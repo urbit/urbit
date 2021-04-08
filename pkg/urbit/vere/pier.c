@@ -72,20 +72,10 @@ _pier_work_send(u3_work* wok_u)
 
   //  calculate work batch size
   {
-    u3_wall* wal_u = wok_u->wal_u;
-
-    if ( !wal_u ) {
-      //  XX work depth, or full lord send-stack depth?
-      //
-      if ( PIER_WORK_BATCH > god_u->dep_w ) {
-        len_w = PIER_WORK_BATCH - god_u->dep_w;
-      }
-    }
-    else {
-      c3_d sen_d = god_u->eve_d + god_u->dep_w;
-      if ( wal_u->eve_d > sen_d ) {
-        len_w = wal_u->eve_d - sen_d;
-      }
+    //  XX work depth, or full lord send-stack depth?
+    //
+    if ( PIER_WORK_BATCH > god_u->dep_w ) {
+      len_w = PIER_WORK_BATCH - god_u->dep_w;
     }
   }
 
@@ -202,55 +192,6 @@ _pier_gift_kick(u3_work* wok_u)
   }
 }
 
-/* _pier_wall_plan(): enqueue a barrier.
-*/
-static void
-_pier_wall_plan(u3_pier* pir_u, c3_d eve_d,
-                void* ptr_v, void (*wal_f)(void*, c3_d))
-{
-  c3_assert( u3_psat_work == pir_u->sat_e );
-
-  u3_wall* wal_u = c3_malloc(sizeof(*wal_u));
-  wal_u->ptr_v = ptr_v;
-  wal_u->eve_d = eve_d;
-  wal_u->wal_f = wal_f;
-
-  //  insert into [pir_u->wal_u], preserving stable sort by [eve_d]
-  //
-  {
-    u3_wall** las_u = &pir_u->wok_u->wal_u;
-
-    while ( *las_u && (eve_d <= (*las_u)->eve_d) ) {
-      las_u = &(*las_u)->nex_u;
-    }
-
-    wal_u->nex_u = *las_u;
-    *las_u = wal_u;
-  }
-}
-
-/* _pier_wall(): process a barrier if possible.
-*/
-static void
-_pier_wall(u3_work* wok_u)
-{
-  u3_lord* god_u = wok_u->pir_u->god_u;
-  // u3_disk* log_u = wok_u->pir_u->log_u;
-
-  // if ( god_u->eve_d == log_u->dun_d ) {
-    u3_wall* wal_u;
-
-    while (  (wal_u = wok_u->wal_u)
-          && !god_u->dep_w
-          && (wal_u->eve_d <= god_u->eve_d) )
-    {
-      wok_u->wal_u = wal_u->nex_u;
-      wal_u->wal_f(wal_u->ptr_v, god_u->eve_d);
-      c3_free(wal_u);
-    }
-  // }
-}
-
 /* _pier_work(): advance event processing.
 */
 static void
@@ -278,7 +219,6 @@ _pier_work(u3_work* wok_u)
   }
 
   _pier_gift_kick(wok_u);
-  _pier_wall(wok_u);
 
   if ( u3_psat_work == pir_u->sat_e ) {
     _pier_work_send(wok_u);
@@ -1073,10 +1013,6 @@ u3_pier_info(u3_pier* pir_u)
           }
         }
 
-        if ( wok_u->wal_u ) {
-          u3l_log("  wall: %" PRIu64 "\n", wok_u->wal_u->eve_d);
-        }
-
         if ( wok_u->car_u ) {
           u3_auto_info(wok_u->car_u);
         }
@@ -1446,20 +1382,6 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
   return pir_u;
 }
 
-/* _pier_save_cb(): save snapshot upon serf/disk synchronization.
-*/
-static void
-_pier_save_cb(void* ptr_v, c3_d eve_d)
-{
-  u3_pier* pir_u = ptr_v;
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): save: send at %" PRIu64 "\r\n", pir_u->god_u->eve_d, eve_d);
-#endif
-
-  u3_lord_save(pir_u->god_u);
-}
-
 /* u3_pier_save(): save a non-portable snapshot
 */
 c3_o
@@ -1469,26 +1391,14 @@ u3_pier_save(u3_pier* pir_u)
   fprintf(stderr, "pier: (%" PRIu64 "): save: plan\r\n", pir_u->god_u->eve_d);
 #endif
 
+  //  XX revise
+  //
   if ( u3_psat_work == pir_u->sat_e ) {
-    _pier_wall_plan(pir_u, 0, pir_u, _pier_save_cb);
+    u3_lord_save(pir_u->god_u);
     return c3y;
   }
 
   return c3n;
-}
-
-/* _pier_cram_cb(): save snapshot upon serf/disk synchronization.
-*/
-static void
-_pier_cram_cb(void* ptr_v, c3_d eve_d)
-{
-  u3_pier* pir_u = ptr_v;
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): cram: send at %" PRIu64 "\r\n", pir_u->god_u->eve_d, eve_d);
-#endif
-
-  u3_lord_cram(pir_u->god_u);
 }
 
 /* u3_pier_cram(): save a portable snapshot.
@@ -1500,8 +1410,10 @@ u3_pier_cram(u3_pier* pir_u)
   fprintf(stderr, "pier: (%" PRIu64 "): cram: plan\r\n", pir_u->god_u->eve_d);
 #endif
 
+  //  XX revise
+  //
   if ( u3_psat_work == pir_u->sat_e ) {
-    _pier_wall_plan(pir_u, 0, pir_u, _pier_cram_cb);
+    u3_lord_cram(pir_u->god_u);
     return c3y;
   }
 
@@ -1634,9 +1546,6 @@ _pier_work_exit_cb(void* ptr_v, c3_d eve_d)
 static void
 _pier_work_exit(u3_pier* pir_u)
 {
-  _pier_wall_plan(pir_u, 0, pir_u, _pier_save_cb);
-  _pier_wall_plan(pir_u, 0, pir_u, _pier_work_exit_cb);
-
   //  XX moveme, XX bails if not started
   //
   {
@@ -1646,6 +1555,10 @@ _pier_work_exit(u3_pier* pir_u)
   }
 
   pir_u->sat_e = u3_psat_done;
+
+  //  XX revise, ensure worker save, run on worker exit?
+  //
+  _pier_work_exit_cb(pir_u, pir_u->god_u->eve_d);
 }
 
 /* u3_pier_exit(): graceful shutdown.

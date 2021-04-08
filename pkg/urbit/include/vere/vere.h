@@ -548,20 +548,10 @@
           struct _u3_pier* pir_u;
         } u3_auto;
 
-      /* u3_wall: pier barrier
-      */
-        typedef struct _u3_wall {
-          void*            ptr_v;
-          c3_d             eve_d;
-          void (*wal_f)(void*, c3_d);
-          struct _u3_wall* nex_u;
-        } u3_wall;
-
       /* u3_work: normal operation.
       */
         typedef struct _u3_work {
           u3_auto*         car_u;               //  i/o drivers
-          u3_wall*         wal_u;               //  barriers
           struct {                              //  finished event queue:
             c3_d           rel_d;               //    last released
             u3_gift*       ent_u;               //    entry
