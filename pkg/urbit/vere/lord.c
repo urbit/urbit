@@ -479,30 +479,6 @@ _lord_work_spin(u3_lord* god_u)
   }
 }
 
-/* _lord_work_done():
-*/
-static void
-_lord_work_done(u3_lord* god_u,
-                u3_ovum* egg_u,
-                c3_d     eve_d,
-                c3_l     mug_l,
-                u3_noun    job,
-                u3_noun    act)
-{
-  god_u->eve_d++;
-  
-  u3_fact* tac_u = 0;
-  // u3_fact* tac_u = u3_fact_init(god_u->eve_d, mug_l, job);
-  // god_u->mug_l   = mug_l;
-  // god_u->eve_d   = eve_d;
-
-  u3_gift* gif_u = u3_gift_init(god_u->eve_d, act);
-
-  _lord_work_spin(god_u);
-
-  god_u->cb_u.work_done_f(god_u->cb_u.ptr_v, egg_u, tac_u, gif_u);
-}
-
 
 /* _lord_plea_work_bail(): hear serf %work %bail
 */
@@ -514,58 +490,18 @@ _lord_plea_work_bail(u3_lord* god_u, u3_ovum* egg_u, u3_noun lud)
   god_u->cb_u.work_bail_f(god_u->cb_u.ptr_v, egg_u, lud);
 }
 
-// /* _lord_plea_work_swap(): hear serf %work %swap
-// */
-// static void
-// _lord_plea_work_swap(u3_lord* god_u, u3_ovum* egg_u, u3_noun dat)
-// {
-//   u3_noun eve, mug, job, act;
-//   c3_d eve_d;
-//   c3_l mug_l;
-
-//   if (  (c3n == u3r_qual(dat, &eve, &mug, &job, &act))
-//      || (c3n == u3r_safe_chub(eve, &eve_d))
-//      || (c3n == u3r_safe_word(mug, &mug_l))
-//      || (c3n == u3a_is_cell(job)) )
-//   {
-//     u3z(job);
-//     u3_ovum_free(egg_u);
-//     fprintf(stderr, "lord: invalid %%work\r\n");
-//     return _lord_plea_foul(god_u, c3__swap, dat);
-//   }
-//   else {
-//     u3k(job); u3k(act);
-//     u3z(dat);
-//     _lord_work_done(god_u, egg_u, eve_d, mug_l, job, act);
-//   }
-// }
-
 /* _lord_plea_work_done(): hear serf %work %done
 */
 static void
 _lord_plea_work_done(u3_lord* god_u,
                      u3_ovum* egg_u,
-                     u3_noun    job,
                      u3_noun    act)
 {
-  // u3_noun eve, mug, act;
-  c3_d eve_d = 0;
-  c3_l mug_l = 0;
+  god_u->eve_d++;
 
-  // if (  (c3n == u3r_trel(dat, &eve, &mug, &act))
-  //    || (c3n == u3r_safe_chub(eve, &eve_d))
-  //    || (c3n == u3r_safe_word(mug, &mug_l)) )
-  // {
-  //   u3z(job);
-  //   u3_ovum_free(egg_u);
-  //   fprintf(stderr, "lord: invalid %%work\r\n");
-  //   return _lord_plea_foul(god_u, c3__done, dat);
-  // }
-  // else {
-    // u3k(act);
-    // u3z(dat);
-    _lord_work_done(god_u, egg_u, eve_d, mug_l, job, act);
-  // }
+  _lord_work_spin(god_u);
+
+  god_u->cb_u.work_done_f(god_u->cb_u.ptr_v, egg_u, act);
 }
 
 /* _lord_plea_work(): hear serf %work response
@@ -597,13 +533,9 @@ _lord_plea_work(u3_lord* god_u, u3_noun dat)
     } break;
 
     case c3y: {
-      _lord_plea_work_done(god_u, egg_u, job, u3k(u3t(dat)));
+      u3z(job);
+      _lord_plea_work_done(god_u, egg_u, u3k(u3t(dat)));
     } break;
-
-    // case c3__swap: {
-    //   u3z(job);
-    //   _lord_plea_work_swap(god_u, egg_u, u3k(u3t(dat)));
-    // } break;
 
     case c3n: {
       u3z(job);

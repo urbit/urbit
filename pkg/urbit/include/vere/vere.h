@@ -447,7 +447,7 @@
           void (*slog_f)(void*, c3_w, u3_noun);
           void (*spin_f)(void*, u3_atom, c3_o);
           void (*spun_f)(void*);
-          void (*work_done_f)(void*, u3_ovum*, u3_fact*, u3_gift*);
+          void (*work_done_f)(void*, u3_ovum*, u3_noun act);
           void (*work_bail_f)(void*, u3_ovum*, u3_noun lud);
           void (*save_f)(void*);
           void (*cram_f)(void*);
@@ -552,11 +552,6 @@
       */
         typedef struct _u3_work {
           u3_auto*         car_u;               //  i/o drivers
-          struct {                              //  finished event queue:
-            c3_d           rel_d;               //    last released
-            u3_gift*       ent_u;               //    entry
-            u3_gift*       ext_u;               //    exit
-          } fec_u;                              //
           uv_prepare_t     pep_u;               //  pre-loop
           uv_check_t       cek_u;               //  post-loop
           uv_idle_t        idl_u;               //  catchall XX uv_async_t?

@@ -125,73 +125,6 @@ _pier_work_send(u3_work* wok_u)
   }
 }
 
-/* _pier_gift_plan(): enqueue effects.
-*/
-static void
-_pier_gift_plan(u3_work* wok_u, u3_gift* gif_u)
-{
-  // c3_assert( gif_u->eve_d > wok_u->fec_u.rel_d );
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): compute: complete\r\n", gif_u->eve_d);
-#endif
-
-  gif_u->nex_u = 0;
-
-  if ( !wok_u->fec_u.ent_u ) {
-    c3_assert( !wok_u->fec_u.ext_u );
-    wok_u->fec_u.ent_u = wok_u->fec_u.ext_u = gif_u;
-  }
-  else {
-    wok_u->fec_u.ent_u->nex_u = gif_u;
-    wok_u->fec_u.ent_u = gif_u;
-  }
-}
-
-/* _pier_gift_next(): dequeue effect.
-*/
-static u3_gift*
-_pier_gift_next(u3_work* wok_u)
-{
-  u3_pier* pir_u = wok_u->pir_u;
-  // u3_disk* log_u = pir_u->log_u;
-  u3_gift* gif_u = wok_u->fec_u.ext_u;
-
-  // if ( !gif_u || (gif_u->eve_d > log_u->dun_d) ) {
-  if ( !gif_u ) {
-    return 0;
-  }
-  else {
-    wok_u->fec_u.ext_u = gif_u->nex_u;
-
-    if ( !wok_u->fec_u.ext_u ) {
-      wok_u->fec_u.ent_u = 0;
-    }
-
-    // c3_assert( (1ULL + wok_u->fec_u.rel_d) == gif_u->eve_d );
-    wok_u->fec_u.rel_d = gif_u->eve_d;
-
-    return gif_u;
-  }
-}
-
-/* _pier_gift_kick(): apply effects.
-*/
-static void
-_pier_gift_kick(u3_work* wok_u)
-{
-  u3_gift* gif_u;
-
-  while ( (gif_u = _pier_gift_next(wok_u)) ) {
-#ifdef VERBOSE_PIER
-    fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", gif_u->eve_d);
-#endif
-
-    u3_auto_kick(wok_u->car_u, gif_u->act);
-    u3_gift_free(gif_u);
-  }
-}
-
 /* _pier_work(): advance event processing.
 */
 static void
@@ -217,8 +150,6 @@ _pier_work(u3_work* wok_u)
       }
     }
   }
-
-  _pier_gift_kick(wok_u);
 
   if ( u3_psat_work == pir_u->sat_e ) {
     _pier_work_send(wok_u);
@@ -261,8 +192,7 @@ _pier_on_lord_work_spun(void* ptr_v)
 static void
 _pier_on_lord_work_done(void*    ptr_v,
                         u3_ovum* egg_u,
-                        u3_fact* tac_u,
-                        u3_gift* gif_u)
+                        u3_noun    act)
 {
   u3_pier* pir_u = ptr_v;
 
@@ -273,13 +203,10 @@ _pier_on_lord_work_done(void*    ptr_v,
   fprintf(stderr, "pier (%" PRIu64 "): work: done\r\n", tac_u->eve_d);
 #endif
 
-  //  XX this is a departure from the general organization of this file
-  //
-  // u3_disk_plan(pir_u->log_u, tac_u);
-
   u3_auto_done(egg_u);
 
-  _pier_gift_plan(pir_u->wok_u, gif_u);
+  u3_auto_kick(pir_u->wok_u->car_u, act);
+
   _pier_work(pir_u->wok_u);
 }
 
@@ -509,8 +436,6 @@ _pier_work_init(u3_pier* pir_u)
   pir_u->sat_e = u3_psat_work;
   pir_u->wok_u = wok_u = c3_calloc(sizeof(*wok_u));
   wok_u->pir_u = pir_u;
-  // wok_u->fec_u.rel_d = pir_u->log_u->dun_d;
-  wok_u->fec_u.rel_d = pir_u->god_u->eve_d;
 
   _pier_work_time(pir_u);
 
@@ -690,8 +615,7 @@ _pier_wyrd_aver(u3_noun act)
 static void
 _pier_on_lord_wyrd_done(void*    ptr_v,
                         u3_ovum* egg_u,
-                        u3_fact* tac_u,
-                        u3_gift* gif_u)
+                        u3_noun    act)
 {
   u3_pier* pir_u = ptr_v;
 
@@ -700,9 +624,9 @@ _pier_on_lord_wyrd_done(void*    ptr_v,
   //  arvo's side of version negotiation succeeded
   //  traverse [gif_y] and validate
   //
-  if ( c3n == _pier_wyrd_aver(gif_u->act) ) {
-    u3_fact_free(tac_u);
-    u3_gift_free(gif_u);
+  if ( c3n == _pier_wyrd_aver(act) ) {
+    // u3_fact_free(tac_u);
+    // u3_gift_free(gif_u);
 
     //  XX messaging, cli argument to bypass
     //
@@ -710,17 +634,13 @@ _pier_on_lord_wyrd_done(void*    ptr_v,
     _pier_wyrd_fail(pir_u, egg_u, u3_nul);
   }
   else {
-    //  enqueue %wyrd event-log commit
-    //
-    // u3_disk_plan(pir_u->log_u, tac_u);
-
     //  finalize %wyrd success
     //
     _pier_wyrd_good(pir_u, egg_u);
 
-    //  plan %wyrd effects
+    //  XX fix
     //
-    _pier_gift_plan(pir_u->wok_u, gif_u);
+    u3z(act);
   }
 }
 
@@ -998,20 +918,6 @@ u3_pier_info(u3_pier* pir_u)
 
       {
         u3_work* wok_u = pir_u->wok_u;
-
-        u3l_log("  effects: released=%" PRIu64 "\n", wok_u->fec_u.rel_d);
-
-        if ( wok_u->fec_u.ext_u ) {
-          if ( wok_u->fec_u.ext_u != wok_u->fec_u.ent_u ) {
-            u3l_log("    pending %" PRIu64 "-%" PRIu64 "\n",
-                    wok_u->fec_u.ext_u->eve_d,
-                    wok_u->fec_u.ent_u->eve_d);
-
-          }
-          else {
-            u3l_log("    pending %" PRIu64 "\n", wok_u->fec_u.ext_u->eve_d);
-          }
-        }
 
         if ( wok_u->car_u ) {
           u3_auto_info(wok_u->car_u);
@@ -1459,19 +1365,6 @@ static void
 _pier_work_close(u3_work* wok_u)
 {
   u3_auto_exit(wok_u->car_u);
-
-  //  free pending effects
-  //
-  {
-    u3_gift* gif_u = wok_u->fec_u.ext_u;
-    u3_gift* nex_u;
-
-    while ( gif_u ) {
-      nex_u = gif_u->nex_u;
-      u3_gift_free(gif_u);
-      gif_u = nex_u;
-    }
-  }
 
   uv_close((uv_handle_t*)&wok_u->pep_u, _pier_work_close_cb);
   uv_close((uv_handle_t*)&wok_u->cek_u, 0);
