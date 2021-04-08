@@ -23,6 +23,9 @@
     %+  rune  tis
     ;~(plug sym ;~(pfix gap stap))
   ::
+    %+  rune  sig
+    ;~(plug sym ;~(pfix gap stap))
+  ::
     %+  rune  cen
     ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
   ::

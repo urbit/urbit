@@ -928,6 +928,7 @@
   ::    /-  sur-file            ::  surface imports from /sur
   ::    /+  lib-file            ::  library imports from /lib
   ::    /=  face  /path         ::  imports built hoon file at path
+  ::    /~  face  /path         ::  imports built hoon files from directory
   ::    /%  face  %mark         ::  imports mark definition from /mar
   ::    /$  face  %from  %to    ::  imports mark converter from /mar
   ::    /*  face  %mark  /path  ::  unbuilt file imports, as mark
@@ -936,6 +937,7 @@
     $:  sur=(list taut)
         lib=(list taut)
         raw=(list [face=term =path])
+        raz=(list [face=term =path])
         maz=(list [face=term =mark])
         caz=(list [face=term =mars])
         bar=(list [face=term =mark =path])

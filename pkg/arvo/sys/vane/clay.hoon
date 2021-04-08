@@ -118,11 +118,11 @@
 ::  Ford cache
 ::
 +$  ford-cache
-  $:  files=(map path [res=vase dez=(set path)])
-      naves=(map mark [res=vase dez=(set path)])
-      marks=(map mark [res=dais dez=(set path)])
-      casts=(map mars [res=vase dez=(set path)])
-      tubes=(map mars [res=tube dez=(set path)])
+  $:  files=(map path [res=vase dez=(set [dir=? =path])])
+      naves=(map mark [res=vase dez=(set [dir=? =path])])
+      marks=(map mark [res=dais dez=(set [dir=? =path])])
+      casts=(map mars [res=vase dez=(set [dir=? =path])])
+      tubes=(map mars [res=tube dez=(set [dir=? =path])])
   ==
 ::  $reef-cache: built system files
 ::
@@ -428,18 +428,23 @@
   ::
   ++  an
     |_  nak=ankh
+    ::  +dug: produce ankh at path
+    ::
+    ++  dug
+      |=  =path
+      ^-  (unit ankh)
+      ?~  path  `nak
+      ?~  kid=(~(get by dir.nak) i.path)
+        ~
+      $(nak u.kid, path t.path)
     ::  +get: produce file at path
     ::
     ++  get
       |=  =path
       ^-  (unit cage)
-      ?~  path
-        ?~  fil.nak
-          ~
-        `q.u.fil.nak
-      ?~  kid=(~(get by dir.nak) i.path)
-        ~
-      $(nak u.kid, path t.path)
+      ?~  nik=(dug path)  ~
+      ?~  fil.u.nik       ~
+      `q.u.fil.u.nik
     --
   ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
   ++  with-faces
@@ -472,7 +477,7 @@
         +$  state
           $:  baked=(map path cage)
               cache=ford-cache
-              stack=(list (set path))
+              stack=(list (set [dir=? =path]))
               cycle=(set build)
           ==
         +$  args
@@ -493,8 +498,8 @@
     ::  +pop-stack: pop build stack, copying deps downward
     ::
     ++  pop-stack
-      ^-  [(set path) _stack.nub]
-      =^  top=(set path)  stack.nub  stack.nub
+      ^-  [(set [dir=? =path]) _stack.nub]
+      =^  top=(set [dir=? =path])  stack.nub  stack.nub
       =?  stack.nub  ?=(^ stack.nub)
         stack.nub(i (~(uni in i.stack.nub) top))
       [top stack.nub]
@@ -524,6 +529,29 @@
       ?<  (~(has in deletes) path)
       ~|  %file-not-found^path
       :_(nub (need (~(get an ankh) path)))
+    ::  +list-directory: retrieve directory listing
+    ::
+    ::    this excludes files directly at /path/mark,
+    ::    instead only including files in the unix-style directory at /path,
+    ::    such as /path/more/mark
+    ::
+    ++  list-directory
+      |=  =path
+      ^-  (list ^path)
+      =/  nuk=(unit _ankh)  (~(dug an ankh) path)
+      ?~  nuk  ~
+      =|  dep=@ud
+      |-
+      =;  dir=(list ^path)
+        ?:  |((lte dep 1) ?=(~ fil.u.nuk) (~(has in deletes) path))
+          dir
+        [path dir]
+      %-  zing
+      %+  turn
+        %+  sort  ~(tap by dir.u.nuk)
+        |=([[a=@ *] [b=@ *]] (aor a b))
+      |=  [nom=@ta nak=_ankh]
+      ^$(u.nuk nak, path (snoc path nom), dep +(dep))
     ::  +build-nave: build a statically typed mark core
     ::
     ++  build-nave
@@ -816,7 +844,7 @@
       ?:  (~(has in cycle.nub) file+path)
         ~|(cycle+file+path^stack.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+path)
-      =.  stack.nub  [(sy path ~) stack.nub]
+      =.  stack.nub  [(sy [| path] ~) stack.nub]
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
@@ -826,11 +854,43 @@
       =.  files.cache.nub  (~(put by files.cache.nub) path [res top])
       [res nub]
     ::
+    ++  build-directory
+      |=  =path
+      ^-  [(map ^path vase) state]
+      =/  paz=(list ^path)  (list-directory path)
+      =|  rez=(map ^path vase)
+      |-
+      ?~  paz
+        [rez nub]
+      =*  pax  i.paz
+      ?.  =(%hoon (rear pax))
+        $(paz t.paz)
+      ::
+      ::TODO  deduplicate with +build-file
+      ?^  got=(~(get by files.cache.nub) pax)
+        =?  stack.nub  ?=(^ stack.nub)
+          stack.nub(i (~(uni in i.stack.nub) dez.u.got))
+        $(paz t.paz, rez (~(put by rez) pax res.u.got))
+      ?:  (~(has in cycle.nub) file+pax)
+        ~|(cycle+file+pax^stack.nub !!)
+      =.  cycle.nub  (~(put in cycle.nub) file+pax)
+      =.  stack.nub  [(sy [& path] ~) stack.nub]
+      =^  cag=cage  nub  (read-file pax)
+      ?>  =(%hoon p.cag)
+      =/  tex=tape  (trip !<(@t q.cag))
+      =/  =pile  (parse-pile pax tex)
+      =^  res=vase  nub  (run-pile pile)
+      =^  top  stack.nub  pop-stack
+      =.  files.cache.nub  (~(put by files.cache.nub) pax [res top])
+      ::
+      $(paz t.paz, rez (~(put by rez) pax res))
+    ::
     ++  run-pile
       |=  =pile
       =^  sut=vase  nub  (run-tauts bud %sur sur.pile)
       =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
       =^  sut=vase  nub  (run-raw sut raw.pile)
+      =^  sut=vase  nub  (run-raz sut raz.pile)
       =^  sut=vase  nub  (run-maz sut maz.pile)
       =^  sut=vase  nub  (run-caz sut caz.pile)
       =^  sut=vase  nub  (run-bar sut bar.pile)
@@ -869,6 +929,9 @@
         (most ;~(plug com gaw) taut-rule)
       ::
         %+  rune  tis
+        ;~(plug sym ;~(pfix gap stap))
+      ::
+        %+  rune  sig
         ;~(plug sym ;~(pfix gap stap))
       ::
         %+  rune  cen
@@ -930,6 +993,30 @@
       =^  pin=vase  nub  (build-file (snoc path.i.raw %hoon))
       =.  p.pin  [%face face.i.raw p.pin]
       $(sut (slop pin sut), raw t.raw)
+    ::
+    ++  run-raz
+      |=  [sut=vase raz=(list [face=term =path])]
+      ^-  [vase state]
+      ?~  raz  [sut nub]
+      =^  res=(map path vase)  nub
+        (build-directory path.i.raz)
+      =;  pin=vase
+        =.  p.pin  [%face face.i.raz p.pin]
+        $(sut (slop pin sut), raz t.raz)
+      ::  convert the (map path vase) into a vase of (map @ta *),
+      ::  with paths hyphenated into names and the .hoon cut off
+      ::
+      =/  lap=@ud  (lent path.i.raz)
+      |-  ^-  vase
+      ?~  res  [[%atom %n `0] 0]
+      %+  slop
+        %+  slop
+          :-  [%atom %ta ~]
+          %+  rap  3
+          %+  join  '-'
+          (snip (slag lap p.n.res))
+        q.n.res
+      (slop $(res l.res) $(res r.res))
     ::
     ++  run-maz
       |=  [sut=vase maz=(list [face=term =mark])]
@@ -1582,12 +1669,20 @@
     ::
     ++  invalidate
       |*  [key=mold value=mold]
-      |=  [cache=(map key [value dez=(set path)]) invalid=(set path)]
-      =/  builds=(list [key value dez=(set path)])  ~(tap by cache)
+      |=  [cache=(map key [value dez=(set [dir=? =path])]) invalid=(set path)]
+      =/  builds=(list [key value dez=(set [dir=? =path])])
+        ~(tap by cache)
       |-  ^+  cache
       ?~  builds
         ~
-      ?:  ?=(^ (~(int in dez.i.builds) invalid))
+      ?:  %+  lien  ~(tap in dez.i.builds)
+          |=  [dir=? =path]
+          ?.  dir  (~(has in invalid) path)
+          =+  l=(lent path)
+          %+  lien  ~(tap in invalid)
+          |=  i=^path
+          =+  j=(lent i)
+          &((gth j +(l)) =(path (scag l i)))
         $(builds t.builds)
       (~(put by $(builds t.builds)) i.builds)
     ::
