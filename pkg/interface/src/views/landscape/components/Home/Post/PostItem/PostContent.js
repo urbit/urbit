@@ -17,8 +17,8 @@ export function PostContent(props) {
     <TruncatedBox
       display="-webkit-box"
       width="100%"
-      pl="2"
-      pr="2"
+      px="2"
+      pb="2"
       truncate={isParent ? null : 8}
       textOverflow="ellipsis"
       overflow="hidden"
