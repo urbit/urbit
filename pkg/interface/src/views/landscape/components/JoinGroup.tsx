@@ -151,47 +151,50 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
           </StatelessAsyncButton>
         </Col>
       ) : preview ? (
-        <GroupSummary
-          metadata={preview.metadata}
-          memberCount={preview?.members}
-          channelCount={preview?.['channel-count']}
-        >
-          { Object.keys(preview.channels).length > 0 && (
-            <Col
-              gapY="2"
-              p="2"
-              borderRadius="2"
-              border="1"
-              borderColor="washedGray"
-              bg="washedBlue"
-              maxHeight="300px"
-              overflowY="auto"
-            >
-              <Text gray fontSize="1">
-                Channels
-              </Text>
-              <Box width="100%" flexShrink="0">
-                {Object.values(preview.channels).map(({ metadata }: any) => (
-                  <Row width="100%">
-                    <Icon
-                      mr="2"
-                      color="blue"
-                      icon={getModuleIcon(metadata?.config?.graph) as any}
-                    />
-                    <Text color="blue">{metadata.title} </Text>
-                  </Row>
-                ))}
-                </Box>
-            </Col>
-          )}
+        <>
+          <GroupSummary
+            metadata={preview.metadata}
+            memberCount={preview?.members}
+            channelCount={preview?.['channel-count']}
+          >
+            { Object.keys(preview.channels).length > 0 && (
+              <Col
+                gapY="2"
+                p="2"
+                borderRadius="2"
+                border="1"
+                borderColor="washedGray"
+                bg="washedBlue"
+                maxHeight="300px"
+                overflowY="auto"
+              >
+                <Text gray fontSize="1">
+                  Channels
+                </Text>
+                <Box width="100%" flexShrink="0">
+                  {Object.values(preview.channels).map(({ metadata }: any) => (
+                    <Row width="100%">
+                      <Icon
+                        mr="2"
+                        color="blue"
+                        icon={getModuleIcon(metadata?.config?.graph) as any}
+                      />
+                      <Text color="blue">{metadata.title} </Text>
+                    </Row>
+                  ))}
+                  </Box>
+              </Col>
+            )}
+          </GroupSummary>
           <StatelessAsyncButton
+            marginTop={3}
             primary
             name="join"
             onClick={() => onConfirm(preview.group)}
           >
             Join {preview.metadata.title}
           </StatelessAsyncButton>
-        </GroupSummary>
+        </>
       ) : (
         <Col width="100%" gapY="4">
           <Formik

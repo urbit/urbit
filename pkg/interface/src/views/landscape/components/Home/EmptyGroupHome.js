@@ -22,14 +22,12 @@ export function EmptyGroupHome(props) {
       alignItems="center"
       display="flex">
       { groupAssociation?.group ? (
-        <Box maxWidth='288px '>
-          <GroupSummary
-            memberCount={groups[groupAssociation.group].members.size}
-            channelCount={channelCount}
-            metadata={groupAssociation.metadata}
-            resource={groupAssociation.group}
-          />
-        </Box>
+        <GroupSummary
+          memberCount={groups[groupAssociation.group].members.size}
+          channelCount={channelCount}
+          metadata={groupAssociation.metadata}
+          resource={groupAssociation.group}
+        />
       ) : (
         <Box p="4">
           <Text color='gray'>
