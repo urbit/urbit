@@ -35,6 +35,7 @@
       feybs=(map ship sats)
       =piym
       =poym
+      ahistorical-txs=(set txid)
   ==
 ::
 +$  card  card:agent:gall
@@ -76,6 +77,7 @@
         *(map ship sats)
         *^piym
         *^poym
+        ~
     ==
   ==
 ++  on-save
@@ -270,7 +272,6 @@
     =+  n=(~(gut by num-fam.piym) f 0)
     ?:  (gte n fam-limit.params)
       ~|("More than {<fam-limit.params>} addresses for moons + planet" !!)
-
     =.  state  state(num-fam.piym (~(put by num-fam.piym) f +(n)))
     =^  a=address  state
       (generate-address u.curr-xpub %0)
@@ -573,13 +574,23 @@
         ==
     ?:  ?|(?!(connected.p) (lth block.btc-state block))
       ;:  weld
-          (retry-pend-piym network)
-          (retry-poym network)
-          (retry-addrs network)
-          (retry-txs network)
-          (retry-scans network)
+        (retry-pend-piym network)
+        (retry-poym network)
+        (retry-addrs network)
+        (retry-txs network)
+        (retry-scans network)
+        retry-ahistorical-txs
       ==
-    (retry-pend-piym network)
+    ;:  weld
+      retry-ahistorical-txs
+      (retry-pend-piym network)
+    ==
+  ::
+  ++  retry-ahistorical-txs
+    ^-  (list card)
+    %+  turn  ~(tap in ahistorical-txs)
+    |=  =txid
+    (poke-provider [%tx-info txid])
   ::
   ++  retry-scans
     |=  =network
@@ -677,6 +688,7 @@
   ^-  _state
   |^
   =/  h  (~(get by history) txid.ti)
+  =.  ahistorical-txs  (~(del in ahistorical-txs) txid.ti)
   =/  our-addrs=(set address)             ::  all our addresses in inputs/outputs of tx
     %-  silt
     %+  skim
@@ -743,22 +755,37 @@
   |=  [=address utxos=(set utxo) used=?]
   ^-  (quip card _state)
   =/  ac  (address-coords:bl address ~(val by walts))
-  ?~  ac  `state
+  ?~  ac
+    `state
   =/  [w=walt =chyg =idx]  u.ac
   =.  walts
     %+  ~(put by walts)  xpub.w
     %+  ~(update-address wad:bl w chyg)
       address
    [used chyg idx utxos]
+  ::  if transactions haven't made it into history, request transaction info
+  ::
+  =^  cards=(list card)  ahistorical-txs
+    %+  roll  ~(tap in utxos)
+    |=  [u=utxo cad=(list card) ah=(set txid)]
+    ^-  [(list card) (set txid)]
+    ?:  (~(has by history) txid.u)
+      [cad ah]
+    :-  [(poke-provider [%tx-info txid.u]) cad]
+    (~(put by ah) txid.u)
   ::  if the wallet+chyg is being scanned, update the scan batch
   ::
   =/  b  (~(get by scans) [xpub.w chyg])
-  ?~  b  `state
+  ?~  b
+    [cards state]
   =.  scans
    (del-scanned u.b(has-used ?|(used has-used.u.b)) xpub.w chyg idx)
   ?:  empty:(scan-status xpub.w chyg)
-    (check-scan xpub.w)
-  `state
+    =^  scan-cards=(list card)  state
+      (check-scan xpub.w)
+    [(weld scan-cards cards) state]
+  ::
+  [cards state]
 ::  +req-scan
 ::   - adds addresses in batch to wallet's watch map as un-used addresses
 ::   - returns provider %address-info request cards
@@ -778,7 +805,7 @@
       scans
     (~(put by scans) [xpub chyg] b)
       walts
-      (~(put by walts) xpub w)
+    (~(put by walts) xpub w)
   ==
 ::
 ++  scan-status
