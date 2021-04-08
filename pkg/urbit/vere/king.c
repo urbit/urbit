@@ -156,15 +156,13 @@ _king_boot(u3_noun bul)
 void
 _king_fake(u3_noun ship, u3_noun pill, u3_noun path)
 {
-  //  XX link properly
-  //
   u3_noun vent = u3nc(c3__fake, u3k(ship));
-  // u3K.pir_u    = u3_pier_boot(sag_w, ship, vent, pill, path);
 
   c3_d  key_d[4] = {0};
   u3_noun msg    = u3nq(c3__boot, pill, vent, u3nc(330, c3y));
 
   u3_lord_boot(u3_Host.dir_c, sag_w, key_d, msg);
+  u3z(path);
 }
 
 /* _king_come(): mine a comet under star (unit)
@@ -196,11 +194,19 @@ _king_dawn(u3_noun seed, u3_noun pill, u3_noun path)
   //  XX link properly
   //
   u3_noun vent = u3_dawn_vent(seed);
-  u3K.pir_u = u3_pier_boot(sag_w, u3k(u3h(seed)), vent, pill, path);
+  c3_d  key_d[4] = {0};
+  u3_noun msg    = u3nq(c3__boot, pill, vent, u3nc(330, c3y));
 
   // disable ivory slog printfs
   //
   u3C.slog_f = 0;
+
+  u3_lord_boot(u3_Host.dir_c, sag_w, key_d, msg);
+
+  //  XX auto resume after boot?
+  //
+  // u3K.pir_u = u3_pier_stay(sag_w, path);
+  u3z(path);
 }
 
 /* _king_pier(): pier parser
