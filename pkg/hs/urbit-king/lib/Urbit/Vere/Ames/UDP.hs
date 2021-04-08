@@ -5,7 +5,8 @@
 
     - If can't open the port, wait and try again repeatedly.
     - If there is an error reading or writting from the open socket,
-      close it and open another.
+      close it and open another, making sure, however, to reuse the
+      same port
 
   2. Receives packets from the socket.
 
@@ -158,7 +159,7 @@ realUdpServ
   -> HostAddress
   -> AmesStat
   -> RIO e UdpServ
-realUdpServ por hos sat = do
+realUdpServ startPort hos sat = do
   logInfo $ displayShow ("AMES", "UDP", "Starting real UDP server.")
 
   env <- ask
@@ -202,23 +203,30 @@ realUdpServ por hos sat = do
         did <- atomically (tryWriteTBQueue qSend (a, b))
         when (did == False) $ do
           logWarn "AMES: UDP: Dropping outbound packet because queue is full."
+  let opener por = do
+        logInfo $ displayShow $ ("AMES", "UDP", "Trying to open socket, port",)
+          por
+        sk <- forceBind por hos
+        sn <- io $ getSocketName sk
+        sp <- io $ socketPort sk
+        logInfo $ displayShow $ ("AMES", "UDP", "Got socket", sn, sp)
 
-  tOpen <- async $ forever $ do
-     sk <- forceBind por hos
-     sn <- io $ getSocketName sk
+        let waitForRelease = do
+              atomically (writeTVar vSock (Just sk))
+              broken <- atomically (takeTMVar vFail)
+              logWarn "AMES: UDP: Closing broken socket."
+              io (close broken)
 
-     let waitForRelease = do
-           atomically (writeTVar vSock (Just sk))
-           broken <- atomically (takeTMVar vFail)
-           logWarn "AMES: UDP: Closing broken socket."
-           io (close broken)
+        case sn of
+          (SockAddrInet boundPort _) ->
+           -- When we're on IPv4, maybe port forward at the NAT.
+           rwith (requestPortAccess $ fromIntegral boundPort) $
+               \() -> waitForRelease
+          _ -> waitForRelease
 
-     case sn of
-       (SockAddrInet boundPort _) ->
-         -- When we're on IPv4, maybe port forward at the NAT.
-         rwith (requestPortAccess $ fromIntegral boundPort) $
-             \() -> waitForRelease
-       _ -> waitForRelease
+        opener sp
+
+  tOpen <- async $ opener startPort
 
   tSend <- async $ forever $ join $ atomically $ do
     (adr, byt) <- readTBQueue qSend
