@@ -12404,11 +12404,11 @@
       [lef rye]
     ::
         [%fits *]
-      =^  nic  grub  (caching-nice bool)
       =^  ref  grub  (caching-play p.gen)
       =^  fid  grub  (caching-find %read q.gen)
       ~|  [%test q.gen]
       =;  [=nock =_grub]
+        =^  nic  grub  (caching-nice bool)
         [[nic nock] grub]
       |-  ^-  [nock _grub]
       ?-  -.fid
