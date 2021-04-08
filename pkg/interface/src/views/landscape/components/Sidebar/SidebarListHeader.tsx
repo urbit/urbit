@@ -88,8 +88,11 @@ export function SidebarListHeader(props: {
            props.history.push(`/~landscape${groupPath}/feed`);
          }}
        >
-         <Text color={unreadCount > 0 ? 'blue' : 'black'}>
+         <Text>
            Group Feed
+         </Text>
+         <Text mr="1" color="blue">
+           { unreadCount > 0 && unreadCount}
          </Text>
        </Row>
      ) : null
