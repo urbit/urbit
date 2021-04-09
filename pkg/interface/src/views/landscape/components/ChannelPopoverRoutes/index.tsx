@@ -125,7 +125,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
               </Col>
 
               ) : (
-              <Col mt="5" mb="6" flexShrink={0}>
+              <Col mx="4" my="6" flexShrink={0}>
               <Text id="remove" fontSize="2" fontWeight="bold">
                 Remove channel from group
               </Text>

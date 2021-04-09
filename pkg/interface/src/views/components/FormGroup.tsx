@@ -24,7 +24,6 @@ export function useFormGroupContext(id: string) {
   );
   const onDirty = useCallback(
     (dirty: boolean) => {
-      console.log(id, dirty);
       ctx.onDirty(id, dirty);
     },
     [ctx.onDirty, id]
@@ -61,11 +60,17 @@ export function FormGroupChild(props: { id: string }) {
     errors,
     resetForm,
     initialValues,
+    values
   } = useFormikContext();
 
   useEffect(() => {
-    addSubmit(submitForm);
-  }, [submitForm]);
+    async function submit() {
+      await submitForm();
+      resetForm({ touched: {}, values });
+    }
+    addSubmit(submit);
+    
+  }, [submitForm, values]);
 
   useEffect(() => {
     onDirty(dirty);
@@ -95,6 +100,10 @@ export function FormGroup(props: PropFunc<typeof Box>) {
     setSubmits((ss) => ({ ...ss, [id]: s }));
   }, []);
 
+  const resetAll = useCallback(() => {
+    _.map(resets, (r) => r());
+  }, [resets]);
+
   const submitAll = useCallback(async () => {
     await Promise.all(
       _.map(
@@ -103,10 +112,6 @@ export function FormGroup(props: PropFunc<typeof Box>) {
       )
     );
   }, [submits, dirty]);
-
-  const resetAll = useCallback(() => {
-    _.map(resets, (r) => r());
-  }, [resets]);
 
   const onDirty = useCallback(
     (id: string, t: boolean) => {
@@ -144,28 +149,26 @@ export function FormGroup(props: PropFunc<typeof Box>) {
       <FormGroupContext.Provider value={context}>
         {children}
       </FormGroupContext.Provider>
-      {isDirty && (
-        <Row
-          justifyContent="flex-end"
-          width="100%"
-          position="sticky"
-          bottom="0px"
-          p="3"
-          gapX="2"
-          backgroundColor="white"
-          borderTop="1"
-          borderTopColor="washedGray"
+      <Row
+        justifyContent="flex-end"
+        width="100%"
+        position="sticky"
+        bottom="0px"
+        p="3"
+        gapX="2"
+        backgroundColor="white"
+        borderTop="1"
+        borderTopColor="washedGray"
+      >
+        <Button disabled={!isDirty} onClick={resetAll}>Cancel</Button>
+        <StatelessAsyncButton
+          onClick={submitAll}
+          disabled={hasErrors || !isDirty}
+          primary
         >
-          <Button onClick={resetAll}>Cancel</Button>
-          <StatelessAsyncButton
-            onClick={submitAll}
-            disabled={hasErrors}
-            primary
-          >
-            Save Changes
-          </StatelessAsyncButton>
-        </Row>
-      )}
+          Save Changes
+        </StatelessAsyncButton>
+      </Row>
     </Box>
   );
 }
