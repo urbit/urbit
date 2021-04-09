@@ -129,16 +129,17 @@ export default function Inbox(props: {
           />
         );
       })}
-      {isDone && (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
+      {isDone ? (
+        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
           <Text gray fontSize="1">No more notifications</Text>
         </Center>
-    )}
-      {isLoading && (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
+    )  : isLoading ? (
+        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
           <LoadingSpinner />
         </Center>
-      )}
+    ) : (
+      <Box mt="2" height="96px" />
+    )}
 
     </Col>
   );

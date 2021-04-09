@@ -64,7 +64,7 @@ export function GroupLink(
   }, [preview]);
 
   return (
-    <Box {...rest}>
+    <Box maxWidth="500px" {...rest} onClick={(e) => { e.stopPropagation(); }}>
       {modal}
       <Row
         width="fit-content"

@@ -1,6 +1,10 @@
 /* vere/db/lmdb.c
 */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include <lmdb.h>
 
 #include "c/portable.h"
@@ -77,6 +81,49 @@ void
 u3_lmdb_exit(MDB_env* env_u)
 {
   mdb_env_close(env_u);
+}
+
+/* u3_lmdb_stat(): print env stats.
+*/
+void
+u3_lmdb_stat(MDB_env* env_u, FILE* fil_u)
+{
+  size_t siz_i;
+
+  fprintf(fil_u, "lmdb info:\n");
+
+  {
+    MDB_stat    mst_u;
+    MDB_envinfo mei_u;
+
+    (void)mdb_env_stat(env_u, &mst_u);
+    (void)mdb_env_info(env_u, &mei_u);
+
+    fprintf(fil_u, "  map size: %zu\n", mei_u.me_mapsize);
+    fprintf(fil_u, "  page size: %u\n", mst_u.ms_psize);
+    fprintf(fil_u, "  max pages: %zu\n", mei_u.me_mapsize / mst_u.ms_psize);
+    fprintf(fil_u, "  number of pages used: %zu\n", mei_u.me_last_pgno+1);
+    fprintf(fil_u, "  last transaction ID: %zu\n", mei_u.me_last_txnid);
+    fprintf(fil_u, "  max readers: %u\n", mei_u.me_maxreaders);
+    fprintf(fil_u, "  number of readers used: %u\n", mei_u.me_numreaders);
+
+    siz_i = mst_u.ms_psize * (mei_u.me_last_pgno+1);
+  }
+
+  {
+    c3_i        fid_i;
+    struct stat sat_u;
+
+    mdb_env_get_fd(env_u, &fid_i);
+    fstat(fid_i, &sat_u);
+
+    if ( siz_i != sat_u.st_size ) {
+      fprintf(fil_u, "MISMATCH:\n");
+    }
+
+    fprintf(fil_u, "  file size (page): %zu\n", siz_i);
+    fprintf(fil_u, "  file size (stat): %jd\n", (intmax_t)sat_u.st_size);
+  }
 }
 
 /* u3_lmdb_gulf(): read first and last event numbers.

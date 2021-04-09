@@ -11,6 +11,7 @@
       update:store
       %contact-update
       %contact-pull-hook
+      0  0
   ==
 ::
 +$  agent  (push-hook:push-hook config)

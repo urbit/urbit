@@ -78,10 +78,14 @@ interface VirtualScrollerProps<T> {
 interface VirtualScrollerState<T> {
   visibleItems: BigIntOrderedMap<T>;
   scrollbar: number;
+  loaded: {
+    top: boolean;
+    bottom: boolean;
+  }
 }
 
 type LogLevel = 'scroll' | 'network' | 'bail' | 'reflow';
-let logLevel = ['bail', 'scroll', 'reflow'] as LogLevel[];
+let logLevel = ['network', 'bail', 'scroll', 'reflow'] as LogLevel[];
 
 const log = (level: LogLevel, message: string) => {
   if(logLevel.includes(level)) {
@@ -136,16 +140,15 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
   private scrollRef: HTMLElement | null = null;
 
-  private loaded = {
-    top: false,
-    bottom: false
-  };
-
   constructor(props: VirtualScrollerProps<T>) {
     super(props);
     this.state = {
       visibleItems: new BigIntOrderedMap(),
-      scrollbar: 0
+      scrollbar: 0,
+      loaded: {
+        top: false,
+        bottom: false
+      }
     };
 
     this.updateVisible = this.updateVisible.bind(this);
@@ -312,13 +315,18 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
   loadRows = async (newer: boolean) => {
     const dir = newer ? 'bottom' : 'top';
-    if(this.loaded[dir]) {
+    if(this.state.loaded[dir]) {
       return;
     }
     log('network', `loading more at ${dir}`);
     const done = await this.props.loadRows(newer);
     if(done) {
-      this.loaded[dir] = true;
+      this.setState({
+        loaded: {
+          ...this.state.loaded,
+          [dir]: done
+        }
+      });
       if(newer && this.props.onBottomLoaded) {
         this.props.onBottomLoaded()
       }
@@ -491,7 +499,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const transform = isTop ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
 
     const atStart = (this.props.data.peekLargest()?.[0] ?? bigInt.zero).eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
-    const atEnd = this.loaded.top;
+    const atEnd = this.state.loaded.top;
 
     return (
       <>

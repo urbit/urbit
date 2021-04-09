@@ -175,6 +175,9 @@
     u3_noun u3we_shal(u3_noun);
     u3_noun u3we_sha1(u3_noun);
 
+    u3_noun u3we_fein_ob(u3_noun);
+    u3_noun u3we_fynd_ob(u3_noun);
+
     u3_noun u3weo_raw(u3_noun);
 
     u3_noun u3wee_puck(u3_noun);

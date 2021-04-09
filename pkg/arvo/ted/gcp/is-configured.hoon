@@ -6,7 +6,6 @@
 /-  gcp, spider, settings
 /+  strandio
 =,  strand=strand:spider
-=,  enjs:format
 ^-  thread:spider
 |^
 |=  *
@@ -22,7 +21,7 @@
   ==
 %-  pure:m
 !>
-%+  frond  %gcp-configured
+^-  json
 b+has
 ::
 ++  has-settings

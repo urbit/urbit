@@ -4,6 +4,5 @@ export interface GcpToken {
 };
 
 export interface GcpState {
-  configured?: boolean;
   token?: GcpToken
 };

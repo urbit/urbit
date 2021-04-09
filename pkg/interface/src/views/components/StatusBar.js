@@ -77,7 +77,7 @@ const StatusBar = (props) => {
       <Row collapse>
         <Button
           width='32px'
-          borderColor='washedGray'
+          borderColor='lightGray'
           mr='2'
           px='2'
           onClick={() => history.push('/')}

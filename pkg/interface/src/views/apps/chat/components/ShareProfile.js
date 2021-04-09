@@ -60,7 +60,7 @@ export const ShareProfile = (props) => {
       alignItems="center"
       justifyContent="space-between"
       borderBottom={1}
-      borderColor="washedGray"
+      borderColor="lightGray"
     >
       <Row pl={3} alignItems="center">
         {image}

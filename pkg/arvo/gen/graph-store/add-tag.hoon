@@ -5,6 +5,6 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=term =resource ~] ~]
     ==
-:-  %graph-update
+:-  %graph-update-1
 ^-  update
-[%0 now [%add-tag term resource]]
+[now [%add-tag term resource]]
