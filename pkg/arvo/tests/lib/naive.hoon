@@ -34,13 +34,6 @@
   |=  =^state:naive
   (n state (owner-changed ~bud 0x123))
 ::
-++  init-l2-marbud
-  |=  =^state:naive
-  =^  f1  state  (init-bud state)
-  =^  f2  state  (n state (owner-changed ~marbud (key ~marbud)))
-  =^  f3  state  (n state (owner-changed ~marbud deposit-address:naive))
-  [:(welp f1 f2 f3) state]
-::
 ++  sign-tx
   |=  [pk=@ nonce=@ud tx=@]
   =+  (ecdsa-raw-sign:secp256k1:secp:crypto (dad:naive 5 nonce tx) pk)
@@ -57,6 +50,25 @@
     20^address
     ~
   ==
+::
+++  l2-init-marbud
+  |=  =^state:naive
+  =^  f1  state  (init-bud state)
+  =^  f2  state  (n state (owner-changed ~marbud (key ~marbud)))
+  =^  f3  state  (n state (owner-changed ~marbud deposit-address:naive))
+  [:(welp f1 f2 f3) state]
+::
+++  l2-init-dopbud
+  |=  =^state:naive
+  =^  f1  state  (init-bud state)
+  =^  f2  state  (n state (owner-changed ~dopbud (key ~dopbud)))
+  =^  f3  state  (n state (l2-changed-spawn-proxy ~dopbud))
+  [:(welp f1 f2 f3) state]
+  ::
+++  l2-changed-spawn-proxy
+  |=  =ship
+  (log changed-spawn-proxy:log-names:naive *@t ship deposit-address:naive ~)
+::
 --
 ::
 |%
@@ -78,7 +90,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-l2-marbud state)
+    =^  f  state  (l2-init-marbud state)
     dominion:(~(got by points.state) ~marbud)
 ::
 ++  test-batch
@@ -87,8 +99,17 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-l2-marbud state)
+    =^  f  state  (l2-init-marbud state)
     =^  f  state  (n state %bat (transfer-point 0 ~marbud (key ~marbud) |))
     =^  f  state  (n state %bat (transfer-point 1 ~marbud 0x234 |))
     owner.own:(~(got by points.state) ~marbud)
+::
+++  test-l2-spawn-proxy-deposit
+  %+  expect-eq
+    !>  %spawn
+  ::
+    !>
+    =|  =^state:naive
+    =^  f1  state  (l2-init-dopbud state)
+    dominion:(~(got by points.state) ~dopbud)
 --
