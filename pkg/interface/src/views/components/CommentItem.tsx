@@ -15,6 +15,7 @@ import { getLatestCommentRevision } from '~/logic/lib/publish';
 import {useCopy} from '~/logic/lib/useCopy';
 import { getPermalinkForGraph} from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
+import {GraphContentWide} from '../landscape/components/Graph/GraphContentWide';
 
 const ClickBox = styled(Box)`
   cursor: pointer;
@@ -101,19 +102,16 @@ export function CommentItem(props: CommentItemProps): ReactElement {
           </Row>
         </Author>
       </Row>
-      <Box
+      <GraphContentWide
         borderRadius="1"
         p="1"
         mb="1"
         backgroundColor={props.highlighted ? 'washedBlue' : 'white'}
-      >
-        <MentionText
-          transcluded={0}
-          api={api}
-          group={group}
-          content={post?.contents}
-        />
-      </Box>
+        transcluded={0}
+        api={api}
+        post={post}
+        showOurContact
+      />
     </Box>
   );
 }
