@@ -69,6 +69,19 @@
   |=  =ship
   (log changed-spawn-proxy:log-names:naive *@t ship deposit-address:naive ~)
 ::
+++  l2-spawn-ship
+  |=  [nonce=@ud from-ship=ship spawn-ship=ship =address]
+  %^  sign-tx  from-ship  nonce
+  %:  can  3
+    1^0 ::proxy set to owner
+  ::1^(can 0 3^%1 5^0 ~)  I think this should use the spawn proxy? but it creates an infinte loop
+    4^from-ship
+    1^(can 0 7^%1 1^0 ~)
+    4^spawn-ship
+    20^address
+    ~
+  ==
+::
 --
 ::
 |%
@@ -110,6 +123,26 @@
   ::
     !>
     =|  =^state:naive
-    =^  f1  state  (l2-init-dopbud state)
+    =^  f  state  (l2-init-dopbud state)
     dominion:(~(got by points.state) ~dopbud)
+::
+++  test-marbud-l2-spawn-point
+  %+  expect-eq
+    !>  [`@ux`(key ~linnup-torsyx) 0]
+    ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (l2-init-marbud state)
+    =^  f  state  (n state %bat (l2-spawn-ship 0 ~marbud ~linnup-torsyx (key ~linnup-torsyx)))
+    transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+::
+++  test-dopbud-l2-spawn-point
+  %+  expect-eq
+    !>  [`@ux`(key ~palsep-picdun) 0]
+    ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (l2-init-dopbud state)
+    =^  f  state  (n state %bat (l2-spawn-ship 0 ~dopbud ~palsep-picdun (key ~palsep-picdun)))
+    transfer-proxy.own:(~(got by points.state) ~palsep-picdun)
 --
