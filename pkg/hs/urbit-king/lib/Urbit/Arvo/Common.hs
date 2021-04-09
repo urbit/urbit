@@ -29,6 +29,7 @@ import Data.Bits
 import Data.Serialize
 
 import qualified Network.HTTP.Types.Method as H
+import qualified Network.Socket            as N
 import qualified Urbit.Ob                  as Ob
 
 
@@ -159,6 +160,19 @@ deriveNoun ''JsonNode
 
 -- Ames Destinations -------------------------------------------------
 
+serializeToNoun :: Serialize a => a -> Noun
+serializeToNoun = A . bytesAtom . encode
+
+serializeParseNoun :: Serialize a => String -> Int -> Noun -> Parser a
+serializeParseNoun desc len = named (pack desc) . \case
+    A (atomBytes -> bs)
+      -- Atoms lose leading 0s, but since lsb, these become trailing NULs
+      | length bs <= len -> case decode $ bs <> replicate (len - length bs) 0 of
+        Right aa -> pure aa
+        Left msg -> fail msg
+      | otherwise -> fail ("putative " <> desc <> " " <> show bs <> " too long")
+    C{} -> fail ("unexpected cell in " <> desc)
+
 newtype Patp a = Patp { unPatp :: a }
   deriving newtype (Eq, Ord, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
@@ -167,8 +181,19 @@ newtype Port = Port { unPort :: Word16 }
   deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
 -- @if
-newtype Ipv4 = Ipv4 { unIpv4 :: Word32 }
-  deriving newtype (Eq, Ord, Enum, Real, Integral, Num, ToNoun, FromNoun)
+newtype Ipv4 = Ipv4 { unIpv4 :: N.HostAddress }
+  deriving newtype (Eq, Ord, Enum)
+
+instance Serialize Ipv4 where
+  get = Ipv4 <$> N.tupleToHostAddress
+    <$> ((,,,) <$> getWord8 <*> getWord8 <*> getWord8 <*> getWord8)
+  put (Ipv4 (N.hostAddressToTuple -> (a, b, c, d))) = for_ [a, b, c, d] putWord8
+
+instance ToNoun Ipv4 where
+  toNoun = serializeToNoun
+
+instance FromNoun Ipv4 where
+  parseNoun = serializeParseNoun "Ipv4" 4
 
 instance Show Ipv4 where
   show (Ipv4 i) =
@@ -178,6 +203,7 @@ instance Show Ipv4 where
     show (i .&. 0xff)
 
 -- @is
+-- should probably use hostAddress6ToTuple here, but no one uses it right now
 newtype Ipv6 = Ipv6 { unIpv6 :: Word128 }
   deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
@@ -190,21 +216,14 @@ data AmesAddress = AAIpv4 Ipv4 Port
   deriving (Eq, Ord, Show)
 
 instance Serialize AmesAddress where
-  get = AAIpv4 <$> (Ipv4 <$> getWord32le) <*> (Port <$> getWord16le)
-  put (AAIpv4 (Ipv4 ip) (Port port)) = putWord32le ip >> putWord16le port
+  get = AAIpv4 <$> get <*> (Port <$> getWord16le)
+  put (AAIpv4 ip (Port port)) = put ip >> putWord16le port
 
 instance FromNoun AmesAddress where
-  parseNoun = named "AmesAddress" . \case
-    A (atomBytes -> bs)
-      -- Atoms lose leading 0s, but since lsb, these become trailing NULs
-      | length bs <= 6  -> case decode $ bs <> replicate (6 - length bs) 0 of
-        Right aa -> pure aa
-        Left msg -> fail msg
-      | otherwise      -> fail ("putative address " <> show bs <> " too long")
-    C{} -> fail "unexpected cell in ames address"
+  parseNoun = serializeParseNoun "AmesAddress" 6
 
 instance ToNoun AmesAddress where
-  toNoun = A . bytesAtom . encode
+  toNoun = serializeToNoun
 
 type AmesDest = Each Galaxy AmesAddress
 
