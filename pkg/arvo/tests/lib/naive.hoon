@@ -25,7 +25,6 @@
   ^-  ^input:naive
   [%log *@ux data log-name topics]
 ::
-::
 ++  owner-changed
   |=  [=ship =address]
   (log owner-changed:log-names:naive *@t ship address ~)
@@ -34,16 +33,28 @@
   |=  =^state:naive
   (n state (owner-changed ~bud 0x123))
 ::
+++  set-proxy-bits
+  |=  from-proxy=@tas
+  =/  proxy
+    ?+  from-proxy  !!
+      %own       %0
+      %spawn     %1
+      %manage    %2
+      %vote      %3
+      %transfer  %4
+    ==
+  1^(can 0 1^0 3^proxy 4^0 ~)
+::
 ++  sign-tx
   |=  [pk=@ nonce=@ud tx=@]
   =+  (ecdsa-raw-sign:secp256k1:secp:crypto (dad:naive 5 nonce tx) pk)
   (cat 3 (can 3 1^v 32^r 32^s ~) tx)
 ::
 ++  transfer-point
-  |=  [nonce=@ud =ship =address reset=?]
+  |=  [nonce=@ud =ship =address proxy=@tas reset=?]
   %^  sign-tx  ship  nonce
   %:  can  3
-    1^0
+    (set-proxy-bits proxy)
     4^ship
     1^(can 0 7^%0 1^reset ~)
     4^ship
@@ -70,11 +81,10 @@
   (log changed-spawn-proxy:log-names:naive *@t ship deposit-address:naive ~)
 ::
 ++  l2-spawn-ship
-  |=  [nonce=@ud from-ship=ship spawn-ship=ship =address]
+  |=  [nonce=@ud from-ship=ship proxy=@tas spawn-ship=ship =address]
   %^  sign-tx  from-ship  nonce
   %:  can  3
-    1^0 ::proxy set to owner
-  ::1^(can 0 3^%1 5^0 ~)  I think this should use the spawn proxy? but it creates an infinte loop
+    (set-proxy-bits proxy)
     4^from-ship
     1^(can 0 7^%1 1^0 ~)
     4^spawn-ship
@@ -113,8 +123,8 @@
     !>
     =|  =^state:naive
     =^  f  state  (l2-init-marbud state)
-    =^  f  state  (n state %bat (transfer-point 0 ~marbud (key ~marbud) |))
-    =^  f  state  (n state %bat (transfer-point 1 ~marbud 0x234 |))
+    =^  f  state  (n state %bat (transfer-point 0 ~marbud (key ~marbud) %own |))
+    =^  f  state  (n state %bat (transfer-point 1 ~marbud 0x234 %own |))
     owner.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-spawn-proxy-deposit
@@ -133,7 +143,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (l2-init-marbud state)
-    =^  f  state  (n state %bat (l2-spawn-ship 0 ~marbud ~linnup-torsyx (key ~linnup-torsyx)))
+    =^  f  state  (n state %bat (l2-spawn-ship 0 ~marbud %own ~linnup-torsyx (key ~linnup-torsyx)))
     transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-dopbud-l2-spawn-point
@@ -143,6 +153,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (l2-init-dopbud state)
-    =^  f  state  (n state %bat (l2-spawn-ship 0 ~dopbud ~palsep-picdun (key ~palsep-picdun)))
+    =^  f  state  (n state %bat (l2-spawn-ship 0 ~dopbud %own ~palsep-picdun (key ~palsep-picdun)))
     transfer-proxy.own:(~(got by points.state) ~palsep-picdun)
+::
 --
