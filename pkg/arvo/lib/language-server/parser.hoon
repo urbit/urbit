@@ -24,7 +24,7 @@
     ;~(plug sym ;~(pfix gap stap))
   ::
     %+  rune  sig
-    ;~(plug sym ;~(pfix gap stap))
+    ;~((glue gap) sym wyde:vast stap)
   ::
     %+  rune  cen
     ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))

@@ -932,7 +932,7 @@
         ;~(plug sym ;~(pfix gap stap))
       ::
         %+  rune  sig
-        ;~(plug sym ;~(pfix gap stap))
+        ;~((glue gap) sym wyde:vast stap)
       ::
         %+  rune  cen
         ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
@@ -995,7 +995,7 @@
       $(sut (slop pin sut), raw t.raw)
     ::
     ++  run-raz
-      |=  [sut=vase raz=(list [face=term =path])]
+      |=  [sut=vase raz=(list [face=term =spec =path])]
       ^-  [vase state]
       ?~  raz  [sut nub]
       =^  res=(map path vase)  nub
@@ -1003,20 +1003,23 @@
       =;  pin=vase
         =.  p.pin  [%face face.i.raz p.pin]
         $(sut (slop pin sut), raz t.raz)
-      ::  convert the (map path vase) into a vase of (map @ta *),
-      ::  with paths hyphenated into names and the .hoon cut off
       ::
       =/  lap=@ud  (lent path.i.raz)
-      |-  ^-  vase
-      ?~  res  [[%atom %n `0] 0]
-      %+  slop
-        %+  slop
-          :-  [%atom %ta ~]
-          %+  rap  3
-          %+  join  '-'
-          (snip (slag lap p.n.res))
-        q.n.res
-      (slop $(res l.res) $(res r.res))
+      =/  =type  (~(play ut p.sut) [%kttr spec.i.raz])
+      ::  ensure results nest in the specified type,
+      ::  and produce a homogenous map containing that type.
+      ::
+      :-  %-  ~(play ut p.sut)
+          [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec.i.raz]]
+      |-
+      ?~  res  ~
+      ~|  [%nest-fail path.i.raz p.n.res]
+      ?>  (~(nest ut type) | p.q.n.res)
+      :_  [$(res l.res) $(res r.res)]
+      :_  q.q.n.res
+      %+  rap  3
+      %+  join  '-'
+      (snip (slag lap p.n.res))
     ::
     ++  run-maz
       |=  [sut=vase maz=(list [face=term =mark])]
