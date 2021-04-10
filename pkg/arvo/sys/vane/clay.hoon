@@ -529,29 +529,6 @@
       ?<  (~(has in deletes) path)
       ~|  %file-not-found^path
       :_(nub (need (~(get an ankh) path)))
-    ::  +list-directory: retrieve directory listing
-    ::
-    ::    this excludes files directly at /path/mark,
-    ::    instead only including files in the unix-style directory at /path,
-    ::    such as /path/more/mark
-    ::
-    ++  list-directory
-      |=  =path
-      ^-  (list ^path)
-      =/  nuk=(unit _ankh)  (~(dug an ankh) path)
-      ?~  nuk  ~
-      =|  dep=@ud
-      |-
-      =;  dir=(list ^path)
-        ?:  |((lte dep 1) ?=(~ fil.u.nuk) (~(has in deletes) path))
-          dir
-        [path dir]
-      %-  zing
-      %+  turn
-        %+  sort  ~(tap by dir.u.nuk)
-        |=([[a=@ *] [b=@ *]] (aor a b))
-      |=  [nom=@ta nak=_ankh]
-      ^$(u.nuk nak, path (snoc path nom), dep +(dep))
     ::  +build-nave: build a statically typed mark core
     ::
     ++  build-nave
@@ -853,24 +830,36 @@
       =^  top  stack.nub  pop-stack
       =.  files.cache.nub  (~(put by files.cache.nub) path [res top])
       [res nub]
+    ::  +build-directory: builds files in top level of a directory
+    ::
+    ::    this excludes files directly at /path/hoon,
+    ::    instead only including files in the unix-style directory at /path,
+    ::    such as /path/file/hoon, but not /path/more/file/hoon.
     ::
     ++  build-directory
       |=  =path
-      ^-  [(map ^path vase) state]
-      =/  paz=(list ^path)  (list-directory path)
-      =|  rez=(map ^path vase)
+      ^-  [(map @ta vase) state]
+      =/  fiz=(list @ta)
+        =/  nuk=(unit _ankh)  (~(dug an ankh) path)
+        ?~  nuk  ~
+        %+  murn
+          ~(tap by dir.u.nuk)
+        |=  [nom=@ta nak=_ankh]
+        ?.  ?=([~ [~ *] *] (~(get by dir.nak) %hoon))  ~
+        `nom
+      ::
+      =|  rez=(map @ta vase)
       |-
-      ?~  paz
+      ?~  fiz
         [rez nub]
-      =*  pax  i.paz
-      ?.  =(%hoon (rear pax))
-        $(paz t.paz)
+      =*  nom=@ta    i.fiz
+      =/  pax=^path  (weld path nom %hoon ~)
       ::
       ::TODO  deduplicate with +build-file
       ?^  got=(~(get by files.cache.nub) pax)
         =?  stack.nub  ?=(^ stack.nub)
           stack.nub(i (~(uni in i.stack.nub) dez.u.got))
-        $(paz t.paz, rez (~(put by rez) pax res.u.got))
+        $(fiz t.fiz, rez (~(put by rez) nom res.u.got))
       ?:  (~(has in cycle.nub) file+pax)
         ~|(cycle+file+pax^stack.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+pax)
@@ -883,7 +872,7 @@
       =^  top  stack.nub  pop-stack
       =.  files.cache.nub  (~(put by files.cache.nub) pax [res top])
       ::
-      $(paz t.paz, rez (~(put by rez) pax res))
+      $(fiz t.fiz, rez (~(put by rez) nom res))
     ::
     ++  run-pile
       |=  =pile
@@ -998,13 +987,12 @@
       |=  [sut=vase raz=(list [face=term =spec =path])]
       ^-  [vase state]
       ?~  raz  [sut nub]
-      =^  res=(map path vase)  nub
+      =^  res=(map @ta vase)  nub
         (build-directory path.i.raz)
       =;  pin=vase
         =.  p.pin  [%face face.i.raz p.pin]
         $(sut (slop pin sut), raz t.raz)
       ::
-      =/  lap=@ud  (lent path.i.raz)
       =/  =type  (~(play ut p.sut) [%kttr spec.i.raz])
       ::  ensure results nest in the specified type,
       ::  and produce a homogenous map containing that type.
@@ -1015,11 +1003,8 @@
       ?~  res  ~
       ~|  [%nest-fail path.i.raz p.n.res]
       ?>  (~(nest ut type) | p.q.n.res)
-      :_  [$(res l.res) $(res r.res)]
-      :_  q.q.n.res
-      %+  rap  3
-      %+  join  '-'
-      (snip (slag lap p.n.res))
+      :-  [p.n.res q.q.n.res]
+      [$(res l.res) $(res r.res)]
     ::
     ++  run-maz
       |=  [sut=vase maz=(list [face=term =mark])]
