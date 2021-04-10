@@ -1669,8 +1669,7 @@
           =+  l=(lent path)
           %+  lien  ~(tap in invalid)
           |=  i=^path
-          =+  j=(lent i)
-          &((gth j +(l)) =(path (scag l i)))
+          &(=(path (scag l i)) ?=([@ %hoon ~] (slag l i)))
         $(builds t.builds)
       (~(put by $(builds t.builds)) i.builds)
     ::
