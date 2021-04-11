@@ -35,43 +35,43 @@ name: build
 on: [push, pull_request]
 
 jobs:
-  urbit:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { os: ubuntu-latest }
-          - { os: macos-latest }
+  # urbit:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       include:
+  #         - { os: ubuntu-latest }
+  #         - { os: macos-latest }
 
-    runs-on: ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
 
-    steps:
-      - uses: actions/checkout@v2
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      # We only want the extra nix config on linux, where it is necessary
-      # for the docker build. We don't want in on Mac, where it isn't but
-      # it breaks the nix install. The two `if` clauses should be mutually
-      # exclusive
-      - uses: cachix/install-nix-action@v12
-        with:
-          extra_nix_config: |
-            system-features = nixos-test benchmark big-parallel kvm
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-      - uses: cachix/install-nix-action@v12
-        if: ${{ matrix.os != 'ubuntu-latest' }}
+  #     # We only want the extra nix config on linux, where it is necessary
+  #     # for the docker build. We don't want in on Mac, where it isn't but
+  #     # it breaks the nix install. The two `if` clauses should be mutually
+  #     # exclusive
+  #     - uses: cachix/install-nix-action@v12
+  #       with:
+  #         extra_nix_config: |
+  #           system-features = nixos-test benchmark big-parallel kvm
+  #       if: ${{ matrix.os == 'ubuntu-latest' }}
+  #     - uses: cachix/install-nix-action@v12
+  #       if: ${{ matrix.os != 'ubuntu-latest' }}
 
-      - uses: cachix/cachix-action@v8
-        with:
-          name: ares
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+  #     - uses: cachix/cachix-action@v8
+  #       with:
+  #         name: ares
+  #         authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix-build -A urbit --arg enableStatic true
+  #     - run: nix-build -A urbit --arg enableStatic true
 
-      - if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: nix-build -A urbit-tests
+  #     - if: ${{ matrix.os == 'ubuntu-latest' }}
+  #       run: nix-build -A urbit-tests
 
-      - if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: nix-build -A docker-image
+  #     - if: ${{ matrix.os == 'ubuntu-latest' }}
+  #       run: nix-build -A docker-image
 
   haskell:
     strategy:
@@ -79,7 +79,7 @@ jobs:
       matrix:
         include:
           - { os: ubuntu-latest }
-          - { os: macos-latest }
+          # - { os: macos-latest }
 
     runs-on: ${{ matrix.os }}
 
