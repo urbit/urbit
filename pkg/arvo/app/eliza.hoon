@@ -86,7 +86,7 @@
   ::
   ++  on-init
      ^-  (quip card _this)
-     [[listen:talk:do]~ this]
+     [~[listen:talk:do await-export:do] this]
   ::
   ++  on-save   !>(state)
   ++  on-load
@@ -244,9 +244,16 @@
     ?.  =(/x/records path)  ~
     ``jam+!>((jam record))
   ::
+  ++  on-arvo
+    |=  [=wire =sign-arvo]
+    ^-  (quip card _this)
+    ?.  =(/export wire)  (on-arvo:def wire sign-arvo)
+    ?+  sign-arvo  (on-arvo:def wire sign-arvo)
+      [%behn %wake *]  [~[export:do await-export:do] this]
+    ==
+  ::
   ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
-  ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
   --
 ::
@@ -321,6 +328,11 @@
         ~
     ==
   --
+::  +await-export: set timer for auto-export
+::
+++  await-export
+  ^-  card
+  [%pass /export %arvo %b %wait (add now.bowl ~d2)]
 ::  +export: export all records to per-study files
 ::
 ++  export
