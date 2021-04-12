@@ -8,6 +8,8 @@ import {
   Col,
 } from '@tlon/indigo-react';
 
+import Send from './send.js'
+
 function currencyFormat(sats, conversion, denomination) {
   let val;
   let text;
@@ -38,6 +40,7 @@ export default class Balance extends Component {
         BTC: 1,
       },
       denomination: "USD",
+      sending: true,
     }
   }
 
@@ -56,40 +59,53 @@ export default class Balance extends Component {
         mb={5}
         p={5}
       >
-        <Row justifyContent="space-between">
-          <Text color="orange" fontSize={1}>Balance</Text>
-          <Text color="lighterGray" fontSize="14px">bc1qxy...hx0wlh</Text>
-          <Row>
-            <Icon icon="ChevronDouble" color="orange" pt="2px"/>
-            <Text color="orange" fontSize={1}>{this.state.denomination}</Text>
-          </Row>
-        </Row>
-        <Col justifyContent="center" alignItems="center" mt="100px" mb="100px">
-          <Text fontSize="52px" color="orange">{value}</Text>
-          <Text fontSize={1} color="orange">{sats} sats</Text>
-        </Col>
-        <Row flexDirection="row-reverse">
-          <Button children="Send"
-            fontSize={1}
-            fontWeight="bold"
-            color="lighterGray"
-            backgroundColor="veryLightGray"
-            borderColor="none"
-            borderRadius="24px"
-            py="24px"
-            px="24px"
-          />
-          <Button children="Copy Address" mr={3}
-            fontSize={1}
-            fontWeight="bold"
-            color="orange"
-            backgroundColor="midOrange"
-            borderColor="none"
-            borderRadius="24px"
-            py="24px"
-            px="24px"
-          />
-        </Row>
+        {this.state.sending ?
+         <Send
+           api={api}
+           value={value}
+           denomination={this.state.denomination}
+           sats={sats}
+           conversion={this.state.conversion}
+           stopSending={() => {this.setState({sending: false})}}
+         /> :
+         <>
+           <Row justifyContent="space-between">
+             <Text color="orange" fontSize={1}>Balance</Text>
+             <Text color="lighterGray" fontSize="14px">bc1qxy...hx0wlh</Text>
+             <Row>
+               <Icon icon="ChevronDouble" color="orange" pt="2px"/>
+               <Text color="orange" fontSize={1}>{this.state.denomination}</Text>
+             </Row>
+           </Row>
+           <Col justifyContent="center" alignItems="center" mt="100px" mb="100px">
+             <Text fontSize="52px" color="orange">{value}</Text>
+             <Text fontSize={1} color="orange">{sats} sats</Text>
+           </Col>
+           <Row flexDirection="row-reverse">
+             <Button children="Send"
+                     fontSize={1}
+                     fontWeight="bold"
+                     color="lighterGray"
+                     backgroundColor="veryLightGray"
+                     borderColor="none"
+                     borderRadius="24px"
+                     py="24px"
+                     px="24px"
+                     onClick={() => this.setState({sending: true})}
+             />
+             <Button children="Copy Address" mr={3}
+                     fontSize={1}
+                     fontWeight="bold"
+                     color="orange"
+                     backgroundColor="midOrange"
+                     borderColor="none"
+                     borderRadius="24px"
+                     py="24px"
+                     px="24px"
+             />
+           </Row>
+         </>
+        }
       </Col>
     );
   }
