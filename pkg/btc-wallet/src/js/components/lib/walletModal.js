@@ -14,6 +14,8 @@ const bitcoin = require('bitcoinjs-lib');
 const bs58check = require('bs58check')
 import { Buffer } from 'buffer';
 
+window.Buffer = Buffer
+
 function bip44To84(network, xpub) {
   var prefix = (network === 'bitcoin') ? '04b24746' : '045f1cf6';
   console.log('xpub', xpub);
@@ -25,8 +27,8 @@ function bip44To84(network, xpub) {
 
 const NETWORK = "testnet" // "bitcoin"
 const DERIVATIONS = {
-  bitcoin: "m/84'/0'/0'/0",
-  testnet: "m/84'/1'/0'/0",
+  bitcoin: "m/84'/0'/0'",
+  testnet: "m/84'/1'/0'",
 }
 const BTC_DERIVATION_TYPE = 'bitcoin'
 const BTC_DERIVATION_PATH = DERIVATIONS[NETWORK]

@@ -10,6 +10,9 @@ export class UpdateReducer {
     if (json.connected) {
       this.reduceConnected(json.connected, state);
     }
+    if (json.psbt) {
+      this.reducePsbt(json.psbt, state);
+    }
   }
 
   reduceProviderStatus(json, state) {
@@ -18,5 +21,9 @@ export class UpdateReducer {
 
   reduceConnected(json, state) {
     state.provider = true;
+  }
+
+  reducePsbt(json, state) {
+    state.psbt = json;
   }
 }

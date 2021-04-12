@@ -28,7 +28,7 @@ class UrbitApi {
   }
 
   btcWalletCommand(data) {
-    this.action("btc-wallet", "btc-wallet-command", data);
+    return this.action("btc-wallet", "btc-wallet-command", data);
   }
 
   action(appl, mark, data) {

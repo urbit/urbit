@@ -16,6 +16,10 @@ window.urb = new window.channel();
 
 subscription.start();
 
+if (module.hot) {
+  module.hot.accept()
+}
+
 ReactDOM.render((
   <Root />
 ), document.querySelectorAll("#root")[0]);

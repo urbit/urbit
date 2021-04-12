@@ -8,6 +8,7 @@ class Store {
       provider: true,
       hasWallet: true,
       wallet: {},
+      psbt: '',
     };
 
     this.initialReducer = new InitialReducer();
