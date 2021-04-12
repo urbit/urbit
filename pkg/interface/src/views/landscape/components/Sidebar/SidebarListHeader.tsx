@@ -24,6 +24,7 @@ import { Workspace } from '~/types/workspace';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 import {IS_SAFARI} from '~/logic/lib/platform';
+import useHarkState from '~/logic/state/hark';
 
 export function SidebarListHeader(props: {
   api: GlobalApi;
@@ -54,15 +55,15 @@ export function SidebarListHeader(props: {
 
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
-  const isFeedEnabled =
-    metadata &&
-    metadata.config &&
-    metadata.config.group &&
-    'resource' in metadata.config.group;
+  const feedPath = metadata?.config?.group?.resource;
+
+  const unreadCount = useHarkState(
+    s => s.unreads?.graph?.[feedPath ?? ""]?.["/"]?.unreads as number ?? 0
+  );
 
   return (
     <Box>
-    {( isFeedEnabled ) ? (
+    {( !!feedPath) ? (
        <Row
          flexShrink="0"
          alignItems="center"
@@ -89,6 +90,9 @@ export function SidebarListHeader(props: {
        >
          <Text>
            Group Feed
+         </Text>
+         <Text mr="1" color="blue">
+           { unreadCount > 0 && unreadCount}
          </Text>
        </Row>
      ) : null
