@@ -50,7 +50,7 @@ export function Mention(props: {
   const name = showNickname ? contact?.nickname : cite(ship);
 
   return (
-    <ProfileOverlay ship={ship} api={api}>
+    <ProfileOverlay ship={ship} api={api} display="inline">
       <Text
         marginLeft={first? 0 : 1}
         marginRight={1}
