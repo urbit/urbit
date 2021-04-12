@@ -60,9 +60,10 @@
   ==  ==
 ::
 +$  action
-  $%  [?(%initiate %resend) =study who=(list ship)]
-      [%export ~]
-      [%nuke ~]
+  $%  [?(%initiate %resend) =study who=(list ship)]     ::  (re)send survey
+      [%import jam=@]                                   ::  record jam
+      [%export ~]                                       ::  to csv in clay
+      [%nuke ~]                                         ::  erase all chats
   ==
 ::
 +$  card  card:agent:gall
@@ -124,6 +125,15 @@
       =/  =action  !<(action vase)
       ?-  -.action
         %export  [[export:do]~ this]
+      ::
+          %import
+        ?.  =(~ record)
+          ~|  %would-overwrite-records
+          !!
+        =.  record
+          ;;  (jar study [@da ship (map place datum)])
+          (cue jam.action)
+        [~ this]
       ::
           ?(%initiate %resend)
         ?.  (~(has by chains) study.action)
@@ -225,9 +235,14 @@
       ==
     ==
   ::
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?.  =(/x/records path)  ~
+    ``jam+!>((jam record))
+  ::
   ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
-  ++  on-peek   on-peek:def
   ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
   --
