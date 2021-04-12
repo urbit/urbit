@@ -25,7 +25,6 @@ module Urbit.Arvo.Common
 import Urbit.Prelude
 
 import Control.Monad.Fail (fail)
-import Data.Bits
 import Data.Serialize
 
 import qualified Network.HTTP.Types.Method as H
@@ -185,9 +184,9 @@ newtype Ipv4 = Ipv4 { unIpv4 :: N.HostAddress }
   deriving newtype (Eq, Ord, Enum)
 
 instance Serialize Ipv4 where
-  get = Ipv4 <$> N.tupleToHostAddress
-    <$> ((,,,) <$> getWord8 <*> getWord8 <*> getWord8 <*> getWord8)
-  put (Ipv4 (N.hostAddressToTuple -> (a, b, c, d))) = for_ [a, b, c, d] putWord8
+  get = (\a b c d -> Ipv4 $ N.tupleToHostAddress $ (d, c, b, a))
+    <$> getWord8 <*> getWord8 <*> getWord8 <*> getWord8
+  put (Ipv4 (N.hostAddressToTuple -> (a, b, c, d))) = for_ [d, c, b, a] putWord8
 
 instance ToNoun Ipv4 where
   toNoun = serializeToNoun
@@ -196,11 +195,11 @@ instance FromNoun Ipv4 where
   parseNoun = serializeParseNoun "Ipv4" 4
 
 instance Show Ipv4 where
-  show (Ipv4 i) =
-    show ((shiftR i 24) .&. 0xff) ++ "." ++
-    show ((shiftR i 16) .&. 0xff) ++ "." ++
-    show ((shiftR i  8) .&. 0xff) ++ "." ++
-    show (i .&. 0xff)
+  show (Ipv4 (N.hostAddressToTuple -> (a, b, c, d))) =
+    show a ++ "." ++
+    show b ++ "." ++
+    show c ++ "." ++
+    show d
 
 -- @is
 -- should probably use hostAddress6ToTuple here, but no one uses it right now
