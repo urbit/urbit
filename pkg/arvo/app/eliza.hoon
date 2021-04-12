@@ -62,6 +62,7 @@
 +$  action
   $%  [%initiate =study who=(list ship)]
       [%export ~]
+      [%nuke ~]
   ==
 ::
 +$  card  card:agent:gall
@@ -123,6 +124,10 @@
         =^  caz  state
           (initiate:do i.who.action study.action)
         $(cards (weld caz cards), who.action t.who.action)
+      ::
+          %nuke
+        =-  [(zing -) this(afairs ~)]
+        (turn ~(tap in ~(key by afairs)) delete:talk:do)
       ==
     ==
   ::
@@ -169,6 +174,11 @@
           [cards this]
         ==
       ==
+    ::
+        [%delete @ ~]
+      =*  ship   (slav %p i.t.wire)
+      ~|  [%deletion ship]
+      (on-agent:def wire sign)
     ::
         [%listen ~]
       ?-  -.sign
@@ -233,6 +243,18 @@
         `%graph-validator-chat
         [%policy %invite (sy ship ~)]
         'chat'
+    ==
+  ::
+  ++  delete
+    |=  =ship
+    ^-  (list card)
+    =/  tid=@ta  (cat 3 'eliza-delete-' (scot %p ship))
+    =/  =action:graph-view
+      [%delete (chat-id ship)]
+    =/  args   [~ `tid %graph-delete !>([~ action])]
+    =/  =wire  /delete/(scot %p ship)
+    :~  [%pass wire %agent [our.bowl %spider] %watch /thread-result/[tid]]
+        [%pass wire %agent [our.bowl %spider] %poke %spider-start !>(args)]
     ==
   ::
   ++  send
