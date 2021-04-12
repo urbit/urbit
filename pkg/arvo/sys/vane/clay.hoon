@@ -810,9 +810,11 @@
       =^  res=vase  nub  (run-pile pile)
       res
     ::
-    ++  build-file
-      |=  =path
+    ++  build-dependency
+      |=  dep=(each [dir=path fil=path] path)
       ^-  [vase state]
+      =/  =path
+        ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
       ?^  got=(~(get by files.cache.nub) path)
         =?  stack.nub  ?=(^ stack.nub)
@@ -821,7 +823,9 @@
       ?:  (~(has in cycle.nub) file+path)
         ~|(cycle+file+path^stack.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+path)
-      =.  stack.nub  [(sy [| path] ~) stack.nub]
+      =.  stack.nub
+        =-  [(sy - ~) stack.nub]
+        ?:(?=(%| -.dep) dep [& dir.p.dep])
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
@@ -830,6 +834,10 @@
       =^  top  stack.nub  pop-stack
       =.  files.cache.nub  (~(put by files.cache.nub) path [res top])
       [res nub]
+    ::
+    ++  build-file
+      |=  =path
+      (build-dependency |+path)
     ::  +build-directory: builds files in top level of a directory
     ::
     ::    this excludes files directly at /path/hoon,
@@ -854,24 +862,7 @@
         [rez nub]
       =*  nom=@ta    i.fiz
       =/  pax=^path  (weld path nom %hoon ~)
-      ::
-      ::TODO  deduplicate with +build-file
-      ?^  got=(~(get by files.cache.nub) pax)
-        =?  stack.nub  ?=(^ stack.nub)
-          stack.nub(i (~(uni in i.stack.nub) dez.u.got))
-        $(fiz t.fiz, rez (~(put by rez) nom res.u.got))
-      ?:  (~(has in cycle.nub) file+pax)
-        ~|(cycle+file+pax^stack.nub !!)
-      =.  cycle.nub  (~(put in cycle.nub) file+pax)
-      =.  stack.nub  [(sy [& path] ~) stack.nub]
-      =^  cag=cage  nub  (read-file pax)
-      ?>  =(%hoon p.cag)
-      =/  tex=tape  (trip !<(@t q.cag))
-      =/  =pile  (parse-pile pax tex)
-      =^  res=vase  nub  (run-pile pile)
-      =^  top  stack.nub  pop-stack
-      =.  files.cache.nub  (~(put by files.cache.nub) pax [res top])
-      ::
+      =^  res  nub   (build-dependency &+[path pax])
       $(fiz t.fiz, rez (~(put by rez) nom res))
     ::
     ++  run-pile
