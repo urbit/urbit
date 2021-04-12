@@ -3,15 +3,13 @@ import React, {
   useRef,
   useCallback,
   useEffect,
-  useState,
+  useState
 } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import * as ob from 'urbit-ob';
 import Mousetrap from 'mousetrap';
 
 import { Box, Row, Text } from '@tlon/indigo-react';
-import { Associations, Contacts, Groups, Invites } from '@urbit/api';
-
 import makeIndex from '~/logic/lib/omnibox';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
@@ -22,7 +20,6 @@ import defaultApps from '~/logic/lib/default-apps';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { Portal } from '../Portal';
 import useSettingsState, { SettingsState } from '~/logic/state/settings';
-import { Tile } from '~/types';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
@@ -46,7 +43,7 @@ const SEARCHED_CATEGORIES = [
 ];
 const settingsSel = (s: SettingsState) => s.leap;
 
-export function Omnibox(props: OmniboxProps) {
+export function Omnibox(props: OmniboxProps): ReactElement {
   const location = useLocation();
   const history = useHistory();
   const leapConfig = useSettingsState(settingsSel);
@@ -55,10 +52,10 @@ export function Omnibox(props: OmniboxProps) {
 
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<[] | [string, string]>([]);
-  const contactState = useContactState((state) => state.contacts);
-  const notifications = useHarkState((state) => state.notifications);
-  const invites = useInviteState((state) => state.invites);
-  const tiles = useLaunchState((state) => state.tiles);
+  const contactState = useContactState(state => state.contacts);
+  const notifications = useHarkState(state => state.notifications);
+  const invites = useInviteState(state => state.invites);
+  const tiles = useLaunchState(state => state.tiles);
 
   const contacts = useMemo(() => {
     const maybeShip = `~${deSig(query)}`;
@@ -67,8 +64,8 @@ export function Omnibox(props: OmniboxProps) {
       : contactState;
   }, [contactState, query]);
 
-  const groups = useGroupState((state) => state.groups);
-  const associations = useMetadataState((state) => state.associations);
+  const groups = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
 
   const selectedGroup = useMemo(
     () =>
@@ -256,14 +253,14 @@ export function Omnibox(props: OmniboxProps) {
       props.show,
       results,
       setPreviousSelected,
-      setNextSelected,
+      setNextSelected
     ]
   );
 
   useEffect(() => {
     const flattenedResultLinks = Array.from(results.values())
       .flat()
-      .map((result) => [result.app, result.link]);
+      .map(result => [result.app, result.link]);
     if (!flattenedResultLinks.includes(selected)) {
       setSelected(flattenedResultLinks[0] || []);
     }
@@ -291,6 +288,12 @@ export function Omnibox(props: OmniboxProps) {
     return 0;
   };
 
+  // Handler to set selection on mouse hover
+  const setSelection = (app, link) => {
+    // TODO: Cancel this event if we are navigating by keyboard
+    setSelected([app, link]);
+  };
+
   const renderResults = useCallback(() => {
     return (
       <Box
@@ -300,10 +303,10 @@ export function Omnibox(props: OmniboxProps) {
         borderBottomLeftRadius='2'
         borderBottomRightRadius='2'
       >
-        {SEARCHED_CATEGORIES.map((category) =>
+        {SEARCHED_CATEGORIES.map(category =>
           Object({ category, categoryResults: results.get(category) })
         )
-          .filter((category) => category.categoryResults.length > 0)
+          .filter(category => category.categoryResults.length > 0)
           .map(({ category, categoryResults }, i) => {
             const categoryTitle =
               category === 'other' ? null : (
@@ -325,6 +328,7 @@ export function Omnibox(props: OmniboxProps) {
                     subtext={result.host}
                     link={result.link}
                     navigate={() => navigate(result.app, result.link)}
+                    setSelection={() => setSelection(result.app, result.link)}
                     selected={sel}
                   />
                 ))}

@@ -178,6 +178,7 @@ export class OmniboxResult extends Component {
       invites,
       notificationsCount,
       contacts,
+      setSelection
     } = this.props;
 
     const color = contacts?.[text]
@@ -198,7 +199,7 @@ export class OmniboxResult extends Component {
         py='2'
         px='2'
         cursor='pointer'
-        onMouseEnter={() => this.setHover(true)}
+        onMouseEnter={() => this.setHover(true), setSelection}
         onMouseLeave={() => this.setHover(false)}
         backgroundColor={
           this.state.hovered || selected === link ? 'blue' : 'white'
