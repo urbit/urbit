@@ -21,13 +21,12 @@ import { roleForShip } from '~/logic/lib/group';
 import { NewChannel } from '~/views/landscape/components/NewChannel';
 import GlobalApi from '~/logic/api/global';
 import { Workspace } from '~/types/workspace';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
 
 export function SidebarListHeader(props: {
   api: GlobalApi;
   initialValues: SidebarListConfig;
-  associations: Associations;
-  groups: Groups;
-  contacts: Rolodex;
   baseUrl: string;
   selected: string;
   workspace: Workspace;
@@ -40,11 +39,13 @@ export function SidebarListHeader(props: {
     },
     [props.handleSubmit]
   );
+  const groups = useGroupState(state => state.groups);
 
   const groupPath = getGroupFromWorkspace(props.workspace);
-  const role = groupPath && props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
+  const role = groupPath && groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
+  const associations = useMetadataState(state => state.associations);
   const memberMetadata =
-    groupPath ? props.associations.groups?.[groupPath].metadata.vip === 'member-metadata' : false;
+    groupPath ? associations.groups?.[groupPath].metadata.vip === 'member-metadata' : false;
 
   const isAdmin = memberMetadata || (role === 'admin') || (props.workspace?.type === 'home') || (props.workspace?.type === 'messages');
 
@@ -86,9 +87,6 @@ export function SidebarListHeader(props: {
               <NewChannel
                 api={props.api}
                 history={props.history}
-                associations={props.associations}
-                contacts={props.contacts}
-                groups={props.groups}
                 workspace={props.workspace}
               />
               </Col>

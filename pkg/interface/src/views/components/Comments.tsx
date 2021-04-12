@@ -13,6 +13,7 @@ import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { getUnreadCount } from '~/logic/lib/hark';
 import { PropFunc } from '~/types/util';
 import { isWriter } from '~/logic/lib/group';
+import useHarkState from '~/logic/state/hark';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -21,7 +22,6 @@ interface CommentsProps {
   ship: string;
   editCommentId: string;
   baseUrl: string;
-  contacts: Contacts;
   api: GlobalApi;
   group: Group;
 }
@@ -109,7 +109,8 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     };
   }, [comments.post.index]);
 
-  const readCount = children.length - getUnreadCount(props?.unreads, association.resource, parentIndex);
+  const unreads = useHarkState(state => state.unreads);
+  const readCount = children.length - getUnreadCount(unreads, association.resource, parentIndex);
 
   const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
 
@@ -130,7 +131,6 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
             <CommentItem
               comment={comment}
               key={idx.toString()}
-              contacts={props.contacts}
               api={api}
               name={name}
               ship={ship}

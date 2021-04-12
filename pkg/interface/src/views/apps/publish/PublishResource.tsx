@@ -24,18 +24,12 @@ export function PublishResource(props: PublishResourceProps) {
         api={api}
         ship={ship}
         book={book}
-        contacts={props.contacts}
-        groups={props.groups}
-        associations={props.associations}
         association={association}
         rootUrl={baseUrl}
         baseUrl={`${baseUrl}/resource/publish/ship/${ship}/${book}`}
         history={props.history}
         match={props.match}
         location={props.location}
-        unreads={props.unreads}
-        graphs={props.graphs}
-        storage={props.storage}
       />
     </Box>
   );

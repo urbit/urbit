@@ -293,7 +293,7 @@
       ~(tap by unreads-count)
     |=  [=stats-index:store count=@ud]
     :*  stats-index
-        ~(wyt in (~(gut by by-index) stats-index ~))
+        (~(gut by by-index) stats-index ~)
         [%count count]
         (~(gut by last-seen) stats-index *time)
     ==
@@ -304,7 +304,7 @@
       ~(tap by unreads-each)
     |=  [=stats-index:store indices=(set index:graph-store)]
     :*  stats-index
-        ~(wyt in (~(gut by by-index) stats-index ~))
+        (~(gut by by-index) stats-index ~)
         [%each indices]
         (~(gut by last-seen) stats-index *time)
     ==
@@ -317,7 +317,7 @@
       ~
     :-  ~
     :*  stats-index
-        ~(wyt in nots)
+        nots
         [%count 0]
         *time
     ==

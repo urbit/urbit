@@ -9,13 +9,14 @@ import { EditProfile } from './EditProfile';
 import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
 import { uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
+import useContactState from '~/logic/state/contact';
 
 export function ProfileHeader(props: any): ReactElement {
   return (
     <Box
       border='1px solid'
-      borderColor='lightGray'
-      borderRadius='2'
+      borderColor='washedGray'
+      borderRadius='3'
       overflow='hidden'
       marginBottom='calc(64px + 2rem)'
     >
@@ -39,6 +40,7 @@ export function ProfileImages(props: any): ReactElement {
         src={contact.cover}
         width='100%'
         height='100%'
+        referrerPolicy="no-referrer"
         style={{ objectFit: 'cover' }}
       />
     ) : (
@@ -56,6 +58,7 @@ export function ProfileImages(props: any): ReactElement {
         src={contact.avatar}
         width='100%'
         height='100%'
+        referrerPolicy="no-referrer"
         style={{ objectFit: 'cover' }}
       />
     ) : (
@@ -64,7 +67,7 @@ export function ProfileImages(props: any): ReactElement {
 
   return (
     <>
-      <Row ref={anchorRef} width='100%' height='300px' position='relative'>
+      <Row ref={anchorRef} width='100%' height='400px' position='relative'>
         {cover}
         <Center position='absolute' width='100%' height='100%'>
           {props.children}
@@ -73,7 +76,7 @@ export function ProfileImages(props: any): ReactElement {
       <Box
         height='128px'
         width='128px'
-        borderRadius='2'
+        borderRadius='3'
         overflow='hidden'
         position='absolute'
         left='50%'
@@ -109,6 +112,7 @@ export function ProfileStatus(props: any): ReactElement {
       display='inline-block'
       verticalAlign='middle'
       color='gray'
+      title={contact?.status ?? ''}
     >
       {contact?.status ?? ''}
     </RichText>
@@ -157,10 +161,12 @@ export function ProfileActions(props: any): ReactElement {
   );
 }
 
-export function Profile(props: any): ReactElement {
+export function Profile(props: any): ReactElement | null {
+  const { hideAvatars } = useSettingsState(selectCalmState);
   const history = useHistory();
+  const nackedContacts = useContactState(state => state.nackedContacts);
 
-  const { contact, nackedContacts, hasLoaded, isPublic, isEdit, ship } = props;
+  const { contact, hasLoaded, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
   const formRef = useRef(null);
 
@@ -183,21 +189,14 @@ export function Profile(props: any): ReactElement {
           <EditProfile
             ship={ship}
             contact={contact}
-            storage={props.storage}
             api={props.api}
-            groups={props.groups}
-            associations={props.associations}
-            isPublic={isPublic}
           />
         ) : (
           <ViewProfile
             nacked={nacked}
             ship={ship}
-            contact={contact}
-            isPublic={isPublic}
             api={props.api}
-            groups={props.groups}
-            associations={props.associations}
+            contact={contact}
           />
         )}
       </Box>

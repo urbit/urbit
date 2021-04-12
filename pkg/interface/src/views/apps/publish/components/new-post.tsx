@@ -17,7 +17,6 @@ interface NewPostProps {
   graph: Graph;
   association: Association;
   baseUrl: string;
-  storage: StorageState;
 }
 
 export default function NewPost(props: NewPostProps & RouteComponentProps) {
@@ -51,7 +50,6 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
       onSubmit={onSubmit}
       submitLabel="Publish"
       loadingText="Posting..."
-      storage={props.storage}
     />
   );
 }

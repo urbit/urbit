@@ -20,11 +20,6 @@ import InviteItem from "~/views/components/Invite";
 
 interface InvitesProps {
   api: GlobalApi;
-  invites: IInvites;
-  groups: Groups;
-  contacts: Contacts;
-  associations: Associations;
-  pendingJoin: JoinRequests;
 }
 
 interface InviteRef {

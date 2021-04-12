@@ -27,12 +27,15 @@ import GlobalSubscription from '~/logic/subscription/global';
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
+import withState from '~/logic/lib/withState';
+import useLocalState from '~/logic/state/local';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
+import useSettingsState from '~/logic/state/settings';
 import gcpManager from '~/logic/lib/gcpManager';
-import { withLocalState } from '~/logic/state/local';
-import { withSettingsState } from '~/logic/state/settings';
 
 
-const Root = withSettingsState(styled.div`
+const Root = withState(styled.div`
   font-family: ${p => p.theme.fonts.sans};
   height: 100%;
   width: 100%;
@@ -66,7 +69,9 @@ const Root = withSettingsState(styled.div`
     border-radius: 1rem;
     border: 0px solid transparent;
   }
-`, ['display']);
+`, [
+  [useSettingsState, ['display']]
+]);
 
 const StatusBarWithRouter = withRouter(StatusBar);
 class App extends React.Component {
@@ -79,7 +84,7 @@ class App extends React.Component {
 
     this.appChannel = new window.channel();
     this.api = new GlobalApi(this.ship, this.appChannel, this.store);
-    gcpManager.configure(this.api, this.store);
+    gcpManager.configure(this.api);
     this.subscription =
       new GlobalSubscription(this.store, this.api, this.appChannel);
 
@@ -98,7 +103,6 @@ class App extends React.Component {
     }, 500);
     this.api.local.getBaseHash();
     this.api.settings.getAll();
-    this.store.rehydrate();
     gcpManager.start();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
@@ -119,8 +123,8 @@ class App extends React.Component {
 
   faviconString() {
     let background = '#ffffff';
-    if (this.state.contacts.hasOwnProperty(`~${window.ship}`)) {
-      background = `#${uxToHex(this.state.contacts[`~${window.ship}`].color)}`;
+    if (this.props.contacts.hasOwnProperty(`~${window.ship}`)) {
+      background = `#${uxToHex(this.props.contacts[`~${window.ship}`].color)}`;
     }
     const foreground = foregroundFromBackground(background);
     const svg = sigiljs({
@@ -135,16 +139,12 @@ class App extends React.Component {
 
   render() {
     const { state, props } = this;
-    const associations = state.associations ?
-      state.associations : { contacts: {} };
     const theme =
     ((props.dark && props?.display?.theme == "auto") ||
       props?.display?.theme == "dark"
     ) ? dark : light;
 
-    const notificationsCount = state.notificationsCount || 0;
-    const doNotDisturb = state.doNotDisturb || false;
-    const ourContact = this.state.contacts[`~${this.ship}`] || null;
+    const ourContact = this.props.contacts[`~${this.ship}`] || null;
     return (
       <ThemeProvider theme={theme}>
         <Helmet>
@@ -158,27 +158,17 @@ class App extends React.Component {
             <ErrorBoundary>
               <StatusBarWithRouter
                 props={this.props}
-                associations={associations}
-                invites={this.state.invites}
                 ourContact={ourContact}
                 api={this.api}
                 connection={this.state.connection}
                 subscription={this.subscription}
                 ship={this.ship}
-                doNotDisturb={doNotDisturb}
-                notificationsCount={notificationsCount}
               />
             </ErrorBoundary>
             <ErrorBoundary>
               <Omnibox
                 associations={state.associations}
-                apps={state.launch}
-                tiles={state.launch.tiles}
                 api={this.api}
-                contacts={state.contacts}
-                notifications={state.notificationsCount}
-                invites={state.invites}
-                groups={state.groups}
                 show={this.props.omniboxShown}
                 toggle={this.props.toggleOmnibox}
               />
@@ -188,7 +178,7 @@ class App extends React.Component {
                 ship={this.ship}
                 api={this.api}
                 subscription={this.subscription}
-                {...state}
+                connection={this.state.connection}
               />
             </ErrorBoundary>
           </Router>
@@ -199,4 +189,9 @@ class App extends React.Component {
   }
 }
 
-export default withSettingsState(withLocalState(process.env.NODE_ENV === 'production' ? App : hot(App)), ['display']);
+export default withState(process.env.NODE_ENV === 'production' ? App : hot(App), [
+  [useGroupState],
+  [useContactState],
+  [useSettingsState, ['display']],
+  [useLocalState]
+]);

@@ -40,7 +40,7 @@ interface VirtualScrollerProps<T> {
   data: BigIntOrderedMap<T>;
   /**
    * The component to render the items
-   * 
+   *
    * @remarks
    *
    * This component must be referentially stable, so either use `useCallback` or
@@ -69,6 +69,10 @@ interface VirtualScrollerProps<T> {
    */
   offset: number;
   style?: any;
+  /**
+   * Callback to execute when finished loading from start
+  */
+  onBottomLoaded?: () => void;
 }
 
 interface VirtualScrollerState<T> {
@@ -153,14 +157,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   }
 
   componentDidMount() {
-    if(this.props.size < 100) {
-      this.loaded.top = true;
-      this.loaded.bottom = true;
-    }
-      
     this.updateVisible(0);
     this.resetScroll();
-    this.loadRows(false);
+    this.loadTop();
+    this.loadBottom();
   }
 
   // manipulate scrollbar manually, to dodge change detection
@@ -307,8 +307,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     this.savedDistance = 0;
     this.saveDepth = 0;
   }
+  loadTop = _.throttle(() => this.loadRows(false), 100);
+  loadBottom = _.throttle(() => this.loadRows(true), 100);
 
-  loadRows = _.throttle(async (newer: boolean) => {
+  loadRows = async (newer: boolean) => {
     const dir = newer ? 'bottom' : 'top';
     if(this.loaded[dir]) {
       return;
@@ -317,8 +319,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const done = await this.props.loadRows(newer);
     if(done) {
       this.loaded[dir] = true;
+      if(newer && this.props.onBottomLoaded) {
+        this.props.onBottomLoaded()
+      }
     }
-  }, 100);
+  };
 
   onScroll(event: UIEvent) {
     this.updateScroll();
@@ -342,7 +347,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       }
       const newOffset = Math.max(0, startOffset - this.pageDelta);
       if(newOffset < 10) {
-        this.loadRows(true);
+        this.loadBottom();
       }
 
       if(newOffset === 0) {
@@ -362,7 +367,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       }
 
       if((newOffset + (3 * this.pageSize) > this.props.data.size)) {
-        this.loadRows(false)
+        this.loadTop();
       }
 
       if(newOffset !== startOffset) {
@@ -485,7 +490,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     const transform = isTop ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
 
-
     const atStart = (this.props.data.peekLargest()?.[0] ?? bigInt.zero).eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
     const atEnd = this.loaded.top;
 
@@ -493,7 +497,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       <>
         {!IS_IOS && (<Box borderRadius="3" top ={isTop ? "0" : undefined} bottom={!isTop ? "0" : undefined} ref={el => { this.scrollRef = el; }} right="0" height="50px" position="absolute" width="4px" backgroundColor="lightGray" />)}
 
-      <ScrollbarLessBox overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, "-webkit-overflow-scrolling": "auto" }}>
+      <ScrollbarLessBox overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, "WebkitOverflowScrolling": "auto" }}>
         <Box style={{ transform, width: 'calc(100% - 4px)' }}>
           {(isTop ? !atStart : !atEnd) && (<Center height="5">
             <LoadingSpinner />
