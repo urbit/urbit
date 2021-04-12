@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Route, Link } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
@@ -8,9 +8,19 @@ import { Profile } from './components/Profile';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
 
+const hasScrollbar = (ref) => {
+  // console.log(ref);
+  if (ref.current && ref.current.clientHeight < ref.current.scrollHeight) {
+    return true;
+  }
+  return false;
+};
+
 export default function ProfileScreen(props: any) {
   const contacts = useContactState(state => state.contacts);
   const notificationsCount = useHarkState(state => state.notificationsCount);
+  const containerRef = useRef(null);
+
   return (
     <>
       <Helmet defer={false}>
@@ -38,9 +48,10 @@ export default function ProfileScreen(props: any) {
                 border={1}
                 borderColor='lightGray'
                 overflowY='auto'
+                ref={containerRef}
                 flexGrow
               >
-                <Box>
+                <Box paddingLeft={hasScrollbar(containerRef) ? '5px' : 0}>
                   <Profile
                     ship={ship}
                     hasLoaded={Object.keys(contacts).length !== 0}
