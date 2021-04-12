@@ -4,8 +4,11 @@
 ::    but not before asking them if they want to participate.
 ::
 ::    usage:
+::    - add conversation "scripts" into /app/eliza/ as hoon files.
 ::    - ask ~zod and ~bus the questions from the feedback-2021-01 survey:
 ::      :eliza [%initiate %feedback-2021-01 ~[~zod ~bus]]
+::    - ask ~zod those questions, even though it has already answered once:
+::      :eliza [%resend %feedback-2021-01 ~[~zod]]
 ::    - write results to csv files in /app/eliza/:
 ::      :eliza [%export ~]
 ::
