@@ -748,11 +748,11 @@ instance FromNoun () where
         x      -> fail ("expecting `~`, but got " <> show x)
 
 instance ToNoun a => ToNoun (Unit a) where
-  toNoun a = toNoun a
+  toNoun (Unit x) = toNoun x
 
 instance FromNoun a => FromNoun (Unit a) where
-  parseNoun a = parseNoun a
-
+  parseNoun n = named "Unit" (Unit <$> parseNoun n)
+ 
 instance (ToNoun a, ToNoun b) => ToNoun (a, b) where
     toNoun (x, y) = Cell (toNoun x) (toNoun y)
 
