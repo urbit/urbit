@@ -49,7 +49,7 @@ export class Root extends Component {
            width='400px'
           >
             <Header />
-            <Balance state={this.state}/>
+            <Balance api={api} state={this.state}/>
             <Transactions state={this.state}/>
           </Box>
         </Box>

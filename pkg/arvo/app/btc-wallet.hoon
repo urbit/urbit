@@ -380,7 +380,9 @@
     =+  fee=~(fee txb:bl u.poym)
     ~&  >>  "{<vb>} vbytes, {<(div fee vb)>} sats/byte, {<fee>} sats fee"
     %-  (slog [%leaf "PSBT: {<u.pb>}"]~)
-    ~
+    =/  psbt=json
+      (frond:enjs:format %psbt [%s u.pb])
+    [%give %fact ~[/all] %json !>(psbt)]~
     ::    update outgoing payment with a rawtx, if the txid is in poym's txis
     ::
     ++  update-poym-txis
