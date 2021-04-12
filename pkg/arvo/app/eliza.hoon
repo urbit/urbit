@@ -17,7 +17,7 @@
 /~  chains  chain  /app/eliza
 ::
 |%
-++  state-1
++$  state-1
   $:  %1
       afairs=(map ship afair)
       record=(jar study [when=@da =ship data=(map place datum)])
@@ -89,12 +89,24 @@
     |=  old=vase
     |^  ^-  (quip card _this)
         =/  any-state   !<($%(state-0 state-1) old)
-        ?-  -.any-state
-          %1  [~ this(state any-state)]
-          %0  [~ this(state [%1 afairs record]:any-state)]
-        ==
+        =.  state
+          ?-  -.any-state
+            %1  any-state
+            %0  [%1 afairs record]:any-state
+          ==
+        sanity-check
     ::
-    ++  state-0
+    ++  sanity-check
+      =/  studies=(set study)
+        %-  ~(gas in ~(key by record))
+        %+  murn  ~(tap by afairs)
+        |=  [* a=afair]
+        ?:(?=(%convo -.a) (some what.convo.a) ~)
+      ~|  [%need-studies studies]
+      ?>  (levy ~(tap in studies) ~(has by chains))
+      [~ this]
+    ::
+    +$  state-0
       $:  %0
           afairs=(map ship afair)
           record=(jar study [when=@da =ship data=(map place datum)])
