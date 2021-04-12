@@ -60,7 +60,7 @@
   ==  ==
 ::
 +$  action
-  $%  [%initiate =study who=(list ship)]
+  $%  [?(%initiate %resend) =study who=(list ship)]
       [%export ~]
       [%nuke ~]
   ==
@@ -125,17 +125,26 @@
       ?-  -.action
         %export  [[export:do]~ this]
       ::
-          %initiate
+          ?(%initiate %resend)
         ?.  (~(has by chains) study.action)
           ~&  [%no-such-study study.action]
           [~ this]
+        =/  [skip=(list ship) send=(list ship)]
+          ?:  ?=(%resend -.action)  [who.action ~]
+          %+  skid  who.action
+          %~  has  in
+          %-  ~(gas in *(set ship))
+          %+  turn  (~(get ja record) study.action)
+          |=([* s=ship *] s)
+        ~?  !=(~ skip)
+          ['skipping, already answered previously' skip]
         =|  cards=(list card)
         |-
-        ?~  who.action
+        ?~  send
           [cards this]
         =^  caz  state
-          (initiate:do i.who.action study.action)
-        $(cards (weld caz cards), who.action t.who.action)
+          (initiate:do i.send study.action)
+        $(cards (weld caz cards), send t.send)
       ::
           %nuke
         =-  [(zing -) this(afairs ~)]
