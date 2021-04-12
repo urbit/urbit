@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -ex
+set -xeuo pipefail
 
-pkg=$(nix-build nix/ops -A solid --no-out-link)
-cp $pkg bin/solid.pill
+cd "${0%/*}/.."
+
+cp "$(nix-build -A solid.build --no-out-link)" bin/solid.pill

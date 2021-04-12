@@ -1,31 +1,40 @@
-:: chat-store: data store that holds linear sequences of chat messages
+:: chat-store [landscape]:
 ::
-/+  *chat-json, *chat-eval, default-agent, verb, dbug
+:: data store that holds linear sequences of chat messages
+::
+/-  *group, store=chat-store
+/+  default-agent, verb, dbug, group-store,
+    graph-store, resource, *migrate, grpl=group, mdl=metadata
+~%  %chat-store-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
-  $%  state-zero
+  $%  state-0
+      state-1
+      state-2
+      state-3
+      state-4
   ==
 ::
-+$  state-zero
-  $:  %0
-      =inbox
-  ==
-::
-+$  diff
-  $%  [%chat-initial inbox]
-      [%chat-configs chat-configs]
-      [%chat-update chat-update]
++$  state-0  [%0 =inbox:store]
++$  state-1  [%1 =inbox:store]
++$  state-2  [%2 =inbox:store]
++$  state-3  [%3 =inbox:store]
++$  state-4  [%4 =inbox:store]
++$  admin-action
+  $%  [%trim ~]
+      [%migrate-graph ~]
   ==
 --
 ::
-=|  state-zero
+=|  state-4
 =*  state  -
 ::
 %-  agent:dbug
 %+  verb  |
 ^-  agent:gall
 =<
+  ~%  %chat-store-agent-core  ..peek-x-envelopes  ~
   |_  =bowl:gall
   +*  this       .
       chat-core  +>
@@ -35,51 +44,77 @@
   ++  on-init   on-init:def
   ++  on-save   !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
+    |=  old-vase=vase
+    ^-  (quip card _this)
+    |^
+    =/  old  !<(versioned-state old-vase)
+    =|  cards=(list card)
+    |-
+    ^-  (quip card _this)
+    ?-  -.old
+        %4  [cards this(state old)]
+      ::
+        %3
+      =.  cards  :_(cards (poke-admin %migrate-graph ~))
+      $(old [%4 inbox.old])
+      ::
+        %2
+      =/  =inbox:store
+        (migrate-path-map:group-store inbox.old)
+      =/  kick-paths
+        %~  tap  in
+        %+  roll
+          ~(val by sup.bowl)
+        |=  [[=ship sub=path] subs=(set path)]
+        ^-  (set path)
+        ?.  ?=([@ @ *] sub)
+          subs
+        ?.  &(=(%mailbox i.sub) =('~' i.t.sub))
+          subs
+        (~(put in subs) sub)
+      =?  cards  ?=(^ kick-paths)
+        :_  cards
+        [%give %kick kick-paths ~]
+      $(old [%3 inbox])
+    ::
+      ?(%0 %1)  $(old (old-to-2 inbox.old))
+    ::
+    ==
+    ++  poke-admin
+      |=  =admin-action
+      ^-  card
+      [%pass / %agent [our dap]:bowl %poke noun+!>(admin-action)]
+    ::
+    ++  old-to-2
+      |=  =inbox:store
+      ^-  state-2
+      :-  %2
+      %-  ~(run by inbox)
+      |=  =mailbox:store
+      ^-  mailbox:store
+      [config.mailbox (flop envelopes.mailbox)]
+    --
   ::
   ++  on-poke
+    ~/  %chat-store-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-        %json         (poke-json:cc !<(json vase))
-        %chat-action  (poke-chat-action:cc !<(chat-action vase))
+          %noun         (poke-noun:cc !<(admin-action vase))
+          %import       (poke-import:cc q.vase)
       ==
     [cards this]
   ::
-  ++  on-watch
-    |=  =path
-    ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
-    |^
-    =/  cards=(list card)
-      ?+    path  (on-watch:def path)
-          [%keys ~]     (give %chat-update !>([%keys ~(key by inbox)]))
-          [%all ~]      (give %chat-initial !>(inbox))
-          [%configs ~]  (give %chat-configs !>((inbox-to-configs inbox)))
-          [%updates ~]  ~
-          [%mailbox @ *]
-        ?>  (~(has by inbox) t.path)
-        =/  =ship  (slav %p i.t.path)
-        (give %chat-update !>([%create ship t.t.path]))
-      ==
-    [cards this]
-    ::
-    ++  give
-      |=  =cage
-      ^-  (list card)
-      [%give %fact ~ cage]~
-    --
-  ::
+  ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
   ++  on-peek
+    ~/  %chat-store-peek
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
         [%x %all ~]        ``noun+!>(inbox)
-        [%x %configs ~]    ``noun+!>((inbox-to-configs inbox))
         [%x %keys ~]       ``noun+!>(~(key by inbox))
         [%x %envelopes *]  (peek-x-envelopes:cc t.t.path)
         [%x %mailbox *]
@@ -94,6 +129,9 @@
       ?~  mailbox
         ~
       ``noun+!>(config.u.mailbox)
+    ::
+        [%x %export ~]
+      ``noun+!>(state)
     ==
   ::
   ++  on-agent  on-agent:def
@@ -101,8 +139,10 @@
   ++  on-fail   on-fail:def
   --
 ::
-::
+~%  %chat-store-library  ..card  ~
 |_  bol=bowl:gall
+++  met  ~(. mdl bol)
+++  grp  ~(. grpl bol)
 ::
 ++  peek-x-envelopes
   |=  pax=path
@@ -142,116 +182,50 @@
     [~ ~ %noun !>((swag [start (sub end start)] envelopes))]
   ==
 ::
-++  poke-json
-  |=  jon=json
+++  poke-noun
+  |=  nou=admin-action
   ^-  (quip card _state)
-  (poke-chat-action (json-to-action jon))
-::
-++  poke-chat-action
-  |=  action=chat-action
-  ^-  (quip card _state)
-  ?-  -.action
-      %create    (handle-create action)
-      %delete    (handle-delete action)
-      %message   (handle-message action)
-      %messages  (handle-messages action)
-      %read      (handle-read action)
+  ?:  ?=([%migrate-graph ~] nou)
+    :_  state
+    (migrate-inbox inbox)
+  ~&  %trimming-chat-store
+  :-  ~
+  %_  state
+      inbox
+    %-  ~(urn by inbox)
+    |=  [=path mailbox:store]
+    ^-  mailbox:store
+    =/  [a=* out=(list envelope:store)]
+      %+  roll  envelopes
+      |=  $:  =envelope:store
+              o=[[hav=(set serial:store) curr=@] out=(list envelope:store)]
+          ==
+      ?:  (~(has in hav.o) uid.envelope)
+        [[hav.o curr.o] out.o]
+      :-
+      ^-  [(set serial:store) @]
+      [(~(put in hav.o) uid.envelope) +(curr.o)]
+      ^-  (list envelope:store)
+      [envelope(number curr.o) out.o]
+    =/  len  (lent out)
+    ~?  !=(len (lent envelopes))  [path [%old (lent envelopes)] [%new len]]
+    [[len len] (flop out)]
   ==
 ::
-++  handle-create
-  |=  act=chat-action
+++  poke-import
+  |=  arc=*
   ^-  (quip card _state)
-  ?>  ?=(%create -.act)
-  =/  pax  [(scot %p ship.act) path.act]
-  ?:  (~(has by inbox) pax)
-    [~ state]
-  :-  (send-diff pax act)
-  state(inbox (~(put by inbox) pax *mailbox))
-::
-++  handle-delete
-  |=  act=chat-action
-  ^-  (quip card _state)
-  ?>  ?=(%delete -.act)
-  =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
-  ?~  mailbox
-    [~ state]
-  :-  (send-diff path.act act)
-  state(inbox (~(del by inbox) path.act))
-::
-++  handle-message
-  |=  act=chat-action
-  ^-  (quip card _state)
-  ?>  ?=(%message -.act)
-  =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
-  ?~  mailbox
-    [~ state]
-  =.  letter.envelope.act  (evaluate-letter [author letter]:envelope.act)
-  =.  u.mailbox  (append-envelope u.mailbox envelope.act)
-  :-  (send-diff path.act act)
-  state(inbox (~(put by inbox) path.act u.mailbox))
-::
-++  handle-messages
-  |=  act=chat-action
-  ^-  (quip card _state)
-  ?>  ?=(%messages -.act)
-  =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
-  ?~  mailbox
-    [~ state]
-  =/  evaluated-envelopes=(list envelope)  ~
-  |-  ^-  (quip card _state)
-  ?~  envelopes.act
-    :_  state(inbox (~(put by inbox) path.act u.mailbox))
-    %+  send-diff  path.act
-    :*  %messages
-        path.act
-        (sub length.config.u.mailbox (lent evaluated-envelopes))
-        length.config.u.mailbox
-        evaluated-envelopes
-    ==
-  =.  letter.i.envelopes.act  (evaluate-letter [author letter]:i.envelopes.act)
-  =.  evaluated-envelopes  (snoc evaluated-envelopes i.envelopes.act)
-  =.  u.mailbox  (append-envelope u.mailbox i.envelopes.act)
-  $(envelopes.act t.envelopes.act)
-::
-++  handle-read
-  |=  act=chat-action
-  ^-  (quip card _state)
-  ?>  ?=(%read -.act)
-  =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
-  ?~  mailbox
-    [~ state]
-  =.  read.config.u.mailbox  length.config.u.mailbox
-  :-  (send-diff path.act act)
-  state(inbox (~(put by inbox) path.act u.mailbox))
-::
-++  evaluate-letter
-  |=  [author=ship =letter]
-  ^-  ^letter
-  =?  letter
-      ?&  ?=(%code -.letter)
-          ?=(~ output.letter)
-          (team:title our.bol author)
-      ==
-    =/  =hoon  (ream expression.letter)
-    letter(output (eval bol hoon))
-  letter
-::
-++  append-envelope
-  |=  [=mailbox =envelope]
-  ^-  ^mailbox
-  =.  number.envelope  +(length.config.mailbox)
-  =:  length.config.mailbox  +(length.config.mailbox)
-      envelopes.mailbox  (snoc envelopes.mailbox envelope)
-  ==
-  mailbox
+  =/  sty=state-4  [%4 (remake-map ;;((tree [path mailbox:store]) +.arc))]
+  :_  sty
+  (migrate-inbox inbox.sty)
 ::
 ++  update-subscribers
-  |=  [pax=path update=chat-update]
+  |=  [pax=path =update:store]
   ^-  (list card)
   [%give %fact ~[pax] %chat-update !>(update)]~
 ::
 ++  send-diff
-  |=  [pax=path upd=chat-update]
+  |=  [pax=path upd=update:store]
   ^-  (list card)
   %-  zing
   :~  (update-subscribers /all upd)
@@ -259,9 +233,102 @@
       (update-subscribers [%mailbox pax] upd)
       ?.  |(|(=(%read -.upd) =(%message -.upd)) =(%messages -.upd))
         ~
-      (update-subscribers /configs upd)
       ?.  |(=(%create -.upd) =(%delete -.upd))
         ~
       (update-subscribers /keys upd)
   ==
+::
+++  migrate-inbox
+  |=  =inbox:store
+  ^-  (list card)
+  %-  zing
+  (turn ~(tap by inbox) mailbox-to-updates)
+::
+++  add-graph
+  |=  [rid=resource =mailbox:store]
+  %-  poke-graph-store
+  :+  %0  now.bol
+  :+  %add-graph  rid
+  :-  (mailbox-to-graph mailbox)
+  [`%graph-validator-chat %.y]
+::
+++  archive-graph
+  |=  rid=resource
+  %-  poke-graph-store
+  [%0 now.bol %archive-graph rid]
+::
+++  nobody
+  ^-  @p
+  (bex 128)
+::
+++  path-to-resource
+  |=  =path
+  ^-  resource
+  ?.  ?=([@ @ ~] path)  
+    nobody^(spat path)
+  =/  m-ship=(unit ship)
+    (slaw %p i.path)
+  ?~  m-ship
+    nobody^(spat path)
+  [u.m-ship i.t.path]
+::
+++  mailbox-to-updates
+  |=  [=path =mailbox:store]
+  ^-  (list card)
+  =/  app-rid=resource
+    (path-to-resource path)
+  =/  group-rid=resource
+    (fall (peek-group:met %graph app-rid) [nobody %bad-group])
+  =/  group=(unit group)
+    (scry-group:grp group-rid)
+  :-  (add-graph app-rid mailbox)
+  ?~  group  (archive-graph app-rid)^~
+  ?.  &(=(~ members.u.group) hidden.u.group)  ~
+  ~&  >>>  "archiving {<app-rid>}"
+  :~  (archive-graph app-rid)
+      (remove-group group-rid)
+  ==
+::
+++  remove-group
+  |=  group=resource
+  ^-  card
+  =-  [%pass / %agent [our.bol %group-store] %poke -]
+  group-update-0+!>([%remove-group group ~])
+::
+++  poke-graph-store
+  |=  =update:graph-store
+  ^-  card
+  [%pass / %agent [our.bol %graph-store] %poke %graph-update-0 !>(update)]
+::
+++  letter-to-contents
+  |=  =letter:store
+  ^-  (list content:graph-store)
+  :_  ~
+  ?.  ?=(%me -.letter)
+    letter
+  [%text narrative.letter]
+::
+++   envelope-to-node
+  |=  =envelope:store
+  ^-  [atom:graph-store node:graph-store]
+  =/  contents=(list content:graph-store)
+    (letter-to-contents letter.envelope)
+  =/  =index:graph-store
+    [when.envelope ~]
+  =,  envelope
+  :-  when.envelope
+  :_  [%empty ~]
+  ^-  post:graph-store
+  :*  author
+      index
+      when
+      contents
+      ~  ~
+  ==
+::
+++  mailbox-to-graph
+  |=  =mailbox:store
+  ^-  graph:graph-store
+  %+  gas:orm:graph-store  *graph:graph-store
+  (turn envelopes.mailbox envelope-to-node)
 --

@@ -9,7 +9,7 @@
 ::  Like +rose except also produces line number
 ::
 ++  lily
-  |*  {los/tape sab/rule}
+  |*  [los=tape sab=rule]
   =+  vex=(sab [[1 1] los])
   ?~  q.vex
     [%| p=p.vex(q (dec q.p.vex))]
@@ -87,7 +87,7 @@
   %+  skim  ids
   |=  [id=cord *]
   ^-  ?(%.y %.n)
-  =(sid (end 3 (met 3 sid) id))
+  =(sid (end [3 (met 3 sid)] id))
 ::
 ::  Get the longest prefix of a list of identifiers.
 ::
@@ -101,14 +101,14 @@
   |-  ^-  term
   ?:  (gth n last)
     term.i.matches
-  =/  prefix  (end 3 n term.i.matches)
+  =/  prefix  (end [3 n] term.i.matches)
   ?:  |-  ^-  ?
       ?|  ?=(~ t.matches)
-          ?&  =(prefix (end 3 n term.i.t.matches))
+          ?&  =(prefix (end [3 n] term.i.t.matches))
               $(t.matches t.t.matches)
       ==  ==
     $(n +(n))
-  (end 3 (dec n) term.i.matches)
+  (end [3 (dec n)] term.i.matches)
 ::
 ::  Run +find-type safely, printing the first line of the stack trace on
 ::  error.
@@ -142,9 +142,8 @@
     `['' (~(play ut sut) wing+t.p.gen)]
   ::
       [^ *]      (both p.gen q.gen)
-      [%ktcn *]  loop(gen p.gen)
       [%brcn *]  (grow q.gen)
-      [%brvt *]  (grow q.gen)
+      [%brpt *]  (grow q.gen)
       [%cnts *]
     |-  ^-  (unit [term type])
     =*  inner-loop  $
@@ -165,13 +164,13 @@
       [%hand *]  ~
       [%ktbr *]  loop(gen p.gen)
       [%ktls *]  (both p.gen q.gen)
-      [%ktpd *]  loop(gen p.gen)
+      [%ktpm *]  loop(gen p.gen)
       [%ktsg *]  loop(gen p.gen)
       [%ktwt *]  loop(gen p.gen)
       [%note *]  loop(gen q.gen)
       [%sgzp *]  (both p.gen q.gen)
-      [%sgbn *]  loop(gen q.gen)  ::  should check for hoon in p.gen
-      [%tsbn *]  (change p.gen q.gen)
+      [%sggr *]  loop(gen q.gen)  ::  should check for hoon in p.gen
+      [%tsgr *]  (change p.gen q.gen)
       [%tscm *]
     %+  replace
       loop(gen p.gen)
@@ -185,7 +184,8 @@
       [%lost *]  loop(gen p.gen)
       [%zpmc *]  (both p.gen q.gen)
       [%zpts *]  loop(gen p.gen)
-      [%zpvt *]  (both q.gen r.gen)
+      [%zppt *]  (both q.gen r.gen)
+      [%zpgl *]  (spec-and-hoon p.gen q.gen)
       [%zpzp *]  ~
       *
     =+  doz=~(open ap gen)
@@ -246,17 +246,27 @@
   ^-  (unit [term type])
   ~
 ::
+++  get-id-sym
+  |=  [pos=@ud =tape]
+  %^  get-id  pos  tape
+  ^-  $-(nail (like (unit @t)))
+  ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
+::
+++  get-id-cord
+   |=  [pos=@ud =tape]
+   %^  get-id  pos  tape
+   ^-  $-(nail (like (unit @t)))
+   ;~(sfix (punt (cook crip (star prn))) (star ;~(pose prn (just `@`10))))
+::
 ++  get-id
-  |=  [pos=@ud txt=tape]
-  ^-  [forward=(unit term) backward=(unit term) id=(unit term)]
-  =/  forward=(unit term)
-    %+  scan  `tape`(slag pos txt)
-    ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
-  =/  backward=(unit term)
-    %-  (lift |=(t=@tas (swp 3 t)))
-    %+  scan  `tape`(flop (scag pos txt))
-    ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
-  =/  id=(unit term)
+  |=  [pos=@ud txt=tape seek=$-(nail (like (unit @t)))]
+  ^-  [forward=(unit @t) backward=(unit @t) id=(unit @t)]
+  =/  forward=(unit @t)
+    (scan (slag pos txt) seek)
+  =/  backward=(unit @t)
+    %-  (lift |=(t=@t (swp 3 t)))
+    (scan (flop (scag pos txt)) seek)
+  =/  id=(unit @t)
     ?~  forward
       ?~  backward
         ~
@@ -273,7 +283,7 @@
   ^-  [back-pos=@ud fore-pos=@ud txt=tape]
   ::  Find beg-pos by searching backward to where the current term
   ::  begins
-  =+  (get-id pos txt)
+  =+  (get-id-sym pos txt)
   =/  back-pos
     ?~  backward
       pos
@@ -338,11 +348,39 @@
   ~?  >  debug  %start-magick
   =/  magicked  txt:(insert-magic pos code)
   ~?  >  debug  %start-parsing
-  =/  res  (lily magicked (language-server-parser *beam))
+  =/  res  (lily magicked (language-server-parser *path))
   ?:  ?=(%| -.res)
     ~?  >  debug  [%parsing-error p.res]
     [%| p.res]
   :-  %&
   ~?  >  debug  %parsed-good
-  ((cury tab-list-hoon sut) tssg+sources.p.res)
+  ((cury tab-list-hoon sut) hoon:`pile:clay`p.res)
+::
+:: Generators
+++  tab-generators
+  |=  [pfix=path app=(unit term) gens=(list term)]
+  ^-  (list (option tank))
+  %+  turn  gens
+  |=  gen=term
+  ^-  (option tank)
+  =/  pax=path
+    (weld pfix ~[gen %hoon])
+  =/  file
+    .^(@t %cx pax)
+  :_  (render-help file)
+  ?~  app
+    (cat 3 '+' gen)
+  ?:  =(%hood u.app)
+    (cat 3 '|' gen)
+  :((cury cat 3) ':' u.app '|' gen)
+::  Stolen from +help
+++  render-help
+  |=  a=@t
+  ^-  tank
+  :-  %leaf
+  =/  c  (to-wain:format a)
+  ?~  c  "~"
+  ?.  =('::  ' (end [3 4] i.c))
+    "<undocumented>"
+  (trip i.c)
 --

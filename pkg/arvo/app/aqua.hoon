@@ -21,19 +21,30 @@
 ::  We get ++unix-event and ++pill from /-aquarium
 ::
 /-  aquarium
-/+  pill, default-agent
+/+  pill, azimuth, default-agent, aqua-azimuth, dbug, verb
 =,  pill-lib=pill
 =,  aquarium
 =>  $~  |%
-    +$  state
+    +$  versioned-state
+      $%  state-0
+      ==
+    +$  state-0
       $:  %0
           pil=pill
           assembled=*
           tym=@da
-          fleet-snaps=(map term (map ship pier))
-          piers=(map ship pier)
+          fleet-snaps=(map term fleet)
+          piers=fleet
+      ==
+    ::  XX temporarily shadowed, fix and remove
+    ::
+    +$  pill
+      $:  boot-ova=*
+          kernel-ova=(list unix-event)
+          userspace-ova=(list unix-event)
       ==
     ::
+    +$  fleet  [ships=(map ship pier) azi=az-state]
     +$  pier
       $:  snap=*
           event-log=(list unix-timed-event)
@@ -42,9 +53,11 @@
       ==
     --
 ::
-=|  state
-=*  all-state  -
+=|  state-0
+=*  state  -
 =<
+  %-  agent:dbug
+  %+  verb  |
   ^-  agent:gall
   |_  =bowl:gall
   +*  this       .
@@ -52,24 +65,30 @@
       ac         ~(. aqua-core bowl)
       def        ~(. (default-agent this %|) bowl)
   ++  on-init           `this
-  ++  on-save  !>(all-state)
+  ++  on-save  !>(state)
   ++  on-load
-    |=  old-state=vase
+    |=  old-vase=vase
     ^-  step:agent:gall
     ~&  prep=%aqua
-    =+  new=((soft state) !<(* old-state))
-    ?~  new
-      `this
-    `this(all-state u.new)
+    =+  !<(old=versioned-state old-vase)
+    =|  cards=(list card:agent:gall)
+    |-
+    ?-  -.old
+    ::  wipe fleets and piers rather than give them falsely nulled azimuth state
+    ::
+        %0
+      [cards this(state old)]
+    ==
   ::
   ++  on-poke
     |=  [=mark =vase]
     ^-  step:agent:gall
-    =^  cards  all-state
+    =^  cards  state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
-          %aqua-events  (poke-aqua-events:ac !<((list aqua-event) vase))
-          %pill         (poke-pill:ac !<(pill vase))
-          %noun         (poke-noun:ac !<(* vase))
+          %aqua-events     (poke-aqua-events:ac !<((list aqua-event) vase))
+          %pill            (poke-pill:ac !<(pill vase))
+          %noun            (poke-noun:ac !<(* vase))
+          %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
       ==
     [cards this]
   ::
@@ -92,7 +111,18 @@
   ++  on-peek   peek:ac
   ::
   ++  on-agent  on-agent:def
-  ++  on-arvo   on-arvo:def
+  ::
+  ++  on-arvo
+    |=  [=wire sign=sign-arvo]
+    ^-  step:agent:gall
+    ?+  wire  (on-arvo:def wire sign)
+        [%wait @ ~]
+      ?>  ?=(%wake +<.sign)
+      =/  wen=@da  (slav %da i.t.wire)
+      =^  cards  state
+        (handle-wake:ac wen)
+      [cards this]
+    ==
   ++  on-fail   on-fail:def
   --
 ::
@@ -110,7 +140,7 @@
 ::
 ++  pe
   |=  who=ship
-  =+  (~(gut by piers) who *pier)
+  =+  (~(gut by ships.piers) who *pier)
   =*  pier-data  -
   |%
   ::
@@ -118,7 +148,7 @@
   ::
   ++  abet-pe
     ^+  this
-    =.  piers  (~(put by piers) who pier-data)
+    =.  ships.piers  (~(put by ships.piers) who pier-data)
     this
   ::
   ::  Initialize new ship
@@ -163,7 +193,9 @@
       $
     =.  snap  +.p.poke-result
     =.  ..abet-pe  (publish-event tym ue)
-    =.  ..abet-pe  (handle-effects ((list ovum) -.p.poke-result))
+    =.  ..abet-pe
+      ~|  ova=-.p.poke-result
+      (handle-effects ;;((list ovum) -.p.poke-result))
     $
   ::
   ::  Peek
@@ -246,7 +278,19 @@
   this
 ::
 ++  abet-aqua
-  ^-  (quip card:agent:gall state)
+  ^-  (quip card:agent:gall _state)
+  ::
+  ::  interecept %request effects to handle azimuth subscription
+  ::
+  =.  this
+    %-  emit-cards
+    %-  zing
+    %+  turn  ~(tap by unix-effects)
+    |=  [=ship ufs=(list unix-effect)]
+    %+  murn  ufs
+    |=  uf=unix-effect
+    (router:aqua-azimuth our.hid ship uf azi.piers)
+  ::
   =.  this
     =/  =path  /effect
     %-  emit-cards
@@ -298,20 +342,19 @@
     =/  =path  /boths/(scot %p ship)
     [%give %fact ~[path] %aqua-boths !>(`aqua-boths`[ship (flop bo)])]
   ::
-  [(flop cards) all-state]
+  [(flop cards) state]
 ::
 ++  emit-cards
   |=  ms=(list card:agent:gall)
   =.  cards  (weld ms cards)
   this
 ::
-::
 ::  Run all events on all ships until all queues are empty
 ::
 ++  plow-all
   |-  ^+  this
   =/  who
-    =/  pers  ~(tap by piers)
+    =/  pers  ~(tap by ships.piers)
     |-  ^-  (unit ship)
     ?~  pers
       ~
@@ -329,7 +372,7 @@
 ::
 ++  poke-pill
   |=  p=pill
-  ^-  (quip card:agent:gall state)
+  ^-  (quip card:agent:gall _state)
   =.  this  apex-aqua  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
@@ -360,7 +403,7 @@
 ::
 ++  poke-noun
   |=  val=*
-  ^-  (quip card:agent:gall state)
+  ^-  (quip card:agent:gall _state)
   =.  this  apex-aqua  =<  abet-aqua
   ^+  this
   ::  Could potentially factor out the three lines of turn-ships
@@ -380,17 +423,16 @@
           %c  %clay
           %d  %dill
           %e  %eyre
-          %f  %ford
           %g  %gall
           %j  %jael
           %g  %gall
         ==
       =/  pax
-        /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/[vane]
+        /(scot %p our.hid)/work/(scot %da now.hid)/sys/vane/[vane]
       =/  txt  .^(@ %cx (weld pax /hoon))
       [/vane/[vane] [%veer v pax txt]]
     =>  .(this ^+(this this))
-    =^  ms  all-state  (poke-pill pil)
+    =^  ms  state  (poke-pill pil)
     (emit-cards ms)
   ::
       [%swap-files ~]
@@ -400,8 +442,8 @@
       :_  ~
       %-  unix-event
       %-  %*(. file-ovum:pill-lib directories slim-dirs)
-      /(scot %p our.hid)/home/(scot %da now.hid)
-    =^  ms  all-state  (poke-pill pil)
+      /(scot %p our.hid)/work/(scot %da now.hid)
+    =^  ms  state  (poke-pill pil)
     (emit-cards ms)
   ::
       [%wish hers=* p=@t]
@@ -411,12 +453,14 @@
     (wish:(pe who) p.val)
   ::
       [%unpause-events hers=*]
+    =.  this  start-azimuth-timer
     %+  turn-ships  ((list ship) hers.val)
     |=  [who=ship thus=_this]
     =.  this  thus
     start-processing-events:(pe who)
   ::
       [%pause-events hers=*]
+    =.  this  stop-azimuth-timer
     %+  turn-ships  ((list ship) hers.val)
     |=  [who=ship thus=_this]
     =.  this  thus
@@ -427,17 +471,47 @@
     this
   ==
 ::
+::  Make changes to azimuth state for the current fleet
+::
+++  poke-azimuth-action
+  |=  act=azimuth-action
+  ^-  (quip card:agent:gall _state)
+  =.  this  apex-aqua  =<  abet-aqua
+  ^+  this
+  ?-  -.act
+  ::
+      %init-azimuth
+    =.  azi.piers  *az-state
+    start-azimuth-timer
+  ::
+      %spawn
+    =.  state  (spawn who.act)
+    this
+  ::
+      %breach
+    ::  should we remove the pier from state here?
+    =.  state  (breach who.act)
+    this
+  ::
+  ==
+::
 ::  Apply a list of events tagged by ship
 ::
 ++  poke-aqua-events
   |=  events=(list aqua-event)
-  ^-  (quip card:agent:gall state)
+  ^-  (quip card:agent:gall _state)
   =.  this  apex-aqua  =<  abet-aqua
   %+  turn-events  events
   |=  [ae=aqua-event thus=_this]
   =.  this  thus
   ?-  -.ae
+  ::
       %init-ship
+    ::  XX  Note that the keys that get passed in are unused. The keys field
+    ::      should be deleted now that aqua is capable of managing azimuth state
+    ::      internally. Its been left this way for now until all the ph tests
+    ::      can be rewritten
+    =/  keys=dawn-event:jael  (dawn who.ae)
     =.  this  abet-pe:(publish-effect:(pe who.ae) [/ %sleep ~])
     =/  initted
       =<  plow
@@ -450,7 +524,7 @@
           :^  //term/1  %boot  &
           ?~  keys.ae
             [%fake who.ae]
-          [%dawn u.keys.ae]
+          [%dawn keys]
           -.userspace-ova.pil
           [//http-client/0v1n.2m9vh %born ~]
           [//http-server/0v1n.2m9vh %born ~]
@@ -463,27 +537,36 @@
     stop-processing-events:(pe who.ae)
   ::
       %snap-ships
+    =.  this
+      %+  turn-ships  (turn ~(tap by ships.piers) head)
+      |=  [who=ship thus=_this]
+      =.  this  thus
+      (publish-effect:(pe who) [/ %kill ~])
     =.  fleet-snaps
       %+  ~(put by fleet-snaps)  lab.ae
+      :_  azi.piers
       %-  malt
       %+  murn  hers.ae
       |=  her=ship
       ^-  (unit (pair ship pier))
-      =+  per=(~(get by piers) her)
+      =+  per=(~(get by ships.piers) her)
       ?~  per
         ~
       `[her u.per]
+    =.  this   stop-azimuth-timer
+    =.  piers  *fleet
     (pe -.hers.ae)
   ::
       %restore-snap
     =.  this
-      %+  turn-ships  (turn ~(tap by piers) head)
+      %+  turn-ships  (turn ~(tap by ships.piers) head)
       |=  [who=ship thus=_this]
       =.  this  thus
-      (publish-effect:(pe who) [/ %sleep ~])
-    =.  piers  (~(uni by piers) (~(got by fleet-snaps) lab.ae))
+      (publish-effect:(pe who) [/ %kill ~])
+    =.  piers  (~(got by fleet-snaps) lab.ae)
+    =.  this   start-azimuth-timer
     =.  this
-      %+  turn-ships  (turn ~(tap by piers) head)
+      %+  turn-ships  (turn ~(tap by ships.piers) head)
       |=  [who=ship thus=_this]
       =.  this  thus
       (publish-effect:(pe who) [/ %restore ~])
@@ -536,18 +619,163 @@
   ^-  (unit (unit cage))
   ?+  path  ~
       [%x %fleet-snap @ ~]  ``noun+!>((~(has by fleet-snaps) i.t.t.path))
-      [%x %ships ~]         ``noun+!>((turn ~(tap by piers) head))
+      [%x %fleets ~]        ``noun+!>((turn ~(tap by fleet-snaps) head))
+      [%x %ships ~]         ``noun+!>((turn ~(tap by ships.piers) head))
       [%x %pill ~]          ``pill+!>(pil)
       [%x %i @ @ @ @ @ *]
     =/  who  (slav %p i.t.t.path)
-    =/  pier  (~(get by piers) who)
+    =/  pier  (~(get by ships.piers) who)
     ?~  pier
       ~
     :^  ~  ~  %noun  !>
     (peek:(pe who) t.t.t.path)
+      [%x %log-info ~]
+    ``noun+!>([lives.azi.piers (lent logs.azi.piers) tym.azi.piers])
   ==
 ::
 ::  Trivial scry for mock
 ::
 ++  scry  |=([* *] ~)
+::
+++  handle-wake
+  |=  wen=@da
+  ^-  (quip card:agent:gall _state)
+  =.  this  apex-aqua  =<  abet-aqua
+  ?.  =(wen tym.azi.piers)
+    this
+  =.  state  (spam-logs 10)
+  start-azimuth-timer
+::
+++  start-azimuth-timer
+  ^+  this
+  =?  this  !=(tym.azi.piers *@da)
+    stop-azimuth-timer
+  =/  until=@da  (add now.hid ~s40)
+  =.  tym.azi.piers  until
+  %-  emit-cards
+  [%pass /wait/(scot %da until) %arvo %b %wait until]~
+::
+++  stop-azimuth-timer
+  ^+  this
+  =*  tym  tym.azi.piers
+  ?:  =(tym *@da)
+    this
+  %-  emit-cards
+  [%pass /wait/(scot %da tym) %arvo %b %rest tym]~
+::
+++  spam-logs
+  |=  n=@
+  ^-  _state
+  =*  loop  $
+  ?:  =(n 0)
+    state
+  =/  new-state=_state
+    ?.  (~(has by lives.azi.piers) ~fes)
+      (spawn ~fes)
+    (cycle-keys ~fes)
+  =.  state  new-state
+  loop(n (dec n))
+::
+++  spawn
+  |=  who=@p
+  ^-  _state
+  ?<  (~(has by lives.azi.piers) who)
+  =.  lives.azi.piers  (~(put by lives.azi.piers) who [1 0])
+  =.  logs.azi.piers
+    %+  weld  logs.azi.piers
+    :_  ~
+    %-  changed-keys:lo:aqua-azimuth
+    :*  who
+        (get-public:aqua-azimuth who 1 %crypt)
+        (get-public:aqua-azimuth who 1 %auth)
+        1
+        1
+    ==
+  (spam-logs 10)
+::
+++  cycle-keys
+  |=  who=@p
+  ^-  _state
+  =/  prev
+    ~|  no-such-ship+who
+    (~(got by lives.azi.piers) who)
+  =/  lyfe  +(lyfe.prev)
+  =.  lives.azi.piers  (~(put by lives.azi.piers) who [lyfe rut.prev])
+  =.  logs.azi.piers
+    %+  weld  logs.azi.piers
+    :_  ~
+    %-  changed-keys:lo:aqua-azimuth
+    :*  who
+        (get-public:aqua-azimuth who lyfe %crypt)
+        (get-public:aqua-azimuth who lyfe %auth)
+        1
+        lyfe
+    ==
+  state
+::
+++  breach
+  |=  who=@p
+  ^-  _state
+  =.  state  (cycle-keys who)
+  =/  prev   (~(got by lives.azi.piers) who)
+  =/  rut  +(rut.prev)
+  =.  lives.azi.piers  (~(put by lives.azi.piers) who [lyfe.prev rut])
+  =.  logs.azi.piers
+    %+  weld  logs.azi.piers
+    [(broke-continuity:lo:aqua-azimuth who rut) ~]
+  (spam-logs 10)
+::
+++  dawn
+  |=  who=ship
+  ^-  dawn-event:jael
+  ?>  ?=(?(%czar %king %duke) (clan:title who))
+  =/  spon=(list [ship point:azimuth])
+    %-  flop
+    |-  ^-  (list [ship point:azimuth])
+    =/  =ship  (^sein:title who)
+    =/  a-point=[^ship point:azimuth]
+      =/  spon-spon  [& (^sein:title ship)]
+      =/  life-rift  ~|([ship lives.azi.piers] (~(got by lives.azi.piers) ship))
+      =/  =life  lyfe.life-rift
+      =/  =rift  rut.life-rift
+      =/  =pass
+        %^    pass-from-eth:azimuth
+            (as-octs:mimes:html (get-public:aqua-azimuth ship life %crypt))
+          (as-octs:mimes:html (get-public:aqua-azimuth ship life %auth))
+        1
+      :^    ship
+          *[address address address address]:azimuth
+        `[life=life pass rift spon-spon ~]
+      ~
+    ?:  ?=(%czar (clan:title ship))
+      [a-point]~
+    [a-point $(who ship)]
+  =/  =seed:jael
+    =/  life-rift  (~(got by lives.azi.piers) who)
+    =/  =life  lyfe.life-rift
+    [who life sec:ex:(get-keys:aqua-azimuth who life) ~]
+  :*  seed
+      spon
+      get-czars
+      ~[~['arvo' 'netw' 'ork']]
+      0
+      `(need (de-purl:html 'http://localhost:8545'))
+  ==
+::
+::  Should only do galaxies
+::
+++  get-czars
+  ^-  (map ship [rift life pass])
+  %-  malt
+  %+  murn
+    ~(tap by lives.azi.piers)
+  |=  [who=ship lyfe=life rut=rift]
+  ?.  =(%czar (clan:title who))
+    ~
+  %-  some
+  :^  who  rut  lyfe
+  %^    pass-from-eth:azimuth
+      (as-octs:mimes:html (get-public:aqua-azimuth who lyfe %crypt))
+    (as-octs:mimes:html (get-public:aqua-azimuth who lyfe %auth))
+  1
 --

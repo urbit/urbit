@@ -90,9 +90,8 @@
 !:
 =/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
 =,  ames
-=,  able
-=*  point               point:able:jael
-=*  public-keys-result  public-keys-result:able:jael
+=*  point               point:jael
+=*  public-keys-result  public-keys-result:jael
 ::  veb: verbosity flags
 ::
 =/  veb-all-off
@@ -105,7 +104,9 @@
       rot=`?`%.n  ::  routing attempts
   ==
 =>
+~%  %ames  ..part  ~
 |%
++|  %helpers
 ::  +trace: print if .verb is set and we're tracking .ship
 ::
 ++  trace
@@ -117,278 +118,373 @@
       ~+  |(=(~ ships) (~(has in ships) ship))
     same
   (slog leaf/"ames: {(scow %p ship)}: {(print)}" ~)
---
-=>
-|%
-+|  %generics
-::  $mk-item: constructor for +ordered-map item type
+::  +qos-update-text: notice text for if connection state changes
 ::
-++  mk-item  |$  [key val]  [key=key val=val]
-::  +ordered-map: treap with user-specified horizontal order
-::
-::    Conceptually smaller items go on the left, so the item with the
-::    smallest key can be popped off the head. If $key is `@` and
-::    .compare is +lte, then the numerically smallest item is the head.
-::
-++  ordered-map
-  |*  [key=mold val=mold]
-  =>  |%
-      +$  item  (mk-item key val)
-      --
-  ::  +compare: item comparator for horizontal order
+++  qos-update-text
+  |=  [=ship old=qos new=qos]
+  ^-  (unit tape)
   ::
-  |=  compare=$-([key key] ?)
-  |%
-  ::  +check-balance: verify horizontal and vertical orderings
+  ?+  [-.old -.new]  ~
+    [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
+    [%dead %live]    `"; {(scow %p ship)} is ok"
+    [%live %dead]    `"; {(scow %p ship)} not responding still trying"
+    [%unborn %dead]  `"; {(scow %p ship)} not responding still trying"
+    [%live %unborn]  `"; {(scow %p ship)} has sunk"
+    [%dead %unborn]  `"; {(scow %p ship)} has sunk"
+  ==
+::  +lte-packets: yes if a is before b
+::
+++  lte-packets
+  |=  [a=live-packet-key b=live-packet-key]
+  ^-  ?
   ::
-  ++  check-balance
-    =|  [l=(unit key) r=(unit key)]
-    |=  a=(tree item)
-    ^-  ?
-    ::  empty tree is valid
-    ::
-    ?~  a  %.y
-    ::  nonempty trees must maintain several criteria
-    ::
-    ?&  ::  if .n.a is left of .u.l, assert horizontal comparator
-        ::
-        ?~(l %.y (compare key.n.a u.l))
-        ::  if .n.a is right of .u.r, assert horizontal comparator
-        ::
-        ?~(r %.y (compare u.r key.n.a))
-        ::  if .a is not leftmost element, assert vertical order between
-        ::  .l.a and .n.a and recurse to the left with .n.a as right
-        ::  neighbor
-        ::
-        ?~(l.a %.y &((mor key.n.a key.n.l.a) $(a l.a, l `key.n.a)))
-        ::  if .a is not rightmost element, assert vertical order
-        ::  between .r.a and .n.a and recurse to the right with .n.a as
-        ::  left neighbor
-        ::
-        ?~(r.a %.y &((mor key.n.a key.n.r.a) $(a r.a, r `key.n.a)))
+  ?:  (lth message-num.a message-num.b)
+    %.y
+  ?:  (gth message-num.a message-num.b)
+    %.n
+  (lte fragment-num.a fragment-num.b)
+::  +split-message: split message into kilobyte-sized fragments
+::
+::    We don't literally split it here since that would allocate many
+::    large atoms with no structural sharing.  Instead, each
+::    static-fragment has the entire message and a counter.  In
+::    +encrypt, we interpret this to get the actual fragment.
+::
+++  split-message
+  ~/  %split-message
+  |=  [=message-num =message-blob]
+  ^-  (list static-fragment)
+  ::
+  =/  num-fragments=fragment-num  (met 13 message-blob)
+  =|  counter=@
+  ::
+  |-  ^-  (list static-fragment)
+  ?:  (gte counter num-fragments)
+    ~
+  ::
+  :-  [message-num num-fragments counter `@`message-blob]
+  $(counter +(counter))
+::  +assemble-fragments: concatenate fragments into a $message
+::
+++  assemble-fragments
+  ~/  %assemble-fragments
+  |=  [num-fragments=fragment-num fragments=(map fragment-num fragment)]
+  ^-  *
+  ::
+  =|  sorted=(list fragment)
+  =.  sorted
+    =/  index=fragment-num  0
+    |-  ^+  sorted
+    ?:  =(index num-fragments)
+      sorted
+    $(index +(index), sorted [(~(got by fragments) index) sorted])
+  ::
+  (cue (rep 13 (flop sorted)))
+::  +jim: caching +jam
+::
+++  jim  |=(n=* ~+((jam n)))
+::  +bind-duct: find or make new $bone for .duct in .ossuary
+::
+++  bind-duct
+  |=  [=ossuary =duct]
+  ^+  [next-bone.ossuary ossuary]
+  ::
+  ?^  existing=(~(get by by-duct.ossuary) duct)
+    [u.existing ossuary]
+  ::
+  :-  next-bone.ossuary
+  :+  (add 4 next-bone.ossuary)
+    (~(put by by-duct.ossuary) duct next-bone.ossuary)
+  (~(put by by-bone.ossuary) next-bone.ossuary duct)
+::  +make-bone-wire: encode ship and bone in wire for sending to vane
+::
+++  make-bone-wire
+  |=  [her=ship =bone]
+  ^-  wire
+  ::
+  /bone/(scot %p her)/(scot %ud bone)
+::  +parse-bone-wire: decode ship and bone from wire from local vane
+::
+++  parse-bone-wire
+  |=  =wire
+  ^-  [her=ship =bone]
+  ::
+  ~|  %ames-wire-bone^wire
+  ?>  ?=([%bone @ @ ~] wire)
+  [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
+::  +make-pump-timer-wire: construct wire for |packet-pump timer
+::
+++  make-pump-timer-wire
+  |=  [her=ship =bone]
+  ^-  wire
+  /pump/(scot %p her)/(scot %ud bone)
+::  +parse-pump-timer-wire: parse .her and .bone from |packet-pump wire
+::
+++  parse-pump-timer-wire
+  |=  =wire
+  ^-  (unit [her=ship =bone])
+  ::
+  ~|  %ames-wire-timer^wire
+  ?.  ?=([%pump @ @ ~] wire)
+    ~
+  ?~  ship=`(unit @p)`(slaw %p i.t.wire)
+    ~
+  ?~  bone=`(unit @ud)`(slaw %ud i.t.t.wire)
+    ~
+  `[u.ship u.bone]
+::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
+::
+::    Assumes keys have a tag on them like the result of the |ex:crub core.
+::
+++  derive-symmetric-key
+  ~/  %derive-symmetric-key
+  |=  [=public-key =private-key]
+  ^-  symmetric-key
+  ::
+  ?>  =('b' (end 3 public-key))
+  =.  public-key  (rsh 8 (rsh 3 public-key))
+  ::
+  ?>  =('B' (end 3 private-key))
+  =.  private-key  (rsh 8 (rsh 3 private-key))
+  ::
+  `@`(shar:ed:crypto public-key private-key)
+::  +encode-packet: serialize a packet into a bytestream
+::
+++  encode-packet
+  ~/  %encode-packet
+  |=  packet
+  ^-  blob
+  ::
+  =/  sndr-meta  (encode-ship-metadata sndr)
+  =/  rcvr-meta  (encode-ship-metadata rcvr)
+  ::
+  =/  body=@
+    ;:  mix
+      sndr-tick
+      (lsh 2 rcvr-tick)
+      (lsh 3 sndr)
+      (lsh [3 +(size.sndr-meta)] rcvr)
+      (lsh [3 +((add size.sndr-meta size.rcvr-meta))] content)
     ==
-  ::  +put: ordered item insert
+  =/  checksum  (end [0 20] (mug body))
+  =?  body  ?=(^ origin)  (mix u.origin (lsh [3 6] body))
   ::
-  ++  put
-    |=  [a=(tree item) =key =val]
-    ^-  (tree item)
-    ::  base case: replace null with single-item tree
-    ::
-    ?~  a  [n=[key val] l=~ r=~]
-    ::  base case: overwrite existing .key with new .val
-    ::
-    ?:  =(key.n.a key)  a(val.n val)
-    ::  if item goes on left, recurse left then rebalance vertical order
-    ::
-    ?:  (compare key key.n.a)
-      =/  l  $(a l.a)
-      ?>  ?=(^ l)
-      ?:  (mor key.n.a key.n.l)
-        a(l l)
-      l(r a(l r.l))
-    ::  item goes on right; recurse right then rebalance vertical order
-    ::
-    =/  r  $(a r.a)
-    ?>  ?=(^ r)
-    ?:  (mor key.n.a key.n.r)
-      a(r r)
-    r(l a(r l.r))
-  ::  +peek: produce head (smallest item) or null
-  ::
-  ++  peek
-    |=  a=(tree item)
-    ^-  (unit item)
-    ::
-    ?~  a    ~
-    ?~  l.a  `n.a
-    $(a l.a)
-  ::  +pop: produce .head (smallest item) and .rest or crash if empty
-  ::
-  ++  pop
-    |=  a=(tree item)
-    ^-  [head=item rest=(tree item)]
-    ::
-    ?~  a    !!
-    ?~  l.a  [n.a r.a]
-    ::
-    =/  l  $(a l.a)
-    :-  head.l
-    ::  load .rest.l back into .a and rebalance
-    ::
-    ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
-      a(l rest.l)
-    rest.l(r a(r r.rest.l))
-  ::  +del: delete .key from .a if it exists, producing value iff deleted
-  ::
-  ++  del
-    |=  [a=(tree item) =key]
-    ^-  [(unit val) (tree item)]
-    ::
-    ?~  a  [~ ~]
-    ::  we found .key at the root; delete and rebalance
-    ::
-    ?:  =(key key.n.a)
-      [`val.n.a (nip a)]
-    ::  recurse left or right to find .key
-    ::
-    ?:  (compare key key.n.a)
-      =+  [found lef]=$(a l.a)
-      [found a(l lef)]
-    =+  [found rig]=$(a r.a)
-    [found a(r rig)]
-  ::  +nip: remove root; for internal use
-  ::
-  ++  nip
-    |=  a=(tree item)
-    ^-  (tree item)
-    ::
-    ?>  ?=(^ a)
-    ::  delete .n.a; merge and balance .l.a and .r.a
-    ::
-    |-  ^-  (tree item)
-    ?~  l.a  r.a
-    ?~  r.a  l.a
-    ?:  (mor key.n.l.a key.n.r.a)
-      l.a(r $(l.a r.l.a))
-    r.a(l $(r.a l.r.a))
-  ::  +traverse: stateful partial inorder traversal
-  ::
-  ::    Mutates .state on each run of .f.  Starts at .start key, or if
-  ::    .start is ~, starts at the head (item with smallest key).  Stops
-  ::    when .f produces .stop=%.y.  Traverses from smaller to larger
-  ::    keys.  Each run of .f can replace an item's value or delete the
-  ::    item.
-  ::
-  ++  traverse
-    |*  state=mold
-    |=  $:  a=(tree item)
-            =state
-            f=$-([state item] [(unit val) ? state])
-        ==
-    ^+  [state a]
-    ::  acc: accumulator
-    ::
-    ::    .stop: set to %.y by .f when done traversing
-    ::    .state: threaded through each run of .f and produced by +abet
-    ::
-    =/  acc  [stop=`?`%.n state=state]
-    =<  abet  =<  main
-    |%
-    ++  abet  [state.acc a]
-    ::  +main: main recursive loop; performs a partial inorder traversal
-    ::
-    ++  main
-      ^+  .
-      ::  stop if empty or we've been told to stop
-      ::
-      ?~  a  .
-      ?:  stop.acc  .
-      ::  inorder traversal: left -> node -> right, until .f sets .stop
-      ::
-      =>  left
-      ?:  stop.acc  .
-      =>  node
-      ?:  stop.acc  .
-      right
-    ::  +node: run .f on .n.a, updating .a, .state, and .stop
-    ::
-    ++  node
-      ^+  .
-      ::  run .f on node, updating .stop.acc and .state.acc
-      ::
-      =^  res  acc
-        ?>  ?=(^ a)
-        (f state.acc n.a)
-      ::  apply update to .a from .f's product
-      ::
-      =.  a
-        ::  if .f requested node deletion, merge and balance .l.a and .r.a
-        ::
-        ?~  res  (nip a)
-        ::  we kept the node; replace its .val; order is unchanged
-        ::
-        ?>  ?=(^ a)
-        a(val.n u.res)
-      ::
-      ..node
-    ::  +left: recurse on left subtree, copying mutant back into .l.a
-    ::
-    ++  left
-      ^+  .
-      ?~  a  .
-      =/  lef  main(a l.a)
-      lef(a a(l a.lef))
-    ::  +right: recurse on right subtree, copying mutant back into .r.a
-    ::
-    ++  right
-      ^+  .
-      ?~  a  .
-      =/  rig  main(a r.a)
-      rig(a a(r a.rig))
-    --
-  ::  +tap: convert to list, smallest to largest
-  ::
-  ++  tap
-    |=  a=(tree item)
-    ^-  (list item)
-    ::
-    =|  b=(list item)
-    |-  ^+  b
-    ?~  a  b
-    ::
-    $(a l.a, b [n.a $(a r.a)])
-  ::  +gas: put a list of items
-  ::
-  ++  gas
-    |=  [a=(tree item) b=(list item)]
-    ^-  (tree item)
-    ::
-    ?~  b  a
-    $(b t.b, a (put a i.b))
-  ::  +uni: unify two ordered maps
-  ::
-  ::    .b takes precedence over .a if keys overlap.
-  ::
-  ++  uni
-    |=  [a=(tree item) b=(tree item)]
-    ^-  (tree item)
-    ::
-    ?~  b  a
-    ?~  a  b
-    ?:  =(key.n.a key.n.b)
-      ::
-      [n=n.b l=$(a l.a, b l.b) r=$(a r.a, b r.b)]
-    ::
-    ?:  (mor key.n.a key.n.b)
-      ::
-      ?:  (compare key.n.b key.n.a)
-        $(l.a $(a l.a, r.b ~), b r.b)
-      $(r.a $(a r.a, l.b ~), b l.b)
-    ::
-    ?:  (compare key.n.a key.n.b)
-      $(l.b $(b l.b, r.a ~), a r.a)
-    $(r.b $(b r.b, l.a ~), a l.a)
-  --
+  =/  header=@
+    %+  can  0
+    :~  [3 reserved=0]
+        [1 is-ames=&]
+        [3 protocol-version]
+        [2 rank.sndr-meta]
+        [2 rank.rcvr-meta]
+        [20 checksum]
+        [1 relayed=.?(origin)]
+    ==
+  (mix header (lsh 5 body))
+::  +decode-packet: deserialize packet from bytestream or crash
 ::
+++  decode-packet
+  ~/  %decode-packet
+  |=  =blob
+  ^-  packet
+  ~|  %decode-packet-fail
+  ::  first 32 (2^5) bits are header; the rest is body
+  ::
+  =/  header  (end 5 blob)
+  =/  body    (rsh 5 blob)
+  ::  read header; first three bits are reserved
+  ::
+  =/  is-ames  (cut 0 [3 1] header)
+  ?.  =(& is-ames)
+    ~|  %ames-not-ames  !!
+  ::
+  =/  version  (cut 0 [4 3] header)
+  ?.  =(protocol-version version)
+    ~|  ames-protocol-version+version  !!
+  ::
+  =/  sndr-size  (decode-ship-size (cut 0 [7 2] header))
+  =/  rcvr-size  (decode-ship-size (cut 0 [9 2] header))
+  =/  checksum   (cut 0 [11 20] header)
+  =/  relayed    (cut 0 [31 1] header)
+  ::  origin, if present, is 6 octets long, at the end of the body
+  ::
+  =^  origin=(unit @)  body
+    ?:  =(| relayed)
+      [~ body]
+    =/  len  (sub (met 3 body) 6)
+    [`(end [3 6] body) (rsh [3 6] body)]
+  ::  .checksum does not apply to the origin
+  ::
+  ?.  =(checksum (end [0 20] (mug body)))
+    ~|  %ames-checksum  !!
+  ::  read fixed-length sndr and rcvr life data from body
+  ::
+  ::    These represent the last four bits of the sender and receiver
+  ::    life fields, to be used for quick dropping of honest packets to
+  ::    or from the wrong life.
+  ::
+  =/  sndr-tick  (cut 0 [0 4] body)
+  =/  rcvr-tick  (cut 0 [4 4] body)
+  ::  read variable-length .sndr and .rcvr addresses
+  ::
+  =/  off   1
+  =^  sndr  off  [(cut 3 [off sndr-size] body) (add off sndr-size)]
+  ?.  (is-valid-rank sndr sndr-size)
+    ~|  ames-sender-impostor+[sndr sndr-size]  !!
+  ::
+  =^  rcvr  off  [(cut 3 [off rcvr-size] body) (add off rcvr-size)]
+  ?.  (is-valid-rank rcvr rcvr-size)
+    ~|  ames-receiver-impostor+[rcvr rcvr-size]  !!
+  ::  read variable-length .content from the rest of .body
+  ::
+  =/  content  (cut 3 [off (sub (met 3 body) off)] body)
+  [[sndr rcvr] sndr-tick rcvr-tick origin content]
+::  +is-valid-rank: does .ship match its stated .size?
+::
+++  is-valid-rank
+  ~/  %is-valid-rank
+  |=  [=ship size=@ubC]
+  ^-  ?
+  .=  size
+  ?-  (clan:title ship)
+    %czar  2
+    %king  2
+    %duke  4
+    %earl  8
+    %pawn  16
+  ==
+::  +encode-open-packet: convert $open-packet attestation to $packet
+::
+++  encode-open-packet
+  ~/  %encode-open-packet
+  |=  [pac=open-packet =acru:ames]
+  ^-  packet
+  :*  [sndr rcvr]:pac
+      (mod sndr-life.pac 16)
+      (mod rcvr-life.pac 16)
+      origin=~
+      content=`@`(sign:as:acru (jam pac))
+  ==
+::  +decode-open-packet: decode comet attestation into an $open-packet
+::
+++  decode-open-packet
+  ~/  %decode-open-packet
+  |=  [=packet our=ship our-life=@]
+  ^-  open-packet
+  ::  deserialize and type-check packet contents
+  ::
+  =+  ;;  [signature=@ signed=@]  (cue content.packet)
+  =+  ;;  =open-packet            (cue signed)
+  ::  assert .our and .her and lives match
+  ::
+  ?>  .=       sndr.open-packet  sndr.packet
+  ?>  .=       rcvr.open-packet  our
+  ?>  .=  sndr-life.open-packet  1
+  ?>  .=  rcvr-life.open-packet  our-life
+  ::  only a star can sponsor a comet
+  ::
+  ?>  =(%king (clan:title (^sein:title sndr.packet)))
+  ::  comet public-key must hash to its @p address
+  ::
+  ?>  =(sndr.packet fig:ex:(com:nu:crub:crypto public-key.open-packet))
+  ::  verify signature
+  ::
+  ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
+  ::
+  =/  key  (end 8 (rsh 3 public-key.open-packet))
+  ?>  (veri:ed:crypto signature signed key)
+  open-packet
+::  +encode-shut-packet: encrypt and packetize a $shut-packet
+::
+++  encode-shut-packet
+  ~/  %encode-shut-packet
+  |=  $:  =shut-packet
+          =symmetric-key
+          sndr=ship
+          rcvr=ship
+          sndr-life=@
+          rcvr-life=@
+      ==
+  ^-  packet
+  ::
+  =?    meat.shut-packet
+      ?&  ?=(%& -.meat.shut-packet)
+          (gth (met 13 fragment.p.meat.shut-packet) 1)
+      ==
+    %_    meat.shut-packet
+        fragment.p
+      (cut 13 [[fragment-num 1] fragment]:p.meat.shut-packet)
+    ==
+  ::
+  =/  vec  ~[sndr rcvr sndr-life rcvr-life]
+  =/  [siv=@uxH len=@ cyf=@ux]
+    (~(en sivc:aes:crypto (shaz symmetric-key) vec) (jam shut-packet))
+  =/  content  :(mix siv (lsh 7 len) (lsh [3 18] cyf))
+  [[sndr rcvr] (mod sndr-life 16) (mod rcvr-life 16) origin=~ content]
+::  +decode-shut-packet: decrypt a $shut-packet from a $packet
+::
+++  decode-shut-packet
+  ~/  %decode-shut-packet
+  |=  [=packet =symmetric-key sndr-life=@ rcvr-life=@]
+  ^-  shut-packet
+  ?.  =(sndr-tick.packet (mod sndr-life 16))
+    ~|  ames-sndr-tick+sndr-tick.packet  !!
+  ?.  =(rcvr-tick.packet (mod rcvr-life 16))
+    ~|  ames-rcvr-tick+rcvr-tick.packet  !!
+  =/  siv  (end 7 content.packet)
+  =/  len  (end 4 (rsh 7 content.packet))
+  =/  cyf  (rsh [3 18] content.packet)
+  ~|  ames-decrypt+[[sndr rcvr origin]:packet len siv]
+  =/  vec  ~[sndr.packet rcvr.packet sndr-life rcvr-life]
+  ;;  shut-packet  %-  cue  %-  need
+  (~(de sivc:aes:crypto (shaz symmetric-key) vec) siv len cyf)
+::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
+::
+::    Type 0: galaxy or star -- 2 bytes
+::    Type 1: planet         -- 4 bytes
+::    Type 2: moon           -- 8 bytes
+::    Type 3: comet          -- 16 bytes
+::
+++  decode-ship-size
+  ~/  %decode-ship-size
+  |=  rank=@ubC
+  ^-  @
+  ::
+  ?+  rank  !!
+    %0b0   2
+    %0b1   4
+    %0b10  8
+    %0b11  16
+  ==
+::  +encode-ship-metadata: produce size (in bytes) and address rank for .ship
+::
+::    0: galaxy or star
+::    1: planet
+::    2: moon
+::    3: comet
+::
+++  encode-ship-metadata
+  ~/  %encode-ship-metadata
+  |=  =ship
+  ^-  [size=@ =rank]
+  ::
+  =/  size=@  (met 3 ship)
+  ::
+  ?:  (lte size 2)  [2 %0b0]
+  ?:  (lte size 4)  [4 %0b1]
+  ?:  (lte size 8)  [8 %0b10]
+  [16 %0b11]
 +|  %atomics
 ::
-+$  bone           @udbone
-+$  fragment       @uwfragment
-+$  fragment-num   @udfragmentnum
-+$  message-blob   @udmessageblob
-+$  message-num    @udmessagenum
 +$  private-key    @uwprivatekey
-+$  public-key     @uwpublickey
 +$  signature      @uwsignature
-+$  symmetric-key  @uwsymmetrickey
 ::  $rank: which kind of ship address, by length
 ::
-::    0: galaxy or star -- 2  bytes
-::    1: planet         -- 4  bytes
-::    2: moon           -- 8  bytes
-::    3: comet          -- 16 bytes
+::    0b0: galaxy or star -- 2  bytes
+::    0b1: planet         -- 4  bytes
+::    0b10: moon           -- 8  bytes
+::    0b11: comet          -- 16 bytes
 ::
-+$  rank  ?(%0 %1 %2 %3)
++$  rank  ?(%0b0 %0b1 %0b10 %0b11)
 ::
 +|  %kinetics
 ::  $channel: combined sender and receiver identifying data
@@ -421,7 +517,13 @@
 ::    address.  Routes are opaque to Arvo and only have meaning in the
 ::    interpreter. This enforces that Ames is transport-agnostic.
 ::
-+$  packet  [dyad encrypted=? origin=(unit lane) content=*]
++$  packet
+  $:  dyad
+      sndr-tick=@ubC
+      rcvr-tick=@ubC
+      origin=(unit @uxaddress)
+      content=@uxcontent
+  ==
 ::  $open-packet: unencrypted packet payload, for comet self-attestation
 ::
 ::    This data structure gets signed and jammed to form the .contents
@@ -437,9 +539,7 @@
 ::  $shut-packet: encrypted packet payload
 ::
 +$  shut-packet
-  $:  =sndr=life
-      =rcvr=life
-      =bone
+  $:  =bone
       =message-num
       meat=(each fragment-meat ack-meat)
   ==
@@ -464,13 +564,6 @@
 ::  $naxplanation: nack trace; explains which message failed and why
 ::
 +$  naxplanation  [=message-num =error]
-::  $ack: positive ack, nack packet, or nack trace
-::
-+$  ack
-  $%  [%ok ~]
-      [%nack ~]
-      [%naxplanation =error]
-  ==
 ::
 +|  %statics
 ::
@@ -498,237 +591,6 @@
   $:  veb=_veb-all-off
       ships=(set ship)
   ==
-::  $ship-state: all we know about a peer
-::
-::    %alien: no PKI data, so enqueue actions to perform once we learn it
-::    %known: we know their life and public keys, so we have a channel
-::
-+$  ship-state
-  $%  [%alien alien-agenda]
-      [%known peer-state]
-  ==
-::  $alien-agenda: what to do when we learn a peer's life and keys
-::
-::    messages: pleas local vanes have asked us to send
-::    packets: packets we've tried to send
-::    heeds: local tracking requests; passed through into $peer-state
-::
-+$  alien-agenda
-  $:  messages=(list [=duct =plea])
-      packets=(set =blob)
-      heeds=(set duct)
-  ==
-::  $peer-state: state for a peer with known life and keys
-::
-::    route: transport-layer destination for packets to peer
-::    qos: quality of service; connection status to peer
-::    ossuary: bone<->duct mapper
-::    snd: per-bone message pumps to send messages as fragments
-::    rcv: per-bone message sinks to assemble messages from fragments
-::    nax: unprocessed nacks (negative acknowledgments)
-::         Each value is ~ when we've received the ack packet but not a
-::         nack-trace, or an error when we've received a nack-trace but
-::         not the ack packet.
-::
-::         When we hear a nack packet or an explanation, if there's no
-::         entry in .nax, we make a new entry. Otherwise, if this new
-::         information completes the packet+nack-trace, we remove the
-::         entry and emit a nack to the local vane that asked us to send
-::         the message.
-::    heeds: listeners for %clog notifications
-::
-+$  peer-state
-  $:  $:  =symmetric-key
-          =life
-          =public-key
-          sponsor=ship
-      ==
-      route=(unit [direct=? =lane])
-      =qos
-      =ossuary
-      snd=(map bone message-pump-state)
-      rcv=(map bone message-sink-state)
-      nax=(set [=bone =message-num])
-      heeds=(set duct)
-  ==
-::  $qos: quality of service; how is our connection to a peer doing?
-::
-::    .last-contact: last time we heard from peer, or if %unborn, when
-::    we first started tracking time
-::
-+$  qos
-  $~  [%unborn *@da]
-  [?(%live %dead %unborn) last-contact=@da]
-::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
-::
-::    The first bone is 0. They increment by 4, since each flow includes
-::    a bit for each message determining forward vs. backward and a
-::    second bit for whether the message is on the normal flow or the
-::    associated diagnostic flow (for naxplanations).
-::
-::    The least significant bit of a $bone is:
-::    1 if "forward", i.e. we send %plea's on this flow, or
-::    0 if "backward", i.e. we receive %plea's on this flow.
-::
-::    The second-least significant bit is 1 if the bone is a
-::    naxplanation bone, and 0 otherwise.  Only naxplanation
-::    messages can be sent on a naxplanation bone, as %boon's.
-::
-+$  ossuary
-  $:  =next=bone
-      by-duct=(map duct bone)
-      by-bone=(map bone duct)
-  ==
-::  $message-pump-state: persistent state for |message-pump
-::
-::    Messages queue up in |message-pump's .unsent-messages until they
-::    can be packetized and fed into |packet-pump for sending.  When we
-::    pop a message off .unsent-messages, we push as many fragments as
-::    we can into |packet-pump, which sends every packet it eats.
-::    Packets rejected by |packet-pump are placed in .unsent-fragments.
-::
-::    When we hear a packet ack, we send it to |packet-pump to be
-::    removed from its queue of unacked packets.
-::
-::    When we hear a message ack (positive or negative), we treat that
-::    as though all fragments have been acked.  If this message is not
-::    .current, then this ack is for a future message and .current has
-::    not yet been acked, so we place the ack in .queued-message-acks.
-::
-::    If we hear a message ack before we've sent all the fragments for
-::    that message, clear .unsent-fragments and have |packet-pump delete
-::    all sent fragments from the message. If this early message ack was
-::    positive, print it out because it indicates the peer is not
-::    behaving properly.
-::
-::    If the ack is for the current message, have |packet-pump delete
-::    all packets from the message, give the message ack back
-::    to the client vane, increment .current, and check if this next
-::    message is in .queued-message-acks.  If it is, emit the message
-::    (n)ack, increment .current, and check the next message.  Repeat
-::    until .current is not fully acked.
-::
-::    The following equation is always true:
-::    .next - .current == number of messages in flight
-::
-::    At the end of a task, |message-pump sends a %halt task to
-::    |packet-pump, which can trigger a timer to be set or cleared based
-::    on congestion control calculations. When the timer fires, it will
-::    generally cause a packet to be re-sent.
-::
-::    Message sequence numbers start at 1 so that the first message will
-::    be greater than .last-acked.message-sink-state on the receiver.
-::
-::    current: sequence number of earliest message sent or being sent
-::    next: sequence number of next message to send
-::    unsent-messages: messages to be sent after current message
-::    unsent-fragments: fragments of current message waiting for sending
-::    queued-message-acks: future message acks to be applied after current
-::    packet-pump-state: state of corresponding |packet-pump
-::
-+$  message-pump-state
-  $:  current=_`message-num`1
-      next=_`message-num`1
-      unsent-messages=(qeu message-blob)
-      unsent-fragments=(list static-fragment)
-      queued-message-acks=(map message-num ack)
-      =packet-pump-state
-  ==
-+$  static-fragment
-  $:  =message-num
-      num-fragments=fragment-num
-      =fragment-num
-      =fragment
-  ==
-::  $packet-pump-state: persistent state for |packet-pump
-::
-::    next-wake: last timer we've set, or null
-::    live: packets in flight; sent but not yet acked
-::    metrics: congestion control information
-::
-+$  packet-pump-state
-  $:  next-wake=(unit @da)
-      live=(tree [live-packet-key live-packet-val])
-      metrics=pump-metrics
-  ==
-::  $pump-metrics: congestion control state for a |packet-pump
-::
-::    This is an Ames adaptation of TCP's Reno congestion control
-::    algorithm.  The information signals and their responses are
-::    identical to those of the "NewReno" variant of Reno; the
-::    implementation differs because Ames acknowledgments differ from
-::    TCP's, because this code uses functional data structures, and
-::    because TCP's sequence numbers reset when a peer becomes
-::    unresponsive, whereas Ames sequence numbers only change when a
-::    ship breaches.
-::
-::    A deviation from Reno is +fast-resend-after-ack, which re-sends
-::    timed-out packets when a peer starts responding again after a
-::    period of unresponsiveness.
-::
-::    If .skips reaches 3, we perform a fast retransmit and fast
-::    recovery.  This corresponds to Reno's handling of "three duplicate
-::    acks".
-::
-::    rto: retransmission timeout
-::    rtt: roundtrip time estimate, low-passed using EWMA
-::    rttvar: mean deviation of .rtt, also low-passed with EWMA
-::    num-live: how many packets sent, awaiting ack
-::    ssthresh: slow-start threshold
-::    cwnd: congestion window; max unacked packets
-::
-+$  pump-metrics
-  $:  rto=_~s1
-      rtt=_~s1
-      rttvar=_~s1
-      ssthresh=_10.000
-      cwnd=_1
-      num-live=@ud
-      counter=@ud
-  ==
-+$  live-packet
-  $:  key=live-packet-key
-      val=live-packet-val
-  ==
-+$  live-packet-key
-  $:  =message-num
-      =fragment-num
-  ==
-+$  live-packet-val
-  $:  packet-state
-      num-fragments=fragment-num
-      =fragment
-  ==
-+$  packet-state
-  $:  last-sent=@da
-      retries=@ud
-      skips=@ud
-  ==
-::  $message-sink-state: state of |message-sink to assemble messages
-::
-::    last-acked: highest $message-num we've fully acknowledged
-::    last-heard: highest $message-num we've heard all fragments on
-::    pending-vane-ack: heard but not processed by local vane
-::    live-messages: partially received messages
-::
-+$  message-sink-state
-  $:  last-acked=message-num
-      last-heard=message-num
-      pending-vane-ack=(qeu [=message-num message=*])
-      live-messages=(map message-num partial-rcv-message)
-      nax=(set message-num)
-  ==
-::  $partial-rcv-message: message for which we've received some fragments
-::
-::    num-fragments: total number of fragments in this message
-::    num-received: how many fragments we've received so far
-::    fragments: fragments we've received, eventually producing a $message
-::
-+$  partial-rcv-message
-  $:  num-fragments=fragment-num
-      num-received=fragment-num
-      fragments=(map fragment-num fragment)
-  ==
 ::
 +|  %dialectics
 ::
@@ -738,8 +600,8 @@
 ::  $queued-event: event to be handled after initial boot completes
 ::
 +$  queued-event
-  $%  [%call =duct type=* wrapped-task=(hobo task)]
-      [%take =wire =duct type=* =sign]
+  $%  [%call =duct wrapped-task=(hobo task)]
+      [%take =wire =duct =sign]
   ==
 ::  $note: request to other vane
 ::
@@ -774,11 +636,11 @@
 ::  $sign: response from other vane
 ::
 +$  sign
-  $~  [%b %wake ~]
-  $%  $:  %b
-      $%  [%wake error=(unit tang)]
+  $~  [%behn %wake ~]
+  $%  $:  %behn
+      $%  $>(%wake gift:behn)
       ==  ==
-      $:  %j
+      $:  %jael
       $%  [%private-keys =life vein=(map life ring)]
           [%public-keys =public-keys-result]
           [%turf turfs=(list turf)]
@@ -858,73 +720,37 @@
   $%  [%memo =message-num message=*]
       [%send =message-num =ack-meat]
   ==
-::  previous state versions, for +stay/+load migrations
-::
-+|  %plasmonics
-::
-+$  ames-state-2
-  $:  peers=(map ship ship-state)
-      =unix=duct
-      =life
-      crypto-core=acru:ames
-      veb=_veb-all-off
-  ==
-::
-+$  ames-state-1
-  $:  peers=(map ship ship-state-1)
-      =unix=duct
-      =life
-      crypto-core=acru:ames
-  ==
-+$  ship-state-1
-  $%  [%alien alien-agenda]
-      [%known peer-state-1]
-  ==
-+$  peer-state-1
-  $:  $:  =symmetric-key
-          =life
-          =public-key
-          sponsor=ship
-      ==
-      route=(unit [direct=? =lane])
-      qos=qos-1
-      =ossuary
-      snd=(map bone message-pump-state)
-      rcv=(map bone message-sink-state)
-      nax=(set [=bone =message-num])
-      heeds=(set duct)
-  ==
-+$  qos-1
-  $~  [%unborn ~]
-  $%  [%live last-contact=@da]
-      [%dead last-contact=@da]
-      [%unborn ~]
-  ==
 --
 ::  external vane interface
 ::
-|=  pit=vase
+|=  our=ship
 ::  larval ames, before %born sets .unix-duct; wraps adult ames core
 ::
 =<  =*  adult-gate  .
     =|  queued-events=(qeu queued-event)
     ::
-    |=  [our=ship now=@da eny=@ scry-gate=sley]
+    |=  [now=@da eny=@ rof=roof]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
     |%
     ::  +call: handle request $task
     ::
     ++  call
-      |=  [=duct type=* wrapped-task=(hobo task)]
+      |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
       ::
       =/  =task  ((harden task) wrapped-task)
+      ::
+      ::  reject larval error notifications
+      ::
+      ?^  dud
+        ~|(%ames-larval-call-dud (mean tang.u.dud))
+      ::
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
         ::  process %born using wrapped adult ames
         ::
-        =^  moves  adult-gate  (call:adult-core duct type task)
+        =^  moves  adult-gate  (call:adult-core duct dud task)
         ::  if no events were queued up, metamorphose
         ::
         ?~  queued-events
@@ -936,20 +762,26 @@
         [moves larval-gate]
       ::  any other event: enqueue it until we have a .unix-duct
       ::
-      =.  queued-events  (~(put to queued-events) %call duct type task)
+      ::    XX what to do with errors?
+      ::
+      =.  queued-events  (~(put to queued-events) %call duct task)
       [~ larval-gate]
     ::  +take: handle response $sign
     ::
     ++  take
-      |=  [=wire =duct type=* =sign]
+      |=  [=wire =duct dud=(unit goof) =sign]
+      ?^  dud
+        ~|(%ames-larval-take-dud (mean tang.u.dud))
       ::  enqueue event if not a larval drainage timer
       ::
+      ::    XX what to do with errors?
+      ::
       ?.  =(/larva wire)
-        =.  queued-events  (~(put to queued-events) %take wire duct type sign)
+        =.  queued-events  (~(put to queued-events) %take wire duct sign)
         [~ larval-gate]
       ::  larval event drainage timer; pop and process a queued event
       ::
-      ?.  ?=([%b %wake *] sign)
+      ?.  ?=([%behn %wake *] sign)
         ~>  %slog.0^leaf/"ames: larva: strange sign"
         [~ larval-gate]
       ::  if crashed, print, dequeue, and set next drainage timer
@@ -982,15 +814,14 @@
       =^  first-event  queued-events  ~(get to queued-events)
       =^  moves  adult-gate
         ?-  -.first-event
-          %call  (call:adult-core +.first-event)
-          %take  (take:adult-core +.first-event)
+          %call  (call:adult-core [duct ~ wrapped-task]:+.first-event)
+          %take  (take:adult-core [wire duct ~ sign]:+.first-event)
         ==
       ::  .queued-events has been cleared; metamorphose
       ::
       ?~  queued-events
         ~>  %slog.0^leaf/"ames: metamorphosis"
         [moves adult-gate]
-      ~>  %slog.0^leaf/"ames: larva: drain"
       ::  set timer to drain next event
       ::
       =.  moves  :_(moves [duct %pass /larva %b %wait now])
@@ -998,43 +829,39 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%3 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%5 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
-          $%  $:  %3
-              $%  [%larva events=_queued-events state=_ames-state.adult-gate]
+          $%  $:  %4
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=_ames-state.adult-gate
+                  ==
                   [%adult state=_ames-state.adult-gate]
               ==  ==
-          ::
-              $:  %2
-              $%  [%larva events=_queued-events state=ames-state-2]
-                  [%adult state=ames-state-2]
+              $:  %5
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=_ames-state.adult-gate
+                  ==
+                  [%adult state=_ames-state.adult-gate]
               ==  ==
-          ::
-              $%  [%larva events=_queued-events state=ames-state-1]
-                  [%adult state=ames-state-1]
-          ==  ==
+          ==
       ?-    old
-          [%3 %adult *]  (load:adult-core %3 state.old)
-          [%2 %adult *]  (load:adult-core %2 state.old)
-          [%adult *]     (load:adult-core %1 state.old)
+          [%4 %adult *]  (load:adult-core %4 state.old)
       ::
-          [%3 %larva *]
+          [%4 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %3 state.old)
+        =.  adult-gate     (load:adult-core %4 state.old)
         larval-gate
       ::
-          [%2 %larva *]
+          [%5 %adult *]  (load:adult-core %5 state.old)
+      ::
+          [%5 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %2 state.old)
-        larval-gate
-      ::
-          [%larva *]
-        ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  events.old
-        =.  adult-gate     (load:adult-core %1 state.old)
+        =.  adult-gate     (load:adult-core %5 state.old)
         larval-gate
       ==
     --
@@ -1042,34 +869,40 @@
 ::
 =<
 =|  =ames-state
-|=  [our=ship now=@da eny=@ scry-gate=sley]
+|=  [now=@da eny=@ rof=roof]
 =*  ames-gate  .
 =*  veb  veb.bug.ames-state
 |%
 ::  +call: handle request $task
 ::
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task)]
+  |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _ames-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
-  ::
-  =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
+  =/  event-core  (per-event [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
+    ::  handle error notifications
+    ::
+    ?^  dud
+      ?+  -.task
+          (on-crud:event-core -.task tang.u.dud)
+        %hear  (on-hear:event-core lane.task blob.task dud)
+      ==
+    ::
     ?-  -.task
       %born  on-born:event-core
-      %crud  (on-crud:event-core [p q]:task)
-      %hear  (on-hear:event-core [lane blob]:task)
+      %hear  (on-hear:event-core [lane blob ~]:task)
       %heed  (on-heed:event-core ship.task)
-      %hole  (on-hole:event-core [lane blob]:task)
-      %init  (on-init:event-core ship=p.task)
+      %init  on-init:event-core
       %jilt  (on-jilt:event-core ship.task)
       %sift  (on-sift:event-core ships.task)
       %spew  (on-spew:event-core veb.task)
+      %stir  (on-stir:event-core arg.task)
+      %trim  on-trim:event-core
       %vega  on-vega:event-core
-      %wegh  on-wegh:event-core
       %plea  (on-plea:event-core [ship plea]:task)
     ==
   ::
@@ -1077,10 +910,13 @@
 ::  +take: handle response $sign
 ::
 ++  take
-  |=  [=wire =duct type=* =sign]
+  |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _ames-gate]
+  ?^  dud
+    ~|(%ames-take-dud (mean tang.u.dud))
   ::
-  =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
+  ::
+  =/  event-core  (per-event [now eny rof] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
@@ -1088,115 +924,139 @@
       [@ %done *]   (on-take-done:event-core wire error.sign)
       [@ %boon *]   (on-take-boon:event-core wire payload.sign)
     ::
-      [%b %wake *]  (on-take-wake:event-core wire error.sign)
+      [%behn %wake *]  (on-take-wake:event-core wire error.sign)
     ::
-      [%j %turf *]          (on-take-turf:event-core turfs.sign)
-      [%j %private-keys *]  (on-priv:event-core [life vein]:sign)
-      [%j %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
+      [%jael %turf *]          (on-take-turf:event-core turfs.sign)
+      [%jael %private-keys *]  (on-priv:event-core [life vein]:sign)
+      [%jael %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
     ==
   ::
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%3 %adult ames-state]
+++  stay  [%5 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   |=  $=  old-state
-      $%  [%1 ames-state-1]
-          [%2 ames-state-2]
-          [%3 ^ames-state]
+      $%  [%4 ^ames-state]
+          [%5 ^ames-state]
       ==
-  |^  ^+  ames-gate
-      ::
-      =?  old-state  ?=(%1 -.old-state)  %2^(state-1-to-2 +.old-state)
-      =?  old-state  ?=(%2 -.old-state)  %3^(state-2-to-3 +.old-state)
-      ::
-      ?>  ?=(%3 -.old-state)
-      ames-gate(ames-state +.old-state)
+  |^
+  ^+  ames-gate
+  =?  old-state  ?=(%4 -.old-state)  %5^(state-4-to-5 +.old-state)
   ::
-  ++  state-1-to-2
-    |=  =ames-state-1
-    ^-  ames-state-2
-    ::
-    =|  =ames-state-2
-    =.  +.ames-state-2
-      :*  unix-duct.ames-state-1
-          life.ames-state-1
-          crypto-core.ames-state-1
-          veb=veb-all-off
-      ==
-    =.  peers.ames-state-2
-      %-  ~(gas by *(map ship ship-state))
-      %+  turn  ~(tap by peers.ames-state-1)
-      |=  [peer=ship =ship-state-1]
-      ^-  [ship ship-state]
-      ?:  ?=(%alien -.ship-state-1)
-        [peer ship-state-1]
-      :+  peer  %known
-      %=    +.ship-state-1
-          qos
-        ?+  -.qos.ship-state-1  qos.ship-state-1
-          %unborn  [%unborn now]
-        ==
-      ==
-    ames-state-2
+  ?>  ?=(%5 -.old-state)
+  ames-gate(ames-state +.old-state)
   ::
-  ++  state-2-to-3
-    |=  =ames-state-2
-    ^-  ^ames-state
-    ::
-    :*  peers.ames-state-2
-        unix-duct.ames-state-2
-        life.ames-state-2
-        crypto-core.ames-state-2
-        bug=[veb=veb.ames-state-2 ships=~]
-    ==
+  ++  state-4-to-5
+    |=  =^ames-state
+    ^-  ^^ames-state
+    =.  peers.ames-state
+      %-  ~(run by peers.ames-state)
+      |=  =ship-state
+      ?.  ?=(%known -.ship-state)
+        ship-state
+      =.  snd.ship-state
+        %-  ~(run by snd.ship-state)
+        |=  =message-pump-state
+        =.  num-live.metrics.packet-pump-state.message-pump-state
+          ~(wyt in live.packet-pump-state.message-pump-state)
+        message-pump-state
+      ship-state
+    ames-state
   --
 ::  +scry: dereference namespace
 ::
-::    The ones producing vases are expected to be used like this:
-::
-::    &tang [(sell .^(vase %a /=peer=/~zod)) ~]
-::
 ++  scry
-  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
-  ?.  =(lot [%$ %da now])  ~
-  ?.  =(%$ ren)  [~ ~]
-  ?.  =([%& our] why)
-    [~ ~]
-  ?+    syd  ~
-      %peer
-    ?.  ?=([@ ~] tyl)  [~ ~]
-    =/  who  (slaw %p i.tyl)
-    ?~  who  [~ ~]
-    =/  per  (~(get by peers.ames-state) u.who)
-    =/  res
-      ?-  per
-        ~             %unknown
-        [~ %alien *]  %alien
-        [~ %known *]
-        =,  u.per
-        :*  %known
-            symkeymug=(mug symmetric-key)
-            life=life
-            pubkey=public-key
-            sponsor=sponsor
-            route=route
-            qos=qos
-            ossuary=ossuary
-            snd=~(key by snd)
-            rcv=~(key by rcv)
-            nax=nax
-            heeds=heeds
-        ==
-      ==
-    ``noun+!>(!>(res))
+  =*  ren  car
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =*  lot=coin  $/r.bem
+  =*  tyl  s.bem
   ::
-      %bones
-    ?.  ?=([@ ~] tyl)  [~ ~]
-    =/  who  (slaw %p i.tyl)
+  ::TODO  don't special-case whey scry
+  ::
+  ?:  &(=(%$ ren) =(tyl /whey))
+    =/  maz=(list mass)
+      =+  [known alien]=(skid ~(val by peers.ames-state) |=(^ =(%known +<-)))
+      :~  peers-known+&+known
+          peers-alien+&+alien
+      ==
+    ``mass+!>(maz)
+  ::  only respond for the local identity, %$ desk, current timestamp
+  ::
+  ?.  ?&  =(&+our why)
+          =([%$ %da now] lot)
+          =(%$ syd)
+      ==
+    ?.  for.veb.bug.ames-state  ~
+    ~>  %slog.0^leaf/"ames: scry-fail {<[why=why lot=lot now=now syd=syd]>}"
+    ~
+  ::  /ax/protocol/version           @
+  ::  /ax/peers                      (map ship ?(%alien %known))
+  ::  /ax/peers/[ship]               ship-state
+  ::  /ax/peers/[ship]/forward-lane  (list lane)
+  ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
+  ::  /ax/snd-bones/[ship]/[bone]    vase
+  ::
+  ?.  ?=(%x ren)  ~
+  ?+    tyl  ~
+      [%protocol %version ~]
+    ``noun+!>(protocol-version)
+  ::
+      [%peers ~]
+    :^  ~  ~  %noun
+    !>  ^-  (map ship ?(%alien %known))
+    (~(run by peers.ames-state) head)
+  ::
+      [%peers @ *]
+    =/  who  (slaw %p i.t.tyl)
+    ?~  who  [~ ~]
+    =/  peer  (~(get by peers.ames-state) u.who)
+    ?+    t.t.tyl  [~ ~]
+        ~
+      ?~  peer
+        [~ ~]
+      ``noun+!>(u.peer)
+    ::
+        [%forward-lane ~]
+      ::
+      ::  this duplicates the routing hack from +send-blob:event-core
+      ::  so long as neither the peer nor the peer's sponsoring galaxy is us:
+      ::
+      ::    - no route to the peer: send to the peer's sponsoring galaxy
+      ::    - direct route to the peer: use that
+      ::    - indirect route to the peer: send to both that route and the
+      ::      the peer's sponsoring galaxy
+      ::
+      :^  ~  ~  %noun
+      !>  ^-  (list lane)
+      ?.  ?&  ?=([~ %known *] peer)
+              !=(our u.who)
+          ==
+        ~
+      =;  zar=(trap (list lane))
+        ?~  route.u.peer  $:zar
+        =*  rot  u.route.u.peer
+        ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
+      ::
+      |.  ^-  (list lane)
+      ?:  ?=(%czar (clan:title sponsor.u.peer))
+        ?:  =(our sponsor.u.peer)
+          ~
+        [%& sponsor.u.peer]~
+      =/  next  (~(get by peers.ames-state) sponsor.u.peer)
+      ?.  ?=([~ %known *] next)
+        ~
+      $(peer next)
+    ==
+  ::
+      [%bones @ ~]
+    =/  who  (slaw %p i.t.tyl)
     ?~  who  [~ ~]
     =/  per  (~(get by peers.ames-state) u.who)
     ?.  ?=([~ %known *] per)  [~ ~]
@@ -1205,11 +1065,10 @@
       [snd=~(key by snd) rcv=~(key by rcv)]
     ``noun+!>(res)
   ::
-      %snd-bone
-    ?.  ?=([@ @ ~] tyl)  [~ ~]
-    =/  who  (slaw %p i.tyl)
+      [%snd-bones @ @ ~]
+    =/  who  (slaw %p i.t.tyl)
     ?~  who  [~ ~]
-    =/  ost  (slaw %ud i.t.tyl)
+    =/  ost  (slaw %ud i.t.t.tyl)
     ?~  ost  [~ ~]
     =/  per  (~(get by peers.ames-state) u.who)
     ?.  ?=([~ %known *] per)  [~ ~]
@@ -1220,13 +1079,16 @@
     ``noun+!>(!>(res))
   ==
 --
-::  helpers
+::  |per-event: inner event-handling core
 ::
+~%  %per-event  ..decode-packet  ~
 |%
 ++  per-event
   =|  moves=(list move)
-  |=  [[our=ship now=@da eny=@ scry-gate=sley] =duct =ames-state]
+  ~%  %event-gate  ..per-event  ~
+  |=  [[now=@da eny=@ rof=roof] =duct =ames-state]
   =*  veb  veb.bug.ames-state
+  ~%  %event-core  ..$  ~
   |%
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
@@ -1296,6 +1158,50 @@
         %rot  acc(rot %.y)
       ==
     event-core
+  ::  +on-stir: start timers for any flow that lack them
+  ::
+  ::    .arg is unused, meant to ease future debug commands
+  ::
+  ++  on-stir
+    |=  arg=@t
+    =/  states=(list [ship peer-state])
+      %+  murn  ~(tap by peers.ames-state)
+      |=  [=ship =ship-state]
+      ^-  (unit [^ship peer-state])
+      ?.  ?=(%known -.ship-state)
+        ~
+      `[ship +.ship-state]
+    =/  snds=(list (list [ship bone message-pump-state]))
+      %+  turn  states
+      |=  [=ship peer-state]
+      %+  turn  ~(tap by snd)
+      |=  [=bone =message-pump-state]
+      [ship bone message-pump-state]
+    =/  next-wakes
+      %+  turn  `(list [ship bone message-pump-state])`(zing snds)
+      |=  [=ship =bone message-pump-state]
+      [ship bone next-wake.packet-pump-state]
+    =/  next-real-wakes=(list [=ship =bone =@da])
+      %+  murn  next-wakes
+      |=  [=ship =bone tym=(unit @da)]
+      ^-  (unit [^ship ^bone @da])
+      ?~(tym ~ `[ship bone u.tym])
+    =/  timers
+      %-  silt
+      ;;  (list [@da ^duct])
+      =<  q.q  %-  need  %-  need
+      (rof ~ %b [[our %timers da+now] /])
+    =/  to-stir
+      %+  skip  next-real-wakes
+      |=  [=ship =bone =@da]
+      (~(has in timers) [da `^duct`~[a+(make-pump-timer-wire ship bone) /ames]])
+    ~&  [%stirring to-stir]
+    |-  ^+  event-core
+    ?~  to-stir
+      event-core
+    =/  =wire  (make-pump-timer-wire [ship bone]:i.to-stir)
+    =.  event-core  (emit duct %pass wire %b %wait da.i.to-stir)
+    $(to-stir t.to-stir)
   ::  +on-crud: handle event failure; print to dill
   ::
   ++  on-crud
@@ -1333,19 +1239,13 @@
   ::  +on-hear: handle raw packet receipt
   ::
   ++  on-hear
-    |=  [=lane =blob]
-    ^+  event-core
-    (on-hear-packet lane (decode-packet blob) ok=%.y)
-  ::  +on-hole: handle packet crash notification
-  ::
-  ++  on-hole
-    |=  [=lane =blob]
-    ^+  event-core
-    (on-hear-packet lane (decode-packet blob) ok=%.n)
+    |=  [l=lane b=blob d=(unit goof)]
+    (on-hear-packet l (decode-packet b) d)
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
   ++  on-hear-packet
-    |=  [=lane =packet ok=?]
+    ~/  %on-hear-packet
+    |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     ::
     ?:  =(our sndr.packet)
@@ -1356,9 +1256,11 @@
     ?.  =(our rcvr.packet)
       on-hear-forward
     ::
-    ?:  encrypted.packet
-      on-hear-shut
-    on-hear-open
+    ?:  ?&  ?=(%pawn (clan:title sndr.packet))
+            !?=([~ %known *] (~(get by peers.ames-state) sndr.packet))
+        ==
+      on-hear-open
+    on-hear-shut
   ::  +on-hear-forward: maybe forward a packet to someone else
   ::
   ::    Note that this performs all forwarding requests without
@@ -1366,48 +1268,39 @@
   ::    provided by Vere.
   ::
   ++  on-hear-forward
-    |=  [=lane =packet ok=?]
+    ~/  %on-hear-forward
+    |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
     %-  %^  trace  for.veb  sndr.packet
         |.("forward: {<sndr.packet>} -> {<rcvr.packet>}")
     ::  set .origin.packet if it doesn't already have one, re-encode, and send
     ::
-    =?  origin.packet  ?=(~ origin.packet)  `lane
+    =?    origin.packet
+        &(?=(~ origin.packet) !=(%czar (clan:title sndr.packet)))
+      ?:  ?=(%& -.lane)
+        ~
+      ?.  (lte (met 3 p.lane) 6)
+        ~|  ames-lane-size+p.lane  !!
+      `p.lane
+    ::
     =/  =blob  (encode-packet packet)
     (send-blob & rcvr.packet blob)
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
-    |=  [=lane =packet ok=?]
+    ~/  %on-hear-open
+    |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
+    ::  assert the comet can't pretend to be a moon or other address
+    ::
+    ?>  ?=(%pawn (clan:title sndr.packet))
     ::  if we already know .sndr, ignore duplicate attestation
     ::
     =/  ship-state  (~(get by peers.ames-state) sndr.packet)
     ?:  ?=([~ %known *] ship-state)
       event-core
-    ::  deserialize and type-check packet contents
     ::
-    ?>  ?=(@ content.packet)
-    =+  ;;  [signature=@ signed=@]  (cue content.packet)
-    =+  ;;  =open-packet            (cue signed)
-    ::  assert .our and .her and lives match
-    ::
-    ?>  .=       sndr.open-packet  sndr.packet
-    ?>  .=       rcvr.open-packet  our
-    ?>  .=  sndr-life.open-packet  1
-    ?>  .=  rcvr-life.open-packet  life.ames-state
-    ::  only a star can sponsor a comet
-    ::
-    ?>  =(%king (clan:title (^sein:title sndr.packet)))
-    ::  comet public-key must hash to its @p address
-    ::
-    ?>  =(sndr.packet fig:ex:(com:nu:crub:crypto public-key.open-packet))
-    ::  verify signature
-    ::
-    ::    Logic duplicates +com:nu:crub:crypto and +sure:as:crub:crypto.
-    ::
-    =/  key  (end 8 1 (rsh 3 1 public-key.open-packet))
-    ?>  (veri:ed:crypto signature signed key)
+    =/  =open-packet  (decode-open-packet packet our life.ames-state)
     ::  store comet as peer in our state
     ::
     =.  peers.ames-state
@@ -1432,21 +1325,13 @@
   ::  +on-hear-shut: handle receipt of encrypted packet
   ::
   ++  on-hear-shut
-    |=  [=lane =packet ok=?]
+    ~/  %on-hear-shut
+    |=  [=lane =packet dud=(unit goof)]
     ^+  event-core
-    ::  encrypted packet content must be an encrypted atom
-    ::
-    ?>  ?=(@ content.packet)
-    ::
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
-    ::  if we don't know them, maybe enqueue a jael %public-keys request
-    ::
-    ::    Ignore encrypted packets from alien comets.
-    ::    TODO: maybe crash?
+    ::  if we don't know them, ask jael for their keys and enqueue
     ::
     ?.  ?=([~ %known *] sndr-state)
-      ?:  =(%pawn (clan:title sndr.packet))
-        event-core
       (enqueue-alien-todo sndr.packet |=(alien-agenda +<))
     ::  decrypt packet contents using symmetric-key.channel
     ::
@@ -1457,34 +1342,41 @@
     =/  =peer-state   +.u.sndr-state
     =/  =channel      [[our sndr.packet] now channel-state -.peer-state]
     ~|  %ames-crash-on-packet-from^her.channel
-    =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
-    ::  ward against replay attacks
-    ::
-    ::    We only accept packets from a ship at their known life, and to
-    ::    us at our current life.
-    ::
-    ~|  our-life=[expected=our-life.channel got=rcvr-life.shut-packet]
-    ~|  her-life=[expected=her-life.channel got=sndr-life.shut-packet]
-    ?>  =(sndr-life.shut-packet her-life.channel)
-    ?>  =(rcvr-life.shut-packet our-life.channel)
+    =/  =shut-packet
+      (decode-shut-packet packet [symmetric-key her-life our-life]:channel)
     ::  non-galaxy: update route with heard lane or forwarded lane
     ::
-    =?    route.peer-state
-        ?:  =(%czar (clan:title her.channel))
-          %.n
-        =/  is-old-direct=?  ?=([~ %& *] route.peer-state)
-        =/  is-new-direct=?  ?=(~ origin.packet)
-        ::  old direct takes precedence over new indirect
-        ::
-        |(is-new-direct !is-old-direct)
+    =?  route.peer-state  !=(%czar (clan:title her.channel))
+      ::  if new packet is direct, use that.  otherwise, if the new new
+      ::  and old lanes are indirect, use the new one.  if the new lane
+      ::  is indirect but the old lane is direct, then if the lanes are
+      ::  identical, don't mark it indirect; if they're not identical,
+      ::  use the new lane and mark it indirect.
       ::
-      ?~  origin.packet
+      ::  if you mark lane as indirect because you got an indirect
+      ::  packet even though you already had a direct identical lane,
+      ::  then delayed forwarded packets will come later and reset to
+      ::  indirect, so you're unlikely to get a stable direct route
+      ::  (unless the forwarder goes offline for a while).
+      ::
+      ::  conversely, if you don't accept indirect routes with different
+      ::  lanes, then if your lane is stale and they're trying to talk
+      ::  to you, your acks will go to the stale lane, and you'll never
+      ::  time it out unless you reach out to them.  this manifests as
+      ::  needing to |hi or dotpost to get a response when the other
+      ::  ship has changed lanes.
+      ::
+      ?:  ?=(~ origin.packet)
         `[direct=%.y lane]
-      `[direct=%.n u.origin.packet]
+      ?:  ?=([~ %& *] route.peer-state)
+        ?:  =(lane.u.route.peer-state |+u.origin.packet)
+          route.peer-state
+        `[direct=%.n |+u.origin.packet]
+      `[direct=%.n |+u.origin.packet]
     ::  perform peer-specific handling of packet
     ::
     =/  peer-core  (make-peer-core peer-state channel)
-    abet:(on-hear-shut-packet:peer-core lane shut-packet ok)
+    abet:(on-hear-shut-packet:peer-core lane shut-packet dud)
   ::  +on-take-boon: receive request to give message to peer
   ::
   ++  on-take-boon
@@ -1519,7 +1411,7 @@
         |.  ^-  tape
         =/  sndr  [our our-life.channel]
         =/  rcvr  [ship her-life.channel]
-        "plea {<sndr^rcvr^bone^vane.plea^path.plea>}"
+        "plea {<sndr^rcvr^bone=bone^vane.plea^path.plea>}"
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
@@ -1544,7 +1436,6 @@
   ::  +on-init: first boot; subscribe to our info from jael
   ::
   ++  on-init
-    |=  our=ship
     ^+  event-core
     ::
     =~  (emit duct %pass /turf %j %turf ~)
@@ -1796,8 +1687,7 @@
       ^-  ship
       ;;  ship
       =<  q.q  %-  need  %-  need
-      %-  scry-gate
-      [[%141 %noun] ~ %j `beam`[[our %sein %da now] /(scot %p who)]]
+      (rof ~ %j `beam`[[our %sein %da now] /(scot %p who)])
     --
   ::  +on-take-turf: relay %turf move from jael to unix
   ::
@@ -1806,20 +1696,6 @@
     ^+  event-core
     ::
     (emit unix-duct.ames-state %give %turf turfs)
-  ::  +on-wegh: produce memory usage report
-  ::
-  ++  on-wegh
-    ^+  event-core
-    ::
-    =+  [known alien]=(skid ~(tap by peers.ames-state) |=(^ =(%known +<-)))
-    ::
-    %-  emit
-    :^  duct  %give  %mass
-    :+  %ames  %|
-    :~  peers-known+&+known
-        peers-alien+&+alien
-        dot+&+ames-state
-    ==
   ::  +on-born: handle unix process restart
   ::
   ++  on-born
@@ -1830,12 +1706,15 @@
     =/  turfs
       ;;  (list turf)
       =<  q.q  %-  need  %-  need
-      (scry-gate [%141 %noun] ~ %j `beam`[[our %turf %da now] /])
+      (rof ~ %j `beam`[[our %turf %da now] /])
     ::
     (emit unix-duct.ames-state %give %turf turfs)
+  ::  +on-trim: handle request to free memory
   ::  +on-vega: handle kernel reload
+  ::  +on-trim: handle request to free memory
   ::
   ++  on-vega  event-core
+  ++  on-trim  event-core
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
   ::    Also requests key and life from Jael on first request.
@@ -1860,6 +1739,9 @@
     ::
     ?:  already-pending
       event-core
+    ::  NB: we specifically look for this wire in +public-keys-give in
+    ::  Jael.  if you change it here, you must change it there.
+    ::
     (emit duct %pass /public-keys %j %public-keys [n=ship ~ ~])
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
@@ -1870,6 +1752,7 @@
   ::    request the information from Jael if we haven't already.
   ::
   ++  send-blob
+    ~/  %send-blob
     |=  [for=? =ship =blob]
     ::
     =/  final-ship  ship
@@ -1934,19 +1817,15 @@
   ++  attestation-packet
     |=  [her=ship =her=life]
     ^-  blob
-    ::
-    =/  =open-packet
-      :*  ^=  public-key  pub:ex:crypto-core.ames-state
-          ^=        sndr  our
-          ^=   sndr-life  life.ames-state
-          ^=        rcvr  her
-          ^=   rcvr-life  her-life
-      ==
-    ::
-    =/  signed=@  (sign:as:crypto-core.ames-state (jam open-packet))
-    =/  =packet   [[our her] encrypted=%.n origin=~ signed]
-    ::
-    (encode-packet packet)
+    %-  encode-packet
+    %-  encode-open-packet
+    :_  crypto-core.ames-state
+    :*  ^=  public-key  pub:ex:crypto-core.ames-state
+        ^=        sndr  our
+        ^=   sndr-life  life.ames-state
+        ^=        rcvr  her
+        ^=   rcvr-life  her-life
+    ==
   ::  +get-peer-state: lookup .her state or ~
   ::
   ++  get-peer-state
@@ -2024,7 +1903,7 @@
       =/  pumps=(list message-pump-state)
         %+  murn  ~(tap by snd.peer-state)
         |=  [=bone =message-pump-state]
-        ?:  =(0 (end 0 1 bone))
+        ?:  =(0 (end 0 bone))
           ~
         `u=message-pump-state
       ::  clogged: are five or more response messages unsent to this peer?
@@ -2056,7 +1935,7 @@
     ::  +on-hear-shut-packet: handle receipt of ack or message fragment
     ::
     ++  on-hear-shut-packet
-      |=  [=lane =shut-packet ok=?]
+      |=  [=lane =shut-packet dud=(unit goof)]
       ^+  peer-core
       ::  update and print connection status
       ::
@@ -2065,12 +1944,23 @@
       =/  =bone  bone.shut-packet
       ::
       ?:  ?=(%& -.meat.shut-packet)
-        (run-message-sink bone %hear lane shut-packet ok)
-      ::  ignore .ok for |message-pump; just try again on error
+        =+  ?~  dud  ~
+            %.  ~
+            %+  slog
+              leaf+"ames: {<her.channel>} fragment crashed {<mote.u.dud>}"
+            ?.(msg.veb ~ tang.u.dud)
+        (run-message-sink bone %hear lane shut-packet ?=(~ dud))
+      ::  Just try again on error, printing trace
       ::
       ::    Note this implies that vanes should never crash on %done,
       ::    since we have no way to continue using the flow if they do.
       ::
+      =+  ?~  dud  ~
+          %.  ~
+          %+  slog  leaf+"ames: {<her.channel>} ack crashed {<mote.u.dud>}"
+          ?.  msg.veb  ~
+          :-  >[bone=bone message-num=message-num meat=meat]:shut-packet<
+          tang.u.dud
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
     ::
@@ -2087,12 +1977,45 @@
           ==
         now
       ::
-      =/  =message-blob  (jam payload)
+      =/  =message-blob  (dedup-message (jim payload))
       =.  peer-core  (run-message-pump bone %memo message-blob)
       ::
       ?:  &(=(%boon valence) ?=(?(%dead %unborn) -.qos.peer-state))
         check-clog
       peer-core
+    ::  +dedup-message: replace with any existing copy of this message
+    ::
+    ++  dedup-message
+      |=  =message-blob
+      ^+  message-blob
+      ?:  (lte (met 13 message-blob) 1)
+        message-blob
+      =/  peers-l=(list [=ship =ship-state])  ~(tap by peers.ames-state)
+      |-  ^+  message-blob
+      =*  peer-loop  $
+      ?~  peers-l
+        message-blob
+      ?.  ?=(%known -.ship-state.i.peers-l)
+        peer-loop(peers-l t.peers-l)
+      =/  snd-l=(list [=bone =message-pump-state])
+        ~(tap by snd.ship-state.i.peers-l)
+      |-  ^+  message-blob
+      =*  bone-loop  $
+      ?~  snd-l
+        peer-loop(peers-l t.peers-l)
+      =/  blob-l=(list ^message-blob)
+        ~(tap to unsent-messages.message-pump-state.i.snd-l)
+      |-  ^+  message-blob
+      =*  blob-loop  $
+      ?^  blob-l
+        ?:  =(i.blob-l message-blob)
+          i.blob-l
+        blob-loop(blob-l t.blob-l)
+      ?~  unsent-fragments.message-pump-state.i.snd-l
+        bone-loop(snd-l t.snd-l)
+      ?:  =(message-blob fragment.i.unsent-fragments.message-pump-state.i.snd-l)
+        `@`fragment.i.unsent-fragments.message-pump-state.i.snd-l
+      bone-loop(snd-l t.snd-l)
     ::  +on-wake: handle timer expiration
     ::
     ++  on-wake
@@ -2110,6 +2033,11 @@
         ?~  message-pump-state=(~(get by snd.peer-state) bone)
           peer-core
         ?~  next-wake.packet-pump-state.u.message-pump-state
+          peer-core
+        ::  If we crashed because we woke up too early, assume another
+        ::  timer is already set.
+        ::
+        ?:  (lth now.channel u.next-wake.packet-pump-state.u.message-pump-state)
           peer-core
         ::
         =/  =wire  (make-pump-timer-wire her.channel bone)
@@ -2167,13 +2095,15 @@
       ::    kind of flow this is (forward/backward), so flip the bit
       ::    here.
       ::
-      =.  bone.shut-packet  (mix 1 bone.shut-packet)
-      ::
-      =/  content  (encrypt symmetric-key.channel shut-packet)
-      =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
-      =/  =blob    (encode-packet packet)
-      ::
-      =.  event-core  (send-blob | her.channel blob)
+      =.  event-core
+        %^  send-blob  |  her.channel
+        %-  encode-packet
+        %:  encode-shut-packet
+          shut-packet(bone (mix 1 bone.shut-packet))
+          symmetric-key.channel
+          our               her.channel
+          our-life.channel  her-life.channel
+        ==
       peer-core
     ::  +got-duct: look up $duct by .bone, asserting already bound
     ::
@@ -2215,11 +2145,11 @@
         ^+  peer-core
         ::  if odd bone, ack is on "subscription update" message; no-op
         ::
-        ?:  =(1 (end 0 1 bone))
+        ?:  =(1 (end 0 bone))
           peer-core
         ::  even bone; is this bone a nack-trace bone?
         ::
-        ?:  =(1 (end 0 1 (rsh 0 1 bone)))
+        ?:  =(1 (end 0 (rsh 0 bone)))
           ::  nack-trace bone; assume .ok, clear nack from |message-sink
           ::
           =/  target-bone=^bone  (mix 0b10 bone)
@@ -2231,17 +2161,7 @@
       ::  +on-pump-send: emit message fragment requested by |message-pump
       ::
       ++  on-pump-send
-        |=  =static-fragment
-        ^+  peer-core
-        ::  encrypt and encode .static-fragment to .blob bitstream
-        ::
-        %-  send-shut-packet  :*
-          our-life.channel
-          her-life.channel
-          bone
-          message-num.static-fragment
-          %&  +.static-fragment
-        ==
+        |=(f=static-fragment (send-shut-packet bone [message-num %& +]:f))
       ::  +on-pump-wait: relay |message-pump's set-timer request
       ::
       ++  on-pump-wait
@@ -2288,16 +2208,7 @@
       ::  +on-sink-send: emit ack packet as requested by |message-sink
       ::
       ++  on-sink-send
-        |=  [=message-num =ack-meat]
-        ^+  peer-core
-        ::
-        %-  send-shut-packet  :*
-          our-life.channel
-          her-life.channel
-          bone
-          message-num
-          %|  ack-meat
-        ==
+        |=([num=message-num ack=ack-meat] (send-shut-packet bone num %| ack))
       ::  +on-sink-memo: dispatch message received by |message-sink
       ::
       ::    odd bone:                %plea request message
@@ -2305,9 +2216,9 @@
       ::    even bone, 1 second bit: nack-trace %boon message
       ::
       ++  on-sink-memo
-        ?:  =(1 (end 0 1 bone))
+        ?:  =(1 (end 0 bone))
           on-sink-plea
-        ?:  =(0 (end 0 1 (rsh 0 1 bone)))
+        ?:  =(0 (end 0 (rsh 0 bone)))
           on-sink-boon
         on-sink-nack-trace
       ::  +on-sink-boon: handle response message received by |message-sink
@@ -2335,11 +2246,15 @@
         ?.  ?=([%hear * * ok=%.n] task)
           ::  fresh boon; give message to client vane
           ::
-          %-  (trace msg.veb |.("boon {<her.channel^bone -.task>}"))
+          %-  %+  trace  msg.veb
+              =/  dat  [her.channel bone=bone message-num=message-num -.task]
+              |.("sink boon {<dat>}")
           peer-core
         ::  we previously crashed on this message; notify client vane
         ::
-        %-  (trace msg.veb |.("crashed on boon {<her.channel^bone -.task>}"))
+        %-  %+  trace  msg.veb
+            =/  dat  [her.channel bone=bone message-num=message-num -.task]
+            |.("crashed on sink boon {<dat>}")
         boon-to-lost
       ::  +boon-to-lost: convert all boons to losts
       ::
@@ -2357,7 +2272,9 @@
       ++  on-sink-nack-trace
         |=  [=message-num message=*]
         ^+  peer-core
-        %-  (trace msg.veb |.("nack trace {<her.channel^bone>}"))
+        %-  %+  trace  msg.veb
+            =/  dat  [her.channel bone=bone message-num=message-num]
+            |.("sink naxplanation {<dat>}")
         ::
         =+  ;;  =naxplanation  message
         ::  ack nack-trace message (only applied if we don't later crash)
@@ -2374,7 +2291,9 @@
       ++  on-sink-plea
         |=  [=message-num message=*]
         ^+  peer-core
-        %-  (trace msg.veb |.("plea {<her.channel^bone>}"))
+        %-  %+  trace  msg.veb
+            =/  dat  [her.channel bone=bone message-num=message-num]
+            |.("sink plea {<dat>}")
         ::  is this the first time we're trying to process this message?
         ::
         ?.  ?=([%hear * * ok=%.n] task)
@@ -2484,7 +2403,8 @@
     ::  ignore duplicate message acks
     ::
     ?:  (lth message-num current.state)
-      %-  (trace snd.veb |.("duplicate done {<current.state message-num>}"))
+      %-  %+  trace  snd.veb
+          |.("duplicate done {<current=current.state message-num=message-num>}")
       message-pump
     ::  ignore duplicate and future acks
     ::
@@ -2519,6 +2439,19 @@
     ::
     =.  queued-message-acks.state
       (~(del by queued-message-acks.state) current.state)
+    ::  clear all packets from this message from the packet pump
+    ::
+    ::    Note we did this when the original packet came in, a few lines
+    ::    above.  It's not clear why, but it doesn't always clear the
+    ::    packets when it's not the current message.  As a workaround,
+    ::    we clear the packets again when we catch up to this packet.
+    ::
+    ::    This is slightly inefficient because we run this twice for
+    ::    each packet and it may emit a few unnecessary packets, but
+    ::    but it's not incorrect.  pump-metrics are updated only once,
+    ::    at the time when we actually delete the packet.
+    ::
+    =.  message-pump  (run-packet-pump %done current.state lag=*@dr)
     ::  give %done to vane if we're ready
     ::
     ?-    -.u.cur
@@ -2784,7 +2717,7 @@
                     =(0 (mod counter.metrics.state 20))
                 ==
               same
-            (trace snd.veb |.("{<[fragment-num show:gauge]>}"))
+            (trace snd.veb |.("send: {<[fragment=fragment-num show:gauge]>}"))
         ::  .resends is backward, so fold backward and emit
         ::
         =.  packet-pump
@@ -2843,7 +2776,7 @@
     =-  =.  metrics.state  metrics.-
         =.  live.state     live.-
         ::
-        %-  (trace snd.veb |.("done {<message-num^show:gauge>}"))
+        %-  (trace snd.veb |.("done {<message-num=message-num^show:gauge>}"))
         (fast-resend-after-ack message-num `fragment-num`0)
     ::
     ^+  [metrics=metrics.state live=live.state]
@@ -3074,7 +3007,8 @@
     ::  ignore messages from far future; limit to 10 in progress
     ::
     ?:  (gte seq (add 10 last-acked.state))
-      %-  (trace odd.veb |.("future %hear {<seq^last-acked.state>}"))
+      %-  %+  trace  odd.veb
+          |.("future %hear {<seq=seq^last-acked=last-acked.state>}")
       message-sink
     ::
     =/  is-last-fragment=?  =(+(fragment-num) num-fragments)
@@ -3084,12 +3018,13 @@
       ?.  is-last-fragment
         ::  single packet ack
         ::
-        %-  (trace rcv.veb |.("send dupe ack {<seq^fragment-num>}"))
+        %-  %+  trace  rcv.veb
+            |.("send dupe ack {<seq=seq^fragment-num=fragment-num>}")
         (give %send seq %& fragment-num)
       ::  whole message (n)ack
       ::
       =/  ok=?  !(~(has in nax.state) seq)
-      %-  (trace rcv.veb |.("send dupe message ack {<seq>} ok={<ok>}"))
+      %-  (trace rcv.veb |.("send dupe message ack {<seq=seq>} ok={<ok>}"))
       (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
@@ -3103,15 +3038,18 @@
         %-  %+  trace  rcv.veb
             |.  ^-  tape
             =/  data
-              :*  her.channel  seq
-                  fragment-num  num-fragments
+              :*  her.channel  seq=seq
+                  fragment-num=fragment-num  num-fragments=num-fragments
                   la=last-acked.state  lh=last-heard.state
               ==
             "hear last in-progress {<data>}"
         message-sink
       ::  ack all other packets
       ::
-      %-  (trace rcv.veb |.("send ack {<seq^fragment-num>}"))
+      %-  %+  trace  rcv.veb  |.
+          =/  data
+            [seq=seq fragment-num=fragment-num num-fragments=num-fragments]
+          "send ack-1 {<data>}"
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
     ::
@@ -3134,10 +3072,12 @@
     ?:  already-heard-fragment
       ?:  is-last-fragment
         %-  %+  trace  rcv.veb  |.
-            =/  data  [her.channel seq last-heard.state last-acked.state]
+            =/  data
+              [her.channel seq=seq lh=last-heard.state la=last-acked.state]
             "hear last dupe {<data>}"
         message-sink
-      %-  (trace rcv.veb |.("send dupe ack {<her.channel^seq^fragment-num>}"))
+      %-  %+  trace  rcv.veb
+          |.("send dupe ack {<her.channel^seq=seq^fragment-num=fragment-num>}")
       (give %send seq %& fragment-num)
     ::  new fragment; store in state and check if message is done
     ::
@@ -3152,7 +3092,10 @@
     ::  ack any packet other than the last one, and continue either way
     ::
     =?  message-sink  !is-last-fragment
-      %-  (trace rcv.veb |.("send ack {<seq^fragment-num>}"))
+      %-  %+  trace  rcv.veb  |.
+          =/  data
+            [seq=seq fragment-num=fragment-num num-fragments=num-fragments]
+          "send ack-2 {<data>}"
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
     ::
@@ -3175,7 +3118,7 @@
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
     %-  %+  trace  msg.veb
-        |.("hear {<her.channel>} {<seq>} {<num-fragments.u.live>}kb")
+        |.("hear {<her.channel>} {<seq=seq>} {<num-fragments.u.live>}kb")
     =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
     =.  message-sink  (enqueue-to-vane seq message)
     ::
@@ -3218,247 +3161,4 @@
     ::
     message-sink
   --
-::  +qos-update-text: notice text for if connection state changes
-::
-++  qos-update-text
-  |=  [=ship old=qos new=qos]
-  ^-  (unit tape)
-  ::
-  ?+  [-.old -.new]  ~
-    [%unborn %live]  `"; {(scow %p ship)} is your neighbor"
-    [%dead %live]    `"; {(scow %p ship)} is ok"
-    [%live %dead]    `"; {(scow %p ship)} not responding still trying"
-    [%unborn %dead]  `"; {(scow %p ship)} not responding still trying"
-    [%live %unborn]  `"; {(scow %p ship)} has sunk"
-    [%dead %unborn]  `"; {(scow %p ship)} has sunk"
-  ==
-::  +lte-packets: yes if a is before b
-::
-++  lte-packets
-  |=  [a=live-packet-key b=live-packet-key]
-  ^-  ?
-  ::
-  ?:  (lth message-num.a message-num.b)
-    %.y
-  ?:  (gth message-num.a message-num.b)
-    %.n
-  (lte fragment-num.a fragment-num.b)
-::  +split-message: split message into kilobyte-sized fragments
-::
-++  split-message
-  |=  [=message-num =message-blob]
-  ^-  (list static-fragment)
-  ::
-  =/  fragments=(list fragment)   (rip 13 message-blob)
-  =/  num-fragments=fragment-num  (lent fragments)
-  =|  counter=@
-  ::
-  |-  ^-  (list static-fragment)
-  ?~  fragments  ~
-  ::
-  :-  [message-num num-fragments counter i.fragments]
-  ::
-  $(fragments t.fragments, counter +(counter))
-::  +assemble-fragments: concatenate fragments into a $message
-::
-++  assemble-fragments
-  |=  [num-fragments=fragment-num fragments=(map fragment-num fragment)]
-  ^-  *
-  ::
-  =|  sorted=(list fragment)
-  =.  sorted
-    =/  index=fragment-num  0
-    |-  ^+  sorted
-    ?:  =(index num-fragments)
-      sorted
-    $(index +(index), sorted [(~(got by fragments) index) sorted])
-  ::
-  %-  cue
-  %+  can   13
-  %+  turn  (flop sorted)
-  |=(a=@ [1 a])
-::  +bind-duct: find or make new $bone for .duct in .ossuary
-::
-++  bind-duct
-  |=  [=ossuary =duct]
-  ^+  [next-bone.ossuary ossuary]
-  ::
-  ?^  existing=(~(get by by-duct.ossuary) duct)
-    [u.existing ossuary]
-  ::
-  :-  next-bone.ossuary
-  :+  (add 4 next-bone.ossuary)
-    (~(put by by-duct.ossuary) duct next-bone.ossuary)
-  (~(put by by-bone.ossuary) next-bone.ossuary duct)
-::  +make-bone-wire: encode ship and bone in wire for sending to vane
-::
-++  make-bone-wire
-  |=  [her=ship =bone]
-  ^-  wire
-  ::
-  /bone/(scot %p her)/(scot %ud bone)
-::  +parse-bone-wire: decode ship and bone from wire from local vane
-::
-++  parse-bone-wire
-  |=  =wire
-  ^-  [her=ship =bone]
-  ::
-  ~|  %ames-wire-bone^wire
-  ?>  ?=([%bone @ @ ~] wire)
-  [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
-::  +make-pump-timer-wire: construct wire for |packet-pump timer
-::
-++  make-pump-timer-wire
-  |=  [her=ship =bone]
-  ^-  wire
-  /pump/(scot %p her)/(scot %ud bone)
-::  +parse-pump-timer-wire: parse .her and .bone from |packet-pump wire
-::
-++  parse-pump-timer-wire
-  |=  =wire
-  ^-  (unit [her=ship =bone])
-  ::
-  ~|  %ames-wire-timer^wire
-  ?.  ?=([%pump @ @ ~] wire)
-    ~
-  ?~  ship=`(unit @p)`(slaw %p i.t.wire)
-    ~
-  ?~  bone=`(unit @ud)`(slaw %ud i.t.t.wire)
-    ~
-  `[u.ship u.bone]
-::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
-::
-::    Assumes keys have a tag on them like the result of the |ex:crub core.
-::
-++  derive-symmetric-key
-  |=  [=public-key =private-key]
-  ^-  symmetric-key
-  ::
-  ?>  =('b' (end 3 1 public-key))
-  =.  public-key  (rsh 8 1 (rsh 3 1 public-key))
-  ::
-  ?>  =('B' (end 3 1 private-key))
-  =.  private-key  (rsh 8 1 (rsh 3 1 private-key))
-  ::
-  `@`(shar:ed:crypto public-key private-key)
-::  +encrypt: encrypt $shut-packet into atomic packet content
-::
-++  encrypt
-  |=  [=symmetric-key plaintext=shut-packet]
-  ^-  @
-  ::
-  (en:crub:crypto symmetric-key (jam plaintext))
-::  +decrypt: decrypt packet content to a $shut-packet or die
-::
-++  decrypt
-  |=  [=symmetric-key ciphertext=@]
-  ^-  shut-packet
-  ::
-  ;;  shut-packet
-  %-  cue
-  %-  need
-  (de:crub:crypto symmetric-key ciphertext)
-::  +encode-packet: serialize a packet into a bytestream
-::
-++  encode-packet
-  |=  packet
-  ^-  blob
-  ::
-  =/  sndr-meta  (encode-ship-metadata sndr)
-  =/  rcvr-meta  (encode-ship-metadata rcvr)
-  ::  body: <<sndr rcvr (jam [origin content])>>
-  ::
-  ::    The .sndr and .rcvr ship addresses are encoded with fixed
-  ::    lengths specified by the packet header. They live outside
-  ::    the jammed-data section to simplify packet filtering in the
-  ::    interpreter.
-  ::
-  =/  body=@
-    ;:  mix
-      sndr
-      (lsh 3 size.sndr-meta rcvr)
-      (lsh 3 (add size.sndr-meta size.rcvr-meta) (jam [origin content]))
-    ==
-  ::  header: 32-bit header assembled from bitstreams of fields
-  ::
-  ::    <<version checksum sndr-rank rcvr-rank encryption-type unused>>
-  ::    4 bits at the end of the header are unused.
-  ::
-  =/  header=@
-    %+  can  0
-    :~  [3 protocol-version]
-        [20 (mug body)]
-        [2 rank.sndr-meta]
-        [2 rank.rcvr-meta]
-        [5 ?:(encrypted %0 %1)]
-    ==
-  ::  result is <<header body>>
-  ::
-  (mix header (lsh 5 1 body))
-::  +decode-packet: deserialize packet from bytestream or crash
-::
-++  decode-packet
-  |=  =blob
-  ^-  packet
-  ::  first 32 (2^5) bits are header; the rest is body
-  ::
-  =/  header  (end 5 1 blob)
-  =/  body    (rsh 5 1 blob)
-  ::
-  =/  version    (end 0 3 header)
-  =/  checksum   (cut 0 [3 20] header)
-  =/  sndr-size  (decode-ship-size (cut 0 [23 2] header))
-  =/  rcvr-size  (decode-ship-size (cut 0 [25 2] header))
-  =/  encrypted  ?+((cut 0 [27 5] header) !! %0 %.y, %1 %.n)
-  ::
-  =/  =dyad
-    :-  sndr=(end 3 sndr-size body)
-    rcvr=(cut 3 [sndr-size rcvr-size] body)
-  ::
-  ?.  =(protocol-version version)
-    ~|  %ames-protocol^version^dyad  !!
-  ?.  =(checksum (end 0 20 (mug body)))
-    ~|  %ames-checksum^dyad  !!
-  ::
-  =+  ~|  %ames-invalid-packet
-      ;;  [origin=(unit lane) content=*]
-      ~|  %ames-invalid-noun
-      %-  cue
-      (rsh 3 (add rcvr-size sndr-size) body)
-  ::
-  [dyad encrypted origin content]
-::  +decode-ship-size: decode a 2-bit ship type specifier into a byte width
-::
-::    Type 0: galaxy or star -- 2 bytes
-::    Type 1: planet         -- 4 bytes
-::    Type 2: moon           -- 8 bytes
-::    Type 3: comet          -- 16 bytes
-::
-++  decode-ship-size
-  |=  rank=@
-  ^-  @
-  ::
-  ?+  rank  !!
-    %0  2
-    %1  4
-    %2  8
-    %3  16
-  ==
-::  +encode-ship-metadata: produce size (in bytes) and address rank for .ship
-::
-::    0: galaxy or star
-::    1: planet
-::    2: moon
-::    3: comet
-::
-++  encode-ship-metadata
-  |=  =ship
-  ^-  [size=@ =rank]
-  ::
-  =/  size=@  (met 3 ship)
-  ::
-  ?:  (lte size 2)  [2 %0]
-  ?:  (lte size 4)  [4 %1]
-  ?:  (lte size 8)  [8 %2]
-  [16 %3]
 --

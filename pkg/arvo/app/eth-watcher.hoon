@@ -1,21 +1,21 @@
 ::  eth-watcher: ethereum event log collector
 ::
 /-  *eth-watcher, spider
-/+  default-agent, verb
+/+  ethereum, default-agent, verb, dbug
 =,  ethereum-types
-=,  able:jael
+=,  jael
 ::
 =>  |%
     +$  card  card:agent:gall
     +$  app-state
-      $:  %3
+      $:  %4
           dogs=(map path watchdog)
       ==
     ::
     +$  context  [=path dog=watchdog]
     +$  watchdog
       $:  config
-          running=(unit =tid:spider)
+          running=(unit [since=@da =tid:spider])
           =number:block
           =pending-logs
           =history
@@ -57,6 +57,7 @@
 ::
 ::  Main
 ::
+%-  agent:dbug
 ^-  agent:gall
 =|  state=app-state
 %+  verb  |
@@ -97,7 +98,7 @@
   ::
   =?  old-state  ?=(%2 -.old-state)
     %-  (slog leaf+"upgrading eth-watcher from %2" ~)
-    ^-  app-state
+    ^-  app-state-3
     %=    old-state
         -  %3
         dogs
@@ -108,10 +109,52 @@
       ==
     ==
   ::
-  [cards-1 this(state ?>(?=(%3 -.old-state) old-state))]
+  =?  old-state  ?=(%3 -.old-state)
+    %-  (slog leaf+"upgrading eth-watcher from %3" ~)
+    ^-  app-state
+    %=    old-state
+        -  %4
+        dogs
+      %-  ~(run by dogs.old-state)
+      |=  dog=watchdog-3
+      %=  dog
+          -
+        =,  -.dog
+        [url eager refresh-rate (mul refresh-rate 6) from contracts topics]
+      ::
+          running
+        ?~  running.dog  ~
+        `[now.bowl u.running.dog]
+      ==
+    ==
+  ::
+  [cards-1 this(state ?>(?=(%4 -.old-state) old-state))]
   ::
   +$  app-states
-    $%(app-state-0 app-state-1 app-state-2 app-state)
+    $%(app-state-0 app-state-1 app-state-2 app-state-3 app-state)
+  ::
+  +$  app-state-3
+    $:  %3
+        dogs=(map path watchdog-3)
+    ==
+  ::
+  +$  watchdog-3
+    $:  config-3
+        running=(unit =tid:spider)
+        =number:block
+        =pending-logs
+        =history
+        blocks=(list block)
+    ==
+  ::
+  +$  config-3
+    $:  url=@ta
+        eager=?
+        refresh-rate=@dr
+        from=number:block
+        contracts=(list address:ethereum)
+        =topics
+    ==
   ::
   +$  app-state-2
     $:  %2
@@ -174,11 +217,11 @@
   ?-  -.poke
       %watch
     ::  fully restart the watchdog if it doesn't exist yet,
-    ::  or if the new config changes more than just the url or refresh rate.
+    ::  or if result-altering parts of the config changed.
     =/  restart=?
       ?|  !(~(has by dogs.state) path.poke)
-          ?!  .=  ->+:(~(got by dogs.state) path.poke)
-                   +>.config.poke
+          ?!  .=  ->+>+:(~(got by dogs.state) path.poke)
+                   +>+>.config.poke
       ==
     ::
     =/  already  (~(has by dogs.state) path.poke)
@@ -196,7 +239,7 @@
               ?=(^ running.u.dog)
           ==
         ~
-      =/  =cage  [%spider-stop !>([u.running.u.dog &])]
+      =/  =cage  [%spider-stop !>([tid.u.running.u.dog &])]
       :_  ~
       `card`[%pass [%starting path.poke] %agent [our.bowl %spider] %poke cage]
     =/  new-dog
@@ -275,7 +318,11 @@
       %watch-ack
     ?~  p.sign
       [~ this]
-    %-  (slog leaf+"eth-watcher couldn't start listen to thread" u.p.sign)
+    %-  (slog leaf+"eth-watcher couldn't start listening to thread" u.p.sign)
+    ::  TODO: kill thread that may have started, although it may not
+    ::  have started yet since we get this response before the
+    ::  %start-spider poke is processed
+    ::
     [~ (clear-running t.wire)]
   ::
       %kick  [~ (clear-running t.wire)]
@@ -347,30 +394,32 @@
     =/  rel-number  (sub number.dog 30)
     =/  numbers=(list number:block)  ~(tap in ~(key by pending-logs.dog))
     =.  numbers  (sort numbers lth)
-    |-  ^-  (quip card watchdog)
-    ?~  numbers
-      `dog
-    ?:  (gth i.numbers rel-number)
-      $(numbers t.numbers)
-    =^  cards-1  dog
-      =/  =loglist  (~(get ja pending-logs.dog) i.numbers)
-      =.  pending-logs.dog  (~(del by pending-logs.dog) i.numbers)
-      ?~  loglist
+    =^  logs=(list event-log:rpc:ethereum)  dog
+      |-  ^-  (quip event-log:rpc:ethereum watchdog)
+      ?~  numbers
         `dog
-      =.  history.dog  [loglist history.dog]
-      :_  dog
-      %+  turn  loglist
-      |=  =event-log:rpc:ethereum
-      ^-  card
-      [%give %fact [%logs path]~ %eth-watcher-diff !>([%log event-log])]
-    =^  cards-2  dog  $(numbers t.numbers)
-    [(weld cards-1 cards-2) dog]
+      ?:  (gth i.numbers rel-number)
+        $(numbers t.numbers)
+      =^  rel-logs-1  dog
+        =/  =loglist  (~(get ja pending-logs.dog) i.numbers)
+        =.  pending-logs.dog  (~(del by pending-logs.dog) i.numbers)
+        ?~  loglist
+          `dog
+        =.  history.dog  [loglist history.dog]
+        [loglist dog]
+      =^  rel-logs-2  dog  $(numbers t.numbers)
+      [(weld rel-logs-1 rel-logs-2) dog]
+    :_  dog
+    ?~  logs
+      ~
+    ^-  (list card:agent:gall)
+    [%give %fact [%logs path]~ %eth-watcher-diff !>([%logs logs])]~
   --
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card agent:gall)
-  ?+  +<.sign-arvo  ~|([%strange-sign-arvo -.sign-arvo] !!)
+  ?+    +<.sign-arvo  ~|([%strange-sign-arvo -.sign-arvo] !!)
       %wake
     ?.  ?=([%timer *] wire)  ~&  weird-wire=wire  [~ this]
     =*  path  t.wire
@@ -384,33 +433,42 @@
       ::
       %-  (slog leaf+"eth-watcher failed; will retry" ~)
       [[(wait path now.bowl refresh-rate.dog)]~ this]
-    ::  start a new thread that checks for updates
+    ::  maybe kill a timed-out update thread, maybe start a new one
     ::
-    =^  cards-1=(list card)  dog
-      ::  if still running, kill it and restart
+    =^  stop-cards=(list card)  dog
+      ::  if still running beyond timeout time, kill it
       ::
-      ?~  running.dog
+      ?.  ?&  ?=(^ running.dog)
+            ::
+              %+  gth  now.bowl
+              (add since.u.running.dog timeout-time.dog)
+          ==
         `dog
       ::
-      %-  (slog leaf+"eth-watcher still running; will restart" ~)
-      =/  =cage  [%spider-stop !>([u.running.dog |])]
+      %-  (slog leaf+"eth-watcher {(spud path)} timed out; will restart" ~)
+      =/  =cage  [%spider-stop !>([tid.u.running.dog |])]
       :_  dog(running ~)
       :~  (leave-spider path our.bowl)
           [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
       ==
     ::
-    =^  cards-2=(list card)  dog
+    =^  start-cards=(list card)  dog
+      ::  if not (or no longer) running, start a new thread
+      ::
+      ?^  running.dog
+        `dog
+      ::
       =/  new-tid=@ta
         (cat 3 'eth-watcher--' (scot %uv eny.bowl))
-      :_  dog(running `new-tid)
+      :_  dog(running `[now.bowl new-tid])
       =/  args
         :^  ~  `new-tid  %eth-watcher
-        !>(`watchpup`[- number pending-logs blocks]:dog)
+        !>([~ `watchpup`[- number pending-logs blocks]:dog])
       :~  (watch-spider path our.bowl /thread-result/[new-tid])
           (poke-spider path our.bowl %spider-start !>(args))
       ==
     ::
-    :-  [(wait path now.bowl refresh-rate.dog) (weld cards-1 cards-2)]
+    :-  [(wait path now.bowl refresh-rate.dog) (weld stop-cards start-cards)]
     this(dogs.state (~(put by dogs.state) path dog))
   ==
 ::

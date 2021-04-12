@@ -1,9 +1,4 @@
-::  TODO: move +ordered-map to zuse
-::
 /+  *test
-/=  ames  /:  /===/sys/vane/ames
-          /!noun/
-::
 =/  items-from-keys
   |=  keys=(list @ud)
   %+  turn  keys
@@ -13,7 +8,7 @@
 =/  test-items=(list [@ud @tas])
   (items-from-keys (gulf 0 6))
 ::
-=/  atom-map  ((ordered-map:ames @ud @tas) lte)
+=/  atom-map  ((ordered-map @ud @tas) lte)
 ::
 |%
 ++  test-ordered-map-gas  ^-  tang
@@ -58,6 +53,56 @@
     !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [3^%d] [4^%e] [5^%f]])
     !>  b
 ::
+++  test-ordered-map-subset  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  =/  b  (subset:atom-map a `0 `4)
+  ::
+  %+  expect-eq
+    !>  (gas:atom-map ~ ~[[1^%b] [2^%c] [3^%d]])
+    !>  b
+::
+++  test-ordered-map-null-start-subset  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  =/  b  (subset:atom-map a ~ `5)
+  ::
+  %+  expect-eq
+    !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [3^%d] [4^%e]])
+    !>  b
+::
+++  test-ordered-map-null-end-subset  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  =/  b  (subset:atom-map a `1 ~)
+  ::
+  %+  expect-eq
+    !>  (gas:atom-map ~ ~[[2^%c] [3^%d] [4^%e] [5^%f] [6^%g]])
+    !>  b
+::
+++  test-ordered-map-double-null-subset  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  =/  b  (subset:atom-map a ~ ~)
+  ::
+  %+  expect-eq
+    !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [3^%d] [4^%e] [5^%f] [6^%g]])
+    !>  b
+::
+++  test-ordered-map-not-found-start-subset  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ ~[[1^%b]])
+  ::
+  =/  b  (subset:atom-map a `0 ~)
+  ::
+  %+  expect-eq
+    !>  (gas:atom-map ~ ~[[1^%b]])
+    !>  b
+::
 ++  test-ordered-map-traverse  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
@@ -82,6 +127,30 @@
     %+  expect-eq
       !>  (flop (items-from-keys (gulf 0 5)))
       !>  -.b
+  ==
+::
+++  test-ordered-map-traverse-delete-all  ^-  tang
+  ;:  weld
+    =/  q  ((ordered-map ,@ ,~) lte)
+    =/  o  (gas:q ~ ~[1/~ 2/~ 3/~])
+    =/  b  ((traverse:q ,~) o ~ |=([~ key=@ ~] [~ %| ~]))
+    %+  expect-eq
+      !>  [~ ~]
+      !>  b
+  ::
+    =/  c
+      :~  [[2.127 1] ~]  [[2.127 2] ~]  [[2.127 3] ~]
+          [[2.127 7] ~]  [[2.127 8] ~]  [[2.127 9] ~]
+      ==
+    =/  compare
+      |=  [[aa=@ ab=@] [ba=@ bb=@]]
+      ?:((lth aa ba) %.y ?:((gth aa ba) %.n (lte ab bb)))
+    =/  q  ((ordered-map ,[@ @] ,~) compare)
+    =/  o  (gas:q ~ c)
+    =/  b  ((traverse:q ,~) o ~ |=([~ key=[@ @] ~] [~ %| ~]))
+    %+  expect-eq
+      !>  [~ ~]
+      !>  b
   ==
 ::
 ++  test-ordered-map-uni  ^-  tang

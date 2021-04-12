@@ -1,12 +1,18 @@
+{-# LANGUAGE StrictData #-}
+
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 {-|
     Event Types and Noun Conversion
 -}
 module Urbit.Arvo.Event where
 
-import Urbit.Noun.Tree (HoonMap, HoonSet)
-import Urbit.Prelude   hiding (Term)
+import Urbit.Prelude
 
-import Urbit.Arvo.Common (KingId(..), ServId(..))
+import Control.Monad.Fail (fail)
+import Urbit.Arvo.Common (KingId(..), ServId(..), Vere(..))
 import Urbit.Arvo.Common (Desk, Mime)
 import Urbit.Arvo.Common (Header(..), HttpEvent)
 import Urbit.Arvo.Common (AmesDest, Ipv4, Ipv6, Port, Turf)
@@ -23,6 +29,7 @@ type Rift = Atom -- Continuity number
 type Life = Word -- Number of Azimoth key revs.
 type Bloq = Atom -- TODO
 type Oath = Atom -- Signature
+
 
 -- Parsed URLs -----------------------------------------------------------------
 
@@ -169,7 +176,7 @@ data HttpServerReq = HttpServerReq
 data HttpClientEv
     = HttpClientEvReceive (KingId, ()) ServerId HttpEvent
     | HttpClientEvBorn    (KingId, ()) ()
-    | HttpClientEvCrud    Path       Cord Tang
+    | HttpClientEvCrud    Path         Noun
   deriving (Eq, Ord, Show)
 
 data HttpServerEv
@@ -178,7 +185,7 @@ data HttpServerEv
     | HttpServerEvRequestLocal  (ServId, UD, UD, ()) HttpServerReq
     | HttpServerEvLive          (ServId, ())         Port (Maybe Port)
     | HttpServerEvBorn          (KingId, ())         ()
-    | HttpServerEvCrud          Path                 Cord Tang
+    | HttpServerEvCrud          Path                 Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Address
@@ -193,7 +200,7 @@ deriveNoun ''HttpServerReq
 data AmesEv
     = AmesEvHear ()   AmesDest Bytes
     | AmesEvHole ()   AmesDest Bytes
-    | AmesEvCrud Path Cord Tang
+    | AmesEvCrud Path Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''AmesEv
@@ -201,12 +208,22 @@ deriveNoun ''AmesEv
 
 -- Arvo Events -----------------------------------------------------------------
 
+newtype Entropy = Entropy { entropyBits :: Word512 }
+ deriving newtype (Eq, Ord, FromNoun, ToNoun)
+
+instance Show Entropy where
+  show = const "\"ENTROPY (secret)\""
+
+
 data ArvoEv
-    = ArvoEvWhom () Ship
-    | ArvoEvWack () Word512
-    | ArvoEvWarn Path Noun
-    | ArvoEvCrud Path Cord Tang
-    | ArvoEvVeer Atom Noun
+    = ArvoEvWhom ()   Ship
+    | ArvoEvWack ()   Entropy
+    | ArvoEvWyrd ()   Vere
+    | ArvoEvCrud Path Noun
+    | ArvoEvTrim UD
+    | ArvoEvWhat [Noun]
+    | ArvoEvWhey ()
+    | ArvoEvVerb (Maybe Bool)
   deriving (Eq, Ord, Show)
 
 deriveNoun ''ArvoEv
@@ -216,7 +233,7 @@ deriveNoun ''ArvoEv
 
 data BoatEv
     = BoatEvBoat ()   ()
-    | BoatEvCrud Path Cord Tang
+    | BoatEvCrud Path Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''BoatEv
@@ -227,7 +244,7 @@ deriveNoun ''BoatEv
 data BehnEv
     = BehnEvWake ()           ()
     | BehnEvBorn (KingId, ()) ()
-    | BehnEvCrud Path         Cord Tang
+    | BehnEvCrud Path         Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''BehnEv
@@ -237,7 +254,7 @@ deriveNoun ''BehnEv
 
 data NewtEv
     = NewtEvBorn (KingId, ()) ()
-    | NewtEvCrud Path         Cord Tang
+    | NewtEvCrud Path         Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''NewtEv
@@ -247,7 +264,7 @@ deriveNoun ''NewtEv
 
 data SyncEv
     = SyncEvInto (Nullable (KingId, ())) Desk Bool [(Path, Maybe Mime)]
-    | SyncEvCrud Path                    Cord Tang
+    | SyncEvCrud Path                    Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''SyncEv
@@ -278,7 +295,7 @@ data TermEv
     | TermEvBlew (UD, ()) Word Word
     | TermEvBoot (UD, ()) Bool LegacyBootEvent
     | TermEvHail (UD, ()) ()
-    | TermEvCrud Path       Cord Tang
+    | TermEvCrud Path     Noun
   deriving (Eq, Show)
 
 deriveNoun ''LegacyBootEvent
@@ -304,50 +321,30 @@ data BlipEv
 deriveNoun ''BlipEv
 
 
--- Boot Events -----------------------------------------------------------------
-
-data Vane
-    = VaneVane VaneEv
-    | VaneZuse ZuseEv
-  deriving (Eq, Ord, Show)
-
-data VaneName
-    = Ames | Behn | Clay | Dill | Eyre | Ford | Gall | Iris | Jael
-  deriving (Eq, Ord, Show, Enum, Bounded)
-
-data ZuseEv
-    = ZEVeer () Cord Path BigCord
-    | ZEVoid Void
-  deriving (Eq, Ord, Show)
-
-data VaneEv
-    = VEVeer (VaneName, ()) Cord Path BigCord
-    | VEVoid Void
-  deriving (Eq, Ord, Show)
-
-deriveNoun ''Vane
-deriveNoun ''VaneName
-deriveNoun ''VaneEv
-deriveNoun ''ZuseEv
-
-
 -- The Main Event Type ---------------------------------------------------------
 
 data Ev
     = EvBlip BlipEv
-    | EvVane Vane
   deriving (Eq, Show)
 
 instance ToNoun Ev where
-  toNoun = \case
-    EvBlip v -> toNoun $ reorgThroughNoun (Cord "",     v)
-    EvVane v -> toNoun $ reorgThroughNoun (Cord "vane", v)
+  toNoun = toNoun . \case
+    EvBlip v@BlipEvAmes{}       -> reorgThroughNoun ("ames", v)
+    EvBlip v@BlipEvArvo{}       -> reorgThroughNoun ("",  v)
+    EvBlip v@BlipEvBehn{}       -> reorgThroughNoun ("behn", v)
+    EvBlip v@BlipEvBoat{}       -> reorgThroughNoun ("clay", v)
+    EvBlip v@BlipEvHttpClient{} -> reorgThroughNoun ("iris", v)
+    EvBlip v@BlipEvHttpServer{} -> reorgThroughNoun ("eyre", v)
+    EvBlip v@BlipEvNewt{}       -> reorgThroughNoun ("ames", v)
+    EvBlip v@BlipEvSync{}       -> reorgThroughNoun ("clay", v)
+    EvBlip v@BlipEvTerm{}       -> reorgThroughNoun ("dill", v)
 
+-- XX We really should check the first path element, but since this is used only
+-- in the event browser, which otherwise is broken, I don't care right now.
 instance FromNoun Ev where
   parseNoun = parseNoun >=> \case
-    ReOrg ""     s t p v -> fmap EvBlip $ parseNoun $ toNoun (s,t,p,v)
-    ReOrg "vane" s t p v -> fmap EvVane $ parseNoun $ toNoun (s,t,p,v)
-    ReOrg _      _ _ _ _ -> fail "First path-elem must be ?($ %vane)"
+    ReOrg _ s t p v -> fmap EvBlip $ parseNoun $ toNoun (s,t,p,v)
+
 
 -- Short Event Names -----------------------------------------------------------
 
@@ -358,7 +355,6 @@ instance FromNoun Ev where
 -}
 getSpinnerNameForEvent :: Ev -> Maybe Text
 getSpinnerNameForEvent = \case
-    EvVane _ -> Nothing
     EvBlip b -> case b of
         BlipEvAmes _           -> Just "ames"
         BlipEvArvo _           -> Just "arvo"
@@ -373,3 +369,10 @@ getSpinnerNameForEvent = \case
   where
     isRet (TermEvBelt _ (Ret ())) = True
     isRet _                       = False
+
+summarizeEvent :: Ev -> Text
+summarizeEvent ev =
+  fromNoun (toNoun ev) & \case
+    Nothing -> "//invalid %event"
+    Just (pax :: [Cord], tag :: Cord, val :: Noun) ->
+      "/" <> intercalate "/" (unCord <$> pax) <> " %" <> unCord tag

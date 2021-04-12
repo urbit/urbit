@@ -1,0 +1,3 @@
+.stack-work
+*.cabal
+test/gold/*.writ

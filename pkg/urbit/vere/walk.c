@@ -6,9 +6,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <uv.h>
-#include <ncurses/curses.h>
-#include <termios.h>
-#include <ncurses/term.h>
 #include <errno.h>
 
 #include "all.h"
@@ -90,6 +87,7 @@ u3_walk_load(c3_c* pas_c)
 
   if ( fln_w != red_w ) {
     c3_free(pad_y);
+    u3l_log("u3_walk_load failed");
     return u3m_bail(c3__fail);
   }
   else {
@@ -118,7 +116,8 @@ _walk_mkdirp(c3_c* bas_c, u3_noun pax)
   len_w = 1 + fas_w + pax_w;
 
   pax_c = c3_malloc(1 + len_w);
-  strncpy(pax_c, bas_c, len_w);
+  strcpy(pax_c, bas_c);
+
   pax_c[fas_w] = '/';
   waq_y = (void*)(1 + pax_c + fas_w);
   u3r_bytes(0, pax_w, waq_y, u3h(pax));

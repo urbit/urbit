@@ -7,9 +7,7 @@
 ::    - receive timestamps, process events
 ::
 /-  eth-watcher
-/+  default-agent, verb
-=,  ethereum
-=,  azimuth
+/+  *ethereum, *azimuth, default-agent, verb
 ::
 =>  |%
     +$  state-0
@@ -51,6 +49,7 @@
     ::
     ++  node-url  'http://eth-mainnet.urbit.org:8545'
     ++  refresh-rate  ~h1
+    ++  timeout-time  ~h2
     --
 ::
 =|  state-0
@@ -207,6 +206,7 @@
   :*  node-url
       |
       refresh-rate
+      timeout-time
       public:mainnet-contracts
       ~[azimuth delegated-sending]:mainnet-contracts
       ~
@@ -252,8 +252,8 @@
     ?-  -.diff
       %history  ~&  [%got-history (lent loglist.diff)]
                 [loglist.diff state(qued ~, seen ~)]
-      %log      ~&  %got-log
-                [[event-log.diff ~] state]
+      %logs     ~&  %got-log
+                [loglist.diff state]
       %disavow  ~&  %disavow-unimplemented
                 [~ state]
     ==

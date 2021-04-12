@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # TODO:
 # - -h text
@@ -76,6 +76,7 @@ class sourceAction(argparse.Action):
     def __init__(self, option_strings, dest, **kwargs):
         self.which = kwargs['which']
         del kwargs['which']
+        logging.debug('args %s %s %s' % (option_strings, dest, kwargs))
         super(sourceAction, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, res, new_value, option_string):
@@ -104,6 +105,10 @@ class sourceAction(argparse.Action):
         logging.debug(res.source)
 
     def construct_value(self, new_value):
+        # hack to allow dojo commands like '-test' without them parsing
+        # as bash command-line arguments
+        if new_value[0:4] == '####':
+            return self.construct_value(new_value[4:])
         if new_value == '-':
             return self.construct_value(''.join(sys.stdin.readlines()))
         elif new_value[0:2] == '@@':
@@ -139,6 +144,34 @@ class importFileAction(argparse.Action):
         base_data = base64.b64encode(data)
 
         res.source = {"import": {"app": new_value, "base64-jam": base_data}}
+
+class importAllAction(argparse.Action):
+    """Handles the import-all statement.
+
+    The --import-all statement reads in a jammed noun file from the path passed
+    in and stuffs it the base64 encoded version which gets passed into your
+    Urbit.
+
+    """
+    def __call__(self, parser, res, new_value, option_string):
+        logging.debug('%r %r' % (new_value, option_string))
+        logging.debug('source %s' % res.source)
+        logging.debug('level %s' % res.level)
+
+        # We check to see if there's a "{new_value}" file in the current
+        # working directory. If there isn't, we error
+        data = ""
+        filename = new_value
+        with open(filename, 'rb') as f:
+            data = f.read()
+
+        if data == "":
+            raise ValueError('Failed to read jamfile')
+
+        base_data = base64.b64encode(data)
+
+        res.source = {"import-all": {"base64-jam": base_data}}
+
 
 class transformerAction(argparse.Action):
     """Handle transformer flag.
@@ -345,6 +378,13 @@ parser.add_argument('-i', '--import',
                     metavar='app-name',
                     help='imports the application state',
                     action=importFileAction)
+parser.add_argument('-E', '--export-all', const={'export-all': None},
+                    help='exports data from all landscape apps',
+                    action='store_const', dest='source')
+parser.add_argument('-I', '--import-all',
+                    metavar='jam-file',
+                    help='imports data for all landscape apps',
+                    action=importAllAction)
 parser.add_argument('-m', '--mark', which='as',
                     metavar='mark',
                     help='transform a source to another mark',
@@ -393,9 +433,7 @@ sinks.add_argument('-p', '--app', which='app',
                    metavar='app',
                    action=sinkAction)
 
-
 args = parser.parse_args(args)
-
 
 if args.source is None:
     args.source = {"data": ''.join(sys.stdin)}

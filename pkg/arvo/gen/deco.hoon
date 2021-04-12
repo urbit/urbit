@@ -1,3 +1,4 @@
+::  Hoon style sample
 ::
 ::  this is a sample file designed to set conventions for
 ::  high-quality conventional hoon.

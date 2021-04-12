@@ -39,6 +39,16 @@ u3x_mean(u3_noun som, ...)
   }
 }
 
+/* u3x_bite(): xtract/default $bloq and $step from $bite.
+*/
+void
+u3x_bite(u3_noun bite, u3_atom* bloq, u3_atom *step)
+{
+  if ( c3n == u3r_bite(bite, bloq, step) ) {
+    u3m_bail(c3__exit);
+  }
+}
+
 /* u3x_cell():
 **
 **   Divide `a` as a cell `[b c]`.

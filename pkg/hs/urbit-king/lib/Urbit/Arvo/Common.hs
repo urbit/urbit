@@ -1,18 +1,32 @@
+{-# LANGUAGE StrictData #-}
+
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
+-- Hack. See comment above instance ToNoun H.StdMethod
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 {-|
     Types used in both Events and Effects.
 -}
 module Urbit.Arvo.Common
   ( KingId(..), ServId(..)
+  , Vere(..), Wynn(..)
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
   , Port(..), Turf(..)
   , HttpServerConf(..), PEM(..), Key, Cert
   , HttpEvent(..), Method, Header(..), ResponseHeader(..)
   , ReOrg(..), reorgThroughNoun
-  , AmesDest(..), Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
+  , AmesDest, Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
   ) where
 
-import Urbit.Prelude hiding (Term)
+import Urbit.Prelude
+
+import Control.Monad.Fail (fail)
+import Data.Bits
+import Data.Serialize
 
 import qualified Network.HTTP.Types.Method as H
 import qualified Urbit.Ob                  as Ob
@@ -34,6 +48,25 @@ newtype KingId = KingId { unKingId :: UV }
 newtype ServId = ServId { unServId :: UV }
   deriving newtype (Eq, Ord, Show, Num, Enum, Integral, Real, FromNoun, ToNoun)
 
+-- Arvo Version Negotiation ----------------------------------------------------
+
+-- Information about the king runtime passed to Arvo.
+data Vere = Vere { vereName :: Term,
+                   vereRev  :: [Cord],
+                   vereWynn :: Wynn }
+  deriving (Eq, Ord, Show)
+
+instance ToNoun Vere where
+  toNoun Vere{..} = toNoun ((vereName, vereRev), vereWynn)
+
+instance FromNoun Vere where
+  parseNoun n = named "Vere" $ do
+    ((vereName, vereRev), vereWynn) <- parseNoun n
+    pure $ Vere {..}
+
+-- A list of names and their kelvin numbers, used in version negotiations.
+newtype Wynn = Wynn { unWynn :: [(Term, Word)] }
+  deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
 
 -- Http Common -----------------------------------------------------------------
 
@@ -78,8 +111,11 @@ instance FromNoun H.StdMethod where
 
 -- Http Server Configuration ---------------------------------------------------
 
-newtype PEM = PEM { unPEM :: Cord }
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+newtype PEM = PEM { unPEM :: Wain }
+  deriving newtype (Eq, Ord, ToNoun, FromNoun)
+
+instance Show PEM where
+  show _ = "\"PEM (secret)\""
 
 type Key  = PEM
 type Cert = PEM
@@ -98,7 +134,7 @@ deriveNoun ''HttpServerConf
 -- Desk and Mime ---------------------------------------------------------------
 
 newtype Desk = Desk { unDesk :: Cord }
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun, IsString)
 
 data Mime = Mime Path File
   deriving (Eq, Ord, Show)
@@ -132,7 +168,14 @@ newtype Port = Port { unPort :: Word16 }
 
 -- @if
 newtype Ipv4 = Ipv4 { unIpv4 :: Word32 }
-  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Enum, Real, Integral, Num, ToNoun, FromNoun)
+
+instance Show Ipv4 where
+  show (Ipv4 i) =
+    show ((shiftR i 24) .&. 0xff) ++ "." ++
+    show ((shiftR i 16) .&. 0xff) ++ "." ++
+    show ((shiftR i  8) .&. 0xff) ++ "." ++
+    show (i .&. 0xff)
 
 -- @is
 newtype Ipv6 = Ipv6 { unIpv6 :: Word128 }
@@ -143,14 +186,27 @@ type Galaxy = Patp Word8
 instance Integral a => Show (Patp a) where
   show = show . Ob.renderPatp . Ob.patp . fromIntegral . unPatp
 
-data AmesAddress
-    = AAIpv4 Ipv4 Port
-    | AAVoid Void
+data AmesAddress = AAIpv4 Ipv4 Port
   deriving (Eq, Ord, Show)
 
-deriveNoun ''AmesAddress
+instance Serialize AmesAddress where
+  get = AAIpv4 <$> (Ipv4 <$> getWord32le) <*> (Port <$> getWord16le)
+  put (AAIpv4 (Ipv4 ip) (Port port)) = putWord32le ip >> putWord16le port
 
-type AmesDest = Each Galaxy (Jammed AmesAddress)
+instance FromNoun AmesAddress where
+  parseNoun = named "AmesAddress" . \case
+    A (atomBytes -> bs)
+      -- Atoms lose leading 0s, but since lsb, these become trailing NULs
+      | length bs <= 6  -> case decode $ bs <> replicate (6 - length bs) 0 of
+        Right aa -> pure aa
+        Left msg -> fail msg
+      | otherwise      -> fail ("putative address " <> show bs <> " too long")
+    C{} -> fail "unexpected cell in ames address"
+
+instance ToNoun AmesAddress where
+  toNoun = A . bytesAtom . encode
+
+type AmesDest = Each Galaxy AmesAddress
 
 
 -- Path+Tagged Restructuring ---------------------------------------------------

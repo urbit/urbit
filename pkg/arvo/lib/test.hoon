@@ -25,6 +25,11 @@
             (~(dunk ut p.expected) %expected)
     ==  ==
   result
+::  +expect: compares :actual to %.y and pretty-prints anything else
+::
+++  expect
+  |=  actual=vase
+  (expect-eq !>(%.y) actual)
 ::  +expect-fail: kicks a trap, expecting crash. pretty-prints if succeeds
 ::
 ++  expect-fail

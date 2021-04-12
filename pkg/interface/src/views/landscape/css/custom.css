@@ -1,0 +1,11 @@
+.c-default {
+  cursor: default;
+}
+
+.m0a {
+  margin: 0 auto;
+}
+
+a, a:any-link {
+  text-decoration: none;
+}

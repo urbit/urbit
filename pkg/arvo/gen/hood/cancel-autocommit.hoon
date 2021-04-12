@@ -1,3 +1,4 @@
+::  Cancel autocommit
 ::
 ::::  /hoon/cancel-autocommit/hood/gen
   ::

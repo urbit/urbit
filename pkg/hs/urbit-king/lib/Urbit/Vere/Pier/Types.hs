@@ -3,12 +3,28 @@
 
     TODO Most of these could probably find better homes.
 -}
-module Urbit.Vere.Pier.Types where
+module Urbit.Vere.Pier.Types
+  ( module Urbit.Vere.Serf.Types
+  , LogIdentity(..)
+  , Pill(..)
+  , Job(..)
+  , LifeCyc(..)
+  , BootSeq(..)
+  , Work(..)
+  , jobId
+  , jobMug
+  , DriverApi(..)
+  , ScryFunc
+  )
+where
 
-import Urbit.Prelude hiding (Term)
+import Urbit.Prelude
 
 import Urbit.Arvo
-import Urbit.Time
+import Urbit.Noun.Time
+import Urbit.Vere.Serf.Types
+
+import Urbit.EventLog.LMDB (LogIdentity(..))
 
 
 -- Avoid touching Nock values. -------------------------------------------------
@@ -29,25 +45,19 @@ instance Show Nock where
 
 --------------------------------------------------------------------------------
 
-type EventId = Word64
-
-data Pill = Pill
-    { pBootFormulas   :: [Nock]
-    , pKernelOvums    :: [Ev]
-    , pUserspaceOvums :: [Ev]
+data Pill
+  = PillIvory [Noun]
+  | PillPill
+    { pName         :: Noun
+    , pBootFormulae :: ![Nock]  -- XX not actually nock, semantically
+    , pKernelOva    :: ![Ev]
+    , pUserspaceOva :: ![Ev]
     }
+ deriving (Eq, Show)
+
+data BootSeq = BootSeq !LogIdentity ![Nock] ![Ev]
   deriving (Eq, Show)
 
-data LogIdentity = LogIdentity
-    { who          :: Ship
-    , isFake       :: Bool
-    , lifecycleLen :: Word
-    } deriving (Eq, Ord, Show)
-
-data BootSeq = BootSeq LogIdentity [Nock] [Ev]
-  deriving (Eq, Show)
-
-deriveNoun ''LogIdentity
 deriveNoun ''Pill
 
 
@@ -60,41 +70,30 @@ data LifeCyc = LifeCyc EventId Mug Nock
   deriving (Eq, Show)
 
 data Job
-    = DoWork Work
-    | RunNok LifeCyc
-  deriving (Eq, Show)
+  = DoWork Work
+  | RunNok LifeCyc
+ deriving (Eq, Show)
 
 jobId :: Job -> EventId
 jobId (RunNok (LifeCyc eId _ _)) = eId
-jobId (DoWork (Work eId _ _ _))  = eId
+jobId (DoWork (Work eId _ _ _ )) = eId
 
 jobMug :: Job -> Mug
 jobMug (RunNok (LifeCyc _ mug _)) = mug
-jobMug (DoWork (Work _ mug _ _))  = mug
+jobMug (DoWork (Work _ mug _ _ )) = mug
 
 
---------------------------------------------------------------------------------
+-- API To IO Drivers -----------------------------------------------------------
 
-data Order
-    = OBoot Word -- lifecycle length
-    | OExit Word8
-    | OSave EventId
-    | OWork Job
-  deriving (Eq, Show)
+data DriverApi ef = DriverApi
+  { diEventSource    :: STM (Maybe RunReq)
+  , diOnEffect       :: ef -> IO ()
+  }
 
-deriveToNoun ''Order
 
-type QueueEv = Ev -> STM ()
+-- Scrying  --------------------------------------------------------------------
 
-type EffCb e a = a -> RIO e ()
-
-type Perform = Ef -> IO ()
-
-data IODriver = IODriver
-    { bornEvent   :: IO Ev
-    , startDriver :: (Ev -> STM ()) -> IO (Async (), Perform)
-    }
-
+type ScryFunc = Gang -> ScryReq -> IO (Maybe (Term, Noun))
 
 -- Instances -------------------------------------------------------------------
 
@@ -102,17 +101,17 @@ instance ToNoun Work where
   toNoun (Work eid m d o) = toNoun (eid, Jammed (m, d, o))
 
 instance FromNoun Work where
-    parseNoun n = named "Work" $ do
-        (eid, Jammed (m, d, o)) <- parseNoun n
-        pure (Work eid m d o)
+  parseNoun n = named "Work" $ do
+    (eid, Jammed (m, d, o)) <- parseNoun n
+    pure (Work eid m d o)
 
 instance ToNoun LifeCyc where
   toNoun (LifeCyc eid m n) = toNoun (eid, Jammed (m, n))
 
 instance FromNoun LifeCyc where
   parseNoun n = named "LifeCyc" $ do
-      (eid, Jammed (m, n)) <- parseNoun n
-      pure (LifeCyc eid m n)
+    (eid, Jammed (m, n)) <- parseNoun n
+    pure (LifeCyc eid m n)
 
 -- | No FromNoun instance, because it depends on context (lifecycle length)
 instance ToNoun Job where

@@ -1,6 +1,6 @@
 ::  :acme domain validation request handler
 ::
-|=  [[now=@da eny=@ bek=beak] $~ $~]
+|=  [[now=@da eny=@ bek=beak] ~ ~]
 |=  [authorized=? =request:http]
 ^-  simple-payload:http
 =/  url=(unit (pair pork:eyre quay:eyre))
@@ -20,7 +20,13 @@
   [[%404 ~] ~]
 =/  challenge=@t  i.t.t.q.p.u.url
 =/  response
-  .^((unit @t) %gx /=acme/(scot %da now)/domain-validation/[challenge]/noun)
+  .^  (unit @t)
+    %gx
+    (scot %p p.bek)
+    %acme
+    (scot %da now)
+    /domain-validation/[challenge]/noun
+  ==
 ?~  response
   [[%404 ~] ~]
 :-  [200 ['content-type' 'text/html']~]

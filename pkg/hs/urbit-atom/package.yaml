@@ -3,23 +3,49 @@ version: 0.10.1
 license: MIT
 license-file: LICENSE
 
+ghc-options:
+  - -Wall
+  - -Werror
+  - -Wno-type-defaults
+  - -Wno-unused-matches
+  - -Wno-name-shadowing
+  - -Wno-unbanged-strict-patterns
+  - -O2
+
 library:
   source-dirs: lib
-  ghc-options:
-    - -fwarn-incomplete-patterns
-    - -fwarn-unused-binds
-    - -fwarn-unused-imports
-    - -Werror
-    - -O2
+  dependencies:
+    - base
+    - bytestring
+    - ghc-prim
+    - integer-gmp
+    - primitive
+    - text
+    - vector
 
-dependencies:
-  - base
-  - bytestring
-  - ghc-prim
-  - integer-gmp
-  - primitive
-  - text
-  - vector
+tests:
+  urbit-atom-tests:
+    source-dirs: test
+    main: Main.hs
+    ghc-options: "-threaded -rtsopts -with-rtsopts=-N"
+    dependencies:
+      - base
+      - bytestring
+      - QuickCheck
+      - text
+      - urbit-atom
+      - vector
+
+benchmarks:
+  urbit-atom-bench:
+    source-dirs: bench
+    main: Main.hs
+    ghc-options: "-threaded -rtsopts -with-rtsopts=-N"
+    dependencies:
+      - base
+      - bytestring
+      - criterion
+      - urbit-atom
 
 default-extensions:
   - ApplicativeDo

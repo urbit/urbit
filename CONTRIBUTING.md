@@ -2,12 +2,14 @@
 
 Thank you for your interest in contributing to Urbit.
 
-See [urbit.org/docs/getting-started][start] for basic orientation and usage
+See [urbit.org/using/install][start] for basic orientation and usage
 instructions.  You may also want to subscribe to [urbit-dev][list], the Urbit
 development mailing list. For specific information on contributing to the Urbit
 interface, see its [contribution guidelines][interface].
 
-[start]: https://urbit.org/docs/getting-started/#arvo
+For information on Arvo's maintainers, see [pkg/arvo][main].
+
+[start]: https://urbit.org/using/install
 [interface]: /pkg/interface/CONTRIBUTING.md
 
 ## Fake ships
@@ -36,6 +38,17 @@ To resume a fake ship, just pass the name of the pier:
 $ urbit my-fake-zod
 ```
 
+Fake ships by default use the same pre-compiled kernelspace ('pills') as livenet
+ships do: boot pills, which are not always current with `master`. If you wish to
+develop using code off the master branch, run the following from the repo
+directory:
+
+```
+git lfs install
+git lfs pull
+urbit -F zod -B "bin/solid.pill" -A "pkg/arvo"
+```
+
 ## Git practice
 
 ### Contributing
@@ -45,11 +58,10 @@ The canonical source tree is the `master` branch of
 `master` when commencing new work; similarly, when we pull in your
 contribution, we'll do so by merging it to `master`.
 
-Since we use GitHub, it's helpful (though not required) to contribute via a
-GitHub pull request.  You can also post patches to the [mailing list][list],
-email them to maintainers, or request a maintainer pull from your tree directly
--- but note that some maintainers will be more receptive to these methods than
-others.
+Since we use GitHub, we request you contribute via a GitHub pull request. Tag
+the [maintainer][main] for the component. If you have a question for the
+maintainer, you can direct message them from your Urbit ship using that
+information.
 
 When contributing changes, via whatever means, make sure you describe them
 appropriately.  You should attach a reasonably high-level summary of what the
@@ -58,8 +70,8 @@ exist, e.g. a GitHub issue, a mailing list discussion, a UP, etc.  [Here][jbpr]
 is a good example of a pull request with a useful, concise description.
 
 If your changes replace significant extant functionality, be sure to compare
-them with the thing you're replacing.  You may also want to cc maintainers,
-reviewers, or other parties who might have a particular interest in what you're
+them with the thing you're replacing.  You may also want to cc reviewers,
+or other parties who might have a particular interest in what you're
 contributing.
 
 [jbpr]: https://github.com/urbit/urbit/pull/1782
@@ -158,9 +170,8 @@ commit that updates the source.
 
 ## Releases
 
-We typically create releases by cherry picking appropriate commits from
-`master` and tagging the result, so any given commit in `master` may not
-actually be present in the latest release.
+We typically create releases by tagging appropriate commits on `master`, so any
+given commit in `master` may not actually be present in the latest release.
 
 We perform updates by pushing releases over-the-air to `~zod` approximately
 once per week, so any contribution that can be deployed OTA will usually find
@@ -284,3 +295,4 @@ Questions or other communications about contributing to Urbit can go to
 [reba]: https://git-rebase.io/
 [issu]: https://github.com/urbit/urbit/issues
 [hoon]: https://urbit.org/docs/learn/hoon/style/
+[main]: https://github.com/urbit/urbit/tree/master/pkg/arvo#maintainers

@@ -123,7 +123,7 @@
   ::
   ::  and the ordering 1 < 2 < 3.
   ::
-  ::  1 should be in the left brach and 3 in the right one.
+  ::  1 should be in the left branch and 3 in the right one.
   ::
   =/  balanced-a=(map @ @)    [[2 2] [[1 1] ~ ~] [[3 3] ~ ~]]
   ::  doesn't follow vertical ordering
@@ -137,6 +137,9 @@
   ::  doesn't follow horizontal & vertical ordering
   ::
   =/  unbalanced-e=(map @ @)  [[1 1] [[3 3] ~ ~] [[2 2] ~ ~]]
+  ::  has duplicate keys
+  ::
+  =/  duplicates=(map @ @)  [[1 1] [[1 2] ~ ~] ~]
   ;:  weld
     %+  expect-eq
       !>  [%b-a %.y]
@@ -156,6 +159,9 @@
     %+  expect-eq
       !>  [%u-e %.n]
       !>  [%u-e ~(apt by unbalanced-e)]
+    %+  expect-eq
+      !>  [%dup %.n]
+      !>  [%dup ~(apt by duplicates)]
   ==
 ::
 ::  Test bifurcation (i.e. splits map a into two, discarding -.a)

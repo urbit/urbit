@@ -4,4 +4,4 @@
   ::
 /?    310
 :-  %say
-|=({^ {input/path ~} ~} kiln-rm+input)
+|=([^ [input=path ~] ~] kiln-rm+input)

@@ -1,23 +1,79 @@
-/out
-/result
-/result-*
-/work
+# OSX
+.DS_Store
+
+# Editors
+*~
+*#
+.#*
+\#*#
+.*.sw[a-z]
+*.un~
+*.org
+.projectile
+s/*
+cscope.*
+
+# Tags
+.tags
+.etags
+TAGS
+GPATH
+GRTAGS
+GTAGS
+
+# Nix
+result
+result-*
+
+# Common Piers
 /zod
 /bus
-/fakezod*
-tags
-TAGS
+/nec
+/fakezod
+
+# NodeJS
+node_modules
+
+# Haskell
+.stack-work
+stack.yaml.lock
+dist-newstyle
+.ghc*
+
+# Profiling
+*.prof
+*.aux
+*.hp
+*.ps
+*.pdf
+
+# Build/Release Artifacts
+build/
 cross/
 release/
-.stack-work
-\#*\#
-s/*
-**/.DS_Store
-**/dist
-**/node_modules
-**/urbitrc
-**/*.swp
-**/*.swo
-**/*-min.js
-.stack-work
+dist/
+out/
+work/
+*.o
+
+# Landscape Dev
+urbitrc
+*-min.js
 pkg/interface/link-webext/web-ext-artifacts
+
+# Certificates
+*.pem
+*.key
+*.secret
+*.sec
+*.asc
+
+# Archives
+*.zip
+*.gz
+*.tar
+*.bzip2
+*.xz
+
+# Logs
+*.log

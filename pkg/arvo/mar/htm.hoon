@@ -2,10 +2,12 @@
 ::::  /hoon/htm/mar
   ::
 /?    310
-|_  own/manx
+|_  own=manx
 ::
+++  grad  %noun
 ++  grow                                                ::  convert to
   |%
+  ++  noun  own
   ++  hymn  own
   --
 ++  grab  |%                                            ::  convert from

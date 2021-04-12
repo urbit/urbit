@@ -3,13 +3,13 @@
 /-  spider, *eth-watcher
 /+  strandio, ethio
 =,  ethereum-types
-=,  able:jael
+=,  jael
 ::
 ::  Main loop: get updates since last checked
 ::
 |=  args=vase
 |^
-=+  !<(pup=watchpup args)
+=+  !<([~ pup=watchpup] args)
 =/  m  (strand:strandio ,vase)
 ^-  form:m
 ;<  =latest=block                 bind:m  (get-latest-block:ethio url.pup)
@@ -80,7 +80,7 @@
   |=  [pup=watchpup =latest=number:block]
   =/  m  (strand:strandio ,watchpup)
   ^-  form:m
-  =/  zoom-margin=number:block  100
+  =/  zoom-margin=number:block  30
   =/  zoom-step=number:block  100.000
   ?:  (lth latest-number (add number.pup zoom-margin))
     (pure:m pup)

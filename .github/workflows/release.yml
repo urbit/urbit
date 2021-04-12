@@ -1,0 +1,43 @@
+name: release
+
+on:
+  release: null
+  push:
+    tags: ['*']
+
+jobs:
+  upload:
+    strategy:
+      matrix:
+        include:
+          - { os: ubuntu-latest, system: x86_64-linux }
+          - { os: macos-latest, system: x86_64-darwin }
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: ${{ secrets.CACHIX_NAME }}
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - uses: google-github-actions/setup-gcloud@v0.2.0
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
+          project_id: ${{ secrets.GCS_PROJECT }}
+          export_default_credentials: true
+
+      - run: nix-build -A tarball --arg enableStatic true
+
+      - name: Run upload to bootstrap.urbit.org
+        run: |
+          version="$(cat ./pkg/urbit/version)"
+          system="$(nix eval --raw '(builtins.currentSystem)')"
+          target="gs://bootstrap.urbit.org/ci/urbit-v${version}-${system}-${GITHUB_SHA:0:9}.tgz"
+
+          gsutil cp -n ./result "$target"
+
+          echo "upload to $target complete."

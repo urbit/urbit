@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -ex
+set -xeuo pipefail
 
-pkg=$(nix-build nix/ops -A ivory --no-out-link)
-cp $pkg bin/ivory.pill
+cd "${0%/*}/.."
+
+cp "$(nix-build -A ivory.build --no-out-link)" bin/ivory.pill

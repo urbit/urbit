@@ -1,3 +1,4 @@
+::  Scry into an aqua ship
 /-  aquarium
 /+  ph-util
 =,  aquarium

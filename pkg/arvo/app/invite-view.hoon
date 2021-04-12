@@ -1,72 +1,21 @@
-::  invite-view: provide a json interface to invite-store
+:: invite-view [landscape]:
 ::
-::    accepts subscriptions at the /primary path.
-::    passes through all invites and their updates.
-::    only accepts subcriptions from the host's team.
+::  deprecated
 ::
-::TODO  could maybe use /lib/proxy-hook, be renamed invite-proxy-hook
-::
-/+  *invite-json, default-agent
-::
-|%
-+$  card  card:agent:gall
---
-::
-=>
-  |%
-  ++  watch-updates
-    |=  our=ship
-    ^-  card
-    [%pass /store %agent [our %invite-store] %watch /updates]
-  --
+/+  default-agent
 ^-  agent:gall
 |_  =bowl:gall
 +*  this  .
-    def   ~(. (default-agent this %|) bowl)
-::
-++  on-init
-  ^-  (quip card _this)
-  [[(watch-updates our.bowl)]~ this]
-::
-++  on-save  on-save:def
-++  on-load
-  |=  old=vase
-  ^-  (quip card _this)
-  [~ this]
-::
-++  on-watch
-  |=  =path
-  ^-  (quip card _this)
-  ?>  (team:title our.bowl src.bowl)
-  ?.  =(/primary path)
-    (on-watch:def path)
-  :_  this
-  =/  =invites
-    .^(invites %gx /=invite-store/(scot %da now.bowl)/all/noun)
-  [%give %fact ~ %json !>((invites-to-json invites))]~
-::
-++  on-agent
-  |=  [=wire =sign:agent:gall]
-  ^-  (quip card _this)
-  :_  this
-  ?-  -.sign
-    %poke-ack   ~|([dap.bowl %unexpected-poke-ack] !!)
-    %watch-ack  ~
-    %kick       [(watch-updates our.bowl)]~
-  ::
-      %fact
-    ~|  [dap.bowl %unexpected-fact-mark p.cage.sign]
-    ?>  ?=(%invite-update p.cage.sign)
-    :~  :*
-      %give   %fact
-      ~[/primary]  %json
-      !>((update-to-json !<(invite-update q.cage.sign)))
-    ==  ==
-  ==
-::
-++  on-poke   on-poke:def
-++  on-peek   on-peek:def
-++  on-leave  on-leave:def
-++  on-arvo   on-arvo:def
+    def  ~(. (default-agent this %|) bowl)
+    step  `step:agent:gall`[~ this]
+++  on-init   on-init:def
+++  on-save   on-save:def
+++  on-load   on-load:def
+++  on-poke   |=(* step)
+++  on-watch  on-watch:def
+++  on-leave  |=(* step)
+++  on-peek   |=(* ~)
+++  on-agent  |=(* step)
+++  on-arvo   |=(* step)
 ++  on-fail   on-fail:def
 --

@@ -308,6 +308,14 @@ _ce_patch_verify(u3_ce_patch* pat_u)
 {
   c3_w i_w;
 
+  if ( u3e_version != pat_u->con_u->ver_y ) {
+    fprintf(stderr, "loom: patch version mismatch: have %u, need %u\r\n",
+                    pat_u->con_u->ver_y,
+                    u3e_version);
+    c3_assert(0);
+    return c3n;
+  }
+
   for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
     c3_w pag_w = pat_u->con_u->mem_u[i_w].pag_w;
     c3_w mug_w = pat_u->con_u->mem_u[i_w].mug_w;
@@ -571,6 +579,7 @@ _ce_patch_compose(void)
 
     _ce_patch_create(pat_u);
     pat_u->con_u = c3_malloc(sizeof(u3e_control) + (pgs_w * sizeof(u3e_line)));
+    pat_u->con_u->ver_y = u3e_version;
     pgc_w = 0;
 
     for ( i_w = 0; i_w < nor_w; i_w++ ) {
@@ -609,44 +618,47 @@ _ce_image_sync(u3e_image* img_u)
   c3_sync(img_u->fid_i);
 }
 
-/* _ce_patch_apply(): apply patch to image.
+/* _ce_image_resize(): resize image, truncating if it shrunk.
+*/
+static void
+_ce_image_resize(u3e_image* img_u, c3_w pgs_w)
+{
+  if ( img_u->pgs_w > pgs_w ) {
+    if ( ftruncate(img_u->fid_i, pgs_w << (u3a_page + 2)) ) {
+      fprintf(stderr, "loom: image truncate %s: %s\r\n",
+                      img_u->nam_c,
+                      strerror(errno));
+      c3_assert(0);
+    }
+  }
+
+  img_u->pgs_w = pgs_w;
+}
+
+/* _ce_patch_apply(): apply patch to images.
 */
 static void
 _ce_patch_apply(u3_ce_patch* pat_u)
 {
   c3_w i_w;
 
-  //u3l_log("image: nor_w %d, new %d\r\n", u3P.nor_u.pgs_w, pat_u->con_u->nor_w);
-  //u3l_log("image: sou_w %d, new %d\r\n", u3P.sou_u.pgs_w, pat_u->con_u->sou_w);
+  //  resize images
+  //
+  _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w);
+  _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w);
 
-  if ( u3P.nor_u.pgs_w > pat_u->con_u->nor_w ) {
-    c3_w ret_w;
-    ret_w = ftruncate(u3P.nor_u.fid_i, u3P.nor_u.pgs_w << (u3a_page + 2));
-    if (ret_w){
-      fprintf(stderr, "loom: patch apply truncate north: %s\r\n", strerror(errno));
-      c3_assert(0);
-    }
-  }
-  u3P.nor_u.pgs_w = pat_u->con_u->nor_w;
-
-  if ( u3P.sou_u.pgs_w > pat_u->con_u->sou_w ) {
-    c3_w ret_w;
-    ret_w = ftruncate(u3P.sou_u.fid_i, u3P.sou_u.pgs_w << (u3a_page + 2));
-    if (ret_w){
-      fprintf(stderr, "loom: patch apply truncate south: %s\r\n", strerror(errno));
-      c3_assert(0);
-    }
-  }
-  u3P.sou_u.pgs_w = pat_u->con_u->sou_w;
-
-  if ( (-1 == lseek(pat_u->mem_i, 0, SEEK_SET)) ||
-       (-1 == lseek(u3P.nor_u.fid_i, 0, SEEK_SET)) ||
-       (-1 == lseek(u3P.sou_u.fid_i, 0, SEEK_SET)) )
+  //  seek to begining of patch and images
+  //
+  if (  (-1 == lseek(pat_u->mem_i, 0, SEEK_SET))
+     || (-1 == lseek(u3P.nor_u.fid_i, 0, SEEK_SET))
+     || (-1 == lseek(u3P.sou_u.fid_i, 0, SEEK_SET)) )
   {
     fprintf(stderr, "loom: patch apply seek 0: %s\r\n", strerror(errno));
     c3_assert(0);
   }
 
+  //  write patch pages into the appropriate image
+  //
   for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
     c3_w pag_w = pat_u->con_u->mem_u[i_w].pag_w;
     c3_w mem_w[1 << u3a_page];
@@ -879,116 +891,24 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
   return nuu_o;
 }
 
-static c3_o
-_ce_image_move(u3e_image* img_u, c3_o bak_o)
-{
-  c3_c old_c[8193];
-  c3_c new_c[8193];
-  snprintf(old_c, 8192, "%s/.urb/chk/%s.bin", u3P.dir_c, img_u->nam_c);
-  snprintf(new_c, 8192, "%s.bak", old_c);
-
-  c3_i ret_i;
-
-  if ( c3y == bak_o ) {
-    ret_i = rename(old_c, new_c);
-  }
-  else {
-    ret_i = rename(new_c, old_c);
-  }
-
-  if ( 0 != ret_i ) {
-    u3l_log("loom: %s %s failed: %s\r\n", ( c3y == bak_o ) ? "hold" : "fall",
-                                          img_u->nam_c, strerror(errno));
-    return c3n;
-  }
-
-  return c3y;
-}
-
-/* u3e_hold(): backup memory images
+/* u3e_yolo(): disable dirty page tracking, read/write whole loom.
 */
 c3_o
-u3e_hold(void)
+u3e_yolo(void)
 {
-  if ( (c3n == _ce_image_move(&u3P.nor_u, c3y)) ||
-       (c3n == _ce_image_move(&u3P.sou_u, c3y)) )
-  {
-    return c3n;
-  }
-
-  //  XX sync directory
-
-  return c3y;
-}
-
-static c3_o
-_ce_image_drop(u3e_image* img_u)
-{
-  c3_c pat_c[8193];
-  snprintf(pat_c, 8192, "%s/.urb/chk/%s.bin.bak", u3P.dir_c, img_u->nam_c);
-
-  if ( 0 != unlink(pat_c) ) {
-    u3l_log("loom: drop %s failed: %s\r\n", img_u->nam_c, strerror(errno));
+  //    NB: u3e_save() will reinstate protection flags
+  //
+  if ( 0 != mprotect((void *)u3_Loom, u3a_bytes, (PROT_READ | PROT_WRITE)) ) {
     return c3n;
   }
 
   return c3y;
 }
 
-/* u3e_drop(): remove backed-up memory images
+/* u3e_foul(): dirty all the pages of the loom.
 */
-c3_o
-u3e_drop(void)
+void
+u3e_foul(void)
 {
-  if ( (c3n == _ce_image_drop(&u3P.nor_u)) ||
-       (c3n == _ce_image_drop(&u3P.sou_u)) )
-  {
-    return c3n;
-  }
-
-  return c3y;
-}
-
-/* u3e_fall(): restore memory images
-*/
-c3_o
-u3e_fall(void)
-{
-  if ( (c3n == _ce_image_move(&u3P.nor_u, c3n)) ||
-       (c3n == _ce_image_move(&u3P.sou_u, c3n)) )
-  {
-    return c3n;
-  }
-
-  //  XX sync directory
-
-  return c3y;
-}
-
-/* u3e_wipe(): discard memory images
-*/
-c3_o
-u3e_wipe(void)
-{
-  //  XX ensure no patch files are present
-
-  if ( 0 != ftruncate(u3P.nor_u.fid_i, 0) ) {
-    u3l_log("loom: wipe %s failed: %s\r\n", u3P.nor_u.nam_c, strerror(errno));
-    return c3n;
-  }
-
-  if ( 0 != ftruncate(u3P.sou_u.fid_i, 0) ) {
-    u3l_log("loom: wipe %s failed: %s\r\n", u3P.sou_u.nam_c, strerror(errno));
-    return c3n;
-  }
-
-  c3_sync(u3P.nor_u.fid_i);
-  c3_sync(u3P.sou_u.fid_i);
-
-  close(u3P.nor_u.fid_i);
-  close(u3P.sou_u.fid_i);
-
-  //  XX sync directory
-
-  return c3y;
+  memset((void*)u3P.dit_w, 0xff, u3a_pages >> 3);
 }

@@ -1,114 +1,121 @@
-::  invite-hook: receive invites from any source
+::  invite-hook [landscape]: receive invites from any source
 ::
-::    only handles %invite actions. accepts json, but only from the host team.
-::    can be poked by the host team to send an invite out to someone.
-::    can be poked by foreign ships to send an invite to us.
+::    only handles %invite actions:
+::    - can be poked by the host team to send an invite out to someone.
+::    - can be poked by foreign ships to send an invite to us.
 ::
-/+  *invite-json, default-agent, verb
+/-  *invite-store
+/+  default-agent, dbug
 ::
 |%
 +$  state-0  [%0 ~]
-::
 +$  card  card:agent:gall
 --
 ::
 =|  state-0
 =*  state  -
-::
-%+  verb  |
+%-  agent:dbug
 ^-  agent:gall
-=<
-  |_  =bowl:gall
-  +*  this  .
-      do    ~(. +> bowl)
-      def   ~(. (default-agent this %|) bowl)
-  ::
-  ++  on-init
-    ^-  (quip card _this)
-    [~ this]
-  ::
-  ++  on-save  !>(state)
-  ++  on-load
-    |=  old=vase
-    ^-  (quip card _this)
-    [~ this(state !<(state-0 old))]
-  ::
-  ++  on-poke
-    |=  [=mark =vase]
-    ^-  (quip card _this)
-    :_  this
-    ?+  mark  (on-poke:def mark vase)
-        %json
-      ::  only accept json from ourselves.
-      ::
-      ?>  (team:title our.bowl src.bowl)
-      =/  act  (json-to-action !<(json vase))
-      ?>  ?=(%invite -.act)
-      [(invite-hook-poke:do recipient.invite.act act)]~
-    ::
-        %invite-action
-      =/  act=invite-action  !<(invite-action vase)
-      ?.  ?=(%invite -.act)  ~
-      ::  if the sender is us,
-      ::
-      ?:  (team:title our.bowl src.bowl)
-        ::  outgoing. we must be inviting another ship. send them the invite.
-        ::
-        ?>  !(team:title our.bowl recipient.invite.act)
-        [(invite-hook-poke:do recipient.invite.act act)]~
-      ::  else incoming. ensure invitatory exists and invite is not a duplicate.
-      ::
-      ?>  ?=(^ (invitatory-scry:do path.act))
-      ?>  ?=(~ (invite-scry:do path.act uid.act))
-      [(invite-poke:do path.act act)]~
-    ==
-  ::
-  ++  on-peek   on-peek:def
-  ++  on-watch  on-watch:def
-  ++  on-leave  on-leave:def
-  ++  on-agent  on-agent:def
-  ++  on-arvo   on-arvo:def
-  ++  on-fail   on-fail:def
-  --
 ::
 |_  =bowl:gall
++*  this  .
+    def   ~(. (default-agent this %|) bowl)
 ::
-++  invite-hook-poke
-  |=  [=ship action=invite-action]
-  ^-  card
-  :*  %pass
-      /invite-hook
-      %agent
-      [ship %invite-hook]
-      %poke
+++  on-init  [~ this]
+++  on-save  !>(state)
+++  on-load
+  |=  old=vase
+  ^-  (quip card _this)
+  [~ this(state !<(state-0 old))]
+::
+++  on-poke
+  |=  [=mark =vase]
+  ^-  (quip card _this)
+  |^
+  :_  this
+  ?+  mark  (on-poke:def mark vase)
       %invite-action
-      !>(action)
+    =/  act=action  !<(action vase)
+    ?+  -.act     ~
+        %invites
+      ?.  (team:title [our src]:bowl)  ~
+      ::  outgoing. we must be inviting other ships. send them each an invite
+      ::
+      %+  turn  ~(tap in recipients.invites.act)
+      |=  recipient=ship
+      ^-  card
+      ?<  (team:title our.bowl recipient)
+      %+  invite-hook-poke  recipient
+      :^  %invite  term.act  uid.act
+      ^-  invite
+      :*  ship.invites.act
+          app.invites.act
+          resource.invites.act
+          recipient
+          text.invites.act
+      ==
+    ::
+        %invite
+      ?:  (team:title [our src]:bowl)
+        ::  outgoing. we must be inviting another ship. send them the invite.
+        ::
+        ?<  (team:title our.bowl recipient.invite.act)
+        [(invite-hook-poke recipient.invite.act act)]~
+      ::  else incoming. ensure invitatory exists and invite is not a duplicate.
+      ::
+      ?>  ?=(^ (invitatory-scry term.act))
+      ?>  ?=(~ (invite-scry term.act uid.act))
+      [(invite-poke term.act act)]~
+    ==
   ==
+  ::
+  ++  invite-hook-poke
+    |=  [=ship =action]
+    ^-  card
+    :*  %pass
+        /invite-hook
+        %agent
+        [ship %invite-hook]
+        %poke
+        %invite-action
+        !>(action)
+    ==
+  ::
+  ++  invite-poke
+    |=  [=term =action]
+    ^-  card
+    :*  %pass
+        /[term]
+        %agent
+        [our.bowl %invite-store]
+        %poke
+        %invite-action
+        !>(action)
+    ==
+  ::
+  ++  invitatory-scry
+    |=  =term
+    .^  (unit invitatory)
+        %gx
+        %+  weld
+          /(scot %p our.bowl)/invite-store/(scot %da now.bowl)/invitatory
+        /[term]/noun
+    ==
+  ::
+  ++  invite-scry
+    |=  [=term uid=serial]
+    .^  (unit invite)
+        %gx
+        %+  weld
+          /(scot %p our.bowl)/invite-store/(scot %da now.bowl)/invite
+        /[term]/(scot %uv uid)/noun
+    ==
+  --
 ::
-++  invite-poke
-  |=  [=path action=invite-action]
-  ^-  card
-  :*  %pass
-      path
-      %agent
-      [our.bowl %invite-store]
-      %poke
-      %invite-action
-      !>(action)
-  ==
-::
-++  invitatory-scry
-  |=  pax=path
-  ^-  (unit invitatory)
-  =.  pax
-    ;:(weld /=invite-store/(scot %da now.bowl)/invitatory pax /noun)
-  .^((unit invitatory) %gx pax)
-::
-++  invite-scry
-  |=  [pax=path uid=serial]
-  ^-  (unit invite)
-  =.  pax
-    ;:(weld /=invite-store/(scot %da now.bowl)/invite pax /(scot %uv uid)/noun)
-  .^((unit invite) %gx pax)
+++  on-peek   on-peek:def
+++  on-watch  on-watch:def
+++  on-leave  on-leave:def
+++  on-agent  on-agent:def
+++  on-arvo   on-arvo:def
+++  on-fail   on-fail:def
 --
-

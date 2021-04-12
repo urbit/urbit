@@ -1,0 +1,369 @@
+* {
+  -webkit-font-smoothing: antialiased;
+  -webkit-touch-callout: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+input,
+textarea,
+button {
+  margin-block-end: unset;
+  margin-block-start: unset;
+  -webkit-margin-before: unset;
+  -webkit-margin-after: unset;
+  font-family: Inter, sans-serif;
+  padding: 0;
+}
+
+textarea,
+input,
+button {
+  outline: none;
+  -webkit-appearance: none;
+  border: none;
+  background-color: #fff;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+.inter {
+  font-family: Inter, sans-serif;
+}
+
+.clamp-3 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.clamp-message {
+  max-width: calc(100% - 36px - 1.5rem);
+}
+
+.mono {
+  font-family: 'Source Code Pro', monospace;
+}
+
+.c-default {
+  cursor: default;
+}
+
+.word-break-all {
+  word-break: break-all;
+}
+
+.focus-b--black:focus {
+  border-color: #000;
+}
+
+.mix-blend-diff {
+  mix-blend-mode: difference;
+}
+
+.mix-blend-darken {
+  mix-blend-mode: darken;
+}
+
+.placeholder-inter::placeholder {
+  font-family: 'Inter', sans-serif;
+}
+
+.embed-container iframe {
+  max-width: 100%;
+}
+
+.mh-16 {
+  max-height: 16rem;
+}
+
+/* toggler checkbox */
+.toggle::after {
+  content: '';
+  height: 12px;
+  width: 12px;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  border-radius: 100%;
+}
+
+.toggle.checked::after {
+  content: '';
+  height: 12px;
+  width: 12px;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 14px;
+  border-radius: 100%;
+}
+
+.shadow-6 {
+  box-shadow: 2px 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.brt2 {
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+
+.green3 {
+  color: #7ea899;
+}
+
+.unread-notice {
+  top: 0px;
+}
+
+/* responsive */
+
+@media all and (max-width: 34.375em) {
+  .unread-notice {
+    top: 96px;
+  }
+}
+
+blockquote {
+  padding: 0 0 0 16px;
+  margin: 0;
+  color: inherit;
+  border-left: 1px solid;
+}
+
+:root {
+  --dark-gray: #555555;
+  --gray: #7f7f7f;
+  --medium-gray: #cccccc;
+  --light-gray: rgba(0, 0, 0, 0.08);
+}
+.chat .react-codemirror2 {
+  width: 100%;
+}
+
+.chat .CodeMirror {
+  height: 100% !important;
+  width: 100% !important;
+  cursor: text;
+  color: inherit;
+  background: transparent;
+}
+
+.chat .CodeMirror * {
+  font-family: 'Inter';
+}
+
+.chat .cm-s-tlon.CodeMirror {
+  font-size: 14px;
+}
+
+.chat.code .react-codemirror2 .CodeMirror * {
+  font-family: 'Source Code Pro';
+}
+
+.chat .CodeMirror.cm-s-code.chat * {
+  font-family: 'Source Code Pro';
+}
+
+.chat .CodeMirror-selected {
+  background: #bae3fe !important;
+  color: black;
+}
+pre.CodeMirror-placeholder.CodeMirror-line-like {
+  color: var(--gray);
+}
+
+.chat .cm-s-tlon span {
+  font-family: 'Inter';
+}
+.chat .cm-s-tlon span.cm-meta {
+  color: var(--gray);
+}
+.chat .cm-s-tlon span.cm-number {
+  color: var(--gray);
+}
+.chat .cm-s-tlon span.cm-quote {
+  color: var(--gray);
+}
+.chat .cm-s-tlon span.cm-keyword {
+  line-height: 1em;
+  font-weight: bold;
+  color: var(--gray);
+}
+.chat .cm-s-tlon span.cm-atom {
+  font-weight: bold;
+  color: var(--gray);
+}
+.chat .cm-s-tlon span.cm-def {
+  color: black;
+}
+.chat .cm-s-tlon span.cm-variable {
+  color: black;
+}
+.chat .cm-s-tlon span.cm-variable-2 {
+  color: black;
+}
+.chat .cm-s-tlon span.cm-variable-3,
+.chat .cm-s-tlon span.cm-type {
+  color: black;
+}
+.chat .cm-s-tlon span.cm-property {
+  color: black;
+}
+.chat .cm-s-tlon span.cm-operator {
+  color: black;
+}
+.chat .cm-s-tlon span.cm-comment {
+  font-family: 'Source Code Pro';
+  color: inherit;
+  background-color: var(--light-gray);
+  display: inline-block;
+  border-radius: 2px;
+}
+.chat .cm-s-tlon span.cm-string {
+  color: var(--dark-gray);
+}
+.chat .cm-s-tlon span.cm-string-2 {
+  color: var(--gray);
+}
+.chat .cm-s-tlon span.cm-qualifier {
+  color: #555;
+}
+.chat .cm-s-tlon span.cm-error {
+  color: #ff0000;
+}
+.chat .cm-s-tlon span.cm-attribute {
+  color: var(--gray);
+}
+.chat .cm-s-tlon span.cm-tag {
+  color: var(--gray);
+}
+.chat .cm-s-tlon span.cm-link {
+  color: var(--dark-gray);
+  text-decoration: none;
+}
+.chat .cm-s-tlon .CodeMirror-activeline-background {
+  background: var(--gray);
+}
+.chat .cm-s-tlon .CodeMirror-cursor {
+  border-left: 2px solid #3687ff;
+}
+
+.chat .cm-s-tlon span.cm-builtin {
+  color: var(--gray);
+}
+.chat .cm-s-tlon span.cm-bracket {
+  color: var(--gray);
+}
+/* .chat .cm-s-tlon  { font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;} */
+
+.chat .cm-s-tlon .CodeMirror-matchingbracket {
+  outline: 1px solid grey;
+  color: black !important;
+}
+
+.chat .CodeMirror-hints.tlon {
+  /* font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; */
+  color: #616569;
+  background-color: #ebf3fd !important;
+}
+
+.chat .CodeMirror-hints.tlon .CodeMirror-hint-active {
+  background-color: #a2b8c9 !important;
+  color: #5c6065 !important;
+}
+
+.title-input[placeholder]:empty:before {
+  content: attr(placeholder);
+  color: #7f7f7f;
+}
+
+/* dark */
+
+@media (prefers-color-scheme: dark) {
+
+  /* codemirror */
+  .chat .cm-s-tlon.CodeMirror {
+    color: inherit;
+  }
+
+  .chat .cm-s-tlon span.cm-def {
+    color: white;
+  }
+
+  .chat .cm-s-tlon span.cm-variable {
+    color: white;
+  }
+
+  .chat .cm-s-tlon span.cm-variable-2 {
+    color: white;
+  }
+
+  .chat .cm-s-tlon span.cm-variable-3,
+  .chat .cm-s-tlon span.cm-type {
+    color: white;
+  }
+
+  .chat .cm-s-tlon span.cm-property {
+    color: white;
+  }
+
+  .chat .cm-s-tlon span.cm-operator {
+    color: white;
+  }
+
+  .chat .cm-s-tlon span.cm-string {
+    color: var(--gray);
+  }
+
+  .chat .cm-s-tlon span.cm-string-2 {
+    color: var(--gray);
+  }
+
+  .chat .cm-s-tlon span.cm-attribute {
+    color: var(--gray);
+  }
+
+  .chat .cm-s-tlon span.cm-tag {
+    color: var(--gray);
+  }
+
+  .chat .cm-s-tlon span.cm-link {
+    color: var(--gray);
+  }
+
+  /* set rules w/ both color & bg-color last to preserve legibility */
+  .chat .CodeMirror-selected {
+    background: var(--medium-gray) !important;
+    color: inherit;
+  }
+}

@@ -10,37 +10,78 @@ applications. Landscape applications will usually make good use of Gall, but
 it's not strictly required if a Landscape application is not interacting with
 ships directly.
 
-Create a development ship, then once your ship is running, mount to Unix with
-`|mount %`. This will create a folder named 'home' in your pier in Unix. The
-'home' desk contains the working state of your ship -- like a Git repository,
-when you want to make a change to it, `|commit %home`.
+## Starting the dev environment
 
-## Contributing to Landscape applications
+From this directory, go to the config folder and copy `urbitrc-sample` to
+`urbitrc`.
 
-If you'd like to contribute to the core set of Landscape applications in this
-repository, clone this repository and start by creating an `urbitrc` file in
-this folder, [pkg/interface][interface]. You can find an `urbitrc-sample` here
-for reference. Then `cd` into the application's folder and `npm install` the
-dependencies, then `gulp watch` to watch for changes.
+You should see the following:
 
-On your development ship, ensure you `|commit %home` to apply your changes.
-Once you're done and ready to make a pull request, running `gulp bundle-prod`
-will make the production files and deposit them in [pkg/arvo][arvo]. Create a
-pull request with both the production files, and the source code you were
-working on in the interface directory.
+```
+module.exports = {
+  URBIT_PIERS: [
+    "/Users/user/ships/zod/home",
+  ],
+  herb: false,
+  URL: 'http://localhost:80'
+};
+```
 
-Please also ensure your pull request fits our standards for
-[Git hygiene][contributing].
+Change the URL to your livenet ship (if making front-end changes) or keep it the
+same (if [developing on a local development ship][local]). Then, from
+'pkg/interface':
 
-[contributing]: /CONTRIBUTING.md#git-practice
-[arvo]: /pkg/arvo
-[interface]:/pkg/interface
+```
+npm install
+npm run start
+```
 
-### Gall
+The dev server will start at `http://localhost:9000`. Sign in as you would
+normally. Landscape will refresh automatically as you make changes.
 
-Presently, Gall documentation is still in [progress][gall], but a good
-reference. For examples of Landscape apps that use Gall, see the code for
-[Chat][chat] and [Publish][publish].
+#### Multi ship environments
+
+If you are testing across multiple ships at once, and you would like to be able
+to run the development server against all of the ships simulataneously, then do
+the following.
+
+Add an object under the `FLEET` key to your urbitrc.
+```javascript
+module.exports = {
+  URL: 'http://localhost:80',
+  FLEET: {
+    'zod': 'http://localhost:8080',
+    'bus': 'http://localhost:8081',
+    'nus': 'http://localhost:8082'
+  }
+};
+
+```
+
+The dev environment will attempt to match the subdomain against the keys of this
+object, and if matched will proxy to the corresponding URL. For example, the 
+above config will proxy `zod.localhost:9000` to `http://localhost:8080`,
+`bus.localhost:9000` to `http://localhost:8081` and so on and so forth. If no
+match is found, then it will fallback to the `URL` property.
+
+## Linting
+
+The Urbit interface uses Eslint to lint the JavaScript code. To install the
+linter and for usage through the command, do the following:
+
+```bash
+$ cd ./pkg/interface
+$ npm install
+$ npm run lint
+```
+
+To use the linter, run npm scripts
+
+```bash
+$ npm run lint # lints all files in `interface`
+$ npm run lint-file ./src/apps/chat/**/*.js # lints all .js files in `interface/chat`
+$ npm run lint-file ./src/chat/app.js # lints a single chosen file
+```
 
 ## Creating your own applications
 
@@ -53,6 +94,5 @@ running.
 
 [cla]: https://github.com/urbit/create-landscape-app
 [template]: https://github.com/urbit/create-landscape-app/generate
-[gall]: https://urbit.org/docs/learn/arvo/gall/
-[chat]: /pkg/arvo/app/chat.hoon
-[publish]: /pkg/arvo/app/publish.hoon
+[gall]:https://urbit.org/docs/learn/arvo/gall/
+[local]: /CONTRIBUTING.md#fake-ships

@@ -10,7 +10,7 @@
 ::  talk to its own star.
 ::
 /+  default-agent, verb
-=*  point  point:able:kale
+=*  point  point:kale
 ::
 |%
 +$  card  card:agent:gall
@@ -71,7 +71,7 @@
     ++  stop-ping-ship
       |=  [our=@p now=@da =ship =old=rift =ship-state]
       ^-  (quip card _state)
-      =+  .^(=new=rift %j /=rift/(scot %da now)/(scot %p ship))
+      =+  .^(=new=rift %j /(scot %p our)/rift/(scot %da now)/(scot %p ship))
       ::  if nothing's changed about us, don't cancel
       ::
       ?:  ?&  =(old-rift new-rift)
@@ -96,7 +96,7 @@
         (send-ping our now ship)
       ::
       ;<  new-state=_state  (rind card state)
-        =+  .^(=rift %j /=rift/(scot %da now)/(scot %p ship))
+        =+  .^(=rift %j /(scot %p our)/rift/(scot %da now)/(scot %p ship))
         :_  state(ships (~(put by ships.state) ship rift %idle ~))
         [%pass /jael/(scot %p ship) %arvo %j %public-keys (silt ship ~)]~
       =.  state  new-state

@@ -2,11 +2,12 @@
 ::
 ::::  /hoon/hello/gen
   ::
+::  TODO: reinstate
 /?    310
 ::
 ::::
   ::
 :-  %say
-|=  {^ {{txt/@tas ~} ~}}
+|=  [^ [[txt=@tas ~] ~]]
 :-  %noun
 (crip (weld "hello, " (trip txt)))

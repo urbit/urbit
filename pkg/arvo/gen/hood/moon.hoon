@@ -13,17 +13,17 @@
         public-key=pass
     ==
 :-  %helm-moon
-^-  (unit [=ship =udiff:point:able:jael])
+^-  (unit [=ship =udiff:point:jael])
 =*  our  p.bec
 =/  ran  (clan:title our)
-?:  ?=({?($earl $pawn)} ran)
+?:  ?=([?(%earl %pawn)] ran)
   %-  %-  slog  :_  ~
-      leaf+"can't create a moon from a {?:(?=($earl ran) "moon" "comet")}"
+      leaf+"can't create a moon from a {?:(?=(%earl ran) "moon" "comet")}"
   ~
 =/  mon=ship
   ?^  arg
     mon.arg
-  (add our (lsh 5 1 (end 5 1 (shaz eny))))
+  (add our (lsh 5 (end 5 (shaz eny))))
 =/  seg=ship  (sein:title our now mon)
 ?.  =(our seg)
   %-  %-  slog  :_  ~
@@ -34,11 +34,11 @@
   ?.  =(*pass public-key)
     public-key
   =/  cub  (pit:nu:crub:crypto 512 (shaz (jam mon life=1 eny)))
-  =/  =seed:able:jael
+  =/  =seed:jael
     [mon 1 sec:ex:cub ~]
   %-  %-  slog
       :~  leaf+"moon: {(scow %p mon)}"
           leaf+(scow %uw (jam seed))
       ==
   pub:ex:cub
-`[mon *id:block:able:jael %keys 1 1 pass]
+`[mon *id:block:jael %keys 1 1 pass]

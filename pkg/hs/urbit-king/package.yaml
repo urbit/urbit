@@ -1,15 +1,20 @@
 name: urbit-king
-version: 0.10.1
+version: 1.3
 license: MIT
 license-file: LICENSE
+data-files:
+  - test/gold/hoontree.gold
+  - test/gold/hoontree.pill
 
 library:
   source-dirs: lib
   ghc-options:
-    - -fwarn-incomplete-patterns
-    - -fwarn-unused-binds
-    - -fwarn-unused-imports
+    - -Wall
     - -Werror
+    - -Wno-type-defaults
+    - -Wno-unused-matches
+    - -Wno-name-shadowing
+    - -Wno-unused-do-bind
     - -O2
 
 tests:
@@ -31,6 +36,7 @@ dependencies:
   - binary
   - bytestring
   - case-insensitive
+  - cereal
   - classy-prelude
   - conduit
   - containers
@@ -50,6 +56,8 @@ dependencies:
   - Glob
   - hashable
   - hashtables
+  - heap
+  - hexstring
   - http-client
   - http-client-tls
   - http-types
@@ -57,25 +65,27 @@ dependencies:
   - iproute
   - largeword
   - lens
-  - lmdb-static
   - lock-file
   - megaparsec
   - memory
   - mtl
   - multimap
   - murmur3
+  - natpmp-static
   - network
   - optparse-applicative
   - para
+  - pem
   - pretty-show
   - primitive
   - process
   - QuickCheck
+  - racquire
   - random
   - regex-tdfa
-  - regex-tdfa-text
   - resourcet
   - rio
+  - rio-orphans
   - semigroups
   - smallcheck
   - stm
@@ -87,18 +97,21 @@ dependencies:
   - tasty-th
   - template-haskell
   - terminal-progress-bar
-  - terminal-size
   - text
   - these
   - time
+  - tls
   - transformers
   - unix
   - unliftio
   - unliftio-core
   - unordered-containers
   - urbit-atom
-  - urbit-azimuth
+  - urbit-eventlog-lmdb
   - urbit-hob
+  - urbit-noun
+  - urbit-noun-core
+  - urbit-termsize
   - utf8-string
   - vector
   - wai
@@ -106,13 +119,14 @@ dependencies:
   - wai-websockets
   - warp
   - warp-tls
-  - web3
   - websockets
 
 default-extensions:
   - ApplicativeDo
   - BangPatterns
+  - BinaryLiterals
   - BlockArguments
+  - ConstraintKinds
   - DataKinds
   - DefaultSignatures
   - DeriveAnyClass
@@ -137,6 +151,7 @@ default-extensions:
   - OverloadedStrings
   - PackageImports
   - PartialTypeSignatures
+  - PatternGuards
   - PatternSynonyms
   - QuasiQuotes
   - Rank2Types

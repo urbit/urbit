@@ -4,7 +4,7 @@
 /?    310
 ::
 =,  mimes:html
-|_  mud/@
+|_  mud=@
 ++  grow
   |%
   ++  mime  [/application/octet-stream (as-octs mud)]

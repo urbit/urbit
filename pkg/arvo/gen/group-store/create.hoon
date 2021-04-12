@@ -1,10 +1,10 @@
 ::  group-store|create: initialize a group
 ::
-/-  *group-store
+/-  *group-store, *group
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[=path ~] ~]
+        [[=term ~] ~]
     ==
 :-  %group-action
-^-  group-action
-[%bundle path]
+^-  action
+[%add-group [p.beak term] *open:policy %.n]

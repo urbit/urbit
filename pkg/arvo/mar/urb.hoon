@@ -4,8 +4,9 @@
 /?    310
 =,  mimes:html
 =,  html
-|_  own/manx
+|_  own=manx
 ::
+++  grad  %noun
 ++  grow                                                ::  convert to
   |%
   ++  hymn  ;html:(head body:"+{own}")                  ::  convert to %hymn

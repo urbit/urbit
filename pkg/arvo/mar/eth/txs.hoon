@@ -1,7 +1,7 @@
 ::  list of ethereum transactions
 ::
+/+  *ethereum
 =,  format
-=,  ethereum
 =,  rpc
 =,  mimes:html
 ::
@@ -10,13 +10,13 @@
   %-  cook  :_  nuck:so
   |=  =coin
   ?>  ?=(%$ -.coin)
-  ?>  ?=(%u (end 3 1 p.p.coin))
+  ?>  ?=(%u (end 3 p.p.coin))
   `@`q.p.coin
 ::
 ++  grab
   |%
   ++  mime
-    |=  [p=mite:eyre q=octs:eyre]
+    |=  (pair mite octs)
     =/  wan=wain  (to-wain q.q)
     ?>  ?=(^ wan)
     %+  murn  t.wan

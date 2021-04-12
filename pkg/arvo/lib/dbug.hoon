@@ -3,14 +3,15 @@
 ::    usage: %-(agent:dbug your-agent)
 ::
 |%
-+$  what
-  $?  %bowl
-      %state
-      %incoming
-      %outgoing
++$  poke
+  $%  [%bowl ~]
+      [%state grab=cord]
+      [%incoming =about]
+      [%outgoing =about]
   ==
 ::
 +$  about
+  $@  ~
   $%  [%ship =ship]
       [%path =path]
       [%wire =wire]
@@ -20,6 +21,7 @@
 ++  agent
   |=  =agent:gall
   ^-  agent:gall
+  !.
   |_  =bowl:gall
   +*  this  .
       ag    ~(. agent bowl)
@@ -31,41 +33,80 @@
       =^  cards  agent  (on-poke:ag mark vase)
       [cards this]
     =/  dbug
-      !<([=what =about] vase)
-    =;  out=^vase
-      ((slog (sell out) ~) [~ this])
-    ?-  what.dbug
-      %bowl   !>(bowl)
-      %state  on-save:ag
+      !<(poke vase)
+    =;  =tang
+      ((%*(. slog pri 1) tang) [~ this])
+    ?-  -.dbug
+      %bowl   [(sell !>(bowl))]~
+    ::
+        %state
+      =?  grab.dbug  =('' grab.dbug)  '-'
+      =;  product=^vase
+        [(sell product)]~
+      =/  state=^vase
+        ::  if the underlying app has implemented a /dbug/state scry endpoint,
+        ::  use that vase in place of +on-save's.
+        ::
+        =/  result=(each ^vase tang)
+          (mule |.(q:(need (need (on-peek:ag /x/dbug/state)))))
+        ?:(?=(%& -.result) p.result on-save:ag)
+      %+  slap
+        (slop state !>([bowl=bowl ..zuse]))
+      (ream grab.dbug)
     ::
         %incoming
-      !>
-      %+  murn  ~(tap by sup.bowl)
-      |=  sub=[=duct [=ship =path]]
-      ^-  (unit _sub)
+      =;  =tang
+        ?^  tang  tang
+        [%leaf "no matching subscriptions"]~
+      %+  murn
+        %+  sort  ~(tap by sup.bowl)
+        |=  [[* a=[=ship =path]] [* b=[=ship =path]]]
+        (aor [path ship]:a [path ship]:b)
+      |=  [=duct [=ship =path]]
+      ^-  (unit tank)
       =;  relevant=?
-        ?:(relevant `sub ~)
+        ?.  relevant  ~
+        `>[path=path from=ship duct=duct]<
+      ?:  ?=(~ about.dbug)  &
       ?-  -.about.dbug
-        %ship  =(ship.sub ship.about.dbug)
-        %path  ?=(^ (find path.about.dbug path.sub))
-        %wire  %+  lien  duct.sub
+        %ship  =(ship ship.about.dbug)
+        %path  ?=(^ (find path.about.dbug path))
+        %wire  %+  lien  duct
                |=(=wire ?=(^ (find wire.about.dbug wire)))
         %term  !!
       ==
     ::
         %outgoing
-      !>
-      %+  murn  ~(tap by wex.bowl)
-      |=  sub=[[=wire =ship =term] [acked=? =path]]
-      ^-  (unit _sub)
+      =;  =tang
+        ?^  tang  tang
+        [%leaf "no matching subscriptions"]~
+      %+  murn
+        %+  sort  ~(tap by wex.bowl)
+        |=  [[[a=wire *] *] [[b=wire *] *]]
+        (aor a b)
+      |=  [[=wire =ship =term] [acked=? =path]]
+      ^-  (unit tank)
       =;  relevant=?
-        ?:(relevant `sub ~)
+        ?.  relevant  ~
+        `>[wire=wire agnt=[ship term] path=path ackd=acked]<
+      ?:  ?=(~ about.dbug)  &
       ?-  -.about.dbug
-        %ship  =(ship.sub ship.about.dbug)
-        %path  ?=(^ (find path.about.dbug path.sub))
-        %wire  ?=(^ (find wire.about.dbug wire.sub))
-        %term  =(term.sub term.about.dbug)
+        %ship  =(ship ship.about.dbug)
+        %path  ?=(^ (find path.about.dbug path))
+        %wire  ?=(^ (find wire.about.dbug wire))
+        %term  =(term term.about.dbug)
       ==
+    ==
+  ::
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?.  ?=([@ %dbug *] path)
+      (on-peek:ag path)
+    ?+  path  [~ ~]
+      [%u %dbug ~]                 ``noun+!>(&)
+      [%x %dbug %state ~]          ``noun+!>(on-save:ag)
+      [%x %dbug %subscriptions ~]  ``noun+!>([wex sup]:bowl)
     ==
   ::
   ++  on-init
@@ -92,8 +133,6 @@
     ^-  (quip card:agent:gall agent:gall)
     =^  cards  agent  (on-leave:ag path)
     [cards this]
-  ::
-  ++  on-peek  on-peek:ag
   ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]

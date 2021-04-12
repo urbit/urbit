@@ -34,56 +34,41 @@
         c3_o
         u3r_mean(u3_noun a, ...);
 
+      /* u3r_mug_both(): Join two mugs.
+      */
+        c3_l
+        u3r_mug_both(c3_w lef_w, c3_w rit_w);
+
       /* u3r_mug_bytes(): Compute the mug of `buf`, `len`, LSW first.
       */
-        c3_w
+        c3_l
         u3r_mug_bytes(const c3_y *buf_y,
                       c3_w        len_w);
 
-      /* u3r_mug_chub(): Compute the mug of `num`, LSW first.
+      /* u3r_mug_c(): Compute the mug of `a`, LSB first.
       */
-        c3_w
-        u3r_mug_chub(c3_d num_d);
-
-      /* u3r_mug_string(): Compute the mug of `a`, LSB first.
-      */
-        c3_w
-        u3r_mug_string(const c3_c *a_c);
-
-      /* u3r_mug_words(): 31-bit nonzero MurmurHash3 on raw words.
-      */
-        c3_w
-        u3r_mug_words(const c3_w* key_w, c3_w len_w);
-
-      /* u3r_mug_both(): Join two mugs.
-      */
-        c3_w
-        u3r_mug_both(c3_w lef_w, c3_w rit_w);
+        c3_l
+        u3r_mug_c(const c3_c *a_c);
 
       /* u3r_mug_cell(): Compute the mug of the cell `[hed tel]`.
       */
-        c3_w
+        c3_l
         u3r_mug_cell(u3_noun hed,
                      u3_noun tel);
 
-      /* u3r_mug_trel(): Compute the mug of `[a b c]`.
+      /* u3r_mug_chub(): Compute the mug of `num`, LSW first.
       */
-        c3_w
-        u3r_mug_trel(u3_noun a,
-                     u3_noun b,
-                     u3_noun c);
+        c3_l
+        u3r_mug_chub(c3_d num_d);
 
-      /* u3r_mug_qual(): Compute the mug of `[a b c d]`.
+      /* u3r_mug_words(): 31-bit nonzero MurmurHash3 on raw words.
       */
-        c3_w
-        u3r_mug_qual(u3_noun a,
-                     u3_noun b,
-                     u3_noun c,
-                     u3_noun d);
+        c3_l
+        u3r_mug_words(const c3_w* key_w, c3_w len_w);
 
-      /* u3r_mug(): MurmurHash3 on a noun.
+      /* u3r_mug(): statefully mug a noun with 31-bit murmur3.
       */
-        c3_w
+        c3_l
         u3r_mug(u3_noun veb);
 
       /* u3r_fing():
@@ -202,6 +187,11 @@
         u3r_mold(u3_noun  a,
                  u3_noun* b,
                  u3_noun* c);
+
+      /* u3r_bite(): retrieve/default $bloq and $step from $bite.
+      */
+        c3_o
+        u3r_bite(u3_noun bite, u3_atom* bloq, u3_atom *step);
 
       /* u3r_cell():
       **
@@ -368,6 +358,14 @@
         u3r_mp(mpz_t   a_mp,
                u3_atom b);
 
+      /* u3r_short():
+      **
+      **   Return short (a_w) of (b).
+      */
+        c3_s
+        u3r_short(c3_w  a_w,
+                  u3_atom b);
+
       /* u3r_word():
       **
       **   Return word (a_w) of (b).
@@ -403,6 +401,21 @@
                   c3_w    b_w,
                   c3_d*   c_d,
                   u3_atom d);
+
+      /* u3r_safe_byte(): validate and retrieve byte.
+      */
+        c3_o
+        u3r_safe_byte(u3_noun dat, c3_y* out_y);
+
+      /* u3r_safe_word(): validate and retrieve word.
+      */
+        c3_o
+        u3r_safe_word(u3_noun dat, c3_w* out_w);
+
+      /* u3r_safe_chub(): validate and retrieve chub.
+      */
+        c3_o
+        u3r_safe_chub(u3_noun dat, c3_d* out_d);
 
       /* u3r_string(): `a`, a text atom, as malloced C string.
       */

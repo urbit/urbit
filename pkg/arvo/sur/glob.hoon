@@ -1,0 +1,3 @@
+|%
++$  glob  (map path mime)
+--

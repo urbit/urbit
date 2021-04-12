@@ -1,4 +1,5 @@
+::  List azimuth sources
 :-  %say
-|=  [[now=@da *] *]
+|=  [[now=@da @ our=@p ^] *]
 :-  %noun
-.^(state-eth-node:jael j//=sources/(scot %da now))
+.^(state-eth-node:jael j//(scot %p our)/sources/(scot %da now))

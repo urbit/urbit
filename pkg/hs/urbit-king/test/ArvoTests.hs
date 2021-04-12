@@ -10,17 +10,20 @@ import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 import Urbit.Arvo
+import Urbit.EventLog.LMDB
+import Urbit.Noun.Time
 import Urbit.Prelude
-import Urbit.Time
-import Urbit.Vere.Log
 import Urbit.Vere.Pier.Types
+
+import System.IO.Unsafe
+import Data.Serialize
 
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
 import Network.Socket     (tupleToHostAddress)
 
-import qualified Urbit.Vere.Log as Log
+import qualified Urbit.EventLog.LMDB as Log
 
 
 -- Utils -----------------------------------------------------------------------
@@ -31,18 +34,6 @@ roundTrip x = Just x == fromNoun (toNoun x)
 nounEq :: (ToNoun a, ToNoun b) => a -> b -> Bool
 nounEq x y = toNoun x == toNoun y
 
-data EvExample = EvEx Ev Noun
-  deriving (Eq, Show)
-
-eventSanity :: [EvExample] -> Bool
-eventSanity = all $ \(EvEx e n) -> toNoun e == n
-
-instance Arbitrary EvExample where
-  arbitrary = oneof $ fmap pure $
-    [ EvEx (EvVane $ VaneVane $ VEVeer (Jael, ()) "" (Path []) "")
-           (toNoun (Path ["vane", "vane", "jael"], Cord "veer", (), (), ()))
-    ]
-
 --------------------------------------------------------------------------------
 
 tests :: TestTree
@@ -51,7 +42,6 @@ tests =
     [ testProperty "Round Trip Effect"   (roundTrip @Ef)
     , testProperty "Round Trip Event"    (roundTrip @Ev)
     , testProperty "Round Trip AmesDest" (roundTrip @AmesDest)
-    , testProperty "Basic Event Sanity" eventSanity
     ]
 
 
@@ -131,23 +121,8 @@ instance Arbitrary BlipEv where
                     ]
 
 instance Arbitrary Ev where
-  arbitrary = oneof [ EvVane <$> arb
-                    , EvBlip <$> arb
+  arbitrary = oneof [ EvBlip <$> arb
                     ]
-
-instance Arbitrary Vane where
-  arbitrary = oneof [ VaneVane <$> arb
-                    , VaneZuse <$> arb
-                    ]
-
-instance Arbitrary VaneName where
-  arbitrary = oneof $ pure <$> [minBound .. maxBound]
-
-instance Arbitrary VaneEv where
-  arbitrary = VEVeer <$> arb <*> arb <*> arb <*> arb
-
-instance Arbitrary ZuseEv where
-  arbitrary = ZEVeer () <$> arb <*> arb <*> arb
 
 instance Arbitrary StdMethod where
   arbitrary = oneof $ pure <$> [ minBound .. maxBound ]

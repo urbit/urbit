@@ -6,26 +6,30 @@
   **/
     /* Conventional axes for gate call.
     */
-#     define u3x_pay      3       //  payload
-#     define u3x_sam      6       //  sample
-#       define u3x_sam_1  6
-#       define u3x_sam_2  12
-#       define u3x_sam_3  13
-#       define u3x_sam_4  24
-#       define u3x_sam_5  25
-#       define u3x_sam_6  26
-#       define u3x_sam_12 52
-#       define u3x_sam_13 53
-#       define u3x_sam_7  27
-#       define u3x_sam_14 54
-#       define u3x_sam_15 55
-#       define u3x_sam_30 110
-#       define u3x_sam_31 111
-#     define u3x_con      7       //  context
-#     define u3x_con_2    14      //  context
-#     define u3x_con_3    15      //  context
-#     define u3x_con_sam  30      //  sample in gate context
-#     define u3x_bat      2       //  battery
+#     define u3x_pay         3       //  payload
+#     define u3x_sam         6       //  sample
+#       define u3x_sam_1     6
+#       define u3x_sam_2     12
+#       define u3x_sam_3     13
+#       define u3x_sam_4     24
+#       define u3x_sam_5     25
+#       define u3x_sam_6     26
+#       define u3x_sam_12    52
+#       define u3x_sam_13    53
+#       define u3x_sam_7     27
+#       define u3x_sam_14    54
+#       define u3x_sam_15    55
+#       define u3x_sam_30    110
+#       define u3x_sam_31    111
+#       define u3x_sam_62    222
+#       define u3x_sam_63    223
+#     define u3x_con         7       //  context
+#     define u3x_con_2       14      //  context
+#     define u3x_con_3       15      //  context
+#     define u3x_con_sam     30      //  sample in gate context
+#       define u3x_con_sam_2 60
+#       define u3x_con_sam_3 61
+#     define u3x_bat         2       //  battery
 
 
   /**  Macros.
@@ -52,6 +56,11 @@
       */
 #       define u3x_peg(a_w, b_w) \
           ( (a_w << u3x_dep(b_w)) | (b_w &~ (1 << u3x_dep(b_w))) )
+
+      /* u3x_atom(): atom or exit.
+      */
+#       define u3x_atom(a)                            \
+          ( (c3y == u3a_is_cell(a)) ? u3m_bail(c3__exit) : a )
 
   /**  Functions.
   **/
@@ -88,6 +97,11 @@
       */
         void
         u3x_mean(u3_noun a, ...);
+
+      /* u3x_bite(): xtract/default $bloq and $step from $bite.
+      */
+        void
+        u3x_bite(u3_noun bite, u3_atom* bloq, u3_atom *step);
 
       /* u3x_cell():
       **

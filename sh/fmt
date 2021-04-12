@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Usage: fmt
+
+# Run all formatters and linters ensuring codebase consistency
+
+set -euo pipefail
+
+cd "${0%/*}"
+
+./fmt-shell
+./fmt-nix
+./fmt-haskell
+
+echo 'Done.'

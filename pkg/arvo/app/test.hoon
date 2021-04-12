@@ -1,40 +1,20 @@
 /+  default-agent
-::
+!:
 |%
 +$  card  card:agent:gall
-+$  test
-  $%  [%arvo ~]       ::UNIMPLEMENTED
-      [%marks ~]      ::UNIMPLEMENTED
-      [%cores p=path]
-      [%hoons p=path]
-      [%names p=path]
-      [%renders p=path]
++$  test  ?(%agents %marks %generators)
++$  state
+  $:  app=(set path)
+      app-ok=?
+      mar=(set path)
+      mar-ok=?
+      gen=(set path)
+      gen-ok=?
   ==
 --
-::
-|%
-++  join
-  |=  {a/cord b/(list cord)}
-  ?~  b  ''
-  (rap 3 |-([i.b ?~(t.b ~ [a $(b t.b)])]))
-::
-++  fake-fcgi  [%many [%blob *cred:eyre] $+[%n ~] ~]
-++  build-core
-  |=  [=disc:ford a=spur b=(list spur)]
-  ^-  card
-  ~&  >>  (flop a)
-  :*  %pass  a-core+a
-      %arvo  %f  %build
-      live=|
-      ^-  schematic:ford
-      :-  [%core disc %hoon a]
-      [%$ %cont !>(b)]
-  ==
---
-::
-=,  ford
 =,  format
 ^-  agent:gall
+=|  =state
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
@@ -44,121 +24,131 @@
 ++  on-load   on-load:def
 ++  on-poke
   |=  [=mark =vase]
-  :_  this
+  ^-  [(list card) _this]
   |^
-  =+  !<(a=test vase)
-  ?-    -.a
-      %arvo     ~|(%stub !!) ::basically double solid?
-      %hoons    ~&((list-hoons p.a ~) ~)
-      %names    ~&((list-names p.a) ~)
-      %marks    ~|(%stub !!) ::TODO restore historical handler
-      %renders   ~&(%all-renderers-are-disabled ~)
-      %cores
-    =/  spurs  [- +]:(list-hoons p.a skip=(sy /sys /ren /tests ~))
-    [(build-core [p q]:byk.bowl spurs) ~]
+  =+  !<(=test vase)
+  ?-  test
+    %marks   test-marks
+    %agents  test-agents
+    %generators  test-generators
   ==
   ::
-  ++  now-beak  %_(byk.bowl r [%da now.bowl])
-  ++  list-hoons
-    |=  [under=path skipping=(set spur)]  ^-  (list spur)
-    =/  sup  (flop under)
-    ~&  [%findining-hoons under=under]
-    |-  ^-  (list spur)
-    %-  zing
-    %+  turn
-      =-  (sort ~(tap by -) aor)
-      dir:.^(arch %cy (en-beam now-beak sup))
-    |=  [a=knot ~]  ^-  (list spur)
-    =.  sup  [a sup]
-    ?:  (~(has in skipping) (flop sup))
-      ~&(> [(flop sup) %out-of-scope] ~)
-    =/  ded  (~(get by skip-completely) (flop sup))
-    ?^  ded
-      ~&(> [(flop sup) %skipped `tape`u.ded] ~)
-    ?~  [fil:.^(arch %cy (en-beam now-beak [%hoon sup]))]
-      ^$
-    ~&  (flop sup)
-    [sup ^$]
-  ::
-  ++  list-names
-    |=  a/path  ^-  (list term)
-    =/  hon  (list-hoons a ~)
-    %+  turn  hon
-    |=  b=spur
-    (join '-' (slag 1 (flop b)))
-  ::
-  ++  skip-completely
-    ^~  ^-  (map path tape)
-    %-  my  :~ ::TODO don't hardcode
-      :-  /ren/run            "not meant to be called except on a (different) hoon file"
-      :-  /ren/test-gen       "temporarily disabled"
+  ++  test-marks
+    =|  fex=(list card)
+    ^+  [fex this]
+    ?>  =(~ mar.state)
+    =.  mar-ok.state  %.y
+    =+  .^(paz=(list path) ct+(en-beam now-beak /mar))
+    |-  ^+  [fex this]
+    ?~  paz  [(flop fex) this]
+    =/  xap=path  (flop i.paz)
+    ?.  ?=([%hoon *] xap)
+      $(paz t.paz)
+    =/  mak=^mark
+      %-  crip
+      %+  turn  (tail (spud (tail (flop (tail xap)))))
+      |=(c=@tD `@tD`?:(=('/' c) '-' c))
+    =/  sing=card
+      :+  %pass  /build/mar/[mak]
+      [%arvo %c %warp our.bowl %home ~ %sing %b da+now.bowl /[mak]]
+    %_  $
+      paz        t.paz
+      fex        [sing fex]
+      mar.state  (~(put in mar.state) /mar/[mak])
     ==
+  ::
+  ++  test-agents
+    =|  fex=(list card)
+    ^+  [fex this]
+    ?>  =(~ app.state)
+    =.  app-ok.state  %.y
+    =+  .^(app-arch=arch cy+(en-beam now-beak /app))
+    =/  daz  (sort ~(tap in ~(key by dir.app-arch)) |=((pair) !(aor p q)))
+    |-  ^+  [fex this]
+    ?~  daz  [fex this]
+    =/  dap-pax=path  /app/[i.daz]/hoon
+    =/  dap-arch  .^(arch cy+(en-beam now-beak dap-pax))
+    ?~  fil.dap-arch
+      $(daz t.daz)
+    =/  sing=card
+      :+  %pass  /build/app/[i.daz]
+      [%arvo %c %warp our.bowl %home ~ %sing %a da+now.bowl dap-pax]
+    %_  $
+      daz        t.daz
+      fex        [sing fex]
+      app.state  (~(put in app.state) /app/[i.daz])
+    ==
+  ::
+  ++  test-generators
+    =|  fex=(list card)
+    ^+  [fex this]
+    ?>  =(~ gen.state)
+    =.  gen-ok.state  %.y
+    =+  .^(paz=(list path) ct+(en-beam now-beak /gen))
+    |-  ^+  [fex this]
+    ?~  paz  [(flop fex) this]
+    =/  xap=path  (flop i.paz)
+    ?.  ?=([%hoon *] xap)
+      $(paz t.paz)
+    =/  sing=card
+      :+  %pass  build+i.paz
+      [%arvo %c %warp our.bowl %home ~ %sing %a da+now.bowl i.paz]
+    %_  $
+      paz        t.paz
+      fex        [sing fex]
+      gen.state  (~(put in gen.state) i.paz)
+    ==
+  ::
+  ++  now-beak  %_(byk.bowl r [%da now.bowl])
   --
-::
-::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
 ++  on-arvo
+  =>  |%
+      ++  report
+        |*  [=path ok=?]
+        =/  =tank  leaf+"{?:(ok "built " "FAILED")}  {(spud path)}"
+        ~>(%slog.[0 tank] same)
+      --
+  ::
   |=  [=wire =sign-arvo]
-  |^
-  :_  this
-  ^-  (list card)
-  ?.  ?=([%a-core *] wire)
-    (on-arvo:def wire sign-arvo)
-  ?.  ?=(%made +<.sign-arvo)
-    (on-arvo:def wire sign-arvo)
-  =/  =spur  t.wire
-  =/  res  result.sign-arvo
-  ?:  ?=([%incomplete *] res)
-    ~&  incomplete-core+spur
-    ((slog tang.res) ~)
-  ?.  ?=([%complete %success *] res)
-    ~&  unsuccessful-core+spur
-    ((slog message.build-result.res) ~)
-  ?>  ?=(^ +<.build-result.res)
-  %-  (slog (report-error spur head.build-result.res))
-  =/  nex=(list ^spur)
-    =<  p
-    ;;  [%success %$ %cont * p=(list ^spur)]
-    tail.build-result.res
-  ?~  nex  ~&(%cores-tested ~)
-  [(build-core [p q]:byk.bowl nex) ~]
-  ::
-  ++  report-error
-    |=  [=spur bud=build-result]
-    ^-  tang
-    =/  should-fail  (~(get by failing) (flop spur))
-    ?-    -.bud
-        %success
-      ?~  should-fail  ~
-      :~  leaf+"warn: expected failure, {<`tape`u.should-fail>}"
-          leaf+"warn: built succesfully"
-          ?:  ?=(%bake +<.bud)
-            (sell q.cage.bud)
-          ?>  ?=(%core +<.bud)
-          (sell vase.bud)
+  ^-  [(list card) _this]
+  ?.  ?&  ?=([%build *] wire)
+          ?=([%clay %writ *] sign-arvo)
       ==
-    ::
-        %error
-      ?^  should-fail
-        ~[>[%failed-known `tape`(weld "TODO: " u.should-fail)]<]
-      (flop message.bud)
-    ==
+    (on-arvo:def wire sign-arvo)
+  =/  =path  t.wire
+  ?+    path  ~|(path+path !!)
+      [%app *]
+    =/  ok
+      ?~  p.sign-arvo  |
+      (~(nest ut -:!>(*agent:gall)) | -:!<(vase q.r.u.p.sign-arvo))
+    %-  (report path ok)
+    =?  app-ok.state  !ok  %.n
+    =.  app.state  (~(del in app.state) path)
+    ~?  =(~ app.state)
+      ?:(app-ok.state %all-agents-built %some-agents-failed)
+    [~ this]
   ::
-  ++  failing
-    ^~  ^-  (map path tape)
-    %-  my  :~ ::TODO don't hardcode
-    ::
-      :-  /gen/al                "compiler types out-of-date"
-      :-  /gen/musk              "compiler types out-of-date"
-    ::
-      :-  /gen/cosmetic          "incomplete"
-      :-  /gen/lust              "incomplete"
-      :-  /gen/scantastic        "incomplete"
-    ==
-  --
-::
+      [%mar *]
+    =/  ok  ?=(^ p.sign-arvo)
+    %-  (report path ok)
+    =?  mar-ok.state  !ok  %.n
+    =.  mar.state  (~(del in mar.state) path)
+    ~?  =(~ mar.state)
+      ?:(mar-ok.state %all-marks-built %some-marks-failed)
+    [~ this]
+  ::
+      [%gen *]
+    =/  ok  ?=(^ p.sign-arvo)
+    %-  (report path ok)
+    =?  gen-ok.state  !ok  %.n
+    =.  gen.state  (~(del in gen.state) path)
+    ~?  =(~ gen.state)
+      ?:(gen-ok.state %all-generators-built %some-generators-failed)
+    [~ this]
+  ==
 ++  on-fail   on-fail:def
 --

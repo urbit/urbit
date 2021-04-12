@@ -2,22 +2,14 @@
 
 set -ex
 
-cd pkg/interface/chat
+cd pkg/npm/api
+npm install &
+
+cd ../../interface
 npm install
-gulp bundle-prod &
-cd ../launch
-npm install
-gulp bundle-prod &
-cd ../clock
-npm install
-gulp bundle-prod &
-cd ../publish
-npm install
-gulp bundle-prod &
-cd ../soto
-npm install
-gulp bundle-prod &
-cd ../weather
+npm run build:prod &
+
+cd ./dbug
 npm install
 gulp bundle-prod
 

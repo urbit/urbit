@@ -16,8 +16,6 @@
 #include <dirent.h>
 #include <stdint.h>
 #include <uv.h>
-#include <termios.h>
-#include <ncurses/term.h>
 #include <errno.h>
 #include <libgen.h>
 #include <ftw.h>
@@ -123,21 +121,15 @@ u3_foil_folder(const c3_c* pax_c)
         }
       }
     }
-    dir_u = c3_malloc(sizeof *dir_u);
-    dir_u->all_u = 0;
-    dir_u->pax_c = c3_malloc(1 + strlen(pax_c));
-    strcpy(dir_u->pax_c, pax_c);
+
+    dir_u = u3_dire_init(pax_c);
   }
 
   /*  create entries for all files
   */
   while ( UV_EOF != uv_fs_scandir_next(&ruq_u, &den_u) ) {
     if ( UV_DIRENT_FILE == den_u.type ) {
-      u3_dent* det_u = c3_malloc(sizeof(*det_u));
-
-      det_u->nam_c = c3_malloc(1 + strlen(den_u.name));
-      strcpy(det_u->nam_c, den_u.name);
-
+      u3_dent* det_u = u3_dent_init(den_u.name);
       det_u->nex_u = dir_u->all_u;
       dir_u->all_u = det_u;
     }

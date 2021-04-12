@@ -1,16 +1,21 @@
 ::
-=,  rpc:jstd
+/-  *json-rpc
 ::
 |_  res=response
 ::
+++  grad  %noun
+++  grow
+  |%
+  ++  noun  res
+  --
 ++  grab                                                ::  convert from
   |%
   ++  noun  response                                    ::  from noun
   ++  httr                                              ::  from httr
-    |=  hit/httr:eyre
+    |=  hit=httr:eyre
     ^-  response
     ~|  hit
-    ?:  ?=($2 (div p.hit 100))
+    ?:  ?=(%2 (div p.hit 100))
       =,  html
       %-  json
       ?~  r.hit

@@ -7,8 +7,10 @@
 #include <ctype.h>
 #include <sigsegv.h>
 #include <curl/curl.h>
+#include <openssl/crypto.h>
 
 #include "all.h"
+#include "vere/vere.h"
 
 //  XX stack-overflow recovery should be gated by -a
 //
@@ -67,10 +69,10 @@
       /* u3m_soft_top(): top-level safety wrapper.
       */
         u3_noun
-        u3m_soft_top(c3_w    sec_w,                     //  timer seconds
+        u3m_soft_top(c3_w    mil_w,                     //  timer ms
                      c3_w    pad_w,                     //  base memory pad
                      u3_funk fun_f,
-                     u3_noun arg);
+                     u3_noun   arg);
 
 
 static sigjmp_buf u3_Signal;
@@ -322,10 +324,10 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
   }
 }
 
-/* _cm_signal_deep(): start deep processing; set timer for sec_w or 0.
+/* _cm_signal_deep(): start deep processing; set timer for [mil_w] or 0.
 */
 static void
-_cm_signal_deep(c3_w sec_w)
+_cm_signal_deep(c3_w mil_w)
 {
   //  disable outer system signal handling
   //
@@ -346,15 +348,19 @@ _cm_signal_deep(c3_w sec_w)
     u3H->rod_u.bug.mer = u3i_string("emergency buffer");
   }
 
-  if ( sec_w ) {
+  if ( mil_w ) {
     struct itimerval itm_u;
 
     timerclear(&itm_u.it_interval);
-    itm_u.it_value.tv_sec = sec_w;
-    itm_u.it_value.tv_usec = 0;
+    itm_u.it_value.tv_sec  = (mil_w / 1000);
+    itm_u.it_value.tv_usec = 1000 * (mil_w % 1000);
 
-    setitimer(ITIMER_VIRTUAL, &itm_u, 0);
-    signal(SIGVTALRM, _cm_signal_handle_alrm);
+    if ( setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
+      u3l_log("loom: set timer failed %s\r\n", strerror(errno));
+    }
+    else {
+      signal(SIGVTALRM, _cm_signal_handle_alrm);
+    }
   }
 
   u3t_boot();
@@ -369,14 +375,18 @@ _cm_signal_done()
   signal(SIGTERM, SIG_IGN);
   signal(SIGVTALRM, SIG_IGN);
 
+#ifndef NO_OVERFLOW
   stackoverflow_deinstall_handler();
+#endif
   {
     struct itimerval itm_u;
 
     timerclear(&itm_u.it_interval);
     timerclear(&itm_u.it_value);
 
-    setitimer(ITIMER_VIRTUAL, &itm_u, 0);
+    if ( setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
+      u3l_log("loom: clear timer failed %s\r\n", strerror(errno));
+    }
   }
 
   //  restore outer system signal handling
@@ -428,81 +438,6 @@ u3m_file(c3_c* pas_c)
   }
 }
 
-/* _find_north(): in restored image, point to a north home.
-*/
-static u3_road*
-_find_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
-{
-  return (void *) ((mem_w + len_w) - siz_w);
-}
-
-#if 0
-/* _find_south(): in restored image, point to a south home.
-*/
-static u3_road*
-_find_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
-{
-  return (void *)mem_w;
-}
-#endif
-
-static u3_road*
-_pave_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
-{
-  c3_w*    rut_w = mem_w;
-  c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = ((mem_w + len_w) - siz_w);
-  c3_w*    cap_w = mat_w;
-  u3_road* rod_u = (void*) mat_w;
-
-  // memset(mem_w, 0, 4 * len_w);     // enable in case of corruption
-  memset(rod_u, 0, 4 * siz_w);
-
-  rod_u->rut_p = u3of(c3_w, rut_w);
-  rod_u->hat_p = u3of(c3_w, hat_w);
-
-  rod_u->mat_p = u3of(c3_w, mat_w);
-  rod_u->cap_p = u3of(c3_w, cap_w);
-
-  return rod_u;
-}
-
-/* _pave_south(): install a south road.
-*/
-static u3_road*
-_pave_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
-{
-  c3_w*    rut_w = (mem_w + len_w);
-  c3_w*    hat_w = rut_w;
-  c3_w*    mat_w = mem_w;
-  c3_w*    cap_w = mat_w + siz_w;
-  u3_road* rod_u = (void*) mat_w;
-
-  //  memset(mem_w, 0, 4 * len_w);    //  enable in case of corruption
-  memset(rod_u, 0, 4 * siz_w);
-
-  rod_u->rut_p = u3of(c3_w, rut_w);
-  rod_u->hat_p = u3of(c3_w, hat_w);
-
-  rod_u->mat_p = u3of(c3_w, mat_w);
-  rod_u->cap_p = u3of(c3_w, cap_w);
-
-  return rod_u;
-}
-
-/* _pave_parts(): build internal tables.
-*/
-static void
-_pave_parts(void)
-{
-  u3R->cax.har_p = u3h_new();
-  u3R->jed.war_p = u3h_new();
-  u3R->jed.cod_p = u3h_new();
-  u3R->jed.han_p = u3h_new();
-  u3R->jed.bas_p = u3h_new();
-  u3R->byc.har_p = u3h_new();
-}
-
 /* u3m_mark(): mark all nouns in the road.
 */
 c3_w
@@ -516,24 +451,135 @@ u3m_mark(FILE* fil_u)
   return tot_w;
 }
 
+/* _pave_parts(): build internal tables.
+*/
+static void
+_pave_parts(void)
+{
+  u3R->cax.har_p = u3h_new_cache(u3_Host.ops_u.hap_w);
+  u3R->jed.war_p = u3h_new();
+  u3R->jed.cod_p = u3h_new();
+  u3R->jed.han_p = u3h_new();
+  u3R->jed.bas_p = u3h_new();
+  u3R->byc.har_p = u3h_new();
+}
+
+/* _pave_road(): initialize road boundaries
+*/
+static u3_road*
+_pave_road(c3_w* rut_w, c3_w* mat_w, c3_w* cap_w, c3_w siz_w)
+{
+  u3_road* rod_u = (void*) mat_w;
+
+  //  enable in case of corruption
+  //
+  // memset(mem_w, 0, 4 * len_w);
+  memset(rod_u, 0, 4 * siz_w);
+
+  //  the top and bottom of the heap are initially the same
+  //
+  rod_u->rut_p = u3of(c3_w, rut_w);
+  rod_u->hat_p = u3of(c3_w, rut_w);
+
+
+  rod_u->mat_p = u3of(c3_w, mat_w);  //  stack bottom
+  rod_u->cap_p = u3of(c3_w, cap_w);  //  stack top
+
+  return rod_u;
+}
+
+/* _pave_north(): calculate boundaries and initialize north road.
+*/
+static u3_road*
+_pave_north(c3_w* mem_w, c3_w siz_w, c3_w len_w)
+{
+  //  in a north road, the heap is low and the stack is high
+  //
+  //    the heap starts at the base memory pointer [mem_w];
+  //    the stack starts at the end of the memory segment,
+  //    minus space for the road structure [siz_w]
+  //
+  c3_w* rut_w = mem_w;
+  c3_w* mat_w = ((mem_w + len_w) - siz_w);
+  c3_w* cap_w = mat_w;
+
+  return _pave_road(rut_w, mat_w, cap_w, siz_w);
+}
+
+/* _pave_south(): calculate boundaries and initialize south road.
+*/
+static u3_road*
+_pave_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
+{
+  //  in a south road, the heap is high and the stack is low
+  //
+  //    the heap starts at the end of the memory segment;
+  //    the stack starts at the base memory pointer [mem_w],
+  //    and ends after the space for the road structure [siz_w]
+  //
+  c3_w* rut_w = (mem_w + len_w);
+  c3_w* mat_w = mem_w;
+  c3_w* cap_w = mat_w + siz_w;
+
+  return _pave_road(rut_w, mat_w, cap_w, siz_w);
+}
+
+/* _pave_home(): initialize pristine home road.
+*/
+static void
+_pave_home(void)
+{
+  c3_w* mem_w = u3_Loom + 1;
+  c3_w  siz_w = c3_wiseof(u3v_home);
+  c3_w  len_w = u3a_words - 1;
+
+  u3H = (void *)_pave_north(mem_w, siz_w, len_w);
+  u3H->ver_w = u3v_version;
+  u3R = &u3H->rod_u;
+
+  _pave_parts();
+}
+
+STATIC_ASSERT( ((c3_wiseof(u3v_home) * 4) == sizeof(u3v_home)),
+               "home road alignment" );
+
+/* _find_home(): in restored image, point to home road.
+*/
+static void
+_find_home(void)
+{
+  //  NB: the home road is always north
+  //
+  c3_w* mem_w = u3_Loom + 1;
+  c3_w  siz_w = c3_wiseof(u3v_home);
+  c3_w  len_w = u3a_words - 1;
+
+  {
+    c3_w ver_w = *((mem_w + len_w) - 1);
+
+    if ( u3v_version != ver_w ) {
+      fprintf(stderr, "loom: checkpoint version mismatch: "
+                      "have %u, need %u\r\n",
+                      ver_w,
+                      u3v_version);
+      abort();
+    }
+  }
+
+  u3H = (void *)((mem_w + len_w) - siz_w);
+  u3R = &u3H->rod_u;
+}
+
 /* u3m_pave(): instantiate or activate image.
 */
 void
-u3m_pave(c3_o nuu_o, c3_o bug_o)
+u3m_pave(c3_o nuu_o)
 {
   if ( c3y == nuu_o ) {
-    u3H = (void *)_pave_north(u3_Loom + 1,
-                              c3_wiseof(u3v_home),
-                              u3a_words - 1);
-    u3R = &u3H->rod_u;
-
-    _pave_parts();
+    _pave_home();
   }
   else {
-    u3H = (void *)_find_north(u3_Loom + 1,
-                              c3_wiseof(u3v_home),
-                              u3a_words - 1);
-    u3R = &u3H->rod_u;
+    _find_home();
   }
 }
 
@@ -590,8 +636,6 @@ u3m_dump(void)
 }
 #endif
 
-c3_w Exit;
-
 /* u3m_bail(): bail out.  Does not return.
 **
 **  Bail motes:
@@ -602,7 +646,6 @@ c3_w Exit;
 **    %intr               ::  interrupt
 **    %fail               ::  computability failure
 **    %over               ::  stack overflow (a kind of %fail)
-**    %need               ::  namespace block
 **    %meme               ::  out of memory
 **
 **  These are equivalents of the full exception noun, the error ball:
@@ -641,30 +684,15 @@ u3m_bail(u3_noun how)
     }
   }
 
+  //  intercept fatal errors
+  //
   switch ( how ) {
-    case c3__fail: {
-      break;
-    }
-
-    case c3__meme: {
+    case c3__foul:
+    case c3__meme:
+    case c3__oops: {
       fprintf(stderr, "bailing out\r\n");
       abort();
     }
-    case c3__exit: {
-
-      static c3_w xuc_w = 0;
-
-      {
-        // u3l_log("exit %d\r\n", xuc_w);
-        // if ( 49 == xuc_w ) { abort(); }
-        xuc_w++;
-        break;
-      }
-    }
-    case c3__foul:
-    case c3__oops:
-      fprintf(stderr, "bailing out\r\n");
-      assert(0);
   }
 
   if ( &(u3H->rod_u) == u3R ) {
@@ -678,21 +706,15 @@ u3m_bail(u3_noun how)
 
   /* Reconstruct a correct error ball.
   */
-  {
-    if ( _(u3ud(how)) ) {
-      switch ( how ) {
-        case c3__exit: {
-          how = u3nc(2, u3R->bug.tax);
-          break;
-        }
-        case c3__need: {
-          c3_assert(0);
-        }
-        default: {
-          how = u3nt(3, how, u3R->bug.tax);
-          break;
-        }
-      }
+  if ( _(u3ud(how)) ) {
+    switch ( how ) {
+      case c3__exit: {
+        how = u3nc(2, u3R->bug.tax);
+      } break;
+
+      default: {
+        how = u3nt(3, how, u3R->bug.tax);
+      } break;
     }
   }
 
@@ -787,6 +809,13 @@ u3m_leap(c3_w pad_w)
 #endif
 }
 
+void
+_print_diff(c3_c* cap_c, c3_w a, c3_w b)
+{
+  c3_w diff = a<b ? b-a : a-b;
+  u3a_print_memory(stderr, cap_c, diff);
+}
+
 /* u3m_fall(): in u3R, return an inner road to its parent.
 */
 void
@@ -795,6 +824,9 @@ u3m_fall()
   c3_assert(0 != u3R->par_p);
 
 #if 0
+  /*  If you're printing a lot of these you need to change
+   *  u3a_print_memory from fprintf to u3l_log
+  */
   fprintf(stderr, "fall: from %s %p, to %s %p (cap 0x%x, was 0x%x)\r\n",
           _(u3a_is_north(u3R)) ? "north" : "south",
           u3R,
@@ -802,6 +834,9 @@ u3m_fall()
           u3to(u3_road, u3R->par_p),
           u3R->hat_p,
           u3R->rut_p);
+  _print_diff("unused free", u3R->hat_p, u3R->cap_p);
+  _print_diff("freeing", u3R->rut_p, u3R->hat_p);
+  _print_diff("stack", u3R->cap_p, u3R->mat_p);
 #endif
 
   u3to(u3_road, u3R->par_p)->pro.nox_d += u3R->pro.nox_d;
@@ -911,17 +946,17 @@ u3m_water(c3_w* low_w, c3_w* hig_w)
 /* u3m_soft_top(): top-level safety wrapper.
 */
 u3_noun
-u3m_soft_top(c3_w    sec_w,                     //  timer seconds
+u3m_soft_top(c3_w    mil_w,                     //  timer ms
              c3_w    pad_w,                     //  base memory pad
              u3_funk fun_f,
-             u3_noun arg)
+             u3_noun   arg)
 {
   u3_noun why, pro;
   c3_l    sig_l;
 
   /* Enter internal signal regime.
   */
-  _cm_signal_deep(0);
+  _cm_signal_deep(mil_w);
 
   if ( 0 != (sig_l = sigsetjmp(u3_Signal, 1)) ) {
     //  reinitialize trace state
@@ -1194,13 +1229,13 @@ u3m_grab(u3_noun som, ...)   // terminate with u3_none
 ** Produces [0 product] or [%error (list tank)], top last.
 */
 u3_noun
-u3m_soft(c3_w    sec_w,
+u3m_soft(c3_w    mil_w,
          u3_funk fun_f,
-         u3_noun arg)
+         u3_noun   arg)
 {
   u3_noun why;
 
-  why = u3m_soft_top(sec_w, (1 << 20), fun_f, arg);   // 2MB pad
+  why = u3m_soft_top(mil_w, (1 << 20), fun_f, arg);   // 2MB pad
 
   if ( 0 == u3h(why) ) {
     return why;
@@ -1216,6 +1251,29 @@ u3m_soft(c3_w    sec_w,
     //    XX produce specific error motes instead of %2?
     //
     if ( 0 == u3A->roc ) {
+      u3_noun tax = u3t(why);
+
+      u3m_p("tone", u3h(why));
+
+      while ( u3_nul != tax ) {
+        u3_noun dat, mot, val;
+        u3x_cell(tax, &dat, &tax);
+
+        if ( c3y == u3r_cell(dat, &mot, &val) ) {
+          if ( c3__spot == mot ) {
+            u3m_p("tax", val);
+          }
+          else if (  (c3__mean == mot)
+                  && (c3y == u3a_is_atom(val)) )
+          {
+            u3m_p("men", val);
+          }
+          else {
+            u3m_p("mot", mot);
+          }
+        }
+      }
+
       u3z(why);
       return u3nc(c3__fail, u3_nul);
     }
@@ -1633,6 +1691,11 @@ u3m_boot(c3_c* dir_c)
   */
   u3m_init();
 
+  /* In the worker, set the openssl memory allocation functions to always
+  ** work on the loom.
+  */
+  CRYPTO_set_mem_functions(u3a_malloc_ssl, u3a_realloc_ssl, u3a_free_ssl);
+
   /* Activate the storage system.
   */
   nuu_o = u3e_live(c3n, dir_c);
@@ -1646,7 +1709,7 @@ u3m_boot(c3_c* dir_c)
 
   /* Construct or activate the allocator.
   */
-  u3m_pave(nuu_o, c3n);
+  u3m_pave(nuu_o);
 
   /* Initialize the jet system.
   */
@@ -1657,11 +1720,11 @@ u3m_boot(c3_c* dir_c)
 
   /* Reactivate jets on old kernel.
   */
-  if ( !_(nuu_o) ) {
+  if ( c3n == nuu_o ) {
     u3j_ream();
     u3n_ream();
 
-    return u3A->ent_d;
+    return u3A->eve_d;
   }
   else {
   /* Basic initialization.
@@ -1689,7 +1752,7 @@ u3m_boot_lite(void)
 
   /* Construct or activate the allocator.
   */
-  u3m_pave(c3y, c3n);
+  u3m_pave(c3y);
 
   /* Initialize the jet system.
   */
@@ -1701,162 +1764,57 @@ u3m_boot_lite(void)
   return 0;
 }
 
-/* u3m_rock_stay(): jam state into [dir_c] at [evt_d]
-*/
-c3_o
-u3m_rock_stay(c3_c* dir_c, c3_d evt_d)
-{
-  c3_c nam_c[8193];
-
-  snprintf(nam_c, 8192, "%s", dir_c);
-  mkdir(nam_c, 0700);
-
-  snprintf(nam_c, 8192, "%s/.urb", dir_c);
-  mkdir(nam_c, 0700);
-
-  snprintf(nam_c, 8192, "%s/.urb/roc", dir_c);
-  mkdir(nam_c, 0700);
-
-  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
-
-  {
-    u3_noun dat = u3nt(c3__fast, u3k(u3A->roc), u3j_stay());
-    c3_o  ret_o = u3s_jam_file(dat, nam_c);
-    u3z(dat);
-    return ret_o;
-  }
-}
-
-/* u3m_rock_load(): load state from [dir_c] at [evt_d]
-*/
-c3_o
-u3m_rock_load(c3_c* dir_c, c3_d evt_d)
-{
-  c3_c nam_c[8193];
-  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
-
-  {
-    u3_noun dat;
-
-    {
-      //  XX u3m_file bails, but we'd prefer to return errors
-      //
-      u3_noun fil = u3m_file(nam_c);
-      u3a_print_memory(stderr, "rock: load", u3r_met(3, fil));
-
-      u3_noun pro = u3m_soft(0, u3ke_cue, fil);
-
-      if ( u3_blip != u3h(pro) ) {
-        fprintf(stderr, "rock: unable to cue %s\r\n", nam_c);
-        u3z(pro);
-        return c3n;
-      }
-      else {
-        dat = u3k(u3t(pro));
-        u3z(pro);
-      }
-    }
-
-    {
-      u3_noun roc, rel;
-
-      if ( u3r_pq(dat, c3__fast, &roc, &rel) ) {
-        u3z(dat);
-        return c3n;
-      }
-
-      u3A->roc = u3k(roc);
-      u3j_load(u3k(rel));
-    }
-
-    u3z(dat);
-  }
-
-  u3A->ent_d = evt_d;
-  u3j_ream();
-  u3n_ream();
-
-  return c3y;
-}
-
-/* u3m_rock_drop(): delete saved state from [dir_c] at [evt_d]
-*/
-c3_o
-u3m_rock_drop(c3_c* dir_c, c3_d evt_d)
-{
-  c3_c nam_c[8193];
-  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, evt_d);
-
-  if ( 0 != unlink(nam_c) ) {
-    u3l_log("rock: drop %s failed: %s\r\n", nam_c, strerror(errno));
-    return c3n;
-  }
-
-  return c3y;
-}
-
-/* u3m_wipe(): purge and reinitialize loom, with checkpointing
-*/
-void
-u3m_wipe(void)
-{
-  //  clear page flags
-  //
-  memset((void*)u3P.dit_w, 0, u3a_pages >> 3);
-  //  reinitialize checkpoint system
-  //
-  //    NB: callers must first u3e_hold() or u3e_wipe()
-  //
-  u3e_live(c3n, u3P.dir_c);
-  //  reinitialize loom
-  //
-  u3m_pave(c3y, c3n);
-  //  reinitialize jets
-  //
-  u3j_boot(c3y);
-}
-
 /* u3m_reclaim: clear persistent caches to reclaim memory
 */
 void
 u3m_reclaim(void)
 {
+  u3v_reclaim();
+  u3j_reclaim();
+  u3n_reclaim();
+  u3a_reclaim();
+}
+
+/* _cm_pack_rewrite(): trace through arena, rewriting pointers.
+*/
+static void
+_cm_pack_rewrite(void)
+{
+  //  XX fix u3a_rewrit* to support south roads
+  //
   c3_assert( &(u3H->rod_u) == u3R );
 
-  //  clear the u3v_wish cache
+  //  NB: these implementations must be kept in sync with u3m_reclaim();
+  //  anything not reclaimed must be rewritable
   //
-  //    NB: this will leak if not on the home road
-  //
-  u3z(u3A->yot);
-  u3A->yot = u3_nul;
+  u3v_rewrite_compact();
+  u3j_rewrite_compact();
+  u3n_rewrite_compact();
+  u3a_rewrite_compact();
+}
 
-  //  clear the memoization cache
-  //
-  u3h_free(u3R->cax.har_p);
-  u3R->cax.har_p = u3h_new();
+/* u3m_pack: compact (defragment) memory.
+*/
+c3_w
+u3m_pack(void)
+{
+  c3_w pre_w = u3a_open(u3R);
 
-  //  clear the jet battery hash cache
+  //  reclaim first, to free space, and discard anything we can't/don't rewrite
   //
-  u3h_free(u3R->jed.bas_p);
-  u3R->jed.bas_p = u3h_new();
+  u3m_reclaim();
 
-  //  re-establish the warm jet state
+  //  sweep the heap, finding and saving new locations
   //
-  //    XX might this reduce fragmentation?
-  //
-  // u3j_ream();
+  u3a_pack_seek(u3R);
 
-  //  clear the jet hank cache
+  //  trace roots, rewriting inner pointers
   //
-  u3h_walk(u3R->jed.han_p, u3j_free_hank);
-  u3h_free(u3R->jed.han_p);
-  u3R->jed.han_p = u3h_new();
+  _cm_pack_rewrite();
 
-  //  clear the bytecode cache
+  //  sweep the heap, relocating objects to their new locations
   //
-  //    We can't just u3h_free() -- the value is a post to a u3n_prog.
-  //    Note that this requires that the hank cache also be freed.
-  //
-  u3n_free();
-  u3R->byc.har_p = u3h_new();
+  u3a_pack_move(u3R);
+
+  return (u3a_open(u3R) - pre_w);
 }

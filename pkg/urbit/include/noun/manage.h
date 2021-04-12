@@ -39,7 +39,7 @@
       /* u3m_pave(): instantiate or activate image.
       */
         void
-        u3m_pave(c3_o nuu_o, c3_o bug_o);
+        u3m_pave(c3_o nuu_o);
 
       /* u3m_file(): load file, as atom, or bail.
       */
@@ -66,7 +66,7 @@
       **  Produces [%$ result] or [%error (list tank)].
       */
         u3_noun
-        u3m_soft(c3_w sec_w, u3_funk fun_f, u3_noun arg);
+        u3m_soft(c3_w mil_w, u3_funk fun_f, u3_noun arg);
 
       /* u3m_soft_slam: top-level call.
       */
@@ -141,22 +141,7 @@
         void
         u3m_reclaim(void);
 
-      /* u3m_rock_stay(): jam state into [dir_c] at [evt_d]
+      /* u3m_pack: compact (defragment) memory.
       */
-        c3_o
-        u3m_rock_stay(c3_c* dir_c, c3_d evt_d);
-
-      /* u3m_rock_load(): load state from [dir_c] at [evt_d]
-      */
-        c3_o
-        u3m_rock_load(c3_c* dir_c, c3_d evt_d);
-
-      /* u3m_rock_drop(): delete saved state from [dir_c] at [evt_d]
-      */
-        c3_o
-        u3m_rock_drop(c3_c* dir_c, c3_d evt_d);
-
-      /* u3m_wipe(): purge and reinitialize loom, with checkpointing
-      */
-        void
-        u3m_wipe(void);
+        c3_w
+        u3m_pack(void);

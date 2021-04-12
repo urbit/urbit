@@ -1,13 +1,15 @@
+/-  store=invite-store
 /+  *invite-json
-|_  upd=invite-update
+|_  =update:store
+++  grad  %noun
 ++  grow
   |%
-  ++  json  (update-to-json upd)
+  ++  noun  update
+  ++  json  (update-to-json update)
   --
 ::
 ++  grab
   |%
-  ++  noun  invite-update
+  ++  noun  update:store
   --
-::
 --

@@ -35,7 +35,7 @@
     ::  compile arvo against hoon, with our current compiler
     ::
     =/  whole-hoon=hoon
-      [%tsbn compiler-hoon [%tsbn [%$ 7] (rain arvo-path arvo-src)]]
+      [%tsgr compiler-hoon [%tsgr [%$ 7] (rain arvo-path arvo-src)]]
     ~&  %solid-parsed
     =/  whole-formula  q:(~(mint ut %noun) %noun whole-hoon)
     ~&  %solid-arvo
@@ -64,18 +64,32 @@
 =/  installed
   =<  q
   %^    spin
-      (module-ova:pill sys)
+      ^-  (list ovum)
+      :~  (boot-ovum:pill compiler-src arvo-src)
+          (file-ovum2:pill (flop (tail (flop sys))))
+      ==
     .*(0 arvo-formula)
   |=  [ovo=ovum ken=*]
   [~ (slum ken [now ovo])]
 ::
-::  our boot-ova is a list containing one massive formula:
+::  kernel-formula
 ::
 ::    We evaluate :arvo-formula (for jet registration),
-::    then ignore the result and produce :installed
+::    then ignore the result and produce .installed
+::
+=/  kernel-formula
+  [%7 arvo-formula %1 installed]
+::
+::  boot-two: startup formula
+::
+=/  boot-two
+  =>  [kernel-formula=** main-sequence=**]
+  !=  [.*(0 kernel-formula) main-sequence]
+::
+::  boot-ova
 ::
 =/  boot-ova=(list)
-  [[%7 arvo-formula %1 installed] ~]
+  [aeon:eden:part boot-two kernel-formula ~]
 ::
 ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
 ::
@@ -83,6 +97,7 @@
 ::    Our userspace event-list is a list containing a full %clay
 ::    filesystem sync event.
 ::
+:+  %pill  %solid
 :+  boot-ova  ~
 =/  bas  (flop (tail (flop sys)))
 [(file-ovum:pill bas) ~]

@@ -1,3 +1,4 @@
+::  Cancel automass
 ::
 ::::  /hoon/cancel-automass/hood/gen
   ::

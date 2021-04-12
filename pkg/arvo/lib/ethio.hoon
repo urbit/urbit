@@ -1,8 +1,9 @@
 ::  ethio: Asynchronous Ethereum input/output functions.
-::.
-/+  strandio
+::
+/-  rpc=json-rpc
+/+  ethereum, strandio
 =,  ethereum-types
-=,  able:jael
+=,  jael
 ::
 =>  |%
     +$  topics  (list ?(@ux (list @ux)))
@@ -37,13 +38,13 @@
   ++  attempt-request
     =/  m  (strand:strandio ,(unit results))
     ^-  form:m
-    ;<  responses=(list response:rpc:jstd)  bind:m
+    ;<  responses=(list response:rpc)  bind:m
       (request-batch-rpc-loose url reqs)
     =-  ?~  err
           (pure:m `res)
         (pure:m ~)
     %+  roll  responses
-    |=  $:  rpc=response:rpc:jstd
+    |=  $:  rpc=response:rpc
             [res=results err=(list [id=@t code=@t message=@t])]
         ==
     ?:  ?=(%error -.rpc)
@@ -63,8 +64,8 @@
         `10
       attempt-request
   ::
-  +$  result   response:rpc:jstd
-  +$  results  (list response:rpc:jstd)
+  +$  result   response:rpc
+  +$  results  (list response:rpc)
   ::
   ++  attempt-request
     =/  m  (strand:strandio ,(unit results))
@@ -98,7 +99,7 @@
     =/  jon=(unit json)  (de-json:html body)
     ?~  jon
       (pure:m ~)
-    =/  array=(unit (list response:rpc:jstd))
+    =/  array=(unit (list response:rpc))
       ((ar:dejs-soft:format parse-one-response) u.jon)
     ?~  array
       (strand-fail:strandio %rpc-result-incomplete-batch >u.jon< ~)
@@ -106,7 +107,7 @@
   ::
   ++  parse-one-response
     |=  =json
-    ^-  (unit response:rpc:jstd)
+    ^-  (unit response:rpc)
     =/  res=(unit [@t ^json])
       %.  json
       =,  dejs-soft:format

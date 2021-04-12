@@ -16,7 +16,7 @@
 ::  Start a ship (low-level; prefer +raw-ship)
 ::
 ++  init
-  |=  [who=ship keys=(unit dawn-event:able:jael)]
+  |=  [who=ship keys=(unit dawn-event:jael)]
   ^-  (list aqua-event)
   [%init-ship who keys]~
 ::
@@ -45,14 +45,16 @@
 ::
 ::  Inject a file into a ship
 ::
-++  insert-file
-  |=  [who=ship des=desk pax=path txt=@t]
+++  insert-files
+  |=  [who=ship des=desk files=(list [=path txt=@t])]
   ^-  (list aqua-event)
-  ?>  ?=([@ @ @ *] pax)
-  =/  file  [/text/plain (as-octs:mimes:html txt)]
+  =/  input
+    %+  turn  files
+    |=  [=path txt=@t]
+    [path ~ /text/plain (as-octs:mimes:html txt)]
   %+  send-events-to  who
   :~
-    [//sync/0v1n.2m9vh %into des | [t.t.t.pax `file]~]
+    [//sync/0v1n.2m9vh %into des | input]
   ==
 ::
 ::  Checks whether the given event is a dojo output blit containing the

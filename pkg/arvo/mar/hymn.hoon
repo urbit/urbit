@@ -4,8 +4,9 @@
 /?    310
 =,  mimes:html
 =,  html
-|_  own/manx
+|_  own=manx
 ::
+++  grad  %noun
 ++  grow                                                ::  convert to
   |%
   ++  html  (crip (en-xml own))                         ::  convert to %html

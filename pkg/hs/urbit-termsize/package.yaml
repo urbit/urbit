@@ -1,0 +1,28 @@
+name: urbit-termsize
+version: 0.1.0
+license: MIT
+license-file: LICENSE
+
+dependencies:
+  - base
+  - terminal-size
+  - unix
+
+ghc-options:
+  - -Wall
+  - -Werror
+  - -Wno-type-defaults
+  - -Wno-unused-matches
+  - -Wno-name-shadowing
+  - -Wno-unused-do-bind
+  - -O2
+
+library:
+  source-dirs: lib
+
+executables:
+  urbit-test-termsize-updates:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - urbit-termsize

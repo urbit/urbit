@@ -7,11 +7,11 @@
 =,  differ
 =,  format
 =,  mimes:html
-|_  txt/wain
+|_  txt=wain
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  mime  |=({p/mite:eyre q/octs:eyre} (to-wain q.q))
+  ++  mime  |=((pair mite octs) (to-wain q.q))
   ++  noun  wain                                        ::  clam from %noun
   --
 ++  grow
@@ -24,18 +24,18 @@
   |%
   ++  form  %txt-diff
   ++  diff
-    |=  tyt/wain
+    |=  tyt=wain
     ^-  (urge cord)
     (lusk txt tyt (loss txt tyt))
   ::
   ++  pact
-    |=  dif/(urge cord)
+    |=  dif=(urge cord)
     ~|  [%pacting dif]
     ^-  wain
     (lurk txt dif)
   ::
   ++  join
-    |=  {ali/(urge cord) bob/(urge cord)}
+    |=  [ali=(urge cord) bob=(urge cord)]
     ^-  (unit (urge cord))
     |^
     =.  ali  (clean ali)
@@ -49,38 +49,43 @@
           %&
         ?:  =(p.i.ali p.i.bob)
           %+  bind  $(ali t.ali, bob t.bob)
-          |=(cud/(urge cord) [i.ali cud])
+          |=(cud=(urge cord) [i.ali cud])
         ?:  (gth p.i.ali p.i.bob)
           %+  bind  $(p.i.ali (sub p.i.ali p.i.bob), bob t.bob)
-          |=(cud/(urge cord) [i.bob cud])
+          |=(cud=(urge cord) [i.bob cud])
         %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob p.i.ali))
-        |=(cud/(urge cord) [i.ali cud])
-    ::
+        |=(cud=(urge cord) [i.ali cud])
+      ::
           %|
         ?:  =(p.i.ali (lent p.i.bob))
           %+  bind  $(ali t.ali, bob t.bob)
-          |=(cud/(urge cord) [i.bob cud])
+          |=(cud=(urge cord) [i.bob cud])
         ?:  (gth p.i.ali (lent p.i.bob))
           %+  bind  $(p.i.ali (sub p.i.ali (lent p.i.bob)), bob t.bob)
-          |=(cud/(urge cord) [i.bob cud])
+          |=(cud=(urge cord) [i.bob cud])
         ~
       ==
     ::
         %|
       ?-  -.i.bob
-          %|  ~
+          %|
+        ?.  =(i.ali i.bob)
+          ~
+        %+  bind  $(ali t.ali, bob t.bob)
+        |=(cud=(urge cord) [i.ali cud])
+      ::
           %&
         ?:  =(p.i.bob (lent p.i.ali))
           %+  bind  $(ali t.ali, bob t.bob)
-          |=(cud/(urge cord) [i.ali cud])
+          |=(cud=(urge cord) [i.ali cud])
         ?:  (gth p.i.bob (lent p.i.ali))
           %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob (lent p.i.ali)))
-          |=(cud/(urge cord) [i.ali cud])
+          |=(cud=(urge cord) [i.ali cud])
         ~
       ==
     ==
     ++  clean                                          ::  clean
-      |=  wig/(urge cord)
+      |=  wig=(urge cord)
       ^-  (urge cord)
       ?~  wig  ~
       ?~  t.wig  wig
@@ -94,8 +99,8 @@
     --
   ::
   ++  mash
-    |=  $:  {als/ship ald/desk ali/(urge cord)}
-            {bos/ship bod/desk bob/(urge cord)}
+    |=  $:  [als=ship ald=desk ali=(urge cord)]
+            [bos=ship bod=desk bob=(urge cord)]
         ==
     ^-  (urge cord)
     |^
@@ -119,7 +124,7 @@
           [i.bob $(ali t.ali, bob t.bob)]
         ?:  (gth p.i.ali (lent p.i.bob))
           [i.bob $(p.i.ali (sub p.i.ali (lent p.i.bob)), bob t.bob)]
-        =/  {fic/(unce cord) ali/(urge cord) bob/(urge cord)}
+        =/  [fic=(unce cord) ali=(urge cord) bob=(urge cord)]
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
         ::  ~   ::  here, alice is good for a while, but not for the whole
@@ -128,7 +133,7 @@
         %|
       ?-  -.i.bob
           %|
-        =/  {fic/(unce cord) ali/(urge cord) bob/(urge cord)}
+        =/  [fic=(unce cord) ali=(urge cord) bob=(urge cord)]
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
       ::
@@ -137,16 +142,16 @@
           [i.ali $(ali t.ali, bob t.bob)]
         ?:  (gth p.i.bob (lent p.i.ali))
           [i.ali $(ali t.ali, p.i.bob (sub p.i.bob (lent p.i.ali)))]
-        =/  {fic/(unce cord) ali/(urge cord) bob/(urge cord)}
+        =/  [fic=(unce cord) ali=(urge cord) bob=(urge cord)]
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
       ==
     ==
     ::
     ++  annotate                                        ::  annotate conflict
-      |=  $:  ali/(list @t)
-              bob/(list @t)
-              bas/(list @t)
+      |=  $:  ali=(list @t)
+              bob=(list @t)
+              bas=(list @t)
           ==
       ^-  (list @t)
       %-  zing
@@ -174,7 +179,7 @@
       ~
     ::
     ++  clean                                          ::  clean
-      |=  wig/(urge cord)
+      |=  wig=(urge cord)
       ^-  (urge cord)
       ?~  wig  ~
       ?~  t.wig  wig
@@ -187,15 +192,15 @@
       [i.wig $(wig t.wig)]
     ::
     ++  resolve
-      |=  {ali/(urge cord) bob/(urge cord)}
-      ^-  {fic/{%| p/(list cord) q/(list cord)} ali/(urge cord) bob/(urge cord)}
+      |=  [ali=(urge cord) bob=(urge cord)]
+      ^-  [fic=[%| p=(list cord) q=(list cord)] ali=(urge cord) bob=(urge cord)]
       =-  [[%| bac (annotate alc boc bac)] ali bob]
-      |-  ^-  $:  $:  bac/(list cord)
-                      alc/(list cord)
-                      boc/(list cord)
+      |-  ^-  $:  $:  bac=(list cord)
+                      alc=(list cord)
+                      boc=(list cord)
                   ==
-                  ali/(urge cord)
-                  bob/(urge cord)
+                  ali=(urge cord)
+                  bob=(urge cord)
               ==
       ?~  ali  [[~ ~ ~] ali bob]
       ?~  bob  [[~ ~ ~] ali bob]

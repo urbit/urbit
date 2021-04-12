@@ -13,6 +13,12 @@
 /+  pill
 =,  pill-lib=pill
 |%
++$  az-log  [topics=(lest @) data=@t]
++$  az-state
+  $:  logs=(list az-log)
+      lives=(map ship [lyfe=life rut=rift])
+      tym=@da
+  ==
 ++  ph-event
   $%  [%test-done p=?]
       aqua-event
@@ -22,11 +28,17 @@
 +$  pill        pill:pill-lib
 ::
 +$  aqua-event
-  $%  [%init-ship who=ship keys=(unit dawn-event:able:jael)]
+  $%  [%init-ship who=ship keys=(unit dawn-event:jael)]
       [%pause-events who=ship]
       [%snap-ships lab=term hers=(list ship)]
       [%restore-snap lab=term]
       [%event who=ship ue=unix-event]
+  ==
+::
++$  azimuth-action
+  $%  [%init-azimuth ~]
+      [%spawn who=ship]
+      [%breach who=ship]
   ==
 ::
 +$  aqua-effects
@@ -57,6 +69,7 @@
       [%ergo p=@tas q=mode:clay]
       [%sleep ~]
       [%restore ~]
+      [%kill ~]
       [%init ~]
       [%request id=@ud request=request:http]
   ==

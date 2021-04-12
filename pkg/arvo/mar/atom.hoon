@@ -6,10 +6,10 @@
 ::::  A minimal atom mark
   ::
 =,  mimes:html
-|_  ato/@
+|_  ato=@
 ++  grab  |%
           ++  noun  @
-          ++  mime  |=({* p/octs:eyre} q.p)
+          ++  mime  |=([* p=octs] q.p)
           --
 ++  grow  |%
           ++  mime  [/application/x-urb-unknown (as-octs ato)]

@@ -1,3 +1,11 @@
 |_  a=manx
-++  grab  |%  ++  noun  manx
---        --
+++  grad  %noun
+++  grab
+  |%
+  ++  noun  manx
+  --
+++  grow
+  |%
+  ++  noun  a
+  --
+--

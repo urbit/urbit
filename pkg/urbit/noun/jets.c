@@ -121,18 +121,14 @@ _cj_bash(u3_noun bat)
       rod_u = u3to(u3_road, rod_u->par_p);
     }
     else {
-      c3_w    bit_w, met_w;
-      c3_w*   wor_w;
-      c3_y*   fat_y;
-      c3_y    dig_y[32];
+      u3i_slab sab_u;
+      c3_w     bit_w = u3s_jam_fib(&sab_u, bat);
+      c3_w     met_w = (bit_w + 0x7) >> 3;
+      //  XX assumes little-endian
+      //
+      c3_y*    fat_y = sab_u.buf_y;
+      c3_y     dig_y[32];
 
-      wor_w = u3s_jam_fib(bat, &bit_w);
-      met_w = bit_w >> 3;
-      if ( bit_w != met_w << 3 ) {
-        ++met_w;
-      }
-      // assume little-endian
-      fat_y = (c3_y*) wor_w;
 #if defined(U3_OS_osx)
       CC_SHA256_CTX ctx_h;
 
@@ -146,9 +142,10 @@ _cj_bash(u3_noun bat)
       SHA256_Update(&ctx_h, fat_y, met_w);
       SHA256_Final(dig_y, &ctx_h);
 #endif
+
       pro = u3i_bytes(32, dig_y);
       u3h_put(u3R->jed.bas_p, bat, u3k(pro));
-      u3a_wfree(wor_w);
+      u3i_slab_free(&sab_u);
       break;
     }
   }
@@ -921,12 +918,11 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
                u3r_mug(pro));
         ham_u->liv = c3n;
 
-        c3_assert(0);
         return u3m_bail(c3__fail);
       }
       else {
 
-#if 1
+#if 0
         u3l_log("test: %s %s\r\n",
                cop_u->cos_c,
                (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c);
@@ -950,11 +946,13 @@ _cj_hook_in(u3_noun     cor,
   u3_noun   roc, tem, got, pat, nam, huc;
 
   if ( c3n == u3du(cor) ) {
+    u3l_log("_cj_hook_in failure: c3n == u3du(cor)\r\n");
     return u3m_bail(c3__fail);
   }
 
   loc = _cj_spot(cor, NULL);
   if ( u3_none == loc ) {
+    u3l_log("_cj_hook_in failure: u3_none == loc\r\n");
     return u3m_bail(c3__fail);
   }
 
@@ -1019,6 +1017,7 @@ _cj_hook_in(u3_noun     cor,
     else {
       u3_noun sat = u3t(pat);
       if ( c3y == u3h(sat) ) {
+        u3l_log("_cj_hook_in failure: c3y == u3h(sat)\r\n");
         return u3m_bail(c3__fail);
       }
       else {
@@ -1158,11 +1157,13 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
   u3j_site* sit_u = &(han_u->sit_u);
 
   if ( c3n == u3du(cor) ) {
+    u3l_log("fail in _cj_hank_fill (c3n == u3du(cor))");
     return u3m_bail(c3__fail);
   }
 
   sit_u->bas = u3_none;
   if ( u3_none == (col = loc = _cj_spot(cor, NULL)) ) {
+    u3l_log("fail in _cj_hank_fill (_cj_spot(cor, NULL))");
     return u3m_bail(c3__fail);
   }
 
@@ -1205,6 +1206,7 @@ _cj_hank_fill(_cj_hank* han_u, u3_noun tam, u3_noun cor)
     else {
       u3_noun sat = u3t(pat);
       if ( c3y == u3h(sat) ) {
+        u3l_log("fail in _cj_hank_fill (c3y == u3h(sat))");
         return u3m_bail(c3__fail);
       }
       else {
@@ -1793,13 +1795,13 @@ _cj_minx(u3_noun cey, u3_noun cor)
 }
 
 static void
-_cj_print_tas(FILE* fh, u3_noun tas)
+_cj_print_tas(u3_noun tas)
 {
   c3_w  met_w = u3r_met(3, tas);
   c3_c* str_c = alloca(met_w + 1);
   u3r_bytes(0, met_w, (c3_y*)str_c, tas);
   str_c[met_w] = 0;
-  fprintf(fh, "/%s", str_c);
+  u3l_log("/%s", str_c);
 }
 
 /* _cj_mine(): declare a core and produce location. RETAIN.
@@ -1848,7 +1850,7 @@ _cj_mine(u3_noun cey, u3_noun cor, u3_noun bas)
         u3_noun i = bal;
         u3l_log("hot jet: ");
         while ( i != u3_nul ) {
-          _cj_print_tas(stderr, u3h(i));
+          _cj_print_tas(u3h(i));
           i = u3t(i);
         }
         u3l_log("\r\n  axe %d, jax %d,\r\n  bash ", axe, jax_l);
@@ -2339,10 +2341,10 @@ u3j_mark(FILE* fil_u)
   return u3a_maid(fil_u, "total jet stuff", tot_w);
 }
 
-/* u3j_free_hank(): free an entry from the hank cache.
+/* _cj_free_hank(): free an entry from the hank cache.
 */
-void
-u3j_free_hank(u3_noun kev)
+static void
+_cj_free_hank(u3_noun kev)
 {
   _cj_hank* han_u = u3to(_cj_hank, u3t(kev));
   if ( u3_none != han_u->hax ) {
@@ -2357,7 +2359,7 @@ u3j_free_hank(u3_noun kev)
 void
 u3j_free(void)
 {
-  u3h_walk(u3R->jed.han_p, u3j_free_hank);
+  u3h_walk(u3R->jed.han_p, _cj_free_hank);
   u3h_free(u3R->jed.war_p);
   u3h_free(u3R->jed.cod_p);
   u3h_free(u3R->jed.han_p);
@@ -2367,3 +2369,49 @@ u3j_free(void)
   }
 }
 
+/* u3j_reclaim(): clear ad-hoc persistent caches to reclaim memory.
+*/
+void
+u3j_reclaim(void)
+{
+  //  re-establish the warm jet state
+  //
+  //    XX might this reduce fragmentation?
+  //
+  // if ( &(u3H->rod_u) == u3R ) {
+  //   u3j_ream();
+  // }
+
+  //  clear the jet hank cache
+  //
+  u3h_walk(u3R->jed.han_p, _cj_free_hank);
+  u3h_free(u3R->jed.han_p);
+  u3R->jed.han_p = u3h_new();
+}
+
+/* u3j_rewrite_compact(): rewrite jet state for compaction.
+ *
+ * NB: u3R->jed.han_p *must* be cleared (currently via u3j_reclaim above)
+ * since it contains hanks which are not nouns but have loom pointers.
+ * Alternately, rewrite the entries with u3h_walk, using u3j_mark as a
+ * template for how to walk.  There's an untested attempt at this in git
+ * history at e8a307a.
+*/
+void
+u3j_rewrite_compact()
+{
+  u3h_rewrite(u3R->jed.war_p);
+  u3h_rewrite(u3R->jed.cod_p);
+  u3h_rewrite(u3R->jed.han_p);
+  u3h_rewrite(u3R->jed.bas_p);
+
+  if ( u3R == &(u3H->rod_u) ) {
+    u3h_rewrite(u3R->jed.hot_p);
+    u3R->jed.hot_p = u3a_rewritten(u3R->jed.hot_p);
+  }
+
+  u3R->jed.war_p = u3a_rewritten(u3R->jed.war_p);
+  u3R->jed.cod_p = u3a_rewritten(u3R->jed.cod_p);
+  u3R->jed.han_p = u3a_rewritten(u3R->jed.han_p);
+  u3R->jed.bas_p = u3a_rewritten(u3R->jed.bas_p);
+}

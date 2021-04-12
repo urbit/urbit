@@ -13,13 +13,14 @@
 ;<  ~              bind:m  (spawn az ~marbud)
 ;<  ~              bind:m  (real-ship az ~bud)
 ;<  ~              bind:m  (real-ship az ~marbud)
-;<  file=@t        bind:m  (touch-file ~bud %base %foo)
+;<  file=@t        bind:m  (touch-file ~bud %kids %foo)
 ;<  ~              bind:m  (check-file-touched ~marbud %home file)
 ;<  ~              bind:m  (breach az ~bud)
 ;<  ~              bind:m  (real-ship az ~bud)
-;<  ~              bind:m  (dojo ~bud "|merge %base ~marbud %kids, =gem %this")
-;<  file=@t        bind:m  (touch-file ~bud %base %bar)
-;<  file=@t        bind:m  (touch-file ~bud %base %baz)
+;<  ~              bind:m
+  (dojo ~bud "|merge %home ~marbud %kids, =gem %only-this")
+;<  file=@t        bind:m  (touch-file ~bud %kids %bar)
+;<  file=@t        bind:m  (touch-file ~bud %kids %baz)
 ;<  ~              bind:m  (check-file-touched ~marbud %home file)
 ;<  ~              bind:m  end-azimuth
 (pure:m *vase)

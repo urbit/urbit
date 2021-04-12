@@ -33,7 +33,7 @@ To boot a fake ship with a custom pill, use the `-B` flag:
 urbit -F zod -A /path/to/arvo -B /path/to.pill -c fakezod
 ```
 
-To run all tests in `/tests`, run `+test` in dojo. `+test /some/path` would only run all tests in `/tests/some/path`.
+To run all tests in `/tests`, run `-test %/tests` in dojo. To run only the tests in `/tests/some/path`, use `-test %/tests/some/path`.
 
 ## Maintainers
 
@@ -41,21 +41,20 @@ Most parts of Arvo have dedicated maintainers.
 
 * `/sys/hoon`: @pilfer-pandex (~pilfer-pandex)
 * `/sys/zuse`: @pilfer-pandex (~pilfer-pandex)
-* `/sys/arvo`: @jtobin (~nidsut-tomdun)
-* `/sys/vane/ames`: @belisarius222 (~rovnys-ricfer) & @joemfb (~master-morzod)
+* `/sys/arvo`: @joemfb (~master-morzod)
+* `/sys/vane/ames`: @belisarius222 (~rovnys-ricfer) & @philipcmonk (~wicdev-wisryt)
 * `/sys/vane/behn`: @belisarius222 (~rovnys-ricfer)
-* `/sys/vane/clay`: @philipcmonk (~wicdev-wisryt)
-* `/sys/vane/dill`: @bernardodelaplaz (~rigdyn-sondur)
-* `/sys/vane/eyre`: @eglaysher (~littel-ponnys)
-* `/sys/vane/ford`: @belisarius222 (~rovnys-ricfer) & @eglaysher (~littel-ponnys)
-* `/sys/vane/gall`: @jtobin (~nidsut-tomdun)
-* `/sys/vane/jael`: @fang- (~palfun-foslup) & @joemfb (~master-morzod)
+* `/sys/vane/clay`: @philipcmonk (~wicdev-wisryt) & @belisarius222 (~rovnys-ricfer)
+* `/sys/vane/dill`: @fang- (~palfun-foslup)
+* `/sys/vane/eyre`: @fang- (~palfun-foslup)
+* `/sys/vane/gall`: @philipcmonk (~wicdev-wisryt)
+* `/sys/vane/jael`: @fang- (~palfun-foslup) & @philipcmonk (~wicdev-wisryt)
 * `/app/acme`: @joemfb (~master-morzod)
 * `/app/dns`: @joemfb (~master-morzod)
-* `/app/hall`: @fang- (~palfun-foslup)
-* `/app/talk`: @fang- (~palfun-foslup)
 * `/app/aqua`: @philipcmonk (~wicdev-wisryt)
-* `/lib/test`: @eglaysher (~littel-ponnys)
+* `/app/hood`: @belisarius222 (~rovnys-ricfer)
+* `/lib/hood/drum`: @fang- (~palfun-foslup)
+* `/lib/hood/kiln`: @philipcmonk (~wicdev-wisryt)
 
 ## Contributing
 

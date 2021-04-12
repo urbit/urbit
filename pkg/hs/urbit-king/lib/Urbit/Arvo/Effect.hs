@@ -1,16 +1,24 @@
+{-# LANGUAGE StrictData #-}
+
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 {-|
     Effect Types and Their Noun Conversions
 -}
 module Urbit.Arvo.Effect where
 
+import Urbit.Noun.Time
 import Urbit.Prelude
-import Urbit.Time
 
+import Control.Monad.Fail (fail)
+import Numeric.Natural    (Natural)
 import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)
 import Urbit.Arvo.Common (AmesDest, Turf)
 import Urbit.Arvo.Common (ReOrg(..), reorgThroughNoun)
-import Urbit.Arvo.Common (Desk)
+import Urbit.Arvo.Common (Desk, Wynn)
 
 
 -- Newt Effects ----------------------------------------------------------------
@@ -82,22 +90,6 @@ data SyncEf
 deriveNoun ''SyncEf
 
 
--- UDP Effects -----------------------------------------------------------------
-
-{-|
-    %init -- "I don't think that's something that can happen"
-    %west -- "Those also shouldn't happen"
-    %woot -- "Those also shouldn't happen"
--}
-data AmesEf
-    = AmesEfInit Path ()
-    | AmesEfWest Path Ship Path Noun
-    | AmesEfWoot Path Ship (Maybe (Maybe (Term, [Tank])))
-  deriving (Eq, Ord, Show)
-
-deriveNoun ''AmesEf
-
-
 -- Timer Effects ---------------------------------------------------------------
 
 {-|
@@ -128,6 +120,7 @@ data Blit
     = Bel ()
     | Clr ()
     | Hop Word64
+    | Klr Stub
     | Lin [Char]
     | Mor ()
     | Sag Path Noun
@@ -135,12 +128,90 @@ data Blit
     | Url Cord
   deriving (Eq, Ord)
 
+data Deco
+    = DecoBl
+    | DecoBr
+    | DecoUn
+    | DecoNull
+  deriving (Eq, Ord, Show)
+
+data Tint
+    = TintR
+    | TintG
+    | TintB
+    | TintC
+    | TintM
+    | TintY
+    | TintK
+    | TintW
+    | TintNull
+    | TintTrue Word8 Word8 Word8
+  deriving (Eq, Ord, Show)
+
+data Stye = Stye
+    { deco :: (HoonSet Deco)
+    , back :: Tint
+    , fore :: Tint
+    }
+  deriving (Eq, Ord, Show)
+
+newtype Stub = Stub [(Stye, [Char])]
+  deriving (Eq, Ord, Show)
+
+instance ToNoun Deco where
+  toNoun = \case
+    DecoBl   -> toNoun $ Cord "bl"
+    DecoBr   -> toNoun $ Cord "br"
+    DecoUn   -> toNoun $ Cord "un"
+    DecoNull -> Atom 0
+
+instance FromNoun Deco where
+  parseNoun = named "Deco" . \case
+    Atom 0 -> pure DecoNull
+    n      -> parseNoun @Cord n <&> unCord >>= \case
+                "bl" -> pure DecoBl
+                "br" -> pure DecoBr
+                "un" -> pure DecoUn
+                t    -> fail ("invalid: " <> unpack t)
+
+instance ToNoun Tint where
+  toNoun = \case
+    TintR          -> toNoun $ Cord "r"
+    TintG          -> toNoun $ Cord "g"
+    TintB          -> toNoun $ Cord "b"
+    TintC          -> toNoun $ Cord "c"
+    TintM          -> toNoun $ Cord "m"
+    TintY          -> toNoun $ Cord "y"
+    TintK          -> toNoun $ Cord "k"
+    TintW          -> toNoun $ Cord "w"
+    TintNull       -> Atom 0
+    TintTrue r g b -> Cell (atom r) $ Cell (atom g) (atom b)
+                      where atom a = Atom (fromIntegral a :: Natural)
+
+instance FromNoun Tint where
+  parseNoun = named "Tint" . \case
+    Atom 0 -> pure TintNull
+    Cell (Atom r) (Cell (Atom g) (Atom b))
+           -> pure (TintTrue (word r) (word g) (word b))
+              where word w = fromIntegral w :: Word8
+    n      -> parseNoun @Cord n <&> unCord >>= \case
+                "r" -> pure TintR
+                "g" -> pure TintG
+                "b" -> pure TintB
+                "c" -> pure TintC
+                "m" -> pure TintM
+                "y" -> pure TintY
+                "k" -> pure TintK
+                "w" -> pure TintW
+                t   -> fail ("invalid: " <> unpack t)
+
 -- Manual instance to not save the noun/atom in Sag/Sav, because these can be
 -- megabytes and makes king hang.
 instance Show Blit where
   show (Bel ())     = "Bel ()"
   show (Clr ())     = "Clr ()"
   show (Hop x)      = "Hop " ++ (show x)
+  show (Klr s)      = "Klr " ++ (show s)
   show (Lin c)      = "Lin " ++ (show c)
   show (Mor ())     = "Mor ()"
   show (Sag path _) = "Sag " ++ (show path)
@@ -160,6 +231,8 @@ data TermEf
     | TermEfMass Path Noun -- Irrelevant
   deriving (Eq, Ord, Show)
 
+deriveNoun ''Stye
+deriveNoun ''Stub
 deriveNoun ''Blit
 deriveNoun ''TermEf
 
@@ -171,7 +244,6 @@ data VaneEf
     | VEHttpClient HttpClientEf
     | VEHttpServer HttpServerEf
     | VEBehn       BehnEf
-    | VEAmes       AmesEf
     | VETerm       TermEf
     | VEClay       SyncEf
     | VESync       SyncEf
@@ -187,19 +259,38 @@ data Ef
     = EfVane VaneEf
     | EfVega Cord EvilPath -- second path component, rest of path
     | EfExit Cord EvilPath -- second path component, rest of path
+    | EfWend Wynn
   deriving (Eq, Ord, Show)
 
+-- XX HACK
+clip :: Noun -> Noun
+clip (C (C _ x) y) = C x y
+clip _ = error "misclip"
+
+tack :: Noun -> Noun
+tack (C x y) = C (C (A 0) x) y
+tack _ = error "mistack"
+
 instance ToNoun Ef where
-  toNoun = \case
+  toNoun = clip . \case
     EfVane v   -> toNoun $ reorgThroughNoun ("", v)
     EfExit s p -> toNoun $ ReOrg "" s "exit" p (A 0)
     EfVega s p -> toNoun $ ReOrg "" s "vega" p (A 0)
+    EfWend w   -> toNoun $ reorgThroughNoun ("", w)
 
 instance FromNoun Ef where
-  parseNoun = parseNoun >=> \case
+  parseNoun = tack >>> parseNoun >=> \case
     ReOrg "" s "exit" p (A 0) -> pure (EfExit s p)
     ReOrg "" s "exit" p _     -> fail "%exit effect expects nil value"
     ReOrg "" s "vega" p (A 0) -> pure (EfVega s p)
     ReOrg "" s "vega" p _     -> fail "%vega effect expects nil value"
+    ReOrg "" s "wend" p val   -> EfWend <$> parseNoun val
     ReOrg "" s tag    p val   -> EfVane <$> parseNoun (toNoun (s, tag, p, val))
     ReOrg _  _ _      _ _     -> fail "Non-empty first path-element"
+
+summarizeEffect :: Lenient Ef -> Text
+summarizeEffect ef =
+  fromNoun (toNoun ef) & \case
+    Nothing -> "//invalid %effect"
+    Just (pax :: [Cord], tag :: Cord, val :: Noun) ->
+      "/" <> intercalate "/" (unCord <$> pax) <> " %" <> unCord tag

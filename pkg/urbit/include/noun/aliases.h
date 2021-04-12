@@ -84,6 +84,11 @@
 #     define u3nt(a, b, c)     u3i_trel(a, b, c)
 #     define u3nq(a, b, c, d)  u3i_qual(a, b, c, d)
 
+
+    /* u3nl(), u3_none-terminated varargs list
+    */
+#     define u3nl              u3i_list
+
     /* u3du(), u3ud(): noun/cell test.
     */
 #     define u3du(som)         (u3r_du(som))

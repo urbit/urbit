@@ -2,10 +2,14 @@
     UNIX Filesystem Driver
 -}
 
-module Urbit.Vere.Clay (clay) where
+module Urbit.Vere.Clay
+  ( clay
+  , clay'
+  )
+where
 
-import Urbit.Arvo            hiding (Term)
-import Urbit.King.Config
+import Urbit.Arvo
+import Urbit.King.App
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
 
@@ -28,6 +32,7 @@ deskToPath :: Desk -> FilePath
 deskToPath (Desk (Cord t)) = unpack t
 
 -- | The hard coded mime type of every file.
+textPlain :: Path
 textPlain = Path [(MkKnot "text"), (MkKnot "plain")]
 
 -- | Filter for dotfiles, tempfiles and backup files.
@@ -112,28 +117,54 @@ buildActionListFromDifferences fp snapshot = do
 
 --------------------------------------------------------------------------------
 
-clay :: forall e. (HasPierConfig e, HasLogFunc e)
-     => KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e SyncEf))
-clay king enqueueEv =
+_boatFailed :: e -> WorkError -> IO ()
+_boatFailed env _ = runRIO env $ do
+  pure () -- TODO What can we do?
+
+clay'
+  :: HasPierEnv e
+  => RIO e ([Ev], RAcquire e (DriverApi SyncEf))
+clay' = do
+  ventQ :: TQueue EvErr <- newTQueueIO
+  env <- ask
+
+  let (bornEvs, startDriver) = clay env (writeTQueue ventQ)
+
+  let runDriver = do
+        diOnEffect <- startDriver
+        let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
+        pure (DriverApi {..})
+
+  pure (bornEvs, runDriver)
+
+clay
+  :: forall e
+   . (HasPierConfig e, HasLogFunc e, HasKingId e)
+  => e
+  -> (EvErr -> STM ())
+  -> ([Ev], RAcquire e (SyncEf -> IO ()))
+clay env plan =
     (initialEvents, runSync)
   where
-    initialEvents = [
-      EvBlip $ BlipEvBoat $ BoatEvBoat () ()
-      -- TODO: In the case of -A, we need to read all the data from the
-      -- specified directory and shove it into an %into event.
-      ]
+    king = fromIntegral (env ^. kingIdL)
 
-    runSync :: RAcquire e (EffCb e SyncEf)
+    boatEv = EvBlip $ BlipEvBoat $ BoatEvBoat () ()
+
+    -- TODO: In the case of -A, we need to read all the data from the
+    -- specified directory and shove it into an %into event.
+    initialEvents = [boatEv]
+
+    runSync :: RAcquire e (SyncEf -> IO ())
     runSync = handleEffect <$> mkRAcquire start stop
 
     start :: RIO e ClayDrv
     start = ClayDrv <$> newTVarIO mempty
     stop c = pure ()
 
-    handleEffect :: ClayDrv -> SyncEf -> RIO e ()
-    handleEffect cd = \case
+    handleEffect :: ClayDrv -> SyncEf -> IO ()
+    handleEffect cd = runRIO env . \case
       SyncEfHill _ mountPoints -> do
-        logDebug $ displayShow ("(clay) known mount points:", mountPoints)
+        logInfo $ displayShow ("(clay) known mount points:", mountPoints)
         pierPath <- view pierPathL
         mountPairs <- flip mapM mountPoints $ \desk -> do
           ss <- takeFilesystemSnapshot (pierPath </> (deskToPath desk))
@@ -141,25 +172,32 @@ clay king enqueueEv =
         atomically $ writeTVar (cdMountPoints cd) (M.fromList mountPairs)
 
       SyncEfDirk p desk -> do
-        logDebug $ displayShow ("(clay) dirk:", p, desk)
+        logInfo $ displayShow ("(clay) dirk:", p, desk)
         m <- atomically $ readTVar (cdMountPoints cd)
         let snapshot = M.findWithDefault M.empty desk m
         pierPath <- view pierPathL
         let dir = pierPath </> deskToPath desk
         actions <- buildActionListFromDifferences dir snapshot
 
-        logDebug $ displayShow ("(clay) dirk actions: ", actions)
+        logInfo $ displayShow ("(clay) dirk actions: ", actions)
 
         let !intoList = map (actionsToInto dir) actions
-        atomically $ enqueueEv $ EvBlip $ BlipEvSync $
-            SyncEvInto (Some (king, ())) desk False intoList
 
-        atomically $ modifyTVar
+        let syncEv = EvBlip
+                   $ BlipEvSync
+                   $ SyncEvInto (Some (king, ())) desk False intoList
+
+        let syncFailed _ = pure ()
+
+        atomically $ plan (EvErr syncEv syncFailed)
+
+
+        atomically $ modifyTVar'
             (cdMountPoints cd)
             (applyActionsToMountPoints desk actions)
 
       SyncEfErgo p desk actions -> do
-        logDebug $ displayShow ("(clay) ergo:", p, desk, actions)
+        logInfo $ displayShow ("(clay) ergo:", p, desk, actions)
 
         m <- atomically $ readTVar (cdMountPoints cd)
         let mountPoint = M.findWithDefault M.empty desk m
@@ -169,15 +207,15 @@ clay king enqueueEv =
         let hashedActions = map (calculateActionHash dir) actions
         for_ hashedActions (performAction mountPoint)
 
-        atomically $ modifyTVar
+        atomically $ modifyTVar'
             (cdMountPoints cd)
             (applyActionsToMountPoints desk hashedActions)
 
       SyncEfOgre p desk -> do
-        logDebug $ displayShow ("(clay) ogre:", p, desk)
+        logInfo $ displayShow ("(clay) ogre:", p, desk)
         pierPath <- view pierPathL
         removeDirectoryRecursive $ pierPath </> deskToPath desk
-        atomically $ modifyTVar (cdMountPoints cd) (M.delete desk)
+        atomically $ modifyTVar' (cdMountPoints cd) (M.delete desk)
 
 
     -- Change the structures off of the event into something we can work with
@@ -192,13 +230,13 @@ clay king enqueueEv =
     performAction :: (Map FilePath Int) -> (FilePath, Maybe (Mime, Int))
                   -> RIO e ()
     performAction m (fp, Nothing) = do
-      logDebug $ displayShow ("(clay) deleting file ", fp)
+      logInfo $ displayShow ("(clay) deleting file ", fp)
       removeFile fp
     performAction m (fp, Just ((Mime _ (File (Octs bs)), hash)))
-        | skip = logDebug $
+        | skip = logInfo $
                  displayShow ("(clay) skipping unchanged file update " , fp)
         | otherwise = do
-            logDebug $ displayShow ("(clay) updating file " , fp)
+            logInfo $ displayShow ("(clay) updating file " , fp)
             createDirectoryIfMissing True $ takeDirectory fp
             writeFile fp bs
       where

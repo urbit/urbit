@@ -7,8 +7,8 @@
 ::::
   ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ byk/beak}
-        {arg/$?({dap/term ~} {who/ship dap/term ~}) ~}
+|=  $:  [now=@da eny=@uvJ byk=beak]
+        [arg=$?([dap=term ~] [who=ship dap=term ~]) ~]
     ==
 :-  %drum-unlink
 ?~  +.arg

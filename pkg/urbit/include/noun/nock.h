@@ -117,6 +117,16 @@
       c3_w
       u3n_mark(FILE* fil_u);
 
+    /* u3n_reclaim(): clear ad-hoc persistent caches to reclaim memory.
+    */
+      void
+      u3n_reclaim(void);
+
+    /* u3n_rewrite_compact(): rewrite bytecode cache for compaction.
+     */
+      void
+      u3n_rewrite_compact();
+
     /* u3n_free(): free bytecode cache.
      */
       void
