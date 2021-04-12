@@ -1,21 +1,29 @@
-import React, { Component } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import _ from "lodash";
+import React, { Component } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import _ from 'lodash';
+import bigInt, { BigInteger } from 'big-integer';
 
-import GlobalApi from "~/logic/api/global";
-import { Patp, Path } from "~/types/noun";
-import { Contacts } from "~/types/contact-update";
-import { Association } from "~/types/metadata-update";
-import { Group } from "~/types/group-update";
-import { Envelope, IMessage } from "~/types/chat-update";
-import { LocalUpdateRemoteContentPolicy } from "~/types";
+import { Col } from '@tlon/indigo-react';
+import {
+  Patp,
+  Contacts,
+  Association,
+  Associations,
+  Group,
+  Groups,
+  Graph
+} from '@urbit/api';
 
-import VirtualScroller from "~/views/components/VirtualScroller";
+import GlobalApi from '~/logic/api/global';
+
+import VirtualScroller from '~/views/components/VirtualScroller';
 
 import ChatMessage, { MessagePlaceholder } from './ChatMessage';
-import { UnreadNotice } from "./unread-notice";
-import { ResubscribeElement } from "./resubscribe-element";
-import { BacklogElement } from "./backlog-element";
+import { UnreadNotice } from './unread-notice';
+import withState from '~/logic/lib/withState';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
+import useGraphState from '~/logic/state/graph';
 
 const INITIAL_LOAD = 20;
 const DEFAULT_BACKLOG_SIZE = 100;
@@ -27,71 +35,91 @@ type ChatWindowProps = RouteComponentProps<{
   station: string;
 }> & {
   unreadCount: number;
-  envelopes: Envelope[];
-  isChatMissing: boolean;
-  isChatLoading: boolean;
-  isChatUnsynced: boolean;
-  unreadMsg: Envelope | false;
-  stationPendingMessages: IMessage[];
-  mailboxSize: number;
-  contacts: Contacts;
+  graph: Graph;
+  graphSize: number;
   association: Association;
   group: Group;
   ship: Patp;
   station: any;
-  allStations: any;
   api: GlobalApi;
-  hideNicknames: boolean;
-  hideAvatars: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
-}
+  scrollTo?: number;
+};
 
 interface ChatWindowState {
   fetchPending: boolean;
   idle: boolean;
   initialized: boolean;
-  lastRead: number;
+  unreadIndex: BigInteger;
 }
 
-export default class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
+const virtScrollerStyle = { height: '100%' };
+
+class ChatWindow extends Component<
+  ChatWindowProps,
+  ChatWindowState
+> {
   private virtualList: VirtualScroller | null;
   private unreadMarkerRef: React.RefObject<HTMLDivElement>;
-  
-  INITIALIZATION_MAX_TIME = 1500;
+  private prevSize = 0;
+  private unreadSet = false;
 
-  constructor(props) {
+  INITIALIZATION_MAX_TIME = 100;
+
+  constructor(props: ChatWindowProps) {
     super(props);
 
     this.state = {
       fetchPending: false,
       idle: true,
       initialized: false,
-      lastRead: props.unreadCount ? props.mailboxSize - props.unreadCount : Infinity,
+      unreadIndex: bigInt.zero
     };
-    
+
     this.dismissUnread = this.dismissUnread.bind(this);
     this.scrollToUnread = this.scrollToUnread.bind(this);
     this.handleWindowBlur = this.handleWindowBlur.bind(this);
     this.handleWindowFocus = this.handleWindowFocus.bind(this);
     this.stayLockedIfActive = this.stayLockedIfActive.bind(this);
-    this.dismissIfLineVisible = this.dismissIfLineVisible.bind(this);
-    
+
     this.virtualList = null;
     this.unreadMarkerRef = React.createRef();
+    this.prevSize = props.graph.size;
   }
 
   componentDidMount() {
-    window.addEventListener('blur', this.handleWindowBlur);
-    window.addEventListener('focus', this.handleWindowFocus);
-    this.initialFetch();
+    this.calculateUnreadIndex();
     setTimeout(() => {
+      if (this.props.scrollTo) {
+        this.scrollToUnread();
+      }
       this.setState({ initialized: true });
+      
     }, this.INITIALIZATION_MAX_TIME);
   }
+
+  calculateUnreadIndex() {
+    const { graph, unreadCount } = this.props;
+    const { state } = this;
+    if(state.unreadIndex.neq(bigInt.zero)) {
+      return;
+    }
+    const unreadIndex = graph.keys()[unreadCount];
+    if (!unreadIndex || unreadCount === 0) {
+      this.setState({
+        unreadIndex: bigInt.zero
+      });
+      return;
+    }
+    this.setState({
+      unreadIndex
+    });
+  }
+
+  dismissedInitialUnread() {
+    const { unreadCount, graph } = this.props;
   
-  componentWillUnmount() {
-    window.removeEventListener('blur', this.handleWindowBlur);
-    window.removeEventListener('focus', this.handleWindowFocus);
+    return this.state.unreadIndex.neq(bigInt.zero) &&
+      this.state.unreadIndex.neq(graph.keys()?.[unreadCount]?.[0] ?? bigInt.zero);
   }
 
   handleWindowBlur() {
@@ -105,58 +133,32 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     }
   }
 
-  initialFetch() {
-    const { envelopes, mailboxSize, unreadCount } = this.props;
-    if (envelopes.length > 0) {
-      const start = Math.min(mailboxSize - unreadCount, mailboxSize - DEFAULT_BACKLOG_SIZE);
-      this.stayLockedIfActive();
-      this.fetchMessages(start, start + DEFAULT_BACKLOG_SIZE, true).then(() => {
-        if (!this.virtualList) return;
-        this.setState({ idle: false });
-        this.setState({ initialized: true });
-        this.dismissIfLineVisible();
-      });
-    } else {
-      setTimeout(() => {
-        this.initialFetch();
-      }, 2000);
-    }
-  }
-
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
-    const { isChatMissing, history, envelopes, mailboxSize, stationPendingMessages, unreadCount, station } = this.props;
-
-    if (isChatMissing) {
-      history.push("/~404");
-    } else if (envelopes.length !== prevProps.envelopes.length && this.state.fetchPending) {
-      this.setState({ fetchPending: false });
+    const { history, graph, unreadCount, graphSize, station } = this.props;
+    if(unreadCount === 0 && prevProps.unreadCount !== unreadCount) {
+      this.unreadSet = true;
     }
 
-    if ((mailboxSize !== prevProps.mailboxSize) || (envelopes.length !== prevProps.envelopes.length)) {
-      this.virtualList?.calculateVisibleItems();
-      this.stayLockedIfActive();
+    if(this.prevSize !== graphSize) {
+      this.prevSize = graphSize;
+      if(this.state.unreadIndex.eq(bigInt.zero)) {
+        this.calculateUnreadIndex();
+      }
+      if(this.unreadSet &&
+        this.dismissedInitialUnread() &&
+        this.virtualList?.startOffset() < 5) {
+        this.dismissUnread();
+      }
+
     }
 
-    if (unreadCount > prevProps.unreadCount && this.state.idle) {
-      this.setState({
-        lastRead: unreadCount ? mailboxSize - unreadCount : Infinity,
-      });
-    }
-
-    if (stationPendingMessages.length !== prevProps.stationPendingMessages.length) {
-      this.virtualList?.calculateVisibleItems();
-    }
-
-    if (!this.state.fetchPending && prevState.fetchPending) {
-      this.virtualList?.calculateVisibleItems();
+    if (unreadCount > prevProps.unreadCount) {
+      this.calculateUnreadIndex();
     }
 
     if (station !== prevProps.station) {
       this.virtualList?.resetScroll();
-      this.scrollToUnread();
-      this.setState({
-        lastRead: unreadCount ? mailboxSize - unreadCount : Infinity,
-      });
+      this.calculateUnreadIndex();
     }
   }
 
@@ -167,154 +169,201 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     }
   }
 
+  onBottomLoaded = () => {
+    if(this.state.unreadIndex.eq(bigInt.zero)) {
+      this.calculateUnreadIndex();
+    }
+  }
+
   scrollToUnread() {
-    const { mailboxSize, unreadCount } = this.props;
-    this.virtualList?.scrollToData(mailboxSize - unreadCount);
+    const { unreadIndex } = this.state;
+    if (unreadIndex.eq(bigInt.zero)) {
+      return;
+    }
+
+    this.virtualList?.scrollToIndex(this.state.unreadIndex);
   }
 
   dismissUnread() {
+    const { association } = this.props;
     if (this.state.fetchPending) return;
     if (this.props.unreadCount === 0) return;
-    this.props.api.chat.read(this.props.station);
+    this.props.api.hark.markCountAsRead(association, '/', 'message');
   }
 
-  fetchMessages(start, end, force = false): Promise<void> {
-    start = Math.max(start, 0);
-    end = Math.max(end, 0);
-    const { api, mailboxSize, station } = this.props;
-
-    if (
-      (this.state.fetchPending ||
-      mailboxSize <= 0)
-      && !force
-    ) {
-      return new Promise((resolve, reject) => {});
+  setActive = () => { 
+    if(this.state.idle) {
+      this.setState({ idle: false });
     }
-
-    this.setState({ fetchPending: true });
-    
-    start = Math.min(mailboxSize - start, mailboxSize);
-    end = Math.max(mailboxSize - end, 0, start - MAX_BACKLOG_SIZE);
-    
-    return api.chat
-      .fetchMessages(end, start, station)
-      .finally(() => {
-        this.setState({ fetchPending: false });
-      });
   }
 
-  onScroll({ scrollTop, scrollHeight, windowHeight }) {
+  fetchMessages = async (newer: boolean): Promise<boolean> => {
+    const { api, station, graph } = this.props;
+    const pageSize = 100;
+
+    const [, , ship, name] = station.split('/');
+    const expectedSize = graph.size + pageSize;
+    if (newer) {
+      const [index] = graph.peekLargest()!;
+      await api.graph.getYoungerSiblings(
+        ship,
+        name,
+        pageSize,
+        `/${index.toString()}`
+      );
+      return expectedSize !== graph.size;
+    } else {
+      const [index] = graph.peekSmallest()!;
+      await api.graph.getOlderSiblings(ship, name, pageSize, `/${index.toString()}`);
+      const done = expectedSize !== graph.size;
+      if(done) {
+        this.calculateUnreadIndex();
+      }
+      return done;
+    }
+  }
+
+  onScroll = ({ scrollTop, scrollHeight, windowHeight }) => {
     if (!this.state.idle && scrollTop > IDLE_THRESHOLD) {
       this.setState({ idle: true });
     }
-
-    this.dismissIfLineVisible();
   }
 
-  dismissIfLineVisible() {
-    if (this.props.unreadCount === 0) return;
-    if (!this.unreadMarkerRef.current || !this.virtualList?.window) return;
-    const parent = this.unreadMarkerRef.current.parentElement?.parentElement;
-    if (!parent) return;
-    const { scrollTop, scrollHeight, offsetHeight } = this.virtualList.window;
-    if (
-      (scrollHeight - parent.offsetTop > scrollTop)
-      && (scrollHeight - parent.offsetTop < scrollTop + offsetHeight)
-    ) {
-      this.dismissUnread();
-    }
-  }
-  
-  render() {
+
+  renderer = React.forwardRef(({ index, scrollWindow }, ref) => {
     const {
-      envelopes,
-      stationPendingMessages,
-      unreadCount,
-      unreadMsg,
-      isChatLoading,
-      isChatUnsynced,
       api,
-      ship,
-      station,
       association,
       group,
-      contacts,
-      mailboxSize,
-      hideAvatars,
-      hideNicknames,
-      remoteContentPolicy,
-      allStations,
-      history
+      showOurContact,
+      graph,
+      history,
+      groups,
+      associations
+    } = this.props;
+    const { unreadMarkerRef } = this;
+    const messageProps = {
+      association,
+      group,
+      showOurContact,
+      unreadMarkerRef,
+      history,
+      api,
+      groups,
+      associations
+    };
+
+    const msg = graph.get(index)?.post;
+    if (!msg) return null;
+    if (!this.state.initialized) {
+      return (
+        <MessagePlaceholder
+          key={index.toString()}
+          height='64px'
+          index={index}
+        />
+      );
+    }
+    const isPending: boolean = 'pending' in msg && Boolean(msg.pending);
+    const isLastMessage = index.eq(
+      graph.peekLargest()?.[0] ?? bigInt.zero
+    );
+    const highlighted = false; // this.state.unreadIndex.eq(index);
+    const keys = graph.keys().reverse();
+    const graphIdx = keys.findIndex((idx) => idx.eq(index));
+    const prevIdx = keys[graphIdx + 1];
+    const nextIdx = keys[graphIdx - 1];
+    const isLastRead: boolean = this.state.unreadIndex.eq(index);
+    const props = {
+      highlighted,
+      scrollWindow,
+      isPending,
+      isLastRead,
+      isLastMessage,
+      msg,
+      ...messageProps
+    };
+
+    return (
+      <ChatMessage
+        key={index.toString()}
+        ref={ref}
+        previousMsg={prevIdx && graph.get(prevIdx)?.post}
+        nextMsg={nextIdx && graph.get(nextIdx)?.post}
+        {...props}
+      />
+    );
+  });
+
+  render() {
+    const {
+      unreadCount,
+      api,
+      association,
+      group,
+      graph,
+      history,
+      groups,
+      associations,
+      showOurContact,
+      pendingSize
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;
+    const messageProps = {
+      association,
+      group,
+      unreadMarkerRef,
+      history,
+      api,
+      associations
+    };
+    const unreadMsg = graph.get(this.state.unreadIndex);
 
-    const messages = new Map();
-    let lastMessage = 0;
-    
-    [...envelopes]
-      .sort((a, b) => a.number - b.number)
-      .forEach(message => {
-        messages.set(message.number, message);
-        lastMessage = message.number;
-      });
+    // hack to force a re-render when we toggle showing contact
+    const contactsModified =
+      showOurContact ? 0 : 100;
 
-    stationPendingMessages
-      .sort((a, b) => a.when - b.when)
-      .forEach((message, index) => {
-        index = index + 1; // To 1-index it
-        messages.set(mailboxSize + index, message);
-        lastMessage = mailboxSize + index;
-      });
-
-    const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy, unreadMarkerRef, allStations, history, api };
-    
     return (
-      <>
-        <UnreadNotice
+      <Col height='100%' overflow='hidden' position='relative'>
+        { this.dismissedInitialUnread() && 
+         (<UnreadNotice
           unreadCount={unreadCount}
-          unreadMsg={unreadCount === 1 && unreadMsg && unreadMsg.author === window.ship ? false : unreadMsg}
+          unreadMsg={
+            unreadCount === 1 &&
+            unreadMsg &&
+            unreadMsg?.post.author === window.ship
+              ? false
+              : unreadMsg
+          }
           dismissUnread={this.dismissUnread}
           onClick={this.scrollToUnread}
-        />
-        <BacklogElement isChatLoading={isChatLoading} />
-        <ResubscribeElement {...{ api, host: ship, station, isChatUnsynced}} />
+        />)}
         <VirtualScroller
-          ref={list => {this.virtualList = list}}
-          origin="bottom"
-          style={{ height: '100%' }}
-          onStartReached={() => {
-            this.setState({ idle: false });
-            this.dismissUnread();
+          ref={(list) => {
+            this.virtualList = list;
           }}
-          onScroll={this.onScroll.bind(this)}
-          data={messages}
-          size={mailboxSize + stationPendingMessages.length}
-          renderer={({ index, measure, scrollWindow }) => {
-            const msg: Envelope | IMessage = messages.get(index);
-            if (!msg) return null;
-            if (!this.state.initialized) {
-              return <MessagePlaceholder key={index} height="64px" index={index} />;
-            }
-            const isPending: boolean = 'pending' in msg && Boolean(msg.pending);
-            const isLastMessage: boolean = Boolean(index === lastMessage)
-            const isLastRead: boolean = Boolean(!isLastMessage && index === this.state.lastRead);
-            const props = { measure, scrollWindow, isPending, isLastRead, isLastMessage, msg, ...messageProps };
-            return (
-              <ChatMessage
-                key={index}
-                previousMsg={messages.get(index + 1)}
-                nextMsg={messages.get(index - 1)}
-                {...props}
-              />
-            );
-          }}
-          loadRows={(start, end) => {
-            this.fetchMessages(start, end);
-          }}
+          offset={unreadCount}
+          origin='bottom'
+          style={virtScrollerStyle}
+          onStartReached={this.setActive}
+          onBottomLoaded={this.onBottomLoaded}
+          onScroll={this.onScroll}
+          data={graph}
+          size={graph.size}
+          pendingSize={pendingSize + contactsModified}
+          id={association.resource}
+          averageHeight={22}
+          renderer={this.renderer}
+          loadRows={this.fetchMessages}
         />
-      </>
+      </Col>
     );
   }
 }
 
+export default withState(ChatWindow, [
+  [useGroupState, ['groups']],
+  [useMetadataState, ['associations']],
+  [useGraphState, ['pendingSize']]
+]);

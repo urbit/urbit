@@ -1,18 +1,26 @@
-import React, { useCallback } from "react";
+import React, { createRef, useCallback, useRef } from 'react';
+import { IUnControlledCodeMirror, UnControlled as CodeEditor } from 'react-codemirror2';
+import { useFormikContext } from 'formik';
+import { Prompt } from 'react-router-dom';
+import { Editor } from 'codemirror';
 
-import { UnControlled as CodeEditor } from "react-codemirror2";
-import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
-import { PropFunc } from "~/types/util";
-import CodeMirror from "codemirror";
+import { MOBILE_BROWSER_REGEX, usePreventWindowUnload } from '~/logic/lib/util';
+import { PropFunc } from '~/types/util';
+import CodeMirror from 'codemirror';
 
-import "codemirror/mode/markdown/markdown";
-import "codemirror/addon/display/placeholder";
+import 'codemirror/mode/markdown/markdown';
+import 'codemirror/addon/display/placeholder';
+import 'codemirror/addon/edit/continuelist';
 
-import "codemirror/lib/codemirror.css";
-import { Box } from "@tlon/indigo-react";
+import 'codemirror/lib/codemirror.css';
+import { Box } from '@tlon/indigo-react';
+import { useFileDrag } from '~/logic/lib/useDrag';
+import SubmitDragger from '~/views/components/SubmitDragger';
+import useStorage from '~/logic/lib/useStorage';
+import { StorageState } from '~/types';
 
 const MARKDOWN_CONFIG = {
-  name: "markdown",
+  name: 'markdown'
 };
 
 interface MarkdownEditorProps {
@@ -22,6 +30,17 @@ interface MarkdownEditorProps {
   onBlur?: (e: any) => void;
 }
 
+const PromptIfDirty = () => {
+  const formik = useFormikContext();
+  usePreventWindowUnload(formik.dirty && !formik.isSubmitting);
+  return (
+    <Prompt
+      when={formik.dirty && !formik.isSubmitting}
+      message="Are you sure you want to leave? You have unsaved changes."
+    />
+  );
+};
+
 export function MarkdownEditor(
   props: MarkdownEditorProps & PropFunc<typeof Box>
 ) {
@@ -29,13 +48,16 @@ export function MarkdownEditor(
 
   const options = {
     mode: MARKDOWN_CONFIG,
-    theme: "tlon",
+    theme: 'tlon',
     lineNumbers: false,
     lineWrapping: true,
-    scrollbarStyle: "native",
+    scrollbarStyle: 'native',
     // cursorHeight: 0.85,
-    placeholder: placeholder || "",
+    placeholder: placeholder || '',
+    extraKeys: { 'Enter': 'newlineAndIndentContinueMarkdownList' }
   };
+
+  const editor: React.RefObject<any> = useRef();
 
   const handleChange = useCallback(
     (_e, _d, v: string) => {
@@ -51,24 +73,55 @@ export function MarkdownEditor(
     [onBlur]
   );
 
+  const { uploadDefault, canUpload } = useStorage();
+
+  const onFileDrag = useCallback(
+    async (files: FileList | File[], e: DragEvent) => {
+      if (!canUpload || !editor.current) {
+        return;
+      }
+      const codeMirror: Editor = editor.current.editor;
+      const doc = codeMirror.getDoc();
+
+      Array.from(files).forEach(async (file) => {
+        const placeholder = `![Uploading ${file.name}](...)`;
+        doc.setValue(doc.getValue() + placeholder);
+        const url = await uploadDefault(file);
+        const markdown = `![${file.name}](${url})`;
+        doc.setValue(doc.getValue().replace(placeholder, markdown));
+      });
+    },
+    [uploadDefault, canUpload, value, onChange]
+  );
+
+  const { bind, dragging } = useFileDrag(onFileDrag);
+
   return (
     <Box
-      flexGrow={1}
-      position="static"
+      height="100%"
+      position="relative"
       className="publish"
       p={1}
       border={1}
       borderColor="lightGray"
       borderRadius={2}
+      height={['calc(100% - 22vh)', '100%']}
       {...boxProps}
     >
+      <PromptIfDirty />
       <CodeEditor
+        ref={editor}
         autoCursor={false}
         onBlur={onBlur}
         value={value}
         options={options}
         onChange={handleChange}
+        onDragLeave={(editor, e) => bind.onDragLeave(e)}
+        onDragOver={(editor, e) => bind.onDragOver(e)}
+        onDrop={(editor, e) => bind.onDrop(e)}
+        onDragEnter={(editor, e) => bind.onDragEnter(e)}
       />
+      {dragging && <SubmitDragger />}
     </Box>
   );
 }

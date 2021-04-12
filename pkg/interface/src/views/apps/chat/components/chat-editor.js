@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { UnControlled as CodeEditor } from 'react-codemirror2';
 import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 import CodeMirror from 'codemirror';
+import styled from "styled-components";
 
-import { Row } from '@tlon/indigo-react';
+import { Row, BaseTextArea, Box } from '@tlon/indigo-react';
 
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
@@ -35,6 +36,56 @@ const MARKDOWN_CONFIG = {
     linkHref: 'presentation'
   }
 };
+
+// Until CodeMirror supports options.inputStyle = 'textarea' on mobile,
+// we need to hack this into a regular input that has some funny behaviors
+const inputProxy = (input) => new Proxy(input, {
+  get(target, property) {
+    if (property in target) {
+      return target[property];
+    }
+    if (property === 'setOption') {
+      return () => {};
+    }
+    if (property === 'getValue') {
+      return () => target.value;
+    }
+    if (property === 'setValue') {
+      return (val) => target.value = val;
+    }
+    if (property === 'element') {
+      return input;
+    }
+  }
+});
+
+const MobileBox = styled(Box)`
+  display: inline-grid;
+  vertical-align: center;
+  align-items: stretch;
+  position: relative;
+  justify-content: flex-start;
+  width: 100%;
+
+  &:after,
+  textarea {
+    grid-area: 2 / 1;
+    width: auto;
+    min-width: 1em;
+    font: inherit;
+    padding: 0.25em;
+    margin: 0;
+    resize: none;
+    background: none;
+    appearance: none;
+    border: none;
+  }
+  &::after {
+    content: attr(data-value) ' ';
+    visibility: hidden;
+    white-space: pre-wrap;
+  }
+`;
 
 export default class ChatEditor extends Component {
   constructor(props) {
@@ -129,7 +180,11 @@ export default class ChatEditor extends Component {
         'Esc': () => {
           this.editor?.getInputField().blur();
         }
-      }
+      },
+      // The below will ony work once codemirror's bug is fixed
+      spellcheck: !!MOBILE_BROWSER_REGEX.test(navigator.userAgent),
+      autocorrect: !!MOBILE_BROWSER_REGEX.test(navigator.userAgent),
+      autocapitalize: !!MOBILE_BROWSER_REGEX.test(navigator.userAgent)
     };
 
     return (
@@ -138,23 +193,63 @@ export default class ChatEditor extends Component {
         alignItems='center'
         flexGrow='1'
         height='100%'
+        paddingTop={MOBILE_BROWSER_REGEX.test(navigator.userAgent) ? '16px' : '0'}
+        paddingBottom={MOBILE_BROWSER_REGEX.test(navigator.userAgent) ? '16px' : '0'}
         maxHeight='224px'
-        paddingTop='8px'
         width='calc(100% - 88px)'
         className={inCodeMode ? 'chat code' : 'chat'}
+        color="black"
+        overflow='auto'
       >
-        <CodeEditor
+        {MOBILE_BROWSER_REGEX.test(navigator.userAgent)
+          ? <MobileBox
+              data-value={this.state.message}
+              fontSize="1"
+              lineHeight="tall"
+              onClick={event => {
+                if (this.editor) {
+                  this.editor.element.focus();
+                }
+              }}
+            >
+            <BaseTextArea
+              fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
+              fontSize="1"
+              lineHeight="tall"
+              rows="1"
+              style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
+              placeholder={inCodeMode ? "Code..." : "Message..."}
+              onChange={event => {
+                this.messageChange(null, null, event.target.value);
+              }}
+              onKeyDown={event => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  this.submit();
+                } else {
+                  this.messageChange(null, null, event.target.value);
+                }
+              }}
+              ref={input => {
+                if (!input) return;
+                this.editor = inputProxy(input);
+              }}
+              {...props}
+            />
+          </MobileBox>
+          : <CodeEditor
+          className="lh-copy"
           value={message}
           options={options}
           onChange={(e, d, v) => this.messageChange(e, d, v)}
           editorDidMount={(editor) => {
             this.editor = editor;
-            if (!MOBILE_BROWSER_REGEX.test(navigator.userAgent)) {
-              editor.focus();
-            }
+            editor.focus();
           }}
           {...props}
         />
+        }
+
       </Row>
     );
   }

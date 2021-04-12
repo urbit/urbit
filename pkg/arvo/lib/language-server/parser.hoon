@@ -5,75 +5,59 @@
 ++  pile-rule
   |=  pax=path
   %-  full
-  %+  ifix  [gay gay]
-  %+  cook  |=(pile +<)
-  ;~  pfix
+  %+  ifix
+    :_  gay
     ::  parse optional /? and ignore
     ::
-    ;~  pose
-      (cold ~ ;~(plug net wut gap dem gap))
-      (easy ~)
+    ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
+  |^
+  ;~  plug
+    %+  cook  (bake zing (list (list taut)))
+    %+  rune  hep
+    (most ;~(plug com gaw) taut-rule)
+  ::
+    %+  cook  (bake zing (list (list taut)))
+    %+  rune  lus
+    (most ;~(plug com gaw) taut-rule)
+  ::
+    %+  rune  tis
+    ;~(plug sym ;~(pfix gap stap))
+  ::
+    %+  rune  cen
+    ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
+  ::
+    %+  rune  buc
+    ;~  (glue gap)
+      sym
+      ;~(pfix cen sym)
+      ;~(pfix cen sym)
     ==
   ::
-    ;~  plug
-      ;~  pose
-        ;~  sfix
-          %+  cook  |=((list (list taut)) (zing +<))
-          %+  more  gap
-          ;~  pfix  ;~(plug net hep gap)
-            (most ;~(plug com gaw) taut-rule)
-          ==
-          gap
-        ==
-        (easy ~)
-      ==
-    ::
-      ;~  pose
-        ;~  sfix
-          %+  cook  |=((list (list taut)) (zing +<))
-          %+  more  gap
-          ;~  pfix  ;~(plug net lus gap)
-            (most ;~(plug com gaw) taut-rule)
-          ==
-          gap
-        ==
-        (easy ~)
-      ==
-    ::
-      ;~  pose
-        ;~  sfix
-          %+  cook  |=((list [face=term =path]) +<)
-          %+  more  gap
-          ;~  pfix  ;~(plug net tis gap)
-            %+  cook  |=([term path] +<)
-            ;~(plug sym ;~(pfix ;~(plug gap net) (more net urs:ab)))
-          ==
-          gap
-        ==
-        (easy ~)
-      ==
-    ::
-      ;~  pose
-        ;~  sfix
-          %+  cook  |=((list [face=term =mark =path]) +<)
-          %+  more  gap
-          ;~  pfix  ;~(plug net tar gap)
-            %+  cook  |=([term mark path] +<)
-            ;~  plug
-              sym
-              ;~(pfix ;~(plug gap cen) sym)
-              ;~(pfix ;~(plug gap net) (more net urs:ab))
-            ==
-          ==
-          gap
-        ==
-        (easy ~)
-      ==
-    ::
-      %+  cook  |=(huz=(list hoon) `hoon`tssg+huz)
-      (most gap tall:(vang & pax))
+    %+  rune  tar
+    ;~  (glue gap)
+      sym
+      ;~(pfix cen sym)
+      stap
     ==
+  ::
+    %+  stag  %tssg
+    (most gap tall:(vang & pax))
   ==
+  ::
+  ++  pant
+    |*  fel=^rule
+    ;~(pose fel (easy ~))
+  ::
+  ++  mast
+    |*  [bus=^rule fel=^rule]
+    ;~(sfix (more bus fel) bus)
+  ::
+  ++  rune
+    |*  [bus=^rule fel=^rule]
+    %-  pant
+    %+  mast  gap
+    ;~(pfix fas bus gap fel)
+  --
 ::
 ++  taut-rule
   %+  cook  |=(taut +<)

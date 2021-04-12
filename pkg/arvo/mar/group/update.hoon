@@ -5,8 +5,8 @@
   |%
   ++  noun  upd
   ++  json
-  %+  frond:enjs:format  'groupUpdate'
-  (update:enjs upd)
+    %+  frond:enjs:format  'groupUpdate'
+    (update:enjs upd)
   --
 ++  grab
   |%

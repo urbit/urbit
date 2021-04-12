@@ -2,54 +2,56 @@
     Use etherium to access PKI information.
 -}
 
-module Urbit.Vere.Dawn where
+module Urbit.Vere.Dawn ( dawnVent
+                       , dawnCometList
+                       , renderShip
+                       , mineComet
+                       -- Used only in testing
+                       , mix
+                       , shas
+                       , shaf
+                       , deriveCode
+                       , cometFingerprintBS
+                       , cometFingerprint
+                       ) where
 
 import Urbit.Arvo.Common
 import Urbit.Arvo.Event  hiding (Address)
-import Urbit.Prelude     hiding (Call, rights, to)
+import Urbit.Prelude     hiding (rights, to, (.=))
 
 import Data.Bits                     (xor)
 import Data.List                     (nub)
 import Data.Text                     (splitOn)
-import Network.Ethereum.Account
-import Network.Ethereum.Api.Eth
-import Network.Ethereum.Api.Provider
-import Network.Ethereum.Api.Types    hiding (blockNumber)
-import Network.Ethereum.Web3
-import Network.HTTP.Client.TLS
+import Data.Aeson
+import Data.HexString
+import Numeric                       (showHex)
 
 import qualified Crypto.Hash.SHA256    as SHA256
 import qualified Crypto.Hash.SHA512    as SHA512
 import qualified Crypto.Sign.Ed25519   as Ed
 import qualified Data.Binary           as B
-import qualified Data.ByteArray        as BA
 import qualified Data.ByteString       as BS
 import qualified Data.ByteString.Char8 as C
-import qualified Network.Ethereum.Ens  as Ens
+import qualified Data.ByteString.Lazy  as L
 import qualified Network.HTTP.Client   as C
-import qualified Urbit.Azimuth         as AZ
 import qualified Urbit.Ob              as Ob
 
--- During boot, use the infura provider
-provider = HttpProvider
-  "https://mainnet.infura.io/v3/196a7f37c7d54211b4a07904ec73ad87"
+import qualified Network.HTTP.Client.TLS as TLS
+import qualified Network.HTTP.Types      as HT
+
+-- The address of the azimuth contract as a string.
+azimuthAddr :: Text
+azimuthAddr = "0x223c067f8cf28ae173ee5cafea60ca44c335fecb"
 
 -- Conversion Utilities --------------------------------------------------------
 
--- Takes the web3's bytes representation and changes the endianness.
-bytes32ToBS :: BytesN 32 -> ByteString
-bytes32ToBS = reverse . BA.pack . BA.unpack
+passFromBS :: ByteString -> ByteString -> ByteString -> Pass
+passFromBS enc aut sut
+  | bytesAtom sut /= 1 = Pass (Ed.PublicKey mempty) (Ed.PublicKey mempty)
+  | otherwise          = Pass (Ed.PublicKey aut) (Ed.PublicKey enc)
 
-toBloq :: Quantity -> Bloq
-toBloq = fromIntegral . unQuantity
-
-passFromEth :: BytesN 32 -> BytesN 32 -> UIntN 32 -> Pass
-passFromEth enc aut sut | sut /= 1 =
-      Pass (Ed.PublicKey mempty) (Ed.PublicKey mempty)
-passFromEth enc aut sut =
-      Pass (decode aut) (decode enc)
-    where
-      decode = Ed.PublicKey . bytes32ToBS
+bsToBool :: ByteString -> Bool
+bsToBool bs = bytesAtom bs == 1
 
 clanFromShip :: Ship -> Ob.Class
 clanFromShip = Ob.clan . Ob.patp . fromIntegral
@@ -59,6 +61,13 @@ shipSein = Ship . fromIntegral . Ob.fromPatp . Ob.sein . Ob.patp . fromIntegral
 
 renderShip :: Ship -> Text
 renderShip = Ob.renderPatp . Ob.patp . fromIntegral
+
+hexStrToAtom :: Text -> Atom
+hexStrToAtom =
+  bytesAtom . reverse . toBytes . hexString . removePrefix . encodeUtf8
+
+onLeft :: (a -> b) -> Either a c -> Either b c
+onLeft fun = bimap fun id
 
 -- Data Validation -------------------------------------------------------------
 
@@ -73,85 +82,261 @@ ringToPass Ring{..} = Pass{..}
       Nothing -> error "Invalid seed passed to createKeypairFromSeed"
       Just x -> x
 
+-- JSONRPC Functions -----------------------------------------------------------
+
+-- The big problem here is that we can't really use the generated web3 wrappers
+-- around the azimuth contracts, especially for the galaxy table request. They
+-- make multiple rpc invocations per galaxy request (which aren't even
+-- batched!), while Vere built a single batched rpc call to fetch the entire
+-- galaxy table.
+--
+-- The included Network.JsonRpc.TinyClient that Network.Web3 embeds can't do
+-- batches, so calling that directly is out.
+--
+-- Network.JSONRPC appears to not like something about the JSON that Infura
+-- returns; it's just hanging? Also no documentation.
+--
+-- So, like with Vere, we roll our own.
+
+dawnSendHTTP :: String -> L.ByteString -> RIO e (Either Int L.ByteString)
+dawnSendHTTP endpoint requestData = liftIO do
+  manager <- C.newManager TLS.tlsManagerSettings
+
+  initialRequest <- C.parseRequest endpoint
+  let request = initialRequest
+        { C.method = "POST"
+        , C.requestBody = C.RequestBodyLBS $ requestData
+        , C.requestHeaders = [("Accept", "application/json"),
+                              ("Content-Type", "application/json"),
+                              ("Charsets", "utf-8")]
+        }
+
+  response <- C.httpLbs request manager
+
+  -- Return body if 200.
+  let code = HT.statusCode $ C.responseStatus response
+  case code of
+    200 -> pure $ Right $ C.responseBody response
+    _   -> pure $ Left code
+
+class RequestMethod m where
+  getRequestMethod :: m -> Text
+
+data RawResponse = RawResponse
+  { rrId :: Int
+  , rrResult :: Text
+  }
+  deriving (Show)
+
+instance FromJSON RawResponse where
+  parseJSON = withObject "Response" $ \v -> do
+    rrId <- v .: "id"
+    rrResult <- v .: "result"
+    pure RawResponse{..}
+
+
+-- Given a list of methods and parameters, return a list of decoded responses.
+dawnPostRequests :: forall req e resp
+                  . (ToJSON req, RequestMethod req)
+                 => String
+                 -> (req -> Text -> resp)
+                 -> [req]
+                 -> RIO e [resp]
+dawnPostRequests endpoint responseBuilder requests = do
+  -- Encode our input requests
+  let requestPayload =
+        encode $ Array $ fromList $ fmap toFullRequest $ zip [0..] requests
+
+  -- Send to the server
+  responses <- dawnSendHTTP endpoint requestPayload >>= \case
+    Left err -> error $ "error fetching " <> endpoint <> ": HTTP " <> (show err)
+    Right x -> pure x
+
+  -- Get a list of the result texts in the order of the submitted requests
+  rawSorted <- case decode responses of
+    Nothing -> error $ "couldn't decode json"
+    Just x  -> pure $ map rrResult $ sortOn rrId x
+
+  -- Build the final result structure by calling the passed in builder with the
+  -- request (some outputs need data from the request structure, eitherwise,
+  -- we'd lean on FromJSON).
+  let results = map (uncurry responseBuilder) (zip requests rawSorted)
+  pure results
+
+ where
+  toFullRequest :: (Int, req) -> Value
+  toFullRequest (rid, req) = object [ "jsonrpc" .= ("2.0" :: Text)
+                                    , "method"  .= getRequestMethod req
+                                    , "params"  .= req
+                                    , "id"      .= rid
+                                    ]
+
+-- Azimuth JSON Requests -------------------------------------------------------
+
+-- Not a full implementation of the Ethereum ABI, but just the ability to call
+-- a method by encoded id (like 0x63fa9a87 for `points(uint32)`), and a single
+-- UIntN 32 parameter.
+encodeCall :: Text -> Int -> Text
+encodeCall method idx = method <> leadingZeroes <> renderedNumber
+  where
+    renderedNumber = pack $ showHex idx ""
+    leadingZeroes = replicate (64 - length renderedNumber) '0'
+
+data BlockRequest = BlockRequest
+  deriving (Show, Eq)
+
+instance RequestMethod BlockRequest where
+  getRequestMethod BlockRequest = "eth_blockNumber"
+
+instance ToJSON BlockRequest where
+  toJSON BlockRequest = Array $ fromList []
+
+-- No need to parse, it's already in the format we'll pass as an argument to
+-- eth calls which take a block number.
+parseBlockRequest :: BlockRequest -> Text -> TextBlockNum
+parseBlockRequest _ txt = txt
+
+type TextBlockNum = Text
+
+data PointRequest = PointRequest
+  { grqHexBlockNum :: TextBlockNum
+  , grqPointId :: Int
+  } deriving (Show, Eq)
+
+instance RequestMethod PointRequest where
+  getRequestMethod PointRequest{..} = "eth_call"
+
+instance ToJSON PointRequest where
+  -- 0x63fa9a87 is the points(uint32) call.
+  toJSON PointRequest{..} =
+    Array $ fromList [object [ "to" .= azimuthAddr
+                             , "data" .= encodeCall "0x63fa9a87" grqPointId],
+                      String grqHexBlockNum
+                     ]
+
+parseAndChunkResultToBS :: Text -> [ByteString]
+parseAndChunkResultToBS result =
+  map reverse $
+  chunkBytestring 32 $
+  toBytes $
+  hexString $
+  removePrefix $
+  encodeUtf8 result
+
+-- The incoming result is a text bytestring. We need to take that text, and
+-- spit out the parsed data.
+--
+-- We're sort of lucky here. After removing the front "0x", we can just chop
+-- the incoming text string into 10 different 64 character chunks and then
+-- parse them as numbers.
+parseEthPoint :: PointRequest -> Text -> EthPoint
+parseEthPoint PointRequest{..} result = EthPoint{..}
+ where
+  [rawEncryptionKey,
+   rawAuthenticationKey,
+   rawHasSponsor,
+   rawActive,
+   rawEscapeRequested,
+   rawSponsor,
+   rawEscapeTo,
+   rawCryptoSuite,
+   rawKeyRevision,
+   rawContinuityNum] = parseAndChunkResultToBS result
+
+  escapeState = if bsToBool rawEscapeRequested
+                then Just $ Ship $ fromIntegral $ bytesAtom rawEscapeTo
+                else Nothing
+
+  -- Vere doesn't set ownership information, neither did the old Dawn.hs
+  -- implementation.
+  epOwn = (0, 0, 0, 0)
+
+  epNet = if not $ bsToBool rawActive
+    then Nothing
+    else Just
+      ( fromIntegral $ bytesAtom rawKeyRevision
+      , passFromBS rawEncryptionKey rawAuthenticationKey rawCryptoSuite
+      , fromIntegral $ bytesAtom rawContinuityNum
+      , (bsToBool rawHasSponsor,
+         Ship (fromIntegral $ bytesAtom rawSponsor))
+      , escapeState
+      )
+
+  -- I don't know what this is supposed to be, other than the old Dawn.hs and
+  -- dawn.c do the same thing.
+  epKid = case clanFromShip (Ship $ fromIntegral grqPointId) of
+    Ob.Galaxy -> Just (0, setToHoonSet mempty)
+    Ob.Star   -> Just (0, setToHoonSet mempty)
+    _         -> Nothing
+
+-- Preprocess data from a point request into the form used in the galaxy table.
+parseGalaxyTableEntry :: PointRequest -> Text -> (Ship, (Rift, Life, Pass))
+parseGalaxyTableEntry PointRequest{..} result = (ship, (rift, life, pass))
+ where
+  [rawEncryptionKey,
+   rawAuthenticationKey,
+   _, _, _, _, _,
+   rawCryptoSuite,
+   rawKeyRevision,
+   rawContinuityNum] = parseAndChunkResultToBS result
+
+  ship = Ship $ fromIntegral grqPointId
+  rift = fromIntegral $ bytesAtom rawContinuityNum
+  life = fromIntegral $ bytesAtom rawKeyRevision
+  pass = passFromBS rawEncryptionKey rawAuthenticationKey rawCryptoSuite
+
+removePrefix :: ByteString -> ByteString
+removePrefix withOhEx
+  | prefix == "0x" = suffix
+  | otherwise      = error "not prefixed with 0x"
+ where
+  (prefix, suffix) = splitAt 2 withOhEx
+
+chunkBytestring :: Int -> ByteString -> [ByteString]
+chunkBytestring size bs
+  | null rest = [cur]
+  | otherwise = (cur : chunkBytestring size rest)
+ where
+  (cur, rest) = splitAt size bs
+
+data TurfRequest = TurfRequest
+  { trqHexBlockNum :: TextBlockNum
+  , trqTurfId :: Int
+  } deriving (Show, Eq)
+
+instance RequestMethod TurfRequest where
+  getRequestMethod TurfRequest{..} = "eth_call"
+
+instance ToJSON TurfRequest where
+  -- 0xeccc8ff1 is the dnsDomains(uint32) call.
+  toJSON TurfRequest{..} =
+    Array $ fromList [object [ "to" .= azimuthAddr
+                             , "data" .= encodeCall "0xeccc8ff1" trqTurfId],
+                      String trqHexBlockNum
+                     ]
+
+-- This is another hack instead of a full Ethereum ABI response.
+parseTurfResponse :: TurfRequest -> Text -> Turf
+parseTurfResponse a raw = turf
+  where
+    without0x = removePrefix $ encodeUtf8 raw
+    (_, blRest) = splitAt 64 without0x
+    (utfLenStr, utfStr) = splitAt 64 blRest
+    utfLen = fromIntegral $ bytesAtom $ reverse $ toBytes $ hexString utfLenStr
+    dnsStr = decodeUtf8 $ BS.take utfLen $ toBytes $ hexString utfStr
+    turf = Turf $ fmap Cord $ reverse $ splitOn "." dnsStr
+
 -- Azimuth Functions -----------------------------------------------------------
 
--- Perform a request to azimuth at a certain block number
-withAzimuth :: Quantity
-            -> Address
-            -> DefaultAccount Web3 a
-            -> Web3 a
-withAzimuth bloq azimuth action =
-    withAccount () $
-      withParam (to .~ azimuth) $
-        withParam (block .~ BlockWithNumber bloq)
-          action
+retrievePoint :: String -> TextBlockNum -> Ship -> RIO e EthPoint
+retrievePoint endpoint block ship =
+  dawnPostRequests endpoint parseEthPoint
+    [PointRequest block (fromIntegral ship)] >>= \case
+      [x] -> pure x
+      _   -> error "JSON server returned multiple return values."
 
--- Retrieves the EthPoint information for an individual point.
-retrievePoint :: Quantity -> Address -> Ship -> Web3 EthPoint
-retrievePoint bloq azimuth ship =
-  withAzimuth bloq azimuth $ do
-    (encryptionKey,
-     authenticationKey,
-     hasSponsor,
-     active,
-     escapeRequested,
-     sponsor,
-     escapeTo,
-     cryptoSuite,
-     keyRevision,
-     continuityNum) <- AZ.points (fromIntegral ship)
-
-    let escapeState = if escapeRequested
-                      then Just $ Ship $ fromIntegral escapeTo
-                      else Nothing
-
-    -- The hoon version also sets this to all 0s and then does nothing with it.
-    let epOwn = (0, 0, 0, 0)
-
-    let epNet = if not active
-        then Nothing
-        else Just
-          ( fromIntegral keyRevision
-          , passFromEth encryptionKey authenticationKey cryptoSuite
-          , fromIntegral continuityNum
-          , (hasSponsor, Ship (fromIntegral sponsor))
-          , escapeState
-          )
-
-    -- TODO: wtf?
-    let epKid = case clanFromShip ship of
-           Ob.Galaxy -> Just (0, setToHoonSet mempty)
-           Ob.Star   -> Just (0, setToHoonSet mempty)
-           _         -> Nothing
-
-    pure EthPoint{..}
-
--- Retrieves information about all the galaxies from Ethereum.
-retrieveGalaxyTable :: Quantity -> Address -> Web3 (Map Ship (Rift, Life, Pass))
-retrieveGalaxyTable bloq azimuth =
-    withAzimuth bloq azimuth $ mapFromList <$> mapM getRow [0..255]
-  where
-    getRow idx = do
-      (encryptionKey, authenticationKey, _, _, _, _, _, cryptoSuite,
-       keyRev, continuity) <- AZ.points idx
-      pure ( fromIntegral idx
-           , ( fromIntegral continuity
-             , fromIntegral keyRev
-             , passFromEth encryptionKey authenticationKey cryptoSuite
-             )
-          )
-
--- Reads the three Ames domains from Ethereum, removing duplicates
-readAmesDomains :: Quantity -> Address -> Web3 [Turf]
-readAmesDomains bloq azimuth =
-    withAzimuth bloq azimuth $ nub <$> mapM getTurf [0..2]
-  where
-    getTurf idx =
-      Turf . fmap Cord . reverse . splitOn "." <$> AZ.dnsDomains idx
-
-
-validateShipAndGetImmediateSponsor :: Quantity -> Address -> Seed -> Web3 Ship
-validateShipAndGetImmediateSponsor block azimuth (Seed ship life ring oaf) =
+validateShipAndGetSponsor :: String -> TextBlockNum -> Seed -> RIO e Ship
+validateShipAndGetSponsor endpoint block (Seed ship life ring oaf) =
   case clanFromShip ship of
     Ob.Comet -> validateComet
     Ob.Moon  -> validateMoon
@@ -161,10 +346,10 @@ validateShipAndGetImmediateSponsor block azimuth (Seed ship life ring oaf) =
       -- A comet address is the fingerprint of the keypair
       let shipFromPass = cometFingerprint $ ringToPass ring
       when (ship /= shipFromPass) $
-        fail ("comet name doesn't match fingerprint " ++ show ship ++ " vs " ++
+        error ("comet name doesn't match fingerprint " <> show ship <> " vs " <>
               show shipFromPass)
       when (life /= 1) $
-        fail ("comet can never be re-keyed")
+        error ("comet can never be re-keyed")
       pure (shipSein ship)
 
     validateMoon = do
@@ -174,18 +359,18 @@ validateShipAndGetImmediateSponsor block azimuth (Seed ship life ring oaf) =
       pure $ shipSein ship
 
     validateRest = do
-      putStrLn ("boot: retrieving " ++ renderShip ship ++ "'s public keys")
+      putStrLn ("boot: retrieving " <> renderShip ship <> "'s public keys")
 
-      whoP <- retrievePoint block azimuth ship
+      whoP <- retrievePoint endpoint block ship
       case epNet whoP of
-        Nothing -> fail "ship not keyed"
+        Nothing -> error "ship not keyed"
         Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
           when (netLife /= life) $
-              fail ("keyfile life mismatch; keyfile claims life " ++
-                    show life ++ ", but Azimuth claims life " ++
+              error ("keyfile life mismatch; keyfile claims life " <>
+                    show life <> ", but Azimuth claims life " <>
                     show netLife)
           when ((ringToPass ring) /= pass) $
-              fail "keyfile does not match blockchain"
+              error "keyfile does not match blockchain"
           -- TODO: The hoon code does a breach check, but the C code never
           -- supplies the data necessary for it to function.
           pure who
@@ -193,62 +378,68 @@ validateShipAndGetImmediateSponsor block azimuth (Seed ship life ring oaf) =
 
 -- Walk through the sponsorship chain retrieving the actual sponsorship chain
 -- as it exists on Ethereum.
-getSponsorshipChain :: Quantity -> Address -> Ship -> Web3 [(Ship,EthPoint)]
-getSponsorshipChain block azimuth = loop
+getSponsorshipChain :: String -> TextBlockNum -> Ship -> RIO e [(Ship,EthPoint)]
+getSponsorshipChain endpoint block = loop
   where
     loop ship = do
-      putStrLn ("boot: retrieving keys for sponsor " ++ renderShip ship)
-      ethPoint <- retrievePoint block azimuth ship
+      putStrLn ("boot: retrieving keys for sponsor " <> renderShip ship)
+      ethPoint <- retrievePoint endpoint block ship
 
       case (clanFromShip ship, epNet ethPoint) of
-        (Ob.Comet, _) -> fail "Comets cannot be sponsors"
-        (Ob.Moon, _)  -> fail "Moons cannot be sponsors"
+        (Ob.Comet, _) -> error "Comets cannot be sponsors"
+        (Ob.Moon, _)  -> error "Moons cannot be sponsors"
 
         (_, Nothing) ->
-            fail $ unpack ("Ship " ++ renderShip ship ++ " not booted")
+            error $ unpack ("Ship " <> renderShip ship <> " not booted")
 
         (Ob.Galaxy, Just _) -> pure [(ship, ethPoint)]
 
         (_, Just (_, _, _, (False, _), _)) ->
-            fail $ unpack ("Ship " ++ renderShip ship ++ " has no sponsor")
+            error $ unpack ("Ship " <> renderShip ship <> " has no sponsor")
 
         (_, Just (_, _, _, (True, sponsor), _)) -> do
             chain <- loop sponsor
-            pure $ chain ++ [(ship, ethPoint)]
-
+            pure $ chain <> [(ship, ethPoint)]
 
 -- Produces either an error or a validated boot event structure.
-dawnVent :: Seed -> RIO e (Either Text Dawn)
-dawnVent dSeed@(Seed ship life ring oaf) = do
-  ret <- runWeb3' provider $ do
-    block <- blockNumber
-    putStrLn ("boot: ethereum block #" ++ tshow block)
+dawnVent :: HasLogFunc e => String -> Seed -> RIO e (Either Text Dawn)
+dawnVent provider dSeed@(Seed ship life ring oaf) =
+  -- The type checker can't figure this out on its own.
+  (onLeft tshow :: Either SomeException Dawn -> Either Text Dawn) <$> try do
+    putStrLn ("boot: requesting ethereum information from " <> pack provider)
+    blockResponses
+      <- dawnPostRequests provider parseBlockRequest [BlockRequest]
 
-    putStrLn "boot: retrieving azimuth contract"
-    azimuth <- withAccount () $ Ens.resolve "azimuth.eth"
+    hexStrBlock <- case blockResponses of
+      [num] -> pure num
+      x     -> error "Unexpected multiple returns from block # request"
 
-    immediateSponsor <- validateShipAndGetImmediateSponsor block azimuth dSeed
-    dSponsor <- getSponsorshipChain block azimuth immediateSponsor
+    let dBloq = hexStrToAtom hexStrBlock
+    putStrLn ("boot: ethereum block #" <> tshow dBloq)
+
+    immediateSponsor <- validateShipAndGetSponsor provider hexStrBlock dSeed
+    dSponsor <- getSponsorshipChain provider hexStrBlock immediateSponsor
 
     putStrLn "boot: retrieving galaxy table"
-    dCzar <- mapToHoonMap <$> retrieveGalaxyTable block azimuth
+    dCzar <- (mapToHoonMap . mapFromList) <$>
+      (dawnPostRequests provider parseGalaxyTableEntry $
+         map (PointRequest hexStrBlock) [0..255])
 
     putStrLn "boot: retrieving network domains"
-    dTurf <- readAmesDomains block azimuth
+    dTurf <- nub <$> (dawnPostRequests provider parseTurfResponse $
+      map (TurfRequest hexStrBlock) [0..2])
 
-    let dBloq = toBloq block
     let dNode = Nothing
+
     pure $ MkDawn{..}
 
-  case ret of
-    Left x  -> pure $ Left $ tshow x
-    Right y -> pure $ Right y
 
+-- Comet List ------------------------------------------------------------------
 
 dawnCometList :: RIO e [Ship]
 dawnCometList = do
   -- Get the jamfile with the list of stars accepting comets right now.
-  manager <- io $ C.newManager tlsManagerSettings
+  manager <- io $ C.newManager TLS.tlsManagerSettings
   request <- io $ C.parseRequest "https://bootstrap.urbit.org/comet-stars.jam"
   response <- io $ C.httpLbs (C.setRequestCheckStatus request) manager
   let body = toStrict $ C.responseBody response
@@ -267,8 +458,11 @@ mix a b = BS.pack $ loop (BS.unpack a) (BS.unpack b)
     loop [] b          = b
     loop (x:xs) (y:ys) = (xor x y) : loop xs ys
 
+shax :: BS.ByteString -> BS.ByteString
+shax = SHA256.hash
+
 shas :: BS.ByteString -> BS.ByteString -> BS.ByteString
-shas salt = SHA256.hash . mix salt . SHA256.hash
+shas salt = shax . mix salt . shax
 
 shaf :: BS.ByteString -> BS.ByteString -> BS.ByteString
 shaf salt ruz = (mix a b)
@@ -276,6 +470,18 @@ shaf salt ruz = (mix a b)
     haz = shas salt ruz
     a = (take 16 haz)
     b = (drop 16 haz)
+
+-- Given a ring, derives the network login code.
+--
+-- Note that the network code is a patp, not a patq: the bytes have been
+-- scrambled.
+deriveCode :: Ring -> Ob.Patp
+deriveCode Ring {..} = Ob.patp $
+                       bytesAtom $
+                       take 8 $
+                       shaf (C.pack "pass") $
+                       shax $
+                       C.singleton 'B' <> ringSign <> ringCrypt
 
 cometFingerprintBS :: Pass -> ByteString
 cometFingerprintBS = (shaf $ C.pack "bfig") . passToBS

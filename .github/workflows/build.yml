@@ -1,0 +1,118 @@
+# Notes:
+#
+#   jobs.<job_id>
+#
+#     A seperate job id results in a lot of duplication of nix/cachix work.
+#     The build will have to download any substituted derivations from cachix
+#     for the steps with each distinct job id and upload built derivations to
+#     cachix after each job has completed, either succesfully or on failure.
+#
+#   jobs.<job_id>.steps.run
+#
+#     build + test are distinct as each step entry results in a collapsable title
+#     within the log output, which makes it easier to view failing builds or
+#     tests independently.
+#
+#   jobs.<job_id>.strategy.fail-fast
+#
+#     Set to false so developers working on vere or king-haskell can have their
+#     respective builds proceed without the other causing failure.
+#
+#   shell.nix
+#
+#     mkShell doesn't allow you to build it - so instantiate all the subshells
+#     defined for the individual pkg/*/shell.nix as a sanity check and to create
+#     some artefacts suitable for developers to pull from cachix. The top-level
+#     shell.nix build time is dominated by Haskell dependencies so it's built as
+#     part of the haskell build steps.
+#
+# Syntax:
+#
+#   https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+
+name: build
+
+on:
+  push:
+    paths:
+      - 'pkg/arvo'
+      - 'pkg/docker-image'
+      - 'pkg/ent'
+      - 'pkg/ge-additions'
+      - 'pkg/hs'
+      - 'pkg/libaes_siv'
+      - 'pkg/urbit'
+      - 'bin'
+      - 'nix'
+  pull_request:
+    paths:
+      - 'pkg/arvo'
+      - 'pkg/docker-image'
+      - 'pkg/ent'
+      - 'pkg/ge-additions'
+      - 'pkg/hs'
+      - 'pkg/libaes_siv'
+      - 'pkg/urbit'
+      - 'bin'
+      - 'nix'
+
+jobs:
+  urbit:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest }
+          - { os: macos-latest }
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # We only want the extra nix config on linux, where it is necessary
+      # for the docker build. We don't want in on Mac, where it isn't but
+      # it breaks the nix install. The two `if` clauses should be mutually
+      # exclusive
+      - uses: cachix/install-nix-action@v12
+        with:
+          extra_nix_config: |
+            system-features = nixos-test benchmark big-parallel kvm
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+      - uses: cachix/install-nix-action@v12
+        if: ${{ matrix.os != 'ubuntu-latest' }}
+
+      - uses: cachix/cachix-action@v8
+        with:
+          name: ares
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: nix-build -A urbit --arg enableStatic true
+
+      - if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: nix-build -A urbit-tests
+
+      - if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: nix-build -A docker-image
+
+  haskell:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest }
+          - { os: macos-latest }
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: ares
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: nix-build -A hs.urbit-king.components.exes.urbit-king --arg enableStatic true
+      - run: nix-build -A hs-checks
+      - run: nix-build shell.nix

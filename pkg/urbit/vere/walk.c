@@ -87,6 +87,7 @@ u3_walk_load(c3_c* pas_c)
 
   if ( fln_w != red_w ) {
     c3_free(pad_y);
+    u3l_log("u3_walk_load failed");
     return u3m_bail(c3__fail);
   }
   else {

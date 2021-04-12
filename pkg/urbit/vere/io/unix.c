@@ -62,6 +62,7 @@ struct _u3_ufil;
 */
   typedef struct _u3_unix {
     u3_auto     car_u;
+    c3_l        sev_l;                  //  instance number
     u3_umon*    mon_u;                  //  mount points
     c3_c*       pax_c;                  //  pier directory
     c3_o        alm;                    //  timer set
@@ -78,7 +79,7 @@ struct _u3_ufil;
   } u3_unix;
 
 void
-u3_unix_ef_look(u3_unix* unx_u, u3_noun all);
+u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all);
 
 /* u3_readdir_r():
 */
@@ -608,8 +609,7 @@ static void
 _unix_commit_mount_point(u3_unix* unx_u, u3_noun mon)
 {
   unx_u->dyr = c3y;
-  u3z(mon);
-  u3_unix_ef_look(unx_u, c3n);
+  u3_unix_ef_look(unx_u, mon, c3n);
   return;
 }
 
@@ -956,7 +956,9 @@ _unix_update_mount(u3_unix* unx_u, u3_umon* mon_u, u3_noun all)
     {
       //  XX remove u3A->sen
       //
-      u3_noun wir = u3nt(c3__sync, u3k(u3A->sen), u3_nul);
+      u3_noun wir = u3nt(c3__sync,
+                        u3dc("scot", c3__uv, unx_u->sev_l),
+                        u3_nul);
       u3_noun cad = u3nq(c3__into, u3i_string(mon_u->nam_c), all, can);
 
       u3_auto_plan(&unx_u->car_u, u3_ovum_init(0, c3__c, wir, cad));
@@ -1090,7 +1092,7 @@ u3_unix_initial_into_card(c3_c* arv_c)
 {
   u3_noun can = _unix_initial_update_dir(arv_c, arv_c);
 
-  return u3nc(u3nt(u3_blip, c3__sync, u3_nul),
+  return u3nc(u3nt(c3__c, c3__sync, u3_nul),
               u3nq(c3__into, u3_nul, c3y, can));
 }
 
@@ -1352,19 +1354,25 @@ u3_unix_release(c3_c* pax_c)
   c3_free(paf_c);
 }
 
-/* u3_unix_ef_look(): update the root.
+/* u3_unix_ef_look(): update the root of a specific mount point.
 */
 void
-u3_unix_ef_look(u3_unix* unx_u, u3_noun all)
+u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all)
 {
   if ( c3y == unx_u->dyr ) {
     unx_u->dyr = c3n;
-    u3_umon* mon_u;
+    u3_umon* mon_u = unx_u->mon_u;
 
-    for ( mon_u = unx_u->mon_u; mon_u; mon_u = mon_u->nex_u ) {
+    while ( mon_u && ( c3n == u3r_sing_c(mon_u->nam_c, mon) ) ) {
+      mon_u = mon_u->nex_u;
+    }
+
+    if ( mon_u ) {
       _unix_update_mount(unx_u, mon_u, all);
     }
   }
+
+  u3z(mon);
 }
 
 /* _unix_io_talk(): start listening for fs events.
@@ -1472,6 +1480,16 @@ u3_unix_io_init(u3_pier* pir_u)
   //  XX wat do
   //
   // car_u->ev.bail_f = ...l;
+
+  {
+    u3_noun now;
+    struct timeval tim_u;
+    gettimeofday(&tim_u, 0);
+
+    now = u3_time_in_tv(&tim_u);
+    unx_u->sev_l = u3r_mug(now);
+    u3z(now);
+  }
 
   return car_u;
 }

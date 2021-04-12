@@ -5,11 +5,8 @@ import ClassyPrelude
 import Bound
 import Control.Monad.Writer hiding (fix)
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
-import qualified Data.Function as F
-import Data.List (elemIndex)
 import Data.Maybe (fromJust)
 import qualified Data.Set as Set
-import Data.Void
 
 import Dashboard (pattern FastAtom)
 import Nock

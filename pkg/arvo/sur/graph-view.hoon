@@ -41,6 +41,8 @@
     ::[%invite rid=resource ships=(set ship)]
     [%groupify rid=resource to=(unit resource)]
     [%forward rid=resource =update:store]
+    [%eval =cord]
+    [%pending-indices pending=(map hash:store index:store)]
   ==
 --
 

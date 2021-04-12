@@ -168,6 +168,38 @@ u3_ovum_free(u3_ovum *egg_u)
   c3_free(egg_u);
 }
 
+/* u3_pico_init(): initialize a scry request struct
+*/
+u3_pico*
+u3_pico_init()
+{
+  u3_pico* pic_u = c3_calloc(sizeof(*pic_u));
+  return pic_u;
+}
+
+/* u3_pico_free(): dispose a scry request struct
+*/
+void
+u3_pico_free(u3_pico* pic_u)
+{
+  u3z(pic_u->gan);
+
+  switch ( pic_u->typ_e ) {
+    default: c3_assert(0);
+
+    case u3_pico_full: {
+      u3z(pic_u->ful);
+    } break;
+
+    case u3_pico_once: {
+      u3z(pic_u->las_u.des);
+      u3z(pic_u->las_u.pax);
+    } break;
+  }
+
+  c3_free(pic_u);
+}
+
 /* u3_mcut_char(): measure/cut character.
 */
 c3_w

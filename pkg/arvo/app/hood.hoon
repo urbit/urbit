@@ -2,7 +2,7 @@
 /+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
 |%
 +$  state
-  $:  %10
+  $:  %12
       drum=state:drum
       helm=state:helm
       kiln=state:kiln
@@ -13,6 +13,8 @@
       [%7 drum=state:drum helm=state:helm kiln=state:kiln]
       [%8 drum=state:drum helm=state:helm kiln=state:kiln]
       [%9 drum=state:drum helm=state:helm kiln=state:kiln]
+      [%10 drum=state:drum helm=state:helm kiln=state:kiln]
+      [%11 drum=state:drum helm=state:helm kiln=state:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum
@@ -71,7 +73,7 @@
   |=  [=mark =vase]
   ^-  step:agent:gall
   |^
-  =/  fin  (end 3 4 mark)
+  =/  fin  (end [3 4] mark)
   ?:  =(%drum fin)  poke-drum
   ?:  =(%helm fin)  poke-helm
   ?:  =(%kiln fin)  poke-kiln

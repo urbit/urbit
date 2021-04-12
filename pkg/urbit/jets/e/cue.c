@@ -6,7 +6,7 @@
 u3_noun
 u3qe_cue(u3_atom a)
 {
-  return u3s_cue(a);
+  return u3s_cue_atom(a);
 }
 
 u3_noun

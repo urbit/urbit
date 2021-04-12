@@ -129,6 +129,30 @@
       !>  -.b
   ==
 ::
+++  test-ordered-map-traverse-delete-all  ^-  tang
+  ;:  weld
+    =/  q  ((ordered-map ,@ ,~) lte)
+    =/  o  (gas:q ~ ~[1/~ 2/~ 3/~])
+    =/  b  ((traverse:q ,~) o ~ |=([~ key=@ ~] [~ %| ~]))
+    %+  expect-eq
+      !>  [~ ~]
+      !>  b
+  ::
+    =/  c
+      :~  [[2.127 1] ~]  [[2.127 2] ~]  [[2.127 3] ~]
+          [[2.127 7] ~]  [[2.127 8] ~]  [[2.127 9] ~]
+      ==
+    =/  compare
+      |=  [[aa=@ ab=@] [ba=@ bb=@]]
+      ?:((lth aa ba) %.y ?:((gth aa ba) %.n (lte ab bb)))
+    =/  q  ((ordered-map ,[@ @] ,~) compare)
+    =/  o  (gas:q ~ c)
+    =/  b  ((traverse:q ,~) o ~ |=([~ key=[@ @] ~] [~ %| ~]))
+    %+  expect-eq
+      !>  [~ ~]
+      !>  b
+  ==
+::
 ++  test-ordered-map-uni  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ (scag 4 test-items))

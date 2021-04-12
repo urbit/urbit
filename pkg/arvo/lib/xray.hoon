@@ -1,3 +1,4 @@
+/-  *plum, *xray
 ::
 ::  # Type Analysis
 ::
@@ -355,8 +356,8 @@
                =^  params=(list xkey)  st
                  |-  ^-  [(list xkey) xtable]
                  ?~  u.q.note  [~ st]
-                 =/  tsld  [%tsld [%limb %$] [%wing i.u.q.note]]
-                 =/  part  (~(play ut subject-of-note) tsld)
+                 =/  tsgl  [%tsgl [%limb %$] [%wing i.u.q.note]]
+                 =/  part  (~(play ut subject-of-note) tsgl)
                  =^  this  st  (main st part)
                  =^  more  st  $(u.q.note t.u.q.note)
                  [[this more] st]
@@ -1318,7 +1319,7 @@
     ::
     =^  i=xkey  st
       ^-  [xkey xtable]
-      %+  (fold {xkey xtable} xkey)
+      %+  (fold ,[xkey xtable] xkey)
         [[void st] ~(tap in fork)]
       |=  [[k=xkey tbl=xtable] branch=xkey]
       ^-  [xkey xtable]
@@ -1416,8 +1417,8 @@
   ::  coherent `xrole` (where possible, otherwise a %misjunction).
   ::
   ::  This often needs to restructure things. For example, if we are
-  ::  combining `{{~ ~} {%a ~}}` and `{{~ ~} {%b ~}}`, we should produce
-  ::  `{{~ ~} ?%({%a ~} {%b ~})}`.
+  ::  combining `[[~ ~] [%a ~]]` and `[[~ ~] [%b ~]]`, we should produce
+  ::  `[[~ ~] ?%([%a ~] [%b ~])]`.
   ::
   ::  This is a massive switch on the xroles of the two arguments. This
   ::  is *very* easy to get wrong, so I structured things this in a
@@ -1774,34 +1775,34 @@
              =/  tl  `spec`$(i tail.d)
              =/  both-basic  &(=([%base %noun] hd) =([%base %noun] tl))
              ?:  both-basic      [%base %cell]
-             ?:  ?=(%bscl -.tl)  [%bscl hd +.tl]
-             [%bscl hd tl ~]
+             ?:  ?=(%bccl -.tl)  [%bccl hd +.tl]
+             [%bccl hd tl ~]
       %core  =/  payld  $(i xray.d)
              =/  batt   ^-  (map term spec)
                         %-  ~(run by (flatten-battery batt.d))
                         |=  =xkey  ^$(i xkey)
              ?-  r.garb.d
-               %lead  [%bszp payld batt]
-               %gold  [%bsdt payld batt]
-               %zinc  [%bstc payld batt]
-               %iron  [%bsnt payld batt]
+               %lead  [%bczp payld batt]
+               %gold  [%bcdt payld batt]
+               %zinc  [%bctc payld batt]
+               %iron  [%bcfs payld batt]
              ==
       %pntr  !!
       %face  =/  =spec  $(i xray.d)
-             ?^(face.d spec [%bsts face.d spec])
+             ?^(face.d spec [%bcts face.d spec])
       %fork  =/  =xrole  (need xrole.x)
              |^  ?+  xrole
                      ~&  [%unexpected-fork-xrole xkey.x d xrole choices]
-                     [%bswt choices]
+                     [%bcwt choices]
                    %noun             [%base %noun]
                    %void             [%base %void]
-                   [%option *]       [%bswt choices]
-                   [%union *]        [%bscn choices]
-                   [%misjunction *]  [%bswt choices]
-                   [%junction *]     :+  %bsvt
+                   [%option *]       [%bcwt choices]
+                   [%union *]        [%bccn choices]
+                   [%misjunction *]  [%bcwt choices]
+                   [%junction *]     :+  %bcpt
                                        ^$(i flat.xrole)
                                      ^$(i deep.xrole)
-                   [%conjunction *]  :+  %bskt
+                   [%conjunction *]  :+  %bckt
                                        ^$(i wide.xrole)
                                      ^$(i tall.xrole)
                  ==
@@ -1821,7 +1822,7 @@
     ^-  spec
     ?.  (need loop.xr)  sp
     =/  nm  (synthetic xkey.xr)
-    [%bsbs [%loop nm] [[nm sp] ~ ~]]
+    [%bcbc [%loop nm] [[nm sp] ~ ~]]
   ::
   ::  If we have a `recipe`, we can generate much nicer output.
   ::
@@ -1843,7 +1844,7 @@
   ++  synthetic
     |=  number=@ud
     ^-  @tas
-    =/  alf/(list term)
+    =/  alf=(list term)
         ^~  :~  %alf  %bet  %gim  %dal  %hej  %vav  %zay  %het
                 %tet  %yod  %kaf  %lam  %mem  %nun  %sam  %ayn
                 %pej  %sad  %qof  %res  %sin  %tav
@@ -1864,4 +1865,77 @@
     (~(uni by q.q.i.chapters) $(chapters t.chapters))
   ::
   --
+::
+::  Left-fold over a list.
+::
+::  This is `roll`, but with explicit type parameters.
+::
+++  fold
+   |*  [state=mold elem=mold]
+   |=  [[st=state xs=(list elem)] f=$-([state elem] state)]
+   ^-  state
+   |-
+   ?~  xs  st
+   $(xs t.xs, st (f st i.xs))
+::
+::  This is basically a `mapM` over a list using the State monad.
+::
+::  Another way to think about this is that it is the same as `turn`,
+::  except that a state variable `st` is threaded through the
+::  execution. The list is processed from left to right.
+::
+::  This is `spin`, but with explicit type parameters.
+::
+++  traverse
+  |*  [state=mold in=mold out=mold]
+  |=  [[st=state xs=(list in)] f=$-([state in] [out state])]
+  ^-  [(list out) state]
+  ?~  xs  [~ st]
+  =^  r   st  (f st i.xs)
+  =^  rs  st  $(xs t.xs, st st)
+  [[r rs] st]
+::
+::  `traverse` over a set.
+::
+++  traverse-set
+  |*  [state=mold input=mold out=mold]
+  |=  [[st=state xs=(set input)] f=$-([state input] [out state])]
+  ^-  [(set out) state]
+  ::
+  =^  elems  st  ((traverse state input out) [st ~(tap in xs)] f)
+  :_  st  (~(gas in *(set out)) elems)
+::
+::  `traverse` over a map, also passing the key to the folding function.
+::
+++  traverse-map
+  |*  [state=mold key=mold in=mold out=mold]
+  |=  [[st=state dict=(map key in)] f=$-([state key in] [out state])]
+  ^-  [(map key out) state]
+  ::
+  =^  pairs=(list (pair key out))  st
+    %+  (traverse state (pair key in) (pair key out))
+      [st ~(tap by dict)]
+    |=  [st=state k=key x=in]
+    ^-  [(pair key out) state]
+    =^  v  st  (f st k x)
+    [[k v] st]
+  ::
+  :_  st
+  (~(gas by *(map key out)) pairs)
+::
+::  Given a map, return its inverse: For each value, what are the set
+::  of associated keys?
+::
+++  reverse-map
+  |*  [key=mold val=mold]
+  |=  tbl=(map key val)
+  =/  init  *(map val (set key))
+  ^-  _init
+  %+  (fold _init (pair key val))
+    [init ~(tap by tbl)]
+  |=  [acc=_init k=key v=val]
+  ^-  _init
+  =/  mb-keys         (~(get by acc) v)
+  =/  keys=(set key)  ?~(mb-keys ~ u.mb-keys)
+  (~(put by acc) v (~(put in keys) k))
 --

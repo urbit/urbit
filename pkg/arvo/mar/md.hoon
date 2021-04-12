@@ -5,7 +5,7 @@
 ::
 =,  format
 =,  mimes:html
-|_  txt/wain
+|_  txt=wain
 ::
 ++  grab                                                ::  convert from
   |%

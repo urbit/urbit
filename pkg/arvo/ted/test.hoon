@@ -46,7 +46,8 @@
   ^-  (list test)
   ::  strip off leading 'tests' from :path
   ::
-  =.  path  ?>(?=([%tests *] path) t.path)
+  ?.  ?=([%tests *] path)  ~
+  =/  path  t.path  ::NOTE  TMI
   ::  for each test, add the test's name to :path
   ::
   %+  turn  test-arms
@@ -70,7 +71,7 @@
 ::
 ++  has-test-prefix
   |=  a=term  ^-  ?
-  =((end 3 5 a) 'test-')
+  =((end [3 5] a) 'test-')
 ::
 ++  find-test-files
   =|  fiz=(set [=beam test=(unit term)])
@@ -80,47 +81,64 @@
   =*  loop  $
   ?~  bez
     (pure:m fiz)
-  ;<  hav=?  bind:m  (check-for-file:strandio -.i.bez hoon+s.i.bez)
+  ;<  hav=?  bind:m  (check-for-file:strandio -.i.bez (snoc s.i.bez %hoon))
   ?:  hav
-    loop(bez t.bez, fiz (~(put in fiz) [i.bez(s hoon+s.i.bez) ~]))
+    loop(bez t.bez, fiz (~(put in fiz) [i.bez(s (snoc s.i.bez %hoon)) ~]))
   ;<  fez=(list path)  bind:m  (list-tree:strandio i.bez)
   ?.  =(~ fez)
-    =/  foz  (turn fez |=(path [[-.i.bez (flop +<)] ~]))
+    =/  foz
+      %+  murn  fez
+      |=  p=path
+      ?.  =(%hoon (rear p))  ~
+      (some [[-.i.bez p] ~])
     loop(bez t.bez, fiz (~(gas in fiz) foz))
-  ~|  bad-test-beam+i.bez
-  =/  tex=term  =-(?>(((sane %tas) -) -) (head s.i.bez))
-  =/  xup=path  (tail s.i.bez)
-  ;<  hov=?  bind:m  (check-for-file:strandio i.bez(s hoon+xup))
+  ::
+  ::  XX this logic appears to be vestigial
+  ::
+  =/  tex=term
+    ~|  bad-test-beam+i.bez
+    =-(?>(((sane %tas) -) -) (rear s.i.bez))
+  =/  xup=path  (snip s.i.bez)
+  ;<  hov=?  bind:m  (check-for-file:strandio i.bez(s (snoc xup %hoon)))
   ?.  hov
     ~|(no-tests-at-path+i.bez !!)
-  loop(bez t.bez, fiz (~(put in fiz) [[-.i.bez hoon+xup] `tex]))
+  loop(bez t.bez, fiz (~(put in fiz) [[-.i.bez (snoc xup %hoon)] `tex]))
 --
 ^-  thread:spider
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
+=/  paz=(list path)
+  (tail !<([~ (list path)] arg))
 =/  bez=(list beam)
-  (turn !<((list path) arg) |=(p=path (need (de-beam:format p))))
+  (turn paz |=(p=path ~|([%test-not-beam p] (need (de-beam p)))))
 ;<  fiz=(set [=beam test=(unit term)])  bind:m  (find-test-files bez)
 =>  .(fiz (sort ~(tap in fiz) aor))
 =|  test-arms=(map path (list test-arm))
+=|  build-ok=?
 |-  ^-  form:m
 =*  gather-tests  $
 ?^  fiz
-  ~>  %slog.0^leaf+"test: building {(spud (flop s.beam.i.fiz))}"
-  ;<  cor=vase  bind:m  (build-file:strandio beam.i.fiz)
-  =/  arms=(list test-arm)  (get-test-arms cor)
+  ;<  cor=(unit vase)  bind:m  (build-file:strandio beam.i.fiz)
+  ?~  cor
+    ~>  %slog.0^leaf+"FAILED  {(spud s.beam.i.fiz)} (build)"
+    gather-tests(fiz t.fiz, build-ok |)
+  ~>  %slog.0^leaf+"built   {(spud s.beam.i.fiz)}"
+  =/  arms=(list test-arm)  (get-test-arms u.cor)
+  ::
+  ::  XX this logic appears to be vestigial
+  ::
   =?  arms  ?=(^ test.i.fiz)
     |-  ^+  arms
     ?~  arms  ~|(no-test-arm+i.fiz !!)
     ?:  =(name.i.arms u.test.i.fiz)
       [i.arms]~
     $(arms t.arms)
-  =.  test-arms  (~(put by test-arms) (flop (tail s.beam.i.fiz)) arms)
+  =.  test-arms  (~(put by test-arms) (snip s.beam.i.fiz) arms)
   gather-tests(fiz t.fiz)
 %-  pure:m  !>  ^=  ok
 %+  roll  (resolve-test-paths test-arms)
-|=  [[=path =test-func] ok=_`?`%&]
+|=  [[=path =test-func] ok=_build-ok]
 ^+  ok
 =/  res  (run-test path test-func)
 %-  (slog (flop tang.res))

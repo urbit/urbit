@@ -5,7 +5,7 @@
 |%
 ::  +key:rsa: rsa public or private key
 ::
-+=  key
++$  key
   $:  ::  pub:  public parameters (n=modulus, e=pub-exponent)
       ::
       pub=[n=@ux e=@ux]
@@ -36,10 +36,10 @@
   ::   Sets low bit, as prime must be odd.
   ::   Sets high bit, as +raw:og only gives up to :a bits.
   ::
-  =/  e  :(con 1 (lsh 0 (dec a) 1) (~(raw og c) a))
+  =/  e  :(con 1 (lsh [0 (dec a)] 1) (~(raw og c) a))
   :: XX what algorithm is this modular remainder check?
   ::
-  ?:  ?&  (levy b |=(f/@ !=(1 (mod e f))))
+  ?:  ?&  (levy b |=(f=@ !=(1 (mod e f))))
           (pram:number e)
       ==
     e
@@ -55,7 +55,7 @@
   =/  e  `@ux`65.537
   |=  [wid=@ eny=@]
   ^-  key
-  =/  diw  (rsh 0 1 wid)
+  =/  diw  (rsh 0 wid)
   =/  p=@ux  (ramp diw [3 5 ~] eny)
   =/  q=@ux  (ramp diw [3 5 ~] +(eny))
   =/  n=@ux  (mul p q)

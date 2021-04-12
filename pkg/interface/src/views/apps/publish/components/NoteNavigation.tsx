@@ -1,77 +1,93 @@
-import React, { Component } from "react";
-import moment from "moment";
-import { Box } from "@tlon/indigo-react";
-import { Link } from "react-router-dom";
-import { Notebook } from "../../../../types/publish-update";
+import React, { ReactElement } from 'react';
+import moment from 'moment';
+import { Link } from 'react-router-dom';
+import { BigInteger } from 'big-integer';
+
+import { Box, Text } from '@tlon/indigo-react';
+import { Graph } from '@urbit/api';
+
+import { getLatestRevision } from '~/logic/lib/publish';
+import Timestamp from '~/views/components/Timestamp';
 
 function NavigationItem(props: {
   url: string;
   title: string;
   date: number;
   prev?: boolean;
-}) {
-  const date = moment(props.date).fromNow();
+}): ReactElement {
   return (
     <Box
-      justifySelf={props.prev ? "start" : "end"}
+      justifySelf={props.prev ? 'start' : 'end'}
       display="flex"
       flexDirection="column"
       justifyContent="flex-end"
-      textAlign={props.prev ? "left" : "right"}
+      textAlign={props.prev ? 'left' : 'right'}
     >
       <Link to={props.url}>
-        <Box color="gray" mb={2}>
-          {props.prev ? "Previous" : "Next"}
-        </Box>
-        <Box mb={1}>{props.title}</Box>
-        <Box color="gray">{date}</Box>
+        <Text display='block' color="gray">
+          {props.prev ? 'Previous' : 'Next'}
+        </Text>
+        <Text display='block' lineHeight="tall">{props.title}</Text>
+        <Timestamp
+          stamp={moment(props.date)}
+          time={false}
+          fontSize="1"
+          justifyContent={props.prev ? 'flex-start' : 'flex-end'}
+        />
       </Link>
     </Box>
   );
 }
 
-interface NoteNavigationProps {
-  book: string;
-  nextId?: string;
-  prevId?: string;
-  ship: string;
-  notebook: Notebook;
+function getAdjacentId(
+  graph: Graph,
+  child: BigInteger,
+  backwards = false
+): BigInteger | null {
+  const children = Array.from(graph);
+  const i = children.findIndex(([index]) => index.eq(child));
+  const target = children[backwards ? i + 1 : i - 1];
+  return target?.[0] || null;
 }
 
-export function NoteNavigation(props: NoteNavigationProps) {
+function makeNoteUrl(noteId: number) {
+  return noteId.toString();
+}
+
+interface NoteNavigationProps {
+  noteId: number;
+  notebook: Graph;
+  baseUrl: string;
+}
+
+export function NoteNavigation(props: NoteNavigationProps): ReactElement {
   let nextComponent = <Box />;
   let prevComponent = <Box />;
-  let nextUrl = "";
-  let prevUrl = "";
-  const { nextId, prevId, notebook } = props;
-  const next =
-    nextId && nextId in notebook?.notes ? notebook?.notes[nextId] : null;
+  const { noteId, notebook } = props;
+  if (!notebook) {
+    return null;
+  }
+  const nextId = getAdjacentId(notebook, noteId);
+  const prevId = getAdjacentId(notebook, noteId, true);
+  const next = nextId && notebook.get(nextId);
+  const prev = prevId && notebook.get(prevId);
 
-  const prev =
-    prevId && prevId in notebook?.notes ? notebook?.notes[prevId] : null;
   if (!next && !prev) {
     return null;
   }
 
-  if (next) {
-    nextUrl = `${props.nextId}`;
-    nextComponent = (
-      <NavigationItem
-        title={next.title}
-        date={next["date-created"]}
-        url={nextUrl}
-      />
-    );
+  if (next && nextId) {
+    const nextUrl = makeNoteUrl(nextId);
+    const [, title, , post] = getLatestRevision(next);
+    const date = post['time-sent'];
+    nextComponent = <NavigationItem title={title} date={date} url={nextUrl} />;
   }
-  if (prev) {
-    prevUrl = `${props.prevId}`;
+  if (prev && prevId) {
+    const prevUrl = makeNoteUrl(prevId);
+    const [, title, , post] = getLatestRevision(prev);
+    const date = post['time-sent'];
     prevComponent = (
-      <NavigationItem
-        title={prev.title}
-        date={prev["date-created"]}
-        url={prevUrl}
-        prev
-      />
+      <NavigationItem title={title} date={date} url={prevUrl} prev />
     );
   }
 

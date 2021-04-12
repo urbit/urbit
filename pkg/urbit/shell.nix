@@ -1,1 +1,8 @@
-import ../../nix/pkgs/urbit/shell.nix
+let
+
+  pkgs = import ../../default.nix { };
+
+in pkgs.shellFor {
+  name = "urbit";
+  packages = ps: [ ps.urbit ];
+}

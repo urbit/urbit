@@ -1,169 +1,202 @@
-import React, { useCallback } from "react";
+import React, { ReactElement } from 'react';
 import {
   Box,
   ManagedTextInputField as Input,
   Col,
-  ManagedRadioButtonField as Radio,
-  Text,
-} from "@tlon/indigo-react";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import GlobalApi from "~/logic/api/global";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import { FormError } from "~/views/components/FormError";
-import { RouteComponentProps } from "react-router-dom";
-import { stringToSymbol } from "~/logic/lib/util";
-import GroupSearch from "~/views/components/GroupSearch";
-import { Associations } from "~/types/metadata-update";
-import { useWaitForProps } from "~/logic/lib/useWaitForProps";
-import { Notebooks } from "~/types/publish-update";
-import { Groups } from "~/types/group-update";
-import { ShipSearch } from "~/views/components/ShipSearch";
-import { Rolodex } from "~/types";
+  Text
+} from '@tlon/indigo-react';
+import _ from 'lodash';
+import { Formik, Form } from 'formik';
+import * as Yup from 'yup';
+import GlobalApi from '~/logic/api/global';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { FormError } from '~/views/components/FormError';
+import { RouteComponentProps } from 'react-router-dom';
+import { stringToSymbol, parentPath, deSig } from '~/logic/lib/util';
+import { resourceFromPath } from '~/logic/lib/group';
+import { Associations } from '@urbit/api/metadata';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import { Groups } from '@urbit/api/groups';
+import { ShipSearch, shipSearchSchemaInGroup, shipSearchSchema } from '~/views/components/ShipSearch';
+import { Rolodex } from '@urbit/api';
+import { IconRadio } from '~/views/components/IconRadio';
+import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
+import { Workspace } from '~/types/workspace';
+import useGroupState from '~/logic/state/group';
 
-interface FormSchema {
+type FormSchema = {
   name: string;
   description: string;
   ships: string[];
-  type: "chat" | "publish" | "links";
-}
+  moduleType: 'chat' | 'publish' | 'link';
+} & ChannelWriteFieldSchema;
 
-const formSchema = Yup.object({
-  name: Yup.string().required("Channel must have a name"),
+const formSchema = (members?: string[]) => Yup.object({
+  name: Yup.string(),
   description: Yup.string(),
   ships: Yup.array(Yup.string()),
-  type: Yup.string().required("Must choose channel type"),
+  moduleType: Yup.string().required('Must choose channel type'),
+  writers: members ? shipSearchSchemaInGroup(members) : shipSearchSchema,
+  writePerms: Yup.string()
 });
 
 interface NewChannelProps {
   api: GlobalApi;
-  associations: Associations;
-  contacts: Rolodex;
-  groups: Groups;
   group?: string;
+  workspace: Workspace;
 }
 
+export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactElement {
+  const { history, api, group, workspace } = props;
 
-export function NewChannel(props: NewChannelProps & RouteComponentProps) {
-  const { history, api, group } = props;
-
-  const waiter = useWaitForProps(props, 5000);
-
+  const groups = useGroupState(state => state.groups);
+  const waiter = useWaitForProps({ groups }, 5000);
+  
   const onSubmit = async (values: FormSchema, actions) => {
-    const resId: string = stringToSymbol(values.name);
+    const name = (values.name) ? values.name : values.moduleType;
+    const resId: string = stringToSymbol(values.name)
+    + ((workspace?.type !== 'messages') ? `-${Math.floor(Math.random() * 10000)}`
+    : '');
     try {
-      const { name, description, type, ships } = values;
-      switch (type) {
-        case "chat":
-          const appPath = `/~${window.ship}/${resId}`;
-          const groupPath = group || `/ship${appPath}`;
+      let { description, moduleType, ships, writers } = values;
+      ships = ships.filter(e => e !== '');
+      if (workspace?.type === 'messages' && ships.length === 1) {
+        return history.push(`/~landscape/dm/${deSig(ships[0])}`);
+      }
+      if (group) {
+        await api.graph.createManagedGraph(
+          resId,
+          name,
+          description,
+          group,
+          moduleType
+        );
+        const tag = {
+          app: 'graph',
+          resource: `/ship/~${window.ship}/${resId}`,
+          tag: 'writers'
+        };
 
-          await api.chat.create(
-            name,
-            description,
-            appPath,
-            groupPath,
-            { invite: { pending: ships.map((s) => `~${s}`) } },
-            ships.map((s) => `~${s}`),
-            true,
-            false
-          );
-          break;
-        case "publish":
-          await props.api.publish.newBook(resId, name, description, group);
-          break;
-        case "links":
-          if (group) {
-            await api.graph.createManagedGraph(
-              resId,
-              name,
-              description,
-              group,
-              "link"
-            );
-          } else {
-            await api.graph.createUnmanagedGraph(
-              resId,
-              name,
-              description,
-              { invite: { pending: ships.map((s) => `~${s}`) } },
-              "link"
-            );
-          }
-          break;
-
-        default:
-          console.log("fallthrough");
+        const resource = resourceFromPath(group);
+        writers = _.compact(writers).map(s => `~${s}`);
+        const us = `~${window.ship}`;
+        if(values.writePerms === 'self') {
+          await api.groups.addTag(resource, tag, [us]);
+        } else if(values.writePerms === 'subset') {
+          writers.push(us);
+          await api.groups.addTag(resource, tag, writers);
+        }
+      } else {
+        await api.graph.createUnmanagedGraph(
+          resId,
+          name,
+          description,
+          { invite: { pending: ships.map(s => `~${deSig(s)}`) } },
+          moduleType
+        );
       }
 
       if (!group) {
-        await waiter((p) => !!p?.groups?.[`/ship/~${window.ship}/${resId}`]);
+        await waiter(p => Boolean(p.groups?.[`/ship/~${window.ship}/${resId}`]));
       }
       actions.setStatus({ success: null });
+      const resourceUrl = (location.pathname.includes("/messages")) ? "/~landscape/messages" : parentPath(location.pathname);
+      history.push(
+        `${resourceUrl}/resource/${moduleType}/ship/~${window.ship}/${resId}`
+      );
     } catch (e) {
       console.error(e);
-      actions.setStatus({ error: "Channel creation failed" });
+      actions.setStatus({ error: 'Channel creation failed' });
     }
   };
+
+  const members = group ? Array.from(groups[group]?.members) : undefined;
+
   return (
-    <Col overflowY="auto" p={3}>
-      <Box fontWeight="bold" mb={4} color="black">
-        New Channel
+    <Col overflowY="auto" p={3} backgroundColor="white">
+      <Box
+        pb='3'
+        display={workspace?.type === 'messages' ? 'none' : ['block', 'none']}
+        onClick={() => history.push(props.baseUrl)}
+      >
+        <Text>{'<- Back'}</Text>
+      </Box>
+      <Box>
+        <Text fontSize={2} bold>{workspace?.type === 'messages' ? 'Direct Message' : 'New Channel'}</Text>
       </Box>
       <Formik
-        validationSchema={formSchema}
+        validationSchema={formSchema(members)}
         initialValues={{
-          type: "chat",
-          name: "",
-          description: "",
-          group: "",
+          moduleType: (workspace?.type === 'home') ? 'publish' : 'chat',
+          name: '',
+          description: '',
+          group: '',
           ships: [],
+          writePerms: 'everyone',
+          writers: []
         }}
         onSubmit={onSubmit}
       >
-        <Form>
-          <Box
-            display="grid"
-            gridTemplateRows="auto"
-            gridRowGap={4}
-            gridTemplateColumns="300px"
+      <Form>
+          <Col
+          maxWidth="348px"
+          gapY="4"
           >
-            <Col gapY="2">
-              <Box color="black" mb={2}>Channel Type</Box>
-              <Radio label="Chat" id="chat" name="type" />
-              <Radio label="Notebook" id="publish" name="type" />
-              <Radio label="Collection" id="links" name="type" />
+            <Col pt={4} gapY="2" display={(workspace?.type === 'messages') ? 'none' : 'flex'}>
+              <Box fontSize="1" color="black" mb={2}>Channel Type</Box>
+              <IconRadio
+                display={!(workspace?.type === 'home') ? 'flex' : 'none'}
+                icon="Chat"
+                label="Chat"
+                id="chat"
+                name="moduleType"
+              />
+              <IconRadio
+                icon="Publish"
+                label="Notebook"
+                id="publish"
+                name="moduleType"
+              />
+              <IconRadio
+                icon="Collection"
+                label="Collection"
+                id="link"
+                name="moduleType"
+              />
             </Col>
             <Input
-              id="name"
-              label="Name"
-              caption="Provide a name for your channel"
-              placeholder="eg. My Channel"
+            display={workspace?.type === 'messages' ? 'none' : 'flex'}
+            id="name"
+            label="Name"
+            caption="Provide a name for your channel"
+            placeholder="eg. My Channel"
             />
             <Input
-              id="description"
-              label="Description"
-              caption="What's your channel about?"
-              placeholder="Channel description"
+            display={workspace?.type === 'messages' ? 'none' : 'flex'}
+            id="description"
+            label="Description"
+            caption="What's your channel about?"
+            placeholder="Channel description"
             />
+            {(workspace?.type === 'home' || workspace?.type === 'messages') ? (
             <ShipSearch
-              groups={props.groups}
-              contacts={props.contacts}
-              id="ships"
-              label="Invitees"
-            />
+            id="ships"
+            label="Invitees"
+            />) : (
+            <ChannelWritePerms />
+          )}
             <Box justifySelf="start">
               <AsyncButton
-                primary
-                loadingText="Creating..."
-                type="submit"
-                border
+              primary
+              loadingText="Creating..."
+              type="submit"
+              border
               >
-                Create Channel
+                Create
               </AsyncButton>
             </Box>
-            <FormError message="Channel creation failed" />
-          </Box>
+          <FormError message="Channel creation failed" />
+          </Col>
         </Form>
       </Formik>
     </Col>

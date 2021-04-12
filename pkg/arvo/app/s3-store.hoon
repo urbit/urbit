@@ -4,7 +4,7 @@
 ::
 /-  *s3
 /+  s3-json, default-agent, verb, dbug
-~%  %s3-top  ..is  ~
+~%  %s3-top  ..part  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state

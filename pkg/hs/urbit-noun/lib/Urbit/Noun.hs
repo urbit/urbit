@@ -11,6 +11,7 @@ module Urbit.Noun
     , module Urbit.Noun.Core
     , module Urbit.Noun.Cue
     , module Urbit.Noun.Jam
+    , module Urbit.Noun.Mug
     , module Urbit.Noun.Tank
     , module Urbit.Noun.TH
     , module Urbit.Noun.Tree
@@ -29,6 +30,7 @@ import Urbit.Noun.Convert
 import Urbit.Noun.Core
 import Urbit.Noun.Cue
 import Urbit.Noun.Jam
+import Urbit.Noun.Mug
 import Urbit.Noun.Tank
 import Urbit.Noun.TH
 import Urbit.Noun.Tree
@@ -49,7 +51,7 @@ data LoadErr
 
 instance Exception LoadErr
 
-loadFile :: ∀a. FromNoun a => FilePath -> IO (Either LoadErr a)
+loadFile :: forall a. FromNoun a => FilePath -> IO (Either LoadErr a)
 loadFile pax = try $ do
     byt <- try (readFile pax) >>= either (throwIO . FileErr) pure
     non <- cueBS byt & either (throwIO . CueErr) pure

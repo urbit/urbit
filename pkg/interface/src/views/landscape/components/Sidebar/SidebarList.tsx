@@ -1,8 +1,11 @@
-import React, { useMemo } from "react";
-import { alphabeticalOrder } from "~/logic/lib/util";
-import { Associations, AppAssociations, Workspace, Groups } from "~/types";
-import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from "./types";
-import { SidebarItem } from "./SidebarItem";
+import React, { ReactElement } from 'react';
+import { Associations, AppAssociations, Groups, Rolodex } from '@urbit/api';
+
+import { alphabeticalOrder } from '~/logic/lib/util';
+import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
+import { SidebarItem } from './SidebarItem';
+import { Workspace } from '~/types/workspace';
+import useMetadataState from '~/logic/state/metadata';
 
 function sidebarSort(
   associations: AppAssociations,
@@ -20,45 +23,43 @@ function sidebarSort(
   const lastUpdated = (a: string, b: string) => {
     const aAssoc = associations[a];
     const bAssoc = associations[b];
-    const aModule = aAssoc?.metadata?.module || aAssoc?.["app-name"];
-    const bModule = bAssoc?.metadata?.module || bAssoc?.["app-name"];
+    const aAppName = aAssoc?.['app-name'];
+    const bAppName = bAssoc?.['app-name'];
 
-    const aUpdated = apps[aModule].lastUpdated(a);
-    const bUpdated = apps[bModule].lastUpdated(b);
+    const aUpdated = apps[aAppName]?.lastUpdated(a) || 0;
+    const bUpdated = apps[bAppName]?.lastUpdated(b) || 0;
 
     return bUpdated - aUpdated || alphabetical(a, b);
   };
 
   return {
     asc: alphabetical,
-    desc: (a, b) => alphabetical(b, a),
-    lastUpdated,
+    lastUpdated
   };
 }
 
 export function SidebarList(props: {
   apps: SidebarAppConfigs;
   config: SidebarListConfig;
-  associations: Associations;
-  groups: Groups;
   baseUrl: string;
   group?: string;
   selected?: string;
-}) {
-  const { selected, group, config } = props;
-  const associations = {
-      ...props.associations.chat,
-      ...props.associations.publish,
-      ...props.associations.link,
-      ...props.associations.graph,
-  };
+  workspace: Workspace;
+}): ReactElement {
+  const { selected, group, config, workspace } = props;
+  const associationState = useMetadataState(state => state.associations);
+  const associations = { ...associationState.graph };
 
   const ordered = Object.keys(associations)
     .filter((a) => {
       const assoc = associations[a];
-      return group
-        ? assoc["group-path"] === group
-        : !(assoc["group-path"] in props.associations.contacts);
+      if (workspace?.type === 'messages') {
+        return (!(assoc.group in associationState.groups) && assoc.metadata.module === 'chat');
+      } else {
+        return group
+          ? assoc.group === group
+          : (!(assoc.group in associationState.groups) && assoc.metadata.module !== 'chat');
+      }
     })
     .sort(sidebarSort(associations, props.apps)[config.sortBy]);
 
@@ -74,7 +75,7 @@ export function SidebarList(props: {
             association={assoc}
             apps={props.apps}
             hideUnjoined={config.hideUnjoined}
-            groups={props.groups}
+            workspace={workspace}
           />
         );
       })}

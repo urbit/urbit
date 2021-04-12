@@ -34,25 +34,38 @@
       !>  (mug 0)
     ::
     %+  expect-eq
+      !>  0x715c.2a60
+      !>  (mug 1)
+    ::
+    %+  expect-eq
       !>  0x64df.da5c
       !>  (mug (crip (reap 28 'x')))
     ::
     %+  expect-eq
-      !>  0x389c.a03a
+      !>  0x192f.5588
       !>  (mug [0 0])
     ::
     %+  expect-eq
-      !>  0x389c.a03a
+      !>  0x6b32.ec46
       !>  (mug [1 1])
     ::
     %+  expect-eq
-      !>  0x5258.a6c0
+      !>  0x2ef.fe10
+      !>  (mug [2 2])
+    ::
+    %+  expect-eq
+      !>  0x3a81.1aec
+      !>  (mug [1 2 3])
+    ::
+    %+  expect-eq
+      !>  0x7ce.fb7f
       !>  (mug [0 (bex 32)])
     ::
     %+  expect-eq
-      !>  0x2ad3.9968
+      !>  0x2aa0.6bfc
       !>  (mug [(dec (bex 128)) 1])
   ==
+::
 ::  SHA tests
 ::  For references see FIPS180-4 and related test vectors
 ::  https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf

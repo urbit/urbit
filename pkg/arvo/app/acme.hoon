@@ -1,5 +1,5 @@
 /-  asn1
-/+  base64, der, primitive-rsa, *pkcs, *jose, default-agent, verb
+/+  der, primitive-rsa, *pkcs, *jose, default-agent, verb
 =,  eyre
 =*  rsa  primitive-rsa
 ::
@@ -7,11 +7,11 @@
 ::  +en-base64url: url-safe base64 encoding, without padding
 ::
 ++  en-base64url
-  ~(en base64 | &)
+  ~(en base64:mimes:html | &)
 ::  +de-base64url: url-safe base64 decoding, without padding
 ::
 ++  de-base64url
-  ~(de base64 | &)
+  ~(de base64:mimes:html | &)
 ::  +join-turf
 ::
 ++  join-turf

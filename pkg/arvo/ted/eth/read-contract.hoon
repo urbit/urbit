@@ -2,9 +2,9 @@
 ::
 ::    produces hex string result, for use with +decode-results:rpc:ethereum
 ::
-/+  ethio, strandio
+/+  ethereum, ethio, strandio
 =,  ethereum-types
-=,  able:jael
+=,  jael
 ::
 |=  args=vase
 =/  m  (strand:strandio ,vase)

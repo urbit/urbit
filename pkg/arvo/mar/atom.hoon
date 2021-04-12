@@ -6,7 +6,7 @@
 ::::  A minimal atom mark
   ::
 =,  mimes:html
-|_  ato/@
+|_  ato=@
 ++  grab  |%
           ++  noun  @
           ++  mime  |=([* p=octs] q.p)

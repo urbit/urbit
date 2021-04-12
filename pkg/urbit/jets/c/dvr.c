@@ -10,8 +10,8 @@
   u3qc_dvr(u3_atom a,
            u3_atom b)
   {
-    if ( 0 == b) {
-      return u3m_bail(c3__exit);
+    if ( 0 == b ) {
+      return u3m_error("divide-by-zero");
     }
     else {
       if ( _(u3a_is_cat(a)) && _(u3a_is_cat(b)) ) {
@@ -25,7 +25,7 @@
 
         mpz_tdiv_qr(a_mp, b_mp, a_mp, b_mp);
 
-        return u3nc(u3k(u3i_mp(a_mp)), u3k(u3i_mp(b_mp)));
+        return u3nc(u3i_mp(a_mp), u3i_mp(b_mp));
       }
     }
   }

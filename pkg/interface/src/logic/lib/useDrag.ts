@@ -1,15 +1,39 @@
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect } from 'react';
 
-function validateDragEvent(e: DragEvent): FileList | null {
-  const files = e.dataTransfer?.files;
-  console.log(files);
-  if(!files?.length) {
-    return null;
+function validateDragEvent(e: DragEvent): FileList | File[] | true | null {
+  const files: File[] = [];
+  let valid = false;
+  if (e.dataTransfer?.files) {
+    Array.from(e.dataTransfer.files).forEach(f => files.push(f));
   }
-  return files || null;
+  if (e.dataTransfer?.items) {
+    Array.from(e.dataTransfer.items || [])
+      .filter(i => i.kind === 'file')
+      .forEach((f) => {
+        valid = true; // Valid if file exists, but on DragOver, won't reveal its contents for security
+        const data = f.getAsFile();
+        if (data) {
+          files.push(data);
+        }
+      });
+  }
+  if (files.length) {
+    return [...new Set(files)];
+  }
+  if (navigator.userAgent.includes('Safari')) {
+    if (e.dataTransfer?.effectAllowed === 'all') {
+      valid = true;
+    } else if (e.dataTransfer?.files.length) {
+      return e.dataTransfer.files;
+    }
+  }
+  if (valid) {
+    return true;
+  }
+  return null;
 }
 
-export function useFileDrag(dragged: (f: FileList) => void) {
+export function useFileDrag(dragged: (f: FileList | File[], e: DragEvent) => void) {
   const [dragging, setDragging] = useState(false);
 
   const onDragEnter = useCallback(
@@ -25,18 +49,21 @@ export function useFileDrag(dragged: (f: FileList) => void) {
   const onDrop = useCallback(
     (e: DragEvent) => {
       setDragging(false);
-      e.preventDefault();
       const files = validateDragEvent(e);
-      if (!files) {
+      if (!files || files === true) {
         return;
       }
-      dragged(files);
+      e.preventDefault();
+      dragged(files, e);
     },
     [setDragging, dragged]
   );
 
   const onDragOver = useCallback(
     (e: DragEvent) => {
+      if (!validateDragEvent(e)) {
+        return;
+      }
       e.preventDefault();
       setDragging(true);
     },
@@ -53,11 +80,23 @@ export function useFileDrag(dragged: (f: FileList) => void) {
     [setDragging]
   );
 
+  useEffect(() => {
+    const mouseleave = (e) => {
+      if (!e.relatedTarget && !e.toElement) {
+        setDragging(false);
+      }
+    };
+    document.body.addEventListener('mouseout', mouseleave);
+    return () => {
+      document.body.removeEventListener('mouseout', mouseleave);
+    };
+  }, []);
+
   const bind = {
     onDragLeave,
     onDragOver,
     onDrop,
-    onDragEnter,
+    onDragEnter
   };
 
   return { bind, dragging };

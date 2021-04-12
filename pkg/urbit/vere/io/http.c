@@ -90,14 +90,15 @@ typedef struct _u3_h2o_serv {
 */
   typedef struct _u3_hfig {
     u3_form*         for_u;             //  config from %eyre
-    struct _u3_warc* cli_u;             //  rev proxy clients
-    struct _u3_pcon* con_u;             //  cli_u connections
+    struct _u3_hreq* seq_u;             //  open slog requests
+    uv_timer_t*      sit_u;             //  slog stream heartbeat
   } u3_hfig;
 
 /* u3_httd: general http device
 */
 typedef struct _u3_httd {
   u3_auto            car_u;             //  driver
+  c3_l               sev_l;             //  instance number
   u3_hfig            fig_u;             //  http configuration
   u3_http*           htp_u;             //  http servers
   SSL_CTX*           tls_u;             //  server SSL_CTX*
@@ -108,6 +109,7 @@ static void _http_serv_start_all(u3_httd* htd_u);
 static void _http_form_free(u3_httd* htd_u);
 
 static const c3_i TCP_BACKLOG = 16;
+static const c3_w HEARTBEAT_TIMEOUT = 20 * 1000;
 
 /* _http_close_cb(): uv_close_cb that just free's handle
 */
@@ -361,6 +363,44 @@ _http_req_unlink(u3_hreq* req_u)
   }
 }
 
+/* _http_seq_link(): store slog stream request in state
+*/
+static void
+_http_seq_link(u3_hcon* hon_u, u3_hreq* req_u)
+{
+  u3_hfig* fig_u = &hon_u->htp_u->htd_u->fig_u;
+  req_u->hon_u = hon_u;
+  req_u->seq_l = hon_u->seq_l++;
+  req_u->nex_u = fig_u->seq_u;
+
+  if ( 0 != req_u->nex_u ) {
+    req_u->nex_u->pre_u = req_u;
+  }
+  fig_u->seq_u = req_u;
+}
+
+/* _http_seq_unlink(): remove slog stream request from state
+*/
+static void
+_http_seq_unlink(u3_hreq* req_u)
+{
+  u3_hfig* fig_u = &req_u->hon_u->htp_u->htd_u->fig_u;
+  if ( 0 != req_u->pre_u ) {
+    req_u->pre_u->nex_u = req_u->nex_u;
+
+    if ( 0 != req_u->nex_u ) {
+      req_u->nex_u->pre_u = req_u->pre_u;
+    }
+  }
+  else {
+    fig_u->seq_u = req_u->nex_u;
+
+    if ( 0 != req_u->nex_u ) {
+      req_u->nex_u->pre_u = 0;
+    }
+  }
+}
+
 /* _http_req_to_duct(): translate srv/con/req to duct
 */
 static u3_noun
@@ -395,13 +435,11 @@ typedef struct _u3_hgen {
   u3_hreq*        req_u;             // originating request
 } u3_hgen;
 
-/* _http_req_done(): request finished, deallocation callback
+/* _http_req_close(): clean up & deallocate request
 */
 static void
-_http_req_done(void* ptr_v)
+_http_req_close(u3_hreq* req_u)
 {
-  u3_hreq* req_u = (u3_hreq*)ptr_v;
-
   //  client canceled request before response
   //
   if ( u3_rsat_plan == req_u->sat_e ) {
@@ -412,8 +450,26 @@ _http_req_done(void* ptr_v)
     uv_close((uv_handle_t*)req_u->tim_u, _http_close_cb);
     req_u->tim_u = 0;
   }
+}
 
+/* _http_req_done(): request finished, deallocation callback
+*/
+static void
+_http_req_done(void* ptr_v)
+{
+  u3_hreq* req_u = (u3_hreq*)ptr_v;
+  _http_req_close(req_u);
   _http_req_unlink(req_u);
+}
+
+/* _http_seq_done(): slog stream request finished, deallocation callback
+*/
+static void
+_http_seq_done(void* ptr_v)
+{
+  u3_hreq* seq_u = (u3_hreq*)ptr_v;
+  _http_req_close(seq_u);
+  _http_seq_unlink(seq_u);
 }
 
 /* _http_req_timer_cb(): request timeout callback
@@ -432,7 +488,7 @@ _http_req_timer_cb(uv_timer_t* tim_u)
   }
 }
 
-/* _http_req_new(): receive http request.
+/* _http_req_new(): receive standard http request.
 */
 static u3_hreq*
 _http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
@@ -446,6 +502,24 @@ _http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
   req_u->pre_u = 0;
 
   _http_req_link(hon_u, req_u);
+
+  return req_u;
+}
+
+/* _http_seq_new(): receive slog stream http request.
+*/
+static u3_hreq*
+_http_seq_new(u3_hcon* hon_u, h2o_req_t* rec_u)
+{
+  u3_hreq* req_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*req_u),
+                                        _http_seq_done);
+  req_u->rec_u = rec_u;
+  req_u->sat_e = u3_rsat_plan;
+  req_u->tim_u = 0;
+  req_u->gen_u = 0;
+  req_u->pre_u = 0;
+
+  _http_seq_link(hon_u, req_u);
 
   return req_u;
 }
@@ -728,6 +802,121 @@ typedef struct _h2o_uv_sock {         //  see private st_h2o_uv_socket_t
   uv_stream_t*     han_u;             //  client stream handler (u3_hcon)
 } h2o_uv_sock;
 
+/* _http_req_prepare(): creates u3 req from h2o req and initializes its timer
+*/
+static u3_hreq*
+_http_req_prepare(h2o_req_t* rec_u,
+                  u3_hreq* (*new_f)(u3_hcon*, h2o_req_t*))
+{
+  h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
+                         callbacks->get_socket(rec_u->conn);
+  u3_hcon* hon_u = (u3_hcon*)suv_u->han_u;
+
+  //  sanity check
+  c3_assert( hon_u->sok_u == &suv_u->sok_u );
+
+  u3_hreq* seq_u = new_f(hon_u, rec_u);
+
+  seq_u->tim_u = c3_malloc(sizeof(*seq_u->tim_u));
+  seq_u->tim_u->data = seq_u;
+  uv_timer_init(u3L, seq_u->tim_u);
+  uv_timer_start(seq_u->tim_u, _http_req_timer_cb, 600 * 1000, 0);
+
+  return seq_u;
+}
+
+/* _http_seq_continue(): respond to slogstream request based on auth scry result
+*/
+static void
+_http_seq_continue(void* vod_p, u3_noun nun)
+{
+  h2o_req_t* rec_u = vod_p;
+  u3_weak    aut   = u3r_at(7, nun);
+
+  //  if the request is authenticated properly, send slogstream/sse headers
+  //
+  //TODO  authentication might expire after the connection has been opened!
+  //      eyre could notify us about this, or we could re-check periodically.
+  //
+  if ( c3y == aut ) {
+    u3_hreq* req_u = _http_req_prepare(rec_u, _http_seq_new);
+    u3_noun  hed   = u3nl(u3nc(u3i_string("Content-Type"),
+                               u3i_string("text/event-stream")),
+                          u3nc(u3i_string("Cache-Control"),
+                               u3i_string("no-cache")),
+                          u3nc(u3i_string("Connection"),
+                               u3i_string("keep-alive")),
+                          u3_none);
+
+    _http_start_respond(req_u, 200, hed, u3_nul, c3n);
+  }
+  //  if the scry failed, the result is unexpected, or there is no auth,
+  //  respond with the appropriate status code
+  //
+  else {
+    //NOTE  we use req_new because we don't want to consider this a slog stream
+    //      request, but this means we need to manually skip past the "in event
+    //      queue" state on the hreq.
+    u3_hreq* req_u = _http_req_prepare(rec_u, _http_req_new);
+    req_u->sat_e = u3_rsat_plan;
+
+    if ( c3n == aut ) {
+      _http_start_respond(req_u, 403, u3_nul, u3_nul, c3y);
+    }
+    else if ( u3_none == aut ) {
+      u3l_log("http: authentication scry failed\n");
+      _http_start_respond(req_u, 500, u3_nul, u3_nul, c3y);
+    }
+    else {
+      u3m_p("http: weird authentication scry result", aut);
+      _http_start_respond(req_u, 500, u3_nul, u3_nul, c3y);
+    }
+  }
+
+  u3z(nun);
+}
+
+/* _http_seq_accept(): handle incoming http request on slogstream endpoint
+*/
+static int
+_http_seq_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
+{
+  //  try to find a cookie header
+  //
+  u3_weak coo = u3_none;
+  {
+    //TODO  http2 allows the client to put multiple 'cookie' headers
+    ssize_t hin_i = h2o_find_header_by_str(&rec_u->headers, "cookie", 6, -1);
+    if ( hin_i != -1 ) {
+      coo = _http_vec_to_atom(rec_u->headers.entries[hin_i].value);
+    }
+  }
+
+  //  if there is no cookie header, it can't possibly be authenticated
+  //
+  if ( u3_none == coo ) {
+    u3_hreq* req_u = _http_req_prepare(rec_u, _http_req_new);
+    req_u->sat_e = u3_rsat_plan;
+    _http_start_respond(req_u, 403, u3_nul, u3_nul, c3y);
+  }
+  //  if there is a cookie, scry to see if it constitutes authentication
+  //
+  else {
+    h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
+                           callbacks->get_socket(rec_u->conn);
+    u3_hcon* hon_u = (u3_hcon*)suv_u->han_u;
+
+    u3_noun pax = u3nq(u3i_string("authenticated"),
+                       u3i_string("cookie"),
+                       u3dc("scot", 't', coo),
+                       u3_nul);
+    u3_pier_peek_last(hon_u->htp_u->htd_u->car_u.pir_u, u3_nul, c3__ex,
+                      u3_nul, pax, rec_u, _http_seq_continue);
+  }
+
+  return 0;
+}
+
 /* _http_rec_accept(); handle incoming http request from h2o.
 */
 static c3_i
@@ -744,20 +933,7 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     h2o_send_error_generic(rec_u, 400, msg_c, msg_c, 0);
   }
   else {
-    h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
-                           callbacks->get_socket(rec_u->conn);
-    u3_hcon* hon_u = (u3_hcon*)suv_u->han_u;
-
-    // sanity check
-    c3_assert( hon_u->sok_u == &suv_u->sok_u );
-
-    u3_hreq* req_u = _http_req_new(hon_u, rec_u);
-
-    req_u->tim_u = c3_malloc(sizeof(*req_u->tim_u));
-    req_u->tim_u->data = req_u;
-    uv_timer_init(u3L, req_u->tim_u);
-    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 600 * 1000, 0);
-
+    u3_hreq* req_u = _http_req_prepare(rec_u, _http_req_new);
     _http_req_dispatch(req_u, req);
   }
 
@@ -922,9 +1098,7 @@ _http_serv_link(u3_httd* htd_u, u3_http* htp_u)
     htp_u->sev_l = 1 + htd_u->htp_u->sev_l;
   }
   else {
-    //  XX load from elsewhere
-    //
-    htp_u->sev_l = u3A->sev_l;
+    htp_u->sev_l = htd_u->sev_l;
   }
 
   htp_u->nex_u = htd_u->htp_u;
@@ -1220,6 +1394,10 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
   h2o_u->fig_u.server_name = h2o_iovec_init(
                                H2O_STRLIT("urbit/vere-" URBIT_VERSION));
 
+  //  set maximum request size to 512 MiB
+  //
+  h2o_u->fig_u.max_request_entity_size = 512 * 1024 * 1024;
+
   // XX default pending vhost/custom-domain design
   // XX revisit the effect of specifying the port
   h2o_u->hos_u = h2o_config_register_host(&h2o_u->fig_u,
@@ -1239,6 +1417,12 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
   else {
     h2o_u->han_u->on_req = _http_rec_accept;
   }
+
+  //  register slog stream endpoint
+  //
+  h2o_pathconf_t* pac_u = h2o_config_register_path(h2o_u->hos_u, "/~_~/slog", 0);
+  h2o_handler_t*  han_u = h2o_create_handler(pac_u, sizeof(*han_u));
+  han_u->on_req = _http_seq_accept;
 
   if ( c3y == log ) {
     // XX move this to post serv_start and put the port in the name
@@ -1553,7 +1737,9 @@ _http_serv_start_all(u3_httd* htd_u)
 
     //  XX remove [sen]
     //
-    u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
+    u3_noun wir = u3nt(u3i_string("http-server"),
+                       u3dc("scot", c3__uv, htd_u->sev_l),
+                       u3_nul);
     u3_noun cad = u3nt(c3__live, non, sec);
 
     u3_auto_plan(&htd_u->car_u, u3_ovum_init(0, c3__e, wir, cad));
@@ -1663,9 +1849,13 @@ u3_http_ef_form(u3_httd* htd_u, u3_noun fig)
 static void
 _http_io_talk(u3_auto* car_u)
 {
-  //  XX remove u3A->sen
+  u3_httd* htd_u = (u3_httd*)car_u;
+
+  //  XX remove [sen]
   //
-  u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
+  u3_noun wir = u3nt(u3i_string("http-server"),
+                     u3dc("scot", c3__uv, htd_u->sev_l),
+                     u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
   u3_auto_plan(car_u, u3_ovum_init(0, c3__e, wir, cad));
@@ -1730,6 +1920,99 @@ _http_ef_http_server(u3_httd* htd_u,
 
   u3z(tag);
   u3z(dat);
+}
+
+/* _http_stream_slog(): emit slog to open connections
+*/
+static void
+_http_stream_slog(void* vop_p, c3_w pri_w, u3_noun tan)
+{
+  u3_httd* htd_u = (u3_httd*)vop_p;
+  u3_hreq* seq_u = htd_u->fig_u.seq_u;
+
+  //  only do the work if there are open slog streams
+  //
+  if ( 0 != seq_u ) {
+    u3_weak data = u3_none;
+
+    if ( c3y == u3a_is_atom(tan) ) {
+      u3_noun lin = u3i_list(u3i_string("data:"),
+                             u3k(tan),
+                             c3_s2('\n', '\n'),
+                             u3_none);
+      u3_atom txt = u3qc_rap(3, lin);
+      data = u3nt(u3_nul, u3r_met(3, txt), txt);
+      u3z(lin);
+    }
+    else {
+      u3_weak wol = u3_none;
+
+      //  if we have no arvo kernel and can't evaluate nock,
+      //  only send %leaf tanks
+      //
+      if ( 0 == u3A->roc ) {
+        if ( c3__leaf == u3h(tan) ) {
+          wol = u3nc(u3k(u3t(tan)), u3_nul);
+        }
+      }
+      else {
+        u3_noun blu = u3_term_get_blew(0);
+        c3_l  col_l = u3h(blu);
+        wol = u3dc("wash", u3nc(0, col_l), u3k(tan));
+        u3z(blu);
+      }
+
+      if ( u3_none != wol ) {
+        u3_noun low = wol;
+        u3_noun paz = u3_nul;
+        while ( u3_nul != low ) {
+          u3_noun lin = u3i_list(u3i_string("data:"),
+                                 u3qc_rap(3, u3h(low)),
+                                 c3_s2('\n', '\n'),
+                                 u3_none);
+          paz = u3kb_weld(paz, lin);
+          low = u3t(low);
+        }
+        u3_atom txt = u3qc_rap(3, paz);
+        data = u3nt(u3_nul, u3r_met(3, txt), txt);
+        u3z(paz);
+      }
+
+      u3z(wol);
+    }
+
+    if ( u3_none != data ) {
+      while ( 0 != seq_u ) {
+        _http_continue_respond(seq_u, u3k(data), c3n);
+        seq_u = seq_u->nex_u;
+      }
+    }
+
+    u3z(data);
+  }
+
+  u3z(tan);
+}
+
+/* _http_seq_heartbeat_cb(): send heartbeat to slog streams and restart timer
+*/
+static void
+_http_seq_heartbeat_cb(uv_timer_t* tim_u)
+{
+  u3_httd* htd_u = tim_u->data;
+  u3_hreq* seq_u = htd_u->fig_u.seq_u;
+
+  if ( 0 != seq_u ) {
+    u3_noun dat = u3nt(u3_nul, 1, c3_s1('\n'));
+    while ( 0 != seq_u ) {
+      _http_continue_respond(seq_u, u3k(dat), c3n);
+      seq_u = seq_u->nex_u;
+    }
+    u3z(dat);
+  }
+
+  uv_timer_start(htd_u->fig_u.sit_u, _http_seq_heartbeat_cb,
+                 HEARTBEAT_TIMEOUT, 0);
 }
 
 /* _reck_mole(): parse simple atomic mole.
@@ -1800,7 +2083,7 @@ _http_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
     u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
     c3_l    sev_l, coq_l, seq_l;
 
-  
+
     if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
          (c3n == _reck_lily(c3__uv, u3k(p_pud), &sev_l)) )
     {
@@ -1857,9 +2140,33 @@ _http_io_exit(u3_auto* car_u)
   //   _http_serv_close(htp_u);
   // }
 
-  // XX close u3_Host.fig_u.cli_u and con_u
+  {
+    u3_atom lin = u3i_string("data:urbit shutting down\n\n");
+    u3_noun dat = u3nt(u3_nul, u3r_met(3, lin), lin);
+    u3_hreq* seq_u = htd_u->fig_u.seq_u;
+    while ( 0 != seq_u ) {
+      _http_continue_respond(seq_u, u3k(dat), c3y);
+      seq_u = seq_u->nex_u;
+    }
+    u3z(dat);
+  }
 
   _http_release_ports_file(u3_Host.dir_c);
+}
+
+/* _http_io_info(): print status info.
+*/
+static void
+_http_io_info(u3_auto* car_u)
+{
+  u3_httd* htd_u = (u3_httd*)car_u;
+  c3_y sec_y = 0;
+  u3_hreq* seq_u = htd_u->fig_u.seq_u;
+  while ( 0 != seq_u ) {
+    sec_y++;
+    seq_u = seq_u->nex_u;
+  }
+  u3l_log("      open slogstreams: %d\n", sec_y);
 }
 
 /* u3_http_io_init(): initialize http I/O.
@@ -1873,8 +2180,29 @@ u3_http_io_init(u3_pier* pir_u)
   car_u->nam_m = c3__http;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _http_io_talk;
+  car_u->io.info_f = _http_io_info;
   car_u->io.kick_f = _http_io_kick;
   car_u->io.exit_f = _http_io_exit;
+
+  pir_u->sop_p = htd_u;
+  pir_u->sog_f = _http_stream_slog;
+
+  uv_timer_t* sit_u = c3_malloc(sizeof(*sit_u));
+  sit_u->data = htd_u;
+  uv_timer_init(u3L, sit_u);
+  uv_timer_start(sit_u, _http_seq_heartbeat_cb, HEARTBEAT_TIMEOUT, 0);
+  htd_u->fig_u.sit_u = sit_u;
+
+  {
+    u3_noun now;
+    struct timeval tim_u;
+    gettimeofday(&tim_u, 0);
+
+    now = u3_time_in_tv(&tim_u);
+    htd_u->sev_l = u3r_mug(now);
+    u3z(now);
+  }
+
   //  XX retry up to N?
   //
   // car_u->ev.bail_f = ...;

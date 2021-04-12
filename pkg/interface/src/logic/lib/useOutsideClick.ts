@@ -1,23 +1,31 @@
-import { useEffect, RefObject } from "react";
+import { useEffect, RefObject } from 'react';
 
 export function useOutsideClick(
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null | undefined>,
   onClick: () => void
 ) {
   useEffect(() => {
     function handleClick(event: MouseEvent) {
+      const portalRoot = document.querySelector('#portal-root')!;
       if (
         ref.current &&
-        !ref.current.contains(event.target as any) &&
-        !document.querySelector("#portal-root")!.contains(event.target as any)
+        !ref.current.contains(event.target as any)
       ) {
         onClick();
       }
     }
-    document.addEventListener("mousedown", handleClick);
+
+    function handleKeyDown(ev) {
+      if(ev.key === 'Escape') {
+        onClick();
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [ref.current, onClick]);
 }

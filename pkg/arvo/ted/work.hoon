@@ -29,7 +29,7 @@
 ;<  ~  bind:m  (sleep:strandio `@dr`(div ~s1 100))
 ::  |mount %work
 ::
-=/  pax=path  (en-beam:format [ship i.desks case] /)
+=/  pax=path  (en-beam [ship i.desks case] /)
 ;<  ~  bind:m  (poke-our:strandio %hood %kiln-mount !>([pax i.desks]))
 ;<  ~  bind:m  (trace:strandio leaf+"work: mounted {<i.desks>}" ~)
 ::

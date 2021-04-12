@@ -7,41 +7,6 @@
 // along with some other debugging info
 #        undef VERBOSE_BYTECODE
 
-/* _n_mush_in(): see _n_mush().
-*/
-static u3_noun
-_n_mush_in(u3_noun val)
-{
-  if ( c3n == u3du(val) ) {
-    return u3_nul;
-  }
-  else {
-    u3_noun h_val = u3h(val);
-    u3_noun ite;
-
-    if ( c3n == u3ud(h_val) ) {
-      ite = u3nc(c3__leaf, u3_nul);
-    } else {
-      ite = u3nc(c3__leaf, u3qe_trip(h_val));
-    }
-    return u3nc(ite, _n_mush_in(u3t(val)));
-  }
-}
-
-/* _n_mush(): tank from failed path request.
-*/
-static u3_noun
-_n_mush(u3_noun val)
-{
-  u3_noun pro;
-
-  pro = u3nt(c3__rose,
-             u3nt(u3nc('/', u3_nul), u3nc('/', u3_nul), u3_nul),
-             _n_mush_in(val));
-  u3z(val);
-  return pro;
-}
-
 #if 0
 // Retained for debugging purposes.
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
@@ -386,7 +351,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         u3_noun val;
 
         u3t_off(noc_o);
-        val = u3m_soft_esc(ref, u3k(gof));
+        val = u3m_soft_esc(u3k(ref), u3k(gof));
         u3t_on(noc_o);
 
         if ( !_(u3du(val)) ) {
@@ -396,12 +361,13 @@ _n_nock_on(u3_noun bus, u3_noun fol)
           //
           //  replace with proper error stack push
           //
-          u3t_push(u3nc(c3__hunk, _n_mush(gof)));
+          u3t_push(u3nt(c3__hunk, ref, gof));
           return u3m_bail(c3__exit);
         }
         else {
           u3_noun pro;
 
+          u3z(ref);
           u3z(gof);
           u3z(fol);
           pro = u3k(u3t(u3t(val)));
@@ -509,22 +475,32 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 #define SLIB 70
 #define SLIS 71
 #define SAVE 72
+// before formula
+#define HILB 73  //  atomic,    byte
+#define HILS 74  //  atomic,    short
+#define HINB 75  //  arbitrary, byte
+#define HINS 76  //  arbitrary, short
+// after formula
+#define HILK 77  //  atomic,    keep
+#define HILL 78  //  atomic,    lose
+#define HINK 79  //  arbitrary, keep
+#define HINL 80  //  arbitrary, lose
 // nock 10
-#define MUTH 73
-#define KUTH 74
-#define MUTT 75
-#define KUTT 76
-#define MUSM 77
-#define KUSM 78
-#define MUTB 79
-#define MUTS 80
-#define MITB 81
-#define MITS 82
-#define KUTB 83
-#define KUTS 84
-#define KITB 85
-#define KITS 86
-#define LAST 87
+#define MUTH 81
+#define KUTH 82
+#define MUTT 83
+#define KUTT 84
+#define MUSM 85
+#define KUSM 86
+#define MUTB 87
+#define MUTS 88
+#define MITB 89
+#define MITS 90
+#define KUTB 91
+#define KUTS 92
+#define KITB 93
+#define KITS 94
+#define LAST 95
 
 /* _n_arg(): return the size (in bytes) of an opcode's argument
  */
@@ -639,6 +615,7 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
         case SAST: case SALT: case KICS: case TICS:
         case FISK: case FISL: case SUSH: case SANS:
         case LISL: case LISK: case SKIS: case SLIS:
+        case HILS: case HINS:
           c3_assert(0); //overflows
           break;
 
@@ -659,6 +636,7 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
         case BUSH: case FIBK: case FIBL:
         case SANB: case LIBL: case LIBK:
         case KITB: case MITB:
+        case HILB: case HINB:
           a_w = (*lit_w)++;
           if ( a_w <= 0xFF ) {
             siz_y[i_w] = 2;
@@ -890,6 +868,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         case LIBK: case LIBL:
         case BUSH: case SANB:
         case KITB: case MITB:
+        case HILB: case HINB:
           _n_prog_asm_inx(buf_y, &i_w, lit_s, cod);
           pog_u->lit_u.non[lit_s++] = u3k(u3t(op));
           break;
@@ -997,6 +976,8 @@ static char* opcode_names[] = {
   "balt", "salt",
   "skib", "skis", "slib", "slis",
   "save",
+  "hilb", "hils", "hinb", "hins"
+  "hilk", "hill", "hink", "hinl"
   "muth", "kuth", "mutt", "kutt",
   "musm", "kusm",
   "mutb", "muts", "mitb", "mits",
@@ -1029,21 +1010,64 @@ static c3_w _n_comp(u3_noun*, u3_noun, c3_o, c3_o);
 static c3_w
 _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
 {
+  c3_w tot_w = 0;
+
   if ( c3n == u3du(hif) ) {
-    // no currently recognized static hints
-    return _n_comp(ops, nef, los_o, tel_o);
+    //  compile whitelisted atomic hints to dispatch protocol;
+    //  compute and drop all others;
+    //
+    switch ( hif ) {
+      default: {
+        return _n_comp(ops, nef, los_o, tel_o);
+      }
+
+      //  no currently recognized static hints
+      //
+      case u3_none: {
+        u3_noun fen = u3_nul;
+        c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+
+        //  HILB overflows to HILS
+        //
+        ++tot_w; _n_emit(ops, u3nc(HILB, u3nc(u3k(hif), u3k(nef))));
+        ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w + 1));
+        tot_w += nef_w; _n_apen(ops, fen);
+        ++tot_w; _n_emit(ops, ( c3y == los_o ) ? HILL : HILK);
+      } break;
+    }
   }
   else {
-    c3_w tot_w = 0;
     u3_noun zep, hod;
     u3x_cell(hif, &zep, &hod);
 
     switch ( zep ) {
-      default:
-        tot_w += _n_comp(ops, hod, c3n, c3n);
-        ++tot_w; _n_emit(ops, TOSS);
-        tot_w += _n_comp(ops, nef, los_o, tel_o);
-        break;
+      default: {
+        //  compile whitelisted dynamic hints to dispatch protocol;
+        //  compute and drop all others;
+        //
+        switch ( zep ) {
+          default: {
+            tot_w += _n_comp(ops, hod, c3n, c3n);
+            ++tot_w; _n_emit(ops, TOSS);
+            tot_w += _n_comp(ops, nef, los_o, tel_o);
+          } break;
+
+          //  no currently recognized dynamic hints
+          //
+          case u3_none: {
+            u3_noun fen = u3_nul;
+            c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
+
+            tot_w += _n_comp(ops, hod, c3n, c3n);
+            //  HINB overflows to HINS
+            //
+            ++tot_w; _n_emit(ops, u3nc(HINB, u3nc(u3k(zep), u3k(nef))));
+            ++tot_w; _n_emit(ops, u3nc(SBIN, nef_w + 1));
+            tot_w += nef_w; _n_apen(ops, fen);
+            ++tot_w; _n_emit(ops, ( c3y == los_o ) ? HINL : HINK);
+          } break;
+        }
+      } break;
 
       case c3__hunk:
       case c3__lose:
@@ -1096,7 +1120,70 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
         break;
       }
     }
-    return tot_w;
+  }
+
+  return tot_w;
+}
+
+static c3_t
+_n_formulaic(u3_noun fol)
+{
+  u3_noun op, ar, a, b, c;
+  if ( c3n == u3r_cell(fol, &op, &ar) ) {
+    return 0;
+  }
+  if ( c3y == u3du(op) ) {
+    return _n_formulaic(op) && _n_formulaic(ar);
+  }
+  else switch ( op ) {
+    case 0:
+      return ( c3y == u3ud(ar) );
+    case 1:
+      return 1;
+    case 3:
+    case 4:
+      return _n_formulaic(ar);
+    case 2:
+    case 5:
+    case 7:
+    case 8:
+    case 12:
+      return (c3y == u3r_cell(ar, &a, &b))
+        && _n_formulaic(a) && _n_formulaic(b);
+    case 6:
+      return ( c3y == u3r_trel(ar, &a, &b, &c) )
+        && _n_formulaic(a) &&
+        (_n_formulaic(b) || _n_formulaic(c));
+    case 9:
+      return (c3y == u3r_cell(ar, &a, &b))
+        && (c3y == u3ud(a))
+        && _n_formulaic(b);
+    case 10:
+      if ( c3n == u3r_cell(ar, &a, &b) ) {
+        return 0;
+      }
+      if ( c3n == u3du(a) ) {
+        return 0;
+      }
+      if ( c3n == u3ud(u3h(a)) ) {
+        return 0;
+      }
+      return _n_formulaic(u3t(a)) && _n_formulaic(b);
+    case 11:
+      if ( c3n == u3r_cell(ar, &a, &b) ) {
+        return 0;
+      }
+      if ( !_n_formulaic(b) ) {
+        return 0;
+      }
+      if ( c3y == u3ud(a) ) {
+        return 1;
+      }
+      else {
+        return ( c3y == u3ud(u3h(a)) ) && _n_formulaic(u3t(a));
+      }
+    default:
+      return 0;
   }
 }
 
@@ -1246,10 +1333,32 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
               yep = u3_nul,
               nop = u3_nul;
       c3_w    yep_w, nop_w;
+      c3_t    yep_t, nop_t;
       u3x_trel(arg, &hed, &mid, &tel);
+
       tot_w += _n_comp(ops, hed, c3n, c3n);
-      yep_w  = _n_comp(&yep, mid, los_o, tel_o);
-      nop_w  = _n_comp(&nop, tel, los_o, tel_o);
+      yep_t = _n_formulaic(mid);
+      nop_t = _n_formulaic(tel);
+
+      if ( !yep_t && !nop_t ) {
+        u3m_bail(c3__exit);
+        break;
+      }
+
+      if ( yep_t ) {
+        yep_w = _n_comp(&yep, mid, los_o, tel_o);
+      }
+      else {
+        yep_w = 1; _n_emit(&yep, BAIL);
+      }
+
+      if ( nop_t ) {
+        nop_w = _n_comp(&nop, tel, los_o, tel_o);
+      }
+      else {
+        nop_w = 1; _n_emit(&nop, BAIL);
+      }
+
       // SBIP and SBIN get sized during assembly
       ++yep_w; _n_emit(&yep, u3nc(SBIP, nop_w));
       ++tot_w; _n_emit(ops, u3nc(SBIN, yep_w));
@@ -1435,6 +1544,19 @@ _n_rewo(c3_y* buf, c3_w* ip_w)
   return one | (two << 8) | (tre << 16) | (qua << 24);
 }
 
+/* _n_swap(): swap two items on the top of the stack, return pointer to top
+ */
+static inline u3_noun*
+_n_swap(c3_ys mov, c3_ys off)
+{
+  u3_noun* top = _n_peek(off);
+  u3_noun*  up = _n_peet(mov, off);
+  u3_noun  tmp = *up;
+  *up  = *top;
+  *top = tmp;
+  return top;
+}
+
 #ifdef VERBOSE_BYTECODE
 /* _n_print_byc(): print bytecode. used for debugging.
  */
@@ -1554,17 +1676,59 @@ u3n_find(u3_noun key, u3_noun fol)
   return pog_p;
 }
 
-/* _n_swap(): swap two items on the top of the stack, return pointer to top
- */
-static inline u3_noun*
-_n_swap(c3_ys mov, c3_ys off)
+/* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
+**            lit: hint atom. TRANSFER
+**            bus: subject. RETAIN
+**            out: token for _n_hilt_hind();
+**                 conventionally, [lit] or [lit data]. ~ if unused.
+**
+**                 any hints herein must be whitelisted in _n_burn().
+*/
+static c3_o
+_n_hilt_fore(u3_atom lit, u3_noun bus, u3_noun* out) // transfer, retain, n/a
 {
-  u3_noun* top = _n_peek(off);
-  u3_noun* up   = _n_peet(mov, off);
-  u3_noun  tmp  = *up;
-  *up  = *top;
-  *top = tmp;
-  return top;
+  u3z(lit);
+  *out = u3_nul;
+  return c3y;
+}
+
+/* _n_hilt_hind(): literal (atomic) dynamic hint, after formula evaluation.
+**            tok: token from _n_hilt_fore(). TRANSFER
+**            pro: product of formula evaluation. RETAIN
+*/
+static void
+_n_hilt_hind(u3_noun tok, u3_noun pro)  // transfer, retain
+{
+  c3_assert( u3_nul == tok );
+  u3z(tok);
+}
+
+/* _n_hint_fore(): arbitrary dynamic hint, before formula evaluation
+**            hin: [hint-atom, formula]. TRANSFER
+**            bus: subject. RETAIN
+**            clu: product of the hint-formula. TRANSFER
+**                 also, token for _n_hint_hind();
+**                 conventionally, [hint-atom] or [hint-atom data]. ~ if unused.
+**
+**                 any hints herein must be whitelisted in _n_burn().
+*/
+static c3_o
+_n_hint_fore(u3_cell hin, u3_noun bus, u3_noun* clu)
+{
+  u3z(hin); u3z(*clu);
+  *clu = u3_nul;
+  return c3y;
+}
+
+/* _n_hint_hind(): arbitrary dynamic hint, after formula evaluation.
+**            tok: token from _n_hint_fore(). TRANSFER
+**            pro: product of formula evaluation. RETAIN
+*/
+static void
+_n_hint_hind(u3_noun tok, u3_noun pro)
+{
+  c3_assert( u3_nul == tok );
+  u3z(tok);
 }
 
 /* _n_kick(): stop tracing noc and kick a u3j_site.
@@ -1630,6 +1794,8 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
     &&do_balt, &&do_salt,
     &&do_skib, &&do_skis, &&do_slib, &&do_slis,
     &&do_save,
+    &&do_hilb, &&do_hils, &&do_hinb, &&do_hins,
+    &&do_hilk, &&do_hill, &&do_hink, &&do_hinl,
     &&do_muth, &&do_kuth, &&do_mutt, &&do_kutt,
     &&do_musm, &&do_kusm,
     &&do_mutb, &&do_muts, &&do_mitb, &&do_mits,
@@ -2082,21 +2248,21 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       top = _n_swap(mov, off); // [ref bus]
     wish_in:
       u3t_off(noc_o);
-      x   = u3m_soft_esc(*top, u3k(o));
+      x   = u3m_soft_esc(u3k(*top), u3k(o));
       u3t_on(noc_o);
 
       if ( c3n == u3du(x) ) {
-        u3m_bail(u3nt(1, o, 0));
+        u3m_bail(u3nc(1, o));
         return u3_none;
       }
       else if ( c3n == u3du(u3t(x)) ) {
-        //  replace with proper error stack push
-        u3t_push(u3nc(c3__hunk, _n_mush(o)));
+        u3t_push(u3nt(c3__hunk, *top, o));
         u3m_bail(c3__exit);
         return u3_none;
       }
       else {
         u3z(o);
+        u3z(*top);
         *top = u3k(u3t(u3t(x)));
         u3z(x);
         BURN();
@@ -2218,6 +2384,67 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       }
       *top = x;
       u3z(o);
+      BURN();
+
+    do_hilb:
+      x = pog[ip_w++];
+      goto hilt_fore_in;
+
+    do_hils:
+      x = _n_resh(pog, &ip_w);
+    hilt_fore_in:
+      x   = u3k(pog_u->lit_u.non[x]);
+      top = _n_peek(off);   // bus
+      x   = _n_hilt_fore(x, *top, &o);
+      _n_push(mov, off, o);
+      _n_swap(mov, off);    // bus
+      _n_push(mov, off, x); // shortcircuit if c3n
+      BURN();
+
+    do_hinb:
+      x = pog[ip_w++];
+      goto hint_fore_in;
+
+    do_hins:
+      x = _n_resh(pog, &ip_w);
+    hint_fore_in:               //  [clu bus]
+      x   = u3k(pog_u->lit_u.non[x]);
+      o   = _n_pep(mov, off);   //  [bus]
+      top = _n_peek(off);
+      x   = _n_hint_fore(x, *top, &o);
+      _n_push(mov, off, o);     //  [tok bus]
+      _n_swap(mov, off);        //  [bus tok]
+      _n_push(mov, off, x);     //  [kip bus tok]
+      BURN();
+
+    do_hilk:                    //  [pro bus tok]
+      x   = _n_pep(mov, off);   //  [bus tok]
+      _n_swap(mov, off);        //  [tok bus]
+      o   = _n_pep(mov, off);   //  [bus]
+      _n_push(mov, off, x);     //  [pro bus]
+      _n_hilt_hind(o, x);
+      BURN();
+
+    do_hill:                    //  [pro tok]
+      top = _n_swap(mov, off);  //  [tok pro]
+      o   = _n_pep(mov, off);   //  [pro]
+      top = _n_peek(off);
+      _n_hilt_hind(o, *top);
+      BURN();
+
+    do_hink:                    //  [pro bus tok]
+      x   = _n_pep(mov, off);   //  [bus tok]
+      _n_swap(mov, off);        //  [tok bus]
+      o   = _n_pep(mov, off);   //  [bus]
+      _n_push(mov, off, x);     //  [pro bus]
+      _n_hint_hind(o, x);
+      BURN();
+
+    do_hinl:                    //  [pro tok]
+      top = _n_swap(mov, off);  //  [tok pro]
+      o   = _n_pep(mov, off);   //  [pro]
+      top = _n_peek(off);
+      _n_hint_hind(o, *top);
       BURN();
 
     do_kuth:

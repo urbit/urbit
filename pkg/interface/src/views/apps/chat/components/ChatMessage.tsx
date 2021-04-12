@@ -1,60 +1,259 @@
-import React, { Component, PureComponent } from "react";
-import moment from "moment";
-import _ from "lodash";
-import { Box, Row, Text } from "@tlon/indigo-react";
-
-import { OverlaySigil } from './overlay-sigil';
-import { uxToHex, cite, writeText } from '~/logic/lib/util';
-import { Envelope, IMessage } from "~/types/chat-update";
-import { Group, Association, Contacts, LocalUpdateRemoteContentPolicy } from "~/types";
+/* eslint-disable max-lines-per-function */
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  Component,
+  PureComponent,
+  useCallback
+} from 'react';
+import moment from 'moment';
+import _ from 'lodash';
+import VisibilitySensor from 'react-visibility-sensor';
+import { Box, Row, Text, Rule, BaseImage, Icon, Col } from '@tlon/indigo-react';
+import { Sigil } from '~/logic/lib/sigil';
+import OverlaySigil from '~/views/components/OverlaySigil';
+import {
+  uxToHex,
+  cite,
+  writeText,
+  useShowNickname,
+  useHideAvatar,
+  useHovering
+} from '~/logic/lib/util';
+import {
+  Group,
+  Association,
+  Contacts,
+  Post,
+  Groups,
+  Associations
+} from '~/types';
 import TextContent from './content/text';
 import CodeContent from './content/code';
 import RemoteContent from '~/views/components/RemoteContent';
+import { Mention } from '~/views/components/MentionText';
+import { Dropdown } from '~/views/components/Dropdown';
+import styled from 'styled-components';
+import useLocalState from '~/logic/state/local';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import Timestamp from '~/views/components/Timestamp';
+import useContactState from '~/logic/state/contact';
+import { useIdlingState } from '~/logic/lib/idling';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
-export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
-  <div ref={ref} style={{ color: "#219dff" }} className="flex items-center f9 absolute w-100 left-0 pv0">
-    <hr style={{ borderColor: "#219dff" }} className="dn-s ma0 w2 bt-0" />
-    <p className="mh4 z-2" style={{ whiteSpace: 'normal' }}>New messages below</p>
-    <hr style={{ borderColor: "#219dff" }} className="ma0 flex-grow-1 bt-0" />
-    {dayBreak
-      ? <p className="gray2 mh4">{moment(when).calendar()}</p>
-      : null}
-    <hr style={{ width: "calc(50% - 48px)" }} style={{ borderColor: "#219dff" }} className="ma0 bt-0" />
-  </div>
-));
+interface DayBreakProps {
+  when: string;
+  shimTop?: boolean;
+}
 
-export const DayBreak = ({ when }) => (
-  <div className="pv3 gray2 b--gray2 flex items-center justify-center f9 w-100">
-    <p>{moment(when).calendar()}</p>
-  </div>
+export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
+  <Row
+    px={2}
+    height={5}
+    mb={2}
+    justifyContent='center'
+    alignItems='center'
+    mt={shimTop ? '-8px' : '0'}
+  >
+    <Rule borderColor='lightGray' />
+    <Text
+      gray
+      flexShrink='0'
+      whiteSpace='nowrap'
+      textAlign='center'
+      fontSize={0}
+      px={2}
+    >
+      {moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}
+    </Text>
+    <Rule borderColor='lightGray' />
+  </Row>
 );
 
+export const UnreadMarker = React.forwardRef(
+  ({ dayBreak, when, api, association }, ref) => {
+    const [visible, setVisible] = useState(false);
+    const idling = useIdlingState();
+    const dismiss = useCallback(() => {
+      api.hark.markCountAsRead(association, '/', 'message');
+    }, [api, association]);
+
+    useEffect(() => {
+      if (visible && !idling) {
+        dismiss();
+      }
+    }, [visible, idling]);
+
+    return (
+      <Row
+        position='absolute'
+        ref={ref}
+        px={2}
+        mt={0}
+        height={5}
+        justifyContent='center'
+        alignItems='center'
+        width='100%'
+      >
+        <Rule borderColor='lightBlue' />
+        <VisibilitySensor onChange={setVisible}>
+          <Text
+            color='blue'
+            fontSize={0}
+            flexShrink='0'
+            whiteSpace='nowrap'
+            textAlign='center'
+            px={2}
+          >
+            New messages below
+          </Text>
+        </VisibilitySensor>
+        <Rule borderColor='lightBlue' />
+      </Row>
+    );
+  }
+);
+
+const MessageActionItem = (props) => {
+  return (
+    <Row
+      color='black'
+      cursor='pointer'
+      fontSize={1}
+      fontWeight='500'
+      px={3}
+      py={2}
+      onClick={props.onClick}
+    >
+      <Text fontWeight='500' color={props.color}>
+        {props.children}
+      </Text>
+    </Row>
+  );
+};
+
+const MessageActions = ({ api, history, msg, group }) => {
+  const isAdmin = () => group.tags.role.admin.has(window.ship);
+  const isOwn = () => msg.author === window.ship;
+  return (
+    <Box
+      borderRadius={1}
+      background='white'
+      border='1px solid'
+      borderColor='lightGray'
+      position='absolute'
+      top='-12px'
+      right={2}
+    >
+      <Row>
+        {isOwn() ? (
+          <Box
+            padding={1}
+            size={'24px'}
+            cursor='pointer'
+            onClick={(e) => console.log(e)}
+          >
+            <Icon icon='NullIcon' size={3} />
+          </Box>
+        ) : null}
+        <Box
+          padding={1}
+          size={'24px'}
+          cursor='pointer'
+          onClick={(e) => console.log(e)}
+        >
+          <Icon icon='Chat' size={3} />
+        </Box>
+        <Dropdown
+          dropWidth='250px'
+          width='auto'
+          alignY='top'
+          alignX='right'
+          flexShrink={'0'}
+          offsetY={8}
+          offsetX={-24}
+          options={
+            <Col
+              py={2}
+              backgroundColor='white'
+              color='washedGray'
+              border={1}
+              borderRadius={2}
+              borderColor='lightGray'
+              boxShadow='0px 0px 0px 3px'
+            >
+              {isOwn() ? (
+                <MessageActionItem onClick={(e) => console.log(e)}>
+                  Edit Message
+                </MessageActionItem>
+              ) : null}
+              <MessageActionItem onClick={(e) => console.log(e)}>
+                Reply
+              </MessageActionItem>
+              <MessageActionItem onClick={(e) => console.log(e)}>
+                Copy Message Link
+              </MessageActionItem>
+              {isAdmin() || isOwn() ? (
+                <MessageActionItem onClick={(e) => console.log(e)} color='red'>
+                  Delete Message
+                </MessageActionItem>
+              ) : null}
+              <MessageActionItem onClick={(e) => console.log(e)}>
+                View Signature
+              </MessageActionItem>
+            </Col>
+          }
+        >
+          <Box padding={1} size={'24px'} cursor='pointer'>
+            <Icon icon='Menu' size={3} />
+          </Box>
+        </Dropdown>
+      </Row>
+    </Box>
+  );
+};
+
+const MessageWrapper = (props) => {
+  const { hovering, bind } = useHovering();
+  return (
+    <Box
+      py='1'
+      backgroundColor={
+        hovering && !props.hideHover ? 'washedGray' : 'transparent'
+      }
+      position='relative'
+      {...bind}
+    >
+      {props.children}
+      {/* {hovering ? <MessageActions {...props} /> : null} */}
+    </Box>
+  );
+};
+
 interface ChatMessageProps {
-  measure(element): void;
-  msg: Envelope | IMessage;
-  previousMsg: Envelope | IMessage | undefined;
-  nextMsg: Envelope | IMessage | undefined;
+  msg: Post;
+  previousMsg?: Post;
+  nextMsg?: Post;
   isLastRead: boolean;
   group: Group;
   association: Association;
-  contacts: Contacts;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   className?: string;
   isPending: boolean;
-  style?: any;
-  allStations: any;
+  style?: unknown;
   scrollWindow: HTMLDivElement;
   isLastMessage?: boolean;
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
-  history: any;
-  api: any;
+  history: unknown;
+  api: GlobalApi;
+  highlighted?: boolean;
+  renderSigil?: boolean;
+  hideHover?: boolean;
+  innerRef: (el: HTMLDivElement | null) => void;
 }
 
-export default class ChatMessage extends Component<ChatMessageProps> {
+class ChatMessage extends Component<ChatMessageProps> {
   private divRef: React.RefObject<HTMLDivElement>;
 
   constructor(props) {
@@ -62,11 +261,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     this.divRef = React.createRef();
   }
 
-  componentDidMount() {
-    if (this.divRef.current) {
-      this.props.measure(this.divRef.current);
-    }
-  }
+  componentDidMount() {}
 
   render() {
     const {
@@ -76,247 +271,470 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       isLastRead,
       group,
       association,
-      contacts,
-      hideAvatars,
-      hideNicknames,
-      remoteContentPolicy,
       className = '',
       isPending,
       style,
-      measure,
       scrollWindow,
       isLastMessage,
       unreadMarkerRef,
-      allStations,
       history,
-      api
+      api,
+      highlighted,
+      showOurContact,
+      fontSize,
+      hideHover
     } = this.props;
 
-    const renderSigil = Boolean((nextMsg && msg.author !== nextMsg.author) || !nextMsg || msg.number === 1);
-    const dayBreak = nextMsg && new Date(msg.when).getDate() !== new Date(nextMsg.when).getDate();
+    let { renderSigil } = this.props;
 
-    const containerClass = `${renderSigil
-      ? `cf pt2 pl3 lh-copy`
-      : `items-center cf hide-child`} ${isPending ? 'o-40' : ''} ${className}`
+    if (renderSigil === undefined) {
+      renderSigil = Boolean(
+        (nextMsg && msg.author !== nextMsg.author) ||
+          !nextMsg ||
+          msg.number === 1
+      );
+    }
 
-    const timestamp = moment.unix(msg.when / 1000).format(renderSigil ? 'hh:mm a' : 'hh:mm');
+    const dayBreak =
+      nextMsg &&
+      new Date(msg['time-sent']).getDate() !==
+        new Date(nextMsg['time-sent']).getDate();
 
-    const reboundMeasure = (event) => {
-      return measure(this.divRef.current);
-    };
+    const containerClass = `${isPending ? 'o-40' : ''} ${className}`;
+
+    const timestamp = moment
+      .unix(msg['time-sent'] / 1000)
+      .format(renderSigil ? 'h:mm A' : 'h:mm');
 
     const messageProps = {
       msg,
       timestamp,
-      contacts,
-      hideNicknames,
       association,
       group,
-      hideAvatars,
-      remoteContentPolicy,
-      measure: reboundMeasure.bind(this),
       style,
       containerClass,
       isPending,
-      allStations,
+      showOurContact,
       history,
       api,
-      scrollWindow
+      scrollWindow,
+      highlighted,
+      fontSize,
+      hideHover
     };
 
     const unreadContainerStyle = {
-      height: isLastRead ? '1.66em' : '0',
+      height: isLastRead ? '2rem' : '0'
     };
 
     return (
       <Box
-        width='100%'
-        display='flex'
-        flexWrap='wrap'
-        pr={3}
-        pb={isLastMessage ? 3 : 0}
-        ref={this.divRef}
+        ref={this.props.innerRef}
+        pt={renderSigil ? 2 : 0}
+        pb={isLastMessage ? '20px' : 0}
         className={containerClass}
+        backgroundColor={highlighted ? 'blue' : 'white'}
         style={style}
-        data-number={msg.number}
-        mb={1}
       >
-        {dayBreak && !isLastRead ? <DayBreak when={msg.when} /> : null}
-        {renderSigil
-          ? <MessageWithSigil {...messageProps} />
-          : <MessageWithoutSigil {...messageProps} />}
-        <Box fontSize={0} position='relative' width='100%' overflow='visible' style={unreadContainerStyle}>{isLastRead
-          ? <UnreadMarker dayBreak={dayBreak} when={msg.when} ref={unreadMarkerRef} />
-          : null}</Box>
+        {dayBreak && !isLastRead ? (
+          <DayBreak when={msg['time-sent']} shimTop={renderSigil} />
+        ) : null}
+        {renderSigil ? (
+          <MessageWrapper {...messageProps}>
+            <MessageAuthor pb={1} {...messageProps} />
+            <Message pl={'44px'} pr={4} {...messageProps} />
+          </MessageWrapper>
+        ) : (
+          <MessageWrapper {...messageProps}>
+            <Message pl={'44px'} pr={4} timestampHover {...messageProps} />
+          </MessageWrapper>
+        )}
+        <Box style={unreadContainerStyle}>
+          {isLastRead ? (
+            <UnreadMarker
+              association={association}
+              api={api}
+              dayBreak={dayBreak}
+              when={msg['time-sent']}
+              ref={unreadMarkerRef}
+            />
+          ) : null}
+        </Box>
       </Box>
     );
   }
 }
 
-interface MessageProps {
-  msg: Envelope | IMessage;
-  timestamp: string;
-  group: Group;
-  association: Association;
-  contacts: Contacts;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
-  containerClass: string;
-  isPending: boolean;
-  style: any;
-  allStations: any;
-  measure(element): void;
-  scrollWindow: HTMLDivElement;
-};
+export default React.forwardRef((props, ref) => (
+  <ChatMessage {...props} innerRef={ref} />
+));
 
-export class MessageWithSigil extends PureComponent<MessageProps> {
-  render() {
-    const {
-      msg,
-      timestamp,
-      contacts,
-      hideNicknames,
-      association,
-      group,
-      hideAvatars,
-      remoteContentPolicy,
-      measure,
-      allStations,
-      history,
-      api,
-      scrollWindow
-    } = this.props;
+export const MessageAuthor = ({
+  timestamp,
+  msg,
+  group,
+  api,
+  history,
+  scrollWindow,
+  showOurContact,
+  ...rest
+}) => {
+  const osDark = useLocalState((state) => state.dark);
 
-    const datestamp = moment.unix(msg.when / 1000).format(DATESTAMP_FORMAT);
-    const contact = msg.author in contacts ? contacts[msg.author] : false;
-    const showNickname = !hideNicknames && contact && contact.nickname;
-    const name = showNickname ? contact.nickname : cite(msg.author);
-    const color = contact ? `#${uxToHex(contact.color)}` : '#000000';
-    const sigilClass = contact ? '' : 'mix-blend-diff';
+  const theme = useSettingsState((s) => s.display.theme);
+  const dark = theme === 'dark' || (theme === 'auto' && osDark);
+  const contacts = useContactState((state) => state.contacts);
 
-    let nameSpan = null;
+  const datestamp = moment
+    .unix(msg['time-sent'] / 1000)
+    .format(DATESTAMP_FORMAT);
+  const contact =
+    ((msg.author === window.ship && showOurContact) ||
+      msg.author !== window.ship) &&
+    `~${msg.author}` in contacts
+      ? contacts[`~${msg.author}`]
+      : false;
 
-    const copyNotice = (saveName) => {
-      if (nameSpan !== null) {
-        nameSpan.innerText = 'Copied';
-        setTimeout(() => {
-          nameSpan.innerText = saveName;
-        }, 800);
-      }
+  const showNickname = useShowNickname(contact);
+  const { hideAvatars } = useSettingsState(selectCalmState);
+  const shipName = showNickname ? contact.nickname : cite(msg.author);
+  const copyNotice = 'Copied';
+  const color = contact
+    ? `#${uxToHex(contact.color)}`
+    : dark
+    ? '#000000'
+    : '#FFFFFF';
+  const sigilClass = contact
+    ? ''
+    : dark
+    ? 'mix-blend-diff'
+    : 'mix-blend-darken';
+  const [displayName, setDisplayName] = useState(shipName);
+  const [nameMono, setNameMono] = useState(showNickname ? false : true);
+  const { hovering, bind } = useHovering();
+  const [showOverlay, setShowOverlay] = useState(false);
+
+  const toggleOverlay = () => {
+    setShowOverlay((value) => !value);
+  };
+
+  const showCopyNotice = () => {
+    setDisplayName(copyNotice);
+    setNameMono(false);
+  };
+
+  useEffect(() => {
+    const resetDisplay = () => {
+      setDisplayName(shipName);
+      setNameMono(showNickname ? false : true);
     };
+    const timer = setTimeout(() => resetDisplay(), 800);
+    return () => clearTimeout(timer);
+  }, [shipName, displayName]);
 
-    return (
-      <>
-        <OverlaySigil
+  const img =
+    contact?.avatar && !hideAvatars ? (
+      <BaseImage
+        display='inline-block'
+        referrerPolicy='no-referrer'
+        style={{ objectFit: 'cover' }}
+        src={contact.avatar}
+        height={24}
+        width={24}
+        borderRadius={1}
+      />
+    ) : (
+      <Box
+        width={24}
+        height={24}
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        backgroundColor={color}
+        borderRadius={1}
+      >
+        <Sigil
           ship={msg.author}
-          contact={contact}
+          size={12}
+          display='block'
           color={color}
-          sigilClass={sigilClass}
-          association={association}
-          group={group}
-          hideAvatars={hideAvatars}
-          hideNicknames={hideNicknames}
-          scrollWindow={scrollWindow}
-          allStations={allStations}
-          history={history}
-          api={api}
-          className="fl pr3 v-top bg-white bg-gray0-d pt1"
+          classes={sigilClass}
+          icon
+          padding={0}
         />
-        <Box flexGrow='1' display='block' className="clamp-message">
-          <Box
-            className="hide-child"
-            pt={1}
-            pb={1}
-            display='flex'
-            alignItems='center'
+      </Box>
+    );
+  return (
+    <Box display='flex' alignItems='flex-start' {...rest}>
+      <Box
+        onClick={() => {
+          setShowOverlay(true);
+        }}
+        height={24}
+        pr={2}
+        mt={'1px'}
+        pl={'12px'}
+        cursor='pointer'
+        position='relative'
+      >
+        {showOverlay && (
+          <OverlaySigil
+            cursor='auto'
+            ship={msg.author}
+            contact={contact}
+            color={`#${uxToHex(contact?.color ?? '0x0')}`}
+            group={group}
+            onDismiss={() => toggleOverlay()}
+            history={history}
+            className='relative'
+            scrollWindow={scrollWindow}
+            api={api}
+          />
+        )}
+        {img}
+      </Box>
+      <Box flexGrow={1} display='block' className='clamp-message' {...bind}>
+        <Box
+          flexShrink={0}
+          className='hide-child'
+          pt={1}
+          pb={1}
+          display='flex'
+          alignItems='baseline'
+        >
+          <Text
+            fontSize={1}
+            mr={2}
+            flexShrink={1}
+            mono={nameMono}
+            fontWeight={nameMono ? '400' : '500'}
+            cursor='pointer'
+            onClick={() => {
+              writeText(`~${msg.author}`);
+              showCopyNotice();
+            }}
+            title={`~${msg.author}`}
           >
-            <Text
-              fontSize={0}
-              mr={3}
-              mono={!showNickname}
-              className={`mw5 db truncate pointer`}
-              ref={e => nameSpan = e}
-              onClick={() => {
-                writeText(msg.author);
-                copyNotice(name);
-              }}
-              title={`~${msg.author}`}
-            >{name}</Text>
-            <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
-            <Text gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
-          </Box>
-          <Box fontSize='14px'><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
+            {displayName}
+          </Text>
+          <Text flexShrink={0} fontSize={0} gray>
+            {timestamp}
+          </Text>
+          <Text
+            flexShrink={0}
+            fontSize={0}
+            gray
+            ml={2}
+            display={['none', hovering ? 'block' : 'none']}
+          >
+            {datestamp}
+          </Text>
         </Box>
-      </>
-    );
-  }
-}
-
-export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
-  <>
-    <p className="child pr1 mono f9 gray2 dib">{timestamp}</p>
-    <Box fontSize='14px' className="clamp-message" style={{ flexGrow: 1 }}>
-      <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
+      </Box>
     </Box>
-  </>
-);
-
-export const MessageContent = ({ content, remoteContentPolicy, measure }) => {
-  if ('code' in content) {
-    return <CodeContent content={content} />;
-  } else if ('url' in content) {
-    return (
-      <Text fontSize='14px' lineHeight="tall" color='black'>
-        <RemoteContent
-          url={content.url}
-          remoteContentPolicy={remoteContentPolicy}
-          onLoad={measure}
-          imageProps={{style: {
-              maxWidth: '18rem'
-          }}}
-          videoProps={{style: {
-            maxWidth: '18rem'
-          }}}
-        />
-      </Text>
-    );
-  } else if ('me' in content) {
-    return (
-      <Text fontStyle='italic' fontSize='14px' lineHeight='tall' color='black'>
-        {content.me}
-      </Text>
-    );
-  }
-  else if ('text' in content) {
-    return <TextContent content={content} />;
-  } else {
-    return null;
-  }
+  );
 };
 
-export const MessagePlaceholder = ({ height, index, className = '', style = {}, ...props }) => (
-  <div className={`w-100 f7 pl3 pt4 pr3 cf flex lh-copy ${className}`} style={{ height, ...style }} {...props}>
-      <div className="fl pr3 v-top bg-white bg-gray0-d">
-        <span
-          className="db bg-gray2 bg-white-d"
-          style={{
-            width: "24px",
-            height: "24px",
-            borderRadius: "50%",
-            visibility: (index % 5 == 0) ? "initial" : "hidden",
-          }}
-        ></span>
-      </div>
-      <div className="fr clamp-message white-d" style={{ flexGrow: 1, marginTop: -8 }}>
-        <div className="hide-child" style={{paddingTop: "6px", visibility: (index % 5 == 0) ? "initial" : "hidden" }}>
-          <p className={`v-mid f9 gray2 dib mr3 c-default`}>
-            <span className="mw5 db"><span className="bg-gray5 bg-gray1-d db w-100 h-100"></span></span>
-          </p>
-          <p className="v-mid mono f9 gray2 dib"><span className="bg-gray5 bg-gray1-d db w-100 h-100" style={{height: "1em", width: `${(index % 3 + 1) * 3}em`}}></span></p>
-          <p className="v-mid mono f9 ml2 gray2 dib child dn-s"><span className="bg-gray5 bg-gray1-d db w-100 h-100"></span></p>
-        </div>
-        <span className="bg-gray5 bg-gray1-d db w-100 h-100 db" style={{height: `1em`, width: `${(index % 5) * 20}%`}}></span>
-      </div>
-    </div>
+export const Message = ({
+  timestamp,
+  msg,
+  group,
+  api,
+  scrollWindow,
+  timestampHover,
+  ...rest
+}) => {
+  const { hovering, bind } = useHovering();
+  const contacts = useContactState((state) => state.contacts);
+  return (
+    <Box position='relative' {...rest}>
+      {timestampHover ? (
+        <Text
+          display={hovering ? 'block' : 'none'}
+          position='absolute'
+          width='36px'
+          textAlign='right'
+          left='0'
+          top='3px'
+          fontSize={0}
+          gray
+        >
+          {timestamp}
+        </Text>
+      ) : (
+        <></>
+      )}
+      <Box {...bind}>
+        {msg.contents.map((content, i) => {
+          switch (Object.keys(content)[0]) {
+            case 'text':
+              return (
+                <TextContent
+                  key={i}
+                  api={api}
+                  fontSize={1}
+                  lineHeight={'20px'}
+                  content={content}
+                />
+              );
+            case 'code':
+              return <CodeContent key={i} content={content} />;
+            case 'url':
+              return (
+                <Box
+                  key={i}
+                  flexShrink={0}
+                  fontSize={1}
+                  lineHeight='20px'
+                  color='black'
+                >
+                  <RemoteContent
+                    key={content.url}
+                    url={content.url}
+                    imageProps={{
+                      style: {
+                        maxWidth: 'min(100%,18rem)',
+                        display: 'inline-block',
+                        marginTop: '0.5rem'
+                      }
+                    }}
+                    videoProps={{
+                      style: {
+                        maxWidth: '18rem',
+                        display: 'block',
+                        marginTop: '0.5rem'
+                      }
+                    }}
+                    textProps={{
+                      style: {
+                        fontSize: 'inherit',
+                        borderBottom: '1px solid',
+                        textDecoration: 'none'
+                      }
+                    }}
+                  />
+                </Box>
+              );
+            case 'mention':
+              const first = (i) => i === 0;
+              return (
+                <Mention
+                  key={i}
+                  first={first(i)}
+                  group={group}
+                  scrollWindow={scrollWindow}
+                  ship={content.mention}
+                  contact={contacts?.[`~${content.mention}`]}
+                />
+              );
+            default:
+              return null;
+          }
+        })}
+      </Box>
+    </Box>
+  );
+};
+
+export const MessagePlaceholder = ({
+  height,
+  index,
+  className = '',
+  style = {},
+  ...props
+}) => (
+  <Box
+    width='100%'
+    fontSize='2'
+    pl='3'
+    pt='4'
+    pr='3'
+    display='flex'
+    lineHeight='tall'
+    className={className}
+    style={{ height, ...style }}
+    {...props}
+  >
+    <Box
+      pr='3'
+      verticalAlign='top'
+      backgroundColor='white'
+      style={{ float: 'left' }}
+    >
+      <Text
+        display='block'
+        background='gray'
+        width='24px'
+        height='24px'
+        borderRadius='50%'
+        style={{
+          visibility: index % 5 == 0 ? 'initial' : 'hidden'
+        }}
+      ></Text>
+    </Box>
+    <Box
+      style={{ float: 'right', flexGrow: 1 }}
+      color='black'
+      className='clamp-message'
+    >
+      <Box
+        className='hide-child'
+        paddingTop='4'
+        style={{ visibility: index % 5 == 0 ? 'initial' : 'hidden' }}
+      >
+        <Text
+          display='inline-block'
+          verticalAlign='middle'
+          fontSize='0'
+          gray
+          cursor='default'
+        >
+          <Text maxWidth='32rem' display='block'>
+            <Text
+              backgroundColor='gray'
+              display='block'
+              width='100%'
+              height='100%'
+            ></Text>
+          </Text>
+        </Text>
+        <Text
+          display='inline-block'
+          mono
+          verticalAlign='middle'
+          fontSize='0'
+          gray
+        >
+          <Text
+            background='gray'
+            display='block'
+            height='1em'
+            style={{ width: `${((index % 3) + 1) * 3}em` }}
+          ></Text>
+        </Text>
+        <Text
+          mono
+          verticalAlign='middle'
+          fontSize='0'
+          ml='2'
+          gray
+          display={['none', 'inline-block']}
+          className='child'
+        >
+          <Text
+            backgroundColor='gray'
+            display='block'
+            width='100%'
+            height='100%'
+          ></Text>
+        </Text>
+      </Box>
+      <Text
+        display='block'
+        backgroundColor='gray'
+        height='1em'
+        style={{ width: `${(index % 5) * 20}%` }}
+      ></Text>
+    </Box>
+  </Box>
 );

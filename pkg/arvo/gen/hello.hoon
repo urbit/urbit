@@ -8,6 +8,6 @@
 ::::
   ::
 :-  %say
-|=  {^ {{txt/@tas ~} ~}}
+|=  [^ [[txt=@tas ~] ~]]
 :-  %noun
 (crip (weld "hello, " (trip txt)))

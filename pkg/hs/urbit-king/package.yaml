@@ -1,15 +1,20 @@
 name: urbit-king
-version: 0.10.8
+version: 1.2
 license: MIT
 license-file: LICENSE
+data-files:
+  - test/gold/hoontree.gold
+  - test/gold/hoontree.pill
 
 library:
   source-dirs: lib
   ghc-options:
-    - -fwarn-incomplete-patterns
-    - -fwarn-unused-binds
-    - -fwarn-unused-imports
+    - -Wall
     - -Werror
+    - -Wno-type-defaults
+    - -Wno-unused-matches
+    - -Wno-name-shadowing
+    - -Wno-unused-do-bind
     - -O2
 
 tests:
@@ -31,6 +36,7 @@ dependencies:
   - binary
   - bytestring
   - case-insensitive
+  - cereal
   - classy-prelude
   - conduit
   - containers
@@ -50,6 +56,8 @@ dependencies:
   - Glob
   - hashable
   - hashtables
+  - heap
+  - hexstring
   - http-client
   - http-client-tls
   - http-types
@@ -64,6 +72,7 @@ dependencies:
   - mtl
   - multimap
   - murmur3
+  - natpmp-static
   - network
   - optparse-applicative
   - para
@@ -75,7 +84,6 @@ dependencies:
   - racquire
   - random
   - regex-tdfa
-  - regex-tdfa-text
   - resourcet
   - rio
   - semigroups
@@ -99,7 +107,6 @@ dependencies:
   - unliftio-core
   - unordered-containers
   - urbit-atom
-  - urbit-azimuth
   - urbit-eventlog-lmdb
   - urbit-hob
   - urbit-noun
@@ -112,12 +119,12 @@ dependencies:
   - wai-websockets
   - warp
   - warp-tls
-  - web3
   - websockets
 
 default-extensions:
   - ApplicativeDo
   - BangPatterns
+  - BinaryLiterals
   - BlockArguments
   - ConstraintKinds
   - DataKinds
@@ -144,6 +151,7 @@ default-extensions:
   - OverloadedStrings
   - PackageImports
   - PartialTypeSignatures
+  - PatternGuards
   - PatternSynonyms
   - QuasiQuotes
   - Rank2Types

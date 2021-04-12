@@ -1,0 +1,16 @@
+input#term {
+  background-color: inherit;
+  color: inherit;
+}
+
+.blink {
+  animation: 4s ease-in-out infinite opacity_blink;
+}
+
+@keyframes opacity_blink {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  80%  { opacity: 1; }
+  90%  { opacity: 0; }
+  100% { opacity: 0; }
+}

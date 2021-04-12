@@ -11,12 +11,7 @@ import Control.Monad.State.Lazy
 import Data.List.NonEmpty (NonEmpty(..))
 import Data.Void          (Void)
 import Prelude            (head)
-import Text.Format.Para   (formatParas)
 
-import qualified Data.MultiMap     as MM
-import qualified Data.Text         as T
-import qualified Data.Text.Lazy    as LT
-import qualified Data.Text.Lazy.IO as LT
 import qualified Prelude
 
 
@@ -79,61 +74,61 @@ data Mode = Wide | Tall
 
 type Parser = StateT Mode (Parsec Void Text)
 
-withLocalState ∷ Monad m => s → StateT s m a → StateT s m a
+withLocalState :: Monad m => s -> StateT s m a -> StateT s m a
 withLocalState val x = do { old <- get; put val; x <* put old }
 
-inWideMode ∷ Parser a → Parser a
+inWideMode :: Parser a -> Parser a
 inWideMode = withLocalState Wide
 
-ace, pal, par ∷ Parser ()
+ace, pal, par :: Parser ()
 ace = void (char ' ')
 pal = void (char '(')
 par = void (char ')')
 
 -- Simple Lexers ---------------------------------------------------------------
 
-gap ∷ Parser ()
+gap :: Parser ()
 gap = choice [ char ' ' >> void (some spaceChar)
              , newline  >> void (many spaceChar)
              ]
 
-whitespace ∷ Parser ()
+whitespace :: Parser ()
 whitespace = ace <|> void gap
 
 
 -- Literals --------------------------------------------------------------------
 
-alpha ∷ Parser Char
+alpha :: Parser Char
 alpha = oneOf (['a'..'z'] ++ ['A'..'Z'])
 
-sym ∷ Parser Sym
+sym :: Parser Sym
 sym = bucSym <|> pack <$> some alpha
   where bucSym = char '$' *> pure ""
 
-atom ∷ Parser Nat
+atom :: Parser Nat
 atom = do
-  init ← some digitChar
-  rest ← many (char '.' *> some digitChar)
+  init <- some digitChar
+  rest <- many (char '.' *> some digitChar)
   guard True -- TODO Validate '.'s
   pure (Prelude.read $ concat $ init:rest)
 
-nat ∷ Parser Nat
+nat :: Parser Nat
 nat = Prelude.read <$> some digitChar
 
-tape ∷ Parser Text
+tape :: Parser Text
 tape = do
   between (char '"') (char '"') $
     pack <$> many (label "tape char" (anySingleBut '"'))
 
-cord ∷ Parser Text
+cord :: Parser Text
 cord = do
   between (char '\'') (char '\'') $
     pack <$> many (label "cord char" (anySingleBut '\''))
 
-tag ∷ Parser Text
+tag :: Parser Text
 tag = try (char '%' >> sym)
 
-literal ∷ Parser CST
+literal :: Parser CST
 literal = choice
   [ Yes  <$  string "%.y"
   , No   <$  string "%.n"
@@ -156,48 +151,48 @@ literal = choice
       - accept the `tall` form or:
       - swich to `Wide` mode and then accept the wide form.
 -}
-parseRune ∷ Parser a → Parser a → Parser a
+parseRune :: Parser a -> Parser a -> Parser a
 parseRune tall wide = get >>= \case
-  Wide → wide
-  Tall → tall <|> inWideMode wide
+  Wide -> wide
+  Tall -> tall <|> inWideMode wide
 
-rune0 ∷ a → Parser a
+rune0 :: a -> Parser a
 rune0 = pure
 
-rune1 ∷ (a→b) → Parser a → Parser b
+rune1 :: (a->b) -> Parser a -> Parser b
 rune1 node x = parseRune tall wide
-  where tall = do gap; p←x;      pure (node p)
-        wide = do pal; p←x; par; pure (node p)
+  where tall = do gap; p<-x;      pure (node p)
+        wide = do pal; p<-x; par; pure (node p)
 
-rune2 ∷ (a→b→c) → Parser a → Parser b → Parser c
+rune2 :: (a->b->c) -> Parser a -> Parser b -> Parser c
 rune2 node x y = parseRune tall wide
-  where tall = do gap; p←x; gap; q←y;      pure (node p q)
-        wide = do pal; p←x; ace; q←y; par; pure (node p q)
+  where tall = do gap; p<-x; gap; q<-y;      pure (node p q)
+        wide = do pal; p<-x; ace; q<-y; par; pure (node p q)
 
-rune3 ∷ (a→b→c→d) → Parser a → Parser b → Parser c → Parser d
+rune3 :: (a->b->c->d) -> Parser a -> Parser b -> Parser c -> Parser d
 rune3 node x y z = parseRune tall wide
-  where tall = do gap; p←x; gap; q←y; gap; r←z;      pure (node p q r)
-        wide = do pal; p←x; ace; q←y; ace; r←z; par; pure (node p q r)
+  where tall = do gap; p<-x; gap; q<-y; gap; r<-z;      pure (node p q r)
+        wide = do pal; p<-x; ace; q<-y; ace; r<-z; par; pure (node p q r)
 
-rune4 ∷ (a→b→c→d→e) → Parser a → Parser b → Parser c → Parser d → Parser e
+rune4 :: (a->b->c->d->e) -> Parser a -> Parser b -> Parser c -> Parser d -> Parser e
 rune4 node x y z g = parseRune tall wide
-  where tall = do gap; p←x; gap; q←y; gap; r←z; gap; s←g; pure (node p q r s)
-        wide = do pal; p←x; ace; q←y; ace; r←z; ace; s←g; pure (node p q r s)
+  where tall = do gap; p<-x; gap; q<-y; gap; r<-z; gap; s<-g; pure (node p q r s)
+        wide = do pal; p<-x; ace; q<-y; ace; r<-z; ace; s<-g; pure (node p q r s)
 
-runeN ∷ ([a]→b) → Parser a → Parser b
+runeN :: ([a]->b) -> Parser a -> Parser b
 runeN node elem = node <$> parseRune tall wide
   where tall = gap >> elems
                  where elems   = term <|> elemAnd
-                       elemAnd = do x ← elem; gap; xs ← elems; pure (x:xs)
+                       elemAnd = do x <- elem; gap; xs <- elems; pure (x:xs)
                        term    = string "==" *> pure []
         wide = pal *> option [] elems <* par
                  where elems = (:) <$> elem <*> many (ace >> elem)
 
-runeNE ∷ (NonEmpty a → b) → Parser a → Parser b
+runeNE :: (NonEmpty a -> b) -> Parser a -> Parser b
 runeNE node elem = node <$> parseRune tall wide
   where tall = do
           let elems   = term <|> elemAnd
-              elemAnd = do x ← elem; gap; xs ← elems; pure (x:xs)
+              elemAnd = do x <- elem; gap; xs <- elems; pure (x:xs)
               term    = string "==" *> pure []
           fst <- gap *> elem
           rst <- gap *> elems
@@ -206,36 +201,36 @@ runeNE node elem = node <$> parseRune tall wide
 
 -- Irregular Syntax ------------------------------------------------------------
 
-inc ∷ Parser CST -- +(3)
+inc :: Parser CST -- +(3)
 inc = do
   string "+("
-  h ← cst
+  h <- cst
   char ')'
   pure h
 
-equals ∷ Parser (CST, CST) -- =(3 4)
+equals :: Parser (CST, CST) -- =(3 4)
 equals = do
   string "=("
-  x ← cst
+  x <- cst
   ace
-  y ← cst
+  y <- cst
   char ')'
   pure (x, y)
 
-tuple ∷ ∀a. Parser a → Parser [a]
+tuple :: forall a. Parser a -> Parser [a]
 tuple p = char '[' >> elems
   where
-    xs ∷ Parser [a]
-    xs = do { x ← p; (x:) <$> tail }
+    xs :: Parser [a]
+    xs = do { x <- p; (x:) <$> tail }
 
-    tail ∷ Parser [a]
+    tail :: Parser [a]
     tail = (pure [] <* char ']')
        <|> (ace >> elems)
 
-    elems ∷ Parser [a]
+    elems :: Parser [a]
     elems = (pure [] <* char ']') <|> xs
 
-appIrr ∷ Parser CST
+appIrr :: Parser CST
 appIrr = do
   char '('
   x <- cst
@@ -244,7 +239,7 @@ appIrr = do
   char ')'
   pure (AppIrr x y)
 
-irregular ∷ Parser CST
+irregular :: Parser CST
 irregular =
   inWideMode $
     choice [ Tupl            <$> tuple cst
@@ -255,14 +250,14 @@ irregular =
 
 -- Runes -----------------------------------------------------------------------
 
-pat ∷ Parser Pat
+pat :: Parser Pat
 pat = choice [ PatTag   <$> tag
              , char '*'  $> PatTar
              ]
 
-cases ∷ Parser [(Pat, CST)]
+cases :: Parser [(Pat, CST)]
 cases = do
-    mode ← get
+    mode <- get
     guard (mode == Tall)
     end <|> lop
   where
@@ -270,9 +265,9 @@ cases = do
     end = string "==" $> []
     lop = do { p <- pat; gap; b <- cst; gap; ((p,b):) <$> goo }
 
-wutHep ∷ Parser CST
+wutHep :: Parser CST
 wutHep = do
-    mode ← get
+    mode <- get
     guard (mode == Tall)
     gap
     ex <- cst
@@ -280,15 +275,15 @@ wutHep = do
     cs <- cases
     pure (WutHep ex cs)
 
-barCen ∷ Parser CST
+barCen :: Parser CST
 barCen = do
-    mode ← get
+    mode <- get
     guard (mode == Tall)
     gap
     cs <- cases
     pure (BarCen cs)
 
-rune ∷ Parser CST
+rune :: Parser CST
 rune = runeSwitch [ ("|=", rune2 BarTis sym cst)
                   , ("|-", rune4 BarHep sym sym cst cst)
                   , (":-", rune2 ColHep cst cst)
@@ -313,33 +308,34 @@ rune = runeSwitch [ ("|=", rune2 BarTis sym cst)
                   , ("~/", rune2 SigFas cst cst)
                   ]
 
-runeSwitch ∷ [(Text, Parser a)] → Parser a
-runeSwitch = choice . fmap (\(s, p) → string s *> p)
+runeSwitch :: [(Text, Parser a)] -> Parser a
+runeSwitch = choice . fmap (\(s, p) -> string s *> p)
 
 
 -- CST Parser ------------------------------------------------------------------
 
-cst ∷ Parser CST
+cst :: Parser CST
 cst = irregular <|> rune <|> literal
 
 
 -- Entry Point -----------------------------------------------------------------
 
+hoonFile :: StateT Mode (Parsec Void Text) CST
 hoonFile = do
   option () whitespace
-  h ← cst
+  h <- cst
   option () whitespace
   eof
   pure h
 
-parse ∷ Text → Either Text CST
+parse :: Text -> Either Text CST
 parse txt =
   runParser (evalStateT hoonFile Tall) "stdin" txt & \case
-    Left  e → Left (pack $ errorBundlePretty e)
-    Right x → pure x
+    Left  e -> Left (pack $ errorBundlePretty e)
+    Right x -> pure x
 
-parseHoonTest ∷ Text → IO ()
+parseHoonTest :: Text -> IO ()
 parseHoonTest = parseTest (evalStateT hoonFile Tall)
 
-main ∷ IO ()
+main :: IO ()
 main = (head <$> getArgs) >>= parseHoonTest

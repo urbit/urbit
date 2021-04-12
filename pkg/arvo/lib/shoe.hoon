@@ -291,7 +291,7 @@
     ++  tab
       |=  pos=@ud
       ^-  (quip card _cli-state)
-      =+  (get-id:auto pos (tufa buf.cli-state))
+      =+  (get-id-cord:auto pos (tufa buf.cli-state))
       =/  needle=term
         (fall id %$)
       ::  autocomplete empty command iff user at start of command
@@ -302,7 +302,7 @@
         (longest-match:auto options)
       =/  to-send=tape
         %-  trip
-        (rsh 3 (met 3 needle) advance)
+        (rsh [3 (met 3 needle)] advance)
       =/  send-pos=@ud
         %+  add  pos
         (met 3 (fall forward ''))

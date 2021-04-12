@@ -1,29 +1,30 @@
 import React, { Component } from 'react';
 import ChatEditor from './chat-editor';
-import { S3Upload, SubmitDragger } from '~/views/components/s3-upload' ;
+import { IuseStorage } from '~/logic/lib/useStorage';
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
+import { createPost } from '~/logic/api/graph';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
-import { Contacts, S3Configuration } from '~/types';
-import { Row } from '@tlon/indigo-react';
+import { StorageState } from '~/types';
+import { Contacts, Content } from '@urbit/api';
+import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
+import withStorage from '~/views/components/withStorage';
+import { withLocalState } from '~/logic/state/local';
 
-interface ChatInputProps {
+type ChatInputProps = IuseStorage & {
   api: GlobalApi;
   numMsgs: number;
-  station: any;
-  ourContact: any;
+  station: unknown;
+  ourContact: unknown;
   envelopes: Envelope[];
-  contacts: Contacts;
   onUnmount(msg: string): void;
-  s3: any;
   placeholder: string;
   message: string;
   deleteMessage(): void;
   hideAvatars: boolean;
-  onPaste?(): void;
-}
+};
 
 interface ChatInputState {
   inCodeMode: boolean;
@@ -31,9 +32,7 @@ interface ChatInputState {
   uploadingPaste: boolean;
 }
 
-
-export default class ChatInput extends Component<ChatInputProps, ChatInputState> {
-  public s3Uploader: React.RefObject<S3Upload>;
+class ChatInput extends Component<ChatInputProps, ChatInputState> {
   private chatEditor: React.RefObject<ChatEditor>;
 
   constructor(props) {
@@ -42,15 +41,15 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
     this.state = {
       inCodeMode: false,
       submitFocus: false,
-      uploadingPaste: false,
+      uploadingPaste: false
     };
 
-    this.s3Uploader = React.createRef();
     this.chatEditor = React.createRef();
 
     this.submit = this.submit.bind(this);
     this.toggleCode = this.toggleCode.bind(this);
-
+    this.uploadSuccess = this.uploadSuccess.bind(this);
+    this.uploadError = this.uploadError.bind(this);
   }
 
   toggleCode() {
@@ -59,66 +58,29 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
     });
   }
 
-  getLetterType(letter) {
-    if (letter.startsWith('/me ')) {
-      letter = letter.slice(4);
-      // remove insignificant leading whitespace.
-      // aces might be relevant to style.
-      while (letter[0] === '\n') {
-        letter = letter.slice(1);
-      }
-
-      return {
-        me: letter
-      };
-    } else if (isUrl(letter)) {
-      return {
-        url: letter
-      };
-    } else {
-      return {
-        text: letter
-      };
-    }
-  }
-
-
-
   submit(text) {
     const { props, state } = this;
+    const [, , ship, name] = props.station.split('/');
     if (state.inCodeMode) {
-      this.setState({
-        inCodeMode: false
-      }, () => {
-        props.api.chat.message(
-          props.station,
-          `~${window.ship}`,
-          Date.now(), {
-            code: {
-              expression: text,
-              output: undefined
-            }
-          }
-        );
-      });
+      this.setState(
+        {
+          inCodeMode: false
+        },
+        async () => {
+          const output = await props.api.graph.eval(text);
+          const contents: Content[] = [{ code: { output, expression: text } }];
+          const post = createPost(contents);
+          props.api.graph.addPost(ship, name, post);
+        }
+      );
       return;
     }
 
-    const messages = tokenizeMessage(text);
+    const post = createPost(tokenizeMessage(text));
 
     props.deleteMessage();
 
-    messages.forEach((message) => {
-      if (message.length > 0) {
-        message = this.getLetterType(message.join(' '));
-        props.api.chat.message(
-          props.station,
-          `~${window.ship}`,
-          Date.now(),
-          message
-        );
-      }
-    });
+    props.api.graph.addPost(ship, name, post);
   }
 
   uploadSuccess(url) {
@@ -127,22 +89,13 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
       this.chatEditor.current.editor.setValue(url);
       this.setState({ uploadingPaste: false });
     } else {
-      props.api.chat.message(
-        props.station,
-        `~${window.ship}`,
-        Date.now(),
-        { url }
-      );
+      const [, , ship, name] = props.station.split('/');
+      props.api.graph.addPost(ship, name, createPost([{ url }]));
     }
-
   }
 
   uploadError(error) {
     //  no-op for now
-  }
-
-  readyToUpload(): boolean {
-    return Boolean(this.s3Uploader.current?.inputRef.current);
   }
 
   onPaste(codemirrorInstance, event: ClipboardEvent) {
@@ -155,52 +108,71 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
     this.uploadFiles(event.clipboardData.files);
   }
 
-  uploadFiles(files: FileList) {
-    if (!this.readyToUpload()) {
+  uploadFiles(files: FileList | File[]) {
+    if (!this.props.canUpload) {
       return;
     }
-    if (!this.s3Uploader.current || !this.s3Uploader.current.inputRef.current) return;
-    this.s3Uploader.current.inputRef.current.files = files;
-    const fire = document.createEvent("HTMLEvents");
-    fire.initEvent("change", true, true);
-    this.s3Uploader.current?.inputRef.current?.dispatchEvent(fire);
+    Array.from(files).forEach((file) => {
+      this.props
+        .uploadDefault(file)
+        .then(this.uploadSuccess)
+        .catch(this.uploadError);
+    });
   }
 
   render() {
     const { props, state } = this;
 
-    const color = props.ourContact
-      ? uxToHex(props.ourContact.color) : '000000';
+    const color = props.ourContact ? uxToHex(props.ourContact.color) : '000000';
 
-    const sigilClass = props.ourContact
-      ? '' : 'mix-blend-diff';
+    const sigilClass = props.ourContact ? '' : 'mix-blend-diff';
 
-    const avatar = (
-        props.ourContact &&
-        ((props.ourContact.avatar !== null) && !props.hideAvatars)
-      )
-      ? <img src={props.ourContact.avatar} height={16} width={16} className="dib" />
-      : <Sigil
-        ship={window.ship}
-        size={16}
-        color={`#${color}`}
-        classes={sigilClass}
-        />;
+    const avatar =
+      props.ourContact && props.ourContact?.avatar && !props.hideAvatars ? (
+        <BaseImage
+          src={props.ourContact.avatar}
+          height={24}
+          width={24}
+          style={{ objectFit: 'cover' }}
+          borderRadius={1}
+          display='inline-block'
+        />
+      ) : (
+        <Box
+          width={24}
+          height={24}
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+          backgroundColor={`#${color}`}
+          borderRadius={1}
+        >
+          <Sigil
+            ship={window.ship}
+            size={16}
+            color={`#${color}`}
+            classes={sigilClass}
+            icon
+            padding={2}
+          />
+        </Box>
+      );
 
     return (
       <Row
         alignItems='center'
         position='relative'
-        flexGrow='1'
-        flexShrink='0'
-        borderTop='1'
+        flexGrow={1}
+        flexShrink={0}
+        borderTop={1}
         borderTopColor='washedGray'
         backgroundColor='white'
         className='cf'
+        zIndex={0}
       >
-        <div className="pa2 flex items-center">
+        <Row p='12px 4px 12px 12px' alignItems='center'>
           {avatar}
-        </div>
+        </Row>
         <ChatEditor
           ref={this.chatEditor}
           inCodeMode={state.inCodeMode}
@@ -210,43 +182,34 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
           onPaste={this.onPaste.bind(this)}
           placeholder='Message...'
         />
-        <div className="ml2 mr2 flex-shrink-0"
-             style={{
-                height: '16px',
-                width: '16px',
-                flexBasis: 16,
-              }}>
-          <S3Upload
-            ref={this.s3Uploader}
-            configuration={props.s3.configuration}
-            credentials={props.s3.credentials}
-            uploadSuccess={this.uploadSuccess.bind(this)}
-            uploadError={this.uploadError.bind(this)}
-            accept="*"
-          >
-            <img
-              className="invert-d"
-              src="/~landscape/img/ImageUpload.png"
-              width="16"
-              height="16"
-            />
-          </S3Upload>
-        </div>
-        <div className="mr2 flex-shrink-0" style={{
-            height: '16px',
-            width: '16px',
-            flexBasis: 16,
-          }}>
-          <img style={{
-              filter: state.inCodeMode ? 'invert(100%)' : '',
-              height: '14px',
-              width: '14px',
-            }}
+        <Box mx={2} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
+          {this.props.canUpload ? (
+            this.props.uploading ? (
+              <LoadingSpinner />
+            ) : (
+              <Icon
+                icon='Links'
+                width='16'
+                height='16'
+                onClick={() =>
+                  this.props.promptUpload().then(this.uploadSuccess)
+                }
+              />
+            )
+          ) : null}
+        </Box>
+        <Box mr={2} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
+          <Icon
+            icon='Dojo'
             onClick={this.toggleCode}
-            src="/~landscape/img/CodeEval.png"
-            className="contrast-10-d bg-white bg-none-d ba b--gray1-d br1" />
-        </div>
+            color={state.inCodeMode ? 'blue' : 'black'}
+          />
+        </Box>
       </Row>
     );
   }
 }
+
+export default withLocalState(withStorage(ChatInput, { accept: 'image/*' }), [
+  'hideAvatars'
+]);

@@ -61,6 +61,7 @@
 */
   typedef struct _u3_cttp {
     u3_auto          car_u;             //  driver
+    c3_l             sev_l;             //  instance number
     u3_creq*         ceq_u;             //  request list
     uv_async_t       nop_u;             //  unused handle (async close)
     h2o_timeout_t    tim_u;             //  request timeout
@@ -714,14 +715,18 @@ _cttp_creq_quit(u3_creq* ceq_u)
 static void
 _cttp_http_client_receive(u3_creq* ceq_u, c3_w sas_w, u3_noun mes, u3_noun uct)
 {
+  u3_cttp* ctp_u = ceq_u->ctp_u;
+
   //  XX inject partial responses as separate events
   //
-  u3_noun wir = u3nt(u3i_string("http-client"), u3k(u3A->sen), u3_nul);
+  u3_noun wir = u3nt(u3i_string("http-client"),
+                     u3dc("scot", c3__uv, ctp_u->sev_l),
+                     u3_nul);
   u3_noun cad = u3nt(u3i_string("receive"),
                     ceq_u->num_l,
                     u3nq(u3i_string("start"), u3nc(sas_w, mes), uct, c3y));
 
-  u3_auto_plan(&ceq_u->ctp_u->car_u, u3_ovum_init(0, c3__i, wir, cad));
+  u3_auto_plan(&ctp_u->car_u, u3_ovum_init(0, c3__i, wir, cad));
 }
 
 /* _cttp_creq_fail(): dispatch error response
@@ -1011,9 +1016,13 @@ _cttp_ef_http_client(u3_cttp* ctp_u, u3_noun tag, u3_noun dat)
 static void
 _cttp_io_talk(u3_auto* car_u)
 {
+  u3_cttp* ctp_u = (u3_cttp*)car_u;
+
   //  XX remove u3A->sen
   //
-  u3_noun wir = u3nt(u3i_string("http-client"), u3k(u3A->sen), u3_nul);
+  u3_noun wir = u3nt(u3i_string("http-client"),
+                     u3dc("scot", c3__uv, ctp_u->sev_l),
+                     u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
   u3_auto_plan(car_u, u3_ovum_init(0, c3__i, wir, cad));
@@ -1117,6 +1126,16 @@ u3_cttp_io_init(u3_pier* pir_u)
   //  XX retry up to N?
   //
   // car_u->ev.bail_f = ...;
+
+  {
+    u3_noun now;
+    struct timeval tim_u;
+    gettimeofday(&tim_u, 0);
+
+    now = u3_time_in_tv(&tim_u);
+    ctp_u->sev_l = u3r_mug(now);
+    u3z(now);
+  }
 
   return car_u;
 }

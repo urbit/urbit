@@ -8,6 +8,12 @@
   ^-  form:m
   (poke-our %aqua %aqua-events !>(events))
 ::
+++  send-azimuth-action
+  |=  =azimuth-action
+  =/  m  (strand ,~)
+  ^-  form:m
+  (poke-our %aqua %azimuth-action !>(azimuth-action))
+::
 ++  take-unix-effect
   =/  m  (strand ,[ship unix-effect])
   ^-  form:m
@@ -34,7 +40,7 @@
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting"
-  ;<  ~  bind:m  (start-threads vane-threads)
+  ;<  tids=(map term tid:spider)  bind:m  (start-threads vane-threads)
   ;<  ~  bind:m  (watch-our /effect %aqua /effect)
   ::  Get our very own event with no mistakes in it... yet.
   ::
@@ -64,22 +70,49 @@
 ::
 ++  start-threads
   |=  threads=(list term)
-  =/  m  (strand ,~)
+  =/  m  (strand ,(map term tid:spider))
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl
+  =|  tids=(map term tid:spider)
   |-  ^-  form:m
   =*  loop  $
   ?~  threads
-    (pure:m ~)
+    (pure:m tids)
+  =/  tid
+    %+  scot  %ta
+    (cat 3 (cat 3 'strand_' i.threads) (scot %uv (sham i.threads eny.bowl)))
   =/  poke-vase  !>([`tid.bowl ~ i.threads *vase])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
-  loop(threads t.threads)
+  loop(threads t.threads, tids (~(put by tids) i.threads tid))
 ::
 ++  stop-threads
   |=  threads=(list term)
   =/  m  (strand ,~)
   ^-  form:m
   (pure:m ~)
+::
+::  XX  +spawn-aqua and +breach-aqua mean do these actions using aqua's internal
+::      azimuth management system, eventually these should just replace +spawn
+::      +breach
+::
+++  init-azimuth
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-azimuth-action %init-azimuth ~)
+::
+++  spawn-aqua
+  |=  =ship
+  ~&  >  "spawning {<ship>}"
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-azimuth-action %spawn ship)
+::
+++  breach-aqua
+  |=  =ship
+  ~&  >  "breaching {<ship>}"
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-azimuth-action %breach ship)
 ::
 ++  spawn
   |=  [=tid:spider =ship]
@@ -127,6 +160,39 @@
     (pure:m ~)
   loop
 ::
+++  breach-and-hear-aqua
+  |=  [who=ship her=ship]
+  =/  m  (strand ,~)
+  ;<  =bowl:spider  bind:m  get-bowl
+  =/  aqua-pax
+    :-  %i
+    /(scot %p her)/j/(scot %p her)/rift/(scot %da now.bowl)/(scot %p who)/noun
+  =/  old-rut  ;;((unit @) (scry-aqua:util noun our.bowl now.bowl aqua-pax))
+  =/  new-rut
+    ?~  old-rut
+      1
+    +(+.old-rut)
+  ;<  ~  bind:m  (send-azimuth-action %breach who)
+  |-  ^-  form:m
+  =*  loop  $
+  ;<  ~  bind:m  (sleep ~s1)
+  ;<  =bowl:spider  bind:m  get-bowl
+  =/  aqua-pax
+    :-  %i
+    /(scot %p her)/j/(scot %p her)/rift/(scot %da now.bowl)/(scot %p who)/noun
+  =/  rut  (scry-aqua:util noun our.bowl now.bowl aqua-pax)
+  ?:  =([~ new-rut] rut)
+    (pure:m ~)
+  loop
+::
+++  init-ship
+  |=  =ship
+  =/  m  (strand ,~)
+  ^-  form:m
+  ~&  >  "starting {<ship>}"
+  ;<  ~  bind:m  (send-events (init:util ship `*dawn-event:jael))
+  (check-ship-booted ship)
+::
 ++  real-ship
   |=  [=tid:spider =ship]
   ~&  >  "booting real {<ship>}"
@@ -136,7 +202,7 @@
   (check-ship-booted ship)
 ::
 ++  raw-ship
-  |=  [=ship keys=(unit dawn-event:able:jael)]
+  |=  [=ship keys=(unit dawn-event:jael)]
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting {<ship>}"
@@ -275,4 +341,20 @@
   ?:  =(warped (need (scry-aqua:util (unit @) our now aqua-pax)))
     (pure:m ~)
   loop
+::
+::  Turns poke into a dojo command
+::
+++  poke-app
+  |=  [=ship app=term =mark data=*]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  command=tape  ":{(trip app)} &{(trip mark)} {<data>}"
+  (send-events (dojo:util ship command))
+::
+++  dojo-thread
+  |=  [=ship ted=term =mark data=*]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  command=tape  "-{(trip ted)} &{(trip mark)} {<data>}"
+  (send-events (dojo:util ship command))
 --

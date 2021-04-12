@@ -1,9 +1,12 @@
-{ pkgs }:
+{ lib, stdenv, openssl, enableParallelBuilding ? true }:
 
-pkgs.stdenv.mkDerivation rec {
-  name    = "libaes_siv";
-  builder = ./builder.sh;
-  src     = ../../../pkg/libaes_siv;
+stdenv.mkDerivation {
+  name = "libaes_siv";
+  src = lib.cleanSource ../../../pkg/libaes_siv;
 
-  nativeBuildInputs = [ pkgs.openssl ];
+  buildInputs = [ openssl ];
+
+  installFlags = [ "PREFIX=$(out)" ];
+
+  inherit enableParallelBuilding;
 }

@@ -9,29 +9,49 @@
 ::    we concat the ship onto the head of the path,
 ::    and trust it to take care of the rest.
 ::
-/-  view=chat-view, hook=chat-hook,  *group,
-    *permission-store, *group-store, *invite-store,
-    sole
-/+  shoe, default-agent, verb, dbug, store=chat-store,
-    group-store, grpl=group, resource
+/-  *resource, post, store=chat-store
+/+  shoe, default-agent, verb, dbug, graph=graph-store, libgraph=graph
 ::
 |%
 +$  card  card:shoe
 ::
 +$  versioned-state
-  $%  state-2
+  $%  state-3
+      state-2
       state-1
       state-0
   ==
 ::
++$  state-3
+  $:  %3
+      ::TODO  support multiple sessions
+      sessions=(map sole-id session)                ::  sole sessions
+      bound=(map resource glyph)                    ::  bound resource glyphs
+      binds=(jug glyph resource)                    ::  resource glyph lookup
+      settings=(set term)                           ::  frontend flags
+      width=@ud                                     ::  display width
+      timez=(pair ? @ud)                            ::  timezone adjustment
+  ==
+::
++$  sole-id  @ta
++$  session
+  $:  viewing=(set resource)                        ::  connected graphs
+      history=(list uid:post)                       ::  scrollback pointers
+      count=@ud                                     ::  (lent history)
+      audience=target                               ::  active target
+  ==
+::
+::TODO  remove for breach
++$  target-2  [in-group=? =ship =path]
++$  mail  [source=target-2 envelope:store]
 +$  state-2
   $:  %2
       grams=(list mail)                             ::  all messages
-      known=(set [target serial])                   ::  known message lookup
+      known=(set [target-2 serial:store])           ::  known message lookup
       count=@ud                                     ::  (lent grams)
-      bound=(map target glyph)                      ::  bound circle glyphs
-      binds=(jug glyph target)                      ::  circle glyph lookup
-      audience=(set target)                         ::  active targets
+      bound=(map target-2 glyph)                    ::  bound circle glyphs
+      binds=(jug glyph target-2)                    ::  circle glyph lookup
+      audience=(set target-2)                       ::  active targets
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
       timez=(pair ? @ud)                            ::  timezone adjustment
@@ -40,21 +60,21 @@
 +$  state-1
   $:  %1
       grams=(list mail)                             ::  all messages
-      known=(set [target serial:store])             ::  known message lookup
+      known=(set [target-2 serial:store])           ::  known message lookup
       count=@ud                                     ::  (lent grams)
-      bound=(map target glyph)                      ::  bound circle glyphs
-      binds=(jug glyph target)                      ::  circle glyph lookup
-      audience=(set target)                         ::  active targets
+      bound=(map target-2 glyph)                    ::  bound circle glyphs
+      binds=(jug glyph target-2)                    ::  circle glyph lookup
+      audience=(set target-2)                       ::  active targets
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
       timez=(pair ? @ud)                            ::  timezone adjustment
-      cli=state=sole-share:sole                     ::  console state
+      cli=state=sole-share:shoe                     ::  console state
       eny=@uvJ                                      ::  entropy
   ==
 ::
 +$  state-0
   $:  grams=(list [[=ship =path] envelope:store])   ::  all messages
-      known=(set [[=ship =path] serial])            ::  known message lookup
+      known=(set [[=ship =path] serial:store])      ::  known message lookup
       count=@ud                                     ::  (lent grams)
       bound=(map [=ship =path] glyph)               ::  bound circle glyphs
       binds=(jug glyph [=ship =path])               ::  circle glyph lookup
@@ -62,50 +82,40 @@
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
       timez=(pair ? @ud)                            ::  timezone adjustment
-      cli=state=sole-share:sole                     ::  console state
+      cli=state=sole-share:shoe                     ::  console state
       eny=@uvJ                                      ::  entropy
   ==
 ::
-+$  mail  [source=target envelope:store]
-+$  target  [in-group=? =ship =path]
++$  target  resource
 ::
 +$  glyph  char
 ++  glyphs  "!@#$%^&()-=_+[]\{}'\\:\",.<>?"
 ::
-+$  nu-security  ?(%channel %village)
-::
 +$  command
-  $%  [%target (set target)]                        ::  set messaging target
-      [%say letter:store]                           ::  send message
+  $%  [%target target]                              ::  set messaging target
+      [%say content:post]                           ::  send message
       [%eval cord hoon]                             ::  send #-message
-    ::
-      ::
-      ::  create chat
-      [%create nu-security path (unit resource) (unit glyph) (unit ?)]
-      [%delete path]                                ::  delete chat
-      [%invite [? path] (set ship)]                   ::  allow
-      [%banish [? path] (set ship)]                   ::  disallow
-    ::
-      [%join target (unit glyph) (unit ?)]          ::  join target
-      [%leave target]                               ::  nuke target
-    ::
+    ::                                              ::
+      [%view $?(~ target)]                          ::  notice chat
+      [%flee target]                                ::  ignore chat
+    ::                                              ::
       [%bind glyph target]                          ::  bind glyph
       [%unbind glyph (unit target)]                 ::  unbind glyph
       [%what (unit $@(char target))]                ::  glyph lookup
-    ::
+    ::                                              ::
       [%settings ~]                                 ::  show active settings
       [%set term]                                   ::  set settings flag
       [%unset term]                                 ::  unset settings flag
       [%width @ud]                                  ::  adjust display width
       [%timezone ? @ud]                             ::  adjust time printing
-    ::
+    ::                                              ::
       [%select $@(rel=@ud [zeros=@u abs=@ud])]      ::  rel/abs msg selection
       [%chats ~]                                    ::  list available chats
       [%help ~]                                     ::  print usage info
   ==                                                ::
 ::
 --
-=|  state-2
+=|  state-3
 =*  state  -
 ::
 %-  agent:dbug
@@ -154,14 +164,14 @@
           %kick
         :_  state
         ?+  wire  ~
-          [%chat-store ~]  ~[connect:tc]
-          [%invites ~]     ~[connect-invites:tc]
+          [%graph-store ~]  ~[connect:tc]
         ==
       ::
           %fact
-        ?+  p.cage.sign  ~|([%chat-cli-bad-sub-mark wire p.cage.sign] !!)
-          %chat-update    (diff-chat-update:tc wire !<(update:store q.cage.sign))
-          %invite-update  (handle-invite-update:tc !<(invite-update q.cage.sign))
+        ?+  p.cage.sign  ~|([dap.bowl %bad-sub-mark wire p.cage.sign] !!)
+            %graph-update
+          %-  on-graph-update:tc
+          !<(update:graph q.cage.sign)
         ==
       ==
     [cards this]
@@ -173,50 +183,38 @@
   ++  on-fail   on-fail:def
   ::
   ++  command-parser
-    |=  sole-id=@ta
-    parser:sh:tc
+    |=  =sole-id
+    parser:(make:sh:tc sole-id)
   ::
   ++  tab-list
-    |=  sole-id=@ta
+    |=  =sole-id
     tab-list:sh:tc
   ::
   ++  on-command
-    |=  [sole-id=@ta =command]
+    |=  [=sole-id =command]
     =^  cards  state
-      (work:sh:tc command)
+      (work:(make:sh:tc sole-id) command)
     [cards this]
   ::
   ++  on-connect
-    |=  sole-id=@ta
+    |=  =sole-id
     ^-  (quip card _this)
-    [[prompt:sh-out:tc ~] this]
+    [[prompt:(make:sh-out:tc sole-id)]~ this]
   ::
   ++  can-connect     can-connect:des
   ++  on-disconnect   on-disconnect:des
   --
 ::
 |_  =bowl:gall
-++  grp  ~(. grpl bowl)
++*  libgraph  ~(. ^libgraph bowl)
 ::  +prep: setup & state adapter
 ::
 ++  prep
   |=  old=(unit versioned-state)
   ^-  (quip card _state)
   ?~  old
-    =^  cards  state
-      %_  catch-up
-        audience  [[| our-self /] ~ ~]
-        settings  (sy %showtime %notify ~)
-        width     80
-      ==
-    [[connect connect-invites cards] state]
-  :-  %+  weld
-        ?:  (~(has by wex.bowl) [/invites our-self %invite-store])  ~
-        ~[connect-invites]
-      ?:  (~(has by wex.bowl) [/chat-store our-self %chat-store])  ~
-      ~[connect]
+    [~[connect] state(width 80)]
   ::
-  ^-  state-2
   =?  u.old  ?=(?(~ ^) -.u.old)
     ^-  state-1
     :-  %1
@@ -224,31 +222,31 @@
       grams  ~  ::NOTE  this only impacts historic message lookup in chat-cli
     ::
         known
-      ^-  (set [target serial])
+      ^-  (set [target-2 serial:store])
       %-  ~(run in known.u.old)
-      |=  [t=[ship path] s=serial]
-      [`target`[| t] s]
+      |=  [t=[ship path] s=serial:store]
+      [`target-2`[| t] s]
     ::
         bound
-      ^-  (map target glyph)
-      %-  ~(gas by *(map target glyph))
+      ^-  (map target-2 glyph)
+      %-  ~(gas by *(map target-2 glyph))
       %+  turn  ~(tap by bound.u.old)
       |=  [t=[ship path] g=glyph]
-      [`target`[| t] g]
+      [`target-2`[| t] g]
     ::
         binds
-      ^-  (jug glyph target)
+      ^-  (jug glyph target-2)
       %-  ~(run by binds.u.old)
       |=  s=(set [ship path])
       %-  ~(run in s)
       |=  t=[ship path]
-      `target`[| t]
+      `target-2`[| t]
     ::
         audience
-      ^-  (set target)
+      ^-  (set target-2)
       %-  ~(run in audience.u.old)
       |=  t=[ship path]
-      `target`[| t]
+      `target-2`[| t]
     ==
   ::
   =?  u.old  ?=(%1 -.u.old)
@@ -260,57 +258,92 @@
       settings  width  timez
     ==
   ::
-  ?>  ?=(%2 -.u.old)
-  u.old
-::  +catch-up: process all chat-store state
-::
-++  catch-up
-  ^-  (quip card _state)
-  =/  =inbox:store
-    (scry-for inbox:store %chat-store /all)
-  |-  ^-  (quip card _state)
-  ?~  inbox  [~ state]
-  =*  path  p.n.inbox
-  =*  mailbox  q.n.inbox
-  =/  =target  (path-to-target path)
-  =^  cards-n  state  (read-envelopes target (flop envelopes.mailbox))
-  =^  cards-l  state  $(inbox l.inbox)
-  =^  cards-r  state  $(inbox r.inbox)
-  [:(weld cards-n cards-l cards-r) state]
-::  +connect: connect to the chat-store
+  =^  cards  u.old
+    ?.  ?=(%2 -.u.old)  [~ u.old]
+    :-  :~  [%pass /chat-store %agent [our-self %chat-store] %leave ~]
+            [%pass /invites %agent [our.bowl %invite-store] %leave ~]
+        ==
+    ^-  state-3
+    :-  %3
+    :*  %+  ~(put in *(map sole-id session))
+          (cat 3 'drum_' (scot %p our.bowl))
+        :*  ~  ~  0
+          ::
+            ?~  audience.u.old  *target
+            [ship ?~(path %$ i.path)]:n.audience.u.old
+        ==
+      ::
+        %-  ~(gas by *(map resource glyph))
+        %+  turn  ~(tap in bound.u.old)
+        |=  [t=target-2 g=glyph]
+        [[ship.t ?~(path.t %$ i.path.t)] g]
+      ::
+        ^-  (jug glyph resource)
+        %-  ~(run by binds.u.old)
+        |=  s=(set target-2)
+        %-  ~(run in s)
+        |=  t=target-2
+        [ship.t ?~(path.t %$ i.path.t)]
+      ::
+        settings.u.old
+        width.u.old
+        timez.u.old
+    ==
+  ::
+  ?>  ?=(%3 -.u.old)
+  :_  u.old
+  %+  welp
+    cards
+  ?:  %-  ~(has by wex.bowl)
+      [/graph-store our-self %graph-store]
+    ~
+  ~[connect]
+::  +connect: connect to the graph-store
 ::
 ++  connect
   ^-  card
-  [%pass /chat-store %agent [our-self %chat-store] %watch /updates]
-::
-++  connect-invites
-  ^-  card
-  [%pass /invites %agent [our.bowl %invite-store] %watch /invitatory/chat]
+  [%pass /graph-store %agent [our-self %graph-store] %watch /updates]
 ::
 ::TODO  better moon support. (name:title our.bowl)
 ++  our-self  our.bowl
-::  +target-to-path: prepend ship to the path
 ::
-++  target-to-path
-  |=  target
-  [(scot %p ship) path]
-::  +path-to-target: deduces a target from a mailbox path
+++  get-session
+  |=  =sole-id
+  ^-  session
+  (~(gut by sessions) sole-id %*(. *session audience [our-self %$]))
+::  +tor: term ordering for targets
 ::
-++  path-to-target
-  |=  =path
-  ^-  target
-  =^  in-group  path
-    ?.  ?=([%'~' *] path)
-      [& path]
-    [| t.path]
-  :-  in-group
-  ?.  ?=([@ @ *] path)
-    ::TODO  can we safely assert the above?
-    ~&  [%path-without-host path]
-    [our-self path]
-  =+  who=(slaw %p i.path)
-  ?~  who  [our-self path]
-  [u.who t.path]
+++  tor
+  |=  [[* a=term] [* b=term]]
+  (aor a b)
+::  +ior: index ordering for nodes
+::
+++  ior
+  |=  [[a=index:post *] [b=index:post *]]
+  (aor a b)
+::  +safe-get-graph: virtualized +get-graph
+::
+++  safe-get-graph
+  |=  =resource
+  ^-  (unit update:graph)
+  =/  res=(each update:graph tang)
+    ::TODO  doesn't actually contain the crash?
+    %-  mule  |.
+    (get-graph:libgraph resource)
+  ?-  -.res
+    %&  `p.res
+    %|  ~
+  ==
+::  +is-chat-graph: check whether graph contains chat-style data
+::
+++  is-chat-graph
+  |=  =resource
+  ^-  ?
+  =/  update=(unit update:graph)
+    (safe-get-graph resource)
+  ?~  update  |
+  ?>  ?=(%add-graph -.q.u.update)
+  =(`%graph-validator-chat mark.q.u.update)
 ::  +poke-noun: debug helpers
 ::
 ++  poke-noun
@@ -318,45 +351,73 @@
   ^-  (quip card _state)
   ?:  ?=(%connect a)
     [[connect ~] state]
-  ?:  ?=(%catch-up a)
-    catch-up
   [~ state]
-::  +handle-invite-update: get new invites
+::  +handle-graph-update: get new mailboxes & messages
 ::
-++  handle-invite-update
-  |=  upd=invite-update
+++  on-graph-update
+  |=  upd=update:graph
   ^-  (quip card _state)
-  ?+  -.upd  [~ state]
-    %invite  [[(show-invite:sh-out invite.upd) ~] state]
-  ==
-::  +diff-chat-update: get new mailboxes & messages
+  ?.  ?=(?(%remove-graph %add-nodes) -.q.upd)
+    [~ state]
+  =/  sez=(list [=sole-id =session])
+    ~(tap by sessions)
+  =|  cards=(list card)
+  |-
+  ?~  sez  [cards state]
+  =^  caz  session.i.sez
+    ?-  -.q.upd
+      %remove-graph  (~(notice-remove se i.sez) +.q.upd)
+    ::
+        %add-nodes
+      ?.  (~(has in viewing.session.i.sez) resource.q.upd)
+        [~ session.i.sez]
+      %+  ~(read-posts se i.sez)
+        resource.q.upd
+      (sort ~(tap by nodes.q.upd) ior)
+    ==
+  =.  sessions  (~(put by sessions) i.sez)
+  $(sez t.sez, cards (weld cards caz))
+::  +se: session event handling
 ::
-++  diff-chat-update
-  |=  [=wire upd=update:store]
-  ^-  (quip card _state)
-  ?+  -.upd  [~ state]
-    %create    (notice-create (path-to-target path.upd))
-    %delete    [[(show-delete:sh-out (path-to-target path.upd)) ~] state]
-    %message   (read-envelope (path-to-target path.upd) envelope.upd)
-    %messages  (read-envelopes (path-to-target path.upd) (flop envelopes.upd))
-  ==
+++  se
+  |_  [=sole-id =session]
+  +*  sh-out  ~(. ^sh-out sole-id session)
+  ::
+  ++  read-posts
+    |=  [=target nodes=(list [=index:post =node:graph])]
+    ^-  (quip card _session)
+    =^  cards  nodes
+      ^-  (quip card _nodes)
+      =+  count=(lent nodes)
+      ?.  (gth count 10)  [~ nodes]
+      :_  (swag [(sub count 10) 10] nodes)
+      [(print:sh-out "skipping {(scow %ud (sub count 10))} messages...")]~
+    |-
+    ?~  nodes  [cards session]
+    =^  caz  session
+      (read-post target [index post.node]:i.nodes)
+    $(cards (weld cards caz), nodes t.nodes)
+  ::
+  ::  +read-post: add envelope to state and show it to user
+  ::
+  ++  read-post
+    |=  [=target =index:post =post:post]
+    ^-  (quip card _session)
+    :-  (show-post:sh-out target post)
+    %_  session
+      history  [[target index] history.session]
+      count    +(count.session)
+    ==
+  ::
+  ++  notice-remove
+    |=  =target
+    ^-  (quip card _session)
+    ?.  (~(has in viewing.session) target)
+      [~ session]
+    :-  [(show-delete:sh-out target) ~]
+    session(viewing (~(del in viewing.session) target))
+  --
 ::
-++  read-envelopes
-  |=  [=target envs=(list envelope:store)]
-  ^-  (quip card _state)
-  ?~  envs  [~ state]
-  =^  cards-i  state  (read-envelope target i.envs)
-  =^  cards-t  state  $(envs t.envs)
-  [(weld cards-i cards-t) state]
-::
-++  notice-create
-  |=  =target
-  ^-  (quip card _state)
-  =^  cards  state
-    ?:  (~(has by bound) target)
-      [~ state]
-    (bind-default-glyph target)
-  [[(show-create:sh-out target) cards] state]
 ::  +bind-default-glyph: bind to default, or random available
 ::
 ++  bind-default-glyph
@@ -410,40 +471,39 @@
 ::  +decode-glyph: find the target that matches a glyph, if any
 ::
 ++  decode-glyph
-  |=  =glyph
+  |=  [=session =glyph]
   ^-  (unit target)
   =+  lax=(~(get ju binds) glyph)
-  ::  no circle
+  ::  no target
   ?:  =(~ lax)  ~
   %-  some
-  ::  single circle
+  ::  single target
+  ?:  ?=([* ~ ~] lax)  n.lax
+  ::  in case of multiple matches, pick one we're viewing
+  =.  lax  (~(uni in lax) viewing.session)
   ?:  ?=([* ~ ~] lax)  n.lax
   ::  in case of multiple audiences, pick the most recently active one
   |-  ^-  target
-  ?~  grams  -:~(tap in lax)
-  =*  source  source.i.grams
-  ?:  (~(has in lax) source)
-    source
-  $(grams t.grams)
-::  +read-envelope: add envelope to state and show it to user
-::
-++  read-envelope
-  |=  [=target =envelope:store]
-  ^-  (quip card _state)
-  ?:  (~(has in known) [target uid.envelope])
-    ::NOTE  we no-op only because edits aren't possible
-    [~ state]
-  :-  (show-envelope:sh-out target envelope)
-  %_  state
-    known  (~(put in known) [target uid.envelope])
-    grams  [[target envelope] grams]
-    count  +(count)
-  ==
+  ?~  history.session  -:~(tap in lax)
+  =*  resource  resource.i.history.session
+  ?:  (~(has in lax) resource)
+    resource
+  $(history.session t.history.session)
 ::
 ::  +sh: shoe handling
 ::
 ++  sh
-  |%
+  |_  [=sole-id session]
+  +*  session  +<+
+      sh-out   ~(. ^sh-out sole-id session)
+      put-ses  state(sessions (~(put by sessions) sole-id session))
+  ::
+  ++  make
+    |=  =^sole-id
+    %_  ..make
+      sole-id  sole-id
+      +<+      (get-session sole-id)
+    ==
   ::  +read: command parser
   ::
   ::    parses the command line buffer.
@@ -455,31 +515,11 @@
       %+  knee  *command  |.  ~+
       =-  ;~(pose ;~(pfix mic -) message)
       ;~  pose
-        (stag %target tars)
+        (stag %target targ)
       ::
-        ;~  (glue ace)
-          (tag %create)
-          security
-          ;~  plug
-            path
-            (punt ;~(pfix ace group))
-            (punt ;~(pfix ace glyph))
-            (punt ;~(pfix ace (fuss 'y' 'n')))
-          ==
-        ==
-        ;~((glue ace) (tag %delete) path)
-        ;~((glue ace) (tag %invite) tarx ships)
-        ;~((glue ace) (tag %banish) tarx ships)
-      ::
-        ;~  (glue ace)
-          (tag %join)
-          ;~  plug
-            targ
-            (punt ;~(pfix ace glyph))
-            (punt ;~(pfix ace (fuss 'y' 'n')))
-          ==
-        ==
-        ;~((glue ace) (tag %leave) targ)
+        ;~((glue ace) (tag %view) targ)
+        ;~((glue ace) (tag %flee) targ)
+        ;~(plug (tag %view) (easy ~))
       ::
         ;~((glue ace) (tag %bind) glyph targ)
         ;~((glue ace) (tag %unbind) ;~(plug glyph (punt ;~(pfix ace targ))))
@@ -534,40 +574,20 @@
     ::     ;~(pfix ace ;~(plug i.opt $(opt t.opt)))
     ::   --
     ::
-    ++  group  ;~((glue net) ship sym)
+    ++  group  ;~((glue fas) ship sym)
     ++  tag   |*(a=@tas (cold a (jest a)))  ::TODO  into stdlib
     ++  ship  ;~(pfix sig fed:ag)
-    ++  path  ;~(pfix net ;~(plug urs:ab (easy ~)))  ::NOTE  short only, tmp
-    ::  +mang: un/managed indicator prefix
-    ::
-    ::    deprecated, as sig prefix is no longer used
-    ::
-    ++  mang  (cold %& (easy ~))
+    ++  name  ;~(pfix fas urs:ab)
     ::  +tarl: local target, as /path
     ::
-    ++  tarl  (stag our-self path)
-    ::  +tarx: local target, maybe managed
-    ::
-    ++  tarx  ;~(plug mang path)
-    ::  +tarp: sponsor target, as ^/path
-    ::
-    ++  tarp
-      =-  ;~(pfix ket (stag - path))
-      (sein:title our.bowl now.bowl our-self)
+    ++  tarl  (stag our-self name)
     ::  +targ: any target, as tarl, tarp, ~ship/path or glyph
     ::
     ++  targ
       ;~  pose
-        ;~  plug
-          mang
-        ::
-          ;~  pose
-            tarl
-            tarp
-            ;~(plug ship path)
-          ==
-        ==
-        (sear decode-glyph glyph)
+        tarl
+        ;~(plug ship name)
+        (sear (cury decode-glyph session) glyph)
       ==
     ::  +tars: set of comma-separated targs
     ::
@@ -579,12 +599,6 @@
     ++  ships
       %+  cook  ~(gas in *(set ^ship))
       (most ;~(plug com (star ace)) ship)
-    ::
-    ::  +security: security mode
-    ::
-    ++  security
-      (perk %channel %village ~)
-    ::
     ::  +glyph: shorthand character
     ::
     ++  glyph  (mask glyphs)
@@ -612,14 +626,14 @@
     ++  message
       ;~  pose
         ;~(plug (cold %eval hax) expr)
-        (stag %say letter)
+        (stag %say content)
       ==
-    ::  +letter: simple messages
+    ::  +content: simple messages
+    ::TODO  mentions
     ::
-    ++  letter
+    ++  content
       ;~  pose
         (stag %url turl)
-        (stag %me ;~(pfix vat text))
         (stag %text ;~(less mic hax text))
       ==
     ::  +turl: url parser
@@ -647,13 +661,8 @@
   ++  tab-list
     ^-  (list [@t tank])
     :~
-      [';join' leaf+";join ~ship/chat-name (glyph)"]
-      [';leave' leaf+";leave ~ship/chat-name"]
-      ::
-      [';create' leaf+";create [type] /chat-name (glyph)"]
-      [';delete' leaf+";delete /chat-name"]
-      [';invite' leaf+";invite /chat-name ~ships"]
-      [';banish' leaf+";banish /chat-name ~ships"]
+      [';view' leaf+";view ~ship/chat-name (glyph)"]
+      [';flee' leaf+";flee ~ship/chat-name"]
     ::
       [';bind' leaf+";bind [glyph] ~ship/chat-name"]
       [';unbind' leaf+";unbind [glyph]"]
@@ -676,13 +685,8 @@
           %say       (say +.job)
           %eval      (eval +.job)
         ::
-          %create    (create +.job)
-          %delete    (delete +.job)
-          %invite    (change-permission & +.job)
-          %banish    (change-permission | +.job)
-        ::
-          %join      (join +.job)
-          %leave     (leave +.job)
+          %view      (view +.job)
+          %flee      (flee +.job)
         ::
           %bind      (bind-glyph +.job)
           %unbind    (unbind-glyph +.job)
@@ -710,178 +714,69 @@
           %poke
           cage
       ==
-    ::  +invite-card: build invite card
-    ::
-    ++  invite-card
-      |=  [where=path who=ship]
-      ^-  card
-      :*  %pass
-          /cli-command/invite
-          %agent
-          [who %invite-hook]  ::NOTE  only place chat-cli pokes others
-          %poke
-          %invite-action
-        ::
-          !>
-          ^-  invite-action
-          :^  %invite  /chat
-            (shax (jam [our-self where] who))
-          ^-  invite
-          [our-self %chat-hook where who '']
-      ==
     ::  +set-target: set audience, update prompt
     ::
     ++  set-target
-      |=  tars=(set target)
-      ^-  (quip card _state)
-      =.  audience  tars
-      [[prompt:sh-out ~] state]
-    ::  +create: new local mailbox
-    ::
-    ++  create
-      |=  $:  security=nu-security
-              =path
-              ugroup=(unit resource)
-              gyf=(unit char)
-              allow-history=(unit ?)
-          ==
-      ^-  (quip card _state)
-      =/  with-group=?     ?=(^ ugroup)
-      =/  =target          [with-group our-self path]
-      =/  real-path=^path  (target-to-path target)
-      =/  group-path=^path  ?~(ugroup ship+real-path (en-path:resource u.ugroup))
-      =/  =policy
-        ?-  security
-          %channel  *open:policy
-          %village  *invite:policy
-        ==
-      ?^  (scry-for (unit mailbox:store) %chat-store [%mailbox real-path])
-        =-  [[- ~] state]
-        %-  print:sh-out
-        "{(spud path)} already exists!"
-      =.  audience  [target ~ ~]
-      =^  moz  state
-        ?.  ?=(^ gyf)  [~ state]
-        (bind-glyph u.gyf target)
-      =-  [[- moz] state]
-      %^  act  %do-create  %chat-view
-      :-  %chat-view-action
-      !>  ^-  action:view
-      :*  %create
-          (rsh 3 1 (spat path))
-          ''
-          real-path  ::  chat
-          group-path  ::  group
-          policy
-          ~
-          (fall allow-history %.y)
-          with-group
-      ==
-    ::  +delete: delete local chats
-    ::
-    ++  delete
-      |=  =path
-      ^-  (quip card _state)
-      =-  [[- ~] state]
-      %^  act  %do-delete  %chat-view
-      :-  %chat-view-action
-      !>  ^-  action:view
-      [%delete (target-to-path | our-self path)]
-    ::  +change-permission: modify permissions on a local chat
-    ::
-    ++  change-permission
-      |=  [allow=? [group=? =path] ships=(set ship)]
-      ^-  (quip card _state)
-      :_  state
-      =/  real-path=^path
-        (target-to-path group our-self path)
-      =;  permit=(unit card)
-        %+  weld  (drop permit)
-        ?.  allow  ~
-        ^-  (list card)
-        %+  murn  ~(tap in ships)
-        |=  =ship
-        ^-  (unit card)
-        ::  if they weren't permitted before, some hook will send an invite.
-        ::  but if they already were, we want to send an invite ourselves.
-        ::
-        ?.  (is-member:grp ship real-path)
-          ~
-        `(invite-card real-path ship)
-      ::  whitelist: empty if no matching permission, else true if whitelist
-      ::
-      =/  whitelist=(unit ?)
-        =;  grp=(unit ^group)
-          ?~(grp ~ `?=(%open -.u.grp))
-        ::TODO  +permission-of-target?
-        %^  scry-for  (unit ^group)
-          %group-store
-        `^path`[%groups real-path]
-      ?~  whitelist
-        ~&  [%weird-no-permission real-path]
-        ~
-      =/  rid=resource
-        (de-path:resource real-path)
-      %-  some
-      %^  act  %do-permission  %group-store
-      :-  %group-action
-      !>   ^-  action:group-store
-      ?:  =(u.whitelist allow)
-        [%add-members rid ships]
-      [%remove-members rid ships]
-    ::  +join: sync with remote mailbox
-    ::
-    ++  join
-      |=  [=target gyf=(unit char) ask-history=(unit ?)]
-      ^-  (quip card _state)
-      =^  moz  state
-        ?.  ?=(^ gyf)  [~ state]
-        (bind-glyph u.gyf target)
-      =.  audience  [target ~ ~]
-      =;  =card
-        [[card prompt:sh-out moz] state]
-      ::TODO  ideally we'd check permission first. attempting this and failing
-      ::      gives ugly %chat-hook-reap
-      %^  act  %do-join  %chat-view
-      :-  %chat-view-action
-      !>  ^-  action:view
-      [%join ship.target (target-to-path target) (fall ask-history %.y)]
-    ::  +leave: unsync & destroy mailbox
-    ::
-    ::TODO  allow us to "mute" local chats using this
-    ++  leave
       |=  =target
-      =-  [[- ~] state]
-      ?:  =(our-self ship.target)
-        %-  print:sh-out
-        "can't ;leave local chats, maybe use ;delete instead"
-      %^  act  %do-leave  %chat-hook
-      :-  %chat-hook-action
-      !>  ^-  action:hook
-      [%remove (target-to-path target)]
+      ^-  (quip card _state)
+      =.  audience  target
+      [[prompt:sh-out ~] put-ses]
+    ::  +view: start printing messages from a resource
+    ::
+    ++  view
+      |=  target=$?(~ target)
+      ^-  (quip card _state)
+      ::  without argument, print all we're viewing
+      ::
+      ?~  target
+        [[(show-chats:sh-out ~(tap in viewing))]~ state]
+      ::  only view existing chat-type graphs
+      ::
+      ?.  (is-chat-graph target)
+        [[(note:sh-out "no such chat")]~ put-ses]
+      =.  viewing  (~(put in viewing) target)
+      =^  cards  state
+        ?:  (~(has by bound) target)
+          [~ state]
+        (bind-default-glyph target)
+      [[prompt:sh-out cards] put-ses]
+    ::  +flee: stop printing messages from a resource
+    ::
+    ++  flee
+      |=  =target
+      ^-  (quip card _state)
+      =.  viewing  (~(del in viewing) target)
+      [~ put-ses]
     ::  +say: send messages
     ::
     ++  say
-      |=  =letter:store
+      |=  msg=content:post
       ^-  (quip card _state)
-      ~!  bowl
-      =/  =serial  (shaf %msg-uid eny.bowl)
+      =/  =serial:store  (shaf %msg-uid eny.bowl)
       :_  state
-      ^-  (list card)
-      %+  turn  ~(tap in audience)
-      |=  =target
-      %^  act  %out-message  %chat-hook
-      :-  %chat-action
-      !>  ^-  action:store
-      :+  %message  (target-to-path target)
-      [serial *@ our-self now.bowl letter]
+      :_  ~
+      ::TODO  move creation into lib?
+      %^  act  %out-message
+        %graph-push-hook
+      :-  %graph-update
+      !>  ^-  update:graph
+      :+  %0  now.bowl
+      :+  %add-nodes  audience
+      %-  ~(put by *(map index:post node:graph))
+      :-  ~[now.bowl]
+      :_  *internal-graph:graph
+      ^-  post:post
+      [our-self ~[now.bowl] now.bowl [msg]~ ~ ~]
     ::  +eval: run hoon, send code and result as message
     ::
     ::    this double-virtualizes and clams to disable .^ for security reasons
     ::
     ++  eval
       |=  [txt=cord exe=hoon]
-      (say %code txt (eval:store bowl exe))
+      ~&  %eval-tmp-disabled
+      [~ state]
+      ::TODO  why -find.eval??
+      :: (say %code txt (eval:store bowl exe))
     ::  +lookup-glyph: print glyph info for all, glyph or target
     ::
     ++  lookup-glyph
@@ -917,7 +812,7 @@
           %-  zing
           ^-  (list tape)
           :-  "flags: "
-          %+  ^join  ", "
+          %+  join  ", "
           (turn `(list @t)`~(tap in settings) trip)
         ::
           %-  print:sh-out
@@ -991,49 +886,61 @@
       ++  activate
         |=  [number=tape index=@ud]
         ^-  (quip card _state)
-        =+  gam=(snag index grams)
-        =.  audience  [source.gam ~ ~]
-        :_  state
+        ::NOTE  graph store allows node deletion, so can this crash?
+        =/  =uid:post    (snag index history)
+        =/  =node:graph  (got-node:libgraph uid)
+        =.  audience     resource.uid
+        :_  put-ses
         ^-  (list card)
         :~  (print:sh-out ['?' ' ' number])
-            (effect:sh-out ~(render-activate mr gam))
+            (effect:sh-out ~(render-activate mr resource.uid post.node))
             prompt:sh-out
         ==
       --
-    ::  +chats: display list of local mailboxes
+    ::  +chats: display list of joined chats
     ::
     ++  chats
       ^-  (quip card _state)
       :_  state
       :_  ~
-      %-  print-more:sh-out
-      =/  all
-        %^  scry-for  (set path)
-          %chat-store
-        /keys
-      %+  turn  ~(tap in all)
-      %+  cork  path-to-target
-      |=  target
-      (weld (scow %p ship) (spud path))
+      %-  show-chats:sh-out
+      (skim ~(tap in get-keys:libgraph) is-chat-graph)
     ::  +help: print (link to) usage instructions
     ::
     ++  help
       ^-  (quip card _state)
-      =-  [[- ~] state]
-      (print:sh-out "see https://urbit.org/using/operations/using-your-ship/#messaging")
+      :_  state
+      =-  (turn - print:sh-out)
+      :~  ";view ~host/chat to print messages for a chat you've already jonied."
+          ";flee ~host/chat to stop printing messages for a chat."
+          "For more details:"
+          "https://urbit.org/using/operations/using-your-ship/#messaging"
+      ==
     --
   --
 ::
 ::  +sh-out: ouput to session
 ::
 ++  sh-out
-  |%
-  ::  +effect: console effect card for all listeners
+  |_  [=sole-id session]
+  ++  make
+    |=  =^sole-id
+    %_  ..make
+      sole-id  sole-id
+      +<+      (get-session sole-id)
+    ==
+  ::  +effex: emit shoe effect card
+  ::
+  ++  effex
+    |=  effect=shoe-effect:shoe
+    ^-  card
+    [%shoe ~[sole-id] effect]
+  ::  +effect: emit console effect card
   ::
   ++  effect
-    |=  effect=sole-effect:sole
+    |=  effect=sole-effect:shoe
     ^-  card
-    [%shoe ~ %sole effect]
+    (effex %sole effect)
   ::  +print: puts some text into the cli as-is
   ::
   ++  print
@@ -1064,29 +971,16 @@
     ^-  card
     %+  effect  %pro
     :+  &  %talk-line
-    ^-  tape
-    =-  ?:  =(1 (lent -))  "{-} "
-        "[{-}] "
-    =/  all
-      %+  sort  ~(tap in audience)
-      |=  [a=target b=target]
-      (~(beat tr a) b)
-    =+  fir=&
-    |-  ^-  tape
-    ?~  all  ~
-    ;:  welp
-      ?:(fir "" " ")
-      ~(show tr i.all)
-      $(all t.all, fir |)
-    ==
-  ::  +show-envelope: print incoming message
+    =+  ~(show tr audience)
+    ?:(=(1 (lent -)) "{-} " "[{-}] ")
+  ::  +show-post: print incoming message
   ::
   ::    every five messages, prints the message number also.
   ::    if the message mentions the user's (shortened) ship name,
   ::    and the %notify flag is set, emit a bell.
   ::
-  ++  show-envelope
-    |=  [=target =envelope:store]
+  ++  show-post
+    |=  [=target =post:post]
     ^-  (list card)
     %+  weld
       ^-  (list card)
@@ -1095,18 +989,13 @@
       =+  num=(scow %ud count)
       %-  print
       (runt [(sub 13 (lent num)) '-'] "[{num}]")
-    =+  lis=~(render-inline mr target envelope)
-    ?~  lis  ~
-    :_  ~
-    %+  effect  %mor
-    %+  turn  `(list tape)`lis
-    =+  nom=(scag 7 (cite:title our-self))
-    |=  t=tape
-    ?.  ?&  (~(has in settings) %notify)
-            ?=(^ (find nom (slag 15 t)))
-        ==
-      [%txt t]
-    [%mor [%txt t] [%bel ~] ~]
+    ^-  (list card)
+    :-  (effex ~(render-inline mr target post))
+    =;  mentioned=?
+      ?.  mentioned  ~
+      [(effect %bel ~)]~
+    %+  lien  contents.post
+    (cury test %mention our.bowl)
   ::  +show-create: print mailbox creation notification
   ::
   ++  show-create
@@ -1129,167 +1018,188 @@
     %+  weld  "set: {[glyph ~]} "
     ?~  target  "unbound"
     ~(phat tr u.target)
-  ::  +show-invite: print incoming invite notification
+  ::  +show-chats: print list of targets
   ::
-  ++  show-invite
-    |=  invite
+  ++  show-chats
+    |=  chats=(list target)
     ^-  card
-    %-  note
-    %+  weld  "invited to: "
-    ~(phat tr (path-to-target path))
+    %-  print-more
+    %+  turn  (sort chats tor)
+    |=  resource
+    "{(nome:mr entity)}/{(trip name)}"
   --
 ::
-::  +tr: render targets
+::  +tr: render targets (resource identifiers)
 ::
 ++  tr
-  |_  ::  one: the target.
-      ::
-      one=target
-  ::  +beat: true if one is more "relevant" than two
-  ::
-  ++  beat
-    |=  two=target
-    ^-  ?
-    ::  the target that's ours is better.
-    ?:  =(our-self ship.one)
-      ?.  =(our-self ship.two)  &
-      ?<  =(path.one path.two)
-      ::  if both targets are ours, the main story is better.
-      ?:  =(%inbox path.one)  &
-      ?:  =(%inbox path.two)  |
-      ::  if neither are, pick the "larger" one.
-      (lth (lent path.one) (lent path.two))
-    ::  if one isn't ours but two is, two is better.
-    ?:  =(our-self ship.two)  |
-    ?:  =(ship.one ship.two)
-      ::  if they're from the same ship, pick the "larger" one.
-      (lth (lent path.one) (lent path.two))
-    ::  if they're from different ships, neither ours, pick hierarchically.
-    (lth (xeb ship.one) (xeb ship.two))
-  ::  +full: render target fully, always
+  |_  tr=target
+  ::  +full: render target fully, always (as ~ship/path)
   ::
   ++  full
     ^-  tape
-    ;:  weld
-      ?:(in-group.one "" "~/")
-      (scow %p ship.one)
-      (spud path.one)
-    ==
+    "{(scow %p entity.tr)}/{(trip name.tr)}"
   ::  +phat: render target with local shorthand
   ::
   ::    renders as ~ship/path.
   ::    for local mailboxes, renders just /path.
-  ::    for sponsor's mailboxes, renders ^/path.
   ::
   ++  phat
     ^-  tape
     %+  weld
-      ?:(in-group.one "" "~/")
-    %+  weld
-      ?:  =(our-self ship.one)  ~
-      ?:  =((sein:title our.bowl now.bowl our-self) ship.one)  "^"
-      (scow %p ship.one)
-    (spud path.one)
+      ?:  =(our-self entity.tr)  ~
+      (scow %p entity.tr)
+    "/{(trip name.tr)}"
   ::  +show: render as tape, as glyph if we can
   ::
   ++  show
     ^-  tape
-    =+  cha=(~(get by bound) one)
-    ?~(cha phat "{u.cha ~}")
+    =+  cha=(~(get by bound) tr)
+    ?~(cha phat [u.cha ~])
   ::  +glyph: tape for glyph of target, defaulting to *
   ::
   ++  glyph
     ^-  tape
-    [(~(gut by bound) one '*') ~]
+    [(~(gut by bound) tr '*') ~]
   --
 ::
 ::  +mr: render messages
 ::
 ++  mr
-  =,  sole
   |_  $:  source=target
-          envelope:store
+          post:post
       ==
+  +*  showtime  (~(has in settings) %showtime)
+      notify    (~(has in settings) %notify)
+  ::
+  ++  content-width
+    ::  termwidth, minus author, timestamp, and padding
+    %+  sub  width
+    %+  add  15
+    ?:(showtime 11 0)
+  ::
+  ++  render-inline
+    ^-  shoe-effect:shoe
+    :+  %row
+      :-  15
+      ?.  showtime
+        ~[(sub width 16)]
+      ~[(sub width 26) 9]
+    :+  t+(crip (weld (nome author) ~(glyph tr source)))
+      t+(crip line)
+    ?.  showtime  ~
+    :_  ~
+    :-  %t
+    =.  time-sent
+      %-  ?:(p.timez add sub)
+      [time-sent (mul q.timez ~h1)]
+    =+  dat=(yore time-sent)
+    =*  t   (d-co:co 2)
+    =,  t.dat
+    %-  crip
+    :(weld "~" (t h) "." (t m) "." (t s))
+  ::
+  ++  line
+    ^-  tape
+    %-  zing
+    %+  join  "\0a"
+    %-  turn
+    :_  |=(ls=(list tape) `tape`(zing (join " " ls)))
+    %+  roll  contents
+    |=  [=content:post out=(list (list tape))]
+    ?-  -.content
+      %text       (append-inline out (trip text.content))
+      %mention    (append-inline out (scow %p ship.content))
+      %reference  (append-inline out "^")
+    ::
+        %code
+      %+  snoc  out
+      ^-  (list tape)
+      :-  (trip expression.content)
+      ?:  =(~ output.content)  ~
+      :-  "\0a"
+      ~(ram re (snag 0 output.content))^~
+    ::
+        %url
+      %+  append-inline  out
+      =+  wyd=content-width
+      =+  ful=(trip url.content)
+      ::  if the full url fits, just render it.
+      ?:  (gte wyd (lent ful))  ful
+      ::  if it doesn't, prefix with _ and truncate domain with ellipses
+      =.  wyd  (sub wyd 2)
+      :-  '_'
+      =-  (weld - "_")
+      =+  prl=(rust ful aurf:de-purl:html)
+      ?~  prl  (scag wyd ful)
+      =+  hok=r.p.p.u.prl
+      =;  domain=tape
+        %+  swag
+          [(sub (max wyd (lent domain)) wyd) wyd]
+        domain
+      ?.  ?=(%& -.hok)
+        +:(scow %if p.hok)
+      %+  reel  p.hok
+      |=  [a=knot b=tape]
+      ?~  b  (trip a)
+      (welp b '.' (trip a))
+    ==
+  ::
+  ++  append-newline
+    |=  [content=(list (list tape)) newline=tape]
+    ^-  (list (list tape))
+    (snoc content ~[newline])
+  ::
+  ++  append-inline
+    |=  [content=(list (list tape)) inline=tape]
+    ^-  (list (list tape))
+    ?:  =(~ content)
+      ~[~[inline]]
+    =/  last
+      (dec (lent content))
+    =/  old=(list tape)
+      (snag last content)
+    =/  new=(list tape)
+      (snoc old inline)
+    (snap content last new)
+
   ::  +activate: produce sole-effect for printing message details
   ::
   ++  render-activate
-    ^-  sole-effect
+    ^-  sole-effect:shoe
     ~[%mor [%tan meta] body]
   ::  +meta: render message metadata (serial, timestamp, author, target)
   ::
   ++  meta
     ^-  tang
-    =.  when  (sub when (mod when (div when ~s0..0001)))    :: round
-    =+  hed=leaf+"{(scow %uv uid)} at {(scow %da when)}"
+    =+  hed=leaf+"{(scow %uv (fall hash 0))} at {(scow %da time-sent)}"
     =/  src=tape  ~(phat tr source)
     [%rose [" " ~ ~] [hed >author< [%rose [", " "to " ~] [leaf+src]~] ~]]~
   ::  +body: long-form render of message contents
   ::
   ++  body
-    |-  ^-  sole-effect
-    ?-  -.letter
-        ?(%text %me)
-      =/  pre=tape  ?:(?=(%me -.letter) "@ " "")
-      tan+~[leaf+"{pre}{(trip +.letter)}"]
+    |-  ^-  sole-effect:shoe
+    :-  %mor
+    %+  turn  contents
+    |=  =content:post
+    ^-  sole-effect:shoe
+    ?-  -.content
+      %text       txt+(trip text.content)
+      %url        url+url.content
+      %reference  txt+"[reference to msg in {~(phat tr resource.uid.content)}]"
     ::
-        %url
-      url+url.letter
+        %mention
+      ?.  =(ship.content our-self)  txt+(scow %p ship.content)
+      :-  %mor
+      :-  klr+[[`%br ~ ~]^(scow %p ship.content)]~  ::TODO  inline
+      ?.(notify ~ [%bel ~]~)
     ::
         %code
-      =/  texp=tape  ['>' ' ' (trip expression.letter)]
-      :-  %mor
-      |-  ^-  (list sole-effect)
-      ?:  =("" texp)  [tan+output.letter ~]
-      =/  newl  (find "\0a" texp)
-      ?~  newl  [txt+texp $(texp "")]
-      =+  (trim u.newl texp)
-      :-  txt+(scag u.newl texp)
-      $(texp [' ' ' ' (slag +(u.newl) texp)])
+      :-  %txt
+      %+  weld  (trip expression.content)
+      ?:  =(~ output.content)  ~
+      :-  '\0a'
+      ~(ram re (snag 0 output.content))
     ==
-  ::  +render-inline: produces lines to display message body in scrollback
-  ::
-  ++  render-inline
-    ^-  (list tape)
-    =/  wyd
-      ::  termwidth,
-      %+  sub  width
-      ::  minus autor,
-      %+  add  14
-      ::  minus timestamp.
-      ?:((~(has in settings) %showtime) 10 0)
-    =+  txs=(line wyd)
-    ?~  txs  ~
-    ::  nom: rendered author
-    ::  den: regular indent
-    ::  tam: timestamp, if desired
-    ::
-    =/  nom=tape  (nome author)
-    =/  den=tape  (reap (lent nom) ' ')
-    =/  tam=tape
-      ?.  (~(has in settings) %showtime)  ""
-      =.  when
-        %.  [when (mul q.timez ~h1)]
-        ?:(p.timez add sub)
-      =+  dat=(yore when)
-      =/  t
-        |=  a/@
-        %+  weld
-          ?:((lth a 10) "0" ~)
-        (scow %ud a)
-      =/  time
-        ;:  weld
-          "~"  (t h.t.dat)
-          "."  (t m.t.dat)
-          "."  (t s.t.dat)
-        ==
-      %+  weld
-        (reap (sub +(wyd) (min wyd (lent (tuba i.txs)))) ' ')
-      time
-    %-  flop
-    %+  roll  `(list tape)`txs
-    |=  [t=tape l=(list tape)]
-    ?~  l  [:(weld nom t tam) ~]
-    [(weld den t) l]
   ::  +nome: prints a ship name in 14 characters, left-padding with spaces
   ::
   ++  nome
@@ -1297,91 +1207,6 @@
     ^-  tape
     =+  raw=(cite:title ship)
     (runt [(sub 14 (lent raw)) ' '] raw)
-  ::  +line: renders most important contents, tries to fit one line
-  ::
-  ::TODO  this should probably be rewritten someday
-  ++  line
-    ::  pre:  replace/append line prefix
-    ::
-    =|  pre=(unit (pair ? tape))
-    |=  wyd=@ud
-    ^-  (list tape)
-    ?-  -.letter
-        %code
-      =+  texp=(trip expression.letter)
-      =+  newline=(find "\0a" texp)
-      =?  texp  ?=(^ newline)
-        (weld (scag u.newline texp) "  ...")
-      :-  (truncate wyd '#' ' ' texp)
-      ?~  output.letter  ~
-      =-  [' ' (truncate (dec wyd) ' ' -)]~
-      ~(ram re (snag 0 `(list tank)`output.letter))
-    ::
-        %url
-      :_  ~
-      =+  ful=(trip url.letter)
-      =+  pef=q:(fall pre [p=| q=""])
-      ::  clean up prefix if needed.
-      =?  pef  =((scag 1 (flop pef)) " ")
-        (scag (dec (lent pef)) pef)
-      =.  pef  (weld "/" pef)
-      =.  wyd  (sub wyd +((lent pef)))  ::  account for prefix.
-      ::  if the full url fits, just render it.
-      ?:  (gte wyd (lent ful))  :(weld pef " " ful)
-      ::  if it doesn't, prefix with _ and render just (the tail of) the domain.
-      %+  weld  (weld pef "_")
-      =+  prl=(rust ful aurf:de-purl:html)
-      ?~  prl  (weld (scag (dec wyd) ful) "…")
-      =+  hok=r.p.p.u.prl
-      =-  (swag [a=(sub (max wyd (lent -)) wyd) b=wyd] -)
-      ^-  tape
-      =<  ?:  ?=(%& -.hok)
-            (reel p.hok .)
-          +:(scow %if p.hok)
-      |=  [a=knot b=tape]
-      ?~  b  (trip a)
-      (welp b '.' (trip a))
-    ::
-        ?(%text %me)
-      ::  glyph prefix
-      =/  pef=tape
-        ?:  &(?=(^ pre) p.u.pre)  q.u.pre
-        ?:  ?=(%me -.letter)  " "
-        =-  (weld - q:(fall pre [p=| q=" "]))
-        ~(glyph tr source)
-      =/  lis=(list tape)
-        %+  simple-wrap
-          =/  result=(each tape tang)
-            %-  mule  |.
-            `(list @)`(tuba (trip +.letter))
-          ?-  -.result
-            %&  p.result
-            %|  "[[msg rendering error]]"
-          ==
-        (sub wyd (min (div wyd 2) (lent pef)))
-      =+  lef=(lent pef)
-      =+  ?:((gth (lent lis) 0) (snag 0 lis) "")
-      :-  (weld pef -)
-      %+  turn  (slag 1 lis)
-      |=(a=tape (runt [lef ' '] a))
-    ==
-  ::  +truncate: truncate txt to fit len, indicating truncation with _ or …
-  ::
-  ++  truncate
-    |=  [len=@u txt=tape]
-    ^-  tape
-    ?:  (gth len (lent txt))  txt
-    =.  txt  (scag len txt)
-    |-
-    ?~  txt  txt
-    ?:  =(' ' i.txt)
-      |-
-      :-  '_'
-      ?.  ?=([%' ' *] t.txt)
-        t.txt
-      $(txt t.txt)
-    ?~  t.txt  "…"
-    [i.txt $(txt t.txt)]
   --
 ::
 ++  simple-wrap

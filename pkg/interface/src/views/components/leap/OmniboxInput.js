@@ -22,7 +22,7 @@ export class OmniboxInput extends Component {
       border='1px solid transparent'
       borderRadius='2'
       maxWidth='calc(600px - 1.15rem)'
-      fontSize='0'
+      fontSize='1'
       style={{ boxSizing: 'border-box' }}
       placeholder='Search...'
       onKeyDown={props.control}

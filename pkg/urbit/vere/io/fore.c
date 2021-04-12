@@ -22,6 +22,17 @@ _fore_inject_bail(u3_ovum* egg_u, u3_noun lud)
   u3_ovum_free(egg_u);
 }
 
+/* _fore_import_bail(): handle failure on arbitrary injection.
+*/
+static void
+_fore_import_bail(u3_ovum* egg_u, u3_noun lud)
+{
+  u3_auto_bail_slog(egg_u, lud);
+  u3l_log("pier: import failed\n");
+
+  u3_ovum_free(egg_u);
+}
+
 /* _fore_inject(): inject an arbitrary ovum from a jammed file at [pax_c].
 */
 static void
@@ -69,6 +80,26 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
   u3z(ovo);
 }
 
+/* _fore_import(): form an ovum from jammed archive at [pax_c] and inject it.
+*/
+static void
+_fore_import(u3_auto* car_u, c3_c* pax_c)
+{
+  u3_noun arc = u3ke_cue(u3m_file(pax_c));
+  u3_noun imp = u3dt("cat", 3, u3i_string("#import_"), arc);
+  u3_noun siz = u3r_met(3, imp);
+  u3_noun dat = u3nt(u3_nul, siz, imp);
+
+  u3_noun req = u3nt(c3n,
+    u3nc(u3i_string("ipv4"), u3i_word(0x7f000001)),
+    u3nq(u3i_string("POST"), u3i_string("/"), u3_nul, dat));
+  u3_noun wir = u3nc(u3i_string("http-server"), u3_nul);
+  u3_noun cad = u3nc(u3i_string("request-local"), req);
+  u3_auto_peer(
+    u3_auto_plan(car_u, u3_ovum_init(0, c3__e, wir, cad)),
+    0, 0, _fore_import_bail);
+}
+
 /* _fore_io_talk():
 */
 static void
@@ -90,14 +121,10 @@ _fore_io_talk(u3_auto* car_u)
 
   //  set verbose as per -v
   //
-  //    XX should be explicit, not a toggle
-  //
-  if ( c3y == u3_Host.ops_u.veb ) {
-    //  XX this path shouldn't be necessary
-    //
-    wir = u3nt(c3__term, '1', u3_nul);
-    cad = u3nc(c3__verb, u3_nul);
-
+  {
+    c3_o lac_o = ( c3y == u3_Host.ops_u.veb ) ? c3n : c3y;
+    wir = u3nc(c3__arvo, u3_nul);
+    cad = u3nt(c3__verb, u3_nul, lac_o);
     u3_auto_plan(car_u, u3_ovum_init(0, u3_blip, wir, cad));
   }
 
@@ -105,6 +132,10 @@ _fore_io_talk(u3_auto* car_u)
   //
   if ( u3_Host.ops_u.jin_c ) {
     _fore_inject(car_u, u3_Host.ops_u.jin_c);
+  }
+
+  if ( u3_Host.ops_u.imp_c ) {
+    _fore_import(car_u, u3_Host.ops_u.imp_c);
   }
 }
 

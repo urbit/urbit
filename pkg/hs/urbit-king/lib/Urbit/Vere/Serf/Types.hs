@@ -2,7 +2,7 @@ module Urbit.Vere.Serf.Types where
 
 import Urbit.Prelude
 
-import Urbit.Arvo      (Ev, FX)
+import Urbit.Arvo      (Desk, Ev, FX)
 import Urbit.Noun.Time (Wen)
 
 
@@ -15,21 +15,21 @@ type PlayBail = (EventId, Mug, Goof)
 type Slog = (Atom, Tank)
 
 data SerfState = SerfState
-  { ssLast :: EventId
-  , ssHash :: Mug
+  { ssLast :: !EventId
+  , ssHash :: !Mug
   }
  deriving (Show, Eq)
 
 data RipeInfo = RipeInfo
-  { riProt :: Atom
-  , riHoon :: Atom
-  , riNock :: Atom
+  { riProt :: !Atom
+  , riHoon :: !Atom
+  , riNock :: !Atom
   }
  deriving (Show)
 
 data SerfInfo = SerfInfo
-  { siRipe :: RipeInfo
-  , siStat :: SerfState
+  { siRipe :: !RipeInfo
+  , siStat :: !SerfState
   }
  deriving (Show)
 
@@ -82,7 +82,7 @@ data EvErr = EvErr Ev (WorkError -> IO ())
 data WorkError -- TODO Rename type and constructors
   = RunSwap EventId Mug Wen Noun FX -- TODO Maybe provide less info here?
   | RunBail [Goof]
-  | RunOkay EventId
+  | RunOkay EventId FX
 
 {-
   - RRWork: Ask the serf to do work, will output (Fact, FX) if work
@@ -94,7 +94,19 @@ data RunReq
   | RRSave ()
   | RRKill ()
   | RRPack ()
-  | RRScry Wen Gang Path (Maybe (Term, Noun) -> IO ())
+  | RRScry Gang ScryReq (Maybe (Term, Noun) -> IO ())
+
+type ScryReq = (Each Path Demi)
+
+data Demi
+  = DemiOnce Term Desk Path
+  | DemiBeam Term Beam
+  deriving (Show)
+
+-- TODO
+type Beam = Void
+
+deriveNoun ''Demi
 
 
 -- Exceptions ------------------------------------------------------------------
@@ -111,6 +123,8 @@ data SerfExn
   | SerfNotRunning
   | MissingBootEventsInEventLog Word Word
   | SnapshotAheadOfLog EventId EventId
+  | BailDuringWyrd [Goof]
+  | SwapDuringWyrd Mug (Wen, Noun) FX
  deriving (Show, Exception)
 
 

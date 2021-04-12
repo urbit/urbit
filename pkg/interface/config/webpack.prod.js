@@ -1,11 +1,17 @@
 const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
+const webpack = require('webpack');
+const { execSync } = require('child_process');
+
+const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
 
 module.exports = {
   mode: 'production',
   entry: {
-     app: './src/index.js'
+     app: './src/index.js',
+     serviceworker: './src/serviceworker.js'
   },
   module: {
     rules: [
@@ -16,6 +22,7 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env', '@babel/typescript', '@babel/preset-react'],
             plugins: [
+              'lodash',
               '@babel/transform-runtime',
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
@@ -23,7 +30,7 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules/
+        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light)\/).*/
       },
       {
          test: /\.css$/i,
@@ -41,7 +48,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.tsx']
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   // devServer: {
   //   contentBase: path.join(__dirname, './'),
   //   hot: true,
@@ -49,16 +56,28 @@ module.exports = {
   //   historyApiFallback: true
   // },
   plugins: [
+    new MomentLocalesPlugin(),
     new CleanWebpackPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.LANDSCAPE_STREAM': JSON.stringify(process.env.LANDSCAPE_STREAM),
+      'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
+      'process.env.TUTORIAL_HOST': JSON.stringify('~difmex-passed'),
+      'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
+      'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),
+      'process.env.TUTORIAL_BOOK': JSON.stringify('guides-9684'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143'),
+    }),
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',
     //   template: './public/index.html',
     // }),
   ],
   output: {
-    filename: 'index.[contenthash].js',
+    filename: (pathData) => {
+      return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
+    },
     path: path.resolve(__dirname, '../../arvo/app/landscape/js/bundle'),
-    publicPath: '/',
+    publicPath: '/'
   },
   optimization: {
     minimize: true,

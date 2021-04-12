@@ -123,7 +123,7 @@
   ::
   ::  and the ordering 1 < 2 < 3.
   ::
-  ::  1 should be in the left brach and 3 in the right one.
+  ::  1 should be in the left branch and 3 in the right one.
   ::
   =/  balanced-a=(map @ @)    [[2 2] [[1 1] ~ ~] [[3 3] ~ ~]]
   ::  doesn't follow vertical ordering

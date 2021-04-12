@@ -1,6 +1,7 @@
 /-  *invite-store
+/+  resource
 |%
-++  slan  |=(mod/@tas |=(txt/@ta (need (slaw mod txt))))
+++  slan  |=(mod=@tas |=(txt=@ta (need (slaw mod txt))))
 ::
 ++  seri                                              :::  serial
   =,  dejs:format
@@ -12,9 +13,9 @@
   ^-  json
   %-  pairs:enjs:format
   %+  turn  ~(tap by inv)
-  |=  [=path =invitatory]
+  |=  [=term =invitatory]
   ^-  [cord json]
-  [(spat path) (invitatory-to-json invitatory)]
+  [term (invitatory-to-json invitatory)]
 ::
 ++  invitatory-to-json
   |=  =invitatory
@@ -33,13 +34,13 @@
   %-  pairs
   :~  [%ship (ship ship.invite)]
       [%app [%s app.invite]]
-      [%path (path path.invite)]
+      [%resource (enjs:resource resource.invite)]
       [%recipient (ship recipient.invite)]
       [%text [%s text.invite]]
   ==
 ::
 ++  update-to-json
-  |=  upd=invite-update
+  |=  upd=update
   =,  enjs:format
   ^-  json
   %+  frond  %invite-update
@@ -50,15 +51,15 @@
       [%initial (invites-to-json invites.upd)]
     ?:  =(%create -.upd)
       ?>  ?=(%create -.upd)
-      [%create (pairs [%path (path path.upd)]~)]
+      [%create (pairs [%term s+term.upd]~)]
     ?:  =(%delete -.upd)
       ?>  ?=(%delete -.upd)
-      [%delete (pairs [%path (path path.upd)]~)]
+      [%delete (pairs [%term s+term.upd]~)]
     ?:  =(%accepted -.upd)
       ?>  ?=(%accepted -.upd)
       :-  %accepted
       %-  pairs
-      :~  [%path (path path.upd)]
+      :~  [%term s+term.upd]
           [%uid s+(scot %uv uid.upd)]
           [%invite (invite-to-json invite.upd)]
       ==
@@ -66,14 +67,14 @@
       ?>  ?=(%decline -.upd)
       :-  %decline
       %-  pairs
-      :~  [%path (path path.upd)]
+      :~  [%term s+term.upd]
           [%uid s+(scot %uv uid.upd)]
       ==
     ?:  =(%invite -.upd)
       ?>  ?=(%invite -.upd)
       :-  %invite
       %-  pairs
-      :~  [%path (path path.upd)]
+      :~  [%term s+term.upd]
           [%uid s+(scot %uv uid.upd)]
           [%invite (invite-to-json invite.upd)]
       ==
@@ -88,53 +89,45 @@
 ::
 ++  json-to-action
   |=  jon=json
-  ^-  invite-action
+  ^-  action
   =,  dejs:format
   =<  (parse-json jon)
   |%
   ++  parse-json
     %-  of
-    :~  [%create create]
-        [%delete delete]
+    :~  [%create so]
+        [%delete so]
         [%invite invite]
         [%accept accept]
         [%decline decline]
     ==
   ::
-  ++  create
-    (ot [%path pa]~)
-  ::
-  ++  delete
-    (ot [%path pa]~)
-  ::
-
   ++  invite
     %-  ot
-    :~  [%path pa]
+    :~  [%term so]
         [%uid seri]
         [%invite invi]
     ==
   ::
   ++  accept
     %-  ot
-    :~  [%path pa]
+    :~  [%term so]
         [%uid seri]
     ==
   ::
   ++  decline
     %-  ot
-    :~  [%path pa]
+    :~  [%term so]
         [%uid seri]
     ==
   ::
   ++  invi
     %-  ot
     :~  [%ship (su ;~(pfix sig fed:ag))]
-        [%app (se %tas)]
-        [%path pa]
+        [%app so]
+        [%resource dejs:resource]
         [%recipient (su ;~(pfix sig fed:ag))]
         [%text so]
     ==
   --
 --
-

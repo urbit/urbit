@@ -16,8 +16,6 @@
   TODO How to detect socket closed during server run?
 -}
 
-{-# OPTIONS_GHC -Wno-deprecations #-}
-
 module Urbit.Vere.Eyre.Serv
   ( ServApi(..)
   , TlsConfig(..)
@@ -35,11 +33,15 @@ where
 
 import Urbit.Prelude hiding (Builder)
 
-import Data.Default       (def)
-import Data.List.NonEmpty (NonEmpty((:|)))
-import Network.TLS        (Credential, Credentials(..), ServerHooks(..))
-import Network.TLS        (credentialLoadX509ChainFromMemory)
-import RIO.Prelude        (decodeUtf8Lenient)
+import Data.Default                (def)
+import Data.List.NonEmpty          (NonEmpty((:|)))
+import Network.TLS                 ( Credential
+                                   , Credentials(..)
+                                   , ServerHooks(..)
+                                   )
+import Network.TLS                 (credentialLoadX509ChainFromMemory)
+import RIO.Prelude                 (decodeUtf8Lenient)
+import Urbit.Vere.Eyre.KingSubsite (KingSubsite)
 
 import qualified Control.Monad.STM           as STM
 import qualified Data.Char                   as C
@@ -54,7 +56,7 @@ import qualified Urbit.Vere.Eyre.Wai         as E
 -- Internal Types --------------------------------------------------------------
 
 data ServApi = ServApi
-  { saKil :: STM ()
+  { saKil :: IO ()
   , saPor :: STM W.Port
   }
 
@@ -67,23 +69,23 @@ data TlsConfig = TlsConfig
 
 newtype MultiTlsConfig = MTC (TVar (Map Ship (TlsConfig, Credential)))
 
-instance Show MultiTlsConfig where
-  show = const "MultiTlsConfig"
-
 data ReqApi = ReqApi
   { rcReq :: Ship -> Word64 -> E.ReqInfo -> STM ()
   , rcKil :: Ship -> Word64 -> STM ()
   }
 
-instance Show ReqApi where
-  show = const "ReqApi"
-
 data ServType
-  = STHttp Ship ReqApi
-  | STHttps Ship TlsConfig ReqApi
-  | STMultiHttp ReqApi
-  | STMultiHttps MultiTlsConfig ReqApi
- deriving (Show)
+  = STHttp Ship KingSubsite ReqApi
+  | STHttps Ship TlsConfig KingSubsite ReqApi
+  | STMultiHttp (Ship -> STM KingSubsite) ReqApi
+  | STMultiHttps MultiTlsConfig (Ship -> STM KingSubsite) ReqApi
+
+instance Show ServType where
+  show = \case
+    STHttp  who _ _      -> "STHttp "  <> show who
+    STHttps who tls _ _  -> "STHttps " <> show who <> " " <> show tls
+    STMultiHttp _ _      -> "STMultiHttp"
+    STMultiHttps tls _ _ -> "STMultiHttps"
 
 data ServPort
   = SPAnyPort
@@ -140,8 +142,12 @@ openFreePort hos = do
       Right ps -> pure (Right ps)
  where
   doBind sok = do
-    adr <- Net.inet_addr hos
-    Net.bind sok (Net.SockAddrInet Net.defaultPort adr)
+    adr <-
+      Net.getAddrInfo Nothing (Just hos) Nothing >>= \case
+        []     -> error ("unable to determine numeric hostname from " ++ hos)
+        ip : _ -> pure (Net.addrAddress ip)
+ 
+    Net.bind sok adr
     Net.listen sok 1
     port <- Net.socketPort sok
     pure (fromIntegral port, sok)
@@ -164,7 +170,7 @@ tryOpenChoices
 tryOpenChoices hos = go
  where
   go (p :| ps) = do
-    logDebug (displayShow ("EYRE", "Trying to open port.", p))
+    logInfo (displayShow ("EYRE", "Trying to open port.", p))
     io (tryOpen hos p) >>= \case
       Left err -> do
         logError (displayShow ("EYRE", "Failed to open port.", p))
@@ -185,7 +191,7 @@ tryOpenAny hos = do
       pure (Right (p, s))
 
 logDbg :: (HasLogFunc e, Show a) => [Text] -> a -> RIO e ()
-logDbg ctx msg = logDebug (prefix <> suffix)
+logDbg ctx msg = logInfo (prefix <> suffix)
  where
   prefix = display (concat $ fmap (<> ": ") ctx)
   suffix = displayShow msg
@@ -262,26 +268,28 @@ startServer typ hos por sok red vLive = do
           & W.setPort (fromIntegral por)
           & W.setTimeout (5 * 60)
 
+  -- TODO build Eyre.Site.app in pier, thread through here
   let runAppl who = E.app envir who vLive
       reqShip = hostShip . W.requestHeaderHost
 
   case typ of
-    STHttp who api -> do
-      let app = runAppl who (rcReq api who) (rcKil api who)
+    STHttp who sub api -> do
+      let app = runAppl who (rcReq api who) (rcKil api who) sub
       io (W.runSettingsSocket opts sok app)
 
-    STHttps who TlsConfig {..} api -> do
+    STHttps who TlsConfig {..} sub api -> do
       let tls = W.tlsSettingsChainMemory tcCerti tcChain tcPrKey
-      let app = runAppl who (rcReq api who) (rcKil api who)
+      let app = runAppl who (rcReq api who) (rcKil api who) sub
       io (W.runTLSSocket tls opts sok app)
 
-    STMultiHttp api -> do
+    STMultiHttp fub api -> do
       let app req resp = do
             who <- reqShip req
-            runAppl who (rcReq api who) (rcKil api who) req resp
+            sub <- atomically $ fub who
+            runAppl who (rcReq api who) (rcKil api who) sub req resp
       io (W.runSettingsSocket opts sok app)
 
-    STMultiHttps mtls api -> do
+    STMultiHttps mtls fub api -> do
       TlsConfig {..} <- atomically (getFirstTlsConfig mtls)
 
       let sni = def { onServerNameIndication = onSniHdr envir mtls }
@@ -296,7 +304,8 @@ startServer typ hos por sok red vLive = do
           runRIO envir $ logDbg ctx "Got request"
           who <- reqShip req
           runRIO envir $ logDbg ctx ("Parsed HOST", who)
-          runAppl who (rcReq api who) (rcKil api who) req resp
+          sub <- atomically $ fub who
+          runAppl who (rcReq api who) (rcKil api who) sub req resp
 
       io (W.runTLSSocket tlsMany opts sok app)
 
@@ -312,7 +321,7 @@ configCreds TlsConfig {..} =
 fakeServ :: HasLogFunc e => ServConf -> RIO e ServApi
 fakeServ conf = do
   let por = fakePort (scPort conf)
-  logDebug (displayShow ("EYRE", "SERV", "Running Fake Server", por))
+  logInfo (displayShow ("EYRE", "SERV", "Running Fake Server", por))
   pure $ ServApi
     { saKil = pure ()
     , saPor = pure por
@@ -331,20 +340,18 @@ getFirstTlsConfig (MTC var) = do
 
 realServ :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
 realServ vLive conf@ServConf {..} = do
-  logDebug (displayShow ("EYRE", "SERV", "Running Real Server"))
-  kil <- newEmptyTMVarIO
+  logInfo (displayShow ("EYRE", "SERV", "Running Real Server"))
   por <- newEmptyTMVarIO
 
   tid <- async (runServ por)
-  _   <- async (atomically (takeTMVar kil) >> cancel tid)
 
   pure $ ServApi
-    { saKil = void (tryPutTMVar kil ())
+    { saKil = cancel tid
     , saPor = readTMVar por
     }
  where
   runServ vPort = do
-    logDebug (displayShow ("EYRE", "SERV", "runServ"))
+    logInfo (displayShow ("EYRE", "SERV", "runServ"))
     rwith (forceOpenSocket scHost scPort) $ \(por, sok) -> do
       atomically (putTMVar vPort por)
       startServer scType scHost por sok scRedi vLive

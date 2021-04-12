@@ -45,12 +45,21 @@ _hind_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
       //
       case c3__trim: {
         ret_o = c3y;
-        u3_auto_plan(car_u, u3_ovum_init(0, u3_blip, u3k(wir), u3k(cad)));
-      }
+        u3_auto_plan(car_u, u3_ovum_init(0, u3_blip,
+                                         u3nc(c3__arvo, u3_nul), u3k(cad)));
+      } break;
 
       case c3__vega: {
         ret_o = c3y;
         u3l_log("<<<reset>>>\n");
+      } break;
+
+      //  NB: startup explicitly handled in pier.c
+      //
+      //    XX review arvo upgrade scenaria
+      //
+      case c3__wend: {
+        ret_o = c3y;
       } break;
     }
   }

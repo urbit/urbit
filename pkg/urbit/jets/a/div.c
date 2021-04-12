@@ -11,7 +11,7 @@
            u3_atom b)
   {
     if ( 0 == b ) {
-      return u3m_bail(c3__exit);
+      return u3m_error("divide-by-zero");
     }
     else {
       if ( _(u3a_is_cat(a)) && _(u3a_is_cat(b)) ) {
@@ -44,3 +44,13 @@
       return u3qa_div(a, b);
     }
   }
+
+
+u3_noun
+u3ka_div(u3_noun a,
+         u3_noun b)
+{
+  u3_noun c = u3qa_div(a, b);
+  u3z(a); u3z(b);
+  return c;
+}

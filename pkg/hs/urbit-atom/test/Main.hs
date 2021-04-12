@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wno-deprecations #-}
+{-# OPTIONS_GHC -Wno-deprecations -Wno-orphans #-}
 
 
 module Main (main) where

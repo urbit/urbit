@@ -1,21 +1,20 @@
-import React from "react";
+import React from 'react';
 import {
-  Center,
   Box,
   Col,
   Row,
   Text,
-  IconButton,
-  Button,
-  Icon,
-} from "@tlon/indigo-react";
-import { uxToHex } from "~/logic/lib/util";
-import { Link } from "react-router-dom";
+  Icon
+} from '@tlon/indigo-react';
+import { uxToHex } from '~/logic/lib/util';
+import { Link } from 'react-router-dom';
 
-import { Association, Associations } from "~/types/metadata-update";
-import { Dropdown } from "~/views/components/Dropdown";
-import { Workspace } from "~/types";
-import { getTitleFromWorkspace } from "~/logic/lib/workspace";
+import { Associations } from '@urbit/api/metadata';
+import { Dropdown } from '~/views/components/Dropdown';
+import { getTitleFromWorkspace } from '~/logic/lib/workspace';
+import { MetadataIcon } from './MetadataIcon';
+import { Workspace } from '~/types/workspace';
+import useMetadataState from '~/logic/state/metadata';
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
@@ -33,10 +32,11 @@ const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
 );
 
 function RecentGroups(props: { recent: string[]; associations: Associations }) {
-  const { associations, recent } = props;
+  const { recent } = props;
   if (recent.length < 2) {
     return null;
   }
+  const associations = useMetadataState(state => state.associations);
 
   return (
     <Col borderBottom={1} borderBottomColor="lightGray" p={1}>
@@ -44,12 +44,13 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
         Recent Groups
       </Box>
       {props.recent.filter((e) => {
-        return (e in associations?.contacts);
+        return (e in associations?.groups);
       }).slice(1, 5).map((g) => {
-        const assoc = associations.contacts[g];
-        const color = uxToHex(assoc?.metadata?.color || "0x0");
+        const assoc = associations.groups[g];
+        const color = uxToHex(assoc?.metadata?.color || '0x0');
         return (
-          <Row key={g} px={1} pb={2} alignItems="center">
+          <Link key={g} style={{ minWidth: 0 }} to={`/~landscape${g}`}>
+          <Row px={1} pb={2} alignItems="center">
             <Box
               borderRadius={1}
               border={1}
@@ -59,12 +60,11 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               bg={`#${color}`}
               mr={2}
               display="block"
-              flexShrink='0'
+              flexShrink={0}
             />
-            <Link style={{ minWidth: 0 }} to={`/~landscape${g}`}>
               <Text verticalAlign='top' maxWidth='100%' overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{assoc?.metadata?.title}</Text>
-            </Link>
-          </Row>
+            </Row>
+          </Link>
         );
       })}
     </Col>
@@ -72,26 +72,40 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
 }
 
 export function GroupSwitcher(props: {
-  associations: Associations;
   workspace: Workspace;
   baseUrl: string;
   recentGroups: string[];
+  isAdmin: any;
 }) {
-  const { associations, workspace } = props;
+  const { workspace, isAdmin } = props;
+  const associations = useMetadataState(state => state.associations);
   const title = getTitleFromWorkspace(associations, workspace);
+  const metadata = (workspace.type === 'home' || workspace.type  === 'messages')
+    ? undefined
+    : associations.groups[workspace.group].metadata;
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
-    <Box zIndex="2" position="sticky" top="0px" p={2}>
+    <Row
+      width="100%"
+      alignItems="center"
+      flexShrink={0}
+      height='48px'
+      backgroundColor="white"
+      position="sticky"
+      top="0px"
+      pl='3'
+      borderBottom='1px solid'
+      borderColor='washedGray'
+    >
       <Col
-        justifyContent="center"
         bg="white"
-        borderRadius={1}
-        border={1}
-        borderColor="washedGray"
+        width="100%"
+        height="100%"
       >
-        <Row alignItems="center" justifyContent="space-between">
+        <Row flexGrow={1} alignItems="center" justifyContent="space-between">
           <Dropdown
-            width="231px"
+            width="auto"
+            dropWidth="231px"
             alignY="top"
             options={
               <Col
@@ -102,7 +116,8 @@ export function GroupSwitcher(props: {
                 width="100%"
                 alignItems="stretch"
               >
-                <GroupSwitcherItem to="">
+                {(props.baseUrl === '/~landscape/home') ?
+                  <GroupSwitcherItem to="">
                   <Icon
                     mr={2}
                     color="gray"
@@ -111,21 +126,30 @@ export function GroupSwitcher(props: {
                   />
                   <Text>All Groups</Text>
                 </GroupSwitcherItem>
+                :
+                <GroupSwitcherItem to="/~landscape/home">
+                  <Icon
+                    mr={2}
+                    color="gray"
+                    display="block"
+                    icon="Home"
+                  />
+                  <Text>My Channels</Text>
+                </GroupSwitcherItem>}
                 <RecentGroups
                   recent={props.recentGroups}
-                  associations={props.associations}
                 />
                 <GroupSwitcherItem to="/~landscape/new">
-                  <Icon mr="2" color="gray" icon="Plus" />
+                  <Icon mr="2" color="gray" icon="CreateGroup" />
                   <Text> New Group</Text>
                 </GroupSwitcherItem>
                 <GroupSwitcherItem to="/~landscape/join">
-                  <Icon mr="2" color="gray" icon="Boot" />
+                  <Icon mr="2" color="gray" icon="Plus" />
                   <Text> Join Group</Text>
                 </GroupSwitcherItem>
-                {workspace.type === "group" && (
+                {workspace.type === 'group' && (
                   <>
-                    <GroupSwitcherItem to={navTo("/popover/participants")}>
+                    <GroupSwitcherItem to={navTo('/popover/participants')}>
                       <Icon
                         mr={2}
                         color="gray"
@@ -133,7 +157,7 @@ export function GroupSwitcher(props: {
                       />
                       <Text> Participants</Text>
                     </GroupSwitcherItem>
-                    <GroupSwitcherItem to={navTo("/popover/settings")}>
+                    <GroupSwitcherItem to={navTo('/popover/settings')}>
                       <Icon
                         mr={2}
                         color="gray"
@@ -141,44 +165,43 @@ export function GroupSwitcher(props: {
                       />
                       <Text> Group Settings</Text>
                     </GroupSwitcherItem>
-                    <GroupSwitcherItem bottom to={navTo("/invites")}>
+                    {isAdmin && (<GroupSwitcherItem bottom to={navTo('/invites')}>
                       <Icon
                         mr={2}
                         color="blue"
-                        icon="CreateGroup"
+                        icon="Users"
                       />
                       <Text color="blue">Invite to group</Text>
-                    </GroupSwitcherItem>
+                    </GroupSwitcherItem>)}
                   </>
                 )}
               </Col>
             }
           >
-            <Row p={2} alignItems="center">
-              <Row alignItems="center" mr={1} flex='1'>
-                <Text overflow='hidden' display='inline-block' maxWidth='131px'  style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+            <Row flexGrow={1} alignItems="center" width='100%' minWidth='0' flexShrink={0}>
+              { metadata && <MetadataIcon flexShrink={0} mr="2" metadata={metadata} height="24px" width="24px" /> }
+              <Text flexShrink={1} lineHeight="1.1" fontSize='2' fontWeight="700" overflow='hidden' display='inline-block' flexShrink='1' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
-              <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
-            </Row>
           </Dropdown>
-          <Row pr={1} justifyContent="flex-end" alignItems="center">
-            {workspace.type === "group" && (
+          <Row pr='3' verticalAlign="middle">
+            {(workspace.type === 'group') && (
               <>
-                <Link to={navTo("/invites")}>
+                {isAdmin && (<Link to={navTo('/invites')}>
                   <Icon
-                    display="block"
+                    display="inline-block"
                     color='blue'
-                    icon="CreateGroup"
+                    icon="Users"
+                    ml='12px'
                   />
-                </Link>
-                <Link to={navTo("/popover/settings")}>
-                  <Icon color='gray' display="block" m={2} icon="Gear" />
+                </Link>)}
+                <Link to={navTo('/popover/settings')}>
+                  <Icon color='gray' display="inline-block" ml={'12px'} icon="Gear" />
                 </Link>
               </>
             )}
           </Row>
         </Row>
       </Col>
-    </Box>
+    </Row>
   );
 }

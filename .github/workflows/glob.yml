@@ -1,0 +1,20 @@
+name: glob
+on:
+  push:
+    branches:
+      - 'release/next-js'
+jobs:
+  glob:
+    runs-on: ubuntu-latest
+    name: "Create and deploy a glob to ~lomlyx-lopsem-nidsut-tomdun"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: ./.github/actions/glob
+        with:
+          ship: 'lomlyx-lopsem-nidsut-tomdun'
+          credentials: ${{ secrets.JANEWAY_SERVICE_KEY }}
+          ssh-sec-key: ${{ secrets.JANEWAY_SSH_SEC_KEY }}
+          ssh-pub-key: ${{ secrets.JANEWAY_SSH_PUB_KEY }}
+

@@ -31,8 +31,10 @@ import Foreign.Ptr           (Ptr, castPtr, nullPtr)
 import Foreign.Storable      (peek, poke, sizeOf)
 import RIO                   (HasLogFunc, RIO, display, logDebug, runRIO)
 import Urbit.Noun            (DecodeErr, Noun, Ship)
-import Urbit.Noun            (deriveNoun, fromNounExn, toNoun)
-import Urbit.Noun            (cueBS, jamBS)
+import Urbit.Noun            (deriveNoun, fromNounExn, toNoun, fromNoun)
+import Urbit.Noun            (atomBytes, bytesAtom)
+import Urbit.Noun.Core       (pattern Atom)
+
 
 import qualified Data.ByteString.Unsafe as BU
 import qualified Data.Vector            as V
@@ -41,9 +43,9 @@ import qualified Data.Vector            as V
 -- Public Types ----------------------------------------------------------------
 
 data LogIdentity = LogIdentity
-  { who          :: Ship
-  , isFake       :: Bool
-  , lifecycleLen :: Word
+  { who          :: !Ship
+  , isFake       :: !Bool
+  , lifecycleLen :: !Word
   } deriving (Eq, Ord, Show)
 
 deriveNoun ''LogIdentity
@@ -74,6 +76,8 @@ lastEv = readTVar . numEvents
 
 data EventLogExn
   = NoLogIdentity
+  | MissingLogVersion
+  | BadLogVersion Word64
   | MissingEvent Word64
   | BadNounInLogIdentity ByteString DecodeErr ByteString
   | BadKeyInEventLog
@@ -100,7 +104,7 @@ rawOpen :: MonadIO m => FilePath -> m Env
 rawOpen dir = io $ do
     env <- mdb_env_create
     mdb_env_set_maxdbs env 3
-    mdb_env_set_mapsize env (100 * 1024 * 1024 * 1024)
+    mdb_env_set_mapsize env (1024 * 1024 * 1024 * 1024)
     mdb_env_open env dir []
     pure env
 
@@ -207,26 +211,35 @@ getIdent env dbi = do
         Nothing -> throwIO NoLogIdentity
         Just li -> pure li
   where
-    decodeIdent :: (Noun, Noun, Noun) -> RIO e LogIdentity
-    decodeIdent = fromNounExn . toNoun
+    decodeIdent :: (Noun, Noun, Noun, Noun) -> RIO e LogIdentity
+    decodeIdent (ver, who, fake, life) = do
+      -- Verify log version
+      case fromNoun ver of
+        Just 1 -> pure ()
+        Just x -> throwIO $ BadLogVersion x
+        Nothing -> throwIO $ MissingLogVersion
 
-    getTbl :: Env -> RIO e (Maybe (Noun, Noun, Noun))
+      fromNounExn $ toNoun (who, fake, life)
+
+    getTbl :: Env -> RIO e (Maybe (Noun, Noun, Noun, Noun))
     getTbl env = do
         rwith (readTxn env) $ \txn -> do
+            version <- getMb txn dbi "version"
             who  <- getMb txn dbi "who"
-            fake <- getMb txn dbi "is-fake"
+            fake <- getMb txn dbi "fake"
             life <- getMb txn dbi "life"
-            pure $ (,,) <$> who <*> fake <*> life
+            pure $ (,,,) <$> version <*> who <*> fake <*> life
 
 writeIdent :: HasLogFunc e => Env -> Dbi -> LogIdentity -> RIO e ()
 writeIdent env metaTbl ident@LogIdentity{..} = do
     logDebug "Writing log identity"
     let flags = compileWriteFlags []
     rwith (writeTxn env) $ \txn -> do
-        x <- putNoun flags txn metaTbl "who"     (toNoun who)
-        y <- putNoun flags txn metaTbl "is-fake" (toNoun isFake)
-        z <- putNoun flags txn metaTbl "life"    (toNoun lifecycleLen)
-        unless (x && y && z) $ do
+        w <- putAtom flags txn metaTbl "version" (toNoun (1 :: Integer))
+        x <- putAtom flags txn metaTbl "who"     (toNoun who)
+        y <- putAtom flags txn metaTbl "fake"    (toNoun isFake)
+        z <- putAtom flags txn metaTbl "life"    (toNoun lifecycleLen)
+        unless (w && x && y && z) $ do
             throwIO (BadWriteLogIdentity ident)
 
 
@@ -300,7 +313,7 @@ streamEvents log first = do
     for_ batch yield
     streamEvents log (first + word (length batch))
 
-streamEffectsRows :: ∀e. HasLogFunc e
+streamEffectsRows :: forall e. HasLogFunc e
                   => EventLog -> Word64
                   -> ConduitT () (Word64, ByteString) (RIO e) ()
 streamEffectsRows log = go
@@ -352,7 +365,7 @@ readBatch log first = start
 {-|
    Read 1000 rows from the database, starting from key `first`.
 -}
-readRowsBatch :: ∀e. HasLogFunc e
+readRowsBatch :: forall e. HasLogFunc e
               => Env -> Dbi -> Word64 -> RIO e (V.Vector (Word64, ByteString))
 readRowsBatch env dbi first = readRows
   where
@@ -395,9 +408,6 @@ assertExn :: Exception e => Bool -> e -> IO ()
 assertExn True  _ = pure ()
 assertExn False e = throwIO e
 
-eitherExn :: Exception e => Either a b -> (a -> e) -> IO b
-eitherExn eat exn = either (throwIO . exn) pure eat
-
 byteStringAsMdbVal :: ByteString -> (MDB_val -> IO a) -> IO a
 byteStringAsMdbVal bs k =
   BU.unsafeUseAsCStringLen bs $ \(ptr,sz) ->
@@ -435,17 +445,17 @@ mdbValToBytes (MDB_val sz ptr) = do
 
 mdbValToNoun :: ByteString -> MDB_val -> IO Noun
 mdbValToNoun key (MDB_val sz ptr) = do
-  bs <- BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
-  let res = cueBS bs
-  eitherExn res (\err -> BadNounInLogIdentity key err bs)
+  (Atom . bytesAtom) <$> BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
 
-putNoun :: MonadIO m
+putAtom :: MonadIO m
         => MDB_WriteFlags -> Txn -> Dbi -> ByteString -> Noun -> m Bool
-putNoun flags txn db key val =
-  io $
-  byteStringAsMdbVal key $ \mKey ->
-  byteStringAsMdbVal (jamBS val) $ \mVal ->
-  mdb_put flags txn db mKey mVal
+putAtom flags txn db key val =
+  case val of
+    Atom a -> io $
+      byteStringAsMdbVal key $ \mKey ->
+      byteStringAsMdbVal (atomBytes a) $ \mVal ->
+      mdb_put flags txn db mKey mVal
+    _ -> error "Impossible putAtom received cell"
 
 putBytes :: MonadIO m
          => MDB_WriteFlags -> Txn -> Dbi -> Word64 -> ByteString -> m Bool

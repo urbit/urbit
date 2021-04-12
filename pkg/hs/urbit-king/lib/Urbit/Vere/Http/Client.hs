@@ -17,7 +17,7 @@ import Urbit.Arvo (BlipEv(..), Ev(..), HttpClientEf(..), HttpClientEv(..),
                    HttpClientReq(..), HttpEvent(..), KingId, ResponseHeader(..))
 
 
-import qualified Data.Map                as M
+import qualified Data.Map.Strict         as M
 import qualified Network.HTTP.Client     as H
 import qualified Network.HTTP.Client.TLS as TLS
 import qualified Network.HTTP.Types      as HT
@@ -126,7 +126,7 @@ client env plan = (initialEvents, runHttpClient)
     newReq :: HttpClientDrv -> ReqId -> HttpClientReq -> RIO e ()
     newReq drv id req = do
       async <- runReq drv id req
-      atomically $ modifyTVar (hcdLive drv) (insertMap id async)
+      atomically $ modifyTVar' (hcdLive drv) (insertMap id async)
 
     -- The problem with the original http client code was that it was written
     -- to the idea of what the events "should have" been instead of what they
@@ -140,7 +140,7 @@ client env plan = (initialEvents, runHttpClient)
     runReq HttpClientDrv{..} id req = async $
       case cvtReq req of
         Nothing -> do
-          logDebug $ displayShow ("(malformed http client request)", id, req)
+          logInfo $ displayShow ("(malformed http client request)", id, req)
           planEvent id (Cancel ())
         Just r -> do
           logDebug $ displayShow ("(http client request)", id, req)

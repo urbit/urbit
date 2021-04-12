@@ -1,14 +1,46 @@
 import React from 'react';
 import moment from 'moment';
-import { Box, Icon, Text } from '@tlon/indigo-react';
+import { Box, Icon, Text, BaseAnchor, BaseInput } from '@tlon/indigo-react';
+import ErrorBoundary from '~/views/components/ErrorBoundary';
+import withState from '~/logic/lib/withState';
+import useLaunchState from '~/logic/state/launch';
 
 import Tile from './tile';
 
-export default class WeatherTile extends React.Component {
+export const weatherStyleMap = {
+  Clear: 'rgba(67, 169, 255, 0.4)',
+  Sunny: 'rgba(67, 169, 255, 0.4)',
+  PartlyCloudy: 'rgba(178, 211, 255, 0.33)',
+  Cloudy: 'rgba(136, 153, 176, 0.43)',
+  VeryCloudy: 'rgba(78, 90, 106, 0.43)',
+  Fog: 'rgba(100, 119, 128, 0.12)',
+  LightShowers: 'rgba(121, 148, 185, 0.33)',
+  LightSleetShowers: 'rgba(114, 130, 153, 0.33)',
+  LightSleet: 'rgba(155, 164, 177, 0.33)',
+  ThunderyShowers: 'rgba(53, 77, 103, 0.33)',
+  LightSnow: 'rgba(179, 182, 200, 0.33)',
+  HeavySnow: 'rgba(179, 182, 200, 0.33)',
+  LightRain: 'rgba(58, 79, 107, 0.33)',
+  HeavyShowers: 'rgba(36, 54, 77, 0.33)',
+  HeavyRain: 'rgba(5, 9, 13, 0.39)',
+  LightSnowShowers: 'rgba(174, 184, 198, 0.33)',
+  HeavySnowShowers: 'rgba(55, 74, 107, 0.33)',
+  ThunderyHeavyRain: 'rgba(45, 56, 66, 0.61)',
+  ThunderySnowShowers: 'rgba(40, 54, 79, 0.46)',
+  default: 'transparent'
+};
+
+const imperialCountries = [
+  'United States of America',
+  'Myanmar',
+  'Liberia',
+];
+
+class WeatherTile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      latlong: '',
+      location: '',
       manualEntry: false,
       error: false
     };
@@ -17,101 +49,62 @@ export default class WeatherTile extends React.Component {
   // geolocation and manual input functions
   locationSubmit() {
     navigator.geolocation.getCurrentPosition((res) => {
-      const latlng = `${res.coords.latitude},${res.coords.longitude}`;
+      const location = `${res.coords.latitude},${res.coords.longitude}`;
       this.setState({
-        latlng
+        location
       }, (err) => {
         console.log(err);
       }, { maximumAge: Infinity, timeout: 10000 });
-      this.props.api.weather(latlng);
+      this.props.api.launch.weather(location);
       this.setState({ manualEntry: !this.state.manualEntry });
     });
   }
 
-  manualLocationSubmit() {
+  manualLocationSubmit(event) {
     event.preventDefault();
-    const gpsInput = document.getElementById('gps');
-    const latlngNoSpace = gpsInput.value.replace(/\s+/g, '');
-    const latlngParse = /-?[0-9]+(?:\.[0-9]*)?,-?[0-9]+(?:\.[0-9]*)?/g;
-    if (latlngParse.test(latlngNoSpace)) {
-      const latlng = latlngNoSpace;
-      this.setState({ latlng }, (err) => {
+    const location = document.getElementById('location').value;
+    this.setState({ location }, (err) => {
       console.log(err);
       }, { maximumAge: Infinity, timeout: 10000 });
-      this.props.api.launch.weather(latlng);
+      this.props.api.launch.weather(location);
       this.setState({ manualEntry: !this.state.manualEntry });
-    } else {
-      this.setState({ error: true });
-      return false;
-    }
   }
-  // set appearance based on weather
-  setColors(data) {
-    let weatherStyle = {
-      bg: '',
-      text: ''
-    };
 
-    switch (data.currently.icon) {
-      case 'clear-day':
-        weatherStyle = { bg: '#E9F5FF', text: '#333' };
-        break;
-      case 'clear-night':
-        weatherStyle = { bg: '#14263C', text: '#fff' };
-        break;
-      case 'rain':
-        weatherStyle = { bg: '#2E1611', text: '#fff' };
-        break;
-      case 'snow':
-        weatherStyle = { bg: '#F9F9FB', text: '#333' };
-        break;
-      case 'sleet':
-        weatherStyle = { bg: '#EFF1F3', text: '#333' };
-        break;
-      case 'wind':
-        weatherStyle = { bg: '#F7FEF6', text: '#333' };
-        break;
-      case 'fog':
-        weatherStyle = { bg: '#504D44', text: '#fff' };
-        break;
-      case 'cloudy':
-        weatherStyle = { bg: '#EEF1F5', text: '#333' };
-        break;
-      case 'partly-cloudy-day':
-        weatherStyle = { bg: '#F3F6FA', text: '#333' };
-        break;
-      case 'partly-cloudy-night':
-        weatherStyle = { bg: '#283442', text: '#fff' };
-        break;
-      default:
-        weatherStyle = { bg: 'white', text: 'black' };
-    }
-    return weatherStyle;
+  // set appearance based on weather
+  colorFromCondition(data) {
+    let weatherDesc = data['current-condition'][0].weatherDesc[0].value;
+    return weatherStyleMap[weatherDesc] || weatherStyleMap.default;
   }
+
   // all tile views
-  renderWrapper(child,
-    weatherStyle = { bg: 'white', text: 'black' }
-    ) {
+  renderWrapper(child, backgroundColor = 'white') {
     return (
-      <Tile bg={weatherStyle.bg} color={weatherStyle.text}>
-        {child}
-      </Tile>
+      <ErrorBoundary>
+        <Tile bg='white' backgroundColor={backgroundColor}>
+          {child}
+        </Tile>
+      </ErrorBoundary>
     );
   }
 
-  renderManualEntry() {
+  renderManualEntry(data) {
     let secureCheck;
     let error;
     if (this.state.error === true) {
-      error = <p className="f9 red2 pt1">Please try again.</p>;
+      error = <Text display='block' color='red' pt='1'>Please try again.</Text>;
     }
     if (location.protocol === 'https:') {
       secureCheck = (
-        <a className="black white-d f9 pointer"
-           onClick={() => this.locationSubmit()}>
+        <Text color='black' cursor='pointer'
+           onClick={() => this.locationSubmit()}
+        >
           Detect ->
-        </a>
+        </Text>
       );
+    }
+    let locationName;
+    if ('nearest-area' in data) {
+      locationName = data['nearest-area'][0].areaName[0].value;
     }
     return this.renderWrapper(
       <Box
@@ -120,48 +113,52 @@ export default class WeatherTile extends React.Component {
         justifyContent='space-between'
         height='100%'
       >
-        <a
-          className="f9 black white-d pointer"
+        <Text
+          color='black'
+          cursor='pointer'
           onClick={() =>
             this.setState({ manualEntry: !this.state.manualEntry })
           }
         >
           &lt;&#45;
-        </a>
+        </Text>
         {secureCheck}
         <Text pb={1} mb='auto'>
-          Please enter your{' '}
-          <a
-            className="bb"
-            href="https://latitudeandlongitude.org/"
-            target="_blank"
-          >
-            latitude and longitude
-          </a>
-          .
+          Please enter your location.
+          {locationName ? ` Current location is near ${locationName}.` : ''}
         </Text>
         {error}
-        <form mt='auto' className="flex" style={{ marginBlockEnd: 0}}>
-          <input
-            id="gps"
+        <Box mt='auto' display='flex' marginBlockEnd='0'>
+          <BaseInput
+            id="location"
             size="10"
-            className="w-100 black white-d bg-transparent bn f9"
+            width='100%'
+            color='black'
+            fontSize='0'
+            backgroundColor='transparent'
+            border='0'
             type="text"
-            placeholder="29.55, -95.08"
+            autoFocus
+            placeholder="GPS, ZIP, City"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                e.preventDefault();
-                this.manualLocationSubmit(e.target.value);
+                this.manualLocationSubmit(e);
               }
-            }} />
-          <input
-            className={'bg-transparent black white-d bn pointer ' +
-            'f9 flex-shrink-0 pr1'}
+            }}
+          />
+          <BaseInput
+            backgroundColor='transparent'
+            color='black'
+            cursor='pointer'
+            flexShrink='0'
+            pl='1'
+            fontSize='0'
+            border='0'
             type="submit"
-            onClick={() => this.manualLocationSubmit()}
+            onClick={this.manualLocationSubmit.bind(this)}
             value="->"
           />
-        </form>
+        </Box>
       </Box>
     );
   }
@@ -169,7 +166,6 @@ export default class WeatherTile extends React.Component {
   renderNoData() {
     return this.renderWrapper(
       <Box
-        bg='white'
         display='flex'
         flexDirection='column'
         justifyContent='space-between'
@@ -177,7 +173,7 @@ export default class WeatherTile extends React.Component {
         onClick={() => this.setState({ manualEntry: !this.state.manualEntry })}
       >
         <Box>
-          <Icon icon='Weather' display='inline-block' verticalAlign='top' pt='3px' pr='2px' />
+          <Icon icon='Weather' display='inline-block' verticalAlign='top' mt='3px' mr='2' />
           <Text>Weather</Text>
         </Box>
         <Text style={{ cursor: 'pointer' }}>
@@ -187,14 +183,16 @@ export default class WeatherTile extends React.Component {
     );
   }
 
-  renderWithData(data, weatherStyle) {
-    const c = data.currently;
-    const d = data.daily.data[0];
+  renderWithData(data) {
+    const locationName = data['nearest-area'][0].areaName[0].value;
+    const c = data['current-condition'][0];
+    const d = data['weather'][0];
+    const bg = this.colorFromCondition(data);
 
-    const sunset = moment.unix(d.sunsetTime);
+    const sunset = moment(moment().format('YYYY-MM-DD') + ' '  + d.astronomy[0].sunset, 'YYYY-MM-DD hh:mm A');
     const sunsetDiff = sunset.diff(moment(), 'hours');
 
-    const sunrise = moment.unix(d.sunriseTime);
+    const sunrise = moment(moment().format('YYYY-MM-DD') + ' '  + d.astronomy[0].sunrise, 'YYYY-MM-DD hh:mm A');
     let sunriseDiff = sunrise.diff(moment(), 'hours');
 
     if (sunriseDiff > 24) {
@@ -207,6 +205,10 @@ export default class WeatherTile extends React.Component {
       ? `Sun sets in ${sunsetDiff}h`
       : `Sun rises in ${sunriseDiff}h`;
 
+    const temp = data['nearest-area'] && imperialCountries.includes(data['nearest-area'][0].country[0].value)
+      ? `${Math.round(c.temp_F)}℉`
+      : `${Math.round(c.temp_C)}℃`;
+
     return this.renderWrapper(
       <Box
         width='100%'
@@ -214,19 +216,18 @@ export default class WeatherTile extends React.Component {
         display='flex'
         flexDirection='column'
         alignItems='space-between'
+        title={`${locationName} Weather`}
       >
-        <Text color={weatherStyle.text}>
-          <Icon icon='Weather' color={weatherStyle.text} display='inline' style={{ position: 'relative', top: '.3em'}} />
-          Weather
-          <a
-            style={{ color: weatherStyle.text }}
-            className='pointer'
-            onClick={() =>
-              this.setState({ manualEntry: !this.state.manualEntry })
-            }
-          >
-          ->
-        </a>
+        <Text>
+          <Icon icon='Weather' display='inline' mr='2' style={{ position: 'relative', top: '.3em' }} />
+            <Text
+              cursor='pointer'
+              onClick={() =>
+                this.setState({ manualEntry: !this.state.manualEntry })
+              }
+            >
+            Weather ->
+          </Text>
         </Text>
 
         <Box
@@ -235,40 +236,59 @@ export default class WeatherTile extends React.Component {
           display="flex"
           flexDirection="column"
         >
-          <Text color={weatherStyle.text}>{c.summary}</Text>
-          <Text color={weatherStyle.text}>{Math.round(c.temperature)}°</Text>
-          <Text color={weatherStyle.text}>{nextSolarEvent}</Text>
+          <Text>{c.weatherDesc[0].value.replace(/([a-z])([A-Z])/g, '$1 $2')}</Text>
+          <Text>{temp}</Text>
+          <Text>{nextSolarEvent}</Text>
         </Box>
-      </Box>
-    , weatherStyle);
+      </Box>, bg);
   }
 
   render() {
     const data = this.props.weather ? this.props.weather : {};
 
     if (this.state.manualEntry === true) {
-      return this.renderManualEntry();
+      return this.renderManualEntry(data);
     }
 
-    if ('currently' in data && 'daily' in data) {
-      const weatherStyle = this.setColors(data);
-      return this.renderWithData(data, weatherStyle);
+    if ('currently' in data) { // Old weather source
+      this.props.api.launch.weather(this.props.location);
+    }
+
+    if ('current-condition' in data && 'weather' in data) {
+      return this.renderWithData(data);
     }
 
     if (this.props.location) {
-      return this.renderWrapper((
-        <div
-          className={'pa2 w-100 h-100 ' +
-          'bg-white bg-gray0-d black white-d'}>
-            <Icon icon='Weather' color='black' display='inline' style={{ position: 'relative', top: '.3em' }} />
-            <Text>Weather</Text>
-          <p className="w-100 flex-col f9">
-          Loading, please check again later...
-          </p>
-        </div>
-      ));
+      return this.renderWrapper(
+        <Box
+          width='100%'
+          height='100%'
+          backgroundColor='white'
+          color='black'
+          display="flex"
+          flexDirection="column"
+          justifyContent="flex-start"
+        >
+          <Text><Icon icon='Weather' color='black' display='inline' mr='2' style={{ position: 'relative', top: '.3em' }} /> Weather</Text>
+          <Text width='100%' display='flex' flexDirection='column' mt={1}>
+            Loading, please check again later...
+          </Text>
+          <Text mt="auto">
+            Set new location{' '}
+            <Text
+                cursor='pointer'
+                onClick={() =>
+                  this.setState({ manualEntry: !this.state.manualEntry })
+                }
+              >
+              ->
+            </Text>
+          </Text>
+        </Box>
+      );
     }
     return this.renderNoData();
   }
 }
 
+export default withState(WeatherTile, [[useLaunchState]]);

@@ -10,8 +10,8 @@ where
 
 import Urbit.Prelude hiding (Builder)
 
-import Urbit.Arvo                hiding (ServerId, reqUrl, secure)
-import Urbit.King.App            (HasKingId(..), HasPierEnv(..))
+import Urbit.Arvo                hiding (ServerId, reqUrl)
+import Urbit.King.App            (HasKingId(..), HasMultiEyreApi(..), HasPierEnv(..))
 import Urbit.King.Config
 import Urbit.Vere.Eyre.Multi
 import Urbit.Vere.Eyre.PortsFile
@@ -20,11 +20,12 @@ import Urbit.Vere.Eyre.Service
 import Urbit.Vere.Eyre.Wai
 import Urbit.Vere.Pier.Types
 
-import Data.List.NonEmpty (NonEmpty((:|)))
-import Data.PEM           (pemParseBS, pemWriteBS)
-import RIO.Prelude        (decodeUtf8Lenient)
-import System.Random      (randomIO)
-import Urbit.Vere.Http    (convertHeaders, unconvertHeaders)
+import Data.List.NonEmpty          (NonEmpty((:|)))
+import Data.PEM                    (pemParseBS, pemWriteBS)
+import RIO.Prelude                 (decodeUtf8Lenient)
+import System.Random               (randomIO)
+import Urbit.Vere.Http             (convertHeaders, unconvertHeaders)
+import Urbit.Vere.Eyre.KingSubsite (KingSubsite)
 
 import qualified Network.HTTP.Types as H
 
@@ -170,15 +171,18 @@ execRespActs (Drv v) who reqId ev = readMVar v >>= \case
       atomically (routeRespAct who (sLiveReqs sv) reqId act)
 
 startServ
-  :: (HasPierConfig e, HasLogFunc e, HasNetworkConfig e)
-  => MultiEyreApi
-  -> Ship
+  :: (HasPierConfig e, HasLogFunc e, HasMultiEyreApi e, HasNetworkConfig e)
+  => Ship
   -> Bool
   -> HttpServerConf
   -> (EvErr -> STM ())
+  -> (Text -> RIO e ())
+  -> KingSubsite
   -> RIO e Serv
-startServ multi who isFake conf plan = do
-  logDebug (displayShow ("EYRE", "startServ"))
+startServ who isFake conf plan stderr sub = do
+  logInfo (displayShow ("EYRE", "startServ"))
+
+  multi <- view multiEyreApiL
 
   let vLive = meaLive multi
 
@@ -219,42 +223,42 @@ startServ multi who isFake conf plan = do
   let onKilReq :: Ship -> Word64 -> STM ()
       onKilReq _ship = plan . cancelEv srvId . fromIntegral
 
-  logDebug (displayShow ("EYRE", "joinMultiEyre", who, mTls, mCre))
+  logInfo (displayShow ("EYRE", "joinMultiEyre", who, mTls, mCre))
 
-  atomically (joinMultiEyre multi who mCre onReq onKilReq)
+  atomically (joinMultiEyre multi who mCre onReq onKilReq sub)
 
-  logDebug $ displayShow ("EYRE", "Starting loopback server")
+  logInfo $ displayShow ("EYRE", "Starting loopback server")
   lop <- serv vLive $ ServConf
     { scHost = soHost (pttLop ptt)
     , scPort = soWhich (pttLop ptt)
     , scRedi = Nothing
     , scFake = False
-    , scType = STHttp who $ ReqApi
+    , scType = STHttp who sub $ ReqApi
         { rcReq = onReq Loopback
         , rcKil = onKilReq
         }
     }
 
-  logDebug $ displayShow ("EYRE", "Starting insecure server")
+  logInfo $ displayShow ("EYRE", "Starting insecure server")
   ins <- serv vLive $ ServConf
     { scHost = soHost (pttIns ptt)
     , scPort = soWhich (pttIns ptt)
     , scRedi = secRedi
     , scFake = noHttp
-    , scType = STHttp who $ ReqApi
+    , scType = STHttp who sub $ ReqApi
         { rcReq = onReq Insecure
         , rcKil = onKilReq
         }
     }
 
   mSec <- for mTls $ \tls -> do
-    logDebug "Starting secure server"
+    logInfo "Starting secure server"
     serv vLive $ ServConf
       { scHost = soHost (pttSec ptt)
       , scPort = soWhich (pttSec ptt)
       , scRedi = Nothing
       , scFake = noHttps
-      , scType = STHttps who tls $ ReqApi
+      , scType = STHttps who tls sub $ ReqApi
           { rcReq = onReq Secure
           , rcKil = onKilReq
           }
@@ -269,7 +273,11 @@ startServ multi who isFake conf plan = do
   let por = Ports secPor insPor lopPor
       fil = pierPath <> "/.http.ports"
 
-  logDebug $ displayShow ("EYRE", "All Servers Started.", srvId, por, fil)
+  logInfo $ displayShow ("EYRE", "All Servers Started.", srvId, por, fil)
+  for secPor $ \p ->
+    stderr ("http: secure web interface live on https://localhost:" <> tshow p)
+  stderr ("http: web interface live on http://localhost:" <> tshow insPor)
+  stderr ("http: loopback live on http://localhost:" <> tshow lopPor)
 
   pure (Serv srvId conf lop ins mSec por fil vLive)
 
@@ -281,16 +289,19 @@ _bornFailed env _ = runRIO env $ do
   pure () -- TODO What should this do?
 
 eyre'
-  :: HasPierEnv e
-  => MultiEyreApi
-  -> Ship
+  :: (HasPierEnv e, HasMultiEyreApi e)
+  => Ship
   -> Bool
+  -> (Text -> RIO e ())
+  -> KingSubsite
   -> RIO e ([Ev], RAcquire e (DriverApi HttpServerEf))
-eyre' multi who isFake = do
+
+eyre' who isFake stderr sub = do
   ventQ :: TQueue EvErr <- newTQueueIO
   env <- ask
 
-  let (bornEvs, startDriver) = eyre env multi who (writeTQueue ventQ) isFake
+  let (bornEvs, startDriver) =
+        eyre env who (writeTQueue ventQ) isFake stderr sub
 
   let runDriver = do
         diOnEffect <- startDriver
@@ -315,14 +326,16 @@ eyre
   :: forall e
    . (HasPierEnv e)
   => e
-  -> MultiEyreApi
   -> Ship
   -> (EvErr -> STM ())
   -> Bool
+  -> (Text -> RIO e ())
+  -> KingSubsite
   -> ([Ev], RAcquire e (HttpServerEf -> IO ()))
-eyre env multi who plan isFake = (initialEvents, runHttpServer)
+eyre env who plan isFake stderr sub = (initialEvents, runHttpServer)
  where
   king = fromIntegral (env ^. kingIdL)
+  multi = env ^. multiEyreApiL
 
   initialEvents :: [Ev]
   initialEvents = [bornEv king]
@@ -335,17 +348,17 @@ eyre env multi who plan isFake = (initialEvents, runHttpServer)
   kill :: HasLogFunc e => Serv -> RIO e ()
   kill Serv{..} = do
     atomically (leaveMultiEyre multi who)
-    atomically (saKil sLop)
-    atomically (saKil sIns)
-    for_ sSec (\sec -> atomically (saKil sec))
+    io (saKil sLop)
+    io (saKil sIns)
+    io $ for_ sSec (\sec -> (saKil sec))
     io (removePortsFile sPortsFile)
 
   restart :: Drv -> HttpServerConf -> RIO e Serv
   restart (Drv var) conf = do
-    logDebug "Restarting http server"
-    let startAct = startServ multi who isFake conf plan
+    logInfo "Restarting http server"
+    let startAct = startServ who isFake conf plan stderr sub
     res <- fromEither =<< restartService var startAct kill
-    logDebug "Done restating http server"
+    logInfo "Done restating http server"
     pure res
 
   liveFailed _ = pure ()
@@ -353,11 +366,11 @@ eyre env multi who plan isFake = (initialEvents, runHttpServer)
   handleEf :: Drv -> HttpServerEf -> IO ()
   handleEf drv = runRIO env . \case
     HSESetConfig (i, ()) conf -> do
-      logDebug (displayShow ("EYRE", "%set-config"))
+      logInfo (displayShow ("EYRE", "%set-config"))
       Serv {..} <- restart drv conf
-      logDebug (displayShow ("EYRE", "%set-config", "Sending %live"))
+      logInfo (displayShow ("EYRE", "%set-config", "Sending %live"))
       atomically $ plan (EvErr (liveEv sServId sPorts) liveFailed)
-      logDebug "Write ports file"
+      logInfo "Write ports file"
       io (writePortsFile sPortsFile sPorts)
     HSEResponse (i, req, _seq, ()) ev -> do
       logDebug (displayShow ("EYRE", "%response"))

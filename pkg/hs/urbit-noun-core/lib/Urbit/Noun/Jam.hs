@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -O2 #-}
 
 {-|
-    Fast implementation of Jam (Noun → Atom).
+    Fast implementation of Jam (Noun -> Atom).
 
     This is based on the implementation of `flat`.
 -}

@@ -1,5 +1,5 @@
 /-  lens, *sole
-/+  base64, *server, default-agent
+/+  *server, default-agent
 /=  lens-mark  /mar/lens/command  ::  TODO: ask clay to build a $tube
 =,  format
 |%
@@ -14,6 +14,24 @@
           job=(unit [eyre-id=@ta com=command:lens])
       ==
   ==
+::
+++  export-app
+  |=  [app=@tas our=@p now=@da]
+  .^(* %gx /(scot %p our)/[app]/(scot %da now)/export/noun)
+++  export-all
+  |=  [our=@p now=@da]
+  ^-  (list [@tas *])
+  %+  turn
+    ^-  (list @tas)
+    :~  %group-store
+        %metadata-store
+        %contact-store
+        %contact-hook
+        %invite-store
+        %graph-store
+    ==
+  |=  app=@tas
+  [app (export-app app our now)]
 --
 ::
 =|  =state
@@ -30,6 +48,11 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _this)
+  ::
+  ?:  &(?=(%noun mark) ?=(%cancel q.vase))
+    ~&  %lens-cancel
+    [~ this(job.state ~)]
+  ::
   ?.  ?=(%handle-http-request mark)
     (on-poke:def mark vase)
   =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -38,18 +61,31 @@
   =/  request-line  (parse-request-line url.request.inbound-request)
   =/  site  (flop site.request-line)
   ::
+  =/  body=@t  q:(need body.request.inbound-request)
+  ?:  =('#import_' (end [3 8] body))
+    ~&  %import-all
+    =/  by-app  ;;((list [@tas *]) (cue (rsh [3 8] body)))
+    :_  this
+    %+  weld  (give-simple-payload:app eyre-id not-found:gen)
+    %+  turn  by-app
+    |=  [app=@tas data=*]
+    ^-  card:agent:gall
+    [%pass /import-all %agent [our.bowl app] %poke %import !>(data)]
   =/  jon=json
-    (need (de-json:html q:(need body.request.inbound-request)))
+    (need (de-json:html body))
   =/  com=command:lens
     (json:grab:lens-mark jon)
   ::
-  ?:  ?=(%export -.source.com)
-    ~&  [%export app.source.com]
+  ?+  -.source.com
+    :_  this(job.state (some [eyre-id com]))
+    [%pass /sole %agent [our.bowl %dojo] %watch /sole/[eyre-id]]~
+  ::
+      %export
     :_  this(job.state (some [eyre-id com]))
     [%pass /export %agent [our.bowl app.source.com] %watch /export]~
   ::
-  ?:  ?=(%import -.source.com)
-    ?~  enc=(de:base64 base64-jam.source.com)
+      %import
+    ?~  enc=(de:base64:mimes:html base64-jam.source.com)
       !!
     ::
     =/  c=*  (cue q.u.enc)
@@ -57,8 +93,29 @@
     :_  this(job.state (some [eyre-id com]))
     [%pass /import %agent [our.bowl app.source.com] %poke %import !>(c)]~
   ::
-  :_  this(job.state (some [eyre-id com]))
-  [%pass /sole %agent [our.bowl %dojo] %watch /sole/[eyre-id]]~
+      %export-all
+    =/  output  (crip "{<our.bowl>}-export/atom")
+    =/  jon
+      =/  =atom  (jam (export-all our.bowl now.bowl))
+      =/  =octs  [(met 3 atom) atom]
+      =/  enc    (en:base64:mimes:html octs)
+      (pairs:enjs:format file+s+output data+s+enc ~)
+    :_  this
+    %+  give-simple-payload:app  eyre-id
+    (json-response:gen jon)
+  ::
+      %import-all
+    ~&  %import-all
+    =/  enc  (de:base64:mimes:html base64-jam.source.com)
+    ?~  enc  !!
+    =/  by-app  ;;((list [@tas *]) (cue q.u.enc))
+    :_  this
+    %+  weld  (give-simple-payload:app eyre-id not-found:gen)
+    %+  turn  by-app
+    |=  [app=@tas data=*]
+    ^-  card:agent:gall
+    [%pass /import-all %agent [our.bowl app] %poke %import !>(data)]
+  ==
 ::
 ++  on-watch
   |=  =path
@@ -68,7 +125,13 @@
   (on-watch:def path)
 ::
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  (on-peek:def path)
+    [%x %export-all ~]
+    ``noun+!>((jam (export-all our.bowl now.bowl)))
+  ==
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card:agent:gall _this)
@@ -131,7 +194,7 @@
     =/  jon=json
       =/  =atom  (jam data)
       =/  =octs  [(met 3 atom) atom]
-      =/  enc  (en:base64 octs)
+      =/  enc  (en:base64:mimes:html octs)
       (pairs:enjs:format file+s+output data+s+enc ~)
     ::
     :_  this
@@ -161,13 +224,11 @@
         [%mime p.fec (as-octs:mimes:html (jam q.fec))]
       ::
           %sav
-        ::  XX use +en:base64 or produce %mime a la %sag
-        ::
         %-  some
         :-  %json
         %-  pairs:enjs:format
         :~  file+s+(crip <`path`p.fec>)
-            data+s+(crip (en-base64:mimes:html q.fec))
+            data+s+(en:base64:mimes:html (met 3 q.fec) q.fec)
         ==
       ::
           %mor

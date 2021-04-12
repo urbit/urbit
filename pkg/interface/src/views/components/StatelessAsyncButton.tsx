@@ -1,40 +1,45 @@
-import React, { ReactNode, useState, useEffect, useCallback } from "react";
+import React, { ReactElement, ReactNode } from 'react';
 
-import { Button, LoadingSpinner } from "@tlon/indigo-react";
-import { useFormikContext } from "formik";
+import { Button, LoadingSpinner } from '@tlon/indigo-react';
 
-import { useStatelessAsyncClickable } from "~/logic/lib/useStatelessAsyncClickable";
+import { useStatelessAsyncClickable } from '~/logic/lib/useStatelessAsyncClickable';
 
 interface AsyncButtonProps {
   children: ReactNode;
-  name: string;
+  name?: string;
   onClick: (e: React.MouseEvent) => Promise<void>;
 }
 
 export function StatelessAsyncButton({
   children,
   onClick,
-  name = "",
+  name = '',
+  disabled = false,
   ...rest
-}: AsyncButtonProps & Parameters<typeof Button>[0]) {
+}: AsyncButtonProps & Parameters<typeof Button>[0]): ReactElement {
   const {
     onClick: handleClick,
-    buttonState: state,
+    buttonState: state
   } = useStatelessAsyncClickable(onClick, name);
 
   return (
-    <Button onClick={handleClick} {...rest}>
-      {state === "error" ? (
-        "Error"
-      ) : state === "loading" ? (
+    <Button
+      hideDisabled={!disabled}
+      disabled={disabled || state === 'loading'}
+      onClick={handleClick}
+      {...rest}
+    >
+      {state === 'error' ? (
+        'Error'
+      ) : state === 'loading' ? (
         <LoadingSpinner
           foreground={
-            rest.primary ? "white" : rest.destructive ? "red" : "black"
+            rest.primary ? 'white' : rest.destructive ? 'red' : 'black'
           }
           background="gray"
         />
-      ) : state === "success" ? (
-        "Done"
+      ) : state === 'success' ? (
+        'Done'
       ) : (
         children
       )}

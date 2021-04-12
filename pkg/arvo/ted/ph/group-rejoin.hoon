@@ -36,7 +36,6 @@
   =/  m  (strand:spider ,~)
   ^-  form:m
   ;<  ~  bind:m  (start-agent ship %group-store)
-  ;<  ~  bind:m  (start-agent ship %group-hook)
   (pure:m ~)
 --
 =,  strand=strand:spider
@@ -59,14 +58,11 @@
 ;<  ~  bind:m  (start-group-agents ~marzod)
 ;<  ~  bind:m  (dojo ~marbud ":group-store|create 'test-group'")
 ;<  ~  bind:m  (wait-for-output ~marbud ">=")
-;<  ~  bind:m  (dojo ~marzod ":group-hook|add ~marbud 'test-group'")
-;<  ~  bind:m  (wait-for-output ~marzod ">=")
 ;<  ~  bind:m  (sleep ~s1)
 ;<  ~  bind:m  (breach-and-hear az ~marzod ~marbud)
 ;<  ~  bind:m  (real-ship az ~marzod)
 ;<  ~  bind:m  (wait-for-goad ~marzod)
 ;<  ~  bind:m  (start-group-agents ~marzod)
-;<  ~  bind:m  (dojo ~marzod ":group-hook|add ~marbud 'test-group'")
 ;<  ~  bind:m  (sleep ~s3)
 ;<  ~  bind:m  end-azimuth
 (pure:m *vase)

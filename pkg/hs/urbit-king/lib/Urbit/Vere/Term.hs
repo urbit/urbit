@@ -18,7 +18,7 @@ import Foreign.Storable
 import RIO.FilePath
 import System.Posix.IO
 import System.Posix.Terminal
-import Urbit.Arvo            hiding (Term)
+import Urbit.Arvo
 import Urbit.King.App
 import Urbit.Noun.Time
 import Urbit.Prelude         hiding (getCurrentTime)
@@ -27,9 +27,11 @@ import Urbit.Vere.Pier.Types
 import Data.List           ((!!))
 import RIO.Directory       (createDirectoryIfMissing)
 import Urbit.King.API      (readPortsFile)
+import Urbit.Vere.Stat     (RenderedStat)
 import Urbit.TermSize      (TermSize(TermSize))
-import Urbit.Vere.Term.API (Client(Client))
+import Urbit.Vere.Term.API (Client(Client), ClientTake(..))
 
+import qualified Data.Set                 as S
 import qualified Data.ByteString.Internal as BS
 import qualified Data.ByteString.UTF8     as BS
 import qualified System.Console.ANSI      as ANSI
@@ -70,8 +72,10 @@ data Private = Private
 
 -- Utils -----------------------------------------------------------------------
 
-initialBlew w h = EvBlip $ BlipEvTerm $ TermEvBlew (UD 1, ()) w h
+blewEvent :: Word -> Word -> Ev
+blewEvent w h = EvBlip $ BlipEvTerm $ TermEvBlew (UD 1, ()) w h
 
+initialHail :: Ev
 initialHail = EvBlip $ BlipEvTerm $ TermEvHail (UD 1, ()) ()
 
 -- Version one of this is punting on the ops_u.dem flag: whether we're running
@@ -97,13 +101,13 @@ isTerminalBlit _         = True
 
 --------------------------------------------------------------------------------
 
-connClient :: Serv.Conn Belt [Term.Ev] -> Client
+connClient :: Serv.Conn ClientTake [Term.Ev] -> Client
 connClient c = Client
     { give = Serv.cSend c
     , take = Serv.cRecv c
     }
 
-connectToRemote :: ∀e. HasLogFunc e
+connectToRemote :: forall e. HasLogFunc e
                 => Port
                 -> Client
                 -> RAcquire e (Async (), Async ())
@@ -129,12 +133,12 @@ data HackConfigDir = HCD { _hcdPax :: FilePath }
 makeLenses ''HackConfigDir
 instance HasPierPath HackConfigDir where pierPathL = hcdPax
 
-runTerminalClient :: ∀e. HasLogFunc e => FilePath -> RIO e ()
+runTerminalClient :: forall e. HasLogFunc e => FilePath -> RIO e ()
 runTerminalClient pier = runRAcquire $ do
     mPort      <- runRIO (HCD pier) readPortsFile
     port       <- maybe (error "Can't connect") pure mPort
     mExit      <- io newEmptyTMVarIO
-    (siz, cli) <- localClient (putTMVar mExit ())
+    cli        <- localClient (putTMVar mExit ())
     (tid, sid) <- connectToRemote (Port $ fromIntegral port) cli
     atomically $ waitSTM tid <|> waitSTM sid <|> takeTMVar mExit
 
@@ -161,6 +165,7 @@ leftBracket, rightBracket :: Text
 leftBracket = "«"
 rightBracket = "»"
 
+_spin_cool_us, _spin_warm_us, _spin_rate_us, _spin_idle_us :: Integral i => i
 _spin_cool_us = 500000
 _spin_warm_us = 50000
 _spin_rate_us = 250000
@@ -172,16 +177,32 @@ _spin_idle_us = 500000
 {-|
     Initializes the generalized input/output parts of the terminal.
 -}
-localClient :: ∀e. HasLogFunc e
+localClient :: forall e. HasLogFunc e
             => STM ()
-            -> RAcquire e (TermSize, Client)
+            -> RAcquire e Client
 localClient doneSignal = fst <$> mkRAcquire start stop
   where
-    start :: HasLogFunc e => RIO e ((TermSize, Client), Private)
+    start :: HasLogFunc e => RIO e (Client, Private)
     start = do
       tsWriteQueue  <- newTQueueIO :: RIO e (TQueue [Term.Ev])
       spinnerMVar   <- newEmptyTMVarIO :: RIO e (TMVar ())
-      pWriterThread <- asyncBound (writeTerminal tsWriteQueue spinnerMVar)
+
+      -- Track the terminal size, keeping track of the size of the local
+      -- terminal for our own printing, as well as putting size changes into an
+      -- event queue so we can send changes to the terminal muxing system.
+      tsizeTVar    <- newTVarIO (TermSize 80 24) -- Value doesn't matter.
+      tsSizeChange <- newEmptyTMVarIO
+      io $ T.liveTermSize (\ts -> atomically $ do
+                              -- We keep track of the console's local size for
+                              -- our own tank washing.
+                              writeTVar tsizeTVar ts
+
+                              -- We queue up changes so we can broadcast them
+                              -- to the muxing client.
+                              putTMVar tsSizeChange ts)
+
+      pWriterThread <- asyncBound
+        (writeTerminal tsWriteQueue spinnerMVar tsizeTVar)
 
       pPreviousConfiguration <- io $ getTerminalAttributes stdInput
 
@@ -198,17 +219,18 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       pReaderThread <- asyncBound
           (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
-      let client = Client { take = Just <$> readTQueue tsReadQueue
+      let client = Client { take = Just <$> asum
+                              [ readTQueue tsReadQueue <&> ClientTakeBelt,
+                                takeTMVar tsSizeChange <&> ClientTakeSize
+                              ]
                           , give = writeTQueue tsWriteQueue
                           }
 
-      tsize <- io $ T.termSize
-
-      pure ((tsize, client), Private{..})
+      pure (client, Private{..})
 
     stop :: HasLogFunc e
-         => ((TermSize, Client), Private) -> RIO e ()
-    stop ((_, Client{..}), Private{..}) = do
+         => (Client, Private) -> RIO e ()
+    stop (Client{..}, Private{..}) = do
       -- Note that we don't `cancel pReaderThread` here. This is a deliberate
       -- decision because fdRead calls into a native function which the runtime
       -- can't kill. If we were to cancel here, the internal `waitCatch` would
@@ -244,8 +266,8 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
     -- Writes data to the terminal. Both the terminal reading, normal logging,
     -- and effect handling can all emit bytes which go to the terminal.
-    writeTerminal :: TQueue [Term.Ev] -> TMVar () -> RIO e ()
-    writeTerminal q spinner = do
+    writeTerminal :: TQueue [Term.Ev] -> TMVar () -> TVar TermSize -> RIO e ()
+    writeTerminal q spinner termSizeVar = do
         currentTime <- io $ now
         loop (LineState "" 0 Nothing Nothing True 0 currentTime)
       where
@@ -257,6 +279,17 @@ localClient doneSignal = fst <$> mkRAcquire start stop
             putStr "\r"
             T.clearLine
             putStr p
+            termRefreshLine ls
+
+        writeSlog :: LineState -> (Atom, Tank) -> RIO e LineState
+        writeSlog ls slog = do
+            putStr "\r"
+            T.clearLine
+            TermSize width _ <- atomically $ readTVar termSizeVar
+            -- TODO: Ignoring priority for now. Priority changes the color of,
+            -- and adds a prefix of '>' to, the output.
+            let lines = fmap unTape $ wash (WashCfg 0 width) $ tankTree $ snd slog
+            forM lines $ \line -> putStr (line <> "\r\n")
             termRefreshLine ls
 
         {-
@@ -309,6 +342,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
         execEv ls = \case
             Term.Blits bs         -> foldM writeBlit ls bs
             Term.Trace p          -> writeTrace ls (unCord p)
+            Term.Slog s           -> writeSlog ls s
             Term.Blank            -> writeBlank ls
             Term.Spinr (Just txt) -> doSpin ls (unCord <$> txt)
             Term.Spinr Nothing    -> unspin ls
@@ -342,12 +376,65 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       Clr ()        -> do T.clearScreen
                           termRefreshLine ls
       Hop w         -> termShowCursor ls (fromIntegral w)
+      Klr s         -> do ls2 <- termShowClear ls
+                          termShowStub ls2 s
       Lin c         -> do ls2 <- termShowClear ls
                           termShowLine ls2 (pack c)
       Mor ()        -> termShowMore ls
       Sag path noun -> pure ls
       Sav path atom -> pure ls
       Url url       -> pure ls
+
+    termRenderDeco :: Deco -> Char
+    termRenderDeco = \case
+      DecoBr   -> '1'
+      DecoUn   -> '4'
+      DecoBl   -> '5'
+      DecoNull -> '0'
+
+    termRenderTint :: Tint -> [Char]
+    termRenderTint = \case
+      TintK    -> ['0']
+      TintR    -> ['1']
+      TintG    -> ['2']
+      TintY    -> ['3']
+      TintB    -> ['4']
+      TintM    -> ['5']
+      TintC    -> ['6']
+      TintW    -> ['7']
+      TintNull -> ['9']
+      TintTrue r g b ->
+        mconcat ["8;2;", show r, ";", show g, ";", show b]
+
+    -- Wraps the appropriate escape sequence around a piece of styled text
+    termRenderStubSegment :: Stye -> [Char] -> [Char]
+    termRenderStubSegment Stye {..} tape =
+        case (S.null decoset, back, fore) of
+          (True, TintNull, TintNull) -> tape
+          _                          -> styled
+      where
+        decoset = setFromHoonSet deco
+        escape  = [chr 27, '[']
+
+        styles = intercalate ";" $ filter (not . null)
+          [ intersperse ';' $ fmap termRenderDeco $ toList decoset
+          , case back of
+              TintNull -> []
+              tint     -> '4' : termRenderTint tint
+          , case fore of
+              TintNull -> []
+              tint     -> '3' : termRenderTint tint
+          ]
+
+        styled = mconcat [escape, styles, "m", tape, escape, "0m"]
+
+    -- Displays and sets styled text as the current line
+    termShowStub :: LineState -> Stub -> RIO e LineState
+    termShowStub ls (Stub s) = do
+      let visualLength = sum $ fmap (length . snd) s
+      let outText = pack $ mconcat $ fmap (uncurry termRenderStubSegment) s
+      putStr outText
+      pure ls { lsLine = outText, lsCurPos = visualLength }
 
     -- Moves the cursor to the requested position
     termShowCursor :: LineState -> Int -> RIO e LineState
@@ -363,7 +450,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
     -- Moves the cursor left without any mutation of the LineState. Used only
     -- in cursor spinning.
-    _termSpinnerMoveLeft :: Int → RIO e ()
+    _termSpinnerMoveLeft :: Int -> RIO e ()
     _termSpinnerMoveLeft = T.cursorLeft
 
     -- Displays and sets the current line
@@ -472,7 +559,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                 loop rd
               else if w == 3 then do
                 -- ETX (^C)
-                logDebug $ displayShow "Ctrl-c interrupt"
+                logInfo $ "Ctrl-c interrupt"
                 atomically $ do
                   writeTQueue wq [Term.Trace "interrupt\r\n"]
                   writeTQueue rq $ Ctl $ Cord "c"
@@ -513,18 +600,19 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 term'
   :: HasPierEnv e
   => (TermSize, Client)
+  -> IO RenderedStat
   -> IO ()
   -> RIO e ([Ev], RAcquire e (DriverApi TermEf))
-term' (tsize, client) serfSIGINT = do
+term' (tsize, client) stat serfSIGINT = do
   let TermSize wi hi = tsize
-      initEv = [initialBlew wi hi, initialHail]
+      initEv = [blewEvent wi hi, initialHail]
 
   pure (initEv, runDriver)
  where
   runDriver = do
     env <- ask
     ventQ :: TQueue EvErr <- newTQueueIO
-    diOnEffect <- term env (tsize, client) (writeTQueue ventQ) serfSIGINT
+    diOnEffect <- term env (tsize, client) (writeTQueue ventQ) stat serfSIGINT
 
     let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
 
@@ -537,9 +625,10 @@ term :: forall e. (HasPierEnv e)
      => e
      -> (TermSize, Client)
      -> (EvErr -> STM ())
+     -> IO RenderedStat
      -> IO ()
      -> RAcquire e (TermEf -> IO ())
-term env (tsize, Client{..}) plan serfSIGINT = runTerm
+term env (tsize, Client{..}) plan stat serfSIGINT = runTerm
   where
     runTerm :: RAcquire e (TermEf -> IO ())
     runTerm = do
@@ -553,13 +642,16 @@ term env (tsize, Client{..}) plan serfSIGINT = runTerm
     readLoop :: RIO e ()
     readLoop = forever $ do
         atomically take >>= \case
-            Nothing -> pure ()
-            Just b  -> do
+            Nothing                              -> pure ()
+            Just (ClientTakeBelt b)              -> do
                 when (b == Ctl (Cord "c")) $ do
                   io serfSIGINT
                 let beltEv       = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
                 let beltFailed _ = pure ()
                 atomically $ plan (EvErr beltEv beltFailed)
+            Just (ClientTakeSize ts@(TermSize w h)) -> do
+                let blewFailed _ = pure ()
+                atomically $ plan (EvErr (blewEvent w h) blewFailed)
 
     handleEffect :: TermEf -> RIO e ()
     handleEffect = \case

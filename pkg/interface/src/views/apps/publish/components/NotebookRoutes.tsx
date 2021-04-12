@@ -1,46 +1,50 @@
-import React, { useEffect } from "react";
-import { RouteComponentProps, Link, Route, Switch } from "react-router-dom";
-import { Center, LoadingSpinner } from "@tlon/indigo-react";
-import GlobalApi from "~/logic/api/global";
-import { Notebook as INotebook } from "~/types/publish-update";
-import { Groups } from "~/types/group-update";
-import { Contacts, Rolodex } from "~/types/contact-update";
-import { LocalUpdateRemoteContentPolicy, Associations } from "~/types";
+import React, { useEffect } from 'react';
+import { RouteComponentProps, Route, Switch } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
+import {
+  Association,
+  Associations,
+  Graphs,
+  Groups,
+  Contacts,
+  Rolodex,
+  Unreads,
+} from '@urbit/api';
+import { Center, LoadingSpinner } from '@tlon/indigo-react';
+import { StorageState } from '~/types';
+import bigInt from 'big-integer';
 
-import Notebook from "./Notebook";
-import NewPost from "./new-post";
+import Notebook from './Notebook';
+import NewPost from './new-post';
 import { NoteRoutes } from './NoteRoutes';
-
-
+import useGraphState from '~/logic/state/graph';
+import useGroupState from '~/logic/state/group';
 
 interface NotebookRoutesProps {
   api: GlobalApi;
   ship: string;
   book: string;
-  notebook: INotebook;
-  notebookContacts: Contacts;
-  contacts: Rolodex;
-  groups: Groups;
-  baseUrl?: string;
-  rootUrl?: string;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
-  associations: Associations;
+  baseUrl: string;
+  rootUrl: string;
+  association: Association;
 }
 
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, notebook, notebookContacts } = props;
+  const { ship, book, api, baseUrl, rootUrl } = props;
 
   useEffect(() => {
-    api.publish.fetchNotesPage(ship, book, 1, 50);
-    api.publish.fetchNotebook(ship, book);
+    ship && book && api.graph.getGraph(ship, book);
   }, [ship, book]);
 
-  const baseUrl = props.baseUrl || `/~404`;
-  const rootUrl = props.rootUrl || '/~404';
+  const graphs = useGraphState(state => state.graphs);
+
+  const graph = graphs[`${ship.slice(1)}/${book}`];
+
+  const groups = useGroupState(state => state.groups);
+
+  const group = groups?.[props.association?.group];
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
   return (
@@ -49,31 +53,46 @@ export function NotebookRoutes(
         path={baseUrl}
         exact
         render={(routeProps) => {
-          return <Notebook {...props} rootUrl={rootUrl} baseUrl={baseUrl}  />;
-        }}
+          if (!graph) {
+            return <Center height="100%"><LoadingSpinner /></Center>;
+          }
+          return <Notebook
+            {...props}
+            graph={graph}
+            association={props.association}
+            rootUrl={rootUrl}
+            baseUrl={baseUrl}
+                 />;
+      }}
       />
       <Route
-        path={relativePath("/new")}
-        render={(routeProps) => (
+        path={relativePath('/new')}
+        render={routeProps => (
           <NewPost
             {...routeProps}
             api={api}
             book={book}
             ship={ship}
-            notebook={notebook}
+            association={props.association}
+            graph={graph}
             baseUrl={baseUrl}
           />
         )}
       />
       <Route
-        path={relativePath("/note/:noteId")}
+        path={relativePath('/note/:noteId')}
         render={(routeProps) => {
           const { noteId } = routeProps.match.params;
-          const note = notebook?.notes?.[noteId];
-          const noteUrl = relativePath(`/note/${noteId}`);
+          const noteIdNum = bigInt(noteId);
+
+          if(!graph) {
+            return <Center height="100%"><LoadingSpinner /></Center>;
+          }
+          const note = graph.get(noteIdNum);
           if(!note) {
             return <Center height="100%"><LoadingSpinner /></Center>;
           }
+          const noteUrl = `${baseUrl}/note/${noteId}`;
           return (
             <NoteRoutes
               rootUrl={baseUrl}
@@ -81,13 +100,11 @@ export function NotebookRoutes(
               api={api}
               book={book}
               ship={ship}
-              noteId={noteId}
-              notebook={notebook}
               note={note}
-              contacts={notebookContacts}
-              hideAvatars={props.hideAvatars}
-              hideNicknames={props.hideNicknames}
-              remoteContentPolicy={props.remoteContentPolicy}
+              notebook={graph}
+              noteId={noteIdNum}
+              association={props.association}
+              group={group}
               {...routeProps}
             />
           );

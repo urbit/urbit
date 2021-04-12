@@ -1,7 +1,7 @@
 !:
 ::  http-client
 ::
-|=  pit=vase
+|=  our=ship
 =,  iris
 ::
 ::
@@ -19,7 +19,7 @@
       =duct
       ::
       ::
-      card=(wind note gift:able)
+      card=(wind note gift)
   ==
 ::  +note: private request from light to another vane
 ::
@@ -102,7 +102,7 @@
 ::  +per-client-event: per-event client core
 ::
 ++  per-client-event
-  |=  [[our=@p eny=@ =duct now=@da scry=sley] =state]
+  |=  [[eny=@ =duct now=@da rof=roof] =state]
   |%
   ::  +request: makes an external web request
   ::
@@ -297,29 +297,22 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
+|=  [now=@da eny=@uvJ rof=roof]
 ::  allow jets to be registered within this core
 ::
-~%  %http-client  ..is  ~
+~%  %http-client  ..part  ~
 |%
 ++  call
-  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _light-gate]
   ::
-  =/  task=task:able  ((harden task:able) wrapped-task)
+  =/  task=task  ((harden task) wrapped-task)
   ::
-  ::  error notifications "downcast" to %crud
+  ::  XX handle error notifications
   ::
-  =?  task  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.task)
-    [%crud -.task tang.u.dud]
-  ::
-  ::  %crud: notifies us of an event failure
-  ::
-  ?:  ?=(%crud -.task)
+  ?^  dud
     =/  moves=(list move)
-      [[duct %slip %d %flog task] ~]
+      [[duct %slip %d %flog %crud [-.task tang.u.dud]] ~]
     [moves light-gate]
   ::  %trim: in response to memory pressure
   ::
@@ -330,7 +323,7 @@
   ?:  ?=(%vega -.task)
     [~ light-gate]
   ::
-  =/  event-args  [[our eny duct now scry-gate] state.ax]
+  =/  event-args  [[eny duct now rof] state.ax]
   =/  client  (per-client-event event-args)
   ?-    -.task
   ::
@@ -370,7 +363,7 @@
 ::  http-client issues no requests to other vanes
 ::
 ++  take
-  |=  [=wire =duct dud=(unit goof) wrapped-sign=*]
+  |=  [=wire =duct dud=(unit goof) sign=*]
   ^-  [(list move) _light-gate]
   ?<  ?=(^ dud)
   !!
@@ -390,8 +383,15 @@
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  car
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =*  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ?.  ?=(%& -.why)  ~
   =*  his  p.why
   ?:  &(=(ren %$) =(tyl /whey))

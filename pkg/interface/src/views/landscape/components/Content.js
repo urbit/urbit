@@ -1,13 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { Box } from '@tlon/indigo-react';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 
 import LaunchApp from '~/views/apps/launch/app';
-import DojoApp from '~/views/apps/dojo/app';
+import TermApp from '~/views/apps/term/app';
 import Landscape from '~/views/landscape/index';
 import Profile from '~/views/apps/profile/profile';
+import Settings from '~/views/apps/settings/settings';
 import ErrorComponent from '~/views/components/Error';
+import Notifications from '~/views/apps/notifications/notifications';
+import GraphApp from '../../apps/graph/app';
+
+import { useMigrateSettings } from '~/logic/lib/migrateSettings';
 
 
 export const Container = styled(Box)`
@@ -19,6 +24,14 @@ export const Container = styled(Box)`
 
 
 export const Content = (props) => {
+
+  const doMigrate = useMigrateSettings();
+  useEffect(() => {
+    setTimeout(() => {
+      doMigrate();
+    }, 10000);
+  }, []);
+
   return (
     <Container>
       <Switch>
@@ -34,9 +47,9 @@ export const Content = (props) => {
           )}
         />
         <Route
-          path='/~dojo'
+          path='/~term'
           render={p => (
-            <DojoApp
+            <TermApp
               history={p.history}
               location={p.location}
               match={p.match}
@@ -61,6 +74,21 @@ export const Content = (props) => {
             />
           )}
         />
+        <Route
+          path="/~settings"
+          render={ p => (
+            <Settings
+             {...props}
+            />
+          )}
+        />
+        <Route
+          path="/~notifications"
+          render={ p => (
+            <Notifications {...props} />
+          )}
+        />
+        <GraphApp path="/~graph" {...props} />
         <Route
           render={p => (
             <ErrorComponent

@@ -74,18 +74,20 @@
     =.  next-timer  ~
     =.  this
       %-  emit-aqua-events
+      ?^  error
+        ::  Should pass through errors to aqua, but doesn't
+        ::
+        %-  (slog leaf+"aqua-behn: timer failed" u.error)
+        ~
       :_  ~
       ^-  aqua-event
       :+  %event  who
-      :-  //behn/0v1n.2m9vh
-      ?~  error
-        [%wake ~]
-      [%crud %fail u.error]
+      [//behn/0v1n.2m9vh [%wake ~]]
     ..abet-pe
   --
 --
 ::
-%+  aqua-vane-thread  ~[%sleep %restore %doze]
+%+  aqua-vane-thread  ~[%sleep %restore %doze %kill]
 |_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect
@@ -96,12 +98,13 @@
       %sleep    abet-pe:handle-sleep:(pe bowl who)
       %restore  abet-pe:handle-restore:(pe bowl who)
       %doze     abet-pe:(handle-doze:(pe bowl who) ue)
+      %kill     `(~(del by piers) who)
     ==
   [cards this]
 ::
 ++  handle-arvo-response
   |=  [=wire =sign-arvo]
-  ?>  ?=([%b %wake *] sign-arvo)
+  ?>  ?=([%behn %wake *] sign-arvo)
   ?>  ?=([@ *] wire)
   =/  who  (,@p (slav %p i.wire))
   =^  cards  piers

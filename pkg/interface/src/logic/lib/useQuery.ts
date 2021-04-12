@@ -1,5 +1,5 @@
-import { useMemo, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useMemo, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import _ from 'lodash';
 
 export function useQuery() {
@@ -25,6 +25,6 @@ export function useQuery() {
 
   return {
     query,
-    appendQuery,
+    appendQuery
   };
 }

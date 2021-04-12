@@ -1,5 +1,17 @@
 /-  *post
 |%
+::
++$  permissions  
+  [admin=permission-level writer=permission-level reader=permission-level]
+::
+::  $permission-level:  levels of permissions in increasing order
+::  
+::    %no: May not add/remove node
+::    %self: May only nodes beneath nodes that were added by
+::      the same pilot, may remove nodes that the pilot 'owns'
+::    %yes: May add a node or remove node
++$  permission-level
+  ?(%no %self %yes)
 +$  graph         ((mop atom node) gth)
 +$  marked-graph  [p=graph q=(unit mark)]
 ::
@@ -10,6 +22,7 @@
 ::
 +$  update-log    ((mop time logged-update) gth)
 +$  update-logs   (map resource update-log)
+::
 ::
 +$  internal-graph
   $~  [%empty ~]
@@ -34,7 +47,8 @@
   ==
 ::
 +$  logged-update-0
-  $%  [%add-nodes =resource nodes=(map index node)]
+  $%  [%add-graph =resource =graph mark=(unit mark) overwrite=?]
+      [%add-nodes =resource nodes=(map index node)]
       [%remove-nodes =resource indices=(set index)]
       [%add-signatures =uid =signatures]
       [%remove-signatures =uid =signatures]
@@ -42,7 +56,6 @@
 ::
 +$  update-0
   $%  logged-update-0
-      [%add-graph =resource =graph mark=(unit mark)]
       [%remove-graph =resource]
     ::
       [%add-tag =term =resource]

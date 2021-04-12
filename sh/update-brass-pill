@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -ex
+set -xeuo pipefail
 
-pkg=$(nix-build nix/ops -A brass --no-out-link)
-cp $pkg bin/brass.pill
+cd "${0%/*}/.."
+
+cp "$(nix-build -A brass.build --no-out-link)" bin/brass.pill

@@ -2,86 +2,100 @@ import React, {
   useState,
   useMemo,
   useCallback,
-  SyntheticEvent,
-  ChangeEvent,
-} from "react";
+  ChangeEvent
+} from 'react';
 import {
   Col,
   Box,
   Row,
   Text,
   Icon,
-  Center,
-  Button,
+  Image,
   Action,
-  StatelessTextInput as Input,
-} from "@tlon/indigo-react";
-import _ from "lodash";
-import VisibilitySensor from "react-visibility-sensor";
+  StatelessTextInput as Input
+} from '@tlon/indigo-react';
+import _ from 'lodash';
+import f from 'lodash/fp';
+import VisibilitySensor from 'react-visibility-sensor';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
-import { Contact, Contacts } from "~/types/contact-update";
-import { Sigil } from "~/logic/lib/sigil";
-import { cite, uxToHex } from "~/logic/lib/util";
-import { Group, RoleTags } from "~/types/group-update";
-import { roleForShip, resourceFromPath } from "~/logic/lib/group";
-import { Association } from "~/types/metadata-update";
-import { useHistory, Link } from "react-router-dom";
-import { Dropdown } from "~/views/components/Dropdown";
-import GlobalApi from "~/logic/api/global";
-import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
-import styled from "styled-components";
+import { Contact, Contacts } from '@urbit/api/contacts';
+import { Group, RoleTags } from '@urbit/api/groups';
+import { Association } from '@urbit/api/metadata';
 
-const TruncText = styled(Box)`
+import { Sigil } from '~/logic/lib/sigil';
+import { cite, uxToHex } from '~/logic/lib/util';
+import { roleForShip, resourceFromPath } from '~/logic/lib/group';
+import { Dropdown } from '~/views/components/Dropdown';
+import GlobalApi from '~/logic/api/global';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import useLocalState from '~/logic/state/local';
+import useContactState from '~/logic/state/contact';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import {deSig} from '@urbit/api';
+
+const TruncText = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: inline-block;
+  min-width: 0;
 `;
 
 type Participant = Contact & { patp: string; pending: boolean };
-type ParticipantsTabId = "total" | "pending" | "admin";
+type ParticipantsTabId = 'total' | 'pending' | 'admin';
 
 const searchParticipant = (search: string) => (p: Participant) => {
   if (search.length == 0) {
     return true;
   }
-  const s = search.toLowerCase();
-  return p.patp.includes(s) || p.nickname.toLowerCase().includes(search);
+  let s = search.toLowerCase();
+  s = (s.startsWith('~')) ? s.substr(1) : s;
+  return p.patp.includes(s) || p.nickname.toLowerCase().includes(s);
 };
 
 function getParticipants(cs: Contacts, group: Group) {
-  const contacts: Participant[] = _.map(cs, (c, patp) => ({
-    ...c,
-    patp,
-    pending: false,
-  }));
-  const members: Participant[] = _.map(Array.from(group.members), (m) =>
-    emptyContact(m, false)
+  const contacts: Participant[] = _.flow(
+    f.omitBy<Contacts>((_c, patp) => !group.members.has(patp.slice(1))),
+    f.toPairs,
+    f.map(([patp, c]: [string, Contact]) => ({
+      ...c,
+      patp: patp.slice(1),
+      pending: false
+    }))
+  )(cs);
+  const members: Participant[] = _.map(
+    Array.from(group.members),
+    s => contacts[s] ?? emptyContact(s, false)
   );
-  const allMembers = _.unionBy(contacts, members, "patp");
+  const allMembers = _.unionBy(contacts, members, 'patp');
   const pending: Participant[] =
-    "invite" in group.policy
-      ? _.map(Array.from(group.policy.invite.pending), (m) =>
+    'invite' in group.policy
+      ? _.map(Array.from(group.policy.invite.pending), m =>
           emptyContact(m, true)
         )
       : [];
 
+  const incPending = _.unionBy(allMembers, pending, 'patp');
   return [
-    _.unionBy(allMembers, pending, "patp"),
-    pending.length,
-    allMembers.length,
+    incPending,
+    incPending.length - group.members.size,
+    group.members.size
   ] as const;
 }
 
 const emptyContact = (patp: string, pending: boolean): Participant => ({
-  nickname: "",
-  email: "",
-  phone: "",
-  color: "",
+  nickname: '',
+  bio: '',
+  status: '',
+  color: '0x0',
   avatar: null,
-  notes: "",
-  website: "",
+  cover: null,
+  groups: [],
   patp,
-  pending,
+  'last-updated': 0,
+  pending
 });
 
 const Tab = ({ selected, id, label, setSelected }) => (
@@ -90,39 +104,36 @@ const Tab = ({ selected, id, label, setSelected }) => (
     borderBottom={selected === id ? 1 : 0}
     borderBottomColor="black"
     mr={2}
-    cursor='pointer'
+    cursor="pointer"
     onClick={() => setSelected(id)}
   >
-    <Text color={selected === id ? "black" : "gray"}>{label}</Text>
+    <Text color={selected === id ? 'black' : 'gray'}>{label}</Text>
   </Box>
 );
 
 export function Participants(props: {
-  contacts: Contacts;
   group: Group;
   association: Association;
   api: GlobalApi;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
-}) {
-  const { api, hideAvatars, hideNicknames } = props;
+}): ReactElement {
+  const { api } = props;
   const tabFilters: Record<
     ParticipantsTabId,
     (p: Participant) => boolean
   > = useMemo(
     () => ({
-      total: (p) => !p.pending,
-      pending: (p) => p.pending,
-      admin: (p) => props.group.tags?.role?.admin?.has(p.patp),
+      total: p => !p.pending,
+      pending: p => p.pending,
+      admin: p => props.group.tags?.role?.admin?.has(p.patp)
     }),
     [props.group]
   );
 
   const ourRole = roleForShip(props.group, window.ship);
 
-  const [filter, setFilter] = useState<ParticipantsTabId>("total");
+  const [filter, setFilter] = useState<ParticipantsTabId>('total');
 
-  const [search, _setSearch] = useState("");
+  const [search, _setSearch] = useState('');
   const setSearch = useMemo(() => _.debounce(_setSearch, 200), [_setSearch]);
   const onSearchChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -132,20 +143,21 @@ export function Participants(props: {
   );
 
   const adminCount = props.group.tags?.role?.admin?.size || 0;
-  const isInvite = "invite" in props.group.policy;
+  const isInvite = 'invite' in props.group.policy;
+  const contacts = useContactState(state => state.contacts);
 
   const [participants, pendingCount, memberCount] = getParticipants(
-    props.contacts,
+    contacts,
     props.group
   );
 
   const filtered = useMemo(
     () =>
-      _.chain(participants)
-        .filter(tabFilters[filter])
-        .filter(searchParticipant(search))
-        .chunk(8)
-        .value(),
+      f.flow(
+        f.filter(tabFilters[filter]),
+        f.filter(searchParticipant(search)),
+        f.chunk(8)
+      )(participants),
     [search, filter, participants]
   );
 
@@ -154,7 +166,7 @@ export function Participants(props: {
   // TODO: remove when resolved
   const isSafari = useMemo(() => {
     const ua = window.navigator.userAgent;
-    return ua.includes("Safari") && !ua.includes("Chrome");
+    return ua.includes('Safari') && !ua.includes('Chrome');
   }, []);
 
   return (
@@ -164,7 +176,7 @@ export function Participants(props: {
         border={1}
         borderColor="washedGray"
         borderRadius={1}
-        position={isSafari ? "static" : "sticky"}
+        position={isSafari ? 'static' : 'sticky'}
         top="0px"
         mb={2}
         px={2}
@@ -190,7 +202,7 @@ export function Participants(props: {
             selected={filter}
             setSelected={setFilter}
             id="admin"
-            label={`${adminCount} Admin${adminCount > 1 ? "s" : ""}`}
+            label={`${adminCount} Admin${adminCount > 1 ? 's' : ''}`}
           />
         </Row>
       </Row>
@@ -206,13 +218,7 @@ export function Participants(props: {
             onChange={onSearchChange}
           />
         </Row>
-        <Box
-          display="grid"
-          gridAutoRows={["48px 48px 1px", "48px 1px"]}
-          gridTemplateColumns={["48px 1fr", "48px 2fr 1fr", "48px 3fr 1fr"]}
-          gridRowGap={2}
-          alignItems="center"
-        >
+        <Col alignItems="center" >
           {filtered.map((cs, idx) => (
             <VisibilitySensor
               key={idx}
@@ -222,7 +228,7 @@ export function Participants(props: {
             >
               {({ isVisible }) =>
                 isVisible ? (
-                  cs.map((c) => (
+                  cs.map(c => (
                     <Participant
                       api={api}
                       key={c.patp}
@@ -230,8 +236,6 @@ export function Participants(props: {
                       group={props.group}
                       contact={c}
                       association={props.association}
-                      hideAvatars={hideAvatars}
-                      hideNicknames={hideNicknames}
                     />
                   ))
                 ) : (
@@ -240,7 +244,7 @@ export function Participants(props: {
               }
             </VisibilitySensor>
           ))}
-        </Box>
+        </Col>
       </Col>
     </Col>
   );
@@ -252,72 +256,91 @@ function Participant(props: {
   group: Group;
   role?: RoleTags;
   api: GlobalApi;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
 }) {
   const { contact, association, group, api } = props;
   const { title } = association.metadata;
+  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
 
   const color = uxToHex(contact.color);
-  const isInvite = "invite" in group.policy;
+  const isInvite = 'invite' in group.policy;
 
   const role = useMemo(
     () =>
       contact.pending
-        ? "pending"
-        : roleForShip(group, contact.patp) || "member",
+        ? 'pending'
+        : roleForShip(group, contact.patp) || 'member',
     [contact, group]
   );
 
   const onPromote = useCallback(async () => {
-    const resource = resourceFromPath(association["group-path"]);
-    await api.groups.addTag(resource, { tag: "admin" }, [`~${contact.patp}`]);
+    const resource = resourceFromPath(association.group);
+    await api.groups.addTag(resource, { tag: 'admin' }, [`~${contact.patp}`]);
   }, [api, association]);
 
   const onDemote = useCallback(async () => {
-    const resource = resourceFromPath(association["group-path"]);
-    await api.groups.removeTag(resource, { tag: "admin" }, [
-      `~${contact.patp}`,
+    const resource = resourceFromPath(association.group);
+    await api.groups.removeTag(resource, { tag: 'admin' }, [
+      `~${contact.patp}`
     ]);
   }, [api, association]);
 
   const onBan = useCallback(async () => {
-    const resource = resourceFromPath(association["group-path"]);
+    const resource = resourceFromPath(association.group);
     await api.groups.changePolicy(resource, {
-      open: { banShips: [`~${contact.patp}`] },
+      open: { banShips: [`~${contact.patp}`] }
     });
   }, [api, association]);
 
-  const avatar = (
-    (contact?.avatar !== null) && !props.hideAvatars)
-    ? <img src={contact.avatar} height={32} width={32} className="dib" />
-    : <Sigil
-      ship={contact.patp}
-      size={32}
-      color={`#${color}`}
-    />;
+  const onKick = useCallback(async () => {
+    const resource = resourceFromPath(association.group);
+    if(contact.pending) {
+      await api.groups.changePolicy(
+        resource, 
+        { invite: { removeInvites: [`~${contact.patp}`] } }
+      );
+    } else {
+      await api.groups.remove(resource, [`~${contact.patp}`]);
+    }
+  }, [api, contact, association]);
 
-  const hasNickname = contact.nickname && !props.hideNicknames;
+  const avatar =
+    contact?.avatar !== null && !hideAvatars ? (
+      <Image 
+        src={contact.avatar} 
+        height={32} 
+        width={32} 
+        display='inline-block'
+        style={{ objectFit: 'cover' }} 
+      />
+    ) : (
+      <Sigil ship={contact.patp} size={32} color={`#${color}`} />
+    );
+
+  const hasNickname = contact.nickname && !hideNicknames;
 
   return (
     <>
-      <Box>
-        {avatar}
-      </Box>
-      <Col justifyContent="center" gapY="1" height="100%">
+      <Row flexDirection={["column", "row"]} gapX="2" alignItems={["flex-start", "center"]} width="100%" justifyContent="space-between" height={["96px", "60px"]}>
+        <Row gapX="4" alignItems="center" height="100%">
+      <Box>{avatar}</Box>
+      <Col alignItems="self-start" justifyContent="center" gapY="1" height="100%" minWidth='0'>
         {hasNickname && (
-          <TruncText title={contact.nickname} maxWidth="85%" color="black">
+          <Row minWidth='0' flexShrink={1}>
+          <TruncText title={contact.nickname} color="black">
             {contact.nickname}
           </TruncText>
+          </Row>
         )}
         <Text title={contact.patp} color="gray" fontFamily="mono">
           {cite(contact.patp)}
         </Text>
       </Col>
+    </Row>
       <Row
         justifyContent="space-between"
-        gridColumn={["1 / 3", "auto"]}
+        width={["100%", "128px"]}
         alignItems="center"
+        gapX="4"
       >
         <Col>
           <Text color="lightGray" mb="1">
@@ -337,21 +360,36 @@ function Participant(props: {
               gapY={2}
               p={2}
             >
-              {props.role === "admin" && (
+              <Action bg="transparent">
+                <Link to={`/~profile/~${contact.patp}`}>
+                  <Text color="black">View Profile</Text>
+                </Link>
+              </Action>
+              <Action bg="transparent">
+                <Link to={`/~landscape/dm/${contact.patp}`}>
+                  <Text color="green">Send Message</Text>
+                </Link>
+              </Action>
+              {props.role === 'admin' && (
                 <>
-                  {!isInvite && (
+                  {(!isInvite && contact.patp !== window.ship) && (
                     <StatelessAsyncAction onClick={onBan} bg="transparent">
                       <Text color="red">Ban from {title}</Text>
                     </StatelessAsyncAction>
                   )}
-                  {role === "admin" ? (
-                    <StatelessAsyncAction onClick={onDemote} bg="transparent">
+                  {role === 'admin' ? (
+                    group?.tags?.role?.admin?.size > 1 && (<StatelessAsyncAction onClick={onDemote} bg="transparent">
                       Demote from Admin
-                    </StatelessAsyncAction>
+                    </StatelessAsyncAction>)
                   ) : (
-                    <StatelessAsyncAction onClick={onPromote} bg="transparent">
-                      Promote to Admin
-                    </StatelessAsyncAction>
+                    <>
+                    {(contact.patp !== window.ship) && (<StatelessAsyncAction onClick={onKick} bg="transparent">
+                        <Text color="red">Kick from {title}</Text>
+                      </StatelessAsyncAction>)}
+                      <StatelessAsyncAction onClick={onPromote} bg="transparent">
+                        Promote to Admin
+                      </StatelessAsyncAction>
+                    </>
                   )}
                 </>
               )}
@@ -361,21 +399,19 @@ function Participant(props: {
           <Icon display="block" icon="Ellipsis" />
         </Dropdown>
       </Row>
+    </Row>
       <Box
         borderBottom={1}
         borderBottomColor="washedGray"
-        gridColumn={["1 / 3", "1 / 4"]}
+        width="100%"
       />
-    </>
+  </>
   );
 }
 
 function BlankParticipant({ length }) {
+  const height = [`${length * 97}px`, `${length * 61}px`];
   return (
-    <Box
-      gridRow={[`auto / span ${3 * length}`, `auto / span ${2 * length}`]}
-      gridColumn={["1 / 3", "1 / 4"]}
-      height="100%"
-    />
+    <Box width="100%" height={height} />
   );
 }

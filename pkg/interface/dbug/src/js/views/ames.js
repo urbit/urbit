@@ -49,11 +49,16 @@ export class Ames extends Component {
     const unsent = snd['unsent-messages'].reduce((a, b) => {
       return a + b + ' bytes, ';
     }, 'unsent msg sizes: ');
-    const queuedAcks = snd['queued-message-acks'].map(qa => {
+
+    const quacks = snd['queued-message-acks'].map(qa => {
       return {key: qa['message-num'], jsx: (
         qa['message-num'] + ': ' + qa.ack
       )};
     });
+    const queuedAcks = (
+      <SearchableList placeholder="msg num" items={quacks} />
+    );
+
     const m = snd['packet-pump-state'].metrics;
     const pumpMetrics = (<>
       <table><tbody>

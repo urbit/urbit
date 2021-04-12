@@ -9,7 +9,7 @@
   ~+  ^-  (map term cord)
   %-  molt  ^-  (list (pair term cord))
   :-  [%class 'className']
-  =-  (rash - (more next (cook |=(a/tape [(crip (cass a)) (crip a)]) (star alf))))
+  =-  (rash - (more next (cook |=(a=tape [(crip (cass a)) (crip a)]) (star alf))))
   '''
   accept acceptCharset accessKey action allowFullScreen allowTransparency alt
   async autoComplete autoFocus autoPlay cellPadding cellSpacing charSet checked
@@ -27,12 +27,12 @@
 ::
 ::  special handling for <pre urb:codemirror>foo</pre>
 ++  urb-codemirror                                      ::  render code blocks
-  |=  src/manx  ^-  manx
-  ?>  ?=({{$pre *} _;/(**) ~} src)
+  |=  src=manx  ^-  manx
+  ?>  ?=([[%pre *] _;/(**) ~] src)
   ;codemirror(value "{v.i.a.g.i.c.src}");
 ::
 ++  elem-to-react-json                                  ::  serialize DOM as json
-  |=  src/manx  ^-  json
+  |=  src=manx  ^-  json
   ?:  ?=(_;/(**) src)
     (tape:enjs v.i.a.g.src)
   =+  atr=(molt `(list (pair mane tape))`a.g.src)
@@ -42,14 +42,14 @@
     c+a+(turn c.src ..$)
     gn+s+(mane-to-cord n.g.src)
     =<  ga+(pairs:enjs (turn a.g.src .))
-    |=  {a/mane b/tape}  ^-  {cord json}
+    |=  [a=mane b=tape]  ^-  [cord json]
     :_  (tape:enjs b)
     ?^  a  (mane-to-cord a)
     (~(gut by react-attrs) a a)
   ==
 ::
 ++  mane-to-cord                                        ::  namespaced xml names
-  |=(a/mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))
+  |=(a=mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))
 --
 ::
 ::::

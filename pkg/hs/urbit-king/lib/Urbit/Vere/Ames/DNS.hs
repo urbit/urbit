@@ -61,10 +61,10 @@ where
 
 import Urbit.Prelude
 
-import Network.Socket        hiding (recvFrom, sendTo)
+import Network.Socket
 import Urbit.Arvo            hiding (Fake)
 
-import qualified Data.Map        as M
+import qualified Data.Map.Strict as M
 import qualified Urbit.Noun.Time as Time
 import qualified Urbit.Ob        as Ob
 
@@ -131,11 +131,11 @@ doResolv gal (prevWen, prevIP) turfs stderr = do
       io (resolv gal turfs) >>= \case
         Nothing -> do
           stderr $ "ames: czar at " ++ galStr ++ ": not found"
-          logDebug $ displayShow ("(ames) Failed to lookup IP for ", gal)
+          logInfo $ displayShow ("(ames) Failed to lookup IP for ", gal)
           pure (prevIP, tim)
         Just (turf, host, port, addr) -> do
           when (Just addr /= prevIP) (printCzar addr)
-          logDebug $ displayShow ("(ames) Looked up ", host, port, turf, addr)
+          logInfo $ displayShow ("(ames) Looked up ", host, port, turf, addr)
           pure (Just addr, tim)
  where
   galStr = renderGalaxy gal
@@ -155,7 +155,7 @@ resolvWorker
 resolvWorker gal vTurfs vLast waitMsg send stderr = async (forever go)
  where
   logDrop =
-    logDebug $ displayShow ("(ames) Dropping packet; no ip for galaxy ", gal)
+    logInfo $ displayShow ("(ames) Dropping packet; no ip for galaxy ", gal)
 
   go :: RIO e ()
   go = do

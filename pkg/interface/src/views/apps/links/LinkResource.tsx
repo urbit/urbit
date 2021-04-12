@@ -1,20 +1,23 @@
-import React, { useEffect } from "react";
-import { Box, Row, Col, Center, LoadingSpinner } from "@tlon/indigo-react";
-import { Switch, Route, Link } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Box, Col, Center, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { Switch, Route, Link } from 'react-router-dom';
+import bigInt from 'big-integer';
 
-import GlobalApi from "~/logic/api/global";
-import { StoreState } from "~/logic/store/type";
-import { uxToHex } from '~/logic/lib/util';
-import { Association, GraphNode } from "~/types";
-import { RouteComponentProps } from "react-router-dom";
+import GlobalApi from '~/logic/api/global';
+import { StoreState } from '~/logic/store/type';
+import { RouteComponentProps } from 'react-router-dom';
 
-import { LinkItem } from "./components/link-item";
-import { LinkSubmit } from "./components/link-submit";
-import { LinkPreview } from "./components/link-preview";
-import { CommentSubmit } from "./components/comment-submit";
-import { Comments } from "./components/comments";
+import { LinkItem } from './components/LinkItem';
+import LinkWindow from './LinkWindow';
+import { Comments } from '~/views/components/Comments';
 
-import "./css/custom.css";
+import './css/custom.css';
+import { Association } from '@urbit/api/metadata';
+import useGraphState from '~/logic/state/graph';
+import useMetadataState from '~/logic/state/metadata';
+import useGroupState from '../../../logic/state/group';
+
+const emptyMeasure = () => {};
 
 type LinkResourceProps = StoreState & {
   association: Association;
@@ -27,116 +30,102 @@ export function LinkResource(props: LinkResourceProps) {
     association,
     api,
     baseUrl,
-    graphs,
-    contacts,
-    groups,
-    associations,
-    graphKeys,
-    s3,
-    hideAvatars,
-    hideNicknames,
-    remoteContentPolicy,
   } = props;
 
-  const appPath = association["app-path"];
+  const rid = association.resource;
 
-  const relativePath = (p: string) => `${baseUrl}/resource/link${appPath}${p}`;
+  const relativePath = (p: string) => `${baseUrl}/resource/link${rid}${p}`;
+  const associations = useMetadataState(state => state.associations);
 
-  const [, , ship, name] = appPath.split("/");
+  const [, , ship, name] = rid.split('/');
   const resourcePath = `${ship.slice(1)}/${name}`;
-  const resource = associations.graph[appPath]
-    ? associations.graph[appPath]
+  const resource = associations.graph[rid]
+    ? associations.graph[rid]
     : { metadata: {} };
-  const contactDetails = contacts[resource["group-path"]] || {};
+  const groups = useGroupState(state => state.groups);
+  const group = groups[resource?.group] || {};
+
+  const graphs = useGraphState(state => state.graphs);
   const graph = graphs[resourcePath] || null;
+  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
 
   useEffect(() => {
     api.graph.getGraph(ship, name);
   }, [association]);
 
-  const resourceUrl = `${baseUrl}/resource/link${appPath}`;
+  const resourceUrl = `${baseUrl}/resource/link${rid}`;
   if (!graph) {
-    return <Center width='100%' height='100%'><LoadingSpinner/></Center>;
+    return <Center width='100%' height='100%'><LoadingSpinner /></Center>;
   }
 
   return (
-    <Col alignItems="center" height="100%" width="100%" overflowY="auto">
+    <Col alignItems="center" height="100%" width="100%" overflowY="hidden">
       <Switch>
         <Route
           exact
-          path={relativePath("")}
+          path={relativePath('')}
           render={(props) => {
             return (
-              <Col width="100%" p={4} alignItems="center" maxWidth="768px">
-                <Row width="100%" flexShrink='0'>
-                  <LinkSubmit s3={s3} name={name} ship={ship.slice(1)} api={api} />
-                </Row>
-                {Array.from(graph).map(([date, node]) => {
-                  const contact = contactDetails[node.post.author];
-                  return (
-                    <LinkItem
-                      key={date}
-                      resource={resourcePath}
-                      node={node}
-                      nickname={contact?.nickname}
-                      hideAvatars={hideAvatars}
-                      hideNicknames={hideNicknames}
-                      baseUrl={resourceUrl}
-                      color={uxToHex(contact?.color || '0x0')}
-                    />
-                  );
-                })}
-              </Col>
+              <LinkWindow
+                key={rid}
+                association={resource}
+                resource={resourcePath}
+                graph={graph}
+                baseUrl={resourceUrl}
+                group={group}
+                path={resource.group}
+                pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
+                api={api}
+                mb={3}
+              />
             );
           }}
         />
         <Route
-          path={relativePath("/:index")}
+          path={relativePath('/:index(\\d+)/:commentId?')}
           render={(props) => {
-            const indexArr = props.match.params.index.split("-");
+            const index = bigInt(props.match.params.index);
+            const editCommentId = props.match.params.commentId || null;
 
-            if (indexArr.length <= 1) {
+            if (!index) {
               return <div>Malformed URL</div>;
             }
 
-            const index = parseInt(indexArr[1], 10);
-            const node = !!graph ? graph.get(index) : null;
+            const node = graph ? graph.get(index) : null;
 
             if (!node) {
               return <Box>Not found</Box>;
             }
-
-            const contact = contactDetails[node.post.author];
-
             return (
-              <Col width="100%" p={3} maxWidth="640px">
-                <Link to={resourceUrl}>{"<- Back"}</Link>
-                <LinkPreview
-                  resourcePath={resourcePath}
-                  post={node.post}
-                  nickname={contact?.nickname}
-                  hideNicknames={hideNicknames}
-                  commentNumber={node.children.size}
-                  remoteContentPolicy={remoteContentPolicy}
-                />
-                <Row flexShrink='0'>
-                  <CommentSubmit
-                    name={name}
-                    ship={ship}
-                    api={api}
-                    parentIndex={node.post.index}
-                  />
-                </Row>
-                <Comments
-                  comments={node.children}
-                  resourcePath={resourcePath}
-                  contacts={contactDetails}
+              <Col alignItems="center" overflowY="auto" width="100%">
+              <Col width="100%" p={3} maxWidth="768px">
+                <Link to={resourceUrl}><Text px={3} bold>{'<- Back'}</Text></Link>
+                <LinkItem
+                  key={node.post.index}
+                  resource={resourcePath}
+                  node={node}
+                  baseUrl={resourceUrl}
+                  group={group}
+                  path={resource?.group}
                   api={api}
-                  hideAvatars={hideAvatars}
-                  hideNicknames={hideNicknames}
-                  remoteContentPolicy={remoteContentPolicy}
+                  mt={3}
+                  measure={emptyMeasure}
+                />
+                <Comments
+                  ship={ship}
+                  name={name}
+                  comments={node}
+                  resource={resourcePath}
+                  association={association}
+                  api={api}
+                  editCommentId={editCommentId}
+                  history={props.history}
+                  baseUrl={`${resourceUrl}/${props.match.params.index}`}
+                  group={group}
+                  px={3}
                 />
               </Col>
+            </Col>
             );
           }}
         />

@@ -1,56 +1,50 @@
 import BaseSubscription from './base';
 import { StoreState } from '../store/type';
-import { Path } from '~/types/noun';
+import { Path } from '@urbit/api';
 import _ from 'lodash';
-
 
 /**
  * Path to subscribe on and app to subscribe to
  */
 type AppSubscription = [Path, string];
 
-const chatSubscriptions: AppSubscription[] = [
-  ['/primary', 'chat-view'],
-  ['/synced', 'chat-hook']
-];
-
-const publishSubscriptions: AppSubscription[] = [
-  ['/primary', 'publish'],
-];
-
 const groupSubscriptions: AppSubscription[] = [
-  ['/synced', 'contact-hook']
 ];
 
 const graphSubscriptions: AppSubscription[] = [
   ['/updates', 'graph-store']
 ];
 
-type AppName = 'publish' | 'chat' | 'groups' | 'graph';
+type AppName = 'groups' | 'graph';
 const appSubscriptions: Record<AppName, AppSubscription[]> = {
-  chat: chatSubscriptions,
-  publish: publishSubscriptions,
   groups: groupSubscriptions,
   graph: graphSubscriptions
 };
 
 export default class GlobalSubscription extends BaseSubscription<StoreState> {
   openSubscriptions: Record<AppName, number[]> = {
-    chat: [],
-    publish: [],
     groups: [],
     graph: []
   };
 
   start() {
-    this.subscribe('/all', 'invite-store');
-    this.subscribe('/groups', 'group-store');
-    this.subscribe('/primary', 'contact-view');
     this.subscribe('/all', 'metadata-store');
-    this.subscribe('/all', 's3-store');
+    this.subscribe('/all', 'invite-store');
     this.subscribe('/all', 'launch');
     this.subscribe('/all', 'weather');
+    this.subscribe('/groups', 'group-store');
+    this.clearQueue();
+
+    //  TODO: update to get /updates
+    this.subscribe('/all', 'contact-store');
+    this.subscribe('/all', 's3-store');
     this.subscribe('/keys', 'graph-store');
+    this.subscribe('/updates', 'hark-store');
+    this.subscribe('/updates', 'hark-graph-hook');
+    this.subscribe('/updates', 'hark-group-hook');
+    this.subscribe('/all', 'settings-store');
+    this.subscribe('/all', 'group-view');
+    this.subscribe('/nacks', 'contact-pull-hook');
   }
 
   restart() {
@@ -73,7 +67,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
   }
 
   stopApp(app: AppName) {
-    this.openSubscriptions[app].map(id => this.unsubscribe(id))
+    this.openSubscriptions[app].map(id => this.unsubscribe(id));
     this.openSubscriptions[app] = [];
   }
 }

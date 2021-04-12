@@ -1,7 +1,10 @@
-interface LocalUpdateSidebarToggle {
-  sidebarToggle: boolean;
-}
+export const tutorialProgress = ['hidden', 'start', 'group-desc', 'channels', 'chat', 'link', 'publish', 'profile', 'leap', 'notifications', 'done', 'exit'] as const;
 
+export const leapCategories = ["mychannel", "messages", "updates", "profile", "logout"] as const;
+
+export type LeapCategories = typeof leapCategories[number];
+
+export type TutorialProgress = typeof tutorialProgress[number];
 interface LocalUpdateSetDark {
   setDark: boolean;
 }
@@ -26,7 +29,7 @@ interface LocalUpdateSetOmniboxShown {
   omniboxShown: boolean;
 }
 
-export interface LocalUpdateRemoteContentPolicy {
+export interface RemoteContentPolicy {
   imageShown: boolean;
   audioShown: boolean;
   videoShown: boolean;
@@ -46,11 +49,10 @@ interface BackgroundConfigColor {
 export type BackgroundConfig = BackgroundConfigUrl | BackgroundConfigColor | undefined;
 
 export type LocalUpdate =
-  LocalUpdateSidebarToggle
 | LocalUpdateSetDark
 | LocalUpdateBaseHash
 | LocalUpdateBackgroundConfig
 | LocalUpdateHideAvatars
 | LocalUpdateHideNicknames
 | LocalUpdateSetOmniboxShown
-| LocalUpdateRemoteContentPolicy;
+| RemoteContentPolicy;

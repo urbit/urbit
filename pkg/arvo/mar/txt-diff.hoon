@@ -2,7 +2,7 @@
 ::::  /hoon/txt-diff/mar
   ::
 /?    310
-|_  txt-diff/(urge:clay cord)
+|_  txt-diff=(urge:clay cord)
 ::
 ++  grad  %noun
 ++  grow

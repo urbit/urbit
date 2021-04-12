@@ -3,7 +3,7 @@
   ::
 /+    cram
 ::
-|_  mud/@t
+|_  mud=@t
 ++  grow
   |%
   ++  mime  [/text/x-unmark (as-octs:mimes:html mud)]
@@ -17,7 +17,7 @@
     ^-  (map term knot)
     %-  ~(run by inf:(static:cram (ream mud)))
     |=  a=dime  ^-  cord
-    ?+  (end 3 1 p.a)  (scot a)
+    ?+  (end 3 p.a)  (scot a)
       %t  q.a
     ==
   --

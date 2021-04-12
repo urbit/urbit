@@ -4,9 +4,9 @@
 /?    310
 =,  mimes:html
 =,  format
-|_  txt/cord
+|_  txt=cord
 ::
-++  grad  %mime
+++  grad  %noun
 ++  grab                                                ::  convert from
   |%
   ++  noun  @t                                          ::  clam from %noun

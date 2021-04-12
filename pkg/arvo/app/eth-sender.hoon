@@ -13,7 +13,7 @@
 ::    waiting for confirms every 4 txs
 ::      :eth-sender [%send %/txs/txt 4 `index+50 ~]
 ::
-/+  default-agent, verb
+/+  ethereum, default-agent, verb
 ::
 |%
 ++  state-0

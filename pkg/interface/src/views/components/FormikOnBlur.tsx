@@ -1,5 +1,5 @@
-import React, { useImperativeHandle, useEffect } from "react";
-import { FormikValues, useFormik, FormikProvider, FormikConfig } from "formik";
+import React, { useImperativeHandle, useEffect } from 'react';
+import { FormikValues, useFormik, FormikProvider, FormikConfig } from 'formik';
 
 export function FormikOnBlur<
   Values extends FormikValues = FormikValues,
@@ -15,14 +15,14 @@ export function FormikOnBlur<
     ) {
       const { values } = formikBag;
       formikBag.submitForm().then(() => {
-        formikBag.resetForm({ values });
+        formikBag.resetForm({ values, touched: {} });
       });
     }
   }, [
     formikBag.errors,
     formikBag.touched,
     formikBag.submitForm,
-    formikBag.values,
+    formikBag.values
   ]);
 
   const { children, innerRef } = props;

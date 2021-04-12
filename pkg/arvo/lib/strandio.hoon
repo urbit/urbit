@@ -173,7 +173,7 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign [%wait @ ~] %b %wake *]
+      [~ %sign [%wait @ ~] %behn %wake *]
     ?.  |(?=(~ until) =(`u.until (slaw %da i.t.wire.u.in.tin)))
       `[%skip ~]
     ?~  error.sign-arvo.u.in.tin
@@ -218,6 +218,32 @@
   =/  =card:agent:gall  [%pass /poke %agent dock %poke cage]
   ;<  ~  bind:m  (send-raw-card card)
   (take-poke-ack /poke)
+::
+++  raw-poke
+  |=  [=dock =cage]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  =card:agent:gall  [%pass /poke %agent dock %poke cage]
+  ;<  ~  bind:m  (send-raw-card card)
+  =/  m  (strand ,~)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+      ~
+    `[%wait ~]
+  ::
+      [~ %agent * %poke-ack *]
+    ?.  =(/poke wire.u.in.tin)
+      `[%skip ~]
+    `[%done ~]
+  ==
+::
+++  raw-poke-our
+  |=  [app=term =cage]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
+  (raw-poke [our.bowl app] cage)
 ::
 ++  poke-our
   |=  [=term =cage]
@@ -321,7 +347,7 @@
   ;<  ~        bind:m  (send-raw-card card)
   |=  tin=strand-input:strand
   =*  loop  $
-  ?:  ?&  ?=([~ %sign [%timeout @ ~] %b %wake *] in.tin)
+  ?:  ?&  ?=([~ %sign [%timeout @ ~] %behn %wake *] in.tin)
           =((scot %da when) i.t.wire.u.in.tin)
       ==
     `[%fail %timeout ~]
@@ -351,7 +377,7 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign [%request ~] %i %http-response %finished *]
+      [~ %sign [%request ~] %iris %http-response %finished *]
     `[%done client-response.sign-arvo.u.in.tin]
   ==
 ::
@@ -376,9 +402,9 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign [%request ~] %i %http-response %cancel *]
+      [~ %sign [%request ~] %iris %http-response %cancel *]
     `[%done ~]
-      [~ %sign [%request ~] %i %http-response %finished *]
+      [~ %sign [%request ~] %iris %http-response %finished *]
     `[%done `client-response.sign-arvo.u.in.tin]
   ==
 ::
@@ -416,19 +442,19 @@
   ;<  ~  bind:m  (send-request (hiss-to-request:html hiss))
   take-maybe-sigh
 ::
-::  +build-fail: build the source file at the specified $beam
+::  +build-file: build the source file at the specified $beam
 ::
 ++  build-file
   |=  [[=ship =desk =case] =spur]
   =*  arg  +<
-  =/  m  (strand ,vase)
+  =/  m  (strand ,(unit vase))
   ^-  form:m
   ;<  =riot:clay  bind:m
-    (warp ship desk ~ %sing %a case (flop spur))
+    (warp ship desk ~ %sing %a case spur)
   ?~  riot
-    (strand-fail %build-file >arg< ~)
+    (pure:m ~)
   ?>  =(%vase p.r.u.riot)
-  (pure:m !<(vase q.r.u.riot))
+  (pure:m (some !<(vase q.r.u.riot)))
 ::  +build-mark: build a mark definition to a $dais
 ::
 ++  build-mark
@@ -442,9 +468,9 @@
     (strand-fail %build-mark >arg< ~)
   ?>  =(%dais p.r.u.riot)
   (pure:m !<(dais:clay q.r.u.riot))
-::  +build-cast: build a mark conversion gate ($tube)
+::  +build-tube: build a mark conversion gate ($tube)
 ::
-++  build-cast
+++  build-tube
   |=  [[=ship =desk =case] =mars:clay]
   =*  arg  +<
   =/  m  (strand ,tube:clay)
@@ -452,9 +478,36 @@
   ;<  =riot:clay  bind:m
     (warp ship desk ~ %sing %c case /[a.mars]/[b.mars])
   ?~  riot
-    (strand-fail %build-cast >arg< ~)
+    (strand-fail %build-tube >arg< ~)
   ?>  =(%tube p.r.u.riot)
   (pure:m !<(tube:clay q.r.u.riot))
+::
+::  +build-nave: build a mark definition to a $nave
+::
+++  build-nave
+  |=  [[=ship =desk =case] mak=mark]
+  =*  arg  +<
+  =/  m  (strand ,vase)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %b case /[mak])
+  ?~  riot
+    (strand-fail %build-nave >arg< ~)
+  ?>  =(%nave p.r.u.riot)
+  (pure:m q.r.u.riot)
+::  +build-cast: build a mark conversion gate (static)
+::
+++  build-cast
+  |=  [[=ship =desk =case] =mars:clay]
+  =*  arg  +<
+  =/  m  (strand ,vase)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %f case /[a.mars]/[b.mars])
+  ?~  riot
+    (strand-fail %build-cast >arg< ~)
+  ?>  =(%cast p.r.u.riot)
+  (pure:m q.r.u.riot)
 ::
 ::  Read from Clay
 ::
@@ -468,7 +521,7 @@
   |=  [[=ship =desk =case:clay] =spur]
   =*  arg  +<
   =/  m  (strand ,cage)
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case (flop spur))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
   ?~  riot
     (strand-fail %read-file >arg< ~)
   (pure:m r.u.riot)
@@ -476,14 +529,14 @@
 ++  check-for-file
   |=  [[=ship =desk =case:clay] =spur]
   =/  m  (strand ,?)
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case (flop spur))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
   (pure:m ?=(^ riot))
 ::
 ++  list-tree
   |=  [[=ship =desk =case:clay] =spur]
   =*  arg  +<
   =/  m  (strand ,(list path))
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %t case (flop spur))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %t case spur)
   ?~  riot
     (strand-fail %list-tree >arg< ~)
   (pure:m !<((list path) q.r.u.riot))
@@ -497,7 +550,7 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign * ?(%b %c) %writ *]
+      [~ %sign * ?(%behn %clay) %writ *]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
     `[%done +>.sign-arvo.u.in.tin]
@@ -651,11 +704,16 @@
 ::
 ++  start-thread
   |=  file=term
+  (start-thread-with-args file *vase)
+::
+++  start-thread-with-args
+  |=  [file=term args=vase]
   =/  m  (strand ,tid:spider)
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl
-  =/  tid  (scot %ta (cat 3 'strand_' (scot %uv (sham file eny.bowl))))
-  =/  poke-vase  !>([`tid.bowl `tid file *vase])
+  =/  tid
+    (scot %ta (cat 3 (cat 3 'strand_' file) (scot %uv (sham file eny.bowl))))
+  =/  poke-vase  !>([`tid.bowl `tid file args])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~  bind:m  (sleep ~s0)  ::  wait for thread to start
   (pure:m tid)

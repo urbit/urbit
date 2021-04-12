@@ -1,10 +1,8 @@
-
 export type LaunchUpdate =
   LaunchUpdateInitial
 | LaunchUpdateFirstTime
 | LaunchUpdateOrder
 | LaunchUpdateIsShown;
-
 
 interface LaunchUpdateInitial {
   initial: LaunchState;

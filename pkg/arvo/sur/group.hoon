@@ -2,6 +2,22 @@
 ::
 ^?
 |%
+::
+++  groups-state-one
+  |%
+  +$  groups  (map resource group)
+  ::
+  +$  tag  $@(group-tag [app=term tag=term])
+  ::
+  +$  tags  (jug tag ship)
+  ::
+  +$  group
+    $:  members=(set ship)
+        =tags
+        =policy
+        hidden=?
+    ==
+  --
 ::  $groups: a mapping from group-ids to groups
 ::
 +$  groups  (map resource group)
@@ -16,7 +32,7 @@
 ::   Tags may be used and recognised differently across apps.
 ::   for example, you could use tags like `%author`, `%bot`, `%flagged`...
 ::
-+$  tag  $@(group-tag [app=term tag=term])
++$  tag  $@(group-tag [app=term =resource tag=term])
 ::  $role-tag: a kind of $group-tag that identifies a privileged user
 ::
 ::    These roles are
