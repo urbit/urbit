@@ -1,4 +1,4 @@
-import React, { PureComponent, useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import React, { PureComponent, useCallback, useEffect, useRef, useState, useMemo, ReactNode } from 'react';
 import { Contact, Group, uxToHex } from '@urbit/api';
 import _ from 'lodash';
 import VisibilitySensor from 'react-visibility-sensor';
@@ -40,6 +40,7 @@ const FixedOverlay = styled(Col)`
 type ProfileOverlayProps = BoxProps & {
   ship: string;
   api: any;
+  children: ReactNode;
 };
 
 const ProfileOverlay = (props: ProfileOverlayProps) => {

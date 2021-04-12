@@ -1,4 +1,5 @@
 import { BigInteger } from "big-integer";
+import { immerable } from 'immer';
 
 interface NonemptyNode<V> {
   n: [BigInteger, V];
@@ -14,6 +15,7 @@ type MapNode<V> = NonemptyNode<V> | null;
  */
 export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   private root: MapNode<V> = null;
+  [immerable] = true;
   size: number = 0;
 
   constructor(initial: [BigInteger, V][] = []) {

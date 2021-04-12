@@ -29,8 +29,8 @@ import {
   Groups,
   Associations
 } from '~/types';
-import TextContent from './content/text';
-import CodeContent from './content/code';
+import TextContent from '../../../landscape/components/Graph/content/text';
+import CodeContent from '../../../landscape/components/Graph/content/code';
 import RemoteContent from '~/views/components/RemoteContent';
 import { Mention } from '~/views/components/MentionText';
 import { Dropdown } from '~/views/components/Dropdown';
@@ -42,8 +42,7 @@ import useContactState from '~/logic/state/contact';
 import { useIdlingState } from '~/logic/lib/idling';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
 import {useCopy} from '~/logic/lib/useCopy';
-import {PermalinkEmbed} from '../../permalinks/embed';
-import {referenceToPermalink} from '~/logic/lib/permalinks';
+import {GraphContentWide} from '~/views/landscape/components/Graph/GraphContentWide';
 
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
@@ -284,8 +283,7 @@ class ChatMessage extends Component<ChatMessageProps> {
       hideHover
     } = this.props;
 
-    let onReply = this.props?.onReply;
-    onReply ??= () => {};
+    let onReply = this.props?.onReply ?? (() => {});
     const transcluded = this.props?.transcluded ?? 0;
     let { renderSigil } = this.props;
 
@@ -397,12 +395,11 @@ export const MessageAuthor = ({
       msg.author !== window.ship) &&
     `~${msg.author}` in contacts
       ? contacts[`~${msg.author}`]
-      : false;
+      : undefined;
 
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
-  const shipName = showNickname ? contact.nickname : cite(msg.author);
-  const copyNotice = 'Copied';
+  const shipName = showNickname && contact?.nickname || cite(msg.author) || `~${msg.author}`;
   const color = contact
     ? `#${uxToHex(contact.color)}`
     : dark
@@ -413,28 +410,10 @@ export const MessageAuthor = ({
     : dark
     ? 'mix-blend-diff'
     : 'mix-blend-darken';
-  const [displayName, setDisplayName] = useState(shipName);
-  const [nameMono, setNameMono] = useState(showNickname ? false : true);
+
+  const { copyDisplay, doCopy, didCopy } = useCopy(`~${msg.author}`, shipName);
   const { hovering, bind } = useHovering();
-  const [showOverlay, setShowOverlay] = useState(false);
-
-  const toggleOverlay = () => {
-    setShowOverlay((value) => !value);
-  };
-
-  const showCopyNotice = () => {
-    setDisplayName(copyNotice);
-    setNameMono(false);
-  };
-
-  useEffect(() => {
-    const resetDisplay = () => {
-      setDisplayName(shipName);
-      setNameMono(showNickname ? false : true);
-    };
-    const timer = setTimeout(() => resetDisplay(), 800);
-    return () => clearTimeout(timer);
-  }, [shipName, displayName]);
+  const nameMono = !(showNickname || didCopy);
 
   const img =
     contact?.avatar && !hideAvatars ? (
@@ -471,10 +450,7 @@ export const MessageAuthor = ({
   return (
     <Box display='flex' alignItems='flex-start' {...rest}>
       <Box
-        onClick={() => {
-          setShowOverlay(true);
-        }}
-        height={24}
+       height={24}
         pr={2}
         mt={'1px'}
         pl={'12px'}
@@ -501,13 +477,10 @@ export const MessageAuthor = ({
             mono={nameMono}
             fontWeight={nameMono ? '400' : '500'}
             cursor='pointer'
-            onClick={() => {
-              writeText(`~${msg.author}`);
-              showCopyNotice();
-            }}
+            onClick={doCopy}
             title={`~${msg.author}`}
           >
-            {displayName}
+            {copyDisplay}
           </Text>
           <Text flexShrink={0} fontSize={0} gray>
             {timestamp}
@@ -539,7 +512,6 @@ export const Message = ({
   ...rest
 }) => {
   const { hovering, bind } = useHovering();
-  const contacts = useContactState((state) => state.contacts);
   return (
     <Box width="100%" position='relative' {...rest}>
       {timestampHover ? (
@@ -558,66 +530,14 @@ export const Message = ({
       ) : (
         <></>
       )}
-      <Box width="100%" {...bind}>
-        {msg.contents.map((content, i) => {
-          switch (Object.keys(content)[0]) {
-            case 'text':
-              return (
-                <TextContent
-                  key={i}
-                  api={api}
-                  fontSize={1}
-                  lineHeight={'20px'}
-                  content={content}
-                />
-              );
-            case 'code':
-            return <CodeContent key={i} content={content} />;
-            case 'reference':
-              const { link } = referenceToPermalink(content);
-              return (
-                <PermalinkEmbed
-                  link={link}
-                  api={api}
-                  transcluded={transcluded}
-                  showOurContact={showOurContact}
-                />
-              );
-            case 'url':
-             return (
-                <Box
-                  key={i}
-                  flexShrink={0}
-                  fontSize={1}
-                  lineHeight='20px'
-                  color='black'
-                  width="fit-content"
-                  maxWidth="500px"
-                >
-                  <RemoteContent
-                    key={content.url}
-                    url={content.url}
-                  />
-                </Box>
-              );
-            case 'mention':
-              const first = (i) => i === 0;
-              return (
-                <Mention
-                  key={i}
-                  first={first(i)}
-                  group={group}
-                  scrollWindow={scrollWindow}
-                  ship={content.mention}
-                  contact={contacts?.[`~${content.mention}`]}
-                  api={api}
-                />
-              );
-            default:
-              return null;
-          }
-        })}
-      </Box>
+      <GraphContentWide
+        {...bind}
+        width="100%"
+        post={msg}
+        transcluded={transcluded}
+        api={api}
+        showOurContact={showOurContact}
+      />
     </Box>
   );
 };
