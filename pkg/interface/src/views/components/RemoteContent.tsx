@@ -135,7 +135,7 @@ return;
     return (
       <Row
         alignItems="center"
-        maxWidth="20rem"
+        maxWidth="min(100%, 20rem)"
         gapX="1" borderRadius="1" backgroundColor="washedGray">
         { textOnly && (<Icon ml="2" display="block" icon="ArrowExternal" />)}
         <BaseAnchor
@@ -149,8 +149,8 @@ return;
         textOverflow="ellipsis"
         minWidth="0"
         width={textOnly ? "calc(100% - 24px)" : "fit-content"}
+        maxWidth="min(500px, 100%)"
         style={{ color: 'inherit', textDecoration: 'none', ...style }}
-        className="word-break-all"
         target="_blank"
         rel="noopener noreferrer"
               >
@@ -218,6 +218,8 @@ return;
             style={style}
             onLoad={onLoad}
             objectFit="contain"
+            height="100%"
+            width="100%"
             {...audioProps}
             {...props}
           />
@@ -237,6 +239,8 @@ return;
             style={style}
             onLoad={onLoad}
             objectFit="contain"
+            height="100%"
+            width="100%"
             {...videoProps}
             {...props}
           />

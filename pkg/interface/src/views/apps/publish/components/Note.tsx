@@ -94,12 +94,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
 
   const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Link');
 
-  const windowRef = React.useRef(null);
-  useEffect(() => {
-    if (windowRef.current && !query.has('selected')) {
-      windowRef.current.parentElement.scrollTop = 0;
-    }
-  }, [note, windowRef]);
 
   return (
     <Box
@@ -112,7 +106,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
       width="100%"
       gridRowGap={4}
       mx="auto"
-      ref={windowRef}
     >
       <Link to={rootUrl}>
         <Text>{'<- Notebook Index'}</Text>
