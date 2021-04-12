@@ -12,21 +12,18 @@
 ::NOTE  implementation details:
 ::  - if it exists in afairs, the chat has been created
 ::
-::TODO  allow importing of surveys from outside of app source
-::
 /-  graph=graph-store, graph-view
-/+  re=resource, dbug, verb, default-agent
+/+  *eliza, re=resource, dbug, verb, default-agent
+/~  chains  chain  /app/eliza
 ::
 |%
-++  state-0
-  $:  %0
+++  state-1
+  $:  %1
       afairs=(map ship afair)
       record=(jar study [when=@da =ship data=(map place datum)])
-      chains=(map study chain)
   ==
 ::
 +$  study  @tasstudy
-+$  place  @tasplace
 ::  $afair: current relation to ship
 ::
 +$  afair
@@ -40,31 +37,6 @@
   $:  what=study
       back=(lest place)
       data=(map place datum)
-  ==
-::  $chain: loose graph of questions
-::
-+$  chain
-  $:  flow=(lest place)
-      bits=(map place point)
-  ==
-::  $point: point (message) in conversation
-::
-+$  point  $@(@t query)
-::  $query: question awaiting answer
-::
-+$  query
-  $~  [%loose '']
-  $%  [%loose q=@t]                                     ::  open question
-      [%yesno q=@t]                                     ::  binary question
-      [%multi q=@t a=(list @t)]                         ::  multiple choice
-      [%drift next=$-(datum place) q=query]             ::  branch on answer
-  ==
-::  $datum:  answer to query
-::
-+$  datum
-  $%  [%loose d=@t]
-      [%yesno d=?]
-      [%multi d=@ud]
   ==
 ::  $reply: user response
 ::
@@ -95,7 +67,7 @@
 +$  card  card:agent:gall
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 %+  verb  |
@@ -109,16 +81,25 @@
   ::
   ++  on-init
      ^-  (quip card _this)
-     =.  chains  all:surveys
      [[listen:talk:do]~ this]
   ::
   ++  on-save   !>(state)
   ++  on-load
     |=  old=vase
-    ^-  (quip card _this)
-    =.  state   !<(state-0 old)
-    =.  chains  all:surveys
-    [~ this]
+    |^  ^-  (quip card _this)
+        =/  any-state   !<($%(state-0 state-1) old)
+        ?-  -.any-state
+          %1  [~ this(state any-state)]
+          %0  [~ this(state [%1 afairs record]:any-state)]
+        ==
+    ::
+    ++  state-0
+      $:  %0
+          afairs=(map ship afair)
+          record=(jar study [when=@da =ship data=(map place datum)])
+          chains=(map study chain)
+      ==
+    --
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -573,46 +554,6 @@
     |=  t=@t
     (crip (turn (trip t) |=(c=@ ?:(=('\0a' c) ' ' c))))
   --
-::  +hop: drift function builders
-::
-++  hop
-  |%
-  ++  yesno
-    |=  [y=place n=place]
-    |=  d=datum
-    ~|  [want=%yesno have=-.d]
-    ?>  ?=(%yesno -.d)
-    ?:(d.d y n)
-  ::
-  ++  multi
-    |=  h=(list place)
-    |=  d=datum
-    ~|  [want=%multi have=-.d]
-    ?>  ?=(%multi -.d)  ::TODO  what happens if we crash? how do we recover?
-    ~|  [want=d.d max=(lent h)]
-    (snag d.d h)
-  --
-::  +build-chain: adds start and end phrases
-::
-++  build-chain
-  |=  [desc=@t points=(lest [p=place n=point])]
-  ^-  chain
-  ::TODO  kinda wish we could sanity-check jumps/references,
-  ::      but they're hidden inside the drift gates...
-  =.  points
-    :*  :-  %eliza-ask-for-permission
-        :+  %drift
-          (yesno:hop p.i.points %eliza-end)
-        :-  %yesno
-        :((cury cat 3) 'May I ask you some questions about ' desc '?')
-      ::
-        %+  snoc  points
-        :-  %eliza-end
-        'That is all for now. Thank you for your time!'
-    ==
-  :-  =+  (turn points head)
-      ?<(?=(~ -) -)
-  (~(gas by *(map place point)) points)
 ::  +phrases: built-in personality
 ::
 ++  phrases
@@ -629,93 +570,5 @@
   ++  back  'Alright, let\'s take a step back.'
   ++  buck  'This is as far back as we can go.'
   ++  stop  'Alright, sorry for bothering you. Goodbye forever.'
-  --
-::  +surveys: content that should probably get loaded from file instead
-::
-++  surveys
-  |%
-  ++  all
-    ^-  (map study chain)
-    %-  my
-    :~  %feedback-2021-01^feedback-2021-01
-        %tally-2021-03^tally-2021-03
-    ==
-  ::
-  ++  tally-2021-03
-    %+  build-chain
-      'your Urbit groups experience so far'
-    :~  :-  %tally-explainer
-        '''
-        Your Urbit comes with `+tally`, a command for getting an anonymized and
-        simplified overview of your participation in groups. The information it
-        outputs is useful for getting a sense of network liveliness, in the
-        absence of more invasive analytics.
-        '''
-      ::
-        :-  %tally
-        :-  %loose
-        'Please run `+tally` in the Urbit terminal, and send me the result.'
-      ::
-        :-  %comments
-        :-  %loose
-        'Is there anything else you want to share, about groups or otherwise?'
-    ==
-  ::
-  ++  feedback-2021-01
-    %+  build-chain
-      'your experience on Urbit so far'
-    :~  :-  %fun
-        [%yesno 'Having fun on urbit yet?']
-      ::
-        :-  %how-many-groups
-        :+  %drift
-          (multi:hop ~[- - + +]:[%group-advice %invited])
-        :+  %multi  'How many groups are you active in?'
-        :~  'None, haven\'t been on much.'
-            'Just Urbit Community.'
-            'A few!'
-            'A lot!!'
-        ==
-      ::
-        :-  %group-advice
-        '''
-        Joining a group is the best way to use Urbit. Find groups to join in
-        Urbit Community (~bitbet-bolbel/urbit-community) in the Bulletin Board
-        channel.
-        '''
-      ::
-        :-  %invited
-        :+  %drift
-          (multi:hop ~[%bugs . .]:%invite-advice)
-        :+  %multi  'Try out the invite feature yet?'
-        :~  'Yes, already did.'
-            'No, but planning to.'
-            'No, not planning to.'
-        ==
-      ::
-        :-  %invite-advice
-        '''
-        To send Urbit invites, log into bridge.urbit.org with your Master
-        Ticket, and simply enter a friend's email address. You've got three
-        invites to send!
-        '''
-      ::
-        :-  %bugs
-        :-  %loose
-        'Find any bugs, lacking features, or hiccups in your setup?'
-      ::
-        :-  %hosting
-        :+  %drift
-          (yesno:hop %hosting-experience %final-thoughts)
-        [%yesno 'Are you on hosting?']
-      ::
-        :-  %hosting-experience
-        :-  %loose
-        'Briefly, how has your hosted experience been so far?'
-      ::
-        :-  %final-thoughts
-        :-  %loose
-        'Any final thoughts?'
-    ==
   --
 --
