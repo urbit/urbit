@@ -210,6 +210,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     }
   }, [selected, results]);
 
+  const setSelection = (app, link) => {
+    setSelected([app, link]);
+  };
+
   const control = useCallback(
     (evt) => {
       if (evt.key === 'Escape') {
@@ -288,12 +292,6 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     return 0;
   };
 
-  // Handler to set selection on mouse hover
-  const setSelection = (app, link) => {
-    // TODO: Cancel this event if we are navigating by keyboard
-    setSelected([app, link]);
-  };
-
   const renderResults = useCallback(() => {
     return (
       <Box
@@ -366,7 +364,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
               ref={(el) => {
                 inputRef.current = el;
               }}
-              control={(e) => control(e)}
+              control={e => control(e)}
               search={search}
               query={query}
             />

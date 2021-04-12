@@ -13,7 +13,7 @@ export class OmniboxResult extends Component {
     super(props);
     this.state = {
       isSelected: false,
-      hovered: false,
+      hovered: false
     };
     this.setHover = this.setHover.bind(this);
     this.result = React.createRef();
@@ -199,7 +199,7 @@ export class OmniboxResult extends Component {
         py='2'
         px='2'
         cursor='pointer'
-        onMouseEnter={() => this.setHover(true), setSelection}
+        onMouseMove={() => setSelection()}
         onMouseLeave={() => this.setHover(false)}
         backgroundColor={
           this.state.hovered || selected === link ? 'blue' : 'white'
