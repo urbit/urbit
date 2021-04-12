@@ -38,7 +38,7 @@ hone = go
       Atom a -> H.HAtom a
       Tag tx -> H.HAtom (textToAtom tx)
       Cord tx -> H.HAtom (textToAtom tx)
-      Tape tx -> undefined
+      Tape tx -> error "hone: tapes not implemented"
       Incr c -> H.DotLus (go c)
       IncrIrr c -> H.DotLus (go c)
       AppIrr c d -> H.CenHep (go c) (go d)

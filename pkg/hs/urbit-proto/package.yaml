@@ -21,7 +21,7 @@ dependencies:
   - transformers
   - transformers-compat
   - unordered-containers
-  - urbit-king
+  - urbit-noun
 
 default-extensions:
   - ApplicativeDo
@@ -67,6 +67,7 @@ library:
     - -fwarn-incomplete-patterns
     - -fwarn-unused-binds
     - -fwarn-unused-imports
+    - -Wwarn
     - -O2
 
 executables:
