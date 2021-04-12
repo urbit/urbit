@@ -16,7 +16,26 @@ export const GraphReducer = (json) => {
       removeNodes
     ]);
   }
+  const loose = _.get(json, 'graph-update-loose', false);
+  if(loose) {
+    reduceState<GraphState, any>(useGraphState, loose, [addNodesLoose]);
+  }
 };
+
+const addNodesLoose = (json: any, state: GraphState): GraphState => {
+  const data = _.get(json, 'add-nodes', false);
+  if(data) {
+    const { resource: { ship, name }, nodes } = data;
+    const resource = `${ship}/${name}`;
+
+    const indices = _.get(state.looseNodes, [resource], {});
+    _.forIn(nodes, (node, index) => {
+      indices[index] = processNode(node);
+    });
+    _.set(state.looseNodes, [resource], indices);
+  }
+  return state;
+}
 
 const keys = (json, state: GraphState): GraphState => {
   const data = _.get(json, 'keys', false);
@@ -29,29 +48,31 @@ const keys = (json, state: GraphState): GraphState => {
   return state;
 };
 
+const processNode = (node) => {
+  //  is empty
+  if (!node.children) {
+    node.children = new BigIntOrderedMap();
+    return node;
+  }
+
+  //  is graph
+  let converted = new BigIntOrderedMap();
+  for (let idx in node.children) {
+    let item = node.children[idx];
+    let index = bigInt(idx);
+    
+    converted.set(
+      index,
+      processNode(item)
+    );
+  }
+  node.children = converted;
+  return node;
+};
+
+
 const addGraph = (json, state: GraphState): GraphState => {
 
-  const _processNode = (node) => {
-    //  is empty
-    if (!node.children) {
-      node.children = new BigIntOrderedMap();
-      return node;
-    }
-
-    //  is graph
-    let converted = new BigIntOrderedMap();
-    for (let idx in node.children) {
-      let item = node.children[idx];
-      let index = bigInt(idx);
-      
-      converted.set(
-        index,
-        _processNode(item)
-      );
-    }
-    node.children = converted;
-    return node;
-  };
 
   const data = _.get(json, 'add-graph', false);
   if (data) {
@@ -68,7 +89,7 @@ const addGraph = (json, state: GraphState): GraphState => {
       let item = data.graph[idx];
       let index = bigInt(idx);
       
-      let node = _processNode(item);
+      let node = processNode(item);
 
       state.graphs[resource].set(
         index,

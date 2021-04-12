@@ -36,7 +36,7 @@ export default function ProfileScreen(props: any) {
                 borderRadius={2}
                 bg='white'
                 border={1}
-                borderColor='washedGray'
+                borderColor='lightGray'
                 overflowY='auto'
                 flexGrow
               >

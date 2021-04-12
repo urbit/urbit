@@ -1,7 +1,7 @@
-import React, { ReactElement, ReactNode } from "react";
-import _ from "lodash";
+import React, { ReactElement, ReactNode } from 'react';
+import _ from 'lodash';
 
-import { Col, Box, Text } from "@tlon/indigo-react";
+import { Col, Box, Text } from '@tlon/indigo-react';
 import {
   Invites as IInvites,
   Associations,
@@ -11,8 +11,8 @@ import {
   Contacts,
   AppInvites,
   JoinProgress,
-  JoinRequest,
-} from "@urbit/api";
+  JoinRequest
+} from '@urbit/api';
 
 import GlobalApi from "~/logic/api/global";
 import { resourceAsPath, alphabeticalOrder } from "~/logic/lib/util";
@@ -20,6 +20,7 @@ import InviteItem from "~/views/components/Invite";
 
 interface InvitesProps {
   api: GlobalApi;
+  pendingJoin?: any;
 }
 
 interface InviteRef {
@@ -46,17 +47,17 @@ export function Invites(props: InvitesProps): ReactNode {
     []
   );
 
-  const pendingJoin = _.omitBy(props.pendingJoin, "hidden");
+  const pendingJoin = _.omitBy(props.pendingJoin, 'hidden');
 
   const invitesAndStatus: { [rid: string]: JoinRequest | InviteRef } = {
     ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)),
-    ...pendingJoin,
+    ...pendingJoin
   };
 
   return (
     <>
       {Object.keys(invitesAndStatus).length > 0 && (
-        <Box position="sticky" zIndex={3} top="-1px" bg="white">
+        <Box position="sticky" zIndex={3} top="-1px" bg="white" flexShrink="0">
           <Box p="2" bg="scales.black05">
             <Text>Invites</Text>
           </Box>
@@ -66,21 +67,18 @@ export function Invites(props: InvitesProps): ReactNode {
         .sort(alphabeticalOrder)
         .map((resource) => {
           const inviteOrStatus = invitesAndStatus[resource];
-          if ("progress" in inviteOrStatus) {
-            return (
-              <InviteItem
-                key={resource}
-                contacts={props.contacts}
-                groups={props.groups}
-                associations={props.associations}
-                resource={resource}
-                pendingJoin={pendingJoin}
-                api={api}
-              />
+          const join = pendingJoin[resource];
+          if ('progress' in inviteOrStatus) {
+           return (
+             <InviteItem
+               key={resource}
+               resource={resource}
+               api={api}
+               pendingJoin={join}
+             />
             );
           } else {
             const { app, uid, invite } = inviteOrStatus;
-            console.log(inviteOrStatus);
             return (
               <InviteItem
                 key={resource}
@@ -88,15 +86,13 @@ export function Invites(props: InvitesProps): ReactNode {
                 invite={invite}
                 app={app}
                 uid={uid}
-                pendingJoin={pendingJoin}
+                join={join}
                 resource={resource}
-                contacts={props.contacts}
-                groups={props.groups}
-                associations={props.associations}
               />
             );
           }
-        })}
+        })
+      }
     </>
   );
 }

@@ -193,12 +193,17 @@
       (~(put by joining) rid [%.n now.bowl ship %start])
     =.  jn-core
       (jn-abed rid)
+    =.  jn-core
+      %-  emit
+      %+  fact:io
+        group-view-update+!>([%started rid (~(got by joining) rid)])
+      ~[/all]
     ?<  ~|("already joined {<rid>}" (has-joined rid)) 
     =.  jn-core
       %-  emit
       %+  poke:(jn-pass-io /add)
         [ship %group-push-hook]
-      group-update+!>([%add-members rid (silt our.bowl ~)])
+      group-update-0+!>([%add-members rid (silt our.bowl ~)])
     =.  jn-core  (tx-progress %start)
     =>  watch-md
     watch-groups
@@ -259,7 +264,7 @@
     ::
     ++  groups-fact
       |=  =cage
-      ?.  ?=(%group-update p.cage)  jn-core
+      ?.  ?=(%group-update-0 p.cage)  jn-core
       =+  !<(=update:group-store q.cage)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(rid resource.update)  jn-core
@@ -278,12 +283,27 @@
     ::
     ++  md-fact
       |=  [=mark =vase]
-      ?.  ?=(%metadata-update mark)    jn-core
+      ?.  ?=(%metadata-update-1 mark)    jn-core
       =+  !<(=update:metadata vase)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(group.update rid)          jn-core
       =.  jn-core  (cleanup %done)
-      ?.  hidden:(need (scry-group:grp rid))  jn-core
+      ?.  hidden:(need (scry-group:grp rid))
+        =/  list-md=(list [=md-resource:metadata =association:metadata])
+          %+  skim  ~(tap by associations.update)
+          |=  [=md-resource:metadata =association:metadata]
+          =(app-name.md-resource %groups)
+        ?>  ?=(^ list-md)
+        =*  metadatum  metadatum.association.i.list-md
+        ?.  ?&  ?=(%group -.config.metadatum)
+                ?=(^ feed.config.metadatum)
+                ?=(^ u.feed.config.metadatum)
+            ==
+          jn-core
+        =*  feed  resource.u.u.feed.config.metadatum
+        %-  emit
+        %+  poke-our:(jn-pass-io /pull-feed)  %graph-pull-hook
+        pull-hook-action+!>([%add [entity .]:feed])
       %-  emit-many
       %+  murn  ~(tap by associations.update)
       |=  [=md-resource:metadata =association:metadata]

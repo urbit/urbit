@@ -165,7 +165,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         flexGrow={1}
         flexShrink={0}
         borderTop={1}
-        borderTopColor='washedGray'
+        borderTopColor='lightGray'
         backgroundColor='white'
         className='cf'
         zIndex={0}

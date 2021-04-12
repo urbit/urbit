@@ -47,10 +47,10 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
       </Text>
       <Text pl='4' gray>Pinning a channel marks it as featured when joining or previewing a group.</Text>
       <Col p="4" width="100%" gapY="3">
-        {channels.map(({ resource, metadata }) => (
+        {channels.filter(({ metadata }) => !metadata.hidden).map(({ resource, metadata }) => (
           <Row justifyContent="space-between" width="100%" key={resource}>
             <Row gapX="2">
-              <Icon icon={getModuleIcon(metadata.module)} />
+              <Icon icon={getModuleIcon(metadata?.config?.graph)} />
               <Text>{metadata.title}</Text>
               {metadata.preview && <Text gray>Pinned</Text>}
             </Row>

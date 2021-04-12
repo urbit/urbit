@@ -11,12 +11,22 @@ const initial = (json: any, state: GroupState): GroupState => {
   return state;
 };
 
+const started = (json: any, state: GroupState): GroupState => {
+  const data = json.started;
+  if(data) {
+    const { resource, request } = data;
+    state.pendingJoin[resource] = request;
+  }
+  return state;
+}
+
 const progress = (json: any, state: GroupState): GroupState => {
   const data = json.progress;
   if(data) {
     const { progress, resource } = data;
     state.pendingJoin[resource].progress = progress;
     if(progress === 'done') {
+
       setTimeout(() => {
         delete state.pendingJoin[resource];
       }, 10000);
@@ -30,6 +40,7 @@ const hide = (json: any, state: any) => {
   if(data) {
     state.pendingJoin[data].hidden = true;
   }
+  return state;
 
 }
 
