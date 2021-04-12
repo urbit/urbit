@@ -173,6 +173,7 @@ export class OmniboxResult extends Component {
       text,
       subtext,
       link,
+      cursor,
       navigate,
       selected,
       invites,
@@ -198,7 +199,7 @@ export class OmniboxResult extends Component {
       <Row
         py='2'
         px='2'
-        cursor='pointer'
+        cursor={cursor}
         onMouseMove={() => setSelection()}
         onMouseLeave={() => this.setHover(false)}
         backgroundColor={

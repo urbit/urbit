@@ -39,7 +39,7 @@ const SEARCHED_CATEGORIES = [
   'other',
   'groups',
   'subscriptions',
-  'apps',
+  'apps'
 ];
 const settingsSel = (s: SettingsState) => s.leap;
 
@@ -56,6 +56,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   const notifications = useHarkState(state => state.notifications);
   const invites = useInviteState(state => state.invites);
   const tiles = useLaunchState(state => state.tiles);
+  const [leapCursor, setLeapCursor] = useState('pointer');
 
   const contacts = useMemo(() => {
     const maybeShip = `~${deSig(query)}`;
@@ -113,7 +114,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         if (category === 'other') {
           return [
             'other',
-            index.get('other').filter(({ app }) => app !== 'tutorial'),
+            index.get('other').filter(({ app }) => app !== 'tutorial')
           ];
         }
         return [category, []];
@@ -211,6 +212,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   }, [selected, results]);
 
   const setSelection = (app, link) => {
+    setLeapCursor('pointer');
     setSelected([app, link]);
   };
 
@@ -228,11 +230,13 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       if (evt.key === 'ArrowUp' || (evt.shiftKey && evt.key === 'Tab')) {
         evt.preventDefault();
         setPreviousSelected();
+        setLeapCursor('none');
         return;
       }
       if (evt.key === 'ArrowDown' || evt.key === 'Tab') {
         evt.preventDefault();
         setNextSelected();
+        setLeapCursor('none');
         return;
       }
       if (evt.key === 'Enter') {
@@ -325,6 +329,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
                     text={result.title}
                     subtext={result.host}
                     link={result.link}
+                    cursor={leapCursor}
                     navigate={() => navigate(result.app, result.link)}
                     setSelection={() => setSelection(result.app, result.link)}
                     selected={sel}
