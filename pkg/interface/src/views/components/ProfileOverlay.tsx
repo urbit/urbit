@@ -151,6 +151,16 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         padding={3}
         justifyContent='center'
       >
+        <Row color='black' padding={3} position='absolute' top={0} left={0}>
+           {!isOwn && (
+             <Icon
+               icon='Chat'
+               size={16}
+               cursor='pointer'
+               onClick={() => history.push(`/~landscape/dm/${ship}`)}
+             />
+           )}
+         </Row>
         <Box
           alignSelf='center'
           height='72px'
