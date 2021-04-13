@@ -11,6 +11,7 @@ export function distanceToBottom(el: HTMLElement) {
 
 export function useLazyScroll(
   ref: RefObject<HTMLElement>,
+  ready: boolean,
   margin: number,
   count: number,
   loadMore: () => Promise<boolean>
@@ -41,7 +42,7 @@ export function useLazyScroll(
   }, [count]);
 
   useEffect(() => {
-    if (!ref.current || isDone) {
+    if (!ref.current || isDone || !ready) {
       return;
     }
     const scroll = ref.current;
@@ -57,7 +58,7 @@ export function useLazyScroll(
     return () => {
       ref.current?.removeEventListener('scroll', onScroll);
     };
-  }, [ref?.current, count]);
+  }, [ref?.current, count, ready]);
 
   return { isDone, isLoading };
 }

@@ -86,11 +86,7 @@ export function SidebarItem(props: {
   let color = 'lightGray';
 
   if (isSynced) {
-    if (hasUnread || hasNotification) {
       color = 'black';
-    } else {
-      color = 'gray';
-    }
   }
 
   const fontWeight = (hasUnread || hasNotification) ? '500' : 'normal';

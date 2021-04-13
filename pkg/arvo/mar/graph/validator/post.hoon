@@ -22,8 +22,9 @@
   ++  notification-kind  
     ^-  (unit notif-kind:hark)
     =/  len  (lent index.p.i)
-    ?:  =(1 len)  ~
-    `[%post [(dec len) len] %none %children]
+    =/  =mode:hark
+      ?:(=(1 len) %count %none)
+    `[%post [(dec len) len] mode %children]
   ::
   ++  transform-add-nodes
     |=  [=index =post =atom was-parent-modified=?]

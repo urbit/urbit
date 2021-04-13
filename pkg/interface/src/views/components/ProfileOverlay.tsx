@@ -1,4 +1,4 @@
-import React, { PureComponent, useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import React, { PureComponent, useCallback, useEffect, useRef, useState, useMemo, ReactNode } from 'react';
 import { Contact, Group, uxToHex } from '@urbit/api';
 import _ from 'lodash';
 import VisibilitySensor from 'react-visibility-sensor';
@@ -40,6 +40,7 @@ const FixedOverlay = styled(Col)`
 type ProfileOverlayProps = BoxProps & {
   ship: string;
   api: any;
+  children: ReactNode;
 };
 
 const ProfileOverlay = (props: ProfileOverlayProps) => {
@@ -150,6 +151,16 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         padding={3}
         justifyContent='center'
       >
+        <Row color='black' padding={3} position='absolute' top={0} left={0}>
+           {!isOwn && (
+             <Icon
+               icon='Chat'
+               size={16}
+               cursor='pointer'
+               onClick={() => history.push(`/~landscape/dm/${ship}`)}
+             />
+           )}
+         </Row>
         <Box
           alignSelf='center'
           height='72px'
