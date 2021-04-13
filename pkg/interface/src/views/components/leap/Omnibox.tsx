@@ -144,6 +144,9 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         })
       );
     });
+    resultsMap.set('ships', resultsMap.get('ships').filter(ship => (
+      ship.title === `~${window.ship}` ? null : (ship)
+    )));
     return resultsMap;
   }, [query, index]);
 
