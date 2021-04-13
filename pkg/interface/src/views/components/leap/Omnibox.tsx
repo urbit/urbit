@@ -8,6 +8,7 @@ import React, {
 import { useLocation, useHistory } from 'react-router-dom';
 import * as ob from 'urbit-ob';
 import Mousetrap from 'mousetrap';
+import { omit } from 'lodash';
 
 import { Box, Row, Text } from '@tlon/indigo-react';
 import makeIndex from '~/logic/lib/omnibox';
@@ -60,9 +61,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
 
   const contacts = useMemo(() => {
     const maybeShip = `~${deSig(query)}`;
+    const selflessContactState = omit(contactState, `~${window.ship}`);
     return ob.isValidPatp(maybeShip)
-      ? { ...contactState, [maybeShip]: {} }
-      : contactState;
+      ? { ...selflessContactState, [maybeShip]: {} }
+      : selflessContactState;
   }, [contactState, query]);
 
   const groups = useGroupState(state => state.groups);
@@ -144,9 +146,6 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         })
       );
     });
-    resultsMap.set('ships', resultsMap.get('ships').filter(ship => (
-      ship.title === `~${window.ship}` ? null : (ship)
-    )));
     return resultsMap;
   }, [query, index]);
 
