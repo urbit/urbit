@@ -25,6 +25,7 @@ import { Invites } from './invites';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
+import useMetadataState from '~/logic/state/metadata';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -63,6 +64,10 @@ export default function Inbox(props: {
       }
     };
   }, []);
+
+  const ready = useHarkState(
+    s => Object.keys(s.unreads.graph).length > 0
+  );
 
   const notificationState = useHarkState(state => state.notifications);
   const archivedNotifications = useHarkState(state => state.archivedNotifications);
@@ -109,6 +114,7 @@ export default function Inbox(props: {
 
   const { isDone, isLoading } = useLazyScroll(
     scrollRef,
+    ready,
     0.2,
     _.flatten(notifications).length,
     loadMore
