@@ -104,6 +104,7 @@
 +$  state-6   [%6 base-state-1]
 +$  state-7   [%7 base-state-2]
 +$  state-8   [%8 base-state-3]
++$  state-9   [%9 base-state-3]
 +$  versioned-state
   $%  state-0
       state-1
@@ -114,10 +115,11 @@
       state-6
       state-7
       state-8
+      state-9
   ==
 ::
 +$  inflated-state
-  $:  state-8
+  $:  state-9
       cached-indices
   ==
 --
@@ -230,13 +232,31 @@
   =|  cards=(list card)
   |^
   =*  loop  $
-  ?:  ?=(%8 -.old)
+  ?:  ?=(%9 -.old)
     :-  cards
     %_  state
       associations      associations.old
       resource-indices  (rebuild-resource-indices associations.old)
       group-indices     (rebuild-group-indices associations.old)
       app-indices       (rebuild-app-indices associations.old)
+    ==
+  ?:  ?=(%8 -.old)
+    =/  groups  (~(got by app-indices) %groups)
+    =/  pokes=(list card)
+      %+  murn  ~(tap in ~(key by groups))
+      |=  group=resource
+      ^-  (unit card)
+      =/  =association:store  (~(got by associations) [%groups group])
+      =*  met  metadatum.association
+      ?.  ?=([%group [~ [~ [@ [@ @]]]]] config.met)
+        ~
+      =*  res  resource.u.u.feed.config.met
+      =-  `[%pass /fix-feed %agent [our.bowl %graph-pull-hook] %poke -]
+      :-  %pull-hook-action
+      !>  [%add entity.res name.res]
+    %_  $
+      cards  (weld cards pokes)
+      -.old  %9
     ==
   ?:  ?=(%7 -.old)
     $(old [%8 (associations-2-to-3 associations.old) ~])
@@ -369,7 +389,7 @@
   ^-  (quip card _state)
   |^
   =^  cards  state  
-    (on-load !>([%8 (remake-metadata ;;(tree-metadata +.arc))]))
+    (on-load !>([%9 (remake-metadata ;;(tree-metadata +.arc))]))
   :_  state
   %+  weld  cards
   %+  turn  ~(tap in ~(key by group-indices))
