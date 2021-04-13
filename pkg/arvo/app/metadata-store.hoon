@@ -241,7 +241,8 @@
       app-indices       (rebuild-app-indices associations.old)
     ==
   ?:  ?=(%8 -.old)
-    =/  groups  (~(got by app-indices) %groups)
+    =/  groups  
+      (fall (~(get by (rebuild-app-indices associations.old)) %groups) ~)
     =/  pokes=(list card)
       %+  murn  ~(tap in ~(key by groups))
       |=  group=resource
