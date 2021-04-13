@@ -24,7 +24,6 @@
       watch-on-self=_&
   ==
 ::
-::
 ++  scry
   |*  [[our=@p now=@da] =mold p=path]
   ?>  ?=(^ p)
@@ -37,7 +36,6 @@
   %^  scry  [our now]
     tube:clay
   /cc/[desk]/[mark]/notification-kind
-::
 --
 ::
 =|  state-1
@@ -198,8 +196,8 @@
         ?(%remove-graph %archive-graph)  
       (remove-graph resource.q.update)
       ::
-        %remove-nodes
-      (remove-nodes resource.q.update indices.q.update)
+        %remove-posts
+      (remove-posts resource.q.update indices.q.update)
       ::
         %add-nodes
       =*  rid  resource.q.update
@@ -208,7 +206,7 @@
   ::  this is awful, but notification kind should always switch
   ::  on the index, so hopefully doesn't matter
   ::  TODO: rethink this
-  ++  remove-nodes
+  ++  remove-posts
     |=  [rid=resource indices=(set index:graph-store)]
     =/  to-remove
       %-  ~(gas by *(set [resource index:graph-store]))
@@ -263,7 +261,6 @@
       [cards state]
     :_   state(watching (~(put in watching) [rid ~]))
     (weld cards (give:ha ~[/updates] %listen [rid ~]))
-  ::
   ::
   ++  check-nodes
     |=  $:  nodes=(list node:graph-store)
@@ -417,30 +414,33 @@
     |=  =node:graph-store
     ^+  update-core
     =.  update-core  (check-node-children node)
+    ?:  ?=(%| -.post.node)
+      update-core
+    =*  pos  p.post.node
     =+  !<  notif-kind=(unit notif-kind:hook)
-        (get-conversion !>([0 post.node]))
+        (get-conversion !>([0 pos]))
     ?~  notif-kind
       update-core
     =/  desc=@t
-      ?:  (is-mention contents.post.node)
+      ?:  (is-mention contents.pos)
         %mention
       name.u.notif-kind
     =*  not-kind  u.notif-kind
     =/  parent=index:post
-      (scag parent.index-len.not-kind index.post.node)
+      (scag parent.index-len.not-kind index.pos)
     =/  notif-index=index:store
       [%graph group rid module desc parent]
-    ?:  =(our.bowl author.post.node)
+    ?:  =(our.bowl author.pos)
       (self-post node notif-index not-kind)
     =.  update-core
-      (update-unread-count not-kind notif-index [time-sent index]:post.node)
+      (update-unread-count not-kind notif-index [time-sent index]:pos)
     =?    update-core
         ?|  =(desc %mention)
             (~(has in watching) [rid parent])
         ==
       =/  =contents:store
-        [%graph (limo post.node ~)]
-      (add-unread notif-index [time-sent.post.node %.n contents])
+        [%graph (limo pos ~)]
+      (add-unread notif-index [time-sent.pos %.n contents])
     update-core
   ::
   ++  update-unread-count
@@ -459,19 +459,19 @@
             =notif-kind:hook
         ==
     ^+  update-core 
+    ?>  ?=(%& -.post.node)
     =/  =stats-index:store
       (to-stats-index:store index)
     =.  update-core
-      (hark %seen-index time-sent.post.node stats-index)
+      (hark %seen-index time-sent.p.post.node stats-index)
     =?  update-core  ?=(%count mode.notif-kind)
       (hark %read-count stats-index)
     =?  update-core  watch-on-self
-      (new-watch index.post.node [watch-for index-len]:notif-kind)
+      (new-watch index.p.post.node [watch-for index-len]:notif-kind)
     update-core
   ::
   ++  add-unread
     |=  [=index:store =notification:store]
     (hark %add-note index notification)
-  ::
   --
 --
