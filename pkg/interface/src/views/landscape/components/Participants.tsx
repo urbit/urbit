@@ -295,7 +295,7 @@ function Participant(props: {
     const resource = resourceFromPath(association.group);
     if(contact.pending) {
       await api.groups.changePolicy(
-        resource, 
+        resource,
         { invite: { removeInvites: [`~${contact.patp}`] } }
       );
     } else {
@@ -305,12 +305,12 @@ function Participant(props: {
 
   const avatar =
     contact?.avatar !== null && !hideAvatars ? (
-      <Image 
-        src={contact.avatar} 
-        height={32} 
-        width={32} 
+      <Image
+        src={contact.avatar}
+        height={32}
+        width={32}
         display='inline-block'
-        style={{ objectFit: 'cover' }} 
+        style={{ objectFit: 'cover' }}
       />
     ) : (
       <Sigil ship={contact.patp} size={32} color={`#${color}`} />
@@ -386,9 +386,9 @@ function Participant(props: {
                     {(contact.patp !== window.ship) && (<StatelessAsyncAction onClick={onKick} bg="transparent">
                         <Text color="red">Kick from {title}</Text>
                       </StatelessAsyncAction>)}
-                      <StatelessAsyncAction onClick={onPromote} bg="transparent">
+                      {!contact.pending && <StatelessAsyncAction onClick={onPromote} bg="transparent">
                         Promote to Admin
-                      </StatelessAsyncAction>
+                      </StatelessAsyncAction>}
                     </>
                   )}
                 </>
