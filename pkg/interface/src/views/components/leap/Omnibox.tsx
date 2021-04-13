@@ -62,7 +62,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   const contacts = useMemo(() => {
     const maybeShip = `~${deSig(query)}`;
     const selflessContactState = omit(contactState, `~${window.ship}`);
-    return ob.isValidPatp(maybeShip)
+    return ob.isValidPatp(maybeShip) && maybeShip !== `~${window.ship}`
       ? { ...selflessContactState, [maybeShip]: {} }
       : selflessContactState;
   }, [contactState, query]);
