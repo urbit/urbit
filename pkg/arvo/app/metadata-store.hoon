@@ -247,7 +247,7 @@
       %+  murn  ~(tap in ~(key by groups))
       |=  group=resource
       ^-  (unit card)
-      =/  =association:store  (~(got by associations) [%groups group])
+      =/  =association:store  (~(got by associations.old) [%groups group])
       =*  met  metadatum.association
       ?.  ?=([%group [~ [~ [@ [@ @]]]]] config.met)
         ~
