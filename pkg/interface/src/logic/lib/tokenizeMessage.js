@@ -42,12 +42,7 @@ const tokenizeMessage = (text) => {
           || (str === '`' && !isInCodeBlock)
         ) {
           isInCodeBlock = true;
-        } else if (
-          (str.endsWith('`') && str !== '`')
-          || (str === '`' && isInCodeBlock)
-        ) {
-          isInCodeBlock = false;
-        }
+        } 
 
         if(isRef(str) && !isInCodeBlock) {
           if (message.length > 0) {
@@ -78,9 +73,15 @@ const tokenizeMessage = (text) => {
           }
           messages.push({ mention: str });
           message = [];
-
         } else {
           message.push(str);
+        }
+
+        if (
+          (str.endsWith('`') && str !== '`')
+          || (str === '`' && isInCodeBlock)
+        ) {
+          isInCodeBlock = false;
         }
       });
     }
