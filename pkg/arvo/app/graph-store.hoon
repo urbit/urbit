@@ -41,19 +41,18 @@
   ^-  (quip card _this)
   =+  !<(old=versioned-state old-vase)
   =|  cards=(list card)
-  |^
+  |-
   ?-    -.old
-      %0  
+      %0
+    =*  zro  zero-load:upgrade:store
     %_    $
       -.old  %1
-      cards  cards
-      validators.old  validators.old
     ::
         graphs.old
       %-  ~(run by graphs.old)
       |=  [=graph:zero:store q=(unit mark)]
       ^-  [graph:zero:store (unit mark)]
-      :-  (convert-unix-timestamped-graph:zero-load graph)
+      :-  (convert-unix-timestamped-graph:zro graph)
       ?^  q  q
       `%graph-validator-link
     ::
@@ -63,138 +62,27 @@
     ==
   ::
       %1
+    =*  zro  zero-load:upgrade:store
     %_  $
       -.old       %2
-      graphs.old  (~(run by graphs.old) change-revision-graph:zero-load)
+      graphs.old  (~(run by graphs.old) change-revision-graph:zro)
     ::
         update-logs.old
       %-  ~(run by update-logs.old)
       |=(a=* *update-log:zero:store)
     ==
   ::
-      %2  
+      %2
+    =*  upg  upgrade:store
     %_  $
       -.old            %3
-      update-logs.old  (~(run by update-logs.old) update-log-to-one:store)
-      graphs.old       (~(run by graphs.old) marked-graph-to-one:store)
-      archive.old      (~(run by archive.old) marked-graph-to-one:store)
+      update-logs.old  (~(run by update-logs.old) update-log-to-one:upg)
+      graphs.old       (~(run by graphs.old) marked-graph-to-one:upg)
+      archive.old      (~(run by archive.old) marked-graph-to-one:upg)
     ==
   ::
     %3  [cards this(state old)]
   ==
-  ::
-  ++  zero-load
-    :: =* infinitely recurses
-    =,  store=zero:store
-    =,  orm=orm:zero:store
-    =,  orm-log=orm-log:zero:store
-    |%
-    ++  change-revision-graph
-      |=  [=graph:store q=(unit mark)]
-      ^-  [graph:store (unit mark)]
-      |^
-      :_  q
-      ?+    q  graph
-        [~ %graph-validator-link]     convert-links
-        [~ %graph-validator-publish]  convert-publish
-      ==
-      ::
-      ++  convert-links
-        %+  gas:orm  *graph:store
-        %+  turn  (tap:orm graph)
-        |=  [=atom =node:store]
-        ^-  [^atom node:store]
-        ::  top-level
-        ::
-        :+  atom  post.node
-        ?:  ?=(%empty -.children.node)
-          [%empty ~]
-        :-  %graph
-        %+  gas:orm  *graph:store
-        %+  turn  (tap:orm p.children.node)
-        |=  [=^atom =node:store]
-        ^-  [^^atom node:store]
-        ::  existing comments get turned into containers for revisions
-        ::
-        :^    atom
-            post.node(contents ~, hash ~)
-          %graph
-        %+  gas:orm  *graph:store
-        :_  ~  :-  %0
-        :_  [%empty ~]
-        post.node(index (snoc index.post.node atom), hash ~)
-      ::
-      ++  convert-publish
-        %+  gas:orm  *graph:store
-        %+  turn  (tap:orm graph)
-        |=  [=atom =node:store]
-        ^-  [^atom node:store]
-        ::  top-level
-        ::
-        :+  atom  post.node
-        ?:  ?=(%empty -.children.node)
-          [%empty ~]
-        :-  %graph
-        %+  gas:orm  *graph:store
-        %+  turn  (tap:orm p.children.node)
-        |=  [=^atom =node:store]
-        ^-  [^^atom node:store]
-        ::  existing container for publish note revisions
-        ::
-        ?+    atom  !!
-            %1  [atom node]
-            %2
-          :+  atom  post.node
-          ?:  ?=(%empty -.children.node)
-            [%empty ~]
-          :-  %graph
-          %+  gas:orm  *graph:store
-          %+  turn  (tap:orm p.children.node)
-          |=  [=^^atom =node:store]
-          ^-  [^^^atom node:store]
-          :+  atom  post.node(contents ~, hash ~)
-          :-  %graph
-          %+  gas:orm  *graph:store
-          :_  ~  :-  %1
-          :_  [%empty ~]
-          post.node(index (snoc index.post.node atom), hash ~)
-        ==
-      --
-    ::  
-    ++  maybe-unix-to-da
-      |=  =atom
-      ^-  @
-      ::  (bex 127) is roughly 226AD
-      ?.  (lte atom (bex 127))
-        atom
-      (add ~1970.1.1 (div (mul ~s1 atom) 1.000))
-    ::
-    ++  convert-unix-timestamped-node
-      |=  =node:store
-      ^-  node:store
-      =.  index.post.node
-        (convert-unix-timestamped-index index.post.node)
-      ?.  ?=(%graph -.children.node)
-        node
-      :+  post.node
-        %graph
-      (convert-unix-timestamped-graph p.children.node)
-    ::
-    ++  convert-unix-timestamped-index
-      |=  =index:store
-      (turn index maybe-unix-to-da)
-    ::
-    ++  convert-unix-timestamped-graph
-      |=  =graph:store
-      %+  gas:orm  *graph:store
-      %+  turn
-        (tap:orm graph)
-      |=  [=atom =node:store]
-      ^-  [^atom node:store]
-      :-  (maybe-unix-to-da atom)
-      (convert-unix-timestamped-node node)
-    --
-  --
 ::
 ++  on-watch
   ~/  %graph-store-watch
