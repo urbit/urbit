@@ -117,6 +117,14 @@
       s+(enjs-path:res grp)
     --
   ::
+  ++  maybe-post
+    |=  mp=^maybe-post
+    ^-  json
+    ?-  -.mp
+      %|  s+(scot %ux p.mp)
+      %&  (post p.mp)
+    ==
+  ::
   ++  post
     |=  p=^post
     ^-  json
@@ -157,8 +165,8 @@
             [%nodes (nodes nodes.upd)]
         ==
       ::
-          %remove-nodes
-        :-  %remove-nodes
+          %remove-posts
+        :-  %remove-posts
         %-  pairs
         :~  [%resource (enjs:res resource.upd)]
             [%indices (indices indices.upd)]
@@ -233,7 +241,7 @@
       |=  n=^node
       ^-  json
       %-  pairs
-      :~  [%post (post post.n)]
+      :~  [%post (maybe-post post.n)]
           :-  %children
           ?-  -.children.n
               %empty  ~
@@ -241,7 +249,6 @@
           ==
       ==
     ::
-            ::
     ++  nodes
       |=  m=(map ^index ^node)
       ^-  json
@@ -275,7 +282,7 @@
     ++  decode
       %-  of
       :~  [%add-nodes add-nodes]
-          [%remove-nodes remove-nodes]
+          [%remove-posts remove-posts]
           [%add-signatures add-signatures]
           [%remove-signatures remove-signatures]
         ::
@@ -327,7 +334,7 @@
     ::
     ++  node
       %-  ot
-      :~  [%post post]
+      :~  [%post maybe-post]
           [%children internal-graph]
       ==
     ::
@@ -337,6 +344,15 @@
       ?~  jon
         [%empty ~]
       [%graph (graph jon)]
+    ::
+    ++  maybe-post
+      |=  jon=json
+      ^-  ^maybe-post
+      ?~  jon    !!
+      ?+  -.jon  !!
+        %s  [%| (nu jon)]
+        %o  [%& (post jon)]
+      ==
     ::
     ++  post
       %-  ot
@@ -394,9 +410,8 @@
       :~  expression+so
           output+tang
       ==
-
     ::
-    ++  remove-nodes
+    ++  remove-posts
       %-  ot
       :~  [%resource dejs:res]
           [%indices (as index)]
@@ -478,16 +493,18 @@
   |%
   ++  update-log-to-one
     |=  =update-log:zero
-    ^-  ^update-log
-    %+  gas:orm-log  *^update-log
+    ^-  update-log:one
+    %+  gas:orm-log:one  *update-log:one
     %+  turn  (tap:orm-log:zero update-log)
     |=  [=time =logged-update:zero]
+    ^-  [^time logged-update:one]
     :-  time
     :-  p.logged-update  
     (logged-update-to-one q.logged-update)
   ::
   ++  logged-update-to-one
     |=  upd=logged-update-0:zero
+    ^-  logged-action:one
     ?+  -.upd  upd
       %add-graph  upd(graph (graph-to-one graph.upd))
       %add-nodes  upd(nodes (~(run by nodes.upd) node-to-one))
