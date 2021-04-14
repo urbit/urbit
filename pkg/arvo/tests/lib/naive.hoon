@@ -295,7 +295,86 @@
     =^  f  state  (n state %bat (transfer-point:l2 1 ~marbud 0x234 %own |))
     owner.own:(~(got by points.state) ~marbud)
 ::
-++  test-l2-spawn-proxy-deposit
+++  test-l1-changed-spawn-proxy  ^-  tang
+  %+  expect-eq
+    !>  [0x123 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-bud state)
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~bud 0x123))
+    spawn-proxy.own:(~(got by points.state) ~bud)
+::
+++  test-l1-changed-transfer-proxy  ^-  tang
+  %+  expect-eq
+    !>  [0x123 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-bud state)
+    =^  f  state  (n state (changed-transfer-proxy:l1 ~bud 0x123))
+    transfer-proxy.own:(~(got by points.state) ~bud)
+::
+++  test-l1-changed-management-proxy  ^-  tang
+  %+  expect-eq
+    !>  [0x123 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-bud state)
+    =^  f  state  (n state (changed-management-proxy:l1 ~bud 0x123))
+    management-proxy.own:(~(got by points.state) ~bud)
+::
+++  test-l1-changed-voting-proxy  ^-  tang
+  %+  expect-eq
+    !>  [0x123 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-bud state)
+    =^  f  state  (n state (changed-voting-proxy:l1 ~bud 0x123))
+    voting-proxy.own:(~(got by points.state) ~bud)
+::
+++  test-l2-set-spawn-proxy  ^-  tang
+  %+  expect-eq
+    !>  [0x123 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat (set-spawn-proxy:l2 0 ~marbud %own 0x123))
+    spawn-proxy.own:(~(got by points.state) ~marbud)
+::
+++  test-l2-set-transfer-proxy  ^-  tang
+  %+  expect-eq
+    !>  [0x123 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat (set-transfer-proxy:l2 0 ~marbud %own 0x123))
+    transfer-proxy.own:(~(got by points.state) ~marbud)
+::
+++  test-l2-set-management-proxy  ^-  tang
+  %+  expect-eq
+    !>  [0x123 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat (set-management-proxy:l2 0 ~marbud %own 0x123))
+    management-proxy.own:(~(got by points.state) ~marbud)
+::
+++  test-l2-set-voting-proxy  ^-  tang
+  ::  Only galaxies have voting proxies, and they aren't allowed on L2
+  %-  expect-fail
+    |.
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat (set-voting-proxy:l2 0 ~marbud %own 0x123))
+    voting-proxy.own:(~(got by points.state) ~marbud)
+::
+++  test-l2-spawn-proxy-deposit  ^-  tang
   %+  expect-eq
     !>  %spawn
   ::
@@ -304,24 +383,60 @@
     =^  f  state  (init-dopbud state)
     dominion:(~(got by points.state) ~dopbud)
 ::
-++  test-marbud-l2-spawn-point
+++  test-marbud-l2-spawn  ^-  tang
   %+  expect-eq
     !>  [`@ux`(key ~linnup-torsyx) 0]
-    ::
+  ::
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (n state %bat (spawn:l2 0 ~marbud %own ~linnup-torsyx (key ~linnup-torsyx)))
     transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
 ::
-++  test-dopbud-l2-spawn-point
+++  test-dopbud-l2-spawn  ^-  tang
   %+  expect-eq
     !>  [`@ux`(key ~palsep-picdun) 0]
-    ::
+  ::
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
     =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %own ~palsep-picdun (key ~palsep-picdun)))
     transfer-proxy.own:(~(got by points.state) ~palsep-picdun)
+::
+++  test-dopbud-l2-spawn-after-transfer  ^-  tang
+  ::  Currently fails, does not spawn ~laclur-rachul unless you leave ~dopbud's ownership address alone
+  ::  All individual transactions work fine though, its the sequence that breaks something.
+  %+  expect-eq
+    !>  [`@ux`(key ~laclur-rachul) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-dopbud state)
+    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %own ~palsep-picdun (key ~palsep-picdun)))
+    =^  f  state  (n state (owner-changed:l1 ~dopbud 0x345))
+    =^  f  state  (n state %bat (spawn:l2 1 ~dopbud %own ~laclur-rachul (key ~laclur-rachul)))
+    transfer-proxy.own:(~(got by points.state) ~laclur-rachul)
+::
+++  test-linnup-torsyx-l2-transfer-ownership  ^-  tang
+  %+  expect-eq
+    !>  [`@ux`(key ~linnup-torsyx) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %own ~linnup-torsyx (key ~linnup-torsyx)))
+    =^  f  state  (n state %bat (transfer-point:l2 0 ~linnup-torsyx (key ~linnup-torsyx) %transfer &))
+    owner.own:(~(got by points.state) ~linnup-torsyx)
+::
+++  test-palsep-picdun-l2-transfer-ownership  ^-  tang
+  %+  expect-eq
+    !>  [`@ux`(key ~palsep-picdun) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-dopbud state)
+    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %own ~palsep-picdun (key ~palsep-picdun)))
+    =^  f  state  (n state %bat (transfer-point:l2 0 ~palsep-picdun (key ~palsep-picdun) %transfer &))
+    owner.own:(~(got by points.state) ~palsep-picdun)
 ::
 --
