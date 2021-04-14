@@ -38,7 +38,7 @@
   |=  =^state:naive
   =^  f1  state  (init-bud state)
   =^  f2  state  (n state (owner-changed:l1 ~dopbud (key ~dopbud)))
-  =^  f3  state  (n state (changed-spawn-proxy:l1 ~dopbud))
+  =^  f3  state  (n state (changed-spawn-proxy:l1 ~dopbud deposit-address:naive))
   [:(welp f1 f2 f3) state]
 ::
 ::  ~marbud is for testing L2 ownership
@@ -103,8 +103,8 @@
     (log broke-continuity:log-names:naive rift ship ~)
   ::
   ++  changed-spawn-proxy
-    |=  =ship
-    (log changed-spawn-proxy:log-names:naive *@t ship deposit-address:naive ~)
+    |=  [=ship =address]
+    (log changed-spawn-proxy:log-names:naive *@t ship address ~)
   ::
   ++  changed-transfer-proxy
     |=  [=ship =address]
