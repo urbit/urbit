@@ -21,14 +21,14 @@
 ::
 ++  key  address-from-prv:key:ethereum
 ++  log
-  |=  [log-name=@ux data=@t topics=(lest @)]
+  |=  [log-name=@ux data=@ux topics=(lest @)]
   ^-  ^input:naive
   [%log *@ux data log-name topics]
 ::
 ::
 ++  owner-changed
   |=  [=ship =address]
-  (log owner-changed:log-names:naive *@t ship address ~)
+  (log owner-changed:log-names:naive *@ux ship address ~)
 ::
 ++  init-bud
   |=  =^state:naive
@@ -64,11 +64,11 @@
   %+  expect-eq
     !>
     :-  [%point ~bud %owner 0x123]~
-    [[[~bud %*(. *point:naive dominion %l1, owner.own 0x123^0)] ~ ~] ~ ~]
+    [[[~bud %*(. *point:naive dominion %l1, owner.own 0x123^0, who.sponsor.net ~bud)] ~ ~] ~ ~]
   ::
     !>
     %^  naive  verifier  *^state:naive
-    :*  %log  *@ux  *@t
+    :*  %log  *@ux  *@ux
         owner-changed:log-names:naive  (@ux ~bud)  0x123  ~
     ==
 ::

@@ -25,10 +25,10 @@
 ::
 ::  TODO: polymorphic addresses to save tx space?
 ::
-::  TODO: default sponsor in get-point
+::  TODO: could remove `ship` from most txs since it's in `from`
 ::
 /+  std
-=>  =+  std
+=>  =>  std
 ::  Constants
 ::
 |%
@@ -153,8 +153,6 @@
       ==
   ==
 ::
-::  TODO: add effects for all changes
-::
 ++  diff
   $%  [%nonce =ship =proxy =nonce]
       [%operator owner=address operator=address approved=?]
@@ -236,6 +234,8 @@
   =/  batch  [len=0 rest=batch]
   |^
   =^  sig  batch  (take 3 65)
+  ::  TODO: reset len?
+  ::
   =/  signed-batch  +.batch
   =-  ?~  res
         ~
@@ -427,7 +427,7 @@
     `u.existing
   =|  =point
   =.  who.sponsor.net.point  (sein ship)
-  ?+    (ship-rank ship)  ~>(%slog.[0 %strange-point] ~&(ship=ship ~))
+  ?+    (ship-rank ship)  ~>(%slog.[0 %strange-point] ~)
       %0  `point(dominion %l1)
       ?(%1 %2)
     =/  existing-parent  $(ship (sein ship))
@@ -482,7 +482,6 @@
   ?>  ?=([@ *] t.topics.log)
   =*  ship=@  i.t.topics.log
   =/  the-point  (get-point state ship)
-  ~|  log=log
   ?>  ?=(^ the-point)
   =*  point  u.the-point
   =-  [effects state(points (~(put by points.state) ship new-point))]
@@ -536,7 +535,6 @@
     :-  [%point ship %sponsor ~]~
     point(has.sponsor.net %|)
   ::
-  ::
   ?:  =(log-name escape-requested:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent=@  i.t.t.topics.log
@@ -580,7 +578,6 @@
     point(address.voting-proxy.own to)
   ::
   ~>  %slog.[0 %unknown-log]
-  ~&  log=i.topics.log
   `point
 ::
 ::  Receive batch of L2 transactions
@@ -661,7 +658,7 @@
     ^-  (unit [effects ^state])
     =/  point  (get-point state ship)
     ?~  point  ~
-    ?>  ?=(%l2 -.u.point)
+    ?.  ?=(%l2 -.u.point)  ~
     =/  res=(unit [=effects new-point=^point])  (fun ship u.point rest)
     ?~  res
       ~
@@ -815,7 +812,7 @@
         ==
       ~
     ::
-    ?.  =(escape.net.point `ship)  ~
+    ?.  =(escape.net.point `parent)  ~
     :+  ~  [%point ship %sponsor `parent]~
     point(escape.net ~, sponsor.net [%& parent])
   ::
@@ -826,6 +823,7 @@
         ==
       ~
     ::
+    ?.  =(escape.net.point `parent)  ~
     :+  ~  [%point ship %escape ~]~
     point(escape.net ~)
   ::
@@ -836,6 +834,7 @@
         ==
       ~
     ::
+    ?.  =(who.sponsor.net.point parent)  ~
     :+  ~  [%point ship %sponsor ~]~
     point(has.sponsor.net %|)
   ::
@@ -858,6 +857,8 @@
     ::
     :+  ~  [%point ship %spawn-proxy address]~
     point(address.spawn-proxy.own address)
+  ::
+  :: TODO: delete?
   ::
   ++  process-set-voting-proxy
     |=  [=ship =point =address]
@@ -882,9 +883,6 @@
 --
 ::
 ::  State transition function
-::
-::  TODO: wrap in mule to no-op instead of crash?  perhaps that's better
-::  as part of the spec?  it's not a clear part of the nock spec, though
 ::
 |=  [=verifier =state =input]
 ^-  [effects ^state]
