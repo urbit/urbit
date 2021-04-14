@@ -75,7 +75,8 @@
   ^-  [index:store node:store]
   =*  loop  $
   :-  index
-  =*  p  post.node
+  ?>  ?=(%& -.post.node)
+  =*  p  p.post.node
   =/  =hash:store
     =-  `@ux`(sham -)
     :^  ?^  parent-hash
@@ -85,9 +86,9 @@
       time-sent.p
     contents.p
   %_  node
-    hash.post  `hash
+    hash.p.post  `hash
   ::
-      signatures.post
+      signatures.p.post
     %-  ~(gas in *signatures:store)
     [(sign:sig our.bowl now.bowl hash)]~
   ::
@@ -115,7 +116,8 @@
   ?:  ?=([@ ~] index)
     ~
   =/  node  (got-deep:gra graph (snip `(list atom)`index))
-  hash.post.node
+  ?>  ?=(%& -.post.node)
+  hash.p.post.node
 ::
 ++  nodes-to-pending-indices
   |=  nodes=(map index:store node:store)
@@ -124,6 +126,7 @@
   %+  turn  ~(tap by nodes)
   |=  [=index:store =node:store]
   ^-  [hash:store index:store]
-  ?>  ?=(^ hash.post.node)
-  [u.hash.post.node index]
+  ?>  ?=(%& -.post.node)
+  ?>  ?=(^ hash.p.post.node)
+  [u.hash.p.post.node index]
 --
