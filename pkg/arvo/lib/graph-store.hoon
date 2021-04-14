@@ -1,5 +1,5 @@
 /-  sur=graph-store, pos=post
-/+  res=resource
+/+  res=resource, migrate
 =<  [sur .]
 =<  [pos .]
 =,  sur
@@ -491,6 +491,25 @@
 ::
 ++  upgrade
   |%
+  ::
+  ::  +two
+  ::
+  ++  marked-graph-to-two
+    |=  [=graph:one m=(unit mark)]
+    [(graph-to-two graph) m]
+  ::
+  ++  graph-to-two
+    |=  =graph:one
+    (graph:(upgrade ,post:one ,maybe-post) graph post-to-two)
+  ::
+  ++  post-to-two
+    |=  p=post:one
+    ^-  maybe-post
+    [%& p]
+  ::
+  ::
+  ::  +one
+  ::
   ++  update-log-to-one
     |=  =update-log:zero
     ^-  update-log:one
@@ -699,5 +718,161 @@
       :-  (maybe-unix-to-da atom)
       (convert-unix-timestamped-node node)
     --
+  --
+++  import
+  |=  [arc=* our=ship]
+  ^-  (quip card:agent:gall [%4 network])
+  |^
+  =/  sty  [%4 (remake-network ;;(tree-network +.arc))]
+  :_  sty
+  %+  turn  ~(tap by graphs.sty)
+  |=  [rid=resource =marked-graph]
+  ^-  card:agent:gall
+  ?:  =(our entity.rid)
+    =/  =cage  [%push-hook-action !>([%add rid])]
+    [%pass / %agent [our %graph-push-hook] %poke cage]
+  (try-rejoin rid 0)
+  ::
+  +$  tree-network
+    $:  graphs=tree-graphs
+        tag-queries=(tree [term (tree resource)])
+        update-logs=tree-update-logs
+        archive=tree-graphs
+        validators=(tree ^mark)
+    ==
+  +$  tree-graphs          (tree [resource tree-marked-graph])
+  +$  tree-marked-graph    [p=tree-graph q=(unit ^mark)]
+  +$  tree-graph           (tree [atom tree-node])
+  +$  tree-node            [post=tree-maybe-post children=tree-internal-graph]
+  +$  tree-internal-graph
+    $~  [%empty ~]
+    $%  [%graph p=tree-graph]
+        [%empty ~]
+    ==
+  +$  tree-update-logs     (tree [resource tree-update-log])
+  +$  tree-update-log      (tree [time tree-logged-update])
+  +$  tree-logged-update
+    $:  p=time
+        $=  q
+        $%  [%add-graph =resource =tree-graph mark=(unit ^mark) ow=?]
+            [%add-nodes =resource nodes=(tree [index tree-node])]
+            [%remove-posts =resource indices=(tree index)]
+            [%add-signatures =uid signatures=tree-signatures]
+            [%remove-signatures =uid signatures=tree-signatures]
+        ==
+    ==
+  +$  tree-signatures      (tree signature)
+  +$  tree-maybe-post      (each tree-post hash)
+  +$  tree-post
+    $:  author=ship
+        =index
+        time-sent=time
+        contents=(list content)
+        hash=(unit hash)
+        signatures=tree-signatures
+    ==
+  ::
+  ++  remake-network
+    |=  t=tree-network
+    ^-  network
+    :*  (remake-graphs graphs.t)
+        (remake-jug:migrate tag-queries.t)
+        (remake-update-logs update-logs.t)
+        (remake-graphs archive.t)
+        (remake-set:migrate validators.t)
+    ==
+  ::
+  ++  remake-graphs
+    |=  t=tree-graphs
+    ^-  graphs
+    %-  remake-map:migrate
+    (~(run by t) remake-marked-graph)
+  ::
+  ++  remake-marked-graph
+    |=  t=tree-marked-graph
+    ^-  marked-graph
+    [(remake-graph p.t) q.t]
+  ::
+  ++  remake-graph
+    |=  t=tree-graph
+    ^-  graph
+    %+  gas:orm  *graph
+    %+  turn  ~(tap by t)
+    |=  [a=atom tn=tree-node]
+    ^-  [atom node]
+    [a (remake-node tn)]
+  ::
+  ++  remake-internal-graph
+    |=  t=tree-internal-graph
+    ^-  internal-graph
+    ?:  ?=(%empty -.t)
+      [%empty ~]
+    [%graph (remake-graph p.t)]
+  ::
+  ++  remake-node
+    |=  t=tree-node
+    ^-  node
+    :-  (remake-post post.t)
+    (remake-internal-graph children.t)
+  ::
+  ++  remake-update-logs
+    |=  t=tree-update-logs
+    ^-  update-logs
+    %-  remake-map:migrate
+    (~(run by t) remake-update-log)
+  ::
+  ++  remake-update-log
+    |=  t=tree-update-log
+    ^-  update-log
+    =/  ulm  ((ordered-map time logged-update) gth)
+    %+  gas:ulm  *update-log
+    %+  turn  ~(tap by t)
+    |=  [=time tlu=tree-logged-update]
+    ^-  [^time logged-update]
+    [time (remake-logged-update tlu)]
+  ::
+  ++  remake-logged-update
+    |=  t=tree-logged-update
+    ^-  logged-update
+    :-  p.t
+    ?-  -.q.t
+        %add-graph
+      :*  %add-graph
+          resource.q.t
+          (remake-graph tree-graph.q.t)
+          mark.q.t
+          ow.q.t
+      ==
+    ::
+        %add-nodes
+      :-  %add-nodes
+      :-  resource.q.t
+      %-  remake-map:migrate
+      (~(run by nodes.q.t) remake-node)
+    ::
+        %remove-posts
+      [%remove-posts resource.q.t (remake-set:migrate indices.q.t)]
+    ::
+        %add-signatures
+      [%add-signatures uid.q.t (remake-set:migrate signatures.q.t)]
+    ::
+        %remove-signatures
+      [%remove-signatures uid.q.t (remake-set:migrate signatures.q.t)]
+    ==
+  ::
+  ++  remake-post
+    |=  t=tree-maybe-post
+    ^-  maybe-post
+    ?-  -.t
+      %|  t
+      %&  t(signatures.p (remake-set:migrate signatures.p.t))
+    ==
+  ::
+  ++  try-rejoin
+    |=  [rid=resource nack-count=@]
+    ^-  card:agent:gall
+    =/  res-path  (en-path:res rid)
+    =/  wire  [%try-rejoin (scot %ud nack-count) res-path]
+    [%pass wire %agent [entity.rid %graph-push-hook] %watch resource+res-path]
   --
 --
