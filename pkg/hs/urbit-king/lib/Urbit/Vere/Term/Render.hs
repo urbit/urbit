@@ -34,10 +34,10 @@ cursorMove :: MonadIO m => Int -> Int -> m ()
 cursorMove r c = liftIO $ ANSI.setCursorPosition r c
 
 cursorSave :: MonadIO m => m ()
-cursorSave = liftIO $ ANSI.saveCursor
+cursorSave = liftIO ANSI.saveCursor
 
 cursorRestore :: MonadIO m => m ()
-cursorRestore = liftIO $ ANSI.restoreCursor
+cursorRestore = liftIO ANSI.restoreCursor
 
 putCSI :: MonadIO m => Char -> [Int] -> m ()
 putCSI c a = liftIO do

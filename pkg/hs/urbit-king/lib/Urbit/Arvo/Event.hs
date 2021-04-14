@@ -309,12 +309,7 @@ instance FromNoun Bolt where
     n   -> $(deriveFromNounFunc ''Bolt) n
 
 instance FromNoun Belt where
-  parseNoun = \case
-    A c       -> pure $ Bol $ Key $ C.chr $ fromIntegral c
-    n         -> runParser ($(deriveFromNounFunc ''Bolt) n) [] belt bolt
-                   where
-                    belt p m = $(deriveFromNounFunc ''Belt) n
-                    bolt !b  = pure $ Bol b
+  parseNoun n = Bol <$> parseNoun n <|> $(deriveFromNounFunc ''Belt) n
 
 instance ToNoun Bolt where
   toNoun = \case
@@ -323,9 +318,7 @@ instance ToNoun Bolt where
 
 instance ToNoun Belt where
   toNoun = \case
-    Bol b -> case b of
-               Key c -> A $ fromIntegral $ C.ord c
-               b     -> $(deriveToNounFunc ''Bolt) b
+    Bol b -> toNoun b
     n     -> $(deriveToNounFunc ''Belt) n
 
 data TermEv

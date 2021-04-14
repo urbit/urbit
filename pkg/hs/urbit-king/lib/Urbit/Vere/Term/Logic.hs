@@ -84,15 +84,15 @@ step st@St{..} = \case
     EvSlog s -> st & recordSlog s
     EvSpin s -> st { sSpinner = s }
     EvMove p -> st { sCurPos = p }
-    EvEdit t -> if fst sCurPos == 0 then st { sLine = t }
-                else st
-    EvNewl   -> if fst sCurPos == 0 then
-                  st { sLine = "", sCurPos = (0, 0) }
-                  & recordText (sLine <> "\n")
-                else
-                  st { sCurPos = (((fst sCurPos) - 1), 0) }
     EvBell   -> st
     EvDraw   -> st
+    EvEdit t | (0, _) <- sCurPos -> st { sLine = t }
+             | otherwise         -> st
+    EvNewl   | (0, _) <- sCurPos ->
+                 st { sLine = "", sCurPos = (0, 0) }
+                 & recordText (sLine <> "\n")
+             | otherwise ->
+                 st { sCurPos = (((fst sCurPos) - 1), 0) }
   where
     recordText :: Text -> St -> St
     recordText !t st@St{..} = st {
@@ -113,8 +113,10 @@ drawState :: St -> [Ev]
 drawState St{..} = hist <> out <> cur <> spin
   where
     hist = drawHistory <$> toList sHistory
-    out  = if null sLine       then [] else [EvEdit sLine]
-    cur  = if 0 == fst sCurPos then [] else [EvMove sCurPos]
+    out  | null <- sLine = []
+         | otherwise     = [EvEdit sLine]
+    cur  | (0, _) <- sCurPos = []
+         | otherwise         = [EvMove sCurPos]
     spin = maybe [] (singleton . EvSpin . Just) sSpinner
 
     drawHistory (HistoryText t) = EvLine t
@@ -151,12 +153,12 @@ fromTermEv = \case
 
 toTermEv :: Ev -> Term.Ev
 toTermEv = \case
-    EvLine ""  -> Term.Blank
-    EvLine t   -> Term.Trace (Cord t)
-    EvSlog s   -> Term.Slog s
-    EvSpin s   -> Term.Spinr (fromCause <$> s)
+    EvLine ""     -> Term.Blank
+    EvLine t      -> Term.Trace (Cord t)
+    EvSlog s      -> Term.Slog s
+    EvSpin s      -> Term.Spinr (fromCause <$> s)
     EvMove (r, c) -> Term.Blits [Arvo.Hop $ Arvo.Roc (fromIntegral r) (fromIntegral c)]
-    EvBell     -> Term.Blits [Arvo.Bel ()]
-    EvDraw     -> Term.Blits [Arvo.Clr ()]
-    EvEdit t   -> Term.Blits [Arvo.Put $ unpack t]
-    EvNewl     -> Term.Blits [Arvo.Nel ()]
+    EvBell        -> Term.Blits [Arvo.Bel ()]
+    EvDraw        -> Term.Blits [Arvo.Clr ()]
+    EvEdit t      -> Term.Blits [Arvo.Put $ unpack t]
+    EvNewl        -> Term.Blits [Arvo.Nel ()]
