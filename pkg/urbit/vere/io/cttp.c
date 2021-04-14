@@ -559,13 +559,18 @@ _cttp_creq_new(u3_cttp* ctp_u, c3_l num_l, u3_noun hes)
     return 0;
   }
 
-  // Parse the url out of the new style url passed to us.
+  //  parse the url out of the new style url passed to us.
+  //
   u3_noun unit_pul = u3do("de-purl:html", u3k(url));
-  if (c3n == u3r_du(unit_pul)) {
-    u3l_log("cttp: url parsing failed\n");
+
+  if ( c3n == u3r_du(unit_pul) ) {
+    c3_c* url_c = u3r_string(url);
+    u3l_log("cttp: unable to parse url:\n    %s\n", url_c);
+    c3_free(url_c);
     u3z(hes);
     return 0;
   }
+
   u3_noun pul = u3t(unit_pul);
 
   u3_noun hat = u3h(pul);      // +hart
@@ -990,7 +995,6 @@ _cttp_ef_http_client(u3_cttp* ctp_u, u3_noun tag, u3_noun dat)
       ret_o = c3y;
     }
     else {
-      u3l_log("cttp: strange request (unparsable url)\n");
       ret_o = c3n;
     }
   }
