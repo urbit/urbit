@@ -9,12 +9,12 @@ import { Group } from '@urbit/api';
 import { uxToHex, cite, useShowNickname, deSig } from '~/logic/lib/util';
 import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 import useLocalState from "~/logic/state/local";
-import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import Timestamp from './Timestamp';
 import useContactState from '~/logic/state/contact';
+import { useCopy } from '~/logic/lib/useCopy';
 import ProfileOverlay from './ProfileOverlay';
-import {PropFunc} from '~/types';
+import { PropFunc } from '~/types';
 
 interface AuthorProps {
   ship: string;
@@ -61,6 +61,7 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
   const { hideAvatars } = useSettingsState(selectCalmState);
   const name = showNickname && contact ? contact.nickname : cite(ship);
   const stamp = moment(date);
+  const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`, name);
 
   const [showOverlay, setShowOverlay] = useState(false);
 
@@ -108,11 +109,13 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
         ml={showImage ? 2 : 0}
         color='black'
         fontSize='1'
+        cursor='pointer'
         lineHeight='tall'
         fontFamily={showNickname ? 'sans' : 'mono'}
         fontWeight={showNickname ? '500' : '400'}
+        onClick={doCopy}
       >
-        {name}
+        {copyDisplay}
       </Box>
       { !dontShowTime && (
         <Timestamp

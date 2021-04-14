@@ -96,7 +96,7 @@ export function CommentItem(props: CommentItemProps): ReactElement {
           unread={props.unread}
           group={group}
         >
-          <Row px="2" gapX="2" alignItems="center">
+          <Row px="2" gapX="2" height="18px">
             <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
             {adminLinks}
           </Row>
