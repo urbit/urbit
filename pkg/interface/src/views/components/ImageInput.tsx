@@ -7,11 +7,10 @@ import {
   Row,
   Button,
   Label,
-  ErrorLabel,
-  BaseInput
+  BaseInput,
+  Text
 } from '@tlon/indigo-react';
 
-import { StorageState } from '~/types';
 import useStorage from '~/logic/lib/useStorage';
 
 type ImageInputProps = Parameters<typeof Box>[0] & {
@@ -20,13 +19,75 @@ type ImageInputProps = Parameters<typeof Box>[0] & {
   placeholder?: string;
 };
 
+const prompt = (field, uploading, meta, clickUploadButton) => {
+  if (!field.value && !uploading && meta.error === undefined) {
+    return (
+      <Text
+        black
+        fontWeight='500'
+        position='absolute'
+        left={2}
+        top={2}
+        style={{ pointerEvents: 'none' }}
+      >
+        Paste a link here, or{' '}
+        <Text
+          fontWeight='500'
+          cursor='pointer'
+          color='blue'
+          style={{ pointerEvents: 'all' }}
+          onClick={clickUploadButton}
+        >
+          upload
+        </Text>{' '}
+        a file
+      </Text>
+    );
+  }
+  return null;
+};
+
+const uploadingStatus = (uploading, meta) => {
+  if (uploading && meta.error === undefined) {
+    return (
+      <Text position='absolute' left={2} top={2} gray>
+        Uploading...
+      </Text>
+    );
+  }
+  return null;
+};
+
+const errorRetry = (meta, uploading, clickUploadButton) => {
+  if (meta.error !== undefined) {
+    return (
+      <Text
+        position='absolute'
+        left={2}
+        top={2}
+        color='red'
+        style={{ pointerEvents: 'none' }}
+      >
+        {meta.error}{', '}please{' '}
+        <Text
+          fontWeight='500'
+          cursor='pointer'
+          color='blue'
+          style={{ pointerEvents: 'all' }}
+          onClick={clickUploadButton}
+        >
+          retry
+        </Text>
+      </Text>
+    );
+  }
+  return null;
+};
+
 export function ImageInput(props: ImageInputProps): ReactElement {
-  const { id, label, caption, placeholder } = props;
-
+  const { id, label, caption } = props;
   const { uploadDefault, canUpload, uploading } = useStorage();
-
   const [field, meta, { setValue, setError }] = useField(id);
-
   const ref = useRef<HTMLInputElement | null>(null);
 
   const onImageUpload = useCallback(async () => {
@@ -43,10 +104,9 @@ export function ImageInput(props: ImageInputProps): ReactElement {
     }
   }, [ref.current, uploadDefault, canUpload, setValue]);
 
-  const onClick = useCallback(() => {
+  const clickUploadButton = useCallback(() => {
     ref.current?.click();
   }, [ref]);
-
   return (
     <Box display="flex" flexDirection="column" {...props}>
       <Label htmlFor={id}>{label}</Label>
@@ -55,25 +115,24 @@ export function ImageInput(props: ImageInputProps): ReactElement {
           {caption}
         </Label>
       ) : null}
-      <Row mt="2" alignItems="flex-end">
-        <Input
-          type={'text'}
-          hasError={meta.touched && meta.error !== undefined}
-          placeholder={placeholder}
-          {...field}
-        />
+      <Row mt="2" alignItems="flex-end" position='relative' width='100%'>
+        {prompt(field, uploading, meta, clickUploadButton)}
+        {uploadingStatus(uploading, meta)}
+        {errorRetry(meta, uploading, clickUploadButton)}
+        <Box background='white' borderRadius={2} width='100%'>
+          <Input
+            width='100%'
+            type={'text'}
+            hasError={meta.touched && meta.error !== undefined}
+            {...field}
+          />
+        </Box>
         {canUpload && (
           <>
             <Button
-              type="button"
-              ml={1}
-              border={1}
-              borderColor="lightGray"
-              onClick={onClick}
-              flexShrink={0}
-            >
-              {uploading ? 'Uploading' : 'Upload'}
-            </Button>
+              display='none'
+              onClick={clickUploadButton}
+            />
             <BaseInput
               style={{ display: 'none' }}
               type="file"
@@ -85,9 +144,6 @@ export function ImageInput(props: ImageInputProps): ReactElement {
           </>
         )}
       </Row>
-      <ErrorLabel mt="2" hasError={Boolean(meta.touched && meta.error)}>
-        {meta.error}
-      </ErrorLabel>
     </Box>
   );
 }
