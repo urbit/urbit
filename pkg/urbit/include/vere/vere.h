@@ -182,32 +182,22 @@
         struct _u3_usig* nex_u;
       } u3_usig;
 
-    /* u2_utfo: unix terminfo strings.
+    /* u2_utfo: terminal escape sequences
     */
       typedef struct {
-        //    disabled, currently unused
+        uv_buf_t mon_u;                //  mouse reporting on
+        uv_buf_t mof_u;                //  mouse reporting off
         //
-        // struct {
-        //   uv_buf_t kcuu1_u;              //  key_up
-        //   uv_buf_t kcud1_u;              //  key_down
-        //   uv_buf_t kcub1_u;              //  key_back
-        //   uv_buf_t kcuf1_u;              //  key_forward
-        // } inn;
-        struct {
-          uv_buf_t clear_u;              //  clear_screen
-          uv_buf_t el_u;                 //  clr_bol clear to end of line
-          // uv_buf_t el1_u;             //  clr_eol clear to beginning of line
-          uv_buf_t ed_u;                 //  clear to end of screen
-          uv_buf_t sc_u;                 //  save cursor position
-          uv_buf_t rc_u;                 //  restore cursor position
-          uv_buf_t bel_u;                //  bel sound bell
-          uv_buf_t cub1_u;               //  parm_left
-          uv_buf_t cuf1_u;               //  parm_right
-          uv_buf_t cuu1_u;               //  parm_up
-          uv_buf_t cud1_u;               //  parm_down
-          // uv_buf_t cub_u;             //  parm_left_cursor #num
-          // uv_buf_t cuf_u;             //  parm_right_cursor #num
-        } out;
+        uv_buf_t reg_u;                //  restore scroll region
+        //
+        uv_buf_t suc_u;                //  save cursor position
+        uv_buf_t ruc_u;                //  restore cursor position
+        uv_buf_t cub_u;                //  move cursor left one column
+        //
+        uv_buf_t clr_u;                //  clear screen
+        uv_buf_t cel_u;                //  clear to end of line
+        //
+        uv_buf_t bel_u;                //  bel sound bell
       } u3_utfo;
 
 #if 0
@@ -236,7 +226,7 @@
         struct _u3_utty* nex_u;             //  next in host list
         c3_i             fid_i;             //  file descriptor
         c3_w             tid_l;             //  terminal identity number
-        u3_utfo          ufo_u;             //  terminfo strings
+        u3_utfo          ufo_u;             //  escape sequences
         c3_i             cug_i;             //  blocking fcntl flags
         c3_i             nob_i;             //  nonblocking fcntl flags
         u3_utat          tat_u;             //  control state

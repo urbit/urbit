@@ -130,31 +130,20 @@ u3_term_log_init(void)
     //    and simply use constant sequences.
     //
     {
-      uty_u->ufo_u.out.clear_u = TERM_LIT_BUF("\033[H\033[2J");
-      uty_u->ufo_u.out.el_u    = TERM_LIT_BUF("\033[K");
-      // uty_u->ufo_u.out.el1_u   = TERM_LIT_BUF("\033[1K");
-      uty_u->ufo_u.out.ed_u    = TERM_LIT_BUF("\033[J");
-      uty_u->ufo_u.out.sc_u    = TERM_LIT_BUF("\033[s");
-      uty_u->ufo_u.out.rc_u    = TERM_LIT_BUF("\033[u");
-      uty_u->ufo_u.out.bel_u   = TERM_LIT_BUF("\x7");
-      uty_u->ufo_u.out.cub1_u  = TERM_LIT_BUF("\x8");
-      uty_u->ufo_u.out.cuf1_u  = TERM_LIT_BUF("\033[C");
-      uty_u->ufo_u.out.cuu1_u  = TERM_LIT_BUF("\033[A");
-      uty_u->ufo_u.out.cud1_u  = TERM_LIT_BUF("\xa");
-      // uty_u->ufo_u.out.cub_u  = TERM_LIT_BUF("\033[%p1%dD");
-      // uty_u->ufo_u.out.cuf_u  = TERM_LIT_BUF("\033[%p1%dC");
-    }
+      uty_u->ufo_u.mon_u = TERM_LIT_BUF("\033[?9h");
+      uty_u->ufo_u.mof_u = TERM_LIT_BUF("\033[?9l");
 
-    //  configure input escape sequences
-    //
-    //    NB: terminfo reports the wrong sequence for arrow keys on xterms.
-    //    disabled, currently unused
-    // {
-    //   uty_u->ufo_u.inn.kcuu1_u = TERM_LIT_BUF("\033[A");  //  terminfo reports "\033OA"
-    //   uty_u->ufo_u.inn.kcud1_u = TERM_LIT_BUF("\033[B");  //  terminfo reports "\033OB"
-    //   uty_u->ufo_u.inn.kcuf1_u = TERM_LIT_BUF("\033[C");  //  terminfo reports "\033OC"
-    //   uty_u->ufo_u.inn.kcub1_u = TERM_LIT_BUF("\033[D");  //  terminfo reports "\033OD"
-    // }
+      uty_u->ufo_u.reg_u = TERM_LIT_BUF("\033[r");
+
+      uty_u->ufo_u.suc_u = TERM_LIT_BUF("\033[s");
+      uty_u->ufo_u.ruc_u = TERM_LIT_BUF("\033[u");
+      uty_u->ufo_u.cub_u = TERM_LIT_BUF("\x8");
+
+      uty_u->ufo_u.clr_u = TERM_LIT_BUF("\033[H\033[2J");
+      uty_u->ufo_u.cel_u = TERM_LIT_BUF("\033[K");
+
+      uty_u->ufo_u.bel_u = TERM_LIT_BUF("\x7");
+    }
 
     //  Load old terminal state to restore.
     //
@@ -443,8 +432,8 @@ static void
 _term_it_clear_line(u3_utty* uty_u)
 {
   _term_it_dump(uty_u, TERM_LIT("\r"));
-  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.el_u);
-  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.rc_u);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.cel_u);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.ruc_u);
 
   //  if we're clearing the bottom line, clear our mirror of it too
   //
@@ -458,8 +447,8 @@ _term_it_clear_line(u3_utty* uty_u)
 static void
 _term_it_show_blank(u3_utty* uty_u)
 {
-  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.clear_u);
-  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.rc_u);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.clr_u);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.ruc_u);
 }
 
 /*  _term_it_move_cursor(): move cursor to row & column
@@ -477,7 +466,7 @@ _term_it_move_cursor(u3_utty* uty_u, c3_w row_w, c3_w col_w)
   if ( col_w >= col_l ) { col_w = col_l - 1; }
 
   _term_it_send_csi(uty_u, 'H', 2, row_l - row_w, col_w + 1);
-  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.sc_u);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.suc_u);
 
   uty_u->tat_u.mir.rus_w = row_w;
   uty_u->tat_u.mir.cus_w = col_w;
@@ -526,7 +515,7 @@ _term_it_show_line(u3_utty* uty_u, c3_w* lin_w, c3_w wor_w)
 
   //NOTE  lin_w freed through hun_y by _send
   _term_it_send(uty_u, byt_w, hun_y);
-  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.rc_u);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.ruc_u);
 }
 
 /* _term_it_restore_line(): refresh current line.
@@ -548,7 +537,7 @@ _term_it_restore_line(u3_utty* uty_u)
     memcpy(hun_w, lin_w, wor_w * sizeof(c3_w));
 
     _term_it_send_csi(uty_u, 'H', 2, tat_u->siz.row_l, 0);
-    _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.el_u);
+    _term_it_dump_buf(uty_u, &uty_u->ufo_u.cel_u);
     _term_it_show_line(uty_u, hun_w, wor_w);
   }
 }
@@ -614,7 +603,7 @@ _term_it_show_nel(u3_utty* uty_u)
   }
   else {
     _term_it_dump(uty_u, TERM_LIT("\r\n"));
-    _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.sc_u);
+    _term_it_dump_buf(uty_u, &uty_u->ufo_u.suc_u);
   }
 
   uty_u->tat_u.mir.cus_w = 0;
@@ -756,7 +745,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
     if ( c3y == tat_u->esc.bra ) {
       switch ( cay_y ) {
         default: {
-          _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.bel_u);
+          _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
           break;
         }
         case 'A': _term_io_belt(uty_u, u3nc(c3__aro, 'u')); break;
@@ -783,7 +772,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       else {
         tat_u->esc.ape = c3n;
 
-        _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.bel_u);
+        _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
       }
     }
   }
@@ -830,7 +819,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       _term_io_belt(uty_u, u3nt(c3__txt, cay_y, u3_nul));
     }
     else if ( 0 == cay_y ) {
-      _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.bel_u);
+      _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
     }
     else if ( 8 == cay_y || 127 == cay_y ) {
       _term_io_belt(uty_u, u3nc(c3__bac, u3_nul));
@@ -980,7 +969,7 @@ _term_spin_step(u3_utty* uty_u)
   //    NB: we simply bail out if anything goes wrong
   //
   {
-    uv_buf_t lef_u = uty_u->ufo_u.out.cub1_u;
+    uv_buf_t lef_u = uty_u->ufo_u.cub_u;
     c3_i fid_i;
 
     if ( uv_fileno((uv_handle_t*)&uty_u->pop_u, &fid_i) ) {
@@ -1425,7 +1414,7 @@ _term_ef_blit(u3_utty* uty_u,
 
     case c3__bel: {
       if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.bel_u);
+        _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
       }
     } break;
 
@@ -1573,8 +1562,8 @@ u3_term_io_loja(int x)
         //  clear the scrolling region we set previously,
         //  and restore cursor to its original position.
         //
-        _term_it_send_csi(uty_u, 'r', 0);
-        _term_it_send_csi(uty_u, 'u', 0);
+        _term_it_dump_buf(uty_u, &uty_u->ufo_u.reg_u);
+        _term_it_dump_buf(uty_u, &uty_u->ufo_u.ruc_u);
       }
     }
   }
@@ -1657,8 +1646,7 @@ _term_io_talk(u3_auto* car_u)
 
     //  start mouse handling
     //
-    uv_buf_t mon_u = TERM_LIT_BUF("\033[?9h");
-    _term_it_dump_buf(uty_u, &mon_u);
+    _term_it_dump_buf(uty_u, &uty_u->ufo_u.mon_u);
 
     uv_read_start((uv_stream_t*)&(uty_u->pop_u),
                   _term_alloc,
@@ -1822,8 +1810,7 @@ _term_io_exit(u3_auto* car_u)
   if ( c3n == u3_Host.ops_u.tem ) {
     //  stop mouse handling
     //
-    uv_buf_t mof_u = TERM_LIT_BUF("\033[?9l");
-    _term_it_dump_buf(uty_u, &mof_u);
+    _term_it_dump_buf(uty_u, &uty_u->ufo_u.mof_u);
 
     uv_timer_t* han_u = &(uty_u->tat_u.sun_u.tim_u);
     han_u->data       = car_u;
