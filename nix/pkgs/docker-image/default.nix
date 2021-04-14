@@ -42,7 +42,7 @@ let
     dirs=( $dirnames )
     dirname=''${dirnames[0]}
 
-    urbit $ttyflag -p ${toString amesPort} $dirname
+    exec urbit $ttyflag -p ${toString amesPort} $dirname
     '';
     
     
