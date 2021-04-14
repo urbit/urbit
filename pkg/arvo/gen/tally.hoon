@@ -92,8 +92,11 @@
   :-  (lent week)
   %~  wyt  in
   %+  roll  week
-  |=  [[* [author=ship *] *] a=(set ship)]
-  (~(put in a) author)
+  |=  [[* mp=maybe-post:ga *] a=(set ship)]
+  ?-  -.mp
+    %|  a
+    %&  (~(put in a) author.p.mp)
+  ==
 ::  render results
 ::
 :-  (tac 'the date is ' (scot %da now))
