@@ -95,39 +95,6 @@ _term_alloc(uv_handle_t* had_u,
   *buf = uv_buf_init(ptr_v, 123);
 }
 
-//  XX unused, but %hook is in %zuse.
-//  implement or remove
-//
-#if 0
-/* _term_close_cb(): free terminal.
-*/
-static void
-_term_close_cb(uv_handle_t* han_t)
-{
-  u3_utty* tty_u = (void*) han_t;
-  if ( u3_Host.uty_u == tty_u ) {
-    u3_Host.uty_u = tty_u->nex_u;
-  }
-  else {
-    u3_utty* uty_u;
-    for (uty_u = u3_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
-      if ( uty_u->nex_u == tty_u ) {
-        uty_u->nex_u = tty_u->nex_u;
-        break;
-      }
-    }
-  }
-
-  {
-    u3_noun tid = u3dc("scot", c3__ud, tty_u->tid_l);
-    u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
-    u3_pier_plan(u3k(pax), u3nc(c3__hook, u3_nul));
-    u3z(pax);
-  }
-  c3_free(tty_u);
-}
-#endif
-
 /* u3_term_log_init(): initialize terminal for logging
 */
 void
