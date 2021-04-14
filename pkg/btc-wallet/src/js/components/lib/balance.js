@@ -40,7 +40,7 @@ export default class Balance extends Component {
         BTC: 1,
       },
       denomination: "USD",
-      sending: true,
+      sending: false,
     }
   }
 
