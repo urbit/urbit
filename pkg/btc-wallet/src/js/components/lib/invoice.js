@@ -137,16 +137,16 @@ export default class Invoice extends Component {
           mt={4}
         >
           <Button
+            primary
             children='Send BTC'
             mr={3}
             fontSize={1}
-            color='white'
-            backgroundColor='blue'
-            borderColor='none'
             borderRadius='24px'
             py='24px'
             px='24px'
             onClick={() => this.sendBitcoin(this.state.masterTicket, store.state.psbt)}
+            disabled={!this.state.ready}
+            style={{cursor: this.state.ready ? "pointer" : "default"}}
           />
         </Row>
 
