@@ -343,7 +343,6 @@
     =/  zon=axon  [app input=[~ ~] width=80]
     ::
     =^  moz  all  abet:(~(into as duc %$ zon) ~)
-    ::REVIEW  can anything relevant happen between %boot and %init?
     =.  eye.all   (~(put ju eye.all) %$ duc)
     [moz ..^$]
   ::  %flog tasks are unwrapped and sent back to us on our default duct
@@ -374,9 +373,6 @@
       !!
     =/  zon=axon  [p.task ~ width=80]
     =^  moz  all  abet:(~(open as hen ses zon) q.task)
-    ::REVIEW  we might want a separate, explicit %view,
-    ::        but then we could miss some initial blits...
-    ::        do we care about that?
     =.  eye.all  (~(put ju eye.all) ses hen)
     [moz ..^$]
   ::  %shut closes an existing dill session
