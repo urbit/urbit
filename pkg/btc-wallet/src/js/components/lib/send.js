@@ -34,7 +34,9 @@ export default class Send extends Component {
       }
     }
     this.props.api.btcWalletCommand(command).then(
-      (res) => console.log({res})
+      (res) => {
+        this.setState({signing: true});
+      }
     );
   }
 
@@ -133,7 +135,6 @@ export default class Send extends Component {
               px='24px'
               onClick={() =>{
                 this.initPayment()
-                this.setState({signing: true})
               }}
             />
           </Row>
