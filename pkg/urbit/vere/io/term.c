@@ -442,12 +442,9 @@ _term_it_free_line(u3_utty* uty_u)
 static void
 _term_it_clear_line(u3_utty* uty_u)
 {
-  //REVIEW  why this conditional?
-  if ( uty_u->tat_u.siz.col_l ) {
-    _term_it_dump(uty_u, TERM_LIT("\r"));
-    _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.el_u);
-    _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.rc_u);
-  }
+  _term_it_dump(uty_u, TERM_LIT("\r"));
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.el_u);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.rc_u);
 
   //  if we're clearing the bottom line, clear our mirror of it too
   //
