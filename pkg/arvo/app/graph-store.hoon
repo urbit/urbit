@@ -333,7 +333,10 @@
         %+  ~(put by graphs)
           resource
         :_  mark
-        (remove-indices resource graph (sort ~(tap in indices) by-lent))
+        %^  remove-indices
+            resource
+          graph
+        (sort ~(tap in indices) by-lent)
       ==
       ::
       ++  by-lent
@@ -563,7 +566,7 @@
     ++  give
       |=  [paths=(list path) update=action:store]
       ^-  (list card)
-      [%give %fact paths [%graph-update-1 !>([now.bowl update])]]~
+      [%give %fact paths [%graph-update-2 !>([now.bowl update])]]~
     --
   ::
   ++  debug
@@ -616,15 +619,15 @@
     ``noun+!>(q.u.result)
   ::
       [%x %keys ~]
-    :-  ~  :-  ~  :-  %graph-update-1
+    :-  ~  :-  ~  :-  %graph-update-2
     !>(`update:store`[now.bowl [%keys ~(key by graphs)]])
   ::
       [%x %tags ~]
-    :-  ~  :-  ~  :-  %graph-update-1
+    :-  ~  :-  ~  :-  %graph-update-2
     !>(`update:store`[now.bowl [%tags ~(key by tag-queries)]])
   ::
       [%x %tag-queries ~]
-    :-  ~  :-  ~  :-  %graph-update-1
+    :-  ~  :-  ~  :-  %graph-update-2
     !>(`update:store`[now.bowl [%tag-queries tag-queries]])
   ::
       [%x %graph @ @ ~]
@@ -633,7 +636,7 @@
     =/  result=(unit marked-graph:store)
       (~(get by graphs) [ship term])
     ?~  result  [~ ~]
-    :-  ~  :-  ~  :-  %graph-update-1
+    :-  ~  :-  ~  :-  %graph-update-2
     !>  ^-  update:store
     :-  now.bowl
     [%add-graph [ship term] `graph:store`p.u.result q.u.result %.y]
@@ -648,7 +651,7 @@
     ?~  result
       ~&  no-archived-graph+[ship term]
       [~ ~]
-    :-  ~  :-  ~  :-  %graph-update-1
+    :-  ~  :-  ~  :-  %graph-update-2
     !>  ^-  update:store
     :-  now.bowl
     [%add-graph [ship term] `graph:store`p.u.result q.u.result %.y]
@@ -664,7 +667,7 @@
     =/  graph=(unit marked-graph:store)
       (~(get by graphs) [ship term])
     ?~  graph  [~ ~]
-    :-  ~  :-  ~  :-  %graph-update-1
+    :-  ~  :-  ~  :-  %graph-update-2
     !>  ^-  update:store
     :-  now.bowl
     :+  %add-nodes
@@ -691,7 +694,7 @@
       (turn t.t.t.t.path (cury slav %ud))
     =/  node=(unit node:store)  (get-node ship term index)
     ?~  node  [~ ~]
-    :-  ~  :-  ~  :-  %graph-update-1
+    :-  ~  :-  ~  :-  %graph-update-2
     !>  ^-  update:store
     :-  now.bowl
     :+  %add-nodes
@@ -710,7 +713,7 @@
     =/  graph
       (get-node-children ship term parent)
     ?~  graph  [~ ~]
-    :-  ~  :-  ~  :-  %graph-update-1
+    :-  ~  :-  ~  :-  %graph-update-2
     !>  ^-  update:store
     :-  now.bowl
     :+  %add-nodes
@@ -740,7 +743,7 @@
     =/  children
       (get-node-children ship term index)
     ?~  children  [~ ~]
-    :-  ~  :-  ~  :-  %graph-update-1
+    :-  ~  :-  ~  :-  %graph-update-2
     !>  ^-  update:store
     :-  now.bowl
     :+  %add-nodes
@@ -766,7 +769,7 @@
     ?-  -.children.u.node
         %empty  [~ ~]
         %graph
-      :-  ~  :-  ~  :-  %graph-update-1
+      :-  ~  :-  ~  :-  %graph-update-2
       !>  ^-  update:store
       :-  now.bowl
       :+  %add-nodes

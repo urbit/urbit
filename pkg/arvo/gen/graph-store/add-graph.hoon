@@ -5,6 +5,6 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=resource mark=(unit mark) overwrite=? ~] ~]
     ==
-:-  %graph-update-1
+:-  %graph-update-2
 ^-  update
 [now [%add-graph resource (gas:orm ~ ~) mark overwrite]]

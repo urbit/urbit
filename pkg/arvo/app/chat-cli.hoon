@@ -169,7 +169,7 @@
       ::
           %fact
         ?+  p.cage.sign  ~|([dap.bowl %bad-sub-mark wire p.cage.sign] !!)
-            %graph-update-1
+            %graph-update-2
           %-  on-graph-update:tc
           !<(update:graph q.cage.sign)
         ==
