@@ -88,7 +88,7 @@ export default class WalletModal extends Component {
     const command = {
       "add-wallet": {
         "xpub": xpub,
-        "fprint": [0, 0],
+        "fprint": [4, 0],
         "scan-to": null,
         "max-gap": 8,
         "confs": 1
