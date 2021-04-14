@@ -319,90 +319,86 @@
     ++  remove-posts
       |=  [=time =resource:store indices=(set index:store)]
       ^-  (quip card _state)
-      ~&  %todo-remove-posts
-      [~ state]
-::      |^
-::      =/  [=graph:store mark=(unit mark:store)]
-::        (~(got by graphs) resource)
-::      =/  =update-log:store  (~(got by update-logs) resource)
-::      =.  update-log
-::        (put:orm-log update-log time [time [%remove-nodes resource indices]])
-::      =/  [affected-indices=(set index:store) new-graph=graph:store]
-::        (remove-indices resource graph (sort ~(tap in indices) by-lent))
-::      ::
-::      :-  (give [/updates]~ [%remove-nodes resource (~(uni in indices) affected-indices)])
-::      %_  state
-::          update-logs  (~(put by update-logs) resource update-log)
-::          graphs
-::        %+  ~(put by graphs)
-::          resource
-::        [new-graph mark]
-::      ==
-::      ::
-::      :: we always want to remove the deepest node first,
-::      :: so we don't remove parents before children
-::      ++  by-lent
-::        |*  [a=(list) b=(list)]
-::        ^-  ?
-::        (gth (lent a) (lent b))
-::      ::
-::      ++  remove-indices
-::        =|  affected=(set index:store)
-::        |=  [=resource:store =graph:store indices=(list index:store)]
-::        ^-  [(set index:store) graph:store]
-::        ?~  indices  [affected graph]
-::        =^  new-affected  graph
-::          (remove-index graph i.indices)
-::        %_  $
-::            indices  t.indices
-::            affected  (~(uni in affected) new-affected)
-::        ==
-::      ::
-::      ++  get-descendants
-::        |=  =graph:store
-::        =|  indices=(list index:store)
-::        =/  nodes  (tap:orm:store graph)
-::        %-  ~(gas in *(set index:store))
-::        |-  =*  tap-nodes  $
-::        ^+  indices
-::        %-  zing
-::        %+  turn  nodes
-::        |=  [atom =node:store]
-::        ^-  (list index:store)
-::        %+  welp
-::          index.post.node^~
-::        ?.  ?=(%graph -.children.node)
-::          ~
-::        %_  tap-nodes
-::          nodes  (tap:orm p.children.node)
-::        ==
-::      ::
-::      ++  remove-index
-::        =|  indices=(set index:store)
-::        |=  [=graph:store =index:store]
-::        ^-  [(set index:store) graph:store]
-::        ?~  index  [indices graph]
-::        =*  atom   i.index
-::        ::  last index in list
-::        ::
-::        ?~  t.index
-::          =^  rm-node  graph  (del:orm graph atom)
-::          ?~  rm-node  `graph
-::          ?.  ?=(%graph -.children.u.rm-node)
-::            `graph
-::          =/  new-indices
-::            (get-descendants p.children.u.rm-node)
-::          [(~(uni in indices) new-indices) graph]
-::        =/  =node:store
-::          ~|  "parent index does not exist to remove a node from!"
-::          (need (get:orm graph atom))
-::        ~|  "child index does not exist to remove a node from!"
-::        ?>  ?=(%graph -.children.node)
-::        =^  new-indices  p.children.node
-::          $(graph p.children.node, index t.index)
-::        :-  (~(uni in indices) new-indices)
-::        (put:orm graph atom node)
-::      --
+      |^
+      =/  [=graph:store mark=(unit mark:store)]
+        (~(got by graphs) resource)
+      =/  =update-log:store  (~(got by update-logs) resource)
+      =.  update-log
+        (put:orm-log update-log time [time [%remove-posts resource indices]])
+      :-  (give [/updates]~ [%remove-posts resource indices])
+      %_  state
+        update-logs  (~(put by update-logs) resource update-log)
+      ::
+          graphs
+        %+  ~(put by graphs)
+          resource
+        :_  mark
+        (remove-indices resource graph (sort ~(tap in indices) by-lent))
+      ==
+      ::
+      ++  by-lent
+        |*  [a=(list) b=(list)]
+        ^-  ?
+        (gth (lent a) (lent b))
+      ::
+      ++  remove-indices
+        |=  [=resource:store =graph:store indices=(list index:store)]
+        ^-  graph:store
+        ?~  indices  graph
+        %_  $
+          indices  t.indices
+          graph    (remove-index graph i.indices)
+        ==
+      ::
+      ++  remove-index
+        =|  parent-hash=(unit hash:store)
+        |=  [=graph:store =index:store]
+        ^-  graph:store
+        ?~  index  graph
+        =*  atom   i.index
+        %^  put:orm
+            graph
+          atom
+        ::  last index in list
+        ::
+        ?~  t.index
+          =/  =node:store
+            ~|  "cannot remove index that does not exist {<index>}"
+            (need (get:orm graph atom))
+          ~|  "cannot remove post that has already been removed"
+          ?>  ?=(%& -.post.node)
+          =*  p  p.post.node
+          %=    node
+              post
+            ^-  maybe-post:store
+            :-  %|
+            ?~  hash.p
+              =/  =validated-portion:store
+                [parent-hash author.p time-sent.p contents.p]
+              `@ux`(sham validated-portion)
+            u.hash.p
+          ==
+        ::  recurse children
+        ::
+        =/  parent=node:store
+          ~|  "parent index does not exist to remove a node from!"
+          (need (get:orm graph atom))
+        ~|  "child index does not exist to remove a node from!"
+        ?>  ?=(%graph -.children.parent)
+        %_    parent
+            p.children
+          %_  $
+            index  t.index
+            graph  p.children.parent
+          ::
+              parent-hash
+            ?-  -.post.parent
+              %|  `p.post.parent
+              %&  hash.p.post.parent
+            ==
+          ==
+        ==
+      --
     ::
     ++  add-signatures
       |=  [=time =uid:store =signatures:store]
