@@ -380,27 +380,25 @@ instance FromNoun Ev where
 -- Short Event Names -----------------------------------------------------------
 
 {-
-    In the case of the user hitting enter, the cause is technically a
-    terminal event, but we don't display any name because the cause is
-    really the user.
+    In the case of user input, the cause is technically a terminal event,
+    but we don't display any name because the cause is really the user.
 -}
---REVIEW  doesn't that hold for _any_ terminal event?
 getSpinnerNameForEvent :: Ev -> Maybe Text
 getSpinnerNameForEvent = \case
     EvBlip b -> case b of
-        BlipEvAmes _           -> Just "ames"
-        BlipEvArvo _           -> Just "arvo"
-        BlipEvBehn _           -> Just "behn"
-        BlipEvBoat _           -> Just "boat"
-        BlipEvHttpClient _     -> Just "iris"
-        BlipEvHttpServer _     -> Just "eyre"
-        BlipEvNewt _           -> Just "newt"
-        BlipEvSync _           -> Just "clay"
-        BlipEvTerm t | isRet t -> Nothing
-        BlipEvTerm t           -> Just "term"
+        BlipEvAmes _            -> Just "ames"
+        BlipEvArvo _            -> Just "arvo"
+        BlipEvBehn _            -> Just "behn"
+        BlipEvBoat _            -> Just "boat"
+        BlipEvHttpClient _      -> Just "iris"
+        BlipEvHttpServer _      -> Just "eyre"
+        BlipEvNewt _            -> Just "newt"
+        BlipEvSync _            -> Just "clay"
+        BlipEvTerm t | isUser t -> Nothing
+        BlipEvTerm t            -> Just "term"
   where
-    isRet (TermEvBelt _ (Bol (Ret ()))) = True
-    isRet _                             = False
+    isUser (TermEvBelt _ _) = True
+    isUser _                = False
 
 summarizeEvent :: Ev -> Text
 summarizeEvent ev =
