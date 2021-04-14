@@ -1519,12 +1519,10 @@ u3_term_io_hija(void)
           c3_assert(!"hija-fcntl");
         }
 
-        //  save cursor position,
         //  set scroll region to exclude the prompt,
         //  scroll up one line to make space,
         //  and move the cursor onto that space.
         //
-        _term_it_send_csi(uty_u, 's', 0);
         _term_it_send_csi(uty_u, 'r', 2, 1, uty_u->tat_u.siz.row_l - 1);
         _term_it_send_csi(uty_u, 'S', 1, 1);
         _term_it_send_csi(uty_u, 'H', 2, uty_u->tat_u.siz.row_l - 1, 1);
