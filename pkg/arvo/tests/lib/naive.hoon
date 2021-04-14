@@ -20,18 +20,35 @@
   ==
 ::
 ++  key  address-from-prv:key:ethereum
+::
 ++  log
   |=  [log-name=@ux data=@t topics=(lest @)]
   ^-  ^input:naive
   [%log *@ux data log-name topics]
 ::
-++  owner-changed
-  |=  [=ship =address]
-  (log owner-changed:log-names:naive *@t ship address ~)
+::  ~bud is so that we aren't testing something impossible in Azimuth, like a star spawned before its sponsor galaxy
 ::
 ++  init-bud
   |=  =^state:naive
-  (n state (owner-changed ~bud 0x123))
+  (n state (owner-changed:l1 ~bud 0x123))
+::
+::  ~dopbud is for testing L1 ownership with L2 spawn proxy
+::
+++  init-dopbud
+  |=  =^state:naive
+  =^  f1  state  (init-bud state)
+  =^  f2  state  (n state (owner-changed:l1 ~dopbud (key ~dopbud)))
+  =^  f3  state  (n state (changed-spawn-proxy:l1 ~dopbud))
+  [:(welp f1 f2 f3) state]
+::
+::  ~marbud is for testing L2 ownership
+::
+++  init-marbud
+  |=  =^state:naive
+  =^  f1  state  (init-bud state)
+  =^  f2  state  (n state (owner-changed:l1 ~marbud (key ~marbud)))
+  =^  f3  state  (n state (owner-changed:l1 ~marbud deposit-address:naive))
+  [:(welp f1 f2 f3) state]
 ::
 ++  set-proxy-bits
   |=  from-proxy=@tas
@@ -50,47 +67,93 @@
   =+  (ecdsa-raw-sign:secp256k1:secp:crypto (dad:naive 5 nonce tx) pk)
   (cat 3 (can 3 1^v 32^r 32^s ~) tx)
 ::
-++  transfer-point
-  |=  [nonce=@ud =ship =address proxy=@tas reset=?]
-  %^  sign-tx  ship  nonce
-  %:  can  3
-    (set-proxy-bits proxy)
-    4^ship
-    1^(can 0 7^%0 1^reset ~)
-    4^ship
-    20^address
-    ~
-  ==
-::
-++  l2-init-marbud
-  |=  =^state:naive
-  =^  f1  state  (init-bud state)
-  =^  f2  state  (n state (owner-changed ~marbud (key ~marbud)))
-  =^  f3  state  (n state (owner-changed ~marbud deposit-address:naive))
-  [:(welp f1 f2 f3) state]
-::
-++  l2-init-dopbud
-  |=  =^state:naive
-  =^  f1  state  (init-bud state)
-  =^  f2  state  (n state (owner-changed ~dopbud (key ~dopbud)))
-  =^  f3  state  (n state (l2-changed-spawn-proxy ~dopbud))
-  [:(welp f1 f2 f3) state]
+++  l1
+  |%
   ::
-++  l2-changed-spawn-proxy
-  |=  =ship
-  (log changed-spawn-proxy:log-names:naive *@t ship deposit-address:naive ~)
+  ::  Azimuth.sol events
+  ::
+  ++  owner-changed
+    |=  [=ship =address]
+    (log owner-changed:log-names:naive *@t ship address ~)
+  ::
+  ::  TODO:  Activated (not in lib/naive.hoon)
+  ::  TODO:  Spawned  (not in lib/naive.hoon)
+  ::
+  ++  escape-requested
+    |=  [escapee=ship parent=ship]
+    (log escape-requested:log-names:naive *@t escapee parent ~)
+  ::
+  ++  escape-canceled
+  ::  The parent is pinned but not used in lib/naive.hoon for some reason
+    |=  [escapee=ship parent=ship]
+    (log escape-canceled:log-names:naive *@t escapee parent ~)
+  ::
+  ++  escape-accepted
+    |=  [escapee=ship parent=ship]
+    (log escape-accepted:log-names:naive *@t escapee parent ~)
+  ::
+  ++  lost-sponsor
+    |=  [lost=ship parent=ship]
+    (log lost-sponsor:log-names:naive *@t lost parent ~)
+  ::
+  ::  TODO:  ChangedKeys (lib/naive.hoon still has TODOs)
+  ::
+  ++  broke-continuity
+    |=  [=ship rift=@]
+    (log broke-continuity:log-names:naive rift ship ~)
+  ::
+  ++  changed-spawn-proxy
+    |=  =ship
+    (log changed-spawn-proxy:log-names:naive *@t ship deposit-address:naive ~)
+  ::
+  ++  changed-transfer-proxy
+    |=  [=ship =address]
+    (log changed-transfer-proxy:log-names:naive *@t ship address ~)
+  ::
+  ++  changed-management-proxy
+    (log changed-management-proxy:log-names:naive *@t ship address ~)
+  ::
+  ++  changed-voting-proxy
+    (log changed-voting-proxy:log-names:naive *@t ship address ~)
+  ::
+  ::  TODO:  ChangedDns (lib/naive still has TODOs)
+  ::
+  ::  Ecliptic.sol events
+  ::
+  ++  approval-for-all
+    |=  [owner=address operator=address approved=@t]
+    (log approval-for-all:log-names:naive approved owner operator ~)
+  ::
+  --
 ::
-++  l2-spawn-ship
-  |=  [nonce=@ud from-ship=ship proxy=@tas spawn-ship=ship =address]
-  %^  sign-tx  from-ship  nonce
-  %:  can  3
-    (set-proxy-bits proxy)
-    4^from-ship
-    1^(can 0 7^%1 1^0 ~)
-    4^spawn-ship
-    20^address
-    ~
-  ==
+++  l2
+  ::
+  |%
+  ::
+  ++  spawn-ship
+    |=  [nonce=@ud from-ship=ship proxy=@tas spawn-ship=ship =address]
+    %^  sign-tx  from-ship  nonce
+    %:  can  3
+      (set-proxy-bits proxy)
+      4^from-ship
+      1^(can 0 7^%1 1^0 ~)
+      4^spawn-ship
+      20^address
+      ~
+    ==
+  ::
+  ++  transfer-point
+    |=  [nonce=@ud =ship =address proxy=@tas reset=?]
+    %^  sign-tx  ship  nonce
+    %:  can  3
+      (set-proxy-bits proxy)
+      4^ship
+      1^(can 0 7^%0 1^reset ~)
+      4^ship
+      20^address
+      ~
+    ==
+  --
 ::
 --
 ::
@@ -113,7 +176,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (l2-init-marbud state)
+    =^  f  state  (init-marbud state)
     dominion:(~(got by points.state) ~marbud)
 ::
 ++  test-batch
@@ -122,9 +185,9 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (l2-init-marbud state)
-    =^  f  state  (n state %bat (transfer-point 0 ~marbud (key ~marbud) %own |))
-    =^  f  state  (n state %bat (transfer-point 1 ~marbud 0x234 %own |))
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat (transfer-point:l2 0 ~marbud (key ~marbud) %own |))
+    =^  f  state  (n state %bat (transfer-point:l2 1 ~marbud 0x234 %own |))
     owner.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-spawn-proxy-deposit
@@ -133,7 +196,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (l2-init-dopbud state)
+    =^  f  state  (init-dopbud state)
     dominion:(~(got by points.state) ~dopbud)
 ::
 ++  test-marbud-l2-spawn-point
@@ -142,8 +205,8 @@
     ::
     !>
     =|  =^state:naive
-    =^  f  state  (l2-init-marbud state)
-    =^  f  state  (n state %bat (l2-spawn-ship 0 ~marbud %own ~linnup-torsyx (key ~linnup-torsyx)))
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat (spawn-ship:l2 0 ~marbud %own ~linnup-torsyx (key ~linnup-torsyx)))
     transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-dopbud-l2-spawn-point
@@ -152,8 +215,8 @@
     ::
     !>
     =|  =^state:naive
-    =^  f  state  (l2-init-dopbud state)
-    =^  f  state  (n state %bat (l2-spawn-ship 0 ~dopbud %own ~palsep-picdun (key ~palsep-picdun)))
+    =^  f  state  (init-dopbud state)
+    =^  f  state  (n state %bat (spawn-ship:l2 0 ~dopbud %own ~palsep-picdun (key ~palsep-picdun)))
     transfer-proxy.own:(~(got by points.state) ~palsep-picdun)
 ::
 --
