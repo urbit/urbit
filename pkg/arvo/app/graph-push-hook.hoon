@@ -134,6 +134,8 @@
       |=  $:  [=index:store =node:store]
               [indices=(set index:store) lis=(list [index:store node:store])]
           ==
+      ~|  "cannot put a deleted post into %add-nodes {<post.node>}"
+      ?>  ?=(%& -.post.node)
       =/  l  (lent index)
       =/  parent-modified=?
         %-  ~(rep in indices)
@@ -144,12 +146,12 @@
           %.n
         =((swag [0 k] index) i)
       =/  [ind=index:store =post:store]
-        (transform index post.node now.bowl parent-modified)
+        (transform index p.post.node now.bowl parent-modified)
       :-  (~(put in indices) index)
-      (snoc lis [ind node(post post)])
+      (snoc lis [ind node(p.post post)])
     --
   ::
-      %remove-nodes
+      %remove-posts
     ?.  (is-allowed-remove:hc resource.q.update indices.q.update)
       ~
     `vas
@@ -281,8 +283,9 @@
 ++  node-to-indexed-post
   |=  =node:store
   ^-  indexed-post:store
-  =*  index  index.post.node
-  [(snag (dec (lent index)) index) post.node]
+  ?>  ?=(%& -.post.node)
+  =*  index  index.p.post.node
+  [(snag (dec (lent index)) index) p.post.node]
 ::
 ++  is-allowed-add
   |=  [=resource:res nodes=(map index:store node:store)] 
@@ -290,27 +293,36 @@
   %-  (bond |.(%.n))
   %+  biff  (get-roles-writers-variation resource)
   |=  [is-admin=? writers=(set ship) vip=vip-metadata:metadata]
+  ^-  (unit ?)
   %-  some  
   %+  levy  ~(tap by nodes)
   |=  [=index:store =node:store]
   =/  parent-index=index:store
     (scag (dec (lent index)) index)
   ?:  (~(has by nodes) parent-index)  %.y
-  ?.  =(author.post.node src.bowl)
-    %.n
-  =/  =permissions:store
-    %^  add-mark  resource  vip
-    (node-to-indexed-post node)
-  =/  =permission-level:store
-    (get-permission permissions is-admin writers)
-  ?-  permission-level
-      %yes  %.y
-      %no   %.n
-    ::
-        %self
-      =/  parent-node=node:store
-        (got-node:gra resource parent-index)
-      =(author.post.parent-node src.bowl)
+  ?-  -.post.node
+    %|  %.n
+  ::
+      %&
+    ?.  =(author.p.post.node src.bowl)
+      %.n
+    =/  =permissions:store
+      %^  add-mark  resource  vip
+      (node-to-indexed-post node)
+    =/  =permission-level:store
+      (get-permission permissions is-admin writers)
+    ?-  permission-level
+        %yes  %.y
+        %no   %.n
+      ::
+          %self
+        =/  parent-node=node:store
+          (got-node:gra resource parent-index)
+        ?-  -.post.parent-node
+          %|  %.n
+          %&  =(author.p.post.parent-node src.bowl)
+        ==
+    ==
   ==
 ::
 ++  is-allowed-remove
@@ -322,17 +334,23 @@
   %-  some  
   %+  levy  ~(tap by indices)
   |=  =index:store
+  ^-  ?
   =/  =node:store
     (got-node:gra resource index)
-  =/  =permissions:store
-    %^  remove-mark  resource  vip
-    (node-to-indexed-post node)
-  =/  =permission-level:store
-    (get-permission permissions is-admin writers)
-  ?-  permission-level
-    %yes   %.y
-    %no    %.n
-    %self  =(author.post.node src.bowl)
+  ?-  -.post.node
+    %|  %.n
+  ::
+      %&
+    =/  =permissions:store
+      %^  remove-mark  resource  vip
+      (node-to-indexed-post node)
+    =/  =permission-level:store
+      (get-permission permissions is-admin writers)
+    ?-  permission-level
+      %yes   %.y
+      %no    %.n
+      %self  =(author.p.post.node src.bowl)
+    ==
   ==
 ::
 ++  build-permissions
