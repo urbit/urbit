@@ -215,27 +215,27 @@
       ++  check-for-duplicates
         |=  [=graph:store nodes=(set index:store)]
         ^-  ?
-        =/  node-list  ~(tap in nodes)
-        |-
-        ?~  node-list  %.n
-        ?:  (has-node graph i.node-list)  %.y
-        $(node-list t.node-list)
-      ::
-      ++  has-node
-        |=  [=graph:store =index:store]
-        ^-  ?
-        =/  node=(unit node:store)  ~
-        |-
-        ?~  index
-          ?=(^ node)
-        ?~  t.index
-          ?=(^ (get:orm graph i.index))
-        =.  node  (get:orm graph i.index)
-        ?~  node  %.n
-        ?-  -.children.u.node
-            %empty  %.n
-            %graph  $(graph p.children.u.node, index t.index)
-        ==
+        |^
+        %+  lien  ~(tap in nodes)
+        |=  =index:store
+        (has-node graph index)
+        ::
+        ++  has-node
+          |=  [=graph:store =index:store]
+          ^-  ?
+          =/  node=(unit node:store)  ~
+          |-
+          ?~  index
+            ?=(^ node)
+          ?~  t.index
+            ?=(^ (get:orm graph i.index))
+          =.  node  (get:orm graph i.index)
+          ?~  node  %.n
+          ?-  -.children.u.node
+              %empty  %.n
+              %graph  $(graph p.children.u.node, index t.index)
+          ==
+        --
       ::
       ++  sort-nodes
         |=  nodes=(map index:store node:store)
