@@ -111,9 +111,11 @@
     (log changed-transfer-proxy:log-names:naive *@t ship address ~)
   ::
   ++  changed-management-proxy
+    |=  [=ship =address]
     (log changed-management-proxy:log-names:naive *@t ship address ~)
   ::
   ++  changed-voting-proxy
+    |=  [=ship =address]
     (log changed-voting-proxy:log-names:naive *@t ship address ~)
   ::
   ::  TODO:  ChangedDns (lib/naive still has TODOs)
