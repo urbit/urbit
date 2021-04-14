@@ -9,6 +9,7 @@ import { PostFormSchema, PostForm } from './NoteForm';
 import GlobalApi from '~/logic/api/global';
 import { getLatestRevision, editPost } from '~/logic/lib/publish';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
 
 interface EditPostProps {
   ship: string;
@@ -23,10 +24,27 @@ export function EditPost(props: EditPostProps & RouteComponentProps): ReactEleme
   const [revNum, title, body] = getLatestRevision(note);
   const location = useLocation();
 
+  let editContent = null;
+  editContent = body.reduce((val, curr) => {
+      if ('text' in curr) {
+        val = val + curr.text;
+      } else if ('mention' in curr) {
+        val = val + `~${curr.mention}`;
+      } else if ('url' in curr) {
+        val = val + curr.url;
+      } else if ('code' in curr) {
+        val = val + curr.code.expression;
+      } else if ('reference' in curr) {
+        val = `${val}${referenceToPermalink(curr).link}`;
+      }
+
+      return val;
+    }, '');
+
   const waiter = useWaitForProps(props);
   const initial: PostFormSchema = {
     title,
-    body
+    body: editContent
   };
 
   const onSubmit = async (

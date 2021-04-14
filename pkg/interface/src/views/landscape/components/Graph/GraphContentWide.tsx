@@ -17,9 +17,11 @@ function GraphContentWideInner(
     post: Post;
     api: GlobalApi;
     showOurContact: boolean;
+    allowHeaders?: boolean;
+    allowLists?: boolean;
   } & PropFunc<typeof Box>
 ) {
-  const { post, transcluded = 0, showOurContact, api, ...rest } = props;
+  const { post, transcluded = 0, showOurContact, api, allowHeaders, allowLists, ...rest } = props;
 
   return (
     <Box {...rest}>
@@ -33,6 +35,8 @@ function GraphContentWideInner(
                 fontSize={1}
                 lineHeight={"20px"}
                 content={content}
+                allowHeaders={allowHeaders}
+                allowLists={allowLists}
               />
             );
           case "code":

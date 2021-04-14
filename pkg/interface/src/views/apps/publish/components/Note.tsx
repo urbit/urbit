@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, Col, Anchor, Row, Action } from '@tlon/indigo-react';
-import ReactMarkdown from 'react-markdown';
+import { GraphContentWide } from "~/views/landscape/components/Graph/GraphContentWide";
 import bigInt from 'big-integer';
 
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -11,7 +11,7 @@ import GlobalApi from '~/logic/api/global';
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import { roleForShip } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
-import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
+import { Contacts, GraphNode, Graph, Association, Unreads, Group, Post } from '@urbit/api';
 import {useCopy} from '~/logic/lib/useCopy';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import {useQuery} from '~/logic/lib/useQuery';
@@ -28,22 +28,11 @@ interface NoteProps {
   group: Group;
 }
 
-const renderers = {
-  link: ({ href, children }) => {
-    return (
-      <Anchor display="inline" target="_blank" href={href}>{children}</Anchor>
-    )
-  }
-};
-
-export function NoteContent({ body }) {
+export function NoteContent({ body, api }) {
+  const post = { contents: Object.values(body) };
   return (
-
-      <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <ReactMarkdown source={body} linkTarget={'_blank'} renderers={renderers} />
-      </Box>
+        <GraphContentWide transcluded={0} post={post} api={api} showOurContact={false} allowHeaders allowLists />
   );
-
 }
 
 export function Note(props: NoteProps & RouteComponentProps) {
@@ -126,7 +115,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           </Author>
         </Row>
       </Col>
-      <NoteContent body={body} />
+      <NoteContent body={body} api={api} />
       <NoteNavigation
         notebook={notebook}
         noteId={noteId}

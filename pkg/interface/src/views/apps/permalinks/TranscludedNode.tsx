@@ -31,7 +31,7 @@ function TranscludedLinkNode(props: {
         return <PermalinkEmbed transcluded={transcluded + 1} api={api} link={permalink} association={assoc} />
 
       }
-      
+
       return (
         <Box borderRadius="2" p="2" bg="scales.black05">
           <Anchor underline={false} target="_blank" color="black" href={link.url}>
@@ -113,7 +113,7 @@ function TranscludedPublishNode(props: {
           </Text>
           <Box p="2">
             <NotePreviewContent
-              snippet={getSnippet(post?.post.contents[1]?.text)}
+              snippet={getSnippet(post?.post.contents.slice(1))}
             />
           </Box>
         </Col>
@@ -200,8 +200,8 @@ export function TranscludedNode(props: {
       <TranscludedPost
         api={props.api}
         post={node.post}
-        group={group} 
-        transcluded={transcluded} 
+        group={group}
+        transcluded={transcluded}
       />)
       ;
     default:
