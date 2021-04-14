@@ -50,18 +50,6 @@
   =^  f3  state  (n state (owner-changed:l1 ~marbud deposit-address:naive))
   [:(welp f1 f2 f3) state]
 ::
-++  set-proxy-bits
-  |=  from-proxy=@tas
-  =/  proxy
-    ?+  from-proxy  !!
-      %own       %0
-      %spawn     %1
-      %manage    %2
-      %vote      %3
-      %transfer  %4
-    ==
-  1^(can 0 1^0 3^proxy 4^0 ~)
-::
 ++  sign-tx
   |=  [pk=@ nonce=@ud tx=@]
   =+  (ecdsa-raw-sign:secp256k1:secp:crypto (dad:naive 5 nonce tx) pk)
@@ -132,29 +120,144 @@
   ::
   |%
   ::
-  ++  spawn-ship
-    |=  [nonce=@ud from-ship=ship proxy=@tas spawn-ship=ship =address]
-    %^  sign-tx  from-ship  nonce
+  ::  TODO: Allow requesting ship to differ from the ship the action is for
+  ::
+  ++  spawn
+    |=  [nonce=@ud parent=ship proxy=@tas child=ship =address]
+    ::  TODO: allow requesting ship and parent ship to differ
+    %^  sign-tx  parent  nonce
+    (take-ship-address:bits %spawn parent proxy child address)
+  ::
+  ++  transfer-point
+    |=  [nonce=@ud =ship =address proxy=@tas reset=?]
+    ::  TODO: allow requesting ship and target ship to differ
+    %^  sign-tx  ship  nonce
     %:  can  3
-      (set-proxy-bits proxy)
-      4^from-ship
-      1^(can 0 7^%1 1^0 ~)
-      4^spawn-ship
+      (from-proxy:bits proxy)
+      4^ship
+      1^(can 0 7^%0 1^reset ~)                   :: %transfer-point
+      4^ship
       20^address
       ~
     ==
   ::
-  ++  transfer-point
-    |=  [nonce=@ud =ship =address proxy=@tas reset=?]
+  ++  configure-keys
+    |=  [nonce=@ud =ship proxy=@tas breach=@ encrypt=@ auth=@ crypto-suite=@]
     %^  sign-tx  ship  nonce
     %:  can  3
-      (set-proxy-bits proxy)
+      (from-proxy:bits proxy)
       4^ship
-      1^(can 0 7^%0 1^reset ~)
+      1^(can 0 7^%2 1^breach ~)                 :: %configure-keys
       4^ship
-      20^address
+      32^encrypt
+      32^auth
+      4^crypto-suite
       ~
     ==
+  ::
+  ++  escape
+    |=  [nonce=@ud child=ship proxy=@tas parent=ship]
+    %^  sign-tx  child  nonce
+    (take-escape:bits %escape child proxy parent)
+  ::
+  ++  cancel-escape
+    |=  [nonce=@ud child=ship proxy=@tas parent=ship]
+    %^  sign-tx  child  nonce
+    (take-escape:bits %cancel-escape child proxy parent)
+  ::
+  ++  adopt
+    |=  [nonce=@ud child=ship proxy=@tas parent=ship]
+    %^  sign-tx  child  nonce
+    (take-escape:bits %adopt child proxy parent)
+  ::
+  ++  reject
+    |=  [nonce=@ud child=ship proxy=@tas parent=ship]
+    %^  sign-tx  child  nonce
+    (take-escape:bits %reject child proxy parent)
+  ::
+  ++  detach
+    |=  [nonce=@ud child=ship proxy=@tas parent=ship]
+    %^  sign-tx  child  nonce
+    (take-escape:bits %detach child proxy parent)
+  ::
+  ++  set-management-proxy
+    |=  [nonce=@ud =ship proxy=@tas =address]
+    %^  sign-tx  ship  nonce
+    (take-ship-address:bits %set-management-proxy ship proxy ship address)
+  ::
+  ++  set-spawn-proxy
+    |=  [nonce=@ud =ship proxy=@tas =address]
+    %^  sign-tx  ship  nonce
+    (take-ship-address:bits %set-spawn-proxy ship proxy ship address)
+  ::
+  ++  set-voting-proxy
+    |=  [nonce=@ud =ship proxy=@tas =address]
+    %^  sign-tx  ship  nonce
+    (take-ship-address:bits %set-voting-proxy ship proxy ship address)
+  ::
+  ++  set-transfer-proxy
+    |=  [nonce=@ud =ship proxy=@tas =address]
+    %^  sign-tx  ship  nonce
+    (take-ship-address:bits %set-transfer-proxy ship proxy ship address)
+  ::
+  ++  bits
+    ::
+    |%
+    ::
+    ::  TODO: Shouldn't need to pass all these arguments along - they should already be in the subject somewhere
+    ::
+    ++  take-escape
+      |=  [action=@tas child=ship proxy=@tas parent=ship]
+      =/  op
+        ?+  action  !!
+          %escape         %3
+          %cancel-escape  %4
+          %adopt          %5
+          %reject         %6
+          %detach         %7
+        ==
+      %:  can  3
+        (from-proxy proxy)
+        4^child
+        1^(can 0 7^op 1^0 ~)
+        4^child
+        4^parent
+        ~
+      ==
+    ::
+    ++  take-ship-address
+      |=  [action=@tas from=ship proxy=@tas target=ship =address]
+      =/  op
+        ?+  action  !!
+          %spawn                    %1
+          %set-management-proxy     %8
+          %set-spawn-proxy          %9
+          %set-voting-proxy         %10
+          %set-transfer-proxy       %11
+        ==
+      %:  can  3
+        (from-proxy proxy)
+        4^from
+        1^(can 0 7^op 1^0 ~)
+        4^target
+        20^address
+        ~
+      ==
+    ::
+    ++  from-proxy
+      |=  prx=@tas
+      =/  proxy
+        ?+  prx  !!
+          %own       %0
+          %spawn     %1
+          %manage    %2
+          %vote      %3
+          %transfer  %4
+        ==
+      1^(can 0 1^0 3^proxy 4^0 ~)
+    ::
+    --
+  ::
   --
 ::
 --
@@ -208,7 +311,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat (spawn-ship:l2 0 ~marbud %own ~linnup-torsyx (key ~linnup-torsyx)))
+    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %own ~linnup-torsyx (key ~linnup-torsyx)))
     transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-dopbud-l2-spawn-point
@@ -218,7 +321,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat (spawn-ship:l2 0 ~dopbud %own ~palsep-picdun (key ~palsep-picdun)))
+    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %own ~palsep-picdun (key ~palsep-picdun)))
     transfer-proxy.own:(~(got by points.state) ~palsep-picdun)
 ::
 --
