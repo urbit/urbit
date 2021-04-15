@@ -8,7 +8,8 @@ import {
   Button,
   Label,
   BaseInput,
-  Text
+  Text,
+  Icon
 } from '@tlon/indigo-react';
 
 import useStorage from '~/logic/lib/useStorage';
@@ -84,6 +85,31 @@ const errorRetry = (meta, uploading, clickUploadButton) => {
   return null;
 };
 
+const clearButton = (field, uploading, clearEvt) => {
+  if (field.value && !uploading) {
+    return (
+      <Box
+        position='absolute'
+        right={0}
+        top={0}
+        px={1}
+        height='100%'
+        cursor='pointer'
+        onClick={clearEvt}
+        backgroundColor='white'
+        display='flex'
+        alignItems='center'
+        borderRadius='0 4px 4px 0'
+        border='1px solid'
+        borderColor='lightGray'
+      >
+        <Icon icon='X' />
+      </Box>
+    );
+  }
+  return null;
+};
+
 export function ImageInput(props: ImageInputProps): ReactElement {
   const { id, label, caption } = props;
   const { uploadDefault, canUpload, uploading } = useStorage();
@@ -107,6 +133,11 @@ export function ImageInput(props: ImageInputProps): ReactElement {
   const clickUploadButton = useCallback(() => {
     ref.current?.click();
   }, [ref]);
+
+  const clearEvt = useCallback(() => {
+    setValue('');
+  }, []);
+
   return (
     <Box display="flex" flexDirection="column" {...props}>
       <Label htmlFor={id}>{label}</Label>
@@ -117,6 +148,7 @@ export function ImageInput(props: ImageInputProps): ReactElement {
       ) : null}
       <Row mt="2" alignItems="flex-end" position='relative' width='100%'>
         {prompt(field, uploading, meta, clickUploadButton)}
+        {clearButton(field, uploading, clearEvt)}
         {uploadingStatus(uploading, meta)}
         {errorRetry(meta, uploading, clickUploadButton)}
         <Box background='white' borderRadius={2} width='100%'>
