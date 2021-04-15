@@ -29,6 +29,9 @@
 ::
 /+  std
 =>  =>  std
+::  Laconic bit
+::
+=|  lac=?
 ::  Constants
 ::
 |%
@@ -211,6 +214,13 @@
 --  =>
 ::
 |%
+++  debug
+  |*  [meg=@t *]
+  ?:  lac
+    +<+
+  ~>  %slog.[0 meg]
+  +<+
+::
 ++  parse-batch
   |=  [=verifier =state batch=@]
   ^-  (list tx)
@@ -222,7 +232,7 @@
   ::  Parsing failed, abort batch
   ::
   ?~  parse-result
-    ~
+    (debug %parse-failed ~)
   =^  signed=(list tx)  batch  u.parse-result
   $(txs (welp (flop signed) txs))
 ::
@@ -241,7 +251,7 @@
         ~
       :-  ~
       ?.  (verify-sig-and-nonce txs.u.res sig len.batch.u.res signed-batch)
-        [~ rest.batch.u.res]
+        [(debug %sig-failed ~) rest.batch.u.res]
       [txs.u.res rest.batch.u.res]
   ^-  res=(unit [txs=(list tx) =_batch])
   =^  single=@   batch  (take 0)
@@ -274,7 +284,7 @@
 ++  parse-single-tx
   ^-  (unit [tx _batch])
   =^  from-proxy=@      batch  (take 0 3)
-  ?:  (gth from-proxy 4)  ~
+  ?:  (gth from-proxy 4)  (debug %bad-proxy ~)
   =^  pad               batch  (take 0 4)
   =^  from-ship=ship    batch  (take 3 4)
   =-  ?~  res
@@ -596,7 +606,7 @@
   =^  effects-2  state
     =/  tx-result=(unit [effects ^state])  (receive-tx state i.txs)
     ?~  tx-result
-      `state
+      (debug %l2-tx-failed `state)
     u.tx-result
   =^  effects-3  state  $(txs t.txs)
   [:(welp effects-1 effects-2 effects-3) state]
@@ -657,8 +667,8 @@
     |*  [fun=$-([ship point *] (unit [effects point])) =ship rest=*]
     ^-  (unit [effects ^state])
     =/  point  (get-point state ship)
-    ?~  point  ~
-    ?.  ?=(%l2 -.u.point)  ~
+    ?~  point  (debug %strange-ship ~)
+    ?.  ?=(%l2 -.u.point)  (debug %ship-not-on-l2 ~)
     =/  res=(unit [=effects new-point=^point])  (fun ship u.point rest)
     ?~  res
       ~
@@ -671,7 +681,7 @@
     ?.  ?&  =(ship ship.from.tx)
             |(=(%own proxy.from.tx) =(%transfer proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::  Execute transfer
     ::
     =/  effects-1
@@ -718,15 +728,15 @@
     ?.  ?&  =(parent ship.from.tx)
             |(=(%own proxy.from.tx) =(%spawn proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::  Assert child not already spawned
     ::
     ::  TODO: verify this means the ship exists on neither L1 nor L2
     ::
-    ?:  (~(has by points.state) ship)  ~
+    ?:  (~(has by points.state) ship)  (debug %spawn-exists ~)
     ::  Assert one-level-down
     ::
-    ?.  =(+((ship-rank parent)) (ship-rank ship))  ~
+    ?.  =(+((ship-rank parent)) (ship-rank ship))  (debug %bad-rank ~)
     ::  TODO check spawnlimit
     ::
     =/  [=effects new-point=point]
@@ -763,7 +773,7 @@
     ?.  ?&  =(ship ship.from.tx)
             |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::
     =^  rift-effects  rift.net.point
       ?.  breach
@@ -785,10 +795,10 @@
     ?.  ?&  =(ship ship.from.tx)
             |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::  TODO: don't allow "peer escape"?
     ::
-    ?.  =(+((ship-rank parent)) (ship-rank ship))  ~
+    ?.  =(+((ship-rank parent)) (ship-rank ship))  (debug %bad-rank ~)
     ::
     :+  ~  [%point ship %escape `parent]~
     point(escape.net `parent)  ::  TODO: omitting a lot of source material?
@@ -798,7 +808,7 @@
     ?.  ?&  =(ship ship.from.tx)
             |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::
     :+  ~  [%point ship %escape ~]~
     point(escape.net ~)
@@ -810,9 +820,9 @@
     ?.  ?&  =(parent ship.from.tx)
             |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::
-    ?.  =(escape.net.point `parent)  ~
+    ?.  =(escape.net.point `parent)  (debug %no-adopt ~)
     :+  ~  [%point ship %sponsor `parent]~
     point(escape.net ~, sponsor.net [%& parent])
   ::
@@ -821,9 +831,9 @@
     ?.  ?&  =(parent ship.from.tx)
             |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::
-    ?.  =(escape.net.point `parent)  ~
+    ?.  =(escape.net.point `parent)  (debug %no-reject ~)
     :+  ~  [%point ship %escape ~]~
     point(escape.net ~)
   ::
@@ -832,9 +842,9 @@
     ?.  ?&  =(parent ship.from.tx)
             |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::
-    ?.  =(who.sponsor.net.point parent)  ~
+    ?.  =(who.sponsor.net.point parent)  (debug %no-detach ~)
     :+  ~  [%point ship %sponsor ~]~
     point(has.sponsor.net %|)
   ::
@@ -843,7 +853,7 @@
     ?.  ?&  =(ship ship.from.tx)
             |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::
     :+  ~  [%point ship %management-proxy address]~
     point(address.management-proxy.own address)
@@ -853,7 +863,7 @@
     ?.  ?&  =(ship ship.from.tx)
             |(=(%own proxy.from.tx) =(%spawn proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::
     :+  ~  [%point ship %spawn-proxy address]~
     point(address.spawn-proxy.own address)
@@ -865,7 +875,7 @@
     ?.  ?&  =(ship ship.from.tx)
             |(=(%own proxy.from.tx) =(%vote proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::
     :+  ~  [%point ship %voting-proxy address]~
     point(address.voting-proxy.own address)
@@ -875,7 +885,7 @@
     ?.  ?&  =(ship ship.from.tx)
             |(=(%own proxy.from.tx) =(%transfer proxy.from.tx))
         ==
-      ~
+      (debug %bad-permission ~)
     ::
     :+  ~  [%point ship %transfer-proxy address]~
     point(address.transfer-proxy.own address)

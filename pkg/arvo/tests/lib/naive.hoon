@@ -1,7 +1,7 @@
 /+  *test, naive, ethereum
 |%
 ++  address  @ux
-++  n  |=([=^state:naive =^input:naive] (naive verifier +<))
+++  n  |=([=^state:naive =^input:naive] (%*(. naive lac |) verifier +<))
 ::  TODO: does this uniquely produce the pubkey?
 ::
 ++  verifier
