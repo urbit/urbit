@@ -64,7 +64,9 @@
   %+  expect-eq
     !>
     :-  [%point ~bud %owner 0x123]~
-    [[[~bud %*(. *point:naive dominion %l1, owner.own 0x123^0, who.sponsor.net ~bud)] ~ ~] ~ ~]
+    :_  [~  ~]  :_  [~ ~]
+    :-  ~bud
+    %*(. *point:naive dominion %l1, owner.own 0x123^0, who.sponsor.net ~bud)
   ::
     !>
     %^  naive  verifier  *^state:naive
