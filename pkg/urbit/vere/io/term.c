@@ -550,9 +550,10 @@ _term_it_save_line(u3_utty* uty_u, c3_w* lin_w, c3_w wor_w)
 {
   u3_utat* tat_u = &uty_u->tat_u;
 
-  //  keep track of changes to bottom-most line, to aid spinner drawing logic
+  //  keep track of changes to bottom-most line, to aid spinner drawing logic.
+  //  -t mode doesn't need this logic, because it doesn't render the spinner.
   //
-  if ( 0 == tat_u->mir.rus_w ) {
+  if ( (0 == tat_u->mir.rus_w) && (c3n == u3_Host.ops_u.tem)) {
     c3_w* nip_w = tat_u->mir.lin_w;
     c3_w  wod_w = tat_u->mir.wor_w;
     c3_w  off_w = tat_u->mir.cus_w;
@@ -1413,26 +1414,20 @@ _term_ef_blit(u3_utty* uty_u,
     default: break;
 
     case c3__bel: {
-      if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
-      }
+      _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
     } break;
 
     case c3__clr: {
-      if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_show_blank(uty_u);
-      }
+      _term_it_show_blank(uty_u);
     } break;
 
     case c3__hop: {
-      if ( c3n == u3_Host.ops_u.tem ) {
-        u3_noun pos = u3t(blt);
-        if ( c3y == u3r_ud(pos) ) {
-          _term_it_move_cursor(uty_u, 0, pos);
-        }
-        else {
-          _term_it_move_cursor(uty_u, u3h(pos), u3t(pos));
-        }
+      u3_noun pos = u3t(blt);
+      if ( c3y == u3r_ud(pos) ) {
+        _term_it_move_cursor(uty_u, 0, pos);
+      }
+      else {
+        _term_it_move_cursor(uty_u, u3h(pos), u3t(pos));
       }
     } break;
 
@@ -1469,6 +1464,43 @@ _term_ef_blit(u3_utty* uty_u,
 
     case c3__wyp: {
       _term_it_clear_line(uty_u);
+    } break;
+  }
+
+  u3z(blt);
+}
+
+/* _term_ef_blit_lame(): simplified output handling for -t
+*/
+static void
+_term_ef_blit_lame(u3_utty* uty_u,
+                   u3_noun  blt)
+{
+  switch ( u3h(blt) ) {
+    default: break;
+
+    case c3__klr: {
+      _term_it_show_stub(uty_u, u3k(u3t(blt)));
+      _term_it_show_nel(uty_u);
+    } break;
+
+    case c3__put: {
+      _term_it_show_tour(uty_u, u3k(u3t(blt)));
+      _term_it_show_nel(uty_u);
+    } break;
+
+    case c3__sav: {
+      u3_noun pax, dat;
+      u3x_cell(u3t(blt), &pax, &dat);
+
+      _term_it_save(u3k(pax), u3k(dat));
+    } break;
+
+    case c3__sag: {
+      u3_noun pax, dat;
+      u3x_cell(u3t(blt), &pax, &dat);
+
+      _term_it_save(u3k(pax), u3qe_jam(dat));
     } break;
   }
 
@@ -1743,7 +1775,12 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
               u3_noun bis = dat;
 
               while ( c3y == u3du(bis) ) {
-                _term_ef_blit(uty_u, u3k(u3h(bis)));
+                if (c3n == u3_Host.ops_u.tem) {
+                  _term_ef_blit(uty_u, u3k(u3h(bis)));
+                }
+                else {
+                  _term_ef_blit_lame(uty_u, u3k(u3h(bis)));
+                }
                 bis = u3t(bis);
               }
             }
