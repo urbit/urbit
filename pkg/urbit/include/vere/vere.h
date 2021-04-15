@@ -577,7 +577,6 @@
                          (void*, c3_w, u3_noun);//
           // XX remove
           c3_s             por_s;               //  UDP port
-          u3_save*         sav_u;               //  autosave
           struct _u3_pier* nex_u;               //  next in list
         } u3_pier;
 
@@ -628,6 +627,7 @@ typedef struct _u3_mars {
   c3_o    mut_o;             //  mutated kerne
   u3_noun sac;               //  space measurementl
   u3_disk* log_u;
+  uv_timer_t   tim_u;
   u3_moat*     inn_u;             //  input stream
   u3_mojo*     out_u;             //  output stream
   u3_cue_xeno* sil_u;             //  cue handle

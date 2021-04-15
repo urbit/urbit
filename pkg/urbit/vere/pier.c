@@ -439,18 +439,6 @@ _pier_work_init(u3_pier* pir_u)
 
   _pier_work_time(pir_u);
 
-  //  XX plan kelvin event
-  //
-
-  //  XX snapshot timer
-  //  XX moveme
-  //
-  {
-    c3_l cod_l = u3a_lush(c3__save);
-    u3_save_io_init(pir_u);
-    u3a_lop(cod_l);
-  }
-
   //  initialize pre i/o polling handle
   //
   uv_prepare_init(u3L, &wok_u->pep_u);
@@ -901,7 +889,6 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
   // XX remove
   //
   pir_u->por_s = u3_Host.ops_u.por_s;
-  pir_u->sav_u = c3_calloc(sizeof(u3_save));
 
   //  initialize compute
   //
@@ -1046,11 +1033,6 @@ static void
 _pier_free(u3_pier* pir_u)
 {
   c3_free(pir_u->pax_c);
-
-  // XX remove
-  //
-  c3_free(pir_u->sav_u);
-
   c3_free(pir_u);
 }
 
@@ -1102,14 +1084,6 @@ _pier_work_exit_cb(void* ptr_v, c3_d eve_d)
 static void
 _pier_work_exit(u3_pier* pir_u)
 {
-  //  XX moveme, XX bails if not started
-  //
-  {
-    c3_l cod_l = u3a_lush(c3__save);
-    u3_save_io_exit(pir_u);
-    u3a_lop(cod_l);
-  }
-
   pir_u->sat_e = u3_psat_done;
 
   //  XX revise, ensure worker save, run on worker exit?

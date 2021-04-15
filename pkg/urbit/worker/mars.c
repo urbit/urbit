@@ -487,7 +487,6 @@ top:
       //  XX exit cb ?
       //
       u3e_save();
-      fprintf(stderr, "mars: exit\r\n");
       exit(0);
     }
   }
@@ -526,6 +525,15 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
   return ret_o;
 }
 
+static void
+_cw_mars_timer_cb(uv_timer_t* tim_u)
+{
+  u3_mars* mar_u = tim_u->data;
+  mar_u->sat_e = _cwe_mars_save;
+
+  _cw_mars_flush(mar_u);
+}
+
 u3_mars*
 u3_mars_init(u3_disk* log_u,
              u3_moat* inn_u,
@@ -553,6 +561,13 @@ u3_mars_init(u3_disk* log_u,
     mar_u->fac_u.ent_u = mar_u->fac_u.ext_u = 0;
     mar_u->gif_u.ent_u = mar_u->gif_u.ext_u = 0;
     mar_u->xit_f = 0;
+
+    //  XX check return, make interval configurable
+    //
+    uv_timer_init(u3L, &mar_u->tim_u);
+    uv_timer_start(&mar_u->tim_u, _cw_mars_timer_cb, 120000, 120000);
+
+    mar_u->tim_u.data = mar_u;
 
     return mar_u;
   }
