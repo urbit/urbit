@@ -507,10 +507,9 @@
       */
         typedef enum {
           u3_psat_init = 0,                   //  initialized
-          u3_psat_boot = 1,                   //  bootstrap
-          u3_psat_wyrd = 3,                   //  versioning
-          u3_psat_work = 4,                   //  working
-          u3_psat_done = 5                    //  shutting down
+          u3_psat_wyrd = 1,                   //  versioning
+          u3_psat_work = 2,                   //  working
+          u3_psat_done = 3                    //  shutting down
         } u3_psat;
 
       /* u3_boot: bootstrap event sequence
@@ -564,10 +563,7 @@
           c3_o             liv_o;               //  fully live
           u3_lord*         god_u;               //  computer
           u3_psat          sat_e;               //  type-tagged
-          union {                               //
-            u3_boot*       bot_u;               //    bootstrap
-            u3_work*       wok_u;               //    work
-          };
+          u3_work*         wok_u;               //    work
           struct {
             u3_pico*       ent_u;
             u3_pico*       ext_u;

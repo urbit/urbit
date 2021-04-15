@@ -776,6 +776,9 @@ _pier_on_lord_cram(void* ptr_v)
   fprintf(stderr, "pier: (%" PRIu64 "): lord: cram\r\n", pir_u->god_u->eve_d);
 #endif
 
+  //  XX review
+  //
+
   // if ( u3_psat_done == pir_u->sat_e ) {
   //   fprintf(stderr, "snap cb exit\r\n");
   //   u3_lord_exit(pir_u->god_u);
@@ -784,9 +787,6 @@ _pier_on_lord_cram(void* ptr_v)
     // _pier_next(pir_u);
   // }
 }
-
-static void
-_pier_done(u3_pier* pir_u);
 
 /* _pier_on_lord_exit(): worker shutdown.
 */
@@ -801,13 +801,9 @@ _pier_on_lord_exit(void* ptr_v)
 
   if ( u3_psat_done != pir_u->sat_e ) {
     u3l_log("pier: serf shutdown unexpected\r\n");
-    u3_pier_bail(pir_u);
   }
-  //  if we made it all the way here, it's our jab to wrap up
-  //
-  else {
-    _pier_done(pir_u);
-  }
+
+  u3_pier_bail(pir_u);
 }
 
 /* _pier_on_lord_bail(): worker error.
@@ -845,10 +841,6 @@ u3_pier_info(u3_pier* pir_u)
 
     case u3_psat_init: {
       u3l_log("pier: init\n");
-    } break;
-
-    case u3_psat_boot: {
-      u3l_log("pier: boot\n");
     } break;
 
     case u3_psat_work: {
@@ -1027,105 +1019,13 @@ _pier_work_close(u3_work* wok_u)
   wok_u->pep_u.data = wok_u;
 }
 
-/* _pier_done(): dispose pier.
-*/
-static void
-_pier_free(u3_pier* pir_u)
-{
-  c3_free(pir_u->pax_c);
-  c3_free(pir_u);
-}
-
-/* _pier_done(): graceful shutdown complete, notify king.
-*/
-static void
-_pier_done(u3_pier* pir_u)
-{
-  //  XX unlink properly
-  //
-  u3K.pir_u = 0;
-  _pier_free(pir_u);
-  u3_king_done();
-}
-
-/* _pier_exit(): synchronous shutdown.
-*/
-static void
-_pier_exit(u3_pier* pir_u)
-{
-  c3_assert( u3_psat_done == pir_u->sat_e );
-
-  if ( pir_u->god_u ) {
-    u3_lord_exit(pir_u->god_u);
-    pir_u->god_u = 0;
-  }
-  else {
-    //  otherwise called in _pier_on_lord_exit()
-    //
-    _pier_done(pir_u);
-  }
-}
-
-/* _pier_work_exit(): commence graceful shutdown.
-*/
-static void
-_pier_work_exit_cb(void* ptr_v, c3_d eve_d)
-{
-  u3_pier* pir_u = ptr_v;
-
-  _pier_work_close(pir_u->wok_u);
-  pir_u->wok_u = 0;
-
-  _pier_exit(pir_u);
-}
-
-/* _pier_work_exit(): setup graceful shutdown callbacks.
-*/
-static void
-_pier_work_exit(u3_pier* pir_u)
-{
-  pir_u->sat_e = u3_psat_done;
-
-  //  XX revise, ensure worker save, run on worker exit?
-  //
-  _pier_work_exit_cb(pir_u, pir_u->god_u->eve_d);
-}
-
-/* u3_pier_exit(): graceful shutdown.
-*/
-void
-u3_pier_exit(u3_pier* pir_u)
-{
-  switch ( pir_u->sat_e ) {
-    default: {
-      fprintf(stderr, "pier: unknown exit: %u\r\n", pir_u->sat_e);
-      c3_assert(0);
-    }
-
-    case u3_psat_done: return;
-
-    case u3_psat_work: return _pier_work_exit(pir_u);
-
-    case u3_psat_init: break;
-
-    case u3_psat_boot: {
-      //  XX properly dispose boot
-      //  XX also on actual boot
-      //
-      c3_free(pir_u->bot_u);
-      pir_u->bot_u = 0;
-    } break;
-  }
-
-  pir_u->sat_e = u3_psat_done;
-  _pier_exit(pir_u);
-}
-
-/* u3_pier_bail(): immediately shutdown due to error.
+/* u3_pier_bail(): immediately shutdown.
 */
 void
 u3_pier_bail(u3_pier* pir_u)
 {
+  pir_u->sat_e = u3_psat_done;
+
   //  halt serf
   //
   if ( pir_u->god_u ) {
@@ -1133,18 +1033,41 @@ u3_pier_bail(u3_pier* pir_u)
     pir_u->god_u = 0;
   }
 
-  //  exig i/o drivers
+  //  close drivers
   //
-  if (  (u3_psat_work == pir_u->sat_e)
-     && pir_u->wok_u )
-  {
+  if ( pir_u->wok_u ) {
     _pier_work_close(pir_u->wok_u);
     pir_u->wok_u = 0;
   }
 
+  //  XX unlink properly
+  //
+  u3K.pir_u = 0;
+
+  c3_free(pir_u->pax_c);
+  c3_free(pir_u);
+
+  u3_king_done();
+}
+
+/* u3_pier_exit(): graceful shutdown.
+*/
+void
+u3_pier_exit(u3_pier* pir_u)
+{
+  if ( u3_psat_done == pir_u->sat_e ) {
+    return;
+  }
+
   pir_u->sat_e = u3_psat_done;
 
-  _pier_done(pir_u);
+  if ( pir_u->god_u ) {
+    u3_lord_exit(pir_u->god_u);
+    pir_u->god_u = 0;
+  }
+  else {
+    u3_pier_bail(pir_u);
+  }
 }
 
 /* c3_rand(): fill a 512-bit (16-word) buffer.
