@@ -173,7 +173,8 @@ leftBracket, rightBracket :: Text
 leftBracket = "«"
 rightBracket = "»"
 
-_spin_cool_us, _spin_warm_us, _spin_rate_us, _spin_idle_us :: Integral i => i
+_spin_fast_us, _spin_cool_us, _spin_warm_us, _spin_rate_us, _spin_idle_us :: Integral i => i
+_spin_fast_us = 100000
 _spin_cool_us = 500000
 _spin_warm_us = 50000
 _spin_rate_us = 250000
@@ -330,7 +331,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
             current <- io $ now
             delay   <- pure $ case mTxt of
-                Nothing -> 0
+                Nothing -> _spin_fast_us
                 Just _  ->
                   if (gap current lsPrevEndTime ^. microSecs) < _spin_idle_us
                   then _spin_warm_us

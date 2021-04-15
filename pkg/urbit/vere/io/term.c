@@ -1023,6 +1023,7 @@ _term_spin_timer_cb(uv_timer_t* tim_u)
   _term_spin_step(uty_u);
 }
 
+#define _SPIN_FAST_US 100UL  //  spinner activation delay when expected
 #define _SPIN_COOL_US 500UL  //  spinner activation delay when cool
 #define _SPIN_WARM_US 50UL   //  spinner activation delay when warm
 #define _SPIN_RATE_US 250UL  //  spinner rate (ms/frame)
@@ -1047,7 +1048,7 @@ u3_term_start_spinner(u3_atom say, c3_o del_o)
     {
       c3_d now_d = _term_msc_out_host();
       c3_d end_d = tat_u->sun_u.end_d;
-      c3_d wen_d = (c3n == del_o) ? 0UL :
+      c3_d wen_d = (c3n == del_o) ? _SPIN_FAST_US :
                      (now_d - end_d < _SPIN_IDLE_US) ?
                      _SPIN_WARM_US : _SPIN_COOL_US;
 
