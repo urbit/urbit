@@ -51,14 +51,7 @@ export default class Balance extends Component {
     const value = currencyFormat(sats, this.state.conversion, this.state.denomination);
 
     return (
-      <Col
-        height="400px"
-        width='100%'
-        backgroundColor="white"
-        borderRadius="32px"
-        mb={5}
-        p={5}
-      >
+      <>
         {this.state.sending ?
          <Send
            api={api}
@@ -68,7 +61,14 @@ export default class Balance extends Component {
            conversion={this.state.conversion}
            stopSending={() => {this.setState({sending: false})}}
          /> :
-         <>
+         <Col
+           height="400px"
+           width='100%'
+           backgroundColor="white"
+           borderRadius="32px"
+           mb={5}
+           p={5}
+         >
            <Row justifyContent="space-between">
              <Text color="orange" fontSize={1}>Balance</Text>
              <Text color="lighterGray" fontSize="14px">bc1qxy...hx0wlh</Text>
@@ -104,9 +104,9 @@ export default class Balance extends Component {
                      px="24px"
              />
            </Row>
-         </>
+          </Col>
         }
-      </Col>
+      </>
     );
   }
 }
