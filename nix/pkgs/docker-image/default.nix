@@ -13,7 +13,7 @@ let
     do
     case $i in
         -p=*|--port=*)
-            amesPort="${i#*=}"
+            amesPort="''${i#*=}"
             shift
             ;;
     esac
