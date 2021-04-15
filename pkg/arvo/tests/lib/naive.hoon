@@ -193,11 +193,6 @@
     %^  sign-tx  ship  nonce
     (take-ship-address:bits %set-spawn-proxy ship proxy ship address)
   ::
-  ++  set-voting-proxy
-    |=  [nonce=@ud =ship proxy=@tas =address]  ^-  @
-    %^  sign-tx  ship  nonce
-    (take-ship-address:bits %set-voting-proxy ship proxy ship address)
-  ::
   ++  set-transfer-proxy
     |=  [nonce=@ud =ship proxy=@tas =address]  ^-  @
     %^  sign-tx  ship  nonce
@@ -235,8 +230,7 @@
           %spawn                    %1
           %set-management-proxy     %8
           %set-spawn-proxy          %9
-          %set-voting-proxy         %10
-          %set-transfer-proxy       %11
+          %set-transfer-proxy       %10
         ==
       %:  can  3
         (from-proxy proxy)
@@ -370,15 +364,6 @@
     =^  f  state  (init-marbud state)
     =^  f  state  (n state %bat (set-management-proxy:l2 0 ~marbud %own 0x123))
     management-proxy.own:(~(got by points.state) ~marbud)
-::
-++  test-l2-set-voting-proxy  ^-  tang
-  ::  Only galaxies have voting proxies, and they aren't allowed on L2
-  %-  expect-fail
-    |.
-    =|  =^state:naive
-    =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat (set-voting-proxy:l2 0 ~marbud %own 0x123))
-    voting-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-spawn-proxy-deposit  ^-  tang
   %+  expect-eq

@@ -195,7 +195,6 @@
       [%detach =ship parent=ship]
       [%set-management-proxy =ship =address]
       [%set-spawn-proxy =ship =address]
-      [%set-voting-proxy =ship =address]
       [%set-transfer-proxy =ship =address]
   ==
 ::
@@ -323,8 +322,7 @@
       %7   =^(res batch take-escape `[[%detach res] batch])
       %8   =^(res batch take-ship-address `[[%set-management-proxy res] batch])
       %9   =^(res batch take-ship-address `[[%set-spawn-proxy res] batch])
-      %10  =^(res batch take-ship-address `[[%set-voting-proxy res] batch])
-      %11  =^(res batch take-ship-address `[[%set-transfer-proxy res] batch])
+      %10  =^(res batch take-ship-address `[[%set-transfer-proxy res] batch])
   ==
   ::
   ::  Take a bite
@@ -659,7 +657,6 @@
     %detach                 (w-point process-detach +>.tx)
     %set-management-proxy   (w-point process-set-management-proxy +>.tx)
     %set-spawn-proxy        (w-point process-set-spawn-proxy +>.tx)
-    %set-voting-proxy       (w-point process-set-voting-proxy +>.tx)
     %set-transfer-proxy     (w-point process-set-transfer-proxy +>.tx)
   ==
   ::
@@ -867,18 +864,6 @@
     ::
     :+  ~  [%point ship %spawn-proxy address]~
     point(address.spawn-proxy.own address)
-  ::
-  :: TODO: delete?
-  ::
-  ++  process-set-voting-proxy
-    |=  [=ship =point =address]
-    ?.  ?&  =(ship ship.from.tx)
-            |(=(%own proxy.from.tx) =(%vote proxy.from.tx))
-        ==
-      (debug %bad-permission ~)
-    ::
-    :+  ~  [%point ship %voting-proxy address]~
-    point(address.voting-proxy.own address)
   ::
   ++  process-set-transfer-proxy
     |=  [=ship =point =address]
