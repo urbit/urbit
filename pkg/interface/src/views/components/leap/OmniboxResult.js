@@ -65,7 +65,7 @@ export class OmniboxResult extends Component {
           <Icon
             display='inline-block'
             verticalAlign='middle'
-            icon='Inbox'
+            icon='Notifications'
             mr='2'
             size='18px'
             color={iconFill}
@@ -85,7 +85,7 @@ export class OmniboxResult extends Component {
         <Icon
           display='inline-block'
           verticalAlign='middle'
-          icon='SignOut'
+          icon='LogOut'
           mr='2'
           size='18px'
           color={iconFill}
@@ -119,7 +119,7 @@ export class OmniboxResult extends Component {
         <Icon
           display='inline-block'
           verticalAlign='middle'
-          icon='Inbox'
+          icon='Notifications'
           mr='2'
           size='18px'
           color={iconFill}

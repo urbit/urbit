@@ -51,7 +51,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactE
 
   const groups = useGroupState(state => state.groups);
   const waiter = useWaitForProps({ groups }, 5000);
-  
+
   const onSubmit = async (values: FormSchema, actions) => {
     const name = (values.name) ? values.name : values.moduleType;
     const resId: string = stringToSymbol(values.name)
@@ -152,7 +152,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactE
                 name="moduleType"
               />
               <IconRadio
-                icon="Publish"
+                icon="Notebook"
                 label="Notebook"
                 id="publish"
                 name="moduleType"

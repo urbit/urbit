@@ -208,7 +208,7 @@ export function Participants(props: {
       </Row>
       <Col flexShrink="0" width="100%" height="fit-content">
         <Row alignItems="center" bg="washedGray" borderRadius="1" px="2" my="2">
-          <Icon color="gray" icon="MagnifyingGlass" />
+          <Icon color="gray" icon="Search" />
           <Input
             maxWidth="256px"
             color="gray"

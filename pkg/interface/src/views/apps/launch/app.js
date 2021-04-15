@@ -220,7 +220,7 @@ export default function LaunchApp(props) {
             <NewGroup {...props} />
           </ModalButton>
           <ModalButton
-            icon="Boot"
+            icon="BootNode"
             bg="washedGray"
             color="black"
             text="Join Group"

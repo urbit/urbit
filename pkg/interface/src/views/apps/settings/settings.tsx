@@ -107,7 +107,7 @@ export default function SettingsScreen(props: any) {
           </Text>
           <Col>
             <SidebarItem
-              icon='Inbox'
+              icon='Notifications'
               text='Notifications'
               hash='notifications'
             />
