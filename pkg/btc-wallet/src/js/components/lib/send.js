@@ -30,14 +30,10 @@ export default class Send extends Component {
       'init-payment': {
         'payee': this.state.payee,
         'value': parseInt(this.state.satsAmount),
-        'feyb': 100,
+        'feyb': 1,
       }
     }
-    this.props.api.btcWalletCommand(command).then(
-      (res) => {
-        this.setState({signing: true});
-      }
-    );
+    this.props.api.btcWalletCommand(command).then(res => this.setState({signing: true}));
   }
 
   render() {
@@ -56,7 +52,14 @@ export default class Send extends Component {
           denomAmount={denomAmount}
           satsAmount={satsAmount}
         /> :
-        <>
+        <Col
+          height='400px'
+          width='100%'
+          backgroundColor='white'
+          borderRadius='32px'
+          mb={5}
+          p={5}
+        >
           <Row
             justifyContent='space-between'
             alignItems='center'
@@ -138,8 +141,7 @@ export default class Send extends Component {
               }}
             />
           </Row>
-
-        </>
+        </Col>
       }
       </>
     );
