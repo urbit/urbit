@@ -25,31 +25,30 @@
 /*
 ::  peek=[gang (each path $%([%once @tas @tas path] [%beam @tas beam]))]
 ::  ovum=ovum
-::  gift=(list ovum)
 ::
-|$  [peek ovum gift]
+|$  [peek ovum]
 |%
-::  +writ: from king to serf
+::  +task: from urth to mars
 ::
 ::    next steps:
 ::    - |mass should be a query of the serf directly
 ::    - add duct or vane stack for spinner
 ::
-+$  writ
++$  task
   $%  [%live ?(%meld %pack) ~] :: XX rename
       [%exit ~]
       [%peek mil=@ peek]
       [%poke mil=@ ovum]  ::  XX replacement y/n
       [%sync ?(%cram %save) ~] :: XX remove cram?
   ==
-::  +plea: from serf to king
+::  +gift: from mars to urth
 ::
-+$  plea
++$  gift
   $%  [%live ~]
       [%flog cord]
       [%slog pri=@ tank]
       [%peek p=(each (unit (cask)) goof)]
-      [%poke p=(each gift (list goof))]
+      [%poke p=(each (list ovum) (list goof))]
       [%ripe [pro=%2 kel=wynn] [who=@p fake=?] eve=@ mug=@]
       [%sync eve=@ mug=@]
   ==
@@ -421,6 +420,11 @@ _cw_mars_work(u3_mars* mar_u, u3_noun jar)
 
       _cw_mars_gift(mar_u, u3nc(c3__live, u3_nul));
     } break;
+
+    case c3__exit: {
+      mar_u->sat_e = _cwe_mars_exit;
+      fprintf(stderr, "mars set exit\r\n");
+    } break;
   }
 
   return c3y;
@@ -482,6 +486,7 @@ top:
     else if ( _cwe_mars_exit == mar_u->sat_e ) {
       //  XX exit cb ?
       //
+      u3e_save();
       fprintf(stderr, "mars: exit\r\n");
       exit(0);
     }

@@ -414,13 +414,10 @@
       /* u3_writ_type: king->serf ipc message types
       */
         typedef enum {
-          u3_writ_work = 0,
+          u3_writ_poke = 0,
           u3_writ_peek = 1,
-          u3_writ_save = 3,
-          u3_writ_cram = 4,
-          u3_writ_meld = 5,
-          u3_writ_pack = 6,
-          u3_writ_exit = 7
+          u3_writ_live = 2,
+          u3_writ_exit = 3
         } u3_writ_type;
 
       /* u3_writ: ipc message from king to serf
@@ -429,13 +426,11 @@
           struct _u3_writ* nex_u;               //  next in queue
           u3_writ_type     typ_e;               //  type-tagged
           union {                               //
-            struct {                            //  work:
+            struct {                            //  poke:
               u3_ovum*     egg_u;               //    origin
               u3_noun        job;               //    (pair date ovum)
             } wok_u;                            //
             u3_peek*       pek_u;               //  peek
-            u3_info        fon_u;               //  recompute
-            c3_d           eve_d;               //  save/pack at
           };
         } u3_writ;
 
