@@ -209,6 +209,19 @@
   ++  parse-hex  |=(=json `(unit @)`(some (parse-hex-result:rpc:ethereum json)))
   --
 ::
+++  get-tx-by-hash
+  |=  [url=@ta tx-hash=@ux]
+  =/  m  (strand:strandio transaction-result:rpc:ethereum)
+  ^-  form:m
+  ;<  =json  bind:m
+    %+  request-rpc  url
+    :*  `'tx by hash'
+        %eth-get-transaction-by-hash
+        tx-hash
+    ==
+  %-  pure:m
+  (parse-transaction-result:rpc:ethereum json)
+::
 ++  get-logs-by-hash
   |=  [url=@ta =hash:block contracts=(list address) =topics]
   =/  m  (strand:strandio (list event-log:rpc:ethereum))

@@ -3,7 +3,7 @@
 =,  jael
 |%
 ++  app-state
-  $:  %0
+  $:  %1
       url=@ta
       whos=(set ship)
       nas=^state:naive
@@ -39,39 +39,41 @@
 ++  topics
   |=  ships=(set ship)
   ^-  (list ?(@ux (list @ux)))
-  ?:  &  ~
-  ::  The first topic should be one of these event types
-  ::
-  :-  =>  azimuth-events:azimuth
-      :~  broke-continuity
-          changed-keys
-          lost-sponsor
-          escape-accepted
-      ==
-  ::  If we're looking for a specific set of ships, specify them as
-  ::  the second topic.  Otherwise don't specify the second topic so
-  ::  we will match all ships.
-  ::
-  ?:  =(~ ships)
-    ~
-  [(turn ~(tap in ships) ,@) ~]
+  ~
+::
+++  data-to-hex
+  |=  data=@t
+  ?~  data  *@ux
+  ?:  =(data '0x')  *@ux
+  (hex-to-num:ethereum data)
 ::
 ++  run-logs
   |=  [nas=^state:naive logs=(list event-log:rpc:ethereum)]
   ^-  [(list tagged-diff) ^state:naive]
+  ~&  >  run-logs=logs
   ?~  logs
+    ~&  >>  %done
     `nas
   ?~  mined.i.logs
+    ~&  >>  %majored
     $(logs t.logs)
   =^  raw-effects  nas
-    =/  data
-      ?~  data.i.logs  *@ux
-      ?:  =(data.i.logs '0x')  *@ux
-      ~|  data.i.logs
-      (hex-to-num:ethereum data.i.logs)
-    =/  =event-log:naive
-      [address.i.logs data topics.i.logs]
-    =/  res  (mule |.((naive verifier nas %log event-log)))
+    =/  =^input:naive
+      ?:  =(azimuth:contracts:azimuth address.i.logs)
+        ~&  >>  %amizuth
+        =/  data  (data-to-hex data.i.logs)
+        =/  =event-log:naive
+          [address.i.logs data topics.i.logs]
+        [%log event-log]
+      ~&  >>  %layer-2
+      ?~  input.u.mined.i.logs
+        ~&  [%strange-no-batch-2 i.logs]
+        [%bat *@]
+      ?.  =(0x2688.7f26 (end [3 4] (swp 5 u.input.u.mined.i.logs)))
+        ~&  [%strange-no-batch-3 i.logs `@ux`(end [3 4] (swp 5 u.input.u.mined.i.logs))]
+        [%bat *@]
+      [%bat (rsh [3 4] u.input.u.mined.i.logs)]
+    =/  res  (mule |.((%*(. naive lac |) verifier nas input)))
     ?-  -.res
       %&  p.res
       %|  ((slog 'naive-fail' p.res) `nas)
@@ -85,7 +87,7 @@
 ++  run-batch
   |=  [nas=^state:naive batch=@]
   ^+  *naive
-  (naive verifier nas %bat batch)
+  (%*(. naive lac |) verifier nas %bat batch)
 ::
 ++  to-udiffs
   |=  effects=(list tagged-diff)
@@ -122,7 +124,8 @@
     ^-  config:eth-watcher
     :*  url.state  =(%czar (clan:title our))  ~m5  ~h30
         launch:contracts:azimuth
-        ~[azimuth:contracts:azimuth]
+        ~  ::  ~[azimuth:contracts:azimuth]
+        ~[naive:contracts:azimuth]
         (topics whos.state)
     ==
   [%pass /wa %agent [our %eth-watcher] %poke %eth-watcher-poke args]
@@ -145,7 +148,42 @@
 ++  on-save   !>(state)
 ++  on-load
   |=  old=vase
-  `this(state !<(app-state old))
+  |^
+  =+  !<(old-state=app-states old)
+  =?  old-state  ?=(%0 -.old-state)
+    %=    old-state
+        -  %1
+        logs
+      %+  turn  logs.old-state
+      |=  =event-log-0
+      event-log-0(mined ?~(mined.event-log-0 ~ `mined.event-log-0))
+    ==
+  `this(state ?>(?=(%1 -.old-state) old-state))
+  ::
+  ++  app-states  $%(app-state-0 app-state)
+  ++  app-state-0
+    $:  %0
+        url=@ta
+        whos=(set ship)
+        nas=^state:naive
+        logs=(list =event-log-0)
+    ==
+  ::
+  +$  event-log-0
+    $:  $=  mined  %-  unit
+        $:  log-index=@ud
+            transaction-index=@ud
+            transaction-hash=@ux
+            block-number=@ud
+            block-hash=@ux
+            removed=?
+        ==
+      ::
+        address=@ux
+        data=@t
+        topics=(lest @ux)
+    ==
+  --
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -207,13 +245,16 @@
   ::
   =.  logs.state
     ?-  -.diff
-      %history  loglist.diff
+      :: %history  loglist.diff
+      %history  (welp logs.state loglist.diff)
       %logs     (welp logs.state loglist.diff)
     ==
+  =?  nas.state  ?=(%history -.diff)  *^state:naive
   =^  effects  nas.state
     %+  run-logs
       ?-  -.diff
-        %history  *^state:naive
+        ::  %history  *^state:naive
+        %history  nas.state
         %logs     nas.state
       ==
     loglist.diff

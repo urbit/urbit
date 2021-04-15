@@ -18,6 +18,7 @@
       timeout-time=@dr
       from=number:block
       contracts=(list address:ethereum)
+      batchers=(list address:ethereum)
       =topics
   ==
 ::

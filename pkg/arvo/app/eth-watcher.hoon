@@ -8,7 +8,7 @@
 =>  |%
     +$  card  card:agent:gall
     +$  app-state
-      $:  %4
+      $:  %5
           dogs=(map path watchdog)
       ==
     ::
@@ -111,14 +111,16 @@
   ::
   =?  old-state  ?=(%3 -.old-state)
     %-  (slog leaf+"upgrading eth-watcher from %3" ~)
-    ^-  app-state
+    ^-  app-state-4
     %=    old-state
         -  %4
         dogs
       %-  ~(run by dogs.old-state)
       |=  dog=watchdog-3
+      ^-  watchdog-4
       %=  dog
           -
+        ^-  config-4
         =,  -.dog
         [url eager refresh-rate (mul refresh-rate 6) from contracts topics]
       ::
@@ -128,10 +130,80 @@
       ==
     ==
   ::
-  [cards-1 this(state ?>(?=(%4 -.old-state) old-state))]
+  =?  old-state  ?=(%4 -.old-state)
+    %-  (slog leaf+"upgrading eth-watcher from %4" ~)
+    ^-  app-state
+    %=    old-state
+        -  %5
+        dogs
+      %-  ~(run by dogs.old-state)
+      |=  dog=watchdog-4
+      %=  dog
+          -
+        =,  -.dog
+        [url eager refresh-rate timeout-time from contracts ~ topics]
+      ::
+          pending-logs-4
+        %-  ~(run by pending-logs-4.dog)
+        |=  =loglist-4
+        %+  turn  loglist-4
+        |=  =event-log-4
+        event-log-4(mined ?~(mined.event-log-4 ~ `mined.event-log-4))
+      ::
+          history-4
+        %+  turn  history-4.dog
+        |=  =loglist-4
+        %+  turn  loglist-4
+        |=  =event-log-4
+        event-log-4(mined ?~(mined.event-log-4 ~ `mined.event-log-4))
+      ==
+    ==
+  ::
+  [cards-1 this(state ?>(?=(%5 -.old-state) old-state))]
   ::
   +$  app-states
-    $%(app-state-0 app-state-1 app-state-2 app-state-3 app-state)
+    $%(app-state-0 app-state-1 app-state-2 app-state-3 app-state-4 app-state)
+  ::
+  +$  app-state-4
+    $:  %4
+        dogs=(map path watchdog-4)
+    ==
+  ::
+  +$  watchdog-4
+    $:  config-4
+        running=(unit [since=@da =tid:spider])
+        =number:block
+        =pending-logs-4
+        =history-4
+        blocks=(list block)
+    ==
+  ::
+  +$  config-4
+    $:  url=@ta
+        eager=?
+        refresh-rate=@dr
+        timeout-time=@dr
+        from=number:block
+        contracts=(list address:ethereum)
+        =topics
+    ==
+  +$  pending-logs-4  (map number:block loglist-4)
+  +$  history-4       (list loglist-4)
+  +$  loglist-4       (list event-log-4)
+  +$  event-log-4
+    $:  $=  mined  %-  unit
+        $:  log-index=@ud
+            transaction-index=@ud
+            transaction-hash=@ux
+            block-number=@ud
+            block-hash=@ux
+            removed=?
+        ==
+      ::
+        address=@ux
+        data=@t
+        topics=(lest @ux)
+    ==
   ::
   +$  app-state-3
     $:  %3
@@ -142,8 +214,8 @@
     $:  config-3
         running=(unit =tid:spider)
         =number:block
-        =pending-logs
-        =history
+        =pending-logs-4
+        =history-4
         blocks=(list block)
     ==
   ::
@@ -170,8 +242,8 @@
     $:  config-1
         running=(unit =tid:spider)
         =number:block
-        =pending-logs
-        =history
+        =pending-logs-4
+        =history-4
         blocks=(list block)
     ==
   ::
@@ -192,8 +264,8 @@
     $:  config-0
         running=(unit =tid:spider)
         =number:block
-        =pending-logs
-        =history
+        =pending-logs-4
+        =history-4
         blocks=(list block)
     ==
   ::
@@ -225,6 +297,7 @@
       ==
     ::
     =/  already  (~(has by dogs.state) path.poke)
+    ~&  [already=already restart=restart]
     ~?  &(already restart)
       [dap.bowl 'overwriting existing watchdog on' path.poke]
     =/  wait-cards=(list card)
@@ -389,9 +462,10 @@
   ++  release-logs
     |=  [=path dog=watchdog]
     ^-  (quip card watchdog)
-    ?:  (lth number.dog 30)
+    ~&  >  release-logs=pending-logs.dog
+    ?:  (lth number.dog 0)  :: TODO: 30!
       `dog
-    =/  rel-number  (sub number.dog 30)
+    =/  rel-number  (sub number.dog 0)  :: TODO: 30!
     =/  numbers=(list number:block)  ~(tap in ~(key by pending-logs.dog))
     =.  numbers  (sort numbers lth)
     =^  logs=(list event-log:rpc:ethereum)  dog

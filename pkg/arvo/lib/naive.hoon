@@ -885,6 +885,7 @@
   :: Received log from L1 transaction
   ::
   (receive-log state event-log.input)
+%+  debug  %batch
 ::  Received L2 batch
 ::
 (receive-batch verifier state batch.input)

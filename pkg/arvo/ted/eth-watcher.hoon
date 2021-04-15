@@ -15,6 +15,7 @@
 ;<  =latest=block                 bind:m  (get-latest-block:ethio url.pup)
 ;<  pup=watchpup   bind:m         (zoom pup number.id.latest-block)
 =|  vows=disavows
+;<  pup=watchpup   bind:m         (fetch-batches pup)
 ::?.  eager.pup
   (pure:m !>([vows pup]))
 :: |-  ^-  form:m
@@ -37,8 +38,9 @@
   ::  if this next block isn't direct descendant of our logs, reorg happened
   ?:  &(?=(^ blocks.pup) !=(parent-hash.block hash.id.i.blocks.pup))
     (rewind pup block)
+  =/  contracts  (weld contracts.pup batchers.pup)
   ;<  =new=loglist  bind:m  ::  oldest first
-    (get-logs-by-hash:ethio url.pup hash.id.block contracts.pup topics.pup)
+    (get-logs-by-hash:ethio url.pup hash.id.block contracts topics.pup)
   %-  pure:m
   :-  ~
   %_  pup
@@ -80,8 +82,9 @@
   |=  [pup=watchpup =latest=number:block]
   =/  m  (strand:strandio ,watchpup)
   ^-  form:m
-  =/  zoom-margin=number:block  30
+  =/  zoom-margin=number:block  0  :: TODO: 30!
   =/  zoom-step=number:block  10.000
+  ~&  >  [%zoom-start number.pup latest-number]
   ?:  (lth latest-number (add number.pup zoom-margin))
     (pure:m pup)
   =/  up-to-number=number:block  (min (add 1.000.000 number.pup) (sub latest-number zoom-margin))
@@ -95,12 +98,62 @@
   ;<  =loglist  bind:m  ::  oldest first
     %:  get-logs-by-range:ethio
       url.pup
-      contracts.pup
+      (weld contracts.pup batchers.pup)
       topics.pup
       number.pup
       to-number
     ==
+  ~&  >  [%zoom-loglist loglist]
   =?  pending-logs.pup  ?=(^ loglist)
     (~(put by pending-logs.pup) to-number loglist)
   loop(number.pup +(to-number))
+::  Fetch input for any logs in batchers.pup
+::
+++  fetch-batches
+  |=  pup=watchpup
+  =/  m  (strand:strandio ,watchpup)
+  =|  res=(list [number:block loglist])
+  =/  pending=(list [=number:block =loglist])  ~(tap by pending-logs.pup)
+  |-  ^-  form:m
+  =*  loop  $
+  ?~  pending
+    (pure:m pup(pending-logs (malt res)))
+  ;<  logs=(list event-log:rpc:ethereum)  bind:m
+    (fetch-inputs pup loglist.i.pending)
+  =.  res  [[number.i.pending logs] res]
+  loop(pending t.pending)
+::  Fetch inputs for a list of logs
+::
+++  fetch-inputs
+  |=  [pup=watchpup logs=(list event-log:rpc:ethereum)]
+  =/  m  (strand:strandio ,(list event-log:rpc:ethereum))
+  =|  res=(list event-log:rpc:ethereum)
+  |-  ^-  form:m
+  =*  loop  $
+  ?~  logs
+    (pure:m (flop res))
+  ;<  log=event-log:rpc:ethereum  bind:m  (fetch-input pup i.logs)
+  =.  res  [log res]
+  loop(logs t.logs)
+::  Fetch input for a log
+::
+++  fetch-input
+  |=  [pup=watchpup log=event-log:rpc:ethereum]
+  =/  m  (strand:strandio ,event-log:rpc:ethereum)
+  ^-  form:m
+  ?~  mined.log
+    (pure:m log)
+  ?^  input.u.mined.log
+    (pure:m log)
+  ?.  (lien batchers.pup |=(=@ux =(ux address.log)))
+    (pure:m log)
+  ;<  res=transaction-result:rpc:ethereum  bind:m
+    (get-tx-by-hash:ethio url.pup transaction-hash.u.mined.log)
+  (pure:m log(input.u.mined `(data-to-hex input.res)))
+::
+++  data-to-hex
+  |=  data=@t
+  ?~  data  *@ux
+  ?:  =(data '0x')  *@ux
+  (hex-to-num:ethereum data)
 --

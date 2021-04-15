@@ -78,7 +78,7 @@
     ::  #  constants
     ::
     ::  contract addresses
-    ++  contracts  mainnet-contracts
+    ++  contracts  local-contracts
     ++  mainnet-contracts
       |%
       ::  azimuth: data contract
@@ -97,6 +97,9 @@
       ::
       ++  delegated-sending
         0xf790.8ab1.f1e3.52f8.3c5e.bc75.051c.0565.aeae.a5fb
+      ::
+      ++  naive
+        0x45bc.b745.a1af.e67a.c877.e107.5478.2329.4ba9.0899
       ::
       ::  launch: block number of azimuth deploy
       ::
@@ -149,6 +152,8 @@
         0x35eb.3b10.2d9c.1b69.ac14.69c1.b1fe.1799.850c.d3eb
       ++  launch  0
       ++  public  0
+      ++  naive
+        0xe604.2703.475d.0dd1.bc2e.b564.a55f.1832.c252.7171
       --
     ::
       ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
