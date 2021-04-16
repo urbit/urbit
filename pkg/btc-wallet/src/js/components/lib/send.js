@@ -11,6 +11,8 @@ import {
 
 import Invoice from './invoice.js'
 
+import * as ob from 'urbit-ob';
+
 export default class Send extends Component {
   constructor(props) {
     super(props);
@@ -20,9 +22,16 @@ export default class Send extends Component {
       denomAmount: '0.00',
       satsAmount: '0',
       payee: '',
+      ready: false,
     };
 
     this.initPayment  = this.initPayment.bind(this);
+    this.checkPatp  = this.checkPatp.bind(this);
+  }
+
+  checkPatp(e){
+    let ready = ob.isValidPatp(e.target.value);
+    this.setState({ready, payee: e.target.value});
   }
 
   initPayment() {
@@ -89,9 +98,7 @@ export default class Send extends Component {
                 fontSize='14px'
                 placeholder='~sampel-palnet or BTC address'
                 value={payee}
-                onChange={e => {
-                  this.setState({payee: e.target.value});
-                }}
+                onChange={this.checkPatp}
               />
             </Row>
             <Row
@@ -145,17 +152,17 @@ export default class Send extends Component {
               mt={8}
             >
               <Button
+                primary
                 children='Sign Transaction' mr={3}
                 fontSize={1}
-                color='white'
-                backgroundColor='blue'
-                borderColor='none'
                 borderRadius='24px'
                 py='24px'
                 px='24px'
                 onClick={() =>{
                   this.initPayment()
                 }}
+                disabled={!this.state.ready}
+                style={{cursor: this.state.ready ? "pointer" : "default"}}
               />
             </Row>
           </Col>
