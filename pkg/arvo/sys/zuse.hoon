@@ -3744,6 +3744,15 @@
         `[i c]
       $(i +(i), b t.b)
     ::
+    ++  pact                                            ::  condense stub
+      |=  a=stub
+      ^-  stub
+      ?~  a  ~
+      ?~  t.a  a
+      ?.  =(p.i.a p.i.t.a)  [i.a $(a t.a)]
+      =.  q.i.t.a  (weld q.i.a q.i.t.a)
+      $(a t.a)
+    ::
     ++  slag                                            ::  slag stub
       |=  [a=@ b=stub]
       ^-  stub
@@ -3774,6 +3783,20 @@
     ++  swag                                            ::  swag stub
       |=  [[a=@ b=@] c=stub]
       (scag b (slag a c))
+    ::
+    ++  wail                                            ::  overlay stub
+      |=  [a=stub b=@ c=stub d=@c]
+      ^-  stub
+      ;:  weld
+        (scag b a)
+      ::
+        =+  e=(lent-char a)
+        ?:  (lth b e)  ~
+        [*stye (reap (sub b e) d)]~
+      ::
+        c
+        (slag (add b (lent-char c)) a)
+      ==
     --  ::  klr
   --
 ::                                                      ::
