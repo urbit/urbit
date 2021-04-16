@@ -18,7 +18,7 @@ export default class Send extends Component {
     this.state = {
       signing: false,
       denomAmount: '0.00',
-      satsAmount: '0.00',
+      satsAmount: '0',
       payee: '',
     };
 
@@ -76,9 +76,17 @@ export default class Send extends Component {
             alignItems='center'
             mt={6}
             justifyContent='space-between'>
-            <Text fontSize={1}>To</Text>
+            <Text
+              gray
+              fontSize={1}
+              width='40%'
+              fontWeight='600'
+            >
+              To
+            </Text>
             <Input
-              width='auto'
+              width='100%'
+              fontSize='14px'
               placeholder='~sampel-palnet or BTC address'
               value={payee}
               onChange={e => {
@@ -88,13 +96,19 @@ export default class Send extends Component {
           </Row>
           <Row
             alignItems='center'
-            mt={2}
+            mt={4}
             justifyContent='space-between'>
-            <Text fontSize={1}>Amount</Text>
+            <Text
+              gray
+              fontSize={1}
+              width='40%'
+              fontWeight='600'
+            >Amount</Text>
             <Input
+              fontSize='14px'
+              width='100%'
               type='number'
               border='none'
-              width='auto'
               value={denomAmount}
               onChange={e => {
                 this.setState({
@@ -109,10 +123,13 @@ export default class Send extends Component {
             alignItems='center'
             mt={2}
             justifyContent='space-between'>
+            {/* yes this is a hack */}
+            <Box width='40%' />
             <Input
+              fontSize='14px'
+              width='100%'
               type='number'
               border='none'
-              width='auto'
               value={satsAmount}
               onChange={e => {
                 this.setState({
