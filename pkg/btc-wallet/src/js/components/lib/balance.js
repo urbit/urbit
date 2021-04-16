@@ -44,6 +44,14 @@ export default class Balance extends Component {
     }
   }
 
+  componentDidMount() {
+    fetch('https://blockchain.info/tobtc?currency=USD&value=1')
+      .then(res => res.json())
+      .then(n => {
+        this.setState({conversion: {USD: 1/n, CAD: 70000, BTC: 1}});
+      });
+  }
+
 
   render() {
     const sats = (this.props.state.wallet) ?
