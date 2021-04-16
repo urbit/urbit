@@ -3749,7 +3749,7 @@
       ^-  stub
       =+  c=(lnts-char b)
       =+  i=(brek a c)
-      ?~  i  b
+      ?~  i  ~
       =+  r=(^slag +(p.u.i) b)
       ?:  =(a q.u.i)
         r
