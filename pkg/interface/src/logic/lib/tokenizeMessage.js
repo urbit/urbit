@@ -37,13 +37,14 @@ const tokenizeMessage = (text) => {
       message.push(line);
     } else {
       line.split(/\s/).forEach((str) => {
+        const punctTest = str.match(/([^\w\d]+)?([0-9a-z\-\s]+)?([^\w\d]+)?/);
         if (
-          (str.startsWith('`') && str !== '`')
+          (str !== '`' && punctTest[1] && punctTest[1] === '`')
           || (str === '`' && !isInCodeBlock)
         ) {
           isInCodeBlock = true;
         } else if (
-          (str.endsWith('`') && str !== '`')
+          (str !== '`' && punctTest[3] && punctTest[3].startsWith('`'))
           || (str === '`' && isInCodeBlock)
         ) {
           isInCodeBlock = false;
@@ -70,13 +71,19 @@ const tokenizeMessage = (text) => {
           }
           messages.push({ url: str });
           message = [];
-        } else if(urbitOb.isValidPatp(str) && !isInCodeBlock) {
+        } else if (urbitOb.isValidPatp(`~${punctTest[2]}`) && !isInCodeBlock) {
           if (message.length > 0) {
             // If we're in the middle of a message, add it to the stack and reset
             messages.push({ text: message.join(' ') });
             message = [];
           }
-          messages.push({ mention: str });
+          if (punctTest[1] && punctTest[1] !== '~') {
+            messages.push({ text: punctTest[1].replace('~', '')})
+          }
+          messages.push({ mention: punctTest[2] });
+          if (punctTest[3]) {
+            messages.push({ text: `${punctTest[3]} ` })
+          }
           message = [];
 
         } else {
