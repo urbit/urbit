@@ -252,15 +252,15 @@ _mars_gift(u3_mars* mar_u, u3_noun pro)
   }
 }
 
-/* _serf_make_crud():
+/* _mars_make_crud(): construct error-notification event.
 */
 static u3_noun
-_serf_make_crud(u3_noun job, u3_noun dud)
+_mars_make_crud(u3_noun job, u3_noun dud)
 {
   u3_noun now, ovo, new;
   u3x_cell(job, &now, &ovo);
 
-  new = u3nt(u3i_vint(u3k(now)),
+  new = u3nt(u3k(now),
              u3nt(u3_blip, c3__arvo, u3_nul),
              u3nt(c3__crud, dud, u3k(ovo)));
 
@@ -287,7 +287,7 @@ _mars_poke(c3_w     mil_w,
   else {
     u3_noun dud = pro;
 
-    *eve = _serf_make_crud(*eve, u3k(dud));
+    *eve = _mars_make_crud(*eve, u3k(dud));
 
     if ( c3y == u3_poke_sure(mil_w, u3k(*eve), &pro) ) {
       *out = pro;
