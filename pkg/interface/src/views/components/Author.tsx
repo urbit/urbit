@@ -18,7 +18,7 @@ import { PropFunc } from '~/types';
 
 interface AuthorProps {
   ship: string;
-  date: number;
+  date?: number;
   showImage?: boolean;
   children?: ReactNode;
   unread?: boolean;
@@ -113,11 +113,13 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
         lineHeight='tall'
         fontFamily={showNickname ? 'sans' : 'mono'}
         fontWeight={showNickname ? '500' : '400'}
+        mr={showNickname ? 0 : "2px"}
+        mt={showNickname ? 0 : "0px"}
         onClick={doCopy}
       >
         {copyDisplay}
       </Box>
-      { !dontShowTime && (
+      { !dontShowTime && time && (
         <Timestamp
           relative={isRelativeTime}
           stamp={stamp}
