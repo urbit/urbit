@@ -76,5 +76,116 @@
     :~  wid+(numb:enjs wid.h)
         dat+s+(scot %ux dat.h)
     ==
+  ::
+  ++  update
+    |=  upd=update:btc-wallet
+    ^-  json
+    %+  frond  -.upd
+    ?-  -.upd
+      %initial             (initial upd)
+      %change-provider     (change-provider upd)
+      %change-wallet       (change-wallet upd)
+      %psbt                s+pb.upd
+      %btc-state           (btc-state btc-state.upd)
+      %new-tx              (hest hest.upd)
+      %cancel-tx           (hexb txid.upd)
+    ==
+  ::
+  ++  initial
+    |=  upd=update:btc-wallet
+    ?>  ?=(%initial -.upd)
+    ^-  json
+    %-  pairs
+    :~  provider+(provider provider.upd)
+        wallet+?~(wallet.upd ~ [%s u.wallet.upd])
+        balance+?~(balance.upd ~ (numb u.balance.upd))
+        history+(history history.upd)
+        btc-state+(btc-state btc-state.upd)
+    ==
+  ::
+  ++  change-provider
+    |=  upd=update:btc-wallet
+    ?>  ?=(%change-provider -.upd)
+    ^-  json
+    (provider provider.upd)
+  ::
+  ++  change-wallet
+    |=  upd=update:btc-wallet
+    ?>  ?=(%change-wallet -.upd)
+    ^-  json
+    %-  pairs
+    :~  wallet+?~(wallet.upd ~ [%s u.wallet.upd])
+        balance+?~(balance.upd ~ (numb u.balance.upd))
+        history+(history history.upd)
+    ==
+  ::
+  ++  btc-state
+    |=  bs=btc-state:btc-wallet
+    ^-  json
+    %-  pairs
+    :~  block+(numb block.bs)
+        fee+?~(fee.bs ~ (numb u.fee.bs))
+        date+(sect t.bs)
+    ==
+  ::
+  ++  provider
+    |=  p=(unit provider:btc-wallet)
+    ^-  json
+    ?~  p  ~
+    %-  pairs
+    :~  host+(ship host.u.p)
+        connected+b+connected.u.p
+    ==
+  ::
+  ++  history
+    |=  hy=history:btc-wallet
+    ^-  json
+    :-   %o
+    ^-  (map @t json)
+    %-  ~(rep by hy)
+    |=  [[=txid:btc-wallet h=hest:btc-wallet] out=(map @t json)]
+    ^-  (map @t json)
+    (~(put by out) (scot %ux dat.txid) (hest h))
+  ::
+  ++  hest
+    |=  h=hest:btc-wallet
+    ^-  json
+    %-  pairs
+    :~  xpub+s+xpub.h
+        txid+(hexb txid.h)
+        confs+(numb confs.h)
+        recvd+?~(recvd.h ~ (sect u.recvd.h))
+        inputs+(vals inputs.h)
+        outputs+(vals outputs.h)
+    ==
+  ::
+  ++  vals
+    |=  vl=(list [=val:tx:bitcoin s=(unit @p)])
+    ^-  json
+    :-  %a
+    %+  turn  vl
+    |=  [v=val:tx:bitcoin s=(unit @p)]
+    %-  pairs
+    :~  val+(val v)
+        ship+?~(s ~ (ship u.s))
+    ==
+  ::
+  ++  val
+    |=  v=val:tx:bitcoin
+    ^-  json
+    %-  pairs
+    :~  txid+(hexb txid.v)
+        pos+(numb pos.v)
+        address+(address address.v)
+        value+(numb value.v)
+    ==
+  ::
+  ++  address
+    |=  a=address:bitcoin
+    ^-  json
+    ?-  -.a
+      %base58  [%s (rsh [3 2] (scot %uc +.a))]
+      %bech32  [%s +.a]
+    ==
   --
 --

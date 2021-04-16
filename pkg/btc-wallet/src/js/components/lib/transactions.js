@@ -8,6 +8,8 @@ import {
   Col,
 } from '@tlon/indigo-react';
 
+import Transaction from './transaction.js';
+
 
 export default class Transactions extends Component {
   constructor(props) {
@@ -16,19 +18,21 @@ export default class Transactions extends Component {
 
 
   render() {
+    const body = (this.props.state.history.length <= 0)
+      ?  <Text color="gray" fontSize={2} fontWeight="bold">No Transactions Yet</Text>
+      :  this.props.state.history.map((tx, i) => {
+        return(<Transaction tx={tx} key={i}/>)
+      });
+
     return (
       <Col
-        height="100px"
         width='100%'
         backgroundColor="white"
         borderRadius="32px"
-        flexGrow="1"
         mb={5}
         p={5}
-        justifyContent="center"
-        alignItems="center"
       >
-        <Text color="gray" fontSize={2} fontWeight="bold">No Transactions Yet</Text>
+        {body}
       </Col>
     );
   }

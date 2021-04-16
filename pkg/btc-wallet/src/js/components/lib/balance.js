@@ -46,9 +46,9 @@ export default class Balance extends Component {
 
 
   render() {
-    const sats = (this.props.state.wallet) ?
-      (this.props.state.wallet.balance || 0) : 0;
+    const sats = (this.props.state.balance || 0);
     const value = currencyFormat(sats, this.state.conversion, this.state.denomination);
+    const sendDisabled = (sats === 0);
 
     return (
       <>
@@ -66,6 +66,7 @@ export default class Balance extends Component {
            width='100%'
            backgroundColor="white"
            borderRadius="32px"
+           justifyContent="space-between"
            mb={5}
            p={5}
          >
@@ -83,10 +84,12 @@ export default class Balance extends Component {
            </Col>
            <Row flexDirection="row-reverse">
              <Button children="Send"
+                     disabled={sendDisabled}
                      fontSize={1}
                      fontWeight="bold"
-                     color="lighterGray"
-                     backgroundColor="veryLightGray"
+                     color={sendDisabled ? "lighterGray" : "white"}
+                     backgroundColor={sendDisabled ? "veryLightGray" : "orange"}
+                     style={{cursor: sendDisabled ? "default" : "pointer" }}
                      borderColor="none"
                      borderRadius="24px"
                      py="24px"
@@ -98,6 +101,7 @@ export default class Balance extends Component {
                      fontWeight="bold"
                      color="orange"
                      backgroundColor="midOrange"
+                     style={{cursor:"pointer"}}
                      borderColor="none"
                      borderRadius="24px"
                      py="24px"

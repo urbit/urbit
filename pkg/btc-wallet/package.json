@@ -40,6 +40,8 @@
     "@reach/tabs": "^0.10.5",
     "@tlon/indigo-light": "^1.0.5",
     "@tlon/indigo-react": "^1.2.8",
+    "@tlon/sigil-js": "^1.4.3",
+    "bip39": "^2.5.0",
     "bitcoinjs-lib": "^5.2.0",
     "bs58check": "^2.1.2",
     "buffer": "^6.0.3",
@@ -63,8 +65,7 @@
     "styled-system": "^5.1.5",
     "urbit-key-generation": "^0.18.0",
     "urbit-ob": "^5.0.0",
-    "urbit-sigil-js": "^1.3.13",
-    "bip39": "^2.5.0"
+    "urbit-sigil-js": "^1.3.13"
   },
   "resolutions": {
     "natives": "1.1.3"
