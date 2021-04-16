@@ -10,7 +10,7 @@ export function useRunIO<I, O>(
   io: (i: I) => Promise<O>,
   after: (o: O) => void,
   key: string
-) {
+): () => Promise<void> {
   const [resolve, setResolve] = useState<() => void>(() => () => {});
   const [reject, setReject] = useState<(e: any) => void>(() => () => {});
   const [output, setOutput] = useState<O | null>(null);

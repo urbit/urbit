@@ -42,6 +42,12 @@ export function useLazyScroll(
   }, [count]);
 
   useEffect(() => {
+    if(!ready) {
+      setIsDone(false);
+    }
+  }, [ready]);
+
+  useEffect(() => {
     if (!ref.current || isDone || !ready) {
       return;
     }
@@ -58,7 +64,7 @@ export function useLazyScroll(
     return () => {
       ref.current?.removeEventListener('scroll', onScroll);
     };
-  }, [ref?.current, count, ready]);
+  }, [ref?.current, ready, isDone]);
 
   return { isDone, isLoading };
 }
