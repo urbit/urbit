@@ -112,31 +112,34 @@ export default class Invoice extends Component {
                 padding={4}
               >
                 <Row>
-                  <Text fontWeight='500'>You are sending</Text>
+                  <Text fontSize='14px' fontWeight='500'>You are sending</Text>
                 </Row>
                 <Row
                   mt={2}
                 >
                   <Text
                     color='green'
+                    fontSize='14px'
                   >{`$${denomAmount} ${denomination}`}</Text>
                   <Text
                     ml={2}
+                    fontSize='14px'
                     color='gray'
                   >{`${satsAmount} sats`}</Text>
                 </Row>
                 <Row
                   mt={2}
                 >
-                  <Text>To:</Text>
+                  <Text fontSize='14px'>To:</Text>
                   <Text
                     ml={2}
+                    fontSize='14px'
                   >{payee}</Text>
                 </Row>
               </Box>
             </Box>
             <Box mt={3} mb={2}>
-              <Text fontSize='14px' fontWeight='500'>
+              <Text gray fontSize={1} fontWeight='600'>
                 Master Key
               </Text>
             </Box>
