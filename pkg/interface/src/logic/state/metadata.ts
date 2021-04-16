@@ -1,4 +1,5 @@
-import { MetadataUpdatePreview, Associations } from "@urbit/api";
+import { useCallback } from 'react';
+import { MetadataUpdatePreview, Association, Associations } from "@urbit/api";
 
 import { BaseState, createState } from "./base";
 
@@ -8,6 +9,14 @@ export interface MetadataState extends BaseState<MetadataState> {
   associations: Associations;
   // preview: (group: string) => Promise<MetadataUpdatePreview>;
 };
+
+export function useAssocForGraph(graph: string) {
+  return useMetadataState(useCallback(s => s.associations.graph[graph] as Association | undefined, [graph]));
+}
+
+export function useAssocForGroup(group: string) {
+  return useMetadataState(useCallback(s => s.associations.groups[group] as Association | undefined, [group]));
+}
 
 const useMetadataState = createState<MetadataState>('Metadata', {
   associations: { groups: {}, graph: {}, contacts: {}, chat: {}, link: {}, publish: {} },
