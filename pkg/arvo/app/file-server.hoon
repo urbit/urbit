@@ -188,8 +188,11 @@
     ?:  ?=([%'~landscape' %js %session ~] site.req-line)
       %+  require-authorization-simple:app
         inbound-request
-      %-  js-response:gen
-      (as-octt:mimes:html "window.ship = '{+:(scow %p our.bowl)}';")
+      %.  %-  as-octs:mimes:html
+          :((cury cat 3) 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";')
+      %*  .  js-response:gen
+        cache  %.n
+      ==
     ::
     =/  [payload=simple-payload:http public=?]  (get-file req-line is-file)
     ?:  public  payload
