@@ -69,13 +69,13 @@ struct _cd_save {
 
 
 static void
-_cw_mars_flush(u3_mars* mar_u);
+_mars_flush(u3_mars* mar_u);
 
 static void
-_cw_mars_commit(u3_mars* mar_u);
+_mars_commit(u3_mars* mar_u);
 
 static void
-_cw_mars_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
+_mars_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
 {
   struct _cd_save* req_u = ted_u->data;
 
@@ -119,15 +119,15 @@ _cw_mars_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
     c3_free(req_u->siz_i);
     c3_free(req_u);
 
-    _cw_mars_commit(mar_u);
-    _cw_mars_flush(mar_u);
+    _mars_commit(mar_u);
+    _mars_flush(mar_u);
   }
 }
 
-/* _cw_mars_commit_cb(): off the main thread, write event-batch.
+/* _mars_commit_cb(): off the main thread, write event-batch.
 */
 static void
-_cw_mars_commit_cb(uv_work_t* ted_u)
+_mars_commit_cb(uv_work_t* ted_u)
 {
   struct _cd_save* req_u = ted_u->data;
   req_u->ret_o = u3_lmdb_save(req_u->log_u->mdb_u,
@@ -138,7 +138,7 @@ _cw_mars_commit_cb(uv_work_t* ted_u)
 }
 
 static void
-_cw_mars_commit(u3_mars* mar_u)
+_mars_commit(u3_mars* mar_u)
 {
   u3_disk* log_u = mar_u->log_u;
 
@@ -180,15 +180,15 @@ _cw_mars_commit(u3_mars* mar_u)
     //
     //  XX need the loop here
     //
-    uv_queue_work(u3L, &log_u->ted_u, _cw_mars_commit_cb,
-                                      _cw_mars_commit_after_cb);
+    uv_queue_work(u3L, &log_u->ted_u, _mars_commit_cb,
+                                      _mars_commit_after_cb);
   }
 }
 
 static void
-_cw_mars_fact(u3_mars* mar_u,
-              u3_noun    job,
-              u3_noun    pro)
+_mars_fact(u3_mars* mar_u,
+           u3_noun    job,
+           u3_noun    pro)
 {
   {
     cw_fact* fac_u = c3_malloc(sizeof(*fac_u));
@@ -207,7 +207,7 @@ _cw_mars_fact(u3_mars* mar_u,
 
     mar_u->log_u->sen_d++;
 
-    _cw_mars_commit(mar_u);
+    _mars_commit(mar_u);
     u3z(job);
   }
 
@@ -232,7 +232,7 @@ _cw_mars_fact(u3_mars* mar_u,
 }
 
 static void
-_cw_mars_gift(u3_mars* mar_u, u3_noun pro)
+_mars_gift(u3_mars* mar_u, u3_noun pro)
 {
   cw_gift* gif_u = c3_malloc(sizeof(*gif_u));
   gif_u->nex_u = 0;
@@ -269,10 +269,10 @@ _serf_make_crud(u3_noun job, u3_noun dud)
 }
 
 static c3_o
-_cw_mars_poke(c3_w     mil_w,
-              c3_o     rep_o,
-              u3_noun*   eve,
-              u3_noun*   out)
+_mars_poke(c3_w     mil_w,
+           c3_o     rep_o,
+           u3_noun*   eve,
+           u3_noun*   out)
 {
   u3_noun pro;
 
@@ -302,7 +302,7 @@ _cw_mars_poke(c3_w     mil_w,
 
 
 static c3_o
-_cw_mars_work(u3_mars* mar_u, u3_noun jar)
+_mars_work(u3_mars* mar_u, u3_noun jar)
 {
   u3_noun tag, dat, pro;
 
@@ -345,18 +345,18 @@ _cw_mars_work(u3_mars* mar_u, u3_noun jar)
 
       mar_u->sen_d++;
 
-      if ( c3y == _cw_mars_poke(mil_w, c3y, &job, &pro) ) {
+      if ( c3y == _mars_poke(mil_w, c3y, &job, &pro) ) {
         mar_u->dun_d = mar_u->sen_d;
         mar_u->mug_l = u3r_mug(u3A->roc);
 
         //  XX process effects
         //
-        _cw_mars_fact(mar_u, job, u3nt(c3__poke, c3y, pro));
+        _mars_fact(mar_u, job, u3nt(c3__poke, c3y, pro));
       }
       else {
         mar_u->sen_d = mar_u->dun_d;
         u3z(job);
-        _cw_mars_gift(mar_u, u3nt(c3__poke, c3n, pro));
+        _mars_gift(mar_u, u3nt(c3__poke, c3n, pro));
       }
 
       c3_assert( mar_u->dun_d == u3A->eve_d );
@@ -374,7 +374,7 @@ _cw_mars_work(u3_mars* mar_u, u3_noun jar)
       }
 
       u3k(sam); u3z(jar);
-      _cw_mars_gift(mar_u, u3nc(c3__peek, u3v_soft_peek(mil_w, sam)));
+      _mars_gift(mar_u, u3nc(c3__peek, u3v_soft_peek(mil_w, sam)));
     } break;
 
     // XX remove /support cram?
@@ -420,7 +420,7 @@ _cw_mars_work(u3_mars* mar_u, u3_noun jar)
         } break;
       }
 
-      _cw_mars_gift(mar_u, u3nc(c3__live, u3_nul));
+      _mars_gift(mar_u, u3nc(c3__live, u3_nul));
     } break;
 
     case c3__exit: {
@@ -433,7 +433,7 @@ _cw_mars_work(u3_mars* mar_u, u3_noun jar)
 }
 
 static u3_weak
-_cw_mars_cue(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
+_mars_cue(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
 {
   u3_weak jar;
 
@@ -451,7 +451,7 @@ _cw_mars_cue(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
 }
 
 static void
-_cw_mars_flush(u3_mars* mar_u)
+_mars_flush(u3_mars* mar_u)
 {
 top:
   {
@@ -480,7 +480,7 @@ top:
   {
     if ( _cwe_mars_save == mar_u->sat_e ) {
       u3e_save();
-      _cw_mars_gift(mar_u,
+      _mars_gift(mar_u,
         u3nt(c3__sync, u3i_chubs(1, &mar_u->dun_d), mar_u->mug_l));
       mar_u->sat_e = _cwe_mars_work;
       goto top;
@@ -502,12 +502,12 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
   //  XX optimize for save/cram w/ peek-next
   //
   if ( _cwe_mars_work == mar_u->sat_e ) {
-    u3_weak jar = _cw_mars_cue(mar_u, len_d, hun_y);
+    u3_weak jar = _mars_cue(mar_u, len_d, hun_y);
 
     //  parse errors are fatal
     // 
     if (  (u3_none == jar)
-       || (c3n == _cw_mars_work(mar_u, jar)) )
+       || (c3n == _mars_work(mar_u, jar)) )
     {
       fprintf(stderr, "mars: bad\r\n");
       //  XX error cb?
@@ -522,18 +522,18 @@ u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y)
     ret_o = c3y;
   }
 
-  _cw_mars_flush(mar_u);
+  _mars_flush(mar_u);
 
   return ret_o;
 }
 
 static void
-_cw_mars_timer_cb(uv_timer_t* tim_u)
+_mars_timer_cb(uv_timer_t* tim_u)
 {
   u3_mars* mar_u = tim_u->data;
   mar_u->sat_e = _cwe_mars_save;
 
-  _cw_mars_flush(mar_u);
+  _mars_flush(mar_u);
 }
 
 u3_mars*
@@ -567,7 +567,7 @@ u3_mars_init(u3_disk* log_u,
     //  XX check return, make interval configurable
     //
     uv_timer_init(u3L, &mar_u->tim_u);
-    uv_timer_start(&mar_u->tim_u, _cw_mars_timer_cb, 120000, 120000);
+    uv_timer_start(&mar_u->tim_u, _mars_timer_cb, 120000, 120000);
 
     mar_u->tim_u.data = mar_u;
 
