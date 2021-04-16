@@ -32,7 +32,7 @@ same (if [developing on a local development ship][local]). Then, from
 'pkg/interface':
 
 ```
-npm install
+npm ci
 npm run start
 ```
 
@@ -59,7 +59,7 @@ module.exports = {
 ```
 
 The dev environment will attempt to match the subdomain against the keys of this
-object, and if matched will proxy to the corresponding URL. For example, the 
+object, and if matched will proxy to the corresponding URL. For example, the
 above config will proxy `zod.localhost:9000` to `http://localhost:8080`,
 `bus.localhost:9000` to `http://localhost:8081` and so on and so forth. If no
 match is found, then it will fallback to the `URL` property.
@@ -71,7 +71,7 @@ linter and for usage through the command, do the following:
 
 ```bash
 $ cd ./pkg/interface
-$ npm install
+$ npm ci
 $ npm run lint
 ```
 
