@@ -37,7 +37,6 @@ export class Root extends Component {
           position='absolute'
           alignItems='center'
           backgroundColor='lightOrange'
-          height='100%'
           width='100%'
           px={[0,4]}
           pb={[0,4]}
