@@ -106,6 +106,7 @@ export function NotificationWrapper(props: {
       gridTemplateRows="auto"
       gridTemplateAreas={["'header' 'main'", "'header actions' 'main main'"]}
       p={2}
+      m={2}
       {...bind}
     >
       {children}
