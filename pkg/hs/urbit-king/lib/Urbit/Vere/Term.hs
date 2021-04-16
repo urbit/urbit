@@ -286,7 +286,9 @@ localClient doneSignal = fst <$> mkRAcquire start stop
     writeTerminal :: TQueue [Term.Ev] -> TMVar () -> TVar TermSize -> RIO e ()
     writeTerminal q spinner termSizeVar = do
         currentTime <- io $ now
-        loop (LineState "" (CurPos 0 0) Nothing Nothing True 0 currentTime)
+        loop
+          termSizeVar
+          (LineState "" (CurPos 0 0) Nothing Nothing True 0 currentTime)
       where
         writeBlank :: LineState -> RIO e LineState
         writeBlank ls = do
@@ -324,7 +326,6 @@ localClient doneSignal = fst <$> mkRAcquire start stop
             event shortly after a previous spin, use a shorter delay to
             avoid giving the impression of a half-idle system.
         -}
-        --TODO  this is too eager and does termRestoreLine on every keypress!
         doSpin :: LineState -> Maybe Text -> RIO e LineState
         doSpin ls@LineState{..} mTxt = do
             maybe (pure ()) cancel lsSpinTimer
@@ -357,7 +358,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
               -- If we ever actually ran the spinner display callback, we need
               -- to force a redisplay of the command prompt.
-              if not lsSpinFirstRender || True
+              if not lsSpinFirstRender
               then termRestoreLine ls termSizeVar
               else pure ()
 
@@ -373,12 +374,19 @@ localClient doneSignal = fst <$> mkRAcquire start stop
             Term.Spinr (Just txt) -> doSpin ls (unCord <$> txt)
             Term.Spinr Nothing    -> unspin ls
 
-        --  TODO What does this do?
-        spin :: LineState -> RIO e LineState
-        spin ls@LineState{..} = do
+        spin :: TVar TermSize -> LineState -> RIO e LineState
+        spin ts ls@LineState{..} = do
             let spinner = (spinners !! lsSpinFrame) ++ case lsSpinCause of
                   Nothing  -> ""
                   Just str -> leftBracket ++ str ++ rightBracket
+
+            --NOTE  even after first render, because cursor might have moved...
+            if row lsCurPos > 0
+              then do
+                TermSize _ h <- readTVarIO ts
+                T.cursorMove (fromIntegral h - 1) 0
+              else
+                T.cursorRestore
 
             putStr (spinner <> pack (ANSI.cursorBackwardCode (length spinner)))
 
@@ -388,11 +396,11 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                       , lsSpinFrame       = newFrame
                       }
 
-        loop :: LineState -> RIO e ()
-        loop ls = do
+        loop :: TVar TermSize -> LineState -> RIO e ()
+        loop ts ls = do
             join $ atomically $ asum
-                [ readTQueue q      >>= pure . (foldM execEv ls >=> loop)
-                , takeTMVar spinner >>  pure (spin ls >>= loop)
+                [ readTQueue q      >>= pure . (foldM execEv ls >=> loop ts)
+                , takeTMVar spinner >>  pure (spin ts ls >>= loop ts)
                 ]
 
     -- Writes an individual blit to the screen
@@ -474,11 +482,6 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       T.cursorMove (max 0 (fromIntegral h - row - 1)) col
       T.cursorSave
       pure ls { lsCurPos = CurPos row col }
-
-    -- Moves the cursor left without any mutation of the LineState. Used only
-    -- in cursor spinning.
-    _termSpinnerMoveLeft :: Int -> RIO e ()
-    _termSpinnerMoveLeft = liftIO . ANSI.cursorBackward
 
     -- Displays and sets the current line
     termShowLine :: LineState -> Text -> RIO e LineState
