@@ -270,29 +270,31 @@ _serf_make_crud(u3_noun job, u3_noun dud)
 
 static c3_o
 _cw_mars_poke(c3_w     mil_w,
+              c3_o     rep_o,
               u3_noun*   eve,
-              u3_noun*   pro)
+              u3_noun*   out)
 {
-  u3_noun dat = u3_poke_sure(mil_w, u3k(*eve));
+  u3_noun pro;
 
-  if ( c3y == u3h(dat) ) {
-    *pro = dat;
+  if ( c3y == u3_poke_sure(mil_w, u3k(*eve), &pro) ) {
+    *out = pro;
     return c3y;
   }
+  else if ( c3n == rep_o ) {
+    *out = u3nc(pro, u3_nul);
+    return c3n;
+  }
   else {
-    u3_noun dud = u3k(u3t(dat));
+    u3_noun dud = pro;
 
-    u3z(dat);
     *eve = _serf_make_crud(*eve, u3k(dud));
-    dat  = u3_poke_sure(mil_w, u3k(*eve));  
 
-    if ( c3y == u3h(dat) ) {
-      *pro = dat;
+    if ( c3y == u3_poke_sure(mil_w, u3k(*eve), &pro) ) {
+      *out = pro;
       return c3y;
     }
     else {
-      *pro = u3nt(c3n, dud, u3k(u3t(dat)));
-      u3z(dat);
+      *out = u3nc(dud, pro);
       return c3n;
     }
   }
@@ -343,18 +345,18 @@ _cw_mars_work(u3_mars* mar_u, u3_noun jar)
 
       mar_u->sen_d++;
 
-      if ( c3y == _cw_mars_poke(mil_w, &job, &pro) ) {
+      if ( c3y == _cw_mars_poke(mil_w, c3y, &job, &pro) ) {
         mar_u->dun_d = mar_u->sen_d;
         mar_u->mug_l = u3r_mug(u3A->roc);
 
         //  XX process effects
         //
-        _cw_mars_fact(mar_u, job, u3nc(c3__poke, pro));
+        _cw_mars_fact(mar_u, job, u3nt(c3__poke, c3y, pro));
       }
       else {
         mar_u->sen_d = mar_u->dun_d;
         u3z(job);
-        _cw_mars_gift(mar_u, u3nc(c3__poke, pro));
+        _cw_mars_gift(mar_u, u3nt(c3__poke, c3n, pro));
       }
 
       c3_assert( mar_u->dun_d == u3A->eve_d );

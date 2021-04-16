@@ -306,38 +306,33 @@ _cv_poke_eve(u3_noun sam)
 
 /* u3v_poke_sure(): inject an event, saving new state if successful.
 */
-u3_noun
-u3_poke_sure(c3_w mil_w, u3_noun eve)
+c3_o
+u3_poke_sure(c3_w mil_w, u3_noun eve, u3_noun* pro)
 {
   u3_noun gon = u3m_soft(mil_w, _cv_poke_eve, eve);
-  u3_noun pro;
+  u3_noun tag, dat;
+  u3x_cell(gon, &tag, &dat);
 
-  {
-    u3_noun tag, dat;
-    u3x_cell(gon, &tag, &dat);
+  //  event succeeded, persist state and produce effects
+  //
+  if ( u3_blip == tag ) {
+    u3_noun vir, cor;
+    u3x_cell(dat, &vir, &cor);
 
-    //  event succeeded, persist state and produce effects
-    //
-    if ( u3_blip == tag ) {
-      u3_noun vir, cor;
-      u3x_cell(dat, &vir, &cor);
+    u3z(u3A->roc);
+    u3A->roc = u3k(cor);
+    u3A->eve_d++;
 
-      u3z(u3A->roc);
-      u3A->roc = u3k(cor);
-      u3A->eve_d++;
-
-      pro = u3nc(c3y, u3k(vir));
-
-      u3z(gon);
-    }
-    //  event failed, produce trace
-    //
-    else {
-      pro = u3nc(c3n, gon);
-    }
+    *pro = u3k(vir);
+    u3z(gon);
+    return c3y;
   }
-
-  return pro;
+  //  event failed, produce trace
+  //
+  else {
+    *pro = gon;
+    return c3n;
+  }
 }
 
 /* u3v_tank(): dump single tank.
