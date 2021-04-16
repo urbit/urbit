@@ -300,29 +300,25 @@
   =/  parent-index=index:store
     (scag (dec (lent index)) index)
   ?:  (~(has by nodes) parent-index)  %.y
-  ?-  -.post.node
-    %|  %.n
-  ::
-      %&
-    ?.  =(author.p.post.node src.bowl)
-      %.n
-    =/  =permissions:store
-      %^  add-mark  resource  vip
-      (node-to-indexed-post node)
-    =/  =permission-level:store
-      (get-permission permissions is-admin writers)
-    ?-  permission-level
-        %yes  %.y
-        %no   %.n
-      ::
-          %self
-        =/  parent-node=node:store
-          (got-node:gra resource parent-index)
-        ?-  -.post.parent-node
-          %|  %.n
-          %&  =(author.p.post.parent-node src.bowl)
-        ==
-    ==
+  ?:  ?=(%| -.post.node)
+    %.n
+  ?.  =(author.p.post.node src.bowl)
+    %.n
+  =/  =permissions:store
+    %^  add-mark  resource  vip
+    (node-to-indexed-post node)
+  =/  =permission-level:store
+    (get-permission permissions is-admin writers)
+  ?-  permission-level
+      %yes  %.y
+      %no   %.n
+    ::
+        %self
+      =/  parent-node=node:store
+        (got-node:gra resource parent-index)
+      ?:  ?=(%| -.post.parent-node)
+        %.n
+      =(author.p.post.parent-node src.bowl)
   ==
 ::
 ++  is-allowed-remove
@@ -337,20 +333,16 @@
   ^-  ?
   =/  =node:store
     (got-node:gra resource index)
-  ?-  -.post.node
-    %|  %.n
-  ::
-      %&
-    =/  =permissions:store
-      %^  remove-mark  resource  vip
-      (node-to-indexed-post node)
-    =/  =permission-level:store
-      (get-permission permissions is-admin writers)
-    ?-  permission-level
-      %yes   %.y
-      %no    %.n
-      %self  =(author.p.post.node src.bowl)
-    ==
+  ?:  ?=(%| -.post.node)  %.n
+  =/  =permissions:store
+    %^  remove-mark  resource  vip
+    (node-to-indexed-post node)
+  =/  =permission-level:store
+    (get-permission permissions is-admin writers)
+  ?-  permission-level
+    %yes   %.y
+    %no    %.n
+    %self  =(author.p.post.node src.bowl)
   ==
 ::
 ++  build-permissions

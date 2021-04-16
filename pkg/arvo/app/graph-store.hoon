@@ -368,11 +368,11 @@
           =/  =node:store
             ~|  "cannot remove index that does not exist {<index>}"
             (need (get:orm graph atom))
-          ~|  "cannot remove post that has already been removed"
-          ?>  ?=(%& -.post.node)
-          =*  p  p.post.node
-          %=    node
+          %_    node
               post
+            ~|  "cannot remove post that has already been removed"
+            ?>  ?=(%& -.post.node)
+            =*  p  p.post.node
             ^-  maybe-post:store
             :-  %|
             ?~  hash.p

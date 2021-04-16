@@ -894,15 +894,13 @@
         =/  =uid:post    (snag index history)
         =/  =node:graph  (got-node:libgraph uid)
         =.  audience     resource.uid
-        ?-    -.post.node
-            %|  [~ state]
-            %&
-          :_  put-ses
-          ^-  (list card)
-          :~  (print:sh-out ['?' ' ' number])
-              (effect:sh-out ~(render-activate mr resource.uid p.post.node))
-              prompt:sh-out
-          ==
+        ?:  ?=(%| -.post.node)
+          [~ state]
+        :_  put-ses
+        ^-  (list card)
+        :~  (print:sh-out ['?' ' ' number])
+            (effect:sh-out ~(render-activate mr resource.uid p.post.node))
+            prompt:sh-out
         ==
       --
     ::  +chats: display list of joined chats
