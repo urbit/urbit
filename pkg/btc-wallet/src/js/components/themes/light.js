@@ -109,6 +109,9 @@ const theme = {
     orange: "rgba(255, 153, 0, 1)",
     midOrange: "rgba(255, 153, 0, 0.2)",
     lightOrange: "rgba(255, 153, 0, 0.08)",
+
+    sentBlue: "rgba(33,157,255,1)",
+    recvGreen: "rgba(0,159,101,1)",
   },
   fonts: {
     sans: `"Inter", "Inter UI", -apple-system, BlinkMacSystemFont, 'San Francisco', 'Helvetica Neue', Arial, sans-serif`,

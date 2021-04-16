@@ -14,7 +14,7 @@ export default class StartupModal extends Component {
   render() {
     let modal = null;
 
-    if (this.props.state.hasWallet && this.props.state.provider) {
+    if (this.props.state.wallet && this.props.state.provider) {
       return null;
     } else if (!this.props.state.provider){
       modal =
@@ -22,7 +22,7 @@ export default class StartupModal extends Component {
           api={this.props.api}
           providerPerms={this.props.state.providerPerms}
         />
-    } else if (!this.props.state.hasWallet){
+    } else if (!this.props.state.wallet){
       modal = <WalletModal api={this.props.api}/>
     }
     return (
