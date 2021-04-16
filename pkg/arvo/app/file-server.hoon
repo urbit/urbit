@@ -189,7 +189,7 @@
       %+  require-authorization-simple:app
         inbound-request
       %.  %-  as-octs:mimes:html
-          :((cury cat 3) 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";')
+          (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~)
       %*  .  js-response:gen
         cache  %.n
       ==
