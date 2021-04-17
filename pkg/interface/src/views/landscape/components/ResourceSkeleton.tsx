@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useRef } from 'react';
+import React, { ReactElement, ReactNode, useRef, useEffect, useState } from 'react';
 import { Icon, Box, Col, Text } from '@tlon/indigo-react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
@@ -36,6 +36,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const group = groups[association.group];
   let workspace = association.group;
   const actionsRef = useRef(null);
+  const [actionsWidth, setActionsWidth] = useState(0);
+  let isGroupDM = false;
 
   if (group?.hidden && app === 'chat') {
     workspace = '/messages';
@@ -47,15 +49,17 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     ? getItemTitle(association)
     : association?.metadata?.title;
 
-  let recipient = "";
+  let recipient = '';
 
   const contacts = useContactState(state => state.contacts);
 
   if (urbitOb.isValidPatp(title)) {
     recipient = title;
     title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
+    isGroupDM = false;
   } else {
-    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(", ")
+    isGroupDM = true;
+    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(', ');
   }
 
   const [, , ship, resource] = rid.split('/');
@@ -121,13 +125,25 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </TruncatedText>
   );
 
-  const WriterControls = () => (
-    <Link to={resourcePath('/new')}>
-      <Text bold pr='3' color='blue'>
-        + New Post
-      </Text>
-    </Link>
-  );
+  const ExtraControls = () => {
+    if (workspace === '/messages' && isGroupDM)
+      return (
+        <Link>
+          <Text bold pr='3' color='blue'>
+            + Add Ship
+          </Text>
+        </Link>
+      );
+    if (canWrite)
+      return (
+        <Link to={resourcePath('/new')}>
+          <Text bold pr='3' color='blue'>
+            + New Post
+          </Text>
+        </Link>
+      );
+    return <></>;
+  };
 
   const MenuControl = () => (
     <Link to={`${baseUrl}/settings`}>
@@ -135,12 +151,11 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Link>
   );
 
-  const actRef = actionsRef.current;
-  let actionsWidth = 0;
-
-  if (actRef) {
-    actionsWidth = actRef.clientWidth;
-  }
+  useEffect(() => {
+    if (actionsRef.current) {
+      setActionsWidth(actionsRef.current.clientWidth);
+    }
+  }, [actionsRef.current]);
 
   return (
     <Col width='100%' height='100%' overflow='hidden'>
@@ -172,7 +187,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           flexShrink='0'
           ref={actionsRef}
         >
-          {canWrite && <WriterControls />}
+          <ExtraControls />
           <MenuControl />
         </Box>
       </Box>
