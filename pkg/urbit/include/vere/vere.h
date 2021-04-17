@@ -145,10 +145,9 @@
         } siz;
 
         struct {
-          c3_w* lin_w;                      //  bottom line (utf32)
-          c3_w  wor_w;                      //  utf32 line-length
-          c3_w  rus_w;                      //  cursor position (row)
-          c3_w  cus_w;                      //  cursor position (column)
+          u3_noun lin;                      //  bottom line (stub)
+          c3_w    rus_w;                    //  cursor position (row)
+          c3_w    cus_w;                    //  cursor position (column)
         } mir;
 
         struct {                            //  escape code control

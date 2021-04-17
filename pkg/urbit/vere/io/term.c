@@ -26,6 +26,7 @@ static void     _term_read_cb(uv_stream_t*    tcp_u,
                               ssize_t         siz_i,
                               const uv_buf_t* buf_u);
 static c3_i     _term_tcsetattr(c3_i, c3_i, const struct termios*);
+static void     _term_it_send_stub(u3_utty* uty_u, u3_noun tub);
 
 /* _write(): retry interrupts, continue partial writes, assert errors.
 */
@@ -175,8 +176,7 @@ u3_term_log_init(void)
     //  Initialize mirror and accumulator state.
     //
     {
-      uty_u->tat_u.mir.lin_w = 0;
-      uty_u->tat_u.mir.wor_w = 0;
+      uty_u->tat_u.mir.lin   = u3_nul;
       uty_u->tat_u.mir.rus_w = 0;
       uty_u->tat_u.mir.cus_w = 0;
 
@@ -416,14 +416,13 @@ _term_it_send_csi(u3_utty *uty_u, c3_c cmd_c, c3_w num_w, ...)
   va_end(ap);
 }
 
-/* _term_it_free_line(): wipe line stored by _term_it_save_line
+/* _term_it_free_line(): wipe line stored by _term_it_save_stub
 */
 static void
 _term_it_free_line(u3_utty* uty_u)
 {
-  c3_free(uty_u->tat_u.mir.lin_w);
-  uty_u->tat_u.mir.lin_w = 0;
-  uty_u->tat_u.mir.wor_w = 0;
+  u3z(uty_u->tat_u.mir.lin);
+  uty_u->tat_u.mir.lin = u3_nul;
 }
 
 /* _term_it_clear_line(): clear line of cursor
@@ -518,80 +517,37 @@ _term_it_show_line(u3_utty* uty_u, c3_w* lin_w, c3_w wor_w)
   _term_it_dump_buf(uty_u, &uty_u->ufo_u.ruc_u);
 }
 
-/* _term_it_restore_line(): refresh current line.
+/* _term_it_restore_line(): re-render original line at bottom of screen
 */
 static void
 _term_it_restore_line(u3_utty* uty_u)
 {
   u3_utat* tat_u = &uty_u->tat_u;
-  c3_w*    lin_w = tat_u->mir.lin_w;
-  c3_w     wor_w = tat_u->mir.wor_w;
 
-  if ( (0 != lin_w) && (0 < wor_w) ) {
-    //  we have to reallocate the current line on write,
-    //  or we have a data race if a) the write is async,
-    //  and b) a new output line arrives before the write completes.
-    //  also, _show_line would free it.
-    //
-    c3_w* hun_w = c3_malloc( sizeof(c3_w) * wor_w );
-    memcpy(hun_w, lin_w, wor_w * sizeof(c3_w));
-
-    _term_it_send_csi(uty_u, 'H', 2, tat_u->siz.row_l, 0);
-    _term_it_dump_buf(uty_u, &uty_u->ufo_u.cel_u);
-    _term_it_show_line(uty_u, hun_w, wor_w);
-  }
+  _term_it_send_csi(uty_u, 'H', 2, tat_u->siz.row_l, 0);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.cel_u);
+  _term_it_send_stub(uty_u, u3k(tat_u->mir.lin));
+  //NOTE  send_stub restores cursor position
 }
 
-/* _term_it_save_line(): store line if relevant to internal logic
- *                       RETAINs lin_w
+/* _term_it_save_stub(): store line if relevant to internal logic
  */
 static void
-_term_it_save_line(u3_utty* uty_u, c3_w* lin_w, c3_w wor_w)
+_term_it_save_stub(u3_utty* uty_u, u3_noun tub)
 {
   u3_utat* tat_u = &uty_u->tat_u;
+  u3_noun  lin   = tat_u->mir.lin;
 
   //  keep track of changes to bottom-most line, to aid spinner drawing logic.
   //  -t mode doesn't need this logic, because it doesn't render the spinner.
   //
   if ( (0 == tat_u->mir.rus_w) && (c3n == u3_Host.ops_u.tem)) {
-    c3_w* nip_w = tat_u->mir.lin_w;
-    c3_w  wod_w = tat_u->mir.wor_w;
-    c3_w  off_w = tat_u->mir.cus_w;
-    c3_w  wyd_w = off_w + wor_w;
-
-    //  if we have no buffer, make one
-    //
-    if ( 0 == nip_w ) {
-      nip_w = c3_malloc( sizeof(c3_w) * wyd_w );
-      wod_w = wyd_w;
-
-      //  initialize offset with spaces
-      //
-      for ( c3_w i_w = 0; i_w < off_w; i_w++ ) {
-        nip_w[i_w] = ' ';
-      }
-    }
-    //  if we have a buffer, but it's too short, make a bigger one
-    //
-    else if ( wyd_w > wod_w ) {
-      c3_w* nic_w = c3_malloc( sizeof(c3_w) * wyd_w );
-      memcpy(nic_w, nip_w, wod_w);
-
-      //  initialize fresh offset with spaces
-      //
-      for ( c3_w i_w = wod_w; i_w < off_w; i_w++ ) {
-        nic_w[i_w] = ' ';
-      }
-
-      c3_free(nip_w);
-      nip_w = nic_w;
-      wod_w = wyd_w;
-    }
-
-    memcpy(nip_w + off_w, lin_w, sizeof(c3_w) * wor_w);
-    tat_u->mir.lin_w = nip_w;
-    tat_u->mir.wor_w = wod_w;
+    lin = u3dq("wail:klr:format", lin, tat_u->mir.cus_w, u3k(tub), ' ');
+    lin = u3do("pact:klr:format", lin);
   }
+
+  tat_u->mir.lin = lin;
+  u3z(tub);
 }
 
 /* _term_it_show_nel(): render newline, moving cursor down
@@ -1262,10 +1218,10 @@ _term_it_put_deco(c3_w* lin_w,
   }
 }
 
-/* _term_it_show_stub(): send styled text to terminal as ansi escape sequences
+/* _term_it_send_stub(): send styled text, without saving
 */
 static void
-_term_it_show_stub(u3_utty* uty_u,
+_term_it_send_stub(u3_utty* uty_u,
                    u3_noun    tub)
 {
   c3_w tuc_w = u3qb_lent(tub);
@@ -1376,10 +1332,19 @@ _term_it_show_stub(u3_utty* uty_u,
     }
   }
 
-  _term_it_save_line(uty_u, lin_w, i_w);
   _term_it_show_line(uty_u, lin_w, i_w);
 
   u3z(tub);
+}
+
+/* _term_it_send_stub(): send styled text to terminal as ansi escape sequences
+*/
+static void
+_term_it_show_stub(u3_utty* uty_u,
+                   u3_noun    tub)
+{
+  _term_it_send_stub(uty_u, u3k(tub));
+  _term_it_save_stub(uty_u, tub);
 }
 
 /* _term_it_show_tour(): send utf32 to terminal.
@@ -1399,10 +1364,14 @@ _term_it_show_tour(u3_utty* uty_u,
     }
   }
 
-  _term_it_save_line(uty_u, lin_w, len_w);
   _term_it_show_line(uty_u, lin_w, len_w);
 
-  u3z(lin);
+  {
+    u3_noun tub = u3i_list(u3nc(u3nt(u3_nul, u3_nul, u3_nul), lin), u3_none);
+    _term_it_save_stub(uty_u, tub);
+  }
+
+  //NOTE  lin transferred to tub above
 }
 
 /* _term_ef_blit(): send blit to terminal.
