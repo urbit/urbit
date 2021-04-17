@@ -1,7 +1,7 @@
 ::  eth-watcher: ethereum event log collector
 ::
 /-  spider, *eth-watcher
-/+  strandio, ethio
+/+  strandio, ethio, azimuth
 =,  ethereum-types
 =,  jael
 ::
@@ -81,17 +81,31 @@
   =/  m  (strand:strandio ,watchpup)
   ^-  form:m
   =/  zoom-margin=number:block  30
-  =/  zoom-step=number:block  10.000
+  =/  zoom-step=number:block  100.000
   ?:  (lth latest-number (add number.pup zoom-margin))
     (pure:m pup)
-  =/  up-to-number=number:block  (min (add 1.000.000 number.pup) (sub latest-number zoom-margin))
+  =/  up-to-number=number:block  (sub latest-number zoom-margin)
   |-
   ~&  >  [%zooming number.pup up-to-number]
   =*  loop  $
   ?:  (gth number.pup up-to-number)
     (pure:m pup(blocks ~))
   =/  to-number=number:block
-    (min up-to-number (add number.pup zoom-step))
+    =;  step
+      (min up-to-number (add number.pup step))
+    ::  Between "launch" (6.784.800) and "public" (7.033.765) blocks,
+    ::  there are a lot events belonging to all the pre-ethereum ships
+    ::  being established on-chain. By reducing the step, we avoid crashing.
+    ::
+    ?:  ?|  &((gte number.pup 6.951.132) (lth number.pup 6.954.242))
+            &((gte number.pup 7.011.857) (lth number.pup 7.021.881))
+        ==
+      50
+    ?:  ?&  (gte number.pup launch:mainnet-contracts:azimuth)
+            (lth number.pup public:mainnet-contracts:azimuth)
+        ==
+      500
+    zoom-step
   ;<  =loglist  bind:m  ::  oldest first
     %:  get-logs-by-range:ethio
       url.pup
