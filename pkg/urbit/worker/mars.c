@@ -55,159 +55,19 @@
 --
 */
 
-struct _cd_save {
-  c3_o             ret_o;               //  result
-  c3_d             eve_d;               //  first event
-  c3_d             len_d;               //  number of events
-  c3_y**           byt_y;               //  array of bytes
-  size_t*          siz_i;               //  array of lengths
-  struct _u3_disk* log_u;
-  struct _u3_mars* mar_u;
-};
-
-// static u3_mars u3M;
-
-
-static void
-_mars_flush(u3_mars* mar_u);
-
-static void
-_mars_commit(u3_mars* mar_u);
-
-static void
-_mars_commit_after_cb(uv_work_t* ted_u, c3_i sas_i)
-{
-  struct _cd_save* req_u = ted_u->data;
-
-  if ( UV_ECANCELED == sas_i ) {
-    c3_free(req_u->byt_y);
-    c3_free(req_u->siz_i);
-    c3_free(req_u);
-  }
-  else {
-    u3_disk* log_u = req_u->log_u;
-    u3_mars* mar_u = req_u->mar_u;
-
-    ted_u->data  = 0;
-    log_u->ted_o = c3n;
-
-    //  XX write failed, fatal error
-    //
-    if ( c3n == req_u->ret_o ) {
-      fprintf(stderr, "mars: commit fail\r\n");
-      exit(1);
-    }
-
-    log_u->dun_d = req_u->eve_d + (req_u->len_d - 1ULL);
-
-    {
-      cw_fact* fac_u = mar_u->fac_u.ext_u;
-
-      while ( fac_u && (fac_u->eve_d <= log_u->dun_d) ) {
-        mar_u->fac_u.ext_u = fac_u->nex_u;
-        c3_free(fac_u->hun_y);
-        c3_free(fac_u);
-        fac_u = mar_u->fac_u.ext_u;
-      }
-    }
-
-    if ( !mar_u->fac_u.ext_u || !mar_u->fac_u.ext_u->nex_u ) {
-      mar_u->fac_u.ent_u = mar_u->fac_u.ext_u;
-    }
-
-    c3_free(req_u->byt_y);
-    c3_free(req_u->siz_i);
-    c3_free(req_u);
-
-    _mars_commit(mar_u);
-    _mars_flush(mar_u);
-  }
-}
-
-/* _mars_commit_cb(): off the main thread, write event-batch.
-*/
-static void
-_mars_commit_cb(uv_work_t* ted_u)
-{
-  struct _cd_save* req_u = ted_u->data;
-  req_u->ret_o = u3_lmdb_save(req_u->log_u->mdb_u,
-                              req_u->eve_d,
-                              req_u->len_d,
-                              (void**)req_u->byt_y,
-                              req_u->siz_i);
-}
-
-static void
-_mars_commit(u3_mars* mar_u)
-{
-  u3_disk* log_u = mar_u->log_u;
-
-  if (  (c3n == log_u->ted_o)
-     && (mar_u->dun_d > log_u->dun_d) )
-  {
-    cw_fact* fac_u = mar_u->fac_u.ext_u;
-    c3_d     len_d = log_u->sen_d - log_u->dun_d;
-
-    //  XX one allocation per save (or static lifetime with max length)
-    //
-    struct _cd_save* req_u = c3_malloc(sizeof(*req_u));
-    req_u->mar_u = mar_u;
-    req_u->log_u = log_u;
-    req_u->ret_o = c3n;
-    req_u->eve_d = log_u->dun_d + 1;
-    req_u->len_d = len_d;
-    req_u->byt_y = c3_malloc(len_d * sizeof(c3_y*));
-    req_u->siz_i = c3_malloc(len_d * sizeof(size_t));
-
-    // fprintf(stderr, "mars: commit batch %" PRIu64 " from %" PRIu64 "\r\n", len_d, log_u->dun_d+1);
-
-    for ( c3_d i_d = 0ULL; i_d < len_d; ++i_d) {
-      c3_assert( fac_u );
-      c3_assert( (req_u->eve_d + i_d) == fac_u->eve_d );
-      req_u->siz_i[i_d] = fac_u->len_i;
-      req_u->byt_y[i_d] = fac_u->hun_y;
-
-      fac_u = fac_u->nex_u;
-    }
-
-    //  XX should unlink from mar_u here
-    //
-
-    log_u->ted_o = c3y;
-    log_u->ted_u.data = req_u;
-
-    //  queue asynchronous work to happen on another thread
-    //
-    //  XX need the loop here
-    //
-    uv_queue_work(u3L, &log_u->ted_u, _mars_commit_cb,
-                                      _mars_commit_after_cb);
-  }
-}
-
 static void
 _mars_fact(u3_mars* mar_u,
            u3_noun    job,
            u3_noun    pro)
 {
   {
-    cw_fact* fac_u = c3_malloc(sizeof(*fac_u));
-    fac_u->eve_d = mar_u->dun_d;
-    fac_u->len_i = (size_t)u3_disk_etch(mar_u->log_u, job, mar_u->mug_l, &fac_u->hun_y);
-    fac_u->nex_u = 0;
+    u3_fact tac_u = {
+      .job   = job,
+      .mug_l = mar_u->mug_l,
+      .eve_d = mar_u->dun_d
+    };
 
-    if ( !mar_u->fac_u.ent_u ) {
-      c3_assert( !mar_u->fac_u.ext_u );
-      mar_u->fac_u.ent_u = mar_u->fac_u.ext_u = fac_u;
-    }
-    else {
-      mar_u->fac_u.ent_u->nex_u = fac_u;
-      mar_u->fac_u.ent_u = fac_u;
-    }
-
-    mar_u->log_u->sen_d++;
-
-    _mars_commit(mar_u);
+    u3_disk_plan(mar_u->log_u, &tac_u);
     u3z(job);
   }
 
@@ -425,7 +285,9 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
 
     case c3__exit: {
       mar_u->sat_e = _cwe_mars_exit;
-      fprintf(stderr, "mars set exit\r\n");
+      //  XX wire up to signal handler
+      //
+      u3_disk_info(mar_u->log_u);
     } break;
   }
 
@@ -536,6 +398,22 @@ _mars_timer_cb(uv_timer_t* tim_u)
   _mars_flush(mar_u);
 }
 
+static void
+_mars_save_done(void* ptr_v, c3_d eve_d, c3_o ret_o)
+{
+  u3_mars* mar_u = ptr_v;
+
+  if ( c3n == ret_o ) {
+    //  XX better
+    //
+    fprintf(stderr, "mars: commit fail\r\n");
+    exit(1);
+  }
+  else {
+    _mars_flush(mar_u);
+  }
+}
+
 u3_mars*
 u3_mars_init(u3_disk* log_u,
              u3_moat* inn_u,
@@ -560,9 +438,10 @@ u3_mars_init(u3_disk* log_u,
     mar_u->pac_o = mar_u->rec_o = mar_u->mut_o = c3n;
     mar_u->sac   = u3_nul;
     mar_u->sat_e = _cwe_mars_work;
-    mar_u->fac_u.ent_u = mar_u->fac_u.ext_u = 0;
     mar_u->gif_u.ent_u = mar_u->gif_u.ext_u = 0;
     mar_u->xit_f = 0;
+
+    u3_disk_async(log_u, mar_u, _mars_save_done);
 
     //  XX check return, make interval configurable
     //

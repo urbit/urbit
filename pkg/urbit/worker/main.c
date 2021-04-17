@@ -825,54 +825,6 @@ _cw_boot_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
   return c3y;
 }
 
-/* _pier_on_disk_write_done(): event log write success.
-*/
-static void
-_pier_on_disk_write_done(void* ptr_v, c3_d eve_d)
-{
-//   u3_pier* pir_u = ptr_v;
-//   u3_disk* log_u = pir_u->log_u;
-
-// #ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): db commit: complete\r\n", eve_d);
-// #endif
-
-//   if ( u3_psat_boot == pir_u->sat_e ) {
-//     //  lord already live
-//     //
-//     if ( c3y == pir_u->god_u->liv_o ) {
-//       //  XX print bootstrap commit complete
-//       //  XX s/b boot_complete_cb
-//       //
-//       _pier_play_init(pir_u, log_u->dun_d);
-//     }
-//   }
-//   else {
-//     c3_assert(  (u3_psat_work == pir_u->sat_e)
-//              || (u3_psat_done == pir_u->sat_e) );
-
-//     _pier_work(pir_u->wok_u);
-//   }
-}
-
-/* _pier_on_disk_write_bail(): event log write failure.
-*/
-static void
-_pier_on_disk_write_bail(void* ptr_v, c3_d eve_d)
-{
-  // u3_pier* pir_u = ptr_v;
-
-  // if ( u3_psat_boot == pir_u->sat_e ) {
-  //   //  XX nice message
-  //   //
-  // }
-
-  // XX
-  //
-  fprintf(stderr, "pier: disk write bail\r\n");
-  // u3_pier_bail(pir_u);
-}
-
 static void
 _cw_boot(c3_i argc, c3_c* argv[])
 {
@@ -981,13 +933,8 @@ _cw_boot(c3_i argc, c3_c* argv[])
   {
     //  XX load/set secrets
     //
-    u3_disk_cb cb_u = {
-      .ptr_v = 0,
-      .write_done_f = _pier_on_disk_write_done,
-      .write_bail_f = _pier_on_disk_write_bail
-    };
 
-    if ( !(log_u = u3_disk_init(dir_c, cb_u)) ) {
+    if ( !(log_u = u3_disk_init(dir_c)) ) {
       // c3_free(pir_u);
       // return 0;
       fprintf(stderr, "boot: dist init fail\n");
@@ -1122,13 +1069,7 @@ _cw_work(c3_i argc, c3_c* argv[])
   {
     //  XX load/set secrets
     //
-    u3_disk_cb cb_u = {
-      .ptr_v = 0,
-      .write_done_f = _pier_on_disk_write_done,
-      .write_bail_f = _pier_on_disk_write_bail
-    };
-
-    if ( !(log_u = u3_disk_init(dir_c, cb_u)) ) {
+    if ( !(log_u = u3_disk_init(dir_c)) ) {
       // c3_free(pir_u);
       // return 0;
       fprintf(stderr, "work: dist init fail\n");

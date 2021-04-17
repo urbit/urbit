@@ -358,6 +358,15 @@
           struct _u3_fact* nex_u;               //  next in queue
         } u3_fact;
 
+      /* u3_feat: serialized fact
+      */
+        typedef struct _u3_feat {
+          c3_d             eve_d;
+          size_t           len_i;
+          c3_y*            hun_y;
+          struct _u3_feat* nex_u;
+        } u3_feat;
+
       /* u3_gift: effects
       */
         typedef struct _u3_gift {
@@ -365,13 +374,6 @@
           u3_noun            act;               //  (list ovum)
           struct _u3_gift* nex_u;               //  next in queue
         } u3_gift;
-
-      /* u3_info: ordered, contiguous slice of facts
-      */
-        typedef struct _u3_info {
-          u3_fact*         ent_u;               //  queue entry (highest)
-          u3_fact*         ext_u;               //  queue exit (lowest)
-        } u3_info;
 
       /* u3_peek_cb: namespace read response callback.
       */
@@ -476,13 +478,10 @@
           struct _u3_writ*     ext_u;           //  queue exit
         } u3_lord;
 
-      /* u3_disk_cb: u3_disk callbacks
+
+      /* u3_disk_news: disk sync callbak.
       */
-        typedef struct _u3_disk_cb {
-          void* ptr_v;
-          void (*write_done_f)(void*, c3_d eve_d);
-          void (*write_bail_f)(void*, c3_d eve_d);
-        } u3_disk_cb;
+        typedef void (*u3_disk_news)(void*, c3_d, c3_o);
 
       /* u3_disk: manage event persistence.
       */
@@ -494,13 +493,25 @@
           void*            mdb_u;               //  lmdb environment.
           c3_d             sen_d;               //  commit requested
           c3_d             dun_d;               //  committed
-          u3_disk_cb        cb_u;               //  callbacks
-          union {                               //  write thread/request
-            uv_work_t      ted_u;               //
-            uv_req_t       req_u;               //
-          };                                    //
-          c3_o             ted_o;               //  c3y == active
-          u3_info          put_u;               //  write queue
+          c3_w             hit_w[100];          //  batch histogram
+          struct {                              //  new write queue
+            u3_feat*       ent_u;               //  queue entry (highest)
+            u3_feat*       ext_u;               //  queue exit (lowest)
+          } put_u;
+          struct {                              //  write control
+            union {                             //  thread/request
+              uv_work_t    ted_u;               //
+              uv_req_t     req_u;               //
+            };
+            void*          ptr_v;               //  async context
+            u3_disk_news   don_f;               //  async write cb
+            c3_o           ted_o;               //  c3y == active
+            c3_o           ret_o;               //  result
+            c3_d           eve_d;               //  first event
+            c3_d           len_w;               //  number of events
+            c3_y*          byt_y[100];          //  array of bytes
+            size_t         siz_i[100];          //  array of lengths
+          } sav_u;
         } u3_disk;
 
       /* u3_psat: pier state.
@@ -606,12 +617,6 @@ typedef enum {
   _cwe_mars_exit = 2
 } cw_mars_sate;
 
-typedef struct _cw_fact {
-  c3_d             eve_d;
-  size_t           len_i;
-  c3_y*            hun_y;
-  struct _cw_fact* nex_u;
-} cw_fact;
 typedef struct _u3_mars {
   c3_d    key_d[4];          //  disk key
   c3_c*   dir_c;             //  execution directory (pier)
@@ -628,10 +633,6 @@ typedef struct _u3_mars {
   u3_mojo*     out_u;             //  output stream
   u3_cue_xeno* sil_u;             //  cue handle
   cw_mars_sate sat_e;
-  struct {
-    cw_fact* ent_u;
-    cw_fact* ext_u;
-  } fac_u;
   struct {
     cw_gift* ent_u;
     cw_gift* ext_u;
@@ -906,7 +907,7 @@ u3_mars_init(u3_disk* log_u,
       /* u3_disk_init(): load or create pier directories and event log.
       */
         u3_disk*
-        u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u);
+        u3_disk_init(c3_c* pax_c);
 
       /* u3_disk_etch(): serialize an event for persistence.
       */
@@ -965,6 +966,18 @@ u3_mars_init(u3_disk* log_u,
       */
         void
         u3_disk_boot_save(u3_disk* log_u);
+
+      /* u3_disk_boot_save_sync(): commit boot sequence.
+      */
+        c3_o
+        u3_disk_boot_save_sync(u3_disk* log_u);
+
+      /* u3_disk_async(): active autosync with callbacks.
+      */
+        void
+        u3_disk_async(u3_disk*     log_u,
+                      void*        ptr_v,
+                      u3_disk_news don_f);
 
       /* u3_disk_plan(): enqueue completed event for persistence.
       */
