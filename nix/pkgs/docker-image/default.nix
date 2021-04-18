@@ -78,11 +78,16 @@ let
   resetUrbitCode = writeScriptBin "reset-urbit-code" ''
     #!${bashInteractive}/bin/bash
 
-    curl -s -X POST -H "Content-Type: application/json" \
-      -d '{ "source": { "dojo": "|code %reset" }, "sink": { "stdout": null } }' \
-      http://127.0.0.1:12321
+    curl=$(curl -s -X POST -H "Content-Type: application/json" \
+      -d '{ "source": { "dojo": "+hood/code %reset" }, "sink": { "app": "hood" } }' \
+      http://127.0.0.1:12321)
 
-    echo "OK"
+    if [[ $? -eq 0 ]]
+    then
+      echo "OK"
+    else
+      echo "Curl error: $?"
+    fi
     '';
     
 in dockerTools.buildImage {
