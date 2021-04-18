@@ -1,4 +1,4 @@
-{ urbit, libcap, coreutils, bashInteractive, dockerTools, writeScriptBin, amesPort ? 34343 }:
+{ urbit, curl, libcap, coreutils, bashInteractive, dockerTools, writeScriptBin, amesPort ? 34343 }:
 let
   startUrbit = writeScriptBin "start-urbit" ''
     #!${bashInteractive}/bin/bash
@@ -58,12 +58,37 @@ let
 
     exec urbit $ttyflag -p $amesPort $dirname
     '';
-    
+
+  getUrbitCode = writeScriptBin "get-urbit-code" ''
+    #!${bashInteractive}/bin/bash
+
+    raw=$(curl -s -X POST -H "Content-Type: application/json" \
+      -d '{ "source": { "dojo": "+code" }, "sink": { "stdout": null } }' \
+      http://127.0.0.1:12321)
+
+    # trim \n" from the end
+    trim="''${raw%\\n\"}"
+
+    # trim " from the start
+    code="''${trim#\"}"
+
+    echo "$code"
+    '';
+
+  resetUrbitCode = writeScriptBin "reset-urbit-code" ''
+    #!${bashInteractive}/bin/bash
+
+    curl -s -X POST -H "Content-Type: application/json" \
+      -d '{ "source": { "dojo": "|code %reset" }, "sink": { "stdout": null } }' \
+      http://127.0.0.1:12321
+
+    echo "OK"
+    '';
     
 in dockerTools.buildImage {
   name = "urbit";
   tag = "v${urbit.version}";
-  contents = [ bashInteractive urbit startUrbit coreutils ];
+  contents = [ bashInteractive urbit curl startUrbit getUrbitCode resetUrbitCode coreutils ];
   runAsRoot = ''
     #!${bashInteractive}
     mkdir -p /urbit
