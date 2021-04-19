@@ -1,17 +1,19 @@
 import React, { ReactElement, ReactNode, useRef, useEffect, useState } from 'react';
 import { Icon, Box, Col, Text } from '@tlon/indigo-react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import { without } from 'lodash';
 import urbitOb from 'urbit-ob';
-
 import { Association } from '@urbit/api/metadata';
-
+import { Dropdown } from '~/views/components/Dropdown';
 import RichText from '~/views/components/RichText';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import { MessageInvite } from '~/views/landscape/components/MessageInvite';
+import { NewChannel } from '~/views/landscape/components/NewChannel';
 
 const TruncatedText = styled(RichText)`
   white-space: nowrap;
@@ -29,7 +31,7 @@ type ResourceSkeletonProps = {
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
-  const { association, baseUrl, children } = props;
+  const { association, baseUrl, children, api } = props;
   const app = association?.metadata?.config?.graph || association['app-name'];
   const rid = association.resource;
   const groups = useGroupState(state => state.groups);
@@ -37,7 +39,6 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   let workspace = association.group;
   const actionsRef = useRef(null);
   const [actionsWidth, setActionsWidth] = useState(0);
-  let isGroupDM = false;
 
   if (group?.hidden && app === 'chat') {
     workspace = '/messages';
@@ -56,9 +57,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   if (urbitOb.isValidPatp(title)) {
     recipient = title;
     title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
-    isGroupDM = false;
   } else {
-    isGroupDM = true;
     recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(', ');
   }
 
@@ -126,13 +125,45 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   );
 
   const ExtraControls = () => {
-    if (workspace === '/messages' && isGroupDM)
+    if (workspace === '/messages' && group.hidden)
       return (
-        <Link>
+        <Dropdown
+          flexShrink={0}
+          dropWidth='300px'
+          width='auto'
+          alignY='top'
+          alignX='right'
+          options={
+            <Col
+              backgroundColor='white'
+              border={1}
+              borderRadius={2}
+              borderColor='lightGray'
+              color='washedGray'
+              boxShadow='0px 0px 0px 3px'
+            >
+              {group.members.size >= 3 ? (
+                <MessageInvite association={association} api={api} />
+              ) : null}
+              {group.members.size === 2 ? (
+                <NewChannel
+                  api={props.api}
+                  history={history}
+                  workspace={{ type: 'messages' }}
+                  borderRadius={2}
+                  existingMembers={without(
+                    Array.from(group.members),
+                    window.ship
+                  )}
+                />
+              ) : null}
+            </Col>
+          }
+        >
           <Text bold pr='3' color='blue'>
             + Add Ship
           </Text>
-        </Link>
+        </Dropdown>
       );
     if (canWrite)
       return (
@@ -155,7 +186,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     if (actionsRef.current) {
       setActionsWidth(actionsRef.current.clientWidth);
     }
-  }, [actionsRef.current]);
+  }, [actionsRef]);
 
   return (
     <Col width='100%' height='100%' overflow='hidden'>

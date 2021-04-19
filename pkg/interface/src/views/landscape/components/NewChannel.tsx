@@ -49,12 +49,14 @@ interface NewChannelProps {
   api: GlobalApi;
   group?: string;
   workspace: Workspace;
+  borderRadius?: number;
+  existingMembers?: Array;
 }
 
 export function NewChannel(
   props: NewChannelProps & RouteComponentProps
 ): ReactElement {
-  const { history, api, group, workspace } = props;
+  const { history, api, group, workspace, borderRadius, existingMembers } = props;
 
   const groups = useGroupState(state => state.groups);
   const waiter = useWaitForProps({ groups }, 5000);
@@ -130,6 +132,7 @@ export function NewChannel(
       overflowY='auto'
       p={3}
       backgroundColor='white'
+      borderRadius={borderRadius}
     >
       <Box
         pb='3'
@@ -140,6 +143,7 @@ export function NewChannel(
       </Box>
       <Box>
         <Text fontSize={2} bold>
+          {workspace?.type === 'messages' && existingMembers ? 'New Group ' : null}
           {workspace?.type === 'messages' ? 'Direct Message' : 'New Channel'}
         </Text>
       </Box>
@@ -150,7 +154,7 @@ export function NewChannel(
           name: '',
           description: '',
           group: '',
-          ships: [],
+          ships: existingMembers ? [...existingMembers] : [],
           writePerms: 'everyone',
           writers: []
         }}
