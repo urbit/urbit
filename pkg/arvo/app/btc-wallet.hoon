@@ -55,7 +55,7 @@
 ^-  (quip card _this)
   ~&  >  '%btc-wallet initialized'
   =/  file
-    [%file-server-action !>([%serve-dir /'~btc' /app/btc-wallet %.n %.n])]
+    [%file-server-action !>([%serve-dir /'~btc' /app/btc-wallet %.n %.y])]
   =/  tile
     :-  %launch-action
     !>  :+  %add
@@ -165,25 +165,16 @@
   ^-  (quip card _this)
   ?>  (team:title our.bowl src.bowl)
   ?>  ?=([%all ~] path)
-  =/  provider=json
-    ?~  prov  ~
-    [%s (scot %p host.u.prov)]
-  =/  cb=(unit sats)  current-balance:hc
-  =/  wallet=json
-    ?~  walts  ~
-    %-  pairs:enjs:format
-    :~  balance+?~(cb ~ (numb:enjs:format u.cb))
-    ==
-  =/  initial=json
-    %+  frond:enjs:format
-      %initial
-    %-  pairs:enjs:format
-    :~  [%'provider' provider]
-        [%'hasWallet' b+?=(^ walts)]
-        [%wallet wallet]
+  =/  initial=update
+    :*  %initial
+        prov
+        curr-xpub
+        current-balance:hc
+        current-history:hc
+        btc-state
     ==
   :_  this
-  [%give %fact ~ %json !>(initial)]~
+  [%give %fact ~ %btc-wallet-update !>(initial)]~
 ::
 ++  on-leave  on-leave:def
 ++  on-arvo   on-arvo:def
@@ -380,9 +371,7 @@
     =+  fee=~(fee txb:bl u.poym)
     ~&  >>  "{<vb>} vbytes, {<(div fee vb)>} sats/byte, {<fee>} sats fee"
     %-  (slog [%leaf "PSBT: {<u.pb>}"]~)
-    =/  psbt=json
-      (frond:enjs:format %psbt [%s u.pb])
-    [%give %fact ~[/all] %json !>(psbt)]~
+    [(give-update [%psbt u.pb])]~
     ::    update outgoing payment with a rawtx, if the txid is in poym's txis
     ::
     ++  update-poym-txis
@@ -408,8 +397,10 @@
       ?:  (poym-has-txid txid.ti.intr)
         (poym-to-history ti.intr)
       `state
-    :-  cards
-    (handle-tx-info ti.intr)
+    =^  cards2  state
+      (handle-tx-info ti.intr)
+    :_  state
+    (weld cards cards2)
     ::
     ++  poym-has-txid
       |=  txid=hexb
@@ -432,11 +423,11 @@
         `state
       =+  vout=(get-vout txos.u.poym)
       ?~  vout  ~|("poym-to-history: poym should always have an output" !!)
-      :-  ~
+      =/  new-hest=hest  (mk-hest ti xpub.u.poym our.bowl payee.u.poym u.vout)
+      :-  [(give-update %new-tx new-hest)]~
       %=  state
-          poym  ~
-          history
-        (add-history-entry ti xpub.u.poym our.bowl payee.u.poym u.vout)
+        poym     ~
+        history  (~(put by history) txid.ti new-hest)
       ==
       ::
       ++  get-vout
@@ -463,8 +454,12 @@
       =+  vout=(get-vout value.u.pay)
       ?~  vout
         `(del-pend-piym txid.ti)
+      =/  new-hest  (mk-hest ti xpub.u.pay payer.u.pay `our.bowl u.vout)
       =.  state  (del-all-piym txid.ti payer.u.pay)
-      `state(history (add-history-entry [ti xpub.u.pay payer.u.pay `our.bowl u.vout]))
+      :-  [(give-update %new-tx new-hest)]~
+      %=  state
+        history  (~(put by history) txid.ti new-hest)
+      ==
       ::
       ++  get-vout
         |=  value=sats
@@ -475,7 +470,6 @@
         ?:  =(value.i.os value)
           `idx
         $(os t.os, idx +(idx))
-      ::
       ::
       ++  del-pend-piym
         |=  txid=hexb
@@ -493,22 +487,20 @@
         ==
       --
     ::
-    ++  add-history-entry
+    ++  mk-hest
       |=  [ti=info:tx =xpub:bc payer=ship payee=(unit ship) vout=@ud]
-      ^-  ^history
-      =/  =hest
-        :*  xpub
-            txid.ti
-            confs.ti
-            recvd.ti
-            (turn inputs.ti |=(i=val:tx [i `payer]))
-            %+  turn  outputs.ti
-              |=  o=val:tx
-              ?:  =(pos.o vout)   ::  check whether this is the output that went to payee
-              [o payee]
-              [o `payer]
-         ==
-      (~(put by history) txid.hest hest)
+      ^-  hest
+      :*  xpub
+          txid.ti
+          confs.ti
+          recvd.ti
+          (turn inputs.ti |=(i=val:tx [i `payer]))
+          %+  turn  outputs.ti
+            |=  o=val:tx
+            ?:  =(pos.o vout)   ::  check whether this is the output that went to payee
+            [o payee]
+            [o `payer]
+       ==
     --
     ::
       %fail-broadcast-tx
@@ -558,8 +550,10 @@
       `state(prov `u.prov(connected %.n))
     ==
   :_  state
-  :_  cards
-  [%give %fact ~[/all] %btc-provider-status !>(s)]
+  :*  (give-update %btc-state btc-state)
+      (give-update %change-provider prov)
+      cards
+  ==
   ::
   ++  on-connected
     |=  $:  p=provider
@@ -668,8 +662,10 @@
     (handle-address-info address.p.upd utxos.p.upd used.p.upd)
     ::
       %tx-info
-    :-  ~[(poke-internal [%close-pym info.p.upd])]
-    (handle-tx-info info.p.upd)
+    =/  [cards=(list card) sty=state-0]
+      (handle-tx-info info.p.upd)
+    :_  sty
+    [(poke-internal [%close-pym info.p.upd]) cards]
     ::
       %raw-tx
     :_  state
@@ -687,7 +683,7 @@
 ::
 ++  handle-tx-info
   |=  ti=info:tx
-  ^-  _state
+  ^-  (quip card _state)
   |^
   =/  h  (~(get by history) txid.ti)
   =.  ahistorical-txs  (~(del in ahistorical-txs) txid.ti)
@@ -697,21 +693,21 @@
       %+  turn  (weld inputs.ti outputs.ti)
       |=(=val:tx address.val)
     is-our-address
-  ?:  =(0 ~(wyt in our-addrs))  state
+  ?:  =(0 ~(wyt in our-addrs))  `state
   =/  =xpub
     xpub.w:(need (address-coords:bl (snag 0 ~(tap in our-addrs)) ~(val by walts)))
   ?~  h                           ::  addresses in wallets, but tx not in history
-    =.  history
-      %+  ~(put by history)  txid.ti
-      (mk-hest xpub our-addrs)
-    state
+    =/  new-hest=hest  (mk-hest xpub our-addrs)
+    =.  history  (~(put by history) txid.ti new-hest)
+    :_  state
+    [(give-update %new-tx new-hest)]~
   ?.  included.ti                 ::  tx in history, but not in mempool/blocks
-    state(history (~(del by history) txid.ti))
-  %_  state
-      history
-    %+  ~(put by history)  txid.ti
-    u.h(confs confs.ti, recvd recvd.ti)
-  ==
+    :_  state(history (~(del by history) txid.ti))
+    [(give-update %cancel-tx txid.ti)]~
+  =/  new-hest  u.h(confs confs.ti, recvd recvd.ti)
+  =.  history  (~(put by history) txid.ti new-hest)
+  :_  state
+  [(give-update %new-tx new-hest)]~
   ::
   ++  mk-hest
     :: has tx-info
@@ -904,6 +900,11 @@
       %btc-wallet-internal  !>(intr)
   ==
 ::
+++  give-update
+  |=  upd=update
+  ^-  card
+  [%give %fact ~[/all] %btc-wallet-update !>(upd)]
+::
 ++  is-broadcasting
   ^-  ?
   ?~  poym  %.n
@@ -938,4 +939,11 @@
   ?~  curr-xpub  ~
   (balance u.curr-xpub)
 ::
+++  current-history
+  ^-  ^history
+  ?~  curr-xpub  ~
+  %-  ~(gas by *^history)
+  %+  skim  ~(tap by history)
+  |=  [txid =hest]
+  =(u.curr-xpub xpub.hest)
 --

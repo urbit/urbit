@@ -36,7 +36,6 @@
       [%succeed-broadcast-tx =txid]
   ==
 ::
-::
 ::  Wallet Types
 ::
 ::  nixt: next indices to generate addresses from (non-change/change)
@@ -110,4 +109,21 @@
       outputs=(list [=val:tx s=(unit ship)])
   ==
 +$  history  (map txid hest)
+::  data to send to the frontend
+::
++$  update
+  $%  $:  %initial
+        provider=(unit provider)
+        wallet=(unit xpub)
+        balance=(unit sats)
+        =history
+        =btc-state
+      ==
+      [%change-provider provider=(unit provider)]
+      [%change-wallet wallet=(unit xpub) balance=(unit sats) =history]
+      [%psbt pb=@t]
+      [%btc-state =btc-state]
+      [%new-tx =hest]
+      [%cancel-tx =txid]
+  ==
 --

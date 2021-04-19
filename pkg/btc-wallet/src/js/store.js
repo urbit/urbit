@@ -5,9 +5,11 @@ class Store {
   constructor() {
     this.state = {
       providerPerms: {},
-      provider: true,
-      hasWallet: true,
-      wallet: {},
+      provider: null,
+      wallet: null,
+      balance: null,
+      btcState: null,
+      history: [],
       psbt: '',
     };
 
@@ -22,8 +24,6 @@ class Store {
 
   handleEvent(data) {
     let json = data.data;
-
-    console.log(json);
     this.initialReducer.reduce(json, this.state);
     this.updateReducer.reduce(json, this.state);
 
