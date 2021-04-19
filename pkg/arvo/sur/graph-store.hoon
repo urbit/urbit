@@ -7,7 +7,7 @@
 +$  node          [post=maybe-post children=internal-graph]
 +$  graphs        (map resource marked-graph)
 ::
-+$  tag-queries   (jug term resource)
++$  tag-queries   (jug term uid)
 ::
 +$  update-log    ((mop time logged-update) gth)
 +$  update-logs   (map resource update-log)
@@ -43,8 +43,8 @@
   $%  logged-action
       [%remove-graph =resource]
     ::
-      [%add-tag =term =resource]
-      [%remove-tag =term =resource]
+      [%add-tag =term =uid]
+      [%remove-tag =term =uid]
     ::
       [%archive-graph =resource]
       [%unarchive-graph =resource]

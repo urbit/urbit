@@ -190,14 +190,14 @@
         :-  %add-tag
         %-  pairs
         :~  [%term s+term.upd]
-            [%resource (enjs:res resource.upd)]
+            [%uid (uid uid.upd)]
         ==
       ::
           %remove-tag
         :-  %remove-tag
         %-  pairs
         :~  [%term s+term.upd]
-            [%resource (enjs:res resource.upd)]
+            [%uid (uid uid.upd)]
         ==
       ::
           %archive-graph
@@ -219,9 +219,9 @@
         :-  %tag-queries
         %-  pairs
         %+  turn  ~(tap by tag-queries.upd)
-        |=  [=term =resources]
+        |=  [=term uids=(set ^uid)]
         ^-  [cord json]
-        [term [%a (turn ~(tap in resources) enjs:res)]]
+        [term [%a (turn ~(tap in uids) uid)]]
       ==
     ::
     ++  graph
@@ -447,13 +447,13 @@
     ++  add-tag
       %-  ot
       :~  [%term so]
-          [%resource dejs:res]
+          [%uid uid]
       ==
     ::
     ++  remove-tag
       %-  ot
       :~  [%term so]
-          [%resource dejs:res]
+          [%uid uid]
       ==
     ::
     ++  keys
@@ -735,7 +735,7 @@
   ::
   +$  tree-network
     $:  graphs=tree-graphs
-        tag-queries=(tree [term (tree resource)])
+        tag-queries=(tree [term (tree uid)])
         update-logs=tree-update-logs
         archive=tree-graphs
         validators=(tree ^mark)

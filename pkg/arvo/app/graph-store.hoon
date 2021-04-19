@@ -83,6 +83,7 @@
       -.old  %4
       graphs.old       (~(run by graphs.old) marked-graph-to-two:upg)
       archive.old      (~(run by archive.old) marked-graph-to-two:upg)
+      tag-queries.old  *tag-queries:store
     ::
         update-logs.old
       %-  ~(run by update-logs.old)
@@ -492,21 +493,20 @@
       --
     ::
     ++  add-tag
-      |=  [=term =resource:store]
+      |=  [=term =uid:store]
       ^-  (quip card _state)
-      ?>  (~(has by graphs) resource)
-      :-  (give [/updates /tags ~] [%add-tag term resource])
+      ?>  (~(has by graphs) resource.uid)
+      :-  (give [/updates /tags ~] [%add-tag term uid])
       %_  state
-          tag-queries  (~(put ju tag-queries) term resource)
+          tag-queries  (~(put ju tag-queries) term uid)
       ==
     ::
     ++  remove-tag
-      |=  [=term =resource:store]
+      |=  [=term =uid:store]
       ^-  (quip card _state)
-      ?>  (~(has by graphs) resource)
-      :-  (give [/updates /tags ~] [%remove-tag term resource])
+      :-  (give [/updates /tags ~] [%remove-tag term uid])
       %_  state
-          tag-queries  (~(del ju tag-queries) term resource)
+          tag-queries  (~(del ju tag-queries) term uid)
       ==
     ::
     ++  archive-graph
@@ -519,10 +519,6 @@
           archive      (~(put by archive) resource (~(got by graphs) resource))
           graphs       (~(del by graphs) resource)
           update-logs  (~(del by update-logs) resource)
-          tag-queries
-        %-  ~(run by tag-queries)
-        |=  =resources:store
-        (~(del in resources) resource)
       ==
     ::
     ++  unarchive-graph
