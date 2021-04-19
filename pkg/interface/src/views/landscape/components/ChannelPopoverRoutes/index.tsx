@@ -84,7 +84,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
           isOwner={isOwner}
           baseUrl={props.baseUrl}
         />
-        <FormGroup height="100%" overflowY="auto" pt="5" flexGrow={1}>
+        <FormGroup onReset={onDismiss} height="100%" overflowY="auto" pt="5" flexGrow={1}>
           <ChannelNotifications {...props} />
           {!isOwner && (
             <Col mx="4" mb="6" flexShrink={0}>

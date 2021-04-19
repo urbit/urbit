@@ -90,8 +90,8 @@ export function FormGroupChild(props: { id: string }) {
   return <Box display="none" />;
 }
 
-export function FormGroup(props: PropFunc<typeof Box>) {
-  const { children, ...rest } = props;
+export function FormGroup(props: { onReset?: () => void; } & PropFunc<typeof Box>) {
+  const { children, onReset, ...rest } = props;
   const [submits, setSubmits] = useState({} as { [id: string]: SubmitHandler });
   const [resets, setResets] = useState({} as Record<string, () => void>);
   const [dirty, setDirty] = useState({} as Record<string, boolean>);
@@ -102,7 +102,8 @@ export function FormGroup(props: PropFunc<typeof Box>) {
 
   const resetAll = useCallback(() => {
     _.map(resets, (r) => r());
-  }, [resets]);
+    onReset && onReset();
+  }, [resets, onReset]);
 
   const submitAll = useCallback(async () => {
     await Promise.all(
@@ -160,7 +161,7 @@ export function FormGroup(props: PropFunc<typeof Box>) {
         borderTop="1"
         borderTopColor="washedGray"
       >
-        <Button disabled={!isDirty} onClick={resetAll}>Cancel</Button>
+        <Button onClick={resetAll}>Cancel</Button>
         <StatelessAsyncButton
           onClick={submitAll}
           disabled={hasErrors || !isDirty}
