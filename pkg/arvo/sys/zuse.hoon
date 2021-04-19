@@ -5296,6 +5296,23 @@
     ?~  a  b
     ::
     $(a r.a, b [n.a $(a l.a)])
+  ::  +run: apply gate to transform all values in place
+  ::  without modifying their type
+  ::
+  ++  run
+    |=  [a=(tree item) b=$-(val val)]
+    |-  ^+  a
+    ?~  a  a
+    [n=[key.n.a (b val.n.a)] l=$(a l.a) r=$(a r.a)]
+  ::  +all: apply logical AND boolean test on all values
+  ::
+  ++  all
+    |=  [a=(tree item) b=$-(item ?)]
+    ^-  ?
+    |-
+    ?~  a
+      &
+    ?&((b n.a) $(a l.a) $(a r.a))
   ::  +gas: put a list of items
   ::
   ++  gas
