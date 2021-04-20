@@ -23,7 +23,7 @@
 ::  /app-name/%app-name                            associations for app
 ::  /group/%path                             associations for group
 ::
-/-  store=metadata-store
+/-  store=metadata-store, pull-hook
 /+  default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
@@ -95,16 +95,17 @@
       ~
   ==
 ::
-+$  state-0   [%0 base-state-0]
-+$  state-1   [%1 base-state-0]
-+$  state-2   [%2 base-state-0]
-+$  state-3   [%3 base-state-1]
-+$  state-4   [%4 base-state-1]
-+$  state-5   [%5 base-state-1]
-+$  state-6   [%6 base-state-1]
-+$  state-7   [%7 base-state-2]
-+$  state-8   [%8 base-state-3]
-+$  state-9   [%9 base-state-3]
++$  state-0    [%0 base-state-0]
++$  state-1    [%1 base-state-0]
++$  state-2    [%2 base-state-0]
++$  state-3    [%3 base-state-1]
++$  state-4    [%4 base-state-1]
++$  state-5    [%5 base-state-1]
++$  state-6    [%6 base-state-1]
++$  state-7    [%7 base-state-2]
++$  state-8    [%8 base-state-3]
++$  state-9    [%9 base-state-3]
++$  state-10   [%10 base-state-3]
 +$  versioned-state
   $%  state-0
       state-1
@@ -116,10 +117,11 @@
       state-7
       state-8
       state-9
+      state-10
   ==
 ::
 +$  inflated-state
-  $:  state-9
+  $:  state-10
       cached-indices
   ==
 --
@@ -232,7 +234,7 @@
   =|  cards=(list card)
   |^
   =*  loop  $
-  ?:  ?=(%9 -.old)
+  ?:  ?=(%10 -.old)
     :-  cards
     %_  state
       associations      associations.old
@@ -240,7 +242,7 @@
       group-indices     (rebuild-group-indices associations.old)
       app-indices       (rebuild-app-indices associations.old)
     ==
-  ?:  ?=(%8 -.old)
+  ?:  ?=(%9 -.old)
     =/  groups  
       (fall (~(get by (rebuild-app-indices associations.old)) %groups) ~)
     =/  pokes=(list card)
@@ -254,11 +256,14 @@
       =*  res  resource.u.u.feed.config.met
       =-  `[%pass /fix-feed %agent [our.bowl %graph-pull-hook] %poke -]
       :-  %pull-hook-action
-      !>  [%add entity.res name.res]
+      !>  ^-  action:pull-hook
+      [%add entity.res res]
     %_  $
       cards  (weld cards pokes)
-      -.old  %9
+      -.old  %10
     ==
+  ?:  ?=(%8 -.old)
+    $(-.old %9)
   ?:  ?=(%7 -.old)
     $(old [%8 (associations-2-to-3 associations.old) ~])
   ?:  ?=(%6 -.old)

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Text, Box } from '@tlon/indigo-react';
 import { Contact, Contacts, Content, Group } from '@urbit/api';
 import RichText from '~/views/components/RichText';
-import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
+import { cite, useShowNickname, uxToHex, deSig } from '~/logic/lib/util';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
 import { useHistory } from 'react-router-dom';
 import useContactState, {useContact} from '~/logic/state/contact';
@@ -45,7 +45,7 @@ export function Mention(props: {
   api: any;
 }) {
   const { ship, first, api, ...rest } = props;
-  const contact = useContact(ship);
+  const contact = useContact(`~${deSig(ship)}`);
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact?.nickname : cite(ship);
 

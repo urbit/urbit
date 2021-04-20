@@ -10,11 +10,19 @@ import GlobalApi from "~/logic/api/global";
 import useHarkState from "~/logic/state/hark";
 import _ from "lodash";
 import {AsyncButton} from "~/views/components/AsyncButton";
+import {GroupChannelPicker} from "./GroupChannelPicker";
+import {isWatching} from "~/logic/lib/hark";
 
 interface FormSchema {
   mentions: boolean;
   dnd: boolean;
   watchOnSelf: boolean;
+  graph: {
+    [rid: string]: boolean;
+  };
+  groups: {
+    [rid: string]: boolean;
+  }
 }
 
 export function NotificationPreferences(props: {
@@ -23,6 +31,7 @@ export function NotificationPreferences(props: {
   const { api } = props;
   const dnd = useHarkState(state => state.doNotDisturb);
   const graphConfig = useHarkState(state => state.notificationsGraphConfig);
+  const groupConfig = useHarkState(s => s.notificationsGroupConfig);
   const initialValues = {
     mentions: graphConfig.mentions,
     dnd: dnd,
@@ -41,6 +50,16 @@ export function NotificationPreferences(props: {
       if (values.dnd !== dnd && !_.isUndefined(values.dnd)) {
         promises.push(api.hark.setDoNotDisturb(values.dnd))
       }
+      _.forEach(values.graph, (listen: boolean, graph: string) => {
+        if(listen !== isWatching(graphConfig, graph)) {
+          promises.push(api.hark[listen ? "listenGraph" : "ignoreGraph"](graph, "/"))
+        }
+      });
+      _.forEach(values.groups, (listen: boolean, group: string) => {
+        if(listen !== groupConfig.includes(group)) {
+          promises.push(api.hark[listen ? "listenGroup" : "ignoreGroup"](group));
+        }
+      });
 
       await Promise.all(promises);
       actions.setStatus({ success: null });
@@ -81,6 +100,15 @@ export function NotificationPreferences(props: {
               id="mentions"
               caption="Notify me if someone mentions my @p in a channel I've joined"
             />
+            <Col gapY="3">
+              <Text lineHeight="tall">
+                Activity
+              </Text>
+              <Text gray>
+                Set which groups will send you notifications.
+              </Text>
+              <GroupChannelPicker />
+            </Col>
             <AsyncButton primary width="fit-content">
               Save
             </AsyncButton>
