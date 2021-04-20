@@ -45,7 +45,7 @@ import qualified Urbit.Vere.Term.Render   as T
 
 -- | All stateful data in the printing to stdOutput.
 data LineState = LineState
-  { lsLine            :: Text
+  { lsLine            :: [(Stye, [Char])]
   , lsCurPos          :: CurPos
   , lsSpinTimer       :: Maybe (Async ())
   , lsSpinCause       :: Maybe Text
@@ -288,7 +288,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
         currentTime <- io $ now
         loop
           termSizeVar
-          (LineState "" (CurPos 0 0) Nothing Nothing True 0 currentTime)
+          (LineState [] (CurPos 0 0) Nothing Nothing True 0 currentTime)
       where
         writeBlank :: LineState -> RIO e LineState
         writeBlank ls = do
@@ -464,15 +464,44 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
         styled = mconcat [escape, styles, "m", tape, escape, "0m"]
 
+    bareStub :: [Char] -> [(Stye, [Char])]
+    bareStub c = [(Stye (setToHoonSet mempty) TintNull TintNull, c)]
+
+    -- overwrite substring of base with put, starting at index
+    overwriteStub :: [(Stye, [Char])] -> Int -> [(Stye, [Char])] -> [(Stye, [Char])]
+    overwriteStub base index put =
+         scagStub index base
+      ++ ( let l = lentStub base in
+           if index <= l then []
+           else bareStub $ take (index - l) [' ',' '..]
+         )
+      ++ put
+      ++ slagStub (index + lentStub put) base
+      where
+        lentStub :: [(Stye, [Char])] -> Int
+        lentStub s = sum $ map (length . snd) s
+
+        scagStub :: Int -> [(Stye, [Char])] -> [(Stye, [Char])]
+        scagStub 0 _  = []
+        scagStub _ [] = []
+        scagStub i ((y,c):s) =
+          (y, take i c) : scagStub (i - min i (length c)) s
+
+        slagStub :: Int -> [(Stye, [Char])] -> [(Stye, [Char])]
+        slagStub 0 s  = s
+        slagStub _ [] = []
+        slagStub i ((y,c):s)
+          | i > l     = slagStub (i - l) s
+          | otherwise = (y, drop i c) : s
+          where l = length c
+
     -- Displays styled text at the cursor
     termShowStub :: LineState -> Stub -> RIO e LineState
-    termShowStub ls@LineState{lsCurPos} (Stub s) = do
-      let outText = pack $ mconcat $ fmap (uncurry termRenderStubSegment) s
-      putStr outText
+    termShowStub ls@LineState{lsCurPos, lsLine} (Stub s) = do
+      putStr $ pack $ mconcat $ fmap (uncurry termRenderStubSegment) s
       T.cursorRestore
       case row lsCurPos of
-        0 -> --TODO  offset by col
-             pure ls { lsLine = outText }
+        0 -> pure ls { lsLine = overwriteStub lsLine (col lsCurPos) s }
         _ -> pure ls
 
     -- Moves the cursor to the requested position
@@ -485,12 +514,11 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
     -- Displays and sets the current line
     termShowLine :: LineState -> Text -> RIO e LineState
-    termShowLine ls@LineState{lsCurPos} newStr = do
+    termShowLine ls@LineState{lsCurPos, lsLine} newStr = do
       putStr newStr
       T.cursorRestore
       case row lsCurPos of
-        0 -> --TODO  offset by col
-             pure ls { lsLine = newStr }
+        0 -> pure ls { lsLine = overwriteStub lsLine (col lsCurPos) (bareStub $ unpack newStr) }
         _ -> pure ls
 
     termShowClear :: LineState -> RIO e LineState
@@ -499,7 +527,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
         T.clearLine
         T.cursorRestore
         case row lsCurPos of
-          0 -> pure ls { lsLine = "" }
+          0 -> pure ls { lsLine = [] }
           _ -> pure ls
 
     -- New Current Line
@@ -507,7 +535,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
     termShowNewline ls@LineState{lsCurPos} = do
       putStr "\r\n"
       case row lsCurPos of
-        0 -> pure ls { lsLine = "", lsCurPos = lsCurPos { col = 0 } }
+        0 -> pure ls { lsLine = [], lsCurPos = lsCurPos { col = 0 } }
         r -> pure ls { lsCurPos = CurPos (r-1) 0 }
 
     -- Redraw the bottom LineState, maintaining the current curpos
@@ -516,7 +544,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       TermSize _ h <- readTVarIO ts
       T.cursorMove (fromIntegral h - 1) 0
       T.clearLine
-      putStr lsLine
+      putStr $ pack $ mconcat $ fmap (uncurry termRenderStubSegment) lsLine
       T.cursorRestore
 
     -- ring my bell
