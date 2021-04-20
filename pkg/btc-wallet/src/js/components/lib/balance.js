@@ -60,6 +60,7 @@ export default class Balance extends Component {
         {this.state.sending ?
          <Send
            api={api}
+           psbt={this.props.state.psbt}
            shipWallets={this.props.state.shipWallets}
            value={value}
            denomination={denomination}

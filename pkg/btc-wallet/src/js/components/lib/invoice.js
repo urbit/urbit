@@ -73,7 +73,7 @@ export default class Invoice extends Component {
   }
 
   render() {
-    const { stopSending, payee, denomination, denomAmount, satsAmount } = this.props;
+    const { stopSending, payee, denomination, denomAmount, satsAmount, psbt } = this.props;
     const { sent } = this.state;
     return (
       <>
@@ -166,7 +166,7 @@ export default class Invoice extends Component {
                 borderRadius='24px'
                 py='24px'
                 px='24px'
-                onClick={() => this.sendBitcoin(this.state.masterTicket, store.state.psbt)}
+                onClick={() => this.sendBitcoin(this.state.masterTicket, psbt)}
                 disabled={!this.state.ready}
                 style={{cursor: this.state.ready ? "pointer" : "default"}}
               />
