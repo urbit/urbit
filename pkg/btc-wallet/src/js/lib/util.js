@@ -80,3 +80,33 @@ export function cite(ship) {
   }
   return `~${patp}`;
 }
+
+export function satsToCurrency(sats, denomination, rates){
+  if (!rates) {
+    throw "nonexistent currency table"
+  }
+  if (!rates[denomination]){
+    denomination = "BTC";
+  }
+  let rate = rates[denomination];
+  let val = (sats * rate.last) * 0.00000001;
+  let text;
+  if (denomination === 'BTC'){
+    text = rate.symbol + val.toFixed(8)
+  } else {
+    text = rate.symbol + val.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  }
+  return text
+}
+
+export function currencyToSats(val, denomination, rates){
+  if (!rates) {
+    throw "nonexistent currency table"
+  }
+  if (!rates[denomination]){
+    throw 'currency not in table'
+  }
+  let rate = rates[denomination];
+  let sats = (parseFloat(val) / rate.last) * 100000000;
+  return sats;
+}

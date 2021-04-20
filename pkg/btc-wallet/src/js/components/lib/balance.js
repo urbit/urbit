@@ -9,50 +9,20 @@ import {
 } from '@tlon/indigo-react';
 
 import Send from './send.js'
+import CurrencyPicker from './currencyPicker.js'
+import { currencyToSats, satsToCurrency } from '../../lib/util.js';
 
-function currencyFormat(sats, conversion, denomination) {
-  let val;
-  let text;
-  switch (denomination) {
-    case "USD":
-    case "CAD":
-      val = sats * 0.00000001 * conversion[denomination]
-      text = '$' + val.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-      break;
-    case "BTC":
-      val = sats * 0.00000001;
-      text =  'BTC ' + val;
-      break;
-    default:
-      break;
-  }
-  return text;
-}
 
 export default class Balance extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      conversion: {
-        USD: 50000,
-        CAD: 70000,
-        BTC: 1,
-      },
-      denomination: "USD",
       sending: false,
       copied: false,
     }
 
     this.copyAddress = this.copyAddress.bind(this);
-  }
-
-  componentDidMount() {
-    fetch('https://blockchain.info/tobtc?currency=USD&value=1')
-      .then(res => res.json())
-      .then(n => {
-        this.setState({conversion: {USD: 1/n, CAD: 70000, BTC: 1}});
-      });
   }
 
   copyAddress() {
@@ -76,11 +46,14 @@ export default class Balance extends Component {
 
   render() {
     const sats = (this.props.state.balance || 0);
-    const value = currencyFormat(sats, this.state.conversion, this.state.denomination);
+    const denomination = this.props.state.denomination;
+    const value = satsToCurrency(sats, denomination, this.props.state.currencyRates);
     const sendDisabled = (sats === 0);
     const addressText = (this.props.state.address === null) ? '' :
       this.props.state.address.slice(0, 6) + '...' +
       this.props.state.address.slice(-6);
+
+    const conversion = this.props.state.currencyRates[denomination].last;
 
     return (
       <>
@@ -89,9 +62,9 @@ export default class Balance extends Component {
            api={api}
            shipWallets={this.props.state.shipWallets}
            value={value}
-           denomination={this.state.denomination}
+           denomination={denomination}
            sats={sats}
-           conversion={this.state.conversion}
+           conversion={conversion}
            stopSending={() => {this.setState({sending: false})}}
          /> :
          <Col
@@ -106,10 +79,10 @@ export default class Balance extends Component {
            <Row justifyContent="space-between">
              <Text color="orange" fontSize={1}>Balance</Text>
              <Text color="lighterGray" fontSize="14px" mono>{addressText}</Text>
-             <Row>
-               <Icon icon="ChevronDouble" color="orange" pt="2px"/>
-               <Text color="orange" fontSize={1}>{this.state.denomination}</Text>
-             </Row>
+             <CurrencyPicker
+               denomination={denomination}
+               currencies={this.props.state.currencyRates}
+             />
            </Row>
            <Col justifyContent="center" alignItems="center">
              <Text fontSize="52px" color="orange">{value}</Text>

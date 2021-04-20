@@ -13,12 +13,12 @@ import _ from 'lodash';
 import { Sigil } from './sigil.js'
 import TxAction from './tx-action.js'
 import TxCounterparty from './tx-counterparty.js'
+import { satsToCurrency } from '../../lib/util.js'
 
 export default class Transaction extends Component {
   constructor(props) {
     super(props);
   }
-
 
   render() {
     const pending = (!this.props.tx.recvd);
@@ -57,6 +57,9 @@ export default class Transaction extends Component {
       sign = '';
     }
 
+//    let currencyValue = (this.props.denom === 'BTC') ? null :
+//      sign + satsToCurrency(value, this.props.denom, this.props.rates);
+
     const failure = Boolean(this.props.tx.failure);
     if (failure) action = "fail";
 
@@ -78,7 +81,7 @@ export default class Transaction extends Component {
         </Box>
         <Row justifyContent="space-between" alignItems="center">
           <TxCounterparty address={counterAddress} ship={counterShip}/>
-          <Text fontSize="14px">{sign}$5</Text>
+          <Text fontSize="14px">{currencyValue}</Text>
         </Row>
       </Col>
     );
