@@ -21,6 +21,7 @@ export interface LocalState {
   hideLeapCats: LeapCategories[];
   setTutorialRef: (el: HTMLElement | null) => void;
   dark: boolean;
+  mobile: boolean;
   background: BackgroundConfig;
   omniboxShown: boolean;
   suspendedFocus?: HTMLElement;
@@ -35,6 +36,7 @@ export const selectLocalState =
 
 const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   dark: false,
+  mobile: false,
   background: undefined,
   theme: "auto",
   hideAvatars: false,
