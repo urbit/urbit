@@ -491,6 +491,7 @@
     ::
     ++  tr-add
       |=  [s=^ship r=resource]
+      ?<  =(s our.bowl)
       =:  ship  s
           rid   r
           status  [%active ~]
