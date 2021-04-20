@@ -688,7 +688,6 @@ u3m_bail(u3_noun how)
   //
   switch ( how ) {
     case c3__foul:
-    case c3__meme:
     case c3__oops: {
       fprintf(stderr, "bailing out\r\n");
       abort();
