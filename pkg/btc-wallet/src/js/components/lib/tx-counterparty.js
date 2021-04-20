@@ -35,11 +35,12 @@ export default class TxCounterparty extends Component {
           borderRadius="2px"
           p={1}
         >
-          <Icon icon="NullIcon" color="black"/>
+          <Icon icon="NullIcon" color="gray"/>
         </Box>
     const addressText = this.props.address.slice(0, 6) + '...' +
       this.props.address.slice(-6);
-    const text = (this.props.ship || addressText);
+    const text = (this.props.ship) ?
+      `~${this.props.ship}` : addressText;
 
     return (
       <Row alignItems="center">

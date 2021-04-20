@@ -32,8 +32,10 @@ export default class TxAction extends Component {
       "red";
 
     const actionText =
-      (this.props.action === "sent") ? "Sent BTC" :
-      (this.props.action === "recv") ? "Received BTC" :
+      (this.props.action === "sent" && !this.props.pending) ? "Sent BTC" :
+      (this.props.action === "sent" &&  this.props.pending) ? "Sending BTC" :
+      (this.props.action === "recv" && !this.props.pending) ? "Received BTC" :
+      (this.props.action === "recv" &&  this.props.pending) ? "Receiving BTC" :
       (this.props.action === "fail") ? "Failed" :
       "error";
 

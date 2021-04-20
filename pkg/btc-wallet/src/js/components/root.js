@@ -20,11 +20,7 @@ export class Root extends Component {
     this.ship = window.ship;
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
-  }
-
-  componentDidUpdate(){
     console.log('state', this.state);
-
   }
 
   render() {
