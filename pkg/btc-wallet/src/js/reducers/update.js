@@ -59,23 +59,22 @@ export class UpdateReducer {
 
   reduceNewTx(json, state) {
     let old = _.findIndex(state.history, (h) => {
-      if (!h) return false;
       return ( h.txid.dat === json.txid.dat &&
                h.txid.wid === json.txid.wid );
     });
     if (old !== -1) {
-      delete state.history[old];
+      delete state.history.splice(old, 1);
     }
     if (json.recvd === null) {
       state.history.unshift(json);
+    } else {
+      // we expect history to have null recvd values first, and the rest in
+      // descending order
+      let insertionIndex = _.findIndex(state.history, (h) => {
+        return ((h.recvd < json.recvd) && (h.recvd !== null));
+      });
+      state.history.splice(insertionIndex, 0, json);
     }
-    // we expect history to have null recvd values first, and the rest in
-    // descending order
-    let insertionIndex = _.findIndex(state.history, (h) => {
-      if (!h) return false;
-      return ((h.recvd < json.recvd) && (h.recvd !== null));
-    });
-    state.history.splice(insertionIndex, 0, json);
   }
 
   reduceCancelTx(json, state) {
