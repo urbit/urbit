@@ -5072,6 +5072,8 @@
   =/  b  ;;((tree [key=key val=value]) a)
   ?>  (apt:((on key value) ord) b)
   b
+::
+::
 ++  ordered-map  on
 ::  +on: treap with user-specified horizontal order, ordered-map
 ::
@@ -5117,9 +5119,9 @@
   ::
   ++  apt
     ~/  %apt
-    =|  [l=(unit key) r=(unit key)]
     |=  a=(tree item)
-    ^-  ?
+    =|  [l=(unit key) r=(unit key)]
+    |-  ^-  ?
     ::  empty tree is valid
     ::
     ?~  a  %.y
