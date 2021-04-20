@@ -5070,7 +5070,7 @@
   |=  ord=$-([key key] ?)
   |=  a=*
   =/  b  ;;((tree [key=key val=value]) a)
-  ?>  (apt:((ordered-map key value) ord) b)
+  ?>  (apt:((on key value) ord) b)
   b
 ++  ordered-map  on
 ::  +on: treap with user-specified horizontal order, ordered-map
@@ -5173,13 +5173,80 @@
       [found a(l lef)]
     =+  [found rig]=$(a r.a)
     [found a(r rig)]
+  ::  +dip: stateful partial inorder traversal
+  ::
+  ::    Mutates .state on each run of .f.  Starts at .start key, or if
+  ::    .start is ~, starts at the head (item with smallest key).  Stops
+  ::    when .f produces .stop=%.y.  Traverses from smaller to larger
+  ::    keys.  Each run of .f can replace an item's value or delete the
+  ::    item.
+  ::
+  ++  dip
+    ~/  %dip
+    |*  state=mold
+    |=  $:  a=(tree item)
+            =state
+            f=$-([state item] [(unit val) ? state])
+        ==
+    ^+  [state a]
+    ::  acc: accumulator
+    ::
+    ::    .stop: set to %.y by .f when done traversing
+    ::    .state: threaded through each run of .f and produced by +abet
+    ::
+    =/  acc  [stop=`?`%.n state=state]
+    =<  abet  =<  main
+    |%
+    ++  this  .
+    ++  abet  [state.acc a]
+    ::  +main: main recursive loop; performs a partial inorder traversal
+    ::
+    ++  main
+      ^+  this
+      ::  stop if empty or we've been told to stop
+      ::
+      ?:  =(~ a)  this
+      ?:  stop.acc  this
+      ::  inorder traversal: left -> node -> right, until .f sets .stop
+      ::
+      =.  this  left
+      ?:  stop.acc  this
+      =^  del  this  node
+      =?  this  !stop.acc  right
+      =?  a  del  (nip a)
+      this
+    ::  +node: run .f on .n.a, updating .a, .state, and .stop
+    ::
+    ++  node
+      ^+  [del=*? this]
+      ::  run .f on node, updating .stop.acc and .state.acc
+      ::
+      ?>  ?=(^ a)
+      =^  res  acc  (f state.acc n.a)
+      ?~  res
+        [del=& this]
+      [del=| this(val.n.a u.res)]
+    ::  +left: recurse on left subtree, copying mutant back into .l.a
+    ::
+    ++  left
+      ^+  this
+      ?~  a  this
+      =/  lef  main(a l.a)
+      lef(a a(l a.lef))
+    ::  +right: recurse on right subtree, copying mutant back into .r.a
+    ::
+    ++  right
+      ^+  this
+      ?~  a  this
+      =/  rig  main(a r.a)
+      rig(a a(r a.rig))
+    --
   ::  +gas: put a list of items
   ::
   ++  gas
     ~/  %gas
     |=  [a=(tree item) b=(list item)]
     ^-  (tree item)
-    ::
     ?~  b  a
     $(b t.b, a (put a i.b))
   ::  +get: get val at key or return ~
@@ -5348,74 +5415,6 @@
     ?~  a  b
     ::
     $(a l.a, b [n.a $(a r.a)])
-  ::  +dip: stateful partial inorder traversal
-  ::
-  ::    Mutates .state on each run of .f.  Starts at .start key, or if
-  ::    .start is ~, starts at the head (item with smallest key).  Stops
-  ::    when .f produces .stop=%.y.  Traverses from smaller to larger
-  ::    keys.  Each run of .f can replace an item's value or delete the
-  ::    item.
-  ::
-  ++  dip
-    ~/  %dip
-    |*  state=mold
-    |=  $:  a=(tree item)
-            =state
-            f=$-([state item] [(unit val) ? state])
-        ==
-    ^+  [state a]
-    ::  acc: accumulator
-    ::
-    ::    .stop: set to %.y by .f when done traversing
-    ::    .state: threaded through each run of .f and produced by +abet
-    ::
-    =/  acc  [stop=`?`%.n state=state]
-    =<  abet  =<  main
-    |%
-    ++  this  .
-    ++  abet  [state.acc a]
-    ::  +main: main recursive loop; performs a partial inorder traversal
-    ::
-    ++  main
-      ^+  this
-      ::  stop if empty or we've been told to stop
-      ::
-      ?:  =(~ a)  this
-      ?:  stop.acc  this
-      ::  inorder traversal: left -> node -> right, until .f sets .stop
-      ::
-      =.  this  left
-      ?:  stop.acc  this
-      =^  del  this  node
-      =?  this  !stop.acc  right
-      =?  a  del  (nip a)
-      this
-    ::  +node: run .f on .n.a, updating .a, .state, and .stop
-    ::
-    ++  node
-      ^+  [del=*? this]
-      ::  run .f on node, updating .stop.acc and .state.acc
-      ::
-      ?>  ?=(^ a)
-      =^  res  acc  (f state.acc n.a)
-      ?~  res
-        [del=& this]
-      [del=| this(val.n.a u.res)]
-    ::  +left: recurse on left subtree, copying mutant back into .l.a
-    ::
-    ++  left
-      ^+  this
-      ?~  a  this
-      =/  lef  main(a l.a)
-      lef(a a(l a.lef))
-    ::  +right: recurse on right subtree, copying mutant back into .r.a
-    ::
-    ++  right
-      ^+  this
-      ?~  a  this
-      =/  rig  main(a r.a)
-      rig(a a(r a.rig))
-    --
   ::  +uni: unify two ordered maps
   ::
   ::    .b takes precedence over .a if keys overlap.
