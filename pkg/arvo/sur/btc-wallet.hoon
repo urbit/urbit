@@ -14,9 +14,11 @@
 +$  command
   $%  [%set-provider provider=ship]
       [%check-provider provider=ship]
+      [%check-payee payee=ship]
       [%set-current-wallet =xpub]
       [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%delete-wallet =xpub]
+      [%init-payment-external =address value=sats feyb=sats]
       [%init-payment payee=ship value=sats feyb=sats]
       [%broadcast-tx txhex=cord]
       [%gen-new-address ~]

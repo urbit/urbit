@@ -6,6 +6,10 @@ export class UpdateReducer {
     if (json.providerStatus) {
       this.reduceProviderStatus(json.providerStatus, state);
     }
+    if (json.checkPayee) {
+      console.log('update', json);
+      this.reduceCheckPayee(json.checkPayee, state);
+    }
     if (json["change-provider"]) {
       this.reduceChangeProvider(json["change-provider"], state);
     }
@@ -31,6 +35,10 @@ export class UpdateReducer {
 
   reduceProviderStatus(json, state) {
     state.providerPerms[json.provider] = json.permitted;
+  }
+
+  reduceCheckPayee(json, state) {
+    state.shipWallets[json.payee] = json.hasWallet;
   }
 
   reduceChangeProvider(json, state) {

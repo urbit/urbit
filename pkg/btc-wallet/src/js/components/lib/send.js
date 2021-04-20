@@ -22,27 +22,73 @@ export default class Send extends Component {
       denomAmount: '0.00',
       satsAmount: '0',
       payee: '',
+      checkingPatp: false,
+      payeeType: '',
       ready: false,
     };
 
     this.initPayment  = this.initPayment.bind(this);
-    this.checkPatp  = this.checkPatp.bind(this);
+    this.checkPayee  = this.checkPayee.bind(this);
   }
 
-  checkPatp(e){
-    let ready = ob.isValidPatp(e.target.value);
-    this.setState({ready, payee: e.target.value});
+  checkPayee(e){
+    let payee = e.target.value;
+    let isPatp = ob.isValidPatp(payee);
+    let isAddress = true; //TODO: actual validation
+
+    if (isPatp) {
+      let command = {'check-payee': payee}
+      this.props.api.btcWalletCommand(command)
+      this.setState({
+        checkingPatp: true,
+        payeeType: 'ship',
+        payee,
+      });
+    } else if (isAddress) {
+      this.setState({
+        payee,
+        ready: true,
+        checkingPatp: false,
+        payeeType: 'address',
+      });
+    } else {
+      this.setState({
+        payee,
+        ready: false,
+        checkingPatp: false,
+        payeeType: '',
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!this.state.ready && this.state.checkingPatp) {
+      if (this.props.shipWallets[this.state.payee.slice(1)]) {
+        this.setState({ready: true, checkingPatp: false});
+      }
+    }
   }
 
   initPayment() {
-    let command = {
-      'init-payment': {
-        'payee': this.state.payee,
-        'value': parseInt(this.state.satsAmount),
-        'feyb': 1,
+    if (this.state.payeeType === 'ship') {
+      let command = {
+        'init-payment': {
+          'payee': this.state.payee,
+          'value': parseInt(this.state.satsAmount),
+          'feyb': 1,
+        }
       }
+      this.props.api.btcWalletCommand(command).then(res => this.setState({signing: true}));
+    } else if (this.state.payeeType === 'address') {
+      let command = {
+        'init-payment-external': {
+          'address': this.state.payee,
+          'value': parseInt(this.state.satsAmount),
+          'feyb': 1,
+        }
+      }
+      this.props.api.btcWalletCommand(command).then(res => this.setState({signing: true}));
     }
-    this.props.api.btcWalletCommand(command).then(res => this.setState({signing: true}));
   }
 
   render() {
@@ -98,7 +144,7 @@ export default class Send extends Component {
                 fontSize='14px'
                 placeholder='~sampel-palnet or BTC address'
                 value={payee}
-                onChange={this.checkPatp}
+                onChange={this.checkPayee}
               />
             </Row>
             <Row
