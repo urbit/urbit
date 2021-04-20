@@ -5072,10 +5072,6 @@
   =/  b  ;;((tree [key=key val=value]) a)
   ?>  (apt:((ordered-map key value) ord) b)
   b
-::
-::  $mk-item: constructor for +ordered-map item type
-::
-++  mk-item  |$  [key val]  [key=key val=val]
 ::  +ordered-map: treap with user-specified horizontal order
 ::
 ::    Conceptually smaller items go on the left, so the item with the
@@ -5088,11 +5084,12 @@
 ++  ordered-map
   |*  [key=mold val=mold]
   =>  |%
-      +$  item  (mk-item key val)
+      +$  item  [key=key val=val]
       --
   ::  +compare: item comparator for horizontal order
   ::
   |=  compare=$-([key key] ?)
+  ~%  %ordered-map  ..part  ~
   |%
   ::  +all: apply logical AND boolean test on all values
   ::
@@ -5286,7 +5283,6 @@
     |-
     ?~  a  a
     [n=[key.n.a (b val.n.a)] l=$(a l.a) r=$(a r.a)]
-  ::
   ::  +subset: take a range excluding start and/or end and all elements
   ::  outside the range
   ::
