@@ -1,5 +1,6 @@
-import { InitialReducer } from './reducers/initial';
-import { UpdateReducer } from './reducers/update';
+import { InitialReducer }  from './reducers/initial';
+import { UpdateReducer }   from './reducers/update';
+import { CurrencyReducer } from './reducers/currency';
 
 class Store {
   constructor() {
@@ -13,10 +14,15 @@ class Store {
       history: [],
       psbt: '',
       address: null,
+      currencyRates: {
+        BTC: { last: 1, symbol: '฿' }
+      },
+      denomination: 'BTC',
     };
 
     this.initialReducer = new InitialReducer();
     this.updateReducer = new UpdateReducer();
+    this.currencyReducer = new CurrencyReducer();
     this.setState = () => { };
   }
 
@@ -28,6 +34,7 @@ class Store {
     let json = data.data;
     this.initialReducer.reduce(json, this.state);
     this.updateReducer.reduce(json, this.state);
+    this.currencyReducer.reduce(json, this.state);
 
     this.setState(this.state);
   }
