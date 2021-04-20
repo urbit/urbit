@@ -134,7 +134,13 @@ export function ProfileActions(props: any): ReactElement {
               history.push(`/~profile/${ship}/edit`);
             }}
           >
-            Edit {isPublic ? 'Public' : 'Private'} Profile
+            Edit
+            <Text
+              fontWeight='500'
+              cursor='pointer'
+              display={['none','inline']}>
+                {isPublic ? ' Public' : ' Private'} Profile
+            </Text>
           </Text>
           <SetStatusBarModal
             isControl
@@ -183,7 +189,7 @@ export function Profile(props: any): ReactElement | null {
   }
 
   return (
-    <Center p={[0, 4]} height='100%' width='100%'>
+    <Center p={[3, 4]} height='100%' width='100%'>
       <Box maxWidth='600px' width='100%' position='relative'>
         { isEdit ? (
           <EditProfile

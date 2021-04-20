@@ -59,13 +59,6 @@ export function Invites(props: InvitesProps): ReactElement {
 
   return (
     <>
-      {Object.keys(invitesAndStatus).length > 0 && (
-        <Box position="sticky" zIndex={3} top="-1px" bg="white" flexShrink="0">
-          <Box p="2" bg="scales.black05">
-            <Text>Invites</Text>
-          </Box>
-        </Box>
-      )}
       {Object.keys(invitesAndStatus)
         .sort(alphabeticalOrder)
         .map((resource) => {
@@ -89,10 +82,9 @@ export function Invites(props: InvitesProps): ReactElement {
                 invite={invite}
                 app={app}
                 uid={uid}
-                join={join}
                 resource={resource}
               />
-              );
+            );
           }
         })
       }
