@@ -661,7 +661,10 @@ u3m_dump(void)
 c3_i
 u3m_bail(u3_noun how)
 {
-  if ( (c3__exit == how) && (u3R == &u3H->rod_u) ) {
+  if ( &(u3H->rod_u) == u3R ) {
+    //  XX set exit code
+    //
+    fprintf(stderr, "home: bailing out\r\n");
     abort();
   }
 
@@ -689,6 +692,8 @@ u3m_bail(u3_noun how)
   switch ( how ) {
     case c3__foul:
     case c3__oops: {
+      //  XX set exit code
+      //
       fprintf(stderr, "bailing out\r\n");
       abort();
     }
@@ -698,6 +703,9 @@ u3m_bail(u3_noun how)
     //  For top-level errors, which shouldn't happen often, we have no
     //  choice but to use the signal process; and we require the flat
     //  form of how.
+    //
+    //    XX JB: these seem unrecoverable, at least wrt memory management,
+    //    so they've been disabled above for now
     //
     c3_assert(_(u3a_is_cat(how)));
     u3m_signal(how);
