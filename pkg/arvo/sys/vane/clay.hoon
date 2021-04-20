@@ -58,6 +58,9 @@
 ::  when the request is filled/updated.
 ::
 +$  cult  (jug wove duct)
+::  State for ongoing %fuse merges - the list maintains the ordering
+::  and the map stores the data needed to merge
++$  melt  [(list [beak germ]) (map [beak germ] (unit dome:clay))]
 ::
 ::  Domestic desk state.
 ::
@@ -69,6 +72,7 @@
       dom=dome                                          ::  desk state
       per=regs                                          ::  read perms per path
       pew=regs                                          ::  write perms per path
+      fiz=melt                                          ::  state for mega merges
   ==
 ::
 ::  Desk state.
@@ -212,6 +216,7 @@
               dom=dome                                  ::  revision state
               per=regs                                  ::  read perms per path
               pew=regs                                  ::  write perms per path
+              fiz=melt                                  ::  domestic mega merges
           ==                                            ::
 ::
 ::  Foreign request manager.
@@ -303,6 +308,7 @@
       $:  %c                                            ::  to %clay
           $>  $?  %info                                 ::  internal edit
                   %merg                                 ::  merge desks
+                  %fuse                                 ::  mega merge
                   %pork                                 ::
                   %warp                                 ::
                   %werp                                 ::
@@ -1043,12 +1049,12 @@
           ~
         =/  rus  rus:(~(gut by hoy.ruf) her *rung)
         %+  ~(gut by rus)  syd
-        [lim=~2000.1.1 ref=`*rind qyx=~ dom=*dome per=~ pew=~]
+        [lim=~2000.1.1 ref=`*rind qyx=~ dom=*dome per=~ pew=~ fiz=[~ ~]]
       ::  administrative duct, domestic +rede
       ::
       :+  ~  `hun.rom.ruf
       =/  jod  (~(gut by dos.rom.ruf) syd *dojo)
-      [lim=now ref=~ [qyx dom per pew]:jod]
+      [lim=now ref=~ [qyx dom per pew fiz]:jod]
   ::
   =*  red=rede  ->+
   |%
@@ -1065,7 +1071,7 @@
     ::
     %=  ruf
       hun.rom  (need hun)
-      dos.rom  (~(put by dos.rom.ruf) syd [qyx dom per pew]:red)
+      dos.rom  (~(put by dos.rom.ruf) syd [qyx dom per pew fiz]:red)
     ==
   ::
   ::  Handle `%sing` requests
@@ -1962,32 +1968,167 @@
     =/  =wire  /merge/[syd]/(scot %p ali-ship)/[ali-desk]/[germ]
     (emit hen %pass wire %c %warp ali-ship ali-desk `[%sing %v case /])
   ::
+  ++  make-melt
+    |=  srcs=(list [beak germ])
+    ^-  melt
+    :-  srcs
+    %-  ~(gas by *(map [beak germ] (unit dome:clay)))
+    (turn srcs |=(a=[beak germ] [a *(unit dome:clay)]))
+  ::
+  ++  start-fuse
+    |=  [srcs=(list [beak germ])]
+    ^+  ..start-fuse
+    ::  use emil here to queue a list of moves
+    ::  syd is current desk (target desk)
+    ::  what is hen? it's the current duct... can this be reused?
+    =/  moves=(list move)
+        %+  turn
+          srcs
+        |=  [bec=beak g=germ]
+        ^-  move
+        =/  wir=wire  /fuse/[syd]/(scot %p p.bec)/[q.bec]/(scot r.bec)/[g]
+        [hen %pass wir %c %warp p.bec q.bec `[%sing %v r.bec /]]
+    ::  we also want to clear the state (fiz) associated with this
+    ::  merge and print a warning if it's non trivial i.e. we're
+    ::  starting a new fuse before the previous one terminated.
+    ~&  ?~  -.fiz
+          [%starting-fuse srcs]
+        :^  %starting-fuse  srcs  %discarding-state
+        ::  we don't want to ~& an entire dome
+        %-  ~(run by +.fiz)
+        |=(v=(unit dome:clay) ?~(v %not-received %recieved))
+    =.  fiz  (make-melt srcs)
+    (emil moves)
+  ::
+  ++  take-fuse
+    |=  [[bec=beak g=germ] =riot]
+    ^+  ..take-fuse
+    ?~  riot
+      ~&  [%fuse-for syd %missing bec]
+      ::  by setting fiz to *melt the merge is aborted - any further
+      ::  responses we get for the merge will cause take-fuse to crash
+      =.  fiz  *melt
+      ..take-fuse
+    ?>  (~(has by +.fiz) [bec g])
+    =.  fiz
+        :-  -.fiz
+        (~(put by +.fiz) [bec g] `!<(dome:clay q.r.u.riot))
+    =/  all-done=flag
+        %-  ~(all by +.fiz)
+        |=  res=(unit dome:clay)
+        ^-  flag
+        !=(res ~)
+    ?.  all-done
+      ..take-fuse
+    ::  do the merge
+    =/  merges=(list [beak germ])  -.fiz
+    ::  there's no point to an empty fuse and a single element fuse
+    ::  should just be an %only-that merge.
+    ?>  (gte (lent merges) 2)
+    =|  rag=rang
+    =/  clean-hut-ran  hut.ran
+    =/  initial-dome=dome:clay  (need (~(got by +.fiz) (snag 0 merges)))
+    =/  continuation-yaki=yaki
+        (~(got by hut.ran) (~(got by hit.initial-dome) let.initial-dome))
+    =/  parents=(list tako)  ~[(~(got by hit.initial-dome) let.initial-dome)]
+    =.  merges  (slag 1 merges)
+    |-
+    ^+  ..take-fuse
+    ?~  merges
+      ::  reset fiz before potentially parking - we hope to
+      ::  succeed so we don't need this state anymore.
+      =.  fiz  *melt
+      =.  hut.ran  clean-hut-ran
+      (park | [%| continuation-yaki(p (flop parents))] rag)
+    =/  [bec=beak g=germ]  i.merges
+    =/  ali-dom=dome:clay  (need (~(got by +.fiz) bec g))
+    =/  result  (merge-helper p.bec q.bec g ali-dom `continuation-yaki)
+    ?-  -.result
+        %|
+      ::  merge failed
+      (mean %fuse-merge-failed p.result)
+    ::
+        %&
+      ::  now we have a unit merge-result
+      =/  merge-result=(unit merge-result)  +.result
+      ?~  merge-result
+        ::  this merge was a no-op, just continue
+        $(merges t.merges)
+      ?~  conflicts.u.merge-result
+        ::  no merge conflicts
+        =/  merged-yaki=yaki
+            ?-  -.new.u.merge-result
+                %|
+              +.new.u.merge-result
+            ::
+                %&
+              ::  convert the yuki to yaki
+              =/  yuk=yuki  +.new.u.merge-result
+              =/  lobes=(map path lobe)
+                  %-  ~(run by q.yuk)
+                  |=  val=(each page lobe)
+                  ^-  lobe
+                  ?-  -.val
+                    %&  (page-to-lobe +.val)
+                    %|  +.val
+                  ==
+              (make-yaki p.yuk lobes now)
+            ==
+        %=  $
+          continuation-yaki  merged-yaki
+          merges  t.merges
+          hut.ran  (~(put by hut.ran) r.merged-yaki merged-yaki)
+          lat.rag  (~(uni by lat.rag) lat.u.merge-result)
+          parents  [(~(got by hit.ali-dom) let.ali-dom) parents]
+        ==
+      :: if there are merge conflicts send the error and abort the merge
+      =.  fiz  *melt
+      (done %& conflicts.u.merge-result)
+    ==
+  ::
+  ++  done
+    |=  result=(each (set path) (pair term tang))
+    ^+  ..merge
+    (emit hen %give %mere result)
+  ::
   ++  merge
     |=  [=ali=ship =ali=desk =germ =riot]
     ^+  ..merge
-    |^
     ?~  riot
-      (done %| %ali-unavailable >[ali-ship ali-desk germ]< ~)
+      (done %| %ali-unavailable ~[>[ali-ship ali-desk germ]<])
     =/  ali-dome=dome:clay  !<(dome:clay q.r.u.riot)
+    =/  result=(each (unit merge-result) (pair term tang))
+        (merge-helper ali-ship ali-desk germ ali-dome ~)
+    ?-  -.result
+        %|
+      (done %| +.result)
+    ::
+        %&
+      =/  mr=(unit merge-result)  +.result
+      ?~  mr
+        (done %& ~)
+      =.  ..merge  (done %& conflicts.u.mr)
+      (park | new.u.mr ~ lat.u.mr)
+    ==
+  ::
+  +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe blob)]
+  ::
+  ++  merge-helper
+    |=  [=ali=ship =ali=desk =germ ali-dome=dome:clay continuation-yaki=(unit yaki)]
+    ^-  (each (unit merge-result) [term tang])
+    |^
+    ::  term tang is the error, merge result being ~ means the merge was
+    ::  a no-op
+    ::  (each a b) is [| b] or [& a]
+    ^-  (each (unit merge-result) [term tang])
     =/  ali-yaki=yaki  (~(got by hut.ran) (~(got by hit.ali-dome) let.ali-dome))
     =/  bob-yaki=(unit yaki)
-      ?~  let.dom
-        ~
-      (~(get by hut.ran) (~(got by hit.dom) let.dom))
-    =/  merge-result  (merge-by-germ ali-yaki bob-yaki)
-    ?:  ?=(%| -.merge-result)
-      (done %| p.merge-result)
-    ?~  p.merge-result
-      (done %& ~)
-    =.  ..merge  (done %& conflicts.u.p.merge-result)
-    (park | new.u.p.merge-result ~ lat.u.p.merge-result)
-    ::
-    ++  done
-      |=  result=(each (set path) (pair term tang))
-      ^+  ..merge
-      (emit hen %give %mere result)
-    ::
-    +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe blob)]
+      ?~  continuation-yaki
+        ?~  let.dom
+          ~
+        (~(get by hut.ran) (~(got by hit.dom) let.dom))
+      continuation-yaki
+    (merge-by-germ ali-yaki bob-yaki)
     ++  merge-by-germ
       |=  [=ali=yaki bob-yaki=(unit yaki)]
       ^-  (each (unit merge-result) [term tang])
@@ -2005,15 +2146,12 @@
       ?-    germ
       ::
       ::  If this is a %only-this merge, we check to see if ali's and bob's
-      ::  commits are the same, in which case we're done.  Otherwise, we
-      ::  check to see if ali's commit is in the ancestry of bob's, in
-      ::  which case we're done.  Otherwise, we create a new commit with
-      ::  bob's data plus ali and bob as parents.
+      ::  commits are the same, in which case we're done.
+      ::  Otherwise, we create a new commit with bob's data plus ali and
+      ::  bob as parents.
       ::
           %only-this
         ?:  =(r.ali-yaki r.bob-yaki)
-          &+~
-        ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
           &+~
         :*  %&  ~
             conflicts=~
@@ -2041,8 +2179,6 @@
       ::
           %take-this
         ?:  =(r.ali-yaki r.bob-yaki)
-          &+~
-        ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
           &+~
         =/  new-data  (~(uni by q.ali-yaki) q.bob-yaki)
         :*  %&  ~
@@ -3384,6 +3520,7 @@
     ::
     ::  Creates a nako of all the changes between a and b.
     ::
+    ::
     ++  make-nako
       |=  [ver=@ud a=aeon b=aeon]
       ^-  nako
@@ -3391,12 +3528,29 @@
           |-
           ?:  =(b let.dom)
             hit.dom
+          ::  del everything after b
           $(hit.dom (~(del by hit.dom) let.dom), let.dom (dec let.dom))
         b
       ?:  =(0 b)
         [~ ~]
-      (data-twixt-takos =(0 ver) (~(get by hit.dom) a) (aeon-to-tako b))
-    ::
+      =/  excludes=(set tako)
+          =|  acc=(set tako)
+          =/  lower=@ud  1
+          |-
+          ::  a should be excluded, so wait until we're past it
+          ?:  =(lower +(a))
+            acc
+          =/  res=(set tako)  (reachable-takos (~(got by hit.dom) lower))
+          $(acc (~(uni in acc) res), lower +(lower))
+      =/  includes=(set tako)
+          =|  acc=(set tako)
+          =/  upper=@ud  b
+          |-
+          ?:  =(upper a)
+            acc
+          =/  res=(set tako)  (reachable-takos (~(got by hit.dom) upper))
+          $(acc (~(uni in acc) res), upper (dec upper))
+      [(~(run in (~(dif in includes) excludes)) tako-to-yaki) ~]
     ::  Traverse parentage and find all ancestor hashes
     ::
     ++  reachable-takos                                 ::  reachable
@@ -3429,15 +3583,9 @@
       |=  [plops=? a=(unit tako) b=tako]
       ^-  [(set yaki) (set plop)]
       =+  old=?~(a ~ (reachable-takos u.a))
-      =/  yal=(set tako)
-          %-  silt
-          %+  skip
-            ~(tap in (reachable-takos b))
-          |=(tak=tako (~(has in old) tak))
+      =/  yal=(set tako)   (~(dif in (reachable-takos b)) old)
       :-  (silt (turn ~(tap in yal) tako-to-yaki))
-      ?.  plops
-        ~
-      (silt (turn ~(tap in (new-lobes (new-lobes ~ old) yal)) lobe-to-blob))
+      ~
     ::
     ::  Get all the lobes that are referenced in `a` except those that are
     ::  already in `b`.
@@ -4075,6 +4223,14 @@
       abet:(start-merge:den her.req dem.req cas.req how.req)
     [mos ..^$]
   ::
+      %fuse
+    ?:  =(%$ des.req)
+      ~&(%fuse-no-desk !!)
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(start-fuse:den srcs.req)
+    [mos ..^$]
+  ::
       %mont
     =.  hez.ruf  ?^(hez.ruf hez.ruf `[[%$ %sync ~] ~])
     =^  mos  ruf
@@ -4202,11 +4358,43 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%7 raft-7]
+        $%  [%8 raft-8]
+            [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-7  raft
-      +$  dojo-7  dojo
+      +$  raft-8  raft
+      +$  raft-7
+          $:  rom=room-7
+              hoy=(map ship rung-7)
+              ran=rang
+              mon=(map term beam)
+              hez=(unit duct)
+              cez=(map @ta crew)
+              pud=(unit [=desk =yoki])
+          ==
+      +$  room-7
+          $:  hun=duct
+              dos=(map desk dojo-7)
+          ==
+
+      +$  rung-7
+          $:  rus=(map desk rede-7)
+          ==
+      +$  dojo-7
+          $:  qyx=cult
+              dom=dome
+              per=regs
+              pew=regs
+          ==
+      +$  rede-7
+          $:  lim=@da
+              ref=(unit rind)
+              qyx=cult
+              dom=dome
+              per=regs
+              pew=regs
+          ==
+
       +$  ford-cache-7  ford-cache
       +$  raft-6
         $:  rom=room-6                                  ::  domestic
@@ -4250,7 +4438,7 @@
   |^
   =?  old  ?=(%6 -.old)  7+(raft-6-to-7 +.old)
   ?>  ?=(%7 -.old)
-  ..^^$(ruf +.old)
+  ..^^$(ruf (raft-7-to-8 +.old))
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
   ++  raft-6-to-7
@@ -4269,6 +4457,26 @@
       %-  ~(run by rus.rung-6)
       |=  =rede-6
       rede-6(dom dom.rede-6(fod *ford-cache-7))
+    ==
+  ::  +raft-7-to-8: create bunted melts in each dojo/rede
+  ::
+  ++  raft-7-to-8
+    |=  raf=raft-7
+    ^-  raft-8
+    %=    raf
+        dos.rom
+      %-  ~(run by dos.rom.raf)
+      |=  doj=dojo-7
+      ^-  dojo
+      [qyx.doj dom.doj per.doj pew.doj *melt]
+    ::
+        hoy
+      %-  ~(run by hoy.raf)
+      |=  =rung-7
+      %-  ~(run by rus.rung-7)
+      |=  r=rede-7
+      ^-  rede
+      [lim.r ref.r qyx.r dom.r per.r pew.r *melt]
     ==
   --
 ::
@@ -4320,6 +4528,7 @@
       dos.rom
     %-  ~(run by dos.rom.ruf)
     |=  =dojo
+    ::dojo
     dojo(fod.dom [~ ~ ~ ~ ~])
   ::
       hoy
@@ -4329,6 +4538,7 @@
         rus
       %-  ~(run by rus.rung)
       |=  =rede
+      ::rede
       rede(fod.dom [~ ~ ~ ~ ~])
     ==
   ==
@@ -4348,6 +4558,19 @@
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our i.t.tea)
       abet:(merge:den ali-ship ali-desk germ p.hin)
+    [mos ..^$]
+  ::
+  ?:  ?=([%fuse @ @ @ @ @ ~] tea)
+    ?>  ?=(%writ +<.hin)
+    =*  syd  i.t.tea
+    =/  ali-ship=@p  (slav %p i.t.t.tea)
+    =*  ali-desk=desk  i.t.t.t.tea
+    =/  ali-case  (rash i.t.t.t.t.tea nuck:so)
+    ?>  ?=([%$ *] ali-case)
+    =/  germ  (germ i.t.t.t.t.t.tea)
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our i.t.tea)
+      abet:(take-fuse:den [[ali-ship ali-desk (case +.ali-case)] germ] p.hin)
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)
