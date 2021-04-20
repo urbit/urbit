@@ -5104,6 +5104,15 @@
     ?~  a
       &
     ?&((b n.a) $(a l.a) $(a r.a))
+  ::  +any: apply logical OR boolean test on all values
+  ::
+  ++  any
+    ~/  %any
+    |=  [a=(tree item) b=$-(item ?)]
+    |-  ^-  ?
+    ?~  a
+      |
+    ?|((b n.a) $(a l.a) $(a r.a))
   ::  +apt: verify horizontal and vertical orderings
   ::
   ++  apt
