@@ -22,7 +22,6 @@ export default class Transaction extends Component {
 
   render() {
     const pending = (!this.props.tx.recvd);
-    console.log("transaction", this.props.tx.recvd);
 
     const weSent = _.find(this.props.tx.inputs, (input) => {
       return (input.ship === window.ship);
