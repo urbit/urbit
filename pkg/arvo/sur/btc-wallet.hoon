@@ -2,7 +2,7 @@
 /+  bip32
 |%
 +$  params  [batch-size=@ud fam-limit=@ud piym-limit=@ud]
-+$  provider  [host=ship connected=?] 
++$  provider  [host=ship connected=?]
 +$  block  @ud
 +$  btc-state  [=block fee=(unit sats) t=@da]
 +$  payment  [pend=(unit txid) =xpub =address payer=ship value=sats]
@@ -19,6 +19,7 @@
       [%delete-wallet =xpub]
       [%init-payment payee=ship value=sats feyb=sats]
       [%broadcast-tx txhex=cord]
+      [%gen-new-address ~]
   ==
 ::  action: how peers poke us
 ::
@@ -118,6 +119,7 @@
         balance=(unit sats)
         =history
         =btc-state
+        address=(unit address)
       ==
       [%change-provider provider=(unit provider)]
       [%change-wallet wallet=(unit xpub) balance=(unit sats) =history]
@@ -125,5 +127,6 @@
       [%btc-state =btc-state]
       [%new-tx =hest]
       [%cancel-tx =txid]
+      [%new-address =address]
   ==
 --

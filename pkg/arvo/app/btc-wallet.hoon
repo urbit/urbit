@@ -163,18 +163,29 @@
 ++  on-watch
   |=  =path
   ^-  (quip card _this)
-  ?>  (team:title our.bowl src.bowl)
-  ?>  ?=([%all ~] path)
-  =/  initial=update
-    :*  %initial
-        prov
-        curr-xpub
-        current-balance:hc
-        current-history:hc
-        btc-state
-    ==
-  :_  this
-  [%give %fact ~ %btc-wallet-update !>(initial)]~
+  ?+  path  (on-watch:def path)
+      [%all ~]
+    ?>  (team:title our.bowl src.bowl)
+    =^  a=(unit address)  state
+      ?~  curr-xpub  `state
+      =/  uw=(unit walt)  (~(get by walts) u.curr-xpub)
+      ?:  ?|(?=(~ uw) ?!(scanned.u.uw))
+        ~|("no wallet with xpub or wallet not scanned yet" !!)
+      =/  [addr=address =idx w=walt]
+        ~(gen-address wad:bl u.uw %0)
+      [`addr state(walts (~(put by walts) u.curr-xpub w))]
+    =/  initial=update
+      :*  %initial
+          prov
+          curr-xpub
+          current-balance:hc
+          current-history:hc
+          btc-state
+          a
+      ==
+    :_  this
+    [%give %fact ~ %btc-wallet-update !>(initial)]~
+  ==
 ::
 ++  on-leave  on-leave:def
 ++  on-arvo   on-arvo:def
@@ -184,6 +195,7 @@
 ++  handle-command
   |=  comm=command
   ^-  (quip card _state)
+  ?>  (team:title our.bowl src.bowl)
   ?-  -.comm
       %set-provider
     =*  sub-card
@@ -243,6 +255,16 @@
     ?.  tx-match  state
       ?~  poym  state
     state(signed-tx.u.poym `signed)
+  ::
+      %gen-new-address
+    ?~  curr-xpub  ~|("btc-wallet: no curr-xpub set" !!)
+    =/  uw=(unit walt)  (~(get by walts) u.curr-xpub)
+    ?:  ?|(?=(~ uw) ?!(scanned.u.uw))
+      ~|("no wallet with xpub or wallet not scanned yet" !!)
+    =/  [addr=address =idx w=walt]
+      ~(gen-address wad:bl u.uw %0)
+    :_  state(walts (~(put by walts) u.curr-xpub w))
+    [(give-update %new-address addr)]~
   ==
 ::
 ++  handle-action

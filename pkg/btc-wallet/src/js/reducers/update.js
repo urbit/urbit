@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 export class UpdateReducer {
   reduce(json, state) {
-    console.log('update', json);
     if (json.providerStatus) {
       this.reduceProviderStatus(json.providerStatus, state);
     }
@@ -24,6 +23,9 @@ export class UpdateReducer {
     }
     if (json["cancel-tx"]) {
       this.reduceCancelTx(json["cancel-tx"], state);
+    }
+    if (json.address) {
+      this.reduceAddress(json.address, state);
     }
   }
 
@@ -48,8 +50,8 @@ export class UpdateReducer {
   }
 
   reduceNewTx(json, state) {
-    console.log("new-tx.....", json);
     let old = _.findIndex(state.history, (h) => {
+      if (!h) return false;
       return ( h.txid.dat === json.txid.dat &&
                h.txid.wid === json.txid.wid );
     });
@@ -62,7 +64,7 @@ export class UpdateReducer {
     // we expect history to have null recvd values first, and the rest in
     // descending order
     let insertionIndex = _.findIndex(state.history, (h) => {
-      console.log("h", h);
+      if (!h) return false;
       return ((h.recvd < json.recvd) && (h.recvd !== null));
     });
     state.history.splice(insertionIndex, 0, json);
@@ -73,5 +75,9 @@ export class UpdateReducer {
       return ((json.wid === h.txid.wid) && (json.dat === h.txid.dat));
     });
     state.history[entryIndex].failure = true;
+  }
+
+  reduceAddress(json, state) {
+    state.address = json;
   }
 }

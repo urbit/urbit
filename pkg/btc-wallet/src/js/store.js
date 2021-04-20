@@ -11,6 +11,7 @@ class Store {
       btcState: null,
       history: [],
       psbt: '',
+      address: null,
     };
 
     this.initialReducer = new InitialReducer();

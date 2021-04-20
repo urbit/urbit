@@ -1,4 +1,5 @@
 /-  btc-wallet, btc-provider, bitcoin
+/+  bl=bitcoin
 |%
 ++  dejs
   =,  dejs:format
@@ -15,6 +16,7 @@
         delete-wallet+so
         init-payment+init-payment
         broadcast-tx+so
+        gen-new-address+|=(json ~)
     ==
   ::
   ++  ship  (su ;~(pfix sig fed:ag))
@@ -34,6 +36,12 @@
         value+ni
         feyb+ni
     ==
+  ::
+  ++  address
+    |=  jon=json
+    ?>  ?=([%s @t] jon)
+    ^-  address:bitcoin
+    (from-cord:adr:bl +.jon)
   --
 ::
 ++  enjs
@@ -89,6 +97,7 @@
       %btc-state           (btc-state btc-state.upd)
       %new-tx              (hest hest.upd)
       %cancel-tx           (hexb txid.upd)
+      %new-address         (address address.upd)
     ==
   ::
   ++  initial
@@ -101,6 +110,7 @@
         balance+?~(balance.upd ~ (numb u.balance.upd))
         history+(history history.upd)
         btc-state+(btc-state btc-state.upd)
+        address+?~(address.upd ~ (address u.address.upd))
     ==
   ::
   ++  change-provider

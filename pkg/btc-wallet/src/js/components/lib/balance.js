@@ -41,7 +41,10 @@ export default class Balance extends Component {
       },
       denomination: "USD",
       sending: false,
+      copied: false,
     }
+
+    this.copyAddress = this.copyAddress.bind(this);
   }
 
   componentDidMount() {
@@ -52,17 +55,39 @@ export default class Balance extends Component {
       });
   }
 
+  copyAddress() {
+    let address = this.props.state.address;
+    function listener(e) {
+      e.clipboardData.setData('text/plain', address);
+      e.preventDefault();
+    }
+
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    document.removeEventListener('copy', listener);
+
+    this.props.api.btcWalletCommand({'gen-new-address': null});
+    this.setState({copied: true});
+    setTimeout(() => {
+      this.setState({copied: false});
+    }, 2000);
+  }
+
 
   render() {
     const sats = (this.props.state.balance || 0);
     const value = currencyFormat(sats, this.state.conversion, this.state.denomination);
     const sendDisabled = (sats === 0);
+    const addressText = (this.props.state.address === null) ? '' :
+      this.props.state.address.slice(0, 6) + '...' +
+      this.props.state.address.slice(-6);
 
     return (
       <>
         {this.state.sending ?
          <Send
            api={api}
+           shipWallets={this.props.state.shipWallets}
            value={value}
            denomination={this.state.denomination}
            sats={sats}
@@ -80,13 +105,13 @@ export default class Balance extends Component {
          >
            <Row justifyContent="space-between">
              <Text color="orange" fontSize={1}>Balance</Text>
-             <Text color="lighterGray" fontSize="14px">bc1qxy...hx0wlh</Text>
+             <Text color="lighterGray" fontSize="14px" mono>{addressText}</Text>
              <Row>
                <Icon icon="ChevronDouble" color="orange" pt="2px"/>
                <Text color="orange" fontSize={1}>{this.state.denomination}</Text>
              </Row>
            </Row>
-           <Col justifyContent="center" alignItems="center" mt="100px" mb="100px">
+           <Col justifyContent="center" alignItems="center">
              <Text fontSize="52px" color="orange">{value}</Text>
              <Text fontSize={1} color="orange">{sats} sats</Text>
            </Col>
@@ -104,16 +129,19 @@ export default class Balance extends Component {
                      px="24px"
                      onClick={() => this.setState({sending: true})}
              />
-             <Button children="Copy Address" mr={3}
+             <Button children={(this.state.copied) ? "Address Copied!" : "Copy Address"}
+                     mr={3}
+                     disabled={this.state.copied}
                      fontSize={1}
                      fontWeight="bold"
-                     color="orange"
-                     backgroundColor="midOrange"
-                     style={{cursor:"pointer"}}
+                     color={(this.state.copied) ? "green" : "orange"}
+                     backgroundColor={(this.state.copied) ? "veryLightGreen" : "midOrange" }
+                     style={{cursor: (this.state.copied) ? "default" : "pointer"}}
                      borderColor="none"
                      borderRadius="24px"
                      py="24px"
                      px="24px"
+                     onClick={this.copyAddress}
              />
            </Row>
           </Col>
