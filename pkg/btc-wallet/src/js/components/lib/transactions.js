@@ -21,7 +21,14 @@ export default class Transactions extends Component {
     const body = (this.props.state.history.length <= 0)
       ?  <Text color="gray" fontSize={2} fontWeight="bold">No Transactions Yet</Text>
       :  this.props.state.history.map((tx, i) => {
-        return(<Transaction tx={tx} key={i}/>)
+        return(
+          <Transaction
+            tx={tx}
+            key={i}
+            denom={this.props.state.denomination}
+            rates={this.props.state.currencyRates}
+          />
+        );
       });
 
     return (

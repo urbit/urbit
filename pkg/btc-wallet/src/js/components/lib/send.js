@@ -166,7 +166,7 @@ export default class Send extends Component {
                 onChange={e => {
                   this.setState({
                     denomAmount: e.target.value,
-                    satsAmount: Math.round(parseFloat(e.target.value) / conversion[denomination] * 100000000)
+                    satsAmount: Math.round(parseFloat(e.target.value) / conversion * 100000000)
                   });
                 }}
               />
@@ -186,7 +186,7 @@ export default class Send extends Component {
                 value={satsAmount}
                 onChange={e => {
                   this.setState({
-                    denomAmount: parseFloat(e.target.value) * (conversion[denomination] / 100000000),
+                    denomAmount: parseFloat(e.target.value) * (conversion / 100000000),
                     satsAmount: e.target.value
                   });
                 }}
