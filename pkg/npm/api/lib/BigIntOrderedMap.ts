@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { immerable } from 'immer';
 import bigInt, { BigInteger } from "big-integer";
 
 function sortBigInt(a: BigInteger, b: BigInteger) {
@@ -13,6 +14,7 @@ function sortBigInt(a: BigInteger, b: BigInteger) {
 export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   private root: Record<string, V> = {}
   private cachedIter: [BigInteger, V][] | null = null;
+  [immerable] = true;
 
   constructor(items: [BigInteger, V][] = []) {
     _.forEach(items, ([key, val]) => {
