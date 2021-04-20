@@ -7,10 +7,10 @@ import { PropFunc } from "~/types";
 
 const DEFAULT_THRESHOLD = 10;
 const AnimBox = styled(animated(Box))`
-  touch-action: none;
+  touch-action: pan-y;
 `;
 const AnimRow = styled(animated(Row))`
-  touch-action: none;
+  touch-action: pan-y;
 `;
 
 export function SwipeMenu(
@@ -60,6 +60,7 @@ export function SwipeMenu(
     },
     {
       filterTaps: true,
+      enabled: !disabled,
       eventOptions: {
         capture: true,
       },

@@ -181,7 +181,6 @@ function getNodeUrl(
   const graphUrl = `/~landscape${groupPath}/resource/${mod}${graph}`;
   const idx = index.slice(1).split("/");
   if (mod === "publish") {
-    console.log(idx);
     const [noteId, kind, commId] = idx;
     const selected = kind === "2" ? `?selected=${commId}` : "";
     return `${graphUrl}/note/${noteId}${selected}`;
