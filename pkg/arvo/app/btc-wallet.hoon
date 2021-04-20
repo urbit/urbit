@@ -150,11 +150,20 @@
         (handle-provider-update:hc !<(update:bp q.cage.sign))
         ::
           %json
-        ?>  ?=([%permitted @ ~] wire)
-        =/  who  (slav %p i.t.wire)
-        :_  state
-        :~  [%give %fact ~[/all] cage.sign]
-            [%pass wire %agent [who %btc-provider] %leave ~]
+        ?+  wire  `state
+            [%check-payee @ ~]
+          =/  who  (slav %p i.t.wire)
+          :_  state
+          :~  [%give %fact ~[/all] cage.sign]
+              [%pass wire %agent [who %btc-wallet] %leave ~]
+          ==
+        ::
+            [%permitted @ ~]
+          =/  who  (slav %p i.t.wire)
+          :_  state
+          :~  [%give %fact ~[/all] cage.sign]
+              [%pass wire %agent [who %btc-provider] %leave ~]
+          ==
         ==
       ==
   [cards this]
@@ -164,6 +173,18 @@
   |=  =path
   ^-  (quip card _this)
   ?+  path  (on-watch:def path)
+      [%check-payee @ ~]
+    =/  who  (slav %p i.t.path)
+    ?>  =(who our.bowl)
+    =/  response=json
+      %+  frond:enjs:format  'checkPayee'
+      %-  pairs:enjs:format
+      :~  ['hasWallet' b+?=(^ curr-xpub)]
+          ['payee' (ship:enjs:format our.bowl)]
+      ==
+    :_  this
+    [%give %fact ~ %json !>(response)]~
+  ::
       [%all ~]
     ?>  (team:title our.bowl src.bowl)
     =^  a=(unit address)  state
@@ -207,15 +228,20 @@
     :~  [%pass /set-provider/[(scot %p host.u.prov)] %agent [host.u.prov %btc-provider] %leave ~]
         sub-card
     ==
-    ::
+  ::
       %check-provider
     =/  pax  /permitted/(scot %p provider.comm)
     :_  state
     [%pass pax %agent [provider.comm %btc-provider] %watch pax]~
-    ::
+  ::
+      %check-payee
+    =/  pax  /check-payee/(scot %p payee.comm)
+    :_  state
+    [%pass pax %agent [payee.comm %btc-wallet] %watch pax]~
+  ::
       %set-current-wallet
     (set-curr-xpub xpub.comm)
-    ::
+  ::
       %add-wallet
     ?~  (~(has by walts) xpub.comm)
     ((slog ~[leaf+"xpub already in wallet"]) `state)
@@ -224,7 +250,7 @@
     =^  c1  state  (init-batches xpub.comm (dec max-gap.w))
     =^  c2  state  (set-curr-xpub xpub.comm)
     [(weld c1 c2) state]
-    ::
+  ::
       %delete-wallet
     =*  cw  curr-xpub.state
     =?  cw  ?&(?=(^ cw) =(u.cw xpub.comm))
@@ -232,9 +258,34 @@
     =.  scans  (~(del by scans) [xpub.comm %0])
     =.  scans  (~(del by scans) [xpub.comm %1])
     `state(walts (~(del by walts) xpub.comm))
+  ::
+      %init-payment-external
+    ?:  is-broadcasting  ~|("Broadcasting a transaction" !!)
+    ?~  curr-xpub        ~|("btc-wallet: no curr-xpub set" !!)
     ::
-    ::  overwrites any payment being built in poym
-    ::
+    =/  uw  (~(get by walts) u.curr-xpub)
+    ?:  ?|(?=(~ uw) ?!(scanned.u.uw))
+      ~|("no wallet with xpub or wallet not scanned yet" !!)
+    =/  [tb=(unit txbu) chng=(unit sats)]
+      %~  with-change  sut:bl
+      [u.uw eny.bowl block.btc-state ~ feyb.comm ~[[address.comm value.comm ~]]]
+    ?~  tb
+      %-  (slog ~[leaf+"insufficient balance or not enough confirmed balance"])
+      `state
+    =^  tb=(unit txbu)  state
+      ?~  chng  `state
+      =/  [addr=address =idx w=walt]
+        ~(nixt-address wad:bl u.uw %1)
+      :-  `(~(add-output txb:bl u.tb) addr u.chng `(~(hdkey wad:bl w %1) idx))
+      state(walts (~(put by walts) u.curr-xpub w))
+    :_  state(poym tb)
+    ?~  tb  ~
+    %+  turn  txis.u.tb
+    |=  =txi
+    (poke-provider %raw-tx txid.utxo.txi)
+  ::
+  ::  overwrites any payment being built in poym
+  ::
       %init-payment
     ~|  "Can't pay ourselves; no comets; can't do while tx is being signed"
     ?<  =(src.bowl payee.comm)
@@ -242,7 +293,7 @@
     ?<  is-broadcasting
     :_  state(poym ~, feybs (~(put by feybs) payee.comm feyb.comm))
      ~[(poke-peer payee.comm [%gen-pay-address value.comm])]
-    ::
+  ::
       %broadcast-tx
     ?~  prov  ~|("Provider not connected" !!)
     =+  signed=(from-cord:hxb:bc txhex.comm)

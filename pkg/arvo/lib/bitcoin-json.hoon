@@ -11,9 +11,11 @@
     %-  of
     :~  set-provider+ship
         check-provider+ship
+        check-payee+ship
         set-current-wallet+so
         add-wallet+add-wallet
         delete-wallet+so
+        init-payment-external+init-payment-external
         init-payment+init-payment
         broadcast-tx+so
         gen-new-address+|=(json ~)
@@ -28,6 +30,13 @@
         scan-to+(mu (at [ni ni ~]))
         max-gap+(mu ni)
         confs+(mu ni)
+    ==
+  ::
+  ++  init-payment-external
+    %-  ot
+    :~  address+address
+        value+ni
+        feyb+ni
     ==
   ::
   ++  init-payment

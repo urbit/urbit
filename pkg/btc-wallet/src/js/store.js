@@ -5,6 +5,7 @@ class Store {
   constructor() {
     this.state = {
       providerPerms: {},
+      shipWallets: {},
       provider: null,
       wallet: null,
       balance: null,
