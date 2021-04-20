@@ -90,7 +90,12 @@
   $:  tracking=(map resource track)
       inner-state=vase
   ==
-      
+::
++$  base-state-3
+  $:  prev-version=@ud
+      prev-min-version=@ud
+      base-state-2
+  ==
 ::
 +$  state-0  [%0 base-state-0]
 ::
@@ -100,11 +105,14 @@
 ::
 +$  state-3  [%3 base-state-2]
 ::
++$  state-4  [%4 base-state-3]
+::
 +$  versioned-state 
   $%  state-0
       state-1
       state-2
       state-3
+      state-4
   ==
 ::
 ++  default
@@ -198,7 +206,7 @@
 ++  agent
   |*  =config
   |=  =(pull-hook config)
-  =|  state-3
+  =|  state-4
   =*  state  -
   ^-  agent:gall
   =<
@@ -224,13 +232,20 @@
       =|  cards=(list card:agent:gall)
       |^ 
       ?-  -.old
-          %3  
+          %4
         =^  og-cards   pull-hook
           (on-load:og inner-state.old)
         =.  state  old
+        =/  kick=(list card)
+          ?:  ?&  =(min-version.config prev-min-version.old)
+                  =(version.config prev-version.old)
+              ==
+            ~
+          (poke-self:pass kick+!>(%kick))^~
         :_  this
-        :(weld cards og-cards (poke-self:pass kick+!>(%kick))^~)
+        :(weld cards og-cards kick)
        ::
+          %3  $(old [%4 0 0 +.old])
           %2  $(old (state-to-3 old))
           %1  $(old [%2 +.old ~])
           %0  !!  :: pre-breach
@@ -257,6 +272,10 @@
       ^-  vase
       =.  inner-state
         on-save:og
+      =.  prev-min-version
+        min-version.config
+      =.  prev-version
+        version.config
       !>(state)
     ::
     ++  on-poke
