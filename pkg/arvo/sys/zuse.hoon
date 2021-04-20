@@ -5182,7 +5182,6 @@
     ::
     ?~  b  a
     $(b t.b, a (put a i.b))
-  ::
   ::  +get: get val at key or return ~
   ::
   ++  get
@@ -5195,6 +5194,19 @@
     ?:  (compare b key.n.a)
       $(a l.a)
     $(a r.a)
+  ::  +got: need value at key
+  ::
+  ++  got
+    |=  [a=(tree item) b=key]
+    ^-  val
+    (need (get a b))
+  ::  +has: check for key existence
+  ::
+  ++  has
+    ~/  %has
+    |=  [a=(tree item) b=key]
+    ^-  ?
+    !=(~ (get a b))
   ::  +nip: remove root; for internal use
   ::
   ++  nip
