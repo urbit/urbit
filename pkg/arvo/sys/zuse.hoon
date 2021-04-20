@@ -3791,7 +3791,7 @@
         (scag b a)
       ::
         =+  e=(lent-char a)
-        ?:  (lth b e)  ~
+        ?:  (lte b e)  ~
         [*stye (reap (sub b e) d)]~
       ::
         c
