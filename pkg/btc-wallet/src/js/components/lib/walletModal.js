@@ -18,7 +18,6 @@ window.Buffer = Buffer
 
 function bip44To84(network, xpub) {
   var prefix = (network === 'bitcoin') ? '04b24746' : '045f1cf6';
-  console.log('xpub', xpub);
   var data = bs58check.decode(xpub);
   data = data.slice(4);
   data = Buffer.concat([Buffer.from(prefix, 'hex'), data]);
@@ -63,7 +62,6 @@ export default class WalletModal extends Component {
   }
 
   submitMasterTicket(ticket){
-    console.log("ticket", ticket);
 
     const node = kg.deriveNode(
       ticket,
@@ -78,8 +76,6 @@ export default class WalletModal extends Component {
         bitcoin.networks[NETWORK]
       ).toBase58()
     );
-
-    console.log('zpub', zpub);
 
     this.submitXPub(zpub);
   }
