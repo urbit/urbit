@@ -17,7 +17,7 @@
   ::
   %+  expect-eq
     !>  %.y
-    !>  (check-balance:atom-map a)
+    !>  (apt:atom-map a)
 ::
 ++  test-ordered-map-tap  ^-  tang
   ::
