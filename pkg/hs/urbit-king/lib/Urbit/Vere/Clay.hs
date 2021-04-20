@@ -42,7 +42,7 @@ validClaySyncPath fp = hasPeriod && notTildeFile && notDotHash && notDoubleHash
     fileName = takeFileName fp
     hasPeriod = elem '.' fileName
     notTildeFile = not $ "~" `isSuffixOf` fileName
-    notDotHash = not $ ".#" `isPrefixOf` fileName
+    notDotHash = not $ "." `isPrefixOf` fileName
     notDoubleHash =
       not $ ("#" `isPrefixOf` fileName) && ("#" `isSuffixOf` fileName)
 
