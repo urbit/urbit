@@ -254,6 +254,7 @@
       ?.  ?=([%group [~ [~ [@ [@ @]]]]] config.met)
         ~
       =*  res  resource.u.u.feed.config.met
+      ?:  =(our.bowl entity.res)  ~
       =-  `[%pass /fix-feed %agent [our.bowl %graph-pull-hook] %poke -]
       :-  %pull-hook-action
       !>  ^-  action:pull-hook
