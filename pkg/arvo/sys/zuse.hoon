@@ -5072,7 +5072,8 @@
   =/  b  ;;((tree [key=key val=value]) a)
   ?>  (apt:((ordered-map key value) ord) b)
   b
-::  +ordered-map: treap with user-specified horizontal order
+++  ordered-map  on
+::  +on: treap with user-specified horizontal order, ordered-map
 ::
 ::    Conceptually smaller items go on the left, so the item with the
 ::    smallest key can be popped off the head. If $key is `@` and
@@ -5081,15 +5082,17 @@
 ::  WARNING: ordered-map will not work properly if two keys can be
 ::  unequal under noun equality but equal via the compare gate
 ::
-++  ordered-map
+++  on
+  ~/  %on
   |*  [key=mold val=mold]
   =>  |%
       +$  item  [key=key val=val]
       --
   ::  +compare: item comparator for horizontal order
   ::
+  ~%  %comp  +>+  ~
   |=  compare=$-([key key] ?)
-  ~%  %ordered-map  ..part  ~
+  ~%  %core    +  ~
   |%
   ::  +all: apply logical AND boolean test on all values
   ::
@@ -5345,7 +5348,7 @@
     ?~  a  b
     ::
     $(a l.a, b [n.a $(a r.a)])
-  ::  +traverse: stateful partial inorder traversal
+  ::  +dip: stateful partial inorder traversal
   ::
   ::    Mutates .state on each run of .f.  Starts at .start key, or if
   ::    .start is ~, starts at the head (item with smallest key).  Stops
@@ -5353,8 +5356,8 @@
   ::    keys.  Each run of .f can replace an item's value or delete the
   ::    item.
   ::
-  ++  traverse
-    ~/  %traverse
+  ++  dip
+    ~/  %dip
     |*  state=mold
     |=  $:  a=(tree item)
             =state
