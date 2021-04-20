@@ -2603,7 +2603,7 @@
     =|  acc=(unit static-fragment)
     ^+  [static-fragment=acc live=live.state]
     ::
-    %^  (traverse:packet-queue _acc)  live.state  acc
+    %^  (dip:packet-queue _acc)  live.state  acc
     |=  $:  acc=_acc
             key=live-packet-key
             val=live-packet-val
@@ -2681,7 +2681,7 @@
     =/  acc
       resends=*(list static-fragment)
     ::
-    %^  (traverse:packet-queue _acc)  live.state  acc
+    %^  (dip:packet-queue _acc)  live.state  acc
     |=  $:  acc=_acc
             key=live-packet-key
             val=live-packet-val
@@ -2734,7 +2734,7 @@
     ::
     ^+  [acc live=live.state]
     ::
-    %^  (traverse:packet-queue _acc)  live.state  acc
+    %^  (dip:packet-queue _acc)  live.state  acc
     |=  $:  acc=_acc
             key=live-packet-key
             val=live-packet-val
@@ -2781,7 +2781,7 @@
     ::
     ^+  [metrics=metrics.state live=live.state]
     ::
-    %^  (traverse:packet-queue pump-metrics)  live.state  acc=metrics.state
+    %^  (dip:packet-queue pump-metrics)  live.state  acc=metrics.state
     |=  $:  metrics=pump-metrics
             key=live-packet-key
             val=live-packet-val

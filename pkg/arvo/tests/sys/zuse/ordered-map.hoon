@@ -103,11 +103,11 @@
     !>  (gas:atom-map ~ ~[[1^%b]])
     !>  b
 ::
-++  test-ordered-map-traverse  ^-  tang
+++  test-ordered-map-dip  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  b  %-  (traverse:atom-map ,(list [@ud @tas]))
+  =/  b  %-  (dip:atom-map ,(list [@ud @tas]))
          :*  a
              state=~
              ::
@@ -129,11 +129,11 @@
       !>  -.b
   ==
 ::
-++  test-ordered-map-traverse-delete-all  ^-  tang
+++  test-ordered-map-dip-delete-all  ^-  tang
   ;:  weld
     =/  q  ((ordered-map ,@ ,~) lte)
     =/  o  (gas:q ~ ~[1/~ 2/~ 3/~])
-    =/  b  ((traverse:q ,~) o ~ |=([~ key=@ ~] [~ %| ~]))
+    =/  b  ((dip:q ,~) o ~ |=([~ key=@ ~] [~ %| ~]))
     %+  expect-eq
       !>  [~ ~]
       !>  b
@@ -147,7 +147,7 @@
       ?:((lth aa ba) %.y ?:((gth aa ba) %.n (lte ab bb)))
     =/  q  ((ordered-map ,[@ @] ,~) compare)
     =/  o  (gas:q ~ c)
-    =/  b  ((traverse:q ,~) o ~ |=([~ key=[@ @] ~] [~ %| ~]))
+    =/  b  ((dip:q ,~) o ~ |=([~ key=[@ @] ~] [~ %| ~]))
     %+  expect-eq
       !>  [~ ~]
       !>  b
