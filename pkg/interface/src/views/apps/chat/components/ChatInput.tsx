@@ -189,6 +189,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
             ) : (
               <Icon
                 icon='Attachment'
+                cursor='pointer'
                 width='16'
                 height='16'
                 onClick={() =>
@@ -201,6 +202,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         <Box mr={2} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
           <Icon
             icon='Dojo'
+            cursor='pointer'
             onClick={this.toggleCode}
             color={state.inCodeMode ? 'blue' : 'black'}
           />
