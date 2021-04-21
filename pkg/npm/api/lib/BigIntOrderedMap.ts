@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { immerable } from 'immer';
 import bigInt, { BigInteger } from "big-integer";
 
@@ -17,7 +16,7 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   [immerable] = true;
 
   constructor(items: [BigInteger, V][] = []) {
-    _.forEach(items, ([key, val]) => {
+    items.forEach(([key, val]) => {
       this.set(key, val);
     });
     this.generateCachedIter();
