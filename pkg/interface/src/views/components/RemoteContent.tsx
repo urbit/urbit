@@ -130,7 +130,7 @@ return;
     });
   }
 
-  wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null, flushPadding = false) {
+  wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null, flushPadding = false, noOp = false) {
     const { style } = this.props;
     return (
       <Box borderRadius="1" backgroundColor="washedGray" maxWidth="min(100%, 20rem)">
@@ -148,7 +148,7 @@ return;
         <BaseAnchor
           display="flex"
           p={flushPadding ? 0 : 2}
-          onClick={(e) => { e.stopPropagation(); }}
+          onClick={(e) => { noOp ? e.preventDefault() : e.stopPropagation() }}
           href={this.props.url}
           whiteSpace="nowrap"
           overflow="hidden"
@@ -159,7 +159,8 @@ return;
           style={{ color: 'inherit', textDecoration: 'none', ...style }}
           target="_blank"
           rel="noopener noreferrer"
-              >
+          cursor={noOp ? 'default' : 'pointer'}
+         >
         {contents}
       </BaseAnchor>
     </Row>
@@ -182,6 +183,7 @@ return;
       remoteContentPolicy,
       url,
       text,
+      transcluded,
       renderUrl = true,
       imageProps = {},
       audioProps = {},
@@ -197,6 +199,10 @@ return;
     const isAudio = AUDIO_REGEX.test(url);
     const isVideo = VIDEO_REGEX.test(url);
     const isOembed = hasProvider(url);
+
+    const isTranscluded = () => {
+      return transcluded;
+    }
 
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
@@ -246,7 +252,8 @@ return;
         false,
         null,
         null,
-        true
+        true,
+        isTranscluded()
       );
     } else if (isAudio && remoteContentPolicy.audioShown) {
       return (
