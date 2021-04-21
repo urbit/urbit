@@ -1,5 +1,12 @@
 /-  eth-watcher
 /+  ethereum, azimuth, naive, default-agent, verb, dbug
+/*  snap  %eth-logs  /app/naive/logs/eth-logs
+=/  last-snap  ::  maybe just use the last one?
+  %+  roll  snap
+  |=  [log=event-log:rpc:ethereum last=@ud]
+  ?~  mined.log
+    last
+  (max block-number.u.mined.log last)
 =,  jael
 |%
 ++  app-state
@@ -50,27 +57,20 @@
 ++  run-logs
   |=  [nas=^state:naive logs=(list event-log:rpc:ethereum)]
   ^-  [(list tagged-diff) ^state:naive]
-  ~&  >  run-logs=logs
   ?~  logs
-    ~&  >>  %done
     `nas
   ?~  mined.i.logs
-    ~&  >>  %majored
     $(logs t.logs)
   =^  raw-effects  nas
     =/  =^input:naive
       ?:  =(azimuth:contracts:azimuth address.i.logs)
-        ~&  >>  %amizuth
         =/  data  (data-to-hex data.i.logs)
         =/  =event-log:naive
           [address.i.logs data topics.i.logs]
         [%log event-log]
-      ~&  >>  %layer-2
       ?~  input.u.mined.i.logs
-        ~&  [%strange-no-batch-2 i.logs]
         [%bat *@]
       ?.  =(0x2688.7f26 (end [3 4] (swp 5 u.input.u.mined.i.logs)))
-        ~&  [%strange-no-batch-3 i.logs `@ux`(end [3 4] (swp 5 u.input.u.mined.i.logs))]
         [%bat *@]
       [%bat (rsh [3 4] u.input.u.mined.i.logs)]
     =/  res  (mule |.((%*(. naive lac |) verifier nas input)))
@@ -123,8 +123,8 @@
     :+  %watch  /[dap]
     ^-  config:eth-watcher
     :*  url.state  =(%czar (clan:title our))  ~m5  ~h30
-        launch:contracts:azimuth
-        ~  ::  ~[azimuth:contracts:azimuth]
+        (max launch:contracts:azimuth last-snap)
+        ~[azimuth:contracts:azimuth]
         ~[naive:contracts:azimuth]
         (topics whos.state)
     ==
@@ -190,13 +190,23 @@
   ?:  =(%noun mark)
     ?+    q.vase  !!
         %rerun
+      ~&  [%rerunning (lent logs.state)]
       =^  effects  nas.state  (run-logs *^state:naive logs.state)
       `this
     ::
         %resub
       :_  this  :_  ~
       [%pass /eth-watcher %agent [our.bowl %eth-watcher] %watch /logs/[dap.bowl]]
+    ::
+        %resnap
+      =.  logs.state  snap
+      $(mark %noun, vase !>(%rerun))
     ==
+  ?:  =(%eth-logs mark)
+    =+  !<(logs=(list event-log:rpc:ethereum) vase)
+    =.  logs.state  logs
+    $(mark %noun, vase !>(%rerun))
+  ::
   ?.  ?=(%azimuth-tracker-poke mark)
     (on-poke:def mark vase)
   =+  !<(poke=poke-data vase)

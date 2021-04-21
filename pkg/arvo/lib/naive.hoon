@@ -10,6 +10,10 @@
 ::  - When depositing, clear proxies (maybe require reset)
 ::  - Maybe require that we're not depositing from a contract?
 ::
+::  TODO: wraps and identities are verified at the beginning but
+::  executed later.  that's no good, since the ownership could change
+::  throughout the wrap or batch.
+::
 ::  TODO: can an L1 star adopt an L2 planet?  It's not obvious how --
 ::  maybe they need to adopt as an L2 transaction?  That sounds right I
 ::  think.  Can an L2 star adopt an L1 planet?  I guess, but L1 wouldn't

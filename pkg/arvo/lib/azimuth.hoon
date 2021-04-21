@@ -78,7 +78,7 @@
     ::  #  constants
     ::
     ::  contract addresses
-    ++  contracts  local-contracts
+    ++  contracts  mainnet-contracts
     ++  mainnet-contracts
       |%
       ::  azimuth: data contract

@@ -84,10 +84,11 @@
   ^-  form:m
   ~&  >  [%zoom-start number.pup latest-number]
   =/  zoom-margin=number:block  0  :: TODO: 30!
-  =/  zoom-step=number:block  10.000
+  =/  zoom-step=number:block  100.000
   ?:  (lth latest-number (add number.pup zoom-margin))
     (pure:m pup)
-  =/  up-to-number=number:block  (sub latest-number zoom-margin)
+  =/  up-to-number=number:block
+    (min (add 1.000.000 number.pup) (sub latest-number zoom-margin))
   |-
   ~&  >  [%zooming number.pup up-to-number]
   =*  loop  $
@@ -117,7 +118,6 @@
       number.pup
       to-number
     ==
-  ~&  >  [%zoom-loglist loglist]
   =?  pending-logs.pup  ?=(^ loglist)
     (~(put by pending-logs.pup) to-number loglist)
   loop(number.pup +(to-number))

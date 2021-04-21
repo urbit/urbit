@@ -23,7 +23,7 @@
       ==
     ::
     ::  history: newest block first, oldest event first
-    +$  history       (list loglist)
+    +$  history  (list loglist)
     --
 ::
 ::  Helpers
@@ -462,7 +462,6 @@
   ++  release-logs
     |=  [=path dog=watchdog]
     ^-  (quip card watchdog)
-    ~&  >  release-logs=pending-logs.dog
     ?:  (lth number.dog 0)  :: TODO: 30!
       `dog
     =/  rel-number  (sub number.dog 0)  :: TODO: 30!
