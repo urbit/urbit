@@ -39,6 +39,10 @@ export function SwipeMenu(
   const [{ x, opacity }, springApi] = useSpring(() => ({
     x: 0,
     opacity: 0,
+    config: {
+      tension: 240,
+      friction: 30
+    }
   }));
   const activationDistance = threshold - menuWidth;
 
