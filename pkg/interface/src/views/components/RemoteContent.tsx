@@ -145,7 +145,7 @@ return;
           )}
         <BaseAnchor
           display="flex"
-          p="2"
+          p={textOnly ? 2 : 0}
           onClick={(e) => { e.stopPropagation(); }}
           href={this.props.url}
           whiteSpace="nowrap"
@@ -205,6 +205,7 @@ return;
           height="100%"
           width="100%"
           objectFit="contain"
+          borderRadius={2}
           {...imageProps}
           {...props}
         />
