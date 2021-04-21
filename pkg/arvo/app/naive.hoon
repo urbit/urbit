@@ -28,6 +28,8 @@
 --
 ::
 |%
+::  TODO: is `dat` supposed to be a 32-byte hash?  I guess so
+::
 ++  verifier
   ^-  ^verifier:naive
   |=  [dat=@ v=@ r=@ s=@]

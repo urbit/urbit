@@ -31,6 +31,10 @@
 ::
 ::  TODO: could remove `ship` from most txs since it's in `from`
 ::
+::  TODO: hmm i don't think wraps can be done easily?  because how do
+::  you keep track of intra-wrap ownership changes.  you need to verify
+::  the eth signature outside, then verify owner as you go along
+::
 /+  std
 =>  =>  std
 ::  Laconic bit
@@ -186,8 +190,9 @@
 +$  operators  (jug address address)
 +$  effects    (list diff)
 +$  proxy      ?(%own %spawn %manage %vote %transfer)
-+$  tx
-  [from=[=ship =proxy] skim-tx]
++$  roll       (list wrap)
++$  wrap       [raw=@ txs=(list tx)]
++$  tx         [from=[=ship =proxy] skim-tx]
 +$  skim-tx
   $%  [%transfer-point =ship =address reset=?]
       [%spawn =ship =address]
@@ -224,43 +229,36 @@
   ~>  %slog.[0 meg]
   +<+
 ::
-++  parse-batch
-  |=  [=verifier =state batch=@]
-  ^-  (list tx)
-  =|  txs=(list tx)
-  |-  ^-  (list tx)
+++  parse-roll
+  |=  [=state batch=@]
+  =|  =roll
+  |-  ^+  roll
   ?~  batch
-    (flop txs)
-  =/  parse-result  (parse-tx verifier state batch)
+    (flop roll)
+  =/  parse-result  (parse-wrap state batch)
   ::  Parsing failed, abort batch
   ::
   ?~  parse-result
     (debug %parse-failed ~)
-  =^  signed=(list tx)  batch  u.parse-result
-  $(txs (welp (flop signed) txs))
+  =^  =wrap  batch  u.parse-result
+  $(roll [wrap roll])
 ::
 ::  TODO: change batch to be a cursor to avoid allocating atoms
 ::
-++  parse-tx
-  |=  [=verifier =state batch=@]
-  ^-  (unit [(list tx) rest=@])
+++  parse-wrap
+  |=  [=state batch=@]
+  ^-  (unit [wrap rest=@])
   =/  batch  [len=0 rest=batch]
-  |^
-  =^  sig  batch  (take 3 65)
-  ::  TODO: reset len?
-  ::
-  =/  signed-batch  +.batch
   =-  ?~  res
         ~
-      :-  ~
-      ?.  (verify-sig-and-nonce txs.u.res sig len.batch.u.res signed-batch)
-        [(debug %sig-failed ~) rest.batch.u.res]
-      [txs.u.res rest.batch.u.res]
+      `[[(end [0 len.batch.u.res] rest.batch) txs.u.res] rest.batch.u.res]
+  |^
+  =^  sig  batch  (take 3 65)
   ^-  res=(unit [txs=(list tx) =_batch])
   =^  single=@   batch  (take 0)
   ?:  =(0 single)
     ::  Single tx
-    =/  single-res=(unit [=tx batch=_batch])  parse-single-tx
+    =/  single-res=(unit [=tx batch=_batch])  parse-tx
     ?~  single-res
       ~
     `[[tx.u.single-res ~] batch.u.single-res]
@@ -274,7 +272,7 @@
   ?:  =(count 0)
     `[~ batch]
   =^  pad  batch  (take 0)  ::  byte align
-  =/  next-res=(unit [=tx batch=_batch])  parse-single-tx
+  =/  next-res=(unit [=tx batch=_batch])  parse-tx
   ?~  next-res
     ~
   =.  batch  batch.u.next-res
@@ -284,7 +282,7 @@
   =.  batch  batch.u.rest-res
   `[[tx.u.next-res txs.u.rest-res] batch]
 ::
-++  parse-single-tx
+++  parse-tx
   ^-  (unit [tx _batch])
   =^  from-proxy=@      batch  (take 0 3)
   ?:  (gth from-proxy 4)  (debug %bad-proxy ~)
@@ -355,33 +353,33 @@
     =^  child=ship   batch  (take 3 4)
     =^  parent=ship  batch  (take 3 4)
     [[child parent] batch]
-  ::
-  ++  verify-sig-and-nonce
-    |=  [txs=(list tx) sig=@ len=@ud signed-batch=@]
-    ^-  ?
-    =/  creds=(list [=address =nonce])
-      %+  turn  txs
-      |=  =tx
-      =/  point  (get-point state ship.from.tx)
-      ?>  ?=(^ point)  ::  we never parse more than four bytes
-      ?-  proxy.from.tx
-        %own       owner.own.u.point
-        %spawn     spawn-proxy.own.u.point
-        %manage    management-proxy.own.u.point
-        %vote      voting-proxy.own.u.point
-        %transfer  transfer-proxy.own.u.point
-      ==
-    =/  nonces  (turn creds |=([* =nonce] nonce))
-    =/  signed-data
-      %:  can  0
-        [(mul (bex 5) (lent nonces)) (rep 5 nonces)]
-        [len (end [0 len] signed-batch)]
-        ~
-      ==
-    =/  dress  (verify-sig sig signed-data)
-    ?~  dress
-      |
-    (levy creds |=([=address *] =(address u.dress)))
+  --
+::
+++  verify-sig-and-nonce
+  |=  [=verifier =state =wrap]
+  ^-  ?
+  |^
+  =/  creds=(list [=address =nonce])
+    %+  turn  txs.wrap
+    |=  =tx
+    =/  point  (get-point state ship.from.tx)
+    ?>  ?=(^ point)  ::  we never parse more than four bytes
+    ?-  proxy.from.tx
+      %own       owner.own.u.point
+      %spawn     spawn-proxy.own.u.point
+      %manage    management-proxy.own.u.point
+      %vote      voting-proxy.own.u.point
+      %transfer  transfer-proxy.own.u.point
+    ==
+  =/  nonces  (turn creds |=([* =nonce] nonce))
+  =/  sig  (end [3 65] raw.wrap)
+  =/  signed-data
+    %^  dad  [5 (lent nonces)]  (rep 5 nonces)
+    (rsh [3 65] raw.wrap)
+  =/  dress  (verify-sig sig signed-data)
+  ?~  dress
+    |
+  (levy creds |=([=address *] =(address u.dress)))
   ::  Verify signature and produce signer address
   ::
   ++  verify-sig
@@ -596,21 +594,36 @@
 ::
 ++  receive-batch
   |=  [=verifier =state batch=@]
-  =/  txs=(list tx)  (parse-batch verifier state batch)
+  =/  =roll  (parse-roll state batch)
+  ::  Handle each wrap
+  ::
   |-  ^-  [effects ^state]
-  ?~  txs
+  =*  roll-loop  $
+  ?~  roll
     [~ state]
+  ::  Verify signature, else skip wrap
+  ::
+  =*  wrap  i.roll
+  ?.  (verify-sig-and-nonce verifier state wrap)
+    %+  debug  %l2-sig-failed
+    roll-loop(roll t.roll)
+  ::  Handle each transaction in this wrap
+  ::
+  |-  ^-  [effects ^state]
+  =*  wrap-loop  $
+  ?~  txs.wrap
+    roll-loop(roll t.roll)
   ::  Increment nonce, even if it later fails
   ::
-  =^  effects-1  points.state  (increment-nonce state from.i.txs)
+  =^  effects-1  points.state  (increment-nonce state from.i.txs.wrap)
   ::  Process tx
   ::
   =^  effects-2  state
-    =/  tx-result=(unit [effects ^state])  (receive-tx state i.txs)
+    =/  tx-result=(unit [effects ^state])  (receive-tx state i.txs.wrap)
     ?~  tx-result
       (debug %l2-tx-failed `state)
     u.tx-result
-  =^  effects-3  state  $(txs t.txs)
+  =^  effects-3  state  wrap-loop(txs.wrap t.txs.wrap)
   [:(welp effects-1 effects-2 effects-3) state]
 ::
 ++  increment-nonce
