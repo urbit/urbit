@@ -192,7 +192,10 @@ export function uxToHex(ux: string) {
 export const hexToUx = (hex) => {
   const ux = f.flow(
     f.chunk(4),
-    f.map(x => _.dropWhile(x, y => y === 0).join('')),
+    // eslint-disable-next-line prefer-arrow-callback
+    f.map(x => _.dropWhile(x, function(y: unknown) {
+      return y === 0;
+    }).join('')),
     f.join('.')
   )(hex.split(''));
   return `0x${ux}`;
@@ -417,7 +420,7 @@ export const useHovering = (): useHoveringInterface => {
     onMouseLeave,
   }), [onMouseLeave, onMouseOver]);
 
-  
+
   return useMemo(() => ({ hovering, bind }), [hovering, bind]);
 };
 
