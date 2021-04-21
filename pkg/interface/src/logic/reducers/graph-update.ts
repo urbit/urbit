@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { BigIntOrderedMap } from "~/logic/lib/BigIntOrderedMap";
+import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
 import bigInt, { BigInteger } from "big-integer";
 import useGraphState, { GraphState } from '../state/graph';
 import { reduceState } from '../state/base';

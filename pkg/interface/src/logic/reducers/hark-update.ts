@@ -8,7 +8,7 @@ import {
 } from '@urbit/api';
 import { makePatDa } from '~/logic/lib/util';
 import _ from 'lodash';
-import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
+import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
 import useHarkState, { HarkState } from '../state/hark';
 import { compose } from 'lodash/fp';
 import { reduceState } from '../state/base';
