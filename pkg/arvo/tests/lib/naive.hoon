@@ -252,7 +252,7 @@
           %vote      %3
           %transfer  %4
         ==
-      1^(can 0 1^0 3^proxy 4^0 ~)
+      1^(can 0 3^proxy 5^0 ~)
     ::
     --
   ::
