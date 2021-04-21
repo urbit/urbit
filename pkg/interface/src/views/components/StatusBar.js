@@ -134,7 +134,7 @@ const StatusBar = (props) => {
           mr={2}
           onClick={() => props.history.push('/~landscape/messages')}
         >
-          <Icon icon='Users' />
+          <Icon icon='Messages' />
         </StatusBarItem>
         <Dropdown
           dropWidth='250px'
