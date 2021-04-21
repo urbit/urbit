@@ -12,6 +12,9 @@ const AnimBox = styled(animated(Box))`
 const AnimRow = styled(animated(Row))`
   touch-action: pan-y;
 `;
+const NoScrollBox = styled(Box)`
+  touch-action: pan-y;
+`;
 
 export function SwipeMenu(
   props: {
@@ -54,21 +57,17 @@ export function SwipeMenu(
         opacity: open
           ? 1
           : active
-          ? Math.abs(Math.min(1, x / activationDistance))
+          ? Math.abs(Math.min(1, Math.min(0, x) / activationDistance))
           : 0,
       });
     },
     {
-      filterTaps: true,
       enabled: !disabled,
-      eventOptions: {
-        capture: true,
-      },
     }
   );
 
   return (
-    <Box {...rest} position="relative">
+    <NoScrollBox {...rest} position="relative">
       <AnimBox {...sliderBind()}>
         <AnimBox style={{ x }}>{children}</AnimBox>
       </AnimBox>
@@ -79,12 +78,12 @@ export function SwipeMenu(
         height="100%"
         right="0px"
         style={{
-          translateX: x.to(x => x + menuWidth),
+          translateX: x.to((x) => x + menuWidth),
           opacity,
         }}
       >
         {menu}
       </AnimRow>
-    </Box>
+    </NoScrollBox>
   );
 }
