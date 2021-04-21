@@ -48,12 +48,14 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     this.state = {
       unfold: props.unfold || false,
       embed: undefined,
-      noCors: false
+      noCors: false,
+      showArrow: false
     };
     this.unfoldEmbed = this.unfoldEmbed.bind(this);
     this.loadOembed = this.loadOembed.bind(this);
     this.wrapInLink = this.wrapInLink.bind(this);
     this.onError = this.onError.bind(this);
+    this.toggleArrow = this.toggleArrow.bind(this);
   }
 
   save = () => {
@@ -171,6 +173,10 @@ return;
     this.setState({ noCors: true });
   }
 
+  toggleArrow() {
+    this.setState({showArrow: !this.state.showArrow})
+  }
+
   render() {
     const {
       remoteContentPolicy,
@@ -194,21 +200,53 @@ return;
 
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
-        <BaseImage
-          {...(noCors ? {} : { crossOrigin: "anonymous" })}
-          referrerPolicy="no-referrer"
-          flexShrink={0}
-          src={url}
-          style={style}
-          onLoad={onLoad}
-          onError={this.onError}
-          height="100%"
-          width="100%"
-          objectFit="contain"
-          borderRadius={2}
-          {...imageProps}
-          {...props}
-        />, false, false, null, null, true
+        <Box
+          position='relative'
+          onMouseEnter={this.toggleArrow}
+          onMouseLeave={this.toggleArrow}
+        >
+          <BaseAnchor
+            position='absolute'
+            top={2}
+            right={2}
+            display={this.state.showArrow ? 'block' : 'none'}
+            target='_blank'
+            rel='noopener noreferrer'
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            href={url}
+          >
+            <Box
+              backgroundColor='white'
+              padding={2}
+              borderRadius='50%'
+              display='flex'
+            >
+              <Icon icon='ArrowNorthEast' />
+            </Box>
+          </BaseAnchor>
+          <BaseImage
+            {...(noCors ? {} : { crossOrigin: 'anonymous' })}
+            referrerPolicy='no-referrer'
+            flexShrink={0}
+            src={url}
+            style={style}
+            onLoad={onLoad}
+            onError={this.onError}
+            height='100%'
+            width='100%'
+            objectFit='contain'
+            borderRadius={2}
+            {...imageProps}
+            {...props}
+          />
+        </Box>,
+        false,
+        false,
+        null,
+        null,
+        true
       );
     } else if (isAudio && remoteContentPolicy.audioShown) {
       return (
