@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useRef, useEffect, useState } from 'react';
+import React, { ReactElement, ReactNode, useState, useCallback } from 'react';
 import { Icon, Box, Col, Text } from '@tlon/indigo-react';
 import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
@@ -37,7 +37,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const groups = useGroupState(state => state.groups);
   const group = groups[association.group];
   let workspace = association.group;
-  const actionsRef = useRef(null);
+  const history = useHistory();
   const [actionsWidth, setActionsWidth] = useState(0);
 
   if (group?.hidden && app === 'chat') {
@@ -182,11 +182,9 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Link>
   );
 
-  useEffect(() => {
-    if (actionsRef.current) {
-      setActionsWidth(actionsRef.current.clientWidth);
-    }
-  }, [actionsRef]);
+  const actionsRef = useCallback((actionsRef) => {
+    setActionsWidth(actionsRef?.getBoundingClientRect().width);
+  }, []);
 
   return (
     <Col width='100%' height='100%' overflow='hidden'>
@@ -218,7 +216,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           flexShrink='0'
           ref={actionsRef}
         >
-          <ExtraControls />
+          {ExtraControls()}
           <MenuControl />
         </Box>
       </Box>
