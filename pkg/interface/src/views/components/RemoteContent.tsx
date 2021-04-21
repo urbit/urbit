@@ -128,7 +128,7 @@ return;
     });
   }
 
-  wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null) {
+  wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null, flushPadding = false) {
     const { style } = this.props;
     return (
       <Box borderRadius="1" backgroundColor="washedGray" maxWidth="min(100%, 20rem)">
@@ -145,7 +145,7 @@ return;
           )}
         <BaseAnchor
           display="flex"
-          p={textOnly ? 2 : 0}
+          p={flushPadding ? 0 : 2}
           onClick={(e) => { e.stopPropagation(); }}
           href={this.props.url}
           whiteSpace="nowrap"
@@ -208,7 +208,7 @@ return;
           borderRadius={2}
           {...imageProps}
           {...props}
-        />
+        />, false, false, null, null, true
       );
     } else if (isAudio && remoteContentPolicy.audioShown) {
       return (
@@ -272,7 +272,6 @@ return;
             display={this.state.unfold ? 'block' : 'none'}
             className='embed-container'
             style={style}
-            flexShrink={0}
             onLoad={this.onLoad}
             {...oembedProps}
             {...props}
