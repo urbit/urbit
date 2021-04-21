@@ -57,8 +57,7 @@ export default class Transaction extends Component {
       sign = '';
     }
 
-//    let currencyValue = (this.props.denom === 'BTC') ? null :
-//      sign + satsToCurrency(value, this.props.denom, this.props.rates);
+    let currencyValue = sign + satsToCurrency(value, this.props.denom, this.props.rates);
 
     const failure = Boolean(this.props.tx.failure);
     if (failure) action = "fail";
