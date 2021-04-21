@@ -17,9 +17,6 @@ pills:
 	sh/update-brass-pill
 	sh/update-ivory-pill
 
-solid:
-	sh/update-solid-pill
-
 ropsten-pills:
 	sh/create-ropsten-pills
 

@@ -77,8 +77,3 @@ pkg/interface/link-webext/web-ext-artifacts
 
 # Logs
 *.log
-
-backup*
-notes
-bel
-wex
