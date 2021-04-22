@@ -66,7 +66,10 @@ export default class Balance extends Component {
            denomination={denomination}
            sats={sats}
            conversion={conversion}
-           stopSending={() => {this.setState({sending: false})}}
+           stopSending={() => {
+             this.setState({sending: false});
+             store.handleEvent({data: {psbt: ''}});
+           }}
          /> :
          <Col
            height="400px"
