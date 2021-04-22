@@ -19,7 +19,7 @@
     %&  `p.result
   ==
 ::
-++  key  address-from-prv:key:ethereum
+++  addr  address-from-prv:key:ethereum
 ::
 ++  log
   |=  [log-name=@ux data=@ux topics=(lest @)]
@@ -31,7 +31,7 @@
 ++  init-bud
   |=  =^state:naive
   ^-  [effects:naive ^state:naive]
-  (n state (owner-changed:l1 ~bud (key ~bud)))
+  (n state (owner-changed:l1 ~bud (addr ~bud)))
 ::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
 ::
@@ -39,7 +39,7 @@
   |=  =^state:naive
   ^-  [effects:naive ^state:naive]
   =^  f1  state  (init-bud state)
-  =^  f2  state  (n state (owner-changed:l1 ~dopbud (key %dopbud-key-0)))
+  =^  f2  state  (n state (owner-changed:l1 ~dopbud (addr %dopbud-key-0)))
   =^  f3  state  (n state (changed-spawn-proxy:l1 ~dopbud deposit-address:naive))
   [:(welp f1 f2 f3) state]
 ::
@@ -49,9 +49,18 @@
   |=  =^state:naive
   ^-  [effects:naive ^state:naive]
   =^  f1  state  (init-bud state)
-  =^  f2  state  (n state (owner-changed:l1 ~marbud (key %marbud-key-0)))
+  =^  f2  state  (n state (owner-changed:l1 ~marbud (addr %marbud-key-0)))
   =^  f3  state  (n state (owner-changed:l1 ~marbud deposit-address:naive))
   [:(welp f1 f2 f3) state]
+::
+::  ~datbud is for testing L1 stars attempting L2 actions
+::
+++  init-datbud
+   |=  =^state:naive
+   ^-  [effects:naive ^state:naive]
+   =^  f1  state  (init-bud state)
+   =^  f2  state  (n state (owner-changed:l1 ~datbud (addr %datbud-key-0)))
+   [:(welp f1 f2) state]
 ::
 ++  sign-tx
   |=  [pk=@ nonce=@ud tx=@]  ^-  @
@@ -297,7 +306,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat (transfer-point:l2 0 ~marbud %marbud-key-0 (key %marbud-key-0) %own |))
+    =^  f  state  (n state %bat (transfer-point:l2 0 ~marbud %marbud-key-0 (addr %marbud-key-0) %own |))
     =^  f  state  (n state %bat (transfer-point:l2 1 ~marbud %marbud-key-0 0x234 %own |))
     owner.own:(~(got by points.state) ~marbud)
 ::
@@ -382,56 +391,67 @@
 ::
 ++  test-marbud-l2-spawn  ^-  tang
   %+  expect-eq
-    !>  [`@ux`(key ~linnup-torsyx) 0]
+    !>  [`@ux`(addr %ll-key-0) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (key ~linnup-torsyx)))
+    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (addr %ll-key-0)))
     transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+::
+++  test-marbud-l2-spawn-w-proxy  ^-  tang
+  %+  expect-eq
+    !>  [`@ux`(addr %ll-key-0) 0]
   ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat (set-spawn-proxy:l2 0 ~marbud %marbud-key-0 %own (addr %marbud-spawn-0)))
+    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %marbud-spawn-0 %spawn ~linnup-torsyx (addr %ll-key-0)))
+    transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+::
 ++  test-dopbud-l2-spawn  ^-  tang
   %+  expect-eq
-    !>  [`@ux`(key ~palsep-picdun) 0]
+    !>  [`@ux`(addr %pp-key-0) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %dopbud-key-0 %own ~palsep-picdun (key ~palsep-picdun)))
+    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %dopbud-key-0 %own ~palsep-picdun (addr %pp-key-0)))
     transfer-proxy.own:(~(got by points.state) ~palsep-picdun)
 ::
 ++  test-dopbud-l2-spawn-after-transfer  ^-  tang
   %+  expect-eq
-    !>  [`@ux`(key ~laclur-rachul) 0]
+    !>  [`@ux`(addr %lr-key-0) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %dopbud-key-0 %own ~palsep-picdun (key ~palsep-picdun)))
-    =^  f  state  (n state (owner-changed:l1 ~dopbud (key %dopbud-key-1)))
-    =^  f  state  (n state %bat (spawn:l2 1 ~dopbud %dopbud-key-1 %own ~laclur-rachul (key ~laclur-rachul)))
+    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %dopbud-key-0 %own ~palsep-picdun (addr %pp-key-0)))
+    =^  f  state  (n state (owner-changed:l1 ~dopbud (addr %dopbud-key-1)))
+    =^  f  state  (n state %bat (spawn:l2 1 ~dopbud %dopbud-key-1 %own ~laclur-rachul (addr %lr-key-0)))
     transfer-proxy.own:(~(got by points.state) ~laclur-rachul)
 ::
 ++  test-linnup-torsyx-l2-transfer-ownership  ^-  tang
   %+  expect-eq
-    !>  [`@ux`(key %lt-key-0) 0]
+    !>  [`@ux`(addr %lt-key-0) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (key %lt-key-0)))
-    =^  f  state  (n state %bat (transfer-point:l2 0 ~linnup-torsyx %lt-key-0 (key %lt-key-0) %transfer &))
+    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)))
+    =^  f  state  (n state %bat (transfer-point:l2 0 ~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &))
     owner.own:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-palsep-picdun-l2-transfer-ownership  ^-  tang
   %+  expect-eq
-    !>  [`@ux`(key %pp-key-0) 0]
+    !>  [`@ux`(addr %pp-key-0) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %dopbud-key-0 %own ~palsep-picdun (key %pp-key-0)))
-    =^  f  state  (n state %bat (transfer-point:l2 0 ~palsep-picdun %pp-key-0 (key %pp-key-0) %transfer &))
+    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %dopbud-key-0 %own ~palsep-picdun (addr %pp-key-0)))
+    =^  f  state  (n state %bat (transfer-point:l2 0 ~palsep-picdun %pp-key-0 (addr %pp-key-0) %transfer &))
     owner.own:(~(got by points.state) ~palsep-picdun)
 ::
 --
