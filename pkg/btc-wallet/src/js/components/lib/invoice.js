@@ -15,6 +15,8 @@ import * as bip39 from 'bip39';
 
 import Sent from './sent.js'
 
+import { satsToCurrency } from '../../lib/util.js';
+
 window.bitcoin = bitcoin;
 window.kg = kg;
 window.bip39 = bip39;
@@ -73,7 +75,7 @@ export default class Invoice extends Component {
   }
 
   render() {
-    const { stopSending, payee, denomination, denomAmount, satsAmount, psbt } = this.props;
+    const { stopSending, payee, denomination, satsAmount, psbt, currencyRates } = this.props;
     const { sent } = this.state;
     return (
       <>
@@ -82,7 +84,7 @@ export default class Invoice extends Component {
             payee={payee}
             stopSending={stopSending}
             denomination={denomination}
-            denomAmount={denomAmount}
+            currencyRates={currencyRates}
             satsAmount={satsAmount}
           /> :
           <Col
@@ -121,7 +123,7 @@ export default class Invoice extends Component {
                   <Text
                     color='green'
                     fontSize='14px'
-                  >{`$${denomAmount} ${denomination}`}</Text>
+                  >{satsToCurrency(satsAmount, denomination, currencyRates)}</Text>
                   <Text
                     ml={2}
                     fontSize='14px'
