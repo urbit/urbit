@@ -11,7 +11,7 @@ import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { FormError } from '~/views/components/FormError';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { stringToSymbol, parentPath, deSig } from '~/logic/lib/util';
 import { resourceFromPath } from '~/logic/lib/group';
 import { Associations } from '@urbit/api/metadata';
@@ -46,8 +46,9 @@ interface NewChannelProps {
   workspace: Workspace;
 }
 
-export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactElement {
-  const { history, api, group, workspace } = props;
+export function NewChannel(props: NewChannelProps): ReactElement {
+  const history = useHistory();
+  const { api, group, workspace } = props;
 
   const groups = useGroupState(state => state.groups);
   const waiter = useWaitForProps({ groups }, 5000);
