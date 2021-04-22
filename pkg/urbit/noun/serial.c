@@ -875,9 +875,7 @@ u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
     return ( 1 == len_w ) ? (u3_noun)0 : u3_none;
   }
 
-  // if ( (1 == len_w) && ('0' == *byt_y) ) return (u3_noun)val_s;
-
-  //  +ted:ab: leading nonzero, 0-2 digits
+  //  +ted:ab: leading nonzero, 0-2 additional digits
   //
   if ( NOT_DEC(*byt_y) ) return u3_none;
 
@@ -885,7 +883,7 @@ u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
   val_s = *byt_y++ - '0';
   if ( 0 == --len_w )    return (u3_noun)val_s;
 
-  //  1 digit
+  //  1 additional digit
   //
   if ( '.' == *byt_y )   goto tid_ab;
   if ( NOT_DEC(*byt_y) ) return u3_none;
@@ -895,7 +893,7 @@ u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
   val_s += *byt_y++ - '0';
   if ( 0 == --len_w )    return (u3_noun)val_s;
 
-  //  2 digits
+  //  2 additional digits
   //
   if ( '.' == *byt_y )   goto tid_ab;
   if ( NOT_DEC(*byt_y) ) return u3_none;
