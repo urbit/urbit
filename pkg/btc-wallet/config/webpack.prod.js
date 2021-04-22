@@ -3,6 +3,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const urbitrc = require('./urbitrc');
 
 module.exports = {
+  node: { fs: 'empty' },
   mode: 'production',
   entry: {
      app: './src/index.js'

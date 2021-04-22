@@ -32,6 +32,7 @@ const scales = {
   black80: "rgba(0,0,0,0.8)",
   black90: "rgba(0,0,0,0.9)",
   black100: "rgba(0,0,0,1)",
+  red05: "rgba(255,65,54,0.05)",
   red10: "rgba(255,65,54,0.1)",
   red20: "rgba(255,65,54,0.2)",
   red30: "rgba(255,65,54,0.3)",
@@ -89,6 +90,7 @@ const theme = {
     red: base.red,
     lightRed: scales.red30,
     washedRed: scales.red10,
+    veryLightRed: scales.red05,
 
     yellow: base.yellow,
     lightYellow: scales.yellow30,

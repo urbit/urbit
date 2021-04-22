@@ -57,11 +57,12 @@ export default class Transaction extends Component {
       sign = '';
     }
 
-//    let currencyValue = (this.props.denom === 'BTC') ? null :
-//      sign + satsToCurrency(value, this.props.denom, this.props.rates);
+    let currencyValue = sign + satsToCurrency(value, this.props.denom, this.props.rates);
 
     const failure = Boolean(this.props.tx.failure);
     if (failure) action = "fail";
+
+    const txid = this.props.tx.txid.dat.slice(2).replaceAll('.','');
 
 
     return (
@@ -72,7 +73,7 @@ export default class Transaction extends Component {
         mb="16px"
       >
         <Row justifyContent="space-between" alignItems="center">
-          <TxAction action={action} pending={pending}/>
+          <TxAction action={action} pending={pending} txid={txid}/>
           <Text fontSize="14px" alignItems="center" color="gray">
             {sign}{value} sats
           </Text>

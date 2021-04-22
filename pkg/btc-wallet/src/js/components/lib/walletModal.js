@@ -7,6 +7,7 @@ import {
   Icon,
   Row,
   Input,
+  LoadingSpinner,
 } from '@tlon/indigo-react';
 
 const kg = require('urbit-key-generation');
@@ -24,7 +25,7 @@ function bip44To84(network, xpub) {
   return bs58check.encode(data);
 }
 
-const NETWORK = "testnet" // "bitcoin"
+const NETWORK = 'testnet'
 const DERIVATIONS = {
   bitcoin: "m/84'/0'/0'",
   testnet: "m/84'/1'/0'",
@@ -40,7 +41,8 @@ export default class WalletModal extends Component {
       mode: 'masterTicket',
       masterTicket: '',
       xpub: '',
-      ready: false,
+      readyToSubmit: false,
+      processingSubmission: false,
     }
     this.checkTicket        = this.checkTicket.bind(this);
     this.checkXPub          = this.checkXPub.bind(this);
@@ -51,14 +53,14 @@ export default class WalletModal extends Component {
   checkTicket(e){
     // TODO: port over bridge ticket validation logic
     let masterTicket = e.target.value;
-    let ready = (masterTicket.length > 0);
-    this.setState({masterTicket, ready});
+    let readyToSubmit = (masterTicket.length > 0);
+    this.setState({masterTicket, readyToSubmit});
   }
 
   checkXPub(e){
     let xpub = e.target.value;
-    let ready = (xpub.length > 0);
-    this.setState({xpub, ready});
+    let readyToSubmit = (xpub.length > 0);
+    this.setState({xpub, readyToSubmit});
   }
 
   submitMasterTicket(ticket){
@@ -91,9 +93,15 @@ export default class WalletModal extends Component {
       }
     }
     api.btcWalletCommand(command);
+    this.setState({processingSubmission: true});
   }
 
   render() {
+    const buttonDisabled = (!this.state.readyToSubmit || this.state.processingSubmission );
+    const inputDisabled = this.state.processingSubmission;
+    const processingSpinner = (!this.state.processingSubmission) ? null :
+      <LoadingSpinner/>
+
     if (this.state.mode === 'masterTicket'){
       return (
         <Box
@@ -118,31 +126,41 @@ export default class WalletModal extends Component {
               Master Key
             </Text>
           </Box>
-          <StatelessTextInput
-            value={this.state.masterTicket}
-            fontSize="14px"
-            type="password"
-            name="masterTicket"
-            obscure={value => value.replace(/[^~-]+/g, '••••••')}
-            placeholder="••••••-••••••-••••••-••••••"
-            autoCapitalize="none"
-            autoCorrect="off"
-            onChange={this.checkTicket}
-          />
+          <Row alignItems="center">
+            <StatelessTextInput
+              mr={2}
+              width="256px"
+              value={this.state.masterTicket}
+              disabled={inputDisabled}
+              fontSize="14px"
+              type="password"
+              name="masterTicket"
+              obscure={value => value.replace(/[^~-]+/g, '••••••')}
+              placeholder="••••••-••••••-••••••-••••••"
+              autoCapitalize="none"
+              autoCorrect="off"
+              onChange={this.checkTicket}
+            />
+            {(!inputDisabled) ? null : <LoadingSpinner/>}
+          </Row>
           <Box mt={3} mb={3}>
-            <Text fontSize="14px" fontWeight="regular" color="gray"
-              style={{cursor: "pointer"}}
-              onClick={() => { this.setState({mode: 'xpub', xpub: ''})}}
+            <Text fontSize="14px" fontWeight="regular"
+              color={(inputDisabled) ? "lighterGray" : "gray"}
+              style={{cursor: (inputDisabled) ? "default" : "pointer"}}
+              onClick={() => {
+                if (inputDisabled) return;
+                this.setState({mode: 'xpub', xpub: '', masterTicket: '', readyToSubmit: false})
+              }}
             >
               Manually import your extended public key ->
             </Text>
           </Box>
           <Button
             primary
-            disabled={!this.state.ready}
+            disabled={buttonDisabled}
             children="Next Step"
             fontSize="14px"
-            style={{cursor: this.state.ready ? "pointer" : "default"}}
+            style={{cursor: buttonDisabled ? "default" : "pointer"}}
             onClick={() => {this.submitMasterTicket(this.state.masterTicket)}}
           />
         </Box>
@@ -172,6 +190,7 @@ export default class WalletModal extends Component {
           </Box>
           <StatelessTextInput
             value={this.state.xpub}
+            disabled={inputDisabled}
             fontSize="14px"
             type="password"
             name="xpub"
@@ -189,11 +208,11 @@ export default class WalletModal extends Component {
               fontSize="14px"
               mr={2}
               style={{cursor: "pointer"}}
-              onClick={() => {this.setState({mode: 'masterTicket', xpub: ''})}}
+              onClick={() => {this.setState({mode: 'masterTicket', masterTicket: '', xpub: '', readyToSubmit: false})}}
             />
             <Button
               primary
-              disabled={!this.state.ready}
+              disabled={buttonDisabled}
               children="Next Step"
               fontSize="14px"
               style={{cursor: this.state.ready ? "pointer" : "default"}}
