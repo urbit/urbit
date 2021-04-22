@@ -87,7 +87,7 @@
     ::
         %fact
       ?:  ?=(%group-initial p.cage.sign)  [~ this]
-      ?>  ?=(%group-update p.cage.sign)
+      ?>  ?=(%group-update-0 p.cage.sign)
       =+  !<(=update:gr q.cage.sign)
       ?.  ?=(%add-members -.update)     [~ this]
       =|  cards=(list card)
