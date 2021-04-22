@@ -857,61 +857,48 @@ u3s_cue_atom(u3_atom a)
   return u3s_cue_bytes((c3_d)len_w, byt_y);
 }
 
-#define NOT_DEC(a) ( ((a) < '0') || ((a) > '9') )
+#define DIGIT(a) ( ((a) >= '0') && ((a) <= '9') )
+#define BLOCK(a) (  ('.' == (a)[0]) \
+                 && DIGIT(a[1])     \
+                 && DIGIT(a[2])     \
+                 && DIGIT(a[3])     )
 
 /* u3s_sift_ud_bytes: parse @ud
 */
 u3_weak
 u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
 {
-  c3_s val_s;  //  leading digits value
-  c3_y num_y;  //  leading digits length
-
-  if ( !len_w ) return u3_none;
+  c3_y num_y = len_w % 4;  //  leading digits length
+  c3_s val_s = 0;          //  leading digits value
 
   //  +ape:ag: just 0
   //
-  if ( '0' == *byt_y ) {
-    return ( 1 == len_w ) ? (u3_noun)0 : u3_none;
+  if      ( !len_w )        return u3_none;
+  else if ( '0' == *byt_y ) return ( 1 == len_w ) ? (u3_noun)0 : u3_none;
+
+  //  +ted:ab: leading nonzero (checked above), plus 0-2 digits
+  //
+  switch (num_y) {
+    case 3:  if ( !DIGIT(*byt_y) ) return u3_none;
+             val_s *= 10;
+             val_s += *byt_y++ - '0';
+
+    case 2:  if ( !DIGIT(*byt_y) ) return u3_none;
+             val_s *= 10;
+             val_s += *byt_y++ - '0';
+
+    case 1:  if ( !DIGIT(*byt_y) ) return u3_none;
+             val_s *= 10;
+             val_s += *byt_y++ - '0';
   }
 
-  //  +ted:ab: leading nonzero, 0-2 additional digits
-  //
-  if ( NOT_DEC(*byt_y) ) return u3_none;
+  len_w -= num_y;
 
-  num_y = 1;
-  val_s = *byt_y++ - '0';
-  if ( 0 == --len_w )    return (u3_noun)val_s;
-
-  //  1 additional digit
-  //
-  if ( '.' == *byt_y )   goto tid_ab;
-  if ( NOT_DEC(*byt_y) ) return u3_none;
-
-  num_y = 2;
-  val_s *= 10;
-  val_s += *byt_y++ - '0';
-  if ( 0 == --len_w )    return (u3_noun)val_s;
-
-  //  2 additional digits
-  //
-  if ( '.' == *byt_y )   goto tid_ab;
-  if ( NOT_DEC(*byt_y) ) return u3_none;
-
-  num_y = 3;
-  val_s *= 10;
-  val_s += *byt_y++ - '0';
-  if ( 0 == --len_w )    return (u3_noun)val_s;
-
-tid_ab:
   //  +tid:ab: dot-prefixed 3-digit blocks
   //
-  if ( len_w % 4 ) return u3_none;
-
-  //  avoid gmp allocation if possible
-  //
-  //    - 19 decimal digits fit in 64 bits
-  //    - 18 digits is 24 bytes with separators
+  //    avoid gmp allocation if possible
+  //      - 19 decimal digits fit in 64 bits
+  //      - 18 digits is 24 bytes with separators
   //
   if (  ((1 == num_y) && (24 >= len_w))
      || (20 >= len_w) )
@@ -919,13 +906,7 @@ tid_ab:
     c3_d val_d = val_s;
 
     while ( len_w ) {
-      if (  ('.' != byt_y[0])
-         || NOT_DEC(byt_y[1])
-         || NOT_DEC(byt_y[2])
-         || NOT_DEC(byt_y[3]) )
-      {
-        return u3_none;
-      }
+      if ( !BLOCK(byt_y) ) return u3_none;
 
       byt_y++;
 
@@ -949,11 +930,7 @@ tid_ab:
     mpz_init_set_ui(a_mp, val_s);
 
     while ( len_w ) {
-      if (  ('.' != byt_y[0])
-         || NOT_DEC(byt_y[1])
-         || NOT_DEC(byt_y[2])
-         || NOT_DEC(byt_y[3]) )
-      {
+      if ( !BLOCK(byt_y) ) {
         mpz_clear(a_mp);
         return u3_none;
       }
@@ -976,7 +953,8 @@ tid_ab:
   }
 }
 
-#undef NOT_DEC
+#undef BLOCK
+#undef DIGIT
 
 /* u3s_sift_ud: parse @ud.
 */
