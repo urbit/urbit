@@ -587,7 +587,10 @@
     %+  roll  (tap:orm graph)
     |=  [[=atom =node:store] out=?]
     ^-  ?
-    ?&  ?=(^ (vale:dais [atom post.node]))
+    ?&  ?|  ?=(%| -.post.node)
+            ?=(^ (vale:dais [atom p.post.node]))
+        ==
+      ::
         ?-  -.children.node
           %empty  %.y
           %graph  ^$(graph p.children.node)
