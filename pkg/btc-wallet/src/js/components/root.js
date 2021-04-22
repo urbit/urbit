@@ -12,6 +12,7 @@ import StartupModal from './lib/startupModal.js';
 import Header from './lib/header.js'
 import Balance from './lib/balance.js'
 import Transactions from './lib/transactions.js'
+import { subscription } from '../subscription.js'
 
 
 export class Root extends Component {
@@ -21,6 +22,13 @@ export class Root extends Component {
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
     console.log('state', this.state);
+  }
+
+  componentDidMount(){
+    this.props.channel.setOnChannelError((e) => {
+      subscription.start();
+    });
+    subscription.start();
   }
 
   render() {
@@ -53,4 +61,3 @@ export class Root extends Component {
     )
   }
 }
-
