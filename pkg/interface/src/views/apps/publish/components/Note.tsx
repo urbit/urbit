@@ -15,6 +15,7 @@ import { Contacts, GraphNode, Graph, Association, Unreads, Group, Post } from '@
 import {useCopy} from '~/logic/lib/useCopy';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import {useQuery} from '~/logic/lib/useQuery';
+import {GraphContentTall} from '~/views/landscape/components/Graph/GraphContentTall';
 
 interface NoteProps {
   ship: string;
@@ -28,10 +29,19 @@ interface NoteProps {
   group: Group;
 }
 
-export function NoteContent({ body, api }) {
-  const post = { contents: Object.values(body) };
+const renderers = {
+  link: ({ href, children }) => {
+    return (
+      <Anchor display="inline" target="_blank" href={href}>{children}</Anchor>
+    )
+  }
+};
+
+export function NoteContent({ post, api }) {
   return (
-        <GraphContentWide transcluded={0} post={post} api={api} showOurContact={false} allowHeaders allowLists />
+      <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
+        <GraphContentTall post={post} showOurContact api={api} />
+      </Box>
   );
 }
 
@@ -115,7 +125,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           </Author>
         </Row>
       </Col>
-      <NoteContent body={body} api={api} />
+      <NoteContent api={props.api} post={post} />
       <NoteNavigation
         notebook={notebook}
         noteId={noteId}
