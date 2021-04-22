@@ -856,3 +856,111 @@ u3s_cue_atom(u3_atom a)
 
   return u3s_cue_bytes((c3_d)len_w, byt_y);
 }
+
+#define NONZERO(a) ( ((a) >= '1') && ((a) <= '9') )
+#define DIGIT(a)   ( ((a) >= '0') && ((a) <= '9') )
+
+/* u3s_sift_ud_bytes: parse @ud
+*/
+u3_weak
+u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
+{
+  //  +ape:ag: just 0 or
+  //
+  if ( (1 == len_w) && ('0' == *byt_y) ) {
+    return (u3_noun)0;
+  }
+
+  //  +ted:ab: leading nonzero, 0-2 digits
+  //
+  if ( len_w && NONZERO(*byt_y) ) {
+    c3_s val_s = *byt_y++ - '0';
+
+    //  0 digits
+    //
+    if ( 0 == --len_w ) return (u3_noun)val_s;
+
+    //  1 digit
+    //
+    if ( !DIGIT(*byt_y) ) goto fail;
+
+    val_s *= 10;
+    val_s += *byt_y++ - '0';
+
+    if ( 0 == --len_w ) return (u3_noun)val_s;
+
+    //  2  digits
+    //
+    if ( !DIGIT(*byt_y) ) goto fail;
+
+    val_s *= 10;
+    val_s += *byt_y++ - '0';
+
+    if ( 0 == --len_w ) return (u3_noun)val_s;
+
+    //  +tid:ab: dot-prefixed 3-digit blocks
+    //
+    if ( 0 != (len_w % 4) ) goto fail;
+
+    {
+      //  XX estimate size, allocate once
+      //
+      mpz_t a_mp;
+      mpz_init_set_ui(a_mp, val_s);
+
+      while ( len_w ) {
+        if (  ('.' != byt_y[0])
+           || !DIGIT(byt_y[1])
+           || !DIGIT(byt_y[2])
+           || !DIGIT(byt_y[1]) )
+        {
+          mpz_clear(a_mp);
+          goto fail;
+        }
+
+        byt_y++;
+
+        val_s  = *byt_y++ - '0';
+        val_s *= 10;
+        val_s += *byt_y++ - '0';
+        val_s *= 10;
+        val_s += *byt_y++ - '0';
+
+        mpz_mul_ui(a_mp, a_mp, 1000);
+        mpz_add_ui(a_mp, a_mp, val_s);
+
+        len_w -= 4;
+      }
+
+      return u3i_mp(a_mp);
+    }
+  }
+
+fail:
+  return u3_none;
+}
+
+#undef DIGIT
+#undef NONZERO
+
+
+/* u3s_sift_ud: parse @ud.
+*/
+u3_weak
+u3s_sift_ud(u3_atom a)
+{
+  c3_w  len_w = u3r_met(3, a);
+  c3_y* byt_y;
+
+  // XX assumes little-endian
+  //
+  if ( c3y == u3a_is_cat(a) ) {
+     byt_y = (c3_y*)&a;
+   }
+   else {
+    u3a_atom* vat_u = u3a_to_ptr(a);
+    byt_y = (c3_y*)vat_u->buf_w;
+  }
+
+  return u3s_sift_ud_bytes(len_w, byt_y);
+}
