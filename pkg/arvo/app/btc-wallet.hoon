@@ -187,25 +187,8 @@
   ::
       [%all ~]
     ?>  (team:title our.bowl src.bowl)
-    =^  a=(unit address)  state
-      ?~  curr-xpub  `state
-      =/  uw=(unit walt)  (~(get by walts) u.curr-xpub)
-      ?:  ?|(?=(~ uw) ?!(scanned.u.uw))
-        ~|("no wallet with xpub or wallet not scanned yet" !!)
-      =/  [addr=address =idx w=walt]
-        ~(gen-address wad:bl u.uw %0)
-      [`addr state(walts (~(put by walts) u.curr-xpub w))]
-    =/  initial=update
-      :*  %initial
-          prov
-          curr-xpub
-          current-balance:hc
-          current-history:hc
-          btc-state
-          a
-      ==
     :_  this
-    [%give %fact ~ %btc-wallet-update !>(initial)]~
+    [give-initial:hc]~
   ==
 ::
 ++  on-leave  on-leave:def
@@ -219,15 +202,31 @@
   ?>  (team:title our.bowl src.bowl)
   ?-  -.comm
       %set-provider
-    =*  sub-card
-    :*  %pass  /set-provider/[(scot %p provider.comm)]
-          %agent  [provider.comm %btc-provider]  %watch  /clients
-      ==
-    :_  state(prov [~ provider.comm %.n])
-    ?~  prov  ~[sub-card]
-    :~  [%pass /set-provider/[(scot %p host.u.prov)] %agent [host.u.prov %btc-provider] %leave ~]
-        sub-card
+    |^
+    ?~  provider.comm
+      ?~  prov  `state
+      :_  state(prov ~)
+      [(leave-provider host.u.prov)]~
+    :_  state(prov [~ u.provider.comm %.n])
+    ?~  prov
+      [(watch-provider u.provider.comm)]~
+    :~  (leave-provider host.u.prov)
+        (watch-provider u.provider.comm)
     ==
+    ::
+    ++  watch-provider
+      |=  who=@p
+      ^-  card
+      :*  %pass  /set-provider/[(scot %p who)]  %agent  [who %btc-provider]
+          %watch  /clients
+      ==
+    ++  leave-provider
+      |=  who=@p
+      ^-  card
+      :*  %pass  /set-provider/[(scot %p who)]  %agent  [who %btc-provider]
+          %leave  ~
+      ==
+    --
   ::
       %check-provider
     =/  pax  /permitted/(scot %p provider.comm)
@@ -257,7 +256,9 @@
       ~
     =.  scans  (~(del by scans) [xpub.comm %0])
     =.  scans  (~(del by scans) [xpub.comm %1])
-    `state(walts (~(del by walts) xpub.comm))
+    =.  walts  (~(del by walts) xpub.comm)
+    :_  state
+    [give-initial]~
   ::
       %init-payment-external
     ?:  is-broadcasting  ~|("Broadcasting a transaction" !!)
@@ -751,7 +752,9 @@
     :_  state
     ?:  ?|(broadcast.p.upd included.p.upd)
       ~[(poke-internal [%succeed-broadcast-tx txid.p.upd])]
-    ~[(poke-internal [%fail-broadcast-tx txid.p.upd])]
+    :~  (poke-internal [%fail-broadcast-tx txid.p.upd])
+        (give-update %cancel-tx txid.p.upd)
+    ==
   ==
 ::
 ++  handle-tx-info
@@ -806,7 +809,9 @@
   |=  =xpub
   ^-  (quip card _state)
   ?~  (find ~[xpub] scanned-wallets)  `state
-  `state(curr-xpub `xpub)
+  =.  curr-xpub  `xpub
+  :_  state
+  [give-initial]~
 ::
 ::
 ::  Scan Logic
@@ -977,6 +982,27 @@
   |=  upd=update
   ^-  card
   [%give %fact ~[/all] %btc-wallet-update !>(upd)]
+::
+++  give-initial
+  ^-  card
+  =^  a=(unit address)  state
+    ?~  curr-xpub  `state
+    =/  uw=(unit walt)  (~(get by walts) u.curr-xpub)
+    ?:  ?|(?=(~ uw) ?!(scanned.u.uw))
+      ~|("no wallet with xpub or wallet not scanned yet" !!)
+    =/  [addr=address =idx w=walt]
+      ~(gen-address wad:bl u.uw %0)
+    [`addr state(walts (~(put by walts) u.curr-xpub w))]
+  =/  initial=update
+    :*  %initial
+        prov
+        curr-xpub
+        current-balance
+        current-history
+        btc-state
+        a
+    ==
+  (give-update initial)
 ::
 ++  is-broadcasting
   ^-  ?
