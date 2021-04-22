@@ -11,7 +11,7 @@ import {
 } from '@tlon/indigo-react';
 
 export default function Sent(props) {
-  const { payee, denomination, denomAmount, satsAmount } = props;
+  const { payee, denomination, denomAmount, satsAmount, stopSending } = props;
   return (
     <Col
       height='400px'
@@ -21,6 +21,16 @@ export default function Sent(props) {
       mb={5}
       p={5}
     >
+      <Row
+        flexDirection='row-reverse'
+      >
+        <Icon
+          color='white'
+          icon='X'
+          cursor='pointer'
+          onClick={stopSending}
+        />
+      </Row>
       <Center>
         <Text color='white'>{`You sent BTC to ${payee}`}</Text>
       </Center>
