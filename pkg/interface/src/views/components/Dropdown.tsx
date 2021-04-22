@@ -48,6 +48,9 @@ export function Dropdown(props: DropdownProps): ReactElement {
   const [coords, setCoords] = useState({});
 
   const updatePos = useCallback(() => {
+    if(!anchorRef.current) {
+      return;
+    }
     const newCoords = getRelativePosition(anchorRef.current, props.alignX, props.alignY, offsetX, offsetY);
     if(newCoords) {
       setCoords(newCoords);
