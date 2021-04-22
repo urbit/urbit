@@ -12,7 +12,7 @@
 ::  command: run from the CLI or as API calls by our ship
 ::
 +$  command
-  $%  [%set-provider provider=ship]
+  $%  [%set-provider provider=(unit ship)]
       [%check-provider provider=ship]
       [%check-payee payee=ship]
       [%set-current-wallet =xpub]
