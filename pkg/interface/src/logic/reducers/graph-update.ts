@@ -241,15 +241,20 @@ const addNodes = (json, state) => {
 
 const removePosts = (json, state: GraphState): GraphState => {
   const _remove = (graph, index) => {
+    const child = graph.get(index[0]);
     if (index.length === 1) {
-        graph.set(index[0], child.post.hash);
-      } else {
-        const child = graph.get(index[0]);
         if (child) {
-          _remove(child.children, index.slice(1));
-          graph.set(index[0], child);
+          graph.set(index[0], {
+            post: child.post.hash,
+            children: child.children 
+          });
         }
+    } else {
+      if (child) {
+        _remove(child.children, index.slice(1));
+        graph.set(index[0], child);
       }
+    }
   };
 
   const data = _.get(json, 'remove-posts', false);
