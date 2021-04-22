@@ -1,7 +1,9 @@
-import produce from "immer";
+import produce, { setAutoFreeze } from "immer";
 import { compose } from "lodash/fp";
 import create, { State, UseStore } from "zustand";
 import { persist, devtools } from "zustand/middleware";
+
+setAutoFreeze(false);
 
 
 export const stateSetter = <StateType>(

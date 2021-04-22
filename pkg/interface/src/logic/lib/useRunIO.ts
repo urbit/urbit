@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useWaitForProps } from "./useWaitForProps";
 import {unstable_batchedUpdates} from "react-dom";
 
 export type IOInstance<I, P, O> = (
@@ -10,7 +9,7 @@ export function useRunIO<I, O>(
   io: (i: I) => Promise<O>,
   after: (o: O) => void,
   key: string
-): () => Promise<void> {
+): (i: I) => Promise<unknown> {
   const [resolve, setResolve] = useState<() => void>(() => () => {});
   const [reject, setReject] = useState<(e: any) => void>(() => () => {});
   const [output, setOutput] = useState<O | null>(null);

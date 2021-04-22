@@ -1,7 +1,8 @@
 import _ from 'lodash';
-import useSettingsState, { SettingsState } from "~/logic/state/settings";
-import { SettingsUpdate } from '@urbit/api/dist/settings';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
+import { SettingsUpdate } from '@urbit/api/settings';
 import { reduceState } from '../state/base';
+import { string } from 'prop-types';
 
 export default class SettingsReducer {
   reduce(json: any) {
@@ -40,21 +41,21 @@ export default class SettingsReducer {
     return state;
   }
 
-  putEntry(json: SettingsUpdate, state: SettingsState): SettingsState {
-    const data = _.get(json, 'put-entry', false);
+  putEntry(json: SettingsUpdate, state: any): SettingsState {
+    const data: Record<string, string> = _.get(json, 'put-entry', false);
     if (data) {
-      if (!state[data["bucket-key"]]) {
-        state[data["bucket-key"]] = {};
+      if (!state[data['bucket-key']]) {
+        state[data['bucket-key']] = {};
       }
-      state[data["bucket-key"]][data["entry-key"]] = data.value;
+      state[data['bucket-key']][data['entry-key']] = data.value;
     }
     return state;
   }
 
-  delEntry(json: SettingsUpdate, state: SettingsState): SettingsState {
+  delEntry(json: SettingsUpdate, state: any): SettingsState {
     const data = _.get(json, 'del-entry', false);
     if (data) {
-      delete state[data["bucket-key"]][data["entry-key"]];
+      delete state[data['bucket-key']][data['entry-key']];
     }
     return state;
   }
@@ -76,7 +77,7 @@ export default class SettingsReducer {
     return state;
   }
 
-  getEntry(json: any, state: SettingsState) {
+  getEntry(json: any, state: any) {
     const bucketKey = _.get(json, 'bucket-key', false);
     const entryKey  = _.get(json, 'entry-key', false);
     const entry     = _.get(json, 'entry', false);
