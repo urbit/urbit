@@ -9,7 +9,7 @@
     ^-  command:btc-wallet
     %.  jon
     %-  of
-    :~  set-provider+ship
+    :~  set-provider+(mu ship)
         check-provider+ship
         check-payee+ship
         set-current-wallet+so
