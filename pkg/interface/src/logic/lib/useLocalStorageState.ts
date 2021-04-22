@@ -15,7 +15,8 @@ function retrieve<T>(key: string, initial: T): T {
 interface SetStateFunc<T> {
   (t: T): T;
 }
-type SetState<T> = T | SetStateFunc<T>;
+// See microsoft/typescript#37663 for filed bug
+type SetState<T> = T extends any ? SetStateFunc<T> : never;
 export function useLocalStorageState<T>(key: string, initial: T) {
   const [state, _setState] = useState(() => retrieve(key, initial));
 

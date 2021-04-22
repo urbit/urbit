@@ -5,16 +5,14 @@ import {
   Group,
   Tags,
   GroupPolicy,
-  GroupPolicyDiff,
   OpenPolicyDiff,
   OpenPolicy,
   InvitePolicyDiff,
   InvitePolicy
 } from '@urbit/api/groups';
-import { Enc, PatpNoSig } from '@urbit/api';
+import { Enc } from '@urbit/api';
 import { resourceAsPath } from '../lib/util';
 import useGroupState, { GroupState } from '../state/group';
-import { compose } from 'lodash/fp';
 import { reduceState } from '../state/base';
 
 function decodeGroup(group: Enc<Group>): Group {
@@ -45,11 +43,11 @@ function decodeTags(tags: Enc<Tags>): Tags {
     tags,
     (acc, ships, key): Tags => {
       if (key.search(/\\/) === -1) {
-        acc.role[key] = new Set(ships);
+        acc.role[key] = new Set([ships]);
         return acc;
       } else {
         const [app, tag, resource] = key.split('\\');
-        _.set(acc, [app, resource, tag], new Set(ships));
+        _.set(acc, [app, resource, tag], new Set([ships]));
         return acc;
       }
     },
@@ -125,9 +123,9 @@ const addMembers = (json: GroupUpdate, state: GroupState): GroupState => {
       state.groups[resourcePath].members.add(member);
       if (
           'invite' in state.groups[resourcePath].policy &&
-          state.groups[resourcePath].policy.invite.pending.has(member)
+          state.groups[resourcePath].policy['invite'].pending.has(member)
          ) {
-           state.groups[resourcePath].policy.invite.pending.delete(member)
+           state.groups[resourcePath].policy['invite'].pending.delete(member);
          }
     }
   }
@@ -159,7 +157,7 @@ const addTag = (json: GroupUpdate, state: GroupState): GroupState => {
     _.set(tags, tagAccessors, tagged);
   }
   return state;
-}
+};
 
 const removeTag = (json: GroupUpdate, state: GroupState): GroupState => {
   if ('removeTag' in json) {

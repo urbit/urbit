@@ -1,4 +1,5 @@
-import { Associations, Workspace } from '@urbit/api';
+import { Associations } from '@urbit/api';
+import { Workspace } from '~/types';
 
 export function getTitleFromWorkspace(
   associations: Associations,
