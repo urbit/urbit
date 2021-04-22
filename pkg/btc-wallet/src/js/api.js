@@ -1,15 +1,16 @@
 import _ from 'lodash';
 
 class UrbitApi {
-  setAuthTokens(authTokens) {
-    this.authTokens = authTokens;
+  setChannel(ship, channel) {
+    this.ship = ship;
+    this.channel = channel;
     this.bindPaths = [];
   }
 
-  bind(path, method, ship = this.authTokens.ship, appl = "btc-wallet", success, fail) {
+  bind(path, method, ship = this.ship, appl = "btc-wallet", success, fail) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.subscriptionId = window.urb.subscribe(ship, appl, path,
+    window.subscriptionId = this.channel.subscribe(ship, appl, path,
       (err) => {
         fail(err);
       },
@@ -33,7 +34,7 @@ class UrbitApi {
 
   action(appl, mark, data) {
     return new Promise((resolve, reject) => {
-      window.urb.poke(ship, appl, mark, data,
+      this.channel.poke(ship, appl, mark, data,
         (json) => {
           resolve(json);
         },

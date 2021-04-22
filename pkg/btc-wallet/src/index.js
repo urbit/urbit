@@ -8,18 +8,16 @@ import './css/indigo-static.css';
 import './css/fonts.css';
 import './css/custom.css';
 
-api.setAuthTokens({
-  ship: window.ship
-});
+window.NETWORK = 'testnet'; // 'bitcoin'
 
-window.urb = new window.channel();
+const channel = new window.channel();
+api.setChannel(window.ship, channel);
 
-subscription.start();
 
 if (module.hot) {
   module.hot.accept()
 }
 
 ReactDOM.render((
-  <Root />
+  <Root channel={channel}/>
 ), document.querySelectorAll("#root")[0]);
