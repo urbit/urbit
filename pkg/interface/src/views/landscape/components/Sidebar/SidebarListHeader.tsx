@@ -65,7 +65,7 @@ export function SidebarListHeader(props: {
     <Box>
     {( !!feedPath) ? (
        <Row
-         flexShrink="0"
+         flexShrink={0}
          alignItems="center"
          justifyContent="space-between"
          py={2}
@@ -98,14 +98,14 @@ export function SidebarListHeader(props: {
      ) : null
     }
     <Row
-      flexShrink="0"
+      flexShrink={0}
       alignItems="center"
       justifyContent="space-between"
       py={2}
       px={3}
       height='48px'
     >
-      <Box flexShrink='0'>
+      <Box flexShrink={0}>
         <Text>
           {props.initialValues.hideUnjoined ? `Joined ${noun}` : `All ${noun}`}
         </Text>
