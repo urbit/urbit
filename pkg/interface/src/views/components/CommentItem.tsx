@@ -95,6 +95,7 @@ export function CommentItem(props: CommentItemProps): ReactElement {
           date={post?.['time-sent']}
           unread={props.unread}
           group={group}
+          isRelativeTime
         >
           <Row px="2" gapX="2" height="18px">
             <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
