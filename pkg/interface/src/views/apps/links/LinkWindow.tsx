@@ -80,9 +80,13 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
               api={api}
             />
           </Col>
-          <LinkItem {...linkProps} />
+          { typeof post !== 'string' && <LinkItem {...linkProps} /> }
         </React.Fragment>
       );
+    }
+
+    if (typeof post === 'string') {
+      return null;
     }
     return <LinkItem key={index.toString()} {...linkProps} />;
   };

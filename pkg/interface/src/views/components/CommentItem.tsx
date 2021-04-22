@@ -49,11 +49,8 @@ export function CommentItem(props: CommentItemProps): ReactElement {
     const children = Array.from(revs.children);
     let indices = [];
     for (let child in children) {
-      console.log(child);
       let node = children[child];
-      if (node?.post && typeof node.post === 'string') {
-        console.log(node.post);
-      } else {
+      if (!node?.post || typeof node.post !== 'string') {
         indices.push(node.post?.index);
       }
     }
@@ -105,6 +102,7 @@ export function CommentItem(props: CommentItemProps): ReactElement {
   );
 
   if (!post || typeof post === 'string') {
+    //  TODO: if typeof post === 'string', show some deleted state
     return null;
   }
 
