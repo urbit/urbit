@@ -48,8 +48,6 @@ export type AppAssociations = {
   [p in Path]: Association;
 }
 
-
-
 export type Association = MdResource & {
   group: Path;
   metadata: Metadata;
@@ -67,8 +65,9 @@ export interface Metadata {
   'date-created': string;
   description: string;
   title: string;
-  module: string;
+  config: { graph: string };
   picture: string;
+  hidden: boolean;
   preview: boolean;
   vip: PermVariation;
 }
