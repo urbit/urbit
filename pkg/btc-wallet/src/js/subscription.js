@@ -3,7 +3,7 @@ import { store } from './store';
 
 export class Subscription {
   start() {
-    if (api.authTokens) {
+    if (api.ship) {
       this.initializeBtcWallet();
       this.initializeCurrencyPoll();
     } else {
@@ -12,7 +12,8 @@ export class Subscription {
   }
 
   initializeBtcWallet() {
-    api.bind('/all', 'PUT', api.authTokens.ship, 'btc-wallet',
+    console.log('initialize');
+    api.bind('/all', 'PUT', api.ship, 'btc-wallet',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
   }
