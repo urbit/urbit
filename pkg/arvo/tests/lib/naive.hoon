@@ -87,7 +87,17 @@
     |=  [lost=ship parent=ship]
     (log lost-sponsor:log-names:naive *@ux lost parent ~)
   ::
-  ::  TODO:  ChangedKeys (lib/naive.hoon still has TODOs)
+  ++  changed-keys
+    |=  [=ship encr=@ auth=@ suite=@ life=@]
+    =/  keys=@ux
+      %:  can  8
+        1^life
+        1^suite
+        1^auth
+        1^encr
+        ~
+      ==
+    (log changed-keys:log-names:naive keys ship ~)
   ::
   ++  broke-continuity
     |=  [=ship rift=@]
