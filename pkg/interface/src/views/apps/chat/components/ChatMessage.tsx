@@ -67,7 +67,7 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
     <Rule borderColor='lightGray' />
     <Text
       gray
-      flexShrink='0'
+      flexShrink={0}
       whiteSpace='nowrap'
       textAlign='center'
       fontSize={0}
@@ -109,7 +109,7 @@ export const UnreadMarker = React.forwardRef(
           <Text
             color='blue'
             fontSize={0}
-            flexShrink='0'
+            flexShrink={0}
             whiteSpace='nowrap'
             textAlign='center'
             px={2}
@@ -170,7 +170,7 @@ const MessageActions = ({ api, onReply, association, history, msg, group }) => {
           width='auto'
           alignY='top'
           alignX='right'
-          flexShrink={'0'}
+          flexShrink={0}
           offsetY={8}
           offsetX={-24}
           options={
