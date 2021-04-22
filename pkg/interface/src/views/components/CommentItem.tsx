@@ -43,7 +43,7 @@ export function CommentItem(props: CommentItemProps): ReactElement {
   const disabled = props.pending;
 
   const onDelete = async () => {
-    await api.graph.removeNodes(ship, name, [comment.post?.index]);
+    await api.graph.removePosts(ship, name, [comment.post?.index]);
   };
 
   const commentIndexArray = (comment.post?.index || '/').split('/');
