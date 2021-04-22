@@ -5,6 +5,7 @@ import { CurrencyReducer } from './reducers/currency';
 class Store {
   constructor() {
     this.state = {
+      loaded: false,
       providerPerms: {},
       shipWallets: {},
       provider: null,
