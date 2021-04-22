@@ -864,7 +864,8 @@ u3s_cue_atom(u3_atom a)
 u3_weak
 u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
 {
-  c3_s val_s;
+  c3_s val_s;  //  leading digits value
+  c3_y num_y;  //  leading digits length
 
   if ( !len_w ) return u3_none;
 
@@ -880,6 +881,7 @@ u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
   //
   if ( NOT_DEC(*byt_y) ) return u3_none;
 
+  num_y = 1;
   val_s = *byt_y++ - '0';
   if ( 0 == --len_w )    return (u3_noun)val_s;
 
@@ -888,6 +890,7 @@ u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
   if ( '.' == *byt_y )   goto tid_ab;
   if ( NOT_DEC(*byt_y) ) return u3_none;
 
+  num_y = 2;
   val_s *= 10;
   val_s += *byt_y++ - '0';
   if ( 0 == --len_w )    return (u3_noun)val_s;
@@ -897,6 +900,7 @@ u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
   if ( '.' == *byt_y )   goto tid_ab;
   if ( NOT_DEC(*byt_y) ) return u3_none;
 
+  num_y = 3;
   val_s *= 10;
   val_s += *byt_y++ - '0';
   if ( 0 == --len_w )    return (u3_noun)val_s;
@@ -905,6 +909,40 @@ tid_ab:
   //  +tid:ab: dot-prefixed 3-digit blocks
   //
   if ( len_w % 4 ) return u3_none;
+
+  //  avoid gmp allocation if possible
+  //
+  //    - 19 decimal digits fit in 64 bits
+  //    - 18 digits is 24 bytes with separators
+  //
+  if (  ((1 == num_y) && (24 >= len_w))
+     || (20 >= len_w) )
+  {
+    c3_d val_d = val_s;
+
+    while ( len_w ) {
+      if (  ('.' != byt_y[0])
+         || NOT_DEC(byt_y[1])
+         || NOT_DEC(byt_y[2])
+         || NOT_DEC(byt_y[1]) )
+      {
+        return u3_none;
+      }
+
+      byt_y++;
+
+      val_d *= 10;
+      val_d += *byt_y++ - '0';
+      val_d *= 10;
+      val_d += *byt_y++ - '0';
+      val_d *= 10;
+      val_d += *byt_y++ - '0';
+
+      len_w -= 4;
+    }
+
+    return u3i_chub(val_d);
+  }
 
   {
     //  XX estimate size, allocate once
