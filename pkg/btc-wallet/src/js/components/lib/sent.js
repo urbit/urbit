@@ -10,8 +10,10 @@ import {
   Col,
 } from '@tlon/indigo-react';
 
+import { satsToCurrency } from '../../lib/util.js';
+
 export default function Sent(props) {
-  const { payee, denomination, denomAmount, satsAmount, stopSending } = props;
+  const { payee, denomination, satsAmount, stopSending, currencyRates } = props;
   return (
     <Col
       height='400px'
@@ -42,7 +44,7 @@ export default function Sent(props) {
           color='white'
           fontSize='52px'
         >
-          {`$${denomAmount}`}
+          {satsToCurrency(satsAmount, denomination, currencyRates)}
         </Text>
         <Text
           color='white'
