@@ -7,6 +7,7 @@ import {
   Icon,
   Row,
   Input,
+  LoadingSpinner,
 } from '@tlon/indigo-react';
 
 import { isValidPatp } from 'urbit-ob';
@@ -16,8 +17,12 @@ export default class ProviderModal extends Component {
     super(props);
 
     this.state = {
+      potentialProvider: null,
+      checkingProvider: false,
+      providerFailed: false,
       ready: false,
       provider: null,
+      connecting: false,
     }
 
     this.checkProvider  = this.checkProvider.bind(this);
@@ -28,20 +33,27 @@ export default class ProviderModal extends Component {
     // TODO: loading states
     let provider = e.target.value;
     let ready = false;
+    let checkingProvider = false;
+    let potentialProvider = this.state.potentialProvider;
 
     if (isValidPatp(provider)) {
       let command = {
         "check-provider": provider
       }
+      potentialProvider = provider;
+      checkingProvider = true;
       this.props.api.btcWalletCommand(command);
+      setTimeout(() => {
+        this.setState({providerFailed: true, checkingProvider: false});
+      }, 5000);
     }
-    this.setState({provider, ready});
+    this.setState({provider, ready, checkingProvider, potentialProvider});
   }
 
   componentDidUpdate(prevProps, prevState){
     if (!this.state.ready){
       if (this.props.providerPerms[this.state.provider]) {
-        this.setState({ready: true});
+        this.setState({ready: true, checkingProvider: false, providerFailed: false});
       }
     }
   }
@@ -52,16 +64,35 @@ export default class ProviderModal extends Component {
         "set-provider": this.state.provider
       }
       this.props.api.btcWalletCommand(command);
+      this.setState({connecting: true});
     }
   }
 
   render() {
-    let workingNode = (!this.state.ready) ? null :
-      <Box mt={3}>
-        <Text fontSize="14px" color="green">
-          {this.state.provider} is a working provider node
-        </Text>
-      </Box>
+
+    let workingNode = null;
+    let workingColor = null;
+    let workingBg = null;
+    if (this.state.ready) {
+      workingColor = "green";
+      workingBg = "veryLightGreen"
+      workingNode =
+        <Box mt={3}>
+          <Text fontSize="14px" color="green">
+            {this.state.provider} is a working provider node
+          </Text>
+        </Box>
+    } else if (this.state.providerFailed) {
+      workingColor = "red";
+      workingBg = "veryLightRed"
+      workingNode =
+        <Box mt={3}>
+          <Text fontSize="14px" color="red">
+            {this.state.potentialProvider} is not a working provider node
+          </Text>
+        </Box>
+    }
+
     return (
       <Box
         width="100%"
@@ -84,29 +115,37 @@ export default class ProviderModal extends Component {
             Provider Node
           </Text>
         </Box>
-        <StatelessTextInput
-          fontSize="14px"
-          type="text"
-          name="masterTicket"
-          placeholder="e.g. ~zod"
-          autoCapitalize="none"
-          autoCorrect="off"
-          mono
-          backgroundColor={this.state.ready ? "veryLightGreen": null}
-          color={this.state.ready ? "green": null}
-          borderColor={this.state.ready ? "green": null}
-          onChange={this.checkProvider}
-        />
+        <Row alignItems="center">
+          <StatelessTextInput
+            mr={2}
+            width="256px"
+            fontSize="14px"
+            type="text"
+            name="masterTicket"
+            placeholder="e.g. ~zod"
+            autoCapitalize="none"
+            autoCorrect="off"
+            mono
+            backgroundColor={workingBg}
+            color={workingColor}
+            borderColor={workingColor}
+            onChange={this.checkProvider}
+          />
+          {(this.state.checkingProvider) ? <LoadingSpinner/> : null}
+        </Row>
         {workingNode}
-        <Button
-          mt={3}
-          primary
-          disabled={!this.state.ready}
-          children="Set Peer Node"
-          fontSize="14px"
-          style={{cursor: this.state.ready ? "pointer" : "default"}}
-          onClick={() => {this.submitProvider(this.state.provider)}}
-        />
+        <Row alignItems="center" mt={3}>
+          <Button
+            mr={2}
+            primary
+            disabled={!this.state.ready}
+            children="Set Peer Node"
+            fontSize="14px"
+            style={{cursor: this.state.ready ? "pointer" : "default"}}
+            onClick={() => {this.submitProvider(this.state.provider)}}
+          />
+          {(this.state.connecting) ? <LoadingSpinner/> : null}
+        </Row>
       </Box>
     );
   }
