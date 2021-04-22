@@ -67,6 +67,7 @@ _test_sift_ud(void)
   ret_i &= _ud_fail("1234.567.8");
   ret_i &= _ud_fail("1234.56..78.");
   ret_i &= _ud_fail("123.45a");
+  ret_i &= _ud_fail(".123.456");
 
   {
     c3_c* num_c = "4.294.967.296";

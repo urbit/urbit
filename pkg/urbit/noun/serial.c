@@ -876,9 +876,9 @@ u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
   if      ( !len_w )        return u3_none;
   else if ( '0' == *byt_y ) return ( 1 == len_w ) ? (u3_noun)0 : u3_none;
 
-  //  +ted:ab: leading nonzero (checked above), plus 0-2 digits
+  //  +ted:ab: leading nonzero (checked above), plus up to 2 digits
   //
-  switch (num_y) {
+  switch ( num_y ) {
     case 3:  if ( !DIGIT(*byt_y) ) return u3_none;
              val_s *= 10;
              val_s += *byt_y++ - '0';
@@ -890,6 +890,9 @@ u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
     case 1:  if ( !DIGIT(*byt_y) ) return u3_none;
              val_s *= 10;
              val_s += *byt_y++ - '0';
+             break;
+
+    case 0:  return u3_none;
   }
 
   len_w -= num_y;
