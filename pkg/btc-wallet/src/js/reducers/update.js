@@ -81,7 +81,9 @@ export class UpdateReducer {
     let entryIndex = _.findIndex(state.history, (h) => {
       return ((json.wid === h.txid.wid) && (json.dat === h.txid.dat));
     });
-    state.history[entryIndex].failure = true;
+    if (entryIndex > -1) {
+      state.history[entryIndex].failure = true;
+    }
   }
 
   reduceAddress(json, state) {
