@@ -80,6 +80,7 @@ export default class Invoice extends Component {
         { sent ?
           <Sent
             payee={payee}
+            stopSending={stopSending}
             denomination={denomination}
             denomAmount={denomAmount}
             satsAmount={satsAmount}
