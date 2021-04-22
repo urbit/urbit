@@ -45,6 +45,10 @@ export default class TxAction extends Component {
         foreground="orange"
       />
 
+    const url = (window.NETWORK === 'testnet')
+      ? `http://blockstream.info/testnet/tx/${this.props.txid}`
+      : `http://blockstream.info/tx/${this.props.txid}`;
+
     return (
       <Row alignItems="center">
         <Box backgroundColor={actionColor}
@@ -59,7 +63,9 @@ export default class TxAction extends Component {
           <Icon icon={leftIcon} color="white"/>
         </Box>
         <Text color={actionColor} fontSize="14px">{actionText}</Text>
-        <Icon color={actionColor} icon="ArrowNorthEast" ml={1} mr={2}/>
+        <a href={url} target="_blank">
+          <Icon color={actionColor} icon="ArrowNorthEast" ml={1} mr={2}/>
+        </a>
         {pending}
       </Row>
     );
