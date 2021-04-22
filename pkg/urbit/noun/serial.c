@@ -878,22 +878,20 @@ u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
 
   //  +ted:ab: leading nonzero (checked above), plus up to 2 digits
   //
+#define NEXT()  do {                          \
+    if ( !DIGIT(*byt_y) ) return u3_none;     \
+    val_s *= 10;                              \
+    val_s += *byt_y++ - '0';                  \
+  } while (0)
+
   switch ( num_y ) {
-    case 3:  if ( !DIGIT(*byt_y) ) return u3_none;
-             val_s *= 10;
-             val_s += *byt_y++ - '0';
-
-    case 2:  if ( !DIGIT(*byt_y) ) return u3_none;
-             val_s *= 10;
-             val_s += *byt_y++ - '0';
-
-    case 1:  if ( !DIGIT(*byt_y) ) return u3_none;
-             val_s *= 10;
-             val_s += *byt_y++ - '0';
-             break;
-
-    case 0:  return u3_none;
+    case 3: NEXT();
+    case 2: NEXT();
+    case 1: NEXT(); break;
+    case 0: return u3_none;
   }
+
+#undef NEXT
 
   len_w -= num_y;
 
