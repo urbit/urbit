@@ -94,6 +94,7 @@ export default class Send extends Component {
   render() {
 
     const { api, value, conversion, stopSending, denomination, psbt } = this.props;
+    const { api, value, conversion, stopSending, denomination, psbt, currencyRates } = this.props;
     const { denomAmount, satsAmount, signing, payee } = this.state;
 
     return (
@@ -102,10 +103,10 @@ export default class Send extends Component {
           <Invoice
             api={api}
             psbt={psbt}
+            currencyRates={currencyRates}
             stopSending={stopSending}
             payee={payee}
             denomination={denomination}
-            denomAmount={denomAmount}
             satsAmount={satsAmount}
           /> :
           <Col
