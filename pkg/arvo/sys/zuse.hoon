@@ -5351,7 +5351,7 @@
   ::
   ++  run
     ~/  %run
-    |=  [a=(tree item) b=$-(val *)]
+    |*  [a=(tree item) b=$-(val *)]
     |-
     ?~  a  a
     [n=[key.n.a (b val.n.a)] l=$(a l.a) r=$(a r.a)]
