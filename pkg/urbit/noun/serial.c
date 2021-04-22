@@ -922,7 +922,7 @@ tid_ab:
       if (  ('.' != byt_y[0])
          || NOT_DEC(byt_y[1])
          || NOT_DEC(byt_y[2])
-         || NOT_DEC(byt_y[1]) )
+         || NOT_DEC(byt_y[3]) )
       {
         return u3_none;
       }
@@ -952,7 +952,7 @@ tid_ab:
       if (  ('.' != byt_y[0])
          || NOT_DEC(byt_y[1])
          || NOT_DEC(byt_y[2])
-         || NOT_DEC(byt_y[1]) )
+         || NOT_DEC(byt_y[3]) )
       {
         mpz_clear(a_mp);
         return u3_none;
