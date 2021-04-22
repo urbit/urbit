@@ -16,7 +16,7 @@ export class UpdateReducer {
     if (json["change-wallet"]) {
       this.changeWallet(json["change-wallet"], state);
     }
-    if (json.psbt) {
+    if (json.hasOwnProperty('psbt')) {
       this.reducePsbt(json.psbt, state);
     }
     if (json["btc-state"]) {
