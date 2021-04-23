@@ -992,8 +992,9 @@
           [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec.i.raz]]
       |-
       ?~  res  ~
-      ~|  [%nest-fail path.i.raz p.n.res]
-      ?>  (~(nest ut type) | p.q.n.res)
+      ?.  (~(nest ut type) | p.q.n.res)
+        ~|  [%nest-fail path.i.raz p.n.res]
+        !!
       :-  [p.n.res q.q.n.res]
       [$(res l.res) $(res r.res)]
     ::
