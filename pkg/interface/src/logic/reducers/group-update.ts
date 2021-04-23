@@ -43,11 +43,11 @@ function decodeTags(tags: Enc<Tags>): Tags {
     tags,
     (acc, ships, key): Tags => {
       if (key.search(/\\/) === -1) {
-        acc.role[key] = new Set([ships]);
+        acc.role[key] = new Set(ships);
         return acc;
       } else {
         const [app, tag, resource] = key.split('\\');
-        _.set(acc, [app, resource, tag], new Set([ships]));
+        _.set(acc, [app, resource, tag], new Set(ships));
         return acc;
       }
     },
