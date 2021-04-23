@@ -37,7 +37,8 @@ export default class TxCounterparty extends Component {
         >
           <Icon icon="Bitcoin" color="gray"/>
         </Box>
-    const addressText = this.props.address.slice(0, 6) + '...' +
+    const addressText = (!this.props.address) ? '' :
+      this.props.address.slice(0, 6) + '...' +
       this.props.address.slice(-6);
     const text = (this.props.ship) ?
       `~${this.props.ship}` : addressText;

@@ -186,6 +186,7 @@
     [%give %fact ~ %json !>(response)]~
   ::
       [%all ~]
+    ~&  %watch-all
     ?>  (team:title our.bowl src.bowl)
     :_  this
     [give-initial:hc]~
@@ -643,6 +644,7 @@
             btc-state  [block fee now.bowl]
         ==
     ?:  ?|(?!(connected.p) (lth block.btc-state block))
+      ~&  >>  block
       ;:  weld
         (retry-pend-piym network)
         (retry-poym network)
@@ -652,6 +654,7 @@
         retry-ahistorical-txs
       ==
     ;:  weld
+::      (retry-addrs network)
       retry-ahistorical-txs
       (retry-pend-piym network)
     ==
@@ -760,6 +763,7 @@
 ++  handle-tx-info
   |=  ti=info:tx
   ^-  (quip card _state)
+  ~&  %handle-tx-info^ti
   |^
   =/  h  (~(get by history) txid.ti)
   =.  ahistorical-txs  (~(del in ahistorical-txs) txid.ti)
@@ -769,6 +773,13 @@
       %+  turn  (weld inputs.ti outputs.ti)
       |=(=val:tx address.val)
     is-our-address
+  ~&  addresses+our-addrs
+::  =/  addr-info-cards=(list card)
+::    %+  turn  ~(tap in our-addrs)
+::    |=  a=address
+::    ^-  card
+::    (poke-provider [%address-info a])
+  ::
   ?:  =(0 ~(wyt in our-addrs))  `state
   =/  =xpub
     xpub.w:(need (address-coords:bl (snag 0 ~(tap in our-addrs)) ~(val by walts)))
@@ -776,13 +787,16 @@
     =/  new-hest=hest  (mk-hest xpub our-addrs)
     =.  history  (~(put by history) txid.ti new-hest)
     :_  state
+::    :_  addr-info-cards
     [(give-update %new-tx new-hest)]~
   ?.  included.ti                 ::  tx in history, but not in mempool/blocks
     :_  state(history (~(del by history) txid.ti))
+::    :_  addr-info-cards
     [(give-update %cancel-tx txid.ti)]~
   =/  new-hest  u.h(confs confs.ti, recvd recvd.ti)
   =.  history  (~(put by history) txid.ti new-hest)
   :_  state
+::  :_  addr-info-cards
   [(give-update %new-tx new-hest)]~
   ::
   ++  mk-hest
@@ -830,6 +844,7 @@
 ++  handle-address-info
   |=  [=address utxos=(set utxo) used=?]
   ^-  (quip card _state)
+  ~&  %handle-address-info^address
   =/  ac  (address-coords:bl address ~(val by walts))
   ?~  ac
     `state
@@ -1020,21 +1035,29 @@
 ::
 ++  balance
   |=  =xpub:bc
-  ^-  (unit sats)
+  ^-  (unit [sats sats])
   =/  w  (~(get by walts) xpub)
   ?~  w  ~
-  =/  values=(list sats)
+  =/  values=(list [confirmed=sats unconfirmed=sats])
     %+  turn  ~(val by wach.u.w)
-    |=  =addi  ^-  sats
+    |=  =addi  ^-  [sats sats]
     %+  roll
       %+  turn  ~(tap by utxos.addi)
-     |=(=utxo value.utxo)
-    add
-  `(roll values add)
+      |=  =utxo
+      ^-  [sats sats]
+      ?:  (~(spendable sut:bl [u.w eny.bowl block.btc-state ~ 0 ~]) utxo)
+        [value.utxo 0]
+      [0 value.utxo]
+    |=  [[a=sats b=sats] out=[p=sats q=sats]]
+    [(add a p.out) (add b q.out)]
+  :-  ~
+  %+  roll  values
+  |=  [[a=sats b=sats] out=[p=sats q=sats]]
+  [(add a p.out) (add b q.out)]
   ::
 ::
 ++  current-balance
-  ^-  (unit sats)
+  ^-  (unit [sats sats])
   ?~  curr-xpub  ~
   (balance u.curr-xpub)
 ::

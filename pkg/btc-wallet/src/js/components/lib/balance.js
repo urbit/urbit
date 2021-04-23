@@ -67,6 +67,7 @@ export default class Balance extends Component {
            denomination={denomination}
            sats={sats}
            conversion={conversion}
+           network={this.props.network}
            stopSending={() => {
              this.setState({sending: false});
              store.handleEvent({data: {psbt: ''}});
