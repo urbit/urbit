@@ -19,7 +19,7 @@
     %&  `p.result
   ==
 ::
-++  addr  address-from-prv:key:ethereum
+++  addr  address-from-pk:key:ethereum
 ::
 ++  log
   |=  [log-name=@ux data=@ux topics=(lest @)]
@@ -143,13 +143,13 @@
   |%
   ::
   ++  spawn
-    |=  [nonce=@ud parent=ship prv=@ proxy=@tas child=ship =address]  ^-  @
-    %^  sign-tx  prv  nonce
+    |=  [nonce=@ud parent=ship pk=@ proxy=@tas child=ship =address]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-ship-address:bits %spawn parent proxy child address)
   ::
   ++  transfer-point
-    |=  [nonce=@ud =ship prv=@ =address proxy=@tas reset=?]  ^-  @
-    %^  sign-tx  prv  nonce
+    |=  [nonce=@ud =ship pk=@ =address proxy=@tas reset=?]  ^-  @
+    %^  sign-tx  pk  nonce
     %:  can  3
       (from-proxy:bits proxy)
       4^ship
@@ -160,8 +160,8 @@
     ==
   ::
   ++  configure-keys
-    |=  [nonce=@ud =ship prv=@ proxy=@tas breach=@ encrypt=@ auth=@ crypto-suite=@]  ^-  @
-    %^  sign-tx  prv  nonce
+    |=  [nonce=@ud =ship pk=@ proxy=@tas breach=@ encrypt=@ auth=@ crypto-suite=@]  ^-  @
+    %^  sign-tx  pk  nonce
     %:  can  3
       (from-proxy:bits proxy)
       4^ship
@@ -174,43 +174,43 @@
     ==
   ::
   ++  escape
-    |=  [nonce=@ud child=ship prv=@ proxy=@tas parent=ship]  ^-  @
-    %^  sign-tx  prv  nonce
+    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-escape:bits %escape child proxy parent)
   ::
   ++  cancel-escape
-    |=  [nonce=@ud child=ship prv=@ proxy=@tas parent=ship]  ^-  @
-    %^  sign-tx  prv  nonce
+    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-escape:bits %cancel-escape child proxy parent)
   ::
   ++  adopt
-    |=  [nonce=@ud child=ship prv=@ proxy=@tas parent=ship]  ^-  @
-    %^  sign-tx  prv  nonce
+    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-escape:bits %adopt child proxy parent)
   ::
   ++  reject
-    |=  [nonce=@ud child=ship prv=@ proxy=@tas parent=ship]  ^-  @
-    %^  sign-tx  prv  nonce
+    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-escape:bits %reject child proxy parent)
   ::
   ++  detach
-    |=  [nonce=@ud child=ship prv=@ proxy=@tas parent=ship]  ^-  @
-    %^  sign-tx  prv  nonce
+    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-escape:bits %detach child proxy parent)
   ::
   ++  set-management-proxy
-    |=  [nonce=@ud =ship prv=@ proxy=@tas =address]  ^-  @
-    %^  sign-tx  prv  nonce
+    |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-ship-address:bits %set-management-proxy ship proxy ship address)
   ::
   ++  set-spawn-proxy
-    |=  [nonce=@ud =ship prv=@ proxy=@tas =address]  ^-  @
-    %^  sign-tx  prv  nonce
+    |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-ship-address:bits %set-spawn-proxy ship proxy ship address)
   ::
   ++  set-transfer-proxy
-    |=  [nonce=@ud =ship prv=@ proxy=@tas =address]  ^-  @
-    %^  sign-tx  prv  nonce
+    |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-ship-address:bits %set-transfer-proxy ship proxy ship address)
   ::
   ++  bits
