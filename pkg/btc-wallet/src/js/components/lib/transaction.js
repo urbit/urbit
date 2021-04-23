@@ -73,7 +73,7 @@ export default class Transaction extends Component {
         mb="16px"
       >
         <Row justifyContent="space-between" alignItems="center">
-          <TxAction action={action} pending={pending} txid={txid}/>
+          <TxAction action={action} pending={pending} txid={txid} network={this.props.network}/>
           <Text fontSize="14px" alignItems="center" color="gray">
             {sign}{value} sats
           </Text>
