@@ -27,11 +27,10 @@ export default class Header extends Component {
             borderRadius={4} mr="12px"
             width={5}
             height={5}
-            p={2}
             alignItems="center"
             justifyContent="center"
           >
-            <Icon icon="NullIcon" color="white"/>
+            <Icon icon="Bitcoin" width={5} height={5} color="white"/>
           </Box>
           <Text fontSize={2} fontWeight="bold" color="orange">
             Bitcoin

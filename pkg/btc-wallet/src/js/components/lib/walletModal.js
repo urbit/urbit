@@ -110,7 +110,7 @@ export default class WalletModal extends Component {
           padding={3}
         >
           <Row>
-            <Icon icon="NullIcon" mr={2}/>
+            <Icon icon="Bitcoin" mr={2}/>
             <Text fontSize="14px" fontWeight="bold">
               Step 2 of 2: Import your extended public key
             </Text>
@@ -173,7 +173,7 @@ export default class WalletModal extends Component {
           padding={3}
         >
           <Row>
-            <Icon icon="NullIcon" mr={2}/>
+            <Icon icon="Bitcoin" mr={2}/>
             <Text fontSize="14px" fontWeight="bold">
               Step 2 of 2: Import your extended public key
             </Text>
