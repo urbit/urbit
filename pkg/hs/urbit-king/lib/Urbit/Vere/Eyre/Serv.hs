@@ -86,7 +86,7 @@ instance Show ServType where
   show = \case
     STHttp  who _ _ _      -> "STHttp "  <> show who
     STHttps who tls _ _ _  -> "STHttps " <> show who <> " " <> show tls
-    STMultiHttp {}      -> "STMultiHttp"
+    STMultiHttp _ _   -> "STMultiHttp"
     STMultiHttps tls _ _ _ -> "STMultiHttps"
 
 data ServPort
