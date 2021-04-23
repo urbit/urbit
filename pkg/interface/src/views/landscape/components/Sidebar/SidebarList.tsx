@@ -1,11 +1,13 @@
 import React, { ReactElement } from 'react';
-import { Associations, AppAssociations, Groups, Rolodex } from '@urbit/api';
+import { Associations, AppAssociations, Groups, Rolodex, Graph } from '@urbit/api';
+import { patp } from 'urbit-ob';
 
 import { alphabeticalOrder } from '~/logic/lib/util';
 import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
-import { SidebarItem } from './SidebarItem';
+import { SidebarAssociationItem, SidebarDmItem } from './SidebarItem';
 import { Workspace } from '~/types/workspace';
 import useMetadataState from '~/logic/state/metadata';
+import {useInbox} from '~/logic/state/graph';
 
 function sidebarSort(
   associations: AppAssociations,
@@ -38,24 +40,13 @@ function sidebarSort(
   };
 }
 
-export function SidebarList(props: {
-  apps: SidebarAppConfigs;
-  config: SidebarListConfig;
-  baseUrl: string;
-  group?: string;
-  selected?: string;
-  workspace: Workspace;
-}): ReactElement {
-  const { selected, group, config, workspace } = props;
-  const associationState = useMetadataState(state => state.associations);
-  const associations = { ...associationState.graph };
 
-  const ordered = Object.keys(associations)
-    .filter((a) => {
-      const assoc = associations[a];
+function getItems(associations: Associations, workspace: Workspace, inbox: Graph) {
+   const filtered = Object.keys(associations.graph).filter((a) => {
+      const assoc = associations.graph[a];
       if (workspace?.type === 'messages') {
         return (
-          !(assoc.group in associationState.groups) &&
+          !(assoc.group in associations.groups) &&
           'graph' in assoc.metadata.config &&
           assoc.metadata.config.graph === 'chat'
         );
@@ -70,24 +61,52 @@ export function SidebarList(props: {
           !assoc.metadata.hidden
         );
       }
-    })
-    .sort(sidebarSort(associations, props.apps)[config.sortBy]);
+   });
+  const direct: string[] = workspace.type !== 'messages' ? []
+    : inbox.keys().map(x => patp(x.toJSNumber()))
+
+  return [...filtered, ...direct];
+
+}
+
+export function SidebarList(props: {
+  apps: SidebarAppConfigs;
+  config: SidebarListConfig;
+  baseUrl: string;
+  group?: string;
+  selected?: string;
+  workspace: Workspace;
+}): ReactElement {
+  const { selected, group, config, workspace } = props;
+  const associations = useMetadataState(state => state.associations);
+  const inbox = useInbox();
+
+
+  const ordered = getItems(associations, workspace, inbox);
+  //.sort(sidebarSort(associations, props.apps)[config.sortBy]);
 
   return (
     <>
-      {ordered.map((path) => {
-        const assoc = associations[path];
-        return (
-          <SidebarItem
-            key={path}
-            path={path}
-            selected={path === selected}
-            association={assoc}
+      {ordered.map((pathOrShip) => {
+        
+        return pathOrShip.startsWith('/') ? (
+          <SidebarAssociationItem
+            key={pathOrShip}
+            path={pathOrShip}
+            selected={pathOrShip === selected}
+            association={associations[pathOrShip]}
             apps={props.apps}
             hideUnjoined={config.hideUnjoined}
             workspace={workspace}
           />
-        );
+          ) : (
+            <SidebarDmItem
+              key={pathOrShip}
+              ship={pathOrShip}
+              workspace={workspace}
+            />
+
+          );
       })}
     </>
   );

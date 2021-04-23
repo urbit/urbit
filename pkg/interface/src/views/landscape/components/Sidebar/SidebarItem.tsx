@@ -1,8 +1,8 @@
-import React, { ReactElement, useRef } from 'react';
+import React, { ReactElement, useRef, ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
 
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
-import { Groups, Association, Rolodex } from '@urbit/api';
+import { Groups, Association, Rolodex, cite } from '@urbit/api';
 
 import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
@@ -11,7 +11,7 @@ import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { SidebarAppConfigs, SidebarItemStatus } from './types';
 import { Workspace } from '~/types/workspace';
-import useContactState from '~/logic/state/contact';
+import useContactState, {useContact} from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import Dot from '~/views/components/Dot';
@@ -32,15 +32,113 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   }
 }
 
+function SidebarItemBase(props: {
+  to: string;
+  selected: boolean;
+  hasNotification: boolean;
+  hasUnread: boolean;
+  isSynced?: boolean;
+  children: ReactNode;
+  title: string;
+  mono?: boolean;
+}) {
+  const { 
+    title,
+    children,
+    to,
+    selected, 
+    hasNotification,
+    hasUnread,
+    isSynced = false,
+    mono = false,
+  } = props;
+  const color = isSynced ? 'black' : 'lightGray';
+
+  const fontWeight = (hasUnread || hasNotification) ? '500' : 'normal';
+
+
+
+  return (
+    <HoverBoxLink
+      //ref={anchorRef}
+      to={to}
+      bg="white"
+      bgActive="washedGray"
+      width="100%"
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      py={1}
+      pl={3}
+      pr={3}
+      selected={selected}
+    >
+      <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
+        {hasNotification && <Text color='black' marginLeft={-2} width={2} display='flex' alignItems='center'>
+          <Dot />
+      </Text>}
+      {children}
+
+        
+        <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
+          <Text
+            lineHeight="tall"
+            display='inline-block'
+            flex='1'
+            overflow='hidden'
+            width='100%'
+            mono={urbitOb.isValidPatp(title)}
+            color={color}
+            fontWeight={fontWeight}
+            style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
+          >
+            {title}
+          </Text>
+        </Box>
+      </Row>
+    </HoverBoxLink>
+  );
+}
+
+export function SidebarDmItem(props: {
+  ship: string;
+  workspace: Workspace;
+}) {
+  const { ship } = props;
+  const contact = useContact(ship);
+  const title = contact?.nickname ?? cite(ship) ?? ship;
+  const hideAvatars = false;
+  const img = (contact?.avatar && !hideAvatars) ? (
+    <BaseImage referrerPolicy="no-referrer" src={contact.avatar} width='16px' height='16px' borderRadius={2} />
+  ) : (
+    <Sigil ship={title} color={`#${uxToHex(contact?.color || '0x0')}`} icon padding={2} size={16} />
+  );
+
+  return (
+    <SidebarItemBase
+      selected={false}
+      hasNotification={false}
+      hasUnread={false}
+      to={`/~landscape/messages/ship/${ship}`}
+      title={title}
+      mono={!!contact?.nickname}
+      isSynced
+    >
+      {img}
+    </SidebarItemBase>
+
+  );
+
+}
 // eslint-disable-next-line max-lines-per-function
-export function SidebarItem(props: {
+export function SidebarAssociationItem(props: {
   hideUnjoined: boolean;
   association: Association;
   path: string;
   selected: boolean;
   apps: SidebarAppConfigs;
   workspace: Workspace;
-}): ReactElement | null {
+}) {
   const { association, path, selected, apps } = props;
   let title = getItemTitle(association) || '';
   const appName = association?.['app-name'];
@@ -83,80 +181,28 @@ export function SidebarItem(props: {
     ? `${baseUrl}/resource/${mod}${rid}`
     : `${baseUrl}/join/${mod}${rid}`;
 
-  let color = 'lightGray';
-
-  if (isSynced) {
-    if (hasUnread || hasNotification) {
-      color = 'black';
-    } else {
-      color = 'gray';
-    }
-  }
-
-  const fontWeight = (hasUnread || hasNotification) ? '500' : 'normal';
-
   if (props.hideUnjoined && !isSynced) {
     return null;
   }
 
-  let img = null;
+  let img: ReactNode | null = null;
 
-  if (urbitOb.isValidPatp(title)) {
-    if (contacts?.[title]?.avatar && !hideAvatars) {
-      img = <BaseImage referrerPolicy="no-referrer" src={contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
-    } else {
-      img = <Sigil ship={title} color={`#${uxToHex(contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
-    }
-    if (contacts?.[title]?.nickname && !hideNicknames) {
-      title = contacts[title].nickname;
-    }
-  } else {
-    img = <Box flexShrink={0} height={16} width={16} borderRadius={2} backgroundColor={`#${uxToHex(props?.association?.metadata?.color)}` || '#000000'} />;
-  }
 
   return (
-    <HoverBoxLink
-      ref={anchorRef}
+    <SidebarItemBase
       to={to}
-      bg="white"
-      bgActive="washedGray"
-      width="100%"
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
-      py={1}
-      pl={3}
-      pr={3}
       selected={selected}
+      hasUnread={hasUnread}
+      title={title}
+      hasNotification={hasNotification}
     >
-      <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
-        {hasNotification && <Text color='black' marginLeft={-2} width={2} display='flex' alignItems='center'>
-          <Dot />
-        </Text>}
-        {DM ? img : (
               <Icon
                 display="block"
                 color={isSynced ? 'black' : 'lightGray'}
                 icon={getModuleIcon(mod) as any}
               />
-            )
-        }
-        <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
-          <Text
-            lineHeight="tall"
-            display='inline-block'
-            flex='1'
-            overflow='hidden'
-            width='100%'
-            mono={urbitOb.isValidPatp(title)}
-            color={color}
-            fontWeight={fontWeight}
-            style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
-          >
-            {title}
-          </Text>
-        </Box>
-      </Row>
-    </HoverBoxLink>
+    
+  </SidebarItemBase>
   );
+
 }
