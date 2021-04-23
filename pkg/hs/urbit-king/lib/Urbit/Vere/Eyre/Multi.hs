@@ -22,6 +22,7 @@ import Urbit.Vere.Eyre.Wai
 
 import Network.TLS                 (Credential)
 import Urbit.Vere.Eyre.KingSubsite (KingSubsite, fourOhFourSubsite)
+import Urbit.Vere.Pier.Types (ScryFunc)
 
 
 -- Types -----------------------------------------------------------------------
@@ -46,7 +47,7 @@ data MultiEyreApi = MultiEyreApi
   , meaPlan :: TVar (Map Ship OnMultiReq)
   , meaCanc :: TVar (Map Ship OnMultiKil)
   , meaTlsC :: TVar (Map Ship (TlsConfig, Credential))
-  , meaMain :: TVar (Map Ship EyreSite)
+  , meaScry :: TVar (Map Ship ScryFunc)
   , meaSite :: TVar (Map Ship KingSubsite)
   , meaKill :: IO ()
   }
@@ -60,16 +61,16 @@ joinMultiEyre
   -> Maybe (TlsConfig, Credential)
   -> OnMultiReq
   -> OnMultiKil
-  -> EyreSite
+  -> ScryFunc
   -> KingSubsite
   -> STM ()
-joinMultiEyre api who mTls onReq onKil site sub = do
+joinMultiEyre api who mTls onReq onKil scry sub = do
   modifyTVar' (meaPlan api) (insertMap who onReq)
   modifyTVar' (meaCanc api) (insertMap who onKil)
   for_ mTls $ \creds -> do
     modifyTVar' (meaTlsC api) (insertMap who creds)
   modifyTVar' (meaSite api) (insertMap who sub)
-  modifyTVar' (meaMain api) (insertMap who site)
+  modifyTVar' (meaScry api) (insertMap who scry)
 
 leaveMultiEyre :: MultiEyreApi -> Ship -> STM ()
 leaveMultiEyre MultiEyreApi {..} who = do
@@ -77,7 +78,7 @@ leaveMultiEyre MultiEyreApi {..} who = do
   modifyTVar' meaPlan (deleteMap who)
   modifyTVar' meaTlsC (deleteMap who)
   modifyTVar' meaSite (deleteMap who)
-  modifyTVar' meaMain (deleteMap who)
+  modifyTVar' meaScry (deleteMap who)
 
 multiEyre :: HasLogFunc e => IO () -> MultiEyreConf -> RIO e MultiEyreApi
 multiEyre onFatal conf@MultiEyreConf {..} = do
@@ -94,10 +95,10 @@ multiEyre onFatal conf@MultiEyreConf {..} = do
       site who = do
         sites <- readTVar vSite
         pure $ maybe (fourOhFourSubsite who) id $ lookup who sites
-  let main :: Ship -> STM EyreSite
+  let main :: Ship -> STM (Maybe ScryFunc)
       main who = do
         mains <- readTVar vMain
-        pure $ maybe (fourOhFourSite who) id $ lookup who mains
+        pure $ lookup who mains
 
   let host = if mecLocalhostOnly then SHLocalhost else SHAnyHostOk
 
@@ -147,7 +148,7 @@ multiEyre onFatal conf@MultiEyreConf {..} = do
     , meaCanc = vCanc
     , meaTlsC = vTlsC
     , meaSite = vSite
-    , meaMain = vMain
+    , meaScry = vMain
     , meaConf = conf
     , meaKill = traverse_ saKil (toList mIns <> toList mSec)
     }

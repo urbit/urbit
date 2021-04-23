@@ -21,9 +21,6 @@ module Urbit.Vere.Eyre.Wai
   , rmLiveReq
   , newLiveReq
   , app
-  , EyreSite
-  , fourOhFourSite
-  , scrySite
   )
 where
 
@@ -46,7 +43,6 @@ import Urbit.King.Scry (scryNow)
 
 
 -- Types -----------------------------------------------------------------------
-newtype EyreSite = ES {runEyreSite :: W.Application}
 
 data RespAct
   = RAFull H.Status [H.Header] ByteString
@@ -220,38 +216,19 @@ app ::
   TVar LiveReqs ->
   (Word64 -> ReqInfo -> STM ()) ->
   (Word64 -> STM ()) ->
-  EyreSite ->
+  ScryFunc ->
   KingSubsite ->
   W.Application
-app env who liv inform cancel site sub req respond = do
+app env who liv inform cancel scry sub req respond = do
   met <- maybe (error "bad method") pure (cookMeth req)
-  let getp = met == H.GET
-      scryFlow =
-        onException
-          (runEyreSite site req respond)
-          normalFlow
-      normalFlow =
-        runEyreSite
-          (normalSite env who liv inform cancel)
-          req
-          respond
   case W.pathInfo req of
     ("~_~" : _) -> runKingSubsite sub req respond
-    _ -> if getp then scryFlow else normalFlow
-
-normalSite ::
-  HasLogFunc e =>
-  e ->
-  Ship ->
-  TVar LiveReqs ->
-  (Word64 -> ReqInfo -> STM ()) ->
-  (Word64 -> STM ()) ->
-  EyreSite
-normalSite env who liv inform cancel = ES $ \req respond ->
-  runRIO env $
-    rwith (liveReq who liv) $ \(reqId, respApi) -> do
+    _ | met == H.GET -> scryFlow `onException` normalFlow met
+    _ -> normalFlow met
+  where
+    normalFlow met = runRIO env $
+      rwith (liveReq who liv) $ \(reqId, respApi) -> do
       bod <- io (toStrict <$> W.strictRequestBody req)
-      met <- maybe (error "bad method") pure (cookMeth req)
 
       let adr = reqAddr req
           hdr = W.requestHeaders req
@@ -265,43 +242,31 @@ normalSite env who liv inform cancel = ES $ \req respond ->
           atomically (cancel reqId)
           logError $ display ("Exception during request" <> tshow exn)
           throwIO (exn :: SomeException)
-
-scrySite :: HasLogFunc e => Ship -> ScryFunc -> RAcquire e EyreSite
-scrySite who scry = do
-  env <- ask
-  pure $
-    ES $ \req respond -> do
-
+    scryFlow = do
       let url =  filter (/= '"') $ tshow $ reqUrl req
           host = filter (/= '"') $ maybe "" tshow (W.requestHeaderHost req)
+
       res <- runRIO env $ scryPath $ ["scry", host, url]
-      respond $ scryResp res
-  where
-    scryPath path = do
-      logDebug $ display ("scrying for " <> tshow path)
-      s <- scryOcts path
-      case s of
-        Just octs -> do
-          logDebug $ display ("scry result: " <> tshow octs)
-          pure $ unOcts octs
-        Nothing -> do 
-          logError $ display ("exception during scry on path: " <> tshow path)
-          throwIO BadScry
+      respond $ (scryResp res)
+          where
+            scryPath path = do
+              logDebug $ display ("scrying for " <> tshow path)
+              s <- scryOcts path
+              case s of
+                Just octs -> do
+                  logDebug $ display ("scry result: " <> tshow octs)
+                  pure $ unOcts octs
+                Nothing -> do
+                  logError $ display ("exception during scry on path: " <> tshow path)
+                  throwIO BadScry
 
-    scryOcts :: HasLogFunc e => [Text] -> RIO e (Maybe Octs)
-    scryOcts path = scryNow scry "ex" "" path
+            scryOcts :: HasLogFunc e => [Text] -> RIO e (Maybe Octs)
+            scryOcts path = scryNow scry "ex" "" path
 
-    scryResp msg =
-      W.responseBuilder (H.mkStatus 200 "OK") scryHeads $ fromByteString msg
+            scryResp msg =
+              W.responseBuilder (H.mkStatus 200 "OK") scryHeads $ fromByteString msg
 
-    scryHeads =
-      [ ("Content-Type", "text/plain"),
-        ("Cache-Control", "no-cache")
-      ]
-
-fourOhFourSite :: Ship -> EyreSite
-fourOhFourSite who = ES $ \req respond ->
-  respond $ W.responseLBS (H.mkStatus 404 "Not Found") [] body
-  where
-    body = toLazyByteString $ foldMap charUtf8 $ msg
-    msg = "Ship " <> show who <> " not docked."
+            scryHeads =
+              [ ("Content-Type", "text/plain"),
+                ("Cache-Control", "no-cache")
+              ]

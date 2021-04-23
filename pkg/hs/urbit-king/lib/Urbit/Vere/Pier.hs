@@ -50,7 +50,6 @@ import qualified Urbit.Vere.Serf             as Serf
 import qualified Urbit.Vere.Term             as Term
 import qualified Urbit.Vere.Term.API         as Term
 import qualified Urbit.Vere.Term.Demux       as Term
-import qualified Urbit.Vere.Eyre.Wai         as Site
 import qualified Urbit.Vere.Eyre.KingSubsite as Site
 
 -- Initialize pier directory. --------------------------------------------------
@@ -314,7 +313,6 @@ pier (serf, log) vSlog startedSig injected = do
   -- and display stats.
   siteSlog <- newTVarIO (const $ pure ())
   runtimeSubsite <- Site.kingSubsite ship scry (renderStat stat) siteSlog
-  scrySite <- Site.scrySite ship scry 
   --  Slogs go to stderr, to the runtime subsite, and to the terminal.
   env <- ask
   atomically $ writeTVar vSlog $ \s@(_, tank) -> runRIO env $ do
@@ -327,7 +325,7 @@ pier (serf, log) vSlog startedSig injected = do
     env <- ask
     siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
-    drivers env ship fak compute scry (siz, muxed) err sigint stat scrySite runtimeSubsite
+    drivers env ship fak compute scry (siz, muxed) err sigint stat runtimeSubsite
 
   let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ
                                     , ccOnKill      = onKill
@@ -507,16 +505,15 @@ drivers
   -> (Text -> RIO e ())
   -> IO ()
   -> Stat
-  -> Site.EyreSite 
   -> Site.KingSubsite
   -> RAcquire e ([Ev], RAcquire e Drivers)
-drivers env who isFake plan scry termSys stderr serfSIGINT stat site sub = do
+drivers env who isFake plan scry termSys stderr serfSIGINT stat sub = do
   let Stat{..} = stat
 
   (behnBorn, runBehn) <- rio Behn.behn'
   (termBorn, runTerm) <- rio (Term.term' termSys (renderStat stat) serfSIGINT)
   (amesBorn, runAmes) <- rio (Ames.ames' who isFake statAmes scry stderr)
-  (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr site sub)
+  (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr scry sub)
   (clayBorn, runClay) <- rio Clay.clay'
   (irisBorn, runIris) <- rio Iris.client'
 

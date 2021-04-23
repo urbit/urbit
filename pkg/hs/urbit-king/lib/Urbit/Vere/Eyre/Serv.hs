@@ -43,7 +43,6 @@ import Network.TLS                 ( Credential
 import Network.TLS                 (credentialLoadX509ChainFromMemory)
 import RIO.Prelude                 (decodeUtf8Lenient)
 import Urbit.Vere.Eyre.KingSubsite (KingSubsite)
-import Urbit.Vere.Eyre.Wai (EyreSite)
 
 import qualified Control.Monad.STM           as STM
 import qualified Data.Char                   as C
@@ -53,6 +52,7 @@ import qualified Network.Wai.Handler.Warp    as W
 import qualified Network.Wai.Handler.WarpTLS as W
 import qualified Urbit.Ob                    as Ob
 import qualified Urbit.Vere.Eyre.Wai         as E
+import Urbit.Vere.Pier.Types (ScryFunc)
 
 
 -- Internal Types --------------------------------------------------------------
@@ -77,10 +77,10 @@ data ReqApi = ReqApi
   }
 
 data ServType
-  = STHttp Ship EyreSite KingSubsite ReqApi
-  | STHttps Ship TlsConfig EyreSite KingSubsite ReqApi
-  | STMultiHttp (Ship -> STM EyreSite) (Ship -> STM KingSubsite) ReqApi
-  | STMultiHttps MultiTlsConfig (Ship -> STM EyreSite) (Ship -> STM KingSubsite) ReqApi
+  = STHttp Ship ScryFunc KingSubsite ReqApi
+  | STHttps Ship TlsConfig ScryFunc KingSubsite ReqApi
+  | STMultiHttp (Ship -> STM (Maybe ScryFunc)) (Ship -> STM KingSubsite) ReqApi
+  | STMultiHttps MultiTlsConfig (Ship -> STM (Maybe ScryFunc)) (Ship -> STM KingSubsite) ReqApi
 
 instance Show ServType where
   show = \case
@@ -294,21 +294,21 @@ startServer typ hos por sok red vLive onFatal = do
       reqShip = hostShip . W.requestHeaderHost
 
   case typ of
-    STHttp who site sub api -> do
-      let app = runAppl who (rcReq api who) (rcKil api who) site sub
+    STHttp who scry sub api -> do
+      let app = runAppl who (rcReq api who) (rcKil api who) scry sub
       io (W.runSettingsSocket opts sok app)
 
-    STHttps who TlsConfig {..} site sub api -> do
+    STHttps who TlsConfig {..} scry sub api -> do
       let tls = W.tlsSettingsChainMemory tcCerti tcChain tcPrKey
-      let app = runAppl who (rcReq api who) (rcKil api who) site sub
+      let app = runAppl who (rcReq api who) (rcKil api who) scry sub
       io (W.runTLSSocket tls opts sok app)
 
     STMultiHttp gub fub api -> do
       let app req resp = do
             who <- reqShip req
             sub <- atomically $ fub who
-            site <- atomically $ gub who
-            runAppl who (rcReq api who) (rcKil api who) site sub req resp
+            Just scry <- atomically $ gub who
+            runAppl who (rcReq api who) (rcKil api who) scry sub req resp
       io (W.runSettingsSocket opts sok app)
 
     STMultiHttps mtls gub fub api -> do
@@ -327,8 +327,8 @@ startServer typ hos por sok red vLive onFatal = do
           who <- reqShip req
           runRIO envir $ logDbg ctx ("Parsed HOST", who)
           sub <- atomically $ fub who
-          site <- atomically $ gub who
-          runAppl who (rcReq api who) (rcKil api who) site sub req resp
+          Just scry <- atomically $ gub who
+          runAppl who (rcReq api who) (rcKil api who) scry sub req resp
 
       io (W.runTLSSocket tlsMany opts sok app)
 

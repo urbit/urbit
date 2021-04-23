@@ -182,10 +182,10 @@ startServ
   -> (EvErr -> STM ())
   -> (Text -> RIO e ())
   -> IO ()
-  -> EyreSite
+  -> ScryFunc
   -> KingSubsite
   -> RIO e Serv
-  startServ who isFake conf plan stderr onFatal site sub = do
+startServ who isFake conf plan stderr onFatal scry sub = do
   logInfo (displayShow ("EYRE", "startServ"))
 
   multi <- view multiEyreApiL
@@ -231,7 +231,7 @@ startServ
 
   logInfo (displayShow ("EYRE", "joinMultiEyre", who, mTls, mCre))
 
-  atomically (joinMultiEyre multi who mCre onReq onKilReq site sub)
+  atomically (joinMultiEyre multi who mCre onReq onKilReq scry sub)
 
   logInfo $ displayShow ("EYRE", "Starting loopback server")
   lop <- serv vLive onFatal $ ServConf
@@ -239,7 +239,7 @@ startServ
     , scPort = soWhich (pttLop ptt)
     , scRedi = Nothing
     , scFake = False
-    , scType = STHttp who site sub $ ReqApi
+    , scType = STHttp who scry sub $ ReqApi
         { rcReq = onReq Loopback
         , rcKil = onKilReq
         }
@@ -251,7 +251,7 @@ startServ
     , scPort = soWhich (pttIns ptt)
     , scRedi = secRedi
     , scFake = noHttp
-    , scType = STHttp who site sub $ ReqApi
+    , scType = STHttp who scry sub $ ReqApi
         { rcReq = onReq Insecure
         , rcKil = onKilReq
         }
@@ -299,16 +299,16 @@ eyre'
   => Ship
   -> Bool
   -> (Text -> RIO e ())
-  -> EyreSite 
+  -> ScryFunc
   -> KingSubsite
   -> RIO e ([Ev], RAcquire e (DriverApi HttpServerEf))
 
-eyre' who isFake stderr site sub = do
+eyre' who isFake stderr scry sub = do
   ventQ :: TQueue EvErr <- newTQueueIO
   env <- ask
 
   let (bornEvs, startDriver) =
-        eyre env who (writeTQueue ventQ) isFake stderr site sub
+        eyre env who (writeTQueue ventQ) isFake stderr scry sub
 
   let runDriver = do
         diOnEffect <- startDriver
@@ -337,10 +337,10 @@ eyre
   -> (EvErr -> STM ())
   -> Bool
   -> (Text -> RIO e ())
-  -> EyreSite 
+  -> ScryFunc
   -> KingSubsite
   -> ([Ev], RAcquire e (HttpServerEf -> IO ()))
-eyre env who plan isFake stderr site sub = (initialEvents, runHttpServer)
+eyre env who plan isFake stderr scry sub = (initialEvents, runHttpServer)
  where
   king = fromIntegral (env ^. kingIdL)
   multi = env ^. multiEyreApiL
@@ -368,7 +368,7 @@ eyre env who plan isFake stderr site sub = (initialEvents, runHttpServer)
           -- XX instead maybe restart following logic under HSESetConfig below
           stderr "A web server problem has occurred. Please restart your ship."
           view killKingActionL >>= atomically
-    let startAct = startServ who isFake conf plan stderr onFatal sub
+    let startAct = startServ who isFake conf plan stderr onFatal scry sub
 
     res <- fromEither =<< restartService var startAct kill
     logInfo "Done restating http server"
