@@ -776,6 +776,7 @@
 ++  handle-tx-info
   |=  ti=info:tx
   ^-  (quip card _state)
+  ~&  %handle-tx-info^ti
   |^
   =/  h  (~(get by history) txid.ti)
   =.  ahistorical-txs  (~(del in ahistorical-txs) txid.ti)
