@@ -49,12 +49,12 @@
         %add-nodes
       ?>  ?=([@ %inbox] resource.q.update)
       ?:  =(our.bowl src.bowl)
-        (incoming-add nodes.q.update)
-      (outgoing-add nodes.q.update)
+        (outgoing-add nodes.q.update)
+      (incoming-add nodes.q.update)
     ==
   ==
   ::
-  ++  incoming-add
+  ++  outgoing-add
     |=  nodes=(map index:store node:store)
     ^-  (list card)
     %-  zing
@@ -73,7 +73,7 @@
     :+  %add-nodes  [our.bowl %inbox]
     (~(gas by *(map index:store node:store)) [index node] ~)
   ::
-  ++  outgoing-add
+  ++  incoming-add
     |=  nodes=(map index:store node:store)
     ^-  (list card)
     ?>  =(1 ~(wyt by nodes))
