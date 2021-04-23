@@ -23,7 +23,7 @@ export default class StartupModal extends Component {
           providerPerms={this.props.state.providerPerms}
         />
     } else if (!this.props.state.wallet){
-      modal = <WalletModal api={this.props.api}/>
+      modal = <WalletModal api={this.props.api} network={this.props.network}/>
     }
     return (
       <Box
