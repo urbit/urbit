@@ -53,13 +53,13 @@
   =^  f3  state  (n state (owner-changed:l1 ~marbud deposit-address:naive))
   [:(welp f1 f2 f3) state]
 ::
-::  ~datbud is for testing L1 stars attempting L2 actions
+::  ~sambud is for testing L1 stars attempting L2 actions
 ::
-++  init-datbud
+++  init-sambud
    |=  =^state:naive
    ^-  [effects:naive ^state:naive]
    =^  f1  state  (init-bud state)
-   =^  f2  state  (n state (owner-changed:l1 ~datbud (addr %datbud-key-0)))
+   =^  f2  state  (n state (owner-changed:l1 ~sambud (addr %sambud-key-0)))
    [:(welp f1 f2) state]
 ::
 ++  sign-tx
@@ -431,6 +431,36 @@
     =^  f  state  (n state (owner-changed:l1 ~dopbud (addr %dopbud-key-1)))
     =^  f  state  (n state %bat (spawn:l2 1 ~dopbud %dopbud-key-1 %own ~laclur-rachul (addr %lr-key-0)))
     transfer-proxy.own:(~(got by points.state) ~laclur-rachul)
+::
+::  ++  test-sambud-double-spawn  ^-  tang
+::    ::
+::    ::  TODO: Not sure of the right way to write this test yet. Current iteration
+::    ::  doesn't even compile
+::    ::
+::    %-  expect-fail
+::      |.
+::      ?<
+::        ?=  [`@ux`(addr %ld-key-1) 0]
+::        =|  =^state:naive
+::        =^  f  state  (init-sambud state)
+::        =^  f  state  (n state (owner-changed:l1 ~lisdur-fodrys (addr %ld-key-0)))
+::        =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+::        =^  f  state  (n state %bat (spawn:l2 0 ~sambud %sambud-key-0 %own ~lisdur-fodrys (addr %ld-key-1)))
+::        transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
+::      %.n
+::
+::  ++  test-sambud-double-spawn-w-proxy  ^-  tang
+::    ::
+::    ::  Same confusion as above
+::    ::
+::    %-  expect-fail
+::      |.
+::      =|  =^state:naive
+::      =^  f  state  (init-sambud state)
+::      =^  f  state  (n state (owner-changed:l1 ~lisdur-fodrys (addr %ld-key-0)))
+::      =^  f  state  (n state (owner-changed:l1 ~sambud deposit-address:naive))
+::      =^  f  state  (n state %bat (spawn:l2 0 ~sambud %sambud-key-0 %own ~lisdur-fodrys (addr %ld-key-1)))
+::      state
 ::
 ++  test-linnup-torsyx-l2-transfer-ownership  ^-  tang
   %+  expect-eq
