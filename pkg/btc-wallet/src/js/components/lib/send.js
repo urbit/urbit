@@ -7,9 +7,12 @@ import {
   Text,
   Button,
   Col,
+  LoadingSpinner,
 } from '@tlon/indigo-react';
 
 import Invoice from './invoice.js'
+
+import { validate } from 'bitcoin-address-validation';
 
 import * as ob from 'urbit-ob';
 
@@ -25,6 +28,11 @@ export default class Send extends Component {
       checkingPatp: false,
       payeeType: '',
       ready: false,
+      validPayee: false,
+      focusPayee: true,
+      focusCurrency: false,
+      focusSats: false,
+      submitting: false,
     };
 
     this.initPayment  = this.initPayment.bind(this);
@@ -34,11 +42,14 @@ export default class Send extends Component {
   checkPayee(e){
     let payee = e.target.value;
     let isPatp = ob.isValidPatp(payee);
-    let isAddress = true; //TODO: actual validation
+    let isAddress = validate(payee);
 
     if (isPatp) {
       let command = {'check-payee': payee}
       this.props.api.btcWalletCommand(command)
+      setTimeout(() => {
+        this.setState({checkingPatp: false});
+      }, 5000);
       this.setState({
         checkingPatp: true,
         payeeType: 'ship',
@@ -50,6 +61,7 @@ export default class Send extends Component {
         ready: true,
         checkingPatp: false,
         payeeType: 'address',
+        validPayee: true,
       });
     } else {
       this.setState({
@@ -57,6 +69,7 @@ export default class Send extends Component {
         ready: false,
         checkingPatp: false,
         payeeType: '',
+        validPayee: false,
       });
     }
   }
@@ -64,7 +77,7 @@ export default class Send extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (!this.state.ready && this.state.checkingPatp) {
       if (this.props.shipWallets[this.state.payee.slice(1)]) {
-        this.setState({ready: true, checkingPatp: false});
+        this.setState({ready: true, checkingPatp: false, validPayee: true});
       }
     }
   }
@@ -92,10 +105,35 @@ export default class Send extends Component {
   }
 
   render() {
+    let payeeColor = "black";
+    let payeeBg = "white";
+    let payeeBorder = "lightGray";
+    if (this.state.focusPayee && this.state.validPayee) {
+      payeeColor = "green";
+      payeeBorder = "green";
+      payeeBg = "veryLightGreen";
+    } else if (!this.state.focusPayee && this.state.validPayee){
+      payeeColor="blue";
+      payeeBorder = "white";
+      payeeBg = "white";
+    } else if (!this.state.focusPayee && !this.state.validPayee) {
+      payeeColor="red";
+      payeeBorder = "red";
+      payeeBg="veryLightRed";
+    } else if (this.state.focusPayee &&
+              !this.state.validPayee &&
+              !this.state.checkingPatp &&
+              this.state.payeeType === 'ship'){
+      payeeColor="red";
+      payeeBorder = "red";
+      payeeBg="veryLightRed";
+    }
 
-    const { api, value, conversion, stopSending, denomination, psbt } = this.props;
+
     const { api, value, conversion, stopSending, denomination, psbt, currencyRates } = this.props;
     const { denomAmount, satsAmount, signing, payee } = this.state;
+
+    const signReady = (this.state.ready && (parseInt(this.state.satsAmount) > 0)) && !signing;
 
     return (
       <>
@@ -133,19 +171,26 @@ export default class Send extends Component {
               alignItems='center'
               mt={6}
               justifyContent='space-between'>
-              <Text
-                gray
-                fontSize={1}
-                width='40%'
-                fontWeight='600'
-              >
-                To
-              </Text>
+              <Row justifyContent="space-between" width='calc(40% - 30px)' alignItems="center">
+                <Text gray fontSize={1} fontWeight='600'>To</Text>
+                {this.state.checkingPatp ?
+                  <LoadingSpinner background="midOrange" foreground="orange"/> : null
+                }
+              </Row>
               <Input
-                width='100%'
+                autoFocus
+                onFocus={() => {this.setState({focusPayee: true})}}
+                onBlur={() => {this.setState({focusPayee: false})}}
+                color={payeeColor}
+                backgroundColor={payeeBg}
+                borderColor={payeeBorder}
+                ml={2}
+                flexGrow="1"
                 fontSize='14px'
                 placeholder='~sampel-palnet or BTC address'
                 value={payee}
+                fontFamily="mono"
+                disabled={signing}
                 onChange={this.checkPayee}
               />
             </Row>
@@ -156,14 +201,17 @@ export default class Send extends Component {
               <Text
                 gray
                 fontSize={1}
-                width='40%'
                 fontWeight='600'
+                width="40%"
               >Amount</Text>
               <Input
+                onFocus={() => {this.setState({focusCurrency: true})}}
+                onBlur={() => {this.setState({focusCurrency: false})}}
                 fontSize='14px'
                 width='100%'
                 type='number'
-                border='none'
+                borderColor={this.state.focusCurrency ? "lightGray" : "none"}
+                disabled={signing}
                 value={denomAmount}
                 onChange={e => {
                   this.setState({
@@ -172,19 +220,22 @@ export default class Send extends Component {
                   });
                 }}
               />
-              <Text gray fontSize={1}>{denomination}</Text>
+              <Text color="lighterGray" fontSize={1} ml={3}>{denomination}</Text>
             </Row>
             <Row
               alignItems='center'
               mt={2}
               justifyContent='space-between'>
               {/* yes this is a hack */}
-              <Box width='40%' />
+              <Box width='40%'/>
               <Input
+                onFocus={() => {this.setState({focusSats: true})}}
+                onBlur={() => {this.setState({focusSats: false})}}
                 fontSize='14px'
                 width='100%'
                 type='number'
-                border='none'
+                borderColor={this.state.focusSats ? "lightGray" : "none"}
+                disabled={signing}
                 value={satsAmount}
                 onChange={e => {
                   this.setState({
@@ -193,10 +244,11 @@ export default class Send extends Component {
                   });
                 }}
               />
-              <Text gray fontSize={1}>sats</Text>
+              <Text color="lighterGray" fontSize={1} ml={3}>sats</Text>
             </Row>
             <Row
               flexDirection='row-reverse'
+              alignItems="center"
               mt={8}
             >
               <Button
@@ -209,9 +261,15 @@ export default class Send extends Component {
                 onClick={() =>{
                   this.initPayment()
                 }}
-                disabled={!this.state.ready}
-                style={{cursor: this.state.ready ? "pointer" : "default"}}
+                color={signReady ? "white" : "lighterGray"}
+                backgroundColor={signReady ? "blue" : "veryLightGray"}
+                disabled={!signReady}
+                border="none"
+                style={{cursor: signReady ? "pointer" : "default"}}
               />
+              { (!signing) ? null :
+                <LoadingSpinner mr={2} background="midOrange" foreground="orange"/>
+              }
             </Row>
           </Col>
         }

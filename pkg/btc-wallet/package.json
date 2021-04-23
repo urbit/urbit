@@ -43,6 +43,7 @@
     "@tlon/indigo-react": "^1.2.22",
     "@tlon/sigil-js": "^1.4.3",
     "bip39": "^2.5.0",
+    "bitcoin-address-validation": "^2.0.1",
     "bitcoinjs-lib": "^5.2.0",
     "bs58check": "^2.1.2",
     "buffer": "^6.0.3",
