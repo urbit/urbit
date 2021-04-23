@@ -7,6 +7,9 @@
     - If there is an error reading or writting from the open socket,
       close it and open another, making sure, however, to reuse the
       same port
+        NOTE: It's not clear what, if anything, closing and reopening
+      the socket does. We're keeping this behavior out of conservatism
+      until we understand it better.
 
   2. Receives packets from the socket.
 
