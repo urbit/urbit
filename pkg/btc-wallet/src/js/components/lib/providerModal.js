@@ -100,7 +100,7 @@ export default class ProviderModal extends Component {
         padding={3}
       >
         <Row>
-          <Icon icon="NullIcon" mr={2}/>
+          <Icon icon="Bitcoin" mr={2}/>
           <Text fontSize="14px" fontWeight="bold">
             Step 1 of 2: Set up Bitcoin Provider Node
           </Text>
