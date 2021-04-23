@@ -30,7 +30,7 @@ export const getModuleIcon = (mod: string) => {
   }
 
   if (mod === 'post') {
-    return 'Spaces';
+    return 'Dashboard';
   }
 
   return _.capitalize(mod);
