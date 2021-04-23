@@ -60,7 +60,7 @@
 +$  cult  (jug wove duct)
 ::  State for ongoing %fuse merges - the list maintains the ordering
 ::  and the map stores the data needed to merge
-+$  melt  [(list [beak germ]) (map [beak germ] (unit dome:clay))]
++$  melt  [bas=beak con=(list [beak germ]) sto=(map beak (unit dome:clay))]
 ::
 ::  Domestic desk state.
 ::
@@ -1049,7 +1049,7 @@
           ~
         =/  rus  rus:(~(gut by hoy.ruf) her *rung)
         %+  ~(gut by rus)  syd
-        [lim=~2000.1.1 ref=`*rind qyx=~ dom=*dome per=~ pew=~ fiz=[~ ~]]
+        [lim=~2000.1.1 ref=`*rind qyx=~ dom=*dome per=~ pew=~ fiz=*melt]
       ::  administrative duct, domestic +rede
       ::
       :+  ~  `hun.rom.ruf
@@ -1969,39 +1969,54 @@
     (emit hen %pass wire %c %warp ali-ship ali-desk `[%sing %v case /])
   ::
   ++  make-melt
-    |=  srcs=(list [beak germ])
+    |=  [bas=beak con=(list [beak germ])]
     ^-  melt
-    :-  srcs
-    %-  ~(gas by *(map [beak germ] (unit dome:clay)))
-    (turn srcs |=(a=[beak germ] [a *(unit dome:clay)]))
+    :+  bas  con
+    %-  ~(gas by (~(put by *(map beak (unit dome:clay))) bas *(unit dome:clay)))
+    (turn con |=(a=[beak germ] [-.a *(unit dome:clay)]))
   ::
   ++  start-fuse
-    |=  [srcs=(list [beak germ])]
+    |=  [ful=(list beak) gim=(list germ)]
     ^+  ..start-fuse
-    ::  use emil here to queue a list of moves
-    ::  syd is current desk (target desk)
-    ::  what is hen? it's the current duct... can this be reused?
+    ::  must have n sources and n-1 gems
+    ?>  =((lent ful) +((lent gim)))
     =/  moves=(list move)
         %+  turn
-          srcs
-        |=  [bec=beak g=germ]
+          ful
+        |=  bec=beak
         ^-  move
-        =/  wir=wire  /fuse/[syd]/(scot %p p.bec)/[q.bec]/(scot r.bec)/[g]
+        =/  wir=wire  /fuse/[syd]/(scot %p p.bec)/[q.bec]/(scot r.bec)
         [hen %pass wir %c %warp p.bec q.bec `[%sing %v r.bec /]]
+    ?~  ful
+      !!
+    =/  base=beak  i.ful
+    =/  ful=(list beak)  t.ful
+    =/  con=(list [beak germ])
+        =|  acc=(list [beak germ])
+        |-
+        ?~  ful
+          acc
+        ?~  gim
+          !!
+        $(acc [[i.ful i.gim] acc], ful t.ful, gim t.gim)
     ::  we also want to clear the state (fiz) associated with this
     ::  merge and print a warning if it's non trivial i.e. we're
     ::  starting a new fuse before the previous one terminated.
-    ~&  ?~  -.fiz
-          [%starting-fuse srcs]
-        :^  %starting-fuse  srcs  %discarding-state
-        ::  we don't want to ~& an entire dome
-        %-  ~(run by +.fiz)
-        |=(v=(unit dome:clay) ?~(v %not-received %recieved))
-    =.  fiz  (make-melt srcs)
+    ~&  ?~  con.fiz
+          [%starting-fuse base con]
+        :*  %starting-fuse
+            base
+            con
+            %discarding-state
+            ::  we don't want to ~& an entire dome
+            %-  ~(run by sto.fiz)
+            |=(v=(unit dome:clay) ?~(v %not-received %recieved))
+        ==
+    =.  fiz  (make-melt base con)
     (emil moves)
   ::
   ++  take-fuse
-    |=  [[bec=beak g=germ] =riot]
+    |=  [bec=beak =riot]
     ^+  ..take-fuse
     ?~  riot
       ~&  [%fuse-for syd %missing bec]
@@ -2009,29 +2024,24 @@
       ::  responses we get for the merge will cause take-fuse to crash
       =.  fiz  *melt
       ..take-fuse
-    ?>  (~(has by +.fiz) [bec g])
+    ?>  (~(has by sto.fiz) bec)
     =.  fiz
-        :-  -.fiz
-        (~(put by +.fiz) [bec g] `!<(dome:clay q.r.u.riot))
+        :+  bas.fiz  con.fiz
+        (~(put by sto.fiz) bec `!<(dome:clay q.r.u.riot))
     =/  all-done=flag
-        %-  ~(all by +.fiz)
+        %-  ~(all by sto.fiz)
         |=  res=(unit dome:clay)
         ^-  flag
         !=(res ~)
     ?.  all-done
       ..take-fuse
-    ::  do the merge
-    =/  merges=(list [beak germ])  -.fiz
-    ::  there's no point to an empty fuse and a single element fuse
-    ::  should just be an %only-that merge.
-    ?>  (gte (lent merges) 2)
     =|  rag=rang
     =/  clean-hut-ran  hut.ran
-    =/  initial-dome=dome:clay  (need (~(got by +.fiz) (snag 0 merges)))
+    =/  initial-dome=dome:clay  (need (~(got by sto.fiz) bas.fiz))
     =/  continuation-yaki=yaki
         (~(got by hut.ran) (~(got by hit.initial-dome) let.initial-dome))
     =/  parents=(list tako)  ~[(~(got by hit.initial-dome) let.initial-dome)]
-    =.  merges  (slag 1 merges)
+    =/  merges  con.fiz
     |-
     ^+  ..take-fuse
     ?~  merges
@@ -2041,7 +2051,7 @@
       =.  hut.ran  clean-hut-ran
       (park | [%| continuation-yaki(p (flop parents))] rag)
     =/  [bec=beak g=germ]  i.merges
-    =/  ali-dom=dome:clay  (need (~(got by +.fiz) bec g))
+    =/  ali-dom=dome:clay  (need (~(got by sto.fiz) bec))
     =/  result  (merge-helper p.bec q.bec g ali-dom `continuation-yaki)
     ?-  -.result
         %|
@@ -4228,7 +4238,7 @@
       ~&(%fuse-no-desk !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(start-fuse:den srcs.req)
+      abet:(start-fuse:den ful.req gim.req)
     [mos ..^$]
   ::
       %mont
@@ -4567,10 +4577,9 @@
     =*  ali-desk=desk  i.t.t.t.tea
     =/  ali-case  (rash i.t.t.t.t.tea nuck:so)
     ?>  ?=([%$ *] ali-case)
-    =/  germ  (germ i.t.t.t.t.t.tea)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our i.t.tea)
-      abet:(take-fuse:den [[ali-ship ali-desk (case +.ali-case)] germ] p.hin)
+      abet:(take-fuse:den [ali-ship ali-desk (case +.ali-case)] p.hin)
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)
