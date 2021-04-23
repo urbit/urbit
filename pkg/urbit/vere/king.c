@@ -938,7 +938,7 @@ u3_king_grab(void* vod_p)
   }
 #else
   {
-    u3_term_io_loja(0);
+    u3_term_io_loja(0, fil_u);
   }
 #endif
 }

@@ -1084,7 +1084,7 @@
       /* u3_term_io_loja(): release console from cooked print.
       */
         void
-        u3_term_io_loja(int x);
+        u3_term_io_loja(int x, FILE* f);
 
       /* u3_term_log_init(): initialize terminal for logging
       */

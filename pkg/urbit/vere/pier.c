@@ -2270,7 +2270,7 @@ u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
 
   fflush(fil_u);
 
-  u3_term_io_loja(0);
+  u3_term_io_loja(0, fil_u);
   u3z(blu);
   u3z(tac);
 }
