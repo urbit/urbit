@@ -4,6 +4,11 @@ import { dateToDa, decToUd } from '../lib/util';
 import { NotifIndex, IndexedNotification, Association, GraphNotifDescription } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import { getParentIndex } from '../lib/notification';
+import useHarkState from '../state/hark';
+
+function getHarkSize() {
+  return useHarkState.getState().notifications.size ?? 0;
+}
 
 export class HarkApi extends BaseApi<StoreState> {
   private harkAction(action: any): Promise<any> {
@@ -172,10 +177,10 @@ export class HarkApi extends BaseApi<StoreState> {
   }
 
   async getMore(): Promise<boolean> {
-    const offset = this.store.state['notifications']?.size || 0;
+    const offset = getHarkSize();
     const count = 3;
     await this.getSubset(offset, count, false);
-    return offset === (this.store.state.notifications?.size || 0);
+    return offset === getHarkSize();
   }
 
   async getSubset(offset:number, count:number, isArchive: boolean) {

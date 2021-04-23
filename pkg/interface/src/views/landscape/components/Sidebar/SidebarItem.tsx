@@ -86,7 +86,11 @@ export function SidebarItem(props: {
   let color = 'lightGray';
 
   if (isSynced) {
+    if (hasUnread || hasNotification) {
       color = 'black';
+    } else {
+      color = 'gray';
+    }
   }
 
   const fontWeight = (hasUnread || hasNotification) ? '500' : 'normal';
@@ -132,7 +136,7 @@ export function SidebarItem(props: {
         {DM ? img : (
               <Icon
                 display="block"
-                color={isSynced ? 'black' : 'gray'}
+                color={isSynced ? 'black' : 'lightGray'}
                 icon={getModuleIcon(mod) as any}
               />
             )

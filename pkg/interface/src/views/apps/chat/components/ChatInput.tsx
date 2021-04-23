@@ -188,7 +188,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
               <LoadingSpinner />
             ) : (
               <Icon
-                icon='Links'
+                icon='Attachment'
                 width='16'
                 height='16'
                 onClick={() =>

@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
-import { Row, Box } from "@tlon/indigo-react";
+import { Row, Box, Icon } from "@tlon/indigo-react";
 import _ from "lodash";
 import {
   GraphNotificationContents,
@@ -19,6 +19,7 @@ import { GraphNotification } from "./graph";
 import { BigInteger } from "big-integer";
 import { useHovering } from "~/logic/lib/util";
 import useHarkState from "~/logic/state/hark";
+import {IS_MOBILE} from "~/logic/lib/platform";
 
 interface NotificationProps {
   notification: IndexedNotification;
@@ -102,39 +103,30 @@ export function NotificationWrapper(props: {
       }
       borderRadius={2}
       display="grid"
-      gridTemplateColumns={["1fr", "1fr 200px"]}
+      gridTemplateColumns={["1fr 24px", "1fr 200px"]}
       gridTemplateRows="auto"
-      gridTemplateAreas={["'header' 'main'", "'header actions' 'main main'"]}
+      gridTemplateAreas="'header actions' 'main main'"
       p={2}
       m={2}
       {...bind}
     >
       {children}
       <Row
-        display={["none", "flex"]}
-        alignItems="center"
+        alignItems="flex-start"
         gapX="2"
         gridArea="actions"
         justifyContent="flex-end"
-        opacity={[1, hovering ? 1 : 0]}
+        opacity={[1, (hovering || IS_MOBILE) ? 1 : 0]}
       >
         {time && notification && (
-          <>
-            <StatelessAsyncAction
-              name={changeMuteDesc}
-              onClick={onChangeMute}
-              backgroundColor="transparent"
-            >
-              {changeMuteDesc}
-            </StatelessAsyncAction>
-            <StatelessAsyncAction
-              name={time.toString()}
-              onClick={onArchive}
-              backgroundColor="transparent"
-            >
-              Dismiss
-            </StatelessAsyncAction>
-          </>
+          <StatelessAsyncAction
+            name={time.toString()}
+            borderRadius={1}
+            onClick={onArchive}
+            backgroundColor="white"
+          >
+            <Icon lineHeight="24px" size={16} icon="X" />
+          </StatelessAsyncAction>
         )}
       </Row>
     </Box>

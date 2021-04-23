@@ -1,4 +1,5 @@
-import { TutorialProgress, Associations } from '@urbit/api';
+import { Associations } from '@urbit/api';
+import { TutorialProgress } from '~/types';
 import { AlignX, AlignY } from '~/logic/lib/relativePosition';
 import { Direction } from '~/views/components/Triangle';
 
@@ -22,7 +23,7 @@ interface StepDetail {
   alignY: AlignY | AlignY[];
   offsetX: number;
   offsetY: number;
-  arrow: Direction;
+  arrow?: Direction;
 }
 
 export function hasTutorialGroup(props: { associations: Associations }) {

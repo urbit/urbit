@@ -64,7 +64,7 @@ function Elbow(
     >
       <Box
         border="2px solid"
-        borderRadius={2}
+        borderRadius={3}
         borderColor={color}
         position="absolute"
         left="0px"
