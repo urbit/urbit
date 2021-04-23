@@ -38,9 +38,9 @@ export default class Transaction extends Component {
       let counter = _.find(this.props.tx.outputs, (output) => {
         return (output.ship !== window.ship);
       });
-      counterShip = counter.ship;
-      counterAddress = counter.val.address;
-      value = counter.val.value;
+      counterShip = _.get(counter, 'ship', null);
+      counterAddress = _.get(counter, 'val.address', null);
+      value = _.get(counter, 'val.value', null);
       sign = '-'
     }
     else if (action === "recv") {
@@ -52,8 +52,8 @@ export default class Transaction extends Component {
       let counter = _.find(this.props.tx.inputs, (input) => {
         return (input.ship !== window.ship);
       });
-      counterShip = counter.ship;
-      counterAddress = counter.val.address;
+      counterShip = _.get(counter, 'ship', null);
+      counterAddress = _.get(counter, 'val.address', null);
       sign = '';
     }
 

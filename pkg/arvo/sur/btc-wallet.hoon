@@ -118,13 +118,13 @@
   $%  $:  %initial
         provider=(unit provider)
         wallet=(unit xpub)
-        balance=(unit sats)
+        balance=(unit [p=sats q=sats])
         =history
         =btc-state
         address=(unit address)
       ==
       [%change-provider provider=(unit provider)]
-      [%change-wallet wallet=(unit xpub) balance=(unit sats) =history]
+      [%change-wallet wallet=(unit xpub) balance=(unit [p=sats q=sats]) =history]
       [%psbt pb=@t]
       [%btc-state =btc-state]
       [%new-tx =hest]
