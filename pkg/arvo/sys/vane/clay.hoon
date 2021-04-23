@@ -1655,11 +1655,11 @@
       |-  ^+  cache
       ?~  builds
         ~
-      ?:  %+  lien  ~(tap in dez.i.builds)
+      ?:  %-  ~(any in dez.i.builds)
           |=  [dir=? =path]
           ?.  dir  (~(has in invalid) path)
           =+  l=(lent path)
-          %+  lien  ~(tap in invalid)
+          %-  ~(any in invalid)
           |=  i=^path
           &(=(path (scag l i)) ?=([@ %hoon ~] (slag l i)))
         $(builds t.builds)
