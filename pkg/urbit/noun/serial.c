@@ -873,8 +873,8 @@ u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
 
   //  +ape:ag: just 0
   //
-  if      ( !len_w )        return u3_none;
-  else if ( '0' == *byt_y ) return ( 1 == len_w ) ? (u3_noun)0 : u3_none;
+  if ( !len_w )        return u3_none;
+  if ( '0' == *byt_y ) return ( 1 == len_w ) ? (u3_noun)0 : u3_none;
 
   //  +ted:ab: leading nonzero (checked above), plus up to 2 digits
   //
