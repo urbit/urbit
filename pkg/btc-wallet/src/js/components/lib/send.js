@@ -33,10 +33,36 @@ export default class Send extends Component {
       focusCurrency: false,
       focusSats: false,
       submitting: false,
+      feeChoices: {
+        low: [10, 1],
+        mid: [10, 1],
+        high: [10, 1],
+      },
+      feeValue: "mid",
+      showModal: false,
     };
 
     this.initPayment  = this.initPayment.bind(this);
     this.checkPayee  = this.checkPayee.bind(this);
+  }
+
+  componentDidMount(){
+    // TODO switch this to bitcoin
+    if (this.props.network === 'testnet'){
+      let url = "https://bitcoiner.live/api/fees/estimates/latest";
+      fetch(url).then(res => res.json()).then(n => {
+        let estimates = Object.keys(n.estimates);
+        let mid = Math.floor(estimates.length/2)
+        let high = estimates.length - 1;
+        this.setState({
+          feeChoices: {
+            low: [30, n.estimates[30]["sat_per_vbyte"]],
+            mid: [180, n.estimates[180]["sat_per_vbyte"]],
+            high: [360, n.estimates[360]["sat_per_vbyte"]],
+          }
+        });
+      })
+    }
   }
 
   checkPayee(e){
@@ -154,102 +180,133 @@ export default class Send extends Component {
             borderRadius='32px'
             mb={5}
             p={5}
+            display="flex"
+            flexDirection="column"
+            justifyContent="space-between"
           >
-            <Row
-              justifyContent='space-between'
-              alignItems='center'
-            >
-              <Text highlight color='blue' fontSize={1}>Send BTC</Text>
-              <Text highlight color='blue' fontSize={1}>{value}</Text>
-              <Icon
-                icon='X'
-                cursor='pointer'
-                onClick={() => stopSending()}
-              />
-            </Row>
-            <Row
-              alignItems='center'
-              mt={6}
-              justifyContent='space-between'>
-              <Row justifyContent="space-between" width='calc(40% - 30px)' alignItems="center">
-                <Text gray fontSize={1} fontWeight='600'>To</Text>
-                {this.state.checkingPatp ?
-                  <LoadingSpinner background="midOrange" foreground="orange"/> : null
-                }
+            <Col width="100%">
+              <Row
+                justifyContent='space-between'
+                alignItems='center'
+              >
+                <Text highlight color='blue' fontSize={1}>Send BTC</Text>
+                <Text highlight color='blue' fontSize={1}>{value}</Text>
+                <Icon
+                  icon='X'
+                  cursor='pointer'
+                  onClick={() => stopSending()}
+                />
               </Row>
-              <Input
-                autoFocus
-                onFocus={() => {this.setState({focusPayee: true})}}
-                onBlur={() => {this.setState({focusPayee: false})}}
-                color={payeeColor}
-                backgroundColor={payeeBg}
-                borderColor={payeeBorder}
-                ml={2}
-                flexGrow="1"
-                fontSize='14px'
-                placeholder='~sampel-palnet or BTC address'
-                value={payee}
-                fontFamily="mono"
-                disabled={signing}
-                onChange={this.checkPayee}
-              />
-            </Row>
-            <Row
-              alignItems='center'
-              mt={4}
-              justifyContent='space-between'>
-              <Text
-                gray
-                fontSize={1}
-                fontWeight='600'
-                width="40%"
-              >Amount</Text>
-              <Input
-                onFocus={() => {this.setState({focusCurrency: true})}}
-                onBlur={() => {this.setState({focusCurrency: false})}}
-                fontSize='14px'
-                width='100%'
-                type='number'
-                borderColor={this.state.focusCurrency ? "lightGray" : "none"}
-                disabled={signing}
-                value={denomAmount}
-                onChange={e => {
-                  this.setState({
-                    denomAmount: e.target.value,
-                    satsAmount: Math.round(parseFloat(e.target.value) / conversion * 100000000)
-                  });
-                }}
-              />
-              <Text color="lighterGray" fontSize={1} ml={3}>{denomination}</Text>
-            </Row>
-            <Row
-              alignItems='center'
-              mt={2}
-              justifyContent='space-between'>
-              {/* yes this is a hack */}
-              <Box width='40%'/>
-              <Input
-                onFocus={() => {this.setState({focusSats: true})}}
-                onBlur={() => {this.setState({focusSats: false})}}
-                fontSize='14px'
-                width='100%'
-                type='number'
-                borderColor={this.state.focusSats ? "lightGray" : "none"}
-                disabled={signing}
-                value={satsAmount}
-                onChange={e => {
-                  this.setState({
-                    denomAmount: parseFloat(e.target.value) * (conversion / 100000000),
-                    satsAmount: e.target.value
-                  });
-                }}
-              />
-              <Text color="lighterGray" fontSize={1} ml={3}>sats</Text>
-            </Row>
+              <Row
+                alignItems='center'
+                mt={6}
+                justifyContent='space-between'>
+                <Row justifyContent="space-between" width='calc(40% - 30px)' alignItems="center">
+                  <Text gray fontSize={1} fontWeight='600'>To</Text>
+                  {this.state.checkingPatp ?
+                    <LoadingSpinner background="midOrange" foreground="orange"/> : null
+                  }
+                </Row>
+                <Input
+                  autoFocus
+                  onFocus={() => {this.setState({focusPayee: true})}}
+                  onBlur={() => {this.setState({focusPayee: false})}}
+                  color={payeeColor}
+                  backgroundColor={payeeBg}
+                  borderColor={payeeBorder}
+                  ml={2}
+                  flexGrow="1"
+                  fontSize='14px'
+                  placeholder='~sampel-palnet or BTC address'
+                  value={payee}
+                  fontFamily="mono"
+                  disabled={signing}
+                  onChange={this.checkPayee}
+                />
+              </Row>
+              <Row
+                alignItems='center'
+                mt={4}
+                justifyContent='space-between'>
+                <Text
+                  gray
+                  fontSize={1}
+                  fontWeight='600'
+                  width="40%"
+                >Amount</Text>
+                <Input
+                  onFocus={() => {this.setState({focusCurrency: true})}}
+                  onBlur={() => {this.setState({focusCurrency: false})}}
+                  fontSize='14px'
+                  width='100%'
+                  type='number'
+                  borderColor={this.state.focusCurrency ? "lightGray" : "none"}
+                  disabled={signing}
+                  value={denomAmount}
+                  onChange={e => {
+                    this.setState({
+                      denomAmount: e.target.value,
+                      satsAmount: Math.round(parseFloat(e.target.value) / conversion * 100000000)
+                    });
+                  }}
+                />
+                <Text color="lighterGray" fontSize={1} ml={3}>{denomination}</Text>
+              </Row>
+              <Row
+                alignItems='center'
+                mt={2}
+                justifyContent='space-between'>
+                {/* yes this is a hack */}
+                <Box width='40%'/>
+                <Input
+                  onFocus={() => {this.setState({focusSats: true})}}
+                  onBlur={() => {this.setState({focusSats: false})}}
+                  fontSize='14px'
+                  width='100%'
+                  type='number'
+                  borderColor={this.state.focusSats ? "lightGray" : "none"}
+                  disabled={signing}
+                  value={satsAmount}
+                  onChange={e => {
+                    this.setState({
+                      denomAmount: parseFloat(e.target.value) * (conversion / 100000000),
+                      satsAmount: e.target.value
+                    });
+                  }}
+                />
+                <Text color="lighterGray" fontSize={1} ml={3}>sats</Text>
+              </Row>
+              <Row mt={4} width="100%" justifyContent="space-between">
+                <Text
+                  gray
+                  fontSize={1}
+                  fontWeight='600'
+                  width="40%"
+                >Fee</Text>
+                <Row alignItems="center">
+                  <Text mr={2} color="lightGray" fontSize="14px">
+                    {this.state.feeChoices[this.state.feeValue][1]} sats/vbyte
+                  </Text>
+                  <Icon icon="ChevronSouth"
+                    fontSize="14px"
+                    color="lightGray"
+                    onClick={() => { this.setState({showModal: !this.state.showModal}); }}
+                    cursor="pointer"/>
+                </Row>
+              </Row>
+              <Col alignItems="center">
+                {!this.state.showModal ? null :
+                  <Box position="fixed" p={4}
+                      border="1px solid green" borderRadius={3}
+                      backgroundColor="white" zIndex={10}>
+                    <Text fontSize={1} color="black">Transaction Speed</Text>
+                  </Box>
+                }
+              </Col>
+            </Col>
             <Row
               flexDirection='row-reverse'
               alignItems="center"
-              mt={8}
             >
               <Button
                 primary

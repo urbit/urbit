@@ -116,7 +116,7 @@
     %-  pairs
     :~  provider+(provider provider.upd)
         wallet+?~(wallet.upd ~ [%s u.wallet.upd])
-        balance+?~(balance.upd ~ (numb u.balance.upd))
+        balance+(balance balance.upd)
         history+(history history.upd)
         btc-state+(btc-state btc-state.upd)
         address+?~(address.upd ~ (address u.address.upd))
@@ -134,8 +134,17 @@
     ^-  json
     %-  pairs
     :~  wallet+?~(wallet.upd ~ [%s u.wallet.upd])
-        balance+?~(balance.upd ~ (numb u.balance.upd))
+        balance+(balance balance.upd)
         history+(history history.upd)
+    ==
+  ::
+  ++  balance
+    |=  b=(unit [p=@ q=@])
+    ^-  json
+    ?~  b  ~
+    %-  pairs
+    :~  confirmed+(numb p.u.b)
+        unconfirmed+(numb q.u.b)
     ==
   ::
   ++  btc-state
