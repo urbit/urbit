@@ -54,6 +54,26 @@
     ==
   ==
   ::
+  ++  add-node
+    |=  [=index:store =node:store]
+    ^-  update:store
+    :^  now.bowl  %add-nodes  [our.bowl %inbox]
+    (~(gas by *(map index:store node:store)) [index node] ~)
+  ::
+  ++  add-missing-root
+    |=  =ship
+    ^-  (list card)
+    =/  =index:store
+      [ship ~]
+    ?:  (check-node-existence:gra [our.bowl %inbox] index)  ~
+    =|  =node:store
+    =:  author.post.node     our.bowl
+        index.post.node      index
+        time-sent.post.node  now.bowl
+      ==
+    =/  =wire  /dm/(scot %p ship)
+    (~(poke-our pass wire) %graph-store (update:cg:gra (add-node index node)))^~
+  ::
   ++  outgoing-add
     |=  nodes=(map index:store node:store)
     ^-  (list card)
@@ -65,24 +85,23 @@
     =/  =ship  i.index
     =/  =dock  [ship %dm-hook]
     =/  =wire  /dm/(scot %p ship)
-    =;  =cage  
-      :~  (~(poke pass wire) dock cage)
-          (~(poke-our pass wire) %graph-store cage)
-      ==
-    %+  update:cg:gra  now.bowl  
-    :+  %add-nodes  [our.bowl %inbox]
-    (~(gas by *(map index:store node:store)) [index node] ~)
-  ::
+    =/  =cage  
+      (update:cg:gra (add-node index node))
+    %+  welp  (add-missing-root ship)
+    :~  (~(poke pass wire) dock cage)
+        (~(poke-our pass wire) %graph-store cage)
+    ==
+    ::
   ++  incoming-add
     |=  nodes=(map index:store node:store)
     ^-  (list card)
     ?>  =(1 ~(wyt by nodes))
     =*  ship  src.bowl
     =/  =wire  /dm/(scot %p ship)
-    :_  ~
+    %+  snoc  (add-missing-root ship)
     %+  ~(poke-our pass wire)  %graph-store
     %+  update:cg:gra  now.bowl
-    :+  %add-nodes  [ship %inbox]
+    :+  %add-nodes  [our.bowl %inbox]
     %-  ~(gas by *(map index:store node:store))
     %+  turn  ~(tap by nodes)
     |=  [=index:store =node:store]
