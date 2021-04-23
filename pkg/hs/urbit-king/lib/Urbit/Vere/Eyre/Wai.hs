@@ -220,7 +220,7 @@ app ::
   KingSubsite ->
   W.Application
 app env who liv inform cancel scry sub req respond = do
-  met <- maybe (error "bad method") pure (cookMeth req)
+  let met <- maybe (error "bad method") id (cookMeth req)
   case W.pathInfo req of
     ("~_~" : _) -> runKingSubsite sub req respond
     _ | met == H.GET -> scryFlow `onException` normalFlow met
