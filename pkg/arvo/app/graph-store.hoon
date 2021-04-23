@@ -749,6 +749,26 @@
     ^-  [index:store node:store]
     [(snoc parent atom) node]
   ::
+      [%x %shallow-children @ @ *]
+    =/  newest  ?=(%newest i.t.path)
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  =index:store
+      (turn t.t.t.t.path (cury slav %ud))
+    =/  children
+      (get-node-children ship term index)
+    ?~  children  [~ ~]
+    :-  ~  :-  ~  :-  %graph-update-1
+    !>  ^-  update:store
+    :+  now.bowl  %add-nodes
+    :-  [ship term]
+    %-  ~(gas by *(map index:store node:store))
+    %+  turn  (tap:orm u.children)
+    |=  [=atom =node:store]
+    ^-  [index:store node:store]
+    :-  index.post.node
+    node(children [%empty ~])
+  ::
       [%x ?(%newest %oldest) @ @ @ *]
     =/  newest  ?=(%newest i.t.path)
     =/  =ship  (slav %p i.t.t.path)

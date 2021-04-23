@@ -349,6 +349,14 @@ export default class GraphApi extends BaseApi<StoreState> {
     this.store.handleEvent({ data });
   }
 
+  async getShallowChildren(ship: string, name: string, index = '') {
+    const idx = index.split('/').map(decToUd).join('/');
+    const data = await this.scry<any>('graph-store',
+      `/shallow-children/${ship}/${name}${idx}`
+    )
+    this.store.handleEvent({ data });
+  }
+
   getGraphSubset(ship: string, resource: string, start: string, end: string) {
     return this.scry<any>(
       'graph-store',
