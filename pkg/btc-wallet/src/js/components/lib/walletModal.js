@@ -25,13 +25,11 @@ function bip44To84(network, xpub) {
   return bs58check.encode(data);
 }
 
-const NETWORK = 'testnet'
 const DERIVATIONS = {
   bitcoin: "m/84'/0'/0'",
   testnet: "m/84'/1'/0'",
 }
 const BTC_DERIVATION_TYPE = 'bitcoin'
-const BTC_DERIVATION_PATH = DERIVATIONS[NETWORK]
 
 export default class WalletModal extends Component {
   constructor(props) {
@@ -48,6 +46,8 @@ export default class WalletModal extends Component {
     this.checkXPub          = this.checkXPub.bind(this);
     this.submitMasterTicket = this.submitMasterTicket.bind(this);
     this.submitXPub         = this.submitXPub.bind(this);
+
+    this.BTC_DERIVATION_PATH = DERIVATIONS[this.props.network]
   }
 
   checkTicket(e){
@@ -68,14 +68,14 @@ export default class WalletModal extends Component {
     const node = kg.deriveNode(
       ticket,
       BTC_DERIVATION_TYPE,
-      BTC_DERIVATION_PATH
+      this.BTC_DERIVATION_PATH
     );
 
-    const zpub = bip44To84(NETWORK,
+    const zpub = bip44To84(this.props.network,
       bitcoin.bip32.fromPublicKey(
         Buffer.from(node.keys.public, 'hex'),
         Buffer.from(node.keys.chain, 'hex'),
-        bitcoin.networks[NETWORK]
+        bitcoin.networks[this.props.network]
       ).toBase58()
     );
 

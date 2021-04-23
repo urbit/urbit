@@ -20,6 +20,7 @@ import Balance from './lib/balance.js'
 import Transactions from './lib/transactions.js'
 import { subscription } from '../subscription.js'
 
+const network = "testnet" // bitcoin
 
 export class Root extends Component {
   constructor(props) {
@@ -44,7 +45,7 @@ export class Root extends Component {
       <BrowserRouter>
         <ThemeProvider theme={light}>
         <Reset/>
-        { (loaded) ? <StartupModal api={api} state={this.state}/> : null }
+        { (loaded) ? <StartupModal api={api} state={this.state} network={network}/> : null }
         <Box display="flex"
           flexDirection='column'
           position='absolute'
@@ -63,8 +64,8 @@ export class Root extends Component {
                width='400px'
               >
                 <Header />
-                <Balance api={api} state={this.state}/>
-                <Transactions state={this.state}/>
+                <Balance api={api} state={this.state} network={network}/>
+                <Transactions state={this.state} network={network}/>
               </Col>
             :  <Box display="flex" width="100%" height="100%" alignItems="center" justifyContent="center">
                  <LoadingSpinner

@@ -50,6 +50,7 @@ export default class Transactions extends Component {
                   key={i}
                   denom={this.props.state.denomination}
                   rates={this.props.state.currencyRates}
+                  network={this.props.network}
                 />
               );
             })

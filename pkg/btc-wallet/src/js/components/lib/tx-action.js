@@ -45,7 +45,7 @@ export default class TxAction extends Component {
         foreground="orange"
       />
 
-    const url = (window.NETWORK === 'testnet')
+    const url = (this.props.network === 'testnet')
       ? `http://blockstream.info/testnet/tx/${this.props.txid}`
       : `http://blockstream.info/tx/${this.props.txid}`;
 
