@@ -102,7 +102,7 @@ export default function index(contacts, associations, apps, currentGroup, groups
   }).map((e) => {
     // iterate through each app's metadata object
     Object.keys(associations[e])
-      .filter((association) => !associations[e][association].metadata.hidden)
+      .filter((association) => !associations?.[e]?.[association]?.metadata?.hidden)
       .map((association) => {
         const each = associations[e][association];
         let title = each.resource;
