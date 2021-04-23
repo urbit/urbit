@@ -925,10 +925,14 @@ u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
   }
 
   {
-    //  XX estimate size, allocate once
+    //  avoid gmp realloc if possible
     //
     mpz_t a_mp;
-    mpz_init_set_ui(a_mp, val_s);
+    {
+      c3_d bit_d = (c3_d)(len_w / 4) * 10;
+      mpz_init2(a_mp, (c3_w)c3_min(bit_d, UINT32_MAX));
+      mpz_set_ui(a_mp, val_s);
+    }
 
     while ( len_w ) {
       if ( !BLOCK(byt_y) ) {
