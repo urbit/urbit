@@ -35,7 +35,7 @@ export default class TxCounterparty extends Component {
           borderRadius="2px"
           p={1}
         >
-          <Icon icon="NullIcon" color="gray"/>
+          <Icon icon="Bitcoin" color="gray"/>
         </Box>
     const addressText = this.props.address.slice(0, 6) + '...' +
       this.props.address.slice(-6);
