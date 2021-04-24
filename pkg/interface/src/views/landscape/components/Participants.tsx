@@ -304,7 +304,7 @@ function Participant(props: {
   }, [api, contact, association]);
 
   const avatar =
-    contact?.avatar !== null && !hideAvatars ? (
+    contact?.avatar && !hideAvatars ? (
       <Image
         src={contact.avatar}
         height={32}
