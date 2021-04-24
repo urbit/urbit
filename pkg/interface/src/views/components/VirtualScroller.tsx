@@ -185,7 +185,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     });
     this.orphans.clear();
   };
-  
+
   // manipulate scrollbar manually, to dodge change detection
   updateScroll = IS_IOS ? () => {} : _.throttle(() => {
     if(!this.window || !this.scrollRef) {
@@ -209,12 +209,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const { visibleItems } = this.state;
 
     if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
-      if(this.scrollLocked) {
-        if(!this.state.visibleItems.peekLargest()![0].eq(this.props.data.peekLargest()![0])) {
+      if(this.scrollLocked && visibleItems?.peekLargest() && data?.peekLargest()) {
+        if(!visibleItems.peekLargest()[0].eq(data.peekLargest()[0])) {
           this.updateVisible(0);
-        }     
+        }
         this.resetScroll();
-
       }
     }
   }
@@ -424,7 +423,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       return;
     }
 
-    let ref = this.childRefs.get(this.savedIndex) 
+    let ref = this.childRefs.get(this.savedIndex)
     if(!ref) {
       return;
     }
@@ -471,7 +470,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       console.log('bail', 'deep save');
       return;
     }
-    
+
     this.saveDepth++;
 
     let bottomIndex: BigInteger | null = null;
