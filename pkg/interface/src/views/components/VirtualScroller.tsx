@@ -222,9 +222,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     if(this.cleanupRefInterval) {
       clearInterval(this.cleanupRefInterval);
     }
-    if(this.initScroll) {
-      clearTimeout(this.initScroll);
-    }
+    this.cleanupRefs();
+    this.childRefs.clear();
   }
 
   startOffset() {
