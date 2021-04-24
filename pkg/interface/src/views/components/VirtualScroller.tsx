@@ -361,10 +361,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       // bail if we're going to adjust scroll anyway
       return;
     }
-    if(this.initScroll) {
-      clearTimeout(this.initScroll);
-      this.initScroll = null;
-    }
     if(this.saveDepth > 0) {
       log('bail', 'deep scroll queue');
       return;
@@ -376,17 +372,15 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const startOffset = this.startOffset();
     if (scrollTop < ZONE_SIZE) {
       log('scroll', `Entered start zone ${scrollTop}`);
-      if (startOffset === 0 && onStartReached) {
-        onStartReached();
+      if (startOffset === 0) {
+        onStartReached && onStartReached();
+        this.scrollLocked = true;
       }
       const newOffset = Math.max(0, startOffset - this.pageDelta);
       if(newOffset < 10) {
         this.loadBottom();
       }
 
-      if(newOffset === 0) {
-        this.scrollLocked = true;
-      }
       if(newOffset !== startOffset) {
         this.updateVisible(newOffset);
       }
