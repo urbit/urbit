@@ -146,8 +146,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
   private cleanupRefInterval: NodeJS.Timeout | null = null;
 
-  private initScroll: NodeJS.Timeout | null = null;
-
   constructor(props: VirtualScrollerProps<T>) {
     super(props);
     this.state = {
@@ -170,15 +168,9 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
   componentDidMount() {
     this.updateVisible(0);
-    this.resetScroll();
     this.loadTop();
     this.loadBottom();
     this.cleanupRefInterval = setInterval(this.cleanupRefs, 5000);
-    this.initScroll = setTimeout(() => {
-      log('scroll', 'initialised scroll');
-      this.restore();
-      this.initScroll = null;
-    }, 100);
   }
 
 
@@ -218,7 +210,9 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
       if(this.scrollLocked) {
-        this.updateVisible(0);
+        if(!this.state.visibleItems.peekLargest()![0].eq(this.props.data.peekLargest()![0])) {
+          this.updateVisible(0);
+        }     
         this.resetScroll();
 
       }
@@ -230,9 +224,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     if(this.cleanupRefInterval) {
       clearInterval(this.cleanupRefInterval);
     }
-    if(this.initScroll) {
-      clearTimeout(this.initScroll);
-    }
+    this.cleanupRefs();
+    this.childRefs.clear();
   }
 
   startOffset() {
@@ -370,10 +363,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       // bail if we're going to adjust scroll anyway
       return;
     }
-    if(this.initScroll) {
-      clearTimeout(this.initScroll);
-      this.initScroll = null;
-    }
     if(this.saveDepth > 0) {
       log('bail', 'deep scroll queue');
       return;
@@ -385,17 +374,15 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const startOffset = this.startOffset();
     if (scrollTop < ZONE_SIZE) {
       log('scroll', `Entered start zone ${scrollTop}`);
-      if (startOffset === 0 && onStartReached) {
-        onStartReached();
+      if (startOffset === 0) {
+        onStartReached && onStartReached();
+        this.scrollLocked = true;
       }
       const newOffset = Math.max(0, startOffset - this.pageDelta);
       if(newOffset < 10) {
         this.loadBottom();
       }
 
-      if(newOffset === 0) {
-        this.scrollLocked = true;
-      }
       if(newOffset !== startOffset) {
         this.updateVisible(newOffset);
       }
@@ -429,8 +416,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       log('bail', 'Deep restore');
       return;
     }
-    if(this.initScroll) {
-      log('bail', 'still initialising scroll');
+    if(this.scrollLocked) {
+      this.resetScroll();
+      this.savedIndex = null;
+      this.savedDistance = 0;
+      this.saveDepth--;
       return;
     }
 
