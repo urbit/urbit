@@ -514,6 +514,10 @@
           } sav_u;
         } u3_disk;
 
+      /* u3_disk_walk: opaque event log iterator.
+      */
+        typedef struct _u3_disk_walk u3_disk_walk;
+
       /* u3_psat: pier state.
       */
         typedef enum {
@@ -983,6 +987,28 @@ u3_mars_init(u3_disk* log_u,
       */
         void
         u3_disk_plan(u3_disk* log_u, u3_fact* tac_u);
+
+      /* u3_disk_walk_init(): init iterator.
+      */
+        u3_disk_walk*
+        u3_disk_walk_init(u3_disk* log_u,
+                          c3_d     eve_d,
+                          c3_d     len_d);
+
+      /* u3_disk_walk_live(): check if live.
+      */
+        c3_o
+        u3_disk_walk_live(u3_disk_walk* wok_u);
+
+      /* u3_disk_walk_live(): get next fact.
+      */
+        c3_o
+        u3_disk_walk_step(u3_disk_walk* wok_u, u3_fact* tac_u);
+
+      /* u3_disk_walk_done(): close iterator.
+      */
+        void
+        u3_disk_walk_done(u3_disk_walk* wok_u);
 
       /* u3_lord_init(): start serf.
       */

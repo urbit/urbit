@@ -175,121 +175,113 @@ u3_lmdb_gulf(MDB_env* env_u, c3_d* low_d, c3_d* hig_d)
   }
 }
 
-/* u3_lmdb_iter_init(): initialize db iterator
+/* u3_lmdb_walk_init(): initialize db iterator.
 */
 c3_o
-u3_lmdb_iter_init(MDB_env* env_u, u3_lmdb_iter* itr_u, c3_d eve_d, c3_d fin_d)
+u3_lmdb_walk_init(MDB_env*      env_u,
+                  u3_lmdb_walk* itr_u,
+                  c3_d          nex_d,
+                  c3_d          las_d)
 {
-  c3_w         ret_w;
+  //  XX assumes little-endian
+  //
+  MDB_val key_u = { .mv_size = sizeof(c3_d), .mv_data = &nex_d };
+  MDB_val val_u;
+  c3_w    ops_w, ret_w;
+
+  itr_u->red_o = c3n;
+  itr_u->nex_d = nex_d;
+  itr_u->las_d = las_d;
+
   //  create a read-only transaction.
   //
-  if ( (ret_w = mdb_txn_begin(env_u, 0, MDB_RDONLY, &itr_u->txn_u)) ) {
+  ops_w = MDB_RDONLY;
+  if ( (ret_w = mdb_txn_begin(env_u, 0, ops_w, &itr_u->txn_u)) ) {
     fprintf(stderr, "lmdb: read txn_begin fail: %s\r\n", mdb_strerror(ret_w));
     return c3n;
   }
   //  open the database in the transaction
   //
-  {
-    c3_w ops_w = MDB_CREATE | MDB_INTEGERKEY;
-
-    ret_w = mdb_dbi_open(itr_u->txn_u, "EVENTS", ops_w, &itr_u->mdb_u);
-    if ( ret_w ) {
-      fprintf(stderr, "lmdb: read: dbi_open fail: %s\r\n", mdb_strerror(ret_w));
-      //  XX confirm
-      //
-      mdb_txn_abort(itr_u->txn_u);
-      return c3n;
-    }
+  ops_w = MDB_CREATE | MDB_INTEGERKEY;
+  if ( (ret_w = mdb_dbi_open(itr_u->txn_u, "EVENTS", ops_w, &itr_u->mdb_u)) ) {
+    fprintf(stderr, "lmdb: read: dbi_open fail: %s\r\n", mdb_strerror(ret_w));
+    //  XX confirm
+    //
+    mdb_txn_abort(itr_u->txn_u);
+    return c3n;
   }
 
-  //  open the cursor and set it to the position of [eve_d]
-  {
-    MDB_val key_u = { .mv_size = sizeof(c3_d), .mv_data = &eve_d };
-    MDB_val val_u;
-
-    //  creates a cursor to iterate over keys starting at [eve_d]
+  //  creates a cursor to iterate over keys starting at [eve_d]
+  //
+  if ( (ret_w = mdb_cursor_open(itr_u->txn_u, itr_u->mdb_u, &itr_u->cur_u)) ) {
+    fprintf(stderr, "lmdb: read: cursor_open fail: %s\r\n",
+                    mdb_strerror(ret_w));
+    //  XX confirm
     //
-    ret_w = mdb_cursor_open(itr_u->txn_u, itr_u->mdb_u, &itr_u->cur_u);
-    if ( ret_w ) {
-      fprintf(stderr, "lmdb: read: cursor_open fail: %s\r\n",
-                      mdb_strerror(ret_w));
-      //  XX confirm
-      //
-      mdb_txn_abort(itr_u->txn_u);
-      return c3n;
-    }
-
-    //  set the cursor to the position of [eve_d]
-    //
-    ret_w = mdb_cursor_get(itr_u->cur_u, &key_u, &val_u, MDB_SET_KEY);
-    if ( ret_w ) {
-      fprintf(stderr, "lmdb: read: initial cursor_get failed at %" PRIu64
-                      ": %s\r\n",
-                      eve_d,
-                      mdb_strerror(ret_w));
-      mdb_cursor_close(itr_u->cur_u);
-      //  XX confirm
-      //
-      mdb_txn_abort(itr_u->txn_u);
-      return c3n;
-    }
+    mdb_txn_abort(itr_u->txn_u);
+    return c3n;
   }
 
-  itr_u->red_o = c3n;
-  itr_u->eve_d = eve_d;
-  itr_u->fin_d = fin_d;
+  //  set the cursor to the position of [eve_d]
+  //
+  ops_w = MDB_SET_KEY;
+  if ( (ret_w = mdb_cursor_get(itr_u->cur_u, &key_u, &val_u, ops_w)) ) {
+    fprintf(stderr, "lmdb: read: initial cursor_get failed at %" PRIu64
+                    ": %s\r\n",
+                    nex_d,
+                    mdb_strerror(ret_w));
+    mdb_cursor_close(itr_u->cur_u);
+    //  XX confirm
+    //
+    mdb_txn_abort(itr_u->txn_u);
+    return c3n;
+  }
+
   return c3y;
 }
 
-/* u3_lmdb_iter_shut():
+/* u3_lmdb_walk_next(): synchronously read next event from iterator.
+*/
+c3_o
+u3_lmdb_walk_next(u3_lmdb_walk* itr_u, size_t* len_i, void** buf_v)
+{
+  MDB_val key_u, val_u;
+  c3_w    ret_w, ops_w;
+
+  c3_assert( itr_u->nex_d <= itr_u->las_d );
+
+  ops_w = ( c3y == itr_u->red_o ) ? MDB_NEXT : MDB_GET_CURRENT;
+  if ( (ret_w = mdb_cursor_get(itr_u->cur_u, &key_u, &val_u, ops_w)) ) {
+    fprintf(stderr, "lmdb: walk error: %s\r\n", mdb_strerror(ret_w));
+    return c3n;
+  }
+
+  //  sanity check: ensure contiguous event numbers
+  //
+  if ( *(c3_d*)key_u.mv_data != itr_u->nex_d ) {
+    fprintf(stderr, "lmdb: read gap: expected %" PRIu64
+                    ", received %" PRIu64 "\r\n",
+                    itr_u->nex_d,
+                    *(c3_d*)key_u.mv_data);
+    return c3n;
+  }
+
+  *len_i = val_u.mv_size;
+  *buf_v = val_u.mv_data;
+
+  itr_u->nex_d++;
+  itr_u->red_o = c3y;
+
+  return c3y;
+}
+
+/* u3_lmdb_walk_done(): close iterator.
 */
 void
-u3_lmdb_iter_shut(u3_lmdb_iter* itr_u)
+u3_lmdb_walk_done(u3_lmdb_walk* itr_u)
 {
   mdb_cursor_close(itr_u->cur_u);
   mdb_txn_abort(itr_u->txn_u);
-}
-
-/* u3_lmdb_read_one_sync(): read an event synchronously
-*/
-c3_o
-u3_lmdb_read_one_sync(u3_lmdb_iter* itr_u, size_t* len_i, void** buf_v)
-{
-  MDB_val key_u, val_u;
-
-  c3_assert( itr_u->eve_d <= itr_u->fin_d );
-
-  c3_w ops_w = ( c3n == itr_u->red_o )? MDB_GET_CURRENT : MDB_NEXT;
-  c3_w ret_w = mdb_cursor_get(itr_u->cur_u, &key_u, &val_u, ops_w);
-  itr_u->red_o = c3y;
-  switch (ret_w) {
-    case 0: {
-      //  sanity check: ensure contiguous event numbers
-      //
-      if ( *(c3_d*)key_u.mv_data != itr_u->eve_d ) {
-        fprintf(stderr, "lmdb: read gap: expected %" PRIu64
-                        ", received %" PRIu64 "\r\n",
-                        itr_u->eve_d,
-                        *(c3_d*)key_u.mv_data);
-        return c3n;
-      }
-
-      itr_u->eve_d++;
-      *len_i = val_u.mv_size;
-      *buf_v = val_u.mv_data;
-      return c3y;
-    } break;
-
-    case MDB_NOTFOUND: {
-      fprintf(stderr, "lmdb: read: missing: %s\r\n", mdb_strerror(ret_w));
-      return c3n;
-    } break;
-
-    default: {
-      fprintf(stderr, "lmdb: read: error: %s\r\n", mdb_strerror(ret_w));
-      return c3n;
-    }
-  }
 }
 
 /* u3_lmdb_read(): read [len_d] events starting at [eve_d].

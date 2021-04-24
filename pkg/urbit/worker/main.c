@@ -975,7 +975,6 @@ _cw_boot(c3_i argc, c3_c* argv[])
   uv_run(lup_u, UV_RUN_DEFAULT);
 }
 
-static void _cw_replay();
 /* _cw_work(): resume and run; replay and start event processing
 */
 static void
@@ -1110,10 +1109,6 @@ _cw_work(c3_i argc, c3_c* argv[])
       }
     }
 
-    _cw_replay();
-    u3e_save();
-
-
     {
       u3_mars* mar_u = u3_mars_init(log_u, &inn_u, &out_u, dir_c, sil_u);
       inn_u.ptr_v = mar_u;
@@ -1140,69 +1135,6 @@ _cw_work(c3_i argc, c3_c* argv[])
   //  enter loop
   //
   uv_run(lup_u, UV_RUN_DEFAULT);
-}
-
-/* _cw_replay(): replay events on disk
-*/
-static void
-_cw_replay()
-{
-  u3_lmdb_iter itr_u;
-
-  if ( u3V.dun_d < log_u->dun_d ) {
-    c3_o ret_o = u3_lmdb_iter_init(log_u->mdb_u,
-                                   &itr_u,
-                                   u3V.dun_d + 1,
-                                   log_u->dun_d);
-    if ( c3n == ret_o ) {
-      fprintf(stderr, "urth: replay: db iter init fail\r\n");
-      exit(1);
-    }
-    fprintf(stderr, "replaying from event %" PRIu64 "\r\n", itr_u.eve_d);
-
-    size_t len_i;
-    void*  buf_v;
-    while ( itr_u.eve_d <= itr_u.fin_d ) {
-      ret_o = u3_lmdb_read_one_sync(&itr_u, &len_i, &buf_v);
-      if ( c3n == ret_o ) {
-        fprintf(stderr, "urth: replay: db event #%" PRIu64 " read fail\r\n",
-                        itr_u.eve_d);
-        exit(1);
-      }
-      else {
-        u3_noun job;
-        c3_l  mug_l;
-
-        if ( c3n == u3_disk_sift(log_u, len_i, (c3_y*)buf_v, &mug_l, &job) ) {
-          fprintf(stderr, "replay: bad event\r\n");
-          exit(1);
-        }
-
-        fprintf(stderr, ".");
-
-        {
-          u3_noun res = u3_serf_play(&u3V, itr_u.eve_d - 1, u3nc(job, u3_nul));
-
-          u3_noun mug, tal;
-          c3_assert( c3y == u3r_p(res, c3__play, &tal) );
-
-          if ( c3n == u3r_p(tal, c3__done, &mug) ) {
-            fprintf(stderr, "replay: event failed\r\n");
-            exit(1);
-          }
-          else if ( mug_l && (mug_l != mug) ) {
-            fprintf(stderr, "replay: result mug mismatch expected %x, actual %x\r\n",
-                            mug_l, mug);
-            exit(1);
-          }
-
-          u3z(res);
-        }
-      }
-    }
-    u3_lmdb_iter_shut(&itr_u);
-    fprintf(stderr, "\r\nreplay: complete\r\n");
-  }
 }
 
 /* _cw_usage(): print urbit-worker usage.

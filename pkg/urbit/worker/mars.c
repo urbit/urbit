@@ -414,6 +414,112 @@ _mars_save_done(void* ptr_v, c3_d eve_d, c3_o ret_o)
   }
 }
 
+/* _mars_poke_play(): replay an event.
+*/
+static u3_noun
+_mars_poke_play(c3_d eve_d, u3_noun job)
+{
+  u3_noun pro;
+
+  if ( c3y == u3_poke_sure(0, job, &pro) ) {
+    //  XX check effects
+    //
+    u3z(pro);
+    return c3y;
+  }
+
+  //  XX reclaim on meme, retry on %intr, &c
+  //
+  // {
+  //   u3_noun mot, tan;
+  //   u3x_cell(pro, &mot, &tan);
+  // }
+  u3z(pro);
+  return c3n;
+}
+
+/* _mars_play_batch(): replay a batch of events.
+*/
+static c3_o
+_mars_play_batch(u3_mars* mar_u, c3_o mug_o, c3_w bat_w)
+{
+  u3_disk*      log_u = mar_u->log_u;
+  u3_disk_walk* wok_u = u3_disk_walk_init(log_u, mar_u->dun_d + 1, bat_w);
+  u3_fact       tac_u;
+
+  while ( c3y == u3_disk_walk_live(wok_u) ) {
+    if ( c3n == u3_disk_walk_step(wok_u, &tac_u) ) {
+      u3_disk_walk_done(wok_u);
+      return c3n;
+    }
+
+    c3_assert( ++mar_u->sen_d == tac_u.eve_d );
+
+    if ( c3n == _mars_poke_play(tac_u.eve_d, tac_u.job) ) {
+      fprintf(stderr, "play (%" PRIu64 "): failed\r\n", tac_u.eve_d);
+      mar_u->sen_d--;
+      u3_disk_walk_done(wok_u);
+      return c3n;
+    }
+
+    mar_u->dun_d++;
+    mar_u->mug_l = u3r_mug(u3A->roc);
+
+    if ( tac_u.mug_l && (mar_u->mug_l != tac_u.mug_l) ) {
+      fprintf(stderr, "play (%" PRIu64 "): mug mismatch "
+                      "expected %08x, actual %08x\r\n",
+                      tac_u.eve_d, tac_u.mug_l, mar_u->mug_l);
+
+      if ( c3y == mug_o ) {
+        mar_u->sen_d--;
+        mar_u->dun_d--;
+        u3_disk_walk_done(wok_u);
+        return c3n;
+      }
+    }
+  }
+
+  u3_disk_walk_done(wok_u);
+
+  return c3y;
+}
+
+/* u3_mars_play(): replay all newer logged events.
+*/
+void
+u3_mars_play(u3_mars* mar_u)
+{
+  u3_disk* log_u = mar_u->log_u;
+
+  u3l_log("---------------- playback starting ----------------\r\n");
+
+  if ( (1ULL + mar_u->dun_d) == log_u->dun_d ) {
+    u3l_log("play: event %" PRIu64 "\r\n", log_u->dun_d);
+  }
+  else {
+    u3l_log("play: events %" PRIu64 "-%" PRIu64 "\r\n",
+            (c3_d)(1ULL + mar_u->dun_d),
+            log_u->dun_d);
+  }
+
+  while ( mar_u->dun_d < log_u->dun_d ) {
+    //  XX get batch from args
+    //
+    if ( c3n == _mars_play_batch(mar_u, c3n, 500) ) {
+      u3l_log("play (%" PRIu64 "): failed\r\n", mar_u->dun_d);
+      //  XX exit code, cb
+      //
+      exit(1);
+    }
+
+    u3l_log("play (%" PRIu64 "): done\r\n", mar_u->dun_d);
+  }
+
+  u3l_log("---------------- playback complete ----------------\r\n");
+}
+
+/* u3_mars_init(): init mars, replay if necessary.
+*/
 u3_mars*
 u3_mars_init(u3_disk* log_u,
              u3_moat* inn_u,
@@ -421,35 +527,34 @@ u3_mars_init(u3_disk* log_u,
              c3_c*    dir_c,
              u3_cue_xeno* sil_u)
 {
-  if ( log_u->dun_d != u3A->eve_d ) {
-    fprintf(stderr, "mars: init ret\r\n");
-    return 0;
+  c3_assert( log_u->sen_d == log_u->dun_d );
+
+  u3_mars* mar_u = c3_malloc(sizeof(*mar_u));
+  mar_u->sil_u = sil_u;
+  mar_u->log_u = log_u;
+  mar_u->inn_u = inn_u;
+  mar_u->out_u = out_u;
+  mar_u->sen_d = mar_u->dun_d = u3A->eve_d;
+  mar_u->mug_l = u3r_mug(u3A->roc);
+  mar_u->pac_o = mar_u->rec_o = mar_u->mut_o = c3n;
+  mar_u->sac   = u3_nul;
+  mar_u->sat_e = _cwe_mars_work;
+  mar_u->gif_u.ent_u = mar_u->gif_u.ext_u = 0;
+  mar_u->xit_f = 0;
+
+  if ( log_u->dun_d > mar_u->dun_d ) {
+    u3_mars_play(mar_u);
+    u3e_save();
   }
-  else {
-    c3_assert( log_u->sen_d == log_u->dun_d );
 
-    u3_mars* mar_u = c3_malloc(sizeof(*mar_u));
-    mar_u->sil_u = sil_u;
-    mar_u->log_u = log_u;
-    mar_u->inn_u = inn_u;
-    mar_u->out_u = out_u;
-    mar_u->sen_d = mar_u->dun_d = log_u->dun_d;
-    mar_u->mug_l = u3r_mug(u3A->roc);
-    mar_u->pac_o = mar_u->rec_o = mar_u->mut_o = c3n;
-    mar_u->sac   = u3_nul;
-    mar_u->sat_e = _cwe_mars_work;
-    mar_u->gif_u.ent_u = mar_u->gif_u.ext_u = 0;
-    mar_u->xit_f = 0;
+  u3_disk_async(log_u, mar_u, _mars_save_done);
 
-    u3_disk_async(log_u, mar_u, _mars_save_done);
+  //  XX check return, make interval configurable
+  //
+  uv_timer_init(u3L, &mar_u->tim_u);
+  uv_timer_start(&mar_u->tim_u, _mars_timer_cb, 120000, 120000);
 
-    //  XX check return, make interval configurable
-    //
-    uv_timer_init(u3L, &mar_u->tim_u);
-    uv_timer_start(&mar_u->tim_u, _mars_timer_cb, 120000, 120000);
+  mar_u->tim_u.data = mar_u;
 
-    mar_u->tim_u.data = mar_u;
-
-    return mar_u;
-  }
+  return mar_u;
 }

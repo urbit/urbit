@@ -8,14 +8,14 @@
 
     /* u3_lmdb_iter: event iterator
     */
-    typedef struct _u3_lmdb_iter {
+    typedef struct _u3_lmdb_walk {
       MDB_txn*    txn_u;  //  transaction handle
       MDB_dbi     mdb_u;  //  db handle
       MDB_cursor* cur_u;  //  db cursor
       c3_o        red_o;  //  have we read from this yet?
-      c3_d        eve_d;  //  next event number
-      c3_d        fin_d;  //  final event number, inclusive
-    } u3_lmdb_iter;
+      c3_d        nex_d;  //  next event number
+      c3_d        las_d;  //  final event number, inclusive
+    } u3_lmdb_walk;
 
     /* u3_lmdb_init(): open lmdb at [pax_c], mmap up to [siz_i].
     */
@@ -65,3 +65,21 @@
                         const c3_c* key_c,
                         size_t      val_i,
                         void*       val_p);
+
+    /* u3_lmdb_walk_init(): initialize db iterator.
+    */
+      c3_o
+      u3_lmdb_walk_init(MDB_env*      env_u,
+                        u3_lmdb_walk* itr_u,
+                        c3_d          nex_d,
+                        c3_d          las_d);
+
+    /* u3_lmdb_walk_next(): synchronously read next event from iterator.
+    */
+      c3_o
+      u3_lmdb_walk_next(u3_lmdb_walk* itr_u, size_t* len_i, void** buf_v);
+
+    /* u3_lmdb_walk_done(): close iterator.
+    */
+      void
+      u3_lmdb_walk_done(u3_lmdb_walk* itr_u);
