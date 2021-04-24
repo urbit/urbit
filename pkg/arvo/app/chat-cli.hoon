@@ -734,7 +734,8 @@
       ::
       ?.  (is-chat-graph target)
         [[(note:sh-out "no such chat")]~ put-ses]
-      =.  viewing  (~(put in viewing) target)
+      =.  audience  target
+      =.  viewing   (~(put in viewing) target)
       =^  cards  state
         ?:  (~(has by bound) target)
           [~ state]
