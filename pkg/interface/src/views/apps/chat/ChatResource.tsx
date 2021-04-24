@@ -75,7 +75,14 @@ export function ChatResource(props: ChatResourceProps) {
   );
 
   const clearUnsent = useCallback(
-    () => setUnsent(s => _.omit(s, station)),
+    () => {
+      setUnsent(s => {
+        if(station in s) {
+          return _.omit(s, station);
+        }
+        return s;
+      });
+    },
     [station]
   );
 
