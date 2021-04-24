@@ -210,7 +210,9 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
       if(this.scrollLocked) {
-        this.updateVisible(0);
+        if(!this.state.visibleItems.peekLargest()![0].eq(this.props.data.peekLargest()![0])) {
+          this.updateVisible(0);
+        }     
         this.resetScroll();
 
       }
