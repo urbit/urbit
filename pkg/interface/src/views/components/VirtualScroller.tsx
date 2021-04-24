@@ -146,8 +146,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
   private cleanupRefInterval: NodeJS.Timeout | null = null;
 
-  private initScroll: NodeJS.Timeout | null = null;
-
   constructor(props: VirtualScrollerProps<T>) {
     super(props);
     this.state = {
@@ -170,15 +168,9 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
   componentDidMount() {
     this.updateVisible(0);
-    this.resetScroll();
     this.loadTop();
     this.loadBottom();
     this.cleanupRefInterval = setInterval(this.cleanupRefs, 5000);
-    this.initScroll = setTimeout(() => {
-      log('scroll', 'initialised scroll');
-      this.restore();
-      this.initScroll = null;
-    }, 100);
   }
 
 
@@ -429,8 +421,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       log('bail', 'Deep restore');
       return;
     }
-    if(this.initScroll) {
-      log('bail', 'still initialising scroll');
+    if(this.scrollLocked) {
+      this.resetScroll();
+      this.savedIndex = null;
+      this.savedDistance = 0;
+      this.saveDepth--;
       return;
     }
 
