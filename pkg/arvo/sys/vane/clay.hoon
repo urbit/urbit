@@ -4102,7 +4102,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%7                                        ::  vane version
+    $:  ver=%8                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4433,8 +4433,9 @@
   |=  old=raft-any
   |^
   =?  old  ?=(%6 -.old)  7+(raft-6-to-7 +.old)
-  ?>  ?=(%7 -.old)
-  ..^^$(ruf (raft-7-to-8 +.old))
+  =?  old  ?=(%7 -.old)  8+(raft-7-to-8 +.old)
+  ?>  ?=(%8 -.old)
+  ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
   ++  raft-6-to-7
