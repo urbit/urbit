@@ -131,4 +131,9 @@
       [%cancel-tx =txid]
       [%new-address =address]
   ==
+::
++$  condition
+  $%  [%exclude =txid]
+      [%include =txid]
+  ==
 --
