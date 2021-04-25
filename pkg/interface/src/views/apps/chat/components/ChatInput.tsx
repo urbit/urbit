@@ -9,7 +9,7 @@ import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
 import { StorageState } from '~/types';
 import { Contacts, Content } from '@urbit/api';
-import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
+import { Row, BaseImage, Box, Icon, LoadingSpinner, Text } from '@tlon/indigo-react';
 import withStorage from '~/views/components/withStorage';
 import { withLocalState } from '~/logic/state/local';
 
@@ -182,7 +182,15 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
           onPaste={this.onPaste.bind(this)}
           placeholder='Message...'
         />
-        <Box mx={2} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
+        <Box mx='12px' flexShrink={0} height='16px' width='16px' flexBasis='16px'>
+          <Icon
+            icon='Dojo'
+            cursor='pointer'
+            onClick={this.toggleCode}
+            color={state.inCodeMode ? 'blue' : 'black'}
+          />
+        </Box>
+        <Box ml='12px' mr={3} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
           {this.props.canUpload ? (
             this.props.uploading ? (
               <LoadingSpinner />
@@ -199,13 +207,15 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
             )
           ) : null}
         </Box>
-        <Box mr={2} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
-          <Icon
-            icon='Dojo'
-            cursor='pointer'
-            onClick={this.toggleCode}
-            color={state.inCodeMode ? 'blue' : 'black'}
-          />
+        <Box mx={3} flexShrink={0} height='16px'>
+          <Text
+              bold
+              color="blue"
+              cursor="pointer"
+              onClick={() => console.log(this.chatEditor.current.submit())}
+            >
+              Send
+            </Text>
         </Box>
       </Row>
     );
