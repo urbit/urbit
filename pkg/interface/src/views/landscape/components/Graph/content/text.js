@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import urbitOb from 'urbit-ob';
-import { Text } from '@tlon/indigo-react';
+import { Text, Anchor } from '@tlon/indigo-react';
 import { GroupLink } from '~/views/components/GroupLink';
 import { Row } from '@tlon/indigo-react';
 
@@ -22,7 +22,6 @@ const DISABLED_INLINE_TOKENS = [
   'autoLink',
   'url',
   'email',
-  'link',
   'reference'
 ];
 
@@ -75,6 +74,9 @@ const renderers = {
         {value}
       </Text>
     );
+  },
+  link: (props) => {
+    return <Anchor src={props.href} borderBottom="1" color="black">{props.children}</Anchor>
   }
 };
 
@@ -91,7 +93,7 @@ const MessageMarkdown = React.memo((props) => {
   }, []);
 
   return lines.map((line, i) => (
-    <>
+    <React.Fragment key={i}>
       {i !== 0 && <Row height={2} />}
       <ReactMarkdown
         {...rest}
@@ -123,7 +125,7 @@ const MessageMarkdown = React.memo((props) => {
           ]
         ]}
       />
-    </>
+    </React.Fragment>
   ));
 });
 
@@ -145,8 +147,6 @@ export default function TextContent(props) {
       <GroupLink
         resource={resource}
         api={props.api}
-        associations={props.associations}
-        groups={props.groups}
         pl='2'
         border='1'
         borderRadius='2'

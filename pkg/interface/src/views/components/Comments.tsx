@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import bigInt from 'big-integer';
 import { Col } from '@tlon/indigo-react';
 import { CommentItem } from './CommentItem';
@@ -13,15 +13,16 @@ import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { getUnreadCount } from '~/logic/lib/hark';
 import { PropFunc } from '~/types/util';
 import { isWriter } from '~/logic/lib/group';
+import useHarkState from '~/logic/state/hark';
+import {useQuery} from '~/logic/lib/useQuery';
+import {referenceToPermalink} from '~/logic/lib/permalinks';
 
 interface CommentsProps {
   comments: GraphNode;
   association: Association;
   name: string;
   ship: string;
-  editCommentId: string;
   baseUrl: string;
-  contacts: Contacts;
   api: GlobalApi;
   group: Group;
 }
@@ -32,13 +33,24 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     comments,
     ship,
     name,
-    editCommentId,
     api,
     history,
     baseUrl,
     group,
     ...rest
   } = props;
+
+  const { query } = useQuery();
+  const selectedComment = useMemo(() => {
+    const id = query.get('selected')
+    return id ? bigInt(id) : null;
+  }, [query]);
+
+  const editCommentId = useMemo(() => {
+    const id = query.get('edit')
+    return id || '';
+  }, [query]);
+
 
   const onSubmit = async (
     { comment },
@@ -95,7 +107,10 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
         val = val + curr.url;
       } else if ('code' in curr) {
         val = val + curr.code.expression;
+      } else if ('reference' in curr) {
+        val = `${val}${referenceToPermalink(curr).link}`;
       }
+
       return val;
     }, '');
   }
@@ -109,14 +124,15 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     };
   }, [comments.post.index]);
 
-  const readCount = children.length - getUnreadCount(props?.unreads, association.resource, parentIndex);
+  const unreads = useHarkState(state => state.unreads);
+  const readCount = children.length - getUnreadCount(unreads, association.resource, parentIndex);
 
   const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
 
   return (
     <Col {...rest}>
-      {( !props.editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
-      {( props.editCommentId ? (
+      {( !editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
+      {( editCommentId ? (
         <CommentInput
           onSubmit={onEdit}
           label='Edit Comment'
@@ -125,12 +141,13 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
         />
       ) : null )}
       {children.reverse()
-        .map(([idx, comment], i) => {
+          .map(([idx, comment], i) => {
+          const highlighted = selectedComment?.eq(idx) ?? false;
           return (
             <CommentItem
+              highlighted={highlighted}
               comment={comment}
               key={idx.toString()}
-              contacts={props.contacts}
               api={api}
               name={name}
               ship={ship}

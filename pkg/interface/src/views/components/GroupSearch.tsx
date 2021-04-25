@@ -18,13 +18,13 @@ import { Associations, Association } from '@urbit/api/metadata';
 
 import { roleForShip } from '~/logic/lib/group';
 import { DropdownSearch } from './DropdownSearch';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
 
 interface GroupSearchProps<I extends string> {
   disabled?: boolean;
   adminOnly?: boolean;
   publicOnly?: boolean;
-  groups: Groups;
-  associations: Associations;
   label: string;
   caption?: string;
   id: I;
@@ -86,34 +86,36 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
   const value: string[] = values[id];
   const touched = touchedFields[id] ?? false;
   const error = _.compact(errors[id] as string[]);
+  const groupState = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
 
   const groups: Association[] = useMemo(() => {
      if (props.adminOnly) {
        return Object.values(
-          Object.keys(props.associations?.groups)
+          Object.keys(associations.groups)
             .filter(
-              e => roleForShip(props.groups[e], window.ship) === 'admin'
+              e => roleForShip(groupState[e], window.ship) === 'admin'
             )
             .reduce((obj, key) => {
-              obj[key] = props.associations?.groups[key];
+              obj[key] = associations.groups[key];
               return obj;
             }, {}) || {}
         );
      } else if (props.publicOnly) {
        return Object.values(
-         Object.keys(props.associations?.groups)
+         Object.keys(associations.groups)
            .filter(
-             e => props.groups?.[e]?.policy?.open
+             e => groupState?.[e]?.policy?.open
            )
            .reduce((obj, key) => {
-             obj[key] = props.associations?.groups[key];
+             obj[key] = associations.groups[key];
              return obj;
            }, {}) || {}
        );
      } else {
-      return Object.values(props.associations?.groups || {});
+      return Object.values(associations.groups || {});
      }
-  }, [props.associations?.groups]);
+  }, [associations.groups]);
 
   return (
     <FieldArray
@@ -155,7 +157,7 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
               {value?.length > 0 && (
                 value.map((e, idx: number) => {
                   const { title } =
-                    props.associations.groups?.[e]?.metadata || {};
+                    associations.groups?.[e]?.metadata || {};
                   return (
                     <Row
                       key={e}

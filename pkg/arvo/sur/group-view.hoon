@@ -31,6 +31,7 @@
 ::
 +$  update
   $%  [%initial initial=(map resource request)]
+      [%started =resource =request]
       [%progress =resource =progress]
       [%hide =resource]
   ==

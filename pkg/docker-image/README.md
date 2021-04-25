@@ -29,6 +29,51 @@ The image includes `EXPOSE` directives for TCP port 80 and UDP port 34343. Port 
 
 You can either pass the `-P` flag to docker to map ports directly to the corresponding ports on the host, or map them individually with `-p` flags. For local testing the latter is often convenient, for instance to remap port 80 to an unprivileged port.
 
+You should be able to use port mapping for most purposes but you can force Ames to use a custom port. 
+`--port=$AMES_PORT` can be passed as an argument to the `docker start` command. Passing `--port=13436` for example, would use port 13436.  
+
+### Examples
+Creating a volume for ~sampel=palnet:
+```
+docker volume create sampel-palnet
+```
+
+Copying key to sampel-palnet's volume (assumes default docker location)
+```
+sudo cp ~/sampel-palnet.key /var/lib/docker/volumes/sampel-palnet/_data/sampel-palnet.key
+```
+
+Using that volume and launching ~sampel-palnet on host port 8080 with Ames talking on host port 27000:
+```
+docker run -d -p 8080:80 -p 27000:34343/udp --name sampel-palnet \
+    --mount type=volume,source=sampel-palnet,destination=/urbit \
+    tloncorp/urbit
+```
+
+Using host port 8088 with Ames talking on host port 23232 while forcing Ames to start internally on port 13436:
+```
+docker run -d -p 8088:80 -p 23232:13436/udp --name sampel-palnet \
+    --mount type=volume,source=sampel-palnet,destination=/urbit \
+    tloncorp/urbit --port=13436
+```
+
+### Getting and resetting the Landscape +code
+This docker image includes tools for retrieving and resetting the Landscape login code belonging to the planet, for programmatic use so the container does not need a tty. These scripts can be called using `docker container exec`.
+
+Getting the code:
+```
+$ docker container exec sampel-palnet /bin/get-urbit-code
+sampel-sampel-sampel-sampel
+```
+
+Resetting the code:
+```
+$ docker container exec sampel-palnet /bin/reset-urbit-code
+OK
+```
+
+Once the code has been reset the new code can be obtained from `/bin/get-urbit-code`.
+
 ## Extending
 
 You likely do not want to extend this image. External applications which interact with Urbit do so primarily via an HTTP API, which should be exposed as described above. For containerized applications using Urbit, it is more appropriate to use a container orchestration service such as Docker Compose or Kubernetes to run Urbit alongside other containers which will interface with its API.

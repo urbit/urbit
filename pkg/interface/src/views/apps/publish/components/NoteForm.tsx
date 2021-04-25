@@ -9,7 +9,6 @@ import {
 import { AsyncButton } from '../../../components/AsyncButton';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { MarkdownField } from './MarkdownField';
-import { StorageState } from '~/types';
 
 interface PostFormProps {
   initial: PostFormSchema;
@@ -21,7 +20,6 @@ interface PostFormProps {
   ) => Promise<any>;
   submitLabel: string;
   loadingText: string;
-  storage: StorageState;
 }
 
 const formSchema = Yup.object({
@@ -35,7 +33,7 @@ export interface PostFormSchema {
 }
 
 export function PostForm(props: PostFormProps) {
-  const { initial, onSubmit, submitLabel, loadingText, storage, cancel, history } = props;
+  const { initial, onSubmit, submitLabel, loadingText, cancel, history } = props;
 
   return (
     <Col width="100%" height="100%" p={[2, 4]}>
@@ -67,7 +65,7 @@ export function PostForm(props: PostFormProps) {
                          >Cancel</Button>}
             </Row>
           </Row>
-          <MarkdownField flexGrow={1} id="body" storage={storage} />
+          <MarkdownField flexGrow={1} id="body" />
         </Form>
       </Formik>
     </Col>

@@ -1,7 +1,7 @@
-import React, { ReactElement, ReactNode } from "react";
-import _ from "lodash";
+import React, { ReactElement, ReactNode } from 'react';
+import _ from 'lodash';
 
-import { Col, Box, Text } from "@tlon/indigo-react";
+import { Col, Box, Text } from '@tlon/indigo-react';
 import {
   Invites as IInvites,
   Associations,
@@ -11,20 +11,18 @@ import {
   Contacts,
   AppInvites,
   JoinProgress,
-  JoinRequest,
-} from "@urbit/api";
+  JoinRequest
+} from '@urbit/api';
 
-import GlobalApi from "~/logic/api/global";
-import { resourceAsPath, alphabeticalOrder } from "~/logic/lib/util";
-import InviteItem from "~/views/components/Invite";
+import GlobalApi from '~/logic/api/global';
+import { resourceAsPath, alphabeticalOrder } from '~/logic/lib/util';
+import InviteItem from '~/views/components/Invite';
+import useInviteState from '~/logic/state/invite';
+import useGroupState from '~/logic/state/group';
 
 interface InvitesProps {
   api: GlobalApi;
-  invites: IInvites;
-  groups: Groups;
-  contacts: Contacts;
-  associations: Associations;
-  pendingJoin: JoinRequests;
+  pendingJoin?: any;
 }
 
 interface InviteRef {
@@ -33,8 +31,9 @@ interface InviteRef {
   invite: Invite;
 }
 
-export function Invites(props: InvitesProps): ReactNode {
-  const { api, invites } = props;
+export function Invites(props: InvitesProps): ReactElement {
+  const { api } = props;
+  const invites = useInviteState(state => state.invites);
 
   const inviteArr: InviteRef[] = _.reduce(
     invites,
@@ -51,41 +50,31 @@ export function Invites(props: InvitesProps): ReactNode {
     []
   );
 
-  const pendingJoin = _.omitBy(props.pendingJoin, "hidden");
+  const pendingJoin = _.omitBy(props.pendingJoin, 'hidden');
 
   const invitesAndStatus: { [rid: string]: JoinRequest | InviteRef } = {
     ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)),
-    ...pendingJoin,
+    ...pendingJoin
   };
 
   return (
     <>
-      {Object.keys(invitesAndStatus).length > 0 && (
-        <Box position="sticky" zIndex={3} top="-1px" bg="white">
-          <Box p="2" bg="scales.black05">
-            <Text>Invites</Text>
-          </Box>
-        </Box>
-      )}
       {Object.keys(invitesAndStatus)
         .sort(alphabeticalOrder)
         .map((resource) => {
           const inviteOrStatus = invitesAndStatus[resource];
-          if ("progress" in inviteOrStatus) {
-            return (
-              <InviteItem
-                key={resource}
-                contacts={props.contacts}
-                groups={props.groups}
-                associations={props.associations}
-                resource={resource}
-                pendingJoin={pendingJoin}
-                api={api}
-              />
+          const join = pendingJoin[resource];
+          if ('progress' in inviteOrStatus) {
+           return (
+             <InviteItem
+               key={resource}
+               resource={resource}
+               api={api}
+               pendingJoin={join}
+             />
             );
           } else {
             const { app, uid, invite } = inviteOrStatus;
-            console.log(inviteOrStatus);
             return (
               <InviteItem
                 key={resource}
@@ -93,15 +82,12 @@ export function Invites(props: InvitesProps): ReactNode {
                 invite={invite}
                 app={app}
                 uid={uid}
-                pendingJoin={pendingJoin}
                 resource={resource}
-                contacts={props.contacts}
-                groups={props.groups}
-                associations={props.associations}
               />
             );
           }
-        })}
+        })
+      }
     </>
   );
 }

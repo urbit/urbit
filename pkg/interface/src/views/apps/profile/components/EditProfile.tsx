@@ -21,6 +21,7 @@ import { ImageInput } from '~/views/components/ImageInput';
 import { MarkdownField } from '~/views/apps/publish/components/MarkdownField';
 import { resourceFromPath } from '~/logic/lib/group';
 import GroupSearch from '~/views/components/GroupSearch';
+import useContactState from '~/logic/state/contact';
 import {
   ProfileHeader,
   ProfileControls,
@@ -48,7 +49,7 @@ const emptyContact = {
 };
 
 export function ProfileHeaderImageEdit(props: any): ReactElement {
-  const { contact, storage, setFieldValue, handleHideCover } = { ...props };
+  const { contact, setFieldValue, handleHideCover } = props;
   const [editCover, setEditCover] = useState(false);
   const [removedCoverLabel, setRemovedCoverLabel] = useState('Remove Header');
   const handleClear = (e) => {
@@ -63,27 +64,28 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
       {contact?.cover ? (
         <div>
           {editCover ? (
-            <ImageInput id='cover' storage={storage} marginTop='-8px' />
+            <ImageInput id='cover' marginTop='-8px' width='288px' />
           ) : (
             <Row>
               <Button mr='2' onClick={() => setEditCover(true)}>
                 Replace Header
               </Button>
-              <Button onClick={(e) => handleClear(e)}>
+              <Button onClick={e => handleClear(e)}>
                 {removedCoverLabel}
               </Button>
             </Row>
           )}
         </div>
       ) : (
-        <ImageInput id='cover' storage={storage} marginTop='-8px' />
+        <ImageInput id='cover' marginTop='-8px' width='288px' />
       )}
     </>
   );
 }
 
 export function EditProfile(props: any): ReactElement {
-  const { contact, storage, ship, api, isPublic } = props;
+  const { contact, ship, api } = props;
+  const isPublic = useContactState((state) => state.isContactPublic);
   const [hideCover, setHideCover] = useState(false);
 
   const handleHideCover = (value) => {
@@ -91,9 +93,6 @@ export function EditProfile(props: any): ReactElement {
   };
 
   const history = useHistory();
-  if (contact) {
-    contact.isPublic = isPublic;
-  }
 
   const onSubmit = async (values: any, actions: any) => {
     try {
@@ -141,14 +140,14 @@ export function EditProfile(props: any): ReactElement {
     <>
       <Formik
         validationSchema={formSchema}
-        initialValues={contact || emptyContact}
+        initialValues={{...contact, isPublic } || emptyContact}
         onSubmit={onSubmit}
       >
         {({ setFieldValue }) => (
           <Form width='100%' height='100%'>
             <ProfileHeader>
               <ProfileControls>
-                <Row>
+                <Row alignItems='baseline'>
                   <Button
                     type='submit'
                     display='inline'
@@ -176,10 +175,13 @@ export function EditProfile(props: any): ReactElement {
                 </Row>
                 <ProfileStatus contact={contact} />
               </ProfileControls>
-              <ProfileImages hideCover={hideCover} contact={contact} ship={ship}>
+              <ProfileImages
+                hideCover={hideCover}
+                contact={contact}
+                ship={ship}
+              >
                 <ProfileHeaderImageEdit
                   contact={contact}
-                  storage={storage}
                   setFieldValue={setFieldValue}
                   handleHideCover={handleHideCover}
                 />
@@ -193,23 +195,16 @@ export function EditProfile(props: any): ReactElement {
                 <ImageInput
                   id='avatar'
                   label='Overlay Avatar (may be hidden by other users)'
-                  storage={storage}
                 />
               </Col>
             </Row>
             <Input id='nickname' label='Custom Name' mb={3} />
             <Col width='100%'>
               <Text mb={2}>Description</Text>
-              <MarkdownField id='bio' mb={3} storage={storage} />
+              <MarkdownField id='bio' mb={3} />
             </Col>
             <Checkbox mb={3} id='isPublic' label='Public Profile' />
-            <GroupSearch
-              label='Pinned Groups'
-              id='groups'
-              groups={props.groups}
-              associations={props.associations}
-              publicOnly
-            />
+            <GroupSearch label='Pinned Groups' id='groups' publicOnly />
             <AsyncButton primary loadingText='Updating...' border mt={3}>
               Submit
             </AsyncButton>

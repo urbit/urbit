@@ -1,7 +1,14 @@
 |%
 +$  observer  [app=term =path thread=term]
 +$  action
-  $%  [%watch =observer]
+  $%  ::  %gall actions
+      ::
+      [%watch =observer]
       [%ignore =observer]
+    ::
+      ::  %clay actions
+      ::
+      [%warm-cache-all ~]
+      [%cool-cache-all ~]
   ==
 --

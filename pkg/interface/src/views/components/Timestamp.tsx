@@ -11,44 +11,76 @@ export type TimestampProps = BoxProps & {
   stamp: MomentType;
   date?: boolean;
   time?: boolean;
-}
+  relative?: boolean;
+};
 
-const Timestamp = (props: TimestampProps): ReactElement | null=> {
-  const { stamp, date, time, color, fontSize, ...rest } = {
-    time: true, color: 'gray', fontSize: 0, ...props
+const Timestamp = (props: TimestampProps): ReactElement | null => {
+  const {
+    stamp,
+    date,
+    time,
+    color,
+    relative,
+    dateNotRelative,
+    fontSize,
+    lineHeight,
+    ...rest
+  } = {
+    time: true,
+    color: 'gray',
+    fontSize: 0,
+    ...props
   };
   if (!stamp) return null;
-  const { hovering, bind } = date === true
-    ? { hovering: true, bind: {} }
-    : useHovering();
+  const { hovering, bind } =
+    date === true ? { hovering: true, bind: {} } : useHovering();
   let datestamp = stamp.format(DateFormat);
-  if (stamp.format(DateFormat) === moment().format(DateFormat)) {
-    datestamp = 'Today';
-  } else if (stamp.format(DateFormat) === moment().subtract(1, 'day').format(DateFormat)) {
-    datestamp = 'Yesterday';
+  if (!dateNotRelative) {
+    if (stamp.format(DateFormat) === moment().format(DateFormat)) {
+      datestamp = 'Today';
+    } else if (
+      stamp.format(DateFormat) === moment().subtract(1, 'day').format(DateFormat)
+    ) {
+      datestamp = 'Yesterday';
+    }
+  } else {
+    datestamp = `~${datestamp}`;
   }
-  const timestamp = stamp.format(TimeFormat);
+
+  let timestamp;
+  if (relative) {
+    timestamp = stamp.fromNow();
+  } else {
+    timestamp = stamp.format(TimeFormat);
+  }
   return (
     <Box
       {...bind}
       display='flex'
       flex='row'
-      flexWrap="nowrap"
+      flexWrap='nowrap'
       {...rest}
       title={stamp.format(DateFormat + ' ' + TimeFormat)}
     >
-      {time && <Text flexShrink={0} color={color} fontSize={fontSize}>{timestamp}</Text>}
-      {date !== false && <Text
-        flexShrink={0}
-        color={color}
-        fontSize={fontSize}
-        ml={time ? 2 : 0}
-        display={time ? ['none', hovering ? 'block' : 'none'] : 'block'}
-      >
-        {datestamp}
-      </Text>}
+      {time && (
+        <Text lineHeight={lineHeight} flexShrink={0} color={color} fontSize={fontSize}>
+          {timestamp}
+        </Text>
+      )}
+      {date !== false && relative !== true && (
+        <Text
+          flexShrink={0}
+          color={color}
+          lineHeight={lineHeight}
+          fontSize={fontSize}
+          display={time ? ['none', hovering ? 'block' : 'none'] : 'block'}
+        >
+          {time ? '\u00A0' : ''}
+          {datestamp}
+        </Text>
+      )}
     </Box>
-  )
-}
+  );
+};
 
 export default Timestamp;

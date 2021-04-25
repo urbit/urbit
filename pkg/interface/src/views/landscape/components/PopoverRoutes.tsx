@@ -20,11 +20,8 @@ import { StorageState } from '~/types';
 export function PopoverRoutes(
   props: {
     baseUrl: string;
-    contacts: Contacts;
     group: Group;
     association: Association;
-    associations: Associations;
-    storage: StorageState;
     api: GlobalApi;
     notificationsGroupConfig: GroupNotificationsConfig;
     rootIdentity: Contact;
@@ -105,6 +102,13 @@ export function PopoverRoutes(
                           to={relativeUrl('/settings#channels')}
                           text="Channel Management"
                         />
+                        { owner && (
+                        <SidebarItem
+                          icon="Server"
+                          to={relativeUrl('/settings#feed')}
+                          text="Group Feed"
+                        />)}
+
                       </>
                     )}
                     <DeleteGroup owner={owner} api={props.api} association={props.association} />
@@ -126,15 +130,11 @@ export function PopoverRoutes(
                       group={props.group}
                       association={props.association}
                       api={props.api}
-                      notificationsGroupConfig={props.notificationsGroupConfig}
-                      associations={props.associations}
-                      storage={props.storage}
                     />
                   )}
                   {view === 'participants' && (
                     <Participants
                       group={props.group}
-                      contacts={props.contacts}
                       association={props.association}
                       api={props.api}
                     />

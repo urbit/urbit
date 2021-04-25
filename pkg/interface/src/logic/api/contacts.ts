@@ -84,7 +84,7 @@ export default class ContactsApi extends BaseApi<StoreState> {
   }
 
   private storeAction(action: any): Promise<any> {
-    return this.action('contact-store', 'contact-update', action);
+    return this.action('contact-store', 'contact-update-0', action);
   }
 
   private viewAction(threadName: string, action: any) {
@@ -92,6 +92,6 @@ export default class ContactsApi extends BaseApi<StoreState> {
   }
 
   private hookAction(ship: Patp, action: any): Promise<any> {
-    return this.action('contact-push-hook', 'contact-update', action);
+    return this.action('contact-push-hook', 'contact-update-0', action);
   }
 }

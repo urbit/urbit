@@ -5,37 +5,34 @@
 // 1. call configure with a GlobalApi and GlobalStore.
 // 2. call start() to start the token refresh loop.
 //
-// If the ship does not have GCP storage configured, we don't try to get
-// a token, but we keep checking at regular intervals to see if it gets
-// configured. If GCP storage is configured, we try to invoke the GCP
-// get-token thread on the ship until it gives us an access token.  Once
+// If the ship does not have GCP storage configured, we don't try to
+// get a token. If GCP storage is configured, we try to invoke the GCP
+// get-token thread on the ship until it gives us an access token. Once
 // we have a token, we refresh it every hour or so according to its
 // intrinsic expiry.
 //
 //
 import GlobalApi from '../api/global';
-import GlobalStore from '../store/store';
+import useStorageState from '../state/storage';
 
 
 class GcpManager {
   #api: GlobalApi | null = null;
-  #store: GlobalStore | null = null;
 
-  configure(api: GlobalApi, store: GlobalStore) {
+  configure(api: GlobalApi) {
     this.#api = api;
-    this.#store = store;
   }
 
   #running = false;
-  #timeoutId: number | null = null;
+  #timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   start() {
     if (this.#running) {
       console.warn('GcpManager already running');
       return;
     }
-    if (!this.#api || !this.#store) {
-      console.error('GcpManager must have api and store set');
+    if (!this.#api) {
+      console.error('GcpManager must have api set');
       return;
     }
     this.#running = true;
@@ -63,22 +60,21 @@ class GcpManager {
   }
 
   #consecutiveFailures: number = 0;
-
-  private isConfigured() {
-    return this.#store.state.storage.gcp.configured;
-  }
+  #configured: boolean = false;
 
   private refreshLoop() {
-    if (!this.isConfigured()) {
-      this.#api.gcp.isConfigured()
-        .then(() => {
-          if (this.isConfigured() === undefined) {
+    if (!this.#configured) {
+      this.#api!.gcp.isConfigured()
+        .then((configured) => {
+          if (configured === undefined) {
             throw new Error("can't check whether GCP is configured?");
           }
-          if (this.isConfigured()) {
+          this.#configured = configured;
+          if (this.#configured) {
             this.refreshLoop();
           } else {
-            this.refreshAfter(10_000);
+            console.log('GcpManager: GCP storage not configured; stopping.');
+            this.stop();
           }
         })
         .catch((reason) => {
@@ -87,9 +83,9 @@ class GcpManager {
         });
       return;
     }
-    this.#api.gcp.getToken()
+    this.#api!.gcp.getToken()
       .then(() => {
-        const token = this.#store.state.storage.gcp?.token;
+        const token = useStorageState.getState().gcp.token;
         if (token) {
           this.#consecutiveFailures = 0;
           const interval = this.refreshInterval(token.expiresIn);
