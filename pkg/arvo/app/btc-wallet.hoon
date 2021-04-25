@@ -36,6 +36,7 @@
       =piym
       =poym
       ahistorical-txs=(set txid)
+      mempool-addresses=(jug address condition)
   ==
 ::
 +$  card  card:agent:gall
@@ -78,6 +79,7 @@
         *^piym
         *^poym
         ~
+        ~
     ==
   ==
 ++  on-save
@@ -88,6 +90,7 @@
   ^-  (quip card _this)
   ~&  >  '%btc-wallet recompiled'
   `this(state !<(versioned-state old-state))
+  ::  `this(state *state-0)
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
@@ -655,6 +658,7 @@
       ==
     ;:  weld
 ::      (retry-addrs network)
+      retry-mempool-addresses
       retry-ahistorical-txs
       (retry-pend-piym network)
     ==
@@ -664,6 +668,14 @@
     %+  turn  ~(tap in ahistorical-txs)
     |=  =txid
     (poke-provider [%tx-info txid])
+
+  ::
+  ++  retry-mempool-addresses
+    ^-  (list card)
+    %+  turn
+      ~(tap in ~(key by mempool-addresses))
+    |=  =address
+    (poke-provider [%address-info address])
   ::
   ++  retry-scans
     |=  =network
@@ -692,6 +704,7 @@
   ++  retry-txs
     |=  =network
     ^-  (list card)
+    ~&  %retry-txs
     %+  murn  ~(tap by history)
     |=  [=txid =hest]
     =/  w  (~(get by walts) xpub.hest)
@@ -763,7 +776,6 @@
 ++  handle-tx-info
   |=  ti=info:tx
   ^-  (quip card _state)
-  ~&  %handle-tx-info^ti
   |^
   =/  h  (~(get by history) txid.ti)
   =.  ahistorical-txs  (~(del in ahistorical-txs) txid.ti)
@@ -774,11 +786,24 @@
       |=(=val:tx address.val)
     is-our-address
   ~&  addresses+our-addrs
-::  =/  addr-info-cards=(list card)
-::    %+  turn  ~(tap in our-addrs)
-::    |=  a=address
-::    ^-  card
-::    (poke-provider [%address-info a])
+  =/  addr-info-cards=(list card)
+    %+  turn  ~(tap in our-addrs)
+    |=  a=address
+    ^-  card
+    (poke-provider [%address-info a])
+  ::
+  =.  mempool-addresses
+    %+  roll  inputs.ti
+    |=  [=val:tx out=_mempool-addresses]
+    ?:  (is-our-address address.val)
+      (~(put ju out) address.val [%exclude txid.val])
+    out
+  =.  mempool-addresses
+    %+  roll  outputs.ti
+    |=  [=val:tx out=_mempool-addresses]
+    ?:  (is-our-address address.val)
+      (~(put ju out) address.val [%include txid.val])
+    out
   ::
   ?:  =(0 ~(wyt in our-addrs))  `state
   =/  =xpub
@@ -787,17 +812,17 @@
     =/  new-hest=hest  (mk-hest xpub our-addrs)
     =.  history  (~(put by history) txid.ti new-hest)
     :_  state
-::    :_  addr-info-cards
-    [(give-update %new-tx new-hest)]~
+    :_  addr-info-cards
+    (give-update %new-tx new-hest)
   ?.  included.ti                 ::  tx in history, but not in mempool/blocks
     :_  state(history (~(del by history) txid.ti))
-::    :_  addr-info-cards
-    [(give-update %cancel-tx txid.ti)]~
+    :_  addr-info-cards
+    (give-update %cancel-tx txid.ti)
   =/  new-hest  u.h(confs confs.ti, recvd recvd.ti)
   =.  history  (~(put by history) txid.ti new-hest)
   :_  state
-::  :_  addr-info-cards
-  [(give-update %new-tx new-hest)]~
+  :_  addr-info-cards
+  (give-update %new-tx new-hest)
   ::
   ++  mk-hest
     :: has tx-info
@@ -848,6 +873,20 @@
   =/  ac  (address-coords:bl address ~(val by walts))
   ?~  ac
     `state
+  ::
+  =/  cons=(set condition)  (~(get ju mempool-addresses) address)
+  =/  new-cons=(set condition)
+    %-  silt
+    %+  skip  ~(tap in cons)
+    |=  =condition
+    ?:  =(%include -.condition)
+      (~(any in utxos) |=(=utxo =(txid.utxo txid.condition)))
+    (~(all in utxos) |=(=utxo !=(txid.utxo txid.condition)))
+  =.  mempool-addresses
+    ?~  new-cons
+      (~(del by mempool-addresses) address)
+    (~(put by mempool-addresses) address new-cons)
+  ::
   =/  [w=walt =chyg =idx]  u.ac
   =.  walts
     %+  ~(put by walts)  xpub.w
@@ -884,6 +923,7 @@
 ++  req-scan
   |=  [b=batch =xpub:bc =chyg]
   ^-  (quip card _state)
+  ~&  %req-scan
   =/  w=walt  (~(got by walts) xpub)
   =/  as=(list [address [? ^chyg idx (set utxo)]])
     %+  turn  ~(tap in todo.b)
