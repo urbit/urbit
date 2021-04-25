@@ -1,6 +1,6 @@
 Usage:
 
-  |fuse %destination-desk ~[[source-beak %some-germ] [another-beak %another-germ]]
+  |fuse %destination-desk base-beak ~[[source-beak %some-germ] [another-beak %another-germ]]
 
 A fuse replaces the contents of %destination-desk with the merge of the
 specified beaks according to their merge strategies. This has no dependence
