@@ -57,7 +57,8 @@
   ==
 +$  kiln-fuse
   $:  syd=desk
-      srcs=(list [beak germ])
+      bas=beak
+      con=(list [beak germ])
   ==
 --
 |=  [bowl:gall state]
@@ -387,7 +388,7 @@
 ::
 ++  poke-fuse
   |=  k=kiln-fuse
-  abet:(emit [%pass /kiln/fuse/[syd.k] %arvo %c [%fuse syd.k srcs.k]])
+  abet:(emit [%pass /kiln/fuse/[syd.k] %arvo %c [%fuse syd.k bas.k con.k]])
 ::
 ++  poke-cancel
   |=  a=@tas

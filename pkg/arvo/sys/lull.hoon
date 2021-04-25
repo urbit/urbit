@@ -764,8 +764,8 @@
         ==                                              ::
         $:  %fuse                                       ::  mega merge
             des=desk                                    ::  target desk
-            ful=(list beak)                             ::  source desks
-            gim=(list germ)                             ::  strategies
+            bas=beak                                    ::  base desk
+            con=(list [beak germ])                      ::  merges
         ==
         [%mont pot=term bem=beam]                       ::  mount to unix
         [%dirk des=desk]                                ::  mark mount dirty

@@ -8,5 +8,5 @@
 ::::
   ::
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] [des=desk srcs=(list [beak germ]) ~] ~]
-[%kiln-fuse des srcs]
+|=  [[now=@da eny=@uvJ bec=beak] [des=desk bas=beak con=(list [beak germ]) ~] ~]
+[%kiln-fuse des bas con]

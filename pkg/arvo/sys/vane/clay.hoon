@@ -1976,43 +1976,29 @@
     (turn con |=(a=[beak germ] [-.a *(unit dome:clay)]))
   ::
   ++  start-fuse
-    |=  [ful=(list beak) gim=(list germ)]
+    |=  [bas=beak con=(list [beak germ])]
     ^+  ..start-fuse
-    ::  must have n sources and n-1 gems
-    ?>  =((lent ful) +((lent gim)))
     =/  moves=(list move)
         %+  turn
-          ful
-        |=  bec=beak
+          [[bas *germ] con]
+        |=  [bec=beak germ]
         ^-  move
         =/  wir=wire  /fuse/[syd]/(scot %p p.bec)/[q.bec]/(scot r.bec)
         [hen %pass wir %c %warp p.bec q.bec `[%sing %v r.bec /]]
-    ?~  ful
-      !!
-    =/  base=beak  i.ful
-    =/  ful=(list beak)  t.ful
-    =/  con=(list [beak germ])
-        =|  acc=(list [beak germ])
-        |-
-        ?~  ful
-          acc
-        ?~  gim
-          !!
-        $(acc [[i.ful i.gim] acc], ful t.ful, gim t.gim)
     ::  we also want to clear the state (fiz) associated with this
     ::  merge and print a warning if it's non trivial i.e. we're
     ::  starting a new fuse before the previous one terminated.
     ~&  ?~  con.fiz
-          [%starting-fuse base con]
+          [%starting-fuse bas con]
         :*  %starting-fuse
-            base
+            bas
             con
             %discarding-state
             ::  we don't want to ~& an entire dome
             %-  ~(run by sto.fiz)
             |=(v=(unit dome:clay) ?~(v %not-received %recieved))
         ==
-    =.  fiz  (make-melt base con)
+    =.  fiz  (make-melt bas con)
     (emil moves)
   ::
   ++  take-fuse
@@ -4238,7 +4224,7 @@
       ~&(%fuse-no-desk !!)
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(start-fuse:den ful.req gim.req)
+      abet:(start-fuse:den bas.req con.req)
     [mos ..^$]
   ::
       %mont
@@ -4570,7 +4556,7 @@
       abet:(merge:den ali-ship ali-desk germ p.hin)
     [mos ..^$]
   ::
-  ?:  ?=([%fuse @ @ @ @ @ ~] tea)
+  ?:  ?=([%fuse @ @ @ @ ~] tea)
     ?>  ?=(%writ +<.hin)
     =*  syd  i.t.tea
     =/  ali-ship=@p  (slav %p i.t.t.tea)
