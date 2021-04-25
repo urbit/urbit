@@ -264,6 +264,7 @@ class ChatMessage extends Component<ChatMessageProps> {
   componentDidMount() {}
 
   render() {
+    let { highlighted } = this.props;
     const {
       msg,
       previousMsg,
@@ -279,11 +280,20 @@ class ChatMessage extends Component<ChatMessageProps> {
       unreadMarkerRef,
       history,
       api,
-      highlighted,
       showOurContact,
       fontSize,
       hideHover
     } = this.props;
+
+    const ourMention = msg?.contents?.some((e) => {
+      return e?.mention && e?.mention === window.ship;
+    });
+
+    if (!highlighted) {
+      if (ourMention) {
+        highlighted = true;
+      }
+    }
 
     let onReply = this.props?.onReply ?? (() => {});
     const transcluded = this.props?.transcluded ?? 0;
