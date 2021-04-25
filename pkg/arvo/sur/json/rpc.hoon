@@ -3,6 +3,7 @@
 |%
 +$  request
   $:  id=@t
+      jsonrpc=@t
       method=@t
       params=request-params
   ==
