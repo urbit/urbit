@@ -89,8 +89,8 @@
   |=  old-state=vase
   ^-  (quip card _this)
   ~&  >  '%btc-wallet recompiled'
-::  `this(state !<(versioned-state old-state))
-  `this(state *state-0)
+  `this(state !<(versioned-state old-state))
+  ::  `this(state *state-0)
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
@@ -658,6 +658,7 @@
       ==
     ;:  weld
 ::      (retry-addrs network)
+      retry-mempool-addresses
       retry-ahistorical-txs
       (retry-pend-piym network)
     ==
@@ -667,6 +668,14 @@
     %+  turn  ~(tap in ahistorical-txs)
     |=  =txid
     (poke-provider [%tx-info txid])
+
+  ::
+  ++  retry-mempool-addresses
+    ^-  (list card)
+    %+  turn
+      ~(tap in ~(key by mempool-addresses))
+    |=  =address
+    (poke-provider [%address-info address])
   ::
   ++  retry-scans
     |=  =network
@@ -681,7 +690,6 @@
   ++  retry-addrs
     |=  =network
     ^-  (list card)
-    ~&  %retry-addrs
     %-  zing
     %+  murn  ~(val by walts)
     |=  w=walt
@@ -723,7 +731,6 @@
   ++  retry-pend-piym
     |=  =network
     ^-  (list card)
-    ~&  %retry-pend-piym
     %+  murn  ~(tap by pend.piym)
     |=  [=txid p=payment]
     =/  w  (~(get by walts) xpub.p)
@@ -769,7 +776,6 @@
 ++  handle-tx-info
   |=  ti=info:tx
   ^-  (quip card _state)
-  ~&  %handle-tx-info^ti
   |^
   =/  h  (~(get by history) txid.ti)
   =.  ahistorical-txs  (~(del in ahistorical-txs) txid.ti)
@@ -789,14 +795,12 @@
   =.  mempool-addresses
     %+  roll  inputs.ti
     |=  [=val:tx out=_mempool-addresses]
-    ^-  (set condition)
     ?:  (is-our-address address.val)
       (~(put ju out) address.val [%exclude txid.val])
     out
   =.  mempool-addresses
-    %+  roll  ouputs.ti
+    %+  roll  outputs.ti
     |=  [=val:tx out=_mempool-addresses]
-    ^-  (set condition)
     ?:  (is-our-address address.val)
       (~(put ju out) address.val [%include txid.val])
     out
@@ -869,6 +873,20 @@
   =/  ac  (address-coords:bl address ~(val by walts))
   ?~  ac
     `state
+  ::
+  =/  cons=(set condition)  (~(get ju mempool-addresses) address)
+  =/  new-cons=(set condition)
+    %-  silt
+    %+  skip  ~(tap in cons)
+    |=  =condition
+    ?:  =(%include -.condition)
+      (~(any in utxos) |=(=utxo =(txid.utxo txid.condition)))
+    (~(all in utxos) |=(=utxo !=(txid.utxo txid.condition)))
+  =.  mempool-addresses
+    ?~  new-cons
+      (~(del by mempool-addresses) address)
+    (~(put by mempool-addresses) address new-cons)
+  ::
   =/  [w=walt =chyg =idx]  u.ac
   =.  walts
     %+  ~(put by walts)  xpub.w

@@ -45,7 +45,11 @@ export default class Balance extends Component {
 
 
   render() {
-    const sats = (this.props.state.balance || 0);
+    const sats = (this.props.state.confirmedBalance || 0);
+    const unconfirmedSats = this.props.state.unconfirmedBalance;
+
+    const unconfirmedString = unconfirmedSats ? ` (${unconfirmedSats}) ` : '';
+
     const denomination = this.props.state.denomination;
     const value = satsToCurrency(sats, denomination, this.props.state.currencyRates);
     const sendDisabled = (sats === 0);
@@ -92,7 +96,7 @@ export default class Balance extends Component {
            </Row>
            <Col justifyContent="center" alignItems="center">
              <Text fontSize="52px" color="orange">{value}</Text>
-             <Text fontSize={1} color="orange">{sats} sats</Text>
+             <Text fontSize={1} color="orange">{`${sats}${unconfirmedString} sats`}</Text>
            </Col>
            <Row flexDirection="row-reverse">
              <Button children="Send"

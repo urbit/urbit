@@ -7,10 +7,11 @@ export class InitialReducer {
     if (data) {
       state.provider = data.provider;
       state.wallet = data.wallet;
-      state.balance = _.get(data.balance, 'confirmed', null);
+      state.confirmedBalance = _.get(data.balance, 'confirmed', null);
+      state.unconfirmedBalance = _.get(data.balance, 'unconfirmed', null);
       state.btcState = data['btc-state'];
       state.history = this.reduceHistory(data.history);
-      state.address = data.address
+      state.address = data.address;
       state.loaded = true;
     }
   }
