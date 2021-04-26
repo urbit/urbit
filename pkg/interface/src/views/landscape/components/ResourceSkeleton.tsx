@@ -125,45 +125,35 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   );
 
   const ExtraControls = () => {
-    if (workspace === '/messages' && group.hidden)
+    if (workspace === '/messages')
       return (
-        <Dropdown
-          flexShrink={0}
-          dropWidth='300px'
-          width='auto'
-          alignY='top'
-          alignX='right'
-          options={
-            <Col
-              backgroundColor='white'
-              border={1}
-              borderRadius={2}
-              borderColor='lightGray'
-              color='washedGray'
-              boxShadow='0px 0px 0px 3px'
-            >
-              {group.members.size >= 3 ? (
-                <MessageInvite association={association} api={api} />
-              ) : null}
-              {group.members.size === 2 ? (
-                <NewChannel
-                  api={props.api}
-                  history={history}
-                  workspace={{ type: 'messages' }}
+        <>
+          {group.members.size >= 3 ?
+            <Dropdown
+              flexShrink={0}
+              dropWidth='300px'
+              width='auto'
+              alignY='top'
+              alignX='right'
+              options={
+                <Col
+                  backgroundColor='white'
+                  border={1}
                   borderRadius={2}
-                  existingMembers={without(
-                    Array.from(group.members),
-                    window.ship
-                  )}
-                />
-              ) : null}
-            </Col>
-          }
-        >
-          <Text bold pr='3' color='blue'>
-            + Add Ship
-          </Text>
-        </Dropdown>
+                  borderColor='lightGray'
+                  color='washedGray'
+                  boxShadow='0px 0px 0px 3px'
+                >
+                  <MessageInvite association={association} api={api} />
+                </Col>
+              }
+            >
+              <Text bold pr='3' color='blue'>
+                + Add Ship
+              </Text>
+            </Dropdown>
+          : null }
+        </>
       );
     if (canWrite)
       return (
