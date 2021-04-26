@@ -19,7 +19,7 @@ export default function Sent(props) {
       height='400px'
       width='100%'
       backgroundColor='orange'
-      borderRadius='32px'
+      borderRadius='48px'
       mb={5}
       p={5}
     >

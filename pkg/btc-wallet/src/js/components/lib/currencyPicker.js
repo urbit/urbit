@@ -33,7 +33,7 @@ export default class CurrencyPicker extends Component {
   render() {
     return (
       <Row style={{cursor: "pointer"}} onClick={this.switchCurrency}>
-        <Icon icon="ChevronDouble" color="orange" pt="2px"/>
+        <Icon icon="ChevronDouble" color="orange" pt="2px" pr={1} />
         <Text color="orange" fontSize={1}>{this.props.denomination}</Text>
       </Row>
     );

@@ -81,14 +81,14 @@ export default class Balance extends Component {
            height="400px"
            width='100%'
            backgroundColor="white"
-           borderRadius="32px"
+           borderRadius="48px"
            justifyContent="space-between"
            mb={5}
            p={5}
          >
            <Row justifyContent="space-between">
              <Text color="orange" fontSize={1}>Balance</Text>
-             <Text color="lighterGray" fontSize="14px" mono>{addressText}</Text>
+             <Text color="lightGray" fontSize="14px" mono>{addressText}</Text>
              <CurrencyPicker
                denomination={denomination}
                currencies={this.props.state.currencyRates}

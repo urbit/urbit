@@ -177,7 +177,7 @@ export default class Send extends Component {
             height='400px'
             width='100%'
             backgroundColor='white'
-            borderRadius='32px'
+            borderRadius='48px'
             mb={5}
             p={5}
             display="flex"
@@ -274,7 +274,7 @@ export default class Send extends Component {
                     });
                   }}
                 />
-                <Text color="lighterGray" fontSize={1} ml={3}>sats</Text>
+                <Text color="lightGray" fontSize={1} ml={3}>sats</Text>
               </Row>
               <Row mt={4} width="100%" justifyContent="space-between">
                 <Text
@@ -310,9 +310,11 @@ export default class Send extends Component {
             >
               <Button
                 primary
-                children='Sign Transaction' mr={3}
+                children='Sign Transaction'
                 fontSize={1}
+                fontWeight='bold'
                 borderRadius='24px'
+                mt={4}
                 py='24px'
                 px='24px'
                 onClick={() =>{
