@@ -125,37 +125,38 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   );
 
   const ExtraControls = () => {
-    if (workspace === '/messages')
-      return (
-        <>
-          {group.members.size >= 3 ?
-            <Dropdown
-              flexShrink={0}
-              dropWidth='300px'
-              width='auto'
-              alignY='top'
-              alignX='right'
-              options={
-                <Col
-                  backgroundColor='white'
-                  border={1}
-                  borderRadius={2}
-                  borderColor='lightGray'
-                  color='washedGray'
-                  boxShadow='0px 0px 0px 3px'
-                >
-                  <MessageInvite association={association} api={api} />
-                </Col>
-              }
-            >
-              <Text bold pr='3' color='blue'>
-                + Add Ship
-              </Text>
-            </Dropdown>
-          : null }
-        </>
-      );
-    if (canWrite)
+    if (workspace === '/messages') {
+      const resourceArr = association.resource.split('/');
+      const resourceName = resourceArr[resourceArr.length - 1];
+      if (!resourceName.startsWith('dm-')) {
+        return (
+          <Dropdown
+            flexShrink={0}
+            dropWidth='300px'
+            width='auto'
+            alignY='top'
+            alignX='right'
+            options={
+              <Col
+                backgroundColor='white'
+                border={1}
+                borderRadius={2}
+                borderColor='lightGray'
+                color='washedGray'
+                boxShadow='0px 0px 0px 3px'
+              >
+                <MessageInvite association={association} api={api} />
+              </Col>
+            }
+          >
+            <Text bold pr='3' color='blue'>
+              + Add Ship
+            </Text>
+          </Dropdown>
+        );
+      }
+    }
+    if (canWrite) {
       return (
         <Link to={resourcePath('/new')}>
           <Text bold pr='3' color='blue'>
@@ -163,6 +164,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           </Text>
         </Link>
       );
+    }
     return <></>;
   };
 
