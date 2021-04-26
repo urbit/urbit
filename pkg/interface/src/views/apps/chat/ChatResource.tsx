@@ -28,9 +28,9 @@ type ChatResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+};
 
-export function ChatResource(props: ChatResourceProps) {
+function ChatResource(props: ChatResourceProps) {
   const station = props.association.resource;
   const groupPath = props.association.group;
   const groups = useGroupState(state => state.groups);
@@ -196,3 +196,8 @@ export function ChatResource(props: ChatResourceProps) {
     </Col>
   );
 }
+
+ChatResource.whyDidYouRender = true;
+
+export { ChatResource };
+
