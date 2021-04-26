@@ -12,6 +12,7 @@ export type TimestampProps = BoxProps & {
   date?: boolean;
   time?: boolean;
   relative?: boolean;
+  height?: string;
 };
 
 const Timestamp = (props: TimestampProps): ReactElement | null => {
