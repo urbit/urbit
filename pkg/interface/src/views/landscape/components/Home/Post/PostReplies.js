@@ -79,6 +79,7 @@ export default function PostReplies(props) {
             baseUrl={baseUrl}
             history={history}
             isParent={true}
+            parentPost={parentNode?.post}
             vip={vip}
             group={group}
           />

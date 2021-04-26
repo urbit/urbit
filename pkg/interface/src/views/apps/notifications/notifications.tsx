@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Link, Switch, Route } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
-import { Box, Col, Text, Row } from '@tlon/indigo-react';
+import { Box, Icon, Col, Text, Row } from '@tlon/indigo-react';
 
 import { Body } from '~/views/components/Body';
 import { PropFunc } from '~/types/util';
@@ -15,6 +15,7 @@ import { useTutorialModal } from '~/views/components/useTutorialModal';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
 import useGroupState from '~/logic/state/group';
+import {StatelessAsyncAction} from '~/views/components/StatelessAsyncAction';
 
 const baseUrl = '/~notifications';
 
@@ -46,8 +47,8 @@ export default function NotificationsScreen(props: any): ReactElement {
   const onSubmit = async ({ groups } : NotificationFilter) => {
     setFilter({ groups });
   };
-  const onReadAll = useCallback(() => {
-    props.api.hark.readAll();
+  const onReadAll = useCallback(async () => {
+    await props.api.hark.readAll();
   }, []);
   const groupFilterDesc =
     filter.groups.length === 0
@@ -81,59 +82,32 @@ export default function NotificationsScreen(props: any): ReactElement {
                     borderBottomColor="lightGray"
                   >
 
-                    <Text ref={anchorRef}>Notifications</Text>
+                  <Text fontWeight="bold" fontSize="2" lineHeight="1" ref={anchorRef}>
+                    Notifications
+                  </Text>
                     <Row
                       justifyContent="space-between"
+                      gapX="3"
                     >
-                      <Box
-                        mr="1"
+                      <StatelessAsyncAction
                         overflow="hidden"
+                        color="black"
+                        backgroundColor="white"
                         onClick={onReadAll}
-                        cursor="pointer"
                       >
-                          <Text mr="1" color="blue">
-                            Mark All Read
-                        </Text>
-                      </Box>
-
-                      <Dropdown
-                        alignX="right"
-                        alignY="top"
-                        options={
-                          <Col
-                            p="2"
-                            backgroundColor="white"
-                            border={1}
-                            borderRadius={1}
-                            borderColor="lightGray"
-                            gapY="2"
-                          >
-                            <FormikOnBlur
-                              initialValues={filter}
-                              onSubmit={onSubmit}
-                            >
-                              <GroupSearch
-                                id="groups"
-                                label="Filter Groups"
-                                caption="Only show notifications from this group"
-                              />
-                            </FormikOnBlur>
-                          </Col>
-                        }
-                      >
+                        Mark All Read
+                      </StatelessAsyncAction>
+                      <Link to="/~settings#notifications">
                         <Box>
-                          <Text mr="1" gray>
-                            Filter:
-                        </Text>
-                          <Text>{groupFilterDesc}</Text>
+                          <Icon lineHeight="1" icon="Adjust" />
                         </Box>
-                      </Dropdown>
+                      </Link>
                     </Row>
                   </Row>
                   {!view && <Inbox
                     pendingJoin={pendingJoin}
                     {...props}
-                    filter={filter.groups} 
+                    filter={filter.groups}
                     />}
                 </Col>
               </Body>

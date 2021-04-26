@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import _ from 'lodash';
 import { MetadataUpdatePreview, Association, Associations } from "@urbit/api";
 
 import { BaseState, createState } from "./base";
@@ -16,6 +17,11 @@ export function useAssocForGraph(graph: string) {
 
 export function useAssocForGroup(group: string) {
   return useMetadataState(useCallback(s => s.associations.groups[group] as Association | undefined, [group]));
+}
+
+export function useGraphsForGroup(group: string) {
+  const graphs = useMetadataState(s => s.associations.graph);
+  return _.pickBy(graphs, (a: Association) => a.group === group);
 }
 
 const useMetadataState = createState<MetadataState>('Metadata', {

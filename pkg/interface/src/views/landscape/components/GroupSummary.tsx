@@ -29,9 +29,9 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
           width="40px"
           height="40px"
           metadata={metadata}
-          flexShrink="0"
+          flexShrink={0}
         />
-        <Col justifyContent="space-between" flexGrow="1" overflow="hidden">
+        <Col justifyContent="space-between" flexGrow={1} overflow="hidden">
           <Text
             fontSize="1"
             textOverflow="ellipsis"

@@ -61,6 +61,7 @@ export const ShareProfile = (props) => {
       justifyContent="space-between"
       borderBottom={1}
       borderColor="lightGray"
+      flexShrink={0}
     >
       <Row pl={3} alignItems="center">
         {image}

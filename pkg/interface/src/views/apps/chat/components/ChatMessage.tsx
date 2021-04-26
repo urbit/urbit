@@ -1,4 +1,5 @@
 /* eslint-disable max-lines-per-function */
+import bigInt from 'big-integer';
 import React, {
   useState,
   useEffect,
@@ -19,7 +20,8 @@ import {
   writeText,
   useShowNickname,
   useHideAvatar,
-  useHovering
+  useHovering,
+  daToUnix
 } from '~/logic/lib/util';
 import {
   Group,
@@ -65,7 +67,7 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
     <Rule borderColor='lightGray' />
     <Text
       gray
-      flexShrink='0'
+      flexShrink={0}
       whiteSpace='nowrap'
       textAlign='center'
       fontSize={0}
@@ -107,7 +109,7 @@ export const UnreadMarker = React.forwardRef(
           <Text
             color='blue'
             fontSize={0}
-            flexShrink='0'
+            flexShrink={0}
             whiteSpace='nowrap'
             textAlign='center'
             px={2}
@@ -168,7 +170,7 @@ const MessageActions = ({ api, onReply, association, history, msg, group }) => {
           width='auto'
           alignY='top'
           alignX='right'
-          flexShrink={'0'}
+          flexShrink={0}
           offsetY={8}
           offsetX={-24}
           options={
@@ -295,15 +297,20 @@ class ChatMessage extends Component<ChatMessageProps> {
       );
     }
 
+    const date = daToUnix(bigInt(msg.index.split('/')[1]));
+    const nextDate = nextMsg ? (
+      daToUnix(bigInt(nextMsg.index.split('/')[1]))
+    ) : null;
+
     const dayBreak =
       nextMsg &&
-      new Date(msg['time-sent']).getDate() !==
-        new Date(nextMsg['time-sent']).getDate();
+      new Date(date).getDate() !==
+      new Date(nextDate).getDate();
 
     const containerClass = `${isPending ? 'o-40' : ''} ${className}`;
 
     const timestamp = moment
-      .unix(msg['time-sent'] / 1000)
+      .unix(date / 1000)
       .format(renderSigil ? 'h:mm A' : 'h:mm');
 
     const messageProps = {
@@ -339,7 +346,7 @@ class ChatMessage extends Component<ChatMessageProps> {
         style={style}
       >
         {dayBreak && !isLastRead ? (
-          <DayBreak when={msg['time-sent']} shimTop={renderSigil} />
+          <DayBreak when={date} shimTop={renderSigil} />
         ) : null}
         {renderSigil ? (
           <MessageWrapper {...messageProps}>
@@ -357,7 +364,7 @@ class ChatMessage extends Component<ChatMessageProps> {
               association={association}
               api={api}
               dayBreak={dayBreak}
-              when={msg['time-sent']}
+              when={date}
               ref={unreadMarkerRef}
             />
           ) : null}
@@ -387,8 +394,10 @@ export const MessageAuthor = ({
   const dark = theme === 'dark' || (theme === 'auto' && osDark);
   const contacts = useContactState((state) => state.contacts);
 
+  const date = daToUnix(bigInt(msg.index.split('/')[1]));
+
   const datestamp = moment
-    .unix(msg['time-sent'] / 1000)
+    .unix(date / 1000)
     .format(DATESTAMP_FORMAT);
   const contact =
     ((msg.author === window.ship && showOurContact) ||

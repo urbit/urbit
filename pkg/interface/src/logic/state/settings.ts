@@ -58,7 +58,7 @@ const useSettingsState = createState<SettingsState>('Settings', {
     categories: leapCategories,
   },
   tutorial: {
-    seen: false,
+    seen: true,
     joined: undefined
   }
 });

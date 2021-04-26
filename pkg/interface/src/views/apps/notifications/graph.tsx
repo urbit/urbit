@@ -145,8 +145,7 @@ function ContentSummary({ icon, name, author, to }) {
 export const GraphNodeContent = ({ post, mod, index, hidden, association }) => {
   const { contents } = post;
   const idx = index.slice(1).split("/");
-  const { group, resource } = association;
-  const url = getNodeUrl(mod, hidden, group, resource, index);
+  const url = getNodeUrl(mod, hidden, association?.group, association?.resource, index);
   if (mod === "link" && idx.length === 1) {
     const [{ text: title }] = contents;
     return (
@@ -296,7 +295,7 @@ export function GraphNotification(props: {
     dm,
     singleAuthor
   );
-  const groupAssociation = useAssocForGroup(association.group);
+  const groupAssociation = useAssocForGroup(association?.group);
   const groups = useGroupState((state) => state.groups);
 
   const onClick = useCallback(() => {
@@ -307,13 +306,12 @@ export function GraphNotification(props: {
       )
     ) {
       const first = contents[0];
-      const { group, resource } = association;
       history.push(
         getNodeUrl(
           index.module,
-          groups[association.group]?.hidden,
+          groups[association?.group]?.hidden,
           group,
-          resource,
+          association?.resource,
           first.index
         )
       );
@@ -328,7 +326,7 @@ export function GraphNotification(props: {
     authorsInHeader ||
     index.description === "note" ||
     index.description === "link";
-  const channelTitle = dm ? undefined : association.metadata.title ?? graph;
+  const channelTitle = dm ? undefined : association?.metadata?.title ?? graph;
   const groupTitle = groupAssociation?.metadata?.title;
 
   return (
@@ -349,7 +347,7 @@ export function GraphNotification(props: {
           description={index.description}
           index={contents?.[0].index}
           association={association}
-          hidden={groups[association.group]?.hidden}
+          hidden={groups[association?.group]?.hidden}
         />
         {contents.length > 4 && (
           <Text mb="2" gray>

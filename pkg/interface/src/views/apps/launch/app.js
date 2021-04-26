@@ -46,7 +46,7 @@ const ScrollbarLessBox = styled(Box)`
 const tutSelector = f.pick(['tutorialProgress', 'nextTutStep', 'hideGroups']);
 
 export default function LaunchApp(props) {
-  const connection = { props };
+  const { connection } = props;
   const baseHash = useLaunchState(state => state.baseHash);
   const [hashText, setHashText] = useState(baseHash);
   const [exitingTut, setExitingTut] = useState(false);
@@ -220,7 +220,7 @@ export default function LaunchApp(props) {
             <NewGroup {...props} />
           </ModalButton>
           <ModalButton
-            icon="Boot"
+            icon="BootNode"
             bg="washedGray"
             color="black"
             text="Join Group"
