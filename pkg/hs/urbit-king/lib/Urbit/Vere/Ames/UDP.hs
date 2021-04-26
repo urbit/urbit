@@ -4,7 +4,7 @@
   1. Opens a UDP socket and makes sure that it stays open.
 
     - If can't open the port, wait and try again repeatedly.
-    - If there is an error reading or writting from the open socket,
+    - If there is an error reading to or writing from the open socket,
       close it and open another, making sure, however, to reuse the
       same port
         NOTE: It's not clear what, if anything, closing and reopening
