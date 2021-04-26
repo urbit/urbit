@@ -23,7 +23,7 @@
   =/  src  "."
   %+  expect-eq
     !>  ^-  pile:fusion
-        :*  ~  ~  ~  ~  ~  ~
+        :*  ~  ~  ~  ~  ~  ~  ~
             tssg+[%dbug [/sur/foo/hoon [[1 1] [1 2]]] [%cnts ~[[%.y 1]] ~]]~
         ==
     !>  (parse-pile:(ford):fusion /sur/foo/hoon src)
@@ -32,7 +32,7 @@
   =/  src  "/%  moo  %mime\0a."
   %+  expect-eq
     !>  ^-  pile:fusion
-        :*  sur=~  lib=~  raw=~
+        :*  sur=~  lib=~  raw=~  raz=~
             maz=[face=%moo mark=%mime]~
             caz=~  bar=~
             tssg+[%dbug [/sur/foo/hoon [[2 1] [2 2]]] [%cnts ~[[%.y 1]] ~]]~
@@ -43,7 +43,7 @@
   =/  src  "/$  goo  %mime  %txt\0a."
   %+  expect-eq
     !>  ^-  pile:fusion
-        :*  sur=~  lib=~  raw=~  maz=~
+        :*  sur=~  lib=~  raw=~  raz=~  maz=~
             caz=[face=%goo from=%mime to=%txt]~
             bar=~
             tssg+[%dbug [/sur/foo/hoon [[2 1] [2 2]]] [%cnts ~[[%.y 1]] ~]]~
@@ -74,7 +74,7 @@
                 [`%hood-drum %hood-drum]
                 [`%hood-write %hood-write]
             ==
-            raw=~  maz=~  caz=~  bar=~
+            raw=~  raz=~  maz=~  caz=~  bar=~
             tssg+[%dbug [/sur/foo/hoon [[10 1] [10 2]]] [%cnts ~[[%.y 1]] ~]]~
         ==
     !>  (parse-pile:(ford):fusion /sur/foo/hoon src)
@@ -115,7 +115,7 @@
         (slap res limb/%bunt)
     ::
       %+  expect-eq
-        !>  (~(gas in *(set path)) /mar/mime/hoon ~)
+        !>  (~(gas in *(set [? path])) |^/mar/mime/hoon ~)
         !>  dez:(~(got by files.cache.nub) /mar/mime/hoon)
     ==
 ::
@@ -142,7 +142,7 @@
         (slap res limb/%bunt)
     ::
       %+  expect-eq
-        !>  (~(gas in *(set path)) /mar/udon/hoon /lib/cram/hoon ~)
+        !>  (~(gas in *(set [? path])) |^/mar/udon/hoon |^/lib/cram/hoon ~)
         !>  dez:(~(got by files.cache.nub) /mar/udon/hoon)
     ==
 ::
@@ -224,7 +224,7 @@
       (slap res (ream '(+ [*^ [%bob ~] ~])'))
   ::
     %+  expect-eq
-      !>  (~(gas in *(set path)) /gen/hello/hoon ~)
+      !>  (~(gas in *(set [? path])) |^/gen/hello/hoon ~)
       !>  dez:(~(got by files.cache.nub) /gen/hello/hoon)
   ==
 ::
@@ -249,10 +249,10 @@
     !>((slab %read %get-our -.res))
   ::
     %+  expect-eq
-      !>  %-  ~(gas in *(set path))
-          :~  /lib/strandio/hoon
-              /lib/strand/hoon
-              /sur/spider/hoon
+      !>  %-  ~(gas in *(set [? path]))
+          :~  [| /lib/strandio/hoon]
+              [| /lib/strand/hoon]
+              [| /sur/spider/hoon]
           ==
       !>  dez:(~(got by files.cache.nub) /lib/strandio/hoon)
   ==
