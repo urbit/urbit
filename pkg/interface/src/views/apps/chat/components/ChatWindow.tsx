@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect, Component, useRef, useState, useCallback } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import _ from 'lodash';
 import bigInt, { BigInteger } from 'big-integer';
@@ -30,10 +30,13 @@ const DEFAULT_BACKLOG_SIZE = 100;
 const IDLE_THRESHOLD = 64;
 const MAX_BACKLOG_SIZE = 1000;
 
-type ChatWindowProps = RouteComponentProps<{
-  ship: Patp;
-  station: string;
-}> & {
+const getCurrGraphSize = (ship: string, name: string) => {
+  const { graphs } = useGraphState.getState();
+  const graph = graphs[`${ship}/${name}`];
+  return graph.size;
+};
+
+type ChatWindowProps = {
   unreadCount: number;
   graph: Graph;
   graphSize: number;
@@ -44,6 +47,8 @@ type ChatWindowProps = RouteComponentProps<{
   api: GlobalApi;
   scrollTo?: BigInteger;
   onReply: (msg: Post) => void;
+  pendingSize?: number;
+  showOurContact: boolean;
 };
 
 interface ChatWindowState {
@@ -54,6 +59,7 @@ interface ChatWindowState {
 }
 
 const virtScrollerStyle = { height: '100%' };
+
 
 class ChatWindow extends Component<
   ChatWindowProps,
@@ -81,6 +87,7 @@ class ChatWindow extends Component<
     this.handleWindowBlur = this.handleWindowBlur.bind(this);
     this.handleWindowFocus = this.handleWindowFocus.bind(this);
     this.stayLockedIfActive = this.stayLockedIfActive.bind(this);
+    this.fetchMessages = this.fetchMessages.bind(this);
 
     this.virtualList = null;
     this.unreadMarkerRef = React.createRef();
@@ -109,9 +116,11 @@ class ChatWindow extends Component<
     }
     const unreadIndex = graph.keys()[unreadCount];
     if (!unreadIndex || unreadCount === 0) {
-      this.setState({
-        unreadIndex: bigInt.zero
-      });
+      if(state.unreadIndex.neq(bigInt.zero)) {
+        this.setState({
+          unreadIndex: bigInt.zero
+        });
+      }
       return;
     }
     this.setState({
@@ -138,7 +147,7 @@ class ChatWindow extends Component<
   }
 
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
-    const { history, graph, unreadCount, graphSize, station } = this.props;
+    const { graph, unreadCount, graphSize, station } = this.props;
     if(unreadCount === 0 && prevProps.unreadCount !== unreadCount) {
       this.unreadSet = true;
     }
@@ -195,31 +204,35 @@ class ChatWindow extends Component<
     this.props.api.hark.markCountAsRead(association, '/', 'message');
   }
 
-  setActive = () => { 
-    if(this.state.idle) {
-      this.setState({ idle: false });
-    }
-  }
 
-  fetchMessages = async (newer: boolean): Promise<boolean> => {
+  async fetchMessages(newer: boolean): Promise<boolean> {
     const { api, station, graph } = this.props;
     const pageSize = 100;
 
     const [, , ship, name] = station.split('/');
     const expectedSize = graph.size + pageSize;
     if (newer) {
-      const [index] = graph.peekLargest()!;
+      const index = graph.peekLargest()?.[0];
+      if(!index) {
+        console.log(`no index for: ${graph}`);
+        return true;
+      }
       await api.graph.getYoungerSiblings(
         ship,
         name,
         pageSize,
         `/${index.toString()}`
       );
-      return expectedSize !== graph.size;
+      return expectedSize !== getCurrGraphSize(ship.slice(1), name);
     } else {
-      const [index] = graph.peekSmallest()!;
+      console.log('x');
+      const index = graph.peekSmallest()?.[0];
+      if(!index) {
+        console.log(`no index for: ${graph}`);
+        return true;
+      }
       await api.graph.getOlderSiblings(ship, name, pageSize, `/${index.toString()}`);
-      const done = expectedSize !== graph.size;
+      const done = expectedSize !== getCurrGraphSize(ship.slice(1), name);
       if(done) {
         this.calculateUnreadIndex();
       }
@@ -238,12 +251,9 @@ class ChatWindow extends Component<
     const {
       api,
       association,
-      group,
       showOurContact,
       graph,
-      history,
-      groups,
-      associations,
+      group,
       onReply
     } = this.props;
     const { unreadMarkerRef } = this;
@@ -252,10 +262,8 @@ class ChatWindow extends Component<
       group,
       showOurContact,
       unreadMarkerRef,
-      history,
       api,
-      groups,
-      associations,
+      group,
       onReply
     };
 
@@ -275,10 +283,10 @@ class ChatWindow extends Component<
       graph.peekLargest()?.[0] ?? bigInt.zero
     );
     const highlighted = index.eq(this.props.scrollTo ?? bigInt.zero);
-    const keys = graph.keys().reverse();
+    const keys = graph.keys();
     const graphIdx = keys.findIndex((idx) => idx.eq(index));
-    const prevIdx = keys[graphIdx + 1];
-    const nextIdx = keys[graphIdx - 1];
+    const prevIdx = keys[graphIdx - 1];
+    const nextIdx = keys[graphIdx + 1];
     const isLastRead: boolean = this.state.unreadIndex.eq(index);
     const props = {
       highlighted,
@@ -308,12 +316,8 @@ class ChatWindow extends Component<
       association,
       group,
       graph,
-      history,
-      groups,
-      associations,
       showOurContact,
-      pendingSize,
-      onReply,
+      pendingSize = 0,
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;
@@ -321,16 +325,10 @@ class ChatWindow extends Component<
       association,
       group,
       unreadMarkerRef,
-      history,
       api,
-      associations
     };
     const unreadMsg = graph.get(this.state.unreadIndex);
-
-    // hack to force a re-render when we toggle showing contact
-    const contactsModified =
-      showOurContact ? 0 : 100;
-
+    
     return (
       <Col height='100%' overflow='hidden' position='relative'>
         { this.dismissedInitialUnread() && 
@@ -353,12 +351,11 @@ class ChatWindow extends Component<
           offset={unreadCount}
           origin='bottom'
           style={virtScrollerStyle}
-          onStartReached={this.setActive}
           onBottomLoaded={this.onBottomLoaded}
           onScroll={this.onScroll}
           data={graph}
           size={graph.size}
-          pendingSize={pendingSize + contactsModified}
+          pendingSize={pendingSize}
           id={association.resource}
           averageHeight={22}
           renderer={this.renderer}
@@ -369,8 +366,5 @@ class ChatWindow extends Component<
   }
 }
 
-export default withState(ChatWindow, [
-  [useGroupState, ['groups']],
-  [useMetadataState, ['associations']],
-  [useGraphState, ['pendingSize']]
-]);
+
+export default ChatWindow
