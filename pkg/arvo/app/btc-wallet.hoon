@@ -78,8 +78,10 @@
     !>  :+  %add
       %btc-wallet
     [[%custom `'/~btc' `'/~btc/img/tile.png'] %.y]
+  =/  warning  [%settings-event !>([%put-entry %btc-wallet %warning %b %.y])]
   :-  :~  [%pass /btc-wallet-server %agent [our.bowl %file-server] %poke file]
           [%pass /btc-wallet-tile %agent [our.bowl %launch] %poke tile]
+          [%pass /warn %agent [our.bowl %settings-store] %poke warning]
       ==
   %_  this
       state
@@ -122,10 +124,12 @@
       [[%custom `'/~btc' `'/~btc/img/tile.png'] %.y]
     =/  remove-tile
       [%launch-action !>([%remove %btc-wallet])]
+    =/  warning  [%settings-event !>([%put-entry %btc-wallet %warning %b %.y])]
     %=  $
         cards
       :~  [%pass /btc-wallet-tile %agent [our.bowl %launch] %poke remove-tile]
           [%pass /btc-wallet-tile %agent [our.bowl %launch] %poke add-tile]
+          [%pass /warn %agent [our.bowl %settings-store] %poke warning]
       ==
     ::
         ver
@@ -244,7 +248,6 @@
     [%give %fact ~ %json !>(response)]~
   ::
       [%all ~]
-    ~&  %watch-all
     ?>  (team:title our.bowl src.bowl)
     :_  this
     [give-initial:hc]~
@@ -702,7 +705,6 @@
             btc-state  [block fee now.bowl]
         ==
     ?:  ?|(?!(connected.p) (lth block.btc-state block))
-      ~&  >>  block
       ;:  weld
         (retry-pend-piym network)
         (retry-poym network)
@@ -759,7 +761,6 @@
   ++  retry-txs
     |=  =network
     ^-  (list card)
-    ~&  %retry-txs
     %+  murn  ~(tap by history)
     |=  [=txid =hest]
     =/  w  (~(get by walts) xpub.hest)
@@ -840,7 +841,6 @@
       %+  turn  (weld inputs.ti outputs.ti)
       |=(=val:tx address.val)
     is-our-address
-  ~&  addresses+our-addrs
   =/  addr-info-cards=(list card)
     %+  turn  ~(tap in our-addrs)
     |=  a=address
@@ -924,7 +924,6 @@
 ++  handle-address-info
   |=  [=address utxos=(set utxo) used=?]
   ^-  (quip card _state)
-  ~&  %handle-address-info^address
   =/  ac  (address-coords:bl address ~(val by walts))
   ?~  ac
     `state
@@ -978,7 +977,6 @@
 ++  req-scan
   |=  [b=batch =xpub:bc =chyg]
   ^-  (quip card _state)
-  ~&  %req-scan
   =/  w=walt  (~(got by walts) xpub)
   =/  as=(list [address [? ^chyg idx (set utxo)]])
     %+  turn  ~(tap in todo.b)

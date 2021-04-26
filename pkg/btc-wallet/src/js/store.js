@@ -1,10 +1,13 @@
 import { InitialReducer }  from './reducers/initial';
 import { UpdateReducer }   from './reducers/update';
 import { CurrencyReducer } from './reducers/currency';
+import { SettingsReducer } from './reducers/settings';
 
 class Store {
   constructor() {
     this.state = {
+      loadedBtc: false,
+      loadedSettings: false,
       loaded: false,
       providerPerms: {},
       shipWallets: {},
@@ -20,11 +23,13 @@ class Store {
         BTC: { last: 1, symbol: '฿' }
       },
       denomination: 'BTC',
+      showWarning: true,
     };
 
     this.initialReducer = new InitialReducer();
     this.updateReducer = new UpdateReducer();
     this.currencyReducer = new CurrencyReducer();
+    this.settingsReducer = new SettingsReducer();
     this.setState = () => { };
   }
 
@@ -37,6 +42,7 @@ class Store {
     this.initialReducer.reduce(json, this.state);
     this.updateReducer.reduce(json, this.state);
     this.currencyReducer.reduce(json, this.state);
+    this.settingsReducer.reduce(json, this.state);
 
     this.setState(this.state);
   }

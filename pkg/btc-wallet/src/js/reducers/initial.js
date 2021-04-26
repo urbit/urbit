@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 export class InitialReducer {
   reduce(json, state) {
-    console.log('data', json);
     let data = _.get(json, 'initial', false);
     if (data) {
       state.provider = data.provider;
@@ -12,7 +11,11 @@ export class InitialReducer {
       state.btcState = data['btc-state'];
       state.history = this.reduceHistory(data.history);
       state.address = data.address;
-      state.loaded = true;
+
+      state.loadedBtc = true;
+      if (state.loadedSettings) {
+        state.loaded = true;
+      }
     }
   }
 

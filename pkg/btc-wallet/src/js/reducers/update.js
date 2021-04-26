@@ -3,11 +3,13 @@ import _ from 'lodash';
 
 export class UpdateReducer {
   reduce(json, state) {
+    if (!json) {
+      return;
+    }
     if (json.providerStatus) {
       this.reduceProviderStatus(json.providerStatus, state);
     }
     if (json.checkPayee) {
-      console.log('update', json);
       this.reduceCheckPayee(json.checkPayee, state);
     }
     if (json["change-provider"]) {
