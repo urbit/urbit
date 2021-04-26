@@ -8,9 +8,11 @@ import {
   Button,
   Col,
   LoadingSpinner,
+  StatelessRadioButtonField as RadioButton,
 } from '@tlon/indigo-react';
 
 import Invoice from './invoice.js'
+import FeePicker from './feePicker.js'
 
 import { validate } from 'bitcoin-address-validation';
 
@@ -44,21 +46,26 @@ export default class Send extends Component {
 
     this.initPayment  = this.initPayment.bind(this);
     this.checkPayee  = this.checkPayee.bind(this);
+    this.feeSelect = this.feeSelect.bind(this);
+  }
+
+  feeSelect(which) {
+    this.setState({feeValue: which});
   }
 
   componentDidMount(){
-    // TODO switch this to bitcoin
-    if (this.props.network === 'testnet'){
+    if (this.props.network === 'bitcoin'){
       let url = "https://bitcoiner.live/api/fees/estimates/latest";
       fetch(url).then(res => res.json()).then(n => {
         let estimates = Object.keys(n.estimates);
         let mid = Math.floor(estimates.length/2)
         let high = estimates.length - 1;
+        console.log(n);
         this.setState({
           feeChoices: {
-            low: [30, n.estimates[30]["sat_per_vbyte"]],
-            mid: [180, n.estimates[180]["sat_per_vbyte"]],
-            high: [360, n.estimates[360]["sat_per_vbyte"]],
+            high: [30, n.estimates[30]["sat_per_vbyte"]],
+            mid: [360, n.estimates[360]["sat_per_vbyte"]],
+            low: [1440, n.estimates[1440]["sat_per_vbyte"]],
           }
         });
       })
@@ -114,7 +121,7 @@ export default class Send extends Component {
         'init-payment': {
           'payee': this.state.payee,
           'value': parseInt(this.state.satsAmount),
-          'feyb': 1,
+          'feyb': this.state.feeChoices[this.state.feeValue][1],
         }
       }
       this.props.api.btcWalletCommand(command).then(res => this.setState({signing: true}));
@@ -296,11 +303,10 @@ export default class Send extends Component {
               </Row>
               <Col alignItems="center">
                 {!this.state.showModal ? null :
-                  <Box position="fixed" p={4}
-                      border="1px solid green" borderRadius={3}
-                      backgroundColor="white" zIndex={10}>
-                    <Text fontSize={1} color="black">Transaction Speed</Text>
-                  </Box>
+                    <FeePicker
+                      feeChoices={this.state.feeChoices}
+                      feeSelect={this.feeSelect}
+                     />
                 }
               </Col>
             </Col>
