@@ -44,7 +44,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
       inCodeMode: false,
       submitFocus: false,
       uploadingPaste: false,
-      currentInput: props.message,
+      currentInput: props.message
     };
 
     this.chatEditor = React.createRef();
@@ -124,10 +124,6 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         .catch(this.uploadError);
     });
   }
-  
-  toggleFocus(value) {
-    this.setState({ submitFocus: value });
-  }
 
   eventHandler(value) {
     this.setState({ currentInput: value });
@@ -194,8 +190,6 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
           onUnmount={props.onUnmount}
           message={props.message}
           onPaste={this.onPaste.bind(this)}
-          focusEvent={() => this.toggleFocus(true)}
-          blurEvent={() => this.toggleFocus(false)}
           changeEvent={this.eventHandler}
           placeholder='Message...'
         />
@@ -224,9 +218,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
             )
           ) : null}
         </Box>
-        {(MOBILE_BROWSER_REGEX.test(navigator.userAgent) &&
-          state.submitFocus) ||
-        state.currentInput !== "" ? (
+        {MOBILE_BROWSER_REGEX.test(navigator.userAgent) ?
           <Box
             ml={2}
             mr="12px"
@@ -237,13 +229,13 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
             width="24px"
             height="24px"
             borderRadius="50%"
-            backgroundColor={state.currentInput !== "" ? "blue" : "gray"}
-            cursor={state.currentInput !== "" ? "pointer" : "default"}
+            backgroundColor={state.currentInput !== '' ? 'blue' : 'gray'}
+            cursor={state.currentInput !== '' ? 'pointer' : 'default'}
             onClick={() => this.chatEditor.current.submit()}
           >
             <Icon icon="ArrowEast" color="white" />
           </Box>
-        ) : null}
+          : null}
       </Row>
     );
   }
