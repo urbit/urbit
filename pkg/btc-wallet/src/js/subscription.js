@@ -5,6 +5,7 @@ export class Subscription {
   start() {
     if (api.ship) {
       this.initializeBtcWallet();
+      this.initializeSettings();
       this.initializeCurrencyPoll();
     } else {
       console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
@@ -12,8 +13,21 @@ export class Subscription {
   }
 
   initializeBtcWallet() {
-    console.log('initialize');
     api.bind('/all', 'PUT', api.ship, 'btc-wallet',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this));
+  }
+
+  initializeSettings() {
+    let app = 'settings-store';
+    let path = '/bucket/btc-wallet';
+
+    fetch(`/~/scry/${app}${path}.json`).then(res => res.json())
+      .then(n => {
+        this.handleEvent({data: n});
+      });
+
+    api.bind(path, 'PUT', api.ship, app,
       this.handleEvent.bind(this),
       this.handleError.bind(this));
   }
@@ -34,6 +48,7 @@ export class Subscription {
   handleError(err) {
     console.error(err);
     this.initializeBtcWallet();
+    this.initializeSettings();
   }
 }
 

@@ -18,6 +18,7 @@ import StartupModal from './lib/startupModal.js';
 import Header from './lib/header.js'
 import Balance from './lib/balance.js'
 import Transactions from './lib/transactions.js'
+import Warning from './lib/warning.js'
 import { subscription } from '../subscription.js'
 
 const network = "testnet" // bitcoin
@@ -39,7 +40,8 @@ export class Root extends Component {
   }
 
   render() {
-    const loaded = this.state.loaded;;
+    const loaded = this.state.loaded;
+    const warning = this.state.showWarning;
 
     return (
       <BrowserRouter>
@@ -64,6 +66,7 @@ export class Root extends Component {
                width='400px'
               >
                 <Header />
+                { (!warning) ? null : <Warning api={api}/>}
                 <Balance api={api} state={this.state} network={network}/>
                 <Transactions state={this.state} network={network}/>
               </Col>

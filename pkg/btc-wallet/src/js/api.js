@@ -32,6 +32,10 @@ class UrbitApi {
     return this.action("btc-wallet", "btc-wallet-command", data);
   }
 
+  settingsEvent(data) {
+    return this.action("settings-store", "settings-event", data);
+  }
+
   action(appl, mark, data) {
     return new Promise((resolve, reject) => {
       this.channel.poke(ship, appl, mark, data,
@@ -42,11 +46,6 @@ class UrbitApi {
           reject(err);
         });
     });
-  }
-
-  scry(app, path) {
-    return fetch(`/~/scry/${app}/${path}.json`).then(r => r.json());
-
   }
 }
 export let api = new UrbitApi();

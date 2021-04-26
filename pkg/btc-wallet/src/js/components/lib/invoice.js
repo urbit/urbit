@@ -63,7 +63,6 @@ export default class Invoice extends Component {
              .extractTransaction()
              .toHex();
 
-    console.log({hex});
     this.broadCastTx(hex).then(res => this.setState({sent: true}));
   }
 
