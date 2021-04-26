@@ -162,6 +162,7 @@ export default class ChatEditor extends Component {
       editor.showHint(['test', 'foo']);
     }
     if (this.state.message !== '' && value == '') {
+      this.props.changeEvent(value);
       this.setState({
         message: value
       });
@@ -169,6 +170,7 @@ export default class ChatEditor extends Component {
     if (value == this.props.message || value == '' || value == ' ') {
       return;
     }
+    this.props.changeEvent(value);
     this.setState({
       message: value
     });
@@ -179,6 +181,8 @@ export default class ChatEditor extends Component {
       inCodeMode,
       placeholder,
       message,
+      focusEvent,
+      blurEvent,
       ...props
     } = this.props;
 
@@ -238,6 +242,8 @@ export default class ChatEditor extends Component {
               rows="1"
               style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
               placeholder={inCodeMode ? "Code..." : "Message..."}
+              onFocus={focusEvent}
+              onBlur={blurEvent}
               onChange={event => {
                 this.messageChange(null, null, event.target.value);
               }}
@@ -265,6 +271,8 @@ export default class ChatEditor extends Component {
             this.editor = editor;
             editor.focus();
           }}
+          onFocus={focusEvent}
+          onBlur={blurEvent}
           {...props}
         />
         }
