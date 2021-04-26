@@ -80,10 +80,6 @@ data ShipClass
 muk :: ByteString -> Word20
 muk bs = mugBS bs .&. (2 ^ 20 - 1)
 
--- XX check this
-getAmesAddress :: Get AmesAddress
-getAmesAddress = AAIpv4 <$> (Ipv4 <$> getWord32le) <*> (Port <$> getWord16le)
-
 putAmesAddress :: Putter AmesAddress
 putAmesAddress = \case
   AAIpv4 (Ipv4 ip) (Port port) -> putWord32le ip >> putWord16le port
@@ -104,7 +100,7 @@ instance Serialize Packet where
     guard isAmes
 
     pktOrigin <- if isRelayed
-      then Just <$> getAmesAddress
+      then Just <$> get
       else pure Nothing
 
     -- body
@@ -157,9 +153,10 @@ instance Serialize Packet where
 
     putWord32le head
     case pktOrigin of
-      Just o  -> putAmesAddress o
+      Just o  -> put o
       Nothing -> pure ()
     putByteString body
+    
     where
       putShipGetRank s@(Ship (LargeKey p q)) = case () of
         _ | s < 2 ^ 16 -> (0, putWord16le $ fromIntegral s)    -- lord
