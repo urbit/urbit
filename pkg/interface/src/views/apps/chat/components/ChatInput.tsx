@@ -143,6 +143,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     const avatar =
       props.ourContact && props.ourContact?.avatar && !props.hideAvatars ? (
         <BaseImage
+          flexShrink={0}
           src={props.ourContact.avatar}
           height={24}
           width={24}
@@ -183,7 +184,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         className='cf'
         zIndex={0}
       >
-        <Row p='12px 4px 12px 12px' alignItems='center'>
+        <Row p='12px 4px 12px 12px' flexShrink={0} alignItems='center'>
           {avatar}
         </Row>
         <ChatEditor
