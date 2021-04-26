@@ -27,7 +27,7 @@ export default class Transactions extends Component {
           width="100%"
           p={5}
           mb={5}
-          borderRadius="32px"
+          borderRadius="48px"
           backgroundColor="white"
         >
           <Text color="gray" fontSize={2} fontWeight="bold">No Transactions Yet</Text>
@@ -38,7 +38,7 @@ export default class Transactions extends Component {
         <Col
           width='100%'
           backgroundColor="white"
-          borderRadius="32px"
+          borderRadius="48px"
           mb={5}
           p={5}
         >

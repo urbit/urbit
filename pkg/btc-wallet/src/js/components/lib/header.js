@@ -30,7 +30,7 @@ export default class Header extends Component {
             alignItems="center"
             justifyContent="center"
           >
-            <Icon icon="Bitcoin" width={5} height={5} color="white"/>
+            <Icon icon="Bitcoin" width={4} p={1} height={4} color="white"/>
           </Box>
           <Text fontSize={2} fontWeight="bold" color="orange">
             Bitcoin
@@ -42,7 +42,7 @@ export default class Header extends Component {
           height={5}
           p={2}
         >
-          <Icon icon="Gear" color="gray" />
+          <Icon icon="Adjust" color="orange" />
         </Box>
       </Row>
     );
