@@ -113,7 +113,7 @@
       ?+    mark  (on-poke:def mark vase)
         %sane  (poke-sane:gc !<(?(%check %fix) vase))
       ::
-          ?(%group-update %group-action)
+          ?(%group-update-0 %group-action)
         (poke-group-update:gc !<(update:store vase))
       ::
           %import
@@ -127,7 +127,7 @@
     ?>  (team:title our.bowl src.bowl)
     ?>  ?=([%groups ~] path)
     :_  this
-    [%give %fact ~ %group-update !>([%initial groups])]~
+    [%give %fact ~ %group-update-0 !>([%initial groups])]~
   ::
   ++  on-leave  on-leave:def
   ::
@@ -234,8 +234,8 @@
     sane+(en-path:resource rid)
   =*  poke-self  ~(poke-self pass:io wire)
   %+  weld  out
-  :~  (poke-self group-update+!>([%add-members rid (silt our.bol ~)]))
-      (poke-self group-update+!>([%add-tag rid %admin (silt our.bol ~)]))
+  :~  (poke-self group-update-0+!>([%add-members rid (silt our.bol ~)]))
+      (poke-self group-update-0+!>([%add-tag rid %admin (silt our.bol ~)]))
   ==
 ::
 ++  poke-import
@@ -298,7 +298,7 @@
   |=  [rid=resource nack-count=@ud]
   ^-  card
   =/  =cage
-    :-  %group-update
+    :-  %group-update-0
     !>  ^-  update:store
     [%add-members rid (sy our.bol ~)]
   =/  =wire
@@ -414,11 +414,8 @@
       ?>  ?&  ?=(~ (~(dif in ships) members))
               (~(has by tags) tag)
           ==
-      %=    +<
-        ::
-          tags
-        %+  ~(jab by tags)  tag
-        |=((set ship) (~(dif in +<) ships))
+      %=  +<
+        tags  (dif-ju tags tag ships)
       ==
     :_  state
     (send-diff %remove-tag rid tag ships)
@@ -543,7 +540,15 @@
     (send-diff %remove-group rid ~)
   ::
   --
-
+::  TODO: move to +zuse
+++  dif-ju
+  |=  [=tags =tag remove=(set ship)]
+  =/  ships  ~(tap in remove)
+  |-
+  ?~  ships
+    tags
+  $(tags (~(del ju tags) tag i.ships), ships t.ships)
+::
 ++  merge-tags
   |=  [=tags ships=(set ship) new-tags=(set tag)]
   ^+  tags
@@ -583,6 +588,6 @@
 ++  send-diff
   |=  =update:store
   ^-  (list card)
-  [%give %fact ~[/groups] %group-update !>(update)]~
+  [%give %fact ~[/groups] %group-update-0 !>(update)]~
 ::
 --

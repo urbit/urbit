@@ -17,7 +17,7 @@
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ::  unarchive graph and share it
 ;<  ~  bind:m
-  (poke-our %graph-store %graph-update !>([%0 now.bowl %unarchive-graph rid]))
+  (poke-our %graph-store %graph-update-1 !>([now.bowl %unarchive-graph rid]))
 ;<  ~  bind:m
   (poke-our %graph-push-hook %push-hook-action !>([%add rid]))
 ::
@@ -29,7 +29,7 @@
     description   description
     date-created  now.bowl
     creator       our.bowl
-    module        module
+    config        [%graph module]
   ==
 ;<  ~  bind:m
   %+  poke-our  %metadata-push-hook

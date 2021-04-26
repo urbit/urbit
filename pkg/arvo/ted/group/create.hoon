@@ -40,6 +40,7 @@
     description   description.action
     date-created  now.bowl
     creator       our.bowl
+    config        [%group ~]
   ==
 =/  met-action=action:metadata
   [%add rid groups+rid metadatum]

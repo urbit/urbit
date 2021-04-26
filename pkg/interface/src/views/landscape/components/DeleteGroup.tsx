@@ -24,9 +24,9 @@ export function DeleteGroup(props: {
 return;
     }
     if(props.owner) {
-      await props.api.groups.deleteGroup(ship, name);
+      props.api.groups.deleteGroup(ship, name);
     } else {
-      await props.api.groups.leaveGroup(ship, name);
+      props.api.groups.leaveGroup(ship, name);
     }
     history.push('/');
   };

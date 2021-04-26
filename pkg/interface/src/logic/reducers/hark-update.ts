@@ -17,7 +17,7 @@ import bigInt, {BigInteger} from 'big-integer';
 export const HarkReducer = (json: any) => {
   const data = _.get(json, 'harkUpdate', false);
   if (data) {
-    reduce(data);
+    reduceState(useHarkState, data, [reduce]);
   }
   const graphHookData = _.get(json, 'hark-graph-hook-update', false);
   if (graphHookData) {
@@ -39,8 +39,9 @@ export const HarkReducer = (json: any) => {
   }
 };
 
-function reduce(data) {
-  reduceState<HarkState, any>(useHarkState, data, [
+function reduce(data, state) {
+  const reducers = [
+    calculateCount,
     unread,
     read,
     archive,
@@ -56,8 +57,11 @@ function reduce(data) {
     seenIndex,
     removeGraph,
     readAll,
-    calculateCount
-  ]);
+  ];
+  const reducer = compose(reducers.map(r => s => {
+    return r(data, s);
+  }));
+  return reducer(state);
 }
 
 function calculateCount(json: any, state: HarkState) {
@@ -148,7 +152,7 @@ function graphWatchSelf(json: any, state: HarkState): HarkState {
 function readAll(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-all');
   if(data) { 
-    state = clearState(state);
+    clearState(state);
   }
   return state;
 }
@@ -164,7 +168,7 @@ function removeGraph(json: any, state: HarkState): HarkState {
 function seenIndex(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'seen-index');
   if(data) {
-    state = updateNotificationStats(state, data.index, 'last', () => data.time);
+    updateNotificationStats(state, data.index, 'last', () => data.time);
   }
   return state;
 }
@@ -172,7 +176,7 @@ function seenIndex(json: any, state: HarkState): HarkState {
 function readEach(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-each');
   if (data) {
-    state = updateUnreads(state, data.index, u => u.delete(data.target));
+    updateUnreads(state, data.index, u => u.delete(data.target));
   }
   return state;
 }
@@ -180,7 +184,7 @@ function readEach(json: any, state: HarkState): HarkState {
 function readSince(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-count');
   if(data) {
-    state = updateUnreadCount(state, data, () => 0);
+    updateUnreadCount(state, data, () => 0);
   }
   return state;
 }
@@ -188,7 +192,7 @@ function readSince(json: any, state: HarkState): HarkState {
 function unreadSince(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unread-count');
   if(data) {
-    state = updateUnreadCount(state, data.index, u => u + 1);
+    updateUnreadCount(state, data.index, u => u + 1);
   }
   return state;
 }
@@ -196,7 +200,7 @@ function unreadSince(json: any, state: HarkState): HarkState {
 function unreadEach(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unread-each');
   if(data) {
-    state = updateUnreads(state, data.index, us => us.add(data.target));
+    updateUnreads(state, data.index, us => us.add(data.target));
   }
   return state;
 }
@@ -204,7 +208,7 @@ function unreadEach(json: any, state: HarkState): HarkState {
 function unreads(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unreads');
   if(data) {
-    state = clearState(state);
+    clearState(state);
     data.forEach(({ index, stats }) => {
       const { unreads, notifications, last } = stats;
       updateNotificationStats(state, index, 'last', () => last);
@@ -212,11 +216,11 @@ function unreads(json: any, state: HarkState): HarkState {
         addNotificationToUnread(state, index, makePatDa(time));
       });
       if('count' in unreads) {
-        state = updateUnreadCount(state, index, (u = 0) => u + unreads.count);
+        updateUnreadCount(state, index, (u = 0) => u + unreads.count);
       } else {
-        state = updateUnreads(state, index, s => new Set());
+        updateUnreads(state, index, s => new Set());
         unreads.each.forEach((u: string) => {
-          state = updateUnreads(state, index, s => s.add(u));
+          updateUnreads(state, index, s => s.add(u));
         });
       }
     });
@@ -240,10 +244,8 @@ function clearState(state: HarkState): HarkState {
     },
     notificationsCount: 0
   };
+  Object.assign(state, initialState);
 
-  Object.keys(initialState).forEach((key) => {
-    state[key] = initialState[key];
-  });
   return state;
 }
 
@@ -361,7 +363,9 @@ const timebox = (json: any, state: HarkState): HarkState => {
 function more(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'more', false);
   if (data) {
-    _.forEach(data, d => reduce(d));
+    _.forEach(data, d => {
+      reduce(d, state);
+    });
   }
   return state;
 }

@@ -102,6 +102,13 @@ export function PopoverRoutes(
                           to={relativeUrl('/settings#channels')}
                           text="Channel Management"
                         />
+                        { owner && (
+                        <SidebarItem
+                          icon="Server"
+                          to={relativeUrl('/settings#feed')}
+                          text="Group Feed"
+                        />)}
+
                       </>
                     )}
                     <DeleteGroup owner={owner} api={props.api} association={props.association} />

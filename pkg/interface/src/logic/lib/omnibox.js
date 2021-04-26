@@ -114,7 +114,7 @@ export default function index(contacts, associations, apps, currentGroup, groups
         };
 
         if (each['app-name'] === 'graph') {
-          app = each.metadata.module;
+          app = each.metadata.config.graph;
         }
 
         const shipStart = each.resource.substr(each.resource.indexOf('~'));
@@ -128,7 +128,7 @@ export default function index(contacts, associations, apps, currentGroup, groups
           );
           landscape.push(obj);
         } else {
-          const app = each.metadata.module || each['app-name'];
+          const app = each.metadata.config.graph || each['app-name'];
           let group = each.group;
           if (groups[each.group]?.hidden && app === 'chat') {
             group = '/messages';

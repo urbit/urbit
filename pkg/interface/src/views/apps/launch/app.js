@@ -6,7 +6,6 @@ import _ from 'lodash';
 import { Col, Button, Box, Row, Icon, Text } from '@tlon/indigo-react';
 
 import './css/custom.css';
-import useContactState from '~/logic/state/contact';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import Groups from './components/Groups';
@@ -33,6 +32,7 @@ import {
 import useLaunchState from '~/logic/state/launch';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import useMetadataState from '~/logic/state/metadata';
+import {useHistory} from 'react-router-dom';
 
 
 const ScrollbarLessBox = styled(Box)`
@@ -46,13 +46,13 @@ const ScrollbarLessBox = styled(Box)`
 const tutSelector = f.pick(['tutorialProgress', 'nextTutStep', 'hideGroups']);
 
 export default function LaunchApp(props) {
-  const connection = { props };
+  const { connection } = props;
   const baseHash = useLaunchState(state => state.baseHash);
   const [hashText, setHashText] = useState(baseHash);
   const [exitingTut, setExitingTut] = useState(false);
   const seen = useSettingsState(s => s?.tutorial?.seen) ?? true;
   const associations = useMetadataState(s => s.associations);
-  const contacts = useContactState(state => state.contacts);
+  const history = useHistory();
   const hasLoaded = useMemo(() => Boolean(connection === "connected"), [connection]);
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const calmState = useSettingsState(selectCalmState);
@@ -191,7 +191,13 @@ export default function LaunchApp(props) {
             to="/~landscape/home"
             p={0}
           >
-            <Box p={2} height='100%' width='100%' bg='scales.black20'>
+            <Box
+              p={2}
+              height='100%'
+              width='100%'
+              bg='scales.black20'
+              border={1}
+              borderColor="lightGray">
               <Row alignItems='center'>
                 <Icon
                   color="black"

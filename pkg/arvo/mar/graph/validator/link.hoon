@@ -1,4 +1,4 @@
-/-  *post, met=metadata-store
+/-  *post, met=metadata-store, graph=graph-store, hark=hark-graph-hook
 |_  i=indexed-post
 ++  grow
   |%
@@ -6,6 +6,7 @@
   ::
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
+    ^-  permissions:graph
     =/  reader
       ?=(%reader-comments vip)
     ?+  index.p.i  !!
@@ -16,6 +17,7 @@
   ::
   ++  graph-permissions-remove
     |=  vip=vip-metadata:met
+    ^-  permissions:graph
     =/  reader
       ?=(%reader-comments vip)
     ?+  index.p.i  !!
@@ -25,10 +27,10 @@
     ==
   ::
   ++  notification-kind
+    ^-  (unit notif-kind:hark)
     ?+  index.p.i  ~
       [@ ~]       `[%link [0 1] %each %children]
       [@ @ %1 ~]  `[%comment [1 2] %count %siblings]
-      [@ @ @ ~]   `[%edit-comment [1 2] %none %none]
     ==
   ::
   ++  transform-add-nodes
@@ -53,7 +55,7 @@
         ::  top-level link post; title and url
         ::
         [@ ~]
-      ?>  ?=([[%text @] [%url @] ~] contents.p.ip)
+      ?>  ?=([[%text @] $%([%url @] [%reference *]) ~] contents.p.ip)
       ip
     ::
         ::  comment on link post; container structure

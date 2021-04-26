@@ -33,7 +33,6 @@ in pkgsLocal.hs.shellFor {
   # dependencies available in the shell.
   packages = ps:
     with ps; [
-      lmdb-static
       racquire
       terminal-progress-bar
       urbit-atom

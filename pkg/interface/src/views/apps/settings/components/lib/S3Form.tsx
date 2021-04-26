@@ -83,7 +83,7 @@ export default function S3Form(props: S3FormProps): ReactElement {
                     style={{ textDecoration: 'none' }}
                     borderBottom='1'
                     ml='1'
-                    href='https://urbit.org/using/operations/using-your-ship/#bucket-setup'
+                    href='https://urbit.org/using/os/s3/'
                   >
                     Learn more
                   </Anchor>
