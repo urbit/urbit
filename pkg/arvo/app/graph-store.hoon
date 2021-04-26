@@ -84,6 +84,7 @@
       graphs.old       (~(run by graphs.old) marked-graph-to-two:upg)
       archive.old      (~(run by archive.old) marked-graph-to-two:upg)
       tag-queries.old  *tag-queries:store
+      validators.old   ~
     ::
         update-logs.old
       %-  ~(run by update-logs.old)

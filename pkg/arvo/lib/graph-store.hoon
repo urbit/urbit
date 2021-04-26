@@ -738,7 +738,7 @@
         tag-queries=(tree [term (tree uid)])
         update-logs=tree-update-logs
         archive=tree-graphs
-        validators=(tree ^mark)
+        ~
     ==
   +$  tree-graphs          (tree [resource tree-marked-graph])
   +$  tree-marked-graph    [p=tree-graph q=(unit ^mark)]
@@ -779,7 +779,7 @@
         (remake-jug:migrate tag-queries.t)
         (remake-update-logs update-logs.t)
         (remake-graphs archive.t)
-        (remake-set:migrate validators.t)
+        ~
     ==
   ::
   ++  remake-graphs
