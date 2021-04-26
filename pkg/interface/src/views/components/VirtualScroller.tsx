@@ -116,6 +116,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
    */
   private childRefs = new BigIntOrderedMap<HTMLElement>();
   /**
+   * A set of child refs which have been unmounted
+   */
+  private orphans = new Set<string>();
+  /**
    *  If saving, the bottommost visible element that we pin our scroll to
    */
   private savedIndex: BigInteger | null = null;
@@ -140,6 +144,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
   private scrollRef: HTMLElement | null = null;
 
+  private cleanupRefInterval: NodeJS.Timeout | null = null;
+
   constructor(props: VirtualScrollerProps<T>) {
     super(props);
     this.state = {
@@ -157,14 +163,28 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     this.onScroll = IS_IOS ? _.debounce(this.onScroll.bind(this), 400) : this.onScroll.bind(this);
     this.scrollKeyMap = this.scrollKeyMap.bind(this);
     this.setWindow = this.setWindow.bind(this);
+    this.restore = this.restore.bind(this);
   }
 
   componentDidMount() {
     this.updateVisible(0);
-    this.resetScroll();
     this.loadTop();
     this.loadBottom();
+    this.cleanupRefInterval = setInterval(this.cleanupRefs, 5000);
   }
+
+
+
+  cleanupRefs = () => {
+    if(this.saveDepth > 0) {
+      return;
+    }
+    [...this.orphans].forEach(o => {
+      const index = bigInt(o);
+      this.childRefs.delete(index);
+    });
+    this.orphans.clear();
+  };
 
   // manipulate scrollbar manually, to dodge change detection
   updateScroll = IS_IOS ? () => {} : _.throttle(() => {
@@ -189,16 +209,22 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const { visibleItems } = this.state;
 
     if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
-      if(this.scrollLocked) {
-        this.updateVisible(0);
+      if(this.scrollLocked && visibleItems?.peekLargest() && data?.peekLargest()) {
+        if(!visibleItems.peekLargest()[0].eq(data.peekLargest()[0])) {
+          this.updateVisible(0);
+        }
         this.resetScroll();
-
       }
     }
   }
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.invertedKeyHandler);
+    if(this.cleanupRefInterval) {
+      clearInterval(this.cleanupRefInterval);
+    }
+    this.cleanupRefs();
+    this.childRefs.clear();
   }
 
   startOffset() {
@@ -237,9 +263,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     }, () => {
       requestAnimationFrame(() => {
         this.restore();
-        requestAnimationFrame(() => {
-
-        });
       });
     });
   }
@@ -350,17 +373,15 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const startOffset = this.startOffset();
     if (scrollTop < ZONE_SIZE) {
       log('scroll', `Entered start zone ${scrollTop}`);
-      if (startOffset === 0 && onStartReached) {
-        onStartReached();
+      if (startOffset === 0) {
+        onStartReached && onStartReached();
+        this.scrollLocked = true;
       }
       const newOffset = Math.max(0, startOffset - this.pageDelta);
       if(newOffset < 10) {
         this.loadBottom();
       }
 
-      if(newOffset === 0) {
-        this.scrollLocked = true;
-      }
       if(newOffset !== startOffset) {
         this.updateVisible(newOffset);
       }
@@ -394,8 +415,18 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       log('bail', 'Deep restore');
       return;
     }
+    if(this.scrollLocked) {
+      this.resetScroll();
+      this.savedIndex = null;
+      this.savedDistance = 0;
+      this.saveDepth--;
+      return;
+    }
 
-    const ref = this.childRefs.get(this.savedIndex)!;
+    let ref = this.childRefs.get(this.savedIndex)
+    if(!ref) {
+      return;
+    }
     const newScrollTop = this.window.scrollHeight - ref.offsetTop - this.savedDistance;
 
     this.window.scrollTo(0, newScrollTop);
@@ -435,11 +466,12 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     if(!this.window || this.savedIndex) {
       return;
     }
-    this.saveDepth++;
-    if(this.saveDepth !== 1) {
+    if(this.saveDepth !== 0) {
       console.log('bail', 'deep save');
       return;
     }
+
+    this.saveDepth++;
 
     let bottomIndex: BigInteger | null = null;
     const { scrollTop, scrollHeight } = this.window;
@@ -472,10 +504,9 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   setRef = (element: HTMLElement | null, index: BigInteger) => {
     if(element) {
       this.childRefs.set(index, element);
+      this.orphans.delete(index.toString());
     } else {
-      setTimeout(() => {
-        this.childRefs.delete(index);
-      });
+      this.orphans.add(index.toString());
     }
   }
 

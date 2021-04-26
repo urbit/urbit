@@ -1,18 +1,14 @@
 import {
-  Notifications,
   NotifIndex,
-  NotificationGraphConfig,
-  GroupNotificationsConfig,
-  UnreadStats,
   Timebox
 } from '@urbit/api';
 import { makePatDa } from '~/logic/lib/util';
 import _ from 'lodash';
-import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import useHarkState, { HarkState } from '../state/hark';
 import { compose } from 'lodash/fp';
 import { reduceState } from '../state/base';
-import bigInt, {BigInteger} from 'big-integer';
+import {BigInteger} from 'big-integer';
 
 export const HarkReducer = (json: any) => {
   const data = _.get(json, 'harkUpdate', false);
@@ -151,7 +147,7 @@ function graphWatchSelf(json: any, state: HarkState): HarkState {
 
 function readAll(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-all');
-  if(data) { 
+  if(data) {
     clearState(state);
   }
   return state;
@@ -264,7 +260,7 @@ function updateUnreads(state: HarkState, index: NotifIndex, f: (us: Set<string>)
   if(!('graph' in index)) {
     return state;
   }
-  let unreads = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], new Set<string>());
+  let unreads: any = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], new Set<string>());
   f(unreads);
 
   _.set(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], unreads);
@@ -278,7 +274,7 @@ function addNotificationToUnread(state: HarkState, index: NotifIndex, time: BigI
     _.set(state.unreads.graph, path,
       [
         ...curr.filter(c => !(c.time.eq(time) && notifIdxEqual(c.index, index))),
-        { time, index}
+        { time, index }
       ]
     );
   } else if ('group' in index) {
@@ -287,7 +283,7 @@ function addNotificationToUnread(state: HarkState, index: NotifIndex, time: BigI
     _.set(state.unreads.group, path,
       [
         ...curr.filter(c => !(c.time.eq(time) && notifIdxEqual(c.index, index))),
-        { time, index}
+        { time, index }
       ]
     );
   }
@@ -312,10 +308,10 @@ function removeNotificationFromUnread(state: HarkState, index: NotifIndex, time:
 function updateNotificationStats(state: HarkState, index: NotifIndex, statField: 'unreads' | 'last', f: (x: number) => number) {
 
     if('graph' in index) {
-      const curr = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, statField], 0);
+      const curr: any = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, statField], 0);
       _.set(state.unreads.graph, [index.graph.graph, index.graph.index, statField], f(curr));
     } else if('group' in index) {
-      const curr = _.get(state.unreads.group, [index.group.group, statField], 0);
+      const curr: any = _.get(state.unreads.group, [index.group.group, statField], 0);
       _.set(state.unreads.group, [index.group.group, statField], f(curr));
     }
 }
