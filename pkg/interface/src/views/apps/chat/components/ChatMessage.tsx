@@ -141,7 +141,7 @@ const MessageActionItem = (props) => {
   );
 };
 
-const MessageActions = ({ api, onReply, association, history, msg, group }) => {
+const MessageActions = ({ api, onReply, association, msg, group }) => {
   const isAdmin = () => group.tags.role.admin.has(window.ship);
   const isOwn = () => msg.author === window.ship;
   const { doCopy, copyDisplay } = useCopy(`web+urbitgraph://group${association.group.slice(5)}/graph${association.resource.slice(5)}${msg.index}`, 'Copy Message Link');
@@ -244,7 +244,6 @@ interface ChatMessageProps {
   scrollWindow: HTMLDivElement;
   isLastMessage?: boolean;
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
-  history: unknown;
   api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
@@ -277,7 +276,6 @@ class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow,
       isLastMessage,
       unreadMarkerRef,
-      history,
       api,
       highlighted,
       showOurContact,
@@ -322,7 +320,6 @@ class ChatMessage extends Component<ChatMessageProps> {
       containerClass,
       isPending,
       showOurContact,
-      history,
       api,
       scrollWindow,
       highlighted,
@@ -374,7 +371,7 @@ class ChatMessage extends Component<ChatMessageProps> {
   }
 }
 
-export default React.forwardRef((props, ref) => (
+export default React.forwardRef((props: Omit<ChatMessageProps, 'innerRef'>, ref: any) => (
   <ChatMessage {...props} innerRef={ref} />
 ));
 
@@ -383,7 +380,6 @@ export const MessageAuthor = ({
   msg,
   group,
   api,
-  history,
   scrollWindow,
   showOurContact,
   ...rest
