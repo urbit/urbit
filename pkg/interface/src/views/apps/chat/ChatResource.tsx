@@ -165,10 +165,9 @@ function ChatResource(props: ChatResourceProps) {
       {dragging && <SubmitDragger />}
       <ChatWindow
         key={station}
-        history={props.history}
         graph={graph}
         graphSize={graph.size}
-        unreadCount={unreadCount}
+        unreadCount={unreadCount as number}
         showOurContact={ !showBanner && hasLoadedAllowed }
         association={props.association}
         pendingSize={Object.keys(graphTimesentMap[graphPath] || {}).length}
