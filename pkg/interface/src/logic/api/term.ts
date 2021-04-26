@@ -14,8 +14,28 @@ export type Belt =
   | { mod: { mod: 'ctl' | 'met' | 'hyp', key: Bolt } }
   | { txt: Array<string> };
 
+export type Task =
+  | { belt: Belt }
+  | { blew: { w: number, h: number } }
+  | { flow: { term: string, apps: Array<{ who: string, app: string }> } }
+  | { hail: null }
+  | { hook: null }
+
 export default class TermApi extends BaseApi<StoreState> {
-  public sendBelt(belt: Belt) {
-    return this.action('herm', 'belt', belt);
+  public sendBelt(session: string, belt: Belt) {
+    if (session === '') {
+      //TODO  remove? reduntant, probably minimal perf gains
+      return this.action('herm', 'belt', belt);
+    } else {
+      return this.sendTask(session, { 'belt': belt });
+    }
+  }
+
+  public sendTask(session: string, task: Task) {
+    return this.action('herm', 'herm-task', { 'session': session, ...task });
+  }
+
+  public getSessions(): Promise<Array<string>> {
+    return this.scry<Array<string>>('herm', '/sessions');
   }
 }

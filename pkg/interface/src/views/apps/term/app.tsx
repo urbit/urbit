@@ -329,7 +329,7 @@ export default function TermApp(props: TermAppProps) {
       strap = '';
     }
     belts.map(b => {  //NOTE  passing api.term.sendBelt makes `this` undefined!
-      api.term.sendBelt(b);
+      api.term.sendBelt(ses, b);
     });
   }, [sessions, api.term]);
 
