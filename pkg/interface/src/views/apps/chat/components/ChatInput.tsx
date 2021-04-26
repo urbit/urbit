@@ -9,9 +9,10 @@ import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
 import { StorageState } from '~/types';
 import { Contacts, Content } from '@urbit/api';
-import { Row, BaseImage, Box, Icon, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
 import withStorage from '~/views/components/withStorage';
 import { withLocalState } from '~/logic/state/local';
+import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 
 type ChatInputProps = IuseStorage & {
   api: GlobalApi;
@@ -30,6 +31,7 @@ interface ChatInputState {
   inCodeMode: boolean;
   submitFocus: boolean;
   uploadingPaste: boolean;
+  currentInput: string;
 }
 
 class ChatInput extends Component<ChatInputProps, ChatInputState> {
@@ -41,7 +43,8 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     this.state = {
       inCodeMode: false,
       submitFocus: false,
-      uploadingPaste: false
+      uploadingPaste: false,
+      currentInput: props.message,
     };
 
     this.chatEditor = React.createRef();
@@ -50,6 +53,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     this.toggleCode = this.toggleCode.bind(this);
     this.uploadSuccess = this.uploadSuccess.bind(this);
     this.uploadError = this.uploadError.bind(this);
+    this.eventHandler = this.eventHandler.bind(this);
   }
 
   toggleCode() {
@@ -61,6 +65,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
   submit(text) {
     const { props, state } = this;
     const [, , ship, name] = props.station.split('/');
+    this.setState({ currentInput: '' });
     if (state.inCodeMode) {
       this.setState(
         {
@@ -118,6 +123,14 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         .then(this.uploadSuccess)
         .catch(this.uploadError);
     });
+  }
+  
+  toggleFocus(value) {
+    this.setState({ submitFocus: value });
+  }
+
+  eventHandler(value) {
+    this.setState({ currentInput: value });
   }
 
   render() {
@@ -180,6 +193,9 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
           onUnmount={props.onUnmount}
           message={props.message}
           onPaste={this.onPaste.bind(this)}
+          focusEvent={() => this.toggleFocus(true)}
+          blurEvent={() => this.toggleFocus(false)}
+          changeEvent={this.eventHandler}
           placeholder='Message...'
         />
         <Box mx='12px' flexShrink={0} height='16px' width='16px' flexBasis='16px'>
@@ -207,16 +223,26 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
             )
           ) : null}
         </Box>
-        <Box mx={3} flexShrink={0} height='16px'>
-          <Text
-              bold
-              color="blue"
-              cursor="pointer"
-              onClick={() => console.log(this.chatEditor.current.submit())}
-            >
-              Send
-            </Text>
-        </Box>
+        {(MOBILE_BROWSER_REGEX.test(navigator.userAgent) &&
+          state.submitFocus) ||
+        state.currentInput !== "" ? (
+          <Box
+            ml={2}
+            mr="12px"
+            flexShrink={0}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            width="24px"
+            height="24px"
+            borderRadius="50%"
+            backgroundColor={state.currentInput !== "" ? "blue" : "gray"}
+            cursor={state.currentInput !== "" ? "pointer" : "default"}
+            onClick={() => this.chatEditor.current.submit()}
+          >
+            <Icon icon="ArrowEast" color="white" />
+          </Box>
+        ) : null}
       </Row>
     );
   }
