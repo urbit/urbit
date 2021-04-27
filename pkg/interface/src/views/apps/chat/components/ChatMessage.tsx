@@ -3,6 +3,7 @@ import bigInt from 'big-integer';
 import React, {
   useState,
   useEffect,
+  useMemo,
   useRef,
   Component,
   PureComponent,
@@ -40,11 +41,12 @@ import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import Timestamp from '~/views/components/Timestamp';
-import useContactState from '~/logic/state/contact';
+import useContactState, {useContact} from '~/logic/state/contact';
 import { useIdlingState } from '~/logic/lib/idling';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
 import {useCopy} from '~/logic/lib/useCopy';
 import {GraphContentWide} from '~/views/landscape/components/Graph/GraphContentWide';
+import {Contact} from '@urbit/api';
 
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
@@ -80,7 +82,7 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
 );
 
 export const UnreadMarker = React.forwardRef(
-  ({ dayBreak, when, api, association }, ref) => {
+  ({ dayBreak, when, api, association }: any, ref) => {
     const [visible, setVisible] = useState(false);
     const idling = useIdlingState();
     const dismiss = useCallback(() => {
@@ -241,7 +243,6 @@ interface ChatMessageProps {
   className?: string;
   isPending: boolean;
   style?: unknown;
-  scrollWindow: HTMLDivElement;
   isLastMessage?: boolean;
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
   api: GlobalApi;
@@ -250,125 +251,124 @@ interface ChatMessageProps {
   hideHover?: boolean;
   innerRef: (el: HTMLDivElement | null) => void;
   onReply?: (msg: Post) => void;
+  showOurContact: boolean;
 }
 
-class ChatMessage extends Component<ChatMessageProps> {
-  private divRef: React.RefObject<HTMLDivElement>;
+function ChatMessage(props: ChatMessageProps) {
+  const {
+    msg,
+    previousMsg,
+    nextMsg,
+    isLastRead,
+    group,
+    association,
+    className = '',
+    isPending,
+    style,
+    isLastMessage,
+    unreadMarkerRef,
+    api,
+    highlighted,
+    showOurContact,
+    fontSize,
+    hideHover
+  } = props;
 
-  constructor(props) {
-    super(props);
-    this.divRef = React.createRef();
-  }
-
-  componentDidMount() {}
-
-  render() {
-    const {
-      msg,
-      previousMsg,
-      nextMsg,
-      isLastRead,
-      group,
-      association,
-      className = '',
-      isPending,
-      style,
-      scrollWindow,
-      isLastMessage,
-      unreadMarkerRef,
-      api,
-      highlighted,
-      showOurContact,
-      fontSize,
-      hideHover
-    } = this.props;
-
-    let onReply = this.props?.onReply ?? (() => {});
-    const transcluded = this.props?.transcluded ?? 0;
-    let { renderSigil } = this.props;
-
-    if (renderSigil === undefined) {
-      renderSigil = Boolean(
-        (nextMsg && msg.author !== nextMsg.author) ||
-          !nextMsg ||
-          msg.number === 1
-      );
-    }
-
-    const date = daToUnix(bigInt(msg.index.split('/')[1]));
-    const nextDate = nextMsg ? (
-      daToUnix(bigInt(nextMsg.index.split('/')[1]))
-    ) : null;
-
-    const dayBreak =
-      nextMsg &&
-      new Date(date).getDate() !==
-      new Date(nextDate).getDate();
-
-    const containerClass = `${isPending ? 'o-40' : ''} ${className}`;
-
-    const timestamp = moment
-      .unix(date / 1000)
-      .format(renderSigil ? 'h:mm A' : 'h:mm');
-
-    const messageProps = {
-      msg,
-      timestamp,
-      association,
-      group,
-      style,
-      containerClass,
-      isPending,
-      showOurContact,
-      api,
-      scrollWindow,
-      highlighted,
-      fontSize,
-      hideHover,
-      transcluded,
-      onReply
-    };
-
-    const unreadContainerStyle = {
-      height: isLastRead ? '2rem' : '0'
-    };
-
-    return (
-      <Box
-        ref={this.props.innerRef}
-        pt={renderSigil ? 2 : 0}
-        width="100%"
-        pb={isLastMessage ? '20px' : 0}
-        className={containerClass}
-        style={style}
-      >
-        {dayBreak && !isLastRead ? (
-          <DayBreak when={date} shimTop={renderSigil} />
-        ) : null}
-        {renderSigil ? (
-          <MessageWrapper {...messageProps}>
-            <MessageAuthor pb={1} {...messageProps} />
-            <Message pl={'44px'} pr={4} {...messageProps} />
-          </MessageWrapper>
-        ) : (
-          <MessageWrapper {...messageProps}>
-            <Message pl={'44px'} pr={4} timestampHover {...messageProps} />
-          </MessageWrapper>
-        )}
-        <Box style={unreadContainerStyle}>
-          {isLastRead ? (
-            <UnreadMarker
-              association={association}
-              api={api}
-              dayBreak={dayBreak}
-              when={date}
-              ref={unreadMarkerRef}
-            />
-          ) : null}
-        </Box>
-      </Box>
+  let onReply = props?.onReply ?? (() => {});
+  const transcluded = props?.transcluded ?? 0;
+  const renderSigil = props.renderSigil ?? (Boolean(nextMsg && msg.author !== nextMsg.author) ||
+        !nextMsg ||
+        msg.number === 1
     );
-  }
+
+
+
+  const date = useMemo(() => daToUnix(bigInt(msg.index.split('/')[1])), [msg.index]);
+  const nextDate = useMemo(() => nextMsg ? (
+    daToUnix(bigInt(nextMsg.index.split('/')[1]))
+  ) : null,
+    [nextMsg]
+  );
+
+  const dayBreak = useMemo(() => 
+    nextDate &&
+    new Date(date).getDate() !==
+    new Date(nextDate).getDate()
+  , [nextDate, date])
+
+  const containerClass = `${isPending ? 'o-40' : ''} ${className}`;
+
+  const timestamp = useMemo(() => moment
+    .unix(date / 1000)
+    .format(renderSigil ? 'h:mm A' : 'h:mm'),
+    [date, renderSigil]
+  );
+
+  const messageProps = {
+    msg,
+    timestamp,
+    association,
+    group,
+    isPending,
+    showOurContact,
+    api,
+    highlighted,
+    fontSize,
+    hideHover,
+    transcluded,
+    onReply
+  };
+
+  const message = useMemo(() => (
+    <Message
+      msg={msg}
+      timestamp={timestamp}
+      timestampHover={!renderSigil}
+      api={api}
+      transcluded={transcluded}
+      showOurContact={showOurContact}
+    />
+  ), [renderSigil, msg, timestamp, api, transcluded, showOurContact]);
+
+  const unreadContainerStyle = {
+    height: isLastRead ? '2rem' : '0'
+  };
+
+  return (
+    <Box
+      ref={props.innerRef}
+      pt={renderSigil ? 2 : 0}
+      width="100%"
+      pb={isLastMessage ? '20px' : 0}
+      className={containerClass}
+      style={style}
+    >
+      {dayBreak && !isLastRead ? (
+        <DayBreak when={date} shimTop={renderSigil} />
+      ) : null}
+      {renderSigil ? (
+        <MessageWrapper {...messageProps}>
+          <MessageAuthor pb={1} {...messageProps} />
+          {message}
+        </MessageWrapper>
+      ) : (
+        <MessageWrapper {...messageProps}>
+          {message}
+        </MessageWrapper>
+      )}
+      <Box style={unreadContainerStyle}>
+        {isLastRead ? (
+          <UnreadMarker
+            association={association}
+            api={api}
+            dayBreak={dayBreak}
+            when={date}
+            ref={unreadMarkerRef}
+          />
+        ) : null}
+      </Box>
+    </Box>
+  );
 }
 
 export default React.forwardRef((props: Omit<ChatMessageProps, 'innerRef'>, ref: any) => (
@@ -378,29 +378,25 @@ export default React.forwardRef((props: Omit<ChatMessageProps, 'innerRef'>, ref:
 export const MessageAuthor = ({
   timestamp,
   msg,
-  group,
   api,
-  scrollWindow,
   showOurContact,
-  ...rest
 }) => {
   const osDark = useLocalState((state) => state.dark);
 
   const theme = useSettingsState((s) => s.display.theme);
   const dark = theme === 'dark' || (theme === 'auto' && osDark);
-  const contacts = useContactState((state) => state.contacts);
+  let contact: Contact | null = useContact(`~${msg.author}`);
 
   const date = daToUnix(bigInt(msg.index.split('/')[1]));
 
   const datestamp = moment
     .unix(date / 1000)
     .format(DATESTAMP_FORMAT);
-  const contact =
+  contact =
     ((msg.author === window.ship && showOurContact) ||
-      msg.author !== window.ship) &&
-    `~${msg.author}` in contacts
-      ? contacts[`~${msg.author}`]
-      : undefined;
+      msg.author !== window.ship)
+      ? contact
+      : null;
 
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
@@ -453,7 +449,7 @@ export const MessageAuthor = ({
       </Box>
     );
   return (
-    <Box display='flex' alignItems='flex-start' {...rest}>
+    <Box display='flex' alignItems='flex-start'>
       <Box
        height={24}
         pr={2}
@@ -505,20 +501,20 @@ export const MessageAuthor = ({
   );
 };
 
-export const Message = ({
+type MessageProps = { timestamp: string; timestampHover: boolean; }
+  & Pick<ChatMessageProps, "msg" | "api" | "transcluded" | "showOurContact">
+
+export const Message = React.memo(({
   timestamp,
   msg,
-  group,
   api,
-  scrollWindow,
   timestampHover,
   transcluded,
-  showOurContact,
-  ...rest
-}) => {
+  showOurContact
+}: MessageProps) => {
   const { hovering, bind } = useHovering();
   return (
-    <Box width="100%" position='relative' {...rest}>
+    <Box pl="44px" width="100%" position='relative'>
       {timestampHover ? (
         <Text
           display={hovering ? 'block' : 'none'}
@@ -545,7 +541,9 @@ export const Message = ({
       />
     </Box>
   );
-};
+});
+
+Message.displayName = 'Message';
 
 export const MessagePlaceholder = ({
   height,
