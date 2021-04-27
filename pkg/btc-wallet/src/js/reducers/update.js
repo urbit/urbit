@@ -33,6 +33,9 @@ export class UpdateReducer {
     if (json.address) {
       this.reduceAddress(json.address, state);
     }
+    if (json.balance) {
+      this.reduceBalance(json.balance, state);
+    }
   }
 
   reduceProviderStatus(json, state) {
@@ -90,5 +93,10 @@ export class UpdateReducer {
 
   reduceAddress(json, state) {
     state.address = json;
+  }
+
+  reduceBalance(json, state) {
+    state.unconfirmedBalance = json.unconfirmed;
+    state.confirmedBalance = json.confirmed;
   }
 }

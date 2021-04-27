@@ -957,6 +957,7 @@
       [cad ah]
     :-  [(poke-provider [%tx-info txid.u]) cad]
     (~(put by ah) txid.u)
+  =.  cards  (snoc cards (give-update %balance current-balance))
   ::  if the wallet+chyg is being scanned, update the scan batch
   ::
   =/  b  (~(get by scans) [xpub.w chyg])

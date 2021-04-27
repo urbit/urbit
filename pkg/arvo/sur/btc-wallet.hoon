@@ -118,7 +118,7 @@
   $%  $:  %initial
         provider=(unit provider)
         wallet=(unit xpub)
-        balance=(unit [p=sats q=sats])
+        balance=(unit [confirmed=sats unconfirmed=sats])
         =history
         =btc-state
         address=(unit address)
@@ -130,6 +130,7 @@
       [%new-tx =hest]
       [%cancel-tx =txid]
       [%new-address =address]
+      [%balance balance=(unit [confirmed=sats unconfirmed=sats])]
   ==
 ::
 +$  condition
