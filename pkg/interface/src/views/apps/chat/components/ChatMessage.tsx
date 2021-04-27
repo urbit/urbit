@@ -255,7 +255,7 @@ interface ChatMessageProps {
 }
 
 function ChatMessage(props: ChatMessageProps) {
-  let { highlighted } = this.props;
+  let { highlighted } = props;
   const {
     msg,
     previousMsg,
