@@ -333,14 +333,21 @@ export default function TermApp(props: TermAppProps) {
     });
   }, [sessions, api.term]);
 
+  const onResize = useCallback(() => {
+    //TODO  debounce, if it ever becomes a problem
+    sessions[selected].fit.fit();
+  }, [sessions, selected]);
+
   //  on-init, open slogstream
   //
   useEffect(() => {
     setupSlog();
+    window.addEventListener('resize', onResize);
     return () => {
       //TODO  clean up subs?
+      window.removeEventListener('resize', onResize);
     };
-  }, []);
+  }, [onResize]);
 
   //  on dark mode change, change terminals' theme
   //
@@ -377,7 +384,9 @@ export default function TermApp(props: TermAppProps) {
       //
       term.onData((e) => onInput(selected, e));
       term.onBinary((e) => onInput(selected, e));
-      //TODO  term.onResize
+      term.onResize((e) => {
+        api.term.sendTask(selected, { blew: { w: e.cols, h: e.rows } });
+      });
 
       ses = { term, fit };
 
@@ -401,7 +410,7 @@ export default function TermApp(props: TermAppProps) {
 
     if (container.current && !container.current.contains(ses.term.element || null)) {
       ses.term.open(container.current);
-      ses.fit.fit();  //TODO  if not default, send %blew
+      ses.fit.fit();
       ses.term.focus();
     }
 
@@ -421,16 +430,17 @@ export default function TermApp(props: TermAppProps) {
       <Box
         width='100%'
         height='100%'
+        px={['0','3']}
+        pb={['0','3']}
         display='flex'
       >
         <Col
             width='100%'
             minHeight='0'
             color='washedGray'
-            borderRadius='2'
-            mx={['0','3']}
-            mb={['0','3']}
+            borderRadius={['0','2']}
             border={['0','1']}
+            p='1'
             //@ts-ignore  //NOTE  fix in indigo Soon™
             ref={container}  //TODO  might somehow be undefined?
           >
