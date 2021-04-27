@@ -46,6 +46,7 @@ export function PostHeader(props) {
         isRelativeTime={true}
         showTime={false}
         time={true}
+        lineHeight='1'
       />
       <Dropdown
         dropWidth="200px"

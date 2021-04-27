@@ -255,6 +255,7 @@ interface ChatMessageProps {
 }
 
 function ChatMessage(props: ChatMessageProps) {
+  let { highlighted } = this.props;
   const {
     msg,
     previousMsg,
@@ -268,7 +269,6 @@ function ChatMessage(props: ChatMessageProps) {
     isLastMessage,
     unreadMarkerRef,
     api,
-    highlighted,
     showOurContact,
     fontSize,
     hideHover
@@ -281,7 +281,15 @@ function ChatMessage(props: ChatMessageProps) {
         msg.number === 1
     );
 
+    const ourMention = msg?.contents?.some((e) => {
+      return e?.mention && e?.mention === window.ship;
+    });
 
+    if (!highlighted) {
+      if (ourMention) {
+        highlighted = true;
+      }
+    }
 
   const date = useMemo(() => daToUnix(bigInt(msg.index.split('/')[1])), [msg.index]);
   const nextDate = useMemo(() => nextMsg ? (
@@ -290,7 +298,7 @@ function ChatMessage(props: ChatMessageProps) {
     [nextMsg]
   );
 
-  const dayBreak = useMemo(() => 
+  const dayBreak = useMemo(() =>
     nextDate &&
     new Date(date).getDate() !==
     new Date(nextDate).getDate()
@@ -572,7 +580,7 @@ export const MessagePlaceholder = ({
     >
       <Text
         display='block'
-        background='gray'
+        background='washedGray'
         width='24px'
         height='24px'
         borderRadius='50%'
@@ -595,12 +603,13 @@ export const MessagePlaceholder = ({
           display='inline-block'
           verticalAlign='middle'
           fontSize='0'
-          gray
+          washedGray
           cursor='default'
         >
           <Text maxWidth='32rem' display='block'>
             <Text
-              backgroundColor='gray'
+              backgroundColor='washedGray'
+              borderRadius='2'
               display='block'
               width='100%'
               height='100%'
@@ -612,10 +621,11 @@ export const MessagePlaceholder = ({
           mono
           verticalAlign='middle'
           fontSize='0'
-          gray
+          washedGray
         >
           <Text
-            background='gray'
+            background='washedGray'
+            borderRadius='2'
             display='block'
             height='1em'
             style={{ width: `${((index % 3) + 1) * 3}em` }}
@@ -626,12 +636,14 @@ export const MessagePlaceholder = ({
           verticalAlign='middle'
           fontSize='0'
           ml='2'
-          gray
+          washedGray
+          borderRadius='2'
           display={['none', 'inline-block']}
           className='child'
         >
           <Text
-            backgroundColor='gray'
+            backgroundColor='washedGray'
+            borderRadius='2'
             display='block'
             width='100%'
             height='100%'
@@ -640,7 +652,8 @@ export const MessagePlaceholder = ({
       </Box>
       <Text
         display='block'
-        backgroundColor='gray'
+        backgroundColor='washedGray'
+        borderRadius='2'
         height='1em'
         style={{ width: `${(index % 5) * 20}%` }}
       ></Text>

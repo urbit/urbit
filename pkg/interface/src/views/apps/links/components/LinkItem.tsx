@@ -19,7 +19,7 @@ interface LinkItemProps {
   node: GraphNode;
   association: Association;
   resource: string; api: GlobalApi; group: Group; path: string; }
-export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactElement => { 
+export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactElement => {
   const {
     association,
     node,
@@ -85,7 +85,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
     permalink,
     'Copy reference'
   );
-  
+
   const deleteLink = () => {
     if (confirm('Are you sure you want to delete this link?')) {
       api.graph.removeNodes(`~${ship}`, name, [node.post.index]);
@@ -96,7 +96,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
   const unreads = useHarkState(state => state.unreads);
   const commColor = (unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
   const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
-  
+
   return (
     <Box
       mx="auto"
@@ -166,9 +166,11 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
       <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
       <Author
         showImage
+        isRelativeTime
         ship={author}
         date={node.post['time-sent']}
         group={group}
+        lineHeight="1"
       />
       <Box ml="auto">
         <Link

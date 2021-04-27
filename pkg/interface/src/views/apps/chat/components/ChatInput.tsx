@@ -12,6 +12,7 @@ import { Contacts, Content } from '@urbit/api';
 import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
 import withStorage from '~/views/components/withStorage';
 import { withLocalState } from '~/logic/state/local';
+import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 
 type ChatInputProps = IuseStorage & {
   api: GlobalApi;
@@ -30,6 +31,7 @@ interface ChatInputState {
   inCodeMode: boolean;
   submitFocus: boolean;
   uploadingPaste: boolean;
+  currentInput: string;
 }
 
 class ChatInput extends Component<ChatInputProps, ChatInputState> {
@@ -41,7 +43,8 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     this.state = {
       inCodeMode: false,
       submitFocus: false,
-      uploadingPaste: false
+      uploadingPaste: false,
+      currentInput: props.message
     };
 
     this.chatEditor = React.createRef();
@@ -50,6 +53,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     this.toggleCode = this.toggleCode.bind(this);
     this.uploadSuccess = this.uploadSuccess.bind(this);
     this.uploadError = this.uploadError.bind(this);
+    this.eventHandler = this.eventHandler.bind(this);
   }
 
   toggleCode() {
@@ -61,6 +65,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
   submit(text) {
     const { props, state } = this;
     const [, , ship, name] = props.station.split('/');
+    this.setState({ currentInput: '' });
     if (state.inCodeMode) {
       this.setState(
         {
@@ -120,6 +125,10 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     });
   }
 
+  eventHandler(value) {
+    this.setState({ currentInput: value });
+  }
+
   render() {
     const { props, state } = this;
 
@@ -130,6 +139,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     const avatar =
       props.ourContact && props.ourContact?.avatar && !props.hideAvatars ? (
         <BaseImage
+          flexShrink={0}
           src={props.ourContact.avatar}
           height={24}
           width={24}
@@ -170,7 +180,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
         className='cf'
         zIndex={0}
       >
-        <Row p='12px 4px 12px 12px' alignItems='center'>
+        <Row p='12px 4px 12px 12px' flexShrink={0} alignItems='center'>
           {avatar}
         </Row>
         <ChatEditor
@@ -180,15 +190,25 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
           onUnmount={props.onUnmount}
           message={props.message}
           onPaste={this.onPaste.bind(this)}
+          changeEvent={this.eventHandler}
           placeholder='Message...'
         />
-        <Box mx={2} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
+        <Box mx='12px' flexShrink={0} height='16px' width='16px' flexBasis='16px'>
+          <Icon
+            icon='Dojo'
+            cursor='pointer'
+            onClick={this.toggleCode}
+            color={state.inCodeMode ? 'blue' : 'black'}
+          />
+        </Box>
+        <Box ml='12px' mr={3} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
           {this.props.canUpload ? (
             this.props.uploading ? (
               <LoadingSpinner />
             ) : (
               <Icon
                 icon='Attachment'
+                cursor='pointer'
                 width='16'
                 height='16'
                 onClick={() =>
@@ -198,13 +218,24 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
             )
           ) : null}
         </Box>
-        <Box mr={2} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
-          <Icon
-            icon='Dojo'
-            onClick={this.toggleCode}
-            color={state.inCodeMode ? 'blue' : 'black'}
-          />
-        </Box>
+        {MOBILE_BROWSER_REGEX.test(navigator.userAgent) ?
+          <Box
+            ml={2}
+            mr="12px"
+            flexShrink={0}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            width="24px"
+            height="24px"
+            borderRadius="50%"
+            backgroundColor={state.currentInput !== '' ? 'blue' : 'gray'}
+            cursor={state.currentInput !== '' ? 'pointer' : 'default'}
+            onClick={() => this.chatEditor.current.submit()}
+          >
+            <Icon icon="ArrowEast" color="white" />
+          </Box>
+          : null}
       </Row>
     );
   }
