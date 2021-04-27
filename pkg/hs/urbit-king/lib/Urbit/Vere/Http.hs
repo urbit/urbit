@@ -4,9 +4,8 @@
 
 module Urbit.Vere.Http where
 
-import ClassyPrelude
+import Urbit.Prelude
 import Urbit.Arvo
-import Urbit.Noun
 
 import qualified Data.CaseInsensitive as CI
 import qualified Network.HTTP.Types   as HT

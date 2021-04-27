@@ -3,9 +3,8 @@
 -}
 module Urbit.King.TryJamPill where
 
-import ClassyPrelude
 import Control.Lens
-import Urbit.Noun
+import Urbit.Prelude
 
 --------------------------------------------------------------------------------
 

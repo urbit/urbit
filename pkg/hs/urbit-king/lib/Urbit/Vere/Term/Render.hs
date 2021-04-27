@@ -9,7 +9,7 @@ module Urbit.Vere.Term.Render
     , soundBell
     ) where
 
-import ClassyPrelude
+import Urbit.Prelude
 
 import qualified System.Console.ANSI as ANSI
 
