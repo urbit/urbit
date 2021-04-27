@@ -188,8 +188,11 @@
     ?:  ?=([%'~landscape' %js %session ~] site.req-line)
       %+  require-authorization-simple:app
         inbound-request
-      %-  js-response:gen
-      (as-octt:mimes:html "window.ship = '{+:(scow %p our.bowl)}';")
+      %.  %-  as-octs:mimes:html
+          (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~)
+      %*  .  js-response:gen
+        cache  %.n
+      ==
     ::
     =/  [payload=simple-payload:http public=?]  (get-file req-line is-file)
     ?:  public  payload
@@ -238,11 +241,9 @@
           [not-found:gen %.n]
         :_  public.u.content
         =/  mime-type=@t  (rsh 3 (crip <p.u.data>))
-        ::  Should maybe inspect to see how long cache should hold
-        ::
         =/  headers
           :~  content-type+mime-type 
-              max-1-da:gen 
+              max-1-wk:gen 
               'service-worker-allowed'^'/'
           ==
         [[200 headers] `q.u.data]
