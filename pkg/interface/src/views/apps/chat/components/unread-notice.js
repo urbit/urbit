@@ -44,10 +44,10 @@ export const UnreadNotice = (props) => {
               cursor={unreadMsg ? 'pointer' : null}
               onClick={onClick}
             >
-              {unreadCount} new message{unreadCount > 1 ? 's' : ''} 
+              {unreadCount} new message{unreadCount > 1 ? 's' : ''}
               {unreadMsg && (
                 <>
-                since{' '}
+                {' '}since{' '}
                 <Timestamp stamp={stamp} color='black' date={true} fontSize={1} />
                 </>
               )}
