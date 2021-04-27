@@ -25,12 +25,13 @@ The first two options result in Urbit attempting to boot either the ship named b
 In consequence, it is safe to remove the container and start a new container which mounts the same volume, e.g. to upgrade the version of the urbit binary by running a later container version. It is also possible to stop the container and then move the pier away e.g. to a location where you will run it directly with the Urbit binary.
 
 ### Ports
-The image includes `EXPOSE` directives for TCP port 80 and UDP port 34343. Port `80` is used for Urbit's HTTP interface for both [Landscape](https://urbit.org/docs/glossary/landscape/) and for [API calls](https://urbit.org/using/integrating-api/) to the ship. Port `34343` is used by [Ames](https://urbit.org/docs/glossary/ames/) for ship-to-ship communication.
+The image includes `EXPOSE` directives for TCP port 80 and UDP port 34343. Port `80` is used for Urbit's HTTP interface for both [Landscape](https://urbit.org/docs/glossary/landscape/) and for [API calls](https://urbit.org/using/integrating-api/) to the ship. Port `34343` is set by default to be used by [Ames](https://urbit.org/docs/glossary/ames/) for ship-to-ship communication.
 
-You can either pass the `-P` flag to docker to map ports directly to the corresponding ports on the host, or map them individually with `-p` flags. For local testing the latter is often convenient, for instance to remap port 80 to an unprivileged port.
+You can either pass the `-P` flag to docker to map ports directly to the corresponding ports on the host, or map them individually with `-p` flags. For local testing the latter is often convenient, for instance to remap port 80 to an unprivileged port. 
 
-You should be able to use port mapping for most purposes but you can force Ames to use a custom port. 
-`--port=$AMES_PORT` can be passed as an argument to the `docker start` command. Passing `--port=13436` for example, would use port 13436.  
+For best performance, you must map the Ames UDP port to the *same* port on the host. If you map to a different port Ames will not be able to make direct connections and your network performance may suffer somewhat. Note that using the same port is required for direct connections but is not by itself sufficient for them. If you are behind a NAT router or the host is not on a public IP address or you are firewalled, you may not achive direct connections regardless.
+
+For this purpose you can force Ames to use a custom port. `/bin/start-urbit --port=$AMES_PORT` can be passed as an argument to the `docker start` command. Passing `/bin/start-urbit --port=13436` for example, would use port 13436. You must pass the name of the start script `/bin/start-urbit` in order to also pass arguments, if this is omitted your container will not start.
 
 ### Examples
 Creating a volume for ~sampel=palnet:
@@ -38,23 +39,23 @@ Creating a volume for ~sampel=palnet:
 docker volume create sampel-palnet
 ```
 
-Copying key to sampel-palnet's volume (assumes default docker location)
+Copying key to sampel-palnet's volume (assumes default docker location):
 ```
 sudo cp ~/sampel-palnet.key /var/lib/docker/volumes/sampel-palnet/_data/sampel-palnet.key
 ```
 
-Using that volume and launching ~sampel-palnet on host port 8080 with Ames talking on host port 27000:
+Using that volume and launching ~sampel-palnet on host port 8080 with Ames talking on the default host port 34343:
 ```
-docker run -d -p 8080:80 -p 27000:34343/udp --name sampel-palnet \
+docker run -d -p 8080:80 -p 34343:34343/udp --name sampel-palnet \
     --mount type=volume,source=sampel-palnet,destination=/urbit \
     tloncorp/urbit
 ```
 
-Using host port 8088 with Ames talking on host port 23232 while forcing Ames to start internally on port 13436:
+Using host port 8088 with Ames talking on host port 23232:
 ```
-docker run -d -p 8088:80 -p 23232:13436/udp --name sampel-palnet \
+docker run -d -p 8088:80 -p 23232:23232/udp --name sampel-palnet \
     --mount type=volume,source=sampel-palnet,destination=/urbit \
-    tloncorp/urbit --port=13436
+    tloncorp/urbit /bin/start-urbit --port=23232
 ```
 
 ### Getting and resetting the Landscape +code
