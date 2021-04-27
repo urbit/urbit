@@ -551,13 +551,18 @@ _cttp_creq_new(u3_cttp* ctp_u, c3_l num_l, u3_noun hes)
     return 0;
   }
 
-  // Parse the url out of the new style url passed to us.
+  //  parse the url out of the new style url passed to us.
+  //
   u3_noun unit_pul = u3do("de-purl:html", u3k(url));
-  if (c3n == u3r_du(unit_pul)) {
-    u3l_log("cttp: url parsing failed\n");
+
+  if ( c3n == u3r_du(unit_pul) ) {
+    c3_c* url_c = u3r_string(url);
+    u3l_log("cttp: unable to parse url:\n    %s\n", url_c);
+    c3_free(url_c);
     u3z(hes);
     return 0;
   }
+
   u3_noun pul = u3t(unit_pul);
 
   u3_noun hat = u3h(pul);      // +hart
@@ -809,7 +814,7 @@ _cttp_creq_on_head(h2o_http1client_t* cli_u, const c3_c* err_c, c3_i ver_i,
 */
 static h2o_http1client_head_cb
 _cttp_creq_on_connect(h2o_http1client_t* cli_u, const c3_c* err_c,
-                      h2o_iovec_t** vec_p, size_t* vec_t, c3_i* hed_i)
+                      h2o_iovec_t** vec_u, size_t* vec_i, c3_i* hed_i)
 {
   u3_creq* ceq_u = (u3_creq *)cli_u->data;
 
@@ -818,11 +823,16 @@ _cttp_creq_on_connect(h2o_http1client_t* cli_u, const c3_c* err_c,
     return 0;
   }
 
+  //  serialize request (populate rub_u)
+  //
+  _cttp_creq_fire(ceq_u);
+
   {
     c3_w len_w;
     ceq_u->vec_u = _cttp_bods_to_vec(ceq_u->rub_u, &len_w);
-    *vec_t = len_w;
-    *vec_p = ceq_u->vec_u;
+
+    *vec_i = len_w;
+    *vec_u = ceq_u->vec_u;
     *hed_i = (0 == strcmp(ceq_u->met_c, "HEAD"));
   }
 
@@ -834,24 +844,28 @@ _cttp_creq_on_connect(h2o_http1client_t* cli_u, const c3_c* err_c,
 static void
 _cttp_creq_connect(u3_creq* ceq_u)
 {
-  c3_assert(u3_csat_ripe == ceq_u->sat_e);
-  c3_assert(ceq_u->ipf_c);
+  c3_assert( u3_csat_ripe == ceq_u->sat_e );
+  c3_assert( ceq_u->ipf_c );
 
-  h2o_iovec_t ipf_u = h2o_iovec_init(ceq_u->ipf_c, strlen(ceq_u->ipf_c));
-  c3_s por_s = ceq_u->por_s ? ceq_u->por_s :
-               ( c3y == ceq_u->sec ) ? 443 : 80;
-
-  // connect by IP
-  h2o_http1client_connect(&ceq_u->cli_u, ceq_u, &ceq_u->ctp_u->ctx_u, ipf_u,
-                          por_s, c3y == ceq_u->sec, _cttp_creq_on_connect);
-
-  // set hostname for TLS handshake
+  //  set hostname for TLS handshake
+  //
   if ( ceq_u->hot_c && c3y == ceq_u->sec ) {
     c3_free(ceq_u->cli_u->ssl.server_name);
     ceq_u->cli_u->ssl.server_name = strdup(ceq_u->hot_c);
   }
 
-  _cttp_creq_fire(ceq_u);
+  //  connect by IP
+  //
+  {
+    h2o_iovec_t ipf_u = h2o_iovec_init(ceq_u->ipf_c, strlen(ceq_u->ipf_c));
+    c3_t        tls_t = ( c3y == ceq_u->sec );
+    c3_s        por_s = ( ceq_u->por_s )
+                        ? ceq_u->por_s
+                        : ( tls_t ) ? 443 : 80;
+
+    h2o_http1client_connect(&ceq_u->cli_u, ceq_u, &ceq_u->ctp_u->ctx_u,
+                            ipf_u, por_s, tls_t, _cttp_creq_on_connect);
+  }
 }
 
 /* _cttp_creq_resolve_cb(): cb upon IP address resolution
@@ -973,7 +987,6 @@ _cttp_ef_http_client(u3_cttp* ctp_u, u3_noun tag, u3_noun dat)
       ret_o = c3y;
     }
     else {
-      u3l_log("cttp: strange request (unparsable url)\n");
       ret_o = c3n;
     }
   }

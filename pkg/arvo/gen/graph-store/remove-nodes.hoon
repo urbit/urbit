@@ -5,6 +5,6 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=resource indices=(set index) ~] ~]
     ==
-:-  %graph-update-0
+:-  %graph-update-1
 ^-  update
-[%0 now [%remove-nodes resource indices]]
+[now [%remove-nodes resource indices]]

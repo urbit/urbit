@@ -4,23 +4,30 @@
 |%
 ++  card  card:agent:gall
 ::
-+$   base-state
++$   base-state-0
   joining=(map rid=resource [=ship =progress:view])
 ::
++$   base-state-1
+  joining=(map rid=resource request:view)
+::
 +$  state-zero
-  [%0 base-state]
+  [%0 base-state-0]
 ::
 +$  state-one
-  [%1 base-state]
+  [%1 base-state-0]
+::
++$  state-two
+  [%2 base-state-1]
 ::
 +$  versioned-state
   $%  state-zero
       state-one
+      state-two
   ==
 ::
 ++  view  view-sur
 --
-=|  state-one
+=|  state-two
 =*  state  -
 ::
 %-  agent:dbug
@@ -41,10 +48,29 @@
   |=  =vase
   =+  !<(old=versioned-state vase)
   =|  cards=(list card)
-  |-
-  ?:  ?=(%1 -.old)
-    `this(state old)
-  $(-.old %1, cards :_(cards (poke-self:pass:io noun+!>(%cleanup))))
+  |^
+  ?-  -.old
+    %2  [cards this(state old)]
+    %1  $(-.old %2, +.old (base-state-to-1 +.old))
+    %0  $(-.old %1, cards :_(cards (poke-self:pass:io noun+!>(%cleanup))))
+  ==
+  ::
+  ++  base-state-to-1
+    |=  base-state-0
+    %-  ~(gas by *(map resource request:view))
+    (turn ~(tap by joining) request-to-1)
+  ::
+  ++  request-to-1
+    |=  [rid=resource =ship =progress:view]
+    ^-  [resource request:view]
+    :-  rid
+    %*  .  *request:view
+      started   now.bowl
+      hidden    %.n
+      ship      ship
+      progress  progress
+    ==
+  --
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -56,9 +82,11 @@
   ?.  ?=(%group-view-action mark)
     (on-poke:def mark vase)
   =+  !<(=action:view vase)
-  ?>  ?=(%join -.action)
   =^  cards  state
-    jn-abet:(jn-start:join:gc +.action)
+    ?+  -.action  !!
+      %join  jn-abet:(jn-start:join:gc +.action)
+      %hide  (hide:gc +.action)
+    ==
   [cards this]
 ::
 ++  on-watch
@@ -69,8 +97,7 @@
     :_  ~
     %+  fact:io  
       :-  %group-view-update
-      !>  ^-  update:view
-      [%initial (~(run by joining) |=([=ship =progress:view] progress))]
+      !>(`update:view`[%initial joining])
     ~
   ==
 ::
@@ -97,6 +124,11 @@
 ++  grp  ~(. grpl bowl)
 ++  io   ~(. agentio bowl)
 ++  con  ~(. conl bowl)
+++  hide
+  |=  rid=resource
+  ^-  (quip card _state)
+  :-  (fact:io group-view-update+!>([%hide rid]) /all ~)^~
+  state(joining (~(jab by joining) rid |=(request:view +<(hidden %.y))))
 ::
 ++  has-joined
   |=  rid=resource
@@ -107,10 +139,10 @@
 ::
 ++  poke-noun
   ^-  (quip card _state)
-  =;  new-joining=(map resource [ship progress:view])
+  =;  new-joining=(map resource request:view)
     `state(joining new-joining)
   %+  roll  ~(tap by joining)
-  |=  [[rid=resource =ship =progress:view] out=_joining]
+  |=  [[rid=resource =request:view] out=_joining]
   ?.  (has-joined rid)  out
   (~(del by out) rid)
 ::
@@ -128,7 +160,7 @@
   ++  tx-progress
     |=  =progress:view
     =.  joining
-      (~(put by joining) rid [ship progress])
+      (~(jab by joining) rid |=(request:view +<(progress progress)))
     =;  =cage
       (emit (fact:io cage /all tx+(en-path:resource rid) ~))
     group-view-update+!>([%progress rid progress]) 
@@ -145,9 +177,9 @@
   :: 
   ++  jn-abed
     |=  r=resource
-    =/  [s=^ship =progress:view]
+    =/  =request:view
       (~(got by joining) r)
-    jn-core(rid r, ship s)
+    jn-core(rid r, ship ship.request)
   ::
   ++  jn-abet
     ^-  (quip card _state)
@@ -158,9 +190,14 @@
     ^+  jn-core
     ?<  (~(has by joining) rid)
     =.  joining
-      (~(put by joining) rid [ship %start])
+      (~(put by joining) rid [%.n now.bowl ship %start])
     =.  jn-core
       (jn-abed rid)
+    =.  jn-core
+      %-  emit
+      %+  fact:io
+        group-view-update+!>([%started rid (~(got by joining) rid)])
+      ~[/all]
     ?<  ~|("already joined {<rid>}" (has-joined rid)) 
     =.  jn-core
       %-  emit
@@ -246,12 +283,27 @@
     ::
     ++  md-fact
       |=  [=mark =vase]
-      ?.  ?=(%metadata-update-0 mark)    jn-core
+      ?.  ?=(%metadata-update-1 mark)    jn-core
       =+  !<(=update:metadata vase)
       ?.  ?=(%initial-group -.update)  jn-core
       ?.  =(group.update rid)          jn-core
       =.  jn-core  (cleanup %done)
-      ?.  hidden:(need (scry-group:grp rid))  jn-core
+      ?.  hidden:(need (scry-group:grp rid))
+        =/  list-md=(list [=md-resource:metadata =association:metadata])
+          %+  skim  ~(tap by associations.update)
+          |=  [=md-resource:metadata =association:metadata]
+          =(app-name.md-resource %groups)
+        ?>  ?=(^ list-md)
+        =*  metadatum  metadatum.association.i.list-md
+        ?.  ?&  ?=(%group -.config.metadatum)
+                ?=(^ feed.config.metadatum)
+                ?=(^ u.feed.config.metadatum)
+            ==
+          jn-core
+        =*  feed  resource.u.u.feed.config.metadatum
+        %-  emit
+        %+  poke-our:(jn-pass-io /pull-feed)  %graph-pull-hook
+        pull-hook-action+!>([%add [entity .]:feed])
       %-  emit-many
       %+  murn  ~(tap by associations.update)
       |=  [=md-resource:metadata =association:metadata]

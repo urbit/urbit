@@ -25,6 +25,7 @@ import { Invites } from './invites';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
+import useMetadataState from '~/logic/state/metadata';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -63,6 +64,10 @@ export default function Inbox(props: {
       }
     };
   }, []);
+
+  const ready = useHarkState(
+    s => Object.keys(s.unreads.graph).length > 0
+  );
 
   const notificationState = useHarkState(state => state.notifications);
   const archivedNotifications = useHarkState(state => state.archivedNotifications);
@@ -109,6 +114,7 @@ export default function Inbox(props: {
 
   const { isDone, isLoading } = useLazyScroll(
     scrollRef,
+    ready,
     0.2,
     _.flatten(notifications).length,
     loadMore
@@ -129,16 +135,17 @@ export default function Inbox(props: {
           />
         );
       })}
-      {isDone && (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
+      {isDone ? (
+        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
           <Text gray fontSize="1">No more notifications</Text>
         </Center>
-    )}
-      {isLoading && (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="washedGray" width="100%" height="96px">
+    )  : isLoading ? (
+        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
           <LoadingSpinner />
         </Center>
-      )}
+    ) : (
+      <Box mt="2" height="96px" />
+    )}
 
     </Col>
   );

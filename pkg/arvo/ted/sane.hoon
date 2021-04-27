@@ -7,9 +7,7 @@
 ::
 ++  supported-apps
   ^-  (list term)
-  :~  %group-push-hook
-      %group-store
-  ==
+  ~[%group-store]
 ::
 ++  poke-all-sane
   |=  =input

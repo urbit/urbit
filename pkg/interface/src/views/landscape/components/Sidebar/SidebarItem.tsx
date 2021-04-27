@@ -44,7 +44,7 @@ export function SidebarItem(props: {
   const { association, path, selected, apps } = props;
   let title = getItemTitle(association) || '';
   const appName = association?.['app-name'];
-  const mod = association?.metadata?.module || appName;
+  const mod = association?.metadata?.config?.graph || appName;
   const rid = association?.resource;
   const groupPath = association?.group;
   const groups = useGroupState(state => state.groups);
@@ -86,11 +86,7 @@ export function SidebarItem(props: {
   let color = 'lightGray';
 
   if (isSynced) {
-    if (hasUnread || hasNotification) {
       color = 'black';
-    } else {
-      color = 'gray';
-    }
   }
 
   const fontWeight = (hasUnread || hasNotification) ? '500' : 'normal';

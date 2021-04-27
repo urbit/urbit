@@ -855,3 +855,128 @@ u3s_cue_atom(u3_atom a)
 
   return u3s_cue_bytes((c3_d)len_w, byt_y);
 }
+
+#define DIGIT(a) ( ((a) >= '0') && ((a) <= '9') )
+#define BLOCK(a) (  ('.' == (a)[0]) \
+                 && DIGIT(a[1])     \
+                 && DIGIT(a[2])     \
+                 && DIGIT(a[3])     )
+
+/* u3s_sift_ud_bytes: parse @ud
+*/
+u3_weak
+u3s_sift_ud_bytes(c3_w len_w, c3_y* byt_y)
+{
+  c3_y num_y = len_w % 4;  //  leading digits length
+  c3_s val_s = 0;          //  leading digits value
+
+  //  +ape:ag: just 0
+  //
+  if ( !len_w )        return u3_none;
+  if ( '0' == *byt_y ) return ( 1 == len_w ) ? (u3_noun)0 : u3_none;
+
+  //  +ted:ab: leading nonzero (checked above), plus up to 2 digits
+  //
+#define NEXT()  do {                          \
+    if ( !DIGIT(*byt_y) ) return u3_none;     \
+    val_s *= 10;                              \
+    val_s += *byt_y++ - '0';                  \
+  } while (0)
+
+  switch ( num_y ) {
+    case 3: NEXT();
+    case 2: NEXT();
+    case 1: NEXT(); break;
+    case 0: return u3_none;
+  }
+
+#undef NEXT
+
+  len_w -= num_y;
+
+  //  +tid:ab: dot-prefixed 3-digit blocks
+  //
+  //    avoid gmp allocation if possible
+  //      - 19 decimal digits fit in 64 bits
+  //      - 18 digits is 24 bytes with separators
+  //
+  if (  ((1 == num_y) && (24 >= len_w))
+     || (20 >= len_w) )
+  {
+    c3_d val_d = val_s;
+
+    while ( len_w ) {
+      if ( !BLOCK(byt_y) ) return u3_none;
+
+      byt_y++;
+
+      val_d *= 10;
+      val_d += *byt_y++ - '0';
+      val_d *= 10;
+      val_d += *byt_y++ - '0';
+      val_d *= 10;
+      val_d += *byt_y++ - '0';
+
+      len_w -= 4;
+    }
+
+    return u3i_chub(val_d);
+  }
+
+  {
+    //  avoid gmp realloc if possible
+    //
+    mpz_t a_mp;
+    {
+      c3_d bit_d = (c3_d)(len_w / 4) * 10;
+      mpz_init2(a_mp, (c3_w)c3_min(bit_d, UINT32_MAX));
+      mpz_set_ui(a_mp, val_s);
+    }
+
+    while ( len_w ) {
+      if ( !BLOCK(byt_y) ) {
+        mpz_clear(a_mp);
+        return u3_none;
+      }
+
+      byt_y++;
+
+      val_s  = *byt_y++ - '0';
+      val_s *= 10;
+      val_s += *byt_y++ - '0';
+      val_s *= 10;
+      val_s += *byt_y++ - '0';
+
+      mpz_mul_ui(a_mp, a_mp, 1000);
+      mpz_add_ui(a_mp, a_mp, val_s);
+
+      len_w -= 4;
+    }
+
+    return u3i_mp(a_mp);
+  }
+}
+
+#undef BLOCK
+#undef DIGIT
+
+/* u3s_sift_ud: parse @ud.
+*/
+u3_weak
+u3s_sift_ud(u3_atom a)
+{
+  c3_w  len_w = u3r_met(3, a);
+  c3_y* byt_y;
+
+  // XX assumes little-endian
+  //
+  if ( c3y == u3a_is_cat(a) ) {
+     byt_y = (c3_y*)&a;
+   }
+   else {
+    u3a_atom* vat_u = u3a_to_ptr(a);
+    byt_y = (c3_y*)vat_u->buf_w;
+  }
+
+  return u3s_sift_ud_bytes(len_w, byt_y);
+}

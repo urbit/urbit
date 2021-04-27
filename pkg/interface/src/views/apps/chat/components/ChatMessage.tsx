@@ -29,8 +29,8 @@ import {
   Groups,
   Associations
 } from '~/types';
-import TextContent from './content/text';
-import CodeContent from './content/code';
+import TextContent from '../../../landscape/components/Graph/content/text';
+import CodeContent from '../../../landscape/components/Graph/content/code';
 import RemoteContent from '~/views/components/RemoteContent';
 import { Mention } from '~/views/components/MentionText';
 import { Dropdown } from '~/views/components/Dropdown';
@@ -40,6 +40,10 @@ import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import Timestamp from '~/views/components/Timestamp';
 import useContactState from '~/logic/state/contact';
 import { useIdlingState } from '~/logic/lib/idling';
+import ProfileOverlay from '~/views/components/ProfileOverlay';
+import {useCopy} from '~/logic/lib/useCopy';
+import {GraphContentWide} from '~/views/landscape/components/Graph/GraphContentWide';
+
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -47,6 +51,7 @@ interface DayBreakProps {
   when: string;
   shimTop?: boolean;
 }
+
 
 export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
   <Row
@@ -134,13 +139,15 @@ const MessageActionItem = (props) => {
   );
 };
 
-const MessageActions = ({ api, history, msg, group }) => {
+const MessageActions = ({ api, onReply, association, history, msg, group }) => {
   const isAdmin = () => group.tags.role.admin.has(window.ship);
   const isOwn = () => msg.author === window.ship;
+  const { doCopy, copyDisplay } = useCopy(`web+urbitgraph://group${association.group.slice(5)}/graph${association.resource.slice(5)}${msg.index}`, 'Copy Message Link');
+
   return (
     <Box
       borderRadius={1}
-      background='white'
+      backgroundColor='white'
       border='1px solid'
       borderColor='lightGray'
       position='absolute'
@@ -148,21 +155,11 @@ const MessageActions = ({ api, history, msg, group }) => {
       right={2}
     >
       <Row>
-        {isOwn() ? (
-          <Box
-            padding={1}
-            size={'24px'}
-            cursor='pointer'
-            onClick={(e) => console.log(e)}
-          >
-            <Icon icon='NullIcon' size={3} />
-          </Box>
-        ) : null}
         <Box
           padding={1}
           size={'24px'}
           cursor='pointer'
-          onClick={(e) => console.log(e)}
+          onClick={() => onReply(msg)}
         >
           <Icon icon='Chat' size={3} />
         </Box>
@@ -184,25 +181,22 @@ const MessageActions = ({ api, history, msg, group }) => {
               borderColor='lightGray'
               boxShadow='0px 0px 0px 3px'
             >
-              {isOwn() ? (
-                <MessageActionItem onClick={(e) => console.log(e)}>
-                  Edit Message
-                </MessageActionItem>
-              ) : null}
-              <MessageActionItem onClick={(e) => console.log(e)}>
+              <MessageActionItem onClick={() => onReply(msg)}>
                 Reply
               </MessageActionItem>
-              <MessageActionItem onClick={(e) => console.log(e)}>
-                Copy Message Link
+              <MessageActionItem onClick={doCopy}>
+                {copyDisplay}
               </MessageActionItem>
-              {isAdmin() || isOwn() ? (
+              {false && (isAdmin() || isOwn()) ? (
                 <MessageActionItem onClick={(e) => console.log(e)} color='red'>
                   Delete Message
                 </MessageActionItem>
               ) : null}
-              <MessageActionItem onClick={(e) => console.log(e)}>
-                View Signature
-              </MessageActionItem>
+              {false && (
+                <MessageActionItem onClick={(e) => console.log(e)}>
+                  View Signature
+                </MessageActionItem>
+              )}
             </Col>
           }
         >
@@ -217,17 +211,19 @@ const MessageActions = ({ api, history, msg, group }) => {
 
 const MessageWrapper = (props) => {
   const { hovering, bind } = useHovering();
+  const showHover = (props.transcluded === 0) && hovering && !props.hideHover;
   return (
     <Box
       py='1'
-      backgroundColor={
-        hovering && !props.hideHover ? 'washedGray' : 'transparent'
+      backgroundColor={props.highlighted
+        ? showHover ? 'lightBlue' : 'washedBlue'
+        : showHover ? 'washedGray' : 'transparent'
       }
       position='relative'
       {...bind}
     >
       {props.children}
-      {/* {hovering ? <MessageActions {...props} /> : null} */}
+      {showHover ? <MessageActions {...props} /> : null}
     </Box>
   );
 };
@@ -239,6 +235,7 @@ interface ChatMessageProps {
   isLastRead: boolean;
   group: Group;
   association: Association;
+  transcluded?: number;
   className?: string;
   isPending: boolean;
   style?: unknown;
@@ -251,6 +248,7 @@ interface ChatMessageProps {
   renderSigil?: boolean;
   hideHover?: boolean;
   innerRef: (el: HTMLDivElement | null) => void;
+  onReply?: (msg: Post) => void;
 }
 
 class ChatMessage extends Component<ChatMessageProps> {
@@ -285,6 +283,8 @@ class ChatMessage extends Component<ChatMessageProps> {
       hideHover
     } = this.props;
 
+    let onReply = this.props?.onReply ?? (() => {});
+    const transcluded = this.props?.transcluded ?? 0;
     let { renderSigil } = this.props;
 
     if (renderSigil === undefined) {
@@ -320,7 +320,9 @@ class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow,
       highlighted,
       fontSize,
-      hideHover
+      hideHover,
+      transcluded,
+      onReply
     };
 
     const unreadContainerStyle = {
@@ -331,9 +333,9 @@ class ChatMessage extends Component<ChatMessageProps> {
       <Box
         ref={this.props.innerRef}
         pt={renderSigil ? 2 : 0}
+        width="100%"
         pb={isLastMessage ? '20px' : 0}
         className={containerClass}
-        backgroundColor={highlighted ? 'blue' : 'white'}
         style={style}
       >
         {dayBreak && !isLastRead ? (
@@ -393,12 +395,11 @@ export const MessageAuthor = ({
       msg.author !== window.ship) &&
     `~${msg.author}` in contacts
       ? contacts[`~${msg.author}`]
-      : false;
+      : undefined;
 
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
-  const shipName = showNickname ? contact.nickname : cite(msg.author);
-  const copyNotice = 'Copied';
+  const shipName = showNickname && contact?.nickname || cite(msg.author) || `~${msg.author}`;
   const color = contact
     ? `#${uxToHex(contact.color)}`
     : dark
@@ -409,28 +410,10 @@ export const MessageAuthor = ({
     : dark
     ? 'mix-blend-diff'
     : 'mix-blend-darken';
-  const [displayName, setDisplayName] = useState(shipName);
-  const [nameMono, setNameMono] = useState(showNickname ? false : true);
+
+  const { copyDisplay, doCopy, didCopy } = useCopy(`~${msg.author}`, shipName);
   const { hovering, bind } = useHovering();
-  const [showOverlay, setShowOverlay] = useState(false);
-
-  const toggleOverlay = () => {
-    setShowOverlay((value) => !value);
-  };
-
-  const showCopyNotice = () => {
-    setDisplayName(copyNotice);
-    setNameMono(false);
-  };
-
-  useEffect(() => {
-    const resetDisplay = () => {
-      setDisplayName(shipName);
-      setNameMono(showNickname ? false : true);
-    };
-    const timer = setTimeout(() => resetDisplay(), 800);
-    return () => clearTimeout(timer);
-  }, [shipName, displayName]);
+  const nameMono = !(showNickname || didCopy);
 
   const img =
     contact?.avatar && !hideAvatars ? (
@@ -467,31 +450,16 @@ export const MessageAuthor = ({
   return (
     <Box display='flex' alignItems='flex-start' {...rest}>
       <Box
-        onClick={() => {
-          setShowOverlay(true);
-        }}
-        height={24}
+       height={24}
         pr={2}
         mt={'1px'}
         pl={'12px'}
         cursor='pointer'
         position='relative'
       >
-        {showOverlay && (
-          <OverlaySigil
-            cursor='auto'
-            ship={msg.author}
-            contact={contact}
-            color={`#${uxToHex(contact?.color ?? '0x0')}`}
-            group={group}
-            onDismiss={() => toggleOverlay()}
-            history={history}
-            className='relative'
-            scrollWindow={scrollWindow}
-            api={api}
-          />
-        )}
-        {img}
+        <ProfileOverlay cursor='auto' ship={msg.author} api={api}>
+          {img}
+        </ProfileOverlay>
       </Box>
       <Box flexGrow={1} display='block' className='clamp-message' {...bind}>
         <Box
@@ -509,13 +477,10 @@ export const MessageAuthor = ({
             mono={nameMono}
             fontWeight={nameMono ? '400' : '500'}
             cursor='pointer'
-            onClick={() => {
-              writeText(`~${msg.author}`);
-              showCopyNotice();
-            }}
+            onClick={doCopy}
             title={`~${msg.author}`}
           >
-            {displayName}
+            {copyDisplay}
           </Text>
           <Text flexShrink={0} fontSize={0} gray>
             {timestamp}
@@ -542,12 +507,13 @@ export const Message = ({
   api,
   scrollWindow,
   timestampHover,
+  transcluded,
+  showOurContact,
   ...rest
 }) => {
   const { hovering, bind } = useHovering();
-  const contacts = useContactState((state) => state.contacts);
   return (
-    <Box position='relative' {...rest}>
+    <Box width="100%" position='relative' {...rest}>
       {timestampHover ? (
         <Text
           display={hovering ? 'block' : 'none'}
@@ -564,74 +530,14 @@ export const Message = ({
       ) : (
         <></>
       )}
-      <Box {...bind}>
-        {msg.contents.map((content, i) => {
-          switch (Object.keys(content)[0]) {
-            case 'text':
-              return (
-                <TextContent
-                  key={i}
-                  api={api}
-                  fontSize={1}
-                  lineHeight={'20px'}
-                  content={content}
-                />
-              );
-            case 'code':
-              return <CodeContent key={i} content={content} />;
-            case 'url':
-              return (
-                <Box
-                  key={i}
-                  flexShrink={0}
-                  fontSize={1}
-                  lineHeight='20px'
-                  color='black'
-                >
-                  <RemoteContent
-                    key={content.url}
-                    url={content.url}
-                    imageProps={{
-                      style: {
-                        maxWidth: 'min(100%,18rem)',
-                        display: 'inline-block',
-                        marginTop: '0.5rem'
-                      }
-                    }}
-                    videoProps={{
-                      style: {
-                        maxWidth: '18rem',
-                        display: 'block',
-                        marginTop: '0.5rem'
-                      }
-                    }}
-                    textProps={{
-                      style: {
-                        fontSize: 'inherit',
-                        borderBottom: '1px solid',
-                        textDecoration: 'none'
-                      }
-                    }}
-                  />
-                </Box>
-              );
-            case 'mention':
-              const first = (i) => i === 0;
-              return (
-                <Mention
-                  key={i}
-                  first={first(i)}
-                  group={group}
-                  scrollWindow={scrollWindow}
-                  ship={content.mention}
-                  contact={contacts?.[`~${content.mention}`]}
-                />
-              );
-            default:
-              return null;
-          }
-        })}
-      </Box>
+      <GraphContentWide
+        {...bind}
+        width="100%"
+        post={msg}
+        transcluded={transcluded}
+        api={api}
+        showOurContact={showOurContact}
+      />
     </Box>
   );
 };

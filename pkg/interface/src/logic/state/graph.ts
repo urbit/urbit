@@ -1,10 +1,15 @@
-import { Graphs, decToUd, numToUd } from "@urbit/api";
+import { Graphs, decToUd, numToUd, GraphNode } from "@urbit/api";
 
 import { BaseState, createState } from "./base";
 
 export interface GraphState extends BaseState<GraphState> {
   graphs: Graphs;
   graphKeys: Set<string>;
+  looseNodes: {
+    [graph: string]: {
+      [index: string]: GraphNode;
+    }
+  };
   pendingIndices: Record<string, any>;
   graphTimesentMap: Record<string, any>;
   // getKeys: () => Promise<void>;
@@ -21,6 +26,7 @@ export interface GraphState extends BaseState<GraphState> {
 const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
   graphKeys: new Set(),
+  looseNodes: {},
   pendingIndices: {},
   graphTimesentMap: {},
   // getKeys: async () => {
@@ -122,6 +128,6 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, ['graphs', 'graphKeys']);
+}, ['graphs', 'graphKeys', 'looseNodes']);
 
 export default useGraphState;

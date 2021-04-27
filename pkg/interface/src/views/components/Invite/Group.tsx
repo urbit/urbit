@@ -2,21 +2,24 @@ import React, { ReactElement, ReactNode } from 'react';
 import { Text, Box, Icon, Row } from '@tlon/indigo-react';
 
 import { cite } from '~/logic/lib/util';
-import { MetadataUpdatePreview, JoinProgress, Invite } from '@urbit/api';
+import { MetadataUpdatePreview, JoinProgress, Invite, JoinRequest } from '@urbit/api';
 import { GroupSummary } from '~/views/landscape/components/GroupSummary';
 import { InviteSkeleton } from './InviteSkeleton';
 import { JoinSkeleton } from './JoinSkeleton';
+import GlobalApi from '~/logic/api/global';
 
 interface GroupInviteProps {
   preview: MetadataUpdatePreview;
-  status?: JoinProgress;
+  status?: JoinRequest;
   invite?: Invite;
+  resource: string;
+  api: GlobalApi;
   onAccept: () => Promise<any>;
   onDecline: () => Promise<any>;
 }
 
 export function GroupInvite(props: GroupInviteProps): ReactElement {
-  const { preview, invite, status, onAccept, onDecline } = props;
+  const { resource, api, preview, invite, status, onAccept, onDecline } = props;
   const { metadata, members } = props.preview;
 
   let inner: ReactNode = null;
@@ -31,7 +34,7 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
       </Text>
     );
     Outer = ({ children }) => (
-      <JoinSkeleton gapY="3" status={status}>
+      <JoinSkeleton resource={resource} api={api} gapY="3" status={status}>
         {children}
       </JoinSkeleton>
     );

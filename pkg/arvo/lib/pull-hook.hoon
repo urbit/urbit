@@ -440,6 +440,11 @@
         =/  fact-ver=@ud
           (read-version:ver p.cage)
         ?.  (gte fact-ver min-version.config)
+          ?.  versioned
+            ::  don't process unversioned, unsupported facts
+            ::  just wait for publisher to upgrade and kick the
+            ::  subscription
+            tr-core
           (tr-suspend-pub-ver min-version.config)
         =/  =vase
           (convert-to:ver cage)

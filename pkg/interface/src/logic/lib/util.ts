@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import _ from 'lodash';
 import f, { compose, memoize } from 'lodash/fp';
 import bigInt, { BigInteger } from 'big-integer';
@@ -28,6 +28,11 @@ export const getModuleIcon = (mod: string) => {
   if (mod === 'link') {
     return 'Collection';
   }
+
+  if (mod === 'post') {
+    return 'Spaces';
+  }
+
   return _.capitalize(mod);
 };
 
@@ -35,10 +40,6 @@ export function wait(ms: number) {
   return new Promise((resolve, reject) => {
     setTimeout(resolve, ms);
   });
-}
-
-export function appIsGraph(app: string) {
-  return app === 'publish' || app == 'link';
 }
 
 export function parentPath(path: string) {
@@ -399,11 +400,15 @@ interface useHoveringInterface {
 
 export const useHovering = (): useHoveringInterface => {
   const [hovering, setHovering] = useState(false);
-  const bind = {
-    onMouseOver: () => setHovering(true),
-    onMouseLeave: () => setHovering(false)
-  };
-  return { hovering, bind };
+  const onMouseOver = useCallback(() => setHovering(true), [])
+  const onMouseLeave = useCallback(() => setHovering(false), [])
+  const bind = useMemo(() => ({
+    onMouseOver,
+    onMouseLeave,
+  }), [onMouseLeave, onMouseOver]);
+
+  
+  return useMemo(() => ({ hovering, bind }), [hovering, bind]);
 };
 
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;

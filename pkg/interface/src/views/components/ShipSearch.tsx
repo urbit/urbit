@@ -157,7 +157,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
     setFieldValue(name(), newValue);
   };
 
-  const error = _.compact(errors[id] as string[]);
+  const error = _.compact((_.isString(errors[id]) ? [errors[id]] : errors[id] as string[]) as any);
 
   const isExact = useCallback((s: string) => {
     const ship = `~${deSig(s)}`;
