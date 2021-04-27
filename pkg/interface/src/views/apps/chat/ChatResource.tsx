@@ -40,7 +40,7 @@ function ChatResource(props: ChatResourceProps) {
   const graphPath = station.slice(7);
   const graph = graphs[graphPath];
   const unreads = useHarkState(state => state.unreads);
-  const unreadCount = unreads.graph?.[station]?.['/']?.unreads || 0;
+  const unreadCount = unreads.graph?.[station]?.['/']?.unreads as number || 0;
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[`~${window.ship}`];
@@ -48,7 +48,7 @@ function ChatResource(props: ChatResourceProps) {
   const canWrite = isWriter(group, station);
 
   useEffect(() => {
-    const count = 100 + unreadCount;
+    const count = Math.min(400, 100 + unreadCount);
     props.api.graph.getNewest(owner, name, count);
   }, [station]);
 
