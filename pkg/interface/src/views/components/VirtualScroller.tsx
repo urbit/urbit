@@ -159,7 +159,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     this.updateVisible = this.updateVisible.bind(this);
 
     this.invertedKeyHandler = this.invertedKeyHandler.bind(this);
-    this.onScroll = IS_IOS ? _.debounce(this.onScroll.bind(this), 400) : this.onScroll.bind(this);
+    this.onScroll = IS_IOS ? _.debounce(this.onScroll.bind(this), 200) : this.onScroll.bind(this);
     this.scrollKeyMap = this.scrollKeyMap.bind(this);
     this.setWindow = this.setWindow.bind(this);
     this.restore = this.restore.bind(this);
@@ -305,8 +305,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const { averageHeight } = this.props;
 
     this.window = element;
-    this.pageSize = Math.floor(element.offsetHeight / Math.floor(averageHeight / 3));
-    this.pageDelta = Math.floor(this.pageSize / 3);
+    this.pageSize = Math.floor(element.offsetHeight / Math.floor(averageHeight / 2));
+    this.pageDelta = Math.floor(this.pageSize / 4);
     if (this.props.origin === 'bottom') {
        element.addEventListener('wheel', (event) => {
         event.preventDefault();
@@ -364,7 +364,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     }
     const { onStartReached, onEndReached } = this.props;
     const windowHeight = this.window.offsetHeight;
-    const { scrollTop, scrollHeight } = event.target as HTMLElement;
+    const { scrollTop, scrollHeight } = this.window;
 
     const startOffset = this.startOffset();
 
@@ -413,11 +413,13 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       log('bail', 'Deep restore');
       return;
     }
-    if(this.scrollLocked) {
-      this.resetScroll();
-      this.savedIndex = null;
-      this.savedDistance = 0;
-      this.saveDepth--;
+      if(this.scrollLocked) {
+        this.resetScroll();
+      requestAnimationFrame(() => {
+        this.savedIndex = null;
+        this.savedDistance = 0;
+        this.saveDepth--;
+      });
       return;
     }
 
@@ -425,14 +427,16 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     if(!ref) {
       return;
     }
+
     const newScrollTop = this.window.scrollHeight - ref.offsetTop - this.savedDistance;
 
     this.window.scrollTo(0, newScrollTop);
     requestAnimationFrame(() => {
-      this.savedIndex = null;
-      this.savedDistance = 0;
-      this.saveDepth--;
-    });
+        this.savedIndex = null;
+        this.savedDistance = 0;
+        this.saveDepth--;
+      });
+
   }
 
   scrollToIndex = (index: BigInteger) => {
@@ -471,11 +475,12 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     log('scroll', 'saving...');
 
     this.saveDepth++;
+    const { visibleItems } = this.state;
 
-    let bottomIndex: BigInteger | null = null;
+    let bottomIndex = visibleItems[visibleItems.length - 1];
     const { scrollTop, scrollHeight } = this.window;
     const topSpacing = scrollHeight - scrollTop;
-    ([...this.state.visibleItems]).reverse().forEach((index) => {
+    ([...visibleItems]).reverse().forEach((index) => {
       const el = this.childRefs.get(index.toString());
       if(!el) {
         return;
@@ -499,7 +504,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     this.savedDistance = topSpacing - offsetTop
   }
 
-  shiftLayout = { save: this.save.bind(this), restore: this.restore.bind(this) };
+  // disabled until we work out race conditions with loading new nodes
+  shiftLayout = { save: () => {}, restore: () => {} };
 
   setRef = (element: HTMLElement | null, index: BigInteger) => {
     if(element) {
@@ -529,7 +535,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const children = isTop ? visibleItems : [...visibleItems].reverse();
 
     const atStart = (this.props.data.peekLargest()?.[0] ?? bigInt.zero).eq(visibleItems?.[0] || bigInt.zero);
-    const atEnd = this.state.loaded.top;
+    const atEnd = (this.props.data.peekSmallest()?.[0] ?? bigInt.zero).eq(visibleItems?.[visibleItems.length -1 ] || bigInt.zero);
 
     return (
       <>
