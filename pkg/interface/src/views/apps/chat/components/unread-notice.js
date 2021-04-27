@@ -8,22 +8,11 @@ import Timestamp from '~/views/components/Timestamp';
 export const UnreadNotice = (props) => {
   const { unreadCount, unreadMsg, dismissUnread, onClick } = props;
 
-  if (!unreadMsg || unreadCount === 0) {
+  if (unreadCount === 0) {
     return null;
   }
 
-  const stamp = moment.unix(unreadMsg.post['time-sent'] / 1000);
-
-  let datestamp = moment
-    .unix(unreadMsg.post['time-sent'] / 1000)
-    .format('YYYY.M.D');
-  const timestamp = moment
-    .unix(unreadMsg.post['time-sent'] / 1000)
-    .format('HH:mm');
-
-  if (datestamp === moment().format('YYYY.M.D')) {
-    datestamp = null;
-  }
+  const stamp = unreadMsg && moment.unix(unreadMsg.post['time-sent'] / 1000);
 
   return (
     <Box
@@ -52,15 +41,20 @@ export const UnreadNotice = (props) => {
               whiteSpace='pre'
               overflow='hidden'
               display='flex'
-              cursor='pointer'
+              cursor={unreadMsg ? 'pointer' : null}
               onClick={onClick}
             >
-              {unreadCount} new message{unreadCount > 1 ? 's' : ''} since{' '}
-              <Timestamp stamp={stamp} color='black' date={true} fontSize={1} />
+              {unreadCount} new message{unreadCount > 1 ? 's' : ''} 
+              {unreadMsg && (
+                <>
+                since{' '}
+                <Timestamp stamp={stamp} color='black' date={true} fontSize={1} />
+                </>
+              )}
             </Text>
             <Icon
               icon='X'
-              ml='4'
+              ml={unreadMsg ? 4 : 1}
               color='black'
               cursor='pointer'
               textAlign='right'

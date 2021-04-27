@@ -131,8 +131,8 @@ class ChatWindow extends Component<
   dismissedInitialUnread() {
     const { unreadCount, graph } = this.props;
   
-    return this.state.unreadIndex.neq(bigInt.zero) &&
-      this.state.unreadIndex.neq(graph.keys()?.[unreadCount]?.[0] ?? bigInt.zero);
+    return this.state.unreadIndex.eq(bigInt.zero) ? unreadCount > graph.size : 
+    this.state.unreadIndex.neq(graph.keys()?.[unreadCount]?.[0] ?? bigInt.zero); 
   }
 
   handleWindowBlur() {
