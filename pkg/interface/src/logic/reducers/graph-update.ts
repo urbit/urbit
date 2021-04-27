@@ -52,23 +52,18 @@ const keys = (json, state: GraphState): GraphState => {
 const processNode = (node) => {
   //  is empty
   if (!node.children) {
-    node.children = new BigIntOrderedMap();
-    return node;
+    return produce(node, draft => {
+      draft.children = new BigIntOrderedMap();
+    });
   }
 
   //  is graph
-  let converted = new BigIntOrderedMap();
-  for (let idx in node.children) {
-    let item = node.children[idx];
-    let index = bigInt(idx);
-    
-    converted.set(
-      index,
-      processNode(item)
-    );
-  }
-  node.children = converted;
-  return node;
+  return produce(node, draft => {
+    draft.children = new BigIntOrderedMap()
+      .gas(_.map(draft.children, (item, idx) => 
+        [bigInt(idx), processNode(item)] as [BigInteger, any]
+      ));
+  });
 };
 
 
@@ -89,6 +84,7 @@ const addGraph = (json, state: GraphState): GraphState => {
     state.graphs[resource] = state.graphs[resource].gas(Object.keys(data.graph).map(idx => {
       return [bigInt(idx), processNode(data.graph[idx])];
     }));
+
     state.graphKeys.add(resource);
   }
   return state;
