@@ -49,20 +49,20 @@
     font-family: 'Source Code Pro';
 }
 
-.publish .CodeMirror-selected { background:#BAE3FE !important; color: black; }
+.publish .CodeMirror-selected { background:#BAE3FE !important; color: inherit; }
 
 .publish .cm-s-tlon span { font-family: "Source Code Pro"}
 .publish .cm-s-tlon span.cm-meta { color: var(--gray); }
 .publish .cm-s-tlon span.cm-number { color: var(--gray); }
 .publish .cm-s-tlon span.cm-keyword { line-height: 1em; font-weight: bold; color: var(--gray); }
 .publish .cm-s-tlon span.cm-atom { font-weight: bold; color: var(--gray); }
-.publish .cm-s-tlon span.cm-def { color: black; }
-.publish .cm-s-tlon span.cm-variable { color: black; }
-.publish .cm-s-tlon span.cm-variable-2 { color: black; }
-.publish .cm-s-tlon span.cm-variable-3, .publish .cm-s-tlon span.cm-type { color: black; }
-.publish .cm-s-tlon span.cm-property { color: black; }
-.publish .cm-s-tlon span.cm-operator { color: black; }
-.publish .cm-s-tlon span.cm-comment { color: black; background-color: var(--light-gray); display: inline-block; border-radius: 2px;}
+.publish .cm-s-tlon span.cm-def { color: inherit; }
+.publish .cm-s-tlon span.cm-variable { color: inherit; }
+.publish .cm-s-tlon span.cm-variable-2 { color: inherit; }
+.publish .cm-s-tlon span.cm-variable-3, .publish .cm-s-tlon span.cm-type { color: inherit; }
+.publish .cm-s-tlon span.cm-property { color: inherit; }
+.publish .cm-s-tlon span.cm-operator { color: inherit; }
+.publish .cm-s-tlon span.cm-comment { color: inherit; background-color: var(--light-gray); display: inline-block; border-radius: 2px;}
 .publish .cm-s-tlon span.cm-string { color: var(--dark-gray); }
 .publish .cm-s-tlon span.cm-string-2 { color: var(--gray); }
 .publish .cm-s-tlon span.cm-qualifier { color: #555; }

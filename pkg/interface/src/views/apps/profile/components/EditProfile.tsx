@@ -64,20 +64,20 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
       {contact?.cover ? (
         <div>
           {editCover ? (
-            <ImageInput id='cover' marginTop='-8px' />
+            <ImageInput id='cover' marginTop='-8px' width='288px' />
           ) : (
             <Row>
               <Button mr='2' onClick={() => setEditCover(true)}>
                 Replace Header
               </Button>
-              <Button onClick={(e) => handleClear(e)}>
+              <Button onClick={e => handleClear(e)}>
                 {removedCoverLabel}
               </Button>
             </Row>
           )}
         </div>
       ) : (
-        <ImageInput id='cover' marginTop='-8px' />
+        <ImageInput id='cover' marginTop='-8px' width='288px' />
       )}
     </>
   );

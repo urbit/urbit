@@ -81,6 +81,9 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
     if(group === TUTORIAL_GROUP_RESOURCE) {
       await api.settings.putEntry('tutorial', 'joined', Date.now());
     }
+    if (group in groups) {
+      return history.push(`/~landscape${group}`);
+    }
     await api.groups.join(ship, name);
     try {
       await waiter((p) => {
@@ -111,6 +114,9 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       const [ship, name] = values.group.split('/');
       const path = `/ship/${ship}/${name}`;
+      if (path in groups) {
+      return history.push(`/~landscape${path}`);
+    }
       //  skip if it's unmanaged
       try {
         const prev = await api.metadata.preview(path);
