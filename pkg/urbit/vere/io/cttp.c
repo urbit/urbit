@@ -36,26 +36,26 @@
 /* u3_creq: outgoing http request.
 */
   typedef struct _u3_creq {             //  client request
-    c3_l             num_l;             //  request number
+    c3_l               num_l;           //  request number
     h2o_http1client_t* cli_u;           //  h2o client
-    u3_csat          sat_e;             //  connection state
-    c3_o             sec;               //  yes == https
-    c3_w             ipf_w;             //  IP
-    c3_c*            ipf_c;             //  IP (string)
-    c3_c*            hot_c;             //  host
-    c3_s             por_s;             //  port
-    c3_c*            por_c;             //  port (string)
-    c3_c*            met_c;             //  method
-    c3_c*            url_c;             //  url
-    u3_hhed*         hed_u;             //  headers
-    u3_hbod*         bod_u;             //  body
-    u3_hbod*         rub_u;             //  exit of send queue
-    u3_hbod*         bur_u;             //  entry of send queue
-    h2o_iovec_t*     vec_u;             //  send-buffer array
-    u3_cres*         res_u;             //  nascent response
-    struct _u3_creq* nex_u;             //  next in list
-    struct _u3_creq* pre_u;             //  previous in list
-    struct _u3_cttp* ctp_u;             //  cttp backpointer
+    u3_csat            sat_e;           //  connection state
+    c3_o               sec;             //  yes == https
+    c3_w               ipf_w;           //  IP
+    c3_c*              ipf_c;           //  IP (string)
+    c3_c*              hot_c;           //  host
+    c3_s               por_s;           //  port
+    c3_c*              por_c;           //  port (string)
+    c3_c*              met_c;           //  method
+    c3_c*              url_c;           //  url
+    u3_hhed*           hed_u;           //  headers
+    u3_hbod*           bod_u;           //  body
+    u3_hbod*           rub_u;           //  exit of send queue
+    u3_hbod*           bur_u;           //  entry of send queue
+    h2o_iovec_t*       vec_u;           //  send-buffer array
+    u3_cres*           res_u;           //  nascent response
+    struct _u3_creq*   nex_u;           //  next in list
+    struct _u3_creq*   pre_u;           //  previous in list
+    struct _u3_cttp*   ctp_u;           //  cttp backpointer
   } u3_creq;
 
 /* u3_cttp: http client.
