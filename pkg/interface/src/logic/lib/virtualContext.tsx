@@ -43,8 +43,8 @@ export function useVirtualResizeState(s: boolean) {
     [_setState, save]
   );
 
-  useLayoutEffect(() => {
-    restore();
+  useEffect(() => {
+    requestAnimationFrame(restore);
   }, [state]);
 
   return [state, setState] as const;
@@ -58,7 +58,7 @@ export function useVirtualResizeProp(prop: Primitive) {
     save();
   }
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     requestAnimationFrame(restore);
   }, [prop]);
 

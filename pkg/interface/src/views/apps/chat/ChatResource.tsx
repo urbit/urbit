@@ -28,9 +28,9 @@ type ChatResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+};
 
-export function ChatResource(props: ChatResourceProps) {
+function ChatResource(props: ChatResourceProps) {
   const station = props.association.resource;
   const groupPath = props.association.group;
   const groups = useGroupState(state => state.groups);
@@ -40,7 +40,7 @@ export function ChatResource(props: ChatResourceProps) {
   const graphPath = station.slice(7);
   const graph = graphs[graphPath];
   const unreads = useHarkState(state => state.unreads);
-  const unreadCount = unreads.graph?.[station]?.['/']?.unreads || 0;
+  const unreadCount = unreads.graph?.[station]?.['/']?.unreads as number || 0;
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[`~${window.ship}`];
@@ -48,7 +48,7 @@ export function ChatResource(props: ChatResourceProps) {
   const canWrite = isWriter(group, station);
 
   useEffect(() => {
-    const count = 100 + unreadCount;
+    const count = Math.min(400, 100 + unreadCount);
     props.api.graph.getNewest(owner, name, count);
   }, [station]);
 
@@ -165,10 +165,9 @@ export function ChatResource(props: ChatResourceProps) {
       {dragging && <SubmitDragger />}
       <ChatWindow
         key={station}
-        history={props.history}
         graph={graph}
         graphSize={graph.size}
-        unreadCount={unreadCount}
+        unreadCount={unreadCount as number}
         showOurContact={ !showBanner && hasLoadedAllowed }
         association={props.association}
         pendingSize={Object.keys(graphTimesentMap[graphPath] || {}).length}
@@ -196,3 +195,8 @@ export function ChatResource(props: ChatResourceProps) {
     </Col>
   );
 }
+
+ChatResource.whyDidYouRender = true;
+
+export { ChatResource };
+

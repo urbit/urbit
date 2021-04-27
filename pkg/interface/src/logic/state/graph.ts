@@ -128,6 +128,8 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, ['graphs', 'graphKeys', 'looseNodes']);
+}, ['graphs', 'graphKeys', 'looseNodes', 'graphTimesentMap']);
+
+window.useGraphState = useGraphState;
 
 export default useGraphState;
