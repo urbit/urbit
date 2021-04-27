@@ -128,7 +128,7 @@ export default function TermApp(props: TermAppProps) {
 
   const container = useRef<HTMLElement>(null);
   //TODO  allow switching of selected
-  const { sessions, selected, set } = useTermState();
+  const { sessions, selected, slogstream, set } = useTermState();
 
   const osDark = useLocalState((state) => state.dark);
   const theme = useSettingsState(s => s.display.theme);
@@ -246,6 +246,8 @@ export default function TermApp(props: TermAppProps) {
         }, 10000);
       }
     }
+
+    set(state => { state.slogstream = slog });
   }, [onSlog]);
 
   const onInput = useCallback((ses: string, e: string) => {
@@ -341,13 +343,13 @@ export default function TermApp(props: TermAppProps) {
   //  on-init, open slogstream
   //
   useEffect(() => {
-    setupSlog();
+    if (!slogstream) setupSlog();
     window.addEventListener('resize', onResize);
     return () => {
       //TODO  clean up subs?
       window.removeEventListener('resize', onResize);
     };
-  }, [onResize]);
+  }, [onResize, setupSlog]);
 
   //  on dark mode change, change terminals' theme
   //
