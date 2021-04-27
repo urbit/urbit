@@ -6,12 +6,10 @@
 -}
 module Urbit.King.CLI where
 
-import ClassyPrelude                   hiding (log)
+import Urbit.Prelude                   hiding (log, Parser)
 import Options.Applicative
 import Options.Applicative.Help.Pretty
 
-import Data.Word          (Word16)
-import RIO                (LogLevel(..))
 import System.Environment (getProgName)
 
 --------------------------------------------------------------------------------
