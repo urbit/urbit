@@ -19,7 +19,7 @@ interface LinkItemProps {
   node: GraphNode;
   association: Association;
   resource: string; api: GlobalApi; group: Group; path: string; }
-export const LinkItem = (props: LinkItemProps): ReactElement => {
+export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactElement => {
   const {
     association,
     node,
@@ -30,7 +30,6 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
     ...rest
   } = props;
 
-  const ref = useRef<HTMLDivElement | null>(null);
   const remoteRef = useRef<typeof RemoteContent | null>(null);
   const index = node.post.index.split('/')[1];
 
@@ -210,5 +209,5 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
 
     </Row>
   </Box>);
-};
+});
 

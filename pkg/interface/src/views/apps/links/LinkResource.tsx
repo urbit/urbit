@@ -23,7 +23,7 @@ type LinkResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+};
 
 export function LinkResource(props: LinkResourceProps) {
   const {
