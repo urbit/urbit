@@ -107,6 +107,7 @@
       %new-tx              (hest hest.upd)
       %cancel-tx           (hexb txid.upd)
       %new-address         (address address.upd)
+      %balance             (balance balance.upd)
     ==
   ::
   ++  initial
