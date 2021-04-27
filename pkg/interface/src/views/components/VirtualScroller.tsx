@@ -428,7 +428,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       return;
     }
 
-    const newScrollTop = this.window.scrollHeight - ref.offsetTop - this.savedDistance;
+    const newScrollTop = this.props.origin === 'top'
+      ? this.savedDistance + ref.offsetTop
+      : this.window.scrollHeight - ref.offsetTop - this.savedDistance;
+
+    console.log(ref.offsetTop);
 
     this.window.scrollTo(0, newScrollTop);
     requestAnimationFrame(() => {
@@ -479,8 +483,10 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     let bottomIndex = visibleItems[visibleItems.length - 1];
     const { scrollTop, scrollHeight } = this.window;
-    const topSpacing = scrollHeight - scrollTop;
-    ([...visibleItems]).reverse().forEach((index) => {
+    const topSpacing = this.props.origin === 'top' ? scrollTop : scrollHeight - scrollTop;
+    console.log(scrollTop);
+    const items = this.props.origin === 'top' ? visibleItems : [...visibleItems].reverse();
+    items.forEach((index) => {
       const el = this.childRefs.get(index.toString());
       if(!el) {
         return;
@@ -499,7 +505,9 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     }
 
     this.savedIndex = bottomIndex;
+    console.log(this.childRefs.size);
     const ref = this.childRefs.get(bottomIndex.toString())!;
+    console.log(ref);
     const { offsetTop } = ref;
     this.savedDistance = topSpacing - offsetTop
   }
