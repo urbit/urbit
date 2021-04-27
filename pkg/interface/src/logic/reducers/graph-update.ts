@@ -105,7 +105,7 @@ const removeGraph = (json, state: GraphState): GraphState => {
 };
 
 const mapifyChildren = (children) => {
-  return new BigIntOrderedMap(
+  return new BigIntOrderedMap().gas(
     _.map(children, (node, idx) => {
       idx = idx && idx.startsWith('/') ? idx.slice(1) : idx;
       const nd = {...node, children: mapifyChildren(node.children || {}) }; 
@@ -214,12 +214,14 @@ const addNodes = (json, state) => {
         state.graphTimesentMap[resource][node.post['time-sent']] = index;
       }
 
-      node.children = mapifyChildren(node?.children || {});
+      
      
       state.graphs[resource] = _addNode(
         state.graphs[resource],
         indexArr,
-        node
+        produce(node, draft => {
+          draft.children = mapifyChildren(draft?.children || {});
+        })
       );
       if(newSize !== old) {
         console.log(`${resource}, (${old}, ${newSize}, ${state.graphs[resource].size})`);
