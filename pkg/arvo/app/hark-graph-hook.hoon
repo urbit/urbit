@@ -266,19 +266,9 @@
     |=  $:  nodes=(list node:graph-store)
             rid=resource
         ==
-    =/  group=(unit resource)
-      (peek-group:met %graph rid)
-    ?~  group  
-      ~&  no-group+rid
-      `state
     =/  metadatum=(unit metadatum:metadata)
       (peek-metadatum:met %graph rid)
-    ?~  metadatum  `state
-    =/  module=term
-      ?:  ?=(%empty -.config.u.metadatum)  %$
-      ?:  ?=(%group -.config.u.metadatum)  %$
-      module.config.u.metadatum
-    abet:check:(abed:handle-update:ha rid nodes u.group module)
+    abet:check:(abed:handle-update:ha rid nodes)
   --
 ::
 ++  on-peek  on-peek:def
@@ -344,7 +334,7 @@
   ^-  ?
   =/  group-rid=(unit resource)
     (peek-group:met %graph rid) 
-  ?~  group-rid  %.n
+  ?~  group-rid  %.y
   ?|  !(is-managed:grp u.group-rid)
       &(watch-on-self =(our.bowl entity.rid))
   ==
@@ -352,16 +342,17 @@
 ++  handle-update
   |_  $:  rid=resource  ::  input
           updates=(list node:graph-store)
-          group=resource
-          module=term
+          mark=(unit mark)
           hark-pokes=(list action:store)  :: output
           new-watches=(list index:graph-store)
       ==
   ++  update-core  .
   ::
   ++  abed
-    |=  [r=resource upds=(list node:graph-store) grp=resource mod=term]
-    update-core(rid r, updates upds, group grp, module mod)
+    |=  [r=resource upds=(list node:graph-store)]
+    =/  m=(unit ^mark)
+      (get-mark:gra r)
+    update-core(rid r, updates upds, mark m)
   ::
   ++  get-conversion
     (^get-conversion rid)
@@ -429,7 +420,7 @@
     =/  parent=index:post
       (scag parent.index-len.not-kind index.pos)
     =/  notif-index=index:store
-      [%graph group rid module desc parent]
+      [%graph rid mark desc parent]
     ?:  =(our.bowl author.pos)
       (self-post node notif-index not-kind)
     =.  update-core
@@ -437,6 +428,7 @@
     =?    update-core
         ?|  =(desc %mention)
             (~(has in watching) [rid parent])
+            =(mark `%graph-validator-dm)
         ==
       =/  =contents:store
         [%graph (limo pos ~)]

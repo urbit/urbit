@@ -25,6 +25,7 @@
       state-4
       state-5
       state-6
+      state-7
   ==
 +$  unread-stats
   [indices=(set index:graph-store) last=@da]
@@ -52,10 +53,13 @@
   [%5 state-three:store]
 ::
 +$  state-6
-  [%6 base-state]
+  [%6 state-four:store]
+::
++$  state-7
+  [%7 base-state]
 ::
 +$  inflated-state
-  $:  state-6
+  $:  state-7
       cache
   ==
 ::  $cache: useful to have precalculated, but can be derived from state
@@ -94,18 +98,23 @@
   =/  old
    !<(versioned-state old-vase)
   =|  cards=(list card)
-  |^  
-  ?-  -.old
-      %6  
+  |^ 
+  ^-  (quip card _this)
+  ?+  -.old  !!
+      %7  
     :-  (flop cards)
     this(-.state old, +.state (inflate-cache:ha old))
+  ==
+  ::
+  ++  unused
+    ?+  -.old  !!
     ::
-      %5
-    %_  $
-      -.old  %6
-      notifications.old  (convert-notifications-4 notifications.old)
-      archive.old        (convert-notifications-4 archive.old)
-    ==
+      %5  !!
+    :: %_  $
+      ::-.old  %6
+      ::notifications.old  (convert-notifications-4 notifications.old)
+      ::archive.old        (convert-notifications-4 archive.old)
+    ::==
     ::
       %4
     %_  $
@@ -162,13 +171,13 @@
   ::
   ++  convert-notifications-4
     |=  old=notifications:state-three:store
-    %+  gas:orm  *notifications:store
-    ^-  (list [@da timebox:store])
+    %+  gas:orm:state-four:store  *notifications:state-four:store
+    ^-  (list [@da timebox:state-four:store])
     %+  murn  
       (tap:orm:state-three:store old)
     |=  [time=@da =timebox:state-three:store]
-    ^-  (unit [@da timebox:store])
-    =/  new-timebox=timebox:store
+    ^-  (unit [@da timebox:state-four:store])
+    =/  new-timebox=timebox:state-four:store
       (convert-timebox-4 timebox)
     ?:  =(0 ~(wyt by new-timebox))
       ~ 
@@ -176,21 +185,21 @@
   ::
   ++  convert-timebox-4
     |=  =timebox:state-three:store
-    ^-  timebox:store
-    %-  ~(gas by *timebox:store)
-    ^-  (list [index:store notification:store])
+    ^-  timebox:state-four:store
+    %-  ~(gas by *timebox:state-four:store)
+    ^-  (list [index:state-four:store notification:state-four:store])
     %+  murn
       ~(tap by timebox)
-    |=  [=index:store =notification:state-three:store]
-    ^-  (unit [index:store notification:store])
-    =/  new-notification=(unit notification:store)
+    |=  [=index:state-four:store =notification:state-three:store]
+    ^-  (unit [index:state-four:store notification:state-four:store])
+    =/  new-notification=(unit notification:state-four:store)
       (convert-notification-4 notification)
     ?~  new-notification  ~
     `[index u.new-notification]
   ::
   ++  convert-notification-4
     |=  =notification:state-three:store
-    ^-  (unit notification:store)
+    ^-  (unit notification:state-four:store)
     ?:  ?=(%group -.contents.notification)
       `notification
     =/  con=(list post:post)
@@ -225,8 +234,8 @@
     ^-  (list [index:state-three:store notification:state-three:store])
     %+  murn
       ~(tap by timebox)
-    |=  [=index:store =notification:state-two:store]
-    ^-  (unit [index:store notification:state-three:store])
+    |=  [=index:state-two:store =notification:state-two:store]
+    ^-  (unit [index:state-three:store notification:state-three:store])
     =/  new-notification=(unit notification:state-three:store)
       (convert-notification-3 notification)
     ?~  new-notification  ~
@@ -291,12 +300,12 @@
     |=  =timebox:state-zero:store
     ^-  timebox:state-two:store
     %-  ~(gas by *timebox:state-two:store)
-    ^-  (list [index:store notification:state-two:store])
+    ^-  (list [index:state-two:store notification:state-two:store])
     %+  murn
       ~(tap by timebox)
     |=  [=index:state-zero:store =notification:state-zero:store]
-    ^-  (unit [index:store notification:state-two:store])
-    =/  new-index=(unit index:store)
+    ^-  (unit [index:state-two:store notification:state-two:store])
+    =/  new-index=(unit index:state-two:store)
       (convert-index-1 index)
     =/  new-notification=(unit notification:state-two:store)
       (convert-notification-1 notification)
@@ -306,13 +315,13 @@
   ::
   ++  convert-index-1
     |=  =index:state-zero:store 
-    ^-  (unit index:store)
+    ^-  (unit index:state-two:store)
     ?+  -.index  `index
       %chat  ~
       ::
         %graph  
       =,  index
-      `[%graph group graph module description ~]
+      `[%graph *resource *resource module description ~]
     ==
   ::
   ++  convert-notification-1
@@ -833,7 +842,7 @@
   ==
 ::
 ++  inflate-cache
-  |=  state-6
+  |=  state-7
   ^+  +.state
   =.  +.state
     *cache

@@ -21,9 +21,8 @@
   ::
   ++  graph-index
     %-  ot
-    :~  group+dejs-path:resource
-        graph+dejs-path:resource
-        module+so
+    :~  graph+dejs-path:resource
+        module+(mu so)
         description+so
         index+(su ;~(pfix fas (more fas dem)))
     ==
@@ -193,17 +192,15 @@
       ==
       :: 
       ++  graph-index
-        |=  $:  group=resource
-                graph=resource
-                module=@t
+        |=  $:  graph=resource
+                mark=(unit mark)
                 description=@t
                 idx=index:graph-store
             ==
         ^-  json
         %-  pairs
-        :~  group+s+(enjs-path:resource group)
-            graph+s+(enjs-path:resource graph)
-            module+s+module
+        :~  graph+s+(enjs-path:resource graph)
+            mark+s+(fall mark '')
             description+s+description
             index+(index:enjs:graph-store idx)
         ==

@@ -6,7 +6,7 @@
   ++  notification-kind
     ^-  (unit notif-kind:hark)
     ?+  index.p.i  ~
-      [@ ~]  `[%message [0 1] %count %none]
+      [@ @ ~]  `[%message [1 2] %count %none]
     ==
   ::
   --
@@ -16,6 +16,7 @@
     |=  p=*
     =/  ip  ;;(indexed-post p)
     ?>  ?=(?([@ ~] [@ @ ~]) index.p.ip)
+    ?>  (lth i.index.p.ip (bex 128))
     ip
   --
 ::
