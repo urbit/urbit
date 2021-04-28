@@ -40,21 +40,20 @@ export const ShareProfile = (props) => {
   );
 
   const onClick = async () => {
-    if(group.hidden && recipients.length > 0) {
-      await api.contacts.allowShips(recipients);
-      await Promise.all(recipients.map(r => api.contacts.share(r)))
-      setShowBanner(false);
-    } else if (!group.hidden) {
-      const [,,ship,name] = groupPath.split('/');
+    if(typeof recipients === 'string') {
+      const [,,ship,name] = recipients.split('/');
       await api.contacts.allowGroup(ship,name);
       if(ship !== `~${window.ship}`) {
         await api.contacts.share(ship);
       }
-      setShowBanner(false);
-    }
+    } else if(recipients.length > 0) {
+      await api.contacts.allowShips(recipients);
+      await Promise.all(recipients.map(r => api.contacts.share(r)))
+    } 
+    props.onShare();
   };
 
-  return showBanner ? (
+  return props.recipients?.length > 0 ? (
     <Row
       height="48px"
       alignItems="center"
