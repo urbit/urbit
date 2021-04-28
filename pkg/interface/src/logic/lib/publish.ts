@@ -73,8 +73,8 @@ export function editPost(rev: number, noteId: BigInteger, title: string, body: s
 }
 
 export function getLatestRevision(node: GraphNode): [number, string, string, Post] {
-  const revs = node.children.get(bigInt(1));
   const empty = [1, '', '', buntPost()] as [number, string, string, Post];
+  const revs = node.children.get(bigInt(1));
   if(!revs) {
     return empty;
   }

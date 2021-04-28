@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useCallback} from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import bigInt from 'big-integer';
 
 import { Box, Row, Text, Action } from '@tlon/indigo-react';
 import { Contacts } from '@urbit/api/contacts';
@@ -40,11 +41,26 @@ export function CommentItem(props: CommentItemProps): ReactElement {
     useCallback(s => s.associations.graph[`/ship/${ship}/${name}`], [ship,name])
   );
   const ref = useRef<HTMLElement | null>(null);
+  console.log(comment);
   const [, post] = getLatestCommentRevision(comment);
   const disabled = props.pending;
 
   const onDelete = async () => {
-    await api.graph.removeNodes(ship, name, [comment.post?.index]);
+    const revs = comment.children.get(bigInt(1));
+    const children = Array.from(revs.children);
+    let indices = [];
+    for (let child in children) {
+      let node = children[child];
+      if (!node?.post || typeof node.post !== 'string') {
+        indices.push(node.post?.index);
+      }
+    }
+
+    await api.graph.removePosts(ship, name, [
+      comment.post?.index,
+      revs?.post?.index,
+      ...indices
+    ]);
   };
 
   const commentIndexArray = (comment.post?.index || '/').split('/');
@@ -81,10 +97,15 @@ export function CommentItem(props: CommentItemProps): ReactElement {
     getPermalinkForGraph(
       association.group,
       association.resource,
-      post.index.split('/').slice(0, -1).join('/')
+      post?.index?.split('/').slice(0, -1).join('/')
     ),
     'Copy Link'
   );
+
+  if (!post || typeof post === 'string') {
+    //  TODO: if typeof post === 'string', show some deleted state
+    return null;
+  }
 
   return (
     <Box ref={ref} mb={4} opacity={post?.pending ? '60%' : '100%'}>

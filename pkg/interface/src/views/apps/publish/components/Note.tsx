@@ -54,7 +54,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const deletePost = async () => {
     setDeleting(true);
     const indices = [note.post.index];
-    await api.graph.removeNodes(ship, book, indices);
+    await api.graph.removePosts(ship, book, indices);
     props.history.push(rootUrl);
   };
 
