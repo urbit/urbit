@@ -414,11 +414,8 @@
       ?>  ?&  ?=(~ (~(dif in ships) members))
               (~(has by tags) tag)
           ==
-      %=    +<
-        ::
-          tags
-        %+  ~(jab by tags)  tag
-        |=((set ship) (~(dif in +<) ships))
+      %=  +<
+        tags  (dif-ju tags tag ships)
       ==
     :_  state
     (send-diff %remove-tag rid tag ships)
@@ -543,7 +540,15 @@
     (send-diff %remove-group rid ~)
   ::
   --
-
+::  TODO: move to +zuse
+++  dif-ju
+  |=  [=tags =tag remove=(set ship)]
+  =/  ships  ~(tap in remove)
+  |-
+  ?~  ships
+    tags
+  $(tags (~(del ju tags) tag i.ships), ships t.ships)
+::
 ++  merge-tags
   |=  [=tags ships=(set ship) new-tags=(set tag)]
   ^+  tags

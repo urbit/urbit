@@ -16,5 +16,5 @@ export function useCopy(copied: string, display: string) {
     display,
   ]);
 
-  return { copyDisplay, doCopy };
+  return { copyDisplay, doCopy, didCopy };
 }

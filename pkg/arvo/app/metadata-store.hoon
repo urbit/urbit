@@ -23,7 +23,7 @@
 ::  /app-name/%app-name                            associations for app
 ::  /group/%path                             associations for group
 ::
-/-  store=metadata-store
+/-  store=metadata-store, pull-hook
 /+  default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
@@ -95,15 +95,17 @@
       ~
   ==
 ::
-+$  state-0   [%0 base-state-0]
-+$  state-1   [%1 base-state-0]
-+$  state-2   [%2 base-state-0]
-+$  state-3   [%3 base-state-1]
-+$  state-4   [%4 base-state-1]
-+$  state-5   [%5 base-state-1]
-+$  state-6   [%6 base-state-1]
-+$  state-7   [%7 base-state-2]
-+$  state-8   [%8 base-state-3]
++$  state-0    [%0 base-state-0]
++$  state-1    [%1 base-state-0]
++$  state-2    [%2 base-state-0]
++$  state-3    [%3 base-state-1]
++$  state-4    [%4 base-state-1]
++$  state-5    [%5 base-state-1]
++$  state-6    [%6 base-state-1]
++$  state-7    [%7 base-state-2]
++$  state-8    [%8 base-state-3]
++$  state-9    [%9 base-state-3]
++$  state-10   [%10 base-state-3]
 +$  versioned-state
   $%  state-0
       state-1
@@ -114,10 +116,12 @@
       state-6
       state-7
       state-8
+      state-9
+      state-10
   ==
 ::
 +$  inflated-state
-  $:  state-8
+  $:  state-10
       cached-indices
   ==
 --
@@ -230,7 +234,7 @@
   =|  cards=(list card)
   |^
   =*  loop  $
-  ?:  ?=(%8 -.old)
+  ?:  ?=(%10 -.old)
     :-  cards
     %_  state
       associations      associations.old
@@ -238,6 +242,29 @@
       group-indices     (rebuild-group-indices associations.old)
       app-indices       (rebuild-app-indices associations.old)
     ==
+  ?:  ?=(%9 -.old)
+    =/  groups  
+      (fall (~(get by (rebuild-app-indices associations.old)) %groups) ~)
+    =/  pokes=(list card)
+      %+  murn  ~(tap in ~(key by groups))
+      |=  group=resource
+      ^-  (unit card)
+      =/  =association:store  (~(got by associations.old) [%groups group])
+      =*  met  metadatum.association
+      ?.  ?=([%group [~ [~ [@ [@ @]]]]] config.met)
+        ~
+      =*  res  resource.u.u.feed.config.met
+      ?:  =(our.bowl entity.res)  ~
+      =-  `[%pass /fix-feed %agent [our.bowl %graph-pull-hook] %poke -]
+      :-  %pull-hook-action
+      !>  ^-  action:pull-hook
+      [%add entity.res res]
+    %_  $
+      cards  (weld cards pokes)
+      -.old  %10
+    ==
+  ?:  ?=(%8 -.old)
+    $(-.old %9)
   ?:  ?=(%7 -.old)
     $(old [%8 (associations-2-to-3 associations.old) ~])
   ?:  ?=(%6 -.old)
@@ -369,7 +396,7 @@
   ^-  (quip card _state)
   |^
   =^  cards  state  
-    (on-load !>([%8 (remake-metadata ;;(tree-metadata +.arc))]))
+    (on-load !>([%9 (remake-metadata ;;(tree-metadata +.arc))]))
   :_  state
   %+  weld  cards
   %+  turn  ~(tap in ~(key by group-indices))

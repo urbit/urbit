@@ -53,6 +53,7 @@ const Root = withState(styled.div`
   }
   display: flex;
   flex-flow: column nowrap;
+  touch-action: none;
 
   * {
     scrollbar-width: thin;

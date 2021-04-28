@@ -16,7 +16,7 @@ const useGroupState = createState<GroupState>('Group', {
 }, ['groups']);
 
 export function useGroup(group: string) {
-  return useGroupState(useCallback(s => s.groups[group], [group]));
+  return useGroupState(useCallback(s => s.groups[group] as Group | undefined, [group]));
 }
 
 export function useGroupForAssoc(association: Association) {
