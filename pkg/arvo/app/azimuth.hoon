@@ -34,7 +34,7 @@
 ::
 ++  verifier
   ^-  ^verifier:naive
-  |=  [dat=@ v=@ r=@ s=@]
+  |=  [dat=octs v=@ r=@ s=@]
   ?:  (gth v 3)  ~  ::  TODO: move to jet
   =/  result
     %-  mule
@@ -42,7 +42,7 @@
     =,  secp256k1:secp:crypto
     %-  address-from-pub:key:ethereum
     %-  serialize-point
-    (ecdsa-raw-recover dat v r s)
+    (ecdsa-raw-recover (keccak-256:keccak:crypto dat) v r s)
   ?-  -.result
     %|  ~
     %&  `p.result

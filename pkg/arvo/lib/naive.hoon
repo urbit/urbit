@@ -54,7 +54,7 @@
 ::  In any case, a signature version number sounds like a good idea
 ::
 /+  std
-=>  =+  std
+=>  =>  std
 ::  Laconic bit
 ::
 =|  lac=?
@@ -238,7 +238,7 @@
   ==
 ::  ECDSA verifier
 ::
-+$  verifier  $-([dat=@ v=@ r=@ s=@] (unit address))
++$  verifier  $-([dat=octs v=@ r=@ s=@] (unit address))
 --  =>
 ::
 |%
@@ -375,9 +375,8 @@
   =/  prepared-data=octs
     :-  (add 4 p.raw.raw-tx)
     (can 3 4^nonce.need raw.raw-tx ~)
-  =/  signed-data
+  =/  signed-data=octs
     =/  len  (ud-to-len p.prepared-data)
-    %-  keccak-256:keccak:crypto
     :-  :(add 26 (met 3 len) p.prepared-data)
     %:  can  3
       26^'\19Ethereum Signed Message:\0a'
@@ -392,7 +391,7 @@
   ::  Verify signature and produce signer address
   ::
   ++  verify-sig
-    |=  [sig=@ txdata=@]
+    |=  [sig=@ txdata=octs]
     ^-  (unit address)
     |^
     ::  Reversed of the usual r-s-v order because Ethereum integers are

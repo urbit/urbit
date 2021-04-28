@@ -171,6 +171,12 @@
   |=  [a=@ b=@]
   |(=(a b) (lth a b))
 ::
+++  gte                                                 ::  greater or equal
+  ~/  %gte
+  |=  [a=@ b=@]
+  ^-  ?
+  !(lth a b)
+::
 ++  gth                                                 ::  greater
   ~/  %gth
   |=  [a=@ b=@]
