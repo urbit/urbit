@@ -98,8 +98,15 @@ h2 {
   font-family: 'Inter', sans-serif;
 }
 
+.embed-container:not(.embed-container .embed-container):not(.links) {
+  padding: 0px 8px 8px 8px;
+}
+
 .embed-container iframe {
   max-width: 100%;
+  width: 100%;
+  height: 100%;
+  margin-top: 8px;
 }
 
 .mh-16 {

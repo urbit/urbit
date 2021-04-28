@@ -12,7 +12,8 @@
     u3_csat_init = 0,                   //  initialized
     u3_csat_addr = 1,                   //  address resolution begun
     u3_csat_quit = 2,                   //  cancellation requested
-    u3_csat_ripe = 3                    //  passed to libh2o
+    u3_csat_conn = 3,                   //  sync connect phase
+    u3_csat_ripe = 4                    //  passed to libh2o
   } u3_csat;
 
 /* u3_cres: response to http client.
@@ -27,26 +28,26 @@
 /* u3_creq: outgoing http request.
 */
   typedef struct _u3_creq {             //  client request
-    c3_l             num_l;             //  request number
+    c3_l               num_l;           //  request number
     h2o_http1client_t* cli_u;           //  h2o client
-    u3_csat          sat_e;             //  connection state
-    c3_o             sec;               //  yes == https
-    c3_w             ipf_w;             //  IP
-    c3_c*            ipf_c;             //  IP (string)
-    c3_c*            hot_c;             //  host
-    c3_s             por_s;             //  port
-    c3_c*            por_c;             //  port (string)
-    c3_c*            met_c;             //  method
-    c3_c*            url_c;             //  url
-    u3_hhed*         hed_u;             //  headers
-    u3_hbod*         bod_u;             //  body
-    u3_hbod*         rub_u;             //  exit of send queue
-    u3_hbod*         bur_u;             //  entry of send queue
-    h2o_iovec_t*     vec_u;             //  send-buffer array
-    u3_cres*         res_u;             //  nascent response
-    struct _u3_creq* nex_u;             //  next in list
-    struct _u3_creq* pre_u;             //  previous in list
-    struct _u3_cttp* ctp_u;             //  cttp backpointer
+    u3_csat            sat_e;           //  connection state
+    c3_o               sec;             //  yes == https
+    c3_w               ipf_w;           //  IP
+    c3_c*              ipf_c;           //  IP (string)
+    c3_c*              hot_c;           //  host
+    c3_s               por_s;           //  port
+    c3_c*              por_c;           //  port (string)
+    c3_c*              met_c;           //  method
+    c3_c*              url_c;           //  url
+    u3_hhed*           hed_u;           //  headers
+    u3_hbod*           bod_u;           //  body
+    u3_hbod*           rub_u;           //  exit of send queue
+    u3_hbod*           bur_u;           //  entry of send queue
+    h2o_iovec_t*       vec_u;           //  send-buffer array
+    u3_cres*           res_u;           //  nascent response
+    struct _u3_creq*   nex_u;           //  next in list
+    struct _u3_creq*   pre_u;           //  previous in list
+    struct _u3_cttp*   ctp_u;           //  cttp backpointer
   } u3_creq;
 
 /* u3_cttp: http client.
@@ -819,7 +820,15 @@ _cttp_creq_on_connect(h2o_http1client_t* cli_u, const c3_c* err_c,
   u3_creq* ceq_u = (u3_creq *)cli_u->data;
 
   if ( 0 != err_c ) {
-    _cttp_creq_fail(ceq_u, err_c);
+    //  if synchronously connecting, caller will cleanup
+    //
+    if ( u3_csat_conn == ceq_u->sat_e ) {
+      ceq_u->sat_e = u3_csat_quit;
+    }
+    else {
+      c3_assert( u3_csat_ripe == ceq_u->sat_e );
+      _cttp_creq_fail(ceq_u, err_c);
+    }
     return 0;
   }
 
@@ -844,17 +853,10 @@ _cttp_creq_on_connect(h2o_http1client_t* cli_u, const c3_c* err_c,
 static void
 _cttp_creq_connect(u3_creq* ceq_u)
 {
-  c3_assert( u3_csat_ripe == ceq_u->sat_e );
+  c3_assert( u3_csat_conn == ceq_u->sat_e );
   c3_assert( ceq_u->ipf_c );
 
-  //  set hostname for TLS handshake
-  //
-  if ( ceq_u->hot_c && c3y == ceq_u->sec ) {
-    c3_free(ceq_u->cli_u->ssl.server_name);
-    ceq_u->cli_u->ssl.server_name = strdup(ceq_u->hot_c);
-  }
-
-  //  connect by IP
+  //  connect by ip/port, avoiding synchronous getaddrinfo()
   //
   {
     h2o_iovec_t ipf_u = h2o_iovec_init(ceq_u->ipf_c, strlen(ceq_u->ipf_c));
@@ -865,6 +867,28 @@ _cttp_creq_connect(u3_creq* ceq_u)
 
     h2o_http1client_connect(&ceq_u->cli_u, ceq_u, &ceq_u->ctp_u->ctx_u,
                             ipf_u, por_s, tls_t, _cttp_creq_on_connect);
+  }
+
+  //  connect() failed, cb invoked synchronously
+  //
+  if ( u3_csat_conn != ceq_u->sat_e ) {
+    c3_assert( u3_csat_quit == ceq_u->sat_e );
+    //  only one such failure case
+    //
+    _cttp_creq_fail(ceq_u, "socket create error");
+  }
+  else {
+    ceq_u->sat_e = u3_csat_ripe;
+
+    //  fixup hostname for TLS handshake
+    //
+    //    must be synchronous, after successfull connect() call
+    //
+    if ( ceq_u->hot_c && (c3y == ceq_u->sec) ) {
+      c3_assert( ceq_u->cli_u );
+      c3_free(ceq_u->cli_u->ssl.server_name);
+      ceq_u->cli_u->ssl.server_name = strdup(ceq_u->hot_c);
+    }
   }
 }
 
@@ -888,7 +912,7 @@ _cttp_creq_resolve_cb(uv_getaddrinfo_t* adr_u,
     ceq_u->ipf_w = ntohl(((struct sockaddr_in *)aif_u->ai_addr)->sin_addr.s_addr);
     ceq_u->ipf_c = _cttp_creq_ip(ceq_u->ipf_w);
 
-    ceq_u->sat_e = u3_csat_ripe;
+    ceq_u->sat_e = u3_csat_conn;
     _cttp_creq_connect(ceq_u);
   }
 
@@ -932,7 +956,7 @@ static void
 _cttp_creq_start(u3_creq* ceq_u)
 {
   if ( ceq_u->ipf_c ) {
-    ceq_u->sat_e = u3_csat_ripe;
+    ceq_u->sat_e = u3_csat_conn;
     _cttp_creq_connect(ceq_u);
   } else {
     ceq_u->sat_e = u3_csat_addr;

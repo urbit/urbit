@@ -121,7 +121,7 @@ export default function Inbox(props: {
   );
 
   return (
-    <Col ref={scrollRef} position="relative" height="100%" overflowY="auto">
+    <Col p="1" ref={scrollRef} position="relative" height="100%" overflowY="auto">
       <Invites pendingJoin={props.pendingJoin} api={api} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
@@ -175,26 +175,15 @@ function DaySection({
 
   return (
     <>
-      <Box position="sticky" zIndex={3} top="-1px" bg="white">
-        <Box p="2" bg="scales.black05">
-          <Text>
-            {label}
-          </Text>
-        </Box>
-      </Box>
       {_.map(timeboxes.sort(sortTimeboxes), ([date, nots], i: number) =>
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
-          <React.Fragment key={j}>
-            {(i !== 0 || j !== 0) && (
-              <Box flexShrink={0} height="4px" bg="scales.black05" />
-            )}
-            <Notification
-              api={api}
-              notification={not}
-              archived={archive}
-              time={date}
-            />
-          </React.Fragment>
+          <Notification
+            key={j}
+            api={api}
+            notification={not}
+            archived={archive}
+            time={date}
+          />
         ))
       )}
     </>

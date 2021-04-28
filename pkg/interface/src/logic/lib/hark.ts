@@ -1,6 +1,6 @@
 import bigInt, { BigInteger } from 'big-integer';
 import f from 'lodash/fp';
-import { Unreads } from '@urbit/api';
+import { Unreads, NotificationGraphConfig } from '@urbit/api';
 
 export function getLastSeen(
   unreads: Unreads,
@@ -33,4 +33,14 @@ export function getNotificationCount(
   return Object.keys(unread)
     .map(index => unread[index]?.notifications?.length || 0)
     .reduce(f.add, 0);
+}
+
+export function isWatching(
+  config: NotificationGraphConfig, 
+  graph: string,
+  index = "/"
+) {
+  return !!config.watching.find(
+    watch => watch.graph === graph && watch.index === index
+  );
 }

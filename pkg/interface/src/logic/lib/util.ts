@@ -63,6 +63,16 @@ export function unixToDa(unix: number) {
   return DA_UNIX_EPOCH.add(timeSinceEpoch);
 }
 
+export function dmCounterparty(resource: string) {
+  const [,,ship,name] = resource.split('/');
+  return ship === `~${window.ship}` ? `~${name.slice(4)}` : ship;
+}
+
+export function isDm(resource: string) {
+  const [,,,name] = resource.split('/');
+  return name.startsWith('dm--');
+}
+
 export function makePatDa(patda: string) {
   return bigInt(udToDec(patda));
 }
