@@ -1,12 +1,14 @@
 /-  eth-watcher
 /+  ethereum, azimuth, naive, default-agent, verb, dbug
 /*  snap  %eth-logs  /app/naive/logs/eth-logs
+::
 =/  last-snap  ::  maybe just use the last one?
-  %+  roll  snap
+  %+  roll  `(list event-log:rpc:ethereum)`snap
   |=  [log=event-log:rpc:ethereum last=@ud]
   ?~  mined.log
     last
   (max block-number.u.mined.log last)
+::
 =,  jael
 |%
 ++  app-state

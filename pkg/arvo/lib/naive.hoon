@@ -31,15 +31,30 @@
 ::
 ::  TODO: could remove `ship` from most txs since it's in `from`
 ::
-::  TODO: hmm i don't think wraps can be done easily?  because how do
-::  you keep track of intra-wrap ownership changes.  you need to verify
-::  the eth signature outside, then verify owner as you go along
-::
 ::  TODO: secp needs to not crash the process when you give it a bad
 ::  v/recid.  See #4797
 ::
+::  TODO: probably should make opcode 0 a no-op and generally ensure
+::  that 0 is not a valid tx, or that it's a no-op that we don't even
+::  send to verify (not sure the verify code can handle a 0 tx)
+::
+::  TODO: add chainId, maybe just everything from
+::  signTypedData_v4/EIP-712.  If we use that, we need to determine
+::  whether EIP-712 is supported by the relevent wallets.  Looks like
+::  ledger does, but maybe not Trezor?  Is there a way to hack around
+::  it?
+::
+::  Okay, my understanding is we can use personal_sign for metamask,
+::  trezor, and ledger, which means prepending each piece of signed data
+::  with '\19Ethereum Signed Message:\0a' and then the length of the
+::  signed data.  We should also include chain_id and maybe other stuff
+::  from the domain separator in EIP-712.  But need to follow up on:
+::  https://github.com/ethereum/go-ethereum/issues/14794
+::
+::  In any case, a signature version number sounds like a good idea
+::
 /+  std
-=>  =>  std
+=>  =+  std
 ::  Laconic bit
 ::
 =|  lac=?
@@ -256,7 +271,6 @@
   =^  sig  batch  (take 3 65)
   =.  len.batch  0
   =/  orig-batch  rest.batch
-  ::  Single tx
   =/  res=(unit [=tx batch=_batch])  parse-tx
   ?~  res
     ~
@@ -352,7 +366,15 @@
       %vote      voting-proxy.own.u.point
       %transfer  transfer-proxy.own.u.point
     ==
-  =/  signed-data  (dad [5 1] nonce.need raw.raw-tx)
+  ::  TODO: do we need to preserve the length of the raw tx?
+  ::
+  =/  prepared-data  (dad [5 1] nonce.need raw.raw-tx)
+  =/  signed-data
+    %-  keccak-256:keccak:crypto
+    %-  as-octs:mimes:html
+    %^  cat  3  '\19Ethereum Signed Message:\0a'
+    %^  cat  3  (ud-to-len (met 3 prepared-data))
+    prepared-data
   =/  dress  (verify-sig sig.raw-tx signed-data)
   ?~  dress
     |
@@ -363,15 +385,33 @@
     |=  [sig=@ txdata=@]
     ^-  (unit address)
     |^
+    ::  Reversed of the usual r-s-v order because Ethereum integers are
+    ::  big-endian
+    ::
     =^  v  sig  (take 3)
-    =^  r  sig  (take 3 32)
     =^  s  sig  (take 3 32)
+    =^  r  sig  (take 3 32)
+    ::  In Ethereum, v is generally 27 + recid, and verifier expects a
+    ::  recid.  Old versions of geth used 0 + recid, so most software
+    ::  now supports either format.  See:
+    ::
+    ::  https://github.com/ethereum/go-ethereum/issues/2053
+    ::
+    =?  v  (gte v 27)  (sub v 27)
     (verifier txdata v r s)
     ::
     ++  take
       |=  =bite
       [(end bite sig) (rsh bite sig)]
     --
+  ::  ASCII-encode length
+  ::
+  ++  ud-to-len
+    |=  n=@ud
+    ^-  @t
+    ?~  n
+      *@t
+    (cat 3 $(n (div n 10)) (add '0' (mod n 10)))
   --
 ::
 ++  ship-rank
@@ -688,10 +728,10 @@
           [%point ship %voting-proxy *address]
           [%point ship %transfer-proxy *address]
       ==
-    =:  address.spawn-proxy.own.point       *address 
-        address.management-proxy.own.point  *address 
-        address.voting-proxy.own.point      *address 
-        address.transfer-proxy.own.point    *address 
+    =:  address.spawn-proxy.own.point       *address
+        address.management-proxy.own.point  *address
+        address.voting-proxy.own.point      *address
+        address.transfer-proxy.own.point    *address
       ==
     `[:(welp effects-1 effects-2 effects-3) point]
   ::
@@ -869,7 +909,6 @@
   :: Received log from L1 transaction
   ::
   (receive-log state event-log.input)
-%+  debug  %batch
 ::  Received L2 batch
 ::
 (receive-batch verifier state batch.input)

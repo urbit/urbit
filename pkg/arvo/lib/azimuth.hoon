@@ -78,7 +78,7 @@
     ::  #  constants
     ::
     ::  contract addresses
-    ++  contracts  mainnet-contracts
+    ++  contracts  ropsten-contracts
     ++  mainnet-contracts
       |%
       ::  azimuth: data contract
@@ -128,6 +128,9 @@
       ::
       ++  delegated-sending
         0x3e8c.a510.354b.c2fd.bbd6.1502.52d9.3105.c9c2.7bbe
+      ::
+      ++  naive
+        0xb581.01cd.3bbb.cc6f.a40b.cdb0.4bb7.1623.b5c7.d39b
       ::
       ++  launch  4.601.630
       ++  public  launch

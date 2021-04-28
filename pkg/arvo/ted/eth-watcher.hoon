@@ -88,7 +88,7 @@
   ?:  (lth latest-number (add number.pup zoom-margin))
     (pure:m pup)
   =/  up-to-number=number:block
-    (min (add 1.000.000 number.pup) (sub latest-number zoom-margin))
+    (min (add 10.000.000 number.pup) (sub latest-number zoom-margin))
   |-
   ~&  >  [%zooming number.pup up-to-number]
   =*  loop  $
@@ -101,6 +101,8 @@
     ::  there are a lot events belonging to all the pre-ethereum ships
     ::  being established on-chain. By reducing the step, we avoid crashing.
     ::
+    ?.  =(contracts:azimuth mainnet-contracts:azimuth)
+      zoom-step
     ?:  ?|  &((gte number.pup 6.951.132) (lth number.pup 6.954.242))
             &((gte number.pup 7.011.857) (lth number.pup 7.021.881))
         ==

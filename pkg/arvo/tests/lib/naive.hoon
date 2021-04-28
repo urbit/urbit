@@ -55,8 +55,15 @@
 ::
 ++  sign-tx
   |=  [pk=@ nonce=@ud tx=@]  ^-  @
-  =+  (ecdsa-raw-sign:secp256k1:secp:crypto (dad:naive 5 nonce tx) pk)
-  (cat 3 (can 3 1^v 32^r 32^s ~) tx)
+  =/  prepared-data  (dad:naive 5 nonce tx)
+  =/  sign-data
+    %-  keccak-256:keccak:crypto
+    %-  as-octs:mimes:html
+    %^  cat  3  '\19Ethereum Signed Message:\0a'
+    %^  cat  3  (rsh [3 2] (scot %ui (met 3 prepared-data)))
+    prepared-data
+  =+  (ecdsa-raw-sign:secp256k1:secp:crypto sign-data pk)
+  (cat 3 (can 3 1^v 32^s 32^r ~) tx)
 ::
 ++  l1
   |%
@@ -430,4 +437,29 @@
     =^  f  state  (n state %bat (transfer-point:l2 0 ~palsep-picdun (key ~palsep-picdun) %transfer &))
     owner.own:(~(got by points.state) ~palsep-picdun)
 ::
+++  test-metamask-signature  ^-  tang
+  =/  meta-owner=address
+    (hex-to-num:ethereum '0xb026b0AA6e686F2386051b31A03E5fB95513e1c0')
+  =/  tx  0x123.0000.0102.0a00.0001.0200
+  =/  sig
+    %-  hex-to-num:ethereum
+    :: %^  cat  3  '0xbcee11aad81466d8693571bdd020a2cc8ca7cd4a717bbfdedbe5d5296b596005'
+    :: '211e6c1a804ea0489ac15ff1dca7a0803f61c2fb473701d100dc9c07bbe6ba6f1c'
+    ::  '0xdede6cb45463d5822e2558cd0aec6835c6500acf928754f7147bc066eaa1f5bb5913d66292e0f5c368611dc8fe2a9635b4d692ee64684a73bb581f31ec6bbefa1c'
+    ::  Must reverse endianness of tx to sign in metamask
+    %^  cat  3
+      '0x5b85936ab7b9db8d72416648e6eb1b844a4545ddb7c7c646a74bc3a4fb001a2'
+    '8583bf12ca837b289036a6cc9e6359ed07dda2b87929b5dd7189a3057a395341f1c'
+  ::
+  %+  expect-eq
+    !>  [0x123 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    ::  =^  f  state  (n state %bat (transfer-point:l2 0 ~marbud (key ~marbud) %own &))
+    ::  =^  f  state  (n state %bat (set-transfer-proxy:l2 1 ~marbud %own 0x123))
+    =^  f  state  (n state %bat (transfer-point:l2 0 ~marbud meta-owner %own &))
+    =^  f  state  (n state %bat (cat 3 sig tx))
+    transfer-proxy.own:(~(got by points.state) ~marbud)
 --
