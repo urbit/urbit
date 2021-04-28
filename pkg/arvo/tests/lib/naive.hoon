@@ -19,7 +19,7 @@
     %&  `p.result
   ==
 ::
-++  key  address-from-prv:key:ethereum
+++  addr  address-from-pk:key:ethereum
 ::
 ++  log
   |=  [log-name=@ux data=@ux topics=(lest @)]
@@ -31,7 +31,7 @@
 ++  init-bud
   |=  =^state:naive
   ^-  [effects:naive ^state:naive]
-  (n state (owner-changed:l1 ~bud (key ~bud)))
+  (n state (owner-changed:l1 ~bud (addr ~bud)))
 ::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
 ::
@@ -39,7 +39,7 @@
   |=  =^state:naive
   ^-  [effects:naive ^state:naive]
   =^  f1  state  (init-bud state)
-  =^  f2  state  (n state (owner-changed:l1 ~dopbud (key ~dopbud)))
+  =^  f2  state  (n state (owner-changed:l1 ~dopbud (addr %dopbud-key-0)))
   =^  f3  state  (n state (changed-spawn-proxy:l1 ~dopbud deposit-address:naive))
   [:(welp f1 f2 f3) state]
 ::
@@ -49,9 +49,18 @@
   |=  =^state:naive
   ^-  [effects:naive ^state:naive]
   =^  f1  state  (init-bud state)
-  =^  f2  state  (n state (owner-changed:l1 ~marbud (key ~marbud)))
+  =^  f2  state  (n state (owner-changed:l1 ~marbud (addr %marbud-key-0)))
   =^  f3  state  (n state (owner-changed:l1 ~marbud deposit-address:naive))
   [:(welp f1 f2 f3) state]
+::
+::  ~sambud is for testing L1 stars attempting L2 actions
+::
+++  init-sambud
+   |=  =^state:naive
+   ^-  [effects:naive ^state:naive]
+   =^  f1  state  (init-bud state)
+   =^  f2  state  (n state (owner-changed:l1 ~sambud (addr %sambud-key-0)))
+   [:(welp f1 f2) state]
 ::
 ++  sign-tx
   |=  [pk=@ nonce=@ud tx=@]  ^-  @
@@ -94,7 +103,17 @@
     |=  [lost=ship parent=ship]
     (log lost-sponsor:log-names:naive *@ux lost parent ~)
   ::
-  ::  TODO:  ChangedKeys (lib/naive.hoon still has TODOs)
+  ++  changed-keys
+    |=  [=ship encr=@ auth=@ suite=@ life=@]
+    =/  keys=@ux
+      %:  can  8
+        1^life
+        1^suite
+        1^auth
+        1^encr
+        ~
+      ==
+    (log changed-keys:log-names:naive keys ship ~)
   ::
   ++  broke-continuity
     |=  [=ship rift=@]
@@ -130,18 +149,14 @@
   ::
   |%
   ::
-  ::  TODO: Allow requesting ship to differ from the ship the action is for
-  ::
   ++  spawn
-    |=  [nonce=@ud parent=ship proxy=@tas child=ship =address]  ^-  @
-    ::  TODO: allow requesting ship and parent ship to differ
-    %^  sign-tx  parent  nonce
+    |=  [nonce=@ud parent=ship pk=@ proxy=@tas child=ship =address]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-ship-address:bits %spawn parent proxy child address)
   ::
   ++  transfer-point
-    |=  [nonce=@ud =ship =address proxy=@tas reset=?]  ^-  @
-    ::  TODO: allow requesting ship and target ship to differ
-    %^  sign-tx  ship  nonce
+    |=  [nonce=@ud =ship pk=@ =address proxy=@tas reset=?]  ^-  @
+    %^  sign-tx  pk  nonce
     %:  can  3
       (from-proxy:bits proxy)
       4^ship
@@ -152,8 +167,8 @@
     ==
   ::
   ++  configure-keys
-    |=  [nonce=@ud =ship proxy=@tas breach=@ encrypt=@ auth=@ crypto-suite=@]  ^-  @
-    %^  sign-tx  ship  nonce
+    |=  [nonce=@ud =ship pk=@ proxy=@tas breach=@ encrypt=@ auth=@ crypto-suite=@]  ^-  @
+    %^  sign-tx  pk  nonce
     %:  can  3
       (from-proxy:bits proxy)
       4^ship
@@ -166,43 +181,43 @@
     ==
   ::
   ++  escape
-    |=  [nonce=@ud child=ship proxy=@tas parent=ship]  ^-  @
-    %^  sign-tx  child  nonce
+    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-escape:bits %escape child proxy parent)
   ::
   ++  cancel-escape
-    |=  [nonce=@ud child=ship proxy=@tas parent=ship]  ^-  @
-    %^  sign-tx  child  nonce
+    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-escape:bits %cancel-escape child proxy parent)
   ::
   ++  adopt
-    |=  [nonce=@ud child=ship proxy=@tas parent=ship]  ^-  @
-    %^  sign-tx  child  nonce
+    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-escape:bits %adopt child proxy parent)
   ::
   ++  reject
-    |=  [nonce=@ud child=ship proxy=@tas parent=ship]  ^-  @
-    %^  sign-tx  child  nonce
+    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-escape:bits %reject child proxy parent)
   ::
   ++  detach
-    |=  [nonce=@ud child=ship proxy=@tas parent=ship]  ^-  @
-    %^  sign-tx  child  nonce
+    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-escape:bits %detach child proxy parent)
   ::
   ++  set-management-proxy
-    |=  [nonce=@ud =ship proxy=@tas =address]  ^-  @
-    %^  sign-tx  ship  nonce
+    |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-ship-address:bits %set-management-proxy ship proxy ship address)
   ::
   ++  set-spawn-proxy
-    |=  [nonce=@ud =ship proxy=@tas =address]  ^-  @
-    %^  sign-tx  ship  nonce
+    |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-ship-address:bits %set-spawn-proxy ship proxy ship address)
   ::
   ++  set-transfer-proxy
-    |=  [nonce=@ud =ship proxy=@tas =address]  ^-  @
-    %^  sign-tx  ship  nonce
+    |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  @
+    %^  sign-tx  pk  nonce
     (take-ship-address:bits %set-transfer-proxy ship proxy ship address)
   ::
   ++  bits
@@ -298,8 +313,8 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat (transfer-point:l2 0 ~marbud (key ~marbud) %own |))
-    =^  f  state  (n state %bat (transfer-point:l2 1 ~marbud 0x234 %own |))
+    =^  f  state  (n state %bat (transfer-point:l2 0 ~marbud %marbud-key-0 (addr %marbud-key-0) %own |))
+    =^  f  state  (n state %bat (transfer-point:l2 1 ~marbud %marbud-key-0 0x234 %own |))
     owner.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l1-changed-spawn-proxy  ^-  tang
@@ -349,7 +364,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat (set-spawn-proxy:l2 0 ~marbud %own 0x123))
+    =^  f  state  (n state %bat (set-spawn-proxy:l2 0 ~marbud %marbud-key-0 %own 0x123))
     spawn-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-set-transfer-proxy  ^-  tang
@@ -359,7 +374,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat (set-transfer-proxy:l2 0 ~marbud %own 0x123))
+    =^  f  state  (n state %bat (set-transfer-proxy:l2 0 ~marbud %marbud-key-0 %own 0x123))
     transfer-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-set-management-proxy  ^-  tang
@@ -369,7 +384,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat (set-management-proxy:l2 0 ~marbud %own 0x123))
+    =^  f  state  (n state %bat (set-management-proxy:l2 0 ~marbud %marbud-key-0 %own 0x123))
     management-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-spawn-proxy-deposit  ^-  tang
@@ -383,58 +398,97 @@
 ::
 ++  test-marbud-l2-spawn  ^-  tang
   %+  expect-eq
-    !>  [`@ux`(key ~linnup-torsyx) 0]
+    !>  [`@ux`(addr %ll-key-0) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %own ~linnup-torsyx (key ~linnup-torsyx)))
+    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (addr %ll-key-0)))
+    transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+::
+++  test-marbud-l2-spawn-w-proxy  ^-  tang
+  %+  expect-eq
+    !>  [`@ux`(addr %ll-key-0) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat (set-spawn-proxy:l2 0 ~marbud %marbud-key-0 %own (addr %marbud-spawn-0)))
+    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %marbud-spawn-0 %spawn ~linnup-torsyx (addr %ll-key-0)))
     transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-dopbud-l2-spawn  ^-  tang
   %+  expect-eq
-    !>  [`@ux`(key ~palsep-picdun) 0]
+    !>  [`@ux`(addr %pp-key-0) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %own ~palsep-picdun (key ~palsep-picdun)))
+    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %dopbud-key-0 %own ~palsep-picdun (addr %pp-key-0)))
     transfer-proxy.own:(~(got by points.state) ~palsep-picdun)
 ::
 ++  test-dopbud-l2-spawn-after-transfer  ^-  tang
-  ::  Currently fails, does not spawn ~laclur-rachul unless you leave ~dopbud's ownership address alone
-  ::  All individual transactions work fine though, its the sequence that breaks something.
   %+  expect-eq
-    !>  [`@ux`(key ~laclur-rachul) 0]
+    !>  [`@ux`(addr %lr-key-0) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %own ~palsep-picdun (key ~palsep-picdun)))
-    =^  f  state  (n state (owner-changed:l1 ~dopbud 0x345))
-    =^  f  state  (n state %bat (spawn:l2 1 ~dopbud %own ~laclur-rachul (key ~laclur-rachul)))
+    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %dopbud-key-0 %own ~palsep-picdun (addr %pp-key-0)))
+    =^  f  state  (n state (owner-changed:l1 ~dopbud (addr %dopbud-key-1)))
+    =^  f  state  (n state %bat (spawn:l2 1 ~dopbud %dopbud-key-1 %own ~laclur-rachul (addr %lr-key-0)))
     transfer-proxy.own:(~(got by points.state) ~laclur-rachul)
+::
+::  ++  test-sambud-double-spawn  ^-  tang
+::    ::
+::    ::  TODO: Not sure of the right way to write this test yet. Current iteration
+::    ::  doesn't even compile
+::    ::
+::    %-  expect-fail
+::      |.
+::      ?<
+::        ?=  [`@ux`(addr %ld-key-1) 0]
+::        =|  =^state:naive
+::        =^  f  state  (init-sambud state)
+::        =^  f  state  (n state (owner-changed:l1 ~lisdur-fodrys (addr %ld-key-0)))
+::        =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+::        =^  f  state  (n state %bat (spawn:l2 0 ~sambud %sambud-key-0 %own ~lisdur-fodrys (addr %ld-key-1)))
+::        transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
+::      %.n
+::
+::  ++  test-sambud-double-spawn-w-proxy  ^-  tang
+::    ::
+::    ::  Same confusion as above
+::    ::
+::    %-  expect-fail
+::      |.
+::      =|  =^state:naive
+::      =^  f  state  (init-sambud state)
+::      =^  f  state  (n state (owner-changed:l1 ~lisdur-fodrys (addr %ld-key-0)))
+::      =^  f  state  (n state (owner-changed:l1 ~sambud deposit-address:naive))
+::      =^  f  state  (n state %bat (spawn:l2 0 ~sambud %sambud-key-0 %own ~lisdur-fodrys (addr %ld-key-1)))
+::      state
 ::
 ++  test-linnup-torsyx-l2-transfer-ownership  ^-  tang
   %+  expect-eq
-    !>  [`@ux`(key ~linnup-torsyx) 0]
+    !>  [`@ux`(addr %lt-key-0) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %own ~linnup-torsyx (key ~linnup-torsyx)))
-    =^  f  state  (n state %bat (transfer-point:l2 0 ~linnup-torsyx (key ~linnup-torsyx) %transfer &))
+    =^  f  state  (n state %bat (spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)))
+    =^  f  state  (n state %bat (transfer-point:l2 0 ~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &))
     owner.own:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-palsep-picdun-l2-transfer-ownership  ^-  tang
   %+  expect-eq
-    !>  [`@ux`(key ~palsep-picdun) 0]
+    !>  [`@ux`(addr %pp-key-0) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %own ~palsep-picdun (key ~palsep-picdun)))
-    =^  f  state  (n state %bat (transfer-point:l2 0 ~palsep-picdun (key ~palsep-picdun) %transfer &))
+    =^  f  state  (n state %bat (spawn:l2 0 ~dopbud %dopbud-key-0 %own ~palsep-picdun (addr %pp-key-0)))
+    =^  f  state  (n state %bat (transfer-point:l2 0 ~palsep-picdun %pp-key-0 (addr %pp-key-0) %transfer &))
     owner.own:(~(got by points.state) ~palsep-picdun)
 ::
 ++  test-metamask-signature  ^-  tang
