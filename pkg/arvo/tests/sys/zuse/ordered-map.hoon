@@ -35,13 +35,13 @@
     !>  [[0 %a] (gas:atom-map ~ (items-from-keys (gulf 1 6)))]
     !>  (pop:atom-map a)
 ::
-++  test-ordered-map-peek  ^-  tang
+++  test-ordered-map-pry  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
   %+  expect-eq
     !>  `[0 %a]
-    !>  (peek:atom-map a)
+    !>  (pry:atom-map a)
 ::
 ++  test-ordered-map-nip  ^-  tang
   ::
@@ -53,51 +53,51 @@
     !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [3^%d] [4^%e] [5^%f]])
     !>  b
 ::
-++  test-ordered-map-subset  ^-  tang
+++  test-ordered-map-lot  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  b  (subset:atom-map a `0 `4)
+  =/  b  (lot:atom-map a `0 `4)
   ::
   %+  expect-eq
     !>  (gas:atom-map ~ ~[[1^%b] [2^%c] [3^%d]])
     !>  b
 ::
-++  test-ordered-map-null-start-subset  ^-  tang
+++  test-ordered-map-null-start-lot  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  b  (subset:atom-map a ~ `5)
+  =/  b  (lot:atom-map a ~ `5)
   ::
   %+  expect-eq
     !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [3^%d] [4^%e]])
     !>  b
 ::
-++  test-ordered-map-null-end-subset  ^-  tang
+++  test-ordered-map-null-end-lot  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  b  (subset:atom-map a `1 ~)
+  =/  b  (lot:atom-map a `1 ~)
   ::
   %+  expect-eq
     !>  (gas:atom-map ~ ~[[2^%c] [3^%d] [4^%e] [5^%f] [6^%g]])
     !>  b
 ::
-++  test-ordered-map-double-null-subset  ^-  tang
+++  test-ordered-map-double-null-lot  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  b  (subset:atom-map a ~ ~)
+  =/  b  (lot:atom-map a ~ ~)
   ::
   %+  expect-eq
     !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [3^%d] [4^%e] [5^%f] [6^%g]])
     !>  b
 ::
-++  test-ordered-map-not-found-start-subset  ^-  tang
+++  test-ordered-map-not-found-start-lot  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ ~[[1^%b]])
   ::
-  =/  b  (subset:atom-map a `0 ~)
+  =/  b  (lot:atom-map a `0 ~)
   ::
   %+  expect-eq
     !>  (gas:atom-map ~ ~[[1^%b]])

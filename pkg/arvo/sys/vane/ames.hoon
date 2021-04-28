@@ -2535,7 +2535,7 @@
   ++  assert
     ^+  message-pump
     =/  top-live
-      (peek:packet-queue:*make-packet-pump live.packet-pump-state.state)
+      (pry:packet-queue:*make-packet-pump live.packet-pump-state.state)
     ?.  |(?=(~ top-live) (lte current.state message-num.key.u.top-live))
       ~|  [%strange-current current=current.state key.u.top-live]
       !!
@@ -2804,10 +2804,10 @@
   ::
   ++  set-wake
     ^+  packet-pump
-    ::  if nonempty .live, peek at head to get next wake time
+    ::  if nonempty .live, pry at head to get next wake time
     ::
     =/  new-wake=(unit @da)
-      ?~  head=(peek:packet-queue live.state)
+      ?~  head=(pry:packet-queue live.state)
         ~
       `(next-expiry:gauge u.head)
     ::  no-op if no change

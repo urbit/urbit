@@ -5150,11 +5150,9 @@
     ~/  %bap
     |=  a=(tree item)
     ^-  (list item)
-    ::
     =|  b=(list item)
     |-  ^+  b
     ?~  a  b
-    ::
     $(a r.a, b [n.a $(a l.a)])
   ::  +del: delete .key from .a if it exists, producing value iff deleted
   ::
@@ -5162,7 +5160,6 @@
     ~/  %del
     |=  [a=(tree item) =key]
     ^-  [(unit val) (tree item)]
-    ::
     ?~  a  [~ ~]
     ::  we found .key at the root; delete and rebalance
     ::
@@ -5276,90 +5273,11 @@
     |=  [a=(tree item) b=key]
     ^-  ?
     !=(~ (get a b))
-  ::  +nip: remove root; for internal use
-  ::
-  ++  nip
-    ~/  %nip
-    |=  a=(tree item)
-    ^-  (tree item)
-    ::
-    ?>  ?=(^ a)
-    ::  delete .n.a; merge and balance .l.a and .r.a
-    ::
-    |-  ^-  (tree item)
-    ?~  l.a  r.a
-    ?~  r.a  l.a
-    ?:  (mor key.n.l.a key.n.r.a)
-      l.a(r $(l.a r.l.a))
-    r.a(l $(r.a l.r.a))
-  ::  +peek: produce head (smallest item) or null
-  ::
-  ++  peek
-    ~/  %peek
-    |=  a=(tree item)
-    ^-  (unit item)
-    ::
-    ?~  a    ~
-    ?~  l.a  `n.a
-    $(a l.a)
-  ::
-  ::  +pop: produce .head (smallest item) and .rest or crash if empty
-  ::
-  ++  pop
-    ~/  %pop
-    |=  a=(tree item)
-    ^-  [head=item rest=(tree item)]
-    ::
-    ?~  a    !!
-    ?~  l.a  [n.a r.a]
-    ::
-    =/  l  $(a l.a)
-    :-  head.l
-    ::  load .rest.l back into .a and rebalance
-    ::
-    ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
-      a(l rest.l)
-    rest.l(r a(r r.rest.l))
-  ::  +put: ordered item insert
-  ::
-  ++  put
-    ~/  %put
-    |=  [a=(tree item) =key =val]
-    ^-  (tree item)
-    ::  base case: replace null with single-item tree
-    ::
-    ?~  a  [n=[key val] l=~ r=~]
-    ::  base case: overwrite existing .key with new .val
-    ::
-    ?:  =(key.n.a key)  a(val.n val)
-    ::  if item goes on left, recurse left then rebalance vertical order
-    ::
-    ?:  (compare key key.n.a)
-      =/  l  $(a l.a)
-      ?>  ?=(^ l)
-      ?:  (mor key.n.a key.n.l)
-        a(l l)
-      l(r a(l r.l))
-    ::  item goes on right; recurse right then rebalance vertical order
-    ::
-    =/  r  $(a r.a)
-    ?>  ?=(^ r)
-    ?:  (mor key.n.a key.n.r)
-      a(r r)
-    r(l a(r l.r))
-  ::  +run: apply gate to transform all values in place
-  ::
-  ++  run
-    ~/  %run
-    |*  [a=(tree item) b=$-(val *)]
-    |-
-    ?~  a  a
-    [n=[key.n.a (b val.n.a)] l=$(a l.a) r=$(a r.a)]
-  ::  +subset: take a range excluding start and/or end and all elements
+  ::  +lot: take a subset range excluding start and/or end and all elements
   ::  outside the range
   ::
-  ++  subset
-    ~/  %subset
+  ++  lot
+    ~/  %lot
     |=  $:  tre=(tree item)
             start=(unit key)
             end=(unit key)
@@ -5405,17 +5323,90 @@
         $(a (nip a(r ~)))
       ==
     --
+  ::  +nip: remove root; for internal use
+  ::
+  ++  nip
+    ~/  %nip
+    |=  a=(tree item)
+    ^-  (tree item)
+    ?>  ?=(^ a)
+    ::  delete .n.a; merge and balance .l.a and .r.a
+    ::
+    |-  ^-  (tree item)
+    ?~  l.a  r.a
+    ?~  r.a  l.a
+    ?:  (mor key.n.l.a key.n.r.a)
+      l.a(r $(l.a r.l.a))
+    r.a(l $(r.a l.r.a))
+  ::
+  ::  +pop: produce .head (smallest item) and .rest or crash if empty
+  ::
+  ++  pop
+    ~/  %pop
+    |=  a=(tree item)
+    ^-  [head=item rest=(tree item)]
+    ?~  a    !!
+    ?~  l.a  [n.a r.a]
+    =/  l  $(a l.a)
+    :-  head.l
+    ::  load .rest.l back into .a and rebalance
+    ::
+    ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
+      a(l rest.l)
+    rest.l(r a(r r.rest.l))
+  ::  +pry: produce head (smallest item) or null
+  ::
+  ++  pry
+    ~/  %pry
+    |=  a=(tree item)
+    ^-  (unit item)
+    ?~  a    ~
+    ?~  l.a  `n.a
+    $(a l.a)
+  ::  +put: ordered item insert
+  ::
+  ++  put
+    ~/  %put
+    |=  [a=(tree item) =key =val]
+    ^-  (tree item)
+    ::  base case: replace null with single-item tree
+    ::
+    ?~  a  [n=[key val] l=~ r=~]
+    ::  base case: overwrite existing .key with new .val
+    ::
+    ?:  =(key.n.a key)  a(val.n val)
+    ::  if item goes on left, recurse left then rebalance vertical order
+    ::
+    ?:  (compare key key.n.a)
+      =/  l  $(a l.a)
+      ?>  ?=(^ l)
+      ?:  (mor key.n.a key.n.l)
+        a(l l)
+      l(r a(l r.l))
+    ::  item goes on right; recurse right then rebalance vertical order
+    ::
+    =/  r  $(a r.a)
+    ?>  ?=(^ r)
+    ?:  (mor key.n.a key.n.r)
+      a(r r)
+    r(l a(r l.r))
+  ::  +run: apply gate to transform all values in place
+  ::
+  ++  run
+    ~/  %run
+    |*  [a=(tree item) b=$-(val *)]
+    |-
+    ?~  a  a
+    [n=[key.n.a (b val.n.a)] l=$(a l.a) r=$(a r.a)]
   ::  +tap: convert to list, smallest to largest
   ::
   ++  tap
     ~/  %tap
     |=  a=(tree item)
     ^-  (list item)
-    ::
     =|  b=(list item)
     |-  ^+  b
     ?~  a  b
-    ::
     $(a l.a, b [n.a $(a r.a)])
   ::  +uni: unify two ordered maps
   ::
@@ -5425,19 +5416,14 @@
     ~/  %uni
     |=  [a=(tree item) b=(tree item)]
     ^-  (tree item)
-    ::
     ?~  b  a
     ?~  a  b
     ?:  =(key.n.a key.n.b)
-      ::
       [n=n.b l=$(a l.a, b l.b) r=$(a r.a, b r.b)]
-    ::
     ?:  (mor key.n.a key.n.b)
-      ::
       ?:  (compare key.n.b key.n.a)
         $(l.a $(a l.a, r.b ~), b r.b)
       $(r.a $(a r.a, l.b ~), b l.b)
-    ::
     ?:  (compare key.n.a key.n.b)
       $(l.b $(b l.b, r.a ~), a r.a)
     $(r.b $(b r.b, l.a ~), a l.a)

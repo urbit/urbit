@@ -1,5 +1,5 @@
 /-  gr=group, md=metadata-store, ga=graph-store
-/+  re=resource
+/+  re=resource, graph=graph-store
 !:
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
@@ -85,9 +85,9 @@
     %+  scry  update:ga
     [%x %graph-store /graph/(scot %p entity.r)/[name.r]/noun]
   ?>  ?=(%add-graph -.q.upd)
-  =/  mo  ((ordered-map atom node:ga) gth)
+  =*  mo  orm:graph
   =/  week=(list [@da node:ga])
-    (tap:mo (subset:mo graph.q.upd ~ `(sub now ~d7)))
+    (tap:mo (lot:mo graph.q.upd ~ `(sub now ~d7)))
   :-  (lent week)
   %~  wyt  in
   %+  roll  week

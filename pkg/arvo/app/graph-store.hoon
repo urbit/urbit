@@ -918,7 +918,7 @@
     :+  %add-nodes
       [ship term]
     %-  ~(gas by *(map index:store node:store))
-    %+  turn  (tap:orm `graph:store`(subset:orm p.u.graph start end))
+    %+  turn  (tap:orm `graph:store`(lot:orm p.u.graph start end))
     |=  [=atom =node:store]
     ^-  [index:store node:store]
     [~[atom] node]
@@ -971,7 +971,7 @@
     %+  turn  
       =-  ?.(older (slag (safe-sub (lent -) count) -) (scag count -))
       %-  tap:orm
-      %+  subset:orm  u.graph
+      %+  lot:orm  u.graph
       =/  idx
         (snag (dec (lent index)) index)
       ?:(older [`idx ~] [~ `idx])
@@ -1024,7 +1024,7 @@
       :+  %add-nodes
         [ship term]
       %-  ~(gas by *(map index:store node:store))
-      %+  turn  (tap:orm `graph:store`(subset:orm p.children.u.node end start))
+      %+  turn  (tap:orm `graph:store`(lot:orm p.children.u.node end start))
       |=  [=atom =node:store]
       ^-  [index:store node:store]
       [(snoc index atom) node]
@@ -1038,7 +1038,7 @@
     =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
     ?~  update-log  [~ ~]
     ::  orm-log is ordered backwards, so swap start and end
-    ``noun+!>((subset:orm-log u.update-log end start))
+    ``noun+!>((lot:orm-log u.update-log end start))
   ::
       [%x %update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
@@ -1056,7 +1056,7 @@
     %+  biff  m-update-log
     |=  =update-log:store
     =/  result=(unit [=time =update:store])
-      (peek:orm-log:store update-log)
+      (pry:orm-log:store update-log)
     (bind result |=([=time update:store] time))
   ==
   ::
