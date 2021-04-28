@@ -218,7 +218,6 @@
   ++  set-management-proxy
     |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  octs
     %^  sign-tx  pk  nonce
-    ^-  octs
     (take-ship-address:bits %set-management-proxy ship proxy ship address)
   ::
   ++  set-spawn-proxy
@@ -426,9 +425,37 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(set-spawn-proxy:l2 0 ~marbud %marbud-key-0 %own (addr %marbud-spawn-0)))
-    =^  f  state  (n state %bat q:(spawn:l2 0 ~marbud %marbud-spawn-0 %spawn ~linnup-torsyx (addr %ll-key-0)))
+    =^  f  state  (n state %bat q:(set-spawn-proxy:l2 0 ~marbud %marbud-key-0 %own (addr %marbud-spn)))
+    =^  f  state  (n state %bat q:(spawn:l2 0 ~marbud %marbud-spn %spawn ~linnup-torsyx (addr %ll-key-0)))
     transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+::
+++  test-marbud-l2-change-keys
+  =/  encrypt       (shax 'You will forget that you ever read this sentence.')
+  =/  auth          (shax 'You cant know that this sentence is true.')
+  =/  new-keys-own  [0 ~marbud %marbud-key-0 %own 0 encrypt auth 1]
+  =/  new-keys-mgt  [0 ~marbud %marbud-mgt %manage 0 encrypt auth 1]
+  =/  mgt-proxy     [0 ~marbud %marbud-key-0 %own (addr %marbud-mgt)]
+  ;:  weld
+    %+  expect-eq
+      !>  (pass-from-eth:naive 32^encrypt 32^auth 1)
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(configure-keys:l2 new-keys-own))
+      pass.net:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+      !>  (pass-from-eth:naive 32^encrypt 32^auth 1)
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(set-management-proxy:l2 mgt-proxy))
+      =^  f  state  (n state %bat q:(configure-keys:l2 new-keys-mgt))
+      pass.net:(~(got by points.state) ~marbud)
+    ::
+  ==
 ::
 ++  test-dopbud-l2-spawn  ^-  tang
   %+  expect-eq
