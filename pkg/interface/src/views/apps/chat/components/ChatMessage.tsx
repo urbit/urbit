@@ -47,6 +47,7 @@ import ProfileOverlay from '~/views/components/ProfileOverlay';
 import {useCopy} from '~/logic/lib/useCopy';
 import {GraphContentWide} from '~/views/landscape/components/Graph/GraphContentWide';
 import {Contact} from '@urbit/api';
+import GlobalApi from '~/logic/api/global';
 
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
@@ -82,16 +83,13 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
 );
 
 export const UnreadMarker = React.forwardRef(
-  ({ dayBreak, when, api, association }: any, ref) => {
+  ({ dismissUnread }: any, ref) => {
     const [visible, setVisible] = useState(false);
     const idling = useIdlingState();
-    const dismiss = useCallback(() => {
-      api.hark.markCountAsRead(association, '/', 'message');
-    }, [api, association]);
 
     useEffect(() => {
       if (visible && !idling) {
-        dismiss();
+        dismissUnread();
       }
     }, [visible, idling]);
 
@@ -143,10 +141,9 @@ const MessageActionItem = (props) => {
   );
 };
 
-const MessageActions = ({ api, onReply, association, msg, group }) => {
-  const isAdmin = () => group.tags.role.admin.has(window.ship);
+const MessageActions = ({ api, onReply, association, msg, isAdmin, permalink }) => {
   const isOwn = () => msg.author === window.ship;
-  const { doCopy, copyDisplay } = useCopy(`web+urbitgraph://group${association.group.slice(5)}/graph${association.resource.slice(5)}${msg.index}`, 'Copy Message Link');
+  const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Message Link');
 
   return (
     <Box
@@ -237,14 +234,13 @@ interface ChatMessageProps {
   previousMsg?: Post;
   nextMsg?: Post;
   isLastRead: boolean;
-  group: Group;
-  association: Association;
+  permalink: string;
   transcluded?: number;
   className?: string;
   isPending: boolean;
   style?: unknown;
   isLastMessage?: boolean;
-  unreadMarkerRef: React.RefObject<HTMLDivElement>;
+  dismissUnread: () => void;
   api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
@@ -267,11 +263,12 @@ function ChatMessage(props: ChatMessageProps) {
     isPending,
     style,
     isLastMessage,
-    unreadMarkerRef,
     api,
     showOurContact,
     fontSize,
-    hideHover
+    hideHover,
+    dismissUnread,
+    permalink
   } = props;
 
   let onReply = props?.onReply ?? (() => {});
@@ -316,7 +313,6 @@ function ChatMessage(props: ChatMessageProps) {
     msg,
     timestamp,
     association,
-    group,
     isPending,
     showOurContact,
     api,
@@ -354,25 +350,13 @@ function ChatMessage(props: ChatMessageProps) {
       {dayBreak && !isLastRead ? (
         <DayBreak when={date} shimTop={renderSigil} />
       ) : null}
-      {renderSigil ? (
-        <MessageWrapper {...messageProps}>
-          <MessageAuthor pb={1} {...messageProps} />
-          {message}
-        </MessageWrapper>
-      ) : (
-        <MessageWrapper {...messageProps}>
-          {message}
-        </MessageWrapper>
-      )}
+      <MessageWrapper permalink={permalink} {...messageProps}>
+        { renderSigil && <MessageAuthor {...messageProps} />}
+        {message}
+      </MessageWrapper>
       <Box style={unreadContainerStyle}>
         {isLastRead ? (
-          <UnreadMarker
-            association={association}
-            api={api}
-            dayBreak={dayBreak}
-            when={date}
-            ref={unreadMarkerRef}
-          />
+          <UnreadMarker dismissUnread={dismissUnread} />
         ) : null}
       </Box>
     </Box>
@@ -457,7 +441,7 @@ export const MessageAuthor = ({
       </Box>
     );
   return (
-    <Box display='flex' alignItems='flex-start'>
+    <Box pb="1" display='flex' alignItems='flex-start'>
       <Box
        height={24}
         pr={2}
