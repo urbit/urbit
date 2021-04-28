@@ -45,18 +45,16 @@ const formSchema = (members?: string[]) =>
     writePerms: Yup.string()
   });
 
-interface NewChannelProps {
+type NewChannelProps = {
   api: GlobalApi;
   group?: string;
   workspace: Workspace;
-  borderRadius?: number;
-  existingMembers?: Array;
-}
-
+  existingMembers: string[];
+} & PropFunc<typeof Col>;
 
 export function NewChannel(props: NewChannelProps): ReactElement {
   const history = useHistory();
-  const { api, group, workspace, borderRadius, existingMembers } = props;
+  const { api, group, workspace, existingMembers, ...rest } = props;
   const groups = useGroupState(state => state.groups);
   const waiter = useWaitForProps({ groups }, 5000);
 
@@ -131,7 +129,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
       overflowY='auto'
       p={3}
       backgroundColor='white'
-      borderRadius={borderRadius}
+      {...rest}
     >
       <Box
         pb='3'

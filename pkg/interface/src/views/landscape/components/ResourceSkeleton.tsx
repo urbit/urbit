@@ -2,7 +2,6 @@ import React, { ReactElement, ReactNode, useState, useCallback } from 'react';
 import { Icon, Box, Col, Text } from '@tlon/indigo-react';
 import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
-import { without } from 'lodash';
 import urbitOb from 'urbit-ob';
 import { Association } from '@urbit/api/metadata';
 import { Dropdown } from '~/views/components/Dropdown';
@@ -13,7 +12,6 @@ import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import { MessageInvite } from '~/views/landscape/components/MessageInvite';
-import { NewChannel } from '~/views/landscape/components/NewChannel';
 
 const TruncatedText = styled(RichText)`
   white-space: nowrap;
@@ -37,7 +35,6 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const groups = useGroupState(state => state.groups);
   const group = groups[association.group];
   let workspace = association.group;
-  const history = useHistory();
   const [actionsWidth, setActionsWidth] = useState(0);
 
   if (group?.hidden && app === 'chat') {
@@ -165,7 +162,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
         </Link>
       );
     }
-    return <></>;
+    return null;
   };
 
   const MenuControl = () => (
