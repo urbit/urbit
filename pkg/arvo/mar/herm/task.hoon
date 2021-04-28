@@ -1,7 +1,7 @@
 ::  task: herm task for passthrough to dill
-::TODO  deduplicate with /mar/belt, or remove one or the other
 ::
 /-  herm
+/+  dill
 ::
 |_  =task:herm
 ++  grad  %noun
@@ -26,7 +26,7 @@
     |^  task
     ++  task
       %-  of
-      :~  belt+belt
+      :~  belt+belt:dejs:^dill
           blew+(ot 'w'^ni 'h'^ni ~)
           hail+ul
           open+(ot 'term'^(se %tas) 'apps'^(ar gill) ~)
@@ -35,38 +35,6 @@
     ::
     ++  gill
       (ot 'who'^(se %p) 'app'^(se %tas) ~)
-    ::
-    ++  belt
-      |=  j=json
-      ^-  belt:dill
-      ?:  ?=([%s *] j)
-        (taft p.j)
-      %.  j
-      %-  of
-      :*  mod+(ot 'mod'^mod 'key'^bot ~)
-          txt+(ar (cu taft so))
-          bol
-      ==
-    ::
-    ++  bol
-      :~  aro+(su (perk %d %l %r %u ~))
-          bac+ul
-          del+ul
-          hit+(ot 'r'^ni 'c'^ni ~)
-          ret+ul
-      ==
-    ::
-    ++  bot
-      |=  j=json
-      ^-  bolt:dill
-      ?+  j  !!
-        [%s *]  (taft p.j)
-        [%o *]  ((of bol) j)
-      ==
-    ::
-    ++  mod
-      |=  j=json
-      ((su (perk %ctl %met %hyp ~)) j)
     --
   --
 ::  +grow: convert to
