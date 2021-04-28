@@ -245,7 +245,7 @@ const removePosts = (json, state: GraphState): GraphState => {
     if (index.length === 1) {
         if (child) {
           graph.set(index[0], {
-            post: child.post.hash,
+            post: child.post.hash || '',
             children: child.children 
           });
         }
