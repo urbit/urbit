@@ -1,7 +1,7 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
 import { Patp } from '@urbit/api';
-import { ContactEdit } from '@urbit/api/contacts';
+import { ContactEditField } from '@urbit/api/contacts';
 import _ from 'lodash';
 
 export default class ContactsApi extends BaseApi<StoreState> {
@@ -14,7 +14,7 @@ export default class ContactsApi extends BaseApi<StoreState> {
     return this.storeAction({ remove: { ship } });
   }
 
-  edit(ship: Patp, editField: ContactEdit) {
+  edit(ship: Patp, editField: ContactEditField) {
     /* editField can be...
     {nickname: ''}
     {email: ''}
