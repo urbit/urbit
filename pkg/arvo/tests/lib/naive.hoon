@@ -369,6 +369,19 @@
     =^  f  state  (n state (changed-voting-proxy:l1 ~bud 0x123))
     voting-proxy.own:(~(got by points.state) ~bud)
 ::
+++  test-l1-changed-keys  ^-  tang
+  =/  encrypt       (shax 'Your eyes dont see, you do.')
+  =/  auth          (shax 'We think much less than we think we think.')
+  =/  new-keys      [~bud encrypt auth 1 1]
+  %+  expect-eq
+    !>  (pass-from-eth:naive 32^encrypt 32^auth 1)
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-bud state)
+    =^  f  state  (n state (changed-keys:l1 new-keys))
+    pass.net:(~(got by points.state) ~bud)
+::
 ++  test-l2-set-spawn-proxy  ^-  tang
   %+  expect-eq
     !>  [0x123 0]
@@ -455,6 +468,7 @@
       =^  f  state  (n state %bat q:(configure-keys:l2 new-keys-mgt))
       pass.net:(~(got by points.state) ~marbud)
     ::
+    :: TODO: make sure nobody else can change these keys
   ==
 ::
 ++  test-dopbud-l2-spawn  ^-  tang
