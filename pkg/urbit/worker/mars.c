@@ -521,17 +521,11 @@ u3_mars_play(u3_mars* mar_u)
 /* u3_mars_init(): init mars, replay if necessary.
 */
 u3_mars*
-u3_mars_init(u3_disk* log_u,
+u3_mars_init(c3_c*    dir_c,
              u3_moat* inn_u,
-             u3_mojo* out_u,
-             c3_c*    dir_c,
-             u3_cue_xeno* sil_u)
+             u3_mojo* out_u)
 {
-  c3_assert( log_u->sen_d == log_u->dun_d );
-
   u3_mars* mar_u = c3_malloc(sizeof(*mar_u));
-  mar_u->sil_u = sil_u;
-  mar_u->log_u = log_u;
   mar_u->inn_u = inn_u;
   mar_u->out_u = out_u;
   mar_u->sen_d = mar_u->dun_d = u3A->eve_d;
@@ -542,12 +536,80 @@ u3_mars_init(u3_disk* log_u,
   mar_u->gif_u.ent_u = mar_u->gif_u.ext_u = 0;
   mar_u->xit_f = 0;
 
-  if ( log_u->dun_d > mar_u->dun_d ) {
-    u3_mars_play(mar_u);
-    u3e_save();
+  mar_u->sil_u = u3s_cue_xeno_init();
+
+  //  initialize persistence
+  //
+  //    XX load/set secrets
+  //
+  if ( !(mar_u->log_u = u3_disk_init(dir_c)) ) {
+    fprintf(stderr, "mars: disk init fail\r\n");
+    c3_free(mar_u);
+    return 0;
   }
 
-  u3_disk_async(log_u, mar_u, _mars_save_done);
+  {
+    c3_d who_d[2];
+    c3_o fak_o;
+    c3_w lif_w;
+
+    if ( c3n == u3_disk_read_meta(mar_u->log_u, who_d, &fak_o, &lif_w) ) {
+      fprintf(stderr, "mars: disk meta fail\r\n");
+      u3_disk_exit(mar_u->log_u);
+      c3_free(mar_u);
+      return 0;
+    }
+
+    if ( !mar_u->dun_d ) {
+      u3_weak eve;
+      c3_l  mug_l;
+
+      if ( u3_none == (eve = u3_disk_read_list(mar_u->log_u, 1, lif_w, &mug_l)) ) {
+        fprintf(stderr, "boot: read failed\r\n");
+        u3_disk_exit(mar_u->log_u);
+        c3_free(mar_u);
+        return 0;
+      }
+
+      //  XX printfs
+      //
+      if ( c3n == u3v_boot(eve) ) {
+        fprintf(stderr, "boot: failed\r\n");
+        u3_disk_exit(mar_u->log_u);
+        c3_free(mar_u);
+        return 0;
+      }
+
+      mar_u->sen_d = mar_u->dun_d = lif_w;
+
+      u3e_save();
+    }
+
+    if ( mar_u->log_u->dun_d > mar_u->dun_d ) {
+      u3_mars_play(mar_u);
+      u3e_save();
+    }
+
+    //  send ready status message
+    //
+    //    XX version negotiation
+    //
+    {
+      c3_d  len_d;
+      c3_y* hun_y;
+      u3_noun wyn = u3_nul;
+      u3_noun msg = u3nq(c3__ripe,
+                         u3nc(2, wyn),
+                         u3nc(u3i_chubs(2, who_d), fak_o),
+                         u3nc(u3i_chubs(1, &u3A->eve_d),
+                              u3r_mug(u3A->roc)));
+
+      u3s_jam_xeno(msg, &len_d, &hun_y);
+      u3_newt_send(mar_u->out_u, len_d, hun_y);
+    }
+  }
+
+  u3_disk_async(mar_u->log_u, mar_u, _mars_save_done);
 
   //  XX check return, make interval configurable
   //
@@ -557,4 +619,389 @@ u3_mars_init(u3_disk* log_u,
   mar_u->tim_u.data = mar_u;
 
   return mar_u;
+}
+
+/* _mars_wyrd_card(): construct %wyrd.
+*/
+static u3_noun
+_mars_wyrd_card(c3_m nam_m, c3_w ver_w, c3_l sev_l)
+{
+  u3_noun ver = u3nt(c3__vere, u3i_string("~." URBIT_VERSION), u3_nul);
+  // u3_noun sen = u3dc("scot", c3__uv, sev_l); //  lol no
+  u3_noun sen = u3i_string("0v1s.vu178");
+  u3_noun kel;
+
+  //  special case versions requiring the full stack
+  //
+  if (  ((c3__zuse == nam_m) && (420 == ver_w))
+     || ((c3__lull == nam_m) && (330 == ver_w))
+     || ((c3__arvo == nam_m) && (240 == ver_w)) )
+  {
+    kel = u3nl(u3nc(c3__zuse, 420),
+               u3nc(c3__lull, 330),
+               u3nc(c3__arvo, 240),
+               u3nc(c3__hoon, 140),
+               u3nc(c3__nock, 4),
+               u3_none);
+  }
+  else {
+    kel = u3nc(nam_m, u3i_word(ver_w));
+  }
+
+  return u3nt(c3__wyrd, u3nc(sen, ver), kel);
+}
+
+/* _mars_sift_pill(): extract boot formulas and module/userspace ova from pill
+*/
+static c3_o
+_mars_sift_pill(u3_noun  pil,
+                u3_noun* bot,
+                u3_noun* mod,
+                u3_noun* use)
+{
+  fprintf(stderr, "boot: pill parse\r\n");
+  u3_noun pil_p, pil_q;
+
+  if ( c3n == u3r_cell(pil, &pil_p, &pil_q) ) {
+    return c3n;
+  }
+
+  {
+    //  XX use faster cue
+    //
+    u3_noun pro = u3m_soft(0, u3ke_cue, u3k(pil_p));
+    u3_noun mot, tag, dat;
+
+    if (  (c3n == u3r_trel(pro, &mot, &tag, &dat))
+       || (u3_blip != mot) )
+    {
+      u3m_p("mot", u3h(pro));
+      fprintf(stderr, "boot: failed: unable to parse pill\r\n");
+      return c3n;
+    }
+
+    if ( c3y == u3r_sing_c("ivory", tag) ) {
+      fprintf(stderr, "boot: failed: unable to boot from ivory pill\r\n");
+      return c3n;
+    }
+    else if ( c3__pill != tag ) {
+      if ( c3y == u3a_is_atom(tag) ) {
+        u3m_p("pill", tag);
+      }
+      fprintf(stderr, "boot: failed: unrecognized pill\r\n");
+      return c3n;
+    }
+
+    {
+      u3_noun typ;
+      c3_c* typ_c;
+
+      if ( c3n == u3r_qual(dat, &typ, bot, mod, use) ) {
+        fprintf(stderr, "boot: failed: unable to extract pill\r\n");
+        return c3n;
+      }
+
+      if ( c3y == u3a_is_atom(typ) ) {
+        c3_c* typ_c = u3r_string(typ);
+        fprintf(stderr, "boot: parsing %%%s pill\r\n", typ_c);
+        c3_free(typ_c);
+      }
+    }
+
+    u3k(*bot); u3k(*mod); u3k(*use);
+    u3z(pro);
+  }
+
+  fprintf(stderr, "boot: 'bout to fs\r\n");
+
+  //  optionally replace filesystem in userspace
+  //
+  if ( u3_nul != pil_q ) {
+    c3_w  len_w = 0;
+    u3_noun ova = *use;
+    u3_noun new = u3_nul;
+    u3_noun ovo;
+
+    while ( u3_nul != ova ) {
+      ovo = u3h(ova);
+
+      if ( c3__into == u3h(u3t(ovo)) ) {
+        c3_assert( 0 == len_w );
+        len_w++;
+        ovo = u3t(pil_q);
+      }
+
+      new = u3nc(u3k(ovo), new);
+      ova = u3t(ova);
+    }
+
+    c3_assert( 1 == len_w );
+
+    u3z(*use);
+    *use = u3kb_flop(new);
+  }
+
+  fprintf(stderr, "boot: fs'd\r\n");
+
+  u3z(pil);
+
+  return c3y;
+}
+
+//  XX rename, move
+//
+typedef struct _mars_input {
+  c3_w           eny_w[16];
+  c3_o           veb_o;
+  c3_o           lit_o;
+  c3_o           sev_l;
+  struct timeval tim_u;
+  struct {
+    c3_m         nam_m;
+    c3_w         ver_w;
+  } ver_u;
+} mars_input;
+
+//  XX move
+//
+typedef struct _u3_meta {
+  c3_d who_d[2];
+  c3_o fak_o;
+  c3_w lif_w;
+} u3_meta;
+
+/*
+$:  pill=[p=@ q=(unit ovum)]
+    $=  vent
+    $%  [%fake p=ship]
+        [%dawn p=seed]
+    ==
+    more=(list ovum)
+==
+*/
+
+/* _mars_boot_make(): construct boot sequence
+*/
+static c3_o
+_mars_boot_make(mars_input* inp_u,
+                u3_noun    com,
+                u3_noun*   ova,
+                u3_meta* met_u)
+{
+  u3_noun pil, ven, mor, who;
+
+  //  parse boot command
+  //
+  if ( c3n == u3r_trel(com, &pil, &ven, &mor) ) {
+    fprintf(stderr, "boot: invalid command\r\n");
+    return c3n;
+  }
+
+  //  parse boot event
+  //
+  {
+    u3_noun tag, dat;
+
+    if ( c3n == u3r_cell(ven, &tag, &dat) ) {
+      return c3n;
+    }
+
+    switch ( tag ) {
+      default: {
+        fprintf(stderr, "boot: unknown boot event\r\n");
+        u3m_p("tag", tag);
+        return c3n;
+      }
+
+      case c3__fake: {
+        met_u->fak_o = c3y;
+        who          = dat;
+      } break;
+
+      case c3__dawn: {
+        met_u->fak_o = c3n;
+
+        if ( c3n == u3r_cell(dat, &who, 0) ) {
+          return c3n;
+        }
+      } break;
+    }
+  }
+
+  //  validate and extract identity
+  //
+  if (  (c3n == u3a_is_atom(who))
+     || (1 < u3r_met(7, who)) )
+  {
+    fprintf(stderr, "boot: invalid identity\r\n");
+    u3m_p("who", who);
+    return c3n;
+  }
+
+  u3r_chubs(0, 2, met_u->who_d, who);
+
+  {
+    u3_noun bot, mod, use;
+
+    //  parse pill
+    //
+    if ( c3n == _mars_sift_pill(pil, &bot, &mod, &use) ) { // transfer [pil]
+      return c3n;
+    }
+
+    met_u->lif_w = u3qb_lent(bot);
+
+
+    fprintf(stderr, "boot: mod\r\n");
+
+    //  break symmetry in the module sequence
+    //
+    //    version negotation, verbose, identity, entropy
+    //
+    {
+      u3_noun cad, wir = u3nt(u3_blip, c3__arvo, u3_nul);
+
+      fprintf(stderr, "boot: mod eny\r\n");
+
+      cad = u3nc(c3__wack, u3i_words(16, inp_u->eny_w));
+      mod = u3nc(u3nc(u3k(wir), cad), mod);
+
+      fprintf(stderr, "boot: mod who\r\n");
+
+      cad = u3nc(c3__whom, u3k(who));
+      mod = u3nc(u3nc(u3k(wir), cad), mod);
+
+      fprintf(stderr, "boot: mod veb\r\n");
+
+      cad = u3nt(c3__verb, u3_nul, inp_u->veb_o);
+      mod = u3nc(u3nc(u3k(wir), cad), mod);
+
+      fprintf(stderr, "boot: mod kel\r\n");
+
+      cad = _mars_wyrd_card(inp_u->ver_u.nam_m,
+                            inp_u->ver_u.ver_w,
+                            inp_u->sev_l);
+      mod = u3nc(u3nc(wir, cad), mod);              // transfer [wir]
+
+
+      fprintf(stderr, "boot: mod done\r\n");
+    }
+
+    fprintf(stderr, "boot: use\r\n");
+
+    //  prepend legacy boot event to the userpace sequence
+    //
+    //    XX do something about this wire
+    //
+    {
+      u3_noun wir = u3nq(c3__d, c3__term, '1', u3_nul);
+      u3_noun cad = u3nt(c3__boot, inp_u->lit_o, ven); // transfer
+      use = u3nc(u3nc(wir, cad), use);
+    }
+
+    fprintf(stderr, "boot: stamp\r\n");
+
+    //  timestamp events, cons list
+    //
+    {
+      u3_noun now = u3_time_in_tv(&inp_u->tim_u);
+      u3_noun bit = u3qc_bex(48);   //  1/2^16 seconds
+      u3_noun eve = u3kb_flop(bot);
+
+      {
+        u3_noun  lit = u3kb_weld(mod, u3kb_weld(use, mor));
+        u3_noun i, t = lit;
+
+        while ( u3_nul != t ) {
+          u3x_cell(t, &i, &t);
+          now = u3ka_add(now, u3k(bit));
+          eve = u3nc(u3nc(u3k(now), u3k(i)), eve);
+        }
+
+        u3z(lit);
+      }
+
+      *ova = u3kb_flop(eve);
+      u3z(now); u3z(bit);
+    }
+  }
+
+  fprintf(stderr, "boot: pro\r\n");
+
+  return c3y;
+}
+
+c3_o
+u3_mars_boot(c3_c* dir_c, u3_noun com)
+{
+  u3_noun   ova;
+  u3_meta met_u;
+  mars_input inp_u;
+
+  //  XX source properly
+  //
+  inp_u.veb_o = c3n;
+  inp_u.lit_o = c3y;
+  inp_u.ver_u.nam_m = c3__zuse;
+  inp_u.ver_u.ver_w = 420;
+
+  gettimeofday(&inp_u.tim_u, 0);
+  c3_rand(inp_u.eny_w);
+
+  {
+    u3_noun now = u3_time_in_tv(&inp_u.tim_u);
+    inp_u.sev_l = u3r_mug(now);
+    u3z(now);
+  }
+
+  if ( c3n == _mars_boot_make(&inp_u, com, &ova, &met_u) ) {
+    fprintf(stderr, "boot: preparation failed\r\n");
+    return c3n;
+  }
+
+  u3_disk* log_u;
+
+  if ( !(log_u = u3_disk_init(dir_c)) ) {
+    fprintf(stderr, "boot: dist init fail\n");
+    return c3n;
+  }
+
+  //  XX refactor
+  //
+  if ( c3n == u3_disk_save_meta(log_u, met_u.who_d, met_u.fak_o, met_u.lif_w) ) {
+    return c3n;
+  }
+
+  u3_disk_plan_list(log_u, ova);
+
+  if ( c3n == u3_disk_sync(log_u) ) {
+    return c3n;
+  }
+
+  fprintf(stderr, "boot: finished commit\r\n");
+
+  //  XX just re-use ova instead of read to confirm write?
+  //  XX don't bootstrap here, defer to mars_init?s
+  //
+  {
+    u3_weak eve;
+    c3_l  mug_l;
+
+    if ( u3_none == (eve = u3_disk_read_list(log_u, 1, log_u->dun_d, &mug_l)) ) {
+      fprintf(stderr, "boot: read failed\r\n");
+      return c3n;
+    }
+
+    //  XX printfs
+    //
+    if ( c3n == u3v_boot(eve) ) {
+      return c3n;
+    }
+
+    u3e_save();
+  }
+
+  u3_disk_exit(log_u);
+
+  return c3y;
 }

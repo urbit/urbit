@@ -153,15 +153,35 @@ _king_boot(u3_noun bul)
 
 /* _king_fake(): boot with fake keys
 */
+static void
+_king_boot_done(void* ptr_v, c3_o ret_o)
+{
+  //  XX review requirements
+  //  XX exit code
+  //
+  if ( c3n == ret_o ) {
+    u3l_log("king: boot failed\r\n");
+    u3_king_bail();
+    return;
+  }
+
+  u3K.pir_u = u3_pier_stay(sag_w, u3i_string(u3_Host.dir_c));
+}
+
+/* _king_fake(): boot with fake keys
+*/
 void
 _king_fake(u3_noun ship, u3_noun pill, u3_noun path)
 {
   u3_noun vent = u3nc(c3__fake, u3k(ship));
 
+  //  XX pass kelvin
+  //
   c3_d  key_d[4] = {0};
-  u3_noun msg    = u3nq(c3__boot, pill, vent, u3nc(330, c3y));
+  u3_noun msg    = u3nq(c3__boot, pill, vent, u3_nul);
 
-  u3_lord_boot(u3_Host.dir_c, sag_w, key_d, msg);
+  u3_lord_boot(u3_Host.dir_c, sag_w, key_d, msg,
+               (void*)0, _king_boot_done);
   u3z(path);
 }
 
@@ -191,21 +211,19 @@ _king_dawn(u3_noun seed, u3_noun pill, u3_noun path)
   //
   u3C.slog_f = _king_slog;
 
+  //  XX pass kelvin
   //  XX link properly
   //
   u3_noun vent = u3_dawn_vent(seed);
   c3_d  key_d[4] = {0};
-  u3_noun msg    = u3nq(c3__boot, pill, vent, u3nc(330, c3y));
+  u3_noun msg    = u3nq(c3__boot, pill, vent, u3_nul);
 
   // disable ivory slog printfs
   //
   u3C.slog_f = 0;
 
-  u3_lord_boot(u3_Host.dir_c, sag_w, key_d, msg);
-
-  //  XX auto resume after boot?
-  //
-  // u3K.pir_u = u3_pier_stay(sag_w, path);
+  u3_lord_boot(u3_Host.dir_c, sag_w, key_d, msg,
+               (void*)0, _king_boot_done);
   u3z(path);
 }
 

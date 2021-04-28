@@ -644,17 +644,16 @@ typedef struct _u3_mars {
   void  (*xit_f)(void);      //  exit callback
 } u3_mars;
 
-
+c3_o
+u3_mars_boot(c3_c* dir_c, u3_noun com);
 
 c3_o
 u3_mars_kick(u3_mars* mar_u, c3_d len_d, c3_y* hun_y);
 
 u3_mars*
-u3_mars_init(u3_disk* log_u,
+u3_mars_init(c3_c*    dir_c,
              u3_moat* inn_u,
-             u3_mojo* out_u,
-             c3_c*    dir_c,
-             u3_cue_xeno* sil_u);
+             u3_mojo* out_u);
 
       /* u3_pier_spin(): (re-)activate idle handler
       */
@@ -961,20 +960,15 @@ u3_mars_init(u3_disk* log_u,
         u3_weak
         u3_disk_read_list(u3_disk* log_u, c3_d eve_d, c3_d len_d, c3_l* mug_l);
 
-      /* u3_disk_boot_plan(): enqueue boot sequence, without autocommit.
+      /* u3_disk_plan_list(): enqueue completed event list, without autocommit.
       */
         void
-        u3_disk_boot_plan(u3_disk* log_u, u3_noun job);
+        u3_disk_plan_list(u3_disk* log_u, u3_noun lit);
 
-      /* u3_disk_boot_save(): commit boot sequence.
-      */
-        void
-        u3_disk_boot_save(u3_disk* log_u);
-
-      /* u3_disk_boot_save_sync(): commit boot sequence.
+      /* u3_disk_sync(): commit planned events.
       */
         c3_o
-        u3_disk_boot_save_sync(u3_disk* log_u);
+        u3_disk_sync(u3_disk* log_u);
 
       /* u3_disk_async(): active autosync with callbacks.
       */
@@ -1009,6 +1003,16 @@ u3_mars_init(u3_disk* log_u,
       */
         void
         u3_disk_walk_done(u3_disk_walk* wok_u);
+
+      /* u3_lord_boot(): instantiate child process.
+      */
+        void
+        u3_lord_boot(c3_c* pax_c,
+                     c3_w  wag_w,
+                     c3_d  key_d[4],
+                     u3_noun msg,
+                     void* ptr_v,
+                     void (*done_f)(void*, c3_o));
 
       /* u3_lord_init(): start serf.
       */

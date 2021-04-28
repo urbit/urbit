@@ -223,95 +223,79 @@ _disk_commit(u3_disk* log_u)
   }
 }
 
+static void
+_disk_plan(u3_disk* log_u,
+           c3_l     mug_l,
+           u3_noun    job)
+{
+  u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
+  fet_u->eve_d = ++log_u->sen_d;
+  fet_u->len_i = (size_t)u3_disk_etch(log_u, job, mug_l, &fet_u->hun_y);
+  fet_u->nex_u = 0;
+
+  if ( !log_u->put_u.ent_u ) {
+    c3_assert( !log_u->put_u.ext_u );
+    log_u->put_u.ent_u = log_u->put_u.ext_u = fet_u;
+  }
+  else {
+    log_u->put_u.ent_u->nex_u = fet_u;
+    log_u->put_u.ent_u = fet_u;
+  }
+}
+
 /* u3_disk_plan(): enqueue completed event for persistence.
 */
 void
 u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 {
   c3_assert( (1ULL + log_u->sen_d) == tac_u->eve_d );
-  log_u->sen_d++;
 
-  u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
-  fet_u->eve_d = tac_u->eve_d;
-  fet_u->len_i = (size_t)u3_disk_etch(log_u, tac_u->job, tac_u->mug_l, &fet_u->hun_y);
-  fet_u->nex_u = 0;
-
-  if ( !log_u->put_u.ent_u ) {
-    c3_assert( !log_u->put_u.ext_u );
-    log_u->put_u.ent_u = log_u->put_u.ext_u = fet_u;
-  }
-  else {
-    log_u->put_u.ent_u->nex_u = fet_u;
-    log_u->put_u.ent_u = fet_u;
-  }
+  _disk_plan(log_u, tac_u->mug_l, tac_u->job);
 
   _disk_commit(log_u);
 }
 
-/* u3_disk_boot_plan(): enqueue boot sequence, without autocommit.
+/* u3_disk_plan_list(): enqueue completed event list, without autocommit.
 */
 void
-u3_disk_boot_plan(u3_disk* log_u, u3_noun job)
+u3_disk_plan_list(u3_disk* log_u, u3_noun lit)
 {
-  u3_feat* fet_u = c3_malloc(sizeof(*fet_u));
-  fet_u->eve_d = ++log_u->sen_d;
-  //  NB, boot mugs are 0
-  //
-  fet_u->len_i = (size_t)u3_disk_etch(log_u, job, 0, &fet_u->hun_y);
-  fet_u->nex_u = 0;
+  u3_noun i, t = lit;
 
-  if ( !log_u->put_u.ent_u ) {
-    c3_assert( !log_u->put_u.ext_u );
-    log_u->put_u.ent_u = log_u->put_u.ext_u = fet_u;
-  }
-  else {
-    log_u->put_u.ent_u->nex_u = fet_u;
-    log_u->put_u.ent_u = fet_u;
+  while ( u3_nul != t ) {
+    u3x_cell(t, &i, &t);
+    //  NB, boot mugs are 0
+    //
+    _disk_plan(log_u, 0, i);
   }
 
-#ifdef VERBOSE_DISK
-  fprintf(stderr, "disk: (%" PRIu64 "): db boot plan\r\n", tac_u->eve_d);
-#endif
-
-  u3z(job);
+  u3z(lit);
 }
 
-/* u3_disk_boot_save(): commit boot sequence.
-*/
-void
-u3_disk_boot_save(u3_disk* log_u)
-{
-  c3_assert( !log_u->dun_d );
-  _disk_commit(log_u);
-}
-
-/* u3_disk_boot_save_sync(): commit boot sequence.
+/* u3_disk_sync(): commit planned events.
 */
 c3_o
-u3_disk_boot_save_sync(u3_disk* log_u)
+u3_disk_sync(u3_disk* log_u)
 {
+  c3_o ret_o = c3n;
+
   //  XX max 100
   //
-  if (  log_u->dun_d
-     || (c3n == _disk_batch(log_u)) )
-  {
-    return c3n;
-  }
-  else {
-    c3_o ret_o = u3_lmdb_save(log_u->mdb_u,
-                              log_u->sav_u.eve_d,
-                              log_u->sav_u.len_w,
-                      (void**)log_u->sav_u.byt_y,
-                              log_u->sav_u.siz_i);
+  if ( c3y == _disk_batch(log_u) ) {
+    ret_o = u3_lmdb_save(log_u->mdb_u,
+                         log_u->sav_u.eve_d,
+                         log_u->sav_u.len_w,
+                 (void**)log_u->sav_u.byt_y,
+                         log_u->sav_u.siz_i);
 
     log_u->sav_u.ret_o = ret_o;
 
     //  XX don't want callbacks
     //
     _disk_commit_done(log_u);
-
-    return ret_o;
   }
+
+  return ret_o;
 }
 
 /* u3_disk_async(): active autosync with callbacks.

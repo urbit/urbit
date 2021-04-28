@@ -1211,6 +1211,7 @@
 #   define c3__velt   c3_s4('v','e','l','t')
 #   define c3__vent   c3_s4('v','e','n','t')
 #   define c3__verb   c3_s4('v','e','r','b')
+#   define c3__vere   c3_s4('v','e','r','e')
 #   define c3__vern   c3_s4('v','e','r','n')
 #   define c3__very   c3_s4('v','e','r','y')
 #   define c3__view   c3_s4('v','i','e','w')
