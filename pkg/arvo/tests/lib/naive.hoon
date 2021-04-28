@@ -19,7 +19,7 @@
     %&  `p.result
   ==
 ::
-++  addr  address-from-pk:key:ethereum
+++  addr  address-from-prv:key:ethereum
 ::
 ++  log
   |=  [log-name=@ux data=@ux topics=(lest @)]
@@ -497,10 +497,8 @@
   =/  tx  0x123.0000.0102.0a00.0001.0200
   =/  sig
     %-  hex-to-num:ethereum
-    :: %^  cat  3  '0xbcee11aad81466d8693571bdd020a2cc8ca7cd4a717bbfdedbe5d5296b596005'
-    :: '211e6c1a804ea0489ac15ff1dca7a0803f61c2fb473701d100dc9c07bbe6ba6f1c'
-    ::  '0xdede6cb45463d5822e2558cd0aec6835c6500acf928754f7147bc066eaa1f5bb5913d66292e0f5c368611dc8fe2a9635b4d692ee64684a73bb581f31ec6bbefa1c'
     ::  Must reverse endianness of tx to sign in metamask
+    ::
     %^  cat  3
       '0x5b85936ab7b9db8d72416648e6eb1b844a4545ddb7c7c646a74bc3a4fb001a2'
     '8583bf12ca837b289036a6cc9e6359ed07dda2b87929b5dd7189a3057a395341f1c'
@@ -513,7 +511,9 @@
     =^  f  state  (init-marbud state)
     ::  =^  f  state  (n state %bat (transfer-point:l2 0 ~marbud (key ~marbud) %own &))
     ::  =^  f  state  (n state %bat (set-transfer-proxy:l2 1 ~marbud %own 0x123))
-    =^  f  state  (n state %bat (transfer-point:l2 0 ~marbud meta-owner %own &))
+    =^  f  state
+      %^  n  state  %bat
+      (transfer-point:l2 0 ~marbud %marbud-key-0 meta-owner %own &)
     =^  f  state  (n state %bat (cat 3 sig tx))
     transfer-proxy.own:(~(got by points.state) ~marbud)
 --
