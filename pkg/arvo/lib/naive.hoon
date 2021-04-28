@@ -63,6 +63,8 @@
 |%
 ::  Transfers on L1 to this address count as depositing to L2
 ::
+::    0x1234567890123456789012345678901234567890
+::
 ++  deposit-address  0x1234.5678.9012.3456.7890.1234.5678.9012.3456.7890
 ++  log-names
   |%
@@ -209,7 +211,7 @@
 +$  effects    (list diff)
 +$  proxy      ?(%own %spawn %manage %vote %transfer)
 +$  roll       (list raw-tx)
-+$  raw-tx     [sig=@ raw=@ =tx]
++$  raw-tx     [sig=@ raw=octs =tx]
 +$  tx         [from=[=ship =proxy] skim-tx]
 +$  skim-tx
   $%  [%transfer-point =ship =address reset=?]
@@ -275,7 +277,10 @@
   ?~  res
     ~
   :-  ~  :_  rest.batch.u.res
-  [sig (end [0 len.batch.u.res] orig-batch) tx.u.res]
+  =/  len-bytes
+    ?>  =(0 (mod len.batch.u.res 8))
+    (div len.batch.u.res 8)
+  [sig [len-bytes (end [0 len.batch.u.res] orig-batch)] tx.u.res]
   ::
   ++  parse-tx
     ^-  (unit [tx _batch])
@@ -366,15 +371,20 @@
       %vote      voting-proxy.own.u.point
       %transfer  transfer-proxy.own.u.point
     ==
-  ::  TODO: do we need to preserve the length of the raw tx?
   ::
-  =/  prepared-data  (dad [5 1] nonce.need raw.raw-tx)
+  =/  prepared-data=octs
+    :-  (add 4 p.raw.raw-tx)
+    (can 3 4^nonce.need raw.raw-tx ~)
   =/  signed-data
+    =/  len  (ud-to-len p.prepared-data)
     %-  keccak-256:keccak:crypto
-    %-  as-octs:mimes:html
-    %^  cat  3  '\19Ethereum Signed Message:\0a'
-    %^  cat  3  (ud-to-len (met 3 prepared-data))
-    prepared-data
+    :-  :(add 26 (met 3 len) p.prepared-data)
+    %:  can  3
+      26^'\19Ethereum Signed Message:\0a'
+      (met 3 len)^len
+      prepared-data
+      ~
+    ==
   =/  dress  (verify-sig sig.raw-tx signed-data)
   ?~  dress
     |
@@ -911,4 +921,5 @@
   (receive-log state event-log.input)
 ::  Received L2 batch
 ::
+%+  debug  %batch
 (receive-batch verifier state batch.input)

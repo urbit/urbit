@@ -207,7 +207,7 @@
         [our our]
         app
         %poke
-        %azimuth-tracker-poke
+        %azimuth-poke
         !>([%watch (crip (en-purl:html purl))])
     ==
   ::
@@ -312,26 +312,26 @@
       ::
       ::  start subscriptions
       ::
-      =.  +>.$  (poke-watch hen %azimuth-tracker nod.own.pki)
+      =.  +>.$  (poke-watch hen %azimuth nod.own.pki)
       =.  +>.$
         ::  get everything from azimuth-tracker because jael subscriptions
         ::  seem to be flaky for now
         ::
         ?:  &
           %-  curd  =<  abet
-          (sources:~(feel su hen now pki etn) ~ [%| %azimuth-tracker])
+          (sources:~(feel su hen now pki etn) ~ [%| %azimuth])
         ::
         ?-    (clan:title our)
             %czar
           %-  curd  =<  abet
-          (sources:~(feel su hen now pki etn) ~ [%| %azimuth-tracker])
+          (sources:~(feel su hen now pki etn) ~ [%| %azimuth])
         ::
             *
           =.  +>.$
             %-  curd  =<  abet
             %+  sources:~(feel su hen now pki etn)
               (silt (turn spon-points head))
-            [%| %azimuth-tracker]
+            [%| %azimuth]
           %-  curd  =<  abet
           (sources:~(feel su hen now pki etn) ~ [%& (need spon-ship)])
         ==

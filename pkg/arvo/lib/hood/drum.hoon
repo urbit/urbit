@@ -66,7 +66,7 @@
     :~  %dojo
         %spider
         %eth-watcher
-        %azimuth-tracker
+        %azimuth
         %ping
         %goad
         %lens
