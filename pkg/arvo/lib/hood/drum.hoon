@@ -676,9 +676,9 @@
   |=  lin=(pair @ud stub)
   ^+  +>
   ?:  =(mir lin)  +>
-  %+  se-blit(mir lin)  %mor
-  ?:  =(q.mir q.lin)  [%hop p.lin]~
-  [[%hop 0] [%wyp ~] [%klr q.lin] [%hop p.lin] ~]
+  %-  se-blit(mir lin)
+  ?:  =(q.mir q.lin)  [%hop p.lin]
+  mor+[[%hop 0] [%wyp ~] [%klr q.lin] [%hop p.lin] ~]
 ::
 ++  se-just                                           ::  adjusted buffer
   |=  [pom=stub lin=(pair @ud (list @c))]

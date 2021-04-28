@@ -161,6 +161,9 @@ u3_term_log_init(void)
 
     //  Construct raw termios configuration.
     //
+    //    makes input available per-character, does not echo input,
+    //    disables special input pre-processing, output post-processing.
+    //
     {
       uty_u->raw_u = uty_u->bak_u;
 
@@ -680,7 +683,6 @@ _term_io_belt(u3_utty* uty_u, u3_noun blb)
   {
     u3_ovum* egg_u = _term_ovum_plan(uty_u->car_u, wir, cad);
 
-    //REVIEW  do we not want even a small delay here?
     //  no spinner delay on %ret
     //
     if ( c3__ret == u3h(blb) ) {
@@ -772,23 +774,18 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
   //  individual characters
   //
   else {
-    if ( (cay_y >= 32) && (cay_y < 127) ) {
+    if ( (cay_y >= 32) && (cay_y < 127) ) {  //  visual ascii
       _term_io_belt(uty_u, u3nt(c3__txt, cay_y, u3_nul));
     }
-    else if ( 0 == cay_y ) {
+    else if ( 0 == cay_y ) {  //  null
       _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
     }
-    else if ( 8 == cay_y || 127 == cay_y ) {
+    else if ( 8 == cay_y || 127 == cay_y ) {  //  backspace & delete
       _term_io_belt(uty_u, u3nc(c3__bac, u3_nul));
     }
-    else if ( 13 == cay_y ) {
+    else if ( 10 == cay_y || 13 == cay_y ) {  //  newline & carriage return
       _term_io_belt(uty_u, u3nc(c3__ret, u3_nul));
     }
-#if 0
-    else if ( 6 == cay_y ) {
-      _term_io_flow(uty_u);   // XX hack
-    }
-#endif
     else if ( cay_y <= 26 ) {
       _term_io_belt(uty_u, u3nt(c3__mod, c3__ctl, ('a' + (cay_y - 1))));
     }
@@ -1655,7 +1652,7 @@ _term_io_talk(u3_auto* car_u)
                   _term_read_cb);
   }
 
-  //  XX groace hardcoded terminal number
+  //TODO  reevaluate wrt dill sessions
   //
   u3_noun wir = u3nt(c3__term, '1', u3_nul);
   u3_noun cad;
@@ -1666,10 +1663,6 @@ _term_io_talk(u3_auto* car_u)
     cad = u3nc(c3__blew, u3_term_get_blew(1));
     _term_ovum_plan(car_u, u3k(wir), cad);
   }
-
-  //  NB, term.c used to also start :dojo
-  //
-  // u3nq(c3__flow, c3__seat, c3__dojo, u3_nul)
 
   //  refresh terminal state
   //

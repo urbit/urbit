@@ -49,11 +49,9 @@ hijack :: MonadIO m => Int -> m ()
 hijack h = liftIO do
     putCSI 'r' [1, h-1]  --  set scroll region to exclude bottom line
     putCSI 'S' [1]       --  scroll up one line
-    cursorMove (h-2) 0   --  move cursor to empty space --TODO  off-by-one?
+    cursorMove (h-2) 0   --  move cursor to empty space
 
 lojack :: MonadIO m => m ()
 lojack = liftIO do
     putCSI 'r' []  --  reset scroll region
     cursorRestore  --  restory cursor position
-
---TODO  consider ANSI.setSGR

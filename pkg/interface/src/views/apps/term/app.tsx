@@ -160,7 +160,6 @@ export default function TermApp(props: TermAppProps) {
 
   //TODO  could be static function if we pass in Terminal explicitly?
   const onBlit = useCallback((ses: string, blit: Blit) => {
-    //TODO
     if (!sessions[ses]) {
       console.log('on blit: no such session', ses);
       return;
