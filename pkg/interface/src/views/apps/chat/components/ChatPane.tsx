@@ -156,7 +156,7 @@ export function ChatPane(props: ChatPaneProps) {
         graph={graph}
         graphSize={graph.size}
         unreadCount={unreadCount}
-        showOurContact={promptShare.length === 0 && showBanner}
+        showOurContact={promptShare.length === 0 && !showBanner}
         pendingSize={Object.keys(graphTimesentMap[id] || {}).length}
         onReply={onReply}
         dismissUnread={dismissUnread}
