@@ -70,43 +70,15 @@
         ::  TODO: method not supported
         ::
         not-found:gen
-      ?~  json-rpc=(validate-json-rpc body.req)
+      ?~  rpc-request=(validate-request:json-rpc body.req parse-method)
         ::  TODO: malformed request
         ::
         not-found:gen
-      (process-rpc-request:do u.json-rpc)
-      ::  TODO: validate that format is e.g. 'get-point'
-      ::  TODO: maybe replace with getPoint and translate to %term
+      (process-rpc-request:do u.rpc-request)
+      ::  TODO: validate that format is e.g. 'getPoint'
+      ::  TODO: maybe use getPoint and translate to %get-point
       ::
       ++  parse-method  |=(t=@t t)
-      ::  TODO: move to library
-      ::
-      ++  validate-json-rpc
-        |=  body=(unit octs)
-        ^-  (unit request:rpc)
-        ?~  body  ~
-        ?~  jon=(de-json:html q.u.body)  ~
-        ::  ignores non-object responses
-        ::
-        :: ?.  ?=([%o *] json)  ~|([%format-not-valid json] !!)
-        ?.  ?=([%o *] u.jon)  ~
-        %-  some
-        %.  u.jon
-        =,  dejs:format
-        %-  ot
-        :~  ['id' no]
-            ['jsonrpc' so]
-            ['method' (cu parse-method so)]
-          ::
-            :-  'params'
-            |=  =json
-            ^-  request-params:rpc
-            ?:  =(%a -.json)
-              [%list ((ar same) json)]
-            ?.  =(%o -.json)
-              !!
-            [%object ~(tap by ((om same) json))]
-        ==
       --
     --
   ::
