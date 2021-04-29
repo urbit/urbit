@@ -24,7 +24,7 @@ function canWrite(props) {
   if(vip === 'host-feed') {
     return isHost(association.group);
   }
-  
+
   return isWriter(group, association.resource);
 }
 
@@ -147,7 +147,7 @@ export function PostInput(props) {
                 <LoadingSpinner />
               ) : (
                 <Icon
-                  icon='Links'
+                  icon='Attachment'
                   width='16'
                   height='16'
                   onClick={uploadImage}

@@ -18,7 +18,7 @@ import { GroupLink } from "~/views/components/GroupLink";
 import GlobalApi from "~/logic/api/global";
 import { getModuleIcon } from "~/logic/lib/util";
 import useMetadataState from "~/logic/state/metadata";
-import { Association, resourceFromPath } from "@urbit/api";
+import { Association, resourceFromPath, GraphNode } from "@urbit/api";
 import { Link } from "react-router-dom";
 import useGraphState from "~/logic/state/graph";
 import { GraphNodeContent } from "../notifications/graph";
@@ -51,7 +51,7 @@ function GraphPermalink(
   const { full = false, showOurContact, pending, link, graph, group, index, api, transcluded } = props;
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
-    useCallback((s) => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index], [
+    useCallback((s) => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index] as GraphNode, [
       graph,
       index,
     ])
@@ -63,7 +63,7 @@ function GraphPermalink(
     ])
   );
 
-  useVirtualResizeProp(node)
+  useVirtualResizeProp(!!node)
   useEffect(() => {
     (async () => {
       if (pending || !index) {

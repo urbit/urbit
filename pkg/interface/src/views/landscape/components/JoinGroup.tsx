@@ -177,7 +177,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
                 <Text gray fontSize="1">
                   Channels
                 </Text>
-                <Box width="100%" flexShrink="0">
+                <Box width="100%" flexShrink={0}>
                   {Object.values(preview.channels).map(({ metadata }: any) => (
                     <Row width="100%">
                       <Icon

@@ -1,13 +1,13 @@
-import { Post, GraphNode, TextContent, Graph, NodeMap } from '@urbit/api';
+import { Post, GraphNode, TextContent } from '@urbit/api';
 import { buntPost } from '~/logic/lib/post';
 import { unixToDa } from '~/logic/lib/util';
-import { BigIntOrderedMap } from './BigIntOrderedMap';
+import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
 import bigInt, { BigInteger } from 'big-integer';
 
 export function newPost(
   title: string,
   body: string
-): [BigInteger, NodeMap] {
+): [BigInteger, any] {
   const now = Date.now();
   const nowDa = unixToDa(now);
   const root: Post = {
@@ -73,13 +73,16 @@ export function editPost(rev: number, noteId: BigInteger, title: string, body: s
 }
 
 export function getLatestRevision(node: GraphNode): [number, string, string, Post] {
-  const revs = node.children.get(bigInt(1));
+  const revs = node.children?.get(bigInt(1));
   const empty = [1, '', '', buntPost()] as [number, string, string, Post];
   if(!revs) {
     return empty;
   }
-  const [revNum, rev] = [...revs.children][0];
-  if(!rev) {
+  let revNum, rev;
+  if (revs?.children !== null) {
+    [revNum, rev] = [...revs.children][0];
+  }
+  if (!rev) {
     return empty;
   }
   const [title, body] = rev.post.contents as TextContent[];
@@ -88,18 +91,22 @@ export function getLatestRevision(node: GraphNode): [number, string, string, Pos
 
 export function getLatestCommentRevision(node: GraphNode): [number, Post] {
   const empty = [1, buntPost()] as [number, Post];
-  if (node.children.size <= 0) {
+  const childSize = node?.children?.size ?? 0;
+  if (childSize <= 0) {
     return empty;
   }
-  const [revNum, rev] = [...node.children][0];
-  if(!rev) {
+  let revNum, rev;
+  if (node?.children !== null) {
+    [revNum, rev] = [...node.children][0];
+  }
+  if (!rev) {
     return empty;
   }
   return [revNum.toJSNumber(), rev.post];
 }
 
 export function getComments(node: GraphNode): GraphNode {
-  const comments = node.children.get(bigInt(2));
+  const comments = node.children?.get(bigInt(2));
   if(!comments) {
     return { post: buntPost(), children: new BigIntOrderedMap() };
   }
