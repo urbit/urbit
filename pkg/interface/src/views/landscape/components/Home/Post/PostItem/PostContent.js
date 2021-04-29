@@ -1,6 +1,6 @@
 import React from 'react';
 import { Col, Box } from '@tlon/indigo-react';
-import { GraphContentWide } from "~/views/landscape/components/Graph/GraphContentWide";
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import styled from 'styled-components';
 
 const TruncatedBox = styled(Col)`
@@ -23,9 +23,9 @@ export function PostContent(props) {
       textOverflow="ellipsis"
       overflow="hidden"
      >
-      <GraphContentWide
+      <GraphContent
         transcluded={0}
-        post={post}
+        contents={post.contents}
         api={api}
         showOurContact
       />

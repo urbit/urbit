@@ -42,7 +42,7 @@ import useContactState from '~/logic/state/contact';
 import { useIdlingState } from '~/logic/lib/idling';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
 import {useCopy} from '~/logic/lib/useCopy';
-import {GraphContentWide} from '~/views/landscape/components/Graph/GraphContentWide';
+import { GraphContent} from  '~/views/landscape/components/Graph/GraphContent';
 
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
@@ -530,10 +530,10 @@ export const Message = ({
       ) : (
         <></>
       )}
-      <GraphContentWide
+      <GraphContent
         {...bind}
         width="100%"
-        post={msg}
+        contents={msg.contents}
         transcluded={transcluded}
         api={api}
         showOurContact={showOurContact}

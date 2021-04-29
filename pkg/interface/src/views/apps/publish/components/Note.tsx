@@ -15,7 +15,7 @@ import { Contacts, GraphNode, Graph, Association, Unreads, Group, Post } from '@
 import {useCopy} from '~/logic/lib/useCopy';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import {useQuery} from '~/logic/lib/useQuery';
-import {GraphContentTall} from '~/views/landscape/components/Graph/GraphContentTall';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 
 interface NoteProps {
   ship: string;
@@ -40,7 +40,7 @@ const renderers = {
 export function NoteContent({ post, api }) {
   return (
       <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <GraphContentTall post={post} showOurContact api={api} />
+        <GraphContent tall contents={post.contents.slice(1)} showOurContact api={api} />
       </Box>
   );
 }
