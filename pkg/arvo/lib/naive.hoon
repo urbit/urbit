@@ -219,17 +219,17 @@
 +$  raw-tx     [sig=@ raw=octs =tx]
 +$  tx         [from=[=ship =proxy] skim-tx]
 +$  skim-tx
-  $%  [%transfer-point =ship =address reset=?]
+  $%  [%transfer-point =address reset=?]
       [%spawn =ship =address]
-      [%configure-keys =ship encrypt=@ auth=@ crypto-suite=@ breach=?]
-      [%escape =ship parent=ship]
-      [%cancel-escape =ship parent=ship]
-      [%adopt =ship parent=ship]
-      [%reject =ship parent=ship]
-      [%detach =ship parent=ship]
-      [%set-management-proxy =ship =address]
-      [%set-spawn-proxy =ship =address]
-      [%set-transfer-proxy =ship =address]
+      [%configure-keys encrypt=@ auth=@ crypto-suite=@ breach=?]
+      [%escape parent=ship]
+      [%cancel-escape parent=ship]
+      [%adopt =ship]
+      [%reject =ship]
+      [%detach =ship]
+      [%set-management-proxy =address]
+      [%set-spawn-proxy =address]
+      [%set-transfer-proxy =address]
   ==
 ::
 +$  event-log
@@ -309,18 +309,21 @@
     ?+    op  ~>(%slog.[0 %strange-opcode] ~)
         %0
       =^  reset=@         batch  (take 0)
-      =^  =ship           batch  (take 3 4)
       =^  =address        batch  (take 3 20)
-      `[[%transfer-point ship address =(0 reset)] batch]
+      `[[%transfer-point address =(0 reset)] batch]
     ::
-        %1   =^(res batch take-ship-address `[[%spawn res] batch])
+        %1
+      =^  pad=@     batch  (take 0)
+      =^  =ship     batch  (take 3 4)
+      =^  =address  batch  (take 3 20)
+      `[[%spawn ship address] batch]
+    ::
         %2
       =^  breach=@        batch  (take 0)
-      =^  =ship           batch  (take 3 4)
       =^  encrypt=@       batch  (take 3 32)
       =^  auth=@          batch  (take 3 32)
       =^  crypto-suite=@  batch  (take 3 4)
-      `[[%configure-keys ship encrypt auth crypto-suite =(0 breach)] batch]
+      `[[%configure-keys encrypt auth crypto-suite =(0 breach)] batch]
     ::
         %3   =^(res batch take-escape `[[%escape res] batch])
         %4   =^(res batch take-escape `[[%cancel-escape res] batch])
@@ -347,19 +350,17 @@
   ::  Encode ship and address
   ::
   ++  take-ship-address
-    ^-  [[ship address] _batch]
+    ^-  [address _batch]
     =^  pad=@     batch  (take 0)
-    =^  =ship     batch  (take 3 4)
     =^  =address  batch  (take 3 20)
-    [[ship address] batch]
+    [address batch]
   ::  Encode escape-related txs
   ::
   ++  take-escape
-    ^-  [[ship ship] _batch]
+    ^-  [ship _batch]
     =^  pad=@        batch  (take 0)
-    =^  child=ship   batch  (take 3 4)
-    =^  parent=ship  batch  (take 3 4)
-    [[child parent] batch]
+    =^  other=ship   batch  (take 3 4)
+    [other batch]
   --
 ::
 ++  verify-sig-and-nonce
@@ -700,18 +701,21 @@
   |=  [=state =tx]
   |^
   ^-  (unit [effects ^state])
-  ?-  +<.tx
-    %spawn                  (process-spawn +>.tx)
-    %transfer-point         (w-point process-transfer-point +>.tx)
-    %configure-keys         (w-point process-configure-keys +>.tx)
-    %escape                 (w-point process-escape +>.tx)
-    %cancel-escape          (w-point process-cancel-escape +>.tx)
-    %adopt                  (w-point process-adopt +>.tx)
-    %reject                 (w-point process-reject +>.tx)
-    %detach                 (w-point process-detach +>.tx)
-    %set-management-proxy   (w-point process-set-management-proxy +>.tx)
-    %set-spawn-proxy        (w-point process-set-spawn-proxy +>.tx)
-    %set-transfer-proxy     (w-point process-set-transfer-proxy +>.tx)
+  ?-    +<.tx
+      %spawn               (process-spawn +>.tx)
+      %transfer-point      (w-point process-transfer-point ship.from.tx +>.tx)
+      %configure-keys      (w-point process-configure-keys ship.from.tx +>.tx)
+      %escape              (w-point process-escape ship.from.tx +>.tx)
+      %cancel-escape       (w-point process-cancel-escape ship.from.tx +>.tx)
+      %adopt               (w-point process-adopt ship.tx +>.tx)
+      %reject              (w-point process-reject ship.tx +>.tx)
+      %detach              (w-point process-detach ship.tx +>.tx)
+      %set-spawn-proxy     (w-point process-set-spawn-proxy ship.from.tx +>.tx)
+      %set-transfer-proxy
+    (w-point process-set-transfer-proxy ship.from.tx +>.tx)
+  ::
+      %set-management-proxy
+    (w-point process-set-management-proxy ship.from.tx +>.tx)
   ==
   ::
   ++  w-point
@@ -720,18 +724,17 @@
     =/  point  (get-point state ship)
     ?~  point  (debug %strange-ship ~)
     ?.  ?=(%l2 -.u.point)  (debug %ship-not-on-l2 ~)
-    =/  res=(unit [=effects new-point=^point])  (fun ship u.point rest)
+    =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
     ?~  res
       ~
     `[effects.u.res state(points (~(put by points.state) ship new-point.u.res))]
   ::
   ++  process-transfer-point
-    |=  [=ship =point to=address reset=?]
+    |=  [=point to=address reset=?]
+    =*  ship  ship.from.tx
     ::  Assert from owner or transfer prxoy
     ::
-    ?.  ?&  =(ship ship.from.tx)
-            |(=(%own proxy.from.tx) =(%transfer proxy.from.tx))
-        ==
+    ?.  |(=(%own proxy.from.tx) =(%transfer proxy.from.tx))
       (debug %bad-permission ~)
     ::  Execute transfer
     ::
@@ -819,11 +822,10 @@
     `[effects state(points (~(put by points.state) ship new-point))]
   ::
   ++  process-configure-keys
-    |=  [=ship =point encrypt=@ auth=@ crypto-suite=@ breach=?]
+    |=  [=point encrypt=@ auth=@ crypto-suite=@ breach=?]
+    =*  ship  ship.from.tx
     ::
-    ?.  ?&  =(ship ship.from.tx)
-            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
-        ==
+    ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
       (debug %bad-permission ~)
     ::
     =^  rift-effects  rift.net.point
@@ -842,35 +844,32 @@
     `[(welp rift-effects keys-effects) point]
   ::
   ++  process-escape
-    |=  [=ship =point parent=ship]
-    ?.  ?&  =(ship ship.from.tx)
-            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
-        ==
+    |=  [=point parent=ship]
+    =*  ship  ship.from.tx
+    ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
       (debug %bad-permission ~)
-    ::  TODO: don't allow "peer escape"?
     ::
-    ?.  =(+((ship-rank parent)) (ship-rank ship))  (debug %bad-rank ~)
+    ?.  =(+((ship-rank parent)) (ship-rank ship))
+      (debug %bad-rank ~)
     ::
     :+  ~  [%point ship %escape `parent]~
     point(escape.net `parent)  ::  TODO: omitting a lot of source material?
   ::
   ++  process-cancel-escape
-    |=  [=ship =point parent=ship]
-    ?.  ?&  =(ship ship.from.tx)
-            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
-        ==
+    |=  [=point parent=ship]
+    =*  ship  ship.from.tx
+    ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
       (debug %bad-permission ~)
     ::
     :+  ~  [%point ship %escape ~]~
     point(escape.net ~)
   ::
   ++  process-adopt
-    |=  [=ship =point parent=ship]
+    |=  [=point =ship]
+    =*  parent  ship.from.tx
     :: TODO: assert child/parent on L2?
     ::
-    ?.  ?&  =(parent ship.from.tx)
-            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
-        ==
+    ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
       (debug %bad-permission ~)
     ::
     ?.  =(escape.net.point `parent)  (debug %no-adopt ~)
@@ -878,10 +877,9 @@
     point(escape.net ~, sponsor.net [%& parent])
   ::
   ++  process-reject
-    |=  [=ship =point parent=ship]
-    ?.  ?&  =(parent ship.from.tx)
-            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
-        ==
+    |=  [=point =ship]
+    =*  parent  ship.from.tx
+    ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
       (debug %bad-permission ~)
     ::
     ?.  =(escape.net.point `parent)  (debug %no-reject ~)
@@ -889,10 +887,9 @@
     point(escape.net ~)
   ::
   ++  process-detach
-    |=  [=ship =point parent=ship]
-    ?.  ?&  =(parent ship.from.tx)
-            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
-        ==
+    |=  [=point =ship]
+    =*  parent  ship.from.tx
+    ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
       (debug %bad-permission ~)
     ::
     ?.  =(who.sponsor.net.point parent)  (debug %no-detach ~)
@@ -900,33 +897,27 @@
     point(has.sponsor.net %|)
   ::
   ++  process-set-management-proxy
-    |=  [=ship =point =address]
-    ?.  ?&  =(ship ship.from.tx)
-            |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
-        ==
+    |=  [=point =address]
+    ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
       (debug %bad-permission ~)
     ::
-    :+  ~  [%point ship %management-proxy address]~
+    :+  ~  [%point ship.from.tx %management-proxy address]~
     point(address.management-proxy.own address)
   ::
   ++  process-set-spawn-proxy
-    |=  [=ship =point =address]
-    ?.  ?&  =(ship ship.from.tx)
-            |(=(%own proxy.from.tx) =(%spawn proxy.from.tx))
-        ==
+    |=  [=point =address]
+    ?.  |(=(%own proxy.from.tx) =(%spawn proxy.from.tx))
       (debug %bad-permission ~)
     ::
-    :+  ~  [%point ship %spawn-proxy address]~
+    :+  ~  [%point ship.from.tx %spawn-proxy address]~
     point(address.spawn-proxy.own address)
   ::
   ++  process-set-transfer-proxy
-    |=  [=ship =point =address]
-    ?.  ?&  =(ship ship.from.tx)
-            |(=(%own proxy.from.tx) =(%transfer proxy.from.tx))
-        ==
+    |=  [=point =address]
+    ?.  |(=(%own proxy.from.tx) =(%transfer proxy.from.tx))
       (debug %bad-permission ~)
     ::
-    :+  ~  [%point ship %transfer-proxy address]~
+    :+  ~  [%point ship.from.tx %transfer-proxy address]~
     point(address.transfer-proxy.own address)
   --
 --

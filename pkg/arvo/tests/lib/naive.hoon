@@ -165,7 +165,14 @@
   ++  spawn
     |=  [nonce=@ud parent=ship pk=@ proxy=@tas child=ship =address]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-ship-address:bits %spawn parent proxy child address)
+    %:  cad:naive  3
+      (from-proxy:bits proxy)
+      4^parent
+      1^%1                                       :: %spawn
+      4^child
+      20^address
+      ~
+    ==
   ::
   ++  transfer-point
     |=  [nonce=@ud =ship pk=@ =address proxy=@tas reset=?]  ^-  octs
@@ -174,7 +181,6 @@
       (from-proxy:bits proxy)
       4^ship
       1^(can 0 7^%0 1^reset ~)                   :: %transfer-point
-      4^ship
       20^address
       ~
     ==
@@ -189,7 +195,6 @@
       (from-proxy:bits proxy)
       4^ship
       1^(can 0 7^%2 1^breach ~)                 :: %configure-keys
-      4^ship
       32^encrypt
       32^auth
       4^crypto-suite
@@ -209,33 +214,33 @@
   ++  adopt
     |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-escape:bits %adopt child proxy parent)
+    (take-escape:bits %adopt parent proxy child)
   ::
   ++  reject
     |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-escape:bits %reject child proxy parent)
+    (take-escape:bits %reject parent proxy child)
   ::
   ++  detach
     |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-escape:bits %detach child proxy parent)
+    (take-escape:bits %detach parent proxy child)
   ::
   ++  set-management-proxy
     |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  octs
     %^  sign-tx  pk  nonce
     ^-  octs
-    (take-ship-address:bits %set-management-proxy ship proxy ship address)
+    (take-ship-address:bits %set-management-proxy ship proxy address)
   ::
   ++  set-spawn-proxy
     |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-ship-address:bits %set-spawn-proxy ship proxy ship address)
+    (take-ship-address:bits %set-spawn-proxy ship proxy address)
   ::
   ++  set-transfer-proxy
     |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-ship-address:bits %set-transfer-proxy ship proxy ship address)
+    (take-ship-address:bits %set-transfer-proxy ship proxy address)
   ::
   ++  bits
     ::
@@ -244,7 +249,7 @@
     ::  TODO: Shouldn't need to pass all these arguments along - they should already be in the subject somewhere
     ::
     ++  take-escape
-      |=  [action=@tas child=ship proxy=@tas parent=ship]  ^-  octs
+      |=  [action=@tas from=ship proxy=@tas other=ship]  ^-  octs
       =/  op
         ?+  action  !!
           %escape         %3
@@ -255,18 +260,16 @@
         ==
       %:  cad:naive  3
         (from-proxy proxy)
-        4^child
+        4^from
         1^(can 0 7^op 1^0 ~)
-        4^child
-        4^parent
+        4^other
         ~
       ==
     ::
     ++  take-ship-address
-      |=  [action=@tas from=ship proxy=@tas target=ship =address]  ^-  octs
+      |=  [action=@tas from=ship proxy=@tas =address]  ^-  octs
       =/  op
         ?+  action  !!
-          %spawn                    %1
           %set-management-proxy     %8
           %set-spawn-proxy          %9
           %set-transfer-proxy       %10
@@ -275,7 +278,6 @@
         (from-proxy proxy)
         4^from
         1^(can 0 7^op 1^0 ~)
-        4^target
         20^address
         ~
       ==
