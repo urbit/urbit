@@ -3,7 +3,11 @@ import React, {
   useState,
   useCallback,
   useLayoutEffect,
+  useRef,
+  useEffect,
 } from "react";
+import usePreviousValue from "./usePreviousValue";
+import {Primitive} from "~/types";
 
 export interface VirtualContextProps {
   save: () => void;
@@ -39,9 +43,24 @@ export function useVirtualResizeState(s: boolean) {
     [_setState, save]
   );
 
-  useLayoutEffect(() => {
-    restore();
+  useEffect(() => {
+    requestAnimationFrame(restore);
   }, [state]);
 
   return [state, setState] as const;
+}
+
+export function useVirtualResizeProp(prop: Primitive) {
+  const { save, restore } = useVirtual();
+  const oldProp = usePreviousValue(prop)
+
+  if(prop !== oldProp) {
+    save();
+  }
+
+  useEffect(() => {
+    requestAnimationFrame(restore);
+  }, [prop]);
+
+
 }

@@ -31,7 +31,7 @@ export const Skeleton = (props: { children: ReactNode }) => (
       borderRadius={2}
       bg='white'
       border={1}
-      borderColor='washedGray'
+      borderColor='lightGray'
     >
       {props.children}
     </Box>
@@ -63,7 +63,7 @@ function SettingsItem(props: { children: ReactNode }) {
   const { children } = props;
 
   return (
-    <Box borderBottom='1' borderBottomColor='washedGray'>
+    <Box borderBottom='1' borderBottomColor='lightGray'>
       {children}
     </Box>
   );
@@ -97,7 +97,7 @@ export default function SettingsScreen(props: any) {
         <Col
           height='100%'
           borderRight='1'
-          borderRightColor='washedGray'
+          borderRightColor='lightGray'
           display={hash === '' ? 'flex' : ['none', 'flex']}
           width='100%'
           overflowY='auto'
@@ -107,7 +107,7 @@ export default function SettingsScreen(props: any) {
           </Text>
           <Col>
             <SidebarItem
-              icon='Inbox'
+              icon='Notifications'
               text='Notifications'
               hash='notifications'
             />

@@ -12,7 +12,7 @@
       update:store
       %graph-update
       %graph-pull-hook
-      0  0
+      1  1
   ==
 ::
 +$  agent  (push-hook:push-hook config)
@@ -185,7 +185,7 @@
     (get-graph:gra resource)
   =/  =time  (slav %da i.path)
   =/  =update-log:store  (get-update-log-subset:gra resource time)
-  [%0 now.bowl [%run-updates resource update-log]]
+  [now.bowl [%run-updates resource update-log]]
 ::
 ++  take-update
   |=  =vase
@@ -293,6 +293,9 @@
   %-  some  
   %+  levy  ~(tap by nodes)
   |=  [=index:store =node:store]
+  =/  parent-index=index:store
+    (scag (dec (lent index)) index)
+  ?:  (~(has by nodes) parent-index)  %.y
   ?.  =(author.post.node src.bowl)
     %.n
   =/  =permissions:store
@@ -305,8 +308,6 @@
       %no   %.n
     ::
         %self
-      =/  parent-index=index:store
-        (scag (dec (lent index)) index)
       =/  parent-node=node:store
         (got-node:gra resource parent-index)
       =(author.post.parent-node src.bowl)

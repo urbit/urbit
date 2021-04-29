@@ -24,9 +24,9 @@ export function DeleteGroup(props: {
 return;
     }
     if(props.owner) {
-      await props.api.groups.deleteGroup(ship, name);
+      props.api.groups.deleteGroup(ship, name);
     } else {
-      await props.api.groups.leaveGroup(ship, name);
+      props.api.groups.leaveGroup(ship, name);
     }
     history.push('/');
   };
@@ -36,7 +36,7 @@ return;
     ? 'Permanently delete this group. (All current members will no longer see this group.)'
     : 'You can rejoin if it is an open group, or if you are reinvited';
 
-  const icon = props.owner ? 'X' : 'SignOut';
+  const icon = props.owner ? 'X' : 'LogOut';
   const { modal, showModal } = useModal({ modal:
     (dismiss: () => void) => {
       const onCancel = (e) => {

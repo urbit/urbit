@@ -31,7 +31,6 @@
     ?+  index.p.i  ~
       [@ ~]       `[%link [0 1] %each %children]
       [@ @ %1 ~]  `[%comment [1 2] %count %siblings]
-      [@ @ @ ~]   `[%edit-comment [1 2] %none %none]
     ==
   ::
   ++  transform-add-nodes
@@ -56,7 +55,7 @@
         ::  top-level link post; title and url
         ::
         [@ ~]
-      ?>  ?=([[%text @] [%url @] ~] contents.p.ip)
+      ?>  ?=([[%text @] $%([%url @] [%reference *]) ~] contents.p.ip)
       ip
     ::
         ::  comment on link post; container structure

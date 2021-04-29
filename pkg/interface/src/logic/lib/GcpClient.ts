@@ -26,7 +26,7 @@ class GcpUpload implements StorageUpload {
     this.#accessKey = accessKey;
   }
 
-  async promise(): UploadResult {
+  async promise(): Promise<UploadResult> {
     const {Bucket, Key, ContentType, Body} = this.#params;
     const urlParams = {
       uploadType: 'media',

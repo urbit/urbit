@@ -8,6 +8,7 @@ import { Row, BaseTextArea, Box } from '@tlon/indigo-react';
 
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
+import 'codemirror/addon/hint/show-hint';
 
 import 'codemirror/lib/codemirror.css';
 
@@ -41,8 +42,20 @@ const MARKDOWN_CONFIG = {
 // we need to hack this into a regular input that has some funny behaviors
 const inputProxy = (input) => new Proxy(input, {
   get(target, property) {
+    if(property === 'focus') {
+      return () => {
+        target.focus();
+      }
+    }
     if (property in target) {
       return target[property];
+    }
+    if (property === 'execCommand') {
+      return () => {
+        target.setSelectionRange(target.value.length, target.value.length);
+        input.blur();
+        input.focus();
+      }
     }
     if (property === 'setOption') {
       return () => {};
@@ -107,6 +120,9 @@ export default class ChatEditor extends Component {
     if (prevProps.message !== props.message) {
       this.editor.setValue(props.message);
       this.editor.setOption('mode', MARKDOWN_CONFIG);
+      this.editor?.focus();
+      this.editor.execCommand('goDocEnd');
+      this.editor?.focus();
       return;
     }
 
@@ -142,7 +158,11 @@ export default class ChatEditor extends Component {
   }
 
   messageChange(editor, data, value) {
+    if(value.endsWith('/')) {
+      editor.showHint(['test', 'foo']);
+    }
     if (this.state.message !== '' && value == '') {
+      this.props.changeEvent(value);
       this.setState({
         message: value
       });
@@ -150,6 +170,7 @@ export default class ChatEditor extends Component {
     if (value == this.props.message || value == '' || value == ' ') {
       return;
     }
+    this.props.changeEvent(value);
     this.setState({
       message: value
     });

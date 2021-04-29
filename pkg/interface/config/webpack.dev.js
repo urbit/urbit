@@ -67,12 +67,12 @@ if(urbitrc.URL) {
           return '/index.js'
         }
       },
-      '/~landscape/js/serviceworker.js': {
-        target: 'http://localhost:9000',
-        pathRewrite: (req, path) => {
-          return '/serviceworker.js'
-        }
-      },
+      // '/~landscape/js/serviceworker.js': {
+      //   target: 'http://localhost:9000',
+      //   pathRewrite: (req, path) => {
+      //     return '/serviceworker.js'
+      //   }
+      // },
       '**': {
         changeOrigin: true,
         target: urbitrc.URL,
@@ -88,7 +88,7 @@ module.exports = {
   mode: 'development',
   entry: {
     app: './src/index.js',
-    serviceworker: './src/serviceworker.js'
+    // serviceworker: './src/serviceworker.js'
   },
   module: {
     rules: [
@@ -111,7 +111,7 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light)\/).*/
+        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light|@tlon\/indigo-react)\/).*/
       },
       {
         test: /\.css$/i,
