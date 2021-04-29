@@ -4,6 +4,7 @@ import ChatMessage from "../chat/components/ChatMessage";
 import { Association, GraphNode, Post, Group } from "@urbit/api";
 import { useGroupForAssoc } from "~/logic/state/group";
 import { MentionText } from "~/views/components/MentionText";
+import { GraphContentWide } from '~/views/landscape/components/Graph/GraphContentWide';
 import Author from "~/views/components/Author";
 import { NoteContent } from "../publish/components/Note";
 import { PostContent } from "~/views/landscape/components/Home/Post/PostContent";
@@ -31,7 +32,7 @@ function TranscludedLinkNode(props: {
         return <PermalinkEmbed transcluded={transcluded + 1} api={api} link={permalink} association={assoc} />
 
       }
-      
+
       return (
         <Box borderRadius="2" p="2" bg="scales.black05">
           <Anchor underline={false} target="_blank" color="black" href={link.url}>
@@ -74,11 +75,11 @@ function TranscludedComment(props: {
         group={group}
       />
       <Box p="2">
-        <MentionText
+        <GraphContentWide
           api={api}
           transcluded={transcluded}
-          content={comment.post.contents}
-          group={group}
+          post={comment.post}
+          showOurContact={false}
         />
       </Box>
     </Col>
@@ -200,8 +201,8 @@ export function TranscludedNode(props: {
       <TranscludedPost
         api={props.api}
         post={node.post}
-        group={group} 
-        transcluded={transcluded} 
+        group={group}
+        transcluded={transcluded}
       />)
       ;
     default:

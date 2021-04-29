@@ -99,9 +99,11 @@ export default function index(contacts, associations, apps, currentGroup, groups
   Object.keys(associations).filter((e) => {
     // skip apps with no metadata
     return Object.keys(associations[e]).length > 0;
-    }).map((e) => {
-      // iterate through each app's metadata object
-      Object.keys(associations[e]).map((association) => {
+  }).map((e) => {
+    // iterate through each app's metadata object
+    Object.keys(associations[e])
+      .filter((association) => !associations?.[e]?.[association]?.metadata?.hidden)
+      .map((association) => {
         const each = associations[e][association];
         let title = each.resource;
         if (each.metadata.title !== '') {

@@ -1,6 +1,6 @@
 import React, { ReactElement, useCallback } from 'react';
 import { FormikHelpers } from 'formik';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import {
   Row,
@@ -34,6 +34,7 @@ export function SidebarListHeader(props: {
   workspace: Workspace;
   handleSubmit: (c: SidebarListConfig) => void;
 }): ReactElement {
+  const history = useHistory();
   const onSubmit = useCallback(
     (values: SidebarListConfig, actions: FormikHelpers<SidebarListConfig>) => {
       props.handleSubmit(values);
@@ -65,7 +66,7 @@ export function SidebarListHeader(props: {
     <Box>
     {( !!feedPath) ? (
        <Row
-         flexShrink="0"
+         flexShrink={0}
          alignItems="center"
          justifyContent="space-between"
          py={2}
@@ -74,18 +75,18 @@ export function SidebarListHeader(props: {
          borderBottom={1}
          borderColor="lightGray"
          backgroundColor={['transparent',
-           props.history.location.pathname.includes(`/~landscape${groupPath}/feed`) 
+           history.location.pathname.includes(`/~landscape${groupPath}/feed`) 
            ? (
             'washedGray'
            ) : (
             'transparent'
            )]}
-           cursor={['pointer', (
-             props.history.location.pathname === `/~landscape${groupPath}/feed`
+           cursor={(
+             history.location.pathname === `/~landscape${groupPath}/feed`
              ? 'default' : 'pointer'
-           )]}
+           )}
          onClick={() => {
-           props.history.push(`/~landscape${groupPath}/feed`);
+           history.push(`/~landscape${groupPath}/feed`);
          }}
        >
          <Text>
@@ -98,14 +99,14 @@ export function SidebarListHeader(props: {
      ) : null
     }
     <Row
-      flexShrink="0"
+      flexShrink={0}
       alignItems="center"
       justifyContent="space-between"
       py={2}
       px={3}
       height='48px'
     >
-      <Box flexShrink='0'>
+      <Box flexShrink={0}>
         <Text>
           {props.initialValues.hideUnjoined ? `Joined ${noun}` : `All ${noun}`}
         </Text>
@@ -131,7 +132,6 @@ export function SidebarListHeader(props: {
               >
               <NewChannel
                 api={props.api}
-                history={props.history}
                 workspace={props.workspace}
               />
               </Col>
@@ -152,7 +152,7 @@ export function SidebarListHeader(props: {
           )
         }
       <Dropdown
-        flexShrink='0'
+        flexShrink={0}
         width="auto"
         alignY="top"
         alignX={['right', 'left']}

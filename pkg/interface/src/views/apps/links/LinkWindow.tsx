@@ -6,7 +6,7 @@ import React, {
   Component,
 } from "react";
 
-import { Col, Text } from "@tlon/indigo-react";
+import { Box, Col, Text } from "@tlon/indigo-react";
 import bigInt from "big-integer";
 import { Association, Graph, Unreads, Group, Rolodex } from "@urbit/api";
 
@@ -48,7 +48,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
     return isWriter(group, association.resource);
   }
 
-  renderItem = ({ index, scrollWindow }) => {
+  renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
     const { props } = this;
     const { association, graph, api } = props;
     const [, , ship, name] = association.resource.split("/");
@@ -80,12 +80,14 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
               api={api}
             />
           </Col>
-          <LinkItem {...linkProps} />
+          <LinkItem ref={ref} {...linkProps} />
         </React.Fragment>
       );
     }
-    return <LinkItem key={index.toString()} {...linkProps} />;
-  };
+    return <Box ref={ref}>
+      <LinkItem ref={ref} key={index.toString()} {...linkProps} />;
+    </Box>
+  });
 
   render() {
     const { graph, api, association } = this.props;
