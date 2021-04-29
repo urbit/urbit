@@ -504,6 +504,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     this.savedIndex = bottomIndex;
     const ref = this.childRefs.get(bottomIndex.toString())!;
+    if(!ref) {
+      this.saveDepth--;
+      log('bail', 'missing ref');
+      return;
+    }
     const { offsetTop } = ref;
     this.savedDistance = topSpacing - offsetTop
   }
