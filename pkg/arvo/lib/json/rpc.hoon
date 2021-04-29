@@ -28,4 +28,26 @@
         %object   [%o (~(gas by *(map @t json)) +.params)]
       ==
   ==
+::
+++  response-to-json
+  |=  =response
+  ^-  json
+  ::  TODO: consider all cases
+  ::
+  ?+  -.response  ~|([%unsupported-rpc-response response] !!)
+      %result
+    :-  %o
+    %-  molt
+    ^-  (list [@t json])
+    ~[['id' s+id.response] ['res' res.response]]
+  ::
+      %error
+    :-  %o
+    %-  molt
+    ^-  (list [@t json])
+    :~  ['id' s+id.response] 
+        ['code' s+code.response]
+        ['message' s+message.response]
+    ==
+  ==
 --

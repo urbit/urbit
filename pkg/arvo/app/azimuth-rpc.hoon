@@ -1,7 +1,7 @@
 ::  Azimuth RPC API
 ::
 /-  rpc=json-rpc
-/+  naive, *server, default-agent, verb, dbug, version
+/+  naive, json-rpc, *server, default-agent, verb, dbug, version
 |%
 +$  card  card:agent:gall
 ::
@@ -141,7 +141,7 @@
   ++  get-point
     |=  [id=@t params=request-params:rpc]
     %-  json-response:gen
-    %-  rpc-response-to-json
+    %-  response-to-json:json-rpc
     ?.  ?=([%object *] params)  
       [%error id 'X' 'RPC params must be an object']
     ?>  ?=(^ +.params)
@@ -204,29 +204,6 @@
           ['nonce' (numb:enjs:format nonce)]
       ==
     --
-  :: TODO: move to rpc library
-  ::
-  ++  rpc-response-to-json
-    |=  =response:rpc
-    ^-  json
-    ::  TODO: consider all cases
-    ::
-    ?+  -.response  ~|([%unsupported-rpc-response response] !!)
-        %result
-      :-  %o
-      %-  molt
-      ^-  (list [@t json])
-      ~[['id' s+id.response] ['res' res.response]]
-    ::
-        %error
-      :-  %o
-      %-  molt
-      ^-  (list [@t json])
-      :~  ['id' s+id.response] 
-          ['code' s+code.response]
-          ['message' s+message.response]
-      ==
-    ==
   --
 ::
 ++  scry-point
