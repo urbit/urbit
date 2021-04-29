@@ -10,10 +10,6 @@
 ::  - When depositing, clear proxies (maybe require reset)
 ::  - Maybe require that we're not depositing from a contract?
 ::
-::  TODO: wraps and identities are verified at the beginning but
-::  executed later.  that's no good, since the ownership could change
-::  throughout the wrap or batch.
-::
 ::  TODO: can an L1 star adopt an L2 planet?  It's not obvious how --
 ::  maybe they need to adopt as an L2 transaction?  That sounds right I
 ::  think.  Can an L2 star adopt an L1 planet?  I guess, but L1 wouldn't
@@ -21,42 +17,11 @@
 ::  for some reason?  IMO if either side is on L2, then both sides
 ::  should operate on L2
 ::
-::  TODO: think about whether nonces are safe when associated with
-::  ship/address
-::
 ::  TODO: is it possible to spawn directly to the deposit address?  if
 ::  so, should we find its parent's owner to control it?
 ::
-::  TODO: polymorphic addresses to save tx space?
-::
-::  TODO: could remove `ship` from most txs since it's in `from`
-::
 ::  TODO: secp needs to not crash the process when you give it a bad
 ::  v/recid.  See #4797
-::
-::  TODO: probably should make opcode 0 a no-op and generally ensure
-::  that 0 is not a valid tx, or that it's a no-op that we don't even
-::  send to verify (not sure the verify code can handle a 0 tx)
-::
-::  TODO: add chainId, maybe just everything from
-::  signTypedData_v4/EIP-712.  If we use that, we need to determine
-::  whether EIP-712 is supported by the relevent wallets.  Looks like
-::  ledger does, but maybe not Trezor?  Is there a way to hack around
-::  it?
-::
-::  Okay, my understanding is we can use personal_sign for metamask,
-::  trezor, and ledger, which means prepending each piece of signed data
-::  with '\19Ethereum Signed Message:\0a' and then the length of the
-::  signed data.  We should also include chain_id and maybe other stuff
-::  from the domain separator in EIP-712.  But need to follow up on:
-::  https://github.com/ethereum/go-ethereum/issues/14794
-::
-::  In any case, a signature version number sounds like a good idea
-::
-::  Kinda inclined to forget EIP-712 domain separator compatibility,
-::  since we're not compatible with the whole EIP, and it's pretty
-::  over-engineered.  Possibly better to just include the same info, eg:
-::  'UrbitV1Chain1:' vs 'UrbitV1Chain3:'.
 ::
 /+  std
 =>  =>  std
@@ -160,14 +125,15 @@
 |%
 ::  ethereum address, 20 bytes.
 ::
-+$  nonce     @ud
-+$  address   @ux
-+$  dominion  ?(%l1 %l2 %spawn)
++$  address    @ux
++$  nonce      @ud
++$  dominion   ?(%l1 %l2 %spawn)
++$  keys  [=life suite=@ud auth=@ crypt=@]
 ++  point
   $:  ::  domain
       ::
       =dominion
-    ::
+      ::
       ::  ownership
       ::
       $=  own
@@ -177,13 +143,12 @@
           voting-proxy=[=address =nonce]
           transfer-proxy=[=address =nonce]
       ==
-    ::
+      ::
       ::  networking
       ::
       $=  net
-      $:  =life
-          =pass
-          rift=@ud
+      $:  rift=@ud
+          =keys
           sponsor=[has=? who=@p]
           escape=(unit @p)
       ==
@@ -195,7 +160,7 @@
       [%dns domains=(list @t)]
       $:  %point  =ship
           $%  [%rift =rift]
-              [%keys =life crypto-suite=@ud =pass]
+              [%keys =keys]
               [%sponsor sponsor=(unit @p)]
               [%escape to=(unit @p)]
               [%owner =address]
@@ -465,15 +430,6 @@
     %4  (end 4 who)
   ==
 ::
-::  TODO: encode sut
-::
-++  pass-from-eth
-  |=  [enc=octs aut=octs sut=@ud]
-  ^-  pass
-  %^  cat  3  'b'
-  ?.  &(=(1 sut) =(p.enc 32) =(p.aut 32))
-    (cat 8 0 0)  ::  TODO: fix
-  (cat 8 q.aut q.enc)
 ::  Produces null only if ship is not a galaxy, star, or planet
 ::
 ++  get-point
@@ -570,15 +526,14 @@
   ::
   ?:  =(log-name changed-keys:log-names)
     ?>  ?=(~ t.t.topics.log)
-    =/  encryption=@      (cut 8 [3 1] data.log)
-    =/  authentication=@  (cut 8 [2 1] data.log)
-    ::  TODO: store in state, or add to pass
-    ::
-    =/  crypto-suite=@    (cut 8 [1 1] data.log)
-    =/  life=@            (cut 8 [0 1] data.log)
-    =/  =pass  (pass-from-eth 32^encryption 32^authentication crypto-suite)
-    :-  [%point ship %keys life crypto-suite pass]~
-    point(life.net life, pass.net pass)
+    =/  =keys
+      :*  life=(cut 8 [0 1] data.log)
+          suite=(cut 8 [1 1] data.log)
+          auth=(cut 8 [2 1] data.log)
+          crypt=(cut 8 [3 1] data.log)
+      ==
+    :-  [%point ship %keys keys]~
+    point(keys.net keys)
   ::
   ?:  =(log-name escape-accepted:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
@@ -749,12 +704,13 @@
       `[effects-1 point]
     ::
     =^  effects-2  net.point
-      ?:  =(0 life.net.point)
+      ?:  =(0 life.keys.net.point)
         `net.point
+      =/  =keys  [+(life.keys.net.point) 0 0 0]
       :-  :~  [%point ship %rift +(rift.net.point)]
-              [%point ship %keys +(life.net.point) 0 0]  ::  TODO: 0?
+              [%point ship %keys keys]  ::  TODO: 0?
           ==
-      [+(life) 0 +(rift) sponsor escape]:net.point
+      [+(rift.net.point) keys sponsor.net.point escape.net.point]
     =/  effects-3
       :~  [%point ship %spawn-proxy *address]
           [%point ship %management-proxy *address]
@@ -822,7 +778,7 @@
     `[effects state(points (~(put by points.state) ship new-point))]
   ::
   ++  process-configure-keys
-    |=  [=point encrypt=@ auth=@ crypto-suite=@ breach=?]
+    |=  [=point crypt=@ auth=@ suite=@ breach=?]
     =*  ship  ship.from.tx
     ::
     ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
@@ -833,13 +789,12 @@
         `rift.net.point
       [[%point ship %rift +(rift.net.point)]~ +(rift.net.point)]
     ::
-    =/  =pass  (pass-from-eth 32^encrypt 32^auth crypto-suite)
-    =?  net.point  !=(pass.net.point pass)  ::  TODO: check crypto-suite
-      net.point(life +(life.net.point), pass pass)
-    =/  keys-effects
-      ?:  =(pass.net.point pass)  ::  TODO: check will always be true
-        ~
-      [%point ship %keys life.net.point crypto-suite pass]~
+    =^  keys-effects  keys.net.point
+      ?:  =(+.keys.net.point [suite auth crypt])
+        `keys.net.point
+      =/  =keys
+        [+(life.keys.net.point) suite auth crypt]
+      [[%point ship %keys keys]~ keys]
     ::
     `[(welp rift-effects keys-effects) point]
   ::
