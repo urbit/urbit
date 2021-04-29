@@ -1256,6 +1256,24 @@
     =/  =path  [%question desk (scot %ud index) ~]
     (emit duct %pass wire %a %plea ship %c path `riff-any`[%1 riff])
   ::
+  ++  foreign-capable
+    |=  =rave
+    |^
+    ?-    -.rave
+        %many  &
+        %sing  (good-care care.mood.rave)
+        %next  (good-care care.mood.rave)
+        %mult
+      %-  ~(all in paths.mool.rave)
+      |=  [=care =path]
+      (good-care care)
+    ==
+    ::
+    ++  good-care
+      |=  =care
+      (~(has in ^~((silt `(list ^care)`~[%u %w %x %y %z]))) care)
+    --
+  ::
   ::  Create a request that cannot be filled immediately.
   ::
   ::  If it's a local request, we just put in in `qyx`, setting a timer if it's
@@ -1275,6 +1293,10 @@
     =.  rave
       ?.  ?=([%sing %v *] rave)  rave
       [%many %| [%ud let.dom] case.mood.rave path.mood.rave]
+    ::
+    ?.  (foreign-capable rave)
+      ~|([%clay-bad-foreign-request-care rave] !!)
+    ::
     =+  inx=nix.u.ref
     =.  +>+.$
       =<  ?>(?=(^ ref) .)
@@ -2665,6 +2687,9 @@
   ++  start-request
     |=  [for=(unit [ship @ud]) rav=rave]
     ^+  ..start-request
+    ?:  &(?=(^ for) !(foreign-capable rav))
+      ~&  [%bad-foreign-request-care from=for rav]
+      ..start-request
     =^  [new-sub=(unit rove) sub-results=(list sub-result)]  fod.dom
       (try-fill-sub for (rave-to-rove rav))
     =.  ..start-request  (send-sub-results sub-results [hen ~ ~])
@@ -2721,13 +2746,22 @@
           %r  ~|  %no-cages-please-they-are-just-way-too-big  !!
           %s  ~|  %please-dont-get-your-takos-over-a-network  !!
           %t  ~|  %requesting-foreign-directory-is-vaporware  !!
-          %u  ~|  %prolly-poor-idea-to-get-rang-over-network  !!
           %v  ~|  %weird-shouldnt-get-v-request-from-network  !!
-          %z  `(validate-z r.rand)
+          %u  `(validate-u r.rand)
           %w  `(validate-w r.rand)
           %x  (validate-x [p.p q.p q r]:rand)
           %y  `[p.r.rand !>(;;(arch q.r.rand))]
+          %z  `(validate-z r.rand)
       ==
+    ::
+    ::  Make sure the incoming data is a %u response
+    ::
+    ++  validate-u
+      |=  =page
+      ^-  cage
+      ?>  ?=(%flag p.page)
+      :-  p.page
+      !>  ;;(? q.page)
     ::
     ::  Make sure the incoming data is a %w response
     ::
@@ -2749,7 +2783,11 @@
       =/  vale-result
         %-  mule  |.
         %-  wrap:fusion
-        (page-to-cage:(ford:fusion static-ford-args) peg)
+        ::  Use %home's marks to validate, so we don't have to build the
+        ::  foreign hoon/zuse
+        ::
+        =/  args  %*(static-ford-args . dom dom:(~(got by dos.rom) %home))
+        (page-to-cage:(ford:fusion args) peg)
       ?:  ?=(%| -.vale-result)
         %-  (slog >%validate-x-failed< p.vale-result)
         ~
@@ -2762,7 +2800,7 @@
       ^-  cage
       ?>  ?=(%uvi p.page)
       :-  p.page
-      !>(;;(@uvI q.page))
+      !>  ;;(@uvI q.page)
     --
   ::
   ::  Respond to backfill request
