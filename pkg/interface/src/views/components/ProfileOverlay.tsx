@@ -23,6 +23,7 @@ import RichText from './RichText';
 import { ProfileStatus } from './ProfileStatus';
 import useSettingsState from '~/logic/state/settings';
 import {useOutsideClick} from '~/logic/lib/useOutsideClick';
+import {useCopy} from '~/logic/lib/useCopy';
 import {useContact} from '~/logic/state/contact';
 import {useHistory} from 'react-router-dom';
 import {Portal} from './Portal';
@@ -59,6 +60,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   const hideAvatars = useSettingsState(state => state.calm.hideAvatars);
   const hideNicknames = useSettingsState(state => state.calm.hideNicknames);
   const isOwn = useMemo(() => window.ship === ship, [ship]);
+  const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`);
 
   const contact = useContact(`~${ship}`)
   const color = `#${uxToHex(contact?.color ?? '0x0')}`;
@@ -188,8 +190,17 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
               overflow='hidden'
               whiteSpace='pre'
               marginBottom='0'
+              cursor='pointer'
+              display={didCopy ? 'none' : 'block'}
+              onClick={doCopy}
             >
               {showNickname ? contact?.nickname : cite(ship)}
+            </Text>
+            <Text
+              fontWeight='600'
+              marginBottom='0'
+            >
+              {copyDisplay}
             </Text>
           </Row>
           {isOwn ? (

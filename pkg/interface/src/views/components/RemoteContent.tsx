@@ -48,12 +48,14 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     this.state = {
       unfold: props.unfold || false,
       embed: undefined,
-      noCors: false
+      noCors: false,
+      showArrow: false
     };
     this.unfoldEmbed = this.unfoldEmbed.bind(this);
     this.loadOembed = this.loadOembed.bind(this);
     this.wrapInLink = this.wrapInLink.bind(this);
     this.onError = this.onError.bind(this);
+    this.toggleArrow = this.toggleArrow.bind(this);
   }
 
   save = () => {
@@ -128,7 +130,7 @@ return;
     });
   }
 
-  wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null) {
+  wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null, flushPadding = false, noOp = false) {
     const { style } = this.props;
     return (
       <Box borderRadius="1" backgroundColor="washedGray" maxWidth="min(100%, 20rem)">
@@ -145,8 +147,8 @@ return;
           )}
         <BaseAnchor
           display="flex"
-          p="2"
-          onClick={(e) => { e.stopPropagation(); }}
+          p={flushPadding ? 0 : 2}
+          onClick={(e) => { noOp ? e.preventDefault() : e.stopPropagation() }}
           href={this.props.url}
           whiteSpace="nowrap"
           overflow="hidden"
@@ -157,7 +159,8 @@ return;
           style={{ color: 'inherit', textDecoration: 'none', ...style }}
           target="_blank"
           rel="noopener noreferrer"
-              >
+          cursor={noOp ? 'default' : 'pointer'}
+         >
         {contents}
       </BaseAnchor>
     </Row>
@@ -171,11 +174,16 @@ return;
     this.setState({ noCors: true });
   }
 
+  toggleArrow() {
+    this.setState({showArrow: !this.state.showArrow})
+  }
+
   render() {
     const {
       remoteContentPolicy,
       url,
       text,
+      transcluded,
       renderUrl = true,
       imageProps = {},
       audioProps = {},
@@ -192,22 +200,60 @@ return;
     const isVideo = VIDEO_REGEX.test(url);
     const isOembed = hasProvider(url);
 
+    const isTranscluded = () => {
+      return transcluded;
+    }
+
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
-        <BaseImage
-          {...(noCors ? {} : { crossOrigin: "anonymous" })}
-          referrerPolicy="no-referrer"
-          flexShrink={0}
-          src={url}
-          style={style}
-          onLoad={onLoad}
-          onError={this.onError}
-          height="100%"
-          width="100%"
-          objectFit="contain"
-          {...imageProps}
-          {...props}
-        />
+        <Box
+          position='relative'
+          onMouseEnter={this.toggleArrow}
+          onMouseLeave={this.toggleArrow}
+        >
+          <BaseAnchor
+            position='absolute'
+            top={2}
+            right={2}
+            display={this.state.showArrow ? 'block' : 'none'}
+            target='_blank'
+            rel='noopener noreferrer'
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            href={url}
+          >
+            <Box
+              backgroundColor='white'
+              padding={2}
+              borderRadius='50%'
+              display='flex'
+            >
+              <Icon icon='ArrowNorthEast' />
+            </Box>
+          </BaseAnchor>
+          <BaseImage
+            {...(noCors ? {} : { crossOrigin: 'anonymous' })}
+            referrerPolicy='no-referrer'
+            flexShrink={0}
+            src={url}
+            style={style}
+            onLoad={onLoad}
+            onError={this.onError}
+            height='100%'
+            width='100%'
+            objectFit='contain'
+            borderRadius={2}
+            {...imageProps}
+            {...props}
+          />
+        </Box>,
+        false,
+        false,
+        null,
+        null,
+        true,
+        isTranscluded()
       );
     } else if (isAudio && remoteContentPolicy.audioShown) {
       return (
@@ -271,7 +317,6 @@ return;
             display={this.state.unfold ? 'block' : 'none'}
             className='embed-container'
             style={style}
-            flexShrink={0}
             onLoad={this.onLoad}
             {...oembedProps}
             {...props}

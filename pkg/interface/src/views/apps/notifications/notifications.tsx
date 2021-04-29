@@ -92,6 +92,7 @@ export default function NotificationsScreen(props: any): ReactElement {
                       <StatelessAsyncAction
                         overflow="hidden"
                         color="black"
+                        backgroundColor="white"
                         onClick={onReadAll}
                       >
                         Mark All Read
@@ -106,7 +107,7 @@ export default function NotificationsScreen(props: any): ReactElement {
                   {!view && <Inbox
                     pendingJoin={pendingJoin}
                     {...props}
-                    filter={filter.groups} 
+                    filter={filter.groups}
                     />}
                 </Col>
               </Body>

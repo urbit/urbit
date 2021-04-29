@@ -2,7 +2,7 @@ import React from 'react';
 import bigInt from 'big-integer';
 import VirtualScroller from "~/views/components/VirtualScroller";
 import PostItem from './PostItem/PostItem';
-import { Col } from '@tlon/indigo-react';
+import { Col, Box } from '@tlon/indigo-react';
 import { resourceFromPath } from '~/logic/lib/group';
 
 
@@ -15,101 +15,102 @@ export class PostFeed extends React.Component {
     super(props);
 
     this.isFetching = false;
-    this.renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
-      const {
-        graph,
-        graphPath,
-        api,
-        history,
-        baseUrl,
-        parentNode,
-        grandparentNode,
-        association,
-        group,
-        vip
-      } = this.props;
-      const graphResource = resourceFromPath(graphPath);
-      const node = graph.get(index);
-      if (!node) { return null; }
-
-      const first = graph.peekLargest()?.[0];
-      const post = node?.post;
-      if (!node || !post) {
-        return null;
-      }
-      let nodeIndex = parentNode ? parentNode.post.index.split('/').slice(1).map((ind) => {
-        return bigInt(ind);
-      }) : [];
-
-      if (parentNode && index.eq(first ?? bigInt.zero)) {
-        return (
-          <React.Fragment key={index.toString()}>
-            <Col
-              key={index.toString()}
-              mb="3"
-              width="100%"
-              flexShrink={0}
-            >
-              <PostItem
-                key={parentNode.post.index}
-                ref={ref}
-                parentPost={grandparentNode?.post}
-                node={parentNode}
-                parentNode={grandparentNode}
-                graphPath={graphPath}
-                association={association}
-                api={api}
-                index={nodeIndex}
-                baseUrl={baseUrl}
-                history={history}
-                isParent={true}
-                isRelativeTime={false}
-                vip={vip}
-                group={group}
-              />
-            </Col>
-            <PostItem
-              ref={ref}
-              node={node}
-              graphPath={graphPath}
-              association={association}
-              api={api}
-              index={[...nodeIndex, index]}
-              baseUrl={baseUrl}
-              history={history}
-              isReply={true}
-              parentPost={parentNode.post}
-              isRelativeTime={true}
-              vip={vip}
-              group={group}
-            />
-          </React.Fragment>
-        );
-      }
-
-      return (
-        <PostItem
-          key={index.toString()}
-          ref={ref}
-          node={node}
-          graphPath={graphPath}
-          association={association}
-          api={api}
-          index={[...nodeIndex, index]}
-          baseUrl={baseUrl}
-          history={history}
-          parentPost={parentNode?.post}
-          isReply={!!parentNode}
-          isRelativeTime={true}
-          vip={vip}
-          group={group}
-        />
-      );
-    });
 
     this.fetchPosts = this.fetchPosts.bind(this);
     this.doNotFetch = this.doNotFetch.bind(this);
   }
+
+  renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
+    const {
+      graph,
+      graphPath,
+      api,
+      history,
+      baseUrl,
+      parentNode,
+      grandparentNode,
+      association,
+      group,
+      vip
+    } = this.props;
+    const graphResource = resourceFromPath(graphPath);
+    const node = graph.get(index);
+    if (!node) { return null; }
+
+    const first = graph.peekLargest()?.[0];
+    const post = node?.post;
+    if (!node || !post) {
+      return null;
+    }
+    let nodeIndex = parentNode ? parentNode.post.index.split('/').slice(1).map((ind) => {
+      return bigInt(ind);
+    }) : [];
+
+    if (parentNode && index.eq(first ?? bigInt.zero)) {
+      return (
+        <React.Fragment key={index.toString()}>
+          <Col
+            key={index.toString()}
+            ref={ref}
+            mb="3"
+            width="100%"
+            flexShrink={0}
+          >
+            <PostItem
+              key={parentNode.post.index}
+              parentPost={grandparentNode?.post}
+              node={parentNode}
+              parentNode={grandparentNode}
+              graphPath={graphPath}
+              association={association}
+              api={api}
+              index={nodeIndex}
+              baseUrl={baseUrl}
+              history={history}
+              isParent={true}
+              isRelativeTime={false}
+              vip={vip}
+              group={group}
+            />
+          </Col>
+          <PostItem
+            node={node}
+            graphPath={graphPath}
+            association={association}
+            api={api}
+            index={[...nodeIndex, index]}
+            baseUrl={baseUrl}
+            history={history}
+            isReply={true}
+            parentPost={parentNode.post}
+            isRelativeTime={true}
+            vip={vip}
+            group={group}
+          />
+        </React.Fragment>
+      );
+    }
+
+    return (
+      <Box key={index.toString()} ref={ref}>
+      <PostItem
+        node={node}
+        graphPath={graphPath}
+        association={association}
+        api={api}
+        index={[...nodeIndex, index]}
+        baseUrl={baseUrl}
+        history={history}
+        parentPost={parentNode?.post}
+        isReply={!!parentNode}
+        isRelativeTime={true}
+        vip={vip}
+        group={group}
+      />
+      </Box>
+    );
+  });
+
 
   async fetchPosts(newer) {
     const { graph, graphPath, api } = this.props;

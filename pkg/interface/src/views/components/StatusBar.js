@@ -83,7 +83,7 @@ const StatusBar = (props) => {
           onClick={() => history.push('/')}
           {...props}
         >
-          <Icon icon='Spaces' color='black' />
+          <Icon icon='Dashboard' color='black' />
         </Button>
         <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
           {!doNotDisturb && (notificationsCount > 0 || invites.length > 0) && (
@@ -134,7 +134,7 @@ const StatusBar = (props) => {
           mr={2}
           onClick={() => props.history.push('/~landscape/messages')}
         >
-          <Icon icon='Users' />
+          <Icon icon='Messages' />
         </StatusBarItem>
         <Dropdown
           dropWidth='250px'

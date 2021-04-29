@@ -1,4 +1,4 @@
-import React, { Component, useCallback } from 'react';
+import React, { Component, useCallback, SyntheticEvent } from 'react';
 import _ from 'lodash';
 import normalizeWheel from 'normalize-wheel';
 import bigInt, { BigInteger } from 'big-integer';
@@ -76,7 +76,7 @@ interface VirtualScrollerProps<T> {
 }
 
 interface VirtualScrollerState<T> {
-  visibleItems: BigIntOrderedMap<T>;
+  visibleItems: BigInteger[];
   scrollbar: number;
   loaded: {
     top: boolean;
@@ -91,10 +91,9 @@ const log = (level: LogLevel, message: string) => {
   if(logLevel.includes(level)) {
     console.log(`[${level}]: ${message}`);
   }
-
 }
 
-const ZONE_SIZE = IS_IOS ? 10 : 40;
+const ZONE_SIZE = IS_IOS ? 10 : 80;
 
 
 // nb: in this file, an index refers to a BigInteger and an offset refers to a
@@ -114,7 +113,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   /**
    * A map of child refs, used to calculate scroll position
    */
-  private childRefs = new BigIntOrderedMap<HTMLElement>();
+  private childRefs = new Map<string, HTMLElement>();
+  /**
+   * A set of child refs which have been unmounted
+   */
+  private orphans = new Set<string>();
   /**
    *  If saving, the bottommost visible element that we pin our scroll to
    */
@@ -140,10 +143,12 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
   private scrollRef: HTMLElement | null = null;
 
+  private cleanupRefInterval: NodeJS.Timeout | null = null;
+
   constructor(props: VirtualScrollerProps<T>) {
     super(props);
     this.state = {
-      visibleItems: new BigIntOrderedMap(),
+      visibleItems: [],
       scrollbar: 0,
       loaded: {
         top: false,
@@ -154,17 +159,32 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     this.updateVisible = this.updateVisible.bind(this);
 
     this.invertedKeyHandler = this.invertedKeyHandler.bind(this);
-    this.onScroll = IS_IOS ? _.debounce(this.onScroll.bind(this), 400) : this.onScroll.bind(this);
+    this.onScroll = IS_IOS ? _.debounce(this.onScroll.bind(this), 200) : this.onScroll.bind(this);
     this.scrollKeyMap = this.scrollKeyMap.bind(this);
     this.setWindow = this.setWindow.bind(this);
+    this.restore = this.restore.bind(this);
+    this.startOffset = this.startOffset.bind(this);
   }
 
   componentDidMount() {
     this.updateVisible(0);
-    this.resetScroll();
     this.loadTop();
     this.loadBottom();
+    this.cleanupRefInterval = setInterval(this.cleanupRefs, 5000);
   }
+
+
+
+  cleanupRefs = () => {
+    if(this.saveDepth > 0) {
+      return;
+    }
+    [...this.orphans].forEach(o => {
+      const index = bigInt(o);
+      this.childRefs.delete(index.toString());
+    });
+    this.orphans.clear();
+  };
 
   // manipulate scrollbar manually, to dodge change detection
   updateScroll = IS_IOS ? () => {} : _.throttle(() => {
@@ -186,27 +206,32 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
   componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState<T>) {
     const { id, size, data, offset, pendingSize } = this.props;
-    const { visibleItems } = this.state;
 
     if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
       if(this.scrollLocked) {
         this.updateVisible(0);
         this.resetScroll();
-
       }
     }
   }
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.invertedKeyHandler);
+    if(this.cleanupRefInterval) {
+      clearInterval(this.cleanupRefInterval);
+    }
+    this.cleanupRefs();
+    this.childRefs.clear();
   }
 
   startOffset() {
-    const startIndex = this.state?.visibleItems?.peekLargest()?.[0];
+    const { data } = this.props;
+    const startIndex = this.state.visibleItems?.[0];
     if(!startIndex) {
       return 0;
     }
-    const offset = [...this.props.data].findIndex(([i]) => i.eq(startIndex))
+    const dataList = Array.from(data);
+    const offset = dataList.findIndex(([i]) => i.eq(startIndex))
     if(offset === -1) {
       // TODO: revisit when we remove nodes for any other reason than
       // pending indices being removed
@@ -226,22 +251,17 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     log('reflow', `from: ${this.startOffset()} to: ${newOffset}`);
 
     const { data, onCalculateVisibleItems } = this.props;
-    const visibleItems = new BigIntOrderedMap<any>(
-      [...data].slice(newOffset, newOffset + this.pageSize)
-    );
+    const visibleItems = data.keys().slice(newOffset, newOffset + this.pageSize);
 
     this.save();
 
     this.setState({
       visibleItems,
-    }, () => {
-      requestAnimationFrame(() => {
-        this.restore();
-        requestAnimationFrame(() => {
-
-        });
-      });
     });
+    requestAnimationFrame(() => {
+      this.restore();
+    });
+
   }
 
   scrollKeyMap(): Map<string, number> {
@@ -273,7 +293,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   setWindow(element) {
     if (!element)
       return;
-    console.log('resetting window');
     this.save();
 
     if (this.window) {
@@ -286,8 +305,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const { averageHeight } = this.props;
 
     this.window = element;
-    this.pageSize = Math.floor(element.offsetHeight / Math.floor(averageHeight / 5.5));
-    this.pageDelta = Math.floor(this.pageSize / 3);
+    this.pageSize = Math.floor(element.offsetHeight / Math.floor(averageHeight / 2));
+    this.pageDelta = Math.floor(this.pageSize / 4);
     if (this.props.origin === 'bottom') {
        element.addEventListener('wheel', (event) => {
         event.preventDefault();
@@ -333,7 +352,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     }
   };
 
-  onScroll(event: UIEvent) {
+  onScroll(event: SyntheticEvent<HTMLElement, ScrollEvent>) {
     this.updateScroll();
     if(!this.window) {
       // bail if we're going to adjust scroll anyway
@@ -348,19 +367,19 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const { scrollTop, scrollHeight } = this.window;
 
     const startOffset = this.startOffset();
+
+    const scrollEnd = scrollTop + windowHeight;
     if (scrollTop < ZONE_SIZE) {
       log('scroll', `Entered start zone ${scrollTop}`);
-      if (startOffset === 0 && onStartReached) {
-        onStartReached();
+      if (startOffset === 0) {
+        onStartReached && onStartReached();
+        this.scrollLocked = true;
       }
       const newOffset = Math.max(0, startOffset - this.pageDelta);
       if(newOffset < 10) {
         this.loadBottom();
       }
 
-      if(newOffset === 0) {
-        this.scrollLocked = true;
-      }
       if(newOffset !== startOffset) {
         this.updateVisible(newOffset);
       }
@@ -394,20 +413,37 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       log('bail', 'Deep restore');
       return;
     }
+      if(this.scrollLocked) {
+        this.resetScroll();
+      requestAnimationFrame(() => {
+        this.savedIndex = null;
+        this.savedDistance = 0;
+        this.saveDepth--;
+      });
+      return;
+    }
 
-    const ref = this.childRefs.get(this.savedIndex)!;
-    const newScrollTop = this.window.scrollHeight - ref.offsetTop - this.savedDistance;
+    let ref = this.childRefs.get(this.savedIndex.toString())
+    if(!ref) {
+      return;
+    }
+
+    const newScrollTop = this.props.origin === 'top'
+      ? this.savedDistance + ref.offsetTop
+      : this.window.scrollHeight - ref.offsetTop - this.savedDistance;
+
 
     this.window.scrollTo(0, newScrollTop);
     requestAnimationFrame(() => {
-      this.savedIndex = null;
-      this.savedDistance = 0;
-      this.saveDepth--;
-    });
+        this.savedIndex = null;
+        this.savedDistance = 0;
+        this.saveDepth--;
+      });
+
   }
 
   scrollToIndex = (index: BigInteger) => {
-    let ref = this.childRefs.get(index);
+    let ref = this.childRefs.get(index.toString());
     if(!ref) {
       const offset = [...this.props.data].findIndex(([idx]) => idx.eq(index));
       if(offset === -1) {
@@ -415,7 +451,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       }
       this.updateVisible(Math.max(offset - this.pageDelta, 0));
       requestAnimationFrame(() => {
-        ref = this.childRefs.get(index);
+        ref = this.childRefs.get(index.toString());
         this.savedIndex = null;
         this.savedDistance = 0;
         this.saveDepth = 0;
@@ -435,17 +471,21 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     if(!this.window || this.savedIndex) {
       return;
     }
-    this.saveDepth++;
-    if(this.saveDepth !== 1) {
-      console.log('bail', 'deep save');
+    if(this.saveDepth !== 0) {
       return;
     }
 
-    let bottomIndex: BigInteger | null = null;
+    log('scroll', 'saving...');
+
+    this.saveDepth++;
+    const { visibleItems } = this.state;
+
+    let bottomIndex = visibleItems[visibleItems.length - 1];
     const { scrollTop, scrollHeight } = this.window;
-    const topSpacing = scrollHeight - scrollTop;
-    [...Array.from(this.state.visibleItems)].reverse().forEach(([index, datum]) => {
-      const el = this.childRefs.get(index);
+    const topSpacing = this.props.origin === 'top' ? scrollTop : scrollHeight - scrollTop;
+    const items = this.props.origin === 'top' ? visibleItems : [...visibleItems].reverse();
+    items.forEach((index) => {
+      const el = this.childRefs.get(index.toString());
       if(!el) {
         return;
       }
@@ -458,24 +498,30 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     if(!bottomIndex) {
       // weird, shouldn't really happen
       this.saveDepth--;
+      log('bail', 'no index found');
       return;
     }
 
     this.savedIndex = bottomIndex;
-    const ref = this.childRefs.get(bottomIndex)!;
+    const ref = this.childRefs.get(bottomIndex.toString())!;
+    if(!ref) {
+      this.saveDepth--;
+      log('bail', 'missing ref');
+      return;
+    }
     const { offsetTop } = ref;
     this.savedDistance = topSpacing - offsetTop
   }
 
-  shiftLayout = { save: this.save.bind(this), restore: this.restore.bind(this) };
+  // disabled until we work out race conditions with loading new nodes
+  shiftLayout = { save: () => {}, restore: () => {} };
 
   setRef = (element: HTMLElement | null, index: BigInteger) => {
     if(element) {
-      this.childRefs.set(index, element);
+      this.childRefs.set(index.toString(), element);
+      this.orphans.delete(index.toString());
     } else {
-      setTimeout(() => {
-        this.childRefs.delete(index);
-      });
+      this.orphans.add(index.toString());
     }
   }
 
@@ -494,12 +540,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     const isTop = origin === 'top';
 
-    const indexesToRender = isTop ? visibleItems.keys() : visibleItems.keys().reverse();
-
     const transform = isTop ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
+    const children = isTop ? visibleItems : [...visibleItems].reverse();
 
-    const atStart = (this.props.data.peekLargest()?.[0] ?? bigInt.zero).eq(visibleItems.peekLargest()?.[0] || bigInt.zero);
-    const atEnd = this.state.loaded.top;
+    const atStart = (this.props.data.peekLargest()?.[0] ?? bigInt.zero).eq(visibleItems?.[0] || bigInt.zero);
+    const atEnd = (this.props.data.peekSmallest()?.[0] ?? bigInt.zero).eq(visibleItems?.[visibleItems.length -1 ] || bigInt.zero);
 
     return (
       <>
@@ -511,7 +556,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
             <LoadingSpinner />
           </Center>)}
           <VirtualContext.Provider value={this.shiftLayout}>
-            {indexesToRender.map(index => (
+            {children.map(index => (
               <VirtualChild
                 key={index.toString()}
                 setRef={this.setRef}
@@ -544,8 +589,10 @@ function VirtualChild(props: VirtualChildProps) {
 
   const ref = useCallback((el: HTMLElement | null) => {
     setRef(el, props.index);
-  }, [setRef, props.index])
+  //  VirtualChild should always be keyed on the index, so the index should be
+  //  valid for the entire lifecycle of the component, hence no dependencies
+  }, []);
 
-  return (<Renderer ref={ref} {...rest} />);
+  return <Renderer ref={ref} {...rest} />
 };
 
