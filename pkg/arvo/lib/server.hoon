@@ -111,6 +111,11 @@
     ^-  simple-payload:http
     [[200 [['content-type' 'image/png'] max-1-wk ~]] `octs]
   ::
+    ++  ico-response
+    |=  =octs
+    ^-  simple-payload:http
+    [[200 [['content-type' 'image/x-icon'] max-1-wk ~]] `octs]
+  ::
   ++  woff2-response
     |=  =octs
     ^-  simple-payload:http
