@@ -1,7 +1,7 @@
 /+  *test, naive, ethereum
 |%
 ++  address  @ux
-++  n  |=([=^state:naive =^input:naive] (%*(. naive lac |) verifier +<))
+++  n  |=([=^state:naive =^input:naive] (%*(. naive lac |) verifier 1.337 +<))
 ::  TODO: does this uniquely produce the pubkey?
 ::
 ++  verifier
@@ -65,7 +65,17 @@
 ::
 ++  sign-tx
   |=  [pk=@ nonce=@ud tx=octs]  ^-  octs
-  =/  prepared-data=octs  [(add 4 p.tx) (can 3 4^nonce tx ~)]
+  =/  prepared-data=octs
+    =/  chain-t  (rsh [3 2] (scot %ui 1.337))
+    :-  :(add 12 (met 3 chain-t) 1 4 p.tx)
+    %:  can  3
+      14^'UrbitIDV1Chain'
+      (met 3 chain-t)^chain-t
+      1^':'
+      4^nonce
+      tx
+      ~
+    ==
   =/  sign-data
     =/  len  (rsh [3 2] (scot %ui p.prepared-data))
     %-  keccak-256:keccak:crypto
@@ -306,7 +316,7 @@
     %*(. *point:naive dominion %l1, owner.own 0x123^0, who.sponsor.net ~bud)
   ::
     !>
-    %^  naive  verifier  *^state:naive
+    %^  naive  verifier  1.337  :-  *^state:naive
     :*  %log  *@ux  *@ux
         owner-changed:log-names:naive  (@ux ~bud)  0x123  ~
     ==

@@ -30,7 +30,8 @@
 --
 ::
 |%
-::  TODO: is `dat` supposed to be a 32-byte hash?  I guess so
+::  TODO: maybe flop the endianness here so metamask signs it in normal
+::  order?
 ::
 ++  verifier
   ^-  ^verifier:naive
@@ -81,7 +82,9 @@
       ?.  =(0x2688.7f26 fun)
         [%bat *@]
       [%bat (end [3 (sub len 4)] u.input.u.mined.i.logs)]
-    =/  res  (mule |.((%*(. naive lac |) verifier nas input)))
+    =/  res
+      %-  mule
+      |.((%*(. naive lac |) verifier chain-id:contracts:azimuth nas input))
     ?-  -.res
       %&  p.res
       %|  ((slog 'naive-fail' p.res) `nas)

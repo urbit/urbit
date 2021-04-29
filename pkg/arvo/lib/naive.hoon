@@ -53,6 +53,11 @@
 ::
 ::  In any case, a signature version number sounds like a good idea
 ::
+::  Kinda inclined to forget EIP-712 domain separator compatibility,
+::  since we're not compatible with the whole EIP, and it's pretty
+::  over-engineered.  Possibly better to just include the same info, eg:
+::  'UrbitV1Chain1:' vs 'UrbitV1Chain3:'.
+::
 /+  std
 =>  =>  std
 ::  Laconic bit
@@ -358,7 +363,7 @@
   --
 ::
 ++  verify-sig-and-nonce
-  |=  [=verifier =state =raw-tx]
+  |=  [=verifier chain-t=@t =state =raw-tx]
   ^-  ?
   |^
   =/  point  (get-point state ship.from.tx.raw-tx)
@@ -373,10 +378,17 @@
     ==
   ::
   =/  prepared-data=octs
-    :-  (add 4 p.raw.raw-tx)
-    (can 3 4^nonce.need raw.raw-tx ~)
+    :-  :(add 12 (met 3 chain-t) 1 4 p.raw.raw-tx)
+    %:  can  3
+      14^'UrbitIDV1Chain'
+      (met 3 chain-t)^chain-t
+      1^':'
+      4^nonce.need
+      raw.raw-tx
+      ~
+    ==
   =/  signed-data=octs
-    =/  len  (ud-to-len p.prepared-data)
+    =/  len  (ud-to-ascii p.prepared-data)
     :-  :(add 26 (met 3 len) p.prepared-data)
     %:  can  3
       26^'\19Ethereum Signed Message:\0a'
@@ -413,15 +425,15 @@
       |=  =bite
       [(end bite sig) (rsh bite sig)]
     --
-  ::  ASCII-encode length
-  ::
-  ++  ud-to-len
-    |=  n=@ud
-    ^-  @t
-    ?~  n
-      *@t
-    (cat 3 $(n (div n 10)) (add '0' (mod n 10)))
   --
+::  ASCII-decimal encode
+::
+++  ud-to-ascii
+  |=  n=@ud
+  ^-  @t
+  ?~  n
+    *@t
+  (cat 3 $(n (div n 10)) (add '0' (mod n 10)))
 ::
 ++  ship-rank
   |=  =ship
@@ -619,14 +631,15 @@
 ::  Receive batch of L2 transactions
 ::
 ++  receive-batch
-  |=  [=verifier =state batch=@]
+  |=  [=verifier chain-id=@ud =state batch=@]
+  =/  chain-t  (ud-to-ascii chain-id)
   =/  =roll  (parse-roll batch)
   |-  ^-  [effects ^state]
   ?~  roll
     [~ state]
   ::  Verify signature, else skip tx
   ::
-  ?.  (verify-sig-and-nonce verifier state i.roll)
+  ?.  (verify-sig-and-nonce verifier chain-t state i.roll)
     %+  debug  %l2-sig-failed
     $(roll t.roll)
   ::  Increment nonce, even if it later fails
@@ -912,7 +925,7 @@
 ::
 ::  State transition function
 ::
-|=  [=verifier =state =input]
+|=  [=verifier chain-id=@ud =state =input]
 ^-  [effects ^state]
 ?:  ?=(%log -.input)
   :: Received log from L1 transaction
@@ -921,4 +934,4 @@
 ::  Received L2 batch
 ::
 %+  debug  %batch
-(receive-batch verifier state batch.input)
+(receive-batch verifier chain-id state batch.input)
