@@ -24,7 +24,13 @@ import { GraphContentWide } from './GraphContentWide';
 import { PropFunc } from '~/types';
 import fromMarkdown from 'mdast-util-from-markdown';
 import Dot from '~/views/components/Dot';
-import { Root, Parent, Content as AstContent, BlockContent } from '@types/mdast';
+import {
+  Root,
+  Parent,
+  Content as AstContent,
+  BlockContent,
+} from '@types/mdast';
+import { parseTall, parseWide } from './parse';
 
 type StitchMode = 'merge' | 'block' | 'inline';
 
@@ -44,19 +50,33 @@ interface GraphUrl {
   type: 'graph-url';
   url: string;
 }
+const codeToMdAst = (content: CodeContent) => {
+  return {
+    type: 'root',
+    children: [
+      {
+        type: 'code',
+        value: content.code.expression
+      },
+      {
+        type: 'code',
+        value: (content.code.output || []).join('\n')
+      }
+    ]
+  };
+      
 
-function contentToMdAst(content: Content): [StitchMode, any] {
+}
+
+const contentToMdAst = (tall: boolean) => (
+  content: Content
+): [StitchMode, any] => {
   if ('text' in content) {
-    return ['merge', fromMarkdown(content.text)];
+    return ['merge', tall ? parseTall(content.text) : parseWide(content.text)] as [StitchMode, any];
   } else if ('code' in content) {
     return [
       'block',
-      fromMarkdown(`
-      \`\`\`
-      ${content.code.expression}
-      ${(content.code.output || []).join('\n')}
-      \`\`\`
-    `),
+      codeToMdAst(content)
     ];
   } else if ('reference' in content) {
     return [
@@ -105,7 +125,7 @@ function contentToMdAst(content: Content): [StitchMode, any] {
       children: [],
     },
   ];
-}
+};
 
 function stitchInline(a: any, b: any) {
   if (!a?.children) {
@@ -122,11 +142,9 @@ function stitchInline(a: any, b: any) {
         ...a.children.slice(lastParaIdx + 1),
       ],
     };
-    //console.log(ros);
     return ros;
   }
   const res = { ...a, children: [...a.children, ...b] };
-  //console.log(res);
   return res;
 }
 
@@ -134,7 +152,7 @@ function last<T>(arr: T[]) {
   return arr[arr.length - 1];
 }
 
-function getChildren<T extends any>(node: T): AstContent[] {
+function getChildren<T extends {}>(node: T): AstContent[] {
   if ('children' in node) {
     // @ts-ignore
     return node.children;
@@ -227,8 +245,6 @@ const header = ({ children, depth, ...rest }) => {
   );
 };
 
-const tall = true;
-
 const renderers = {
   heading: header,
   inlineCode: ({ language, value }) => {
@@ -245,7 +261,7 @@ const renderers = {
     );
   },
 
-  blockquote: ({ children }) => {
+  blockquote: ({ children, tall, ...rest }) => {
     return (
       <Text
         lineHeight="20px"
@@ -253,6 +269,7 @@ const renderers = {
         borderLeft="1px solid"
         color="black"
         paddingLeft={2}
+        py="1"
       >
         {children}
       </Text>
@@ -281,7 +298,8 @@ const renderers = {
     );
   },
 
-  code: ({ language, value }) => {
+  code: ({ language, tall, value, ...rest }) => {
+    console.log(rest);
     const inner = (
       <Text
         p="1"
@@ -332,30 +350,46 @@ const renderers = {
 export function Graphdown<T extends {} = {}>(
   props: {
     ast: GraphAstNode;
+    tall?: boolean;
+    depth?: number;
   } & T
 ) {
-  const { ast, ...rest } = props;
+  const { ast, depth = 0, ...rest } = props;
   const { type, children = [], ...nodeRest } = ast;
   const Renderer = renderers[ast.type] ?? (() => `unknown element: ${type}`);
 
   return (
-    <Renderer {...rest} {...nodeRest}>
+    <Renderer depth={depth} {...rest} {...nodeRest}>
       {children.map((c) => (
-        <Graphdown {...rest} ast={c} />
+        <Graphdown depth={depth+1} {...rest} ast={c} />
       ))}
     </Renderer>
   );
 }
 
-export function GraphContentTall(
+export const GraphContent = React.memo(function GraphContent(
   props: {
+    tall?: boolean;
     transcluded?: number;
-    post: Post;
+    contents: Content[];
     api: GlobalApi;
     showOurContact: boolean;
   } & PropFunc<typeof Box>
 ) {
-  const { post, transcluded = 0, showOurContact, api, ...rest } = props;
-  const [, ast] = stitchAsts(post.contents.slice(1).map(contentToMdAst));
-  return <Graphdown api={api} ast={ast} />;
-}
+  const {
+    post,
+    contents,
+    tall = false,
+    transcluded = 0,
+    showOurContact,
+    api,
+    ...rest
+  } = props;
+  const [,ast] = stitchAsts(contents.map(contentToMdAst(tall)));
+  return (
+    <Box {...rest}>
+      <Graphdown api={api} ast={ast} />
+    </Box>
+  );
+});
+
