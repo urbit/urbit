@@ -122,36 +122,32 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   );
 
   const ExtraControls = () => {
-    if (workspace === '/messages') {
-      const resourceArr = association.resource.split('/');
-      const resourceName = resourceArr[resourceArr.length - 1];
-      if (!resourceName.startsWith('dm-')) {
-        return (
-          <Dropdown
-            flexShrink={0}
-            dropWidth='300px'
-            width='auto'
-            alignY='top'
-            alignX='right'
-            options={
-              <Col
-                backgroundColor='white'
-                border={1}
-                borderRadius={2}
-                borderColor='lightGray'
-                color='washedGray'
-                boxShadow='0px 0px 0px 3px'
-              >
-                <MessageInvite association={association} api={api} />
-              </Col>
-            }
-          >
-            <Text bold pr='3' color='blue'>
-              + Add Ship
-            </Text>
-          </Dropdown>
-        );
-      }
+    if (workspace === '/messages' && !resource.startsWith('dm-')) {
+      return (
+        <Dropdown
+          flexShrink={0}
+          dropWidth='300px'
+          width='auto'
+          alignY='top'
+          alignX='right'
+          options={
+            <Col
+              backgroundColor='white'
+              border={1}
+              borderRadius={2}
+              borderColor='lightGray'
+              color='washedGray'
+              boxShadow='0px 0px 0px 3px'
+            >
+              <MessageInvite association={association} api={api} />
+            </Col>
+          }
+        >
+          <Text bold pr='3' color='blue'>
+            + Add Ship
+          </Text>
+        </Dropdown>
+      );
     }
     if (canWrite) {
       return (
@@ -173,7 +169,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
 
   const actionsRef = useCallback((actionsRef) => {
     setActionsWidth(actionsRef?.getBoundingClientRect().width);
-  }, []);
+  }, [rid]);
 
   return (
     <Col width='100%' height='100%' overflow='hidden'>
