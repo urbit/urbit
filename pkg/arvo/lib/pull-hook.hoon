@@ -270,12 +270,10 @@
     ::
     ++  on-save
       ^-  vase
-      =.  inner-state
-        on-save:og
-      =.  prev-min-version
-        min-version.config
-      =.  prev-version
-        version.config
+      =:  inner-state       on-save:og
+          prev-min-version  min-version.config
+          prev-version      version.config
+        ==
       !>(state)
     ::
     ++  on-poke

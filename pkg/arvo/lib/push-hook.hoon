@@ -249,12 +249,10 @@
       --
     ::
     ++  on-save
-      =.  inner-state
-        on-save:og
-      =.  prev-version
-        version.config
-      =.  prev-min-version
-        min-version.config
+      =:  prev-version      version.config
+          prev-min-version  min-version.config
+          inner-state       on-save:og
+        ==
       !>(state)
     ::
     ++  on-poke
