@@ -125,10 +125,10 @@
 |%
 ::  ethereum address, 20 bytes.
 ::
-+$  address    @ux
-+$  nonce      @ud
-+$  dominion   ?(%l1 %l2 %spawn)
-+$  keys  [=life suite=@ud auth=@ crypt=@]
++$  address   @ux
++$  nonce     @ud
++$  dominion  ?(%l1 %l2 %spawn)
++$  keys      [=life suite=@ud auth=@ crypt=@]
 ++  point
   $:  ::  domain
       ::
@@ -206,7 +206,11 @@
   $%  [%bat batch=@]
       [%log =event-log]
   ==
-::  ECDSA verifier
+::  ECDSA verifier.
+::
+::  Must keccak `dat` and recover the ethereum address which signed.
+::  Must not crash.  `v` will normally be between 0 and 3; if it is not,
+::  should produce null.
 ::
 +$  verifier  $-([dat=octs v=@ r=@ s=@] (unit address))
 --  =>
@@ -333,7 +337,7 @@
   ^-  ?
   |^
   =/  point  (get-point state ship.from.tx.raw-tx)
-  ?>  ?=(^ point)  ::  we never parse more than four bytes
+  ?>  ?=(^ point)  ::  we never parse more than four bytes for a ship
   =/  need=[=address =nonce]
     ?-  proxy.from.tx.raw-tx
       %own       owner.own.u.point
@@ -708,7 +712,7 @@
         `net.point
       =/  =keys  [+(life.keys.net.point) 0 0 0]
       :-  :~  [%point ship %rift +(rift.net.point)]
-              [%point ship %keys keys]  ::  TODO: 0?
+              [%point ship %keys keys]
           ==
       [+(rift.net.point) keys sponsor.net.point escape.net.point]
     =/  effects-3

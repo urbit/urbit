@@ -41,15 +41,15 @@
 |=  sig=(unit @t)
 ^-  @t
 =/  account  (hex-to-num:eth '0xb026b0AA6e686F2386051b31A03E5fB95513e1c0')
-=/  tx=octs  (set-spawn-proxy:l2:tt 0 ~ravmun-mitbus %ravmun %own account)
-=/  prep=octs  [(sub p.tx 65) (rsh 3^65 q.tx)]
-=/  nonced=octs  [(add p.prep 4) (can 3 4^1 prep ~)]
+=/  tx=octs
+  (take-ship-address:bits:l2:tt %set-spawn-proxy ~ravmun-mitbus %own account)
+=/  prepped=octs  (prepare-for-sig:tt 3 0 tx)
 ?~  sig
-  (cat 3 'sign: ' (print-for-web3 nonced))
+  (cat 3 'sign: ' (print-for-web3 prepped))
 =/  batch=@t
   %:  rap  3
     '0x26887f26'
-    (print-for-batch prep)
+    (print-for-batch tx)
     (rsh 3^2 u.sig)
     ~
   ==

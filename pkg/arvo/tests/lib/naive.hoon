@@ -65,16 +65,7 @@
 ::
 ++  sign-tx
   |=  [pk=@ nonce=@ud tx=octs]  ^-  octs
-  =/  prepared-data=octs
-    =/  chain-t  (rsh [3 2] (scot %ui 1.337))
-    %:  cad:naive  3
-      14^'UrbitIDV1Chain'
-      (met 3 chain-t)^chain-t
-      1^':'
-      4^nonce
-      tx
-      ~
-    ==
+  =/  prepared-data  (prepare-for-sig 1.337 nonce tx)
   =/  sign-data
     =/  len  (rsh [3 2] (scot %ui p.prepared-data))
     %-  keccak-256:keccak:crypto
@@ -86,6 +77,19 @@
     ==
   =+  (ecdsa-raw-sign:secp256k1:secp:crypto sign-data pk)
   (cad:naive 3 1^v 32^s 32^r tx ~)
+::
+++  prepare-for-sig
+  |=  [chain-id=@ud nonce=@ud tx=octs]
+  ^-  octs
+  =/  chain-t  (rsh [3 2] (scot %ui chain-id))
+  %:  cad:naive  3
+    14^'UrbitIDV1Chain'
+    (met 3 chain-t)^chain-t
+    1^':'
+    4^nonce
+    tx
+    ~
+  ==
 ::
 ++  l1
   |%

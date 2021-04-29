@@ -136,7 +136,7 @@
       ::
       ++  launch  4.601.630
       ++  public  launch
-      ++  chain-id  1
+      ++  chain-id  3
       --
     ::
     ::  Local contract addresses
