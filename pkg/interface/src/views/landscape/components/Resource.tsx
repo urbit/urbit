@@ -15,12 +15,14 @@ import useGroupState from '~/logic/state/group';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
+import {Workspace} from '~/types';
 
 type ResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+  workspace: Workspace;
+};
 
 export function Resource(props: ResourceProps): ReactElement {
   const { association, api, notificationsGraphConfig } = props;

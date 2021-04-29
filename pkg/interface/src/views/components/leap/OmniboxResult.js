@@ -130,7 +130,7 @@ export class OmniboxResult extends Component {
         <Icon
           display='inline-block'
           verticalAlign='middle'
-          icon='Users'
+          icon='Messages'
           mr='2'
           size='18px'
           color={iconFill}

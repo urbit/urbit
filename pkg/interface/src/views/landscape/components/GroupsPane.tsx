@@ -124,7 +124,6 @@ export function GroupsPane(props: GroupsPaneProps) {
             >
               <Resource
                 {...props}
-                {...routeProps}
                 association={association}
                 baseUrl={baseUrl}
               />

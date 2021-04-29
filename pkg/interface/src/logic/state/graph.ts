@@ -1,4 +1,5 @@
-import { Graphs, decToUd, numToUd, GraphNode } from "@urbit/api";
+import { Graphs, decToUd, numToUd, GraphNode, deSig, Association, resourceFromPath } from "@urbit/api";
+import {useCallback} from "react";
 
 import { BaseState, createState } from "./base";
 
@@ -128,6 +129,20 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, ['graphs', 'graphKeys', 'looseNodes']);
+}, ['graphs', 'graphKeys', 'looseNodes', 'graphTimesentMap']);
+
+export function useGraph(ship: string, name: string) {
+  return useGraphState(
+    useCallback(s => s.graphs[`${deSig(ship)}/${name}`], [ship, name])
+  );
+}
+
+export function useGraphForAssoc(association: Association) {
+  const { resource } = association;
+  const { ship, name } = resourceFromPath(resource);
+  return useGraph(ship, name);
+}
+
+window.useGraphState = useGraphState;
 
 export default useGraphState;
