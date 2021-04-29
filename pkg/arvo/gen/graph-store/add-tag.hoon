@@ -3,8 +3,8 @@
 /-  *graph-store
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[=term =resource ~] ~]
+        [[=term =uid ~] ~]
     ==
 :-  %graph-update-2
 ^-  update
-[now [%add-tag term resource]]
+[now [%add-tag term uid]]
