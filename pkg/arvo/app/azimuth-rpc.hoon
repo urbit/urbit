@@ -8,7 +8,8 @@
     default-agent,
     verb,
     dbug,
-    version
+    version,
+    agentio
 |%
 +$  card  card:agent:gall
 ::
@@ -136,13 +137,8 @@
 ::
 ++  scry-point
   |=  =ship
-  .^  (unit point:naive)
-      %gx
-      (scot %p our.bowl)
-      %naive
-      (scot %da now.bowl)
-      %nas
-      (scot %p ship)
-      /noun
+  .^  (unit point:naive) 
+      %gx 
+      (~(scry agentio bowl) %naive /nas/[(scot %p ship)]/noun)
   ==
 --
