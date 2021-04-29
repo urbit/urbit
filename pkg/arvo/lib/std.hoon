@@ -171,6 +171,12 @@
   |=  [a=@ b=@]
   |(=(a b) (lth a b))
 ::
+++  gte                                                 ::  greater or equal
+  ~/  %gte
+  |=  [a=@ b=@]
+  ^-  ?
+  !(lth a b)
+::
 ++  gth                                                 ::  greater
   ~/  %gth
   |=  [a=@ b=@]
@@ -218,6 +224,16 @@
   ^-  @
   ?~  b  0
   (add (end [a p.i.b] q.i.b) (lsh [a p.i.b] $(b t.b)))
+::
+++  cad                                                 ::  assemble specific
+  ~/  %cad
+  |=  [a=bloq b=(list [p=step q=@])]
+  ^-  [=step @]
+  :_  (can a b)
+  |-
+  ?~  b
+    0
+  (add p.i.b $(b t.b))
 ::
 ++  rep                                                 ::  assemble fixed
   ~/  %rep

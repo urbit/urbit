@@ -7,16 +7,17 @@ import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { getModuleIcon } from '~/logic/lib/util';
 import { Dropdown } from '~/views/components/Dropdown';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
+import useMetadataState from '~/logic/state/metadata';
 
 interface GroupChannelSettingsProps {
   group: Group;
   association: Association;
-  associations: Associations;
   api: GlobalApi;
 }
 
 export function GroupChannelSettings(props: GroupChannelSettingsProps) {
-  const { api, associations, association, group } = props;
+  const { api, association, group } = props;
+  const associations = useMetadataState(state => state.associations);
   const channels = Object.values(associations.graph).filter(
     ({ group }) => association.group === group
   );
@@ -46,10 +47,10 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
       </Text>
       <Text pl='4' gray>Pinning a channel marks it as featured when joining or previewing a group.</Text>
       <Col p="4" width="100%" gapY="3">
-        {channels.map(({ resource, metadata }) => (
+        {channels.filter(({ metadata }) => !metadata.hidden).map(({ resource, metadata }) => (
           <Row justifyContent="space-between" width="100%" key={resource}>
             <Row gapX="2">
-              <Icon icon={getModuleIcon(metadata.module)} />
+              <Icon icon={getModuleIcon(metadata?.config?.graph)} />
               <Text>{metadata.title}</Text>
               {metadata.preview && <Text gray>Pinned</Text>}
             </Row>

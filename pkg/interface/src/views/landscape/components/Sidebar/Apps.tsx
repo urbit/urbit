@@ -17,6 +17,15 @@ export function useGraphModule(
         return 'unsubscribed';
       }
 
+      const notifications = graphUnreads?.[s]?.['/']?.notifications;
+      if (
+        notifications &&
+        ((typeof notifications === 'number' && notifications > 0)
+        || notifications.length)
+      ) {
+        return 'notification';
+      }
+
       const unreads = graphUnreads?.[s]?.['/']?.unreads;
       if (typeof unreads === 'number' ? unreads > 0 : unreads?.size ?? 0 > 0) {
         return 'unread';

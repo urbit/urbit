@@ -1,15 +1,14 @@
 /+  store=metadata-store
-|_  =update:store
+|_  =update:zero:store
 ++  grad  %noun
 ++  grow
   |%
   ++  noun  update
-  ++  json  (update:enjs:store update)
+  ++  metadata-update-0  update
   --
 ::
 ++  grab
   |%
-  ++  noun  update:store
-  ++  json  action:dejs:store
+  ++  noun  update:zero:store
   --
 --

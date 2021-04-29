@@ -10,6 +10,7 @@
       update:store
       %contact-update
       %contact-push-hook
+      0  0
       %.y  :: necessary to enable p2p
   ==
 --

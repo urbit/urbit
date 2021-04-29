@@ -3,7 +3,10 @@ import React, {
   useState,
   useCallback,
   useLayoutEffect,
+  useRef,
+  useEffect,
 } from "react";
+import usePreviousValue from "./usePreviousValue";
 
 export interface VirtualContextProps {
   save: () => void;
@@ -44,4 +47,19 @@ export function useVirtualResizeState(s: boolean) {
   }, [state]);
 
   return [state, setState] as const;
+}
+
+export function useVirtualResizeProp<T>(prop: T) {
+  const { save, restore } = useVirtual();
+  const oldProp = usePreviousValue(prop)
+
+  if(prop !== oldProp) {
+    save();
+  }
+
+  useLayoutEffect(() => {
+    restore();
+  }, [prop]);
+
+
 }

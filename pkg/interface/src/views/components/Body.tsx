@@ -14,7 +14,7 @@ export function Body(
         width="100%"
         borderRadius={2}
         border={border ? border : [0, 1]}
-        borderColor={['washedGray', 'washedGray']}
+        borderColor={['lightGray', 'lightGray']}
         {...boxProps}
       >
         {children}

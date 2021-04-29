@@ -48,7 +48,7 @@ const Tile = React.forwardRef((props, ref) => {
       borderRadius={2}
       overflow="hidden"
       bg={bg || "white"}
-      color={props?.color || 'washedGray'}
+      color={props?.color || 'lightGray'}
       boxShadow={boxShadow || '0 0 0px 1px inset'}
       style={{ gridColumnStart }}
     >

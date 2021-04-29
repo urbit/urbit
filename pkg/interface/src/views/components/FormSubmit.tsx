@@ -5,6 +5,7 @@ import { AsyncButton } from './AsyncButton';
 
 interface FormSubmitProps {
   children?: ReactNode;
+  start?: boolean;
 }
 
 export function FormSubmit<T = unknown>(props: FormSubmitProps): ReactElement {
@@ -23,7 +24,7 @@ export function FormSubmit<T = unknown>(props: FormSubmitProps): ReactElement {
     <Row
       p="2"
       bottom="0px"
-      justifyContent="flex-end"
+      justifyContent={props.start ? 'flex-start' : "flex-end"}
       gapX="2"
       alignItems="center"
     >
@@ -32,7 +33,7 @@ export function FormSubmit<T = unknown>(props: FormSubmitProps): ReactElement {
           Cancel
         </Button>
       )}
-      <AsyncButton onSuccess={handleSuccess} primary>
+      <AsyncButton disabled={!dirty} onSuccess={handleSuccess} primary>
         {children}
       </AsyncButton>
     </Row>

@@ -7,17 +7,17 @@ import { StorageState } from '~/types';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import { createPost } from '~/logic/api/graph';
 import { hasProvider } from 'oembed-parser';
+import {parsePermalink, permalinkToReference} from '~/logic/lib/permalinks';
 
 interface LinkSubmitProps {
   api: GlobalApi;
-  storage: StorageState;
   name: string;
   ship: string;
 }
 
 const LinkSubmit = (props: LinkSubmitProps) => {
   const { canUpload, uploadDefault, uploading, promptUpload } =
-    useStorage(props.storage);
+    useStorage();
 
   const [submitFocused, setSubmitFocused] = useState(false);
   const [urlFocused, setUrlFocused] = useState(false);
@@ -29,12 +29,13 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   const doPost = () => {
     const url = linkValue;
     const text = linkTitle ? linkTitle : linkValue;
+    const contents = url.startsWith('web+urbitgraph:/') 
+      ?  [{ text }, permalinkToReference(parsePermalink(url)!) ]
+      :  [{ text }, { url }];
+
     setDisabled(true);
     const parentIndex = props.parentIndex || '';
-    const post = createPost([
-      { text },
-      { url }
-    ], parentIndex);
+    const post = createPost(contents, parentIndex);
 
     props.api.graph.addPost(
       `~${props.ship}`,
@@ -60,6 +61,13 @@ const LinkSubmit = (props: LinkSubmitProps) => {
       if (linkValid) {
         link = `http://${link}`;
         setLinkValue(link);
+      }
+    }
+    if(link.startsWith('web+urbitgraph://')) {
+      const permalink = parsePermalink(link);
+      if(!permalink) {
+        setLinkValid(false);
+        return;
       }
     }
 
@@ -154,7 +162,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
         flexShrink={0}
         position='relative'
         border='1px solid'
-        borderColor={submitFocused ? 'black' : 'washedGray'}
+        borderColor={submitFocused ? 'black' : 'lightGray'}
         width='100%'
         borderRadius={2}
         {...bind}

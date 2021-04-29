@@ -12,7 +12,7 @@
 =,  jael
 |%
 ++  app-state
-  $:  %1
+  $:  %2
       url=@ta
       whos=(set ship)
       nas=^state:naive
@@ -30,11 +30,12 @@
 --
 ::
 |%
-::  TODO: is `dat` supposed to be a 32-byte hash?  I guess so
+::  TODO: maybe flop the endianness here so metamask signs it in normal
+::  order?
 ::
 ++  verifier
   ^-  ^verifier:naive
-  |=  [dat=@ v=@ r=@ s=@]
+  |=  [dat=octs v=@ r=@ s=@]
   ?:  (gth v 3)  ~  ::  TODO: move to jet
   =/  result
     %-  mule
@@ -42,7 +43,7 @@
     =,  secp256k1:secp:crypto
     %-  address-from-pub:key:ethereum
     %-  serialize-point
-    (ecdsa-raw-recover dat v r s)
+    (ecdsa-raw-recover (keccak-256:keccak:crypto dat) v r s)
   ?-  -.result
     %|  ~
     %&  `p.result
@@ -81,7 +82,9 @@
       ?.  =(0x2688.7f26 fun)
         [%bat *@]
       [%bat (end [3 (sub len 4)] u.input.u.mined.i.logs)]
-    =/  res  (mule |.((%*(. naive lac |) verifier nas input)))
+    =/  res
+      %-  mule
+      |.((%*(. naive lac |) verifier chain-id:contracts:azimuth nas input))
     ?-  -.res
       %&  p.res
       %|  ((slog 'naive-fail' p.res) `nas)
@@ -99,10 +102,13 @@
   |=  tag=tagged-diff
   ^-  (unit [=ship =udiff:point])
   ?.  ?=(%point +<.tag)  ~
-  ?+  +>+<.tag  ~
-    %rift     `[ship.tag id.tag %rift rift.tag]
-    %keys     `[ship.tag id.tag %keys [life crypto-suite pass]:tag]
-    %sponsor  `[ship.tag id.tag %spon sponsor.tag]
+  ?+    +>+<.tag  ~
+      %rift     `[ship.tag id.tag %rift rift.tag]
+      %sponsor  `[ship.tag id.tag %spon sponsor.tag]
+      %keys
+    =/  =pass
+      (pass-from-eth:azimuth 32^crypt.keys.tag 32^auth.keys.tag suite.keys.tag)
+    `[ship.tag id.tag %keys life.keys.tag suite.keys.tag pass]
   ==
 ::
 ++  jael-update
@@ -161,14 +167,26 @@
       |=  =event-log-0
       event-log-0(mined ?~(mined.event-log-0 ~ `mined.event-log-0))
     ==
-  `this(state ?>(?=(%1 -.old-state) old-state))
+  =?  old-state  ?=(%1 -.old-state)
+    %=    old-state
+        -    %2
+        nas  *^state:naive
+    ==
+  `this(state ?>(?=(%2 -.old-state) old-state))
   ::
-  ++  app-states  $%(app-state-0 app-state)
+  ++  app-states  $%(app-state-0 app-state-1 app-state)
+  ++  app-state-1
+    $:  %1
+        url=@ta
+        whos=(set ship)
+        nas=*
+        logs=(list =event-log:rpc:ethereum)
+    ==
   ++  app-state-0
     $:  %0
         url=@ta
         whos=(set ship)
-        nas=^state:naive
+        nas=*
         logs=(list =event-log-0)
     ==
   ::

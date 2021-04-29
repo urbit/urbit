@@ -23,7 +23,7 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
     anchorRef
   );
   return (
-    <Col {...rest} ref={anchorRef} gapY="4">
+    <Col {...rest} ref={anchorRef} gapY="4" maxWidth={['100%', '288px']}>
       <Row gapX="2" width="100%">
         <MetadataIcon
           width="40px"

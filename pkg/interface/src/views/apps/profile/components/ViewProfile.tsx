@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { Center, Box, Text, Row, Col } from '@tlon/indigo-react';
@@ -15,11 +15,13 @@ import {
   ProfileStatus,
   ProfileImages
 } from './Profile';
+import useContactState from '~/logic/state/contact';
 
-export function ViewProfile(props: any) {
-  const history = useHistory();
+export function ViewProfile(props: any): ReactElement {
   const { hideNicknames } = useSettingsState(selectCalmState);
-  const { api, contact, nacked, isPublic, ship, associations, groups } = props;
+  const { api, contact, nacked, ship } = props;
+
+  const isPublic = useContactState(state => state.isContactPublic);
 
   return (
     <>
@@ -37,7 +39,7 @@ export function ViewProfile(props: any) {
       </ProfileHeader>
       <Row pb={2} alignItems='center' width='100%'>
         <Center width='100%'>
-          <Text>
+          <Text fontWeight='500'>
             {!hideNicknames && contact?.nickname ? contact.nickname : ''}
           </Text>
         </Center>
@@ -49,7 +51,7 @@ export function ViewProfile(props: any) {
           </Text>
         </Center>
       </Row>
-      <Col pb={2} alignItems='center' justifyContent='center' width='100%'>
+      <Col pb={2} mt='3' alignItems='center' justifyContent='center' width='100%'>
         <Center flexDirection='column' maxWidth='32rem'>
           <RichText width='100%' disableRemoteContent>
             {contact?.bio ? contact.bio : ''}
@@ -60,12 +62,10 @@ export function ViewProfile(props: any) {
         <Col gapY='3' mb='3' mt='6' alignItems='flex-start'>
           <Text gray>Pinned Groups</Text>
           <Col>
-            {contact?.groups.sort(lengthOrder).map((g) => (
+            {contact?.groups.slice().sort(lengthOrder).map((g) => (
               <GroupLink
                 api={api}
                 resource={g}
-                groups={groups}
-                associations={associations}
                 measure={() => {}}
               />
             ))}
@@ -79,7 +79,7 @@ export function ViewProfile(props: any) {
           borderRadius={1}
           bg='white'
           border={1}
-          borderColor='washedGray'
+          borderColor='lightGray'
         >
           <Center height='100%'>
             <Text mono pr={1} color='gray'>

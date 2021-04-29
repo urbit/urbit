@@ -1,19 +1,20 @@
 /+  *test, naive, ethereum
 |%
 ++  address  @ux
-++  n  |=([=^state:naive =^input:naive] (%*(. naive lac |) verifier +<))
+++  n  |=([=^state:naive =^input:naive] (%*(. naive lac |) verifier 1.337 +<))
 ::  TODO: does this uniquely produce the pubkey?
 ::
 ++  verifier
   ^-  ^verifier:naive
-  |=  [dat=@ v=@ r=@ s=@]
+  |=  [dat=octs v=@ r=@ s=@]
+  ?:  (gth v 3)  ~  ::  TODO: move to jet
   =/  result
     %-  mule
     |.
     =,  secp256k1:secp:crypto
     %-  address-from-pub:key:ethereum
     %-  serialize-point
-    (ecdsa-raw-recover dat v r s)
+    (ecdsa-raw-recover (keccak-256:keccak:crypto dat) v r s)
   ?-  -.result
     %|  ~
     %&  `p.result
@@ -64,20 +65,31 @@
 ::
 ++  sign-tx
   |=  [pk=@ nonce=@ud tx=octs]  ^-  octs
-  =/  prepared-data=octs  [(add 4 p.tx) (can 3 4^nonce tx ~)]
+  =/  prepared-data  (prepare-for-sig 1.337 nonce tx)
   =/  sign-data
     =/  len  (rsh [3 2] (scot %ui p.prepared-data))
     %-  keccak-256:keccak:crypto
-    :-  :(add 26 (met 3 len) p.prepared-data)
-    %:  can  3
+    %:  cad:naive  3
       26^'\19Ethereum Signed Message:\0a'
       (met 3 len)^len
       prepared-data
       ~
     ==
   =+  (ecdsa-raw-sign:secp256k1:secp:crypto sign-data pk)
-  :-  :(add 1 32 32 p.tx)
-  (can 3 1^v 32^s 32^r tx ~)
+  (cad:naive 3 1^v 32^s 32^r tx ~)
+::
+++  prepare-for-sig
+  |=  [chain-id=@ud nonce=@ud tx=octs]
+  ^-  octs
+  =/  chain-t  (rsh [3 2] (scot %ui chain-id))
+  %:  cad:naive  3
+    14^'UrbitIDV1Chain'
+    (met 3 chain-t)^chain-t
+    1^':'
+    4^nonce
+    tx
+    ~
+  ==
 ::
 ++  l1
   |%
@@ -157,17 +169,22 @@
   ++  spawn
     |=  [nonce=@ud parent=ship pk=@ proxy=@tas child=ship =address]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-ship-address:bits %spawn parent proxy child address)
+    %:  cad:naive  3
+      (from-proxy:bits proxy)
+      4^parent
+      1^%1                                       :: %spawn
+      4^child
+      20^address
+      ~
+    ==
   ::
   ++  transfer-point
     |=  [nonce=@ud =ship pk=@ =address proxy=@tas reset=?]  ^-  octs
     %^  sign-tx  pk  nonce
-    :-  :(add 1 4 1 4 20)
-    %:  can  3
+    %:  cad:naive  3
       (from-proxy:bits proxy)
       4^ship
       1^(can 0 7^%0 1^reset ~)                   :: %transfer-point
-      4^ship
       20^address
       ~
     ==
@@ -178,12 +195,10 @@
         ==
     ^-  octs
     %^  sign-tx  pk  nonce
-    :-  :(add 1 4 1 4 32 32 4)
-    %:  can  3
+    %:  cad:naive  3
       (from-proxy:bits proxy)
       4^ship
       1^(can 0 7^%2 1^breach ~)                 :: %configure-keys
-      4^ship
       32^encrypt
       32^auth
       4^crypto-suite
@@ -203,32 +218,33 @@
   ++  adopt
     |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-escape:bits %adopt child proxy parent)
+    (take-escape:bits %adopt parent proxy child)
   ::
   ++  reject
     |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-escape:bits %reject child proxy parent)
+    (take-escape:bits %reject parent proxy child)
   ::
   ++  detach
     |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-escape:bits %detach child proxy parent)
+    (take-escape:bits %detach parent proxy child)
   ::
   ++  set-management-proxy
     |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-ship-address:bits %set-management-proxy ship proxy ship address)
+    ^-  octs
+    (take-ship-address:bits %set-management-proxy ship proxy address)
   ::
   ++  set-spawn-proxy
     |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-ship-address:bits %set-spawn-proxy ship proxy ship address)
+    (take-ship-address:bits %set-spawn-proxy ship proxy address)
   ::
   ++  set-transfer-proxy
     |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  octs
     %^  sign-tx  pk  nonce
-    (take-ship-address:bits %set-transfer-proxy ship proxy ship address)
+    (take-ship-address:bits %set-transfer-proxy ship proxy address)
   ::
   ++  bits
     ::
@@ -237,7 +253,7 @@
     ::  TODO: Shouldn't need to pass all these arguments along - they should already be in the subject somewhere
     ::
     ++  take-escape
-      |=  [action=@tas child=ship proxy=@tas parent=ship]  ^-  octs
+      |=  [action=@tas from=ship proxy=@tas other=ship]  ^-  octs
       =/  op
         ?+  action  !!
           %escape         %3
@@ -246,31 +262,26 @@
           %reject         %6
           %detach         %7
         ==
-      :-  :(add 1 4 1 4 4)
-      %:  can  3
+      %:  cad:naive  3
         (from-proxy proxy)
-        4^child
+        4^from
         1^(can 0 7^op 1^0 ~)
-        4^child
-        4^parent
+        4^other
         ~
       ==
     ::
     ++  take-ship-address
-      |=  [action=@tas from=ship proxy=@tas target=ship =address]  ^-  octs
+      |=  [action=@tas from=ship proxy=@tas =address]  ^-  octs
       =/  op
         ?+  action  !!
-          %spawn                    %1
           %set-management-proxy     %8
           %set-spawn-proxy          %9
           %set-transfer-proxy       %10
         ==
-      :-  :(add 1 4 1 4 20)
-      %:  can  3
+      %:  cad:naive  3
         (from-proxy proxy)
         4^from
         1^(can 0 7^op 1^0 ~)
-        4^target
         20^address
         ~
       ==
@@ -304,7 +315,7 @@
     %*(. *point:naive dominion %l1, owner.own 0x123^0, who.sponsor.net ~bud)
   ::
     !>
-    %^  naive  verifier  *^state:naive
+    %^  naive  verifier  1.337  :-  *^state:naive
     :*  %log  *@ux  *@ux
         owner-changed:log-names:naive  (@ux ~bud)  0x123  ~
     ==

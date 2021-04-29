@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text, Col, Anchor } from '@tlon/indigo-react';
+import { Box, Text, Col, Anchor, Row, Action } from '@tlon/indigo-react';
 import ReactMarkdown from 'react-markdown';
 import bigInt from 'big-integer';
 
@@ -9,36 +9,47 @@ import { Comments } from '~/views/components/Comments';
 import { NoteNavigation } from './NoteNavigation';
 import GlobalApi from '~/logic/api/global';
 import { getLatestRevision, getComments } from '~/logic/lib/publish';
+import { roleForShip } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
 import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
+import {useCopy} from '~/logic/lib/useCopy';
+import { getPermalinkForGraph } from '~/logic/lib/permalinks';
+import {useQuery} from '~/logic/lib/useQuery';
 
 interface NoteProps {
   ship: string;
   book: string;
   note: GraphNode;
-  unreads: Unreads;
   association: Association;
   notebook: Graph;
-  contacts: Contacts;
   api: GlobalApi;
   rootUrl: string;
   baseUrl: string;
   group: Group;
 }
 
+const renderers = {
+  link: ({ href, children }) => {
+    return (
+      <Anchor display="inline" target="_blank" href={href}>{children}</Anchor>
+    )
+  }
+};
+
+export function NoteContent({ body }) {
+  return (
+
+      <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
+        <ReactMarkdown source={body} linkTarget={'_blank'} renderers={renderers} />
+      </Box>
+  );
+
+}
+
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
-  const { notebook, note, contacts, ship, book, api, rootUrl, baseUrl, group } = props;
-  const editCommentId = props.match.params.commentId;
-
-  const renderers = {
-    link: ({ href, children }) => {
-      return (
-        <Anchor display="inline" target="_blank" href={href}>{children}</Anchor>
-      )
-    }
-  };
+  const { association, notebook, note, ship, book, api, rootUrl, baseUrl, group } = props;
 
   const deletePost = async () => {
     setDeleting(true);
@@ -47,6 +58,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
     props.history.push(rootUrl);
   };
 
+  const { query } = useQuery();
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
   const index = note.post.index.split('/');
@@ -56,36 +68,32 @@ export function Note(props: NoteProps & RouteComponentProps) {
     api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
   }, [props.association, props.note]);
 
-  let adminLinks: JSX.Element | null = null;
+  let adminLinks: JSX.Element[] = [];
+  const ourRole = roleForShip(group, window.ship);
   if (window.ship === note?.post?.author) {
-    adminLinks = (
-      <Box display="inline-block" verticalAlign="middle">
-        <Link to={`${baseUrl}/edit`}>
-        <Text
-          color="green"
-          ml={2}
-        >
-          Update
-        </Text>
+    adminLinks.push(
+      <Link to={`${baseUrl}/edit`}>
+        <Action>Update</Action>
       </Link>
-        <Text
-          color="red"
-          ml={2}
-          onClick={deletePost}
-          style={{ cursor: 'pointer' }}
-        >
-          Delete
-        </Text>
-      </Box>
-    );
-  }
+    )
+  };
 
-  const windowRef = React.useRef(null);
-  useEffect(() => {
-    if (windowRef.current) {
-      windowRef.current.parentElement.scrollTop = 0;
-    }
-  }, [windowRef, note]);
+  if (window.ship === note?.post?.author || ourRole === "admin") {
+    adminLinks.push(
+      <Action destructive onClick={deletePost}>
+        Delete
+      </Action>
+    )
+  };
+
+  const permalink = getPermalinkForGraph(
+    association.group,
+    association.resource,
+    `/${noteId.toString()}`
+  );
+
+  const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Link');
+
 
   return (
     <Box
@@ -98,25 +106,27 @@ export function Note(props: NoteProps & RouteComponentProps) {
       width="100%"
       gridRowGap={4}
       mx="auto"
-      ref={windowRef}
     >
       <Link to={rootUrl}>
         <Text>{'<- Notebook Index'}</Text>
       </Link>
       <Col>
         <Text display="block" mb={2}>{title || ''}</Text>
-        <Box display="flex">
+        <Row alignItems="center">
           <Author
+            showImage
             ship={post?.author}
-            contacts={contacts}
             date={post?.['time-sent']}
-          />
-          <Text ml={2}>{adminLinks}</Text>
-        </Box>
+            group={group}
+          >
+            <Row px="2" gapX="2" alignItems="flex-end">
+              <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
+              {adminLinks}
+            </Row>
+          </Author>
+        </Row>
       </Col>
-      <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <ReactMarkdown source={body} linkTarget={'_blank'} renderers={renderers} />
-      </Box>
+      <NoteContent body={body} />
       <NoteNavigation
         notebook={notebook}
         noteId={noteId}
@@ -126,13 +136,10 @@ export function Note(props: NoteProps & RouteComponentProps) {
       <Comments
         ship={ship}
         name={props.book}
-        unreads={props.unreads}
         comments={comments}
-        contacts={props.contacts}
         association={props.association}
         api={props.api}
         baseUrl={baseUrl}
-        editCommentId={editCommentId}
         history={props.history}
         group={group}
       />

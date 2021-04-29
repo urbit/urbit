@@ -1,9 +1,17 @@
-import { useEffect, useState } from 'react';
-import _ from "lodash";
-import f, { memoize } from "lodash/fp";
-import bigInt, { BigInteger } from "big-integer";
-import { Contact } from '~/types';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import _ from 'lodash';
+import f, { compose, memoize } from 'lodash/fp';
+import bigInt, { BigInteger } from 'big-integer';
+import { Association, Contact } from '@urbit/api';
+import useLocalState from '../state/local';
+import produce, { enableMapSet } from 'immer';
 import useSettingsState from '../state/settings';
+import { State, UseStore } from 'zustand';
+import { Cage } from '~/types/cage';
+import { BaseState } from '../state/base';
+import anyAscii from 'any-ascii';
+
+enableMapSet();
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
@@ -17,9 +25,14 @@ export const MOMENT_CALENDAR_DATE = {
 };
 
 export const getModuleIcon = (mod: string) => {
- if (mod === 'link') {
+  if (mod === 'link') {
     return 'Collection';
   }
+
+  if (mod === 'post') {
+    return 'Spaces';
+  }
+
   return _.capitalize(mod);
 };
 
@@ -27,10 +40,6 @@ export function wait(ms: number) {
   return new Promise((resolve, reject) => {
     setTimeout(resolve, ms);
   });
-}
-
-export function appIsGraph(app: string) {
-  return app === 'publish' || app == 'link';
 }
 
 export function parentPath(path: string) {
@@ -50,8 +59,18 @@ export function daToUnix(da: BigInteger) {
 }
 
 export function unixToDa(unix: number) {
-  const timeSinceEpoch =  bigInt(unix).multiply(DA_SECOND).divide(bigInt(1000));
+  const timeSinceEpoch = bigInt(unix).multiply(DA_SECOND).divide(bigInt(1000));
   return DA_UNIX_EPOCH.add(timeSinceEpoch);
+}
+
+export function dmCounterparty(resource: string) {
+  const [,,ship,name] = resource.split('/');
+  return ship === `~${window.ship}` ? `~${name.slice(4)}` : ship;
+}
+
+export function isDm(resource: string) {
+  const [,,,name] = resource.split('/');
+  return name.startsWith('dm--');
 }
 
 export function makePatDa(patda: string) {
@@ -300,7 +319,7 @@ export function stringToTa(str: string) {
 
 export function amOwnerOfGroup(groupPath: string) {
   if (!groupPath)
-return false;
+    return false;
   const groupOwner = /(\/~)?\/~([a-z-]{3,})\/.*/.exec(groupPath)?.[2];
   return window.ship === groupOwner;
 }
@@ -319,11 +338,12 @@ export function getContactDetails(contact: any) {
 }
 
 export function stringToSymbol(str: string) {
+  const ascii = anyAscii(str);
   let result = '';
-  for (let i = 0; i < str.length; i++) {
-    const n = str.charCodeAt(i);
+  for (let i = 0; i < ascii.length; i++) {
+    const n = ascii.charCodeAt(i);
     if ((n >= 97 && n <= 122) || (n >= 48 && n <= 57)) {
-      result += str[i];
+      result += ascii[i];
     } else if (n >= 65 && n <= 90) {
       result += String.fromCharCode(n + 32);
     } else {
@@ -337,7 +357,6 @@ export function stringToSymbol(str: string) {
   }
   return result;
 }
-
 /**
  * Formats a numbers as a `@ud` inserting dot where needed
  */
@@ -355,7 +374,7 @@ export function numToUd(num: number) {
 export function usePreventWindowUnload(shouldPreventDefault: boolean, message = 'You have unsaved changes. Are you sure you want to exit?') {
   useEffect(() => {
     if (!shouldPreventDefault)
-return;
+      return;
     const handleBeforeUnload = (event) => {
       event.preventDefault();
       return message;
@@ -371,12 +390,13 @@ return;
 }
 
 export function pluralize(text: string, isPlural = false, vowel = false) {
-  return isPlural ? `${text}s`: `${vowel ? 'an' : 'a'} ${text}`;
+  return isPlural ? `${text}s` : `${vowel ? 'an' : 'a'} ${text}`;
 }
 
 // Hide is an optional second parameter for when this function is used in class components
 export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
-  const hideNicknames = typeof hide !== 'undefined' ? hide : useSettingsState(state => state.calm.hideNicknames);
+  const hideState = useSettingsState(state => state.calm.hideNicknames);
+  const hideNicknames = typeof hide !== 'undefined' ? hide : hideState;
   return !!(contact && contact.nickname && !hideNicknames);
 }
 
@@ -390,21 +410,26 @@ interface useHoveringInterface {
 
 export const useHovering = (): useHoveringInterface => {
   const [hovering, setHovering] = useState(false);
-  const bind = {
-    onMouseOver: () => setHovering(true),
-    onMouseLeave: () => setHovering(false)
-  };
-  return { hovering, bind };
+  const onMouseOver = useCallback(() => setHovering(true), [])
+  const onMouseLeave = useCallback(() => setHovering(false), [])
+  const bind = useMemo(() => ({
+    onMouseOver,
+    onMouseLeave,
+  }), [onMouseLeave, onMouseOver]);
+
+  
+  return useMemo(() => ({ hovering, bind }), [hovering, bind]);
 };
 
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 export function getItemTitle(association: Association) {
-  if(DM_REGEX.test(association.resource)) {
-    const [,,ship,name] = association.resource.split('/');
-    if(ship.slice(1) === window.ship) {
+  if (DM_REGEX.test(association.resource)) {
+    const [, , ship, name] = association.resource.split('/');
+    if (ship.slice(1) === window.ship) {
       return cite(`~${name.slice(4)}`);
     }
     return cite(ship);
   }
   return association.metadata.title || association.resource;
 }
+

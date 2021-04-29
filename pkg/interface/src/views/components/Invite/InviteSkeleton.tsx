@@ -47,7 +47,7 @@ export function InviteSkeleton(
           </StatelessAsyncAction>
         </Row>
       </Col>
-      <Rule />
+      <Rule borderColor="washedGray" />
     </>
   );
 }

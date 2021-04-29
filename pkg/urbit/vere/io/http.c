@@ -1467,6 +1467,10 @@ _http_serv_start(u3_http* htp_u)
                           htonl(INADDR_LOOPBACK) :
                           INADDR_ANY;
 
+  if ( 0 != u3_Host.ops_u.bin_c && c3n == htp_u->lop ) {
+    inet_aton(u3_Host.ops_u.bin_c, &adr_u.sin_addr);
+  }
+
   uv_tcp_init(u3L, &htp_u->wax_u);
 
   /*  Try ascending ports.
@@ -1480,6 +1484,10 @@ _http_serv_start(u3_http* htp_u)
                                    (const struct sockaddr*)&adr_u, 0)) ||
          0 != (sas_i = uv_listen((uv_stream_t*)&htp_u->wax_u,
                                  TCP_BACKLOG, _http_serv_listen_cb)) ) {
+      if ( UV_EADDRNOTAVAIL == sas_i ) {
+        u3l_log("http: ip address not available\n");
+        u3_king_bail();
+      }
       if ( (UV_EADDRINUSE == sas_i) || (UV_EACCES == sas_i) ) {
         if ( (c3y == htp_u->sec) && (443 == htp_u->por_s) ) {
           htp_u->por_s = 8443;

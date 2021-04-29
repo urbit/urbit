@@ -13,7 +13,7 @@ export function ChannelPopoverRoutesSidebar(props: {
 
   return (
     <Col
-      display={['none', 'flex-column']}
+      display={['none', 'flex']}
       minWidth="200px"
       borderRight="1"
       borderRightColor="washedGray"

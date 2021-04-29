@@ -1389,8 +1389,21 @@ static c3_c* _140_tri_shal_ha[] = {
   0
 };
 
-static u3j_core _140_ob_d[] =
-{ {}
+static u3j_harm _140_ob_fein_a[] = {{".2", u3we_fein_ob}, {}};
+static c3_c* _140_ob_fein_ha[] = {
+  0
+};
+
+static u3j_harm _140_ob_fynd_a[] = {{".2", u3we_fynd_ob}, {}};
+static c3_c* _140_ob_fynd_ha[] = {
+  0
+};
+
+
+static u3j_core _140_ob_d[] = {
+  { "fein", 7, _140_ob_fein_a, 0, _140_ob_fein_ha },
+  { "fynd", 7, _140_ob_fynd_a, 0, _140_ob_fynd_ha },
+  {}
 };
 static c3_c* _140_ob_ha[] = {
   "13ebfbdee69396bc1d980fc4dcbcdaa9cc3fb9c011e6cf188e71311a8bffc8e6",
@@ -2088,6 +2101,7 @@ u3j_core _a50_d[] =
 { { "add", 7, _140_one_add_a, 0, _140_one_add_ha },
   { "dec", 7, _140_one_dec_a, 0, _140_one_dec_ha },
   { "div", 7, _140_one_div_a, 0, _140_one_div_ha },
+  { "gte", 7, _140_one_gte_a, 0, _140_one_gte_ha },
   { "gth", 7, _140_one_gth_a, 0, _140_one_gth_ha },
   { "lte", 7, _140_one_lte_a, 0, _140_one_lte_ha },
   { "lth", 7, _140_one_lth_a, 0, _140_one_lth_ha },
