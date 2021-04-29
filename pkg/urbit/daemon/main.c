@@ -25,6 +25,8 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#include <vere/db/lmdb.h>
+
 #include "ca-bundle.h"
 
 /* Require unsigned char
@@ -97,7 +99,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "X:Y:G:J:B:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdgqstvxPDRS")) )
+                 "X:Y:G:J:B:b:K:A:H:I:C:w:u:e:F:k:n:p:r:i:Z:LljacdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'X': {
@@ -118,6 +120,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
+        break;
+      }
+      case 'b': {
+        u3_Host.ops_u.bin_c = strdup(optarg);
         break;
       }
       case 'G': {
@@ -300,6 +306,12 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
+  struct sockaddr_in t;
+  if ( u3_Host.ops_u.bin_c != 0 && inet_aton(u3_Host.ops_u.bin_c, &t.sin_addr) == 0 ) {
+    fprintf(stderr, "-b invalid IP address\n");
+    return c3n;
+  }
+
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.dns_c != 0) {
     fprintf(stderr, "-H only makes sense when bootstrapping a new instance\n");
     return c3n;
@@ -400,6 +412,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "\n",
     "-A dir        Use dir for initial clay sync\n",
     "-B pill       Bootstrap from this pill\n",
+    "-b ip         Bind HTTP server to this IP address\n",
     "-C limit      Set memo cache max size; 0 means uncapped\n",
     "-c pier       Create a new urbit in pier/\n",
     "-D            Recompute from events\n",
@@ -602,6 +615,32 @@ _stop_on_boot_completed_cb()
   u3_king_exit();
 }
 
+static c3_i
+_debug_db_stats(const c3_c* dir_c)
+{
+#if defined(U3_CPU_aarch64) && defined(U3_OS_linux)
+  const size_t siz_i = 64424509440;
+#else
+  const size_t siz_i = 1099511627776;
+#endif
+
+  c3_c* log_c = c3_malloc(10 + strlen(dir_c));
+
+  strcpy(log_c, dir_c);
+  strcat(log_c, "/.urb/log");
+
+  MDB_env* mdb_u = u3_lmdb_init(log_c, siz_i);
+
+  if ( mdb_u ) {
+    u3_lmdb_stat(mdb_u, stdout);
+    u3_lmdb_exit(mdb_u);
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+
 c3_i
 main(c3_i   argc,
      c3_c** argv)
@@ -609,6 +648,12 @@ main(c3_i   argc,
   //  Parse options.
   //
   if ( c3n == _main_getopt(argc, argv) ) {
+    if (  (3 == argc)
+       && (0 == strcmp("db-info", argv[1])) )
+    {
+      return _debug_db_stats(argv[2]);
+    }
+
     u3_ve_usage(argc, argv);
     return 1;
   }

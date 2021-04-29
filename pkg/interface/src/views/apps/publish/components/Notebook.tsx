@@ -5,44 +5,41 @@ import { Col, Box, Text, Row } from '@tlon/indigo-react';
 import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from '@urbit/api';
 
 import { NotebookPosts } from './NotebookPosts';
-import GlobalApi from '~/logic/api/global';
 import { useShowNickname } from '~/logic/lib/util';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 
 interface NotebookProps {
-  api: GlobalApi;
   ship: string;
   book: string;
   graph: Graph;
   association: Association;
-  associations: Associations;
-  contacts: Rolodex;
-  groups: Groups;
   baseUrl: string;
   rootUrl: string;
   unreads: Unreads;
 }
 
-export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement {
+export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement | null {
   const {
     ship,
     book,
-    contacts,
-    groups,
     association,
     graph
   } = props;
 
-  const group = groups[association?.group];
-  if (!group) {
-    return null; // Waiting on groups to populate
-  }
+  const groups = useGroupState(state => state.groups);
+  const contacts = useContactState(state => state.contacts);
 
+  const group = groups[association?.group];
   const relativePath = (p: string) => props.baseUrl + p;
 
   const contact = contacts?.[`~${ship}`];
-  console.log(association.resource);
 
   const showNickname = useShowNickname(contact);
+
+  if (!group) {
+    return null; // Waiting on groups to populate
+  }
 
   return (
     <Col gapY="4" pt={4} mx="auto" px={3} maxWidth="768px">
@@ -55,15 +52,12 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
           </Text>
         </Box>
       </Row>
-      <Box borderBottom="1" borderBottomColor="washedGray" />
+      <Box borderBottom="1" borderBottomColor="lightGray" />
       <NotebookPosts
         graph={graph}
         host={ship}
         book={book}
-        contacts={contacts}
-        unreads={props.unreads}
         baseUrl={props.baseUrl}
-        api={props.api}
         group={group}
       />
     </Col>

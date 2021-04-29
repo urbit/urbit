@@ -12,6 +12,9 @@
   $%  [%0 observers=(map serial observer:sur)]
       [%1 observers=(map serial observer:sur)]
       [%2 observers=(map serial observer:sur)]
+      [%3 observers=(map serial observer:sur)]
+      [%4 observers=(map serial observer:sur)]
+      [%5 observers=(map serial observer:sur) warm-cache=_|]
   ==
 ::
 +$  serial   @uv
@@ -25,7 +28,7 @@
 --
 ::
 %-  agent:dbug
-=|  [%2 observers=(map serial observer:sur)]
+=|  [%5 observers=(map serial observer:sur) warm-cache=_|]
 =*  state  -
 ::
 ^-  agent:gall
@@ -39,6 +42,8 @@
   :~  (act [%watch %invite-store /invitatory/graph %invite-accepted-graph])
       (act [%watch %group-store /groups %group-on-leave])
       (act [%watch %group-store /groups %group-on-remove-member])
+      (act [%watch %metadata-store /updates %md-on-add-group-feed])
+      (act [%warm-cache-all ~])
   ==
   ::
   ++  act
@@ -50,8 +55,7 @@
         [our.bowl %observe-hook]
         %poke
         %observe-action
-        !>  ^-  action:sur
-        action
+        !>(action)
     ==
   --
 ::
@@ -63,20 +67,36 @@
   =/  old-state  !<(versioned-state old-vase)
   =|  cards=(list card)
   |-
-  ?:  ?=(%2 -.old-state)
-    =.  cards
-      :_  cards
-      (act [%watch %group-store /groups %group-on-leave])
+  ?-  -.old-state
+      %5
     [cards this(state old-state)]
-  ?:  ?=(%1 -.old-state)
+      %4
+    =.  cards
+      :_  cards
+      (act [%warm-cache-all ~])
+    $(old-state [%5 observers.old-state %.n])
+  ::
+      %3
+    =.  cards
+      :_  cards
+      (act [%watch %metadata-store /updates %md-on-add-group-feed])
+    $(-.old-state %4)
+  ::
+      %2
     =.  cards
       :_  cards
       (act [%watch %group-store /groups %group-on-leave])
+    $(-.old-state %3)
+  ::
+      %1
     $(-.old-state %2)
-  =.  cards
-    :_  cards
-    (act [%watch %group-store /groups %group-on-remove-member])
-  $(-.old-state %1)
+  ::
+      %0
+    =.  cards
+      :_  cards
+      (act [%watch %group-store /groups %group-on-remove-member])
+    $(-.old-state %1)
+  ==
   ::
   ++  act
     |=  =action:sur
@@ -87,8 +107,7 @@
         [our.bowl %observe-hook]
         %poke
         %observe-action
-        !>  ^-  action:sur
-        action
+        !>(action)
     ==
   --
 ::
@@ -98,11 +117,19 @@
   ?>  (team:title our.bowl src.bowl)
   ?.  ?=(%observe-action mark)
     (on-poke:def mark vase)
+  |^
   =/  =action:sur  !<(action:sur vase)
   =*  observer  observer.action
   =/  vals  (silt ~(val by observers))
   ?-  -.action
-      %watch
+    %watch           (watch observer vals)
+    %ignore          (ignore observer vals)
+    %warm-cache-all  warm-cache-all
+    %cool-cache-all  cool-cache-all
+  ==
+  ::
+  ++  watch
+    |=  [=observer:sur vals=(set observer:sur)]
     ?:  ?|(=(app.observer %spider) =(app.observer %observe-hook)) 
       ~|('we avoid infinite loops' !!)
     ?:  (~(has in vals) observer)
@@ -117,7 +144,8 @@
         path.observer
     == 
   ::
-      %ignore
+  ++  ignore
+    |=  [=observer:sur vals=(set observer:sur)]
     ?.  (~(has in vals) observer)
       ~|('cannot remove nonexistent observer' !!)
     =/  key  (got-by-val observers observer)
@@ -130,7 +158,19 @@
         %leave
         ~
     == 
-  ==
+  ::
+  ++  warm-cache-all
+    ?:  warm-cache
+      ~|('cannot warm up cache that is already warm' !!)
+    :_  this(warm-cache %.y)
+    =/  =rave:clay  [%sing [%t da+now.bowl /mar]]
+    [%pass /warm-cache %arvo %c %warp our.bowl %home `rave]~
+  ::
+  ++  cool-cache-all
+    ?.  warm-cache
+      ~|('cannot cool down cache that is already cool' !!)
+    [~ this(warm-cache %.n)]
+  --
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
@@ -248,9 +288,48 @@
     ==  == 
   --
 ::
+++  on-arvo
+  |=  [=wire =sign-arvo]
+  ^-  (quip card _this)
+  :_  this
+  ?+    wire  (on-arvo:def wire sign-arvo)
+      [%warm-cache ~]
+    ?.  warm-cache
+      ~
+    ?>  ?=([%clay %writ *] sign-arvo)
+    =*  riot  p.sign-arvo
+    ?~  riot
+      =/  =rave:clay  [%next [%t da+now.bowl /mar]]
+      [%pass /warm-cache %arvo %c %warp our.bowl %home `rave]~
+    :-  =/  =rave:clay  [%next [%t q.p.u.riot /mar]]
+        [%pass /warm-cache %arvo %c %warp our.bowl %home `rave]
+    %+  turn  !<((list path) q.r.u.riot)
+    |=  pax=path
+    ^-  card
+    =.  pax  (snip (slag 1 pax))
+    =/  mark=@ta
+      %+  roll  pax
+      |=  [=term mark=term]
+      ?:  ?=(%$ mark)
+        term
+      :((cury cat 3) mark '-' term)
+    =/  =rave:clay  [%sing %b da+now.bowl /[mark]]
+    [%pass [%mar mark ~] %arvo %c %warp our.bowl %home `rave]
+  ::
+      [%mar ^]
+    ?.  warm-cache
+      ~
+    ?>  ?=([%clay %writ *] sign-arvo)
+    =*  riot  p.sign-arvo
+    =*  mark  t.wire
+    ?~  riot
+      ~
+    =/  =rave:clay  [%next %b q.p.u.riot mark]
+    [%pass wire %arvo %c %warp our.bowl %home `rave]~
+  ==
+::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
-++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --

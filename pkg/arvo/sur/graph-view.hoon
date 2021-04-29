@@ -1,4 +1,4 @@
-/-  *group, store=graph-store
+/-  *group, store=graph-store, met=metadata-store
 /+  resource
 ^?
 |%
@@ -43,6 +43,8 @@
     [%forward rid=resource =update:store]
     [%eval =cord]
     [%pending-indices pending=(map hash:store index:store)]
+    [%create-group-feed group=resource vip=vip-metadata:met]
+    [%disable-group-feed group=resource]
   ==
 --
 

@@ -11,15 +11,17 @@ import { Association } from '@urbit/api/metadata';
 
 import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
+import useHarkState from '~/logic/state/hark';
 
 export function GroupPersonalSettings(props: {
   api: GlobalApi;
   association: Association;
-  notificationsGroupConfig: GroupNotificationsConfig;
 }) {
   const groupPath = props.association.group;
 
-  const watching = props.notificationsGroupConfig.findIndex(g => g === groupPath) !== -1;
+  const notificationsGroupConfig = useHarkState(state => state.notificationsGroupConfig);
+
+  const watching = notificationsGroupConfig.findIndex(g => g === groupPath) !== -1;
 
   const onClick = async () => {
     const func = !watching ? 'listenGroup' : 'ignoreGroup';

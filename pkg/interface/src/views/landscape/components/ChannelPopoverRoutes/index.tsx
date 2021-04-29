@@ -19,16 +19,14 @@ import { useHistory, Link } from 'react-router-dom';
 import { ChannelNotifications } from './Notifications';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { isChannelAdmin, isHost } from '~/logic/lib/group';
+import {FormGroup} from '~/views/components/FormGroup';
 
 interface ChannelPopoverRoutesProps {
   baseUrl: string;
   rootUrl: string;
   association: Association;
   group: Group;
-  groups: Groups;
-  contacts: Rolodex;
   api: GlobalApi;
-  notificationsGraphConfig: NotificationGraphConfig;
 }
 
 export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
@@ -86,10 +84,10 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
           isOwner={isOwner}
           baseUrl={props.baseUrl}
         />
-        <Col height="100%" overflowY="auto" p="5" flexGrow={1}>
+        <FormGroup onReset={onDismiss} height="100%" overflowY="auto" pt="5" flexGrow={1}>
           <ChannelNotifications {...props} />
           {!isOwner && (
-            <Col mb="6" flexShrink={0}>
+            <Col mx="4" mb="6" flexShrink={0}>
               <Text id="unsubscribe" fontSize="2" fontWeight="bold">
                 Unsubscribe from Channel
               </Text>
@@ -110,7 +108,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
               <ChannelDetails {...props} />
               <GraphPermissions {...props} />
               { isOwner ? (
-              <Col mt="5" mb="6" flexShrink={0}>
+              <Col mx="4" mt="5" mb="6" flexShrink={0}>
                 <Text id="archive" fontSize="2" fontWeight="bold">
                   Archive channel
                 </Text>
@@ -127,7 +125,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
               </Col>
 
               ) : (
-              <Col mt="5" mb="6" flexShrink={0}>
+              <Col mx="4" my="6" flexShrink={0}>
               <Text id="remove" fontSize="2" fontWeight="bold">
                 Remove channel from group
               </Text>
@@ -146,7 +144,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
               )}
             </>
           )}
-        </Col>
+      </FormGroup>
       </Row>
     </ModalOverlay>
   );

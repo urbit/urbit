@@ -10,10 +10,12 @@ import { Box, Col } from '@tlon/indigo-react';
 import Api from './api';
 import Store from './store';
 import Subscription from './subscription';
+import withState from '~/logic/lib/withState';
+import useHarkState from '~/logic/state/hark';
 
 import './css/custom.css';
 
-export default class TermApp extends Component {
+class TermApp extends Component {
   constructor(props) {
     super(props);
     this.store = new Store();
@@ -68,7 +70,7 @@ export default class TermApp extends Component {
                     width='100%'
                     minHeight='0'
                     minWidth='0'
-                    color='washedGray'
+                    color='lightGray'
                     borderRadius='2'
                     mx={['0','3']}
                     mb={['0','3']}
@@ -93,3 +95,5 @@ export default class TermApp extends Component {
     );
   }
 }
+
+export default withState(TermApp, [[useHarkState]]);

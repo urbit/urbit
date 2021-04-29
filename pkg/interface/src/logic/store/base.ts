@@ -5,10 +5,6 @@ export default class BaseStore<S extends object> {
     this.state = this.initialState();
   }
 
-  dehydrate() {}
-
-  rehydrate() {}
-
   initialState() {
     return {} as S;
   }
@@ -36,7 +32,9 @@ export default class BaseStore<S extends object> {
     }
 
     this.reduce(json, this.state);
-    this.setState(this.state);
+    if('connection' in json) {
+      this.setState(this.state);
+    }
   }
 
   reduce(data, state) {

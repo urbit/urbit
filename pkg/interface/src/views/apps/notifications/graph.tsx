@@ -1,149 +1,168 @@
-import React, { ReactNode, useCallback } from 'react';
-import moment from 'moment';
-import { Row, Box, Col, Text, Anchor, Icon, Action } from '@tlon/indigo-react';
-import { Link, useHistory } from 'react-router-dom';
-import _ from 'lodash';
+import React, { ReactNode, useCallback } from "react";
+import moment from "moment";
+import { Row, Box, Col, Text, Anchor, Icon, Action } from "@tlon/indigo-react";
+import { Link, useHistory } from "react-router-dom";
+import _ from "lodash";
 import {
   GraphNotifIndex,
   GraphNotificationContents,
   Associations,
   Rolodex,
-  Groups
-} from '~/types';
-import { Header } from './header';
-import { cite, deSig, pluralize, useShowNickname } from '~/logic/lib/util';
-import Author from '~/views/components/Author';
-import GlobalApi from '~/logic/api/global';
-import { getSnippet } from '~/logic/lib/publish';
-import styled from 'styled-components';
-import { MentionText } from '~/views/components/MentionText';
-import ChatMessage from '../chat/components/ChatMessage';
+  Groups,
+} from "~/types";
+import { Header } from "./header";
+import {
+  cite,
+  deSig,
+  pluralize,
+  useShowNickname,
+  isDm,
+} from "~/logic/lib/util";
+import { GraphContentWide } from "~/views/landscape/components/Graph/GraphContentWide";
+import Author from "~/views/components/Author";
+import GlobalApi from "~/logic/api/global";
+import styled from "styled-components";
+import useContactState from "~/logic/state/contact";
+import useGroupState from "~/logic/state/group";
+import useMetadataState, {
+  useAssocForGraph,
+  useAssocForGroup,
+} from "~/logic/state/metadata";
+import { PermalinkEmbed } from "../permalinks/embed";
+import { parsePermalink, referenceToPermalink } from "~/logic/lib/permalinks";
+import { Post, Group, Association } from "@urbit/api";
+import { BigInteger } from "big-integer";
+
+const TruncBox = styled(Box)<{ truncate?: number }>`
+  -webkit-line-clamp: ${(p) => p.truncate ?? "unset"};
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  color: ${(p) => p.theme.colors.black};
+`;
 
 function getGraphModuleIcon(module: string) {
-  if (module === 'link') {
-    return 'Collection';
+  if (module === "link") {
+    return "Collection";
+  }
+  if (module === "post") {
+    return "Groups";
   }
   return _.capitalize(module);
 }
 
-const FilterBox = styled(Box)`
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    ${p => p.theme.colors.white}
-  );
-`;
-
-function describeNotification(description: string, plural: boolean): string {
+function describeNotification(
+  description: string,
+  plural: boolean,
+  isDm: boolean,
+  singleAuthor: boolean
+): string {
   switch (description) {
-    case 'link':
-      return `added ${pluralize('new link', plural)} to`;
-    case 'comment':
-      return `left ${pluralize('comment', plural)} on`;
-    case 'edit-comment':
-      return `updated ${pluralize('comment', plural)} on`;
-    case 'note':
-      return `posted ${pluralize('note', plural)} to`;
-    case 'edit-note':
-      return `updated ${pluralize('note', plural)} in`;
-    case 'mention':
-      return 'mentioned you on';
-    case 'message':
-      return `sent ${pluralize('message', plural)} to`;
+    case "post":
+      return singleAuthor ? "replied to you" : "Your post received replies";
+    case "link":
+      return `New link${plural ? "s" : ""} in`;
+    case "comment":
+      return `New comment${plural ? "s" : ""} on`;
+    case "note":
+      return `New Note${plural ? "s" : ""} in`;
+    case "edit-note":
+      return `updated ${pluralize("note", plural)} in`;
+    case "mention":
+      return singleAuthor ? "mentioned you in" : "You were mentioned in";
+    case "message":
+      if (isDm) {
+        return "messaged you";
+      }
+      return `New message${plural ? "s" : ""} in`;
     default:
       return description;
   }
 }
 
-const GraphUrl = ({ url, title }) => (
-  <Box borderRadius='2' p='2' bg='scales.black05'>
-    <Anchor underline={false} target='_blank' color='black' href={url}>
-      <Icon verticalAlign='bottom' mr='2' icon='ArrowExternal' />
-      {title}
-    </Anchor>
-  </Box>
-);
+const GraphUrl = ({ contents, api }) => {
+  const [{ text }, link] = contents;
 
-const GraphNodeContent = ({
-  group,
-  post,
-  contacts,
-  mod,
-  description,
-  index,
-  remoteContentPolicy
-}) => {
-  const { contents } = post;
-  const idx = index.slice(1).split('/');
-  if (mod === 'link') {
-    if (idx.length === 1) {
-      const [{ text }, { url }] = contents;
-      return <GraphUrl title={text} url={url} />;
-    } else if (idx.length === 3) {
-      return (
-        <MentionText content={contents} contacts={contacts} group={group} />
-      );
-    }
-    return null;
-  }
-  if (mod === 'publish') {
-    if (idx[1] === '2') {
-      return (
-        <MentionText
-          content={contents}
-          group={group}
-          contacts={contacts}
-          fontSize='14px'
-          lineHeight='tall'
-        />
-      );
-    } else if (idx[1] === '1') {
-      const [{ text: header }, { text: body }] = contents;
-      const snippet = getSnippet(body);
-      return (
-        <Col>
-          <Box mb='2' fontWeight='500'>
-            <Text>{header}</Text>
-          </Box>
-          <Box overflow='hidden' maxHeight='400px' position='relative'>
-            <Text lineHeight='tall'>{snippet}</Text>
-            <FilterBox
-              width='100%'
-              zIndex='1'
-              height='calc(100% - 2em)'
-              bottom='-4px'
-              position='absolute'
-            />
-          </Box>
-        </Col>
-      );
-    }
-  }
-
-  if (mod === 'chat') {
+  if ("reference" in link) {
     return (
-      <Row
-        width='100%'
-        flexShrink={0}
-        flexGrow={1}
-        flexWrap='wrap'
-        marginLeft='-32px'
-      >
-        <ChatMessage
-          renderSigil={false}
-          containerClass='items-top cf hide-child'
-          group={group}
-          contacts={contacts}
-          groups={{}}
-          associations={{ graph: {}, groups: {} }}
-          msg={post}
-          fontSize='0'
-          pt='2'
-        />
-      </Row>
+      <PermalinkEmbed
+        transcluded={1}
+        link={referenceToPermalink(link).link}
+        api={api}
+        showOurContact
+      />
     );
   }
-  return null;
+  return (
+    <Box borderRadius="2" p="2" bg="scales.black05">
+      <Anchor underline={false} target="_blank" color="black" href={link.url}>
+        <Icon verticalAlign="bottom" mr="2" icon="ArrowExternal" />
+        {text}
+      </Anchor>
+    </Box>
+  );
+};
+
+function ContentSummary({ icon, name, author, to }) {
+  return (
+    <Link to={to}>
+      <Col
+        gapY="1"
+        flexDirection={["column", "row"]}
+        alignItems={["flex-start", "center"]}
+      >
+        <Row
+          alignItems="center"
+          gapX="2"
+          p="1"
+          width="fit-content"
+          borderRadius="2"
+          border="1"
+          borderColor="lightGray"
+        >
+          <Icon display="block" icon={icon} />
+          <Text verticalAlign="baseline" fontWeight="medium">
+            {name}
+          </Text>
+        </Row>
+        <Row ml={[0, 1]} alignItems="center">
+          <Text lineHeight="1" fontWeight="medium" mr="1">
+            by
+          </Text>
+          <Author
+            sigilPadding={6}
+            size={24}
+            dontShowTime
+            ship={author}
+            showImage
+          />
+        </Row>
+      </Col>
+    </Link>
+  );
+}
+
+export const GraphNodeContent = ({ post, mod, index, hidden, association }) => {
+  const { contents } = post;
+  const idx = index.slice(1).split("/");
+  const url = getNodeUrl(mod, hidden, association?.group, association?.resource, index);
+  if (mod === "link" && idx.length === 1) {
+    const [{ text: title }] = contents;
+    return (
+      <ContentSummary to={url} icon="Links" name={title} author={post.author} />
+    );
+  }
+  if (mod === "publish" && idx[1] === "1") {
+    const [{ text: title }] = contents;
+    return (
+      <ContentSummary to={url} icon="Note" name={title} author={post.author} />
+    );
+  }
+  return (
+    <TruncBox truncate={8}>
+      <GraphContentWide api={{} as any} post={post} showOurContact />
+    </TruncBox>
+  );
 };
 
 function getNodeUrl(
@@ -153,78 +172,103 @@ function getNodeUrl(
   graph: string,
   index: string
 ) {
-  if (hidden && mod === 'chat') {
-    groupPath = '/messages';
+  if (hidden && mod === "chat") {
+    groupPath = "/messages";
   } else if (hidden) {
-    groupPath = '/home';
+    groupPath = "/home";
   }
   const graphUrl = `/~landscape${groupPath}/resource/${mod}${graph}`;
-  const idx = index.slice(1).split('/');
-  if (mod === 'publish') {
-    const [noteId] = idx;
-    return `${graphUrl}/note/${noteId}`;
-  } else if (mod === 'link') {
-    const [linkId] = idx;
-    return `${graphUrl}/${linkId}`;
-  } else if (mod === 'chat') {
-    return graphUrl;
-  }
-  return '';
-}
-const GraphNode = ({
-  post,
-  contacts,
-  author,
-  mod,
-  description,
-  time,
-  index,
-  graph,
-  groupPath,
-  group,
-  read,
-  onRead,
-  showContact = false,
-}) => {
-  author = deSig(author);
-  const history = useHistory();
-
-  const nodeUrl = getNodeUrl(mod, group?.hidden, groupPath, graph, index);
-
-  const onClick = useCallback(() => {
-    if (!read) {
-      onRead();
+  const idx = index.slice(1).split("/");
+  if (mod === "publish") {
+    console.log(idx);
+    const [noteId, kind, commId] = idx;
+    const selected = kind === "2" ? `?selected=${commId}` : "";
+    return `${graphUrl}/note/${noteId}${selected}`;
+  } else if (mod === "link") {
+    const [linkId, commId] = idx;
+    return `${graphUrl}/index/${linkId}${commId ? `?selected=${commId}` : ""}`;
+  } else if (mod === "chat") {
+    if (idx.length > 0) {
+      return `${graphUrl}?msg=${idx[0]}`;
     }
-    history.push(nodeUrl);
-  }, [read, onRead]);
+    return graphUrl;
+  } else if (mod === "post") {
+    return `/~landscape${groupPath}/feed${index}`;
+  }
+  return "";
+}
 
-  const showNickname = useShowNickname(contacts?.[`~${author}`]);
-  const nickname = (contacts?.[`~${author}`]?.nickname && showNickname) ? contacts[`~${author}`].nickname : cite(author);
+interface PostsByAuthor {
+  author: string;
+  posts: Post[];
+}
+const GraphNodes = (props: {
+  posts: Post[];
+  graph: string;
+  hideAuthors?: boolean;
+  group?: Group;
+  groupPath: string;
+  description: string;
+  index: string;
+  mod: string;
+  association: Association;
+  hidden: boolean;
+}) => {
+  const {
+    posts,
+    mod,
+    hidden,
+    index,
+    description,
+    hideAuthors = false,
+    association,
+  } = props;
+
+  const postsByConsecAuthor = _.reduce(
+    posts,
+    (acc: PostsByAuthor[], val: Post, key: number) => {
+      const lent = acc.length;
+      if (lent > 0 && acc?.[lent - 1]?.author === val.author) {
+        const last = acc[lent - 1];
+        const rest = acc.slice(0, -1);
+        return [...rest, { ...last, posts: [...last.posts, val] }];
+      }
+      return [...acc, { author: val.author, posts: [val] }];
+    },
+    []
+  );
+
   return (
-    <Row onClick={onClick} gapX='2' pt={showContact ? 2 : 0}>
-      <Col flexGrow={1} alignItems='flex-start'>
-        {showContact && (
-          <Author
-            showImage
-            contacts={contacts}
-            ship={author}
-            date={time}
-            group={group}
-          />
-        )}
-        <Row width='100%' p='1' flexDirection='column'>
-          <GraphNodeContent
-            contacts={contacts}
-            post={post}
-            mod={mod}
-            description={description}
-            index={index}
-            group={group}
-            remoteContentPolicy={{}}
-          />
-        </Row>
-      </Col>
-    </Row>
+    <>
+      {_.map(postsByConsecAuthor, ({ posts, author }, idx) => {
+        const time = posts[0]?.["time-sent"];
+        return (
+          <Col key={idx} flexGrow={1} alignItems="flex-start">
+            {!hideAuthors && (
+              <Author
+                size={24}
+                sigilPadding={6}
+                showImage
+                ship={author}
+                date={time}
+              />
+            )}
+            <Col gapY="2" py={hideAuthors ? 0 : 2} width="100%">
+              {_.map(posts, (post) => (
+                <GraphNodeContent
+                  key={post.index}
+                  post={post}
+                  mod={mod}
+                  index={index}
+                  association={association}
+                  hidden={hidden}
+                />
+              ))}
+            </Col>
+          </Col>
+        );
+      })}
+    </>
   );
 };
 
@@ -235,60 +279,82 @@ export function GraphNotification(props: {
   read: boolean;
   time: number;
   timebox: BigInteger;
-  associations: Associations;
-  groups: Groups;
-  contacts: Rolodex;
   api: GlobalApi;
 }) {
-  const { contents, index, read, time, api, timebox, groups } = props;
+  const { contents, index, read, time, api, timebox } = props;
+  const history = useHistory();
 
-  const authors = _.map(contents, 'author');
+  const authors = _.uniq(_.map(contents, "author"));
+  const singleAuthor = authors.length === 1;
   const { graph, group } = index;
-  const icon = getGraphModuleIcon(index.module);
-  const desc = describeNotification(index.description, contents.length !== 1);
+  const association = useAssocForGraph(graph)!;
+  const dm = isDm(graph);
+  const desc = describeNotification(
+    index.description,
+    contents.length !== 1,
+    dm,
+    singleAuthor
+  );
+  const groupAssociation = useAssocForGroup(association?.group);
+  const groups = useGroupState((state) => state.groups);
 
   const onClick = useCallback(() => {
-    if (props.archived || read) {
-      return;
+    if (
+      !(
+        (index.description === "note" || index.description === "link") &&
+        index.index === "/"
+      )
+    ) {
+      const first = contents[0];
+      history.push(
+        getNodeUrl(
+          index.module,
+          groups[association?.group]?.hidden,
+          group,
+          association?.resource,
+          first.index
+        )
+      );
     }
-
-    return api.hark['read'](timebox, { graph: index });
   }, [api, timebox, index, read]);
+
+  const authorsInHeader =
+    dm ||
+    ((index.description === "mention" || index.description === "post") &&
+      singleAuthor);
+  const hideAuthors =
+    authorsInHeader ||
+    index.description === "note" ||
+    index.description === "link";
+  const channelTitle = dm ? undefined : association?.metadata?.title ?? graph;
+  const groupTitle = groupAssociation?.metadata?.title;
 
   return (
     <>
       <Header
-        onClick={onClick}
-        archived={props.archived}
         time={time}
-        read={read}
-        authors={authors}
-        moduleIcon={icon}
-        channel={graph}
-        contacts={props.contacts}
-        group={group}
+        authors={authorsInHeader ? authors : []}
+        channelTitle={channelTitle}
         description={desc}
-        associations={props.associations}
+        groupTitle={groupTitle}
+        content
       />
-      <Box flexGrow={1} width='100%' pl={5} gridArea='main'>
-        {_.map(contents, (content, idx) => (
-          <GraphNode
-            post={content}
-            author={content.author}
-            contacts={props.contacts}
-            mod={index.module}
-            time={content?.['time-sent']}
-            description={index.description}
-            index={content.index}
-            graph={graph}
-            group={groups[group]}
-            groupPath={group}
-            read={read}
-            onRead={onClick}
-            showContact={idx === 0}
-          />
-        ))}
-      </Box>
+      <Col onClick={onClick} gapY="2" flexGrow={1} width="100%" gridArea="main">
+        <GraphNodes
+          hideAuthors={hideAuthors}
+          posts={contents.slice(0, 4)}
+          mod={index.module}
+          description={index.description}
+          index={contents?.[0].index}
+          association={association}
+          hidden={groups[association?.group]?.hidden}
+        />
+        {contents.length > 4 && (
+          <Text mb="2" gray>
+            + {contents.length - 4} more
+          </Text>
+        )}
+      </Col>
     </>
   );
 }

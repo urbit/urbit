@@ -2,6 +2,7 @@ import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Col } from '@tlon/indigo-react';
 import _ from 'lodash';
+import bigInt from 'big-integer';
 
 import { Association } from '@urbit/api/metadata';
 import { StoreState } from '~/logic/store/type';
@@ -16,6 +17,12 @@ import { Loading } from '~/views/components/Loading';
 import { isWriter, resourceFromPath } from '~/logic/lib/group';
 
 import './css/custom.css';
+import useContactState from '~/logic/state/contact';
+import useGraphState from '~/logic/state/graph';
+import useGroupState from '~/logic/state/group';
+import useHarkState from '~/logic/state/hark';
+import {Post} from '@urbit/api';
+import {getPermalinkForGraph} from '~/logic/lib/permalinks';
 
 type ChatResourceProps = StoreState & {
   association: Association;
@@ -26,12 +33,15 @@ type ChatResourceProps = StoreState & {
 export function ChatResource(props: ChatResourceProps) {
   const station = props.association.resource;
   const groupPath = props.association.group;
-  const group = props.groups[groupPath];
-  const contacts = props.contacts;
+  const groups = useGroupState(state => state.groups);
+  const group = groups[groupPath];
+  const contacts = useContactState(state => state.contacts);
+  const graphs = useGraphState(state => state.graphs);
   const graphPath = station.slice(7);
-  const graph = props.graphs[station.slice(7)];
-  const isChatMissing = !props.graphKeys.has(station.slice(7));
-  const unreadCount = props.unreads.graph?.[station]?.['/']?.unreads || 0;
+  const graph = graphs[graphPath];
+  const unreads = useHarkState(state => state.unreads);
+  const unreadCount = unreads.graph?.[station]?.['/']?.unreads || 0;
+  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
   const [,, owner, name] = station.split('/');
   const ourContact = contacts?.[`~${window.ship}`];
   const chatInput = useRef<ChatInput>();
@@ -71,19 +81,20 @@ export function ChatResource(props: ChatResourceProps) {
 
   const scrollTo = new URLSearchParams(location.search).get('msg');
 
-  useEffect(() => {
-    const clear = () => {
-      props.history.replace(location.pathname);
-    };
-    setTimeout(clear, 10000);
-    return clear;
-  }, [station]);
-
   const [showBanner, setShowBanner] = useState(false);
   const [hasLoadedAllowed, setHasLoadedAllowed] = useState(false);
   const [recipients, setRecipients] = useState([]);
 
   const res = resourceFromPath(groupPath);
+  const onReply = useCallback((msg: Post) => {
+    const url = getPermalinkForGraph(
+      props.association.group,
+      props.association.resource,
+      msg.index
+    );
+    const message = `${url}\n~${msg.author} : `;
+    setUnsent(s => ({...s, [props.association.resource]: message }));
+  }, [props.association, group, setUnsent]);
 
   useEffect(() => {
     (async () => {
@@ -132,9 +143,6 @@ export function ChatResource(props: ChatResourceProps) {
     return <Loading />;
   }
 
-  const modifiedContacts = { ...contacts };
-  delete  modifiedContacts[`~${window.ship}`];
-
   return (
     <Col {...bind} height="100%" overflow="hidden" position="relative">
       <ShareProfile
@@ -152,20 +160,17 @@ export function ChatResource(props: ChatResourceProps) {
         key={station}
         history={props.history}
         graph={graph}
+        graphSize={graph.size}
         unreadCount={unreadCount}
-        contacts={
-          (!showBanner && hasLoadedAllowed) ?
-          contacts : modifiedContacts
-        }
+        showOurContact={ !showBanner && hasLoadedAllowed }
         association={props.association}
-        associations={props.associations}
-        groups={props.groups}
-        pendingSize={Object.keys(props.graphTimesentMap[graphPath] || {}).length}
+        pendingSize={Object.keys(graphTimesentMap[graphPath] || {}).length}
         group={group}
         ship={owner}
+        onReply={onReply}
         station={station}
         api={props.api}
-        scrollTo={scrollTo ? parseInt(scrollTo, 10) : undefined}
+        scrollTo={scrollTo ? bigInt(scrollTo) : undefined}
       />
       { canWrite && (
       <ChatInput
@@ -176,11 +181,7 @@ export function ChatResource(props: ChatResourceProps) {
           (!showBanner && hasLoadedAllowed) ? ourContact : null
         }
         envelopes={[]}
-        contacts={
-          (!showBanner && hasLoadedAllowed) ? contacts : modifiedContacts
-        }
         onUnmount={appendUnsent}
-        storage={props.storage}
         placeholder="Message..."
         message={unsent[station] || ''}
         deleteMessage={clearUnsent}

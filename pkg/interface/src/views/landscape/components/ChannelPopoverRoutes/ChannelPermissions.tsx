@@ -15,6 +15,7 @@ import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { FormSubmit } from '~/views/components/FormSubmit';
 import { ChannelWritePerms } from '../ChannelWritePerms';
+import {FormGroupChild} from '~/views/components/FormGroup';
 
 function PermissionsSummary(props: {
   writersSize: number;
@@ -53,8 +54,6 @@ function PermissionsSummary(props: {
 interface GraphPermissionsProps {
   association: Association;
   group: Group;
-  groups: Groups;
-  contacts: Rolodex;
   api: GlobalApi;
 }
 
@@ -160,7 +159,8 @@ export function GraphPermissions(props: GraphPermissionsProps) {
       onSubmit={onSubmit}
     >
       <Form style={{ display: 'contents' }}>
-        <Col mt="4" flexShrink={0} gapY="5">
+        <FormGroupChild id="permissions" />
+        <Col mx="4" mt="4" flexShrink={0} gapY="5">
           <Col gapY="1" mt="0">
             <Text id="permissions" fontWeight="bold" fontSize="2">
               Permissions
@@ -177,15 +177,18 @@ export function GraphPermissions(props: GraphPermissionsProps) {
               vip={association.metadata.vip}
             />
           </Col>
-          <ChannelWritePerms contacts={props.contacts} groups={props.groups} />
-          {association.metadata.module !== 'chat' && (
+          <ChannelWritePerms />
+          { ( association.metadata &&
+              'graph' in association.metadata.config &&
+              association.metadata.config.graph !== 'chat'
+            )
+            && (
             <Checkbox
               id="readerComments"
               label="Allow readers to comment"
               caption="If enabled, all members of the group can comment on this channel"
             />
           )}
-          <FormSubmit>Update Permissions</FormSubmit>
         </Col>
       </Form>
     </Formik>
