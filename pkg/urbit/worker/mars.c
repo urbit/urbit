@@ -571,14 +571,16 @@ u3_mars_init(c3_c*    dir_c,
         return 0;
       }
 
-      //  XX printfs
-      //
+      u3l_log("--------------- bootstrap starting ----------------\r\n");
+
       if ( c3n == u3v_boot(eve) ) {
         fprintf(stderr, "boot: failed\r\n");
         u3_disk_exit(mar_u->log_u);
         c3_free(mar_u);
         return 0;
       }
+
+      u3l_log("--------------- bootstrap complete ----------------\r\n");
 
       mar_u->sen_d = mar_u->dun_d = lif_w;
 
@@ -659,7 +661,6 @@ _mars_sift_pill(u3_noun  pil,
                 u3_noun* mod,
                 u3_noun* use)
 {
-  fprintf(stderr, "boot: pill parse\r\n");
   u3_noun pil_p, pil_q;
 
   if ( c3n == u3r_cell(pil, &pil_p, &pil_q) ) {
@@ -712,8 +713,6 @@ _mars_sift_pill(u3_noun  pil,
     u3z(pro);
   }
 
-  fprintf(stderr, "boot: 'bout to fs\r\n");
-
   //  optionally replace filesystem in userspace
   //
   if ( u3_nul != pil_q ) {
@@ -740,8 +739,6 @@ _mars_sift_pill(u3_noun  pil,
     u3z(*use);
     *use = u3kb_flop(new);
   }
-
-  fprintf(stderr, "boot: fs'd\r\n");
 
   u3z(pil);
 
@@ -851,9 +848,6 @@ _mars_boot_make(mars_input* inp_u,
 
     met_u->lif_w = u3qb_lent(bot);
 
-
-    fprintf(stderr, "boot: mod\r\n");
-
     //  break symmetry in the module sequence
     //
     //    version negotation, verbose, identity, entropy
@@ -861,33 +855,20 @@ _mars_boot_make(mars_input* inp_u,
     {
       u3_noun cad, wir = u3nt(u3_blip, c3__arvo, u3_nul);
 
-      fprintf(stderr, "boot: mod eny\r\n");
-
       cad = u3nc(c3__wack, u3i_words(16, inp_u->eny_w));
       mod = u3nc(u3nc(u3k(wir), cad), mod);
-
-      fprintf(stderr, "boot: mod who\r\n");
 
       cad = u3nc(c3__whom, u3k(who));
       mod = u3nc(u3nc(u3k(wir), cad), mod);
 
-      fprintf(stderr, "boot: mod veb\r\n");
-
       cad = u3nt(c3__verb, u3_nul, inp_u->veb_o);
       mod = u3nc(u3nc(u3k(wir), cad), mod);
-
-      fprintf(stderr, "boot: mod kel\r\n");
 
       cad = _mars_wyrd_card(inp_u->ver_u.nam_m,
                             inp_u->ver_u.ver_w,
                             inp_u->sev_l);
       mod = u3nc(u3nc(wir, cad), mod);              // transfer [wir]
-
-
-      fprintf(stderr, "boot: mod done\r\n");
     }
-
-    fprintf(stderr, "boot: use\r\n");
 
     //  prepend legacy boot event to the userpace sequence
     //
@@ -898,8 +879,6 @@ _mars_boot_make(mars_input* inp_u,
       u3_noun cad = u3nt(c3__boot, inp_u->lit_o, ven); // transfer
       use = u3nc(u3nc(wir, cad), use);
     }
-
-    fprintf(stderr, "boot: stamp\r\n");
 
     //  timestamp events, cons list
     //
@@ -925,8 +904,6 @@ _mars_boot_make(mars_input* inp_u,
       u3z(now); u3z(bit);
     }
   }
-
-  fprintf(stderr, "boot: pro\r\n");
 
   return c3y;
 }
@@ -978,8 +955,6 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
     return c3n;
   }
 
-  fprintf(stderr, "boot: finished commit\r\n");
-
   //  XX just re-use ova instead of read to confirm write?
   //  XX don't bootstrap here, defer to mars_init?s
   //
@@ -992,11 +967,13 @@ u3_mars_boot(c3_c* dir_c, u3_noun com)
       return c3n;
     }
 
-    //  XX printfs
-    //
+    u3l_log("--------------- bootstrap starting ----------------\r\n");
+
     if ( c3n == u3v_boot(eve) ) {
       return c3n;
     }
+
+    u3l_log("--------------- bootstrap complete ----------------\r\n");
 
     u3e_save();
   }
