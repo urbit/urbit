@@ -20,7 +20,8 @@ export function newPost(
     signatures: []
   };
 
-  const tokenisedBody = tokenizeMessage(body);
+  // re-enable on mainnet deploy
+  //const tokenisedBody = tokenizeMessage(body);
 
   const revContainer: Post = { ...root, index: root.index + '/1' };
   const commentsContainer = { ...root, index: root.index + '/2' };
@@ -28,7 +29,8 @@ export function newPost(
   const firstRevision: Post = {
     ...revContainer,
     index: revContainer.index + '/1',
-    contents: [{ text: title }, ...tokenisedBody]
+    contents: [{ text: title }, { text: body }]
+    //contents: [{ text: title }, { text: body } ...tokenisedBody]
   };
 
   const nodes = {
@@ -57,12 +59,14 @@ export function newPost(
 
 export function editPost(rev: number, noteId: BigInteger, title: string, body: string) {
   const now = Date.now();
-  const tokenisedBody = tokenizeMessage(body);
+  // reenable
+  //const tokenisedBody = tokenizeMessage(body);
   const newRev: Post = {
     author: `~${window.ship}`,
     index: `/${noteId.toString()}/1/${rev}`,
     'time-sent': now,
-    contents: [{ text: title }, ...tokenisedBody],
+    //contents: [{ text: title }, ...tokenisedBody],
+    contents: [{ text: title }, { text: body }],
     hash: null,
     signatures: []
   };
