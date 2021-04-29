@@ -67,8 +67,7 @@
   |=  [pk=@ nonce=@ud tx=octs]  ^-  octs
   =/  prepared-data=octs
     =/  chain-t  (rsh [3 2] (scot %ui 1.337))
-    :-  :(add 12 (met 3 chain-t) 1 4 p.tx)
-    %:  can  3
+    %:  cad:naive  3
       14^'UrbitIDV1Chain'
       (met 3 chain-t)^chain-t
       1^':'
@@ -79,16 +78,14 @@
   =/  sign-data
     =/  len  (rsh [3 2] (scot %ui p.prepared-data))
     %-  keccak-256:keccak:crypto
-    :-  :(add 26 (met 3 len) p.prepared-data)
-    %:  can  3
+    %:  cad:naive  3
       26^'\19Ethereum Signed Message:\0a'
       (met 3 len)^len
       prepared-data
       ~
     ==
   =+  (ecdsa-raw-sign:secp256k1:secp:crypto sign-data pk)
-  :-  :(add 1 32 32 p.tx)
-  (can 3 1^v 32^s 32^r tx ~)
+  (cad:naive 3 1^v 32^s 32^r tx ~)
 ::
 ++  l1
   |%
@@ -173,8 +170,7 @@
   ++  transfer-point
     |=  [nonce=@ud =ship pk=@ =address proxy=@tas reset=?]  ^-  octs
     %^  sign-tx  pk  nonce
-    :-  :(add 1 4 1 4 20)
-    %:  can  3
+    %:  cad:naive  3
       (from-proxy:bits proxy)
       4^ship
       1^(can 0 7^%0 1^reset ~)                   :: %transfer-point
@@ -189,8 +185,7 @@
         ==
     ^-  octs
     %^  sign-tx  pk  nonce
-    :-  :(add 1 4 1 4 32 32 4)
-    %:  can  3
+    %:  cad:naive  3
       (from-proxy:bits proxy)
       4^ship
       1^(can 0 7^%2 1^breach ~)                 :: %configure-keys
@@ -258,8 +253,7 @@
           %reject         %6
           %detach         %7
         ==
-      :-  :(add 1 4 1 4 4)
-      %:  can  3
+      %:  cad:naive  3
         (from-proxy proxy)
         4^child
         1^(can 0 7^op 1^0 ~)
@@ -277,8 +271,7 @@
           %set-spawn-proxy          %9
           %set-transfer-proxy       %10
         ==
-      :-  :(add 1 4 1 4 20)
-      %:  can  3
+      %:  cad:naive  3
         (from-proxy proxy)
         4^from
         1^(can 0 7^op 1^0 ~)

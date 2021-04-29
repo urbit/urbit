@@ -376,10 +376,16 @@
       %vote      voting-proxy.own.u.point
       %transfer  transfer-proxy.own.u.point
     ==
+  ::  We include a domain separator to avoid letting signatures be
+  ::  accidentally reused with other applications.  We include the name
+  ::  UrbitID, a signature format version number, and the EIP-155 chain
+  ::  ID.
+  ::
+  ::  We also include a nonce so that a transaction cannot be
+  ::  rebroadcast.
   ::
   =/  prepared-data=octs
-    :-  :(add 12 (met 3 chain-t) 1 4 p.raw.raw-tx)
-    %:  can  3
+    %:  cad  3
       14^'UrbitIDV1Chain'
       (met 3 chain-t)^chain-t
       1^':'
@@ -387,10 +393,12 @@
       raw.raw-tx
       ~
     ==
+  ::  Wallets which support personal_sign include this preamble to avoid
+  ::  letting personal_sign be used to sign ethereum transactions
+  ::
   =/  signed-data=octs
     =/  len  (ud-to-ascii p.prepared-data)
-    :-  :(add 26 (met 3 len) p.prepared-data)
-    %:  can  3
+    %:  cad  3
       26^'\19Ethereum Signed Message:\0a'
       (met 3 len)^len
       prepared-data
