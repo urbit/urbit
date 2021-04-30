@@ -574,6 +574,7 @@
   =/  yes-breach    [0 ~marbud %marbud-key-0 %own & encrypt auth suite]
   ;:  weld
     %+  expect-eq
+    ::  breach=%.n
       !>  [0 1]                   :: [rift life]
     ::
       !>
@@ -583,6 +584,7 @@
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
+    ::  breach=%.y
       !>  [1 1]
     ::
       !>
@@ -595,6 +597,7 @@
 ++  test-marbud-transfer-life-rift  ^-  tang
   ;:  weld
     %+  expect-eq
+    ::  reset=%.n
       !>  [1 0]                   :: [rift life]
     ::
       !>
@@ -605,6 +608,7 @@
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
+    ::  reset=%.y
       !>  [1 1]
     ::
       !>
@@ -688,6 +692,19 @@
     =^  f  state  (n state %bat q:(spawn:l2 0 ~dopbud %dopbud-key-0 %own ~palsep-picdun (addr %pp-key-0)))
     =^  f  state  (n state %bat q:(transfer-point:l2 0 ~palsep-picdun %pp-key-0 (addr %pp-key-0) %transfer &))
     owner.own:(~(got by points.state) ~palsep-picdun)
+::
+++  test-linnup-torsyx-l2-escape-request  ^-  tang
+  ::  TODO: Are you supposed to be able to request escape to a non-existent star?
+  %+  expect-eq
+    !>  [~ ~sambud]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat q:(spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)))
+    =^  f  state  (n state %bat q:(transfer-point:l2 0 ~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &))
+    =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~sambud))
+    escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
 ::  TODO: signature format changed; regenerate
 ::
