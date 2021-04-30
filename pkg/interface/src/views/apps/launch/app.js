@@ -47,7 +47,7 @@ const tutSelector = f.pick(['tutorialProgress', 'nextTutStep', 'hideGroups']);
 
 export default function LaunchApp(props) {
   const { connection } = props;
-  const baseHash = useLaunchState(state => state.baseHash);
+  const { baseHash, runtimeLag } = useLaunchState(state => state);
   const [hashText, setHashText] = useState(baseHash);
   const [exitingTut, setExitingTut] = useState(false);
   const seen = useSettingsState(s => s?.tutorial?.seen) ?? true;
@@ -82,7 +82,10 @@ export default function LaunchApp(props) {
         }, 2000);
       }}
     >
-      <Box backgroundColor="washedGray" p={2}>
+      <Box
+        backgroundColor={runtimeLag ? 'yellow' : 'washedGray'}
+        p={2}
+      >
         <Text mono bold>{hashText || baseHash}</Text>
       </Box>
     </Box>

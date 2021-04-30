@@ -191,9 +191,14 @@
   ^-  (unit (unit cage))
   ?.  (team:title our.bowl src.bowl)  ~
   ?+  path  [~ ~]
-      [%x %tiles ~]       ``noun+!>([tiles tile-ordering])
-      [%x %first-time ~]  ``noun+!>(first-time)
-      [%x %keys ~]        ``noun+!>(~(key by tiles))
+    [%x %tiles ~]       ``noun+!>([tiles tile-ordering])
+    [%x %first-time ~]  ``noun+!>(first-time)
+    [%x %keys ~]        ``noun+!>(~(key by tiles))
+  ::
+      [%x %runtime-lag ~]
+    :^  ~  ~  %json
+    !>  ^-  json
+    b+.^(? //(scot %p our.bowl)//(scot %da now.bowl)/zen/lag)
   ==
 ::
 ++  on-arvo
