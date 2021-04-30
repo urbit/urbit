@@ -4,7 +4,15 @@ import _ from 'lodash';
 import moment from 'moment';
 import { BigInteger } from 'big-integer';
 
-import { Col, Center, Box, Text, LoadingSpinner } from '@tlon/indigo-react';
+import {
+  Col,
+  Center,
+  Box,
+  Text,
+  LoadingSpinner,
+  Icon
+} from '@tlon/indigo-react';
+
 import {
   Associations,
   Notifications,
@@ -23,6 +31,7 @@ import GlobalApi from '~/logic/api/global';
 import { Notification } from './notification';
 import { Invites } from './invites';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
+import useLaunchState from '~/logic/state/launch';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
 import useMetadataState from '~/logic/state/metadata';
@@ -64,6 +73,8 @@ export default function Inbox(props: {
       }
     };
   }, []);
+
+  const runtimeLag = useLaunchState(state => state.runtimeLag);
 
   const ready = useHarkState(
     s => Object.keys(s.unreads.graph).length > 0
@@ -122,6 +133,16 @@ export default function Inbox(props: {
 
   return (
     <Col p="1" ref={scrollRef} position="relative" height="100%" overflowY="auto">
+
+      {runtimeLag && (
+        <Box bg="yellow" borderRadius={2} p={2} m={2}>
+          <Icon verticalAlign="middle" mr={2} icon="Tutorial" />
+          <Text verticalAlign="middle">
+            Update your binary to continue receiving updates.
+          </Text>
+        </Box>
+      )}
+
       <Invites pendingJoin={props.pendingJoin} api={api} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;

@@ -8,6 +8,12 @@ export default class LocalApi extends BaseApi<StoreState> {
     });
   }
 
+  getRuntimeLag() {
+    return this.scry<boolean>('launch', '/runtime-lag').then((runtimeLag) => {
+      this.store.handleEvent({ data: { runtimeLag } });
+    });
+  }
+
   dehydrate() {
     this.store.dehydrate();
   }
