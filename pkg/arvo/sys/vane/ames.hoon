@@ -1940,7 +1940,7 @@
       ::  XX hack to drop all incoming pleas
       ::
       ?:  ?&  ?=(%& -.meat.shut-packet)
-              =(1 (end 0 bone))
+              =(1 (end 0 bone.shut-packet))
           ==
         ~&  %ames-drop-plea-packet
         peer-core
@@ -1951,11 +1951,11 @@
       =/  =bone  bone.shut-packet
       ::
       ?:  ?=(%& -.meat.shut-packet)
-        =+  ?~  dud  ~
+        =+  ?.  &(?=(^ dud) msg.veb)  ~
             %.  ~
-            %+  slog
-              leaf+"ames: {<her.channel>} fragment crashed {<mote.u.dud>}"
-            ?.(msg.veb ~ tang.u.dud)
+            %-  slog
+            :_  tang.u.dud
+            leaf+"ames: {<her.channel>} fragment crashed {<mote.u.dud>}"
         (run-message-sink bone %hear lane shut-packet ?=(~ dud))
       ::  Just try again on error, printing trace
       ::
