@@ -329,9 +329,9 @@ function added(json: any, state: HarkState): HarkState {
     );
     if (arrIdx !== -1) {
       timebox[arrIdx] = { index, notification };
-      state.notifications.set(time, timebox);
+      state.notifications = state.notifications.set(time, timebox);
     } else {
-      state.notifications.set(time, [...timebox, { index, notification }]);
+      state.notifications = state.notifications.set(time, [...timebox, { index, notification }]);
     }
   }
   return state;
@@ -350,7 +350,7 @@ const timebox = (json: any, state: HarkState): HarkState => {
   if (data) {
     const time = makePatDa(data.time);
     if (!data.archive) {
-      state.notifications.set(time, data.notifications);
+      state.notifications = state.notifications.set(time, data.notifications);
     }
   }
   return state;
@@ -403,7 +403,7 @@ function setRead(
     return state;
   }
   timebox[arrIdx].notification.read = read;
-  state.notifications.set(patDa, timebox);
+  state.notifications = state.notifications.set(patDa, timebox);
   return state;
 }
 
@@ -443,9 +443,9 @@ function archive(json: any, state: HarkState): HarkState {
     );
     if(unarchived.length === 0) {
       console.log('deleting entire timebox');
-      state.notifications.delete(time);
+      state.notifications = state.notifications.delete(time);
     } else {
-      state.notifications.set(time, unarchived);
+      state.notifications = state.notifications.set(time, unarchived);
     }
   }
   return state;

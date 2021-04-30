@@ -54,7 +54,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const deletePost = async () => {
     setDeleting(true);
     const indices = [note.post.index];
-    await api.graph.removeNodes(ship, book, indices);
+    await api.graph.removePosts(ship, book, indices);
     props.history.push(rootUrl);
   };
 
@@ -115,11 +115,12 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Row alignItems="center">
           <Author
             showImage
+            isRelativeTime
             ship={post?.author}
             date={post?.['time-sent']}
             group={group}
           >
-            <Row px="2" gapX="2" alignItems="flex-end">
+            <Row px="2" gapX="2" alignItems="flex-end" height="14px">
               <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
               {adminLinks}
             </Row>

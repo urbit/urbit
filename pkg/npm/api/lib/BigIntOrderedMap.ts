@@ -1,5 +1,9 @@
-import { immerable } from 'immer';
+import produce, { immerable, castImmutable, castDraft, setAutoFreeze, enablePatches } from 'immer';
 import bigInt, { BigInteger } from "big-integer";
+
+setAutoFreeze(false);
+
+enablePatches();
 
 function sortBigInt(a: BigInteger, b: BigInteger) {
   if (a.lt(b)) {
@@ -11,19 +15,18 @@ function sortBigInt(a: BigInteger, b: BigInteger) {
   }
 }
 export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
-  private root: Record<string, V> = {}
-  private cachedIter: [BigInteger, V][] | null = null;
+  root: Record<string, V> = {}
+  cachedIter: [BigInteger, V][] = [];
   [immerable] = true;
 
   constructor(items: [BigInteger, V][] = []) {
     items.forEach(([key, val]) => {
       this.set(key, val);
     });
-    this.generateCachedIter();
   }
 
   get size() {
-    return this.cachedIter?.length ?? Object.keys(this.root).length;
+    return Object.keys(this.root).length;
   }
 
 
@@ -31,14 +34,30 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
     return this.root[key.toString()] ?? null;
   }
 
+  gas(items: [BigInteger, V][]) {
+    return produce(this, draft => {
+      items.forEach(([key, value]) => {
+        draft.root[key.toString()] = castDraft(value);
+      });
+      draft.generateCachedIter();
+    }, 
+    (patches) => {
+      //console.log(`gassed with ${JSON.stringify(patches, null, 2)}`);
+    });
+  }
+
   set(key: BigInteger, value: V) {
-    this.root[key.toString()] = value;
-    this.cachedIter = null;
+    return produce(this, draft => {
+      draft.root[key.toString()] = castDraft(value);
+      draft.generateCachedIter();
+    });
   }
 
   clear() {
-    this.cachedIter = null;
-    this.root = {}
+    return produce(this, draft => {
+      draft.cachedIter = [];
+      draft.root = {}
+    });
   }
 
   has(key: BigInteger) {
@@ -46,17 +65,15 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   }
 
   delete(key: BigInteger) {
-    const had = this.has(key);
-    if(had) {
-      delete this.root[key.toString()];
-      this.cachedIter = null;
-    }
-    return had;
+    return produce(this, draft => {
+      delete draft.root[key.toString()];
+      draft.cachedIter  = draft.cachedIter.filter(([x]) => x.eq(key));
+    });
   }
 
   [Symbol.iterator](): IterableIterator<[BigInteger, V]> {
     let idx = 0;
-    const result = this.generateCachedIter();
+    let result = [...this.cachedIter];
     return {
       [Symbol.iterator]: this[Symbol.iterator],
       next: (): IteratorResult<[BigInteger, V]> => {
@@ -79,19 +96,15 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   }
 
   keys() {
-    return Object.keys(this.root).map(k => bigInt(k)).sort(sortBigInt)
+    return Array.from(this).map(([k,v]) => k);
   }
 
-  private generateCachedIter() {
-    if(this.cachedIter) {
-      return this.cachedIter;
-    }
+  generateCachedIter() {
     const result = Object.keys(this.root).map(key => {
       const num = bigInt(key);
       return [num, this.root[key]] as [BigInteger, V];
     }).sort(([a], [b]) => sortBigInt(a,b));
     this.cachedIter = result;
-    return result;
   }
 }
 
