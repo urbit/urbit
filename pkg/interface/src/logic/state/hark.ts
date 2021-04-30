@@ -1,5 +1,7 @@
 import { NotificationGraphConfig, Timebox, Unreads, dateToDa } from "@urbit/api";
+import { patp2dec } from 'urbit-ob';
 import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
+import {useCallback} from "react";
 
 // import { harkGraphHookReducer, harkGroupHookReducer, harkReducer } from "~/logic/subscription/hark";
 import { BaseState, createState } from "./base";
@@ -65,5 +67,10 @@ const useHarkState = createState<HarkState>('Hark', {
   },
 }, ['notifications', 'archivedNotifications', 'unreads', 'notificationsCount']);
 
+export function useHarkDm(ship: string) {
+  return useHarkState(useCallback(s => {
+    return s.unreads.graph[`/ship/~${window.ship}/inbox`]?.[`/${patp2dec(ship)}`];
+  }, [ship]));
+}
 
 export default useHarkState;

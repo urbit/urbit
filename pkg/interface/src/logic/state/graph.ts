@@ -1,5 +1,7 @@
 import { Graphs, decToUd, numToUd, GraphNode, deSig, Association, resourceFromPath } from "@urbit/api";
+import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
 import {useCallback} from "react";
+import { patp2dec } from 'urbit-ob';
 
 import { BaseState, createState } from "./base";
 
@@ -144,5 +146,15 @@ export function useGraphForAssoc(association: Association) {
 }
 
 window.useGraphState = useGraphState;
+
+export function useInbox() {
+  return useGraphState(s => s.graphs[`${window.ship}/inbox`]);
+}
+
+export function useDM(ship: string) {
+  const inbox = useInbox();
+  const shipGraph = inbox.get(patp2dec(ship));
+  return shipGraph?.children ?? new BigIntOrderedMap();
+}
 
 export default useGraphState;

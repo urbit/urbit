@@ -119,7 +119,7 @@ export function SidebarDmItem(props: {
       selected={false}
       hasNotification={false}
       hasUnread={false}
-      to={`/~landscape/messages/ship/${ship}`}
+      to={`/~landscape/messages/dm/${ship}`}
       title={title}
       mono={!!contact?.nickname}
       isSynced

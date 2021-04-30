@@ -1,6 +1,7 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
 import { Patp, Path, Resource } from '@urbit/api';
+import { patp2dec } from 'urbit-ob';
 import _ from 'lodash';
 import { makeResource, resourceFromPath } from '../lib/group';
 import { GroupPolicy, Enc, Post, Content } from '@urbit/api';
@@ -198,6 +199,21 @@ export default class GraphApi extends BaseApi<StoreState> {
         resource: { ship, name },
         graph,
         mark
+      }
+    });
+  }
+
+  addDmMessage(ship: Patp, contents: Content[]) {
+    const post = createPost(contents, `/${patp2dec(ship)}`)
+    return this.action('dm-hook', 'graph-update-1', {
+      "add-nodes": {
+        resource: { ship: `~${window.ship}`, name: 'inbox' },
+        nodes: {
+          [post.index]: {
+            post,
+            children: null
+          }
+        }
       }
     });
   }

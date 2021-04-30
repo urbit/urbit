@@ -32,6 +32,7 @@ import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
+import {DmResource} from '~/views/apps/chat/DmResource';
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
@@ -95,6 +96,25 @@ export function GroupsPane(props: GroupsPaneProps) {
 
   return (
     <Switch>
+      <Route
+        path={relativePath('/dm/:ship')}
+        render={({ match }) => {
+          const { ship } = match.params as Record<string, string>;
+
+          return (
+            <Skeleton
+              mobileHide
+              recentGroups={recentGroups}
+              selected={ship}
+              {...props}
+              baseUrl={match.path}
+            > <DmResource ship={ship} api={api} />
+
+            </Skeleton>
+
+          );
+        }}
+      />
       <Route
         path={[relativePath('/resource/:app/(ship)?/:host/:name')]}
         render={(routeProps) => {
