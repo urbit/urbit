@@ -1621,7 +1621,7 @@
     $%  [%boon payload=*]                               ::  ames response
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%onto p=(each suss tang)]                      ::  about agent
-        [%unto p=sign:agent]                            ::
+        [%unto =unto]                                   ::
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
@@ -1667,7 +1667,17 @@
     ==
   +$  deal
     $%  [%raw-poke =mark =noun]
-        task:agent
+        [%watch wid=@ud =path]
+        [%watch-as wid=@ud =mark =path]
+        [%leave wid=@ud]
+        [%poke =cage]
+        [%poke-as =mark =cage]
+    ==
+  +$  unto
+    $%  [%poke-ack p=(unit tang)]
+        [%watch-ack p=(unit tang)]
+        [%fact wid=@ud =cage]
+        [%kick wid=@ud]
     ==
   ::
   ::  +agent: app core

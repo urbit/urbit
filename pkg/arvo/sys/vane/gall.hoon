@@ -25,7 +25,7 @@
 ::
 +$  state
   $:  system-duct=duct
-      outstanding=(map [wire duct] (qeu remote-request))
+      outstanding=(map [wire duct] (list [wid=@ud out=(qeu remote-request)]))
       contacts=(set ship)
       yokes=(map term yoke)
       blocked=(map term (qeu blocked-move))
@@ -78,8 +78,8 @@
 ::    %x: quit
 ::
 +$  ames-response
-  $%  [%d =mark noun=*]
-      [%x ~]
+  $%  [%d wid=@ud =mark noun=*]
+      [%x wid=@ud]
   ==
 ::  $ames-request: network request (%plea)
 ::
@@ -93,9 +93,9 @@
   ==
 +$  ames-request
   $%  [%m =mark noun=*]
-      [%l =mark =path]
-      [%s =path]
-      [%u ~]
+      [%l wid=@ud =mark =path]
+      [%s wid=@ud =path]
+      [%u wid=@ud]
   ==
 ::  $remote-request: kinds of agent actions that can cross the network
 ::
@@ -405,6 +405,8 @@
     ::
     =.  mo-core  (mo-track-ship ship)
     ?<  ?=(?(%raw-poke %poke-as) -.deal)
+    ::
+    =/  wire  /sys/way/(scot %p ship)/[foreign-agent]
     =/  =ames-request-all
       :-  %0
       ?-  -.deal
@@ -414,16 +416,15 @@
         %watch     [%s path.deal]
       ==
     ::
-    =/  wire
-      /sys/way/(scot %p ship)/[foreign-agent]
-    ::
     =/  =note-arvo
       =/  =path  /ge/[foreign-agent]
       [%a %plea ship %g path ames-request-all]
     ::
     =.  outstanding.state
       =/  stand
-        (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
+        %+  ~(gut by outstanding.state)  [wire hen]
+        %-  ~(put by *(map nonce (qeu remote-request)))
+        [nonce *(qeu remote-request)]
       (~(put by outstanding.state) [wire hen] (~(put to stand) -.deal))
     (mo-pass wire note-arvo)
   ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
