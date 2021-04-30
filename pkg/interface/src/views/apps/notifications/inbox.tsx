@@ -25,6 +25,7 @@ import { Invites } from './invites';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
+import useMetadataState from '~/logic/state/metadata';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -63,6 +64,10 @@ export default function Inbox(props: {
       }
     };
   }, []);
+
+  const ready = useHarkState(
+    s => Object.keys(s.unreads.graph).length > 0
+  );
 
   const notificationState = useHarkState(state => state.notifications);
   const archivedNotifications = useHarkState(state => state.archivedNotifications);
@@ -109,13 +114,14 @@ export default function Inbox(props: {
 
   const { isDone, isLoading } = useLazyScroll(
     scrollRef,
+    ready,
     0.2,
     _.flatten(notifications).length,
     loadMore
   );
 
   return (
-    <Col ref={scrollRef} position="relative" height="100%" overflowY="auto">
+    <Col p="1" ref={scrollRef} position="relative" height="100%" overflowY="auto">
       <Invites pendingJoin={props.pendingJoin} api={api} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
@@ -169,26 +175,15 @@ function DaySection({
 
   return (
     <>
-      <Box position="sticky" zIndex={3} top="-1px" bg="white">
-        <Box p="2" bg="scales.black05">
-          <Text>
-            {label}
-          </Text>
-        </Box>
-      </Box>
       {_.map(timeboxes.sort(sortTimeboxes), ([date, nots], i: number) =>
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
-          <React.Fragment key={j}>
-            {(i !== 0 || j !== 0) && (
-              <Box flexShrink={0} height="4px" bg="scales.black05" />
-            )}
-            <Notification
-              api={api}
-              notification={not}
-              archived={archive}
-              time={date}
-            />
-          </React.Fragment>
+          <Notification
+            key={j}
+            api={api}
+            notification={not}
+            archived={archive}
+            time={date}
+          />
         ))
       )}
     </>

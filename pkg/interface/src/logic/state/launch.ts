@@ -9,7 +9,7 @@ export interface LaunchState extends BaseState<LaunchState> {
   tiles: {
     [app: string]: Tile;
   },
-  weather: WeatherState | null,
+  weather: WeatherState | null | Record<string, never> | boolean,
   userLocation: string | null;
   baseHash: string | null;
 };

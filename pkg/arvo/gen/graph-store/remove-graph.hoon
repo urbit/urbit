@@ -5,6 +5,6 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=resource ~] ~]
     ==
-:-  %graph-update-1
+:-  %graph-update-2
 ^-  update
 [now [%remove-graph resource]]

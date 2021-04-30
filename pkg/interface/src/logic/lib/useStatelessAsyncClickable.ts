@@ -5,7 +5,7 @@ export function useStatelessAsyncClickable(
   onClick: (e: MouseEvent) => Promise<void>,
   name: string
 ) {
-  const [state, setState] = useState<ButtonState>('waiting');
+  const [state, setState] = useState<AsyncClickableState>('waiting');
   const handleClick = useCallback(
     async (e: MouseEvent) => {
       try {

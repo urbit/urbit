@@ -12,6 +12,7 @@ export type TimestampProps = BoxProps & {
   date?: boolean;
   time?: boolean;
   relative?: boolean;
+  height?: string;
 };
 
 const Timestamp = (props: TimestampProps): ReactElement | null => {
@@ -23,6 +24,7 @@ const Timestamp = (props: TimestampProps): ReactElement | null => {
     relative,
     dateNotRelative,
     fontSize,
+    lineHeight,
     ...rest
   } = {
     time: true,
@@ -62,7 +64,7 @@ const Timestamp = (props: TimestampProps): ReactElement | null => {
       title={stamp.format(DateFormat + ' ' + TimeFormat)}
     >
       {time && (
-        <Text flexShrink={0} color={color} fontSize={fontSize}>
+        <Text lineHeight={lineHeight} flexShrink={0} color={color} fontSize={fontSize}>
           {timestamp}
         </Text>
       )}
@@ -70,6 +72,7 @@ const Timestamp = (props: TimestampProps): ReactElement | null => {
         <Text
           flexShrink={0}
           color={color}
+          lineHeight={lineHeight}
           fontSize={fontSize}
           display={time ? ['none', hovering ? 'block' : 'none'] : 'block'}
         >

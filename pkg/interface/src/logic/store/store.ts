@@ -3,10 +3,8 @@ import _ from 'lodash';
 import BaseStore from './base';
 import InviteReducer from '../reducers/invite-update';
 import MetadataReducer from '../reducers/metadata-update';
-import LocalReducer from '../reducers/local';
 
 import { StoreState } from './type';
-import { Timebox } from '@urbit/api';
 import { Cage } from '~/types/cage';
 import S3Reducer from '../reducers/s3-update';
 import { GraphReducer } from '../reducers/graph-update';
@@ -17,8 +15,6 @@ import LaunchReducer from '../reducers/launch-update';
 import ConnectionReducer from '../reducers/connection';
 import SettingsReducer from '../reducers/settings-update';
 import GcpReducer from '../reducers/gcp-reducer';
-import { OrderedMap } from '../lib/OrderedMap';
-import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
 import { GroupViewReducer } from '../reducers/group-view';
 import { unstable_batchedUpdates } from 'react-dom';
 

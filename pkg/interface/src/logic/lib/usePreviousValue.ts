@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Primitive } from '@urbit/api';
+import { Primitive } from '~/types';
 
 export default function usePreviousValue<T extends Primitive>(value: T): T {
   const prev = useRef<T | null>(null);

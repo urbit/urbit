@@ -54,7 +54,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const deletePost = async () => {
     setDeleting(true);
     const indices = [note.post.index];
-    await api.graph.removeNodes(ship, book, indices);
+    await api.graph.removePosts(ship, book, indices);
     props.history.push(rootUrl);
   };
 
@@ -73,14 +73,14 @@ export function Note(props: NoteProps & RouteComponentProps) {
   if (window.ship === note?.post?.author) {
     adminLinks.push(
       <Link to={`${baseUrl}/edit`}>
-        <Action>Update</Action>
+        <Action backgroundColor="white">Update</Action>
       </Link>
     )
   };
 
   if (window.ship === note?.post?.author || ourRole === "admin") {
     adminLinks.push(
-      <Action destructive onClick={deletePost}>
+      <Action backgroundColor="white" destructive onClick={deletePost}>
         Delete
       </Action>
     )
@@ -94,12 +94,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
 
   const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Link');
 
-  const windowRef = React.useRef(null);
-  useEffect(() => {
-    if (windowRef.current && !query.has('selected')) {
-      windowRef.current.parentElement.scrollTop = 0;
-    }
-  }, [note, windowRef]);
 
   return (
     <Box
@@ -112,7 +106,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
       width="100%"
       gridRowGap={4}
       mx="auto"
-      ref={windowRef}
     >
       <Link to={rootUrl}>
         <Text>{'<- Notebook Index'}</Text>
@@ -122,11 +115,12 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Row alignItems="center">
           <Author
             showImage
+            isRelativeTime
             ship={post?.author}
             date={post?.['time-sent']}
             group={group}
           >
-            <Row px="2" gapX="2" alignItems="flex-end">
+            <Row px="2" gapX="2" alignItems="flex-end" height="14px">
               <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
               {adminLinks}
             </Row>

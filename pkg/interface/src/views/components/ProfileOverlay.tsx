@@ -1,4 +1,4 @@
-import React, { PureComponent, useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import React, { PureComponent, useCallback, useEffect, useRef, useState, useMemo, ReactNode } from 'react';
 import { Contact, Group, uxToHex } from '@urbit/api';
 import _ from 'lodash';
 import VisibilitySensor from 'react-visibility-sensor';
@@ -23,6 +23,7 @@ import RichText from './RichText';
 import { ProfileStatus } from './ProfileStatus';
 import useSettingsState from '~/logic/state/settings';
 import {useOutsideClick} from '~/logic/lib/useOutsideClick';
+import {useCopy} from '~/logic/lib/useCopy';
 import {useContact} from '~/logic/state/contact';
 import {useHistory} from 'react-router-dom';
 import {Portal} from './Portal';
@@ -40,6 +41,7 @@ const FixedOverlay = styled(Col)`
 type ProfileOverlayProps = BoxProps & {
   ship: string;
   api: any;
+  children: ReactNode;
 };
 
 const ProfileOverlay = (props: ProfileOverlayProps) => {
@@ -58,6 +60,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   const hideAvatars = useSettingsState(state => state.calm.hideAvatars);
   const hideNicknames = useSettingsState(state => state.calm.hideNicknames);
   const isOwn = useMemo(() => window.ship === ship, [ship]);
+  const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`);
 
   const contact = useContact(`~${ship}`)
   const color = `#${uxToHex(contact?.color ?? '0x0')}`;
@@ -120,7 +123,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         borderRadius={2}
       />
     ) : (
-      <Box size={60} backgroundColor={color}>
+      <Box size={60} borderRadius={2} backgroundColor={color}>
         <Center height={60}>
           <Sigil ship={ship} size={32} color={color} />
         </Center>
@@ -150,6 +153,16 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         padding={3}
         justifyContent='center'
       >
+        <Row color='black' padding={3} position='absolute' top={0} left={0}>
+           {!isOwn && (
+             <Icon
+               icon='Chat'
+               size={16}
+               cursor='pointer'
+               onClick={() => history.push(`/~landscape/dm/${ship}`)}
+             />
+           )}
+         </Row>
         <Box
           alignSelf='center'
           height='72px'
@@ -177,8 +190,17 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
               overflow='hidden'
               whiteSpace='pre'
               marginBottom='0'
+              cursor='pointer'
+              display={didCopy ? 'none' : 'block'}
+              onClick={doCopy}
             >
               {showNickname ? contact?.nickname : cite(ship)}
+            </Text>
+            <Text
+              fontWeight='600'
+              marginBottom='0'
+            >
+              {copyDisplay}
             </Text>
           </Row>
           {isOwn ? (

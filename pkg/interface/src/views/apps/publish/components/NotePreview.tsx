@@ -51,7 +51,7 @@ export function NotePreviewContent({ snippet }) {
 export function NotePreview(props: NotePreviewProps) {
   const { node, group } = props;
   const { post } = node;
-  if (!post) {
+  if (!post || typeof post === 'string') {
     return null;
   }
 

@@ -76,7 +76,7 @@ export function PopoverRoutes(
                   <Col gapY="2">
                     <Text my="1" mx="3" gray>Group</Text>
                     <SidebarItem
-                      icon="Inbox"
+                      icon='Notifications'
                       to={relativeUrl('/settings#notifications')}
                       text="Notifications"
                     />
@@ -98,7 +98,7 @@ export function PopoverRoutes(
                           text="Group Details"
                         />
                         <SidebarItem
-                          icon="Spaces"
+                          icon="Dashboard"
                           to={relativeUrl('/settings#channels')}
                           text="Channel Management"
                         />

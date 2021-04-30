@@ -82,6 +82,8 @@ haskell-nix.stackProject {
 
       urbit-king.components.tests.urbit-king-tests.testFlags =
         [ "--brass-pill=${brass.lfs}" ];
+
+      lmdb.components.library.libs = lib.mkForce [ lmdb ];
     };
   }];
 }

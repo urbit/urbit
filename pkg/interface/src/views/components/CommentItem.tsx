@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useCallback} from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import bigInt from 'big-integer';
 
 import { Box, Row, Text, Action } from '@tlon/indigo-react';
 import { Contacts } from '@urbit/api/contacts';
@@ -15,6 +16,7 @@ import { getLatestCommentRevision } from '~/logic/lib/publish';
 import {useCopy} from '~/logic/lib/useCopy';
 import { getPermalinkForGraph} from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
+import {GraphContentWide} from '../landscape/components/Graph/GraphContentWide';
 
 const ClickBox = styled(Box)`
   cursor: pointer;
@@ -34,17 +36,43 @@ interface CommentItemProps {
 }
 
 export function CommentItem(props: CommentItemProps): ReactElement {
+  let { highlighted } = props;
   const { ship, name, api, comment, group } = props;
   const association = useMetadataState(
     useCallback(s => s.associations.graph[`/ship/${ship}/${name}`], [ship,name])
   );
   const ref = useRef<HTMLElement | null>(null);
+  console.log(comment);
   const [, post] = getLatestCommentRevision(comment);
   const disabled = props.pending;
 
   const onDelete = async () => {
-    await api.graph.removeNodes(ship, name, [comment.post?.index]);
+    const revs = comment.children.get(bigInt(1));
+    const children = Array.from(revs.children);
+    let indices = [];
+    for (let child in children) {
+      let node = children[child];
+      if (!node?.post || typeof node.post !== 'string') {
+        indices.push(node.post?.index);
+      }
+    }
+
+    await api.graph.removePosts(ship, name, [
+      comment.post?.index,
+      revs?.post?.index,
+      ...indices
+    ]);
   };
+
+  const ourMention = post?.contents?.some((e) => {
+      return e?.mention && e?.mention === window.ship;
+    });
+
+  if (!highlighted) {
+    if (ourMention) {
+      highlighted = true;
+    }
+  }
 
   const commentIndexArray = (comment.post?.index || '/').split('/');
   const commentIndex = commentIndexArray[commentIndexArray.length - 1];
@@ -80,10 +108,15 @@ export function CommentItem(props: CommentItemProps): ReactElement {
     getPermalinkForGraph(
       association.group,
       association.resource,
-      post.index.split('/').slice(0, -1).join('/')
+      post?.index?.split('/').slice(0, -1).join('/')
     ),
     'Copy Link'
   );
+
+  if (!post || typeof post === 'string') {
+    //  TODO: if typeof post === 'string', show some deleted state
+    return null;
+  }
 
   return (
     <Box ref={ref} mb={4} opacity={post?.pending ? '60%' : '100%'}>
@@ -94,26 +127,24 @@ export function CommentItem(props: CommentItemProps): ReactElement {
           date={post?.['time-sent']}
           unread={props.unread}
           group={group}
+          isRelativeTime
         >
-          <Row px="2" gapX="2" alignItems="center">
+          <Row px="2" gapX="2" height="18px">
             <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
             {adminLinks}
           </Row>
         </Author>
       </Row>
-      <Box
+      <GraphContentWide
         borderRadius="1"
         p="1"
         mb="1"
-        backgroundColor={props.highlighted ? 'washedBlue' : 'white'}
-      >
-        <MentionText
-          transcluded={0}
-          api={api}
-          group={group}
-          content={post?.contents}
-        />
-      </Box>
+        backgroundColor={highlighted ? 'washedBlue' : 'white'}
+        transcluded={0}
+        api={api}
+        post={post}
+        showOurContact
+      />
     </Box>
   );
 }

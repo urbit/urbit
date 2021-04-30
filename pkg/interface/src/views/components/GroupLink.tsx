@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useLayoutEffect, ReactElement } from 'react';
-
+import { useHistory } from 'react-router-dom';
 import { Box, Text, Row, Col } from '@tlon/indigo-react';
 import { Associations, Groups } from '@urbit/api';
-
 import GlobalApi from '~/logic/api/global';
 import { MetadataIcon } from '../landscape/components/MetadataIcon';
 import { JoinGroup } from '../landscape/components/JoinGroup';
@@ -23,27 +22,12 @@ export function GroupLink(
   const name = resource.slice(6);
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
   const associations = useMetadataState(state => state.associations);
-
+  const { save, restore } = useVirtual();
+  const history = useHistory();
   const joined = resource in associations.groups;
 
-  const { save, restore } = useVirtual();
-
   const { modal, showModal } = useModal({
-    modal:
-      joined && preview ? (
-        <Box width="fit-content" p="4">
-          <GroupSummary
-            metadata={preview.metadata}
-            memberCount={preview.members}
-            channelCount={preview?.['channel-count']}
-          />
-        </Box>
-      ) : (
-        <JoinGroup
-          api={api}
-          autojoin={name}
-        />
-      )
+    modal: <JoinGroup api={api} autojoin={name} />
   });
 
   useEffect(() => {
@@ -72,7 +56,9 @@ export function GroupLink(
         alignItems="center"
         py="2"
         pr="2"
-        onClick={showModal}
+        onClick={
+          joined ? () => history.push(`/~landscape/ship/${name}`) : showModal
+        }
         cursor='pointer'
         opacity={preview ? '1' : '0.6'}
       >

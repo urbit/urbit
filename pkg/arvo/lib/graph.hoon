@@ -19,7 +19,7 @@
       %add-graph          ~[resource.q.update]
       %remove-graph       ~[resource.q.update]
       %add-nodes          ~[resource.q.update]
-      %remove-nodes       ~[resource.q.update]
+      %remove-posts       ~[resource.q.update]
       %add-signatures     ~[resource.uid.q.update]
       %remove-signatures  ~[resource.uid.q.update]
       %archive-graph      ~[resource.q.update]
@@ -76,6 +76,7 @@
 ++  get-graph
   |=  res=resource
   ^-  update:store
+  =-  -(p *time)
   %+  scry-for  update:store
   /graph/(scot %p entity.res)/[name.res]
 ::

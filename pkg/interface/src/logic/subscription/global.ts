@@ -49,6 +49,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
   }
 
   restart() {
-    this.start();
+    this.openSubscriptions = {};
+    super.restart();
   }
 }

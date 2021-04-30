@@ -9,21 +9,22 @@ import { Group } from '@urbit/api';
 import { uxToHex, cite, useShowNickname, deSig } from '~/logic/lib/util';
 import useSettingsState, {selectCalmState} from "~/logic/state/settings";
 import useLocalState from "~/logic/state/local";
-import OverlaySigil from './OverlaySigil';
 import { Sigil } from '~/logic/lib/sigil';
 import Timestamp from './Timestamp';
 import useContactState from '~/logic/state/contact';
+import { useCopy } from '~/logic/lib/useCopy';
 import ProfileOverlay from './ProfileOverlay';
-import {PropFunc} from '~/types';
+import { PropFunc } from '~/types';
 
 interface AuthorProps {
   ship: string;
-  date: number;
+  date?: number;
   showImage?: boolean;
   children?: ReactNode;
   unread?: boolean;
   api?: GlobalApi;
   size?: number;
+  lineHeight?: string;
 }
 
 // eslint-disable-next-line max-lines-per-function
@@ -38,10 +39,11 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
     group,
     isRelativeTime,
     dontShowTime,
+    lineHeight = 'tall',
     ...rest
   } = props;
 
-  const time = props.time || false;
+  const time = props.time || props.date || false;
   const size = props.size || 16;
   const sigilPadding = props.sigilPadding || 2;
 
@@ -61,6 +63,7 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
   const { hideAvatars } = useSettingsState(selectCalmState);
   const name = showNickname && contact ? contact.nickname : cite(ship);
   const stamp = moment(date);
+  const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`, name);
 
   const [showOverlay, setShowOverlay] = useState(false);
 
@@ -88,7 +91,7 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
     ) : sigil;
 
   return (
-    <Row height="20px" {...rest} alignItems='center' width='auto'>
+    <Row {...rest} alignItems='center' width='auto'>
       <Box
         onClick={(e) => {
           e.stopPropagation();
@@ -108,14 +111,19 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
         ml={showImage ? 2 : 0}
         color='black'
         fontSize='1'
-        lineHeight='tall'
+        cursor='pointer'
+        lineHeight={lineHeight}
         fontFamily={showNickname ? 'sans' : 'mono'}
         fontWeight={showNickname ? '500' : '400'}
+        mr={showNickname ? 0 : "2px"}
+        mt={showNickname ? 0 : "0px"}
+        onClick={doCopy}
       >
-        {name}
+        {copyDisplay}
       </Box>
-      { !dontShowTime && (
+      { !dontShowTime && time && (
         <Timestamp
+          height="fit-content"
           relative={isRelativeTime}
           stamp={stamp}
           fontSize={1}
