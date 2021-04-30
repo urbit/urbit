@@ -423,10 +423,10 @@ u3_auto_init(u3_pier* pir_u)
   u3_auto* car_u = 0;
 
   car_u = _auto_link(u3_hind_io_init(pir_u), pir_u, car_u);
+  car_u = _auto_link(u3_behn_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_ames_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_http_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_cttp_io_init(pir_u), pir_u, car_u);
-  car_u = _auto_link(u3_behn_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_unix_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_term_io_init(pir_u), pir_u, car_u);
   car_u = _auto_link(u3_fore_io_init(pir_u), pir_u, car_u);
