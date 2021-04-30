@@ -306,6 +306,9 @@
 --
 ::
 |%
+::
+::  TODO: Factor out commonly used things like keys and addresses
+::
 ++  test-log  ^-  tang
   %+  expect-eq
     !>
@@ -561,6 +564,55 @@
       =^  f  state  (n state %bat q:(configure-keys:l2 new-keys))
       =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 (addr %marbud-key-0) %own |))
       |1:keys.net:(~(got by points.state) ~marbud)
+  ==
+::
+++  test-marbud-keys-life-rift  ^-  tang
+  =/  encrypt       (shax 'You will forget that you ever read this sentence.')
+  =/  auth          (shax 'You cant know that this sentence is true.')
+  =/  suite         1
+  =/  no-breach     [0 ~marbud %marbud-key-0 %own | encrypt auth suite]
+  =/  yes-breach    [0 ~marbud %marbud-key-0 %own & encrypt auth suite]
+  ;:  weld
+    %+  expect-eq
+      !>  [0 1]                   :: [rift life]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(configure-keys:l2 no-breach))
+      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+      !>  [1 1]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(configure-keys:l2 yes-breach))
+      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+  ==
+::
+++  test-marbud-transfer-life-rift  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  [1 0]                   :: [rift life]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(set-transfer-proxy:l2 0 ~marbud %marbud-key-0 %own (addr %marbud-key-1)))
+      =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-1 (addr %marbud-key-1) %transfer |))
+      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+      !>  [1 1]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(set-transfer-proxy:l2 0 ~marbud %marbud-key-0 %own (addr %marbud-key-1)))
+      =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-1 (addr %marbud-key-1) %transfer &))
+      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
   ==
 ::
 ++  test-dopbud-l2-spawn  ^-  tang
