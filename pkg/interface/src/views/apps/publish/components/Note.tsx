@@ -73,14 +73,14 @@ export function Note(props: NoteProps & RouteComponentProps) {
   if (window.ship === note?.post?.author) {
     adminLinks.push(
       <Link to={`${baseUrl}/edit`}>
-        <Action>Update</Action>
+        <Action backgroundColor="white">Update</Action>
       </Link>
     )
   };
 
   if (window.ship === note?.post?.author || ourRole === "admin") {
     adminLinks.push(
-      <Action destructive onClick={deletePost}>
+      <Action backgroundColor="white" destructive onClick={deletePost}>
         Delete
       </Action>
     )
@@ -115,11 +115,12 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Row alignItems="center">
           <Author
             showImage
+            isRelativeTime
             ship={post?.author}
             date={post?.['time-sent']}
             group={group}
           >
-            <Row px="2" gapX="2" alignItems="flex-end">
+            <Row px="2" gapX="2" alignItems="flex-end" height="14px">
               <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
               {adminLinks}
             </Row>

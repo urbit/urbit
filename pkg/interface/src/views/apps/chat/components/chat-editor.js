@@ -162,6 +162,7 @@ export default class ChatEditor extends Component {
       editor.showHint(['test', 'foo']);
     }
     if (this.state.message !== '' && value == '') {
+      this.props.changeEvent(value);
       this.setState({
         message: value
       });
@@ -169,6 +170,7 @@ export default class ChatEditor extends Component {
     if (value == this.props.message || value == '' || value == ' ') {
       return;
     }
+    this.props.changeEvent(value);
     this.setState({
       message: value
     });

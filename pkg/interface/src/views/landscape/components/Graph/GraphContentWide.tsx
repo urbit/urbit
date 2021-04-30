@@ -58,7 +58,11 @@ function GraphContentWideInner(
                 width="fit-content"
                 maxWidth="min(500px, 100%)"
               >
-                <RemoteContent key={content.url} url={content.url} />
+                <RemoteContent 
+                  key={content.url}
+                  url={content.url}
+                  transcluded={transcluded}
+                />
               </Box>
             );
           case "mention":

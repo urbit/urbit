@@ -36,6 +36,7 @@ interface CommentItemProps {
 }
 
 export function CommentItem(props: CommentItemProps): ReactElement {
+  let { highlighted } = props;
   const { ship, name, api, comment, group } = props;
   const association = useMetadataState(
     useCallback(s => s.associations.graph[`/ship/${ship}/${name}`], [ship,name])
@@ -62,6 +63,16 @@ export function CommentItem(props: CommentItemProps): ReactElement {
       ...indices
     ]);
   };
+
+  const ourMention = post?.contents?.some((e) => {
+      return e?.mention && e?.mention === window.ship;
+    });
+
+  if (!highlighted) {
+    if (ourMention) {
+      highlighted = true;
+    }
+  }
 
   const commentIndexArray = (comment.post?.index || '/').split('/');
   const commentIndex = commentIndexArray[commentIndexArray.length - 1];
@@ -116,6 +127,7 @@ export function CommentItem(props: CommentItemProps): ReactElement {
           date={post?.['time-sent']}
           unread={props.unread}
           group={group}
+          isRelativeTime
         >
           <Row px="2" gapX="2" height="18px">
             <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
@@ -127,7 +139,7 @@ export function CommentItem(props: CommentItemProps): ReactElement {
         borderRadius="1"
         p="1"
         mb="1"
-        backgroundColor={props.highlighted ? 'washedBlue' : 'white'}
+        backgroundColor={highlighted ? 'washedBlue' : 'white'}
         transcluded={0}
         api={api}
         post={post}
