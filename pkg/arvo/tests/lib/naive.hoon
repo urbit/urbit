@@ -598,7 +598,7 @@
   ;:  weld
     %+  expect-eq
     ::  reset=%.n
-      !>  [1 0]                   :: [rift life]
+      !>  [0 0]                   :: [rift life]
     ::
       !>
       =|  =^state:naive
@@ -609,7 +609,8 @@
     ::
     %+  expect-eq
     ::  reset=%.y
-      !>  [1 1]
+    ::  TODO: This test currently fails - rift is not increments on transfer w/ breach
+      !>  [1 0]
     ::
       !>
       =|  =^state:naive
