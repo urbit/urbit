@@ -191,7 +191,7 @@
   ::
   ++  configure-keys
     |=  $:  nonce=@ud  =ship  pk=@  proxy=@tas
-            breach=@  encrypt=@  auth=@  crypto-suite=@
+            breach=?  encrypt=@  auth=@  crypto-suite=@
         ==
     ^-  octs
     %^  sign-tx  pk  nonce
@@ -459,8 +459,8 @@
   =/  encrypt       (shax 'You will forget that you ever read this sentence.')
   =/  auth          (shax 'You cant know that this sentence is true.')
   =/  suite         1
-  =/  new-keys-own  [0 ~marbud %marbud-key-0 %own 0 encrypt auth suite]
-  =/  new-keys-mgt  [0 ~marbud %marbud-mgt %manage 0 encrypt auth suite]
+  =/  new-keys-own  [0 ~marbud %marbud-key-0 %own | encrypt auth suite]
+  =/  new-keys-mgt  [0 ~marbud %marbud-mgt %manage | encrypt auth suite]
   =/  mgt-proxy     [0 ~marbud %marbud-key-0 %own (addr %marbud-mgt)]
   ;:  weld
     %+  expect-eq
