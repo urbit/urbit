@@ -1937,6 +1937,13 @@
     ++  on-hear-shut-packet
       |=  [=lane =shut-packet dud=(unit goof)]
       ^+  peer-core
+      ::  XX hack to drop all incoming pleas
+      ::
+      ?:  ?&  ?=(%& -.meat.shut-packet)
+              =(1 (end 0 bone))
+          ==
+        ~&  %ames-drop-plea-packet
+        peer-core
       ::  update and print connection status
       ::
       =.  peer-core  (update-qos %live last-contact=now)
