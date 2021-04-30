@@ -94,6 +94,8 @@
   ::
       %4
     %_   $
+      -.old  %5
+    ::
         update-logs.old
       %-  ~(gas by *update-logs:store)
       %+  turn  ~(tap by graphs.old)
