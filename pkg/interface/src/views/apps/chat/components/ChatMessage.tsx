@@ -215,7 +215,7 @@ const MessageWrapper = (props) => {
   const showHover = (props.transcluded === 0) && hovering && !props.hideHover;
   return (
     <Box
-      py='1'
+      py={props.transcluded ? '2px' : '1'}
       backgroundColor={props.highlighted
         ? showHover ? 'lightBlue' : 'washedBlue'
         : showHover ? 'washedGray' : 'transparent'
@@ -372,6 +372,7 @@ export const MessageAuthor = ({
   msg,
   api,
   showOurContact,
+  ...props
 }) => {
   const osDark = useLocalState((state) => state.dark);
 
@@ -441,12 +442,12 @@ export const MessageAuthor = ({
       </Box>
     );
   return (
-    <Box pb="1" display='flex' alignItems='flex-start'>
+    <Box pb="1" display='flex' alignItems='center'>
       <Box
        height={24}
         pr={2}
         mt={'1px'}
-        pl={'12px'}
+        pl={props.transcluded ? '11px' : '12px'}
         cursor='pointer'
         position='relative'
       >
@@ -506,7 +507,7 @@ export const Message = React.memo(({
 }: MessageProps) => {
   const { hovering, bind } = useHovering();
   return (
-    <Box pl="44px" width="100%" position='relative'>
+    <Box pl="44px" pr={4} width="100%" position='relative'>
       {timestampHover ? (
         <Text
           display={hovering ? 'block' : 'none'}

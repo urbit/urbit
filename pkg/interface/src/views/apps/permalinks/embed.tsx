@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { useHistory } from 'react-router-dom';
 import {
   parsePermalink,
   GraphPermalink as IGraphPermalink,
@@ -13,10 +14,11 @@ import {
   Row,
   Icon,
   Col,
+  Center
 } from "@tlon/indigo-react";
 import { GroupLink } from "~/views/components/GroupLink";
 import GlobalApi from "~/logic/api/global";
-import { getModuleIcon } from "~/logic/lib/util";
+import { getModuleIcon, useHovering } from "~/logic/lib/util";
 import useMetadataState from "~/logic/state/metadata";
 import { Association, resourceFromPath, GraphNode } from "@urbit/api";
 import { Link } from "react-router-dom";
@@ -49,6 +51,8 @@ function GraphPermalink(
   }
 ) {
   const { full = false, showOurContact, pending, link, graph, group, index, api, transcluded } = props;
+  const history = useHistory();
+  const { hovering, bind } = useHovering();
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
     useCallback((s) => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index] as GraphNode, [
@@ -80,26 +84,33 @@ function GraphPermalink(
   const showTransclusion = !!(association && node && transcluded < 1);
   const permalink = getPermalinkForGraph(group, graph, index);
 
+  const navigate = (e) => {
+    e.stopPropagation();
+    history.push(`/perma${permalink.slice(16)}`);
+  };
+
   return (
     <Col
       width="100%"
       bg="white"
       maxWidth={full ? null : "500px"}
       border={full ? null : "1"}
-      borderColor="lightGray"
+      borderColor={hovering ? 'lightBlue' : 'lightGray'}
       borderRadius="2"
-      onClick={(e) => { e.stopPropagation(); }}
+      cursor='pointer'
+      onClick={(e) => {
+        navigate(e);
+      }}
+      {...bind}
     >
       {showTransclusion && index && (
-        <Box p="2">
-          <TranscludedNode
-            api={api}
-            transcluded={transcluded + 1}
-            node={node}
-            assoc={association!}
-            showOurContact={showOurContact}
-          />
-        </Box>
+        <TranscludedNode
+          api={api}
+          transcluded={transcluded + 1}
+          node={node}
+          assoc={association!}
+          showOurContact={showOurContact}
+        />
       )}
       {!!association ? (
         <PermalinkDetails
@@ -129,12 +140,8 @@ function PermalinkDetails(props: {
 }) {
   const { title, icon, permalink, known, showTransclusion } = props;
   const rowTransclusionStyle = showTransclusion
-    ? {
-        borderTop: "1",
-        borderTopColor: "lightGray",
-        my: "1",
-      }
-    : {};
+    ? { p: '12px 12px 11px 11px' }
+    : { p: '12px' };
 
   return (
     <Row
@@ -142,18 +149,17 @@ function PermalinkDetails(props: {
       alignItems="center"
       justifyContent="space-between"
       width="100%"
-      px="2"
-      py="1"
     >
       <Row gapX="2" alignItems="center">
-        <Icon icon={icon} />
-        <Text lineHeight="20px" mono={!known}>
+        <Box width={4} height={4}>
+          <Center width={4} height={4}>
+            <Icon icon={icon} color='gray' />
+          </Center>
+        </Box>
+        <Text gray mono={!known}>
           {title}
         </Text>
       </Row>
-      <Link to={`/perma${permalink.slice(16)}`}>
-        <Text color="blue">Go to link</Text>
-      </Link>
     </Row>
   );
 }

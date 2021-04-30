@@ -188,7 +188,7 @@ export function TranscludedNode(props: {
             ml="0"
             mr="0"
             showOurContact={showOurContact}
-            pt="2"
+            mt='0'
           />
         </Row>
       );
