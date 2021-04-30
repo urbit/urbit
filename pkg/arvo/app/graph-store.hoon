@@ -10,16 +10,17 @@
       [%1 network:zero:store]
       [%2 network:zero:store]
       [%3 network:one:store]
-      state-4
+      [%4 network:store]
+      state-5
   ==
 ::
-+$  state-4  [%4 network:store]
++$  state-5  [%5 network:store]
 ++  orm      orm:store
 ++  orm-log  orm-log:store
 +$  debug-input  [%validate-graph =resource:store]
 --
 ::
-=|  state-4
+=|  state-5
 =*  state  -
 ::
 %-  agent:dbug
@@ -91,7 +92,21 @@
       |=(a=* *update-log:store)
     ==
   ::
-    %4  [cards this(state old)]
+      %4
+    %_   $
+        update-logs.old
+      %-  ~(gas by *update-logs:store)
+      %+  turn  ~(tap by graphs.old)
+      |=  [=resource:store =graph:store mar=(unit mark)]
+      :-  resource
+      =/  log  (~(got by update-logs.old) resource)
+      ?.  =(~ log)  log
+      =/  =logged-update:store
+        [now.bowl %add-graph resource graph mar %.y]
+      (gas:orm-log ~ [now.bowl logged-update] ~)
+    ==
+  ::
+    %5  [cards this(state old)]
   ==
 ::
 ++  on-watch

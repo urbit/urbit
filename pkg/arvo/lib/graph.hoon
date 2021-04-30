@@ -76,6 +76,7 @@
 ++  get-graph
   |=  res=resource
   ^-  update:store
+  =-  -(p *time)
   %+  scry-for  update:store
   /graph/(scot %p entity.res)/[name.res]
 ::
