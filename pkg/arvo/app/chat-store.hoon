@@ -247,7 +247,7 @@
 ++  add-graph
   |=  [rid=resource =mailbox:store]
   %-  poke-graph-store
-  :+  %0  now.bol
+  :-  now.bol
   :+  %add-graph  rid
   :-  (mailbox-to-graph mailbox)
   [`%graph-validator-chat %.y]
@@ -255,7 +255,7 @@
 ++  archive-graph
   |=  rid=resource
   %-  poke-graph-store
-  [%0 now.bol %archive-graph rid]
+  [now.bol %archive-graph rid]
 ::
 ++  nobody
   ^-  @p
@@ -293,12 +293,12 @@
   |=  group=resource
   ^-  card
   =-  [%pass / %agent [our.bol %group-store] %poke -]
-  group-update+!>([%remove-group group ~])
+  group-update-0+!>([%remove-group group ~])
 ::
 ++  poke-graph-store
   |=  =update:graph-store
   ^-  card
-  [%pass / %agent [our.bol %graph-store] %poke %graph-update !>(update)]
+  [%pass / %agent [our.bol %graph-store] %poke %graph-update-1 !>(update)]
 ::
 ++  letter-to-contents
   |=  =letter:store

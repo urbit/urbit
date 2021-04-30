@@ -5455,9 +5455,10 @@
   ~%  %co  ..co  ~
   =<  |_  lot=coin
       ++  rear  |=(rom=tape rend(rep rom))
-      ++  rent  `@ta`(rap 3 rend)
+      ++  rent  ~+  `@ta`(rap 3 rend)
       ++  rend
         ^-  tape
+        ~+
         ?:  ?=(%blob -.lot)
           ['~' '0' ((v-co 1) (jam p.lot))]
         ?:  ?=(%many -.lot)

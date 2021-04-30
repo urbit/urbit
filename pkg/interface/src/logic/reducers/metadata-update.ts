@@ -25,7 +25,7 @@ export default class MetadataReducer {
 const groupInitial = (json: MetadataUpdate, state: MetadataState): MetadataState => {
   const data = _.get(json, 'initial-group', false);
   if(data) {
-    state = associations(data, state);
+    associations(data, state);
   }
   return state;
 }

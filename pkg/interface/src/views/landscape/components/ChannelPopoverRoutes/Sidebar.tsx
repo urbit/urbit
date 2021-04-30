@@ -13,7 +13,7 @@ export function ChannelPopoverRoutesSidebar(props: {
 
   return (
     <Col
-      display={['none', 'flex-column']}
+      display={['none', 'flex']}
       minWidth="200px"
       borderRight="1"
       borderRightColor="washedGray"
@@ -27,13 +27,13 @@ export function ChannelPopoverRoutesSidebar(props: {
         Preferences
       </Text>
       <SidebarItem
-        icon="Inbox"
+        icon='Notifications'
         text="Notifications"
         to={relativePath('/settings#notifications')}
       />
       {!isOwner && (
         <SidebarItem
-          icon="SignOut"
+          icon="LogOut"
           text="Unsubscribe"
           color="red"
           to={relativePath('/settings#unsubscribe')}
@@ -45,7 +45,7 @@ export function ChannelPopoverRoutesSidebar(props: {
             Administration
           </Text>
           <SidebarItem
-            icon="Boot"
+            icon="BootNode"
             text="Channel Details"
             to={relativePath('/settings#details')}
           />
@@ -56,14 +56,14 @@ export function ChannelPopoverRoutesSidebar(props: {
           />
           { isOwner ? (
             <SidebarItem
-              icon="TrashCan"
+              icon="X"
               text="Archive Channel"
               to={relativePath('/settings#archive')}
               color="red"
             />
           ) : (
             <SidebarItem
-              icon="TrashCan"
+              icon="X"
               text="Archive Channel"
               to={relativePath('/settings#remove')}
               color="red"

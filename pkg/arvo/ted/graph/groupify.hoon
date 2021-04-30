@@ -69,5 +69,5 @@
   !>  ^-  action:met
   [%remove rid.action [%graph rid.action]]
 ;<  ~  bind:m
-  (poke-our %group-store %group-update !>([%remove-group rid.action ~]))
+  (poke-our %group-store %group-update-0 !>([%remove-group rid.action ~]))
 (pure:m !>(~))

@@ -99,9 +99,11 @@ export default function index(contacts, associations, apps, currentGroup, groups
   Object.keys(associations).filter((e) => {
     // skip apps with no metadata
     return Object.keys(associations[e]).length > 0;
-    }).map((e) => {
-      // iterate through each app's metadata object
-      Object.keys(associations[e]).map((association) => {
+  }).map((e) => {
+    // iterate through each app's metadata object
+    Object.keys(associations[e])
+      .filter((association) => !associations?.[e]?.[association]?.metadata?.hidden)
+      .map((association) => {
         const each = associations[e][association];
         let title = each.resource;
         if (each.metadata.title !== '') {
@@ -114,7 +116,7 @@ export default function index(contacts, associations, apps, currentGroup, groups
         };
 
         if (each['app-name'] === 'graph') {
-          app = each.metadata.module;
+          app = each.metadata.config.graph;
         }
 
         const shipStart = each.resource.substr(each.resource.indexOf('~'));
@@ -128,7 +130,7 @@ export default function index(contacts, associations, apps, currentGroup, groups
           );
           landscape.push(obj);
         } else {
-          const app = each.metadata.module || each['app-name'];
+          const app = each.metadata.config.graph || each['app-name'];
           let group = each.group;
           if (groups[each.group]?.hidden && app === 'chat') {
             group = '/messages';

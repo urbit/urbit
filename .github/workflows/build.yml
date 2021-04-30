@@ -35,26 +35,26 @@ name: build
 on:
   push:
     paths:
-      - 'pkg/arvo'
-      - 'pkg/docker-image'
-      - 'pkg/ent'
-      - 'pkg/ge-additions'
-      - 'pkg/hs'
-      - 'pkg/libaes_siv'
-      - 'pkg/urbit'
-      - 'bin'
-      - 'nix'
+      - 'pkg/arvo/**'
+      - 'pkg/docker-image/**'
+      - 'pkg/ent/**'
+      - 'pkg/ge-additions/**'
+      - 'pkg/hs/**'
+      - 'pkg/libaes_siv/**'
+      - 'pkg/urbit/**'
+      - 'bin/**'
+      - 'nix/**'
   pull_request:
     paths:
-      - 'pkg/arvo'
-      - 'pkg/docker-image'
-      - 'pkg/ent'
-      - 'pkg/ge-additions'
-      - 'pkg/hs'
-      - 'pkg/libaes_siv'
-      - 'pkg/urbit'
-      - 'bin'
-      - 'nix'
+      - 'pkg/arvo/**'
+      - 'pkg/docker-image/**'
+      - 'pkg/ent/**'
+      - 'pkg/ge-additions/**'
+      - 'pkg/hs/**'
+      - 'pkg/libaes_siv/**'
+      - 'pkg/urbit/**'
+      - 'bin/**'
+      - 'nix/**'
 
 jobs:
   urbit:

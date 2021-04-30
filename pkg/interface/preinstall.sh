@@ -6,7 +6,7 @@ for i in $(find . -type d -maxdepth 1) ; do
     if [ -f "${packageJson}" ]; then
         echo "installing ${i}..."
         cd ./${i}
-        npm install
+        npm ci
         cd ..
     fi
 done

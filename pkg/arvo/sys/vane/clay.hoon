@@ -118,11 +118,11 @@
 ::  Ford cache
 ::
 +$  ford-cache
-  $:  files=(map path [res=vase dez=(set path)])
-      naves=(map mark [res=vase dez=(set path)])
-      marks=(map mark [res=dais dez=(set path)])
-      casts=(map mars [res=vase dez=(set path)])
-      tubes=(map mars [res=tube dez=(set path)])
+  $:  files=(map path [res=vase dez=(set [dir=? =path])])
+      naves=(map mark [res=vase dez=(set [dir=? =path])])
+      marks=(map mark [res=dais dez=(set [dir=? =path])])
+      casts=(map mars [res=vase dez=(set [dir=? =path])])
+      tubes=(map mars [res=tube dez=(set [dir=? =path])])
   ==
 ::  $reef-cache: built system files
 ::
@@ -428,18 +428,23 @@
   ::
   ++  an
     |_  nak=ankh
+    ::  +dug: produce ankh at path
+    ::
+    ++  dug
+      |=  =path
+      ^-  (unit ankh)
+      ?~  path  `nak
+      ?~  kid=(~(get by dir.nak) i.path)
+        ~
+      $(nak u.kid, path t.path)
     ::  +get: produce file at path
     ::
     ++  get
       |=  =path
       ^-  (unit cage)
-      ?~  path
-        ?~  fil.nak
-          ~
-        `q.u.fil.nak
-      ?~  kid=(~(get by dir.nak) i.path)
-        ~
-      $(nak u.kid, path t.path)
+      ?~  nik=(dug path)  ~
+      ?~  fil.u.nik       ~
+      `q.u.fil.u.nik
     --
   ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
   ++  with-faces
@@ -472,7 +477,7 @@
         +$  state
           $:  baked=(map path cage)
               cache=ford-cache
-              stack=(list (set path))
+              stack=(list (set [dir=? =path]))
               cycle=(set build)
           ==
         +$  args
@@ -493,8 +498,8 @@
     ::  +pop-stack: pop build stack, copying deps downward
     ::
     ++  pop-stack
-      ^-  [(set path) _stack.nub]
-      =^  top=(set path)  stack.nub  stack.nub
+      ^-  [(set [dir=? =path]) _stack.nub]
+      =^  top=(set [dir=? =path])  stack.nub  stack.nub
       =?  stack.nub  ?=(^ stack.nub)
         stack.nub(i (~(uni in i.stack.nub) top))
       [top stack.nub]
@@ -805,9 +810,11 @@
       =^  res=vase  nub  (run-pile pile)
       res
     ::
-    ++  build-file
-      |=  =path
+    ++  build-dependency
+      |=  dep=(each [dir=path fil=path] path)
       ^-  [vase state]
+      =/  =path
+        ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
       ?^  got=(~(get by files.cache.nub) path)
         =?  stack.nub  ?=(^ stack.nub)
@@ -816,7 +823,9 @@
       ?:  (~(has in cycle.nub) file+path)
         ~|(cycle+file+path^stack.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+path)
-      =.  stack.nub  [(sy path ~) stack.nub]
+      =.  stack.nub
+        =-  [(sy - ~) stack.nub]
+        ?:(?=(%| -.dep) dep [& dir.p.dep])
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
@@ -826,11 +835,42 @@
       =.  files.cache.nub  (~(put by files.cache.nub) path [res top])
       [res nub]
     ::
+    ++  build-file
+      |=  =path
+      (build-dependency |+path)
+    ::  +build-directory: builds files in top level of a directory
+    ::
+    ::    this excludes files directly at /path/hoon,
+    ::    instead only including files in the unix-style directory at /path,
+    ::    such as /path/file/hoon, but not /path/more/file/hoon.
+    ::
+    ++  build-directory
+      |=  =path
+      ^-  [(map @ta vase) state]
+      =/  fiz=(list @ta)
+        =/  nuk=(unit _ankh)  (~(dug an ankh) path)
+        ?~  nuk  ~
+        %+  murn
+          ~(tap by dir.u.nuk)
+        |=  [nom=@ta nak=_ankh]
+        ?.  ?=([~ [~ *] *] (~(get by dir.nak) %hoon))  ~
+        `nom
+      ::
+      =|  rez=(map @ta vase)
+      |-
+      ?~  fiz
+        [rez nub]
+      =*  nom=@ta    i.fiz
+      =/  pax=^path  (weld path nom %hoon ~)
+      =^  res  nub   (build-dependency &+[path pax])
+      $(fiz t.fiz, rez (~(put by rez) nom res))
+    ::
     ++  run-pile
       |=  =pile
       =^  sut=vase  nub  (run-tauts bud %sur sur.pile)
       =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
       =^  sut=vase  nub  (run-raw sut raw.pile)
+      =^  sut=vase  nub  (run-raz sut raz.pile)
       =^  sut=vase  nub  (run-maz sut maz.pile)
       =^  sut=vase  nub  (run-caz sut caz.pile)
       =^  sut=vase  nub  (run-bar sut bar.pile)
@@ -870,6 +910,9 @@
       ::
         %+  rune  tis
         ;~(plug sym ;~(pfix gap stap))
+      ::
+        %+  rune  sig
+        ;~((glue gap) sym wyde:vast stap)
       ::
         %+  rune  cen
         ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
@@ -930,6 +973,30 @@
       =^  pin=vase  nub  (build-file (snoc path.i.raw %hoon))
       =.  p.pin  [%face face.i.raw p.pin]
       $(sut (slop pin sut), raw t.raw)
+    ::
+    ++  run-raz
+      |=  [sut=vase raz=(list [face=term =spec =path])]
+      ^-  [vase state]
+      ?~  raz  [sut nub]
+      =^  res=(map @ta vase)  nub
+        (build-directory path.i.raz)
+      =;  pin=vase
+        =.  p.pin  [%face face.i.raz p.pin]
+        $(sut (slop pin sut), raz t.raz)
+      ::
+      =/  =type  (~(play ut p.sut) [%kttr spec.i.raz])
+      ::  ensure results nest in the specified type,
+      ::  and produce a homogenous map containing that type.
+      ::
+      :-  %-  ~(play ut p.sut)
+          [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec.i.raz]]
+      |-
+      ?~  res  ~
+      ?.  (~(nest ut type) | p.q.n.res)
+        ~|  [%nest-fail path.i.raz p.n.res]
+        !!
+      :-  [p.n.res q.q.n.res]
+      [$(res l.res) $(res r.res)]
     ::
     ++  run-maz
       |=  [sut=vase maz=(list [face=term =mark])]
@@ -1256,6 +1323,24 @@
     =/  =path  [%question desk (scot %ud index) ~]
     (emit duct %pass wire %a %plea ship %c path `riff-any`[%1 riff])
   ::
+  ++  foreign-capable
+    |=  =rave
+    |^
+    ?-    -.rave
+        %many  &
+        %sing  (good-care care.mood.rave)
+        %next  (good-care care.mood.rave)
+        %mult
+      %-  ~(all in paths.mool.rave)
+      |=  [=care =path]
+      (good-care care)
+    ==
+    ::
+    ++  good-care
+      |=  =care
+      (~(has in ^~((silt `(list ^care)`~[%u %w %x %y %z]))) care)
+    --
+  ::
   ::  Create a request that cannot be filled immediately.
   ::
   ::  If it's a local request, we just put in in `qyx`, setting a timer if it's
@@ -1275,6 +1360,10 @@
     =.  rave
       ?.  ?=([%sing %v *] rave)  rave
       [%many %| [%ud let.dom] case.mood.rave path.mood.rave]
+    ::
+    ?.  (foreign-capable rave)
+      ~|([%clay-bad-foreign-request-care rave] !!)
+    ::
     =+  inx=nix.u.ref
     =.  +>+.$
       =<  ?>(?=(^ ref) .)
@@ -1582,12 +1671,19 @@
     ::
     ++  invalidate
       |*  [key=mold value=mold]
-      |=  [cache=(map key [value dez=(set path)]) invalid=(set path)]
-      =/  builds=(list [key value dez=(set path)])  ~(tap by cache)
+      |=  [cache=(map key [value dez=(set [dir=? =path])]) invalid=(set path)]
+      =/  builds=(list [key value dez=(set [dir=? =path])])
+        ~(tap by cache)
       |-  ^+  cache
       ?~  builds
         ~
-      ?:  ?=(^ (~(int in dez.i.builds) invalid))
+      ?:  %-  ~(any in dez.i.builds)
+          |=  [dir=? =path]
+          ?.  dir  (~(has in invalid) path)
+          =+  l=(lent path)
+          %-  ~(any in invalid)
+          |=  i=^path
+          &(=(path (scag l i)) ?=([@ %hoon ~] (slag l i)))
         $(builds t.builds)
       (~(put by $(builds t.builds)) i.builds)
     ::
@@ -2665,6 +2761,9 @@
   ++  start-request
     |=  [for=(unit [ship @ud]) rav=rave]
     ^+  ..start-request
+    ?:  &(?=(^ for) !(foreign-capable rav))
+      ~&  [%bad-foreign-request-care from=for rav]
+      ..start-request
     =^  [new-sub=(unit rove) sub-results=(list sub-result)]  fod.dom
       (try-fill-sub for (rave-to-rove rav))
     =.  ..start-request  (send-sub-results sub-results [hen ~ ~])
@@ -2721,13 +2820,22 @@
           %r  ~|  %no-cages-please-they-are-just-way-too-big  !!
           %s  ~|  %please-dont-get-your-takos-over-a-network  !!
           %t  ~|  %requesting-foreign-directory-is-vaporware  !!
-          %u  ~|  %prolly-poor-idea-to-get-rang-over-network  !!
           %v  ~|  %weird-shouldnt-get-v-request-from-network  !!
-          %z  `(validate-z r.rand)
+          %u  `(validate-u r.rand)
           %w  `(validate-w r.rand)
           %x  (validate-x [p.p q.p q r]:rand)
           %y  `[p.r.rand !>(;;(arch q.r.rand))]
+          %z  `(validate-z r.rand)
       ==
+    ::
+    ::  Make sure the incoming data is a %u response
+    ::
+    ++  validate-u
+      |=  =page
+      ^-  cage
+      ?>  ?=(%flag p.page)
+      :-  p.page
+      !>  ;;(? q.page)
     ::
     ::  Make sure the incoming data is a %w response
     ::
@@ -2749,7 +2857,11 @@
       =/  vale-result
         %-  mule  |.
         %-  wrap:fusion
-        (page-to-cage:(ford:fusion static-ford-args) peg)
+        ::  Use %home's marks to validate, so we don't have to build the
+        ::  foreign hoon/zuse
+        ::
+        =/  args  %*(static-ford-args . dom dom:(~(got by dos.rom) %home))
+        (page-to-cage:(ford:fusion args) peg)
       ?:  ?=(%| -.vale-result)
         %-  (slog >%validate-x-failed< p.vale-result)
         ~
@@ -2762,7 +2874,7 @@
       ^-  cage
       ?>  ?=(%uvi p.page)
       :-  p.page
-      !>(;;(@uvI q.page))
+      !>  ;;(@uvI q.page)
     --
   ::
   ::  Respond to backfill request
@@ -3962,8 +4074,10 @@
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
+~%  %clay-top  ..part  ~
 |%                                                    ::
 ++  call                                              ::  handle request
+  ~/  %clay-call
   |=  $:  hen=duct
           dud=(unit goof)
           wrapped-task=(hobo task)
@@ -4273,6 +4387,7 @@
   --
 ::
 ++  scry                                              ::  inspect
+  ~/  %clay-scry
   ^-  roon
   |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
@@ -4334,6 +4449,7 @@
   ==
 ::
 ++  take                                              ::  accept response
+  ~/  %clay-take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
   ?^  dud

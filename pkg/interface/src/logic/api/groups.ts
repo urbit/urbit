@@ -78,12 +78,16 @@ export default class GroupsApi extends BaseApi<StoreState> {
     });
   }
 
+  hide(resource: string) {
+    return this.viewAction({ hide: resource });
+  }
+
   private proxyAction(action: GroupAction) {
-    return this.action('group-push-hook', 'group-update', action);
+    return this.action('group-push-hook', 'group-update-0', action);
   }
 
   private storeAction(action: GroupAction) {
-    return this.action('group-store', 'group-update', action);
+    return this.action('group-store', 'group-update-0', action);
   }
 
   private viewThread(thread: string, action: any) {

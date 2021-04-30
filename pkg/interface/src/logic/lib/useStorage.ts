@@ -16,7 +16,7 @@ export interface IuseStorage {
   upload: (file: File, bucket: string) => Promise<string>;
   uploadDefault: (file: File) => Promise<string>;
   uploading: boolean;
-  promptUpload: () => Promise<string | undefined>;
+  promptUpload: () => Promise<unknown>;
 }
 
 const useStorage = ({ accept = '*' } = { accept: '*' }): IuseStorage => {

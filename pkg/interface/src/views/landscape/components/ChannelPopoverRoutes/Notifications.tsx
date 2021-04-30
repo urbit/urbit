@@ -28,7 +28,7 @@ export function ChannelNotifications(props: ChannelNotificationsProps) {
   const anchorRef = useRef<HTMLElement | null>(null);
 
   return (
-    <Col mb="6" gapY="4" flexShrink={0}>
+    <Col mx="4" mb="6" gapY="4" flexShrink={0}>
       <Text ref={anchorRef} id="notifications" fontSize="2" fontWeight="bold">
         Channel Notifications
       </Text>
