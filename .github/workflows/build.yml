@@ -134,3 +134,6 @@ jobs:
 
       - run: make build/urbit build/urbit-worker
         working-directory: ./pkg/urbit
+
+      - run: build/urbit -d -B ../../bin/brass.pill -F zod && curl -f --data '{"source":{"dojo":"+hood/exit"},"sink":{"app":"hood"}}' http://localhost:12321
+        working-directory: ./pkg/urbit
