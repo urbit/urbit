@@ -106,6 +106,7 @@ class App extends React.Component {
       this.updateTheme(this.themeWatcher);
     }, 500);
     this.api.local.getBaseHash();
+    this.api.local.getRuntimeLag();  //TODO  consider polling periodically
     this.api.settings.getAll();
     gcpManager.start();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
