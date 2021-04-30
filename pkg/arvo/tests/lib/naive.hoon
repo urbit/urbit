@@ -485,6 +485,84 @@
     :: TODO: make sure nobody else can change these keys
   ==
 ::
+++  test-marbud-l2-transfer-breach  ^-  tang
+  =/  encrypt       (shax 'You will forget that you ever read this sentence.')
+  =/  auth          (shax 'You cant know that this sentence is true.')
+  =/  suite         1
+  =/  new-keys      [0 ~marbud %marbud-key-0 %own | encrypt auth suite]
+  ;:  weld
+    %+  expect-eq
+    ::  Tests that proxies are reset on transfer breach
+      !>
+      :*  [(addr %marbud-key-1) 3]       :: ownership
+          [0 0]                          :: spawn-proxy
+          [0 0]                          :: management-proxy
+          [0 0]                          :: voting-proxy
+          [0 1]                          :: transfer-proxy
+      ==
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(set-spawn-proxy:l2 0 ~marbud %marbud-key-0 %own 0x123))
+      =^  f  state  (n state %bat q:(set-management-proxy:l2 1 ~marbud %marbud-key-0 %own 0x234))
+      =^  f  state  (n state %bat q:(set-transfer-proxy:l2 2 ~marbud %marbud-key-0 %own (addr %marbud-key-1)))
+      =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-1 (addr %marbud-key-1) %transfer &))
+      ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
+      own:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+    ::  Tests that networking keys are reset on transfer breach
+      !>
+      [0 0 0]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(configure-keys:l2 new-keys))
+      =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 (addr %marbud-key-0) %own &))
+      |1:keys.net:(~(got by points.state) ~marbud)
+  ==
+::
+++  test-marbud-l2-transfer-no-breach  ^-  tang
+  =/  encrypt       (shax 'You will forget that you ever read this sentence.')
+  =/  auth          (shax 'You cant know that this sentence is true.')
+  =/  suite         1
+  =/  new-keys      [0 ~marbud %marbud-key-0 %own | encrypt auth suite]
+  ;:  weld
+    %+  expect-eq
+    ::  Tests that proxies are not reset when transfering with no breach
+      !>
+      :*  [(addr %marbud-key-1) 3]       :: ownership
+          [`@`0x123 0]                   :: spawn-proxy
+          [`@`0x234 0]                   :: management-proxy
+          [0 0]                          :: voting-proxy
+          [0 1]                          :: transfer-proxy
+      ==
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(set-spawn-proxy:l2 0 ~marbud %marbud-key-0 %own 0x123))
+      =^  f  state  (n state %bat q:(set-management-proxy:l2 1 ~marbud %marbud-key-0 %own 0x234))
+      =^  f  state  (n state %bat q:(set-transfer-proxy:l2 2 ~marbud %marbud-key-0 %own (addr %marbud-key-1)))
+      =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-1 (addr %marbud-key-1) %transfer |))
+      ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
+      own:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+    ::  Tests that networking keys are not reset when transfering with no breach
+      !>
+      [suite auth encrypt]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(configure-keys:l2 new-keys))
+      =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 (addr %marbud-key-0) %own |))
+      |1:keys.net:(~(got by points.state) ~marbud)
+  ==
+::
 ++  test-dopbud-l2-spawn  ^-  tang
   %+  expect-eq
     !>  [`@ux`(addr %pp-key-0) 0]
