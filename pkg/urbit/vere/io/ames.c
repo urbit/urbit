@@ -1047,6 +1047,25 @@ _ames_try_forward(u3_ames* sam_u,
   }
 }
 
+#undef AMES_SKIP
+#ifdef AMES_SKIP
+/* _ames_skip(): decide whether to skip this packet, for rescue
+*/
+static c3_o
+_ames_skip(u3_body* bod_u) {
+  if ( bod_u->sen_d[1] == 0 &&
+       ( bod_u->sen_d[0] == 0x743a17a6
+         || bod_u->sen_d[0] == 0xea99acb6
+         || bod_u->sen_d[0] == 0x10100
+     ) ) {
+    return c3n;
+  }
+  else {
+    return c3y;
+  }
+}
+#endif
+
 /* _ames_hear(): parse a (potential) packet, dispatch appropriately.
 */
 static void
@@ -1149,7 +1168,16 @@ _ames_hear(u3_ames* sam_u,
   else {
     u3_noun msg = u3i_bytes(len_w, hun_y);
     c3_free(hun_y);
-    _ames_put_packet(sam_u, msg, *lan_u);
+#ifdef AMES_SKIP
+    if (_ames_skip(&bod_u) == c3y ) {
+      u3z(msg);
+    }
+    else {
+#endif
+      _ames_put_packet(sam_u, msg, *lan_u);
+#ifdef AMES_SKIP
+    }
+#endif
   }
 }
 
