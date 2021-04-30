@@ -1396,6 +1396,11 @@
         void
         u3_king_grab(void* ptr_v);
 
+      /* u3_daemon_init(): platform-specific daemon mode initialization.
+      */
+        void
+        u3_daemon_init();
+
       /* u3_write_fd(): retry interrupts, continue partial writes, assert errors.
       */
         void
