@@ -1047,6 +1047,18 @@ _ames_try_forward(u3_ames* sam_u,
   }
 }
 
+#define SKIP_PARITY 1
+#define SKIP_MASK   0x1
+
+static c3_o _ames_skip(u3_body* bod_u) {
+  if( bod_u->sen_d[1] == 0 &&
+       ((bod_u->sen_d[0] & SKIP_MASK) == SKIP_PARITY) ) {
+    return c3y; 
+  } else {
+    return c3n;
+  }
+}
+
 /* _ames_hear(): parse a (potential) packet, dispatch appropriately.
 */
 static void
@@ -1149,10 +1161,13 @@ _ames_hear(u3_ames* sam_u,
   else {
     u3_noun msg = u3i_bytes(len_w, hun_y);
     c3_free(hun_y);
-    _ames_put_packet(sam_u, msg, *lan_u);
+    if(_ames_skip(&bod_u) == c3y ) {
+      u3z(msg);
+    } else {
+      _ames_put_packet(sam_u, msg, *lan_u);
+    }
   }
 }
-
 /* _ames_recv_cb(): udp message receive callback.
 */
 static void
