@@ -29,6 +29,7 @@
 +$  reference
   $%  [%graph group=resource =uid]
       [%group group=resource]
+      [%dm =ship =index]
   ==
 ::
 +$  content
