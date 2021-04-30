@@ -74,6 +74,7 @@
 ++  transform-proxy-update
   |=  vas=vase
   ^-  (unit vase)
+  ?:  =(1 1)  `this
   =/  =update:store  !<(update:store vas)
   =*  rid  resource.q.update
   =.  p.update  now.bowl
