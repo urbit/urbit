@@ -122,6 +122,7 @@ jobs:
     defaults:
       run:
         shell: C:\msys64\msys2_shell.cmd -mingw64 -defterm -no-start -here -c ". <(cygpath '{0}')"
+        working-directory: ./pkg/urbit
 
     steps:
       - uses: actions/checkout@v2
@@ -130,10 +131,9 @@ jobs:
 
       # echo suppresses pacman prompt
       - run: echo|./configure
-        working-directory: ./pkg/urbit
+        env:
+          CACHIX_CACHE: ares
+          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: make build/urbit build/urbit-worker
-        working-directory: ./pkg/urbit
-
       - run: build/urbit -d -B ../../bin/brass.pill -F zod && curl -f --data '{"source":{"dojo":"+hood/exit"},"sink":{"app":"hood"}}' http://localhost:12321
-        working-directory: ./pkg/urbit

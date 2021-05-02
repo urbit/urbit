@@ -93,37 +93,11 @@ esac
 # TODO Determine if the target cpu is little or big endian.
 case $(tr A-Z a-z <<< $os) in
   *mingw*)
-     # ensure required mingw packages are installed
-     mpkgs=(cmake curl gcc jq libsigsegv libuv make wslay)
-     pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w64-x86_64-}
+     # set up dependencies and create cdirs and ldirs arrays
+     . compat/mingw/poor-mans-nix-shell.sh
 
      # support running off a tarball that doesn't contain binary pills
      (( $(stat -c %s ../../bin/ivory.pill) > 512 )) || curl -L https://github.com/urbit/urbit/raw/urbit-v$URBIT_VERSION/bin/ivory.pill > ../../bin/ivory.pill
-
-     # poor man's nix-shell
-     declare -a cdirs
-     declare -a ldirs
-     . <(jq -sr '
-add|to_entries|.[]|select(.value.mingw)|.key as $key|"../\(.key)" as $dir|(if .value.url then "
-if [ ! -d \($dir) ]
-then
-  mkdir -p \($dir)
-  pushd \($dir)
-  curl -L \(.value.url)|(tar --strip \(.value.mingw.strip+1) -xzf - || true)
-  popd
-fi" else "" end) + "
-pushd \($dir)
-if [ ! -e .mingw~ ]
-then" + ("../urbit/compat/mingw/\($key).patch"|"
-  [ -e \(.) ] && patch -p 1 <\(.)") + "
-  \(.value.mingw.prepare//"")
-  touch .mingw~
-fi
-make \(.value.mingw.make//"")
-popd
-\(.value.mingw.include//"."|if type == "array" then .[] else . end|"cdirs+=(-I../\($key)/\(.))
-")\(.value.mingw.lib//"."|if type == "array" then .[] else . end|"ldirs+=(-L../\($key)/\(.))
-")"' ../../nix/sources.json ../../nix/sources-mingw.json)
 
      [ -e include/ca-bundle.h ] || xxd /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt include_ca_bundle_crt >include/ca-bundle.h
      [ -e include/ivory.h     ] || xxd ../../bin/ivory.pill u3_Ivory_pill >include/ivory.h
