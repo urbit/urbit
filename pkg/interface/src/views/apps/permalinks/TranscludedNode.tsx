@@ -68,13 +68,15 @@ function TranscludedComment(props: {
   return (
     <Col>
       <Author
-        p="2"
+        pt='12px'
+        pl='12px'
+        size='24'
         showImage
         ship={comment.post.author}
         date={comment.post?.["time-sent"]}
         group={group}
       />
-      <Box p="2">
+      <Box pl="44px" pt='1'>
         <GraphContentWide
           api={api}
           transcluded={transcluded}
@@ -103,16 +105,18 @@ function TranscludedPublishNode(props: {
       return (
         <Col color="black" gapY="2">
           <Author
-            px="2"
+            pl='12px'
+            pt='12px'
+            size='24'
             showImage
             ship={post.post.author}
             date={post.post?.["time-sent"]}
             group={group}
           />
-          <Text px="2" fontSize="2" fontWeight="medium">
+          <Text pl='44px' fontSize="2" fontWeight="medium">
             {post.post.contents[0]?.text}
           </Text>
-          <Box p="2">
+          <Box pl="44px" pr='3'>
             <NotePreviewContent
               snippet={getSnippet(post?.post.contents[1]?.text)}
             />
@@ -144,13 +148,15 @@ export function TranscludedPost(props: {
   return (
     <Col>
       <Author
-        p="2"
+        pt='12px'
+        pl='12px'
+        size='24'
         showImage
         ship={post.author}
         date={post?.["time-sent"]}
         group={group}
       />
-      <Box p="2">
+      <Box pl='44px' pt='2' pr='3'>
         <MentionText
           api={api}
           transcluded={transcluded}
