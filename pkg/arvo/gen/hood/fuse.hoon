@@ -8,5 +8,8 @@
 ::::
   ::
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] [des=desk bas=beak con=(list [beak germ]) ~] ~]
-[%kiln-fuse des bas con]
+|=  [[now=@da eny=@uvJ bec=beak] [arg=[?(~ [des=desk bas=beak con=(list [beak germ]) ~])]] ~]
+:-  %kiln-fuse
+?~  arg
+  ((slog (turn `wain`help-text |=(=@t leaf+(trip t)))) ~)
+[des bas con]:arg

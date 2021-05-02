@@ -56,6 +56,7 @@
       gim=?(%auto germ)                                 ::
   ==
 +$  kiln-fuse
+  $@  ~
   $:  syd=desk
       bas=beak
       con=(list [beak germ])
@@ -388,6 +389,7 @@
 ::
 ++  poke-fuse
   |=  k=kiln-fuse
+  ?~  k  abet
   abet:(emit [%pass /kiln/fuse/[syd.k] %arvo %c [%fuse syd.k bas.k con.k]])
 ::
 ++  poke-cancel
