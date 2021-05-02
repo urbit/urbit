@@ -4,7 +4,10 @@ pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w6
 
 declare -a cdirs
 declare -a ldirs
+declare -A hdeps
 sources=(../../nix/sources.json ../../nix/sources-mingw.json)
+deriver=urbit-mingw-build
+depdirs=
 
 hex2nixbase32 () {
   local digits='0123456789abcdfghijklmnpqrsvwxyz'
@@ -31,19 +34,23 @@ hex2nixbase32 () {
   echo -n ${digits:$bits:1}
 }
 
+hashnixdep () {
+  local patch=compat/mingw/$1.patch
+  local hash
+  read hash _ < <((
+  # create 'store hash' from sources.json data and patch
+  jq -Sscj --arg key "$1" --arg deriver "$deriver" 'add|to_entries|.[]|select(.key==$key)|{($deriver):.value}' ${sources[@]}
+  [ -e $patch ] && cat $patch)|sha256sum)
+  hex2nixbase32 $hash
+}
+
 buildnixdep () {
   local cache=https://app.cachix.org/api/v1/cache/${CACHIX_CACHE-}
-  local deriver=urbit-mingw-build
   local hash=
   local dir
   if [ -n "$url" ]
   then
-    local patch=compat/mingw/$key.patch
-    # create 'store hash' from sources.json data and patch
-    read hash _ < <((
-    jq -Sscj --arg key "$key" --arg deriver "$deriver" 'add|to_entries|.[]|select(.key==$key)|{($deriver):.value}' ${sources[@]}
-    [ -e $patch ] && cat $patch)|sha256sum)
-    hash=$(hex2nixbase32 $hash)
+    hash=${hdeps[$key]}
     dir=../$hash-$key
     if [ -e $dir/.mingw~ ]
     then
@@ -79,8 +86,8 @@ pushd \($dir)
 if [ ! -e .mingw~ ]
 then" + ("../urbit/compat/mingw/\($key).patch"|"
   [ -e \(.) ] && patch -p 1 <\(.)") + "
-  \(.value.mingw.prepare//"")
-  make \(.value.mingw.make//"")
+  \(.value.mingw.prepare//""'"$depdirs"')
+  make \(.value.mingw.make//""'"$depdirs"')
   touch .mingw~
 fi
 popd
@@ -112,6 +119,13 @@ EOF
     rm $hash.tar || true
   fi
 }
+
+# list dependencies, create store hashes and a directory replacement regex
+. <(jq -sr 'add|to_entries|.[]|select(.value.mingw)|select(.value.url)|"
+_hash=$(hashnixdep \(.key|@sh))
+hdeps[\(.key|@sh)]=$_hash
+depdirs=\"$depdirs|gsub(\\\"\\\\\\.\\\\\\./\(.key)\\\";\\\"../$_hash-\(.key)\\\")\"
+unset _hash"' ${sources[@]})
 
 # I have to go over the sources files several times
 # because jq does not have a way to invoke external programs
