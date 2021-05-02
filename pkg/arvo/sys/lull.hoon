@@ -762,7 +762,7 @@
             her=@p  dem=desk  cas=case                  ::  source
             how=germ                                    ::  method
         ==                                              ::
-        $:  %fuse                                       ::  mega merge
+        $:  %fuse                                       ::  merge many
             des=desk                                    ::  target desk
             bas=beak                                    ::  base desk
             con=(list [beak germ])                      ::  merges

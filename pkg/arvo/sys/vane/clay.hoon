@@ -1972,104 +1972,116 @@
     |=  [bas=beak con=(list [beak germ])]
     ^-  melt
     :+  bas  con
-    %-  ~(gas by (~(put by *(map beak (unit dome:clay))) bas *(unit dome:clay)))
+    %-  ~(gas by *(map beak (unit dome:clay)))
+    :-  [bas *(unit dome:clay)]
     (turn con |=(a=[beak germ] [-.a *(unit dome:clay)]))
   ::
   ++  start-fuse
     |=  [bas=beak con=(list [beak germ])]
     ^+  ..start-fuse
     =/  moves=(list move)
-        %+  turn
-          [[bas *germ] con]
-        |=  [bec=beak germ]
-        ^-  move
-        =/  wir=wire  /fuse/[syd]/(scot %p p.bec)/[q.bec]/(scot r.bec)
-        [hen %pass wir %c %warp p.bec q.bec `[%sing %v r.bec /]]
+    %+  turn
+      [[bas *germ] con]
+    |=  [bec=beak germ]
+    ^-  move
+    =/  wir=wire  /fuse/[syd]/(scot %p p.bec)/[q.bec]/(scot r.bec)
+    [hen %pass wir %c %warp p.bec q.bec `[%sing %v r.bec /]]
+    ::
     ::  we also want to clear the state (fiz) associated with this
     ::  merge and print a warning if it's non trivial i.e. we're
     ::  starting a new fuse before the previous one terminated.
-    ~&  ?~  con.fiz
-          [%starting-fuse bas con]
-        :*  %starting-fuse
-            bas
-            con
-            %discarding-state
-            ::  we don't want to ~& an entire dome
-            %-  ~(run by sto.fiz)
-            |=(v=(unit dome:clay) ?~(v %not-received %recieved))
-        ==
+    ::
+    =/  err=tang
+    ?~  con.fiz
+      ~
+    =/  discarded=tang
+    %+  turn
+      ~(tap in sto.fiz)
+    |=  [k=beak v=(unit dome:clay)]
+    ^-  tank
+    =/  received=tape  ?~(v "missing" "received")
+    leaf+"{<k>} {received}"
+    :-  leaf+"fusing into {<syd>} from {<bas>} {<con>} - overwriting prior fuse"
+    discarded
     =.  fiz  (make-melt bas con)
-    (emil moves)
+    ((slog err) (emil moves))
   ::
   ++  take-fuse
     |=  [bec=beak =riot]
     ^+  ..take-fuse
     ?~  riot
-      ~&  [%fuse-for syd %missing bec]
+      ::
       ::  by setting fiz to *melt the merge is aborted - any further
       ::  responses we get for the merge will cause take-fuse to crash
+      ::
       =.  fiz  *melt
-      ..take-fuse
+      ((slog [leaf+"clay: fuse failed, missing {<bec>}"]~) ..take-fuse)
     ?>  (~(has by sto.fiz) bec)
     =.  fiz
         :+  bas.fiz  con.fiz
         (~(put by sto.fiz) bec `!<(dome:clay q.r.u.riot))
     =/  all-done=flag
-        %-  ~(all by sto.fiz)
-        |=  res=(unit dome:clay)
-        ^-  flag
-        !=(res ~)
+    %-  ~(all by sto.fiz)
+    |=  res=(unit dome:clay)
+    ^-  flag
+    !=(res ~)
     ?.  all-done
       ..take-fuse
     =|  rag=rang
     =/  clean-hut-ran  hut.ran
     =/  initial-dome=dome:clay  (need (~(got by sto.fiz) bas.fiz))
     =/  continuation-yaki=yaki
-        (~(got by hut.ran) (~(got by hit.initial-dome) let.initial-dome))
+    (~(got by hut.ran) (~(got by hit.initial-dome) let.initial-dome))
     =/  parents=(list tako)  ~[(~(got by hit.initial-dome) let.initial-dome)]
     =/  merges  con.fiz
+    ::
+    ::  We must ensure that we don't leave garbage around.
+    ::  In all cases we want to clear fiz and restore hut.ran
+    ::  to clean-hut-ran.
+    ::
     |-
     ^+  ..take-fuse
     ?~  merges
-      ::  reset fiz before potentially parking - we hope to
-      ::  succeed so we don't need this state anymore.
+      =/  t=tang  [leaf+"{<syd>} fused from {<bas.fiz>} {<con.fiz>}" ~]
       =.  fiz  *melt
       =.  hut.ran  clean-hut-ran
-      (park | [%| continuation-yaki(p (flop parents))] rag)
+      =.  ..take-fuse  (park | [%| continuation-yaki(p (flop parents))] rag)
+      (done %| %fuse-succeded t)
     =/  [bec=beak g=germ]  i.merges
     =/  ali-dom=dome:clay  (need (~(got by sto.fiz) bec))
     =/  result  (merge-helper p.bec q.bec g ali-dom `continuation-yaki)
-    ?-  -.result
+    ?-    -.result
         %|
-      ::  merge failed
-      (mean %fuse-merge-failed p.result)
+      =.  fiz  *melt
+      =.  hut.ran  clean-hut-ran
+      (done %| %fuse-merge-failed p.result)
     ::
         %&
-      ::  now we have a unit merge-result
       =/  merge-result=(unit merge-result)  +.result
       ?~  merge-result
         ::  this merge was a no-op, just continue
         $(merges t.merges)
       ?~  conflicts.u.merge-result
-        ::  no merge conflicts
         =/  merged-yaki=yaki
-            ?-  -.new.u.merge-result
-                %|
-              +.new.u.merge-result
-            ::
-                %&
-              ::  convert the yuki to yaki
-              =/  yuk=yuki  +.new.u.merge-result
-              =/  lobes=(map path lobe)
-                  %-  ~(run by q.yuk)
-                  |=  val=(each page lobe)
-                  ^-  lobe
-                  ?-  -.val
-                    %&  (page-to-lobe +.val)
-                    %|  +.val
-                  ==
-              (make-yaki p.yuk lobes now)
-            ==
+        ?-    -.new.u.merge-result
+            %|
+          +.new.u.merge-result
+        ::
+            %&
+          ::
+          ::  convert the yuki to yaki
+          ::
+          =/  yuk=yuki  +.new.u.merge-result
+          =/  lobes=(map path lobe)
+              %-  ~(run by q.yuk)
+              |=  val=(each page lobe)
+              ^-  lobe
+              ?-  -.val
+                %&  (page-to-lobe +.val)
+                %|  +.val
+              ==
+          (make-yaki p.yuk lobes now)
+        ==
         %=  $
           continuation-yaki  merged-yaki
           merges  t.merges
@@ -2077,8 +2089,11 @@
           lat.rag  (~(uni by lat.rag) lat.u.merge-result)
           parents  [(~(got by hit.ali-dom) let.ali-dom) parents]
         ==
+      ::
       :: if there are merge conflicts send the error and abort the merge
+      ::
       =.  fiz  *melt
+      =.  hut.ran  clean-hut-ran
       (done %& conflicts.u.merge-result)
     ==
   ::
@@ -2094,8 +2109,8 @@
       (done %| %ali-unavailable ~[>[ali-ship ali-desk germ]<])
     =/  ali-dome=dome:clay  !<(dome:clay q.r.u.riot)
     =/  result=(each (unit merge-result) (pair term tang))
-        (merge-helper ali-ship ali-desk germ ali-dome ~)
-    ?-  -.result
+    (merge-helper ali-ship ali-desk germ ali-dome ~)
+    ?-    -.result
         %|
       (done %| +.result)
     ::
@@ -2119,11 +2134,11 @@
     ^-  (each (unit merge-result) [term tang])
     =/  ali-yaki=yaki  (~(got by hut.ran) (~(got by hit.ali-dome) let.ali-dome))
     =/  bob-yaki=(unit yaki)
-      ?~  continuation-yaki
-        ?~  let.dom
-          ~
-        (~(get by hut.ran) (~(got by hit.dom) let.dom))
-      continuation-yaki
+    ?~  continuation-yaki
+      ?~  let.dom
+        ~
+      (~(get by hut.ran) (~(got by hit.dom) let.dom))
+    continuation-yaki
     (merge-by-germ ali-yaki bob-yaki)
     ++  merge-by-germ
       |=  [=ali=yaki bob-yaki=(unit yaki)]
@@ -3516,7 +3531,6 @@
     ::
     ::  Creates a nako of all the changes between a and b.
     ::
-    ::
     ++  make-nako
       |=  [ver=@ud a=aeon b=aeon]
       ^-  nako
@@ -3564,24 +3578,6 @@
         $(p.y t.p.y)
       =.  s  ^$(p i.p.y)
       $(p.y t.p.y)
-    ::
-    ::  Gets the data between two commit hashes, assuming the first is an
-    ::  ancestor of the second.
-    ::
-    ::  Get all the takos before `a`, then get all takos before `b` except the
-    ::  ones we found before `a`.  Then convert the takos to yakis and also get
-    ::  all the data in all the yakis.
-    ::
-    ::  What happens if you run an %init merge on a desk that already
-    ::  had a commit?
-    ::
-    ++  data-twixt-takos
-      |=  [plops=? a=(unit tako) b=tako]
-      ^-  [(set yaki) (set plop)]
-      =+  old=?~(a ~ (reachable-takos u.a))
-      =/  yal=(set tako)   (~(dif in (reachable-takos b)) old)
-      :-  (silt (turn ~(tap in yal) tako-to-yaki))
-      ~
     ::
     ::  Get all the lobes that are referenced in `a` except those that are
     ::  already in `b`.
@@ -4372,7 +4368,6 @@
           $:  hun=duct
               dos=(map desk dojo-7)
           ==
-
       +$  rung-7
           $:  rus=(map desk rede-7)
           ==
@@ -4525,7 +4520,6 @@
       dos.rom
     %-  ~(run by dos.rom.ruf)
     |=  =dojo
-    ::dojo
     dojo(fod.dom [~ ~ ~ ~ ~])
   ::
       hoy
@@ -4535,7 +4529,6 @@
         rus
       %-  ~(run by rus.rung)
       |=  =rede
-      ::rede
       rede(fod.dom [~ ~ ~ ~ ~])
     ==
   ==
