@@ -2059,42 +2059,44 @@
         %&
       =/  merge-result=(unit merge-result)  +.result
       ?~  merge-result
-        ::  this merge was a no-op, just continue
-        $(merges t.merges)
-      ?~  conflicts.u.merge-result
-        =/  merged-yaki=yaki
-        ?-    -.new.u.merge-result
-            %|
-          +.new.u.merge-result
         ::
-            %&
-          ::
-          ::  convert the yuki to yaki
-          ::
-          =/  yuk=yuki  +.new.u.merge-result
-          =/  lobes=(map path lobe)
-              %-  ~(run by q.yuk)
-              |=  val=(each page lobe)
-              ^-  lobe
-              ?-  -.val
-                %&  (page-to-lobe +.val)
-                %|  +.val
-              ==
-          (make-yaki p.yuk lobes now)
-        ==
-        %=  $
-          continuation-yaki  merged-yaki
-          merges  t.merges
-          hut.ran  (~(put by hut.ran) r.merged-yaki merged-yaki)
-          lat.rag  (~(uni by lat.rag) lat.u.merge-result)
-          parents  [(~(got by hit.ali-dom) let.ali-dom) parents]
-        ==
+        ::  this merge was a no-op, just continue
+        ::
+        $(merges t.merges)
+      ?^  conflicts.u.merge-result
+        ::
+        :: if there are merge conflicts send the error and abort the merge
+        ::
+        =.  fiz  *melt
+        =.  hut.ran  clean-hut-ran
+        (done %& conflicts.u.merge-result)
+      =/  merged-yaki=yaki
+      ?-    -.new.u.merge-result
+          %|
+        +.new.u.merge-result
       ::
-      :: if there are merge conflicts send the error and abort the merge
-      ::
-      =.  fiz  *melt
-      =.  hut.ran  clean-hut-ran
-      (done %& conflicts.u.merge-result)
+          %&
+        ::
+        ::  convert the yuki to yaki
+        ::
+        =/  yuk=yuki  +.new.u.merge-result
+        =/  lobes=(map path lobe)
+            %-  ~(run by q.yuk)
+            |=  val=(each page lobe)
+            ^-  lobe
+            ?-  -.val
+              %&  (page-to-lobe +.val)
+              %|  +.val
+            ==
+        (make-yaki p.yuk lobes now)
+      ==
+      %=  $
+        continuation-yaki  merged-yaki
+        merges  t.merges
+        hut.ran  (~(put by hut.ran) r.merged-yaki merged-yaki)
+        lat.rag  (~(uni by lat.rag) lat.u.merge-result)
+        parents  [(~(got by hit.ali-dom) let.ali-dom) parents]
+      ==
     ==
   ::
   ++  done
