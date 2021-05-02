@@ -29,16 +29,38 @@ function TranscludedLinkNode(props: {
     const [{ text }, link] = node.post.contents;
       if('reference' in link) {
         const permalink = referenceToPermalink(link).link;
-        return <PermalinkEmbed transcluded={transcluded + 1} api={api} link={permalink} association={assoc} />
-
+        return <PermalinkEmbed transcluded={transcluded + 1} api={api} link={permalink} association={assoc} />;
       }
 
       return (
-        <Box borderRadius="2" p="2" bg="scales.black05">
-          <Anchor underline={false} target="_blank" color="black" href={link.url}>
-            <Icon verticalAlign="bottom" mr="2" icon="ArrowExternal" />
-            {text}
-          </Anchor>
+        <Box>
+          <Author
+            pt='12px'
+            pl='12px'
+            size='24'
+            showImage
+            ship={node.post.author}
+            date={node.post?.['time-sent']}
+          />
+          <Box
+            borderRadius='2'
+            mt='1'
+            ml='44px'
+            mr='3'
+            p='2'
+            display='inline-block'
+            bg='scales.black05'
+          >
+            <Anchor
+              underline={false}
+              target='_blank'
+              color='black'
+              href={link.url}
+            >
+              <Icon verticalAlign='bottom' mr='2' icon='ArrowExternal' />
+              {text}
+            </Anchor>
+          </Box>
         </Box>
       );
     case 2:
