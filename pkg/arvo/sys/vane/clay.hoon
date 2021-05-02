@@ -58,8 +58,11 @@
 ::  when the request is filled/updated.
 ::
 +$  cult  (jug wove duct)
-::  State for ongoing %fuse merges - the list maintains the ordering
-::  and the map stores the data needed to merge
+::
+::  State for ongoing %fuse merges. `con` maintains the ordering,
+::  `sto` stores the data needed to merge, and `bas` is the base
+::  beak for the merge.
+::
 +$  melt  [bas=beak con=(list [beak germ]) sto=(map beak (unit dome:clay))]
 ::
 ::  Domestic desk state.
@@ -308,7 +311,7 @@
       $:  %c                                            ::  to %clay
           $>  $?  %info                                 ::  internal edit
                   %merg                                 ::  merge desks
-                  %fuse                                 ::  mega merge
+                  %fuse                                 ::  merge many
                   %pork                                 ::
                   %warp                                 ::
                   %werp                                 ::
@@ -1987,7 +1990,7 @@
     =/  wir=wire  /fuse/[syd]/(scot %p p.bec)/[q.bec]/(scot r.bec)
     [hen %pass wir %c %warp p.bec q.bec `[%sing %v r.bec /]]
     ::
-    ::  we also want to clear the state (fiz) associated with this
+    ::  We also want to clear the state (fiz) associated with this
     ::  merge and print a warning if it's non trivial i.e. we're
     ::  starting a new fuse before the previous one terminated.
     ::
@@ -2011,7 +2014,7 @@
     ^+  ..take-fuse
     ?~  riot
       ::
-      ::  by setting fiz to *melt the merge is aborted - any further
+      ::  By setting fiz to *melt the merge is aborted - any further
       ::  responses we get for the merge will cause take-fuse to crash
       ::
       =.  fiz  *melt
@@ -2060,12 +2063,12 @@
       =/  merge-result=(unit merge-result)  +.result
       ?~  merge-result
         ::
-        ::  this merge was a no-op, just continue
+        ::  This merge was a no-op, just continue
         ::
         $(merges t.merges)
       ?^  conflicts.u.merge-result
         ::
-        :: if there are merge conflicts send the error and abort the merge
+        :: If there are merge conflicts send the error and abort the merge
         ::
         =.  fiz  *melt
         =.  hut.ran  clean-hut-ran
@@ -2077,7 +2080,7 @@
       ::
           %&
         ::
-        ::  convert the yuki to yaki
+        ::  Convert the yuki to yaki
         ::
         =/  yuk=yuki  +.new.u.merge-result
         =/  lobes=(map path lobe)
@@ -2130,9 +2133,6 @@
     |=  [=ali=ship =ali=desk =germ ali-dome=dome:clay continuation-yaki=(unit yaki)]
     ^-  (each (unit merge-result) [term tang])
     |^
-    ::  term tang is the error, merge result being ~ means the merge was
-    ::  a no-op
-    ::  (each a b) is [| b] or [& a]
     ^-  (each (unit merge-result) [term tang])
     =/  ali-yaki=yaki  (~(got by hut.ran) (~(got by hit.ali-dome) let.ali-dome))
     =/  bob-yaki=(unit yaki)
