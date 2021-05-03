@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useLayoutEffect, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Box, Text, Row, Col } from '@tlon/indigo-react';
+import { Box, Text, Row, Col, Icon } from '@tlon/indigo-react';
 import { Associations, Groups } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
 import { MetadataIcon } from '../landscape/components/MetadataIcon';
 import { JoinGroup } from '../landscape/components/JoinGroup';
 import { useModal } from '~/logic/lib/useModal';
+import { useHovering } from '~/logic/lib/util';
 import { GroupSummary } from '../landscape/components/GroupSummary';
 import { PropFunc } from '~/types';
 import useMetadataState from '~/logic/state/metadata';
@@ -24,6 +25,7 @@ export function GroupLink(
   const associations = useMetadataState(state => state.associations);
   const { save, restore } = useVirtual();
   const history = useHistory();
+  const { hovering, bind } = useHovering();
   const joined = resource in associations.groups;
 
   const { modal, showModal } = useModal({
@@ -48,7 +50,17 @@ export function GroupLink(
   }, [preview]);
 
   return (
-    <Box maxWidth="500px" {...rest} onClick={(e) => { e.stopPropagation(); }}>
+    <Box
+      maxWidth="500px"
+      cursor='pointer'
+      {...bind}
+      {...rest}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+      backgroundColor='white'
+      borderColor={hovering ? 'lightBlue' : props.borderColor}
+    >
       {modal}
       <Row
         width="fit-content"
@@ -59,7 +71,6 @@ export function GroupLink(
         onClick={
           joined ? () => history.push(`/~landscape/ship/${name}`) : showModal
         }
-        cursor='pointer'
         opacity={preview ? '1' : '0.6'}
       >
         <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : {"color": "0x0"}} />
@@ -67,7 +78,24 @@ export function GroupLink(
           <Text ml="2" fontWeight="medium" mono={!preview}>
             {preview ? preview.metadata.title : name}
           </Text>
-          <Text pt='1' ml='2'>{preview ? `${preview.members} members` : "Fetching member count"}</Text>
+          <Box pt='1' ml='2' display='flex' alignItems='center'>
+            {preview ?
+              <>
+                <Box pr='2' display='flex' alignItems='center'>
+                  <Icon icon='Public' color='gray' mr='1' />
+                  <Text fontSize='0' color='gray'>
+                    {preview.metadata.hidden ? 'Private' : 'Public'}
+                  </Text>
+                </Box>
+                <Box display='flex' alignItems='center'>
+                  <Icon icon='Users' color='gray' mr='1' />
+                  <Text fontSize='0'color='gray' >
+                    {preview.members} peers
+                  </Text>
+                </Box>
+              </>
+              : <Text fontSize='0'>Fetching member count</Text>}
+          </Box>
         </Col>
       </Row>
     </Box>

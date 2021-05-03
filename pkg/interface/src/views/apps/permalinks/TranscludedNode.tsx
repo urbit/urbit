@@ -167,9 +167,10 @@ export function TranscludedPost(props: {
   post: Post;
   api: GlobalApi;
   transcluded: number;
+  commentsCount?: number;
   group: Group;
 }) {
-  const { transcluded, post, group, api } = props;
+  const { transcluded, commentsCount, post, group, api } = props;
   return (
     <Col>
       <Author
@@ -190,6 +191,13 @@ export function TranscludedPost(props: {
           group={group}
         />
       </Box>
+      {commentsCount >= 1 ?
+        <Box pl='44px' pt='2' pr='3'>
+          <Text>
+            {commentsCount} {commentsCount === 1 ? 'reply' : 'replies'}
+          </Text>
+        </Box>
+      : null}
     </Col>
   );
 }
@@ -233,6 +241,7 @@ export function TranscludedNode(props: {
       <TranscludedPost
         api={props.api}
         post={node.post}
+        commentsCount={Object.keys(node.children.root).length}
         group={group}
         transcluded={transcluded}
       />)
