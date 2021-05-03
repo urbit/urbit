@@ -202,7 +202,7 @@
   ++  convert-graph-contents-4
     |=  con=(list post:post-zero:post)
     ^-  (list post:post)
-    (turn con post-to-one:graph-store)
+    (turn con post-to-one:upgrade:graph-store)
   ::
   ++  convert-notifications-3
     |=  old=notifications:state-two:store

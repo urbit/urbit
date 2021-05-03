@@ -443,9 +443,9 @@ function archive(json: any, state: HarkState): HarkState {
     );
     if(unarchived.length === 0) {
       console.log('deleting entire timebox');
-      state.notifications.delete(time);
+      state.notifications = state.notifications.delete(time);
     } else {
-      state.notifications.set(time, unarchived);
+      state.notifications = state.notifications.set(time, unarchived);
     }
   }
   return state;

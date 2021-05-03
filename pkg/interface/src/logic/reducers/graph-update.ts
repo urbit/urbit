@@ -14,7 +14,7 @@ export const GraphReducer = (json) => {
       addGraph,
       removeGraph,
       addNodes,
-      removeNodes
+      removePosts
     ]);
   }
   const loose = _.get(json, 'graph-update-loose', false);
@@ -169,7 +169,6 @@ const addNodes = (json, state) => {
     graph = _killByFuzzyTimestamp(graph, resource, post['time-sent']);
     graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'] - 1);
     graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'] + 1);
-
     return graph;
   };
 
@@ -233,10 +232,20 @@ const addNodes = (json, state) => {
   return state;
 };
 
-const removeNodes = (json, state: GraphState): GraphState => {
+const removePosts = (json, state: GraphState): GraphState => {
   const _remove = (graph, index) => {
+    const child = graph.get(index[0]);
     if (index.length === 1) {
-        return graph.delete(index[0]);
+        if (child) {
+          return graph.set(index[0], {
+            post: child.post.hash || '',
+            children: child.children 
+          });
+        }
+    } else {
+      if (child) {
+        _remove(child.children, index.slice(1));
+        return graph.set(index[0], child);
       } else {
         const child = graph.get(index[0]);
         if (child) {
@@ -246,9 +255,10 @@ const removeNodes = (json, state: GraphState): GraphState => {
         }
         return graph;
       }
+    }
   };
 
-  const data = _.get(json, 'remove-nodes', false);
+  const data = _.get(json, 'remove-posts', false);
   if (data) {
     const { ship, name } = data.resource;
     const res = `${ship}/${name}`;

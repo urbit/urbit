@@ -1,105 +1,10 @@
 /-  sur=graph-store, pos=post
-/+  res=resource
+/+  res=resource, migrate
 =<  [sur .]
 =<  [pos .]
 =,  sur
 =,  pos
 |%
-::
-++  update-log-to-one
-  |=  =update-log:zero
-  ^-  ^update-log
-  %+  gas:orm-log  *^update-log
-  %+  turn  (tap:orm-log:zero update-log)
-  |=  [=time =logged-update:zero]
-  :-  time
-  :-  p.logged-update  
-  (logged-update-to-one q.logged-update)
-::
-++  logged-update-to-one
-  |=  upd=logged-update-0:zero
-  ?+  -.upd  upd
-    %add-graph  upd(graph (graph-to-one graph.upd))
-    %add-nodes  upd(nodes (~(run by nodes.upd) node-to-one))
-  ==
-::
-++  node-to-one
-  |=  =node:zero
-  (node:(upgrade ,post:zero ,post) node post-to-one)
-::
-++  graph-to-one
-  |=  =graph:zero
-  (graph:(upgrade ,post:zero ,post) graph post-to-one)
-::
-++  marked-graph-to-one
-  |=  [=graph:zero m=(unit mark)]
-  [(graph-to-one graph) m]
-::
-++  post-to-one
-  |=  p=post:zero
-  ^-  post
-  p(contents (contents-to-one contents.p))
-::
-++  contents-to-one
-  |=  cs=(list content:zero)
-  ^-  (list content)
-  %+  murn  cs
-  |=  =content:zero
-  ^-  (unit ^content)
-  ?:  ?=(%reference -.content)  ~
-  `content
-::
-++  upgrade
-  |*  [in-pst=mold out-pst=mold]
-  =>
-    |%
-    ++  in-orm
-      ((ordered-map atom in-node) gth)
-    +$  in-node
-      [post=in-pst children=in-internal-graph]
-    +$  in-graph
-      ((mop atom in-node) gth)
-    +$  in-internal-graph
-      $~  [%empty ~]
-      $%  [%graph p=in-graph]
-          [%empty ~]
-      ==
-    ::
-    ++  out-orm
-      ((ordered-map atom out-node) gth)
-    +$  out-node
-      [post=out-pst children=out-internal-graph]
-    +$  out-graph
-      ((mop atom out-node) gth)
-    +$  out-internal-graph
-      $~  [%empty ~]
-      $%  [%graph p=out-graph]
-          [%empty ~]
-      ==
-    --
-  |%
-  ::
-  ++  graph
-    |=  $:  gra=in-graph
-            fn=$-(in-pst out-pst)
-        ==
-    ^-  out-graph
-    %+  gas:out-orm  *out-graph
-    ^-  (list [atom out-node])
-    %+  turn  (tap:in-orm gra)
-    |=  [a=atom n=in-node]
-    ^-  [atom out-node]
-    [a (node n fn)]
-  ::
-  ++  node
-    |=  [nod=in-node fn=$-(in-pst out-pst)]
-    ^-  out-node
-    :-  (fn post.nod)
-    ^-  out-internal-graph
-    ?:  ?=(%empty -.children.nod)
-      [%empty ~]
-    [%graph (graph p.children.nod fn)]
-  --
 ::  NOTE: move these functions to zuse
 ++  nu                                              ::  parse number as hex
   |=  jon=json
@@ -212,6 +117,14 @@
       s+(enjs-path:res grp)
     --
   ::
+  ++  maybe-post
+    |=  mp=^maybe-post
+    ^-  json
+    ?-  -.mp
+      %|  s+(scot %ux p.mp)
+      %&  (post p.mp)
+    ==
+  ::
   ++  post
     |=  p=^post
     ^-  json
@@ -252,8 +165,8 @@
             [%nodes (nodes nodes.upd)]
         ==
       ::
-          %remove-nodes
-        :-  %remove-nodes
+          %remove-posts
+        :-  %remove-posts
         %-  pairs
         :~  [%resource (enjs:res resource.upd)]
             [%indices (indices indices.upd)]
@@ -277,14 +190,14 @@
         :-  %add-tag
         %-  pairs
         :~  [%term s+term.upd]
-            [%resource (enjs:res resource.upd)]
+            [%uid (uid uid.upd)]
         ==
       ::
           %remove-tag
         :-  %remove-tag
         %-  pairs
         :~  [%term s+term.upd]
-            [%resource (enjs:res resource.upd)]
+            [%uid (uid uid.upd)]
         ==
       ::
           %archive-graph
@@ -306,9 +219,9 @@
         :-  %tag-queries
         %-  pairs
         %+  turn  ~(tap by tag-queries.upd)
-        |=  [=term =resources]
+        |=  [=term uids=(set ^uid)]
         ^-  [cord json]
-        [term [%a (turn ~(tap in resources) enjs:res)]]
+        [term [%a (turn ~(tap in uids) uid)]]
       ==
     ::
     ++  graph
@@ -328,7 +241,7 @@
       |=  n=^node
       ^-  json
       %-  pairs
-      :~  [%post (post post.n)]
+      :~  [%post (maybe-post post.n)]
           :-  %children
           ?-  -.children.n
               %empty  ~
@@ -336,7 +249,6 @@
           ==
       ==
     ::
-            ::
     ++  nodes
       |=  m=(map ^index ^node)
       ^-  json
@@ -370,7 +282,7 @@
     ++  decode
       %-  of
       :~  [%add-nodes add-nodes]
-          [%remove-nodes remove-nodes]
+          [%remove-posts remove-posts]
           [%add-signatures add-signatures]
           [%remove-signatures remove-signatures]
         ::
@@ -422,7 +334,7 @@
     ::
     ++  node
       %-  ot
-      :~  [%post post]
+      :~  [%post maybe-post]
           [%children internal-graph]
       ==
     ::
@@ -432,6 +344,15 @@
       ?~  jon
         [%empty ~]
       [%graph (graph jon)]
+    ::
+    ++  maybe-post
+      |=  jon=json
+      ^-  ^maybe-post
+      ?~  jon    !!
+      ?+  -.jon  !!
+        %s  [%| (nu jon)]
+        %o  [%& (post jon)]
+      ==
     ::
     ++  post
       %-  ot
@@ -489,9 +410,8 @@
       :~  expression+so
           output+tang
       ==
-
     ::
-    ++  remove-nodes
+    ++  remove-posts
       %-  ot
       :~  [%resource dejs:res]
           [%indices (as index)]
@@ -527,13 +447,13 @@
     ++  add-tag
       %-  ot
       :~  [%term so]
-          [%resource dejs:res]
+          [%uid uid]
       ==
     ::
     ++  remove-tag
       %-  ot
       :~  [%term so]
-          [%resource dejs:res]
+          [%uid uid]
       ==
     ::
     ++  keys
@@ -567,5 +487,392 @@
         ~
         *signatures
     ==
+  --
+::
+++  upgrade
+  |%
+  ::
+  ::  +two
+  ::
+  ++  marked-graph-to-two
+    |=  [=graph:one m=(unit mark)]
+    [(graph-to-two graph) m]
+  ::
+  ++  graph-to-two
+    |=  =graph:one
+    (graph:(upgrade ,post:one ,maybe-post) graph post-to-two)
+  ::
+  ++  post-to-two
+    |=  p=post:one
+    ^-  maybe-post
+    [%& p]
+  ::
+  ::
+  ::  +one
+  ::
+  ++  update-log-to-one
+    |=  =update-log:zero
+    ^-  update-log:one
+    %+  gas:orm-log:one  *update-log:one
+    %+  turn  (tap:orm-log:zero update-log)
+    |=  [=time =logged-update:zero]
+    ^-  [^time logged-update:one]
+    :-  time
+    :-  p.logged-update  
+    (logged-update-to-one q.logged-update)
+  ::
+  ++  logged-update-to-one
+    |=  upd=logged-update-0:zero
+    ^-  logged-action:one
+    ?+  -.upd  upd
+      %add-graph  upd(graph (graph-to-one graph.upd))
+      %add-nodes  upd(nodes (~(run by nodes.upd) node-to-one))
+    ==
+  ::
+  ++  node-to-one
+    |=  =node:zero
+    (node:(upgrade ,post:zero ,post) node post-to-one)
+  ::
+  ++  graph-to-one
+    |=  =graph:zero
+    (graph:(upgrade ,post:zero ,post) graph post-to-one)
+  ::
+  ++  marked-graph-to-one
+    |=  [=graph:zero m=(unit mark)]
+    [(graph-to-one graph) m]
+  ::
+  ++  post-to-one
+    |=  p=post:zero
+    ^-  post
+    p(contents (contents-to-one contents.p))
+  ::
+  ++  contents-to-one
+    |=  cs=(list content:zero)
+    ^-  (list content)
+    %+  murn  cs
+    |=  =content:zero
+    ^-  (unit ^content)
+    ?:  ?=(%reference -.content)  ~
+    `content
+  ::
+  ++  upgrade
+    |*  [in-pst=mold out-pst=mold]
+    =>
+      |%
+      ++  in-orm
+        ((ordered-map atom in-node) gth)
+      +$  in-node
+        [post=in-pst children=in-internal-graph]
+      +$  in-graph
+        ((mop atom in-node) gth)
+      +$  in-internal-graph
+        $~  [%empty ~]
+        $%  [%graph p=in-graph]
+            [%empty ~]
+        ==
+      ::
+      ++  out-orm
+        ((ordered-map atom out-node) gth)
+      +$  out-node
+        [post=out-pst children=out-internal-graph]
+      +$  out-graph
+        ((mop atom out-node) gth)
+      +$  out-internal-graph
+        $~  [%empty ~]
+        $%  [%graph p=out-graph]
+            [%empty ~]
+        ==
+      --
+    |%
+    ::
+    ++  graph
+      |=  $:  gra=in-graph
+              fn=$-(in-pst out-pst)
+          ==
+      ^-  out-graph
+      %+  gas:out-orm  *out-graph
+      ^-  (list [atom out-node])
+      %+  turn  (tap:in-orm gra)
+      |=  [a=atom n=in-node]
+      ^-  [atom out-node]
+      [a (node n fn)]
+    ::
+    ++  node
+      |=  [nod=in-node fn=$-(in-pst out-pst)]
+      ^-  out-node
+      :-  (fn post.nod)
+      ^-  out-internal-graph
+      ?:  ?=(%empty -.children.nod)
+        [%empty ~]
+      [%graph (graph p.children.nod fn)]
+    --
+  ::
+  ++  zero-load
+    :: =* infinitely recurses
+    =,  store=zero
+    =,  orm=orm:zero
+    =,  orm-log=orm-log:zero
+    |%
+    ++  change-revision-graph
+      |=  [=graph:store q=(unit mark)]
+      ^-  [graph:store (unit mark)]
+      |^
+      :_  q
+      ?+    q  graph
+        [~ %graph-validator-link]     convert-links
+        [~ %graph-validator-publish]  convert-publish
+      ==
+      ::
+      ++  convert-links
+        %+  gas:orm  *graph:store
+        %+  turn  (tap:orm graph)
+        |=  [=atom =node:store]
+        ^-  [^atom node:store]
+        ::  top-level
+        ::
+        :+  atom  post.node
+        ?:  ?=(%empty -.children.node)
+          [%empty ~]
+        :-  %graph
+        %+  gas:orm  *graph:store
+        %+  turn  (tap:orm p.children.node)
+        |=  [=^atom =node:store]
+        ^-  [^^atom node:store]
+        ::  existing comments get turned into containers for revisions
+        ::
+        :^    atom
+            post.node(contents ~, hash ~)
+          %graph
+        %+  gas:orm  *graph:store
+        :_  ~  :-  %0
+        :_  [%empty ~]
+        post.node(index (snoc index.post.node atom), hash ~)
+      ::
+      ++  convert-publish
+        %+  gas:orm  *graph:store
+        %+  turn  (tap:orm graph)
+        |=  [=atom =node:store]
+        ^-  [^atom node:store]
+        ::  top-level
+        ::
+        :+  atom  post.node
+        ?:  ?=(%empty -.children.node)
+          [%empty ~]
+        :-  %graph
+        %+  gas:orm  *graph:store
+        %+  turn  (tap:orm p.children.node)
+        |=  [=^atom =node:store]
+        ^-  [^^atom node:store]
+        ::  existing container for publish note revisions
+        ::
+        ?+    atom  !!
+            %1  [atom node]
+            %2
+          :+  atom  post.node
+          ?:  ?=(%empty -.children.node)
+            [%empty ~]
+          :-  %graph
+          %+  gas:orm  *graph:store
+          %+  turn  (tap:orm p.children.node)
+          |=  [=^^atom =node:store]
+          ^-  [^^^atom node:store]
+          :+  atom  post.node(contents ~, hash ~)
+          :-  %graph
+          %+  gas:orm  *graph:store
+          :_  ~  :-  %1
+          :_  [%empty ~]
+          post.node(index (snoc index.post.node atom), hash ~)
+        ==
+      --
+    ::  
+    ++  maybe-unix-to-da
+      |=  =atom
+      ^-  @
+      ::  (bex 127) is roughly 226AD
+      ?.  (lte atom (bex 127))
+        atom
+      (add ~1970.1.1 (div (mul ~s1 atom) 1.000))
+    ::
+    ++  convert-unix-timestamped-node
+      |=  =node:store
+      ^-  node:store
+      =.  index.post.node
+        (convert-unix-timestamped-index index.post.node)
+      ?.  ?=(%graph -.children.node)
+        node
+      :+  post.node
+        %graph
+      (convert-unix-timestamped-graph p.children.node)
+    ::
+    ++  convert-unix-timestamped-index
+      |=  =index:store
+      (turn index maybe-unix-to-da)
+    ::
+    ++  convert-unix-timestamped-graph
+      |=  =graph:store
+      %+  gas:orm  *graph:store
+      %+  turn
+        (tap:orm graph)
+      |=  [=atom =node:store]
+      ^-  [^atom node:store]
+      :-  (maybe-unix-to-da atom)
+      (convert-unix-timestamped-node node)
+    --
+  --
+++  import
+  |=  [arc=* our=ship]
+  ^-  (quip card:agent:gall [%5 network])
+  |^
+  =/  sty  [%5 (remake-network ;;(tree-network +.arc))]
+  :_  sty
+  %+  turn  ~(tap by graphs.sty)
+  |=  [rid=resource =marked-graph]
+  ^-  card:agent:gall
+  ?:  =(our entity.rid)
+    =/  =cage  [%push-hook-action !>([%add rid])]
+    [%pass / %agent [our %graph-push-hook] %poke cage]
+  (try-rejoin rid 0)
+  ::
+  +$  tree-network
+    $:  graphs=tree-graphs
+        tag-queries=(tree [term (tree uid)])
+        update-logs=tree-update-logs
+        archive=tree-graphs
+        ~
+    ==
+  +$  tree-graphs          (tree [resource tree-marked-graph])
+  +$  tree-marked-graph    [p=tree-graph q=(unit ^mark)]
+  +$  tree-graph           (tree [atom tree-node])
+  +$  tree-node            [post=tree-maybe-post children=tree-internal-graph]
+  +$  tree-internal-graph
+    $~  [%empty ~]
+    $%  [%graph p=tree-graph]
+        [%empty ~]
+    ==
+  +$  tree-update-logs     (tree [resource tree-update-log])
+  +$  tree-update-log      (tree [time tree-logged-update])
+  +$  tree-logged-update
+    $:  p=time
+        $=  q
+        $%  [%add-graph =resource =tree-graph mark=(unit ^mark) ow=?]
+            [%add-nodes =resource nodes=(tree [index tree-node])]
+            [%remove-posts =resource indices=(tree index)]
+            [%add-signatures =uid signatures=tree-signatures]
+            [%remove-signatures =uid signatures=tree-signatures]
+        ==
+    ==
+  +$  tree-signatures      (tree signature)
+  +$  tree-maybe-post      (each tree-post hash)
+  +$  tree-post
+    $:  author=ship
+        =index
+        time-sent=time
+        contents=(list content)
+        hash=(unit hash)
+        signatures=tree-signatures
+    ==
+  ::
+  ++  remake-network
+    |=  t=tree-network
+    ^-  network
+    :*  (remake-graphs graphs.t)
+        (remake-jug:migrate tag-queries.t)
+        (remake-update-logs update-logs.t)
+        (remake-graphs archive.t)
+        ~
+    ==
+  ::
+  ++  remake-graphs
+    |=  t=tree-graphs
+    ^-  graphs
+    %-  remake-map:migrate
+    (~(run by t) remake-marked-graph)
+  ::
+  ++  remake-marked-graph
+    |=  t=tree-marked-graph
+    ^-  marked-graph
+    [(remake-graph p.t) q.t]
+  ::
+  ++  remake-graph
+    |=  t=tree-graph
+    ^-  graph
+    %+  gas:orm  *graph
+    %+  turn  ~(tap by t)
+    |=  [a=atom tn=tree-node]
+    ^-  [atom node]
+    [a (remake-node tn)]
+  ::
+  ++  remake-internal-graph
+    |=  t=tree-internal-graph
+    ^-  internal-graph
+    ?:  ?=(%empty -.t)
+      [%empty ~]
+    [%graph (remake-graph p.t)]
+  ::
+  ++  remake-node
+    |=  t=tree-node
+    ^-  node
+    :-  (remake-post post.t)
+    (remake-internal-graph children.t)
+  ::
+  ++  remake-update-logs
+    |=  t=tree-update-logs
+    ^-  update-logs
+    %-  remake-map:migrate
+    (~(run by t) remake-update-log)
+  ::
+  ++  remake-update-log
+    |=  t=tree-update-log
+    ^-  update-log
+    =/  ulm  ((ordered-map time logged-update) gth)
+    %+  gas:ulm  *update-log
+    %+  turn  ~(tap by t)
+    |=  [=time tlu=tree-logged-update]
+    ^-  [^time logged-update]
+    [time (remake-logged-update tlu)]
+  ::
+  ++  remake-logged-update
+    |=  t=tree-logged-update
+    ^-  logged-update
+    :-  p.t
+    ?-  -.q.t
+        %add-graph
+      :*  %add-graph
+          resource.q.t
+          (remake-graph tree-graph.q.t)
+          mark.q.t
+          ow.q.t
+      ==
+    ::
+        %add-nodes
+      :-  %add-nodes
+      :-  resource.q.t
+      %-  remake-map:migrate
+      (~(run by nodes.q.t) remake-node)
+    ::
+        %remove-posts
+      [%remove-posts resource.q.t (remake-set:migrate indices.q.t)]
+    ::
+        %add-signatures
+      [%add-signatures uid.q.t (remake-set:migrate signatures.q.t)]
+    ::
+        %remove-signatures
+      [%remove-signatures uid.q.t (remake-set:migrate signatures.q.t)]
+    ==
+  ::
+  ++  remake-post
+    |=  t=tree-maybe-post
+    ^-  maybe-post
+    ?-  -.t
+      %|  t
+      %&  t(signatures.p (remake-set:migrate signatures.p.t))
+    ==
+  ::
+  ++  try-rejoin
+    |=  [rid=resource nack-count=@]
+    ^-  card:agent:gall
+    =/  res-path  (en-path:res rid)
+    =/  wire  [%try-rejoin (scot %ud nack-count) res-path]
+    [%pass wire %agent [entity.rid %graph-push-hook] %watch resource+res-path]
   --
 --
