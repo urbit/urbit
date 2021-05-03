@@ -10,6 +10,7 @@
 ::
 +$  request-params
   $%  [%list (list json)]
+      [%map (map @t json)]
       [%object (list (pair @t json))]
   ==
 +$  response

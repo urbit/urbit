@@ -24,10 +24,10 @@
       :-  %params
       ^-  json
       ?-  -.params
-        %list     [%a +.params]
-        %object   [%o (~(gas by *(map @t json)) +.params)]
-      ==
-  ==
+        %list    [%a +.params]
+        %map     [%o +.params] 
+        %object  [%o (~(gas by *(map @t json)) +.params)]
+  ==  ==
 ::
 ++  response-to-json
   |=  =response
@@ -45,7 +45,9 @@
     :-  %o
     %-  molt
     ^-  (list [@t json])
-    :~  ['id' s+id.response] 
+    :~  ::  FIXME: return 'id' as string, number or NULL
+        ::
+        ['id' s+id.response] 
         ['code' s+code.response]
         ['message' s+message.response]
     ==
@@ -63,18 +65,20 @@
   %-  some
   %.  u.jon
   =,  dejs:format
+  ::  TODO: If parsing fails, return a proper error (not 500)
+  ::
   %-  ot
-  :~  ['id' no]
-      ['jsonrpc' so]
+  :~  ::  FIXME: parse 'id' as string, number or NULL
+      ::
+      ['id' so]
+      ['jsonrpc' (su (jest '2.0'))]
       ['method' (cu parse-method so)]
     ::
       :-  'params'
       |=  =json
       ^-  request-params
-      ?:  =(%a -.json)
-        [%list ((ar same) json)]
-      ?.  =(%o -.json)
-        !!
-      [%object ~(tap by ((om same) json))]
-  ==
+      ?+  -.json  !!
+        %a  [%list ((ar same) json)]
+        %o  [%map ((om same) json)] 
+  ==  ==
 --
