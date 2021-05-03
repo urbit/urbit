@@ -1983,29 +1983,29 @@
     |=  [bas=beak con=(list [beak germ])]
     ^+  ..start-fuse
     =/  moves=(list move)
-    %+  turn
-      [[bas *germ] con]
-    |=  [bec=beak germ]
-    ^-  move
-    =/  wir=wire  /fuse/[syd]/(scot %p p.bec)/[q.bec]/(scot r.bec)
-    [hen %pass wir %c %warp p.bec q.bec `[%sing %v r.bec /]]
+      %+  turn
+        [[bas *germ] con]
+      |=  [bec=beak germ]
+      ^-  move
+      =/  wir=wire  /fuse/[syd]/(scot %p p.bec)/[q.bec]/(scot r.bec)
+      [hen %pass wir %c %warp p.bec q.bec `[%sing %v r.bec /]]
     ::
     ::  We also want to clear the state (fiz) associated with this
     ::  merge and print a warning if it's non trivial i.e. we're
     ::  starting a new fuse before the previous one terminated.
     ::
     =/  err=tang
-    ?~  con.fiz
-      ~
-    =/  discarded=tang
-    %+  turn
-      ~(tap in sto.fiz)
-    |=  [k=beak v=(unit dome:clay)]
-    ^-  tank
-    =/  received=tape  ?~(v "missing" "received")
-    leaf+"{<k>} {received}"
-    :-  leaf+"fusing into {<syd>} from {<bas>} {<con>} - overwriting prior fuse"
-    discarded
+      ?~  con.fiz
+        ~
+      =/  discarded=tang
+        %+  turn
+          ~(tap in sto.fiz)
+        |=  [k=beak v=(unit dome:clay)]
+        ^-  tank
+        =/  received=tape  ?~(v "missing" "received")
+        leaf+"{<k>} {received}"
+      :_  discarded
+      leaf+"fusing into {<syd>} from {<bas>} {<con>} - overwriting prior fuse"
     =.  fiz  (make-melt bas con)
     ((slog err) (emil moves))
   ::
@@ -2024,10 +2024,10 @@
         :+  bas.fiz  con.fiz
         (~(put by sto.fiz) bec `!<(dome:clay q.r.u.riot))
     =/  all-done=flag
-    %-  ~(all by sto.fiz)
-    |=  res=(unit dome:clay)
-    ^-  flag
-    !=(res ~)
+      %-  ~(all by sto.fiz)
+      |=  res=(unit dome:clay)
+      ^-  flag
+      !=(res ~)
     ?.  all-done
       ..take-fuse
     =|  rag=rang
@@ -2084,13 +2084,13 @@
         ::
         =/  yuk=yuki  +.new.u.merge-result
         =/  lobes=(map path lobe)
-            %-  ~(run by q.yuk)
-            |=  val=(each page lobe)
-            ^-  lobe
-            ?-  -.val
-              %&  (page-to-lobe +.val)
-              %|  +.val
-            ==
+          %-  ~(run by q.yuk)
+          |=  val=(each page lobe)
+          ^-  lobe
+          ?-  -.val
+            %&  (page-to-lobe +.val)
+            %|  +.val
+          ==
         (make-yaki p.yuk lobes now)
       ==
       %=  $
