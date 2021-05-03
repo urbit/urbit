@@ -128,13 +128,7 @@ const StatusBar = (props) => {
             )
           }
         >
-          <Text color='#000000'>
-            Submit{' '}
-            <Text color='#000000' display={['none', 'inline']}>
-              an
-            </Text>{' '}
-            issue
-          </Text>
+        <Icon icon="Bug" color="#000000" />
         </StatusBarItem>
         <StatusBarItem
           width='32px'
