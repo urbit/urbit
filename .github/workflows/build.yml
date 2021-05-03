@@ -136,4 +136,4 @@ jobs:
           CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: make build/urbit build/urbit-worker
-      - run: build/urbit -d -B ../../bin/brass.pill -F zod && curl -f --data '{"source":{"dojo":"+hood/exit"},"sink":{"app":"hood"}}' http://localhost:12321
+      - run: build/urbit -l -d -B ../../bin/solid.pill -F bus && curl -f --data '{"source":{"dojo":"+hood/exit"},"sink":{"app":"hood"}}' http://localhost:12321
