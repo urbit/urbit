@@ -421,7 +421,8 @@
       update-core
     =*  pos  p.post.node
     =+  !<  notif-kind=(unit notif-kind:hook)
-        (get-conversion !>([0 pos]))
+        %-  get-conversion
+        !>(`indexed-post:graph-store`[0 pos])
     ?~  notif-kind
       update-core
     =/  desc=@t
