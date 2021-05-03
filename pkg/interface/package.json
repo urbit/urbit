@@ -10,7 +10,7 @@
     "@reach/tabs": "^0.10.5",
     "@tlon/indigo-dark": "^1.0.6",
     "@tlon/indigo-light": "^1.0.7",
-    "@tlon/indigo-react": "^1.2.21",
+    "@tlon/indigo-react": "^1.2.22",
     "@tlon/sigil-js": "^1.4.3",
     "@urbit/api": "file:../npm/api",
     "any-ascii": "^0.1.7",
