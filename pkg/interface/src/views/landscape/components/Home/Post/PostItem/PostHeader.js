@@ -5,6 +5,7 @@ import { useCopy } from '~/logic/lib/useCopy';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { Dropdown } from '~/views/components/Dropdown';
 import useContactState from '~/logic/state/contact';
+import { resourceFromPath } from '~/logic/lib/group';
 
 
 export function PostHeader(props) {
@@ -13,7 +14,8 @@ export function PostHeader(props) {
     api,
     association,
     isReply,
-    showTimestamp
+    showTimestamp,
+    graphPath
   } = props;
   const contacts = useContactState(state => state.contacts);
   const mb = isReply ? "2" : "3";
@@ -24,6 +26,11 @@ export function PostHeader(props) {
     post.index
   ) : '';
   const { copyDisplay, doCopy } = useCopy(permalink, 'Copy Link');
+  const resource = resourceFromPath(graphPath);
+
+  const doDelete = () => {
+    api.graph.removePosts(resource.ship, resource.name, [post.index]);
+  };
 
   return (
     <Row
@@ -49,7 +56,7 @@ export function PostHeader(props) {
         lineHeight='1'
       />
       <Dropdown
-        dropWidth="200px"
+        dropWidth="100px"
         alignX="right"
         alignY="top"
         options={
@@ -57,12 +64,14 @@ export function PostHeader(props) {
             backgroundColor="white"
             border={1}
             borderRadius={1}
-            borderColor="lightGray">
-            <Row alignItems="center" p={1}>
-              <Action bg="white" m={1} color="black" onClick={doCopy}>
-                {copyDisplay}
-              </Action>
-            </Row>
+            borderColor="lightGray"
+            p={1}>
+            <Action bg="white" m={1} color="black" onClick={doCopy}>
+              {copyDisplay}
+            </Action>
+            <Action bg="white" m={1} color="black" onClick={doDelete}>
+              Delete
+            </Action>
           </Col>
         }>
         <Icon icon="Ellipsis" color="gray" />
