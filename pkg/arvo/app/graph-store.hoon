@@ -758,7 +758,7 @@
     =/  children
       (get-node-children ship term index)
     ?~  children  [~ ~]
-    :-  ~  :-  ~  :-  %graph-update-1
+    :-  ~  :-  ~  :-  %graph-update-2
     !>  ^-  update:store
     :+  now.bowl  %add-nodes
     :-  [ship term]

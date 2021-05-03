@@ -13,9 +13,9 @@
     contents.post   contents
 ==
 ::
-:-  %graph-update-1
+:-  %graph-update-2
 ^-  update
 :-  now
 :+  %add-nodes  [our %inbox]
 %-  ~(gas by *(map index node))
-~[[~[him now] [post [%empty ~]]]]
+~[[~[him now] [%&^post [%empty ~]]]]

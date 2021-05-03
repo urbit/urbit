@@ -43,7 +43,7 @@
   ^-  (quip card _this)
   |^
   ?+  mark  (on-poke:def mark vase)
-      %graph-update-1
+      %graph-update-2
     =+  !<(=update:store vase)
     ?+    -.q.update  `this
         %add-nodes
@@ -68,11 +68,13 @@
     =/  =index:store
       [ship ~]
     ?:  (check-node-existence:gra [our.bowl %inbox] index)  ~
-    =|  =node:store
-    =:  author.post.node     our.bowl
-        index.post.node      index
-        time-sent.post.node  now.bowl
+    =|  =post:store
+    =:  author.post     our.bowl
+        index.post      index
+        time-sent.post  now.bowl
       ==
+    =/  =node:store
+      [%&^post %empty ~]
     (poke-our:pass %graph-store (update:cg:gra (add-node index node)))^~
   ::
   ++  outgoing-add
@@ -118,9 +120,10 @@
     |=  [=index:store =node:store]
     ?>  ?=([@ @ ~] index)
     ?>  ?=(%empty -.children.node)
+    ?>  ?=(%& -.post.node)
     =/  new-index=index:store
       [ship now.bowl ~]
-    =.  index.post.node
+    =.  index.p.post.node
       new-index
     [new-index node]
   --
@@ -145,7 +148,7 @@
   :_  ~
   =+  indices=(~(gas in *(set index:store)) ~[ship acked] ~)
   %+  poke-our:pass  %graph-store
-  (update:cg:gra now.bowl %remove-nodes [our.bowl %inbox] indices)
+  (update:cg:gra now.bowl %remove-posts [our.bowl %inbox] indices)
   ::
   ++  remove-pending
     |=  =ship
