@@ -1,15 +1,19 @@
-::  invite-hook [landscape]: receive invites from any source
-::
-::    only handles %invite actions:
-::    - can be poked by the host team to send an invite out to someone.
-::    - can be poked by foreign ships to send an invite to us.
+::  dm-hook [landscape]: receive and send DMs 
 ::
 /+  default-agent, dbug, store=graph-store, graphlib=graph, agentio, resource
-/+  sig=signatures
+/+  sig=signatures, hook=dm-hook
 ::
 |%
-+$  state-0  [%0 pending=(jar ship atom)]
+::
++$  base-state-0
+  $:  screening=? 
+      screened=(jug ship [=index:store =node:store])
+      pending=(jar ship atom)
+  ==
+::
++$  state-0  [%0 base-state-0]
 +$  card  card:agent:gall
++$  nodes  (map index:store node:store)
 --
 ::
 =|  state-0
@@ -43,6 +47,16 @@
   ^-  (quip card _this)
   |^
   ?+  mark  (on-poke:def mark vase)
+      %dm-hook-action
+    =+  !<(=action:hook vase)
+    =^  cards  state
+      ?+  -.action  !!
+        %accept   (accept-screen ship.action)
+        %decline  (decline-screen ship.action)
+        %screen   (set-screen screen.action)
+      ==
+    [cards this]
+  ::
       %graph-update-2
     =+  !<(=update:store vase)
     ?+    -.q.update  `this
@@ -51,23 +65,68 @@
       =^  cards  state
         ?:  =(our.bowl src.bowl)
           (outgoing-add nodes.q.update)
+        ?:  &(screening !(dm-exists src.bowl))
+          (screen-add nodes.q.update)
         (incoming-add nodes.q.update)
       [cards this]
     ==
   ==
   ::
+  ++  give
+    |=  =action:hook
+    ^-  card
+    (fact:io dm-hook-action+!>(action) ~[/updates]) 
+  ::
+  ++  accept-screen
+    |=  =ship
+    ^-  (quip card _state)
+    =/  unscreened=nodes
+      %-  ~(gas by *nodes)
+      ~(tap in (~(get ju screened) ship))
+    :_  state(screened (~(del by screened) ship))
+    %+  welp  (add-missing-root ship)
+    :~  %+  poke-our:pass  %graph-store 
+        (update:cg:gra now.bowl %add-nodes [our.bowl %inbox] unscreened)
+        ::
+        (give %accept ship)
+    ==
+  ::
+  ++  set-screen
+    |=  screen=?
+    :_  state(screening screen)
+    (give %screen screen)^~
+  ::
+  ++  decline-screen
+    |=  =ship
+    ^-  (quip card _state)
+    :_  state(screened (~(del by screened) ship))
+    (give %decline ship)^~
+  ::
+  ++  screen-add
+    |=  =nodes
+    ?>  =(1 ~(wyt by nodes))
+    =/  ship-screen  (~(get ju screened) src.bowl)
+    =.  ship-screen  (~(uni in ship-screen) (normalize-incoming nodes))
+    `state(screened (~(put by screened) src.bowl ship-screen))
+  ::
+  ++  dm-exists
+    |=  =ship
+    =/  =index:store
+      [ship ~]
+    (check-node-existence:gra [our.bowl %inbox] index)
+  ::
   ++  add-node
     |=  [=index:store =node:store]
     ^-  update:store
     :^  now.bowl  %add-nodes  [our.bowl %inbox]
-    (~(gas by *(map index:store node:store)) [index node] ~)
+    (~(gas by *nodes) [index node] ~)
   ::
   ++  add-missing-root
     |=  =ship
     ^-  (list card)
+    ?:  (dm-exists ship)  ~
     =/  =index:store
       [ship ~]
-    ?:  (check-node-existence:gra [our.bowl %inbox] index)  ~
     =|  =post:store
     =:  author.post     our.bowl
         index.post      index
@@ -78,7 +137,7 @@
     (poke-our:pass %graph-store (update:cg:gra (add-node index node)))^~
   ::
   ++  outgoing-add
-    |=  nodes=(map index:store node:store)
+    |=  =nodes
     ^-  (quip card _state)
     =/  nodes=(list [=index:store =node:store])
       ~(tap by nodes)
@@ -105,8 +164,23 @@
       == 
     ==
   ::
+  ++  normalize-incoming
+    |=  =nodes
+    ^-  ^nodes
+    %-  ~(gas by *^nodes)
+    %+  turn  ~(tap by nodes)
+    |=  [=index:store =node:store]
+    ?>  ?=([@ @ ~] index)
+    ?>  ?=(%empty -.children.node)
+    ?>  ?=(%& -.post.node)
+    =/  new-index=index:store
+      [src.bowl now.bowl ~]
+    =.  index.p.post.node
+      new-index
+    [new-index node]
+  ::
   ++  incoming-add
-    |=  nodes=(map index:store node:store)
+    |=  =nodes
     ^-  (quip card _state)
     :_  state
     ?>  =(1 ~(wyt by nodes))
@@ -114,22 +188,19 @@
     %+  snoc  (add-missing-root ship)
     %+  poke-our:pass  %graph-store
     %+  update:cg:gra  now.bowl
-    :+  %add-nodes  [our.bowl %inbox]
-    %-  ~(gas by *(map index:store node:store))
-    %+  turn  ~(tap by nodes)
-    |=  [=index:store =node:store]
-    ?>  ?=([@ @ ~] index)
-    ?>  ?=(%empty -.children.node)
-    ?>  ?=(%& -.post.node)
-    =/  new-index=index:store
-      [ship now.bowl ~]
-    =.  index.p.post.node
-      new-index
-    [new-index node]
+    [%add-nodes [our.bowl %inbox] (normalize-incoming nodes)]
   --
 ::
+++  on-watch  
+  |=  =path
+  ?.  ?=([%updates ~] path)
+    (on-watch:def path)
+  :_  this
+  :~  (fact-init:io dm-hook-action+!>([%pendings ~(key by screened)]))
+      (fact-init:io dm-hook-action+!>([%screen screening]))
+  ==
+::
 ++  on-peek   on-peek:def
-++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-agent  
   |=  [=wire =sign:agent:gall]

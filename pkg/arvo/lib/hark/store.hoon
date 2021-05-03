@@ -22,7 +22,7 @@
   ++  graph-index
     %-  ot
     :~  graph+dejs-path:resource
-        module+(mu so)
+        mark+(mu so)
         description+so
         index+(su ;~(pfix fas (more fas dem)))
     ==
