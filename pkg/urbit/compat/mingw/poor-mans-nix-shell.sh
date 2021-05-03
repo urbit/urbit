@@ -76,8 +76,8 @@ buildnixdep () {
   then
     local patch=../urbit/compat/mingw/$key.patch
     [ -e $patch ] && patch -p 1 <$patch
-    $cmdprep
-    make $cmdmake
+    eval "$cmdprep"
+    eval make "$cmdmake"
     touch .mingw~
   fi
   popd
