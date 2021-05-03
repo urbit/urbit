@@ -1,8 +1,9 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import _ from 'lodash';
+import { patp2dec } from 'urbit-ob';
 import f, { compose, memoize } from 'lodash/fp';
 import bigInt, { BigInteger } from 'big-integer';
-import { Association, Contact } from '@urbit/api';
+import { Association, Contact, Patp } from '@urbit/api';
 import useLocalState from '../state/local';
 import produce, { enableMapSet } from 'immer';
 import useSettingsState from '../state/settings';
@@ -369,9 +370,13 @@ export function numToUd(num: number) {
     f.reverse,
     f.chunk(3),
     f.reverse,
-    f.map(s => s.join('')),
+    f.map(f.flow(f.reverse, f.join(''))),
     f.join('.')
   )(num.toString());
+}
+
+export function patpToUd(patp: Patp) {
+  return numToUd(patp2dec(patp))
 }
 
 export function usePreventWindowUnload(shouldPreventDefault: boolean, message = 'You have unsaved changes. Are you sure you want to exit?') {

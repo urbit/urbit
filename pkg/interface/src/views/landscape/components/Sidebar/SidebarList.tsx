@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
-import { Associations, AppAssociations, Groups, Rolodex, Graph } from '@urbit/api';
-import { patp } from 'urbit-ob';
+import { Associations, AppAssociations, Groups, Rolodex, Graph, UnreadStats } from '@urbit/api';
+import { patp, patp2dec } from 'urbit-ob';
 
 import { alphabeticalOrder } from '~/logic/lib/util';
 import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
@@ -8,10 +8,12 @@ import { SidebarAssociationItem, SidebarDmItem } from './SidebarItem';
 import { Workspace } from '~/types/workspace';
 import useMetadataState from '~/logic/state/metadata';
 import {useInbox} from '~/logic/state/graph';
+import useHarkState from '~/logic/state/hark';
 
 function sidebarSort(
   associations: AppAssociations,
-  apps: SidebarAppConfigs
+  apps: SidebarAppConfigs,
+  inboxUnreads: Record<string, UnreadStats>
 ): Record<SidebarSort, (a: string, b: string) => number> {
   const alphabetical = (a: string, b: string) => {
     const aAssoc = associations[a];
@@ -28,8 +30,12 @@ function sidebarSort(
     const aAppName = aAssoc?.['app-name'];
     const bAppName = bAssoc?.['app-name'];
 
-    const aUpdated = apps[aAppName]?.lastUpdated(a) || 0;
-    const bUpdated = apps[bAppName]?.lastUpdated(b) || 0;
+    const aUpdated = a.startsWith('~') 
+      ?  (inboxUnreads?.[`/${patp2dec(a)}`]?.last)
+      :  apps[aAppName]?.lastUpdated(a) || 0;
+    const bUpdated = b.startsWith('~')
+      ?  (inboxUnreads?.[`/${patp2dec(b)}`]?.last || 0)
+      :  apps[bAppName]?.lastUpdated(b) || 0;
 
     return bUpdated - aUpdated || alphabetical(a, b);
   };
@@ -80,10 +86,11 @@ export function SidebarList(props: {
   const { selected, group, config, workspace } = props;
   const associations = useMetadataState(state => state.associations);
   const inbox = useInbox();
+  const unreads = useHarkState(s => s.unreads.graph?.[`/ship/~${window.ship}/inbox`]);
 
 
-  const ordered = getItems(associations, workspace, inbox);
-    //.sort(sidebarSort(associations, props.apps)[config.sortBy]);
+  const ordered = getItems(associations, workspace, inbox)
+    .sort(sidebarSort(associations, props.apps, unreads)[config.sortBy]);
 
   return (
     <>

@@ -152,7 +152,7 @@ export function useGraphForAssoc(association: Association) {
 window.useGraphState = useGraphState;
 
 export function useInbox() {
-  return useGraphState(s => s.graphs[`${window.ship}/inbox`]);
+  return useGraphState(s => s.graphs[`${window.ship}/inbox`] || new BigIntOrderedMap());
 }
 
 export function useDM(ship: string) {

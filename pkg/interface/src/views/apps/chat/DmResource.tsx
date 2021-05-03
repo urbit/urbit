@@ -9,6 +9,7 @@ import useGraphState, { useDM } from '~/logic/state/graph';
 import useHarkState, { useHarkDm } from '~/logic/state/hark';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
+import {patpToUd} from '~/logic/lib/util';
 
 interface DmResourceProps {
   ship: string;
@@ -36,7 +37,7 @@ export function DmResource(props: DmResourceProps) {
   const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
 
   useEffect(() => {
-    api.graph.getNewest(`~${window.ship}`, 'inbox', 100, `/${patp2dec(ship)}`);
+    api.graph.getNewest(`~${window.ship}`, 'inbox', 100, `/${patpToUd(ship)}`);
   }, [ship]);
 
   const fetchMessages = useCallback(
