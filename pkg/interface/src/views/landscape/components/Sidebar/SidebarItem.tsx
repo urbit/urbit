@@ -102,9 +102,10 @@ function SidebarItemBase(props: {
 
 export function SidebarDmItem(props: {
   ship: string;
+  selected?: boolean;
   workspace: Workspace;
 }) {
-  const { ship } = props;
+  const { ship, selected = false} = props;
   const contact = useContact(ship);
   const title = contact?.nickname ?? cite(ship) ?? ship;
   const hideAvatars = false;
@@ -116,7 +117,7 @@ export function SidebarDmItem(props: {
 
   return (
     <SidebarItemBase
-      selected={false}
+      selected={selected}
       hasNotification={false}
       hasUnread={false}
       to={`/~landscape/messages/dm/${ship}`}

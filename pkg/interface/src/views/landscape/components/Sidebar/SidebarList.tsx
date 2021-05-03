@@ -83,7 +83,7 @@ export function SidebarList(props: {
 
 
   const ordered = getItems(associations, workspace, inbox);
-  //.sort(sidebarSort(associations, props.apps)[config.sortBy]);
+    //.sort(sidebarSort(associations, props.apps)[config.sortBy]);
 
   return (
     <>
@@ -104,6 +104,7 @@ export function SidebarList(props: {
               key={pathOrShip}
               ship={pathOrShip}
               workspace={workspace}
+              selected={pathOrShip === selected}
             />
 
           );
