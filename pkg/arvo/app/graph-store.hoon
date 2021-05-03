@@ -1030,6 +1030,47 @@
       [(snoc index atom) node]
     ==
   ::
+      [%x %graph-deep-subset @ @ @ ~]
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  count=(unit atom)  (rush i.t.t.t.t.path dem:ag)
+    ?:  ?=(~ count)
+      [~ ~]
+    =/  result=(unit marked-graph:store)
+      (~(get by graphs) [ship term])
+    ?~  result
+      [~ ~]
+    =*  graph  p.u.result
+    =/  =(list [atom node:store])  (tap:orm graph)
+    :-  ~  :-  ~  :-  %graph-update-2
+    !>  ^-  update:store
+    :-  now.bowl
+    :+  %add-nodes
+      [ship term]
+    =|  deep-map=(map index:store node:store)
+    =|  iter=@ud
+    =|  =index:store
+    |-  ^-  (map index:store node:store)
+    ?:  ?|(?=(~ list) =(iter count))
+      deep-map
+    =*  atom  -.i.list
+    =*  node  +.i.list
+    =.  index  (snoc index atom)
+    ::  check children first, then check parent
+    ?-  -.children.node
+        %empty
+      =.  deep-map  (~(put by deep-map) index node(children [%empty ~]))
+      $(list t.list, iter +(iter), index ~)
+    ::
+        %graph
+      =.  deep-map  $(list (tap:orm p.children.node))
+      =.  iter  ~(wyt by deep-map)
+      ?:  =(iter count)
+        deep-map
+      =.  deep-map  (~(put by deep-map) index node(children [%empty ~]))
+      $(list t.list, iter +(iter), index ~)
+    ==
+  ::
       [%x %update-log-subset @ @ @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
