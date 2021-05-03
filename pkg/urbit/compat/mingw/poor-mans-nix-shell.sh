@@ -34,20 +34,10 @@ hex2nixbase32 () {
   echo -n ${digits:$bits:1}
 }
 
-hashnixdep () {
-  local patch=compat/mingw/$1.patch
-  local hash
-  read hash _ < <((
-  # create 'store hash' from sources.json data and patch
-  jq -Sscj --arg key "$1" --arg deriver "$deriver" 'add|to_entries|.[]|select(.key==$key)|{($deriver):.value}' ${sources[@]}
-  [ -e $patch ] && cat $patch)|sha256sum)
-  hex2nixbase32 $hash
-}
-
 buildnixdep () {
+  echo Building dependency $key...
   local cache=https://app.cachix.org/api/v1/cache/${CACHIX_CACHE-}
   local hash=
-  local dir
   if [ -n "$url" ]
   then
     hash=${hdeps[$key]}
@@ -79,20 +69,18 @@ buildnixdep () {
     # local dependency
     dir=../$key
   fi
+
   # patch and build the dependency if necessary
-  # and append dependency paths to -I and -L arrays
-  . <(jq -sr --arg key "$key" --arg dir "$dir" 'add|to_entries|.[]|select(.key==$key)|"
-pushd \($dir)
-if [ ! -e .mingw~ ]
-then" + ("../urbit/compat/mingw/\($key).patch"|"
-  [ -e \(.) ] && patch -p 1 <\(.)") + "
-  \(.value.mingw.prepare//""'"$depdirs"')
-  make \(.value.mingw.make//""'"$depdirs"')
-  touch .mingw~
-fi
-popd
-\(.value.mingw.include//"."|if type == "array" then . else [.] end|map("cdirs+=(-I\($dir)/\(.))")|join("\n"))
-\(.value.mingw.lib//"."|if type == "array" then . else [.] end|map("ldirs+=(-L\($dir)/\(.))")|join("\n"))"' ${sources[@]})
+  pushd $dir
+  if [ ! -e .mingw~ ]
+  then
+    local patch=../urbit/compat/mingw/$key.patch
+    [ -e $patch ] && patch -p 1 <$patch
+    $cmdprep
+    make $cmdmake
+    touch .mingw~
+  fi
+  popd
 
   # if configured, upload freshly built dependency to binary cache
   if [ -n "$hash" -a -n "${CACHIX_AUTH_TOKEN-}" ]
@@ -120,13 +108,31 @@ EOF
   fi
 }
 
-# list dependencies, create store hashes and a directory replacement regex
-. <(jq -sr 'add|to_entries|.[]|select(.value.mingw)|select(.value.url)|"
-_hash=$(hashnixdep \(.key|@sh))
-hdeps[\(.key|@sh)]=$_hash
-depdirs=\"$depdirs|gsub(\\\"\\\\\\.\\\\\\./\(.key)\\\";\\\"../$_hash-\(.key)\\\")\"
-unset _hash"' ${sources[@]})
-
 # I have to go over the sources files several times
 # because jq does not have a way to invoke external programs
-. <(jq -sr 'add|to_entries|.[]|select(.value.mingw)|"key=\(.key|@sh) url=\(.value.url//""|@sh) strip=\(.value.mingw.strip+1) buildnixdep"' ${sources[@]})
+
+# list external dependencies, create hash map and directory replacement regex
+# use -j and \u0000 to work around https://github.com/stedolan/jq/issues/1870
+while read -rd "" key json
+do
+  # create 'store hash' from sources.json data and patch
+  patch=compat/mingw/$key.patch
+  read hash _ < <((
+  echo -n $json
+  [ -e $patch ] && cat $patch)|sha256sum)
+  hash=$(hex2nixbase32 $hash)
+  hdeps[$key]=$hash
+  depdirs="$depdirs|gsub(\"\\\\.\\\\./$key\";\"../$hash-$key\")"
+done < <(jq --arg deriver "$deriver" -Sscrj 'add|to_entries|.[]|select(.value.mingw)|select(.value.url)|.key," ",{($deriver):(.value)},"\u0000"' ${sources[@]})
+
+# build dependencies, create include and library directory arrays
+. <(jq -sr 'add|to_entries|.[]|select(.value.mingw)|"
+unset dir
+key=\(.key|@sh) \\
+url=\(.value.url//""|@sh) \\
+strip=\(.value.mingw.strip+1) \\
+cmdprep=\(.value.mingw.prepare//""'"$depdirs"'|@sh) \\
+cmdmake=\(.value.mingw.make//""'"$depdirs"'|@sh) \\
+buildnixdep # sets dir
+\(.value.mingw.include//"."|if type == "array" then . else [.] end|map("cdirs+=(-I$dir/\(.))")|join("\n"))
+\(.value.mingw.lib//"."|if type == "array" then . else [.] end|map("ldirs+=(-L$dir/\(.))")|join("\n"))"' ${sources[@]})
