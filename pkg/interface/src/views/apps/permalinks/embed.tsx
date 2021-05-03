@@ -21,7 +21,7 @@ import GlobalApi from "~/logic/api/global";
 import { getModuleIcon, useHovering } from "~/logic/lib/util";
 import useMetadataState from "~/logic/state/metadata";
 import { Association, resourceFromPath, GraphNode } from "@urbit/api";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import useGraphState from "~/logic/state/graph";
 import { GraphNodeContent } from "../notifications/graph";
 import { TranscludedNode } from "./TranscludedNode";
@@ -52,6 +52,7 @@ function GraphPermalink(
 ) {
   const { full = false, showOurContact, pending, link, graph, group, index, api, transcluded } = props;
   const history = useHistory();
+  const location = useLocation();
   const { hovering, bind } = useHovering();
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
@@ -89,6 +90,26 @@ function GraphPermalink(
     history.push(`/perma${permalink.slice(16)}`);
   };
 
+  const [nodeGroupHost, nodeGroupName] = association.group.split('/').slice(-2);
+  const [nodeChannelHost, nodeChannelName] = association.resource
+    .split('/')
+    .slice(-2);
+  const [
+    locChannelName,
+    locChannelHost,
+    ,
+    ,
+    ,
+    locGroupName,
+    locGroupHost
+  ] = location.pathname.split('/').reverse();
+
+  const isInSameResource =
+    locChannelHost === nodeChannelHost &&
+    locChannelName === nodeChannelName &&
+    locGroupName === nodeGroupName &&
+    locGroupHost === nodeGroupHost;
+
   return (
     <Col
       width="100%"
@@ -116,6 +137,7 @@ function GraphPermalink(
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
+          showDetails={!isInSameResource}
           icon={getModuleIcon(association.metadata.config.graph)}
           title={association.metadata.title}
           permalink={permalink}
@@ -136,32 +158,42 @@ function PermalinkDetails(props: {
   icon: any;
   permalink: string;
   showTransclusion?: boolean;
+  showDetails?: boolean;
   known?: boolean;
 }) {
-  const { title, icon, permalink, known, showTransclusion } = props;
+  const { title, icon, permalink, known, showTransclusion , showDetails } = props;
   const rowTransclusionStyle = showTransclusion
     ? { p: '12px 12px 11px 11px' }
     : { p: '12px' };
 
-  return (
-    <Row
-      {...rowTransclusionStyle}
-      alignItems="center"
-      justifyContent="space-between"
-      width="100%"
-    >
-      <Row gapX="2" alignItems="center">
-        <Box width={4} height={4}>
-          <Center width={4} height={4}>
-            <Icon icon={icon} color='gray' />
-          </Center>
-        </Box>
-        <Text gray mono={!known}>
-          {title}
-        </Text>
+  if (showDetails) {
+    return (
+      <Row
+        {...rowTransclusionStyle}
+        alignItems="center"
+        justifyContent="space-between"
+        width="100%"
+      >
+        <Row gapX="2" alignItems="center">
+          <Box width={4} height={4}>
+            <Center width={4} height={4}>
+              <Icon icon={icon} color='gray' />
+            </Center>
+          </Box>
+          <Text gray mono={!known}>
+            {title}
+          </Text>
+        </Row>
       </Row>
-    </Row>
-  );
+    );
+  } else {
+    return (
+      <Row
+        height='12px'
+        width="100%"
+      />
+    );
+  }
 }
 
 export function PermalinkEmbed(props: {
