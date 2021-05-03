@@ -111,7 +111,7 @@ export function SidebarDmItem(props: {
   const img = (contact?.avatar && !hideAvatars) ? (
     <BaseImage referrerPolicy="no-referrer" src={contact.avatar} width='16px' height='16px' borderRadius={2} />
   ) : (
-    <Sigil ship={title} color={`#${uxToHex(contact?.color || '0x0')}`} icon padding={2} size={16} />
+    <Sigil ship={ship} color={`#${uxToHex(contact?.color || '0x0')}`} icon padding={2} size={16} />
   );
 
   return (

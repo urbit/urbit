@@ -1,20 +1,81 @@
-import { Content, createPost } from '@urbit/api';
-import React, { useCallback } from 'react';
+import { cite, Content, createPost } from '@urbit/api';
+import React, { useCallback, useEffect } from 'react';
+import bigInt from 'big-integer';
+import { Box, Row, Col, Text } from '@tlon/indigo-react';
 import { patp2dec } from 'urbit-ob';
 import GlobalApi from '~/logic/api/global';
-import { useDM } from '~/logic/state/graph';
+import { useContact } from '~/logic/state/contact';
+import useGraphState, { useDM } from '~/logic/state/graph';
 import useHarkState, { useHarkDm } from '~/logic/state/hark';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
 
 interface DmResourceProps {
   ship: string;
   api: GlobalApi;
 }
+
+const getCurrDmSize = (ship: string) => {
+  const { graphs } = useGraphState.getState();
+  const graph = graphs[`${window.ship}/inbox`];
+  if (!graph) {
+    return 0;
+  }
+  const shipGraph = graph.get(bigInt(patp2dec(ship)));
+  return shipGraph?.children?.size ?? 0;
+};
+
 export function DmResource(props: DmResourceProps) {
   const { ship, api } = props;
   const dm = useDM(ship);
   const hark = useHarkDm(ship);
   const unreadCount = (hark?.unreads as number) ?? 0;
+  const contact = useContact(ship);
+  const { hideNicknames } = useSettingsState(selectCalmState);
+  const showNickname = !hideNicknames && !!contact;
+  const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
+
+  useEffect(() => {
+    api.graph.getNewest(`~${window.ship}`, 'inbox', 100, `/${patp2dec(ship)}`);
+  }, [ship]);
+
+  const fetchMessages = useCallback(
+    async (newer: boolean) => {
+      const pageSize = 100;
+      const expectedSize = dm.size + pageSize;
+      if (newer) {
+        const index = dm.peekLargest()?.[0];
+        if (!index) {
+          return true;
+        }
+        await api.graph.getYoungerSiblings(
+          `~${window.ship}`,
+          'inbox',
+          pageSize,
+          `/${patp2dec(ship)}/${index.toString()}`
+        );
+        return expectedSize !== getCurrDmSize(ship);
+      } else {
+        const index = dm.peekSmallest()?.[0];
+        if (!index) {
+          return true;
+        }
+        await api.graph.getOlderSiblings(
+          `~${window.ship}`,
+          'inbox',
+          pageSize,
+          `/${patp2dec(ship)}/${index.toString()}`
+        );
+        return expectedSize !== getCurrDmSize(ship);
+      }
+    },
+    [ship, dm, api]
+  );
+
+  const dismissUnread = useCallback(() => {
+    api.hark.dismissReadCount(`/ship/~${window.ship}/inbox`, `/${patp2dec(ship)}`);
+  }, [ship]);
+    
 
   const onSubmit = useCallback(
     (contents: Content[]) => {
@@ -24,18 +85,44 @@ export function DmResource(props: DmResourceProps) {
   );
 
   return (
-    <ChatPane
-      api={api}
-      canWrite
-      id={ship}
-      graph={dm}
-      unreadCount={unreadCount}
-      onReply={() => ''}
-      fetchMessages={async () => true}
-      dismissUnread={() => {}}
-      getPermalink={() => ''}
-      isAdmin
-      onSubmit={onSubmit}
-    />
+    <Col width="100%" height="100%" overflow="hidden">
+      <Row
+        px="3"
+        gapX="3"
+        flexShrink={0}
+        alignItems="center"
+        height="6"
+        borderBottom="1"
+        borderBottomColor="lightGray"
+      >
+        <Row gapX="2" alignItems="baseline">
+          {showNickname && (
+            <Box>
+              <Text fontWeight="medium" fontSize={2} mono={!showNickname}>
+                {nickname}
+              </Text>
+            </Box>
+          )}
+          <Box>
+            <Text gray={showNickname} mono>
+              {cite(ship)}
+            </Text>
+          </Box>
+        </Row>
+      </Row>
+      <ChatPane
+        api={api}
+        canWrite
+        id={ship}
+        graph={dm}
+        unreadCount={unreadCount}
+        onReply={() => ''}
+        fetchMessages={fetchMessages}
+        dismissUnread={dismissUnread}
+        getPermalink={() => ''}
+        isAdmin
+        onSubmit={onSubmit}
+      />
+    </Col>
   );
 }
