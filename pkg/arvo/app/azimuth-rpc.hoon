@@ -50,8 +50,7 @@
         %handle-http-request
       =+  !<([id=@ta req=inbound-request:eyre] vase)
       :_  this
-      %+  give-simple-payload:app  id
-      (handle-http-request req)
+      (handle-http-request id req)
     ::
         %azimuth-action
       =+  !<([%disconnect bind=binding:eyre] vase)
@@ -61,8 +60,8 @@
     ==
     ::
     ++  handle-http-request
-      |=  =inbound-request:eyre
-      ^-  simple-payload:http
+      |=  [id=@ta =inbound-request:eyre]
+      ^-  (list card)
       |^
       =*  req       request.inbound-request
       =*  headers   header-list.req
@@ -70,16 +69,23 @@
       ?.  =(method.req %'POST')
         ::  TODO: method not supported
         ::
-        not-found:gen
+        (give-simple-payload:app id not-found:gen)
       ?~  rpc-request=(validate-request:json-rpc body.req parse-method)
         ::  TODO: malformed request
         ::
-        not-found:gen
-      (process-rpc-request:do u.rpc-request)
+        (give-simple-payload:app id not-found:gen)
+      =/  [data=(unit cage) response=simple-payload:http]
+        (process-rpc-request:do u.rpc-request)
+      %+  weld
+        (give-simple-payload:app id response)
+      ?~  data  ~
+      :_  ~
+      ^-  card
+      [%pass / %agent [our.bowl %dice] %poke u.data]
       ::  TODO: validate that format is e.g. 'getPoint'
       ::  TODO: maybe use getPoint and translate to %get-point
       ::
-      ++  parse-method  |=(t=@t t)
+      ++  parse-method  |=(t=@t `term`t)
       --
     --
   ::
@@ -109,36 +115,34 @@
 ::
 |_  =bowl:gall
 ++  process-rpc-request
-  |=  req=request:rpc
-  ^-  simple-payload:http
-  |^
-  ?+    method.req  ~|([%unsupported-azimuth-request method.req] !!)
-    %get-point   (get-point id.req params.req)
-  ==
-  ::  TODO: handle rpc error responses properly
-  ::
-  ++  get-point
-    |=  [id=@t params=request-params:rpc]
+  |=  request:rpc
+  ^-  [(unit cage) simple-payload:http]
+  =;  [data=(unit cage) =response:rpc]
+    :-  data
     %-  json-response:gen
-    %-  response-to-json:json-rpc
-    ?.  ?=([%object *] params)  
-      [%error id 'X' 'RPC params must be an object']
-    ?>  ?=(^ +.params)
-    ?.  =('ship' p.i.+.params)  
-      [%error id 'X' 'A "ship" key must exist']
-    =/  ship=(unit ship)
-      (rush (so:dejs:format q.i.+.params) ;~(pfix sig fed:ag))
-    ?~  ship  
-      [%error id 'X' 'Ship @p invalid']
-    ?~  point=(scry-point u.ship)
-      [%error id 'X' 'Ship @p not found']
-    [%result id (point-to-json:azimuth-rpc u.point)]
-  --
+    (response-to-json:json-rpc response)
+  ?.  ?=([%map *] params)  
+    [~ [%error id 'X' 'RPC params must be an object']]
+  =,  azimuth-rpc
+  ?+    method  [~ [%error id 'X' 'Unsupported Azimuth RPC']]
+    %get-point             [~ (get-point id +.params scry-point)]
+    %transfer-point        (transfer-point id +.params)
+    %configure-keys        (configure-keys id +.params)
+    %spawn                 (spawn id +.params)
+    %escape                (escape id +.params)
+    %cancel-escape         (cancel-escape id +.params)
+    %adopt                 (adopt id +.params)
+    %detach                (detach id +.params)
+    %reject                (reject id +.params)
+    %set-management-proxy  (management-proxy id +.params)
+    %set-spawn-proxy       (spawn-proxy id +.params)
+    %set-transfer-proxy    (transfer-proxy id +.params)
+  ==
 ::
 ++  scry-point
   |=  =ship
   .^  (unit point:naive) 
       %gx 
-      (~(scry agentio bowl) %naive /nas/[(scot %p ship)]/noun)
+      (~(scry agentio bowl) %azimuth /nas/[(scot %p ship)]/noun)
   ==
 --
