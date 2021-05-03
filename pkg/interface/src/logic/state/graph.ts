@@ -14,6 +14,8 @@ export interface GraphState extends BaseState<GraphState> {
     }
   };
   pendingIndices: Record<string, any>;
+  pendingDms: Set<string>;
+  screening: boolean;
   graphTimesentMap: Record<string, any>;
   // getKeys: () => Promise<void>;
   // getTags: () => Promise<void>;
@@ -32,6 +34,8 @@ const useGraphState = createState<GraphState>('Graph', {
   looseNodes: {},
   pendingIndices: {},
   graphTimesentMap: {},
+  pendingDms: new Set(),
+  screening: false,
   // getKeys: async () => {
   //   const api = useApi();
   //   const keys = await api.scry({

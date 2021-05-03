@@ -218,6 +218,14 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
+  acceptDm(ship: Patp) {
+    return this.action('dm-hook', 'dm-hook-action', { "accept" : ship });
+  }
+
+  declineDm(ship: Patp) {
+    return this.action('dm-hook', 'dm-hook-action', { "decline" : ship });
+  }
+
   addPost(ship: Patp, name: string, post: Post) {
     const nodes = {};
     nodes[post.index] = {
