@@ -25,6 +25,7 @@ interface AuthorProps {
   api?: GlobalApi;
   size?: number;
   lineHeight?: string;
+  isRelativeTime?: boolean;
 }
 
 // eslint-disable-next-line max-lines-per-function
@@ -97,7 +98,8 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
           e.stopPropagation();
           toggleOverlay();
         }}
-        height={size}
+        height={`${size}px`}
+        overflow='hidden'
         position='relative'
         cursor='pointer'
       >
@@ -107,31 +109,33 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
           </ProfileOverlay>
         )}
       </Box>
-      <Box
-        ml={showImage ? 2 : 0}
-        color='black'
-        fontSize='1'
-        cursor='pointer'
-        lineHeight={lineHeight}
-        fontFamily={showNickname ? 'sans' : 'mono'}
-        fontWeight={showNickname ? '500' : '400'}
-        mr={showNickname ? 0 : "2px"}
-        mt={showNickname ? 0 : "0px"}
-        onClick={doCopy}
-      >
-        {copyDisplay}
+      <Box display='flex' alignItems='baseline'>
+        <Box
+          ml={showImage ? 2 : 0}
+          color='black'
+          fontSize='1'
+          cursor='pointer'
+          lineHeight={lineHeight}
+          fontFamily={showNickname ? 'sans' : 'mono'}
+          fontWeight={showNickname ? '500' : '400'}
+          mr={showNickname ? 0 : '2px'}
+          mt={showNickname ? 0 : '0px'}
+          onClick={doCopy}
+        >
+          {copyDisplay}
+        </Box>
+        { !dontShowTime && time && (
+          <Timestamp
+            height="fit-content"
+            relative={isRelativeTime}
+            stamp={stamp}
+            fontSize={0}
+            time={time}
+            ml={2}
+            color={unread ? 'blue' : 'gray'} />
+        )}
+        {children}
       </Box>
-      { !dontShowTime && time && (
-        <Timestamp
-          height="fit-content"
-          relative={isRelativeTime}
-          stamp={stamp}
-          fontSize={1}
-          time={time}
-          ml={2}
-          color={unread ? 'blue' : 'gray'} />
-      )}
-      {children}
     </Row>
   );
 }

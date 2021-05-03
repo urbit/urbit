@@ -38,6 +38,7 @@ function TranscludedLinkNode(props: {
             pt='12px'
             pl='12px'
             size='24'
+            sigilPadding='6'
             showImage
             ship={node.post.author}
             date={node.post?.['time-sent']}
@@ -93,6 +94,7 @@ function TranscludedComment(props: {
         pt='12px'
         pl='12px'
         size='24'
+        sigilPadding='6'
         showImage
         ship={comment.post.author}
         date={comment.post?.["time-sent"]}
@@ -130,6 +132,7 @@ function TranscludedPublishNode(props: {
             pl='12px'
             pt='12px'
             size='24'
+            sigilPadding='6'
             showImage
             ship={post.post.author}
             date={post.post?.["time-sent"]}
@@ -173,6 +176,7 @@ export function TranscludedPost(props: {
         pt='12px'
         pl='12px'
         size='24'
+        sigilPadding='6'
         showImage
         ship={post.author}
         date={post?.["time-sent"]}
