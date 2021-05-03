@@ -225,6 +225,10 @@ export default class GraphApi extends BaseApi<StoreState> {
   declineDm(ship: Patp) {
     return this.action('dm-hook', 'dm-hook-action', { "decline" : ship });
   }
+  
+  setScreen(screen: boolean) {
+    return this.action('dm-hook', 'dm-hook-action', { screen });
+  }
 
   addPost(ship: Patp, name: string, post: Post) {
     const nodes = {};
