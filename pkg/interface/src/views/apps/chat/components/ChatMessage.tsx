@@ -141,7 +141,7 @@ const MessageActionItem = (props) => {
   );
 };
 
-const MessageActions = ({ api, onReply, association, msg, isAdmin, permalink }) => {
+const MessageActions = ({ api, onReply, onDelete, association, msg, isAdmin, permalink }) => {
   const isOwn = () => msg.author === window.ship;
   const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Message Link');
 
@@ -188,8 +188,8 @@ const MessageActions = ({ api, onReply, association, msg, isAdmin, permalink }) 
               <MessageActionItem onClick={doCopy}>
                 {copyDisplay}
               </MessageActionItem>
-              {false && (isAdmin() || isOwn()) ? (
-                <MessageActionItem onClick={(e) => console.log(e)} color='red'>
+              {(isAdmin || isOwn()) ? (
+                <MessageActionItem onClick={(e) => onDelete(msg)} color='red'>
                   Delete Message
                 </MessageActionItem>
               ) : null}
@@ -272,6 +272,7 @@ function ChatMessage(props: ChatMessageProps) {
   } = props;
 
   let onReply = props?.onReply ?? (() => {});
+  let onDelete = props?.onDelete ?? (() => {});
   const transcluded = props?.transcluded ?? 0;
   const renderSigil = props.renderSigil ?? (Boolean(nextMsg && msg.author !== nextMsg.author) ||
         !nextMsg ||
@@ -289,7 +290,7 @@ function ChatMessage(props: ChatMessageProps) {
     }
 
   const date = useMemo(() => daToUnix(bigInt(msg.index.split('/')[1])), [msg.index]);
-  const nextDate = useMemo(() => nextMsg ? (
+  const nextDate = useMemo(() => nextMsg && typeof nextMsg !== 'string' ? (
     daToUnix(bigInt(nextMsg.index.split('/')[1]))
   ) : null,
     [nextMsg]
@@ -320,7 +321,8 @@ function ChatMessage(props: ChatMessageProps) {
     fontSize,
     hideHover,
     transcluded,
-    onReply
+    onReply,
+    onDelete
   };
 
   const message = useMemo(() => (

@@ -134,6 +134,11 @@ function ChatResource(props: ChatResourceProps) {
     api.graph.addPost(ship, name, createPost(window.ship, contents))
   }, [resource]);
 
+  const onDelete = useCallback((msg: Post) => {
+    const { ship, name } = resourceFromPath(resource);
+    api.graph.removePosts(ship, name, [msg.index]);
+  }, [resource]);
+
   const dismissUnread = useCallback(() => {
     api.hark.markCountAsRead(association, '/', 'message');
   }, [association]);
@@ -156,6 +161,7 @@ function ChatResource(props: ChatResourceProps) {
       api={api}
       canWrite={canWrite}
       onReply={onReply}
+      onDelete={onDelete}
       fetchMessages={fetchMessages}
       dismissUnread={dismissUnread}
       getPermalink={getPermalink}

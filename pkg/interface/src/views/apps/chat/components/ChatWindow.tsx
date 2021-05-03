@@ -42,6 +42,7 @@ type ChatWindowProps = {
   api: GlobalApi;
   scrollTo?: BigInteger;
   onReply: (msg: Post) => void;
+  onDelete: (msg: Post) => void;
   dismissUnread: () => void;
   pendingSize?: number;
   showOurContact: boolean;
@@ -203,6 +204,7 @@ class ChatWindow extends Component<
       showOurContact,
       graph,
       onReply,
+      onDelete,
       getPermalink,
       dismissUnread,
       isAdmin,
@@ -212,13 +214,14 @@ class ChatWindow extends Component<
       showOurContact,
       api,
       onReply,
+      onDelete,
       permalink,
       dismissUnread,
       isAdmin
     };
 
     const msg = graph.get(index)?.post;
-    if (!msg) return null;
+    if (!msg || typeof msg === 'string') return null;
     if (!this.state.initialized) {
       return (
         <MessagePlaceholder
