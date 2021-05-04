@@ -439,6 +439,7 @@
         ?~  tan  tr-core
         ?.  versioned
           (tr-ap-og:tr-cleanup |.((on-pull-nack:og rid u.tan)))
+        %-  (slog leaf+"versioned nack for {<rid>} in {<dap.bowl>}" u.tan)
         =/  pax
           (kick-mule:virt rid |.((on-pull-kick:og rid)))
         ?~  pax  tr-failed-kick
