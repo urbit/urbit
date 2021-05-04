@@ -1,15 +1,15 @@
-import React from "react";
-import { Post, ReferenceContent } from "@urbit/api";
-import { Box } from "@tlon/indigo-react";
+import React from 'react';
+import { Content, Post, ReferenceContent } from '@urbit/api';
+import { Box } from '@tlon/indigo-react';
 
-import GlobalApi from "~/logic/api/global";
-import TextContent from "./content/text";
-import CodeContent from "./content/code";
-import RemoteContent from "~/views/components/RemoteContent";
-import { Mention } from "~/views/components/MentionText";
-import { PermalinkEmbed } from "~/views/apps/permalinks/embed";
-import { referenceToPermalink } from "~/logic/lib/permalinks";
-import { PropFunc } from "~/types";
+import GlobalApi from '~/logic/api/global';
+import TextContent from './content/text';
+import CodeContent from './content/code';
+import RemoteContent from '~/views/components/RemoteContent';
+import { Mention } from '~/views/components/MentionText';
+import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { PropFunc } from '~/types';
 
 function GraphContentWideInner(
   props: {
@@ -23,21 +23,21 @@ function GraphContentWideInner(
 
   return (
     <Box {...rest}>
-      {post.contents.map((content, i) => {
+      {post.contents.map((content: Content, i) => {
         switch (Object.keys(content)[0]) {
-          case "text":
+          case 'text':
             return (
               <TextContent
                 key={i}
                 api={api}
                 fontSize={1}
-                lineHeight={"20px"}
+                lineHeight={'20px'}
                 content={content}
               />
             );
-          case "code":
+          case 'code':
             return <CodeContent key={i} content={content} />;
-          case "reference":
+          case 'reference':
             const { link } = referenceToPermalink(content as ReferenceContent);
             return (
               <PermalinkEmbed
@@ -47,7 +47,7 @@ function GraphContentWideInner(
                 showOurContact={showOurContact}
               />
             );
-          case "url":
+          case 'url':
             return (
               <Box
                 key={i}
@@ -58,15 +58,15 @@ function GraphContentWideInner(
                 width="fit-content"
                 maxWidth="min(500px, 100%)"
               >
-                <RemoteContent 
+                <RemoteContent
                   key={content.url}
                   url={content.url}
                   transcluded={transcluded}
                 />
               </Box>
             );
-          case "mention":
-            const first = (i) => i === 0;
+          case 'mention':
+            const first = i => i === 0;
             return (
               <Mention
                 key={i}

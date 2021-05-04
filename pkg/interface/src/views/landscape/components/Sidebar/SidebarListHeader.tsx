@@ -15,7 +15,7 @@ import { Groups, Rolodex, Associations } from '@urbit/api';
 
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { Dropdown } from '~/views/components/Dropdown';
-import { SidebarListConfig  } from './types';
+import { SidebarListConfig } from './types';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { roleForShip } from '~/logic/lib/group';
 import { NewChannel } from '~/views/landscape/components/NewChannel';
@@ -32,7 +32,7 @@ export function SidebarListHeader(props: {
   baseUrl: string;
   selected: string;
   workspace: Workspace;
-  handleSubmit: (c: SidebarListConfig) => void;
+  handleSubmit: (s: any) => void;
 }): ReactElement {
   const history = useHistory();
   const onSubmit = useCallback(
@@ -75,7 +75,7 @@ export function SidebarListHeader(props: {
          borderBottom={1}
          borderColor="lightGray"
          backgroundColor={['transparent',
-           history.location.pathname.includes(`/~landscape${groupPath}/feed`) 
+           history.location.pathname.includes(`/~landscape${groupPath}/feed`)
            ? (
             'washedGray'
            ) : (
