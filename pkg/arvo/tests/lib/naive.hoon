@@ -305,6 +305,18 @@
 ::
 --
 ::
+:: Keys
+::
+|%
+::
+++  encr    (shax 'You will forget that you ever read this sentence.')
+++  auth    (shax 'You cant know that this sentence is true.')
+++  suit     1
+::
+--
+::
+:: Tests
+::
 |%
 ::
 ::  TODO: Factor out commonly used things like keys and addresses
@@ -384,13 +396,10 @@
     voting-proxy.own:(~(got by points.state) ~bud)
 ::
 ++  test-l1-changed-keys  ^-  tang
-  =/  encrypt       (shax 'Your eyes dont see, you do.')
-  =/  auth          (shax 'We think much less than we think we think.')
-  =/  suite         1
   =/  life          1
-  =/  new-keys      [~bud encrypt auth suite life]
+  =/  new-keys      [~bud encr auth suit life]
   %+  expect-eq
-    !>  [suite auth encrypt]
+    !>  [suit auth encr]
   ::
     !>
     =|  =^state:naive
@@ -459,40 +468,35 @@
     transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-marbud-l2-change-keys
-  =/  encrypt       (shax 'You will forget that you ever read this sentence.')
-  =/  auth          (shax 'You cant know that this sentence is true.')
-  =/  suite         1
-  =/  new-keys-own  [0 ~marbud %marbud-key-0 %own | encrypt auth suite]
-  =/  new-keys-mgt  [0 ~marbud %marbud-mgt %manage | encrypt auth suite]
-  =/  mgt-proxy     [0 ~marbud %marbud-key-0 %own (addr %marbud-mgt)]
+  =/  new-keys-own  [~marbud %marbud-key-0 %own | encr auth suit]
+  =/  new-keys-mgt  [~marbud %marbud-mgt %manage | encr auth suit]
+  =/  mgt-proxy     [~marbud %marbud-key-0 %own (addr %marbud-mgt)]
   ;:  weld
     %+  expect-eq
-      !>  [suite auth encrypt]
+      !>  [suit auth encr]
     ::
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(configure-keys:l2 new-keys-own))
+      =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys-own))
       |1:keys.net:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
-      !>  [suite auth encrypt]
+      !>  [suit auth encr]
     ::
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(set-management-proxy:l2 mgt-proxy))
-      =^  f  state  (n state %bat q:(configure-keys:l2 new-keys-mgt))
+      =^  f  state  (n state %bat q:(set-management-proxy:l2 0 mgt-proxy))
+      =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys-mgt))
       |1:keys.net:(~(got by points.state) ~marbud)
     ::
     :: TODO: make sure nobody else can change these keys
   ==
 ::
+:: TODO: transfer breach via transfer proxy
 ++  test-marbud-l2-transfer-breach  ^-  tang
-  =/  encrypt       (shax 'You will forget that you ever read this sentence.')
-  =/  auth          (shax 'You cant know that this sentence is true.')
-  =/  suite         1
-  =/  new-keys      [0 ~marbud %marbud-key-0 %own | encrypt auth suite]
+  =/  new-keys      [~marbud %marbud-key-0 %own | encr auth suit]
   ;:  weld
     %+  expect-eq
     ::  Tests that proxies are reset on transfer breach
@@ -522,16 +526,13 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(configure-keys:l2 new-keys))
+      =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys))
       =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 (addr %marbud-key-0) %own &))
       |1:keys.net:(~(got by points.state) ~marbud)
   ==
 ::
 ++  test-marbud-l2-transfer-no-breach  ^-  tang
-  =/  encrypt       (shax 'You will forget that you ever read this sentence.')
-  =/  auth          (shax 'You cant know that this sentence is true.')
-  =/  suite         1
-  =/  new-keys      [0 ~marbud %marbud-key-0 %own | encrypt auth suite]
+  =/  new-keys      [~marbud %marbud-key-0 %own | encr auth suit]
   ;:  weld
     %+  expect-eq
     ::  Tests that proxies are not reset when transfering with no breach
@@ -556,22 +557,24 @@
     %+  expect-eq
     ::  Tests that networking keys are not reset when transfering with no breach
       !>
-      [suite auth encrypt]
+      [suit auth encr]
     ::
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(configure-keys:l2 new-keys))
+      =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys))
       =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 (addr %marbud-key-0) %own |))
       |1:keys.net:(~(got by points.state) ~marbud)
   ==
 ::
+:: TODO: life+rift changes via transfer proxy
+::
 ++  test-marbud-keys-life-rift  ^-  tang
-  =/  encrypt       (shax 'You will forget that you ever read this sentence.')
-  =/  auth          (shax 'You cant know that this sentence is true.')
-  =/  suite         1
-  =/  no-breach     [0 ~marbud %marbud-key-0 %own | encrypt auth suite]
-  =/  yes-breach    [0 ~marbud %marbud-key-0 %own & encrypt auth suite]
+  =/  new-keys-no-reset       [~marbud %marbud-key-0 %own | encr auth suit]
+  =/  new-keys-yes-reset      [~marbud %marbud-key-0 %own & encr auth suit]
+  =/  zero-keys-no-reset      [~marbud %marbud-key-0 %own | 0 0 0]
+  =/  zero-keys-yes-reset     [~marbud %marbud-key-0 %own & 0 0 0]
+
   ;:  weld
     %+  expect-eq
     ::  breach=%.n
@@ -580,7 +583,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(configure-keys:l2 no-breach))
+      =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys-no-reset))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -590,35 +593,70 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(configure-keys:l2 yes-breach))
+      =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys-yes-reset))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+    ::  networking keys set incremenets life, reset=%.y
+    ::  then zero keys and transfer, should increment rift but not life
+    ::
+      !>  [2 2]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys-yes-reset)) :: inc life and rift
+      =^  f  state  (n state %bat q:(configure-keys:l2 1 zero-keys-no-reset)) :: inc life
+      =^  f  state  (n state %bat q:(configure-keys:l2 2 zero-keys-yes-reset)) :: inc rift
+      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+    ::
   ==
 ::
 ++  test-marbud-transfer-life-rift  ^-  tang
+  =/  new-keys-no-reset       [~marbud %marbud-key-0 %own | encr auth suit]
+  =/  new-keys-yes-reset      [~marbud %marbud-key-0 %own & encr auth suit]
+  =/  zero-keys-no-reset      [~marbud %marbud-key-0 %own | 0 0 0]
+  =/  zero-keys-yes-reset     [~marbud %marbud-key-0 %own & 0 0 0]
   ;:  weld
     %+  expect-eq
-    ::  reset=%.n
+    ::  networking keys not set, reset=%.n
+    ::
       !>  [0 0]                   :: [rift life]
     ::
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(set-transfer-proxy:l2 0 ~marbud %marbud-key-0 %own (addr %marbud-key-1)))
-      =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-1 (addr %marbud-key-1) %transfer |))
+      =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-0 (addr %marbud-key-1) %own |))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
-    ::  reset=%.y
-    ::  TODO: This test currently fails - rift is not increments on transfer w/ breach
-      !>  [1 0]
+    ::  networking keys not set, reset=%.y
+    ::
+      !>  [0 0]
     ::
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(set-transfer-proxy:l2 0 ~marbud %marbud-key-0 %own (addr %marbud-key-1)))
-      =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-1 (addr %marbud-key-1) %transfer &))
+      =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-0 (addr %marbud-key-1) %own &))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
-  ==
+    ::
+    %+  expect-eq
+    ::  networking keys set incremenets life, reset=%.y
+    ::  then zero keys and transfer, should increment rift but not life
+    ::  TODO: transferring and reset with already zeroed keys ought to incr rift but not life, right?
+    ::  but currently the transfer w/ reset increments both life and rift, despite keys already being 0
+    ::
+      !>  [2 2]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys-yes-reset)) :: inc life and rift
+      =^  f  state  (n state %bat q:(configure-keys:l2 1 zero-keys-no-reset)) :: inc life
+      =^  f  state  (n state %bat q:(transfer-point:l2 2 ~marbud %marbud-key-0 (addr %marbud-key-1) %own &)) :: inc rift
+      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+    ::
+ ==
 ::
 ++  test-dopbud-l2-spawn  ^-  tang
   %+  expect-eq
