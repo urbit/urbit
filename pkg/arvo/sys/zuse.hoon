@@ -5398,6 +5398,44 @@
     |-
     ?~  a  a
     [n=[key.n.a (b val.n.a)] l=$(a l.a) r=$(a r.a)]
+  ::  +tab: tabulate a subset excluding start element with a max count
+  ::
+  ++  tab
+    ~/  %tab
+    |=  [a=(tree item) b=(unit key) c=@]
+    ^-  (list item)
+    |^
+    -:(tabulate (del-span a b) b c)
+    ::
+    ++  tabulate
+      |=  [a=(tree item) b=(unit key) c=@]
+      ^-  [(list item) @]
+      ?:  ?&(?=(~ b) =(c 0))
+        [~ 0]
+      =|  f=[d=(list item) e=@]
+      |-  ^-  [(list item) @]
+      ?:  ?|(?=(~ a) =(e.f c))  f
+      =.  f  $(a l.a)
+      ?:  =(e.f c)  f
+      =.  f  [[n.a d.f] +(e.f)]
+      ?:  =(e.f c)  f
+      $(a r.a)
+    ::
+    ++  del-span
+      |=  [a=(tree item) b=(unit key)]
+      ^-  (tree item)
+      ?~  a  a
+      ?~  b  a
+      ::  found key
+      ?:  =(u.b key.n.a)
+        (nip a(r ~))
+      ::  traverse to find key
+      ?:  (compare key.n.a u.b)
+        :: found key to the left of end
+        a(r $(a r.a))
+      :: found key to the right of end
+      $(a (nip a(r ~)))
+    --
   ::  +tap: convert to list, smallest to largest
   ::
   ++  tap
