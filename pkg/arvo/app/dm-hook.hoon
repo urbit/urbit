@@ -32,6 +32,8 @@
   :_  this
   :_  ~
   =/  dms=(list resource)
+    ?.  .^(? (scry:io %gu %graph-store ~))
+      ~
     %+  skim  ~(tap in get-keys:gra)
     |=([ship name=term] ?=(^ (rush name ;~(pfix (jest 'dm--') (star next)))))
   |^
