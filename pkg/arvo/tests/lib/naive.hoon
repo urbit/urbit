@@ -54,6 +54,17 @@
   =^  f3  state  (n state (owner-changed:l1 ~marbud deposit-address:naive))
   [:(welp f1 f2 f3) state]
 ::
+:: ~litbud is for testing L2 sponsorship
+::
+++  init-litbud
+  |=  =^state:naive
+  ^-  [effects:naive ^state:naive]
+  :: ~bud should already be spawned, though trying to init ~bud again shouldn't matter i think?
+  :: =^  f1  state  (init-bud state)
+  =^  f2  state  (n state (owner-changed:l1 ~litbud (addr %litbud-key-0)))
+  =^  f3  state  (n state (owner-changed:l1 ~litbud deposit-address:naive))
+  [:(welp f2 f3) state]
+::
 ::  ~sambud is for testing L1 stars attempting L2 actions
 ::
 ++  init-sambud
@@ -216,17 +227,17 @@
     (take-escape:bits %cancel-escape child proxy parent)
   ::
   ++  adopt
-    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  octs
+    |=  [nonce=@ud parent=ship pk=@ proxy=@tas child=ship]  ^-  octs
     %^  sign-tx  pk  nonce
     (take-escape:bits %adopt parent proxy child)
   ::
   ++  reject
-    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  octs
+    |=  [nonce=@ud parent=ship pk=@ proxy=@tas child=ship]  ^-  octs
     %^  sign-tx  pk  nonce
     (take-escape:bits %reject parent proxy child)
   ::
   ++  detach
-    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  octs
+    |=  [nonce=@ud parent=ship pk=@ proxy=@tas child=ship]  ^-  octs
     %^  sign-tx  pk  nonce
     (take-escape:bits %detach parent proxy child)
   ::
@@ -735,15 +746,74 @@
 ++  test-linnup-torsyx-l2-escape-request  ^-  tang
   ::  TODO: Are you supposed to be able to request escape to a non-existent star?
   %+  expect-eq
-    !>  [~ ~sambud]
+    !>  [~ ~litbud]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
+    =^  f  state  (init-litbud state)
     =^  f  state  (n state %bat q:(spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)))
     =^  f  state  (n state %bat q:(transfer-point:l2 0 ~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &))
-    =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~sambud))
+    ::  why is the nonce for the escape still 0?
+    =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~litbud))
     escape.net:(~(got by points.state) ~linnup-torsyx)
+::
+++  test-linnup-torsyx-l2-cancel-escape-request  ^-  tang
+  %+  expect-eq
+    !>  ~
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (init-litbud state)
+    =^  f  state  (n state %bat q:(spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)))
+    =^  f  state  (n state %bat q:(transfer-point:l2 0 ~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &))
+    =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~litbud))
+    =^  f  state  (n state %bat q:(cancel-escape:l2 1 ~linnup-torsyx %lt-key-0 %own ~litbud))
+    escape.net:(~(got by points.state) ~linnup-torsyx)
+::
+++  test-linnup-torsyx-l2-adopt-accept
+  %+  expect-eq
+    !>  [~ %.y ~litbud]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (init-litbud state)
+    =^  f  state  (n state %bat q:(spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)))
+    =^  f  state  (n state %bat q:(transfer-point:l2 0 ~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &))
+    =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~litbud))
+    =^  f  state  (n state %bat q:(adopt:l2 0 ~litbud %litbud-key-0 %own ~linnup-torsyx))
+    [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
+::
+++  test-linnup-torsyx-l2-adopt-reject
+  ::  TODO: at the moment the default sponsor is always ~zod, but it should probably
+  ::  be ~marbud here
+  %+  expect-eq
+    !>  ~
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (init-litbud state)
+    =^  f  state  (n state %bat q:(spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)))
+    =^  f  state  (n state %bat q:(transfer-point:l2 0 ~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &))
+    =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~litbud))
+    =^  f  state  (n state %bat q:(reject:l2 0 ~litbud %litbud-key-0 %own ~linnup-torsyx))
+    escape.net:(~(got by points.state) ~linnup-torsyx)
+::
+++  test-linnup-torsyx-l2-detach
+  %+  expect-eq
+    !>  [~ %.n ~marbud]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (init-litbud state)
+    =^  f  state  (n state %bat q:(spawn:l2 0 ~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)))
+    =^  f  state  (n state %bat q:(transfer-point:l2 0 ~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &))
+    =^  f  state  (n state %bat q:(detach:l2 1 ~marbud %marbud-key-0 %own ~linnup-torsyx))
+    [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
 ::
 ::  TODO: signature format changed; regenerate
 ::
