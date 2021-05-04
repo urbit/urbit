@@ -12,9 +12,8 @@
         |=  params=(map @t json)
         ^-  (unit [encrypt=@ auth=@ crypto-suite=@ breach=?])
         ?~  data=(~(get by params) 'data')  ~
-        =,  dejs:format
-        %-  some
         %.  u.data
+        =,  dejs-soft:format
         %-  ot 
         :~  ['encrypt' so]
             ['auth' so]
@@ -26,11 +25,12 @@
         |=  params=(map @t json)
         ^-  (unit [@ux ship])
         ?~  data=(~(get by params) 'data')  ~
-        =,  dejs:format
-        =;  [add=(unit @ux) =ship]
-          ?~  add  ~
-          (some [u.add ship])
+        =;  ans=(unit [add=(unit @ux) =ship])
+          ?~  ans  ~
+          ?~  add.u.ans  ~
+          (some [u.add.u.ans ship.u.ans])
         %.  u.data
+        =,  dejs-soft:format
         %-  ot 
         :~  ['address' (cu to-hex so)]
             ['ship' (su ;~(pfix sig fed:ag))]
@@ -40,22 +40,26 @@
         |=  params=(map @t json)
         ^-  (unit @ux)
         ?~  data=(~(get by params) 'data')  ~
-        =,  dejs:format
+        =;  ans=(unit (unit @ux))
+          ?~  ans  ~
+          ?~  u.ans  ~
+          (some u.u.ans)
+        =,  dejs-soft:format
         %.  u.data
         (ot ['address' (cu to-hex so)]~)
-      ::
+      ::                    
       ++  sig
         |=  params=(map @t json)
         ^-  (unit @)
+        =,  dejs-soft:format
         ?~  sig=(~(get by params) 'sig')  ~
-        (some (so:dejs:format u.sig))
+        (so:dejs-soft:format u.sig)
       ::
       ++  from
         |=  params=(map @t json)
         ^-  (unit [ship @t])
         ?~  from=(~(get by params) 'from')  ~
-        %-  some
-        =,  dejs:format
+        =,  dejs-soft:format
         %.  u.from 
         %-  ot
         :~  ['ship' (su ;~(pfix sig fed:ag))]
@@ -131,15 +135,14 @@
     ::
     ++  sponsor-call
       |=  [id=@t params=(map @t json)]
-      ?.  =((lent ~(tap by params)) 3)
-        [~ [%error id 'X' 'Params missing']]
-      ?>  =((lent ~(tap by params)) 3)
+      ^-  [(unit cage) response:rpc]
+      ?.  =((lent ~(tap by params)) 3)  
+        [~ ~(params error id)]
       =/  sig=(unit @)            (sig:extract params)
       =/  from=(unit [ship @t])   (from:extract params)
       =/  data=(unit [@ux ship])  (address-ship:extract params)
-      ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
-
-        [~ [%error id 'X' 'Failed to parsed']]
+      ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))  
+        [~ ~(parse error id)]
       :_  [%result id s+'ok']
       %-  some 
       noun+!>([u.sig u.from u.data])
@@ -147,51 +150,60 @@
     ++  proxy-call
       |=  [id=@t params=(map @t json)]
       ^-  [(unit cage) response:rpc]
-      ?.  =((lent ~(tap by params)) 3)
-        [~ [%error id 'X' 'Params missing']]
+      ?.  =((lent ~(tap by params)) 3)  
+        [~ ~(params error id)]
       =/  sig=(unit @)           (sig:extract params)
       =/  from=(unit [ship @t])  (from:extract params)
       =/  data=(unit @ux)        (address:extract params)
-      ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
-        [~ [%error id 'X' 'Failed to parsed']]
+      ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))  
+        [~ ~(parse error id)]
       :_  [%result id s+'ok']
       %-  some 
       noun+!>([u.sig u.from u.data])
+    ::
+    ++  error
+      |_  id=@t
+      ::  https://www.jsonrpc.org/specification#error_object
+      ::
+      ++  parse     [%error id '-32700' 'Failed to parsed']
+      ++  request   [%error id '-32600' 'Invalid Request']
+      ++  method    [%error id '-32601' 'Method not found']
+      ++  params    [%error id '-32602' 'Invalid params']
+      ++  internal  [%error id '-32603' 'Internal error']
+      --
     --
 |%
-::  TODO: move error handling to separate core
-::
 ++  get-point
   |=  [id=@t params=(map @t json) scry=$-(ship (unit point:naive))]
   ^-  response:rpc
-  ?.  =((lent ~(tap by params)) 1)
-    [%error id 'X' 'Params missing']
-  ?~  ship=(~(get by params) 'ship')
-    [%error id 'X' 'A "ship" key must exist']
+  ?.  =((lent ~(tap by params)) 1)    
+    ~(params error id)
+  ?~  ship=(~(get by params) 'ship')  
+    ~(params error id)
   ?~  ship=(rush (so:dejs:format u.ship) ;~(pfix sig fed:ag))
-    [%error id 'X' 'Ship @p invalid']
-  ?~  point=(scry u.ship)
-    [%error id 'X' 'Ship @p not found']
+    ~(params error id)
+  ?~  point=(scry u.ship)  
+    ~(params error id)
   [%result id (point-to-json u.point)]
 ::
 ++  transfer-point
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]
-  ?.  =((lent ~(tap by params)) 3)
-    [~ [%error id 'X' 'Params missing']]
-  =/  sig=(unit @)            (sig:extract params)
-  =/  from=(unit [ship @t])   (from:extract params)
+  ?.  =((lent ~(tap by params)) 3)  
+    [~ ~(params error id)]
+  =/  sig=(unit @)           (sig:extract params)
+  =/  from=(unit [ship @t])  (from:extract params)
   =/  data=(unit [@ux ?])
     ?~  data=(~(get by params) 'data')  ~
-    =,  dejs:format
     =;  [add=(unit @ux) r=?]
       ?~  add  ~
       (some [u.add r])
     %.  u.data
+    =,  dejs:format
     %-  ot 
     ~[['address' (cu to-hex so)] ['reset' bo]]
-  ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
-    [~ [%error id 'X' 'Failed to parsed']]
+  ?:  |(?=(~ sig) ?=(~ from) ?=(~ data))  
+    [~ ~(parse error id)]
   :_  [%result id s+'ok']
   %-  some 
   noun+!>([u.sig u.from u.data])
@@ -199,14 +211,14 @@
 ++  configure-keys
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]
-  ?.  =((lent ~(tap by params)) 3)
-    [~ [%error id 'X' 'Params missing']]
+  ?.  =((lent ~(tap by params)) 3)  
+    [~ ~(params error id)]
   =/  sig=(unit @)            (sig:extract params)
   =/  from=(unit [ship @t])   (from:extract params)
   =/  data=(unit [encrypt=@ auth=@ crypto-suite=@ breach=?])
     (keys:extract params)
-  ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
-    [~ [%error id 'X' 'Failed to parsed']]
+  ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))  
+    [~ ~(parse error id)]
   :_  [%result id s+'ok']
   %-  some 
   noun+!>([u.sig u.from u.data])

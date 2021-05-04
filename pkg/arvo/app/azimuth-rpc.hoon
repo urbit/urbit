@@ -121,10 +121,10 @@
     :-  data
     %-  json-response:gen
     (response-to-json:json-rpc response)
-  ?.  ?=([%map *] params)  
-    [~ [%error id 'X' 'RPC params must be an object']]
   =,  azimuth-rpc
-  ?+    method  [~ [%error id 'X' 'Unsupported Azimuth RPC']]
+  ?.  ?=([%map *] params)  
+    [~ ~(parse error id)]
+  ?+    method  [~ ~(method error id)]
     %get-point             [~ (get-point id +.params scry-point)]
     %transfer-point        (transfer-point id +.params)
     %configure-keys        (configure-keys id +.params)
@@ -136,7 +136,7 @@
     %reject                (reject id +.params)
     %set-management-proxy  (management-proxy id +.params)
     %set-spawn-proxy       (spawn-proxy id +.params)
-    %set-transfer-proxy    (transfer-proxy id +.params)
+    %set-transfer-proxy    (transfer-proxy id +.params) 
   ==
 ::
 ++  scry-point

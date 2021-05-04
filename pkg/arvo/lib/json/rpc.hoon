@@ -39,16 +39,20 @@
     :-  %o
     %-  molt
     ^-  (list [@t json])
-    ~[['id' s+id.response] ['res' res.response]]
+    ::  FIXME: return 'id' as string, number or NULL
+    ::  
+    :~  ['jsonrpc' s+'2.0'] 
+        ['id' s+id.response] 
+        ['res' res.response]
+    ==
   ::
       %error
     :-  %o
     %-  molt
     ^-  (list [@t json])
-    :~  ::  FIXME: return 'id' as string, number or NULL
-        ::
-        ['id' s+id.response] 
-        ['code' s+code.response]
+    :~  ['jsonrpc' s+'2.0'] 
+        ['id' ?~(id.response ~ s+id.response)] 
+        ['code' n+code.response]
         ['message' s+message.response]
     ==
   ==
