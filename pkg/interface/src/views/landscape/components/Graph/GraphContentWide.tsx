@@ -24,59 +24,54 @@ function GraphContentWideInner(
   return (
     <Box {...rest}>
       {post.contents.map((content: Content, i) => {
-        switch (Object.keys(content)[0]) {
-          case 'text':
-            return (
-              <TextContent
-                key={i}
-                api={api}
-                fontSize={1}
-                lineHeight={'20px'}
-                content={content}
-              />
-            );
-          case 'code':
-            return <CodeContent key={i} content={content} />;
-          case 'reference':
-            const { link } = referenceToPermalink(content as ReferenceContent);
-            return (
-              <PermalinkEmbed
-                link={link}
-                api={api}
-                transcluded={transcluded}
-                showOurContact={showOurContact}
-              />
-            );
-          case 'url':
-            return (
-              <Box
-                key={i}
-                flexShrink={0}
-                fontSize={1}
-                lineHeight="20px"
-                color="black"
-                width="fit-content"
-                maxWidth="min(500px, 100%)"
-              >
-                <RemoteContent
-                  key={content.url}
-                  url={content.url}
-                  transcluded={transcluded}
-                />
-              </Box>
-            );
-          case 'mention':
-            const first = i => i === 0;
-            return (
-              <Mention
-                key={i}
-                first={first(i)}
-                ship={content.mention}
-                api={api}
-              />
-            );
-          default:
-            return null;
+        if ('text' in content) {
+          return (
+            <TextContent
+              key={i}
+              api={api}
+              fontSize={1}
+              lineHeight={'20px'}
+              content={content}
+            />
+          );
+        } else if ('code' in content) {
+          return <CodeContent key={i} content={content} />;
+        } else if ('reference' in content) {
+          const { link } = referenceToPermalink(content as ReferenceContent);
+          return (
+            <PermalinkEmbed
+              link={link}
+              api={api}
+              transcluded={transcluded}
+              showOurContact={showOurContact}
+            />
+          );
+        } else if ('url' in content) {
+          return (
+          <Box
+            key={i}
+            flexShrink={0}
+            fontSize={1}
+            lineHeight="20px"
+            color="black"
+            width="fit-content"
+            maxWidth="min(500px, 100%)"
+          >
+            <RemoteContent
+              key={content.url}
+              url={content.url}
+              transcluded={transcluded}
+            />
+          </Box>
+          );
+        } else if ('mention' in content) {
+          const first = i => i === 0;
+          return (<Mention
+            key={i}
+            first={first(i)}
+            ship={content.mention}
+            api={api}
+                  />);
         }
       })}
     </Box>
