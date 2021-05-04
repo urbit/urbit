@@ -463,18 +463,18 @@
             ::  subscription
             tr-core
           (tr-suspend-pub-ver min-version.config)
-        =/  =vase
+        =/  =^cage
           (convert-to:ver cage)
         =/  =wire
           (make-wire /store)
-        =+  resources=(~(gas in *(set resource)) (resource-for-update:og vase))
+        =+  resources=(~(gas in *(set resource)) (resource-for-update:og q.cage))
         ?>  ?|  no-validate.config
             ?&  (check-src resources)
                 (~(has in resources) rid)
             ==  ==
         =/  =mark
           (append-version:ver version.config)
-        (tr-emit (~(poke-our pass wire) store-name.config mark vase))
+        (tr-emit (~(poke-our pass wire) store-name.config cage))
       --
     ::
     ++  tr-kick
