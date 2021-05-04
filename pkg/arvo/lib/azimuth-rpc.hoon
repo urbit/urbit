@@ -70,15 +70,13 @@
     ++  point-to-json
       |=  =point:naive
       ^-  json
+      =,  enjs:format
       |^
-      :-  %o
-      %-  molt
-      ^-  (list [@t json])
+      %-  pairs
       :~  ['dominion' s+dominion.point]
         ::
           :-  'ownership' 
-          :-  %o
-          %-  molt
+          %-  pairs
           =*  own  own.point
           ^-  (list [@t json])
           :~  ['owner' (own-to-json owner.own)]
@@ -89,15 +87,12 @@
           ==
         ::
           :-  'network'
-          :-  %o
-          =,  enjs:format
-          %-  molt  ^-  (list [@t json])
+          %-  pairs
           =*  net  net.point
           :*  ['rift' (numb rift.net)]
             ::
               :-  'keys'
-              :-  %o
-              %-  molt  ^-  (list [@t json])
+              %-  pairs
               :~  ['life' (numb life.keys.net)]
                   ['suite' (numb suite.keys.net)]
                   ['auth' (numb auth.keys.net)]
@@ -106,8 +101,7 @@
             ::
               ['rift' (numb rift.net)]
               :-  'sponsor'
-              :-  %o
-              %-  molt  ^-  (list [@t json])
+              %-  pairs
               ~[['has' b+has.sponsor.net] ['who' (ship who.sponsor.net)]]
             ::
               ?~  escape.net  ~
@@ -117,8 +111,7 @@
       ++  own-to-json
         |=  [=address:naive =nonce:naive]
         ^-  json
-        :-  %o
-        %-  molt  ^-  (list [@t json])
+        %-  pairs
         :~  ['address' s+(crip "0x{((x-co:co 20) address)}")]
             ['nonce' (numb:enjs:format nonce)]
         ==
