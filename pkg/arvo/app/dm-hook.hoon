@@ -31,10 +31,35 @@
 ++  on-init  
   :_  this
   :_  ~
+  =/  dms=(list resource)
+    %+  skim  ~(tap in get-keys:gra)
+    |=([ship name=term] ?=(^ (rush name ;~(pfix (jest 'dm--') (star next)))))
+  |^
   %+  poke-our:pass  %graph-store
   %+  update:cg:gra  now.bowl
   :+  %add-graph  [our.bowl %inbox]
-  [*graph:store `%graph-validator-dm %.n]
+  [graph `%graph-validator-dm %.n]
+  ::
+  ++  dm-parser
+    ;~(pfix (jest 'dm--') fed:ag)
+  ::
+  ++  counterparty
+    |=  rid=resource
+    =/  =ship  (rash name.rid dm-parser)
+    ?.  =(our.bowl ship)  ship
+    entity.rid
+  ::
+  ++  graph
+    %+  roll  dms
+    |=  [rid=resource =graph:store]
+    =/  =ship  (counterparty rid)
+    =|  =post:store
+    =:  author.post     our.bowl
+        index.post      [ship ~]
+        time-sent.post  now.bowl
+      ==
+    (put:orm:store graph `@`ship [%& post] %graph graph)
+  --
 ::
 ++  on-save  !>(state)
 ++  on-load
