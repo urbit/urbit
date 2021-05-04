@@ -59,18 +59,37 @@
   ::
       %graph-update-2
     =+  !<(=update:store vase)
-    ?+    -.q.update  `this
+    ?+    -.q.update  !!
         %add-nodes
       ?>  ?=([@ %inbox] resource.q.update)
       =^  cards  state
         ?:  =(our.bowl src.bowl)
-          (outgoing-add nodes.q.update)
+          (outgoing-add (hash-and-sign nodes.q.update))
         ?:  &(screening !(dm-exists src.bowl))
           (screen-add nodes.q.update)
         (incoming-add nodes.q.update)
       [cards this]
     ==
   ==
+  ::
+  ++  hash-and-sign
+    |=  =nodes
+    %-  ~(gas by *^nodes)
+    %+  turn  ~(tap by nodes)
+    |=  [=index:store =node:store]
+    ^-  [index:store node:store]
+    :-  index
+    ?>  ?=(%& -.post.node)
+    =*  p  post.node
+    =/  =hash:store
+      `@ux`(sham [~ author time-sent contents]:p.p)
+    %_  node
+      hash.p.post  `hash
+    ::
+        signatures.p.post
+      %-  ~(gas in *signatures:store)
+      [(sign:sig our.bowl now.bowl hash)]~
+    ==
   ::
   ++  give
     |=  =action:hook
