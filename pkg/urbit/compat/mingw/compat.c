@@ -134,33 +134,11 @@ int err_win_to_posix(DWORD winerr)
 	return error;
 }
 
-int kill(pid_t pid, int sig)
-{
-	if (pid > 0 && sig == SIGKILL) {
-		HANDLE h = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
-
-		if (TerminateProcess(h, -1)) {
-			CloseHandle(h);
-			return 0;
-		}
-
-		errno = err_win_to_posix(GetLastError());
-		CloseHandle(h);
-		return -1;
-	}
-
-    // TODO: handle signals for self
-    // TODO: send SIGTERM as ctrl-c: https://stackoverflow.com/questions/813086/can-i-send-a-ctrl-c-sigint-to-an-application-on-windows
-	errno = EINVAL;
-	return -1;
-}
-
 static HANDLE timer_event;
 static HANDLE timer_thread;
 static int timer_signal;
 static int timer_interval;
 static int one_shot;
-static __p_sig_fn_t timer_fn = SIG_DFL, sigint_fn = SIG_DFL;
 
 /* The timer works like this:
  * The thread, ticktack(), is a trivial routine that most of the time
@@ -380,6 +358,28 @@ int msync(void *addr, size_t len, int flags)
 }
 
 // -----------------------------------------------------------------------
+
+// vere uses kill() only to kill lockfile owner with SIGTERM or SIGKILL
+// Windows does not have signals, so I handle SIGKILL as TerminateProcess()
+// and return an error in all other cases
+int kill(pid_t pid, int sig)
+{
+    if (pid > 0 && sig == SIGKILL) {
+        HANDLE h = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
+
+        if (TerminateProcess(h, -1)) {
+            CloseHandle(h);
+            return 0;
+        }
+
+        errno = err_win_to_posix(GetLastError());
+        CloseHandle(h);
+        return -1;
+    }
+
+    errno = EINVAL;
+    return -1;
+}
 
 // libgcc built for mingw has included an implementation of mprotect
 // via VirtualProtect since olden days, but it takes int rather than size_t
