@@ -9,6 +9,7 @@
   (items-from-keys (gulf 0 6))
 ::
 =/  atom-map  ((ordered-map @ud @tas) lte)
+=/  gte-atom-map  ((ordered-map @ud @tas) gte)
 ::
 |%
 ++  test-ordered-map-gas  ^-  tang
@@ -26,6 +27,34 @@
   %+  expect-eq
     !>  test-items
     !>  (tap:atom-map a)
+::
+++  test-ordered-map-tab  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:gte-atom-map ~ test-items)
+  ::
+  %+  expect-eq
+    !>  test-items
+    !>  (tab:gte-atom-map a ~ 7)
+::
+++  test-ordered-map-tab-starting-from  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:gte-atom-map ~ test-items)
+  =/  small-test-items=(list [@ud @tas])
+    (items-from-keys (gulf 3 6))
+  ::
+  %+  expect-eq
+    !>  small-test-items
+    !>  (tab:gte-atom-map a [~ 2] 4)
+::
+++  test-ordered-map-tab-starting-from-and-count  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:gte-atom-map ~ test-items)
+  =/  small-test-items=(list [@ud @tas])
+    (items-from-keys (gulf 4 6))
+  ::
+  %+  expect-eq
+    !>  small-test-items
+    !>  (tab:gte-atom-map a [~ 2] 3)
 ::
 ++  test-ordered-map-pop  ^-  tang
   ::
