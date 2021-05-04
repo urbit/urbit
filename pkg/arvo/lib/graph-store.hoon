@@ -99,17 +99,9 @@
     |^
     %+  frond  -.ref
     ?-  -.ref
-      %dm     (dm +.ref)
       %graph  (graph +.ref)
       %group  (group +.ref)
     ==
-    ::
-    ++  dm
-      |=  [s=^ship idx=^index]
-      %-  pairs
-      :~  ship+(ship s)
-          index+(index idx)
-      ==
     ::
     ++  graph
       |=  [grp=res gra=res idx=^index]
@@ -385,14 +377,7 @@
       %-  of
       :~  graph+graph
           group+dejs-path:res
-          dm+dm
       ==
-      ::
-      ++  dm
-        %-  ot
-        :~  ship+(su ;~(pfix sig fed:ag))
-            index+index
-        ==
       ::
       ++  graph
         %-  ot

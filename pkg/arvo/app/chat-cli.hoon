@@ -1200,8 +1200,6 @@
         ::
           %group
         txt+"[reference to msg in {~(phat tr group.reference.content)}]"
-          %dm
-        txt+"[reference to DM with {(scow %p ship.reference.content)}]"
       ==
     ::
         %mention
