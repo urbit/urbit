@@ -207,8 +207,6 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
     sig_s.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sig_s, 0);
   }
-  #else
-  signal(SIGPIPE, SIG_IGN);
   #endif
 
   //  configure pipe to daemon process

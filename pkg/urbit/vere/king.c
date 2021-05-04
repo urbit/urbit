@@ -756,8 +756,6 @@ u3_king_commence()
     sig_s.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sig_s, 0);
   }
-  #else
-  signal(SIGPIPE, SIG_IGN);
   #endif
 
   //  boot the ivory pill
