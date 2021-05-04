@@ -297,14 +297,14 @@
       ::
       ++  unversioned
         ?>  ?=([%ship @ @ *] t.path)
-        ?.  =(min-version.config 0)
-           ~&  >>>  "unversioned req from: {<src.bowl>}, nooping"
-           `this
         =/  =resource
           (de-path:resource t.path)
         =/   =vase 
           (initial-watch:og t.t.t.t.path resource)
         :_  this
+        ?.  =(min-version.config 0)
+           ~&  >>>  "unversioned req from: {<src.bowl>}, nooping"
+           ~
         [%give %fact ~ (convert-to:ver update-mark.config vase)]~
       --
     ::
