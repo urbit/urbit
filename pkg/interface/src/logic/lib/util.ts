@@ -1,14 +1,13 @@
+/* eslint-disable max-lines */
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import _ from 'lodash';
+import { IconRef } from '~/types';
 import f, { compose, memoize } from 'lodash/fp';
 import bigInt, { BigInteger } from 'big-integer';
 import { Association, Contact } from '@urbit/api';
-import useLocalState from '../state/local';
-import produce, { enableMapSet } from 'immer';
+import { enableMapSet } from 'immer';
 import useSettingsState from '../state/settings';
-import { State, UseStore } from 'zustand';
-import { Cage } from '~/types/cage';
-import { BaseState } from '../state/base';
+
 import anyAscii from 'any-ascii';
 
 enableMapSet();
@@ -24,7 +23,9 @@ export const MOMENT_CALENDAR_DATE = {
   sameElse: '~YYYY.M.D'
 };
 
-export const getModuleIcon = (mod: string) => {
+type GraphModule = 'link' | 'post' | 'chat' | 'publish';
+
+export const getModuleIcon = (mod: GraphModule): IconRef => {
   if (mod === 'link') {
     return 'Collection';
   }
@@ -33,7 +34,7 @@ export const getModuleIcon = (mod: string) => {
     return 'Dashboard';
   }
 
-  return _.capitalize(mod);
+  return _.capitalize(mod) as IconRef;
 };
 
 export function wait(ms: number) {
@@ -226,11 +227,11 @@ export function writeText(str: string) {
 }
 
 // trim patps to match dojo, chat-cli
-export function cite(ship: string) {
+export function cite(ship: string): string {
   let patp = ship,
     shortened = '';
   if (patp === null || patp === '') {
-    return null;
+    return '';
   }
   if (patp.startsWith('~')) {
     patp = patp.substr(1);
@@ -425,7 +426,7 @@ export const useHovering = (): useHoveringInterface => {
 };
 
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
-export function getItemTitle(association: Association) {
+export function getItemTitle(association: Association): string {
   if (DM_REGEX.test(association.resource)) {
     const [, , ship, name] = association.resource.split('/');
     if (ship.slice(1) === window.ship) {
@@ -433,6 +434,6 @@ export function getItemTitle(association: Association) {
     }
     return cite(ship);
   }
-  return association.metadata.title || association.resource;
+  return association.metadata.title ?? association.resource ?? '';
 }
 

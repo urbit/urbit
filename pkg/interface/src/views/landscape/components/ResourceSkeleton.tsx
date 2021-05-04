@@ -47,7 +47,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     ? getItemTitle(association)
     : association?.metadata?.title;
 
-  let recipient = "";
+  let recipient = '';
 
   const contacts = useContactState(state => state.contacts);
 
