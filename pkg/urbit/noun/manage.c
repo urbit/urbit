@@ -8,7 +8,6 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <sigsegv.h>
-#include <curl/curl.h>
 #include <openssl/crypto.h>
 
 //  XX stack-overflow recovery should be gated by -a
