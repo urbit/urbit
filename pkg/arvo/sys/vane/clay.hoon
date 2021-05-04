@@ -2010,6 +2010,8 @@
     ((slog err) (emil moves))
   ::
   ++  take-fuse
+    |^
+    ::
     |=  [bec=beak =riot]
     ^+  ..take-fuse
     ?~  riot
@@ -2031,33 +2033,24 @@
     ?.  all-done
       ..take-fuse
     =|  rag=rang
-    =/  clean-hut-ran  hut.ran
+    =/  clean-state  ..take-fuse
     =/  initial-dome=dome:clay  (need (~(got by sto.fiz) bas.fiz))
     =/  continuation-yaki=yaki
-    (~(got by hut.ran) (~(got by hit.initial-dome) let.initial-dome))
+      (~(got by hut.ran) (~(got by hit.initial-dome) let.initial-dome))
     =/  parents=(list tako)  ~[(~(got by hit.initial-dome) let.initial-dome)]
     =/  merges  con.fiz
-    ::
-    ::  We must ensure that we don't leave garbage around.
-    ::  In all cases we want to clear fiz and restore hut.ran
-    ::  to clean-hut-ran.
-    ::
     |-
     ^+  ..take-fuse
     ?~  merges
       =/  t=tang  [leaf+"{<syd>} fused from {<bas.fiz>} {<con.fiz>}" ~]
-      =.  fiz  *melt
-      =.  hut.ran  clean-hut-ran
-      =.  ..take-fuse  (park | [%| continuation-yaki(p (flop parents))] rag)
-      (done %| %fuse-succeded t)
+      =.  ..take-fuse  (done-fuse clean-state %| %fuse-succeded t)
+      (park | [%| continuation-yaki(p (flop parents))] rag)
     =/  [bec=beak g=germ]  i.merges
     =/  ali-dom=dome:clay  (need (~(got by sto.fiz) bec))
     =/  result  (merge-helper p.bec q.bec g ali-dom `continuation-yaki)
     ?-    -.result
         %|
-      =.  fiz  *melt
-      =.  hut.ran  clean-hut-ran
-      (done %| %fuse-merge-failed p.result)
+      (done-fuse clean-state %| %fuse-merge-failed p.result)
     ::
         %&
       =/  merge-result=(unit merge-result)  +.result
@@ -2070,9 +2063,7 @@
         ::
         :: If there are merge conflicts send the error and abort the merge
         ::
-        =.  fiz  *melt
-        =.  hut.ran  clean-hut-ran
-        (done %& conflicts.u.merge-result)
+        (done-fuse clean-state %& conflicts.u.merge-result)
       =/  merged-yaki=yaki
       ?-    -.new.u.merge-result
           %|
@@ -2101,6 +2092,15 @@
         parents  [(~(got by hit.ali-dom) let.ali-dom) parents]
       ==
     ==
+    ::  +done-fuse: restore state after a fuse is attempted, whether it
+    ::  succeeds or fails.
+    ::
+    ++  done-fuse
+      |=  [to-restore=_..take-fuse result=(each (set path) (pair term tang))]
+      ^+  ..take-fuse
+      =.  fiz.to-restore  *melt
+      (done:to-restore result)
+    --
   ::
   ++  done
     |=  result=(each (set path) (pair term tang))
