@@ -73,6 +73,16 @@
       state-1
       state-2
   ==
+::  +diplomatic: only renegotiate if versions changed
+::    
+::    If %.n please leave note as to why renegotiation necessary
+::    
+::    - Fixing incorrectly held unversioned subscriptions
+::
+++  diplomatic
+  ^-  ?
+  %.n
+::
 ++  push-hook
   |*  =config
   $_  ^|
@@ -221,6 +231,7 @@
         |=  [prev-min-version=@ud prev-version=@ud]
         ?:  ?&  =(min-version.config prev-min-version)
                 =(prev-version version.config)
+                diplomatic
             ==
           ::  bail on kick if we didn't change versions
           ~

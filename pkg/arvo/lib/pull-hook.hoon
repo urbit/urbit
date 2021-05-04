@@ -114,6 +114,15 @@
       state-3
       state-4
   ==
+::  +diplomatic: only renegotiate if versions changed
+::    
+::    If %.n please leave note as to why renegotiation necessary
+::    
+::    - Fixing incorrectly held unversioned subscriptions
+::
+++  diplomatic
+  ^-  ?
+  %.n
 ::
 ++  default
   |*  [pull-hook=* =config]
@@ -239,6 +248,7 @@
         =/  kick=(list card)
           ?:  ?&  =(min-version.config prev-min-version.old)
                   =(version.config prev-version.old)
+                  diplomatic
               ==
             ~
           (poke-self:pass kick+!>(%kick))^~
