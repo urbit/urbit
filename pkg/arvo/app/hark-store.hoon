@@ -131,8 +131,8 @@
       %3
     %_  $
       -.old  %4
-      notifications.old  (convert-notifications-3 notifications.old)
-      archive.old  (convert-notifications-3 archive.old)
+      notifications.old  (notifications:to-three:upgrade:store notifications.old)
+      archive.old        *notifications:state-three:store
     ==
   ::
       %2
@@ -171,54 +171,6 @@
       ==
     ==
   ==
-  ::
-  ++  convert-notifications-3
-    |=  old=notifications:state-two:store
-    %+  gas:orm:state-three:store  *notifications:state-three:store
-    ^-  (list [@da timebox:state-three:store])
-    %+  murn  
-      (tap:orm:state-two:store old)
-    |=  [time=@da =timebox:state-two:store]
-    ^-  (unit [@da timebox:state-three:store])
-    =/  new-timebox=timebox:state-three:store
-      (convert-timebox-3 timebox)
-    ?:  =(0 ~(wyt by new-timebox))
-      ~ 
-    `[time new-timebox]
-  ::
-  ++  convert-timebox-3
-    |=  =timebox:state-two:store
-    ^-  timebox:state-three:store
-    %-  ~(gas by *timebox:state-three:store)
-    ^-  (list [index:state-three:store notification:state-three:store])
-    %+  murn
-      ~(tap by timebox)
-    |=  [=index:state-two:store =notification:state-two:store]
-    ^-  (unit [index:state-three:store notification:state-three:store])
-    =/  new-notification=(unit notification:state-three:store)
-      (convert-notification-3 notification)
-    ?~  new-notification  ~
-    `[index u.new-notification]
-  ::
-  ++  convert-notification-3
-    |=  =notification:state-two:store
-    ^-  (unit notification:state-three:store)
-    ?:  ?=(%graph -.contents.notification)
-      `notification
-    =/  con=(list group-contents:store)
-      (convert-group-contents-3 list.contents.notification)
-    ?:  =(~ con)  ~
-    =,  notification
-    `[date read %group con]
-  ::
-  ++  convert-group-contents-3
-    |=  con=(list group-contents:state-two:store)
-    ^-  (list group-contents:store)
-    %+  murn  con
-    |=  =group-contents:state-two:store
-    ^-  (unit group-contents:store)
-    ?.  ?=(?(%add-members %remove-members) -.group-contents)  ~
-    `group-contents
   ::
   ++  uni-by
     |=  [a=(set index:graph-store) b=(set index:graph-store)]

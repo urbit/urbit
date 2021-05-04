@@ -6,6 +6,48 @@
 |%
 ++  upgrade
   |%
+  ++  to-three
+    =*  two    state-two
+    =*  three  state-three
+    |%
+    ++  index
+      |=  =index:two
+      ^-  (unit index:three)
+      `index
+    ++  contents
+      |=  =contents:two
+      ^-  (unit contents:three)
+      ?.  ?=(%group -.contents)
+        `contents
+      =-  ?:  =(~ -)  ~
+          `[%group -]
+      %+  murn  list.contents
+      |=  =group-contents:two
+      ^-  (unit group-contents:three)
+      ?:  ?=(?(%add %remove) -.group-contents)
+        ~
+      `group-contents
+    ::
+    ++  stats-index
+      |=  =stats-index:two
+      ^-  (unit stats-index:three)
+      `stats-index
+    ::
+    ++  notifications
+      upg-notifications:upg
+    ::
+    ++  upg
+      %.  [index stats-index contents]
+      %:  upgrade
+        index:two
+        stats-index:two
+        contents:two
+        index:three
+        stats-index:three
+        contents:three
+      ==
+    --
+  ::
   ++  to-four
     =*  three  state-three
     =*  four   state-four
