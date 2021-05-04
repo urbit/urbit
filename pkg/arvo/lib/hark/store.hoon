@@ -4,6 +4,205 @@
 =<  [. sur]
 =,  sur
 |%
+++  upgrade
+  |%
+  ++  to-four
+    =*  three  state-three
+    =*  four   state-four
+    |%
+    ++  index
+      |=  =index:three
+      ^-  (unit index:four)
+      `index
+    ++  contents
+      |=  =contents:three
+      ^-  (unit contents:four)
+      ?.  ?=(%graph -.contents)
+        `contents
+      `[%graph (turn list.contents post-to-one:upgrade:graph-store)]
+    ::
+    ++  unreads-each
+      upg-unreads-each:upg
+    ::
+    ++  notifications
+      upg-notifications:upg
+    ::
+    ++  stats-index
+      |=  =stats-index:three
+      ^-  (unit stats-index:four)
+      `stats-index
+    ::
+    ++  upg
+      %.  [index stats-index contents]
+      %:  upgrade
+        index:three
+        stats-index:three
+        contents:three
+        index:four
+        stats-index:four
+        contents:four
+      ==
+    --
+  ::
+  ++  to-five
+    =*  four  state-four
+    =*  five  sur
+    |%
+    ++  mark
+      |=  module=@t
+      ^-  (unit @t)
+      ?+  module  ~
+        %chat     `%graph-validator-chat
+        %publish  `%graph-validator-publish
+        %link     `%graph-validator-link
+      ==
+    ++  index
+      |=  =index:four
+      ^-  (unit index:five)
+      ?:  ?=(%group -.index)
+        `index
+      =*  i  index
+      `[%graph graph.i (mark module.i) description.i index.i]
+    ::
+    ++  contents
+      |=  =contents:four
+      ^-  (unit contents:five)
+      `contents
+    ::
+    ++  unreads-each
+      upg-unreads-each:upg
+    ::
+    ++  stats-index
+      |=  =stats-index:four
+      ^-  (unit stats-index:five)
+      `stats-index
+    ::
+    ++  upg
+      %.  [index stats-index contents]
+      %:  upgrade
+        index:four
+        stats-index:four
+        contents:four
+        index:five
+        stats-index:five
+        contents:five
+      ==
+
+    ++  notifications
+      upg-notifications:upg
+    --
+  ::
+  ++  upgrade
+    |*  $:  :: input molds
+            in-index=mold
+            in-stats-index=mold
+            in-contents=mold
+            :: output molds
+            out-index=mold
+            out-stats-index=mold
+            out-contents=mold
+        ==
+    =>  .  =>
+    |%
+    ::
+    ++  in
+      |%
+      ::
+      +$  index  in-index
+      +$  stats-index  in-stats-index 
+      +$  contents     in-contents
+      +$  unreads-each  (jug stats-index index)
+      +$  timebox  (map index notification)
+      +$  notification
+         [date=@da read=? =contents]
+      ++  orm
+        ((ordered-map time timebox) gth)
+      +$  notifications
+        ((mop time timebox) gth)
+      --
+    ++  out
+      |%
+      ::
+      ::
+      +$  index  out-index
+      +$  stats-index  out-stats-index 
+      +$  contents     out-contents
+      +$  timebox  (map out-index notification)
+      +$  unreads-each  (jug stats-index index)
+      +$  notification
+         [date=@da read=? contents=out-contents]
+      +$  notifications
+        ((mop time timebox) gth)
+      ++  orm
+        ((ordered-map time timebox) gth)
+      --
+    --
+    |=  $:  fun-index=$-(index:in (unit index:out))
+            fun-stats-index=$-(stats-index:in (unit stats-index:out))
+            fun-contents=$-(contents:in (unit contents:out))
+        ==
+    |%
+    ::
+    ++  upg-unreads-each
+      |=  =unreads-each:in
+      ^-  unreads-each:out
+      %-  ~(gas by *unreads-each:out)
+      %+  murn  ~(tap by unreads-each)
+      |=  [=stats-index:in indices=(set index:in)]
+      ^-  (unit [stats-index:out (set index:out)])
+      =/  new-stats
+        (fun-stats-index stats-index)
+      ?~  new-stats  ~
+      =/  new-indices
+        (upg-indices indices)
+      ?:  =(0 ~(wyt ^in new-indices))  ~
+      `[u.new-stats new-indices]
+    ::
+    ++  upg-indices
+      |=  indices=(set index:in)
+      ^-  (set index:out)
+      %-  ~(gas ^in *(set index:out))
+      (murn ~(tap ^in indices) fun-index)
+    ::
+    ++  upg-notifications
+      |=  =notifications:in
+      ^-  notifications:out
+      %+  gas:orm:out  *notifications:out
+      ^-  (list [@da timebox:out])
+      %+  murn  (tap:orm:in notifications)
+      |=  [time=@da =timebox:in]
+      ^-  (unit [@da =timebox:out])
+      =/  new-timebox=timebox:out
+        (upg-timebox timebox)
+      ?:  =(0 ~(wyt by timebox))
+        ~
+       `[time new-timebox]
+     ::
+     ++  upg-timebox
+       |=  =timebox:in
+       ^-  timebox:out
+       %-  ~(gas by *timebox:out)
+       %+  murn  ~(tap by timebox)
+       |=  [=index:in =notification:in]
+       ^-  (unit [index:out notification:out])
+       =/  new-index
+         (fun-index index)
+       ?~  new-index  ~
+       =/  new-notification
+         (upg-notification notification)
+       ?~  new-notification  ~
+       `[u.new-index u.new-notification]
+     ::
+     ++  upg-notification
+       |=  n=notification:in
+       ^-  (unit notification:out)
+       =/  new-contents
+         (fun-contents contents.n)
+       ?~  new-contents  ~
+       `[date.n read.n u.new-contents]
+     --
+   --
+
 ++  dejs
   =,  dejs:format
   |%

@@ -100,22 +100,25 @@
   =|  cards=(list card)
   |^ 
   ^-  (quip card _this)
-  ?+  -.old  !!
+  ?-  -.old
       %7  
     :-  (flop cards)
     this(-.state old, +.state (inflate-cache:ha old))
-  ==
   ::
-  ++  unused
-    ?+  -.old  !!
-    ::
-      %5  !!
-    :: %_  $
-      ::-.old  %6
-      ::notifications.old  (convert-notifications-4 notifications.old)
-      ::archive.old        (convert-notifications-4 archive.old)
-    ::==
-    ::
+      %6
+    %_  $
+      -.old  %7
+      notifications.old  (notifications:to-five:upgrade:store notifications.old)
+      archive.old        ~
+    ==
+  ::
+      %5  
+    %_  $
+      -.old  %6
+      notifications.old  (notifications:to-four:upgrade:store notifications.old)
+      archive.old        *notifications:state-four:store
+    ==
+  ::
       %4
     %_  $
       -.old  %5
@@ -124,14 +127,14 @@
       %-  ~(run by last-seen.old)
       |=(old=@da (min old now.bowl))
     ==
-    ::
+  ::
       %3
     %_  $
       -.old  %4
       notifications.old  (convert-notifications-3 notifications.old)
       archive.old  (convert-notifications-3 archive.old)
     ==
-    ::
+  ::
       %2
     %_  $
       -.old  %3
@@ -140,7 +143,7 @@
       :_  cards
       [%pass / %agent [our dap]:bowl %poke noun+!>(%fix-dangling)]
     ==
-    ::
+  ::
       %1
     %_  $
       ::
@@ -155,7 +158,7 @@
         dnd              dnd.old
       ==
     ==
-    ::
+  ::
       %0
     %_   $
       ::
@@ -168,50 +171,6 @@
       ==
     ==
   ==
-  ::
-  ++  convert-notifications-4
-    |=  old=notifications:state-three:store
-    %+  gas:orm:state-four:store  *notifications:state-four:store
-    ^-  (list [@da timebox:state-four:store])
-    %+  murn  
-      (tap:orm:state-three:store old)
-    |=  [time=@da =timebox:state-three:store]
-    ^-  (unit [@da timebox:state-four:store])
-    =/  new-timebox=timebox:state-four:store
-      (convert-timebox-4 timebox)
-    ?:  =(0 ~(wyt by new-timebox))
-      ~ 
-    `[time new-timebox]
-  ::
-  ++  convert-timebox-4
-    |=  =timebox:state-three:store
-    ^-  timebox:state-four:store
-    %-  ~(gas by *timebox:state-four:store)
-    ^-  (list [index:state-four:store notification:state-four:store])
-    %+  murn
-      ~(tap by timebox)
-    |=  [=index:state-four:store =notification:state-three:store]
-    ^-  (unit [index:state-four:store notification:state-four:store])
-    =/  new-notification=(unit notification:state-four:store)
-      (convert-notification-4 notification)
-    ?~  new-notification  ~
-    `[index u.new-notification]
-  ::
-  ++  convert-notification-4
-    |=  =notification:state-three:store
-    ^-  (unit notification:state-four:store)
-    ?:  ?=(%group -.contents.notification)
-      `notification
-    =/  con=(list post:post)
-      (convert-graph-contents-4 list.contents.notification)
-    ?:  =(~ con)  ~
-    =,  notification
-    `[date read %graph con]
-  ::
-  ++  convert-graph-contents-4
-    |=  con=(list post:post-zero:post)
-    ^-  (list post:post)
-    (turn con post-to-one:upgrade:graph-store)
   ::
   ++  convert-notifications-3
     |=  old=notifications:state-two:store
@@ -321,7 +280,7 @@
       ::
         %graph  
       =,  index
-      `[%graph *resource *resource module description ~]
+      `[%graph graph *resource module description ~]
     ==
   ::
   ++  convert-notification-1

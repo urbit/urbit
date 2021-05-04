@@ -227,7 +227,7 @@
     ((ordered-map @da timebox) gth)
   ::
   +$  base-state
-    $:  unreads-each=(jug stats-index index)
+    $:  unreads-each=(jug stats-index index:graph-store)
         unreads-count=(map stats-index @ud)
         last-seen=(map stats-index @da)
         =notifications 
