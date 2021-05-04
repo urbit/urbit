@@ -66,6 +66,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
       return (
         <React.Fragment key={index.toString()}>
           <Col
+            ref={ref}
             key={index.toString()}
             mx="auto"
             mt="4"
@@ -80,13 +81,19 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
               api={api}
             />
           </Col>
-          <LinkItem ref={ref} {...linkProps} />
+          { typeof post !== 'string' && <LinkItem {...linkProps} /> }
         </React.Fragment>
       );
     }
-    return <Box ref={ref}>
-      <LinkItem ref={ref} key={index.toString()} {...linkProps} />;
-    </Box>
+
+    if (typeof post === 'string') {
+      return null;
+    }
+    return (
+      <Box ref={ref}>
+        <LinkItem key={index.toString()} {...linkProps} />;
+      </Box>
+    );
   });
 
   render() {

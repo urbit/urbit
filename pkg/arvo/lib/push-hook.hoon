@@ -57,13 +57,21 @@
       inner-state=vase
   ==
 ::
++$  base-state-1
+  $:  prev-version=@ud
+      prev-min-version=@ud
+      base-state-0
+  ==
+::
 +$  state-0  [%0 base-state-0]
 ::
 +$  state-1  [%1 base-state-0]
++$  state-2  [%2 base-state-1]
 ::
 +$  versioned-state
   $%  state-0
       state-1
+      state-2
   ==
 ++  push-hook
   |*  =config
@@ -153,7 +161,7 @@
 ++  agent
   |*  =config
   |=  =(push-hook config)
-  =|  state-1
+  =|  state-2
   =*  state  -
   ^-  agent:gall
   =<
@@ -179,16 +187,21 @@
       =|  cards=(list card:agent:gall)
       |^ 
       ?-  -.old
-          %1  
+          %2
         =^  og-cards   push-hook
           (on-load:og inner-state.old)
         =/  old-subs
-          find-old-subs
+          (find-old-subs [prev-version prev-min-version]:old)
         =/  version-cards
           :-  (fact:io version+!>(version.config) /version ~)
           ?~  old-subs  ~
           (kick:io old-subs)^~
         [:(weld cards og-cards version-cards) this(state old)]
+        ::
+          %1
+        %_    $
+          old  [%2 0 0 +.old]
+        ==
         ::
         ::
           %0
@@ -205,6 +218,12 @@
       ==
       ::
       ++  find-old-subs
+        |=  [prev-min-version=@ud prev-version=@ud]
+        ?:  ?&  =(min-version.config prev-min-version)
+                =(prev-version version.config)
+            ==
+          ::  bail on kick if we didn't change versions
+          ~
         %~  tap  in
         %+  roll
           ~(val by sup.bowl)
@@ -230,8 +249,10 @@
       --
     ::
     ++  on-save
-      =.  inner-state
-        on-save:og
+      =:  prev-version      version.config
+          prev-min-version  min-version.config
+          inner-state       on-save:og
+        ==
       !>(state)
     ::
     ++  on-poke

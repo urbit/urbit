@@ -93,7 +93,7 @@ const log = (level: LogLevel, message: string) => {
   }
 }
 
-const ZONE_SIZE = IS_IOS ? 10 : 80;
+const ZONE_SIZE = IS_IOS ? 20 : 80;
 
 
 // nb: in this file, an index refers to a BigInteger and an offset refers to a
@@ -208,7 +208,8 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     const { id, size, data, offset, pendingSize } = this.props;
 
     if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
-      if(this.scrollLocked) {
+      if((this.window?.scrollTop ?? 0) < ZONE_SIZE) {
+        this.scrollLocked = true;
         this.updateVisible(0);
         this.resetScroll();
       }
@@ -449,21 +450,26 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       if(offset === -1) {
         return;
       }
+      this.scrollLocked = false;
       this.updateVisible(Math.max(offset - this.pageDelta, 0));
       requestAnimationFrame(() => {
         ref = this.childRefs.get(index.toString());
-        this.savedIndex = null;
-        this.savedDistance = 0;
-        this.saveDepth = 0;
+        requestAnimationFrame(() => {
+          this.savedIndex = null;
+          this.savedDistance = 0;
+          this.saveDepth = 0;
+        });
 
         ref?.scrollIntoView({ block: 'center' });
       });
     } else {
-      this.savedIndex = null;
-      this.savedDistance = 0;
-      this.saveDepth = 0;
-
       ref?.scrollIntoView({ block: 'center' });
+      requestAnimationFrame(() => {
+        this.savedIndex = null;
+        this.savedDistance = 0;
+        this.saveDepth = 0;
+      });
+
     }
   };
 
@@ -504,6 +510,11 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     this.savedIndex = bottomIndex;
     const ref = this.childRefs.get(bottomIndex.toString())!;
+    if(!ref) {
+      this.saveDepth--;
+      log('bail', 'missing ref');
+      return;
+    }
     const { offsetTop } = ref;
     this.savedDistance = topSpacing - offsetTop
   }

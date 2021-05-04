@@ -72,6 +72,8 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     } else {
       onSubmit(tokenizeMessage(text));
     }
+    this.chatEditor.current.editor.focus();
+    this.setState({ currentInput: '' });
   }
 
   uploadSuccess(url: string) {

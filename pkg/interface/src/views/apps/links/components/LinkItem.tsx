@@ -88,7 +88,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
 
   const deleteLink = () => {
     if (confirm('Are you sure you want to delete this link?')) {
-      api.graph.removeNodes(`~${ship}`, name, [node.post.index]);
+      api.graph.removePosts(`~${ship}`, name, [node.post.index]);
     }
   };
 

@@ -1,10 +1,10 @@
-::  graph-store|remove-nodes: remove nodes from a graph at indices
+::  graph-store|remove-posts: remove nodes from a graph at indices
 ::
 /-  *graph-store
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=resource indices=(set index) ~] ~]
     ==
-:-  %graph-update-1
+:-  %graph-update-2
 ^-  update
-[now [%remove-nodes resource indices]]
+[now [%remove-posts resource indices]]
