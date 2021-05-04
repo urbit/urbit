@@ -23,7 +23,9 @@ export const MOMENT_CALENDAR_DATE = {
   sameElse: '~YYYY.M.D'
 };
 
-export const getModuleIcon = (mod: string): IconRef => {
+type GraphModule = 'link' | 'post' | 'chat' | 'publish';
+
+export const getModuleIcon = (mod: GraphModule): IconRef => {
   if (mod === 'link') {
     return 'Collection';
   }
@@ -32,7 +34,7 @@ export const getModuleIcon = (mod: string): IconRef => {
     return 'Dashboard';
   }
 
-  return _.capitalize(mod);
+  return _.capitalize(mod) as IconRef;
 };
 
 export function wait(ms: number) {
