@@ -772,7 +772,7 @@
     =^  f  state  (n state %bat q:(cancel-escape:l2 1 ~linnup-torsyx %lt-key-0 %own ~litbud))
     escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
-++  test-linnup-torsyx-l2-adopt-accept
+++  test-linnup-torsyx-l2-adopt-accept  ^-  tang
   %+  expect-eq
     !>  [~ %.y ~litbud]
   ::
@@ -786,7 +786,7 @@
     =^  f  state  (n state %bat q:(adopt:l2 0 ~litbud %litbud-key-0 %own ~linnup-torsyx))
     [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
 ::
-++  test-linnup-torsyx-l2-adopt-reject
+++  test-linnup-torsyx-l2-adopt-reject  ^-  tang
   ::  TODO: at the moment the default sponsor is always ~zod, but it should probably
   ::  be ~marbud here
   %+  expect-eq
@@ -802,7 +802,7 @@
     =^  f  state  (n state %bat q:(reject:l2 0 ~litbud %litbud-key-0 %own ~linnup-torsyx))
     escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
-++  test-linnup-torsyx-l2-detach
+++  test-linnup-torsyx-l2-detach  ^-  tang
   %+  expect-eq
     !>  [~ %.n ~marbud]
   ::
