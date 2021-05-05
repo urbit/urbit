@@ -5405,20 +5405,20 @@
     |=  [a=(tree item) b=(unit key) c=@]
     ^-  (list item)
     |^
-    (flop -:(tabulate (del-span a b) b c))
+    (flop e:(tabulate (del-span a b) b c))
     ::
     ++  tabulate
       |=  [a=(tree item) b=(unit key) c=@]
-      ^-  [(list item) @]
+      ^-  [d=@ e=(list item)]
       ?:  ?&(?=(~ b) =(c 0))
-        [~ 0]
-      =|  f=[d=(list item) e=@]
-      |-  ^-  [(list item) @]
-      ?:  ?|(?=(~ a) =(e.f c))  f
+        [0 ~]
+      =|  f=[d=@ e=(list item)]
+      |-  ^-  [d=@ e=(list item)]
+      ?:  ?|(?=(~ a) =(d.f c))  f
       =.  f  $(a l.a)
-      ?:  =(e.f c)  f
-      =.  f  [[n.a d.f] +(e.f)]
-      ?:  =(e.f c)  f
+      ?:  =(d.f c)  f
+      =.  f  [+(d.f) [n.a e.f]]
+      ?:  =(d.f c)  f
       $(a r.a)
     ::
     ++  del-span
@@ -5426,14 +5426,10 @@
       ^-  (tree item)
       ?~  a  a
       ?~  b  a
-      ::  found key
       ?:  =(key.n.a u.b)
         (nip a(l ~))
-      ::  traverse to find key
       ?:  (compare key.n.a u.b)
-        ::  found key to the left of start
         $(a (nip a(l ~)))
-      ::  found key to the right of start
       a(l $(a l.a))
     --
   ::  +tap: convert to list, smallest to largest
