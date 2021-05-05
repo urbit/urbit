@@ -5405,7 +5405,7 @@
     |=  [a=(tree item) b=(unit key) c=@]
     ^-  (list item)
     |^
-    -:(tabulate (del-span a b) b c)
+    (flop -:(tabulate (del-span a b) b c))
     ::
     ++  tabulate
       |=  [a=(tree item) b=(unit key) c=@]
@@ -5427,14 +5427,14 @@
       ?~  a  a
       ?~  b  a
       ::  found key
-      ?:  =(u.b key.n.a)
-        (nip a(r ~))
+      ?:  =(key.n.a u.b)
+        (nip a(l ~))
       ::  traverse to find key
       ?:  (compare key.n.a u.b)
-        :: found key to the left of end
-        a(r $(a r.a))
-      :: found key to the right of end
-      $(a (nip a(r ~)))
+        ::  found key to the left of start
+        $(a (nip a(l ~)))
+      ::  found key to the right of start
+      a(l $(a l.a))
     --
   ::  +tap: convert to list, smallest to largest
   ::

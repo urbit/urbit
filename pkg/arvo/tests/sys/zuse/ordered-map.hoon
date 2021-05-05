@@ -28,33 +28,61 @@
     !>  test-items
     !>  (tap:atom-map a)
 ::
-++  test-ordered-map-tab  ^-  tang
+++  test-ordered-map-tab-gte  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:gte-atom-map ~ test-items)
   ::
   %+  expect-eq
-    !>  test-items
+    !>  (flop test-items)
     !>  (tab:gte-atom-map a ~ 7)
 ::
-++  test-ordered-map-tab-starting-from  ^-  tang
+++  test-ordered-map-tab-gte-starting-from  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:gte-atom-map ~ test-items)
   =/  small-test-items=(list [@ud @tas])
-    (items-from-keys (gulf 3 6))
+    (items-from-keys (gulf 2 5))
   ::
   %+  expect-eq
-    !>  small-test-items
-    !>  (tab:gte-atom-map a [~ 2] 4)
+    !>  (flop small-test-items)
+    !>  (tab:gte-atom-map a [~ 6] 4)
 ::
-++  test-ordered-map-tab-starting-from-and-count  ^-  tang
+++  test-ordered-map-tab-gte-count  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:gte-atom-map ~ test-items)
   =/  small-test-items=(list [@ud @tas])
     (items-from-keys (gulf 4 6))
   ::
   %+  expect-eq
+    !>  (flop small-test-items)
+    !>  (tab:gte-atom-map a ~ 3)
+::
+++  test-ordered-map-tab  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  %+  expect-eq
+    !>  test-items
+    !>  (tab:atom-map a ~ 7)
+::
+++  test-ordered-map-tab-starting-from  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  =/  small-test-items=(list [@ud @tas])
+    (items-from-keys (gulf 1 4))
+  ::
+  %+  expect-eq
     !>  small-test-items
-    !>  (tab:gte-atom-map a [~ 2] 3)
+    !>  (tab:atom-map a [~ 0] 4)
+::
+++  test-ordered-map-tab-count  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  =/  small-test-items=(list [@ud @tas])
+    (items-from-keys (gulf 0 2))
+  ::
+  %+  expect-eq
+    !>  small-test-items
+    !>  (tab:atom-map a ~ 3)
 ::
 ++  test-ordered-map-pop  ^-  tang
   ::
