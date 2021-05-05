@@ -1,6 +1,8 @@
 import f from 'lodash/fp';
 import { RemoteContentPolicy, LeapCategories, leapCategories } from "~/types/local-update";
+import { useShortcut as usePlainShortcut } from '~/logic/lib/shortcutContext';
 import { BaseState, createState } from '~/logic/state/base';
+import {useCallback} from 'react';
 
 export interface ShortcutMapping {
   cycleForward: string;
@@ -78,5 +80,10 @@ const useSettingsState = createState<SettingsState>('Settings', {
     hideSidebar: 'ctrl+h'
   }
 });
+
+export function useShortcut<T extends keyof ShortcutMapping>(name: T, cb: (e: KeyboardEvent) => void) {
+  const key = useSettingsState(useCallback(s => s.keyboard[name], [name]));
+  return usePlainShortcut(key, cb);
+}
 
 export default useSettingsState;

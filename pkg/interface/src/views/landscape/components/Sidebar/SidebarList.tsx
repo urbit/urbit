@@ -8,7 +8,7 @@ import { Workspace } from '~/types/workspace';
 import useMetadataState from '~/logic/state/metadata';
 import useGraphState from '~/logic/state/graph';
 import {useHistory} from 'react-router';
-import {useShortcut} from '~/logic/lib/shortcutContext';
+import { useShortcut } from '~/logic/state/settings';
 
 function sidebarSort(
   associations: AppAssociations,
@@ -90,12 +90,12 @@ export function SidebarList(props: {
     history.push(path)
   }, [selected, history.push]);
 
-  useShortcut('ctrl+n', useCallback((e: KeyboardEvent) => {
+  useShortcut('cycleForward', useCallback((e: KeyboardEvent) => {
     cycleChannels(false);
     e.preventDefault();
   }, [cycleChannels]));
 
-  useShortcut('ctrl+p', useCallback((e: KeyboardEvent) => {
+  useShortcut('cycleBack', useCallback((e: KeyboardEvent) => {
     cycleChannels(true);
     e.preventDefault();
   }, [cycleChannels]))

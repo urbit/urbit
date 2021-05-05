@@ -14,8 +14,7 @@ import GraphApp from '../../apps/graph/app';
 import { PermalinkRoutes } from '~/views/apps/permalinks/app';
 
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
-import { useShortcuts } from '~/logic/lib/useShortcuts';
-import { useShortcut } from '~/logic/lib/shortcutContext';
+import { useShortcut } from '~/logic/state/settings';
 
 
 export const Container = styled(Box)`
@@ -29,13 +28,13 @@ export const Container = styled(Box)`
 export const Content = (props) => {
   const history = useHistory();
 
-  useShortcut('ctrl+f', useCallback((e) => {
+  useShortcut('navForward', useCallback((e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
     history.goForward();
-  }, [history.goBack]));
+  }, [history.goForward]));
 
-  useShortcut('ctrl+b', useCallback((e) => {
+  useShortcut('navBack', useCallback((e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
     history.goBack();

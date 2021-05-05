@@ -11,7 +11,7 @@ import { Workspace } from '~/types/workspace';
 import useGraphState from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
-import {useShortcut} from '~/logic/lib/shortcutContext';
+import { useShortcut } from '~/logic/state/settings';
 
 interface SkeletonProps {
   children: ReactNode;
@@ -26,7 +26,7 @@ interface SkeletonProps {
 
 export function Skeleton(props: SkeletonProps): ReactElement {
   const [sidebar, setSidebar] = useState(true)
-  useShortcut('ctrl+h', useCallback(() => {
+  useShortcut('hideSidebar', useCallback(() => {
     setSidebar(s => !s);
   }, []));
   const graphs = useGraphState(state => state.graphs);

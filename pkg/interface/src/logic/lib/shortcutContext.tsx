@@ -3,26 +3,19 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 import _ from 'lodash';
+import { getChord } from '~/logic/lib/util';
 
 type Handler = (e: KeyboardEvent) => void;
 const fallback: ShortcutContextProps = {
   add: () => {},
   remove: () => {},
 };
-const getChord = (e: KeyboardEvent) => {
-  let chord = [e.key];
-  if(e.metaKey) {
-    chord.unshift('meta');
-  }
-  if(e.ctrlKey) {
-    chord.unshift('ctrl');
-  }
-  return chord.join('+');
-}
+
 
 export const ShortcutContext = createContext(fallback);
 export interface ShortcutContextProps {
@@ -58,8 +51,10 @@ export function ShortcutContextProvider({ children }) {
     };
   }, [shortcuts]);
 
+  const value = useMemo(() => ({ add, remove }), [add, remove])
+
   return (
-    <ShortcutContext.Provider value={{ add, remove }}>
+    <ShortcutContext.Provider value={value}>
       {children}
     </ShortcutContext.Provider>
   );
