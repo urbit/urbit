@@ -36,6 +36,7 @@ import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useSettingsState from '~/logic/state/settings';
 import gcpManager from '~/logic/lib/gcpManager';
+import { ShortcutContextProvider } from '~/logic/lib/shortcutContext';
 
 
 const Root = withState(styled.div`
@@ -151,6 +152,7 @@ class App extends React.Component {
     const ourContact = this.props.contacts[`~${this.ship}`] || null;
     return (
       <ThemeProvider theme={theme}>
+        <ShortcutContextProvider>
         <Helmet>
           {window.ship.length < 14
             ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
@@ -188,6 +190,7 @@ class App extends React.Component {
           </Router>
         </Root>
         <div id="portal-root" />
+        </ShortcutContextProvider>
       </ThemeProvider>
     );
   }
