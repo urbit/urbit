@@ -1041,35 +1041,34 @@
       (~(get by graphs) [ship term])
     ?~  result
       [~ ~]
-    =*  graph  p.u.result
-    =/  =(list [atom node:store])  (tap:orm graph)
     :-  ~  :-  ~  :-  %graph-update-2
     !>  ^-  update:store
-    :-  now.bowl
+    :+  %0
+      now.bowl
     :+  %add-nodes
       [ship term]
-    =|  deep-map=(map index:store node:store)
-    =|  iter=@ud
-    =|  =index:store
-    |-  ^-  (map index:store node:store)
-    ?:  ?|(?=(~ list) =(iter count))
-      deep-map
-    =*  atom  -.i.list
-    =*  node  +.i.list
-    =.  index  (snoc index atom)
-    ::  check children first, then check parent
+    =*  a  u.count
+    =/  b=(list (pair atom node:store))
+      (tab:orm p.u.result start u.count)
+    =|  c=index:store
+    =|  d=(map index:store node:store)
+    =|  e=@ud
+    =-  d
+    |-  ^-  [e=@ud d=(map index:store node:store)]
+    ?:  ?|(?=(~ b) =(e a))
+      [e d]
+    =*  atom  p.i.b
+    =*  node  q.i.b
     ?-  -.children.node
-        %empty
-      =.  deep-map  (~(put by deep-map) index node(children [%empty ~]))
-      $(list t.list, iter +(iter), index ~)
+      %empty  $(e +(e), d (~(put by d) c node))
     ::
         %graph
-      =.  deep-map  $(list (tap:orm p.children.node))
-      =.  iter  ~(wyt by deep-map)
-      ?:  =(iter count)
-        deep-map
-      =.  deep-map  (~(put by deep-map) index node(children [%empty ~]))
-      $(list t.list, iter +(iter), index ~)
+      =/  f  $(c (snoc c atom), b (tab:orm p.children.node ~ (sub a e)))
+      ?:  =(e.f a)  f
+      %_  $
+        e  +(e.f)
+        d  (~(put by d.f) c node(children [%empty ~]))
+      ==
     ==
   ::
       [%x %update-log-subset @ @ @ @ ~]
