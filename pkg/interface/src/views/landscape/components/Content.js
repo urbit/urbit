@@ -1,6 +1,6 @@
-import React, { Component, useEffect } from 'react';
+import React, { Component, useCallback, useEffect } from 'react';
 import { Box } from '@tlon/indigo-react';
-import { Route, Switch } from 'react-router-dom';
+import { useHistory, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 
 import LaunchApp from '~/views/apps/launch/app';
@@ -14,6 +14,8 @@ import GraphApp from '../../apps/graph/app';
 import { PermalinkRoutes } from '~/views/apps/permalinks/app';
 
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
+import { useShortcuts } from '~/logic/lib/useShortcuts';
+import { useShortcut } from '~/logic/lib/shortcutContext';
 
 
 export const Container = styled(Box)`
@@ -25,6 +27,20 @@ export const Container = styled(Box)`
 
 
 export const Content = (props) => {
+  const history = useHistory();
+
+  useShortcut('ctrl+f', useCallback((e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    history.goForward();
+  }, [history.goBack]));
+
+  useShortcut('ctrl+b', useCallback((e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    history.goBack();
+  }, [history.goBack]));
+
 
   const [hasProtocol, setHasProtocol] = useLocalStorageState(
     'registeredProtocol', false
