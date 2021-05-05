@@ -1,43 +1,35 @@
-import React, { ReactElement, ReactNode, useCallback } from "react";
+import { css } from '@styled-system/css';
 import {
-  Text,
   Box,
   Icon,
-  Row,
-  LoadingSpinner,
-  Button,
-} from "@tlon/indigo-react";
-import { css } from "@styled-system/css";
-import _ from "lodash";
-import { useHistory } from "react-router-dom";
 
-import { cite, isDm } from "~/logic/lib/util";
+  LoadingSpinner, Row, Text
+} from '@tlon/indigo-react';
 import {
-  MetadataUpdatePreview,
-  joinProgress,
-  JoinProgress,
-  Invite,
+  Invite, joinProgress,
+
   JoinRequest,
-  resourceFromPath,
-  Metadata,
-} from "@urbit/api";
-import { GroupSummary } from "~/views/landscape/components/GroupSummary";
-import { NotificationWrapper } from "~/views/apps/notifications/notification";
-import { Header } from "~/views/apps/notifications/header";
-import { InviteSkeleton } from "./InviteSkeleton";
-import { JoinSkeleton } from "./JoinSkeleton";
-import GlobalApi from "~/logic/api/global";
-import { PropFunc } from "~/types";
-import { MetadataIcon } from "~/views/landscape/components/MetadataIcon";
-import { useContact } from "~/logic/state/contact";
-import { useWaitForProps } from "~/logic/lib/useWaitForProps";
-import useGroupState, {useGroup} from "~/logic/state/group";
-import useContactState from "~/logic/state/contact";
-import useMetadataState, {useAssocForGraph} from "~/logic/state/metadata";
-import useGraphState from "~/logic/state/graph";
-import { useRunIO } from "~/logic/lib/useRunIO";
-import { StatelessAsyncButton } from "../StatelessAsyncButton";
-import styled from "styled-components";
+
+  Metadata, MetadataUpdatePreview,
+
+  resourceFromPath
+} from '@urbit/api';
+import _ from 'lodash';
+import React, { ReactElement, ReactNode, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+import GlobalApi from '~/logic/api/global';
+import { useRunIO } from '~/logic/lib/useRunIO';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import { cite, isDm } from '~/logic/lib/util';
+import useGraphState from '~/logic/state/graph';
+import useGroupState from '~/logic/state/group';
+import useMetadataState, { useAssocForGraph } from '~/logic/state/metadata';
+import { PropFunc } from '~/types';
+import { Header } from '~/views/apps/notifications/header';
+import { NotificationWrapper } from '~/views/apps/notifications/notification';
+import { MetadataIcon } from '~/views/landscape/components/MetadataIcon';
+import { StatelessAsyncButton } from '../StatelessAsyncButton';
 
 interface GroupInviteProps {
   preview?: MetadataUpdatePreview;
@@ -52,7 +44,7 @@ interface GroupInviteProps {
 function Elbow(
   props: { size?: number; color?: string } & PropFunc<typeof Box>
 ) {
-  const { size = 12, color = "lightGray", ...rest } = props;
+  const { size = 12, color = 'lightGray', ...rest } = props;
 
   return (
     <Box
@@ -77,11 +69,11 @@ function Elbow(
 }
 
 const description: string[] = [
-  "Contacting host...",
-  "Retrieving data...",
-  "Finished join",
-  "Unable to join, you do not have the correct permissions",
-  "Internal error, please file an issue",
+  'Contacting host...',
+  'Retrieving data...',
+  'Finished join',
+  'Unable to join, you do not have the correct permissions',
+  'Internal error, please file an issue'
 ];
 
 function inviteUrl(hidden: boolean, resource: string, metadata?: Metadata) {
@@ -89,7 +81,7 @@ function inviteUrl(hidden: boolean, resource: string, metadata?: Metadata) {
     return `/~landscape${resource}`;
   }
 
-  if (metadata?.config.graph === "chat") {
+  if (metadata?.config.graph === 'chat') {
     return `/~landscape/messages/resource/${metadata?.config?.graph}${resource}`;
   } else {
     return `/~landscape/home/resource/${metadata?.config?.graph}${resource}`;
@@ -120,7 +112,7 @@ function InviteMetadata(props: {
         <MetadataIcon height={4} width={4} metadata={preview.metadata} />
         <Text fontWeight="medium">{title}</Text>
         <Text gray fontWeight="medium">
-          {members} Member{members > 1 ? "s" : ""}
+          {members} Member{members > 1 ? 's' : ''}
         </Text>
       </>
     );
@@ -160,9 +152,9 @@ export function useInviteAccept(
 ) {
   const { ship, name } = resourceFromPath(resource);
   const history = useHistory();
-  const associations = useMetadataState((s) => s.associations);
-  const groups = useGroupState((s) => s.groups);
-  const graphKeys = useGraphState((s) => s.graphKeys);
+  const associations = useMetadataState(s => s.associations);
+  const groups = useGroupState(s => s.groups);
+  const graphKeys = useGraphState(s => s.graphKeys);
 
   const waiter = useWaitForProps({ associations, graphKeys, groups });
   return useRunIO<void, boolean>(
@@ -269,15 +261,15 @@ function InviteActions(props: {
 
 const responsiveStyle = ({ gapXY = 0 as number | number[] }) => {
   return css({
-    flexDirection: ["column", "row"],
-    "& > *": {
+    flexDirection: ['column', 'row'],
+    '& > *': {
       marginTop: _.isArray(gapXY) ? [gapXY[0], 0] : [gapXY, 0],
-      marginLeft: _.isArray(gapXY) ? [0, ...gapXY.slice(1)] : [0, gapXY],
+      marginLeft: _.isArray(gapXY) ? [0, ...gapXY.slice(1)] : [0, gapXY]
     },
-    "& > :first-child": {
+    '& > :first-child': {
       marginTop: 0,
-      marginLeft: 0,
-    },
+      marginLeft: 0
+    }
   });
 };
 const ResponsiveRow = styled(Row)(responsiveStyle);
@@ -286,9 +278,8 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
   const dm = isDm(resource);
   const history = useHistory();
 
-  const invitedTo = dm ? "DM" : "group";
+  const invitedTo = dm ? 'DM' : 'group';
   const graphAssoc = useAssocForGraph(resource);
-
 
   const headerProps = status
     ? { description: `You are joining a ${invitedTo}` }
@@ -301,7 +292,7 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
         history.push(redir);
       }
     }
-  }
+  };
 
   return (
     <NotificationWrapper api={api}>
@@ -311,7 +302,7 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
         <ResponsiveRow
           gapXY={[1, 2]}
           height={[null, 4]}
-          alignItems={["flex-start", "center"]}
+          alignItems={['flex-start', 'center']}
         >
           <InviteMetadata preview={preview} resource={resource} />
           <InviteStatus status={status} />

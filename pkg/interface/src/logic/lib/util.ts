@@ -1,14 +1,13 @@
 /* eslint-disable max-lines */
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import _ from 'lodash';
-import { IconRef } from '~/types';
-import f, { compose, memoize } from 'lodash/fp';
-import bigInt, { BigInteger } from 'big-integer';
 import { Association, Contact } from '@urbit/api';
-import { enableMapSet } from 'immer';
-import useSettingsState from '../state/settings';
-
 import anyAscii from 'any-ascii';
+import bigInt, { BigInteger } from 'big-integer';
+import { enableMapSet } from 'immer';
+import _ from 'lodash';
+import f from 'lodash/fp';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { IconRef } from '~/types';
+import useSettingsState from '../state/settings';
 
 enableMapSet();
 
@@ -202,7 +201,7 @@ export const hexToUx = (hex) => {
   return `0x${ux}`;
 };
 
-export function writeText(str: string) {
+export function writeText(str: string | null): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     const range = document.createRange();
     range.selectNodeContents(document.body);
@@ -401,7 +400,7 @@ export function pluralize(text: string, isPlural = false, vowel = false) {
 export function useShowNickname(contact: Contact | null, hide?: boolean): boolean {
   const hideState = useSettingsState(state => state.calm.hideNicknames);
   const hideNicknames = typeof hide !== 'undefined' ? hide : hideState;
-  return !!(contact && contact.nickname && !hideNicknames);
+  return Boolean(contact && contact.nickname && !hideNicknames);
 }
 
 interface useHoveringInterface {
@@ -414,13 +413,12 @@ interface useHoveringInterface {
 
 export const useHovering = (): useHoveringInterface => {
   const [hovering, setHovering] = useState(false);
-  const onMouseOver = useCallback(() => setHovering(true), [])
-  const onMouseLeave = useCallback(() => setHovering(false), [])
+  const onMouseOver = useCallback(() => setHovering(true), []);
+  const onMouseLeave = useCallback(() => setHovering(false), []);
   const bind = useMemo(() => ({
     onMouseOver,
-    onMouseLeave,
+    onMouseLeave
   }), [onMouseLeave, onMouseOver]);
-
 
   return useMemo(() => ({ hovering, bind }), [hovering, bind]);
 };

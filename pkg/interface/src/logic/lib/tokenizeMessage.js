@@ -1,5 +1,5 @@
 import urbitOb from 'urbit-ob';
-import { parsePermalink, permalinkToReference } from "~/logic/lib/permalinks";
+import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 
 const URL_REGEX = new RegExp(String(/^(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)/.source));
 
@@ -9,14 +9,14 @@ const isUrl = (string) => {
   } catch (e) {
     return false;
   }
-}
+};
 
 const isRef = (str) => {
-  return isUrl(str) && str.startsWith("web+urbitgraph://");
-}
+  return isUrl(str) && str.startsWith('web+urbitgraph://');
+};
 
 const tokenizeMessage = (text) => {
-  let messages = [];
+  const messages = [];
   let message = [];
   let isInCodeBlock = false;
   let endOfCodeBlock = false;
@@ -78,7 +78,6 @@ const tokenizeMessage = (text) => {
           }
           messages.push({ mention: str });
           message = [];
-
         } else {
           message.push(str);
         }

@@ -1,10 +1,10 @@
-import BaseApi from './base';
-import { StoreState } from '../store/type';
-import { Key,
-  Value,
-  Bucket,
-  SettingsUpdate
+import {
+  Bucket, Key,
+
+  SettingsUpdate, Value
 } from '@urbit/api/settings';
+import { StoreState } from '../store/type';
+import BaseApi from './base';
 
 export default class SettingsApi extends BaseApi<StoreState> {
   private storeAction(action: SettingsUpdate): Promise<any> {

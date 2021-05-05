@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState, useMemo, ReactNode } from 'react';
-import { uxToHex } from '@urbit/api';
+import { uxToHex, cite } from '@urbit/api';
+import { useShowNickname } from '~/logic/lib/util';
 import _ from 'lodash';
+import { useHistory } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
 import styled from 'styled-components';
-
-import { cite, useShowNickname } from '~/logic/lib/util';
+import { getRelativePosition } from '~/logic/lib/relativePosition';
 import { Sigil } from '~/logic/lib/sigil';
-
 import {
   Box,
   Row,
@@ -23,9 +23,7 @@ import useSettingsState from '~/logic/state/settings';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { useCopy } from '~/logic/lib/useCopy';
 import { useContact } from '~/logic/state/contact';
-import { useHistory } from 'react-router-dom';
 import { Portal } from './Portal';
-import { getRelativePosition } from '~/logic/lib/relativePosition';
 
 export const OVERLAY_HEIGHT = 250;
 const FixedOverlay = styled(Col)`

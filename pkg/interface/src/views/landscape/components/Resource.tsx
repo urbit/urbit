@@ -1,21 +1,19 @@
+import { Association } from '@urbit/api/metadata';
 import React, { ReactElement } from 'react';
 import Helmet from 'react-helmet';
 import { Route, Switch } from 'react-router-dom';
-
-import { Association } from '@urbit/api/metadata';
-
-import { ChatResource } from '~/views/apps/chat/ChatResource';
-import { PublishResource } from '~/views/apps/publish/PublishResource';
-import { LinkResource } from '~/views/apps/links/LinkResource';
-import { StoreState } from '~/logic/store/type';
 import GlobalApi from '~/logic/api/global';
-import { ResourceSkeleton } from './ResourceSkeleton';
-import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
-import useGroupState from '~/logic/state/group';
 import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
+import { StoreState } from '~/logic/store/type';
 import { Workspace } from '~/types';
+import { ChatResource } from '~/views/apps/chat/ChatResource';
+import { LinkResource } from '~/views/apps/links/LinkResource';
+import { PublishResource } from '~/views/apps/publish/PublishResource';
+import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
+import { ResourceSkeleton } from './ResourceSkeleton';
 
 type ResourceProps = StoreState & {
   association: Association;

@@ -1,13 +1,12 @@
+import { Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { Association, Group } from '@urbit/api';
 import React, { useCallback } from 'react';
-import { Icon, Text, Row, Col } from '@tlon/indigo-react';
-import { Formik } from 'formik';
-import { Association, Associations, Group } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
-import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
-import { getModuleIcon, GraphModule } from '~/logic/lib/util';
-import { Dropdown } from '~/views/components/Dropdown';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
+import { getModuleIcon, GraphModule } from '~/logic/lib/util';
 import useMetadataState from '~/logic/state/metadata';
+import { Dropdown } from '~/views/components/Dropdown';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 
 interface GroupChannelSettingsProps {
   group: Group;

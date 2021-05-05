@@ -1,11 +1,9 @@
-import React, { ReactElement } from 'react';
-
 import {
-  StatelessToggleSwitchField as Toggle,
-  LoadingSpinner,
+  LoadingSpinner, StatelessToggleSwitchField as Toggle,
+
   Text
 } from '@tlon/indigo-react';
-
+import React, { ReactElement } from 'react';
 import { useStatelessAsyncClickable } from '~/logic/lib/useStatelessAsyncClickable';
 
 interface AsyncToggleProps {

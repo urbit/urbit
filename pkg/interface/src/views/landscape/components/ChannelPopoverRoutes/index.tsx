@@ -1,25 +1,21 @@
-import React, { useRef, useCallback } from 'react';
-
-import { Col, Box, Text, Row } from '@tlon/indigo-react';
+import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import {
   Association,
-  Groups,
-  Group,
-  Rolodex,
-  NotificationGraphConfig
-} from '@urbit/api';
 
-import { ModalOverlay } from '~/views/components/ModalOverlay';
-import { GraphPermissions } from './ChannelPermissions';
-import { ChannelPopoverRoutesSidebar } from './Sidebar';
-import { ChannelDetails } from './Details';
+  Group
+} from '@urbit/api';
+import React, { useCallback, useRef } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { useHashLink } from '~/logic/lib/useHashLink';
-import { useHistory, Link } from 'react-router-dom';
-import { ChannelNotifications } from './Notifications';
-import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { isChannelAdmin, isHost } from '~/logic/lib/group';
-import {FormGroup} from '~/views/components/FormGroup';
+import { useHashLink } from '~/logic/lib/useHashLink';
+import { FormGroup } from '~/views/components/FormGroup';
+import { ModalOverlay } from '~/views/components/ModalOverlay';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { GraphPermissions } from './ChannelPermissions';
+import { ChannelDetails } from './Details';
+import { ChannelNotifications } from './Notifications';
+import { ChannelPopoverRoutesSidebar } from './Sidebar';
 
 interface ChannelPopoverRoutesProps {
   baseUrl: string;

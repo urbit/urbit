@@ -1,12 +1,12 @@
-import React, { Component, Fragment } from 'react';
-import { BaseAnchor, BaseImage, Box, Button, Text, Row, Icon } from '@tlon/indigo-react';
-import styled from 'styled-components';
+import { BaseAnchor, BaseImage, Box, Icon, Row, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
+import React, { Component, Fragment } from 'react';
 import EmbedContainer from 'react-oembed-container';
+import styled from 'styled-components';
+import { VirtualContextProps, withVirtual } from '~/logic/lib/virtualContext';
+import withState from '~/logic/lib/withState';
 import useSettingsState from '~/logic/state/settings';
 import { RemoteContentPolicy } from '~/types/local-update';
-import { VirtualContextProps, withVirtual } from "~/logic/lib/virtualContext";
-import withState from '~/logic/lib/withState';
 
 type RemoteContentProps = VirtualContextProps & {
   url: string;
@@ -93,17 +93,15 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     });
   }
 
-
   componentDidUpdate(prevProps, prevState) {
     if(prevState.embed !== this.state.embed) {
-      //console.log('remotecontent: restoring');
-      //prevProps.shiftLayout.restore();
+      // console.log('remotecontent: restoring');
+      // prevProps.shiftLayout.restore();
     }
     const { url } = this.props;
     if(url !== prevProps.url && (IMAGE_REGEX.test(url) || AUDIO_REGEX.test(url) || VIDEO_REGEX.test(url))) {
       this.save();
-    };
-
+    }
   }
 
   componentDidMount() {
@@ -114,7 +112,6 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
       const { restore } = this;
       restore();
     });
-
   }
 
   loadOembed() {
@@ -138,31 +135,35 @@ return;
       <Box borderRadius="1" backgroundColor="washedGray" maxWidth="min(100%, 20rem)">
       <Row
         alignItems="center"
-        gapX="1">
+        gapX="1"
+      >
         { textOnly && (<Icon ml="2" display="block" icon="ArrowExternal" />)}
         { !textOnly && unfoldEmbed && (
           <Icon
             ml='2'
             display='block'
             onClick={unfoldEmbed}
-            icon={unfold ? 'TriangleSouth' : 'TriangleEast'}/>
+            icon={unfold ? 'TriangleSouth' : 'TriangleEast'}
+          />
           )}
         <BaseAnchor
           display="flex"
           p={flushPadding ? 0 : 2}
-          onClick={(e) => { noOp ? e.preventDefault() : e.stopPropagation() }}
+          onClick={(e) => {
+ noOp ? e.preventDefault() : e.stopPropagation();
+}}
           href={this.props.url}
           whiteSpace="nowrap"
           overflow="hidden"
           textOverflow="ellipsis"
           minWidth="0"
-          width={textOnly ? "calc(100% - 24px)" : "fit-content"}
+          width={textOnly ? 'calc(100% - 24px)' : 'fit-content'}
           maxWidth="min(500px, 100%)"
           style={{ color: 'inherit', textDecoration: 'none', ...style }}
           target="_blank"
           rel="noopener noreferrer"
           cursor={noOp ? 'default' : 'pointer'}
-         >
+        >
         {contents}
       </BaseAnchor>
     </Row>
@@ -177,7 +178,7 @@ return;
   }
 
   toggleArrow() {
-    this.setState({showArrow: !this.state.showArrow})
+    this.setState({ showArrow: !this.state.showArrow });
   }
 
   render() {
@@ -204,7 +205,7 @@ return;
 
     const isTranscluded = () => {
       return transcluded;
-    }
+    };
 
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
@@ -267,9 +268,11 @@ return;
               this.state.unfold,
               this.unfoldEmbed,
             <audio
-              onClick={(e) => { e.stopPropagation(); }}
+              onClick={(e) => {
+ e.stopPropagation();
+}}
               controls
-              className={this.state.unfold ? "db" : "dn"}
+              className={this.state.unfold ? 'db' : 'dn'}
               src={url}
               style={style}
               onLoad={onLoad}
@@ -292,7 +295,9 @@ return;
               this.state.unfold,
               this.unfoldEmbed,
               <video
-                onClick={(e) => { e.stopPropagation(); }}
+                onClick={(e) => {
+ e.stopPropagation();
+}}
                 controls
                 className={this.state.unfold ? 'db' : 'dn pa2'}
                 src={url}
@@ -322,10 +327,11 @@ return;
             onLoad={this.onLoad}
             {...oembedProps}
             {...props}
-          >
+                   >
             <TruncatedText
             display={(renderUrl && this.state.embed?.title && this.state.embed.title !== url) ? 'inline-block' : 'none'}
-            fontWeight='bold' width='100%'>
+            fontWeight='bold' width='100%'
+            >
               {this.state.embed?.title}
             </TruncatedText>
               {this.state.embed && this.state.embed.html && this.state.unfold

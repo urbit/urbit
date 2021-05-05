@@ -1,7 +1,6 @@
+import { Action, LoadingSpinner } from '@tlon/indigo-react';
 import React, { ReactNode } from 'react';
 import { useStatelessAsyncClickable } from '~/logic/lib/useStatelessAsyncClickable';
-
-import { LoadingSpinner, Action } from '@tlon/indigo-react';
 
 interface AsyncActionProps {
   children: ReactNode;

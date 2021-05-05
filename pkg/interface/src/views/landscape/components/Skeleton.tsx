@@ -1,16 +1,13 @@
+import { AppName } from '@urbit/api';
 import React, { ReactElement, ReactNode, useMemo } from 'react';
-
-import { Groups, Graphs, Invites, Rolodex, Path, AppName } from '@urbit/api';
-import { Associations } from '@urbit/api/metadata';
-
-import { Sidebar } from './Sidebar/Sidebar';
 import GlobalApi from '~/logic/api/global';
-import { useGraphModule } from './Sidebar/Apps';
-import { Body } from '~/views/components/Body';
-import { Workspace } from '~/types/workspace';
 import useGraphState from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
+import { Workspace } from '~/types/workspace';
+import { Body } from '~/views/components/Body';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
+import { useGraphModule } from './Sidebar/Apps';
+import { Sidebar } from './Sidebar/Sidebar';
 
 interface SkeletonProps {
   children: ReactNode;

@@ -1,16 +1,14 @@
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  ChangeEvent,
-  useRef
-} from 'react';
 import {
-  Row,
-  Text,
-  Button,
+  Button, Row,
+
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
+import React, {
+  ChangeEvent, useCallback,
+  useEffect,
+
+  useRef, useState
+} from 'react';
 
 export function SetStatus(props: any) {
   const { contact, ship, api, callback } = props;

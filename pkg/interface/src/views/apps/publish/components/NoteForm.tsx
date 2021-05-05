@@ -1,13 +1,11 @@
+import {
+  Button, Col, ManagedTextInputField as Input,
+  Row
+} from '@tlon/indigo-react';
+import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
-import {
-  ManagedTextInputField as Input,
-  Row,
-  Col,
-  Button
-} from '@tlon/indigo-react';
 import { AsyncButton } from '../../../components/AsyncButton';
-import { Formik, Form, FormikHelpers } from 'formik';
 import { MarkdownField } from './MarkdownField';
 
 interface PostFormProps {

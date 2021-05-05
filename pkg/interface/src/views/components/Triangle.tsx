@@ -1,6 +1,6 @@
-import React from 'react';
-import _ from 'lodash';
 import { Box } from '@tlon/indigo-react';
+import _ from 'lodash';
+import React from 'react';
 import { PropFunc } from '~/types';
 
 export type Direction = 'East' | 'South' | 'West' | 'North';

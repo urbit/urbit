@@ -1,14 +1,14 @@
+import { BaseLabel, Col, Label, Text } from '@tlon/indigo-react';
+import { Association, Group, PermVariation, resourceFromPath } from '@urbit/api';
+import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
-import { Box, Col, Row, Text, BaseLabel, Label } from '@tlon/indigo-react';
-import { Association, resourceFromPath, Group, PermVariation } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
-import { Formik, Form, FormikHelpers } from 'formik';
+import useMetadataState from '~/logic/state/metadata';
+import { FormSubmit } from '~/views/components/FormSubmit';
+import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 import {
   GroupFeedPermsInput
 } from '../Home/Post/GroupFeedPerms';
-import { FormSubmit } from '~/views/components/FormSubmit';
-import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
-import useMetadataState from '~/logic/state/metadata';
 
 interface FormSchema {
   permissions: PermVariation;
@@ -33,7 +33,10 @@ export function GroupFeedSettings(props: {
   const feedAssoc = useMetadataState(s => s.associations.graph[feedResource]);
   const isEnabled = Boolean(feedResource);
 
-  const vip = feedAssoc?.metadata?.vip || '';
+  const associations = useMetadataState(state => state.associations);
+  const feedMetadata = associations?.graph[feedResource];
+
+  const vip = feedAssoc?.metadata?.vip || ' ';
   const toggleFeed = async (actions: any) => {
     if (isEnabled) {
       await api.graph.disableGroupFeed(resource);

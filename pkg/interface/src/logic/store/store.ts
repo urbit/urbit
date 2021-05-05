@@ -1,22 +1,20 @@
 import _ from 'lodash';
-
-import BaseStore from './base';
-import InviteReducer from '../reducers/invite-update';
-import MetadataReducer from '../reducers/metadata-update';
-
-import { StoreState } from './type';
-import { Cage } from '~/types/cage';
-import S3Reducer from '../reducers/s3-update';
-import { GraphReducer } from '../reducers/graph-update';
-import { HarkReducer } from '../reducers/hark-update';
-import { ContactReducer } from '../reducers/contact-update';
-import GroupReducer from '../reducers/group-update';
-import LaunchReducer from '../reducers/launch-update';
-import ConnectionReducer from '../reducers/connection';
-import SettingsReducer from '../reducers/settings-update';
-import GcpReducer from '../reducers/gcp-reducer';
-import { GroupViewReducer } from '../reducers/group-view';
 import { unstable_batchedUpdates } from 'react-dom';
+import { Cage } from '~/types/cage';
+import ConnectionReducer from '../reducers/connection';
+import { ContactReducer } from '../reducers/contact-update';
+import GcpReducer from '../reducers/gcp-reducer';
+import { GraphReducer } from '../reducers/graph-update';
+import GroupReducer from '../reducers/group-update';
+import { GroupViewReducer } from '../reducers/group-view';
+import { HarkReducer } from '../reducers/hark-update';
+import InviteReducer from '../reducers/invite-update';
+import LaunchReducer from '../reducers/launch-update';
+import MetadataReducer from '../reducers/metadata-update';
+import S3Reducer from '../reducers/s3-update';
+import SettingsReducer from '../reducers/settings-update';
+import BaseStore from './base';
+import { StoreState } from './type';
 
 export default class GlobalStore extends BaseStore<StoreState> {
   inviteReducer = new InviteReducer();
@@ -42,7 +40,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
 
   initialState(): StoreState {
     return {
-      connection: 'connected',
+      connection: 'connected'
     };
   }
 

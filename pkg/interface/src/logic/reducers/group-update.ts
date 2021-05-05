@@ -1,19 +1,16 @@
+import { Enc } from '@urbit/api';
+import {
+  Group,
+
+  GroupPolicy, GroupUpdate,
+
+  InvitePolicy, InvitePolicyDiff, OpenPolicy, OpenPolicyDiff, Tags
+} from '@urbit/api/groups';
 import _ from 'lodash';
 import { Cage } from '~/types/cage';
-import {
-  GroupUpdate,
-  Group,
-  Tags,
-  GroupPolicy,
-  OpenPolicyDiff,
-  OpenPolicy,
-  InvitePolicyDiff,
-  InvitePolicy
-} from '@urbit/api/groups';
-import { Enc } from '@urbit/api';
 import { resourceAsPath } from '../lib/util';
-import useGroupState, { GroupState } from '../state/group';
 import { reduceState } from '../state/base';
+import useGroupState, { GroupState } from '../state/group';
 
 function decodeGroup(group: Enc<Group>): Group {
   const members = new Set(group.members);
@@ -69,11 +66,10 @@ export default class GroupReducer {
         addGroup,
         removeGroup,
         changePolicy,
-        expose,
+        expose
       ]);
     }
   }
-
 }
 const initial = (json: GroupUpdate, state: GroupState): GroupState => {
   const data = json['initial'];
@@ -81,7 +77,7 @@ const initial = (json: GroupUpdate, state: GroupState): GroupState => {
     state.groups = _.mapValues(data, decodeGroup);
   }
   return state;
-}
+};
 
 const initialGroup = (json: GroupUpdate, state: GroupState): GroupState => {
   if ('initialGroup' in json) {
@@ -90,7 +86,7 @@ const initialGroup = (json: GroupUpdate, state: GroupState): GroupState => {
     state.groups[path] = decodeGroup(group);
   }
   return state;
-}
+};
 
 const addGroup = (json: GroupUpdate, state: GroupState): GroupState => {
   if ('addGroup' in json) {
@@ -104,7 +100,7 @@ const addGroup = (json: GroupUpdate, state: GroupState): GroupState => {
     };
   }
   return state;
-}
+};
 
 const removeGroup = (json: GroupUpdate, state: GroupState): GroupState => {
   if('removeGroup' in json) {
@@ -113,7 +109,7 @@ const removeGroup = (json: GroupUpdate, state: GroupState): GroupState => {
     delete state.groups[resourcePath];
   }
   return state;
-}
+};
 
 const addMembers = (json: GroupUpdate, state: GroupState): GroupState => {
   if ('addMembers' in json) {
@@ -130,7 +126,7 @@ const addMembers = (json: GroupUpdate, state: GroupState): GroupState => {
     }
   }
   return state;
-}
+};
 
 const removeMembers = (json: GroupUpdate, state: GroupState): GroupState => {
   if ('removeMembers' in json) {
@@ -141,7 +137,7 @@ const removeMembers = (json: GroupUpdate, state: GroupState): GroupState => {
     }
   }
   return state;
-}
+};
 
 const addTag = (json: GroupUpdate, state: GroupState): GroupState => {
   if ('addTag' in json) {
@@ -177,7 +173,7 @@ const removeTag = (json: GroupUpdate, state: GroupState): GroupState => {
     _.set(tags, tagAccessors, tagged);
   }
   return state;
-}
+};
 
 const changePolicy = (json: GroupUpdate, state: GroupState): GroupState => {
   if ('changePolicy' in json && state) {
@@ -195,7 +191,7 @@ const changePolicy = (json: GroupUpdate, state: GroupState): GroupState => {
     }
   }
   return state;
-}
+};
 
 const expose = (json: GroupUpdate, state: GroupState): GroupState => {
   if( 'expose' in json && state) {
@@ -204,7 +200,7 @@ const expose = (json: GroupUpdate, state: GroupState): GroupState => {
     state.groups[resourcePath].hidden = false;
   }
   return state;
-}
+};
 
 const inviteChangePolicy = (diff: InvitePolicyDiff, policy: InvitePolicy) => {
   if ('addInvites' in diff) {
@@ -220,7 +216,7 @@ const inviteChangePolicy = (diff: InvitePolicyDiff, policy: InvitePolicy) => {
   } else {
     console.log('bad policy change');
   }
-}
+};
 
 const openChangePolicy = (diff: OpenPolicyDiff, policy: OpenPolicy) => {
   if ('allowRanks' in diff) {
@@ -246,4 +242,4 @@ const openChangePolicy = (diff: OpenPolicyDiff, policy: OpenPolicy) => {
   } else {
     console.log('bad policy change');
   }
-}
+};

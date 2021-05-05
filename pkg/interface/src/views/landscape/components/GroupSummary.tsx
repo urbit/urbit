@@ -1,10 +1,10 @@
-import React, { ReactElement, ReactNode, useRef } from 'react';
-import { Metadata } from '@urbit/api';
-import { PropFunc } from '~/types';
 import { Col, Row, Text } from '@tlon/indigo-react';
-import { MetadataIcon } from './MetadataIcon';
+import { Metadata } from '@urbit/api';
+import React, { ReactElement, ReactNode, useRef } from 'react';
+import { TUTORIAL_GROUP, TUTORIAL_HOST } from '~/logic/lib/tutorialModal';
+import { PropFunc } from '~/types';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
-import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
+import { MetadataIcon } from './MetadataIcon';
 
 interface GroupSummaryProps {
   metadata: Metadata;

@@ -1,18 +1,14 @@
-import React, { useCallback } from 'react';
-
-import { Box, Col, Button, Text } from '@tlon/indigo-react';
+import { Box, Button, Col, Text } from '@tlon/indigo-react';
 import { Group } from '@urbit/api/groups';
-import { Association, Associations } from '@urbit/api/metadata';
-import { GroupNotificationsConfig } from '@urbit/api';
-
-import GlobalApi from '~/logic/api/global';
-import { GroupAdminSettings } from './Admin';
-import { GroupPersonalSettings } from './Personal';
-import { GroupChannelSettings } from './Channels';
+import { Association } from '@urbit/api/metadata';
+import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
-import { StorageState } from '~/types';
-import {GroupFeedSettings} from './GroupFeed';
+import { GroupAdminSettings } from './Admin';
+import { GroupChannelSettings } from './Channels';
+import { GroupFeedSettings } from './GroupFeed';
+import { GroupPersonalSettings } from './Personal';
 
 const Section = ({ children }) => (
   <Box boxShadow="inset 0px 1px 0px rgba(0, 0, 0, 0.2)">{children}</Box>
@@ -33,7 +29,7 @@ export function GroupSettings(props: GroupSettingsProps) {
     [history, props.baseUrl]
   );
 
-  const isOwner = 
+  const isOwner =
     resourceFromPath(props.association.group).ship.slice(1) === window.ship;
 
   const isAdmin =

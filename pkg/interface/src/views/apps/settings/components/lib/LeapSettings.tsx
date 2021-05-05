@@ -1,29 +1,27 @@
-import React, { useCallback } from "react";
-import _ from "lodash";
 import {
   Col,
-  Text,
-  ManagedToggleSwitchField as Toggle,
-  ManagedCheckboxField,
-  BaseInput,
-} from "@tlon/indigo-react";
-import { Form, FormikHelpers, useField, useFormikContext } from "formik";
-import { FormikOnBlur } from "~/views/components/FormikOnBlur";
-import { BackButton } from "./BackButton";
-import GlobalApi from "~/logic/api/global";
+
+  ManagedCheckboxField, Text
+} from '@tlon/indigo-react';
+import { Form, useField, useFormikContext } from 'formik';
+import _ from 'lodash';
+import React from 'react';
+import GlobalApi from '~/logic/api/global';
+import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
 import {
   LeapCategories,
-  leapCategories,
-} from "~/types";
-import useSettingsState, { selectSettingsState } from "~/logic/state/settings";
-import { ShuffleFields } from "~/views/components/ShuffleFields";
+  leapCategories
+} from '~/types';
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
+import { ShuffleFields } from '~/views/components/ShuffleFields';
+import { BackButton } from './BackButton';
 
 const labels: Record<LeapCategories, string> = {
-  mychannel: "My Channel",
-  updates: "Notifications",
-  profile: "Profile",
-  messages: "Messages",
-  logout: "Log Out",
+  mychannel: 'My Channel',
+  updates: 'Notifications',
+  profile: 'Profile',
+  messages: 'Messages',
+  logout: 'Log Out'
 };
 
 interface FormSchema {
@@ -45,7 +43,7 @@ function CategoryCheckbox(props: { index: number }) {
   );
 }
 
-const settingsSel = selectSettingsState(["leap", "set"]);
+const settingsSel = selectSettingsState(['leap', 'set']);
 
 export function LeapSettings(props: { api: GlobalApi; }) {
   const { api } = props;
@@ -56,12 +54,12 @@ export function LeapSettings(props: { api: GlobalApi; }) {
 
   const initialValues = {
     categories: [
-      ...categories.map((cat) => ({
+      ...categories.map(cat => ({
         category: cat,
-        display: true,
+        display: true
       })),
-      ...missing.map((cat) => ({ category: cat, display: false })),
-    ],
+      ...missing.map(cat => ({ category: cat, display: false }))
+    ]
   };
 
   const onSubmit = async (values: FormSchema) => {
@@ -74,7 +72,7 @@ export function LeapSettings(props: { api: GlobalApi; }) {
 
   return (
     <>
-    <BackButton/>
+    <BackButton />
     <Col p="5" pt="4" gapY="5">
       <Col gapY="1" mt="0">
         <Text fontSize="2" fontWeight="medium">

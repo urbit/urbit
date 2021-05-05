@@ -1,17 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { Box, Center, Col, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
-import { Box, Text, Button, Col, Center } from '@tlon/indigo-react';
-import RichText from '~/views/components/RichText';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
+import { useQuery } from '~/logic/lib/useQuery';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import useGraphState from '~/logic/state/graph';
+import RichText from '~/views/components/RichText';
 import {
-  StatelessAsyncButton as AsyncButton,
   StatelessAsyncButton
 } from './StatelessAsyncButton';
-import { Graphs } from '@urbit/api';
-import useGraphState from '~/logic/state/graph';
-import {useQuery} from '~/logic/lib/useQuery';
 
 interface UnjoinedResourceProps {
   association: Association;
@@ -23,7 +21,6 @@ function isJoined(path: string) {
   return function (
     props: Pick<UnjoinedResourceProps, 'graphKeys'>
   ) {
-
     const graphKey = path.substr(7);
     return props.graphKeys.has(graphKey);
   };
@@ -64,7 +61,6 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
         await onJoin();
         setLoading(false);
       }
-
     })();
   }, [query]);
 

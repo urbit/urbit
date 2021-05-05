@@ -1,22 +1,18 @@
-import React, {useEffect, useRef, useCallback} from 'react';
+import { Action, Box, Row } from '@tlon/indigo-react';
+import { Group } from '@urbit/api';
+import { GraphNode } from '@urbit/api/graph';
+import bigInt from 'big-integer';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import bigInt from 'big-integer';
-
-import { Box, Row, Text, Action } from '@tlon/indigo-react';
-import { Contacts } from '@urbit/api/contacts';
-import { GraphNode } from '@urbit/api/graph';
-import { Group } from '@urbit/api';
-
 import GlobalApi from '~/logic/api/global';
-import Author from '~/views/components/Author';
-import { MentionText } from '~/views/components/MentionText';
 import { roleForShip } from '~/logic/lib/group';
+import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
-import {useCopy} from '~/logic/lib/useCopy';
-import { getPermalinkForGraph} from '~/logic/lib/permalinks';
+import { useCopy } from '~/logic/lib/useCopy';
 import useMetadataState from '~/logic/state/metadata';
-import {GraphContentWide} from '../landscape/components/Graph/GraphContentWide';
+import Author from '~/views/components/Author';
+import { GraphContentWide } from '../landscape/components/Graph/GraphContentWide';
 
 const ClickBox = styled(Box)`
   cursor: pointer;
@@ -49,9 +45,9 @@ export function CommentItem(props: CommentItemProps): ReactElement {
   const onDelete = async () => {
     const revs = comment.children.get(bigInt(1));
     const children = Array.from(revs.children);
-    let indices = [];
-    for (let child in children) {
-      let node = children[child];
+    const indices = [];
+    for (const child in children) {
+      const node = children[child];
       if (!node?.post || typeof node.post !== 'string') {
         indices.push(node.post?.index);
       }
@@ -81,21 +77,21 @@ export function CommentItem(props: CommentItemProps): ReactElement {
   const ourRole = roleForShip(group, window.ship);
   if (window.ship == post?.author && !disabled) {
     adminLinks.push(
-      <Link to={{ pathname: props.baseUrl, search: `?edit=${commentIndex}`}}>
+      <Link to={{ pathname: props.baseUrl, search: `?edit=${commentIndex}` }}>
         <Action bg="white">
           Update
         </Action>
       </Link>
-    )
-  };
+    );
+  }
 
-  if ((window.ship == post?.author || ourRole == "admin") && !disabled) {
+  if ((window.ship == post?.author || ourRole == 'admin') && !disabled) {
     adminLinks.push(
       <Action bg="white" onClick={onDelete} destructive>
         Delete
       </Action>
-    )
-  };
+    );
+  }
 
   useEffect(() => {
     if(ref.current && props.highlighted) {
