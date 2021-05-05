@@ -649,11 +649,13 @@ main(c3_i   argc,
   }
 #endif
 
+  #if !defined(U3_OS_mingw)
   //  Handle SIGTSTP as if it was SIGTERM.
   //
   //    Configured here using signal() so as to be immediately available.
   //
   signal(SIGTSTP, _stop_exit);
+  #endif
 
   printf("~\n");
   //  printf("welcome.\n");

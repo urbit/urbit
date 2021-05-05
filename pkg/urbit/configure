@@ -42,8 +42,6 @@ do
   case $1 in
   --enable-debug)
     CFLAGS="${CFLAGS-} -O0 -g"
-    MEMORY_DEBUG=1
-    CPU_DEBUG=1
     ;;
   --disable-debug)
     CFLAGS="${CFLAGS-} -O3 -g"
@@ -110,8 +108,8 @@ case $(tr A-Z a-z <<< $os) in
      ldextra="$ldextra -lzstd"
      # libuv implibs
      ldextra="$ldextra -luserenv -liphlpapi -lpsapi"
-     vcompat=mingw
-     CFLAGS="${CFLAGS-} ${cdirs[@]} -DCURL_STATICLIB -DH2O_NO_UNIX_SOCKETS -Icompat/mingw"
+     compat="${compat-} mingw"
+     CFLAGS="${CFLAGS-} ${cdirs[@]} -DCURL_STATICLIB -DH2O_NO_UNIX_SOCKETS"
      LDFLAGS="${LDFLAGS-} ${ldirs[@]} -static"
      PKG_CONFIG=">/dev/null echo"
      ;;
@@ -149,11 +147,17 @@ for header in $headers
 do LDFLAGS="${LDFLAGS-} -I$header"
 done
 
+compat="${compat-posix}"
+for citem in $compat
+do
+   CFLAGS="${CFLAGS-} -Icompat/$citem"
+done
+
 cat >config.mk <<EOF
 CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math -fcommon -std=gnu99
 LDFLAGS := $LDFLAGS ${ldextra-}
 CC      := ${CC-cc}
-compat  := ${vcompat-posix}
+compat  := $compat
 EOF
 
 echo == config.mk == >&2
