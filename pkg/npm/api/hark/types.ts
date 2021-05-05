@@ -7,7 +7,7 @@ export type GraphNotifDescription = "link" | "comment" | "note" | "mention" | "m
 
 export interface UnreadStats {
   unreads: Set<string> | number;
-  notifications: NotifRef[];
+  notifications: NotifRef[] | number;
   last: number;
 }
 

@@ -173,9 +173,9 @@ export function dateToDa(d: Date, mil = false) {
   );
 }
 
-export function deSig(ship: string) {
+export function deSig(ship: string): string {
   if (!ship) {
-    return null;
+    return '';
   }
   return ship.replace('~', '');
 }
