@@ -45,7 +45,7 @@ type DropdownSearchProps<C> = PropFunc<typeof Box> &
   DropdownSearchExtraProps<C>;
 
 export function DropdownSearch<C>(props: DropdownSearchProps<C>): ReactElement {
-  const textarea = useRef<HTMLTextAreaElement>();
+  const textarea = useRef<HTMLTextAreaElement>(null);
   const {
     candidates,
     getKey,

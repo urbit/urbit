@@ -3,7 +3,7 @@ import { Box } from '@tlon/indigo-react';
 import { PropFunc } from '~/types/util';
 
 interface ModalOverlayProps {
-  spacing: PropFunc<typeof Box>['m'];
+  spacing?: PropFunc<typeof Box>['m'];
   dismiss: () => void;
 }
 type Props = ModalOverlayProps & PropFunc<typeof Box>;

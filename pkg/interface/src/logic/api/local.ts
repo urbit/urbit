@@ -7,8 +7,4 @@ export default class LocalApi extends BaseApi<StoreState> {
       this.store.handleEvent({ data: { baseHash } });
     });
   }
-
-  dehydrate() {
-    this.store.dehydrate();
-  }
 }

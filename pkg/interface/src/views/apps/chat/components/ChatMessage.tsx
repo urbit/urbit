@@ -3,44 +3,23 @@ import bigInt from 'big-integer';
 import React, {
   useState,
   useEffect,
-  useMemo,
-  useRef,
-  Component,
-  PureComponent,
-  useCallback
+  useMemo
 } from 'react';
 import moment from 'moment';
-import _ from 'lodash';
 import VisibilitySensor from 'react-visibility-sensor';
 import { Box, Row, Text, Rule, BaseImage, Icon, Col } from '@tlon/indigo-react';
 import { Sigil } from '~/logic/lib/sigil';
-import OverlaySigil from '~/views/components/OverlaySigil';
 import {
   uxToHex,
   cite,
-  writeText,
   useShowNickname,
-  useHideAvatar,
   useHovering,
   daToUnix
 } from '~/logic/lib/util';
-import {
-  Group,
-  Association,
-  Contacts,
-  Post,
-  Groups,
-  Associations
-} from '~/types';
-import TextContent from '../../../landscape/components/Graph/content/text';
-import CodeContent from '../../../landscape/components/Graph/content/code';
-import RemoteContent from '~/views/components/RemoteContent';
-import { Mention } from '~/views/components/MentionText';
+import { Post } from '@urbit/api';
 import { Dropdown } from '~/views/components/Dropdown';
-import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
-import Timestamp from '~/views/components/Timestamp';
 import useContactState, {useContact} from '~/logic/state/contact';
 import { useIdlingState } from '~/logic/lib/idling';
 import ProfileOverlay from '~/views/components/ProfileOverlay';

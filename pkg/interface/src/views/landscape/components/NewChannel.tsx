@@ -44,6 +44,7 @@ interface NewChannelProps {
   api: GlobalApi;
   group?: string;
   workspace: Workspace;
+  baseUrl?: string;
 }
 
 export function NewChannel(props: NewChannelProps): ReactElement {
@@ -118,7 +119,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
       <Box
         pb='3'
         display={workspace?.type === 'messages' ? 'none' : ['block', 'none']}
-        onClick={() => history.push(props.baseUrl)}
+        onClick={() => history.push(props?.baseUrl ?? '/')}
       >
         <Text>{'<- Back'}</Text>
       </Box>

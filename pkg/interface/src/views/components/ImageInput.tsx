@@ -24,7 +24,7 @@ const prompt = (field, uploading, meta, clickUploadButton) => {
   if (!field.value && !uploading && meta.error === undefined) {
     return (
       <Text
-        black
+        color='black'
         fontWeight='500'
         position='absolute'
         left={2}

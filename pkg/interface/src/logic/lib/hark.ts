@@ -1,6 +1,6 @@
 import bigInt, { BigInteger } from 'big-integer';
 import f from 'lodash/fp';
-import { Unreads, NotificationGraphConfig } from '@urbit/api';
+import { Unreads, NotificationGraphConfig, IndexedNotification } from '@urbit/api';
 
 export function getLastSeen(
   unreads: Unreads,
@@ -44,3 +44,16 @@ export function isWatching(
     watch => watch.graph === graph && watch.index === index
   );
 }
+
+export function getNotificationKey(time: BigInteger, notification: IndexedNotification): string {
+  const base = time.toString();
+  if('graph' in notification.index) {
+    const { graph, index } = notification.index.graph;
+    return `${base}-${graph}-${index}`;
+  } else if('group' in notification.index) {
+    const { group } = notification.index.group;
+    return `${base}-${group}`;
+  }
+  return `${base}-unknown`;
+}
+

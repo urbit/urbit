@@ -1,27 +1,24 @@
-import React, { useCallback } from "react";
-import { ModalOverlay } from "~/views/components/ModalOverlay";
-import { Formik, Form, FormikHelpers } from "formik";
+import React, { useCallback } from 'react';
+import { ModalOverlay } from '~/views/components/ModalOverlay';
+import { Formik, Form, FormikHelpers } from 'formik';
 import {
-  GroupFeedPermissions,
-  GroupFeedPermsInput,
-} from "./Post/GroupFeedPerms";
-import { Text, Button, Col, Row } from "@tlon/indigo-react";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import GlobalApi from "~/logic/api/global";
-import { resourceFromPath, Tag, resourceAsPath } from "@urbit/api";
-import useGroupState, { useGroup } from "~/logic/state/group";
+  GroupFeedPermsInput
+} from './Post/GroupFeedPerms';
+import { Text, Button, Col, Row } from '@tlon/indigo-react';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import GlobalApi from '~/logic/api/global';
+import { resourceFromPath, Tag, resourceAsPath } from '@urbit/api';
 import { useHistory } from 'react-router-dom';
-import useMetadataState from "~/logic/state/metadata";
-
 
 interface FormSchema {
-  permissions: GroupFeedPermissions;
+  permissions: any;
 }
 
 export function EnableGroupFeed(props: {
   groupPath: string;
   dismiss: () => void;
   api: GlobalApi;
+  baseUrl: string;
 }) {
   const { api, groupPath, baseUrl } = props;
 
@@ -31,9 +28,9 @@ export function EnableGroupFeed(props: {
   };
 
   const initialValues: FormSchema = {
-    permissions: "everyone",
+    permissions: 'everyone'
   };
-  const onSubmit = 
+  const onSubmit =
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       const resource = resourceFromPath(groupPath);
       const feed = resourceAsPath(

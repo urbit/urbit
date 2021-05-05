@@ -93,16 +93,21 @@ class App extends React.Component {
       new GlobalSubscription(this.store, this.api, this.appChannel);
 
     this.updateTheme = this.updateTheme.bind(this);
+    this.updateMobile = this.updateMobile.bind(this);
     this.faviconString = this.faviconString.bind(this);
   }
 
   componentDidMount() {
     this.subscription.start();
+    const theme = this.getTheme();
     this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
+    this.mobileWatcher = window.matchMedia(`(max-width: ${theme.breakpoints[0]})`);
     this.themeWatcher.onchange = this.updateTheme;
+    this.mobileWatcher.onchange = this.updateMobile;
     setTimeout(() => {
       // Something about how the store works doesn't like changing it
       // before the app has actually rendered, hence the timeout.
+      this.updateMobile(this.mobileWatcher);
       this.updateTheme(this.themeWatcher);
     }, 500);
     this.api.local.getBaseHash();
@@ -117,11 +122,18 @@ class App extends React.Component {
 
   componentWillUnmount() {
     this.themeWatcher.onchange = undefined;
+    this.mobileWatcher.onchange = undefined;
   }
 
   updateTheme(e) {
     this.props.set(state => {
       state.dark = e.matches;
+    });
+  }
+
+  updateMobile(e) {
+    this.props.set(state => {
+      state.mobile = e.matches;
     });
   }
 
@@ -141,12 +153,16 @@ class App extends React.Component {
     return dataurl;
   }
 
-  render() {
-    const { state, props } = this;
-    const theme =
-    ((props.dark && props?.display?.theme == "auto") ||
+  getTheme() {
+    const { props } = this;
+    return ((props.dark && props?.display?.theme == "auto") ||
       props?.display?.theme == "dark"
     ) ? dark : light;
+  }
+
+  render() {
+    const { state } = this;
+    const theme = this.getTheme();
 
     const ourContact = this.props.contacts[`~${this.ship}`] || null;
     return (

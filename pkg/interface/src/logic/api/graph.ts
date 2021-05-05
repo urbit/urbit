@@ -3,7 +3,7 @@ import { StoreState } from '../store/type';
 import { Patp, Path, Resource } from '@urbit/api';
 import _ from 'lodash';
 import { makeResource, resourceFromPath } from '../lib/group';
-import { GroupPolicy, Enc, Post, Content } from '@urbit/api';
+import { GroupPolicy, Enc, Post, Content, GraphNode } from '@urbit/api';
 import { numToUd, unixToDa, decToUd, deSig, resourceAsPath } from '~/logic/lib/util';
 
 export const createBlankNodeWithChildPost = (
@@ -211,7 +211,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     return this.addNodes(ship, name, nodes);
   }
 
-  addNode(ship: Patp, name: string, node: Object) {
+  addNode(ship: Patp, name: string, node: GraphNode) {
     const nodes = {};
     nodes[node.post.index] = node;
 
