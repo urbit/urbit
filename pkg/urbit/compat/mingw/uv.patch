@@ -15,3 +15,16 @@ index 0f2bb869b..f81245ec6 100644
      if (err == ERROR_ACCESS_DENIED) {
        /*
         * SetNamedPipeHandleState can fail if the handle doesn't have either
+diff --git a/src/win/tty.c b/src/win/tty.c
+index c359d5601..1b9d4f853 100644
+--- a/src/win/tty.c
++++ b/src/win/tty.c
+@@ -367,7 +367,7 @@ int uv_tty_set_mode(uv_tty_t* tty, uv_tty_mode_t mode) {
+       flags = ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT | ENABLE_PROCESSED_INPUT;
+       break;
+     case UV_TTY_MODE_RAW:
+-      flags = ENABLE_WINDOW_INPUT;
++      flags = ENABLE_WINDOW_INPUT | ENABLE_PROCESSED_INPUT;
+       break;
+     case UV_TTY_MODE_IO:
+       return UV_ENOTSUP;
