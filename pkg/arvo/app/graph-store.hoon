@@ -1030,10 +1030,11 @@
       [(snoc index atom) node]
     ==
   ::
-      [%x %graph-deep-subset @ @ @ ~]
+      [%x %deep-nodes-up-to @ @ @ @ ~]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
     =/  count=(unit atom)  (rush i.t.t.t.t.path dem:ag)
+    =/  start=(unit atom)  (rush i.t.t.t.t.t.path dem:ag)
     ?:  ?=(~ count)
       [~ ~]
     =/  result=(unit marked-graph:store)

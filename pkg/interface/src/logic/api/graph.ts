@@ -325,6 +325,14 @@ export default class GraphApi extends BaseApi<StoreState> {
     this.store.handleEvent({ data });
   }
 
+  async getDeepNodesUpTo(ship: string, resource: string, startTime = null, count: number) {
+    const start = startTime ? decToUd(startTime) : null;
+    const data = await this.scry<any>('graph-store',
+       `/deep-nodes-up-to/${ship}/${resource}/${count}/${start}`
+     );
+    this.store.handleEvent({ data });
+  }
+
   getGraphSubset(ship: string, resource: string, start: string, end: string) {
     return this.scry<any>(
       'graph-store',
