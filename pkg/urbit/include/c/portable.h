@@ -81,6 +81,7 @@
 #     include <unistd.h>
 #     include <stdint.h>
 #     include <assert.h>
+#     include <setjmp.h>
 #     include <stdio.h>
 #     include <dirent.h>
 #     include <signal.h>

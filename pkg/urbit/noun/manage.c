@@ -2,6 +2,7 @@
 **
 */
 #include "all.h"
+#include "rsignal.h"
 #include "vere/vere.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -73,7 +74,14 @@
                      u3_noun   arg);
 
 
-static sigjmp_buf u3_Signal;
+//  u3m_signal uses restricted functionality signals for compatibility reasons:
+//  some platforms may not provide true POSIX asynchronous signals and their
+//  compat layer will then implement this restricted functionality subset.
+//  u3m_signal never needs to interrupt I/O operations, its signal handlers
+//  do not manipulate signals, do not modify shared state, and always either
+//  return or longjmp.
+//
+static rsignal_jmpbuf u3_Signal;
 
 #ifndef SIGSTKSZ
 # define SIGSTKSZ 16384
@@ -330,8 +338,8 @@ _cm_signal_deep(c3_w mil_w)
 #ifndef NO_OVERFLOW
   stackoverflow_install_handler(_cm_signal_handle_over, Sigstk, SIGSTKSZ);
 #endif
-  signal(SIGINT, _cm_signal_handle_intr);
-  signal(SIGTERM, _cm_signal_handle_term);
+  rsignal_install_handler(SIGINT, _cm_signal_handle_intr);
+  rsignal_install_handler(SIGTERM, _cm_signal_handle_term);
 
   // Provide a little emergency memory, for use in case things
   // go utterly haywire.
@@ -347,11 +355,11 @@ _cm_signal_deep(c3_w mil_w)
     itm_u.it_value.tv_sec  = (mil_w / 1000);
     itm_u.it_value.tv_usec = 1000 * (mil_w % 1000);
 
-    if ( setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
+    if ( rsignal_setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
       u3l_log("loom: set timer failed %s\r\n", strerror(errno));
     }
     else {
-      signal(SIGVTALRM, _cm_signal_handle_alrm);
+      rsignal_install_handler(SIGVTALRM, _cm_signal_handle_alrm);
     }
   }
 
@@ -363,9 +371,9 @@ _cm_signal_deep(c3_w mil_w)
 static void
 _cm_signal_done()
 {
-  signal(SIGINT, SIG_IGN);
-  signal(SIGTERM, SIG_IGN);
-  signal(SIGVTALRM, SIG_IGN);
+  rsignal_deinstall_handler(SIGINT);
+  rsignal_deinstall_handler(SIGTERM);
+  rsignal_deinstall_handler(SIGVTALRM);
 
 #ifndef NO_OVERFLOW
   stackoverflow_deinstall_handler();
@@ -376,7 +384,7 @@ _cm_signal_done()
     timerclear(&itm_u.it_interval);
     timerclear(&itm_u.it_value);
 
-    if ( setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
+    if ( rsignal_setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
       u3l_log("loom: clear timer failed %s\r\n", strerror(errno));
     }
   }
@@ -395,7 +403,7 @@ _cm_signal_done()
 void
 u3m_signal(u3_noun sig_l)
 {
-  siglongjmp(u3_Signal, sig_l);
+  rsignal_longjmp(u3_Signal, sig_l);
 }
 
 /* u3m_file(): load file, as atom, or bail.
@@ -957,7 +965,7 @@ u3m_soft_top(c3_w    mil_w,                     //  timer ms
   */
   _cm_signal_deep(mil_w);
 
-  if ( 0 != (sig_l = sigsetjmp(u3_Signal, 1)) ) {
+  if ( 0 != (sig_l = rsignal_setjmp(u3_Signal)) ) {
     //  reinitialize trace state
     //
     u3t_init();
@@ -1620,8 +1628,6 @@ _cm_signals(void)
     u3l_log("boot: sigsegv install failed\n");
     exit(1);
   }
-  // signal(SIGINT, _loom_stop);
-
 
 # if defined(U3_OS_PROF)
   //  Block SIGPROF, so that if/when we reactivate it on the
