@@ -18,7 +18,7 @@ export default class LaunchReducer {
       ]);
     }
 
-    const weatherData: WeatherState = _.get(json, 'weather', false);
+    const weatherData: WeatherState | boolean | Record<string, never> = _.get(json, 'weather', false);
     if (weatherData) {
       useLaunchState.getState().set(state => {
         state.weather = weatherData;

@@ -15,31 +15,30 @@ import useGroupState from '~/logic/state/group';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
+import { Workspace } from '~/types';
 
 type ResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+  workspace: Workspace;
+};
 
 export function Resource(props: ResourceProps): ReactElement {
-  const { association, api, notificationsGraphConfig } = props;
+  const { association, api } = props;
   const groups = useGroupState(state => state.groups);
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const associations = useMetadataState(state => state.associations);
   const contacts = useContactState(state => state.contacts);
   const app = association.metadata?.config?.graph || association['app-name'];
-  const rid = association.resource;
-  const selectedGroup = association.group;
-  const relativePath = (p: string) =>
-    `${props.baseUrl}/resource/${app}${rid}${p}`;
+  const { resource: rid, group: selectedGroup } = association;
+  const relativePath = (p: string) => `${props.baseUrl}/resource/${app}${rid}${p}`;
   const skelProps = { api, association, groups, contacts };
   let title = props.association.metadata.title;
-  if ('workspace' in props) {
-    if ('group' in props.workspace && props.workspace.group in associations.groups) {
+  if ('group' in props.workspace && props.workspace.group in associations.groups) {
       title = `${associations.groups[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
-    }
   }
+
   return (
     <>
       <Helmet defer={false}>

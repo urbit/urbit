@@ -35,4 +35,8 @@ export function useContact(ship: string) {
   );
 }
 
+export function useOurContact() {
+  return useContact(`~${window.ship}`)
+}
+
 export default useContactState;

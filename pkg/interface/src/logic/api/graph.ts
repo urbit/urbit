@@ -3,7 +3,7 @@ import { StoreState } from '../store/type';
 import { Patp, Path, Resource } from '@urbit/api';
 import _ from 'lodash';
 import { makeResource, resourceFromPath } from '../lib/group';
-import { GroupPolicy, Enc, Post, Content } from '@urbit/api';
+import { GroupPolicy, Enc, Post, Content, GraphNode } from '@urbit/api';
 import { numToUd, unixToDa, decToUd, deSig, resourceAsPath } from '~/logic/lib/util';
 
 export const createBlankNodeWithChildPost = (
@@ -83,7 +83,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   joiningGraphs = new Set<string>();
 
   private storeAction(action: any): Promise<any> {
-    return this.action('graph-store', 'graph-update-1', action);
+    return this.action('graph-store', 'graph-update-2', action);
   }
 
   private viewAction(threadName: string, action: any) {
@@ -91,7 +91,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   private hookAction(ship: Patp, action: any): Promise<any> {
-    return this.action('graph-push-hook', 'graph-update-1', action);
+    return this.action('graph-push-hook', 'graph-update-2', action);
   }
 
   createManagedGraph(
@@ -211,7 +211,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     return this.addNodes(ship, name, nodes);
   }
 
-  addNode(ship: Patp, name: string, node: Object) {
+  addNode(ship: Patp, name: string, node: GraphNode) {
     const nodes = {};
     nodes[node.post.index] = node;
 
@@ -227,7 +227,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     };
 
     const pendingPromise = this.spider(
-      'graph-update-1',
+      'graph-update-2',
       'graph-view-action',
       'graph-add-nodes',
       action
@@ -283,9 +283,9 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
 
-  removeNodes(ship: Patp, name: string, indices: string[]) {
+  removePosts(ship: Patp, name: string, indices: string[]) {
     return this.hookAction(ship, {
-      'remove-nodes': {
+      'remove-posts': {
         resource: { ship, name },
         indices
       }

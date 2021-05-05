@@ -6,13 +6,8 @@ import {
 
 import GlobalApi from '~/logic/api/global';
 import { GroupSwitcher } from '../GroupSwitcher';
-import {
-  Associations,
-  Workspace,
-  Groups,
-  Invites,
-  Rolodex
-} from '@urbit/api';
+import { Workspace } from '~/types';
+import { SidebarListConfig } from './types';
 import { SidebarListHeader } from './SidebarListHeader';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
@@ -21,7 +16,6 @@ import { SidebarList } from './SidebarList';
 import { roleForShip } from '~/logic/lib/group';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import useGroupState from '~/logic/state/group';
-import useMetadataState from '~/logic/state/metadata';
 
 const ScrollbarLessCol = styled(Col)`
   scrollbar-width: none !important;
@@ -32,7 +26,6 @@ const ScrollbarLessCol = styled(Col)`
 `;
 
 interface SidebarProps {
-  children: ReactNode;
   recentGroups: string[];
   api: GlobalApi;
   selected?: string;
@@ -91,7 +84,6 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         selected={selected || ''}
         workspace={workspace}
         api={props.api}
-        history={props.history}
       />
       <SidebarList
         config={config}

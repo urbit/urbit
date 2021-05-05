@@ -1,7 +1,9 @@
-import produce from "immer";
+import produce, { setAutoFreeze } from "immer";
 import { compose } from "lodash/fp";
 import create, { State, UseStore } from "zustand";
 import { persist, devtools } from "zustand/middleware";
+
+setAutoFreeze(false);
 
 
 export const stateSetter = <StateType>(
@@ -43,16 +45,15 @@ export interface BaseState<StateType> extends State {
   set: (fn: (state: StateType) => void) => void;
 }
 
-export const createState = <StateType extends BaseState<any>>(
+export const createState = <T extends {}>(
   name: string,
-  properties: Omit<StateType, 'set'>,
+  properties: T,
   blacklist: string[] = []
-): UseStore<StateType> => create(persist((set, get) => ({
-  // TODO why does this typing break?
+): UseStore<T & BaseState<T>> => create(persist((set, get) => ({
   set: fn => stateSetter(fn, set),
   ...properties
 }), {
   blacklist,
   name: stateStorageKey(name),
-  version: process.env.LANDSCAPE_SHORTHASH
+  version: process.env.LANDSCAPE_SHORTHASH as any
 }));

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import f from 'lodash/fp';
 import create, { State }  from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -7,7 +7,7 @@ import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgre
 
 
 export interface LocalState {
-  theme: "light" | "dark" | "auto";
+  theme: 'light' | 'dark' | 'auto';
   hideAvatars: boolean;
   hideNicknames: boolean;
   remoteContentPolicy: RemoteContentPolicy;
@@ -38,7 +38,7 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   dark: false,
   mobile: false,
   background: undefined,
-  theme: "auto",
+  theme: 'auto',
   hideAvatars: false,
   hideNicknames: false,
   hideLeapCats: [],
@@ -92,8 +92,8 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   name: 'localReducer'
 }));
 
-function withLocalState<P, S extends keyof LocalState>(Component: any, stateMemberKeys?: S[]) {
-  return React.forwardRef((props: Omit<P, S>, ref) => {
+function withLocalState<P, S extends keyof LocalState, C extends React.ComponentType<P>>(Component: C, stateMemberKeys?: S[]) {
+  return React.forwardRef<C, Omit<P, S>>((props, ref) => {
     const localState = stateMemberKeys ? useLocalState(
       state => stateMemberKeys.reduce(
         (object, key) => ({ ...object, [key]: state[key] }), {}

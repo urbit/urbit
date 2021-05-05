@@ -11,7 +11,7 @@ type PublishResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+};
 
 export function PublishResource(props: PublishResourceProps) {
   const { association, api, baseUrl, notebooks } = props;

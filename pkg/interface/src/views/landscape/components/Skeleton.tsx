@@ -52,8 +52,7 @@ export function Skeleton(props: SkeletonProps): ReactElement {
           baseUrl={props.baseUrl}
           mobileHide={props.mobileHide}
           workspace={props.workspace}
-          history={props.history}
-          />
+        />
       </ErrorBoundary>
       {props.children}
     </Body>

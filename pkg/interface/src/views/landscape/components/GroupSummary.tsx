@@ -1,5 +1,6 @@
 import React, { ReactElement, ReactNode, useRef } from 'react';
-import { Metadata, PropFunc } from '@urbit/api';
+import { Metadata } from '@urbit/api';
+import { PropFunc } from '~/types';
 import { Col, Row, Text } from '@tlon/indigo-react';
 import { MetadataIcon } from './MetadataIcon';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
@@ -29,9 +30,9 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
           width="40px"
           height="40px"
           metadata={metadata}
-          flexShrink="0"
+          flexShrink={0}
         />
-        <Col justifyContent="space-between" flexGrow="1" overflow="hidden">
+        <Col justifyContent="space-between" flexGrow={1} overflow="hidden">
           <Text
             fontSize="1"
             textOverflow="ellipsis"

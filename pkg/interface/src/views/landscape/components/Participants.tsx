@@ -2,7 +2,8 @@ import React, {
   useState,
   useMemo,
   useCallback,
-  ChangeEvent
+  ChangeEvent,
+  ReactElement
 } from 'react';
 import {
   Col,
@@ -30,10 +31,8 @@ import { roleForShip, resourceFromPath } from '~/logic/lib/group';
 import { Dropdown } from '~/views/components/Dropdown';
 import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
-import useLocalState from '~/logic/state/local';
 import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
-import {deSig} from '@urbit/api';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -181,9 +180,9 @@ export function Participants(props: {
         mb={2}
         px={2}
         zIndex={1}
-        flexShrink="0"
+        flexShrink={0}
       >
-        <Row mr="4" flexShrink="0">
+        <Row mr="4" flexShrink={0}>
           <Tab
             selected={filter}
             setSelected={setFilter}
@@ -206,9 +205,9 @@ export function Participants(props: {
           />
         </Row>
       </Row>
-      <Col flexShrink="0" width="100%" height="fit-content">
+      <Col flexShrink={0} width="100%" height="fit-content">
         <Row alignItems="center" bg="washedGray" borderRadius="1" px="2" my="2">
-          <Icon color="gray" icon="MagnifyingGlass" />
+          <Icon color="gray" icon="Search" />
           <Input
             maxWidth="256px"
             color="gray"
@@ -304,7 +303,7 @@ function Participant(props: {
   }, [api, contact, association]);
 
   const avatar =
-    contact?.avatar !== null && !hideAvatars ? (
+    contact?.avatar && !hideAvatars ? (
       <Image
         src={contact.avatar}
         height={32}

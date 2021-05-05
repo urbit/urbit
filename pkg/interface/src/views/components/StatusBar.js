@@ -83,7 +83,7 @@ const StatusBar = (props) => {
           onClick={() => history.push('/')}
           {...props}
         >
-          <Icon icon='Spaces' color='black' />
+          <Icon icon='Dashboard' color='black' />
         </Button>
         <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
           {!doNotDisturb && (notificationsCount > 0 || invites.length > 0) && (
@@ -121,20 +121,14 @@ const StatusBar = (props) => {
             )
           }
         >
-          <Text color='#000000'>
-            Submit{' '}
-            <Text color='#000000' display={['none', 'inline']}>
-              an
-            </Text>{' '}
-            issue
-          </Text>
+        <Icon icon="Bug" color="#000000" />
         </StatusBarItem>
         <StatusBarItem
           width='32px'
           mr={2}
           onClick={() => props.history.push('/~landscape/messages')}
         >
-          <Icon icon='Users' />
+          <Icon icon='Messages' />
         </StatusBarItem>
         <Dropdown
           dropWidth='250px'

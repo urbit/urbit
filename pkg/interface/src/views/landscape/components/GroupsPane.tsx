@@ -1,10 +1,9 @@
-import React, { useEffect, ReactNode } from 'react';
+import React, { useEffect } from 'react';
 import {
   Switch,
   Route,
   RouteComponentProps
 } from 'react-router-dom';
-import { Col, Box, Text } from '@tlon/indigo-react';
 import _ from 'lodash';
 import Helmet from 'react-helmet';
 
@@ -28,7 +27,6 @@ import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import { GroupHome } from './Home/GroupHome';
 import { EmptyGroupHome } from './Home/EmptyGroupHome';
 import { Workspace } from '~/types/workspace';
-import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
@@ -42,17 +40,12 @@ type GroupsPaneProps = StoreState & {
 export function GroupsPane(props: GroupsPaneProps) {
   const { baseUrl, api, workspace } = props;
   const associations = useMetadataState(state => state.associations);
-  const contacts = useContactState(state => state.contacts);
   const notificationsCount = useHarkState(state => state.notificationsCount);
-  
+
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
   const groups = useGroupState(state => state.groups);
 
-  const groupContacts = Object.assign({}, ...Array.from(groups?.[groupPath]?.members ?? []).filter(e => contacts[`~${e}`]).map(e => {
-      return {[e]: contacts[`~${e}`]};
-  })) || {};
-  const rootIdentity = contacts?.["/~/default"]?.[window.ship];
   const groupAssociation =
     (groupPath && associations.groups[groupPath]) || undefined;
   const group = (groupPath && groups[groupPath]) || undefined;
@@ -75,8 +68,6 @@ export function GroupsPane(props: GroupsPaneProps) {
   const popovers = (routeProps: RouteComponentProps, baseUrl: string) =>
      ( <>
         {groupPath && ( <PopoverRoutes
-          contacts={groupContacts || {}}
-          rootIdentity={rootIdentity}
           association={groupAssociation!}
           group={group!}
           api={api}
@@ -124,7 +115,6 @@ export function GroupsPane(props: GroupsPaneProps) {
             >
               <Resource
                 {...props}
-                {...routeProps}
                 association={association}
                 baseUrl={baseUrl}
               />
@@ -203,12 +193,13 @@ export function GroupsPane(props: GroupsPaneProps) {
                 </title>
               </Helmet>
               <Skeleton
+                {...props}
                 mobileHide={shouldHideSidebar}
                 recentGroups={recentGroups}
                 baseUrl={baseUrl}
-                {...props}>
+              >
                 { workspace.type === 'group' ? (
-                  <GroupHome 
+                  <GroupHome
                     api={api}
                     baseUrl={baseUrl}
                     groupPath={groupPath}
