@@ -32,8 +32,8 @@
   [%& %project "y/n: "]
 %+  parse
   ;~  pose
-    (cold %.y ;~(pose (just 'y') (just 'Y')))
-    (cold %.n ;~(pose (just 'n') (just 'N')))
+    (cold %.y (mask "yY"))
+    (cold %.n (mask "nN"))
   ==
 |=  reset=?
 ?.  reset
