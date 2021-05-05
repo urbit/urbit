@@ -1,16 +1,12 @@
-import React, { ReactElement } from 'react';
-
 import {
-  Text,
-  Row,
-  Label,
-  Col,
-  ManagedRadioButtonField as Radio
-} from '@tlon/indigo-react';
+  Col, Label,
 
+  ManagedRadioButtonField as Radio, Row, Text
+} from '@tlon/indigo-react';
+import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
-import { ImageInput } from '~/views/components/ImageInput';
 import { ColorInput } from '~/views/components/ColorInput';
+import { ImageInput } from '~/views/components/ImageInput';
 
 export type BgType = 'none' | 'url' | 'color';
 
@@ -60,7 +56,8 @@ export function BackgroundPicker({
         caption="Your home screen will simply render as its respective day/night mode color"
         name="bgType"
         label="None"
-        id="none" />
+        id="none"
+      />
     </Col>
   );
 }

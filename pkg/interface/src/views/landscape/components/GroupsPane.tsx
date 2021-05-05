@@ -1,35 +1,30 @@
-import React, { useEffect } from 'react';
-import {
-  Switch,
-  Route,
-  RouteComponentProps
-} from 'react-router-dom';
-import _ from 'lodash';
-import Helmet from 'react-helmet';
-
 import { AppName } from '@urbit/api';
-
-import { Resource } from './Resource';
-import { PopoverRoutes } from './PopoverRoutes';
-import { Skeleton } from './Skeleton';
-import { InvitePopover } from './InvitePopover';
-import { NewChannel } from './NewChannel';
-
+import _ from 'lodash';
+import React, { useEffect } from 'react';
+import Helmet from 'react-helmet';
+import {
+  Route,
+  RouteComponentProps, Switch
+} from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { StoreState } from '~/logic/store/type';
-import { UnjoinedResource } from '~/views/components/UnjoinedResource';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
-import { Loading } from '~/views/components/Loading';
-
-import '~/views/apps/links/css/custom.css';
-import '~/views/apps/publish/css/custom.css';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
-import { GroupHome } from './Home/GroupHome';
-import { EmptyGroupHome } from './Home/EmptyGroupHome';
-import { Workspace } from '~/types/workspace';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
+import { StoreState } from '~/logic/store/type';
+import { Workspace } from '~/types/workspace';
+import '~/views/apps/links/css/custom.css';
+import '~/views/apps/publish/css/custom.css';
+import { Loading } from '~/views/components/Loading';
+import { UnjoinedResource } from '~/views/components/UnjoinedResource';
+import { EmptyGroupHome } from './Home/EmptyGroupHome';
+import { GroupHome } from './Home/GroupHome';
+import { InvitePopover } from './InvitePopover';
+import { NewChannel } from './NewChannel';
+import { PopoverRoutes } from './PopoverRoutes';
+import { Resource } from './Resource';
+import { Skeleton } from './Skeleton';
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;

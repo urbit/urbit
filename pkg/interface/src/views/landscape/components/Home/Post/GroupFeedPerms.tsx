@@ -1,11 +1,10 @@
-import React from "react";
 import {
-  ManagedRadioButtonField as Radio,
-  Col,
-  Label,
-  Text,
-} from "@tlon/indigo-react";
-import { PropFunc } from "~/types";
+  Col, ManagedRadioButtonField as Radio,
+
+  Text
+} from '@tlon/indigo-react';
+import React from 'react';
+import { PropFunc } from '~/types';
 
 export function GroupFeedPermsInput(
   props: {

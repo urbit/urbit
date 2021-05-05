@@ -1,21 +1,15 @@
+import { Box, Center, Col, Row, Text } from '@tlon/indigo-react';
 import React, { ReactElement } from 'react';
-import _ from 'lodash';
-import { useHistory } from 'react-router-dom';
-import { Center, Box, Text, Row, Col } from '@tlon/indigo-react';
-import RichText from '~/views/components/RichText';
-import useSettingsState, { selectCalmState } from '~/logic/state/settings';
-import { Sigil } from '~/logic/lib/sigil';
-import { GroupLink } from '~/views/components/GroupLink';
 import { lengthOrder } from '~/logic/lib/util';
-import useLocalState from '~/logic/state/local';
-import {
-  ProfileHeader,
-  ProfileControls,
-  ProfileActions,
-  ProfileStatus,
-  ProfileImages
-} from './Profile';
 import useContactState from '~/logic/state/contact';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import { GroupLink } from '~/views/components/GroupLink';
+import RichText from '~/views/components/RichText';
+import {
+  ProfileActions, ProfileControls, ProfileHeader,
+
+  ProfileImages, ProfileStatus
+} from './Profile';
 
 export function ViewProfile(props: any): ReactElement {
   const { hideNicknames } = useSettingsState(selectCalmState);
@@ -62,7 +56,7 @@ export function ViewProfile(props: any): ReactElement {
         <Col gapY='3' mb='3' mt='6' alignItems='flex-start'>
           <Text gray>Pinned Groups</Text>
           <Col>
-            {contact?.groups.slice().sort(lengthOrder).map((g) => (
+            {contact?.groups.slice().sort(lengthOrder).map(g => (
               <GroupLink
                 api={api}
                 resource={g}

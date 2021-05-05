@@ -1,8 +1,8 @@
-import { Post, GraphNode, TextContent } from '@urbit/api';
+import { GraphNode, Post, TextContent } from '@urbit/api';
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import bigInt, { BigInteger } from 'big-integer';
 import { buntPost } from '~/logic/lib/post';
 import { unixToDa } from '~/logic/lib/util';
-import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
-import bigInt, { BigInteger } from 'big-integer';
 
 export function newPost(
   title: string,

@@ -1,15 +1,13 @@
-import React, { useEffect, useState, useLayoutEffect, ReactElement } from 'react';
+import { Box, Col, Row, Text } from '@tlon/indigo-react';
+import React, { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Box, Text, Row, Col } from '@tlon/indigo-react';
-import { Associations, Groups } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
-import { MetadataIcon } from '../landscape/components/MetadataIcon';
-import { JoinGroup } from '../landscape/components/JoinGroup';
 import { useModal } from '~/logic/lib/useModal';
-import { GroupSummary } from '../landscape/components/GroupSummary';
-import { PropFunc } from '~/types';
+import { useVirtual } from '~/logic/lib/virtualContext';
 import useMetadataState from '~/logic/state/metadata';
-import {useVirtual} from '~/logic/lib/virtualContext';
+import { PropFunc } from '~/types';
+import { JoinGroup } from '../landscape/components/JoinGroup';
+import { MetadataIcon } from '../landscape/components/MetadataIcon';
 
 export function GroupLink(
   props: {
@@ -48,7 +46,11 @@ export function GroupLink(
   }, [preview]);
 
   return (
-    <Box maxWidth="500px" {...rest} onClick={(e) => { e.stopPropagation(); }}>
+    <Box maxWidth="500px" {...rest}
+onClick={(e) => {
+ e.stopPropagation();
+}}
+    >
       {modal}
       <Row
         width="fit-content"
@@ -62,12 +64,12 @@ export function GroupLink(
         cursor='pointer'
         opacity={preview ? '1' : '0.6'}
       >
-        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : {"color": "0x0"}} />
+        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : { 'color': '0x0' }} />
           <Col>
           <Text ml="2" fontWeight="medium" mono={!preview}>
             {preview ? preview.metadata.title : name}
           </Text>
-          <Text pt='1' ml='2'>{preview ? `${preview.members} members` : "Fetching member count"}</Text>
+          <Text pt='1' ml='2'>{preview ? `${preview.members} members` : 'Fetching member count'}</Text>
         </Col>
       </Row>
     </Box>

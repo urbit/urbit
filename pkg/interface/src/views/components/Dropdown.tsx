@@ -1,20 +1,14 @@
-import React, {
-  ReactNode,
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-  ReactElement
-} from 'react';
-import styled from 'styled-components';
-import _ from 'lodash';
-import { useLocation } from 'react-router-dom';
-
 import { Box } from '@tlon/indigo-react';
+import React, {
+  ReactElement, ReactNode,
 
+  useCallback, useEffect, useRef, useState
+} from 'react';
+import { useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import { AlignX, AlignY, getRelativePosition } from '~/logic/lib/relativePosition';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { Portal } from './Portal';
-import { getRelativePosition, AlignY, AlignX } from '~/logic/lib/relativePosition';
 
 interface DropdownProps {
   children: ReactNode;

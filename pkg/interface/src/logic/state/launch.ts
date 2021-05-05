@@ -1,7 +1,5 @@
-import { Tile, WeatherState } from "~/types/launch-update";
-
-import { BaseState, createState } from "./base";
-
+import { Tile, WeatherState } from '~/types/launch-update';
+import { BaseState, createState } from './base';
 
 export interface LaunchState extends BaseState<LaunchState> {
   firstTime: boolean;
@@ -12,7 +10,7 @@ export interface LaunchState extends BaseState<LaunchState> {
   weather: WeatherState | null | Record<string, never> | boolean,
   userLocation: string | null;
   baseHash: string | null;
-};
+}
 
 const useLaunchState = createState<LaunchState>('Launch', {
   firstTime: true,
@@ -22,6 +20,5 @@ const useLaunchState = createState<LaunchState>('Launch', {
   userLocation: null,
   baseHash: null
 });
-
 
 export default useLaunchState;

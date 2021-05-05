@@ -1,15 +1,15 @@
-import useLocalState, { LocalState } from "~/logic/state/local";
-import useSettingsState from "~/logic/state/settings";
-import GlobalApi from "../api/global";
-import { BackgroundConfig, RemoteContentPolicy } from "~/types";
+import useLocalState from '~/logic/state/local';
+import useSettingsState from '~/logic/state/settings';
+import { BackgroundConfig, RemoteContentPolicy } from '~/types';
+import GlobalApi from '../api/global';
 
 const getBackgroundString = (bg: BackgroundConfig) => {
-  if (bg?.type === "url") {
+  if (bg?.type === 'url') {
     return bg.url;
-  } else if (bg?.type === "color") {
+  } else if (bg?.type === 'color') {
     return bg.color;
   } else {
-    return "";
+    return '';
   }
 };
 
@@ -18,17 +18,17 @@ export function useMigrateSettings(api: GlobalApi) {
   const { display, remoteContentPolicy, calm } = useSettingsState();
 
   return async () => {
-    let promises: Promise<any>[] = [];
+    const promises: Promise<any>[] = [];
 
     if (local.hideAvatars !== calm.hideAvatars) {
       promises.push(
-        api.settings.putEntry("calm", "hideAvatars", local.hideAvatars)
+        api.settings.putEntry('calm', 'hideAvatars', local.hideAvatars)
       );
     }
 
     if (local.hideNicknames !== calm.hideNicknames) {
       promises.push(
-        api.settings.putEntry("calm", "hideNicknames", local.hideNicknames)
+        api.settings.putEntry('calm', 'hideNicknames', local.hideNicknames)
       );
     }
 
@@ -38,15 +38,15 @@ export function useMigrateSettings(api: GlobalApi) {
     ) {
       promises.push(
         api.settings.putEntry(
-          "display",
-          "background",
+          'display',
+          'background',
           getBackgroundString(local.background)
         )
       );
       promises.push(
         api.settings.putEntry(
-          "display",
-          "backgroundType",
+          'display',
+          'backgroundType',
           local.background?.type
         )
       );
@@ -57,12 +57,12 @@ export function useMigrateSettings(api: GlobalApi) {
       const localVal = local.remoteContentPolicy[key];
       if (localVal !== remoteContentPolicy[key]) {
         promises.push(
-          api.settings.putEntry("remoteContentPolicy", key, localVal)
+          api.settings.putEntry('remoteContentPolicy', key, localVal)
         );
       }
     });
 
     await Promise.all(promises);
-    localStorage.removeItem("localReducer");
+    localStorage.removeItem('localReducer');
   };
 }

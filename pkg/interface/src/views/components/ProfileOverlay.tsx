@@ -1,33 +1,30 @@
-import React, { PureComponent, useCallback, useEffect, useRef, useState, useMemo, ReactNode } from 'react';
-import { Contact, Group, uxToHex } from '@urbit/api';
+import {
+  BaseImage, Box,
+
+  BoxProps,
+
+  Center, Col,
+
+  Icon, Row,
+
+  Text
+} from '@tlon/indigo-react';
+import { uxToHex } from '@urbit/api';
 import _ from 'lodash';
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
 import styled from 'styled-components';
-
-import { cite, useShowNickname } from '~/logic/lib/util';
+import { getRelativePosition } from '~/logic/lib/relativePosition';
 import { Sigil } from '~/logic/lib/sigil';
-
-import {
-  Box,
-  Row,
-  Col,
-  Button,
-  Text,
-  BaseImage,
-  Icon,
-  BoxProps,
-  ColProps,
-  Center
-} from '@tlon/indigo-react';
-import RichText from './RichText';
-import { ProfileStatus } from './ProfileStatus';
+import { useCopy } from '~/logic/lib/useCopy';
+import { useOutsideClick } from '~/logic/lib/useOutsideClick';
+import { cite, useShowNickname } from '~/logic/lib/util';
+import { useContact } from '~/logic/state/contact';
 import useSettingsState from '~/logic/state/settings';
-import {useOutsideClick} from '~/logic/lib/useOutsideClick';
-import {useCopy} from '~/logic/lib/useCopy';
-import {useContact} from '~/logic/state/contact';
-import {useHistory} from 'react-router-dom';
-import {Portal} from './Portal';
-import {getRelativePosition} from '~/logic/lib/relativePosition';
+import { Portal } from './Portal';
+import { ProfileStatus } from './ProfileStatus';
+import RichText from './RichText';
 
 export const OVERLAY_HEIGHT = 250;
 const FixedOverlay = styled(Col)`
@@ -62,7 +59,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   const isOwn = useMemo(() => window.ship === ship, [ship]);
   const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`);
 
-  const contact = useContact(`~${ship}`)
+  const contact = useContact(`~${ship}`);
   const color = `#${uxToHex(contact?.color ?? '0x0')}`;
   const showNickname = useShowNickname(contact, hideNicknames);
 
