@@ -84,6 +84,14 @@
     !>  small-test-items
     !>  (tab:atom-map a ~ 3)
 ::
+++  test-ordered-map-tab-more-than-exist  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  %+  expect-eq
+    !>  test-items
+    !>  (tab:atom-map a [~ 0] 8)
+::
 ++  test-ordered-map-pop  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
