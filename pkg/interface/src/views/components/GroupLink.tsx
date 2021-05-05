@@ -6,7 +6,6 @@ import GlobalApi from '~/logic/api/global';
 import { MetadataIcon } from '../landscape/components/MetadataIcon';
 import { JoinGroup } from '../landscape/components/JoinGroup';
 import { useModal } from '~/logic/lib/useModal';
-import { useHovering } from '~/logic/lib/util';
 import { GroupSummary } from '../landscape/components/GroupSummary';
 import { PropFunc } from '~/types';
 import useMetadataState from '~/logic/state/metadata';
@@ -25,7 +24,6 @@ export function GroupLink(
   const associations = useMetadataState(state => state.associations);
   const { save, restore } = useVirtual();
   const history = useHistory();
-  const { hovering, bind } = useHovering();
   const joined = resource in associations.groups;
 
   const { modal, showModal } = useModal({
@@ -53,13 +51,12 @@ export function GroupLink(
     <Box
       maxWidth="500px"
       cursor='pointer'
-      {...bind}
       {...rest}
       onClick={(e) => {
         e.stopPropagation();
       }}
       backgroundColor='white'
-      borderColor={hovering ? 'lightBlue' : props.borderColor}
+      borderColor={props.borderColor}
     >
       {modal}
       <Row

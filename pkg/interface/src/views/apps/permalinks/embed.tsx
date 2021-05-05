@@ -18,7 +18,7 @@ import {
 } from "@tlon/indigo-react";
 import { GroupLink } from "~/views/components/GroupLink";
 import GlobalApi from "~/logic/api/global";
-import { getModuleIcon, useHovering } from "~/logic/lib/util";
+import { getModuleIcon } from "~/logic/lib/util";
 import useMetadataState from "~/logic/state/metadata";
 import { Association, resourceFromPath, GraphNode } from "@urbit/api";
 import { Link, useLocation } from "react-router-dom";
@@ -53,7 +53,6 @@ function GraphPermalink(
   const { full = false, showOurContact, pending, link, graph, group, index, api, transcluded } = props;
   const history = useHistory();
   const location = useLocation();
-  const { hovering, bind } = useHovering();
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
     useCallback((s) => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index] as GraphNode, [
@@ -90,8 +89,8 @@ function GraphPermalink(
     history.push(`/perma${permalink.slice(16)}`);
   };
 
-  const [nodeGroupHost, nodeGroupName] = association.group.split('/').slice(-2);
-  const [nodeChannelHost, nodeChannelName] = association.resource
+  const [nodeGroupHost, nodeGroupName] = association?.group.split('/').slice(-2);
+  const [nodeChannelHost, nodeChannelName] = association?.resource
     .split('/')
     .slice(-2);
   const [
@@ -116,13 +115,12 @@ function GraphPermalink(
       bg="white"
       maxWidth={full ? null : "500px"}
       border={full ? null : "1"}
-      borderColor={hovering ? 'lightBlue' : 'lightGray'}
+      borderColor='lightGray'
       borderRadius="2"
       cursor='pointer'
       onClick={(e) => {
         navigate(e);
       }}
-      {...bind}
     >
       {showTransclusion && index && (
         <TranscludedNode
