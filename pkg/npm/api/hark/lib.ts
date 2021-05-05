@@ -107,7 +107,6 @@ export const markCountAsRead = (
     graph: {
       graph: association.resource,
       group: association.group,
-      module: association.metadata.module,
       description: description,
       index: parent
     }

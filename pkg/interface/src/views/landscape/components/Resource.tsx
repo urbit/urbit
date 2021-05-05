@@ -28,7 +28,10 @@ export function Resource(props: ResourceProps): ReactElement {
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const associations = useMetadataState(state => state.associations);
   const contacts = useContactState(state => state.contacts);
-  const app = association.metadata?.config?.graph || association['app-name'];
+  let app = association['app-name'];
+  if (association?.metadata?.config && 'graph' in association.metadata.config) {
+    app = association.metadata.config.graph;
+  }
   const { resource: rid, group: selectedGroup } = association;
   const relativePath = (p: string) => `${props.baseUrl}/resource/${app}${rid}${p}`;
   const skelProps = { api, association, groups, contacts };

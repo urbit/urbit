@@ -22,7 +22,7 @@ export const MOMENT_CALENDAR_DATE = {
   sameElse: '~YYYY.M.D'
 };
 
-type GraphModule = 'link' | 'post' | 'chat' | 'publish';
+export type GraphModule = 'link' | 'post' | 'chat' | 'publish';
 
 export const getModuleIcon = (mod: GraphModule): IconRef => {
   if (mod === 'link') {

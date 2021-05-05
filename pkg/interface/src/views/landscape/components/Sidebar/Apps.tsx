@@ -19,7 +19,7 @@ export function useGraphModule(
       if (
         notifications &&
         ((typeof notifications === 'number' && notifications > 0)
-        || notifications.length)
+        || typeof notifications === 'object' && notifications.length)
       ) {
         return 'notification';
       }

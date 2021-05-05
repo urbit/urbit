@@ -98,7 +98,9 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
 
       if(groups?.[group]?.hidden) {
         const { metadata } = associations.graph[group];
-        history.push(`/~landscape/home/resource/${metadata.config.graph}${group}`);
+        if (metadata?.config && 'graph' in metadata.config) {
+          history.push(`/~landscape/home/resource/${metadata.config.graph}${group}`);
+        }
         return;
       } else {
         history.push(`/~landscape${group}`);

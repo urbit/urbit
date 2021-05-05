@@ -3,7 +3,7 @@ import { Association, Group } from '@urbit/api';
 import React, { useCallback } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
-import { getModuleIcon } from '~/logic/lib/util';
+import { getModuleIcon, GraphModule } from '~/logic/lib/util';
 import useMetadataState from '~/logic/state/metadata';
 import { Dropdown } from '~/views/components/Dropdown';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
@@ -38,7 +38,6 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
   const disabled =
     resourceFromPath(association.group).ship.slice(1) !== window.ship &&
     roleForShip(group, window.ship) !== 'admin';
-
   return (
     <Col maxWidth="384px" width="100%">
       <Text p="4" id="channels" fontWeight="600" fontSize="2">
@@ -49,7 +48,12 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
         {channels.filter(({ metadata }) => !metadata.hidden).map(({ resource, metadata }) => (
           <Row justifyContent="space-between" width="100%" key={resource}>
             <Row gapX="2">
-              <Icon icon={getModuleIcon(metadata?.config?.graph)} />
+              <Icon
+                icon={getModuleIcon(
+                  'graph' in metadata?.config
+                    ? metadata?.config?.graph as GraphModule
+                    : 'post')}
+               />
               <Text>{metadata.title}</Text>
               {metadata.preview && <Text gray>Pinned</Text>}
             </Row>

@@ -58,6 +58,7 @@ function GraphContentWideInner(
           >
             <RemoteContent
               key={content.url}
+              // @ts-ignore Invalid prop detection due to double with() export
               url={content.url}
               transcluded={transcluded}
             />

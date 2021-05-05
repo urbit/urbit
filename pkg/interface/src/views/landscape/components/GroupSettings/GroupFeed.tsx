@@ -19,9 +19,17 @@ export function GroupFeedSettings(props: {
   group: Group;
   api: GlobalApi;
 }) {
-  const { association, group, api } = props;
+  const { association, api } = props;
   const resource = resourceFromPath(association.group);
-  const feedResource = association?.metadata.config?.group?.resource;
+  let feedResource = '';
+  if (
+    association?.metadata?.config &&
+    'group' in association.metadata.config &&
+    association.metadata.config.group !== null &&
+    'resource' in association.metadata.config.group
+    ) {
+    feedResource = association.metadata.config.group.resource ?? '';
+  }
   const feedAssoc = useMetadataState(s => s.associations.graph[feedResource]);
   const isEnabled = Boolean(feedResource);
 
@@ -44,7 +52,7 @@ export function GroupFeedSettings(props: {
     values: FormSchema,
     actions: FormikHelpers<FormSchema>
   ) => {
-    await api.metadata.update(feedAssoc, { vip: values.permissions.trim() });
+    await api.metadata.update(feedAssoc, { vip: values.permissions.trim() as PermVariation });
 
     actions.setStatus({ success: null });
   };

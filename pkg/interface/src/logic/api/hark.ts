@@ -75,7 +75,6 @@ export class HarkApi extends BaseApi<StoreState> {
          graph: {
         graph: association.resource,
         group: association.group,
-        module: association.metadata.module,
         description,
         index: parent
       } }
