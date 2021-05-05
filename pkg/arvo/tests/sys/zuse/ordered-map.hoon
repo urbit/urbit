@@ -86,10 +86,12 @@
 ::
 ++  test-ordered-map-tab-more-than-exist  ^-  tang
   ::
-  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  =/  specific-test-items=(list [@ud @tas])
+    (items-from-keys (gulf 1 6))
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ specific-test-items)
   ::
   %+  expect-eq
-    !>  test-items
+    !>  specific-test-items
     !>  (tab:atom-map a [~ 0] 8)
 ::
 ++  test-ordered-map-pop  ^-  tang
