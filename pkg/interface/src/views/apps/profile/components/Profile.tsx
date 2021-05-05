@@ -30,7 +30,7 @@ export function ProfileImages(props: any): ReactElement {
   const { contact, hideCover, ship } = { ...props };
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : '#000000';
 
-  const anchorRef = useRef<HTMLElement | null>(null)
+  const anchorRef = useRef<HTMLDivElement>(null)
 
   useTutorialModal('profile', ship === `~${window.ship}`, anchorRef);
 
