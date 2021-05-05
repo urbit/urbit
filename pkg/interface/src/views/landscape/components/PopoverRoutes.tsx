@@ -2,8 +2,6 @@ import React, { useRef, useCallback, ReactElement } from 'react';
 import { Route, Switch, RouteComponentProps, Link } from 'react-router-dom';
 import { Box,  Col, Text } from '@tlon/indigo-react';
 
-import { GroupNotificationsConfig, Associations } from '@urbit/api';
-import { Contacts, Contact } from '@urbit/api/contacts';
 import { Group } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
 
@@ -15,7 +13,6 @@ import { DeleteGroup } from './DeleteGroup';
 import { resourceFromPath } from '~/logic/lib/group';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { SidebarItem } from '~/views/landscape/components/SidebarItem';
-import { StorageState } from '~/types';
 
 export function PopoverRoutes(
   props: {
@@ -23,8 +20,6 @@ export function PopoverRoutes(
     group: Group;
     association: Association;
     api: GlobalApi;
-    notificationsGroupConfig: GroupNotificationsConfig;
-    rootIdentity: Contact;
   } & RouteComponentProps
 ): ReactElement {
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;

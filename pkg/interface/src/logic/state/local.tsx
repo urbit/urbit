@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import f from 'lodash/fp';
 import create, { State }  from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -7,7 +7,7 @@ import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgre
 
 
 export interface LocalState {
-  theme: "light" | "dark" | "auto";
+  theme: 'light' | 'dark' | 'auto';
   hideAvatars: boolean;
   hideNicknames: boolean;
   remoteContentPolicy: RemoteContentPolicy;
@@ -21,6 +21,7 @@ export interface LocalState {
   hideLeapCats: LeapCategories[];
   setTutorialRef: (el: HTMLElement | null) => void;
   dark: boolean;
+  mobile: boolean;
   background: BackgroundConfig;
   omniboxShown: boolean;
   suspendedFocus?: HTMLElement;
@@ -35,8 +36,9 @@ export const selectLocalState =
 
 const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   dark: false,
+  mobile: false,
   background: undefined,
-  theme: "auto",
+  theme: 'auto',
   hideAvatars: false,
   hideNicknames: false,
   hideLeapCats: [],

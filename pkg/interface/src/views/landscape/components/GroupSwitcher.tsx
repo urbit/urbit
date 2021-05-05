@@ -31,7 +31,7 @@ const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   </Link>
 );
 
-function RecentGroups(props: { recent: string[]; associations: Associations }) {
+function RecentGroups(props: { recent: string[] }) {
   const { recent } = props;
   if (recent.length < 2) {
     return null;

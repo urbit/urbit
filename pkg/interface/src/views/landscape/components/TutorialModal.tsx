@@ -43,7 +43,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
   const {
     title,
     description,
-    arrow,
+    arrow = 'North',
     alignX,
     alignY,
     offsetX,

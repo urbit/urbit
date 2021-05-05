@@ -1,7 +1,10 @@
 import React from 'react';
-import useStorage, {IuseStorage} from '~/logic/lib/useStorage';
+import useStorage, { IuseStorage } from '~/logic/lib/useStorage';
 
-const withStorage = <P, C extends React.ComponentType<P>>(Component: C, params = {}) => {
+const withStorage = <P, C extends React.ComponentType<P & IuseStorage>>(
+  Component: C,
+  params = {}
+) => {
   return React.forwardRef<C, Omit<C, keyof IuseStorage>>((props, ref) => {
     const storage = useStorage(params);
 

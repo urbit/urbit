@@ -5,7 +5,7 @@ import { LoadingSpinner, Action } from '@tlon/indigo-react';
 
 interface AsyncActionProps {
   children: ReactNode;
-  name: string;
+  name?: string;
   disabled?: boolean;
   onClick: (e: React.MouseEvent) => Promise<void>;
 }

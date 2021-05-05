@@ -6,8 +6,6 @@ import { Sigil } from '~/logic/lib/sigil';
 import { createPost } from '~/logic/api/graph';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
-import { Envelope } from '~/types/chat-update';
-import { StorageState } from '~/types';
 import { Contact, Contacts, Content, Post } from '@urbit/api';
 import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
 import withStorage from '~/views/components/withStorage';
@@ -74,6 +72,8 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     } else {
       onSubmit(tokenizeMessage(text));
     }
+    this.chatEditor.current.editor.focus();
+    this.setState({ currentInput: '' });
   }
 
   uploadSuccess(url: string) {

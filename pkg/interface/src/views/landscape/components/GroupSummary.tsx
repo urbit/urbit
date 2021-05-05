@@ -1,5 +1,6 @@
 import React, { ReactElement, ReactNode, useRef } from 'react';
-import { Metadata, PropFunc } from '@urbit/api';
+import { Metadata } from '@urbit/api';
+import { PropFunc } from '~/types';
 import { Col, Row, Text } from '@tlon/indigo-react';
 import { MetadataIcon } from './MetadataIcon';
 import { useTutorialModal } from '~/views/components/useTutorialModal';

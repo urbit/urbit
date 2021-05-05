@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Row, Icon, Text } from '@tlon/indigo-react';
 
 import { IconRef, PropFunc } from '~/types/util';

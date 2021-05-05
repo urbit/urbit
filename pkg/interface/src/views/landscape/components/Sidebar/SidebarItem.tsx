@@ -2,35 +2,19 @@ import React, { ReactElement, useRef } from 'react';
 import urbitOb from 'urbit-ob';
 
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
-import { Groups, Association, Rolodex } from '@urbit/api';
+import { Association } from '@urbit/api';
 
 import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
 import { getModuleIcon, getItemTitle, uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
-import { SidebarAppConfigs, SidebarItemStatus } from './types';
+import { SidebarAppConfigs } from './types';
 import { Workspace } from '~/types/workspace';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import Dot from '~/views/components/Dot';
-
-
-function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
-  switch (props.status) {
-    case 'disconnected':
-      return <Icon ml={2} fill="red" icon="X" />;
-    case 'unsubscribed':
-      return <Icon ml={2} icon="Circle" fill="gray" />;
-    case 'mention':
-      return <Icon ml={2} icon="Circle" />;
-    case 'loading':
-      return <Icon ml={2} icon="Bullet" />;
-    default:
-      return null;
-  }
-}
 
 // eslint-disable-next-line max-lines-per-function
 export function SidebarItem(props: {
@@ -48,7 +32,7 @@ export function SidebarItem(props: {
   const rid = association?.resource;
   const groupPath = association?.group;
   const groups = useGroupState(state => state.groups);
-  const anchorRef = useRef<HTMLElement | null>(null);
+  const anchorRef = useRef<HTMLAnchorElement>(null);
   const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
   const contacts = useContactState(state => state.contacts);
   useTutorialModal(
@@ -99,11 +83,11 @@ export function SidebarItem(props: {
     return null;
   }
 
-  let img = null;
+  let img: null | JSX.Element = null;
 
   if (urbitOb.isValidPatp(title)) {
     if (contacts?.[title]?.avatar && !hideAvatars) {
-      img = <BaseImage referrerPolicy="no-referrer" src={contacts[title].avatar} width='16px' height='16px' borderRadius={2} />;
+      img = <BaseImage referrerPolicy="no-referrer" src={contacts?.[title].avatar ?? ''} width='16px' height='16px' borderRadius={2} />;
     } else {
       img = <Sigil ship={title} color={`#${uxToHex(contacts?.[title]?.color || '0x0')}`} icon padding={2} size={16} />;
     }
@@ -137,7 +121,7 @@ export function SidebarItem(props: {
               <Icon
                 display="block"
                 color={isSynced ? 'black' : 'lightGray'}
-                icon={getModuleIcon(mod) as any}
+                icon={getModuleIcon(mod)}
               />
             )
         }

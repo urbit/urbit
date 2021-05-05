@@ -41,8 +41,8 @@ const DropdownOptions = styled(Box)`
 
 export function Dropdown(props: DropdownProps): ReactElement {
   const { children, options, offsetX = 0, offsetY = 0, flexShrink = 1 } = props;
-  const dropdownRef = useRef<HTMLElement>(null);
-  const anchorRef = useRef<HTMLElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState({});

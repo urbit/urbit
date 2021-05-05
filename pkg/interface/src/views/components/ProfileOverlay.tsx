@@ -55,8 +55,8 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   const [coords, setCoords] = useState({});
   const [visible, setVisible] = useState(false);
   const history = useHistory();
-  const outerRef = useRef<HTMLElement | null>(null);
-  const innerRef = useRef<HTMLElement | null>(null);
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
   const hideAvatars = useSettingsState(state => state.calm.hideAvatars);
   const hideNicknames = useSettingsState(state => state.calm.hideNicknames);
   const isOwn = useMemo(() => window.ship === ship, [ship]);
