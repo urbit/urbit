@@ -15,6 +15,7 @@ import { SidebarItem as BaseSidebarItem } from '~/views/landscape/components/Sid
 import { PropFunc } from '~/types';
 import DebugPane from './components/lib/Debug';
 import useHarkState from '~/logic/state/hark';
+import ShortcutSettings from './components/lib/ShortcutSettings';
 
 export const Skeleton = (props: { children: ReactNode }) => (
   <Box height='100%' width='100%' px={[0, 3]} pb={[0, 3]} borderRadius={1}>
@@ -115,6 +116,7 @@ export default function SettingsScreen(props: any) {
             <SidebarItem icon='Upload' text='Remote Storage' hash='s3' />
             <SidebarItem icon='LeapArrow' text='Leap' hash='leap' />
             <SidebarItem icon='Node' text='CalmEngine' hash='calm' />
+            <SidebarItem icon='Keyboard' text='Shortcuts' hash='shortcuts' />
             <SidebarItem
               icon='Locked'
               text='Devices + Security'
@@ -131,6 +133,7 @@ export default function SettingsScreen(props: any) {
               />
             )}
             {hash === 'display' && <DisplayForm api={props.api} />}
+            {hash === 'shortcuts' && <ShortcutSettings api={props.api} />}
             {hash === 's3' && <S3Form api={props.api} />}
             {hash === 'leap' && <LeapSettings api={props.api} />}
             {hash === 'calm' && <CalmPrefs api={props.api} />}

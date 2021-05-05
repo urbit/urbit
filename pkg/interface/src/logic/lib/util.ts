@@ -47,6 +47,17 @@ export function parentPath(path: string) {
   return _.dropRight(path.split('/'), 1).join('/');
 }
 
+export const getChord = (e: KeyboardEvent) => {
+  let chord = [e.key];
+  if(e.metaKey) {
+    chord.unshift('meta');
+  }
+  if(e.ctrlKey) {
+    chord.unshift('ctrl');
+  }
+  return chord.join('+');
+}
+
 export function getResourcePath(workspace: Workspace, path: string, joined: boolean, mod: string) {
   const base = workspace.type === 'group' 
     ? `/~landscape${workspace.group}` 

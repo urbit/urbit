@@ -2,6 +2,14 @@ import f from 'lodash/fp';
 import { RemoteContentPolicy, LeapCategories, leapCategories } from "~/types/local-update";
 import { BaseState, createState } from '~/logic/state/base';
 
+export interface ShortcutMapping {
+  cycleForward: string;
+  cycleBack: string;
+  navForward: string;
+  navBack: string;
+  hideSidebar: string;
+}
+
 
 export interface SettingsState extends BaseState<SettingsState> {
   display: {
@@ -17,13 +25,7 @@ export interface SettingsState extends BaseState<SettingsState> {
     hideGroups: boolean;
     hideUtilities: boolean;
   };
-  keyboard: {
-    cycleForward: string;
-    cycleBack: string;
-    navForward: string;
-    navBack: string;
-    hideSidebar: string;
-  }
+  keyboard: ShortcutMapping;
   remoteContentPolicy: RemoteContentPolicy;
   leap: {
     categories: LeapCategories[];
