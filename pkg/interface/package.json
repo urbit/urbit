@@ -34,6 +34,7 @@
     "react-codemirror2": "^6.0.1",
     "react-dom": "^16.14.0",
     "react-helmet": "^6.1.0",
+    "react-markdown": "^4.3.1",
     "react-oembed-container": "^1.0.0",
     "react-router-dom": "^5.2.0",
     "react-virtuoso": "^0.20.3",
