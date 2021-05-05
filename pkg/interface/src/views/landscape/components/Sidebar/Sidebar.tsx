@@ -54,7 +54,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
   const role = groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
   const isAdmin = (role === 'admin') || (workspace?.type === 'home');
 
-  const anchorRef = useRef<HTMLElement | null>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
   useTutorialModal('channels', true, anchorRef);
 
   return (

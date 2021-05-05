@@ -32,7 +32,7 @@ export function SidebarItem(props: {
   const rid = association?.resource;
   const groupPath = association?.group;
   const groups = useGroupState(state => state.groups);
-  const anchorRef = useRef<HTMLElement | null>(null);
+  const anchorRef = useRef<HTMLAnchorElement>(null);
   const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
   const contacts = useContactState(state => state.contacts);
   useTutorialModal(

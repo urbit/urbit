@@ -48,7 +48,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
     return isWriter(group, association.resource);
   }
 
-  renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
+  renderItem = React.forwardRef<HTMLDivElement>(({ index, scrollWindow }, ref) => {
     const { props } = this;
     const { association, graph, api } = props;
     const [, , ship, name] = association.resource.split("/");
