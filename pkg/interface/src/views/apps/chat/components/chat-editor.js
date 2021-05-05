@@ -108,10 +108,27 @@ export default class ChatEditor extends Component {
       message: props.message
     };
     this.editor = null;
+    this.onKeyPress = this.onKeyPress.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.onKeyPress);
   }
 
   componentWillUnmount() {
     this.props.onUnmount(this.state.message);
+    document.removeEventListener('keydown', this.onKeyPress);
+  }
+
+  onKeyPress(e) {
+    const focusedTag = document.activeElement?.nodeName?.toLowerCase();
+    const shouldCapture = !(focusedTag === 'textarea' || focusedTag === 'input' || e.metaKey || e.ctrlKey);
+    if(/^[a-z]|[A-Z]$/.test(e.key) && shouldCapture) {
+      this.editor.focus();
+    }
+    if(e.key === 'Escape') {
+      this.editor.getInputField().blur();
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -120,9 +137,9 @@ export default class ChatEditor extends Component {
     if (prevProps.message !== props.message) {
       this.editor.setValue(props.message);
       this.editor.setOption('mode', MARKDOWN_CONFIG);
-      this.editor?.focus();
-      this.editor.execCommand('goDocEnd');
-      this.editor?.focus();
+      //this.editor?.focus();
+      //this.editor.execCommand('goDocEnd');
+      //this.editor?.focus();
       return;
     }
 
@@ -260,7 +277,6 @@ export default class ChatEditor extends Component {
           onChange={(e, d, v) => this.messageChange(e, d, v)}
           editorDidMount={(editor) => {
             this.editor = editor;
-            editor.focus();
           }}
           {...props}
         />
