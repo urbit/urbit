@@ -122,7 +122,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   );
 
   const ExtraControls = () => {
-    if (workspace === '/messages' && !resource.startsWith('dm-')) {
+    if (workspace === '/messages' && isOwn && !resource.startsWith('dm-')) {
       return (
         <Dropdown
           flexShrink={0}
