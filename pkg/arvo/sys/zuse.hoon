@@ -5426,9 +5426,9 @@
       ?~  a  a
       ?~  b  a
       ?:  =(key.n.a u.b)
-        a(l r.a)
+        r.a
       ?:  (compare key.n.a u.b)
-        $(a a(l r.a))
+        $(a r.a)
       a(l $(a l.a))
     --
   ::  +tap: convert to list, smallest to largest
