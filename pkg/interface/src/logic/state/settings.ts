@@ -17,6 +17,13 @@ export interface SettingsState extends BaseState<SettingsState> {
     hideGroups: boolean;
     hideUtilities: boolean;
   };
+  keyboard: {
+    cycleForward: string;
+    cycleBack: string;
+    navForward: string;
+    navBack: string;
+    hideSidebar: string;
+  }
   remoteContentPolicy: RemoteContentPolicy;
   leap: {
     categories: LeapCategories[];
@@ -60,6 +67,13 @@ const useSettingsState = createState<SettingsState>('Settings', {
   tutorial: {
     seen: true,
     joined: undefined
+  },
+  keyboard: {
+    cycleForward: 'ctrl+n',
+    cycleBack: 'ctrl+p',
+    navForward: 'ctrl+f',
+    navBack: 'ctrl+b',
+    hideSidebar: 'ctrl+h'
   }
 });
 
