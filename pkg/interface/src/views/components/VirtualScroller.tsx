@@ -205,7 +205,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
 
   componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState<T>) {
-    const { id, size, data, offset, pendingSize } = this.props;
+    const { size, data, offset, pendingSize } = this.props;
 
     if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
       if((this.window?.scrollTop ?? 0) < ZONE_SIZE) {
@@ -251,7 +251,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     }
     log('reflow', `from: ${this.startOffset()} to: ${newOffset}`);
 
-    const { data, onCalculateVisibleItems } = this.props;
+    const { data } = this.props;
     const visibleItems = data.keys().slice(newOffset, newOffset + this.pageSize);
 
     this.save();
@@ -353,7 +353,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     }
   };
 
-  onScroll(event: SyntheticEvent<HTMLElement, ScrollEvent>) {
+  onScroll(event: SyntheticEvent<HTMLElement>) {
     this.updateScroll();
     if(!this.window) {
       // bail if we're going to adjust scroll anyway
@@ -533,8 +533,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
   render() {
     const {
-      startgap,
-      endgap,
       visibleItems
     } = this.state;
 

@@ -35,7 +35,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
   const { query } = useQuery();
   const rid = props.association.resource;
   const appName = props.association['app-name'];
-  
+
   const { title, description, config } = props.association.metadata;
   const graphKeys = useGraphState(state => state.graphKeys);
 

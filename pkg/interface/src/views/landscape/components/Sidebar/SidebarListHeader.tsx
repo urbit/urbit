@@ -23,7 +23,7 @@ import GlobalApi from '~/logic/api/global';
 import { Workspace } from '~/types/workspace';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
-import {IS_SAFARI} from '~/logic/lib/platform';
+import { IS_SAFARI } from '~/logic/lib/platform';
 import useHarkState from '~/logic/state/hark';
 
 export function SidebarListHeader(props: {
@@ -56,15 +56,18 @@ export function SidebarListHeader(props: {
 
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
-  const feedPath = metadata?.config?.group?.resource;
+  let feedPath: any = '';
+  if (metadata?.config && 'group' in metadata.config) {
+    feedPath = metadata.config.group ?? '';
+  }
 
   const unreadCount = useHarkState(
-    s => s.unreads?.graph?.[feedPath ?? ""]?.["/"]?.unreads as number ?? 0
+    s => s.unreads?.graph?.[feedPath ?? '']?.['/']?.unreads as number ?? 0
   );
 
   return (
     <Box>
-    {( !!feedPath) ? (
+    {( feedPath) ? (
        <Row
          flexShrink={0}
          alignItems="center"

@@ -13,6 +13,7 @@ export type TimestampProps = BoxProps & {
   time?: boolean;
   relative?: boolean;
   height?: string;
+  color?: string;
 };
 
 const Timestamp = (props: TimestampProps): ReactElement | null => {
@@ -22,7 +23,7 @@ const Timestamp = (props: TimestampProps): ReactElement | null => {
     time,
     color,
     relative,
-    dateNotRelative,
+    dateNotRelative = false,
     fontSize,
     lineHeight,
     ...rest

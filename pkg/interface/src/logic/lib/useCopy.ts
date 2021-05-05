@@ -1,7 +1,7 @@
 import { writeText } from "./util";
 import { useCallback, useState, useMemo } from "react";
 
-export function useCopy(copied: string, display: string) {
+export function useCopy(copied: string, display?: string) {
   const [didCopy, setDidCopy] = useState(false);
   const doCopy = useCallback(() => {
     writeText(copied);

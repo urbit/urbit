@@ -12,7 +12,6 @@ import { FormikOnBlur } from "~/views/components/FormikOnBlur";
 import { BackButton } from "./BackButton";
 import GlobalApi from "~/logic/api/global";
 import {
-  NotificationGraphConfig,
   LeapCategories,
   leapCategories,
 } from "~/types";

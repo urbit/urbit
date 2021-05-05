@@ -28,7 +28,10 @@ export function SidebarItem(props: {
   const { association, path, selected, apps } = props;
   let title = getItemTitle(association) || '';
   const appName = association?.['app-name'];
-  const mod = association?.metadata?.config?.graph || appName;
+  let mod = appName;
+  if (association?.metadata?.config && 'graph' in association.metadata.config) {
+    mod = association.metadata.config.graph;
+  }
   const rid = association?.resource;
   const groupPath = association?.group;
   const groups = useGroupState(state => state.groups);

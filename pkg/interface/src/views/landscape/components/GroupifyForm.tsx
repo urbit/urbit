@@ -39,7 +39,10 @@ export function GroupifyForm(props: GroupifyFormProps) {
         name,
         values.group?.toString() || undefined
       );
-      const mod = association.metadata?.config?.graph || association['app-name'];
+      let mod = association['app-name'];
+      if (association?.metadata?.config && 'graph' in association.metadata.config) {
+        mod = association.metadata.config.graph;
+      }
       const newGroup = values.group || association.group;
       history.push(`/~landscape${newGroup}/resource/${mod}${rid}`);
       actions.setStatus({ success: null });

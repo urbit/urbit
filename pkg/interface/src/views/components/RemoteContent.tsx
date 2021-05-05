@@ -13,19 +13,21 @@ type RemoteContentProps = VirtualContextProps & {
   text?: string;
   unfold?: boolean;
   renderUrl?: boolean;
-  remoteContentPolicy: RemoteContentPolicy;
+  remoteContentPolicy?: RemoteContentPolicy;
   imageProps?: any;
   audioProps?: any;
   videoProps?: any;
   oembedProps?: any;
   textProps?: any;
   style?: any;
+  transcluded?: any;
 }
 
 interface RemoteContentState {
   unfold: boolean;
   embed: any | undefined;
   noCors: boolean;
+  showArrow: boolean;
 }
 
 const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);

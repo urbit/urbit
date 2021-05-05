@@ -41,7 +41,7 @@ function decodePolicy(policy: Enc<GroupPolicy>): GroupPolicy {
 function decodeTags(tags: Enc<Tags>): Tags {
   return _.reduce(
     tags,
-    (acc, ships, key): Tags => {
+    (acc, ships: any, key): Tags => {
       if (key.search(/\\/) === -1) {
         acc.role[key] = new Set(ships);
         return acc;
