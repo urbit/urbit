@@ -1,12 +1,10 @@
-import React from 'react';
 import {
-  Label,
-  Box,
-  ManagedRadioButtonField as Radio,
-  Col
+  Col, Label,
+
+  ManagedRadioButtonField as Radio
 } from '@tlon/indigo-react';
 import { useFormikContext } from 'formik';
-import { Groups, Rolodex } from '@urbit/api';
+import React from 'react';
 import { ShipSearch } from '~/views/components/ShipSearch';
 
 export type WritePerms = 'everyone' | 'subset' | 'self';

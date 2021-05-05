@@ -1,14 +1,14 @@
-import React, { useCallback } from 'react';
+import { Button, Col, Row, Text } from '@tlon/indigo-react';
+import { resourceAsPath, resourceFromPath } from '@urbit/api';
+import { Form, Formik, FormikHelpers } from 'formik';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
+import { AsyncButton } from '~/views/components/AsyncButton';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
-import { Formik, Form, FormikHelpers } from 'formik';
 import {
   GroupFeedPermsInput
 } from './Post/GroupFeedPerms';
-import { Text, Button, Col, Row } from '@tlon/indigo-react';
-import { AsyncButton } from '~/views/components/AsyncButton';
-import GlobalApi from '~/logic/api/global';
-import { resourceFromPath, Tag, resourceAsPath } from '@urbit/api';
-import { useHistory } from 'react-router-dom';
 
 interface FormSchema {
   permissions: any;

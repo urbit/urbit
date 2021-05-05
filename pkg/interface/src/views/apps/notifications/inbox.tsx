@@ -1,32 +1,23 @@
-import React, { useEffect, useCallback, useRef } from 'react';
-import f from 'lodash/fp';
-import _ from 'lodash';
-import moment from 'moment';
-import { BigInteger } from 'big-integer';
-
-import { Col, Center, Box, Text, LoadingSpinner } from '@tlon/indigo-react';
+import { Box, Center, Col, LoadingSpinner, Text } from '@tlon/indigo-react';
 import {
-  Associations,
-  Notifications,
-  Rolodex,
-  Timebox,
   IndexedNotification,
-  Groups,
-  JoinRequests,
-  GroupNotificationsConfig,
-  NotificationGraphConfig,
-  Invites as InviteType
-} from '@urbit/api';
 
-import { MOMENT_CALENDAR_DATE, daToUnix } from '~/logic/lib/util';
+  JoinRequests, Notifications,
+
+  Timebox
+} from '@urbit/api';
+import { BigInteger } from 'big-integer';
+import _ from 'lodash';
+import f from 'lodash/fp';
+import moment from 'moment';
+import React, { useCallback, useEffect, useRef } from 'react';
 import GlobalApi from '~/logic/api/global';
-import { Notification } from './notification';
-import { Invites } from './invites';
+import { getNotificationKey } from '~/logic/lib/hark';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
+import { daToUnix, MOMENT_CALENDAR_DATE } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
-import useInviteState from '~/logic/state/invite';
-import useMetadataState from '~/logic/state/metadata';
-import {getNotificationKey} from '~/logic/lib/hark';
+import { Invites } from './invites';
+import { Notification } from './notification';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -169,7 +160,7 @@ function DaySection({
   archive,
   timeboxes,
   time,
-  api,
+  api
 }) {
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {

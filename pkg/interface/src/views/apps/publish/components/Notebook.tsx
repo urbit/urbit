@@ -1,13 +1,11 @@
+import { Box, Col, Row, Text } from '@tlon/indigo-react';
+import { Association, Graph, Unreads } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-
-import { Col, Box, Text, Row } from '@tlon/indigo-react';
-import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from '@urbit/api';
-
-import { NotebookPosts } from './NotebookPosts';
 import { useShowNickname } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import { NotebookPosts } from './NotebookPosts';
 
 interface NotebookProps {
   ship: string;

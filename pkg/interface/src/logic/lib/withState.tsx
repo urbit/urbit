@@ -1,6 +1,6 @@
-import React from "react";
-import { UseStore } from "zustand";
-import { BaseState } from "../state/base";
+import React from 'react';
+import { UseStore } from 'zustand';
+import { BaseState } from '../state/base';
 
 const withStateo = <
   StateType extends BaseState<any>
@@ -15,8 +15,8 @@ const withStateo = <
         (object, key) => ({ ...object, [key]: state[key] }), {}
       )
     ) : useState();
-    return <Component ref={ref} {...state} {...props} />
-  })
+    return <Component ref={ref} {...state} {...props} />;
+  });
 };
 
 const withState = <
@@ -24,10 +24,10 @@ const withState = <
   stateKey extends keyof StateType
   >(
     Component: any,
-    stores: ([UseStore<StateType>, stateKey[]])[],
+    stores: ([UseStore<StateType>, stateKey[]])[]
 ) => {
   return React.forwardRef((props, ref) => {
-    let stateProps: unknown = {};
+    const stateProps: unknown = {};
     stores.forEach(([store, keys]) => {
       const storeProps = Array.isArray(keys)
         ? store(state => keys.reduce(
@@ -36,8 +36,8 @@ const withState = <
         : store();
       Object.assign(stateProps, storeProps);
     });
-    return <Component ref={ref} {...stateProps} {...props} />
+    return <Component ref={ref} {...stateProps} {...props} />;
   });
-}
+};
 
 export default withState;

@@ -1,11 +1,9 @@
-import React, { Component, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Anchor, Row, Text } from '@tlon/indigo-react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import urbitOb from 'urbit-ob';
-import { Text, Anchor } from '@tlon/indigo-react';
 import { GroupLink } from '~/views/components/GroupLink';
-import { Row } from '@tlon/indigo-react';
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -46,10 +44,11 @@ const renderers = {
         display="block"
         borderLeft="1px solid"
         color="black"
-        paddingLeft={2}>
+        paddingLeft={2}
+      >
         {children}
       </Text>
-    )
+    );
   },
   paragraph: ({ children }) => {
     return (
@@ -76,14 +75,14 @@ const renderers = {
     );
   },
   link: (props) => {
-    return <Anchor src={props.href} borderBottom="1" color="black">{props.children}</Anchor>
+    return <Anchor src={props.href} borderBottom="1" color="black">{props.children}</Anchor>;
   }
 };
 
 const MessageMarkdown = React.memo((props) => {
   const { source, ...rest } = props;
   const blockCode = source.split('```');
-  const codeLines = blockCode.map((codes) => codes.split('\n'));
+  const codeLines = blockCode.map(codes => codes.split('\n'));
   const lines = codeLines.reduce((acc, val, i) => {
     if (i % 2 === 1) {
       return [...acc, `\`\`\`${val.join('\n')}\`\`\``];

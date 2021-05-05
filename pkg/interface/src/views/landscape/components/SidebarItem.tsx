@@ -1,6 +1,5 @@
+import { Icon, Row, Text } from '@tlon/indigo-react';
 import React, { ReactElement } from 'react';
-import { Row, Icon, Text } from '@tlon/indigo-react';
-
 import { IconRef, PropFunc } from '~/types/util';
 import { HoverBoxLink } from '~/views/components/HoverBox';
 

@@ -1,9 +1,9 @@
-import React, { useMemo, useState, ReactNode, ReactChildren } from "react";
-import { animated, useSpring } from "@react-spring/web";
-import { useDrag } from "react-use-gesture";
-import { Box, Row } from "@tlon/indigo-react";
-import styled from "styled-components";
-import { PropFunc } from "~/types";
+import { animated, useSpring } from '@react-spring/web';
+import { Box, Row } from '@tlon/indigo-react';
+import React, { ReactNode, useState } from 'react';
+import { useDrag } from 'react-use-gesture';
+import styled from 'styled-components';
+import { PropFunc } from '~/types';
 
 const DEFAULT_THRESHOLD = 10;
 const AnimBox = styled(animated(Box))`
@@ -62,11 +62,11 @@ export function SwipeMenu(
           ? 1
           : active
           ? Math.abs(Math.min(1, Math.min(0, x) / activationDistance))
-          : 0,
+          : 0
       });
     },
     {
-      enabled: !disabled,
+      enabled: !disabled
     }
   );
 
@@ -82,8 +82,8 @@ export function SwipeMenu(
         height="100%"
         right="0px"
         style={{
-          translateX: x.to((x) => x + menuWidth),
-          opacity,
+          translateX: x.to(x => x + menuWidth),
+          opacity
         }}
       >
         {menu}

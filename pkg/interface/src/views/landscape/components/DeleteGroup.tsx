@@ -1,13 +1,11 @@
-import React from 'react';
-import { Icon, Text, Col, Label, Row, Button } from '@tlon/indigo-react';
-import { useHistory } from 'react-router-dom';
-
+import { Button, Col, Icon, Label, Row, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api';
-
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
-import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { useModal } from '~/logic/lib/useModal';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 
 export function DeleteGroup(props: {
   owner: boolean;

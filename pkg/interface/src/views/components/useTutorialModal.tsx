@@ -1,6 +1,6 @@
-import { useEffect, MutableRefObject } from 'react';
-import { TutorialProgress } from '~/types';
+import { MutableRefObject, useEffect } from 'react';
 import useLocalState, { selectLocalState } from '~/logic/state/local';
+import { TutorialProgress } from '~/types';
 
 const localSelector = selectLocalState(['tutorialProgress', 'setTutorialRef']);
 

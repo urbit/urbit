@@ -1,18 +1,16 @@
-import React, { useRef, useCallback, ReactElement } from 'react';
-import { Route, Switch, RouteComponentProps, Link } from 'react-router-dom';
-import { Box,  Col, Text } from '@tlon/indigo-react';
-
+import { Box, Col, Text } from '@tlon/indigo-react';
 import { Group } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
-
+import React, { ReactElement, useCallback, useRef } from 'react';
+import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { GroupSettings } from './GroupSettings/GroupSettings';
-import { Participants } from './Participants';
-import { useHashLink } from '~/logic/lib/useHashLink';
-import { DeleteGroup } from './DeleteGroup';
 import { resourceFromPath } from '~/logic/lib/group';
+import { useHashLink } from '~/logic/lib/useHashLink';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { SidebarItem } from '~/views/landscape/components/SidebarItem';
+import { DeleteGroup } from './DeleteGroup';
+import { GroupSettings } from './GroupSettings/GroupSettings';
+import { Participants } from './Participants';
 
 export function PopoverRoutes(
   props: {

@@ -1,10 +1,10 @@
-import BaseApi from './base';
-import { StoreState } from '../store/type';
-import { dateToDa, decToUd } from '../lib/util';
-import { NotifIndex, IndexedNotification, Association, GraphNotifDescription } from '@urbit/api';
+import { Association, GraphNotifDescription, IndexedNotification, NotifIndex } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import { getParentIndex } from '../lib/notification';
+import { dateToDa, decToUd } from '../lib/util';
 import useHarkState from '../state/hark';
+import { StoreState } from '../store/type';
+import BaseApi from './base';
 
 function getHarkSize() {
   return useHarkState.getState().notifications.size ?? 0;

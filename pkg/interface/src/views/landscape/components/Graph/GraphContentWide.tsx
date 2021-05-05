@@ -1,15 +1,14 @@
-import React from 'react';
-import { Content, Post, ReferenceContent } from '@urbit/api';
 import { Box } from '@tlon/indigo-react';
-
+import { Content, Post, ReferenceContent } from '@urbit/api';
+import React from 'react';
 import GlobalApi from '~/logic/api/global';
-import TextContent from './content/text';
-import CodeContent from './content/code';
-import RemoteContent from '~/views/components/RemoteContent';
-import { Mention } from '~/views/components/MentionText';
-import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import { PropFunc } from '~/types';
+import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
+import { Mention } from '~/views/components/MentionText';
+import RemoteContent from '~/views/components/RemoteContent';
+import CodeContent from './content/code';
+import TextContent from './content/text';
 
 function GraphContentWideInner(
   props: {
