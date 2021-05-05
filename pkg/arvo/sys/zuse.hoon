@@ -5418,8 +5418,7 @@
       =.  f  $(a l.a)
       ?:  =(d.f c)  f
       =.  f  [+(d.f) [n.a e.f]]
-      ?:  =(d.f c)  f
-      $(a r.a)
+      ?:(=(d.f c) f $(a r.a))
     ::
     ++  del-span
       |=  [a=(tree item) b=(unit key)]
@@ -5427,9 +5426,9 @@
       ?~  a  a
       ?~  b  a
       ?:  =(key.n.a u.b)
-        (nip a(l ~))
+        a(l r.a)
       ?:  (compare key.n.a u.b)
-        $(a (nip a(l ~)))
+        $(a a(l r.a))
       a(l $(a l.a))
     --
   ::  +tap: convert to list, smallest to largest
