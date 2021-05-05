@@ -10,6 +10,7 @@ import { State, UseStore } from 'zustand';
 import { Cage } from '~/types/cage';
 import { BaseState } from '../state/base';
 import anyAscii from 'any-ascii';
+import {Workspace} from '~/types';
 
 enableMapSet();
 
@@ -44,6 +45,15 @@ export function wait(ms: number) {
 
 export function parentPath(path: string) {
   return _.dropRight(path.split('/'), 1).join('/');
+}
+
+export function getResourcePath(workspace: Workspace, path: string, joined: boolean, mod: string) {
+  const base = workspace.type === 'group' 
+    ? `/~landscape${workspace.group}` 
+    : workspace.type === 'home' 
+    ? `/~landscape/home` 
+    : `/~landscape/messages`;
+  return `${base}/${joined ? 'resource' : 'join'}/${mod}${path}`
 }
 
 const DA_UNIX_EPOCH = bigInt('170141184475152167957503069145530368000'); // `@ud` ~1970.1.1
@@ -100,6 +110,13 @@ export function decToUd(str: string): string {
  */
 export function clamp(x: number, min: number, max: number) {
   return Math.max(min, Math.min(max, x));
+}
+
+/**
+ * Euclidean modulo
+ */
+export function modulo(x: number, mod: number) {
+  return x < 0 ? (x % mod + mod) % mod : x % mod;
 }
 
 // color is a #000000 color
@@ -255,6 +272,8 @@ export function alphabeticalOrder(a: string, b: string) {
 export function lengthOrder(a: string, b: string) {
   return b.length - a.length;
 }
+
+export const keys = <T extends {}>(o: T) => Object.keys(o) as (keyof T)[];
 
 //  TODO: deprecated
 export function alphabetiseAssociations(associations: any) {
