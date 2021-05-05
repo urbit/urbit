@@ -1,3 +1,4 @@
+import { Resource } from "..";
 import { AppName, Path, Patp } from "../lib";
 
 export type MetadataUpdate =
@@ -65,11 +66,20 @@ export interface Metadata {
   'date-created': string;
   description: string;
   title: string;
-  config: { graph: string };
+  config: MetadataConfig;
   picture: string;
   hidden: boolean;
   preview: boolean;
   vip: PermVariation;
+}
+
+type MetadataConfig = GroupConfig | GraphConfig;
+
+interface GroupConfig {
+  group: null | {} | Resource;
+}
+interface GraphConfig {
+  graph: string;
 }
 
 export type PermVariation = '' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';
