@@ -56,28 +56,26 @@ const codeToMdAst = (content: CodeContent) => {
     children: [
       {
         type: 'code',
-        value: content.code.expression
+        value: content.code.expression,
       },
       {
         type: 'code',
-        value: (content.code.output || []).join('\n')
-      }
-    ]
+        value: (content.code.output || []).join('\n'),
+      },
+    ],
   };
-      
-
-}
+};
 
 const contentToMdAst = (tall: boolean) => (
   content: Content
 ): [StitchMode, any] => {
   if ('text' in content) {
-    return ['merge', tall ? parseTall(content.text) : parseWide(content.text)] as [StitchMode, any];
-  } else if ('code' in content) {
     return [
-      'block',
-      codeToMdAst(content)
-    ];
+      'merge',
+      tall ? parseTall(content.text) : parseWide(content.text),
+    ] as [StitchMode, any];
+  } else if ('code' in content) {
+    return ['block', codeToMdAst(content)];
   } else if ('reference' in content) {
     return [
       'block',
@@ -337,10 +335,15 @@ const renderers = {
       <RemoteContent key={url} url={url} />
     </Box>
   ),
-  'graph-reference': ({ api, reference }) => {
+  'graph-reference': ({ api, reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
     return (
-      <PermalinkEmbed api={api} link={link} transcluded={0} showOurContact />
+      <PermalinkEmbed
+        api={api}
+        link={link}
+        transcluded={transcluded}
+        showOurContact
+      />
     );
   },
   root: ({ children }) => <Col gapY="2">{children}</Col>,
@@ -350,18 +353,24 @@ const renderers = {
 export function Graphdown<T extends {} = {}>(
   props: {
     ast: GraphAstNode;
+    transcluded: number;
     tall?: boolean;
     depth?: number;
   } & T
 ) {
-  const { ast, depth = 0, ...rest } = props;
+  const { ast, transcluded, depth = 0, ...rest } = props;
   const { type, children = [], ...nodeRest } = ast;
   const Renderer = renderers[ast.type] ?? (() => `unknown element: ${type}`);
 
   return (
-    <Renderer depth={depth} {...rest} {...nodeRest}>
+    <Renderer transcluded={transcluded} depth={depth} {...rest} {...nodeRest}>
       {children.map((c) => (
-        <Graphdown depth={depth+1} {...rest} ast={c} />
+        <Graphdown
+          transcluded={transcluded}
+          depth={depth + 1}
+          {...rest}
+          ast={c}
+        />
       ))}
     </Renderer>
   );
@@ -385,11 +394,10 @@ export const GraphContent = React.memo(function GraphContent(
     api,
     ...rest
   } = props;
-  const [,ast] = stitchAsts(contents.map(contentToMdAst(tall)));
+  const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
   return (
     <Box {...rest}>
-      <Graphdown api={api} ast={ast} />
+      <Graphdown transcluded={transcluded} api={api} ast={ast} />
     </Box>
   );
 });
-
