@@ -197,7 +197,7 @@
     ==
   ::
   ++  transfer-point
-    |=  [nonce=@ud =ship pk=@ =address proxy=@tas reset=?]  ^-  octs
+    |=  [nonce=@ud =ship pk=@ proxy=@tas =address reset=?]  ^-  octs
     %^  sign-tx  pk  nonce
     %:  cad:naive  3
       (from-proxy:bits proxy)
@@ -363,8 +363,8 @@
     dominion:(~(got by points.state) ~marbud)
 ::
 ++  test-batch  ^-  tang
-  =/  marbud-transfer    [~marbud %marbud-key-0 (addr %marbud-key-0) %own |]
-  =/  marbud-transfer-2  [~marbud %marbud-key-0 (addr %marbud-key-1) %own |]
+  =/  marbud-transfer    [~marbud %marbud-key-0 %own (addr %marbud-key-0) |]
+  =/  marbud-transfer-2  [~marbud %marbud-key-0 %own (addr %marbud-key-1) |]
   ::
   %+  expect-eq
     !>  [(addr %marbud-key-1) 2]
@@ -596,7 +596,7 @@
   =/  marbud-sproxy           [~marbud %marbud-key-0 %own (addr %marbud-skey)]
   =/  marbud-mproxy           [~marbud %marbud-key-0 %own (addr %marbud-mkey)]
   =/  marbud-tproxy           [~marbud %marbud-key-0 %own (addr %marbud-key-1)]
-  =/  marbud-transfer-breach  [~marbud %marbud-key-1 (addr %marbud-key-1) %transfer &]
+  =/  marbud-transfer-breach  [~marbud %marbud-key-1 %transfer (addr %marbud-key-1) &]
   ::
   ;:  weld
     %+  expect-eq
@@ -629,7 +629,7 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys))
-      =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 (addr %marbud-key-0) %own &))
+      =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 %own (addr %marbud-key-0) &))
       |1:keys.net:(~(got by points.state) ~marbud)
   ==
 ::
@@ -656,7 +656,7 @@
       =^  f  state  (n state %bat q:(set-spawn-proxy:l2 0 marbud-sproxy))
       =^  f  state  (n state %bat q:(set-management-proxy:l2 1 marbud-mproxy))
       =^  f  state  (n state %bat q:(set-transfer-proxy:l2 2 marbud-tproxy))
-      =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-1 (addr %marbud-key-1) %transfer |))
+      =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-1 %transfer (addr %marbud-key-1) |))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
       own:(~(got by points.state) ~marbud)
     ::
@@ -669,7 +669,7 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys))
-      =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 (addr %marbud-key-0) %own |))
+      =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 %own (addr %marbud-key-0) |))
       |1:keys.net:(~(got by points.state) ~marbud)
   ==
 ::
@@ -723,8 +723,8 @@
   =/  new-keys-yes-reset          [~marbud %marbud-key-0 %own encr auth suit &]
   =/  zero-keys-no-reset          [~marbud %marbud-key-0 %own 0 0 0 |]
   =/  zero-keys-yes-reset         [~marbud %marbud-key-0 %own 0 0 0 &]
-  =/  marbud-transfer-no-breach   [~marbud %marbud-key-0 (addr %marbud-key-1) %own |]
-  =/  marbud-transfer-yes-breach  [~marbud %marbud-key-0 (addr %marbud-key-1) %own &]
+  =/  marbud-transfer-no-breach   [~marbud %marbud-key-0 %own (addr %marbud-key-1) |]
+  =/  marbud-transfer-yes-breach  [~marbud %marbud-key-0 %own (addr %marbud-key-1) &]
   ::
   ;:  weld
     %+  expect-eq
@@ -826,7 +826,7 @@
 ::
 ++  test-linnup-torsyx-l2-transfer-ownership  ^-  tang
   =/  lt-spawn                [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach  [~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &]
+  =/  lt-transfer-yes-breach  [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  [`@ux`(addr %lt-key-0) 0]
@@ -840,7 +840,7 @@
 ::
 ++  test-palsep-picdun-l2-transfer-ownership  ^-  tang
   =/  pp-spawn                [~dopbud %dopbud-key-0 %own ~palsep-picdun (addr %pp-key-0)]
-  =/  pp-transfer-yes-breach  [~palsep-picdun %pp-key-0 (addr %pp-key-0) %transfer &]
+  =/  pp-transfer-yes-breach  [~palsep-picdun %pp-key-0 %transfer (addr %pp-key-0) &]
   %+  expect-eq
     !>  [`@ux`(addr %pp-key-0) 0]
   ::
@@ -854,7 +854,7 @@
 ++  test-linnup-torsyx-l2-escape-request  ^-  tang
   ::  TODO: Are you supposed to be able to request escape to a non-existent star?
   =/  lt-spawn                   [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach     [~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &]
+  =/  lt-transfer-yes-breach     [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  [~ ~litbud]
@@ -870,7 +870,7 @@
 ::
 ++  test-linnup-torsyx-l2-cancel-escape-request  ^-  tang
   =/  lt-spawn                   [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach     [~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &]
+  =/  lt-transfer-yes-breach     [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  ~
@@ -887,7 +887,7 @@
 ::
 ++  test-linnup-torsyx-l2-adopt-accept  ^-  tang
   =/  lt-spawn                  [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &]
+  =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  [~ %.y ~litbud]
@@ -906,7 +906,7 @@
   ::  TODO: at the moment the default sponsor is always ~zod, but it should probably
   ::  be ~marbud here
   =/  lt-spawn                  [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &]
+  =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  ~
@@ -923,7 +923,7 @@
 ::
 ++  test-linnup-torsyx-l2-detach  ^-  tang
   =/  lt-spawn                  [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &]
+  =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  [~ %.n ~marbud]
