@@ -136,7 +136,10 @@
     %reject                (reject id +.params)
     %set-management-proxy  (management-proxy id +.params)
     %set-spawn-proxy       (spawn-proxy id +.params)
-    %set-transfer-proxy    (transfer-proxy id +.params) 
+    %set-transfer-proxy    (transfer-proxy id +.params)
+    %pending               (pending id +.params all:pending-rolls)
+    %pending-by-ship       (pending-ship id +.params ship:pending-rolls)
+    %pending-by-address    (pending-address id +.params addr:pending-rolls)
   ==
 ::
 ++  scry-point
@@ -145,4 +148,26 @@
       %gx 
       (~(scry agentio bowl) %azimuth /nas/[(scot %p ship)]/noun)
   ==
+::
+++  pending-rolls
+  |%
+  ++  all
+  .^  (list tx:naive)
+      %gx 
+      (~(scry agentio bowl) %dice /pending/all/noun)
+  ==
+  ++  ship
+    |=  =^ship
+    .^  (list tx:naive)
+        %gx 
+        (~(scry agentio bowl) %dice /pending/ship/[(scot %p ship)]/noun)
+    ==
+  ++  addr
+    |=  =address:naive
+    .^  (list tx:naive)
+        %gx 
+        %+  ~(scry agentio bowl)  %dice
+        /pending/address/[(scot %ux address)]/noun
+    ==
+  --
 --
