@@ -37,14 +37,16 @@ xxd () {
 
 defmacro URBIT_VERSION "\"$URBIT_VERSION\""
 
+opt_debug=
+
 while test $# != 0
 do
   case $1 in
   --enable-debug)
-    CFLAGS="${CFLAGS-} -O0 -g"
+    opt_debug=1
     ;;
   --disable-debug)
-    CFLAGS="${CFLAGS-} -O3 -g"
+    opt_debug=0
     ;;
   *)
     echo "unrecognized option: $1"
@@ -101,6 +103,13 @@ case $(tr A-Z a-z <<< $os) in
      [ -e include/ivory.h     ] || xxd ../../bin/ivory.pill u3_Ivory_pill >include/ivory.h
 
      defmacro U3_OS_mingw 1
+
+     if ((opt_debug))
+     then
+       CFLAGS="${CFLAGS-} -O0 -g"
+     else
+       CFLAGS="${CFLAGS-} -O3 -g"
+     fi
 
      # increase default thread stack size and link Windows implibs
      ldextra="-Wl,--stack,67108864 -lbcrypt -lntdll -lws2_32"
