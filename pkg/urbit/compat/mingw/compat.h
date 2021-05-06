@@ -9,10 +9,9 @@ int utimes(const char *path, const struct timeval times[2]);
 
 int kill(pid_t pid, int signum);
 
-#define SIGALRM   (NSIG+0)
-#define SIGVTALRM (NSIG+1)
-#define SIGINFO   (NSIG+2)
-#define SIGUSR1   (NSIG+3)
-#define SIG_COUNT (NSIG+4)
+#define SIGUSR1   10
+#define SIGALRM   14
+#define SIGVTALRM 26
+#define SIG_COUNT 32
 
 #endif//_MINGW_IO_H

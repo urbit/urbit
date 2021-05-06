@@ -544,7 +544,7 @@ _king_sign_init(void)
 
   //  handle SIGINFO (if available)
   //
-#ifndef U3_OS_linux
+#ifdef SIGINFO
   {
     u3_usig* sig_u;
 
@@ -600,7 +600,7 @@ _king_sign_cb(uv_signal_t* sil_u, c3_i num_i)
 
     //  fallthru if defined
     //
-#ifndef U3_OS_linux
+#ifdef SIGINFO
     case SIGINFO:
 #endif
     case SIGUSR1: {
