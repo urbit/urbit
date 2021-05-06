@@ -32,7 +32,14 @@
 ++  init-bud
   |=  =^state:naive
   ^-  [effects:naive ^state:naive]
-  (n state (owner-changed:l1 ~bud (addr ~bud)))
+  (n state (owner-changed:l1 ~bud (addr %bud-key-0)))
+::
+::  ~wes is for testing sponsors of stars
+::
+++  init-wes
+  |=  =^state:naive
+  ^-  [effects:naive ^state:naive]
+  (n state (owner-changed:l1 ~wes (addr %wes-key-0)))
 ::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
 ::
@@ -65,7 +72,7 @@
   =^  f3  state  (n state (owner-changed:l1 ~litbud deposit-address:naive))
   [:(welp f2 f3) state]
 ::
-::  ~sambud is for testing L1 stars attempting L2 actions
+::  ~sambud is for testing L1 stars
 ::
 ++  init-sambud
    |=  =^state:naive
@@ -356,54 +363,56 @@
     dominion:(~(got by points.state) ~marbud)
 ::
 ++  test-batch  ^-  tang
+  =/  marbud-transfer-no-breach    [~marbud %marbud-key-0 (addr %marbud-key-0) %own |]
+  =/  marbud-transfer-no-breach-2  [~marbud %marbud-key-0 (addr %marbud-key-1) %own |]
   %+  expect-eq
-    !>  [0x234 2]
+    !>  [(addr %marbud-key-1) 2]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-0 (addr %marbud-key-0) %own |))
-    =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 0x234 %own |))
+    =^  f  state  (n state %bat q:(transfer-point:l2 0 marbud-transfer-no-breach))
+    =^  f  state  (n state %bat q:(transfer-point:l2 1 marbud-transfer-no-breach-2))
     owner.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l1-changed-spawn-proxy  ^-  tang
   %+  expect-eq
-    !>  [0x123 0]
+    !>  [(addr %bud-skey) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-bud state)
-    =^  f  state  (n state (changed-spawn-proxy:l1 ~bud 0x123))
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~bud (addr %bud-skey)))
     spawn-proxy.own:(~(got by points.state) ~bud)
 ::
 ++  test-l1-changed-transfer-proxy  ^-  tang
   %+  expect-eq
-    !>  [0x123 0]
+    !>  [(addr %bud-tkey) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-bud state)
-    =^  f  state  (n state (changed-transfer-proxy:l1 ~bud 0x123))
+    =^  f  state  (n state (changed-transfer-proxy:l1 ~bud (addr %bud-tkey)))
     transfer-proxy.own:(~(got by points.state) ~bud)
 ::
 ++  test-l1-changed-management-proxy  ^-  tang
   %+  expect-eq
-    !>  [0x123 0]
+    !>  [(addr %bud-mkey) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-bud state)
-    =^  f  state  (n state (changed-management-proxy:l1 ~bud 0x123))
+    =^  f  state  (n state (changed-management-proxy:l1 ~bud (addr %bud-mkey)))
     management-proxy.own:(~(got by points.state) ~bud)
 ::
 ++  test-l1-changed-voting-proxy  ^-  tang
   %+  expect-eq
-    !>  [0x123 0]
+    !>  [(addr %bud-vkey) 0]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-bud state)
-    =^  f  state  (n state (changed-voting-proxy:l1 ~bud 0x123))
+    =^  f  state  (n state (changed-voting-proxy:l1 ~bud (addr %bud-vkey)))
     voting-proxy.own:(~(got by points.state) ~bud)
 ::
 ++  test-l1-changed-keys  ^-  tang
@@ -417,6 +426,121 @@
     =^  f  state  (init-bud state)
     =^  f  state  (n state (changed-keys:l1 new-keys))
     |1:keys.net:(~(got by points.state) ~bud)
+::
+++  test-l1-star-escape-requested
+  %+  expect-eq
+    !>  [~ ~wes]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-wes state)
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
+    escape.net:(~(got by points.state) ~sambud)
+::
+++  test-l1-star-escape-canceled
+  %+  expect-eq
+    !>  ~
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-wes state)
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
+    =^  f  state  (n state (escape-canceled:l1 ~sambud ~wes))
+    escape.net:(~(got by points.state) ~sambud)
+::
+++  test-l1-star-adopt-accept
+  %+  expect-eq
+    !>  [~ %.y ~wes]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-wes state)
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
+    =^  f  state  (n state (escape-accepted:l1 ~sambud ~wes))
+    [escape.net sponsor.net]:(~(got by points.state) ~sambud)
+::
+++  test-l1-star-lost-sponsor
+  %+  expect-eq
+    !>  [~ %.n ~bud]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (lost-sponsor:l1 ~sambud ~bud))
+    [escape.net sponsor.net]:(~(got by points.state) ~sambud)
+::
+::
+::
+::  ++  test-linnup-torsyx-l2-adopt-accept  ^-  tang
+::    =/  lt-spawn                  [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
+::    =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &]
+::    %+  expect-eq
+::      !>  [~ %.y ~litbud]
+::    ::
+::      !>
+::      =|  =^state:naive
+::      =^  f  state  (init-marbud state)
+::      =^  f  state  (init-litbud state)
+::      =^  f  state  (n state %bat q:(spawn:l2 0 lt-spawn))
+::      =^  f  state  (n state %bat q:(transfer-point:l2 0 lt-transfer-yes-breach))
+::      =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~litbud))
+::      =^  f  state  (n state %bat q:(adopt:l2 0 ~litbud %litbud-key-0 %own ~linnup-torsyx))
+::      [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
+::  ::
+::  ++  test-linnup-torsyx-l2-adopt-reject  ^-  tang
+::    ::  TODO: at the moment the default sponsor is always ~zod, but it should probably
+::    ::  be ~marbud here
+::    =/  lt-spawn                  [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
+::    =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &]
+::    %+  expect-eq
+::      !>  ~
+::    ::
+::      !>
+::      =|  =^state:naive
+::      =^  f  state  (init-marbud state)
+::      =^  f  state  (init-litbud state)
+::      =^  f  state  (n state %bat q:(spawn:l2 0 lt-spawn))
+::      =^  f  state  (n state %bat q:(transfer-point:l2 0 lt-transfer-yes-breach))
+::      =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~litbud))
+::      =^  f  state  (n state %bat q:(reject:l2 0 ~litbud %litbud-key-0 %own ~linnup-torsyx))
+::      escape.net:(~(got by points.state) ~linnup-torsyx)
+::  ::
+::  ++  test-linnup-torsyx-l2-detach  ^-  tang
+::    =/  lt-spawn                  [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
+::    =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 (addr %lt-key-0) %transfer &]
+::    %+  expect-eq
+::      !>  [~ %.n ~marbud]
+::    ::
+::      !>
+::      =|  =^state:naive
+::      =^  f  state  (init-marbud state)
+::      =^  f  state  (init-litbud state)
+::      =^  f  state  (n state %bat q:(spawn:l2 0 lt-spawn))
+::      =^  f  state  (n state %bat q:(transfer-point:l2 0 lt-transfer-yes-breach))
+::      =^  f  state  (n state %bat q:(detach:l2 1 ~marbud %marbud-key-0 %own ~linnup-torsyx))
+::      [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
+::  ::
+::  :
+::
+::  ::  ++  escape-requested
+::      |=  [escapee=ship parent=ship]
+::      (log escape-requested:log-names:naive *@ux escapee parent ~)
+::    ::
+::    ++  escape-canceled
+::    ::  The parent is pinned but not used in lib/naive.hoon for some reason
+::      |=  [escapee=ship parent=ship]
+::      (log escape-canceled:log-names:naive *@ux escapee parent ~)
+::    ::
+::    ++  escape-accepted
+::      |=  [escapee=ship parent=ship]
+::      (log escape-accepted:log-names:naive *@ux escapee parent ~)
+::    ::
+::    ++  lost-sponsor
+::      |=  [lost=ship parent=ship]
+::      (log lost-sponsor:log-names:naive *@ux lost parent ~)
 ::
 ++  test-l2-set-spawn-proxy  ^-  tang
   =/  marbud-sproxy  [~marbud %marbud-key-0 %own (addr %marbud-skey)]
