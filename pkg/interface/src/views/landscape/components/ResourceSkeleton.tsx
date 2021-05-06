@@ -101,7 +101,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       maxWidth={association?.metadata?.description ? ['100%', '50%'] : 'none'}
       mr='2'
       ml='1'
-      flexShrink={[1, 0]}
+      flexShrink={1}
     >
       {title}
     </Text>
