@@ -26,6 +26,7 @@ import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
 import useMetadataState from '~/logic/state/metadata';
+import {getNotificationKey} from '~/logic/lib/hark';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -121,13 +122,14 @@ export default function Inbox(props: {
   );
 
   return (
-    <Col p="1" ref={scrollRef} position="relative" height="100%" overflowY="auto">
+    <Col p="1" ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
       <Invites pendingJoin={props.pendingJoin} api={api} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
           <DaySection
             key={day}
+            time={day}
             label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
             timeboxes={timeboxes}
             archive={Boolean(props.showArchive)}
@@ -166,6 +168,7 @@ function DaySection({
   label,
   archive,
   timeboxes,
+  time,
   api,
 }) {
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
@@ -178,7 +181,7 @@ function DaySection({
       {_.map(timeboxes.sort(sortTimeboxes), ([date, nots], i: number) =>
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
           <Notification
-            key={j}
+            key={getNotificationKey(time, not)}
             api={api}
             notification={not}
             archived={archive}

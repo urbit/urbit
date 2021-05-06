@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback, useMemo, useState } from "react";
-import { Row, Box, Icon } from "@tlon/indigo-react";
+import { Row, Box, Icon, Button } from "@tlon/indigo-react";
 import _ from "lodash";
 import {
   GraphNotificationContents,
@@ -19,7 +19,13 @@ import { GraphNotification } from "./graph";
 import { BigInteger } from "big-integer";
 import { useHovering } from "~/logic/lib/util";
 import useHarkState from "~/logic/state/hark";
-import {IS_MOBILE} from "~/logic/lib/platform";
+import useLocalState from "~/logic/state/local";
+import { IS_MOBILE } from "~/logic/lib/platform";
+import styled from "styled-components";
+import { useSpring, animated } from "@react-spring/web";
+import { useDrag } from "react-use-gesture";
+import { SwipeMenu } from "~/views/components/SwipeMenu";
+import {getNotificationKey} from "~/logic/lib/hark";
 
 interface NotificationProps {
   notification: IndexedNotification;
@@ -62,6 +68,8 @@ export function NotificationWrapper(props: {
 }) {
   const { api, time, notification, children } = props;
 
+  const isMobile = useLocalState(s => s.mobile);
+
   const onArchive = useCallback(async () => {
     if (!(time && notification)) {
       return;
@@ -83,7 +91,7 @@ export function NotificationWrapper(props: {
     return api.hark[func](notification);
   }, [notification, api, isMuted]);
 
-  const onClick = () => {
+  const onClick = (e: any) => {
     if (!(time && notification) || notification.notification.read) {
       return;
     }
@@ -92,44 +100,54 @@ export function NotificationWrapper(props: {
 
   const { hovering, bind } = useHovering();
 
-  const changeMuteDesc = isMuted ? "Unmute" : "Mute";
   return (
-    <Box
-      onClick={onClick}
-      bg={
-        (notification ? notification?.notification?.read : false)
-          ? "washedGray"
-          : "washedBlue"
-      }
-      borderRadius={2}
-      display="grid"
-      gridTemplateColumns={["1fr 24px", "1fr 200px"]}
-      gridTemplateRows="auto"
-      gridTemplateAreas="'header actions' 'main main'"
-      p={2}
+    <SwipeMenu
+      key={(time && notification && getNotificationKey(time, notification)) ?? 'unknown'}
       m={2}
-      {...bind}
+      menuWidth={100}
+      disabled={!isMobile}
+      menu={
+        <Button onClick={onArchive} ml="2" height="100%" width="92px" primary destructive>
+          Remove
+        </Button>
+      }
     >
-      {children}
-      <Row
-        alignItems="flex-start"
-        gapX="2"
-        gridArea="actions"
-        justifyContent="flex-end"
-        opacity={[1, (hovering || IS_MOBILE) ? 1 : 0]}
+      <Box
+        onClick={onClick}
+        bg={
+          (notification ? notification?.notification?.read : false)
+            ? "washedGray"
+            : "washedBlue"
+        }
+        borderRadius={2}
+        display="grid"
+        gridTemplateColumns={["1fr 24px", "1fr 200px"]}
+        gridTemplateRows="auto"
+        gridTemplateAreas="'header actions' 'main main'"
+        p={2}
+        {...bind}
       >
-        {time && notification && (
-          <StatelessAsyncAction
-            name={time.toString()}
-            borderRadius={1}
-            onClick={onArchive}
-            backgroundColor="white"
-          >
-            <Icon lineHeight="24px" size={16} icon="X" />
-          </StatelessAsyncAction>
-        )}
-      </Row>
-    </Box>
+        {children}
+        <Row
+          alignItems="flex-start"
+          gapX="2"
+          gridArea="actions"
+          justifyContent="flex-end"
+          opacity={[0, hovering ? 1 : 0]}
+        >
+          {time && notification && (
+            <StatelessAsyncAction
+              name={time.toString()}
+              borderRadius={1}
+              onClick={onArchive}
+              backgroundColor="white"
+            >
+              <Icon lineHeight="24px" size={16} icon="X" />
+            </StatelessAsyncAction>
+          )}
+        </Row>
+      </Box>
+    </SwipeMenu>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useCallback, ReactElement } from 'react';
+import React, { useEffect, useCallback, ReactElement } from 'react';
 import { Route, Switch, RouteComponentProps } from 'react-router-dom';
 import Helmet from 'react-helmet';
 
@@ -18,8 +18,7 @@ import { Loading } from '../components/Loading';
 import { Workspace } from '~/types/workspace';
 import GlobalSubscription from '~/logic/subscription/global';
 import useGraphState from '~/logic/state/graph';
-import useHarkState, { withHarkState } from '~/logic/state/hark';
-import withState from '~/logic/lib/withState';
+import useHarkState from '~/logic/state/hark';
 import moment from 'moment';
 
 
