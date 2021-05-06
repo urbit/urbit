@@ -16,7 +16,7 @@ function sortBigInt(a: BigInteger, b: BigInteger) {
 }
 export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   root: Record<string, V> = {}
-  cachedIter: [BigInteger, V][] = [];
+  cachedIter: [BigInteger, V][] = null;
   [immerable] = true;
 
   constructor(items: [BigInteger, V][] = []) {
