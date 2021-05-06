@@ -6307,7 +6307,18 @@
       fis=(map (pair type axis) nock)                        ::  +fish
       cro=(map (pair type type) type)                        ::  +crop
       fus=(map (pair type type) type)                        ::  +fuse
+      nen=(map (pair type type) ?)                           ::  internal +nest
+      con=(map (pair type type) type)                        ::  internal +crop
+      fun=(map (pair type type) type)                        ::  internal +fuse
+      fin=(map (pair type axis) nock)                        ::  internal +fish
   ==                                                    ::
++$  pony                                                ::  raw match
+  $@  ~                                                 ::  void
+  %+  each                                              ::  natural/abnormal
+    palo                                                ::  arm or leg
+  %+  each                                              ::  abnormal
+    @ud                                                 ::  unmatched
+  (pair type nock)                                      ::  synthetic
 +$  poly  ?(%wet %dry)                                  ::  polarity
 +$  foot  $%  [%dry p=hoon]                             ::  dry arm, geometric
               [%wet p=hoon]                             ::  wet arm, generic
@@ -9665,13 +9676,19 @@
     ?^  cached
       [u.cached grub]
     =;  [cropped=type =_grub]
-      :_  grub(cro (~(put by cro.grub) [sut ref] cropped))
+      :_  grub(cro (~(put by cro.grub) [sut ref] cropped), con ~)
       cropped
     =|  bix=(set [type type])
     =<  dext
     |%
     ++  dext
       ^-  [type _grub]
+      =/  cached  (~(get by con.grub) [sut ref])
+      ?^  cached
+        [u.cached grub]
+      =;  [cropped=type =_grub]
+        :_  grub(con (~(put by con.grub) [sut ref] cropped))
+        cropped
       ~_  leaf+"crop"
       ?:  |(=(sut ref) =(%noun ref))
         [%void grub]
@@ -10474,16 +10491,6 @@
   ::
   ++  caching-fond
     |=  [way=vial hyp=wing]
-    =>
-    |%
-      +$  pony                                          ::  raw match
-        $@  ~                                           ::  void
-        %+  each                                        ::  natural/abnormal
-          palo                                          ::  arm or leg
-        %+  each                                        ::  abnormal
-          @ud                                           ::  unmatched
-        (pair type nock)                                ::  synthetic
-    --
     ^-  [pony _grub]
     ?~  hyp
       :_  grub
@@ -10492,14 +10499,11 @@
     ?-    -.mor
         %|
       ?-    -.p.mor
-          %&
-        [mor grub]
-      ::
-          %|
-        =^  fex  grub
-          (caching-mint(sut p.p.p.mor) %noun [%wing i.hyp ~])
-        :_  grub
-        [%| %| p.fex (comb q.p.p.mor q.fex)]
+          %&  [mor grub]
+          %|  =^  fex  grub
+                (caching-mint(sut p.p.p.mor) %noun [%wing i.hyp ~])
+              :_  grub
+              [%| %| p.fex (comb q.p.p.mor q.fex)]
       ==
     ::
         %&
@@ -10509,8 +10513,7 @@
           %&  p.lap
           %|  (fork (turn ~(tap in q.lap) head))
         ==
-      =>  :_  +
-          :*  axe=`axis`1
+      =+  :*  axe=`axis`1
               lon=p.p.mor
               heg=?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
           ==
@@ -10519,159 +10522,152 @@
         :_  grub
         [%& [`p.heg lon] %& rig]
       =|  gil=(set type)
-      ::  XX consider using |^ here
-      =<  $
-      |%
-        ++  here
-          ?:  =(0 p.heg)
-            [%& [~ `axe lon] %& sut]
-          [%| %& (dec p.heg)]
+      |^
+      ^-  [pony _grub]
+      ?-    sut
+          %void
+        [~ grub]
+      ::
+          %noun
+        [stop grub]
+      ::
+          [%atom *]
+        [stop grub]
+      ::
+          [%cell *]
+        ?~  q.heg  [here grub]
+        =^  taf  grub  $(axe (peg axe 2), sut p.sut)
+        ?~  taf  [~ grub]
+        ?:  |(?=(%& -.taf) ?=(%| -.p.taf))
+          [taf grub]
+        $(axe (peg axe 3), p.heg p.p.taf, sut q.sut)
+      ::
+          [%core *]
+        ?~  q.heg  [here grub]
+        =^  zem  p.heg
+          =/  zem  (loot u.q.heg q.r.q.sut)
+          ?~  zem  [~ p.heg]
+          ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
+        ?^  zem
+          :_  grub
+          :+  %&
+            [`axe lon]
+          =/  zut
+            ^-  foot
+            ?-  q.p.q.sut
+              %wet  [%wet q.u.zem]
+              %dry  [%dry q.u.zem]
+            ==
+          [%| (peg 2 p.u.zem) [[sut zut] ~ ~]]
+        =/  pec  (peel way r.p.q.sut)
+        ?.  sam.pec  [lose grub]
+        ?:  con.pec  $(sut p.sut, axe (peg axe 3))
+        =^  lef  grub  (caching-peek(sut p.sut) way 2)
+        $(sut lef, axe (peg axe 6))
+      ::
+          [%hint *]
+        =^  val  grub  caching-repo
+        $(sut val)
+      ::
+          [%face *]
+        ?:  ?=(~ q.heg)
+          :_  grub
+          here(sut q.sut)
+        =*  zot  p.sut
+        ?@  zot
+          :_  grub
+          ?:(=(u.q.heg zot) here(sut q.sut) lose)
+        |^
+        ^-  [pony _grub]
+        =/  tyr  (~(get by p.zot) u.q.heg)
+        ?~  tyr
+          next
+        ?~  u.tyr
+          ^$(sut q.sut, lon [~ lon], p.heg +(p.heg))
+        ?.  =(0 p.heg)
+          next(p.heg (dec p.heg))
+        =^  tor  grub  (caching-fund way u.u.tyr)
+        :_  grub
+        ?-  -.tor
+          %&  [%& (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
+          %|  [%| %| p.p.tor (comb [%0 axe] q.p.tor)]
+        ==
+        ++  next
+          |-  ^-  [pony _grub]
+          ?~  q.zot
+            ^^$(sut q.sut, lon [~ lon])
+          =^  tiv  grub  (caching-mint(sut q.sut) %noun i.q.zot)
+          =^  fid  grub  ^^$(sut p.tiv, lon ~, axe 1, gil ~)
+          ?~  fid  [~ grub]
+          ?:  ?=({%| %& *} fid)
+            $(q.zot t.q.zot, p.heg p.p.fid)
+          =^  vat=(pair type nock)  grub
+            ?-    -.fid
+              %&  (caching-fine %& p.fid)
+              %|  (caching-fine %| p.p.fid)
+            ==
+          :_  grub
+          [%| %| p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
+        --
         ::
-        ++  lose  [%| %& p.heg]
-        ::
-        ++  stop  ?~(q.heg here lose)
-        ::
-        ++  twin
-          |=  [hax=pony yor=pony]
-          ^-  pony
-          ~_  leaf+"find-fork"
-          ?:  =(hax yor)  hax
-          ?~  hax  yor
-          ?~  yor  hax
-          ?:  ?=(%| -.hax)
-            ?>  ?&  ?=(%| -.yor)
-                    ?=(%| -.p.hax)
-                    ?=(%| -.p.yor)
-                    =(q.p.p.hax q.p.p.yor)
-                ==
-            :+  %|
-              %|
-            [(fork p.p.p.hax p.p.p.yor ~) q.p.p.hax]
-          ?>  ?=(%& -.yor)
-          ?>  =(p.p.hax p.p.yor)
-          ?:  &(?=(%& -.q.p.hax) ?=(%& -.q.p.yor))
-            :+  %&  p.p.hax
-            [%& (fork p.q.p.hax p.q.p.yor ~)]
-          ?>  &(?=(%| -.q.p.hax) ?=(%| -.q.p.yor))
-          ?>  =(p.q.p.hax p.q.p.yor)
-          =/  wal  (~(uni in q.q.p.hax) q.q.p.yor)
-          :+  %&  p.p.hax
-          [%| p.q.p.hax wal]
-        ::
-        ++  $
-          ^-  [pony _grub]
-          ?-    sut
-              %void
-            [~ grub]
-          ::
-              %noun
-            [stop grub]
-          ::
-              [%atom *]
-            [stop grub]
-          ::
-              [%cell *]
-            ?~  q.heg  [here grub]
-            =^  taf  grub  $(axe (peg axe 2), sut p.sut)
-            ?~  taf  [~ grub]
-            ?:  |(?=(%& -.taf) ?=(%| -.p.taf))
-              [taf grub]
-            $(axe (peg axe 3), p.heg p.p.taf, sut q.sut)
-          ::
-              [%core *]
-            ?~  q.heg  [here grub]
-            =^  zem  p.heg
-              =/  zem  (loot u.q.heg q.r.q.sut)
-              ?~  zem  [~ p.heg]
-              ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
-            ?^  zem
-              :_  grub
-              :+  %&
-                [`axe lon]
-              =/  zut
-                ^-  foot
-                ?-  q.p.q.sut
-                  %wet  [%wet q.u.zem]
-                  %dry  [%dry q.u.zem]
-                ==
-              [%| (peg 2 p.u.zem) [[sut zut] ~ ~]]
-            =/  pec  (peel way r.p.q.sut)
-            ?.  sam.pec  [lose grub]
-            ?:  con.pec  $(sut p.sut, axe (peg axe 3))
-            =^  lef  grub  (caching-peek(sut p.sut) way 2)
-            $(sut lef, axe (peg axe 6))
-          ::
-              [%hint *]
-            =^  val  grub  caching-repo
-            $(sut val)
-          ::
-              [%face *]
-            ?:  ?=(~ q.heg)
-              :_  grub
-              here(sut q.sut)
-            =*  zot  p.sut
-            ?@  zot
-              :_  grub
-              ?:(=(u.q.heg zot) here(sut q.sut) lose)
-            =<  main
-            ::
-            |%
-            ++  main
-              ^-  [pony _grub]
-              =/  tyr  (~(get by p.zot) u.q.heg)
-              ?~  tyr
-                next
-              ?~  u.tyr
-                $(sut q.sut, lon [~ lon], p.heg +(p.heg))
-              ?.  =(0 p.heg)
-                next(p.heg (dec p.heg))
-              =^  tor  grub  (caching-fund way u.u.tyr)
-              :_  grub
-              ?-  -.tor
-                %&  [%& (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
-                %|  [%| %| p.p.tor (comb [%0 axe] q.p.tor)]
-              ==
-            ::
-            ++  next
-              |-  ^-  [pony _grub]
-              ?~  q.zot
-                ^$(sut q.sut, lon [~ lon])
-              =^  tiv  grub  (caching-mint(sut q.sut) %noun i.q.zot)
-              =^  fid  grub  ^$(sut p.tiv, lon ~, axe 1, gil ~)
-              ?~  fid  [~ grub]
-              ?:  ?=([%| %& *] fid)
-                $(q.zot t.q.zot, p.heg p.p.fid)
-              =^  vat=(pair type nock)  grub
-                ?-    -.fid
-                  %&  (caching-fine %& p.fid)
-                  %|  (caching-fine %| p.p.fid)
-                ==
-              :_  grub
-              [%| %| p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
-            --
-            ::
-              [%fork *]
-            =/  yed  ~(tap in p.sut)
-            =|  wiz=(list pony)
-            =^  woz  grub
-              |-  ^-  [(list pony) _grub]
-              ?~  yed
-                :_  grub
-                wiz
-              =^  val  grub  ^$(sut i.yed)
-              $(yed t.yed, wiz [val wiz])
+          [%fork *]
+        =/  yed  ~(tap in p.sut)
+        =|  wiz=(list pony)
+        =^  woz  grub
+          |-  ^-  [(list pony) _grub]
+          ?~  yed
             :_  grub
-            ?~  woz  ~
-            |-  ^-  pony
-            ?~  t.woz  i.woz
-            (twin i.woz $(woz t.woz))
-          ::
-              [%hold *]
-            ?:  (~(has in gil) sut)
-              [~ grub]
-            =^  rig  grub  caching-repo
-            $(gil (~(put in gil) sut), sut rig)
-          ==
+            wiz
+          =^  val  grub  ^$(sut i.yed)
+          $(yed t.yed, wiz [val wiz])
+        :_  grub
+        ?~  woz  ~
+        |-  ^-  pony
+        ?~  t.woz  i.woz
+        (twin i.woz $(woz t.woz))
+      ::
+          [%hold *]
+        ?:  (~(has in gil) sut)
+          [~ grub]
+        =^  rig  grub  caching-repo
+        $(gil (~(put in gil) sut), sut rig)
+      ==
+      ::
+      ++  here
+        ?:  =(0 p.heg)
+          [%& [~ `axe lon] %& sut]
+        [%| %& (dec p.heg)]
+      ::
+      ++  lose  [%| %& p.heg]
+      ::
+      ++  stop  ?~(q.heg here lose)
+      ::
+      ++  twin
+        |=  [hax=pony yor=pony]
+        ^-  pony
+        ~_  leaf+"find-fork"
+        ?:  =(hax yor)  hax
+        ?~  hax  yor
+        ?~  yor  hax
+        ?:  ?=(%| -.hax)
+          ?>  ?&  ?=(%| -.yor)
+                  ?=(%| -.p.hax)
+                  ?=(%| -.p.yor)
+                  =(q.p.p.hax q.p.p.yor)
+              ==
+          :+  %|
+            %|
+          [(fork p.p.p.hax p.p.p.yor ~) q.p.p.hax]
+        ?>  ?=(%& -.yor)
+        ?>  =(p.p.hax p.p.yor)
+        ?:  &(?=(%& -.q.p.hax) ?=(%& -.q.p.yor))
+          :+  %&  p.p.hax
+          [%& (fork p.q.p.hax p.q.p.yor ~)]
+        ?>  &(?=(%| -.q.p.hax) ?=(%| -.q.p.yor))
+        ?>  =(p.q.p.hax p.q.p.yor)
+        =/  wal  (~(uni in q.q.p.hax) q.q.p.yor)
+        :+  %&  p.p.hax
+        [%| p.q.p.hax wal]
       --
     ==
   ::
@@ -11028,10 +11024,16 @@
     ?^  cached
       [u.cached grub]
     =;  [fished=nock =_grub]
-      :_  grub(fis (~(put by fis.grub) [sut axe] fished))
+      :_  grub(fis (~(put by fis.grub) [sut axe] fished), fin ~)
       fished
     =|  vot=(set type)
     |-  ^-  [nock _grub]
+    =/  cached  (~(get by fin.grub) [sut axe])
+    ?^  cached
+      [u.cached grub]
+    =;  [fished=nock =_grub]
+      :_  grub(fin (~(put by fin.grub) [sut axe] fished))
+      fished
     ?-  sut
         %void
       [[%1 1] grub]
@@ -11127,10 +11129,16 @@
     ?^  cached
       [u.cached grub]
     =;  [fused=type =_grub]
-      :_  grub(fus (~(put by fus.grub) [sut ref] fused))
+      :_  grub(fus (~(put by fus.grub) [sut ref] fused), fun ~)
       fused
     =|  bix=(set [type type])
     |-  ^-  [type _grub]
+    =/  cached  (~(get by fun.grub) [sut ref])
+    ?^  cached
+      [u.cached grub]
+    =;  [fused=type =_grub]
+      :_  grub(fun (~(put by fun.grub) [sut ref] fused))
+      fused
     ?:  ?|(=(sut ref) =(%noun ref))
       [sut grub]
     ?-    sut
@@ -12993,6 +13001,12 @@
   ::
   ++  caching-nest
     |=  [tel=? ref=type]
+    =/  cached  (~(get by nes.grub) [sut ref])
+    ?^  cached
+      [u.cached grub]
+    =;  [nests=? =_grub]
+      :_  grub(nes (~(put by nes.grub) [sut ref] nests), nen ~)
+      nests
     =|  $:  seg=(set type)                              ::  degenerate sut
             reg=(set type)                              ::  degenerate ref
             gil=(set (pair type type))                  ::  assume nest
@@ -13060,15 +13074,15 @@
       dext(sut played-dab, ref played-hem)
     ::
     ++  dext
-      =/  cached  (~(get by nes.grub) [sut ref])
+      =/  cached  (~(get by nen.grub) [sut ref])
       ?^  cached
         [u.cached grub]
       =;  [nests=? =_grub]
-        =?  nes.grub
+        =?  nen.grub
             ?|  &(nests =(~ reg))
                 &(!nests =(~ seg))
             ==
-          (~(put by nes.grub) [sut ref] nests)
+          (~(put by nen.grub) [sut ref] nests)
         :_  grub
         nests
       |-
