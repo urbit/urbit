@@ -8,7 +8,7 @@ import { getSnippet } from '~/logic/lib/publish';
 import { useGroupForAssoc } from '~/logic/state/group';
 import Author from '~/views/components/Author';
 import { MentionText } from '~/views/components/MentionText';
-import { GraphContentWide } from '~/views/landscape/components/Graph/GraphContentWide';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import ChatMessage from '../chat/components/ChatMessage';
 import { NotePreviewContent } from '../publish/components/NotePreview';
 import { PermalinkEmbed } from './embed';
@@ -72,10 +72,10 @@ function TranscludedComment(props: {
         group={group}
       />
       <Box p="2">
-        <GraphContentWide
+        <GraphContent
           api={api}
           transcluded={transcluded}
-          post={comment.post}
+          contents={comment.post.contents}
           showOurContact={false}
         />
       </Box>
@@ -111,7 +111,7 @@ function TranscludedPublishNode(props: {
           </Text>
           <Box p="2">
             <NotePreviewContent
-              snippet={getSnippet(post?.post.contents[1]?.text)}
+              snippet={getSnippet(post?.post.contents.slice(1))}
             />
           </Box>
         </Col>

@@ -11,8 +11,8 @@ import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import { useCopy } from '~/logic/lib/useCopy';
 import useMetadataState from '~/logic/state/metadata';
+import { GraphContent } from '../landscape/components/Graph/GraphContent';
 import Author from '~/views/components/Author';
-import { GraphContentWide } from '../landscape/components/Graph/GraphContentWide';
 
 const ClickBox = styled(Box)`
   cursor: pointer;
@@ -31,14 +31,13 @@ interface CommentItemProps {
   highlighted: boolean;
 }
 
-export function CommentItem(props: CommentItemProps): ReactElement {
+export function CommentItem(props: CommentItemProps) {
   let { highlighted } = props;
   const { ship, name, api, comment, group } = props;
   const association = useMetadataState(
     useCallback(s => s.associations.graph[`/ship/${ship}/${name}`], [ship,name])
   );
-  const ref = useRef<HTMLElement | null>(null);
-  console.log(comment);
+  const ref = useRef<HTMLDivElement>(null);
   const [, post] = getLatestCommentRevision(comment);
   const disabled = props.pending;
 
@@ -131,14 +130,14 @@ export function CommentItem(props: CommentItemProps): ReactElement {
           </Row>
         </Author>
       </Row>
-      <GraphContentWide
+      <GraphContent
         borderRadius="1"
         p="1"
         mb="1"
         backgroundColor={highlighted ? 'washedBlue' : 'white'}
         transcluded={0}
         api={api}
-        post={post}
+        contents={post.contents}
         showOurContact
       />
     </Box>

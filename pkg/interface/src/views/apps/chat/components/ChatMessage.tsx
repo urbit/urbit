@@ -22,7 +22,8 @@ import useLocalState from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Dropdown } from '~/views/components/Dropdown';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
-import { GraphContentWide } from '~/views/landscape/components/Graph/GraphContentWide';
+import { GraphContent} from  '~/views/landscape/components/Graph/GraphContent';
+
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
@@ -496,10 +497,10 @@ export const Message = React.memo(({
       ) : (
         <></>
       )}
-      <GraphContentWide
+      <GraphContent
         {...bind}
         width="100%"
-        post={msg}
+        contents={msg.contents}
         transcluded={transcluded}
         api={api}
         showOurContact={showOurContact}

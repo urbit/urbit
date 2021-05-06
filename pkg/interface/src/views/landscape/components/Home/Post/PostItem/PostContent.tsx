@@ -3,7 +3,7 @@ import { Post } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import GlobalApi from '~/logic/api/global';
-import { GraphContentWide } from '~/views/landscape/components/Graph/GraphContentWide';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 
 const TruncatedBox = styled(Col)`
   display: -webkit-box;
@@ -31,9 +31,9 @@ const PostContent = (props: PostContentProps): ReactElement => {
       textOverflow="ellipsis"
       overflow="hidden"
     >
-      <GraphContentWide
+      <GraphContent
         transcluded={0}
-        post={post}
+        contents={post.contents}
         api={api}
         showOurContact
       />

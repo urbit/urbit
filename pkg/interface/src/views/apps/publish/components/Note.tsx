@@ -1,12 +1,12 @@
-import { Action, Anchor, Box, Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph, GraphNode, Group } from '@urbit/api';
+import React, { useState, useEffect } from 'react';
+import { Box, Text, Col, Anchor, Row, Action } from '@tlon/indigo-react';
 import bigInt from 'big-integer';
-import React, { useEffect, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
+import { Contacts, GraphNode, Graph, Association, Unreads, Group, Post } from '@urbit/api';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { getComments, getLatestRevision } from '~/logic/lib/publish';
 import { useCopy } from '~/logic/lib/useCopy';
 import { useQuery } from '~/logic/lib/useQuery';
@@ -35,11 +35,10 @@ const renderers = {
   }
 };
 
-export function NoteContent({ body }) {
+export function NoteContent({ post, api }) {
   return (
-
       <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <ReactMarkdown source={body} linkTarget={'_blank'} renderers={renderers} />
+        <GraphContent tall contents={post.contents.slice(1)} showOurContact api={api} />
       </Box>
   );
 }
@@ -124,7 +123,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           </Author>
         </Row>
       </Col>
-      <NoteContent body={body} />
+      <NoteContent api={props.api} post={post} />
       <NoteNavigation
         notebook={notebook}
         noteId={noteId}

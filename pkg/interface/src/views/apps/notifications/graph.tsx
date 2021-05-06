@@ -19,7 +19,7 @@ import {
   GraphNotificationContents, GraphNotifIndex
 } from '~/types';
 import Author from '~/views/components/Author';
-import { GraphContentWide } from '~/views/landscape/components/Graph/GraphContentWide';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { PermalinkEmbed } from '../permalinks/embed';
 import { Header } from './header';
 
@@ -150,7 +150,7 @@ export const GraphNodeContent = ({ post, mod, index, hidden, association }) => {
   }
   return (
     <TruncBox truncate={8}>
-      <GraphContentWide api={{} as any} post={post} showOurContact />
+      <GraphContent api={{} as any} contents={post.contents} showOurContact />
     </TruncBox>
   );
 };
