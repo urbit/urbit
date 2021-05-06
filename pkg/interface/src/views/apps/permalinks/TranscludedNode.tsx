@@ -20,7 +20,7 @@ function TranscludedLinkNode(props: {
   api: GlobalApi;
 }) {
   const { node, api, assoc, transcluded } = props;
-  const idx = node.post.index.slice(1).split('/');
+  const idx = node?.post.index.slice(1).split('/');
 
   switch (idx.length) {
     case 1:
@@ -91,7 +91,7 @@ function TranscludedPublishNode(props: {
 }) {
   const { node, assoc, transcluded, api } = props;
   const group = useGroupForAssoc(assoc)!;
-  const idx = node.post.index.slice(1).split('/');
+  const idx = node?.post.index.slice(1).split('/');
   switch (idx.length) {
     case 1:
       const post = node.children
