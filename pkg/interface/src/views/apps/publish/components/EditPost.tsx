@@ -1,15 +1,13 @@
-import React, { ReactElement } from 'react';
-import _ from 'lodash';
-import { FormikHelpers } from 'formik';
-import { RouteComponentProps, useLocation } from 'react-router-dom';
-
 import { GraphNode } from '@urbit/api';
-
-import { PostFormSchema, PostForm } from './NoteForm';
+import { FormikHelpers } from 'formik';
+import _ from 'lodash';
+import React, { ReactElement } from 'react';
+import { RouteComponentProps, useLocation } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { getLatestRevision, editPost } from '~/logic/lib/publish';
+import { editPost, getLatestRevision } from '~/logic/lib/publish';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { PostForm, PostFormSchema } from './NoteForm';
 
 interface EditPostProps {
   ship: string;

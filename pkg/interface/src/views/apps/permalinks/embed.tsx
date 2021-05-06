@@ -1,29 +1,21 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
-  parsePermalink,
-  GraphPermalink as IGraphPermalink,
-  getPermalinkForGraph,
-  usePermalinkForGraph,
-} from "~/logic/lib/permalinks";
+  BaseAnchor, Box,
+
+  Col, Icon, Row, Text
+} from '@tlon/indigo-react';
+import { Association, GraphNode, resourceFromPath } from '@urbit/api';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
 import {
-  Action,
-  Box,
-  Text,
-  BaseAnchor,
-  Row,
-  Icon,
-  Col,
-} from "@tlon/indigo-react";
-import { GroupLink } from "~/views/components/GroupLink";
-import GlobalApi from "~/logic/api/global";
-import { getModuleIcon } from "~/logic/lib/util";
-import useMetadataState from "~/logic/state/metadata";
-import { Association, resourceFromPath } from "@urbit/api";
-import { Link } from "react-router-dom";
-import useGraphState from "~/logic/state/graph";
-import { GraphNodeContent } from "../notifications/graph";
-import { TranscludedNode } from "./TranscludedNode";
-import {useVirtualResizeProp} from "~/logic/lib/virtualContext";
+  getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
+} from '~/logic/lib/permalinks';
+import { getModuleIcon } from '~/logic/lib/util';
+import { useVirtualResizeProp } from '~/logic/lib/virtualContext';
+import useGraphState from '~/logic/state/graph';
+import useMetadataState from '~/logic/state/metadata';
+import { GroupLink } from '~/views/components/GroupLink';
+import { TranscludedNode } from './TranscludedNode';
 
 function GroupPermalink(props: { group: string; api: GlobalApi }) {
   const { group, api } = props;
@@ -51,19 +43,19 @@ function GraphPermalink(
   const { full = false, showOurContact, pending, link, graph, group, index, api, transcluded } = props;
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
-    useCallback((s) => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index], [
+    useCallback(s => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index] as GraphNode, [
       graph,
-      index,
+      index
     ])
   );
   const [errored, setErrored] = useState(false);
   const association = useMetadataState(
-    useCallback((s) => s.associations.graph[graph] as Association | null, [
-      graph,
+    useCallback(s => s.associations.graph[graph] as Association | null, [
+      graph
     ])
   );
 
-  useVirtualResizeProp(node)
+  useVirtualResizeProp(Boolean(node));
   useEffect(() => {
     (async () => {
       if (pending || !index) {
@@ -77,18 +69,20 @@ function GraphPermalink(
       }
     })();
   }, [pending, graph, index]);
-  const showTransclusion = !!(association && node && transcluded < 1);
+  const showTransclusion = Boolean(association && node && transcluded < 1);
   const permalink = getPermalinkForGraph(group, graph, index);
 
   return (
     <Col
       width="100%"
       bg="white"
-      maxWidth={full ? null : "500px"}
-      border={full ? null : "1"}
+      maxWidth={full ? null : '500px'}
+      border={full ? null : '1'}
       borderColor="lightGray"
       borderRadius="2"
-      onClick={(e) => { e.stopPropagation(); }}
+      onClick={(e) => {
+ e.stopPropagation();
+}}
     >
       {showTransclusion && index && (
         <Box p="2">
@@ -101,7 +95,7 @@ function GraphPermalink(
           />
         </Box>
       )}
-      {!!association ? (
+      {association ? (
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
@@ -130,9 +124,9 @@ function PermalinkDetails(props: {
   const { title, icon, permalink, known, showTransclusion } = props;
   const rowTransclusionStyle = showTransclusion
     ? {
-        borderTop: "1",
-        borderTopColor: "lightGray",
-        my: "1",
+        borderTop: '1',
+        borderTopColor: 'lightGray',
+        my: '1'
       }
     : {};
 
@@ -173,9 +167,9 @@ export function PermalinkEmbed(props: {
   }
 
   switch (permalink.type) {
-    case "group":
+    case 'group':
       return <GroupPermalink group={permalink.group} api={props.api} />;
-    case "graph":
+    case 'graph':
       return (
         <GraphPermalink
           transcluded={props.transcluded}

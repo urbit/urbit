@@ -1,19 +1,17 @@
-import React, { useRef } from 'react';
-import { Box, Text, Col } from '@tlon/indigo-react';
+import { Box, Col, Text } from '@tlon/indigo-react';
+import { Association, Associations, Unreads } from '@urbit/api';
 import f from 'lodash/fp';
-import _ from 'lodash';
 import moment from 'moment';
-
-import { Associations, Association, Unreads, UnreadStats } from '@urbit/api';
+import React, { useRef } from 'react';
+import { getNotificationCount, getUnreadCount } from '~/logic/lib/hark';
+import { TUTORIAL_GROUP, TUTORIAL_GROUP_RESOURCE, TUTORIAL_HOST } from '~/logic/lib/tutorialModal';
 import { alphabeticalOrder } from '~/logic/lib/util';
-import { getUnreadCount, getNotificationCount } from '~/logic/lib/hark';
-import Tile from '../components/tiles/tile';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
-import { TUTORIAL_HOST, TUTORIAL_GROUP, TUTORIAL_GROUP_RESOURCE } from '~/logic/lib/tutorialModal';
 import useSettingsState, { selectCalmState, SettingsState } from '~/logic/state/settings';
+import { useTutorialModal } from '~/views/components/useTutorialModal';
+import Tile from '../components/tiles/tile';
 
 interface GroupsProps {}
 

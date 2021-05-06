@@ -1,14 +1,13 @@
 import f from 'lodash/fp';
-import { RemoteContentPolicy, LeapCategories, leapCategories } from "~/types/local-update";
 import { BaseState, createState } from '~/logic/state/base';
-
+import { LeapCategories, leapCategories, RemoteContentPolicy } from '~/types/local-update';
 
 export interface SettingsState extends BaseState<SettingsState> {
   display: {
     backgroundType: 'none' | 'url' | 'color';
     background?: string;
     dark: boolean;
-    theme: "light" | "dark" | "auto";
+    theme: 'light' | 'dark' | 'auto';
   };
   calm: {
     hideNicknames: boolean;
@@ -25,7 +24,7 @@ export interface SettingsState extends BaseState<SettingsState> {
     seen: boolean;
     joined?: number;
   };
-};
+}
 
 export const selectSettingsState =
 <K extends keyof SettingsState>(keys: K[]) => f.pick<SettingsState, K>(keys);
@@ -39,7 +38,7 @@ const useSettingsState = createState<SettingsState>('Settings', {
     backgroundType: 'none',
     background: undefined,
     dark: false,
-    theme: "auto"
+    theme: 'auto'
   },
   calm: {
     hideNicknames: false,
@@ -55,10 +54,10 @@ const useSettingsState = createState<SettingsState>('Settings', {
     videoShown: true
   },
   leap: {
-    categories: leapCategories,
+    categories: leapCategories
   },
   tutorial: {
-    seen: false,
+    seen: true,
     joined: undefined
   }
 });

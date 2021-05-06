@@ -1,6 +1,6 @@
+import { Text } from '@tlon/indigo-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Text } from '@tlon/indigo-react';
 
 export function BackButton(props: {}) {
   return (

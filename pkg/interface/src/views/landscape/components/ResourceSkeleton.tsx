@@ -1,17 +1,15 @@
-import React, { ReactElement, ReactNode, useRef } from 'react';
-import { Icon, Box, Col, Text } from '@tlon/indigo-react';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import urbitOb from 'urbit-ob';
-
+import { Box, Col, Icon, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
-
-import RichText from '~/views/components/RichText';
+import React, { ReactElement, ReactNode, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import urbitOb from 'urbit-ob';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import RichText from '~/views/components/RichText';
 
 const TruncatedText = styled(RichText)`
   white-space: nowrap;
@@ -30,7 +28,10 @@ type ResourceSkeletonProps = {
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const { association, baseUrl, children } = props;
-  const app = association?.metadata?.config?.graph || association['app-name'];
+  let app = association['app-name'];
+  if (association?.metadata?.config && 'graph' in association.metadata.config) {
+    app = association.metadata.config.graph;
+  }
   const rid = association.resource;
   const groups = useGroupState(state => state.groups);
   const group = groups[association.group];
@@ -47,7 +48,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     ? getItemTitle(association)
     : association?.metadata?.title;
 
-  let recipient = "";
+  let recipient = '';
 
   const contacts = useContactState(state => state.contacts);
 
@@ -55,7 +56,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     recipient = title;
     title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
   } else {
-    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(", ")
+    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(', ');
   }
 
   const [, , ship, resource] = rid.split('/');
@@ -77,7 +78,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       fontSize='1'
       mr='12px'
       my='1'
-      flexShrink='0'
+      flexShrink={0}
       display={['block','none']}
     >
       <Link to={`/~landscape${workspace}`}>
@@ -98,7 +99,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       maxWidth={association?.metadata?.description ? ['100%', '50%'] : 'none'}
       mr='2'
       ml='1'
-      flexShrink={['1', '0']}
+      flexShrink={[1, 0]}
     >
       {title}
     </Text>
@@ -112,7 +113,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       mb='0'
       minWidth='0'
       maxWidth='50%'
-      flexShrink='1'
+      flexShrink={1}
       disableRemoteContent
     >
       {workspace === '/messages'
@@ -145,7 +146,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   return (
     <Col width='100%' height='100%' overflow='hidden'>
       <Box
-        flexShrink='0'
+        flexShrink={0}
         height='48px'
         py='2'
         px='2'
@@ -159,7 +160,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           display='flex'
           alignItems='baseline'
           width={`calc(100% - ${actionsWidth}px - 16px)`}
-          flexShrink='0'
+          flexShrink={0}
         >
           <BackLink />
           <Title />
@@ -169,7 +170,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           ml={3}
           display='flex'
           alignItems='center'
-          flexShrink='0'
+          flexShrink={0}
           ref={actionsRef}
         >
           {canWrite && <WriterControls />}

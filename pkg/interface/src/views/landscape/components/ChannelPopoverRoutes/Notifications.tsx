@@ -1,9 +1,9 @@
+import { BaseLabel, Col, Label, Text } from '@tlon/indigo-react';
+import { Association } from '@urbit/api';
 import React, { useRef } from 'react';
-import { Col, Text, BaseLabel, Label } from '@tlon/indigo-react';
 import GlobalApi from '~/logic/api/global';
-import { Association, NotificationGraphConfig } from '@urbit/api';
-import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 import useHarkState from '~/logic/state/hark';
+import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 
 interface ChannelNotificationsProps {
   api: GlobalApi;
@@ -28,7 +28,7 @@ export function ChannelNotifications(props: ChannelNotificationsProps) {
   const anchorRef = useRef<HTMLElement | null>(null);
 
   return (
-    <Col mb="6" gapY="4" flexShrink={0}>
+    <Col mx="4" mb="6" gapY="4" flexShrink={0}>
       <Text ref={anchorRef} id="notifications" fontSize="2" fontWeight="bold">
         Channel Notifications
       </Text>

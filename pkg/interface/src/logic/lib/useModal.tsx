@@ -1,19 +1,13 @@
+import { Box } from '@tlon/indigo-react';
 import React, {
-  useState,
   ReactNode,
   useCallback,
-  SyntheticEvent,
   useMemo,
-  useEffect,
-  useRef
+  useRef, useState
 } from 'react';
-
-import { Box } from '@tlon/indigo-react';
-import { useOutsideClick } from './useOutsideClick';
+import { PropFunc } from '~/types';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { Portal } from '~/views/components/Portal';
-import { ModalPortal } from '~/views/components/ModalPortal';
-import { PropFunc } from '@urbit/api';
 
 type ModalFunc = (dismiss: () => void) => JSX.Element;
 interface UseModalProps {

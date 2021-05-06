@@ -1,11 +1,9 @@
-import React, { Component, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Anchor, Row, Text } from '@tlon/indigo-react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import urbitOb from 'urbit-ob';
-import { Text, Anchor } from '@tlon/indigo-react';
 import { GroupLink } from '~/views/components/GroupLink';
-import { Row } from '@tlon/indigo-react';
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -46,10 +44,11 @@ const renderers = {
         display="block"
         borderLeft="1px solid"
         color="black"
-        paddingLeft={2}>
+        paddingLeft={2}
+      >
         {children}
       </Text>
-    )
+    );
   },
   paragraph: ({ children }) => {
     return (

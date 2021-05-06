@@ -1,24 +1,21 @@
-import React, { useRef, useCallback } from 'react';
-
-import { Col, Box, Text, Row } from '@tlon/indigo-react';
+import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import {
   Association,
-  Groups,
-  Group,
-  Rolodex,
-  NotificationGraphConfig
-} from '@urbit/api';
 
-import { ModalOverlay } from '~/views/components/ModalOverlay';
-import { GraphPermissions } from './ChannelPermissions';
-import { ChannelPopoverRoutesSidebar } from './Sidebar';
-import { ChannelDetails } from './Details';
+  Group
+} from '@urbit/api';
+import React, { useCallback, useRef } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { useHashLink } from '~/logic/lib/useHashLink';
-import { useHistory, Link } from 'react-router-dom';
-import { ChannelNotifications } from './Notifications';
-import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { isChannelAdmin, isHost } from '~/logic/lib/group';
+import { useHashLink } from '~/logic/lib/useHashLink';
+import { FormGroup } from '~/views/components/FormGroup';
+import { ModalOverlay } from '~/views/components/ModalOverlay';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { GraphPermissions } from './ChannelPermissions';
+import { ChannelDetails } from './Details';
+import { ChannelNotifications } from './Notifications';
+import { ChannelPopoverRoutesSidebar } from './Sidebar';
 
 interface ChannelPopoverRoutesProps {
   baseUrl: string;
@@ -83,10 +80,10 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
           isOwner={isOwner}
           baseUrl={props.baseUrl}
         />
-        <Col height="100%" overflowY="auto" p="5" flexGrow={1}>
+        <FormGroup onReset={onDismiss} height="100%" overflowY="auto" pt="5" flexGrow={1}>
           <ChannelNotifications {...props} />
           {!isOwner && (
-            <Col mb="6" flexShrink={0}>
+            <Col mx="4" mb="6" flexShrink={0}>
               <Text id="unsubscribe" fontSize="2" fontWeight="bold">
                 Unsubscribe from Channel
               </Text>
@@ -107,7 +104,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
               <ChannelDetails {...props} />
               <GraphPermissions {...props} />
               { isOwner ? (
-              <Col mt="5" mb="6" flexShrink={0}>
+              <Col mx="4" mt="5" mb="6" flexShrink={0}>
                 <Text id="archive" fontSize="2" fontWeight="bold">
                   Archive channel
                 </Text>
@@ -124,7 +121,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
               </Col>
 
               ) : (
-              <Col mt="5" mb="6" flexShrink={0}>
+              <Col mx="4" my="6" flexShrink={0}>
               <Text id="remove" fontSize="2" fontWeight="bold">
                 Remove channel from group
               </Text>
@@ -143,7 +140,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
               )}
             </>
           )}
-        </Col>
+      </FormGroup>
       </Row>
     </ModalOverlay>
   );

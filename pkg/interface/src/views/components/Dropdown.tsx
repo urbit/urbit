@@ -1,20 +1,14 @@
-import React, {
-  ReactNode,
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-  ReactElement
-} from 'react';
-import styled from 'styled-components';
-import _ from 'lodash';
-import { useLocation } from 'react-router-dom';
-
 import { Box } from '@tlon/indigo-react';
+import React, {
+  ReactElement, ReactNode,
 
+  useCallback, useEffect, useRef, useState
+} from 'react';
+import { useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import { AlignX, AlignY, getRelativePosition } from '~/logic/lib/relativePosition';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { Portal } from './Portal';
-import { getRelativePosition, AlignY, AlignX } from '~/logic/lib/relativePosition';
 
 interface DropdownProps {
   children: ReactNode;
@@ -25,6 +19,7 @@ interface DropdownProps {
   offsetY?: number;
   width?: string;
   dropWidth?: string;
+  flexShrink?: number;
 }
 
 const ClickBox = styled(Box)`
@@ -39,14 +34,17 @@ const DropdownOptions = styled(Box)`
 `;
 
 export function Dropdown(props: DropdownProps): ReactElement {
-  const { children, options, offsetX = 0, offsetY = 0 } = props;
-  const dropdownRef = useRef<HTMLElement>(null);
-  const anchorRef = useRef<HTMLElement>(null);
+  const { children, options, offsetX = 0, offsetY = 0, flexShrink = 1 } = props;
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState({});
 
   const updatePos = useCallback(() => {
+    if(!anchorRef.current) {
+      return;
+    }
     const newCoords = getRelativePosition(anchorRef.current, props.alignX, props.alignY, offsetX, offsetY);
     if(newCoords) {
       setCoords(newCoords);
@@ -86,7 +84,7 @@ export function Dropdown(props: DropdownProps): ReactElement {
   }, []);
 
   return (
-    <Box flexShrink={props?.flexShrink ? props.flexShrink : 1} position={open ? 'relative' : 'static'} minWidth='0' width={props?.width ? props.width : 'auto'}>
+    <Box flexShrink={flexShrink} position={open ? 'relative' : 'static'} minWidth='0' width={props?.width ? props.width : 'auto'}>
       <ClickBox width='100%' ref={anchorRef} onClick={onOpen}>
         {children}
       </ClickBox>

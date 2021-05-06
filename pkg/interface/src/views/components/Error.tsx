@@ -1,5 +1,5 @@
+import { BaseAnchor, Box, Button, Col, Text } from '@tlon/indigo-react';
 import React, { Component } from 'react';
-import { Text, Box, Col, Button, BaseAnchor } from '@tlon/indigo-react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 

@@ -1,17 +1,14 @@
-import React, { ReactElement, useCallback } from 'react';
-import _ from 'lodash';
-
 import { Col } from '@tlon/indigo-react';
 import {
-  Associations,
   GroupNotificationContents,
   GroupNotifIndex,
-  GroupUpdate,
-  Rolodex
+  GroupUpdate
 } from '@urbit/api';
-
-import { Header } from './header';
+import _ from 'lodash';
+import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
+import { useAssocForGroup } from '~/logic/state/metadata';
+import { Header } from './header';
 
 function describeNotification(description: string, plural: boolean) {
   switch (description) {
@@ -52,23 +49,16 @@ export function GroupNotification(props: GroupNotificationProps): ReactElement {
   const { group } = index;
   const desc = describeNotification(index.description, contents.length !== 1);
 
-  const onClick = useCallback(() => {
-    if (props.archived) {
-      return;
-    }
-    const func = read ? 'unread' : 'read';
-    return api.hark[func](timebox, { group: index });
-  }, [api, timebox, index, read]);
+  const association = useAssocForGroup(group);
+  const groupTitle = association?.metadata?.title ?? group;
 
   return (
-    <Col onClick={onClick} p="2">
+    <Col>
       <Header
-        archived={props.archived}
         time={time}
-        read={read}
-        group={group}
         authors={authors}
         description={desc}
+        groupTitle={groupTitle}
       />
     </Col>
   );

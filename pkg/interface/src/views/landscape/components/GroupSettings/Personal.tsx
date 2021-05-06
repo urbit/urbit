@@ -1,17 +1,14 @@
-import React from 'react';
-
 import {
-  Col,
+  BaseLabel, Col,
   Label,
-  BaseLabel,
+
   Text
 } from '@tlon/indigo-react';
-import { GroupNotificationsConfig } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
-
+import React from 'react';
 import GlobalApi from '~/logic/api/global';
-import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 import useHarkState from '~/logic/state/hark';
+import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 
 export function GroupPersonalSettings(props: {
   api: GlobalApi;
