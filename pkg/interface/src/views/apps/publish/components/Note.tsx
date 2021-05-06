@@ -49,7 +49,11 @@ export function Note(props: NoteProps & RouteComponentProps) {
   };
 
   if (typeof note.post === 'string' || !note.post) {
-    return <Redirect to="/~404" />;
+    return (
+      <Box width="100%"  pt="2" textAlign="center">
+        <Text gray>This note has been deleted.</Text>
+      </Box>
+    );
   }
 
   const { query } = useQuery();

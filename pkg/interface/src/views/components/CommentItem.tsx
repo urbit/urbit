@@ -1,4 +1,4 @@
-import { Action, Box, Row } from '@tlon/indigo-react';
+import { Action, Box, Row, Text } from '@tlon/indigo-react';
 import { Group } from '@urbit/api';
 import { GraphNode } from '@urbit/api/graph';
 import bigInt from 'big-integer';
@@ -109,8 +109,11 @@ export function CommentItem(props: CommentItemProps) {
   );
 
   if (!post || typeof post === 'string') {
-    //  TODO: if typeof post === 'string', show some deleted state
-    return null;
+    return (
+      <Box width="100%" textAlign="left" py="3">
+        <Text gray>This comment has been deleted.</Text>
+      </Box>
+    );
   }
 
   return (
