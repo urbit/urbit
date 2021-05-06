@@ -73,6 +73,8 @@
 #     include <sys/mman.h>
 
 #   elif defined(U3_OS_mingw)
+#     define signal mingw_has_no_usable_signal
+#     define raise  mingw_has_no_usable_raise
 #     define _POSIX
 #     include <inttypes.h>
 #     include <stdlib.h>
