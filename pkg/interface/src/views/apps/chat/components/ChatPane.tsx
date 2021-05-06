@@ -34,6 +34,7 @@ interface ChatPaneProps {
    * Get contents of reply message
    */
   onReply: (msg: Post) => string;
+  onDelete: (msg: Post) => void;
   /**
    * Fetch more messages
    *
@@ -75,6 +76,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
     isAdmin,
     dismissUnread,
     onSubmit,
+    onDelete,
     promptShare = [],
     fetchMessages
   } = props;
@@ -150,6 +152,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
         showOurContact={promptShare.length === 0 && !showBanner}
         pendingSize={Object.keys(graphTimesentMap[id] || {}).length}
         onReply={onReply}
+        onDelete={onDelete}
         dismissUnread={dismissUnread}
         fetchMessages={fetchMessages}
         isAdmin={isAdmin}

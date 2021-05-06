@@ -1,4 +1,4 @@
-import { Box, Col } from '@tlon/indigo-react';
+import { Box, Col, Text } from '@tlon/indigo-react';
 import bigInt from 'big-integer';
 import React from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
@@ -35,15 +35,15 @@ export class PostFeed extends React.Component {
     const graphResource = resourceFromPath(graphPath);
     const node = graph.get(index);
     if (!node) {
- return null;
-}
+      return null;
+    }
 
     const first = graph.peekLargest()?.[0];
     const post = node?.post;
-    if (!node || !post) {
-      return null;
-    }
-    const nodeIndex = parentNode ? parentNode.post.index.split('/').slice(1).map((ind) => {
+    const nodeIndex = 
+      ( parentNode &&
+        typeof parentNode.post !== 'string'
+      ) ? parentNode.post.index.split('/').slice(1).map((ind) => {
       return bigInt(ind);
     }) : [];
 
