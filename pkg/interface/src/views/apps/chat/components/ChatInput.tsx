@@ -1,18 +1,14 @@
+import { BaseImage, Box, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
+import { Contact, Content } from '@urbit/api';
 import React, { Component, ReactNode } from 'react';
-import ChatEditor from './chat-editor';
-import { IuseStorage } from '~/logic/lib/useStorage';
-import { uxToHex } from '~/logic/lib/util';
-import { Sigil } from '~/logic/lib/sigil';
-import { createPost } from '~/logic/api/graph';
-import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
-import { Envelope } from '~/types/chat-update';
-import { StorageState } from '~/types';
-import { Contact, Contacts, Content, Post } from '@urbit/api';
-import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
-import withStorage from '~/views/components/withStorage';
+import { Sigil } from '~/logic/lib/sigil';
+import tokenizeMessage from '~/logic/lib/tokenizeMessage';
+import { IuseStorage } from '~/logic/lib/useStorage';
+import { MOBILE_BROWSER_REGEX, uxToHex } from '~/logic/lib/util';
 import { withLocalState } from '~/logic/state/local';
-import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
+import withStorage from '~/views/components/withStorage';
+import ChatEditor from './ChatEditor';
 
 type ChatInputProps = IuseStorage & {
   api: GlobalApi;
@@ -84,7 +80,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
       this.chatEditor.current.editor.setValue(url);
       this.setState({ uploadingPaste: false });
     } else {
-      props.onSubmit([{ url }])
+      props.onSubmit([{ url }]);
     }
   }
 
@@ -233,4 +229,4 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
 export default withLocalState<Omit<ChatInputProps, keyof IuseStorage>, 'hideAvatars', ChatInput>(
   withStorage<ChatInputProps, ChatInput>(ChatInput, { accept: 'image/*' }),
   ['hideAvatars']
-)
+);

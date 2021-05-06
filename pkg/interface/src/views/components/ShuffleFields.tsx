@@ -1,12 +1,11 @@
-import React, { ReactNode, useMemo, useCallback } from "react";
-
+import { Box, Icon } from '@tlon/indigo-react';
 import {
   FieldArray,
   FieldArrayRenderProps,
-  Field,
-  useFormikContext,
-} from "formik";
-import { Icon, Col, Row, Box } from "@tlon/indigo-react";
+
+  useFormikContext
+} from 'formik';
+import React, { ReactNode, useMemo } from 'react';
 
 interface ShuffleFieldsProps<N extends string> {
   name: N;
@@ -36,7 +35,6 @@ export function ShuffleFields<N extends string, T, F extends Value<N, T>>(
         const goDown = (i: number) => () => {
           if(i < fields.length - 1) {
             arrayHelpers.swap(i + 1, i);
-
           }
         };
         return (

@@ -1,8 +1,7 @@
-import React from 'react';
 import { Box, Image } from '@tlon/indigo-react';
-
-import { uxToHex } from '~/logic/lib/util';
 import { Metadata } from '@urbit/api';
+import React from 'react';
+import { uxToHex } from '~/logic/lib/util';
 import { PropFunc } from '~/types/util';
 
 type MetadataIconProps = PropFunc<typeof Box> & {
