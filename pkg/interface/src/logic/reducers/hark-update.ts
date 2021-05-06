@@ -6,7 +6,7 @@ import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import { compose } from 'lodash/fp';
-import { makePatDa } from '~/logic/lib/util';
+import { favicon, makePatDa } from '~/logic/lib/util';
 import { reduceState } from '../state/base';
 import useHarkState, { HarkState } from '../state/hark';
 
@@ -187,7 +187,14 @@ function readSince(json: any, state: HarkState): HarkState {
 
 function unreadSince(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unread-count');
-  if(data) {
+  if (data) {
+    if (!useHarkState.getState().doNotDisturb && !document.hasFocus()) {
+      new Notification('New Landscape Notification', {
+        tag: 'landscape',
+        icon: favicon(),
+        image: favicon()
+      });
+    }
     updateUnreadCount(state, data.index, u => u + 1);
   }
   return state;
@@ -305,7 +312,7 @@ function removeNotificationFromUnread(state: HarkState, index: NotifIndex, time:
   }
 }
 
-function updateNotificationStats(state: HarkState, index: NotifIndex, statField: 'unreads' | 'last', f: (x: number) => number) {
+function updateNotificationStats(state: HarkState, index: NotifIndex, statField: 'unreads' | 'last', f: (x: number) => number, notify = false) {
     if('graph' in index) {
       const curr: any = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, statField], 0);
       _.set(state.unreads.graph, [index.graph.graph, index.graph.index, statField], f(curr));

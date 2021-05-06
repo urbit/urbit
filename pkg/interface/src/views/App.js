@@ -1,6 +1,5 @@
 import dark from '@tlon/indigo-dark';
 import light from '@tlon/indigo-light';
-import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
 import Mousetrap from 'mousetrap';
 import 'mousetrap-global-bind';
 import * as React from 'react';
@@ -11,8 +10,7 @@ import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import GlobalApi from '~/logic/api/global';
 import gcpManager from '~/logic/lib/gcpManager';
-import { foregroundFromBackground } from '~/logic/lib/sigil';
-import { uxToHex } from '~/logic/lib/util';
+import { favicon } from '~/logic/lib/util';
 import withState from '~/logic/lib/withState';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
@@ -86,7 +84,6 @@ class App extends React.Component {
 
     this.updateTheme = this.updateTheme.bind(this);
     this.updateMobile = this.updateMobile.bind(this);
-    this.faviconString = this.faviconString.bind(this);
   }
 
   componentDidMount() {
@@ -129,22 +126,6 @@ class App extends React.Component {
     });
   }
 
-  faviconString() {
-    let background = '#ffffff';
-    if (this.props.contacts.hasOwnProperty(`~${window.ship}`)) {
-      background = `#${uxToHex(this.props.contacts[`~${window.ship}`].color)}`;
-    }
-    const foreground = foregroundFromBackground(background);
-    const svg = sigiljs({
-      patp: window.ship,
-      renderer: stringRenderer,
-      size: 16,
-      colors: [background, foreground]
-    });
-    const dataurl = 'data:image/svg+xml;base64,' + btoa(svg);
-    return dataurl;
-  }
-
   getTheme() {
     const { props } = this;
     return ((props.dark && props?.display?.theme == 'auto') ||
@@ -161,7 +142,7 @@ class App extends React.Component {
       <ThemeProvider theme={theme}>
         <Helmet>
           {window.ship.length < 14
-            ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
+            ? <link rel="icon" type="image/svg+xml" href={favicon()} />
             : null}
         </Helmet>
         <Root>

@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
 import { Association, Contact } from '@urbit/api';
 import anyAscii from 'any-ascii';
 import bigInt, { BigInteger } from 'big-integer';
@@ -6,7 +7,9 @@ import { enableMapSet } from 'immer';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { foregroundFromBackground } from '~/logic/lib/sigil';
 import { IconRef } from '~/types';
+import useContactState from '../state/contact';
 import useSettingsState from '../state/settings';
 
 enableMapSet();
@@ -435,3 +438,19 @@ export function getItemTitle(association: Association): string {
   return association.metadata.title ?? association.resource ?? '';
 }
 
+export const favicon = () => {
+  let background = '#ffffff';
+  const contacts = useContactState.getState().contacts;
+  if (contacts.hasOwnProperty(`~${window.ship}`)) {
+    background = `#${uxToHex(contacts[`~${window.ship}`].color)}`;
+  }
+  const foreground = foregroundFromBackground(background);
+  const svg = sigiljs({
+    patp: window.ship,
+    renderer: stringRenderer,
+    size: 16,
+    colors: [background, foreground]
+  });
+  const dataurl = 'data:image/svg+xml;base64,' + btoa(svg);
+  return dataurl;
+}
