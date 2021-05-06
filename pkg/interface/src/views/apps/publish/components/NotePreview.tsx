@@ -50,7 +50,11 @@ export function NotePreview(props: NotePreviewProps) {
   const { node, group } = props;
   const { post } = node;
   if (!post || typeof post === 'string') {
-    return null;
+    return (
+      <Box width="100%" py="3">
+        <Text gray>This note has been deleted.</Text>
+      </Box>
+    );
   }
 
   const numComments = getComments(node).children.size;
