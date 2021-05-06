@@ -56,28 +56,26 @@ const codeToMdAst = (content: CodeContent) => {
     children: [
       {
         type: 'code',
-        value: content.code.expression
+        value: content.code.expression,
       },
       {
         type: 'code',
-        value: (content.code.output || []).join('\n')
-      }
-    ]
+        value: (content.code.output || []).join('\n'),
+      },
+    ],
   };
-      
-
-}
+};
 
 const contentToMdAst = (tall: boolean) => (
   content: Content
 ): [StitchMode, any] => {
   if ('text' in content) {
-    return ['merge', tall ? parseTall(content.text) : parseWide(content.text)] as [StitchMode, any];
-  } else if ('code' in content) {
     return [
-      'block',
-      codeToMdAst(content)
-    ];
+      'merge',
+      tall ? parseTall(content.text) : parseWide(content.text),
+    ] as [StitchMode, any];
+  } else if ('code' in content) {
+    return ['block', codeToMdAst(content)];
   } else if ('reference' in content) {
     return [
       'block',
@@ -171,7 +169,9 @@ export function asParent<T extends BlockContent>(node: T): Parent | undefined {
 function stitchMerge(a: Root, b: Root) {
   const aChildren = a.children;
   const bChildren = b.children;
-  if (last(aChildren)?.type === bChildren[0]?.type) {
+  const lastType = last(aChildren)?.type;
+
+  if (lastType === bChildren[0]?.type) {
     const aGrandchild = getChildren(last(aChildren));
     const bGrandchild = getChildren(bChildren[0]);
     const mergedPara = {
@@ -270,6 +270,7 @@ const renderers = {
         color="black"
         paddingLeft={2}
         py="1"
+        mb="1" 
       >
         {children}
       </Text>
@@ -333,35 +334,49 @@ const renderers = {
   },
   'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
   'graph-url': ({ url }) => (
-    <Box my="2" flexShrink={0}>
+    <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent key={url} url={url} />
     </Box>
   ),
-  'graph-reference': ({ api, reference }) => {
+  'graph-reference': ({ api, reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
     return (
-      <PermalinkEmbed api={api} link={link} transcluded={0} showOurContact />
+      <Box mb="2" flexShrink={0}>
+        <PermalinkEmbed
+          api={api}
+          link={link}
+          transcluded={transcluded}
+          showOurContact
+        />
+      </Box>
     );
   },
-  root: ({ children }) => <Col gapY="2">{children}</Col>,
+  root: ({ tall, children }) =>
+    tall ? <Col gapY="2">{children}</Col> : <Box>{children}</Box>,
   text: ({ value }) => value,
 };
 
 export function Graphdown<T extends {} = {}>(
   props: {
     ast: GraphAstNode;
+    transcluded: number;
     tall?: boolean;
     depth?: number;
   } & T
 ) {
-  const { ast, depth = 0, ...rest } = props;
+  const { ast, transcluded, depth = 0, ...rest } = props;
   const { type, children = [], ...nodeRest } = ast;
   const Renderer = renderers[ast.type] ?? (() => `unknown element: ${type}`);
 
   return (
-    <Renderer depth={depth} {...rest} {...nodeRest}>
+    <Renderer transcluded={transcluded} depth={depth} {...rest} {...nodeRest}>
       {children.map((c) => (
-        <Graphdown depth={depth+1} {...rest} ast={c} />
+        <Graphdown
+          transcluded={transcluded}
+          depth={depth + 1}
+          {...rest}
+          ast={c}
+        />
       ))}
     </Renderer>
   );
@@ -385,11 +400,10 @@ export const GraphContent = React.memo(function GraphContent(
     api,
     ...rest
   } = props;
-  const [,ast] = stitchAsts(contents.map(contentToMdAst(tall)));
+  const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
   return (
     <Box {...rest}>
-      <Graphdown api={api} ast={ast} />
+      <Graphdown transcluded={transcluded} api={api} ast={ast} />
     </Box>
   );
 });
-
