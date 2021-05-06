@@ -1,6 +1,6 @@
 import { Box, Col, Icon, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
-import React, { ReactElement, ReactNode, useRef } from 'react';
+import React, { ReactElement, ReactNode, useRef, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import urbitOb from 'urbit-ob';
