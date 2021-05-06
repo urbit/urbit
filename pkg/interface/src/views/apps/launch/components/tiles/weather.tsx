@@ -98,7 +98,7 @@ class WeatherTile extends React.Component {
         <Text color='black' cursor='pointer'
            onClick={() => this.locationSubmit()}
         >
-          Detect ->
+          Detect {'->'}
         </Text>
       );
     }
@@ -177,7 +177,7 @@ class WeatherTile extends React.Component {
           <Text>Weather</Text>
         </Box>
         <Text style={{ cursor: 'pointer' }}>
-          -> Set location
+          {'->'} Set location
         </Text>
       </Box>
     );
@@ -226,7 +226,7 @@ class WeatherTile extends React.Component {
                 this.setState({ manualEntry: !this.state.manualEntry })
               }
             >
-            Weather ->
+            Weather {'->'}
           </Text>
         </Text>
 
@@ -281,7 +281,7 @@ class WeatherTile extends React.Component {
                   this.setState({ manualEntry: !this.state.manualEntry })
                 }
               >
-              ->
+              {'->'}
             </Text>
           </Text>
         </Box>
