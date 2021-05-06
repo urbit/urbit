@@ -120,7 +120,11 @@ const SvgArc = ({ start, end, ...rest }) => {
   return <path d={d} {...rest} />;
 };
 
-class ClockText extends React.Component<ClockTextProps, ClockTextState> {
+interface ClockTextState {
+  time: number;
+}
+
+class ClockText extends React.Component<{}, ClockTextState> {
   interval?: NodeJS.Timeout;
   constructor(props) {
     super(props);
@@ -176,7 +180,34 @@ class ClockText extends React.Component<ClockTextProps, ClockTextState> {
   }
 }
 
-class Clock extends React.PureComponent {
+interface ClockProps {
+  data: {
+    latitude?: number;
+    longitude?: number;
+  }
+}
+
+interface ClockState {
+  time: number;
+  lat: number;
+  lon: number;
+  geolocationSuccess: boolean;
+  sunrise: number;
+  sunsetStart: number;
+  sunset: number;
+  sunriseEnd: number;
+  dusk: number;
+  dawn: number;
+  night: number;
+  nightEnd: number;
+  nauticalDawn: number;
+  nauticalDusk: number;
+}
+
+class Clock extends React.PureComponent<ClockProps, ClockState> {
+  angle: number;
+  referenceTime: moment.Moment;
+  interval: NodeJS.Timeout;
   constructor(props) {
     super(props);
     this.angle = 0;
@@ -188,7 +219,7 @@ class Clock extends React.PureComponent {
       geolocationSuccess: false,
       sunrise: 0,
       sunsetStart: 0,
-      sunset:0,
+      sunset: 0,
       sunriseEnd: 0,
       dusk: 0,
       dawn: 0,

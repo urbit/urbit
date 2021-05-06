@@ -52,7 +52,7 @@ const StoreDebugger = (props: StoreDebuggerProps) => {
           backgroundColor='white'
           color='black'
           border='1px solid transparent'
-          borderRadius='2'
+          borderRadius={2}
           fontSize={1}
           placeholder="Drill Down"
           width="100%"
@@ -65,7 +65,7 @@ const StoreDebugger = (props: StoreDebuggerProps) => {
             }
           }}
         />
-        <Text mono p='1' borderRadius='1' display='block' overflow='auto' backgroundColor='washedGray' style={{ whiteSpace: 'pre', wordWrap: 'break-word' }}>{text}</Text>
+        <Text mono p={1} borderRadius={1} display='block' overflow='auto' backgroundColor='washedGray' style={{ whiteSpace: 'pre', wordWrap: 'break-word' }}>{text}</Text>
       </Box>}
     </Box>
   );
@@ -75,8 +75,8 @@ const DebugPane = () => {
   return (
     <>
       <BackButton />
-      <Col borderBottom="1" borderBottomColor="washedGray" p="5" pt="4" gapY="5">
-        <Col gapY="1" mt="0">
+      <Col borderBottom={1} borderBottomColor="washedGray" p={5} pt={4} gapY={5}>
+        <Col gapY={1} mt={0}>
           <Text color="black" fontSize={2} fontWeight="medium">
             Debug Menu
           </Text>

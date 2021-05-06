@@ -26,7 +26,7 @@ export function StatelessAsyncToggle({
   ) : state === 'loading' ? (
     <LoadingSpinner foreground={'white'} background="gray" />
   ) : state === 'success' ? (
-    <Text mx="2">Done</Text>
+    <Text mx={2}>Done</Text>
   ) : (
     <Toggle onClick={handleClick} {...rest} />
   );

@@ -13,7 +13,7 @@ export default class CustomTile extends React.PureComponent {
           backgroundColor='white'
           border='1px solid'
           borderColor='lightGray'
-          borderRadius='2'
+          borderRadius={2}
         >
           <BaseImage
             position='absolute'

@@ -40,12 +40,12 @@ export function GroupSettings(props: GroupSettingsProps) {
       <Col>
         <GroupPersonalSettings {...props} />
         <Section>
-          <Col p="4" maxWidth="384px">
-            <Text fontSize="2" fontWeight="600">
+          <Col p={4} maxWidth="384px">
+            <Text fontSize={2} fontWeight="600">
               Participants
             </Text>
             <Text gray>View list of all group participants and statuses</Text>
-            <Button primary mt="4" onClick={linkRelative('/participants')}>View List</Button>
+            <Button primary mt={4} onClick={linkRelative('/participants')}>View List</Button>
           </Col>
         </Section>
         { isAdmin && (

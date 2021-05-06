@@ -1,15 +1,40 @@
 import { Box, Col, Row, Text } from '@tlon/indigo-react';
-import React from 'react';
-import { isWriter, resourceFromPath } from '~/logic/lib/group';
-import { useHovering } from '~/logic/lib/util';
-import withState from '~/logic/lib/withState';
+import { Association, GraphNode, Group, Post } from '@urbit/api';
+import { History } from 'history';
+import React, { Ref } from 'react';
+import GlobalApi from '~/logic/api/global';
+import { isWriter } from '~/logic/lib/group';
+import { withHovering } from '~/logic/lib/util';
 import { Mention } from '~/views/components/MentionText';
 import PostInput from '../PostInput';
 import PostContent from './PostContent';
 import PostFooter from './PostFooter';
 import PostHeader from './PostHeader';
 
-class PostItem extends React.Component {
+export interface PostItemProps {
+  api: GlobalApi;
+  association: Association;
+  baseUrl: string
+  bind?: unknown;
+  graphPath: string;
+  group: Group;
+  history: History;
+  hovering?: boolean;
+  index: BigInt[];
+  innerRef?: Ref<HTMLDivElement>;
+  isParent?: boolean;
+  isRelativeTime?: boolean;
+  isReply?: boolean;
+  node: GraphNode;
+  parentPost?: Post;
+  vip: string;
+}
+
+interface PostItemState {
+  inReplyMode: boolean;
+}
+
+class PostItem extends React.Component<PostItemProps, PostItemState> {
   constructor(props) {
     super(props);
 
@@ -45,8 +70,8 @@ class PostItem extends React.Component {
   navigateToReplies() {
     const { history, baseUrl, index, isParent } = this.props;
     if (isParent) {
- return;
-}
+      return;
+    }
     let indexString = '';
 
     index.forEach((i) => {
@@ -68,16 +93,15 @@ class PostItem extends React.Component {
       association,
       index,
       innerRef,
-      isParent,
-      isReply,
-      isRelativeTime,
+      isParent = false,
+      isReply = false,
+      isRelativeTime = true,
       parentPost,
       vip,
       group,
       hovering,
       bind
     } = this.props;
-    const graphResource = resourceFromPath(graphPath);
 
     let indexString = '';
 
@@ -93,17 +117,17 @@ class PostItem extends React.Component {
     return (
       <Col
         ref={innerRef}
-        pl="1"
-        pr="1"
-        mb="3"
+        pl={1}
+        pr={1}
+        mb={3}
         width="100%"
         alignItems="center"
       >
         <Col
-          pt="2"
+          pt={2}
           border={1}
           borderColor={ isParent ? 'gray' : 'lightGray' }
-          borderRadius="2"
+          borderRadius={2}
           width="100%"
           maxWidth="600px"
           backgroundColor={ hovering ? 'washedGray' : 'transparent' }
@@ -122,7 +146,7 @@ class PostItem extends React.Component {
               { (isReply || (parentPost && index.length > 1 && isParent)) ? (
                 <Row width="100%" alignItems="center" mb="2" pl="2" pr="2">
                   <Text color="gray" pr="1">Replying to</Text>
-                  <Mention ship={parentPost?.author} />
+                  <Mention ship={parentPost?.author} api={api} />
                 </Row>
               ) : null }
               <PostContent
@@ -147,7 +171,7 @@ class PostItem extends React.Component {
         { inReplyMode ? (
           <Col width="100%" maxWidth="600px">
             <Box
-              ml="3"
+              ml={3}
               height="16px"
               borderLeft={1}
               borderLeftColor="lightGray"
@@ -168,7 +192,4 @@ class PostItem extends React.Component {
   }
 }
 
-export default withState(PostItem, [
-  [useHovering, ['hovering', 'bind']]
-]);
-
+export default withHovering<PostItemProps>(PostItem);

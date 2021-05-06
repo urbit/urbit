@@ -1,9 +1,9 @@
 import {
-  Box,
+    Box,
 
-  Col, ManagedTextInputField as Input,
+    Col, ManagedTextInputField as Input,
 
-  Row, Text
+    Row, Text
 } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
 import { Form, Formik } from 'formik';
@@ -104,7 +104,7 @@ export function InvitePopover(props: InvitePopoverProps) {
               validateOnBlur
             >
               <Form>
-                <Col gapY="3" pt={3} px={3}>
+                <Col gapY={3} pt={3} px={3}>
                   <Box>
                     <Text>Invite to </Text>
                     <Text fontWeight="800">{title}</Text>

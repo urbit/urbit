@@ -1,6 +1,8 @@
-import { Box, Col, Text } from '@tlon/indigo-react';
+import { Box, Col } from '@tlon/indigo-react';
+import { Association, Graph, GraphNode, Group } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
+import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import VirtualScroller from '~/views/components/VirtualScroller';
 import PostItem from './PostItem/PostItem';
@@ -9,7 +11,22 @@ const virtualScrollerStyle = {
   height: '100%'
 };
 
-export class PostFeed extends React.Component {
+interface PostFeedProps {
+  graph: Graph;
+  graphPath: string;
+  api: GlobalApi;
+  history?: History;
+  baseUrl: string;
+  parentNode?: GraphNode;
+  grandparentNode?: GraphNode;
+  association: Association;
+  group: Group;
+  vip: string;
+  pendingSize: number;
+}
+
+export class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
+  isFetching: boolean;
   constructor(props) {
     super(props);
 
@@ -32,7 +49,6 @@ export class PostFeed extends React.Component {
       group,
       vip
     } = this.props;
-    const graphResource = resourceFromPath(graphPath);
     const node = graph.get(index);
     if (!node) {
       return null;
@@ -53,7 +69,7 @@ export class PostFeed extends React.Component {
           <Col
             key={index.toString()}
             ref={ref}
-            mb="3"
+            mb={3}
             width="100%"
             flexShrink={0}
           >

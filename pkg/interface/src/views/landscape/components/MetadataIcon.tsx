@@ -5,7 +5,7 @@ import { uxToHex } from '~/logic/lib/util';
 import { PropFunc } from '~/types/util';
 
 type MetadataIconProps = PropFunc<typeof Box> & {
-  metadata: Metadata;
+  metadata: Pick<Metadata, 'color' | 'picture'>;
 };
 
 export function MetadataIcon(props: MetadataIconProps) {

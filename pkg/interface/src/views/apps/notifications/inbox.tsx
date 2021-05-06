@@ -1,10 +1,10 @@
 import { Box, Center, Col, LoadingSpinner, Text } from '@tlon/indigo-react';
 import {
-  IndexedNotification,
+    IndexedNotification,
 
-  JoinRequests, Notifications,
+    JoinRequests, Notifications,
 
-  Timebox
+    Timebox
 } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import _ from 'lodash';
@@ -113,7 +113,7 @@ export default function Inbox(props: {
   );
 
   return (
-    <Col p="1" ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
+    <Col p={1} ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
       <Invites pendingJoin={props.pendingJoin} api={api} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
@@ -129,15 +129,15 @@ export default function Inbox(props: {
         );
       })}
       {isDone ? (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
-          <Text gray fontSize="1">No more notifications</Text>
+        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
+          <Text gray fontSize={1}>No more notifications</Text>
         </Center>
     )  : isLoading ? (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
+        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
           <LoadingSpinner />
         </Center>
     ) : (
-      <Box mt="2" height="96px" />
+      <Box mt={2} height="96px" />
     )}
 
     </Col>

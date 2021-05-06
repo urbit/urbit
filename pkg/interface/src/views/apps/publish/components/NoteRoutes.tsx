@@ -1,4 +1,5 @@
 import { Association, Graph, GraphNode, Group } from '@urbit/api';
+import bigInt from 'big-integer';
 import React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
@@ -9,7 +10,7 @@ interface NoteRoutesProps {
   ship: string;
   book: string;
   note: GraphNode;
-  noteId: number;
+  noteId: bigInt.BigInteger;
   notebook: Graph;
   api: GlobalApi;
   association: Association;

@@ -20,12 +20,13 @@ function getPermalinkForAssociatedGroup(group: string) {
 
 type Permalink = GraphPermalink | GroupPermalink;
 
-interface GroupPermalink {
+export interface GroupPermalink {
   type: 'group';
   group: string;
   link: string;
 }
-interface GraphPermalink {
+
+export interface GraphPermalink {
   type: 'graph';
   link: string;
   graph: string;

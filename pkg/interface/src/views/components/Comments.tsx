@@ -82,7 +82,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
       const post = createPost(
         content,
         commentNode.post.index,
-        parseInt(idx + 1, 10)
+        parseInt((idx + 1).toString(), 10).toString()
       );
       await api.graph.addPost(ship, name, post);
       history.push(baseUrl);
@@ -128,7 +128,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
 
   return (
-    <Col {...rest} minWidth='0'>
+    <Col {...rest} minWidth={0}>
       {( !editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
       {( editCommentId ? (
         <CommentInput

@@ -2,6 +2,9 @@ import { saveAs } from 'file-saver';
 import bel from '../../../logic/lib/bel';
 
 export default class Store {
+  state: any;
+  api: any;
+  setState: any;
   constructor() {
     this.state = this.initialState();
   }
@@ -69,6 +72,7 @@ return h;
         break;
       case 'sag':
         blit.sav = blit.sag;
+        break;
       case 'sav':
         const name = blit.sav.path.split('/').slice(-2).join('.');
         const buff = new Buffer(blit.sav.file, 'base64');

@@ -10,14 +10,14 @@ export function SettingsItem(props: {
   const { to, title, description } = props;
   return (
     <Link to={`/~settings/${to}`}>
-      <Row alignItems="center" gapX="3">
+      <Row alignItems="center" gapX={3}>
         <Box
-          borderRadius="2"
+          borderRadius={2}
           backgroundColor="blue"
           width="64px"
           height="64px"
         />
-        <Col gapY="2">
+        <Col gapY={2}>
           <Text>{title}</Text>
           <Text gray>{description}</Text>
         </Col>
@@ -28,9 +28,9 @@ export function SettingsItem(props: {
 
 export default function Settings(props: {}) {
   return (
-    <Col gapY="5" p="5">
-      <Col gapY="1">
-        <Text fontSize="2">System Preferences</Text>
+    <Col gapY={5} p={5}>
+      <Col gapY={1}>
+        <Text fontSize={2}>System Preferences</Text>
         <Text gray>Configure and customize Landscape</Text>
       </Col>
       <Box
@@ -38,7 +38,7 @@ export default function Settings(props: {}) {
         width="100%"
         height="100%"
         gridTemplateColumns={['100%', '1fr 1fr']}
-        gridGap="3"
+        gridGap={3}
       >
         <SettingsItem
           to="notifications"

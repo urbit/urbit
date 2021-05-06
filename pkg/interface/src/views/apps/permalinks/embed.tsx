@@ -3,14 +3,14 @@ import {
 
   Col, Icon, Row, Text
 } from '@tlon/indigo-react';
-import { Association, GraphNode, resourceFromPath } from '@urbit/api';
+import { Association, GraphConfig, GraphNode, resourceFromPath } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import {
   getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
 } from '~/logic/lib/permalinks';
-import { getModuleIcon } from '~/logic/lib/util';
+import { getModuleIcon, GraphModule } from '~/logic/lib/util';
 import { useVirtualResizeProp } from '~/logic/lib/virtualContext';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
@@ -23,9 +23,9 @@ function GroupPermalink(props: { group: string; api: GlobalApi }) {
     <GroupLink
       resource={group}
       api={api}
-      pl="2"
-      border="1"
-      borderRadius="2"
+      pl={2}
+      border={1}
+      borderRadius={2}
       borderColor="lightGray"
     />
   );
@@ -79,13 +79,13 @@ function GraphPermalink(
       maxWidth={full ? null : '500px'}
       border={full ? null : '1'}
       borderColor="lightGray"
-      borderRadius="2"
+      borderRadius={2}
       onClick={(e) => {
  e.stopPropagation();
 }}
     >
       {showTransclusion && index && (
-        <Box p="2">
+        <Box p={2}>
           <TranscludedNode
             api={api}
             transcluded={transcluded + 1}
@@ -99,7 +99,7 @@ function GraphPermalink(
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
-          icon={getModuleIcon(association.metadata.config.graph)}
+          icon={getModuleIcon((association.metadata.config as GraphConfig).graph as GraphModule)}
           title={association.metadata.title}
           permalink={permalink}
         />
@@ -136,10 +136,10 @@ function PermalinkDetails(props: {
       alignItems="center"
       justifyContent="space-between"
       width="100%"
-      px="2"
-      py="1"
+      px={2}
+      py={1}
     >
-      <Row gapX="2" alignItems="center">
+      <Row gapX={2} alignItems="center">
         <Icon icon={icon} />
         <Text lineHeight="20px" mono={!known}>
           {title}

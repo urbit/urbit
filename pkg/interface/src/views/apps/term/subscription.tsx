@@ -1,4 +1,8 @@
 export default class Subscription {
+  store: any;
+  api: any;
+  channel: any;
+  firstRoundComplete: boolean;
   constructor(store, api, channel) {
     this.store = store;
     this.api = api;
@@ -51,13 +55,13 @@ return;
     console.error('event source error: ', err);
     console.log('initiating new channel');
     this.firstRoundComplete = false;
-    setTimeout(2000, () => {
+    setTimeout(() => {
       this.store.handleEvent({
         data: { clear : true }
       });
 
       this.start();
-    });
+    }, 2000);
   }
 
   subscribe(path, app) {

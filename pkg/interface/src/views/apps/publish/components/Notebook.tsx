@@ -40,7 +40,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   }
 
   return (
-    <Col gapY="4" pt={4} mx="auto" px={3} maxWidth="768px">
+    <Col gapY={4} pt={4} mx="auto" px={3} maxWidth="768px">
       <Row justifyContent="space-between">
         <Box>
           <Text display='block'>{association.metadata?.title}</Text>
@@ -50,7 +50,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
           </Text>
         </Box>
       </Row>
-      <Box borderBottom="1" borderBottomColor="lightGray" />
+      <Box borderBottom={1} borderBottomColor="lightGray" />
       <NotebookPosts
         graph={graph}
         host={ship}

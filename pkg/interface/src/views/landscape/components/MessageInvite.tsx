@@ -1,20 +1,25 @@
+import { Box, Col, Text } from '@tlon/indigo-react';
+import { Form, Formik } from 'formik';
+import _ from 'lodash';
 import React from 'react';
-import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { Col, Text, Box } from '@tlon/indigo-react';
-import { ShipSearch } from '~/views/components/ShipSearch';
 import { resourceFromPath } from '~/logic/lib/group';
 import { deSig } from '~/logic/lib/util';
 import { AsyncButton } from '~/views/components/AsyncButton';
+import { ShipSearch } from '~/views/components/ShipSearch';
 
-const formSchema = Yup.object({
+interface FormSchema {
+  ships: string[];
+}
+
+const formSchema = Yup.object<FormSchema>({
   ships: Yup.array(Yup.string()).min(1, 'Must invite at least one ship')
 });
 
 export const MessageInvite = (props) => {
-  const { association, api } = { ...props };
+  const { association, api } = props;
   const initialValues: FormSchema = { ships: [] };
-  const onSubmit = async ({ ships, description }: FormSchema, actions) => {
+  const onSubmit = async ({ ships }: FormSchema, actions) => {
     try {
       const { ship, name } = resourceFromPath(association.group);
       await api.groups.invite(

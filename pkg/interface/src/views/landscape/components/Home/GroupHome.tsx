@@ -1,5 +1,5 @@
 import { Box } from '@tlon/indigo-react';
-import { resourceFromPath } from '@urbit/api';
+import { GroupConfig, resourceFromPath } from '@urbit/api';
 import React from 'react';
 import { Route } from 'react-router-dom';
 import useGroupState from '~/logic/state/group';
@@ -33,10 +33,10 @@ function GroupHome(props) {
   const isFeedEnabled =
     metadata &&
     metadata.config &&
-    metadata.config.group &&
-    'resource' in metadata.config.group;
+    (metadata.config as GroupConfig).group &&
+    'resource' in (metadata.config as GroupConfig).group;
 
-  const graphPath = metadata?.config?.group?.resource;
+  const graphPath = (metadata.config as GroupConfig)?.group?.resource;
   const graphMetadata = associations?.graph[graphPath]?.metadata;
 
   return (

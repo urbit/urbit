@@ -1,9 +1,9 @@
 import { Box, Icon } from '@tlon/indigo-react';
 import {
-  FieldArray,
-  FieldArrayRenderProps,
+    FieldArray,
+    FieldArrayRenderProps,
 
-  useFormikContext
+    useFormikContext
 } from 'formik';
 import React, { ReactNode, useMemo } from 'react';
 
@@ -38,11 +38,11 @@ export function ShuffleFields<N extends string, T, F extends Value<N, T>>(
           }
         };
         return (
-          <Box gridColumnGap="2" gridRowGap="3" display="grid" gridAutoRows="auto" gridTemplateColumns="32px 32px 1fr">
+          <Box gridColumnGap={2} gridRowGap={3} display="grid" gridAutoRows="auto" gridTemplateColumns="32px 32px 1fr">
             {fields.map((field, i) => (
               <React.Fragment key={i}>
-                <Icon width="3" height="3" icon="ChevronNorth" onClick={goUp(i)} />
-                <Icon width="3" height="3" icon="ChevronSouth" onClick={goDown(i)} />
+                <Icon width={3} height={3} icon="ChevronNorth" onClick={goUp(i)} />
+                <Icon width={3} height={3} icon="ChevronSouth" onClick={goDown(i)} />
                 {children(i, arrayHelpers)}
               </React.Fragment>
             ))}

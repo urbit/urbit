@@ -6,7 +6,7 @@ import {
 import { Enc, GroupPolicy } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
@@ -31,8 +31,9 @@ interface NewGroupProps {
   api: GlobalApi;
 }
 
-export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactElement {
-  const { api, history } = props;
+export function NewGroup(props: NewGroupProps): ReactElement {
+  const { api } = props;
+  const history = useHistory();
   const initialValues: FormSchema = {
     title: '',
     description: '',
@@ -78,7 +79,7 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
 
   return (
     <>
-      <Col overflowY="auto" p="3">
+      <Col overflowY="auto" p={3}>
         <Box mb={3}>
           <Text fontWeight="bold">New Group</Text>
         </Box>
@@ -88,7 +89,7 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
           onSubmit={onSubmit}
         >
           <Form>
-            <Col gapY="4">
+            <Col gapY={4}>
               <Input
                 id="title"
                 label="Name"

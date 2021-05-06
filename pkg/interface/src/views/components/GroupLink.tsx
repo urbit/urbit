@@ -1,4 +1,5 @@
 import { Box, Col, Row, Text } from '@tlon/indigo-react';
+import { MetadataUpdatePreview } from '@urbit/api';
 import React, { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
@@ -56,20 +57,20 @@ onClick={(e) => {
         width="fit-content"
         flexShrink={1}
         alignItems="center"
-        py="2"
-        pr="2"
+        py={2}
+        pr={2}
         onClick={
           joined ? () => history.push(`/~landscape/ship/${name}`) : showModal
         }
         cursor='pointer'
         opacity={preview ? '1' : '0.6'}
       >
-        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : { 'color': '0x0' }} />
+        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : { color: '0x0' , picture: ''}} />
           <Col>
-          <Text ml="2" fontWeight="medium" mono={!preview}>
+          <Text ml={2} fontWeight="medium" mono={!preview}>
             {preview ? preview.metadata.title : name}
           </Text>
-          <Text pt='1' ml='2'>{preview ? `${preview.members} members` : 'Fetching member count'}</Text>
+          <Text pt={1} ml={2}>{preview ? `${preview.members} members` : 'Fetching member count'}</Text>
         </Col>
       </Row>
     </Box>

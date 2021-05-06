@@ -73,12 +73,12 @@ export interface Metadata {
   vip: PermVariation;
 }
 
-type MetadataConfig = GroupConfig | GraphConfig;
+export type MetadataConfig = GroupConfig | GraphConfig;
 
-interface GroupConfig {
+export interface GroupConfig {
   group: null | Record<string, string> | Resource;
 }
-interface GraphConfig {
+export interface GraphConfig {
   graph: string;
 }
 

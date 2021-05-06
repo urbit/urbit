@@ -1,9 +1,9 @@
 import {
-  BaseLabel, Box,
+    BaseLabel, Box,
 
-  Col, Icon,
+    Col, Icon,
 
-  Label, Row
+    Label, Row
 } from '@tlon/indigo-react';
 import { useField } from 'formik';
 import React, { useCallback, useMemo } from 'react';
@@ -86,7 +86,7 @@ return indicator.state.offError;
   }, [selected, disabled, hasError]);
 
   return (
-    <Box borderRadius="1" border="1" {...rest} {...style}>
+    <Box borderRadius={1} border={1} {...rest} {...style}>
       {children}
     </Box>
   );
@@ -121,10 +121,10 @@ export function IconRadio(props: IconRadioProps) {
           hasError={meta.touched && meta.error !== undefined}
           selected={field.checked}
           disabled={disabled}
-          mr="2"
+          mr={2}
         >
           <Icon
-            m="2"
+            m={2}
             color={field.checked ? 'white' : 'black'}
             icon={icon as any}
           />
@@ -132,7 +132,7 @@ export function IconRadio(props: IconRadioProps) {
         <Col justifyContent="space-around">
           <Label color={field.checked ? 'blue' : 'black'}>{label}</Label>
           {caption ? (
-            <Label gray mt="2">
+            <Label gray mt={2}>
               {caption}
             </Label>
           ) : null}

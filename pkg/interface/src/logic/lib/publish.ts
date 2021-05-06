@@ -1,4 +1,4 @@
-import { GraphNode, Post, TextContent } from '@urbit/api';
+import { Content, GraphNode, Post } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import bigInt, { BigInteger } from 'big-integer';
 import { buntPost } from '~/logic/lib/post';
@@ -118,7 +118,7 @@ export function getComments(node: GraphNode): GraphNode {
   return comments;
 }
 
-export function getSnippet(body: any) {
+export function getSnippet(body: string | Content[]) {
   const firstContent = Object.values(body[0])[0];
   const newlineIdx = firstContent.indexOf('\n', 2);
   const end = newlineIdx > -1 ? newlineIdx : firstContent.length;

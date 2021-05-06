@@ -65,9 +65,9 @@ export function PopoverRoutes(
                   borderRight={1}
                   borderRightColor="washedGray"
                 >
-                  <Text my="4" mx="3" fontWeight="600" fontSize="2">Group Settings</Text>
-                  <Col gapY="2">
-                    <Text my="1" mx="3" gray>Group</Text>
+                  <Text my={4} mx={3} fontWeight="600" fontSize={2}>Group Settings</Text>
+                  <Col gapY={2}>
+                    <Text my={1} mx={3} gray>Group</Text>
                     <SidebarItem
                       icon='Notifications'
                       to={relativeUrl('/settings#notifications')}
@@ -82,7 +82,7 @@ export function PopoverRoutes(
                     </SidebarItem>
                     { admin && (
                       <>
-                        <Box pt="3" mb="1" mx="3">
+                        <Box pt={3} mb={1} mx={3}>
                           <Text gray>Administration</Text>
                         </Box>
                         <SidebarItem

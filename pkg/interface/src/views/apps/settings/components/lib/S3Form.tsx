@@ -1,7 +1,7 @@
 import {
-  Anchor, Col, ManagedForm as Form, ManagedTextInputField as Input,
+    Anchor, Col, ManagedForm as Form, ManagedTextInputField as Input,
 
-  Text
+    Text
 } from '@tlon/indigo-react';
 import { Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
@@ -47,7 +47,7 @@ export default function S3Form(props: S3FormProps): ReactElement {
   return (
     <>
       <BackButton />
-      <Col p='5' pt='4' borderBottom='1' borderBottomColor='washedGray'>
+      <Col p={5} pt={4} borderBottom={1} borderBottomColor='washedGray'>
         <Formik
           initialValues={
             {
@@ -61,8 +61,8 @@ export default function S3Form(props: S3FormProps): ReactElement {
           onSubmit={onSubmit}
         >
           <Form>
-            <Col maxWidth='600px' gapY='5'>
-              <Col gapY='1' mt='0'>
+            <Col maxWidth='600px' gapY={5}>
+              <Col gapY={1} mt={0}>
                 <Text color='black' fontSize={2} fontWeight='medium'>
                   S3 Storage Setup
                 </Text>
@@ -72,8 +72,8 @@ export default function S3Form(props: S3FormProps): ReactElement {
                   <Anchor
                     target='_blank'
                     style={{ textDecoration: 'none' }}
-                    borderBottom='1'
-                    ml='1'
+                    borderBottom={1}
+                    ml={1}
                     href='https://urbit.org/using/os/s3/'
                   >
                     Learn more
@@ -94,8 +94,8 @@ export default function S3Form(props: S3FormProps): ReactElement {
           </Form>
         </Formik>
       </Col>
-      <Col maxWidth='600px' p='5' gapY='4'>
-        <Col gapY='1'>
+      <Col maxWidth='600px' p={5} gapY={4}>
+        <Col gapY={1}>
           <Text color='black' mb={4} fontSize={2} fontWeight='medium'>
             S3 Buckets
           </Text>

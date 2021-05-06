@@ -139,11 +139,11 @@ export function ImageInput(props: ImageInputProps): ReactElement {
     <Box display="flex" flexDirection="column" {...props}>
       <Label htmlFor={id}>{label}</Label>
       {caption ? (
-        <Label mt="2" gray>
+        <Label mt={2} gray>
           {caption}
         </Label>
       ) : null}
-      <Row mt="2" alignItems="flex-end" position='relative' width='100%'>
+      <Row mt={2} alignItems="flex-end" position='relative' width='100%'>
         {prompt(field, uploading, meta, clickUploadButton)}
         {clearButton(field, uploading, clearEvt)}
         {uploadingStatus(uploading, meta)}
