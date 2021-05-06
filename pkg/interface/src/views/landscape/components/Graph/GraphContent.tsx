@@ -346,6 +346,11 @@ const renderers = {
     );
   },
   'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
+  'image': ({ url }) => (
+    <Box mt="1" mb="2" flexShrink={0}>
+      <RemoteContent key={url} url={url} />
+    </Box>
+  ),
   'graph-url': ({ url }) => (
     <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent key={url} url={url} />
