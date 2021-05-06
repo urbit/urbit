@@ -88,6 +88,7 @@ class PostItem extends React.Component {
     const { inReplyMode } = this.state;
 
     const canComment = this.canWrite();
+    const postExists = !!node.post && typeof node.post !== 'string';
 
     return (
       <Col
@@ -107,36 +108,41 @@ class PostItem extends React.Component {
           maxWidth="600px"
           backgroundColor={ hovering ? 'washedGray' : 'transparent' }
           onClick={this.navigateToReplies}
-          cursor={isParent ? 'default': 'pointer'}
-          {...bind}
-        >
-          <PostHeader
-            post={node.post}
-            api={api}
-            association={association}
-            showTimestamp={isRelativeTime}
-            isReply={isReply}
-          />
-          { (isReply || (parentPost && index.length > 1 && isParent)) ? (
-            <Row width="100%" alignItems="center" mb="2" pl="2" pr="2">
-              <Text color="gray" pr="1">Replying to</Text>
-              <Mention ship={parentPost?.author} />
-            </Row>
-          ) : null }
-          <PostContent
-            post={node.post}
-            isParent={isParent}
-            isReply={isReply}
-            api={api}
-          />
-          <PostFooter
-            timeSent={node.post['time-sent']}
-            replyCount={node.children.size}
-            showTimestamp={!isRelativeTime}
-            isParent={isParent}
-            canComment={canComment}
-            toggleReplyMode={this.toggleReplyMode}
-          />
+          cursor={isParent ? "default": "pointer"}
+          {...bind}>
+          { (postExists) ? (
+            <>
+              <PostHeader
+                post={node.post}
+                api={api}
+                association={association}
+                showTimestamp={isRelativeTime}
+                graphPath={graphPath}
+                isReply={isReply} />
+              { (isReply || (parentPost && index.length > 1 && isParent)) ? (
+                <Row width="100%" alignItems="center" mb="2" pl="2" pr="2">
+                  <Text color="gray" pr="1">Replying to</Text>
+                  <Mention ship={parentPost?.author} />
+                </Row>
+              ) : null }
+              <PostContent
+                post={node.post}
+                isParent={isParent}
+                isReply={isReply}
+                api={api} />
+            <PostFooter
+              timeSent={node.post['time-sent']}
+              replyCount={node.children.size}
+              showTimestamp={!isRelativeTime}
+              isParent={isParent}
+              canComment={canComment}
+              toggleReplyMode={this.toggleReplyMode} />
+            </>
+          ) : (
+            <Box px="2" pb="2">
+              <Text gray>This post has been deleted</Text>
+            </Box>
+          ) }
         </Col>
         { inReplyMode ? (
           <Col width="100%" maxWidth="600px">

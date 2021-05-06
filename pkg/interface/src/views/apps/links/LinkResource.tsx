@@ -92,6 +92,14 @@ export function LinkResource(props: LinkResourceProps) {
             if (!node) {
               return <Box>Not found</Box>;
             }
+
+            if (typeof node.post === 'string') {
+              return (
+                <Col width="100%" textAlign="center" pt="2">
+                  <Text gray>This link has been deleted.</Text>
+                </Col>
+              );
+            }
             return (
               <Col alignItems="center" overflowY="auto" width="100%">
               <Col width="100%" p={3} maxWidth="768px">

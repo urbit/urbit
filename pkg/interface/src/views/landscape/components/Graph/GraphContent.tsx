@@ -230,16 +230,16 @@ const header = ({ children, depth, ...rest }) => {
   const level = depth;
   const inner =
     level === 1 ? (
-      <H1>{children}</H1>
+      <H1 display='block'>{children}</H1>
     ) : level === 2 ? (
-      <H2>{children}</H2>
+      <H2 display='block'>{children}</H2>
     ) : level === 3 ? (
-      <H3>{children}</H3>
+      <H3 display='block'>{children}</H3>
     ) : (
-      <H4>{children}</H4>
+      <H4 display='block'>{children}</H4>
     );
   return (
-    <Box {...rest} mt="2" mb="4">
+    <Box {...rest}>
       {inner}
     </Box>
   );
@@ -247,6 +247,12 @@ const header = ({ children, depth, ...rest }) => {
 
 const renderers = {
   heading: header,
+  break: () => {
+    return <Box display='block' width='100%' height={2}></Box>
+  },
+  thematicBreak: () => {
+    return <Box display='block' width='100%' height={2}></Box>
+  },
   inlineCode: ({ language, value }) => {
     return (
       <Text
@@ -262,12 +268,12 @@ const renderers = {
   },
   strong: ({ children }) => {
     return (
-      <Text fontWeight="bold">
+      <Text fontWeight="bold" lineHeight='1'>
         {children}
       </Text>
     );
-  }, 
-  emphasis: ({ children }) => { 
+  },
+  emphasis: ({ children }) => {
     return (
     <Text fontStyle="italic" fontSize="1" lineHeight={'20px'}>
         {children}
@@ -283,7 +289,7 @@ const renderers = {
         color="black"
         paddingLeft={2}
         py="1"
-        mb="1" 
+        mb="1"
       >
         {children}
       </Text>
@@ -333,7 +339,7 @@ const renderers = {
   },
   link: (props) => {
     return (
-      <Anchor href={props.href} borderBottom="1" color="black">
+      <Anchor href={props.url} borderBottom="1" color="black" target="_blank">
         {props.children}
       </Anchor>
     );
@@ -370,7 +376,7 @@ const renderers = {
     );
   },
   root: ({ tall, children }) =>
-    tall ? <Col gapY="2">{children}</Col> : <Box>{children}</Box>,
+    tall ? <Col display='grid' style={{ 'row-gap': '1rem' }}>{children}</Col> : <Box>{children}</Box>,
   text: ({ value }) => value,
 };
 
@@ -382,12 +388,12 @@ export function Graphdown<T extends {} = {}>(
     depth?: number;
   } & T
 ) {
-  const { ast, transcluded, depth = 0, ...rest } = props;
+  const { ast, transcluded, tall, depth = 0, ...rest } = props;
   const { type, children = [], ...nodeRest } = ast;
   const Renderer = renderers[ast.type] ?? (() => `unknown element: ${type}`);
 
   return (
-    <Renderer transcluded={transcluded} depth={depth} {...rest} {...nodeRest}>
+    <Renderer transcluded={transcluded} depth={depth} {...rest} {...nodeRest} tall={tall}>
       {children.map((c) => (
         <Graphdown
           transcluded={transcluded}
@@ -421,7 +427,7 @@ export const GraphContent = React.memo(function GraphContent(
   const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
   return (
     <Box {...rest}>
-      <Graphdown transcluded={transcluded} api={api} ast={ast} />
+      <Graphdown transcluded={transcluded} api={api} ast={ast} tall={tall} />
     </Box>
   );
 });

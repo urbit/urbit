@@ -1,7 +1,7 @@
 import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
 import { Association, GraphNode, Group } from '@urbit/api';
 import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph, referenceToPermalink } from '~/logic/lib/permalinks';
@@ -26,6 +26,10 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
     path,
     ...rest
   } = props;
+
+  if (typeof node.post === 'string' || !note.post) {
+    return <Redirect to="/~404" />;
+  }
 
   const remoteRef = useRef<typeof RemoteContent | null>(null);
   const index = node.post.index.split('/')[1];

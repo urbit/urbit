@@ -1,14 +1,16 @@
 import { Box, Col, Icon, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
-import React, { ReactElement, ReactNode, useRef } from 'react';
+import React, { ReactElement, ReactNode, useRef, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import urbitOb from 'urbit-ob';
+import { Dropdown } from '~/views/components/Dropdown';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import { MessageInvite } from '~/views/landscape/components/MessageInvite';
 import RichText from '~/views/components/RichText';
 
 const TruncatedText = styled(RichText)`
@@ -27,7 +29,7 @@ type ResourceSkeletonProps = {
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
-  const { association, baseUrl, children } = props;
+  const { association, baseUrl, children, api } = props;
   let app = association['app-name'];
   if (association?.metadata?.config && 'graph' in association.metadata.config) {
     app = association.metadata.config.graph;
@@ -36,7 +38,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const groups = useGroupState(state => state.groups);
   const group = groups[association.group];
   let workspace = association.group;
-  const actionsRef = useRef(null);
+  const [actionsWidth, setActionsWidth] = useState(0);
 
   if (group?.hidden && app === 'chat') {
     workspace = '/messages';
@@ -99,7 +101,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       maxWidth={association?.metadata?.description ? ['100%', '50%'] : 'none'}
       mr='2'
       ml='1'
-      flexShrink={[1, 0]}
+      flexShrink={1}
     >
       {title}
     </Text>
@@ -122,13 +124,45 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </TruncatedText>
   );
 
-  const WriterControls = () => (
-    <Link to={resourcePath('/new')}>
-      <Text bold pr='3' color='blue'>
-        + New Post
-      </Text>
-    </Link>
-  );
+  const ExtraControls = () => {
+    if (workspace === '/messages' && isOwn && !resource.startsWith('dm-')) {
+      return (
+        <Dropdown
+          flexShrink={0}
+          dropWidth='300px'
+          width='auto'
+          alignY='top'
+          alignX='right'
+          options={
+            <Col
+              backgroundColor='white'
+              border={1}
+              borderRadius={2}
+              borderColor='lightGray'
+              color='washedGray'
+              boxShadow='0px 0px 0px 3px'
+            >
+              <MessageInvite association={association} api={api} />
+            </Col>
+          }
+        >
+          <Text bold pr='3' color='blue'>
+            + Add Ship
+          </Text>
+        </Dropdown>
+      );
+    }
+    if (canWrite) {
+      return (
+        <Link to={resourcePath('/new')}>
+          <Text bold pr='3' color='blue'>
+            + New Post
+          </Text>
+        </Link>
+      );
+    }
+    return null;
+  };
 
   const MenuControl = () => (
     <Link to={`${baseUrl}/settings`}>
@@ -136,12 +170,9 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Link>
   );
 
-  const actRef = actionsRef.current;
-  let actionsWidth = 0;
-
-  if (actRef) {
-    actionsWidth = actRef.clientWidth;
-  }
+  const actionsRef = useCallback((actionsRef) => {
+    setActionsWidth(actionsRef?.getBoundingClientRect().width);
+  }, [rid]);
 
   return (
     <Col width='100%' height='100%' overflow='hidden'>
@@ -173,7 +204,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           flexShrink={0}
           ref={actionsRef}
         >
-          {canWrite && <WriterControls />}
+          {ExtraControls()}
           <MenuControl />
         </Box>
       </Box>

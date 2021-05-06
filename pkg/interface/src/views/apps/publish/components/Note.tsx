@@ -14,6 +14,7 @@ import Author from '~/views/components/Author';
 import { Comments } from '~/views/components/Comments';
 import { Spinner } from '~/views/components/Spinner';
 import { NoteNavigation } from './NoteNavigation';
+import { Redirect } from 'react-router-dom';
 
 interface NoteProps {
   ship: string;
@@ -27,18 +28,10 @@ interface NoteProps {
   group: Group;
 }
 
-const renderers = {
-  link: ({ href, children }) => {
-    return (
-      <Anchor display="inline" target="_blank" href={href}>{children}</Anchor>
-    );
-  }
-};
-
 export function NoteContent({ post, api }) {
   return (
       <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <GraphContent tall contents={post.contents.slice(1)} showOurContact api={api} />
+        <GraphContent tall={true} contents={post.contents.slice(1)} showOurContact api={api} />
       </Box>
   );
 }
@@ -54,6 +47,14 @@ export function Note(props: NoteProps & RouteComponentProps) {
     await api.graph.removePosts(ship, book, indices);
     props.history.push(rootUrl);
   };
+
+  if (typeof note.post === 'string' || !note.post) {
+    return (
+      <Box width="100%"  pt="2" textAlign="center">
+        <Text gray>This note has been deleted.</Text>
+      </Box>
+    );
+  }
 
   const { query } = useQuery();
   const comments = getComments(note);

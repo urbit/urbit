@@ -1,7 +1,6 @@
-import { Col } from '@tlon/indigo-react';
+import { Col, Text } from '@tlon/indigo-react';
 import {
   Graph,
-
   GraphNode, Post
 } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
@@ -22,6 +21,7 @@ type ChatWindowProps = {
   api: GlobalApi;
   scrollTo?: BigInteger;
   onReply: (msg: Post) => void;
+  onDelete: (msg: Post) => void;
   dismissUnread: () => void;
   pendingSize?: number;
   showOurContact: boolean;
@@ -179,6 +179,7 @@ class ChatWindow extends Component<
       showOurContact,
       graph,
       onReply,
+      onDelete,
       getPermalink,
       dismissUnread,
       isAdmin
@@ -188,14 +189,20 @@ class ChatWindow extends Component<
       showOurContact,
       api,
       onReply,
+      onDelete,
       permalink,
       dismissUnread,
       isAdmin
     };
 
     const msg = graph.get(index)?.post;
-    if (!msg)
-return null;
+    if (!msg || typeof msg === 'string') {
+      return (
+        <Text pl="44px" pt="1" pb="1" gray display="block">
+          This message has been deleted.
+        </Text>
+      );
+    };
     if (!this.state.initialized) {
       return (
         <MessagePlaceholder

@@ -20,7 +20,11 @@ function TranscludedLinkNode(props: {
   api: GlobalApi;
 }) {
   const { node, api, assoc, transcluded } = props;
-  const idx = node.post.index.slice(1).split('/');
+  const idx = node?.post?.index?.slice(1)?.split('/') ?? [];
+
+  if (typeof node?.post === 'string') {
+    return <Text gray>This link has been deleted.</Text>
+  }
 
   switch (idx.length) {
     case 1:
@@ -59,6 +63,11 @@ function TranscludedComment(props: {
   transcluded: number;
 }) {
   const { assoc, node, api, transcluded } = props;
+
+  if (typeof node?.post === 'string') {
+    return <Text gray>This comment has been deleted.</Text>
+  }
+
   const group = useGroupForAssoc(assoc)!;
 
   const comment = node.children?.peekLargest()![1]!;
@@ -91,7 +100,12 @@ function TranscludedPublishNode(props: {
 }) {
   const { node, assoc, transcluded, api } = props;
   const group = useGroupForAssoc(assoc)!;
-  const idx = node.post.index.slice(1).split('/');
+
+  if (typeof node?.post === 'string') {
+    return <Text gray>This note has been deleted.</Text>
+  }
+
+  const idx = node?.post?.index?.slice(1)?.split('/') ?? [];
   switch (idx.length) {
     case 1:
       const post = node.children
@@ -138,6 +152,11 @@ export function TranscludedPost(props: {
   group: Group;
 }) {
   const { transcluded, post, group, api } = props;
+
+  if (typeof post === 'string') {
+    return <Text gray>This post has been deleted.</Text>
+  }
+
   return (
     <Col>
       <Author
