@@ -57,13 +57,13 @@
       ::
       ++  from
         |=  params=(map @t json)
-        ^-  (unit [ship @t])
+        ^-  (unit [ship proxy:naive])
         ?~  from=(~(get by params) 'from')  ~
         =,  dejs-soft:format
         %.  u.from 
         %-  ot
         :~  ['ship' (su ;~(pfix sig fed:ag))]
-            ['proxy' so]
+            ['proxy' (cu proxy:naive so)]
         == 
       --
     ::
