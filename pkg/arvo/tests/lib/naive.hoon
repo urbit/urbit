@@ -522,30 +522,32 @@
     dominion:(~(got by points.state) ~dopbud)
 ::
 ++  test-marbud-l2-spawn  ^-  tang
-  =/  lt-ospawn   [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %ll-key-0)]
-  ::
-  %+  expect-eq
-    !>  [`@ux`(addr %ll-key-0) 0]
-  ::
-    !>
-    =|  =^state:naive
-    =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(spawn:l2 0 lt-ospawn))
-    transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
-::
-++  test-marbud-l2-spawn-w-proxy  ^-  tang
   =/  marbud-sproxy  [~marbud %marbud-key-0 %own (addr %marbud-skey)]
-  =/  lt-ospawn      [~marbud %marbud-skey %spawn ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-ospawn      [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-sspawn      [~marbud %marbud-skey %spawn ~linnup-torsyx (addr %lt-key-0)]
   ::
-  %+  expect-eq
-    !>  [`@ux`(addr %lt-key-0) 0]
-  ::
-    !>
-    =|  =^state:naive
-    =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(set-spawn-proxy:l2 0 marbud-sproxy))
-    =^  f  state  (n state %bat q:(spawn:l2 0 lt-ospawn))
-    transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+  ;:  weld
+    %+  expect-eq
+    ::  Tests l2 spawning with ownership
+      !>  [`@ux`(addr %lt-key-0) 0]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(spawn:l2 0 lt-ospawn))
+      transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+    ::
+    %+  expect-eq
+    ::  Tests l2 spawning with spawn proxy
+      !>  [`@ux`(addr %lt-key-0) 0]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(set-spawn-proxy:l2 0 marbud-sproxy))
+      =^  f  state  (n state %bat q:(spawn:l2 0 lt-sspawn))
+      transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+  ==
 ::
 ++  test-marbud-l2-double-spawn  ^-  tang
   ::  Attempts to spawn the same planet twice, once with ownership and once with spawn proxy
