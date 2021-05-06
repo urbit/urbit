@@ -245,6 +245,12 @@ function ChatMessage(props: ChatMessageProps) {
     permalink
   } = props;
 
+  if (typeof msg === 'string' || !msg) {
+    return (
+      <Text gray>This message has been deleted.</Text>
+    );
+  }
+
   let onReply = props?.onReply ?? (() => {});
   let onDelete = props?.onDelete ?? (() => {});
   const transcluded = props?.transcluded ?? 0;

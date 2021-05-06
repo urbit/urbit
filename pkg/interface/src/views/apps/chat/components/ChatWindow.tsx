@@ -1,7 +1,6 @@
-import { Col } from '@tlon/indigo-react';
+import { Col, Text } from '@tlon/indigo-react';
 import {
   Graph,
-
   GraphNode, Post
 } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
@@ -197,7 +196,13 @@ class ChatWindow extends Component<
     };
 
     const msg = graph.get(index)?.post;
-    if (!msg || typeof msg === 'string') return null;
+    if (!msg || typeof msg === 'string') {
+      return (
+        <Text pl="44px" pt="1" pb="1" gray display="block">
+          This message has been deleted.
+        </Text>
+      );
+    };
     if (!this.state.initialized) {
       return (
         <MessagePlaceholder
