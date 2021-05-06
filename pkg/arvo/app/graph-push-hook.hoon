@@ -33,6 +33,7 @@
 %-  (agent:push-hook config)
 ^-  agent
 =-
+~%  %graph-push-hook-agent  ..scry.hook-core  ~
 =|  state-one
 =*  state  -
 |_  =bowl:gall
@@ -72,6 +73,7 @@
 ::
 ++  on-fail   on-fail:def
 ++  transform-proxy-update
+  ~/  %transform-proxy-update
   |=  vas=vase
   ^-  (unit vase)
   =/  =update:store  !<(update:store vas)
@@ -81,23 +83,31 @@
       %add-nodes
     ?.  (is-allowed-add:hc rid nodes.q.update)
       ~
+    ::  TODO: this scry is slow.
     =/  mark  (get-mark:gra rid)
     ?~  mark  `vas
-    |^
-    =/  transform
-      !<  $-([index:store post:store atom ?] [index:store post:store])
-      %.  !>(*indexed-post:store)
-      .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
-    =/  [* result=(list [index:store node:store])]
-      %+  roll
-        (flatten-node-map ~(tap by nodes.q.update))
-      (transform-list transform)
-    =.  nodes.q.update
-      %-  ~(gas by *(map index:store node:store))
-      result
-    [~ !>(update)]
+    =<  $
+    ~%  %transform-add-nodes  ..transform-proxy-update  ~
+    |%
+    ++  $
+      ^-  (unit vase)
+      ::  TODO: scries are slow, we should find a way to cache this so as
+      ::  not to need to fetch it continually in the hot path
+      =/  transform
+        !<  $-([index:store post:store atom ?] [index:store post:store])
+        %.  !>(*indexed-post:store)
+        .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
+      =/  [* result=(list [index:store node:store])]
+        %+  roll
+          (flatten-node-map ~(tap by nodes.q.update))
+        (transform-list transform)
+      =.  nodes.q.update
+        %-  ~(gas by *(map index:store node:store))
+        result
+      [~ !>(update)]
     ::
     ++  flatten-node-map
+      ~/  %flatten-node-map
       |=  lis=(list [index:store node:store])
       ^-  (list [index:store node:store])
       |^
@@ -129,6 +139,7 @@
       --
     ::
     ++  transform-list
+      ~/  %transform-list
       |=  transform=$-([index:store post:store atom ?] [index:store post:store])
       |=  $:  [=index:store =node:store]
               [indices=(set index:store) lis=(list [index:store node:store])]
@@ -172,6 +183,7 @@
 ++  resource-for-update  resource-for-update:gra
 ::
 ++  initial-watch
+  ~/  %initial-watch
   |=  [=path =resource:res]
   ^-  vase
   |^
@@ -211,7 +223,8 @@
   ==
 --
 ::
-^|  ^=  hook-core
+~%  %graph-push-hook-helper  ..card.hook-core  ~
+^=  hook-core
 |_  =bowl:gall
 +*  grp  ~(. group bowl)
     met  ~(. mdl bowl)
@@ -254,6 +267,8 @@
 ++  get-roles-writers-variation
   |=  =resource:res
   ^-  (unit [is-admin=? writers=(set ship) vip=vip-metadata:metadata])
+  ::  TODO: doing three scries in a row on the hot path is slow
+  ::
   =/  assoc=(unit association:metadata)
      (peek-association:met %graph resource)
   ?~  assoc  ~
@@ -276,6 +291,8 @@
 ++  is-allowed-add
   |=  [=resource:res nodes=(map index:store node:store)] 
   ^-  ?
+  ::  TODO: extremely slow due to scries. This takes about ~30ms per
+  ::  %add-nodes event.
   |^
   %-  (bond |.(%.n))
   %+  biff  (get-roles-writers-variation resource)
@@ -291,6 +308,7 @@
     %.n
   ?.  =(author.p.post.node src.bowl)
     %.n
+  ::  TODO: these scries are slow, find a way to persistently cache them
   =/  =permissions:store
     %^  add-mark  resource  vip
     (node-to-indexed-post node)
