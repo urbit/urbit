@@ -239,7 +239,7 @@ const header = ({ children, depth, ...rest }) => {
       <H4 display='block'>{children}</H4>
     );
   return (
-    <Box {...rest} mt="2" mb="4">
+    <Box {...rest}>
       {inner}
     </Box>
   );
