@@ -137,9 +137,10 @@
     %set-management-proxy  (management-proxy id +.params)
     %set-spawn-proxy       (spawn-proxy id +.params)
     %set-transfer-proxy    (transfer-proxy id +.params)
-    %pending               (pending id +.params all:pending-rolls)
-    %pending-by-ship       (pending-ship id +.params ship:pending-rolls)
-    %pending-by-address    (pending-address id +.params addr:pending-rolls)
+    %pending               [~ (all:pending id +.params all:pending-rolls)]
+    %pending-by-ship       [~ (ship:pending id +.params ship:pending-rolls)]
+    %pending-by-address    [~ (addr:pending id +.params addr:pending-rolls)]
+    %history               [~ (history id +.params scry-history)]
   ==
 ::
 ++  scry-point
@@ -149,7 +150,7 @@
       (~(scry agentio bowl) %azimuth /nas/[(scot %p ship)]/noun)
   ==
 ::
-++  pending-rolls
+++  pending-rolls 
   |%
   ++  all
   .^  (list tx:naive)
@@ -170,4 +171,14 @@
         /pending/address/[(scot %ux address)]/noun
     ==
   --
+::
+++  scry-history
+  |=  [=ship =proxy:naive]
+  ::  FIXME: use proper type from aggregator/index
+  ::
+  .^  (list [tx:naive ?])
+      %gx 
+      %+  ~(scry agentio bowl)  %dice
+      /history/[(scot %p ship)]/proxy/noun
+  ==
 --

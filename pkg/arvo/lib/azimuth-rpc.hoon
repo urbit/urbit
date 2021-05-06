@@ -192,6 +192,13 @@
         ==
       --
     ::
+    ++  txs-to-json
+      ::  TODO: implement me!
+      ::
+      |=  txs=(list [tx:naive success=?])
+      ^-  json
+      ~
+    ::
     ++  to-hex
       |=  =cord
       ^-  (unit @ux)
@@ -306,34 +313,53 @@
     ~(params error id)
   [%result id (numb:enjs:format u.nonce)]
 ::
-:: - readPendingRoll() -> (list tx)
-::
 ++  pending
-  |=  [id=@t params=(map @t json) pending=(list tx:naive)]
-  ^-  response:rpc
-  ?.  =((lent ~(tap by params)) 0)  
-    ~(params error id)
-  [%result id (pending-to-json pending)]
+  ::  FIXME: send raw-tx (i.e. tx with signature) instead?
+  ::
+  |%
+  :: - readPendingRoll() -> (list tx)
+  ::
+  ++  all
+    |=  [id=@t params=(map @t json) pending=(list tx:naive)]
+    ^-  response:rpc
+    ?.  =((lent ~(tap by params)) 0)  
+      ~(params error id)
+    [%result id (pending-to-json pending)]
+  ::
+  :: - readPendingByShip(ship) -> (list tx)
+  ::
+  ++  ship
+    |=  [id=@t params=(map @t json) scry=$-(@p (list tx:naive))]
+    ^-  response:rpc
+    ?.  =((lent ~(tap by params)) 1)  
+      ~(params error id)
+    ?~  ship=(ship:extract params)
+      ~(parse error id)
+    [%result id (pending-to-json (scry u.ship))]
+  ::
+  :: - readPendingByAddress(address) -> (list tx)
+  ::
+  ++  addr
+    |=  [id=@t params=(map @t json) scry=$-(@ux (list tx:naive))]
+    ^-  response:rpc
+    ?.  =((lent ~(tap by params)) 1)  
+      ~(params error id)
+    ?~  address=(address:extract params)
+      ~(parse error id)
+    [%result id (pending-to-json (scry u.address))]
+  --
 ::
-:: - readPendingByShip(ship) -> (list tx)
-::
-++  pending-by-ship
-  |=  [id=@t params=(map @t json) scry=$-(ship (list tx:naive))]
+++  history
+  |=  $:  id=@t 
+          params=(map @t json) 
+          ::  FIXME: use proper type from aggregator/index
+          ::
+          scry=$-([@p proxy:naive] (list [tx:naive success=?]))
+      ==
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 1)  
     ~(params error id)
-  ?~  ship=(ship:extract params)
+  ?~  from=(from:extract params)
     ~(parse error id)
-  [%result id (pending-to-json (scry u.ship))]
-::
-:: - readPendingByAddress(address) -> (list tx)
-::
-++  pending-by-address
-  |=  [id=@t params=(map @t json) scry=$-(@ux (list tx:naive))]
-  ^-  response:rpc
-  ?.  =((lent ~(tap by params)) 1)  
-    ~(params error id)
-  ?~  address=(address:extract params)
-    ~(parse error id)
-  [%result id (pending-to-json (scry u.address))]
+  [%result id (txs-to-json (scry u.from))]
 --
