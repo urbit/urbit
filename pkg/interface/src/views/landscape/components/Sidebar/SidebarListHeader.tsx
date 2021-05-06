@@ -53,7 +53,7 @@ export function SidebarListHeader(props: {
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
   let feedPath: any = null;
-  if (metadata.config && 'group' in metadata?.config && 'resource' in metadata.config.group) {
+  if (metadata?.config && 'group' in metadata?.config && 'resource' in metadata.config.group) {
     feedPath = metadata.config.group.resource;
   }
 
