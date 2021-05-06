@@ -1,15 +1,13 @@
+import {
+  BaseLabel, Box,
+
+  Col, Icon,
+
+  Label, Row
+} from '@tlon/indigo-react';
+import { useField } from 'formik';
 import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import { useField } from 'formik';
-
-import {
-  Icon,
-  Box,
-  Row,
-  BaseLabel,
-  Col,
-  Label
-} from '@tlon/indigo-react';
 
 type IconRadioProps = Parameters<typeof Row>[0] & {
   id: string;

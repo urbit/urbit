@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Contact, Group } from '@urbit/api';
-import ProfileOverlay, { OVERLAY_HEIGHT } from './ProfileOverlay';
 import { Box, ColProps } from '@tlon/indigo-react';
+import { Contact, Group } from '@urbit/api';
+import React, { useEffect, useRef, useState } from 'react';
+import ProfileOverlay, { OVERLAY_HEIGHT } from './ProfileOverlay';
 
 type OverlaySigilProps = ColProps & {
   api: any;

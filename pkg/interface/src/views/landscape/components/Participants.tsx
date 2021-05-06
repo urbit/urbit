@@ -1,39 +1,31 @@
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  ChangeEvent
-} from 'react';
 import {
-  Col,
-  Box,
-  Row,
-  Text,
-  Icon,
-  Image,
-  Action,
-  StatelessTextInput as Input
-} from '@tlon/indigo-react';
-import _ from 'lodash';
-import f from 'lodash/fp';
-import VisibilitySensor from 'react-visibility-sensor';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+  Action, Box, Col,
 
+  Icon,
+  Image, Row,
+
+  StatelessTextInput as Input, Text
+} from '@tlon/indigo-react';
 import { Contact, Contacts } from '@urbit/api/contacts';
 import { Group, RoleTags } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
-
+import _ from 'lodash';
+import f from 'lodash/fp';
+import React, {
+  ChangeEvent,
+  ReactElement, useCallback, useMemo, useState
+} from 'react';
+import { Link } from 'react-router-dom';
+import VisibilitySensor from 'react-visibility-sensor';
+import styled from 'styled-components';
+import GlobalApi from '~/logic/api/global';
+import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { Sigil } from '~/logic/lib/sigil';
 import { cite, uxToHex } from '~/logic/lib/util';
-import { roleForShip, resourceFromPath } from '~/logic/lib/group';
-import { Dropdown } from '~/views/components/Dropdown';
-import GlobalApi from '~/logic/api/global';
-import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
-import useLocalState from '~/logic/state/local';
 import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
-import {deSig} from '@urbit/api';
+import { Dropdown } from '~/views/components/Dropdown';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -320,7 +312,7 @@ function Participant(props: {
 
   return (
     <>
-      <Row flexDirection={["column", "row"]} gapX="2" alignItems={["flex-start", "center"]} width="100%" justifyContent="space-between" height={["96px", "60px"]}>
+      <Row flexDirection={['column', 'row']} gapX="2" alignItems={['flex-start', 'center']} width="100%" justifyContent="space-between" height={['96px', '60px']}>
         <Row gapX="4" alignItems="center" height="100%">
       <Box>{avatar}</Box>
       <Col alignItems="self-start" justifyContent="center" gapY="1" height="100%" minWidth='0'>
@@ -338,7 +330,7 @@ function Participant(props: {
     </Row>
       <Row
         justifyContent="space-between"
-        width={["100%", "128px"]}
+        width={['100%', '128px']}
         alignItems="center"
         gapX="4"
       >

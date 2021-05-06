@@ -1,17 +1,14 @@
-import React, { useRef, useCallback, ReactElement } from 'react';
-import { useField } from 'formik';
-
 import {
-  Box,
-  StatelessTextInput as Input,
-  Row,
-  Button,
-  Label,
-  BaseInput,
-  Text,
-  Icon
-} from '@tlon/indigo-react';
+  BaseInput, Box,
 
+  Button,
+
+  Icon, Label, Row, StatelessTextInput as Input,
+
+  Text
+} from '@tlon/indigo-react';
+import { useField } from 'formik';
+import React, { ReactElement, useCallback, useRef } from 'react';
 import useStorage from '~/logic/lib/useStorage';
 
 type ImageInputProps = Parameters<typeof Box>[0] & {
@@ -24,7 +21,7 @@ const prompt = (field, uploading, meta, clickUploadButton) => {
   if (!field.value && !uploading && meta.error === undefined) {
     return (
       <Text
-        black
+        color='black'
         fontWeight='500'
         position='absolute'
         left={2}

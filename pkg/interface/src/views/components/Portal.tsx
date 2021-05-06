@@ -1,4 +1,4 @@
-import { useEffect, ReactNode, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 
 export function Portal(props: { children: ReactNode }) {

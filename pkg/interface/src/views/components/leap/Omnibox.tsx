@@ -1,32 +1,30 @@
+import { Box, Row, Text } from '@tlon/indigo-react';
+import { omit } from 'lodash';
+import Mousetrap from 'mousetrap';
 import React, {
-  useMemo,
+  ReactElement, useCallback,
+  useEffect, useMemo,
   useRef,
-  useCallback,
-  useEffect,
+
   useState
 } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import * as ob from 'urbit-ob';
-import Mousetrap from 'mousetrap';
-import { omit } from 'lodash';
-
-import { Box, Row, Text } from '@tlon/indigo-react';
-import makeIndex from '~/logic/lib/omnibox';
-import OmniboxInput from './OmniboxInput';
-import OmniboxResult from './OmniboxResult';
-import { deSig } from '~/logic/lib/util';
-import { withLocalState } from '~/logic/state/local';
-
 import defaultApps from '~/logic/lib/default-apps';
+import makeIndex from '~/logic/lib/omnibox';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
-import { Portal } from '../Portal';
-import useSettingsState, { SettingsState } from '~/logic/state/settings';
+import { deSig } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
 import useLaunchState from '~/logic/state/launch';
+import { withLocalState } from '~/logic/state/local';
 import useMetadataState from '~/logic/state/metadata';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
+import { Portal } from '../Portal';
+import OmniboxInput from './OmniboxInput';
+import OmniboxResult from './OmniboxResult';
 
 interface OmniboxProps {
   show: boolean;
