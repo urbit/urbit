@@ -1,6 +1,6 @@
-import React, { useCallback, ReactNode, ReactElement } from 'react';
+import { Button, Row } from '@tlon/indigo-react';
 import { useFormikContext } from 'formik';
-import { Row, Button } from '@tlon/indigo-react';
+import React, { ReactElement, ReactNode, useCallback } from 'react';
 import { AsyncButton } from './AsyncButton';
 
 interface FormSubmitProps {
@@ -24,7 +24,7 @@ export function FormSubmit<T = unknown>(props: FormSubmitProps): ReactElement {
     <Row
       p="2"
       bottom="0px"
-      justifyContent={props.start ? 'flex-start' : "flex-end"}
+      justifyContent={props.start ? 'flex-start' : 'flex-end'}
       gapX="2"
       alignItems="center"
     >

@@ -1,32 +1,26 @@
-import React, { ReactElement } from 'react';
 import {
   Box,
-  ManagedTextInputField as Input,
-  Col,
+
+  Col, ManagedTextInputField as Input,
+
   Text
 } from '@tlon/indigo-react';
+import { Form, Formik } from 'formik';
 import _ from 'lodash';
-import { Formik, Form } from 'formik';
+import React, { ReactElement } from 'react';
+import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
-import { AsyncButton } from '~/views/components/AsyncButton';
-import { FormError } from '~/views/components/FormError';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { stringToSymbol, parentPath, deSig } from '~/logic/lib/util';
 import { resourceFromPath } from '~/logic/lib/group';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import {
-  ShipSearch,
-  shipSearchSchemaInGroup,
-  shipSearchSchema
-} from '~/views/components/ShipSearch';
-import { IconRadio } from '~/views/components/IconRadio';
-import {
-  ChannelWriteFieldSchema,
-  ChannelWritePerms
-} from './ChannelWritePerms';
-import { Workspace } from '~/types/workspace';
+import { deSig, parentPath, stringToSymbol } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
+import { Workspace } from '~/types/workspace';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { FormError } from '~/views/components/FormError';
+import { IconRadio } from '~/views/components/IconRadio';
+import { ShipSearch, shipSearchSchema, shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
+import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
 
 type FormSchema = {
   name: string;

@@ -1,11 +1,9 @@
-import React, { ReactElement } from 'react';
-import moment from 'moment';
-import { Link } from 'react-router-dom';
-import { BigInteger } from 'big-integer';
-
 import { Box, Text } from '@tlon/indigo-react';
 import { Graph } from '@urbit/api';
-
+import { BigInteger } from 'big-integer';
+import moment from 'moment';
+import React, { ReactElement } from 'react';
+import { Link } from 'react-router-dom';
 import { getLatestRevision } from '~/logic/lib/publish';
 import Timestamp from '~/views/components/Timestamp';
 

@@ -1,5 +1,5 @@
-import BaseApi from './base';
 import { StoreState } from '../store/type';
+import BaseApi from './base';
 
 export default class LocalApi extends BaseApi<StoreState> {
   getBaseHash() {

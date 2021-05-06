@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, Col, Anchor, Row, Action } from '@tlon/indigo-react';
-import ReactMarkdown from 'react-markdown';
 import bigInt from 'big-integer';
-
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Spinner } from '~/views/components/Spinner';
-import { Comments } from '~/views/components/Comments';
-import { NoteNavigation } from './NoteNavigation';
 import GlobalApi from '~/logic/api/global';
-import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import { roleForShip } from '~/logic/lib/group';
-import Author from '~/views/components/Author';
-import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
-import {useCopy} from '~/logic/lib/useCopy';
+import { Contacts, GraphNode, Graph, Association, Unreads, Group, Post } from '@urbit/api';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
-import {useQuery} from '~/logic/lib/useQuery';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
+import { getComments, getLatestRevision } from '~/logic/lib/publish';
+import { useCopy } from '~/logic/lib/useCopy';
+import { useQuery } from '~/logic/lib/useQuery';
+import Author from '~/views/components/Author';
+import { Comments } from '~/views/components/Comments';
+import { Spinner } from '~/views/components/Spinner';
+import { NoteNavigation } from './NoteNavigation';
 
 interface NoteProps {
   ship: string;
@@ -28,22 +27,12 @@ interface NoteProps {
   group: Group;
 }
 
-const renderers = {
-  link: ({ href, children }) => {
-    return (
-      <Anchor display="inline" target="_blank" href={href}>{children}</Anchor>
-    )
-  }
-};
-
-export function NoteContent({ body }) {
+export function NoteContent({ post, api }) {
   return (
-
       <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <ReactMarkdown source={body} linkTarget={'_blank'} renderers={renderers} />
+        <GraphContent tall={true} contents={post.contents.slice(1)} showOurContact api={api} />
       </Box>
   );
-
 }
 
 export function Note(props: NoteProps & RouteComponentProps) {
@@ -68,23 +57,23 @@ export function Note(props: NoteProps & RouteComponentProps) {
     api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
   }, [props.association, props.note]);
 
-  let adminLinks: JSX.Element[] = [];
+  const adminLinks: JSX.Element[] = [];
   const ourRole = roleForShip(group, window.ship);
   if (window.ship === note?.post?.author) {
     adminLinks.push(
       <Link to={`${baseUrl}/edit`}>
         <Action backgroundColor="white">Update</Action>
       </Link>
-    )
-  };
+    );
+  }
 
-  if (window.ship === note?.post?.author || ourRole === "admin") {
+  if (window.ship === note?.post?.author || ourRole === 'admin') {
     adminLinks.push(
       <Action backgroundColor="white" destructive onClick={deletePost}>
         Delete
       </Action>
-    )
-  };
+    );
+  }
 
   const permalink = getPermalinkForGraph(
     association.group,
@@ -93,7 +82,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
   );
 
   const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Link');
-
 
   return (
     <Box
@@ -127,7 +115,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           </Author>
         </Row>
       </Col>
-      <NoteContent body={body} />
+      <NoteContent api={props.api} post={post} />
       <NoteNavigation
         notebook={notebook}
         noteId={noteId}

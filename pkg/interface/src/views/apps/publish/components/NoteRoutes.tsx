@@ -1,13 +1,9 @@
+import { Association, Graph, GraphNode, Group } from '@urbit/api';
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
-
+import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { RouteComponentProps } from 'react-router-dom';
-import Note from './Note';
 import { EditPost } from './EditPost';
-
-import { GraphNode, Graph, Contacts, Association, Group } from '@urbit/api';
-import { StorageState } from '~/types';
+import Note from './Note';
 
 interface NoteRoutesProps {
   ship: string;

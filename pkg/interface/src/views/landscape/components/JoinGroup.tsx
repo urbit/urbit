@@ -1,31 +1,30 @@
-import React, { useState, useCallback, useEffect, ReactElement } from 'react';
+import {
+  Box, Col,
+
+  Icon,
+
+  ManagedTextInputField as Input, Row,
+
+  Text
+} from '@tlon/indigo-react';
+import { MetadataUpdatePreview } from '@urbit/api';
+import { Form, Formik, FormikHelpers, useFormikContext } from 'formik';
 import _ from 'lodash';
-import { Formik, Form, FormikHelpers, useFormikContext } from 'formik';
-import * as Yup from 'yup';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import urbitOb from 'urbit-ob';
-
-import {
-  Col,
-  Row,
-  Icon,
-  Box,
-  Text,
-  ManagedTextInputField as Input
-} from '@tlon/indigo-react';
-import { Groups, MetadataUpdatePreview, Associations } from '@urbit/api';
-
-import { AsyncButton } from '~/views/components/AsyncButton';
-import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
-import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { TUTORIAL_GROUP_RESOURCE } from '~/logic/lib/tutorialModal';
+import { useQuery } from '~/logic/lib/useQuery';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { getModuleIcon } from '~/logic/lib/util';
-import { FormError } from '~/views/components/FormError';
-import { GroupSummary } from './GroupSummary';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
-import {TUTORIAL_GROUP_RESOURCE} from '~/logic/lib/tutorialModal';
-import {useQuery} from '~/logic/lib/useQuery';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { FormError } from '~/views/components/FormError';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { GroupSummary } from './GroupSummary';
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -99,7 +98,9 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
 
       if(groups?.[group]?.hidden) {
         const { metadata } = associations.graph[group];
-        history.push(`/~landscape/home/resource/${metadata.config.graph}${group}`);
+        if (metadata?.config && 'graph' in metadata.config) {
+          history.push(`/~landscape/home/resource/${metadata.config.graph}${group}`);
+        }
         return;
       } else {
         history.push(`/~landscape${group}`);

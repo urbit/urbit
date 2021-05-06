@@ -1,17 +1,17 @@
-import React, { ReactElement, ReactNode, useState, useCallback } from 'react';
-import { Icon, Box, Col, Text } from '@tlon/indigo-react';
-import styled from 'styled-components';
-import { Link, useHistory } from 'react-router-dom';
-import urbitOb from 'urbit-ob';
+import { Box, Col, Icon, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
+import React, { ReactElement, ReactNode, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import urbitOb from 'urbit-ob';
 import { Dropdown } from '~/views/components/Dropdown';
-import RichText from '~/views/components/RichText';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import { MessageInvite } from '~/views/landscape/components/MessageInvite';
+import RichText from '~/views/components/RichText';
 
 const TruncatedText = styled(RichText)`
   white-space: nowrap;
@@ -30,7 +30,10 @@ type ResourceSkeletonProps = {
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const { association, baseUrl, children, api } = props;
-  const app = association?.metadata?.config?.graph || association['app-name'];
+  let app = association['app-name'];
+  if (association?.metadata?.config && 'graph' in association.metadata.config) {
+    app = association.metadata.config.graph;
+  }
   const rid = association.resource;
   const groups = useGroupState(state => state.groups);
   const group = groups[association.group];

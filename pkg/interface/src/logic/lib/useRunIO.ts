@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import {unstable_batchedUpdates} from "react-dom";
+import { useEffect, useState } from 'react';
+import { unstable_batchedUpdates } from 'react-dom';
 
 export type IOInstance<I, P, O> = (
   input: I
@@ -29,7 +29,7 @@ export function useRunIO<I, O>(
     });
 
   useEffect(() => {
-    reject(new Error("useRunIO: key changed"));
+    reject(new Error('useRunIO: key changed'));
     setDone(false);
     setOutput(null);
   }, [key]);

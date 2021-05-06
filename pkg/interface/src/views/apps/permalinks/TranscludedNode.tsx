@@ -1,19 +1,17 @@
-import React from "react";
-import { Anchor, Icon, Box, Row, Col, Text } from "@tlon/indigo-react";
-import ChatMessage from "../chat/components/ChatMessage";
-import { Association, GraphNode, Post, Group } from "@urbit/api";
-import { useGroupForAssoc } from "~/logic/state/group";
-import { MentionText } from "~/views/components/MentionText";
-import { GraphContentWide } from '~/views/landscape/components/Graph/GraphContentWide';
-import Author from "~/views/components/Author";
-import { NoteContent } from "../publish/components/Note";
-import { PostContent } from "~/views/landscape/components/Home/Post/PostContent";
-import bigInt from "big-integer";
-import { getSnippet } from "~/logic/lib/publish";
-import { NotePreviewContent } from "../publish/components/NotePreview";
-import GlobalApi from "~/logic/api/global";
-import {PermalinkEmbed} from "./embed";
-import {referenceToPermalink} from "~/logic/lib/permalinks";
+import { Anchor, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { Association, GraphNode, Group, Post } from '@urbit/api';
+import bigInt from 'big-integer';
+import React from 'react';
+import GlobalApi from '~/logic/api/global';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { getSnippet } from '~/logic/lib/publish';
+import { useGroupForAssoc } from '~/logic/state/group';
+import Author from '~/views/components/Author';
+import { MentionText } from '~/views/components/MentionText';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
+import ChatMessage from '../chat/components/ChatMessage';
+import { NotePreviewContent } from '../publish/components/NotePreview';
+import { PermalinkEmbed } from './embed';
 
 function TranscludedLinkNode(props: {
   node: GraphNode;
@@ -22,15 +20,14 @@ function TranscludedLinkNode(props: {
   api: GlobalApi;
 }) {
   const { node, api, assoc, transcluded } = props;
-  const idx = node.post.index.slice(1).split("/");
+  const idx = node?.post?.index?.slice(1)?.split('/') ?? [];
 
   switch (idx.length) {
     case 1:
     const [{ text }, link] = node.post.contents;
       if('reference' in link) {
         const permalink = referenceToPermalink(link).link;
-        return <PermalinkEmbed transcluded={transcluded + 1} api={api} link={permalink} association={assoc} />
-
+        return <PermalinkEmbed transcluded={transcluded + 1} api={api} link={permalink} association={assoc} />;
       }
 
       return (
@@ -71,14 +68,14 @@ function TranscludedComment(props: {
         p="2"
         showImage
         ship={comment.post.author}
-        date={comment.post?.["time-sent"]}
+        date={comment.post?.['time-sent']}
         group={group}
       />
       <Box p="2">
-        <GraphContentWide
+        <GraphContent
           api={api}
           transcluded={transcluded}
-          post={comment.post}
+          contents={comment.post.contents}
           showOurContact={false}
         />
       </Box>
@@ -94,7 +91,7 @@ function TranscludedPublishNode(props: {
 }) {
   const { node, assoc, transcluded, api } = props;
   const group = useGroupForAssoc(assoc)!;
-  const idx = node.post.index.slice(1).split("/");
+  const idx = node?.post?.index?.slice(1)?.split('/') ?? [];
   switch (idx.length) {
     case 1:
       const post = node.children
@@ -106,7 +103,7 @@ function TranscludedPublishNode(props: {
             px="2"
             showImage
             ship={post.post.author}
-            date={post.post?.["time-sent"]}
+            date={post.post?.['time-sent']}
             group={group}
           />
           <Text px="2" fontSize="2" fontWeight="medium">
@@ -114,7 +111,7 @@ function TranscludedPublishNode(props: {
           </Text>
           <Box p="2">
             <NotePreviewContent
-              snippet={getSnippet(post?.post.contents[1]?.text)}
+              snippet={getSnippet(post?.post.contents.slice(1))}
             />
           </Box>
         </Col>
@@ -147,7 +144,7 @@ export function TranscludedPost(props: {
         p="2"
         showImage
         ship={post.author}
-        date={post?.["time-sent"]}
+        date={post?.['time-sent']}
         group={group}
       />
       <Box p="2">
@@ -172,7 +169,7 @@ export function TranscludedNode(props: {
   const { node, showOurContact, assoc, transcluded } = props;
   const group = useGroupForAssoc(assoc)!;
   switch (assoc.metadata.config.graph) {
-    case "chat":
+    case 'chat':
       return (
         <Row width="100%" flexShrink={0} flexGrow={1} flexWrap="wrap">
           <ChatMessage
@@ -192,11 +189,11 @@ export function TranscludedNode(props: {
           />
         </Row>
       );
-    case "publish":
+    case 'publish':
       return <TranscludedPublishNode {...props} />;
-    case "link":
+    case 'link':
       return <TranscludedLinkNode {...props} />;
-    case "post":
+    case 'post':
     return (
       <TranscludedPost
         api={props.api}

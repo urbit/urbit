@@ -1,15 +1,15 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import { BaseImage, Box, Center, Row, Text } from '@tlon/indigo-react';
+import React, { ReactElement, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Center, Box, Row, BaseImage, Text } from '@tlon/indigo-react';
-import RichText from '~/views/components/RichText';
-import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Sigil } from '~/logic/lib/sigil';
-import { ViewProfile } from './ViewProfile';
-import { EditProfile } from './EditProfile';
-import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
 import { uxToHex } from '~/logic/lib/util';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
 import useContactState from '~/logic/state/contact';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import RichText from '~/views/components/RichText';
+import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
+import { useTutorialModal } from '~/views/components/useTutorialModal';
+import { EditProfile } from './EditProfile';
+import { ViewProfile } from './ViewProfile';
 
 export function ProfileHeader(props: any): ReactElement {
   return (
@@ -30,7 +30,7 @@ export function ProfileImages(props: any): ReactElement {
   const { contact, hideCover, ship } = { ...props };
   const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : '#000000';
 
-  const anchorRef = useRef<HTMLDivElement>(null)
+  const anchorRef = useRef<HTMLDivElement>(null);
 
   useTutorialModal('profile', ship === `~${window.ship}`, anchorRef);
 
@@ -138,7 +138,8 @@ export function ProfileActions(props: any): ReactElement {
             <Text
               fontWeight='500'
               cursor='pointer'
-              display={['none','inline']}>
+              display={['none','inline']}
+            >
                 {isPublic ? ' Public' : ' Private'} Profile
             </Text>
           </Text>

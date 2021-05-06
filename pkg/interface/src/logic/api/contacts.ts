@@ -1,8 +1,8 @@
-import BaseApi from './base';
-import { StoreState } from '../store/type';
 import { Patp } from '@urbit/api';
 import { ContactEditField } from '@urbit/api/contacts';
 import _ from 'lodash';
+import { StoreState } from '../store/type';
+import BaseApi from './base';
 
 export default class ContactsApi extends BaseApi<StoreState> {
   add(ship: Patp, contact: any) {
@@ -78,17 +78,17 @@ export default class ContactsApi extends BaseApi<StoreState> {
     return _.compact(
       await Promise.all(
         ships.map(
-          async s => {
+          async (s) => {
             const ship = `~${s}`;
             if(s === window.ship) {
-              return null
+              return null;
             }
             const allowed = await this.fetchIsAllowed(
               `~${window.ship}`,
               'personal',
               ship,
               true
-            )
+            );
             return allowed ? null : ship;
           }
         )

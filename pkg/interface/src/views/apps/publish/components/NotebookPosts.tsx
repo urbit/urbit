@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
 import { Col } from '@tlon/indigo-react';
-import { NotePreview } from './NotePreview';
-import { Contacts, Graph, Unreads, Group } from '@urbit/api';
+import { Graph, Group } from '@urbit/api';
+import React from 'react';
 import useContactState from '~/logic/state/contact';
+import { NotePreview } from './NotePreview';
 
 interface NotebookPostsProps {
   graph: Graph;

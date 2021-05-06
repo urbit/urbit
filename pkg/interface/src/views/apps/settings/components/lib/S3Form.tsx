@@ -1,24 +1,15 @@
-import React, { ReactElement, useCallback } from 'react';
-import { Formik, FormikHelpers } from 'formik';
-
 import {
-  ManagedTextInputField as Input,
-  ManagedForm as Form,
-  Box,
-  Text,
-  Button,
-  Col,
-  Anchor
-} from '@tlon/indigo-react';
-import { AsyncButton } from "~/views/components/AsyncButton";
+  Anchor, Col, ManagedForm as Form, ManagedTextInputField as Input,
 
+  Text
+} from '@tlon/indigo-react';
+import { Formik, FormikHelpers } from 'formik';
+import React, { ReactElement, useCallback } from 'react';
 import GlobalApi from '~/logic/api/global';
-import { BucketList } from './BucketList';
-import { S3State } from '~/types/s3-update';
-import useS3State from '~/logic/state/storage';
-import { BackButton } from './BackButton';
-import { StorageState } from '~/types';
 import useStorageState from '~/logic/state/storage';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { BackButton } from './BackButton';
+import { BucketList } from './BucketList';
 
 interface FormSchema {
   s3bucket: string;
@@ -34,7 +25,7 @@ interface S3FormProps {
 
 export default function S3Form(props: S3FormProps): ReactElement {
   const { api } = props;
-  const s3 = useStorageState((state) => state.s3);
+  const s3 = useStorageState(state => state.s3);
 
   const onSubmit = useCallback(async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       if (values.s3secretAccessKey !== s3.credentials?.secretAccessKey) {
