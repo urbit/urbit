@@ -591,7 +591,7 @@
   ==
 ::
 :: TODO: transfer breach via transfer proxy
-++  test-marbud-l2-transfer-breach  ^-  tang
+++  test-marbud-l2-proxies-transfer  ^-  tang
   =/  new-keys                [~marbud %marbud-key-0 %own encr auth suit |]
   =/  marbud-sproxy           [~marbud %marbud-key-0 %own (addr %marbud-skey)]
   =/  marbud-mproxy           [~marbud %marbud-key-0 %own (addr %marbud-mkey)]
@@ -600,7 +600,7 @@
   ::
   ;:  weld
     %+  expect-eq
-    ::  Tests that proxies are reset on transfer breach
+    ::  Tests that proxies are reset on transfer with breach
     ::
       !>
       :*  [(addr %marbud-key-1) 3]       :: ownership
@@ -621,7 +621,7 @@
       own:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
-    ::  Tests that networking keys are reset on transfer breach
+    ::  Tests that networking keys are reset on transfer with breach
       !>
       [0 0 0]
     ::
@@ -631,21 +631,13 @@
       =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys))
       =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 %own (addr %marbud-key-0) &))
       |1:keys.net:(~(got by points.state) ~marbud)
-  ==
-::
-++  test-marbud-l2-transfer-no-breach  ^-  tang
-  =/  new-keys                [~marbud %marbud-key-0 %own encr auth suit |]
-  =/  marbud-sproxy           [~marbud %marbud-key-0 %own (addr %marbud-skey)]
-  =/  marbud-mproxy           [~marbud %marbud-key-0 %own (addr %marbud-mkey)]
-  =/  marbud-tproxy           [~marbud %marbud-key-0 %own (addr %marbud-key-1)]
-  ::
-  ;:  weld
+    ::
     %+  expect-eq
-    ::  Tests that proxies are not reset when transfering with no breach
+    ::  Tests that proxies are not reset when transfering without breach
       !>
       :*  [(addr %marbud-key-1) 3]       :: ownership
-          [`@`(addr %marbud-skey) 0]     :: spawn-proxy
-          [`@`(addr %marbud-mkey) 0]     :: management-proxy
+          [(addr %marbud-skey) 0]        :: spawn-proxy
+          [(addr %marbud-mkey) 0]        :: management-proxy
           [0 0]                          :: voting-proxy
           [0 1]                          :: transfer-proxy
       ==
@@ -661,7 +653,7 @@
       own:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
-    ::  Tests that networking keys are not reset when transfering with no breach
+    ::  Tests that networking keys are not reset when transfering without breach
       !>
       [suit auth encr]
     ::
