@@ -1,18 +1,13 @@
-import React, { useCallback } from "react";
-
-import useMetadataState from "~/logic/state/metadata";
-import useGroupState from "~/logic/state/group";
+import { Association } from '@urbit/api';
+import React, { useCallback } from 'react';
 import {
-  Switch,
-  Route,
-  Redirect,
-  useLocation,
-  useParams,
-} from "react-router-dom";
-import { makeResource, Association } from "@urbit/api";
-import { getGraphPermalink } from "./graphIndex";
-import { useQuery } from "~/logic/lib/useQuery";
-import useGraphState from "~/logic/state/graph";
+  Redirect, Route, Switch
+} from 'react-router-dom';
+import { useQuery } from '~/logic/lib/useQuery';
+import useGraphState from '~/logic/state/graph';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
+import { getGraphPermalink } from './graphIndex';
 
 interface ResourceRouteProps {
   ship: string;
@@ -20,7 +15,7 @@ interface ResourceRouteProps {
 }
 
 export function PermalinkRoutes(props: {}) {
-  const groups = useGroupState((s) => s.groups);
+  const groups = useGroupState(s => s.groups);
   const { query, toQuery } = useQuery();
 
   return (
@@ -52,8 +47,8 @@ export function PermalinkRoutes(props: {}) {
 function FallbackRoutes(props: { query: URLSearchParams }) {
   const { query } = props;
 
-  if (query.has("ext")) {
-    const ext = query.get("ext")!;
+  if (query.has('ext')) {
+    const ext = query.get('ext')!;
     const url = `/perma${ext.slice(16)}`;
     console.log(url);
     return <Redirect to={{ pathname: url }} />;
@@ -65,7 +60,7 @@ function FallbackRoutes(props: { query: URLSearchParams }) {
 function GroupRoutes(props: { group: string; url: string }) {
   const { group, url } = props;
   const makePath = (s: string) => url + s;
-  const associations = useMetadataState((s) => s.associations);
+  const associations = useMetadataState(s => s.associations);
   const graphKeys = useGraphState(s => s.graphKeys);
   const { toQuery } = useQuery();
   const groupUrl = `/~landscape${group}`;
@@ -73,7 +68,7 @@ function GroupRoutes(props: { group: string; url: string }) {
   return (
     <Switch>
       <Route
-        path={makePath("/graph/:ship/:name")}
+        path={makePath('/graph/:ship/:name')}
         render={({ match, location }) => {
           const { ship, name } = match.params as ResourceRouteProps;
           const path = `/ship/${ship}/${name}`;
@@ -89,7 +84,7 @@ function GroupRoutes(props: { group: string; url: string }) {
                   { auto: 'y', redir: location.pathname },
                   `${groupUrl}/join/${association.metadata.config.graph}${path}`
                 )}
-              />;
+                     />;
             }
             return null;
           }
@@ -99,7 +94,7 @@ function GroupRoutes(props: { group: string; url: string }) {
       />
       <Route
         exact
-        path={makePath("")}
+        path={makePath('')}
         render={() => {
           return <Redirect to={groupUrl} />;
         }}
@@ -113,10 +108,10 @@ export function GraphIndexRoutes(props: {
   url: string;
   index?: string;
 }) {
-  const { index = "", association, url } = props;
+  const { index = '', association, url } = props;
   const makePath = (s: string) => url + s;
   const group = useGroupState(
-    useCallback((s) => s.groups[association.group], [association])
+    useCallback(s => s.groups[association.group], [association])
   );
 
   if(!group) {
@@ -126,7 +121,7 @@ export function GraphIndexRoutes(props: {
   return (
     <Switch>
       <Route
-        path={makePath("/:id")}
+        path={makePath('/:id')}
         render={({ match }) => {
           const newIndex = `${index}/${match.params.id}`;
           const { url: newUrl } = match;
@@ -139,7 +134,7 @@ export function GraphIndexRoutes(props: {
           );
         }}
       />
-      <Route path={makePath("")}>
+      <Route path={makePath('')}>
         <Redirect to={getGraphPermalink(association, group, index)} />
       </Route>
     </Switch>

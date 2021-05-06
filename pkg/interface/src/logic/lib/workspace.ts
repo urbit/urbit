@@ -18,10 +18,10 @@ export function getTitleFromWorkspace(
 
 export function getGroupFromWorkspace(
   workspace: Workspace
-): string | undefined {
+): string {
   if (workspace.type === 'group') {
     return workspace.group;
   }
 
-  return undefined;
+  return '';
 }

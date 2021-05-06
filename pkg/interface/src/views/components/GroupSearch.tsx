@@ -1,25 +1,20 @@
-import React, { ReactElement, useMemo, useState } from 'react';
-import { useFormikContext, FieldArray } from 'formik';
-import _ from 'lodash';
-import styled from 'styled-components';
-
 import {
   Box,
-  Text,
-  Label,
-  Row,
+
   Col,
-  Icon,
-  ErrorLabel
+
+  ErrorLabel, Icon, Label,
+  Row, Text
 } from '@tlon/indigo-react';
-import { Groups } from '@urbit/api';
-import { Associations, Association } from '@urbit/api/metadata';
-
-
+import { Association } from '@urbit/api/metadata';
+import { FieldArray, useFormikContext } from 'formik';
+import _ from 'lodash';
+import React, { ReactElement, useMemo, useState } from 'react';
+import styled from 'styled-components';
 import { roleForShip } from '~/logic/lib/group';
-import { DropdownSearch } from './DropdownSearch';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
+import { DropdownSearch } from './DropdownSearch';
 
 interface GroupSearchProps<I extends string> {
   disabled?: boolean;

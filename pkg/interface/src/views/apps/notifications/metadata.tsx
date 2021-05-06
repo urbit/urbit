@@ -1,8 +1,7 @@
-import React from 'react';
 import { Box } from '@tlon/indigo-react';
-
-import { MetadataBody, NotificationProps } from './types';
+import React from 'react';
 import { Header } from './header';
+import { MetadataBody, NotificationProps } from './types';
 
 function getInvolvedUsers(body: MetadataBody) {
   return [];

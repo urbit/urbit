@@ -1,12 +1,10 @@
-import React, { ReactElement } from "react";
-import _ from "lodash";
-import moment from "moment";
-import { Text as NormalText, Row, Rule, Box, Col } from "@tlon/indigo-react";
-
-import { PropFunc } from "~/types/util";
-import Timestamp from "~/views/components/Timestamp";
-import Author from "~/views/components/Author";
-import Dot from "~/views/components/Dot";
+import { Box, Row, Text as NormalText } from '@tlon/indigo-react';
+import moment from 'moment';
+import React, { ReactElement } from 'react';
+import { PropFunc } from '~/types/util';
+import Author from '~/views/components/Author';
+import Dot from '~/views/components/Dot';
+import Timestamp from '~/views/components/Timestamp';
 
 const Text = (props: PropFunc<typeof Text>) => (
   <NormalText fontWeight="500" {...props} />
@@ -24,21 +22,21 @@ export function Header(
 ): ReactElement {
   const {
     description,
-    channelTitle = "",
+    channelTitle = '',
     groupTitle,
     authors = [],
     content = false,
-    time,
+    time
   } = props;
 
   return (
     <Row
-      flexDirection={["column-reverse", "row"]}
+      flexDirection={['column-reverse', 'row']}
       minHeight="4"
       mb={content ? 2 : 0}
       onClick={props.onClick}
       flexWrap="wrap"
-      alignItems={["flex-start", "center"]}
+      alignItems={['flex-start', 'center']}
       gridArea="header"
       overflow="hidden"
     >

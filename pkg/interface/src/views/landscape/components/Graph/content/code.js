@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
 import { Box, Text } from '@tlon/indigo-react';
+import React, { Component } from 'react';
 
 export default class CodeContent extends Component {
   render() {
