@@ -21,6 +21,19 @@
             ['breach' bo]
         ==
       ::
+      ++  address-transfer
+        |=  params=(map @t json)
+        ^-  (unit [@ux ?])
+        ?~  data=(~(get by params) 'data')  ~
+        =;  ans=(unit [add=(unit @ux) r=?])
+          ?~  ans  ~
+          ?~  add.u.ans  ~
+          (some [u.add.u.ans r.u.ans])
+        %.  u.data
+        =,  dejs-soft:format
+        %-  ot 
+        ~[['address' (cu to-hex so)] ['reset' bo]]
+      ::
       ++  address-ship
         |=  params=(map @t json)
         ^-  (unit [@ux ship])
@@ -186,15 +199,7 @@
     [~ ~(params error id)]
   =/  sig=(unit @)           (sig:extract params)
   =/  from=(unit [ship @t])  (from:extract params)
-  =/  data=(unit [@ux ?])
-    ?~  data=(~(get by params) 'data')  ~
-    =;  [add=(unit @ux) r=?]
-      ?~  add  ~
-      (some [u.add r])
-    %.  u.data
-    =,  dejs:format
-    %-  ot 
-    ~[['address' (cu to-hex so)] ['reset' bo]]
+  =/  data=(unit [@ux ?])    (address-transfer:extract params)
   ?:  |(?=(~ sig) ?=(~ from) ?=(~ data))  
     [~ ~(parse error id)]
   :_  [%result id s+'ok']
