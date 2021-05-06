@@ -27,18 +27,10 @@ interface NoteProps {
   group: Group;
 }
 
-const renderers = {
-  link: ({ href, children }) => {
-    return (
-      <Anchor display="inline" target="_blank" href={href}>{children}</Anchor>
-    );
-  }
-};
-
 export function NoteContent({ post, api }) {
   return (
       <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <GraphContent tall contents={post.contents.slice(1)} showOurContact api={api} />
+        <GraphContent tall={true} contents={post.contents.slice(1)} showOurContact api={api} />
       </Box>
   );
 }

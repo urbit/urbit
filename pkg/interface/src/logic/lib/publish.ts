@@ -3,7 +3,7 @@ import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import bigInt, { BigInteger } from 'big-integer';
 import { buntPost } from '~/logic/lib/post';
 import { unixToDa } from '~/logic/lib/util';
-//import tokenizeMessage from './tokenizeMessage';
+import tokenizeMessage from './tokenizeMessage';
 
 export function newPost(
   title: string,
@@ -20,8 +20,7 @@ export function newPost(
     signatures: []
   };
 
-  // re-enable on mainnet deploy
-  //const tokenisedBody = tokenizeMessage(body);
+  const tokenisedBody = tokenizeMessage(body);
 
   const revContainer: Post = { ...root, index: root.index + '/1' };
   const commentsContainer = { ...root, index: root.index + '/2' };
@@ -29,8 +28,7 @@ export function newPost(
   const firstRevision: Post = {
     ...revContainer,
     index: revContainer.index + '/1',
-    contents: [{ text: title }, { text: body }]
-    //contents: [{ text: title }, { text: body } ...tokenisedBody]
+    contents: [{ text: title }, ...tokenisedBody]
   };
 
   const nodes = {
@@ -59,14 +57,12 @@ export function newPost(
 
 export function editPost(rev: number, noteId: BigInteger, title: string, body: string) {
   const now = Date.now();
-  // reenable
-  //const tokenisedBody = tokenizeMessage(body);
+  const tokenisedBody = tokenizeMessage(body);
   const newRev: Post = {
     author: `~${window.ship}`,
     index: `/${noteId.toString()}/1/${rev}`,
     'time-sent': now,
-    //contents: [{ text: title }, ...tokenisedBody],
-    contents: [{ text: title }, { text: body }],
+    contents: [{ text: title }, ...tokenisedBody],
     hash: null,
     signatures: []
   };

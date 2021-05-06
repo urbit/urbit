@@ -56,28 +56,26 @@ const codeToMdAst = (content: CodeContent) => {
     children: [
       {
         type: 'code',
-        value: content.code.expression
+        value: content.code.expression,
       },
       {
         type: 'code',
-        value: (content.code.output || []).join('\n')
-      }
-    ]
+        value: (content.code.output || []).join('\n'),
+      },
+    ],
   };
-      
-
-}
+};
 
 const contentToMdAst = (tall: boolean) => (
   content: Content
 ): [StitchMode, any] => {
   if ('text' in content) {
-    return ['merge', tall ? parseTall(content.text) : parseWide(content.text)] as [StitchMode, any];
-  } else if ('code' in content) {
     return [
-      'block',
-      codeToMdAst(content)
-    ];
+      'merge',
+      tall ? parseTall(content.text) : parseWide(content.text),
+    ] as [StitchMode, any];
+  } else if ('code' in content) {
+    return ['block', codeToMdAst(content)];
   } else if ('reference' in content) {
     return [
       'block',
@@ -171,7 +169,9 @@ export function asParent<T extends BlockContent>(node: T): Parent | undefined {
 function stitchMerge(a: Root, b: Root) {
   const aChildren = a.children;
   const bChildren = b.children;
-  if (last(aChildren)?.type === bChildren[0]?.type) {
+  const lastType = last(aChildren)?.type;
+
+  if (lastType === bChildren[0]?.type) {
     const aGrandchild = getChildren(last(aChildren));
     const bGrandchild = getChildren(bChildren[0]);
     const mergedPara = {
@@ -230,16 +230,16 @@ const header = ({ children, depth, ...rest }) => {
   const level = depth;
   const inner =
     level === 1 ? (
-      <H1>{children}</H1>
+      <H1 display='block'>{children}</H1>
     ) : level === 2 ? (
-      <H2>{children}</H2>
+      <H2 display='block'>{children}</H2>
     ) : level === 3 ? (
-      <H3>{children}</H3>
+      <H3 display='block'>{children}</H3>
     ) : (
-      <H4>{children}</H4>
+      <H4 display='block'>{children}</H4>
     );
   return (
-    <Box {...rest} mt="2" mb="4">
+    <Box {...rest}>
       {inner}
     </Box>
   );
@@ -247,6 +247,12 @@ const header = ({ children, depth, ...rest }) => {
 
 const renderers = {
   heading: header,
+  break: () => {
+    return <Box display='block' width='100%' height={2}></Box>
+  },
+  thematicBreak: () => {
+    return <Box display='block' width='100%' height={2}></Box>
+  },
   inlineCode: ({ language, value }) => {
     return (
       <Text
@@ -260,7 +266,20 @@ const renderers = {
       </Text>
     );
   },
-
+  strong: ({ children }) => {
+    return (
+      <Text fontWeight="bold" lineHeight='1'>
+        {children}
+      </Text>
+    );
+  },
+  emphasis: ({ children }) => {
+    return (
+    <Text fontStyle="italic" fontSize="1" lineHeight={'20px'}>
+        {children}
+    </Text>
+    )
+  },
   blockquote: ({ children, tall, ...rest }) => {
     return (
       <Text
@@ -270,6 +289,7 @@ const renderers = {
         color="black"
         paddingLeft={2}
         py="1"
+        mb="1"
       >
         {children}
       </Text>
@@ -319,7 +339,7 @@ const renderers = {
   },
   link: (props) => {
     return (
-      <Anchor href={props.href} borderBottom="1" color="black">
+      <Anchor href={props.url} borderBottom="1" color="black" target="_blank">
         {props.children}
       </Anchor>
     );
@@ -332,36 +352,55 @@ const renderers = {
     );
   },
   'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
-  'graph-url': ({ url }) => (
-    <Box my="2" flexShrink={0}>
+  'image': ({ url }) => (
+    <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent key={url} url={url} />
     </Box>
   ),
-  'graph-reference': ({ api, reference }) => {
+  'graph-url': ({ url }) => (
+    <Box mt="1" mb="2" flexShrink={0}>
+      <RemoteContent key={url} url={url} />
+    </Box>
+  ),
+  'graph-reference': ({ api, reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
     return (
-      <PermalinkEmbed api={api} link={link} transcluded={0} showOurContact />
+      <Box mb="2" flexShrink={0}>
+        <PermalinkEmbed
+          api={api}
+          link={link}
+          transcluded={transcluded}
+          showOurContact
+        />
+      </Box>
     );
   },
-  root: ({ children }) => <Col gapY="2">{children}</Col>,
+  root: ({ tall, children }) =>
+    tall ? <Col display='grid' style={{ 'row-gap': '1rem' }}>{children}</Col> : <Box>{children}</Box>,
   text: ({ value }) => value,
 };
 
 export function Graphdown<T extends {} = {}>(
   props: {
     ast: GraphAstNode;
+    transcluded: number;
     tall?: boolean;
     depth?: number;
   } & T
 ) {
-  const { ast, depth = 0, ...rest } = props;
+  const { ast, transcluded, tall, depth = 0, ...rest } = props;
   const { type, children = [], ...nodeRest } = ast;
   const Renderer = renderers[ast.type] ?? (() => `unknown element: ${type}`);
 
   return (
-    <Renderer depth={depth} {...rest} {...nodeRest}>
+    <Renderer transcluded={transcluded} depth={depth} {...rest} {...nodeRest} tall={tall}>
       {children.map((c) => (
-        <Graphdown depth={depth+1} {...rest} ast={c} />
+        <Graphdown
+          transcluded={transcluded}
+          depth={depth + 1}
+          {...rest}
+          ast={c}
+        />
       ))}
     </Renderer>
   );
@@ -385,11 +424,10 @@ export const GraphContent = React.memo(function GraphContent(
     api,
     ...rest
   } = props;
-  const [,ast] = stitchAsts(contents.map(contentToMdAst(tall)));
+  const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
   return (
     <Box {...rest}>
-      <Graphdown api={api} ast={ast} />
+      <Graphdown transcluded={transcluded} api={api} ast={ast} tall={tall} />
     </Box>
   );
 });
-

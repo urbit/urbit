@@ -52,9 +52,9 @@ export function SidebarListHeader(props: {
 
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
-  let feedPath: any = '';
-  if (metadata?.config && 'group' in metadata.config) {
-    feedPath = metadata.config.group ?? '';
+  let feedPath: any = null;
+  if (metadata?.config && 'group' in metadata?.config && metadata.config?.group && 'resource' in metadata.config.group) {
+    feedPath = metadata.config.group.resource;
   }
 
   const unreadCount = useHarkState(
@@ -63,7 +63,7 @@ export function SidebarListHeader(props: {
 
   return (
     <Box>
-    {( feedPath) ? (
+    {( !!feedPath) ? (
        <Row
          flexShrink={0}
          alignItems="center"
