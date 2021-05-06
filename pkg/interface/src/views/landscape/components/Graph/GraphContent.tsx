@@ -169,7 +169,9 @@ export function asParent<T extends BlockContent>(node: T): Parent | undefined {
 function stitchMerge(a: Root, b: Root) {
   const aChildren = a.children;
   const bChildren = b.children;
-  if (last(aChildren)?.type === bChildren[0]?.type) {
+  const lastType = last(aChildren)?.type;
+
+  if (lastType === bChildren[0]?.type) {
     const aGrandchild = getChildren(last(aChildren));
     const bGrandchild = getChildren(bChildren[0]);
     const mergedPara = {
@@ -268,6 +270,7 @@ const renderers = {
         color="black"
         paddingLeft={2}
         py="1"
+        mb="1" 
       >
         {children}
       </Text>
@@ -331,22 +334,25 @@ const renderers = {
   },
   'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
   'graph-url': ({ url }) => (
-    <Box my="2" flexShrink={0}>
+    <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent key={url} url={url} />
     </Box>
   ),
   'graph-reference': ({ api, reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
     return (
-      <PermalinkEmbed
-        api={api}
-        link={link}
-        transcluded={transcluded}
-        showOurContact
-      />
+      <Box mb="2" flexShrink={0}>
+        <PermalinkEmbed
+          api={api}
+          link={link}
+          transcluded={transcluded}
+          showOurContact
+        />
+      </Box>
     );
   },
-  root: ({ children }) => <Col gapY="2">{children}</Col>,
+  root: ({ tall, children }) =>
+    tall ? <Col gapY="2">{children}</Col> : <Box>{children}</Box>,
   text: ({ value }) => value,
 };
 
