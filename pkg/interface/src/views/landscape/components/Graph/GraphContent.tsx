@@ -260,7 +260,20 @@ const renderers = {
       </Text>
     );
   },
-
+  strong: ({ children }) => {
+    return (
+      <Text fontWeight="bold">
+        {children}
+      </Text>
+    );
+  }, 
+  emphasis: ({ children }) => { 
+    return (
+    <Text fontStyle="italic" fontSize="1" lineHeight={'20px'}>
+        {children}
+    </Text>
+    )
+  },
   blockquote: ({ children, tall, ...rest }) => {
     return (
       <Text
