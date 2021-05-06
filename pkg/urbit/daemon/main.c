@@ -753,6 +753,18 @@ main(c3_i   argc,
       }
     }
 
+    #if defined(U3_OS_mingw)
+    //  Initialize event used to transmit Ctrl-C to worker process
+    //
+    {
+      SECURITY_ATTRIBUTES sa = {sizeof(sa), NULL, TRUE};
+      if ( NULL == (u3_Host.cev_u = CreateEvent(&sa, FALSE, FALSE, NULL)) ) {
+        u3l_log("boot: failed to create Ctrl-C event: %d\r\n", GetLastError());
+        exit(1);
+      }
+    }
+    #endif
+
     //  Initialize OpenSSL for client and server
     //
     {

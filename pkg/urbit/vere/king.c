@@ -590,6 +590,10 @@ _king_sign_cb(uv_signal_t* sil_u, c3_i num_i)
     case SIGINT: {
       u3l_log("\r\ninterrupt\r\n");
       u3_term_ef_ctlc();
+
+      #if defined(U3_OS_mingw)
+      PulseEvent(u3_Host.cev_u);
+      #endif
       break;
     }
 

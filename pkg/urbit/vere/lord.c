@@ -1145,6 +1145,7 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
     c3_c  key_c[256];
     c3_c  wag_c[11];
     c3_c  hap_c[11];
+    c3_c  cev_c[11];
     c3_i  err_i;
 
     sprintf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
@@ -1173,7 +1174,13 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
       arg_c[6] = "0";
     }
 
+    #if defined(U3_OS_mingw)
+    sprintf(cev_c, "%u", u3_Host.cev_u);
+    arg_c[7] = cev_c;
+    arg_c[8] = 0;
+    #else
     arg_c[7] = 0;
+    #endif
 
     uv_pipe_init(u3L, &god_u->inn_u.pyp_u, 0);
     uv_timer_init(u3L, &god_u->out_u.tim_u);

@@ -319,6 +319,9 @@
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
         u3_usig*   sig_u;                   //  signal list
+        #if defined(U3_OS_mingw)
+        HANDLE     cev_u;                   //  Ctrl-C event handle
+        #endif
         u3_utty*   uty_u;                   //  linked terminal list
         u3_opts    ops_u;                   //  commandline options
         c3_i       xit_i;                   //  exit code for shutdown

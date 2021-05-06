@@ -155,6 +155,18 @@ _cw_serf_exit(void)
   u3t_trace_close();
 }
 
+#if defined(U3_OS_mingw)
+extern void rsignal_raise(int);
+
+/* _mingw_ctrlc_cb(): invoked when the lord signals the Ctrl-C event
+*/
+static void
+_mingw_ctrlc_cb(PVOID param, BOOLEAN timedOut)
+{
+  rsignal_raise(SIGINT);
+}
+#endif
+
 /* _cw_serf_commence(); initialize and run serf
 */
 static void
@@ -163,7 +175,23 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   c3_i inn_i, out_i;
   _cw_serf_stdio(&inn_i, &out_i);
 
+  #if defined(U3_OS_mingw)
+  c3_assert( 8 == argc );
+
+  //  Initialize serf's end of Ctrl-C handling
+  //
+  {
+    HANDLE h;
+    if ( 1 != sscanf(argv[7], "%u", &h) ) {
+      fprintf(stderr, "serf: Ctrl-C event: bad handle %s: %s\r\n", argv[7], strerror(errno));
+    } else
+    if ( !RegisterWaitForSingleObject(&h, h, _mingw_ctrlc_cb, NULL, INFINITE, 0) ) {
+      fprintf(stderr, "serf: Ctrl-C event: RegisterWaitForSingleObject(%u) failed (%d)\r\n", h, GetLastError());
+    }
+  }
+  #else
   c3_assert( 7 == argc );
+  #endif
 
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[2];
@@ -435,7 +463,11 @@ _cw_usage(c3_i argc, c3_c* argv[])
           "  cue persistent state:\n"
           "    %s queu <pier> <at-event>\n\n"
           "  run as a 'serf':\n"
-          "    %s serf <pier> <key> <flags> <cache-size> <at-event>\n",
+          "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
+          #if defined(U3_OS_mingw)
+          " <ctrlc-handle>"
+          #endif
+          "\n",
           argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
 }
 
