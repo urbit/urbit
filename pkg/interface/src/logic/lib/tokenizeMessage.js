@@ -3,6 +3,8 @@ import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 
 const URL_REGEX = new RegExp(String(/^(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)/.source));
 
+const GROUP_REGEX = new RegExp(String(/^~[-a-z_]+\/[-a-z]+/.source));
+
 const isUrl = (string) => {
   try {
     return URL_REGEX.test(string);
@@ -14,6 +16,16 @@ const isUrl = (string) => {
 const isRef = (str) => {
   return isUrl(str) && str.startsWith('web+urbitgraph://');
 };
+
+const isGroup = str => {
+  try {
+    return GROUP_REGEX.test(str);
+  } catch (e) {
+    return false;
+  }
+}
+
+const convertToGroupRef = (group) => `web+urbitgraph://group/${group}`;
 
 const tokenizeMessage = (text) => {
   let messages = [];
@@ -37,7 +49,9 @@ const tokenizeMessage = (text) => {
       currTextLine = [line];
     } else {
       const words = line.split(/\s/);
-      words.forEach((str, idx) => {
+      words.forEach((word, idx) => {
+        const str = isGroup(word) ?  convertToGroupRef(word) : word;
+
         const last = words.length - 1 === idx;
         if (
           (str.startsWith('`') && str !== '`')
