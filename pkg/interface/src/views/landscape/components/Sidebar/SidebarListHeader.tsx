@@ -1,30 +1,26 @@
-import React, { ReactElement, useCallback } from 'react';
-import { FormikHelpers } from 'formik';
-import { Link, useHistory } from 'react-router-dom';
-
 import {
-  Row,
   Box,
-  Icon,
-  ManagedRadioButtonField as Radio,
-  ManagedCheckboxField as Checkbox,
-  Col,
+
+  Col, Icon,
+
+  ManagedCheckboxField as Checkbox, ManagedRadioButtonField as Radio, Row,
+
   Text
 } from '@tlon/indigo-react';
-import { Groups, Rolodex, Associations } from '@urbit/api';
-
-import { FormikOnBlur } from '~/views/components/FormikOnBlur';
-import { Dropdown } from '~/views/components/Dropdown';
-import { SidebarListConfig } from './types';
-import { getGroupFromWorkspace } from '~/logic/lib/workspace';
-import { roleForShip } from '~/logic/lib/group';
-import { NewChannel } from '~/views/landscape/components/NewChannel';
+import { FormikHelpers } from 'formik';
+import React, { ReactElement, useCallback } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { Workspace } from '~/types/workspace';
+import { roleForShip } from '~/logic/lib/group';
+import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
-import useMetadataState from '~/logic/state/metadata';
-import {IS_SAFARI} from '~/logic/lib/platform';
 import useHarkState from '~/logic/state/hark';
+import useMetadataState from '~/logic/state/metadata';
+import { Workspace } from '~/types/workspace';
+import { Dropdown } from '~/views/components/Dropdown';
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
+import { NewChannel } from '~/views/landscape/components/NewChannel';
+import { SidebarListConfig } from './types';
 
 export function SidebarListHeader(props: {
   api: GlobalApi;
@@ -56,15 +52,18 @@ export function SidebarListHeader(props: {
 
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
-  const feedPath = metadata?.config?.group?.resource;
+  let feedPath: any = '';
+  if (metadata?.config && 'group' in metadata.config) {
+    feedPath = metadata.config.group ?? '';
+  }
 
   const unreadCount = useHarkState(
-    s => s.unreads?.graph?.[feedPath ?? ""]?.["/"]?.unreads as number ?? 0
+    s => s.unreads?.graph?.[feedPath ?? '']?.['/']?.unreads as number ?? 0
   );
 
   return (
     <Box>
-    {( !!feedPath) ? (
+    {( feedPath) ? (
        <Row
          flexShrink={0}
          alignItems="center"

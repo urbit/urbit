@@ -1,42 +1,34 @@
-import { hot } from 'react-hot-loader/root';
-import 'react-hot-loader';
-import * as React from 'react';
-import { BrowserRouter as Router, withRouter } from 'react-router-dom';
-import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
+import dark from '@tlon/indigo-dark';
+import light from '@tlon/indigo-light';
 import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
-import Helmet from 'react-helmet';
-
 import Mousetrap from 'mousetrap';
 import 'mousetrap-global-bind';
-
-import './css/indigo-static.css';
-import './css/fonts.css';
-import './apps/chat/css/custom.css';
-import './landscape/css/custom.css';
-
-import light from '@tlon/indigo-light';
-import dark from '@tlon/indigo-dark';
-
-import { Text, Anchor, Row } from '@tlon/indigo-react';
-
-import { Content } from './landscape/components/Content';
-import StatusBar from './components/StatusBar';
-import Omnibox from './components/leap/Omnibox';
-import ErrorBoundary from '~/views/components/ErrorBoundary';
-import { TutorialModal } from '~/views/landscape/components/TutorialModal';
-
-import GlobalStore from '~/logic/store/store';
-import GlobalSubscription from '~/logic/subscription/global';
+import * as React from 'react';
+import Helmet from 'react-helmet';
+import 'react-hot-loader';
+import { hot } from 'react-hot-loader/root';
+import { BrowserRouter as Router, withRouter } from 'react-router-dom';
+import styled, { ThemeProvider } from 'styled-components';
 import GlobalApi from '~/logic/api/global';
-import { uxToHex } from '~/logic/lib/util';
+import gcpManager from '~/logic/lib/gcpManager';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
+import { uxToHex } from '~/logic/lib/util';
 import withState from '~/logic/lib/withState';
-import useLocalState from '~/logic/state/local';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import useLocalState from '~/logic/state/local';
 import useSettingsState from '~/logic/state/settings';
-import gcpManager from '~/logic/lib/gcpManager';
-
+import GlobalStore from '~/logic/store/store';
+import GlobalSubscription from '~/logic/subscription/global';
+import ErrorBoundary from '~/views/components/ErrorBoundary';
+import { TutorialModal } from '~/views/landscape/components/TutorialModal';
+import './apps/chat/css/custom.css';
+import Omnibox from './components/leap/Omnibox';
+import StatusBar from './components/StatusBar';
+import './css/fonts.css';
+import './css/indigo-static.css';
+import { Content } from './landscape/components/Content';
+import './landscape/css/custom.css';
 
 const Root = withState(styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -126,13 +118,13 @@ class App extends React.Component {
   }
 
   updateTheme(e) {
-    this.props.set(state => {
+    this.props.set((state) => {
       state.dark = e.matches;
     });
   }
 
   updateMobile(e) {
-    this.props.set(state => {
+    this.props.set((state) => {
       state.mobile = e.matches;
     });
   }
@@ -155,8 +147,8 @@ class App extends React.Component {
 
   getTheme() {
     const { props } = this;
-    return ((props.dark && props?.display?.theme == "auto") ||
-      props?.display?.theme == "dark"
+    return ((props.dark && props?.display?.theme == 'auto') ||
+      props?.display?.theme == 'dark'
     ) ? dark : light;
   }
 

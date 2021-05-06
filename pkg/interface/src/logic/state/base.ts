@@ -1,10 +1,9 @@
-import produce, { setAutoFreeze } from "immer";
-import { compose } from "lodash/fp";
-import create, { State, UseStore } from "zustand";
-import { persist, devtools } from "zustand/middleware";
+import produce, { setAutoFreeze } from 'immer';
+import { compose } from 'lodash/fp';
+import create, { State, UseStore } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 setAutoFreeze(false);
-
 
 export const stateSetter = <StateType>(
   fn: (state: StateType) => void,
@@ -22,7 +21,7 @@ export const reduceState = <
   reducers: ((data: UpdateType, state: StateType) => StateType)[]
 ): void => {
   const reducer = compose(reducers.map(r => sta => r(data, sta)));
-  state.getState().set(state => {
+  state.getState().set((state) => {
     reducer(state);
   });
 };
@@ -36,10 +35,10 @@ export const stateStorageKey = (stateName: string) => {
 };
 
 (window as any).clearStates = () => {
-  stateStorageKeys.forEach(key => {
+  stateStorageKeys.forEach((key) => {
     localStorage.removeItem(key);
   });
-}
+};
 
 export interface BaseState<StateType> extends State {
   set: (fn: (state: StateType) => void) => void;

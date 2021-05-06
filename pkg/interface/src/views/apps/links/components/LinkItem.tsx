@@ -1,19 +1,16 @@
-import React, { useState, useEffect, useRef, useCallback, ReactElement }  from 'react';
+import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
+import { Association, GraphNode, Group } from '@urbit/api';
+import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-
-import { Row, Col, Anchor, Box, Text, Icon, Action, Rule } from '@tlon/indigo-react';
-import { GraphNode, Group, Rolodex, Unreads, Association } from '@urbit/api';
-
-import { writeText } from '~/logic/lib/util';
-import Author from '~/views/components/Author';
-import { roleForShip } from '~/logic/lib/group';
 import GlobalApi from '~/logic/api/global';
+import { roleForShip } from '~/logic/lib/group';
+import { getPermalinkForGraph, referenceToPermalink } from '~/logic/lib/permalinks';
+import { useCopy } from '~/logic/lib/useCopy';
+import useHarkState from '~/logic/state/hark';
+import Author from '~/views/components/Author';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
-import useHarkState from '~/logic/state/hark';
-import {useCopy} from '~/logic/lib/useCopy';
-import {usePermalinkForGraph, getPermalinkForGraph, referenceToPermalink} from '~/logic/lib/permalinks';
-import {PermalinkEmbed} from '../../permalinks/embed';
+import { PermalinkEmbed } from '../../permalinks/embed';
 
 interface LinkItemProps {
   node: GraphNode;
@@ -62,13 +59,12 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
   const size = node.children ? node.children.size : 0;
   const contents = node.post.contents;
   const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
-  const href = URLparser.exec(contents[1].url) ? contents[1].url : `http://${contents[1].url}`
+  const href = URLparser.exec(contents[1].url) ? contents[1].url : `http://${contents[1].url}`;
 
   const baseUrl = props.baseUrl || `/~404/${resource}`;
 
   const ourRole = group ? roleForShip(group, window.ship) : undefined;
   const [ship, name] = resource.split('/');
-
 
   const permalink = getPermalinkForGraph(
     association.group,
@@ -105,7 +101,8 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
       ref={ref}
       width="100%"
       opacity={node.post.pending ? '0.5' : '1'}
-      {...rest}>
+      {...rest}
+    >
       <Box
         lineHeight="tall"
         display='flex'
@@ -128,7 +125,9 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
         ) : (
         <>
         <RemoteContent
-          ref={r => { remoteRef.current = r }}
+          ref={(r) => {
+ remoteRef.current = r;
+}}
           renderUrl={false}
           url={href}
           text={contents[0].text}
@@ -175,7 +174,8 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
       <Box ml="auto">
         <Link
           to={node.post.pending ? '#' : `${baseUrl}/index/${index}`}
-          style={{ cursor: node.post.pending ? 'default' : 'pointer' }}>
+          style={{ cursor: node.post.pending ? 'default' : 'pointer' }}
+        >
         <Box display='flex'>
           <Icon color={commColor} icon='Chat' />
           <Text color={commColor} ml={1}>{size}</Text>

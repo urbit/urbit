@@ -1,32 +1,28 @@
 /* eslint-disable max-lines-per-function */
+import { BaseImage, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
+import { Contact, Post } from '@urbit/api';
 import bigInt from 'big-integer';
-import React, {
-  useState,
-  useEffect,
-  useMemo
-} from 'react';
 import moment from 'moment';
+import React, {
+  useEffect,
+  useMemo, useState
+} from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
-import { Box, Row, Text, Rule, BaseImage, Icon, Col } from '@tlon/indigo-react';
+import GlobalApi from '~/logic/api/global';
+import { useIdlingState } from '~/logic/lib/idling';
 import { Sigil } from '~/logic/lib/sigil';
+import { useCopy } from '~/logic/lib/useCopy';
 import {
-  uxToHex,
   cite,
-  useShowNickname,
-  useHovering,
-  daToUnix
+
+  daToUnix, useHovering, useShowNickname, uxToHex
 } from '~/logic/lib/util';
-import { Post } from '@urbit/api';
-import { Dropdown } from '~/views/components/Dropdown';
+import { useContact } from '~/logic/state/contact';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
-import useContactState, {useContact} from '~/logic/state/contact';
-import { useIdlingState } from '~/logic/lib/idling';
+import { Dropdown } from '~/views/components/Dropdown';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
-import {useCopy} from '~/logic/lib/useCopy';
-import {GraphContentWide} from '~/views/landscape/components/Graph/GraphContentWide';
-import {Contact} from '@urbit/api';
-import GlobalApi from '~/logic/api/global';
+import { GraphContent} from  '~/views/landscape/components/Graph/GraphContent';
 
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
@@ -35,7 +31,6 @@ interface DayBreakProps {
   when: string;
   shimTop?: boolean;
 }
-
 
 export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
   <Row
@@ -173,7 +168,7 @@ const MessageActions = ({ api, onReply, onDelete, association, msg, isAdmin, per
                 </MessageActionItem>
               ) : null}
               {false && (
-                <MessageActionItem onClick={(e) => console.log(e)}>
+                <MessageActionItem onClick={e => console.log(e)}>
                   View Signature
                 </MessageActionItem>
               )}
@@ -279,7 +274,7 @@ function ChatMessage(props: ChatMessageProps) {
     nextDate &&
     new Date(date).getDate() !==
     new Date(nextDate).getDate()
-  , [nextDate, date])
+  , [nextDate, date]);
 
   const containerClass = `${isPending ? 'o-40' : ''} ${className}`;
 
@@ -352,11 +347,11 @@ export const MessageAuthor = ({
   timestamp,
   msg,
   api,
-  showOurContact,
+  showOurContact
 }) => {
-  const osDark = useLocalState((state) => state.dark);
+  const osDark = useLocalState(state => state.dark);
 
-  const theme = useSettingsState((s) => s.display.theme);
+  const theme = useSettingsState(s => s.display.theme);
   const dark = theme === 'dark' || (theme === 'auto' && osDark);
   let contact: Contact | null = useContact(`~${msg.author}`);
 
@@ -475,7 +470,7 @@ export const MessageAuthor = ({
 };
 
 type MessageProps = { timestamp: string; timestampHover: boolean; }
-  & Pick<ChatMessageProps, "msg" | "api" | "transcluded" | "showOurContact">
+  & Pick<ChatMessageProps, 'msg' | 'api' | 'transcluded' | 'showOurContact'>
 
 export const Message = React.memo(({
   timestamp,
@@ -504,10 +499,10 @@ export const Message = React.memo(({
       ) : (
         <></>
       )}
-      <GraphContentWide
+      <GraphContent
         {...bind}
         width="100%"
-        post={msg}
+        contents={msg.contents}
         transcluded={transcluded}
         api={api}
         showOurContact={showOurContact}
@@ -568,7 +563,7 @@ export const MessagePlaceholder = ({
           display='inline-block'
           verticalAlign='middle'
           fontSize='0'
-          washedGray
+          color='washedGray'
           cursor='default'
         >
           <Text maxWidth='32rem' display='block'>

@@ -1,27 +1,18 @@
-import React, { useRef, useCallback, useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { Col } from '@tlon/indigo-react';
-import _ from 'lodash';
+import { Content, Graph, Post } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
-
-import { Association } from '@urbit/api/metadata';
-import { StoreState } from '~/logic/store/type';
-import { useFileDrag } from '~/logic/lib/useDrag';
-import ChatWindow from './ChatWindow';
-import ChatInput from './ChatInput';
+import _ from 'lodash';
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import GlobalApi from '~/logic/api/global';
-import { ShareProfile } from '~/views/apps/chat/components/ShareProfile';
-import SubmitDragger from '~/views/components/SubmitDragger';
+import { useFileDrag } from '~/logic/lib/useDrag';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
-import { Loading } from '~/views/components/Loading';
-import { isWriter, resourceFromPath } from '~/logic/lib/group';
-
-import useContactState, { useOurContact } from '~/logic/state/contact';
+import { useOurContact } from '~/logic/state/contact';
 import useGraphState from '~/logic/state/graph';
-import useGroupState from '~/logic/state/group';
-import useHarkState from '~/logic/state/hark';
-import { Post, Graph, Content } from '@urbit/api';
-import { getPermalinkForGraph } from '~/logic/lib/permalinks';
+import ShareProfile from '~/views/apps/chat/components/ShareProfile';
+import { Loading } from '~/views/components/Loading';
+import SubmitDragger from '~/views/components/SubmitDragger';
+import ChatInput from './ChatInput';
+import ChatWindow from './ChatWindow';
 
 interface ChatPaneProps {
   /**
@@ -74,7 +65,7 @@ interface ChatPaneProps {
   promptShare?: string[] | string;
 }
 
-export function ChatPane(props: ChatPaneProps) {
+export function ChatPane(props: ChatPaneProps): ReactElement {
   const {
     api,
     graph,
@@ -89,7 +80,7 @@ export function ChatPane(props: ChatPaneProps) {
     promptShare = [],
     fetchMessages
   } = props;
-  const graphTimesentMap = useGraphState((state) => state.graphTimesentMap);
+  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
   const ourContact = useOurContact();
   const chatInput = useRef<ChatInput>();
 
@@ -111,7 +102,7 @@ export function ChatPane(props: ChatPaneProps) {
   );
 
   const appendUnsent = useCallback(
-    (u: string) => setUnsent((s) => ({ ...s, [id]: u })),
+    (u: string) => setUnsent(s => ({ ...s, [id]: u })),
     [id]
   );
 
@@ -135,7 +126,7 @@ export function ChatPane(props: ChatPaneProps) {
   const onReply = useCallback(
     (msg: Post) => {
       const message = props.onReply(msg);
-      setUnsent((s) => ({ ...s, [id]: message }));
+      setUnsent(s => ({ ...s, [id]: message }));
     },
     [id, props.onReply]
   );

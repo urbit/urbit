@@ -1,5 +1,5 @@
-import React, { useImperativeHandle, useEffect } from 'react';
-import { FormikValues, useFormik, FormikProvider, FormikConfig } from 'formik';
+import { FormikConfig, FormikProvider, FormikValues, useFormik } from 'formik';
+import React, { useEffect, useImperativeHandle } from 'react';
 
 export function FormikOnBlur<
   Values extends FormikValues = FormikValues,

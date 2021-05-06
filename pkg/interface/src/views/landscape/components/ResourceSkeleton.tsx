@@ -1,17 +1,15 @@
-import React, { ReactElement, ReactNode, useRef } from 'react';
-import { Icon, Box, Col, Text } from '@tlon/indigo-react';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import urbitOb from 'urbit-ob';
-
+import { Box, Col, Icon, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
-
-import RichText from '~/views/components/RichText';
+import React, { ReactElement, ReactNode, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import urbitOb from 'urbit-ob';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import RichText from '~/views/components/RichText';
 
 const TruncatedText = styled(RichText)`
   white-space: nowrap;
@@ -30,7 +28,10 @@ type ResourceSkeletonProps = {
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const { association, baseUrl, children } = props;
-  const app = association?.metadata?.config?.graph || association['app-name'];
+  let app = association['app-name'];
+  if (association?.metadata?.config && 'graph' in association.metadata.config) {
+    app = association.metadata.config.graph;
+  }
   const rid = association.resource;
   const groups = useGroupState(state => state.groups);
   const group = groups[association.group];
@@ -55,7 +56,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     recipient = title;
     title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
   } else {
-    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(", ")
+    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(', ');
   }
 
   const [, , ship, resource] = rid.split('/');

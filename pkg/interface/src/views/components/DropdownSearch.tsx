@@ -1,20 +1,15 @@
-import React, {
-  useRef,
-  useState,
-  useMemo,
-  useCallback,
-  useEffect,
-  ChangeEvent,
-  ReactElement
-} from 'react';
-import _ from 'lodash';
-import Mousetrap from 'mousetrap';
-
 import {
   Box,
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
-
+import _ from 'lodash';
+import Mousetrap from 'mousetrap';
+import React, {
+  ChangeEvent,
+  ReactElement, useCallback,
+  useEffect, useMemo, useRef,
+  useState
+} from 'react';
 import { useDropdown } from '~/logic/lib/useDropdown';
 import { PropFunc } from '~/types/util';
 

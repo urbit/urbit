@@ -1,28 +1,26 @@
-import React, { ReactElement } from 'react';
 import {
   Box,
-  ManagedTextInputField as Input,
-  Col,
+
+  Col, ManagedTextInputField as Input,
+
   Text
 } from '@tlon/indigo-react';
+import { Form, Formik } from 'formik';
 import _ from 'lodash';
-import { Formik, Form } from 'formik';
+import React, { ReactElement } from 'react';
+import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
+import { resourceFromPath } from '~/logic/lib/group';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import { deSig, parentPath, stringToSymbol } from '~/logic/lib/util';
+import useGroupState from '~/logic/state/group';
+import { Workspace } from '~/types/workspace';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { FormError } from '~/views/components/FormError';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { stringToSymbol, parentPath, deSig } from '~/logic/lib/util';
-import { resourceFromPath } from '~/logic/lib/group';
-import { Associations } from '@urbit/api/metadata';
-import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import { Groups } from '@urbit/api/groups';
-import { ShipSearch, shipSearchSchemaInGroup, shipSearchSchema } from '~/views/components/ShipSearch';
-import { Rolodex } from '@urbit/api';
 import { IconRadio } from '~/views/components/IconRadio';
+import { ShipSearch, shipSearchSchema, shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
 import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
-import { Workspace } from '~/types/workspace';
-import useGroupState from '~/logic/state/group';
 
 type FormSchema = {
   name: string;
@@ -102,7 +100,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
         await waiter(p => Boolean(p.groups?.[`/ship/~${window.ship}/${resId}`]));
       }
       actions.setStatus({ success: null });
-      const resourceUrl = (location.pathname.includes("/messages")) ? "/~landscape/messages" : parentPath(location.pathname);
+      const resourceUrl = (location.pathname.includes('/messages')) ? '/~landscape/messages' : parentPath(location.pathname);
       history.push(
         `${resourceUrl}/resource/${moduleType}/ship/~${window.ship}/${resId}`
       );

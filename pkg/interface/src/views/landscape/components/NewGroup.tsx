@@ -1,23 +1,19 @@
-import React, { ReactElement, useCallback } from 'react';
-import { Formik, Form, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
-import { RouteComponentProps } from 'react-router-dom';
-
 import {
-  Col,
-  Box,
-  Text,
-  ManagedTextInputField as Input,
-  ManagedCheckboxField as Checkbox
-} from '@tlon/indigo-react';
-import { Groups, Rolodex, GroupPolicy, Enc, Associations } from '@urbit/api';
+  Box, Col,
 
-import { AsyncButton } from '~/views/components/AsyncButton';
-import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+  ManagedCheckboxField as Checkbox, ManagedTextInputField as Input, Text
+} from '@tlon/indigo-react';
+import { Enc, GroupPolicy } from '@urbit/api';
+import { Form, Formik, FormikHelpers } from 'formik';
+import React, { ReactElement, useCallback } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { stringToSymbol } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
+import { AsyncButton } from '~/views/components/AsyncButton';
 
 const formSchema = Yup.object({
   title: Yup.string().required('Group must have a name'),

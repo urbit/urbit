@@ -1,22 +1,19 @@
-import React, {
-  useCallback,
-  useState,
-  ReactNode,
-  useEffect,
-  useRef,
-  ReactElement
-} from 'react';
+import {
+  Col,
+
+  ErrorLabel, Label,
+  Row,
+
+  StatelessTextInput as Input
+} from '@tlon/indigo-react';
 import { useField } from 'formik';
 import Mousetrap from 'mousetrap';
+import React, {
+  ReactElement, ReactNode, useCallback,
 
-import {
-  Label,
-  Row,
-  Col,
-  StatelessTextInput as Input,
-  ErrorLabel
-} from '@tlon/indigo-react';
-
+  useEffect,
+  useRef, useState
+} from 'react';
 
 function Chip(props: { children: ReactNode }): ReactElement {
   return (

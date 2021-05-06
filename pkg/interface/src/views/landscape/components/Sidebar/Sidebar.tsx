@@ -1,21 +1,19 @@
-import React, { ReactElement, ReactNode, useRef } from 'react';
-import styled from 'styled-components';
 import {
   Col
 } from '@tlon/indigo-react';
-
+import React, { ReactElement, useRef } from 'react';
+import styled from 'styled-components';
 import GlobalApi from '~/logic/api/global';
-import { GroupSwitcher } from '../GroupSwitcher';
-import { Workspace } from '~/types';
-import { SidebarListConfig } from './types';
-import { SidebarListHeader } from './SidebarListHeader';
+import { roleForShip } from '~/logic/lib/group';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
-import { SidebarAppConfigs } from './types';
-import { SidebarList } from './SidebarList';
-import { roleForShip } from '~/logic/lib/group';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
 import useGroupState from '~/logic/state/group';
+import { Workspace } from '~/types';
+import { useTutorialModal } from '~/views/components/useTutorialModal';
+import { GroupSwitcher } from '../GroupSwitcher';
+import { SidebarList } from './SidebarList';
+import { SidebarListHeader } from './SidebarListHeader';
+import { SidebarAppConfigs, SidebarListConfig } from './types';
 
 const ScrollbarLessCol = styled(Col)`
   scrollbar-width: none !important;
