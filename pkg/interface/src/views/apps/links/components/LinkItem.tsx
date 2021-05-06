@@ -27,7 +27,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
     ...rest
   } = props;
 
-  if (typeof node.post === 'string' || !note.post) {
+  if (typeof node.post === 'string' || !node.post) {
     return <Redirect to="/~404" />;
   }
 
