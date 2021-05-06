@@ -1,23 +1,18 @@
-import React, { createRef, useCallback, useRef } from 'react';
-import { IUnControlledCodeMirror, UnControlled as CodeEditor } from 'react-codemirror2';
-import { useFormikContext } from 'formik';
-import { Prompt } from 'react-router-dom';
+import { Box } from '@tlon/indigo-react';
 import { Editor } from 'codemirror';
-
-import { MOBILE_BROWSER_REGEX, usePreventWindowUnload } from '~/logic/lib/util';
-import { PropFunc } from '~/types/util';
-import CodeMirror from 'codemirror';
-
-import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/addon/edit/continuelist';
-
 import 'codemirror/lib/codemirror.css';
-import { Box } from '@tlon/indigo-react';
+import 'codemirror/mode/markdown/markdown';
+import { useFormikContext } from 'formik';
+import React, { useCallback, useRef } from 'react';
+import { UnControlled as CodeEditor } from 'react-codemirror2';
+import { Prompt } from 'react-router-dom';
 import { useFileDrag } from '~/logic/lib/useDrag';
-import SubmitDragger from '~/views/components/SubmitDragger';
 import useStorage from '~/logic/lib/useStorage';
-import { StorageState } from '~/types';
+import { usePreventWindowUnload } from '~/logic/lib/util';
+import { PropFunc } from '~/types/util';
+import SubmitDragger from '~/views/components/SubmitDragger';
 
 const MARKDOWN_CONFIG = {
   name: 'markdown'

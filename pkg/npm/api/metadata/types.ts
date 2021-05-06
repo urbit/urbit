@@ -76,10 +76,10 @@ export interface Metadata {
 type MetadataConfig = GroupConfig | GraphConfig;
 
 interface GroupConfig {
-  group: null | {} | Resource;
+  group: null | Record<string, string> | Resource;
 }
 interface GraphConfig {
   graph: string;
 }
 
-export type PermVariation = '' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';
+export type PermVariation = '' | ' ' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';

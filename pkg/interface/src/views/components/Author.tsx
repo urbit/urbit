@@ -1,20 +1,16 @@
-import React, { ReactElement, ReactNode, useState } from 'react';
+import { BaseImage, Box, Row } from '@tlon/indigo-react';
 import moment from 'moment';
+import React, { ReactElement, ReactNode, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
-import { Col, Row, Box, BaseImage } from '@tlon/indigo-react';
-import { Contacts } from '@urbit/api/contacts';
-import { Group } from '@urbit/api';
-
-import { uxToHex, cite, useShowNickname, deSig } from '~/logic/lib/util';
-import useSettingsState, {selectCalmState} from "~/logic/state/settings";
-import useLocalState from "~/logic/state/local";
 import { Sigil } from '~/logic/lib/sigil';
-import Timestamp from './Timestamp';
-import useContactState from '~/logic/state/contact';
 import { useCopy } from '~/logic/lib/useCopy';
-import ProfileOverlay from './ProfileOverlay';
+import { cite, deSig, useShowNickname, uxToHex } from '~/logic/lib/util';
+import useContactState from '~/logic/state/contact';
+import useLocalState from '~/logic/state/local';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { PropFunc } from '~/types';
+import ProfileOverlay from './ProfileOverlay';
+import Timestamp from './Timestamp';
 
 interface AuthorProps {
   ship: string;
@@ -49,10 +45,10 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
   const sigilPadding = props.sigilPadding || 2;
 
   const history = useHistory();
-  const osDark = useLocalState((state) => state.dark);
+  const osDark = useLocalState(state => state.dark);
 
   const theme = useSettingsState(s => s.display.theme);
-  const dark = theme === 'dark' || (theme === 'auto' && osDark)
+  const dark = theme === 'dark' || (theme === 'auto' && osDark);
 
   let contact;
   const contacts = useContactState(state => state.contacts);

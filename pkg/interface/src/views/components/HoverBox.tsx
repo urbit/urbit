@@ -1,7 +1,7 @@
-import React, { RefObject } from 'react';
+import { Box } from '@tlon/indigo-react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Box } from '@tlon/indigo-react';
 import { PropFunc } from '~/types/util';
 interface HoverBoxProps {
   selected: boolean;

@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useHistory } from 'react-router-dom';
-import {
-  parsePermalink,
-  GraphPermalink as IGraphPermalink,
-  getPermalinkForGraph,
-  usePermalinkForGraph,
-} from "~/logic/lib/permalinks";
+import { useHistory, useLocation, Link } from 'react-router-dom';
+import { Association, GraphNode, resourceFromPath } from '@urbit/api';
+import GlobalApi from '~/logic/api/global';
+import { 
+  getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
+} from '~/logic/lib/permalinks';
 import {
   Action,
   Box,
@@ -17,11 +16,8 @@ import {
   Center
 } from "@tlon/indigo-react";
 import { GroupLink } from "~/views/components/GroupLink";
-import GlobalApi from "~/logic/api/global";
 import { getModuleIcon } from "~/logic/lib/util";
 import useMetadataState from "~/logic/state/metadata";
-import { Association, resourceFromPath, GraphNode } from "@urbit/api";
-import { Link, useLocation } from "react-router-dom";
 import useGraphState from "~/logic/state/graph";
 import { GraphNodeContent } from "../notifications/graph";
 import { TranscludedNode } from "./TranscludedNode";
@@ -55,19 +51,19 @@ function GraphPermalink(
   const location = useLocation();
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
-    useCallback((s) => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index] as GraphNode, [
+    useCallback(s => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index] as GraphNode, [
       graph,
-      index,
+      index
     ])
   );
   const [errored, setErrored] = useState(false);
   const association = useMetadataState(
-    useCallback((s) => s.associations.graph[graph] as Association | null, [
-      graph,
+    useCallback(s => s.associations.graph[graph] as Association | null, [
+      graph
     ])
   );
 
-  useVirtualResizeProp(!!node)
+  useVirtualResizeProp(Boolean(node));
   useEffect(() => {
     (async () => {
       if (pending || !index) {
@@ -81,7 +77,7 @@ function GraphPermalink(
       }
     })();
   }, [pending, graph, index]);
-  const showTransclusion = !!(association && node && transcluded < 1);
+  const showTransclusion = Boolean(association && node && transcluded < 1);
   const permalink = getPermalinkForGraph(group, graph, index);
 
   const navigate = (e) => {
@@ -119,7 +115,7 @@ function GraphPermalink(
       borderRadius="2"
       cursor='pointer'
       onClick={(e) => {
-        navigate(e);
+        e.stopPropagation();
       }}
     >
       {showTransclusion && index && (
@@ -131,7 +127,7 @@ function GraphPermalink(
           showOurContact={showOurContact}
         />
       )}
-      {!!association ? (
+      {association ? (
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
@@ -209,9 +205,9 @@ export function PermalinkEmbed(props: {
   }
 
   switch (permalink.type) {
-    case "group":
+    case 'group':
       return <GroupPermalink group={permalink.group} api={props.api} />;
-    case "graph":
+    case 'graph':
       return (
         <GraphPermalink
           transcluded={props.transcluded}

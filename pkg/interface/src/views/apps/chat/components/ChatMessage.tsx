@@ -1,32 +1,26 @@
 /* eslint-disable max-lines-per-function */
+import { BaseImage, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
+import { Contact, Post } from '@urbit/api';
 import bigInt from 'big-integer';
-import React, {
-  useState,
-  useEffect,
-  useMemo
-} from 'react';
 import moment from 'moment';
+import React, {
+  useEffect,
+  useMemo, useState
+} from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
-import { Box, Row, Text, Rule, BaseImage, Icon, Col } from '@tlon/indigo-react';
+import GlobalApi from '~/logic/api/global';
+import { useIdlingState } from '~/logic/lib/idling';
 import { Sigil } from '~/logic/lib/sigil';
+import { useCopy } from '~/logic/lib/useCopy';
 import {
-  uxToHex,
-  cite,
-  useShowNickname,
-  useHovering,
-  daToUnix
+  cite, daToUnix, useHovering, useShowNickname, uxToHex
 } from '~/logic/lib/util';
-import { Post } from '@urbit/api';
-import { Dropdown } from '~/views/components/Dropdown';
+import { useContact } from '~/logic/state/contact';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
-import useContactState, {useContact} from '~/logic/state/contact';
-import { useIdlingState } from '~/logic/lib/idling';
+import { Dropdown } from '~/views/components/Dropdown';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
-import {useCopy} from '~/logic/lib/useCopy';
-import {GraphContentWide} from '~/views/landscape/components/Graph/GraphContentWide';
-import {Contact} from '@urbit/api';
-import GlobalApi from '~/logic/api/global';
+import { GraphContent} from  '~/views/landscape/components/Graph/GraphContent';
 
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
@@ -35,7 +29,6 @@ interface DayBreakProps {
   when: string;
   shimTop?: boolean;
 }
-
 
 export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
   <Row
@@ -120,7 +113,7 @@ const MessageActionItem = (props) => {
   );
 };
 
-const MessageActions = ({ api, onReply, association, msg, isAdmin, permalink }) => {
+const MessageActions = ({ api, onReply, onDelete, association, msg, isAdmin, permalink }) => {
   const isOwn = () => msg.author === window.ship;
   const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Message Link');
 
@@ -167,13 +160,13 @@ const MessageActions = ({ api, onReply, association, msg, isAdmin, permalink }) 
               <MessageActionItem onClick={doCopy}>
                 {copyDisplay}
               </MessageActionItem>
-              {false && (isAdmin() || isOwn()) ? (
-                <MessageActionItem onClick={(e) => console.log(e)} color='red'>
+              {(isAdmin || isOwn()) ? (
+                <MessageActionItem onClick={(e) => onDelete(msg)} color='red'>
                   Delete Message
                 </MessageActionItem>
               ) : null}
               {false && (
-                <MessageActionItem onClick={(e) => console.log(e)}>
+                <MessageActionItem onClick={e => console.log(e)}>
                   View Signature
                 </MessageActionItem>
               )}
@@ -250,7 +243,14 @@ function ChatMessage(props: ChatMessageProps) {
     permalink
   } = props;
 
+  if (typeof msg === 'string' || !msg) {
+    return (
+      <Text gray>This message has been deleted.</Text>
+    );
+  }
+
   let onReply = props?.onReply ?? (() => {});
+  let onDelete = props?.onDelete ?? (() => {});
   const transcluded = props?.transcluded ?? 0;
   const renderSigil = props.renderSigil ?? (Boolean(nextMsg && msg.author !== nextMsg.author) ||
         !nextMsg ||
@@ -268,7 +268,7 @@ function ChatMessage(props: ChatMessageProps) {
     }
 
   const date = useMemo(() => daToUnix(bigInt(msg.index.split('/')[1])), [msg.index]);
-  const nextDate = useMemo(() => nextMsg ? (
+  const nextDate = useMemo(() => nextMsg && typeof nextMsg !== 'string' ? (
     daToUnix(bigInt(nextMsg.index.split('/')[1]))
   ) : null,
     [nextMsg]
@@ -278,7 +278,7 @@ function ChatMessage(props: ChatMessageProps) {
     nextDate &&
     new Date(date).getDate() !==
     new Date(nextDate).getDate()
-  , [nextDate, date])
+  , [nextDate, date]);
 
   const containerClass = `${isPending ? 'o-40' : ''} ${className}`;
 
@@ -299,7 +299,8 @@ function ChatMessage(props: ChatMessageProps) {
     fontSize,
     hideHover,
     transcluded,
-    onReply
+    onReply,
+    onDelete
   };
 
   const message = useMemo(() => (
@@ -353,9 +354,9 @@ export const MessageAuthor = ({
   showOurContact,
   ...props
 }) => {
-  const osDark = useLocalState((state) => state.dark);
+  const osDark = useLocalState(state => state.dark);
 
-  const theme = useSettingsState((s) => s.display.theme);
+  const theme = useSettingsState(s => s.display.theme);
   const dark = theme === 'dark' || (theme === 'auto' && osDark);
   let contact: Contact | null = useContact(`~${msg.author}`);
 
@@ -474,7 +475,7 @@ export const MessageAuthor = ({
 };
 
 type MessageProps = { timestamp: string; timestampHover: boolean; }
-  & Pick<ChatMessageProps, "msg" | "api" | "transcluded" | "showOurContact">
+  & Pick<ChatMessageProps, 'msg' | 'api' | 'transcluded' | 'showOurContact'>
 
 export const Message = React.memo(({
   timestamp,
@@ -503,10 +504,10 @@ export const Message = React.memo(({
       ) : (
         <></>
       )}
-      <GraphContentWide
+      <GraphContent
         {...bind}
         width="100%"
-        post={msg}
+        contents={msg.contents}
         transcluded={transcluded}
         api={api}
         showOurContact={showOurContact}
@@ -567,7 +568,7 @@ export const MessagePlaceholder = ({
           display='inline-block'
           verticalAlign='middle'
           fontSize='0'
-          washedGray
+          color='washedGray'
           cursor='default'
         >
           <Text maxWidth='32rem' display='block'>

@@ -1,20 +1,18 @@
+import { BaseImage, Box, Icon, Row, Text } from '@tlon/indigo-react';
+import { Association } from '@urbit/api';
 import React, { ReactElement, useRef } from 'react';
 import urbitOb from 'urbit-ob';
-
-import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
-import { Association } from '@urbit/api';
-
-import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
-import { getModuleIcon, getItemTitle, uxToHex } from '~/logic/lib/util';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
-import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
-import { SidebarAppConfigs } from './types';
-import { Workspace } from '~/types/workspace';
+import { TUTORIAL_GROUP, TUTORIAL_HOST } from '~/logic/lib/tutorialModal';
+import { getItemTitle, getModuleIcon, uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import { Workspace } from '~/types/workspace';
 import Dot from '~/views/components/Dot';
+import { HoverBoxLink } from '~/views/components/HoverBox';
+import { useTutorialModal } from '~/views/components/useTutorialModal';
+import { SidebarAppConfigs } from './types';
 
 // eslint-disable-next-line max-lines-per-function
 export function SidebarItem(props: {
@@ -28,7 +26,10 @@ export function SidebarItem(props: {
   const { association, path, selected, apps } = props;
   let title = getItemTitle(association) || '';
   const appName = association?.['app-name'];
-  const mod = association?.metadata?.config?.graph || appName;
+  let mod = appName;
+  if (association?.metadata?.config && 'graph' in association.metadata.config) {
+    mod = association.metadata.config.graph;
+  }
   const rid = association?.resource;
   const groupPath = association?.group;
   const groups = useGroupState(state => state.groups);

@@ -1,27 +1,25 @@
-import React from 'react';
-import { Formik, Form, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
-
 import {
   Box,
-  ManagedTextInputField as Input,
+
+  Col, ManagedTextInputField as Input,
   ManagedToggleSwitchField as Checkbox,
-  Col,
+
   Text
 } from '@tlon/indigo-react';
 import { Enc } from '@urbit/api';
 import { Group, GroupPolicy } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
-
-import { AsyncButton } from '~/views/components/AsyncButton';
-import { FormError } from '~/views/components/FormError';
+import { Form, Formik, FormikHelpers } from 'formik';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
-import { ColorInput } from '~/views/components/ColorInput';
-import { useHistory } from 'react-router-dom';
 import { uxToHex } from '~/logic/lib/util';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { ColorInput } from '~/views/components/ColorInput';
+import { FormError } from '~/views/components/FormError';
 import { ImageInput } from '~/views/components/ImageInput';
-import { StorageState } from '~/types';
 
 interface FormSchema {
   title: string;
