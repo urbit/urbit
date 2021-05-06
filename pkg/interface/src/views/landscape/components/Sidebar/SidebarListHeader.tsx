@@ -53,8 +53,8 @@ export function SidebarListHeader(props: {
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
   let feedPath: any = null;
-  if ('group' in metadata?.config && typeof metadata.config.group === 'string') {
-    feedPath = metadata.config.group;
+  if (metadata?.config && 'group' in metadata?.config && metadata.config?.group && 'resource' in metadata.config.group) {
+    feedPath = metadata.config.group.resource;
   }
 
   const unreadCount = useHarkState(
