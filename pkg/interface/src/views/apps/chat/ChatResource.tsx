@@ -89,7 +89,7 @@ function ChatResource(props: ChatResourceProps) {
         props.association.resource,
         msg.index
       );
-      return `${url}\n`;
+      return `${url}\n~${msg.author} : `;
     },
     [association]
   );
