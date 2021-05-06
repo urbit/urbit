@@ -22,7 +22,6 @@ import useLocalState from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Dropdown } from '~/views/components/Dropdown';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
-import {useCopy} from '~/logic/lib/useCopy';
 import { GraphContent} from  '~/views/landscape/components/Graph/GraphContent';
 
 

@@ -6,7 +6,6 @@ import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { Contacts, GraphNode, Graph, Association, Unreads, Group, Post } from '@urbit/api';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
-import {useQuery} from '~/logic/lib/useQuery';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { getComments, getLatestRevision } from '~/logic/lib/publish';
 import { useCopy } from '~/logic/lib/useCopy';
