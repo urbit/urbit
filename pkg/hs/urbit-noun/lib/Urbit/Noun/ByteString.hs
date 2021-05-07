@@ -3,7 +3,7 @@ module Urbit.Noun.ByteString where
 import ClassyPrelude hiding (ByteString)
 import qualified ClassyPrelude as CP
 import Data.Char (ord)
-import qualified Data.Vector.Unboxed as P
+import qualified Data.Vector as P
 import GHC.Base (unsafeChr)
 
 type ByteString = P.Vector Word8

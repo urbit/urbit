@@ -21,7 +21,7 @@ import Urbit.Arvo.Common (ReOrg(..), reorgThroughNoun)
 import qualified Crypto.Sign.Ed25519       as Ed
 import qualified Data.ByteString           as BS
 import qualified Data.ByteString.Char8     as C
-import qualified Data.Vector.Unboxed       as V
+import qualified Data.Vector               as V
 import qualified Network.HTTP.Types.Method as H
 
 -- Misc Types ------------------------------------------------------------------
