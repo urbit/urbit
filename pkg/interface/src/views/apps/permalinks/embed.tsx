@@ -85,10 +85,10 @@ function GraphPermalink(
     history.push(`/perma${permalink.slice(16)}`);
   };
 
-  const [nodeGroupHost, nodeGroupName] = association?.group.split('/').slice(-2);
+  const [nodeGroupHost, nodeGroupName] = association?.group.split('/').slice(-2) ?? ['Unknown', 'Unknown'];
   const [nodeChannelHost, nodeChannelName] = association?.resource
     .split('/')
-    .slice(-2);
+    .slice(-2) ?? ['Unknown', 'Unknown'];
   const [
     locChannelName,
     locChannelHost,
