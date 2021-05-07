@@ -9,13 +9,8 @@ data-files:
 library:
   source-dirs: lib
   ghc-options:
-    - -Wall
-    - -Werror
-    - -Wno-type-defaults
-    - -Wno-unused-matches
-    - -Wno-name-shadowing
-    - -Wno-unused-do-bind
-    - -O2
+    - -w
+    - -Wwarn
 
 tests:
   urbit-king-tests:

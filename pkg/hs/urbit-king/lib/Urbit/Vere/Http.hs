@@ -16,9 +16,9 @@ convertHeaders :: [HT.Header] -> [Header]
 convertHeaders = fmap f
   where
     f (k, v) = Header (Cord $ decodeUtf8 $ CI.foldedCase k)
-                      (MkBytes v)
+                      (MkBytes $ fromBS v)
 
 unconvertHeaders :: [Header] -> [HT.Header]
 unconvertHeaders = fmap f
   where
-    f (Header (Cord k) (MkBytes v)) = (CI.mk (encodeUtf8 k), v)
+    f (Header (Cord k) (MkBytes (toBS -> v))) = (CI.mk (encodeUtf8 k), v)

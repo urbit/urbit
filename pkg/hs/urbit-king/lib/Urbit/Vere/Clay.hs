@@ -93,9 +93,9 @@ checkFileForUpdates snapshot fp = do
   let !newHash = hash bs
   pure $ case lookup fp snapshot of
     -- text/plain is the hardcoded mime type of every file sent to clay.
-    Nothing -> Right (fp, (Mime textPlain (File (Octs bs))), newHash)
+    Nothing -> Right (fp, (Mime textPlain (File (Octs $ fromBS bs))), newHash)
     Just i -> if i == newHash then Left fp
-              else Right (fp, (Mime textPlain (File (Octs bs))), newHash)
+              else Right (fp, (Mime textPlain (File (Octs $ fromBS bs))), newHash)
 
 {-|
     Given a previous snapshot of the filesystem, produces a list of changes
@@ -238,7 +238,7 @@ clay env plan =
         | otherwise = do
             logInfo $ displayShow ("(clay) updating file " , fp)
             createDirectoryIfMissing True $ takeDirectory fp
-            writeFile fp bs
+            writeFile fp $ toBS bs
       where
         skip = case M.lookup fp m of
           Nothing -> False

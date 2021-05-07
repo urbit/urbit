@@ -44,7 +44,7 @@ cvtReq r =
     , H.requestBody =
         H.RequestBodyBS $ case body r of
                             Nothing        -> ""
-                            Just (Octs bs) -> bs
+                            Just (Octs bs) -> toBS bs
     }
 
 cvtRespHeaders :: H.Response a -> ResponseHeader
@@ -160,7 +160,7 @@ client env plan = (initialEvents, runHttpClient)
 
         recv :: H.BodyReader -> RIO e (Maybe ByteString)
         recv read = io $ read <&> \case chunk | null chunk -> Nothing
-                                              | otherwise  -> Just chunk
+                                              | otherwise  -> Just (fromBS chunk)
 
         exec :: H.Response H.BodyReader -> RIO e ()
         exec resp = do

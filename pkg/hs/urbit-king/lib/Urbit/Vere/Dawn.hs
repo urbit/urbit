@@ -17,7 +17,8 @@ module Urbit.Vere.Dawn ( dawnVent
 
 import Urbit.Arvo.Common
 import Urbit.Arvo.Event  hiding (Address)
-import Urbit.Prelude     hiding (rights, to, (.=))
+import Urbit.Prelude     hiding (rights, to, (.=), ByteString)
+import ClassyPrelude (ByteString)
 
 import Data.Bits                     (xor)
 import Data.List                     (nub)
@@ -75,8 +76,8 @@ onLeft fun = bimap fun id
 ringToPass :: Ring -> Pass
 ringToPass Ring{..} = Pass{..}
   where
-    passCrypt = decode ringCrypt
-    passSign = decode ringSign
+    passCrypt = decode $ toBS ringCrypt
+    passSign = decode $ toBS ringSign
     decode = fst . fromJust . Ed.createKeypairFromSeed_
     fromJust = \case
       Nothing -> error "Invalid seed passed to createKeypairFromSeed"
@@ -480,8 +481,9 @@ deriveCode Ring {..} = Ob.patp $
                        bytesAtom $
                        take 8 $
                        shaf (C.pack "pass") $
-                       shax $
-                       C.singleton 'B' <> ringSign <> ringCrypt
+                       shax $ 
+                       toBS $
+                       singleton (c2w 'B') <> ringSign <> ringCrypt
 
 cometFingerprintBS :: Pass -> ByteString
 cometFingerprintBS = (shaf $ C.pack "bfig") . passToBS
@@ -497,8 +499,8 @@ tryMineComet ships seed =
   where
     -- Hash the incoming seed into a 64 bytes.
     baseHash = SHA512.hash $ toStrict $ B.encode seed
-    signSeed = (take 32 baseHash)
-    ringSeed = (drop 32 baseHash)
+    signSeed = fromBS (take 32 baseHash)
+    ringSeed = fromBS (drop 32 baseHash)
     ring = Ring signSeed ringSeed
     pass = ringToPass ring
     shipName = cometFingerprint pass

@@ -16,7 +16,7 @@ module Urbit.Noun.Conversions
   , textAsT
   ) where
 
-import ClassyPrelude hiding (hash)
+import ClassyPrelude hiding (hash, ByteString)
 
 import Control.Lens         hiding (Each, Index, (<.>))
 import Control.Monad.Fail   (fail)
@@ -25,6 +25,7 @@ import Data.Word
 import Text.Regex.TDFA
 import Text.Regex.TDFA.Text ()
 import Urbit.Atom
+import Urbit.Noun.ByteString
 import Urbit.Noun.Convert
 import Urbit.Noun.Core
 import Urbit.Noun.TH
@@ -444,7 +445,7 @@ newtype Tape = Tape { unTape :: Text }
   deriving newtype (Eq, Ord, Show, Semigroup, Monoid, IsString)
 
 instance ToNoun Tape where
-  toNoun = toNoun . (unpack :: ByteString -> [Word8]) . encodeUtf8 . unTape
+  toNoun = toNoun . (unpack) . encodeUtf8 . unTape
 
 instance FromNoun Tape where
   parseNoun n = named "Tape" $ do
@@ -497,10 +498,10 @@ newtype Bytes = MkBytes { unBytes :: ByteString }
   deriving newtype (Eq, Ord, Show, IsString)
 
 instance ToNoun Bytes where
-    toNoun = Atom . bytesAtom . unBytes
+    toNoun = Atom . bytesAtom . toBS . unBytes
 
 instance FromNoun Bytes where
-    parseNoun = named "Bytes" . fmap (MkBytes . atomBytes) . parseNoun
+    parseNoun = named "Bytes" . fmap (MkBytes . fromBS . atomBytes) . parseNoun
 
 
 -- Octs ------------------------------------------------------------------------
@@ -510,7 +511,7 @@ newtype Octs = Octs { unOcts :: ByteString }
 
 instance ToNoun Octs where
   toNoun (Octs bs) =
-      toNoun (int2Word (length bs), bytesAtom bs)
+      toNoun (int2Word (length bs), bytesAtom $ toBS bs)
     where
       int2Word :: Int -> Word
       int2Word = fromIntegral
@@ -518,7 +519,7 @@ instance ToNoun Octs where
 instance FromNoun Octs where
     parseNoun x = named "Octs" $ do
         (word2Int -> len, atom) <- parseNoun x
-        let bs = atomBytes atom
+        let bs = fromBS $ atomBytes atom
         pure $ Octs $ case compare (length bs) len of
           EQ -> bs
           LT -> bs <> replicate (len - length bs) 0

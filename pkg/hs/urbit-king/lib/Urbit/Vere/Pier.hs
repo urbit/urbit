@@ -107,7 +107,6 @@ writeJobs log !jobs = do
   events <- fmap fromList $ traverse fromJob (zip [expect ..] $ toList jobs)
   Log.appendEvents log events
  where
-  fromJob :: (EventId, Job) -> RIO e ByteString
   fromJob (expectedId, job) = do
     unless (expectedId == jobId job) $ error $ show
       ("bad job id!", expectedId, jobId job)
@@ -669,7 +668,6 @@ runPersist log inpQ out = do
       out fx
 
  where
-  validateFactsAndGetBytes :: [Fact] -> RIO e (Vector ByteString)
   validateFactsAndGetBytes facts = do
     expect <- atomically (Log.nextEv log)
     lis <- for (zip [expect ..] facts) $ \(expectedId, Fact eve mug wen non) ->

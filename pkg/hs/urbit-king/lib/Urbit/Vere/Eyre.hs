@@ -128,9 +128,8 @@ parseTlsConfig (PEM key, PEM certs) = do
   (cert, chain) <- case pems of
     []     -> Nothing
     p : ps -> pure (pemWriteBS p, pemWriteBS <$> ps)
-  pure $ TlsConfig keyByt cert chain
+  pure $ TlsConfig (fromBS keyByt) (fromBS cert) (fromBS <$> chain)
  where
-  wainBytes :: Wain -> ByteString
   wainBytes = encodeUtf8 . unWain
 
 parseHttpEvent :: HttpEvent -> [RespAct]
@@ -155,7 +154,7 @@ requestEvent srvId which reqId ReqInfo{..} = reqEv srvId reqUd which riAdr evReq
  where
   evBod = bodFile riBod
   evHdr = convertHeaders riHdr
-  evUrl = Cord (decodeUtf8Lenient riUrl)
+  evUrl = Cord (decodeUtf8Lenient $ toBS riUrl)
   evReq = HttpRequest riMet evUrl evHdr evBod
   reqUd = fromIntegral reqId
 

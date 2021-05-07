@@ -11,6 +11,7 @@ import Data.Bits
 import Data.LargeWord
 import Data.List (genericIndex)
 import Data.Serialize
+import qualified Data.ByteString as BS
 
 import Urbit.Arvo (AmesAddress(..), Ipv4(..), Port(..))
 
@@ -40,7 +41,7 @@ instance Show Packet where
    <> ", pktOrigin = "
    <> show pktOrigin
    <> ", pktContent = "
-   <> showUD (bytesAtom pktContent)
+   <> showUD (bytesAtom $ toBS pktContent)
    <> "}"
 
 {-
@@ -77,7 +78,7 @@ data ShipClass
   | Comet
   deriving (Eq, Show)
 
-muk :: ByteString -> Word20
+muk :: BS.ByteString -> Word20
 muk bs = mugBS bs .&. (2 ^ 20 - 1)
 
 putAmesAddress :: Putter AmesAddress
@@ -120,7 +121,7 @@ instance Serialize Packet where
     pktRcvr <- getShip rcvrClass
 
     len <- remaining
-    pktContent <- getBytes len
+    pktContent <- fromBS <$> getBytes len
 
     pure Packet{..}
     where
@@ -139,7 +140,7 @@ instance Serialize Packet where
                  .|. shiftL (pktRcvrTick .&. 0b1111) 4
           putSndr
           putRcvr
-          putByteString pktContent
+          putByteString $ toBS pktContent
 
     let vers = fromIntegral pktVersion .&. 0b111
     let chek = muk body

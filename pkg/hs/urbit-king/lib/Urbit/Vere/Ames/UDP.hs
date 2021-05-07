@@ -103,7 +103,7 @@ forceBind por hos = go
 sendPacket :: HasLogFunc e => ByteString -> SockAddr -> Socket -> RIO e Bool
 sendPacket fullBytes adr sok = do
   logDebug $ displayShow ("AMES", "UDP", "Sending packet.")
-  res <- io $ tryIOError $ go fullBytes
+  res <- io $ tryIOError $ go $ toBS fullBytes
   case res of
     Left err -> do
       logError $ displayShow ("AMES", "UDP", "Failed to send packet", err)
@@ -131,7 +131,7 @@ recvPacket
 recvPacket sok = do
   io (tryIOError $ recvFrom sok 4096) <&> \case
     Left  exn                   -> Left exn
-    Right (b, SockAddrInet p a) -> Right (Just (b, p, a))
+    Right (b, SockAddrInet p a) -> Right (Just (fromBS b, p, a))
     Right (_, _               ) -> Right Nothing
 
 

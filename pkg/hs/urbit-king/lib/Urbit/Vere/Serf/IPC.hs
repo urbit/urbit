@@ -128,13 +128,13 @@ sendLen s i = do
   w <- evaluate (fromIntegral i :: Word64)
   withWord64AsByteString w (hPut (serfSend s))
  where
-  withWord64AsByteString :: Word64 -> (ByteString -> IO a) -> IO a
+  withWord64AsByteString :: Word64 -> (BS.ByteString -> IO a) -> IO a
   withWord64AsByteString w k = alloca $ \wp -> do
     poke wp w
     bs <- BS.unsafePackCStringLen (castPtr wp, 8)
     k bs
 
-sendBytes :: Serf -> ByteString -> IO ()
+sendBytes :: Serf -> BS.ByteString -> IO ()
 sendBytes s bs = handle onIOError $ do
   sendLen s (length bs)
   hPut (serfSend s) bs
@@ -143,7 +143,7 @@ sendBytes s bs = handle onIOError $ do
   onIOError :: IOError -> IO ()
   onIOError = const (throwIO SerfConnectionClosed)
 
-recvBytes :: Serf -> Word64 -> IO ByteString
+recvBytes :: Serf -> Word64 -> IO BS.ByteString
 recvBytes serf = BS.hGet (serfRecv serf) . fromIntegral
 
 recvLen :: Serf -> IO Word64
@@ -153,7 +153,7 @@ recvLen w = do
     8 -> BS.unsafeUseAsCString bs (peek @Word64 . castPtr)
     _ -> throwIO SerfConnectionClosed
 
-recvResp :: Serf -> IO ByteString
+recvResp :: Serf -> IO BS.ByteString
 recvResp serf = do
   len <- recvLen serf
   recvBytes serf len

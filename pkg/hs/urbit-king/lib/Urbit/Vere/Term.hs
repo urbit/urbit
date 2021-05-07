@@ -538,7 +538,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                 rd@ReadData{..} <- pure rd { rdUTF8 = snoc rdUTF8 w }
                 if length rdUTF8 /= rdUTF8width then loop rd
                 else do
-                  case BS.decode rdUTF8 of
+                  case BS.decode $ toBS rdUTF8 of
                     Nothing ->
                       error "empty utf8 accumulation buffer"
                     Just (c, bytes) | bytes /= rdUTF8width ->
@@ -668,7 +668,6 @@ term env (tsize, Client{..}) plan stat serfSIGINT = runTerm
     handleFsWrite (Sav path atom) = performPut path (atomBytes atom)
     handleFsWrite _               = pure ()
 
-    performPut :: Path -> ByteString -> RIO e ()
     performPut path bs = do
       pierPath <- view pierPathL
       let putOutFile = pierPath </> ".urb" </> "put" </> (pathToFilePath path)

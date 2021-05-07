@@ -265,9 +265,9 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
       -- port number, host address, bytestring
     (p, a, b) <- atomically (bump' asRcv >> usRecv)
     ver <- readTVarIO vers
-    case decode b of
+    case decode $ toBS b of
       Right (pkt@Packet {..}) | ver == Nothing || ver == Just pktVersion -> do
-        logDebug $ displayShow ("ames: bon packet", pkt, showUD $ bytesAtom b)
+        -- logDebug $ displayShow ("ames: bon packet", pkt, showUD $ bytesAtom b)
 
         if pktRcvr == who
           then do
@@ -278,7 +278,7 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
               |  dest:_ <- filter notSelf ls
               -> do
                 bump asFwd
-                forward dest $ encode pkt
+                forward dest $ fromBS $ encode pkt
                   { pktOrigin = pktOrigin
                             <|> Just (AAIpv4 (Ipv4 a) (fromIntegral p)) }
               where

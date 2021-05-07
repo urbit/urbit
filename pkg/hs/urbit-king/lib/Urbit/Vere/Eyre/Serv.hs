@@ -45,6 +45,7 @@ import RIO.Prelude                 (decodeUtf8Lenient)
 import Urbit.Vere.Eyre.KingSubsite (KingSubsite)
 
 import qualified Control.Monad.STM           as STM
+import qualified Data.ByteString             as BS
 import qualified Data.Char                   as C
 import qualified Network.Socket              as Net
 import qualified Network.Wai                 as W
@@ -223,7 +224,7 @@ forceOpenSocket hos por = mkRAcquire opn kil
 
 -- Starting WAI ----------------------------------------------------------------
 
-hostShip :: Maybe ByteString -> IO Ship
+hostShip :: Maybe BS.ByteString -> IO Ship
 hostShip Nothing   = error "Request must contain HOST header."
 hostShip (Just bs) = byteShip (hedLabel bs) & \case
   Left  err -> error ("Bad host prefix. Must be a ship name: " <> unpack err)
@@ -298,7 +299,7 @@ startServer typ hos por sok red vLive onFatal = do
       io (W.runSettingsSocket opts sok app)
 
     STHttps who TlsConfig {..} sub api -> do
-      let tls = W.tlsSettingsChainMemory tcCerti tcChain tcPrKey
+      let tls = W.tlsSettingsChainMemory (toBS tcCerti) (toBS <$> tcChain) (toBS tcPrKey)
       let app = runAppl who (rcReq api who) (rcKil api who) sub
       io (W.runTLSSocket tls opts sok app)
 
@@ -314,7 +315,7 @@ startServer typ hos por sok red vLive onFatal = do
 
       let sni = def { onServerNameIndication = onSniHdr envir mtls }
 
-      let tlsSing = (W.tlsSettingsChainMemory tcCerti tcChain tcPrKey)
+      let tlsSing = W.tlsSettingsChainMemory (toBS tcCerti) (toBS <$> tcChain) (toBS tcPrKey)
       let tlsMany = tlsSing { W.tlsServerHooks = sni }
 
       let ctx = ["EYRE", "HTTPS", "REQ"]
@@ -334,7 +335,7 @@ startServer typ hos por sok red vLive onFatal = do
 
 configCreds :: TlsConfig -> Either Text Credential
 configCreds TlsConfig {..} =
-  credentialLoadX509ChainFromMemory tcCerti tcChain tcPrKey & \case
+  credentialLoadX509ChainFromMemory (toBS tcCerti) (toBS <$> tcChain) (toBS tcPrKey) & \case
     Left  str -> Left (pack str)
     Right rs  -> Right rs
 

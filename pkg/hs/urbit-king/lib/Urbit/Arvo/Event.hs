@@ -21,6 +21,7 @@ import Urbit.Arvo.Common (ReOrg(..), reorgThroughNoun)
 import qualified Crypto.Sign.Ed25519       as Ed
 import qualified Data.ByteString           as BS
 import qualified Data.ByteString.Char8     as C
+import qualified Data.Vector.Unboxed       as V
 import qualified Network.HTTP.Types.Method as H
 
 -- Misc Types ------------------------------------------------------------------
@@ -46,10 +47,10 @@ deriveNoun ''PUrl
 
 -- Dawn Records ----------------------------------------------------------------
 
-padByteString :: BS.ByteString -> Int -> BS.ByteString
-padByteString bs length | remaining > 0 = bs <> (BS.replicate remaining 0)
-                        | otherwise = bs
-  where remaining = (length - (BS.length bs))
+padByteString :: ByteString -> Int -> ByteString
+padByteString bs len | remaining > 0 = bs <> (replicate remaining 0)
+                     | otherwise = bs
+  where remaining = (len - length bs)
 
 -- A Pass is the Atom concatenation of 'b', the public encryption key, and the
 -- public authentication key. (see +pass-from-eth.)
@@ -68,11 +69,11 @@ instance FromNoun Pass where
   parseNoun n = named "Pass" $ do
     MkBytes unpadded <- parseNoun n
     let bs = padByteString unpadded 65
-    when ((C.head bs) /= 'b') $ do
+    when (V.head bs /= c2w 'b') $ do
       fail "Expecting 'b' prefix in public key structure"
-    let removedPrefix = C.tail bs
-    let passSign = Ed.PublicKey (take 32 removedPrefix)
-    let passCrypt = Ed.PublicKey (drop 32 removedPrefix)
+    let removedPrefix = V.tail bs
+    let passSign = Ed.PublicKey (toBS $ take 32 removedPrefix)
+    let passCrypt = Ed.PublicKey (toBS $ drop 32 removedPrefix)
     unless ((length $ Ed.unPublicKey passSign) == 32) $
       error "Sign pubkey not 32 bytes"
     unless ((length $ Ed.unPublicKey passCrypt) == 32) $
@@ -84,20 +85,20 @@ instance FromNoun Pass where
 -- encryption key derivation seed, and the authentication key derivation
 -- seed. These aren't actually private keys, but public/private keypairs which
 -- can be derived from these seeds.
-data Ring = Ring { ringSign :: BS.ByteString, ringCrypt :: BS.ByteString }
+data Ring = Ring { ringSign :: ByteString, ringCrypt :: ByteString }
   deriving (Eq)
 
 instance ToNoun Ring where
   toNoun Ring{..} =
-    Atom $ bytesAtom (C.singleton 'B' <> ringSign <> ringCrypt)
+    Atom $ bytesAtom (C.singleton 'B' <> toBS ringSign <> toBS ringCrypt)
 
 instance FromNoun Ring where
   parseNoun n = named "Ring" $ do
       MkBytes unpadded <- parseNoun n
       let bs = padByteString unpadded 65
-      when ((C.head bs) /= 'B') $ do
+      when (V.head bs /= c2w 'B') $ do
         fail "Expecting 'B' prefix in public key structure"
-      let removedPrefix = C.tail bs
+      let removedPrefix = V.tail bs
       let ringSign = (take 32 removedPrefix)
       let ringCrypt = (drop 32 removedPrefix)
       unless ((length ringSign) == 32) $

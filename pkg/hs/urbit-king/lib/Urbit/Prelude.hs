@@ -13,14 +13,16 @@ module Urbit.Prelude
     , module Text.Show.Pretty
     , module Text.Printf
     , module RIO
+    , module Urbit.Noun.ByteString
     , io, rio
     , logTrace
     , acquireWorker, acquireWorkerBound
     , hark
     ) where
 
-import ClassyPrelude
+import ClassyPrelude hiding (ByteString)
 import Urbit.Noun
+import Urbit.Noun.ByteString
 
 import Control.Arrow    ((<<<), (>>>))
 import Control.Lens hiding (Each, Index, cons, index, snoc, uncons, unsnoc,

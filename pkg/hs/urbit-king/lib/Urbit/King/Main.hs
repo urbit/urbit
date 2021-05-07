@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-missing-signatures #-}
+
 {- |
   # Signal Handling (SIGTERM, SIGINT)
 
@@ -277,11 +279,6 @@ checkEvs pierPath first last = do
   logPath :: FilePath
   logPath = pierPath <> "/.urb/log"
 
-  showEvents
-    :: PB.ProgressBar ()
-    -> EventId
-    -> EventId
-    -> ConduitT ByteString Void (RIO KingEnv) ()
   showEvents pb eId _ | eId > last = pure ()
   showEvents pb eId cycle          = await >>= \case
     Nothing -> do
@@ -413,8 +410,6 @@ testPill pax showPil showSeq = do
       logInfo "\n\n== Boot Sequence ==\n"
       io $ pPrint bootSeq
 
-validateNounVal :: (HasLogFunc e, Eq a, ToNoun a, FromNoun a)
-                => a -> RIO e ByteString
 validateNounVal inpVal = do
     logInfo "  jam"
     inpByt <- evaluate $ jamBS $ toNoun inpVal
@@ -881,8 +876,6 @@ connTerm = Term.runTerminalClient
 
 --------------------------------------------------------------------------------
 
-checkFx :: HasLogFunc e
-        => FilePath -> Word64 -> Word64 -> RIO e ()
 checkFx pierPath first last =
     rwith (Log.existing logPath) $ \log ->
         runConduit $ streamFX log first last
@@ -890,9 +883,6 @@ checkFx pierPath first last =
   where
     logPath = pierPath <> "/.urb/log"
 
-streamFX :: HasLogFunc e
-         => Log.EventLog -> Word64 -> Word64
-         -> ConduitT () ByteString (RIO e) ()
 streamFX log first last = do
     Log.streamEffectsRows log first .| loop
   where
@@ -900,7 +890,6 @@ streamFX log first last = do
                            Just (eId, bs) | eId > last -> pure ()
                            Just (eId, bs)              -> yield bs >> loop
 
-tryParseFXStream :: HasLogFunc e => ConduitT ByteString Void (RIO e) ()
 tryParseFXStream = loop
   where
     loop = await >>= \case

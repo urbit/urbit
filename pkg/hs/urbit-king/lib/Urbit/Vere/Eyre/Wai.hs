@@ -144,7 +144,7 @@ mkIpv6 (p, q, r, s) = Ipv6 (pBits .|. qBits .|. rBits .|. sBits)
   sBits = shiftL (fromIntegral s) 96
 
 reqUrl :: W.Request -> ByteString
-reqUrl r = W.rawPathInfo r <> W.rawQueryString r
+reqUrl r = fromBS $ W.rawPathInfo r <> W.rawQueryString r
 
 
 -- Responses -------------------------------------------------------------------
@@ -170,13 +170,13 @@ streamBlocks
   -> ByteString
   -> STM RespAct
   -> ConduitT () (Flush Builder) IO ()
-streamBlocks env init getAct = send init >> loop
+streamBlocks env init getAct = send (toBS init) >> loop
  where
   loop = atomically getAct >>= \case
     RAHead _ _ _ -> runRIO env dupHead
     RAFull _ _ _ -> runRIO env dupHead
     RADone       -> pure ()
-    RABloc c     -> send c >> loop
+    RABloc c     -> send (toBS c) >> loop
 
   send "" = pure ()
   send c  = do
@@ -193,7 +193,7 @@ sendResponse cb waitAct = do
   env <- ask
   atomically waitAct >>= \case
     RADone       -> io $ cb $ W.responseLBS (H.mkStatus 444 "No Response") [] ""
-    RAFull s h b -> io $ cb $ W.responseLBS s h $ fromStrict b
+    RAFull s h b -> io $ cb $ W.responseLBS s h $ fromStrict $ toBS b
     RAHead s h b -> io $ cb $ W.responseSource s h $ streamBlocks env b waitAct
     RABloc _     -> noHeader
 
@@ -217,7 +217,7 @@ app env who liv inform cancel sub req respond =
     ("~_~":_) -> runKingSubsite sub req respond
     _ ->
       runRIO env $ rwith (liveReq who liv) $ \(reqId, respApi) -> do
-        bod <- io (toStrict <$> W.strictRequestBody req)
+        bod <- io (fromBS <$> toStrict <$> W.strictRequestBody req)
         met <- maybe (error "bad method") pure (cookMeth req)
 
         let adr = reqAddr req

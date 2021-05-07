@@ -28,6 +28,7 @@ dependencies:
   - urbit-atom
   - urbit-hob
   - urbit-noun-core
+  - vector
 
 default-extensions:
   - ApplicativeDo
