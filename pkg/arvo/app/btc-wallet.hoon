@@ -34,7 +34,6 @@
       =piym
       =poym
       ahistorical-txs=(set txid)
-      mempool-addresses=(jug address condition)
   ==
 ::
 +$  card  card:agent:gall
@@ -78,7 +77,6 @@
         *(map ship sats)
         *^piym
         *^poym
-        ~
         ~
     ==
   ==
@@ -687,7 +685,6 @@
       ==
     ;:  weld
 ::      (retry-addrs network)
-      retry-mempool-addresses
       retry-ahistorical-txs
       (retry-pend-piym network)
     ==
@@ -698,13 +695,6 @@
     |=  =txid
     (poke-provider [%tx-info txid])
 
-  ::
-  ++  retry-mempool-addresses
-    ^-  (list card)
-    %+  turn
-      ~(tap in ~(key by mempool-addresses))
-    |=  =address
-    (poke-provider [%address-info address])
   ::
   ++  retry-scans
     |=  =network
@@ -827,20 +817,6 @@
     |=  a=address
     ^-  card
     (poke-provider [%address-info a])
-  ::
-  =.  mempool-addresses
-    %+  roll  inputs.ti
-    |=  [=val:tx out=_mempool-addresses]
-    ?:  (is-our-address address.val)
-      (~(put ju out) address.val [%exclude txid.val])
-    out
-  =.  mempool-addresses
-    %+  roll  outputs.ti
-    |=  [=val:tx out=_mempool-addresses]
-    ?:  (is-our-address address.val)
-      (~(put ju out) address.val [%include txid.val])
-    out
-  ::
   ?:  =(0 ~(wyt in our-addrs))  `state
   =/  =xpub
     xpub.w:(need (address-coords:bl (snag 0 ~(tap in our-addrs)) ~(val by walts)))
@@ -848,17 +824,20 @@
     =/  new-hest=hest  (mk-hest xpub our-inputs our-outputs)
     =.  history  (~(put by history) txid.ti new-hest)
     :_  state
-    :_  addr-info-cards
-    (give-update %new-tx new-hest)
+    :_  :_  addr-info-cards
+      (give-update %new-tx new-hest)
+    (give-update %balance current-balance)
   ?.  included.ti                 ::  tx in history, but not in mempool/blocks
     :_  state(history (~(del by history) txid.ti))
-    :_  addr-info-cards
-    (give-update %cancel-tx txid.ti)
+    :_  :_  addr-info-cards
+      (give-update %cancel-tx txid.ti)
+    (give-update %balance current-balance)
   =/  new-hest  u.h(confs confs.ti, recvd recvd.ti)
   =.  history  (~(put by history) txid.ti new-hest)
   :_  state
-  :_  addr-info-cards
-  (give-update %new-tx new-hest)
+  :_  :_  addr-info-cards
+    (give-update %new-tx new-hest)
+  (give-update %balance current-balance)
   ::
   ++  mk-hest
     :: has tx-info
@@ -909,20 +888,6 @@
   =/  ac  (address-coords:bl address ~(val by walts))
   ?~  ac
     `state
-  ::
-  =/  cons=(set condition)  (~(get ju mempool-addresses) address)
-  =/  new-cons=(set condition)
-    %-  silt
-    %+  skip  ~(tap in cons)
-    |=  =condition
-    ?:  =(%include -.condition)
-      (~(any in utxos) |=(=utxo =(txid.utxo txid.condition)))
-    (~(all in utxos) |=(=utxo !=(txid.utxo txid.condition)))
-  =.  mempool-addresses
-    ?~  new-cons
-      (~(del by mempool-addresses) address)
-    (~(put by mempool-addresses) address new-cons)
-  ::
   =/  [w=walt =chyg =idx]  u.ac
   =.  walts
     %+  ~(put by walts)  xpub.w
@@ -939,7 +904,6 @@
       [cad ah]
     :-  [(poke-provider [%tx-info txid.u]) cad]
     (~(put by ah) txid.u)
-  =.  cards  (snoc cards (give-update %balance current-balance))
   ::  if the wallet+chyg is being scanned, update the scan batch
   ::
   =/  b  (~(get by scans) [xpub.w chyg])

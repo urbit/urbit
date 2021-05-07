@@ -138,8 +138,4 @@
       [%balance balance=(unit [confirmed=sats unconfirmed=sats])]
   ==
 ::
-+$  condition
-  $%  [%exclude =txid]
-      [%include =txid]
-  ==
 --
