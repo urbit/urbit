@@ -1,6 +1,6 @@
 /-  *group, metadata=metadata-store
 /+  store=graph-store, mdl=metadata, res=resource, graph, group, default-agent,
-    dbug, verb, push-hook
+    dbug, verb, push-hook, agentio
 ::
 ~%  %graph-push-hook-top  ..part  ~
 |%
@@ -25,6 +25,25 @@
   $%  state-zero
       state-one
   ==
+::
++$  cache
+  $:  graph-to-md=(map resource:res association:metadata)
+      graph-to-mark=(map resource:res (unit mark))
+      perm-marks=(map [mark @tas] tube:clay)
+      transform-marks=(map mark tube:clay)
+  ==
+::
++$  inflated-state
+  $:  state-one
+      cache
+  ==
+::
++$  cache-action
+  $%  [%graph-to-md (pair resource:res association:metadata)]
+      [%graph-to-mark (pair resource:res (unit mark))]
+      [%perm-marks (pair (pair mark @tas) tube:clay)]
+      [%transform-marks (pair mark tube:clay)]
+  ==
 --
 ::
 %-  agent:dbug
@@ -34,7 +53,7 @@
 ^-  agent
 =-
 ~%  %graph-push-hook-agent  ..scry.hook-core  ~
-=|  state-one
+=|  inflated-state
 =*  state  -
 |_  =bowl:gall
 +*  this  .
@@ -42,10 +61,11 @@
     grp   ~(. group bowl)
     gra   ~(. graph bowl)
     met   ~(. mdl bowl)
-    hc    ~(. hook-core bowl)
+    hc    ~(. hook-core bowl +.state)
+    io    ~(. agentio bowl)
 ::
 ++  on-init   on-init:def
-++  on-save   !>(state)
+++  on-save   !>(-.state)
 ++  on-load   
   |=  =vase
   =+  !<(old=versioned-state vase)
@@ -54,9 +74,28 @@
   =?  old  ?=(%0 -.old)
     [%1 ~]
   ?>  ?=(%1 -.old)
-  `this(state old)
+  `this(-.state old, +.state *cache)
 ::
-++  on-poke   on-poke:def
+++  on-poke
+  |=  [=mark =vase]
+  ^-  (quip card _this)
+  ?.  =(mark %gph-cache-action)
+    [~ this]
+  =/  a=cache-action  !<(cache-action vase)
+  =*  c                +.state
+  =*  graph-to-md      graph-to-md.c
+  =*  graph-to-mark    graph-to-mark.c
+  =*  perm-marks       perm-marks.c
+  =*  transform-marks  transform-marks.c
+  =.  c
+    ?-  -.a
+      %graph-to-md      c(graph-to-md (~(put by graph-to-md) p.a q.a))
+      %graph-to-mark    c(graph-to-mark (~(put by graph-to-mark) p.a q.a))
+      %perm-marks       c(perm-marks (~(put by perm-marks) p.a q.a))
+      %transform-marks  c(transform-marks (~(put by transform-marks) p.a q.a))
+    ==
+  [~ this(+.state c)]
+::
 ++  on-agent  on-agent:def
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
@@ -75,28 +114,39 @@
 ++  transform-proxy-update
   ~/  %transform-proxy-update
   |=  vas=vase
-  ^-  (unit vase)
+  ^-  (quip card (unit vase))
   =/  =update:store  !<(update:store vas)
   =*  rid  resource.q.update
   =.  p.update  now.bowl
   ?-  -.q.update
       %add-nodes
-    ?.  (is-allowed-add:hc rid nodes.q.update)
-      ~
-    ::  TODO: this scry is slow.
-    =/  mark  (get-mark:gra rid)
-    ?~  mark  `vas
+    =|  cards=(list card)
+    =^  allowed  cards  (is-allowed-add:hc rid nodes.q.update)
+    ?.  allowed
+      [cards ~]
+    =/  mark-cached  (~(has by graph-to-mark) rid)
+    =/  mark
+      ?:  mark-cached
+        (~(got by graph-to-mark) rid)
+      (get-mark:gra rid)
+    ?~  mark
+      [cards `vas]
     =<  $
     ~%  %transform-add-nodes  ..transform-proxy-update  ~
     |%
     ++  $
-      ^-  (unit vase)
+      ^-  (quip card (unit vase))
       ::  TODO: scries are slow, we should find a way to cache this so as
       ::  not to need to fetch it continually in the hot path
+      =/  transform-cached  (~(has by transform-marks) u.mark)
+      =/  =tube:clay
+        ?:  transform-cached
+          (~(got by transform-marks) u.mark)
+        .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
       =/  transform
         !<  $-([index:store post:store atom ?] [index:store post:store])
         %.  !>(*indexed-post:store)
-        .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
+        tube
       =/  [* result=(list [index:store node:store])]
         %+  roll
           (flatten-node-map ~(tap by nodes.q.update))
@@ -104,7 +154,21 @@
       =.  nodes.q.update
         %-  ~(gas by *(map index:store node:store))
         result
-      [~ !>(update)]
+      :_  [~ !>(update)]
+      %+  weld  cards
+      %-  zing
+      :~  ?:  mark-cached   ~
+          :_  ~
+          %+  poke-self:pass:io  %gph-cache-action
+          !>  ^-  cache-action
+          [%graph-to-mark rid mark]
+        ::
+          ?:  transform-cached   ~
+          :_  ~
+          %+  poke-self:pass:io  %gph-cache-action
+          !>  ^-  cache-action
+          [%transform-marks u.mark tube]
+      ==
     ::
     ++  flatten-node-map
       ~/  %flatten-node-map
@@ -162,22 +226,26 @@
     --
   ::
       %remove-posts
-    ?.  (is-allowed-remove:hc resource.q.update indices.q.update)
+    =|  cards=(list card)
+    =^  allowed  cards
+      (is-allowed-remove:hc rid indices.q.update)
+    :-  cards
+    ?.  allowed
       ~
     `vas
   ::
-    %add-graph          ~
-    %remove-graph       ~
-    %add-signatures     ~
-    %remove-signatures  ~
-    %archive-graph      ~
-    %unarchive-graph    ~
-    %add-tag            ~
-    %remove-tag         ~
-    %keys               ~
-    %tags               ~
-    %tag-queries        ~
-    %run-updates        ~
+    %add-graph          [~ ~]
+    %remove-graph       [~ ~]
+    %add-signatures     [~ ~]
+    %remove-signatures  [~ ~]
+    %archive-graph      [~ ~]
+    %unarchive-graph    [~ ~]
+    %add-tag            [~ ~]
+    %remove-tag         [~ ~]
+    %keys               [~ ~]
+    %tags               [~ ~]
+    %tag-queries        [~ ~]
+    %run-updates        [~ ~]
   ==
 ::
 ++  resource-for-update  resource-for-update:gra
@@ -225,10 +293,11 @@
 ::
 ~%  %graph-push-hook-helper  ..card.hook-core  ~
 ^=  hook-core
-|_  =bowl:gall
+|_  [=bowl:gall =cache]
 +*  grp  ~(. group bowl)
     met  ~(. mdl bowl)
     gra  ~(. graph bowl)
+    io    ~(. agentio bowl)
 ::
 ++  scry
   |=  [care=@t desk=@t =path]
@@ -238,14 +307,38 @@
 ::
 ++  perm-mark
   |=  [=resource:res perm=@t vip=vip-metadata:metadata =indexed-post:store]
-  ^-  permissions:store
+  ^-  [permissions:store (list card)]
   |^
-  =-  (check vip)
-  !<  check=$-(vip-metadata:metadata permissions:store)
-  %.  !>(indexed-post)
-  =/  mark  (get-mark:gra resource)
-  ?~  mark  |=(=vase !>([%no %no %no]))
-  .^(tube:clay (scry %cc %home /[u.mark]/(perm-mark-name perm)))
+  =/  mark-cached  (~(has by graph-to-mark.cache) resource)
+  =/  mark
+    ?:  mark-cached
+      (~(got by graph-to-mark.cache) resource)
+    (get-mark:gra resource)
+  ?~  mark
+    [[%no %no %no] ~]
+  =/  key  [u.mark (perm-mark-name perm)]
+  =/  perms-cached  (~(has by perm-marks.cache) key)
+  =/  =tube:clay
+    ?:  perms-cached
+      (~(got by perm-marks.cache) key)
+    .^(tube:clay (scry %cc %home /[u.mark]/(perm-mark-name perm)))
+  =/  check
+    !<  $-(vip-metadata:metadata permissions:store)
+    (tube !>(indexed-post))
+  :-  (check vip)
+  %-  zing
+  :~  ?:  mark-cached   ~
+      :_  ~
+      %+  poke-self:pass:io  %gph-cache-action
+      !>  ^-  cache-action
+      [%graph-to-mark resource mark]
+    ::
+      ?:  perms-cached  ~
+      :_  ~
+      %+  poke-self:pass:io  %gph-cache-action
+      !>  ^-  cache-action
+      [%perm-marks [u.mark (perm-mark-name perm)] tube]
+  ==
   ::
   ++  perm-mark-name
     |=  perm=@t
@@ -268,15 +361,23 @@
   ~/  %get-roles-writers-variation
   |=  =resource:res
   ^-  (unit [is-admin=? writers=(set ship) vip=vip-metadata:metadata])
-  ::  TODO: doing three scries in a row on the hot path is slow
-  ::
   =/  assoc=(unit association:metadata)
-     (peek-association:met %graph resource)
+    ?:  (~(has by graph-to-md.cache) resource)
+      (~(get by graph-to-md.cache) resource)
+    (peek-association:met %graph resource)
   ?~  assoc  ~
+  =.  graph-to-md.cache
+    (~(put by graph-to-md.cache) resource u.assoc)
+  =/  group=(unit group:grp)
+    (scry-group:grp group.u.assoc)
+  ?~  group  ~
   =/  role=(unit (unit role-tag))
-    (role-for-ship:grp group.u.assoc src.bowl)
+    (role-for-ship-with-group:grp u.group group.u.assoc src.bowl)
   =/  writers=(set ship)
-    (get-tagged-ships:grp group.u.assoc [%graph resource %writers])
+    %^  get-tagged-ships-with-group:grp
+        u.group
+      group.u.assoc
+    [%graph resource %writers]
   ?~  role  ~
   =/  is-admin=?
     ?=(?([~ %admin] [~ %moderator]) u.role)
@@ -292,41 +393,59 @@
 ++  is-allowed-add
   ~/  %is-allowed-add
   |=  [=resource:res nodes=(map index:store node:store)] 
-  ^-  ?
+  ^-  [? (list card)]
   ::  TODO: extremely slow due to scries. This takes about ~30ms per
   ::  %add-nodes event.
   |^
-  %-  (bond |.(%.n))
+  %-  (bond |.([%.n ~]))
   %+  biff  (get-roles-writers-variation resource)
   |=  [is-admin=? writers=(set ship) vip=vip-metadata:metadata]
-  ^-  (unit ?)
+  ^-  (unit [? (list card)])
   %-  some  
-  %+  levy  ~(tap by nodes)
-  |=  [=index:store =node:store]
-  =/  parent-index=index:store
-    (scag (dec (lent index)) index)
-  ?:  (~(has by nodes) parent-index)  %.y
-  ?:  ?=(%| -.post.node)
-    %.n
-  ?.  =(author.p.post.node src.bowl)
-    %.n
-  ::  TODO: these scries are slow, find a way to persistently cache them
-  =/  =permissions:store
-    %^  add-mark  resource  vip
-    (node-to-indexed-post node)
-  =/  =permission-level:store
-    (get-permission permissions is-admin writers)
-  ?-  permission-level
-      %yes  %.y
-      %no   %.n
-    ::
-        %self
-      =/  parent-node=node:store
-        (got-node:gra resource parent-index)
-      ?:  ?=(%| -.post.parent-node)
-        %.n
-      =(author.p.post.parent-node src.bowl)
-  ==
+  =/  a  ~(tap by nodes)
+  =|  cards=(list card)
+  |-  ^-  [? (list card)]
+  ?~  a  [& cards]
+  =/  c  (check i.a is-admin writers vip)
+  =.  cards  (weld cards +.c)
+  ?.  -.c  [| cards]
+  $(a t.a)
+  ::
+  ++  check
+    |=  $:  [=index:store =node:store]
+            is-admin=?
+            writers=(set ship)
+            vip=vip-metadata:metadata
+        ==
+    ^-  [? (list card)]
+    =/  parent-index=index:store
+      (scag (dec (lent index)) index)
+    ?:  (~(has by nodes) parent-index)
+      [%.y ~]
+    ?:  ?=(%| -.post.node)
+      [%.n ~]
+    ?.  =(author.p.post.node src.bowl)
+      [%.n ~]
+    ::  TODO: these scries are slow, find a way to persistently cache them
+    =/  added
+      %^  add-mark  resource  vip
+      (node-to-indexed-post node)
+    =*  permissions  -.added
+    =*  cards         +.added
+    =/  =permission-level:store
+      (get-permission permissions is-admin writers)
+    :_  cards
+    ?-  permission-level
+        %yes  %.y
+        %no   %.n
+      ::
+          %self
+        =/  parent-node=node:store
+          (got-node:gra resource parent-index)
+        ?:  ?=(%| -.post.parent-node)
+          %.n
+        =(author.p.post.parent-node src.bowl)
+    ==
   ::
   ++  add-mark
     |=  [=resource:res vip=vip-metadata:metadata =indexed-post:store]
@@ -336,28 +455,41 @@
 ++  is-allowed-remove
   ~/  %is-allowed-remove
   |=  [=resource:res indices=(set index:store)]
-  ^-  ?
+  ^-  [? (list card)]
   |^
-  %-  (bond |.(%.n))
+  %-  (bond |.([%.n ~]))
   %+  biff  (get-roles-writers-variation resource)
   |=  [is-admin=? writers=(set ship) vip=vip-metadata:metadata]
-  %-  some  
-  %+  levy  ~(tap by indices)
-  |=  =index:store
-  ^-  ?
-  =/  =node:store
-    (got-node:gra resource index)
-  ?:  ?=(%| -.post.node)  %.n
-  =/  =permissions:store
-    %^  remove-mark  resource  vip
-    (node-to-indexed-post node)
-  =/  =permission-level:store
-    (get-permission permissions is-admin writers)
-  ?-  permission-level
-    %yes   %.y
-    %no    %.n
-    %self  =(author.p.post.node src.bowl)
-  ==
+  %-  some
+  =/  a  ~(tap by indices)
+  =|  cards=(list card)
+  |-  ^-  [? (list card)]
+  ?~  a  [& cards]
+  =/  c  (check i.a is-admin writers vip)
+  =.  cards  (weld cards +.c)
+  ?.  -.c  [| cards]
+  $(a t.a)
+  ::
+  ++  check
+    |=  [=index:store is-admin=? writers=(set ship) vip=vip-metadata:metadata]
+    ^-  [? (list card)]
+    =/  =node:store
+      (got-node:gra resource index)
+    ?:  ?=(%| -.post.node)
+      [%.n ~]
+    =/  removed
+      %^  remove-mark  resource  vip
+      (node-to-indexed-post node)
+    =*  permissions  -.removed
+    =*  cards         +.removed
+    =/  =permission-level:store
+      (get-permission permissions is-admin writers)
+    :_  cards
+    ?-  permission-level
+      %yes   %.y
+      %no    %.n
+      %self  =(author.p.post.node src.bowl)
+    ==
   ::
   ++  remove-mark
     |=  [=resource:res vip=vip-metadata:metadata =indexed-post:store]
