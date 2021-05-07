@@ -111,9 +111,9 @@ function GraphPermalink(
       bg="white"
       maxWidth={full ? null : "500px"}
       border={full ? null : "1"}
-      borderColor='lightGray'
+      borderColor="lightGray"
       borderRadius="2"
-      cursor='pointer'
+      cursor="pointer"
       onClick={(e) => {
         navigate(e);
       }}
@@ -126,6 +126,17 @@ function GraphPermalink(
           assoc={association!}
           showOurContact={showOurContact}
         />
+      )}
+      {!showTransclusion && (
+        <Box
+          mx="12px"
+          mt="12px"
+          p="2"
+          backgroundColor="washedGray"
+          borderRadius="2"
+        >
+          <Text gray>This reference is unavailable.</Text>
+        </Box>
       )}
       {association ? (
         <PermalinkDetails
