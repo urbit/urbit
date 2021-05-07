@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation, Link } from 'react-router-dom';
 import { Association, GraphNode, resourceFromPath } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
-import { 
+import {
   getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
 } from '~/logic/lib/permalinks';
 import {
@@ -115,7 +115,7 @@ function GraphPermalink(
       borderRadius="2"
       cursor='pointer'
       onClick={(e) => {
-        e.stopPropagation();
+        navigate(e);
       }}
     >
       {showTransclusion && index && (
