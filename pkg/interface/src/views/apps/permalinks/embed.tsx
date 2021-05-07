@@ -119,16 +119,16 @@ function GraphPermalink(
       }}
     >
       {showTransclusion && index && (
-        <>
-          <TranscludedNode
-            api={api}
-            transcluded={transcluded + 1}
-            node={node}
-            assoc={association!}
-            showOurContact={showOurContact}
-          />
-          <Row height='12px' />
-        </>
+        <TranscludedNode
+          api={api}
+          transcluded={transcluded + 1}
+          node={node}
+          assoc={association!}
+          showOurContact={showOurContact}
+        />
+      )}
+      {isInSameResource && (
+        <Row height='12px' />
       )}
       {association && !isInSameResource ? (
         <PermalinkDetails
