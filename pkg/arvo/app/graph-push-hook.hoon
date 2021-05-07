@@ -265,6 +265,7 @@
   reader.permissions
 ::
 ++  get-roles-writers-variation
+  ~/  %get-roles-writers-variation
   |=  =resource:res
   ^-  (unit [is-admin=? writers=(set ship) vip=vip-metadata:metadata])
   ::  TODO: doing three scries in a row on the hot path is slow
@@ -289,6 +290,7 @@
   [(snag (dec (lent index)) index) p.post.node]
 ::
 ++  is-allowed-add
+  ~/  %is-allowed-add
   |=  [=resource:res nodes=(map index:store node:store)] 
   ^-  ?
   ::  TODO: extremely slow due to scries. This takes about ~30ms per
@@ -332,6 +334,7 @@
   --
 ::
 ++  is-allowed-remove
+  ~/  %is-allowed-remove
   |=  [=resource:res indices=(set index:store)]
   ^-  ?
   |^
