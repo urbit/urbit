@@ -111,9 +111,9 @@ function GraphPermalink(
       bg="white"
       maxWidth={full ? null : "500px"}
       border={full ? null : "1"}
-      borderColor='lightGray'
+      borderColor="lightGray"
       borderRadius="2"
-      cursor='pointer'
+      cursor="pointer"
       onClick={(e) => {
         navigate(e);
       }}
@@ -127,18 +127,22 @@ function GraphPermalink(
           showOurContact={showOurContact}
         />
       )}
-      {association ? (
+      {isInSameResource && (
+        <Row height='12px' />
+      )}
+      {association && !isInSameResource ? (
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
-          showDetails={!isInSameResource}
           icon={getModuleIcon(association.metadata.config.graph)}
           title={association.metadata.title}
           permalink={permalink}
         />
-      ) : (
+      ) : null}
+      {!association && (
         <PermalinkDetails
           icon="Groups"
+          showDetails={false}
           title={graph.slice(5)}
           permalink={permalink}
         />
@@ -155,39 +159,30 @@ function PermalinkDetails(props: {
   showDetails?: boolean;
   known?: boolean;
 }) {
-  const { title, icon, permalink, known, showTransclusion , showDetails } = props;
+  const { title, icon, permalink, known, showTransclusion } = props;
   const rowTransclusionStyle = showTransclusion
     ? { p: '12px 12px 11px 11px' }
     : { p: '12px' };
 
-  if (showDetails) {
-    return (
-      <Row
-        {...rowTransclusionStyle}
-        alignItems="center"
-        justifyContent="space-between"
-        width="100%"
-      >
-        <Row gapX="2" alignItems="center">
-          <Box width={4} height={4}>
-            <Center width={4} height={4}>
-              <Icon icon={icon} color='gray' />
-            </Center>
-          </Box>
-          <Text gray mono={!known}>
-            {title}
-          </Text>
-        </Row>
+  return (
+    <Row
+      {...rowTransclusionStyle}
+      alignItems="center"
+      justifyContent="space-between"
+      width="100%"
+    >
+      <Row gapX="2" alignItems="center">
+        <Box width={4} height={4}>
+          <Center width={4} height={4}>
+            <Icon icon={icon} color='gray' />
+          </Center>
+        </Box>
+        <Text gray mono={!known}>
+          {title}
+        </Text>
       </Row>
-    );
-  } else {
-    return (
-      <Row
-        height='12px'
-        width="100%"
-      />
-    );
-  }
+    </Row>
+  );
 }
 
 export function PermalinkEmbed(props: {
