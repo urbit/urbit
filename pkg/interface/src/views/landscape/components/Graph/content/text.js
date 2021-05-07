@@ -170,7 +170,7 @@ export default function TextContent(props) {
         my='2'
         border='1'
         borderRadius='2'
-        borderColor='washedGray'
+        borderColor='lightGray'
       />
     );
   } else {

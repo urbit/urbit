@@ -23,7 +23,17 @@ function TranscludedLinkNode(props: {
   const idx = node?.post?.index?.slice(1)?.split('/') ?? [];
 
   if (typeof node?.post === 'string') {
-    return <Text gray>This link has been deleted.</Text>
+    return (
+      <Box
+        mx="12px"
+        mt="12px"
+        p="2"
+        backgroundColor="washedGray"
+        borderRadius="2"
+      >
+        <Text gray>This link has been deleted.</Text>
+      </Box>
+    )
   }
 
   switch (idx.length) {
@@ -35,11 +45,35 @@ function TranscludedLinkNode(props: {
       }
 
       return (
-        <Box borderRadius="2" p="2" bg="scales.black05">
-          <Anchor underline={false} target="_blank" color="black" href={link.url}>
-            <Icon verticalAlign="bottom" mr="2" icon="ArrowExternal" />
-            {text}
-          </Anchor>
+        <Box>
+          <Author
+            pt='12px'
+            pl='12px'
+            size='24'
+            sigilPadding='6'
+            showImage
+            ship={node.post.author}
+            date={node.post?.['time-sent']}
+          />
+          <Box
+            borderRadius='2'
+            mt='1'
+            ml='44px'
+            mr='3'
+            p='2'
+            display='inline-block'
+            bg='scales.black05'
+          >
+            <Anchor
+              underline={false}
+              target='_blank'
+              color='black'
+              href={link.url}
+            >
+              <Icon verticalAlign='bottom' mr='2' icon='ArrowExternal' />
+              {text}
+            </Anchor>
+          </Box>
         </Box>
       );
     case 2:
@@ -65,7 +99,17 @@ function TranscludedComment(props: {
   const { assoc, node, api, transcluded } = props;
 
   if (typeof node?.post === 'string') {
-    return <Text gray>This comment has been deleted.</Text>
+    return (
+      <Box
+        mx="12px"
+        mt="12px"
+        p="2"
+        backgroundColor="washedGray"
+        borderRadius="2"
+      >
+        <Text gray>This comment has been deleted.</Text>
+      </Box>
+    )
   }
 
   const group = useGroupForAssoc(assoc)!;
@@ -74,13 +118,16 @@ function TranscludedComment(props: {
   return (
     <Col>
       <Author
-        p="2"
+        pt='12px'
+        pl='12px'
+        size='24'
+        sigilPadding='6'
         showImage
         ship={comment.post.author}
         date={comment.post?.['time-sent']}
         group={group}
       />
-      <Box p="2">
+      <Box pl="44px" pt='1'>
         <GraphContent
           api={api}
           transcluded={transcluded}
@@ -102,7 +149,18 @@ function TranscludedPublishNode(props: {
   const group = useGroupForAssoc(assoc)!;
 
   if (typeof node?.post === 'string') {
-    return <Text gray>This note has been deleted.</Text>
+    console.log(node)
+    return (
+      <Box
+        mx="12px"
+        mt="12px"
+        p="2"
+        backgroundColor="washedGray"
+        borderRadius="2"
+      >
+        <Text gray>This note has been deleted.</Text>
+      </Box>
+    );
   }
 
   const idx = node?.post?.index?.slice(1)?.split('/') ?? [];
@@ -114,16 +172,19 @@ function TranscludedPublishNode(props: {
       return (
         <Col color="black" gapY="2">
           <Author
-            px="2"
+            pl='12px'
+            pt='12px'
+            size='24'
+            sigilPadding='6'
             showImage
             ship={post.post.author}
             date={post.post?.['time-sent']}
             group={group}
           />
-          <Text px="2" fontSize="2" fontWeight="medium">
+          <Text pl='44px' fontSize="2" fontWeight="medium">
             {post.post.contents[0]?.text}
           </Text>
-          <Box p="2">
+          <Box pl="44px" pr='3'>
             <NotePreviewContent
               snippet={getSnippet(post?.post.contents.slice(1))}
             />
@@ -149,24 +210,38 @@ export function TranscludedPost(props: {
   post: Post;
   api: GlobalApi;
   transcluded: number;
+  commentsCount?: number;
   group: Group;
 }) {
-  const { transcluded, post, group, api } = props;
+  const { transcluded, post, group, commentsCount, api } = props;
 
   if (typeof post === 'string') {
-    return <Text gray>This post has been deleted.</Text>
+    return (
+      <Box
+        mx="12px"
+        mt="12px"
+        p="2"
+        backgroundColor="washedGray"
+        borderRadius="2"
+      >
+        <Text gray>This post has been deleted.</Text>
+      </Box>
+    )
   }
 
   return (
     <Col>
       <Author
-        p="2"
+        pt='12px'
+        pl='12px'
+        size='24'
+        sigilPadding='6'
         showImage
         ship={post.author}
         date={post?.['time-sent']}
         group={group}
       />
-      <Box p="2">
+      <Box pl='44px' pt='2' pr='3'>
         <MentionText
           api={api}
           transcluded={transcluded}
@@ -174,6 +249,13 @@ export function TranscludedPost(props: {
           group={group}
         />
       </Box>
+      {commentsCount >= 1 ?
+        <Box pl='44px' pt='2' pr='3'>
+          <Text>
+            {commentsCount} {commentsCount === 1 ? 'reply' : 'replies'}
+          </Text>
+        </Box>
+      : null}
     </Col>
   );
 }
@@ -204,7 +286,7 @@ export function TranscludedNode(props: {
             ml="0"
             mr="0"
             showOurContact={showOurContact}
-            pt="2"
+            mt='0'
           />
         </Row>
       );
@@ -217,6 +299,7 @@ export function TranscludedNode(props: {
       <TranscludedPost
         api={props.api}
         post={node.post}
+        commentsCount={Object.keys(node.children.root).length}
         group={group}
         transcluded={transcluded}
       />)
