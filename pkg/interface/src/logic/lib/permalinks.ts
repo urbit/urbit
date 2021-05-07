@@ -25,7 +25,7 @@ interface GroupPermalink {
   group: string;
   link: string;
 }
-interface GraphPermalink {
+export interface GraphPermalink {
   type: 'graph';
   link: string;
   graph: string;
