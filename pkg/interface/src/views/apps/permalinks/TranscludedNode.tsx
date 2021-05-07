@@ -269,6 +269,24 @@ export function TranscludedNode(props: {
 }) {
   const { node, showOurContact, assoc, transcluded } = props;
   const group = useGroupForAssoc(assoc)!;
+
+  if (
+    typeof node?.post === "string" &&
+    assoc.metadata.config.graph === "chat"
+  ) {
+    return (
+      <Box
+        mx="12px"
+        mt="12px"
+        p="2"
+        backgroundColor="washedGray"
+        borderRadius="2"
+      >
+        <Text gray>This message has been deleted.</Text>
+      </Box>
+    );
+  }
+
   switch (assoc.metadata.config.graph) {
     case 'chat':
       return (
