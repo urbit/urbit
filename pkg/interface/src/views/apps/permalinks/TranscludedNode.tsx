@@ -23,7 +23,17 @@ function TranscludedLinkNode(props: {
   const idx = node?.post?.index?.slice(1)?.split('/') ?? [];
 
   if (typeof node?.post === 'string') {
-    return <Text gray>This link has been deleted.</Text>
+    return (
+      <Box
+        mx="12px"
+        mt="12px"
+        p="2"
+        backgroundColor="washedGray"
+        borderRadius="2"
+      >
+        <Text gray>This link has been deleted.</Text>
+      </Box>
+    )
   }
 
   switch (idx.length) {
@@ -89,7 +99,17 @@ function TranscludedComment(props: {
   const { assoc, node, api, transcluded } = props;
 
   if (typeof node?.post === 'string') {
-    return <Text gray>This comment has been deleted.</Text>
+    return (
+      <Box
+        mx="12px"
+        mt="12px"
+        p="2"
+        backgroundColor="washedGray"
+        borderRadius="2"
+      >
+        <Text gray>This comment has been deleted.</Text>
+      </Box>
+    )
   }
 
   const group = useGroupForAssoc(assoc)!;
@@ -129,7 +149,18 @@ function TranscludedPublishNode(props: {
   const group = useGroupForAssoc(assoc)!;
 
   if (typeof node?.post === 'string') {
-    return <Text gray>This note has been deleted.</Text>
+    console.log(node)
+    return (
+      <Box
+        mx="12px"
+        mt="12px"
+        p="2"
+        backgroundColor="washedGray"
+        borderRadius="2"
+      >
+        <Text gray>This note has been deleted.</Text>
+      </Box>
+    );
   }
 
   const idx = node?.post?.index?.slice(1)?.split('/') ?? [];
@@ -185,7 +216,17 @@ export function TranscludedPost(props: {
   const { transcluded, post, group, commentsCount, api } = props;
 
   if (typeof post === 'string') {
-    return <Text gray>This post has been deleted.</Text>
+    return (
+      <Box
+        mx="12px"
+        mt="12px"
+        p="2"
+        backgroundColor="washedGray"
+        borderRadius="2"
+      >
+        <Text gray>This post has been deleted.</Text>
+      </Box>
+    )
   }
 
   return (
