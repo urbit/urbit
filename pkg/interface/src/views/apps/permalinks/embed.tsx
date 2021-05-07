@@ -119,37 +119,30 @@ function GraphPermalink(
       }}
     >
       {showTransclusion && index && (
-        <TranscludedNode
-          api={api}
-          transcluded={transcluded + 1}
-          node={node}
-          assoc={association!}
-          showOurContact={showOurContact}
-        />
+        <>
+          <TranscludedNode
+            api={api}
+            transcluded={transcluded + 1}
+            node={node}
+            assoc={association!}
+            showOurContact={showOurContact}
+          />
+          <Row height='12px' />
+        </>
       )}
-      {!showTransclusion && (
-        <Box
-          mx="12px"
-          mt="12px"
-          p="2"
-          backgroundColor="washedGray"
-          borderRadius="2"
-        >
-          <Text gray>This reference is unavailable.</Text>
-        </Box>
-      )}
-      {association ? (
+      {association && !isInSameResource ? (
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
-          showDetails={!isInSameResource}
           icon={getModuleIcon(association.metadata.config.graph)}
           title={association.metadata.title}
           permalink={permalink}
         />
-      ) : (
+      ) : null}
+      {!association && (
         <PermalinkDetails
           icon="Groups"
+          showDetails={false}
           title={graph.slice(5)}
           permalink={permalink}
         />
@@ -166,39 +159,30 @@ function PermalinkDetails(props: {
   showDetails?: boolean;
   known?: boolean;
 }) {
-  const { title, icon, permalink, known, showTransclusion , showDetails } = props;
+  const { title, icon, permalink, known, showTransclusion } = props;
   const rowTransclusionStyle = showTransclusion
     ? { p: '12px 12px 11px 11px' }
     : { p: '12px' };
 
-  if (showDetails) {
-    return (
-      <Row
-        {...rowTransclusionStyle}
-        alignItems="center"
-        justifyContent="space-between"
-        width="100%"
-      >
-        <Row gapX="2" alignItems="center">
-          <Box width={4} height={4}>
-            <Center width={4} height={4}>
-              <Icon icon={icon} color='gray' />
-            </Center>
-          </Box>
-          <Text gray mono={!known}>
-            {title}
-          </Text>
-        </Row>
+  return (
+    <Row
+      {...rowTransclusionStyle}
+      alignItems="center"
+      justifyContent="space-between"
+      width="100%"
+    >
+      <Row gapX="2" alignItems="center">
+        <Box width={4} height={4}>
+          <Center width={4} height={4}>
+            <Icon icon={icon} color='gray' />
+          </Center>
+        </Box>
+        <Text gray mono={!known}>
+          {title}
+        </Text>
       </Row>
-    );
-  } else {
-    return (
-      <Row
-        height='12px'
-        width="100%"
-      />
-    );
-  }
+    </Row>
+  );
 }
 
 export function PermalinkEmbed(props: {
