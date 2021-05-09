@@ -39,6 +39,11 @@ export function NotePreviewContent({ snippet }) {
           >
             <Image src={props.src} opacity={0} maxHeight="300px" />
           </Box>
+        ),
+        paragraph: props => (
+          <Text>
+            {props.children}
+          </Text>
         )
       }}
       source={snippet}

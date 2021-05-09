@@ -14,9 +14,7 @@ import { useIdlingState } from '~/logic/lib/idling';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
 import {
-  cite,
-
-  daToUnix, useHovering, useShowNickname, uxToHex
+  cite, daToUnix, useHovering, useShowNickname, uxToHex
 } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
 import useLocalState from '~/logic/state/local';
@@ -190,7 +188,7 @@ const MessageWrapper = (props) => {
   const showHover = (props.transcluded === 0) && hovering && !props.hideHover;
   return (
     <Box
-      py={1}
+      py={props.transcluded ? '2px' : '1'}
       backgroundColor={props.highlighted
         ? showHover ? 'lightBlue' : 'washedBlue'
         : showHover ? 'washedGray' : 'transparent'
@@ -349,7 +347,8 @@ export const MessageAuthor = ({
   timestamp,
   msg,
   api,
-  showOurContact
+  showOurContact,
+  ...props
 }) => {
   const osDark = useLocalState(state => state.dark);
 
@@ -419,12 +418,12 @@ export const MessageAuthor = ({
       </Box>
     );
   return (
-    <Box pb={1} display='flex' alignItems='flex-start'>
+    <Box pb="1" display='flex' alignItems='center'>
       <Box
        height={24}
         pr={2}
         mt={'1px'}
-        pl={'12px'}
+        pl={props.transcluded ? '11px' : '12px'}
         cursor='pointer'
         position='relative'
       >
@@ -484,7 +483,7 @@ export const Message = React.memo(({
 }: MessageProps) => {
   const { hovering, bind } = useHovering();
   return (
-    <Box pl="44px" width="100%" position='relative'>
+    <Box pl="44px" pr={4} width="100%" position='relative'>
       {timestampHover ? (
         <Text
           display={hovering ? 'block' : 'none'}

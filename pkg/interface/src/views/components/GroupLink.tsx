@@ -1,4 +1,4 @@
-import { Box, Col, Row, Text } from '@tlon/indigo-react';
+import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { MetadataUpdatePreview } from '@urbit/api';
 import React, { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -47,10 +47,15 @@ export function GroupLink(
   }, [preview]);
 
   return (
-    <Box maxWidth="500px" {...rest}
-onClick={(e) => {
- e.stopPropagation();
-}}
+    <Box
+      maxWidth="500px"
+      cursor='pointer'
+      {...rest}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+      backgroundColor='white'
+      borderColor={props.borderColor}
     >
       {modal}
       <Row
@@ -62,7 +67,6 @@ onClick={(e) => {
         onClick={
           joined ? () => history.push(`/~landscape/ship/${name}`) : showModal
         }
-        cursor='pointer'
         opacity={preview ? '1' : '0.6'}
       >
         <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : { color: '0x0' , picture: ''}} />
@@ -70,7 +74,24 @@ onClick={(e) => {
           <Text ml={2} fontWeight="medium" mono={!preview}>
             {preview ? preview.metadata.title : name}
           </Text>
-          <Text pt={1} ml={2}>{preview ? `${preview.members} members` : 'Fetching member count'}</Text>
+          <Box pt='1' ml='2' display='flex' alignItems='center'>
+            {preview ?
+              <>
+                <Box pr='2' display='flex' alignItems='center'>
+                  <Icon icon='Public' color='gray' mr='1' />
+                  <Text fontSize='0' color='gray'>
+                    {preview.metadata.hidden ? 'Private' : 'Public'}
+                  </Text>
+                </Box>
+                <Box display='flex' alignItems='center'>
+                  <Icon icon='Users' color='gray' mr='1' />
+                  <Text fontSize='0'color='gray' >
+                    {preview.members} peers
+                  </Text>
+                </Box>
+              </>
+              : <Text fontSize='0'>Fetching member count</Text>}
+          </Box>
         </Col>
       </Row>
     </Box>

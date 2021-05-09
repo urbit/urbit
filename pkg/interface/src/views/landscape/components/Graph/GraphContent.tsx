@@ -366,7 +366,14 @@ const renderers = {
     );
   },
   root: ({ tall, children }) =>
-    tall ? <Col display='grid' style={{ 'row-gap': '1rem' }}>{children}</Col> : <Box>{children}</Box>,
+    tall
+      ? <Box
+          display='grid'
+          style={{ 'gridTemplateColumns': 'minmax(0,1fr)', 'rowGap': '1rem' }}
+         >
+           {children}
+        </Box>
+      : <Box>{children}</Box>,
   text: ({ value }) => value,
 };
 
