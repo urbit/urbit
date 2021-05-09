@@ -170,10 +170,10 @@ export function NewChannel(props: NewChannelProps): ReactElement {
                 name='moduleType'
               />
               <IconRadio
-                icon='Notebook'
-                label='Notebook'
-                id='publish'
-                name='moduleType'
+                icon="Publish"
+                label="Notebook"
+                id="publish"
+                name="moduleType"
               />
               <IconRadio
                 icon='Collection'
