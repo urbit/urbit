@@ -1,52 +1,42 @@
-import React, { ReactNode, useCallback } from "react";
-import moment from "moment";
-import { Row, Box, Col, Text, Anchor, Icon, Action } from "@tlon/indigo-react";
-import { Link, useHistory } from "react-router-dom";
-import _ from "lodash";
+import { Anchor, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { Association, Group, Post } from '@urbit/api';
+import { BigInteger } from 'big-integer';
+import _ from 'lodash';
+import React, { useCallback } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+import GlobalApi from '~/logic/api/global';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
 import {
-  GraphNotifIndex,
-  GraphNotificationContents,
-  Associations,
-  Rolodex,
-  Groups,
-} from "~/types";
-import { Header } from "./header";
+  isDm, pluralize
+} from '~/logic/lib/util';
+import useGroupState from '~/logic/state/group';
 import {
-  cite,
-  deSig,
-  pluralize,
-  useShowNickname,
-  isDm,
-} from "~/logic/lib/util";
-import { GraphContentWide } from "~/views/landscape/components/Graph/GraphContentWide";
-import Author from "~/views/components/Author";
-import GlobalApi from "~/logic/api/global";
-import styled from "styled-components";
-import useContactState from "~/logic/state/contact";
-import useGroupState from "~/logic/state/group";
-import useMetadataState, {
   useAssocForGraph,
-  useAssocForGroup,
-} from "~/logic/state/metadata";
-import { PermalinkEmbed } from "../permalinks/embed";
-import { parsePermalink, referenceToPermalink } from "~/logic/lib/permalinks";
-import { Post, Group, Association } from "@urbit/api";
-import { BigInteger } from "big-integer";
+  useAssocForGroup
+} from '~/logic/state/metadata';
+import {
+  GraphNotificationContents, GraphNotifIndex
+} from '~/types';
+import Author from '~/views/components/Author';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
+import { PermalinkEmbed } from '../permalinks/embed';
+import { Header } from './header';
 
 const TruncBox = styled(Box)<{ truncate?: number }>`
-  -webkit-line-clamp: ${(p) => p.truncate ?? "unset"};
+  -webkit-line-clamp: ${p => p.truncate ?? 'unset'};
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  color: ${(p) => p.theme.colors.black};
+  color: ${p => p.theme.colors.black};
 `;
 
 function getGraphModuleIcon(module: string) {
-  if (module === "link") {
-    return "Collection";
+  if (module === 'link') {
+    return 'Collection';
   }
-  if (module === "post") {
-    return "Groups";
+  if (module === 'post') {
+    return 'Groups';
   }
   return _.capitalize(module);
 }
@@ -58,23 +48,23 @@ function describeNotification(
   singleAuthor: boolean
 ): string {
   switch (description) {
-    case "post":
-      return singleAuthor ? "replied to you" : "Your post received replies";
-    case "link":
-      return `New link${plural ? "s" : ""} in`;
-    case "comment":
-      return `New comment${plural ? "s" : ""} on`;
-    case "note":
-      return `New Note${plural ? "s" : ""} in`;
-    case "edit-note":
-      return `updated ${pluralize("note", plural)} in`;
-    case "mention":
-      return singleAuthor ? "mentioned you in" : "You were mentioned in";
-    case "message":
+    case 'post':
+      return singleAuthor ? 'replied to you' : 'Your post received replies';
+    case 'link':
+      return `New link${plural ? 's' : ''} in`;
+    case 'comment':
+      return `New comment${plural ? 's' : ''} on`;
+    case 'note':
+      return `New Note${plural ? 's' : ''} in`;
+    case 'edit-note':
+      return `updated ${pluralize('note', plural)} in`;
+    case 'mention':
+      return singleAuthor ? 'mentioned you in' : 'You were mentioned in';
+    case 'message':
       if (isDm) {
-        return "messaged you";
+        return 'messaged you';
       }
-      return `New message${plural ? "s" : ""} in`;
+      return `New message${plural ? 's' : ''} in`;
     default:
       return description;
   }
@@ -83,7 +73,7 @@ function describeNotification(
 const GraphUrl = ({ contents, api }) => {
   const [{ text }, link] = contents;
 
-  if ("reference" in link) {
+  if ('reference' in link) {
     return (
       <PermalinkEmbed
         transcluded={1}
@@ -108,8 +98,8 @@ function ContentSummary({ icon, name, author, to }) {
     <Link to={to}>
       <Col
         gapY="1"
-        flexDirection={["column", "row"]}
-        alignItems={["flex-start", "center"]}
+        flexDirection={['column', 'row']}
+        alignItems={['flex-start', 'center']}
       >
         <Row
           alignItems="center"
@@ -144,15 +134,15 @@ function ContentSummary({ icon, name, author, to }) {
 
 export const GraphNodeContent = ({ post, mod, index, hidden, association }) => {
   const { contents } = post;
-  const idx = index.slice(1).split("/");
+  const idx = index.slice(1).split('/');
   const url = getNodeUrl(mod, hidden, association?.group, association?.resource, index);
-  if (mod === "link" && idx.length === 1) {
+  if (mod === 'link' && idx.length === 1) {
     const [{ text: title }] = contents;
     return (
       <ContentSummary to={url} icon="Links" name={title} author={post.author} />
     );
   }
-  if (mod === "publish" && idx[1] === "1") {
+  if (mod === 'publish' && idx[1] === '1') {
     const [{ text: title }] = contents;
     return (
       <ContentSummary to={url} icon="Note" name={title} author={post.author} />
@@ -160,7 +150,7 @@ export const GraphNodeContent = ({ post, mod, index, hidden, association }) => {
   }
   return (
     <TruncBox truncate={8}>
-      <GraphContentWide api={{} as any} post={post} showOurContact />
+      <GraphContent api={{} as any} contents={post.contents} showOurContact />
     </TruncBox>
   );
 };
@@ -172,30 +162,29 @@ function getNodeUrl(
   graph: string,
   index: string
 ) {
-  if (hidden && mod === "chat") {
-    groupPath = "/messages";
+  if (hidden && mod === 'chat') {
+    groupPath = '/messages';
   } else if (hidden) {
-    groupPath = "/home";
+    groupPath = '/home';
   }
   const graphUrl = `/~landscape${groupPath}/resource/${mod}${graph}`;
-  const idx = index.slice(1).split("/");
-  if (mod === "publish") {
-    console.log(idx);
+  const idx = index.slice(1).split('/');
+  if (mod === 'publish') {
     const [noteId, kind, commId] = idx;
-    const selected = kind === "2" ? `?selected=${commId}` : "";
+    const selected = kind === '2' ? `?selected=${commId}` : '';
     return `${graphUrl}/note/${noteId}${selected}`;
-  } else if (mod === "link") {
+  } else if (mod === 'link') {
     const [linkId, commId] = idx;
-    return `${graphUrl}/index/${linkId}${commId ? `?selected=${commId}` : ""}`;
-  } else if (mod === "chat") {
+    return `${graphUrl}/index/${linkId}${commId ? `?selected=${commId}` : ''}`;
+  } else if (mod === 'chat') {
     if (idx.length > 0) {
       return `${graphUrl}?msg=${idx[0]}`;
     }
     return graphUrl;
-  } else if (mod === "post") {
+  } else if (mod === 'post') {
     return `/~landscape${groupPath}/feed${index}`;
   }
-  return "";
+  return '';
 }
 
 interface PostsByAuthor {
@@ -221,7 +210,7 @@ const GraphNodes = (props: {
     index,
     description,
     hideAuthors = false,
-    association,
+    association
   } = props;
 
   const postsByConsecAuthor = _.reduce(
@@ -241,7 +230,7 @@ const GraphNodes = (props: {
   return (
     <>
       {_.map(postsByConsecAuthor, ({ posts, author }, idx) => {
-        const time = posts[0]?.["time-sent"];
+        const time = posts[0]?.['time-sent'];
         return (
           <Col key={idx} flexGrow={1} alignItems="flex-start">
             {!hideAuthors && (
@@ -254,7 +243,7 @@ const GraphNodes = (props: {
               />
             )}
             <Col gapY="2" py={hideAuthors ? 0 : 2} width="100%">
-              {_.map(posts, (post) => (
+              {_.map(posts, post => (
                 <GraphNodeContent
                   key={post.index}
                   post={post}
@@ -284,7 +273,7 @@ export function GraphNotification(props: {
   const { contents, index, read, time, api, timebox } = props;
   const history = useHistory();
 
-  const authors = _.uniq(_.map(contents, "author"));
+  const authors = _.uniq(_.map(contents, 'author'));
   const singleAuthor = authors.length === 1;
   const { graph, group } = index;
   const association = useAssocForGraph(graph)!;
@@ -296,13 +285,13 @@ export function GraphNotification(props: {
     singleAuthor
   );
   const groupAssociation = useAssocForGroup(association?.group);
-  const groups = useGroupState((state) => state.groups);
+  const groups = useGroupState(state => state.groups);
 
   const onClick = useCallback(() => {
     if (
       !(
-        (index.description === "note" || index.description === "link") &&
-        index.index === "/"
+        (index.description === 'note' || index.description === 'link') &&
+        index.index === '/'
       )
     ) {
       const first = contents[0];
@@ -320,12 +309,12 @@ export function GraphNotification(props: {
 
   const authorsInHeader =
     dm ||
-    ((index.description === "mention" || index.description === "post") &&
+    ((index.description === 'mention' || index.description === 'post') &&
       singleAuthor);
   const hideAuthors =
     authorsInHeader ||
-    index.description === "note" ||
-    index.description === "link";
+    index.description === 'note' ||
+    index.description === 'link';
   const channelTitle = dm ? undefined : association?.metadata?.title ?? graph;
   const groupTitle = groupAssociation?.metadata?.title;
 

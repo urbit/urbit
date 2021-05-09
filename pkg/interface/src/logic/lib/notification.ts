@@ -1,4 +1,4 @@
-import { GraphNotifIndex, GraphNotificationContents } from '@urbit/api';
+import { GraphNotificationContents, GraphNotifIndex } from '@urbit/api';
 
 export function getParentIndex(
   idx: GraphNotifIndex,

@@ -1,21 +1,20 @@
-import React from 'react';
-import _ from 'lodash';
-import * as Yup from 'yup';
 import {
-  Label,
-  ManagedToggleSwitchField as Checkbox,
   Box,
-  Col,
+  Col, Label,
+  ManagedToggleSwitchField as Checkbox,
+
   Text
 } from '@tlon/indigo-react';
-import { Formik, Form } from 'formik';
-import { PermVariation, Association, Group, Groups, Rolodex } from '@urbit/api';
-import { shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
+import { Association, Group, PermVariation } from '@urbit/api';
+import { Form, Formik } from 'formik';
+import _ from 'lodash';
+import React from 'react';
+import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
-import { FormSubmit } from '~/views/components/FormSubmit';
+import { FormGroupChild } from '~/views/components/FormGroup';
+import { shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
 import { ChannelWritePerms } from '../ChannelWritePerms';
-import {FormGroupChild} from '~/views/components/FormGroup';
 
 function PermissionsSummary(props: {
   writersSize: number;

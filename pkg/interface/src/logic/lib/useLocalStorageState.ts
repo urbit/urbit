@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function retrieve<T>(key: string, initial: T): T {
   const s = localStorage.getItem(key);

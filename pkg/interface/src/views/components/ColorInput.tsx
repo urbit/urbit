@@ -1,15 +1,13 @@
-import React, { FormEvent, ReactElement } from 'react';
-import { useField } from 'formik';
-
 import {
-  Col,
-  Label,
+  Box, Col,
+
+  ErrorLabel, Label,
   Row,
-  Box,
-  ErrorLabel,
+
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
-
+import { useField } from 'formik';
+import React, { FormEvent } from 'react';
 import { hexToUx } from '~/logic/lib/util';
 
 type ColorInputProps = Parameters<typeof Col>[0] & {
@@ -73,7 +71,7 @@ export function ColorInput(props: ColorInputProps) {
             height='100%'
             alignSelf='stretch'
             onChange={onChange}
-            value={`#${padded}`}
+            value={padded}
             disabled={disabled || false}
             type='color'
             opacity={0}

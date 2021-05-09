@@ -1,15 +1,13 @@
+import { Box } from '@tlon/indigo-react';
 import React, {
-  useState,
   ReactNode,
   useCallback,
   useMemo,
-  useRef
+  useRef, useState
 } from 'react';
-
-import { Box } from '@tlon/indigo-react';
+import { PropFunc } from '~/types';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { Portal } from '~/views/components/Portal';
-import { PropFunc } from '~/types';
 
 type ModalFunc = (dismiss: () => void) => JSX.Element;
 interface UseModalProps {

@@ -1,11 +1,7 @@
-import _ from 'lodash';
-import { compose } from 'lodash/fp';
-
 import { ContactUpdate } from '@urbit/api';
-
-import useContactState, { ContactState } from '../state/contact';
+import _ from 'lodash';
 import { reduceState } from '../state/base';
-
+import useContactState, { ContactState } from '../state/contact';
 
 export const ContactReducer = (json) => {
   const data: ContactUpdate = _.get(json, 'contact-update', false);
@@ -69,7 +65,7 @@ const edit = (json: ContactUpdate, state: ContactState): ContactState => {
     }
 
     const value = data['edit-field'][field];
-    
+
     if(field === 'add-group') {
       state.contacts[ship].groups.push(value);
     } else if (field === 'remove-group') {

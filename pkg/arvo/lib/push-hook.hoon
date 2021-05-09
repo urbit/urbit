@@ -57,14 +57,32 @@
       inner-state=vase
   ==
 ::
++$  base-state-1
+  $:  prev-version=@ud
+      prev-min-version=@ud
+      base-state-0
+  ==
+::
 +$  state-0  [%0 base-state-0]
 ::
 +$  state-1  [%1 base-state-0]
++$  state-2  [%2 base-state-1]
 ::
 +$  versioned-state
   $%  state-0
       state-1
+      state-2
   ==
+::  +diplomatic: only renegotiate if versions changed
+::    
+::    If %.n please leave note as to why renegotiation necessary
+::    
+::    - Fixing incorrectly held unversioned subscriptions
+::
+++  diplomatic
+  ^-  ?
+  %.n
+::
 ++  push-hook
   |*  =config
   $_  ^|
@@ -153,7 +171,7 @@
 ++  agent
   |*  =config
   |=  =(push-hook config)
-  =|  state-1
+  =|  state-2
   =*  state  -
   ^-  agent:gall
   =<
@@ -179,16 +197,21 @@
       =|  cards=(list card:agent:gall)
       |^ 
       ?-  -.old
-          %1  
+          %2
         =^  og-cards   push-hook
           (on-load:og inner-state.old)
         =/  old-subs
-          find-old-subs
+          (find-old-subs [prev-version prev-min-version]:old)
         =/  version-cards
           :-  (fact:io version+!>(version.config) /version ~)
           ?~  old-subs  ~
           (kick:io old-subs)^~
         [:(weld cards og-cards version-cards) this(state old)]
+        ::
+          %1
+        %_    $
+          old  [%2 0 0 +.old]
+        ==
         ::
         ::
           %0
@@ -205,6 +228,13 @@
       ==
       ::
       ++  find-old-subs
+        |=  [prev-min-version=@ud prev-version=@ud]
+        ?:  ?&  =(min-version.config prev-min-version)
+                =(prev-version version.config)
+                diplomatic
+            ==
+          ::  bail on kick if we didn't change versions
+          ~
         %~  tap  in
         %+  roll
           ~(val by sup.bowl)
@@ -230,8 +260,10 @@
       --
     ::
     ++  on-save
-      =.  inner-state
-        on-save:og
+      =:  prev-version      version.config
+          prev-min-version  min-version.config
+          inner-state       on-save:og
+        ==
       !>(state)
     ::
     ++  on-poke
@@ -270,23 +302,21 @@
       ?.  (supported:ver mark)
         :_  this
         (fact-init-kick:io version+!>(min-version.config))
-      =/  =vase
-        (convert-to:ver mark (initial-watch:og t.t.t.t.t.t.path resource))
       :_  this
-      [%give %fact ~ mark vase]~
+      =-  [%give %fact ~ -]~
+      (convert-to:ver mark (initial-watch:og t.t.t.t.t.t.path resource))
       ::
       ++  unversioned
         ?>  ?=([%ship @ @ *] t.path)
-        ?.  =(min-version.config 0)
-           ~&  >>>  "unversioned req from: {<src.bowl>}, nooping"
-           `this
         =/  =resource
           (de-path:resource t.path)
-        =/  =vase
-          %+  convert-to:ver  update-mark.config
+        =/   =vase 
           (initial-watch:og t.t.t.t.path resource)
         :_  this
-        [%give %fact ~ update-mark.config vase]~
+        ?.  =(min-version.config 0)
+           ~&  >>>  "unversioned req from: {<src.bowl>}, nooping"
+           ~
+        [%give %fact ~ (convert-to:ver update-mark.config vase)]~
       --
     ::
     ++  on-agent
@@ -440,10 +470,7 @@
       |=  [fact-ver=@ud paths=(set path)]
       =/  =mark
         (append-version:ver fact-ver)
-      =/  =^cage
-        :-  mark
-        (convert-from:ver mark q.cage)
-      (fact:io cage ~(tap in paths))
+      (fact:io (convert-from:ver mark q.cage) ~(tap in paths))
     ::  TODO: deprecate
     ++  unversioned
       ?.  =(min-version.config 0)  ~
@@ -453,18 +480,15 @@
         %-  ~(gas in *(set path))
         (turn (incoming-subscriptions prefix) tail)
       ?:  =(0 ~(wyt in unversioned))  ~
-      =/  =^cage
-        :-  update-mark.config
-        (convert-from:ver update-mark.config q.cage)
-      (fact:io cage ~(tap in unversioned))^~
+      (fact:io (convert-from:ver update-mark.config q.cage) ~(tap in unversioned))^~
     --
   ::
   ++  forward-update
     |=  =cage
     ^-  (list card:agent:gall)
     =-  lis
-    =/  vas
-      (convert-to:ver cage)
+    =/  vas=vase
+      q:(convert-to:ver cage)
     %+  roll  (resource-for-update q.cage)
     |=  [rid=resource [lis=(list card:agent:gall) tf-vas=(unit vase)]]
     ^-  [(list card:agent:gall) (unit vase)]

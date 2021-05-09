@@ -1,19 +1,17 @@
+import { Box, Col, Icon, Image, Row, Text } from '@tlon/indigo-react';
+import { Group } from '@urbit/api';
+import { GraphNode } from '@urbit/api/graph';
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Col, Row, Box, Text, Icon, Image } from '@tlon/indigo-react';
-
-import Author from '~/views/components/Author';
-import { GraphNode } from '@urbit/api/graph';
-import { Contacts, Group } from '@urbit/api';
 import {
   getComments,
   getLatestRevision,
   getSnippet
 } from '~/logic/lib/publish';
-import { Unreads } from '@urbit/api';
-import ReactMarkdown from 'react-markdown';
 import useHarkState from '~/logic/state/hark';
+import Author from '~/views/components/Author';
 
 interface NotePreviewProps {
   host: string;
@@ -37,10 +35,15 @@ export function NotePreviewContent({ snippet }) {
           <Box
             backgroundImage={`url(${props.src})`}
             style={{ backgroundSize: 'cover',
-              backgroundPosition: "center" }}
+              backgroundPosition: 'center' }}
           >
-            <Image src={props.src} opacity="0" maxHeight="300px"/>
+            <Image src={props.src} opacity="0" maxHeight="300px" />
           </Box>
+        ),
+        paragraph: props => (
+          <Text>
+            {props.children}
+          </Text>
         )
       }}
       source={snippet}
@@ -51,8 +54,12 @@ export function NotePreviewContent({ snippet }) {
 export function NotePreview(props: NotePreviewProps) {
   const { node, group } = props;
   const { post } = node;
-  if (!post) {
-    return null;
+  if (!post || typeof post === 'string') {
+    return (
+      <Box width="100%" py="3">
+        <Text gray>This note has been deleted.</Text>
+      </Box>
+    );
   }
 
   const numComments = getComments(node).children.size;
@@ -74,7 +81,8 @@ export function NotePreview(props: NotePreviewProps) {
     <Box width='100%' opacity={post.pending ? '0.5' : '1'}>
       <Link
         to={post.pending ? '#' : url}
-        style={ { cursor: cursorStyle } }>
+        style={ { cursor: cursorStyle } }
+      >
         <Col
           lineHeight='tall'
           width='100%'
@@ -88,7 +96,7 @@ export function NotePreview(props: NotePreviewProps) {
           <WrappedBox mb={2}><Text bold>{title}</Text></WrappedBox>
           <WrappedBox>
             <Text fontSize='14px' lineHeight='tall'>
-              <NotePreviewContent snippet={snippet} /> 
+              <NotePreviewContent snippet={snippet} />
             </Text>
           </WrappedBox>
         </Col>
