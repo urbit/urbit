@@ -153,7 +153,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
                 name="moduleType"
               />
               <IconRadio
-                icon="Notebook"
+                icon="Publish"
                 label="Notebook"
                 id="publish"
                 name="moduleType"
