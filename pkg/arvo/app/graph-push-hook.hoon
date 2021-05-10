@@ -27,8 +27,7 @@
   ==
 ::
 +$  cache
-  $:  graph-to-md=(map resource:res association:metadata)
-      graph-to-mark=(map resource:res (unit mark))
+  $:  graph-to-mark=(map resource:res (unit mark))
       perm-marks=(map [mark @tas] tube:clay)
       transform-marks=(map mark tube:clay)
   ==
@@ -39,8 +38,7 @@
   ==
 ::
 +$  cache-action
-  $%  [%graph-to-md (pair resource:res association:metadata)]
-      [%graph-to-mark (pair resource:res (unit mark))]
+  $%  [%graph-to-mark (pair resource:res (unit mark))]
       [%perm-marks (pair (pair mark @tas) tube:clay)]
       [%transform-marks (pair mark tube:clay)]
   ==
@@ -83,13 +81,11 @@
     [~ this]
   =/  a=cache-action  !<(cache-action vase)
   =*  c                +.state
-  =*  graph-to-md      graph-to-md.c
   =*  graph-to-mark    graph-to-mark.c
   =*  perm-marks       perm-marks.c
   =*  transform-marks  transform-marks.c
   =.  c
     ?-  -.a
-      %graph-to-md      c(graph-to-md (~(put by graph-to-md) p.a q.a))
       %graph-to-mark    c(graph-to-mark (~(put by graph-to-mark) p.a q.a))
       %perm-marks       c(perm-marks (~(put by perm-marks) p.a q.a))
       %transform-marks  c(transform-marks (~(put by transform-marks) p.a q.a))
@@ -360,12 +356,8 @@
   |=  =resource:res
   ^-  (unit [is-admin=? writers=(set ship) vip=vip-metadata:metadata])
   =/  assoc=(unit association:metadata)
-    ?:  (~(has by graph-to-md.cache) resource)
-      (~(get by graph-to-md.cache) resource)
     (peek-association:met %graph resource)
   ?~  assoc  ~
-  =.  graph-to-md.cache
-    (~(put by graph-to-md.cache) resource u.assoc)
   =/  group=(unit group:grp)
     (scry-group:grp group.u.assoc)
   ?~  group  ~
