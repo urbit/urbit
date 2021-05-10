@@ -69,7 +69,7 @@ const useHarkState = createState<HarkState>('Hark', {
 
 export function useHarkDm(ship: string) {
   return useHarkState(useCallback(s => {
-    return s.unreads.graph[`/ship/~${window.ship}/inbox`]?.[`/${patp2dec(ship)}`];
+    return s.unreads.graph[`/ship/~${window.ship}/dm-inbox`]?.[`/${patp2dec(ship)}`];
   }, [ship]));
 }
 

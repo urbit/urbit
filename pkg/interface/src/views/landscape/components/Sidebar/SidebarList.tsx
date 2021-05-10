@@ -86,7 +86,7 @@ export function SidebarList(props: {
   const { selected, group, config, workspace } = props;
   const associations = useMetadataState(state => state.associations);
   const inbox = useInbox();
-  const unreads = useHarkState(s => s.unreads.graph?.[`/ship/~${window.ship}/inbox`]);
+  const unreads = useHarkState(s => s.unreads.graph?.[`/ship/~${window.ship}/dm-inbox`]);
 
 
   const ordered = getItems(associations, workspace, inbox)

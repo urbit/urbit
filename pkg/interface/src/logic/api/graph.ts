@@ -207,7 +207,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     const post = createPost(contents, `/${patp2dec(ship)}`)
     return this.action('dm-hook', 'graph-update-2', {
       "add-nodes": {
-        resource: { ship: `~${window.ship}`, name: 'inbox' },
+        resource: { ship: `~${window.ship}`, name: 'dm-inbox' },
         nodes: {
           [post.index]: {
             post,

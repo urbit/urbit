@@ -98,7 +98,7 @@ class App extends React.Component {
 
   componentDidMount() {
     this.subscription.start();
-    this.api.graph.getShallowChildren(`~${window.ship}`, 'inbox');
+    this.api.graph.getShallowChildren(`~${window.ship}`, 'dm-inbox');
     this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
     this.themeWatcher.onchange = this.updateTheme;
     setTimeout(() => {

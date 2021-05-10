@@ -18,7 +18,7 @@ interface DmResourceProps {
 
 const getCurrDmSize = (ship: string) => {
   const { graphs } = useGraphState.getState();
-  const graph = graphs[`${window.ship}/inbox`];
+  const graph = graphs[`${window.ship}/dm-inbox`];
   if (!graph) {
     return 0;
   }
@@ -37,7 +37,7 @@ export function DmResource(props: DmResourceProps) {
   const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
 
   useEffect(() => {
-    api.graph.getNewest(`~${window.ship}`, 'inbox', 100, `/${patpToUd(ship)}`);
+    api.graph.getNewest(`~${window.ship}`, 'dm-inbox', 100, `/${patpToUd(ship)}`);
   }, [ship]);
 
   const fetchMessages = useCallback(
@@ -51,9 +51,9 @@ export function DmResource(props: DmResourceProps) {
         }
         await api.graph.getYoungerSiblings(
           `~${window.ship}`,
-          'inbox',
+          'dm-inbox',
           pageSize,
-          `/${patp2dec(ship)}/${index.toString()}`
+          `/${patpToUd(ship)}/${index.toString()}`
         );
         return expectedSize !== getCurrDmSize(ship);
       } else {
@@ -63,9 +63,9 @@ export function DmResource(props: DmResourceProps) {
         }
         await api.graph.getOlderSiblings(
           `~${window.ship}`,
-          'inbox',
+          'dm-inbox',
           pageSize,
-          `/${patp2dec(ship)}/${index.toString()}`
+          `/${patpToUd(ship)}/${index.toString()}`
         );
         return expectedSize !== getCurrDmSize(ship);
       }
@@ -74,7 +74,7 @@ export function DmResource(props: DmResourceProps) {
   );
 
   const dismissUnread = useCallback(() => {
-    api.hark.dismissReadCount(`/ship/~${window.ship}/inbox`, `/${patp2dec(ship)}`);
+    api.hark.dismissReadCount(`/ship/~${window.ship}/dm-inbox`, `/${patpToUd(ship)}`);
   }, [ship]);
     
 
