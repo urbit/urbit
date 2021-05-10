@@ -127,10 +127,7 @@ function GraphPermalink(
           showOurContact={showOurContact}
         />
       )}
-      {isInSameResource && (
-        <Row height='12px' />
-      )}
-      {association && !isInSameResource ? (
+      {association && !isInSameResource && (
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
@@ -138,7 +135,17 @@ function GraphPermalink(
           title={association.metadata.title}
           permalink={permalink}
         />
-      ) : null}
+      )}
+      {association && isInSameResource && transcluded === 2 && (
+        <PermalinkDetails
+          known
+          showTransclusion={showTransclusion}
+          icon={getModuleIcon(association.metadata.config.graph)}
+          title={association.metadata.title}
+          permalink={permalink}
+        />
+      )}
+      {isInSameResource && transcluded !== 2 && <Row height="12px" />}
       {!association && (
         <PermalinkDetails
           icon="Groups"
