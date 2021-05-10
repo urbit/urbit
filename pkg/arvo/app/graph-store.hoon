@@ -763,13 +763,10 @@
     :+  now.bowl  %add-nodes
     :-  [ship term]
     %-  ~(gas by *(map index:store node:store))
-    %+  murn  (tap:orm u.children)
+    %+  turn  (tap:orm u.children)
     |=  [=atom =node:store]
-    ^-  (unit [index:store node:store])
-    ?.  ?=(%& -.post.node)  ~
-    =*  p  p.post.node
-    :-  ~
-    :-  index.p
+    ^-  [index:store node:store]
+    :-  (snoc index atom)
     node(children [%empty ~])
   ::
       [%x ?(%newest %oldest) @ @ @ *]
