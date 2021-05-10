@@ -1,40 +1,24 @@
-import React, { useEffect, useCallback, useRef } from 'react';
-import f from 'lodash/fp';
-import _ from 'lodash';
-import moment from 'moment';
-import { BigInteger } from 'big-integer';
-
+import { Box, Center, Col, LoadingSpinner, Text, Icon } from '@tlon/indigo-react';
 import {
-  Col,
-  Center,
-  Box,
-  Text,
-  LoadingSpinner,
-  Icon
-} from '@tlon/indigo-react';
-
-import {
-  Associations,
-  Notifications,
-  Rolodex,
-  Timebox,
   IndexedNotification,
-  Groups,
-  JoinRequests,
-  GroupNotificationsConfig,
-  NotificationGraphConfig,
-  Invites as InviteType
-} from '@urbit/api';
 
-import { MOMENT_CALENDAR_DATE, daToUnix } from '~/logic/lib/util';
+  JoinRequests, Notifications,
+
+  Timebox
+} from '@urbit/api';
+import { BigInteger } from 'big-integer';
+import _ from 'lodash';
+import f from 'lodash/fp';
+import moment from 'moment';
+import React, { useCallback, useEffect, useRef } from 'react';
 import GlobalApi from '~/logic/api/global';
-import { Notification } from './notification';
-import { Invites } from './invites';
+import { getNotificationKey } from '~/logic/lib/hark';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useLaunchState from '~/logic/state/launch';
+import { daToUnix, MOMENT_CALENDAR_DATE } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
-import useInviteState from '~/logic/state/invite';
-import useMetadataState from '~/logic/state/metadata';
+import { Invites } from './invites';
+import { Notification } from './notification';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -132,7 +116,7 @@ export default function Inbox(props: {
   );
 
   return (
-    <Col p="1" ref={scrollRef} position="relative" height="100%" overflowY="auto">
+    <Col p="1" ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
 
       {runtimeLag && (
         <Box bg="yellow" borderRadius={2} p={2} m={2}>
@@ -149,6 +133,7 @@ export default function Inbox(props: {
         return timeboxes.length > 0 && (
           <DaySection
             key={day}
+            time={day}
             label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
             timeboxes={timeboxes}
             archive={Boolean(props.showArchive)}
@@ -187,7 +172,8 @@ function DaySection({
   label,
   archive,
   timeboxes,
-  api,
+  time,
+  api
 }) {
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {
@@ -199,7 +185,7 @@ function DaySection({
       {_.map(timeboxes.sort(sortTimeboxes), ([date, nots], i: number) =>
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
           <Notification
-            key={j}
+            key={getNotificationKey(time, not)}
             api={api}
             notification={not}
             archived={archive}

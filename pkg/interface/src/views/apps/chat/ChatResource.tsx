@@ -1,33 +1,20 @@
-import React, {
-  useRef,
-  useCallback,
-  useEffect,
-  useState,
-  useMemo,
-} from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import { Col } from '@tlon/indigo-react';
-import _ from 'lodash';
-import bigInt, { BigInteger } from 'big-integer';
-
-import { Association } from '@urbit/api/metadata';
-import { StoreState } from '~/logic/store/type';
-import { useFileDrag } from '~/logic/lib/useDrag';
-import ChatWindow from './components/ChatWindow';
-import ChatInput from './components/ChatInput';
-import GlobalApi from '~/logic/api/global';
-import { ShareProfile } from '~/views/apps/chat/components/ShareProfile';
-import SubmitDragger from '~/views/components/SubmitDragger';
-import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
-import { Loading } from '~/views/components/Loading';
-import { isWriter, resourceFromPath } from '~/logic/lib/group';
-
-import useContactState from '~/logic/state/contact';
-import useGraphState, { useGraphForAssoc } from '~/logic/state/graph';
-import useGroupState, { useGroupForAssoc } from '~/logic/state/group';
-import useHarkState from '~/logic/state/hark';
 import { Content, createPost, Post } from '@urbit/api';
+import { Association } from '@urbit/api/metadata';
+import { BigInteger } from 'big-integer';
+import React, {
+  ReactElement, useCallback,
+  useEffect,
+
+  useMemo, useState
+} from 'react';
+import GlobalApi from '~/logic/api/global';
+import { isWriter, resourceFromPath } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
+import useGraphState, { useGraphForAssoc } from '~/logic/state/graph';
+import { useGroupForAssoc } from '~/logic/state/group';
+import useHarkState from '~/logic/state/hark';
+import { StoreState } from '~/logic/store/type';
+import { Loading } from '~/views/components/Loading';
 import { ChatPane } from './components/ChatPane';
 
 const getCurrGraphSize = (ship: string, name: string) => {
@@ -36,20 +23,19 @@ const getCurrGraphSize = (ship: string, name: string) => {
   return graph?.size ?? 0;
 };
 
-
 type ChatResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
 };
 
-function ChatResource(props: ChatResourceProps) {
+const ChatResource = (props: ChatResourceProps): ReactElement => {
   const { association, api } = props;
   const { resource } = association;
   const [toShare, setToShare] = useState<string[] | string | undefined>();
   const group = useGroupForAssoc(association)!;
   const graph = useGraphForAssoc(association);
-  const unreads = useHarkState((state) => state.unreads);
+  const unreads = useHarkState(state => state.unreads);
   const unreadCount =
     (unreads.graph?.[resource]?.['/']?.unreads as number) || 0;
   const canWrite = group ? isWriter(group, resource) : false;
@@ -59,12 +45,12 @@ function ChatResource(props: ChatResourceProps) {
     const { ship, name } = resourceFromPath(resource);
     props.api.graph.getNewest(ship, name, count);
     setToShare(undefined);
-    (async function() {
-      if(group.hidden) {
+    (async function () {
+      if (group.hidden) {
         const members = await props.api.contacts.disallowedShipsForOurContact(
           Array.from(group.members)
         );
-        if(members.length > 0) {
+        if (members.length > 0) {
           setToShare(members);
         }
       } else {
@@ -75,7 +61,7 @@ function ChatResource(props: ChatResourceProps) {
           groupHost,
           true
         );
-        if(!shared) {
+        if (!shared) {
           setToShare(association.group);
         }
       }
@@ -108,7 +94,7 @@ function ChatResource(props: ChatResourceProps) {
     const expectedSize = graphSize + pageSize;
     if (newer) {
       const index = graph.peekLargest()?.[0];
-      if(!index) {
+      if (!index) {
         return true;
       }
       await api.graph.getYoungerSiblings(
@@ -120,7 +106,7 @@ function ChatResource(props: ChatResourceProps) {
       return expectedSize !== getCurrGraphSize(ship.slice(1), name);
     } else {
       const index = graph.peekSmallest()?.[0];
-      if(!index) {
+      if (!index) {
         return true;
       }
       await api.graph.getOlderSiblings(ship, name, pageSize, `/${index.toString()}`);
@@ -131,7 +117,12 @@ function ChatResource(props: ChatResourceProps) {
 
   const onSubmit = useCallback((contents: Content[]) => {
     const { ship, name } = resourceFromPath(resource);
-    api.graph.addPost(ship, name, createPost(window.ship, contents))
+    api.graph.addPost(ship, name, createPost(window.ship, contents));
+  }, [resource]);
+
+  const onDelete = useCallback((msg: Post) => {
+    const { ship, name } = resourceFromPath(resource);
+    api.graph.removePosts(ship, name, [msg.index]);
   }, [resource]);
 
   const dismissUnread = useCallback(() => {
@@ -156,6 +147,7 @@ function ChatResource(props: ChatResourceProps) {
       api={api}
       canWrite={canWrite}
       onReply={onReply}
+      onDelete={onDelete}
       fetchMessages={fetchMessages}
       dismissUnread={dismissUnread}
       getPermalink={getPermalink}
@@ -164,6 +156,6 @@ function ChatResource(props: ChatResourceProps) {
       promptShare={toShare}
     />
   );
-}
+};
 
 export { ChatResource };

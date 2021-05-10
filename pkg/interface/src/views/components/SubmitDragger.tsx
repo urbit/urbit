@@ -1,6 +1,5 @@
-import React, { ReactElement } from 'react';
-
 import { Box, Text } from '@tlon/indigo-react';
+import React, { ReactElement } from 'react';
 
 const SubmitDragger = (): ReactElement => (
   <Box

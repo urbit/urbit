@@ -1,15 +1,6 @@
-import React from "react";
-
-import { Row, Icon, Box, Col, Text } from "@tlon/indigo-react";
-
-import GlobalApi from "~/logic/api/global";
-import { StoreState } from "~/logic/store/type";
-import DisplayForm from "./lib/DisplayForm";
-import S3Form from "./lib/S3Form";
-import SecuritySettings from "./lib/Security";
-import { NotificationPreferences } from "./lib/NotificationPref";
-import { CalmPrefs } from "./lib/CalmPref";
-import { Link } from "react-router-dom";
+import { Box, Col, Row, Text } from '@tlon/indigo-react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 export function SettingsItem(props: {
   title: string;
@@ -46,7 +37,7 @@ export default function Settings(props: {}) {
         display="grid"
         width="100%"
         height="100%"
-        gridTemplateColumns={["100%", "1fr 1fr"]}
+        gridTemplateColumns={['100%', '1fr 1fr']}
         gridGap="3"
       >
         <SettingsItem

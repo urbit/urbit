@@ -1,9 +1,9 @@
+import { BaseLabel, Col, Label, Text } from '@tlon/indigo-react';
+import { Association } from '@urbit/api';
 import React, { useRef } from 'react';
-import { Col, Text, BaseLabel, Label } from '@tlon/indigo-react';
 import GlobalApi from '~/logic/api/global';
-import { Association, NotificationGraphConfig } from '@urbit/api';
-import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 import useHarkState from '~/logic/state/hark';
+import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 
 interface ChannelNotificationsProps {
   api: GlobalApi;
