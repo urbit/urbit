@@ -75,7 +75,12 @@
   =/  grp=(unit group)
     (scry-group rid)
   ?~  grp  ~
-  =*  group   u.grp
+  (role-for-ship-with-group u.grp rid ship)
+::
+++  role-for-ship-with-group
+  |=  [grp=group rid=resource =ship]
+  ^-  (unit (unit role-tag))
+  =*  group   grp
   =*  policy  policy.group
   =*  tags    tags.group
   =/  admins=(set ^ship)
@@ -106,8 +111,13 @@
   ^-  (set ship)
   =/  grp=(unit group)
    (scry-group rid)
-  ?~  grp   ~
-  (~(get ju tags.u.grp) tag)
+  ?~  grp    ~
+  (get-tagged-ships-with-group u.grp rid tag)
+::
+++  get-tagged-ships-with-group
+  |=  [grp=group rid=resource =tag]
+  ^-  (set ship)
+  (~(get ju tags.grp) tag)
 ::
 ++  is-managed
   |=  rid=resource
