@@ -26,6 +26,8 @@
       state-one
   ==
 ::
+::  TODO: come back to this and potentially use send a %t
+::  to be notified of validator changes
 +$  cache
   $:  graph-to-mark=(map resource:res (unit mark))
       perm-marks=(map [mark @tas] tube:clay)

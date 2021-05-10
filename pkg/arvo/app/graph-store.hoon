@@ -23,6 +23,8 @@
   $:  validators=(map mark dais:clay)
   ==
 ::
+::  TODO: come back to this and potentially use ford runes or otherwise
+::  send a %t to be notified of validator changes
 +$  inflated-state
   $:  state-5
       cache
