@@ -172,7 +172,7 @@ function DaySection({
       {_.map(timeboxes.sort(sortTimeboxes), ([date, nots], i: number) =>
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
           <Notification
-            key={getNotificationKey(time, not)}
+            key={getNotificationKey(date, not)}
             api={api}
             notification={not}
             archived={archive}
