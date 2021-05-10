@@ -73,11 +73,11 @@ const useSettingsState = createState<SettingsState>('Settings', {
     joined: undefined
   },
   keyboard: {
-    cycleForward: 'ctrl+n',
-    cycleBack: 'ctrl+p',
-    navForward: 'ctrl+f',
-    navBack: 'ctrl+b',
-    hideSidebar: 'ctrl+h'
+    cycleForward: 'ctrl+\'',
+    cycleBack: 'ctrl+;',
+    navForward: 'ctrl+[',
+    navBack: 'ctrl+[',
+    hideSidebar: 'ctrl+\\'
   }
 });
 
