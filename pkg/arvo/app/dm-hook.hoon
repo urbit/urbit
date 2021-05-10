@@ -39,7 +39,7 @@
   |^
   %+  poke-our:pass  %graph-store
   %+  update:cg:gra  now.bowl
-  :+  %add-graph  [our.bowl %inbox]
+  :+  %add-graph  [our.bowl %dm-inbox]
   [graph `%graph-validator-dm %.n]
   ::
   ++  dm-parser
@@ -88,7 +88,7 @@
     =+  !<(=update:store vase)
     ?+    -.q.update  !!
         %add-nodes
-      ?>  ?=([@ %inbox] resource.q.update)
+      ?>  ?=([@ %dm-inbox] resource.q.update)
       =^  cards  state
         ?:  =(our.bowl src.bowl)
           (outgoing-add (hash-and-sign nodes.q.update))
@@ -132,7 +132,7 @@
     :_  state(screened (~(del by screened) ship))
     %+  welp  (add-missing-root ship)
     :~  %+  poke-our:pass  %graph-store 
-        (update:cg:gra now.bowl %add-nodes [our.bowl %inbox] unscreened)
+        (update:cg:gra now.bowl %add-nodes [our.bowl %dm-inbox] unscreened)
         ::
         (give %accept ship)
     ==
@@ -159,12 +159,12 @@
     |=  =ship
     =/  =index:store
       [ship ~]
-    (check-node-existence:gra [our.bowl %inbox] index)
+    (check-node-existence:gra [our.bowl %dm-inbox] index)
   ::
   ++  add-node
     |=  [=index:store =node:store]
     ^-  update:store
-    :^  now.bowl  %add-nodes  [our.bowl %inbox]
+    :^  now.bowl  %add-nodes  [our.bowl %dm-inbox]
     (~(gas by *nodes) [index node] ~)
   ::
   ++  add-missing-root
@@ -234,7 +234,7 @@
     %+  snoc  (add-missing-root ship)
     %+  poke-our:pass  %graph-store
     %+  update:cg:gra  now.bowl
-    [%add-nodes [our.bowl %inbox] (normalize-incoming nodes)]
+    [%add-nodes [our.bowl %dm-inbox] (normalize-incoming nodes)]
   --
 ::
 ++  on-watch  
@@ -265,7 +265,7 @@
   :_  ~
   =+  indices=(~(gas in *(set index:store)) ~[ship acked] ~)
   %+  poke-our:pass  %graph-store
-  (update:cg:gra now.bowl %remove-posts [our.bowl %inbox] indices)
+  (update:cg:gra now.bowl %remove-posts [our.bowl %dm-inbox] indices)
   ::
   ++  remove-pending
     |=  =ship
