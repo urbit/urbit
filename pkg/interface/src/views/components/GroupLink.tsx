@@ -90,7 +90,8 @@ export function GroupLink(
                 <Box display='flex' alignItems='center'>
                   <Icon icon='Users' color='gray' mr='1' />
                   <Text fontSize='0'color='gray' >
-                    {preview.members} 
+                    {preview.members}
+                    {' '}
                     {preview.members > 1 ? 'peers' : 'peer'}
                   </Text>
                 </Box>
