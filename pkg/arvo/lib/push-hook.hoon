@@ -504,37 +504,32 @@
     ^-  [(list card:agent:gall) (unit vase)]
     =/  =path
       resource+(en-path:resource rid)
-    =/  =wire  (make-wire path)
     =*  ship   entity.rid
-    =/  out=[lis=(list card:agent:gall) tf-vas=(unit vase)]
+    =/  out=(pair (list card:agent:gall) (unit vase))
       ?.  =(our.bowl ship)
         ::  do not transform before forwarding
         ::
-        [~ `vas]
+        ``vas
       ::  use cached transform
       ::
-      ?^  tf-vas  [~ tf-vas]
+      ?^  tf-vas  `tf-vas
       ::  transform before poking store
       ::
       (transform-proxy-update:og vas)
-    =.  tf-vas  tf-vas.out
-    =.  lis  (weld lis lis.out)
-    ~|  "forwarding failed during transform. mark: {<p.cage>} resource: {<rid>}"
-    ?>  ?=(^ tf-vas)
-    =/  =dock
-      :-  ship
-      ?.  =(our.bowl ship)
-        ::  forward to host
-        ::
-        dap.bowl
-      ::  poke our store
+    ~|  "forwarding failed during transform. mark: {<p.cage>} rid: {<rid>}"
+    ?>  ?=(^ q.out)
+    :_  q.out
+    :_  (weld lis p.out)
+    =/  =wire  (make-wire path)
+    =-  [%pass wire %agent - %poke [current-version:ver u.q.out]]
+    :-  ship
+    ?.  =(our.bowl ship)
+      ::  forward to host
       ::
-      store-name.config
-    =/  cag=^cage
-      :-  current-version:ver
-      u.tf-vas
-    :_  tf-vas
-    [[%pass wire %agent dock %poke cag] lis]
+      dap.bowl
+    ::  poke our store
+    ::
+    store-name.config
   ::
   ++  ver-from-path
     |=  =path

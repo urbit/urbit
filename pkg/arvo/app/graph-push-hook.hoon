@@ -136,8 +136,6 @@
     |%
     ++  $
       ^-  (quip card (unit vase))
-      ::  TODO: scries are slow, we should find a way to cache this so as
-      ::  not to need to fetch it continually in the hot path
       =/  transform-cached  (~(has by transform-marks) u.mark)
       =/  =tube:clay
         ?:  transform-cached
@@ -394,8 +392,6 @@
   ~/  %is-allowed-add
   |=  [=resource:res nodes=(map index:store node:store)] 
   ^-  [? (list card)]
-  ::  TODO: extremely slow due to scries. This takes about ~30ms per
-  ::  %add-nodes event.
   |^
   %-  (bond |.([%.n ~]))
   %+  biff  (get-roles-writers-variation resource)
@@ -426,7 +422,6 @@
       [%.n ~]
     ?.  =(author.p.post.node src.bowl)
       [%.n ~]
-    ::  TODO: these scries are slow, find a way to persistently cache them
     =/  added
       %^  add-mark  resource  vip
       (node-to-indexed-post node)
