@@ -403,9 +403,9 @@
   |-  ^-  [? (list card)]
   ?~  a  [& cards]
   =/  c  (check i.a is-admin writers vip)
-  =.  cards  (weld cards +.c)
-  ?.  -.c  [| cards]
-  $(a t.a)
+  ?.  -.c
+    [| (weld cards +.c)]
+  $(a t.a, cards (weld cards +.c))
   ::
   ++  check
     |=  $:  [=index:store =node:store]
@@ -461,9 +461,9 @@
   |-  ^-  [? (list card)]
   ?~  a  [& cards]
   =/  c  (check i.a is-admin writers vip)
-  =.  cards  (weld cards +.c)
-  ?.  -.c  [| cards]
-  $(a t.a)
+  ?.  -.c
+    [| (weld cards +.c)]
+  $(a t.a, cards (weld cards +.c))
   ::
   ++  check
     |=  [=index:store is-admin=? writers=(set ship) vip=vip-metadata:metadata]
@@ -475,7 +475,7 @@
     =/  removed
       %^  remove-mark  resource  vip
       (node-to-indexed-post node)
-    =*  permissions  -.removed
+    =*  permissions   -.removed
     =*  cards         +.removed
     =/  =permission-level:store
       (get-permission permissions is-admin writers)
