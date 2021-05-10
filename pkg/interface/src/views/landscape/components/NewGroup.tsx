@@ -6,7 +6,7 @@ import {
 import { Enc, GroupPolicy } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
@@ -32,7 +32,8 @@ interface NewGroupProps {
 }
 
 export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactElement {
-  const { api, history } = props;
+  const { api } = props;
+  const history = useHistory();
   const initialValues: FormSchema = {
     title: '',
     description: '',
