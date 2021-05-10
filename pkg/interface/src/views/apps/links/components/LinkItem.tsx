@@ -1,15 +1,16 @@
 import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, Group } from '@urbit/api';
+import { Association, GraphNode, Group, UrlContent } from '@urbit/api';
 import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
-import { getPermalinkForGraph, referenceToPermalink } from '~/logic/lib/permalinks';
+import { getPathForPermalink, getPermalinkForGraph, referenceToPermalink } from '~/logic/lib/permalinks';
 import { useCopy } from '~/logic/lib/useCopy';
 import useHarkState from '~/logic/state/hark';
 import Author from '~/views/components/Author';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
+import {StatelessAsyncAction} from '~/views/components/StatelessAsyncAction';
 import { PermalinkEmbed } from '../../permalinks/embed';
 
 interface LinkItemProps {
@@ -26,6 +27,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
     path,
     ...rest
   } = props;
+  const history = useHistory();
 
   if (typeof node.post === 'string' || !node.post) {
     return <Redirect to="/~404" />;
@@ -34,9 +36,19 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
   const remoteRef = useRef<typeof RemoteContent | null>(null);
   const index = node.post.index.split('/')[1];
 
-  const markRead = useCallback(() => {
-    api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
+  const markRead = useCallback(async () => {
+    await api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
   }, [association, index]);
+
+  const goLink = useCallback(() => {
+    const content = node.post.contents[1];
+    markRead();
+    if('reference' in content) {
+      history.push(getPathForPermalink(referenceToPermalink(content).link));
+    } else if( 'url' in content) {
+      window.open(content.url);
+    }
+  }, [history, markRead, node]);
 
   useEffect(() => {
     function onBlur() {
@@ -118,7 +130,8 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
         borderRadius={2}
         alignItems="flex-start"
         overflow="hidden"
-        onClick={markRead}
+        cursor="pointer"
+        onClick={goLink}
       >
         <Text p={2}>{contents[0].text}</Text>
         { 'reference' in contents[1] ? (
@@ -199,7 +212,9 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
             <Row alignItems="center" p={1}>
               <Action bg="white" m={1} color="black" onClick={doCopyNode}>{nodeText}</Action>
             </Row>
-
+            <Row alignItems="center" p={1}>
+              <StatelessAsyncAction bg="white" m={1} color="black" onClick={markRead}>Mark as Read</StatelessAsyncAction>
+            </Row>
             {(ourRole === 'admin' || node.post.author === window.ship) &&
               <Row alignItems="center" p={1}>
                 <Action bg="white" m={1} color="red" destructive onClick={deleteLink}>Delete Link</Action>

@@ -18,6 +18,10 @@ function getPermalinkForAssociatedGroup(group: string) {
   return `web+urbitgraph://group/${ship}/${name}`;
 }
 
+export function getPathForPermalink(permalink: string) {
+  return `/perma${permalink.slice(16)}`;
+}
+
 type Permalink = GraphPermalink | GroupPermalink;
 
 interface GroupPermalink {
