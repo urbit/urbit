@@ -275,20 +275,23 @@ const renderers = {
   },
   emphasis: ({ children }) => {
     return (
-    <Text fontStyle="italic" fontSize="1" lineHeight={'20px'}>
+    <Text fontStyle="italic" fontSize="1" lineHeight="tall">
         {children}
     </Text>
     )
   },
-  blockquote: ({ children, tall, ...rest }) => {
+  blockquote: ({ children, depth, tall, ...rest }) => {
+    if(depth > 1) {
+      return children;
+    }
+    
     return (
       <Text
-        lineHeight="20px"
+        lineHeight="tall"
         display="block"
         borderLeft="1px solid"
         color="black"
         paddingLeft={2}
-        py="1"
         mb="1"
       >
         {children}
@@ -297,7 +300,7 @@ const renderers = {
   },
   paragraph: ({ children }) => {
     return (
-      <Text fontSize="1" lineHeight={'20px'}>
+      <Text fontSize="1" lineHeight="tall">
         {children}
       </Text>
     );
@@ -384,7 +387,16 @@ const renderers = {
            {children}
         </Box>
       : <Box>{children}</Box>,
-  text: ({ value }) => value,
+  text: ({ value }) => (
+    <>
+      {value.split('\n').map((v,idx) => (
+        <React.Fragment key={idx}>
+          {idx !== 0 ? <br /> : null}
+          {v}
+        </React.Fragment>
+      ))}
+    </>
+  ),
 };
 
 export function Graphdown<T extends {} = {}>(
