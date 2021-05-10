@@ -79,7 +79,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ?.  =(mark %gph-cache-action)
+  ?.  =(mark %graph-cache-hook)
     [~ this]
   =/  a=cache-action  !<(cache-action vase)
   =*  c                +.state
@@ -159,13 +159,13 @@
       %-  zing
       :~  ?:  mark-cached   ~
           :_  ~
-          %+  poke-self:pass:io  %gph-cache-action
+          %+  poke-self:pass:io  %graph-cache-hook
           !>  ^-  cache-action
           [%graph-to-mark rid mark]
         ::
           ?:  transform-cached   ~
           :_  ~
-          %+  poke-self:pass:io  %gph-cache-action
+          %+  poke-self:pass:io  %graph-cache-hook
           !>  ^-  cache-action
           [%transform-marks u.mark tube]
       ==
@@ -329,13 +329,13 @@
   %-  zing
   :~  ?:  mark-cached   ~
       :_  ~
-      %+  poke-self:pass:io  %gph-cache-action
+      %+  poke-self:pass:io  %graph-cache-hook
       !>  ^-  cache-action
       [%graph-to-mark resource mark]
     ::
       ?:  perms-cached  ~
       :_  ~
-      %+  poke-self:pass:io  %gph-cache-action
+      %+  poke-self:pass:io  %graph-cache-hook
       !>  ^-  cache-action
       [%perm-marks [u.mark (perm-mark-name perm)] tube]
   ==
