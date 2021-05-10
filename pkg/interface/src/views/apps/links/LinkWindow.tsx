@@ -82,7 +82,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
     }
     return (
       <Box ref={ref}>
-        <LinkItem key={index.toString()} {...linkProps} />;
+        <LinkItem key={index.toString()} {...linkProps} />
       </Box>
     );
   });
