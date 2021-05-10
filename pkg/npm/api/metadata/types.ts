@@ -1,3 +1,4 @@
+import { Resource } from "..";
 import { AppName, Path, Patp } from "../lib";
 
 export type MetadataUpdate =
@@ -48,8 +49,6 @@ export type AppAssociations = {
   [p in Path]: Association;
 }
 
-
-
 export type Association = MdResource & {
   group: Path;
   metadata: Metadata;
@@ -67,10 +66,20 @@ export interface Metadata {
   'date-created': string;
   description: string;
   title: string;
-  module: string;
+  config: MetadataConfig;
   picture: string;
+  hidden: boolean;
   preview: boolean;
   vip: PermVariation;
 }
 
-export type PermVariation = '' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';
+type MetadataConfig = GroupConfig | GraphConfig;
+
+interface GroupConfig {
+  group: null | Record<string, string> | Resource;
+}
+interface GraphConfig {
+  graph: string;
+}
+
+export type PermVariation = '' | ' ' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';

@@ -1,8 +1,9 @@
-import { Post, GraphNode, TextContent } from '@urbit/api';
+import { Content, GraphNode, Post, TextContent } from '@urbit/api';
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import bigInt, { BigInteger } from 'big-integer';
 import { buntPost } from '~/logic/lib/post';
 import { unixToDa } from '~/logic/lib/util';
-import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
-import bigInt, { BigInteger } from 'big-integer';
+import tokenizeMessage from './tokenizeMessage';
 
 export function newPost(
   title: string,
@@ -19,13 +20,15 @@ export function newPost(
     signatures: []
   };
 
+  const tokenisedBody = tokenizeMessage(body);
+
   const revContainer: Post = { ...root, index: root.index + '/1' };
   const commentsContainer = { ...root, index: root.index + '/2' };
 
   const firstRevision: Post = {
     ...revContainer,
     index: revContainer.index + '/1',
-    contents: [{ text: title }, { text: body }]
+    contents: [{ text: title }, ...tokenisedBody]
   };
 
   const nodes = {
@@ -54,11 +57,12 @@ export function newPost(
 
 export function editPost(rev: number, noteId: BigInteger, title: string, body: string) {
   const now = Date.now();
+  const tokenisedBody = tokenizeMessage(body);
   const newRev: Post = {
     author: `~${window.ship}`,
     index: `/${noteId.toString()}/1/${rev}`,
     'time-sent': now,
-    contents: [{ text: title }, { text: body }],
+    contents: [{ text: title }, ...tokenisedBody],
     hash: null,
     signatures: []
   };
@@ -85,8 +89,9 @@ export function getLatestRevision(node: GraphNode): [number, string, string, Pos
   if (!rev) {
     return empty;
   }
-  const [title, body] = rev.post.contents as TextContent[];
-  return [revNum.toJSNumber(), title.text, body.text, rev.post];
+  const title = rev.post.contents[0];
+  const body = rev.post.contents.slice(1);
+  return [revNum.toJSNumber(), title.text, body, rev.post];
 }
 
 export function getLatestCommentRevision(node: GraphNode): [number, Post] {
@@ -113,10 +118,12 @@ export function getComments(node: GraphNode): GraphNode {
   return comments;
 }
 
-export function getSnippet(body: string) {
-  const newlineIdx = body.indexOf('\n', 2);
-  const end = newlineIdx > -1 ? newlineIdx : body.length;
-  const start = body.substr(0, end);
+export function getSnippet(body: Content[]) {
+  const firstContent = body
+    .filter((c: Content): c is TextContent => 'text' in c).map(c => c.text)[0] ?? '';
+  const newlineIdx = firstContent.indexOf('\n', 2);
+  const end = newlineIdx > -1 ? newlineIdx : firstContent.length;
+  const start = firstContent.substr(0, end);
 
-  return (start === body || start.startsWith('![')) ? start : `${start}...`;
+  return (start === firstContent || firstContent.startsWith('![')) ? start : `${start}...`;
 }

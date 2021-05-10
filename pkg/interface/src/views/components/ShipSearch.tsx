@@ -1,31 +1,26 @@
-import React, {
-  useMemo,
-  useCallback,
-  ChangeEvent,
-  useRef,
-  ReactElement
-} from 'react';
+import {
+  Col,
+  ErrorLabel, Icon, Label,
+
+  Row, Text
+} from '@tlon/indigo-react';
+import { Groups, Rolodex } from '@urbit/api';
+import { FieldArray, useFormikContext } from 'formik';
 import _ from 'lodash';
+import React, {
+  ChangeEvent,
+
+  ReactElement, useCallback, useMemo,
+
+  useRef
+} from 'react';
 import ob from 'urbit-ob';
 import * as Yup from 'yup';
-import { FieldArray, useFormikContext } from 'formik';
-
-import {
-  Label,
-  Icon,
-  Text,
-  Row,
-  Col,
-  ErrorLabel
-} from '@tlon/indigo-react';
-import { Rolodex, Groups } from '@urbit/api';
-
-
-import { DropdownSearch } from './DropdownSearch';
 import { cite, deSig } from '~/logic/lib/util';
-import { HoverBox } from './HoverBox';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import { DropdownSearch } from './DropdownSearch';
+import { HoverBox } from './HoverBox';
 
 interface InviteSearchProps<I extends string> {
   autoFocus?: boolean;

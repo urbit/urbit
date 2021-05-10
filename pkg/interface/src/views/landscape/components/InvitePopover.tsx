@@ -1,26 +1,24 @@
-import React, { useCallback, useRef } from 'react';
-import _ from 'lodash';
-import { Switch, Route, useHistory } from 'react-router-dom';
-import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
 import {
-  ManagedTextInputField as Input,
   Box,
-  Text,
-  Col,
-  Row
-} from '@tlon/indigo-react';
 
-import { ShipSearch } from '~/views/components/ShipSearch';
+  Col, ManagedTextInputField as Input,
+
+  Row, Text
+} from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
-import { AsyncButton } from '~/views/components/AsyncButton';
-import { useOutsideClick } from '~/logic/lib/useOutsideClick';
-import { FormError } from '~/views/components/FormError';
-import { resourceFromPath } from '~/logic/lib/group';
+import { Form, Formik } from 'formik';
+import _ from 'lodash';
+import React, { useCallback, useRef } from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom';
+import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
-import { Groups, Rolodex } from '@urbit/api';
+import { resourceFromPath } from '~/logic/lib/group';
+import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { deSig } from '~/logic/lib/util';
 import { Workspace } from '~/types/workspace';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { FormError } from '~/views/components/FormError';
+import { ShipSearch } from '~/views/components/ShipSearch';
 
 interface InvitePopoverProps {
   baseUrl: string;
@@ -44,7 +42,7 @@ export function InvitePopover(props: InvitePopoverProps) {
   const { baseUrl, api, association } = props;
 
   const relativePath = (p: string) => baseUrl + p;
-  const { title } = association?.metadata || '';
+  const { title } = association?.metadata || { title: '' };
   const innerRef = useRef(null);
   const history = useHistory();
 

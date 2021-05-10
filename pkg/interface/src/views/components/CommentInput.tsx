@@ -1,8 +1,8 @@
+import { ManagedTextAreaField as TextArea } from '@tlon/indigo-react';
+import { Form, Formik, FormikHelpers, useFormikContext } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
-import { Formik, FormikHelpers, Form, useFormikContext } from 'formik';
 import { AsyncButton } from './AsyncButton';
-import { ManagedTextAreaField as TextArea } from '@tlon/indigo-react';
 
 interface FormSchema {
   comment: string;

@@ -16,7 +16,7 @@ function sortBigInt(a: BigInteger, b: BigInteger) {
 }
 export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   root: Record<string, V> = {}
-  cachedIter: [BigInteger, V][] = [];
+  cachedIter: [BigInteger, V][] = null;
   [immerable] = true;
 
   constructor(items: [BigInteger, V][] = []) {
@@ -65,10 +65,11 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   }
 
   delete(key: BigInteger) {
-    return produce(this, draft => {
+    const result = produce(this, draft => {
       delete draft.root[key.toString()];
       draft.cachedIter = null;
     });
+    return result;
   }
 
   [Symbol.iterator](): IterableIterator<[BigInteger, V]> {
@@ -108,7 +109,7 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
       return [num, this.root[key]] as [BigInteger, V];
     }).sort(([a], [b]) => sortBigInt(a,b));
     this.cachedIter = result;
-    return result;
+    return [...result];
   }
 }
 

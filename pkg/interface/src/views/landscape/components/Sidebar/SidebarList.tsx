@@ -1,5 +1,5 @@
 import React, { ReactElement, useCallback, useEffect } from 'react';
-import { Associations, AppAssociations, Groups, Rolodex } from '@urbit/api';
+import { AppAssociations, Groups, Rolodex } from '@urbit/api';
 
 import { alphabeticalOrder, getResourcePath, modulo } from '~/logic/lib/util';
 import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';

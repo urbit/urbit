@@ -1,9 +1,11 @@
 import { AppName, Path, Poke, uxToHex, PatpNoSig } from "../lib";
 import { Association, Metadata, MetadataUpdate, MetadataUpdateAdd, MetadataUpdateRemove } from './types';
 
-export const metadataAction = <T extends MetadataUpdate>(data: T): Poke<T> => ({
+export const METADATA_UPDATE_VERSION = 1;
+
+export const metadataAction = <T extends MetadataUpdate>(data: T, version: number = METADATA_UPDATE_VERSION): Poke<T> => ({
   app: 'metadata-push-hook',
-  mark: 'metadata-update',
+  mark: `metadata-update-${version}`,
   json: data
 });
 
@@ -30,8 +32,9 @@ export const add = (
       color,
       'date-created': dateCreated,
       creator: `~${ship}`,
-      'module': moduleName,
+      config: { graph: moduleName },
       picture: '',
+      hidden: false,
       preview: false,
       vip: ''
     }

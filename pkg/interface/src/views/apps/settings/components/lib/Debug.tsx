@@ -1,18 +1,18 @@
-import { BaseInput, Box, Col, Text } from "@tlon/indigo-react";
-import _ from "lodash";
-import React, { useCallback, useState } from "react";
-import { UseStore } from "zustand";
-import { BaseState } from "~/logic/state/base";
-import useContactState from "~/logic/state/contact";
-import useGraphState from "~/logic/state/graph";
-import useGroupState from "~/logic/state/group";
-import useHarkState from "~/logic/state/hark";
-import useInviteState from "~/logic/state/invite";
-import useLaunchState from "~/logic/state/launch";
-import useMetadataState from "~/logic/state/metadata";
-import useSettingsState from "~/logic/state/settings";
-import useStorageState from "~/logic/state/storage";
-import { BackButton } from "./BackButton";
+import { BaseInput, Box, Col, Text } from '@tlon/indigo-react';
+import _ from 'lodash';
+import React, { useCallback, useState } from 'react';
+import { UseStore } from 'zustand';
+import { BaseState } from '~/logic/state/base';
+import useContactState from '~/logic/state/contact';
+import useGraphState from '~/logic/state/graph';
+import useGroupState from '~/logic/state/group';
+import useHarkState from '~/logic/state/hark';
+import useInviteState from '~/logic/state/invite';
+import useLaunchState from '~/logic/state/launch';
+import useMetadataState from '~/logic/state/metadata';
+import useSettingsState from '~/logic/state/settings';
+import useStorageState from '~/logic/state/storage';
+import { BackButton } from './BackButton';
 
 interface StoreDebuggerProps {
   name: string;
@@ -27,7 +27,7 @@ const StoreDebugger = (props: StoreDebuggerProps) => {
   const [filter, setFilter] = useState('');
   const [text, setText] = useState(objectToString(state));
   const [visible, setVisible] = useState(false);
-  
+
   const tryFilter = useCallback((filterToTry) => {
     let output: any = false;
     try {
@@ -39,7 +39,6 @@ const StoreDebugger = (props: StoreDebuggerProps) => {
       setFilter(filterToTry);
     }
   }, [state, filter, text]);
-  
 
   return (
     <Box p={1}>
@@ -57,14 +56,15 @@ const StoreDebugger = (props: StoreDebuggerProps) => {
           fontSize={1}
           placeholder="Drill Down"
           width="100%"
-          onKeyUp={event => {
+          onKeyUp={(event) => {
             if (event.target.value) {
               tryFilter(event.target.value);
             } else {
               setFilter('');
               setText(objectToString(state));
             }
-          }} />
+          }}
+        />
         <Text mono p='1' borderRadius='1' display='block' overflow='auto' backgroundColor='washedGray' style={{ whiteSpace: 'pre', wordWrap: 'break-word' }}>{text}</Text>
       </Box>}
     </Box>
@@ -95,7 +95,7 @@ const DebugPane = () => {
         <StoreDebugger name="Storage" useStore={useStorageState} />
       </Col>
     </>
-  )
+  );
 };
 
 export default DebugPane;

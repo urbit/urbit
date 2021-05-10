@@ -1,11 +1,9 @@
-import React, { ReactElement } from 'react';
-
 import {
-  StatelessToggleSwitchField as Toggle,
-  LoadingSpinner,
+  LoadingSpinner, StatelessToggleSwitchField as Toggle,
+
   Text
 } from '@tlon/indigo-react';
-
+import React, { ReactElement } from 'react';
 import { useStatelessAsyncClickable } from '~/logic/lib/useStatelessAsyncClickable';
 
 interface AsyncToggleProps {
@@ -24,11 +22,11 @@ export function StatelessAsyncToggle({
   } = useStatelessAsyncClickable(onClick, name);
 
   return state === 'error' ? (
-    <Text mr="2">Error</Text>
+    <Text>Error</Text>
   ) : state === 'loading' ? (
-    <LoadingSpinner mr="2" foreground={'white'} background="gray" />
+    <LoadingSpinner foreground={'white'} background="gray" />
   ) : state === 'success' ? (
-    <Text mr="2">Done</Text>
+    <Text mx="2">Done</Text>
   ) : (
     <Toggle onClick={handleClick} {...rest} />
   );
