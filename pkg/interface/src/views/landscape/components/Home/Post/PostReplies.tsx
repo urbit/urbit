@@ -3,7 +3,7 @@ import bigInt from 'big-integer';
 import React from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
 import { Loading } from '~/views/components/Loading';
-import { PostFeed } from './PostFeed';
+import PostFeed from './PostFeed';
 import PostItem from './PostItem/PostItem';
 
 export default function PostReplies(props) {

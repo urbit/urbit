@@ -3,7 +3,7 @@ import { Association, Graph, Group } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { Loading } from '~/views/components/Loading';
-import { PostFeed } from './PostFeed';
+import PostFeed from './PostFeed';
 import PostInput from './PostInput';
 
 interface PostTimelineProps {

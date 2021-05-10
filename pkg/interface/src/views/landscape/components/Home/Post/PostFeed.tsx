@@ -2,6 +2,7 @@ import { Box, Col } from '@tlon/indigo-react';
 import { Association, Graph, GraphNode, Group } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
+import { withRouter } from 'react-router';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import VirtualScroller from '~/views/components/VirtualScroller';
@@ -15,7 +16,7 @@ interface PostFeedProps {
   graph: Graph;
   graphPath: string;
   api: GlobalApi;
-  history?: History;
+  history: History;
   baseUrl: string;
   parentNode?: GraphNode;
   grandparentNode?: GraphNode;
@@ -25,7 +26,7 @@ interface PostFeedProps {
   pendingSize: number;
 }
 
-export class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
+class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
   isFetching: boolean;
   constructor(props) {
     super(props);
@@ -187,3 +188,5 @@ export class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
     );
   }
 }
+
+export default withRouter(PostFeed);

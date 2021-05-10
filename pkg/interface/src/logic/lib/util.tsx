@@ -424,10 +424,10 @@ export const useHovering = (): useHoveringInterface => {
 };
 
 export function withHovering<T>(Component: React.ComponentType<T>) {
-  const { hovering, bind } = useHovering();
-  return (props: T) => (
-    <Component hovering={hovering} {...bind} {...props} />
-  )
+  return React.forwardRef((props, ref) => {
+    const { hovering, bind } = useHovering();
+    return <Component ref={ref} hovering={hovering} bind={bind} {...props} />
+  })
 }
 
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
