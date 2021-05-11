@@ -6,7 +6,16 @@
 =>  ::  Utilities
     ::
     |%
-    ++  extract
+    ::  FIXME: import tx-status, pend-tx from aggregator
+    ::
+    +$  tx-status
+      $:  status=?(%unknown %pending %sent %confirmed %failed)
+          tx=(unit @ux)
+      ==
+    ::
+    +$  pend-tx  [force=? =raw-tx:naive]
+    ::
+    ++  from-json
       |%
       ++  keys
         |=  params=(map @t json)
@@ -54,9 +63,7 @@
         ^-  (unit @ux)
         ?~  data=(~(get by params) 'data')  ~
         =;  ans=(unit (unit @ux))
-          ?~  ans  ~
-          ?~  u.ans  ~
-          (some u.u.ans)
+          ?~(ans ~ u.ans)
         =,  dejs-soft:format
         %.  u.data
         (ot ['address' (cu to-hex so)]~)
@@ -72,7 +79,6 @@
       ++  sig
         |=  params=(map @t json)
         ^-  (unit @)
-        =,  dejs-soft:format
         ?~  sig=(~(get by params) 'sig')  ~
         (so:dejs-soft:format u.sig)
       ::
@@ -86,118 +92,152 @@
         :~  ['ship' (su ;~(pfix sig fed:ag))]
             ['proxy' (cu proxy:naive so)]
         == 
+      ::
+      ++  keccak
+        |=  params=(map @t json)
+        ^-  (unit @ux)
+        ?~  keccak=(~(get by params) 'keccak')  ~
+        =;  ans=(unit (unit @ux))
+          ?~(ans ~ u.ans)
+        =,  dejs-soft:format
+        ((cu to-hex so) u.keccak)
       --
     ::
-    ++  pending-to-json
-      |=  pending=(list tx:naive)
-      ^-  json
-      =,  enjs:format
-      :-  %a
-      %+  turn  pending
-      |=  =tx:naive
-      ^-  json
-      |^
-      =,  enjs:format
-      %-  pairs
-      :~  ['tx' (parse-tx +.tx)]
-        ::
-          :-  'from'
-          %-  pairs
-          ~[['ship' (ship ship.from.tx)] ['proxy' s+proxy.from.tx]]
-      ==
-      ::
-      ++  parse-tx
-        |=  tx=skim-tx:naive
+    ++  to-json
+      |%
+      ++  pending
+        |=  pending=(list pend-tx)
         ^-  json
+        =,  enjs:format
+        :-  %a
+        %+  turn  pending
+        |=  pend-tx
+        ^-  json
+        =,  enjs:format
         %-  pairs
-        :~  ['type' s+-.tx]
+        :~  ['force' b+force]
           ::
-            :-  'data'
+            :-  'raw-tx'
             %-  pairs
-            ?-  -.tx
-              %transfer-point        (en-transfer +.tx)
-              %spawn                 (en-spawn +.tx)
-              %configure-keys        (en-keys +.tx)
-              %escape                ~[(en-ship parent.tx)]
-              %cancel-escape         ~[(en-ship parent.tx)]
-              %adopt                 ~[(en-ship ship.tx)]
-              %reject                ~[(en-ship ship.tx)]
-              %detach                ~[(en-ship ship.tx)]
-              %set-management-proxy  ~[(en-address address.tx)]
-              %set-spawn-proxy       ~[(en-address address.tx)]
-              %set-transfer-proxy    ~[(en-address address.tx)]
+            :~  ['sig' (numb sig.raw-tx)]
+                ['tx' (tx:to-json tx.raw-tx)]
         ==  ==
       ::
-      ++  en-ship      |=(s=@p ship+(ship s))
-      ++  en-address   |=(a=@ux address+s+(crip "0x{((x-co:co 20) a)}"))
-      ++  en-spawn     |=([s=@p a=@ux] ~[(en-ship s) (en-address a)])
-      ++  en-transfer  |=([a=@ux r=?] ~[(en-address a) reset+b+r])
-      ++  en-keys      
-        |=  [encrypt=@ auth=@ crypto-suite=@ breach=?]
-        ^-  (list [@t json])
-        :~  ['encrypt' (numb encrypt)]
-            ['auth' (numb auth)]
-            ['crypto-suite' (numb crypto-suite)]
-            ['breach' b+breach]
+      ++  tx
+        |=  =tx:naive
+        ^-  json
+        =,  enjs:format
+        |^
+        %-  pairs
+        :~  ['tx' (parse-tx +.tx)]
+          ::
+            :-  'from'
+            %-  pairs
+            ~[['ship' (ship ship.from.tx)] ['proxy' s+proxy.from.tx]]
         ==
-      --
-    ::
-    ++  point-to-json
-      |=  =point:naive
-      ^-  json
-      =,  enjs:format
-      |^
-      %-  pairs
-      :~  ['dominion' s+dominion.point]
         ::
-          :-  'ownership' 
+        ++  parse-tx
+          |=  tx=skim-tx:naive
+          ^-  json
           %-  pairs
-          =*  own  own.point
+          :~  ['type' s+-.tx]
+            ::
+              :-  'data'
+              %-  pairs
+              ?-  -.tx
+                %transfer-point        (en-transfer +.tx)
+                %spawn                 (en-spawn +.tx)
+                %configure-keys        (en-keys +.tx)
+                %escape                ~[(en-ship parent.tx)]
+                %cancel-escape         ~[(en-ship parent.tx)]
+                %adopt                 ~[(en-ship ship.tx)]
+                %reject                ~[(en-ship ship.tx)]
+                %detach                ~[(en-ship ship.tx)]
+                %set-management-proxy  ~[(en-address address.tx)]
+                %set-spawn-proxy       ~[(en-address address.tx)]
+                %set-transfer-proxy    ~[(en-address address.tx)]
+          ==  ==
+        ::
+        ++  en-ship      |=(s=@p ship+(ship s))
+        ++  en-address   |=(a=@ux address+s+(crip "0x{((x-co:co 20) a)}"))
+        ++  en-spawn     |=([s=@p a=@ux] ~[(en-ship s) (en-address a)])
+        ++  en-transfer  |=([a=@ux r=?] ~[(en-address a) reset+b+r])
+        ++  en-keys      
+          |=  [encrypt=@ auth=@ crypto-suite=@ breach=?]
           ^-  (list [@t json])
-          :~  ['owner' (own-to-json owner.own)]
-              ['spawnProxy' (own-to-json spawn-proxy.own)]
-              ['managementProxy' (own-to-json management-proxy.own)]
-              ['votingProxy' (own-to-json voting-proxy.own)]
-              ['transferProxy' (own-to-json transfer-proxy.own)]
+          :~  ['encrypt' (numb encrypt)]
+              ['auth' (numb auth)]
+              ['crypto-suite' (numb crypto-suite)]
+              ['breach' b+breach]
           ==
-        ::
-          :-  'network'
-          %-  pairs
-          =*  net  net.point
-          :*  ['rift' (numb rift.net)]
-            ::
-              :-  'keys'
-              %-  pairs
-              :~  ['life' (numb life.keys.net)]
-                  ['suite' (numb suite.keys.net)]
-                  ['auth' (numb auth.keys.net)]
-                  ['crypt' (numb crypt.keys.net)]
-              ==
-            ::
-              ['rift' (numb rift.net)]
-              :-  'sponsor'
-              %-  pairs
-              ~[['has' b+has.sponsor.net] ['who' (ship who.sponsor.net)]]
-            ::
-              ?~  escape.net  ~
-              ['escape' (ship u.escape.net)]~
-      ==  ==
+        --
+      ::
+      ++  txs
+        |=  txs=(list tx:naive)
+        ^-  json
+        a+(turn txs |=(=tx:naive (tx:to-json tx)))
+      ::
+      ++  point
+        |=  =point:naive
+        ^-  json
+        =,  enjs:format
+        %-  pairs
+        :~  ['dominion' s+dominion.point]
+          ::
+            :-  'ownership' 
+            %-  pairs
+            =*  own  own.point
+            ^-  (list [@t json])
+            :~  ['owner' (ownership owner.own)]
+                ['spawnProxy' (ownership spawn-proxy.own)]
+                ['managementProxy' (ownership management-proxy.own)]
+                ['votingProxy' (ownership voting-proxy.own)]
+                ['transferProxy' (ownership transfer-proxy.own)]
+            ==
+          ::
+            :-  'network'
+            %-  pairs
+            =*  net  net.point
+            :*  ['rift' (numb rift.net)]
+              ::
+                :-  'keys'
+                %-  pairs
+                :~  ['life' (numb life.keys.net)]
+                    ['suite' (numb suite.keys.net)]
+                    ['auth' (numb auth.keys.net)]
+                    ['crypt' (numb crypt.keys.net)]
+                ==
+              ::
+                ['rift' (numb rift.net)]
+                :-  'sponsor'
+                %-  pairs
+                ~[['has' b+has.sponsor.net] ['who' (ship who.sponsor.net)]]
+              ::
+                ?~  escape.net  ~
+                ['escape' (ship u.escape.net)]~
+        ==  ==
       :: 
-      ++  own-to-json
+      ++  ownership
         |=  [=address:naive =nonce:naive]
         ^-  json
+        =,  enjs:format 
         %-  pairs
         :~  ['address' s+(crip "0x{((x-co:co 20) address)}")]
-            ['nonce' (numb:enjs:format nonce)]
+            ['nonce' (numb nonce)]
+        ==
+      ::  
+      ++  tx-status
+        |=  =^tx-status
+        ^-  json
+        =,  enjs:format
+        %-  pairs
+        :~  ['status' s+status.tx-status]
+          ::
+            :-  'tx' 
+            ?~  tx.tx-status  ~ 
+            s+(crip "0x{((x-co:co 20) u.tx.tx-status)}")
         ==
       --
-    ::
-    ++  txs-to-json
-      ::  TODO: implement me!
-      ::
-      |=  txs=(list [tx:naive success=?])
-      ^-  json
-      ~
     ::
     ++  to-hex
       |=  =cord
@@ -208,33 +248,37 @@
         ~
       (some q.u.parsed)
     ::
-    ++  sponsor-call
-      |=  [id=@t params=(map @t json)]
-      ^-  [(unit cage) response:rpc]
-      ?.  =((lent ~(tap by params)) 3)  
-        [~ ~(params error id)]
-      =/  sig=(unit @)                  (sig:extract params)
-      =/  from=(unit [@p proxy:naive])  (from:extract params)
-      =/  data=(unit [@ux @p])          (address-ship:extract params)
-      ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))  
-        [~ ~(parse error id)]
-      :_  [%result id s+'ok']
-      %-  some 
-      noun+!>([u.sig u.from u.data])
-    ::
-    ++  proxy-call
-      |=  [id=@t params=(map @t json)]
-      ^-  [(unit cage) response:rpc]
-      ?.  =((lent ~(tap by params)) 3)  
-        [~ ~(params error id)]
-      =/  sig=(unit @)                  (sig:extract params)
-      =/  from=(unit [@p proxy:naive])  (from:extract params)
-      =/  data=(unit @ux)               (address:extract params)
-      ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))  
-        [~ ~(parse error id)]
-      :_  [%result id s+'ok']
-      %-  some 
-      noun+!>([u.sig u.from u.data])
+    ++  rpc-res
+      |%
+      ++  sponsor
+        |=  [id=@t params=(map @t json)]
+        ^-  [(unit cage) response:rpc]
+        ?.  =((lent ~(tap by params)) 3)  
+          [~ ~(params error id)]
+        =/  sig=(unit @)                  (sig:from-json params)
+        =/  from=(unit [@p proxy:naive])  (from:from-json params)
+        =/  data=(unit [@ux @p])          (address-ship:from-json params)
+        ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))  
+          [~ ~(parse error id)]
+        :_  [%result id s+'ok']
+        %-  some 
+        noun+!>([u.sig u.from u.data])
+      ::
+      ++  proxy
+        |=  [id=@t params=(map @t json)]
+        ^-  [(unit cage) response:rpc]
+        ?.  =((lent ~(tap by params)) 3)  
+          [~ ~(params error id)]
+        =/  sig=(unit @)                  (sig:from-json params)
+        =/  from=(unit [@p proxy:naive])  (from:from-json params)
+        =/  data=(unit @ux)               (address:from-json params)
+        ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))  
+          [~ ~(parse error id)]
+        :_  [%result id s+'ok']
+        %-  some 
+        noun+!>([u.sig u.from u.data])
+      ::
+      --
     ::
     ++  error
       |_  id=@t
@@ -260,16 +304,16 @@
     ~(params error id)
   ?~  point=(scry u.ship)  
     ~(params error id)
-  [%result id (point-to-json u.point)]
+  [%result id (point:to-json u.point)]
 ::
 ++  transfer-point
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]
   ?.  =((lent ~(tap by params)) 3)  
     [~ ~(params error id)]
-  =/  sig=(unit @)           (sig:extract params)
-  =/  from=(unit [ship @t])  (from:extract params)
-  =/  data=(unit [@ux ?])    (address-transfer:extract params)
+  =/  sig=(unit @)           (sig:from-json params)
+  =/  from=(unit [ship @t])  (from:from-json params)
+  =/  data=(unit [@ux ?])    (address-transfer:from-json params)
   ?:  |(?=(~ sig) ?=(~ from) ?=(~ data))  
     [~ ~(parse error id)]
   :_  [%result id s+'ok']
@@ -281,25 +325,25 @@
   ^-  [(unit cage) response:rpc]
   ?.  =((lent ~(tap by params)) 3)  
     [~ ~(params error id)]
-  =/  sig=(unit @)            (sig:extract params)
-  =/  from=(unit [ship @t])   (from:extract params)
+  =/  sig=(unit @)            (sig:from-json params)
+  =/  from=(unit [ship @t])   (from:from-json params)
   =/  data=(unit [encrypt=@ auth=@ crypto-suite=@ breach=?])
-    (keys:extract params)
+    (keys:from-json params)
   ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))  
     [~ ~(parse error id)]
   :_  [%result id s+'ok']
   %-  some 
   noun+!>([u.sig u.from u.data])
 ::
-++  spawn             sponsor-call
-++  escape            sponsor-call
-++  cancel-escape     sponsor-call
-++  adopt             sponsor-call
-++  detach            sponsor-call
-++  reject            sponsor-call
-++  management-proxy  proxy-call
-++  spawn-proxy       proxy-call
-++  transfer-proxy    proxy-call
+++  spawn             sponsor:rpc-res
+++  escape            sponsor:rpc-res
+++  cancel-escape     sponsor:rpc-res
+++  adopt             sponsor:rpc-res
+++  detach            sponsor:rpc-res
+++  reject            sponsor:rpc-res
+++  management-proxy  proxy:rpc-res
+++  spawn-proxy       proxy:rpc-res
+++  transfer-proxy    proxy:rpc-res
 :: - readNonce(from=[ship proxy]) -> @  :: automatically increment for pending wraps
 ::
 ++  read-nonce
@@ -307,7 +351,7 @@
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 3)  
     ~(params error id)
-  ?~  from=(from:extract params)
+  ?~  from=(from:from-json params)
     ~(parse error id)
   ?~  nonce=(scry u.from)  
     ~(params error id)
@@ -317,49 +361,56 @@
   ::  FIXME: send raw-tx (i.e. tx with signature) instead?
   ::
   |%
-  :: - readPendingRoll() -> (list tx)
+  :: - readPendingRoll() -> (list pend-tx)
   ::
-  ++  all
-    |=  [id=@t params=(map @t json) pending=(list tx:naive)]
+  ++  all 
+    |=  [id=@t params=(map @t json) pending=(list pend-tx)]
     ^-  response:rpc
     ?.  =((lent ~(tap by params)) 0)  
       ~(params error id)
-    [%result id (pending-to-json pending)]
-  ::
-  :: - readPendingByShip(ship) -> (list tx)
+    [%result id (pending:to-json pending)]
+  :: - readPendingByShip(ship) -> (list pend-tx)
   ::
   ++  ship
-    |=  [id=@t params=(map @t json) scry=$-(@p (list tx:naive))]
+    |=  [id=@t params=(map @t json) scry=$-(@p (list pend-tx))]
     ^-  response:rpc
     ?.  =((lent ~(tap by params)) 1)  
       ~(params error id)
-    ?~  ship=(ship:extract params)
+    ?~  ship=(ship:from-json params)
       ~(parse error id)
-    [%result id (pending-to-json (scry u.ship))]
-  ::
-  :: - readPendingByAddress(address) -> (list tx)
+    [%result id (pending:to-json (scry u.ship))]
+  :: - readPendingByAddress(address) -> (list pend-tx)
   ::
   ++  addr
-    |=  [id=@t params=(map @t json) scry=$-(@ux (list tx:naive))]
+    |=  [id=@t params=(map @t json) scry=$-(@ux (list pend-tx))]
     ^-  response:rpc
     ?.  =((lent ~(tap by params)) 1)  
       ~(params error id)
-    ?~  address=(address:extract params)
+    ?~  address=(address:from-json params)
       ~(parse error id)
-    [%result id (pending-to-json (scry u.address))]
+    [%result id (pending:to-json (scry u.address))]
   --
 ::
-++  history
-  |=  $:  id=@t 
-          params=(map @t json) 
-          ::  FIXME: use proper type from aggregator/index
-          ::
-          scry=$-([@p proxy:naive] (list [tx:naive success=?]))
-      ==
+++  status
+  |=  [id=@t params=(map @t json) scry=$-(@ tx-status)]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 1)  
     ~(params error id)
-  ?~  from=(from:extract params)
+  ?~  keccak=(keccak:from-json params)
     ~(parse error id)
-  [%result id (txs-to-json (scry u.from))]
+  [%result id (tx-status:to-json (scry u.keccak))]
+::
+:: ++  history
+::   |=  $:  id=@t 
+::           params=(map @t json) 
+::           ::  FIXME: use proper type from aggregator/index
+::           ::
+::           scry=$-([@p proxy:naive] (list tx:naive))
+::       ==
+::   ^-  response:rpc
+::   ?.  =((lent ~(tap by params)) 1)  
+::     ~(params error id)
+::   ?~  from=(from:from-json params)
+::     ~(parse error id)
+::   [%result id (txs:to-json (scry u.from))]
 --
