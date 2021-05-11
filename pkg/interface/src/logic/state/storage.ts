@@ -1,4 +1,4 @@
-import { BaseState, createState } from "./base";
+import { BaseState, createState } from './base';
 
 export interface GcpToken {
   accessKey: string;
@@ -17,7 +17,7 @@ export interface StorageState extends BaseState<StorageState> {
     };
     credentials: any | null; // TODO better type
   }
-};
+}
 
 const useStorageState = createState<StorageState>('Storage', {
   gcp: {},
@@ -26,7 +26,7 @@ const useStorageState = createState<StorageState>('Storage', {
       buckets: new Set(),
       currentBucket: ''
     },
-    credentials: null,
+    credentials: null
   }
 }, ['s3']);
 

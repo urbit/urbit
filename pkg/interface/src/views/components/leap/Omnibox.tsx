@@ -1,32 +1,30 @@
+import { Box, Row, Text } from '@tlon/indigo-react';
+import { omit } from 'lodash';
+import Mousetrap from 'mousetrap';
 import React, {
-  useMemo,
+  ReactElement, useCallback,
+  useEffect, useMemo,
   useRef,
-  useCallback,
-  useEffect,
+
   useState
 } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import * as ob from 'urbit-ob';
-import Mousetrap from 'mousetrap';
-import { omit } from 'lodash';
-
-import { Box, Row, Text } from '@tlon/indigo-react';
-import makeIndex from '~/logic/lib/omnibox';
-import OmniboxInput from './OmniboxInput';
-import OmniboxResult from './OmniboxResult';
-import { deSig } from '~/logic/lib/util';
-import { withLocalState } from '~/logic/state/local';
-
 import defaultApps from '~/logic/lib/default-apps';
+import makeIndex from '~/logic/lib/omnibox';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
-import { Portal } from '../Portal';
-import useSettingsState, { SettingsState } from '~/logic/state/settings';
+import { deSig } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
 import useLaunchState from '~/logic/state/launch';
+import { withLocalState } from '~/logic/state/local';
 import useMetadataState from '~/logic/state/metadata';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
+import { Portal } from '../Portal';
+import OmniboxInput from './OmniboxInput';
+import OmniboxResult from './OmniboxResult';
 
 interface OmniboxProps {
   show: boolean;
@@ -268,10 +266,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   );
 
   useEffect(() => {
-    const flattenedResultLinks = Array.from(results.values())
+    const flattenedResultLinks: [string, string][] = Array.from(results.values())
       .flat()
       .map(result => [result.app, result.link]);
-    if (!flattenedResultLinks.includes(selected)) {
+    if (!flattenedResultLinks.includes(selected as [string, string])) {
       setSelected(flattenedResultLinks[0] || []);
     }
   }, [results]);
@@ -304,8 +302,8 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         maxHeight={['200px', '400px']}
         overflowY='auto'
         overflowX='hidden'
-        borderBottomLeftRadius='2'
-        borderBottomRightRadius='2'
+        borderBottomLeftRadius={2}
+        borderBottomRightRadius={2}
       >
         {SEARCHED_CATEGORIES.map(category =>
           Object({ category, categoryResults: results.get(category) })
@@ -314,7 +312,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
           .map(({ category, categoryResults }, i) => {
             const categoryTitle =
               category === 'other' ? null : (
-                <Row pl='2' height='5' alignItems='center' bg='washedGray'>
+                <Row pl={2} height={5} alignItems='center' bg='washedGray'>
                   <Text gray bold>
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                   </Text>
@@ -351,8 +349,8 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         width='100%'
         height='100%'
         position='absolute'
-        top='0'
-        right='0'
+        top={0}
+        right={0}
         zIndex={11}
         display={props.show ? 'block' : 'none'}
       >
@@ -361,7 +359,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
             mt={['10vh', '20vh']}
             width='max(50vw, 300px)'
             maxWidth='600px'
-            borderRadius='2'
+            borderRadius={2}
             backgroundColor='white'
             ref={(el) => {
               omniboxRef.current = el;
