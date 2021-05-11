@@ -1,5 +1,6 @@
 import { GraphNode } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import BigIntArrayOrderedMap from '@urbit/api/lib/BigIntArrayOrderedMap';
 import bigInt, { BigInteger } from 'big-integer';
 import produce from 'immer';
 import _ from 'lodash';
@@ -22,6 +23,12 @@ export const GraphReducer = (json) => {
   if(loose) {
     reduceState<GraphState, any>(useGraphState, loose, [addNodesLoose]);
   }
+
+  const flat = _.get(json, 'graph-update-flat', false);
+  if (flat) {
+    reduceState<GraphState, any>(useGraphState, loose, [addNodesFlat]);
+  }
+
 };
 
 const addNodesLoose = (json: any, state: GraphState): GraphState => {
@@ -35,6 +42,45 @@ const addNodesLoose = (json: any, state: GraphState): GraphState => {
       indices[index] = processNode(node);
     });
     _.set(state.looseNodes, [resource], indices);
+  }
+  return state;
+};
+
+const addNodesFlat = (json: any, state: GraphState): GraphState => {
+  const data = _.get(json, 'add-nodes', false);
+  if (data) {
+    if (!('flatGraphs' in state)) {
+      return state;
+    }
+
+    const resource = data.resource.ship + '/' + data.resource.name;
+    if (!(resource in state.flatGraphs)) {
+      state.flatGraphs[resource] = new BigIntArrayOrderedMap();
+    }
+    const indices = Array.from(Object.keys(data.nodes));
+
+    indices.forEach((index) => {
+      const node = data.nodes[index];
+      if (index.split('/').length === 0) {
+       return;
+      }
+
+      const indexArr = index.split('/').slice(1).map((ind) => {
+        return bigInt(ind);
+      });
+
+      if (indexArr.length === 0) {
+       return state;
+      }
+
+      state.flatGraphs[resource] =
+        state.flatGraphs[resource].set(
+          indexArr,
+          produce(node, (draft) => {
+            draft.children = mapifyChildren({});
+          })
+        );
+    });
   }
   return state;
 };

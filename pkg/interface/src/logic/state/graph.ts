@@ -2,6 +2,7 @@ import { Association, deSig, GraphNode, Graphs, resourceFromPath } from '@urbit/
 import { useCallback } from 'react';
 import { BaseState, createState } from './base';
 
+
 export interface GraphState extends BaseState<GraphState> {
   graphs: Graphs;
   graphKeys: Set<string>;
@@ -10,6 +11,7 @@ export interface GraphState extends BaseState<GraphState> {
       [index: string]: GraphNode;
     }
   };
+  flatGraphs: FlatGraphs;
   pendingIndices: Record<string, any>;
   graphTimesentMap: Record<string, any>;
   // getKeys: () => Promise<void>;
