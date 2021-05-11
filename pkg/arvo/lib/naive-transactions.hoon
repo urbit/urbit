@@ -1,7 +1,7 @@
 /+  naive, ethereum
 ::  Types
 |%
-+$  address  @ux
++$  address  address:ethereum
 +$  nonce    @ud
 +$  proxy    ?(%own %spawn %manage %vote %transfer)
 +$  skp      [=ship pk=@ =proxy]

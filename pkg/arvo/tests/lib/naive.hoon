@@ -94,7 +94,7 @@
     (log lost-sponsor:log-names:naive *@ux lost parent ~)
   ::
   ++  changed-keys
-    |=  [=ship encr=@ auth=@ suite=@ life=@]
+    |=  [=ship suite=@ encr=@ auth=@ life=@]
     =/  keys=@ux
       %:  can  8
         1^life
@@ -240,7 +240,7 @@
 ::
 ++  test-l1-changed-keys  ^-  tang
   =/  life          1
-  =/  new-keys      [~bud encr auth suit life]
+  =/  new-keys      [~bud suit encr auth life]
   ::
   %+  expect-eq
     !>  [suit auth encr]
@@ -386,7 +386,7 @@
     state
 ::
 ++  test-marbud-l2-change-keys  ^-  tang
-  =/  new-keys       [%configure-keys encr auth suit |]
+  =/  new-keys       [%configure-keys suit encr auth |]
   =/  marbud-mproxy  [%set-management-proxy (addr %marbud-mkey)]
   ::
   ;:  weld
@@ -415,7 +415,7 @@
 :: TODO: transfer breach via transfer proxy
 ++  test-marbud-l2-proxies-transfer  ^-  tang
   =/  marbud-t1                  [~marbud %marbud-key-1 %transfer]
-  =/  new-keys                   [%configure-keys encr auth suit |]
+  =/  new-keys                   [%configure-keys suit encr auth |]
   =/  marbud-sproxy              [%set-spawn-proxy (addr %marbud-skey)]
   =/  marbud-mproxy              [%set-management-proxy (addr %marbud-mkey)]
   =/  marbud-tproxy              [%set-transfer-proxy (addr %marbud-key-1)]
@@ -492,8 +492,8 @@
 :: TODO: life+rift changes via transfer proxy
 ::
 ++  test-marbud-keys-life-rift  ^-  tang
-  =/  new-keys-no-reset       [%configure-keys encr auth suit |]
-  =/  new-keys-yes-reset      [%configure-keys encr auth suit &]
+  =/  new-keys-no-reset       [%configure-keys suit encr auth |]
+  =/  new-keys-yes-reset      [%configure-keys suit encr auth &]
   =/  zero-keys-no-reset      [%configure-keys 0 0 0 |]
   =/  zero-keys-yes-reset     [%configure-keys 0 0 0 &]
   ::
@@ -535,8 +535,8 @@
   ==
 ::
 ++  test-marbud-transfer-life-rift  ^-  tang
-  =/  new-keys-no-reset           [%configure-keys encr auth suit |]
-  =/  new-keys-yes-reset          [%configure-keys encr auth suit &]
+  =/  new-keys-no-reset           [%configure-keys suit encr auth |]
+  =/  new-keys-yes-reset          [%configure-keys suit encr auth &]
   =/  zero-keys-no-reset          [%configure-keys 0 0 0 |]
   =/  zero-keys-yes-reset         [%configure-keys 0 0 0 &]
   =/  marbud-transfer-no-breach   [%transfer-point (addr %marbud-key-1) |]
