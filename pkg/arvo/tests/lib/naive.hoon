@@ -1,6 +1,13 @@
 /+  *test, naive, ethereum, azimuth
+::
+::  Types
 |%
-++  address  @ux
++$  address  @ux
++$  nonce    @ud
++$  skp      [=ship pk=@ proxy=@tas]
+--
+::
+|%
 ++  n  |=([=^state:naive =^input:naive] (%*(. naive lac |) verifier 1.337 +<))
 ::  TODO: does this uniquely produce the pubkey?
 ::
@@ -82,7 +89,7 @@
    [:(welp f1 f2) state]
 ::
 ++  sign-tx
-  |=  [pk=@ nonce=@ud tx=octs]  ^-  octs
+  |=  [pk=@ =nonce tx=octs]  ^-  octs
   =/  prepared-data  (prepare-for-sig 1.337 nonce tx)
   =/  sign-data
     =/  len  (rsh [3 2] (scot %ui p.prepared-data))
@@ -97,7 +104,7 @@
   (cad:naive 3 1^v 32^s 32^r tx ~)
 ::
 ++  prepare-for-sig
-  |=  [chain-id=@ud nonce=@ud tx=octs]
+  |=  [chain-id=@ud =nonce tx=octs]
   ^-  octs
   =/  chain-t  (rsh [3 2] (scot %ui chain-id))
   %:  cad:naive  3
@@ -185,11 +192,12 @@
   |%
   ::
   ++  spawn
-    |=  [nonce=@ud parent=ship pk=@ proxy=@tas child=ship =address]  ^-  octs
-    %^  sign-tx  pk  nonce
+::    |=  [=nonce parent=ship pk=@ proxy=@tas child=ship =address]  ^-  octs
+    |=  [=nonce =skp child=ship =address]  ^-  octs
+    %^  sign-tx  pk.skp  nonce
     %:  cad:naive  3
-      (from-proxy:bits proxy)
-      4^parent
+      (from-proxy:bits proxy.skp)
+      4^ship.skp
       1^%1                                       :: %spawn
       4^child
       20^address
@@ -197,25 +205,25 @@
     ==
   ::
   ++  transfer-point
-    |=  [nonce=@ud =ship pk=@ proxy=@tas =address reset=?]  ^-  octs
-    %^  sign-tx  pk  nonce
+    |=  [=nonce =skp =address reset=?]  ^-  octs
+    %^  sign-tx  pk.skp  nonce
     %:  cad:naive  3
-      (from-proxy:bits proxy)
-      4^ship
+      (from-proxy:bits proxy.skp)
+      4^ship.skp
       1^(can 0 7^%0 1^reset ~)                   :: %transfer-point
       20^address
       ~
     ==
   ::
   ++  configure-keys
-    |=  $:  nonce=@ud  =ship  pk=@  proxy=@tas
+    |=  $:  =nonce  =skp
             encrypt=@  auth=@  crypto-suite=@  breach=?
         ==
     ^-  octs
-    %^  sign-tx  pk  nonce
+    %^  sign-tx  pk.skp  nonce
     %:  cad:naive  3
-      (from-proxy:bits proxy)
-      4^ship
+      (from-proxy:bits proxy.skp)
+      4^ship.skp
       1^(can 0 7^%2 1^breach ~)                 :: %configure-keys
       32^encrypt
       32^auth
@@ -224,45 +232,45 @@
     ==
   ::
   ++  escape
-    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  octs
-    %^  sign-tx  pk  nonce
-    (take-escape:bits %escape child proxy parent)
+    |=  [=nonce =skp parent=ship]  ^-  octs
+    %^  sign-tx  pk.skp  nonce
+    (take-escape:bits %escape ship.skp proxy.skp parent)
   ::
   ++  cancel-escape
-    |=  [nonce=@ud child=ship pk=@ proxy=@tas parent=ship]  ^-  octs
-    %^  sign-tx  pk  nonce
-    (take-escape:bits %cancel-escape child proxy parent)
+    |=  [=nonce =skp parent=ship]  ^-  octs
+    %^  sign-tx  pk.skp  nonce
+    (take-escape:bits %cancel-escape ship.skp proxy.skp parent)
   ::
   ++  adopt
-    |=  [nonce=@ud parent=ship pk=@ proxy=@tas child=ship]  ^-  octs
-    %^  sign-tx  pk  nonce
-    (take-escape:bits %adopt parent proxy child)
+    |=  [=nonce =skp child=ship]  ^-  octs
+    %^  sign-tx  pk.skp  nonce
+    (take-escape:bits %adopt ship.skp proxy.skp child)
   ::
   ++  reject
-    |=  [nonce=@ud parent=ship pk=@ proxy=@tas child=ship]  ^-  octs
-    %^  sign-tx  pk  nonce
-    (take-escape:bits %reject parent proxy child)
+    |=  [=nonce =skp child=ship]  ^-  octs
+    %^  sign-tx  pk.skp  nonce
+    (take-escape:bits %reject ship.skp proxy.skp child)
   ::
   ++  detach
-    |=  [nonce=@ud parent=ship pk=@ proxy=@tas child=ship]  ^-  octs
-    %^  sign-tx  pk  nonce
-    (take-escape:bits %detach parent proxy child)
+    |=  [=nonce =skp child=ship]  ^-  octs
+    %^  sign-tx  pk.skp  nonce
+    (take-escape:bits %detach ship.skp proxy.skp child)
   ::
   ++  set-management-proxy
-    |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  octs
-    %^  sign-tx  pk  nonce
+    |=  [=nonce =skp =address]  ^-  octs
+    %^  sign-tx  pk.skp  nonce
     ^-  octs
-    (take-ship-address:bits %set-management-proxy ship proxy address)
+    (take-ship-address:bits %set-management-proxy ship.skp proxy.skp address)
   ::
   ++  set-spawn-proxy
-    |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  octs
-    %^  sign-tx  pk  nonce
-    (take-ship-address:bits %set-spawn-proxy ship proxy address)
+    |=  [=nonce =skp =address]  ^-  octs
+    %^  sign-tx  pk.skp  nonce
+    (take-ship-address:bits %set-spawn-proxy ship.skp proxy.skp address)
   ::
   ++  set-transfer-proxy
-    |=  [nonce=@ud =ship pk=@ proxy=@tas =address]  ^-  octs
-    %^  sign-tx  pk  nonce
-    (take-ship-address:bits %set-transfer-proxy ship proxy address)
+    |=  [=nonce =skp =address]  ^-  octs
+    %^  sign-tx  pk.skp  nonce
+    (take-ship-address:bits %set-transfer-proxy ship.skp proxy.skp address)
   ::
   ++  bits
     ::
@@ -331,6 +339,16 @@
 ++  auth    (shax 'You cant know that this sentence is true.')
 ++  suit     1
 ::
+++  marbud-own  [~marbud %marbud-key-0 %own]
+++  marbud-spn  [~marbud %marbud-skey %spawn]
+++  marbud-mgt  [~marbud %marbud-mkey %manage]
+::
+++  dopbud-own  [~dopbud %dopbud-key-0 %own]
+::
+++  litbud-own  [~litbud %litbud-key-0 %own]
+::
+++  lt-own      [~linnup-torsyx %lt-key-0 %own]
+++  lt-xfr      [~linnup-torsyx %lt-key-0 %transfer]
 --
 ::
 :: Tests
@@ -363,8 +381,8 @@
     dominion:(~(got by points.state) ~marbud)
 ::
 ++  test-batch  ^-  tang
-  =/  marbud-transfer    [~marbud %marbud-key-0 %own (addr %marbud-key-0) |]
-  =/  marbud-transfer-2  [~marbud %marbud-key-0 %own (addr %marbud-key-1) |]
+  =/  marbud-transfer    [marbud-own (addr %marbud-key-0) |]
+  =/  marbud-transfer-2  [marbud-own (addr %marbud-key-1) |]
   ::
   %+  expect-eq
     !>  [(addr %marbud-key-1) 2]
@@ -477,7 +495,7 @@
 ::  TODO: sponsorship tests for l1 planets, and L1/L2 sponsorship tests
 ::
 ++  test-l2-set-spawn-proxy  ^-  tang
-  =/  marbud-sproxy  [~marbud %marbud-key-0 %own (addr %marbud-skey)]
+  =/  marbud-sproxy  [marbud-own (addr %marbud-skey)]
   ::
   %+  expect-eq
     !>  [(addr %marbud-skey) 0]
@@ -489,7 +507,7 @@
     spawn-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-set-transfer-proxy  ^-  tang
-  =/  marbud-tproxy  [~marbud %marbud-key-0 %own (addr %marbud-tkey)]
+  =/  marbud-tproxy  [marbud-own (addr %marbud-tkey)]
   ::
   %+  expect-eq
     !>  [(addr %marbud-tkey) 0]
@@ -501,7 +519,7 @@
     transfer-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-set-management-proxy  ^-  tang
-  =/  marbud-mproxy  [~marbud %marbud-key-0 %own (addr %marbud-mkey)]
+  =/  marbud-mproxy  [marbud-own (addr %marbud-mkey)]
   ::
   %+  expect-eq
     !>  [(addr %marbud-mkey) 0]
@@ -522,9 +540,9 @@
     dominion:(~(got by points.state) ~dopbud)
 ::
 ++  test-marbud-l2-spawn  ^-  tang
-  =/  marbud-sproxy  [~marbud %marbud-key-0 %own (addr %marbud-skey)]
-  =/  lt-ospawn      [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-sspawn      [~marbud %marbud-skey %spawn ~linnup-torsyx (addr %lt-key-0)]
+  =/  marbud-sproxy  [marbud-own (addr %marbud-skey)]
+  =/  lt-ospawn      [marbud-own ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-sspawn      [marbud-spn ~linnup-torsyx (addr %lt-key-0)]
   ::
   ;:  weld
     %+  expect-eq
@@ -551,9 +569,9 @@
 ::
 ++  test-marbud-l2-double-spawn  ^-  tang
   ::  Attempts to spawn the same planet twice, once with ownership and once with spawn proxy
-  =/  marbud-sproxy  [~marbud %marbud-key-0 %own (addr %marbud-skey)]
-  =/  lt-ospawn      [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-sspawn      [~marbud %marbud-skey %spawn ~linnup-torsyx (addr %lt-key-1)]
+  =/  marbud-sproxy  [marbud-own (addr %marbud-skey)]
+  =/  lt-ospawn      [marbud-own ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-sspawn      [marbud-spn ~linnup-torsyx (addr %lt-key-1)]
   ::
   %-  expect-fail
     |.
@@ -565,9 +583,9 @@
     state
 ::
 ++  test-marbud-l2-change-keys  ^-  tang
-  =/  new-keys-own   [~marbud %marbud-key-0 %own encr auth suit |]
-  =/  new-keys-mgt   [~marbud %marbud-mkey %manage encr auth suit |]
-  =/  marbud-mproxy  [~marbud %marbud-key-0 %own (addr %marbud-mkey)]
+  =/  new-keys-own   [marbud-own encr auth suit |]
+  =/  new-keys-mgt   [marbud-mgt encr auth suit |]
+  =/  marbud-mproxy  [marbud-own (addr %marbud-mkey)]
   ::
   ;:  weld
     %+  expect-eq
@@ -594,11 +612,12 @@
 ::
 :: TODO: transfer breach via transfer proxy
 ++  test-marbud-l2-proxies-transfer  ^-  tang
-  =/  new-keys                [~marbud %marbud-key-0 %own encr auth suit |]
-  =/  marbud-sproxy           [~marbud %marbud-key-0 %own (addr %marbud-skey)]
-  =/  marbud-mproxy           [~marbud %marbud-key-0 %own (addr %marbud-mkey)]
-  =/  marbud-tproxy           [~marbud %marbud-key-0 %own (addr %marbud-key-1)]
-  =/  marbud-transfer-breach  [~marbud %marbud-key-1 %transfer (addr %marbud-key-1) &]
+  =/  new-keys                   [marbud-own encr auth suit |]
+  =/  marbud-sproxy              [marbud-own (addr %marbud-skey)]
+  =/  marbud-mproxy              [marbud-own (addr %marbud-mkey)]
+  =/  marbud-tproxy              [marbud-own (addr %marbud-key-1)]
+  =/  marbud-transfer-breach     [[~marbud %marbud-key-1 %transfer] (addr %marbud-key-1) &]
+  =/  marbud-transfer-no-breach  [[~marbud %marbud-key-1 %transfer] (addr %marbud-key-1) |]
   ::
   ;:  weld
     %+  expect-eq
@@ -631,7 +650,7 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys))
-      =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 %own (addr %marbud-key-0) &))
+      =^  f  state  (n state %bat q:(transfer-point:l2 1 marbud-own (addr %marbud-key-0) &))
       |1:keys.net:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -650,7 +669,7 @@
       =^  f  state  (n state %bat q:(set-spawn-proxy:l2 0 marbud-sproxy))
       =^  f  state  (n state %bat q:(set-management-proxy:l2 1 marbud-mproxy))
       =^  f  state  (n state %bat q:(set-transfer-proxy:l2 2 marbud-tproxy))
-      =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud %marbud-key-1 %transfer (addr %marbud-key-1) |))
+      =^  f  state  (n state %bat q:(transfer-point:l2 0 marbud-transfer-no-breach))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
       own:(~(got by points.state) ~marbud)
     ::
@@ -663,17 +682,17 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(configure-keys:l2 0 new-keys))
-      =^  f  state  (n state %bat q:(transfer-point:l2 1 ~marbud %marbud-key-0 %own (addr %marbud-key-0) |))
+      =^  f  state  (n state %bat q:(transfer-point:l2 1 marbud-own (addr %marbud-key-0) |))
       |1:keys.net:(~(got by points.state) ~marbud)
   ==
 ::
 :: TODO: life+rift changes via transfer proxy
 ::
 ++  test-marbud-keys-life-rift  ^-  tang
-  =/  new-keys-no-reset       [~marbud %marbud-key-0 %own encr auth suit |]
-  =/  new-keys-yes-reset      [~marbud %marbud-key-0 %own encr auth suit &]
-  =/  zero-keys-no-reset      [~marbud %marbud-key-0 %own 0 0 0 |]
-  =/  zero-keys-yes-reset     [~marbud %marbud-key-0 %own 0 0 0 &]
+  =/  new-keys-no-reset       [marbud-own encr auth suit |]
+  =/  new-keys-yes-reset      [marbud-own encr auth suit &]
+  =/  zero-keys-no-reset      [marbud-own 0 0 0 |]
+  =/  zero-keys-yes-reset     [marbud-own 0 0 0 &]
   ::
   ;:  weld
     %+  expect-eq
@@ -713,12 +732,12 @@
   ==
 ::
 ++  test-marbud-transfer-life-rift  ^-  tang
-  =/  new-keys-no-reset           [~marbud %marbud-key-0 %own encr auth suit |]
-  =/  new-keys-yes-reset          [~marbud %marbud-key-0 %own encr auth suit &]
-  =/  zero-keys-no-reset          [~marbud %marbud-key-0 %own 0 0 0 |]
-  =/  zero-keys-yes-reset         [~marbud %marbud-key-0 %own 0 0 0 &]
-  =/  marbud-transfer-no-breach   [~marbud %marbud-key-0 %own (addr %marbud-key-1) |]
-  =/  marbud-transfer-yes-breach  [~marbud %marbud-key-0 %own (addr %marbud-key-1) &]
+  =/  new-keys-no-reset           [marbud-own encr auth suit |]
+  =/  new-keys-yes-reset          [marbud-own encr auth suit &]
+  =/  zero-keys-no-reset          [marbud-own 0 0 0 |]
+  =/  zero-keys-yes-reset         [marbud-own 0 0 0 &]
+  =/  marbud-transfer-no-breach   [marbud-own (addr %marbud-key-1) |]
+  =/  marbud-transfer-yes-breach  [marbud-own (addr %marbud-key-1) &]
   ::
   ;:  weld
     %+  expect-eq
@@ -762,7 +781,7 @@
  ==
 ::
 ++  test-dopbud-l2-spawn  ^-  tang
-  =/  pp-spawn        [~dopbud %dopbud-key-0 %own ~palsep-picdun (addr %pp-key-0)]
+  =/  pp-spawn        [dopbud-own ~palsep-picdun (addr %pp-key-0)]
   ::
   %+  expect-eq
     !>  [`@ux`(addr %pp-key-0) 0]
@@ -774,8 +793,8 @@
     transfer-proxy.own:(~(got by points.state) ~palsep-picdun)
 ::
 ++  test-dopbud-l2-spawn-after-transfer  ^-  tang
-  =/  pp-spawn        [~dopbud %dopbud-key-0 %own ~palsep-picdun (addr %pp-key-0)]
-  =/  lr-spawn        [~dopbud %dopbud-key-1 %own ~laclur-rachul (addr %lr-key-0)]
+  =/  pp-spawn        [dopbud-own ~palsep-picdun (addr %pp-key-0)]
+  =/  lr-spawn        [[~dopbud %dopbud-key-1 %own] ~laclur-rachul (addr %lr-key-0)]
   ::
   %+  expect-eq
     !>  [`@ux`(addr %lr-key-0) 0]
@@ -819,8 +838,8 @@
 ::      state
 ::
 ++  test-linnup-torsyx-l2-transfer-ownership  ^-  tang
-  =/  lt-spawn                [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach  [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
+  =/  lt-spawn                [marbud-own ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-transfer-yes-breach  [lt-xfr (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  [`@ux`(addr %lt-key-0) 0]
@@ -833,8 +852,8 @@
     owner.own:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-palsep-picdun-l2-transfer-ownership  ^-  tang
-  =/  pp-spawn                [~dopbud %dopbud-key-0 %own ~palsep-picdun (addr %pp-key-0)]
-  =/  pp-transfer-yes-breach  [~palsep-picdun %pp-key-0 %transfer (addr %pp-key-0) &]
+  =/  pp-spawn                [dopbud-own ~palsep-picdun (addr %pp-key-0)]
+  =/  pp-transfer-yes-breach  [[~palsep-picdun %pp-key-0 %transfer] (addr %pp-key-0) &]
   %+  expect-eq
     !>  [`@ux`(addr %pp-key-0) 0]
   ::
@@ -847,8 +866,8 @@
 ::
 ++  test-linnup-torsyx-l2-escape-request  ^-  tang
   ::  TODO: Are you supposed to be able to request escape to a non-existent star?
-  =/  lt-spawn                   [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach     [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
+  =/  lt-spawn                   [marbud-own ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-transfer-yes-breach     [lt-xfr (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  [~ ~litbud]
@@ -859,12 +878,12 @@
     =^  f  state  (init-litbud state)
     =^  f  state  (n state %bat q:(spawn:l2 0 lt-spawn))
     =^  f  state  (n state %bat q:(transfer-point:l2 0 lt-transfer-yes-breach))
-    =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~litbud))
+    =^  f  state  (n state %bat q:(escape:l2 0 [lt-own] ~litbud))
     escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-cancel-escape-request  ^-  tang
-  =/  lt-spawn                   [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach     [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
+  =/  lt-spawn                   [marbud-own ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-transfer-yes-breach     [lt-xfr (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  ~
@@ -875,13 +894,13 @@
     =^  f  state  (init-litbud state)
     =^  f  state  (n state %bat q:(spawn:l2 0 lt-spawn))
     =^  f  state  (n state %bat q:(transfer-point:l2 0 lt-transfer-yes-breach))
-    =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~litbud))
-    =^  f  state  (n state %bat q:(cancel-escape:l2 1 ~linnup-torsyx %lt-key-0 %own ~litbud))
+    =^  f  state  (n state %bat q:(escape:l2 0 lt-own ~litbud))
+    =^  f  state  (n state %bat q:(cancel-escape:l2 1 lt-own ~litbud))
     escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-adopt-accept  ^-  tang
-  =/  lt-spawn                  [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
+  =/  lt-spawn                  [marbud-own ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-transfer-yes-breach    [lt-xfr (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  [~ %.y ~litbud]
@@ -892,15 +911,15 @@
     =^  f  state  (init-litbud state)
     =^  f  state  (n state %bat q:(spawn:l2 0 lt-spawn))
     =^  f  state  (n state %bat q:(transfer-point:l2 0 lt-transfer-yes-breach))
-    =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~litbud))
-    =^  f  state  (n state %bat q:(adopt:l2 0 ~litbud %litbud-key-0 %own ~linnup-torsyx))
+    =^  f  state  (n state %bat q:(escape:l2 0 lt-own ~litbud))
+    =^  f  state  (n state %bat q:(adopt:l2 0 litbud-own ~linnup-torsyx))
     [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-adopt-reject  ^-  tang
   ::  TODO: at the moment the default sponsor is always ~zod, but it should probably
   ::  be ~marbud here
-  =/  lt-spawn                  [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
+  =/  lt-spawn                  [marbud-own ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-transfer-yes-breach    [lt-xfr (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  ~
@@ -911,13 +930,13 @@
     =^  f  state  (init-litbud state)
     =^  f  state  (n state %bat q:(spawn:l2 0 lt-spawn))
     =^  f  state  (n state %bat q:(transfer-point:l2 0 lt-transfer-yes-breach))
-    =^  f  state  (n state %bat q:(escape:l2 0 ~linnup-torsyx %lt-key-0 %own ~litbud))
-    =^  f  state  (n state %bat q:(reject:l2 0 ~litbud %litbud-key-0 %own ~linnup-torsyx))
+    =^  f  state  (n state %bat q:(escape:l2 0 lt-own ~litbud))
+    =^  f  state  (n state %bat q:(reject:l2 0 litbud-own ~linnup-torsyx))
     escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-detach  ^-  tang
-  =/  lt-spawn                  [~marbud %marbud-key-0 %own ~linnup-torsyx (addr %lt-key-0)]
-  =/  lt-transfer-yes-breach    [~linnup-torsyx %lt-key-0 %transfer (addr %lt-key-0) &]
+  =/  lt-spawn                  [marbud-own ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-transfer-yes-breach    [lt-xfr (addr %lt-key-0) &]
   ::
   %+  expect-eq
     !>  [~ %.n ~marbud]
@@ -928,7 +947,7 @@
     =^  f  state  (init-litbud state)
     =^  f  state  (n state %bat q:(spawn:l2 0 lt-spawn))
     =^  f  state  (n state %bat q:(transfer-point:l2 0 lt-transfer-yes-breach))
-    =^  f  state  (n state %bat q:(detach:l2 1 ~marbud %marbud-key-0 %own ~linnup-torsyx))
+    =^  f  state  (n state %bat q:(detach:l2 1 marbud-own ~linnup-torsyx))
     [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
 ::
 ::  TODO: signature format changed; regenerate
