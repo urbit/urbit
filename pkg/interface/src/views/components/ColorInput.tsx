@@ -73,7 +73,7 @@ export function ColorInput(props: ColorInputProps) {
             height='100%'
             alignSelf='stretch'
             onChange={onChange}
-            value={`#${padded}`}
+            value={padded}
             disabled={disabled || false}
             type='color'
             opacity={0}

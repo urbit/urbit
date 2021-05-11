@@ -77,13 +77,13 @@ const StatusBar = (props) => {
       <Row collapse>
         <Button
           width='32px'
-          borderColor='washedGray'
+          borderColor='lightGray'
           mr='2'
           px='2'
           onClick={() => history.push('/')}
           {...props}
         >
-          <Icon icon='Spaces' color='black' />
+          <Icon icon='Dashboard' color='black' />
         </Button>
         <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
           {!doNotDisturb && (notificationsCount > 0 || invites.length > 0) && (
@@ -134,7 +134,7 @@ const StatusBar = (props) => {
           mr={2}
           onClick={() => props.history.push('/~landscape/messages')}
         >
-          <Icon icon='Users' />
+          <Icon icon='Messages' />
         </StatusBarItem>
         <Dropdown
           dropWidth='250px'

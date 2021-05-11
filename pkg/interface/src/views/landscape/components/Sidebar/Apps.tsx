@@ -18,7 +18,11 @@ export function useGraphModule(
       }
 
       const notifications = graphUnreads?.[s]?.['/']?.notifications;
-      if ( notifications > 0 ) {
+      if (
+        notifications &&
+        ((typeof notifications === 'number' && notifications > 0)
+        || notifications.length)
+      ) {
         return 'notification';
       }
 

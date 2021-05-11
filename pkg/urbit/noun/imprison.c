@@ -313,12 +313,17 @@ u3i_word(c3_w dat_w)
 u3_atom
 u3i_chub(c3_d dat_d)
 {
-  c3_w dat_w[2] = {
-    dat_d & 0xffffffffULL,
-    dat_d >> 32
-  };
+  if ( c3y == u3a_is_cat(dat_d) ) {
+    return (u3_atom)dat_d;
+  }
+  else {
+    c3_w dat_w[2] = {
+      dat_d & 0xffffffffULL,
+      dat_d >> 32
+    };
 
-  return u3i_words(2, dat_w);
+    return u3i_words(2, dat_w);
+  }
 }
 
 /* u3i_bytes(): Copy [a] bytes from [b] to an LSB first atom.

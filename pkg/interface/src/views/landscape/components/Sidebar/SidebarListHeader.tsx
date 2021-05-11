@@ -1,6 +1,6 @@
 import React, { ReactElement, useCallback } from 'react';
 import { FormikHelpers } from 'formik';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import {
   Row,
@@ -23,6 +23,8 @@ import GlobalApi from '~/logic/api/global';
 import { Workspace } from '~/types/workspace';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
+import {IS_SAFARI} from '~/logic/lib/platform';
+import useHarkState from '~/logic/state/hark';
 
 export function SidebarListHeader(props: {
   api: GlobalApi;
@@ -32,6 +34,7 @@ export function SidebarListHeader(props: {
   workspace: Workspace;
   handleSubmit: (c: SidebarListConfig) => void;
 }): ReactElement {
+  const history = useHistory();
   const onSubmit = useCallback(
     (values: SidebarListConfig, actions: FormikHelpers<SidebarListConfig>) => {
       props.handleSubmit(values);
@@ -44,23 +47,66 @@ export function SidebarListHeader(props: {
   const groupPath = getGroupFromWorkspace(props.workspace);
   const role = groupPath && groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
   const associations = useMetadataState(state => state.associations);
+
+  const metadata = associations?.groups?.[groupPath]?.metadata;
   const memberMetadata =
-    groupPath ? associations.groups?.[groupPath].metadata.vip === 'member-metadata' : false;
+    groupPath ? metadata.vip === 'member-metadata' : false;
 
   const isAdmin = memberMetadata || (role === 'admin') || (props.workspace?.type === 'home') || (props.workspace?.type === 'messages');
 
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
+  const feedPath = metadata?.config?.group?.resource;
+
+  const unreadCount = useHarkState(
+    s => s.unreads?.graph?.[feedPath ?? ""]?.["/"]?.unreads as number ?? 0
+  );
+
   return (
+    <Box>
+    {( !!feedPath) ? (
+       <Row
+         flexShrink={0}
+         alignItems="center"
+         justifyContent="space-between"
+         py={2}
+         px={3}
+         height='48px'
+         borderBottom={1}
+         borderColor="lightGray"
+         backgroundColor={['transparent',
+           history.location.pathname.includes(`/~landscape${groupPath}/feed`) 
+           ? (
+            'washedGray'
+           ) : (
+            'transparent'
+           )]}
+           cursor={(
+             history.location.pathname === `/~landscape${groupPath}/feed`
+             ? 'default' : 'pointer'
+           )}
+         onClick={() => {
+           history.push(`/~landscape${groupPath}/feed`);
+         }}
+       >
+         <Text>
+           Group Feed
+         </Text>
+         <Text mr="1" color="blue">
+           { unreadCount > 0 && unreadCount}
+         </Text>
+       </Row>
+     ) : null
+    }
     <Row
-      flexShrink="0"
+      flexShrink={0}
       alignItems="center"
       justifyContent="space-between"
       py={2}
       px={3}
       height='48px'
     >
-      <Box flexShrink='0'>
+      <Box flexShrink={0}>
         <Text>
           {props.initialValues.hideUnjoined ? `Joined ${noun}` : `All ${noun}`}
         </Text>
@@ -86,7 +132,6 @@ export function SidebarListHeader(props: {
               >
               <NewChannel
                 api={props.api}
-                history={props.history}
                 workspace={props.workspace}
               />
               </Col>
@@ -107,7 +152,7 @@ export function SidebarListHeader(props: {
           )
         }
       <Dropdown
-        flexShrink='0'
+        flexShrink={0}
         width="auto"
         alignY="top"
         alignX={['right', 'left']}
@@ -141,5 +186,6 @@ export function SidebarListHeader(props: {
       </Dropdown>
       </Box>
     </Row>
+    </Box>
   );
 }

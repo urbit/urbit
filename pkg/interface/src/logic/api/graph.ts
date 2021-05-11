@@ -1,6 +1,6 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Patp, Path } from '@urbit/api';
+import { Patp, Path, Resource } from '@urbit/api';
 import _ from 'lodash';
 import { makeResource, resourceFromPath } from '../lib/group';
 import { GroupPolicy, Enc, Post, Content } from '@urbit/api';
@@ -83,7 +83,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   joiningGraphs = new Set<string>();
 
   private storeAction(action: any): Promise<any> {
-    return this.action('graph-store', 'graph-update', action);
+    return this.action('graph-store', 'graph-update-1', action);
   }
 
   private viewAction(threadName: string, action: any) {
@@ -91,7 +91,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   private hookAction(ship: Patp, action: any): Promise<any> {
-    return this.action('graph-push-hook', 'graph-update', action);
+    return this.action('graph-push-hook', 'graph-update-1', action);
   }
 
   createManagedGraph(
@@ -227,7 +227,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     };
 
     const pendingPromise = this.spider(
-      'graph-update',
+      'graph-update-1',
       'graph-view-action',
       'graph-add-nodes',
       action
@@ -258,6 +258,30 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
     */
   }
+
+  async enableGroupFeed(group: Resource, vip: any = ''): Promise<Resource> {
+    const { resource } = await this.spider(
+      'graph-view-action',
+      'resource',
+      'graph-create-group-feed',
+      {
+        "create-group-feed": { resource: group, vip }
+      }
+    );
+    return resource;
+  }
+
+  async disableGroupFeed(group: Resource): Promise<void> {
+    await this.spider(
+      'graph-view-action',
+      'json',
+      'graph-disable-group-feed',
+      {
+        "disable-group-feed": { resource: group }
+      }
+    );
+  }
+
 
   removeNodes(ship: Patp, name: string, indices: string[]) {
     return this.hookAction(ship, {
@@ -344,15 +368,17 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  getNode(ship: string, resource: string, index: string) {
-    const idx = index.split('/').map(numToUd).join('/');
-    return this.scry<any>(
+  async getNode(ship: string, resource: string, index: string) {
+    const idx = index.split('/').map(decToUd).join('/');
+    const data = await this.scry<any>(
       'graph-store',
       `/node/${ship}/${resource}${idx}`
-    ).then((node) => {
-      this.store.handleEvent({
-        data: node
-      });
+    );
+    const node = data['graph-update'];
+    this.store.handleEvent({
+      data: {
+        "graph-update-loose": node
+      }
     });
   }
 }

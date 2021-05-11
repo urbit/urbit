@@ -182,7 +182,7 @@
     ~[watch-graph:ha]
   ::
       %fact
-    ?.  ?=(%graph-update p.cage.sign)
+    ?.  ?=(%graph-update-1 p.cage.sign)
       (on-agent:def wire sign)
     =^  cards  state
       (graph-update !<(update:graph-store q.cage.sign))
@@ -277,7 +277,11 @@
     =/  metadatum=(unit metadatum:metadata)
       (peek-metadatum:met %graph rid)
     ?~  metadatum  `state
-    abet:check:(abed:handle-update:ha rid nodes u.group module.u.metadatum)
+    =/  module=term
+      ?:  ?=(%empty -.config.u.metadatum)  %$
+      ?:  ?=(%group -.config.u.metadatum)  %$
+      module.config.u.metadatum
+    abet:check:(abed:handle-update:ha rid nodes u.group module)
   --
 ::
 ++  on-peek  on-peek:def
@@ -455,7 +459,6 @@
             =notif-kind:hook
         ==
     ^+  update-core 
-    ?:  ?=(%none mode.notif-kind)  update-core
     =/  =stats-index:store
       (to-stats-index:store index)
     =.  update-core

@@ -1205,16 +1205,11 @@ u3r_mp(mpz_t   a_mp,
   else {
     u3a_atom* b_u = u3a_to_ptr(b);
     c3_w    len_w = b_u->len_w;
+    c3_d    bit_d = (c3_d)len_w << 5;
 
     //  avoid reallocation on import, if possible
     //
-    if ( (len_w >> 27) ) {
-      mpz_init(a_mp);
-    }
-    else {
-      mpz_init2(a_mp, len_w << 5);
-    }
-
+    mpz_init2(a_mp, (c3_w)c3_min(bit_d, UINT32_MAX));
     mpz_import(a_mp, len_w, -1, sizeof(c3_w), 0, 0, b_u->buf_w);
   }
 }

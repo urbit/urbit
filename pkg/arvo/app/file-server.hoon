@@ -243,7 +243,7 @@
         =/  headers
           :~  content-type+mime-type 
               max-1-da:gen 
-              'Service-Worker-Allowed'^'/'
+              'service-worker-allowed'^'/'
           ==
         [[200 headers] `q.u.data]
       ==

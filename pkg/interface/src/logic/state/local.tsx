@@ -90,8 +90,8 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   name: 'localReducer'
 }));
 
-function withLocalState<P, S extends keyof LocalState>(Component: any, stateMemberKeys?: S[]) {
-  return React.forwardRef((props: Omit<P, S>, ref) => {
+function withLocalState<P, S extends keyof LocalState, C extends React.ComponentType<P>>(Component: C, stateMemberKeys?: S[]) {
+  return React.forwardRef<C, Omit<P, S>>((props, ref) => {
     const localState = stateMemberKeys ? useLocalState(
       state => stateMemberKeys.reduce(
         (object, key) => ({ ...object, [key]: state[key] }), {}
