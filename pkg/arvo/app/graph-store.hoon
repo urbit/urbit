@@ -860,13 +860,16 @@
       [e d]
     =*  atom  p.i.b
     =*  node  q.i.b
+    =.  c  (snoc c atom)
     ?-  -.children.node
-      %empty  $(e +(e), d (~(put by d) c node))
+      %empty
+      $(b t.b, e +(e), d (~(put by d) c node), c ~)
     ::
         %graph
-      =/  f  $(c (snoc c atom), b (tab:orm p.children.node ~ (sub a e)))
+      =/  f  $(b (tab:orm p.children.node ~ (sub a e)))
       ?:  =(e.f a)  f
       %_  $
+        b  t.b
         e  +(e.f)
         d  (~(put by d.f) c node(children [%empty ~]))
       ==
