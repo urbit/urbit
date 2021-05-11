@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useState, useEffect } from 'react';
+import { MouseEvent, useCallback, useEffect, useState } from 'react';
 export type AsyncClickableState = 'waiting' | 'error' | 'loading' | 'success';
 
 export function useStatelessAsyncClickable(

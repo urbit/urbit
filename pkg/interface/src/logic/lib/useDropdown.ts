@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 export function useDropdown<C>(
   candidates: C[],

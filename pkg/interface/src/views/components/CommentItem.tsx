@@ -1,21 +1,18 @@
-import React, {useEffect, useRef, useCallback} from 'react';
+import { Action, Box, Row, Text } from '@tlon/indigo-react';
+import { Group } from '@urbit/api';
+import { GraphNode } from '@urbit/api/graph';
+import bigInt from 'big-integer';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-
-import { Box, Row, Text, Action } from '@tlon/indigo-react';
-import { Contacts } from '@urbit/api/contacts';
-import { GraphNode } from '@urbit/api/graph';
-import { Group } from '@urbit/api';
-
 import GlobalApi from '~/logic/api/global';
-import Author from '~/views/components/Author';
-import { MentionText } from '~/views/components/MentionText';
 import { roleForShip } from '~/logic/lib/group';
+import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
-import {useCopy} from '~/logic/lib/useCopy';
-import { getPermalinkForGraph} from '~/logic/lib/permalinks';
+import { useCopy } from '~/logic/lib/useCopy';
 import useMetadataState from '~/logic/state/metadata';
-import {GraphContentWide} from '../landscape/components/Graph/GraphContentWide';
+import Author from '~/views/components/Author';
+import { GraphContent } from '../landscape/components/Graph/GraphContent';
 
 const ClickBox = styled(Box)`
   cursor: pointer;
@@ -34,23 +31,38 @@ interface CommentItemProps {
   highlighted: boolean;
 }
 
-export function CommentItem(props: CommentItemProps): ReactElement {
+export function CommentItem(props: CommentItemProps) {
   let { highlighted } = props;
   const { ship, name, api, comment, group } = props;
   const association = useMetadataState(
     useCallback(s => s.associations.graph[`/ship/${ship}/${name}`], [ship,name])
   );
-  const ref = useRef<HTMLElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [, post] = getLatestCommentRevision(comment);
   const disabled = props.pending;
 
   const onDelete = async () => {
-    await api.graph.removeNodes(ship, name, [comment.post?.index]);
+    const revs = comment.children.get(bigInt(1));
+    const children = Array.from(revs.children);
+    const indices = [];
+    for (const child in children) {
+      const node = children[child];
+      if (!node?.post || typeof node.post !== 'string') {
+        indices.push(node.post?.index);
+      }
+    }
+
+    await api.graph.removePosts(ship, name, [
+      comment.post?.index,
+      revs?.post?.index,
+      ...indices
+    ]);
   };
 
   const ourMention = post?.contents?.some((e) => {
-      return e?.mention && e?.mention === window.ship;
-    });
+    if (!('mention' in e)) return false;
+    return e?.mention && e?.mention === window.ship;
+  });
 
   if (!highlighted) {
     if (ourMention) {
@@ -65,21 +77,21 @@ export function CommentItem(props: CommentItemProps): ReactElement {
   const ourRole = roleForShip(group, window.ship);
   if (window.ship == post?.author && !disabled) {
     adminLinks.push(
-      <Link to={{ pathname: props.baseUrl, search: `?edit=${commentIndex}`}}>
+      <Link to={{ pathname: props.baseUrl, search: `?edit=${commentIndex}` }}>
         <Action bg="white">
           Update
         </Action>
       </Link>
-    )
-  };
+    );
+  }
 
-  if ((window.ship == post?.author || ourRole == "admin") && !disabled) {
+  if ((window.ship == post?.author || ourRole == 'admin') && !disabled) {
     adminLinks.push(
       <Action bg="white" onClick={onDelete} destructive>
         Delete
       </Action>
-    )
-  };
+    );
+  }
 
   useEffect(() => {
     if(ref.current && props.highlighted) {
@@ -92,14 +104,22 @@ export function CommentItem(props: CommentItemProps): ReactElement {
     getPermalinkForGraph(
       association.group,
       association.resource,
-      post.index.split('/').slice(0, -1).join('/')
+      post?.index?.split('/').slice(0, -1).join('/')
     ),
     'Copy Link'
   );
 
+  if (!post || typeof post === 'string') {
+    return (
+      <Box width="100%" textAlign="left" py="3">
+        <Text gray>This comment has been deleted.</Text>
+      </Box>
+    );
+  }
+
   return (
     <Box ref={ref} mb={4} opacity={post?.pending ? '60%' : '100%'}>
-      <Row px="1" my={3}>
+      <Row px={1} my={3}>
         <Author
           showImage
           ship={post?.author}
@@ -108,20 +128,20 @@ export function CommentItem(props: CommentItemProps): ReactElement {
           group={group}
           isRelativeTime
         >
-          <Row px="2" gapX="2" height="18px">
+          <Row px={2} gapX={2} height="18px">
             <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
             {adminLinks}
           </Row>
         </Author>
       </Row>
-      <GraphContentWide
-        borderRadius="1"
-        p="1"
-        mb="1"
+      <GraphContent
+        borderRadius={1}
+        p={1}
+        mb={1}
         backgroundColor={highlighted ? 'washedBlue' : 'white'}
         transcluded={0}
         api={api}
-        post={post}
+        contents={post.contents}
         showOurContact
       />
     </Box>

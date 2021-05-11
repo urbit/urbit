@@ -1,20 +1,17 @@
-import React, { ReactElement, ReactNode, useState } from 'react';
+import { BaseImage, Box, Row } from '@tlon/indigo-react';
 import moment from 'moment';
+import React, { ReactElement, ReactNode, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
-import { Col, Row, Box, BaseImage } from '@tlon/indigo-react';
-import { Contacts } from '@urbit/api/contacts';
-import { Group } from '@urbit/api';
-
-import { uxToHex, cite, useShowNickname, deSig } from '~/logic/lib/util';
-import useSettingsState, {selectCalmState} from "~/logic/state/settings";
-import useLocalState from "~/logic/state/local";
+import GlobalApi from '~/logic/api/global';
 import { Sigil } from '~/logic/lib/sigil';
-import Timestamp from './Timestamp';
-import useContactState from '~/logic/state/contact';
 import { useCopy } from '~/logic/lib/useCopy';
-import ProfileOverlay from './ProfileOverlay';
+import { cite, deSig, useShowNickname, uxToHex } from '~/logic/lib/util';
+import useContactState from '~/logic/state/contact';
+import useLocalState from '~/logic/state/local';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { PropFunc } from '~/types';
+import ProfileOverlay from './ProfileOverlay';
+import Timestamp from './Timestamp';
 
 interface AuthorProps {
   ship: string;
@@ -24,7 +21,8 @@ interface AuthorProps {
   unread?: boolean;
   api?: GlobalApi;
   size?: number;
-  lineHeight?: string;
+  lineHeight?: string | number;
+  isRelativeTime?: boolean;
 }
 
 // eslint-disable-next-line max-lines-per-function
@@ -48,10 +46,10 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
   const sigilPadding = props.sigilPadding || 2;
 
   const history = useHistory();
-  const osDark = useLocalState((state) => state.dark);
+  const osDark = useLocalState(state => state.dark);
 
   const theme = useSettingsState(s => s.display.theme);
-  const dark = theme === 'dark' || (theme === 'auto' && osDark)
+  const dark = theme === 'dark' || (theme === 'auto' && osDark);
 
   let contact;
   const contacts = useContactState(state => state.contacts);
@@ -97,7 +95,8 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
           e.stopPropagation();
           toggleOverlay();
         }}
-        height={size}
+        height={`${size}px`}
+        overflow='hidden'
         position='relative'
         cursor='pointer'
       >
@@ -107,31 +106,33 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
           </ProfileOverlay>
         )}
       </Box>
-      <Box
-        ml={showImage ? 2 : 0}
-        color='black'
-        fontSize='1'
-        cursor='pointer'
-        lineHeight={lineHeight}
-        fontFamily={showNickname ? 'sans' : 'mono'}
-        fontWeight={showNickname ? '500' : '400'}
-        mr={showNickname ? 0 : "2px"}
-        mt={showNickname ? 0 : "0px"}
-        onClick={doCopy}
-      >
-        {copyDisplay}
+      <Box display='flex' alignItems='baseline'>
+        <Box
+          ml={showImage ? 2 : 0}
+          color='black'
+          fontSize='1'
+          cursor='pointer'
+          lineHeight={lineHeight}
+          fontFamily={showNickname ? 'sans' : 'mono'}
+          fontWeight={showNickname ? '500' : '400'}
+          mr={showNickname ? 0 : '2px'}
+          mt={showNickname ? 0 : '0px'}
+          onClick={doCopy}
+        >
+          {copyDisplay}
+        </Box>
+        { !dontShowTime && time && (
+          <Timestamp
+            height="fit-content"
+            relative={isRelativeTime}
+            stamp={stamp}
+            fontSize={0}
+            time={time}
+            ml={2}
+            color={unread ? 'blue' : 'gray'} />
+        )}
+        {children}
       </Box>
-      { !dontShowTime && time && (
-        <Timestamp
-          height="fit-content"
-          relative={isRelativeTime}
-          stamp={stamp}
-          fontSize={1}
-          time={time}
-          ml={2}
-          color={unread ? 'blue' : 'gray'} />
-      )}
-      {children}
     </Row>
   );
 }
