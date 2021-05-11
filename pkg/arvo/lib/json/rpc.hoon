@@ -43,7 +43,7 @@
     ::  
     :~  ['jsonrpc' s+'2.0'] 
         ['id' s+id.response] 
-        ['res' res.response]
+        ['result' res.response]
     ==
   ::
       %error
