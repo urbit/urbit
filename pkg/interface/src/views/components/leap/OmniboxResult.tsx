@@ -235,8 +235,8 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
       selected,
       link,
       invites,
-      notificationsCount,
       runtimeLag,
+      notificationsCount,
       text,
       color
     );
