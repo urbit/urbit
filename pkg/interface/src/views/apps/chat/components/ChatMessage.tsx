@@ -491,7 +491,8 @@ export const Message = React.memo(({
           width='36px'
           textAlign='right'
           left={0}
-          top='3px'
+          top='2px'
+          lineHeight="tall"
           fontSize={0}
           gray
         >

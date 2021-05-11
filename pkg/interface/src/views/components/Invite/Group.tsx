@@ -203,8 +203,9 @@ function InviteActions(props: {
   app?: string;
   uid?: string;
 }) {
-  const { resource, api, app, uid } = props;
+  const { status, resource, api, app, uid } = props;
   const inviteAccept = useInviteAccept(resource, api, app, uid);
+  const set = useGroupState(s => s.set);
 
   const inviteDecline = useCallback(async () => {
     if (!(app && uid)) {
@@ -213,15 +214,18 @@ function InviteActions(props: {
     await api.invite.decline(app, uid);
   }, [app, uid]);
 
-  const hideJoin = useCallback(async () => {
-    await api.groups.hide(resource);
-  }, [api, resource]);
-
-  const { status } = props;
-  if (status) {
-    if(status.progress === 'done') {
-      return null;
+  const hideJoin = useCallback(async (e) => {
+    if(status?.progress === 'done') {
+      set(s => {
+        delete s.pendingJoin[resource]
+      });
+      e.stopPropagation();
+      return;
     }
+    await api.groups.hide(resource);
+  }, [api, resource, status]);
+
+  if (status) {
     return (
       <Row gapX={2} alignItems="center" height={4}>
         <StatelessAsyncButton
@@ -229,7 +233,7 @@ function InviteActions(props: {
           backgroundColor="white"
           onClick={hideJoin}
         >
-          Cancel
+          {status?.progress === 'done' ? 'Dismiss' : 'Cancel'}
         </StatelessAsyncButton>
       </Row>
     );

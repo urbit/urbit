@@ -43,8 +43,8 @@
 ::
 ++  transform-proxy-update
   |=  vas=vase
-  ^-  (unit vase)
-  `vas
+  ^-  (quip card (unit vase))
+  ``vas
 ::
 ++  resource-for-update  
   |=  =vase

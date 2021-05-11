@@ -220,28 +220,24 @@ const header = ({ children, depth, ...rest }) => {
   const level = depth;
   const inner =
     level === 1 ? (
-      <H1 display='block'>{children}</H1>
+      <H1 display="block">{children}</H1>
     ) : level === 2 ? (
-      <H2 display='block'>{children}</H2>
+      <H2 display="block">{children}</H2>
     ) : level === 3 ? (
-      <H3 display='block'>{children}</H3>
+      <H3 display="block">{children}</H3>
     ) : (
-      <H4 display='block'>{children}</H4>
+      <H4 display="block">{children}</H4>
     );
-  return (
-    <Box {...rest} mt={2} mb={4}>
-      {inner}
-    </Box>
-  );
+  return <Box {...rest}>{inner}</Box>;
 };
 
 const renderers = {
   heading: header,
   break: () => {
-    return <Box display='block' width='100%' height={2}></Box>
+    return <Box display="block" width="100%" height={2}></Box>;
   },
   thematicBreak: () => {
-    return <Box display='block' width='100%' height={2}></Box>
+    return <Box display="block" width="100%" height={2}></Box>;
   },
   inlineCode: ({ language, value }) => {
     return (
@@ -258,28 +254,32 @@ const renderers = {
   },
   strong: ({ children }) => {
     return (
-      <Text fontWeight="bold" lineHeight='1'>
+      <Text fontWeight="bold" lineHeight="1">
         {children}
       </Text>
     );
   },
   emphasis: ({ children }) => {
     return (
-    <Text fontStyle="italic" fontSize={1} lineHeight={'20px'}>
+      <Text fontStyle="italic" fontSize={1} lineHeight="tall">
         {children}
-    </Text>
-    )
+      </Text>
+    );
   },
-  blockquote: ({ children, tall, ...rest }) => {
+  blockquote: ({ children, depth, tall, ...rest }) => {
+    if (depth > 1) {
+      return children;
+    }
+
     return (
       <Text
-        lineHeight="20px"
+        lineHeight="tall"
         display="block"
         borderLeft="1px solid"
         color="black"
         paddingLeft={2}
         py={1}
-        mb={1} 
+        mb={1}
       >
         {children}
       </Text>
@@ -287,7 +287,7 @@ const renderers = {
   },
   paragraph: ({ children }) => {
     return (
-      <Text fontSize={1} lineHeight={'20px'}>
+      <Text fontSize={1} lineHeight="tall">
         {children}
       </Text>
     );
@@ -329,7 +329,13 @@ const renderers = {
   },
   link: (props) => {
     return (
-      <Anchor href={props.url} borderBottom="1" color="black" target="_blank">
+      <Anchor
+        display="inline"
+        href={props.url}
+        borderBottom="1"
+        color="black"
+        target="_blank"
+      >
         {props.children}
       </Anchor>
     );
@@ -342,7 +348,7 @@ const renderers = {
     );
   },
   'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
-  'image': ({ url }) => (
+  image: ({ url }) => (
     <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent key={url} url={url} />
     </Box>
@@ -366,15 +372,26 @@ const renderers = {
     );
   },
   root: ({ tall, children }) =>
-    tall
-      ? <Box
-          display='grid'
-          style={{ 'gridTemplateColumns': 'minmax(0,1fr)', 'rowGap': '1rem' }}
-         >
-           {children}
-        </Box>
-      : <Box>{children}</Box>,
-  text: ({ value }) => value,
+    tall ? (
+      <Box
+        display="grid"
+        style={{ gridTemplateColumns: 'minmax(0,1fr)', rowGap: '1rem' }}
+      >
+        {children}
+      </Box>
+    ) : (
+      <Box>{children}</Box>
+    ),
+  text: ({ value }) => (
+    <>
+      {value.split('\n').map((v, idx) => (
+        <React.Fragment key={idx}>
+          {idx !== 0 ? <br /> : null}
+          {v}
+        </React.Fragment>
+      ))}
+    </>
+  ),
 };
 
 export function Graphdown<T extends {} = {}>(
@@ -390,7 +407,13 @@ export function Graphdown<T extends {} = {}>(
   const Renderer = renderers[ast.type] ?? (() => `unknown element: ${type}`);
 
   return (
-    <Renderer transcluded={transcluded} depth={depth} {...rest} {...nodeRest} tall={tall}>
+    <Renderer
+      transcluded={transcluded}
+      depth={depth}
+      {...rest}
+      {...nodeRest}
+      tall={tall}
+    >
       {children.map((c) => (
         <Graphdown
           transcluded={transcluded}
