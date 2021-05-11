@@ -1,4 +1,4 @@
-import { Box, Center, Col, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { Box, Center, Col, LoadingSpinner, Text, Icon } from '@tlon/indigo-react';
 import {
     IndexedNotification,
 
@@ -14,6 +14,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { getNotificationKey } from '~/logic/lib/hark';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
+import useLaunchState from '~/logic/state/launch';
 import { daToUnix, MOMENT_CALENDAR_DATE } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
 import { Invites } from './invites';
@@ -56,6 +57,8 @@ export default function Inbox(props: {
       }
     };
   }, []);
+
+  const runtimeLag = useLaunchState(state => state.runtimeLag);
 
   const ready = useHarkState(
     s => Object.keys(s.unreads.graph).length > 0
@@ -114,6 +117,14 @@ export default function Inbox(props: {
 
   return (
     <Col p={1} ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
+      {runtimeLag && (
+        <Box bg="yellow" borderRadius={2} p={2} m={2}>
+          <Icon verticalAlign="middle" mr={2} icon="Tutorial" />
+          <Text verticalAlign="middle">
+            Update your binary to continue receiving updates.
+          </Text>
+        </Box>
+      )}
       <Invites pendingJoin={props.pendingJoin} api={api} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;

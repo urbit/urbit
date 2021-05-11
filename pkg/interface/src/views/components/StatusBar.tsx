@@ -13,6 +13,7 @@ import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
+import useLaunchState from '~/logic/state/launch';
 import useInviteState from '~/logic/state/invite';
 import useLocalState, { selectLocalState } from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
@@ -27,6 +28,7 @@ const localSel = selectLocalState(['toggleOmnibox']);
 const StatusBar = (props) => {
   const { api, ship } = props;
   const history = useHistory();
+  const runtimeLag = useLaunchState(state => state.runtimeLag);
   const ourContact = useContactState(state => state.contacts[`~${ship}`]);
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const doNotDisturb = useHarkState(state => state.doNotDisturb);
@@ -83,6 +85,11 @@ const StatusBar = (props) => {
           <Icon icon='Dashboard' color='black' />
         </Button>
         <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
+          {!doNotDisturb && runtimeLag && (
+            <Box display='block' right='-8px' top='-8px' position='absolute'>
+              <Icon color='yellow' icon='Bullet' />
+            </Box>
+          )}
           {!doNotDisturb && (notificationsCount > 0 || invites.length > 0) && (
             <Box display='block' right='-8px' top='-8px' position='absolute'>
               <Icon color='blue' icon='Bullet' />

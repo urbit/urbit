@@ -50,7 +50,7 @@ interface LaunchAppProps {
 
 export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
   const { connection } = props;
-  const baseHash = useLaunchState(state => state.baseHash);
+  const { baseHash, runtimeLag } = useLaunchState(state => state);
   const [hashText, setHashText] = useState(baseHash);
   const [exitingTut, setExitingTut] = useState(false);
   const seen = useSettingsState(s => s?.tutorial?.seen) ?? true;
@@ -84,7 +84,10 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
         }, 2000);
       }}
     >
-      <Box backgroundColor="washedGray" p={2}>
+      <Box
+        backgroundColor={runtimeLag ? 'yellow' : 'washedGray'}
+        p={2}
+      >
         <Text mono bold>{hashText || baseHash}</Text>
       </Box>
     </Box>

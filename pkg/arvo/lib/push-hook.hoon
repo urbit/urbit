@@ -77,12 +77,10 @@
 ::  +diplomatic: only renegotiate if versions changed
 ::    
 ::    If %.n please leave note as to why renegotiation necessary
-::    
-::    - Fixing incorrectly held unversioned subscriptions
 ::
 ++  diplomatic
   ^-  ?
-  %.n
+  %.y
 ::
 ++  push-hook
   ~/  %push-hook
