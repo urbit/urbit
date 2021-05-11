@@ -7,6 +7,7 @@ import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import VirtualScroller from '~/views/components/VirtualScroller';
 import PostItem from './PostItem/PostItem';
+import PostInput from './PostInput';
 
 const virtualScrollerStyle = {
   height: '100%'
@@ -62,7 +63,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
         typeof parentNode.post !== 'string'
       ) ? parentNode.post.index.split('/').slice(1).map((ind) => {
       return bigInt(ind);
-    }) : [];
+      }) : [];
 
     if (parentNode && index.eq(first ?? bigInt.zero)) {
       return (
@@ -107,24 +108,62 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
           />
         </React.Fragment>
       );
+    } else if (index.eq(first ?? bigInt.zero)) {
+      return (
+        <Col
+          width="100%"
+          alignItems="center"
+          key={index.toString()}
+          ref={ref}>
+          <Col
+            width="100%"
+            maxWidth="616px"
+            pt={3}
+            pl={2}
+            pr={2}
+            mb={3}>
+            <PostInput
+              api={api}
+              group={group}
+              association={association}
+              vip={vip}
+              graphPath={graphPath}
+            />
+          </Col>
+          <PostItem
+            node={node}
+            graphPath={graphPath}
+            association={association}
+            api={api}
+            index={[...nodeIndex, index]}
+            baseUrl={baseUrl}
+            history={history}
+            parentPost={parentNode?.post}
+            isReply={Boolean(parentNode)}
+            isRelativeTime={true}
+            vip={vip}
+            group={group}
+          />
+        </Col>
+      );
     }
 
     return (
       <Box key={index.toString()} ref={ref}>
-      <PostItem
-        node={node}
-        graphPath={graphPath}
-        association={association}
-        api={api}
-        index={[...nodeIndex, index]}
-        baseUrl={baseUrl}
-        history={history}
-        parentPost={parentNode?.post}
-        isReply={Boolean(parentNode)}
-        isRelativeTime={true}
-        vip={vip}
-        group={group}
-      />
+        <PostItem
+          node={node}
+          graphPath={graphPath}
+          association={association}
+          api={api}
+          index={[...nodeIndex, index]}
+          baseUrl={baseUrl}
+          history={history}
+          parentPost={parentNode?.post}
+          isReply={Boolean(parentNode)}
+          isRelativeTime={true}
+          vip={vip}
+          group={group}
+        />
       </Box>
     );
   });
@@ -143,6 +182,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
 
     if (newer) {
       const [index] = graph.peekLargest();
+      //  TODO: replace this with deep something
       await api.graph.getYoungerSiblings(
         ship,
         name,
@@ -169,6 +209,9 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
       parentNode,
       history
     } = this.props;
+
+    //  TODO: memoize flattening the graph,
+    //  take in a prop on whether to flatten the graph or not
 
     return (
       <Col width="100%" height="100%" position="relative">
