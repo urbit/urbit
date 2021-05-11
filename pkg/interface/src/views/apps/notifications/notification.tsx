@@ -22,7 +22,7 @@ import { SwipeMenu } from '~/views/components/SwipeMenu';
 import { GraphNotification } from './graph';
 import { GroupNotification } from './group';
 
-interface NotificationProps {
+export interface NotificationProps {
   notification: IndexedNotification;
   time: BigInteger;
   api: GlobalApi;
@@ -40,7 +40,7 @@ function getMuted(
     if (!('graph' in notification.contents)) {
       throw new Error();
     }
-    const parent = getParentIndex(index.graph, notification.contents.graph);
+    const parent = getParentIndex(idxNotif.index.graph, notification.contents.graph);
 
     return (
       _.findIndex(
@@ -102,7 +102,7 @@ export function NotificationWrapper(props: {
       menuWidth={100}
       disabled={!isMobile}
       menu={
-        <Button onClick={onArchive} ml="2" height="100%" width="92px" primary destructive>
+        <Button onClick={onArchive} ml={2} height="100%" width="92px" primary destructive>
           Remove
         </Button>
       }
@@ -125,7 +125,7 @@ export function NotificationWrapper(props: {
         {children}
         <Row
           alignItems="flex-start"
-          gapX="2"
+          gapX={2}
           gridArea="actions"
           justifyContent="flex-end"
           opacity={[0, hovering ? 1 : 0]}
@@ -147,7 +147,7 @@ export function NotificationWrapper(props: {
 }
 
 export function Notification(props: NotificationProps) {
-  const { notification, associations, archived } = props;
+  const { notification, archived } = props;
   const { read, contents, time } = notification.notification;
 
   const wrapperProps = {

@@ -6,13 +6,13 @@ import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
 import GlobalApi from '~/logic/api/global';
 import {
-  hasTutorialGroup,
+    hasTutorialGroup,
 
-  TUTORIAL_BOOK,
-  TUTORIAL_CHAT, TUTORIAL_GROUP,
-  TUTORIAL_HOST,
+    TUTORIAL_BOOK,
+    TUTORIAL_CHAT, TUTORIAL_GROUP,
+    TUTORIAL_HOST,
 
-  TUTORIAL_LINKS
+    TUTORIAL_LINKS
 } from '~/logic/lib/tutorialModal';
 import { useModal } from '~/logic/lib/useModal';
 import { useQuery } from '~/logic/lib/useQuery';
@@ -50,7 +50,7 @@ interface LaunchAppProps {
 
 export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
   const { connection } = props;
-  const baseHash = useLaunchState(state => state.baseHash);
+  const { baseHash, runtimeLag } = useLaunchState(state => state);
   const [hashText, setHashText] = useState(baseHash);
   const [exitingTut, setExitingTut] = useState(false);
   const seen = useSettingsState(s => s?.tutorial?.seen) ?? true;
@@ -67,8 +67,8 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
   const hashBox = (
     <Box
       position={['relative', 'absolute']}
-      left="0"
-      bottom="0"
+      left={0}
+      bottom={0}
       backgroundColor="white"
       ml={3}
       mb={3}
@@ -84,7 +84,10 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
         }, 2000);
       }}
     >
-      <Box backgroundColor="washedGray" p={2}>
+      <Box
+        backgroundColor={runtimeLag ? 'yellow' : 'washedGray'}
+        p={2}
+      >
         <Text mono bold>{hashText || baseHash}</Text>
       </Box>
     </Box>
@@ -120,28 +123,28 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
         dismiss();
       };
       return exitingTut ? (
-        <Col maxWidth="350px" p="3">
+        <Col maxWidth="350px" p={3}>
           <Icon icon="Info" fill="black"></Icon>
-          <Text my="3" lineHeight="tall">
+          <Text my={3} lineHeight="tall">
             You can always restart the tutorial by typing &ldquo;tutorial&rdquo; in Leap
           </Text>
-          <Row gapX="2" justifyContent="flex-end">
+          <Row gapX={2} justifyContent="flex-end">
             <Button primary onClick={onDismiss}>Ok</Button>
           </Row>
         </Col>
       ) : (
-        <Col maxWidth="350px" p="3">
+        <Col maxWidth="350px" p={3}>
           <Box position="absolute" left="-16px" top="-16px">
             <StarIcon width="32px" height="32px" color="blue" display="block" />
           </Box>
-          <Text mb="3" lineHeight="tall" fontWeight="medium">Welcome</Text>
-          <Text mb="3" lineHeight="tall">
+          <Text mb={3} lineHeight="tall" fontWeight="medium">Welcome</Text>
+          <Text mb={3} lineHeight="tall">
                         You have been invited to use Landscape, an interface to chat
             and interact with communities
             <br />
             Would you like a tour of Landscape?
           </Text>
-          <Row gapX="2" justifyContent="flex-end">
+          <Row gapX={2} justifyContent="flex-end">
             <Button
               backgroundColor="washedGray"
               onClick={() => setExitingTut(true)}
@@ -181,7 +184,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
       <ScrollbarLessBox height='100%' overflowY='scroll' display="flex" flexDirection="column">
         {modal}
         <Box
-          mx='2'
+          mx={2}
           display='grid'
           gridTemplateColumns='repeat(auto-fill, minmax(128px, 1fr))'
           gridGap={3}
@@ -208,7 +211,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
                   color="black"
                   icon="Home"
                 />
-                <Text ml="2" mt='1px' color="black">My Channels</Text>
+                <Text ml={2} mt='1px' color="black">My Channels</Text>
               </Row>
             </Box>
           </Tile>

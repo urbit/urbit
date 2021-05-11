@@ -1,8 +1,8 @@
 import {
-  Button, Col, ManagedCheckboxField as Checkbox, ManagedForm as Form,
-  ManagedTextInputField as Input,
+    Button, Col, ManagedCheckboxField as Checkbox, ManagedForm as Form,
+    ManagedTextInputField as Input,
 
-  Row, Text
+    Row, Text
 } from '@tlon/indigo-react';
 import { Formik } from 'formik';
 import _ from 'lodash';
@@ -18,9 +18,9 @@ import { ColorInput } from '~/views/components/ColorInput';
 import GroupSearch from '~/views/components/GroupSearch';
 import { ImageInput } from '~/views/components/ImageInput';
 import {
-  ProfileControls, ProfileHeader,
+    ProfileControls, ProfileHeader,
 
-  ProfileImages, ProfileStatus
+    ProfileImages, ProfileStatus
 } from './Profile';
 
 const formSchema = Yup.object({
@@ -61,7 +61,7 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
             <ImageInput id='cover' marginTop='-8px' width='288px' />
           ) : (
             <Row>
-              <Button mr='2' onClick={() => setEditCover(true)}>
+              <Button mr={2} onClick={() => setEditCover(true)}>
                 Replace Header
               </Button>
               <Button onClick={e => handleClear(e)}>
@@ -148,16 +148,16 @@ export function EditProfile(props: any): ReactElement {
                     cursor='pointer'
                     fontWeight='500'
                     color='blue'
-                    pl='0'
-                    pr='0'
-                    border='0'
+                    pl={0}
+                    pr={0}
+                    border={0}
                     style={{ appearance: 'none', background: 'transparent' }}
                   >
                     Save Edits
                   </Button>
                   <Text
-                    py='2'
-                    ml='3'
+                    py={2}
+                    ml={3}
                     fontWeight='500'
                     cursor='pointer'
                     onClick={() => {

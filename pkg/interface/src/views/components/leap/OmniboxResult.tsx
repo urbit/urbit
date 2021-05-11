@@ -7,6 +7,7 @@ import { cite, uxToHex } from '~/logic/lib/util';
 import withState from '~/logic/lib/withState';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
+import useLaunchState from '~/logic/state/launch';
 import useInviteState from '~/logic/state/invite';
 
 interface OmniboxResultProps {
@@ -58,6 +59,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
     selected: string,
     link: string,
     invites: Invites,
+    lag: any,
     notificationsCount: number,
     text: string,
     color: string
@@ -66,7 +68,8 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
       (this.state.hovered || selected === link) ? 'white' : 'black';
     const bulletFill =
       (this.state.hovered || selected === link) ? 'white' : 'blue';
-
+    const lagFill =
+      this.state.hovered || selected === link ? 'white' : 'yellow';
     const inviteCount = [].concat(
       ...Object.values(invites).map(obj => Object.values(obj))
     );
@@ -87,7 +90,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon={icon}
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -99,10 +102,18 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
             display='inline-block'
             verticalAlign='middle'
             icon='Notifications'
-            mr='2'
+            mr={2}
             size='18px'
             color={iconFill}
           />
+          {lag && (
+            <Icon
+              display='inline-block'
+              icon='Bullet'
+              style={{ position: 'absolute', top: -5, left: 5 }}
+              color={lagFill}
+            />
+          )}
           {(notificationsCount > 0 || inviteCount.length > 0) && (
             <Icon
               display='inline-block'
@@ -119,7 +130,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon='LogOut'
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -142,7 +153,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon='Home'
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -153,7 +164,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon='Notifications'
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -164,7 +175,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon='Messages'
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -175,7 +186,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon='Tutorial'
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -186,7 +197,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           icon='NullIcon'
           verticalAlign='middle'
-          mr='2'
+          mr={2}
           size='16px'
           color={iconFill}
         />
@@ -211,6 +222,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
       selected,
       invites,
       notificationsCount,
+      runtimeLag,
       contacts,
       setSelection
     } = this.props;
@@ -224,14 +236,15 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
       link,
       invites,
       notificationsCount,
+      runtimeLag,
       text,
       color
     );
 
     return (
       <Row
-        py='2'
-        px='2'
+        py={2}
+        px={2}
         cursor={cursor}
         onMouseMove={() => setSelection()}
         onMouseLeave={() => this.setHover(false)}
@@ -259,13 +272,13 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
             overflow='hidden'
             textOverflow='ellipsis'
             whiteSpace='pre'
-            mr='1'
+            mr={1}
           >
             {text.startsWith('~') ? cite(text) : text}
           </Text>
         </Box>
         <Text
-          pr='2'
+          pr={2}
           display='inline-block'
           verticalAlign='middle'
           color={this.state.hovered || selected === link ? 'white' : 'black'}
@@ -285,6 +298,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
 }
 
 export default withState(OmniboxResult, [
+  [useLaunchState, ['runtimeLag']],
   [useInviteState],
   [useHarkState, ['notificationsCount']],
   [useContactState]

@@ -1,5 +1,5 @@
 import { Anchor, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import { Association, Group, Post } from '@urbit/api';
+import { Association, GraphNotificationContents, GraphNotifIndex, Post } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
@@ -15,9 +15,6 @@ import {
   useAssocForGraph,
   useAssocForGroup
 } from '~/logic/state/metadata';
-import {
-  GraphNotificationContents, GraphNotifIndex
-} from '~/types';
 import Author from '~/views/components/Author';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { PermalinkEmbed } from '../permalinks/embed';
@@ -84,9 +81,9 @@ const GraphUrl = ({ contents, api }) => {
     );
   }
   return (
-    <Box borderRadius="2" p="2" bg="scales.black05">
+    <Box borderRadius={2} p={2} bg="scales.black05">
       <Anchor underline={false} target="_blank" color="black" href={link.url}>
-        <Icon verticalAlign="bottom" mr="2" icon="ArrowExternal" />
+        <Icon verticalAlign="bottom" mr={2} icon="ArrowExternal" />
         {text}
       </Anchor>
     </Box>
@@ -97,17 +94,17 @@ function ContentSummary({ icon, name, author, to }) {
   return (
     <Link to={to}>
       <Col
-        gapY="1"
+        gapY={1}
         flexDirection={['column', 'row']}
         alignItems={['flex-start', 'center']}
       >
         <Row
           alignItems="center"
-          gapX="2"
-          p="1"
+          gapX={2}
+          p={1}
           width="fit-content"
-          borderRadius="2"
-          border="1"
+          borderRadius={2}
+          border={1}
           borderColor="lightGray"
         >
           <Icon display="block" icon={icon} />
@@ -116,7 +113,7 @@ function ContentSummary({ icon, name, author, to }) {
           </Text>
         </Row>
         <Row ml={[0, 1]} alignItems="center">
-          <Text lineHeight="1" fontWeight="medium" mr="1">
+          <Text lineHeight={1} fontWeight="medium" mr={1}>
             by
           </Text>
           <Author
@@ -193,11 +190,7 @@ interface PostsByAuthor {
 }
 const GraphNodes = (props: {
   posts: Post[];
-  graph: string;
   hideAuthors?: boolean;
-  group?: Group;
-  groupPath: string;
-  description: string;
   index: string;
   mod: string;
   association: Association;
@@ -208,7 +201,6 @@ const GraphNodes = (props: {
     mod,
     hidden,
     index,
-    description,
     hideAuthors = false,
     association
   } = props;
@@ -242,7 +234,7 @@ const GraphNodes = (props: {
                 date={time}
               />
             )}
-            <Col gapY="2" py={hideAuthors ? 0 : 2} width="100%">
+            <Col gapY={2} py={hideAuthors ? 0 : 2} width="100%">
               {_.map(posts, post => (
                 <GraphNodeContent
                   key={post.index}
@@ -328,18 +320,17 @@ export function GraphNotification(props: {
         groupTitle={groupTitle}
         content
       />
-      <Col onClick={onClick} gapY="2" flexGrow={1} width="100%" gridArea="main">
+      <Col onClick={onClick} gapY={2} flexGrow={1} width="100%" gridArea="main">
         <GraphNodes
           hideAuthors={hideAuthors}
           posts={contents.slice(0, 4)}
           mod={index.module}
-          description={index.description}
           index={contents?.[0].index}
           association={association}
           hidden={groups[association?.group]?.hidden}
         />
         {contents.length > 4 && (
-          <Text mb="2" gray>
+          <Text mb={2} gray>
             + {contents.length - 4} more
           </Text>
         )}

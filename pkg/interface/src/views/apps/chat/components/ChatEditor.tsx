@@ -108,8 +108,18 @@ interface ChatEditorState {
   message: string;
 }
 
+interface CodeMirrorShim {
+  setValue: (string) => void;
+  setOption: (option: string, property: any) => void;
+  focus: () => void;
+  execCommand: (string) => void;
+  getValue: () => string;
+  getInputField: () => HTMLInputElement;
+  element: HTMLElement;
+}
+
 export default class ChatEditor extends Component<ChatEditorProps, ChatEditorState> {
-  editor: ProxyHandler<unknown> | null;
+  editor: CodeMirrorShim;
   constructor(props: ChatEditorProps) {
     super(props);
 
@@ -222,7 +232,7 @@ export default class ChatEditor extends Component<ChatEditorProps, ChatEditorSta
       <Row
         backgroundColor='white'
         alignItems='center'
-        flexGrow='1'
+        flexGrow={1}
         height='100%'
         paddingTop={MOBILE_BROWSER_REGEX.test(navigator.userAgent) ? '16px' : '0'}
         paddingBottom={MOBILE_BROWSER_REGEX.test(navigator.userAgent) ? '16px' : '0'}
@@ -235,7 +245,7 @@ export default class ChatEditor extends Component<ChatEditorProps, ChatEditorSta
         {MOBILE_BROWSER_REGEX.test(navigator.userAgent)
           ? <MobileBox
               data-value={this.state.message}
-              fontSize="1"
+              fontSize={1}
               lineHeight="tall"
               onClick={(event) => {
                 if (this.editor) {
@@ -245,7 +255,7 @@ export default class ChatEditor extends Component<ChatEditorProps, ChatEditorSta
             >
             <BaseTextArea
               fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
-              fontSize="1"
+              fontSize={1}
               lineHeight="tall"
               rows={1}
               style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
@@ -254,7 +264,7 @@ export default class ChatEditor extends Component<ChatEditorProps, ChatEditorSta
                 this.messageChange(null, null, event.target.value)
               }
               onKeyDown={event =>
-                this.messageChange(null, null, event.target.value)
+                this.messageChange(null, null, (event.target as any).value)
               }
               ref={(input) => {
                 if (!input)

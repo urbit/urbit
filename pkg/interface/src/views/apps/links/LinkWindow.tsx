@@ -2,7 +2,7 @@ import { Box, Col, Text } from '@tlon/indigo-react';
 import { Association, Graph, Group } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, {
-  Component
+  Component, ReactNode
 } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
@@ -31,6 +31,11 @@ const style = {
   alignItems: 'center'
 };
 
+interface RendererProps {
+  index: BigInteger;
+  children?: ReactNode;
+}
+
 class LinkWindow extends Component<LinkWindowProps, {}> {
   fetchLinks = async () => true;
 
@@ -39,7 +44,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
     return isWriter(group, association.resource);
   }
 
-  renderItem = React.forwardRef<HTMLDivElement>(({ index, scrollWindow }, ref) => {
+  renderItem = React.forwardRef<HTMLDivElement>(({ index }: RendererProps, ref) => {
     const { props } = this;
     const { association, graph, api } = props;
     const [, , ship, name] = association.resource.split('/');
@@ -60,7 +65,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
             ref={ref}
             key={index.toString()}
             mx="auto"
-            mt="4"
+            mt={4}
             maxWidth="768px"
             width="100%"
             flexShrink={0}
@@ -82,7 +87,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
     }
     return (
       <Box ref={ref}>
-        <LinkItem key={index.toString()} {...linkProps} />;
+        <LinkItem key={index.toString()} {...linkProps} />
       </Box>
     );
   });
@@ -96,7 +101,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
         <Col
           key={0}
           mx="auto"
-          mt="4"
+          mt={4}
           maxWidth="768px"
           width="100%"
           flexShrink={0}

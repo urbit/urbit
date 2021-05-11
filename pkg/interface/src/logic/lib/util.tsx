@@ -5,7 +5,7 @@ import bigInt, { BigInteger } from 'big-integer';
 import { enableMapSet } from 'immer';
 import _ from 'lodash';
 import f from 'lodash/fp';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IconRef } from '~/types';
 import useSettingsState from '../state/settings';
 
@@ -422,6 +422,13 @@ export const useHovering = (): useHoveringInterface => {
 
   return useMemo(() => ({ hovering, bind }), [hovering, bind]);
 };
+
+export function withHovering<T>(Component: React.ComponentType<T>) {
+  return React.forwardRef((props, ref) => {
+    const { hovering, bind } = useHovering();
+    return <Component ref={ref} hovering={hovering} bind={bind} {...props} />
+  })
+}
 
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 export function getItemTitle(association: Association): string {

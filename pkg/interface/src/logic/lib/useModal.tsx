@@ -1,9 +1,9 @@
 import { Box } from '@tlon/indigo-react';
 import React, {
-  ReactNode,
-  useCallback,
-  useMemo,
-  useRef, useState
+    ReactNode,
+    useCallback,
+    useMemo,
+    useRef, useState
 } from 'react';
 import { PropFunc } from '~/types';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
@@ -57,7 +57,7 @@ export function useModal(props: UseModalProps & PropFunc<typeof Box>): UseModalR
           display="flex"
           alignItems="stretch"
           flexDirection="column"
-          spacing="2"
+          spacing={2}
           dismiss={dismiss}
           {...rest}
         >

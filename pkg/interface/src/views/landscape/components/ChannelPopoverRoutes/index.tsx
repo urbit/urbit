@@ -1,8 +1,8 @@
 import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import {
-  Association,
+    Association,
 
-  Group
+    Group
 } from '@urbit/api';
 import React, { useCallback, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -64,15 +64,15 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
     >
       <Row
         flexDirection={['column', 'row']}
-        border="1"
+        border={1}
         borderColor="lightGray"
-        borderRadius="2"
+        borderRadius={2}
         bg="white"
         height="100%"
       >
-        <Box pt="4" px="4" display={['block', 'none']}>
+        <Box pt={4} px={4} display={['block', 'none']}>
           <Link to={props.baseUrl}>
-            <Text fontSize="1">{'<- Back'}</Text>
+            <Text fontSize={1}>{'<- Back'}</Text>
           </Link>
         </Box>
         <ChannelPopoverRoutesSidebar
@@ -80,19 +80,19 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
           isOwner={isOwner}
           baseUrl={props.baseUrl}
         />
-        <FormGroup onReset={onDismiss} height="100%" overflowY="auto" pt="5" flexGrow={1}>
+        <FormGroup onReset={onDismiss} height="100%" overflowY="auto" pt={5} flexGrow={1}>
           <ChannelNotifications {...props} />
           {!isOwner && (
-            <Col mx="4" mb="6" flexShrink={0}>
-              <Text id="unsubscribe" fontSize="2" fontWeight="bold">
+            <Col mx={4} mb={6} flexShrink={0}>
+              <Text id="unsubscribe" fontSize={2} fontWeight="bold">
                 Unsubscribe from Channel
               </Text>
-              <Text mt="1" maxWidth="450px" gray>
+              <Text mt={1} maxWidth="450px" gray>
                 Unsubscribing from a channel will revoke your ability to read
                 its contents. Any permissions set by the channel host will still
                 apply once you have left.
               </Text>
-              <Row mt="3">
+              <Row mt={3}>
                 <StatelessAsyncButton destructive onClick={handleUnsubscribe}>
                   Unsubscribe from {props.association.metadata.title}
                 </StatelessAsyncButton>
@@ -104,16 +104,16 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
               <ChannelDetails {...props} />
               <GraphPermissions {...props} />
               { isOwner ? (
-              <Col mx="4" mt="5" mb="6" flexShrink={0}>
-                <Text id="archive" fontSize="2" fontWeight="bold">
+              <Col mx={4} mt={5} mb={6} flexShrink={0}>
+                <Text id="archive" fontSize={2} fontWeight="bold">
                   Archive channel
                 </Text>
-                <Text mt="1" maxWidth="450px" gray>
+                <Text mt={1} maxWidth="450px" gray>
                   Archiving a channel will prevent further updates to the channel.
                   Users who are currently joined to the channel will retain a copy
                   of the channel.
                 </Text>
-                <Row mt="3">
+                <Row mt={3}>
                   <StatelessAsyncButton destructive onClick={handleArchive}>
                     Archive {props.association.metadata.title}
                   </StatelessAsyncButton>
@@ -121,16 +121,16 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
               </Col>
 
               ) : (
-              <Col mx="4" my="6" flexShrink={0}>
-              <Text id="remove" fontSize="2" fontWeight="bold">
+              <Col mx={4} my={6} flexShrink={0}>
+              <Text id="remove" fontSize={2} fontWeight="bold">
                 Remove channel from group
               </Text>
-              <Text mt="1" maxWidth="450px" gray>
+              <Text mt={1} maxWidth="450px" gray>
                 Removing a channel will prevent further updates to the channel.
                 Users who are currently joined to the channel will retain a copy
                 of the channel.
               </Text>
-              <Row mt="3">
+              <Row mt={3}>
                 <StatelessAsyncButton destructive onClick={handleRemove}>
                   Remove {props.association.metadata.title}
                 </StatelessAsyncButton>

@@ -16,7 +16,7 @@ type ChatWindowProps = {
   unreadCount: number;
   graph: Graph;
   graphSize: number;
-  station: unknown;
+  station?: unknown;
   fetchMessages: (newer: boolean) => Promise<boolean>;
   api: GlobalApi;
   scrollTo?: BigInteger;
@@ -34,6 +34,11 @@ interface ChatWindowState {
   idle: boolean;
   initialized: boolean;
   unreadIndex: BigInteger;
+}
+
+interface RendererProps {
+  index: bigInt.BigInteger;
+  scrollWindow: any;
 }
 
 const virtScrollerStyle = { height: '100%' };
@@ -99,11 +104,12 @@ class ChatWindow extends Component<
     });
   }
 
-  dismissedInitialUnread(): void {
+  dismissedInitialUnread(): boolean {
     const { unreadCount, graph } = this.props;
 
-    return this.state.unreadIndex.eq(bigInt.zero) ? unreadCount > graph.size :
-    this.state.unreadIndex.neq(graph.keys()?.[unreadCount]?.[0] ?? bigInt.zero);
+    return this.state.unreadIndex.eq(bigInt.zero)
+      ? unreadCount > graph.size
+      : this.state.unreadIndex.neq(graph.keys()?.[unreadCount]?.[0] ?? bigInt.zero);
   }
 
   handleWindowBlur(): void {
@@ -173,7 +179,7 @@ class ChatWindow extends Component<
     }
   }
 
-  renderer = React.forwardRef(({ index, scrollWindow }, ref) => {
+  renderer = React.forwardRef(({ index, scrollWindow }: RendererProps, ref) => {
     const {
       api,
       showOurContact,

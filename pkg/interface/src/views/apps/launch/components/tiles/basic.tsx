@@ -21,7 +21,7 @@ const BasicTile = (props: BasicTileProps): ReactElement => (
           display='inline-block'
           verticalAlign='top'
           mt='5px'
-          mr='2'
+          mr={2}
           />
         : null
       }{props.title}

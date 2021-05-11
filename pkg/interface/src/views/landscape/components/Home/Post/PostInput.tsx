@@ -1,5 +1,5 @@
 import { BaseTextArea, Box, Button, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
-import { Content, Path } from '@urbit/api';
+import { Association, Content, Group, Path } from '@urbit/api';
 import React, {
   ReactElement, useCallback, useState
 } from 'react';
@@ -31,9 +31,11 @@ function canWrite(props) {
 
 interface PostInputProps {
   api: GlobalApi;
+  association: Association;
   graphPath: Path;
-  index: string;
-  submitCallback: () => void;
+  group: Group;
+  index?: string;
+  submitCallback?: () => void;
   vip: string;
 }
 
@@ -106,7 +108,7 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
     <Box
       width="100%"
       minHeight="96px"
-      borderRadius="2"
+      borderRadius={2}
       border={1}
       borderColor="lightGray"
     >
@@ -133,7 +135,7 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
         borderTopColor="lightGray"
         width="100%"
         height="32px"
-        pl="2"
+        pl={2}
         display="flex"
         justifyContent="space-between"
         alignItems="center"
@@ -164,8 +166,8 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
           )}
         </Row>
         <Button
-          pl="2"
-          pr="2"
+          pl={2}
+          pr={2}
           height="31px"
           flexShrink={0}
           backgroundColor="transparent"

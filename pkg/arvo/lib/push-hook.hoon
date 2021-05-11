@@ -26,6 +26,7 @@
 ::
 /-  *push-hook
 /+  default-agent, resource, verb, versioning, agentio
+~%  %push-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -76,14 +77,13 @@
 ::  +diplomatic: only renegotiate if versions changed
 ::    
 ::    If %.n please leave note as to why renegotiation necessary
-::    
-::    - Fixing incorrectly held unversioned subscriptions
 ::
 ++  diplomatic
   ^-  ?
-  %.n
+  %.y
 ::
 ++  push-hook
+  ~/  %push-hook
   |*  =config
   $_  ^|
   |_  bowl:gall
@@ -113,7 +113,7 @@
   ::
   ++  transform-proxy-update
     |~  vase
-    *(unit vase)
+    *[(list card) (unit vase)]
   ::  +initial-watch: produce initial state for a subscription
   ::
   ::    .resource is the resource being subscribed to.
@@ -175,6 +175,7 @@
   =*  state  -
   ^-  agent:gall
   =<
+    ~%  %push-agent-lib  ..poke-hook-action  ~
     |_  =bowl:gall
     +*  this  .
         og   ~(. push-hook bowl)
@@ -267,6 +268,7 @@
       !>(state)
     ::
     ++  on-poke
+      ~/  %on-poke
       |=  [=mark =vase]
       ^-  (quip card:agent:gall agent:gall)
       ?:  =(mark %push-hook-action)
@@ -283,6 +285,7 @@
       [cards this]
     ::
     ++  on-watch
+      ~/  %on-watch
       |=  =path
       ^-  (quip card:agent:gall agent:gall)
       ?:  ?=([%version ~] path)
@@ -320,6 +323,7 @@
       --
     ::
     ++  on-agent
+      ~/  %on-agent
       |=  [=wire =sign:agent:gall]
       ^-  (quip card:agent:gall agent:gall)
       ?.  ?=([%helper %push-hook @ *] wire)
@@ -373,6 +377,7 @@
           [%x %min-version ~]  ``version+!>(version.config)
         ==
     --
+  ~%  %push-helper-lib  ..card  ~
   |_  =bowl:gall
   +*  og   ~(. push-hook bowl)
       ver  ~(. versioning [bowl [update-mark version min-version]:config])
@@ -380,6 +385,7 @@
       pass  pass:io
   ::
   ++  poke-hook-action
+    ~/  %poke-hook-action
     |=  =action
     ^-  (quip card:agent:gall _state)
     |^
@@ -448,6 +454,7 @@
     [%pass wire %agent [our.bowl store-name.config] %watch store-path.config]
   ::
   ++  push-updates
+    ~/  %push-updates
     |=  =cage
     ^-  (list card:agent:gall)
     %+  roll  (resource-for-update q.cage)
@@ -484,6 +491,7 @@
     --
   ::
   ++  forward-update
+    ~/  %forward-update
     |=  =cage
     ^-  (list card:agent:gall)
     =-  lis
@@ -494,35 +502,32 @@
     ^-  [(list card:agent:gall) (unit vase)]
     =/  =path
       resource+(en-path:resource rid)
-    =/  =wire  (make-wire path)
     =*  ship   entity.rid
-    =.  tf-vas
+    =/  out=(pair (list card:agent:gall) (unit vase))
       ?.  =(our.bowl ship)
         ::  do not transform before forwarding
         ::
-        `vas
+        ``vas
       ::  use cached transform
       ::
-      ?^  tf-vas  tf-vas
+      ?^  tf-vas  `tf-vas
       ::  transform before poking store
       ::
       (transform-proxy-update:og vas)
-    ~|  "forwarding failed during transform. mark: {<p.cage>} resource: {<rid>}"
-    ?>  ?=(^ tf-vas)
-    =/  =dock
-      :-  ship
-      ?.  =(our.bowl ship)
-        ::  forward to host
-        ::
-        dap.bowl
-      ::  poke our store
+    ~|  "forwarding failed during transform. mark: {<p.cage>} rid: {<rid>}"
+    ?>  ?=(^ q.out)
+    :_  q.out
+    :_  (weld lis p.out)
+    =/  =wire  (make-wire path)
+    =-  [%pass wire %agent - %poke [current-version:ver u.q.out]]
+    :-  ship
+    ?.  =(our.bowl ship)
+      ::  forward to host
       ::
-      store-name.config
-    =/  cag=^cage
-      :-  current-version:ver
-      u.tf-vas
-    :_  tf-vas
-    [[%pass wire %agent dock %poke cag] lis]
+      dap.bowl
+    ::  poke our store
+    ::
+    store-name.config
   ::
   ++  ver-from-path
     |=  =path
@@ -532,6 +537,7 @@
     (slav %ud i.extra)
   ::
   ++  resource-for-update
+    ~/  %resource-for-update
     |=  =vase
     ^-  (list resource)
     %~  tap  in

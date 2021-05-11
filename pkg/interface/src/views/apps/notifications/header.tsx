@@ -32,7 +32,7 @@ export function Header(
   return (
     <Row
       flexDirection={['column-reverse', 'row']}
-      minHeight="4"
+      minHeight={4}
       mb={content ? 2 : 0}
       onClick={props.onClick}
       flexWrap="wrap"
@@ -40,7 +40,7 @@ export function Header(
       gridArea="header"
       overflow="hidden"
     >
-      <Row gapX="1" overflow="hidden" alignItems="center">
+      <Row gapX={1} overflow="hidden" alignItems="center">
         {authors.length > 0 && (
           <>
             <Author
@@ -58,15 +58,15 @@ export function Header(
           </>
         )}
         <Box whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
-          <Text lineHeight="tall" mr="1">
+          <Text lineHeight="tall" mr={1}>
             {description} {channelTitle}
           </Text>
         </Box>
       </Row>
-      <Row ml={[0, 1]} mb={[1, 0]} gapX="1" alignItems="center">
+      <Row ml={[0, 1]} mb={[1, 0]} gapX={1} alignItems="center">
         {groupTitle && (
           <>
-            <Text lineHeight="tall" fontSize="1" gray>
+            <Text lineHeight="tall" fontSize={1} gray>
               {groupTitle}
             </Text>
             <Dot color="gray" />
@@ -75,7 +75,7 @@ export function Header(
         {time && (
           <Timestamp
             lineHeight="tall"
-            fontSize="1"
+            fontSize={1}
             relative
             stamp={moment(time)}
             color="gray"

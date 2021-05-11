@@ -18,9 +18,20 @@
 ++  orm      orm:store
 ++  orm-log  orm-log:store
 +$  debug-input  [%validate-graph =resource:store]
+::
++$  cache
+  $:  validators=(map mark dais:clay)
+  ==
+::
+::  TODO: come back to this and potentially use ford runes or otherwise
+::  send a %t to be notified of validator changes
++$  inflated-state
+  $:  state-5
+      cache
+  ==
 --
 ::
-=|  state-5
+=|  inflated-state
 =*  state  -
 ::
 %-  agent:dbug
@@ -32,7 +43,7 @@
     def   ~(. (default-agent this %|) bowl)
 ::
 ++  on-init  [~ this]
-++  on-save  !>(state)
+++  on-save  !>(-.state)
 ++  on-load
   |=  =old=vase
   ^-  (quip card _this)
@@ -108,7 +119,7 @@
       (gas:orm-log ~ [now.bowl logged-update] ~)
     ==
   ::
-    %5  [cards this(state old)]
+    %5  [cards this(-.state old, +.state *cache)]
   ==
 ::
 ++  on-watch
@@ -180,7 +191,9 @@
                   !(~(has by graphs) resource)
           ==  ==
       ~|  "validation of graph {<resource>} failed using mark {<mark>}"
-      ?>  (validate-graph graph mark)
+      =^  is-valid  state
+        (validate-graph graph mark)
+      ?>  is-valid
       =/  =logged-update:store
         [time %add-graph resource graph mark overwrite]
       =/  =update-log:store
@@ -217,6 +230,10 @@
         (~(got by graphs) resource)
       ~|  "cannot add duplicate nodes to {<resource>}"
       ?<  (check-for-duplicates graph ~(key by nodes))
+      ~|  "validation of nodes failed using mark {<mark>}"
+      =^  is-valid  state
+        (check-validity ~(tap by nodes) mark)
+      ?>  is-valid
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [time [%add-nodes resource nodes]])
@@ -230,6 +247,17 @@
         :_  mark
         (add-node-list resource graph mark (sort-nodes nodes))
       ==
+      ::
+      ++  check-validity
+        |=  [lis=(list (pair index:store node:store)) mark=(unit ^mark)]
+        ^-  [? _state]
+        |-
+        ?~  lis  [& state]
+        =^  is-valid  state
+          (validate-graph (gas:orm ~ [(rear p.i.lis) q.i.lis]~) mark)
+        ?.  is-valid
+          [| state]
+        $(lis t.lis)
       ::
       ++  check-for-duplicates
         |=  [=graph:store nodes=(set index:store)]
@@ -288,8 +316,6 @@
             ==
         ^-  graph:store
         ?<  ?=(~ index)
-        ~|  "validation of node failed using mark {<mark>}"
-        ?>  (validate-graph (gas:orm ~ [i.index node]~) mark)
         =*  atom   i.index
         %^  put:orm
             graph
@@ -588,18 +614,24 @@
     ^-  (quip card _state)
     =/  [=graph:store mark=(unit mark:store)]
       (~(got by graphs) resource.debug-input)
-    ?>  (validate-graph graph mark)
+    =^  is-valid  state
+      (validate-graph graph mark)
+    ?>  is-valid
     [~ state]
   ::
   ++  validate-graph
     |=  [=graph:store mark=(unit mark:store)]
-    ^-  ?
-    ?~  mark   %.y
+    ^-  [? _state]
+    ?~  mark   [%.y state]
+    =/  has-dais  (~(has by validators) u.mark)
     =/  =dais:clay
+      ?:  has-dais
+        (~(got by validators) u.mark)
       .^  =dais:clay
           %cb
           /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[u.mark]
       ==
+    :_  state(validators (~(put by validators) u.mark dais))
     |-  ^-  ?
     ?~  graph  %.y
     %+  roll  (tap:orm graph)
@@ -617,7 +649,9 @@
   ++  poke-import
     |=  arc=*
     ^-  (quip card _state)
-    (import:store arc our.bowl)
+    =^  cards  -.state
+      (import:store arc our.bowl)
+    [cards state]
   --
 ::
 ++  on-peek

@@ -1,8 +1,8 @@
 import { Box, Row, SegmentedProgressBar, Text } from '@tlon/indigo-react';
 import {
-  joinError, joinProgress,
+    joinError, joinProgress,
 
-  JoinRequest
+    JoinRequest
 } from '@urbit/api';
 import React, { useCallback } from 'react';
 import GlobalApi from '~/logic/api/global';
@@ -34,8 +34,8 @@ export function JoiningStatus(props: JoiningStatusProps) {
     <Row
       display={['flex-column', 'flex']}
       alignItems="center"
-      px="4"
-      gapX="4"
+      px={4}
+      gapX={4}
     >
       <Box flexGrow={1} maxWidth="400px">
         <SegmentedProgressBar current={current + 1} segments={3} />

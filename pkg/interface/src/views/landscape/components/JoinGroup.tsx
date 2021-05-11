@@ -1,11 +1,11 @@
 import {
-  Box, Col,
+    Box, Col,
 
-  Icon,
+    Icon,
 
-  ManagedTextInputField as Input, Row,
+    ManagedTextInputField as Input, Row,
 
-  Text
+    Text
 } from '@tlon/indigo-react';
 import { MetadataUpdatePreview } from '@urbit/api';
 import { Form, Formik, FormikHelpers, useFormikContext } from 'formik';
@@ -140,14 +140,14 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
   );
 
   return (
-    <Col p="3">
+    <Col p={3}>
       <Box mb={3}>
-        <Text fontSize="2" fontWeight="bold">
+        <Text fontSize={2} fontWeight="bold">
           Join a Group
         </Text>
       </Box>
       {_.isString(preview) ? (
-        <Col width="100%" gapY="4">
+        <Col width="100%" gapY={4}>
           <Text>The host appears to be offline. Join anyway?</Text>
           <StatelessAsyncButton
             primary
@@ -166,23 +166,23 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
           >
             { Object.keys(preview.channels).length > 0 && (
               <Col
-                gapY="2"
-                p="2"
-                borderRadius="2"
-                border="1"
+                gapY={2}
+                p={2}
+                borderRadius={2}
+                border={1}
                 borderColor="washedGray"
                 bg="washedBlue"
                 maxHeight="300px"
                 overflowY="auto"
               >
-                <Text gray fontSize="1">
+                <Text gray fontSize={1}>
                   Channels
                 </Text>
                 <Box width="100%" flexShrink={0}>
                   {Object.values(preview.channels).map(({ metadata }: any) => (
                     <Row width="100%">
                       <Icon
-                        mr="2"
+                        mr={2}
                         color="blue"
                         icon={getModuleIcon(metadata?.config?.graph) as any}
                       />
@@ -203,7 +203,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
           </StatelessAsyncButton>
         </>
       ) : (
-        <Col width="100%" gapY="4">
+        <Col width="100%" gapY={4}>
           <Formik
             validationSchema={formSchema}
             initialValues={initialValues}
@@ -217,8 +217,8 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
                 caption="What group are you joining?"
                 placeholder="~sampel-palnet/test-group"
               />
-              <AsyncButton mt="4">Join Group</AsyncButton>
-              <FormError mt="4" />
+              <AsyncButton mt={4}>Join Group</AsyncButton>
+              <FormError mt={4} />
             </Form>
           </Formik>
         </Col>

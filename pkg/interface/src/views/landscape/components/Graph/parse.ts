@@ -1,5 +1,6 @@
 import remark from 'remark';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
+import RemarkBreaks from 'remark-breaks';
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -12,7 +13,7 @@ const DISABLED_BLOCK_TOKENS = [
   'table',
 ];
 
-const DISABLED_INLINE_TOKENS = ['autoLink', 'url', 'email', 'reference'];
+const DISABLED_INLINE_TOKENS = ['autoLink', 'url', 'email', 'reference', 'html'];
 
 const tallParser = remark().freeze();
 
@@ -27,6 +28,7 @@ const wideParser = remark()
         inline: DISABLED_INLINE_TOKENS,
       },
     ],
+    RemarkBreaks,
   ])
   .freeze();
 

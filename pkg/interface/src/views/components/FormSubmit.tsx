@@ -22,10 +22,10 @@ export function FormSubmit<T = unknown>(props: FormSubmitProps): ReactElement {
 
   return (
     <Row
-      p="2"
+      p={2}
       bottom="0px"
       justifyContent={props.start ? 'flex-start' : 'flex-end'}
-      gapX="2"
+      gapX={2}
       alignItems="center"
     >
       {dirty && !isSubmitting && (

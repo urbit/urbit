@@ -3,7 +3,7 @@ import bigInt from 'big-integer';
 import React from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
 import { Loading } from '~/views/components/Loading';
-import { PostFeed } from './PostFeed';
+import PostFeed from './PostFeed';
 import PostItem from './PostItem/PostItem';
 
 export default function PostReplies(props) {
@@ -12,7 +12,6 @@ export default function PostReplies(props) {
     api,
     history,
     association,
-    groups,
     graphPath,
     group,
     vip,
@@ -20,14 +19,13 @@ export default function PostReplies(props) {
   } = props;
 
   const graphResource = resourceFromPath(graphPath);
-  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
 
   let graph = props.graph;
   const shouldRenderFeed = Boolean(graph);
 
   if (!shouldRenderFeed) {
     return (
-      <Box height="100%" width="100%" alignItems="center" pl="1" pt="3">
+      <Box height="100%" width="100%" alignItems="center" pl={1} pt={3}>
         <Loading />
       </Box>
     );
@@ -68,7 +66,7 @@ export default function PostReplies(props) {
         height="100%"
         alignItems="center" overflowY="scroll"
       >
-        <Box mt="3" width="100%" alignItems="center">
+        <Box mt={3} width="100%" alignItems="center">
           <PostItem
             key={node.post.index}
             node={node}
@@ -85,13 +83,13 @@ export default function PostReplies(props) {
           />
         </Box>
         <Box
-          pl="2"
-          pr="2"
+          pl={2}
+          pr={2}
           width="100%"
           maxWidth="616px"
           alignItems="center"
         >
-          <Col bg="washedGray" width="100%" alignItems="center" p="3">
+          <Col bg="washedGray" width="100%" alignItems="center" p={3}>
             <Text textAlign="center" width="100%">
               No one has posted any replies yet.
             </Text>
@@ -102,7 +100,7 @@ export default function PostReplies(props) {
   }
 
   return (
-    <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl="1" pt="3">
+    <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl={1} pt={3}>
       <PostFeed
         key={locationUrl}
         graphPath={graphPath}
@@ -112,7 +110,6 @@ export default function PostReplies(props) {
         pendingSize={pendingSize}
         association={association}
         group={group}
-        groups={groups}
         vip={vip}
         api={api}
         history={history}

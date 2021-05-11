@@ -58,13 +58,7 @@ const tokenizeMessage = (text) => {
           || (str === '`' && !isInCodeBlock)
         ) {
           isInCodeBlock = true;
-        } else if (
-          (str.endsWith('`') && str !== '`')
-          || (str === '`' && isInCodeBlock)
-        ) {
-          isInCodeBlock = false;
-        }
-
+        } 
         if(isRef(str) && !isInCodeBlock) {
           if (currTextLine.length > 0 || currTextBlock.length > 0) {
             // If we're in the middle of a message, add it to the stack and reset
@@ -105,6 +99,13 @@ const tokenizeMessage = (text) => {
         } else {
           currTextLine.push(str);
         }
+        if (
+          (str.endsWith('`') && str !== '`')
+          || (str === '`' && isInCodeBlock)
+        ) {
+          isInCodeBlock = false;
+        }
+
       });
     }
     currTextBlock.push(currTextLine.join(' '))

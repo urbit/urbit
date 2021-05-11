@@ -11,7 +11,7 @@ import useGraphState from '~/logic/state/graph';
 import ShareProfile from '~/views/apps/chat/components/ShareProfile';
 import { Loading } from '~/views/components/Loading';
 import SubmitDragger from '~/views/components/SubmitDragger';
-import ChatInput from './ChatInput';
+import ChatInput, { ChatInput as NakedChatInput } from './ChatInput';
 import ChatWindow from './ChatWindow';
 
 interface ChatPaneProps {
@@ -82,14 +82,14 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   } = props;
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
   const ourContact = useOurContact();
-  const chatInput = useRef<ChatInput>();
+  const chatInput = useRef<NakedChatInput>();
 
   const onFileDrag = useCallback(
     (files: FileList | File[]) => {
       if (!chatInput.current) {
         return;
       }
-      chatInput.current?.uploadFiles(files);
+      (chatInput.current as NakedChatInput)?.uploadFiles(files);
     },
     [chatInput.current]
   );

@@ -1,9 +1,10 @@
 /* eslint-disable max-lines-per-function */
 import { BaseImage, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
-import { Contact, Post } from '@urbit/api';
+import { Contact, MentionContent, Post } from '@urbit/api';
 import bigInt from 'big-integer';
 import moment from 'moment';
 import React, {
+  Ref,
   useEffect,
   useMemo, useState
 } from 'react';
@@ -13,22 +14,20 @@ import { useIdlingState } from '~/logic/lib/idling';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
 import {
-  cite,
-
-  daToUnix, useHovering, useShowNickname, uxToHex
+  cite, daToUnix, useHovering, useShowNickname, uxToHex
 } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
 import useLocalState from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Dropdown } from '~/views/components/Dropdown';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
-import { GraphContent} from  '~/views/landscape/components/Graph/GraphContent';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
 interface DayBreakProps {
-  when: string;
+  when: string | number;
   shimTop?: boolean;
 }
 
@@ -57,7 +56,7 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
 );
 
 export const UnreadMarker = React.forwardRef(
-  ({ dismissUnread }: any, ref) => {
+  ({ dismissUnread }: any, ref: Ref<HTMLDivElement>) => {
     const [visible, setVisible] = useState(false);
     const idling = useIdlingState();
 
@@ -115,7 +114,7 @@ const MessageActionItem = (props) => {
   );
 };
 
-const MessageActions = ({ api, onReply, onDelete, association, msg, isAdmin, permalink }) => {
+const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink }) => {
   const isOwn = () => msg.author === window.ship;
   const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Message Link');
 
@@ -189,7 +188,7 @@ const MessageWrapper = (props) => {
   const showHover = (props.transcluded === 0) && hovering && !props.hideHover;
   return (
     <Box
-      py='1'
+      py={props.transcluded ? '2px' : '1'}
       backgroundColor={props.highlighted
         ? showHover ? 'lightBlue' : 'washedBlue'
         : showHover ? 'washedGray' : 'transparent'
@@ -207,14 +206,14 @@ interface ChatMessageProps {
   msg: Post;
   previousMsg?: Post;
   nextMsg?: Post;
-  isLastRead: boolean;
-  permalink: string;
+  isLastRead?: boolean;
+  permalink?: string;
   transcluded?: number;
   className?: string;
-  isPending: boolean;
+  isPending?: boolean;
   style?: unknown;
   isLastMessage?: boolean;
-  dismissUnread: () => void;
+  dismissUnread?: () => void;
   api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
@@ -222,27 +221,24 @@ interface ChatMessageProps {
   innerRef: (el: HTMLDivElement | null) => void;
   onReply?: (msg: Post) => void;
   showOurContact: boolean;
+  onDelete?: () => void;
 }
 
 function ChatMessage(props: ChatMessageProps) {
   let { highlighted } = props;
   const {
     msg,
-    previousMsg,
     nextMsg,
-    isLastRead,
-    group,
-    association,
+    isLastRead = false,
     className = '',
-    isPending,
+    isPending = false,
     style,
     isLastMessage,
     api,
     showOurContact,
-    fontSize,
     hideHover,
-    dismissUnread,
-    permalink
+    dismissUnread = () => null,
+    permalink = ''
   } = props;
 
   if (typeof msg === 'string' || !msg) {
@@ -259,7 +255,7 @@ function ChatMessage(props: ChatMessageProps) {
         msg.number === 1
     );
 
-    const ourMention = msg?.contents?.some((e) => {
+    const ourMention = msg?.contents?.some((e: MentionContent) => {
       return e?.mention && e?.mention === window.ship;
     });
 
@@ -293,12 +289,10 @@ function ChatMessage(props: ChatMessageProps) {
   const messageProps = {
     msg,
     timestamp,
-    association,
     isPending,
     showOurContact,
     api,
     highlighted,
-    fontSize,
     hideHover,
     transcluded,
     onReply,
@@ -353,7 +347,8 @@ export const MessageAuthor = ({
   timestamp,
   msg,
   api,
-  showOurContact
+  showOurContact,
+  ...props
 }) => {
   const osDark = useLocalState(state => state.dark);
 
@@ -423,12 +418,12 @@ export const MessageAuthor = ({
       </Box>
     );
   return (
-    <Box pb="1" display='flex' alignItems='flex-start'>
+    <Box pb="1" display='flex' alignItems='center'>
       <Box
        height={24}
         pr={2}
         mt={'1px'}
-        pl={'12px'}
+        pl={props.transcluded ? '11px' : '12px'}
         cursor='pointer'
         position='relative'
       >
@@ -488,15 +483,16 @@ export const Message = React.memo(({
 }: MessageProps) => {
   const { hovering, bind } = useHovering();
   return (
-    <Box pl="44px" width="100%" position='relative'>
+    <Box pl="44px" pr={4} width="100%" position='relative'>
       {timestampHover ? (
         <Text
           display={hovering ? 'block' : 'none'}
           position='absolute'
           width='36px'
           textAlign='right'
-          left='0'
-          top='3px'
+          left={0}
+          top='2px'
+          lineHeight="tall"
           fontSize={0}
           gray
         >
@@ -528,10 +524,10 @@ export const MessagePlaceholder = ({
 }) => (
   <Box
     width='100%'
-    fontSize='2'
-    pl='3'
-    pt='4'
-    pr='3'
+    fontSize={2}
+    pl={3}
+    pt={4}
+    pr={3}
     display='flex'
     lineHeight='tall'
     className={className}
@@ -539,7 +535,7 @@ export const MessagePlaceholder = ({
     {...props}
   >
     <Box
-      pr='3'
+      pr={3}
       verticalAlign='top'
       backgroundColor='white'
       style={{ float: 'left' }}
@@ -562,20 +558,20 @@ export const MessagePlaceholder = ({
     >
       <Box
         className='hide-child'
-        paddingTop='4'
+        paddingTop={4}
         style={{ visibility: index % 5 == 0 ? 'initial' : 'hidden' }}
       >
         <Text
           display='inline-block'
           verticalAlign='middle'
-          fontSize='0'
+          fontSize={0}
           color='washedGray'
           cursor='default'
         >
           <Text maxWidth='32rem' display='block'>
             <Text
               backgroundColor='washedGray'
-              borderRadius='2'
+              borderRadius={2}
               display='block'
               width='100%'
               height='100%'
@@ -586,12 +582,12 @@ export const MessagePlaceholder = ({
           display='inline-block'
           mono
           verticalAlign='middle'
-          fontSize='0'
-          washedGray
+          fontSize={0}
+          color='washedGray'
         >
           <Text
             background='washedGray'
-            borderRadius='2'
+            borderRadius={2}
             display='block'
             height='1em'
             style={{ width: `${((index % 3) + 1) * 3}em` }}
@@ -600,16 +596,16 @@ export const MessagePlaceholder = ({
         <Text
           mono
           verticalAlign='middle'
-          fontSize='0'
-          ml='2'
-          washedGray
-          borderRadius='2'
+          fontSize={0}
+          ml={2}
+          color='washedGray'
+          borderRadius={2}
           display={['none', 'inline-block']}
           className='child'
         >
           <Text
             backgroundColor='washedGray'
-            borderRadius='2'
+            borderRadius={2}
             display='block'
             width='100%'
             height='100%'
@@ -619,7 +615,7 @@ export const MessagePlaceholder = ({
       <Text
         display='block'
         backgroundColor='washedGray'
-        borderRadius='2'
+        borderRadius={2}
         height='1em'
         style={{ width: `${(index % 5) * 20}%` }}
       ></Text>

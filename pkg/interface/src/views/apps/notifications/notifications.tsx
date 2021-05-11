@@ -23,7 +23,7 @@ const HeaderLink = React.forwardRef((
 
   return (
     <Link to={to}>
-      <Text ref={ref} px="2" {...textProps} gray={!active} />
+      <Text ref={ref} px={2} {...textProps} gray={!active} />
     </Link>
   );
 });
@@ -67,21 +67,21 @@ export default function NotificationsScreen(props: any): ReactElement {
               <Body>
                 <Col overflowY="hidden" height="100%">
                   <Row
-                    p="3"
+                    p={3}
                     alignItems="center"
                     height="48px"
                     justifyContent="space-between"
                     width="100%"
-                    borderBottom="1"
+                    borderBottom={1}
                     borderBottomColor="lightGray"
                   >
 
-                  <Text fontWeight="bold" fontSize="2" lineHeight="1" ref={anchorRef}>
+                  <Text fontWeight="bold" fontSize={2} lineHeight={1} ref={anchorRef}>
                     Notifications
                   </Text>
                     <Row
                       justifyContent="space-between"
-                      gapX="3"
+                      gapX={3}
                     >
                       <StatelessAsyncAction
                         overflow="hidden"
@@ -93,7 +93,7 @@ export default function NotificationsScreen(props: any): ReactElement {
                       </StatelessAsyncAction>
                       <Link to="/~settings#notifications">
                         <Box>
-                          <Icon lineHeight="1" icon="Adjust" />
+                          <Icon lineHeight={1} icon="Adjust" />
                         </Box>
                       </Link>
                     </Row>

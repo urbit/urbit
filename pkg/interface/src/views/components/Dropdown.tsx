@@ -1,8 +1,8 @@
 import { Box } from '@tlon/indigo-react';
 import React, {
-  ReactElement, ReactNode,
+    ReactElement, ReactNode,
 
-  useCallback, useEffect, useRef, useState
+    useCallback, useEffect, useRef, useState
 } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -84,7 +84,7 @@ export function Dropdown(props: DropdownProps): ReactElement {
   }, []);
 
   return (
-    <Box flexShrink={flexShrink} position={open ? 'relative' : 'static'} minWidth='0' width={props?.width ? props.width : 'auto'}>
+    <Box flexShrink={flexShrink} position={open ? 'relative' : 'static'} minWidth={0} width={props?.width ? props.width : 'auto'}>
       <ClickBox width='100%' ref={anchorRef} onClick={onOpen}>
         {children}
       </ClickBox>
