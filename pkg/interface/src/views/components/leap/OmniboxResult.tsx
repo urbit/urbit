@@ -87,7 +87,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon={icon}
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -99,7 +99,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
             display='inline-block'
             verticalAlign='middle'
             icon='Notifications'
-            mr='2'
+            mr={2}
             size='18px'
             color={iconFill}
           />
@@ -119,7 +119,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon='LogOut'
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -142,7 +142,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon='Home'
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -153,7 +153,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon='Notifications'
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -164,7 +164,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon='Messages'
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -175,7 +175,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           verticalAlign='middle'
           icon='Tutorial'
-          mr='2'
+          mr={2}
           size='18px'
           color={iconFill}
         />
@@ -186,7 +186,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           display='inline-block'
           icon='NullIcon'
           verticalAlign='middle'
-          mr='2'
+          mr={2}
           size='16px'
           color={iconFill}
         />
@@ -230,8 +230,8 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
 
     return (
       <Row
-        py='2'
-        px='2'
+        py={2}
+        px={2}
         cursor={cursor}
         onMouseMove={() => setSelection()}
         onMouseLeave={() => this.setHover(false)}
@@ -259,13 +259,13 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
             overflow='hidden'
             textOverflow='ellipsis'
             whiteSpace='pre'
-            mr='1'
+            mr={1}
           >
             {text.startsWith('~') ? cite(text) : text}
           </Text>
         </Box>
         <Text
-          pr='2'
+          pr={2}
           display='inline-block'
           verticalAlign='middle'
           color={this.state.hovered || selected === link ? 'white' : 'black'}

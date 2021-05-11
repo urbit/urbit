@@ -1,11 +1,11 @@
 import {
-  Box,
+    Box,
 
-  Col, Icon,
+    Col, Icon,
 
-  ManagedCheckboxField as Checkbox, ManagedRadioButtonField as Radio, Row,
+    ManagedCheckboxField as Checkbox, ManagedRadioButtonField as Radio, Row,
 
-  Text
+    Text
 } from '@tlon/indigo-react';
 import { FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
@@ -91,7 +91,7 @@ export function SidebarListHeader(props: {
          <Text>
            Group Feed
          </Text>
-         <Text mr="1" color="blue">
+         <Text mr={1} color="blue">
            { unreadCount > 0 && unreadCount}
          </Text>
        </Row>
@@ -159,7 +159,7 @@ export function SidebarListHeader(props: {
           <FormikOnBlur initialValues={props.initialValues} onSubmit={onSubmit}>
             <Col bg="white" borderRadius={1} border={1} borderColor="lightGray">
               <Col
-                gapY="2"
+                gapY={2}
                 borderBottom={1}
                 borderBottomColor="washedGray"
                 p={2}
@@ -167,7 +167,7 @@ export function SidebarListHeader(props: {
                 <Box>
                   <Text color="gray">Sort Order</Text>
                 </Box>
-                <Radio mb="1" label="A -> Z" id="asc" name="sortBy" />
+                <Radio mb={1} label="A -> Z" id="asc" name="sortBy" />
                 <Radio label="Last Updated" id="lastUpdated" name="sortBy" />
               </Col>
               <Col px={2}>

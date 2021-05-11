@@ -1,17 +1,17 @@
 import { Box, Col, Icon, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
-import React, { ReactElement, ReactNode, useRef, useState, useCallback } from 'react';
+import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import urbitOb from 'urbit-ob';
-import { Dropdown } from '~/views/components/Dropdown';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
-import { MessageInvite } from '~/views/landscape/components/MessageInvite';
+import { Dropdown } from '~/views/components/Dropdown';
 import RichText from '~/views/components/RichText';
+import { MessageInvite } from '~/views/landscape/components/MessageInvite';
 
 const TruncatedText = styled(RichText)`
   white-space: nowrap;
@@ -77,9 +77,9 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       borderRight={1}
       borderRightColor='gray'
       pr={3}
-      fontSize='1'
+      fontSize={1}
       mr='12px'
-      my='1'
+      my={1}
       flexShrink={0}
       display={['block','none']}
     >
@@ -92,12 +92,12 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const Title = () => (
     <Text
       mono={urbitOb.isValidPatp(title)}
-      fontSize='2'
+      fontSize={2}
       fontWeight='600'
       textOverflow='ellipsis'
       overflow='hidden'
       whiteSpace='nowrap'
-      minWidth='0'
+      minWidth={0}
       maxWidth={association?.metadata?.description ? ['100%', '50%'] : 'none'}
       mr='2'
       ml='1'
@@ -112,8 +112,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       display={['none','inline']}
       mono={workspace === '/messages' && !urbitOb.isValidPatp(title)}
       color='gray'
-      mb='0'
-      minWidth='0'
+      mb={0}
+      minWidth={0}
       maxWidth='50%'
       flexShrink={1}
       disableRemoteContent
@@ -166,7 +166,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
 
   const MenuControl = () => (
     <Link to={`${baseUrl}/settings`}>
-      <Icon icon='Menu' color='gray' pr='2' />
+      <Icon icon='Menu' color='gray' pr={2} />
     </Link>
   );
 
@@ -179,8 +179,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       <Box
         flexShrink={0}
         height='48px'
-        py='2'
-        px='2'
+        py={2}
+        px={2}
         borderBottom={1}
         borderBottomColor='lightGray'
         display='flex'

@@ -1,18 +1,18 @@
 import {
-  Col,
-  ErrorLabel, Icon, Label,
+    Col,
+    ErrorLabel, Icon, Label,
 
-  Row, Text
+    Row, Text
 } from '@tlon/indigo-react';
 import { Groups, Rolodex } from '@urbit/api';
 import { FieldArray, useFormikContext } from 'formik';
 import _ from 'lodash';
 import React, {
-  ChangeEvent,
+    ChangeEvent,
 
-  ReactElement, useCallback, useMemo,
+    ReactElement, useCallback, useMemo,
 
-  useRef
+    useRef
 } from 'react';
 import ob from 'urbit-ob';
 import * as Yup from 'yup';
@@ -181,13 +181,13 @@ export function ShipSearch<I extends string, V extends Value<I>>(
           <Col>
             <Label htmlFor={id}>{label}</Label>
             {caption && (
-              <Label gray mt="2">
+              <Label gray mt={2}>
                 {caption}
               </Label>
             )}
 
             <DropdownSearch<string>
-              mt="2"
+              mt={2}
               isExact={isExact}
               placeholder="Search for ships"
               candidates={peers}
@@ -210,7 +210,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
                   py={1}
                   px={2}
                   color="black"
-                  borderRadius="2"
+                  borderRadius={2}
                   bg="washedGray"
                   fontSize={0}
                   mt={2}
@@ -226,7 +226,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
                 </Row>
               ))}
             </Row>
-            <ErrorLabel mt="3" hasError={error.length > 0}>
+            <ErrorLabel mt={3} hasError={error.length > 0}>
               {error.join(', ')}
             </ErrorLabel>
           </Col>

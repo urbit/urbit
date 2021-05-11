@@ -2,6 +2,8 @@ import { BaseInput, Box, Row } from '@tlon/indigo-react';
 import React, { Component } from 'react';
 
 export class Input extends Component {
+  inputRef: React.RefObject<unknown>;
+  props: any;
   constructor(props) {
     super(props);
     this.state = {};
@@ -69,7 +71,7 @@ belt = { met: 'bac' };
   }
 
   paste(e) {
-    const clipboardData = e.clipboardData || window.clipboardData;
+    const clipboardData = e.clipboardData || (window as any).clipboardData;
     const clipboardText = clipboardData.getData('Text');
     this.props.api.belt({ txt: [...clipboardText] });
     e.preventDefault();
@@ -94,18 +96,18 @@ belt = { met: 'bac' };
       }
     }
     return (
-      <Row flexGrow='1' position='relative'>
-        <Box flexShrink='0' width='100%' color='black' fontSize='0'>
+      <Row flexGrow={1} position='relative'>
+        <Box flexShrink={0} width='100%' color='black' fontSize={0}>
           <BaseInput
             autoFocus
             autoCorrect="off"
             autoCapitalize="off"
             color='black'
-            minHeight='0'
+            minHeight={0}
             display='inline-block'
             width='100%'
             spellCheck="false"
-            tabindex="0"
+            tabindex={0}
             wrap="off"
             className="mono"
             id="term"

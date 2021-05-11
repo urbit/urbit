@@ -1,3 +1,4 @@
+import { GraphNode } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import bigInt, { BigInteger } from 'big-integer';
 import produce from 'immer';
@@ -52,14 +53,14 @@ const keys = (json, state: GraphState): GraphState => {
 const processNode = (node) => {
   //  is empty
   if (!node.children) {
-    return produce(node, (draft) => {
+    return produce<GraphNode>(node, (draft: GraphNode) => {
       draft.children = new BigIntOrderedMap();
     });
   }
 
   //  is graph
-  return produce(node, (draft) => {
-    draft.children = new BigIntOrderedMap()
+  return produce<GraphNode>(node, (draft: GraphNode) => {
+    draft.children = new BigIntOrderedMap<GraphNode>()
       .gas(_.map(draft.children, (item, idx) =>
         [bigInt(idx), processNode(item)] as [BigInteger, any]
       ));

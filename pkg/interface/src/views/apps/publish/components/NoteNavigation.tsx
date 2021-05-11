@@ -29,7 +29,7 @@ function NavigationItem(props: {
         <Timestamp
           stamp={moment(props.date)}
           time={false}
-          fontSize="1"
+          fontSize={1}
           justifyContent={props.prev ? 'flex-start' : 'flex-end'}
         />
       </Link>
@@ -48,12 +48,12 @@ function getAdjacentId(
   return target?.[0] || null;
 }
 
-function makeNoteUrl(noteId: number) {
+function makeNoteUrl(noteId: BigInteger) {
   return noteId.toString();
 }
 
 interface NoteNavigationProps {
-  noteId: number;
+  noteId: BigInteger;
   notebook: Graph;
   baseUrl: string;
 }

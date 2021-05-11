@@ -29,7 +29,7 @@ interface ChatInputState {
   currentInput: string;
 }
 
-class ChatInput extends Component<ChatInputProps, ChatInputState> {
+export class ChatInput extends Component<ChatInputProps, ChatInputState> {
   private chatEditor: React.RefObject<ChatEditor>;
 
   constructor(props) {

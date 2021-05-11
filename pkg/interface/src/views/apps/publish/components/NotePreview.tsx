@@ -6,9 +6,9 @@ import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import {
-  getComments,
-  getLatestRevision,
-  getSnippet
+    getComments,
+    getLatestRevision,
+    getSnippet
 } from '~/logic/lib/publish';
 import useHarkState from '~/logic/state/hark';
 import Author from '~/views/components/Author';
@@ -37,7 +37,7 @@ export function NotePreviewContent({ snippet }) {
             style={{ backgroundSize: 'cover',
               backgroundPosition: 'center' }}
           >
-            <Image src={props.src} opacity="0" maxHeight="300px" />
+            <Image src={props.src} opacity={0} maxHeight="300px" />
           </Box>
         ),
         paragraph: props => (
@@ -91,7 +91,7 @@ export function NotePreview(props: NotePreviewProps) {
           borderRadius={2}
           alignItems='flex-start'
           overflow='hidden'
-          p='2'
+          p={2}
         >
           <WrappedBox mb={2}><Text bold>{title}</Text></WrappedBox>
           <WrappedBox>
@@ -101,7 +101,7 @@ export function NotePreview(props: NotePreviewProps) {
           </WrappedBox>
         </Col>
       </Link>
-      <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
+      <Row minWidth={0} flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
         <Author
           showImage
           ship={post?.author}

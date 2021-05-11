@@ -1,36 +1,26 @@
-import React from 'react';
-import _ from 'lodash';
-import { Post, Content, ReferenceContent } from '@urbit/api';
 import {
-  Box,
-  Text,
-  Anchor,
-  H1,
+  Anchor, Box,
+  Col, H1,
   H2,
   H3,
-  H4,
-  Row,
-  Col,
+  H4, Text
 } from '@tlon/indigo-react';
-
-import GlobalApi from '~/logic/api/global';
-import TextContent from './content/text';
-import CodeContent from './content/code';
-import RemoteContent from '~/views/components/RemoteContent';
-import { Mention } from '~/views/components/MentionText';
-import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
-import { referenceToPermalink } from '~/logic/lib/permalinks';
-import { GraphContentWide } from './GraphContentWide';
-import { PropFunc } from '~/types';
-import fromMarkdown from 'mdast-util-from-markdown';
-import Dot from '~/views/components/Dot';
+import { Content, ReferenceContent } from '@urbit/api';
+import _ from 'lodash';
 import {
-  Root,
-  Parent,
-  Content as AstContent,
-  BlockContent,
-} from '@types/mdast';
+  BlockContent, Content as AstContent, Parent, Root
+} from 'mdast';
+import React from 'react';
+import GlobalApi from '~/logic/api/global';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { PropFunc } from '~/types';
+import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
+import Dot from '~/views/components/Dot';
+import { Mention } from '~/views/components/MentionText';
+import RemoteContent from '~/views/components/RemoteContent';
+import CodeContent from './content/code';
 import { parseTall, parseWide } from './parse';
+
 
 type StitchMode = 'merge' | 'block' | 'inline';
 
@@ -253,9 +243,9 @@ const renderers = {
     return (
       <Text
         mono
-        p="1"
+        p={1}
         backgroundColor="washedGray"
-        fontSize="0"
+        fontSize={0}
         style={{ whiteSpace: 'pre-wrap' }}
       >
         {value}
@@ -271,7 +261,7 @@ const renderers = {
   },
   emphasis: ({ children }) => {
     return (
-      <Text fontStyle="italic" fontSize="1" lineHeight="tall">
+      <Text fontStyle="italic" fontSize={1} lineHeight="tall">
         {children}
       </Text>
     );
@@ -288,7 +278,8 @@ const renderers = {
         borderLeft="1px solid"
         color="black"
         paddingLeft={2}
-        mb="1"
+        py={1}
+        mb={1}
       >
         {children}
       </Text>
@@ -296,7 +287,7 @@ const renderers = {
   },
   paragraph: ({ children }) => {
     return (
-      <Text fontSize="1" lineHeight="tall">
+      <Text fontSize={1} lineHeight="tall">
         {children}
       </Text>
     );
@@ -308,11 +299,11 @@ const renderers = {
           top="7px"
           position="absolute"
           left="0px"
-          mr="1"
+          mr={1}
           height="20px"
           width="20px"
         />
-        <Box ml="2">{children}</Box>
+        <Box ml={2}>{children}</Box>
       </Box>
     );
   },
@@ -321,12 +312,12 @@ const renderers = {
     console.log(rest);
     const inner = (
       <Text
-        p="1"
+        p={1}
         className="clamp-message"
         display="block"
-        borderRadius="1"
+        borderRadius={1}
         mono
-        fontSize="0"
+        fontSize={0}
         backgroundColor="washedGray"
         overflowX="auto"
         style={{ whiteSpace: 'pre' }}
@@ -334,7 +325,7 @@ const renderers = {
         {value}
       </Text>
     );
-    return tall ? <Box mb="2">{inner}</Box> : inner;
+    return tall ? <Box mb={2}>{inner}</Box> : inner;
   },
   link: (props) => {
     return (
@@ -351,7 +342,7 @@ const renderers = {
   },
   list: ({ depth, children }) => {
     return (
-      <Col ml="3" gapY="2" my="2">
+      <Col ml={3} gapY={2} my={2}>
         {children}
       </Col>
     );
@@ -363,14 +354,14 @@ const renderers = {
     </Box>
   ),
   'graph-url': ({ url }) => (
-    <Box mt="1" mb="2" flexShrink={0}>
+    <Box mt={1} mb={2} flexShrink={0}>
       <RemoteContent key={url} url={url} />
     </Box>
   ),
   'graph-reference': ({ api, reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
     return (
-      <Box mb="2" flexShrink={0}>
+      <Box mb={2} flexShrink={0}>
         <PermalinkEmbed
           api={api}
           link={link}

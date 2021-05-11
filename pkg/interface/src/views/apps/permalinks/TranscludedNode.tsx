@@ -1,5 +1,5 @@
 import { Anchor, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, Group, Post } from '@urbit/api';
+import { Association, GraphConfig, GraphNode, Group, Post, ReferenceContent, TextContent, UrlContent } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
 import GlobalApi from '~/logic/api/global';
@@ -38,7 +38,7 @@ function TranscludedLinkNode(props: {
 
   switch (idx.length) {
     case 1:
-    const [{ text }, link] = node.post.contents;
+      const [{ text }, link] = node.post.contents as [TextContent, UrlContent | ReferenceContent];
       if('reference' in link) {
         const permalink = referenceToPermalink(link).link;
         return <PermalinkEmbed transcluded={transcluded + 1} api={api} link={permalink} association={assoc} />;
@@ -76,6 +76,7 @@ function TranscludedLinkNode(props: {
           </Box>
         </Box>
       );
+
     case 2:
       return (
         <TranscludedComment
@@ -170,7 +171,7 @@ function TranscludedPublishNode(props: {
         ?.get(bigInt.one)
         ?.children?.peekLargest()?.[1]!;
       return (
-        <Col color="black" gapY="2">
+        <Col color="black" gapY={2}>
           <Author
             pl='12px'
             pt='12px'
@@ -182,7 +183,7 @@ function TranscludedPublishNode(props: {
             group={group}
           />
           <Text pl='44px' fontSize="2" fontWeight="medium">
-            {post.post.contents[0]?.text}
+            {(post.post.contents[0] as TextContent)?.text}
           </Text>
           <Box pl="44px" pr='3'>
             <NotePreviewContent
@@ -267,7 +268,7 @@ export function TranscludedNode(props: {
   api: GlobalApi;
   showOurContact?: boolean;
 }) {
-  const { node, showOurContact, assoc, transcluded } = props;
+  const { node, showOurContact, assoc, transcluded, api } = props;
   const group = useGroupForAssoc(assoc)!;
 
   if (
@@ -287,23 +288,19 @@ export function TranscludedNode(props: {
     );
   }
 
-  switch (assoc.metadata.config.graph) {
+  switch ((assoc.metadata.config as GraphConfig).graph) {
     case 'chat':
       return (
         <Row width="100%" flexShrink={0} flexGrow={1} flexWrap="wrap">
           <ChatMessage
-            width="100%"
             renderSigil
             transcluded={transcluded + 1}
-            containerClass="items-top cf hide-child"
+            className="items-top cf hide-child"
             association={assoc}
-            group={group}
-            groups={{}}
             msg={node.post}
-            fontSize="0"
-            ml="0"
-            mr="0"
+            fontSize={0}
             showOurContact={showOurContact}
+            api={api}
             mt='0'
           />
         </Row>

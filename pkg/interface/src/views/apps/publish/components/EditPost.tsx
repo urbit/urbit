@@ -1,17 +1,18 @@
 import { GraphNode } from '@urbit/api';
+import bigInt from 'big-integer';
 import { FormikHelpers } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement } from 'react';
 import { RouteComponentProps, useLocation } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
 import { editPost, getLatestRevision } from '~/logic/lib/publish';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import { referenceToPermalink } from '~/logic/lib/permalinks';
 import { PostForm, PostFormSchema } from './NoteForm';
 
 interface EditPostProps {
   ship: string;
-  noteId: number;
+  noteId: bigInt.BigInteger;
   note: GraphNode;
   api: GlobalApi;
   book: string;

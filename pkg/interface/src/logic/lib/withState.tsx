@@ -19,12 +19,14 @@ const withStateo = <
   });
 };
 
-const withState = <
-  StateType extends BaseState<StateType>,
-  stateKey extends keyof StateType
-  >(
+interface StatePicker extends Array<any> {
+  0: UseStore<any>;
+  1?: string[];
+}
+
+const withState = (
     Component: any,
-    stores: ([UseStore<StateType>, stateKey[]])[]
+    stores: StatePicker[]
 ) => {
   return React.forwardRef((props, ref) => {
     const stateProps: unknown = {};

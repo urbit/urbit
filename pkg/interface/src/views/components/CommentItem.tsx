@@ -11,8 +11,8 @@ import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import { useCopy } from '~/logic/lib/useCopy';
 import useMetadataState from '~/logic/state/metadata';
-import { GraphContent } from '../landscape/components/Graph/GraphContent';
 import Author from '~/views/components/Author';
+import { GraphContent } from '../landscape/components/Graph/GraphContent';
 
 const ClickBox = styled(Box)`
   cursor: pointer;
@@ -60,8 +60,9 @@ export function CommentItem(props: CommentItemProps) {
   };
 
   const ourMention = post?.contents?.some((e) => {
-      return e?.mention && e?.mention === window.ship;
-    });
+    if (!('mention' in e)) return false;
+    return e?.mention && e?.mention === window.ship;
+  });
 
   if (!highlighted) {
     if (ourMention) {
@@ -118,7 +119,7 @@ export function CommentItem(props: CommentItemProps) {
 
   return (
     <Box ref={ref} mb={4} opacity={post?.pending ? '60%' : '100%'}>
-      <Row px="1" my={3}>
+      <Row px={1} my={3}>
         <Author
           showImage
           ship={post?.author}
@@ -127,16 +128,16 @@ export function CommentItem(props: CommentItemProps) {
           group={group}
           isRelativeTime
         >
-          <Row px="2" gapX="2" height="18px">
+          <Row px={2} gapX={2} height="18px">
             <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
             {adminLinks}
           </Row>
         </Author>
       </Row>
       <GraphContent
-        borderRadius="1"
-        p="1"
-        mb="1"
+        borderRadius={1}
+        p={1}
+        mb={1}
         backgroundColor={highlighted ? 'washedBlue' : 'white'}
         transcluded={0}
         api={api}

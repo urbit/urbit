@@ -1,13 +1,13 @@
 import {
-  Box,
-  Button, ManagedForm as Form, ManagedTextInputField as Input,
+    Box,
+    Button, ManagedForm as Form, ManagedTextInputField as Input,
 
-  Menu,
-  MenuButton,
+    Menu,
+    MenuButton,
 
-  MenuItem, MenuList,
+    MenuItem, MenuList,
 
-  Row, Text
+    Row, Text
 } from '@tlon/indigo-react';
 import { Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback, useState } from 'react';
@@ -95,12 +95,12 @@ export function BucketList({
         {adding && (
           <Input
             placeholder="Enter your new bucket"
-            mt="2"
+            mt={2}
             label="New Bucket"
             id="newBucket"
           />
         )}
-        <Row gapX="3" mt="3">
+        <Row gapX={3} mt={3}>
           <Button type="button" onClick={() => setAdding(false)}>
             Cancel
           </Button>

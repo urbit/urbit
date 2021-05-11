@@ -1,7 +1,8 @@
-import { Box } from '@tlon/indigo-react';
-import React from 'react';
+import { Box, BoxProps } from '@tlon/indigo-react';
+import React, { RefObject } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { PaddingProps } from 'styled-system';
 import defaultApps from '~/logic/lib/default-apps';
 
 const SquareBox = styled(Box)`
@@ -20,7 +21,17 @@ const SquareBox = styled(Box)`
 `;
 const routeList = defaultApps.map(a => `/~${a}`);
 
-const Tile = React.forwardRef((props, ref) => {
+type TileProps = BoxProps & {
+  bg?: string;
+  to?: string;
+  href?: string;
+  p?: PaddingProps;
+  children: any;
+  gridColumnStart?: number;
+  color?: string;
+}
+
+const Tile = React.forwardRef((props: TileProps, ref: RefObject<HTMLDivElement>) => {
   const { bg, to, href, p, boxShadow, gridColumnStart, ...rest } = props;
 
   let childElement = (

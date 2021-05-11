@@ -1,10 +1,10 @@
 import {
-  Box,
+    Box,
 
-  Col,
+    Col,
 
-  ErrorLabel, Icon, Label,
-  Row, Text
+    ErrorLabel, Icon, Label,
+    Row, Text
 } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
 import { FieldArray, useFormikContext } from 'formik';
@@ -132,12 +132,12 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
           <Col>
             <Label htmlFor={id}>{label}</Label>
             {caption && (
-              <Label gray mt="2">
+              <Label gray mt={2}>
                 {caption}
               </Label>
             )}
               <DropdownSearch<Association>
-                mt="2"
+                mt={2}
                 candidates={groups}
                 placeholder="Search for groups..."
                 disabled={props.maxLength ? value.length >= props.maxLength : false}
@@ -156,16 +156,16 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
                   return (
                     <Row
                       key={e}
-                      borderRadius="1"
-                      mt="2"
+                      borderRadius={1}
+                      mt={2}
                       width="fit-content"
-                      border="1"
+                      border={1}
                       borderColor="gray"
                       height="32px"
-                      px="2"
+                      px={2}
                       alignItems="center"
                     >
-                      <Text mr="2">{title || e}</Text>
+                      <Text mr={2}>{title || e}</Text>
                       <Icon onClick={() => onRemove(idx)} icon="X" />
                     </Row>
                   );

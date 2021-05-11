@@ -79,7 +79,7 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
 
   return (
     <>
-      <Col overflowY="auto" p="3">
+      <Col overflowY="auto" p={3}>
         <Box mb={3}>
           <Text fontWeight="bold">New Group</Text>
         </Box>
@@ -89,7 +89,7 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
           onSubmit={onSubmit}
         >
           <Form>
-            <Col gapY="4">
+            <Col gapY={4}>
               <Input
                 id="title"
                 label="Name"

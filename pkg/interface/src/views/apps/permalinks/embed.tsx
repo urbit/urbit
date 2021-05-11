@@ -1,27 +1,25 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useHistory, useLocation, Link } from 'react-router-dom';
+import {
+  BaseAnchor, Box,
+
+
+
+
+
+  Center, Col, Icon, Row, Text
+} from "@tlon/indigo-react";
 import { Association, GraphNode, resourceFromPath } from '@urbit/api';
+import React, { useCallback, useEffect, useState } from "react";
+import { useHistory, useLocation } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import {
   getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
 } from '~/logic/lib/permalinks';
-import {
-  Action,
-  Box,
-  Text,
-  BaseAnchor,
-  Row,
-  Icon,
-  Col,
-  Center
-} from "@tlon/indigo-react";
-import { GroupLink } from "~/views/components/GroupLink";
 import { getModuleIcon } from "~/logic/lib/util";
-import useMetadataState from "~/logic/state/metadata";
+import { useVirtualResizeProp } from "~/logic/lib/virtualContext";
 import useGraphState from "~/logic/state/graph";
-import { GraphNodeContent } from "../notifications/graph";
+import useMetadataState from "~/logic/state/metadata";
+import { GroupLink } from "~/views/components/GroupLink";
 import { TranscludedNode } from "./TranscludedNode";
-import {useVirtualResizeProp} from "~/logic/lib/virtualContext";
 
 function GroupPermalink(props: { group: string; api: GlobalApi }) {
   const { group, api } = props;
@@ -29,9 +27,9 @@ function GroupPermalink(props: { group: string; api: GlobalApi }) {
     <GroupLink
       resource={group}
       api={api}
-      pl="2"
-      border="1"
-      borderRadius="2"
+      pl={2}
+      border={1}
+      borderRadius={2}
       borderColor="lightGray"
     />
   );
@@ -112,7 +110,7 @@ function GraphPermalink(
       maxWidth={full ? null : "500px"}
       border={full ? null : "1"}
       borderColor="lightGray"
-      borderRadius="2"
+      borderRadius={2}
       cursor="pointer"
       onClick={(e) => {
         navigate(e);
@@ -140,7 +138,7 @@ function GraphPermalink(
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
-          icon={getModuleIcon(association.metadata.config.graph)}
+          icon={getModuleIcon((association.metadata.config as GraphConfig).graph as GraphModule)}
           title={association.metadata.title}
           permalink={permalink}
         />

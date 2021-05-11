@@ -4,6 +4,7 @@ import {
   GroupNotifIndex,
   GroupUpdate
 } from '@urbit/api';
+import bigInt from 'big-integer';
 import _ from 'lodash';
 import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
@@ -37,7 +38,7 @@ interface GroupNotificationProps {
   archived: boolean;
   read: boolean;
   time: number;
-  timebox: BigInteger;
+  timebox: bigInt.BigInteger;
   api: GlobalApi;
 }
 

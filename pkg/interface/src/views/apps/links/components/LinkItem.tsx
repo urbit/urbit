@@ -1,6 +1,6 @@
 import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, Group } from '@urbit/api';
-import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
+import { Association, GraphNode, Group, TextContent, UrlContent } from '@urbit/api';
+import React, { ReactElement, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
@@ -15,8 +15,13 @@ import { PermalinkEmbed } from '../../permalinks/embed';
 interface LinkItemProps {
   node: GraphNode;
   association: Association;
-  resource: string; api: GlobalApi; group: Group; path: string; }
-export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactElement => {
+  resource: string;
+  api: GlobalApi;
+  group: Group;
+  path: string;
+  baseUrl: string;
+}
+export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<HTMLDivElement>): ReactElement => {
   const {
     association,
     node,
@@ -61,7 +66,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
 
   const author = node.post.author;
   const size = node.children ? node.children.size : 0;
-  const contents = node.post.contents;
+  const contents = node.post.contents as [TextContent, UrlContent];
   const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
   const href = URLparser.exec(contents[1].url) ? contents[1].url : `http://${contents[1].url}`;
 
@@ -130,8 +135,8 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
         <>
         <RemoteContent
           ref={(r) => {
- remoteRef.current = r;
-}}
+            remoteRef.current = r;
+          }}
           renderUrl={false}
           url={href}
           text={contents[0].text}
@@ -166,14 +171,14 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
         </>
       )}
       </Box>
-      <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
+      <Row minWidth={0} flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
       <Author
         showImage
         isRelativeTime
         ship={author}
         date={node.post['time-sent']}
         group={group}
-        lineHeight="1"
+        lineHeight={1}
       />
       <Box ml="auto">
         <Link
@@ -208,7 +213,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref): ReactEleme
           </Col>
         }
       >
-        <Icon ml="2" display="block" icon="Ellipsis" color="gray" />
+        <Icon ml={2} display="block" icon="Ellipsis" color="gray" />
       </Dropdown>
 
     </Row>

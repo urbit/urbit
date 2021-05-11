@@ -41,7 +41,7 @@ export const AddFeedBanner = (props) => {
       pl={2}
       pr={2}
     >
-      <Row gapX="2" flexShrink={1} minWidth='0'>
+      <Row gapX={2} flexShrink={1} minWidth={0}>
         { dismissing ? (
           <>
             <Icon icon="Info" />
@@ -58,7 +58,7 @@ export const AddFeedBanner = (props) => {
               textOverflow="ellipsis"
               overflow="hidden"
               whiteSpace="nowrap"
-              minWidth="0"
+              minWidth={0}
               flexShrink={1}
             >
               A central place to broadcast short posts with your group
@@ -66,7 +66,7 @@ export const AddFeedBanner = (props) => {
           </>
         )}
       </Row>
-      <Row gapX="2" flexShrink={0}>
+      <Row gapX={2} flexShrink={0}>
         { dismissing ? (
           <Button primary onClick={disableFeed}>
             OK

@@ -2,6 +2,7 @@ import { BaseImage, Box, Row } from '@tlon/indigo-react';
 import moment from 'moment';
 import React, { ReactElement, ReactNode, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
 import { cite, deSig, useShowNickname, uxToHex } from '~/logic/lib/util';
@@ -20,7 +21,7 @@ interface AuthorProps {
   unread?: boolean;
   api?: GlobalApi;
   size?: number;
-  lineHeight?: string;
+  lineHeight?: string | number;
   isRelativeTime?: boolean;
 }
 

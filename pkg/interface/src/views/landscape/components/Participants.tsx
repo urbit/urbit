@@ -1,10 +1,10 @@
 import {
-  Action, Box, Col,
+    Action, Box, Col,
 
-  Icon,
-  Image, Row,
+    Icon,
+    Image, Row,
 
-  StatelessTextInput as Input, Text
+    StatelessTextInput as Input, Text
 } from '@tlon/indigo-react';
 import { Contact, Contacts } from '@urbit/api/contacts';
 import { Group, RoleTags } from '@urbit/api/groups';
@@ -12,8 +12,8 @@ import { Association } from '@urbit/api/metadata';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import React, {
-  ChangeEvent,
-  ReactElement, useCallback, useMemo, useState
+    ChangeEvent,
+    ReactElement, useCallback, useMemo, useState
 } from 'react';
 import { Link } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
@@ -175,7 +175,7 @@ export function Participants(props: {
         zIndex={1}
         flexShrink={0}
       >
-        <Row mr="4" flexShrink={0}>
+        <Row mr={4} flexShrink={0}>
           <Tab
             selected={filter}
             setSelected={setFilter}
@@ -199,13 +199,13 @@ export function Participants(props: {
         </Row>
       </Row>
       <Col flexShrink={0} width="100%" height="fit-content">
-        <Row alignItems="center" bg="washedGray" borderRadius="1" px="2" my="2">
+        <Row alignItems="center" bg="washedGray" borderRadius={1} px={2} my={2}>
           <Icon color="gray" icon="Search" />
           <Input
             maxWidth="256px"
             color="gray"
             bg="transparent"
-            border="0"
+            border={0}
             placeholder="Search Participants"
             onChange={onSearchChange}
           />
@@ -312,12 +312,12 @@ function Participant(props: {
 
   return (
     <>
-      <Row flexDirection={['column', 'row']} gapX="2" alignItems={['flex-start', 'center']} width="100%" justifyContent="space-between" height={['96px', '60px']}>
-        <Row gapX="4" alignItems="center" height="100%">
+      <Row flexDirection={['column', 'row']} gapX={2} alignItems={['flex-start', 'center']} width="100%" justifyContent="space-between" height={['96px', '60px']}>
+        <Row gapX={4} alignItems="center" height="100%">
       <Box>{avatar}</Box>
-      <Col alignItems="self-start" justifyContent="center" gapY="1" height="100%" minWidth='0'>
+      <Col alignItems="self-start" justifyContent="center" gapY={1} height="100%" minWidth={0}>
         {hasNickname && (
-          <Row minWidth='0' flexShrink={1}>
+          <Row minWidth={0} flexShrink={1}>
           <TruncText title={contact.nickname} color="black">
             {contact.nickname}
           </TruncText>
@@ -332,10 +332,10 @@ function Participant(props: {
         justifyContent="space-between"
         width={['100%', '128px']}
         alignItems="center"
-        gapX="4"
+        gapX={4}
       >
         <Col>
-          <Text color="lightGray" mb="1">
+          <Text color="lightGray" mb={1}>
             Role
           </Text>
           <Text>{_.capitalize(role)}</Text>
@@ -346,8 +346,8 @@ function Participant(props: {
           options={
             <Col
               bg="white"
-              border="1"
-              borderRadius="1"
+              border={1}
+              borderRadius={1}
               borderColor="lightGray"
               gapY={2}
               p={2}

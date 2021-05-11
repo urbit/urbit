@@ -1,5 +1,5 @@
 import {
-  Col
+    Col
 } from '@tlon/indigo-react';
 import React, { ReactElement, useRef } from 'react';
 import styled from 'styled-components';
@@ -62,7 +62,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
       width="100%"
       gridRow="1/2"
       gridColumn="1/2"
-      borderTopLeftRadius='2'
+      borderTopLeftRadius={2}
       borderRight={1}
       borderRightColor="lightGray"
       overflowY="scroll"

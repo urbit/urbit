@@ -40,14 +40,14 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
     roleForShip(group, window.ship) !== 'admin';
   return (
     <Col maxWidth="384px" width="100%">
-      <Text p="4" id="channels" fontWeight="600" fontSize="2">
+      <Text p={4} id="channels" fontWeight="600" fontSize={2}>
         Channels
       </Text>
-      <Text pl='4' gray>Pinning a channel marks it as featured when joining or previewing a group.</Text>
-      <Col p="4" width="100%" gapY="3">
+      <Text pl={4} gray>Pinning a channel marks it as featured when joining or previewing a group.</Text>
+      <Col p={4} width="100%" gapY={3}>
         {channels.filter(({ metadata }) => !metadata.hidden).map(({ resource, metadata }) => (
           <Row justifyContent="space-between" width="100%" key={resource}>
-            <Row gapX="2">
+            <Row gapX={2}>
               <Icon
                 icon={getModuleIcon(
                   'graph' in metadata?.config
@@ -62,11 +62,11 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
                 options={
                   <Col
                     bg="white"
-                    border="1"
-                    borderRadius="1"
+                    border={1}
+                    borderRadius={1}
                     borderColor="lightGray"
-                    p="1"
-                    gapY="1"
+                    p={1}
+                    gapY={1}
                   >
                     <StatelessAsyncAction
                       bg="transparent"

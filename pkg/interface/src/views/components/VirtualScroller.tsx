@@ -107,7 +107,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
   /**
    * A reference to our scroll container
    */
-  private window: HTMLDivElement | null = null;
+  window: HTMLDivElement | null = null;
   /**
    * A map of child refs, used to calculate scroll position
    */
@@ -133,7 +133,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
    */
   private saveDepth = 0;
 
-  private scrollLocked = true;
+  scrollLocked = true;
 
   private pageSize = 50;
 
@@ -541,18 +541,18 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     return (
       <>
-        {!IS_IOS && (<Box borderRadius="3" top ={isTop ? '0' : undefined}
+        {!IS_IOS && (<Box borderRadius={3} top ={isTop ? '0' : undefined}
 bottom={!isTop ? '0' : undefined} ref={(el) => {
  this.scrollRef = el;
 }}
-right="0" height="50px"
+right={0} height="50px"
 position="absolute" width="4px"
 backgroundColor="lightGray"
                      />)}
 
       <ScrollbarLessBox overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, 'WebkitOverflowScrolling': 'auto' }}>
         <Box style={{ transform, width: 'calc(100% - 4px)' }}>
-          {(isTop ? !atStart : !atEnd) && (<Center height="5">
+          {(isTop ? !atStart : !atEnd) && (<Center height={5}>
             <LoadingSpinner />
           </Center>)}
           <VirtualContext.Provider value={this.shiftLayout}>
@@ -567,7 +567,7 @@ backgroundColor="lightGray"
             ))}
           </VirtualContext.Provider>
           {(!isTop ? !atStart : !atEnd) &&
-            (<Center height="5">
+            (<Center height={5}>
               <LoadingSpinner />
             </Center>)}
         </Box>

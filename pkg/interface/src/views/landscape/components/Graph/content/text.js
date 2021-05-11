@@ -28,9 +28,9 @@ const renderers = {
     return (
       <Text
         mono
-        p='1'
+        p={1}
         backgroundColor='washedGray'
-        fontSize='0'
+        fontSize={0}
         style={{ whiteSpace: 'preWrap' }}
       >
         {value}
@@ -52,7 +52,7 @@ const renderers = {
   },
   paragraph: ({ children }) => {
     return (
-      <Text fontSize='1' lineHeight={'20px'}>
+      <Text fontSize={1} lineHeight={'20px'}>
         {children}
       </Text>
     );
@@ -60,12 +60,12 @@ const renderers = {
   code: ({ language, value }) => {
     return (
       <Text
-        p='1'
+        p={1}
         className='clamp-message'
         display='block'
-        borderRadius='1'
+        borderRadius={1}
         mono
-        fontSize='0'
+        fontSize={0}
         backgroundColor='washedGray'
         overflowX='auto'
         style={{ whiteSpace: 'pre' }}
@@ -75,10 +75,10 @@ const renderers = {
     );
   },
   link: (props) => {
-    return <Anchor src={props.href} borderBottom="1" color="black">{props.children}</Anchor>
+    return <Anchor src={props.href} borderBottom={1} color="black">{props.children}</Anchor>
   },
   list: ({depth, children}) => {
-    return <Text my='2' display='block' fontSize='1' ml={depth ? (2 * depth) : 0} lineHeight={'20px'}>{children}</Text>
+    return <Text my={2} display='block' fontSize={1} ml={depth ? (2 * depth) : 0} lineHeight={'20px'}>{children}</Text>
   }
 };
 
@@ -166,11 +166,11 @@ export default function TextContent(props) {
       <GroupLink
         resource={resource}
         api={props.api}
-        pl='2'
-        my='2'
-        border='1'
-        borderRadius='2'
-        borderColor='lightGray'
+        pl={2}
+        my={2}
+        border={1}
+        borderRadius={2}
+        borderColor='washedGray'
       />
     );
   } else {
