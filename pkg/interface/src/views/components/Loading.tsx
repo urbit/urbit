@@ -7,7 +7,7 @@ interface LoadingProps {
 }
 export function Loading({ text }: LoadingProps) {
   return (
-    <Body border={0}>
+    <Body border="0">
       <Center height="100%">
         <LoadingSpinner />
         {Boolean(text) && <Text ml={4}>{text}</Text>}
