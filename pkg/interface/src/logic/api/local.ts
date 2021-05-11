@@ -7,4 +7,10 @@ export default class LocalApi extends BaseApi<StoreState> {
       this.store.handleEvent({ data: { baseHash } });
     });
   }
+
+  getRuntimeLag() {
+    return this.scry<boolean>('launch', '/runtime-lag').then((runtimeLag) => {
+      this.store.handleEvent({ data: { runtimeLag } });
+    });
+  }
 }

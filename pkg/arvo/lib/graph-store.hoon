@@ -50,18 +50,17 @@
     ==
   ::
   ++  index
-    |=  i=^index
+    |=  ind=^index
     ^-  json
-    ?:  =(~ i)  s+'/'
-    =/  j=^tape  ""
-    |-
-    ?~  i  [%s (crip j)]
-    =/  k=json  (numb i.i)
-    ?>  ?=(%n -.k)
-    %_  $
-        i  t.i
-        j  (weld j (weld "/" (trip +.k)))
-    ==
+    :-  %s
+    ?:  =(~ ind)
+      '/'
+    %+  roll  ind
+    |=  [cur=@ acc=@t]
+    ^-  @t
+    =/  num  (numb cur)
+    ?>  ?=(%n -.num)
+    (rap 3 acc '/' p.num ~) 
   ::
   ++  uid
     |=  u=^uid

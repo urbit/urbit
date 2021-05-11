@@ -37,6 +37,13 @@ export default class LaunchReducer {
         state.baseHash = baseHash;
       });
     }
+
+    const runtimeLag = _.get(json, 'runtimeLag', null);
+    if (runtimeLag !== null) {
+      useLaunchState.getState().set(state => {
+        state.runtimeLag = runtimeLag;
+      });
+    }
   }
 }
 
