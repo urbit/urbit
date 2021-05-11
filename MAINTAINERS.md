@@ -309,9 +309,9 @@ the new binary, and restarting the pier with it.
 #### Continuous deployment
 
 A subset of release branches are deployed continuously to the network. Thus far
-this only includes `release/next-js`, which deploys livenet-compatible
-JavaScript changes to select QA ships. Any push to master will automatically
-merge master into `release/next-js` to keep the streams at parity.
+this only includes `release/next-userspace`, which deploys livenet-compatible
+changes to select QA ships. Any push to master will automatically
+merge master into `release/next-userspace` to keep the streams at parity.
 
 ### Announce the update
 
