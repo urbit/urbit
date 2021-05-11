@@ -23,7 +23,7 @@
     "file-saver": "^2.0.5",
     "formik": "^2.1.5",
     "immer": "^8.0.1",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
     "mousetrap-global-bind": "^1.1.0",
