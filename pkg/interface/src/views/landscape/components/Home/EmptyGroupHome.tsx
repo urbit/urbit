@@ -19,6 +19,7 @@ export function EmptyGroupHome(props) {
       justifyContent="center"
       alignItems="center"
       display="flex"
+      className='empty-group-home'
     >
       { groupAssociation?.group ? (
         <GroupSummary

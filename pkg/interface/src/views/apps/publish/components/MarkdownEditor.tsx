@@ -94,7 +94,7 @@ export function MarkdownEditor(
   return (
     <Box
       position="relative"
-      className="publish"
+      className="publish markdown-editor"
       p={1}
       border={1}
       borderColor="lightGray"

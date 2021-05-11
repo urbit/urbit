@@ -27,7 +27,7 @@ export function PublishResource(props: PublishResourceProps) {
   }, [location]);
 
   return (
-    <Box ref={scrollRef} height="100%" width="100%" overflowY="auto">
+    <Box ref={scrollRef} height="100%" width="100%" overflowY="auto" className='publish-resource'>
       <NotebookRoutes
         api={api}
         ship={ship}

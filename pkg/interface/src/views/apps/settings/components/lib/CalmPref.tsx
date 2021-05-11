@@ -1,7 +1,7 @@
 import {
-    Col, ManagedToggleSwitchField as Toggle,
+  Col, ManagedToggleSwitchField as Toggle,
 
-    Text
+  Text
 } from '@tlon/indigo-react';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React, { useCallback } from 'react';
@@ -73,7 +73,7 @@ export function CalmPrefs(props: {
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      <Form>
+      <Form className='calm-prefs'>
         <BackButton />
         <Col borderBottom={1} borderBottomColor="washedGray" p={5} pt={4} gapY={5}>
           <Col gapY={1} mt={0}>

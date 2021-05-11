@@ -39,6 +39,7 @@ export function Header(
       alignItems={['flex-start', 'center']}
       gridArea="header"
       overflow="hidden"
+      className='notification-header'
     >
       <Row gapX={1} overflow="hidden" alignItems="center">
         {authors.length > 0 && (

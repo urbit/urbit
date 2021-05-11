@@ -89,7 +89,7 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
     ) : sigil;
 
   return (
-    <Row {...rest} alignItems='center' width='auto'>
+    <Row className='author' {...rest} alignItems='center' width='auto'>
       <Box
         onClick={(e) => {
           e.stopPropagation();

@@ -1,4 +1,4 @@
-import { Action, Anchor, Box, Col, Row, Text } from '@tlon/indigo-react';
+import { Action, Box, Col, Row, Text } from '@tlon/indigo-react';
 import { Association, Graph, GraphNode, Group } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, { useEffect, useState } from 'react';
@@ -14,7 +14,6 @@ import { Comments } from '~/views/components/Comments';
 import { Spinner } from '~/views/components/Spinner';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { NoteNavigation } from './NoteNavigation';
-import { Redirect } from 'react-router-dom';
 
 interface NoteProps {
   ship: string;
@@ -103,6 +102,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       width="100%"
       gridRowGap={4}
       mx="auto"
+      className='publish-note'
     >
       <Link to={rootUrl}>
         <Text>{'<- Notebook Index'}</Text>

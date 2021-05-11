@@ -162,7 +162,7 @@ export class ChatInput extends Component<ChatInputProps, ChatInputState> {
         borderTop={1}
         borderTopColor='lightGray'
         backgroundColor='white'
-        className='cf'
+        className='cf chat-input'
         zIndex={0}
       >
         <Row p='12px 4px 12px 12px' flexShrink={0} alignItems='center'>

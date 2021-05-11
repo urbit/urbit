@@ -289,6 +289,7 @@ class Clock extends React.PureComponent<ClockProps, ClockState> {
           viewBox={`0 0 ${VIEWBOX_SIZE} ${VIEWBOX_SIZE}`}
           xmlns="http://www.w3.org/2000/svg"
           xmlnsXlink="http://www.w3.org/1999/xlink"
+          className='clock'
         >
           <defs>
             <symbol id="border">
@@ -347,7 +348,7 @@ class Clock extends React.PureComponent<ClockProps, ClockState> {
 }
 
 const ClockTile = ({ location = {} }) => (
-  <Tile p={0} border={0} bg='transparent' boxShadow='none'>
+  <Tile p={0} border={0} bg='transparent' boxShadow='none' className='clock-tile'>
     <Clock data={location} />
   </Tile>
 );

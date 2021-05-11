@@ -58,7 +58,8 @@ export default React.memo(({ line }) => {
   return (
     <Text mono display='flex'
 fontSize={0}
-    style={{ overflowWrap: 'break-word', whiteSpace: 'pre-wrap' }}
+      style={{ overflowWrap: 'break-word', whiteSpace: 'pre-wrap' }}
+      className='term-line'
     >
       {text}
     </Text>

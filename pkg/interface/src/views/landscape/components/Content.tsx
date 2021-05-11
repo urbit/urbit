@@ -38,7 +38,7 @@ export const Content = (props) => {
   }, [hasProtocol]);
 
   return (
-    <Container>
+    <Container className='content'>
       <Switch>
         <Route
           exact

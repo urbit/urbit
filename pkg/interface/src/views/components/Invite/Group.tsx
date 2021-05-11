@@ -50,6 +50,7 @@ function Elbow(
       width={size}
       height={size}
       position="relative"
+      className='elbow'
     >
       <Box
         border="2px solid"
@@ -227,7 +228,7 @@ function InviteActions(props: {
 
   if (status) {
     return (
-      <Row gapX={2} alignItems="center" height={4}>
+      <Row gapX={2} alignItems="center" height={4} className='invite-actions'>
         <StatelessAsyncButton
           height={4}
           backgroundColor="white"
@@ -240,7 +241,7 @@ function InviteActions(props: {
   }
 
   return (
-    <Row gapX={2} alignItems="center" height={4}>
+    <Row gapX={2} alignItems="center" height={4} className='invite-actions'>
       <StatelessAsyncButton
         color="blue"
         height={4}

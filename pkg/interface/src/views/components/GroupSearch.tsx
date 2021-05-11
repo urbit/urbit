@@ -1,10 +1,10 @@
 import {
-    Box,
+  Box,
 
-    Col,
+  Col,
 
-    ErrorLabel, Icon, Label,
-    Row, Text
+  ErrorLabel, Icon, Label,
+  Row, Text
 } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
 import { FieldArray, useFormikContext } from 'formik';
@@ -129,7 +129,7 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
         };
 
         return (
-          <Col>
+          <Col className='group-search'>
             <Label htmlFor={id}>{label}</Label>
             {caption && (
               <Label gray mt={2}>

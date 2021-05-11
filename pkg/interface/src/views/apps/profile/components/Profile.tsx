@@ -190,7 +190,7 @@ export function Profile(props: any): ReactElement | null {
   }
 
   return (
-    <Center p={[3, 4]} height='100%' width='100%'>
+    <Center p={[3, 4]} height='100%' width='100%' className='profile'>
       <Box maxWidth='600px' width='100%' position='relative'>
         { isEdit ? (
           <EditProfile

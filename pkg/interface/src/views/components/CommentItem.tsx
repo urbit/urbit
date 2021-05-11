@@ -118,7 +118,7 @@ export function CommentItem(props: CommentItemProps) {
   }
 
   return (
-    <Box ref={ref} mb={4} opacity={post?.pending ? '60%' : '100%'}>
+    <Box ref={ref} mb={4} opacity={post?.pending ? '60%' : '100%'} className='comment-item'>
       <Row px={1} my={3}>
         <Author
           showImage

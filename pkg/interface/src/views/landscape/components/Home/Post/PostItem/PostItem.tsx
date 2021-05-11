@@ -122,6 +122,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
         mb={3}
         width="100%"
         alignItems="center"
+        className='post-item'
       >
         <Col
           pt={2}

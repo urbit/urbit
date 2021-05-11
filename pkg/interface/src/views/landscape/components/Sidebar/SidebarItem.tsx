@@ -114,7 +114,7 @@ export function SidebarItem(props: {
       pr={3}
       selected={selected}
     >
-      <Row width='100%' alignItems="center" flex='1 auto' minWidth={0}>
+      <Row width='100%' alignItems="center" flex='1 auto' minWidth={0} className='sidebar-item'>
         {hasNotification && <Text color='black' marginLeft={-2} width={2} display='flex' alignItems='center'>
           <Dot />
         </Text>}

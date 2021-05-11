@@ -32,6 +32,7 @@ const PostFooter = (props: PostFooterProps): ReactElement => {
       justify-content="flex-start"
       width="100%"
       opacity={canComment ? 1 : 0}
+      className='post-footer'
     >
       <Col width="100%">
         { showTimestamp && (

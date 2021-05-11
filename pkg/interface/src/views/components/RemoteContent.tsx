@@ -133,7 +133,7 @@ return;
   wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null, flushPadding = false, noOp = false) {
     const { style } = this.props;
     return (
-      <Box borderRadius={1} backgroundColor="washedGray" maxWidth="min(100%, 20rem)">
+      <Box borderRadius={1} backgroundColor="washedGray" maxWidth="min(100%, 20rem)" className='remote-content'>
       <Row
         alignItems="center"
         gapX={1}

@@ -79,7 +79,7 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
 
   return (
     <>
-      <Col overflowY="auto" p={3}>
+      <Col overflowY="auto" p={3} className='new-group'>
         <Box mb={3}>
           <Text fontWeight="bold">New Group</Text>
         </Box>

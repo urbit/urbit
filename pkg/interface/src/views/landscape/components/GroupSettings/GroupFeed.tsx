@@ -7,7 +7,7 @@ import useMetadataState from '~/logic/state/metadata';
 import { FormSubmit } from '~/views/components/FormSubmit';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 import {
-    GroupFeedPermsInput
+  GroupFeedPermsInput
 } from '../Home/Post/GroupFeedPerms';
 
 interface FormSchema {
@@ -58,7 +58,7 @@ export function GroupFeedSettings(props: {
   };
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      <Form>
+      <Form className='group-feed-settings'>
         <Col p={4} gapY={4}>
           <Text id="feed" fontSize={2} fontWeight="medium">
             Group Feed Settings

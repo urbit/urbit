@@ -69,7 +69,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
       initialValues={initialValues}
       onSubmit={onGroupify}
     >
-      <Form>
+      <Form className='groupify-form'>
         <Col flexShrink={0} gapY={4} maxWidth="512px">
           <Box>
             <Text fontWeight="500">Groupify this channel</Text>

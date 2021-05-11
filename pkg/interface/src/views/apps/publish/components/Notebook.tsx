@@ -40,7 +40,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   }
 
   return (
-    <Col gapY={4} pt={4} mx="auto" px={3} maxWidth="768px">
+    <Col gapY={4} pt={4} mx="auto" px={3} maxWidth="768px" className='notebook'>
       <Row justifyContent="space-between">
         <Box>
           <Text display='block'>{association.metadata?.title}</Text>

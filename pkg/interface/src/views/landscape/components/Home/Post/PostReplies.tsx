@@ -64,7 +64,9 @@ export default function PostReplies(props) {
         key={locationUrl}
         width="100%"
         height="100%"
-        alignItems="center" overflowY="scroll"
+        alignItems="center"
+        overflowY="scroll"
+        className='post-replies'
       >
         <Box mt={3} width="100%" alignItems="center">
           <PostItem
@@ -100,7 +102,14 @@ export default function PostReplies(props) {
   }
 
   return (
-    <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl={1} pt={3}>
+    <Box
+      height="calc(100% - 48px)"
+      width="100%"
+      alignItems="center"
+      pl={1}
+      pt={3}
+      className='post-replies'
+    >
       <PostFeed
         key={locationUrl}
         graphPath={graphPath}

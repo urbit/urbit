@@ -45,7 +45,7 @@ export default function CommentInput(props: CommentInputProps) {
       validateOnBlur={false}
       validateOnChange={false}
     >
-      <Form>
+      <Form className='comment-input'>
         <SubmitTextArea
           id="comment"
           placeholder={props.placeholder || ''}

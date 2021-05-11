@@ -36,7 +36,7 @@ export const Writers = (props: WritersProps): ReactElement => {
     const writers = Array.from(groups?.[association?.group]?.tags.graph[association.resource]?.writers || []).map(s => `~${s}`).join(', ');
 
     return (
-      <Box maxWidth='512px'>
+      <Box maxWidth='512px' className='writers'>
         <Text display='block'>Writers</Text>
         <Text display='block' mt={2} gray>Add additional writers to this notebook</Text>
         <Formik

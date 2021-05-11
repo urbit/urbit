@@ -111,6 +111,7 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
       borderRadius={2}
       border={1}
       borderColor="lightGray"
+      className='post-input'
     >
       <BaseTextArea
         p={2}

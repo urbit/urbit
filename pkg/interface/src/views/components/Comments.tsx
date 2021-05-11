@@ -128,7 +128,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
 
   return (
-    <Col {...rest} minWidth={0}>
+    <Col className='comments' {...rest} minWidth={0}>
       {( !editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
       {( editCommentId ? (
         <CommentInput

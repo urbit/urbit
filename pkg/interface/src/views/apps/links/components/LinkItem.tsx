@@ -110,6 +110,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
       ref={ref}
       width="100%"
       opacity={node.post.pending ? '0.5' : '1'}
+      className='link-item'
       {...rest}
     >
       <Box

@@ -96,7 +96,14 @@ function Group(props: GroupProps) {
         .diff(moment()))
     .as('days'))) || 0;
   return (
-    <Tile ref={anchorRef} position="relative" bg={isTutorialGroup ? 'lightBlue' : undefined} to={`/~landscape${path}`} gridColumnStart={first ? '1' : null}>
+    <Tile
+      ref={anchorRef}
+      position="relative"
+      bg={isTutorialGroup ? 'lightBlue' : undefined}
+      to={`/~landscape${path}`}
+      gridColumnStart={first ? '1' : null}
+      className='group-tile'
+    >
       <Col height="100%" justifyContent="space-between">
         <Text>{title}</Text>
         {!hideUnreads && (<Col>

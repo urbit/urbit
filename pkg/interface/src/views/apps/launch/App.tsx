@@ -6,13 +6,13 @@ import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
 import GlobalApi from '~/logic/api/global';
 import {
-    hasTutorialGroup,
+  hasTutorialGroup,
 
-    TUTORIAL_BOOK,
-    TUTORIAL_CHAT, TUTORIAL_GROUP,
-    TUTORIAL_HOST,
+  TUTORIAL_BOOK,
+  TUTORIAL_CHAT, TUTORIAL_GROUP,
+  TUTORIAL_HOST,
 
-    TUTORIAL_LINKS
+  TUTORIAL_LINKS
 } from '~/logic/lib/tutorialModal';
 import { useModal } from '~/logic/lib/useModal';
 import { useQuery } from '~/logic/lib/useQuery';
@@ -76,6 +76,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
       overflow='hidden'
       fontSize={0}
       cursor="pointer"
+      className='hash-box'
       onClick={() => {
         writeText(baseHash);
         setHashText('copied');
@@ -190,6 +191,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
           gridGap={3}
           p={2}
           pt={0}
+          className='launch-app'
         >
         {!hideUtilities && <>
           <Tile
@@ -197,6 +199,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
             color="scales.black20"
             to="/~landscape/home"
             p={0}
+            className='home-tile'
           >
             <Box
               p={2}

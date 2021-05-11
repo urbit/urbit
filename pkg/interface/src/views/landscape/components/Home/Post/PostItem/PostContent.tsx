@@ -34,6 +34,7 @@ const PostContent = (props: PostContentProps): ReactElement => {
       truncate={isParent ? null : 8}
       textOverflow="ellipsis"
       overflow="hidden"
+      className='post-content'
     >
       <GraphContent
         transcluded={0}

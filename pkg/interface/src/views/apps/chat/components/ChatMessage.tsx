@@ -39,6 +39,7 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
     justifyContent='center'
     alignItems='center'
     mt={shimTop ? '-8px' : '0'}
+    className='day-break'
   >
     <Rule borderColor='lightGray' />
     <Text
@@ -76,6 +77,7 @@ export const UnreadMarker = React.forwardRef(
         justifyContent='center'
         alignItems='center'
         width='100%'
+        className='unread-marker'
       >
         <Rule borderColor='lightBlue' />
         <VisibilitySensor onChange={setVisible}>
@@ -106,6 +108,7 @@ const MessageActionItem = (props) => {
       px={3}
       py={2}
       onClick={props.onClick}
+      className='message-action-item'
     >
       <Text fontWeight='500' color={props.color}>
         {props.children}
@@ -127,6 +130,7 @@ const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink }) => {
       position='absolute'
       top='-12px'
       right={2}
+      className='message-actions'
     >
       <Row>
         <Box
@@ -194,6 +198,7 @@ const MessageWrapper = (props) => {
         : showHover ? 'washedGray' : 'transparent'
       }
       position='relative'
+    className='message-wrapper'
       {...bind}
     >
       {props.children}
@@ -278,7 +283,7 @@ function ChatMessage(props: ChatMessageProps) {
     new Date(nextDate).getDate()
   , [nextDate, date]);
 
-  const containerClass = `${isPending ? 'o-40' : ''} ${className}`;
+  const containerClass = `${isPending ? 'o-40' : ''} ${className} chat-message`;
 
   const timestamp = useMemo(() => moment
     .unix(date / 1000)
@@ -418,7 +423,7 @@ export const MessageAuthor = ({
       </Box>
     );
   return (
-    <Box pb="1" display='flex' alignItems='center'>
+    <Box pb="1" display='flex' alignItems='center' className='message-author'>
       <Box
        height={24}
         pr={2}
@@ -483,7 +488,7 @@ export const Message = React.memo(({
 }: MessageProps) => {
   const { hovering, bind } = useHovering();
   return (
-    <Box pl="44px" pr={4} width="100%" position='relative'>
+    <Box pl="44px" pr={4} width="100%" position='relative' className='message'>
       {timestampHover ? (
         <Text
           display={hovering ? 'block' : 'none'}
@@ -530,7 +535,7 @@ export const MessagePlaceholder = ({
     pr={3}
     display='flex'
     lineHeight='tall'
-    className={className}
+    className={`${className} message-placeholder`}
     style={{ height, ...style }}
     {...props}
   >

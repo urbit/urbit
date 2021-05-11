@@ -29,10 +29,11 @@ type TileProps = BoxProps & {
   children: any;
   gridColumnStart?: number;
   color?: string;
+  className?: string;
 }
 
 const Tile = React.forwardRef((props: TileProps, ref: RefObject<HTMLDivElement>) => {
-  const { bg, to, href, p, boxShadow, gridColumnStart, ...rest } = props;
+  const { bg, to, href, p, boxShadow, gridColumnStart, className = '', ...rest } = props;
 
   let childElement = (
     <Box p={typeof p === 'undefined' ? 2 : p} width="100%" height="100%">
@@ -58,6 +59,7 @@ const Tile = React.forwardRef((props: TileProps, ref: RefObject<HTMLDivElement>)
       color={props?.color || 'lightGray'}
       boxShadow={boxShadow || '0 0 0px 1px inset'}
       style={{ gridColumnStart }}
+      className={`${className} tile`}
     >
       <Box
         {...rest}

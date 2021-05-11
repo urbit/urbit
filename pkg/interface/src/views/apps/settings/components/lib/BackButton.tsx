@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 export function BackButton(props: {}) {
   return (
-    <Link to='/~settings'>
+    <Link to='/~settings' className='back-button'>
       <Text
         display={['block', 'none']}
         fontSize={2}

@@ -353,6 +353,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         right={0}
         zIndex={11}
         display={props.show ? 'block' : 'none'}
+        className='omnibox'
       >
         <Row justifyContent='center'>
           <Box

@@ -28,7 +28,7 @@ interface OverlaySigilState {
 export const OverlaySigil = (props: OverlaySigilProps) => {
   const {
     api,
-    className,
+    className = '',
     color,
     contact,
     group,
@@ -81,7 +81,7 @@ export const OverlaySigil = (props: OverlaySigilProps) => {
     <Box
       cursor='pointer'
       position='relative'
-      className={className}
+      className={`${className} overlay-sigil`}
       pr={0}
       pl={0}
       ref={containerRef}

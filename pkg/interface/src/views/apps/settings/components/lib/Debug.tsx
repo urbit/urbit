@@ -41,7 +41,7 @@ const StoreDebugger = (props: StoreDebuggerProps) => {
   }, [state, filter, text]);
 
   return (
-    <Box p={1}>
+    <Box p={1} className='store-debugger'>
       <Text cursor="pointer" onClick={() => setVisible(!visible)}>{name}</Text>
       {visible && <Box>
         <BaseInput

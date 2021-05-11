@@ -15,6 +15,7 @@ const SubmitDragger = (): ReactElement => (
     alignItems='center'
     justifyContent='center'
     style={{ pointerEvents: 'none', zIndex: 999 }}
+    className='submit-drager'
   >
       <Text fontSize={1} color='black'>
         Drop a file to upload

@@ -124,6 +124,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
       overflowY='auto'
       p={3}
       backgroundColor='white'
+      className='new-channel'
       {...rest}
     >
       <Box

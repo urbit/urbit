@@ -99,6 +99,7 @@ return;
           display={hash === '' ? 'flex' : ['none', 'flex']}
           width='100%'
           overflowY='auto'
+          className='settings-screen'
         >
           <Text display='block' mt={4} mb={3} mx={3} fontSize={2} fontWeight='700'>
             System Preferences

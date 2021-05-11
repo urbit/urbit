@@ -30,6 +30,7 @@ function TranscludedLinkNode(props: {
         p="2"
         backgroundColor="washedGray"
         borderRadius="2"
+        className='deleted-link'
       >
         <Text gray>This link has been deleted.</Text>
       </Box>
@@ -45,7 +46,7 @@ function TranscludedLinkNode(props: {
       }
 
       return (
-        <Box>
+        <Box className='transcluded-link'>
           <Author
             pt='12px'
             pl='12px'
@@ -107,6 +108,7 @@ function TranscludedComment(props: {
         p="2"
         backgroundColor="washedGray"
         borderRadius="2"
+        className='deleted-comment'
       >
         <Text gray>This comment has been deleted.</Text>
       </Box>
@@ -117,7 +119,7 @@ function TranscludedComment(props: {
 
   const comment = node.children?.peekLargest()![1]!;
   return (
-    <Col>
+    <Col className='transcluded-comment'>
       <Author
         pt='12px'
         pl='12px'
@@ -158,6 +160,7 @@ function TranscludedPublishNode(props: {
         p="2"
         backgroundColor="washedGray"
         borderRadius="2"
+        className='deleted-note'
       >
         <Text gray>This note has been deleted.</Text>
       </Box>
@@ -171,7 +174,7 @@ function TranscludedPublishNode(props: {
         ?.get(bigInt.one)
         ?.children?.peekLargest()?.[1]!;
       return (
-        <Col color="black" gapY={2}>
+        <Col color="black" gapY={2} className='transcluded-note'>
           <Author
             pl='12px'
             pt='12px'
@@ -224,6 +227,7 @@ export function TranscludedPost(props: {
         p="2"
         backgroundColor="washedGray"
         borderRadius="2"
+        className='deleted-post'
       >
         <Text gray>This post has been deleted.</Text>
       </Box>
@@ -231,7 +235,7 @@ export function TranscludedPost(props: {
   }
 
   return (
-    <Col>
+    <Col className='transcluded-post'>
       <Author
         pt='12px'
         pl='12px'
@@ -282,6 +286,7 @@ export function TranscludedNode(props: {
         p="2"
         backgroundColor="washedGray"
         borderRadius="2"
+        className='deleted-message'
       >
         <Text gray>This message has been deleted.</Text>
       </Box>
@@ -291,7 +296,13 @@ export function TranscludedNode(props: {
   switch ((assoc.metadata.config as GraphConfig).graph) {
     case 'chat':
       return (
-        <Row width="100%" flexShrink={0} flexGrow={1} flexWrap="wrap">
+        <Row
+          width="100%"
+          flexShrink={0}
+          flexGrow={1}
+          flexWrap="wrap"
+          className='transcluded-node'
+        >
           <ChatMessage
             renderSigil
             transcluded={transcluded + 1}

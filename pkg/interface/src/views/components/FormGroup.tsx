@@ -2,9 +2,9 @@ import { Box, Button, Row } from '@tlon/indigo-react';
 import { useFormikContext } from 'formik';
 import _ from 'lodash';
 import React, {
-    useCallback, useEffect,
+  useCallback, useEffect,
 
-    useMemo, useState
+  useMemo, useState
 } from 'react';
 import { Prompt } from 'react-router-dom';
 import { FormGroupContext, SubmitHandler } from '~/logic/lib/formGroup';
@@ -138,7 +138,7 @@ export function FormGroup(props: { onReset?: () => void; } & PropFunc<typeof Box
   usePreventWindowUnload(isDirty);
 
   return (
-    <Box {...rest} position="relative">
+    <Box className='form-group' {...rest} position="relative">
       <Prompt
         when={isDirty}
         message="Are you sure you want to leave? You have unsaved changes"

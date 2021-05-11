@@ -34,7 +34,7 @@ export function PostForm(props: PostFormProps) {
   const { initial, onSubmit, submitLabel, loadingText, cancel, history } = props;
 
   return (
-    <Col width="100%" height="100%" p={[2, 4]}>
+    <Col width="100%" height="100%" p={[2, 4]} className='post-form'>
       <Formik
         validationSchema={formSchema}
         initialValues={initial}

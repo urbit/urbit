@@ -101,6 +101,7 @@ export function NotificationWrapper(props: {
       m={2}
       menuWidth={100}
       disabled={!isMobile}
+      className='notification-wrapper'
       menu={
         <Button onClick={onArchive} ml={2} height="100%" width="92px" primary destructive>
           Remove

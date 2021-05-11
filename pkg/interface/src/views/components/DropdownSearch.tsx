@@ -1,14 +1,14 @@
 import {
-    Box,
-    StatelessTextInput as Input
+  Box,
+  StatelessTextInput as Input
 } from '@tlon/indigo-react';
 import _ from 'lodash';
 import Mousetrap from 'mousetrap';
 import React, {
-    ChangeEvent,
-    ReactElement, useCallback,
-    useEffect, useMemo, useRef,
-    useState
+  ChangeEvent,
+  ReactElement, useCallback,
+  useEffect, useMemo, useRef,
+  useState
 } from 'react';
 import { useDropdown } from '~/logic/lib/useDropdown';
 import { PropFunc } from '~/types/util';
@@ -128,7 +128,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>): ReactElement {
   }, [options, props.getKey, props.renderCandidate, selected]);
 
   return (
-    <Box {...rest} position="relative" zIndex={9}>
+    <Box className='dropdown-search' {...rest} position="relative" zIndex={9}>
       <Input
         ref={textarea}
         onChange={changeCallback}

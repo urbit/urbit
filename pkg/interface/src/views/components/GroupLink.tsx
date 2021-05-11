@@ -50,6 +50,7 @@ export function GroupLink(
     <Box
       maxWidth="500px"
       cursor='pointer'
+      className='group-link'
       {...rest}
       onClick={(e) => {
         e.stopPropagation();

@@ -550,7 +550,13 @@ position="absolute" width="4px"
 backgroundColor="lightGray"
                      />)}
 
-      <ScrollbarLessBox overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, 'WebkitOverflowScrolling': 'auto' }}>
+        <ScrollbarLessBox
+          overflowY='scroll'
+          ref={this.setWindow}
+          onScroll={this.onScroll}
+          style={{ ...style, ...{ transform }, 'WebkitOverflowScrolling': 'auto' }}
+          className='virtual-scroller'
+        >
         <Box style={{ transform, width: 'calc(100% - 4px)' }}>
           {(isTop ? !atStart : !atEnd) && (<Center height={5}>
             <LoadingSpinner />

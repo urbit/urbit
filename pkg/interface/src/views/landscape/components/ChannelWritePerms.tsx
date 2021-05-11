@@ -1,7 +1,7 @@
 import {
-    Col, Label,
+  Col, Label,
 
-    ManagedRadioButtonField as Radio
+  ManagedRadioButtonField as Radio
 } from '@tlon/indigo-react';
 import { useFormikContext } from 'formik';
 import React from 'react';
@@ -22,7 +22,7 @@ export function ChannelWritePerms<
   const { values, errors } = useFormikContext<T>();
 
   return (
-    <Col gapY={3}>
+    <Col gapY={3} className='channel-write-perms'>
       <Label> Write Access</Label>
       <Radio name="writePerms" id="everyone" label="All group members" />
       <Radio name="writePerms" id="self" label="Only host" />

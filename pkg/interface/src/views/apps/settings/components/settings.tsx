@@ -28,7 +28,7 @@ export function SettingsItem(props: {
 
 export default function Settings(props: {}) {
   return (
-    <Col gapY={5} p={5}>
+    <Col gapY={5} p={5} className='settings'>
       <Col gapY={1}>
         <Text fontSize={2}>System Preferences</Text>
         <Text gray>Configure and customize Landscape</Text>

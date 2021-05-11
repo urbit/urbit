@@ -1,9 +1,9 @@
 import {
-    BaseLabel, Box,
+  BaseLabel, Box,
 
-    Col, Icon,
+  Col, Icon,
 
-    Label, Row
+  Label, Row
 } from '@tlon/indigo-react';
 import { useField } from 'formik';
 import React, { useCallback, useMemo } from 'react';
@@ -110,7 +110,7 @@ export function IconRadio(props: IconRadioProps) {
   );
 
   return (
-    <Row {...rest}>
+    <Row {...rest} className='icon-radio'>
       <BaseLabel
         htmlFor={id}
         display="flex"

@@ -20,6 +20,7 @@ function NavigationItem(props: {
       flexDirection="column"
       justifyContent="flex-end"
       textAlign={props.prev ? 'left' : 'right'}
+      className='navigation-item'
     >
       <Link to={props.url}>
         <Text display='block' color="gray">
@@ -99,6 +100,7 @@ export function NoteNavigation(props: NoteNavigationProps): ReactElement {
       alignItems="center"
       gridTemplateColumns="1fr 1px 1fr"
       gridTemplateRows="100px"
+      className='note-navigation'
     >
       {prevComponent}
       <Box borderRight={1} borderColor="lightGray" height="100%" />

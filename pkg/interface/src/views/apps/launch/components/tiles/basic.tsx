@@ -12,7 +12,7 @@ const BasicTile = (props: BasicTileProps): ReactElement => (
     bg={props.title === 'Terminal' ? '#000000' : 'white'}
     to={props.linkedUrl}
   >
-    <Text color={props.title === 'Terminal' ? '#ffffff' : 'black'}>
+    <Text color={props.title === 'Terminal' ? '#ffffff' : 'black'} className='basic-tile'>
       {props.title === 'Terminal'
         ? <Icon
           icon='ChevronEast'

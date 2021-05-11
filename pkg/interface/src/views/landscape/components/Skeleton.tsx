@@ -39,6 +39,7 @@ export function Skeleton(props: SkeletonProps): ReactElement {
         ['100%', 'minmax(150px, 1fr) 3fr', 'minmax(250px, 1fr) 4fr']
       }
       gridTemplateRows="100%"
+      className='skeleton'
     >
       <ErrorBoundary>
         <Sidebar

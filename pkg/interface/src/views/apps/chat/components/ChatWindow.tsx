@@ -259,7 +259,7 @@ class ChatWindow extends Component<
     const unreadMsg = graph.get(this.state.unreadIndex);
 
     return (
-      <Col height='100%' overflow='hidden' position='relative'>
+      <Col height='100%' overflow='hidden' position='relative' className='chat-window'>
         { this.dismissedInitialUnread() &&
          (<UnreadNotice
           unreadCount={unreadCount}

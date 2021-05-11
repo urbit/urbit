@@ -65,6 +65,7 @@ const ShareProfile = (props: ShareProfileProps): ReactElement | null => {
       borderBottom={1}
       borderColor="lightGray"
       flexShrink={0}
+      className='share-profile'
     >
       <Row pl={3} alignItems="center">
         {image}

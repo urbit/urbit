@@ -7,8 +7,8 @@ import { cite, uxToHex } from '~/logic/lib/util';
 import withState from '~/logic/lib/withState';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
-import useLaunchState from '~/logic/state/launch';
 import useInviteState from '~/logic/state/invite';
+import useLaunchState from '~/logic/state/launch';
 
 interface OmniboxResultProps {
   contacts: Contacts;
@@ -255,6 +255,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
         width='100%'
         justifyContent='space-between'
         ref={this.result}
+        className='omnibox-result'
       >
         <Box
           display='flex'

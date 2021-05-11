@@ -36,7 +36,7 @@ export function GroupSettings(props: GroupSettingsProps) {
     isOwner || roleForShip(props.group, window.ship) === 'admin';
 
   return (
-    <Box height="100%" overflowY="auto">
+    <Box height="100%" overflowY="auto" className='group-settings'>
       <Col>
         <GroupPersonalSettings {...props} />
         <Section>

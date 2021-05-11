@@ -1,8 +1,8 @@
 import {
-    BaseLabel, Col,
-    Label,
+  BaseLabel, Col,
+  Label,
 
-    Text
+  Text
 } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
 import React from 'react';
@@ -26,7 +26,7 @@ export function GroupPersonalSettings(props: {
   };
 
   return (
-    <Col px={4} pb={4} gapY={4}>
+    <Col px={4} pb={4} gapY={4} className='group-personal-settings'>
       <Text pt={4} fontWeight="600" id="notifications" fontSize={2}>Group Notifications</Text>
       <BaseLabel
         htmlFor="asyncToggle"

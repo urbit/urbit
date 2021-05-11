@@ -55,7 +55,13 @@ export function LinkResource(props: LinkResourceProps) {
   }
 
   return (
-    <Col alignItems="center" height="100%" width="100%" overflowY="hidden">
+    <Col
+      alignItems="center"
+      height="100%"
+      width="100%"
+      overflowY="hidden"
+      className='link-resource'
+    >
       <Switch>
         <Route
           exact

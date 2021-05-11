@@ -28,6 +28,7 @@ export const MarkdownField = ({
       display="flex"
       flexDirection="column"
       color="black"
+      className='markdown-field'
       {...rest}
     >
       <MarkdownEditor

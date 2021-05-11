@@ -96,7 +96,7 @@ belt = { met: 'bac' };
       }
     }
     return (
-      <Row flexGrow={1} position='relative'>
+      <Row flexGrow={1} position='relative' className='term-input'>
         <Box flexShrink={0} width='100%' color='black' fontSize={0}>
           <BaseInput
             autoFocus

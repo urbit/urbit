@@ -87,7 +87,7 @@ class WeatherTile extends React.Component<WeatherTileProps, WeatherTileState> {
   renderWrapper(child, backgroundColor = 'white') {
     return (
       <ErrorBoundary>
-        <Tile bg='white' backgroundColor={backgroundColor}>
+        <Tile bg='white' backgroundColor={backgroundColor} className='weather-tile'>
           {child}
         </Tile>
       </ErrorBoundary>

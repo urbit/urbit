@@ -1,10 +1,10 @@
 import {
-    Action, Box, Col,
+  Action, Box, Col,
 
-    Icon,
-    Image, Row,
+  Icon,
+  Image, Row,
 
-    StatelessTextInput as Input, Text
+  StatelessTextInput as Input, Text
 } from '@tlon/indigo-react';
 import { Contact, Contacts } from '@urbit/api/contacts';
 import { Group, RoleTags } from '@urbit/api/groups';
@@ -12,8 +12,8 @@ import { Association } from '@urbit/api/metadata';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import React, {
-    ChangeEvent,
-    ReactElement, useCallback, useMemo, useState
+  ChangeEvent,
+  ReactElement, useCallback, useMemo, useState
 } from 'react';
 import { Link } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
@@ -162,7 +162,7 @@ export function Participants(props: {
   }, []);
 
   return (
-    <Col height="100%" overflowY="scroll" p={2} position="relative">
+    <Col height="100%" overflowY="scroll" p={2} position="relative" className='participants'>
       <Row
         bg="white"
         border={1}

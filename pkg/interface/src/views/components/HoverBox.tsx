@@ -26,7 +26,7 @@ export const HoverBoxLink = React.forwardRef<HTMLAnchorElement, HoverBoxLinkProp
   children,
   ...rest
 }, ref) => (
-  <Link ref={ref} to={to}>
+  <Link ref={ref} to={to} className='hover-box'>
     <HoverBox {...rest}>{children}</HoverBox>
   </Link>
 ));

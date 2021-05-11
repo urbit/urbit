@@ -1,8 +1,8 @@
 import {
-    Col,
-    Label, ManagedTextInputField as Input,
+  Col,
+  Label, ManagedTextInputField as Input,
 
-    Text
+  Text
 } from '@tlon/indigo-react';
 import { Association } from '@urbit/api';
 import { Form, Formik } from 'formik';
@@ -42,7 +42,7 @@ export function ChannelDetails(props: ChannelDetailsProps) {
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      <Form style={{ display: 'contents' }}>
+      <Form style={{ display: 'contents' }} className='channel-details'>
         <FormGroupChild id="details" />
         <Col mx={4} mb={4} flexShrink={0} gapY={4}>
           <Col mb={3}>
