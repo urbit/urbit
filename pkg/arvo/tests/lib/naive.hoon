@@ -1,46 +1,7 @@
-/+  *test, naive, ethereum, azimuth
-::
-::  Types
-|%
-+$  address  @ux
-+$  nonce    @ud
-+$  proxy    ?(%own %spawn %manage %vote %transfer)
-+$  skp      [=ship pk=@ =proxy]
-::
-+$  l2-tx
-  $%  [%spawn child=ship =address]
-      [%transfer-point =address reset=?]
-      [%configure-keys encrypt=@ auth=@ crypto-suite=@ breach=?]
-      [%escape parent=ship]
-      [%cancel-escape parent=ship]
-      [%adopt child=ship]
-      [%reject child=ship]
-      [%detach child=ship]
-      [%set-management-proxy =address]
-      [%set-spawn-proxy =address]
-      [%set-transfer-proxy =address]
-  ==
---
+/+  *test, naive, ethereum, azimuth, *naive-transactions
 ::
 |%
 ++  n  |=([=^state:naive =^input:naive] (%*(. naive lac |) verifier 1.337 +<))
-::  TODO: does this uniquely produce the pubkey?
-::
-++  verifier
-  ^-  ^verifier:naive
-  |=  [dat=octs v=@ r=@ s=@]
-  ?:  (gth v 3)  ~  ::  TODO: move to jet
-  =/  result
-    %-  mule
-    |.
-    =,  secp256k1:secp:crypto
-    %-  address-from-pub:key:ethereum
-    %-  serialize-point
-    (ecdsa-raw-recover (keccak-256:keccak:crypto dat) v r s)
-  ?-  -.result
-    %|  ~
-    %&  `p.result
-  ==
 ::
 ++  addr  address-from-prv:key:ethereum
 ::
@@ -102,34 +63,6 @@
    =^  f1  state  (init-bud state)
    =^  f2  state  (n state (owner-changed:l1 ~sambud (addr %sambud-key-0)))
    [:(welp f1 f2) state]
-::
-++  sign-tx
-  |=  [pk=@ =nonce tx=octs]  ^-  octs
-  =/  prepared-data  (prepare-for-sig 1.337 nonce tx)
-  =/  sign-data
-    =/  len  (rsh [3 2] (scot %ui p.prepared-data))
-    %-  keccak-256:keccak:crypto
-    %:  cad:naive  3
-      26^'\19Ethereum Signed Message:\0a'
-      (met 3 len)^len
-      prepared-data
-      ~
-    ==
-  =+  (ecdsa-raw-sign:secp256k1:secp:crypto sign-data pk)
-  (cad:naive 3 1^v 32^s 32^r tx ~)
-::
-++  prepare-for-sig
-  |=  [chain-id=@ud =nonce tx=octs]
-  ^-  octs
-  =/  chain-t  (rsh [3 2] (scot %ui chain-id))
-  %:  cad:naive  3
-    14^'UrbitIDV1Chain'
-    (met 3 chain-t)^chain-t
-    1^':'
-    4^nonce
-    tx
-    ~
-  ==
 ::
 ++  l1
   |%
@@ -202,118 +135,6 @@
   ::
   --
 ::
-++  l2
-  ::
-  |%
-  ::
-  ++  gen-tx
-    |=  [=nonce =skp tx=l2-tx]  ^-  octs
-    =/  raw=octs
-      ?-  -.tx
-        %spawn  (get-spawn:bits ship.skp proxy.skp +.tx)
-        %transfer-point  (get-transfer:bits ship.skp proxy.skp +.tx)
-        %configure-keys  (get-keys:bits ship.skp proxy.skp +.tx)
-        %escape  (get-escape:bits %escape ship.skp proxy.skp +.tx)
-        %cancel-escape  (get-escape:bits %cancel-escape ship.skp proxy.skp +.tx)
-        %adopt  (get-escape:bits %adopt ship.skp proxy.skp +.tx)
-        %reject  (get-escape:bits %reject ship.skp proxy.skp +.tx)
-        %detach  (get-escape:bits %detach ship.skp proxy.skp +.tx)
-        %set-management-proxy  (get-ship-address:bits %set-management-proxy ship.skp proxy.skp +.tx)
-        %set-spawn-proxy  (get-ship-address:bits %set-spawn-proxy ship.skp proxy.skp +.tx)
-        %set-transfer-proxy  (get-ship-address:bits %set-transfer-proxy ship.skp proxy.skp +.tx)
-      ==
-    %^  sign-tx  pk.skp  nonce  raw
-  ::
-  ++  bits
-    ::
-    |%
-    ::
-    ::  TODO: Shouldn't need to pass all these arguments along - they should already be in the subject somewhere
-    ::
-    ++  get-spawn
-      |=  [=ship =proxy child=ship =address]  ^-  octs
-      %:  cad:naive  3
-        (from-proxy:bits proxy)
-        4^ship
-        1^%1                                       :: %spawn
-        4^child
-        20^address
-        ~
-      ==
-    ::
-    ++  get-transfer
-      |=  [=ship =proxy =address reset=?]  ^-  octs
-      %:  cad:naive  3
-        (from-proxy:bits proxy)
-        4^ship
-        1^(can 0 7^%0 1^reset ~)                   :: %transfer-point
-        20^address
-        ~
-      ==
-    ::
-    ++  get-keys
-      |=  [=ship =proxy encrypt=@ auth=@ crypto-suite=@ breach=?]  ^-  octs
-      %:  cad:naive  3
-        (from-proxy:bits proxy)
-        4^ship
-        1^(can 0 7^%2 1^breach ~)                 :: %configure-keys
-        32^encrypt
-        32^auth
-        4^crypto-suite
-        ~
-      ==
-    ::
-    ++  get-escape
-      |=  [action=@tas from=ship proxy=@tas other=ship]  ^-  octs
-      =/  op
-        ?+  action  !!
-          %escape         %3
-          %cancel-escape  %4
-          %adopt          %5
-          %reject         %6
-          %detach         %7
-        ==
-      %:  cad:naive  3
-        (from-proxy proxy)
-        4^from
-        1^(can 0 7^op 1^0 ~)
-        4^other
-        ~
-      ==
-    ::
-    ++  get-ship-address
-      |=  [action=@tas from=ship proxy=@tas =address]  ^-  octs
-      =/  op
-        ?+  action  !!
-          %set-management-proxy     %8
-          %set-spawn-proxy          %9
-          %set-transfer-proxy       %10
-        ==
-      %:  cad:naive  3
-        (from-proxy proxy)
-        4^from
-        1^(can 0 7^op 1^0 ~)
-        20^address
-        ~
-      ==
-    ::
-    ++  from-proxy
-      |=  prx=@tas
-      ^-  [@ @]
-      =/  proxy
-        ?+  prx  !!
-          %own       %0
-          %spawn     %1
-          %manage    %2
-          %vote      %3
-          %transfer  %4
-        ==
-      1^(can 0 3^proxy 5^0 ~)
-    ::
-    --
-  ::
-  --
-::
 --
 ::
 :: Common values used for tests
@@ -339,8 +160,6 @@
 :: Tests
 ::
 |%
-::
-::  TODO: Factor out commonly used things like keys and addresses
 ::
 ++  test-log  ^-  tang
   %+  expect-eq
@@ -375,8 +194,8 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own marbud-transfer))
-    =^  f  state  (n state %bat q:(gen-tx:l2 1 marbud-own marbud-transfer-2))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-transfer))
+    =^  f  state  (n state %bat q:(gen-tx 1 marbud-own marbud-transfer-2))
     owner.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l1-changed-spawn-proxy  ^-  tang
@@ -488,7 +307,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own marbud-sproxy))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-sproxy))
     spawn-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-set-transfer-proxy  ^-  tang
@@ -500,7 +319,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own marbud-tproxy))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-tproxy))
     transfer-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-set-management-proxy  ^-  tang
@@ -512,7 +331,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own marbud-mproxy))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-mproxy))
     management-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-spawn-proxy-deposit  ^-  tang
@@ -536,7 +355,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own lt-spawn))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own lt-spawn))
       transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
     ::
     %+  expect-eq
@@ -546,8 +365,8 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own marbud-sproxy))
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-spn lt-spawn))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-sproxy))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-spn lt-spawn))
       transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
   ==
 ::
@@ -561,9 +380,9 @@
     |.
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own marbud-sproxy))
-    =^  f  state  (n state %bat q:(gen-tx:l2 1 marbud-own lt-spawn-0))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-spn lt-spawn-1))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-sproxy))
+    =^  f  state  (n state %bat q:(gen-tx 1 marbud-own lt-spawn-0))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-spn lt-spawn-1))
     state
 ::
 ++  test-marbud-l2-change-keys  ^-  tang
@@ -577,7 +396,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own new-keys))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own new-keys))
       |1:keys.net:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -586,8 +405,8 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own marbud-mproxy))
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-mgt new-keys))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-mproxy))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-mgt new-keys))
       |1:keys.net:(~(got by points.state) ~marbud)
     ::
     :: TODO: make sure nobody else can change these keys
@@ -618,10 +437,10 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own marbud-sproxy))
-      =^  f  state  (n state %bat q:(gen-tx:l2 1 marbud-own marbud-mproxy))
-      =^  f  state  (n state %bat q:(gen-tx:l2 2 marbud-own marbud-tproxy))
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-t1 marbud-transfer-breach))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-sproxy))
+      =^  f  state  (n state %bat q:(gen-tx 1 marbud-own marbud-mproxy))
+      =^  f  state  (n state %bat q:(gen-tx 2 marbud-own marbud-tproxy))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-t1 marbud-transfer-breach))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
       own:(~(got by points.state) ~marbud)
     ::
@@ -633,8 +452,8 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own new-keys))
-      =^  f  state  (n state %bat q:(gen-tx:l2 1 marbud-own [%transfer-point (addr %marbud-key-0) &]))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own new-keys))
+      =^  f  state  (n state %bat q:(gen-tx 1 marbud-own [%transfer-point (addr %marbud-key-0) &]))
       |1:keys.net:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -650,10 +469,10 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own marbud-sproxy))
-      =^  f  state  (n state %bat q:(gen-tx:l2 1 marbud-own marbud-mproxy))
-      =^  f  state  (n state %bat q:(gen-tx:l2 2 marbud-own marbud-tproxy))
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-t1 marbud-transfer-no-breach))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-sproxy))
+      =^  f  state  (n state %bat q:(gen-tx 1 marbud-own marbud-mproxy))
+      =^  f  state  (n state %bat q:(gen-tx 2 marbud-own marbud-tproxy))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-t1 marbud-transfer-no-breach))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
       own:(~(got by points.state) ~marbud)
     ::
@@ -665,8 +484,8 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own new-keys))
-      =^  f  state  (n state %bat q:(gen-tx:l2 1 marbud-own [%transfer-point (addr %marbud-key-0) |]))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own new-keys))
+      =^  f  state  (n state %bat q:(gen-tx 1 marbud-own [%transfer-point (addr %marbud-key-0) |]))
       |1:keys.net:(~(got by points.state) ~marbud)
   ==
 ::
@@ -686,7 +505,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own new-keys-no-reset))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own new-keys-no-reset))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -696,7 +515,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own new-keys-yes-reset))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own new-keys-yes-reset))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -708,9 +527,9 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own new-keys-yes-reset)) :: inc life and rift
-      =^  f  state  (n state %bat q:(gen-tx:l2 1 marbud-own zero-keys-no-reset)) :: inc life
-      =^  f  state  (n state %bat q:(gen-tx:l2 2 marbud-own zero-keys-yes-reset)) :: inc rift
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own new-keys-yes-reset)) :: inc life and rift
+      =^  f  state  (n state %bat q:(gen-tx 1 marbud-own zero-keys-no-reset)) :: inc life
+      =^  f  state  (n state %bat q:(gen-tx 2 marbud-own zero-keys-yes-reset)) :: inc rift
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
   ==
@@ -732,7 +551,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own marbud-transfer-no-breach))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-transfer-no-breach))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -743,7 +562,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own marbud-transfer-no-breach))
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-transfer-no-breach))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -757,9 +576,9 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own new-keys-yes-reset)) :: inc life and rift
-      =^  f  state  (n state %bat q:(gen-tx:l2 1 marbud-own zero-keys-no-reset)) :: inc life
-      =^  f  state  (n state %bat q:(gen-tx:l2 2 marbud-own marbud-transfer-yes-breach)) :: inc rift
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own new-keys-yes-reset)) :: inc life and rift
+      =^  f  state  (n state %bat q:(gen-tx 1 marbud-own zero-keys-no-reset)) :: inc life
+      =^  f  state  (n state %bat q:(gen-tx 2 marbud-own marbud-transfer-yes-breach)) :: inc rift
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
  ==
@@ -773,7 +592,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 dopbud-own pp-spawn))
+    =^  f  state  (n state %bat q:(gen-tx 0 dopbud-own pp-spawn))
     transfer-proxy.own:(~(got by points.state) ~palsep-picdun)
 ::
 ++  test-dopbud-l2-spawn-after-transfer  ^-  tang
@@ -787,9 +606,9 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 dopbud-own pp-spawn))
+    =^  f  state  (n state %bat q:(gen-tx 0 dopbud-own pp-spawn))
     =^  f  state  (n state (owner-changed:l1 ~dopbud (addr %dopbud-key-1)))
-    =^  f  state  (n state %bat q:(gen-tx:l2 1 dopbud-own-1 lr-spawn))
+    =^  f  state  (n state %bat q:(gen-tx 1 dopbud-own-1 lr-spawn))
     transfer-proxy.own:(~(got by points.state) ~laclur-rachul)
 ::
 ::  ++  test-sambud-double-spawn  ^-  tang
@@ -832,8 +651,8 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own lt-spawn))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 lt-xfr lt-transfer-yes-breach))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-own lt-spawn))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-xfr lt-transfer-yes-breach))
     owner.own:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-palsep-picdun-l2-transfer-ownership  ^-  tang
@@ -846,8 +665,8 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 dopbud-own pp-spawn))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 pp-xfr pp-transfer-yes-breach))
+    =^  f  state  (n state %bat q:(gen-tx 0 dopbud-own pp-spawn))
+    =^  f  state  (n state %bat q:(gen-tx 0 pp-xfr pp-transfer-yes-breach))
     owner.own:(~(got by points.state) ~palsep-picdun)
 ::
 ++  test-linnup-torsyx-l2-escape-request  ^-  tang
@@ -862,9 +681,9 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (init-litbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own lt-spawn))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 lt-xfr lt-transfer-yes-breach))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 lt-own [%escape ~litbud]))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-own lt-spawn))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-xfr lt-transfer-yes-breach))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-own [%escape ~litbud]))
     escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-cancel-escape-request  ^-  tang
@@ -878,10 +697,10 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (init-litbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own lt-spawn))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 lt-xfr lt-transfer-yes-breach))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 lt-own [%escape ~litbud]))
-    =^  f  state  (n state %bat q:(gen-tx:l2 1 lt-own [%cancel-escape ~litbud]))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-own lt-spawn))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-xfr lt-transfer-yes-breach))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-own [%escape ~litbud]))
+    =^  f  state  (n state %bat q:(gen-tx 1 lt-own [%cancel-escape ~litbud]))
     escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-adopt-accept  ^-  tang
@@ -895,10 +714,10 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (init-litbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own lt-spawn))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 lt-xfr lt-transfer-yes-breach))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 lt-own [%escape ~litbud]))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 litbud-own [%adopt ~linnup-torsyx]))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-own lt-spawn))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-xfr lt-transfer-yes-breach))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-own [%escape ~litbud]))
+    =^  f  state  (n state %bat q:(gen-tx 0 litbud-own [%adopt ~linnup-torsyx]))
     [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-adopt-reject  ^-  tang
@@ -914,10 +733,10 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (init-litbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own lt-spawn))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 lt-xfr lt-transfer-yes-breach))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 lt-own [%escape ~litbud]))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 litbud-own [%reject ~linnup-torsyx]))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-own lt-spawn))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-xfr lt-transfer-yes-breach))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-own [%escape ~litbud]))
+    =^  f  state  (n state %bat q:(gen-tx 0 litbud-own [%reject ~linnup-torsyx]))
     escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-detach  ^-  tang
@@ -931,9 +750,9 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (init-litbud state)
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 marbud-own lt-spawn))
-    =^  f  state  (n state %bat q:(gen-tx:l2 0 lt-xfr lt-transfer-yes-breach))
-    =^  f  state  (n state %bat q:(gen-tx:l2 1 marbud-own [%detach ~linnup-torsyx]))
+    =^  f  state  (n state %bat q:(gen-tx 0 marbud-own lt-spawn))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-xfr lt-transfer-yes-breach))
+    =^  f  state  (n state %bat q:(gen-tx 1 marbud-own [%detach ~linnup-torsyx]))
     [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
 ::
 ::  TODO: signature format changed; regenerate
