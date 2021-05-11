@@ -190,6 +190,7 @@ const StatusBar = (props) => {
             px={xPadding}
             width='32px'
             flexShrink={0}
+            border={0}
             backgroundColor={bgColor}
           >
             {profileImage}
