@@ -16,6 +16,12 @@
       void
       u3_lmdb_exit(MDB_env* env_u);
 
+
+    /* u3_lmdb_stat(): print env stats.
+    */
+      void
+      u3_lmdb_stat(MDB_env* env_u, FILE* fil_u);
+
     /* u3_lmdb_gulf(): read first and last event numbers.
     */
       c3_o

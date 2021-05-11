@@ -39,7 +39,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
         name,
         values.group?.toString() || undefined
       );
-      const mod = association.metadata.module || association['app-name'];
+      const mod = association.metadata?.config?.graph || association['app-name'];
       const newGroup = values.group || association.group;
       history.push(`/~landscape${newGroup}/resource/${mod}${rid}`);
       actions.setStatus({ success: null });
@@ -69,7 +69,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
       onSubmit={onGroupify}
     >
       <Form>
-        <Col flexShrink="0" gapY="4" maxWidth="512px">
+        <Col flexShrink={0} gapY="4" maxWidth="512px">
           <Box>
             <Text fontWeight="500">Groupify this channel</Text>
           </Box>

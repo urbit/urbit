@@ -1,11 +1,11 @@
 import React, { Component, Fragment } from 'react';
-import { BaseAnchor, BaseImage, Box, Button, Text } from '@tlon/indigo-react';
+import { BaseAnchor, BaseImage, Box, Button, Text, Row, Icon } from '@tlon/indigo-react';
+import styled from 'styled-components';
 import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
 import useSettingsState from '~/logic/state/settings';
 import { RemoteContentPolicy } from '~/types/local-update';
 import { VirtualContextProps, withVirtual } from "~/logic/lib/virtualContext";
-import { IS_IOS } from '~/logic/lib/platform';
 import withState from '~/logic/lib/withState';
 
 type RemoteContentProps = VirtualContextProps & {
@@ -32,6 +32,12 @@ const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg)$/i);
 const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
+const TruncatedText = styled(Text)`
+  white-space: pre;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  min-width: 0;
+`;
 
 class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
@@ -42,12 +48,14 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     this.state = {
       unfold: props.unfold || false,
       embed: undefined,
-      noCors: false
+      noCors: false,
+      showArrow: false
     };
     this.unfoldEmbed = this.unfoldEmbed.bind(this);
     this.loadOembed = this.loadOembed.bind(this);
     this.wrapInLink = this.wrapInLink.bind(this);
     this.onError = this.onError.bind(this);
+    this.toggleArrow = this.toggleArrow.bind(this);
   }
 
   save = () => {
@@ -122,19 +130,43 @@ return;
     });
   }
 
-  wrapInLink(contents) {
+  wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null, flushPadding = false, noOp = false) {
     const { style } = this.props;
-    return (<BaseAnchor
-      href={this.props.url}
-      flexShrink={0}
-      style={{ color: 'inherit', textDecoration: 'none', ...style }}
-      className={`word-break-all ${(typeof contents === 'string') ? 'bb' : ''}`}
-      target="_blank"
-      width="100%"
-      rel="noopener noreferrer"
-            >
-      {contents}
-    </BaseAnchor>);
+    return (
+      <Box borderRadius="1" backgroundColor="washedGray" maxWidth="min(100%, 20rem)">
+      <Row
+        alignItems="center"
+        gapX="1">
+        { textOnly && (<Icon ml="2" display="block" icon="ArrowExternal" />)}
+        { !textOnly && unfoldEmbed && (
+          <Icon
+            ml='2'
+            display='block'
+            onClick={unfoldEmbed}
+            icon={unfold ? 'TriangleSouth' : 'TriangleEast'}/>
+          )}
+        <BaseAnchor
+          display="flex"
+          p={flushPadding ? 0 : 2}
+          onClick={(e) => { noOp ? e.preventDefault() : e.stopPropagation() }}
+          href={this.props.url}
+          whiteSpace="nowrap"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          minWidth="0"
+          width={textOnly ? "calc(100% - 24px)" : "fit-content"}
+          maxWidth="min(500px, 100%)"
+          style={{ color: 'inherit', textDecoration: 'none', ...style }}
+          target="_blank"
+          rel="noopener noreferrer"
+          cursor={noOp ? 'default' : 'pointer'}
+         >
+        {contents}
+      </BaseAnchor>
+    </Row>
+    {embedContainer}
+    </Box>
+    );
   }
 
   onError(e: Event) {
@@ -142,12 +174,16 @@ return;
     this.setState({ noCors: true });
   }
 
+  toggleArrow() {
+    this.setState({showArrow: !this.state.showArrow})
+  }
+
   render() {
     const {
       remoteContentPolicy,
       url,
       text,
-      unfold = false,
+      transcluded,
       renderUrl = true,
       imageProps = {},
       audioProps = {},
@@ -164,105 +200,159 @@ return;
     const isVideo = VIDEO_REGEX.test(url);
     const isOembed = hasProvider(url);
 
+    const isTranscluded = () => {
+      return transcluded;
+    }
+
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
-        <BaseImage
-          {...(noCors ? {} : { crossOrigin: "anonymous" })}
-          referrerPolicy="no-referrer"
-          flexShrink={0}
-          src={url}
-          style={style}
-          onLoad={onLoad}
-          onError={this.onError}
-          {...imageProps}
-          {...props}
-        />
+        <Box
+          position='relative'
+          onMouseEnter={this.toggleArrow}
+          onMouseLeave={this.toggleArrow}
+        >
+          <BaseAnchor
+            position='absolute'
+            top={2}
+            right={2}
+            display={this.state.showArrow ? 'block' : 'none'}
+            target='_blank'
+            rel='noopener noreferrer'
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            href={url}
+          >
+            <Box
+              backgroundColor='white'
+              padding={2}
+              borderRadius='50%'
+              display='flex'
+            >
+              <Icon icon='ArrowNorthEast' />
+            </Box>
+          </BaseAnchor>
+          <BaseImage
+            {...(noCors ? {} : { crossOrigin: 'anonymous' })}
+            referrerPolicy='no-referrer'
+            flexShrink={0}
+            src={url}
+            style={style}
+            onLoad={onLoad}
+            onError={this.onError}
+            height='100%'
+            width='100%'
+            objectFit='contain'
+            borderRadius={2}
+            {...imageProps}
+            {...props}
+          />
+        </Box>,
+        false,
+        false,
+        null,
+        null,
+        true,
+        isTranscluded()
       );
     } else if (isAudio && remoteContentPolicy.audioShown) {
       return (
         <>
           {renderUrl
-            ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
+            ? this.wrapInLink(
+              <TruncatedText {...textProps}>{url}</TruncatedText>,
+              false,
+              this.state.unfold,
+              this.unfoldEmbed,
+            <audio
+              onClick={(e) => { e.stopPropagation(); }}
+              controls
+              className={this.state.unfold ? "db" : "dn"}
+              src={url}
+              style={style}
+              onLoad={onLoad}
+              objectFit="contain"
+              height="100%"
+              width="100%"
+              {...audioProps}
+              {...props}
+            />)
             : null}
-          <audio
-            controls
-            className="db"
-            src={url}
-            style={style}
-            onLoad={onLoad}
-            {...audioProps}
-            {...props}
-          />
         </>
       );
     } else if (isVideo && remoteContentPolicy.videoShown) {
       return (
         <>
           {renderUrl
-            ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
+            ? this.wrapInLink(
+              <TruncatedText {...textProps}>{url}</TruncatedText>,
+              false,
+              this.state.unfold,
+              this.unfoldEmbed,
+              <video
+                onClick={(e) => { e.stopPropagation(); }}
+                controls
+                className={this.state.unfold ? 'db' : 'dn pa2'}
+                src={url}
+                style={style}
+                onLoad={onLoad}
+                objectFit="contain"
+                height="100%"
+                width="100%"
+                {...videoProps}
+                {...props}
+              />)
             : null}
-          <video
-            controls
-            className="db"
-            src={url}
-            style={style}
-            onLoad={onLoad}
-            {...videoProps}
-            {...props}
-          />
         </>
       );
     } else if (isOembed && remoteContentPolicy.oembedShown) {
       if (!this.state.embed || this.state.embed?.html === '') {
         this.loadOembed();
       }
-
-      return (
-        <Fragment>
-          {renderUrl
-            ? this.wrapInLink(<Text {...textProps}>{(this.state.embed && this.state.embed.title)
-              ? this.state.embed.title
-              : (text || url)}</Text>)
-            : null}
-          {this.state.embed !== 'error' && this.state.embed?.html && !unfold ? <Button
-            display='inline-flex'
-            border={1}
-            height={3}
-            ml={1}
-            onClick={this.unfoldEmbed}
-            flexShrink={0}
-            style={{ cursor: 'pointer' }}
-                                                                               >
-            {this.state.unfold ? 'collapse' : 'expand'}
-          </Button> : null}
-          <Box
+     const renderEmbed = !(this.state.embed !== 'error' && this.state.embed?.html);
+     const embed = <Box
             mb='2'
             width='100%'
             flexShrink={0}
             display={this.state.unfold ? 'block' : 'none'}
             className='embed-container'
             style={style}
-            flexShrink={0}
             onLoad={this.onLoad}
             {...oembedProps}
             {...props}
           >
-            {this.state.embed && this.state.embed.html && this.state.unfold
-            ? <EmbedContainer markup={this.state.embed.html}>
-              <div className="embed-container" ref={(el) => {
-                this.onLoad();
- this.containerRef = el;
-}}
-                dangerouslySetInnerHTML={{ __html: this.state.embed.html }}
-              ></div>
-            </EmbedContainer>
-            : null}
-          </Box>
+            <TruncatedText
+            display={(renderUrl && this.state.embed?.title && this.state.embed.title !== url) ? 'inline-block' : 'none'}
+            fontWeight='bold' width='100%'>
+              {this.state.embed?.title}
+            </TruncatedText>
+              {this.state.embed && this.state.embed.html && this.state.unfold
+              ? <EmbedContainer markup={this.state.embed.html}>
+                <div className="embed-container" ref={(el) => {
+                  this.onLoad();
+                  this.containerRef = el;
+                  }}
+                  dangerouslySetInnerHTML={{ __html: this.state.embed.html }}
+                ></div>
+              </EmbedContainer>
+              : null}
+          </Box>;
+
+      return (
+        <Fragment>
+          {renderUrl
+            ? this.wrapInLink(
+            <TruncatedText {...textProps}>{url}</TruncatedText>,
+            renderEmbed,
+            this.state.unfold,
+            this.unfoldEmbed,
+            embed
+          ) : embed}
         </Fragment>
       );
     } else {
       return renderUrl
-        ? this.wrapInLink(<Text {...textProps}>{text || url}</Text>)
+        ? this.wrapInLink(<TruncatedText {...textProps}>{text || url}</TruncatedText>, true)
         : null;
     }
   }

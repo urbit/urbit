@@ -23,15 +23,15 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
     anchorRef
   );
   return (
-    <Col {...rest} ref={anchorRef} gapY="4">
+    <Col {...rest} ref={anchorRef} gapY="4" maxWidth={['100%', '288px']}>
       <Row gapX="2" width="100%">
         <MetadataIcon
           width="40px"
           height="40px"
           metadata={metadata}
-          flexShrink="0"
+          flexShrink={0}
         />
-        <Col justifyContent="space-between" flexGrow="1" overflow="hidden">
+        <Col justifyContent="space-between" flexGrow={1} overflow="hidden">
           <Text
             fontSize="1"
             textOverflow="ellipsis"

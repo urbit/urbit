@@ -11,6 +11,9 @@ import 'mousetrap-global-bind';
 
 import './css/indigo-static.css';
 import './css/fonts.css';
+import './apps/chat/css/custom.css';
+import './landscape/css/custom.css';
+
 import light from '@tlon/indigo-light';
 import dark from '@tlon/indigo-dark';
 
@@ -50,6 +53,7 @@ const Root = withState(styled.div`
   }
   display: flex;
   flex-flow: column nowrap;
+  touch-action: none;
 
   * {
     scrollbar-width: thin;

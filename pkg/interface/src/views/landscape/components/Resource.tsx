@@ -15,12 +15,14 @@ import useGroupState from '~/logic/state/group';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
+import {Workspace} from '~/types';
 
 type ResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+  workspace: Workspace;
+};
 
 export function Resource(props: ResourceProps): ReactElement {
   const { association, api, notificationsGraphConfig } = props;
@@ -28,7 +30,7 @@ export function Resource(props: ResourceProps): ReactElement {
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const associations = useMetadataState(state => state.associations);
   const contacts = useContactState(state => state.contacts);
-  const app = association.metadata.module || association['app-name'];
+  const app = association.metadata?.config?.graph || association['app-name'];
   const rid = association.resource;
   const selectedGroup = association.group;
   const relativePath = (p: string) =>

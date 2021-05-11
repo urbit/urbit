@@ -187,7 +187,7 @@
     :: ship - store ship identity as a string
     ::
     %+  expect-eq
-      !>  [%s 'zod']
+      !>  [%n '"zod"']
       !>  (ship ~zod)
   ==
 ::  dejs - recursive processing of `json` values

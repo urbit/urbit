@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import _ from 'lodash';
 import f, { compose, memoize } from 'lodash/fp';
 import bigInt, { BigInteger } from 'big-integer';
@@ -28,6 +28,11 @@ export const getModuleIcon = (mod: string) => {
   if (mod === 'link') {
     return 'Collection';
   }
+
+  if (mod === 'post') {
+    return 'Dashboard';
+  }
+
   return _.capitalize(mod);
 };
 
@@ -35,10 +40,6 @@ export function wait(ms: number) {
   return new Promise((resolve, reject) => {
     setTimeout(resolve, ms);
   });
-}
-
-export function appIsGraph(app: string) {
-  return app === 'publish' || app == 'link';
 }
 
 export function parentPath(path: string) {
@@ -60,6 +61,16 @@ export function daToUnix(da: BigInteger) {
 export function unixToDa(unix: number) {
   const timeSinceEpoch = bigInt(unix).multiply(DA_SECOND).divide(bigInt(1000));
   return DA_UNIX_EPOCH.add(timeSinceEpoch);
+}
+
+export function dmCounterparty(resource: string) {
+  const [,,ship,name] = resource.split('/');
+  return ship === `~${window.ship}` ? `~${name.slice(4)}` : ship;
+}
+
+export function isDm(resource: string) {
+  const [,,,name] = resource.split('/');
+  return name.startsWith('dm--');
 }
 
 export function makePatDa(patda: string) {
@@ -181,7 +192,10 @@ export function uxToHex(ux: string) {
 export const hexToUx = (hex) => {
   const ux = f.flow(
     f.chunk(4),
-    f.map(x => _.dropWhile(x, y => y === 0).join('')),
+    // eslint-disable-next-line prefer-arrow-callback
+    f.map(x => _.dropWhile(x, function(y: unknown) {
+      return y === 0;
+    }).join('')),
     f.join('.')
   )(hex.split(''));
   return `0x${ux}`;
@@ -399,11 +413,15 @@ interface useHoveringInterface {
 
 export const useHovering = (): useHoveringInterface => {
   const [hovering, setHovering] = useState(false);
-  const bind = {
-    onMouseOver: () => setHovering(true),
-    onMouseLeave: () => setHovering(false)
-  };
-  return { hovering, bind };
+  const onMouseOver = useCallback(() => setHovering(true), [])
+  const onMouseLeave = useCallback(() => setHovering(false), [])
+  const bind = useMemo(() => ({
+    onMouseOver,
+    onMouseLeave,
+  }), [onMouseLeave, onMouseOver]);
+
+
+  return useMemo(() => ({ hovering, bind }), [hovering, bind]);
 };
 
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;

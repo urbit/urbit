@@ -8,11 +8,14 @@ interface AsyncButtonProps {
   children: ReactNode;
   name?: string;
   onClick: (e: React.MouseEvent) => Promise<void>;
+  /** Manual override */
+  loading?: boolean;
 }
 
 export function StatelessAsyncButton({
   children,
   onClick,
+  loading,
   name = '',
   disabled = false,
   ...rest
@@ -29,16 +32,16 @@ export function StatelessAsyncButton({
       onClick={handleClick}
       {...rest}
     >
-      {state === 'error' ? (
-        'Error'
-      ) : state === 'loading' ? (
+      {(state === 'loading' || loading) ? (
         <LoadingSpinner
           foreground={
             rest.primary ? 'white' : rest.destructive ? 'red' : 'black'
           }
           background="gray"
         />
-      ) : state === 'success' ? (
+      ) : state === 'error' ? (
+        'Error'
+      )  : state === 'success' ? (
         'Done'
       ) : (
         children

@@ -3286,7 +3286,7 @@
     ++  ship                                            ::  string from ship
       |=  a=^ship
       ^-  json
-      (tape (slag 1 (scow %p a)))
+      [%n (rap 3 '"' (rsh [3 1] (scot %p a)) '"' ~)]
     ::                                                  ::  ++numb:enjs:format
     ++  numb                                            ::  number from unsigned
       |=  a=@u
