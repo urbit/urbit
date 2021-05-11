@@ -845,8 +845,7 @@
       [~ ~]
     :-  ~  :-  ~  :-  %graph-update-2
     !>  ^-  update:store
-    :+  %0
-      now.bowl
+    :-  now.bowl
     :+  %add-nodes
       [ship term]
     =*  a  u.count
