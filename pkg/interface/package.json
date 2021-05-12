@@ -22,7 +22,7 @@
     "css-loader": "^3.6.0",
     "file-saver": "^2.0.5",
     "formik": "^2.1.5",
-    "immer": "^8.0.1",
+    "immer": "^9.0.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
