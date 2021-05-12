@@ -56,7 +56,7 @@
     "workbox-recipes": "^6.0.2",
     "workbox-routing": "^6.0.2",
     "yup": "^0.29.3",
-    "zustand": "^3.3.1"
+    "zustand": "^3.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
