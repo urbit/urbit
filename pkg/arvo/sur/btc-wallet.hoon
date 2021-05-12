@@ -117,6 +117,13 @@
       note=(unit @t)
   ==
 +$  history  (map txid hest)
+::
++$  error
+  $?  %cant-pay-ourselves
+      %no-comets
+      %tx-being-signed
+      %insufficient-balance
+  ==
 ::  data to send to the frontend
 ::
 +$  update
@@ -136,6 +143,7 @@
       [%cancel-tx =txid]
       [%new-address =address]
       [%balance balance=(unit [confirmed=sats unconfirmed=sats])]
+      [%error =error]
   ==
 ::
 --

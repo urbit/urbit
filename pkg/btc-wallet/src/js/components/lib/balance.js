@@ -72,9 +72,10 @@ export default class Balance extends Component {
            sats={sats}
            conversion={conversion}
            network={this.props.network}
+           error={this.props.state.error}
            stopSending={() => {
              this.setState({sending: false});
-             store.handleEvent({data: {psbt: ''}});
+             store.handleEvent({data: {psbt: '', error: ''}});
            }}
          /> :
          <Col

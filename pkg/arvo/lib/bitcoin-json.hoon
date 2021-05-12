@@ -110,6 +110,7 @@
       %cancel-tx           (hexb txid.upd)
       %new-address         (address address.upd)
       %balance             (balance balance.upd)
+      %error               s+error.upd
     ==
   ::
   ++  initial

@@ -24,6 +24,7 @@ class Store {
       },
       denomination: 'BTC',
       showWarning: true,
+      error: '',
     };
 
     this.initialReducer = new InitialReducer();
