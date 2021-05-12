@@ -13,6 +13,7 @@ import {
 
 import Invoice from './invoice.js'
 import FeePicker from './feePicker.js'
+import Error from './error.js'
 
 import { validate } from 'bitcoin-address-validation';
 
@@ -75,9 +76,12 @@ export default class Send extends Component {
   }
 
   checkPayee(e){
+    store.handleEvent({data: {error: ''}});
+
     let payee = e.target.value;
     let isPatp = ob.isValidPatp(payee);
     let isAddress = validate(payee);
+
 
     if (isPatp) {
       let command = {'check-payee': payee}
@@ -110,6 +114,10 @@ export default class Send extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (prevProps.error !== this.props.error && this.props.error !== '') {
+      this.setState({signing: false});
+    }
+
     if (!this.state.ready && this.state.checkingPatp) {
       if (this.props.shipWallets[this.state.payee.slice(1)]) {
         this.setState({ready: true, checkingPatp: false, validPayee: true});
@@ -145,7 +153,11 @@ export default class Send extends Component {
     let payeeColor = "black";
     let payeeBg = "white";
     let payeeBorder = "lightGray";
-    if (this.state.focusPayee && this.state.validPayee) {
+    if (this.props.error) {
+      payeeColor="red";
+      payeeBorder = "red";
+      payeeBg="veryLightRed";
+    } else if (this.state.focusPayee && this.state.validPayee) {
       payeeColor = "green";
       payeeBorder = "green";
       payeeBg = "veryLightGreen";
@@ -167,7 +179,7 @@ export default class Send extends Component {
     }
 
 
-    const { api, value, conversion, stopSending, denomination, psbt, currencyRates } = this.props;
+    const { api, value, conversion, stopSending, denomination, psbt, currencyRates, error } = this.props;
     const { denomAmount, satsAmount, signing, payee } = this.state;
 
     const signReady = (this.state.ready && (parseInt(this.state.satsAmount) > 0)) && !signing;
@@ -231,6 +243,20 @@ export default class Send extends Component {
                   onChange={this.checkPayee}
                 />
               </Row>
+              {error &&
+               <Row
+                 alignItems='center'
+                 justifyContent='space-between'>
+                 {/* yes this is a hack */}
+                 <Box width='calc(40% - 30px)'/>
+                 <Error
+                   error={error}
+                   fontSize='14px'
+                   ml={2}
+                   mt={2}
+                   width='100%' />
+               </Row>
+              }
               <Row
                 alignItems='center'
                 mt={4}
@@ -350,16 +376,14 @@ export default class Send extends Component {
                 mt={4}
                 py='24px'
                 px='24px'
-                onClick={() =>{
-                  this.initPayment()
-                }}
+                onClick={this.initPayment}
                 color={signReady ? "white" : "lighterGray"}
                 backgroundColor={signReady ? "blue" : "veryLightGray"}
                 disabled={!signReady}
                 border="none"
                 style={{cursor: signReady ? "pointer" : "default"}}
               />
-              { (!signing) ? null :
+              { (!(signing && !error)) ? null :
                 <LoadingSpinner mr={2} background="midOrange" foreground="orange"/>
               }
             </Row>

@@ -36,6 +36,9 @@ export class UpdateReducer {
     if (json.balance) {
       this.reduceBalance(json.balance, state);
     }
+    if (json.hasOwnProperty('error')) {
+      this.reduceError(json.error, state);
+    }
   }
 
   reduceProviderStatus(json, state) {
@@ -98,5 +101,9 @@ export class UpdateReducer {
   reduceBalance(json, state) {
     state.unconfirmedBalance = json.unconfirmed;
     state.confirmedBalance = json.confirmed;
+  }
+
+  reduceError(json, state) {
+    state.error = json;
   }
 }
