@@ -125,7 +125,7 @@ export function LinkResource(props: LinkResourceProps) {
                   api={api}
                   editCommentId={editCommentId}
                   history={props.history}
-                  baseUrl={`${resourceUrl}/${props.match.params.index}`}
+                  baseUrl={`${resourceUrl}/index/${props.match.params.index}`}
                   group={group}
                   px={3}
                 />
