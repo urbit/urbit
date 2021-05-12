@@ -1,11 +1,11 @@
 import { NotificationGraphConfig, Timebox, Unreads } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 // import { harkGraphHookReducer, harkGroupHookReducer, harkReducer } from "~/logic/subscription/hark";
-import { BaseState, createState } from './base';
+import { createState } from './base';
 
 export const HARK_FETCH_MORE_COUNT = 3;
 
-export interface HarkState extends BaseState<HarkState> {
+export interface HarkState {
   archivedNotifications: BigIntOrderedMap<Timebox>;
   doNotDisturb: boolean;
   // getMore: () => Promise<boolean>;
