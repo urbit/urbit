@@ -1,12 +1,12 @@
 import {
-  BaseImage, Box,
-
-  Button, Col,
-
-  Icon, Row,
-
-  Text
-} from '@tlon/indigo-react';
+  BaseImage,
+  Box,
+  Button,
+  Col,
+  Icon,
+  Row,
+  Text,
+} from "@tlon/indigo-react";
 import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
@@ -110,6 +110,7 @@ const StatusBar = (props) => {
       </Row>
       <Row justifyContent='flex-end' collapse>
         <StatusBarItem
+          width='32px'
           mr={2}
           backgroundColor='yellow'
           display={
@@ -125,7 +126,7 @@ const StatusBar = (props) => {
             )
           }
         >
-        <Icon icon="Bug" color="#000000" />
+          <Icon icon="Bug" color="#000000" />
         </StatusBarItem>
         <StatusBarItem
           width='32px'
