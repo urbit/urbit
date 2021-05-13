@@ -35,7 +35,7 @@ export const HarkReducer = (json: any) => {
   }
 };
 
-function reduce(data, state) {
+export function reduce(data, state) {
   const reducers = [
     calculateCount,
     unread,
