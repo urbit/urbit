@@ -10,7 +10,7 @@ import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import GlobalApi from '~/logic/api/global';
 import gcpManager from '~/logic/lib/gcpManager';
-import { favicon } from '~/logic/lib/util';
+import { favicon, svgDataURL } from '~/logic/lib/util';
 import withState from '~/logic/lib/withState';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
@@ -142,7 +142,7 @@ class App extends React.Component {
       <ThemeProvider theme={theme}>
         <Helmet>
           {window.ship.length < 14
-            ? <link rel="icon" type="image/svg+xml" href={favicon()} />
+            ? <link rel="icon" type="image/svg+xml" href={svgDataURL(favicon())} />
             : null}
         </Helmet>
         <Root>

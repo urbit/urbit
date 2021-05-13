@@ -1,8 +1,8 @@
-import { GraphNotifIndex, GroupNotifIndex, IndexedNotification, NotificationGraphConfig, NotifIndex, Post, Unreads } from '@urbit/api';
+import { GraphNotifIndex, GroupNotifIndex, IndexedNotification, NotificationGraphConfig, Post, Unreads } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
-import f from 'lodash/fp';
-import {pluralize} from './util';
 import _ from 'lodash';
+import f from 'lodash/fp';
+import { pluralize } from './util';
 
 export function getLastSeen(
   unreads: Unreads,

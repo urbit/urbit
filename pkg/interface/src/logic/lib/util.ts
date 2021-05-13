@@ -438,6 +438,10 @@ export function getItemTitle(association: Association): string {
   return association.metadata.title ?? association.resource ?? '';
 }
 
+export const svgDataURL = (svg) => 'data:image/svg+xml;base64,' + btoa(svg);
+
+export const svgBlobURL = (svg) => URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+
 export const favicon = () => {
   let background = '#ffffff';
   const contacts = useContactState.getState().contacts;
@@ -451,7 +455,5 @@ export const favicon = () => {
     size: 16,
     colors: [background, foreground]
   });
-  const dataurl = 'data:image/svg+xml;base64,' + btoa(svg);
-  console.log(dataurl);
-  return dataurl;
+  return svg;
 }
