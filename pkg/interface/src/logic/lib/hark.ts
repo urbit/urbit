@@ -89,6 +89,7 @@ export function describeNotification(notification: IndexedNotification) {
         return `New comment${plural ? 's' : ''} on`;
       case 'note':
         return `New Note${plural ? 's' : ''} in`;
+        // @ts-ignore
       case 'edit-note':
         return `updated ${pluralize('note', plural)} in`;
       case 'mention':
@@ -105,6 +106,7 @@ export function describeNotification(notification: IndexedNotification) {
   if('group' in notification.index) {
     return group(notification.index.group);
   } else if('graph' in notification.index) {
+    // @ts-ignore needs better type guard
     const contents = notification.notification?.contents?.graph ?? [] as Post[];
     return graph(notification.index.graph, contents.length > 1, _.uniq(_.map(contents, 'author')).length === 1)
 
