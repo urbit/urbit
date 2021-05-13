@@ -46,7 +46,6 @@ export function ShortcutContextProvider({ children }) {
   useEffect(() => {
     handlerRef.current = function (e: KeyboardEvent) {
       const chord = getChord(e);
-      console.log(chord);
       shortcuts?.[chord]?.(e);
     };
   }, [shortcuts]);

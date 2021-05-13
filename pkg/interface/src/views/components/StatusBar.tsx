@@ -116,7 +116,7 @@ const StatusBar = (props) => {
           display={
             process.env.LANDSCAPE_STREAM === 'development' ? 'flex' : 'none'
           }
-          justifyContent='flex-end'
+          justifyContent='center'
           flexShrink={0}
           onClick={() =>
             window.open(
