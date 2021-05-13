@@ -100,8 +100,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     }
     Mousetrap.bind('escape', props.toggle);
     const touchstart = new Event('touchstart');
-    inputRef?.current?.dispatchEvent(touchstart);
-    inputRef?.current?.focus();
+    // @ts-ignore
+    inputRef?.current?.input?.dispatchEvent(touchstart);
+    // @ts-ignore
+    inputRef?.current?.input?.focus();
     return () => {
       Mousetrap.unbind('escape');
       setQuery('');
