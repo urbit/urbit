@@ -1,11 +1,14 @@
 import { Box, Col } from '@tlon/indigo-react';
-import { Association, Graph, GraphNode, Group } from '@urbit/api';
+import { Association, FlatGraph, FlatGraphNode, Group } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
 import { withRouter } from 'react-router';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
-import VirtualScroller from '~/views/components/VirtualScroller';
+import ArrayVirtualScroller, {
+  indexEqual,
+  arrToString
+} from '~/views/components/ArrayVirtualScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
 
@@ -14,20 +17,19 @@ const virtualScrollerStyle = {
 };
 
 interface PostFeedProps {
-  graph: Graph;
+  flatGraph: FlatGraph;
   graphPath: string;
   api: GlobalApi;
   history: History;
   baseUrl: string;
-  parentNode?: GraphNode;
-  grandparentNode?: GraphNode;
+  parentNode?: FlatGraphNode;
   association: Association;
   group: Group;
   vip: string;
   pendingSize: number;
 }
 
-class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
+class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
   isFetching: boolean;
   constructor(props) {
     super(props);
@@ -40,84 +42,36 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
 
   renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
     const {
-      graph,
+      flatGraph,
       graphPath,
       api,
       history,
       baseUrl,
-      parentNode,
-      grandparentNode,
       association,
       group,
       vip
     } = this.props;
-    const node = graph.get(index);
+    const node = flatGraph.get(index);
+    const parentNode = index.length > 1 ?
+      flatGraph.get(index.slice(0, index.length - 1)) : null;
+
     if (!node) {
       return null;
     }
 
-    const first = graph.peekLargest()?.[0];
+    const first = flatGraph.peekLargest()?.[0];
     const post = node?.post;
-    const nodeIndex = 
-      ( parentNode &&
-        typeof parentNode.post !== 'string'
-      ) ? parentNode.post.index.split('/').slice(1).map((ind) => {
-      return bigInt(ind);
-      }) : [];
 
-    if (parentNode && index.eq(first ?? bigInt.zero)) {
-      return (
-        <React.Fragment key={index.toString()}>
-          <Col
-            key={index.toString()}
-            ref={ref}
-            mb={3}
-            width="100%"
-            flexShrink={0}
-          >
-            <PostItem
-              key={parentNode.post.index}
-              parentPost={grandparentNode?.post}
-              node={parentNode}
-              parentNode={grandparentNode}
-              graphPath={graphPath}
-              association={association}
-              api={api}
-              index={nodeIndex}
-              baseUrl={baseUrl}
-              history={history}
-              isParent={true}
-              isRelativeTime={false}
-              vip={vip}
-              group={group}
-            />
-          </Col>
-          <PostItem
-            node={node}
-            graphPath={graphPath}
-            association={association}
-            api={api}
-            index={[...nodeIndex, index]}
-            baseUrl={baseUrl}
-            history={history}
-            isReply={true}
-            parentPost={parentNode.post}
-            isRelativeTime={true}
-            vip={vip}
-            group={group}
-          />
-        </React.Fragment>
-      );
-    } else if (index.eq(first ?? bigInt.zero)) {
+    if (indexEqual(index, (first ?? [bigInt.zero]))) {
       return (
         <Col
           width="100%"
           alignItems="center"
-          key={index.toString()}
+          key={arrToString(index)}
           ref={ref}>
           <Col
             width="100%"
-            maxWidth="616px"
+            maxWidth="608px"
             pt={3}
             pl={1}
             pr={1}
@@ -135,11 +89,11 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
             graphPath={graphPath}
             association={association}
             api={api}
-            index={[...nodeIndex, index]}
+            index={index}
             baseUrl={baseUrl}
             history={history}
             parentPost={parentNode?.post}
-            isReply={Boolean(parentNode)}
+            isReply={index.length > 1}
             isRelativeTime={true}
             vip={vip}
             group={group}
@@ -149,17 +103,17 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
     }
 
     return (
-      <Box key={index.toString()} ref={ref}>
+      <Box key={arrToString(index)} ref={ref}>
         <PostItem
           node={node}
           graphPath={graphPath}
           association={association}
           api={api}
-          index={[...nodeIndex, index]}
+          index={index}
           baseUrl={baseUrl}
           history={history}
           parentPost={parentNode?.post}
-          isReply={Boolean(parentNode)}
+          isReply={index.length > 1}
           isRelativeTime={true}
           vip={vip}
           group={group}
@@ -169,7 +123,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
   });
 
   async fetchPosts(newer) {
-    const { graph, graphPath, api } = this.props;
+    const { flatGraph, graphPath, api } = this.props;
     const graphResource = resourceFromPath(graphPath);
 
     if (this.isFetching) {
@@ -178,23 +132,21 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
 
     this.isFetching = true;
     const { ship, name } = graphResource;
-    const currSize = graph.size;
+    const currSize = flatGraph.size;
 
     if (newer) {
-      const [index] = graph.peekLargest();
-      await api.graph.getYoungerSiblings(
-        ship,
-        name,
-        100,
-        `/${index.toString()}`
-      );
+      return true;
     } else {
-      const [index] = graph.peekSmallest();
-      await api.graph.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
+      const [index] = flatGraph.peekSmallest();
+      if (index && index.length > 0) {
+        await api.graph.getDeepNewest(ship, name, index[0].toString(), 100);
+      } else {
+        await api.graph.getDeepNewest(ship, name, null, 100);
+      }
     }
 
     this.isFetching = false;
-    return currSize === graph.size;
+    return currSize === flatGraph.size;
   }
 
   async doNotFetch(newer) {
@@ -203,7 +155,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
 
   render() {
     const {
-      graph,
+      flatGraph,
       pendingSize,
       parentNode,
       history
@@ -211,21 +163,21 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
 
     return (
       <Col width="100%" height="100%" position="relative">
-        <VirtualScroller
+        <ArrayVirtualScroller
           key={history.location.pathname}
           origin="top"
           offset={0}
-          data={graph}
+          data={flatGraph}
           averageHeight={106}
-          size={graph.size}
+          size={flatGraph.size}
           style={virtualScrollerStyle}
           pendingSize={pendingSize}
           renderer={this.renderItem}
-          loadRows={parentNode ? this.doNotFetch : this.fetchPosts}
+          loadRows={this.fetchPosts}
         />
       </Col>
     );
   }
 }
 
-export default withRouter(PostFeed);
+export default withRouter(PostFlatFeed);

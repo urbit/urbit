@@ -414,8 +414,9 @@ export function Graphdown<T extends {} = {}>(
       {...nodeRest}
       tall={tall}
     >
-      {children.map((c) => (
+      {children.map((c, idx) => (
         <Graphdown
+          key={idx}
           transcluded={transcluded}
           depth={depth + 1}
           {...rest}

@@ -1,4 +1,4 @@
-import { Association, deSig, GraphNode, Graphs, resourceFromPath } from '@urbit/api';
+import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath } from '@urbit/api';
 import { useCallback } from 'react';
 import { BaseState, createState } from './base';
 
@@ -27,6 +27,7 @@ export interface GraphState extends BaseState<GraphState> {
 
 const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
+  flatGraphs: {},
   graphKeys: new Set(),
   looseNodes: {},
   pendingIndices: {},
@@ -130,7 +131,7 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, ['graphs', 'graphKeys', 'looseNodes', 'graphTimesentMap']);
+}, ['graphs', 'graphKeys', 'looseNodes', 'graphTimesentMap', 'flatGraphs']);
 
 export function useGraph(ship: string, name: string) {
   return useGraphState(

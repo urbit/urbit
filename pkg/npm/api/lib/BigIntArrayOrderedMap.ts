@@ -5,30 +5,21 @@ setAutoFreeze(false);
 
 enablePatches();
 
-function sortBigInt(a: BigInteger[], b: BigInteger[]) {
-  if (a.lt(b)) {
-    return 1;
-  } else if (a.eq(b)) {
-    return 0;
-  } else {
-    return -1;
-  }
-}
-
-function stringToBigIntArr(str: string) {
+export function stringToArr(str: string) {
   return str.split('/').slice(1).map((ind) => {
     return bigInt(ind);
   });
 }
 
-function arrToString(arr: BigInteger[]) {
+export function arrToString(arr: BigInteger[]) {
   let string = '';
   arr.forEach((key) => {
     string = string + `/${key.toString()}`;
   });
+  return string;
 }
 
-function sortBigIntArr(a: BigInteger[], b: BigInteger[]) {
+export function sortBigIntArr(a: BigInteger[], b: BigInteger[]) {
   let aLen = a.length;
   let bLen = b.length;
 
@@ -81,7 +72,7 @@ export default class BigIntArrayOrderedMap<V> implements Iterable<[BigInteger[],
 
   set(key: BigInteger[], value: V) {
     return produce(this, draft => {
-      draft.root[key.toString()] = castDraft(value);
+      draft.root[arrToString(key)] = castDraft(value);
       draft.cachedIter = null;
     });
   }
@@ -138,9 +129,8 @@ export default class BigIntArrayOrderedMap<V> implements Iterable<[BigInteger[],
       return [...this.cachedIter];
     }
     const result = Object.keys(this.root).map(key => {
-      const num = stringtoBigIntArr(key);
-      return [num, this.root[key]] as [BigInteger[], V];
-    }).sort(([a], [b]) => sortBigIntArr(a,b));
+      return [stringToArr(key), this.root[key]] as [BigInteger[], V];
+    }).sort(([a], [b]) => sortBigIntArr(a, b));
     this.cachedIter = result;
     return [...result];
   }

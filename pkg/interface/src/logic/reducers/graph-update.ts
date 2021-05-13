@@ -26,9 +26,8 @@ export const GraphReducer = (json) => {
 
   const flat = _.get(json, 'graph-update-flat', false);
   if (flat) {
-    reduceState<GraphState, any>(useGraphState, loose, [addNodesFlat]);
+    reduceState<GraphState, any>(useGraphState, flat, [addNodesFlat]);
   }
-
 };
 
 const addNodesLoose = (json: any, state: GraphState): GraphState => {
@@ -60,7 +59,7 @@ const addNodesFlat = (json: any, state: GraphState): GraphState => {
     const indices = Array.from(Object.keys(data.nodes));
 
     indices.forEach((index) => {
-      const node = data.nodes[index];
+      let node = data.nodes[index];
       if (index.split('/').length === 0) {
        return;
       }
@@ -73,14 +72,11 @@ const addNodesFlat = (json: any, state: GraphState): GraphState => {
        return state;
       }
 
+      node.children = mapifyChildren({});
       state.flatGraphs[resource] =
-        state.flatGraphs[resource].set(
-          indexArr,
-          produce(node, (draft) => {
-            draft.children = mapifyChildren({});
-          })
-        );
+        state.flatGraphs[resource].set(indexArr, node);
     });
+
   }
   return state;
 };
@@ -120,8 +116,13 @@ const addGraph = (json, state: GraphState): GraphState => {
       state.graphs = {};
     }
 
+    if (!('flatGraphs' in state)) {
+      state.flatGraphs = {};
+    }
+
     const resource = data.resource.ship + '/' + data.resource.name;
     state.graphs[resource] = new BigIntOrderedMap();
+    state.flatGraphs[resource] = new BigIntArrayOrderedMap();
     state.graphTimesentMap[resource] = {};
 
     state.graphs[resource] = state.graphs[resource].gas(Object.keys(data.graph).map((idx) => {
@@ -138,6 +139,10 @@ const removeGraph = (json, state: GraphState): GraphState => {
   if (data) {
     if (!('graphs' in state)) {
       state.graphs = {};
+    }
+
+    if (!('graphs' in state)) {
+      state.flatGraphs = {};
     }
     const resource = data.ship + '/' + data.name;
     state.graphKeys.delete(resource);
@@ -219,12 +224,16 @@ const addNodes = (json, state) => {
   const data = _.get(json, 'add-nodes', false);
   if (data) {
     if (!('graphs' in state)) {
- return state;
-}
+      return state;
+    }
 
     const resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.graphs)) {
       state.graphs[resource] = new BigIntOrderedMap();
+    }
+
+    if (!(resource in state.flatGraphs)) {
+      state.flatGraphs[resource] = new BigIntArrayOrderedMap();
     }
 
     if (!(resource in state.graphTimesentMap)) {

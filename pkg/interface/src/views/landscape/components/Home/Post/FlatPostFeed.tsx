@@ -5,7 +5,7 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
-import VirtualScroller from '~/views/components/VirtualScroller';
+import ArrayVirtualScroller from '~/views/components/ArrayVirtualScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
 
@@ -119,8 +119,8 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
             width="100%"
             maxWidth="616px"
             pt={3}
-            pl={1}
-            pr={1}
+            pl={2}
+            pr={2}
             mb={3}>
             <PostInput
               api={api}
@@ -182,6 +182,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
 
     if (newer) {
       const [index] = graph.peekLargest();
+      //  TODO: replace this with deep something
       await api.graph.getYoungerSiblings(
         ship,
         name,
@@ -203,21 +204,24 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
 
   render() {
     const {
-      graph,
+      flatGraph,
       pendingSize,
       parentNode,
       history
     } = this.props;
 
+    //  TODO: memoize flattening the graph,
+    //  take in a prop on whether to flatten the graph or not
+
     return (
       <Col width="100%" height="100%" position="relative">
-        <VirtualScroller
+        <ArrayVirtualScroller
           key={history.location.pathname}
           origin="top"
           offset={0}
-          data={graph}
+          data={flatGraph}
           averageHeight={106}
-          size={graph.size}
+          size={flatGraph.size}
           style={virtualScrollerStyle}
           pendingSize={pendingSize}
           renderer={this.renderItem}
