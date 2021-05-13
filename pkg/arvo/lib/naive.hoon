@@ -333,6 +333,17 @@
     [other batch]
   --
 ::
+++  proxy-from-point
+  |=  [=proxy point]
+  ^-  [=address =nonce]
+  ?-  proxy
+    %own       owner.own
+    %spawn     spawn-proxy.own
+    %manage    management-proxy.own
+    %vote      voting-proxy.own
+    %transfer  transfer-proxy.own
+  ==
+::
 ++  verify-sig-and-nonce
   |=  [=verifier chain-t=@t =state =raw-tx]
   ^-  ?
@@ -340,13 +351,7 @@
   =/  point  (get-point state ship.from.tx.raw-tx)
   ?>  ?=(^ point)  ::  we never parse more than four bytes for a ship
   =/  need=[=address =nonce]
-    ?-  proxy.from.tx.raw-tx
-      %own       owner.own.u.point
-      %spawn     spawn-proxy.own.u.point
-      %manage    management-proxy.own.u.point
-      %vote      voting-proxy.own.u.point
-      %transfer  transfer-proxy.own.u.point
-    ==
+    (proxy-from-point proxy.from.tx.raw-tx u.point)
   ::  We include a domain separator to avoid letting signatures be
   ::  accidentally reused with other applications.  We include the name
   ::  UrbitID, a signature format version number, and the EIP-155 chain
