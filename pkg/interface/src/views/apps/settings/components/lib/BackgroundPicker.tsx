@@ -3,6 +3,7 @@ import {
 
   ManagedRadioButtonField as Radio, Row, Text
 } from '@tlon/indigo-react';
+import {useField} from 'formik';
 import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { ColorInput } from '~/views/components/ColorInput';
@@ -10,11 +11,7 @@ import { ImageInput } from '~/views/components/ImageInput';
 
 export type BgType = 'none' | 'url' | 'color';
 
-export function BackgroundPicker({
-  bgType,
-  bgUrl,
-  api
-}: {
+export function BackgroundPicker({ api }: {
   bgType: BgType;
   bgUrl?: string;
   api: GlobalApi;
@@ -40,7 +37,6 @@ export function BackgroundPicker({
             id="bgUrl"
             placeholder="Drop or upload a file, or paste a link here"
             name="bgUrl"
-            url={bgUrl || ''}
           />
         </Col>
       </Row>
