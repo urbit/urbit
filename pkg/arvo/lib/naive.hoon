@@ -23,6 +23,13 @@
 ::  TODO: secp needs to not crash the process when you give it a bad
 ::  v/recid.  See #4797
 ::
+::  TODO: life shouldn't increment on transfer with reset if keys were
+::  already 0,0,0
+::
+::  TODO: planets get incorrect sponsor
+::
+::  TODO: maybe emit keccak success/failure events?
+::
 /+  std
 =>  =>  std
 ::  Laconic bit
@@ -763,6 +770,8 @@
                   =(to address.spawn-proxy.own.u.parent-point)
               ==
           ==
+        ::  TODO: use get-point or duplicate sponsor logic
+        ::
         :-  ~[[%point ship %dominion %l2] [%point ship %owner to]]
         %*  .  *point
           dominion           %l2
