@@ -278,8 +278,12 @@ export function cite(ship: string): string {
   return `~${patp}`;
 }
 
+export function stripNonWord(string: string): string {
+  return string.replace(/[^\p{L}\p{N}\p{Z}]/gu, '');
+}
+
 export function alphabeticalOrder(a: string, b: string) {
-  return a.toLowerCase().localeCompare(b.toLowerCase());
+  return stripNonWord(a).toLowerCase().trim().localeCompare(stripNonWord(b).toLowerCase().trim());
 }
 
 export function lengthOrder(a: string, b: string) {
