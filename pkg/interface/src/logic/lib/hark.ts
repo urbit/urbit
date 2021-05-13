@@ -33,7 +33,7 @@ export function getNotificationCount(
 ): number {
   const unread = unreads.graph?.[path] || {};
   return Object.keys(unread)
-    .map(index => unread[index]?.notifications?.length || 0)
+    .map(index => _.get(unread[index], 'notifications.length', 0))
     .reduce(f.add, 0);
 }
 

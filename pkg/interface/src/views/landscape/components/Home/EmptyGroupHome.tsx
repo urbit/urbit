@@ -28,7 +28,7 @@ export function EmptyGroupHome(props) {
           resource={groupAssociation.group}
         />
       ) : (
-        <Box p="4">
+        <Box p={4}>
           <Text color='gray'>
             Create or select a channel to get started
           </Text>

@@ -1,8 +1,8 @@
 import {
-  Col,
+    Col,
 
-  Label,
-  ManagedRadioButtonField as Radio, Text
+    Label,
+    ManagedRadioButtonField as Radio, Text
 } from '@tlon/indigo-react';
 import { Form, Formik } from 'formik';
 import React from 'react';
@@ -89,8 +89,8 @@ export default function DisplayForm(props: DisplayFormProps) {
       {props => (
         <Form>
           <BackButton />
-          <Col p="5" pt="4" gapY="5">
-              <Col gapY="1" mt="0">
+          <Col p={5} pt={4} gapY={5}>
+              <Col gapY={1} mt={0}>
               <Text color="black" fontSize={2} fontWeight="medium">
                 Display Preferences
               </Text>

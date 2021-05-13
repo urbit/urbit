@@ -93,7 +93,6 @@ export function MarkdownEditor(
 
   return (
     <Box
-      height="100%"
       position="relative"
       className="publish"
       p={1}
@@ -111,10 +110,10 @@ export function MarkdownEditor(
         value={value}
         options={options}
         onChange={handleChange}
-        onDragLeave={(editor, e) => bind.onDragLeave(e)}
-        onDragOver={(editor, e) => bind.onDragOver(e)}
-        onDrop={(editor, e) => bind.onDrop(e)}
-        onDragEnter={(editor, e) => bind.onDragEnter(e)}
+        onDragLeave={(editor, e: DragEvent) => bind.onDragLeave(e)}
+        onDragOver={(editor, e: DragEvent) => bind.onDragOver(e)}
+        onDrop={(editor, e: DragEvent) => bind.onDrop(e)}
+        onDragEnter={(editor, e: DragEvent) => bind.onDragEnter(e)}
       />
       {dragging && <SubmitDragger />}
     </Box>

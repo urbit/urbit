@@ -10,7 +10,8 @@ export interface LaunchState extends BaseState<LaunchState> {
   weather: WeatherState | null | Record<string, never> | boolean,
   userLocation: string | null;
   baseHash: string | null;
-}
+  runtimeLag: boolean;
+};
 
 const useLaunchState = createState<LaunchState>('Launch', {
   firstTime: true,
@@ -18,7 +19,8 @@ const useLaunchState = createState<LaunchState>('Launch', {
   tiles: {},
   weather: null,
   userLocation: null,
-  baseHash: null
+  baseHash: null,
+  runtimeLag: false,
 });
 
 export default useLaunchState;

@@ -2,6 +2,9 @@ import {
   Button,
   Col,
 
+
+
+
   ManagedToggleSwitchField as Toggle, Text
 } from '@tlon/indigo-react';
 import { Form, Formik, FormikHelpers } from 'formik';
@@ -75,9 +78,9 @@ export function NotificationPreferences(props: {
   return (
     <>
     <BackButton />
-    <Col p="5" pt="4" gapY="5">
-      <Col gapY="1" mt="0">
-        <Text fontSize="2" fontWeight="medium">
+    <Col p={5} pt={4} gapY={5}>
+      <Col gapY={1} mt={0}>
+        <Text fontSize={2} fontWeight="medium">
           Notification Preferences
         </Text>
         <Text gray>
@@ -111,7 +114,7 @@ export function NotificationPreferences(props: {
               id="mentions"
               caption="Notify me if someone mentions my @p in a channel I've joined"
             />
-            <Col gapY="3">
+            <Col gapY={3}>
               <Text lineHeight="tall">
                 Activity
               </Text>

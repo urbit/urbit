@@ -31,7 +31,7 @@ return;
 
   const action = props.owner ? 'Archive' : 'Leave';
   const description = props.owner
-    ? 'Permanently delete this group. (All current members will no longer see this group.)'
+    ? 'Permanently archive this group. (All current members will no longer see this group.)'
     : 'You can rejoin if it is an open group, or if you are reinvited';
 
   const icon = props.owner ? 'X' : 'LogOut';
@@ -42,17 +42,17 @@ return;
         dismiss();
       };
       return (
-        <Col p="4">
+        <Col p={4}>
           <Label>{action} Group</Label>
-          <Label gray mt="2">
+          <Label gray mt={2}>
             {description}
           </Label>
-          <Row mt="2" justifyContent="flex-end">
+          <Row mt={2} justifyContent="flex-end">
             <Button onClick={onCancel}>Cancel</Button>
             <StatelessAsyncButton
               name={`delete-${props.association.group}`}
               onClick={onDelete}
-              ml="2"
+              ml={2}
               destructive
               primary
             >
@@ -63,9 +63,9 @@ return;
       );
     } });
   return (
-    <Row px="3" py="1" onClick={showModal} cursor="pointer">
+    <Row px={3} py={1} onClick={showModal} cursor="pointer">
       {modal}
-      <Icon icon={icon} color="red" mr="2" />
+      <Icon icon={icon} color="red" mr={2} />
       <Text color="red">
         {action} group
       </Text>

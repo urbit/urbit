@@ -49,8 +49,8 @@ const PostHeader = (props: PostHeaderProps): ReactElement => {
       pr={2}
       justifyContent="space-between"
       onClick={(e) => {
- e.stopPropagation();
-}}
+        e.stopPropagation();
+      }}
     >
       <Author
         showImage
@@ -65,7 +65,7 @@ const PostHeader = (props: PostHeaderProps): ReactElement => {
         isRelativeTime={true}
         showTime={false}
         time={true}
-        lineHeight='1'
+        lineHeight={1}
       />
       <Dropdown
         dropWidth="100px"

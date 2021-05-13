@@ -36,7 +36,7 @@ export const MarkdownField = ({
         value={value}
         onChange={setValue}
       />
-      <ErrorLabel mt="2" hasError={Boolean(error && touched)}>
+      <ErrorLabel mt={2} hasError={Boolean(error && touched)}>
         {error}
       </ErrorLabel>
     </Box>

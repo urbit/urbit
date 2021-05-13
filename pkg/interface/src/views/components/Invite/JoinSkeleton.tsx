@@ -16,7 +16,7 @@ export function JoinSkeleton(props: JoinSkeletonProps): ReactElement {
   const { api, resource, children, status, ...rest } = props;
   return (
     <>
-      <Col p="1" {...rest}>
+      <Col p={1} {...rest}>
         {children}
         <JoiningStatus api={api} resource={resource} status={status} />
       </Col>

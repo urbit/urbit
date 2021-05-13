@@ -24,15 +24,15 @@ export function InviteSkeleton(
   } = props;
   return (
     <>
-      <Col width="100%" p="1" {...rest}>
+      <Col width="100%" p={1} {...rest}>
         {children}
-        <Row px="4" gapX="4">
+        <Row px={4} gapX={4}>
           <StatelessAsyncAction
             name="accept"
             bg="transparent"
             onClick={onAccept}
             color="blue"
-            mr="2"
+            mr={2}
           >
             {acceptDesc}
           </StatelessAsyncAction>

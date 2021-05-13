@@ -66,11 +66,19 @@ function calculateCount(json: any, state: HarkState) {
   let count = 0;
   _.forEach(state.unreads.graph, (graphs) => {
     _.forEach(graphs, (graph) => {
-      count += (graph?.notifications || []).length;
+      if (typeof graph?.notifications === 'object') {
+        count += graph?.notifications.length;
+      } else {
+        count += 0;
+      }
     });
   });
   _.forEach(state.unreads.group, (group) => {
-    count += (group?.notifications || []).length;
+    if (typeof group?.notifications === 'object') {
+      count += group?.notifications.length;
+    } else {
+      count += 0;
+    }
   });
   state.notificationsCount = count;
   return state;

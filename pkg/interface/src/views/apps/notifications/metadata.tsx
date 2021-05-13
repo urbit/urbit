@@ -1,13 +1,9 @@
 import { Box } from '@tlon/indigo-react';
+import { Metadata } from '@urbit/api';
 import React from 'react';
 import { Header } from './header';
-import { MetadataBody, NotificationProps } from './types';
 
-function getInvolvedUsers(body: MetadataBody) {
-  return [];
-}
-
-function getDescription(body: MetadataBody) {
+function getDescription(body: { metadata: Metadata}) {
   const b = body.metadata;
   if ('new' in b) {
     return 'created';
@@ -24,12 +20,12 @@ function getDescription(body: MetadataBody) {
   }
 }
 
-export function MetadataNotification(props: NotificationProps<'metadata'>) {
+export function MetadataNotification(props: any) {
   const { unread } = props;
   const description = getDescription(unread.unreads[0].body);
 
   return (
-    <Box p="2">
+    <Box p={2}>
       <Header
         authors={[]}
         description={description}

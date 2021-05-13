@@ -40,7 +40,7 @@ export function MentionText(props: MentionTextProps) {
 export function Mention(props: {
   ship: string;
   first?: boolean;
-  api: any;
+  api: GlobalApi;
 }) {
   const { ship, first, api, ...rest } = props;
   const contact = useContact(`~${deSig(ship)}`);

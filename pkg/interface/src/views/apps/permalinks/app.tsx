@@ -1,4 +1,4 @@
-import { Association } from '@urbit/api';
+import { Association, GraphConfig } from '@urbit/api';
 import React, { useCallback } from 'react';
 import {
   Redirect, Route, Switch
@@ -82,7 +82,7 @@ function GroupRoutes(props: { group: string; url: string }) {
               return <Redirect
                 to={toQuery(
                   { auto: 'y', redir: location.pathname },
-                  `${groupUrl}/join/${association.metadata.config.graph}${path}`
+                  `${groupUrl}/join/${(association.metadata.config as GraphConfig).graph}${path}`
                 )}
                      />;
             }

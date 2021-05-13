@@ -1,4 +1,5 @@
 import { Content, Enc, GraphNode, GroupPolicy, Path, Patp, Post, Resource } from '@urbit/api';
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import _ from 'lodash';
 import { decToUd, deSig, resourceAsPath, unixToDa } from '~/logic/lib/util';
 import { makeResource, resourceFromPath } from '../lib/group';
@@ -9,7 +10,7 @@ export const createBlankNodeWithChildPost = (
   parentIndex = '',
   childIndex = '',
   contents: Content[]
-) => {
+): GraphNode => {
   const date = unixToDa(Date.now()).toString();
   const nodeIndex = parentIndex + '/' + date;
 
@@ -35,7 +36,7 @@ export const createBlankNodeWithChildPost = (
       hash: null,
       signatures: []
     },
-    children: childGraph
+    children: childGraph as BigIntOrderedMap<GraphNode>
   };
 };
 

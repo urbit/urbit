@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Text, Col, Anchor, Row, Action } from '@tlon/indigo-react';
+import { Action, Anchor, Box, Col, Row, Text } from '@tlon/indigo-react';
+import { Association, Graph, GraphNode, Group } from '@urbit/api';
 import bigInt from 'big-integer';
+import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
-import { Contacts, GraphNode, Graph, Association, Unreads, Group, Post } from '@urbit/api';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
-import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { getComments, getLatestRevision } from '~/logic/lib/publish';
 import { useCopy } from '~/logic/lib/useCopy';
 import { useQuery } from '~/logic/lib/useQuery';
 import Author from '~/views/components/Author';
 import { Comments } from '~/views/components/Comments';
 import { Spinner } from '~/views/components/Spinner';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { NoteNavigation } from './NoteNavigation';
 import { Redirect } from 'react-router-dom';
 
@@ -117,7 +117,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
             date={post?.['time-sent']}
             group={group}
           >
-            <Row px="2" gapX="2" alignItems="flex-end" height="14px">
+            <Row px={2} gapX={2} alignItems="flex-end" height="14px">
               <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
               {adminLinks}
             </Row>
@@ -128,8 +128,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       <NoteNavigation
         notebook={notebook}
         noteId={noteId}
-        ship={props.ship}
-        book={props.book}
+        baseUrl={baseUrl}
       />
       <Comments
         ship={ship}

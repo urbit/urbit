@@ -1,9 +1,9 @@
 import {
-  Box,
-  Col,
+    Box,
+    Col,
 
-  Icon, Row,
-  Text
+    Icon, Row,
+    Text
 } from '@tlon/indigo-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -91,7 +91,7 @@ export function GroupSwitcher(props: {
       backgroundColor="white"
       position="sticky"
       top="0px"
-      pl='3'
+      pl={3}
       borderBottom='1px solid'
       borderColor='lightGray'
     >
@@ -138,11 +138,11 @@ export function GroupSwitcher(props: {
                   recent={props.recentGroups}
                 />
                 <GroupSwitcherItem to="/~landscape/new">
-                  <Icon mr="2" color="gray" icon="CreateGroup" />
+                  <Icon mr={2} color="gray" icon="CreateGroup" />
                   <Text> New Group</Text>
                 </GroupSwitcherItem>
                 <GroupSwitcherItem to="/~landscape/join">
-                  <Icon mr="2" color="gray" icon="Plus" />
+                  <Icon mr={2} color="gray" icon="Plus" />
                   <Text> Join Group</Text>
                 </GroupSwitcherItem>
                 {workspace.type === 'group' && (
@@ -176,12 +176,12 @@ export function GroupSwitcher(props: {
               </Col>
             }
           >
-            <Row flexGrow={1} alignItems="center" width='100%' minWidth='0' flexShrink={0}>
-              { metadata && <MetadataIcon flexShrink={0} mr="2" metadata={metadata} height="24px" width="24px" /> }
-              <Text flexShrink={1} lineHeight="1.1" fontSize='2' fontWeight="600" overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
+            <Row flexGrow={1} alignItems="center" width='100%' minWidth={0} flexShrink={0}>
+              { metadata && <MetadataIcon flexShrink={0} mr={2} metadata={metadata} height="24px" width="24px" /> }
+              <Text flexShrink={1} lineHeight="1.1" fontSize={2} fontWeight="600" overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{title}</Text>
               </Row>
           </Dropdown>
-          <Row pr='3' verticalAlign="middle">
+          <Row pr={3} verticalAlign="middle">
             {(workspace.type === 'group') && (
               <>
                 {isAdmin && (<Link to={navTo('/invites')}>

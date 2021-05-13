@@ -5,12 +5,12 @@ import {
 
   StatelessToggleSwitchField, Text
 } from '@tlon/indigo-react';
-import { Association, resourceFromPath } from '@urbit/api';
+import { Association, GraphConfig, resourceFromPath } from '@urbit/api';
 import { useField } from 'formik';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { isWatching } from '~/logic/lib/hark';
-import { getModuleIcon } from '~/logic/lib/util';
+import { getModuleIcon, GraphModule } from '~/logic/lib/util';
 import useGraphState from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState, { useGraphsForGroup } from '~/logic/state/metadata';
@@ -20,7 +20,7 @@ export function GroupChannelPicker(props: {}) {
   const associations = useMetadataState(s => s.associations);
 
   return (
-    <Col gapY="3">
+    <Col gapY={3}>
       {_.map(associations.groups, (assoc: Association, group: string) => (
         <GroupWithChannels key={group} association={assoc} />
       ))}
@@ -62,7 +62,7 @@ function GroupWithChannels(props: { association: Association }) {
       display="grid"
       gridTemplateColumns="24px 24px 1fr 24px 24px"
       gridTemplateRows="auto"
-      gridGap="2"
+      gridGap={2}
       gridTemplateAreas="'arrow icon title graphToggle groupToggle'"
     >
       {Object.keys(joinedGroupGraphs).length > 0 && (
@@ -112,17 +112,17 @@ function Channel(props: { association: Association }) {
     setValue(!value);
   };
 
-  const icon = getModuleIcon(metadata.config?.graph);
+  const icon = getModuleIcon((metadata.config as GraphConfig)?.graph as GraphModule);
 
   return (
     <>
-      <Center gridColumn="2">
+      <Center gridColumn={2}>
         <Icon icon={icon} />
       </Center>
-      <Box gridColumn="3">
+      <Box gridColumn={3}>
         <Text> {metadata.title}</Text>
       </Box>
-      <Box gridColumn="4">
+      <Box gridColumn={4}>
         <StatelessToggleSwitchField selected={value} onChange={onChange} />
       </Box>
     </>

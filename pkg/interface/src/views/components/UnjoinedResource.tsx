@@ -1,5 +1,5 @@
 import { Box, Center, Col, Text } from '@tlon/indigo-react';
-import { Association } from '@urbit/api/metadata';
+import { Association, GraphConfig } from '@urbit/api/metadata';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
@@ -19,7 +19,7 @@ interface UnjoinedResourceProps {
 
 function isJoined(path: string) {
   return function (
-    props: Pick<UnjoinedResourceProps, 'graphKeys'>
+    props: { graphKeys: Set<string> }
   ) {
     const graphKey = path.substr(7);
     return props.graphKeys.has(graphKey);
@@ -38,7 +38,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
 
   const [loading, setLoading] = useState(false);
   const waiter = useWaitForProps({ ...props, graphKeys });
-  const app = useMemo(() => config.graph || appName, [props.association]);
+  const app = useMemo(() => (config as GraphConfig).graph || appName, [props.association]);
 
   const onJoin = async () => {
     const [, , ship, name] = rid.split('/');
@@ -71,14 +71,14 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
         p={4}
         border={1}
         borderColor="lightGray"
-        borderRadius="1"
-        gapY="3"
+        borderRadius={1}
+        gapY={3}
       >
         <Box>
           <Text>{title}</Text>
         </Box>
         <Box>
-          <RichText color="gray">{description}</RichText>
+          <RichText color="gray" api={api}>{description}</RichText>
         </Box>
         <StatelessAsyncButton
           name={rid}

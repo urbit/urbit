@@ -36,7 +36,7 @@ export default function ProfileScreen(props: any) {
                 border={1}
                 borderColor='lightGray'
                 overflowY='auto'
-                flexGrow
+                flexGrow={1}
               >
                 <Box>
                   <Profile

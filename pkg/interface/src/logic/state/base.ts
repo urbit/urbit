@@ -44,13 +44,13 @@ export interface BaseState<StateType> extends State {
   set: (fn: (state: StateType) => void) => void;
 }
 
-export const createState = <T extends {}>(
+export const createState = <T extends BaseState<T>>(
   name: string,
-  properties: T,
+  properties: { [K in keyof Omit<T, 'set'>]: T[K] },
   blacklist: string[] = []
-): UseStore<T & BaseState<T>> => create(persist((set, get) => ({
+): UseStore<T> => create(persist((set, get) => ({
   set: fn => stateSetter(fn, set),
-  ...properties
+  ...properties as any
 }), {
   blacklist,
   name: stateStorageKey(name),
