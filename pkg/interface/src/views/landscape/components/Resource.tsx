@@ -1,45 +1,45 @@
+import { Association } from '@urbit/api/metadata';
 import React, { ReactElement } from 'react';
 import Helmet from 'react-helmet';
-import { RouteComponentProps, Route, Switch } from 'react-router-dom';
-
-import { Association } from '@urbit/api/metadata';
-
-import { ChatResource } from '~/views/apps/chat/ChatResource';
-import { PublishResource } from '~/views/apps/publish/PublishResource';
-import { LinkResource } from '~/views/apps/links/LinkResource';
-import { StoreState } from '~/logic/store/type';
+import { Route, Switch } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { ResourceSkeleton } from './ResourceSkeleton';
-import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
-import useGroupState from '~/logic/state/group';
 import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
+import { StoreState } from '~/logic/store/type';
+import { Workspace } from '~/types';
+import { ChatResource } from '~/views/apps/chat/ChatResource';
+import { LinkResource } from '~/views/apps/links/LinkResource';
+import { PublishResource } from '~/views/apps/publish/PublishResource';
+import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
+import { ResourceSkeleton } from './ResourceSkeleton';
 
 type ResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+  workspace: Workspace;
+};
 
 export function Resource(props: ResourceProps): ReactElement {
-  const { association, api, notificationsGraphConfig } = props;
+  const { association, api } = props;
   const groups = useGroupState(state => state.groups);
   const notificationsCount = useHarkState(state => state.notificationsCount);
   const associations = useMetadataState(state => state.associations);
   const contacts = useContactState(state => state.contacts);
-  const app = association.metadata.module || association['app-name'];
-  const rid = association.resource;
-  const selectedGroup = association.group;
-  const relativePath = (p: string) =>
-    `${props.baseUrl}/resource/${app}${rid}${p}`;
+  let app = association['app-name'];
+  if (association?.metadata?.config && 'graph' in association.metadata.config) {
+    app = association.metadata.config.graph;
+  }
+  const { resource: rid, group: selectedGroup } = association;
+  const relativePath = (p: string) => `${props.baseUrl}/resource/${app}${rid}${p}`;
   const skelProps = { api, association, groups, contacts };
   let title = props.association.metadata.title;
-  if ('workspace' in props) {
-    if ('group' in props.workspace && props.workspace.group in associations.groups) {
+  if ('group' in props.workspace && props.workspace.group in associations.groups) {
       title = `${associations.groups[props.workspace.group].metadata.title} - ${props.association.metadata.title}`;
-    }
   }
+
   return (
     <>
       <Helmet defer={false}>

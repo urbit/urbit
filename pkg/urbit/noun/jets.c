@@ -918,12 +918,11 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
                u3r_mug(pro));
         ham_u->liv = c3n;
 
-        c3_assert(0);
         return u3m_bail(c3__fail);
       }
       else {
 
-#if 1
+#if 0
         u3l_log("test: %s %s",
                cop_u->cos_c,
                (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c);

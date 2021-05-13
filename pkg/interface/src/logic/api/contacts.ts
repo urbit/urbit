@@ -1,7 +1,8 @@
-import BaseApi from './base';
-import { StoreState } from '../store/type';
 import { Patp } from '@urbit/api';
-import { ContactEdit } from '@urbit/api/contacts';
+import { ContactEditField } from '@urbit/api/contacts';
+import _ from 'lodash';
+import { StoreState } from '../store/type';
+import BaseApi from './base';
 
 export default class ContactsApi extends BaseApi<StoreState> {
   add(ship: Patp, contact: any) {
@@ -13,7 +14,7 @@ export default class ContactsApi extends BaseApi<StoreState> {
     return this.storeAction({ remove: { ship } });
   }
 
-  edit(ship: Patp, editField: ContactEdit) {
+  edit(ship: Patp, editField: ContactEditField) {
     /* editField can be...
     {nickname: ''}
     {email: ''}
@@ -73,6 +74,28 @@ export default class ContactsApi extends BaseApi<StoreState> {
     );
   }
 
+  async disallowedShipsForOurContact(ships: string[]): Promise<string[]> {
+    return _.compact(
+      await Promise.all(
+        ships.map(
+          async (s) => {
+            const ship = `~${s}`;
+            if(s === window.ship) {
+              return null;
+            }
+            const allowed = await this.fetchIsAllowed(
+              `~${window.ship}`,
+              'personal',
+              ship,
+              true
+            );
+            return allowed ? null : ship;
+          }
+        )
+      )
+    );
+  }
+
   retrieve(ship: string) {
     const resource = { ship, name: '' };
     return this.action('contact-pull-hook', 'pull-hook-action', {
@@ -84,7 +107,7 @@ export default class ContactsApi extends BaseApi<StoreState> {
   }
 
   private storeAction(action: any): Promise<any> {
-    return this.action('contact-store', 'contact-update', action);
+    return this.action('contact-store', 'contact-update-0', action);
   }
 
   private viewAction(threadName: string, action: any) {
@@ -92,6 +115,6 @@ export default class ContactsApi extends BaseApi<StoreState> {
   }
 
   private hookAction(ship: Patp, action: any): Promise<any> {
-    return this.action('contact-push-hook', 'contact-update', action);
+    return this.action('contact-push-hook', 'contact-update-0', action);
   }
 }

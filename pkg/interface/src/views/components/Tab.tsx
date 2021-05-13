@@ -1,5 +1,5 @@
+import { Box, Row, Text } from '@tlon/indigo-react';
 import React from 'react';
-import { Box, Text, Row } from '@tlon/indigo-react';
 
 export const Tab = ({ selected, id, label, setSelected }) => (
   <Box

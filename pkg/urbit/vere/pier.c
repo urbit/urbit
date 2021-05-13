@@ -20,6 +20,8 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#include <vere/db/lmdb.h>
+
 #define PIER_READ_BATCH 1000ULL
 #define PIER_PLAY_BATCH 500ULL
 #define PIER_WORK_BATCH 10ULL
@@ -1621,6 +1623,12 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
     //
     u3_pier_bail(pir_u);
     exit(1);
+  }
+
+  if ( c3y == u3_Host.ops_u.veb ) {
+    FILE* fil_u = u3_term_io_hija();
+    u3_lmdb_stat(pir_u->log_u->mdb_u, fil_u);
+    u3_term_io_loja(1, fil_u);
   }
 
   u3z(pax);

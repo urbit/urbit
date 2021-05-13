@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Text, Col, Anchor } from '@tlon/indigo-react';
-import ReactMarkdown from 'react-markdown';
+import { Action, Anchor, Box, Col, Row, Text } from '@tlon/indigo-react';
+import { Association, Graph, GraphNode, Group } from '@urbit/api';
 import bigInt from 'big-integer';
-
+import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Spinner } from '~/views/components/Spinner';
-import { Comments } from '~/views/components/Comments';
-import { NoteNavigation } from './NoteNavigation';
 import GlobalApi from '~/logic/api/global';
-import { getLatestRevision, getComments } from '~/logic/lib/publish';
+import { roleForShip } from '~/logic/lib/group';
+import { getPermalinkForGraph } from '~/logic/lib/permalinks';
+import { getComments, getLatestRevision } from '~/logic/lib/publish';
+import { useCopy } from '~/logic/lib/useCopy';
+import { useQuery } from '~/logic/lib/useQuery';
 import Author from '~/views/components/Author';
-import { Contacts, GraphNode, Graph, Association, Unreads, Group } from '@urbit/api';
+import { Comments } from '~/views/components/Comments';
+import { Spinner } from '~/views/components/Spinner';
+import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
+import { NoteNavigation } from './NoteNavigation';
+import { Redirect } from 'react-router-dom';
 
 interface NoteProps {
   ship: string;
@@ -24,27 +28,35 @@ interface NoteProps {
   group: Group;
 }
 
+export function NoteContent({ post, api }) {
+  return (
+      <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
+        <GraphContent tall={true} contents={post.contents.slice(1)} showOurContact api={api} />
+      </Box>
+  );
+}
+
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
-  const { notebook, note, ship, book, api, rootUrl, baseUrl, group } = props;
-  const editCommentId = props.match.params.commentId;
-
-  const renderers = {
-    link: ({ href, children }) => {
-      return (
-        <Anchor display="inline" target="_blank" href={href}>{children}</Anchor>
-      )
-    }
-  };
+  const { association, notebook, note, ship, book, api, rootUrl, baseUrl, group } = props;
 
   const deletePost = async () => {
     setDeleting(true);
     const indices = [note.post.index];
-    await api.graph.removeNodes(ship, book, indices);
+    await api.graph.removePosts(ship, book, indices);
     props.history.push(rootUrl);
   };
 
+  if (typeof note.post === 'string' || !note.post) {
+    return (
+      <Box width="100%"  pt="2" textAlign="center">
+        <Text gray>This note has been deleted.</Text>
+      </Box>
+    );
+  }
+
+  const { query } = useQuery();
   const comments = getComments(note);
   const [revNum, title, body, post] = getLatestRevision(note);
   const index = note.post.index.split('/');
@@ -54,36 +66,31 @@ export function Note(props: NoteProps & RouteComponentProps) {
     api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
   }, [props.association, props.note]);
 
-  let adminLinks: JSX.Element | null = null;
+  const adminLinks: JSX.Element[] = [];
+  const ourRole = roleForShip(group, window.ship);
   if (window.ship === note?.post?.author) {
-    adminLinks = (
-      <Box display="inline-block" verticalAlign="middle">
-        <Link to={`${baseUrl}/edit`}>
-        <Text
-          color="green"
-          ml={2}
-        >
-          Update
-        </Text>
+    adminLinks.push(
+      <Link to={`${baseUrl}/edit`}>
+        <Action backgroundColor="white">Update</Action>
       </Link>
-        <Text
-          color="red"
-          ml={2}
-          onClick={deletePost}
-          style={{ cursor: 'pointer' }}
-        >
-          Delete
-        </Text>
-      </Box>
     );
   }
 
-  const windowRef = React.useRef(null);
-  useEffect(() => {
-    if (windowRef.current) {
-      windowRef.current.parentElement.scrollTop = 0;
-    }
-  }, [windowRef, note]);
+  if (window.ship === note?.post?.author || ourRole === 'admin') {
+    adminLinks.push(
+      <Action backgroundColor="white" destructive onClick={deletePost}>
+        Delete
+      </Action>
+    );
+  }
+
+  const permalink = getPermalinkForGraph(
+    association.group,
+    association.resource,
+    `/${noteId.toString()}`
+  );
+
+  const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Link');
 
   return (
     <Box
@@ -96,29 +103,32 @@ export function Note(props: NoteProps & RouteComponentProps) {
       width="100%"
       gridRowGap={4}
       mx="auto"
-      ref={windowRef}
     >
       <Link to={rootUrl}>
         <Text>{'<- Notebook Index'}</Text>
       </Link>
       <Col>
         <Text display="block" mb={2}>{title || ''}</Text>
-        <Box display="flex">
+        <Row alignItems="center">
           <Author
+            showImage
+            isRelativeTime
             ship={post?.author}
             date={post?.['time-sent']}
-          />
-          <Text ml={2}>{adminLinks}</Text>
-        </Box>
+            group={group}
+          >
+            <Row px={2} gapX={2} alignItems="flex-end" height="14px">
+              <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
+              {adminLinks}
+            </Row>
+          </Author>
+        </Row>
       </Col>
-      <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <ReactMarkdown source={body} linkTarget={'_blank'} renderers={renderers} />
-      </Box>
+      <NoteContent api={props.api} post={post} />
       <NoteNavigation
         notebook={notebook}
         noteId={noteId}
-        ship={props.ship}
-        book={props.book}
+        baseUrl={baseUrl}
       />
       <Comments
         ship={ship}
@@ -127,7 +137,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         association={props.association}
         api={props.api}
         baseUrl={baseUrl}
-        editCommentId={editCommentId}
         history={props.history}
         group={group}
       />

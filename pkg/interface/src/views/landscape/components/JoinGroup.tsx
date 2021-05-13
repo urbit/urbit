@@ -1,30 +1,30 @@
-import React, { useState, useCallback, useEffect, ReactElement } from 'react';
+import {
+    Box, Col,
+
+    Icon,
+
+    ManagedTextInputField as Input, Row,
+
+    Text
+} from '@tlon/indigo-react';
+import { MetadataUpdatePreview } from '@urbit/api';
+import { Form, Formik, FormikHelpers, useFormikContext } from 'formik';
 import _ from 'lodash';
-import { Formik, Form, FormikHelpers, useFormikContext } from 'formik';
-import * as Yup from 'yup';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import urbitOb from 'urbit-ob';
-
-import {
-  Col,
-  Row,
-  Icon,
-  Box,
-  Text,
-  ManagedTextInputField as Input
-} from '@tlon/indigo-react';
-import { Groups, MetadataUpdatePreview, Associations } from '@urbit/api';
-
-import { AsyncButton } from '~/views/components/AsyncButton';
-import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
-import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { TUTORIAL_GROUP_RESOURCE } from '~/logic/lib/tutorialModal';
+import { useQuery } from '~/logic/lib/useQuery';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { getModuleIcon } from '~/logic/lib/util';
-import { FormError } from '~/views/components/FormError';
-import { GroupSummary } from './GroupSummary';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
-import {TUTORIAL_GROUP_RESOURCE} from '~/logic/lib/tutorialModal';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { FormError } from '~/views/components/FormError';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { GroupSummary } from './GroupSummary';
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -71,12 +71,17 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
     MetadataUpdatePreview | string | null
   >(null);
 
-  const waiter = useWaitForProps({ associations, groups }, _.isString(preview) ? 1 : 5000);
+  const waiter = useWaitForProps({ associations, groups }, _.isString(preview) ? 1 : 30000);
+
+  const { query } = useQuery();
 
   const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
     if(group === TUTORIAL_GROUP_RESOURCE) {
       await api.settings.putEntry('tutorial', 'joined', Date.now());
+    }
+    if (group in groups) {
+      return history.push(`/~landscape${group}`);
     }
     await api.groups.join(ship, name);
     try {
@@ -86,9 +91,16 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
             || group in (p.associations?.groups ?? {}));
       });
 
+      if(query.has('redir')) {
+        const redir = query.get('redir')!;
+        history.push(redir);
+      }
+
       if(groups?.[group]?.hidden) {
         const { metadata } = associations.graph[group];
-        history.push(`/~landscape/home/resource/${metadata.module}${group}`);
+        if (metadata?.config && 'graph' in metadata.config) {
+          history.push(`/~landscape/home/resource/${metadata.config.graph}${group}`);
+        }
         return;
       } else {
         history.push(`/~landscape${group}`);
@@ -103,6 +115,9 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       const [ship, name] = values.group.split('/');
       const path = `/ship/${ship}/${name}`;
+      if (path in groups) {
+      return history.push(`/~landscape${path}`);
+    }
       //  skip if it's unmanaged
       try {
         const prev = await api.metadata.preview(path);
@@ -125,14 +140,14 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
   );
 
   return (
-    <Col p="3">
+    <Col p={3}>
       <Box mb={3}>
-        <Text fontSize="2" fontWeight="bold">
+        <Text fontSize={2} fontWeight="bold">
           Join a Group
         </Text>
       </Box>
       {_.isString(preview) ? (
-        <Col width="100%" gapY="4">
+        <Col width="100%" gapY={4}>
           <Text>The host appears to be offline. Join anyway?</Text>
           <StatelessAsyncButton
             primary
@@ -143,49 +158,52 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
           </StatelessAsyncButton>
         </Col>
       ) : preview ? (
-        <GroupSummary
-          metadata={preview.metadata}
-          memberCount={preview?.members}
-          channelCount={preview?.['channel-count']}
-        >
-          { Object.keys(preview.channels).length > 0 && (
-            <Col
-              gapY="2"
-              p="2"
-              borderRadius="2"
-              border="1"
-              borderColor="washedGray"
-              bg="washedBlue"
-              maxHeight="300px"
-              overflowY="auto"
-            >
-              <Text gray fontSize="1">
-                Channels
-              </Text>
-              <Box width="100%" flexShrink="0">
-                {Object.values(preview.channels).map(({ metadata }: any) => (
-                  <Row width="100%">
-                    <Icon
-                      mr="2"
-                      color="blue"
-                      icon={getModuleIcon(metadata.module) as any}
-                    />
-                    <Text color="blue">{metadata.title} </Text>
-                  </Row>
-                ))}
-                </Box>
-            </Col>
-          )}
+        <>
+          <GroupSummary
+            metadata={preview.metadata}
+            memberCount={preview?.members}
+            channelCount={preview?.['channel-count']}
+          >
+            { Object.keys(preview.channels).length > 0 && (
+              <Col
+                gapY={2}
+                p={2}
+                borderRadius={2}
+                border={1}
+                borderColor="washedGray"
+                bg="washedBlue"
+                maxHeight="300px"
+                overflowY="auto"
+              >
+                <Text gray fontSize={1}>
+                  Channels
+                </Text>
+                <Box width="100%" flexShrink={0}>
+                  {Object.values(preview.channels).map(({ metadata }: any) => (
+                    <Row width="100%">
+                      <Icon
+                        mr={2}
+                        color="blue"
+                        icon={getModuleIcon(metadata?.config?.graph) as any}
+                      />
+                      <Text color="blue">{metadata.title} </Text>
+                    </Row>
+                  ))}
+                  </Box>
+              </Col>
+            )}
+          </GroupSummary>
           <StatelessAsyncButton
+            marginTop={3}
             primary
             name="join"
             onClick={() => onConfirm(preview.group)}
           >
             Join {preview.metadata.title}
           </StatelessAsyncButton>
-        </GroupSummary>
+        </>
       ) : (
-        <Col width="100%" gapY="4">
+        <Col width="100%" gapY={4}>
           <Formik
             validationSchema={formSchema}
             initialValues={initialValues}
@@ -199,8 +217,8 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
                 caption="What group are you joining?"
                 placeholder="~sampel-palnet/test-group"
               />
-              <AsyncButton mt="4">Join Group</AsyncButton>
-              <FormError mt="4" />
+              <AsyncButton mt={4}>Join Group</AsyncButton>
+              <FormError mt={4} />
             </Form>
           </Formik>
         </Col>

@@ -1,11 +1,10 @@
+import { AppAssociations } from '@urbit/api';
 import React, { ReactElement } from 'react';
-import { Associations, AppAssociations, Groups, Rolodex } from '@urbit/api';
-
 import { alphabeticalOrder } from '~/logic/lib/util';
-import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
-import { SidebarItem } from './SidebarItem';
-import { Workspace } from '~/types/workspace';
 import useMetadataState from '~/logic/state/metadata';
+import { Workspace } from '~/types/workspace';
+import { SidebarItem } from './SidebarItem';
+import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
 
 function sidebarSort(
   associations: AppAssociations,
@@ -54,11 +53,21 @@ export function SidebarList(props: {
     .filter((a) => {
       const assoc = associations[a];
       if (workspace?.type === 'messages') {
-        return (!(assoc.group in associationState.groups) && assoc.metadata.module === 'chat');
+        return (
+          !(assoc.group in associationState.groups) &&
+          'graph' in assoc.metadata.config &&
+          assoc.metadata.config.graph === 'chat'
+        );
       } else {
-        return group
-          ? assoc.group === group
-          : (!(assoc.group in associationState.groups) && assoc.metadata.module !== 'chat');
+        return group ? (
+          assoc.group === group &&
+          !assoc.metadata.hidden
+        ) : (
+          !(assoc.group in associationState.groups) &&
+          'graph' in assoc.metadata.config &&
+          assoc.metadata.config.graph !== 'chat' &&
+          !assoc.metadata.hidden
+        );
       }
     })
     .sort(sidebarSort(associations, props.apps)[config.sortBy]);

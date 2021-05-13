@@ -36,12 +36,12 @@
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   ;<  ~  bind:m
-    (poke-our %graph-store %graph-update !>([%0 now.bowl %remove-graph rid]))
+    (poke-our %graph-store %graph-update-2 !>([now.bowl %remove-graph rid]))
   ;<  ~  bind:m
     (poke-our %graph-push-hook %push-hook-action !>([%remove rid]))
   ;<  ~  bind:m
     %+  poke-our  %metadata-push-hook
-    :-  %metadata-update
+    :-  %metadata-update-1
     !>  ^-  action:metadata
     [%remove group-rid [%graph rid]]
   (pure:m ~)
@@ -63,7 +63,7 @@
     (pure:m ~)
   ;<  ~  bind:m
     %+  poke  [entity.grp-rid %group-push-hook]
-    :-  %group-update
+    :-  %group-update-0
     !>  ^-  update:group-store
     [%remove-tag grp-rid tag.i.tags tagged.i.tags]
   loop(tags t.tags)

@@ -1,17 +1,13 @@
+import { Box, Col, Row, Text } from '@tlon/indigo-react';
+import { Association, Graph, Unreads } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-
-import { Col, Box, Text, Row } from '@tlon/indigo-react';
-import { Contacts, Rolodex, Groups, Associations, Graph, Association, Unreads } from '@urbit/api';
-
-import { NotebookPosts } from './NotebookPosts';
-import GlobalApi from '~/logic/api/global';
 import { useShowNickname } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import { NotebookPosts } from './NotebookPosts';
 
 interface NotebookProps {
-  api: GlobalApi;
   ship: string;
   book: string;
   graph: Graph;
@@ -30,22 +26,21 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   } = props;
 
   const groups = useGroupState(state => state.groups);
+  const contacts = useContactState(state => state.contacts);
 
   const group = groups[association?.group];
+  const relativePath = (p: string) => props.baseUrl + p;
+
+  const contact = contacts?.[`~${ship}`];
+
+  const showNickname = useShowNickname(contact);
+
   if (!group) {
     return null; // Waiting on groups to populate
   }
 
-  const relativePath = (p: string) => props.baseUrl + p;
-  const contacts = useContactState(state => state.contacts);
-
-  const contact = contacts?.[`~${ship}`];
-  console.log(association.resource);
-
-  const showNickname = useShowNickname(contact);
-
   return (
-    <Col gapY="4" pt={4} mx="auto" px={3} maxWidth="768px">
+    <Col gapY={4} pt={4} mx="auto" px={3} maxWidth="768px">
       <Row justifyContent="space-between">
         <Box>
           <Text display='block'>{association.metadata?.title}</Text>
@@ -55,13 +50,12 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
           </Text>
         </Box>
       </Row>
-      <Box borderBottom="1" borderBottomColor="washedGray" />
+      <Box borderBottom={1} borderBottomColor="lightGray" />
       <NotebookPosts
         graph={graph}
         host={ship}
         book={book}
         baseUrl={props.baseUrl}
-        api={props.api}
         group={group}
       />
     </Col>

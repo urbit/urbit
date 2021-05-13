@@ -1,6 +1,6 @@
 export type SidebarItemStatus =
   | 'unread'
-  | 'mention'
+  | 'notification'
   | 'unsubscribed'
   | 'disconnected'
   | 'loading';
@@ -18,5 +18,5 @@ export interface SidebarAppConfig {
 }
 
 export type SidebarAppConfigs = {
-  [a in 'chat' | 'link' | 'publish']: SidebarAppConfig;
+  graph: SidebarAppConfig;
 };

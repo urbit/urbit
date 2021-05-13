@@ -25,12 +25,12 @@
     (poke-our %metadata-push-hook push-hook-act)
   ;<  ~  bind:m
      %+  poke-our  %group-store
-     :-  %group-update
+     :-  %group-update-0
      !>  ^-  update:group-store
      [%add-group rid policy.associated %.y]
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   ;<  ~  bind:m
-    (poke-our %group-store group-update+!>([%add-members rid (sy our.bowl ~)]))
+    (poke-our %group-store group-update-0+!>([%add-members rid (sy our.bowl ~)]))
   ;<  ~  bind:m
     (poke-our %group-push-hook push-hook-act)
   (pure:m rid)
@@ -52,9 +52,9 @@
 =/  overwrite=?
   ?=(%policy -.associated.action)
 =/  =update:graph
-  [%0 now.bowl %add-graph rid.action *graph:graph mark.action overwrite]
+  [now.bowl %add-graph rid.action *graph:graph mark.action overwrite]
 ;<  ~  bind:m
-  (poke-our %graph-store graph-update+!>(update))
+  (poke-our %graph-store graph-update-2+!>(update))
 ;<  ~  bind:m
   (poke-our %graph-push-hook %push-hook-action !>([%add rid.action]))
 ::
@@ -71,13 +71,14 @@
     description   description.action
     date-created  now.bowl
     creator       our.bowl
-    module        module.action
+    config        [%graph module.action]
     preview       %.n
+    hidden        %.n
   ==
 =/  met-action=action:met
   [%add group graph+rid.action metadatum]
 ;<  ~  bind:m
-  (poke-our %metadata-push-hook metadata-update+!>(met-action))
+  (poke-our %metadata-push-hook metadata-update-1+!>(met-action))
 ::
 ::  Send invites
 ::

@@ -1,16 +1,14 @@
-import React, { useEffect, useState, useLayoutEffect, ReactElement } from 'react';
-
-import { Box, Text, Row, Col } from '@tlon/indigo-react';
-import { Associations, Groups } from '@urbit/api';
-
+import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { MetadataUpdatePreview } from '@urbit/api';
+import React, { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { MetadataIcon } from '../landscape/components/MetadataIcon';
-import { JoinGroup } from '../landscape/components/JoinGroup';
 import { useModal } from '~/logic/lib/useModal';
-import { GroupSummary } from '../landscape/components/GroupSummary';
-import { PropFunc } from '~/types';
+import { useVirtual } from '~/logic/lib/virtualContext';
 import useMetadataState from '~/logic/state/metadata';
-import {useVirtual} from '~/logic/lib/virtualContext';
+import { PropFunc } from '~/types';
+import { JoinGroup } from '../landscape/components/JoinGroup';
+import { MetadataIcon } from '../landscape/components/MetadataIcon';
 
 export function GroupLink(
   props: {
@@ -23,27 +21,12 @@ export function GroupLink(
   const name = resource.slice(6);
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
   const associations = useMetadataState(state => state.associations);
-
+  const { save, restore } = useVirtual();
+  const history = useHistory();
   const joined = resource in associations.groups;
 
-  const { save, restore } = useVirtual();
-
   const { modal, showModal } = useModal({
-    modal:
-      joined && preview ? (
-        <Box width="fit-content" p="4">
-          <GroupSummary
-            metadata={preview.metadata}
-            memberCount={preview.members}
-            channelCount={preview?.['channel-count']}
-          />
-        </Box>
-      ) : (
-        <JoinGroup
-          api={api}
-          autojoin={name}
-        />
-      )
+    modal: <JoinGroup api={api} autojoin={name} />
   });
 
   useEffect(() => {
@@ -64,24 +47,57 @@ export function GroupLink(
   }, [preview]);
 
   return (
-    <Box {...rest}>
+    <Box
+      maxWidth="500px"
+      cursor='pointer'
+      {...rest}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+      backgroundColor='white'
+      borderColor={props.borderColor}
+    >
       {modal}
       <Row
         width="fit-content"
         flexShrink={1}
         alignItems="center"
-        py="2"
-        pr="2"
-        onClick={showModal}
-        cursor='pointer'
+        py={2}
+        pr={2}
+        onClick={
+          joined ? () => history.push(`/~landscape/ship/${name}`) : showModal
+        }
         opacity={preview ? '1' : '0.6'}
       >
-        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : {"color": "0x0"}} />
+        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : { color: '0x0' , picture: ''}} />
           <Col>
-          <Text ml="2" fontWeight="medium" mono={!preview}>
+          <Text ml={2} fontWeight="medium" mono={!preview}>
             {preview ? preview.metadata.title : name}
           </Text>
-          <Text pt='1' ml='2'>{preview ? `${preview.members} members` : "Fetching member count"}</Text>
+          <Box pt='1' ml='2' display='flex' alignItems='center'>
+            {preview ?
+              <>
+                <Box pr='2' display='flex' alignItems='center'>
+                  <Icon 
+                    icon={preview.metadata.hidden ? 'Locked' : 'Public'}
+                    color='gray'
+                    mr='1'
+                   />
+                  <Text fontSize='0' color='gray'>
+                    {preview.metadata.hidden ? 'Private' : 'Public'}
+                  </Text>
+                </Box>
+                <Box display='flex' alignItems='center'>
+                  <Icon icon='Users' color='gray' mr='1' />
+                  <Text fontSize='0'color='gray' >
+                    {preview.members}
+                    {' '}
+                    {preview.members > 1 ? 'peers' : 'peer'}
+                  </Text>
+                </Box>
+              </>
+              : <Text fontSize='0'>Fetching member count</Text>}
+          </Box>
         </Col>
       </Row>
     </Box>

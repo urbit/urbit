@@ -1,10 +1,15 @@
-import { Graphs, decToUd, numToUd } from "@urbit/api";
-
-import { BaseState, createState } from "./base";
+import { Association, deSig, GraphNode, Graphs, resourceFromPath } from '@urbit/api';
+import { useCallback } from 'react';
+import { BaseState, createState } from './base';
 
 export interface GraphState extends BaseState<GraphState> {
   graphs: Graphs;
   graphKeys: Set<string>;
+  looseNodes: {
+    [graph: string]: {
+      [index: string]: GraphNode;
+    }
+  };
   pendingIndices: Record<string, any>;
   graphTimesentMap: Record<string, any>;
   // getKeys: () => Promise<void>;
@@ -16,13 +21,14 @@ export interface GraphState extends BaseState<GraphState> {
   // getYoungerSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
   // getGraphSubset: (ship: string, resource: string, start: string, end: string) => Promise<void>;
   // getNode: (ship: string, resource: string, index: string) => Promise<void>;
-};
+}
 
 const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
   graphKeys: new Set(),
+  looseNodes: {},
   pendingIndices: {},
-  graphTimesentMap: {},
+  graphTimesentMap: {}
   // getKeys: async () => {
   //   const api = useApi();
   //   const keys = await api.scry({
@@ -122,6 +128,20 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, ['graphs', 'graphKeys']);
+}, ['graphs', 'graphKeys', 'looseNodes', 'graphTimesentMap']);
+
+export function useGraph(ship: string, name: string) {
+  return useGraphState(
+    useCallback(s => s.graphs[`${deSig(ship)}/${name}`], [ship, name])
+  );
+}
+
+export function useGraphForAssoc(association: Association) {
+  const { resource } = association;
+  const { ship, name } = resourceFromPath(resource);
+  return useGraph(ship, name);
+}
+
+window.useGraphState = useGraphState;
 
 export default useGraphState;

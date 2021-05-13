@@ -130,16 +130,25 @@ export default function TermApp(props: TermAppProps) {
   //TODO  allow switching of selected
   const { sessions, selected, slogstream, set } = useTermState();
 
+  //NOTE  doesn't work? ): might be nice if it could
+  // const session = useTermState(useCallback(
+  //   state => state.sessions[state.selected],
+  //   [selected]
+  // ));
+
   const osDark = useLocalState((state) => state.dark);
   const theme = useSettingsState(s => s.display.theme);
   const dark = theme === 'dark' || (theme === 'auto' && osDark);
 
   const onSlog = useCallback((slog) => {
-    if (!sessions['']) {
+    //TODO  why does using sessions[selected] not work?
+    let theSession = useTermState.getState().sessions[''];
+
+    if (!theSession) {
       console.log('default session mia!', 'slog:', slog);
       return;
     }
-    const term = sessions[''].term;
+    const term = theSession.term;
 
     //  set scroll region to exclude the bottom line,
     //  scroll up one line,
@@ -160,12 +169,15 @@ export default function TermApp(props: TermAppProps) {
 
   //TODO  could be static function if we pass in Terminal explicitly?
   const onBlit = useCallback((ses: string, blit: Blit) => {
-    if (!sessions[ses]) {
-      console.log('on blit: no such session', ses);
+    //TODO  why does using sessions[selected] not work?
+    let theSession = useTermState.getState().sessions[selected];
+
+    if (!theSession) {
+      console.log('on blit: no such session', selected);
       return;
     }
 
-    const term = sessions[ses].term;
+    const term = theSession.term;
     let out = '';
 
     if ('bel' in blit) {
@@ -250,7 +262,8 @@ export default function TermApp(props: TermAppProps) {
   }, [onSlog]);
 
   const onInput = useCallback((ses: string, e: string) => {
-    const term = sessions[ses].term;
+    //TODO  just sessions[ses].term;
+    const term = useTermState.getState().sessions[ses].term;
     let belts: Array<Belt> = [];
     let strap = '';
 
@@ -365,7 +378,9 @@ export default function TermApp(props: TermAppProps) {
   //  on selected change, maybe setup the term, or put it into the container
   //
   useEffect(() => {
-    let ses = sessions[selected];
+    //TODO  improve name, confusing wrt ses as session name
+    //TODO  why doesn't sessions[selected] just work?
+    let ses = useTermState.getState().sessions[selected];
 
     //  initialize terminal
     //

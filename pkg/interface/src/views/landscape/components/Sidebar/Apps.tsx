@@ -1,7 +1,5 @@
-import { useCallback } from 'react';
-
 import { Graphs, UnreadStats } from '@urbit/api';
-
+import { useCallback } from 'react';
 import { SidebarAppConfig } from './types';
 
 export function useGraphModule(
@@ -15,6 +13,15 @@ export function useGraphModule(
       const graphKey = `${host.slice(1)}/${name}`;
       if (!graphKeys.has(graphKey)) {
         return 'unsubscribed';
+      }
+
+      const notifications = graphUnreads?.[s]?.['/']?.notifications;
+      if (
+        notifications &&
+        ((typeof notifications === 'number' && notifications > 0)
+        || typeof notifications === 'object' && notifications.length)
+      ) {
+        return 'notification';
       }
 
       const unreads = graphUnreads?.[s]?.['/']?.unreads;

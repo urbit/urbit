@@ -1,20 +1,15 @@
-import produce from "immer";
-import { compose } from "lodash/fp";
-import create, { State, UseStore } from "zustand";
-import { persist } from "zustand/middleware";
+import produce, { setAutoFreeze } from 'immer';
+import { compose } from 'lodash/fp';
+import create, { State, UseStore } from 'zustand';
+import { persist } from 'zustand/middleware';
 
+setAutoFreeze(false);
 
 export const stateSetter = <StateType>(
   fn: (state: StateType) => void,
   set
 ): void => {
-  // fn = (state: StateType) => {
-  //   // TODO this is a stub for the store debugging
-  //   fn(state);
-  // }
-  return set(fn);
-  // TODO we want to use the below, but it makes everything read-only
-  return set(produce(fn));
+  set(produce(fn));
 };
 
 export const reduceState = <
@@ -25,40 +20,39 @@ export const reduceState = <
   data: UpdateType,
   reducers: ((data: UpdateType, state: StateType) => StateType)[]
 ): void => {
-  const oldState = state.getState();
-  const reducer = compose(reducers.map(reducer => reducer.bind(reducer, data)));
-  const newState = reducer(oldState);
-  state.getState().set(state => state = newState);
+  const reducer = compose(reducers.map(r => sta => r(data, sta)));
+  state.getState().set((state) => {
+    reducer(state);
+  });
 };
 
 export let stateStorageKeys: string[] = [];
 
 export const stateStorageKey = (stateName: string) => {
-  stateName = `Landcape${stateName}State`;
+  stateName = `Landscape${stateName}State`;
   stateStorageKeys = [...new Set([...stateStorageKeys, stateName])];
   return stateName;
 };
 
 (window as any).clearStates = () => {
-  stateStorageKeys.forEach(key => {
+  stateStorageKeys.forEach((key) => {
     localStorage.removeItem(key);
   });
-}
+};
 
 export interface BaseState<StateType> extends State {
   set: (fn: (state: StateType) => void) => void;
 }
 
-export const createState = <StateType extends BaseState<any>>(
+export const createState = <T extends BaseState<T>>(
   name: string,
-  properties: Omit<StateType, 'set'>,
+  properties: { [K in keyof Omit<T, 'set'>]: T[K] },
   blacklist: string[] = []
-): UseStore<StateType> => create(persist((set, get) => ({
-  // TODO why does this typing break?
+): UseStore<T> => create(persist((set, get) => ({
   set: fn => stateSetter(fn, set),
-  ...properties
+  ...properties as any
 }), {
   blacklist,
   name: stateStorageKey(name),
-  version: 1, // TODO version these according to base hash
+  version: process.env.LANDSCAPE_SHORTHASH as any
 }));

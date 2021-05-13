@@ -1382,7 +1382,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
 
     case 9:
       u3x_cell(arg, &hed, &tel);
-      if ( 3 == u3qc_cap(hed) ) {
+      if ( (1 == hed) || (3 == u3qc_cap(hed)) ) {
         u3_noun mac = u3nq(7, u3k(tel), 2, u3nt(u3nc(0, 1), 0, u3k(hed)));
         tot_w += _n_comp(ops, mac, los_o, tel_o);
         u3z(mac);

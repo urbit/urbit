@@ -1,16 +1,16 @@
-import BaseApi from './base';
-import { StoreState } from '../store/type';
-import { Patp, Path } from '@urbit/api';
+import { Content, Enc, GraphNode, GroupPolicy, Path, Patp, Post, Resource } from '@urbit/api';
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import _ from 'lodash';
+import { decToUd, deSig, resourceAsPath, unixToDa } from '~/logic/lib/util';
 import { makeResource, resourceFromPath } from '../lib/group';
-import { GroupPolicy, Enc, Post, Content } from '@urbit/api';
-import { numToUd, unixToDa, decToUd, deSig, resourceAsPath } from '~/logic/lib/util';
+import { StoreState } from '../store/type';
+import BaseApi from './base';
 
 export const createBlankNodeWithChildPost = (
   parentIndex = '',
   childIndex = '',
   contents: Content[]
-) => {
+): GraphNode => {
   const date = unixToDa(Date.now()).toString();
   const nodeIndex = parentIndex + '/' + date;
 
@@ -36,7 +36,7 @@ export const createBlankNodeWithChildPost = (
       hash: null,
       signatures: []
     },
-    children: childGraph
+    children: childGraph as BigIntOrderedMap<GraphNode>
   };
 };
 
@@ -83,7 +83,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   joiningGraphs = new Set<string>();
 
   private storeAction(action: any): Promise<any> {
-    return this.action('graph-store', 'graph-update', action);
+    return this.action('graph-store', 'graph-update-2', action);
   }
 
   private viewAction(threadName: string, action: any) {
@@ -91,7 +91,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   private hookAction(ship: Patp, action: any): Promise<any> {
-    return this.action('graph-push-hook', 'graph-update', action);
+    return this.action('graph-push-hook', 'graph-update-2', action);
   }
 
   createManagedGraph(
@@ -185,12 +185,11 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  eval(cord: string) {
+  eval(cord: string): Promise<string[] | undefined> {
     return this.spider('graph-view-action', 'tang', 'graph-eval', {
       eval: cord
     });
   }
-
 
   addGraph(ship: Patp, name: string, graph: any, mark: any) {
     return this.storeAction({
@@ -211,7 +210,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     return this.addNodes(ship, name, nodes);
   }
 
-  addNode(ship: Patp, name: string, node: Object) {
+  addNode(ship: Patp, name: string, node: GraphNode) {
     const nodes = {};
     nodes[node.post.index] = node;
 
@@ -227,7 +226,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     };
 
     const pendingPromise = this.spider(
-      'graph-update',
+      'graph-update-2',
       'graph-view-action',
       'graph-add-nodes',
       action
@@ -259,9 +258,32 @@ export default class GraphApi extends BaseApi<StoreState> {
     */
   }
 
-  removeNodes(ship: Patp, name: string, indices: string[]) {
+  async enableGroupFeed(group: Resource, vip: any = ''): Promise<Resource> {
+    const { resource } = await this.spider(
+      'graph-view-action',
+      'resource',
+      'graph-create-group-feed',
+      {
+        'create-group-feed': { resource: group, vip }
+      }
+    );
+    return resource;
+  }
+
+  async disableGroupFeed(group: Resource): Promise<void> {
+    await this.spider(
+      'graph-view-action',
+      'json',
+      'graph-disable-group-feed',
+      {
+        'disable-group-feed': { resource: group }
+      }
+    );
+  }
+
+  removePosts(ship: Patp, name: string, indices: string[]) {
     return this.hookAction(ship, {
-      'remove-nodes': {
+      'remove-posts': {
         resource: { ship, name },
         indices
       }
@@ -336,15 +358,17 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  getNode(ship: string, resource: string, index: string) {
-    const idx = index.split('/').map(numToUd).join('/');
-    return this.scry<any>(
+  async getNode(ship: string, resource: string, index: string) {
+    const idx = index.split('/').map(decToUd).join('/');
+    const data = await this.scry<any>(
       'graph-store',
       `/node/${ship}/${resource}${idx}`
-    ).then((node) => {
-      this.store.handleEvent({
-        data: node
-      });
+    );
+    const node = data['graph-update'];
+    this.store.handleEvent({
+      data: {
+        'graph-update-loose': node
+      }
     });
   }
 }

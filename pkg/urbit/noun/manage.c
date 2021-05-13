@@ -98,28 +98,22 @@ _cm_punt(u3_noun tax)
 }
 #endif
 
-static void _write(int  fd,  const  void  *buf,  size_t count)
-{
-  if (count != write(fd,  buf, count)){
-    u3l_log("write failed");
-    c3_assert(0);
-  }
-}
-
-
 /* _cm_emergency(): write emergency text to stderr, never failing.
 */
 static void
 _cm_emergency(c3_c* cap_c, c3_l sig_l)
 {
-  _write(2, "\r\n", 2);
-  _write(2, cap_c, strlen(cap_c));
+  c3_i ret_i;
+
+  ret_i = write(2, "\r\n", 2);
+  ret_i = write(2, cap_c, strlen(cap_c));
 
   if ( sig_l ) {
-    _write(2, ": ", 2);
-    _write(2, &sig_l, 4);
+    ret_i = write(2, ": ", 2);
+    ret_i = write(2, &sig_l, 4);
   }
-  _write(2, "\r\n", 2);
+
+  ret_i = write(2, "\r\n", 2);
 }
 
 static void _cm_overflow(void *arg1, void *arg2, void *arg3)
@@ -127,7 +121,7 @@ static void _cm_overflow(void *arg1, void *arg2, void *arg3)
   (void)(arg1);
   (void)(arg2);
   (void)(arg3);
-  siglongjmp(u3_Signal, c3__over);
+  u3m_signal(c3__over);
 }
 
 /* _cm_signal_handle(): handle a signal in general.
@@ -139,7 +133,7 @@ _cm_signal_handle(c3_l sig_l)
     sigsegv_leave_handler(_cm_overflow, NULL, NULL, NULL);
   }
   else {
-    siglongjmp(u3_Signal, sig_l);
+    u3m_signal(sig_l);
   }
 }
 
@@ -661,7 +655,10 @@ u3m_dump(void)
 c3_i
 u3m_bail(u3_noun how)
 {
-  if ( (c3__exit == how) && (u3R == &u3H->rod_u) ) {
+  if ( &(u3H->rod_u) == u3R ) {
+    //  XX set exit code
+    //
+    fprintf(stderr, "home: bailing out\r\n");
     abort();
   }
 
@@ -688,8 +685,9 @@ u3m_bail(u3_noun how)
   //
   switch ( how ) {
     case c3__foul:
-    case c3__meme:
     case c3__oops: {
+      //  XX set exit code
+      //
       fprintf(stderr, "bailing out\r\n");
       abort();
     }
@@ -699,6 +697,9 @@ u3m_bail(u3_noun how)
     //  For top-level errors, which shouldn't happen often, we have no
     //  choice but to use the signal process; and we require the flat
     //  form of how.
+    //
+    //    XX JB: these seem unrecoverable, at least wrt memory management,
+    //    so they've been disabled above for now
     //
     c3_assert(_(u3a_is_cat(how)));
     u3m_signal(how);

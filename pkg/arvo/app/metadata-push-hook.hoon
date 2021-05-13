@@ -14,6 +14,7 @@
       update:store
       %metadata-update
       %metadata-pull-hook
+      1  1
   ==
 ::
 +$  agent  (push-hook:push-hook config)
@@ -35,7 +36,7 @@
 ++  on-init  on-init:def
 ++  on-save  !>(~)
 ++  on-load    on-load:def
-++  on-poke   
+++  on-poke
   |=  [=mark =vase]
   ?.  ?=(%metadata-hook-update mark)
     (on-poke:def mark vase)
@@ -58,22 +59,32 @@
 ::
 ++  transform-proxy-update
   |=  vas=vase
-  ^-  (unit vase)
+  ^-  (quip card (unit vase))
   =/  =update:store  !<(update:store vas)
+  :-  ~
   ?.  ?=(?(%add %remove) -.update)
     ~
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp group.update src.bowl)
-  =/  =metadatum:store
-    (need (peek-metadatum:met %groups group.update))
   ?~  role  ~
-  ?^  u.role  
+  =/  metadatum=(unit metadatum:store)
+    (peek-metadatum:met %groups group.update)
+  ?:  ?&  ?=(~ metadatum)
+          (is-managed:grp group.update)
+      ==
+    ~
+  ?:  ?&  ?=(^ metadatum)
+          !(is-managed:grp group.update)
+      ==
+    ~
+  ?^  u.role
     ?:  ?=(?(%admin %moderator) u.u.role)
       `vas
     ~
   ?.  ?=(%add -.update)  ~
-  ?:  ?&  =(src.bowl entity.resource.resource.update)
-          ?=(%member-metadata vip.metadatum)
+  ?:  ?&  ?=(^ metadatum)
+          =(src.bowl entity.resource.resource.update)
+          ?=(%member-metadata vip.u.metadatum)
       ==
     `vas
   ~

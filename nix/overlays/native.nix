@@ -25,4 +25,11 @@ in {
     ldapSupport = false;
     brotliSupport = false;
   };
+
+  lmdb = prev.lmdb.overrideAttrs (attrs: {
+    patches =
+      optionalList attrs.patches ++ prev.lib.optional prev.stdenv.isDarwin [
+        ../pkgs/lmdb/darwin-fsync.patch
+      ];
+  });
 }

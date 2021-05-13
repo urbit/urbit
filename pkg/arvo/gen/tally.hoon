@@ -60,13 +60,14 @@
   |=  [m=md-resource:md association:md]
   ::NOTE  we only count graphs for now
   ?.  &(=(%graph app-name.m) =(our creator.metadatum))  ~
-  `[module.metadatum resource.m]
+  ?.  ?=(%graph -.config.metadatum)  ~
+  `[module.config.metadatum resource.m]
 ::  for sanity checks
 ::
 =/  real=(set resource:re)
   =/  upd=update:ga
     %+  scry  update:ga
-    [%x %graph-store /keys/graph-update]
+    [%x %graph-store /keys/graph-update-2]
   ?>  ?=(%keys -.q.upd)
   resources.q.upd
 ::  count activity per channel
@@ -91,8 +92,11 @@
   :-  (lent week)
   %~  wyt  in
   %+  roll  week
-  |=  [[* [author=ship *] *] a=(set ship)]
-  (~(put in a) author)
+  |=  [[* mp=maybe-post:ga *] a=(set ship)]
+  ?-  -.mp
+    %|  a
+    %&  (~(put in a) author.p.mp)
+  ==
 ::  render results
 ::
 :-  (tac 'the date is ' (scot %da now))

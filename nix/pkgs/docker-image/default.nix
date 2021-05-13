@@ -1,9 +1,23 @@
-{ urbit, libcap, coreutils, bashInteractive, dockerTools, writeScriptBin, amesPort ? 34343 }:
+{ urbit, curl, libcap, coreutils, bashInteractive, dockerTools, writeScriptBin, amesPort ? 34343 }:
 let
   startUrbit = writeScriptBin "start-urbit" ''
     #!${bashInteractive}/bin/bash
 
     set -eu
+
+    # set defaults
+    amesPort=${toString amesPort}
+
+    # check args
+    for i in "$@"
+    do
+    case $i in
+        -p=*|--port=*)
+            amesPort="''${i#*=}"
+            shift
+            ;;
+    esac
+    done
 
     # If the container is not started with the `-i` flag
     # then STDIN will be closed and we need to start
@@ -23,7 +37,7 @@ let
       mv $keyname /tmp
 
       # Boot urbit with the key, exit when done booting
-      urbit $ttyflag -w $(basename $keyname .key) -k /tmp/$keyname -c $(basename $keyname .key) -p ${toString amesPort} -x
+      urbit $ttyflag -w $(basename $keyname .key) -k /tmp/$keyname -c $(basename $keyname .key) -p $amesPort -x
 
       # Remove the keyfile for security
       rm /tmp/$keyname
@@ -34,7 +48,7 @@ let
       cometname=''${comets[0]}
       rm *.comet
 
-      urbit $ttyflag -c $(basename $cometname .comet) -p ${toString amesPort} -x
+      urbit $ttyflag -c $(basename $cometname .comet) -p $amesPort -x
     fi
 
     # Find the first directory and start urbit with the ship therein
@@ -42,14 +56,44 @@ let
     dirs=( $dirnames )
     dirname=''${dirnames[0]}
 
-    urbit $ttyflag -p ${toString amesPort} $dirname
+    exec urbit $ttyflag -p $amesPort $dirname
     '';
-    
+
+  getUrbitCode = writeScriptBin "get-urbit-code" ''
+    #!${bashInteractive}/bin/bash
+
+    raw=$(curl -s -X POST -H "Content-Type: application/json" \
+      -d '{ "source": { "dojo": "+code" }, "sink": { "stdout": null } }' \
+      http://127.0.0.1:12321)
+
+    # trim \n" from the end
+    trim="''${raw%\\n\"}"
+
+    # trim " from the start
+    code="''${trim#\"}"
+
+    echo "$code"
+    '';
+
+  resetUrbitCode = writeScriptBin "reset-urbit-code" ''
+    #!${bashInteractive}/bin/bash
+
+    curl=$(curl -s -X POST -H "Content-Type: application/json" \
+      -d '{ "source": { "dojo": "+hood/code %reset" }, "sink": { "app": "hood" } }' \
+      http://127.0.0.1:12321)
+
+    if [[ $? -eq 0 ]]
+    then
+      echo "OK"
+    else
+      echo "Curl error: $?"
+    fi
+    '';
     
 in dockerTools.buildImage {
   name = "urbit";
   tag = "v${urbit.version}";
-  contents = [ bashInteractive urbit startUrbit coreutils ];
+  contents = [ bashInteractive urbit curl startUrbit getUrbitCode resetUrbitCode coreutils ];
   runAsRoot = ''
     #!${bashInteractive}
     mkdir -p /urbit

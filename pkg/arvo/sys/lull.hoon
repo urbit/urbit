@@ -1005,7 +1005,7 @@
     |=  suffix=@tas
     ^-  (list path)
     =/  parser
-      (most hep (cook crip ;~(plug low (star ;~(pose low nud)))))
+      (most hep (cook crip ;~(plug ;~(pose low nud) (star ;~(pose low nud)))))
     =/  torn=(list @tas)  (fall (rush suffix parser) ~[suffix])
     %-  flop
     |-  ^-  (list (list @tas))
