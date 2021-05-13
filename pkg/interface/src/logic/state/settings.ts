@@ -45,6 +45,7 @@ export const selectCalmState = (s: SettingsState) => s.calm;
 
 export const selectDisplayState = (s: SettingsState) => s.display;
 
+// @ts-ignore investigate zustand types
 const useSettingsState = createState<SettingsState>('Settings', {
   display: {
     backgroundType: 'none',

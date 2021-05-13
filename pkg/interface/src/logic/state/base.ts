@@ -83,17 +83,20 @@ export const createState = <T extends {}>(
   properties: T,
   blacklist: (keyof BaseState<T> | keyof T)[] = []
 ): UseStore<T & BaseState<T>> => create<T & BaseState<T>>(persist<T & BaseState<T>>((set, get) => ({
+  // @ts-ignore investigate zustand types
   set: fn => stateSetter(fn, set),
   optSet: fn => {
     return optStateSetter(fn, set, get);
   },
   patches: {},
   addPatch: (id: string, ...patch: Patch[]) => {
+      // @ts-ignore investigate immer types
     set(({ patches }) => ({ patches: {...patches, [id]: patch }}));
   },
   removePatch: (id: string) => {
+      // @ts-ignore investigate immer types
     set(({ patches }) => ({ patches: _.omit(patches, id)}));
-  }, 
+  },
   rollback: (id: string) => {
     set(state => {
         const applying = state.patches[id]
