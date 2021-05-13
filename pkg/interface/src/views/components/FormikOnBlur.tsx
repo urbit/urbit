@@ -10,7 +10,7 @@ export function FormikOnBlur<
   useEffect(() => {
     if (
       Object.keys(formikBag.errors || {}).length === 0 &&
-      Object.keys(formikBag.touched || {}).length !== 0 &&
+      formikBag.dirty && 
       !formikBag.isSubmitting
     ) {
       const { values } = formikBag;
@@ -22,7 +22,8 @@ export function FormikOnBlur<
     formikBag.errors,
     formikBag.touched,
     formikBag.submitForm,
-    formikBag.values
+    formikBag.values,
+    formikBag.dirty
   ]);
 
   const { children, innerRef } = props;
