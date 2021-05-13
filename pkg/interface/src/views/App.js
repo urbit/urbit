@@ -16,6 +16,8 @@ import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useLocalState from '~/logic/state/local';
 import useSettingsState from '~/logic/state/settings';
+import { ShortcutContextProvider } from '~/logic/lib/shortcutContext';
+
 import GlobalStore from '~/logic/store/store';
 import GlobalSubscription from '~/logic/subscription/global';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
@@ -141,6 +143,7 @@ class App extends React.Component {
     const ourContact = this.props.contacts[`~${this.ship}`] || null;
     return (
       <ThemeProvider theme={theme}>
+        <ShortcutContextProvider>
         <Helmet>
           {window.ship.length < 14
             ? <link rel="icon" type="image/svg+xml" href={svgDataURL(favicon())} />
@@ -178,6 +181,7 @@ class App extends React.Component {
           </Router>
         </Root>
         <div id="portal-root" />
+        </ShortcutContextProvider>
       </ThemeProvider>
     );
   }
