@@ -73,7 +73,7 @@ const StatusBar = (props) => {
       px={3}
       pb={3}
     >
-      <Row collapse>
+      <Row>
         <Button
           width='32px'
           borderColor='lightGray'
@@ -108,7 +108,7 @@ const StatusBar = (props) => {
           subscription={props.subscription}
         />
       </Row>
-      <Row justifyContent='flex-end' collapse>
+      <Row justifyContent='flex-end'>
         <StatusBarItem
           width='32px'
           mr={2}

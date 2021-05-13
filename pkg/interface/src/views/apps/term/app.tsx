@@ -78,6 +78,7 @@ class TermApp extends Component {
                     border={['0','1']}
                     cursor='text'
                   >
+                    {/* @ts-ignore declare props in later pass */}
                     <History log={this.state.lines.slice(0, -1)} />
                     <Input
                       ship={this.props.ship}

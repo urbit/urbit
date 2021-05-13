@@ -49,7 +49,7 @@ function TranscludedLinkNode(props: {
           <Author
             pt='12px'
             pl='12px'
-            size='24'
+            size={24}
             sigilPadding='6'
             showImage
             ship={node.post.author}
@@ -121,7 +121,7 @@ function TranscludedComment(props: {
       <Author
         pt='12px'
         pl='12px'
-        size='24'
+        size={24}
         sigilPadding='6'
         showImage
         ship={comment.post.author}
@@ -175,7 +175,7 @@ function TranscludedPublishNode(props: {
           <Author
             pl='12px'
             pt='12px'
-            size='24'
+            size={24}
             sigilPadding='6'
             showImage
             ship={post.post.author}
@@ -235,7 +235,7 @@ export function TranscludedPost(props: {
       <Author
         pt='12px'
         pl='12px'
-        size='24'
+        size={24}
         sigilPadding='6'
         showImage
         ship={post.author}
@@ -273,7 +273,7 @@ export function TranscludedNode(props: {
 
   if (
     typeof node?.post === "string" &&
-    assoc.metadata.config.graph === "chat"
+    (assoc.metadata.config as GraphConfig).graph === "chat"
   ) {
     return (
       <Box
@@ -296,6 +296,7 @@ export function TranscludedNode(props: {
             renderSigil
             transcluded={transcluded + 1}
             className="items-top cf hide-child"
+            // @ts-ignore isn't forwarding props to memo
             association={assoc}
             msg={node.post}
             fontSize={0}
