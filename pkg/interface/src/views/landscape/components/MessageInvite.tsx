@@ -35,7 +35,7 @@ export const MessageInvite = (props) => {
     }
   };
   return (
-    <Col p={3}>
+    <Col p={3} className='message-invite'>
       <Formik
         initialValues={initialValues}
         onSubmit={onSubmit}

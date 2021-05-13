@@ -446,7 +446,7 @@ export const GraphContent = React.memo(function GraphContent(
   } = props;
   const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
   return (
-    <Box {...rest}>
+    <Box className='graph-content' {...rest}>
       <Graphdown transcluded={transcluded} api={api} ast={ast} tall={tall} />
     </Box>
   );

@@ -238,7 +238,7 @@ export default class ChatEditor extends Component<ChatEditorProps, ChatEditorSta
         paddingBottom={MOBILE_BROWSER_REGEX.test(navigator.userAgent) ? '16px' : '0'}
         maxHeight='224px'
         width='calc(100% - 88px)'
-        className={inCodeMode ? 'chat code' : 'chat'}
+        className={inCodeMode ? 'chat code chat-editor' : 'chat chat-editor'}
         color="black"
         overflow='auto'
       >

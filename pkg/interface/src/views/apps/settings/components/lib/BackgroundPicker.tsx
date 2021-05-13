@@ -28,7 +28,7 @@ export function BackgroundPicker({
     width: ['100%', '288px']
   };
   return (
-    <Col>
+    <Col className='background-picker'>
       <Label>Landscape Background</Label>
       <Row flexWrap="wrap" {...rowSpace}>
         <Col {...colProps}>

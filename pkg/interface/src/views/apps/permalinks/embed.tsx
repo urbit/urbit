@@ -112,6 +112,7 @@ function GraphPermalink(
       borderColor="lightGray"
       borderRadius={2}
       cursor="pointer"
+      className='graph-permalink'
       onClick={(e) => {
         navigate(e);
       }}
@@ -175,6 +176,7 @@ function PermalinkDetails(props: {
       alignItems="center"
       justifyContent="space-between"
       width="100%"
+      className='permalink-details'
     >
       <Row gapX="2" alignItems="center">
         <Box width={4} height={4}>

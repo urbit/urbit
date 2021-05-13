@@ -1,18 +1,18 @@
 import {
-    Col,
+  Col,
 
-    ErrorLabel, Label,
-    Row,
+  ErrorLabel, Label,
+  Row,
 
-    StatelessTextInput as Input
+  StatelessTextInput as Input
 } from '@tlon/indigo-react';
 import { useField } from 'formik';
 import Mousetrap from 'mousetrap';
 import React, {
-    ReactElement, ReactNode, useCallback,
+  ReactElement, ReactNode, useCallback,
 
-    useEffect,
-    useRef, useState
+  useEffect,
+  useRef, useState
 } from 'react';
 
 function Chip(props: { children: ReactNode }): ReactElement {
@@ -25,6 +25,7 @@ function Chip(props: { children: ReactNode }): ReactElement {
       p={1}
       bg="blue"
       color="white"
+      className='chip'
     >
       {props.children}
     </Row>
@@ -93,7 +94,7 @@ export function ChipInput(props: ChipInputProps): ReactElement {
   }, [inputRef.current, addNewChip, newChip]);
 
   return (
-    <Col gapY={2}>
+    <Col gapY={2} className='chip-input'>
       <Label htmlFor={id}>{label}</Label>
       {caption && <Label gray>{caption}</Label>}
       <Row

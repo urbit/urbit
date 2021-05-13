@@ -65,7 +65,7 @@ export default function NotificationsScreen(props: any): ReactElement {
                 <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape - Notifications</title>
               </Helmet>
               <Body>
-                <Col overflowY="hidden" height="100%">
+                <Col overflowY="hidden" height="100%" className='notification-screen'>
                   <Row
                     p={3}
                     alignItems="center"

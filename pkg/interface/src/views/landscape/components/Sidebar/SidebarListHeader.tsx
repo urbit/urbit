@@ -1,11 +1,11 @@
 import {
-    Box,
+  Box,
 
-    Col, Icon,
+  Col, Icon,
 
-    ManagedCheckboxField as Checkbox, ManagedRadioButtonField as Radio, Row,
+  ManagedCheckboxField as Checkbox, ManagedRadioButtonField as Radio, Row,
 
-    Text
+  Text
 } from '@tlon/indigo-react';
 import { FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
@@ -62,7 +62,7 @@ export function SidebarListHeader(props: {
   );
 
   return (
-    <Box>
+    <Box className='sidebar-list-header'>
     {( !!feedPath) ? (
        <Row
          flexShrink={0}

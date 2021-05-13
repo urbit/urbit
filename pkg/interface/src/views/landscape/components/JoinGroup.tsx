@@ -1,11 +1,11 @@
 import {
-    Box, Col,
+  Box, Col,
 
-    Icon,
+  Icon,
 
-    ManagedTextInputField as Input, Row,
+  ManagedTextInputField as Input, Row,
 
-    Text
+  Text
 } from '@tlon/indigo-react';
 import { MetadataUpdatePreview } from '@urbit/api';
 import { Form, Formik, FormikHelpers, useFormikContext } from 'formik';
@@ -140,7 +140,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
   );
 
   return (
-    <Col p={3}>
+    <Col p={3} className='join-group'>
       <Box mb={3}>
         <Text fontSize={2} fontWeight="bold">
           Join a Group

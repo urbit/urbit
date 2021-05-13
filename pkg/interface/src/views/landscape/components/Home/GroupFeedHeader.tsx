@@ -51,6 +51,7 @@ export function GroupFeedHeader(props) {
       alignItems="center"
       borderBottom={1}
       borderColor="lightGray"
+      className='group-feed-header'
     >
       <Box display='block'>
         { ( baseUrl !== historyLocation ) ? (

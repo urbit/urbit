@@ -1,18 +1,18 @@
 import {
-    Col,
-    ErrorLabel, Icon, Label,
+  Col,
+  ErrorLabel, Icon, Label,
 
-    Row, Text
+  Row, Text
 } from '@tlon/indigo-react';
 import { Groups, Rolodex } from '@urbit/api';
 import { FieldArray, useFormikContext } from 'formik';
 import _ from 'lodash';
 import React, {
-    ChangeEvent,
+  ChangeEvent,
 
-    ReactElement, useCallback, useMemo,
+  ReactElement, useCallback, useMemo,
 
-    useRef
+  useRef
 } from 'react';
 import ob from 'urbit-ob';
 import * as Yup from 'yup';
@@ -178,7 +178,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
         };
 
         return (
-          <Col>
+          <Col className='ship-search'>
             <Label htmlFor={id}>{label}</Label>
             {caption && (
               <Label gray mt={2}>

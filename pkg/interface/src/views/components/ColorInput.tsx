@@ -1,10 +1,10 @@
 import {
-    Box, Col,
+  Box, Col,
 
-    ErrorLabel, Label,
-    Row,
+  ErrorLabel, Label,
+  Row,
 
-    StatelessTextInput as Input
+  StatelessTextInput as Input
 } from '@tlon/indigo-react';
 import { useField } from 'formik';
 import React, { FormEvent } from 'react';
@@ -37,7 +37,7 @@ export function ColorInput(props: ColorInputProps) {
   };
 
   return (
-    <Box display='flex' flexDirection='column' {...rest}>
+    <Box display='flex' flexDirection='column' className='color-input' {...rest}>
       <Label htmlFor={id}>{label}</Label>
       {caption ? (
         <Label mt={2} gray>

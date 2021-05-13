@@ -17,6 +17,7 @@ export class History extends Component {
         flexDirection='column-reverse'
         overflowY='scroll'
         style={{ resize: 'none' }}
+        className='term-history'
       >
         <Box
           mt='auto'

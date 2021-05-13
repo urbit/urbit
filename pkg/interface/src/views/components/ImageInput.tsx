@@ -136,7 +136,7 @@ export function ImageInput(props: ImageInputProps): ReactElement {
   }, []);
 
   return (
-    <Box display="flex" flexDirection="column" {...props}>
+    <Box display="flex" flexDirection="column" className='image-input' {...props}>
       <Label htmlFor={id}>{label}</Label>
       {caption ? (
         <Label mt={2} gray>

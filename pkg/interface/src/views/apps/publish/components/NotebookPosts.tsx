@@ -17,7 +17,7 @@ interface NotebookPostsProps {
 export function NotebookPosts(props: NotebookPostsProps) {
   const contacts = useContactState(state => state.contacts);
   return (
-    <Col>
+    <Col className='notebook-posts'>
       {Array.from(props.graph || []).map(
         ([date, node]) =>
           node && (

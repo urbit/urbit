@@ -40,7 +40,7 @@ function GroupHome(props) {
   const graphMetadata = associations?.graph[graphPath]?.metadata;
 
   return (
-    <Box width="100%" height="100%" overflow="hidden">
+    <Box width="100%" height="100%" overflow="hidden" className='group-home'>
       <Route path={`${baseUrl}/enable`}
         render={() => {
           return (

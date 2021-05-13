@@ -63,7 +63,7 @@ return;
       );
     } });
   return (
-    <Row px={3} py={1} onClick={showModal} cursor="pointer">
+    <Row px={3} py={1} onClick={showModal} cursor="pointer" className='delete-group'>
       {modal}
       <Icon icon={icon} color="red" mr={2} />
       <Text color="red">

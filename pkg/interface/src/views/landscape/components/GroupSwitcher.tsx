@@ -1,9 +1,9 @@
 import {
-    Box,
-    Col,
+  Box,
+  Col,
 
-    Icon, Row,
-    Text
+  Icon, Row,
+  Text
 } from '@tlon/indigo-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -37,7 +37,7 @@ function RecentGroups(props: { recent: string[] }) {
   const associations = useMetadataState(state => state.associations);
 
   return (
-    <Col borderBottom={1} borderBottomColor="lightGray" p={1}>
+    <Col borderBottom={1} borderBottomColor="lightGray" p={1} className='recent-groups'>
       <Box fontSize={0} px={1} py={2} color="gray">
         Recent Groups
       </Box>
@@ -94,6 +94,7 @@ export function GroupSwitcher(props: {
       pl={3}
       borderBottom='1px solid'
       borderColor='lightGray'
+      className='group-switcher'
     >
       <Col
         bg="white"

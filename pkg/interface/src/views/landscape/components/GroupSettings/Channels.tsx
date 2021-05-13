@@ -39,7 +39,7 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
     resourceFromPath(association.group).ship.slice(1) !== window.ship &&
     roleForShip(group, window.ship) !== 'admin';
   return (
-    <Col maxWidth="384px" width="100%">
+    <Col maxWidth="384px" width="100%" className='group-channel-settings'>
       <Text p={4} id="channels" fontWeight="600" fontSize={2}>
         Channels
       </Text>

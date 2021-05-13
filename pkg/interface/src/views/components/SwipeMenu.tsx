@@ -23,6 +23,7 @@ export function SwipeMenu(
     menu: ReactNode;
     menuWidth: number;
     threshold?: number;
+    className?: string;
   } & PropFunc<typeof Box>
 ) {
   const [open, setOpen] = useState(false);
@@ -34,6 +35,7 @@ export function SwipeMenu(
     menu,
     menuWidth,
     threshold = DEFAULT_THRESHOLD,
+    className = '',
     ...rest
   } = props;
   const [{ x, opacity }, springApi] = useSpring(() => ({
@@ -71,7 +73,7 @@ export function SwipeMenu(
   );
 
   return (
-    <NoScrollBox {...rest} position="relative">
+    <NoScrollBox {...rest} position="relative" className={className}>
       <AnimBox {...sliderBind()}>
         <AnimBox style={{ x }}>{children}</AnimBox>
       </AnimBox>

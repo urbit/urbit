@@ -165,6 +165,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
         width='100%'
         borderRadius={2}
         {...bind}
+        className='link-submit'
       >
         {uploading && <Box
           display="flex"

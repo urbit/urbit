@@ -73,6 +73,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
             mb={3}
             width="100%"
             flexShrink={0}
+            className='post-feed'
           >
             <PostItem
               key={parentNode.post.index}

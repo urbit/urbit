@@ -1,10 +1,10 @@
-import { Box, Center, Col, LoadingSpinner, Text, Icon } from '@tlon/indigo-react';
+import { Box, Center, Col, Icon, LoadingSpinner, Text } from '@tlon/indigo-react';
 import {
-    IndexedNotification,
+  IndexedNotification,
 
-    JoinRequests, Notifications,
+  JoinRequests, Notifications,
 
-    Timebox
+  Timebox
 } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import _ from 'lodash';
@@ -14,9 +14,9 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { getNotificationKey } from '~/logic/lib/hark';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
-import useLaunchState from '~/logic/state/launch';
 import { daToUnix, MOMENT_CALENDAR_DATE } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
+import useLaunchState from '~/logic/state/launch';
 import { Invites } from './invites';
 import { Notification } from './notification';
 
@@ -116,7 +116,15 @@ export default function Inbox(props: {
   );
 
   return (
-    <Col p={1} ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
+    <Col
+      p={1}
+      ref={scrollRef}
+      position="relative"
+      height="100%"
+      overflowY="auto"
+      overflowX="hidden"
+      className='inbox'
+    >
       {runtimeLag && (
         <Box bg="yellow" borderRadius={2} p={2} m={2}>
           <Icon verticalAlign="middle" mr={2} icon="Tutorial" />

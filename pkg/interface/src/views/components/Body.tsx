@@ -6,7 +6,7 @@ export function Body(
 ) {
   const { children, border, ...boxProps } = props;
   return (
-    <Box fontSize={0} px={[0, 3]} pb={[0, 3]} height="100%" width="100%">
+    <Box fontSize={0} px={[0, 3]} pb={[0, 3]} height="100%" width="100%" className='body'>
       <Box
         bg="white"
         height="100%"

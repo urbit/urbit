@@ -12,6 +12,7 @@ export const Tab = ({ selected, id, label, setSelected }) => (
     display="flex"
     alignItems="center"
     justifyContent="center"
+    className='tab'
     onClick={() => setSelected(id)}
   >
     <Text color={selected === id ? 'black' : 'gray'}>{label}</Text>
@@ -24,6 +25,7 @@ export const Tabs = ({ children, ...rest }: Parameters<typeof Row>[0]) => (
     mb={2}
     justifyContent="stretch"
     alignItems="flex-end"
+    className='tabs'
     {...rest}
   >
     {children}

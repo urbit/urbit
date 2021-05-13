@@ -13,8 +13,8 @@ import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
-import useLaunchState from '~/logic/state/launch';
 import useInviteState from '~/logic/state/invite';
+import useLaunchState from '~/logic/state/launch';
 import useLocalState, { selectLocalState } from '~/logic/state/local';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Dropdown } from './Dropdown';
@@ -72,6 +72,7 @@ const StatusBar = (props) => {
       py={3}
       px={3}
       pb={3}
+      className='status-bar'
     >
       <Row collapse>
         <Button

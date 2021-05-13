@@ -1,5 +1,5 @@
 import {
-    Col
+  Col
 } from '@tlon/indigo-react';
 import React, { ReactElement, useRef } from 'react';
 import styled from 'styled-components';
@@ -68,6 +68,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
       overflowY="scroll"
       fontSize={0}
       position="relative"
+      className='sidebar'
     >
       <GroupSwitcher
         recentGroups={props.recentGroups}

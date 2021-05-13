@@ -19,6 +19,7 @@ export function ChannelPopoverRoutesSidebar(props: {
       borderRightColor="washedGray"
       py={5}
       gapY={2}
+      className='channel-popover-routes-sidebar'
     >
       <Text mx={3} my={3} fontSize={1} fontWeight="medium">
         Channel Settings

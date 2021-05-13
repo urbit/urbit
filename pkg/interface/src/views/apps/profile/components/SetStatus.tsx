@@ -34,7 +34,7 @@ export function SetStatus(props: any) {
   };
 
   return (
-    <Row width='100%' my={3}>
+    <Row width='100%' my={3} className='set-status'>
       <Input
         ref={inputRef}
         onChange={onStatusChange}

@@ -1,7 +1,7 @@
 import {
-    Col,
+  Col,
 
-    ManagedToggleSwitchField as Toggle, Text
+  ManagedToggleSwitchField as Toggle, Text
 } from '@tlon/indigo-react';
 import { Form, Formik, FormikHelpers } from 'formik';
 import _ from 'lodash';
@@ -83,7 +83,7 @@ export function NotificationPreferences(props: {
         </Text>
       </Col>
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
-        <Form>
+        <Form className='notification-pref'>
           <Col gapY={4}>
             <Toggle
               label="Do not disturb"

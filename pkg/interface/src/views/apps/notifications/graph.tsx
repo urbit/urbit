@@ -92,7 +92,7 @@ const GraphUrl = ({ contents, api }) => {
 
 function ContentSummary({ icon, name, author, to }) {
   return (
-    <Link to={to}>
+    <Link to={to} className='content-summary'>
       <Col
         gapY={1}
         flexDirection={['column', 'row']}
@@ -224,7 +224,7 @@ const GraphNodes = (props: {
       {_.map(postsByConsecAuthor, ({ posts, author }, idx) => {
         const time = posts[0]?.['time-sent'];
         return (
-          <Col key={idx} flexGrow={1} alignItems="flex-start">
+          <Col key={idx} flexGrow={1} alignItems="flex-start" className='graph-node'>
             {!hideAuthors && (
               <Author
                 size={24}

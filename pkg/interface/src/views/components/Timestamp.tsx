@@ -62,6 +62,7 @@ return null;
       display='flex'
       flex='row'
       flexWrap='nowrap'
+      className='timestamp'
       {...rest}
       title={stamp.format(DateFormat + ' ' + TimeFormat)}
     >

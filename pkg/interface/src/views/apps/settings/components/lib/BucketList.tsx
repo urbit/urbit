@@ -1,13 +1,13 @@
 import {
-    Box,
-    Button, ManagedForm as Form, ManagedTextInputField as Input,
+  Box,
+  Button, ManagedForm as Form, ManagedTextInputField as Input,
 
-    Menu,
-    MenuButton,
+  Menu,
+  MenuButton,
 
-    MenuItem, MenuList,
+  MenuItem, MenuList,
 
-    Row, Text
+  Row, Text
 } from '@tlon/indigo-react';
 import { Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback, useState } from 'react';
@@ -59,6 +59,7 @@ export function BucketList({
         gridTemplateColumns="100%"
         gridAutoRows="auto"
         gridRowGap={2}
+        className='bucket-list'
       >
         {_buckets.map(bucket => (
           <Box

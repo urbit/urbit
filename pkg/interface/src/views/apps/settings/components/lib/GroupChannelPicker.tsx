@@ -64,6 +64,7 @@ function GroupWithChannels(props: { association: Association }) {
       gridTemplateRows="auto"
       gridGap={2}
       gridTemplateAreas="'arrow icon title graphToggle groupToggle'"
+      className='group-with-channels'
     >
       {Object.keys(joinedGroupGraphs).length > 0 && (
         <Center

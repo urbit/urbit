@@ -54,6 +54,7 @@ class TermApp extends Component {
         </Helmet>
         <Box
           height='100%'
+          className='term-app'
         >
           <Route
             exact

@@ -45,6 +45,7 @@ export const ModalOverlay = (props: Props) => {
       p={spacing}
       onClick={onClick}
       onKeyDown={onKeyDown}
+      className='modal-overlay'
     >
       <Box ref={ref} {...rest} />
     </Box>

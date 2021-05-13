@@ -5,7 +5,7 @@ import Tile from './tile';
 export default class CustomTile extends React.PureComponent {
   render() {
     return (
-      <Tile>
+      <Tile className='custom-tile'>
         <Box
           width='100%'
           height='100%'

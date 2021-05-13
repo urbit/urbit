@@ -1,9 +1,9 @@
 import {
-    Box,
-    Col, Label,
-    ManagedToggleSwitchField as Checkbox,
+  Box,
+  Col, Label,
+  ManagedToggleSwitchField as Checkbox,
 
-    Text
+  Text
 } from '@tlon/indigo-react';
 import { Association, Group, PermVariation } from '@urbit/api';
 import { Form, Formik } from 'formik';
@@ -157,7 +157,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
       initialValues={initialValues}
       onSubmit={onSubmit}
     >
-      <Form style={{ display: 'contents' }}>
+      <Form style={{ display: 'contents' }} className='graph-permissions'>
         <FormGroupChild id="permissions" />
         <Col mx={4} mt={4} flexShrink={0} gapY={5}>
           <Col gapY={1} mt={0}>

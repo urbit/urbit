@@ -1,7 +1,7 @@
 import {
-    Anchor, Col, ManagedForm as Form, ManagedTextInputField as Input,
+  Anchor, Col, ManagedForm as Form, ManagedTextInputField as Input,
 
-    Text
+  Text
 } from '@tlon/indigo-react';
 import { Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
@@ -60,7 +60,7 @@ export default function S3Form(props: S3FormProps): ReactElement {
           }
           onSubmit={onSubmit}
         >
-          <Form>
+          <Form className='s3-form'>
             <Col maxWidth='600px' gapY={5}>
               <Col gapY={1} mt={0}>
                 <Text color='black' fontSize={2} fontWeight='medium'>

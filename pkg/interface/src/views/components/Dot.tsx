@@ -14,6 +14,7 @@ const Dot = ({ color, ...rest }: DotProps): ReactElement => {
         height: '4px',
         borderRadius: '50%'
       }}
+    className='dot'
       {...rest}
     />
   );

@@ -40,6 +40,7 @@ export const AddFeedBanner = (props) => {
       borderColor="lightGray"
       pl={2}
       pr={2}
+      className='add-feed-banner'
     >
       <Row gapX={2} flexShrink={1} minWidth={0}>
         { dismissing ? (

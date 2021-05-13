@@ -65,7 +65,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
   }, [query]);
 
   return (
-    <Center p={6}>
+    <Center p={6} className='unjoined-resource'>
       <Col
         maxWidth="400px"
         p={4}

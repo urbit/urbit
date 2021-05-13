@@ -64,6 +64,7 @@ function GroupFeed(props) {
       display="flex"
       position="relative"
       alignItems="center"
+      className='group-feed'
     >
       <GroupFeedHeader
         baseUrl={baseUrl}

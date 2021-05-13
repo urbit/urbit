@@ -181,6 +181,7 @@ export default function TextContent(props) {
         fontSize={props.fontSize ? props.fontSize : '14px'}
         lineHeight={props.lineHeight ? props.lineHeight : '20px'}
         style={{ overflowWrap: 'break-word' }}
+        className='text-content'
       >
         <MessageMarkdown source={content.text} allowHeaders={allowHeaders} allowLists={allowLists} />
       </Text>

@@ -28,7 +28,7 @@ export default class CodeContent extends Component {
       ) : null;
 
     return (
-      <Box my={2}>
+      <Box my={2} className='code-content'>
         <Text
           display='block'
           mono

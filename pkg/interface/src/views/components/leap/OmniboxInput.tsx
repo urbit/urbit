@@ -34,6 +34,7 @@ export class OmniboxInput extends Component<OmniboxInputProps> {
         onChange={props.search}
         spellCheck={false}
         value={props.query}
+        className='omnibox-input'
       />
     );
   }

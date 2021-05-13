@@ -25,7 +25,7 @@ export function MetadataNotification(props: any) {
   const description = getDescription(unread.unreads[0].body);
 
   return (
-    <Box p={2}>
+    <Box p={2} className='metadata-notification'>
       <Header
         authors={[]}
         description={description}

@@ -54,7 +54,7 @@ export function GroupNotification(props: GroupNotificationProps): ReactElement {
   const groupTitle = association?.metadata?.title ?? group;
 
   return (
-    <Col>
+    <Col className='group-notification'>
       <Header
         time={time}
         authors={authors}

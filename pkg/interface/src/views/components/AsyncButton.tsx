@@ -34,6 +34,7 @@ export function AsyncButton<T = any>({
       hideDisabled={isSubmitting}
       disabled={!isValid || isSubmitting}
       type="submit"
+      className='asynct-button'
       {...rest}
     >
       {isSubmitting ? (

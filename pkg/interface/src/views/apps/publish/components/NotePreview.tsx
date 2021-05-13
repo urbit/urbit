@@ -6,9 +6,9 @@ import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import {
-    getComments,
-    getLatestRevision,
-    getSnippet
+  getComments,
+  getLatestRevision,
+  getSnippet
 } from '~/logic/lib/publish';
 import useHarkState from '~/logic/state/hark';
 import Author from '~/views/components/Author';
@@ -78,7 +78,7 @@ export function NotePreview(props: NotePreviewProps) {
   const cursorStyle = post.pending ? 'default' : 'pointer';
 
   return (
-    <Box width='100%' opacity={post.pending ? '0.5' : '1'}>
+    <Box width='100%' opacity={post.pending ? '0.5' : '1'} className='note-preview'>
       <Link
         to={post.pending ? '#' : url}
         style={ { cursor: cursorStyle } }

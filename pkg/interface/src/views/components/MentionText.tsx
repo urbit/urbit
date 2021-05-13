@@ -57,6 +57,7 @@ export function Mention(props: {
         color='blue'
         fontSize={showNickname ? 1 : 0}
         mono={!showNickname}
+        className='mention-text'
       >
         {name}
       </Text>

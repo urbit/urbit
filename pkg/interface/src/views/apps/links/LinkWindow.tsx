@@ -106,6 +106,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
           width="100%"
           flexShrink={0}
           px={3}
+          class='link-window empty'
         >
           {this.canWrite() ? (
             <LinkSubmit
@@ -124,7 +125,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
     }
 
     return (
-      <Col width="100%" height="100%" position="relative">
+      <Col width="100%" height="100%" position="relative" class='link-window'>
         <VirtualScroller
           origin="top"
           offset={0}

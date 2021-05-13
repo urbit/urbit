@@ -175,7 +175,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   }, [rid]);
 
   return (
-    <Col width='100%' height='100%' overflow='hidden'>
+    <Col width='100%' height='100%' overflow='hidden' className='resource-skeleton'>
       <Box
         flexShrink={0}
         height='48px'

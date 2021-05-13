@@ -43,7 +43,7 @@ export function EnableGroupFeed(props: {
   return (
     <ModalOverlay spacing={[3, 5, 7]} bg="white" dismiss={dismiss}>
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
-        <Form>
+        <Form className='enable-group-feed'>
           <Col gapY={3} p={3}>
             <Col gapY={1}>
               <Text fontWeight="medium" fontSize={2}>

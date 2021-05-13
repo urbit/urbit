@@ -2,10 +2,10 @@ import { Action, Col, Icon, Row } from '@tlon/indigo-react';
 import { Association, Post } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
+import { resourceFromPath } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { useCopy } from '~/logic/lib/useCopy';
 import useContactState from '~/logic/state/contact';
-import { resourceFromPath } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
 import { Dropdown } from '~/views/components/Dropdown';
 
@@ -48,6 +48,7 @@ const PostHeader = (props: PostHeaderProps): ReactElement => {
       pl={2}
       pr={2}
       justifyContent="space-between"
+      className='post-header'
       onClick={(e) => {
         e.stopPropagation();
       }}

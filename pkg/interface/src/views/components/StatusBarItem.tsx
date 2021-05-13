@@ -25,6 +25,7 @@ export function StatusBarItem({
       overflow='visible'
       zIndex={10}
       boxShadow="1px 1px black"
+      className='status-bar-item'
       {...props}
     >
       {children}

@@ -1,8 +1,8 @@
 import {
-    Button, Col, ManagedCheckboxField as Checkbox, ManagedForm as Form,
-    ManagedTextInputField as Input,
+  Button, Col, ManagedCheckboxField as Checkbox, ManagedForm as Form,
+  ManagedTextInputField as Input,
 
-    Row, Text
+  Row, Text
 } from '@tlon/indigo-react';
 import { Formik } from 'formik';
 import _ from 'lodash';
@@ -18,9 +18,9 @@ import { ColorInput } from '~/views/components/ColorInput';
 import GroupSearch from '~/views/components/GroupSearch';
 import { ImageInput } from '~/views/components/ImageInput';
 import {
-    ProfileControls, ProfileHeader,
+  ProfileControls, ProfileHeader,
 
-    ProfileImages, ProfileStatus
+  ProfileImages, ProfileStatus
 } from './Profile';
 
 const formSchema = Yup.object({
@@ -138,7 +138,7 @@ export function EditProfile(props: any): ReactElement {
         onSubmit={onSubmit}
       >
         {({ setFieldValue }) => (
-          <Form width='100%' height='100%'>
+          <Form width='100%' height='100%' className='edit-profile'>
             <ProfileHeader>
               <ProfileControls>
                 <Row alignItems='baseline'>
