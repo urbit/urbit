@@ -452,5 +452,6 @@ export const favicon = () => {
     colors: [background, foreground]
   });
   const dataurl = 'data:image/svg+xml;base64,' + btoa(svg);
+  console.log(dataurl);
   return dataurl;
 }

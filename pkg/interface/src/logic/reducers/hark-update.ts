@@ -7,8 +7,10 @@ import { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import { compose } from 'lodash/fp';
 import { favicon, makePatDa } from '~/logic/lib/util';
+import {describeNotification, notificationReferent} from '../lib/hark';
 import { reduceState } from '../state/base';
 import useHarkState, { HarkState } from '../state/hark';
+import useMetadataState from '../state/metadata';
 
 export const HarkReducer = (json: any) => {
   const data = _.get(json, 'harkUpdate', false);
@@ -36,6 +38,7 @@ export const HarkReducer = (json: any) => {
 };
 
 function reduce(data, state) {
+  console.log(data);
   const reducers = [
     calculateCount,
     unread,
@@ -188,13 +191,6 @@ function readSince(json: any, state: HarkState): HarkState {
 function unreadSince(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unread-count');
   if (data) {
-    if (!useHarkState.getState().doNotDisturb && !document.hasFocus()) {
-      new Notification('New Landscape Notification', {
-        tag: 'landscape',
-        icon: favicon(),
-        image: favicon()
-      });
-    }
     updateUnreadCount(state, data.index, u => u + 1);
   }
   return state;
@@ -325,8 +321,24 @@ function updateNotificationStats(state: HarkState, index: NotifIndex, statField:
 function added(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'added', false);
   if (data) {
+    console.log('adding')
     const { index, notification } = data;
     const time = makePatDa(data.time);
+    if (true || !useHarkState.getState().doNotDisturb) {
+      console.log('showing');
+      
+      const description = describeNotification(data);
+      const meta = useMetadataState.getState();
+      const referent = 'graph' in data.index ? meta.associations.graph[data.index.graph.graph]?.metadata?.title ?? data.index.graph : meta.associations.groups[data.index.group.group]?.metadata?.title ?? data.index.group;
+      new Notification(`${description} ${referent}`, {
+        tag: 'landscape',
+        image: 'https://media.urbit.org/logo/logo-black-600x600.jpg',
+        icon: 'https://media.urbit.org/logo/logo-black-600x600.jpg',
+        badge: 'https://media.urbit.org/logo/logo-black-600x600.jpg',
+      });
+      console.log('showed');
+    }
+
     const timebox = state.notifications.get(time) || [];
     addNotificationToUnread(state, index, time);
 
