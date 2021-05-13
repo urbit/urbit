@@ -48,7 +48,6 @@ export function CalmPrefs(props: {
     _.forEach(v, (bool, key) => {
       const bucket = ['imageShown', 'videoShown', 'audioShown', 'oembedShown'].includes(key) ? 'remoteContentPolicy' : 'calm';
       if(initialValues[key] !== bool) {
-        console.log('updating', bucket, key, bool);
         promises.push(api.settings.putEntry(bucket, key, bool));
       }
     })
