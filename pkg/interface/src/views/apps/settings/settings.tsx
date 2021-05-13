@@ -61,7 +61,7 @@ function SettingsItem(props: { children: ReactNode }) {
   const { children } = props;
 
   return (
-    <Box borderBottom='1' borderBottomColor='lightGray'>
+    <Box borderBottom={1} borderBottomColor='lightGray'>
       {children}
     </Box>
   );
@@ -95,13 +95,13 @@ return;
       <Skeleton>
         <Col
           height='100%'
-          borderRight='1'
+          borderRight={1}
           borderRightColor='lightGray'
           display={hash === '' ? 'flex' : ['none', 'flex']}
           width='100%'
           overflowY='auto'
         >
-          <Text display='block' mt='4' mb='3' mx='3' fontSize='2' fontWeight='700'>
+          <Text display='block' mt={4} mb={3} mx={3} fontSize={2} fontWeight='700'>
             System Preferences
           </Text>
           <Col>

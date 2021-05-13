@@ -1,4 +1,4 @@
-import { Association, Group } from '@urbit/api';
+import { Association, GraphConfig, Group } from '@urbit/api';
 import _ from 'lodash';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -8,7 +8,7 @@ export function getGraphPermalink(
   group: Group,
   index: string
 ) {
-  const mod = assoc.metadata.config.graph;
+  const mod = (assoc.metadata.config as GraphConfig).graph;
   const groupPath = group.hidden
     ? '/~landscape/home'
     : `/~landscape${assoc.group}`;

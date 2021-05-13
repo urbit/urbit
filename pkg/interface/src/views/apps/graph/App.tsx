@@ -1,4 +1,5 @@
 import { Center, Text } from '@tlon/indigo-react';
+import { GraphConfig } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
@@ -40,8 +41,8 @@ const GraphApp = (props: GraphAppProps): ReactElement => {
 
           if(!graphKeys.has(resource)) {
             autoJoin();
-          } else if(Boolean(association) && 'graph' in association.config) {
-            history.push(`/~landscape/home/resource/${association.metadata.config.graph}${path}`);
+          } else if(Boolean(association) && 'graph' in association.metadata.config) {
+            history.push(`/~landscape/home/resource/${(association.metadata.config as GraphConfig).graph}${path}`);
           }
           return (
             <Center width="100%" height="100%">

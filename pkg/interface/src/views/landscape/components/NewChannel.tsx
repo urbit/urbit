@@ -1,8 +1,7 @@
 import {
   Box,
-
-  Col, ManagedTextInputField as Input,
-
+  Col,
+  ManagedTextInputField as Input,
   Text
 } from '@tlon/indigo-react';
 import { Form, Formik } from 'formik';
@@ -15,6 +14,7 @@ import { resourceFromPath } from '~/logic/lib/group';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { deSig, parentPath, stringToSymbol } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
+import { PropFunc } from '~/types/util';
 import { Workspace } from '~/types/workspace';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { FormError } from '~/views/components/FormError';
@@ -44,7 +44,7 @@ type NewChannelProps = {
   group?: string;
   workspace: Workspace;
   baseUrl?: string;
-  existingMembers: string[];
+  existingMembers?: string[];
 } & PropFunc<typeof Col>;
 
 export function NewChannel(props: NewChannelProps): ReactElement {
@@ -127,7 +127,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
       {...rest}
     >
       <Box
-        pb='3'
+        pb={3}
         display={workspace?.type === 'messages' ? 'none' : ['block', 'none']}
         onClick={() => history.push(props?.baseUrl ?? '/')}
       >
@@ -152,16 +152,13 @@ export function NewChannel(props: NewChannelProps): ReactElement {
         }}
         onSubmit={onSubmit}
       >
-        <Form>
-          <Col maxWidth='348px' gapY='4'>
-            <Col
-              pt={4}
-              gapY='2'
-              display={workspace?.type === 'messages' ? 'none' : 'flex'}
-            >
-              <Box fontSize='1' color='black' mb={2}>
-                Channel Type
-              </Box>
+      <Form>
+          <Col
+          maxWidth="348px"
+          gapY={4}
+          >
+            <Col pt={4} gapY={2} display={(workspace?.type === 'messages') ? 'none' : 'flex'}>
+              <Box fontSize={1} color="black" mb={2}>Channel Type</Box>
               <IconRadio
                 display={!(workspace?.type === 'home') ? 'flex' : 'none'}
                 icon='Chat'

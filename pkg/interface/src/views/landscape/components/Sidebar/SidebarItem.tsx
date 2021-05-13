@@ -114,7 +114,7 @@ export function SidebarItem(props: {
       pr={3}
       selected={selected}
     >
-      <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
+      <Row width='100%' alignItems="center" flex='1 auto' minWidth={0}>
         {hasNotification && <Text color='black' marginLeft={-2} width={2} display='flex' alignItems='center'>
           <Dot />
         </Text>}
@@ -130,7 +130,7 @@ export function SidebarItem(props: {
           <Text
             lineHeight="tall"
             display='inline-block'
-            flex='1'
+            flex={1}
             overflow='hidden'
             width='100%'
             mono={urbitOb.isValidPatp(title)}

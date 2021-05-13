@@ -1,6 +1,7 @@
 import { BaseInput, Box, Icon, Text } from '@tlon/indigo-react';
 import moment from 'moment';
 import React from 'react';
+import GlobalApi from '~/logic/api/global';
 import withState from '~/logic/lib/withState';
 import useLaunchState from '~/logic/state/launch';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
@@ -36,8 +37,20 @@ const imperialCountries = [
   'Liberia',
 ];
 
-class WeatherTile extends React.Component {
-  constructor(props) {
+interface WeatherTileProps {
+  weather: any;
+  api: GlobalApi;
+  location: string;
+}
+
+interface WeatherTileState {
+  location: string;
+  manualEntry: boolean;
+  error: boolean;
+}
+
+class WeatherTile extends React.Component<WeatherTileProps, WeatherTileState> {
+  constructor(props: WeatherTileProps) {
     super(props);
     this.state = {
       location: '',
@@ -50,11 +63,7 @@ class WeatherTile extends React.Component {
   locationSubmit() {
     navigator.geolocation.getCurrentPosition((res) => {
       const location = `${res.coords.latitude},${res.coords.longitude}`;
-      this.setState({
-        location
-      }, (err) => {
-        console.log(err);
-      }, { maximumAge: Infinity, timeout: 10000 });
+      this.setState({ location });
       this.props.api.launch.weather(location);
       this.setState({ manualEntry: !this.state.manualEntry });
     });
@@ -62,10 +71,8 @@ class WeatherTile extends React.Component {
 
   manualLocationSubmit(event) {
     event.preventDefault();
-    const location = document.getElementById('location').value;
-    this.setState({ location }, (err) => {
-      console.log(err);
-      }, { maximumAge: Infinity, timeout: 10000 });
+    const location = (document.getElementById('location') as HTMLInputElement).value;
+    this.setState({ location });
       this.props.api.launch.weather(location);
       this.setState({ manualEntry: !this.state.manualEntry });
   }
@@ -91,7 +98,7 @@ class WeatherTile extends React.Component {
     let secureCheck;
     let error;
     if (this.state.error === true) {
-      error = <Text display='block' color='red' pt='1'>Please try again.</Text>;
+      error = <Text display='block' color='red' pt={1}>Please try again.</Text>;
     }
     if (location.protocol === 'https:') {
       secureCheck = (
@@ -128,15 +135,15 @@ class WeatherTile extends React.Component {
           {locationName ? ` Current location is near ${locationName}.` : ''}
         </Text>
         {error}
-        <Box mt='auto' display='flex' marginBlockEnd='0'>
+        <Box mt='auto' display='flex' marginBlockEnd={0}>
           <BaseInput
             id="location"
-            size="10"
+            size={10}
             width='100%'
             color='black'
-            fontSize='0'
+            fontSize={0}
             backgroundColor='transparent'
-            border='0'
+            border={0}
             type="text"
             autoFocus
             placeholder="GPS, ZIP, City"
@@ -150,10 +157,10 @@ class WeatherTile extends React.Component {
             backgroundColor='transparent'
             color='black'
             cursor='pointer'
-            flexShrink='0'
-            pl='1'
-            fontSize='0'
-            border='0'
+            flexShrink={0}
+            pl={1}
+            fontSize={0}
+            border={0}
             type="submit"
             onClick={this.manualLocationSubmit.bind(this)}
             value="->"
@@ -173,7 +180,7 @@ class WeatherTile extends React.Component {
         onClick={() => this.setState({ manualEntry: !this.state.manualEntry })}
       >
         <Box>
-          <Icon icon='Weather' display='inline-block' verticalAlign='top' mt='3px' mr='2' />
+          <Icon icon='Weather' display='inline-block' verticalAlign='top' mt='3px' mr={2} />
           <Text>Weather</Text>
         </Box>
         <Text style={{ cursor: 'pointer' }}>
@@ -219,7 +226,7 @@ class WeatherTile extends React.Component {
         title={`${locationName} Weather`}
       >
         <Text>
-          <Icon icon='Weather' display='inline' mr='2' style={{ position: 'relative', top: '.3em' }} />
+          <Icon icon='Weather' display='inline' mr={2} style={{ position: 'relative', top: '.3em' }} />
             <Text
               cursor='pointer'
               onClick={() =>
@@ -269,7 +276,7 @@ class WeatherTile extends React.Component {
           flexDirection="column"
           justifyContent="flex-start"
         >
-          <Text><Icon icon='Weather' color='black' display='inline' mr='2' style={{ position: 'relative', top: '.3em' }} /> Weather</Text>
+          <Text><Icon icon='Weather' color='black' display='inline' mr={2} style={{ position: 'relative', top: '.3em' }} /> Weather</Text>
           <Text width='100%' display='flex' flexDirection='column' mt={1}>
             Loading, please check again later...
           </Text>

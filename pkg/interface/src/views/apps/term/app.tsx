@@ -12,6 +12,11 @@ import Store from './store';
 import Subscription from './subscription';
 
 class TermApp extends Component {
+  store: Store;
+  api: any;
+  subscription: any;
+  props: any;
+  state: any;
   constructor(props) {
     super(props);
     this.store = new Store();
@@ -27,7 +32,7 @@ class TermApp extends Component {
 
   componentDidMount() {
     this.resetControllers();
-    const channel = new window.channel();
+    const channel = new (window as any).channel();
     this.api = new Api(this.props.ship, channel);
     this.store.api = this.api;
 
@@ -61,13 +66,13 @@ class TermApp extends Component {
                   display='flex'
                 >
                   <Col
-                    p='3'
+                    p={3}
                     backgroundColor='white'
                     width='100%'
-                    minHeight='0'
-                    minWidth='0'
+                    minHeight={0}
+                    minWidth={0}
                     color='lightGray'
-                    borderRadius='2'
+                    borderRadius={2}
                     mx={['0','3']}
                     mb={['0','3']}
                     border={['0','1']}

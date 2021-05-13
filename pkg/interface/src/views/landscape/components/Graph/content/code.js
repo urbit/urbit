@@ -12,11 +12,11 @@ export default class CodeContent extends Component {
       (
         <Text
           display='block'
-          fontSize='0'
+          fontSize={0}
           mono
-          p='1'
-          my='0'
-          borderRadius='1'
+          p={1}
+          my={0}
+          borderRadius={1}
           overflow='auto'
           maxHeight='10em'
           maxWidth='100%'
@@ -28,17 +28,17 @@ export default class CodeContent extends Component {
       ) : null;
 
     return (
-      <Box my='2'>
+      <Box my={2}>
         <Text
           display='block'
           mono
-          my='0'
-          p='1'
-          borderRadius='1'
+          my={0}
+          p={1}
+          borderRadius={1}
           overflow='auto'
           maxHeight='10em'
           maxWidth='100%'
-          fontSize='0'
+          fontSize={0}
           style={{ whiteSpace: 'pre' }}
         >
           {content.code.expression}

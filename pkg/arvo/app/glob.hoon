@@ -5,7 +5,7 @@
 /-  glob
 /+  default-agent, verb, dbug
 |%
-++  hash  0v7.k043v.fjsi2.bpm4g.0ekbj.566c4 :: DO NOT MOVE FROM LINE 8
+++  hash  0v2.rvlfs.f97fq.hjrpe.d3h68.n54sj
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
 +$  all-states
   $%  state-0

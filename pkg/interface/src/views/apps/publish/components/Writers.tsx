@@ -38,7 +38,7 @@ export const Writers = (props: WritersProps): ReactElement => {
     return (
       <Box maxWidth='512px'>
         <Text display='block'>Writers</Text>
-        <Text display='block' mt='2' gray>Add additional writers to this notebook</Text>
+        <Text display='block' mt={2} gray>Add additional writers to this notebook</Text>
         <Formik
           initialValues={{ ships: [] }}
           onSubmit={onSubmit}
@@ -49,16 +49,16 @@ export const Writers = (props: WritersProps): ReactElement => {
               label=""
               maxLength={undefined}
             />
-            <AsyncButton width='100%' mt='3' primary>
+            <AsyncButton width='100%' mt={3} primary>
             Submit
             </AsyncButton>
           </Form>
         </Formik>
         {writers.length > 0 ? <>
-        <Text display='block' mt='2'>Current writers:</Text>
-        <Text mt='2' display='block' mono>{writers}</Text>
+        <Text display='block' mt={2}>Current writers:</Text>
+        <Text mt={2} display='block' mono>{writers}</Text>
         </> :
-          <Text display='block' mt='2'>
+          <Text display='block' mt={2}>
             All group members can write to this channel
           </Text>
         }

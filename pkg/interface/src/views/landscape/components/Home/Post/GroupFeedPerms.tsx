@@ -1,7 +1,7 @@
 import {
-  Col, ManagedRadioButtonField as Radio,
+    Col, ManagedRadioButtonField as Radio,
 
-  Text
+    Text
 } from '@tlon/indigo-react';
 import React from 'react';
 import { PropFunc } from '~/types';
@@ -14,7 +14,7 @@ export function GroupFeedPermsInput(
   const { id, ...rest } = props;
 
   return (
-    <Col gapY="4" {...rest}>
+    <Col gapY={4} {...rest}>
       <Text fontWeight="medium">Permissions</Text>
       <Radio
         name={id}

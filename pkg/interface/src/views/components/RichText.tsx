@@ -1,8 +1,10 @@
 import { Anchor, Text } from '@tlon/indigo-react';
+import { Contact, Group } from '@urbit/api';
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { ReactMarkdownProps } from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import { isValidPatp } from 'urbit-ob';
+import GlobalApi from '~/logic/api/global';
 import { deSig } from '~/logic/lib/util';
 import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
 import { Mention } from '~/views/components/MentionText';
@@ -21,7 +23,20 @@ const DISABLED_BLOCK_TOKENS = [
 
 const DISABLED_INLINE_TOKENS = [];
 
-const RichText = React.memo(({ disableRemoteContent, api, ...props }) => (
+type RichTextProps = ReactMarkdownProps & {
+  api: GlobalApi;
+  disableRemoteContent?: boolean;
+  contact?: Contact;
+  group?: Group;
+  pending?: boolean;
+  transcluded?: number;
+  inline?: boolean;
+  color?: string;
+  children?: any;
+  width?: string;
+}
+
+const RichText = React.memo(({ disableRemoteContent = false, api, ...props }: RichTextProps) => (
   <ReactMarkdown
     {...props}
     renderers={{
@@ -80,7 +95,7 @@ const RichText = React.memo(({ disableRemoteContent, api, ...props }) => (
         );
       },
       paragraph: (paraProps) => {
-        return <Text display={props.inline ? 'inline' : 'block'} mb='2' {...props}>{paraProps.children}</Text>;
+        return <Text display={props.inline ? 'inline' : 'block'} mb={2} {...props}>{paraProps.children}</Text>;
       }
     }}
     plugins={[[

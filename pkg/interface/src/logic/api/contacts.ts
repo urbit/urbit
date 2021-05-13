@@ -1,6 +1,9 @@
 import { Patp } from '@urbit/api';
 import { ContactEditField } from '@urbit/api/contacts';
 import _ from 'lodash';
+import {edit} from '../reducers/contact-update';
+import {doOptimistically} from '../state/base';
+import useContactState from '../state/contact';
 import { StoreState } from '../store/type';
 import BaseApi from './base';
 
@@ -26,13 +29,14 @@ export default class ContactsApi extends BaseApi<StoreState> {
     {add-group: {ship, name}}
     {remove-group: {ship, name}}
     */
-    return this.storeAction({
+    const action = {
       edit: {
         ship,
         'edit-field': editField,
         timestamp: Date.now()
       }
-    });
+    }
+    doOptimistically(useContactState, action, this.storeAction.bind(this), [edit])
   }
 
   allowShips(ships: Patp[]) {

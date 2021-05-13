@@ -43,18 +43,18 @@ export function GroupFeedHeader(props) {
 
   return (
     <Row
-      flexShrink="0"
+      flexShrink={0}
       width="100%"
       height="48px"
-      pl="2"
-      pr="2"
+      pl={2}
+      pr={2}
       alignItems="center"
       borderBottom={1}
       borderColor="lightGray"
     >
       <Box display='block'>
         { ( baseUrl !== historyLocation ) ? (
-            <Text pl="1" pr="1"
+            <Text pl={1} pr={1}
 cursor="pointer" onClick={() => {
               let loc =
                 history.location.pathname.replace(`${baseUrl}`, '').split('/');
@@ -68,13 +68,13 @@ cursor="pointer" onClick={() => {
       </Box>
       { isHome ? (
         <>
-          <Text bold fontSize="2" pl="1" pr="2">Group Feed</Text>
-          <Text fontSize="0" p="1" backgroundColor="washedGray">{permText}</Text>
+          <Text bold fontSize={2} pl={1} pr={2}>Group Feed</Text>
+          <Text fontSize={0} p={1} backgroundColor="washedGray">{permText}</Text>
         </>
       ) : ( !authorText ? null : (
         <>
-          <Text bold fontSize="2" pl="1" pr="2">Post by </Text>
-          <Text bold fontSize="2" mono>{`~${authorText}`}</Text>
+          <Text bold fontSize={2} pl={1} pr={2}>Post by </Text>
+          <Text bold fontSize={2} mono>{`~${authorText}`}</Text>
         </>
       ))}
     </Row>

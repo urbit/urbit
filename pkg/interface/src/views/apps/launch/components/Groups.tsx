@@ -47,8 +47,8 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   const groups = Object.values(associations?.groups || {})
     .filter(e => e?.group in groupState)
     .sort(sortGroupsAlph);
-  const graphUnreads = getGraphUnreads(associations || {}, unreads);
-  const graphNotifications = getGraphNotifications(associations || {}, unreads);
+  const graphUnreads = getGraphUnreads(associations || {} as Associations, unreads);
+  const graphNotifications = getGraphNotifications(associations || {} as Associations, unreads);
 
   return (
     <>
@@ -56,9 +56,9 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
         const path = group?.group;
         const unreadCount = graphUnreads(path);
         const notCount = graphNotifications(path);
-
         return (
           <Group
+            key={group.metadata.title}
             updates={notCount}
             first={index === 0}
             unreads={unreadCount}
@@ -82,7 +82,7 @@ interface GroupProps {
 const selectJoined = (s: SettingsState) => s.tutorial.joined;
 function Group(props: GroupProps) {
   const { path, title, unreads, updates, first = false } = props;
-  const anchorRef = useRef<HTMLElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
   const isTutorialGroup = path === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`;
   useTutorialModal(
     'start',
@@ -104,7 +104,7 @@ function Group(props: GroupProps) {
             (<Text>{days} day{days !== 1 && 's'} remaining</Text>)
           }
           {updates > 0 &&
-            (<Text mt="1" color="blue">{updates} update{updates !== 1 && 's'} </Text>)
+            (<Text mt={1} color="blue">{updates} update{updates !== 1 && 's'} </Text>)
           }
           {unreads > 0 &&
             (<Text color="lightGray">{unreads}</Text>)

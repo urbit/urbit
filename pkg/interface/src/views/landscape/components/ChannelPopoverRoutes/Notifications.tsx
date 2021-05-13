@@ -28,15 +28,15 @@ export function ChannelNotifications(props: ChannelNotificationsProps) {
   const anchorRef = useRef<HTMLElement | null>(null);
 
   return (
-    <Col mx="4" mb="6" gapY="4" flexShrink={0}>
-      <Text ref={anchorRef} id="notifications" fontSize="2" fontWeight="bold">
+    <Col mx={4} mb={6} gapY={4} flexShrink={0}>
+      <Text ref={anchorRef} id="notifications" fontSize={2} fontWeight="bold">
         Channel Notifications
       </Text>
       <BaseLabel display="flex" cursor="pointer">
         <StatelessAsyncToggle selected={isMuted} onClick={onChangeMute} />
         <Col>
           <Label>Mute this channel</Label>
-          <Label gray mt="1">
+          <Label gray mt={1}>
             Muting this channel will prevent it from sending updates to your
             inbox
           </Label>

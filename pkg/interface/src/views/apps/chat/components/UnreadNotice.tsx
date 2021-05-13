@@ -22,16 +22,16 @@ const UnreadNotice = (props): ReactElement | null => {
       className='unread-notice'
     >
       <Center>
-        <Box backgroundColor='white' borderRadius='3' overflow='hidden'>
+        <Box backgroundColor='white' borderRadius={3} overflow='hidden'>
           <Box
             backgroundColor='washedBlue'
             display='flex'
             alignItems='center'
-            p='2'
-            fontSize='0'
+            p={2}
+            fontSize={0}
             justifyContent='space-between'
-            borderRadius='3'
-            border='1'
+            borderRadius={3}
+            border={1}
             borderColor='lightBlue'
           >
             <Text

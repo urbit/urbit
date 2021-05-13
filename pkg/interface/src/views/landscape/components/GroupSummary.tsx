@@ -24,8 +24,8 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
     anchorRef
   );
   return (
-    <Col {...rest} ref={anchorRef} gapY="4" maxWidth={['100%', '288px']}>
-      <Row gapX="2" width="100%">
+    <Col {...rest} ref={anchorRef} gapY={4} maxWidth={['100%', '288px']}>
+      <Row gapX={2} width="100%">
         <MetadataIcon
           width="40px"
           height="40px"
@@ -34,16 +34,16 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
         />
         <Col justifyContent="space-between" flexGrow={1} overflow="hidden">
           <Text
-            fontSize="1"
+            fontSize={1}
             textOverflow="ellipsis"
             whiteSpace="nowrap"
             overflow="hidden"
           >{metadata.title}</Text>
-          <Row gapX="4" >
-            <Text fontSize="1" gray>
+          <Row gapX={4} >
+            <Text fontSize={1} gray>
               {memberCount} participants
             </Text>
-            <Text fontSize="1" gray>
+            <Text fontSize={1} gray>
               {channelCount} channels
             </Text>
           </Row>
@@ -54,7 +54,7 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
         <Text
             gray
             width="100%"
-            fontSize="1"
+            fontSize={1}
             textOverflow="ellipsis"
             overflow="hidden"
         >

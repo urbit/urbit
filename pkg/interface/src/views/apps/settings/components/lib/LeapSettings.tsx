@@ -1,7 +1,7 @@
 import {
-  Col,
+    Col,
 
-  ManagedCheckboxField, Text
+    ManagedCheckboxField, Text
 } from '@tlon/indigo-react';
 import { Form, useField, useFormikContext } from 'formik';
 import _ from 'lodash';
@@ -9,8 +9,8 @@ import React from 'react';
 import GlobalApi from '~/logic/api/global';
 import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
 import {
-  LeapCategories,
-  leapCategories
+    LeapCategories,
+    leapCategories
 } from '~/types';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { ShuffleFields } from '~/views/components/ShuffleFields';
@@ -50,7 +50,6 @@ export function LeapSettings(props: { api: GlobalApi; }) {
   const { leap, set: setSettingsState } = useSettingsState(settingsSel);
   const categories = leap.categories as LeapCategories[];
   const missing = _.difference(leapCategories, categories);
-  console.log(categories);
 
   const initialValues = {
     categories: [
@@ -73,9 +72,9 @@ export function LeapSettings(props: { api: GlobalApi; }) {
   return (
     <>
     <BackButton />
-    <Col p="5" pt="4" gapY="5">
-      <Col gapY="1" mt="0">
-        <Text fontSize="2" fontWeight="medium">
+    <Col p={5} pt={4} gapY={5}>
+      <Col gapY={1} mt={0}>
+        <Text fontSize={2} fontWeight="medium">
           Leap
         </Text>
         <Text gray>
@@ -84,7 +83,7 @@ export function LeapSettings(props: { api: GlobalApi; }) {
       </Col>
       <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
         <Form>
-          <Col gapY="4">
+          <Col gapY={4}>
             <Text fontWeight="medium">
               Customize default Leap sections
             </Text>

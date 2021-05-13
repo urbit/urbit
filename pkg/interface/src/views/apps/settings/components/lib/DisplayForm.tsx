@@ -1,8 +1,8 @@
 import {
-  Col,
+    Col,
 
-  Label,
-  ManagedRadioButtonField as Radio, Text
+    Label,
+    ManagedRadioButtonField as Radio, Text
 } from '@tlon/indigo-react';
 import { Form, Formik } from 'formik';
 import React from 'react';
@@ -11,6 +11,7 @@ import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
 import { AsyncButton } from '~/views/components/AsyncButton';
+import {FormikOnBlur} from '~/views/components/FormikOnBlur';
 import { BackButton } from './BackButton';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
 
@@ -58,7 +59,7 @@ export default function DisplayForm(props: DisplayFormProps) {
   const bgType = backgroundType || 'none';
 
   return (
-    <Formik
+    <FormikOnBlur
       validationSchema={formSchema}
       initialValues={
         {
@@ -86,11 +87,10 @@ export default function DisplayForm(props: DisplayFormProps) {
         actions.setStatus({ success: null });
       }}
     >
-      {props => (
         <Form>
           <BackButton />
-          <Col p="5" pt="4" gapY="5">
-              <Col gapY="1" mt="0">
+          <Col p={5} pt={4} gapY={5}>
+              <Col gapY={1} mt={0}>
               <Text color="black" fontSize={2} fontWeight="medium">
                 Display Preferences
               </Text>
@@ -98,10 +98,7 @@ export default function DisplayForm(props: DisplayFormProps) {
                 Customize visual interfaces across your Landscape
               </Text>
             </Col>
-            <BackgroundPicker
-              bgType={props.values.bgType}
-              bgUrl={props.values.bgUrl}
-              api={api}
+            <BackgroundPicker api={api}
             />
             <Label>Theme</Label>
             <Radio name="theme" id="light" label="Light" />
@@ -112,7 +109,6 @@ export default function DisplayForm(props: DisplayFormProps) {
             </AsyncButton>
           </Col>
         </Form>
-      )}
-    </Formik>
+    </FormikOnBlur>
   );
 }

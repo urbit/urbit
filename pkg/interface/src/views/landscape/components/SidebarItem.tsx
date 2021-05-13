@@ -28,13 +28,13 @@ export const SidebarItem = ({
       bg="white"
       bgActive="washedGray"
       display="flex"
-      px="3"
-      py="2"
+      px={3}
+      py={2}
       justifyContent="space-between"
       {...rest}
     >
       <Row alignItems="center">
-        <Icon color={color} icon={icon as any} mr="2" />
+        <Icon color={color} icon={icon as any} mr={2} />
         <Text color={color}>{text}</Text>
       </Row>
       {children}

@@ -2,18 +2,15 @@ import { css } from '@styled-system/css';
 import {
   Box,
   Icon,
-
   LoadingSpinner, Row, Text
 } from '@tlon/indigo-react';
 import {
   Invite, joinProgress,
-
   JoinRequest,
-
   Metadata, MetadataUpdatePreview,
-
   resourceFromPath
 } from '@urbit/api';
+import { GraphConfig } from '@urbit/api/dist';
 import _ from 'lodash';
 import React, { ReactElement, ReactNode, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -81,10 +78,10 @@ function inviteUrl(hidden: boolean, resource: string, metadata?: Metadata) {
     return `/~landscape${resource}`;
   }
 
-  if (metadata?.config.graph === 'chat') {
-    return `/~landscape/messages/resource/${metadata?.config?.graph}${resource}`;
+  if ((metadata?.config as GraphConfig).graph === 'chat') {
+    return `/~landscape/messages/resource/${(metadata?.config as GraphConfig)?.graph}${resource}`;
   } else {
-    return `/~landscape/home/resource/${metadata?.config?.graph}${resource}`;
+    return `/~landscape/home/resource/${(metadata?.config as GraphConfig)?.graph}${resource}`;
   }
 }
 function InviteMetadata(props: {
@@ -99,7 +96,7 @@ function InviteMetadata(props: {
   }
 
   const container = (children: ReactNode) => (
-    <Row overflow="hidden" height="4" gapX="2" alignItems="center">
+    <Row overflow="hidden" height={4} gapX={2} alignItems="center">
       {children}
     </Row>
   );
@@ -137,7 +134,7 @@ function InviteStatus(props: { status?: JoinRequest }) {
   const current = status && joinProgress.indexOf(status.progress);
   const desc = _.isNumber(current) && description[current];
   return (
-    <Row gapX="1" alignItems="center" height={4}>
+    <Row gapX={1} alignItems="center" height={4}>
       { status.progress === 'done' ? <Icon icon="Checkmark" /> : <LoadingSpinner dark /> }
       <Text gray>{desc}</Text>
     </Row>
@@ -206,8 +203,9 @@ function InviteActions(props: {
   app?: string;
   uid?: string;
 }) {
-  const { resource, api, app, uid } = props;
+  const { status, resource, api, app, uid } = props;
   const inviteAccept = useInviteAccept(resource, api, app, uid);
+  const set = useGroupState(s => s.set);
 
   const inviteDecline = useCallback(async () => {
     if (!(app && uid)) {
@@ -216,30 +214,33 @@ function InviteActions(props: {
     await api.invite.decline(app, uid);
   }, [app, uid]);
 
-  const hideJoin = useCallback(async () => {
-    await api.groups.hide(resource);
-  }, [api, resource]);
-
-  const { status } = props;
-  if (status) {
-    if(status.progress === 'done') {
-      return null;
+  const hideJoin = useCallback(async (e) => {
+    if(status?.progress === 'done') {
+      set(s => {
+        delete s.pendingJoin[resource]
+      });
+      e.stopPropagation();
+      return;
     }
+    await api.groups.hide(resource);
+  }, [api, resource, status]);
+
+  if (status) {
     return (
-      <Row gapX="2" alignItems="center" height={4}>
+      <Row gapX={2} alignItems="center" height={4}>
         <StatelessAsyncButton
           height={4}
           backgroundColor="white"
           onClick={hideJoin}
         >
-          Cancel
+          {status?.progress === 'done' ? 'Dismiss' : 'Cancel'}
         </StatelessAsyncButton>
       </Row>
     );
   }
 
   return (
-    <Row gapX="2" alignItems="center" height={4}>
+    <Row gapX={2} alignItems="center" height={4}>
       <StatelessAsyncButton
         color="blue"
         height={4}
@@ -298,7 +299,7 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
     <NotificationWrapper api={api}>
       <Header content {...headerProps} />
       <Row onClick={onClick} height={[null, 4]} alignItems="flex-start" gridArea="main">
-        <Elbow mx="2" />
+        <Elbow mx={2} />
         <ResponsiveRow
           gapXY={[1, 2]}
           height={[null, 4]}

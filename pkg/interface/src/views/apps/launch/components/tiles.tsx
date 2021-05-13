@@ -1,17 +1,18 @@
 import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
 import useLaunchState from '~/logic/state/launch';
+import { WeatherState } from '~/types';
 import BasicTile from './tiles/basic';
 import ClockTile from './tiles/clock';
 import CustomTile from './tiles/custom';
 import WeatherTile from './tiles/weather';
 
-interface TileProps {
+export interface TileProps {
   api: GlobalApi;
 }
 
 const Tiles = (props: TileProps): ReactElement => {
-  const weather = useLaunchState(state => state.weather);
+  const weather = useLaunchState(state => state.weather) as WeatherState;
   const tileOrdering = useLaunchState(state => state.tileOrdering);
   const tileState = useLaunchState(state => state.tiles);
   const tiles = tileOrdering.filter((key) => {
@@ -26,7 +27,6 @@ const Tiles = (props: TileProps): ReactElement => {
         <BasicTile
           key={key}
           title={basic.title}
-          iconUrl={basic.iconUrl}
           linkedUrl={basic.linkedUrl}
         />
       );

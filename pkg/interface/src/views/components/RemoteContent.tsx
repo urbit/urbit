@@ -21,6 +21,7 @@ type RemoteContentProps = VirtualContextProps & {
   textProps?: any;
   style?: any;
   transcluded?: any;
+  className?: string;
 }
 
 interface RemoteContentState {
@@ -132,15 +133,15 @@ return;
   wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null, flushPadding = false, noOp = false) {
     const { style } = this.props;
     return (
-      <Box borderRadius="1" backgroundColor="washedGray" maxWidth="min(100%, 20rem)">
+      <Box borderRadius={1} backgroundColor="washedGray" maxWidth="min(100%, 20rem)">
       <Row
         alignItems="center"
-        gapX="1"
+        gapX={1}
       >
-        { textOnly && (<Icon ml="2" display="block" icon="ArrowExternal" />)}
+        { textOnly && (<Icon ml={2} display="block" icon="ArrowExternal" />)}
         { !textOnly && unfoldEmbed && (
           <Icon
-            ml='2'
+            ml={2}
             display='block'
             onClick={unfoldEmbed}
             icon={unfold ? 'TriangleSouth' : 'TriangleEast'}
@@ -156,7 +157,7 @@ return;
           whiteSpace="nowrap"
           overflow="hidden"
           textOverflow="ellipsis"
-          minWidth="0"
+          minWidth={0}
           width={textOnly ? 'calc(100% - 24px)' : 'fit-content'}
           maxWidth="min(500px, 100%)"
           style={{ color: 'inherit', textDecoration: 'none', ...style }}
@@ -318,7 +319,7 @@ return;
       }
      const renderEmbed = !(this.state.embed !== 'error' && this.state.embed?.html);
      const embed = <Box
-            mb='2'
+            mb={2}
             width='100%'
             flexShrink={0}
             display={this.state.unfold ? 'block' : 'none'}

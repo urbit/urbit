@@ -45,15 +45,15 @@ export function ViewProfile(props: any): ReactElement {
           </Text>
         </Center>
       </Row>
-      <Col pb={2} mt='3' alignItems='center' justifyContent='center' width='100%'>
+      <Col pb={2} mt={3} alignItems='center' justifyContent='center' width='100%'>
         <Center flexDirection='column' maxWidth='32rem'>
-          <RichText width='100%' disableRemoteContent>
+          <RichText api={props.api} width='100%' disableRemoteContent>
             {contact?.bio ? contact.bio : ''}
           </RichText>
         </Center>
       </Col>
       {(contact?.groups || []).length > 0 && (
-        <Col gapY='3' mb='3' mt='6' alignItems='flex-start'>
+        <Col gapY={3} mb={3} mt={6} alignItems='flex-start'>
           <Text gray>Pinned Groups</Text>
           <Col>
             {contact?.groups.slice().sort(lengthOrder).map(g => (

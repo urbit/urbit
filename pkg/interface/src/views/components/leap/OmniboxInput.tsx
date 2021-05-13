@@ -21,13 +21,13 @@ export class OmniboxInput extends Component<OmniboxInputProps> {
           }
         }}
         width='100%'
-        p='2'
+        p={2}
         backgroundColor='white'
         color='black'
         border='1px solid transparent'
-        borderRadius='2'
+        borderRadius={2}
         maxWidth='calc(600px - 1.15rem)'
-        fontSize='1'
+        fontSize={1}
         style={{ boxSizing: 'border-box' }}
         placeholder='Search...'
         onKeyDown={props.control}

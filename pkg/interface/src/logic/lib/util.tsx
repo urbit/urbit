@@ -1,12 +1,15 @@
 /* eslint-disable max-lines */
+import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
 import { Association, Contact } from '@urbit/api';
 import anyAscii from 'any-ascii';
 import bigInt, { BigInteger } from 'big-integer';
 import { enableMapSet } from 'immer';
 import _ from 'lodash';
 import f from 'lodash/fp';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { foregroundFromBackground } from '~/logic/lib/sigil';
 import { IconRef, Workspace } from '~/types';
+import useContactState from '../state/contact';
 import useSettingsState from '../state/settings';
 
 enableMapSet();
@@ -58,10 +61,10 @@ export const getChord = (e: KeyboardEvent) => {
 }
 
 export function getResourcePath(workspace: Workspace, path: string, joined: boolean, mod: string) {
-  const base = workspace.type === 'group' 
-    ? `/~landscape${workspace.group}` 
-    : workspace.type === 'home' 
-    ? `/~landscape/home` 
+  const base = workspace.type === 'group'
+    ? `/~landscape${workspace.group}`
+    : workspace.type === 'home'
+    ? `/~landscape/home`
     : `/~landscape/messages`;
   return `${base}/${joined ? 'resource' : 'join'}/${mod}${path}`
 }
@@ -452,6 +455,13 @@ export const useHovering = (): useHoveringInterface => {
   return useMemo(() => ({ hovering, bind }), [hovering, bind]);
 };
 
+export function withHovering<T>(Component: React.ComponentType<T>) {
+  return React.forwardRef((props, ref) => {
+    const { hovering, bind } = useHovering();
+    return <Component ref={ref} hovering={hovering} bind={bind} {...props} />
+  })
+}
+
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
 export function getItemTitle(association: Association): string {
   if (DM_REGEX.test(association.resource)) {
@@ -464,3 +474,22 @@ export function getItemTitle(association: Association): string {
   return association.metadata.title ?? association.resource ?? '';
 }
 
+export const svgDataURL = (svg) => 'data:image/svg+xml;base64,' + btoa(svg);
+
+export const svgBlobURL = (svg) => URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+
+export const favicon = () => {
+  let background = '#ffffff';
+  const contacts = useContactState.getState().contacts;
+  if (contacts.hasOwnProperty(`~${window.ship}`)) {
+    background = `#${uxToHex(contacts[`~${window.ship}`].color)}`;
+  }
+  const foreground = foregroundFromBackground(background);
+  const svg = sigiljs({
+    patp: window.ship,
+    renderer: stringRenderer,
+    size: 16,
+    colors: [background, foreground]
+  });
+  return svg;
+}

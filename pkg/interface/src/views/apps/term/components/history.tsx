@@ -11,8 +11,8 @@ export class History extends Component {
     return (
       <Box
         height='100%'
-        minHeight='0'
-        minWidth='0'
+        minHeight={0}
+        minWidth={0}
         display='flex'
         flexDirection='column-reverse'
         overflowY='scroll'

@@ -1,6 +1,9 @@
 import _ from 'lodash';
 
 export default class Api {
+  ship: any;
+  channel: any;
+  bindPaths: any[];
   constructor(ship, channel) {
     this.ship = ship;
     this.channel = channel;
@@ -10,7 +13,7 @@ export default class Api {
   bind(path, method, ship = this.ship, appl = 'herm', success, fail) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.subscriptionId = this.channel.subscribe(ship, appl, path,
+    (window as any).subscriptionId = this.channel.subscribe(ship, appl, path,
       (err) => {
         fail(err);
       },

@@ -1,36 +1,26 @@
-import React from 'react';
-import _ from 'lodash';
-import { Post, Content, ReferenceContent } from '@urbit/api';
 import {
-  Box,
-  Text,
-  Anchor,
-  H1,
+  Anchor, Box,
+  Col, H1,
   H2,
   H3,
-  H4,
-  Row,
-  Col,
+  H4, Text
 } from '@tlon/indigo-react';
-
-import GlobalApi from '~/logic/api/global';
-import TextContent from './content/text';
-import CodeContent from './content/code';
-import RemoteContent from '~/views/components/RemoteContent';
-import { Mention } from '~/views/components/MentionText';
-import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
-import { referenceToPermalink } from '~/logic/lib/permalinks';
-import { GraphContentWide } from './GraphContentWide';
-import { PropFunc } from '~/types';
-import fromMarkdown from 'mdast-util-from-markdown';
-import Dot from '~/views/components/Dot';
+import { Content, ReferenceContent } from '@urbit/api';
+import _ from 'lodash';
 import {
-  Root,
-  Parent,
-  Content as AstContent,
-  BlockContent,
-} from '@types/mdast';
+  BlockContent, Content as AstContent, Parent, Root
+} from 'mdast';
+import React from 'react';
+import GlobalApi from '~/logic/api/global';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { PropFunc } from '~/types';
+import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
+import Dot from '~/views/components/Dot';
+import { Mention } from '~/views/components/MentionText';
+import RemoteContent from '~/views/components/RemoteContent';
+import CodeContent from './content/code';
 import { parseTall, parseWide } from './parse';
+
 
 type StitchMode = 'merge' | 'block' | 'inline';
 
@@ -230,36 +220,32 @@ const header = ({ children, depth, ...rest }) => {
   const level = depth;
   const inner =
     level === 1 ? (
-      <H1 display='block'>{children}</H1>
+      <H1 display="block">{children}</H1>
     ) : level === 2 ? (
-      <H2 display='block'>{children}</H2>
+      <H2 display="block">{children}</H2>
     ) : level === 3 ? (
-      <H3 display='block'>{children}</H3>
+      <H3 display="block">{children}</H3>
     ) : (
-      <H4 display='block'>{children}</H4>
+      <H4 display="block">{children}</H4>
     );
-  return (
-    <Box {...rest}>
-      {inner}
-    </Box>
-  );
+  return <Box {...rest}>{inner}</Box>;
 };
 
 const renderers = {
   heading: header,
   break: () => {
-    return <Box display='block' width='100%' height={2}></Box>
+    return <Box display="block" width="100%" height={2}></Box>;
   },
   thematicBreak: () => {
-    return <Box display='block' width='100%' height={2}></Box>
+    return <Box display="block" width="100%" height={2}></Box>;
   },
   inlineCode: ({ language, value }) => {
     return (
       <Text
         mono
-        p="1"
+        p={1}
         backgroundColor="washedGray"
-        fontSize="0"
+        fontSize={0}
         style={{ whiteSpace: 'pre-wrap' }}
       >
         {value}
@@ -268,28 +254,32 @@ const renderers = {
   },
   strong: ({ children }) => {
     return (
-      <Text fontWeight="bold" lineHeight='1'>
+      <Text fontWeight="bold" lineHeight="1">
         {children}
       </Text>
     );
   },
   emphasis: ({ children }) => {
     return (
-    <Text fontStyle="italic" fontSize="1" lineHeight={'20px'}>
+      <Text fontStyle="italic" fontSize={1} lineHeight="tall">
         {children}
-    </Text>
-    )
+      </Text>
+    );
   },
-  blockquote: ({ children, tall, ...rest }) => {
+  blockquote: ({ children, depth, tall, ...rest }) => {
+    if (depth > 1) {
+      return children;
+    }
+
     return (
       <Text
-        lineHeight="20px"
+        lineHeight="tall"
         display="block"
         borderLeft="1px solid"
         color="black"
         paddingLeft={2}
-        py="1"
-        mb="1"
+        py={1}
+        mb={1}
       >
         {children}
       </Text>
@@ -297,7 +287,7 @@ const renderers = {
   },
   paragraph: ({ children }) => {
     return (
-      <Text fontSize="1" lineHeight={'20px'}>
+      <Text fontSize={1} lineHeight="tall">
         {children}
       </Text>
     );
@@ -309,11 +299,11 @@ const renderers = {
           top="7px"
           position="absolute"
           left="0px"
-          mr="1"
+          mr={1}
           height="20px"
           width="20px"
         />
-        <Box ml="2">{children}</Box>
+        <Box ml={2}>{children}</Box>
       </Box>
     );
   },
@@ -322,12 +312,12 @@ const renderers = {
     console.log(rest);
     const inner = (
       <Text
-        p="1"
+        p={1}
         className="clamp-message"
         display="block"
-        borderRadius="1"
+        borderRadius={1}
         mono
-        fontSize="0"
+        fontSize={0}
         backgroundColor="washedGray"
         overflowX="auto"
         style={{ whiteSpace: 'pre' }}
@@ -335,37 +325,43 @@ const renderers = {
         {value}
       </Text>
     );
-    return tall ? <Box mb="2">{inner}</Box> : inner;
+    return tall ? <Box mb={2}>{inner}</Box> : inner;
   },
   link: (props) => {
     return (
-      <Anchor href={props.url} borderBottom="1" color="black" target="_blank">
+      <Anchor
+        display="inline"
+        href={props.url}
+        borderBottom="1"
+        color="black"
+        target="_blank"
+      >
         {props.children}
       </Anchor>
     );
   },
   list: ({ depth, children }) => {
     return (
-      <Col ml="3" gapY="2" my="2">
+      <Col ml={3} gapY={2} my={2}>
         {children}
       </Col>
     );
   },
   'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
-  'image': ({ url }) => (
+  image: ({ url }) => (
     <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent key={url} url={url} />
     </Box>
   ),
   'graph-url': ({ url }) => (
-    <Box mt="1" mb="2" flexShrink={0}>
+    <Box mt={1} mb={2} flexShrink={0}>
       <RemoteContent key={url} url={url} />
     </Box>
   ),
   'graph-reference': ({ api, reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
     return (
-      <Box mb="2" flexShrink={0}>
+      <Box mb={2} flexShrink={0}>
         <PermalinkEmbed
           api={api}
           link={link}
@@ -376,15 +372,26 @@ const renderers = {
     );
   },
   root: ({ tall, children }) =>
-    tall
-      ? <Box
-          display='grid'
-          style={{ 'gridTemplateColumns': 'minmax(0,1fr)', 'rowGap': '1rem' }}
-         >
-           {children}
-        </Box>
-      : <Box>{children}</Box>,
-  text: ({ value }) => value,
+    tall ? (
+      <Box
+        display="grid"
+        style={{ gridTemplateColumns: 'minmax(0,1fr)', rowGap: '1rem' }}
+      >
+        {children}
+      </Box>
+    ) : (
+      <Box>{children}</Box>
+    ),
+  text: ({ value }) => (
+    <>
+      {value.split('\n').map((v, idx) => (
+        <React.Fragment key={idx}>
+          {idx !== 0 ? <br /> : null}
+          {v}
+        </React.Fragment>
+      ))}
+    </>
+  ),
 };
 
 export function Graphdown<T extends {} = {}>(
@@ -400,7 +407,13 @@ export function Graphdown<T extends {} = {}>(
   const Renderer = renderers[ast.type] ?? (() => `unknown element: ${type}`);
 
   return (
-    <Renderer transcluded={transcluded} depth={depth} {...rest} {...nodeRest} tall={tall}>
+    <Renderer
+      transcluded={transcluded}
+      depth={depth}
+      {...rest}
+      {...nodeRest}
+      tall={tall}
+    >
       {children.map((c) => (
         <Graphdown
           transcluded={transcluded}

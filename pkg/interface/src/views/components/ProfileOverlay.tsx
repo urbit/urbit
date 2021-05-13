@@ -1,29 +1,34 @@
-import React, { useCallback, useEffect, useRef, useState, useMemo, ReactNode } from 'react';
-import { uxToHex, cite } from '@urbit/api';
-import { useShowNickname } from '~/logic/lib/util';
+import {
+  BaseImage, Box,
+
+
+
+
+
+  BoxProps,
+  Center, Col,
+
+
+  Icon, Row,
+
+  Text
+} from '@tlon/indigo-react';
+import { cite, uxToHex } from '@urbit/api';
 import _ from 'lodash';
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
 import styled from 'styled-components';
 import { getRelativePosition } from '~/logic/lib/relativePosition';
 import { Sigil } from '~/logic/lib/sigil';
-import {
-  Box,
-  Row,
-  Col,
-  Text,
-  BaseImage,
-  Icon,
-  BoxProps,
-  Center
-} from '@tlon/indigo-react';
-import RichText from './RichText';
-import { ProfileStatus } from './ProfileStatus';
-import useSettingsState from '~/logic/state/settings';
-import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { useCopy } from '~/logic/lib/useCopy';
+import { useOutsideClick } from '~/logic/lib/useOutsideClick';
+import { useShowNickname } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
+import useSettingsState from '~/logic/state/settings';
 import { Portal } from './Portal';
+import { ProfileStatus } from './ProfileStatus';
+import RichText from './RichText';
 
 export const OVERLAY_HEIGHT = 250;
 const FixedOverlay = styled(Col)`
@@ -37,7 +42,7 @@ const FixedOverlay = styled(Col)`
 type ProfileOverlayProps = BoxProps & {
   ship: string;
   api: any;
-  children: ReactNode;
+  children?: ReactNode;
   color?: string;
 };
 
@@ -143,7 +148,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         borderColor='lightGray'
         boxShadow='0px 0px 0px 3px'
         zIndex={3}
-        fontSize='0'
+        fontSize={0}
         height='250px'
         width='250px'
         padding={3}
@@ -172,7 +177,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         <Col
           position='absolute'
           overflow='hidden'
-          minWidth='0'
+          minWidth={0}
           width='100%'
           padding={3}
           bottom={0}
@@ -185,7 +190,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
               textOverflow='ellipsis'
               overflow='hidden'
               whiteSpace='pre'
-              marginBottom='0'
+              marginBottom={0}
               cursor='pointer'
               display={didCopy ? 'none' : 'block'}
               onClick={doCopy}
@@ -194,7 +199,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
             </Text>
             <Text
               fontWeight='600'
-              marginBottom='0'
+              marginBottom={0}
             >
               {copyDisplay}
             </Text>
@@ -209,11 +214,11 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
             <RichText
               display='inline-block'
               width='100%'
-              minWidth='0'
+              minWidth={0}
               textOverflow='ellipsis'
               overflow='hidden'
               whiteSpace='pre'
-              marginBottom='0'
+              marginBottom={0}
               disableRemoteContent
               gray
               title={contact?.status ? contact.status : ''}

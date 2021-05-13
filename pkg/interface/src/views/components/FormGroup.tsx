@@ -2,9 +2,9 @@ import { Box, Button, Row } from '@tlon/indigo-react';
 import { useFormikContext } from 'formik';
 import _ from 'lodash';
 import React, {
-  useCallback, useEffect,
+    useCallback, useEffect,
 
-  useMemo, useState
+    useMemo, useState
 } from 'react';
 import { Prompt } from 'react-router-dom';
 import { FormGroupContext, SubmitHandler } from '~/logic/lib/formGroup';
@@ -152,10 +152,10 @@ export function FormGroup(props: { onReset?: () => void; } & PropFunc<typeof Box
         width="100%"
         position="sticky"
         bottom="0px"
-        p="3"
-        gapX="2"
+        p={3}
+        gapX={2}
         backgroundColor="white"
-        borderTop="1"
+        borderTop={1}
         borderTopColor="washedGray"
       >
         <Button onClick={resetAll}>Cancel</Button>
