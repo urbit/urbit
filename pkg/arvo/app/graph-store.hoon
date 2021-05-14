@@ -875,10 +875,10 @@
       ==
     ==
   ::
-      [%x %firstborn @ @ @ *]
+      [%x %firstborn @ @ @ ~]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
-    =/  =atom  i.t.t.t.t.path
+    =/  =atom  (slav %ud i.t.t.t.t.path)
     =/  result=(unit marked-graph:store)
       (~(get by graphs) [ship term])
     ?~  result
