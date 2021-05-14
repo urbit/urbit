@@ -98,7 +98,9 @@ export default function DisplayForm(props: DisplayFormProps) {
                 Customize visual interfaces across your Landscape
               </Text>
             </Col>
-            <BackgroundPicker api={api}
+            <BackgroundPicker
+            api={api}
+            bgType={bgType}
             />
             <Label>Theme</Label>
             <Radio name="theme" id="light" label="Light" />

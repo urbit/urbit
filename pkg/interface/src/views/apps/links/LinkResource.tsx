@@ -1,4 +1,5 @@
 import { Box, Center, Col, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { Group } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
@@ -35,7 +36,7 @@ export function LinkResource(props: LinkResourceProps) {
 
   const [, , ship, name] = rid.split('/');
   const resourcePath = `${ship.slice(1)}/${name}`;
-  const resource = associations.graph[rid]
+  const resource: any = associations.graph[rid]
     ? associations.graph[rid]
     : { metadata: {} };
   const groups = useGroupState(state => state.groups);
@@ -62,13 +63,14 @@ export function LinkResource(props: LinkResourceProps) {
           path={relativePath('')}
           render={(props) => {
             return (
+              // @ts-ignore
               <LinkWindow
                 key={rid}
                 association={resource}
                 resource={resourcePath}
                 graph={graph}
                 baseUrl={resourceUrl}
-                group={group}
+                group={group as Group}
                 path={resource.group}
                 pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
                 api={api}
@@ -110,7 +112,7 @@ export function LinkResource(props: LinkResourceProps) {
                   node={node}
                   baseUrl={resourceUrl}
                   association={association}
-                  group={group}
+                  group={group as Group}
                   path={resource?.group}
                   api={api}
                   mt={3}
@@ -126,7 +128,7 @@ export function LinkResource(props: LinkResourceProps) {
                   editCommentId={editCommentId}
                   history={props.history}
                   baseUrl={`${resourceUrl}/index/${props.match.params.index}`}
-                  group={group}
+                  group={group as Group}
                   px={3}
                 />
               </Col>

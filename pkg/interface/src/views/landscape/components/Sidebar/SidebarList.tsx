@@ -81,12 +81,15 @@ export function SidebarList(props: {
 
   const cycleChannels = useCallback((backward: boolean) => {
     const idx = ordered.findIndex(s => s === selected);
-    const offset = backward ? -1 : 1 
+    const offset = backward ? -1 : 1
 
     const newIdx = modulo(idx+offset, ordered.length - 1);
     const { metadata, resource } = associations[ordered[newIdx]];
     const joined = graphKeys.has(resource.slice(7));
-    const path = getResourcePath(workspace, resource, joined, metadata.config.graph)
+    let path = '/~landscape/home';
+    if ('graph' in metadata.config) {
+      path = getResourcePath(workspace, resource, joined, metadata.config.graph);
+    }
     history.push(path)
   }, [selected, history.push]);
 

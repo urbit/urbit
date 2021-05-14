@@ -10,7 +10,7 @@ import {
   Metadata, MetadataUpdatePreview,
   resourceFromPath
 } from '@urbit/api';
-import { GraphConfig } from '@urbit/api/dist';
+import { GraphConfig } from '@urbit/api';
 import _ from 'lodash';
 import React, { ReactElement, ReactNode, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -217,6 +217,7 @@ function InviteActions(props: {
   const hideJoin = useCallback(async (e) => {
     if(status?.progress === 'done') {
       set(s => {
+        // @ts-ignore investigate zustand types
         delete s.pendingJoin[resource]
       });
       e.stopPropagation();
@@ -245,14 +246,14 @@ function InviteActions(props: {
         color="blue"
         height={4}
         backgroundColor="white"
-        onClick={inviteAccept}
+        onClick={inviteAccept as any}
       >
         Accept
       </StatelessAsyncButton>
       <StatelessAsyncButton
         height={4}
         backgroundColor="white"
-        onClick={inviteDecline}
+        onClick={inviteDecline as any}
       >
         Decline
       </StatelessAsyncButton>

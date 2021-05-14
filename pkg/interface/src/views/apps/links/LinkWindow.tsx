@@ -21,6 +21,7 @@ interface LinkWindowProps {
   path: string;
   api: GlobalApi;
   pendingSize: number;
+  mb?: number;
 }
 
 const style = {
@@ -48,6 +49,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
     const { props } = this;
     const { association, graph, api } = props;
     const [, , ship, name] = association.resource.split('/');
+    // @ts-ignore Uint8Array vs. BigInt mismatch?
     const node = graph.get(index);
     const first = graph.peekLargest()?.[0];
     const post = node?.post;
@@ -58,6 +60,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
       ...props,
       node
     };
+    {/* @ts-ignore calling @liam-fitzgerald on Uint8Array props */}
     if (this.canWrite() && index.eq(first ?? bigInt.zero)) {
       return (
         <React.Fragment key={index.toString()}>
@@ -125,6 +128,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
 
     return (
       <Col width="100%" height="100%" position="relative">
+        {/* @ts-ignore calling @liam-fitzgerald on virtualscroller */}
         <VirtualScroller
           origin="top"
           offset={0}

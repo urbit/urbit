@@ -13,6 +13,7 @@ export interface LaunchState extends BaseState<LaunchState> {
   runtimeLag: boolean;
 };
 
+// @ts-ignore investigate zustand types
 const useLaunchState = createState<LaunchState>('Launch', {
   firstTime: true,
   tileOrdering: [],
