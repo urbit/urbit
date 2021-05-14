@@ -25,7 +25,7 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
     resource === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
     anchorRef
   );
-  const { doCopy, copyDisplay } = useCopy(`web+urbitgraph://group${resource.slice(5)}`, "Copy", "Checkmark");
+  const { doCopy, copyDisplay } = useCopy(`web+urbitgraph://group${resource?.slice(5)}`, "Copy", "Checkmark");
   return (
     <Col {...rest} ref={anchorRef} gapY={4} maxWidth={['100%', '288px']}>
       <Row gapX={2} width="100%">
@@ -44,7 +44,7 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
             overflow="hidden"
           >{metadata.title}
           </Text>
-          {props.AllowCopy &&
+          {props?.AllowCopy &&
             <Icon
               color="gray"
               icon={props?.locked ? "Locked" : copyDisplay as IconRef}
