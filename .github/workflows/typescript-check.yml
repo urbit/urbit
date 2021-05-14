@@ -3,7 +3,7 @@ name: typescript-check
 on:
   pull_request:
     paths:
-      - 'pkg/interface'
+      - 'pkg/interface/**'
 
 jobs:
   typescript-check:
