@@ -256,11 +256,19 @@
 ++  on-leave  on-leave:def
 ++  on-peek
   |=  =path
-  ?:  =(/x/nas path)
-    ``nas+!>(nas.state)
-  ?:  =(/x/logs path)
+  ^-  (unit (unit cage))
+  ?+  path  (on-peek:def path)
+      [%x %logs ~]
     ``logs+!>(logs.state)
-  ~
+  ::
+      [%x %nas ~]
+    ``nas+!>(nas.state)
+  ::
+      [%x %nas @t ~]
+    ?~  ship=(rush i.t.t.path ;~(pfix sig fed:ag))
+      ``noun+!>(*(unit point:naive))
+    ``noun+!>((~(get by points.nas.state) u.ship))
+  ==
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
