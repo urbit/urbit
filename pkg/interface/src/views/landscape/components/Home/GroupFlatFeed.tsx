@@ -50,7 +50,7 @@ function GroupFlatFeed(props) {
     if (graphResource.ship === '~zod' && graphResource.name === 'null') {
       return;
     }
-    api.graph.getDeepNewest(graphResource.ship, graphResource.name, null, 100);
+    api.graph.getDeepOlderThan(graphResource.ship, graphResource.name, null, 100);
     api.hark.markCountAsRead(association, '/', 'post');
   }, [graphPath]);
 

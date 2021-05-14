@@ -34,7 +34,7 @@ export function sortBigIntArr(a: BigInteger[], b: BigInteger[]) {
     }
   }
   
-  return aLen - bLen;
+  return bLen - aLen;
 }
 
 
