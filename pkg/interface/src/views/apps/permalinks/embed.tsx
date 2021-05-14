@@ -1,20 +1,12 @@
-import {
-  BaseAnchor, Box,
-
-
-
-
-
-  Center, Col, Icon, Row, Text
-} from "@tlon/indigo-react";
-import { Association, GraphNode, resourceFromPath } from '@urbit/api';
+import { BaseAnchor, Box, Center, Col, Icon, Row, Text } from "@tlon/indigo-react";
+import { Association, GraphNode, resourceFromPath, GraphConfig } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import {
   getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
 } from '~/logic/lib/permalinks';
-import { getModuleIcon } from "~/logic/lib/util";
+import { getModuleIcon, GraphModule } from "~/logic/lib/util";
 import { useVirtualResizeProp } from "~/logic/lib/virtualContext";
 import useGraphState from "~/logic/state/graph";
 import useMetadataState from "~/logic/state/metadata";
@@ -129,7 +121,7 @@ function GraphPermalink(
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
-          icon={getModuleIcon(association.metadata.config.graph)}
+          icon={getModuleIcon((association.metadata.config as GraphConfig).graph as GraphModule)}
           title={association.metadata.title}
           permalink={permalink}
         />
@@ -197,6 +189,7 @@ export function PermalinkEmbed(props: {
   transcluded: number;
   showOurContact?: boolean;
   full?: boolean;
+  pending?: any;
 }) {
   const permalink = parsePermalink(props.link);
 

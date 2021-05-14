@@ -1,5 +1,5 @@
 import { Box, Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph, Unreads } from '@urbit/api';
+import { Association, Graph } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { useShowNickname } from '~/logic/lib/util';
@@ -14,7 +14,6 @@ interface NotebookProps {
   association: Association;
   baseUrl: string;
   rootUrl: string;
-  unreads: Unreads;
 }
 
 export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement | null {

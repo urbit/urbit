@@ -76,7 +76,7 @@ export interface Metadata {
 export type MetadataConfig = GroupConfig | GraphConfig;
 
 export interface GroupConfig {
-  group: null | Record<string, string> | Resource;
+  group: null | Record<string, string>;
 }
 export interface GraphConfig {
   graph: string;

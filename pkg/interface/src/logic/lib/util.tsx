@@ -462,6 +462,7 @@ export const useHovering = (): useHoveringInterface => {
 export function withHovering<T>(Component: React.ComponentType<T>) {
   return React.forwardRef((props, ref) => {
     const { hovering, bind } = useHovering();
+    // @ts-ignore needs type signature on return?
     return <Component ref={ref} hovering={hovering} bind={bind} {...props} />
   })
 }

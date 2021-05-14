@@ -20,18 +20,26 @@ export const HarkReducer = (json: any) => {
   const graphHookData = _.get(json, 'hark-graph-hook-update', false);
   if (graphHookData) {
     reduceState<HarkState, any>(useHarkState, graphHookData, [
+      // @ts-ignore investigate zustand types
       graphInitial,
+      // @ts-ignore investigate zustand types
       graphIgnore,
+      // @ts-ignore investigate zustand types
       graphListen,
+      // @ts-ignore investigate zustand types
       graphWatchSelf,
+      // @ts-ignore investigate zustand types
       graphMentions
     ]);
   }
   const groupHookData = _.get(json, 'hark-group-hook-update', false);
   if (groupHookData) {
     reduceState<HarkState, any>(useHarkState, groupHookData, [
+      // @ts-ignore investigate zustand types
       groupInitial,
+      // @ts-ignore investigate zustand types
       groupListen,
+      // @ts-ignore investigate zustand types
       groupIgnore
     ]);
   }
