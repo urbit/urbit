@@ -7,14 +7,13 @@ import {
 
   ManagedToggleSwitchField as Toggle, Text
 } from '@tlon/indigo-react';
-import { Form, Formik, FormikHelpers } from 'formik';
+import { Form, FormikHelpers } from 'formik';
 import _ from 'lodash';
 import React, { useCallback, useState } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { isWatching } from '~/logic/lib/hark';
 import useHarkState from '~/logic/state/hark';
-import { AsyncButton } from '~/views/components/AsyncButton';
-import {FormikOnBlur} from '~/views/components/FormikOnBlur';
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { BackButton } from './BackButton';
 import { GroupChannelPicker } from './GroupChannelPicker';
 
@@ -74,7 +73,7 @@ export function NotificationPreferences(props: {
     }
   }, [api, graphConfig, dnd]);
 
-  const [notificationsAllowed, setNotificationsAllowed] = useState(Notification.permission !== 'default');
+  const [notificationsAllowed, setNotificationsAllowed] = useState('Notification' in window && Notification.permission !== 'default');
 
   return (
     <>
@@ -92,7 +91,7 @@ export function NotificationPreferences(props: {
       <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
         <Form>
           <Col gapY="4">
-            {notificationsAllowed
+            {notificationsAllowed || !('Notification' in window)
               ? null
               : <Button alignSelf='flex-start' onClick={() => {
                 Notification.requestPermission().then(() => {

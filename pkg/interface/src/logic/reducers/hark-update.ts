@@ -339,7 +339,7 @@ function added(json: any, state: HarkState): HarkState {
     const { index, notification } = data;
     const time = makePatDa(data.time);
 
-    if (!useHarkState.getState().doNotDisturb) {
+    if ('Notification' in window && !useHarkState.getState().doNotDisturb) {
       const description = describeNotification(data);
       const meta = useMetadataState.getState();
       const referent = 'graph' in data.index ? meta.associations.graph[data.index.graph.graph]?.metadata?.title ?? data.index.graph : meta.associations.groups[data.index.group.group]?.metadata?.title ?? data.index.group;
