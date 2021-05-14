@@ -28,6 +28,7 @@ export default class Invoice extends Component {
     this.state = {
       masterTicket: '',
       ready: false,
+      error: false,
       sent: false,
     };
 
@@ -51,31 +52,48 @@ export default class Invoice extends Component {
 
     const newPsbt = bitcoin.Psbt.fromBase64(psbt);
 
-    const hex =
-      newPsbt.data.inputs
-             .reduce((psbt, input, idx) => {
-               const path = input.bip32Derivation[0].path
-               const prv = hd.derivePath(path).privateKey;
-               return psbt.signInput(idx, bitcoin.ECPair.fromPrivateKey(prv));
+    try {
+      const hex =
+        newPsbt.data.inputs
+               .reduce((psbt, input, idx) => {
+                 const path = input.bip32Derivation[0].path
+                 const prv = hd.derivePath(path).privateKey;
+                 return psbt.signInput(idx, bitcoin.ECPair.fromPrivateKey(prv));
 
-             }, newPsbt)
-             .finalizeAllInputs()
-             .extractTransaction()
-             .toHex();
+               }, newPsbt)
+               .finalizeAllInputs()
+               .extractTransaction()
+               .toHex();
 
-    this.broadCastTx(hex).then(res => this.setState({sent: true}));
+      this.broadCastTx(hex).then(res => this.setState({sent: true}));
+    }
+    catch(e) {
+      this.setState({error: true});
+    }
   }
 
   checkTicket(e){
     // TODO: port over bridge ticket validation logic
     let masterTicket = e.target.value;
     let ready = (masterTicket.length > 0);
-    this.setState({masterTicket, ready});
+    let error = false;
+    this.setState({masterTicket, ready, error});
   }
 
   render() {
     const { stopSending, payee, denomination, satsAmount, psbt, currencyRates } = this.props;
-    const { sent } = this.state;
+    const { sent, error } = this.state;
+
+    let inputColor = 'black';
+    let inputBg = 'white';
+    let inputBorder = 'lightGray';
+
+    if (error) {
+      inputColor = 'red';
+      inputBg = 'veryLightRed';
+      inputBorder = 'red';
+    }
+
     return (
       <>
         { sent ?
@@ -154,8 +172,21 @@ export default class Invoice extends Component {
               placeholder="••••••-••••••-••••••-••••••"
               autoCapitalize="none"
               autoCorrect="off"
+              color={inputColor}
+              backgroundColor={inputBg}
+              borderColor={inputBorder}
               onChange={this.checkTicket}
             />
+            {error &&
+             <Row>
+               <Text
+                 fontSize='14px'
+                 color='red'
+                 mt={2}>
+                 Invalid master ticket
+               </Text>
+             </Row>
+            }
             <Row
               flexDirection='row-reverse'
               mt={4}
@@ -169,7 +200,7 @@ export default class Invoice extends Component {
                 py='24px'
                 px='24px'
                 onClick={() => this.sendBitcoin(this.state.masterTicket, psbt)}
-                disabled={!this.state.ready}
+                disabled={!this.state.ready || error}
                 style={{cursor: this.state.ready ? "pointer" : "default"}}
               />
             </Row>
