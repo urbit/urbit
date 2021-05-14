@@ -1,5 +1,6 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
 import { Association, Graph, Group } from '@urbit/api';
+import { History } from 'history';
 import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { Loading } from '~/views/components/Loading';
@@ -15,6 +16,7 @@ interface PostTimelineProps {
   group: Group;
   pendingSize: number;
   vip: string;
+  history?: History;
 }
 
 const PostTimeline = (props: PostTimelineProps): ReactElement => {

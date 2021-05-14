@@ -9,6 +9,7 @@ export interface GroupState extends BaseState<GroupState> {
   pendingJoin: JoinRequests;
 }
 
+// @ts-ignore investigate zustand types
 const useGroupState = createState<GroupState>('Group', {
   groups: {},
   pendingJoin: {}

@@ -12,6 +12,7 @@ interface LinkSubmitProps {
   api: GlobalApi;
   name: string;
   ship: string;
+  parentIndex?: any;
 }
 
 const LinkSubmit = (props: LinkSubmitProps) => {
@@ -157,6 +158,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
   return (
     <>
+    {/* @ts-ignore archaic event type mismatch */}
       <Box
         flexShrink={0}
         position='relative'
@@ -194,6 +196,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
             onBlur={() => [setUrlFocused(false), setSubmitFocused(false)]}
             onFocus={() => [setUrlFocused(true), setSubmitFocused(true)]}
             spellCheck="false"
+            // @ts-ignore archaic event type mismatch error
             onPaste={onPaste}
             onKeyPress={onKeyPress}
             value={linkValue}

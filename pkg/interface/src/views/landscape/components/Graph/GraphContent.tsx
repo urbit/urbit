@@ -9,7 +9,7 @@ import { Content, ReferenceContent } from '@urbit/api';
 import _ from 'lodash';
 import {
   BlockContent, Content as AstContent, Parent, Root
-} from 'mdast';
+} from 'ts-mdast';
 import React from 'react';
 import GlobalApi from '~/logic/api/global';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
@@ -350,12 +350,18 @@ const renderers = {
   'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
   image: ({ url }) => (
     <Box mt="1" mb="2" flexShrink={0}>
-      <RemoteContent key={url} url={url} />
+      <RemoteContent
+      // @ts-ignore RemoteContent weirdness
+      key={url} url={url}
+      />
     </Box>
   ),
   'graph-url': ({ url }) => (
     <Box mt={1} mb={2} flexShrink={0}>
-      <RemoteContent key={url} url={url} />
+      <RemoteContent
+      // @ts-ignore RemoteContent weirdness
+        key={url} url={url}
+      />
     </Box>
   ),
   'graph-reference': ({ api, reference, transcluded }) => {

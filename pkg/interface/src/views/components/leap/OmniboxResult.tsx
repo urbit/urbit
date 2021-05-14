@@ -4,6 +4,7 @@ import React, { Component, ReactElement } from 'react';
 import defaultApps from '~/logic/lib/default-apps';
 import Sigil from '~/logic/lib/sigil';
 import { cite, uxToHex } from '~/logic/lib/util';
+import { IconRef } from '~/types/util';
 import withState from '~/logic/lib/withState';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
@@ -18,6 +19,7 @@ interface OmniboxResultProps {
   link: string;
   navigate: () => void;
   notificationsCount: number;
+  runtimeLag: any;
   selected: string;
   setSelection: () =>  void;
   subtext: string;
@@ -50,6 +52,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
       props.selected === props.link
       && this.result.current
     ) {
+      // @ts-ignore ref is forwarded as never, investigate later
       this.result.current.scrollIntoView({ block: 'nearest' });
     }
   }
@@ -63,7 +66,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
     notificationsCount: number,
     text: string,
     color: string
-  ): (typeof Icon) {
+  ): (any) {
     const iconFill =
       (this.state.hovered || selected === link) ? 'white' : 'black';
     const bulletFill =
@@ -81,7 +84,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
       icon.toLowerCase() === 'terminal'
     ) {
       if (icon === 'Link') {
-        link = 'Collection';
+        icon = 'Collection';
       } else if (icon === 'Terminal') {
         icon = 'Dojo';
       }
@@ -89,7 +92,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
         <Icon
           display='inline-block'
           verticalAlign='middle'
-          icon={icon}
+          icon={icon as IconRef}
           mr={2}
           size='18px'
           color={iconFill}
@@ -254,6 +257,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
         onClick={navigate}
         width='100%'
         justifyContent='space-between'
+        // @ts-ignore indigo-react doesn't allow us to pass refs
         ref={this.result}
       >
         <Box

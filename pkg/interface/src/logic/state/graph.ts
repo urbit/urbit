@@ -25,7 +25,7 @@ export interface GraphState extends BaseState<GraphState> {
   // getGraphSubset: (ship: string, resource: string, start: string, end: string) => Promise<void>;
   // getNode: (ship: string, resource: string, index: string) => Promise<void>;
 }
-
+// @ts-ignore investigate zustand types
 const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
   flatGraphs: {},
@@ -153,7 +153,5 @@ export function useGraphForAssoc(association: Association) {
   const { ship, name } = resourceFromPath(resource);
   return useGraph(ship, name);
 }
-
-window.useGraphState = useGraphState;
 
 export default useGraphState;
