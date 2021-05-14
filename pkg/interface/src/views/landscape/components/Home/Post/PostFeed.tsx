@@ -117,7 +117,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
           ref={ref}>
           <Col
             width="100%"
-            maxWidth="616px"
+            maxWidth="608px"
             pt={3}
             pl={1}
             pr={1}

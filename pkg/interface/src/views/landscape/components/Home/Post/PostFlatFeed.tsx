@@ -139,9 +139,9 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
     } else {
       const [index] = flatGraph.peekSmallest();
       if (index && index.length > 0) {
-        await api.graph.getDeepNewest(ship, name, index[0].toString(), 100);
+        await api.graph.getDeepOlderThan(ship, name, index[0].toString(), 100);
       } else {
-        await api.graph.getDeepNewest(ship, name, null, 100);
+        await api.graph.getDeepOlderThan(ship, name, null, 100);
       }
     }
 
