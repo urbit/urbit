@@ -84,7 +84,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
       icon.toLowerCase() === 'terminal'
     ) {
       if (icon === 'Link') {
-        link = 'Collection';
+        icon = 'Collection';
       } else if (icon === 'Terminal') {
         icon = 'Dojo';
       }
