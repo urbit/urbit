@@ -77,16 +77,6 @@ export function GroupLink(
           <Box pt='1' ml='2' display='flex' alignItems='center'>
             {preview ?
               <>
-                <Box pr='2' display='flex' alignItems='center'>
-                  <Icon 
-                    icon={preview.metadata.hidden ? 'Locked' : 'Public'}
-                    color='gray'
-                    mr='1'
-                   />
-                  <Text fontSize='0' color='gray'>
-                    {preview.metadata.hidden ? 'Private' : 'Public'}
-                  </Text>
-                </Box>
                 <Box display='flex' alignItems='center'>
                   <Icon icon='Users' color='gray' mr='1' />
                   <Text fontSize='0'color='gray' >
