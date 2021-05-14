@@ -121,6 +121,7 @@
 +$  error
   $?  %cant-pay-ourselves
       %no-comets
+      %no-dust
       %tx-being-signed
       %insufficient-balance
   ==
