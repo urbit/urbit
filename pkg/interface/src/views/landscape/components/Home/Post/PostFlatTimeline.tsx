@@ -29,7 +29,6 @@ const PostFlatTimeline = (props: PostTimelineProps): ReactElement => {
     vip
   } = props;
 
-  //console.log(flatGraph);
   const shouldRenderFeed = Boolean(flatGraph);
 
   if (!shouldRenderFeed) {
@@ -51,10 +50,10 @@ const PostFlatTimeline = (props: PostTimelineProps): ReactElement => {
       >
         <Col
           width="100%"
-          maxWidth="616px"
+          maxWidth="608px"
           pt={3}
-          pl={2}
-          pr={2}
+          pl={1}
+          pr={1}
           mb={3}
           alignItems="center"
         >
@@ -67,10 +66,10 @@ const PostFlatTimeline = (props: PostTimelineProps): ReactElement => {
           />
         </Col>
         <Box
-          pl={2}
-          pr={2}
+          pl={1}
+          pr={1}
           width="100%"
-          maxWidth="616px"
+          maxWidth="608px"
           alignItems="center"
         >
           <Col bg="washedGray" width="100%" alignItems="center" p={3}>
@@ -95,6 +94,7 @@ const PostFlatTimeline = (props: PostTimelineProps): ReactElement => {
         vip={vip}
         api={api}
         baseUrl={baseUrl}
+        isThread={false}
       />
     </Box>
   );

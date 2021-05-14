@@ -1,6 +1,8 @@
 import { GraphNode } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
-import BigIntArrayOrderedMap from '@urbit/api/lib/BigIntArrayOrderedMap';
+import BigIntArrayOrderedMap, {
+  arrToString
+} from '@urbit/api/lib/BigIntArrayOrderedMap';
 import bigInt, { BigInteger } from 'big-integer';
 import produce from 'immer';
 import _ from 'lodash';
@@ -28,6 +30,11 @@ export const GraphReducer = (json) => {
   if (flat) {
     reduceState<GraphState, any>(useGraphState, flat, [addNodesFlat]);
   }
+
+  const thread = _.get(json, 'graph-update-thread', false);
+  if (thread) {
+    reduceState<GraphState, any>(useGraphState, thread, [addNodesThread]);
+  }
 };
 
 const addNodesLoose = (json: any, state: GraphState): GraphState => {
@@ -48,9 +55,7 @@ const addNodesLoose = (json: any, state: GraphState): GraphState => {
 const addNodesFlat = (json: any, state: GraphState): GraphState => {
   const data = _.get(json, 'add-nodes', false);
   if (data) {
-    if (!('flatGraphs' in state)) {
-      return state;
-    }
+    if (!('flatGraphs' in state)) { return state; }
 
     const resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.flatGraphs)) {
@@ -59,22 +64,48 @@ const addNodesFlat = (json: any, state: GraphState): GraphState => {
     const indices = Array.from(Object.keys(data.nodes));
 
     indices.forEach((index) => {
+      if (index.split('/').length === 0) { return; }
+      const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
+      if (indexArr.length === 0) { return state; }
+
       let node = data.nodes[index];
-      if (index.split('/').length === 0) {
-       return;
-      }
-
-      const indexArr = index.split('/').slice(1).map((ind) => {
-        return bigInt(ind);
-      });
-
-      if (indexArr.length === 0) {
-       return state;
-      }
-
       node.children = mapifyChildren({});
       state.flatGraphs[resource] =
         state.flatGraphs[resource].set(indexArr, node);
+    });
+
+  }
+  return state;
+};
+
+const addNodesThread = (json: any, state: GraphState): GraphState => {
+  const data = _.get(json, 'add-nodes', false);
+  if (data) {
+    if (!('threadGraphs' in state)) {
+      return state;
+    }
+
+    const resource = data.resource.ship + '/' + data.resource.name;
+    if (!(resource in state.threadGraphs)) {
+      state.threadGraphs[resource] = {};
+    }
+
+    const indices = Array.from(Object.keys(data.nodes));
+
+    indices.forEach((index) => {
+      if (index.split('/').length === 0) { return; }
+      const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
+      if (indexArr.length === 0) { return state; }
+
+      let parentKey = indexArr[0].toString();
+      if (!(parentKey in state.threadGraphs[resource])) {
+        state.threadGraphs[resource][parentKey] = new BigIntArrayOrderedMap([], true);
+      }
+
+      let node = data.nodes[index];
+      node.children = mapifyChildren({});
+      state.threadGraphs[resource][parentKey] =
+        state.threadGraphs[resource][parentKey].set(indexArr, node);
     });
 
   }
@@ -122,7 +153,6 @@ const addGraph = (json, state: GraphState): GraphState => {
 
     const resource = data.resource.ship + '/' + data.resource.name;
     state.graphs[resource] = new BigIntOrderedMap();
-    state.flatGraphs[resource] = new BigIntArrayOrderedMap();
     state.graphTimesentMap[resource] = {};
 
     state.graphs[resource] = state.graphs[resource].gas(Object.keys(data.graph).map((idx) => {
@@ -197,12 +227,8 @@ const addNodes = (json, state) => {
     if (state.graphTimesentMap[resource][timestamp]) {
       const index = state.graphTimesentMap[resource][timestamp];
 
-      if (index.split('/').length === 0) {
- return graph;
-}
-      const indexArr = index.split('/').slice(1).map((ind) => {
-        return bigInt(ind);
-      });
+      if (index.split('/').length === 0) { return graph; }
+      const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
 
       delete state.graphTimesentMap[resource][timestamp];
       return _remove(graph, indexArr);
@@ -211,9 +237,7 @@ const addNodes = (json, state) => {
   };
 
   const _removePending = (graph, post, resource) => {
-    if (!post.hash) {
-      return graph;
-    }
+    if (!post.hash) { return graph; }
 
     graph = _killByFuzzyTimestamp(graph, resource, post['time-sent']);
     graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'] - 1);
@@ -223,17 +247,13 @@ const addNodes = (json, state) => {
 
   const data = _.get(json, 'add-nodes', false);
   if (data) {
-    if (!('graphs' in state)) {
-      return state;
-    }
+    if (!('graphs' in state)) { return state; }
+    if (!('flatGraphs' in state)) { return state; }
+    if (!('threadGraphs' in state)) { return state; }
 
     const resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.graphs)) {
       state.graphs[resource] = new BigIntOrderedMap();
-    }
-
-    if (!(resource in state.flatGraphs)) {
-      state.flatGraphs[resource] = new BigIntArrayOrderedMap();
     }
 
     if (!(resource in state.graphTimesentMap)) {
@@ -251,21 +271,18 @@ const addNodes = (json, state) => {
     });
 
     indices.forEach((index) => {
-      const node = data.nodes[index];
+      let node = data.nodes[index];
       const old = state.graphs[resource].size;
-      state.graphs[resource] = _removePending(state.graphs[resource], node.post, resource);
+      state.graphs[resource] = _removePending(
+        state.graphs[resource],
+        node.post,
+        resource
+      );
       const newSize = state.graphs[resource].size;
 
-      if (index.split('/').length === 0) {
- return;
-}
-      const indexArr = index.split('/').slice(1).map((ind) => {
-        return bigInt(ind);
-      });
-
-      if (indexArr.length === 0) {
- return state;
-}
+      if (index.split('/').length === 0) { return; }
+      const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
+      if (indexArr.length === 0) { return state; }
 
       if (node.post.pending) {
         state.graphTimesentMap[resource][node.post['time-sent']] = index;
@@ -278,6 +295,36 @@ const addNodes = (json, state) => {
           draft.children = mapifyChildren(draft?.children || {});
         })
       );
+
+      if (resource in state.flatGraphs) {
+        node.children = mapifyChildren({});
+        state.flatGraphs[resource] =
+          state.flatGraphs[resource].set(indexArr, node);
+      }
+
+      let threadKey = indexArr[0].toString();
+      if (resource in state.threadGraphs &&
+          threadKey in state.threadGraphs[resource]) {
+
+        let thread = state.threadGraphs[resource][threadKey];
+        if (indexArr.length > 1) {
+          let parentKey = indexArr.slice(0, indexArr.length - 1);
+          if (thread.has(parentKey)) {
+            let isFirstChild =  Array.from(thread.keys()).filter((k) => {
+              console.log(k);
+              console.log(arrToString(k).indexOf(parentKey));
+              return arrToString(k).indexOf(parentKey) !== -1;
+            }).length === 0;
+
+            if (isFirstChild) {
+              node.children = mapifyChildren({});
+              state.threadGraphs[resource][threadKey] =
+                state.threadGraphs[resource][threadKey].set(indexArr, node);
+            }
+          }
+        }
+      }
+
       if(newSize !== old) {
         console.log(`${resource}, (${old}, ${newSize}, ${state.graphs[resource].size})`);
       }

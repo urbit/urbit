@@ -27,6 +27,7 @@ interface PostFeedProps {
   group: Group;
   vip: string;
   pendingSize: number;
+  isThread: boolean;
 }
 
 class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
@@ -49,8 +50,10 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
       baseUrl,
       association,
       group,
-      vip
+      vip,
+      isThread
     } = this.props;
+
     const node = flatGraph.get(index);
     const parentNode = index.length > 1 ?
       flatGraph.get(index.slice(0, index.length - 1)) : null;
@@ -63,6 +66,32 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
     const post = node?.post;
 
     if (indexEqual(index, (first ?? [bigInt.zero]))) {
+      if (isThread) {
+        return (
+          <Col
+            pt={3}
+            width="100%"
+            alignItems="center"
+            key={arrToString(index)}
+            ref={ref}>
+            <PostItem
+              node={node}
+              graphPath={graphPath}
+              association={association}
+              api={api}
+              index={index}
+              baseUrl={baseUrl}
+              history={history}
+              parentPost={parentNode?.post}
+              isReply={index.length > 1}
+              isRelativeTime={true}
+              vip={vip}
+              group={group}
+            />
+          </Col>
+        );
+      } 
+
       return (
         <Col
           width="100%"

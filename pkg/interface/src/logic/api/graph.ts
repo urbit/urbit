@@ -350,8 +350,8 @@ export default class GraphApi extends BaseApi<StoreState> {
   async getDeepOlderThan(ship: string, resource: string, startTime = null, count: number) {
     const start = startTime ? decToUd(startTime) : 'null';
     const data = await this.scry<any>('graph-store',
-       `/deep-nodes-older-than/${ship}/${resource}/${count}/${start}`
-     );
+      `/deep-nodes-older-than/${ship}/${resource}/${count}/${start}`
+    );
     const node = data['graph-update'];
     this.store.handleEvent({
       data: {
@@ -364,9 +364,15 @@ export default class GraphApi extends BaseApi<StoreState> {
   async getFirstborn(ship: string, resource: string, topAncestor: string) {
     const top = topAncestor ? decToUd(topAncestor) : null;
     const data = await this.scry<any>('graph-store',
-       `/firstborn/${ship}/${resource}/${top}`
-     );
-    this.store.handleEvent({ data });
+      `/firstborn/${ship}/${resource}/${top}`
+    );
+    const node = data['graph-update'];
+    this.store.handleEvent({
+      data: {
+        'graph-update-thread': node,
+        'graph-update': node
+      },
+    });
   }
 
   getGraphSubset(ship: string, resource: string, start: string, end: string) {

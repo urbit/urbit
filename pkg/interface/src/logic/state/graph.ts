@@ -12,6 +12,7 @@ export interface GraphState extends BaseState<GraphState> {
     }
   };
   flatGraphs: FlatGraphs;
+  threadGraphs: ThreadGraphs;
   pendingIndices: Record<string, any>;
   graphTimesentMap: Record<string, any>;
   // getKeys: () => Promise<void>;
@@ -28,6 +29,7 @@ export interface GraphState extends BaseState<GraphState> {
 const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
   flatGraphs: {},
+  threadGraphs: {},
   graphKeys: new Set(),
   looseNodes: {},
   pendingIndices: {},
@@ -131,7 +133,14 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, ['graphs', 'graphKeys', 'looseNodes', 'graphTimesentMap', 'flatGraphs']);
+}, [
+  'graphs',
+  'graphKeys',
+  'looseNodes',
+  'graphTimesentMap',
+  'flatGraphs',
+  'threadGraphs'
+]);
 
 export function useGraph(ship: string, name: string) {
   return useGraphState(

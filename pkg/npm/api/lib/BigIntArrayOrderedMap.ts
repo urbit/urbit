@@ -19,6 +19,15 @@ export function arrToString(arr: BigInteger[]) {
   return string;
 }
 
+function sorted(a: BigInteger[], b: BigInteger[], reversed = false) {
+  const getSort = sortBigIntArr(a, b);
+  if (reversed) {
+    return getSort * -1;
+  } else {
+    return getSort
+  }
+}
+
 export function sortBigIntArr(a: BigInteger[], b: BigInteger[]) {
   let aLen = a.length;
   let bLen = b.length;
@@ -42,11 +51,13 @@ export default class BigIntArrayOrderedMap<V> implements Iterable<[BigInteger[],
   root: Record<string, V> = {}
   cachedIter: [BigInteger[], V][] = null;
   [immerable] = true;
+  reversed = false;
 
-  constructor(items: [BigInteger[], V][] = []) {
+  constructor(items: [BigInteger[], V][] = [], reversed = false) {
     items.forEach(([key, val]) => {
       this.set(key, val);
     });
+    this.reversed = reversed;
   }
 
   get size() {
@@ -130,7 +141,7 @@ export default class BigIntArrayOrderedMap<V> implements Iterable<[BigInteger[],
     }
     const result = Object.keys(this.root).map(key => {
       return [stringToArr(key), this.root[key]] as [BigInteger[], V];
-    }).sort(([a], [b]) => sortBigIntArr(a, b));
+    }).sort(([a], [b]) => sorted(a, b, this.reversed));
     this.cachedIter = result;
     return [...result];
   }

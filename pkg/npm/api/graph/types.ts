@@ -78,3 +78,9 @@ export type Graphs = { [rid: string]: Graph };
 export type FlatGraph = BigIntArrayOrderedMap<FlatGraphNode>;
 
 export type FlatGraphs = { [rid: string]: FlatGraph };
+
+export type ThreadGraphs = {
+  [rid: string]: {
+    [index: string]: FlatGraph;
+  }
+};
