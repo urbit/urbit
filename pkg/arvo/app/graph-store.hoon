@@ -302,6 +302,11 @@
         ?~  node-list  graph
         =*  index  -.i.node-list
         =*  node   +.i.node-list
+        ~|  "cannot add deleted post"
+        ?>  ?=(%& -.post.node)
+        =*  p  p.post.node
+        ~|  "graph indexes must match"
+        ?>  =(index index.p)
         %_  $
             node-list  t.node-list
             graph      (add-node-at-index graph index node mark)
@@ -883,6 +888,7 @@
       (~(get by graphs) [ship term])
     ?~  result
       [~ ~]
+    ~&  (has:orm p.u.result atom)
     ?.  (has:orm p.u.result atom)
       [~ ~]
     =/  =node:store  (got:orm p.u.result atom)
