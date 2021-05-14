@@ -832,7 +832,7 @@
       [(snoc index atom) node]
     ==
   ::
-      [%x %deep-nodes-up-to @ @ @ @ ~]
+      [%x %deep-nodes-older-than @ @ @ @ ~]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
     =/  count=(unit atom)  (rush i.t.t.t.t.path dem:ag)
@@ -874,6 +874,31 @@
         d  (~(put by d.f) c node(children [%empty ~]))
       ==
     ==
+  ::
+      [%x %firstborn @ @ @ *]
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  =atom  i.t.t.t.t.path
+    =/  result=(unit marked-graph:store)
+      (~(get by graphs) [ship term])
+    ?~  result
+      [~ ~]
+    ?.  (has:orm p.u.result atom)
+      [~ ~]
+    =/  =node:store  (got:orm p.u.result atom)
+    =/  =index:store  atom^~
+    =/  map
+      %-  ~(gas by *(map index:store node:store))
+      [index node(children empty+~)]~
+    |-
+    ?:  ?=(%empty -.children.node)
+      :-  ~  :-  ~  :-  %graph-update-2
+      !>  ^-  update:store
+      [now.bowl [%add-nodes [ship term] map]]
+    =/  item=[k=^atom v=node:store]
+      (need (pry:orm p.children.node))
+    =.  index  (snoc index k.item)
+    $(map (~(put by map) index v.item(children empty+~)), node v.item)
   ::
       [%x %update-log-subset @ @ @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
