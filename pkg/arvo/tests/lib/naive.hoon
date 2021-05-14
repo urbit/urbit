@@ -506,6 +506,7 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx 0 marbud-own new-keys-no-reset))
+      =^  f  state  (n state %bat q:(gen-tx 1 marbud-own new-keys-no-reset))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -541,6 +542,7 @@
   =/  zero-keys-yes-reset         [%configure-keys 0 0 0 &]
   =/  marbud-transfer-no-breach   [%transfer-point (addr %marbud-key-1) |]
   =/  marbud-transfer-yes-breach  [%transfer-point (addr %marbud-key-1) &]
+  =/  marbud-own-1                [~marbud %marbud-key-1 %own]
   ::
   ;:  weld
     %+  expect-eq
@@ -563,6 +565,31 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-transfer-no-breach))
+      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+    ::  set networking keys increments life
+    ::
+      !>  [0 1]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own new-keys-no-reset))
+      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+    ::  set networking keys, then transfer and set networking keys with breach
+    ::
+      !>  [1 2]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own new-keys-no-reset))
+      =^  f  state  (n state %bat q:(gen-tx 1 marbud-own marbud-transfer-no-breach))
+      ::  TODO: shouldn't the nonce by zero for the next tx?
+      =^  f  state  (n state %bat q:(gen-tx 2 marbud-own-1 zero-keys-yes-reset))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
