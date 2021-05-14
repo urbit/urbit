@@ -8,6 +8,9 @@ const errorToString = (error) => {
   if (error === 'no-comets') {
     return 'Cannot pay comets';
   }
+  if (error === 'no-dust') {
+    return 'Cannot send dust';
+  }
   if (error === 'tx-being-signed') {
     return 'Cannot pay when transaction is being signed';
   }
