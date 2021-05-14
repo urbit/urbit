@@ -28,6 +28,7 @@ export interface PostItemProps {
   node: GraphNode;
   parentPost?: Post;
   vip: string;
+  isThread?: boolean;
 }
 
 interface PostItemState {
@@ -100,7 +101,8 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
       vip,
       group,
       hovering,
-      bind
+      bind,
+      isThread
     } = this.props;
 
     let indexString = '';
@@ -119,7 +121,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
         ref={innerRef}
         pl={1}
         pr={1}
-        mb={3}
+        mb={isThread && !inReplyMode ? 0 : 3}
         width="100%"
         alignItems="center"
       >
@@ -185,6 +187,16 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
               index={indexString}
               submitCallback={this.submitCallback}
             />
+          </Col>
+        ) : null }
+      { isThread && !inReplyMode ? (
+          <Col width="100%" maxWidth="600px">
+            <Box
+              ml={3}
+              height="16px"
+              borderLeft={1}
+              borderLeftColor="lightGray"
+            ></Box>
           </Col>
         ) : null }
       </Col>
