@@ -888,7 +888,6 @@
       (~(get by graphs) [ship term])
     ?~  result
       [~ ~]
-    ~&  (has:orm p.u.result atom)
     ?.  (has:orm p.u.result atom)
       [~ ~]
     =/  =node:store  (got:orm p.u.result atom)
