@@ -42,6 +42,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
     this.state = { inReplyMode: false };
     this.toggleReplyMode = this.toggleReplyMode.bind(this);
     this.navigateToReplies = this.navigateToReplies.bind(this);
+    this.navigateToThread = this.navigateToThread.bind(this);
     this.submitCallback = this.submitCallback.bind(this);
   }
 
@@ -79,7 +80,21 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
       indexString = indexString + '/' + i.toString();
     });
 
-    history.push(`${baseUrl}/feed${indexString}`);
+    history.push(`${baseUrl}/feed/replies${indexString}`);
+  }
+
+  navigateToThread() {
+    const { history, baseUrl, index, isParent } = this.props;
+    if (isParent) {
+      return;
+    }
+    let indexString = '';
+
+    index.forEach((i) => {
+      indexString = indexString + '/' + i.toString();
+    });
+
+    history.push(`${baseUrl}/feed/thread${indexString}`);
   }
 
   submitCallback() {
@@ -133,7 +148,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
           width="100%"
           maxWidth="600px"
           backgroundColor={ hovering ? 'washedGray' : 'transparent' }
-          onClick={this.navigateToReplies}
+          onClick={isThread ? this.navigateToReplies : this.navigateToThread}
           cursor={isParent ? "default": "pointer"}
           {...bind}>
           { (postExists) ? (

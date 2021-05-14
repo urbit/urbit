@@ -25,7 +25,7 @@ export default function PostThread(props) {
   const graphResource =
     graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
 
-  const locationUrl = props.locationUrl.replace(`${baseUrl}/feed`, '');
+  const locationUrl = props.locationUrl.replace(`${baseUrl}/feed/thread`, '');
   const index = locationUrl.split('/').slice(1).map((ind) => bigInt(ind));
 
   useEffect(() => {
@@ -36,6 +36,7 @@ export default function PostThread(props) {
     if (index.length < 1) {
       return;
     }
+    console.log(index[0].toString());
 
     api.graph.getFirstborn(
       graphResource.ship,

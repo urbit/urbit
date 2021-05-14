@@ -94,7 +94,7 @@ function GroupFeed(props) {
           }}
         />
         <Route
-          path={relativePath('/feed/:index+')}
+          path={relativePath('/feed/replies/:index+')}
           render={(routeProps) => {
             return (
               <PostReplies

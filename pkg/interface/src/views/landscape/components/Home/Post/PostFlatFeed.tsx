@@ -55,6 +55,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
     } = this.props;
 
     const node = flatGraph.get(index);
+    console.log(arrToString(index))
     const parentNode = index.length > 1 ?
       flatGraph.get(index.slice(0, index.length - 1)) : null;
 
@@ -204,7 +205,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
           style={virtualScrollerStyle}
           pendingSize={pendingSize}
           renderer={this.renderItem}
-          loadRows={this.fetchPosts}
+          loadRows={this.doNotFetch}
         />
       </Col>
     );

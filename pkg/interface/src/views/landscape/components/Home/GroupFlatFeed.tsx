@@ -11,6 +11,8 @@ import { Loading } from '~/views/components/Loading';
 import { GroupFeedHeader } from './GroupFeedHeader';
 import PostThread from './Post/PostThread';
 import PostFlatTimeline from './Post/PostFlatTimeline';
+import PostReplies from './Post/PostReplies';
+
 
 function GroupFlatFeed(props) {
   const {
@@ -95,10 +97,28 @@ function GroupFlatFeed(props) {
           }}
         />
         <Route
-          path={relativePath('/feed/:index+')}
+          path={relativePath('/feed/thread/:index+')}
           render={(routeProps) => {
             return (
               <PostThread
+                locationUrl={locationUrl}
+                baseUrl={baseUrl}
+                api={api}
+                history={history}
+                graphPath={graphPath}
+                group={group}
+                association={association}
+                vip={vip}
+                pendingSize={pendingSize}
+              />
+            );
+          }}
+        />
+        <Route
+          path={relativePath('/feed/replies/:index+')}
+          render={(routeProps) => {
+            return (
+              <PostReplies
                 locationUrl={locationUrl}
                 baseUrl={baseUrl}
                 api={api}

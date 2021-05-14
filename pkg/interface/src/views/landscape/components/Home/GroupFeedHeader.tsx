@@ -14,9 +14,17 @@ export function GroupFeedHeader(props) {
 
   const locationUrl =
     history.location.pathname.replace(`${baseUrl}/feed`, '');
-  const nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
-    return bigInt(ind);
-  });
+  console.log(locationUrl);
+
+  let splitLoc = locationUrl.split('/');
+  let indicator = '';
+  if (splitLoc.length > 1) {
+    splitLoc = splitLoc.slice(1);
+    indicator = splitLoc[0];
+  }
+
+  const nodeIndex = splitLoc.slice(1).map((ind) => bigInt(ind));
+  console.log(nodeIndex);
 
   let node;
   nodeIndex.forEach((i) => {
@@ -60,7 +68,8 @@ cursor="pointer" onClick={() => {
                 history.location.pathname.replace(`${baseUrl}`, '').split('/');
               loc.pop();
               loc = loc.join('/');
-              history.push(`${baseUrl}${loc}`);
+              //  TODO: improve
+              history.push(`${baseUrl}/feed`);
             }}
             >{'<- Back'}</Text>
           ) : null
@@ -71,10 +80,16 @@ cursor="pointer" onClick={() => {
           <Text bold fontSize={2} pl={1} pr={2}>Group Feed</Text>
           <Text fontSize={0} p={1} backgroundColor="washedGray">{permText}</Text>
         </>
-      ) : ( !authorText ? null : (
+      ) : ( !!authorText ? (
         <>
           <Text bold fontSize={2} pl={1} pr={2}>Post by </Text>
           <Text bold fontSize={2} mono>{`~${authorText}`}</Text>
+        </>
+      ) : (
+        <>
+          <Text bold fontSize={2} pl={1} pr={2}>{
+            indicator.charAt(0).toUpperCase() + indicator.slice(1)
+          }</Text>
         </>
       ))}
     </Row>

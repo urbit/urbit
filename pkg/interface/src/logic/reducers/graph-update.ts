@@ -55,6 +55,9 @@ const addNodesLoose = (json: any, state: GraphState): GraphState => {
 const addNodesFlat = (json: any, state: GraphState): GraphState => {
   const data = _.get(json, 'add-nodes', false);
   if (data) {
+    console.log(JSON.stringify(data.nodes))
+    console.log(Object.keys(data.nodes).length);
+
     if (!('flatGraphs' in state)) { return state; }
 
     const resource = data.resource.ship + '/' + data.resource.name;
