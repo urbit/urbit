@@ -472,14 +472,16 @@
     =/  mnu  `(list @ud)`(shape u)
     =/  mu  `@ud`-:mnu
     =/  nu  `@ud`+<:mnu
+    =/  mn  (mul mu nu)
+    =/  count  1
     =/  i  1
     =/  j  1
     =/  off  0
     |-  ^-  ?
       ?:  (gth off 0)  %.n
-      ?:  (gth count n)  %.y
-      ?:  (gth i nu)  $(count i +(i), j 1, off off)
-    $(i i, j +(j), off (add off ?:((isclose (get u i j) (get v i j) tol) 0 1)))
+      ?:  (gth count mn)  %.y
+      ?:  (gth i nu)  $(count +(count), i +(i), j 1, off off)
+    $(count +(count), i i, j +(j), off (add off ?:((isclose (get u i j) (get v i j) tol) 0 1)))
   ++  gauss-find-next-row
     |=  [u=@lms i=@ud]  ^-  @ud
     ~_  leaf+"lagoon-fail"
