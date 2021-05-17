@@ -14,7 +14,7 @@ export interface GraphState extends BaseState<GraphState> {
   flatGraphs: FlatGraphs;
   threadGraphs: ThreadGraphs;
   pendingIndices: Record<string, any>;
-  graphTimesentMap: Record<string, any>;
+  graphTimesentMap: Record<number, string>;
   // getKeys: () => Promise<void>;
   // getTags: () => Promise<void>;
   // getTagQueries: () => Promise<void>;

@@ -55,15 +55,17 @@ const addNodesLoose = (json: any, state: GraphState): GraphState => {
 const addNodesFlat = (json: any, state: GraphState): GraphState => {
   const data = _.get(json, 'add-nodes', false);
   if (data) {
-    console.log(JSON.stringify(data.nodes))
-    console.log(Object.keys(data.nodes).length);
-
     if (!('flatGraphs' in state)) { return state; }
 
     const resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.flatGraphs)) {
       state.flatGraphs[resource] = new BigIntArrayOrderedMap();
     }
+
+    if (!(resource in state.graphTimesentMap)) {
+      state.graphTimesentMap[resource] = {};
+    }
+
     const indices = Array.from(Object.keys(data.nodes));
 
     indices.forEach((index) => {
@@ -291,6 +293,7 @@ const addNodes = (json, state) => {
 
       if (node.post.pending) {
         state.graphTimesentMap[resource][node.post['time-sent']] = index;
+        console.log('set pending', index);
       }
 
       state.graphs[resource] = _addNode(
@@ -302,9 +305,44 @@ const addNodes = (json, state) => {
       );
 
       if (resource in state.flatGraphs) {
-        node.children = mapifyChildren({});
+        console.log('flat update', node.post);
+        const _flatKill = (graph, resource, timestamp) => {
+          console.log('flat kill', resource in state.graphTimesentMap);
+          console.log(timestamp, state.graphTimesentMap[resource]);
+          console.log(state.graphTimesentMap[resource][timestamp.toString()]);
+          debugger;
+          if (state.graphTimesentMap[resource][timestamp.toString()]) {
+            console.log('never reach this console log because 312 is undefined');
+            const index = state.graphTimesentMap[resource][timestamp.toString()];
+
+            if (index.split('/').length === 0) { return graph; }
+            const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
+
+            delete state.graphTimesentMap[resource][timestamp];
+            return graph.delete(indexArr);
+          }
+          return graph;
+        };
+
+        const _removeFlatPending = (graph, post, resource) => {
+          if (!post.hash) { return graph; }
+
+          graph = _flatKill(graph, resource, post['time-sent']);
+          graph = _flatKill(graph, resource, post['time-sent'] - 1);
+          graph = _flatKill(graph, resource, post['time-sent'] + 1);
+          return graph;
+        };
+
+        state.flatGraphs[resource] = _removeFlatPending(
+          state.flatGraphs[resource],
+          node.post,
+          resource
+        );
+
         state.flatGraphs[resource] =
-          state.flatGraphs[resource].set(indexArr, node);
+          state.flatGraphs[resource].set(indexArr, produce(node, draft => {
+            draft.children = mapifyChildren({});
+          }));
       }
 
       let threadKey = indexArr[0].toString();
@@ -316,8 +354,6 @@ const addNodes = (json, state) => {
           let parentKey = indexArr.slice(0, indexArr.length - 1);
           if (thread.has(parentKey)) {
             let isFirstChild =  Array.from(thread.keys()).filter((k) => {
-              console.log(k);
-              console.log(arrToString(k).indexOf(parentKey));
               return arrToString(k).indexOf(parentKey) !== -1;
             }).length === 0;
 
