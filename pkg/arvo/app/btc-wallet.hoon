@@ -19,28 +19,10 @@
 ::
 +$  versioned-state
     $%  state-0
-        state-1
     ==
-::  batch-size: how many addresses to send out at once for checking
-::  last-block: most recent block seen by the store
 ::
 +$  state-0
   $:  %0
-      prov=(unit provider)
-      walts=(map xpub:bc walt)
-      =btc-state
-      =history
-      curr-xpub=(unit xpub:bc)
-      =scans
-      =params
-      feybs=(map ship sats)
-      =piym
-      =poym
-      ahistorical-txs=(set txid)
-  ==
-::
-+$  state-1
-  $:  %1
       prov=(unit provider)
       walts=(map xpub:bc walt)
       =btc-state
@@ -58,7 +40,7 @@
 +$  card  card:agent:gall
 ::
 --
-=|  state-1
+=|  state-0
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -85,7 +67,7 @@
       ==
   %_  this
       state
-    :*  %1
+    :*  %0
         ~
         *(map xpub:bc walt)
         *^btc-state
@@ -113,41 +95,8 @@
   =|  cards=(list card)
   |-
   ?-  -.ver
-      %1
-    [cards this(state ver)]
-  ::
       %0
-    =/  add-tile
-      :-  %launch-action
-      !>  :+  %add
-        %btc-wallet
-      [[%custom `'/~btc' `'/~btc/img/tile.png'] %.y]
-    =/  remove-tile
-      [%launch-action !>([%remove %btc-wallet])]
-    =/  warning  [%settings-event !>([%put-entry %btc-wallet %warning %b %.y])]
-    %=  $
-        cards
-      :~  [%pass /btc-wallet-tile %agent [our.bowl %launch] %poke remove-tile]
-          [%pass /btc-wallet-tile %agent [our.bowl %launch] %poke add-tile]
-          [%pass /warn %agent [our.bowl %settings-store] %poke warning]
-      ==
-    ::
-        ver
-      :*  %1
-          prov.ver
-          walts.ver
-          btc-state.ver
-          history.ver
-          curr-xpub.ver
-          scans.ver
-          params.ver
-          feybs.ver
-          piym.ver
-          poym.ver
-          ahistorical-txs.ver
-          ~
-      ==
-    ==
+    [cards this(state ver)]
   ==
 ::
 ++  on-poke
@@ -341,7 +290,8 @@
         ~(nixt-address wad:bl u.uw %1)
       :-  `(~(add-output txb:bl u.tb) addr u.chng `(~(hdkey wad:bl w %1) idx))
       state(walts (~(put by walts) u.curr-xpub w))
-    :_  state(poym tb)
+    =/  po=^poym  ?~(tb [~ ~] [tb note.comm])
+    :_  state(poym po)
     ?~  tb  ~
     %+  turn  txis.u.tb
     |=  =txi
@@ -354,21 +304,21 @@
     ?<  =(src.bowl payee.comm)
     ?<  ?=(%pawn (clan:title payee.comm))
     ?<  is-broadcasting
-    :_  state(poym ~, feybs (~(put by feybs) payee.comm feyb.comm))
-     ~[(poke-peer payee.comm [%gen-pay-address value.comm])]
+    :_  state(poym [~ note.comm], feybs (~(put by feybs) payee.comm feyb.comm))
+     ~[(poke-peer payee.comm [%gen-pay-address value.comm note.comm])]
   ::
       %broadcast-tx
     ?~  prov  ~|("Provider not connected" !!)
     =+  signed=(from-cord:hxb:bc txhex.comm)
     =/  tx-match=?
-      ?~  poym  %.n
-      =((get-id:txu:bc (decode:txu:bc signed)) ~(get-txid txb:bl u.poym))
+      ?~  txbu.poym  %.n
+      =((get-id:txu:bc (decode:txu:bc signed)) ~(get-txid txb:bl u.txbu.poym))
     :-  ?.  tx-match
           ((slog leaf+"txid didn't match txid in wallet") ~)
         ~[(poke-provider [%broadcast-tx signed])]
     ?.  tx-match  state
-      ?~  poym  state
-    state(signed-tx.u.poym `signed)
+      ?~  txbu.poym  state
+    state(signed-tx.u.txbu.poym `signed)
   ::
       %gen-new-address
     ?~  curr-xpub  ~|("btc-wallet: no curr-xpub set" !!)
@@ -403,7 +353,11 @@
     =^  a=address  state
       (generate-address u.curr-xpub %0)
     :-  ~[(poke-peer src.bowl [%give-pay-address a value.act])]
-    state(ps.piym (~(put by ps.piym) src.bowl [~ u.curr-xpub a src.bowl value.act]))
+    %=  state
+        ps.piym
+      %+  ~(put by ps.piym)  src.bowl
+      [~ u.curr-xpub a src.bowl value.act note.act]
+    ==
     ::
     ++  generate-address
       |=  [=xpub:bc =chyg]
@@ -433,7 +387,8 @@
     |^
     =^  tb=(unit txbu)  state
       (generate-txbu u.curr-xpub `src.bowl feyb ~[[address.act value.act ~]])
-    :_  state(poym tb)
+    =/  po=^poym  ?~(tb [~ ~] [tb note.poym])
+    :_  state(poym po)
     ?~  tb  ~
     %+  turn  txis.u.tb
     |=(=txi (poke-provider [%raw-tx txid.utxo.txi]))
@@ -497,14 +452,14 @@
         %add-poym-raw-txi
     |^
     ?>  =(src.bowl our.bowl)
-    ?~  poym  `state
-    =.  txis.u.poym
-      (update-poym-txis txis.u.poym +.intr)
+    ?~  txbu.poym  `state
+    =.  txis.u.txbu.poym
+      (update-poym-txis txis.u.txbu.poym +.intr)
     :_  state
-    =+  pb=~(to-psbt txb:bl u.poym)
+    =+  pb=~(to-psbt txb:bl u.txbu.poym)
     ?~  pb  ~
-    =+  vb=~(vbytes txb:bl u.poym)
-    =+  fee=~(fee txb:bl u.poym)
+    =+  vb=~(vbytes txb:bl u.txbu.poym)
+    =+  fee=~(fee txb:bl u.txbu.poym)
     ~&  >>  "{<vb>} vbytes, {<(div fee vb)>} sats/byte, {<fee>} sats fee"
     %-  (slog [%leaf "PSBT: {<u.pb>}"]~)
     [(give-update [%psbt u.pb])]~
@@ -541,9 +496,9 @@
     ++  poym-has-txid
       |=  txid=hexb
       ^-  ?
-      ?~  poym  %.n
-      ?~  signed-tx.u.poym  %.n
-      =(txid (get-id:txu:bc (decode:txu:bc u.signed-tx.u.poym)))
+      ?~  txbu.poym  %.n
+      ?~  signed-tx.u.txbu.poym  %.n
+      =(txid (get-id:txu:bc (decode:txu:bc u.signed-tx.u.txbu.poym)))
     ::   - checks whether poym has a signed tx
     ::   - checks whether the txid matches that signed tx, if not, skip
     ::   - clears poym
@@ -553,16 +508,17 @@
       |=  ti=info:tx
       ^-  (quip card _state)
       |^
-      ?~  poym  `state
-      ?~  signed-tx.u.poym  `state
+      ?~  txbu.poym  `state
+      ?~  signed-tx.u.txbu.poym  `state
       ?.  (poym-has-txid txid.ti)
         `state
-      =+  vout=(get-vout txos.u.poym)
+      =+  vout=(get-vout txos.u.txbu.poym)
       ?~  vout  ~|("poym-to-history: poym should always have an output" !!)
-      =/  new-hest=hest  (mk-hest ti xpub.u.poym our.bowl payee.u.poym u.vout)
+      =/  new-hest=hest
+        (mk-hest ti xpub.u.txbu.poym our.bowl payee.u.txbu.poym u.vout note.poym)
       :-  [(give-update %new-tx new-hest)]~
       %=  state
-        poym     ~
+        poym     [~ ~]
         history  (~(put by history) txid.ti new-hest)
       ==
       ::
@@ -590,7 +546,7 @@
       =+  vout=(get-vout value.u.pay)
       ?~  vout
         `(del-pend-piym txid.ti)
-      =/  new-hest  (mk-hest ti xpub.u.pay payer.u.pay `our.bowl u.vout)
+      =/  new-hest  (mk-hest ti xpub.u.pay payer.u.pay `our.bowl u.vout note.u.pay)
       =.  state  (del-all-piym txid.ti payer.u.pay)
       :-  [(give-update %new-tx new-hest)]~
       %=  state
@@ -624,7 +580,13 @@
       --
     ::
     ++  mk-hest
-      |=  [ti=info:tx =xpub:bc payer=ship payee=(unit ship) vout=@ud]
+      |=  $:  ti=info:tx
+              =xpub:bc
+              payer=ship
+              payee=(unit ship)
+              vout=@ud
+              note=(unit @t)
+          ==
       ^-  hest
       :*  xpub
           txid.ti
@@ -636,13 +598,14 @@
             ?:  =(pos.o vout)   ::  check whether this is the output that went to payee
             [o payee]
             [o `payer]
+          note
        ==
     --
     ::
       %fail-broadcast-tx
     ?>  =(src.bowl our.bowl)
     ~&  >>>  "%fail-broadcast-tx"
-    `state(poym ~)
+    `state(poym [~ ~])
     ::
       %succeed-broadcast-tx
     ?>  =(src.bowl our.bowl)
@@ -650,14 +613,14 @@
     :_  state
     ?~  prov  ~
     :-  (poke-provider [%tx-info txid.intr])
-    ?~  poym          ~
-    ?~  payee.u.poym  ~
+    ?~  txbu.poym  ~
+    ?~  payee.u.txbu.poym  ~
     :_  ~
     %-  poke-peer
-    :*  u.payee.u.poym
+    :*  u.payee.u.txbu.poym
         %expect-payment
         txid.intr
-        value:(snag 0 txos.u.poym)
+        value:(snag 0 txos.u.txbu.poym)
     ==
   ==
 ::
@@ -772,16 +735,16 @@
   ++  retry-poym
     |=  =network
     ^-  (list card)
-    ?~  poym  ~
-    =/  w  (~(get by walts) xpub.u.poym)
+    ?~  txbu.poym  ~
+    =/  w  (~(get by walts) xpub.u.txbu.poym)
     ?~  w  ~
     ?.  =(network network.u.w)  ~
     %+  weld
-      ?~  signed-tx.u.poym  ~
-      ~[(poke-provider [%broadcast-tx u.signed-tx.u.poym])]
-    %+  turn  txis.u.poym
+      ?~  signed-tx.u.txbu.poym  ~
+      ~[(poke-provider [%broadcast-tx u.signed-tx.u.txbu.poym])]
+    %+  turn  txis.u.txbu.poym
     |=  =txi
-    (poke-provider [%raw-tx ~(get-txid txb:bl u.poym)])
+    (poke-provider [%raw-tx ~(get-txid txb:bl u.txbu.poym)])
   ::  +retry-pend-piym: check whether txids in pend-piym are in mempool
   ::
   ++  retry-pend-piym
@@ -808,7 +771,7 @@
     (handle-address-info address.p.upd utxos.p.upd used.p.upd)
     ::
       %tx-info
-    =/  [cards=(list card) sty=state-1]
+    =/  [cards=(list card) sty=state-0]
       (handle-tx-info info.p.upd)
     :_  sty
     [(poke-internal [%close-pym info.p.upd]) cards]
@@ -818,8 +781,8 @@
     ~[(poke-internal [%add-poym-raw-txi +.p.upd])]
     ::
       %broadcast-tx
-    ?~  poym  `state
-    ?.  =(~(get-txid txb:bl u.poym) txid.p.upd)
+    ?~  txbu.poym  `state
+    ?.  =(~(get-txid txb:bl u.txbu.poym) txid.p.upd)
       `state
     :_  state
     ?:  ?|(broadcast.p.upd included.p.upd)
@@ -889,6 +852,7 @@
           recvd.ti
           (turn inputs.ti |=(v=val:tx (is-our-ship our-addrs v)))
           (turn outputs.ti |=(v=val:tx (is-our-ship our-addrs v)))
+          ~
       ==
   ::
   ++  is-our-ship
@@ -1115,8 +1079,8 @@
 ::
 ++  is-broadcasting
   ^-  ?
-  ?~  poym  %.n
-  ?=(^ signed-tx.u.poym)
+  ?~  txbu.poym  %.n
+  ?=(^ signed-tx.u.txbu.poym)
 ::
 ::  Scry Helpers
 ::

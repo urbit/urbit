@@ -34,6 +34,7 @@ export default class Send extends Component {
       focusPayee: true,
       focusCurrency: false,
       focusSats: false,
+      focusNote: false,
       submitting: false,
       feeChoices: {
         low: [10, 1],
@@ -42,6 +43,7 @@ export default class Send extends Component {
       },
       feeValue: "mid",
       showModal: false,
+      note: '',
     };
 
     this.initPayment  = this.initPayment.bind(this);
@@ -122,6 +124,7 @@ export default class Send extends Component {
           'payee': this.state.payee,
           'value': parseInt(this.state.satsAmount),
           'feyb': this.state.feeChoices[this.state.feeValue][1],
+          'note': (this.state.note || null),
         }
       }
       this.props.api.btcWalletCommand(command).then(res => this.setState({signing: true}));
@@ -131,6 +134,7 @@ export default class Send extends Component {
           'address': this.state.payee,
           'value': parseInt(this.state.satsAmount),
           'feyb': 1,
+          'note': (this.state.note || null),
         }
       }
       this.props.api.btcWalletCommand(command).then(res => this.setState({signing: true}));
@@ -181,15 +185,11 @@ export default class Send extends Component {
             satsAmount={satsAmount}
           /> :
           <Col
-            height='400px'
             width='100%'
             backgroundColor='white'
             borderRadius='48px'
             mb={5}
             p={5}
-            display="flex"
-            flexDirection="column"
-            justifyContent="space-between"
           >
             <Col width="100%">
               <Row
@@ -309,6 +309,33 @@ export default class Send extends Component {
                      />
                 }
               </Col>
+              <Row mt={4} width="100%"
+                justifyContent="space-between"
+                alignItems='center'
+              >
+                <Text
+                  gray
+                  fontSize={1}
+                  fontWeight='600'
+                  width="40%"
+                >Note</Text>
+                <Input
+                  onFocus={() => {this.setState({focusNote: true})}}
+                  onBlur={() => {this.setState({focusNote: false})}}
+                  fontSize='14px'
+                  width='100%'
+                  placeholder="What's this for?"
+                  type='text'
+                  borderColor={this.state.focusNote ? "lightGray" : "none"}
+                  disabled={signing}
+                  value={this.state.note}
+                  onChange={e => {
+                    this.setState({
+                      note: e.target.value,
+                    });
+                  }}
+                />
+              </Row>
             </Col>
             <Row
               flexDirection='row-reverse'
