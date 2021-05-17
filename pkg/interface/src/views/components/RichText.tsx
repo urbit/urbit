@@ -1,4 +1,4 @@
-import { Anchor, Text } from '@tlon/indigo-react';
+import { Anchor, Box, Text } from '@tlon/indigo-react';
 import { Contact, Group } from '@urbit/api';
 import React from 'react';
 import ReactMarkdown, { ReactMarkdownProps } from 'react-markdown';
@@ -6,6 +6,7 @@ import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import { isValidPatp } from 'urbit-ob';
 import GlobalApi from '~/logic/api/global';
 import { deSig } from '~/logic/lib/util';
+import {PropFunc} from '~/types';
 import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
 import { Mention } from '~/views/components/MentionText';
 import RemoteContent from '~/views/components/RemoteContent';
@@ -34,7 +35,7 @@ type RichTextProps = ReactMarkdownProps & {
   color?: string;
   children?: any;
   width?: string;
-}
+} & PropFunc<typeof Box>;
 
 const RichText = React.memo(({ disableRemoteContent = false, api, ...props }: RichTextProps) => (
   <ReactMarkdown

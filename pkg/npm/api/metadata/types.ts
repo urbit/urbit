@@ -67,19 +67,20 @@ export interface Metadata {
   description: string;
   title: string;
   config: MetadataConfig;
-  picture: string;
   hidden: boolean;
+  picture: string;
   preview: boolean;
   vip: PermVariation;
 }
 
 export type MetadataConfig = GroupConfig | GraphConfig;
 
-export interface GroupConfig {
-  group: null | Record<string, string> | Resource;
-}
 export interface GraphConfig {
   graph: string;
+}
+
+export interface GroupConfig {
+  group: undefined | {} | MdResource;
 }
 
 export type PermVariation = '' | ' ' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';

@@ -22,7 +22,38 @@ export const GraphReducer = (json) => {
   if(loose) {
     reduceState<GraphState, any>(useGraphState, loose, [addNodesLoose]);
   }
+  const dm = _.get(json, 'dm-hook-action', false);
+  if(dm) {
+    console.log(dm);
+    reduceState<GraphState, any>(useGraphState, dm, [
+      acceptOrRejectDm,
+      pendings,
+      setScreen
+    ])
+  }
 };
+const acceptOrRejectDm = (json: any, state: GraphState): GraphState => {
+  const data = _.get(json, 'accept', _.get(json, 'decline', false));
+  if(data) {
+    state.pendingDms.delete(data)
+  }
+  return state;
+}
+
+const pendings = (json: any, state: GraphState): GraphState => {
+  const data = _.get(json, 'pendings', false);
+  if(data) {
+    state.pendingDms = new Set(data);
+  }
+  return state;
+}
+
+const setScreen = (json: any, state: GraphState): GraphState => {
+  if('screen' in json) {
+    state.screening = json.screen;
+  }
+  return state;
+}
 
 const addNodesLoose = (json: any, state: GraphState): GraphState => {
   const data = _.get(json, 'add-nodes', false);

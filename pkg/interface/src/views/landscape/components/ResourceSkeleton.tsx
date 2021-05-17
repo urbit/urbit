@@ -17,6 +17,10 @@ const TruncatedText = styled(RichText)`
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  display: none;
+  @media screen and (min-width: ${p => p.theme.breakpoints[0]}) {
+    display: inline;
+  }
 `;
 
 type ResourceSkeletonProps = {
@@ -109,7 +113,6 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
 
   const Description = () => (
     <TruncatedText
-      display={['none','inline']}
       mono={workspace === '/messages' && !urbitOb.isValidPatp(title)}
       color='gray'
       mb={0}

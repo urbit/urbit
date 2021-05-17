@@ -267,19 +267,22 @@ export function GraphNotification(props: {
 
   const authors = _.uniq(_.map(contents, 'author'));
   const singleAuthor = authors.length === 1;
-  const { graph, group } = index;
-  const association = useAssocForGraph(graph)!;
-  const dm = isDm(graph);
+  const { graph, mark } = index;
+  const association = useAssocForGraph(graph);
+  const dm = mark === 'graph-validator-dm';
   const desc = describeNotification(
     index.description,
     contents.length !== 1,
     dm,
     singleAuthor
   );
-  const groupAssociation = useAssocForGroup(association?.group);
-  const groups = useGroupState(state => state.groups);
+  const groupAssociation = useAssocForGroup(association?.group ?? "");
+  const groups = useGroupState((state) => state.groups);
 
   const onClick = useCallback(() => {
+    if(!association) {
+      history.push(`/~landscape/messages/dm/~${authors[0]}`);
+    }
     if (
       !(
         (index.description === 'note' || index.description === 'link') &&
@@ -291,7 +294,7 @@ export function GraphNotification(props: {
         getNodeUrl(
           index.module,
           groups[association?.group]?.hidden,
-          group,
+          association?.group,
           association?.resource,
           first.index
         )
@@ -324,7 +327,8 @@ export function GraphNotification(props: {
         <GraphNodes
           hideAuthors={hideAuthors}
           posts={contents.slice(0, 4)}
-          mod={index.module}
+          mod={index.mark}
+          description={index.description}
           index={contents?.[0].index}
           association={association}
           hidden={groups[association?.group]?.hidden}

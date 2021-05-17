@@ -91,6 +91,7 @@ class App extends React.Component {
 
   componentDidMount() {
     this.subscription.start();
+    this.api.graph.getShallowChildren(`~${window.ship}`, 'dm-inbox');
     const theme = this.getTheme();
     this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
     this.mobileWatcher = window.matchMedia(`(max-width: ${theme.breakpoints[0]})`);

@@ -265,9 +265,12 @@ function ChatMessage(props: ChatMessageProps) {
       }
     }
 
-  const date = useMemo(() => daToUnix(bigInt(msg.index.split('/')[1])), [msg.index]);
-  const nextDate = useMemo(() => nextMsg && typeof nextMsg !== 'string' ? (
-    daToUnix(bigInt(nextMsg.index.split('/')[1]))
+  const date = useMemo(() => 
+    daToUnix(bigInt(msg.index.split('/').reverse()[0])),
+    [msg.index]
+  );
+  const nextDate = useMemo(() => nextMsg ? (
+    daToUnix(bigInt(nextMsg.index.split('/').reverse()[0]))
   ) : null,
     [nextMsg]
   );
@@ -356,7 +359,7 @@ export const MessageAuthor = ({
   const dark = theme === 'dark' || (theme === 'auto' && osDark);
   let contact: Contact | null = useContact(`~${msg.author}`);
 
-  const date = daToUnix(bigInt(msg.index.split('/')[1]));
+  const date = daToUnix(bigInt(msg.index.split('/').reverse()[0]));
 
   const datestamp = moment
     .unix(date / 1000)

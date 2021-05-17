@@ -1,13 +1,14 @@
-/* eslint-disable max-lines */
-import { Association, Contact } from '@urbit/api';
-import anyAscii from 'any-ascii';
-import bigInt, { BigInteger } from 'big-integer';
-import { enableMapSet } from 'immer';
-import _ from 'lodash';
-import f from 'lodash/fp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { IconRef } from '~/types';
+import _ from 'lodash';
+import { patp2dec } from 'urbit-ob';
+import f, { compose, memoize } from 'lodash/fp';
+import bigInt, { BigInteger } from 'big-integer';
+import { Association, Contact, Patp } from '@urbit/api';
+import produce, { enableMapSet } from 'immer';
 import useSettingsState from '../state/settings';
+/* eslint-disable max-lines */
+import anyAscii from 'any-ascii';
+import { IconRef } from '~/types';
 
 enableMapSet();
 
@@ -369,9 +370,13 @@ export function numToUd(num: number) {
     f.reverse,
     f.chunk(3),
     f.reverse,
-    f.map(s => s.join('')),
+    f.map(f.flow(f.reverse, f.join(''))),
     f.join('.')
   )(num.toString());
+}
+
+export function patpToUd(patp: Patp) {
+  return numToUd(patp2dec(patp))
 }
 
 export function usePreventWindowUnload(shouldPreventDefault: boolean, message = 'You have unsaved changes. Are you sure you want to exit?') {
