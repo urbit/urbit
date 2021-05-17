@@ -34,7 +34,9 @@ export default function Sent(props) {
         />
       </Row>
       <Center>
-        <Text color='white'>{`You sent BTC to ${payee}`}</Text>
+        <Text
+          style={{'display': 'block', 'overflow-wrap': 'anywhere'}}
+          color='white'>{`You sent BTC to ${payee}`}</Text>
       </Center>
       <Center
         flexDirection='column'
