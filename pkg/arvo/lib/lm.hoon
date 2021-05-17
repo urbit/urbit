@@ -437,9 +437,7 @@
     ::~/  %augment
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
+    =+  [mu nu]=[&1 &2]:(shape u)
     ?.  =(mu nu)  !!  :: make sure this is a valid operation (square matrix)
     =/  w  `@lms`(zeros mu (mul mu 2))
     =/  count  1
@@ -469,9 +467,7 @@
     (isclose x .0 .1e-6)
   ++  all-close
     |=  [u=@lms v=@lms tol=@rs]
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
+    =+  [mu nu]=[&1 &2]:(shape u)
     =/  mn  (mul mu nu)
     =/  count  1
     =/  i  1
@@ -491,20 +487,23 @@
       ?:  (gth ii mu)  i
       ?.  (isclose (get u ii i) .0 .1e-6)  ii
     $(ii +(ii))
-  ++  gauss-scale
+  ++  gauss-normalize-row
     |=  [u=@lms i=@ud]  ^-  @lms
-    ::~&  ["gs" i (unmake:lvs (getr u i)) (get u i i) (unmake:lvs (divs:lvs (getr u i) (get u i i)))]
-    (setr u i (divs:lvs (getr u i) (get u i i)))
+    ~_  leaf+"lagoon-fail"
+    (divsr u i (get u i i))
   ++  gauss-replace-down
     |=  [u=@lms i=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
     =+  [mu nu]=[&1 &2]:(shape u)
-    =/  jj  +(i)
+    =/  ii  +(i)
+    =/  u  (gauss-normalize-row u i)
     |-  ^-  @lms
-      ?:  (gth jj mu)  u
-      ?:  (isclose (get u jj i) .0 .1e-6)  $(jj +(jj), u u)
-      ::need to divide through by first element then subtract row i
-    $(jj +(jj), u (subvr u jj (muls:lvs (getr u i) (get u jj i))))
+      ?:  (gth ii mu)  u
+      ?:  (isclose (get u ii i) .0 .1e-6)  $(ii +(ii), u u)
+      =/  r1  (muls:lvs (getr u i) (get u ii i))
+      =/  r2  (subv:lvs (getr u ii) r1)
+      =/  r3  (divs:lvs r2 (get:lvs r2 +(i)))
+    $(ii +(ii), u (setr u ii r3))
   ::
   ::  Row reduction has two phases:  check for zero in ith column, if so swap.
   ::  Then replace down and rescale.
@@ -516,16 +515,13 @@
     |-  ^-  @lms
       ?:  (gth i mu)  `@lms`u
       ?.  (isclose (get u i i) .0 .1e-6)
-        ~&  [i (unmake (gauss-scale u i))]
-        $(i +(i), u (gauss-replace-down (gauss-scale u i) i))
+        $(i +(i), u (gauss-replace-down u i))
       =/  ii  (gauss-find-next-row u i)
-    $(i +(i), u (gauss-scale (gauss-replace-down (swapr u i ii) i) i))
+    $(i +(i), u (gauss-replace-down (swapr u i ii) i))
   ++  gauss-replace-up
     |=  [u=@lms i=@ud]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
+    =+  [mu nu]=[&1 &2]:(shape u)
     =/  j  (dec i)
     |-  ^-  @lms
       ?:  =(j 0)  `@lms`u
@@ -533,9 +529,7 @@
   ++  gauss-row-replace
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
-    =/  mnu  `(list @ud)`(shape u)
-    =/  mu  `@ud`-:mnu
-    =/  nu  `@ud`+<:mnu
+    =+  [mu nu]=[&1 &2]:(shape u)
     =/  i  1
     |-  ^-  @lms
       ?:  (gth i mu)  `@lms`u
@@ -550,7 +544,6 @@
     =/  u  (augment u)
     |-  ^-  @lms
       ?:  (gth i m)  (gauss-row-replace u)
-      ~&  [i (unmake u)]
     $(i +(i), u (gauss-row-reduce u i))
   ++  minor
     ::~/  %minor
