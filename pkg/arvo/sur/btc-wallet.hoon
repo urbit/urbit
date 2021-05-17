@@ -5,9 +5,13 @@
 +$  provider  [host=ship connected=?]
 +$  block  @ud
 +$  btc-state  [=block fee=(unit sats) t=@da]
-+$  payment  [pend=(unit txid) =xpub =address payer=ship value=sats]
-+$  piym  [ps=(map ship payment) pend=(map txid payment) num-fam=(map ship @ud)]
-+$  poym  (unit txbu)
++$  payment  [pend=(unit txid) =xpub =address payer=ship value=sats note=(unit @t)]
++$  piym
+  $:  ps=(map ship payment)
+      pend=(map txid payment)
+      num-fam=(map ship @ud)
+  ==
++$  poym  [txbu=(unit txbu) note=(unit @t)]
 ::
 ::  command: run from the CLI or as API calls by our ship
 ::
@@ -18,15 +22,15 @@
       [%set-current-wallet =xpub]
       [%add-wallet =xpub =fprint scan-to=(unit scon) max-gap=(unit @ud) confs=(unit @ud)]
       [%delete-wallet =xpub]
-      [%init-payment-external =address value=sats feyb=sats]
-      [%init-payment payee=ship value=sats feyb=sats]
+      [%init-payment-external =address value=sats feyb=sats note=(unit @t)]
+      [%init-payment payee=ship value=sats feyb=sats note=(unit @t)]
       [%broadcast-tx txhex=cord]
       [%gen-new-address ~]
   ==
 ::  action: how peers poke us
 ::
 +$  action
-  $%  [%gen-pay-address value=sats]
+  $%  [%gen-pay-address value=sats note=(unit @t)]
       [%give-pay-address =address value=sats]
       [%expect-payment =txid value=sats]
   ==
@@ -110,6 +114,7 @@
       recvd=(unit @da)
       inputs=(list [=val:tx s=(unit ship)])
       outputs=(list [=val:tx s=(unit ship)])
+      note=(unit @t)
   ==
 +$  history  (map txid hest)
 ::  data to send to the frontend

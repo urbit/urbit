@@ -37,6 +37,7 @@
     :~  address+address
         value+ni
         feyb+ni
+        note+(mu so)
     ==
   ::
   ++  init-payment
@@ -44,6 +45,7 @@
     :~  payee+ship
         value+ni
         feyb+ni
+        note+(mu so)
     ==
   ::
   ++  address
@@ -186,6 +188,7 @@
         recvd+?~(recvd.h ~ (sect u.recvd.h))
         inputs+(vals inputs.h)
         outputs+(vals outputs.h)
+        note+?~(note.h ~ [%s u.note.h])
     ==
   ::
   ++  vals

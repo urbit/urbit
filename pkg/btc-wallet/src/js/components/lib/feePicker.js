@@ -35,7 +35,7 @@ export default class FeePicker extends Component {
         backgroundColor="white" borderRadius={3}
       >
         <Text fontSize={1} color="black" fontWeight="bold" mb={4}>
-          Transaction Speedaaaaa
+          Transaction Speed
         </Text>
         <Col mt={4}>
           <RadioButton
