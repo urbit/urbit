@@ -124,15 +124,15 @@
   ::
   ++  poke-noun
     |=  non=*
-    ?>  ?=(%rewatch-dms non)
-    =/  graphs=(list resource)
-      ~(tap in get-keys:gra)
-    :-  ~
-    %_   state
-        watching  
-      %-  ~(gas in watching)
-      (murn graphs |=(rid=resource ?:((should-watch:ha rid) `[rid ~] ~)))
-    ==
+    [~ state]
+::    ?>  ?=(%rewatch-dms non)
+::    =/  graphs=(list resource)
+::      ~(tap in get-keys:gra)
+::    %_   state
+::        watching  
+::      %-  ~(gas in watching)
+::      (murn graphs |=(rid=resource ?:((should-watch:ha rid) `[rid ~] ~)))
+::    ==
   ::
   ++  hark-graph-hook-action
     |=  =action:hook
@@ -195,13 +195,15 @@
       ::
         ?(%remove-graph %archive-graph)  
       (remove-graph resource.q.update)
-      ::
+    ::
         %remove-posts
       (remove-posts resource.q.update indices.q.update)
-      ::
+    ::
         %add-nodes
       =*  rid  resource.q.update
-      (check-nodes ~(val by nodes.q.update) rid)
+      =/  assoc=(unit association:metadata)
+        (peek-association:met %graph rid)
+      (check-nodes ~(val by nodes.q.update) rid assoc)
     ==
   ::  this is awful, but notification kind should always switch
   ::  on the index, so hopefully doesn't matter
@@ -255,9 +257,11 @@
       (get-graph-mop:gra rid)
     =/  node=(unit node:graph-store)
       (bind (peek:orm:graph-store graph) |=([@ =node:graph-store] node))
+    =/  assoc=(unit association:metadata)
+      (peek-association:met %graph rid)
     =^  cards  state
-      (check-nodes (drop node) rid)
-    ?.  (should-watch:ha rid)
+      (check-nodes (drop node) rid assoc)
+    ?.  (should-watch:ha rid assoc)
       [cards state]
     :_   state(watching (~(put in watching) [rid ~]))
     (weld cards (give:ha ~[/updates] %listen [rid ~]))
@@ -265,9 +269,8 @@
   ++  check-nodes
     |=  $:  nodes=(list node:graph-store)
             rid=resource
+            assoc=(unit association:metadata)
         ==
-    =/  metadatum=(unit metadatum:metadata)
-      (peek-metadatum:met %graph rid)
     abet:check:(abed:handle-update:ha rid nodes)
   --
 ::
@@ -330,14 +333,11 @@
   $(contents t.contents)
 ::
 ++  should-watch
-  |=  rid=resource
+  |=  [rid=resource assoc=(unit association:metadata)]
   ^-  ?
-  =/  group-rid=(unit resource)
-    (peek-group:met %graph rid) 
-  ?~  group-rid  %.y
-  ?|  !(is-managed:grp u.group-rid)
-      &(watch-on-self =(our.bowl entity.rid))
-  ==
+  ?~  assoc
+    %.y
+  &(watch-on-self =(our.bowl entity.rid))
 ::
 ++  handle-update
   |_  $:  rid=resource  ::  input
@@ -355,7 +355,9 @@
     update-core(rid r, updates upds, mark m)
   ::
   ++  get-conversion
-    (^get-conversion rid)
+    ::  LA:  this tube should be cached in %hark-graph-hook state
+    ::  instead of just trying to keep it warm, as the scry overhead is large
+    ~+  (^get-conversion rid)
   ::
   ++  abet
     ^-  (quip card _state)
@@ -409,7 +411,8 @@
       update-core
     =*  pos  p.post.node
     =+  !<  notif-kind=(unit notif-kind:hook)
-        (get-conversion !>([0 pos]))
+        %-  get-conversion
+        !>(`indexed-post:graph-store`[0 pos])
     ?~  notif-kind
       update-core
     =/  desc=@t

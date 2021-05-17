@@ -1,9 +1,9 @@
-import { Graphs, decToUd, numToUd, GraphNode, deSig, Association, resourceFromPath } from "@urbit/api";
+import { Graphs, GraphNode, deSig, Association, resourceFromPath } from "@urbit/api";
 import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
-import {useCallback} from "react";
 import { patp2dec } from 'urbit-ob';
 
-import { BaseState, createState } from "./base";
+import { useCallback } from 'react';
+import { BaseState, createState } from './base';
 
 export interface GraphState extends BaseState<GraphState> {
   graphs: Graphs;
@@ -26,7 +26,7 @@ export interface GraphState extends BaseState<GraphState> {
   // getYoungerSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
   // getGraphSubset: (ship: string, resource: string, start: string, end: string) => Promise<void>;
   // getNode: (ship: string, resource: string, index: string) => Promise<void>;
-};
+}
 
 const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
@@ -149,10 +149,8 @@ export function useGraphForAssoc(association: Association) {
   return useGraph(ship, name);
 }
 
-window.useGraphState = useGraphState;
-
 export function useInbox() {
-  return useGraphState(s => s.graphs[`${window.ship}/dm-inbox`] || new BigIntOrderedMap());
+  return useGraphState(s => s.graphs[`${window.ship}/dm-inbox`] || new BigIntOrderedMap<GraphNode>());
 }
 
 export function useDM(ship: string) {

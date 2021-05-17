@@ -1,29 +1,25 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
-  parsePermalink,
-  GraphPermalink as IGraphPermalink,
-  getPermalinkForGraph,
-  usePermalinkForGraph,
-} from "~/logic/lib/permalinks";
-import {
-  Action,
-  Box,
-  Text,
-  BaseAnchor,
-  Row,
-  Icon,
-  Col,
+  BaseAnchor, Box,
+
+
+
+
+
+  Center, Col, Icon, Row, Text
 } from "@tlon/indigo-react";
-import { GroupLink } from "~/views/components/GroupLink";
-import GlobalApi from "~/logic/api/global";
+import { Association, GraphNode, resourceFromPath } from '@urbit/api';
+import React, { useCallback, useEffect, useState } from "react";
+import { useHistory, useLocation } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
+import {
+  getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
+} from '~/logic/lib/permalinks';
 import { getModuleIcon } from "~/logic/lib/util";
-import useMetadataState from "~/logic/state/metadata";
-import { Association, resourceFromPath, GraphNode } from "@urbit/api";
-import { Link } from "react-router-dom";
+import { useVirtualResizeProp } from "~/logic/lib/virtualContext";
 import useGraphState from "~/logic/state/graph";
-import { GraphNodeContent } from "../notifications/graph";
+import useMetadataState from "~/logic/state/metadata";
+import { GroupLink } from "~/views/components/GroupLink";
 import { TranscludedNode } from "./TranscludedNode";
-import {useVirtualResizeProp} from "~/logic/lib/virtualContext";
 
 function GroupPermalink(props: { group: string; api: GlobalApi }) {
   const { group, api } = props;
@@ -31,9 +27,9 @@ function GroupPermalink(props: { group: string; api: GlobalApi }) {
     <GroupLink
       resource={group}
       api={api}
-      pl="2"
-      border="1"
-      borderRadius="2"
+      pl={2}
+      border={1}
+      borderRadius={2}
       borderColor="lightGray"
     />
   );
@@ -49,21 +45,23 @@ function GraphPermalink(
   }
 ) {
   const { full = false, showOurContact, pending, link, graph, group, index, api, transcluded } = props;
+  const history = useHistory();
+  const location = useLocation();
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
-    useCallback((s) => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index] as GraphNode, [
+    useCallback(s => s.looseNodes?.[`${ship.slice(1)}/${name}`]?.[index] as GraphNode, [
       graph,
-      index,
+      index
     ])
   );
   const [errored, setErrored] = useState(false);
   const association = useMetadataState(
-    useCallback((s) => s.associations.graph[graph] as Association | null, [
-      graph,
+    useCallback(s => s.associations.graph[graph] as Association | null, [
+      graph
     ])
   );
 
-  useVirtualResizeProp(!!node)
+  useVirtualResizeProp(Boolean(node));
   useEffect(() => {
     (async () => {
       if (pending || !index) {
@@ -77,8 +75,33 @@ function GraphPermalink(
       }
     })();
   }, [pending, graph, index]);
-  const showTransclusion = !!(association && node && transcluded < 1);
+  const showTransclusion = Boolean(association && node && transcluded < 1);
   const permalink = getPermalinkForGraph(group, graph, index);
+
+  const navigate = (e) => {
+    e.stopPropagation();
+    history.push(`/perma${permalink.slice(16)}`);
+  };
+
+  const [nodeGroupHost, nodeGroupName] = association?.group.split('/').slice(-2) ?? ['Unknown', 'Unknown'];
+  const [nodeChannelHost, nodeChannelName] = association?.resource
+    .split('/')
+    .slice(-2) ?? ['Unknown', 'Unknown'];
+  const [
+    locChannelName,
+    locChannelHost,
+    ,
+    ,
+    ,
+    locGroupName,
+    locGroupHost
+  ] = location.pathname.split('/').reverse();
+
+  const isInSameResource =
+    locChannelHost === nodeChannelHost &&
+    locChannelName === nodeChannelName &&
+    locGroupName === nodeGroupName &&
+    locGroupHost === nodeGroupHost;
 
   return (
     <Col
@@ -87,21 +110,22 @@ function GraphPermalink(
       maxWidth={full ? null : "500px"}
       border={full ? null : "1"}
       borderColor="lightGray"
-      borderRadius="2"
-      onClick={(e) => { e.stopPropagation(); }}
+      borderRadius={2}
+      cursor="pointer"
+      onClick={(e) => {
+        navigate(e);
+      }}
     >
       {showTransclusion && index && (
-        <Box p="2">
-          <TranscludedNode
-            api={api}
-            transcluded={transcluded + 1}
-            node={node}
-            assoc={association!}
-            showOurContact={showOurContact}
-          />
-        </Box>
+        <TranscludedNode
+          api={api}
+          transcluded={transcluded + 1}
+          node={node}
+          assoc={association!}
+          showOurContact={showOurContact}
+        />
       )}
-      {!!association ? (
+      {association && !isInSameResource && (
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
@@ -109,9 +133,21 @@ function GraphPermalink(
           title={association.metadata.title}
           permalink={permalink}
         />
-      ) : (
+      )}
+      {association && isInSameResource && transcluded === 2 && (
+        <PermalinkDetails
+          known
+          showTransclusion={showTransclusion}
+          icon={getModuleIcon((association.metadata.config as GraphConfig).graph as GraphModule)}
+          title={association.metadata.title}
+          permalink={permalink}
+        />
+      )}
+      {isInSameResource && transcluded !== 2 && <Row height="12px" />}
+      {!association && (
         <PermalinkDetails
           icon="Groups"
+          showDetails={false}
           title={graph.slice(5)}
           permalink={permalink}
         />
@@ -125,16 +161,13 @@ function PermalinkDetails(props: {
   icon: any;
   permalink: string;
   showTransclusion?: boolean;
+  showDetails?: boolean;
   known?: boolean;
 }) {
   const { title, icon, permalink, known, showTransclusion } = props;
   const rowTransclusionStyle = showTransclusion
-    ? {
-        borderTop: "1",
-        borderTopColor: "lightGray",
-        my: "1",
-      }
-    : {};
+    ? { p: '12px 12px 11px 11px' }
+    : { p: '12px' };
 
   return (
     <Row
@@ -142,18 +175,17 @@ function PermalinkDetails(props: {
       alignItems="center"
       justifyContent="space-between"
       width="100%"
-      px="2"
-      py="1"
     >
       <Row gapX="2" alignItems="center">
-        <Icon icon={icon} />
-        <Text lineHeight="20px" mono={!known}>
+        <Box width={4} height={4}>
+          <Center width={4} height={4}>
+            <Icon icon={icon} color='gray' />
+          </Center>
+        </Box>
+        <Text gray mono={!known}>
           {title}
         </Text>
       </Row>
-      <Link to={`/perma${permalink.slice(16)}`}>
-        <Text color="blue">Go to link</Text>
-      </Link>
     </Row>
   );
 }
@@ -173,9 +205,9 @@ export function PermalinkEmbed(props: {
   }
 
   switch (permalink.type) {
-    case "group":
+    case 'group':
       return <GroupPermalink group={permalink.group} api={props.api} />;
-    case "graph":
+    case 'graph':
       return (
         <GraphPermalink
           transcluded={props.transcluded}

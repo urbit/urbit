@@ -4,7 +4,7 @@ import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
 import {useCallback} from "react";
 
 // import { harkGraphHookReducer, harkGroupHookReducer, harkReducer } from "~/logic/subscription/hark";
-import { BaseState, createState } from "./base";
+import { BaseState, createState } from './base';
 
 export const HARK_FETCH_MORE_COUNT = 3;
 
@@ -17,9 +17,9 @@ export interface HarkState extends BaseState<HarkState> {
   notifications: BigIntOrderedMap<Timebox>;
   notificationsCount: number;
   notificationsGraphConfig: NotificationGraphConfig; // TODO unthread this everywhere
-  notificationsGroupConfig: string[]; 
+  notificationsGroupConfig: string[];
   unreads: Unreads;
-};
+}
 
 const useHarkState = createState<HarkState>('Hark', {
   archivedNotifications: new BigIntOrderedMap<Timebox>(),
@@ -64,7 +64,7 @@ const useHarkState = createState<HarkState>('Hark', {
   unreads: {
     graph: {},
     group: {}
-  },
+  }
 }, ['notifications', 'archivedNotifications', 'unreads', 'notificationsCount']);
 
 export function useHarkDm(ship: string) {

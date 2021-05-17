@@ -1,7 +1,5 @@
-import { Tile, WeatherState } from "~/types/launch-update";
-
-import { BaseState, createState } from "./base";
-
+import { Tile, WeatherState } from '~/types/launch-update';
+import { BaseState, createState } from './base';
 
 export interface LaunchState extends BaseState<LaunchState> {
   firstTime: boolean;
@@ -24,6 +22,5 @@ const useLaunchState = createState<LaunchState>('Launch', {
   baseHash: null,
   runtimeLag: false,
 });
-
 
 export default useLaunchState;

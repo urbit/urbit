@@ -107,6 +107,11 @@
     :_  `octs
     [200 [['content-type' 'image/png'] ?:(cache [max-1-wk ~] ~)]]
   ::
+    ++  ico-response
+    |=  =octs
+    ^-  simple-payload:http
+    [[200 [['content-type' 'image/x-icon'] max-1-wk ~]] `octs]
+  ::
   ++  woff2-response
     =|  cache=?
     |=  =octs

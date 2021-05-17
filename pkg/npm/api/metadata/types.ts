@@ -1,5 +1,5 @@
+import { Resource } from "..";
 import { AppName, Path, Patp } from "../lib";
-import {Resource} from "../groups";
 
 export type MetadataUpdate =
   MetadataUpdateInitial
@@ -49,8 +49,6 @@ export type AppAssociations = {
   [p in Path]: Association;
 }
 
-
-
 export type Association = MdResource & {
   group: Path;
   metadata: Metadata;
@@ -75,14 +73,14 @@ export interface Metadata {
   vip: PermVariation;
 }
 
-export type MetadataConfig = GraphConfig | GroupConfig;
+export type MetadataConfig = GroupConfig | GraphConfig;
 
 export interface GraphConfig {
   graph: string;
 }
 
 export interface GroupConfig {
-  group: undefined | {} | Resource;
+  group: undefined | {} | MdResource;
 }
 
-export type PermVariation = '' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';
+export type PermVariation = '' | ' ' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';

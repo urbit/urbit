@@ -6,31 +6,14 @@ import { Groups, Association, Rolodex, cite } from '@urbit/api';
 
 import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
-import { getModuleIcon, getItemTitle, uxToHex } from '~/logic/lib/util';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
-import { SidebarAppConfigs, SidebarItemStatus } from './types';
 import { Workspace } from '~/types/workspace';
-import useContactState, {useContact} from '~/logic/state/contact';
+import { useContact } from '~/logic/state/contact';
+import { getItemTitle, getModuleIcon, uxToHex } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
-import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import Dot from '~/views/components/Dot';
-
-
-function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
-  switch (props.status) {
-    case 'disconnected':
-      return <Icon ml={2} fill="red" icon="X" />;
-    case 'unsubscribed':
-      return <Icon ml={2} icon="Circle" fill="gray" />;
-    case 'mention':
-      return <Icon ml={2} icon="Circle" />;
-    case 'loading':
-      return <Icon ml={2} icon="Bullet" />;
-    default:
-      return null;
-  }
-}
+import { SidebarAppConfigs } from './types';
 
 function SidebarItemBase(props: {
   to: string;
@@ -42,11 +25,11 @@ function SidebarItemBase(props: {
   title: string;
   mono?: boolean;
 }) {
-  const { 
+  const {
     title,
     children,
     to,
-    selected, 
+    selected,
     hasNotification,
     hasUnread,
     isSynced = false,
@@ -54,9 +37,7 @@ function SidebarItemBase(props: {
   } = props;
   const color = isSynced ? 'black' : 'lightGray';
 
-  const fontWeight = (hasUnread || hasNotification) ? '500' : 'normal';
-
-
+  const fontWeight = hasUnread || hasNotification ? '500' : 'normal';
 
   return (
     <HoverBoxLink
@@ -73,20 +54,33 @@ function SidebarItemBase(props: {
       pr={3}
       selected={selected}
     >
-      <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
-        {hasNotification && <Text color='black' marginLeft={-2} width={2} display='flex' alignItems='center'>
-          <Dot />
-      </Text>}
-      {children}
+      <Row width="100%" alignItems="center" flex="1 auto" minWidth="0">
+        {hasNotification && (
+          <Text
+            color="black"
+            marginLeft={-2}
+            width={2}
+            display="flex"
+            alignItems="center"
+          >
+            <Dot />
+          </Text>
+        )}
+        {children}
 
-        
-        <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
+        <Box
+          width="100%"
+          flexShrink={2}
+          ml={2}
+          display="flex"
+          overflow="hidden"
+        >
           <Text
             lineHeight="tall"
-            display='inline-block'
-            flex='1'
-            overflow='hidden'
-            width='100%'
+            display="inline-block"
+            flex="1"
+            overflow="hidden"
+            width="100%"
             mono={urbitOb.isValidPatp(title)}
             color={color}
             fontWeight={fontWeight}
@@ -105,15 +99,28 @@ export function SidebarDmItem(props: {
   selected?: boolean;
   workspace: Workspace;
 }) {
-  const { ship, selected = false} = props;
+  const { ship, selected = false } = props;
   const contact = useContact(ship);
   const title = contact?.nickname ?? cite(ship) ?? ship;
   const hideAvatars = false;
-  const img = (contact?.avatar && !hideAvatars) ? (
-    <BaseImage referrerPolicy="no-referrer" src={contact.avatar} width='16px' height='16px' borderRadius={2} />
-  ) : (
-    <Sigil ship={ship} color={`#${uxToHex(contact?.color || '0x0')}`} icon padding={2} size={16} />
-  );
+  const img =
+    contact?.avatar && !hideAvatars ? (
+      <BaseImage
+        referrerPolicy="no-referrer"
+        src={contact.avatar}
+        width="16px"
+        height="16px"
+        borderRadius={2}
+      />
+    ) : (
+      <Sigil
+        ship={ship}
+        color={`#${uxToHex(contact?.color || '0x0')}`}
+        icon
+        padding={2}
+        size={16}
+      />
+    );
 
   return (
     <SidebarItemBase
@@ -127,9 +134,7 @@ export function SidebarDmItem(props: {
     >
       {img}
     </SidebarItemBase>
-
   );
-
 }
 // eslint-disable-next-line max-lines-per-function
 export function SidebarAssociationItem(props: {
@@ -143,13 +148,14 @@ export function SidebarAssociationItem(props: {
   const { association, path, selected, apps } = props;
   let title = getItemTitle(association) || '';
   const appName = association?.['app-name'];
-  const mod = association?.metadata?.config?.graph || appName;
+  let mod = appName;
+  if (association?.metadata?.config && 'graph' in association.metadata.config) {
+    mod = association.metadata.config.graph;
+  }
   const rid = association?.resource;
   const groupPath = association?.group;
-  const groups = useGroupState(state => state.groups);
-  const anchorRef = useRef<HTMLElement | null>(null);
-  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
-  const contacts = useContactState(state => state.contacts);
+  const groups = useGroupState((state) => state.groups);
+  const anchorRef = useRef<HTMLAnchorElement>(null);
   useTutorialModal(
     mod as any,
     groupPath === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
@@ -160,7 +166,7 @@ export function SidebarAssociationItem(props: {
   if (!app) {
     return null;
   }
-  const DM = (isUnmanaged && props.workspace?.type === 'messages');
+  const DM = isUnmanaged && props.workspace?.type === 'messages';
 
   const itemStatus = app.getStatus(path);
 
@@ -186,9 +192,6 @@ export function SidebarAssociationItem(props: {
     return null;
   }
 
-  let img: ReactNode | null = null;
-
-
   return (
     <SidebarItemBase
       to={to}
@@ -197,13 +200,11 @@ export function SidebarAssociationItem(props: {
       title={title}
       hasNotification={hasNotification}
     >
-              <Icon
-                display="block"
-                color={isSynced ? 'black' : 'lightGray'}
-                icon={getModuleIcon(mod) as any}
-              />
-    
-  </SidebarItemBase>
+      <Icon
+        display="block"
+        color={isSynced ? 'black' : 'lightGray'}
+        icon={getModuleIcon(mod)}
+      />
+    </SidebarItemBase>
   );
-
 }

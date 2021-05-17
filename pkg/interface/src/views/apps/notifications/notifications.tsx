@@ -1,21 +1,15 @@
-import React, { useCallback, useState, useRef, ReactElement } from 'react';
-import _ from 'lodash';
-import { Link, Switch, Route } from 'react-router-dom';
+import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import React, { ReactElement, useCallback, useRef, useState } from 'react';
 import Helmet from 'react-helmet';
-
-import { Box, Icon, Col, Text, Row } from '@tlon/indigo-react';
-
-import { Body } from '~/views/components/Body';
-import { PropFunc } from '~/types/util';
-import Inbox from './inbox';
-import { Dropdown } from '~/views/components/Dropdown';
-import { FormikOnBlur } from '~/views/components/FormikOnBlur';
-import GroupSearch from '~/views/components/GroupSearch';
-import { useTutorialModal } from '~/views/components/useTutorialModal';
+import { Link, Route, Switch } from 'react-router-dom';
+import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
-import useGroupState from '~/logic/state/group';
-import {StatelessAsyncAction} from '~/views/components/StatelessAsyncAction';
+import { PropFunc } from '~/types/util';
+import { Body } from '~/views/components/Body';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import { useTutorialModal } from '~/views/components/useTutorialModal';
+import Inbox from './inbox';
 
 const baseUrl = '/~notifications';
 
@@ -29,7 +23,7 @@ const HeaderLink = React.forwardRef((
 
   return (
     <Link to={to}>
-      <Text ref={ref} px="2" {...textProps} gray={!active} />
+      <Text ref={ref} px={2} {...textProps} gray={!active} />
     </Link>
   );
 });
@@ -73,21 +67,21 @@ export default function NotificationsScreen(props: any): ReactElement {
               <Body>
                 <Col overflowY="hidden" height="100%">
                   <Row
-                    p="3"
+                    p={3}
                     alignItems="center"
                     height="48px"
                     justifyContent="space-between"
                     width="100%"
-                    borderBottom="1"
+                    borderBottom={1}
                     borderBottomColor="lightGray"
                   >
 
-                  <Text fontWeight="bold" fontSize="2" lineHeight="1" ref={anchorRef}>
+                  <Text fontWeight="bold" fontSize={2} lineHeight={1} ref={anchorRef}>
                     Notifications
                   </Text>
                     <Row
                       justifyContent="space-between"
-                      gapX="3"
+                      gapX={3}
                     >
                       <StatelessAsyncAction
                         overflow="hidden"
@@ -99,7 +93,7 @@ export default function NotificationsScreen(props: any): ReactElement {
                       </StatelessAsyncAction>
                       <Link to="/~settings#notifications">
                         <Box>
-                          <Icon lineHeight="1" icon="Adjust" />
+                          <Icon lineHeight={1} icon="Adjust" />
                         </Box>
                       </Link>
                     </Row>
@@ -108,7 +102,7 @@ export default function NotificationsScreen(props: any): ReactElement {
                     pendingJoin={pendingJoin}
                     {...props}
                     filter={filter.groups}
-                    />}
+                            />}
                 </Col>
               </Body>
             </>

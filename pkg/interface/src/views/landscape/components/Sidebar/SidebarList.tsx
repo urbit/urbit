@@ -1,14 +1,14 @@
 import React, { ReactElement } from 'react';
-import { Associations, AppAssociations, Groups, Rolodex, Graph, UnreadStats } from '@urbit/api';
+import { AppAssociations, Associations, Graph, UnreadStats } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
 
-import { alphabeticalOrder } from '~/logic/lib/util';
-import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
 import { SidebarAssociationItem, SidebarDmItem } from './SidebarItem';
-import { Workspace } from '~/types/workspace';
 import useMetadataState from '~/logic/state/metadata';
 import {useInbox} from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
+import { alphabeticalOrder } from '~/logic/lib/util';
+import { Workspace } from '~/types/workspace';
+import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
 
 function sidebarSort(
   associations: AppAssociations,
@@ -49,19 +49,27 @@ function sidebarSort(
 
 function getItems(associations: Associations, workspace: Workspace, inbox: Graph) {
    const filtered = Object.keys(associations.graph).filter((a) => {
-      const assoc = associations.graph[a];
+     const assoc = associations.graph[a];
+     if(!('graph' in assoc.metadata.config)) {
+       return false;
+    }
       if (workspace?.type === 'messages') {
         return (
           !(assoc.group in associations.groups) &&
-          'graph' in assoc.metadata.config &&
           assoc.metadata.config.graph === 'chat'
         );
+      } else if (workspace?.type === 'home') {
+        return (
+          !(assoc.group in associations.groups) &&
+          assoc.metadata.config.graph !== 'chat'
+        );
       } else {
+        const group = workspace.group;
         return group ? (
           assoc.group === group &&
           !assoc.metadata.hidden
         ) : (
-          !(assoc.group in associationState.groups) &&
+          !(assoc.group in associations.groups) &&
           'graph' in assoc.metadata.config &&
           assoc.metadata.config.graph !== 'chat' &&
           !assoc.metadata.hidden
@@ -90,7 +98,7 @@ export function SidebarList(props: {
 
 
   const ordered = getItems(associations, workspace, inbox)
-    .sort(sidebarSort(associations, props.apps, unreads)[config.sortBy]);
+    .sort(sidebarSort(associations.graph, props.apps, unreads)[config.sortBy]);
 
   return (
     <>

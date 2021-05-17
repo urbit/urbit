@@ -1,49 +1,43 @@
-import React, { Component, useEffect, useCallback, ReactElement } from 'react';
-import { Route, Switch, RouteComponentProps } from 'react-router-dom';
-import Helmet from 'react-helmet';
-
-import './css/custom.css';
-
-import { PatpNoSig } from '@urbit/api';
-import GlobalApi from '~/logic/api/global';
-import { StoreState } from '~/logic/store/type';
-import { GroupsPane } from './components/GroupsPane';
-import { NewGroup } from './components/NewGroup';
-import { JoinGroup } from './components/JoinGroup';
-
-import { cite } from '~/logic/lib/util';
-import { Body } from '../components/Body';
 import { Box } from '@tlon/indigo-react';
-import { Loading } from '../components/Loading';
-import { Workspace } from '~/types/workspace';
-import GlobalSubscription from '~/logic/subscription/global';
-import useGraphState from '~/logic/state/graph';
-import useHarkState, { withHarkState } from '~/logic/state/hark';
-import withState from '~/logic/lib/withState';
+import { PatpNoSig } from '@urbit/api';
 import moment from 'moment';
-
+import React, { ReactElement, useCallback, useEffect } from 'react';
+import Helmet from 'react-helmet';
+import { Route, RouteComponentProps, Switch } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
+import { cite } from '~/logic/lib/util';
+import useGraphState from '~/logic/state/graph';
+import useHarkState from '~/logic/state/hark';
+import { StoreState } from '~/logic/store/type';
+import GlobalSubscription from '~/logic/subscription/global';
+import { Workspace } from '~/types/workspace';
+import { Body } from '../components/Body';
+import { Loading } from '../components/Loading';
+import { GroupsPane } from './components/GroupsPane';
+import { JoinGroup } from './components/JoinGroup';
+import { NewGroup } from './components/NewGroup';
+import './css/custom.css';
 
 moment.updateLocale('en', {
   relativeTime : {
-    future: "%s",
-    past:   "%s",
-    s  : "1s",
-    ss : "%ds",
-    m:  "1m",
-    mm: "%dm",
-    h:  "1h",
-    hh: "%dh",
-    d:  "1d",
-    dd: "%dd",
-    w:  "1w",
-    ww: "%dw",
-    M:  "1mo",
-    MM: "%dmo",
-    y:  "1y",
-    yy: "%dy"
+    future: '%s',
+    past:   '%s',
+    s  : '1s',
+    ss : '%ds',
+    m:  '1m',
+    mm: '%dm',
+    h:  '1h',
+    hh: '%dh',
+    d:  '1d',
+    dd: '%dd',
+    w:  '1w',
+    ww: '%dw',
+    M:  '1mo',
+    MM: '%dmo',
+    y:  '1y',
+    yy: '%dy'
   }
 });
-
 
 type LandscapeProps = StoreState & {
   ship: PatpNoSig;

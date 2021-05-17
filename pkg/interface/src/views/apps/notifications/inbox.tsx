@@ -1,40 +1,24 @@
-import React, { useEffect, useCallback, useRef } from 'react';
-import f from 'lodash/fp';
-import _ from 'lodash';
-import moment from 'moment';
-import { BigInteger } from 'big-integer';
-
+import { Box, Center, Col, LoadingSpinner, Text, Icon } from '@tlon/indigo-react';
 import {
-  Col,
-  Center,
-  Box,
-  Text,
-  LoadingSpinner,
-  Icon
-} from '@tlon/indigo-react';
+    IndexedNotification,
 
-import {
-  Associations,
-  Notifications,
-  Rolodex,
-  Timebox,
-  IndexedNotification,
-  Groups,
-  JoinRequests,
-  GroupNotificationsConfig,
-  NotificationGraphConfig,
-  Invites as InviteType
+    JoinRequests, Notifications,
+
+    Timebox
 } from '@urbit/api';
-
-import { MOMENT_CALENDAR_DATE, daToUnix } from '~/logic/lib/util';
+import { BigInteger } from 'big-integer';
+import _ from 'lodash';
+import f from 'lodash/fp';
+import moment from 'moment';
+import React, { useCallback, useEffect, useRef } from 'react';
 import GlobalApi from '~/logic/api/global';
-import { Notification } from './notification';
-import { Invites } from './invites';
+import { getNotificationKey } from '~/logic/lib/hark';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useLaunchState from '~/logic/state/launch';
+import { daToUnix, MOMENT_CALENDAR_DATE } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
-import useInviteState from '~/logic/state/invite';
-import useMetadataState from '~/logic/state/metadata';
+import { Invites } from './invites';
+import { Notification } from './notification';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -132,8 +116,7 @@ export default function Inbox(props: {
   );
 
   return (
-    <Col p="1" ref={scrollRef} position="relative" height="100%" overflowY="auto">
-
+    <Col p={1} ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
       {runtimeLag && (
         <Box bg="yellow" borderRadius={2} p={2} m={2}>
           <Icon verticalAlign="middle" mr={2} icon="Tutorial" />
@@ -142,13 +125,13 @@ export default function Inbox(props: {
           </Text>
         </Box>
       )}
-
       <Invites pendingJoin={props.pendingJoin} api={api} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
           <DaySection
             key={day}
+            time={day}
             label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
             timeboxes={timeboxes}
             archive={Boolean(props.showArchive)}
@@ -157,15 +140,15 @@ export default function Inbox(props: {
         );
       })}
       {isDone ? (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
-          <Text gray fontSize="1">No more notifications</Text>
+        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
+          <Text gray fontSize={1}>No more notifications</Text>
         </Center>
     )  : isLoading ? (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
+        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
           <LoadingSpinner />
         </Center>
     ) : (
-      <Box mt="2" height="96px" />
+      <Box mt={2} height="96px" />
     )}
 
     </Col>
@@ -187,7 +170,8 @@ function DaySection({
   label,
   archive,
   timeboxes,
-  api,
+  time,
+  api
 }) {
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {
@@ -199,7 +183,7 @@ function DaySection({
       {_.map(timeboxes.sort(sortTimeboxes), ([date, nots], i: number) =>
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
           <Notification
-            key={j}
+            key={getNotificationKey(date, not)}
             api={api}
             notification={not}
             archived={archive}
