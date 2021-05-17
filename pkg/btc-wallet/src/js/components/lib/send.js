@@ -12,8 +12,10 @@ import {
 } from '@tlon/indigo-react';
 
 import Invoice from './invoice.js'
+import BridgeInvoice from './bridgeInvoice.js'
 import FeePicker from './feePicker.js'
 import Error from './error.js'
+import Signer from './signer.js'
 
 import { validate } from 'bitcoin-address-validation';
 
@@ -45,11 +47,15 @@ export default class Send extends Component {
       feeValue: "mid",
       showModal: false,
       note: '',
+      choosingSignMethod: false,
+      signMethod: 'Sign Transaction',
     };
 
     this.initPayment  = this.initPayment.bind(this);
     this.checkPayee  = this.checkPayee.bind(this);
     this.feeSelect = this.feeSelect.bind(this);
+    this.toggleSignMethod = this.toggleSignMethod.bind(this);
+    this.setSignMethod = this.setSignMethod.bind(this);
   }
 
   feeSelect(which) {
@@ -57,22 +63,26 @@ export default class Send extends Component {
   }
 
   componentDidMount(){
-    if (this.props.network === 'bitcoin'){
+    // TODO switch this to bitcoin
+    if (this.props.network === 'testnet'){
       let url = "https://bitcoiner.live/api/fees/estimates/latest";
       fetch(url).then(res => res.json()).then(n => {
         let estimates = Object.keys(n.estimates);
         let mid = Math.floor(estimates.length/2)
         let high = estimates.length - 1;
-        console.log(n);
         this.setState({
           feeChoices: {
-            high: [30, n.estimates[30]["sat_per_vbyte"]],
-            mid: [360, n.estimates[360]["sat_per_vbyte"]],
-            low: [1440, n.estimates[1440]["sat_per_vbyte"]],
+            low: [30, n.estimates[30]["sat_per_vbyte"]],
+            mid: [180, n.estimates[180]["sat_per_vbyte"]],
+            high: [360, n.estimates[360]["sat_per_vbyte"]],
           }
         });
       })
     }
+  }
+
+  setSignMethod(signMethod) {
+    this.setState({signMethod});
   }
 
   checkPayee(e){
@@ -123,6 +133,10 @@ export default class Send extends Component {
         this.setState({ready: true, checkingPatp: false, validPayee: true});
       }
     }
+  }
+
+  toggleSignMethod(toggle) {
+    this.setState({choosingSignMethod: !toggle});
   }
 
   initPayment() {
@@ -180,22 +194,38 @@ export default class Send extends Component {
 
 
     const { api, value, conversion, stopSending, denomination, psbt, currencyRates, error } = this.props;
-    const { denomAmount, satsAmount, signing, payee } = this.state;
+    const { denomAmount, satsAmount, signing, payee, choosingSignMethod, signMethod } = this.state;
 
     const signReady = (this.state.ready && (parseInt(this.state.satsAmount) > 0)) && !signing;
 
+    let invoice = null;
+    if (signMethod === 'Sign Transaction') {
+      invoice =
+        <Invoice
+          api={api}
+          psbt={psbt}
+          currencyRates={currencyRates}
+          stopSending={stopSending}
+          payee={payee}
+          denomination={denomination}
+          satsAmount={satsAmount}
+        />
+    } else if (signMethod === 'Sign with Bridge') {
+      invoice =
+        <BridgeInvoice
+          api={api}
+          psbt={psbt}
+          currencyRates={currencyRates}
+          stopSending={stopSending}
+          payee={payee}
+          denomination={denomination}
+          satsAmount={satsAmount}
+        />
+    }
+
     return (
       <>
-        { (signing && psbt) ?
-          <Invoice
-            api={api}
-            psbt={psbt}
-            currencyRates={currencyRates}
-            stopSending={stopSending}
-            payee={payee}
-            denomination={denomination}
-            satsAmount={satsAmount}
-          /> :
+        { (signing && psbt) ? invoice :
           <Col
             width='100%'
             backgroundColor='white'
@@ -223,7 +253,7 @@ export default class Send extends Component {
                 <Row justifyContent="space-between" width='calc(40% - 30px)' alignItems="center">
                   <Text gray fontSize={1} fontWeight='600'>To</Text>
                   {this.state.checkingPatp ?
-                    <LoadingSpinner background="midOrange" foreground="orange"/> : null
+                   <LoadingSpinner background="midOrange" foreground="orange"/> : null
                   }
                 </Row>
                 <Input
@@ -321,18 +351,18 @@ export default class Send extends Component {
                     {this.state.feeChoices[this.state.feeValue][1]} sats/vbyte
                   </Text>
                   <Icon icon="ChevronSouth"
-                    fontSize="14px"
-                    color="lightGray"
-                    onClick={() => { this.setState({showModal: !this.state.showModal}); }}
-                    cursor="pointer"/>
+                        fontSize="14px"
+                        color="lightGray"
+                        onClick={() => { this.setState({showModal: !this.state.showModal}); }}
+                        cursor="pointer"/>
                 </Row>
               </Row>
               <Col alignItems="center">
                 {!this.state.showModal ? null :
-                    <FeePicker
-                      feeChoices={this.state.feeChoices}
-                      feeSelect={this.feeSelect}
-                     />
+                 <FeePicker
+                   feeChoices={this.state.feeChoices}
+                   feeSelect={this.feeSelect}
+                 />
                 }
               </Col>
               <Row mt={4} width="100%"
@@ -366,26 +396,37 @@ export default class Send extends Component {
             <Row
               flexDirection='row-reverse'
               alignItems="center"
+              mt={4}
             >
-              <Button
-                primary
-                children='Sign Transaction'
-                fontSize={1}
-                fontWeight='bold'
-                borderRadius='24px'
-                mt={4}
-                py='24px'
-                px='24px'
-                onClick={this.initPayment}
-                color={signReady ? "white" : "lighterGray"}
-                backgroundColor={signReady ? "blue" : "veryLightGray"}
-                disabled={!signReady}
-                border="none"
-                style={{cursor: signReady ? "pointer" : "default"}}
-              />
+              <Signer
+                signReady={signReady}
+                choosingSignMethod={choosingSignMethod}
+                signMethod={signMethod}
+                setSignMethod={this.setSignMethod}
+                initPayment={this.initPayment} />
               { (!(signing && !error)) ? null :
                 <LoadingSpinner mr={2} background="midOrange" foreground="orange"/>
               }
+              <Button
+                width='48px'
+                children={
+                  <Icon
+                    icon={choosingSignMethod ? 'X' : 'Ellipsis'}
+                    color={signReady ? 'blue' : 'lighterGray'}
+                  />
+                }
+                fontSize={1}
+                fontWeight='bold'
+                borderRadius='24px'
+                mr={2}
+                py='24px'
+                px='24px'
+                onClick={() => this.toggleSignMethod(choosingSignMethod)}
+                color={signReady ? 'white' : 'lighterGray'}
+                backgroundColor={signReady ? 'rgba(33, 157, 255, 0.2)' : 'veryLightGray'}
+                disabled={!signReady}
+                border='none'
+                style={{cursor: signReady ? 'pointer' : 'default'}} />
             </Row>
           </Col>
         }
