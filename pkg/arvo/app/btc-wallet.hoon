@@ -268,6 +268,12 @@
     =.  scans  (~(del by scans) [xpub.comm %0])
     =.  scans  (~(del by scans) [xpub.comm %1])
     =.  walts  (~(del by walts) xpub.comm)
+    =.  history
+      %-  ~(rep by history)
+      |=  [[=txid =hest] out=_history]
+      ?:  =(xpub.hest xpub.comm)
+        (~(del by out) txid)
+      out
     :_  state
     [give-initial]~
   ::
@@ -798,12 +804,21 @@
   |^
   =/  h  (~(get by history) txid.ti)
   =.  ahistorical-txs  (~(del in ahistorical-txs) txid.ti)
-  =/  our-addrs=(set address)             ::  all our addresses in inputs/outputs of tx
+  =/  our-inputs=(set address)
     %-  silt
     %+  skim
-      %+  turn  (weld inputs.ti outputs.ti)
+      %+  turn  inputs.ti
       |=(=val:tx address.val)
     is-our-address
+  =/  our-outputs=(set address)
+    %-  silt
+    %+  skim
+      %+  turn  outputs.ti
+      |=(=val:tx address.val)
+    is-our-address
+  =/  our-addrs=(set address)             ::  all our addresses in inputs/outputs of tx
+    (~(uni in our-inputs) our-outputs)
+  ::
   =/  addr-info-cards=(list card)
     %+  turn  ~(tap in our-addrs)
     |=  a=address
@@ -827,7 +842,7 @@
   =/  =xpub
     xpub.w:(need (address-coords:bl (snag 0 ~(tap in our-addrs)) ~(val by walts)))
   ?~  h                           ::  addresses in wallets, but tx not in history
-    =/  new-hest=hest  (mk-hest xpub our-addrs)
+    =/  new-hest=hest  (mk-hest xpub our-inputs our-outputs)
     =.  history  (~(put by history) txid.ti new-hest)
     :_  state
     :_  addr-info-cards
@@ -844,14 +859,14 @@
   ::
   ++  mk-hest
     :: has tx-info
-      |=  [=xpub:bc our-addrs=(set address)]
+      |=  [=xpub:bc our-inputs=(set address) our-outputs=(set address)]
       ^-  hest
       :*  xpub
           txid.ti
           confs.ti
           recvd.ti
-          (turn inputs.ti |=(v=val:tx (is-our-ship our-addrs v)))
-          (turn outputs.ti |=(v=val:tx (is-our-ship our-addrs v)))
+          (turn inputs.ti |=(v=val:tx (is-our-ship our-inputs v)))
+          (turn outputs.ti |=(v=val:tx (is-our-ship our-outputs v)))
           ~
       ==
   ::

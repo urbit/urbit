@@ -23,14 +23,19 @@ export default class Transaction extends Component {
   render() {
     const pending = (!this.props.tx.recvd);
 
-    const weSent = _.find(this.props.tx.inputs, (input) => {
+    let weSent = _.find(this.props.tx.inputs, (input) => {
       return (input.ship === window.ship);
     });
+    let weRecv = this.props.tx.outputs.every((output) => {
+      return (output.ship === window.ship)
+    });
 
-    let action = (weSent) ? "sent" : "recv";
+    let action =
+      (weRecv) ? "recv" :
+      (weSent) ? "sent" : "recv";
 
-    let counterShip;
-    let counterAddress;
+    let counterShip = null;
+    let counterAddress = null;
     let value;
     let sign;
 
@@ -44,16 +49,26 @@ export default class Transaction extends Component {
       sign = '-'
     }
     else if (action === "recv") {
-      let incoming = _.find(this.props.tx.outputs, (output) => {
-        return (output.ship === window.ship);
-      });
-      value = incoming.val.value;
+      value = _.reduce(this.props.tx.outputs, (sum, output) => {
+        if (output.ship === window.ship) {
+          return sum + output.val.value;
+        } else {
+          return sum;
+        }
+      }, 0);
 
-      let counter = _.find(this.props.tx.inputs, (input) => {
-        return (input.ship !== window.ship);
-      });
-      counterShip = _.get(counter, 'ship', null);
-      counterAddress = _.get(counter, 'val.address', null);
+
+      if (weSent && weRecv) {
+        counterAddress = _.get(_.find(this.props.tx.inputs, (input) => {
+          return (input.ship === window.ship);
+        }), 'val.address', null);
+      } else {
+        let counter = _.find(this.props.tx.inputs, (input) => {
+          return (input.ship !== window.ship);
+        });
+        counterShip = _.get(counter, 'ship', null);
+        counterAddress = _.get(counter, 'val.address', null);
+      }
       sign = '';
     }
 
