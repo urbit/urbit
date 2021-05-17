@@ -52,7 +52,7 @@ export default class Warning extends Component {
             of BTC.
           </Text>
           <Text color="white" fontWeight='bold' fontSize={1}>
-            Always ensure that the checksum of the wallet matches that of the walletls repo.
+            Always ensure that the checksum of the wallet matches that of the wallet's repo.
           </Text>
           <br/>
           <Text  color="white" fontWeight='bold' fontSize={1} style={{textDecoration: 'underline'}}>
