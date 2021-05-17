@@ -26,8 +26,8 @@
 ::TODO  questions:
 ::  - it's a bit weird how we just assume the raw and tx in raw-tx to match...
 ::
-/+  naive, ethereum
-/=  ttttt  /tests/lib/naive  ::TODO  use new lib
+/+  naive, default-agent, ethereum, dbug, verb
+/=  ttttt  /tests/lib/naive  ::TODO  use new lib 
 ::
 ::TODO  /sur file for public types
 |%
@@ -40,7 +40,7 @@
       ::  next-nonce: next l1 nonce to use
       ::
       pending=(list pend-tx)
-      sending=(map nonce [next-gas-price=@ud txs=(list raw-tx:naive)])
+      sending=(map nonce:naive [next-gas-price=@ud txs=(list raw-tx:naive)])
       finding=(map keccak $?(%confirmed %failed l1-tx-pointer))
       next-nonce=@ud
     ::
@@ -88,14 +88,16 @@
 ::
 ::TODO  config?
 ++  contract  0xb581.01cd.3bbb.cc6f.a40b.cdb0.4bb7.1623.b5c7.d39b
-++  chain-id  0x1
+++  chain-id  '1'
 ::
 ++  resend-time  ~m5
 ::
 ++  lverb  &
 --
 ::
-=|  state=state-0
+=|  state-0
+=*  state  -
+::
 %-  agent:dbug
 %+  verb  |
 ^-  agent:gall
@@ -103,6 +105,7 @@
 =<
   |_  =bowl:gall
   +*  this  .
+      do    ~(. +> bowl)
       def   ~(. (default-agent this %|) bowl)
   ::
   ++  on-init
@@ -120,13 +123,13 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
-    ?+  mark  (on-poke:def mark vase)
-      %noun  $(mark %aggregator-action)
-    ::
-        %aggregator-action
-      !!
-      ::TODO
-    ==
+    =^  cards  state
+      ?+    mark  (on-poke:def mark vase)
+          %aggregator-action  
+        =+  !<(poke=action vase)
+        (on-action:do poke)
+      ==
+    [cards this]
   ::  +on-peek: scry paths
   ::TODO  reevaluate wrt recent flow changes
   ::
@@ -145,12 +148,20 @@
         [%x %pending @ ~]
       =*  wat  i.t.t.path
       ?~  who=(slaw %p wat)
+        ::  by-address
+        ::
         ?~  wer=(slaw %ux wat)
           [~ ~]
+        =;  pending=(list pend-tx)
+          ``noun+!>(pending)
         %+  skim  pending
         |=  pend-tx
         ::TODO  deduce address from sig.raw-tx ?
         !!
+      ::  by-ship
+      ::
+      =;  pending=(list pend-tx)
+        ``noun+!>(pending)
       %+  skim  pending
       |=  pend-tx
       =(u.who ship.from.tx.raw-tx)
@@ -163,12 +174,12 @@
       !>  ^-  tx-status
       ?^  status=(~(get by finding) u.keccak)
         ?@  u.status  [u.status ~]
-        [%sending u.status]
+        [%sending status]
       ::TODO  potentially slow!
       =;  known=?
         [?:(known %pending %unknown) ~]
       %+  lien  pending
-      |=  [* raw-tx]
+      |=  [* raw-tx:naive]
       =(u.keccak (hash-tx raw))
     ::
         [%x %nonce @ @ ~]
@@ -177,9 +188,9 @@
       =+  proxy=i.t.t.t.path
       ?.  ?=(proxy:naive proxy)
         [~ ~]
-      =^  *  nas  pending-state:do
+      =/  [* nas=^state:naive]  pending-state:do
       ::TODO  or should we ~ when !(~(has by points.nas) who) ?
-      =/  =point:naive  (~(gut by points.nas) who *point)
+      =/  =point:naive  (~(gut by points.nas) u.who *point:naive)
       =+  (proxy-from-point:naive proxy point)
       ``atom+!>(nonce)
     ==
@@ -187,7 +198,7 @@
   ++  on-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
-    ?+  +<.sign  (on-arvo:def wire sign)
+    ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
       %wake  =^(cards state on-timer:do [cards this])
     ==
   ::
@@ -220,24 +231,38 @@
     |=  [=wire thread=term arg=vase]
     ^-  (list card)
     =/  tid=@ta  (rap 3 thread '--' (scot %uv eny.bowl) ~)
-    =/  args     [~ `tid thread arg]
-    :~  [%pass wire %agent [our.bowl %spider] %watch /thread-result/[tid]]
-        [%pass wire %agent [our.bowl %spider] %poke %spider-start !>(args)]
+    :~  (poke wire %spider-start !>([~ `tid thread arg]))
+        (watch wire %spider-start /thread-result/[tid])
     ==
+  ::
+  ++  poke
+    |=  [=path =cage]
+    ^-  card
+    [%pass path %agent [our.bowl %spider] %poke cage]
+  ::
+  ++  watch
+    |=  [=path =sub=path]
+    ^-  card
+    [%pass path %agent [our.bowl %spider] %watch sub-path]
+  ::
+  ++  leave
+    |=  =path
+    ^-  card
+    [%pass path %agent [our.bowl %spider] %leave ~]
   --
 ::
 ++  hash-tx  keccak-256:keccak:crypto
 ::
 ++  hash-raw-tx
-  |=  raw-tx
-  (hash-tx raw)
+  |=  =raw-tx:naive
+  (hash-tx raw.raw-tx)
 ::
 ++  part-tx-to-full
   |=  =part-tx
   ^-  [octs tx:naive]
-  ?-  -.part-tx
-    %raw  [+.part-tx (decode-tx:naive +.part-tx)]
-    %don  [(encode-tx:naive +.part-tx) +.part-tx]
+  ?+  -.part-tx  !!
+    :: %raw  [+.part-tx (decode-tx:naive +.part-tx)]
+    :: %don  [(encode-tx:naive +.part-tx) +.part-tx]
     %ful  +.part-tx
   ==
 ::  +pending-state
@@ -248,21 +273,21 @@
 ::TODO  maybe want to cache locally, refresh on %fact from azimuth?
 ::
 ++  pending-state
-  ^-  [_pending state:naive]
+  ^-  (quip pend-tx ^state:naive)
   ::  load current, canonical state
   ::
-  =+  .^  nas=state:naive
-        %gx
-        (scot %p our.bowl)
-        %azimuth
-        (scot %da now.bowl)
-        /nas/nas
-      ==
+  =+  .^  nas=^state:naive
+      %gx
+      (scot %p our.bowl)
+      %azimuth
+      (scot %da now.bowl)
+      /nas/nas
+    ==
   ::  apply our pending transactions
   ::TODO  should also apply txs from sending map!
   ::
   =|  valid=_pending
-  |-  ^+  nas
+  |-  ^+  [valid nas]
   ?~  pending  [(flop valid) nas]
   ::
   =^  gud=?  nas  (try-apply nas i.pending)
@@ -271,12 +296,12 @@
 ::  +try-apply:
 ::
 ++  try-apply
-  |=  [nas=state:naive force=? =raw-tx:naive]
+  |=  [nas=^state:naive force=? =raw-tx:naive]
   ^-  [success=? _nas]
-  ?.  (verify-sig-and-nonce:naive verifier:ttttt nas raw-tx)
+  ?.  (verify-sig-and-nonce:naive verifier:ttttt chain-id nas raw-tx)
     [force nas]
   ::
-  =^  *  nas  (increment-nonce:naive nas from.tx.raw-tx)
+  =^  out  points.nas  (increment-nonce:naive nas from.tx.raw-tx)
   ::
   ?~  nex=(receive-tx:naive nas tx.raw-tx)
     [force nas]
@@ -284,15 +309,20 @@
 ::
 ++  on-action
   |=  =action
+  ^-  (quip card _state)
   ?-  -.action
-    %commit  send-roll
+    %commit  !!  ::  TODO  send-roll
     %config  [~ state(frequency frequency.action)]
     %setkey  [~ state(pk pk.action)]  ::TODO  what about existing sending entries?
   ::
       %submit
     =^  success  state
-      %+  take-tx  force.action
+      ^-  [? _state]
+      %^    take-tx  
+          force.action
+        sig.action 
       (part-tx-to-full tx.action)
+    ::  TODO:  consider failure case
     ?>  success
     [~ state]
   ::
@@ -305,32 +335,36 @@
 ++  take-tx
   |=  [force=? =raw-tx:naive]
   ^-  [success=? _state]
-  =/  [nep=_pending nas=state:naive]  pending-state
-  =^  success  nas
-    (try-apply nas force raw-tx)
+  =/  [nep=_pending nas=^state:naive]  pending-state
+  =|  success=?
+  ::  TODO: actually use try-apply when proper Tx signing in place
+  ::
+  :: =^  success  nas
+  ::   (try-apply nas force raw-tx)
   ::TODO  want to notify about dropped pendings, or no? client prolly polls...
-  =?  pending  success  [[force raw-tx] nep]  ::TODO  probably +snoc instead?
+  =?  pending  success  (snoc nep [force raw-tx])
   ::TODO  cache nas?
   [success state]
 ::  +set-timer: %wait until next whole :frequency
 ::
 ++  set-timer
   ^-  card
-  %+  wait  /timer
+  %+  wait:b:sys  /timer
   (mul +((div now.bowl frequency)) frequency)
 ::  +on-timer: every :frequency, freeze :pending txs roll and start sending it
 ::
 ++  on-timer
+  ^-  (quip card _state)
   =^  cards  state
     ?~  pending  [~ state]
     =/  nonce=@ud  next-nonce
-    =:  pending     ~
+    =:  :: FIXME: what's up with this?  `pending  ~` also fails
+        :: pending     *(list pend-tx)
         next-nonce  +(next-nonce)
       ::
           sending
         %+  ~(put by sending)  nonce
-        %+  turn  pending
-        (cork tail (lead 0))
+        [0 (turn pending tail)]
       ==
     [(send-roll nonce) state]
   [[set-timer cards] state]
@@ -350,7 +384,14 @@
   %+  start-thread:spider
     /send/(scot %ud nonce)
   :-  %aggregator-send
-  !>([nonce ~(got by sending) nonce)])  ::TODO  other args
+  !>  
+  :*  endpoint
+      contract
+      chain-id
+      0x1234.5678
+      nonce
+      (~(got by sending) nonce)
+  ==
 ::  +on-thread-result: await resend after thread success or failure
 ::
 ++  on-thread-result
@@ -367,7 +408,7 @@
   ::  resend the l1 tx in five minutes
   ::
   :_  state
-  [(wait /resend/(scot %ud nonce) (add resend-time now.bowl))]~
+  [(wait:b:sys /resend/(scot %ud nonce) (add resend-time now.bowl))]~
 ::  +on-naive-diff: process l2 tx confirmations
 ::
 ++  on-naive-diff
@@ -382,7 +423,7 @@
   ::
   ?@  u.wer
     ~?  &(?=(%confirmed u.wer) ?=(~ err.diff))
-      [dap.bowl %weird-double-confirm from.tx]
+      [dap.bowl %weird-double-confirm from.tx.raw-tx.diff]
     [~ state]
   =*  nonce  nonce.u.wer
   ::  remove the tx from the sending map
@@ -393,6 +434,7 @@
       sending
     ?~  nin=(find [raw-tx.diff]~ txs.u.sen)
       ~&  [dap.bowl %weird-unknown]
+      sending
     =.  txs.u.sen  (oust [u.nin 1] txs.u.sen)
     ?~  txs.u.sen
       ~?  lverb  [dap.bowl %done-with-nonce nonce]
