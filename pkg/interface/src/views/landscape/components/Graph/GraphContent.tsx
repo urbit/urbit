@@ -3,7 +3,8 @@ import {
   Col, H1,
   H2,
   H3,
-  H4, Text
+  H4, Text,
+  Li, Ol, Ul
 } from '@tlon/indigo-react';
 import { Content, ReferenceContent } from '@urbit/api';
 import _ from 'lodash';
@@ -254,16 +255,12 @@ const renderers = {
   },
   strong: ({ children }) => {
     return (
-      <Text fontWeight="bold" lineHeight="1">
-        {children}
-      </Text>
+        <b>{children}</b>
     );
   },
   emphasis: ({ children }) => {
     return (
-      <Text fontStyle="italic" fontSize={1} lineHeight="tall">
-        {children}
-      </Text>
+        <i>{children}</i>
     );
   },
   blockquote: ({ children, depth, tall, ...rest }) => {
@@ -293,22 +290,11 @@ const renderers = {
   },
   listItem: ({ children }) => {
     return (
-      <Box position="relative" alignItems="center">
-        <Dot
-          top="7px"
-          position="absolute"
-          left="0px"
-          mr={1}
-          height="20px"
-          width="20px"
-        />
-        <Box ml={2}>{children}</Box>
-      </Box>
+      <Li>{children}</Li>
     );
   },
 
   code: ({ language, tall, value, ...rest }) => {
-    console.log(rest);
     const inner = (
       <Text
         p={1}
@@ -339,12 +325,8 @@ const renderers = {
       </Anchor>
     );
   },
-  list: ({ depth, children }) => {
-    return (
-      <Col ml={3} gapY={2} my={2}>
-        {children}
-      </Col>
-    );
+  list: ({ depth, ordered, children }) => {
+    return ordered ? <Ol>{children}</Ol> : <Ul>{children}</Ul>;
   },
   'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
   image: ({ url }) => (
