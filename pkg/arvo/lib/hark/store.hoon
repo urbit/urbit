@@ -287,9 +287,9 @@
     `@da`(rash p.jon dem:ag)
   ::
   ++  notif-ref
-    ^-  $-(json [@da ^index])
+    ^-  $-(json [(unit @da) ^index])
     %-  ot
-    :~  time+sd
+    :~  time+(mu sd)
         index+index
     ==
   ++  graph-store-index
@@ -310,8 +310,7 @@
     %-  of
     :~  seen+ul
         archive+notif-ref
-        unread-note+notif-ref
-        read-note+notif-ref
+        read-note+index
         add-note+add
         set-dnd+bo
         read-count+stats-index
@@ -340,11 +339,20 @@
         %unread-count  (unread-count +.upd)
         %remove-graph  s+(enjs-path:resource +.upd)
         %seen-index  (seen-index +.upd)
-        %unreads   (unreads +.upd)
+        %unreads     (unreads +.upd)
+        %read-note   (index +.upd)
+        %note-read   (note-read +.upd)
         ::
-          ?(%archive %read-note %unread-note)
+          %archive
         (notif-ref +.upd)
     ==
+    ::
+    ++  note-read
+      |=  [tim=@da idx=^index]
+      %-  pairs
+      :~  time+s+(scot %ud tim)
+          index+(index idx)
+      ==
     ::
     ++  stats-index
       |=  s=^stats-index
@@ -391,23 +399,21 @@
       ^-  json
       %-  pairs
       :~  unreads+(unread unreads.s)
-          notifications+a+(turn ~(tap in notifications.s) notif-ref)
           last+(time last-seen.s)
       ==
     ++  added
-      |=  [tim=@da idx=^index not=^notification]
+      |=  [idx=^index not=^notification]
       ^-  json
       %-  pairs
-      :~  time+s+(scot %ud tim)
-          index+(index idx)
+      :~  index+(index idx)
           notification+(notification not)
       ==
     ::
     ++  notif-ref
-      |=  [tim=@da idx=^index]
+      |=  [tim=(unit @da) idx=^index]
       ^-  json
       %-  pairs
-      :~  time+s+(scot %ud tim)
+      :~  [%time ?~(tim ~ s+(scot %ud u.tim))]
           index+(index idx)
       ==
     ++  seen-index
@@ -460,7 +466,6 @@
       ^-  json
       %-  pairs
       :~  time+(time date)
-          read+b+read
           contents+(^contents contents)
       ==
     ::

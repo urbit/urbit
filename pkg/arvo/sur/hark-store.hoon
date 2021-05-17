@@ -31,7 +31,7 @@
 ::
 +$  action
   $%  [%add-note =index =notification]
-      [%archive time=@da index]
+      [%archive time=(unit @da) index]
     ::
       [%unread-count =stats-index =time]
       [%read-count =stats-index]
@@ -40,8 +40,7 @@
       [%unread-each =stats-index ref=index:graph-store time=@da]
       [%read-each =stats-index ref=index:graph-store]
     ::
-      [%read-note time=@da index]
-      [%unread-note time=@da index]
+      [%read-note =index]
     ::
       [%seen-index time=@da =stats-index]
       [%remove-graph =resource]
@@ -60,7 +59,7 @@
   [index notification]
 ::
 +$  stats
-  [notifications=(set [time index]) =unreads last-seen=@da]
+  [=unreads last-seen=@da]
 ::
 +$  unreads
   $%  [%count num=@ud]
@@ -70,7 +69,8 @@
 +$  update
   $%  action
       [%more more=(list update)]
-      [%added time=@da =index =notification]
+      [%added =index =notification]
+      [%note-read =time =index]
       [%timebox time=@da archived=? =(list [index notification])]
       [%count count=@ud]
       [%clear =stats-index]
