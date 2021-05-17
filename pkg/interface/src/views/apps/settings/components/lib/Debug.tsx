@@ -16,7 +16,7 @@ import { BackButton } from './BackButton';
 
 interface StoreDebuggerProps {
   name: string;
-  useStore: UseStore<BaseState<any>>;
+  useStore: UseStore<BaseState<any> & any>;
 }
 
 const objectToString = (obj: any): string => JSON.stringify(obj, null, '  ');

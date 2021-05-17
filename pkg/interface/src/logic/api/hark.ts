@@ -79,6 +79,17 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.actOnNotification('unread-note', time, index);
   }
 
+  dismissReadCount(graph: string, index: string) {
+    return this.harkAction({
+      'read-count': {
+        graph: {
+          graph,
+          index
+        }
+      }
+    });
+  }
+
   markCountAsRead(association: Association, parent: string, description: GraphNotifDescription) {
     const action = {  'read-count': {
          graph: {

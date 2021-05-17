@@ -64,7 +64,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
       let { description, moduleType, ships, writers } = values;
       ships = ships.filter(e => e !== '');
       if (workspace?.type === 'messages' && ships.length === 1) {
-        return history.push(`/~landscape/dm/${deSig(ships[0])}`);
+        return history.push(`/~landscape/messages/dm/${deSig(ships[0])}`);
       }
       if (group) {
         await api.graph.createManagedGraph(

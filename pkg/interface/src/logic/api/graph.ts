@@ -1,3 +1,4 @@
+import { patp2dec } from 'urbit-ob';
 import { Content, Enc, GraphNode, GroupPolicy, Path, Patp, Post, Resource } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import _ from 'lodash';
@@ -201,6 +202,33 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
+  addDmMessage(ship: Patp, contents: Content[]) {
+    const post = createPost(contents, `/${patp2dec(ship)}`)
+    return this.action('dm-hook', 'graph-update-2', {
+      "add-nodes": {
+        resource: { ship: `~${window.ship}`, name: 'dm-inbox' },
+        nodes: {
+          [post.index]: {
+            post,
+            children: null
+          }
+        }
+      }
+    });
+  }
+
+  acceptDm(ship: Patp) {
+    return this.action('dm-hook', 'dm-hook-action', { "accept" : ship });
+  }
+
+  declineDm(ship: Patp) {
+    return this.action('dm-hook', 'dm-hook-action', { "decline" : ship });
+  }
+  
+  setScreen(screen: boolean) {
+    return this.action('dm-hook', 'dm-hook-action', { screen });
+  }
+
   addPost(ship: Patp, name: string, post: Post) {
     const nodes = {};
     nodes[post.index] = {
@@ -344,6 +372,14 @@ export default class GraphApi extends BaseApi<StoreState> {
     const data = await this.scry<any>('graph-store',
        `/node-siblings/younger/${ship}/${resource}/${count}${idx}`
      );
+    this.store.handleEvent({ data });
+  }
+
+  async getShallowChildren(ship: string, name: string, index = '') {
+    const idx = index.split('/').map(decToUd).join('/');
+    const data = await this.scry<any>('graph-store',
+      `/shallow-children/${ship}/${name}${idx}`
+    )
     this.store.handleEvent({ data });
   }
 

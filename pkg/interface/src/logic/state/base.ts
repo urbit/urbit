@@ -67,7 +67,7 @@ export const stateStorageKey = (stateName: string) => {
   });
 };
 
-export interface BaseState<StateType> {
+export interface BaseState<StateType extends {}> {
   rollback: (id: string) => void;
   patches: {
     [id: string]: Patch[];

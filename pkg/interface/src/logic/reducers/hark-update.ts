@@ -402,7 +402,7 @@ function notifIdxEqual(a: NotifIndex, b: NotifIndex) {
     return (
       a.graph.graph === b.graph.graph &&
       a.graph.group === b.graph.group &&
-      a.graph.module === b.graph.module &&
+      a.graph.mark === b.graph.mark &&
       a.graph.description === b.graph.description
     );
   } else if ('group' in a && 'group' in b) {
