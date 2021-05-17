@@ -90,7 +90,7 @@
       ?~  data  ~
       :_  ~
       ^-  card
-      [%pass / %agent [our.bowl %dice] %poke u.data]
+      [%pass / %agent [our.bowl %aggregator] %poke u.data]
       ::  TODO: validate that format is e.g. 'getPoint'
       ::  TODO: maybe use getPoint and translate to %get-point
       ::
@@ -138,14 +138,14 @@
     %transfer-point        (transfer-point id +.params)
     %configure-keys        (configure-keys id +.params)
     %spawn                 (spawn id +.params)
-    %escape                (escape id +.params)
-    %cancel-escape         (cancel-escape id +.params)
-    %adopt                 (adopt id +.params)
-    %detach                (detach id +.params)
-    %reject                (reject id +.params)
-    %set-management-proxy  (management-proxy id +.params)
-    %set-spawn-proxy       (spawn-proxy id +.params)
-    %set-transfer-proxy    (transfer-proxy id +.params)
+    %escape                (escape id +.params method)
+    %cancel-escape         (cancel-escape id +.params method)
+    %adopt                 (adopt id +.params method)
+    %detach                (detach id +.params method)
+    %reject                (reject id +.params method)
+    %set-management-proxy  (management-proxy id +.params method)
+    %set-spawn-proxy       (spawn-proxy id +.params method)
+    %set-transfer-proxy    (transfer-proxy id +.params method)
     %pending               [~ (all:pending id +.params all:pending:scry)]
     %pending-by-ship       [~ (ship:pending id +.params ship:pending:scry)] 
     %pending-by-address    [~ (addr:pending id +.params addr:pending:scry)] 
@@ -167,21 +167,21 @@
     ++  all
       .^  (list pend-tx) 
           %gx 
-          (~(scry agentio bowl) %dice /pending/noun)
+          (~(scry agentio bowl) %aggregator /pending/noun)
       ==
     ::
     ++  ship
       |=  =^ship
       .^  (list pend-tx)
           %gx 
-          (~(scry agentio bowl) %dice /pending/[(scot %p ship)]/noun)
+          (~(scry agentio bowl) %aggregator /pending/[(scot %p ship)]/noun)
       ==
     ::
     ++  addr
       |=  =address:naive
       .^  (list pend-tx)
           %gx 
-          %+  ~(scry agentio bowl)  %dice
+          %+  ~(scry agentio bowl)  %aggregator
           /pending/[(scot %ux address)]/noun
       ==
     --
@@ -193,7 +193,7 @@
       ::
       .^  (list tx:naive)
           %gx 
-          (~(scry agentio bowl) %dice /history/noun)
+          (~(scry agentio bowl) %aggregator /history/noun)
       ==    
     ::
     ++  ship
@@ -202,7 +202,7 @@
       ::
       .^  (list tx:naive)
           %gx 
-          (~(scry agentio bowl) %dice /history/[(scot %p ship)]/noun)
+          (~(scry agentio bowl) %aggregator /history/[(scot %p ship)]/noun)
       ==    
     ::
     ++  addr
@@ -211,7 +211,7 @@
       ::
       .^  (list tx:naive)
           %gx 
-          (~(scry agentio bowl) %dice /history/[(scot %ux address)]/noun)
+          (~(scry agentio bowl) %aggregator /history/[(scot %ux address)]/noun)
       ==    
     --
   ::
@@ -219,7 +219,7 @@
     |=  keccak=@ux
     .^  ^tx-status
         %gx 
-        (~(scry agentio bowl) %dice /tx/[(scot %ux keccak)]/status/noun)
+        (~(scry agentio bowl) %aggregator /tx/[(scot %ux keccak)]/status/noun)
     ==
   ::
   ++  nonce
@@ -228,7 +228,7 @@
     .^  @
         %gx 
         %+  ~(scry agentio bowl)  
-          %dice
+          %aggregator
         /nonce/[(scot %p ship)]/[(scot %ux address)]/atom
     ==
   --
