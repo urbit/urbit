@@ -38,9 +38,12 @@ export default class WalletModal extends Component {
     this.state = {
       mode: 'masterTicket',
       masterTicket: '',
+      confirmedMasterTicket: '',
       xpub: '',
       readyToSubmit: false,
       processingSubmission: false,
+      confirmingMasterTicket: false,
+      error: false,
     }
     this.checkTicket        = this.checkTicket.bind(this);
     this.checkXPub          = this.checkXPub.bind(this);
@@ -52,9 +55,15 @@ export default class WalletModal extends Component {
 
   checkTicket(e){
     // TODO: port over bridge ticket validation logic
-    let masterTicket = e.target.value;
-    let readyToSubmit = (masterTicket.length > 0);
-    this.setState({masterTicket, readyToSubmit});
+    if (this.state.confirmingMasterTicket) {
+      let confirmedMasterTicket = e.target.value;
+      let readyToSubmit = (confirmedMasterTicket.length > 0);
+      this.setState({confirmedMasterTicket, readyToSubmit});
+    } else {
+      let masterTicket = e.target.value;
+      let readyToSubmit = (masterTicket.length > 0);
+      this.setState({masterTicket, readyToSubmit});
+    }
   }
 
   checkXPub(e){
@@ -121,16 +130,30 @@ export default class WalletModal extends Component {
               master ticket. Learn More
             </Text>
           </Box>
-          <Box mt={3} mb={2}>
+          <Box
+            display='flex'
+            alignItems='center'
+            mt={3}
+            mb={2}>
+            {this.state.confirmingMasterTicket &&
+             <Icon
+               icon='ArrowWest'
+               cursor='pointer'
+               onClick={() => this.setState({
+                 confirmingMasterTicket: false,
+                 masterTicket: '',
+                 confirmedMasterTicket: '',
+                 error: false
+               })}/>}
             <Text fontSize="14px" fontWeight="500">
-              Master Key
+              {this.state.confirmingMasterTicket ? 'Confirm Master Key' : 'Master Key'}
             </Text>
           </Box>
           <Row alignItems="center">
             <StatelessTextInput
               mr={2}
               width="256px"
-              value={this.state.masterTicket}
+              value={this.state.confirmingMasterTicket ? this.state.confirmedMasterTicket : this.state.masterTicket}
               disabled={inputDisabled}
               fontSize="14px"
               type="password"
@@ -143,6 +166,15 @@ export default class WalletModal extends Component {
             />
             {(!inputDisabled) ? null : <LoadingSpinner/>}
           </Row>
+          {this.state.error &&
+           <Row mt={2}>
+             <Text
+               fontSize='14px'
+               color='red'>
+               Master tickets do not match
+             </Text>
+           </Row>
+          }
           <Box mt={3} mb={3}>
             <Text fontSize="14px" fontWeight="regular"
               color={(inputDisabled) ? "lighterGray" : "gray"}
@@ -161,7 +193,18 @@ export default class WalletModal extends Component {
             children="Next Step"
             fontSize="14px"
             style={{cursor: buttonDisabled ? "default" : "pointer"}}
-            onClick={() => {this.submitMasterTicket(this.state.masterTicket)}}
+            onClick={() => {
+              if (!this.state.confirmingMasterTicket) {
+                this.setState({confirmingMasterTicket: true});
+              } else {
+                if (this.state.masterTicket === this.state.confirmedMasterTicket) {
+                  this.setState({error: false});
+                  this.submitMasterTicket(this.state.masterTicket);
+                } else {
+                  this.setState({error: true});
+                }
+              }
+            }}
           />
         </Box>
       );
