@@ -6,7 +6,6 @@ import {
   AppInvites,
   JoinRequest,
 } from '@urbit/api';
-import _ from 'lodash';
 import GlobalApi from '~/logic/api/global';
 import { alphabeticalOrder, resourceAsPath } from '~/logic/lib/util';
 import useInviteState from '~/logic/state/invite';
@@ -29,7 +28,7 @@ export function Invites(props: InvitesProps): ReactElement {
   const { api } = props;
   const invites = useInviteState((state) => state.invites);
 
-  const pendingDms = useGraphState((s) => s.pendingDms);
+  const pendingDms = useGraphState((s) => s.pendingDms) ?? [];
 
   const inviteArr: InviteRef[] = _.reduce(
     invites,
@@ -52,6 +51,7 @@ export function Invites(props: InvitesProps): ReactElement {
     ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)),
     ...pendingJoin,
   };
+
 
   return (
     <>

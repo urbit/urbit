@@ -1,4 +1,5 @@
 import {
+  NotificationContents,
   NotifIndex,
   Timebox
 } from '@urbit/api';
@@ -13,6 +14,7 @@ import useHarkState, { HarkState } from '../state/hark';
 export const HarkReducer = (json: any) => {
   const data = _.get(json, 'harkUpdate', false);
   if (data) {
+    console.log(data);
     reduceState(useHarkState, data, [reduce]);
   }
   const graphHookData = _.get(json, 'hark-graph-hook-update', false);
@@ -38,7 +40,6 @@ export const HarkReducer = (json: any) => {
 function reduce(data, state) {
   const reducers = [
     calculateCount,
-    unread,
     read,
     archive,
     timebox,
@@ -327,19 +328,8 @@ function added(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'added', false);
   if (data) {
     const { index, notification } = data;
-    const time = makePatDa(data.time);
-    const timebox = state.notifications.get(time) || [];
-    addNotificationToUnread(state, index, time);
-
-    const arrIdx = timebox.findIndex(idxNotif =>
-      notifIdxEqual(index, idxNotif.index)
-    );
-    if (arrIdx !== -1) {
-      timebox[arrIdx] = { index, notification };
-      state.notifications = state.notifications.set(time, timebox);
-    } else {
-      state.notifications = state.notifications.set(time, [...timebox, { index, notification }]);
-    }
+    const [fresh, stale] = _.partition(state.unreadNotes, ({ index: idx }) => !notifIdxEqual(index, idx));
+    state.unreadNotes = [...fresh, { index, notification }];
   }
   return state;
 }
@@ -390,6 +380,22 @@ function notifIdxEqual(a: NotifIndex, b: NotifIndex) {
   return false;
 }
 
+function mergeNotifs(a: NotificationContents, b: NotificationContents) {
+  if ('graph' in a && 'graph' in b) {
+    return {
+      graph: [...a.graph, ...b.graph]
+    };
+  } else if ('group' in a && 'group' in b) {
+    return {
+      group: [...a.group, ...b.group]
+    };
+  }
+  return a;
+}
+
+
+
+
 function setRead(
   time: string,
   index: NotifIndex,
@@ -415,21 +421,19 @@ function setRead(
 }
 
 function read(json: any, state: HarkState): HarkState {
-  const data = _.get(json, 'read-note', false);
+  const data = _.get(json, 'note-read', false);
   if (data) {
-    const { time, index } = data;
-    removeNotificationFromUnread(state, index, makePatDa(time));
-    setRead(time, index, true, state);
-  }
-  return state;
-}
+    const { index } = data;
+    const time = makePatDa(data.time);
+    const [read, unread] = _.partition(state.unreadNotes,({ index: idx }) => notifIdxEqual(index, idx))
+    state.unreadNotes = unread;
+    const oldTimebox = state.notifications.get(time) ?? [];
+    const [toMerge, rest] = _.partition(oldTimebox, i => notifIdxEqual(index, i.index));
+    if(toMerge.length > 0 && read.length > 0) {
+      read[0].notification.contents = mergeNotifs(read[0].notification.contents, toMerge[0].notification.contents);
 
-function unread(json: any, state: HarkState): HarkState {
-  const data = _.get(json, 'unread-note', false);
-  if (data) {
-    const { time, index } = data;
-    addNotificationToUnread(state, index, makePatDa(time));
-    setRead(time, index, false, state);
+    }
+    state.notifications = state.notifications.set(time, [...read, ...rest]);
   }
   return state;
 }
