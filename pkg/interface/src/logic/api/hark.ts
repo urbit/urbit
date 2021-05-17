@@ -80,15 +80,15 @@ export class HarkApi extends BaseApi<StoreState> {
   }
 
   markCountAsRead(association: Association, parent: string, description: GraphNotifDescription) {
-    return this.harkAction(
-      {  'read-count': {
+    const action = {  'read-count': {
          graph: {
         graph: association.resource,
         group: association.group,
         description,
         index: parent
       } }
-    });
+    };
+    doOptimistically(useHarkState, action, this.harkAction.bind(this), [reduce]);
   }
 
   markEachAsRead(association: Association, parent: string, child: string, description: GraphNotifDescription, mod: string) {
