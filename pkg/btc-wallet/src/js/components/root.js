@@ -42,6 +42,8 @@ export class Root extends Component {
   render() {
     const loaded = this.state.loaded;
     const warning = this.state.showWarning;
+    const blur = (!loaded) ? false :
+      !(this.state.wallet && this.state.provider);
 
     return (
       <BrowserRouter>
@@ -56,6 +58,7 @@ export class Root extends Component {
           width='100%'
           minHeight={loaded ? '100%' : 'none'}
           height={loaded ? 'none' : '100%'}
+          style={{filter: (blur ? 'blur(8px)' : 'none')}}
           px={[0,4]}
           pb={[0,4]}
         >
