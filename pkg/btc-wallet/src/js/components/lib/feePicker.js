@@ -30,7 +30,7 @@ export default class FeePicker extends Component {
   render() {
     return (
       <Box
-        position="fixed" p={4}
+        position="absolute" p={4}
         border="1px solid green" zIndex={10}
         backgroundColor="white" borderRadius={3}
       >
