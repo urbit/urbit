@@ -100,7 +100,9 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     }
     Mousetrap.bind('escape', props.toggle);
     const touchstart = new Event('touchstart');
+    // @ts-ignore
     inputRef?.current?.input?.dispatchEvent(touchstart);
+    // @ts-ignore
     inputRef?.current?.input?.focus();
     return () => {
       Mousetrap.unbind('escape');
@@ -173,6 +175,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     const totalLength = flattenedResults.length;
     if (selected.length) {
       const currentIndex = flattenedResults.indexOf(
+          // @ts-ignore unclear how to give this spread a return signature
         ...flattenedResults.filter((e) => {
           return e.link === selected[1];
         })
@@ -194,6 +197,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     const flattenedResults = Array.from(results.values()).flat();
     if (selected.length) {
       const currentIndex = flattenedResults.indexOf(
+        // @ts-ignore unclear how to give this spread a return signature
         ...flattenedResults.filter((e) => {
           return e.link === selected[1];
         })
@@ -325,6 +329,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
                 {categoryResults.sort(sortResults).map((result, i2) => (
                   <OmniboxResult
                     key={i2}
+                    // @ts-ignore withHovering doesn't pass props
                     icon={result.app}
                     text={result.title}
                     subtext={result.host}
@@ -365,8 +370,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
               omniboxRef.current = el;
             }}
           >
+            { /* @ts-ignore investigate zustand types */ }
             <OmniboxInput
               ref={(el) => {
+                // @ts-ignore investigate refs
                 inputRef.current = el;
               }}
               control={e => control(e)}
@@ -380,5 +387,5 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     </Portal>
   );
 }
-
+// @ts-ignore investigate zustand types
 export default withLocalState(Omnibox, ['toggleOmnibox', 'omniboxShown']);

@@ -9,6 +9,7 @@ export interface ContactState extends BaseState<ContactState> {
   // fetchIsAllowed: (entity, name, ship, personal) => Promise<boolean>;
 }
 
+// @ts-ignore investigate zustand types
 const useContactState = createState<ContactState>('Contact', {
   contacts: {},
   nackedContacts: new Set(),

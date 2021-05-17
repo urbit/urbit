@@ -1,4 +1,5 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
+import { GraphNode } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
@@ -37,7 +38,7 @@ export default function PostReplies(props) {
     return bigInt(ind);
   });
 
-  let node;
+  let node: GraphNode;
   let parentNode;
   nodeIndex.forEach((i, idx) => {
     if (!graph) {
@@ -69,6 +70,7 @@ export default function PostReplies(props) {
         <Box mt={3} width="100%" alignItems="center">
           <PostItem
             key={node.post.index}
+            // @ts-ignore withHovering prop pass is broken?
             node={node}
             graphPath={graphPath}
             association={association}

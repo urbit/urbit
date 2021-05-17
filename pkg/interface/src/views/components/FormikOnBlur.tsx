@@ -1,28 +1,32 @@
 import { FormikConfig, FormikProvider, FormikValues, useFormik } from 'formik';
-import React, { useEffect, useImperativeHandle } from 'react';
+import React, { useEffect, useImperativeHandle, useState } from 'react';
 
 export function FormikOnBlur<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps) {
   const formikBag = useFormik<Values>({ ...props, validateOnBlur: true });
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (
       Object.keys(formikBag.errors || {}).length === 0 &&
-      Object.keys(formikBag.touched || {}).length !== 0 &&
-      !formikBag.isSubmitting
+      formikBag.dirty && 
+      !formikBag.isSubmitting &&
+      !submitting
     ) {
+      setSubmitting(true);
       const { values } = formikBag;
       formikBag.submitForm().then(() => {
-        formikBag.resetForm({ values, touched: {} });
+        formikBag.resetForm({ values })
+        setSubmitting(false);
       });
     }
   }, [
     formikBag.errors,
-    formikBag.touched,
-    formikBag.submitForm,
-    formikBag.values
+    formikBag.dirty,
+    submitting,
+    formikBag.isSubmitting
   ]);
 
   const { children, innerRef } = props;

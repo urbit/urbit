@@ -39,7 +39,7 @@ export default class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
       items.forEach(([key, value]) => {
         draft.root[key.toString()] = castDraft(value);
       });
-      draft.generateCachedIter();
+      draft.cachedIter = null;
     }, 
     (patches) => {
       //console.log(`gassed with ${JSON.stringify(patches, null, 2)}`);

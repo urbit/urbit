@@ -226,7 +226,9 @@ export class ChatInput extends Component<ChatInputProps, ChatInputState> {
   }
 }
 
+// @ts-ignore withLocalState prop passing weirdness
 export default withLocalState<Omit<ChatInputProps, keyof IuseStorage>, 'hideAvatars', ChatInput>(
+  // @ts-ignore withLocalState prop passing weirdness
   withStorage<ChatInputProps, ChatInput>(ChatInput, { accept: 'image/*' }),
   ['hideAvatars']
 );

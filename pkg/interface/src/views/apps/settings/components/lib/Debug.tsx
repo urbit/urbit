@@ -57,7 +57,9 @@ const StoreDebugger = (props: StoreDebuggerProps) => {
           placeholder="Drill Down"
           width="100%"
           onKeyUp={(event) => {
+            // @ts-ignore clearly value is in eventtarget
             if (event.target.value) {
+            // @ts-ignore clearly value is in eventtarget
               tryFilter(event.target.value);
             } else {
               setFilter('');

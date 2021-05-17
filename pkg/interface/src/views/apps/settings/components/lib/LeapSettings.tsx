@@ -50,7 +50,6 @@ export function LeapSettings(props: { api: GlobalApi; }) {
   const { leap, set: setSettingsState } = useSettingsState(settingsSel);
   const categories = leap.categories as LeapCategories[];
   const missing = _.difference(leapCategories, categories);
-  console.log(categories);
 
   const initialValues = {
     categories: [

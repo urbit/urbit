@@ -3,7 +3,8 @@ import {
 
   Center, Col, Icon,
 
-  StatelessToggleSwitchField, Text
+  ToggleSwitch, Text,
+  StatelessToggleSwitchField
 } from '@tlon/indigo-react';
 import { Association, GraphConfig, resourceFromPath } from '@urbit/api';
 import { useField } from 'formik';
@@ -100,7 +101,7 @@ function Channel(props: { association: Association }) {
     return isWatching(config, association.resource);
   });
 
-  const [{ value }, meta, { setValue }] = useField(
+  const [{ value }, meta, { setValue, setTouched }] = useField(
     `graph["${association.resource}"]`
   );
 
@@ -108,9 +109,11 @@ function Channel(props: { association: Association }) {
     setValue(watching);
   }, [watching]);
 
-  const onChange = () => {
+  const onClick = () => {
     setValue(!value);
-  };
+    setTouched(true);
+  }
+
 
   const icon = getModuleIcon((metadata.config as GraphConfig)?.graph as GraphModule);
 
@@ -123,7 +126,7 @@ function Channel(props: { association: Association }) {
         <Text> {metadata.title}</Text>
       </Box>
       <Box gridColumn={4}>
-        <StatelessToggleSwitchField selected={value} onChange={onChange} />
+        <StatelessToggleSwitchField selected={value} onClick={onClick} />
       </Box>
     </>
   );

@@ -1,12 +1,12 @@
 import {
-  BaseImage, Box,
-
-  Button, Col,
-
-  Icon, Row,
-
-  Text
-} from '@tlon/indigo-react';
+  BaseImage,
+  Box,
+  Button,
+  Col,
+  Icon,
+  Row,
+  Text,
+} from "@tlon/indigo-react";
 import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
@@ -73,7 +73,7 @@ const StatusBar = (props) => {
       px={3}
       pb={3}
     >
-      <Row collapse>
+      <Row>
         <Button
           width='32px'
           borderColor='lightGray'
@@ -108,14 +108,15 @@ const StatusBar = (props) => {
           subscription={props.subscription}
         />
       </Row>
-      <Row justifyContent='flex-end' collapse>
+      <Row justifyContent='flex-end'>
         <StatusBarItem
+          width='32px'
           mr={2}
           backgroundColor='yellow'
           display={
             process.env.LANDSCAPE_STREAM === 'development' ? 'flex' : 'none'
           }
-          justifyContent='flex-end'
+          justifyContent='center'
           flexShrink={0}
           onClick={() =>
             window.open(
@@ -125,7 +126,7 @@ const StatusBar = (props) => {
             )
           }
         >
-        <Icon icon="Bug" color="#000000" />
+          <Icon icon="Bug" color="#000000" />
         </StatusBarItem>
         <StatusBarItem
           width='32px'

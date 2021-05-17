@@ -218,7 +218,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
               textOverflow='ellipsis'
               overflow='hidden'
               whiteSpace='pre'
-              marginBottom={0}
+              mb={0}
               disableRemoteContent
               gray
               title={contact?.status ? contact.status : ''}

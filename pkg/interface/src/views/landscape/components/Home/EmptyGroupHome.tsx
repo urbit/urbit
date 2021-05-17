@@ -23,9 +23,11 @@ export function EmptyGroupHome(props) {
       { groupAssociation?.group ? (
         <GroupSummary
           memberCount={groups[groupAssociation.group].members.size}
+          locked={Boolean('invite' in groups[groupAssociation.group].policy)}
           channelCount={channelCount}
           metadata={groupAssociation.metadata}
           resource={groupAssociation.group}
+          AllowCopy
         />
       ) : (
         <Box p={4}>
