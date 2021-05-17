@@ -102,6 +102,7 @@ const addGraph = (json, state: GraphState): GraphState => {
   const data = _.get(json, 'add-graph', false);
   if (data) {
     if (!('graphs' in state)) {
+      // @ts-ignore investigate zustand types
       state.graphs = {};
     }
 
@@ -122,6 +123,7 @@ const removeGraph = (json, state: GraphState): GraphState => {
   const data = _.get(json, 'remove-graph', false);
   if (data) {
     if (!('graphs' in state)) {
+      // @ts-ignore investigate zustand types
       state.graphs = {};
     }
     const resource = data.ship + '/' + data.name;
@@ -279,7 +281,7 @@ const removePosts = (json, state: GraphState): GraphState => {
       } else {
         const child = graph.get(index[0]);
         if (child) {
-          return graph.set(index[0], produce((draft) => {
+          return graph.set(index[0], produce((draft: any) => {
             draft.children = _remove(draft.children, index.slice(1));
           }));
         }

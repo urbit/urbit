@@ -13,7 +13,7 @@ import useStorage from '~/logic/lib/useStorage';
 
 type ImageInputProps = Parameters<typeof Box>[0] & {
   id: string;
-  label: string;
+  label?: string;
   placeholder?: string;
 };
 

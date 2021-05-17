@@ -1,4 +1,4 @@
-import { ContactUpdate } from '@urbit/api';
+import { ContactUpdate, deSig } from '@urbit/api';
 import _ from 'lodash';
 import { reduceState } from '../state/base';
 import useContactState, { ContactState } from '../state/contact';
@@ -52,9 +52,9 @@ const remove = (json: ContactUpdate, state: ContactState): ContactState => {
   return state;
 };
 
-const edit = (json: ContactUpdate, state: ContactState): ContactState => {
+export const edit = (json: ContactUpdate, state: ContactState): ContactState => {
   const data = _.get(json, 'edit', false);
-  const ship = `~${data.ship}`;
+  const ship = `~${deSig(data.ship)}`;
   if (
     data &&
     (ship in state.contacts)

@@ -251,8 +251,7 @@ function ChatMessage(props: ChatMessageProps) {
   let onDelete = props?.onDelete ?? (() => {});
   const transcluded = props?.transcluded ?? 0;
   const renderSigil = props.renderSigil ?? (Boolean(nextMsg && msg.author !== nextMsg.author) ||
-        !nextMsg ||
-        msg.number === 1
+        !nextMsg
     );
 
     const ourMention = msg?.contents?.some((e: MentionContent) => {

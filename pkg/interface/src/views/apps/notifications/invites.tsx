@@ -6,7 +6,6 @@ import {
   AppInvites,
   JoinRequest,
 } from '@urbit/api';
-import _ from 'lodash';
 import GlobalApi from '~/logic/api/global';
 import { alphabeticalOrder, resourceAsPath } from '~/logic/lib/util';
 import useInviteState from '~/logic/state/invite';

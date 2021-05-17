@@ -292,7 +292,7 @@ export function GraphNotification(props: {
       const first = contents[0];
       history.push(
         getNodeUrl(
-          index.module,
+          index.mark,
           groups[association?.group]?.hidden,
           association?.group,
           association?.resource,
@@ -328,7 +328,6 @@ export function GraphNotification(props: {
           hideAuthors={hideAuthors}
           posts={contents.slice(0, 4)}
           mod={index.mark}
-          description={index.description}
           index={contents?.[0].index}
           association={association}
           hidden={groups[association?.group]?.hidden}

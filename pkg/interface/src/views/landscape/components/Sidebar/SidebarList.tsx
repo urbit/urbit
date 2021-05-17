@@ -1,14 +1,16 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import { AppAssociations, Associations, Graph, UnreadStats } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
 
 import { SidebarAssociationItem, SidebarDmItem } from './SidebarItem';
-import useMetadataState from '~/logic/state/metadata';
-import {useInbox} from '~/logic/state/graph';
+import useGraphState, {useInbox} from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
-import { alphabeticalOrder } from '~/logic/lib/util';
-import { Workspace } from '~/types/workspace';
+import { alphabeticalOrder, getResourcePath, modulo } from '~/logic/lib/util';
 import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
+import { Workspace } from '~/types/workspace';
+import useMetadataState from '~/logic/state/metadata';
+import {useHistory} from 'react-router';
+import { useShortcut } from '~/logic/state/settings';
 
 function sidebarSort(
   associations: AppAssociations,
@@ -45,7 +47,6 @@ function sidebarSort(
     lastUpdated
   };
 }
-
 
 function getItems(associations: Associations, workspace: Workspace, inbox: Graph) {
    const filtered = Object.keys(associations.graph).filter((a) => {
@@ -95,10 +96,38 @@ export function SidebarList(props: {
   const associations = useMetadataState(state => state.associations);
   const inbox = useInbox();
   const unreads = useHarkState(s => s.unreads.graph?.[`/ship/~${window.ship}/dm-inbox`]);
+  const graphKeys = useGraphState(s => s.graphKeys);
 
 
   const ordered = getItems(associations, workspace, inbox)
     .sort(sidebarSort(associations.graph, props.apps, unreads)[config.sortBy]);
+
+  const history = useHistory();
+
+  const cycleChannels = useCallback((backward: boolean) => {
+    const idx = ordered.findIndex(s => s === selected);
+    const offset = backward ? -1 : 1
+
+    const newIdx = modulo(idx+offset, ordered.length - 1);
+    const { metadata, resource } = associations[ordered[newIdx]];
+    const joined = graphKeys.has(resource.slice(7));
+    let path = '/~landscape/home';
+    if ('graph' in metadata.config) {
+      path = getResourcePath(workspace, resource, joined, metadata.config.graph);
+    }
+    history.push(path)
+  }, [selected, history.push]);
+
+  useShortcut('cycleForward', useCallback((e: KeyboardEvent) => {
+    cycleChannels(false);
+    e.preventDefault();
+  }, [cycleChannels]));
+
+  useShortcut('cycleBack', useCallback((e: KeyboardEvent) => {
+    cycleChannels(true);
+    e.preventDefault();
+  }, [cycleChannels]))
+
 
   return (
     <>

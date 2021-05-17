@@ -239,6 +239,7 @@ class ChatWindow extends Component<
     };
 
     return (
+      // @ts-ignore
       <ChatMessage
         key={index.toString()}
         ref={ref}
@@ -281,6 +282,7 @@ class ChatWindow extends Component<
           origin='bottom'
           style={virtScrollerStyle}
           onBottomLoaded={this.onBottomLoaded}
+          // @ts-ignore paging @liam-fitzgerald on virtualscroller props
           onScroll={this.onScroll}
           data={graph}
           size={graph.size}
