@@ -29,7 +29,7 @@
 %-  agent:dbug
 ::
 =|  state-0
-=*  state  - 
+=*  state  -
 ::
 ^-  agent:gall
 =<
@@ -90,7 +90,7 @@
       ?~  data  ~
       :_  ~
       ^-  card
-      [%pass / %agent [our.bowl %dice] %poke u.data]
+      [%pass / %agent [our.bowl %aggregator] %poke u.data]
       ::  TODO: validate that format is e.g. 'getPoint'
       ::  TODO: maybe use getPoint and translate to %get-point
       ::
@@ -131,57 +131,57 @@
     %-  json-response:gen
     (response-to-json:json-rpc response)
   =,  azimuth-rpc
-  ?.  ?=([%map *] params)  
+  ?.  ?=([%map *] params)
     [~ ~(parse error id)]
   ?+    method  [~ ~(method error id)]
     %get-point             [~ (get-point id +.params point:scry)]
     %transfer-point        (transfer-point id +.params)
     %configure-keys        (configure-keys id +.params)
     %spawn                 (spawn id +.params)
-    %escape                (escape id +.params)
-    %cancel-escape         (cancel-escape id +.params)
-    %adopt                 (adopt id +.params)
-    %detach                (detach id +.params)
-    %reject                (reject id +.params)
-    %set-management-proxy  (management-proxy id +.params)
-    %set-spawn-proxy       (spawn-proxy id +.params)
-    %set-transfer-proxy    (transfer-proxy id +.params)
+    %escape                (escape id +.params method)
+    %cancel-escape         (cancel-escape id +.params method)
+    %adopt                 (adopt id +.params method)
+    %detach                (detach id +.params method)
+    %reject                (reject id +.params method)
+    %set-management-proxy  (management-proxy id +.params method)
+    %set-spawn-proxy       (spawn-proxy id +.params method)
+    %set-transfer-proxy    (transfer-proxy id +.params method)
     %pending               [~ (all:pending id +.params all:pending:scry)]
-    %pending-by-ship       [~ (ship:pending id +.params ship:pending:scry)] 
-    %pending-by-address    [~ (addr:pending id +.params addr:pending:scry)] 
-    %status                [~ (status id +.params tx-status:scry)]  
-    :: %history               [~ (history id +.params all:history:scry)] 
+    %pending-by-ship       [~ (ship:pending id +.params ship:pending:scry)]
+    %pending-by-address    [~ (addr:pending id +.params addr:pending:scry)]
+    %status                [~ (status id +.params tx-status:scry)]
+    :: %history               [~ (history id +.params all:history:scry)]
   ==
 ::
 ++  scry
   |%
   ++  point
     |=  =ship
-    .^  (unit point:naive) 
-        %gx 
+    .^  (unit point:naive)
+        %gx
         (~(scry agentio bowl) %azimuth /nas/[(scot %p ship)]/noun)
     ==
   ::
   ++  pending
     |%
     ++  all
-      .^  (list pend-tx) 
-          %gx 
-          (~(scry agentio bowl) %dice /pending/noun)
+      .^  (list pend-tx)
+          %gx
+          (~(scry agentio bowl) %aggregator /pending/noun)
       ==
     ::
     ++  ship
       |=  =^ship
       .^  (list pend-tx)
-          %gx 
-          (~(scry agentio bowl) %dice /pending/[(scot %p ship)]/noun)
+          %gx
+          (~(scry agentio bowl) %aggregator /pending/[(scot %p ship)]/noun)
       ==
     ::
     ++  addr
       |=  =address:naive
       .^  (list pend-tx)
-          %gx 
-          %+  ~(scry agentio bowl)  %dice
+          %gx
+          %+  ~(scry agentio bowl)  %aggregator
           /pending/[(scot %ux address)]/noun
       ==
     --
@@ -192,43 +192,43 @@
       ::  FIXME: use proper type from aggregator/index
       ::
       .^  (list tx:naive)
-          %gx 
-          (~(scry agentio bowl) %dice /history/noun)
-      ==    
+          %gx
+          (~(scry agentio bowl) %aggregator /history/noun)
+      ==
     ::
     ++  ship
       |=  =^ship
       ::  FIXME: use proper type from aggregator/index
       ::
       .^  (list tx:naive)
-          %gx 
-          (~(scry agentio bowl) %dice /history/[(scot %p ship)]/noun)
-      ==    
+          %gx
+          (~(scry agentio bowl) %aggregator /history/[(scot %p ship)]/noun)
+      ==
     ::
     ++  addr
       |=  =address:naive
       ::  FIXME: use proper type from aggregator/index
       ::
       .^  (list tx:naive)
-          %gx 
-          (~(scry agentio bowl) %dice /history/[(scot %ux address)]/noun)
-      ==    
+          %gx
+          (~(scry agentio bowl) %aggregator /history/[(scot %ux address)]/noun)
+      ==
     --
   ::
   ++  tx-status
     |=  keccak=@ux
     .^  ^tx-status
-        %gx 
-        (~(scry agentio bowl) %dice /tx/[(scot %ux keccak)]/status/noun)
+        %gx
+        (~(scry agentio bowl) %aggregator /tx/[(scot %ux keccak)]/status/noun)
     ==
   ::
   ++  nonce
     |=  [=ship =address:naive]
     ::  FIXME: use proper type from aggregator/index
     .^  @
-        %gx 
-        %+  ~(scry agentio bowl)  
-          %dice
+        %gx
+        %+  ~(scry agentio bowl)
+          %aggregator
         /nonce/[(scot %p ship)]/[(scot %ux address)]/atom
     ==
   --
