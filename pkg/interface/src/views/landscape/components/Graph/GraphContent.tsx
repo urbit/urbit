@@ -234,7 +234,7 @@ const header = ({ children, depth, ...rest }) => {
 const renderers = {
   heading: header,
   break: () => {
-    return <Box display="block" width="100%" height={2}></Box>;
+    return <br />
   },
   thematicBreak: () => {
     return <Box display="block" width="100%" height={2}></Box>;
@@ -274,12 +274,11 @@ const renderers = {
     return (
       <Text
         lineHeight="tall"
-        display="block"
+        display="inline-block"
         borderLeft="1px solid"
         color="black"
         paddingLeft={2}
-        py={1}
-        mb={1}
+        my={1}
       >
         {children}
       </Text>
@@ -287,9 +286,9 @@ const renderers = {
   },
   paragraph: ({ children }) => {
     return (
-      <Text fontSize={1} lineHeight="tall">
+      <Box fontSize={1} lineHeight="tall">
         {children}
-      </Text>
+      </Box>
     );
   },
   listItem: ({ children }) => {
