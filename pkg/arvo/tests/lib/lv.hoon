@@ -48,50 +48,50 @@
       !>  `@lvs`0x1.0000.0000.0000.0000.0000.0000
       !>  (zeros:lvs 3)
     %+  expect-eq
-      !>  (zeros:lvs 3)
       !>  (make:lvs ~[.0 .0 .0])
+      !>  (zeros:lvs 3)
     %+  expect-eq
       !>  `@lvs`0x1.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
       !>  (zeros:lvs 5)
     %+  expect-eq
-      !>  (zeros:lvs 5)
       !>  (make:lvs `(list @rs)`(reap 5 .0))
+      !>  (zeros:lvs 5)
     %+  expect-eq
-      !>  (zeros:lvs 16)
       !>  `@lvs`0x1.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
-    %+  expect-eq
       !>  (zeros:lvs 16)
+    %+  expect-eq
       !>  (make:lvs `(list @rs)`(reap 16 .0))
+      !>  (zeros:lvs 16)
   ==
 ++  test-lvs-ones  ^-  tang
   ;:  weld
     %+  expect-eq
-      !>  (ones:lvs 0)
       !>  `@lvs`0x1
+      !>  (ones:lvs 0)
     %+  expect-eq
-      !>  (ones:lvs 1)
       !>  `@lvs`0x1.3f80.0000
-    %+  expect-eq
       !>  (ones:lvs 1)
+    %+  expect-eq
       !>  (make:lvs ~[.1])
+      !>  (ones:lvs 1)
     %+  expect-eq
-      !>  (ones:lvs 3)
       !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000
-    %+  expect-eq
       !>  (ones:lvs 3)
+    %+  expect-eq
       !>  (make:lvs ~[.1 .1 .1])
+      !>  (ones:lvs 3)
     %+  expect-eq
-      !>  (ones:lvs 5)
       !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
-    %+  expect-eq
       !>  (ones:lvs 5)
+    %+  expect-eq
       !>  (make:lvs `(list @rs)`(reap 5 .1))
+      !>  (ones:lvs 5)
     %+  expect-eq
-      !>  (ones:lvs 16)
       !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
-    %+  expect-eq
       !>  (ones:lvs 16)
+    %+  expect-eq
       !>  (make:lvs `(list @rs)`(reap 16 .1))
+      !>  (ones:lvs 16)
   ==
 ++  test-lvs-fill  ^-  tang
   ;:  weld
@@ -102,35 +102,35 @@
       !>  `@lvs`0x1
       !>  (fill:lvs 0 .1)
     %+  expect-eq
-      !>  (fill:lvs 1 .0)
       !>  `@lvs`0x1.0000.0000
-    %+  expect-eq
       !>  (fill:lvs 1 .0)
+    %+  expect-eq
       !>  (make:lvs ~[.0])
+      !>  (fill:lvs 1 .0)
     %+  expect-eq
-      !>  (fill:lvs 1 .1)
       !>  `@lvs`0x1.3f80.0000
-    %+  expect-eq
       !>  (fill:lvs 1 .1)
+    %+  expect-eq
       !>  (make:lvs ~[.1])
+      !>  (fill:lvs 1 .1)
     %+  expect-eq
-      !>  (fill:lvs 1 .-1)
       !>  `@lvs`0x1.bf80.0000
-    %+  expect-eq
       !>  (fill:lvs 1 .-1)
+    %+  expect-eq
       !>  (make:lvs ~[.-1])
+      !>  (fill:lvs 1 .-1)
     %+  expect-eq
-      !>  (fill:lvs 3 .1)
       !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000
-    %+  expect-eq
       !>  (fill:lvs 3 .1)
+    %+  expect-eq
       !>  (make:lvs ~[.1 .1 .1])
+      !>  (fill:lvs 3 .1)
     %+  expect-eq
-      !>  (fill:lvs 5 .1)
       !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
-    %+  expect-eq
       !>  (fill:lvs 5 .1)
+    %+  expect-eq
       !>  (make:lvs `(list @rs)`(reap 5 .1))
+      !>  (fill:lvs 5 .1)
   ==
 ++  test-lvs-make  ^-  tang
   ;:  weld
@@ -156,8 +156,8 @@
       !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
       !>  (make:lvs `(list @rs)`(reap 5 .1))
     %+  expect-eq
-      !>  (make:lvs `(list @rs)`(reap 16 .1))
       !>  `@lvs`0x1.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000.3f80.0000
+      !>  (make:lvs `(list @rs)`(reap 16 .1))
     %+  expect-eq
       !>  `@lvs`0x1.4000.0000.3f80.0000
       !>  (make:lvs ~[.1 .2])
