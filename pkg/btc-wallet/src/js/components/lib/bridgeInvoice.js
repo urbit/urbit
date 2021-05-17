@@ -11,7 +11,6 @@ import {
 
 import * as bitcoin from 'bitcoinjs-lib';
 import * as kg from 'urbit-key-generation';
-import * as bip39 from 'bip39';
 
 import Sent from './sent.js'
 
@@ -19,20 +18,19 @@ import { satsToCurrency } from '../../lib/util.js';
 
 window.bitcoin = bitcoin;
 window.kg = kg;
-window.bip39 = bip39;
 
-export default class Invoice extends Component {
+export default class BridgeInvoice extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      masterTicket: '',
+      externalPsbt: '',
       ready: false,
       error: false,
       sent: false,
     };
 
-    this.checkTicket = this.checkTicket.bind(this);
+    this.checkExternalPsbt = this.checkExternalPsbt.bind(this);
     this.broadCastTx = this.broadCastTx.bind(this);
     this.sendBitcoin = this.sendBitcoin.bind(this);
   }
@@ -44,45 +42,32 @@ export default class Invoice extends Component {
     return this.props.api.btcWalletCommand(command)
   }
 
-  sendBitcoin(ticket, psbt) {
+  componentDidMount() {
+    window.open('https://bridge.urbit.org/?kind=btc&utx=' + this.props.psbt);
+  }
 
-    const mnemonic = kg.deriveNodeSeed(ticket, 'bitcoin');
-    const seed = bip39.mnemonicToSeed(mnemonic);
-    const hd = bitcoin.bip32.fromSeed(seed);
-
-    const newPsbt = bitcoin.Psbt.fromBase64(psbt);
+  sendBitcoin(psbt) {
 
     try {
-      const hex =
-        newPsbt.data.inputs
-               .reduce((psbt, input, idx) => {
-                 const path = input.bip32Derivation[0].path
-                 const prv = hd.derivePath(path).privateKey;
-                 return psbt.signInput(idx, bitcoin.ECPair.fromPrivateKey(prv));
-
-               }, newPsbt)
-               .finalizeAllInputs()
-               .extractTransaction()
-               .toHex();
-
+      const hex = bitcoin.Psbt.fromBase64(psbt).validateSignaturesOfAllInputs().toHex();
       this.broadCastTx(hex).then(res => this.setState({sent: true}));
     }
+
     catch(e) {
       this.setState({error: true});
     }
   }
 
-  checkTicket(e){
-    // TODO: port over bridge ticket validation logic
-    let masterTicket = e.target.value;
-    let ready = (masterTicket.length > 0);
+  checkExternalPsbt(e){
+    let externalPsbt = e.target.value;
+    let ready = (externalPsbt.length > 0);
     let error = false;
-    this.setState({masterTicket, ready, error});
+    this.setState({externalPsbt, ready, error});
   }
 
   render() {
     const { stopSending, payee, denomination, satsAmount, psbt, currencyRates } = this.props;
-    const { sent, error } = this.state;
+    const { sent, error, externalPsbt } = this.state;
 
     let inputColor = 'black';
     let inputBg = 'white';
@@ -159,24 +144,27 @@ export default class Invoice extends Component {
                 </Row>
               </Box>
             </Box>
-            <Box mt={3} mb={2}>
-              <Text gray fontSize={1} fontWeight='600'>
-                Master Key
+            <Box mt={3}>
+              <Text fontSize='14px' fontWeight='500'>
+                Bridge signed transaction
+              </Text>
+            </Box>
+            <Box mt={1} mb={2}>
+              <Text gray fontSize='14px'>
+                Copy the signed transaction from Bridge
               </Text>
             </Box>
             <Input
-              value={this.state.masterTicket}
-              fontSize="14px"
-              type="password"
-              name="masterTicket"
-              obscure={value => value.replace(/[^~-]+/g, '••••••')}
-              placeholder="••••••-••••••-••••••-••••••"
-              autoCapitalize="none"
-              autoCorrect="off"
+              value={this.state.externalPsbt}
+              fontSize='14px'
+              placeholder='cHNidP8BAHEBAAAAAXqmzdCZ4uv...'
+              autoCapitalize='none'
+              autoCorrect='off'
               color={inputColor}
               backgroundColor={inputBg}
               borderColor={inputBorder}
-              onChange={this.checkTicket}
+              style={{'line-height': '4'}}
+              onChange={this.checkExternalPsbt}
             />
             {error &&
              <Row>
@@ -184,7 +172,7 @@ export default class Invoice extends Component {
                  fontSize='14px'
                  color='red'
                  mt={2}>
-                 Invalid master ticket
+                 Invalid signed bitcoin transaction
                </Text>
              </Row>
             }
@@ -200,7 +188,7 @@ export default class Invoice extends Component {
                 borderRadius='24px'
                 py='24px'
                 px='24px'
-                onClick={() => this.sendBitcoin(this.state.masterTicket, psbt)}
+                onClick={() => this.sendBitcoin(externalPsbt)}
                 disabled={!this.state.ready || error}
                 style={{cursor: (this.state.ready && !error) ? "pointer" : "default"}}
               />
