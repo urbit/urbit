@@ -1,6 +1,7 @@
 import { BaseAnchor, Box, Center, Col, Icon, Row, Text } from "@tlon/indigo-react";
 import { Association, GraphNode, resourceFromPath, GraphConfig } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from "react";
+import _ from 'lodash';
 import { useHistory, useLocation } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import {
@@ -13,22 +14,44 @@ import useMetadataState from "~/logic/state/metadata";
 import { GroupLink } from "~/views/components/GroupLink";
 import { TranscludedNode } from "./TranscludedNode";
 
-function Placeholder() {
+function Placeholder(type) {
+  const lines = (type) => {
+    switch (type) {
+      case 'publish':
+        return 5;
+      case 'post':
+        return 3;
+      default:
+        return 1;
+    }
+  }
   return (
-    <Row margin="12px" marginBottom="0" height="4">
-      <Box
-        backgroundColor="washedGray"
-        size="4"
-        marginRight="2"
-        borderRadius="2"
-      />
-      <Box
-        backgroundColor="washedGray"
-        height="4"
-        width="75%"
-        borderRadius="2"
-      />
-    </Row>
+    <>
+      <Row mt='12px' ml='12px' mb='6px' height="4">
+        <Box
+          backgroundColor="washedGray"
+          size="4"
+          marginRight="2"
+          borderRadius="2"
+        />
+        <Box
+          backgroundColor="washedGray"
+          height="4"
+          width="25%"
+          borderRadius="2"
+        />
+      </Row>
+      {_.times(lines(type), () => (
+        <Row margin="6px" ml='44px' mr='12px' height="4">
+          <Box
+            backgroundColor="washedGray"
+            height="4"
+            width="100%"
+            borderRadius="2"
+          />
+        </Row>
+      ))}
+    </>
   );
 }
 
@@ -131,8 +154,8 @@ function GraphPermalink(
         navigate(e);
       }}
     >
-      {loading && Placeholder()}
-      {showTransclusion && index && (
+      {loading && association && Placeholder(association.metadata.config.graph)}
+      {showTransclusion && index && !loading && (
         <TranscludedNode
           api={api}
           transcluded={transcluded + 1}
@@ -141,7 +164,7 @@ function GraphPermalink(
           showOurContact={showOurContact}
         />
       )}
-      {association && !isInSameResource && (
+      {association && !isInSameResource && !loading && (
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
@@ -150,7 +173,7 @@ function GraphPermalink(
           permalink={permalink}
         />
       )}
-      {association && isInSameResource && transcluded === 2 && (
+      {association && isInSameResource && transcluded === 2 && !loading && (
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
@@ -159,8 +182,8 @@ function GraphPermalink(
           permalink={permalink}
         />
       )}
-      {isInSameResource && transcluded !== 2 && <Row height="12px" />}
-      {!association && (
+      {isInSameResource && transcluded !== 2 && <Row height='2' />}
+      {!association && !loading && (
         <PermalinkDetails
           icon="Groups"
           showDetails={false}
