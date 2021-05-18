@@ -880,30 +880,59 @@
       ==
     ==
   ::
-      [%x %firstborn @ @ @ ~]
+      [%x %firstborn @ @ @ *]
+    |^
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
-    =/  =atom  (slav %ud i.t.t.t.t.path)
+    =/  =index:store
+      (turn t.t.t.t.path (cury slav %ud))
+    ?>  ?=(^ index)
     =/  result=(unit marked-graph:store)
       (~(get by graphs) [ship term])
     ?~  result
       [~ ~]
-    ?.  (has:orm p.u.result atom)
-      [~ ~]
-    =/  =node:store  (got:orm p.u.result atom)
-    =/  =index:store  atom^~
-    =/  map
-      %-  ~(gas by *(map index:store node:store))
-      [index node(children empty+~)]~
-    |-
-    ?:  ?=(%empty -.children.node)
-      :-  ~  :-  ~  :-  %graph-update-2
-      !>  ^-  update:store
-      [now.bowl [%add-nodes [ship term] map]]
-    =/  item=[k=^atom v=node:store]
-      (need (ram:orm p.children.node))
-    =.  index  (snoc index k.item)
-    $(map (~(put by map) index v.item(children empty+~)), node v.item)
+    %-  (bond |.(`(unit (unit cage))`[~ ~]))
+    %+  biff
+      (collect-parents p.u.result index ship term)
+    (corl some collect-firstborn)
+    ::
+    ++  collect-parents
+      |=  [=graph:store =index:store =ship =term]
+      ^-  (unit [node:store index:store (map index:store node:store) ^ship ^term])
+      =|  =(map index:store node:store)
+      =|  =node:store
+      =|  ind=index:store
+      =/  len  (lent index)
+      |-  
+      ?:  (gte (lent ind) len)
+        `[node ind map ship term]
+      ?>  ?=(^ index)
+      =*  atom  i.index
+      ?.  (has:orm graph atom)
+        ~
+      =:  node   (got:orm graph atom)
+          ind    (snoc ind atom)
+        ==
+      ?:  ?=(%empty -.children.node)
+        ~
+      %_  $
+        index  t.index
+        graph  p.children.node
+        map    (~(put by map) [ind node(children empty+~)])
+      ==
+    ::
+    ++  collect-firstborn
+      |=  [=node:store =index:store map=(map index:store node:store) =ship =term]
+      ^-  (unit (unit cage))
+      ?:  ?=(%empty -.children.node)
+        :-  ~  :-  ~  :-  %graph-update-2
+        !>  ^-  update:store
+        [now.bowl [%add-nodes [ship term] map]]
+      =/  item=[k=atom v=node:store]
+        (need (ram:orm p.children.node))
+      =.  index  (snoc index k.item)
+      $(map (~(put by map) index v.item(children empty+~)), node v.item)
+    --
   ::
       [%x %update-log-subset @ @ @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
