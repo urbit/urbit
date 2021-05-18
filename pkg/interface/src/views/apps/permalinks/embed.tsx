@@ -1,6 +1,7 @@
 import { BaseAnchor, Box, Center, Col, Icon, Row, Text } from "@tlon/indigo-react";
 import { Association, GraphNode, resourceFromPath, GraphConfig } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from "react";
+import _ from 'lodash';
 import { useHistory, useLocation } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import {
@@ -12,6 +13,47 @@ import useGraphState from "~/logic/state/graph";
 import useMetadataState from "~/logic/state/metadata";
 import { GroupLink } from "~/views/components/GroupLink";
 import { TranscludedNode } from "./TranscludedNode";
+
+function Placeholder(type) {
+  const lines = (type) => {
+    switch (type) {
+      case 'publish':
+        return 5;
+      case 'post':
+        return 3;
+      default:
+        return 1;
+    }
+  }
+  return (
+    <>
+      <Row mt='12px' ml='12px' mb='6px' height="4">
+        <Box
+          backgroundColor="washedGray"
+          size="4"
+          marginRight="2"
+          borderRadius="2"
+        />
+        <Box
+          backgroundColor="washedGray"
+          height="4"
+          width="25%"
+          borderRadius="2"
+        />
+      </Row>
+      {_.times(lines(type), () => (
+        <Row margin="6px" ml='44px' mr='12px' height="4">
+          <Box
+            backgroundColor="washedGray"
+            height="4"
+            width="100%"
+            borderRadius="2"
+          />
+        </Row>
+      ))}
+    </>
+  );
+}
 
 function GroupPermalink(props: { group: string; api: GlobalApi }) {
   const { group, api } = props;
@@ -47,6 +89,7 @@ function GraphPermalink(
     ])
   );
   const [errored, setErrored] = useState(false);
+  const [loading, setLoading] = useState(false);
   const association = useMetadataState(
     useCallback(s => s.associations.graph[graph] as Association | null, [
       graph
@@ -60,9 +103,12 @@ function GraphPermalink(
         return;
       }
       try {
+        setLoading(true);
         await api.graph.getNode(ship, name, index);
+        setLoading(false);
       } catch (e) {
         console.log(e);
+        setLoading(false);
         setErrored(true);
       }
     })();
@@ -108,7 +154,8 @@ function GraphPermalink(
         navigate(e);
       }}
     >
-      {showTransclusion && index && (
+      {loading && association && Placeholder((association.metadata.config as GraphConfig).graph)}
+      {showTransclusion && index && !loading && (
         <TranscludedNode
           api={api}
           transcluded={transcluded + 1}
@@ -117,7 +164,7 @@ function GraphPermalink(
           showOurContact={showOurContact}
         />
       )}
-      {association && !isInSameResource && (
+      {association && !isInSameResource && !loading && (
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
@@ -126,7 +173,7 @@ function GraphPermalink(
           permalink={permalink}
         />
       )}
-      {association && isInSameResource && transcluded === 2 && (
+      {association && isInSameResource && transcluded === 2 && !loading && (
         <PermalinkDetails
           known
           showTransclusion={showTransclusion}
@@ -135,8 +182,8 @@ function GraphPermalink(
           permalink={permalink}
         />
       )}
-      {isInSameResource && transcluded !== 2 && <Row height="12px" />}
-      {!association && (
+      {isInSameResource && transcluded !== 2 && <Row height='2' />}
+      {!association && !loading && (
         <PermalinkDetails
           icon="Groups"
           showDetails={false}
