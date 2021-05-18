@@ -283,7 +283,7 @@ const renderers = {
   },
   paragraph: ({ children }) => {
     return (
-      <Box fontSize={1} lineHeight="tall">
+      <Box color="black" fontSize={1} lineHeight="tall">
         {children}
       </Box>
     );
