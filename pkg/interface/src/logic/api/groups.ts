@@ -1,14 +1,14 @@
-import BaseApi from './base';
-import { StoreState } from '../store/type';
-import { Path, Patp, Enc } from '@urbit/api';
+import { Enc, Patp } from '@urbit/api';
 import {
   GroupAction,
   GroupPolicy,
-  Resource,
-  Tag,
-  GroupPolicyDiff
+
+  GroupPolicyDiff, Resource,
+  Tag
 } from '@urbit/api/groups';
 import { makeResource } from '../lib/group';
+import { StoreState } from '../store/type';
+import BaseApi from './base';
 
 export default class GroupsApi extends BaseApi<StoreState> {
   remove(resource: Resource, ships: Patp[]) {

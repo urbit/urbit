@@ -1,16 +1,16 @@
-import BaseApi from './base';
-import { StoreState } from '../store/type';
-import { Patp, Path, Resource } from '@urbit/api';
+import { Content, Enc, GraphNode, GroupPolicy, Path, Patp, Post, Resource } from '@urbit/api';
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import _ from 'lodash';
+import { decToUd, deSig, resourceAsPath, unixToDa } from '~/logic/lib/util';
 import { makeResource, resourceFromPath } from '../lib/group';
-import { GroupPolicy, Enc, Post, Content } from '@urbit/api';
-import { numToUd, unixToDa, decToUd, deSig, resourceAsPath } from '~/logic/lib/util';
+import { StoreState } from '../store/type';
+import BaseApi from './base';
 
 export const createBlankNodeWithChildPost = (
   parentIndex = '',
   childIndex = '',
   contents: Content[]
-) => {
+): GraphNode => {
   const date = unixToDa(Date.now()).toString();
   const nodeIndex = parentIndex + '/' + date;
 
@@ -36,7 +36,7 @@ export const createBlankNodeWithChildPost = (
       hash: null,
       signatures: []
     },
-    children: childGraph
+    children: childGraph as BigIntOrderedMap<GraphNode>
   };
 };
 
@@ -185,12 +185,11 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  eval(cord: string) {
+  eval(cord: string): Promise<string[] | undefined> {
     return this.spider('graph-view-action', 'tang', 'graph-eval', {
       eval: cord
     });
   }
-
 
   addGraph(ship: Patp, name: string, graph: any, mark: any) {
     return this.storeAction({
@@ -211,7 +210,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     return this.addNodes(ship, name, nodes);
   }
 
-  addNode(ship: Patp, name: string, node: Object) {
+  addNode(ship: Patp, name: string, node: GraphNode) {
     const nodes = {};
     nodes[node.post.index] = node;
 
@@ -265,7 +264,7 @@ export default class GraphApi extends BaseApi<StoreState> {
       'resource',
       'graph-create-group-feed',
       {
-        "create-group-feed": { resource: group, vip }
+        'create-group-feed': { resource: group, vip }
       }
     );
     return resource;
@@ -277,11 +276,10 @@ export default class GraphApi extends BaseApi<StoreState> {
       'json',
       'graph-disable-group-feed',
       {
-        "disable-group-feed": { resource: group }
+        'disable-group-feed': { resource: group }
       }
     );
   }
-
 
   removePosts(ship: Patp, name: string, indices: string[]) {
     return this.hookAction(ship, {
@@ -369,7 +367,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     const node = data['graph-update'];
     this.store.handleEvent({
       data: {
-        "graph-update-loose": node
+        'graph-update-loose': node
       }
     });
   }

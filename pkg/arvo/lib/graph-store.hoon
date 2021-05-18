@@ -50,18 +50,17 @@
     ==
   ::
   ++  index
-    |=  i=^index
+    |=  ind=^index
     ^-  json
-    ?:  =(~ i)  s+'/'
-    =/  j=^tape  ""
-    |-
-    ?~  i  [%s (crip j)]
-    =/  k=json  (numb i.i)
-    ?>  ?=(%n -.k)
-    %_  $
-        i  t.i
-        j  (weld j (weld "/" (trip +.k)))
-    ==
+    :-  %s
+    ?:  =(~ ind)
+      '/'
+    %+  roll  ind
+    |=  [cur=@ acc=@t]
+    ^-  @t
+    =/  num  (numb cur)
+    ?>  ?=(%n -.num)
+    (rap 3 acc '/' p.num ~) 
   ::
   ++  uid
     |=  u=^uid
@@ -721,9 +720,9 @@
   --
 ++  import
   |=  [arc=* our=ship]
-  ^-  (quip card:agent:gall [%4 network])
+  ^-  (quip card:agent:gall [%5 network])
   |^
-  =/  sty  [%4 (remake-network ;;(tree-network +.arc))]
+  =/  sty  [%5 (remake-network ;;(tree-network +.arc))]
   :_  sty
   %+  turn  ~(tap by graphs.sty)
   |=  [rid=resource =marked-graph]
