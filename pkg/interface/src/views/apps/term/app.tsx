@@ -130,25 +130,23 @@ export default function TermApp(props: TermAppProps) {
   //TODO  allow switching of selected
   const { sessions, selected, slogstream, set } = useTermState();
 
-  //NOTE  doesn't work? ): might be nice if it could
-  // const session = useTermState(useCallback(
-  //   state => state.sessions[state.selected],
-  //   [selected]
-  // ));
+  const session = useTermState(useCallback(
+    state => state.sessions[state.selected],
+    [selected, sessions]
+  ));
 
   const osDark = useLocalState((state) => state.dark);
   const theme = useSettingsState(s => s.display.theme);
   const dark = theme === 'dark' || (theme === 'auto' && osDark);
 
-  const onSlog = useCallback((slog) => {
-    //TODO  why does using sessions[selected] not work?
-    let theSession = useTermState.getState().sessions[''];
+  const onSlog = (slog) => {
+    let session = useTermState.getState().sessions[''];
 
-    if (!theSession) {
+    if (!session) {
       console.log('default session mia!', 'slog:', slog);
       return;
     }
-    const term = theSession.term;
+    const term = session.term;
 
     //  set scroll region to exclude the bottom line,
     //  scroll up one line,
@@ -165,19 +163,16 @@ export default function TermApp(props: TermAppProps) {
              + csi('m', 0)
              + csi('r')
              + csi('u'));
-  }, [sessions['']]);
+  };
 
-  //TODO  could be static function if we pass in Terminal explicitly?
-  const onBlit = useCallback((ses: string, blit: Blit) => {
-    //TODO  why does using sessions[selected] not work?
-    let theSession = useTermState.getState().sessions[selected];
-
-    if (!theSession) {
-      console.log('on blit: no such session', selected);
+  const onBlit = (sesId: string, blit: Blit) => {
+    const ses = useTermState.getState().sessions[sesId];
+    if (!ses) {
+      console.log('on blit: no such session', selected, sessions, useTermState.getState().sessions);
       return;
     }
 
-    const term = theSession.term;
+    const term = ses.term;
     let out = '';
 
     if ('bel' in blit) {
@@ -231,7 +226,7 @@ export default function TermApp(props: TermAppProps) {
     }
 
     term.write(out);
-  }, [sessions]);
+  };
 
   const setupSlog = useCallback(() => {
     console.log('slog: setting up...');
@@ -259,10 +254,9 @@ export default function TermApp(props: TermAppProps) {
     }
 
     set(state => { state.slogstream = slog });
-  }, [onSlog]);
+  }, [sessions]);
 
   const onInput = useCallback((ses: string, e: string) => {
-    //TODO  just sessions[ses].term;
     const term = useTermState.getState().sessions[ses].term;
     let belts: Array<Belt> = [];
     let strap = '';
@@ -349,8 +343,8 @@ export default function TermApp(props: TermAppProps) {
 
   const onResize = useCallback(() => {
     //TODO  debounce, if it ever becomes a problem
-    sessions[selected].fit.fit();
-  }, [sessions, selected]);
+    session?.fit.fit();
+  }, [session]);
 
   //  on-init, open slogstream
   //
@@ -378,10 +372,7 @@ export default function TermApp(props: TermAppProps) {
   //  on selected change, maybe setup the term, or put it into the container
   //
   useEffect(() => {
-    //TODO  improve name, confusing wrt ses as session name
-    //TODO  why doesn't sessions[selected] just work?
-    let ses = useTermState.getState().sessions[selected];
-
+    let ses = session;
     //  initialize terminal
     //
     if (!ses) {
@@ -436,7 +427,7 @@ export default function TermApp(props: TermAppProps) {
       //TODO  unload term from container
       //      but term.dispose is too powerful? maybe just empty the container?
     }
-  }, [set, sessions[selected], container.current]);
+  }, [set, session, container.current]);
 
   return (
     <>
