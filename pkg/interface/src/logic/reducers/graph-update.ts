@@ -230,7 +230,7 @@ const addNodes = (json, state) => {
     return graph;
   };
 
-  const _killByFuzzyTimestamp = (graph, resource, timestamp) => {
+  const _killByFuzzyTimestamp = (graph, resource, timestamp, isFlat = false) => {
     if (state.graphTimesentMap[resource][timestamp]) {
       const index = state.graphTimesentMap[resource][timestamp];
 
@@ -238,17 +238,23 @@ const addNodes = (json, state) => {
       const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
 
       delete state.graphTimesentMap[resource][timestamp];
-      return _remove(graph, indexArr);
+
+      if (isFlat) {
+        return graph.delete(indexArr);
+      } else {
+        return _remove(graph, indexArr);
+      }
     }
     return graph;
   };
 
-  const _removePending = (graph, post, resource) => {
+  const _removePending = (graph, post, resource, isFlat = false) => {
     if (!post.hash) { return graph; }
 
-    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent']);
-    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'] - 1);
-    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'] + 1);
+    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'], isFlat);
+    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'] - 1, isFlat);
+    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'] + 1, isFlat);
+    
     return graph;
   };
 
@@ -280,11 +286,24 @@ const addNodes = (json, state) => {
     indices.forEach((index) => {
       let node = data.nodes[index];
       const old = state.graphs[resource].size;
-      state.graphs[resource] = _removePending(
-        state.graphs[resource],
-        node.post,
-        resource
-      );
+
+      if (resource in state.flatGraphs) {
+        //  TODO: will this cause multiple pending replies to render 
+        //  in the reply view and thread view? probably
+
+        state.flatGraphs[resource] = _removePending(
+          state.flatGraphs[resource],
+          node.post,
+          resource,
+          true
+        );
+      } else {
+        state.graphs[resource] = _removePending(
+          state.graphs[resource],
+          node.post,
+          resource
+        );
+      }
       const newSize = state.graphs[resource].size;
 
       if (index.split('/').length === 0) { return; }
@@ -305,46 +324,13 @@ const addNodes = (json, state) => {
       );
 
       if (resource in state.flatGraphs) {
-        console.log('flat update', node.post);
-        const _flatKill = (graph, resource, timestamp) => {
-          console.log('flat kill', resource in state.graphTimesentMap);
-          console.log(timestamp, state.graphTimesentMap[resource]);
-          console.log(state.graphTimesentMap[resource][timestamp.toString()]);
-          debugger;
-          if (state.graphTimesentMap[resource][timestamp.toString()]) {
-            console.log('never reach this console log because 312 is undefined');
-            const index = state.graphTimesentMap[resource][timestamp.toString()];
-
-            if (index.split('/').length === 0) { return graph; }
-            const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
-
-            delete state.graphTimesentMap[resource][timestamp];
-            return graph.delete(indexArr);
-          }
-          return graph;
-        };
-
-        const _removeFlatPending = (graph, post, resource) => {
-          if (!post.hash) { return graph; }
-
-          graph = _flatKill(graph, resource, post['time-sent']);
-          graph = _flatKill(graph, resource, post['time-sent'] - 1);
-          graph = _flatKill(graph, resource, post['time-sent'] + 1);
-          return graph;
-        };
-
-        state.flatGraphs[resource] = _removeFlatPending(
-          state.flatGraphs[resource],
-          node.post,
-          resource
-        );
-
         state.flatGraphs[resource] =
           state.flatGraphs[resource].set(indexArr, produce(node, draft => {
             draft.children = mapifyChildren({});
           }));
       }
 
+      //  TODO: make pending work here too
       let threadKey = indexArr[0].toString();
       if (resource in state.threadGraphs &&
           threadKey in state.threadGraphs[resource]) {
