@@ -1967,20 +1967,12 @@
     ++  on-memo
       |=  [=bone payload=* valence=?(%plea %boon)]
       ^+  peer-core
-      ::  if we haven't been trying to talk to %live, reset timer
-      ::
-      =?    last-contact.qos.peer-state
-          ?&  ?=(%live -.qos.peer-state)
-              %-  ~(all by snd.peer-state)
-              |=  =message-pump-state
-              =(~ live.packet-pump-state.message-pump-state)
-          ==
-        now
-      ::
       =/  =message-blob  (dedup-message (jim payload))
       =.  peer-core  (run-message-pump bone %memo message-blob)
       ::
-      ?:  &(=(%boon valence) ?=(?(%dead %unborn) -.qos.peer-state))
+      ?:  ?&  =(%boon valence)
+              (gte now (add ~s30 last-contact.qos.peer-state))
+          ==
         check-clog
       peer-core
     ::  +dedup-message: replace with any existing copy of this message
