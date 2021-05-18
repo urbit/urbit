@@ -64,7 +64,9 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
     }
 
     const first = flatGraph.peekLargest()?.[0];
+    const last = flatGraph.peekSmallest()?.[0];
     const post = node?.post;
+    const isLast = last ? indexEqual(index, last) : false;
 
     if (indexEqual(index, (first ?? [bigInt.zero]))) {
       if (isThread) {
@@ -88,7 +90,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
               isRelativeTime={true}
               vip={vip}
               group={group}
-              isThread={isThread}
+              isThread={isThread && !isLast}
             />
           </Col>
         );
@@ -148,7 +150,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
           isRelativeTime={true}
           vip={vip}
           group={group}
-          isThread={isThread}
+          isThread={isThread && !isLast}
         />
       </Box>
     );
