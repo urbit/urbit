@@ -284,6 +284,7 @@ _mars_work(u3_mars* mar_u, u3_noun jar)
     } break;
 
     case c3__exit: {
+      u3z(jar);
       mar_u->sat_e = _cwe_mars_exit;
       //  XX wire up to signal handler
       //
@@ -608,6 +609,7 @@ u3_mars_init(c3_c*    dir_c,
 
       u3s_jam_xeno(msg, &len_d, &hun_y);
       u3_newt_send(mar_u->out_u, len_d, hun_y);
+      u3z(msg);
     }
   }
 
