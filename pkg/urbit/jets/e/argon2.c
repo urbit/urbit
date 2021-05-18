@@ -11,7 +11,7 @@
   int argon2_alloc(uint8_t** output, size_t bytes)
   {
     *output = u3a_malloc(bytes);
-    return (NULL != output);
+    return 1;
   }
 
   void argon2_free(uint8_t* memory, size_t bytes)
