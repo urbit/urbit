@@ -135,10 +135,7 @@ export default function Inbox(props: {
         return timeboxes.length > 0 && (
           <DaySection
             key={day}
-            time={day}
-            label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
             timeboxes={timeboxes}
-            archive={Boolean(props.showArchive)}
             api={api}
           />
         );

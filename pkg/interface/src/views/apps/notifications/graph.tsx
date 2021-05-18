@@ -256,7 +256,6 @@ const GraphNodes = (props: {
 export function GraphNotification(props: {
   index: GraphNotifIndex;
   contents: GraphNotificationContents;
-  archived: boolean;
   read: boolean;
   time: number;
   timebox: BigInteger;
