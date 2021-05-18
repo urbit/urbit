@@ -86,6 +86,7 @@ const rules = {
   "new-parens": "error",
   "no-buffer-constructor": "error",
   "no-console": "off",
+  "@typescript-eslint/no-empty-function": "off",
   "no-extra-semi": "off",
   "no-fallthrough": "off",
   "no-func-assign": "off",
