@@ -5,6 +5,7 @@ import {
   Row,
   Text,
 } from '@tlon/indigo-react';
+import { Link } from 'react-router-dom';
 
 export default class Header extends Component {
   constructor(props) {
@@ -13,6 +14,9 @@ export default class Header extends Component {
 
 
   render() {
+    let icon      = this.props.settings ? "X" : "Adjust";
+    let iconColor = this.props.settings ? "black" : "orange";
+    let iconLink  = this.props.settings ? "/~btc" : "/~btc/settings";
     return (
       <Row
         height={8}
@@ -36,14 +40,16 @@ export default class Header extends Component {
             Bitcoin
           </Text>
         </Row>
-        <Box backgroundColor="white"
-          borderRadius={4}
-          width={5}
-          height={5}
-          p={2}
-        >
-          <Icon icon="Adjust" color="orange" />
-        </Box>
+        <Link to={iconLink}>
+          <Box backgroundColor="white"
+            borderRadius={4}
+            width={5}
+            height={5}
+            p={2}
+          >
+            <Icon icon={icon} color={iconColor} />
+          </Box>
+        </Link>
       </Row>
     );
   }

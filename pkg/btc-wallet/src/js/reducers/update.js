@@ -12,7 +12,7 @@ export class UpdateReducer {
     if (json.checkPayee) {
       this.reduceCheckPayee(json.checkPayee, state);
     }
-    if (json["change-provider"]) {
+    if ("change-provider" in json) {
       this.reduceChangeProvider(json["change-provider"], state);
     }
     if (json["change-wallet"]) {

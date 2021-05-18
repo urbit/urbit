@@ -19,6 +19,7 @@ import Header from './lib/header.js'
 import Balance from './lib/balance.js'
 import Transactions from './lib/transactions.js'
 import Warning from './lib/warning.js'
+import Body from './lib/body.js'
 import { subscription } from '../subscription.js'
 
 const network = "testnet" // bitcoin
@@ -50,39 +51,24 @@ export class Root extends Component {
         <ThemeProvider theme={light}>
         <Reset/>
         { (loaded) ? <StartupModal api={api} state={this.state} network={network}/> : null }
-        <Box display="flex"
-          flexDirection='column'
-          position='absolute'
-          alignItems='center'
-          backgroundColor='lightOrange'
-          width='100%'
-          minHeight={loaded ? '100%' : 'none'}
-          height={loaded ? 'none' : '100%'}
-          style={{filter: (blur ? 'blur(8px)' : 'none')}}
-          px={[0,4]}
-          pb={[0,4]}
-        >
-          { (loaded) ?
-              <Col
-               display='flex'
-               flexDirection='column'
-               width='400px'
-              >
-                <Header />
-                { (!warning) ? null : <Warning api={api}/>}
-                <Balance api={api} state={this.state} network={network}/>
-                <Transactions state={this.state} network={network}/>
-              </Col>
-            :  <Box display="flex" width="100%" height="100%" alignItems="center" justifyContent="center">
-                 <LoadingSpinner
-                   width={7}
-                   height={7}
-                   background="midOrange"
-                   foreground="orange"
-                 />
-               </Box>
-          }
-        </Box>
+          <Box display="flex"
+            flexDirection='column'
+            position='absolute'
+            alignItems='center'
+            backgroundColor='lightOrange'
+            width='100%'
+            minHeight={loaded ? '100%' : 'none'}
+            height={loaded ? 'none' : '100%'}
+            style={{filter: (blur ? 'blur(8px)' : 'none')}}
+            px={[0,4]}
+            pb={[0,4]}
+          >
+            <Body loaded={loaded}
+              state={this.state}
+              api={api} network={network}
+              warning={warning}
+            />
+          </Box>
         </ThemeProvider>
       </BrowserRouter>
     )

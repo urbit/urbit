@@ -217,12 +217,15 @@
     ?~  provider.comm
       ?~  prov  `state
       :_  state(prov ~)
-      [(leave-provider host.u.prov)]~
+      :~  (leave-provider host.u.prov)
+          (give-update %change-provider ~)
+      ==
     :_  state(prov [~ u.provider.comm %.n])
     ?~  prov
       [(watch-provider u.provider.comm)]~
     :~  (leave-provider host.u.prov)
         (watch-provider u.provider.comm)
+        (give-update %change-provider `[u.provider.comm %.n])
     ==
     ::
     ++  watch-provider
