@@ -23,14 +23,9 @@ const DISABLED_BLOCK_TOKENS = [
 
 const DISABLED_INLINE_TOKENS = ['autoLink', 'url', 'email', 'reference', 'html'];
 
-const tallParser = remark();
+const tallParser = remark().freeze();
 
-export const parseTall = (text: string, settings: ParserSettings) => {
-  const res = tallParser.parse(text);
-  //const { inList, inBlock, inLink }  = parser.Parser;
-
-  return res;
-}
+export const parseTall = (text: string) => tallParser.parse(text);
 
 const wideParser = remark()
   .use([
