@@ -170,7 +170,14 @@
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+::
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  (on-peek:def path)
+    [%x %btc-wallet ~]  ``noun+!>(btc-hash)
+  ==
+::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
