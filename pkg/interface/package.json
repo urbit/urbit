@@ -115,7 +115,6 @@
   "license": "MIT",
   "lint-staged": {
     "*.js": "eslint --cache --fix",
-    "*.ts": "eslint --cache --fix",
-    "*.tsx": "eslint --cache --fix"
+    "*.{ts,tsx}": ["eslint --cache --fix", "sh -c 'tsc --project tsconfig.json --noEmit'"]
   }
 }
