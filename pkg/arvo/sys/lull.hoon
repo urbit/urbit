@@ -762,6 +762,11 @@
             her=@p  dem=desk  cas=case                  ::  source
             how=germ                                    ::  method
         ==                                              ::
+        $:  %fuse                                       ::  merge many
+            des=desk                                    ::  target desk
+            bas=beak                                    ::  base desk
+            con=(list [beak germ])                      ::  merges
+        ==
         [%mont pot=term bem=beam]                       ::  mount to unix
         [%dirk des=desk]                                ::  mark mount dirty
         [%ogre pot=$@(desk beam)]                       ::  delete mount point

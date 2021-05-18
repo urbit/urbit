@@ -55,6 +55,12 @@
       cas=case                                          ::
       gim=?(%auto germ)                                 ::
   ==
++$  kiln-fuse
+  $@  ~
+  $:  syd=desk
+      bas=beak
+      con=(list [beak germ])
+  ==
 --
 |=  [bowl:gall state]
 ?>  =(src our)
@@ -381,6 +387,11 @@
   ?~  +<  abet
   abet:abet:(merge:(work syd) ali sud cas gim)
 ::
+++  poke-fuse
+  |=  k=kiln-fuse
+  ?~  k  abet
+  abet:(emit [%pass /kiln/fuse/[syd.k] %arvo %c [%fuse syd.k bas.k con.k]])
+::
 ++  poke-cancel
   |=  a=@tas
   abet:(emit %pass /cancel %arvo %c [%drop a])
@@ -430,6 +441,7 @@
     %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
+    %kiln-fuse               =;(f (f !<(_+<.f vase)) poke-fuse)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
     %kiln-ota                =;(f (f !<(_+<.f vase)) poke:update)
     %kiln-ota-info           =;(f (f !<(_+<.f vase)) poke-ota-info)
