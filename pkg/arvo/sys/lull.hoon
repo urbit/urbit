@@ -957,7 +957,6 @@
     $_
     ^?
     |%
-    ++  bunt  *typ
     ++  diff  |~([old=typ new=typ] *dif)
     ++  form  *mark
     ++  join  |~([a=dif b=dif] *(unit (unit dif)))
@@ -972,7 +971,6 @@
   +$  dais
     $_  ^|
     |_  sam=vase
-    ++  bunt  sam
     ++  diff  |~(new=_sam *vase)
     ++  form  *mark
     ++  join  |~([a=vase b=vase] *(unit (unit vase)))

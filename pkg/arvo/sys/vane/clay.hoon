@@ -564,7 +564,6 @@
         =/  dif  diff:deg
         ^-  (nave typ dif)
         |%
-        ++  bunt  +<.cor
         ++  diff
           |=  [old=typ new=typ]
           ^-  dif
@@ -586,7 +585,6 @@
       =/  dif  _*diff:grad:cor
       ^-  (nave:clay typ dif)
       |%
-      ++  bunt  +<.cor
       ++  diff  |=([old=typ new=typ] (diff:~(grad cor old) new))
       ++  form  form:grad:cor
       ++  join
@@ -627,7 +625,6 @@
       :_  nub
       ^-  dais
       |_  sam=vase
-      ++  bunt  (slap nav limb/%bunt)
       ++  diff
         |=  new=vase
         (slam (slap nav limb/%diff) (slop sam new))
@@ -654,7 +651,7 @@
         |=  diff=vase
         (slam (slap nav limb/%pact) (slop sam diff))
       ++  vale
-        |=  =noun
+        |:  noun=q:(slap nav !,(*hoon *vale))
         (slam (slap nav limb/%vale) noun/noun)
       --
     ::  +build-cast: produce gate to convert mark .a to, statically typed
@@ -2409,7 +2406,7 @@
           =+  (slag (dec (lent path)) path)
           ?~(- %$ i.-)
         =/  =dais  (get-dais mark)
-        =/  res=(unit (unit vase))  (~(join dais bunt:dais) q.cal q.cob)
+        =/  res=(unit (unit vase))  (~(join dais *vale:dais) q.cal q.cob)
         ?~  res
           `[form:dais q.cob]
         ?~  u.res
@@ -3640,11 +3637,11 @@
         [[~ ~] fod.dom]
       =/  cached=(unit [=vase *])  (~(get by naves.fod.dom) i.path)
       ?^  cached
-        :_(fod.dom [~ ~ %& %nave !>(vase.u.cached)])
+        :_(fod.dom [~ ~ %& %nave vase.u.cached])
       =^  =vase  fod.dom
         %-  wrap:fusion
         (build-nave:(ford:fusion static-ford-args) i.path)
-      :_(fod.dom [~ ~ %& %nave !>(vase)])
+      :_(fod.dom [~ ~ %& %nave vase])
     ::
     ++  read-f
       !.
