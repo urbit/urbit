@@ -501,6 +501,8 @@
 ++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
   |=  [way=wire are=(each (set path) (pair term tang))]
+  ?.  ?=([@ ~] way)
+    abet
   abet:abet:(mere:(take way) are)
 ::
 ++  take-coup-fancy                                   ::
