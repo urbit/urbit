@@ -914,11 +914,17 @@
           ind    (snoc ind atom)
         ==
       ?:  ?=(%empty -.children.node)
-        ~
+        ?.  (gte (lent ind) len)
+          ~
+        :-  ~
+        :*  node  ind
+            (~(put by map) ind node)
+            ship  term
+        ==
       %_  $
         index  t.index
         graph  p.children.node
-        map    (~(put by map) [ind node(children empty+~)])
+        map    (~(put by map) ind node(children empty+~))
       ==
     ::
     ++  collect-firstborn
