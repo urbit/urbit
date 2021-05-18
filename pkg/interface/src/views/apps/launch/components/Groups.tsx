@@ -58,7 +58,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
         const notCount = graphNotifications(path);
         return (
           <Group
-            key={group.metadata.title}
+            key={group?.group}
             updates={notCount}
             first={index === 0}
             unreads={unreadCount}

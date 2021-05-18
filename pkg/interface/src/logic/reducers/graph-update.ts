@@ -211,9 +211,15 @@ const addNodes = (json, state) => {
 
     const resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.graphs)) {
-      state.graphs[resource] = new BigIntOrderedMap();
+      if(json.fetch) {
+        state.graphs[resource] = new BigIntOrderedMap();
+      } else {
+        //  ignore updates until we load backlog deliberately, to avoid 
+        //  unnecessary memory usage
+        return state;
+      }
     }
-
+    
     if (!(resource in state.graphTimesentMap)) {
       state.graphTimesentMap[resource] = {};
     }

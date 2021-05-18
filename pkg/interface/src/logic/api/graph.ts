@@ -356,6 +356,7 @@ export default class GraphApi extends BaseApi<StoreState> {
 
   async getNewest(ship: string, resource: string, count: number, index = '') {
     const data = await this.scry<any>('graph-store', `/newest/${ship}/${resource}/${count}${index}`);
+    data['graph-update'].fetch = true;
     this.store.handleEvent({ data });
   }
 
@@ -363,7 +364,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     const idx = index.split('/').map(decToUd).join('/');
     const data = await this.scry<any>('graph-store',
        `/node-siblings/older/${ship}/${resource}/${count}${idx}`
-     );
+    );
     this.store.handleEvent({ data });
   }
 
