@@ -271,7 +271,7 @@ const renderers = {
     return (
       <Text
         lineHeight="tall"
-        display="inline-block"
+        display="block"
         borderLeft="1px solid"
         color="black"
         paddingLeft={2}
@@ -283,8 +283,10 @@ const renderers = {
   },
   paragraph: ({ children }) => {
     return (
-      <Box fontSize={1} lineHeight="tall">
+      <Box display="inline-block">
+        <Text fontSize={1} lineHeight="tall">
         {children}
+        </Text>
       </Box>
     );
   },
