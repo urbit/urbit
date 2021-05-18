@@ -87,6 +87,8 @@
     "eslint-plugin-react": "^7.22.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.1",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
     "moment-locales-webpack-plugin": "^1.2.0",
     "react-hot-loader": "^4.13.0",
     "sass": "^1.32.5",
@@ -106,8 +108,14 @@
     "build:dev": "cross-env NODE_ENV=development webpack --config config/webpack.dev.js",
     "build:prod": "cd ../npm/api && npm ci && cd ../../interface && cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
     "start": "webpack-dev-server --config config/webpack.dev.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "cd ../.. && husky install pkg/interface/.husky"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.ts": "eslint --cache --fix",
+    "*.tsx": "eslint --cache --fix"
+  }
 }
