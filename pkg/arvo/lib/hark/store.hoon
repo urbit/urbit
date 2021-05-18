@@ -502,11 +502,10 @@
       ==
     ::
     ++  timebox
-      |=  [tim=@da arch=? l=(list [^index ^notification])]
+      |=  [tim=(unit @da) l=(list [^index ^notification])]
       ^-  json
       %-  pairs
-      :~  time+s+(scot %ud tim)
-          archive+b+arch
+      :~  time+`json`?~(tim ~ s+(scot %ud u.tim))
           :-  %notifications  
           ^-  json
           :-  %a

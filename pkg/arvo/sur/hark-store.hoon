@@ -31,11 +31,12 @@
 ::
 +$  action
   $%  [%add-note =index =notification]
-      [%archive time=(unit @da) index]
+    ::  if .time is ~, then archiving unread notification
+    ::  else, archiving read notification
+      [%archive time=(unit @da) =index]
     ::
       [%unread-count =stats-index =time]
       [%read-count =stats-index]
-    ::
     ::
       [%unread-each =stats-index ref=index:graph-store time=@da]
       [%read-each =stats-index ref=index:graph-store]
@@ -71,7 +72,7 @@
       [%more more=(list update)]
       [%added =index =notification]
       [%note-read =time =index]
-      [%timebox time=@da archived=? =(list [index notification])]
+      [%timebox time=(unit @da) =(list [index notification])]
       [%count count=@ud]
       [%clear =stats-index]
       [%unreads unreads=(list [stats-index stats])]

@@ -260,16 +260,14 @@
     ^-  update:store
     :-  %more
     ^-  (list update:store)
-    :+  give-unreads
-      [%set-dnd dnd]
-    give-notifications
+    :~  give-unreads
+        [%set-dnd dnd]
+        give-notifications
+    ==
   ::
   ++  give-notifications
-    ^-  (list update:store)
-    %+  turn  ~(tap by unread-notes) 
-    |=  [=index:store =notification:store]
     ^-  update:store
-    [%added index notification]
+    [%timebox ~ ~(tap by unread-notes)]
   ::
   ++  give-since-unreads
     ^-  (list [stats-index:store stats:store])
@@ -322,8 +320,7 @@
       ?:(is-archive archive notifications)
     |=  [time=@da =timebox:store]
     ^-  update:store
-    :^  %timebox  time  is-archive
-    ~(tap by timebox)
+    [%timebox `time ~(tap by timebox)]
   ==
 ::
 ++  on-poke
@@ -550,7 +547,7 @@
     =.  unreads-count  (~(put by unreads-count) stats-index 0)
     =/  times=(list index:store)
       (unread-for-stats-index stats-index)
-    =?  timeboxes  !(~(has by timeboxes) stats-index)  ~&  'new box'  (~(put by timeboxes) stats-index now.bowl)
+    =?  timeboxes  !(~(has by timeboxes) stats-index)  (~(put by timeboxes) stats-index now.bowl)
     (give:(read-indices times) %read-count stats-index)
   :: 
   ++  read-indices
