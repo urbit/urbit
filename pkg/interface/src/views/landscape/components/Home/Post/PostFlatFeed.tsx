@@ -7,7 +7,8 @@ import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import ArrayVirtualScroller, {
   indexEqual,
-  arrToString
+  arrToString,
+  stringToArr
 } from '~/views/components/ArrayVirtualScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
@@ -62,9 +63,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
       return null;
     }
 
-    if (arrToString(index) !== node.post.index) {
-      console.log(node.post.index, arrToString(index), node);
-    }
+    let key = arrToString(index);
 
     const first = flatGraph.peekLargest()?.[0];
     const last = flatGraph.peekSmallest()?.[0];
@@ -78,7 +77,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
             pt={3}
             width="100%"
             alignItems="center"
-            key={arrToString(index)}
+            key={key}
             ref={ref}>
             <PostItem
               node={node}
@@ -103,7 +102,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
         <Col
           width="100%"
           alignItems="center"
-          key={arrToString(index)}
+          key={key}
           ref={ref}>
           <Col
             width="100%"
@@ -139,7 +138,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
     }
 
     return (
-      <Box key={arrToString(index)} ref={ref}>
+      <Box key={key} ref={ref}>
         <PostItem
           node={node}
           graphPath={graphPath}

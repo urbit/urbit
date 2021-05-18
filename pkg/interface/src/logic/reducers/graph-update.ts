@@ -67,7 +67,6 @@ const addNodesFlat = (json: any, state: GraphState): GraphState => {
     }
 
     const indices = Array.from(Object.keys(data.nodes));
-    console.log(indices);
 
     indices.forEach((index) => {
       if (index.split('/').length === 0) { return; }
@@ -87,7 +86,6 @@ const addNodesFlat = (json: any, state: GraphState): GraphState => {
 const addNodesThread = (json: any, state: GraphState): GraphState => {
   const data = _.get(json, 'add-nodes', false);
   const parentIndex = _.get(json, 'index', false);
-  console.log(json);
   if (data && parentIndex) {
     if (!('threadGraphs' in state)) {
       return state;
@@ -102,8 +100,6 @@ const addNodesThread = (json: any, state: GraphState): GraphState => {
     if (!(parentIndex in state.threadGraphs[resource])) {
       state.threadGraphs[resource][parentIndex] = new BigIntArrayOrderedMap([], true);
     }
-
-    console.log(state.threadGraphs);
 
     indices.forEach((index) => {
       if (index.split('/').length === 0) { return; }
@@ -319,7 +315,6 @@ const addNodes = (json, state) => {
 
       if (node.post.pending) {
         state.graphTimesentMap[resource][node.post['time-sent']] = index;
-        console.log('set pending', index);
       }
 
       state.graphs[resource] = _addNode(
