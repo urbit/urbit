@@ -13,6 +13,15 @@ import useMetadataState from "~/logic/state/metadata";
 import { GroupLink } from "~/views/components/GroupLink";
 import { TranscludedNode } from "./TranscludedNode";
 
+function Placeholder() {
+  return (
+    <Row margin='12px' marginBottom='0' height='4'>
+      <Box backgroundColor='washedGray' size='4' marginRight='2' borderRadius='2' />
+      <Box backgroundColor='washedGray' heigh='4' width='75%' borderRadius='2' />
+    </Row>
+  )
+}
+
 function GroupPermalink(props: { group: string; api: GlobalApi }) {
   const { group, api } = props;
   return (
@@ -47,6 +56,7 @@ function GraphPermalink(
     ])
   );
   const [errored, setErrored] = useState(false);
+  const [loading, setLoading] = useState(false);
   const association = useMetadataState(
     useCallback(s => s.associations.graph[graph] as Association | null, [
       graph
@@ -60,9 +70,12 @@ function GraphPermalink(
         return;
       }
       try {
+        setLoading(true);
         await api.graph.getNode(ship, name, index);
+        setLoading(false);
       } catch (e) {
         console.log(e);
+        setLoading(false);
         setErrored(true);
       }
     })();
@@ -108,6 +121,7 @@ function GraphPermalink(
         navigate(e);
       }}
     >
+      {loading && Placeholder()}
       {showTransclusion && index && (
         <TranscludedNode
           api={api}
