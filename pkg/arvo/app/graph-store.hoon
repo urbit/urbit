@@ -877,6 +877,7 @@
         b  t.b
         e  +(e.f)
         d  (~(put by d.f) c node(children [%empty ~]))
+        c  (snip c)
       ==
     ==
   ::
