@@ -1,14 +1,6 @@
 import remark from 'remark';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import RemarkBreaks from 'remark-breaks';
-import ResumeParse from './resume';
-import newlines from './remark-break';
-
-export interface ParserSettings {
-  inList: boolean;
-  inBlock: boolean;
-  inLink: boolean;
-}
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -36,7 +28,8 @@ const wideParser = remark()
         inline: DISABLED_INLINE_TOKENS,
       },
     ],
-    newlines
+    RemarkBreaks,
   ])
+  .freeze();
 
 export const parseWide = (text: string) => wideParser.parse(text);

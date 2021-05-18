@@ -3,8 +3,7 @@ import {
   Col, H1,
   H2,
   H3,
-  H4, Text,
-  Li, Ol, Ul
+  H4, Text
 } from '@tlon/indigo-react';
 import { Content, ReferenceContent } from '@urbit/api';
 import _ from 'lodash';
@@ -235,7 +234,7 @@ const header = ({ children, depth, ...rest }) => {
 const renderers = {
   heading: header,
   break: () => {
-    return <br />
+    return <Box display="block" width="100%" height={2}></Box>;
   },
   thematicBreak: () => {
     return <Box display="block" width="100%" height={2}></Box>;
@@ -255,12 +254,16 @@ const renderers = {
   },
   strong: ({ children }) => {
     return (
-        <b>{children}</b>
+      <Text fontWeight="bold" lineHeight="1">
+        {children}
+      </Text>
     );
   },
   emphasis: ({ children }) => {
     return (
-        <i>{children}</i>
+      <Text fontStyle="italic" fontSize={1} lineHeight="tall">
+        {children}
+      </Text>
     );
   },
   blockquote: ({ children, depth, tall, ...rest }) => {
@@ -271,11 +274,12 @@ const renderers = {
     return (
       <Text
         lineHeight="tall"
-        display="inline-block"
+        display="block"
         borderLeft="1px solid"
         color="black"
         paddingLeft={2}
-        my={1}
+        py={1}
+        mb={1}
       >
         {children}
       </Text>
@@ -283,18 +287,29 @@ const renderers = {
   },
   paragraph: ({ children }) => {
     return (
-      <Box fontSize={1} lineHeight="tall">
+      <Text fontSize={1} lineHeight="tall">
         {children}
-      </Box>
+      </Text>
     );
   },
   listItem: ({ children }) => {
     return (
-      <Li>{children}</Li>
+      <Box position="relative" alignItems="center">
+        <Dot
+          top="7px"
+          position="absolute"
+          left="0px"
+          mr={1}
+          height="20px"
+          width="20px"
+        />
+        <Box ml={2}>{children}</Box>
+      </Box>
     );
   },
 
   code: ({ language, tall, value, ...rest }) => {
+    console.log(rest);
     const inner = (
       <Text
         p={1}
@@ -325,8 +340,12 @@ const renderers = {
       </Anchor>
     );
   },
-  list: ({ depth, ordered, children }) => {
-    return ordered ? <Ol>{children}</Ol> : <Ul>{children}</Ul>;
+  list: ({ depth, children }) => {
+    return (
+      <Col ml={3} gapY={2} my={2}>
+        {children}
+      </Col>
+    );
   },
   'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
   image: ({ url }) => (
