@@ -361,15 +361,18 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  async getFirstborn(ship: string, resource: string, topAncestor: string) {
-    const top = topAncestor ? decToUd(topAncestor) : null;
+  async getFirstborn(ship: string, resource: string, index = '') {
+    const idx = index.split('/').map(decToUd).join('/');
     const data = await this.scry<any>('graph-store',
-      `/firstborn/${ship}/${resource}/${top}`
+      `/firstborn/${ship}/${resource}/${idx}`
     );
     const node = data['graph-update'];
     this.store.handleEvent({
       data: {
-        'graph-update-thread': node,
+        'graph-update-thread': {
+          index,
+          ...node
+        },
         'graph-update': node
       },
     });

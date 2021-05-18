@@ -67,6 +67,7 @@ const addNodesFlat = (json: any, state: GraphState): GraphState => {
     }
 
     const indices = Array.from(Object.keys(data.nodes));
+    console.log(indices);
 
     indices.forEach((index) => {
       if (index.split('/').length === 0) { return; }
@@ -85,7 +86,9 @@ const addNodesFlat = (json: any, state: GraphState): GraphState => {
 
 const addNodesThread = (json: any, state: GraphState): GraphState => {
   const data = _.get(json, 'add-nodes', false);
-  if (data) {
+  const parentIndex = _.get(json, 'index', false);
+  console.log(json);
+  if (data && parentIndex) {
     if (!('threadGraphs' in state)) {
       return state;
     }
@@ -96,21 +99,25 @@ const addNodesThread = (json: any, state: GraphState): GraphState => {
     }
 
     const indices = Array.from(Object.keys(data.nodes));
+    if (!(parentIndex in state.threadGraphs[resource])) {
+      state.threadGraphs[resource][parentIndex] = new BigIntArrayOrderedMap([], true);
+    }
+
+    console.log(state.threadGraphs);
 
     indices.forEach((index) => {
       if (index.split('/').length === 0) { return; }
       const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
+
       if (indexArr.length === 0) { return state; }
 
-      let parentKey = indexArr[0].toString();
-      if (!(parentKey in state.threadGraphs[resource])) {
-        state.threadGraphs[resource][parentKey] = new BigIntArrayOrderedMap([], true);
-      }
-
       let node = data.nodes[index];
-      node.children = mapifyChildren({});
-      state.threadGraphs[resource][parentKey] =
-        state.threadGraphs[resource][parentKey].set(indexArr, node);
+      state.threadGraphs[resource][parentIndex] =
+        state.threadGraphs[resource][parentIndex].set(indexArr,
+          produce(node, (draft) => {
+            draft.children = mapifyChildren({});
+          })
+        );
     });
 
   }

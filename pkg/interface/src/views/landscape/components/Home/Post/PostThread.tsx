@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
 import { Loading } from '~/views/components/Loading';
+import { arrToString } from '~/views/components/ArrayVirtualScroller';
 import useGraphState from '~/logic/state/graph';
 import PostFlatFeed from './PostFlatFeed';
 import PostItem from './PostItem/PostItem';
@@ -36,12 +37,11 @@ export default function PostThread(props) {
     if (index.length < 1) {
       return;
     }
-    console.log(index[0].toString());
 
     api.graph.getFirstborn(
       graphResource.ship,
       graphResource.name,
-      index[0].toString()
+      arrToString(index)
     );
   }, [graphPath, props.locationUrl]);
 
@@ -49,7 +49,7 @@ export default function PostThread(props) {
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
 
   const shouldRenderFeed =
-    graphId in threadGraphs && index[0].toString() in threadGraphs[graphId];
+    graphId in threadGraphs && arrToString(index) in threadGraphs[graphId];
 
   if (!shouldRenderFeed) {
     return (
@@ -59,7 +59,9 @@ export default function PostThread(props) {
     );
   }
 
-  const threadGraph = threadGraphs[graphId][index[0].toString()];
+  //  TODO: improve performance characteristics of the useGraphState required
+  //  to fetch this
+  const threadGraph = threadGraphs[graphId][arrToString(index)];
 
   const first = threadGraph.peekLargest()?.[0];
   if (!first) {

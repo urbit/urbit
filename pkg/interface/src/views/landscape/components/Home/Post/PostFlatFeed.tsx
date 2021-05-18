@@ -55,12 +55,15 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
     } = this.props;
 
     const node = flatGraph.get(index);
-    console.log(arrToString(index))
     const parentNode = index.length > 1 ?
       flatGraph.get(index.slice(0, index.length - 1)) : null;
 
     if (!node) {
       return null;
+    }
+
+    if (arrToString(index) !== node.post.index) {
+      console.log(node.post.index, arrToString(index), node);
     }
 
     const first = flatGraph.peekLargest()?.[0];

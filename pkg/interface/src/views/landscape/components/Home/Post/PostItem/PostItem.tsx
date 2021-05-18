@@ -41,8 +41,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
 
     this.state = { inReplyMode: false };
     this.toggleReplyMode = this.toggleReplyMode.bind(this);
-    this.navigateToReplies = this.navigateToReplies.bind(this);
-    this.navigateToThread = this.navigateToThread.bind(this);
+    this.navigateToChildren = this.navigateToChildren.bind(this);
     this.submitCallback = this.submitCallback.bind(this);
   }
 
@@ -69,8 +68,8 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
     this.setState({ inReplyMode: !this.state.inReplyMode });
   }
 
-  navigateToReplies() {
-    const { history, baseUrl, index, isParent } = this.props;
+  navigateToChildren() {
+    const { history, baseUrl, index, isParent, isThread } = this.props;
     if (isParent) {
       return;
     }
@@ -80,21 +79,10 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
       indexString = indexString + '/' + i.toString();
     });
 
-    history.push(`${baseUrl}/feed/replies${indexString}`);
-  }
-
-  navigateToThread() {
-    const { history, baseUrl, index, isParent } = this.props;
-    if (isParent) {
-      return;
-    }
-    let indexString = '';
-
-    index.forEach((i) => {
-      indexString = indexString + '/' + i.toString();
-    });
-
+    //  TODO: ensure that the logic here works properly
     history.push(`${baseUrl}/feed/thread${indexString}`);
+
+    //history.push(`${baseUrl}/feed/replies${indexString}`);
   }
 
   submitCallback() {
@@ -148,7 +136,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
           width="100%"
           maxWidth="600px"
           backgroundColor={ hovering ? 'washedGray' : 'transparent' }
-          onClick={isThread ? this.navigateToReplies : this.navigateToThread}
+          onClick={this.navigateToChildren}
           cursor={isParent ? "default": "pointer"}
           {...bind}>
           { (postExists) ? (

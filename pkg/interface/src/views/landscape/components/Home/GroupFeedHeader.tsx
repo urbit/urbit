@@ -4,6 +4,7 @@ import React from 'react';
 
 export function GroupFeedHeader(props) {
   const { baseUrl, history, graphResource, vip } = props;
+
   let graph = props.graph;
   const historyLocation = history.location.pathname;
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;

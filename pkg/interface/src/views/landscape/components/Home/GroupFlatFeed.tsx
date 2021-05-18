@@ -4,9 +4,9 @@ import React, {
 } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { resourceFromPath } from '~/logic/lib/group';
-import useGraphState from '~/logic/state/graph';
-import useGroupState from '~/logic/state/group';
-import useMetadataState from '~/logic/state/metadata';
+import { useFlatGraph, useGraphTimesentMap } from '~/logic/state/graph';
+import { useGroup } from '~/logic/state/group';
+import { useAssocForGraph } from '~/logic/state/metadata';
 import { Loading } from '~/views/components/Loading';
 import { GroupFeedHeader } from './GroupFeedHeader';
 import PostThread from './Post/PostThread';
@@ -23,36 +23,27 @@ function GroupFlatFeed(props) {
     vip
   } = props;
 
-  const groups = useGroupState(state => state.groups);
-  const group = groups[groupPath];
+  const group = useGroup(groupPath);
 
-  const associations = useMetadataState(state => state.associations);
-  const flatGraphs = useGraphState(state => state.flatGraphs);
-
-  const graphResource =
+  const graphRid =
     graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
-  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
 
-  const pendingSize = Object.keys(
-    graphTimesentMap[`${graphResource.ship.slice(1)}/${graphResource.name}`] ||
-    {}
-  ).length;
+  const flatGraph = useFlatGraph(graphRid.ship, graphRid.name);
+  const association = useAssocForGraph(graphPath);
+  
+  const graphTimesentMap = useGraphTimesentMap(graphRid.ship, graphRid.name);
+  const pendingSize = Object.keys(graphTimesentMap || {}).length;
 
   const relativePath = path => baseUrl + path;
-  const association = associations.graph[graphPath];
-
   const history = useHistory();
   const locationUrl = history.location.pathname;
 
-  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
-  const flatGraph = flatGraphs[graphId];
-
   useEffect(() => {
     //  TODO: VirtualScroller should support lower starting values than 100
-    if (graphResource.ship === '~zod' && graphResource.name === 'null') {
+    if (graphRid.ship === '~zod' && graphRid.name === 'null') {
       return;
     }
-    api.graph.getDeepOlderThan(graphResource.ship, graphResource.name, null, 100);
+    api.graph.getDeepOlderThan(graphRid.ship, graphRid.name, null, 100);
     api.hark.markCountAsRead(association, '/', 'post');
   }, [graphPath]);
 
@@ -72,9 +63,8 @@ function GroupFlatFeed(props) {
       <GroupFeedHeader
         baseUrl={baseUrl}
         history={history}
-        graphs={flatGraphs}
         vip={vip}
-        graphResource={graphResource}
+        graphResource={graphRid}
       />
       <Switch>
         <Route

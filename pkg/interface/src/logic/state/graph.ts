@@ -148,6 +148,28 @@ export function useGraph(ship: string, name: string) {
   );
 }
 
+export function useFlatGraph(ship: string, name: string) {
+  return useGraphState(
+    useCallback(s => s.flatGraphs[`${deSig(ship)}/${name}`], [ship, name])
+  );
+}
+
+export function useThreadGraph(ship: string, name: string, index: string) {
+  return useGraphState(
+    useCallback(s => s.threadGraphs[`${deSig(ship)}/${name}/${index}`], [
+      ship,
+      name,
+      index
+    ])
+  );
+}
+
+export function useGraphTimesentMap(ship: string, name: string) {
+  return useGraphState(
+    useCallback(s => s.graphTimesentMap[`${deSig(ship)}/${name}`], [ship, name])
+  );
+}
+
 export function useGraphForAssoc(association: Association) {
   const { resource } = association;
   const { ship, name } = resourceFromPath(resource);
