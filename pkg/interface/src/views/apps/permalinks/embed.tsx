@@ -15,11 +15,21 @@ import { TranscludedNode } from "./TranscludedNode";
 
 function Placeholder() {
   return (
-    <Row margin='12px' marginBottom='0' height='4'>
-      <Box backgroundColor='washedGray' size='4' marginRight='2' borderRadius='2' />
-      <Box backgroundColor='washedGray' heigh='4' width='75%' borderRadius='2' />
+    <Row margin="12px" marginBottom="0" height="4">
+      <Box
+        backgroundColor="washedGray"
+        size="4"
+        marginRight="2"
+        borderRadius="2"
+      />
+      <Box
+        backgroundColor="washedGray"
+        height="4"
+        width="75%"
+        borderRadius="2"
+      />
     </Row>
-  )
+  );
 }
 
 function GroupPermalink(props: { group: string; api: GlobalApi }) {
