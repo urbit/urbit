@@ -256,7 +256,7 @@
     =/  graph=graph:graph-store  :: graph in subscription is bunted 
       (get-graph-mop:gra rid)
     =/  node=(unit node:graph-store)
-      (bind (peek:orm:graph-store graph) |=([@ =node:graph-store] node))
+      (bind (pry:orm:graph-store graph) |=([@ =node:graph-store] node))
     =^  cards  state
       (check-nodes (drop node) rid)
     ?.  (should-watch:ha rid)
