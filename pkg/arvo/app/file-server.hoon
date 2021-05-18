@@ -273,7 +273,10 @@
     ++  match-content-path
       |=  [pax=path =^serving is-file=?]
       ^-  (unit [content path ?])
-      %-  ~(rep by serving)
+      %+  roll
+        %+  sort  ~(tap by serving)
+        |=  [[a=path *] [b=path *]]
+        (gth (lent a) (lent b))
       |=  $:  [url-base=path =content public=? spa=?]
               out=(unit [content path ?])
           ==
