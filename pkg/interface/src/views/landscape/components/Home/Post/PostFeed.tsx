@@ -71,7 +71,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
         <React.Fragment key={index.toString()}>
           <Col
             key={index.toString()}
-            // @ts-ignore indigo-react doesn't allow us to pass refs
             ref={ref}
             mb={3}
             width="100%"
@@ -79,7 +78,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
           >
             <PostItem
               key={parentNode.post.index}
-              // @ts-ignore withHovering prop pass is broken?
               parentPost={grandparentNode?.post}
               node={parentNode}
               parentNode={grandparentNode}
@@ -96,7 +94,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
             />
           </Col>
           <PostItem
-            // @ts-ignore withHovering prop pass is broken?
             node={node}
             graphPath={graphPath}
             association={association}
@@ -153,9 +150,7 @@ class PostFeed extends React.Component<PostFeedProps, any> {
     }
 
     return (
-      // @ts-ignore indigo-react doesn't allow us to pass refs
       <Box key={index.toString()} ref={ref}>
-        // @ts-ignore withHovering prop pass is broken?
         <PostItem
           node={node}
           graphPath={graphPath}

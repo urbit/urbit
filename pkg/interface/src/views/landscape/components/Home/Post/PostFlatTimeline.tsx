@@ -3,6 +3,8 @@ import { Association, FlatGraph, Group } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { Loading } from '~/views/components/Loading';
+import { useFlatGraph } from '~/logic/state/graph';
+import { resourceFromPath } from '~/logic/lib/group';
 import PostFlatFeed from './PostFlatFeed';
 import PostInput from './PostInput';
 
@@ -10,7 +12,6 @@ interface PostTimelineProps {
   api: GlobalApi;
   association: Association;
   baseUrl: string;
-  flatGraph: FlatGraph;
   graphPath: string;
   group: Group;
   pendingSize: number;
@@ -24,10 +25,13 @@ const PostFlatTimeline = (props: PostTimelineProps): ReactElement => {
     association,
     graphPath,
     group,
-    flatGraph,
     pendingSize,
     vip
   } = props;
+
+  const graphRid =
+    graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
+  const flatGraph = useFlatGraph(graphRid.ship, graphRid.name);
 
   const shouldRenderFeed = Boolean(flatGraph);
 

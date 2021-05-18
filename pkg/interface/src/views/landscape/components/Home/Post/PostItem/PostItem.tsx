@@ -29,6 +29,7 @@ export interface PostItemProps {
   parentPost?: Post;
   vip: string;
   isThread?: boolean;
+  isLast?: boolean;
 }
 
 interface PostItemState {
@@ -80,9 +81,11 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
     });
 
     //  TODO: ensure that the logic here works properly
-    history.push(`${baseUrl}/feed/thread${indexString}`);
-
-    //history.push(`${baseUrl}/feed/replies${indexString}`);
+    if (!isThread) {
+      history.push(`${baseUrl}/feed/thread${indexString}`);
+    } else {
+      history.push(`${baseUrl}/feed/replies${indexString}`);
+    }
   }
 
   submitCallback() {
@@ -105,7 +108,8 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
       group,
       hovering,
       bind,
-      isThread
+      isThread,
+      isLast
     } = this.props;
 
     let indexString = '';
@@ -124,7 +128,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
         ref={innerRef}
         pl={1}
         pr={1}
-        mb={isThread && !inReplyMode ? 0 : 3}
+        mb={isThread && !isLast && !inReplyMode ? 0 : 3}
         width="100%"
         alignItems="center"
       >
@@ -192,7 +196,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
             />
           </Col>
         ) : null }
-      { isThread && !inReplyMode ? (
+      { isThread && !isLast && !inReplyMode ? (
           <Col width="100%" maxWidth="600px">
             <Box
               ml={3}

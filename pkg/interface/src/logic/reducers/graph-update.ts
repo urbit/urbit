@@ -204,6 +204,9 @@ const addNodes = (json, state) => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {
+      if (graph.has(index[0])) {
+        return graph;
+      }
       return graph.set(index[0], node);
     }
 
@@ -346,9 +349,13 @@ const addNodes = (json, state) => {
             }).length === 0;
 
             if (isFirstChild) {
-              node.children = mapifyChildren({});
               state.threadGraphs[resource][threadKey] =
-                state.threadGraphs[resource][threadKey].set(indexArr, node);
+                state.threadGraphs[resource][threadKey].set(
+                  indexArr,
+                  produce(node, draft => {
+                    draft.children = mapifyChildren({});
+                  })
+                );
             }
           }
         }
@@ -359,6 +366,7 @@ const addNodes = (json, state) => {
       }
     });
   }
+
   return state;
 };
 

@@ -92,7 +92,8 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
               isRelativeTime={true}
               vip={vip}
               group={group}
-              isThread={isThread && !isLast}
+              isThread={isThread}
+              isLast={isLast}
             />
           </Col>
         );
@@ -152,7 +153,8 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
           isRelativeTime={true}
           vip={vip}
           group={group}
-          isThread={isThread && !isLast}
+          isThread={isThread}
+          isLast={isLast}
         />
       </Box>
     );

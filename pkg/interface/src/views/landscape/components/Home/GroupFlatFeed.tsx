@@ -28,7 +28,6 @@ function GroupFlatFeed(props) {
   const graphRid =
     graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
 
-  const flatGraph = useFlatGraph(graphRid.ship, graphRid.name);
   const association = useAssocForGraph(graphPath);
   
   const graphTimesentMap = useGraphTimesentMap(graphRid.ship, graphRid.name);
@@ -80,7 +79,6 @@ function GroupFlatFeed(props) {
                 group={group}
                 association={association}
                 vip={vip}
-                flatGraph={flatGraph}
                 pendingSize={pendingSize}
               />
             );

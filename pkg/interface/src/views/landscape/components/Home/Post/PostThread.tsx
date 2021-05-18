@@ -109,7 +109,7 @@ export default function PostThread(props) {
   return (
     <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl={1}>
       <PostFlatFeed
-        key={graphPath}
+        key={`/thread/${locationUrl}`}
         graphPath={graphPath}
         flatGraph={threadGraph}
         pendingSize={pendingSize}
