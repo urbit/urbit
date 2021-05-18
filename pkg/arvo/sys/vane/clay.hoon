@@ -2229,12 +2229,13 @@
     ^-  (each (unit merge-result) [term tang])
     =/  ali-yaki=yaki  (~(got by hut.ran) (~(got by hit.ali-dome) let.ali-dome))
     =/  bob-yaki=(unit yaki)
-    ?~  continuation-yaki
-      ?~  let.dom
-        ~
-      (~(get by hut.ran) (~(got by hit.dom) let.dom))
-    continuation-yaki
+      ?~  continuation-yaki
+        ?~  let.dom
+          ~
+        (~(get by hut.ran) (~(got by hit.dom) let.dom))
+      continuation-yaki
     (merge-by-germ ali-yaki bob-yaki)
+    ::
     ++  merge-by-germ
       |=  [=ali=yaki bob-yaki=(unit yaki)]
       ^-  (each (unit merge-result) [term tang])
@@ -4498,7 +4499,6 @@
               per=regs
               pew=regs
           ==
-
       +$  ford-cache-7  ford-cache
       +$  raft-6
         $:  rom=room-6                                  ::  domestic
