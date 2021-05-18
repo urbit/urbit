@@ -1,6 +1,6 @@
 import { Text } from '@tlon/indigo-react';
 import React from 'react';
-
+// @ts-ignore line isn't in props?
 export default React.memo(({ line }) => {
   //  line body to jsx
   // NOTE  lines are lists of characters that might span multiple codepoints

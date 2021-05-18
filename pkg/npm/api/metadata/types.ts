@@ -1,4 +1,3 @@
-import { Resource } from "..";
 import { AppName, Path, Patp } from "../lib";
 
 export type MetadataUpdate =

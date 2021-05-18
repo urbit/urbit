@@ -20,7 +20,7 @@ export interface GraphNotifIndex {
   graph: string;
   group: string;
   description: GraphNotifDescription;
-  module: string;
+  mark: string;
   index: string;
 }
 

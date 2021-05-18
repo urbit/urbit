@@ -19,6 +19,7 @@ export interface StorageState extends BaseState<StorageState> {
   }
 }
 
+// @ts-ignore investigate zustand types
 const useStorageState = createState<StorageState>('Storage', {
   gcp: {},
   s3: {

@@ -8,8 +8,10 @@ import { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import { compose } from 'lodash/fp';
 import { makePatDa } from '~/logic/lib/util';
+import { describeNotification } from '../lib/hark';
 import { reduceState } from '../state/base';
 import useHarkState, { HarkState } from '../state/hark';
+import useMetadataState from '../state/metadata';
 
 export const HarkReducer = (json: any) => {
   const data = _.get(json, 'harkUpdate', false);
@@ -20,24 +22,32 @@ export const HarkReducer = (json: any) => {
   const graphHookData = _.get(json, 'hark-graph-hook-update', false);
   if (graphHookData) {
     reduceState<HarkState, any>(useHarkState, graphHookData, [
+      // @ts-ignore investigate zustand types
       graphInitial,
+      // @ts-ignore investigate zustand types
       graphIgnore,
+      // @ts-ignore investigate zustand types
       graphListen,
+      // @ts-ignore investigate zustand types
       graphWatchSelf,
+      // @ts-ignore investigate zustand types
       graphMentions
     ]);
   }
   const groupHookData = _.get(json, 'hark-group-hook-update', false);
   if (groupHookData) {
     reduceState<HarkState, any>(useHarkState, groupHookData, [
+      // @ts-ignore investigate zustand types
       groupInitial,
+      // @ts-ignore investigate zustand types
       groupListen,
+      // @ts-ignore investigate zustand types
       groupIgnore
     ]);
   }
 };
 
-function reduce(data, state) {
+export function reduce(data, state) {
   const reducers = [
     calculateCount,
     read,
@@ -196,7 +206,7 @@ function readSince(json: any, state: HarkState): HarkState {
 
 function unreadSince(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unread-count');
-  if(data) {
+  if (data) {
     updateUnreadCount(state, data.index, u => u + 1);
   }
   return state;
@@ -314,7 +324,7 @@ function removeNotificationFromUnread(state: HarkState, index: NotifIndex, time:
   }
 }
 
-function updateNotificationStats(state: HarkState, index: NotifIndex, statField: 'unreads' | 'last', f: (x: number) => number) {
+function updateNotificationStats(state: HarkState, index: NotifIndex, statField: 'unreads' | 'last', f: (x: number) => number, notify = false) {
     if('graph' in index) {
       const curr: any = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, statField], 0);
       _.set(state.unreads.graph, [index.graph.graph, index.graph.index, statField], f(curr));
@@ -330,6 +340,20 @@ function added(json: any, state: HarkState): HarkState {
     const { index, notification } = data;
     const [fresh, stale] = _.partition(state.unreadNotes, ({ index: idx }) => !notifIdxEqual(index, idx));
     state.unreadNotes = [...fresh, { index, notification }];
+
+    if ('Notification' in window && !useHarkState.getState().doNotDisturb) {
+      const description = describeNotification(data);
+      const meta = useMetadataState.getState();
+      const referent = 'graph' in data.index ? meta.associations.graph[data.index.graph.graph]?.metadata?.title ?? data.index.graph : meta.associations.groups[data.index.group.group]?.metadata?.title ?? data.index.group;
+      new Notification(`${description} ${referent}`, {
+        tag: 'landscape',
+        image: '/img/favicon.png',
+        icon: '/img/favicon.png',
+        badge: '/img/favicon.png',
+        renotify: true
+      });
+    }
+
   }
   return state;
 }
@@ -368,7 +392,7 @@ function notifIdxEqual(a: NotifIndex, b: NotifIndex) {
     return (
       a.graph.graph === b.graph.graph &&
       a.graph.group === b.graph.group &&
-      a.graph.module === b.graph.module &&
+      a.graph.mark === b.graph.mark &&
       a.graph.description === b.graph.description
     );
   } else if ('group' in a && 'group' in b) {

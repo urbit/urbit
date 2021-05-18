@@ -25,7 +25,7 @@ const DISABLED_BLOCK_TOKENS = [
 const DISABLED_INLINE_TOKENS = [];
 
 type RichTextProps = ReactMarkdownProps & {
-  api: GlobalApi;
+  api?: GlobalApi;
   disableRemoteContent?: boolean;
   contact?: Contact;
   group?: Group;
@@ -35,7 +35,21 @@ type RichTextProps = ReactMarkdownProps & {
   color?: string;
   children?: any;
   width?: string;
-} & PropFunc<typeof Box>;
+  display?: string[] | string;
+  mono?: boolean;
+  mb?: number;
+  minWidth?: number | string;
+  maxWidth?: number | string;
+  flexShrink?: number;
+  textOverflow?: string;
+  overflow?: string;
+  whiteSpace?: string;
+  gray?: boolean;
+  title?: string;
+  py?: number;
+  overflowX?: any;
+  verticalAlign?: any;
+}; 
 
 const RichText = React.memo(({ disableRemoteContent = false, api, ...props }: RichTextProps) => (
   <ReactMarkdown
@@ -49,6 +63,7 @@ const RichText = React.memo(({ disableRemoteContent = false, api, ...props }: Ri
           oembedShown: false
         } : null;
         if (!disableRemoteContent) {
+          // @ts-ignore RemoteContent weirdness
           return <RemoteContent className="mw-100" url={linkProps.href} />;
         }
 
@@ -60,16 +75,16 @@ const RichText = React.memo(({ disableRemoteContent = false, api, ...props }: Ri
             borderBottom='1px solid'
             remoteContentPolicy={remoteContentPolicy}
             onClick={(e) => {
- e.stopPropagation();
-}}
+              e.stopPropagation();
+            }}
             {...linkProps}
           >{linkProps.children}</Anchor>
         );
       },
-      linkReference: (linkProps) => {
+      linkReference: (linkProps): any => {
         const linkText = String(linkProps.children[0].props.children);
         if (isValidPatp(linkText)) {
-          return <Mention contact={props.contact || {}} group={props.group} ship={deSig(linkText)} api={api} />;
+          return <Mention ship={deSig(linkText)} api={api} />;
         } else if(linkText.startsWith('web+urbitgraph://')) {
           return (
             <PermalinkEmbed

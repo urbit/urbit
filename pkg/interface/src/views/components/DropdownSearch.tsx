@@ -129,6 +129,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>): ReactElement {
 
   return (
     <Box {...rest} position="relative" zIndex={9}>
+      { /* @ts-ignore investigate onblur on styled-system component later */}
       <Input
         ref={textarea}
         onChange={changeCallback}
