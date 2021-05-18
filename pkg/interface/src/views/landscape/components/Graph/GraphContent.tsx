@@ -283,9 +283,9 @@ const renderers = {
   },
   paragraph: ({ children }) => {
     return (
-      <Box color="black" fontSize={1} lineHeight="tall">
+      <Text color="black" fontSize={1} lineHeight="tall">
         {children}
-      </Box>
+      </Text>
     );
   },
   listItem: ({ children }) => {
