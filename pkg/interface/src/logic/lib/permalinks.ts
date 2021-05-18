@@ -1,15 +1,12 @@
 
 import {
-  Association,
-  resourceFromPath,
-  Group,
-  ReferenceContent,
-} from "@urbit/api";
+  ReferenceContent, resourceFromPath
+} from '@urbit/api';
 
 export function getPermalinkForGraph(
   group: string,
   graph: string,
-  index = ""
+  index = ''
 ) {
   const groupLink = getPermalinkForAssociatedGroup(group);
   const { ship, name } = resourceFromPath(graph);
@@ -21,16 +18,16 @@ function getPermalinkForAssociatedGroup(group: string) {
   return `web+urbitgraph://group/${ship}/${name}`;
 }
 
-
 type Permalink = GraphPermalink | GroupPermalink;
 
-interface GroupPermalink {
-  type: "group";
+export interface GroupPermalink {
+  type: 'group';
   group: string;
   link: string;
 }
-interface GraphPermalink {
-  type: "graph";
+
+export interface GraphPermalink {
+  type: 'graph';
   link: string;
   graph: string;
   group: string;
@@ -43,16 +40,16 @@ function parseGraphPermalink(
   segments: string[]
 ): GraphPermalink | null {
   const [kind, ship, name, ...index] = segments;
-  if (kind !== "graph") {
+  if (kind !== 'graph') {
     return null;
   }
   const graph = `/ship/${ship}/${name}`;
   return {
-    type: "graph",
+    type: 'graph',
     link: link.slice(16),
     graph,
     group,
-    index: `/${index.join("/")}`,
+    index: `/${index.join('/')}`
   };
 }
 
@@ -64,7 +61,7 @@ export function permalinkToReference(link: Permalink): ReferenceContent {
         group: link.group,
         index: link.index
       }
-    }
+    };
     return { reference };
   } else {
     const reference = {
@@ -89,22 +86,22 @@ export function referenceToPermalink({ reference }: ReferenceContent): Permalink
       type: 'group',
       link,
       ...reference
-    }
+    };
   }
 }
 
 export function parsePermalink(url: string): Permalink | null {
-  const [kind, ...rest] = url.slice(17).split("/");
-  if (kind === "group") {
+  const [kind, ...rest] = url.slice(17).split('/');
+  if (kind === 'group') {
     const [ship, name, ...graph] = rest;
     const group = `/ship/${ship}/${name}`;
     if (graph.length > 0) {
       return parseGraphPermalink(url, group, graph);
     }
     return {
-      type: "group",
+      type: 'group',
       group,
-      link: url.slice(11),
+      link: url.slice(11)
     };
   }
   return null;

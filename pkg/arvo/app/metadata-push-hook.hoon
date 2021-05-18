@@ -59,8 +59,9 @@
 ::
 ++  transform-proxy-update
   |=  vas=vase
-  ^-  (unit vase)
+  ^-  (quip card (unit vase))
   =/  =update:store  !<(update:store vas)
+  :-  ~
   ?.  ?=(?(%add %remove) -.update)
     ~
   =/  role=(unit (unit role-tag))

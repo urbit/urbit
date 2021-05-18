@@ -1,29 +1,26 @@
-import React, { useState, useEffect } from "react";
 import {
   Box,
-  Text,
-  Icon,
-  ManagedToggleSwitchField,
-  StatelessToggleSwitchField,
-  Col,
-  Center,
-} from "@tlon/indigo-react";
-import _ from "lodash";
 
-import useMetadataState, { useGraphsForGroup } from "~/logic/state/metadata";
-import { Association, resourceFromPath } from "@urbit/api";
-import { MetadataIcon } from "~/views/landscape/components/MetadataIcon";
-import useGraphState from "~/logic/state/graph";
-import { useField } from "formik";
-import useHarkState from "~/logic/state/hark";
-import { getModuleIcon } from "~/logic/lib/util";
-import {isWatching} from "~/logic/lib/hark";
+  Center, Col, Icon,
+
+  StatelessToggleSwitchField, Text
+} from '@tlon/indigo-react';
+import { Association, GraphConfig, resourceFromPath } from '@urbit/api';
+import { useField } from 'formik';
+import _ from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { isWatching } from '~/logic/lib/hark';
+import { getModuleIcon, GraphModule } from '~/logic/lib/util';
+import useGraphState from '~/logic/state/graph';
+import useHarkState from '~/logic/state/hark';
+import useMetadataState, { useGraphsForGroup } from '~/logic/state/metadata';
+import { MetadataIcon } from '~/views/landscape/components/MetadataIcon';
 
 export function GroupChannelPicker(props: {}) {
-  const associations = useMetadataState((s) => s.associations);
+  const associations = useMetadataState(s => s.associations);
 
   return (
-    <Col gapY="3">
+    <Col gapY={3}>
       {_.map(associations.groups, (assoc: Association, group: string) => (
         <GroupWithChannels key={group} association={assoc} />
       ))}
@@ -35,26 +32,24 @@ function GroupWithChannels(props: { association: Association }) {
   const { association } = props;
   const { metadata } = association;
 
-  const groupWatched = useHarkState((s) =>
+  const groupWatched = useHarkState(s =>
     s.notificationsGroupConfig.includes(association.group)
   );
 
   const [{ value }, meta, { setValue }] = useField(
     `groups["${association.group}"]`
   );
-  
 
   const onChange = () => {
     setValue(!value);
   };
-
 
   useEffect(() => {
     setValue(groupWatched);
   }, []);
 
   const graphs = useGraphsForGroup(association.group);
-  const joinedGraphs = useGraphState((s) => s.graphKeys);
+  const joinedGraphs = useGraphState(s => s.graphKeys);
   const joinedGroupGraphs = _.pickBy(graphs, (_, graph: string) => {
     const { ship, name } = resourceFromPath(graph);
     return joinedGraphs.has(`${ship.slice(1)}/${name}`);
@@ -67,16 +62,16 @@ function GroupWithChannels(props: { association: Association }) {
       display="grid"
       gridTemplateColumns="24px 24px 1fr 24px 24px"
       gridTemplateRows="auto"
-      gridGap="2"
+      gridGap={2}
       gridTemplateAreas="'arrow icon title graphToggle groupToggle'"
     >
       {Object.keys(joinedGroupGraphs).length > 0 && (
         <Center
           cursor="pointer"
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => setOpen(o => !o)}
           gridArea="arrow"
         >
-          <Icon icon={open ? "ChevronSouth" : "ChevronEast"} />
+          <Icon icon={open ? 'ChevronSouth' : 'ChevronEast'} />
         </Center>
       )}
       <MetadataIcon
@@ -117,17 +112,17 @@ function Channel(props: { association: Association }) {
     setValue(!value);
   };
 
-  const icon = getModuleIcon(metadata.config?.graph);
+  const icon = getModuleIcon((metadata.config as GraphConfig)?.graph as GraphModule);
 
   return (
     <>
-      <Center gridColumn="2">
+      <Center gridColumn={2}>
         <Icon icon={icon} />
       </Center>
-      <Box gridColumn="3">
+      <Box gridColumn={3}>
         <Text> {metadata.title}</Text>
       </Box>
-      <Box gridColumn="4">
+      <Box gridColumn={4}>
         <StatelessToggleSwitchField selected={value} onChange={onChange} />
       </Box>
     </>

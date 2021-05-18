@@ -1,12 +1,10 @@
-import React, { ReactElement } from "react";
-import _ from "lodash";
-import moment from "moment";
-import { Text as NormalText, Row, Rule, Box, Col } from "@tlon/indigo-react";
-
-import { PropFunc } from "~/types/util";
-import Timestamp from "~/views/components/Timestamp";
-import Author from "~/views/components/Author";
-import Dot from "~/views/components/Dot";
+import { Box, Row, Text as NormalText } from '@tlon/indigo-react';
+import moment from 'moment';
+import React, { ReactElement } from 'react';
+import { PropFunc } from '~/types/util';
+import Author from '~/views/components/Author';
+import Dot from '~/views/components/Dot';
+import Timestamp from '~/views/components/Timestamp';
 
 const Text = (props: PropFunc<typeof Text>) => (
   <NormalText fontWeight="500" {...props} />
@@ -24,25 +22,25 @@ export function Header(
 ): ReactElement {
   const {
     description,
-    channelTitle = "",
+    channelTitle = '',
     groupTitle,
     authors = [],
     content = false,
-    time,
+    time
   } = props;
 
   return (
     <Row
-      flexDirection={["column-reverse", "row"]}
-      minHeight="4"
+      flexDirection={['column-reverse', 'row']}
+      minHeight={4}
       mb={content ? 2 : 0}
       onClick={props.onClick}
       flexWrap="wrap"
-      alignItems={["flex-start", "center"]}
+      alignItems={['flex-start', 'center']}
       gridArea="header"
       overflow="hidden"
     >
-      <Row gapX="1" overflow="hidden" alignItems="center">
+      <Row gapX={1} overflow="hidden" alignItems="center">
         {authors.length > 0 && (
           <>
             <Author
@@ -60,15 +58,15 @@ export function Header(
           </>
         )}
         <Box whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
-          <Text lineHeight="tall" mr="1">
+          <Text lineHeight="tall" mr={1}>
             {description} {channelTitle}
           </Text>
         </Box>
       </Row>
-      <Row ml={[0, 1]} mb={[1, 0]} gapX="1" alignItems="center">
+      <Row ml={[0, 1]} mb={[1, 0]} gapX={1} alignItems="center">
         {groupTitle && (
           <>
-            <Text lineHeight="tall" fontSize="1" gray>
+            <Text lineHeight="tall" fontSize={1} gray>
               {groupTitle}
             </Text>
             <Dot color="gray" />
@@ -77,7 +75,7 @@ export function Header(
         {time && (
           <Timestamp
             lineHeight="tall"
-            fontSize="1"
+            fontSize={1}
             relative
             stamp={moment(time)}
             color="gray"

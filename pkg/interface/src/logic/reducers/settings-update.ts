@@ -1,26 +1,25 @@
+import { SettingsUpdate } from '@urbit/api/settings';
 import _ from 'lodash';
 import useSettingsState, { SettingsState } from '~/logic/state/settings';
-import { SettingsUpdate } from '@urbit/api/settings';
 import { reduceState } from '../state/base';
-import { string } from 'prop-types';
 
 export default class SettingsReducer {
   reduce(json: any) {
-    let data = json["settings-event"];
+    let data = json['settings-event'];
     if (data) {
       reduceState<SettingsState, SettingsUpdate>(useSettingsState, data, [
         this.putBucket,
         this.delBucket,
         this.putEntry,
-        this.delEntry,
+        this.delEntry
       ]);
     }
-    data = json["settings-data"];
+    data = json['settings-data'];
     if (data) {
       reduceState<SettingsState, SettingsUpdate>(useSettingsState, data, [
         this.getAll,
         this.getBucket,
-        this.getEntry,
+        this.getEntry
       ]);
     }
   }
@@ -28,7 +27,7 @@ export default class SettingsReducer {
   putBucket(json: SettingsUpdate, state: SettingsState): SettingsState {
     const data = _.get(json, 'put-bucket', false);
     if (data) {
-      state[data["bucket-key"]] = data.bucket;
+      state[data['bucket-key']] = data.bucket;
     }
     return state;
   }
@@ -63,7 +62,7 @@ export default class SettingsReducer {
   getAll(json: any, state: SettingsState): SettingsState {
     const data = _.get(json, 'all');
     if(data) {
-      _.mergeWith(state, data, (obj, src) => _.isArray(src) ? src : undefined)
+      _.mergeWith(state, data, (obj, src) => _.isArray(src) ? src : undefined);
     }
     return state;
   }

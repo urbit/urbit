@@ -1,31 +1,31 @@
-import React from "react";
-import _ from "lodash";
-import { Switch, Route, Redirect } from "react-router-dom";
-import { Association, Group } from "@urbit/api";
+import { Association, GraphConfig, Group } from '@urbit/api';
+import _ from 'lodash';
+import React from 'react';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 export function getGraphPermalink(
   assoc: Association,
   group: Group,
   index: string
 ) {
-  const mod = assoc.metadata.config.graph;
+  const mod = (assoc.metadata.config as GraphConfig).graph;
   const groupPath = group.hidden
-    ? "/~landscape/home"
+    ? '/~landscape/home'
     : `/~landscape${assoc.group}`;
-  if (mod === "chat") {
+  if (mod === 'chat') {
     return getChatPermalink(
-      group.hidden ? "/~landscape/messages" : `/~landscape${assoc.group}`,
+      group.hidden ? '/~landscape/messages' : `/~landscape${assoc.group}`,
       assoc,
       index
     );
-  } else if (mod === "publish") {
+  } else if (mod === 'publish') {
     return getPublishPermalink(groupPath, assoc, index);
-  } else if (mod === "link") {
+  } else if (mod === 'link') {
     return getLinkPermalink(groupPath, assoc, index);
-  } else if (mod === "post") {
+  } else if (mod === 'post') {
     return getPostPermalink(groupPath, assoc, index);
   }
-  return "/~404";
+  return '/~404';
 }
 
 function getPostPermalink(
@@ -37,20 +37,19 @@ function getPostPermalink(
   return base + index;
 }
 
-
 function getPublishPermalink(
   groupPath: string,
   assoc: Association,
   index: string
 ) {
-  const idx = index.split("/").slice(1);
+  const idx = index.split('/').slice(1);
   const base = `${groupPath}/resource/publish${assoc.resource}`;
   let isComment = false;
   const res = _.reduce(
     idx,
     (acc, val, i) => {
       if (i === 0) {
-        return {...acc, pathname: `${acc.pathname}/note/${val}` };
+        return { ...acc, pathname: `${acc.pathname}/note/${val}` };
       } else if (i === 1 && val === '2') {
         isComment = true;
         return acc;
@@ -69,16 +68,16 @@ function getLinkPermalink(
   assoc: Association,
   index: string
 ) {
-  const idx = index.split("/").slice(1);
+  const idx = index.split('/').slice(1);
   const base = `${groupPath}/resource/link${assoc.resource}`;
   const res = _.reduce(
     idx,
     (acc, val, i) => {
       console.log(acc);
       if (i === 0) {
-        return {...acc, pathname: `${acc.pathname}/index/${val}` };
+        return { ...acc, pathname: `${acc.pathname}/index/${val}` };
       } else if (i === 1) {
-        return {...acc, search: `?selected=${val}` };
+        return { ...acc, search: `?selected=${val}` };
       }
       return acc;
     },
@@ -92,7 +91,7 @@ function getChatPermalink(
   assoc: Association,
   index: string
 ) {
-  const idx = index.split("/").slice(1);
+  const idx = index.split('/').slice(1);
   if (idx.length === 0) {
     return `${groupPath}/resource/chat${assoc.resource}`;
   }
