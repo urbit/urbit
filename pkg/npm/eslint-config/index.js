@@ -14,7 +14,14 @@ const rules = {
     }
   ],
   "arrow-spacing": "error",
-  "ban-ts-comment": "allow-with-description",
+  "@typescript-eslint/ban-ts-comment": [2,
+    {
+    'ts-expect-error': 'allow-with-description',
+    'ts-ignore': 'allow-with-description',
+    'ts-nocheck': 'allow-with-description',
+    'ts-check': 'allow-with-description',
+     minimumDescriptionLength: 3,
+  }],
   "block-spacing": ["error", "always"],
   "brace-style": ["error", "1tbs"],
   "camelcase": [
