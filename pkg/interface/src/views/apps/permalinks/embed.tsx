@@ -154,7 +154,7 @@ function GraphPermalink(
         navigate(e);
       }}
     >
-      {loading && association && Placeholder(association.metadata.config.graph)}
+      {loading && association && Placeholder((association.metadata.config as GraphConfig).graph)}
       {showTransclusion && index && !loading && (
         <TranscludedNode
           api={api}
