@@ -189,7 +189,7 @@ function DaySection({
             api={api}
             notification={not}
             unread={unread}
-            time={date}
+            time={!unread ? date : undefined}
           />
         ))
       )}

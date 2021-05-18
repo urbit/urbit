@@ -72,24 +72,7 @@ export function reduce(data, state) {
 }
 
 function calculateCount(json: any, state: HarkState) {
-  let count = 0;
-  _.forEach(state.unreads.graph, (graphs) => {
-    _.forEach(graphs, (graph) => {
-      if (typeof graph?.notifications === 'object') {
-        count += graph?.notifications.length;
-      } else {
-        count += 0;
-      }
-    });
-  });
-  _.forEach(state.unreads.group, (group) => {
-    if (typeof group?.notifications === 'object') {
-      count += group?.notifications.length;
-    } else {
-      count += 0;
-    }
-  });
-  state.notificationsCount = count;
+  state.notificationsCount = Object.keys(state.unreadNotes).length;
   return state;
 }
 
@@ -369,9 +352,11 @@ const dnd = (json: any, state: HarkState): HarkState => {
 const timebox = (json: any, state: HarkState): HarkState => {
   const data = _.get(json, 'timebox', false);
   if (data) {
-    const time = makePatDa(data.time);
-    if (!data.archive) {
+    if (data.time) {
+      const time = makePatDa(data.time);
       state.notifications = state.notifications.set(time, data.notifications);
+    } else {
+      state.unreadNotes = data.notifications;
     }
   }
   return state;
@@ -466,21 +451,24 @@ function archive(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'archive', false);
   if (data) {
     const { index } = data;
-    removeNotificationFromUnread(state, index, makePatDa(data.time));
-    const time = makePatDa(data.time);
-    const timebox = state.notifications.get(time);
-    if (!timebox) {
-      console.warn('Modifying nonexistent timebox');
-      return state;
-    }
-    const [archived, unarchived] = _.partition(timebox, idxNotif =>
-      notifIdxEqual(index, idxNotif.index)
-    );
-    if(unarchived.length === 0) {
-      console.log('deleting entire timebox');
-      state.notifications = state.notifications.delete(time);
+    if(data.time) {
+      const time = makePatDa(data.time);
+      const timebox = state.notifications.get(time);
+      if (!timebox) {
+        console.warn('Modifying nonexistent timebox');
+        return state;
+      }
+      const [archived, unarchived] = _.partition(timebox, idxNotif =>
+        notifIdxEqual(index, idxNotif.index)
+      );
+      if(unarchived.length === 0) {
+        console.log('deleting entire timebox');
+        state.notifications = state.notifications.delete(time);
+      } else {
+        state.notifications = state.notifications.set(time, unarchived);
+      }
     } else {
-      state.notifications = state.notifications.set(time, unarchived);
+      state.unreadNotes = state.unreadNotes.filter(({ index: idx }) => !notifIdxEqual(idx, index)) 
     }
   }
   return state;

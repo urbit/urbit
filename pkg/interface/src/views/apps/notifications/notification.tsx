@@ -66,8 +66,9 @@ export function NotificationWrapper(props: {
 
   const isMobile = useLocalState(s => s.mobile);
 
-  const onArchive = useCallback(async () => {
-    if (!(time && notification)) {
+  const onArchive = useCallback(async (e) => {
+    e.stopPropagation();
+    if (!notification) {
       return;
     }
     return api.hark.archive(time, notification.index);
@@ -79,16 +80,8 @@ export function NotificationWrapper(props: {
   const isMuted =
     time && notification && getMuted(notification, groupConfig, graphConfig);
 
-  const onChangeMute = useCallback(async () => {
-    if (!notification) {
-      return;
-    }
-    const func = isMuted ? 'unmute' : 'mute';
-    return api.hark[func](notification);
-  }, [notification, api, isMuted]);
-
   const onClick = (e: any) => {
-    if (!(time && notification) || read) {
+    if (!notification || read) {
       return;
     }
     return api.hark.read(time, notification.index);
@@ -127,9 +120,9 @@ export function NotificationWrapper(props: {
           justifyContent="flex-end"
           opacity={[0, hovering ? 1 : 0]}
         >
-          {time && notification && (
+          {notification && (
             <StatelessAsyncAction
-              name={time.toString()}
+              name=""
               borderRadius={1}
               onClick={onArchive}
               backgroundColor="white"
