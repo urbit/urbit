@@ -868,7 +868,7 @@
     =.  c  (snoc c atom)
     ?-  -.children.node
       %empty
-      $(b t.b, e +(e), d (~(put by d) c node), c ~)
+      $(b t.b, e +(e), d (~(put by d) c node), c (snip c))
     ::
         %graph
       =/  f  $(b (tab:orm p.children.node ~ (sub a e)))
@@ -901,7 +901,7 @@
       !>  ^-  update:store
       [now.bowl [%add-nodes [ship term] map]]
     =/  item=[k=^atom v=node:store]
-      (need (pry:orm p.children.node))
+      (need (ram:orm p.children.node))
     =.  index  (snoc index k.item)
     $(map (~(put by map) index v.item(children empty+~)), node v.item)
   ::
