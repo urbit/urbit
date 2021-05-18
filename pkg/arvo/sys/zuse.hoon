@@ -5077,10 +5077,6 @@
 ++  ordered-map  on
 ::  +on: treap with user-specified horizontal order, ordered-map
 ::
-::    Conceptually smaller items go on the left, so the item with the
-::    smallest key can be popped off the head. If $key is `@` and
-::    .compare is +lte, then the numerically smallest item is the head.
-::
 ::  WARNING: ordered-map will not work properly if two keys can be
 ::  unequal under noun equality but equal via the compare gate
 ::
@@ -5144,7 +5140,7 @@
         ::
         ?~(r.a %.y &((mor key.n.a key.n.r.a) $(a r.a, r `key.n.a)))
     ==
-  ::  +bap: convert to list, largest to smallest
+  ::  +bap: convert to list, right to left
   ::
   ++  bap
     ~/  %bap
@@ -5175,10 +5171,9 @@
   ::  +dip: stateful partial inorder traversal
   ::
   ::    Mutates .state on each run of .f.  Starts at .start key, or if
-  ::    .start is ~, starts at the head (item with smallest key).  Stops
-  ::    when .f produces .stop=%.y.  Traverses from smaller to larger
-  ::    keys.  Each run of .f can replace an item's value or delete the
-  ::    item.
+  ::    .start is ~, starts at the head.  Stops when .f produces .stop=%.y.
+  ::    Traverses from left to right keys.
+  ::    Each run of .f can replace an item's value or delete the item.
   ::
   ++  dip
     ~/  %dip
@@ -5339,7 +5334,7 @@
       l.a(r $(l.a r.l.a))
     r.a(l $(r.a l.r.a))
   ::
-  ::  +pop: produce .head (smallest item) and .rest or crash if empty
+  ::  +pop: produce .head (leftmost item) and .rest or crash if empty
   ::
   ++  pop
     ~/  %pop
@@ -5354,13 +5349,14 @@
     ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
       a(l rest.l)
     rest.l(r a(r r.rest.l))
-  ::  +pry: produce head (smallest item) or null
+  ::  +pry: produce head (leftmost item) or null
   ::
   ++  pry
     ~/  %pry
     |=  a=(tree item)
     ^-  (unit item)
     ?~  a    ~
+    |-
     ?~  l.a  `n.a
     $(a l.a)
   ::  +put: ordered item insert
@@ -5390,6 +5386,16 @@
     ?:  (mor key.n.a key.n.r)
       a(r r)
     r(l a(r l.r))
+  ::  +ram: produce tail (rightmost item) or null
+  ::
+  ++  ram
+    ~/  %ram
+    |=  a=(tree item)
+    ^-  (unit item)
+    ?~  a    ~
+    |-
+    ?~  r.a  `n.a
+    $(a r.a)
   ::  +run: apply gate to transform all values in place
   ::
   ++  run
@@ -5431,7 +5437,7 @@
         $(a r.a)
       a(l $(a l.a))
     --
-  ::  +tap: convert to list, smallest to largest
+  ::  +tap: convert to list, left to right
   ::
   ++  tap
     ~/  %tap
