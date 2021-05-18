@@ -32,11 +32,16 @@ export function sortBigIntArr(a: BigInteger[], b: BigInteger[]) {
   let aLen = a.length;
   let bLen = b.length;
 
+  let aCop = a.slice();
+  let bCop = b.slice();
+  aCop.reverse();
+  bCop.reverse();
+
   let i = 0;
   while (i < aLen && i < bLen) {
-    if (a[i].lt(b[i])) {
+    if (aCop[i].lt(bCop[i])) {
       return 1;
-    } else if (a[i].gt(b[i])) {
+    } else if (aCop[i].gt(bCop[i])) {
       return -1;
     } else {
       i++;
