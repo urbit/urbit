@@ -30,6 +30,9 @@
           $%  [%rest p=@da]
               [%wait p=@da]
       ==  ==
+      $:  %c
+          $>(%warp task:clay)
+      == 
       ::  %d: to dill
       ::
       $:  %d
@@ -1232,8 +1235,8 @@
         ::      since conversion failure also gets caught during first receive.
         ::      we can't do anything about this, so consider it unsupported.
         ?~  sign=(channel-event-to-sign channel-event)  $
-        ?~  json=(sign-to-json request-id u.sign)       $
-        $(events [(event-json-to-wall id u.json) events])
+        ?~  json-with-moves=(sign-to-json request-id u.sign)       $
+        $(events [(event-json-to-wall id p.u.json-with-moves) events])
       ::  send the start event to the client
       ::
       =^  http-moves  state
@@ -1499,8 +1502,13 @@
       ::  if conversion succeeds, we *can* send it. if the client is actually
       ::  connected, we *will* send it immediately.
       ::
-      =/  json=(unit json)
+      =/  json-with-moves=(unit (pair json (list move)))
         (sign-to-json request-id sign)
+      =/  json=(unit json)
+        ?~  json-with-moves  ~
+        `p.u.json-with-moves
+      =?  moves  ?=(^ json-with-moves)
+        (weld moves q.u.json-with-moves)
       =*  sending  &(?=([%| *] state.u.channel) ?=(^ json))
       ::
       =/  next-id  next-id.u.channel
@@ -1578,7 +1586,7 @@
             ^=  data
             %-  wall-to-octs
             %+  event-json-to-wall  next-id
-            (need (sign-to-json request-id %kick ~))
+            p:(need (sign-to-json request-id %kick ~))
         ::
             complete=%.n
         ==
@@ -1620,12 +1628,12 @@
     ::
     ++  sign-to-json
       |=  [request-id=@ud =sign:agent:gall]
-      ^-  (unit json)
+      ^-  (unit (pair json (list move)))
       ::  for facts, we try to convert the result to json
       ::
-      =/  jsyn=(unit sign:agent:gall)
-        ?.  ?=(%fact -.sign)       `sign
-        ?:  ?=(%json p.cage.sign)  `sign
+      =/  jsyn=(pair (unit mark) (unit sign:agent:gall))
+        ?.  ?=(%fact -.sign)       ``sign
+        ?:  ?=(%json p.cage.sign)  ``sign
         ::  find and use tube from fact mark to json
         ::
         =*  have=mark  p.cage.sign
@@ -1636,16 +1644,20 @@
           ?.  ?=([~ ~ *] tuc)  ~
           `!<(tube:clay q.u.u.tuc)
         ?~  tube
-          ((slog leaf+"eyre: no tube {desc}" ~) ~)
+          ((slog leaf+"eyre: no tube {desc}" ~) [~ ~])
         ::
         =/  res  (mule |.((u.tube q.cage.sign)))
         ?:  ?=(%& -.res)
-          `[%fact %json p.res]
-        ((slog leaf+"eyre: failed tube {desc}" ~) ~)
+          [`have `[%fact %json p.res]]
+        ((slog leaf+"eyre: failed tube {desc}" ~) [~ ~])
       ::
-      ?~  jsyn  ~
+      ?~  q.jsyn  ~
       %-  some
-      =*  sign  u.jsyn
+      :_  ?~  p.jsyn  ~
+          :_  ~
+          :^  duct  %pass  /pass/(scot %ud request-id)
+          [%c %warp our %home `[%sing %c da+now /[u.p.jsyn]/json]]
+      =*  sign  u.q.jsyn
       =,  enjs:format
       %-  pairs
       ^-  (list [@t json])
