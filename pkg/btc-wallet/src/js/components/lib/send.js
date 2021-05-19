@@ -63,8 +63,7 @@ export default class Send extends Component {
   }
 
   componentDidMount(){
-    // TODO switch this to bitcoin
-    if (this.props.network === 'testnet'){
+    if (this.props.network === 'bitcoin'){
       let url = "https://bitcoiner.live/api/fees/estimates/latest";
       fetch(url).then(res => res.json()).then(n => {
         let estimates = Object.keys(n.estimates);
