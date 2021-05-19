@@ -56,6 +56,10 @@
       $:  %gall
           gift:gall
           ::  $>(%unto gift:gall)
+          ::
+      ==
+      $:  %clay
+          gift:clay
   ==  ==
 --
 ::  more structures
@@ -2326,6 +2330,8 @@
           sign
         sign
       ==
+  ?:  ?=([%clay *] sign)
+    [~ http-server-gate]
   ::  :wire must at least contain two parts, the type and the build
   ::
   ?>  ?=([@ *] wire)
