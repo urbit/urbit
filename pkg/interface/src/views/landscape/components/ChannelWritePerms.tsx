@@ -24,7 +24,7 @@ export function ChannelWritePerms<
   return (
     <Col gapY={3}>
       <Label> Write Access</Label>
-      <Radio name="writePerms" id="everyone" label="All group members" />
+      <Radio name="writePerms" id="everyone" label="All group peers" />
       <Radio name="writePerms" id="self" label="Only host" />
       <Radio name="writePerms" id="subset" label="Host and selected ships" />
       {values.writePerms === 'subset' && (

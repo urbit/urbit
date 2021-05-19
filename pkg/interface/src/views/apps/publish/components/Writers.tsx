@@ -59,7 +59,7 @@ export const Writers = (props: WritersProps): ReactElement => {
         <Text mt={2} display='block' mono>{writers}</Text>
         </> :
           <Text display='block' mt={2}>
-            All group members can write to this channel
+            All group peers can write to this channel
           </Text>
         }
       </Box>
