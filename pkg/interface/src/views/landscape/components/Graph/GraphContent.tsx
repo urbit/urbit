@@ -347,21 +347,23 @@ const renderers = {
     return ordered ? <Ol>{children}</Ol> : <Ul>{children}</Ul>;
   },
   'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
-  image: ({ url }) => (
+  image: ({ url, tall }) => (
     <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent
         // @ts-ignore RemoteContent weirdness
         key={url}
         url={url}
+        tall={tall}
       />
     </Box>
   ),
-  'graph-url': ({ url }) => (
+  'graph-url': ({ url, tall }) => (
     <Box mt={1} mb={2} flexShrink={0}>
       <RemoteContent
         // @ts-ignore RemoteContent weirdness
         key={url}
         url={url}
+        tall={tall}
       />
     </Box>
   ),
@@ -425,6 +427,7 @@ export function Graphdown<T extends {} = {}>(
         <Graphdown
           transcluded={transcluded}
           depth={depth + 1}
+          tall={tall}
           {...rest}
           ast={c}
         />

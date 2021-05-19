@@ -22,6 +22,7 @@ type RemoteContentProps = VirtualContextProps & {
   style?: any;
   transcluded?: any;
   className?: string;
+  tall?: boolean;
 }
 
 interface RemoteContentState {
@@ -131,9 +132,10 @@ return;
   }
 
   wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null, flushPadding = false, noOp = false) {
-    const { style } = this.props;
+    const { style, tall = false } = this.props;
+    const maxWidth = tall ? '100%' : 'min(500px, 100%)';
     return (
-      <Box borderRadius={1} backgroundColor="washedGray" maxWidth="min(100%, 20rem)">
+      <Box borderRadius={1} backgroundColor="washedGray" maxWidth={maxWidth}>
       <Row
         alignItems="center"
         gapX={1}
@@ -159,7 +161,7 @@ return;
           textOverflow="ellipsis"
           minWidth={0}
           width={textOnly ? 'calc(100% - 24px)' : 'fit-content'}
-          maxWidth="min(500px, 100%)"
+          maxWidth={maxWidth}
           style={{ color: 'inherit', textDecoration: 'none', ...style }}
           target="_blank"
           rel="noopener noreferrer"
