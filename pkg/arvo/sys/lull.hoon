@@ -762,6 +762,11 @@
             her=@p  dem=desk  cas=case                  ::  source
             how=germ                                    ::  method
         ==                                              ::
+        $:  %fuse                                       ::  merge many
+            des=desk                                    ::  target desk
+            bas=beak                                    ::  base desk
+            con=(list [beak germ])                      ::  merges
+        ==
         [%mont pot=term bem=beam]                       ::  mount to unix
         [%dirk des=desk]                                ::  mark mount dirty
         [%ogre pot=$@(desk beam)]                       ::  delete mount point
@@ -957,7 +962,6 @@
     $_
     ^?
     |%
-    ++  bunt  *typ
     ++  diff  |~([old=typ new=typ] *dif)
     ++  form  *mark
     ++  join  |~([a=dif b=dif] *(unit (unit dif)))
@@ -972,7 +976,6 @@
   +$  dais
     $_  ^|
     |_  sam=vase
-    ++  bunt  sam
     ++  diff  |~(new=_sam *vase)
     ++  form  *mark
     ++  join  |~([a=vase b=vase] *(unit (unit vase)))

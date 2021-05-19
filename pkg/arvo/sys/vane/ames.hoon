@@ -2527,7 +2527,7 @@
   ++  assert
     ^+  message-pump
     =/  top-live
-      (peek:packet-queue:*make-packet-pump live.packet-pump-state.state)
+      (pry:packet-queue:*make-packet-pump live.packet-pump-state.state)
     ?.  |(?=(~ top-live) (lte current.state message-num.key.u.top-live))
       ~|  [%strange-current current=current.state key.u.top-live]
       !!
@@ -2595,7 +2595,7 @@
     =|  acc=(unit static-fragment)
     ^+  [static-fragment=acc live=live.state]
     ::
-    %^  (traverse:packet-queue _acc)  live.state  acc
+    %^  (dip:packet-queue _acc)  live.state  acc
     |=  $:  acc=_acc
             key=live-packet-key
             val=live-packet-val
@@ -2673,7 +2673,7 @@
     =/  acc
       resends=*(list static-fragment)
     ::
-    %^  (traverse:packet-queue _acc)  live.state  acc
+    %^  (dip:packet-queue _acc)  live.state  acc
     |=  $:  acc=_acc
             key=live-packet-key
             val=live-packet-val
@@ -2726,7 +2726,7 @@
     ::
     ^+  [acc live=live.state]
     ::
-    %^  (traverse:packet-queue _acc)  live.state  acc
+    %^  (dip:packet-queue _acc)  live.state  acc
     |=  $:  acc=_acc
             key=live-packet-key
             val=live-packet-val
@@ -2773,7 +2773,7 @@
     ::
     ^+  [metrics=metrics.state live=live.state]
     ::
-    %^  (traverse:packet-queue pump-metrics)  live.state  acc=metrics.state
+    %^  (dip:packet-queue pump-metrics)  live.state  acc=metrics.state
     |=  $:  metrics=pump-metrics
             key=live-packet-key
             val=live-packet-val
@@ -2796,10 +2796,10 @@
   ::
   ++  set-wake
     ^+  packet-pump
-    ::  if nonempty .live, peek at head to get next wake time
+    ::  if nonempty .live, pry at head to get next wake time
     ::
     =/  new-wake=(unit @da)
-      ?~  head=(peek:packet-queue live.state)
+      ?~  head=(pry:packet-queue live.state)
         ~
       `(next-expiry:gauge u.head)
     ::  no-op if no change
