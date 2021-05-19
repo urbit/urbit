@@ -260,14 +260,13 @@ const renderers = {
     );
   },
   strong: ({ children }) => {
-    return (
-        <b>{children}</b>
-    );
+    return <b>{children}</b>;
   },
   emphasis: ({ children }) => {
-    return (
-        <i>{children}</i>
-    );
+    return <i>{children}</i>;
+  },
+  delete: ({ children }) => {
+    return <del> {children}</del>;
   },
   blockquote: ({ children, depth, tall, ...rest }) => {
     if (depth > 1) {
