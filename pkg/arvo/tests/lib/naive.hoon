@@ -195,8 +195,8 @@
 ::      !>
 ::      =|  =^state:naive
 ::      =^  f  state  (init-marbud state)
-::      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own marbud-transfer))
-::      =^  f  state  (n state %bat q:(gen-tx 1 marbud-own marbud-transfer-2))
+::      =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-own marbud-transfer))
+::      =^  f  state  (n state %bat q:(gen-tx-octs 1 marbud-own marbud-transfer-2))
 ::      owner.own:(~(got by points.state) ~marbud)
 ::  ::
 ::  ++  test-l1-changed-spawn-proxy  ^-  tang
@@ -308,7 +308,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-sproxy %marbud-key-0))
     spawn-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-set-transfer-proxy  ^-  tang
@@ -320,7 +320,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 marbud-tproxy %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-tproxy %marbud-key-0))
     transfer-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-set-management-proxy  ^-  tang
@@ -332,7 +332,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 marbud-mproxy %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-mproxy %marbud-key-0))
     management-proxy.own:(~(got by points.state) ~marbud)
 ::
 ++  test-l2-spawn-proxy-deposit  ^-  tang
@@ -356,7 +356,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own lt-spawn] %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 [marbud-own lt-spawn] %marbud-key-0))
       transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
     ::
     %+  expect-eq
@@ -366,8 +366,8 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 0 [marbud-spn lt-spawn] %marbud-skey))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-sproxy %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 [marbud-spn lt-spawn] %marbud-skey))
       transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
   ==
 ::
@@ -381,9 +381,9 @@
     |.
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 1 lt-spawn-0 %marbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn-1 %marbud-skey))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-sproxy %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 1 lt-spawn-0 %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-spawn-1 %marbud-skey))
     state
 ::
 ++  test-marbud-l2-change-keys  ^-  tang
@@ -397,7 +397,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 [marbud-own new-keys] %marbud-key-0))
       |1:keys.net:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -406,8 +406,8 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-mproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 0 [marbud-mgt new-keys] %marbud-mkey))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-mproxy %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 [marbud-mgt new-keys] %marbud-mkey))
       |1:keys.net:(~(got by points.state) ~marbud)
     ::
     :: TODO: make sure nobody else can change these keys
@@ -439,10 +439,10 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 1 marbud-mproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 2 marbud-tproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-xfr-breach %marbud-key-1))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-sproxy %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 1 marbud-mproxy %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 2 marbud-tproxy %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-xfr-breach %marbud-key-1))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
       own:(~(got by points.state) ~marbud)
     ::
@@ -454,8 +454,8 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-new-keys %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 1 marbud-transfer-breach %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-new-keys %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 1 marbud-transfer-breach %marbud-key-0))
       |1:keys.net:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -471,10 +471,10 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 1 marbud-mproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 2 marbud-tproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-xfr-no-breach %marbud-key-1))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-sproxy %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 1 marbud-mproxy %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 2 marbud-tproxy %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-xfr-no-breach %marbud-key-1))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
       own:(~(got by points.state) ~marbud)
     ::
@@ -486,8 +486,8 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-new-keys %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 1 marbud-transfer-no-breach %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-new-keys %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 1 marbud-transfer-no-breach %marbud-key-0))
       |1:keys.net:(~(got by points.state) ~marbud)
   ==
 ::
@@ -510,8 +510,8 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 new-keys-no-reset %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 1 new-keys-no-reset %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 new-keys-no-reset %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 1 new-keys-no-reset %marbud-key-0))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -521,7 +521,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 new-keys-yes-reset %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 new-keys-yes-reset %marbud-key-0))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -533,9 +533,9 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
-      =^  f  state  (n state %bat q:(gen-tx 1 zero-keys-no-reset %marbud-key-0)) :: inc life
-      =^  f  state  (n state %bat q:(gen-tx 2 zero-keys-yes-reset %marbud-key-0)) :: inc rift
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
+      =^  f  state  (n state %bat q:(gen-tx-octs 1 zero-keys-no-reset %marbud-key-0)) :: inc life
+      =^  f  state  (n state %bat q:(gen-tx-octs 2 zero-keys-yes-reset %marbud-key-0)) :: inc rift
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -546,8 +546,8 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
-      =^  f  state  (n state %bat q:(gen-tx 1 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
+      =^  f  state  (n state %bat q:(gen-tx-octs 1 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -557,10 +557,10 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 new-keys-no-reset %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 1 marbud-transfer-no-breach %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 new-keys-no-reset %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx-octs 1 marbud-transfer-no-breach %marbud-key-0))
       ::  TODO: shouldn't the nonce by zero for the next tx?
-      =^  f  state  (n state %bat q:(gen-tx 2 zero-keys-yes-reset %marbud-key-1))
+      =^  f  state  (n state %bat q:(gen-tx-octs 2 zero-keys-yes-reset %marbud-key-1))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -571,10 +571,10 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 new-keys-no-reset %marbud-key-0)) :: inc life
-      =^  f  state  (n state %bat q:(gen-tx 1 marbud-transfer-yes-breach %marbud-key-0)) :: inc life and rift
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 new-keys-no-reset %marbud-key-0)) :: inc life
+      =^  f  state  (n state %bat q:(gen-tx-octs 1 marbud-transfer-yes-breach %marbud-key-0)) :: inc life and rift
       ::  TODO: shouldn't the nonce by zero for the next tx?
-      =^  f  state  (n state %bat q:(gen-tx 2 new-keys-no-reset %marbud-key-1)) ::inc life
+      =^  f  state  (n state %bat q:(gen-tx-octs 2 new-keys-no-reset %marbud-key-1)) ::inc life
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -588,9 +588,9 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
-      =^  f  state  (n state %bat q:(gen-tx 1 zero-keys-no-reset %marbud-key-0)) :: inc life
-      =^  f  state  (n state %bat q:(gen-tx 2 marbud-transfer-yes-breach %marbud-key-0)) :: inc rift
+      =^  f  state  (n state %bat q:(gen-tx-octs 0 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
+      =^  f  state  (n state %bat q:(gen-tx-octs 1 zero-keys-no-reset %marbud-key-0)) :: inc life
+      =^  f  state  (n state %bat q:(gen-tx-octs 2 marbud-transfer-yes-breach %marbud-key-0)) :: inc rift
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
  ==
@@ -604,7 +604,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 pp-spawn %dopbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 pp-spawn %dopbud-key-0))
     transfer-proxy.own:(~(got by points.state) ~palsep-picdun)
 ::
 ++  test-dopbud-l2-spawn-after-transfer  ^-  tang
@@ -617,9 +617,9 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 pp-spawn %dopbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 pp-spawn %dopbud-key-0))
     =^  f  state  (n state (owner-changed:l1 ~dopbud (addr %dopbud-key-1)))
-    =^  f  state  (n state %bat q:(gen-tx 1 lr-spawn %dopbud-key-1))
+    =^  f  state  (n state %bat q:(gen-tx-octs 1 lr-spawn %dopbud-key-1))
     transfer-proxy.own:(~(got by points.state) ~laclur-rachul)
 ::
 ::  ++  test-sambud-double-spawn  ^-  tang
@@ -662,8 +662,8 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 [lt-xfr lt-transfer-yes-breach] %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-spawn %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 [lt-xfr lt-transfer-yes-breach] %lt-key-0))
     owner.own:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-palsep-picdun-l2-transfer-ownership  ^-  tang
@@ -676,8 +676,8 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 pp-spawn %dopbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 pp-transfer-yes-breach %pp-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 pp-spawn %dopbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 pp-transfer-yes-breach %pp-key-0))
     owner.own:(~(got by points.state) ~palsep-picdun)
 ::
 ++  test-linnup-torsyx-l2-escape-request  ^-  tang
@@ -691,9 +691,9 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (init-litbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 [lt-own [%escape ~litbud]] %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-spawn %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-transfer-yes-breach %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 [lt-own [%escape ~litbud]] %lt-key-0))
     escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-cancel-escape-request  ^-  tang
@@ -707,10 +707,10 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (init-litbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 [lt-own [%escape ~litbud]] %lt-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 1 [lt-own [%cancel-escape ~litbud]] %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-spawn %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-transfer-yes-breach %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 [lt-own [%escape ~litbud]] %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 1 [lt-own [%cancel-escape ~litbud]] %lt-key-0))
     escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-adopt-accept  ^-  tang
@@ -724,10 +724,10 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (init-litbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 [lt-own [%escape ~litbud]] %lt-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 [litbud-own [%adopt ~linnup-torsyx]] %litbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-spawn %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-transfer-yes-breach %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 [lt-own [%escape ~litbud]] %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 [litbud-own [%adopt ~linnup-torsyx]] %litbud-key-0))
     [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-adopt-reject  ^-  tang
@@ -743,10 +743,10 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (init-litbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 [lt-own [%escape ~litbud]] %lt-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 [litbud-own [%reject ~linnup-torsyx]] %litbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-spawn %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-transfer-yes-breach %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 [lt-own [%escape ~litbud]] %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 [litbud-own [%reject ~linnup-torsyx]] %litbud-key-0))
     escape.net:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-detach  ^-  tang
@@ -760,9 +760,9 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (init-litbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 1 [marbud-own [%detach ~linnup-torsyx]] %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-spawn %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 lt-transfer-yes-breach %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 1 [marbud-own [%detach ~linnup-torsyx]] %marbud-key-0))
     [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
 ::
 ::  TODO: signature format changed; regenerate

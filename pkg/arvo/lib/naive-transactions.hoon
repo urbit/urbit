@@ -8,7 +8,8 @@
 ::
 |%
 ::
-++  gen-tx
+++  gen-tx-octs
+  :: takes in a nonce, tx:naive, and private key and returned a signed transactions as octs
   |=  [=nonce tx=tx:naive pk=@]  ^-  octs
   =/  raw=octs
     ?-  +<.tx
