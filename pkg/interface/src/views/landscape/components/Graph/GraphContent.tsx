@@ -288,19 +288,25 @@ const renderers = {
   },
   paragraph: ({ children }) => {
     return (
-      <Box display="inline-block">
+      <Box display="block">
         <Text fontSize={1} lineHeight="tall">
-        {children}
+          {children}
         </Text>
       </Box>
     );
   },
+  table: ({ children }) => <Table>{children}</Table>,
+  tableRow: ({ children }) => <Tr>{children}</Tr>,
+  tableCell: ({ children }) => (
+    <Td>
+      <Text fontSize="1" lineHeight="tall">
+        {children}
+      </Text>
+    </Td>
+  ),
   listItem: ({ children }) => {
-    return (
-      <Li>{children}</Li>
-    );
+    return <Li>{children}</Li>;
   },
-
   code: ({ language, tall, value, ...rest }) => {
     const inner = (
       <Text
