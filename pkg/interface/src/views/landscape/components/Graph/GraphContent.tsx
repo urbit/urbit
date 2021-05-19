@@ -61,6 +61,12 @@ const contentToMdAst = (tall: boolean) => (
   content: Content
 ): [StitchMode, any] => {
   if ('text' in content) {
+    if (content.text.toString().trim().length === 0) {
+      return [
+        'merge',
+        { type: 'root', children: [{ type: 'paragraph', children: [] }] },
+      ];
+    }
     return [
       'merge',
       tall ? parseTall(content.text) : parseWide(content.text),
