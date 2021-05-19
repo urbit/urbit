@@ -1,6 +1,5 @@
 ::  graph-store [landscape]
 ::
-::
 /+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug, verb
 ~%  %graph-store-top  ..part  ~
 |%
