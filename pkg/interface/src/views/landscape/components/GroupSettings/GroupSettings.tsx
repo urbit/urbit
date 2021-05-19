@@ -42,9 +42,9 @@ export function GroupSettings(props: GroupSettingsProps) {
         <Section>
           <Col p={4} maxWidth="384px">
             <Text fontSize={2} fontWeight="600">
-              Participants
+              Peers
             </Text>
-            <Text gray>View list of all group participants and statuses</Text>
+            <Text gray>View list of all group peers and statuses</Text>
             <Button primary mt={4} onClick={linkRelative('/participants')}>View List</Button>
           </Col>
         </Section>

@@ -153,7 +153,7 @@ export function GroupSwitcher(props: {
                         color="gray"
                         icon="Node"
                       />
-                      <Text> Participants</Text>
+                      <Text> Peers</Text>
                     </GroupSwitcherItem>
                     <GroupSwitcherItem to={navTo('/popover/settings')}>
                       <Icon

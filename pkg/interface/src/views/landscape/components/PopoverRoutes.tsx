@@ -76,7 +76,7 @@ export function PopoverRoutes(
                     <SidebarItem
                       icon="Users"
                       to={relativeUrl('/participants')}
-                      text="Participants"
+                      text="Peers"
                       selected={view === 'participants'}
                     ><Text gray>{groupSize}</Text>
                     </SidebarItem>

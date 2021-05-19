@@ -206,7 +206,7 @@ export function Participants(props: {
             color="gray"
             bg="transparent"
             border={0}
-            placeholder="Search Participants"
+            placeholder="Search Peers"
             onChange={onSearchChange}
           />
         </Row>

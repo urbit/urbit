@@ -86,7 +86,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
   'group-desc': {
     title: 'What\'s a group',
     description:
-      'A group contains members and tends to be centered around a topic or multiple topics.',
+      'A group contains peers and tends to be centered around a topic or multiple topics.',
     url: `/~landscape/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
     alignX: 'left',
     alignY: 'top',

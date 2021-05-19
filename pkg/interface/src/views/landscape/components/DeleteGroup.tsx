@@ -31,7 +31,7 @@ return;
 
   const action = props.owner ? 'Archive' : 'Leave';
   const description = props.owner
-    ? 'Permanently archive this group. (All current members will no longer see this group.)'
+    ? 'Permanently archive this group. (All current peers will no longer see this group.)'
     : 'You can rejoin if it is an open group, or if you are reinvited';
 
   const icon = props.owner ? 'X' : 'LogOut';

@@ -55,7 +55,7 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
           </Row>
           <Row gapX={4} justifyContent="space-between">
             <Text fontSize={1} gray>
-              {memberCount} participants
+              {memberCount} peers
             </Text>
             <Text fontSize={1} gray>
               {channelCount} channels

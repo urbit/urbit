@@ -24,7 +24,7 @@ function PermissionsSummary(props: {
 
   const description =
     writersSize === 0
-      ? 'Currently, all members of the group can write to this channel'
+      ? 'Currently, all peers in the group can write to this channel'
       : `Currently, only ${writersSize} ship${
           writersSize > 1 ? 's' : ''
         } can write to this channel`;
@@ -185,7 +185,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
             <Checkbox
               id="readerComments"
               label="Allow readers to comment"
-              caption="If enabled, all members of the group can comment on this channel"
+              caption="If enabled, all peers in the group can comment on this channel"
             />
           )}
         </Col>
