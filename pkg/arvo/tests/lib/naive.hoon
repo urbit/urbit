@@ -537,6 +537,18 @@
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
+    ::  Keep the same keys while breaching via %configure-keys
+    ::
+      !>  [2 1]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(gen-tx 0 marbud-own new-keys-yes-reset)) :: inc life and rift
+      =^  f  state  (n state %bat q:(gen-tx 1 marbud-own new-keys-yes-reset)) :: inc life and rift
+      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
     ::
       !>  [1 2]
     ::
