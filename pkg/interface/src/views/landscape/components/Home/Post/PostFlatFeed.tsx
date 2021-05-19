@@ -206,7 +206,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
           origin="top"
           offset={0}
           data={flatGraph}
-          averageHeight={106}
+          averageHeight={122}
           size={flatGraph.size}
           style={virtualScrollerStyle}
           pendingSize={pendingSize}

@@ -10,6 +10,7 @@ import React, { Component, SyntheticEvent, useCallback } from 'react';
 import styled from 'styled-components';
 import { IS_IOS } from '~/logic/lib/platform';
 import { VirtualContext } from '~/logic/lib/virtualContext';
+import { clamp } from '~/logic/lib/util';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -326,6 +327,7 @@ export default class ArrayVirtualScroller<T> extends Component<VirtualScrollerPr
     this.window = element;
     this.pageSize = Math.floor(element.offsetHeight / Math.floor(averageHeight / 2));
     this.pageDelta = Math.floor(this.pageSize / 4);
+
     if (this.props.origin === 'bottom') {
        element.addEventListener('wheel', (event) => {
         event.preventDefault();
@@ -395,7 +397,9 @@ export default class ArrayVirtualScroller<T> extends Component<VirtualScrollerPr
         onStartReached && onStartReached();
         this.scrollLocked = true;
       }
-      const newOffset = Math.max(0, startOffset - this.pageDelta);
+
+      const newOffset = 
+        clamp(startOffset - this.pageDelta, 0, this.props.data.size - this.pageSize);
       if(newOffset < 10) {
         this.loadBottom();
       }
@@ -407,7 +411,8 @@ export default class ArrayVirtualScroller<T> extends Component<VirtualScrollerPr
       this.scrollLocked = false;
       log('scroll', `Entered end zone ${scrollTop}`);
 
-      const newOffset = Math.min(startOffset + this.pageDelta, this.props.data.size - this.pageSize);
+      const newOffset = 
+        clamp(startOffset + this.pageDelta, 0, this.props.data.size - this.pageSize);
       if (onEndReached && startOffset === 0) {
         onEndReached();
       }
