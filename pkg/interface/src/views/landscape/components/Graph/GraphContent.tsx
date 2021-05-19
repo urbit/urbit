@@ -225,7 +225,7 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
       }
       return [mode, ast];
     },
-    ['block', { type: 'root', children: [] }]
+    ['block', { type: 'root', children: [] }] as [StitchMode, GraphAstNode]
   );
 }
 const header = ({ children, depth, ...rest }) => {
