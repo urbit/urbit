@@ -221,6 +221,7 @@
       ::
       ++  open
         |=  gyl=(list gill)
+        =.  +>  (pass / %g %conf ram)
         =.  +>  peer
         %+  roll  gyl
         |=  [g=gill _..open]
