@@ -58,7 +58,7 @@
   :: +noun: validate publish note
   :: 
   ++  noun
-    |=  p=*
+    |:  p=`*`%*(. *indexed-post index.p [0 ~])
     =/  ip  ;;(indexed-post p)
     ?+    index.p.ip  !!
     ::  top level post must have no content
