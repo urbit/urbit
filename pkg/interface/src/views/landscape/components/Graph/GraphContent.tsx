@@ -1,16 +1,22 @@
 import {
-  Anchor, Box,
-  Col, H1,
+  Anchor,
+  Box,
+  Col,
+  H1,
   H2,
   H3,
-  H4, Text,
-  Li, Ol, Ul
+  H4,
+  Text,
+  Li,
+  Ol,
+  Ul,
+  Table,
+  Tr,
+  Td,
 } from '@tlon/indigo-react';
 import { Content, ReferenceContent } from '@urbit/api';
 import _ from 'lodash';
-import {
-  BlockContent, Content as AstContent, Parent, Root
-} from 'ts-mdast';
+import { BlockContent, Content as AstContent, Parent, Root } from 'ts-mdast';
 import React from 'react';
 import GlobalApi from '~/logic/api/global';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
@@ -21,7 +27,6 @@ import { Mention } from '~/views/components/MentionText';
 import RemoteContent from '~/views/components/RemoteContent';
 import CodeContent from './content/code';
 import { parseTall, parseWide } from './parse';
-
 
 type StitchMode = 'merge' | 'block' | 'inline';
 
@@ -196,14 +201,14 @@ function stitchInlineAfterBlock(a: Root, b: GraphMentionNode[]) {
 
 function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
   return _.reduce(
-    asts.slice(1),
+    asts,
     ([prevMode, ast], [mode, val]): [StitchMode, GraphAstNode] => {
       if (prevMode === 'block') {
         if (mode === 'inline') {
           return [mode, stitchInlineAfterBlock(ast, val?.children ?? [])];
         }
         if (mode === 'merge') {
-          return [mode, stitchBlock(ast, val?.children ?? [])];
+          return [mode, stitchMerge(ast, val)];
         }
         if (mode === 'block') {
           return [mode, stitchBlock(ast, val?.children ?? [])];
@@ -220,7 +225,7 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
       }
       return [mode, ast];
     },
-    asts[0]
+    ['block', { type: 'root', children: [] }]
   );
 }
 const header = ({ children, depth, ...rest }) => {
@@ -241,7 +246,7 @@ const header = ({ children, depth, ...rest }) => {
 const renderers = {
   heading: header,
   break: () => {
-    return <br />
+    return <br />;
   },
   thematicBreak: () => {
     return <Box display="block" width="100%" height={2}></Box>;
@@ -345,23 +350,25 @@ const renderers = {
   image: ({ url }) => (
     <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent
-      // @ts-ignore RemoteContent weirdness
-      key={url} url={url}
+        // @ts-ignore RemoteContent weirdness
+        key={url}
+        url={url}
       />
     </Box>
   ),
   'graph-url': ({ url }) => (
     <Box mt={1} mb={2} flexShrink={0}>
       <RemoteContent
-      // @ts-ignore RemoteContent weirdness
-        key={url} url={url}
+        // @ts-ignore RemoteContent weirdness
+        key={url}
+        url={url}
       />
     </Box>
   ),
   'graph-reference': ({ api, reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
     return (
-      <Box mb={2} flexShrink={0}>
+      <Box my={2} flexShrink={0}>
         <PermalinkEmbed
           api={api}
           link={link}
@@ -426,14 +433,16 @@ export function Graphdown<T extends {} = {}>(
   );
 }
 
+export type GraphContentProps = PropFunc<typeof Box> & {
+  tall?: boolean;
+  transcluded?: number;
+  contents: Content[];
+  api: GlobalApi;
+  showOurContact: boolean;
+};
+
 export const GraphContent = React.memo(function GraphContent(
-  props: {
-    tall?: boolean;
-    transcluded?: number;
-    contents: Content[];
-    api: GlobalApi;
-    showOurContact: boolean;
-  } & PropFunc<typeof Box>
+  props: GraphContentProps
 ) {
   const {
     post,
