@@ -2,7 +2,12 @@
 ::
 /-  herm
 /+  default-agent, dbug, verb
-=,  jael
+::  keep relevant mark conversions in cache for performance
+::
+/$  bj  %blit  %json
+/$  jb  %json  %belt
+/$  jt  %json  %herm-task
+::
 |%
 +$  state-0  [%0 ~]
 --
@@ -13,18 +18,6 @@
 %-  agent:dbug
 ^-  agent:gall
 =>  |%
-    ++  request-tube
-      |=  [bowl:gall from=mark to=mark next=?]
-      ^-  card:agent:gall
-      :*  %pass  /tube/[from]/[to]
-          %arvo  %c     %warp
-          our    q.byk  ~
-        ::
-          ?:  next
-            [%next %c da+now /[from]/[to]]
-          [%sing %c da+now /[from]/[to]]
-      ==
-    ::
     ++  pass-session
       |=  [ses=@tas tas=session-task:dill]
       [%pass /dill/[ses] %arvo %d %shot ses tas]
@@ -35,13 +28,7 @@
 ::
 ++  on-init
   ^-  (quip card:agent:gall _this)
-  :_  this
-  ::  ensure the tubes we use are in cache
-  ::
-  :~  (request-tube bowl %blit %json |)
-      (request-tube bowl %json %belt |)
-      (request-tube bowl %json %herm-task |)
-  ==
+  [~ this]
 ::
 ++  on-save   !>([%0 ~])
 ++  on-load
@@ -83,17 +70,6 @@
     %+  turn  p.sign-arvo
     |=  =blit:dill
     [%give %fact [%session ses ~]~ %blit !>(blit)]
-  ::
-    ::  ensure the tubes we need remain in cache
-    ::
-      [%tube @ @ ~]
-    =*  from  i.t.wire
-    =*  to  i.t.t.wire
-    ?.  ?=([%clay %writ *] sign-arvo)
-      ~|  [%unexpected-sign [- +<]:sign-arvo]
-      !!
-    :_  this
-    [(request-tube bowl from to &)]~
   ==
 ::
 ++  on-poke
