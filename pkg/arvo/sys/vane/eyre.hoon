@@ -1642,17 +1642,16 @@
         ::
         =*  have=mark  p.cage.sign
         =*  desc=tape  "from {(trip have)} to json"
-        =/  tube=(unit tube:clay)
-          =/  tuc=(unit (unit cage))
-            (rof ~ %cc [our %home da+now] /[have]/json)
-          ?.  ?=([~ ~ *] tuc)  ~
-          `!<(tube:clay q.u.u.tuc)
-        ?~  tube
-          ((slog leaf+"eyre: no tube {desc}" ~) [~ ~])
-        ::
-        =/  res  (mule |.((u.tube q.cage.sign)))
+        =/  convert=(unit $-(* json))
+          =/  cag=(unit (unit cage))
+            (rof ~ %cf [our %home da+now] /[have]/json)
+          ?.  ?=([~ ~ *] cag)  ~
+          `!<($-(* json) q.u.u.cag)
+        ?~  convert
+          ((slog leaf+"eyre: no convert {desc}" ~) [~ ~])
+        =/  res  (mule |.((u.convert q.cage.sign)))
         ?:  ?=(%& -.res)
-          [`have `[%fact %json p.res]]
+          [`have `[%fact %json !>(p.res)]]
         ((slog leaf+"eyre: failed tube {desc}" ~) [~ ~])
       ::
       ?~  q.jsyn  ~
@@ -1660,7 +1659,7 @@
       :_  ?~  p.jsyn  ~
           :_  ~
           :^  duct  %pass  /pass/(scot %ud request-id)
-          [%c %warp our %home `[%sing %c da+now /[u.p.jsyn]/json]]
+          [%c %warp our %home `[%sing %f da+now /[u.p.jsyn]/json]]
       =*  sign  u.q.jsyn
       =,  enjs:format
       %-  pairs
