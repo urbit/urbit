@@ -14,6 +14,7 @@
 +$  state-0  [%0 base-state-0]
 +$  card  card:agent:gall
 +$  nodes  (map index:store node:store)
+++  orm   orm:store
 --
 ::
 =|  state-0
@@ -51,6 +52,22 @@
     ?.  =(our.bowl ship)  ship
     entity.rid
   ::
+  ++  update-indices
+    |=  [pfix=index:store =graph:store]
+    =*  loop  $
+    ^-  graph:store
+    %+  gas:orm  *graph:store
+    %+  turn  (tap:orm graph)
+    |=  [=atom =node:store]
+    ^-  [^atom node:store]
+    =/  =index:store  (snoc pfix atom)
+    :-  atom 
+    =.  children.node
+      ?:  ?=(%empty -.children.node)  children.node
+      [%graph loop(pfix index, graph p.children.node)]
+    ?:  ?=(%| -.post.node)  node
+    node(index.p.post index)
+  ::
   ++  graph
     %+  roll  dms
     |=  [rid=resource =graph:store]
@@ -60,6 +77,8 @@
         index.post      [ship ~]
         time-sent.post  now.bowl
       ==
+    =.  graph
+      (update-indices ~[ship] graph)
     (put:orm:store graph `@`ship [%& post] %graph graph)
   --
 ::
