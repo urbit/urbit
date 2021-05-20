@@ -71,15 +71,16 @@
   ++  graph
     %+  roll  dms
     |=  [rid=resource =graph:store]
+    ^-  graph:store
     =/  =ship  (counterparty rid)
     =|  =post:store
     =:  author.post     our.bowl
         index.post      [ship ~]
         time-sent.post  now.bowl
       ==
-    =.  graph
-      (update-indices ~[ship] graph)
-    (put:orm:store graph `@`ship [%& post] %graph graph)
+    =/  dm=graph:store
+      (update-indices ~[ship] (get-graph-mop:gra rid))
+    (put:orm:store graph `@`ship [%& post] %graph dm)
   --
 ::
 ++  on-save  !>(state)
