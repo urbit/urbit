@@ -1,11 +1,9 @@
-import React, { Component, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Anchor, Row, Text } from '@tlon/indigo-react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import urbitOb from 'urbit-ob';
-import { Text } from '@tlon/indigo-react';
 import { GroupLink } from '~/views/components/GroupLink';
-import { Row } from '@tlon/indigo-react';
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -22,7 +20,6 @@ const DISABLED_INLINE_TOKENS = [
   'autoLink',
   'url',
   'email',
-  'link',
   'reference'
 ];
 
@@ -31,9 +28,9 @@ const renderers = {
     return (
       <Text
         mono
-        p='1'
+        p={1}
         backgroundColor='washedGray'
-        fontSize='0'
+        fontSize={0}
         style={{ whiteSpace: 'preWrap' }}
       >
         {value}
@@ -47,14 +44,15 @@ const renderers = {
         display="block"
         borderLeft="1px solid"
         color="black"
-        paddingLeft={2}>
+        paddingLeft={2}
+      >
         {children}
       </Text>
-    )
+    );
   },
   paragraph: ({ children }) => {
     return (
-      <Text fontSize='1' lineHeight={'20px'}>
+      <Text fontSize={1} lineHeight={'20px'}>
         {children}
       </Text>
     );
@@ -62,12 +60,12 @@ const renderers = {
   code: ({ language, value }) => {
     return (
       <Text
-        p='1'
+        p={1}
         className='clamp-message'
         display='block'
-        borderRadius='1'
+        borderRadius={1}
         mono
-        fontSize='0'
+        fontSize={0}
         backgroundColor='washedGray'
         overflowX='auto'
         style={{ whiteSpace: 'pre' }}
@@ -75,20 +73,41 @@ const renderers = {
         {value}
       </Text>
     );
+  },
+  link: (props) => {
+    return <Anchor src={props.href} borderBottom={1} color="black">{props.children}</Anchor>
+  },
+  list: ({depth, children}) => {
+    return <Text my={2} display='block' fontSize={1} ml={depth ? (2 * depth) : 0} lineHeight={'20px'}>{children}</Text>
   }
 };
 
 const MessageMarkdown = React.memo((props) => {
-  const { source, ...rest } = props;
+  const { source, allowHeaders, allowLists, ...rest } = props;
   const blockCode = source.split('```');
   const codeLines = blockCode.map((codes) => codes.split('\n'));
-  const lines = codeLines.reduce((acc, val, i) => {
-    if (i % 2 === 1) {
-      return [...acc, `\`\`\`${val.join('\n')}\`\`\``];
-    } else {
-      return [...acc, ...val];
+  let lines = [];
+  if (allowLists) {
+    lines.push(source);
+  } else {
+    lines = codeLines.reduce((acc, val, i) => {
+        if (i % 2 === 1) {
+          return [...acc, `\`\`\`${val.join('\n')}\`\`\``];
+        } else {
+          return [...acc, ...val];
+        }
+      }, []);
+  }
+
+  const modifiedBlockTokens = DISABLED_BLOCK_TOKENS.filter(e => {
+    if (allowHeaders && allowLists) {
+      return (e in ["setextHeading", "atxHeading", "list"])
+    } else if (allowHeaders) {
+      return (e in ["setextHeading", "atxHeading"])
+    } else if (allowLists) {
+      return (e  === "list")
     }
-  }, []);
+  })
 
   return lines.map((line, i) => (
     <React.Fragment key={i}>
@@ -117,7 +136,7 @@ const MessageMarkdown = React.memo((props) => {
           [
             RemarkDisableTokenizers,
             {
-              block: DISABLED_BLOCK_TOKENS,
+              block: modifiedBlockTokens,
               inline: DISABLED_INLINE_TOKENS
             }
           ]
@@ -129,25 +148,28 @@ const MessageMarkdown = React.memo((props) => {
 
 export default function TextContent(props) {
   const content = props.content;
+  const allowHeaders = props.allowHeaders;
+  const allowLists = props.allowLists;
 
-  const group = content.text.match(
+  const group = content.text.trim().match(
     /([~][/])?(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z0-9-])+([/-])?)+/
   );
   const isGroupLink =
     group !== null && // matched possible chatroom
     group[2].length > 2 && // possible ship?
     urbitOb.isValidPatp(group[2]) && // valid patp?
-    group[0] === content.text; // entire message is room name?
+    group[0] === content.text.trim(); // entire message is room name?
 
   if (isGroupLink) {
-    const resource = `/ship/${content.text}`;
+    const resource = `/ship/${content.text.trim()}`;
     return (
       <GroupLink
         resource={resource}
         api={props.api}
-        pl='2'
-        border='1'
-        borderRadius='2'
+        pl={2}
+        my={2}
+        border={1}
+        borderRadius={2}
         borderColor='washedGray'
       />
     );
@@ -160,7 +182,7 @@ export default function TextContent(props) {
         lineHeight={props.lineHeight ? props.lineHeight : '20px'}
         style={{ overflowWrap: 'break-word' }}
       >
-        <MessageMarkdown source={content.text} />
+        <MessageMarkdown source={content.text} allowHeaders={allowHeaders} allowLists={allowLists} />
       </Text>
     );
   }

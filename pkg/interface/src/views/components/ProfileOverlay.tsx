@@ -1,32 +1,34 @@
-import React, { PureComponent, useCallback, useEffect, useRef, useState, useMemo, ReactNode } from 'react';
-import { Contact, Group, uxToHex } from '@urbit/api';
+import {
+  BaseImage, Box,
+
+
+
+
+
+  BoxProps,
+  Center, Col,
+
+
+  Icon, Row,
+
+  Text
+} from '@tlon/indigo-react';
+import { cite, uxToHex } from '@urbit/api';
 import _ from 'lodash';
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
 import styled from 'styled-components';
-
-import { cite, useShowNickname } from '~/logic/lib/util';
+import { getRelativePosition } from '~/logic/lib/relativePosition';
 import { Sigil } from '~/logic/lib/sigil';
-
-import {
-  Box,
-  Row,
-  Col,
-  Button,
-  Text,
-  BaseImage,
-  Icon,
-  BoxProps,
-  ColProps,
-  Center
-} from '@tlon/indigo-react';
-import RichText from './RichText';
-import { ProfileStatus } from './ProfileStatus';
+import { useCopy } from '~/logic/lib/useCopy';
+import { useOutsideClick } from '~/logic/lib/useOutsideClick';
+import { useShowNickname } from '~/logic/lib/util';
+import { useContact } from '~/logic/state/contact';
 import useSettingsState from '~/logic/state/settings';
-import {useOutsideClick} from '~/logic/lib/useOutsideClick';
-import {useContact} from '~/logic/state/contact';
-import {useHistory} from 'react-router-dom';
-import {Portal} from './Portal';
-import {getRelativePosition} from '~/logic/lib/relativePosition';
+import { Portal } from './Portal';
+import { ProfileStatus } from './ProfileStatus';
+import RichText from './RichText';
 
 export const OVERLAY_HEIGHT = 250;
 const FixedOverlay = styled(Col)`
@@ -40,13 +42,13 @@ const FixedOverlay = styled(Col)`
 type ProfileOverlayProps = BoxProps & {
   ship: string;
   api: any;
-  children: ReactNode;
+  children?: ReactNode;
+  color?: string;
 };
 
 const ProfileOverlay = (props: ProfileOverlayProps) => {
   const {
     ship,
-    api,
     children,
     ...rest
   } = props;
@@ -54,13 +56,14 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   const [coords, setCoords] = useState({});
   const [visible, setVisible] = useState(false);
   const history = useHistory();
-  const outerRef = useRef<HTMLElement | null>(null);
-  const innerRef = useRef<HTMLElement | null>(null);
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
   const hideAvatars = useSettingsState(state => state.calm.hideAvatars);
   const hideNicknames = useSettingsState(state => state.calm.hideNicknames);
   const isOwn = useMemo(() => window.ship === ship, [ship]);
+  const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`);
 
-  const contact = useContact(`~${ship}`)
+  const contact = useContact(`~${ship}`);
   const color = `#${uxToHex(contact?.color ?? '0x0')}`;
   const showNickname = useShowNickname(contact, hideNicknames);
 
@@ -145,7 +148,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         borderColor='lightGray'
         boxShadow='0px 0px 0px 3px'
         zIndex={3}
-        fontSize='0'
+        fontSize={0}
         height='250px'
         width='250px'
         padding={3}
@@ -174,7 +177,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         <Col
           position='absolute'
           overflow='hidden'
-          minWidth='0'
+          minWidth={0}
           width='100%'
           padding={3}
           bottom={0}
@@ -187,9 +190,18 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
               textOverflow='ellipsis'
               overflow='hidden'
               whiteSpace='pre'
-              marginBottom='0'
+              marginBottom={0}
+              cursor='pointer'
+              display={didCopy ? 'none' : 'block'}
+              onClick={doCopy}
             >
               {showNickname ? contact?.nickname : cite(ship)}
+            </Text>
+            <Text
+              fontWeight='600'
+              marginBottom={0}
+            >
+              {copyDisplay}
             </Text>
           </Row>
           {isOwn ? (
@@ -202,11 +214,11 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
             <RichText
               display='inline-block'
               width='100%'
-              minWidth='0'
+              minWidth={0}
               textOverflow='ellipsis'
               overflow='hidden'
               whiteSpace='pre'
-              marginBottom='0'
+              marginBottom={0}
               disableRemoteContent
               gray
               title={contact?.status ? contact.status : ''}

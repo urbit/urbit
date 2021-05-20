@@ -1,24 +1,14 @@
-import React, { ReactElement, ReactNode } from 'react';
-import _ from 'lodash';
-
-import { Col, Box, Text } from '@tlon/indigo-react';
 import {
-  Invites as IInvites,
-  Associations,
-  Invite,
-  JoinRequests,
-  Groups,
-  Contacts,
-  AppInvites,
-  JoinProgress,
+  AppInvites, Invite,
+
   JoinRequest
 } from '@urbit/api';
-
+import _ from 'lodash';
+import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
-import { resourceAsPath, alphabeticalOrder } from '~/logic/lib/util';
-import InviteItem from '~/views/components/Invite';
+import { alphabeticalOrder, resourceAsPath } from '~/logic/lib/util';
 import useInviteState from '~/logic/state/invite';
-import useGroupState from '~/logic/state/group';
+import InviteItem from '~/views/components/Invite';
 
 interface InvitesProps {
   api: GlobalApi;
@@ -59,13 +49,6 @@ export function Invites(props: InvitesProps): ReactElement {
 
   return (
     <>
-      {Object.keys(invitesAndStatus).length > 0 && (
-        <Box position="sticky" zIndex={3} top="-1px" bg="white" flexShrink="0">
-          <Box p="2" bg="scales.black05">
-            <Text>Invites</Text>
-          </Box>
-        </Box>
-      )}
       {Object.keys(invitesAndStatus)
         .sort(alphabeticalOrder)
         .map((resource) => {
@@ -89,10 +72,9 @@ export function Invites(props: InvitesProps): ReactElement {
                 invite={invite}
                 app={app}
                 uid={uid}
-                join={join}
                 resource={resource}
               />
-              );
+            );
           }
         })
       }

@@ -1,9 +1,10 @@
-import React, { ReactElement, ReactNode, useRef } from 'react';
-import { Metadata, PropFunc } from '@urbit/api';
 import { Col, Row, Text } from '@tlon/indigo-react';
-import { MetadataIcon } from './MetadataIcon';
+import { Metadata } from '@urbit/api';
+import React, { ReactElement, ReactNode, useRef } from 'react';
+import { TUTORIAL_GROUP, TUTORIAL_HOST } from '~/logic/lib/tutorialModal';
+import { PropFunc } from '~/types';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
-import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
+import { MetadataIcon } from './MetadataIcon';
 
 interface GroupSummaryProps {
   metadata: Metadata;
@@ -23,26 +24,26 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
     anchorRef
   );
   return (
-    <Col {...rest} ref={anchorRef} gapY="4" maxWidth={['100%', '288px']}>
-      <Row gapX="2" width="100%">
+    <Col {...rest} ref={anchorRef} gapY={4} maxWidth={['100%', '288px']}>
+      <Row gapX={2} width="100%">
         <MetadataIcon
           width="40px"
           height="40px"
           metadata={metadata}
-          flexShrink="0"
+          flexShrink={0}
         />
-        <Col justifyContent="space-between" flexGrow="1" overflow="hidden">
+        <Col justifyContent="space-between" flexGrow={1} overflow="hidden">
           <Text
-            fontSize="1"
+            fontSize={1}
             textOverflow="ellipsis"
             whiteSpace="nowrap"
             overflow="hidden"
           >{metadata.title}</Text>
-          <Row gapX="4" >
-            <Text fontSize="1" gray>
+          <Row gapX={4} >
+            <Text fontSize={1} gray>
               {memberCount} participants
             </Text>
-            <Text fontSize="1" gray>
+            <Text fontSize={1} gray>
               {channelCount} channels
             </Text>
           </Row>
@@ -53,7 +54,7 @@ export function GroupSummary(props: GroupSummaryProps & PropFunc<typeof Col>): R
         <Text
             gray
             width="100%"
-            fontSize="1"
+            fontSize={1}
             textOverflow="ellipsis"
             overflow="hidden"
         >

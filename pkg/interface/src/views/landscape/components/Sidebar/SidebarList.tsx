@@ -1,11 +1,10 @@
+import { AppAssociations } from '@urbit/api';
 import React, { ReactElement } from 'react';
-import { Associations, AppAssociations, Groups, Rolodex } from '@urbit/api';
-
 import { alphabeticalOrder } from '~/logic/lib/util';
-import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
-import { SidebarItem } from './SidebarItem';
-import { Workspace } from '~/types/workspace';
 import useMetadataState from '~/logic/state/metadata';
+import { Workspace } from '~/types/workspace';
+import { SidebarItem } from './SidebarItem';
+import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
 
 function sidebarSort(
   associations: AppAssociations,

@@ -1,18 +1,18 @@
-import React, { ReactElement } from 'react';
-import _ from 'lodash';
-import { FormikHelpers } from 'formik';
-import { RouteComponentProps, useLocation } from 'react-router-dom';
-
 import { GraphNode } from '@urbit/api';
-
-import { PostFormSchema, PostForm } from './NoteForm';
+import bigInt from 'big-integer';
+import { FormikHelpers } from 'formik';
+import _ from 'lodash';
+import React, { ReactElement } from 'react';
+import { RouteComponentProps, useLocation } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { getLatestRevision, editPost } from '~/logic/lib/publish';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { editPost, getLatestRevision } from '~/logic/lib/publish';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import { PostForm, PostFormSchema } from './NoteForm';
 
 interface EditPostProps {
   ship: string;
-  noteId: number;
+  noteId: bigInt.BigInteger;
   note: GraphNode;
   api: GlobalApi;
   book: string;
@@ -23,10 +23,27 @@ export function EditPost(props: EditPostProps & RouteComponentProps): ReactEleme
   const [revNum, title, body] = getLatestRevision(note);
   const location = useLocation();
 
+  let editContent = null;
+  editContent = body.reduce((val, curr) => {
+      if ('text' in curr) {
+        val = val + curr.text;
+      } else if ('mention' in curr) {
+        val = val + `~${curr.mention}`;
+      } else if ('url' in curr) {
+        val = val + curr.url;
+      } else if ('code' in curr) {
+        val = val + curr.code.expression;
+      } else if ('reference' in curr) {
+        val = `${val}${referenceToPermalink(curr).link}`;
+      }
+
+      return val;
+    }, '');
+
   const waiter = useWaitForProps(props);
   const initial: PostFormSchema = {
     title,
-    body
+    body: editContent
   };
 
   const onSubmit = async (
