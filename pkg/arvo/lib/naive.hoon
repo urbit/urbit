@@ -765,6 +765,7 @@
     ::  TODO check spawnlimit
     ::
     =/  [=effects new-point=point]
+      =/  =point  (get-point state ship)
       ::  If spawning to self, just do it
       ::
       ?:  ?|  ?&  =(%own proxy.from.tx)
@@ -777,18 +778,14 @@
         ::  TODO: use get-point or duplicate sponsor logic
         ::
         :-  ~[[%point ship %dominion %l2] [%point ship %owner to]]
-        %*  .  *point
-          dominion           %l2
-          address.owner.own  to
-        ==
+        point(address.owner.own to)
       ::  Else spawn to parent and set transfer proxy
       ::
       :-  :~  [%point ship %dominion %l2]
               [%point ship %owner address.owner.own.u.parent-point]
               [%point ship %transfer-proxy to]
           ==
-      %*  .  *point
-        dominion                    %l2
+      %=  point
         address.owner.own           address.owner.own.u.parent-point
         address.transfer-proxy.own  to
       ==
