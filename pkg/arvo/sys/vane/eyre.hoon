@@ -1642,17 +1642,14 @@
         ::
         =*  have=mark  p.cage.sign
         =*  desc=tape  "from {(trip have)} to json"
-        =/  convert=(unit $-(* json))
+        =/  convert=(unit vase)
           =/  cag=(unit (unit cage))
             (rof ~ %cf [our %home da+now] /[have]/json)
           ?.  ?=([~ ~ *] cag)  ~
-          `!<($-(* json) q.u.u.cag)
+          `q.u.u.cag
         ?~  convert
           ((slog leaf+"eyre: no convert {desc}" ~) [~ ~])
-        =/  res  (mule |.((u.convert q.cage.sign)))
-        ?:  ?=(%& -.res)
-          [`have `[%fact %json !>(p.res)]]
-        ((slog leaf+"eyre: failed tube {desc}" ~) [~ ~])
+        [`have `[%fact %json (slam u.convert q.cage.sign)]]
       ::
       ?~  q.jsyn  ~
       %-  some
@@ -1680,7 +1677,7 @@
             :-  'json'
             ~|  [%unexpected-fact-mark p.cage.sign]
             ?>  =(%json p.cage.sign)
-            ;;(json q.q.cage.sign)
+            !<(json q.cage.sign)
         ==
       ::
           %kick
