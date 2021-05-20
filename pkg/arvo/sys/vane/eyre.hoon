@@ -1655,7 +1655,7 @@
       %-  some
       :_  ?~  p.jsyn  ~
           :_  ~
-          :^  duct  %pass  /pass/(scot %ud request-id)
+          :^  duct  %pass  /conversion-cache/[u.p.jsyn]
           [%c %warp our %home `[%sing %f da+now /[u.p.jsyn]/json]]
       =*  sign  u.q.jsyn
       =,  enjs:format
