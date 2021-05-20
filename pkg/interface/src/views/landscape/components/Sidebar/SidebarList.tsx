@@ -5,7 +5,7 @@ import { patp, patp2dec } from 'urbit-ob';
 import { SidebarAssociationItem, SidebarDmItem } from './SidebarItem';
 import useGraphState, {useInbox} from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
-import { alphabeticalOrder, getResourcePath, modulo } from '~/logic/lib/util';
+import { alphabeticalOrder, getResourcePath, modulo, patpToUd } from '~/logic/lib/util';
 import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
 import { Workspace } from '~/types/workspace';
 import useMetadataState from '~/logic/state/metadata';
@@ -138,7 +138,7 @@ export function SidebarList(props: {
             key={pathOrShip}
             path={pathOrShip}
             selected={pathOrShip === selected}
-            association={associations[pathOrShip]}
+            association={associations.graph[pathOrShip]}
             apps={props.apps}
             hideUnjoined={config.hideUnjoined}
             workspace={workspace}
