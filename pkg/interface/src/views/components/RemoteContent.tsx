@@ -369,4 +369,4 @@ return;
   }
 }
 
-export default withState(withVirtual(RemoteContent), [[useSettingsState, ['remoteContentPolicy']]]);
+export default withState(withVirtual(RemoteContent), [[useSettingsState, ['remoteContentPolicy']]]) as React.ComponentType<Omit<RemoteContentProps, "save" | "restore" | "remoteContentPolicy"> & { ref?: any }>;

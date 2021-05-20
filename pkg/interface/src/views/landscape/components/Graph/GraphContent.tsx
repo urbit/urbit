@@ -350,7 +350,6 @@ const renderers = {
   image: ({ url, tall }) => (
     <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent
-        // @ts-ignore RemoteContent weirdness
         key={url}
         url={url}
         tall={tall}
@@ -360,7 +359,6 @@ const renderers = {
   'graph-url': ({ url, tall }) => (
     <Box mt={1} mb={2} flexShrink={0}>
       <RemoteContent
-        // @ts-ignore RemoteContent weirdness
         key={url}
         url={url}
         tall={tall}
