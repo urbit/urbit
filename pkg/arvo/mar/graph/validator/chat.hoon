@@ -33,7 +33,7 @@
 ++  grab
   |%
   ++  noun
-    |=  p=*
+    |:  p=`*`%*(. *indexed-post index.p [0 ~])
     =/  ip  ;;(indexed-post p)
     ?>  ?=([@ ~] index.p.ip)
     ip

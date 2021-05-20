@@ -179,10 +179,15 @@
     %+  expect-eq
       !>  [%n '1000']
       !>  (time ~1970.1.1..0.0.1)
+    ::  timestamps should invert
+    ::
+    %+  expect-eq
+      !>  [%n '1001']
+      !>  (time (from-unix-ms:chrono:userlib 1.001))
     :: ship - store ship identity as a string
     ::
     %+  expect-eq
-      !>  [%s 'zod']
+      !>  [%n '"zod"']
       !>  (ship ~zod)
   ==
 ::  dejs - recursive processing of `json` values

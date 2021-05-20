@@ -14,6 +14,7 @@ const rules = {
     }
   ],
   "arrow-spacing": "error",
+  "ban-ts-comment": "allow-with-description",
   "block-spacing": ["error", "always"],
   "brace-style": ["error", "1tbs"],
   "camelcase": [

@@ -1,31 +1,34 @@
-import React, { Component, Fragment } from 'react';
-import { BaseAnchor, BaseImage, Box, Button, Text, Row, Icon } from '@tlon/indigo-react';
-import styled from 'styled-components';
+import { BaseAnchor, BaseImage, Box, Icon, Row, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
+import React, { Component, Fragment } from 'react';
 import EmbedContainer from 'react-oembed-container';
+import styled from 'styled-components';
+import { VirtualContextProps, withVirtual } from '~/logic/lib/virtualContext';
+import withState from '~/logic/lib/withState';
 import useSettingsState from '~/logic/state/settings';
 import { RemoteContentPolicy } from '~/types/local-update';
-import { VirtualContextProps, withVirtual } from "~/logic/lib/virtualContext";
-import withState from '~/logic/lib/withState';
 
 type RemoteContentProps = VirtualContextProps & {
   url: string;
   text?: string;
   unfold?: boolean;
   renderUrl?: boolean;
-  remoteContentPolicy: RemoteContentPolicy;
+  remoteContentPolicy?: RemoteContentPolicy;
   imageProps?: any;
   audioProps?: any;
   videoProps?: any;
   oembedProps?: any;
   textProps?: any;
   style?: any;
+  transcluded?: any;
+  className?: string;
 }
 
 interface RemoteContentState {
   unfold: boolean;
   embed: any | undefined;
   noCors: boolean;
+  showArrow: boolean;
 }
 
 const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
@@ -48,12 +51,14 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     this.state = {
       unfold: props.unfold || false,
       embed: undefined,
-      noCors: false
+      noCors: false,
+      showArrow: false
     };
     this.unfoldEmbed = this.unfoldEmbed.bind(this);
     this.loadOembed = this.loadOembed.bind(this);
     this.wrapInLink = this.wrapInLink.bind(this);
     this.onError = this.onError.bind(this);
+    this.toggleArrow = this.toggleArrow.bind(this);
   }
 
   save = () => {
@@ -89,17 +94,15 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     });
   }
 
-
   componentDidUpdate(prevProps, prevState) {
     if(prevState.embed !== this.state.embed) {
-      //console.log('remotecontent: restoring');
-      //prevProps.shiftLayout.restore();
+      // console.log('remotecontent: restoring');
+      // prevProps.shiftLayout.restore();
     }
     const { url } = this.props;
     if(url !== prevProps.url && (IMAGE_REGEX.test(url) || AUDIO_REGEX.test(url) || VIDEO_REGEX.test(url))) {
       this.save();
-    };
-
+    }
   }
 
   componentDidMount() {
@@ -110,7 +113,6 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
       const { restore } = this;
       restore();
     });
-
   }
 
   loadOembed() {
@@ -128,36 +130,41 @@ return;
     });
   }
 
-  wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null) {
+  wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null, flushPadding = false, noOp = false) {
     const { style } = this.props;
     return (
-      <Box borderRadius="1" backgroundColor="washedGray" maxWidth="min(100%, 20rem)">
+      <Box borderRadius={1} backgroundColor="washedGray" maxWidth="min(100%, 20rem)">
       <Row
         alignItems="center"
-        gapX="1">
-        { textOnly && (<Icon ml="2" display="block" icon="ArrowExternal" />)}
+        gapX={1}
+      >
+        { textOnly && (<Icon ml={2} display="block" icon="ArrowExternal" />)}
         { !textOnly && unfoldEmbed && (
           <Icon
-            ml='2'
+            ml={2}
             display='block'
             onClick={unfoldEmbed}
-            icon={unfold ? 'TriangleSouth' : 'TriangleEast'}/>
+            icon={unfold ? 'TriangleSouth' : 'TriangleEast'}
+          />
           )}
         <BaseAnchor
           display="flex"
-          p="2"
-          onClick={(e) => { e.stopPropagation(); }}
+          p={flushPadding ? 0 : 2}
+          onClick={(e) => {
+ noOp ? e.preventDefault() : e.stopPropagation();
+}}
           href={this.props.url}
           whiteSpace="nowrap"
           overflow="hidden"
           textOverflow="ellipsis"
-          minWidth="0"
-          width={textOnly ? "calc(100% - 24px)" : "fit-content"}
+          minWidth={0}
+          width={textOnly ? 'calc(100% - 24px)' : 'fit-content'}
           maxWidth="min(500px, 100%)"
           style={{ color: 'inherit', textDecoration: 'none', ...style }}
           target="_blank"
           rel="noopener noreferrer"
-              >
+          cursor={noOp ? 'default' : 'pointer'}
+        >
         {contents}
       </BaseAnchor>
     </Row>
@@ -171,11 +178,16 @@ return;
     this.setState({ noCors: true });
   }
 
+  toggleArrow() {
+    this.setState({ showArrow: !this.state.showArrow });
+  }
+
   render() {
     const {
       remoteContentPolicy,
       url,
       text,
+      transcluded,
       renderUrl = true,
       imageProps = {},
       audioProps = {},
@@ -192,22 +204,60 @@ return;
     const isVideo = VIDEO_REGEX.test(url);
     const isOembed = hasProvider(url);
 
+    const isTranscluded = () => {
+      return transcluded;
+    };
+
     if (isImage && remoteContentPolicy.imageShown) {
       return this.wrapInLink(
-        <BaseImage
-          {...(noCors ? {} : { crossOrigin: "anonymous" })}
-          referrerPolicy="no-referrer"
-          flexShrink={0}
-          src={url}
-          style={style}
-          onLoad={onLoad}
-          onError={this.onError}
-          height="100%"
-          width="100%"
-          objectFit="contain"
-          {...imageProps}
-          {...props}
-        />
+        <Box
+          position='relative'
+          onMouseEnter={this.toggleArrow}
+          onMouseLeave={this.toggleArrow}
+        >
+          <BaseAnchor
+            position='absolute'
+            top={2}
+            right={2}
+            display={this.state.showArrow ? 'block' : 'none'}
+            target='_blank'
+            rel='noopener noreferrer'
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            href={url}
+          >
+            <Box
+              backgroundColor='white'
+              padding={2}
+              borderRadius='50%'
+              display='flex'
+            >
+              <Icon icon='ArrowNorthEast' />
+            </Box>
+          </BaseAnchor>
+          <BaseImage
+            {...(noCors ? {} : { crossOrigin: 'anonymous' })}
+            referrerPolicy='no-referrer'
+            flexShrink={0}
+            src={url}
+            style={style}
+            onLoad={onLoad}
+            onError={this.onError}
+            height='100%'
+            width='100%'
+            objectFit='contain'
+            borderRadius={2}
+            {...imageProps}
+            {...props}
+          />
+        </Box>,
+        false,
+        false,
+        null,
+        null,
+        true,
+        isTranscluded()
       );
     } else if (isAudio && remoteContentPolicy.audioShown) {
       return (
@@ -219,9 +269,11 @@ return;
               this.state.unfold,
               this.unfoldEmbed,
             <audio
-              onClick={(e) => { e.stopPropagation(); }}
+              onClick={(e) => {
+ e.stopPropagation();
+}}
               controls
-              className={this.state.unfold ? "db" : "dn"}
+              className={this.state.unfold ? 'db' : 'dn'}
               src={url}
               style={style}
               onLoad={onLoad}
@@ -244,7 +296,9 @@ return;
               this.state.unfold,
               this.unfoldEmbed,
               <video
-                onClick={(e) => { e.stopPropagation(); }}
+                onClick={(e) => {
+ e.stopPropagation();
+}}
                 controls
                 className={this.state.unfold ? 'db' : 'dn pa2'}
                 src={url}
@@ -265,20 +319,20 @@ return;
       }
      const renderEmbed = !(this.state.embed !== 'error' && this.state.embed?.html);
      const embed = <Box
-            mb='2'
+            mb={2}
             width='100%'
             flexShrink={0}
             display={this.state.unfold ? 'block' : 'none'}
             className='embed-container'
             style={style}
-            flexShrink={0}
             onLoad={this.onLoad}
             {...oembedProps}
             {...props}
-          >
+                   >
             <TruncatedText
             display={(renderUrl && this.state.embed?.title && this.state.embed.title !== url) ? 'inline-block' : 'none'}
-            fontWeight='bold' width='100%'>
+            fontWeight='bold' width='100%'
+            >
               {this.state.embed?.title}
             </TruncatedText>
               {this.state.embed && this.state.embed.html && this.state.unfold

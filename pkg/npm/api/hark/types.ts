@@ -1,13 +1,13 @@
+import { BigInteger } from "big-integer";
 import { Post } from "../graph/types";
 import { GroupUpdate } from "../groups/types";
 import BigIntOrderedMap from "../lib/BigIntOrderedMap";
-import {BigInteger} from "big-integer";
 
-export type GraphNotifDescription = "link" | "comment" | "note" | "mention" | "message";
+export type GraphNotifDescription = "link" | "comment" | "note" | "mention" | "message" | "post";
 
 export interface UnreadStats {
   unreads: Set<string> | number;
-  notifications: NotifRef[];
+  notifications: NotifRef[] | number;
   last: number;
 }
 

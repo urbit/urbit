@@ -1,20 +1,17 @@
+import { Box, Col, Text } from '@tlon/indigo-react';
 import React, { ReactNode, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import Helmet from 'react-helmet';
-
-import { Text, Box, Col, Row } from '@tlon/indigo-react';
-
-import { NotificationPreferences } from './components/lib/NotificationPref';
-import DisplayForm from './components/lib/DisplayForm';
-import S3Form from './components/lib/S3Form';
-import { CalmPrefs } from './components/lib/CalmPref';
-import SecuritySettings from './components/lib/Security';
-import { LeapSettings } from './components/lib/LeapSettings';
-import { useHashLink } from '~/logic/lib/useHashLink';
-import { SidebarItem as BaseSidebarItem } from '~/views/landscape/components/SidebarItem';
-import { PropFunc } from '~/types';
-import DebugPane from './components/lib/Debug';
+import { useLocation } from 'react-router-dom';
 import useHarkState from '~/logic/state/hark';
+import { PropFunc } from '~/types';
+import { SidebarItem as BaseSidebarItem } from '~/views/landscape/components/SidebarItem';
+import { CalmPrefs } from './components/lib/CalmPref';
+import DebugPane from './components/lib/Debug';
+import DisplayForm from './components/lib/DisplayForm';
+import { LeapSettings } from './components/lib/LeapSettings';
+import { NotificationPreferences } from './components/lib/NotificationPref';
+import S3Form from './components/lib/S3Form';
+import SecuritySettings from './components/lib/Security';
 
 export const Skeleton = (props: { children: ReactNode }) => (
   <Box height='100%' width='100%' px={[0, 3]} pb={[0, 3]} borderRadius={1}>
@@ -63,7 +60,7 @@ function SettingsItem(props: { children: ReactNode }) {
   const { children } = props;
 
   return (
-    <Box borderBottom='1' borderBottomColor='lightGray'>
+    <Box borderBottom={1} borderBottomColor='lightGray'>
       {children}
     </Box>
   );
@@ -76,7 +73,8 @@ export default function SettingsScreen(props: any) {
 
   useEffect(() => {
     const debugShower = (event) => {
-      if (hash) return;
+      if (hash)
+return;
       if (event.key === '~') {
         window.location.hash = 'debug';
       }
@@ -85,7 +83,7 @@ export default function SettingsScreen(props: any) {
 
     return () => {
       document.removeEventListener('keyup', debugShower);
-    }
+    };
   }, [hash]);
 
   return (
@@ -96,18 +94,18 @@ export default function SettingsScreen(props: any) {
       <Skeleton>
         <Col
           height='100%'
-          borderRight='1'
+          borderRight={1}
           borderRightColor='lightGray'
           display={hash === '' ? 'flex' : ['none', 'flex']}
           width='100%'
           overflowY='auto'
         >
-          <Text display='block' mt='4' mb='3' mx='3' fontSize='2' fontWeight='700'>
+          <Text display='block' mt={4} mb={3} mx={3} fontSize={2} fontWeight='700'>
             System Preferences
           </Text>
           <Col>
             <SidebarItem
-              icon='Inbox'
+              icon='Notifications'
               text='Notifications'
               hash='notifications'
             />

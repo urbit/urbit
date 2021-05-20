@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
-import { sigil, reactRenderer } from '@tlon/sigil-js';
 import { Box } from '@tlon/indigo-react';
+import { reactRenderer, sigil } from '@tlon/sigil-js';
+import React, { memo } from 'react';
 
 export const foregroundFromBackground = (background) => {
   const rgb = {
