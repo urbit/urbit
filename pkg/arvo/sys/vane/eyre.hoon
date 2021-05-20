@@ -1650,6 +1650,7 @@
           `q.u.u.cag
         ?~  convert
           ((slog leaf+"eyre: no convert {desc}" ~) [~ ~])
+        ~|  "conversion failed {desc}"
         [`have `[%fact %json (slym u.convert q.q.cage.sign)]]
       ?~  jsyn  ~
       %-  some
