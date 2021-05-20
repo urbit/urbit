@@ -13,7 +13,7 @@
 ++  grab
   |%
   ++  noun
-    |=  p=*
+    |:  p=`*`%*(. *indexed-post index.p [0 0 ~])
     =/  ip  ;;(indexed-post p)
     ?>  ?=(?([@ ~] [@ @ ~]) index.p.ip)
     ?>  (lth i.index.p.ip (bex 128))
