@@ -180,7 +180,7 @@ function getNodeUrl(
     return graphUrl;
   } else if (mod === 'post') {
     return `/~landscape${groupPath}/feed${index}`;
-  }
+  } 
   return '';
 }
 
@@ -256,7 +256,6 @@ const GraphNodes = (props: {
 export function GraphNotification(props: {
   index: GraphNotifIndex;
   contents: GraphNotificationContents;
-  archived: boolean;
   read: boolean;
   time: number;
   timebox: BigInteger;
@@ -280,8 +279,9 @@ export function GraphNotification(props: {
   const groups = useGroupState((state) => state.groups);
 
   const onClick = useCallback(() => {
-    if(!association) {
+    if(dm) {
       history.push(`/~landscape/messages/dm/~${authors[0]}`);
+      return;
     }
     if (
       !(
@@ -300,7 +300,7 @@ export function GraphNotification(props: {
         )
       );
     }
-  }, [api, timebox, index, read]);
+  }, [api, timebox, index, read, history.push, authors, dm]);
 
   const authorsInHeader =
     dm ||

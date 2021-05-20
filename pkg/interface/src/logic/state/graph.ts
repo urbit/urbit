@@ -135,7 +135,7 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, ['graphs', 'graphKeys', 'looseNodes', 'graphTimesentMap']);
+}, ['graphs', 'pendingDms', 'graphKeys', 'looseNodes', 'graphTimesentMap']);
 
 export function useGraph(ship: string, name: string) {
   return useGraphState(

@@ -1,4 +1,5 @@
 import {
+  NotificationContents,
   NotifIndex,
   Timebox
 } from '@urbit/api';
@@ -15,6 +16,7 @@ import useMetadataState from '../state/metadata';
 export const HarkReducer = (json: any) => {
   const data = _.get(json, 'harkUpdate', false);
   if (data) {
+    console.log(data);
     reduceState(useHarkState, data, [reduce]);
   }
   const graphHookData = _.get(json, 'hark-graph-hook-update', false);
@@ -48,7 +50,6 @@ export const HarkReducer = (json: any) => {
 export function reduce(data, state) {
   const reducers = [
     calculateCount,
-    unread,
     read,
     archive,
     timebox,
@@ -71,24 +72,7 @@ export function reduce(data, state) {
 }
 
 function calculateCount(json: any, state: HarkState) {
-  let count = 0;
-  _.forEach(state.unreads.graph, (graphs) => {
-    _.forEach(graphs, (graph) => {
-      if (typeof graph?.notifications === 'object') {
-        count += graph?.notifications.length;
-      } else {
-        count += 0;
-      }
-    });
-  });
-  _.forEach(state.unreads.group, (group) => {
-    if (typeof group?.notifications === 'object') {
-      count += group?.notifications.length;
-    } else {
-      count += 0;
-    }
-  });
-  state.notificationsCount = count;
+  state.notificationsCount = Object.keys(state.unreadNotes).length;
   return state;
 }
 
@@ -337,7 +321,8 @@ function added(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'added', false);
   if (data) {
     const { index, notification } = data;
-    const time = makePatDa(data.time);
+    const [fresh, stale] = _.partition(state.unreadNotes, ({ index: idx }) => !notifIdxEqual(index, idx));
+    state.unreadNotes = [...fresh, { index, notification }];
 
     if ('Notification' in window && !useHarkState.getState().doNotDisturb) {
       const description = describeNotification(data);
@@ -352,18 +337,6 @@ function added(json: any, state: HarkState): HarkState {
       });
     }
 
-    const timebox = state.notifications.get(time) || [];
-    addNotificationToUnread(state, index, time);
-
-    const arrIdx = timebox.findIndex(idxNotif =>
-      notifIdxEqual(index, idxNotif.index)
-    );
-    if (arrIdx !== -1) {
-      timebox[arrIdx] = { index, notification };
-      state.notifications = state.notifications.set(time, timebox);
-    } else {
-      state.notifications = state.notifications.set(time, [...timebox, { index, notification }]);
-    }
   }
   return state;
 }
@@ -379,9 +352,11 @@ const dnd = (json: any, state: HarkState): HarkState => {
 const timebox = (json: any, state: HarkState): HarkState => {
   const data = _.get(json, 'timebox', false);
   if (data) {
-    const time = makePatDa(data.time);
-    if (!data.archive) {
+    if (data.time) {
+      const time = makePatDa(data.time);
       state.notifications = state.notifications.set(time, data.notifications);
+    } else {
+      state.unreadNotes = data.notifications;
     }
   }
   return state;
@@ -414,6 +389,22 @@ function notifIdxEqual(a: NotifIndex, b: NotifIndex) {
   return false;
 }
 
+function mergeNotifs(a: NotificationContents, b: NotificationContents) {
+  if ('graph' in a && 'graph' in b) {
+    return {
+      graph: [...a.graph, ...b.graph]
+    };
+  } else if ('group' in a && 'group' in b) {
+    return {
+      group: [...a.group, ...b.group]
+    };
+  }
+  return a;
+}
+
+
+
+
 function setRead(
   time: string,
   index: NotifIndex,
@@ -439,21 +430,19 @@ function setRead(
 }
 
 function read(json: any, state: HarkState): HarkState {
-  const data = _.get(json, 'read-note', false);
+  const data = _.get(json, 'note-read', false);
   if (data) {
-    const { time, index } = data;
-    removeNotificationFromUnread(state, index, makePatDa(time));
-    setRead(time, index, true, state);
-  }
-  return state;
-}
+    const { index } = data;
+    const time = makePatDa(data.time);
+    const [read, unread] = _.partition(state.unreadNotes,({ index: idx }) => notifIdxEqual(index, idx))
+    state.unreadNotes = unread;
+    const oldTimebox = state.notifications.get(time) ?? [];
+    const [toMerge, rest] = _.partition(oldTimebox, i => notifIdxEqual(index, i.index));
+    if(toMerge.length > 0 && read.length > 0) {
+      read[0].notification.contents = mergeNotifs(read[0].notification.contents, toMerge[0].notification.contents);
 
-function unread(json: any, state: HarkState): HarkState {
-  const data = _.get(json, 'unread-note', false);
-  if (data) {
-    const { time, index } = data;
-    addNotificationToUnread(state, index, makePatDa(time));
-    setRead(time, index, false, state);
+    }
+    state.notifications = state.notifications.set(time, [...read, ...rest]);
   }
   return state;
 }
@@ -462,21 +451,24 @@ function archive(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'archive', false);
   if (data) {
     const { index } = data;
-    removeNotificationFromUnread(state, index, makePatDa(data.time));
-    const time = makePatDa(data.time);
-    const timebox = state.notifications.get(time);
-    if (!timebox) {
-      console.warn('Modifying nonexistent timebox');
-      return state;
-    }
-    const [archived, unarchived] = _.partition(timebox, idxNotif =>
-      notifIdxEqual(index, idxNotif.index)
-    );
-    if(unarchived.length === 0) {
-      console.log('deleting entire timebox');
-      state.notifications = state.notifications.delete(time);
+    if(data.time) {
+      const time = makePatDa(data.time);
+      const timebox = state.notifications.get(time);
+      if (!timebox) {
+        console.warn('Modifying nonexistent timebox');
+        return state;
+      }
+      const [archived, unarchived] = _.partition(timebox, idxNotif =>
+        notifIdxEqual(index, idxNotif.index)
+      );
+      if(unarchived.length === 0) {
+        console.log('deleting entire timebox');
+        state.notifications = state.notifications.delete(time);
+      } else {
+        state.notifications = state.notifications.set(time, unarchived);
+      }
     } else {
-      state.notifications = state.notifications.set(time, unarchived);
+      state.unreadNotes = state.unreadNotes.filter(({ index: idx }) => !notifIdxEqual(idx, index)) 
     }
   }
   return state;
