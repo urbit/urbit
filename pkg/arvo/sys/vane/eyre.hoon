@@ -1636,8 +1636,8 @@
       ::  for facts, we try to convert the result to json
       ::
       =/  jsyn=(pair (unit mark) (unit sign:agent:gall))
-        ?.  ?=(%fact -.sign)       ``sign
-        ?:  ?=(%json p.cage.sign)  ``sign
+        ?.  ?=(%fact -.sign)       [~ `sign]
+        ?:  ?=(%json p.cage.sign)  [~ `sign]
         ::  find and use tube from fact mark to json
         ::
         =*  have=mark  p.cage.sign
