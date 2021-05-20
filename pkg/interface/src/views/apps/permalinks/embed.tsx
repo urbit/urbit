@@ -1,18 +1,18 @@
-import { BaseAnchor, Box, Center, Col, Icon, Row, Text } from "@tlon/indigo-react";
+import { BaseAnchor, Box, Center, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { Association, GraphNode, resourceFromPath, GraphConfig } from '@urbit/api';
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { useHistory, useLocation } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import {
   getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
 } from '~/logic/lib/permalinks';
-import { getModuleIcon, GraphModule } from "~/logic/lib/util";
-import { useVirtualResizeProp } from "~/logic/lib/virtualContext";
-import useGraphState from "~/logic/state/graph";
-import useMetadataState from "~/logic/state/metadata";
-import { GroupLink } from "~/views/components/GroupLink";
-import { TranscludedNode } from "./TranscludedNode";
+import { getModuleIcon, GraphModule } from '~/logic/lib/util';
+import { useVirtualResizeProp } from '~/logic/lib/virtualContext';
+import useGraphState from '~/logic/state/graph';
+import useMetadataState from '~/logic/state/metadata';
+import { GroupLink } from '~/views/components/GroupLink';
+import { TranscludedNode } from './TranscludedNode';
 
 function Placeholder(type) {
   const lines = (type) => {
@@ -24,10 +24,10 @@ function Placeholder(type) {
       default:
         return 1;
     }
-  }
+  };
   return (
-    <>
-      <Row mt='12px' ml='12px' mb='6px' height="4">
+    <Box p='12px 12px 6px'>
+      <Row mb='6px' height="4">
         <Box
           backgroundColor="washedGray"
           size="4"
@@ -41,8 +41,8 @@ function Placeholder(type) {
           borderRadius="2"
         />
       </Row>
-      {_.times(lines(type), () => (
-        <Row margin="6px" ml='44px' mr='12px' height="4">
+      {_.times(lines(type), i => (
+        <Row margin="6px" ml='32px' height="4">
           <Box
             backgroundColor="washedGray"
             height="4"
@@ -51,7 +51,7 @@ function Placeholder(type) {
           />
         </Row>
       ))}
-    </>
+    </Box>
   );
 }
 
@@ -78,7 +78,7 @@ function GraphPermalink(
     full?: boolean;
   }
 ) {
-  const { full = false, showOurContact, pending, link, graph, group, index, api, transcluded } = props;
+  const { full = false, showOurContact, pending, graph, group, index, api, transcluded } = props;
   const history = useHistory();
   const location = useLocation();
   const { ship, name } = resourceFromPath(graph);
@@ -145,8 +145,8 @@ function GraphPermalink(
     <Col
       width="100%"
       bg="white"
-      maxWidth={full ? null : "500px"}
-      border={full ? null : "1"}
+      maxWidth={full ? null : '500px'}
+      border={full ? null : '1'}
       borderColor="lightGray"
       borderRadius={2}
       cursor="pointer"
@@ -154,7 +154,7 @@ function GraphPermalink(
         navigate(e);
       }}
     >
-      {loading && association && Placeholder((association.metadata.config as GraphConfig).graph)}
+      {loading && association && !errored && Placeholder((association.metadata.config as GraphConfig).graph)}
       {showTransclusion && index && !loading && (
         <TranscludedNode
           api={api}
@@ -182,7 +182,7 @@ function GraphPermalink(
           permalink={permalink}
         />
       )}
-      {isInSameResource && transcluded !== 2 && <Row height='2' />}
+      {isInSameResource && transcluded !== 2 && !loading && <Row height='2' />}
       {!association && !loading && (
         <PermalinkDetails
           icon="Groups"
@@ -203,7 +203,7 @@ function PermalinkDetails(props: {
   showDetails?: boolean;
   known?: boolean;
 }) {
-  const { title, icon, permalink, known, showTransclusion } = props;
+  const { title, icon, known, showTransclusion } = props;
   const rowTransclusionStyle = showTransclusion
     ? { p: '12px 12px 11px 11px' }
     : { p: '12px' };
