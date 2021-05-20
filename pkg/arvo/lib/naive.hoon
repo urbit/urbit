@@ -267,9 +267,9 @@
   ++  parse-tx
     ^-  (unit [tx _batch])
     =^  from-proxy=@      batch  (take 0 3)
-    ?:  (gth from-proxy 4)  (debug %bad-proxy ~)
+    ?.  ?=(?(%0 %1 %2 %3 %4) from-proxy)  (debug %bad-proxy ~)
     =/  =proxy
-      ?+  from-proxy  !!  :: checked above that lte 4
+      ?-  from-proxy
         %0  %own
         %1  %spawn
         %2  %manage
