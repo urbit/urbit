@@ -336,6 +336,8 @@ const renderers = {
         display="inline"
         href={props.url}
         borderBottom="1"
+        fontSize="inherit"
+        fontWeight="inherit"
         color="black"
         target="_blank"
       >
