@@ -284,7 +284,7 @@ const renderers = {
   paragraph: ({ children }) => {
     return (
       <Box display="block">
-        <Text fontSize={1} lineHeight="tall">
+        <Text fontSize={1} lineHeight="tall" style={{ 'overflowWrap': 'break-word' }}>
           {children}
         </Text>
       </Box>
