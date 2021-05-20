@@ -163,6 +163,7 @@
 ::
 ++  diff
   $%  [%nonce =ship =proxy =nonce]
+      [%tx =raw-tx err=(unit @tas)]
       [%operator owner=address operator=address approved=?]
       [%dns domains=(list @t)]
       $:  %point  =ship
@@ -616,17 +617,20 @@
   ::
   ?.  (verify-sig-and-nonce verifier chain-t state i.roll)
     %+  debug  %l2-sig-failed
-    $(roll t.roll)
+    =^  effects  state  $(roll t.roll)
+    :_  state
+    [[%tx i.roll `%sig-or-nonce-failed] effects]
   ::  Increment nonce, even if it later fails
   ::
   =^  effects-1  points.state  (increment-nonce state from.tx.i.roll)
   ::  Process tx
   ::
   =^  effects-2  state
-    =/  tx-result=(unit [effects ^state])  (receive-tx state tx.i.roll)
+    =/  tx-result=(unit [=effects =^state])  (receive-tx state tx.i.roll)
     ?~  tx-result
-      (debug %l2-tx-failed `state)
-    u.tx-result
+      %+  debug  %l2-tx-failed
+      [[%tx i.roll `%tx-failed]~ state]
+    [[[%tx i.roll ~] effects.u.tx-result] state.u.tx-result]
   =^  effects-3  state  $(roll t.roll)
   [:(welp effects-1 effects-2 effects-3) state]
 ::
