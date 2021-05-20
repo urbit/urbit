@@ -161,141 +161,140 @@
 :: Tests
 ::
 |%
+++  test-log  ^-  tang
+  %+  expect-eq
+    !>
+    :-  [%point ~bud %owner (addr %bud-key-0)]~
+    :_  [~ ~]  :_  [~ ~]
+    :-  ~bud
+    %*(. *point:naive dominion %l1, owner.own (addr %bud-key-0)^0, who.sponsor.net ~bud)
+  ::
+    !>
+    %^  naive  verifier  1.337  :-  *^state:naive
+    :*  %log  *@ux  *@ux
+        owner-changed:log-names:naive  (@ux ~bud)  (addr %bud-key-0)  ~
+    ==
 ::
-::  ++  test-log  ^-  tang
-::    %+  expect-eq
-::      !>
-::      :-  [%point ~bud %owner (addr %bud-key-0)]~
-::      :_  [~ ~]  :_  [~ ~]
-::      :-  ~bud
-::      %*(. *point:naive dominion %l1, owner.own (addr %bud-key-0)^0, who.sponsor.net ~bud)
-::    ::
-::      !>
-::      %^  naive  verifier  1.337  :-  *^state:naive
-::      :*  %log  *@ux  *@ux
-::          owner-changed:log-names:naive  (@ux ~bud)  (addr %bud-key-0)  ~
-::      ==
-::  ::
-::  ++  test-deposit  ^-  tang
-::    %+  expect-eq
-::      !>  %l2
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-marbud state)
-::      dominion:(~(got by points.state) ~marbud)
-::  ::
-::  ++  test-batch  ^-  tang
-::    =/  marbud-transfer    [%transfer-point (addr %marbud-key-0) |]
-::    =/  marbud-transfer-2  [%transfer-point (addr %marbud-key-1) |]
-::    ::
-::    %+  expect-eq
-::      !>  [(addr %marbud-key-1) 2]
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-marbud state)
-::      =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-own marbud-transfer))
-::      =^  f  state  (n state %bat q:(gen-tx-octs 1 marbud-own marbud-transfer-2))
-::      owner.own:(~(got by points.state) ~marbud)
-::  ::
-::  ++  test-l1-changed-spawn-proxy  ^-  tang
-::    %+  expect-eq
-::      !>  [(addr %bud-skey) 0]
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-bud state)
-::      =^  f  state  (n state (changed-spawn-proxy:l1 ~bud (addr %bud-skey)))
-::      spawn-proxy.own:(~(got by points.state) ~bud)
-::  ::
-::  ++  test-l1-changed-transfer-proxy  ^-  tang
-::    %+  expect-eq
-::      !>  [(addr %bud-key-1) 0]
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-bud state)
-::      =^  f  state  (n state (changed-transfer-proxy:l1 ~bud (addr %bud-key-1)))
-::      transfer-proxy.own:(~(got by points.state) ~bud)
-::  ::
-::  ++  test-l1-changed-management-proxy  ^-  tang
-::    %+  expect-eq
-::      !>  [(addr %bud-mkey) 0]
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-bud state)
-::      =^  f  state  (n state (changed-management-proxy:l1 ~bud (addr %bud-mkey)))
-::      management-proxy.own:(~(got by points.state) ~bud)
-::  ::
-::  ++  test-l1-changed-voting-proxy  ^-  tang
-::    %+  expect-eq
-::      !>  [(addr %bud-vkey) 0]
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-bud state)
-::      =^  f  state  (n state (changed-voting-proxy:l1 ~bud (addr %bud-vkey)))
-::      voting-proxy.own:(~(got by points.state) ~bud)
-::  ::
-::  ++  test-l1-changed-keys  ^-  tang
-::    =/  life          1
-::    =/  new-keys      [~bud suit encr auth life]
-::    ::
-::    %+  expect-eq
-::      !>  [suit auth encr]
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-bud state)
-::      =^  f  state  (n state (changed-keys:l1 new-keys))
-::      |1:keys.net:(~(got by points.state) ~bud)
-::  ::
-::  ++  test-l1-star-escape-requested  ^-  tang
-::    %+  expect-eq
-::      !>  [~ ~wes]
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-wes state)
-::      =^  f  state  (init-sambud state)
-::      =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
-::      escape.net:(~(got by points.state) ~sambud)
-::  ::
-::  ++  test-l1-star-escape-canceled  ^-  tang
-::    %+  expect-eq
-::      !>  ~
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-wes state)
-::      =^  f  state  (init-sambud state)
-::      =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
-::      =^  f  state  (n state (escape-canceled:l1 ~sambud ~wes))
-::      escape.net:(~(got by points.state) ~sambud)
-::  ::
-::  ++  test-l1-star-adopt-accept  ^-  tang
-::    %+  expect-eq
-::      !>  [~ %.y ~wes]
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-wes state)
-::      =^  f  state  (init-sambud state)
-::      =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
-::      =^  f  state  (n state (escape-accepted:l1 ~sambud ~wes))
-::      [escape.net sponsor.net]:(~(got by points.state) ~sambud)
-::  ::
-::  ++  test-l1-star-lost-sponsor  ^-  tang
-::    %+  expect-eq
-::      !>  [~ %.n ~bud]
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-sambud state)
-::      =^  f  state  (n state (lost-sponsor:l1 ~sambud ~bud))
-::      [escape.net sponsor.net]:(~(got by points.state) ~sambud)
+++  test-deposit  ^-  tang
+  %+  expect-eq
+    !>  %l2
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    dominion:(~(got by points.state) ~marbud)
+::
+++  test-batch  ^-  tang
+  =/  marbud-transfer    [marbud-own %transfer-point (addr %marbud-key-0) |]
+  =/  marbud-transfer-2  [marbud-own %transfer-point (addr %marbud-key-1) |]
+  ::
+  %+  expect-eq
+    !>  [(addr %marbud-key-1) 2]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat q:(gen-tx-octs 0 marbud-transfer %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx-octs 1 marbud-transfer-2 %marbud-key-0))
+    owner.own:(~(got by points.state) ~marbud)
+::
+++  test-l1-changed-spawn-proxy  ^-  tang
+  %+  expect-eq
+    !>  [(addr %bud-skey) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-bud state)
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~bud (addr %bud-skey)))
+    spawn-proxy.own:(~(got by points.state) ~bud)
+::
+++  test-l1-changed-transfer-proxy  ^-  tang
+  %+  expect-eq
+    !>  [(addr %bud-key-1) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-bud state)
+    =^  f  state  (n state (changed-transfer-proxy:l1 ~bud (addr %bud-key-1)))
+    transfer-proxy.own:(~(got by points.state) ~bud)
+::
+++  test-l1-changed-management-proxy  ^-  tang
+  %+  expect-eq
+    !>  [(addr %bud-mkey) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-bud state)
+    =^  f  state  (n state (changed-management-proxy:l1 ~bud (addr %bud-mkey)))
+    management-proxy.own:(~(got by points.state) ~bud)
+::
+++  test-l1-changed-voting-proxy  ^-  tang
+  %+  expect-eq
+    !>  [(addr %bud-vkey) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-bud state)
+    =^  f  state  (n state (changed-voting-proxy:l1 ~bud (addr %bud-vkey)))
+    voting-proxy.own:(~(got by points.state) ~bud)
+::
+++  test-l1-changed-keys  ^-  tang
+  =/  life          1
+  =/  new-keys      [~bud suit encr auth life]
+  ::
+  %+  expect-eq
+    !>  [suit auth encr]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-bud state)
+    =^  f  state  (n state (changed-keys:l1 new-keys))
+    |1:keys.net:(~(got by points.state) ~bud)
+::
+++  test-l1-star-escape-requested  ^-  tang
+  %+  expect-eq
+    !>  [~ ~wes]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-wes state)
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
+    escape.net:(~(got by points.state) ~sambud)
+::
+++  test-l1-star-escape-canceled  ^-  tang
+  %+  expect-eq
+    !>  ~
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-wes state)
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
+    =^  f  state  (n state (escape-canceled:l1 ~sambud ~wes))
+    escape.net:(~(got by points.state) ~sambud)
+::
+++  test-l1-star-adopt-accept  ^-  tang
+  %+  expect-eq
+    !>  [~ %.y ~wes]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-wes state)
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
+    =^  f  state  (n state (escape-accepted:l1 ~sambud ~wes))
+    [escape.net sponsor.net]:(~(got by points.state) ~sambud)
+::
+++  test-l1-star-lost-sponsor  ^-  tang
+  %+  expect-eq
+    !>  [~ %.n ~bud]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (lost-sponsor:l1 ~sambud ~bud))
+    [escape.net sponsor.net]:(~(got by points.state) ~sambud)
 ::
 ::  TODO: sponsorship tests for l1 planets, and L1/L2 sponsorship tests
 ::
