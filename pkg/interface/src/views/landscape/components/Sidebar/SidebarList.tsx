@@ -33,10 +33,10 @@ function sidebarSort(
     const bAppName = bAssoc?.['app-name'];
 
     const aUpdated = a.startsWith('~') 
-      ?  (inboxUnreads?.[`/${patpToUd(a)}`]?.last)
+      ?  (inboxUnreads?.[`/${patp2dec(a)}`]?.last)
       :  apps[aAppName]?.lastUpdated(a) || 0;
     const bUpdated = b.startsWith('~')
-      ?  (inboxUnreads?.[`/${patpToUd(b)}`]?.last || 0)
+      ?  (inboxUnreads?.[`/${patp2dec(b)}`]?.last || 0)
       :  apps[bAppName]?.lastUpdated(b) || 0;
 
     return bUpdated - aUpdated || alphabetical(a, b);

@@ -101,7 +101,7 @@ export function SidebarDmItem(props: {
 }) {
   const { ship, selected = false } = props;
   const contact = useContact(ship);
-  const title = contact?.nickname ?? cite(ship) ?? ship;
+  const title = contact?.nickname || (cite(ship) ?? ship)
   const hideAvatars = false;
   const img =
     contact?.avatar && !hideAvatars ? (
