@@ -4,17 +4,17 @@ import { Story, Meta } from '@storybook/react';
 import { Box } from '@tlon/indigo-react';
 import {
   GraphContent,
-  GraphContentProps,
+  GraphContentProps
 } from '~/views/landscape/components/Graph/GraphContent';
 
 export default {
   title: 'Graph/ContentTall',
-  component: GraphContent,
+  component: GraphContent
 } as Meta;
 
 const fakeApi = {} as any;
 
-const Template: Story<GraphContentProps> = (args) => (
+const Template: Story<GraphContentProps> = args => (
   <Box
     maxWidth="500px"
     backgroundColor="white"
@@ -48,31 +48,31 @@ There are presumed to be 3 roles of support:
 ## Second Heading [and a link](https://urbit.org)
 
 This demonstration text includes an inline mention here
-`,
+`
     },
     { mention: '~hastuc-dibtux' },
     {
       text: `
 to demonstrate text reflowing around inline elements. However, several elements do not flow inline, for example links.
-`,
+`
     },
     { url: 'https://www.youtube.com/watch?v=M04AKTCDavc&t=1s' },
     {
-      text: `Links can also be images, where they'll be embedded with the content`,
+      text: 'Links can also be images, where they\'ll be embedded with the content'
     },
     { url: 'http://media.urbit.org/site/sea30-poster.jpg' },
     {
       text: `
-A link should stand alone to allow for the expansion of embedded content. Another element that does not flow inline is the permalink`,
+A link should stand alone to allow for the expansion of embedded content. Another element that does not flow inline is the permalink`
     },
     {
       reference: {
         graph: {
           index: '/170141184505059416342852185329797955584',
           graph: '/ship/~darrux-landes/development',
-          group: '/ship/~bitbet-bolbel/urbit-community',
-        },
-      },
+          group: '/ship/~bitbet-bolbel/urbit-community'
+        }
+      }
     },
     {
       text: `
@@ -113,8 +113,8 @@ function fibonacci(num: number) {
 \`\`\`
 
 
-`,
-    },
-  ],
+`
+    }
+  ]
 };
 

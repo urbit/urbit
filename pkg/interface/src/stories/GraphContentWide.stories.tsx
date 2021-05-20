@@ -4,12 +4,12 @@ import { Story, Meta } from '@storybook/react';
 
 import {
   GraphContent,
-  GraphContentProps,
+  GraphContentProps
 } from '~/views/landscape/components/Graph/GraphContent';
 
 export default {
   title: 'Graph/ContentWide',
-  component: GraphContent,
+  component: GraphContent
 } as Meta;
 
 const fakeApi = {} as any;
@@ -34,11 +34,11 @@ Omnibus.args = {
     { text: 'as for @H, I literally just miscounted' },
     {
       url:
-        'https://github.com/urbit/urbit/blob/master/pkg/arvo/ted/eth-watcher.hoon',
+        'https://github.com/urbit/urbit/blob/master/pkg/arvo/ted/eth-watcher.hoon'
     },
     {
       text:
-        'Text in landscape chats support *bolding* **italics** and ~~strikeouts~~ `code snippets`',
+        'Text in landscape chats support *bolding* **italics** and ~~strikeouts~~ `code snippets`'
     },
     { mention: '~fabled-faster' },
     {
@@ -46,16 +46,15 @@ Omnibus.args = {
         graph: {
           index: '/170141184505059416342852185329797955584',
           graph: '/ship/~darrux-landes/development',
-          group: '/ship/~bitbet-bolbel/urbit-community',
-        },
-      },
+          group: '/ship/~bitbet-bolbel/urbit-community'
+        }
+      }
     },
     { text: ' ' },
     { mention: 'sipfyn-pidmex' },
     { text: `: you can always use a pattern like this
 > blockquote demo
 should not be quoted` }
-  ],
+  ]
 };
-
 
