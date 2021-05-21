@@ -54,8 +54,13 @@ export default class Send extends Component {
     this.initPayment  = this.initPayment.bind(this);
     this.checkPayee  = this.checkPayee.bind(this);
     this.feeSelect = this.feeSelect.bind(this);
+    this.feeDismiss = this.feeDismiss.bind(this);
     this.toggleSignMethod = this.toggleSignMethod.bind(this);
     this.setSignMethod = this.setSignMethod.bind(this);
+  }
+
+  feeDismiss() {
+    this.setState({showModal: false});
   }
 
   feeSelect(which) {
@@ -352,7 +357,7 @@ export default class Send extends Component {
                   <Icon icon="ChevronSouth"
                         fontSize="14px"
                         color="lightGray"
-                        onClick={() => { this.setState({showModal: !this.state.showModal}); }}
+                        onClick={() => {if (!this.state.showModal) this.setState({showModal: true}); }}
                         cursor="pointer"/>
                 </Row>
               </Row>
@@ -361,6 +366,7 @@ export default class Send extends Component {
                  <FeePicker
                    feeChoices={this.state.feeChoices}
                    feeSelect={this.feeSelect}
+                   feeDismiss={this.feeDismiss}
                  />
                 }
               </Col>

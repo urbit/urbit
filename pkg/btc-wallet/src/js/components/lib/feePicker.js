@@ -19,7 +19,27 @@ export default class FeePicker extends Component {
       selected: 'mid'
     }
 
-    this.select = this.select.bind(this);
+    this.select       = this.select.bind(this);
+    this.clickDismiss = this.clickDismiss.bind(this);
+    this.setModalRef  = this.setModalRef.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener("click", this.clickDismiss);
+  }
+
+  componentWillUnount() {
+    document.removeEventListener("click", this.clickDismiss);
+  }
+
+  setModalRef(n) {
+    this.modalRef = n;
+  }
+
+  clickDismiss(e) {
+    if (this.modalRef && !(this.modalRef.contains(e.target))){
+      this.props.feeDismiss();
+    }
   }
 
   select(which) {
@@ -30,6 +50,7 @@ export default class FeePicker extends Component {
   render() {
     return (
       <Box
+        ref={this.setModalRef}
         position="absolute" p={4}
         border="1px solid green" zIndex={10}
         backgroundColor="white" borderRadius={3}
