@@ -1,7 +1,7 @@
 ::  azimuth-rpc: command parsing and utilities
 ::
 /-  rpc=json-rpc
-/+  naive
+/+  naive, json-rpc
 ::
 =>  ::  Utilities
     ::
@@ -287,13 +287,13 @@
         |=  [id=@t params=(map @t json) action=spawn-action]
         ^-  [(unit cage) response:rpc]
         ?.  (params:validate params)
-          [~ ~(params error id)]
+          [~ ~(params error:json-rpc id)]
         =/  sig=(unit @ux)                (sig:from-json params)
         =/  from=(unit [@p proxy:naive])  (from:from-json params)
         =/  raw=(unit octs)               (raw:from-json params)
         =/  data=(unit @p)                (ship:data:from-json params)
         ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
-          [~ ~(parse error id)]
+          [~ ~(parse error:json-rpc id)]
         :_  [%result id s+'ok']
         %-  some
         :-  %aggregator-action
@@ -312,13 +312,13 @@
         |=  [id=@t params=(map @t json) action=proxy-action]
         ^-  [(unit cage) response:rpc]
         ?.  (params:validate params)
-          [~ ~(params error id)]
+          [~ ~(params error:json-rpc id)]
         =/  sig=(unit @ux)                (sig:from-json params)
         =/  from=(unit [@p proxy:naive])  (from:from-json params)
         =/  raw=(unit octs)               (raw:from-json params)
         =/  data=(unit @ux)               (address:data:from-json params)
         ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
-          [~ ~(parse error id)]
+          [~ ~(parse error:json-rpc id)]
         :_  [%result id s+'ok']
         %-  some
         :-  %aggregator-action
@@ -330,18 +330,6 @@
           %set-spawn-proxy       [%set-spawn-proxy u.data]
           %set-transfer-proxy    [%set-transfer-proxy u.data]
         ==
-      --
-    ::
-    ++  error
-      |_  id=@t
-      ::  https://www.jsonrpc.org/specification#error_object
-      ::
-      ++  parse      [%error id '-32700' 'Failed to parsed']
-      ++  request    [%error id '-32600' 'Invalid Request']
-      ++  method     [%error id '-32601' 'Method not found']
-      ++  params     [%error id '-32602' 'Invalid params']
-      ++  internal   [%error id '-32603' 'Internal error']
-      ++  not-found  [%error id '-32000' 'Resource not found']
       --
     ::
     ++  validate
@@ -357,26 +345,26 @@
   |=  [id=@t params=(map @t json) scry=$-(ship (unit point:naive))]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 1)
-    ~(params error id)
+    ~(params error:json-rpc id)
   ?~  ship=(~(get by params) 'ship')
-    ~(params error id)
+    ~(params error:json-rpc id)
   ?~  ship=(rush (so:dejs:format u.ship) ;~(pfix sig fed:ag))
-    ~(params error id)
+    ~(params error:json-rpc id)
   ?~  point=(scry u.ship)
-    ~(params error id)
+    ~(params error:json-rpc id)
   [%result id (point:to-json u.point)]
 ::
 ++  transfer-point
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]
   ?.  (params:validate params)
-    [~ ~(params error id)]
+    [~ ~(params error:json-rpc id)]
   =/  sig=(unit @ux)         (sig:from-json params)
   =/  from=(unit [ship @t])  (from:from-json params)
   =/  raw=(unit octs)        (raw:from-json params)
   =/  data=(unit [@ux ?])    (address-transfer:data:from-json params)
   ?:  |(?=(~ sig) ?=(~ from) ?=(~ raw) ?=(~ data))
-    [~ ~(parse error id)]
+    [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
   %-  some
   noun+!>([u.sig u.from u.data])
@@ -385,14 +373,14 @@
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]
   ?.  (params:validate params)
-    [~ ~(params error id)]
+    [~ ~(params error:json-rpc id)]
   =/  sig=(unit @ux)          (sig:from-json params)
   =/  from=(unit [ship @t])   (from:from-json params)
   =/  raw=(unit octs)         (raw:from-json params)
   =/  data=(unit [encrypt=@ auth=@ crypto-suite=@ breach=?])
     (keys:data:from-json params)
   ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
-    [~ ~(parse error id)]
+    [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
   %-  some
   noun+!>([u.sig u.from u.data])
@@ -401,13 +389,13 @@
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]
   ?.  (params:validate params)
-    [~ ~(params error id)]
+    [~ ~(params error:json-rpc id)]
   =/  sig=(unit @ux)                (sig:from-json params)
   =/  from=(unit [@p proxy:naive])  (from:from-json params)
   =/  raw=(unit octs)               (raw:from-json params)
   =/  data=(unit [@p @ux])          (address-ship:data:from-json params)
   ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
-    [~ ~(parse error id)]
+    [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
   %-  some
   aggregator-action+!>([%submit | u.sig %ful u.raw u.from %spawn u.data])
@@ -426,11 +414,11 @@
   |=  [id=@t params=(map @t json) scry=$-([ship proxy:naive] (unit @))]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 3)
-    ~(params error id)
+    ~(params error:json-rpc id)
   ?~  from=(from:from-json params)
-    ~(parse error id)
+    ~(parse error:json-rpc id)
   ?~  nonce=(scry u.from)
-    ~(params error id)
+    ~(params error:json-rpc id)
   [%result id (numb:enjs:format u.nonce)]
 ::
 ++  pending
@@ -443,7 +431,7 @@
     |=  [id=@t params=(map @t json) pending=(list pend-tx)]
     ^-  response:rpc
     ?.  =((lent ~(tap by params)) 0)
-      ~(params error id)
+      ~(params error:json-rpc id)
     [%result id (pending:to-json pending)]
   :: - readPendingByShip(ship) -> (list pend-tx)
   ::
@@ -451,9 +439,9 @@
     |=  [id=@t params=(map @t json) scry=$-(@p (list pend-tx))]
     ^-  response:rpc
     ?.  =((lent ~(tap by params)) 1)
-      ~(params error id)
+      ~(params error:json-rpc id)
     ?~  ship=(ship:from-json params)
-      ~(parse error id)
+      ~(parse error:json-rpc id)
     [%result id (pending:to-json (scry u.ship))]
   :: - readPendingByAddress(address) -> (list pend-tx)
   ::
@@ -461,9 +449,9 @@
     |=  [id=@t params=(map @t json) scry=$-(@ux (list pend-tx))]
     ^-  response:rpc
     ?.  =((lent ~(tap by params)) 1)
-      ~(params error id)
+      ~(params error:json-rpc id)
     ?~  address=(address:from-json params)
-      ~(parse error id)
+      ~(parse error:json-rpc id)
     [%result id (pending:to-json (scry u.address))]
   --
 ::
@@ -471,9 +459,9 @@
   |=  [id=@t params=(map @t json) scry=$-(@ tx-status)]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 1)
-    ~(params error id)
+    ~(params error:json-rpc id)
   ?~  keccak=(keccak:from-json params)
-    ~(parse error id)
+    ~(parse error:json-rpc id)
   [%result id (tx-status:to-json (scry u.keccak))]
 ::
 :: ++  history
@@ -485,8 +473,8 @@
 ::       ==
 ::   ^-  response:rpc
 ::   ?.  =((lent ~(tap by params)) 1)
-::     ~(params error id)
+::     ~(params error:json-rpc id)
 ::   ?~  from=(from:from-json params)
-::     ~(parse error id)
+::     ~(parse error:json-rpc id)
 ::   [%result id (txs:to-json (scry u.from))]
 --

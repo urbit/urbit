@@ -132,8 +132,8 @@
     (response-to-json:json-rpc response)
   =,  azimuth-rpc
   ?.  ?=([%map *] params)
-    [~ ~(parse error id)]
-  ?+    method  [~ ~(method error id)]
+    [~ ~(parse error:json-rpc id)]
+  ?+    method  [~ ~(method error:json-rpc id)]
     %get-point             [~ (get-point id +.params point:scry)]
     %transfer-point        (transfer-point id +.params)
     %configure-keys        (configure-keys id +.params)

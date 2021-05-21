@@ -25,7 +25,9 @@
       ^-  json
       ?-  -.params
         %list    [%a +.params]
-        %map     [%o +.params] 
+        ::  FIXME: support either %map or %object (also in /sur/json/rpc)
+        ::
+        %map     [%o +.params]
         %object  [%o (~(gas by *(map @t json)) +.params)]
   ==  ==
 ::
@@ -40,9 +42,9 @@
     %-  molt
     ^-  (list [@t json])
     ::  FIXME: return 'id' as string, number or NULL
-    ::  
-    :~  ['jsonrpc' s+'2.0'] 
-        ['id' s+id.response] 
+    ::
+    :~  ['jsonrpc' s+'2.0']
+        ['id' s+id.response]
         ['result' res.response]
     ==
   ::
@@ -50,8 +52,8 @@
     :-  %o
     %-  molt
     ^-  (list [@t json])
-    :~  ['jsonrpc' s+'2.0'] 
-        ['id' ?~(id.response ~ s+id.response)] 
+    :~  ['jsonrpc' s+'2.0']
+        ['id' ?~(id.response ~ s+id.response)]
         ['code' n+code.response]
         ['message' s+message.response]
     ==
@@ -83,6 +85,18 @@
       ^-  request-params
       ?+  -.json  !!
         %a  [%list ((ar same) json)]
-        %o  [%map ((om same) json)] 
+        %o  [%map ((om same) json)]
   ==  ==
+::
+++  error
+  |_  id=@t
+  ::  https://www.jsonrpc.org/specification#error_object
+  ::
+  ++  parse      [%error id '-32700' 'Failed to parsed']
+  ++  request    [%error id '-32600' 'Invalid Request']
+  ++  method     [%error id '-32601' 'Method not found']
+  ++  params     [%error id '-32602' 'Invalid params']
+  ++  internal   [%error id '-32603' 'Internal error']
+  ++  not-found  [%error id '-32000' 'Resource not found']
+  --
 --
