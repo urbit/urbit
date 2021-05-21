@@ -3,18 +3,10 @@ const webpack = require('webpack');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const urbitrc = require('./urbitrc');
-const fs = require('fs');
-const util = require('util');
 const _ = require('lodash');
 const { execSync } = require('child_process');
 
 const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
-
-
-function copyFile(src,dest) {
-  return new Promise((res,rej) =>
-    fs.copyFile(src,dest, err => err ? rej(err) : res()));
-}
 
 class UrbitShipPlugin {
   constructor(urbitrc) {
@@ -26,7 +18,7 @@ class UrbitShipPlugin {
     compiler.hooks.afterEmit.tapPromise(
       'UrbitShipPlugin',
       async (compilation) => {
-        const src = path.resolve(compiler.options.output.path, 'index.js');
+        // const src = path.resolve(compiler.options.output.path, 'index.js');
         // uncomment to copy into all piers
         //
         // return Promise.all(this.piers.map(pier => {
@@ -64,7 +56,7 @@ if(urbitrc.URL) {
       '/~landscape/js/bundle/index.*.js': {
         target: 'http://localhost:9000',
         pathRewrite: (req, path) => {
-          return '/index.js'
+          return '/index.js';
         }
       },
       // '/~landscape/js/serviceworker.js': {
@@ -78,7 +70,7 @@ if(urbitrc.URL) {
         target: urbitrc.URL,
         router,
         // ensure proxy doesn't timeout channels
-        proxyTimeout: 0,
+        proxyTimeout: 0
      }
     }
   };
@@ -87,7 +79,7 @@ if(urbitrc.URL) {
 module.exports = {
   mode: 'development',
   entry: {
-    app: './src/index.js',
+    app: './src/index.js'
     // serviceworker: './src/serviceworker.js'
   },
   module: {
@@ -100,7 +92,7 @@ module.exports = {
             presets: ['@babel/preset-env', '@babel/typescript', ['@babel/preset-react', {
               runtime: 'automatic',
               development: true,
-              importSource: '@welldone-software/why-did-you-render',
+              importSource: '@welldone-software/why-did-you-render'
             }]],
             plugins: [
               '@babel/transform-runtime',
@@ -123,6 +115,10 @@ module.exports = {
           // Compiles Sass to CSS
           'sass-loader'
         ]
+      },
+      {
+        test: /\.(woff|woff2|ttf)$/i,
+        use: ['url-loader']
       }
     ]
   },
@@ -139,7 +135,7 @@ module.exports = {
       'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
       'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),
       'process.env.TUTORIAL_BOOK': JSON.stringify('guides-9684'),
-      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143')
     })
 
     // new CleanWebpackPlugin(),

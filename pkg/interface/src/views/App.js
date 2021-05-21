@@ -27,6 +27,7 @@ import Omnibox from './components/leap/Omnibox';
 import StatusBar from './components/StatusBar';
 import './css/fonts.css';
 import './css/indigo-static.css';
+import 'katex/dist/katex.css';
 import { Content } from './landscape/components/Content';
 import './landscape/css/custom.css';
 
@@ -78,6 +79,7 @@ class App extends React.Component {
     this.store.setStateHandler(this.setState.bind(this));
     this.state = this.store.state;
 
+    // eslint-disable-next-line
     this.appChannel = new window.channel();
     this.api = new GlobalApi(this.ship, this.appChannel, this.store);
     gcpManager.configure(this.api);
@@ -102,7 +104,7 @@ class App extends React.Component {
       this.updateTheme(this.themeWatcher);
     }, 500);
     this.api.local.getBaseHash();
-    this.api.local.getRuntimeLag();  //TODO  consider polling periodically
+    this.api.local.getRuntimeLag();  // TODO  consider polling periodically
     this.api.settings.getAll();
     gcpManager.start();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {

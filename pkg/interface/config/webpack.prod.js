@@ -42,6 +42,10 @@ module.exports = {
           // Compiles Sass to CSS
           'sass-loader'
         ]
+      },
+      {
+        test: /\.(woff|woff2|ttf)$/i,
+        use: ['url-loader']
       }
     ]
   },
@@ -65,8 +69,8 @@ module.exports = {
       'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
       'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),
       'process.env.TUTORIAL_BOOK': JSON.stringify('guides-9684'),
-      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143'),
-    }),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143')
+    })
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',
     //   template: './public/index.html',
