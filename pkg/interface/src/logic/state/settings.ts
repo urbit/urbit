@@ -1,8 +1,8 @@
 import f from 'lodash/fp';
-import { RemoteContentPolicy, LeapCategories, leapCategories } from "~/types/local-update";
+import { RemoteContentPolicy, LeapCategories, leapCategories } from '~/types/local-update';
 import { useShortcut as usePlainShortcut } from '~/logic/lib/shortcutContext';
 import { BaseState, createState } from '~/logic/state/base';
-import {useCallback} from 'react';
+import { useCallback } from 'react';
 
 export interface ShortcutMapping {
   cycleForward: string;
@@ -11,7 +11,6 @@ export interface ShortcutMapping {
   navBack: string;
   hideSidebar: string;
 }
-
 
 export interface SettingsState extends BaseState<SettingsState> {
   display: {
@@ -76,7 +75,7 @@ const useSettingsState = createState<SettingsState>('Settings', {
   keyboard: {
     cycleForward: 'ctrl+\'',
     cycleBack: 'ctrl+;',
-    navForward: 'ctrl+[',
+    navForward: 'ctrl+]',
     navBack: 'ctrl+[',
     hideSidebar: 'ctrl+\\'
   }
