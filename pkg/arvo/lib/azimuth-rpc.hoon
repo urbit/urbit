@@ -29,13 +29,13 @@
     +$  pend-tx  [force=? =raw-tx:naive]
     ::
     ++  from-json
+      =,  dejs-soft:format
       |%
       ++  keys
         |=  params=(map @t json)
         ^-  (unit [encrypt=@ auth=@ crypto-suite=@ breach=?])
         ?~  data=(~(get by params) 'data')  ~
         %.  u.data
-        =,  dejs-soft:format
         %-  ot
         :~  ['encrypt' so]
             ['auth' so]
@@ -54,7 +54,6 @@
             ?~  add.u.ans  ~
             (some [u.add.u.ans r.u.ans])
           %.  u.data
-          =,  dejs-soft:format
           %-  ot
           ~[['address' (cu to-hex so)] ['reset' bo]]
         ::
@@ -67,9 +66,8 @@
             ?~  add.u.ans  ~
             (some [ship.u.ans u.add.u.ans])
           %.  u.data
-          =,  dejs-soft:format
           %-  ot
-          :~  ['ship' (su ;~(pfix sig fed:ag))]
+          :~  ['ship' (su ;~(pfix ^sig fed:ag))]
               ['address' (cu to-hex so)]
           ==
         ::
@@ -79,7 +77,6 @@
           ?~  data=(~(get by params) 'data')  ~
           =;  ans=(unit (unit @ux))
             ?~(ans ~ u.ans)
-          =,  dejs-soft:format
           %.  u.data
           (ot ['address' (cu to-hex so)]~)
         ::
@@ -87,18 +84,16 @@
           |=  params=(map @t json)
           ^-  (unit @p)
           ?~  data=(~(get by params) 'data')  ~
-          =,  dejs-soft:format
           %.  u.data
-          (ot ['ship' (su ;~(pfix sig fed:ag))]~)
+          (ot ['ship' (su ;~(pfix ^sig fed:ag))]~)
         --
       ::
       ++  ship
         |=  params=(map @t json)
         ^-  (unit @p)
         ?~  data=(~(get by params) 'ship')  ~
-        =,  dejs-soft:format
         %.  u.data
-        (su ;~(pfix sig fed:ag))
+        (su ;~(pfix ^sig fed:ag))
       ::
       ++  address
         |=  params=(map @t json)
@@ -106,7 +101,6 @@
         ?~  data=(~(get by params) 'address')  ~
         =;  ans=(unit (unit @ux))
           ?~(ans ~ u.ans)
-        =,  dejs-soft:format
         ((cu to-hex so) u.data)
       ::
       ++  sig
@@ -116,17 +110,15 @@
         =;  ans=(unit (unit @ux))
           ?~(ans ~ u.ans)
         %.  u.sig
-        =,  dejs-soft:format
         (cu to-hex so)
       ::
       ++  from
         |=  params=(map @t json)
         ^-  (unit [@p proxy:naive])
         ?~  from=(~(get by params) 'from')  ~
-        =,  dejs-soft:format
         %.  u.from
         %-  ot
-        :~  ['ship' (su ;~(pfix sig fed:ag))]
+        :~  ['ship' (su ;~(pfix ^sig fed:ag))]
             ['proxy' (cu proxy:naive so)]
         ==
       ::
@@ -136,7 +128,6 @@
         ?~  keccak=(~(get by params) 'keccak')  ~
         =;  ans=(unit (unit @ux))
           ?~(ans ~ u.ans)
-        =,  dejs-soft:format
         ((cu to-hex so) u.keccak)
       ::
       ++  raw
@@ -147,21 +138,19 @@
           ?~  ans  ~
           ?~  u.ans  ~
           (some (as-octs:mimes:html u.u.ans))
-        =,  dejs-soft:format
         ((cu to-hex so) u.raw)
       --
     ::
     ++  to-json
+      =,  enjs:format
       |%
       ++  pending
         |=  pending=(list pend-tx)
         ^-  json
-        =,  enjs:format
         :-  %a
         %+  turn  pending
         |=  pend-tx
         ^-  json
-        =,  enjs:format
         %-  pairs
         :~  ['force' b+force]
           ::
@@ -174,7 +163,6 @@
       ++  tx
         |=  =tx:naive
         ^-  json
-        =,  enjs:format
         |^
         %-  pairs
         :~  ['tx' (parse-tx +.tx)]
@@ -228,7 +216,6 @@
       ++  point
         |=  =point:naive
         ^-  json
-        =,  enjs:format
         %-  pairs
         :~  ['dominion' s+dominion.point]
           ::
@@ -268,7 +255,6 @@
       ++  ownership
         |=  [=address:naive =nonce:naive]
         ^-  json
-        =,  enjs:format
         %-  pairs
         :~  ['address' s+(crip "0x{((x-co:co 20) address)}")]
             ['nonce' (numb nonce)]
@@ -277,7 +263,6 @@
       ++  tx-status
         |=  =^tx-status
         ^-  json
-        =,  enjs:format
         %-  pairs
         :~  ['status' s+status.tx-status]
           ::
