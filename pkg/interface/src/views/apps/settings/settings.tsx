@@ -114,7 +114,7 @@ return;
             <SidebarItem icon='Upload' text='Remote Storage' hash='s3' />
             <SidebarItem icon='LeapArrow' text='Leap' hash='leap' />
             <SidebarItem icon='Node' text='CalmEngine' hash='calm' />
-            <SidebarItem icon='Keyboard' text='Shortcuts' hash='shortcuts' />
+            <SidebarItem icon='EastCarat' text='Shortcuts' hash='shortcuts' />
             <SidebarItem
               icon='Locked'
               text='Devices + Security'
