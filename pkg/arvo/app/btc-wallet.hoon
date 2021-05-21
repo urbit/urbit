@@ -60,9 +60,12 @@
       %btc-wallet
     [[%custom `'/~btc' `'/~btc/img/tile.png'] %.y]
   =/  warning  [%settings-event !>([%put-entry %btc-wallet %warning %b %.y])]
+  =/  currency
+    [%settings-event !>([%put-entry %btc-wallet %currency %s 'USD'])]
   :-  :~  [%pass /btc-wallet-server %agent [our.bowl %file-server] %poke file]
           [%pass /btc-wallet-tile %agent [our.bowl %launch] %poke tile]
           [%pass /warn %agent [our.bowl %settings-store] %poke warning]
+          [%pass /warn %agent [our.bowl %settings-store] %poke currency]
       ==
   %_  this
       state

@@ -20,7 +20,7 @@ class Store {
       psbt: '',
       address: null,
       currencyRates: {
-        BTC: { last: 1, symbol: '฿' }
+        BTC: { last: 1, symbol: 'BTC' }
       },
       denomination: 'BTC',
       showWarning: true,

@@ -99,12 +99,15 @@ export default class Balance extends Component {
               {this.state.copiedString ? "copied" : addressText}
              </Text>
              <CurrencyPicker
+               api={this.props.api}
                denomination={denomination}
                currencies={this.props.state.currencyRates}
              />
            </Row>
            <Col justifyContent="center" alignItems="center">
-             <Text fontSize="52px" color="orange">{value}</Text>
+             <Text fontSize="40px" color="orange" style={{whiteSpace: "nowrap"}} >
+               {value}
+             </Text>
              <Text fontSize={1} color="orange">{`${sats}${unconfirmedString} sats`}</Text>
            </Col>
            <Row flexDirection="row-reverse">

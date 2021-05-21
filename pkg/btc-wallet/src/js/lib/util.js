@@ -92,7 +92,7 @@ export function satsToCurrency(sats, denomination, rates){
   let val = (sats * rate.last) * 0.00000001;
   let text;
   if (denomination === 'BTC'){
-    text = rate.symbol + val.toFixed(8)
+    text = val + ' ' + rate.symbol
   } else {
     text = rate.symbol + val.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
   }

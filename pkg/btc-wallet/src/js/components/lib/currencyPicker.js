@@ -20,13 +20,22 @@ export default class CurrencyPicker extends Component {
   }
 
   switchCurrency(){
+    let newCurrency;
     if (this.props.denomination === 'BTC') {
       if (this.props.currencies['USD']) {
-        store.handleEvent({data: {denomination: 'USD'}})
+        newCurrency = "USD";
       }
     } else if (this.props.denomination === 'USD') {
-      store.handleEvent({data: {denomination: 'BTC'}})
+      newCurrency = "BTC";
     }
+    let setCurrency = {
+      "put-entry": {
+        value: newCurrency,
+        "entry-key": "currency",
+        "bucket-key": "btc-wallet",
+      }
+    }
+    this.props.api.settingsEvent(setCurrency);
   }
 
 
