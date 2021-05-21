@@ -14,7 +14,7 @@ export const stateSetter = <T extends {}>(
 ): void => {
   const old = get();
   const [state, patches] = produceWithPatches(old, fn) as readonly [(T & BaseState<T>), any, Patch[]];
-  console.log(patches);
+  //console.log(patches);
   set(state);
 };
 

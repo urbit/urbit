@@ -1,7 +1,8 @@
 import { GraphNode } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import BigIntArrayOrderedMap, {
-  arrToString
+  arrToString,
+  stringToArr
 } from '@urbit/api/lib/BigIntArrayOrderedMap';
 import bigInt, { BigInteger } from 'big-integer';
 import produce from 'immer';
@@ -70,7 +71,7 @@ const addNodesFlat = (json: any, state: GraphState): GraphState => {
 
     indices.forEach((index) => {
       if (index.split('/').length === 0) { return; }
-      const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
+      const indexArr = stringToArr(index);
       if (indexArr.length === 0) { return state; }
 
       let node = data.nodes[index];
@@ -103,7 +104,7 @@ const addNodesThread = (json: any, state: GraphState): GraphState => {
 
     indices.forEach((index) => {
       if (index.split('/').length === 0) { return; }
-      const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
+      const indexArr = stringToArr(index);
 
       if (indexArr.length === 0) { return state; }
 
@@ -236,32 +237,44 @@ const addNodes = (json, state) => {
     return graph;
   };
 
-  const _killByFuzzyTimestamp = (graph, resource, timestamp, isFlat = false) => {
+  const _removePending = (
+    graph,
+    flatGraph,
+    threadGraphs,
+    post,
+    resource
+  ) => {
+    if (!post.hash) { return [graph, flatGraph, threadGraphs]; }
+    const timestamp = post['time-sent'];
+
     if (state.graphTimesentMap[resource][timestamp]) {
       const index = state.graphTimesentMap[resource][timestamp];
 
       if (index.split('/').length === 0) { return graph; }
-      const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
+      const indexArr = stringToArr(index);
 
       delete state.graphTimesentMap[resource][timestamp];
 
-      if (isFlat) {
-        return graph.delete(indexArr);
-      } else {
-        return _remove(graph, indexArr);
+      if (graph) {
+        graph = _remove(graph, indexArr);
+      }
+
+      if (flatGraph) {
+        flatGraph = flatGraph.delete(indexArr);
+      }
+
+      if (threadGraphs) {
+        let k = [];
+        for (let i in indexArr) {
+          k.push(indexArr[i]);
+          if (threadGraphs[k]) {
+            threadGraphs[k] = threadGraphs[k].delete(indexArr);
+          }
+        }
       }
     }
-    return graph;
-  };
-
-  const _removePending = (graph, post, resource, isFlat = false) => {
-    if (!post.hash) { return graph; }
-
-    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'], isFlat);
-    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'] - 1, isFlat);
-    graph = _killByFuzzyTimestamp(graph, resource, post['time-sent'] + 1, isFlat);
     
-    return graph;
+    return [graph, flatGraph, threadGraphs];
   };
 
   const data = _.get(json, 'add-nodes', false);
@@ -292,29 +305,30 @@ const addNodes = (json, state) => {
     indices.forEach((index) => {
       let node = data.nodes[index];
       const old = state.graphs[resource].size;
+     
+      if (index.split('/').length === 0) { return state; }
+      const indexArr = stringToArr(index);
 
-      if (resource in state.flatGraphs) {
-        //  TODO: will this cause multiple pending replies to render 
-        //  in the reply view and thread view? probably
-
-        state.flatGraphs[resource] = _removePending(
-          state.flatGraphs[resource],
-          node.post,
-          resource,
-          true
-        );
-      } else {
-        state.graphs[resource] = _removePending(
+      let [graph, flatGraph, threadGraphs] =
+        _removePending(
           state.graphs[resource],
+          state.flatGraphs[resource],
+          state.threadGraphs[resource],
           node.post,
           resource
         );
-      }
-      const newSize = state.graphs[resource].size;
 
-      if (index.split('/').length === 0) { return; }
-      const indexArr = index.split('/').slice(1).map((ind) => bigInt(ind));
-      if (indexArr.length === 0) { return state; }
+      if (graph) {
+        state.graphs[resource] = graph;
+      }
+      if (flatGraph) {
+        state.flatGraphs[resource] = flatGraph;
+      }
+      if (threadGraphs) {
+        state.threadGraphs[resource] = threadGraphs;
+      }
+
+      const newSize = state.graphs[resource].size;
 
       if (node.post.pending) {
         state.graphTimesentMap[resource][node.post['time-sent']] = index;
@@ -335,28 +349,23 @@ const addNodes = (json, state) => {
           }));
       }
 
-      //  TODO: make pending work here too
-      let threadKey = indexArr[0].toString();
-      if (resource in state.threadGraphs &&
-          threadKey in state.threadGraphs[resource]) {
+      if (indexArr.length > 1 && resource in state.threadGraphs) {
+        let parentKey = arrToString(indexArr.slice(0, indexArr.length - 1));
 
-        let thread = state.threadGraphs[resource][threadKey];
-        if (indexArr.length > 1) {
-          let parentKey = indexArr.slice(0, indexArr.length - 1);
-          if (thread.has(parentKey)) {
-            let isFirstChild =  Array.from(thread.keys()).filter((k) => {
-              return arrToString(k).indexOf(parentKey) !== -1;
-            }).length === 0;
+        if (parentKey in state.threadGraphs[resource]) {
+          let thread = state.threadGraphs[resource][parentKey];
+          let isFirstChild =  Array.from(thread.keys()).filter((k) => {
+            return stringToArr(parentKey).length < k.length;
+          }).length === 0;
 
-            if (isFirstChild) {
-              state.threadGraphs[resource][threadKey] =
-                state.threadGraphs[resource][threadKey].set(
-                  indexArr,
-                  produce(node, draft => {
-                    draft.children = mapifyChildren({});
-                  })
-                );
-            }
+          if (isFirstChild) {
+            state.threadGraphs[resource][parentKey] =
+              state.threadGraphs[resource][parentKey].set(
+                indexArr,
+                produce(node, draft => {
+                  draft.children = mapifyChildren({});
+                })
+              );
           }
         }
       }
@@ -408,9 +417,7 @@ const removePosts = (json, state: GraphState): GraphState => {
       if (index.split('/').length === 0) {
  return;
 }
-      const indexArr = index.split('/').slice(1).map((ind) => {
-        return bigInt(ind);
-      });
+      const indexArr = stringToArr(index);
       state.graphs[res] = _remove(state.graphs[res], indexArr);
     });
   }
