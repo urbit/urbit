@@ -1,4 +1,4 @@
-::  graph-store|add-post: add post to a graph
+::  dm-hook|dm: DM somebody
 ::
 /-  *graph-store
 :-  %say
@@ -16,6 +16,6 @@
 :-  %graph-update-2
 ^-  update
 :-  now
-:+  %add-nodes  [our %inbox]
+:+  %add-nodes  [our %dm-inbox]
 %-  ~(gas by *(map index node))
 ~[[~[him now] [%&^post [%empty ~]]]]

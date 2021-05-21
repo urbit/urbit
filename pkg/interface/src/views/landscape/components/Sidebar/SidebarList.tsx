@@ -78,7 +78,7 @@ function getItems(associations: Associations, workspace: Workspace, inbox: Graph
       }
    });
   const direct: string[] = workspace.type !== 'messages' ? []
-    : inbox.keys().map(x => patp(x.toJSNumber()))
+    : inbox.keys().map(x => patp(x.toString()))
 
   return [...filtered, ...direct];
 

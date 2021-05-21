@@ -14,6 +14,7 @@ import { getItemTitle, getModuleIcon, uxToHex } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
 import Dot from '~/views/components/Dot';
 import { SidebarAppConfigs } from './types';
+import {useHarkDm} from '~/logic/state/hark';
 
 function SidebarItemBase(props: {
   to: string;
@@ -81,7 +82,7 @@ function SidebarItemBase(props: {
             flex="1"
             overflow="hidden"
             width="100%"
-            mono={urbitOb.isValidPatp(title)}
+            mono={mono}
             color={color}
             fontWeight={fontWeight}
             style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
@@ -103,6 +104,7 @@ export function SidebarDmItem(props: {
   const contact = useContact(ship);
   const title = contact?.nickname || (cite(ship) ?? ship)
   const hideAvatars = false;
+  const { unreads } = useHarkDm(ship) || { unreads : 0 };
   const img =
     contact?.avatar && !hideAvatars ? (
       <BaseImage
@@ -126,10 +128,10 @@ export function SidebarDmItem(props: {
     <SidebarItemBase
       selected={selected}
       hasNotification={false}
-      hasUnread={false}
+      hasUnread={unreads as number > 0}
       to={`/~landscape/messages/dm/${ship}`}
       title={title}
-      mono={!!contact?.nickname}
+      mono={!contact?.nickname}
       isSynced
     >
       {img}
