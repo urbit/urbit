@@ -17,6 +17,23 @@ export default class Header extends Component {
     let icon      = this.props.settings ? "X" : "Adjust";
     let iconColor = this.props.settings ? "black" : "orange";
     let iconLink  = this.props.settings ? "/~btc" : "/~btc/settings";
+
+    let connection = null;
+    let badge = null;
+    if (!(this.props.state.provider && this.props.state.provider.connected)) {
+      connection =
+        <Text fontSize={1} color="red" fontWeight="bold" mr={3}>
+          Provider Offline
+        </Text>
+
+      if (!this.props.settings) {
+        badge = <Box borderRadius="50%" width="8px" height="8px" backgroundColor="red" position="absolute" top="0px" right="0px"></Box>
+
+      }
+    }
+
+
+
     return (
       <Row
         height={8}
@@ -40,16 +57,21 @@ export default class Header extends Component {
             Bitcoin
           </Text>
         </Row>
-        <Link to={iconLink}>
-          <Box backgroundColor="white"
-            borderRadius={4}
-            width={5}
-            height={5}
-            p={2}
-          >
-            <Icon icon={icon} color={iconColor} />
-          </Box>
-        </Link>
+        <Row alignItems="center">
+          {connection}
+          <Link to={iconLink}>
+            <Box backgroundColor="white"
+              borderRadius={4}
+              width={5}
+              height={5}
+              p={2}
+              position="relative"
+            >
+              {badge}
+              <Icon icon={icon} color={iconColor} />
+            </Box>
+          </Link>
+        </Row>
       </Row>
     );
   }

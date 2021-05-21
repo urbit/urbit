@@ -26,11 +26,17 @@ export default class Settings extends Component {
   }
 
   render() {
-    let conn = 'Not Connected'
+    let connColor = "red";
+    let connBackground = "veryLightRed";
+    let conn = 'Offline'
     let host = '';
     if (this.props.state.provider){
       if (this.props.state.provider.connected) conn = 'Connected';
       if (this.props.state.provider.host) host = this.props.state.provider.host;
+      if (this.props.state.provider.connected && this.props.state.provider.host) {
+        connColor = "orange";
+        connBackground = "lightOrange";
+      }
     }
 
     return (
@@ -85,14 +91,14 @@ export default class Settings extends Component {
           py={5}
           px="36px"
           borderRadius="12px"
-          backgroundColor="lightOrange"
+          backgroundColor={connBackground}
           alignItems="center"
           justifyContent="space-between"
         >
-          <Text fontSize={1} color="orange" mono>
+          <Text fontSize={1} color={connColor} mono>
             ~{host}
           </Text>
-          <Text fontSize={0} color="orange">
+          <Text fontSize={0} color={connColor}>
             {conn}
           </Text>
         </Col>

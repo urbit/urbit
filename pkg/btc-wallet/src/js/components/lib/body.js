@@ -43,7 +43,7 @@ export default class Body extends Component {
              flexDirection='column'
              width='400px'
             >
-              <Header settings={true}/>
+              <Header settings={true} state={this.props.state}/>
               <Settings state={this.props.state}
                 api={this.props.api}
                 network={this.props.network}
@@ -56,7 +56,7 @@ export default class Body extends Component {
              flexDirection='column'
              width='400px'
             >
-              <Header settings={false}/>
+              <Header settings={false} state={this.props.state}/>
               { (!this.props.warning) ? null : <Warning api={this.props.api}/>}
               <Balance api={this.props.api} state={this.props.state} network={this.props.network}/>
               <Transactions state={this.props.state} network={this.props.network}/>
