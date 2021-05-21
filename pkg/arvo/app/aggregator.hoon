@@ -26,6 +26,7 @@
 ::TODO  questions:
 ::  - it's a bit weird how we just assume the raw and tx in raw-tx to match...
 ::
+/-  *aggregator
 /+  naive, default-agent, ethereum, dbug, verb
 /=  ttttt  /tests/lib/naive  ::TODO  use new lib
 ::
@@ -51,27 +52,6 @@
       pk=@
       frequency=@dr
       endpoint=@t
-  ==
-::
-+$  keccak  @ux
-::
-+$  tx-status
-  $:  status=?(%unknown %pending %sending %confirmed %failed)
-      pointer=(unit l1-tx-pointer)
-  ==
-::
-+$  l1-tx-pointer
-  $:  =address:ethereum
-      nonce=@ud
-  ==
-::
-::TODO  cache sender address?
-+$  pend-tx  [force=? =raw-tx:naive]
-::
-+$  part-tx
-  $%  [%raw raw=octs]
-      [%don =tx:naive]
-      [%ful raw=octs =tx:naive]  ::TODO  redundant?
   ==
 ::
 +$  action
@@ -430,7 +410,7 @@
   %+  start-thread:spider
     /send/(scot %ud nonce)
   :-  %aggregator-send
-  !>
+  !>  ^-  rpc-send-roll
   :*  endpoint
       contract
       chain-id

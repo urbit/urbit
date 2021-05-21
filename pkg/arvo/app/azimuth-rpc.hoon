@@ -1,6 +1,6 @@
 ::  Azimuth JSON-RPC API
 ::
-/-  rpc=json-rpc
+/-  rpc=json-rpc, *aggregator
 /+  naive,
     azimuth-rpc,
     json-rpc,
@@ -11,14 +11,6 @@
     version,
     agentio
 |%
-::  FIXME: import tx-status, pend-tx from aggregator
-::
-+$  tx-status
-  $:  status=?(%unknown %pending %sent %confirmed %failed)
-      tx=(unit @ux)
-  ==
-::
-+$  pend-tx  [force=? =raw-tx:naive]
 ::
 +$  card  card:agent:gall
 ::

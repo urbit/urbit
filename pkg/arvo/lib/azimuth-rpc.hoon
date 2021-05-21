@@ -1,6 +1,6 @@
 ::  azimuth-rpc: command parsing and utilities
 ::
-/-  rpc=json-rpc
+/-  rpc=json-rpc, *aggregator
 /+  naive, json-rpc
 ::
 =>  ::  Utilities
@@ -19,14 +19,6 @@
           %set-spawn-proxy
           %set-transfer-proxy
       ==
-    ::  FIXME: import tx-status, pend-tx from aggregator
-    ::
-    +$  tx-status
-      $:  status=?(%unknown %pending %sent %confirmed %failed)
-          tx=(unit @ux)
-      ==
-    ::
-    +$  pend-tx  [force=? =raw-tx:naive]
     ::
     ++  from-json
       =,  dejs-soft:format
@@ -266,9 +258,10 @@
         %-  pairs
         :~  ['status' s+status.tx-status]
           ::
-            :-  'tx'
-            ?~  tx.tx-status  ~
-            s+(crip "0x{((x-co:co 20) u.tx.tx-status)}")
+            :-  'pointer'
+            ?~  pointer.tx-status  ~
+            =*  pointer  u.pointer.tx-status
+            (ownership address.pointer nonce.pointer)
         ==
       --
     ::

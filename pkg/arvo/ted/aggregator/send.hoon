@@ -1,6 +1,6 @@
 ::  aggregator/send: send rollup tx
 ::
-/-  rpc=json-rpc
+/-  rpc=json-rpc, *aggregator
 /+  naive, ethereum, ethio, strandio
 ::
 =/  gas-limit=@ud  30.000  ::TODO  verify, maybe scale with roll size
@@ -10,16 +10,7 @@
   (keccak-256:keccak:crypto (as-octs:mimes:html 'batch(bytes)'))
 ::
 |=  args=vase
-=+  !<  $:  endpoint=@t
-            contract=address:ethereum
-            chain-id=@
-            pk=@
-          ::
-            nonce=@ud
-            next-gas-price=@ud
-            txs=(list raw-tx:naive)
-        ==
-    args
+=+  !<(rpc-send-roll args)
 =/  m  (strand:strandio ,vase)
 |^
 ^-  form:m
