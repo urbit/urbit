@@ -4,6 +4,10 @@
 /+  naive, ethereum, ethio, strandio
 ::
 =/  gas-limit=@ud  30.000  ::TODO  verify, maybe scale with roll size
+=/  batch-function=octs
+  %-  as-octs:mimes:html
+  %+  rsh  [3 28]
+  (keccak-256:keccak:crypto (as-octs:mimes:html 'batch(bytes)'))
 ::
 |=  args=vase
 =+  !<  $:  endpoint=@t
@@ -19,10 +23,9 @@
 =/  m  (strand:strandio ,vase)
 |^
 ^-  form:m
-=*  not-sent  (pure:m !>(next-gas-price))
+=*  not-sent  (pure:m !>(%.y^next-gas-price))
 ::
-=/  =address:ethereum
-  (address-from-pub:key:ethereum pk)
+=/  =address:ethereum  (address-from-prv:key:ethereum pk)
 ;<  expected-nonce=@ud  bind:m
   (get-next-nonce:ethio endpoint address)
 ::  if chain expects a different nonce, don't send this transaction
@@ -37,13 +40,28 @@
 ::  if we cannot pay for the transaction, don't bother sending it out
 ::
 =/  max-cost=@ud  (mul gas-limit use-gas-price)
-;<  balance=@ud  bind:m
-  ::TODO  implement %eth-get-balance in /lib/ethio and /lib/ethereum
-  !!
-?:  (gth max-cost balance)
-  ~&  [%insufficient-aggregator-balance address]
-  not-sent
+::TODO  implement %eth-get-balance in /lib/ethio and /lib/ethereum
+:: ;<  balance=@ud  bind:m
+::   !!
+:: ?:  (gth max-cost balance)
+::   ~&  [%insufficient-aggregator-balance address]
+::   not-sent
 ::
+=/  tx-data=@ux
+  %+  can:naive  3
+  :_  [batch-function ~]
+  =;  =cord
+    =/  parsed=(unit (pair @ud @ux))
+      (de:base16:mimes:html cord)
+    ?~(parsed !! u.parsed)
+  %-  crip
+  %-  encode-args:abi:ethereum
+  :_  ~
+  :-  %bytes
+  %+  cad:naive  3
+  %+  roll  txs
+  |=  [=raw-tx:naive out=(list octs)]
+  [raw.raw-tx 65^sig.raw-tx out]
 =/  tx=@ux
   =;  tx=transaction:rpc:ethereum
     (sign-transaction:key:ethereum tx pk)
@@ -52,7 +70,7 @@
       gas-limit
       contract
       0
-      roll  ::TODO  tx data
+      tx-data
       chain-id
   ==
 ::
@@ -60,12 +78,12 @@
 ::      the "retry with same gas price" behavior we want
 ;<  jon=json  bind:m
   %+  request-rpc:ethio  endpoint
-  [~ %eth-send-raw-transaction tx]
+  [`'sendRawTransaction' %eth-send-raw-transaction tx]
 ::TODO  check that tx-hash in jon is non-zero?
 ::TODO  enforce max here, or in app?
 ::  add five gwei to gas price of next attempt
 ::
-(pure:m !>((add use-gas-price 5.000.000.000)))
+(pure:m !>(%.y^(add use-gas-price 5.000.000.000)))
 ::
 ::TODO  should be distilled further, partially added to strandio?
 ++  fetch-gas-price
@@ -96,5 +114,5 @@
     (mul 1.000.000.000 u.res)  ::NOTE  gwei to wei
   %.  u.jon
   =,  dejs-soft:format
-  (ot 'result'^(ot 'FastGasPrice'^ni) ~)
+  (ot 'result'^(ot 'FastGasPrice'^ni ~) ~)
 --

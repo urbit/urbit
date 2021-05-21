@@ -27,7 +27,7 @@
 ::  - it's a bit weird how we just assume the raw and tx in raw-tx to match...
 ::
 /+  naive, default-agent, ethereum, dbug, verb
-/=  ttttt  /tests/lib/naive  ::TODO  use new lib 
+/=  ttttt  /tests/lib/naive  ::TODO  use new lib
 ::
 ::TODO  /sur file for public types
 |%
@@ -81,14 +81,18 @@
       [%commit ~]  ::TODO  maybe pk=(unit @) later
       [%config frequency=@dr]
       [%setkey pk=@]
-      ::TODO  configure endpoint, contract address, chain..?
+      [%endpoint endpoint=@t]
+      [%nonce nonce=@ud]
+      ::TODO  contract address, chain..?
   ==
 ::
 +$  card  card:agent:gall
 ::
 ::TODO  config?
-++  contract  0xb581.01cd.3bbb.cc6f.a40b.cdb0.4bb7.1623.b5c7.d39b
-++  chain-id  '1'
+:: ++  contract  0xb581.01cd.3bbb.cc6f.a40b.cdb0.4bb7.1623.b5c7.d39b  ::  Ropsten
+::  TODO: add this to action
+++  contract  0x4754.03bf.4e8e.b8d0.2f71.7b0e.553f.869f.a690.425e  :: Local
+++  chain-id  0x539  ::  '1337' (Geth private chain)
 ::
 ++  resend-time  ~m5
 ::
@@ -125,7 +129,7 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
-          %aggregator-action  
+          %aggregator-action
         =+  !<(poke=action vase)
         (on-action:do poke)
       ==
@@ -209,7 +213,49 @@
   ::
   ++  on-watch  on-watch:def
   ++  on-leave  on-leave:def
-  ++  on-agent  on-agent:def
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    ~&  wire+wire
+    ?.  ?=([%send @t *] wire)
+      (on-agent:def wire sign)
+    ?-  -.sign
+        %poke-ack
+      ?~  p.sign
+        %-  (slog leaf+"Thread started successfully" ~)
+        [~ this]
+      %-  (slog leaf+"{(trip dap.bowl)} couldn't start thread" u.p.sign)
+      :_  this
+      [(leave:spider:do wire)]~
+    ::
+        %watch-ack
+      ?~  p.sign
+        [~ this]
+      =/  =tank  leaf+"{(trip dap.bowl)} couldn't start listen to thread"
+      %-  (slog tank u.p.sign)
+      [~ this]
+    ::
+        %kick
+      [~ this]
+    ::
+        %fact
+      ?+  p.cage.sign  (on-agent:def wire sign)
+          %thread-fail
+        =+  !<([=term =tang] q.cage.sign)
+        %-  (slog leaf+"{(trip dap.bowl)} failed" leaf+<term> tang)
+        =^  cards  state
+          (on-thread-result:do (rash i.t.wire dem) %.n^term)
+        [cards this]
+      ::
+          %thread-done
+        ~&  ['all submitted to' t.wire]
+        :: is aggregator/send thread expected to maybe return an error?
+        =+   !<(result=(each @ud term) q.cage.sign)
+        =^  cards  state
+          (on-thread-result:do (rash i.t.wire dem) result)
+        [cards this]
+      ==
+    ==
   --
 ::
 |_  =bowl:gall
@@ -231,19 +277,9 @@
     |=  [=wire thread=term arg=vase]
     ^-  (list card)
     =/  tid=@ta  (rap 3 thread '--' (scot %uv eny.bowl) ~)
-    :~  (poke wire %spider-start !>([~ `tid thread arg]))
-        (watch wire %spider-start /thread-result/[tid])
+    :~  [%pass wire %agent [our.bowl %spider] %watch /thread-result/[tid]]
+        [%pass wire %agent [our.bowl %spider] %poke %spider-start !>([~ `tid thread arg])]
     ==
-  ::
-  ++  poke
-    |=  [=path =cage]
-    ^-  card
-    [%pass path %agent [our.bowl %spider] %poke cage]
-  ::
-  ++  watch
-    |=  [=path =sub=path]
-    ^-  card
-    [%pass path %agent [our.bowl %spider] %watch sub-path]
   ::
   ++  leave
     |=  =path
@@ -298,7 +334,7 @@
 ++  try-apply
   |=  [nas=^state:naive force=? =raw-tx:naive]
   ^-  [success=? _nas]
-  ?.  (verify-sig-and-nonce:naive verifier:ttttt chain-id nas raw-tx)
+  ?.  (verify-sig-and-nonce:naive verifier:ttttt `@`chain-id nas raw-tx)
     [force nas]
   ::
   =^  out  points.nas  (increment-nonce:naive nas from.tx.raw-tx)
@@ -311,16 +347,24 @@
   |=  =action
   ^-  (quip card _state)
   ?-  -.action
-    %commit  !!  ::  TODO  send-roll
-    %config  [~ state(frequency frequency.action)]
-    %setkey  [~ state(pk pk.action)]  ::TODO  what about existing sending entries?
+    %commit    on-timer
+    %config    [~ state(frequency frequency.action)]
+    %nonce     [~ state(next-nonce nonce.action)]
+    %endpoint  [~ state(endpoint endpoint.action)]
+  ::
+      %setkey
+    ::TODO  what about existing sending entries?
+    :-  ~
+    ?~  pk=(de:base16:mimes:html pk.action)
+      state
+    state(pk q.u.pk)
   ::
       %submit
     =^  success  state
       ^-  [? _state]
-      %^    take-tx  
+      %^    take-tx
           force.action
-        sig.action 
+        sig.action
       (part-tx-to-full tx.action)
     ::  TODO:  consider failure case
     ?>  success
@@ -356,10 +400,9 @@
 ++  on-timer
   ^-  (quip card _state)
   =^  cards  state
-    ?~  pending  [~ state]
+    ?:  =(~ pending)  [~ state]
     =/  nonce=@ud  next-nonce
-    =:  :: FIXME: what's up with this?  `pending  ~` also fails
-        :: pending     *(list pend-tx)
+    =:  pending     ~
         next-nonce  +(next-nonce)
       ::
           sending
@@ -384,11 +427,11 @@
   %+  start-thread:spider
     /send/(scot %ud nonce)
   :-  %aggregator-send
-  !>  
+  !>
   :*  endpoint
       contract
       chain-id
-      0x1234.5678
+      pk
       nonce
       (~(got by sending) nonce)
   ==
