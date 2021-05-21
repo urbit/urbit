@@ -223,10 +223,12 @@
         cards
       ;:  welp  
         cards
+        ::
         (add-missing-root ship)
-        :~  (~(poke pass wire) dock cage)
-            (poke-our:pass %graph-store cage)
-        ==
+        ::
+        :-  (poke-our:pass %graph-store cage)
+        ?:  =(our.bowl ship)  ~
+        (~(poke pass wire) dock cage)^~
       == 
     ==
   ::
