@@ -15,8 +15,9 @@ import {
 } from '@tlon/indigo-react';
 import { Content } from '@urbit/api';
 import _ from 'lodash';
+import katex from 'katex';
 import { BlockContent, Content as AstContent, Parent, Root } from 'ts-mdast';
-import React from 'react';
+import React, { useMemo } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import { PropFunc } from '~/types';
@@ -284,7 +285,11 @@ const renderers = {
   paragraph: ({ children }) => {
     return (
       <Box display="block">
-        <Text fontSize={1} lineHeight="tall" style={{ 'overflowWrap': 'break-word' }}>
+        <Text
+          fontSize={1}
+          lineHeight="tall"
+          style={{ overflowWrap: 'break-word' }}
+        >
           {children}
         </Text>
       </Box>
@@ -341,20 +346,12 @@ const renderers = {
   'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
   image: ({ url, tall }) => (
     <Box mt="1" mb="2" flexShrink={0}>
-      <RemoteContent
-        key={url}
-        url={url}
-        tall={tall}
-      />
+      <RemoteContent key={url} url={url} tall={tall} />
     </Box>
   ),
   'graph-url': ({ url, tall }) => (
     <Box mt={1} mb={2} flexShrink={0}>
-      <RemoteContent
-        key={url}
-        url={url}
-        tall={tall}
-      />
+      <RemoteContent key={url} url={url} tall={tall} />
     </Box>
   ),
   'graph-reference': ({ api, reference, transcluded }) => {
@@ -390,7 +387,37 @@ const renderers = {
         </React.Fragment>
       ))}
     </>
-  )
+  ),
+  inlineMath: ({ value }) => {
+    const innerHtml = useMemo(() => {
+      try {
+        const result = katex.renderToString(value);
+        return result;
+      } catch (e) {
+        console.log(e);
+        return '<span>Parsing error</span>';
+      }
+    }, [value]);
+
+    return <span dangerouslySetInnerHTML={{ __html: innerHtml }}></span>;
+  },
+  math: ({ value }) => {
+    const innerHtml = useMemo(() => {
+      try {
+        const result = katex.renderToString(value, { displayMode: true });
+        return result;
+      } catch (e) {
+        console.log(e);
+        return '<span>Parsing error</span>';
+      }
+    }, [value]);
+
+    return (
+      <Box>
+        <div dangerouslySetInnerHTML={{ __html: innerHtml }}></div>
+      </Box>
+    );
+  }
 };
 
 export function Graphdown<T extends {} = {}>(
@@ -435,16 +462,8 @@ export type GraphContentProps = PropFunc<typeof Box> & {
   showOurContact: boolean;
 };
 
-export const GraphContent = React.memo((
-  props: GraphContentProps
-) => {
-  const {
-    contents,
-    tall = false,
-    transcluded = 0,
-    api,
-    ...rest
-  } = props;
+export const GraphContent = React.memo((props: GraphContentProps) => {
+  const { contents, tall = false, transcluded = 0, api, ...rest } = props;
   const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
   return (
     <Box {...rest}>
