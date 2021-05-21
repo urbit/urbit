@@ -36,7 +36,7 @@
         ?~  data=(~(get by params) 'data')  ~
         %.  u.data
         =,  dejs-soft:format
-        %-  ot 
+        %-  ot
         :~  ['encrypt' so]
             ['auth' so]
             ['crypto-suite' so]
@@ -55,7 +55,7 @@
             (some [u.add.u.ans r.u.ans])
           %.  u.data
           =,  dejs-soft:format
-          %-  ot 
+          %-  ot
           ~[['address' (cu to-hex so)] ['reset' bo]]
         ::
         ++  address-ship
@@ -68,7 +68,7 @@
             (some [ship.u.ans u.add.u.ans])
           %.  u.data
           =,  dejs-soft:format
-          %-  ot 
+          %-  ot
           :~  ['ship' (su ;~(pfix sig fed:ag))]
               ['address' (cu to-hex so)]
           ==
@@ -82,7 +82,7 @@
           =,  dejs-soft:format
           %.  u.data
           (ot ['address' (cu to-hex so)]~)
-        ::    
+        ::
         ++  ship
           |=  params=(map @t json)
           ^-  (unit @p)
@@ -91,15 +91,15 @@
           %.  u.data
           (ot ['ship' (su ;~(pfix sig fed:ag))]~)
         --
-      :: 
+      ::
       ++  ship
         |=  params=(map @t json)
         ^-  (unit @p)
         ?~  data=(~(get by params) 'ship')  ~
         =,  dejs-soft:format
         %.  u.data
-        (su ;~(pfix sig fed:ag)) 
-      ::    
+        (su ;~(pfix sig fed:ag))
+      ::
       ++  address
         |=  params=(map @t json)
         ^-  (unit @ux)
@@ -124,11 +124,11 @@
         ^-  (unit [@p proxy:naive])
         ?~  from=(~(get by params) 'from')  ~
         =,  dejs-soft:format
-        %.  u.from 
+        %.  u.from
         %-  ot
         :~  ['ship' (su ;~(pfix sig fed:ag))]
             ['proxy' (cu proxy:naive so)]
-        == 
+        ==
       ::
       ++  keccak
         |=  params=(map @t json)
@@ -144,8 +144,8 @@
         ^-  (unit octs)
         ?~  raw=(~(get by params) 'raw')  ~
         =;  ans=(unit (unit @ux))
-          ?~  ans  ~ 
-          ?~  u.ans  ~ 
+          ?~  ans  ~
+          ?~  u.ans  ~
           (some (as-octs:mimes:html u.u.ans))
         =,  dejs-soft:format
         ((cu to-hex so) u.raw)
@@ -210,7 +210,7 @@
         ++  en-address   |=(a=@ux address+s+(crip "0x{((x-co:co 20) a)}"))
         ++  en-spawn     |=([s=@p a=@ux] ~[(en-ship s) (en-address a)])
         ++  en-transfer  |=([a=@ux r=?] ~[(en-address a) reset+b+r])
-        ++  en-keys      
+        ++  en-keys
           |=  [encrypt=@ auth=@ crypto-suite=@ breach=?]
           ^-  (list [@t json])
           :~  ['encrypt' (numb encrypt)]
@@ -232,7 +232,7 @@
         %-  pairs
         :~  ['dominion' s+dominion.point]
           ::
-            :-  'ownership' 
+            :-  'ownership'
             %-  pairs
             =*  own  own.point
             ^-  (list [@t json])
@@ -264,16 +264,16 @@
                 ?~  escape.net  ~
                 ['escape' (ship u.escape.net)]~
         ==  ==
-      :: 
+      ::
       ++  ownership
         |=  [=address:naive =nonce:naive]
         ^-  json
-        =,  enjs:format 
+        =,  enjs:format
         %-  pairs
         :~  ['address' s+(crip "0x{((x-co:co 20) address)}")]
             ['nonce' (numb nonce)]
         ==
-      ::  
+      ::
       ++  tx-status
         |=  =^tx-status
         ^-  json
@@ -281,8 +281,8 @@
         %-  pairs
         :~  ['status' s+status.tx-status]
           ::
-            :-  'tx' 
-            ?~  tx.tx-status  ~ 
+            :-  'tx'
+            ?~  tx.tx-status  ~
             s+(crip "0x{((x-co:co 20) u.tx.tx-status)}")
         ==
       --
@@ -291,7 +291,7 @@
       |=  =cord
       ^-  (unit @ux)
       =/  parsed=(unit (pair @ud @ux))  (de:base16:mimes:html cord)
-      ?~  parsed  
+      ?~  parsed
         ::~|(%non-hex-cord !!)
         ~
       (some q.u.parsed)
@@ -307,10 +307,10 @@
         =/  from=(unit [@p proxy:naive])  (from:from-json params)
         =/  raw=(unit octs)               (raw:from-json params)
         =/  data=(unit @p)                (ship:data:from-json params)
-        ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))  
+        ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
           [~ ~(parse error id)]
-        :_  [%result id s+'ok']               
-        %-  some 
+        :_  [%result id s+'ok']
+        %-  some
         :-  %aggregator-action
         !>
         =;  =skim-tx:naive
@@ -326,16 +326,16 @@
       ++  proxy
         |=  [id=@t params=(map @t json) action=proxy-action]
         ^-  [(unit cage) response:rpc]
-        ?.  (params:validate params) 
+        ?.  (params:validate params)
           [~ ~(params error id)]
         =/  sig=(unit @ux)                (sig:from-json params)
         =/  from=(unit [@p proxy:naive])  (from:from-json params)
         =/  raw=(unit octs)               (raw:from-json params)
         =/  data=(unit @ux)               (address:data:from-json params)
-        ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))  
+        ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
           [~ ~(parse error id)]
         :_  [%result id s+'ok']
-        %-  some 
+        %-  some
         :-  %aggregator-action
         !>
         =;  =skim-tx:naive
@@ -358,70 +358,70 @@
       ++  internal   [%error id '-32603' 'Internal error']
       ++  not-found  [%error id '-32000' 'Resource not found']
       --
-    ::  
+    ::
     ++  validate
       |%
       ++  params
         |=  params=(map @t json)
         ^-  ?
-        =((lent ~(tap by params)) 4) 
+        =((lent ~(tap by params)) 4)
       --
     --
 |%
 ++  get-point
   |=  [id=@t params=(map @t json) scry=$-(ship (unit point:naive))]
   ^-  response:rpc
-  ?.  =((lent ~(tap by params)) 1)    
+  ?.  =((lent ~(tap by params)) 1)
     ~(params error id)
-  ?~  ship=(~(get by params) 'ship')  
+  ?~  ship=(~(get by params) 'ship')
     ~(params error id)
   ?~  ship=(rush (so:dejs:format u.ship) ;~(pfix sig fed:ag))
     ~(params error id)
-  ?~  point=(scry u.ship)  
+  ?~  point=(scry u.ship)
     ~(params error id)
   [%result id (point:to-json u.point)]
 ::
 ++  transfer-point
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]
-  ?.  (params:validate params)  
+  ?.  (params:validate params)
     [~ ~(params error id)]
   =/  sig=(unit @ux)         (sig:from-json params)
   =/  from=(unit [ship @t])  (from:from-json params)
   =/  raw=(unit octs)        (raw:from-json params)
   =/  data=(unit [@ux ?])    (address-transfer:data:from-json params)
-  ?:  |(?=(~ sig) ?=(~ from) ?=(~ raw) ?=(~ data))  
+  ?:  |(?=(~ sig) ?=(~ from) ?=(~ raw) ?=(~ data))
     [~ ~(parse error id)]
   :_  [%result id s+'ok']
-  %-  some 
+  %-  some
   noun+!>([u.sig u.from u.data])
 ::
 ++  configure-keys
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]
-  ?.  (params:validate params)  
+  ?.  (params:validate params)
     [~ ~(params error id)]
   =/  sig=(unit @ux)          (sig:from-json params)
   =/  from=(unit [ship @t])   (from:from-json params)
   =/  raw=(unit octs)         (raw:from-json params)
   =/  data=(unit [encrypt=@ auth=@ crypto-suite=@ breach=?])
     (keys:data:from-json params)
-  ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))  
+  ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
     [~ ~(parse error id)]
   :_  [%result id s+'ok']
-  %-  some 
+  %-  some
   noun+!>([u.sig u.from u.data])
 ::
 ++  spawn
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]
-  ?.  (params:validate params)  
+  ?.  (params:validate params)
     [~ ~(params error id)]
   =/  sig=(unit @ux)                (sig:from-json params)
   =/  from=(unit [@p proxy:naive])  (from:from-json params)
   =/  raw=(unit octs)               (raw:from-json params)
   =/  data=(unit [@p @ux])          (address-ship:data:from-json params)
-  ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))  
+  ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
     [~ ~(parse error id)]
   :_  [%result id s+'ok']
   %-  some
@@ -440,11 +440,11 @@
 ++  read-nonce
   |=  [id=@t params=(map @t json) scry=$-([ship proxy:naive] (unit @))]
   ^-  response:rpc
-  ?.  =((lent ~(tap by params)) 3)  
+  ?.  =((lent ~(tap by params)) 3)
     ~(params error id)
   ?~  from=(from:from-json params)
     ~(parse error id)
-  ?~  nonce=(scry u.from)  
+  ?~  nonce=(scry u.from)
     ~(params error id)
   [%result id (numb:enjs:format u.nonce)]
 ::
@@ -454,10 +454,10 @@
   |%
   :: - readPendingRoll() -> (list pend-tx)
   ::
-  ++  all 
+  ++  all
     |=  [id=@t params=(map @t json) pending=(list pend-tx)]
     ^-  response:rpc
-    ?.  =((lent ~(tap by params)) 0)  
+    ?.  =((lent ~(tap by params)) 0)
       ~(params error id)
     [%result id (pending:to-json pending)]
   :: - readPendingByShip(ship) -> (list pend-tx)
@@ -465,7 +465,7 @@
   ++  ship
     |=  [id=@t params=(map @t json) scry=$-(@p (list pend-tx))]
     ^-  response:rpc
-    ?.  =((lent ~(tap by params)) 1)  
+    ?.  =((lent ~(tap by params)) 1)
       ~(params error id)
     ?~  ship=(ship:from-json params)
       ~(parse error id)
@@ -475,7 +475,7 @@
   ++  addr
     |=  [id=@t params=(map @t json) scry=$-(@ux (list pend-tx))]
     ^-  response:rpc
-    ?.  =((lent ~(tap by params)) 1)  
+    ?.  =((lent ~(tap by params)) 1)
       ~(params error id)
     ?~  address=(address:from-json params)
       ~(parse error id)
@@ -485,21 +485,21 @@
 ++  status
   |=  [id=@t params=(map @t json) scry=$-(@ tx-status)]
   ^-  response:rpc
-  ?.  =((lent ~(tap by params)) 1)  
+  ?.  =((lent ~(tap by params)) 1)
     ~(params error id)
   ?~  keccak=(keccak:from-json params)
     ~(parse error id)
   [%result id (tx-status:to-json (scry u.keccak))]
 ::
 :: ++  history
-::   |=  $:  id=@t 
-::           params=(map @t json) 
+::   |=  $:  id=@t
+::           params=(map @t json)
 ::           ::  FIXME: use proper type from aggregator/index
 ::           ::
 ::           scry=$-([@p proxy:naive] (list tx:naive))
 ::       ==
 ::   ^-  response:rpc
-::   ?.  =((lent ~(tap by params)) 1)  
+::   ?.  =((lent ~(tap by params)) 1)
 ::     ~(params error id)
 ::   ?~  from=(from:from-json params)
 ::     ~(parse error id)
