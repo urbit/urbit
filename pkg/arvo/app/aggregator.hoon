@@ -326,8 +326,11 @@
   |-  ^+  [valid nas]
   ?~  pending  [(flop valid) nas]
   ::
-  =^  gud=?  nas  (try-apply nas i.pending)
-  =?  valid  gud  [i.pending valid]
+  =^  gud=?    nas  (try-apply nas i.pending)
+  =?  valid    gud  [i.pending valid]
+  =?  finding  =(gud %.n)
+    %-  ~(put by finding)
+    [(hash-raw-tx raw-tx.i.pending) %failed]
   $(pending t.pending)
 ::  +try-apply:
 ::
