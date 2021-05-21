@@ -309,7 +309,7 @@
 ::TODO  maybe want to cache locally, refresh on %fact from azimuth?
 ::
 ++  pending-state
-  ^-  (quip pend-tx ^state:naive)
+  ^-  [_pending ^state:naive]
   ::  load current, canonical state
   ::
   =+  .^  nas=^state:naive
