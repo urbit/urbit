@@ -142,7 +142,7 @@ const mapifyChildren = (children) => {
     }));
 };
 
-const addNodes = (json, state) => {
+export const addNodes = (json, state) => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {

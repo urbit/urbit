@@ -6,6 +6,9 @@ import { decToUd, deSig, resourceAsPath, unixToDa } from '~/logic/lib/util';
 import { makeResource, resourceFromPath } from '../lib/group';
 import { StoreState } from '../store/type';
 import BaseApi from './base';
+import {doOptimistically} from '../state/base';
+import useGraphState from '../state/graph';
+import { addNodes } from '../reducers/graph-update';
 
 export const createBlankNodeWithChildPost = (
   parentIndex = '',
@@ -204,7 +207,7 @@ export default class GraphApi extends BaseApi<StoreState> {
 
   addDmMessage(ship: Patp, contents: Content[]) {
     const post = createPost(contents, `/${patp2dec(ship)}`)
-    return this.action('dm-hook', 'graph-update-2', {
+    const action = {
       "add-nodes": {
         resource: { ship: `~${window.ship}`, name: 'dm-inbox' },
         nodes: {
@@ -214,7 +217,14 @@ export default class GraphApi extends BaseApi<StoreState> {
           }
         }
       }
-    });
+    }
+    this.action('dm-hook', 'graph-update-2', action);
+    markPending(action['add-nodes'].nodes);
+    action['add-nodes'].resource.ship =
+      action['add-nodes'].resource.ship.slice(1);
+    this.store.handleEvent({ data: {
+      'graph-update': action
+    } });
   }
 
   acceptDm(ship: Patp) {
