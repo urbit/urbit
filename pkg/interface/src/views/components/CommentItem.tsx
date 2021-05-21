@@ -46,7 +46,7 @@ export function CommentItem(props: CommentItemProps) {
     const children = Array.from(revs.children);
     const indices = [];
     for (const child in children) {
-      const node = children[child];
+      const node = children[child] as any;
       if (!node?.post || typeof node.post !== 'string') {
         indices.push(node.post?.index);
       }

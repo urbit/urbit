@@ -20,6 +20,7 @@ export default class LaunchReducer {
     const weatherData: WeatherState | boolean | Record<string, never> = _.get(json, 'weather', false);
     if (weatherData) {
       useLaunchState.getState().set((state) => {
+        // @ts-ignore investigate zustand types
         state.weather = weatherData;
       });
     }
@@ -27,6 +28,7 @@ export default class LaunchReducer {
     const locationData = _.get(json, 'location', false);
     if (locationData) {
       useLaunchState.getState().set((state) => {
+        // @ts-ignore investigate zustand types
         state.userLocation = locationData;
       });
     }
@@ -34,6 +36,7 @@ export default class LaunchReducer {
     const baseHash = _.get(json, 'baseHash', false);
     if (baseHash) {
       useLaunchState.getState().set((state) => {
+        // @ts-ignore investigate zustand types
         state.baseHash = baseHash;
       });
     }
@@ -41,6 +44,7 @@ export default class LaunchReducer {
     const runtimeLag = _.get(json, 'runtimeLag', null);
     if (runtimeLag !== null) {
       useLaunchState.getState().set(state => {
+        // @ts-ignore investigate zustand types
         state.runtimeLag = runtimeLag;
       });
     }

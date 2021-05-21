@@ -1,6 +1,6 @@
 import { Box } from '@tlon/indigo-react';
-import React, { useEffect } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import LaunchApp from '~/views/apps/launch/App';
@@ -10,6 +10,8 @@ import Profile from '~/views/apps/profile/profile';
 import Settings from '~/views/apps/settings/settings';
 import TermApp from '~/views/apps/term/app';
 import ErrorComponent from '~/views/components/Error';
+import { useShortcut } from '~/logic/state/settings';
+
 import Landscape from '~/views/landscape/index';
 import GraphApp from '../../apps/graph/App';
 
@@ -21,6 +23,21 @@ export const Container = styled(Box)`
 `;
 
 export const Content = (props) => {
+  const history = useHistory();
+
+  useShortcut('navForward', useCallback((e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    history.goForward();
+  }, [history.goForward]));
+
+  useShortcut('navBack', useCallback((e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    history.goBack();
+  }, [history.goBack]));
+
+
   const [hasProtocol, setHasProtocol] = useLocalStorageState(
     'registeredProtocol', false
   );

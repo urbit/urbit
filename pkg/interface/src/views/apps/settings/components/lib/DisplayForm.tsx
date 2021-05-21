@@ -11,6 +11,7 @@ import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
 import { AsyncButton } from '~/views/components/AsyncButton';
+import {FormikOnBlur} from '~/views/components/FormikOnBlur';
 import { BackButton } from './BackButton';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
 
@@ -58,7 +59,7 @@ export default function DisplayForm(props: DisplayFormProps) {
   const bgType = backgroundType || 'none';
 
   return (
-    <Formik
+    <FormikOnBlur
       validationSchema={formSchema}
       initialValues={
         {
@@ -86,7 +87,6 @@ export default function DisplayForm(props: DisplayFormProps) {
         actions.setStatus({ success: null });
       }}
     >
-      {props => (
         <Form>
           <BackButton />
           <Col p={5} pt={4} gapY={5}>
@@ -99,9 +99,8 @@ export default function DisplayForm(props: DisplayFormProps) {
               </Text>
             </Col>
             <BackgroundPicker
-              bgType={props.values.bgType}
-              bgUrl={props.values.bgUrl}
-              api={api}
+            api={api}
+            bgType={bgType}
             />
             <Label>Theme</Label>
             <Radio name="theme" id="light" label="Light" />
@@ -112,7 +111,6 @@ export default function DisplayForm(props: DisplayFormProps) {
             </AsyncButton>
           </Col>
         </Form>
-      )}
-    </Formik>
+    </FormikOnBlur>
   );
 }

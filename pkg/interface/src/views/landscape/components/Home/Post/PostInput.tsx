@@ -120,7 +120,7 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
         fontSize={1}
         minHeight="62px"
         fontFamily={code ? 'mono' : 'sans'}
-        lineNumber={3}
+        rows={3}
         style={{
           resize: 'vertical'
         }}

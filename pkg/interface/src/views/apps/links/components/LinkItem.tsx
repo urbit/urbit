@@ -20,6 +20,8 @@ interface LinkItemProps {
   group: Group;
   path: string;
   baseUrl: string;
+  mt?: number;
+  measure?: any;
 }
 export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<HTMLDivElement>): ReactElement => {
   const {
@@ -49,6 +51,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
       setTimeout(() => {
         console.log(remoteRef.current);
         if(document.activeElement instanceof HTMLIFrameElement
+          // @ts-ignore forwardref prop passing
           && remoteRef?.current?.containerRef?.contains(document.activeElement)) {
           markRead();
         }
@@ -100,6 +103,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
   const appPath = `/ship/~${resource}`;
   const unreads = useHarkState(state => state.unreads);
   const commColor = (unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+  // @ts-ignore hark will have to choose between sets and numbers
   const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
 
   return (
@@ -135,8 +139,10 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
         <>
         <RemoteContent
           ref={(r) => {
+            // @ts-ignore RemoteContent weirdness
             remoteRef.current = r;
           }}
+          // @ts-ignore RemoteContent weirdness
           renderUrl={false}
           url={href}
           text={contents[0].text}

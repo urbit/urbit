@@ -17,7 +17,7 @@ interface SetStateFunc<T> {
 }
 // See microsoft/typescript#37663 for filed bug
 type SetState<T> = T extends any ? SetStateFunc<T> : never;
-export function useLocalStorageState<T>(key: string, initial: T) {
+export function useLocalStorageState<T>(key: string, initial: T): any {
   const [state, _setState] = useState(() => retrieve(key, initial));
 
   useEffect(() => {

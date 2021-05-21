@@ -135,7 +135,7 @@ class WeatherTile extends React.Component<WeatherTileProps, WeatherTileState> {
           {locationName ? ` Current location is near ${locationName}.` : ''}
         </Text>
         {error}
-        <Box mt='auto' display='flex' marginBlockEnd={0}>
+        <Box mt='auto' display='flex' style={{ marginBlockEnd: '0' }}>
           <BaseInput
             id="location"
             size={10}

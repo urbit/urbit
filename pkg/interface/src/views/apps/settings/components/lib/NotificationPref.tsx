@@ -1,15 +1,19 @@
 import {
-    Col,
+  Button,
+  Col,
 
-    ManagedToggleSwitchField as Toggle, Text
+
+
+
+  ManagedToggleSwitchField as Toggle, Text
 } from '@tlon/indigo-react';
-import { Form, Formik, FormikHelpers } from 'formik';
+import { Form, FormikHelpers } from 'formik';
 import _ from 'lodash';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { isWatching } from '~/logic/lib/hark';
 import useHarkState from '~/logic/state/hark';
-import { AsyncButton } from '~/views/components/AsyncButton';
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { BackButton } from './BackButton';
 import { GroupChannelPicker } from './GroupChannelPicker';
 
@@ -69,6 +73,8 @@ export function NotificationPreferences(props: {
     }
   }, [api, graphConfig, dnd]);
 
+  const [notificationsAllowed, setNotificationsAllowed] = useState('Notification' in window && Notification.permission !== 'default');
+
   return (
     <>
     <BackButton />
@@ -82,9 +88,17 @@ export function NotificationPreferences(props: {
           messaging
         </Text>
       </Col>
-      <Formik initialValues={initialValues} onSubmit={onSubmit}>
+      <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
         <Form>
-          <Col gapY={4}>
+          <Col gapY="4">
+            {notificationsAllowed || !('Notification' in window)
+              ? null
+              : <Button alignSelf='flex-start' onClick={() => {
+                Notification.requestPermission().then(() => {
+                  setNotificationsAllowed(Notification.permission !== 'default');
+                });
+              }}>Allow Browser Notifications</Button>
+            }
             <Toggle
               label="Do not disturb"
               id="dnd"
@@ -109,12 +123,9 @@ export function NotificationPreferences(props: {
               </Text>
               <GroupChannelPicker />
             </Col>
-            <AsyncButton primary width="fit-content">
-              Save
-            </AsyncButton>
           </Col>
         </Form>
-      </Formik>
+      </FormikOnBlur>
     </Col>
     </>
   );

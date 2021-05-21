@@ -1,5 +1,6 @@
 import { Box, Col } from '@tlon/indigo-react';
 import { Association, Graph, GraphNode, Group } from '@urbit/api';
+import { History } from 'history';
 import bigInt from 'big-integer';
 import React from 'react';
 import { withRouter } from 'react-router';
@@ -26,7 +27,7 @@ interface PostFeedProps {
   pendingSize: number;
 }
 
-class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
+class PostFeed extends React.Component<PostFeedProps, any> {
   isFetching: boolean;
   constructor(props) {
     super(props);
@@ -36,7 +37,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
     this.fetchPosts = this.fetchPosts.bind(this);
     this.doNotFetch = this.doNotFetch.bind(this);
   }
-
+  // @ts-ignore needs @liam-fitzgerald peek at props for virtualscroller
   renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
     const {
       graph,
@@ -57,7 +58,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
 
     const first = graph.peekLargest()?.[0];
     const post = node?.post;
-    const nodeIndex = 
+    const nodeIndex =
       ( parentNode &&
         typeof parentNode.post !== 'string'
       ) ? parentNode.post.index.split('/').slice(1).map((ind) => {
@@ -69,6 +70,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
         <React.Fragment key={index.toString()}>
           <Col
             key={index.toString()}
+            // @ts-ignore indigo-react doesn't allow us to pass refs
             ref={ref}
             mb={3}
             width="100%"
@@ -76,6 +78,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
           >
             <PostItem
               key={parentNode.post.index}
+              // @ts-ignore withHovering prop pass is broken?
               parentPost={grandparentNode?.post}
               node={parentNode}
               parentNode={grandparentNode}
@@ -92,6 +95,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
             />
           </Col>
           <PostItem
+            // @ts-ignore withHovering prop pass is broken?
             node={node}
             graphPath={graphPath}
             association={association}
@@ -110,8 +114,10 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
     }
 
     return (
+        // @ts-ignore indigo-react doesn't allow us to pass refs
       <Box key={index.toString()} ref={ref}>
       <PostItem
+        // @ts-ignore withHovering prop pass is broken?
         node={node}
         graphPath={graphPath}
         association={association}
@@ -179,6 +185,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
           data={graph}
           averageHeight={106}
           size={graph.size}
+          totalSize={graph.size}
           style={virtualScrollerStyle}
           pendingSize={pendingSize}
           renderer={this.renderItem}

@@ -35,6 +35,7 @@ const Tiles = (props: TileProps): ReactElement => {
         return (
           <WeatherTile
             key={key}
+            // @ts-ignore withState not passing props
             api={props.api}
           />
         );
