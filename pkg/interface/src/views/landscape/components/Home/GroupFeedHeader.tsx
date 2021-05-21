@@ -1,6 +1,9 @@
 import { Box, Row, Text } from '@tlon/indigo-react';
 import bigInt from 'big-integer';
-import React from 'react';
+import React, {
+  useEffect,
+  useState
+} from 'react';
 
 export function GroupFeedHeader(props) {
   const { baseUrl, history, graphResource, vip } = props;
@@ -9,13 +12,18 @@ export function GroupFeedHeader(props) {
   const historyLocation = history.location.pathname;
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
 
+  const [locationList, setLocationList] = useState([]);
+  useEffect(() => {
+    locationList.push(history.location.pathname);
+    setLocationList(locationList);
+  }, [history.location.pathname]);
+
   const isHome =
     historyLocation === baseUrl ||
     historyLocation === `${baseUrl}/feed`;
 
   const locationUrl =
     history.location.pathname.replace(`${baseUrl}/feed`, '');
-  console.log(locationUrl);
 
   let splitLoc = locationUrl.split('/');
   let indicator = '';
@@ -25,7 +33,6 @@ export function GroupFeedHeader(props) {
   }
 
   const nodeIndex = splitLoc.slice(1).map((ind) => bigInt(ind));
-  console.log(nodeIndex);
 
   let node;
   nodeIndex.forEach((i) => {
@@ -63,14 +70,22 @@ export function GroupFeedHeader(props) {
     >
       <Box display='block'>
         { ( baseUrl !== historyLocation ) ? (
-            <Text pl={1} pr={1}
-cursor="pointer" onClick={() => {
+            <Text pl={1} pr={1} cursor="pointer" onClick={() => {
               let loc =
                 history.location.pathname.replace(`${baseUrl}`, '').split('/');
               loc.pop();
               loc = loc.join('/');
-              //  TODO: improve
-              history.push(`${baseUrl}/feed`);
+              if (history.location.pathname === `${baseUrl}/feed`) {
+                history.push(baseUrl);
+              } else if (indicator === 'thread' || indicator === 'replies') {
+                if (locationList.length === 1) {
+                  history.push(`${baseUrl}/feed`);
+                } else {
+                  history.goBack();
+                }
+              } else {
+                history.push(`${baseUrl}/feed`);
+              }
             }}
             >{'<- Back'}</Text>
           ) : null
