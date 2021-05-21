@@ -27,8 +27,7 @@
 ::  - it's a bit weird how we just assume the raw and tx in raw-tx to match...
 ::
 /-  *aggregator
-/+  naive, default-agent, ethereum, dbug, verb
-/=  ttttt  /tests/lib/naive  ::TODO  use new lib
+/+  naive, default-agent, ethereum, dbug, verb, lib=naive-transactions
 ::
 ::TODO  /sur file for public types
 |%
@@ -317,7 +316,7 @@
 ++  try-apply
   |=  [nas=^state:naive force=? =raw-tx:naive]
   ^-  [success=? _nas]
-  ?.  (verify-sig-and-nonce:naive verifier:ttttt `@`chain-id nas raw-tx)
+  ?.  (verify-sig-and-nonce:naive verifier:lib `@`chain-id nas raw-tx)
     [force nas]
   ::
   =^  out  points.nas  (increment-nonce:naive nas from.tx.raw-tx)
