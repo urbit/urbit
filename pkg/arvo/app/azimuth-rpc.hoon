@@ -159,7 +159,7 @@
     |=  =ship
     .^  (unit point:naive)
         %gx
-        (~(scry agentio bowl) %azimuth /nas/[(scot %p ship)]/noun)
+        (~(scry agentio bowl) %azimuth /nas/(scot %p ship)/noun)
     ==
   ::
   ++  pending
@@ -174,7 +174,7 @@
       |=  =^ship
       .^  (list pend-tx)
           %gx
-          (~(scry agentio bowl) %aggregator /pending/[(scot %p ship)]/noun)
+          (~(scry agentio bowl) %aggregator /pending/(scot %p ship)/noun)
       ==
     ::
     ++  addr
@@ -202,7 +202,7 @@
       ::
       .^  (list tx:naive)
           %gx
-          (~(scry agentio bowl) %aggregator /history/[(scot %p ship)]/noun)
+          (~(scry agentio bowl) %aggregator /history/(scot %p ship)/noun)
       ==
     ::
     ++  addr
@@ -211,7 +211,7 @@
       ::
       .^  (list tx:naive)
           %gx
-          (~(scry agentio bowl) %aggregator /history/[(scot %ux address)]/noun)
+          (~(scry agentio bowl) %aggregator /history/(scot %ux address)/noun)
       ==
     --
   ::
@@ -219,7 +219,7 @@
     |=  keccak=@ux
     .^  ^tx-status
         %gx
-        (~(scry agentio bowl) %aggregator /tx/[(scot %ux keccak)]/status/noun)
+        (~(scry agentio bowl) %aggregator /tx/(scot %ux keccak)/status/noun)
     ==
   ::
   ++  nonce
@@ -229,7 +229,7 @@
         %gx
         %+  ~(scry agentio bowl)
           %aggregator
-        /nonce/[(scot %p ship)]/[(scot %ux address)]/atom
+        /nonce/(scot %p ship)/[(scot %ux address)]/atom
     ==
   --
 --
