@@ -9,7 +9,7 @@ import useGraphState, { useDM } from '~/logic/state/graph';
 import useHarkState, { useHarkDm } from '~/logic/state/hark';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
-import {patpToUd} from '~/logic/lib/util';
+import { patpToUd } from '~/logic/lib/util';
 
 interface DmResourceProps {
   ship: string;
@@ -55,7 +55,7 @@ export function DmResource(props: DmResourceProps) {
           pageSize,
           `/${patpToUd(ship)}/${index.toString()}`
         );
-        return expectedSize !== getCurrDmSize(ship);
+        return expectedSize !== getCurrDmSize(ship.slice(1));
       } else {
         const index = dm.peekSmallest()?.[0];
         if (!index) {
@@ -74,7 +74,7 @@ export function DmResource(props: DmResourceProps) {
   );
 
   const dismissUnread = useCallback(() => {
-    api.hark.dismissReadCount(`/ship/~${window.ship}/dm-inbox`, `/${patpToUd(ship)}`);
+    api.hark.dismissReadCount(`/ship/~${window.ship}/dm-inbox`, `/${patp2dec(ship)}`);
   }, [ship]);
     
 
