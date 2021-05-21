@@ -19,13 +19,14 @@ export default class Balance extends Component {
 
     this.state = {
       sending: false,
-      copied: false,
+      copiedButton: false,
+      copiedString: false,
     }
 
     this.copyAddress = this.copyAddress.bind(this);
   }
 
-  copyAddress() {
+  copyAddress(arg) {
     let address = this.props.state.address;
     function listener(e) {
       e.clipboardData.setData('text/plain', address);
@@ -37,10 +38,14 @@ export default class Balance extends Component {
     document.removeEventListener('copy', listener);
 
     this.props.api.btcWalletCommand({'gen-new-address': null});
-    this.setState({copied: true});
-    setTimeout(() => {
-      this.setState({copied: false});
-    }, 2000);
+
+    if (arg === 'button'){
+      this.setState({copiedButton: true});
+      setTimeout(() => { this.setState({copiedButton: false}); }, 2000);
+    } else if (arg === 'string') {
+      this.setState({copiedString: true});
+      setTimeout(() => { this.setState({copiedString: false}); }, 2000);
+    }
   }
 
 
@@ -89,7 +94,10 @@ export default class Balance extends Component {
          >
            <Row justifyContent="space-between">
              <Text color="orange" fontSize={1}>Balance</Text>
-             <Text color="lightGray" fontSize="14px" mono>{addressText}</Text>
+             <Text color="lightGray" fontSize="14px" mono style={{cursor: "pointer"}}
+                   onClick={() => {this.copyAddress('string')}}>
+              {this.state.copiedString ? "copied" : addressText}
+             </Text>
              <CurrencyPicker
                denomination={denomination}
                currencies={this.props.state.currencyRates}
@@ -113,19 +121,19 @@ export default class Balance extends Component {
                      px="24px"
                      onClick={() => this.setState({sending: true})}
              />
-             <Button children={(this.state.copied) ? "Address Copied!" : "Copy Address"}
+             <Button children={(this.state.copiedButton) ? "Address Copied!" : "Copy Address"}
                      mr={3}
-                     disabled={this.state.copied}
+                     disabled={this.state.copiedButton}
                      fontSize={1}
                      fontWeight="bold"
-                     color={(this.state.copied) ? "green" : "orange"}
-                     backgroundColor={(this.state.copied) ? "veryLightGreen" : "midOrange" }
-                     style={{cursor: (this.state.copied) ? "default" : "pointer"}}
+                     color={(this.state.copiedButton) ? "green" : "orange"}
+                     backgroundColor={(this.state.copiedButton) ? "veryLightGreen" : "midOrange" }
+                     style={{cursor: (this.state.copiedButton) ? "default" : "pointer"}}
                      borderColor="none"
                      borderRadius="24px"
                      py="24px"
                      px="24px"
-                     onClick={this.copyAddress}
+                     onClick={() => {this.copyAddress('button')}}
              />
            </Row>
           </Col>
