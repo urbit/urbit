@@ -260,9 +260,9 @@
   ++  parse-tx
     ^-  (unit [tx _batch])
     =^  from-proxy=@      batch  (take 0 3)
-    ?:  (gth from-proxy 4)  (debug %bad-proxy ~)
+    ?.  ?=(?(%0 %1 %2 %3 %4) from-proxy)  (debug %bad-proxy ~)
     =/  =proxy
-      ?+  from-proxy  !!  :: checked above that lte 4
+      ?-  from-proxy
         %0  %own
         %1  %spawn
         %2  %manage
@@ -717,14 +717,17 @@
       `[effects-1 point]
     ::
     =^  effects-2  net.point
-      ?:  =(0 life.keys.net.point)
+      ?:  =([0 0 0] +.keys.net.point)
         `net.point
       =/  =keys  [+(life.keys.net.point) 0 0 0]
-      :-  :~  [%point ship %rift +(rift.net.point)]
-              [%point ship %keys keys]
-          ==
-      [+(rift.net.point) keys sponsor.net.point escape.net.point]
-    =/  effects-3
+      :-  [%point ship %keys keys]~
+      [rift.net.point keys sponsor.net.point escape.net.point]
+    =^  effects-3  rift.net.point
+      ?:  =(0 life.keys.net.point)
+        `rift.net.point
+      :-  [%point ship %rift +(rift.net.point)]~
+      +(rift.net.point) 
+    =/  effects-4
       :~  [%point ship %spawn-proxy *address]
           [%point ship %management-proxy *address]
           [%point ship %voting-proxy *address]
@@ -735,7 +738,7 @@
         address.voting-proxy.own.point      *address
         address.transfer-proxy.own.point    *address
       ==
-    `[:(welp effects-1 effects-2 effects-3) point]
+    `[:(welp effects-1 effects-2 effects-3 effects-4) point]
   ::
   ++  process-spawn
     |=  [=ship to=address]
@@ -763,6 +766,8 @@
     ::  TODO check spawnlimit
     ::
     =/  [=effects new-point=point]
+      =/  point=(unit point)  (get-point state ship)
+      ?>  ?=(^ point)  ::  only parsed 4 bytes
       ::  If spawning to self, just do it
       ::
       ?:  ?|  ?&  =(%own proxy.from.tx)
@@ -772,19 +777,17 @@
                   =(to address.spawn-proxy.own.u.parent-point)
               ==
           ==
+        ::  TODO: use get-point or duplicate sponsor logic
+        ::
         :-  ~[[%point ship %dominion %l2] [%point ship %owner to]]
-        %*  .  *point
-          dominion           %l2
-          address.owner.own  to
-        ==
+        u.point(address.owner.own to)
       ::  Else spawn to parent and set transfer proxy
       ::
       :-  :~  [%point ship %dominion %l2]
               [%point ship %owner address.owner.own.u.parent-point]
               [%point ship %transfer-proxy to]
           ==
-      %*  .  *point
-        dominion                    %l2
+      %=  u.point
         address.owner.own           address.owner.own.u.parent-point
         address.transfer-proxy.own  to
       ==
@@ -900,5 +903,5 @@
   (receive-log state event-log.input)
 ::  Received L2 batch
 ::
-%+  debug  %batch
+::  %+  debug  %batch
 (receive-batch verifier chain-id state batch.input)
