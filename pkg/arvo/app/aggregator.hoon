@@ -223,13 +223,13 @@
         =+  !<([=term =tang] q.cage.sign)
         %-  (slog leaf+"{(trip dap.bowl)} failed" leaf+<term> tang)
         =^  cards  state
-          (on-thread-result:do (rash i.t.wire dem) %.n^term)
+          (on-thread-result:do (rash i.t.wire dem) %.n^'thread failed')
         [cards this]
       ::
           %thread-done
         ~&  ['all submitted to' t.wire]
         :: is aggregator/send thread expected to maybe return an error?
-        =+   !<(result=(each @ud term) q.cage.sign)
+        =+   !<(result=(each @ud @t) q.cage.sign)
         =^  cards  state
           (on-thread-result:do (rash i.t.wire dem) result)
         [cards this]
@@ -420,7 +420,7 @@
 ::  +on-thread-result: await resend after thread success or failure
 ::
 ++  on-thread-result
-  |=  [nonce=@ud result=(each @ud term)]
+  |=  [nonce=@ud result=(each @ud @t)]
   ^-  (quip card _state)
   ::  update gas price for this tx in state
   ::

@@ -67,14 +67,19 @@
 ::
 ::NOTE  this fails the thread if sending fails, which in the app gives us
 ::      the "retry with same gas price" behavior we want
-;<  jon=json  bind:m
-  %+  request-rpc:ethio  endpoint
-  [`'sendRawTransaction' %eth-send-raw-transaction tx]
-::TODO  check that tx-hash in jon is non-zero?
-::TODO  enforce max here, or in app?
-::  add five gwei to gas price of next attempt
-::
-(pure:m !>(%.y^(add use-gas-price 5.000.000.000)))
+;<  =response:rpc  bind:m  (send-batch endpoint tx)
+%-  pure:m
+!>  ^-  (each @ud @t)
+?+  -.response  %.n^'unexpected rpc response'
+  %error   %.n^message.res
+  :: TODO:
+  ::  check that tx-hash in +.response is non-zero?
+  ::  log tx-hash to getTransactionReceipt(tx-hash)?
+  ::  enforce max here, or in app?
+  ::  add five gwei to gas price of next attempt
+  ::
+  %result  %.y^(add use-gas-price 5.000.000.000)
+==
 ::
 ::TODO  should be distilled further, partially added to strandio?
 ++  fetch-gas-price
@@ -106,4 +111,19 @@
   %.  u.jon
   =,  dejs-soft:format
   (ot 'result'^(ot 'FastGasPrice'^ni ~) ~)
+::
+++  send-batch
+  |=  [endpoint=@ta batch=@ux]
+  =/  m  (strand:strandio ,response:rpc)
+  ^-  form:m
+  =/  req=[(unit @t) request:rpc:ethereum]
+    [`'sendRawTransaction' %eth-send-raw-transaction batch]
+  ;<  res=(list response:rpc)  bind:m
+    (request-batch-rpc-loose:ethio endpoint [req]~)
+  ?:  ?=([* ~] res)
+    (pure:m i.res)
+  %+  strand-fail:strandio
+    %unexpected-multiple-results
+  [>(lent res)< ~]
+::
 --
