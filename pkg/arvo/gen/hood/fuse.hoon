@@ -2,14 +2,25 @@
 ::
 ::::  /hoon/fuse/hood/gen
   ::
+/+  *hood-kiln
 /*  help-text  %txt  /gen/hood/fuse/help/txt
 =,  clay
 ::
 ::::
   ::
+=>
+|%
++$  fuse-arg
+  $:  des=desk
+      res=[?([%cancel ~] [bas=fuse-source con=(list [fuse-source germ]) ~])]
+  ==
+--
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] [arg=[?(~ [des=desk bas=beak con=(list [beak germ]) ~])]] ~]
+|=  [* [arg=[?(~ fuse-arg)]] [overwrite=$~(| flag) ~]]
 :-  %kiln-fuse
 ?~  arg
   ((slog (turn `wain`help-text |=(=@t leaf+(trip t)))) ~)
-[des bas con]:arg
+:-  des.arg
+?:  ?=([%cancel ~] res.arg)
+  ~
+[overwrite bas.res.arg con.res.arg]

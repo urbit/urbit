@@ -2043,7 +2043,7 @@
     ^+  ..take-fuse
     ?~  merges
       =/  t=tang  [leaf+"{<syd>} fused from {<bas.fiz>} {<con.fiz>}" ~]
-      =.  ..take-fuse  (done-fuse clean-state %| %fuse-succeded t)
+      =.  ..take-fuse  (done-fuse clean-state %& ~)
       (park | [%| continuation-yaki(p (flop parents))] rag)
     =/  [bec=beak g=germ]  i.merges
     =/  ali-dom=dome:clay  (need (~(got by sto.fiz) bec))
