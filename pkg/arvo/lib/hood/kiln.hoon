@@ -3,11 +3,29 @@
 =,  space:userlib
 =,  format
 |%
-+$  state  [%1 pith-1]
++$  state  state-2
++$  state-2  [%2 pith-2]
++$  state-1  [%1 pith-1]
++$  state-0  [%0 pith-0]
 +$  any-state
-  $%  state
-      [%0 pith-0]
+  $%  state-2
+      state-1
+      state-0
   ==
++$  pith-2                                              ::
+  $:  rem=(map desk per-desk)                           ::
+      syn=(map kiln-sync let=@ud)                       ::
+      ota=(unit [=ship =desk =aeon])                    ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+      ::  map desk to the currently ongoing fuse request
+      ::  and the latest version numbers for beaks to
+      fus=(map desk per-fuse)
+      ::  used for fuses - every time we get a fuse we
+      ::  bump this. used when calculating hashes to
+      ::  ensure they're unique even when the same
+      ::  request is made multiple times.
+      hxs=(map desk @ud)
+  ==                                                    ::
 +$  pith-1                                              ::
   $:  rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
@@ -30,6 +48,15 @@
       her=@p                                            ::  from ship
       sud=@tas                                          ::  from desk
       cas=case                                          ::  at case
+  ==
++$  per-fuse                                            ::  per fuse state
+      ::  map [ship desk] to latest version number we
+      ::  have for them. used for things we're %trak-ing
+      ::  our invariant here is to store the latest version
+      ::  number we've heard of.
+  $:  mox=(map [ship desk] let=@ud)
+      ::  relevant parts of originating request
+      kf=kiln-fuse-data
   ==
 +$  kiln-commit  term                                   ::
 +$  kiln-mount                                          ::
@@ -55,11 +82,22 @@
       cas=case                                          ::
       gim=?(%auto germ)                                 ::
   ==
++$  fuse-source  [who=ship des=desk ver=$@(%trak case)]
+::  actual poke
 +$  kiln-fuse
   $@  ~
   $:  syd=desk
-      bas=beak
-      con=(list [beak germ])
+      $@  ~  :: signifies clearing the fuse
+      $:  overwrite=flag  :: force overwrite previous fuse
+          bas=fuse-source
+          con=(list [fuse-source germ])
+      ==
+  ==
+::  state tracked by kiln
++$  kiln-fuse-data
+  $:  syd=desk
+      bas=fuse-source
+      con=(list [fuse-source germ])
   ==
 --
 |=  [bowl:gall state]
@@ -85,6 +123,15 @@
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
 ::
 ++  on-load
+  =>
+  |%
+  ++  state-1-to-2
+    |=  s=state-1
+    ^-  state-2
+    =/  p=pith-1  +.s
+    :-  %2
+    [rem.p syn.p ota.p commit-timer.p *(map desk per-fuse) *(map desk @ud)]
+  --
   |=  [hood-version=@ud old=any-state]
   =<  abet
   =?  .  ?=(%0 -.old)
@@ -97,8 +144,8 @@
       ?:  &(=(%base syd.i.syncs) !=(our her.i.syncs) =(%kids sud.i.syncs))
         `[syd her sud]:i.syncs
       $(syncs t.syncs)
-    ::
     =.  +<+.$.abet
+      %-  state-1-to-2
       =-  old(- %1, |3 [ota=~ commit-timer.old], syn -)
       ?~  recognized-ota
         syn
@@ -108,7 +155,8 @@
       (poke-internal:update `[her sud]:u.recognized-ota)
     +(old +<+.$.abet)
   ::
-  ?>  ?=(%1 -.old)
+  =?  old  ?=(%1 -.old)  (state-1-to-2 old)
+  ?>  ?=(%2 -.old)
   =.  +<+.$.abet  old
   ..abet
 ::
@@ -390,7 +438,17 @@
 ++  poke-fuse
   |=  k=kiln-fuse
   ?~  k  abet
-  abet:(emit [%pass /kiln/fuse/[syd.k] %arvo %c [%fuse syd.k bas.k con.k]])
+  =/  payload  +.k
+  ?~  payload
+    ::  cancelling an ongoing fuse
+    %-  (slog [leaf+"cancelling fuse into {<syd.k>}" ~])
+    abet:abet:delete:(fuzz syd.k now)
+  ?:  &(!overwrite.payload (~(has by fus) syd.k))
+    ((slog [leaf+"existing fuse into {<syd.k>} - need =overwrite &" ~]) abet)
+  =.  fus  (~(put by fus) syd.k [~ [syd.k bas.payload con.payload]])
+  =/  old-cnt=@ud  (~(gut by hxs) syd.k 0)
+  =.  hxs  (~(put by hxs) syd.k +(old-cnt))
+  abet:abet:fuse:(fuzz syd.k now)
 ::
 ++  poke-cancel
   |=  a=@tas
@@ -489,6 +547,10 @@
       [%autocommit *]   %+  take-wake-autocommit  t.wire
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
       [%ota *]          abet:(take:update t.wire sign-arvo)
+      [%fuse-request @tas *]
+                      abet:abet:(take:(fuzz i.t.wire now) t.t.wire sign-arvo)
+      [%fuse @tas *]  ?>  ?=(%mere +<.sign-arvo)
+                      abet:abet:(mere:(fuzz i.t.wire now) +>.sign-arvo)
       *
     ?+    +<.sign-arvo
         ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
@@ -567,6 +629,142 @@
 ++  spam
   |=  mes=(list tank)
   ((slog mes) ..spam)
+::  state machine for fuses
+::
+++  fuzz
+  |=  [syd=desk now=@da]
+  =/  pf=per-fuse  (~(gut by fus) syd *per-fuse)
+  =*  kf  kf.pf
+  =*  mox  mox.pf
+  =/  should-delete=flag  |
+  ::  Check this in arms that rely on the key being present.
+  ::  If this is true we will never update our state.
+  ::
+  =/  key-missing=flag  !(~(has by fus) syd)
+  |%
+  ::  finalize
+  ::
+  ++  abet
+    ::  If this is an operation on a key that isn't present
+    ::  we should just produce the unchanged state.
+    ::
+    ?:  key-missing
+      ..fuzz
+    ?:  should-delete
+      ..fuzz(fus (~(del by fus) syd))
+    ..fuzz(fus (~(put by fus) syd [mox kf]))
+  ::
+  ++  delete
+    ^+  ..delete
+    =.  should-delete  &
+    ..delete
+  ::
+  ++  mere
+    |=  mes=(each (set path) (pair term tang))
+    ^+  ..mere
+    ?.  ?=([%| *] mes)
+      ..mere
+    %-  (slog leaf+"failed fuse for {<syd>}" p.mes)
+    ..mere
+  ::  queue moves
+  ::
+  ++  blab
+    |=  new=(list card:agent:gall)
+    ^+  +>
+    +>.$(moz (welp new moz))
+  ::  +make-requests: send requests for each %trak source
+  ::
+  ++  make-requests
+    ^+  ..abet
+    ?:  key-missing
+      ..make-requests
+    =/  movs=(list card:agent:gall)
+      %+  murn
+        [[bas.kf *germ] con.kf]
+      |=  [fs=fuse-source germ]
+      ^-  (unit card:agent:gall)
+      ?^  ver.fs
+        ::  static source, don't need to track
+        ~
+      =/  bec=beak  (realize-fuse-source fs)
+      ?>  =(who.fs p.bec)
+      ?>  =(des.fs q.bec)
+      =/  hax=@ud  (mug [kf (~(got by hxs) syd)])
+      =/  wir=wire  /kiln/fuse-request/[syd]/(scot %p p.bec)/[q.bec]/(scot %ud hax)
+      =/  rav=rave  [%next %v r.bec /]
+      =/  rif=riff  [q.bec `rav]
+      `[%pass wir %arvo %c [%warp who.fs rif]]
+    ::  No need to keep state if all the sources are static
+    ?~  movs
+      delete
+    (blab movs)
+  ::
+  ++  send-fuse
+    ^+  ..abet
+    ?:  key-missing
+      ..send-fuse
+    =/  bas=beak  (realize-fuse-source bas.kf)
+    =/  con=(list [beak germ])
+      %+  turn
+        con.kf
+      |=  [fs=fuse-source g=germ]
+      [(realize-fuse-source fs) g]
+    %-  blab
+    [%pass /kiln/fuse/[syd] %arvo %c [%fuse syd bas con]]~
+  ::
+  ++  fuse
+    ^+  ..abet
+    ?:  key-missing
+      ..fuse
+    send-fuse:make-requests
+  ::
+  ++  take
+    |=  [wir=wire =sign-arvo]
+    ^+  ..fuse
+    ?:  key-missing
+      ..take
+    ?>  =((lent wir) 3)
+    =/  who=ship  (slav %p (snag 0 wir))
+    =/  src=desk  (snag 1 wir)
+    =/  hax=@ud  (slav %ud (snag 2 wir))
+    ?.  =(hax (mug [kf (~(got by hxs) syd)]))
+      ::  If the hash in the wire doesn't match the current request
+      ::  this is a response for a previous fuse that we can ignore.
+      %-  (slog [leaf+"|fuse take: hash mismatch for source {<src>} on {<who>} while fusing {<syd>}" ~])
+      ..take
+    ?>  ?=([%clay *] sign-arvo)
+    =/  gif=gift:clay  +.sign-arvo
+    ?>  ?=([%writ *] gif)
+    ?~  p.gif
+      %-  (slog leaf+"|fuse request failed for {<src>} on <who> - cancelling")
+      delete
+    =/  dom=dome  !<(dome +.r.u.p.gif)
+    =.  mox  (~(put by mox) [who src] let.dom)
+    fuse
+  ::
+  ::  utility functions below
+  ::
+  ::  +realize-fuse-source: convert a fuse-source to a
+  ::  fully realized beak.
+  ::
+  ++  realize-fuse-source
+    |=  fs=fuse-source
+    ^-  beak
+    :+  who.fs
+      des.fs
+    ?@  ver.fs
+      (realize-case [who.fs des.fs])
+    `case`ver.fs
+  ::
+  ++  realize-case
+    |=  [who=ship des=desk]
+    ^-  case
+    =/  let=(unit @ud)  (~(get by mox) [who des])
+    ^-  case
+    ?~  let
+      da+now
+    ud+u.let
+  --
 ::
 ++  auto
   |=  kiln-sync
