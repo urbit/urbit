@@ -275,8 +275,14 @@
 ++  part-tx-to-full
   |=  =part-tx
   ^-  [octs tx:naive]
-  ?+  -.part-tx  !!
-    :: %raw  [+.part-tx (decode-tx:naive +.part-tx)]
+  ?+    -.part-tx  !!
+      %raw
+    ?~  batch=(parse-raw-tx:naive q.raw.part-tx)
+      ~&  %parse-failed
+      ::  TODO: maybe return a unit if parsing fails?
+      ::
+      !!
+    [raw tx]:-.u.batch
     :: %don  [(encode-tx:naive +.part-tx) +.part-tx]
     %ful  +.part-tx
   ==
