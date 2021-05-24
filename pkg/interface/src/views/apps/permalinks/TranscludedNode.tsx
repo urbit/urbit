@@ -1,3 +1,5 @@
+/* eslint-disable no-case-declarations */
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { Anchor, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { Association, GraphConfig, GraphNode, Group, Post, ReferenceContent, TextContent, UrlContent } from '@urbit/api';
 import bigInt from 'big-integer';
@@ -33,7 +35,7 @@ function TranscludedLinkNode(props: {
       >
         <Text gray>This link has been deleted.</Text>
       </Box>
-    )
+    );
   }
 
   switch (idx.length) {
@@ -49,6 +51,7 @@ function TranscludedLinkNode(props: {
           <Author
             pt='12px'
             pl='12px'
+            mt='6px'
             size={24}
             sigilPadding='6'
             showImage
@@ -57,7 +60,7 @@ function TranscludedLinkNode(props: {
           />
           <Box
             borderRadius='2'
-            mt='1'
+            mt='3'
             ml='44px'
             mr='3'
             p='2'
@@ -110,7 +113,7 @@ function TranscludedComment(props: {
       >
         <Text gray>This comment has been deleted.</Text>
       </Box>
-    )
+    );
   }
 
   const group = useGroupForAssoc(assoc)!;
@@ -121,6 +124,7 @@ function TranscludedComment(props: {
       <Author
         pt='12px'
         pl='12px'
+        mt='6px'
         size={24}
         sigilPadding='6'
         showImage
@@ -128,7 +132,7 @@ function TranscludedComment(props: {
         date={comment.post?.['time-sent']}
         group={group}
       />
-      <Box pl="44px" pt='1'>
+      <Box pl="44px" pt='2'>
         <GraphContent
           api={api}
           transcluded={transcluded}
@@ -150,7 +154,6 @@ function TranscludedPublishNode(props: {
   const group = useGroupForAssoc(assoc)!;
 
   if (typeof node?.post === 'string') {
-    console.log(node)
     return (
       <Box
         mx="12px"
@@ -171,10 +174,11 @@ function TranscludedPublishNode(props: {
         ?.get(bigInt.one)
         ?.children?.peekLargest()?.[1]!;
       return (
-        <Col color="black" gapY={2}>
+        <Col color="black">
           <Author
             pl='12px'
             pt='12px'
+            mt='6px'
             size={24}
             sigilPadding='6'
             showImage
@@ -182,7 +186,7 @@ function TranscludedPublishNode(props: {
             date={post.post?.['time-sent']}
             group={group}
           />
-          <Text pl='44px' fontSize="2" fontWeight="medium">
+          <Text mt='3' pl='44px' fontSize="2" fontWeight="medium">
             {(post.post.contents[0] as TextContent)?.text}
           </Text>
           <Box pl="44px" pr='3'>
@@ -227,7 +231,7 @@ export function TranscludedPost(props: {
       >
         <Text gray>This post has been deleted.</Text>
       </Box>
-    )
+    );
   }
 
   return (
@@ -235,6 +239,7 @@ export function TranscludedPost(props: {
       <Author
         pt='12px'
         pl='12px'
+        mt='6px'
         size={24}
         sigilPadding='6'
         showImage
@@ -242,7 +247,7 @@ export function TranscludedPost(props: {
         date={post?.['time-sent']}
         group={group}
       />
-      <Box pl='44px' pt='2' pr='3'>
+      <Box pl='44px' pt='3' pr='3'>
         <MentionText
           api={api}
           transcluded={transcluded}
@@ -272,8 +277,8 @@ export function TranscludedNode(props: {
   const group = useGroupForAssoc(assoc)!;
 
   if (
-    typeof node?.post === "string" &&
-    (assoc.metadata.config as GraphConfig).graph === "chat"
+    typeof node?.post === 'string' &&
+    (assoc.metadata.config as GraphConfig).graph === 'chat'
   ) {
     return (
       <Box

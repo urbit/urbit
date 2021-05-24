@@ -14,7 +14,7 @@ interface ResourceRouteProps {
   name: string;
 }
 
-export function PermalinkRoutes(props: {}) {
+export function PermalinkRoutes(props: unknown) {
   const groups = useGroupState(s => s.groups);
   const { query, toQuery } = useQuery();
 
@@ -70,7 +70,7 @@ function GroupRoutes(props: { group: string; url: string }) {
       <Route
         path={makePath('/graph/:ship/:name')}
         render={({ match, location }) => {
-          const { ship, name } = match.params as ResourceRouteProps;
+          const { ship, name } = match.params as unknown as ResourceRouteProps;
           const path = `/ship/${ship}/${name}`;
           const association = associations.graph[path];
           const { url: routeUrl } = match;
