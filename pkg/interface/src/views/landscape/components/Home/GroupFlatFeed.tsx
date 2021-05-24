@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { resourceFromPath } from '~/logic/lib/group';
-import { useFlatGraph, useGraphTimesentMap } from '~/logic/state/graph';
+import { useGraphTimesentMap } from '~/logic/state/graph';
 import { useGroup } from '~/logic/state/group';
 import { useAssocForGraph } from '~/logic/state/metadata';
 import { Loading } from '~/views/components/Loading';
@@ -12,7 +12,6 @@ import { GroupFeedHeader } from './GroupFeedHeader';
 import PostThread from './Post/PostThread';
 import PostFlatTimeline from './Post/PostFlatTimeline';
 import PostReplies from './Post/PostReplies';
-
 
 function GroupFlatFeed(props) {
   const {
@@ -29,7 +28,7 @@ function GroupFlatFeed(props) {
     graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
 
   const association = useAssocForGraph(graphPath);
-  
+
   const graphTimesentMap = useGraphTimesentMap(graphRid.ship, graphRid.name);
   const pendingSize = Object.keys(graphTimesentMap || {}).length;
 
@@ -74,7 +73,6 @@ function GroupFlatFeed(props) {
               <PostFlatTimeline
                 baseUrl={baseUrl}
                 api={api}
-                history={history}
                 graphPath={graphPath}
                 group={group}
                 association={association}

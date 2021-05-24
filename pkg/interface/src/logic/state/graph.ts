@@ -1,7 +1,6 @@
-import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath } from '@urbit/api';
+import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs } from '@urbit/api';
 import { useCallback } from 'react';
 import { BaseState, createState } from './base';
-
 
 export interface GraphState extends BaseState<GraphState> {
   graphs: Graphs;

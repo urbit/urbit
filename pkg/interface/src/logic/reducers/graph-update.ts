@@ -10,32 +10,30 @@ import _ from 'lodash';
 import { reduceState } from '../state/base';
 import useGraphState, { GraphState } from '../state/graph';
 
-export const GraphReducer = (json) => {
-  const data = _.get(json, 'graph-update', false);
+const mapifyChildren = (children) => {
+  return new BigIntOrderedMap().gas(
+    _.map(children, (node, idx) => {
+      idx = idx && idx.startsWith('/') ? idx.slice(1) : idx;
+      const nd = { ...node, children: mapifyChildren(node.children || {}) };
+      return [bigInt(idx), nd];
+    }));
+};
 
-  if (data) {
-    reduceState<GraphState, any>(useGraphState, data, [
-      keys,
-      addGraph,
-      removeGraph,
-      addNodes,
-      removePosts
-    ]);
-  }
-  const loose = _.get(json, 'graph-update-loose', false);
-  if(loose) {
-    reduceState<GraphState, any>(useGraphState, loose, [addNodesLoose]);
-  }
-
-  const flat = _.get(json, 'graph-update-flat', false);
-  if (flat) {
-    reduceState<GraphState, any>(useGraphState, flat, [addNodesFlat]);
+const processNode = (node) => {
+  //  is empty
+  if (!node.children) {
+    return produce<GraphNode>(node, (draft: GraphNode) => {
+      draft.children = new BigIntOrderedMap();
+    });
   }
 
-  const thread = _.get(json, 'graph-update-thread', false);
-  if (thread) {
-    reduceState<GraphState, any>(useGraphState, thread, [addNodesThread]);
-  }
+  //  is graph
+  return produce<GraphNode>(node, (draft: GraphNode) => {
+    draft.children = new BigIntOrderedMap<GraphNode>()
+      .gas(_.map(draft.children, (item, idx) =>
+        [bigInt(idx), processNode(item)] as [BigInteger, any]
+      ));
+  });
 };
 
 const addNodesLoose = (json: any, state: GraphState): GraphState => {
@@ -56,7 +54,9 @@ const addNodesLoose = (json: any, state: GraphState): GraphState => {
 const addNodesFlat = (json: any, state: GraphState): GraphState => {
   const data = _.get(json, 'add-nodes', false);
   if (data) {
-    if (!('flatGraphs' in state)) { return state; }
+    if (!('flatGraphs' in state)) {
+ return state;
+}
 
     const resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.flatGraphs)) {
@@ -70,16 +70,19 @@ const addNodesFlat = (json: any, state: GraphState): GraphState => {
     const indices = Array.from(Object.keys(data.nodes));
 
     indices.forEach((index) => {
-      if (index.split('/').length === 0) { return; }
+      if (index.split('/').length === 0) {
+ return;
+}
       const indexArr = stringToArr(index);
-      if (indexArr.length === 0) { return state; }
+      if (indexArr.length === 0) {
+ return state;
+}
 
-      let node = data.nodes[index];
+      const node = data.nodes[index];
       node.children = mapifyChildren({});
       state.flatGraphs[resource] =
         state.flatGraphs[resource].set(indexArr, node);
     });
-
   }
   return state;
 };
@@ -103,20 +106,20 @@ const addNodesThread = (json: any, state: GraphState): GraphState => {
     }
 
     indices.forEach((index) => {
-      if (index.split('/').length === 0) { return; }
+      if (index.split('/').length === 0) {
+ return;
+}
       const indexArr = stringToArr(index);
 
-      if (indexArr.length === 0) { return state; }
+      if (indexArr.length === 0) {
+ return state;
+}
 
-      let node = data.nodes[index];
+      const node = data.nodes[index];
+      node.children = mapifyChildren({});
       state.threadGraphs[resource][parentIndex] =
-        state.threadGraphs[resource][parentIndex].set(indexArr,
-          produce(node, (draft) => {
-            draft.children = mapifyChildren({});
-          })
-        );
+        state.threadGraphs[resource][parentIndex].set(indexArr, node);
     });
-
   }
   return state;
 };
@@ -132,23 +135,6 @@ const keys = (json, state: GraphState): GraphState => {
   return state;
 };
 
-const processNode = (node) => {
-  //  is empty
-  if (!node.children) {
-    return produce<GraphNode>(node, (draft: GraphNode) => {
-      draft.children = new BigIntOrderedMap();
-    });
-  }
-
-  //  is graph
-  return produce<GraphNode>(node, (draft: GraphNode) => {
-    draft.children = new BigIntOrderedMap<GraphNode>()
-      .gas(_.map(draft.children, (item, idx) =>
-        [bigInt(idx), processNode(item)] as [BigInteger, any]
-      ));
-  });
-};
-
 const addGraph = (json, state: GraphState): GraphState => {
   const data = _.get(json, 'add-graph', false);
   if (data) {
@@ -158,6 +144,7 @@ const addGraph = (json, state: GraphState): GraphState => {
     }
 
     if (!('flatGraphs' in state)) {
+      // @ts-ignore investigate zustand types
       state.flatGraphs = {};
     }
 
@@ -183,6 +170,7 @@ const removeGraph = (json, state: GraphState): GraphState => {
     }
 
     if (!('graphs' in state)) {
+      // @ts-ignore investigate zustand types
       state.flatGraphs = {};
     }
     const resource = data.ship + '/' + data.name;
@@ -190,15 +178,6 @@ const removeGraph = (json, state: GraphState): GraphState => {
     delete state.graphs[resource];
   }
   return state;
-};
-
-const mapifyChildren = (children) => {
-  return new BigIntOrderedMap().gas(
-    _.map(children, (node, idx) => {
-      idx = idx && idx.startsWith('/') ? idx.slice(1) : idx;
-      const nd = { ...node, children: mapifyChildren(node.children || {}) };
-      return [bigInt(idx), nd];
-    }));
 };
 
 const addNodes = (json, state) => {
@@ -244,13 +223,17 @@ const addNodes = (json, state) => {
     post,
     resource
   ) => {
-    if (!post.hash) { return [graph, flatGraph, threadGraphs]; }
+    if (!post.hash) {
+ return [graph, flatGraph, threadGraphs];
+}
     const timestamp = post['time-sent'];
 
     if (state.graphTimesentMap[resource][timestamp]) {
       const index = state.graphTimesentMap[resource][timestamp];
 
-      if (index.split('/').length === 0) { return graph; }
+      if (index.split('/').length === 0) {
+ return graph;
+}
       const indexArr = stringToArr(index);
 
       delete state.graphTimesentMap[resource][timestamp];
@@ -264,36 +247,43 @@ const addNodes = (json, state) => {
       }
 
       if (threadGraphs) {
-        let k = [];
-        for (let i in indexArr) {
+        const k = [];
+        for (const i in indexArr) {
           k.push(indexArr[i]);
-          if (threadGraphs[k]) {
-            threadGraphs[k] = threadGraphs[k].delete(indexArr);
+          const arr = arrToString(k);
+          if (threadGraphs[arr]) {
+            threadGraphs[arr] = threadGraphs[arr].delete(indexArr);
           }
         }
       }
     }
-    
+
     return [graph, flatGraph, threadGraphs];
   };
 
   const data = _.get(json, 'add-nodes', false);
   if (data) {
-    if (!('graphs' in state)) { return state; }
-    if (!('flatGraphs' in state)) { return state; }
-    if (!('threadGraphs' in state)) { return state; }
+    if (!('graphs' in state)) {
+ return state;
+}
+    if (!('flatGraphs' in state)) {
+ return state;
+}
+    if (!('threadGraphs' in state)) {
+ return state;
+}
 
     const resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.graphs)) {
       if(json.fetch) {
         state.graphs[resource] = new BigIntOrderedMap();
       } else {
-        //  ignore updates until we load backlog deliberately, to avoid 
+        //  ignore updates until we load backlog deliberately, to avoid
         //  unnecessary memory usage
         return state;
       }
     }
-    
+
     if (!(resource in state.graphTimesentMap)) {
       state.graphTimesentMap[resource] = {};
     }
@@ -309,13 +299,15 @@ const addNodes = (json, state) => {
     });
 
     indices.forEach((index) => {
-      let node = data.nodes[index];
+      const node = data.nodes[index];
       const old = state.graphs[resource].size;
-     
-      if (index.split('/').length === 0) { return state; }
+
+      if (index.split('/').length === 0) {
+ return state;
+}
       const indexArr = stringToArr(index);
 
-      let [graph, flatGraph, threadGraphs] =
+      const [graph, flatGraph, threadGraphs] =
         _removePending(
           state.graphs[resource],
           state.flatGraphs[resource],
@@ -350,17 +342,18 @@ const addNodes = (json, state) => {
 
       if (resource in state.flatGraphs) {
         state.flatGraphs[resource] =
-          state.flatGraphs[resource].set(indexArr, produce(node, draft => {
+          state.flatGraphs[resource].set(indexArr, produce(node, (draft) => {
             draft.children = mapifyChildren({});
           }));
       }
 
       if (indexArr.length > 1 && resource in state.threadGraphs) {
-        let parentKey = arrToString(indexArr.slice(0, indexArr.length - 1));
+        const parentKey = arrToString(indexArr.slice(0, indexArr.length - 1));
 
         if (parentKey in state.threadGraphs[resource]) {
-          let thread = state.threadGraphs[resource][parentKey];
-          let isFirstChild =  Array.from(thread.keys()).filter((k) => {
+          const thread = state.threadGraphs[resource][parentKey];
+          const isFirstChild =  Array.from(thread.keys()).filter((k) => {
+            //  @ts-ignore @tacryt-socryp what do?
             return stringToArr(parentKey).length < k.length;
           }).length === 0;
 
@@ -368,7 +361,7 @@ const addNodes = (json, state) => {
             state.threadGraphs[resource][parentKey] =
               state.threadGraphs[resource][parentKey].set(
                 indexArr,
-                produce(node, draft => {
+                produce(node, (draft) => {
                   draft.children = mapifyChildren({});
                 })
               );
@@ -428,4 +421,32 @@ const removePosts = (json, state: GraphState): GraphState => {
     });
   }
   return state;
+};
+
+export const GraphReducer = (json) => {
+  const data = _.get(json, 'graph-update', false);
+
+  if (data) {
+    reduceState<GraphState, any>(useGraphState, data, [
+      keys,
+      addGraph,
+      removeGraph,
+      addNodes,
+      removePosts
+    ]);
+  }
+  const loose = _.get(json, 'graph-update-loose', false);
+  if(loose) {
+    reduceState<GraphState, any>(useGraphState, loose, [addNodesLoose]);
+  }
+
+  const flat = _.get(json, 'graph-update-flat', false);
+  if (flat) {
+    reduceState<GraphState, any>(useGraphState, flat, [addNodesFlat]);
+  }
+
+  const thread = _.get(json, 'graph-update-thread', false);
+  if (thread) {
+    reduceState<GraphState, any>(useGraphState, thread, [addNodesThread]);
+  }
 };

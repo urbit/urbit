@@ -39,7 +39,7 @@ class PostFeed extends React.Component<PostFeedProps, any> {
     this.doNotFetch = this.doNotFetch.bind(this);
   }
   // @ts-ignore needs @liam-fitzgerald peek at props for virtualscroller
-  renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
+  renderItem = React.forwardRef<HTMLDivElement, any>(({ index, scrollWindow }, ref) => {
     const {
       graph,
       graphPath,
@@ -58,7 +58,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
     }
 
     const first = graph.peekLargest()?.[0];
-    const post = node?.post;
     const nodeIndex =
       ( parentNode &&
         typeof parentNode.post !== 'string'
@@ -80,7 +79,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
               key={parentNode.post.index}
               parentPost={grandparentNode?.post}
               node={parentNode}
-              parentNode={grandparentNode}
               graphPath={graphPath}
               association={association}
               api={api}
@@ -115,14 +113,16 @@ class PostFeed extends React.Component<PostFeedProps, any> {
           width="100%"
           alignItems="center"
           key={index.toString()}
-          ref={ref}>
+          ref={ref}
+        >
           <Col
             width="100%"
             maxWidth="608px"
             pt={3}
             pl={1}
             pr={1}
-            mb={3}>
+            mb={3}
+          >
             <PostInput
               api={api}
               group={group}

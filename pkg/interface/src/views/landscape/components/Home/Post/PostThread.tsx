@@ -8,14 +8,12 @@ import { Loading } from '~/views/components/Loading';
 import { arrToString } from '~/views/components/ArrayVirtualScroller';
 import useGraphState from '~/logic/state/graph';
 import PostFlatFeed from './PostFlatFeed';
-import PostItem from './PostItem/PostItem';
-
+import PostInput from './PostInput';
 
 export default function PostThread(props) {
   const {
     baseUrl,
     api,
-    history,
     association,
     graphPath,
     group,
@@ -27,7 +25,7 @@ export default function PostThread(props) {
     graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
 
   const locationUrl = props.locationUrl.replace(`${baseUrl}/feed/thread`, '');
-  const index = locationUrl.split('/').slice(1).map((ind) => bigInt(ind));
+  const index = locationUrl.split('/').slice(1).map(ind => bigInt(ind));
 
   useEffect(() => {
     if (graphResource.ship === '~zod' && graphResource.name === 'null') {

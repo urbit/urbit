@@ -1,7 +1,8 @@
+/* eslint-disable valid-jsdoc */
 import { Box, Center, LoadingSpinner } from '@tlon/indigo-react';
 import BigIntArrayOrderedMap, {
   arrToString,
-  stringToArr 
+  stringToArr
 } from '@urbit/api/lib/BigIntArrayOrderedMap';
 import bigInt, { BigInteger } from 'big-integer';
 import _ from 'lodash';
@@ -29,8 +30,8 @@ interface RendererProps {
 export { arrToString, stringToArr };
 
 export function indexEqual(a: BigInteger[], b: BigInteger[]) {
-  let aLen = a.length;
-  let bLen = b.length;
+  const aLen = a.length;
+  const bLen = b.length;
 
   if (aLen === bLen) {
     let i = 0;
@@ -77,7 +78,6 @@ interface VirtualScrollerProps<T> {
   onEndReached?(): void;
   size: number;
   pendingSize: number;
-  totalSize: number;
   /**
    * Average height of a single rendered item
    *
@@ -101,7 +101,7 @@ interface VirtualScrollerProps<T> {
   onBottomLoaded?: () => void;
 }
 
-interface VirtualScrollerState<T> {
+interface VirtualScrollerState {
   visibleItems: BigInteger[][];
   scrollbar: number;
   loaded: {
@@ -130,7 +130,7 @@ const ZONE_SIZE = IS_IOS ? 20 : 80;
  * VirtualScroller does not clean up or reset itself, so please use `key`
  * to ensure a new instance is created for each BigIntArrayOrderedMap
  */
-export default class ArrayVirtualScroller<T> extends Component<VirtualScrollerProps<T>, VirtualScrollerState<T>> {
+export default class ArrayVirtualScroller<T> extends Component<VirtualScrollerProps<T>, VirtualScrollerState> {
   /**
    * A reference to our scroll container
    */
@@ -213,19 +213,18 @@ export default class ArrayVirtualScroller<T> extends Component<VirtualScrollerPr
     if(!this.window || !this.scrollRef) {
       return;
     }
-    const { scrollTop, scrollHeight, offsetHeight } = this.window;
+    const { scrollTop, scrollHeight } = this.window;
 
     const unloaded = (this.startOffset() / this.pageSize);
     const totalpages = this.props.size / this.pageSize;
 
     const loaded = (scrollTop / scrollHeight);
-    const total = unloaded +  loaded;
     const result = ((unloaded + loaded) / totalpages) * this.window.offsetHeight;
     this.scrollRef.style[this.props.origin] = `${result}px`;
   }, 50);
 
-  componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState<T>) {
-    const { size, data, offset, pendingSize } = this.props;
+  componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState) {
+    const { size, pendingSize } = this.props;
 
     if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
       if((this.window?.scrollTop ?? 0) < ZONE_SIZE) {
@@ -264,6 +263,8 @@ export default class ArrayVirtualScroller<T> extends Component<VirtualScrollerPr
   /**
    *  Updates the `startOffset` and adjusts visible items accordingly.
    *  Saves the scroll positions before repainting and restores it afterwards
+   *
+   *  @param newOffset new startOffset
    */
   updateVisible(newOffset: number) {
     if (!this.window) {
@@ -389,8 +390,6 @@ export default class ArrayVirtualScroller<T> extends Component<VirtualScrollerPr
 
     const startOffset = this.startOffset();
 
-    const scrollEnd = scrollTop + windowHeight;
-
     if (scrollTop < ZONE_SIZE) {
       log('scroll', `Entered start zone ${scrollTop}`);
       if (startOffset === 0) {
@@ -398,7 +397,7 @@ export default class ArrayVirtualScroller<T> extends Component<VirtualScrollerPr
         this.scrollLocked = true;
       }
 
-      const newOffset = 
+      const newOffset =
         clamp(startOffset - this.pageDelta, 0, this.props.data.size - this.pageSize);
       if(newOffset < 10) {
         this.loadBottom();
@@ -411,7 +410,7 @@ export default class ArrayVirtualScroller<T> extends Component<VirtualScrollerPr
       this.scrollLocked = false;
       log('scroll', `Entered end zone ${scrollTop}`);
 
-      const newOffset = 
+      const newOffset =
         clamp(startOffset + this.pageDelta, 0, this.props.data.size - this.pageSize);
       if (onEndReached && startOffset === 0) {
         onEndReached();

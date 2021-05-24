@@ -2,13 +2,12 @@ import { Box, Col } from '@tlon/indigo-react';
 import { Association, FlatGraph, FlatGraphNode, Group } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
-import { withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import ArrayVirtualScroller, {
   indexEqual,
-  arrToString,
-  stringToArr
+  arrToString
 } from '~/views/components/ArrayVirtualScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
@@ -21,7 +20,7 @@ interface PostFeedProps {
   flatGraph: FlatGraph;
   graphPath: string;
   api: GlobalApi;
-  history: History;
+  history: RouteComponentProps['history'];
   baseUrl: string;
   parentNode?: FlatGraphNode;
   association: Association;
@@ -31,7 +30,7 @@ interface PostFeedProps {
   isThread: boolean;
 }
 
-class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
+class PostFlatFeed extends React.Component<PostFeedProps, {}> {
   isFetching: boolean;
   constructor(props) {
     super(props);
@@ -42,7 +41,8 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
     this.doNotFetch = this.doNotFetch.bind(this);
   }
 
-  renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
+  //  eslint-disable-next-line max-lines-per-function
+  renderItem = React.forwardRef<HTMLDivElement, any>(({ index, scrollWindow }, ref) => {
     const {
       flatGraph,
       graphPath,
@@ -63,11 +63,10 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
       return null;
     }
 
-    let key = arrToString(index);
+    const key = arrToString(index);
 
     const first = flatGraph.peekLargest()?.[0];
     const last = flatGraph.peekSmallest()?.[0];
-    const post = node?.post;
     const isLast = last ? indexEqual(index, last) : false;
 
     if (indexEqual(index, (first ?? [bigInt.zero]))) {
@@ -78,7 +77,8 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
             width="100%"
             alignItems="center"
             key={key}
-            ref={ref}>
+            ref={ref}
+          >
             <PostItem
               node={node}
               graphPath={graphPath}
@@ -97,21 +97,23 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
             />
           </Col>
         );
-      } 
+      }
 
       return (
         <Col
           width="100%"
           alignItems="center"
           key={key}
-          ref={ref}>
+          ref={ref}
+        >
           <Col
             width="100%"
             maxWidth="608px"
             pt={3}
             pl={1}
             pr={1}
-            mb={3}>
+            mb={3}
+          >
             <PostInput
               api={api}
               group={group}
@@ -195,7 +197,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, PostFeedState> {
     const {
       flatGraph,
       pendingSize,
-      parentNode,
       history
     } = this.props;
 
