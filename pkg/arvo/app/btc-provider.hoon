@@ -88,7 +88,7 @@
     ~&  >>>  "btc-provider: blocked client {<src.bowl>}"
     [~[[%give %kick ~ ~]] this]
   ~&  >  "btc-provider: accepted client {<src.bowl>}"
-  :-  do-ping:hc
+  :-  [do-ping:hc]~
   this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
 ++  on-arvo
@@ -97,7 +97,10 @@
   ::  check for connectivity every 30 seconds
   ::
   ?:  ?=([%ping-timer *] wire)
-    [do-ping:hc this]
+    :_  this
+    :~  do-ping:hc
+        (start-ping-timer:hc ~s30)
+    ==
   =^  cards  state
   ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
       %http-response
@@ -127,8 +130,13 @@
   ^-  (quip card _state)
   ?-  -.comm
       %set-credentials
-    :-  do-ping
-    state(host-info [api-url.comm connected=%.n network.comm block=0 clients=*(set ship)])
+    :-  :~  do-ping
+            (start-ping-timer ~s30)
+        ==
+    %=  state
+        host-info
+      [api-url.comm connected=%.n network.comm block=0 clients=*(set ship)]
+    ==
     ::
       %add-whitelist
     ?-  -.wt.comm
@@ -144,7 +152,7 @@
         %groups
       `state(groups.whitelist (~(uni in groups.whitelist) groups.wt.comm))
     ==
-    :: 
+    ::
       %remove-whitelist
     =.  state
       ?-  -.wt.comm
@@ -209,7 +217,7 @@
   :-  ~[[%give %kick ~[/clients] `client]]
   state(clients.host-info (~(dif in clients.host-info) (silt ~[client])))
 ::
-::  Handles HTTP responses from RPC servers. Parses for errors, then handles response. 
+::  Handles HTTP responses from RPC servers. Parses for errors, then handles response.
 ::  For actions that require collating multiple RPC calls, uses req-card to call out
 ::    to RPC again if more information is required.
 ::
@@ -263,7 +271,7 @@
       %raw-tx
     ?>  ?=([%get-raw-tx *] r)
     :_  state
-    ~[(send-update [%.y %raw-tx +.r])] 
+    ~[(send-update [%.y %raw-tx +.r])]
     ::
       %broadcast-tx
     ?>  ?=([%broadcast-tx *] r)
@@ -327,7 +335,7 @@
     ?:((is-whitelisted c) ~ `c)
   :_  state(clients.host-info (~(dif in clients.host-info) to-kick))
   %+  turn  ~(tap in to-kick)
-  |=(c=ship [%give %kick ~[/clients] `c]) 
+  |=(c=ship [%give %kick ~[/clients] `c])
 ::
 ++  is-client
   |=  user=ship  ^-  ?
@@ -338,12 +346,10 @@
   [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
 ::
 ++  do-ping
-  ^-  (list card)
+  ^-  card
   =/  act=action  [%ping ~]
-  :~  :*  %pass  /ping/[(scot %da now.bowl)]  %agent
-          [our.bowl %btc-provider]  %poke
-          %btc-provider-action  !>(act)
-      ==
-      (start-ping-timer ~s30)
+  :*  %pass  /ping/[(scot %da now.bowl)]  %agent
+      [our.bowl %btc-provider]  %poke
+      %btc-provider-action  !>(act)
   ==
 --
