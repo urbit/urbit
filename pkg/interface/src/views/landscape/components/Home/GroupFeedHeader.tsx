@@ -6,16 +6,14 @@ import React, {
 } from 'react';
 
 export function GroupFeedHeader(props) {
-  const { baseUrl, history, graphResource, vip } = props;
+  const { baseUrl, history, vip } = props;
 
   let graph = props.graph;
   const historyLocation = history.location.pathname;
-  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
 
   const [locationList, setLocationList] = useState([]);
   useEffect(() => {
-    locationList.push(history.location.pathname);
-    setLocationList(locationList);
+    setLocationList(ls => [...ls, history.location.pathname]);
   }, [history.location.pathname]);
 
   const isHome =
@@ -32,7 +30,7 @@ export function GroupFeedHeader(props) {
     indicator = splitLoc[0];
   }
 
-  const nodeIndex = splitLoc.slice(1).map((ind) => bigInt(ind));
+  const nodeIndex = splitLoc.slice(1).map(ind => bigInt(ind));
 
   let node;
   nodeIndex.forEach((i) => {
@@ -70,7 +68,8 @@ export function GroupFeedHeader(props) {
     >
       <Box display='block'>
         { ( baseUrl !== historyLocation ) ? (
-            <Text pl={1} pr={1} cursor="pointer" onClick={() => {
+            <Text pl={1} pr={1}
+cursor="pointer" onClick={() => {
               let loc =
                 history.location.pathname.replace(`${baseUrl}`, '').split('/');
               loc.pop();
@@ -96,7 +95,7 @@ export function GroupFeedHeader(props) {
           <Text bold fontSize={2} pl={1} pr={2}>Group Feed</Text>
           <Text fontSize={0} p={1} backgroundColor="washedGray">{permText}</Text>
         </>
-      ) : ( !!authorText ? (
+      ) : ( authorText ? (
         <>
           <Text bold fontSize={2} pl={1} pr={2}>Post by </Text>
           <Text bold fontSize={2} mono>{`~${authorText}`}</Text>
