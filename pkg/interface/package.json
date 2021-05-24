@@ -11,7 +11,7 @@
     "@react-spring/web": "^9.1.1",
     "@tlon/indigo-dark": "^1.0.6",
     "@tlon/indigo-light": "^1.0.7",
-    "@tlon/indigo-react": "^1.2.22",
+    "@tlon/indigo-react": "^1.2.23",
     "@tlon/sigil-js": "^1.4.3",
     "@urbit/api": "file:../npm/api",
     "any-ascii": "^0.1.7",
@@ -67,6 +67,10 @@
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
     "@babel/preset-typescript": "^7.12.7",
+    "@storybook/addon-actions": "^6.2.9",
+    "@storybook/addon-essentials": "^6.2.9",
+    "@storybook/addon-links": "^6.2.9",
+    "@storybook/react": "^6.2.9",
     "@types/lodash": "^4.14.168",
     "@types/react": "^16.14.2",
     "@types/react-dom": "^16.9.10",
@@ -75,6 +79,7 @@
     "@types/styled-system": "^5.1.10",
     "@types/yup": "^0.29.11",
     "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.24.0",
     "@urbit/eslint-config": "file:../npm/eslint-config",
     "@welldone-software/why-did-you-render": "^6.1.0",
     "babel-eslint": "^10.1.0",
@@ -83,10 +88,13 @@
     "babel-plugin-root-import": "^6.6.0",
     "clean-webpack-plugin": "^3.0.0",
     "cross-env": "^7.0.3",
-    "eslint": "^7.19.0",
+    "eslint": "^7.26.0",
     "eslint-plugin-react": "^7.22.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.1",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "loki": "^0.28.1",
     "moment-locales-webpack-plugin": "^1.2.0",
     "react-hot-loader": "^4.13.0",
     "sass": "^1.32.5",
@@ -106,8 +114,14 @@
     "build:dev": "cross-env NODE_ENV=development webpack --config config/webpack.dev.js",
     "build:prod": "cd ../npm/api && npm ci && cd ../../interface && cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
     "start": "webpack-dev-server --config config/webpack.dev.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "cd ../.. && husky install pkg/interface/.husky",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "lint-staged": {
+    "*.{js,ts,tsx}": "eslint --cache --fix"
+  }
 }

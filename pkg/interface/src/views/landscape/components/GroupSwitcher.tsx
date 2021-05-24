@@ -43,7 +43,7 @@ function RecentGroups(props: { recent: string[] }) {
       </Box>
       {props.recent.filter((e) => {
         return (e in associations?.groups);
-      }).slice(1, 5).map((g) => {
+      }).slice(0, 4).map((g) => {
         const assoc = associations.groups[g];
         const color = uxToHex(assoc?.metadata?.color || '0x0');
         return (

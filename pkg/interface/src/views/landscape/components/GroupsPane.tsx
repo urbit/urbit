@@ -53,7 +53,9 @@ export function GroupsPane(props: GroupsPaneProps) {
     if (workspace.type !== 'group') {
       return;
     }
-    setRecentGroups(gs => _.uniq([workspace.group, ...gs]));
+    return () => {
+      setRecentGroups(gs => _.uniq([workspace.group, ...gs]));
+    }
   }, [workspace]);
 
   if (!(associations && (groupPath ? groupPath in groups : true))) {
