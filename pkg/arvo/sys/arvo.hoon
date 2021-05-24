@@ -291,12 +291,13 @@
   |=(b=beam =*(s scot `path`[(s %p p.b) q.b (s r.b) s.b]))
 ::
 ++  de-beam
+  ~/  %de-beam
   |=  p=path
   ^-  (unit beam)
   ?.  ?=([@ @ @ *] p)  ~
   ?~  who=(slaw %p i.p)  ~
   ?~  des=?~(i.t.p (some %$) (slaw %tas i.t.p))  ~  :: XX +sym ;~(pose low (easy %$))
-  ?~  ved=(slay i.t.t.p)  ~
+  ?~  ved=(sloy i.t.t.p)  ~
   ?.  ?=([%$ case] u.ved)  ~
   `(unit beam)`[~ [`ship`u.who `desk`u.des `case`p.u.ved] t.t.t.p]
 ::
@@ -308,6 +309,7 @@
   ~(rent co [%many $/tas/way.vis $/tas/car.vis ~])
 ::
 ++  de-omen
+  ~/  %de-omen
   |=  pax=path
   ^-  (unit [vis=view bem=beam])
   ?~  pax  ~
