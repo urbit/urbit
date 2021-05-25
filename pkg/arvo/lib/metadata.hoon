@@ -95,4 +95,13 @@
   ^-  (unit resource)
   %+  bind  (peek-association md-resource)
   |=(association:store group)
+::
+++  graphs-of-group
+  |=  group=resource
+  =/  =associations:store
+    (metadata-for-group)
+  %+  murn  ~(tap in ~(key by associations))
+  |=  [=app-name:store rid=resource]
+  ?.(=(%graph app-name) ~ `rid)
+  
 --

@@ -75,6 +75,8 @@
         add-note+add
         set-dnd+bo
         read-count+stats-index
+        read-graph+dejs-path:resource
+        read-group+dejs-path:resource
         read-each+read-graph-index
         read-all+ul
     ==
