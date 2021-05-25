@@ -3,9 +3,9 @@ import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 
 const URL_REGEX = new RegExp(String(/^(.*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)([\s\S]*)/.source));
 
-const PATP_REGEX = /^(.)(~[a-z_-]+)(.*)/;
+const PATP_REGEX = /^(.)(~[a-z_-]+)([\s\S]*)/;
 
-const GROUP_REGEX = new RegExp(String(/^( *)(~[-a-z_]+\/[-a-z]+)(.*)/.source));
+const GROUP_REGEX = new RegExp(String(/^( *)(~[-a-z_]+\/[-a-z]+)([\s\S]*)/.source));
 
 const convertToGroupRef = group => `web+urbitgraph://group/${group}`;
 
@@ -18,7 +18,6 @@ export const isUrl = (str) => {
 };
 
 const tokenizeMessage = (text) => {
-  console.log(text);
   const messages = [];
   // by line
   let blocks = [];
@@ -35,7 +34,6 @@ const tokenizeMessage = (text) => {
       return;
     }
     while(str.length > 0) {
-      console.log(str);
       const resetAndPush = (content) => {
         blocks.push(currBlock.join(''));
         messages.push({ text: blocks.join('`') });
