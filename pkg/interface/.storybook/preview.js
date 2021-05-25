@@ -34,6 +34,7 @@ export const globalTypes = {
 
 export const decorators = [
   (Story, context) => {
+    window.ship = 'sampel-palnet';
     const theme = context.globals.theme === 'light' ? light : dark;
 
     useMetadataState.setState({
