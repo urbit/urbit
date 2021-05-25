@@ -442,13 +442,19 @@
   ?~  payload
     ::  cancelling an ongoing fuse
     %-  (slog [leaf+"cancelling fuse into {<syd.k>}" ~])
-    abet:abet:delete:(fuzz syd.k now)
+    =/  f  (fuzz syd.k now)
+    ?~  f
+      abet
+    abet:abet:delete:u.f
   ?:  &(!overwrite.payload (~(has by fus) syd.k))
     ((slog [leaf+"existing fuse into {<syd.k>} - need =overwrite &" ~]) abet)
   =.  fus  (~(put by fus) syd.k [~ [syd.k bas.payload con.payload]])
   =/  old-cnt=@ud  (~(gut by hxs) syd.k 0)
   =.  hxs  (~(put by hxs) syd.k +(old-cnt))
-  abet:abet:fuse:(fuzz syd.k now)
+  =/  f  (fuzz syd.k now)
+  ?~  f
+    abet
+  abet:abet:fuse:u.f
 ::
 ++  poke-cancel
   |=  a=@tas
@@ -548,9 +554,19 @@
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
       [%ota *]          abet:(take:update t.wire sign-arvo)
       [%fuse-request @tas *]
-                      abet:abet:(take:(fuzz i.t.wire now) t.t.wire sign-arvo)
+                      =/  f  (fuzz i.t.wire now)
+                      ?~  f
+                        abet
+                      abet:abet:(take:u.f t.t.wire sign-arvo)
       [%fuse @tas *]  ?>  ?=(%mere +<.sign-arvo)
-                      abet:abet:(mere:(fuzz i.t.wire now) +>.sign-arvo)
+                      =/  syd=desk  i.t.wire
+                      ?.  ?=([%| *] +>.sign-arvo)
+                        ?~  p.p.sign-arvo
+                          abet
+                        %-  (slog [leaf+"fuse merge conflict for {<syd>}" >p.p.sign-arvo< ~])
+                        abet
+                      %-  (slog leaf+"failed fuse for {<syd>}" p.p.sign-arvo)
+                      abet
       *
     ?+    +<.sign-arvo
         ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
@@ -631,24 +647,18 @@
 ::
 ++  fuzz
   |=  [syd=desk now=@da]
-  =/  pf=per-fuse  (~(gut by fus) syd *per-fuse)
-  =*  kf  kf.pf
-  =*  mox  mox.pf
+  =/  pfu=(unit per-fuse)  (~(get by fus) syd)
+  ?~  pfu
+    ~
+  =*  kf  kf.u.pfu
+  =*  mox  mox.u.pfu
   =/  should-delete=flag  |
-  ::  Check this in arms that rely on the key being present.
-  ::  If this is true we will never update our state.
-  ::
-  =/  key-missing=flag  !(~(has by fus) syd)
+  %-  some
   |%
   ::  finalize
   ::
   ++  abet
-    ::  If this is an operation on a key that isn't present
-    ::  we should just produce the unchanged state.
-    ::
-    ?:  key-missing
-      ..fuzz
-    ?:  should-delete
+   ?:  should-delete
       ..fuzz(fus (~(del by fus) syd))
     ..fuzz(fus (~(put by fus) syd [mox kf]))
   ::
@@ -656,14 +666,6 @@
     ^+  ..delete
     =.  should-delete  &
     ..delete
-  ::
-  ++  mere
-    |=  mes=(each (set path) (pair term tang))
-    ^+  ..mere
-    ?.  ?=([%| *] mes)
-      ..mere
-    %-  (slog leaf+"failed fuse for {<syd>}" p.mes)
-    ..mere
   ::  queue moves
   ::
   ++  blab
@@ -674,8 +676,6 @@
   ::
   ++  make-requests
     ^+  ..abet
-    ?:  key-missing
-      ..make-requests
     =/  movs=(list card:agent:gall)
       %+  murn
         [[bas.kf *germ] con.kf]
@@ -699,8 +699,6 @@
   ::
   ++  send-fuse
     ^+  ..abet
-    ?:  key-missing
-      ..send-fuse
     =/  bas=beak  (realize-fuse-source bas.kf)
     =/  con=(list [beak germ])
       %+  turn
@@ -712,15 +710,11 @@
   ::
   ++  fuse
     ^+  ..abet
-    ?:  key-missing
-      ..fuse
     send-fuse:make-requests
   ::
   ++  take
     |=  [wir=wire =sign-arvo]
     ^+  ..fuse
-    ?:  key-missing
-      ..take
     ?>  =((lent wir) 3)
     =/  who=ship  (slav %p (snag 0 wir))
     =/  src=desk  (snag 1 wir)
