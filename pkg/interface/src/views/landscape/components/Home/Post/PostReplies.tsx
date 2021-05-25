@@ -3,9 +3,12 @@ import { GraphNode } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
+import { useGraph } from '~/logic/state/graph';
 import { Loading } from '~/views/components/Loading';
 import PostFeed from './PostFeed';
 import PostItem from './PostItem/PostItem';
+import { stringToArr } from '~/views/components/ArrayVirtualScroller';
+
 
 export default function PostReplies(props) {
   const {
@@ -19,9 +22,9 @@ export default function PostReplies(props) {
     pendingSize
   } = props;
 
-  const graphResource = resourceFromPath(graphPath);
+  const graphRid = resourceFromPath(graphPath);
+  let graph = useGraph(graphRid.ship, graphRid.name);
 
-  let graph = props.graph;
   const shouldRenderFeed = Boolean(graph);
 
   if (!shouldRenderFeed) {
@@ -33,10 +36,8 @@ export default function PostReplies(props) {
   }
 
   const locationUrl =
-    props.locationUrl.replace(`${baseUrl}/feed`, '');
-  const nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
-    return bigInt(ind);
-  });
+    props.locationUrl.replace(`${baseUrl}/feed/replies`, '');
+  const nodeIndex = stringToArr(locationUrl);
 
   let node: GraphNode;
   let parentNode;
@@ -62,7 +63,7 @@ export default function PostReplies(props) {
   if (!first) {
     return (
       <Col
-        key={locationUrl}
+        key={`/replies/${locationUrl}`}
         width="100%"
         height="100%"
         alignItems="center" overflowY="scroll"
@@ -70,7 +71,6 @@ export default function PostReplies(props) {
         <Box mt={3} width="100%" alignItems="center">
           <PostItem
             key={node.post.index}
-            // @ts-ignore withHovering prop pass is broken?
             node={node}
             graphPath={graphPath}
             association={association}
@@ -104,7 +104,7 @@ export default function PostReplies(props) {
   return (
     <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl={1} pt={3}>
       <PostFeed
-        key={locationUrl}
+        key={`/replies/${locationUrl}`}
         graphPath={graphPath}
         graph={graph}
         grandparentNode={parentNode}

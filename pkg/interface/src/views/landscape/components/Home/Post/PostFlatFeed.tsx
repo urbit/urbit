@@ -1,12 +1,14 @@
 import { Box, Col } from '@tlon/indigo-react';
-import { Association, Graph, GraphNode, Group } from '@urbit/api';
-import { History } from 'history';
+import { Association, FlatGraph, FlatGraphNode, Group } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
-import { withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
-import VirtualScroller from '~/views/components/VirtualScroller';
+import ArrayVirtualScroller, {
+  indexEqual,
+  arrToString
+} from '~/views/components/ArrayVirtualScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
 
@@ -15,20 +17,20 @@ const virtualScrollerStyle = {
 };
 
 interface PostFeedProps {
-  graph: Graph;
+  flatGraph: FlatGraph;
   graphPath: string;
   api: GlobalApi;
-  history: History;
+  history: RouteComponentProps['history'];
   baseUrl: string;
-  parentNode?: GraphNode;
-  grandparentNode?: GraphNode;
+  parentNode?: FlatGraphNode;
   association: Association;
   group: Group;
   vip: string;
   pendingSize: number;
+  isThread: boolean;
 }
 
-class PostFeed extends React.Component<PostFeedProps, any> {
+class PostFlatFeed extends React.Component<PostFeedProps, {}> {
   isFetching: boolean;
   constructor(props) {
     super(props);
@@ -38,81 +40,70 @@ class PostFeed extends React.Component<PostFeedProps, any> {
     this.fetchPosts = this.fetchPosts.bind(this);
     this.doNotFetch = this.doNotFetch.bind(this);
   }
-  // @ts-ignore needs @liam-fitzgerald peek at props for virtualscroller
+
+  //  eslint-disable-next-line max-lines-per-function
   renderItem = React.forwardRef<HTMLDivElement, any>(({ index, scrollWindow }, ref) => {
     const {
-      graph,
+      flatGraph,
       graphPath,
       api,
       history,
       baseUrl,
-      parentNode,
-      grandparentNode,
       association,
       group,
-      vip
+      vip,
+      isThread
     } = this.props;
-    const node = graph.get(index);
+
+    const node = flatGraph.get(index);
+    const parentNode = index.length > 1 ?
+      flatGraph.get(index.slice(0, index.length - 1)) : null;
+
     if (!node) {
       return null;
     }
 
-    const first = graph.peekLargest()?.[0];
-    const nodeIndex =
-      ( parentNode &&
-        typeof parentNode.post !== 'string'
-      ) ? parentNode.post.index.split('/').slice(1).map((ind) => {
-      return bigInt(ind);
-      }) : [];
+    const key = arrToString(index);
 
-    if (parentNode && index.eq(first ?? bigInt.zero)) {
-      return (
-        <React.Fragment key={index.toString()}>
+    const first = flatGraph.peekLargest()?.[0];
+    const last = flatGraph.peekSmallest()?.[0];
+    const isLast = last ? indexEqual(index, last) : false;
+
+    if (indexEqual(index, (first ?? [bigInt.zero]))) {
+      if (isThread) {
+        return (
           <Col
-            key={index.toString()}
-            ref={ref}
-            mb={3}
+            pt={3}
             width="100%"
-            flexShrink={0}
+            alignItems="center"
+            key={key}
+            ref={ref}
           >
             <PostItem
-              key={parentNode.post.index}
-              parentPost={grandparentNode?.post}
-              node={parentNode}
+              node={node}
               graphPath={graphPath}
               association={association}
               api={api}
-              index={nodeIndex}
+              index={index}
               baseUrl={baseUrl}
               history={history}
-              isParent={true}
-              isRelativeTime={false}
+              parentPost={parentNode?.post}
+              isReply={index.length > 1}
+              isRelativeTime={true}
               vip={vip}
               group={group}
+              isThread={isThread}
+              isLast={isLast}
             />
           </Col>
-          <PostItem
-            node={node}
-            graphPath={graphPath}
-            association={association}
-            api={api}
-            index={[...nodeIndex, index]}
-            baseUrl={baseUrl}
-            history={history}
-            isReply={true}
-            parentPost={parentNode.post}
-            isRelativeTime={true}
-            vip={vip}
-            group={group}
-          />
-        </React.Fragment>
-      );
-    } else if (index.eq(first ?? bigInt.zero)) {
+        );
+      }
+
       return (
         <Col
           width="100%"
           alignItems="center"
-          key={index.toString()}
+          key={key}
           ref={ref}
         >
           <Col
@@ -136,11 +127,11 @@ class PostFeed extends React.Component<PostFeedProps, any> {
             graphPath={graphPath}
             association={association}
             api={api}
-            index={[...nodeIndex, index]}
+            index={index}
             baseUrl={baseUrl}
             history={history}
             parentPost={parentNode?.post}
-            isReply={Boolean(parentNode)}
+            isReply={index.length > 1}
             isRelativeTime={true}
             vip={vip}
             group={group}
@@ -150,27 +141,29 @@ class PostFeed extends React.Component<PostFeedProps, any> {
     }
 
     return (
-      <Box key={index.toString()} ref={ref}>
+      <Box key={key} ref={ref}>
         <PostItem
           node={node}
           graphPath={graphPath}
           association={association}
           api={api}
-          index={[...nodeIndex, index]}
+          index={index}
           baseUrl={baseUrl}
           history={history}
           parentPost={parentNode?.post}
-          isReply={Boolean(parentNode)}
+          isReply={index.length > 1}
           isRelativeTime={true}
           vip={vip}
           group={group}
+          isThread={isThread}
+          isLast={isLast}
         />
       </Box>
     );
   });
 
   async fetchPosts(newer) {
-    const { graph, graphPath, api } = this.props;
+    const { flatGraph, graphPath, api } = this.props;
     const graphResource = resourceFromPath(graphPath);
 
     if (this.isFetching) {
@@ -179,23 +172,21 @@ class PostFeed extends React.Component<PostFeedProps, any> {
 
     this.isFetching = true;
     const { ship, name } = graphResource;
-    const currSize = graph.size;
+    const currSize = flatGraph.size;
 
     if (newer) {
-      const [index] = graph.peekLargest();
-      await api.graph.getYoungerSiblings(
-        ship,
-        name,
-        100,
-        `/${index.toString()}`
-      );
+      return true;
     } else {
-      const [index] = graph.peekSmallest();
-      await api.graph.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
+      const [index] = flatGraph.peekSmallest();
+      if (index && index.length > 0) {
+        await api.graph.getDeepOlderThan(ship, name, index[0].toString(), 100);
+      } else {
+        await api.graph.getDeepOlderThan(ship, name, null, 100);
+      }
     }
 
     this.isFetching = false;
-    return currSize === graph.size;
+    return currSize === flatGraph.size;
   }
 
   async doNotFetch(newer) {
@@ -204,30 +195,28 @@ class PostFeed extends React.Component<PostFeedProps, any> {
 
   render() {
     const {
-      graph,
+      flatGraph,
       pendingSize,
-      parentNode,
       history
     } = this.props;
 
     return (
       <Col width="100%" height="100%" position="relative">
-        <VirtualScroller
+        <ArrayVirtualScroller
           key={history.location.pathname}
           origin="top"
           offset={0}
-          data={graph}
-          averageHeight={106}
-          size={graph.size}
-          totalSize={graph.size}
+          data={flatGraph}
+          averageHeight={122}
+          size={flatGraph.size}
           style={virtualScrollerStyle}
           pendingSize={pendingSize}
           renderer={this.renderItem}
-          loadRows={parentNode ? this.doNotFetch : this.fetchPosts}
+          loadRows={this.doNotFetch}
         />
       </Col>
     );
   }
 }
 
-export default withRouter(PostFeed);
+export default withRouter(PostFlatFeed);

@@ -4,15 +4,16 @@ import React, {
 } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { resourceFromPath } from '~/logic/lib/group';
-import useGraphState from '~/logic/state/graph';
-import useGroupState from '~/logic/state/group';
-import useMetadataState from '~/logic/state/metadata';
+import { useGraphTimesentMap } from '~/logic/state/graph';
+import { useGroup } from '~/logic/state/group';
+import { useAssocForGraph } from '~/logic/state/metadata';
 import { Loading } from '~/views/components/Loading';
 import { GroupFeedHeader } from './GroupFeedHeader';
+import PostThread from './Post/PostThread';
+import PostFlatTimeline from './Post/PostFlatTimeline';
 import PostReplies from './Post/PostReplies';
-import PostTimeline from './Post/PostTimeline';
 
-function GroupFeed(props) {
+function GroupFlatFeed(props) {
   const {
     baseUrl,
     api,
@@ -21,35 +22,26 @@ function GroupFeed(props) {
     vip
   } = props;
 
-  const groups = useGroupState(state => state.groups);
-  const group = groups[groupPath];
+  const group = useGroup(groupPath);
 
-  const associations = useMetadataState(state => state.associations);
-  const graphs = useGraphState(state => state.graphs);
-  const graphResource =
+  const graphRid =
     graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
-  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
 
-  const pendingSize = Object.keys(
-    graphTimesentMap[`${graphResource.ship.slice(1)}/${graphResource.name}`] ||
-    {}
-  ).length;
+  const association = useAssocForGraph(graphPath);
+
+  const graphTimesentMap = useGraphTimesentMap(graphRid.ship, graphRid.name);
+  const pendingSize = Object.keys(graphTimesentMap || {}).length;
 
   const relativePath = path => baseUrl + path;
-  const association = associations.graph[graphPath];
-
   const history = useHistory();
   const locationUrl = history.location.pathname;
 
-  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
-  const graph = graphs[graphId];
-
   useEffect(() => {
     //  TODO: VirtualScroller should support lower starting values than 100
-    if (graphResource.ship === '~zod' && graphResource.name === 'null') {
+    if (graphRid.ship === '~zod' && graphRid.name === 'null') {
       return;
     }
-    api.graph.getNewest(graphResource.ship, graphResource.name, 100);
+    api.graph.getDeepOlderThan(graphRid.ship, graphRid.name, null, 100);
     api.hark.markCountAsRead(association, '/', 'post');
   }, [graphPath]);
 
@@ -69,9 +61,8 @@ function GroupFeed(props) {
       <GroupFeedHeader
         baseUrl={baseUrl}
         history={history}
-        graphs={graphs}
         vip={vip}
-        graphResource={graphResource}
+        graphResource={graphRid}
       />
       <Switch>
         <Route
@@ -79,7 +70,24 @@ function GroupFeed(props) {
           path={[relativePath('/'), relativePath('/feed')]}
           render={(routeProps) => {
             return (
-              <PostTimeline
+              <PostFlatTimeline
+                baseUrl={baseUrl}
+                api={api}
+                graphPath={graphPath}
+                group={group}
+                association={association}
+                vip={vip}
+                pendingSize={pendingSize}
+              />
+            );
+          }}
+        />
+        <Route
+          path={relativePath('/feed/thread/:index+')}
+          render={(routeProps) => {
+            return (
+              <PostThread
+                locationUrl={locationUrl}
                 baseUrl={baseUrl}
                 api={api}
                 history={history}
@@ -87,7 +95,6 @@ function GroupFeed(props) {
                 group={group}
                 association={association}
                 vip={vip}
-                graph={graph}
                 pendingSize={pendingSize}
               />
             );
@@ -106,7 +113,6 @@ function GroupFeed(props) {
                 group={group}
                 association={association}
                 vip={vip}
-                graph={graph}
                 pendingSize={pendingSize}
               />
             );
@@ -117,4 +123,4 @@ function GroupFeed(props) {
   );
 }
 
-export { GroupFeed };
+export { GroupFlatFeed };

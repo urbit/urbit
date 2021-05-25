@@ -1,36 +1,39 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association, Graph, Group } from '@urbit/api';
-import { History } from 'history';
+import { Association, FlatGraph, Group } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { Loading } from '~/views/components/Loading';
-import PostFeed from './PostFeed';
+import { useFlatGraph } from '~/logic/state/graph';
+import { resourceFromPath } from '~/logic/lib/group';
+import PostFlatFeed from './PostFlatFeed';
 import PostInput from './PostInput';
 
 interface PostTimelineProps {
   api: GlobalApi;
   association: Association;
   baseUrl: string;
-  graph: Graph;
   graphPath: string;
   group: Group;
   pendingSize: number;
   vip: string;
-  history?: History;
 }
 
-const PostTimeline = (props: PostTimelineProps): ReactElement => {
+const PostFlatTimeline = (props: PostTimelineProps): ReactElement => {
   const {
     baseUrl,
     api,
     association,
     graphPath,
     group,
-    graph,
     pendingSize,
     vip
   } = props;
-  const shouldRenderFeed = Boolean(graph);
+
+  const graphRid =
+    graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
+  const flatGraph = useFlatGraph(graphRid.ship, graphRid.name);
+
+  const shouldRenderFeed = Boolean(flatGraph);
 
   if (!shouldRenderFeed) {
     return (
@@ -40,7 +43,7 @@ const PostTimeline = (props: PostTimelineProps): ReactElement => {
     );
   }
 
-  const first = graph.peekLargest()?.[0];
+  const first = flatGraph.peekLargest()?.[0];
   if (!first) {
     return (
       <Col
@@ -51,10 +54,10 @@ const PostTimeline = (props: PostTimelineProps): ReactElement => {
       >
         <Col
           width="100%"
-          maxWidth="616px"
+          maxWidth="608px"
           pt={3}
-          pl={2}
-          pr={2}
+          pl={1}
+          pr={1}
           mb={3}
           alignItems="center"
         >
@@ -67,10 +70,10 @@ const PostTimeline = (props: PostTimelineProps): ReactElement => {
           />
         </Col>
         <Box
-          pl={2}
-          pr={2}
+          pl={1}
+          pr={1}
           width="100%"
-          maxWidth="616px"
+          maxWidth="608px"
           alignItems="center"
         >
           <Col bg="washedGray" width="100%" alignItems="center" p={3}>
@@ -85,19 +88,20 @@ const PostTimeline = (props: PostTimelineProps): ReactElement => {
 
   return (
     <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl={1}>
-      <PostFeed
+      <PostFlatFeed
         key={graphPath}
         graphPath={graphPath}
-        graph={graph}
+        flatGraph={flatGraph}
         pendingSize={pendingSize}
         association={association}
         group={group}
         vip={vip}
         api={api}
         baseUrl={baseUrl}
+        isThread={false}
       />
     </Box>
   );
 }
 
-export default PostTimeline;
+export default PostFlatTimeline;

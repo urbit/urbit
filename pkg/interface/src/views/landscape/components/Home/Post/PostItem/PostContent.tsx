@@ -28,7 +28,7 @@ const PostContent = (props: PostContentProps): ReactElement => {
   return (
     <TruncatedBox
       display="-webkit-box"
-      width="100%"
+      width="90%"
       px={2}
       pb={2}
       truncate={isParent ? null : 8}

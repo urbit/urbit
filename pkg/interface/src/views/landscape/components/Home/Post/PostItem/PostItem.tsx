@@ -1,5 +1,6 @@
 import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import { Association, GraphNode, Group, Post } from '@urbit/api';
+import { BigInteger } from 'big-integer';
 import { History } from 'history';
 import React, { Ref } from 'react';
 import GlobalApi from '~/logic/api/global';
@@ -20,7 +21,7 @@ export interface PostItemProps {
   group: Group;
   history: History;
   hovering?: boolean;
-  index: BigInt[];
+  index: BigInteger[];
   innerRef?: Ref<HTMLDivElement>;
   isParent?: boolean;
   isRelativeTime?: boolean;
@@ -28,6 +29,8 @@ export interface PostItemProps {
   node: GraphNode;
   parentPost?: Post;
   vip: string;
+  isThread?: boolean;
+  isLast?: boolean;
 }
 
 interface PostItemState {
@@ -40,7 +43,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
 
     this.state = { inReplyMode: false };
     this.toggleReplyMode = this.toggleReplyMode.bind(this);
-    this.navigateToReplies = this.navigateToReplies.bind(this);
+    this.navigateToChildren = this.navigateToChildren.bind(this);
     this.submitCallback = this.submitCallback.bind(this);
   }
 
@@ -67,8 +70,8 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
     this.setState({ inReplyMode: !this.state.inReplyMode });
   }
 
-  navigateToReplies() {
-    const { history, baseUrl, index, isParent } = this.props;
+  navigateToChildren() {
+    const { history, baseUrl, index, isParent, isThread } = this.props;
     if (isParent) {
       return;
     }
@@ -78,7 +81,12 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
       indexString = indexString + '/' + i.toString();
     });
 
-    history.push(`${baseUrl}/feed${indexString}`);
+    //  TODO: ensure that the logic here works properly
+    if (!isThread) {
+      history.push(`${baseUrl}/feed/thread${indexString}`);
+    } else {
+      history.push(`${baseUrl}/feed/replies${indexString}`);
+    }
   }
 
   submitCallback() {
@@ -100,7 +108,9 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
       vip,
       group,
       hovering,
-      bind
+      bind,
+      isThread,
+      isLast
     } = this.props;
 
     let indexString = '';
@@ -112,14 +122,14 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
     const { inReplyMode } = this.state;
 
     const canComment = this.canWrite();
-    const postExists = !!node.post && typeof node.post !== 'string';
+    const postExists = Boolean(node.post) && typeof node.post !== 'string';
 
     return (
       <Col
         ref={innerRef}
         pl={1}
         pr={1}
-        mb={3}
+        mb={isThread && !isLast && !inReplyMode ? 0 : 3}
         width="100%"
         alignItems="center"
       >
@@ -131,9 +141,10 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
           width="100%"
           maxWidth="600px"
           backgroundColor={ hovering ? 'washedGray' : 'transparent' }
-          onClick={this.navigateToReplies}
-          cursor={isParent ? "default": "pointer"}
-          {...bind}>
+          onClick={this.navigateToChildren}
+          cursor={isParent ? 'default': 'pointer'}
+          {...bind}
+        >
           { (postExists) ? (
             <>
               <PostHeader
@@ -142,7 +153,8 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
                 association={association}
                 showTimestamp={isRelativeTime}
                 graphPath={graphPath}
-                isReply={isReply} />
+                isReply={isReply}
+              />
               { (isReply || (parentPost && index.length > 1 && isParent)) ? (
                 <Row width="100%" alignItems="center" mb="2" pl="2" pr="2">
                   <Text color="gray" pr="1">Replying to</Text>
@@ -153,14 +165,16 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
                 post={node.post}
                 isParent={isParent}
                 isReply={isReply}
-                api={api} />
+                api={api}
+              />
             <PostFooter
               timeSent={node.post['time-sent']}
               replyCount={node.children.size}
               showTimestamp={!isRelativeTime}
               isParent={isParent}
               canComment={canComment}
-              toggleReplyMode={this.toggleReplyMode} />
+              toggleReplyMode={this.toggleReplyMode}
+            />
             </>
           ) : (
             <Box px="2" pb="2">
@@ -187,9 +201,19 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
             />
           </Col>
         ) : null }
+      { isThread && !isLast && !inReplyMode ? (
+          <Col width="100%" maxWidth="600px">
+            <Box
+              ml={3}
+              height="16px"
+              borderLeft={1}
+              borderLeftColor="lightGray"
+            ></Box>
+          </Col>
+        ) : null }
       </Col>
     );
   }
 }
 
-export default withHovering<PostItemProps>(PostItem);
+export default withHovering<PostItemProps>(PostItem) as React.ComponentType<PostItemProps>;
