@@ -1,10 +1,9 @@
 import { Association, GraphNotifDescription, IndexedNotification, NotifIndex } from '@urbit/api';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import { BigInteger } from 'big-integer';
 import { getParentIndex } from '../lib/notification';
 import { dateToDa, decToUd } from '../lib/util';
-import {reduce} from '../reducers/hark-update';
-import {doOptimistically, optReduceState} from '../state/base';
+import { reduce } from '../reducers/hark-update';
+import { doOptimistically } from '../state/base';
 import useHarkState from '../state/hark';
 import { StoreState } from '../store/type';
 import BaseApi from './base';
@@ -62,7 +61,7 @@ export class HarkApi extends BaseApi<StoreState> {
         index
       }
     };
-    await doOptimistically(useHarkState, action, this.harkAction.bind(this), [reduce])
+    await doOptimistically(useHarkState, action, this.harkAction.bind(this), [reduce]);
   }
 
   read(time: BigInteger, index: NotifIndex) {
@@ -77,6 +76,18 @@ export class HarkApi extends BaseApi<StoreState> {
 
   unread(time: BigInteger, index: NotifIndex) {
     return this.actOnNotification('unread-note', time, index);
+  }
+
+  readGroup(group: string) {
+    return this.harkAction({
+      'read-group': group
+    });
+  }
+
+  readGraph(graph: string) {
+    return this.harkAction({
+      'read-graph': graph
+    });
   }
 
   markCountAsRead(association: Association, parent: string, description: GraphNotifDescription) {
