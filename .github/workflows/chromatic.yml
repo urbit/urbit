@@ -19,4 +19,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          working-directory: pkg/interface
+          workingDir: pkg/interface
