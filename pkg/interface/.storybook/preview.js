@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
+import useContactState from '~/logic/state/contact';
 import '~/views/landscape/css/custom.css';
 import '~/views/css/fonts.css';
 import '~/views/apps/chat/css/custom.css';
@@ -84,6 +85,21 @@ export const decorators = [
             resource: '/ship/~darrux-landes/development',
             group: '/ship/~bitbet-bolbel/urbit-community',
           },
+        },
+      },
+    });
+
+    useContactState.setState({
+      contacts: {
+        '~sampel-palnet': {
+          status: 'Just urbiting',
+          'last-updated': 1621511447583,
+          avatar: null,
+          cover: null,
+          bio: 'An urbit user',
+          nickname: 'Sample Planet',
+          color: '0xee.5432',
+          groups: [],
         },
       },
     });
