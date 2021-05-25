@@ -1,11 +1,11 @@
 import urbitOb from 'urbit-ob';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 
-const URL_REGEX = new RegExp(String(/^(.*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)(.*)/.source));
+const URL_REGEX = new RegExp(String(/^(.*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)([\s\S]*)/.source));
 
-const PATP_REGEX = /^(.*)(~[a-z_-]+)(.*)/;
+const PATP_REGEX = /^(.)(~[a-z_-]+)(.*)/;
 
-const GROUP_REGEX = new RegExp(String(/^(.*)(~[-a-z_]+\/[-a-z]+)(.*)/.source));
+const GROUP_REGEX = new RegExp(String(/^( *)(~[-a-z_]+\/[-a-z]+)(.*)/.source));
 
 const convertToGroupRef = group => `web+urbitgraph://group/${group}`;
 
@@ -18,6 +18,7 @@ export const isUrl = (str) => {
 };
 
 const tokenizeMessage = (text) => {
+  console.log(text);
   const messages = [];
   // by line
   let blocks = [];
@@ -34,6 +35,7 @@ const tokenizeMessage = (text) => {
       return;
     }
     while(str.length > 0) {
+      console.log(str);
       const resetAndPush = (content) => {
         blocks.push(currBlock.join(''));
         messages.push({ text: blocks.join('`') });
@@ -41,6 +43,19 @@ const tokenizeMessage = (text) => {
         blocks = [];
         messages.push(content);
       };
+      const link = str.match(URL_REGEX);
+      if(link) {
+        const [,pfix, url, protocol, sfix] = link;
+        const perma = parsePermalink(url);
+        currBlock.push(pfix);
+        if(protocol === 'web+urbitgraph://' && perma) {
+          resetAndPush(permalinkToReference(perma));
+        } else {
+          resetAndPush({ url });
+        }
+        str = sfix;
+        continue;
+      }
       const groupRef = str.match(GROUP_REGEX);
       if(groupRef) {
         const [,pfix, group, sfix] = groupRef;
@@ -58,20 +73,6 @@ const tokenizeMessage = (text) => {
         str = sfix;
         continue;
       }
-      const link = str.match(URL_REGEX);
-      if(link) {
-        const [,pfix, url, protocol, sfix] = link;
-        const perma = parsePermalink(url);
-        currBlock.push(pfix);
-        if(protocol === 'web+urbitgraph://' && perma) {
-          resetAndPush(permalinkToReference(perma));
-        } else {
-          resetAndPush({ url });
-        }
-        str = sfix;
-        continue;
-      }
-
       currBlock.push(str);
       str = '';
     }
