@@ -11,14 +11,14 @@
   ?:  (gth:rs x .0)  x
   (sub:rs .0 x)
 ::    Closeness of two matrices
-++  all-close  ^+  %.y
-|=  [u=@lms v=@lms]  ^-  @rd
-  =/  n  `@ud`(length u)
-  =/  count  0
-  =/  off  0
-  |-  ^-  @rd
-    ?:  =(count n)  =(0 off)
-  $(count +(count), sum (add off `@`(isclose:lms (get u +(count)) (get v +(count)))))
+++  all-close
+  |=  [u=@lms v=@lms]
+    =/  n  `@ud`(length u)
+    =/  count  0
+    =/  off  0
+    |-
+      ?:  =(count n)  =(0 off)
+    $(count +(count), sum (add off `@`(isclose (get u +(count)) (get v +(count)))))
 ::
 ::  Tests for matrix creation
 ::
