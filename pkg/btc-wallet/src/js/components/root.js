@@ -22,7 +22,7 @@ import Warning from './lib/warning.js'
 import Body from './lib/body.js'
 import { subscription } from '../subscription.js'
 
-const network = "testnet" // bitcoin
+const network = "bitcoin";
 
 export class Root extends Component {
   constructor(props) {
