@@ -20,10 +20,6 @@ import { patp2dec, isValidPatq } from 'urbit-ob';
 import { satsToCurrency } from '../../lib/util.js';
 import Error from './error.js';
 
-window.bitcoin = bitcoin;
-window.kg = kg;
-window.bip39 = bip39;
-
 const BITCOIN_MAINNET_INFO = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: 'bc',

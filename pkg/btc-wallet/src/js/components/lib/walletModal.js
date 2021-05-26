@@ -17,8 +17,6 @@ const bitcoin = require('bitcoinjs-lib');
 const bs58check = require('bs58check')
 import { Buffer } from 'buffer';
 
-window.Buffer = Buffer
-
 export default class WalletModal extends Component {
   constructor(props) {
     super(props);

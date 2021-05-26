@@ -18,9 +18,6 @@ import Error from './error.js'
 
 import { satsToCurrency } from '../../lib/util.js';
 
-window.bitcoin = bitcoin;
-window.kg = kg;
-
 export default class BridgeInvoice extends Component {
   constructor(props) {
     super(props);
