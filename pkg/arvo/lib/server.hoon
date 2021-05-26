@@ -107,6 +107,13 @@
     :_  `octs
     [200 [['content-type' 'image/png'] ?:(cache [max-1-wk ~] ~)]]
   ::
+  ++  svg-response
+    =|  cache=?
+    |=  =octs
+    ^-  simple-payload:http
+    :_  `octs
+    [200 [['content-type' 'image/svg+xml'] ?:(cache [max-1-wk ~] ~)]]
+  ::
     ++  ico-response
     |=  =octs
     ^-  simple-payload:http

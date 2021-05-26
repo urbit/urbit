@@ -58,7 +58,7 @@
     :-  %launch-action
     !>  :+  %add
       %btc-wallet
-    [[%custom `'/~btc' `'/~btc/img/tile.png'] %.y]
+    [[%custom `'/~btc' `'/~btc/img/tile.svg'] %.y]
   =/  warning  [%settings-event !>([%put-entry %btc-wallet %warning %b %.y])]
   =/  currency
     [%settings-event !>([%put-entry %btc-wallet %currency %s 'USD'])]

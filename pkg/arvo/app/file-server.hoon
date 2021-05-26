@@ -225,6 +225,7 @@
             [~ %js]    (js-response:gen file)
             [~ %css]   (css-response:gen file)
             [~ %png]   (png-response:gen file)
+            [~ %svg]   (svg-response:gen file)
             [~ %ico]   (ico-response:gen file)
           ::
               [~ %html]
