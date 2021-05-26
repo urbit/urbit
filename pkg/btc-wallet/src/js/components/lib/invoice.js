@@ -7,6 +7,7 @@ import {
   Text,
   Button,
   Col,
+  LoadingSpinner,
 } from '@tlon/indigo-react';
 
 import * as bitcoin from 'bitcoinjs-lib';
@@ -14,12 +15,38 @@ import * as kg from 'urbit-key-generation';
 import * as bip39 from 'bip39';
 
 import Sent from './sent.js'
+import { patp2dec, isValidPatq } from 'urbit-ob';
 
 import { satsToCurrency } from '../../lib/util.js';
+import Error from './error.js';
 
 window.bitcoin = bitcoin;
 window.kg = kg;
 window.bip39 = bip39;
+
+const BITCOIN_MAINNET_INFO = {
+  messagePrefix: '\x18Bitcoin Signed Message:\n',
+  bech32: 'bc',
+  bip32: {
+    public: 0x04b24746,
+    private: 0x04b2430c,
+  },
+  pubKeyHash: 0x00,
+  scriptHash: 0x05,
+  wif: 0x80,
+};
+
+const BITCOIN_TESTNET_INFO = {
+  messagePrefix: '\x18Bitcoin Signed Message:\n',
+  bech32: 'tb',
+  bip32: {
+    public: 0x045f1cf6,
+    private: 0x045f18bc,
+  },
+  pubKeyHash: 0x6f,
+  scriptHash: 0xc4,
+  wif: 0xef,
+};
 
 export default class Invoice extends Component {
   constructor(props) {
@@ -28,13 +55,22 @@ export default class Invoice extends Component {
     this.state = {
       masterTicket: '',
       ready: false,
-      error: false,
+      error: this.props.state.error,
       sent: false,
+      broadcasting: false,
     };
 
     this.checkTicket = this.checkTicket.bind(this);
     this.broadCastTx = this.broadCastTx.bind(this);
     this.sendBitcoin = this.sendBitcoin.bind(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.broadcasting) {
+      if (this.state.error !== '') {
+        this.setState({broadcasting: false});
+      }
+    }
   }
 
   broadCastTx(psbtHex) {
@@ -45,42 +81,58 @@ export default class Invoice extends Component {
   }
 
   sendBitcoin(ticket, psbt) {
-
-    const mnemonic = kg.deriveNodeSeed(ticket, 'bitcoin');
-    const seed = bip39.mnemonicToSeed(mnemonic);
-    const hd = bitcoin.bip32.fromSeed(seed);
-
     const newPsbt = bitcoin.Psbt.fromBase64(psbt);
+    this.setState({broadcasting: true});
+    kg.generateWallet({ ticket, ship: parseInt(patp2dec('~' + window.ship)) })
+      .then(urbitWallet => {
+        const { xpub } = this.props.network === 'testnet'
+          ? urbitWallet.bitcoinTestnet.keys
+          : urbitWallet.bitcoinMainnet.keys;
 
-    try {
-      const hex =
-        newPsbt.data.inputs
-               .reduce((psbt, input, idx) => {
-                 const path = input.bip32Derivation[0].path
-                 const prv = hd.derivePath(path).privateKey;
-                 return psbt.signInput(idx, bitcoin.ECPair.fromPrivateKey(prv));
+        const { xprv: zprv } = urbitWallet.bitcoinMainnet.keys;
+        const { xprv: vprv } = urbitWallet.bitcoinTestnet.keys;
 
-               }, newPsbt)
-               .finalizeAllInputs()
-               .extractTransaction()
-               .toHex();
+        const isTestnet = (this.props.network === 'testnet');
+        const derivationPrefix = isTestnet ? "m/84'/1'/0'/" : "m/84'/0'/0'/";
 
-      this.broadCastTx(hex).then(res => this.setState({sent: true}));
-    }
-    catch(e) {
-      this.setState({error: true});
-    }
+        const btcWallet = (isTestnet)
+          ? bitcoin.bip32.fromBase58(vprv, BITCOIN_TESTNET_INFO)
+          : bitcoin.bip32.fromBase58(zprv, BITCOIN_MAINNET_INFO);
+
+        try {
+          const hex = newPsbt.data.inputs
+            .reduce((psbt, input, idx) => {
+              //  removing already derived part, eg m/84'/0'/0'/0/0 becomes 0/0
+              const path = input.bip32Derivation[0].path
+                                .split(derivationPrefix)
+                                .join('');
+              const prv = btcWallet.derivePath(path).privateKey;
+              return psbt.signInput(idx, bitcoin.ECPair.fromPrivateKey(prv));
+            }, newPsbt)
+            .finalizeAllInputs()
+            .extractTransaction()
+            .toHex();
+
+          this.broadCastTx(hex);
+        }
+        catch(e) {
+          this.setState({error: 'invalid-master-ticket', broadcasting: false});
+        }
+      });
+
   }
+
 
   checkTicket(e){
     // TODO: port over bridge ticket validation logic
     let masterTicket = e.target.value;
-    let ready = (masterTicket.length > 0);
-    let error = false;
+    let ready = isValidPatq(masterTicket);
+    let error = (ready) ? '' : 'invalid-master-ticket';
     this.setState({masterTicket, ready, error});
   }
 
   render() {
+    const broadcastSuccess = this.props.state.broadcastSuccess;
     const { stopSending, payee, denomination, satsAmount, psbt, currencyRates } = this.props;
     const { sent, error } = this.state;
 
@@ -88,7 +140,7 @@ export default class Invoice extends Component {
     let inputBg = 'white';
     let inputBorder = 'lightGray';
 
-    if (error) {
+    if (error !== '') {
       inputColor = 'red';
       inputBg = 'veryLightRed';
       inputBorder = 'red';
@@ -96,7 +148,7 @@ export default class Invoice extends Component {
 
     return (
       <>
-        { sent ?
+        { broadcastSuccess ?
           <Sent
             payee={payee}
             stopSending={stopSending}
@@ -178,19 +230,19 @@ export default class Invoice extends Component {
               borderColor={inputBorder}
               onChange={this.checkTicket}
             />
-            {error &&
+            {(error !== '') &&
              <Row>
-               <Text
+               <Error
                  fontSize='14px'
                  color='red'
-                 mt={2}>
-                 Invalid master ticket
-               </Text>
+                 error={error}
+                 mt={2}/>
              </Row>
             }
             <Row
               flexDirection='row-reverse'
               mt={4}
+              alignItems="center"
             >
               <Button
                 primary
@@ -201,9 +253,10 @@ export default class Invoice extends Component {
                 py='24px'
                 px='24px'
                 onClick={() => this.sendBitcoin(this.state.masterTicket, psbt)}
-                disabled={!this.state.ready || error}
-                style={{cursor: (this.state.ready && !error) ? "pointer" : "default"}}
+                disabled={!this.state.ready || error || this.state.broadcasting}
+                style={{cursor: (this.state.ready && !error && !this.state.broadcasting) ? "pointer" : "default"}}
               />
+              { (this.state.broadcasting) ? <LoadingSpinner mr={3}/> : null}
             </Row>
           </Col>
         }

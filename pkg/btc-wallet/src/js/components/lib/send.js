@@ -128,7 +128,8 @@ export default class Send extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.error !== this.props.error && this.props.error !== '') {
+    if ((prevProps.error !== this.props.error) &&
+       (this.props.error !== '') && (this.props.error !== 'broadcast-fail')) {
       this.setState({signing: false});
     }
 
@@ -197,7 +198,7 @@ export default class Send extends Component {
     }
 
 
-    const { api, value, conversion, stopSending, denomination, psbt, currencyRates, error } = this.props;
+    const { api, value, conversion, stopSending, denomination, psbt, currencyRates, error, network } = this.props;
     const { denomAmount, satsAmount, signing, payee, choosingSignMethod, signMethod } = this.state;
 
     const signReady = (this.state.ready && (parseInt(this.state.satsAmount) > 0)) && !signing;
@@ -206,6 +207,7 @@ export default class Send extends Component {
     if (signMethod === 'Sign Transaction') {
       invoice =
         <Invoice
+          network={network}
           api={api}
           psbt={psbt}
           currencyRates={currencyRates}
@@ -213,10 +215,12 @@ export default class Send extends Component {
           payee={payee}
           denomination={denomination}
           satsAmount={satsAmount}
+          state={this.props.state}
         />
     } else if (signMethod === 'Sign with Bridge') {
       invoice =
         <BridgeInvoice
+          state={this.props.state}
           api={api}
           psbt={psbt}
           currencyRates={currencyRates}

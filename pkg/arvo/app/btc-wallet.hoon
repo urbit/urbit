@@ -334,7 +334,8 @@
       ?~  txbu.poym  %.n
       =((get-id:txu:bc (decode:txu:bc signed)) ~(get-txid txb:bl u.txbu.poym))
     :-  ?.  tx-match
-          ((slog leaf+"txid didn't match txid in wallet") ~)
+          %-  (slog leaf+"txid didn't match txid in wallet")
+          [(give-update %error %broadcast-fail)]~
         ~[(poke-provider [%broadcast-tx signed])]
     ?.  tx-match  state
       ?~  txbu.poym  state
@@ -486,7 +487,7 @@
     =+  fee=~(fee txb:bl u.txbu.poym)
     ~&  >>  "{<vb>} vbytes, {<(div fee vb)>} sats/byte, {<fee>} sats fee"
     %-  (slog [%leaf "PSBT: {<u.pb>}"]~)
-    [(give-update [%psbt u.pb])]~
+    [(give-update [%psbt u.pb fee])]~
     ::    update outgoing payment with a rawtx, if the txid is in poym's txis
     ::
     ++  update-poym-txis
@@ -629,12 +630,14 @@
       %fail-broadcast-tx
     ?>  =(src.bowl our.bowl)
     ~&  >>>  "%fail-broadcast-tx"
-    `state(poym [~ ~])
+    :_  state(poym [~ ~])
+    [(give-update %error %broadcast-fail)]~
     ::
       %succeed-broadcast-tx
     ?>  =(src.bowl our.bowl)
     ~&  >  "%succeed-broadcast-tx"
     :_  state
+    :-  (give-update %broadcast-success ~)
     ?~  prov  ~
     :-  (poke-provider [%tx-info txid.intr])
     ?~  txbu.poym  ~

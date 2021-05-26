@@ -6,6 +6,7 @@ export class UpdateReducer {
     if (!json) {
       return;
     }
+    console.log('reduce', json);
     if (json.providerStatus) {
       this.reduceProviderStatus(json.providerStatus, state);
     }
@@ -39,6 +40,12 @@ export class UpdateReducer {
     if (json.hasOwnProperty('error')) {
       this.reduceError(json.error, state);
     }
+    if (json.hasOwnProperty('broadcast-success')){
+      state.broadcastSuccess = true;
+    }
+    if (json.hasOwnProperty('broadcast-fail')){
+      state.broadcastSuccess = false;
+    }
   }
 
   reduceProviderStatus(json, state) {
@@ -58,7 +65,8 @@ export class UpdateReducer {
   }
 
   reducePsbt(json, state) {
-    state.psbt = json;
+    state.psbt = json.pb;
+    state.fee = json.fee;
   }
 
   reduceBtcState(json, state) {

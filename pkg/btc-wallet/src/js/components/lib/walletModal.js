@@ -10,7 +10,7 @@ import {
   LoadingSpinner,
 } from '@tlon/indigo-react';
 
-import { patp2dec } from 'urbit-ob';
+import { patp2dec, isValidPatq } from 'urbit-ob';
 
 const kg = require('urbit-key-generation');
 const bitcoin = require('bitcoinjs-lib');
@@ -44,11 +44,11 @@ export default class WalletModal extends Component {
     // TODO: port over bridge ticket validation logic
     if (this.state.confirmingMasterTicket) {
       let confirmedMasterTicket = e.target.value;
-      let readyToSubmit = (confirmedMasterTicket.length > 0);
+      let readyToSubmit = isValidPatq(confirmedMasterTicket);
       this.setState({confirmedMasterTicket, readyToSubmit});
     } else {
       let masterTicket = e.target.value;
-      let readyToSubmit = (masterTicket.length > 0);
+      let readyToSubmit = isValidPatq(masterTicket);
       this.setState({masterTicket, readyToSubmit});
     }
   }
@@ -60,7 +60,6 @@ export default class WalletModal extends Component {
   }
 
   submitMasterTicket(ticket){
-
     this.setState({processingSubmission: true});
     kg.generateWallet({ ticket, ship: parseInt(patp2dec('~' + window.ship)) })
       .then(urbitWallet => {

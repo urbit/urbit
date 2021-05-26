@@ -124,6 +124,7 @@
       %no-dust
       %tx-being-signed
       %insufficient-balance
+      %broadcast-fail
   ==
 ::  data to send to the frontend
 ::
@@ -136,9 +137,10 @@
         =btc-state
         address=(unit address)
       ==
+      [%broadcast-success ~]
       [%change-provider provider=(unit provider)]
       [%change-wallet wallet=(unit xpub) balance=(unit [p=sats q=sats]) =history]
-      [%psbt pb=@t]
+      [%psbt pb=@t fee=sats]
       [%btc-state =btc-state]
       [%new-tx =hest]
       [%cancel-tx =txid]

@@ -68,6 +68,7 @@ export default class Balance extends Component {
       <>
         {this.state.sending ?
          <Send
+           state={this.props.state}
            api={api}
            psbt={this.props.state.psbt}
            currencyRates={this.props.state.currencyRates}
@@ -80,7 +81,7 @@ export default class Balance extends Component {
            error={this.props.state.error}
            stopSending={() => {
              this.setState({sending: false});
-             store.handleEvent({data: {psbt: '', error: ''}});
+             store.handleEvent({data: {psbt: '', fee: 0, error: '', "broadcast-fail": null}});
            }}
          /> :
          <Col

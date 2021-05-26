@@ -104,13 +104,14 @@
       %initial             (initial upd)
       %change-provider     (change-provider upd)
       %change-wallet       (change-wallet upd)
-      %psbt                s+pb.upd
+      %psbt                (psbt upd)
       %btc-state           (btc-state btc-state.upd)
       %new-tx              (hest hest.upd)
       %cancel-tx           (hexb txid.upd)
       %new-address         (address address.upd)
       %balance             (balance balance.upd)
       %error               s+error.upd
+      %broadcast-success   ~
     ==
   ::
   ++  initial
@@ -140,6 +141,15 @@
     :~  wallet+?~(wallet.upd ~ [%s u.wallet.upd])
         balance+(balance balance.upd)
         history+(history history.upd)
+    ==
+  ::
+  ++  psbt
+    |=  upd=update:btc-wallet
+    ?>  ?=(%psbt -.upd)
+    ^-  json
+    %-  pairs
+    :~  pb+s+pb.upd
+        fee+(numb fee.upd)
     ==
   ::
   ++  balance

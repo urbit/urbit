@@ -44,7 +44,7 @@ export default function Sent(props) {
       >
         <Text
           color='white'
-          fontSize='52px'
+          fontSize='40px'
         >
           {satsToCurrency(satsAmount, denomination, currencyRates)}
         </Text>

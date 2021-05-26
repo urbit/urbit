@@ -7,12 +7,14 @@ import {
   Text,
   Button,
   Col,
+  LoadingSpinner,
 } from '@tlon/indigo-react';
 
 import * as bitcoin from 'bitcoinjs-lib';
 import * as kg from 'urbit-key-generation';
 
 import Sent from './sent.js'
+import Error from './error.js'
 
 import { satsToCurrency } from '../../lib/util.js';
 
@@ -24,10 +26,10 @@ export default class BridgeInvoice extends Component {
     super(props);
 
     this.state = {
-      txHex: 'm',
+      txHex: '',
       ready: false,
-      error: false,
-      sent: false,
+      error: this.props.state.error,
+      broadcasting: false,
     };
 
     this.checkTxHex = this.checkTxHex.bind(this);
@@ -46,42 +48,56 @@ export default class BridgeInvoice extends Component {
     window.open('https://bridge.urbit.org/?kind=btc&utx=' + this.props.psbt);
   }
 
-  sendBitcoin(hex) {
+  componentDidUpdate(prevProps){
+    if (this.state.broadcasting) {
+      if (this.state.error !== '') {
+        this.setState({broadcasting: false});
+      }
+    }
 
+    if (prevProps.state.error !== this.props.state.error) {
+      this.setState({error: this.props.state.error});
+    }
+  }
+
+  sendBitcoin(hex) {
     try {
       bitcoin.Transaction.fromHex(hex)
-      this.broadCastTx(hex).then(res => this.setState({sent: true}));
+      this.broadCastTx(hex)
+      this.setState({broadcasting: true});
     }
 
     catch(e) {
-      this.setState({error: true});
+      this.setState({error: 'invalid-signed', broadcasting: false});
     }
   }
 
   checkTxHex(e){
     let txHex = e.target.value;
     let ready = (txHex.length > 0);
-    let error = false;
+    let error = '';
     this.setState({txHex, ready, error});
   }
 
   render() {
     const { stopSending, payee, denomination, satsAmount, psbt, currencyRates } = this.props;
-    const { sent, error, txHex } = this.state;
+    const { error, txHex } = this.state;
 
     let inputColor = 'black';
     let inputBg = 'white';
     let inputBorder = 'lightGray';
 
-    if (error) {
+    if (error !== '') {
       inputColor = 'red';
       inputBg = 'veryLightRed';
       inputBorder = 'red';
     }
 
+    console.log('bridge invoice', error);
+
     return (
       <>
-        { sent ?
+        { this.props.state.broadcastSuccess ?
           <Sent
             payee={payee}
             stopSending={stopSending}
@@ -166,19 +182,18 @@ export default class BridgeInvoice extends Component {
               style={{'line-height': '4'}}
               onChange={this.checkTxHex}
             />
-            {error &&
+            { (error !== '') &&
              <Row>
-               <Text
+               <Error
+                 error={error}
                  fontSize='14px'
-                 color='red'
-                 mt={2}>
-                 Invalid signed bitcoin transaction
-               </Text>
+                 mt={2}/>
              </Row>
             }
             <Row
               flexDirection='row-reverse'
               mt={4}
+              alignItems="center"
             >
               <Button
                 primary
@@ -192,6 +207,7 @@ export default class BridgeInvoice extends Component {
                 disabled={!this.state.ready || error}
                 style={{cursor: (this.state.ready && !error) ? "pointer" : "default"}}
               />
+              {this.state.broadcasting ? <LoadingSpinner mr={3}/> : null}
             </Row>
           </Col>
         }
