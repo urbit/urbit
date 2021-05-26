@@ -3780,11 +3780,11 @@
         [[~ ~] fod.dom]
       =/  cached=(unit [=vase *])  (~(get by naves.fod.dom) i.path)
       ?^  cached
-        :_(fod.dom [~ ~ %& %nave vase.u.cached])
+        :_(fod.dom [~ ~ %& %nave !>(vase.u.cached)])
       =^  =vase  fod.dom
         %-  wrap:fusion
         (build-nave:(ford:fusion static-ford-args) i.path)
-      :_(fod.dom [~ ~ %& %nave vase])
+      :_(fod.dom [~ ~ %& %nave !>(vase)])
     ::
     ++  read-f
       !.
@@ -3796,11 +3796,11 @@
         [[~ ~] fod.dom]
       =/  cached=(unit [=vase *])  (~(get by casts.fod.dom) [i i.t]:path)
       ?^  cached
-        :_(fod.dom [~ ~ %& %cast vase.u.cached])
+        :_(fod.dom [~ ~ %& %cast !>(vase.u.cached)])
       =^  =vase  fod.dom
         %-  wrap:fusion
         (build-cast:(ford:fusion static-ford-args) [i i.t]:path)
-      :_(fod.dom [~ ~ %& %cast vase])
+      :_(fod.dom [~ ~ %& %cast !>(vase)])
     ::
     ::  Gets the permissions that apply to a particular node.
     ::

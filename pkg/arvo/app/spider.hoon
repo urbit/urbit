@@ -249,7 +249,8 @@
       ?+  wire  (on-arvo:def wire sign-arvo)
         [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
         [%build @ ~]   (handle-build:sc i.t.wire sign-arvo)
-        [%bind ~]      `state
+        [%bind ~]              `state
+        [%conversion-cache *]  `state
       ==
     [cards this]
   ::  On unexpected failure, kill all outstanding strands
@@ -284,21 +285,30 @@
   =/  =tid         (new-thread-id thread)
   =.  serving.state
     (~(put by serving.state) tid [eyre-id output-mark])
-  =+  .^
-      =tube:clay
-      %cc 
-      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/json/[input-mark]
-    ==
+  =/  convert
+    .^  vase
+        %cf 
+        /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/json/[input-mark]
+      ==
+  ~|  "body cannot be null"
   ?>  ?=(^ body.request.inbound-request)
+  ~|  "body must be json"
   =/  body=json
     (need (de-json:html q.u.body.request.inbound-request))
+  ~|  "body must be able to be converted into {(trip input-mark)}"
   =/  input=vase
-    (slop !>(~) (tube !>(body)))
+    %+  slop
+      !>(~)
+    (slym convert body)
   =/  =start-args
     [~ `tid thread input]
   =^  cards  state
     (handle-start-thread start-args)
-  [cards state]
+  :_  state
+  :_  cards
+  =/  =wire  /conversion-cache/[input-mark]
+  =/  =rave:clay  [%sing %f [%da now.bowl] /json/[input-mark]]
+  [%pass wire %arvo %c %warp our.bowl [%home `rave]]
 ::
 ++  on-poke-input
   |=  input
