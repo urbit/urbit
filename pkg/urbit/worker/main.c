@@ -74,6 +74,10 @@ _cw_serf_send(u3_noun pel)
 static void
 _cw_serf_send_slog(u3_noun hod)
 {
+  if ( 0x3cc7a9c9 == u3r_mug(hod) ) {
+    fprintf(stderr, "gall: slog'n reloaded agents\r\n");
+  }
+
   _cw_serf_send(u3nc(c3__slog, hod));
 }
 
