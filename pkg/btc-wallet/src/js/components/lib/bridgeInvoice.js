@@ -24,20 +24,20 @@ export default class BridgeInvoice extends Component {
     super(props);
 
     this.state = {
-      externalPsbt: '',
+      txHex: 'm',
       ready: false,
       error: false,
       sent: false,
     };
 
-    this.checkExternalPsbt = this.checkExternalPsbt.bind(this);
+    this.checkTxHex = this.checkTxHex.bind(this);
     this.broadCastTx = this.broadCastTx.bind(this);
     this.sendBitcoin = this.sendBitcoin.bind(this);
   }
 
-  broadCastTx(psbtHex) {
+  broadCastTx(hex) {
     let command = {
-      'broadcast-tx': psbtHex
+      'broadcast-tx': hex
     }
     return this.props.api.btcWalletCommand(command)
   }
@@ -46,10 +46,10 @@ export default class BridgeInvoice extends Component {
     window.open('https://bridge.urbit.org/?kind=btc&utx=' + this.props.psbt);
   }
 
-  sendBitcoin(psbt) {
+  sendBitcoin(hex) {
 
     try {
-      const hex = bitcoin.Psbt.fromBase64(psbt).validateSignaturesOfAllInputs().toHex();
+      bitcoin.Transaction.fromHex(hex)
       this.broadCastTx(hex).then(res => this.setState({sent: true}));
     }
 
@@ -58,16 +58,16 @@ export default class BridgeInvoice extends Component {
     }
   }
 
-  checkExternalPsbt(e){
-    let externalPsbt = e.target.value;
-    let ready = (externalPsbt.length > 0);
+  checkTxHex(e){
+    let txHex = e.target.value;
+    let ready = (txHex.length > 0);
     let error = false;
-    this.setState({externalPsbt, ready, error});
+    this.setState({txHex, ready, error});
   }
 
   render() {
     const { stopSending, payee, denomination, satsAmount, psbt, currencyRates } = this.props;
-    const { sent, error, externalPsbt } = this.state;
+    const { sent, error, txHex } = this.state;
 
     let inputColor = 'black';
     let inputBg = 'white';
@@ -155,16 +155,16 @@ export default class BridgeInvoice extends Component {
               </Text>
             </Box>
             <Input
-              value={this.state.externalPsbt}
+              value={this.state.txHex}
               fontSize='14px'
-              placeholder='cHNidP8BAHEBAAAAAXqmzdCZ4uv...'
+              placeholder='010000000001019e478cc370323ac539097...'
               autoCapitalize='none'
               autoCorrect='off'
               color={inputColor}
               backgroundColor={inputBg}
               borderColor={inputBorder}
               style={{'line-height': '4'}}
-              onChange={this.checkExternalPsbt}
+              onChange={this.checkTxHex}
             />
             {error &&
              <Row>
@@ -188,7 +188,7 @@ export default class BridgeInvoice extends Component {
                 borderRadius='24px'
                 py='24px'
                 px='24px'
-                onClick={() => this.sendBitcoin(externalPsbt)}
+                onClick={() => this.sendBitcoin(txHex)}
                 disabled={!this.state.ready || error}
                 style={{cursor: (this.state.ready && !error) ? "pointer" : "default"}}
               />

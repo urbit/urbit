@@ -10,26 +10,14 @@ import {
   LoadingSpinner,
 } from '@tlon/indigo-react';
 
+import { patp2dec } from 'urbit-ob';
+
 const kg = require('urbit-key-generation');
 const bitcoin = require('bitcoinjs-lib');
 const bs58check = require('bs58check')
 import { Buffer } from 'buffer';
 
 window.Buffer = Buffer
-
-function bip44To84(network, xpub) {
-  var prefix = (network === 'bitcoin') ? '04b24746' : '045f1cf6';
-  var data = bs58check.decode(xpub);
-  data = data.slice(4);
-  data = Buffer.concat([Buffer.from(prefix, 'hex'), data]);
-  return bs58check.encode(data);
-}
-
-const DERIVATIONS = {
-  bitcoin: "m/84'/0'/0'",
-  testnet: "m/84'/1'/0'",
-}
-const BTC_DERIVATION_TYPE = 'bitcoin'
 
 export default class WalletModal extends Component {
   constructor(props) {
@@ -50,7 +38,6 @@ export default class WalletModal extends Component {
     this.submitMasterTicket = this.submitMasterTicket.bind(this);
     this.submitXPub         = this.submitXPub.bind(this);
 
-    this.BTC_DERIVATION_PATH = DERIVATIONS[this.props.network]
   }
 
   checkTicket(e){
@@ -74,21 +61,16 @@ export default class WalletModal extends Component {
 
   submitMasterTicket(ticket){
 
-    const node = kg.deriveNode(
-      ticket,
-      BTC_DERIVATION_TYPE,
-      this.BTC_DERIVATION_PATH
-    );
+    this.setState({processingSubmission: true});
+    kg.generateWallet({ ticket, ship: parseInt(patp2dec('~' + window.ship)) })
+      .then(urbitWallet => {
+        const { xpub } = this.props.network === 'testnet'
+                       ? urbitWallet.bitcoinTestnet.keys :
+                         urbitWallet.bitcoinMainnet.keys
 
-    const zpub = bip44To84(this.props.network,
-      bitcoin.bip32.fromPublicKey(
-        Buffer.from(node.keys.public, 'hex'),
-        Buffer.from(node.keys.chain, 'hex'),
-        bitcoin.networks[this.props.network]
-      ).toBase58()
-    );
+        this.submitXPub(xpub);
+      });
 
-    this.submitXPub(zpub);
   }
 
   submitXPub(xpub){
