@@ -1239,8 +1239,8 @@
         ::      since conversion failure also gets caught during first receive.
         ::      we can't do anything about this, so consider it unsupported.
         ?~  sign=(channel-event-to-sign channel-event)        $
-        ?~  json-with-moves=(sign-to-json request-id u.sign)  $
-        $(events [(event-json-to-wall id +.u.json-with-moves) events])
+        ?~  jive=(sign-to-json request-id u.sign)  $
+        $(events [(event-json-to-wall id +.u.jive) events])
       ::  send the start event to the client
       ::
       =^  http-moves  state
@@ -1506,13 +1506,12 @@
       ::  if conversion succeeds, we *can* send it. if the client is actually
       ::  connected, we *will* send it immediately.
       ::
-      =/  json-with-moves=(unit (quip move json))
+      =/  jive=(unit (quip move json))
         (sign-to-json request-id sign)
       =/  json=(unit json)
-        ?~  json-with-moves  ~
-        `+.u.json-with-moves
-      =?  moves  ?=(^ json-with-moves)
-        (weld moves -.u.json-with-moves)
+        ?~(jive ~ `+.u.jive)
+      =?  moves  ?=(^ jive)
+        (weld moves -.u.jive)
       =*  sending  &(?=([%| *] state.u.channel) ?=(^ json))
       ::
       =/  next-id  next-id.u.channel
@@ -2327,22 +2326,21 @@
           sign
         sign
       ==
-  ?:  ?=([%clay *] sign)
-    [~ http-server-gate]
   ::  :wire must at least contain two parts, the type and the build
   ::
   ?>  ?=([@ *] wire)
   ::
   |^  ^-  [(list move) _http-server-gate]
       ::
-      ?+     i.wire
-           ~|([%bad-take-wire wire] !!)
+      ?+    i.wire
+          ~|([%bad-take-wire wire] !!)
       ::
-         %run-app-request  run-app-request
-         %watch-response   watch-response
-         %sessions         sessions
-         %channel          channel
-         %acme             acme-ack
+        %run-app-request   run-app-request
+        %watch-response    watch-response
+        %sessions          sessions
+        %channel           channel
+        %acme              acme-ack
+        %conversion-cache  `http-server-gate
       ==
   ::
   ++  run-app-request
