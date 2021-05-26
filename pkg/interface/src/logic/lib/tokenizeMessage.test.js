@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import tokenizeMessage from './tokenizeMessage';
 
 describe('tokenizeMessage', () => {
@@ -43,5 +44,25 @@ describe('tokenizeMessage', () => {
     const example = 'test \n \n foo \n \n \n';
     const [{ text }] = tokenizeMessage(example);
     expect(text).toEqual(example);
+  });
+
+  it('should handle multiline messages with references', () => {
+    const example = 'web+urbitgraph://group/~fabled-faster/interface-testing-facility/graph/~hastuc-dibtux/test-book-7531/170141184505064871297992714192687202304\n\nlol here [is a link](https://urbit.org)';
+    const [{ text }, { reference }, { text: text2 }] = tokenizeMessage(example);
+    expect(text).toEqual('');
+    expect(reference.graph.graph).toEqual('/ship/~hastuc-dibtux/test-book-7531');
+    expect(reference.graph.index).toEqual('/170141184505064871297992714192687202304');
+    expect(text2).toEqual('\n\nlol here [is a link](https://urbit.org)');
+  });
+
+  it('should handle links on newlines after references', () => {
+    const example = 'web+urbitgraph://group/~fabled-faster/interface-testing-facility/graph/~hastuc-dibtux/test-book-7531/170141184505064871297992714192687202304\n\nhttps://urbit.org a link is here!';
+    const [{ text }, { reference }, { text: text2 }, { url }, { text: text3 }] = tokenizeMessage(example);
+    expect(text).toEqual('');
+    expect(reference.graph.graph).toEqual('/ship/~hastuc-dibtux/test-book-7531');
+    expect(reference.graph.index).toEqual('/170141184505064871297992714192687202304');
+    expect(text2).toEqual('\n\n');
+    expect(url).toEqual('https://urbit.org');
+    expect(text3).toEqual(' a link is here!');
   });
 });
