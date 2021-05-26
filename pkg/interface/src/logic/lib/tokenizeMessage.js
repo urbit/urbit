@@ -1,11 +1,11 @@
 import urbitOb from 'urbit-ob';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 
-const URL_REGEX = new RegExp(String(/^(.*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)(.*)/.source));
+const URL_REGEX = new RegExp(String(/^([^[\]]*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+[\w/])([\s\S]*)/.source));
 
-const PATP_REGEX = /^(.*)(~[a-z_-]+)(.*)/;
+const PATP_REGEX = /^([\s\S]*?)(~[a-z_-]+)([\s\S]*)/;
 
-const GROUP_REGEX = new RegExp(String(/^(.*)(~[-a-z_]+\/[-a-z]+)(.*)/.source));
+const GROUP_REGEX = new RegExp(String(/^([\s\S ]*?)(~[-a-z_]+\/[-a-z]+)([\s\S]*)/.source));
 
 const convertToGroupRef = group => `web+urbitgraph://group/${group}`;
 
@@ -41,6 +41,19 @@ const tokenizeMessage = (text) => {
         blocks = [];
         messages.push(content);
       };
+      const link = str.match(URL_REGEX);
+      if(link) {
+        const [,pfix, url, protocol, sfix] = link;
+        const perma = parsePermalink(url);
+        currBlock.push(pfix);
+        if(protocol === 'web+urbitgraph://' && perma) {
+          resetAndPush(permalinkToReference(perma));
+        } else {
+          resetAndPush({ url });
+        }
+        str = sfix;
+        continue;
+      }
       const groupRef = str.match(GROUP_REGEX);
       if(groupRef) {
         const [,pfix, group, sfix] = groupRef;
@@ -58,20 +71,6 @@ const tokenizeMessage = (text) => {
         str = sfix;
         continue;
       }
-      const link = str.match(URL_REGEX);
-      if(link) {
-        const [,pfix, url, protocol, sfix] = link;
-        const perma = parsePermalink(url);
-        currBlock.push(pfix);
-        if(protocol === 'web+urbitgraph://' && perma) {
-          resetAndPush(permalinkToReference(perma));
-        } else {
-          resetAndPush({ url });
-        }
-        str = sfix;
-        continue;
-      }
-
       currBlock.push(str);
       str = '';
     }
@@ -79,7 +78,7 @@ const tokenizeMessage = (text) => {
     currBlock = [];
   });
   messages.push({ text: blocks.join('`') });
-
+  console.log(messages);
   return messages;
 };
 
