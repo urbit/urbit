@@ -35,7 +35,7 @@
       !>  (zeros:lms 12 16)
     %+  expect-eq
       !>  (make:lms `(list (list @rs))`(reap 12 (reap 16 .0)))
-      !>  (zeros:lms 16)
+      !>  (zeros:lms 12 16)
   ==
 ++  test-ones  ^-  tang
   ;:  weld
