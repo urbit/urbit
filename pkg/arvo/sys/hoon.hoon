@@ -5952,13 +5952,6 @@
     ~
   [~ p.u.q.vex]
 ::
-++  sloy
-  |=  txt=@ta  ^-  (unit coin)
-  =/  maybe-da  (rush txt ;~(pfix sig (cook year when:so)))
-  ?^  maybe-da
-    `[%$ [%da u.maybe-da]]
-  (slay txt)
-::
 ++  smyt                                                ::  pretty print path
   |=  bon=path  ^-  tank
   :+  %rose  [['/' ~] ['/' ~] ~]

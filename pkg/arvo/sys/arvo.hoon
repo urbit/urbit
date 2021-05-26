@@ -297,9 +297,17 @@
   ?.  ?=([@ @ @ *] p)  ~
   ?~  who=(slaw %p i.p)  ~
   ?~  des=?~(i.t.p (some %$) (slaw %tas i.t.p))  ~  :: XX +sym ;~(pose low (easy %$))
-  ?~  ved=(sloy i.t.t.p)  ~
-  ?.  ?=([%$ case] u.ved)  ~
-  `(unit beam)`[~ [`ship`u.who `desk`u.des `case`p.u.ved] t.t.t.p]
+  ?~  ved=(en-case i.t.t.p)  ~
+  `(unit beam)`[~ [`ship`u.who `desk`u.des `case`u.ved] t.t.t.p]
+::
+++  en-case
+  ~/  %en-case
+  |=  =knot
+  ^-  (unit case)
+  ?^  num=(slaw %ud knot)  `[%ud u.num]
+  ?^  wen=(slaw %da knot)  `[%da u.wen]
+  ?~  lab=(slaw %tas knot)  ~
+  `[%tas u.lab]
 ::
 ++  en-omen
   |=  [vis=view bem=beam]
