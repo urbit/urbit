@@ -297,10 +297,10 @@
   ?.  ?=([@ @ @ *] p)  ~
   ?~  who=(slaw %p i.p)  ~
   ?~  des=?~(i.t.p (some %$) (slaw %tas i.t.p))  ~  :: XX +sym ;~(pose low (easy %$))
-  ?~  ved=(en-case i.t.t.p)  ~
+  ?~  ved=(de-case i.t.t.p)  ~
   `(unit beam)`[~ [`ship`u.who `desk`u.des `case`u.ved] t.t.t.p]
 ::
-++  en-case
+++  de-case
   ~/  %en-case
   |=  =knot
   ^-  (unit case)
@@ -1010,8 +1010,11 @@
         ++  settle
           |=  van=vase
           ^-  (pair vase worm)
-          =/  [rig=vase wor=worm]  (~(slym wa *worm) van *vane-sample)
-          [van +:(~(slap wa wor) rig [%limb %scry])]
+          =|  sac=worm
+          =^  rig=vase  sac  (~(slym wa sac) van *vane-sample)
+          =^  gat=vase  sac  (~(slap wa sac) rig [%limb %scry])
+          =^  pro=vase  sac  (~(slap wa sac) gat [%limb %$])
+          [van +:(~(mint wa sac) p.pro [%$ 7])]
         ::
         ::  XX pass identity to preserve behavior?
         ::
