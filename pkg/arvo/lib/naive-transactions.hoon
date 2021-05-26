@@ -8,26 +8,6 @@
 ::
 |%
 ::
-::  ++  gen-tx-octs
-::    :: takes in a nonce, tx:naive, and private key and returned a signed transactions as octs
-::    ::
-::    |=  [=nonce tx=tx:naive pk=@]  ^-  octs
-::    =/  raw=octs
-::      ?-  +<.tx
-::        %spawn  (get-spawn:bits -.tx +>.tx)
-::        %transfer-point  (get-transfer:bits -.tx +>.tx)
-::        %configure-keys  (get-keys:bits -.tx +>.tx)
-::        %escape  (get-escape:bits -.tx +.tx)
-::        %cancel-escape  (get-escape:bits -.tx +.tx)
-::        %adopt  (get-escape:bits -.tx +.tx)
-::        %reject  (get-escape:bits -.tx +.tx)
-::        %detach  (get-escape:bits -.tx +.tx)
-::        %set-management-proxy  (get-ship-address:bits -.tx +.tx)
-::        %set-spawn-proxy  (get-ship-address:bits -.tx +.tx)
-::        %set-transfer-proxy  (get-ship-address:bits -.tx +.tx)
-::      ==
-::    %^  sign-tx  pk  nonce  raw
-::
 ::  TODO: does this uniquely produce the pubkey?
 ++  verifier
   ^-  ^verifier:naive
@@ -73,10 +53,14 @@
     ~
   ==
 ::
-++  gen-tx-octs
-  :: takes in a nonce, tx:naive, and private key and returned a signed transactions as octs
-  ::
+++  gen-tx
   |=  [=nonce tx=tx:naive pk=@]
+  :: takes in a nonce, tx:naive, and private key and returned a signed transactions as octs
+  %^  sign-tx  pk  nonce  (gen-tx-octs tx)
+::
+++  gen-tx-octs
+  ::  generates octs for a transaction
+  |=  tx=tx:naive
   |^
   ^-  octs
   =/  raw=octs
@@ -93,7 +77,8 @@
       %set-spawn-proxy  (get-ship-address +.tx)
       %set-transfer-proxy  (get-ship-address +.tx)
     ==
-  %^  sign-tx  pk  nonce  raw
+  raw
+  ::%^  sign-tx  pk  nonce  raw
   ::
   ++  get-spawn
     |=  [child=ship to=address]  ^-  octs
