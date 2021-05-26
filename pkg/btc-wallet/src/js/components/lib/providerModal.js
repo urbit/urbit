@@ -107,7 +107,8 @@ export default class ProviderModal extends Component {
         </Row>
         <Box mt={3}>
           <Text fontSize="14px" fontWeight="regular" color="gray">
-            In order to perform Bitcoin transaction in Landscape, you'll need to set a provider node. A provider node is an urbit which maintains a synced Bitcoin ledger. Learn More
+            In order to perform Bitcoin transaction in Landscape, you'll need to set a provider node. A provider node is an urbit which maintains a synced Bitcoin ledger. 
+            <a fontSize="14px" target="_blank" href="https://urbit.org/bitcoin-wallet"> Learn More</a>
           </Text>
         </Box>
         <Box mt={3} mb={2}>

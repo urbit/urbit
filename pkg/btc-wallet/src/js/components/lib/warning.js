@@ -6,6 +6,7 @@ import {
   Text,
   Button,
   Col,
+  Anchor,
 } from '@tlon/indigo-react';
 
 import { store } from '../../store'
@@ -55,9 +56,10 @@ export default class Warning extends Component {
             Always ensure that the checksum of the wallet matches that of the wallet's repo.
           </Text>
           <br/>
-          <Text  color="white" fontWeight='bold' fontSize={1} style={{textDecoration: 'underline'}}>
+          <Anchor color="white" fontWeight="bold" fontSize={1} style={{textDecoration: 'underline'}}
+                  href="https://urbit.org/bitcoin-wallet" target="_blank">
             Learn more on urbit.org
-          </Text>
+          </Anchor>
         </Col>
         <Button children="I Understand"
           backgroundColor="white"

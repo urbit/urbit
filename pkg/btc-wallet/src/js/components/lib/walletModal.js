@@ -106,7 +106,8 @@ export default class WalletModal extends Component {
           <Box mt={3}>
             <Text fontSize="14px" fontWeight="regular" color="gray">
               To begin, you'll need to derive an XPub Bitcoin address using your
-              master ticket. Learn More
+              master ticket. 
+                <a fontSize="14px" target="_blank" href="https://urbit.org/bitcoin-wallet"> Learn More</a>
             </Text>
           </Box>
           <Box
