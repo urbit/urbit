@@ -232,58 +232,75 @@
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::
   ++  veri
-    |=  [=seed:jael =point:azimuth =live]
-    ^-  (unit error=term)
-    =/  rac  (clan:title who.seed)
-    =/  cub  (nol:nu:crub:crypto key.seed)
-    ?-  rac
-        %pawn
-      ::  a comet address is the fingerprint of the keypair
-      ::
-      ?.  =(who.seed `@`fig:ex:cub)
-        `%key-mismatch
-      ::  a comet can never be breached
-      ::
-      ?^  live
-        `%already-booted
-      ::  a comet can never be re-keyed
-      ::
-      ?.  ?=(%1 lyf.seed)
-        `%invalid-life
-      ~
+    |=  [=ship =feed:jael =point:azimuth =live]
+    ^-  $@(life (lest error=term))
+    |^  ?@  -.feed
+          ?^  err=(test feed)  [u.err ~]
+          lyf.feed
+        ?>  ?=([%1 ~] -.feed)
+        =|  errs=(list term)
+        |-
+        ?~  seeds.feed
+          ?~(errs [%no-key ~] errs)
+        ?~  (test i.seeds.feed)
+          lyf.i.seeds.feed
+        $(seeds.feed t.seeds.feed)
     ::
-        %earl
-      ~
-    ::
-        *
-      ::  on-chain ships must be launched
+    ++  test
+      |=  =seed:jael
+      ^-  (unit error=term)
+      ?.  =(ship who.seed)  `%not-our-key
+      =/  rac  (clan:title who.seed)
+      =/  cub  (nol:nu:crub:crypto key.seed)
+      ?-  rac
+          %pawn
+        ::  a comet address is the fingerprint of the keypair
+        ::
+        ?.  =(who.seed `@`fig:ex:cub)
+          `%key-mismatch
+        ::  a comet can never be breached
+        ::
+        ?^  live
+          `%already-booted
+        ::  a comet can never be re-keyed
+        ::
+        ?.  ?=(%1 lyf.seed)
+          `%invalid-life
+        ~
       ::
-      ?~  net.point
-        `%not-keyed
-      =*  net  u.net.point
-      ::  boot keys must match the contract
+          %earl
+        ~
       ::
-      ?.  =(pub:ex:cub pass.net)
-        ~&  [%key-mismatch pub:ex:cub pass.net]
-        `%key-mismatch
-      ::  life must match the contract
-      ::
-      ?.  =(lyf.seed life.net)
-        `%life-mismatch
-      ::  the boot life must be greater than and discontinuous with
-      ::  the last seen life (per the sponsor)
-      ::
-      ?:  ?&  ?=(^ live)
-              ?|  ?=(%| breach.u.live)
-                  (lte life.net life.u.live)
-          ==  ==
-        `%already-booted
-      ::  produce the sponsor for vere
-      ::
-      ~?  !has.sponsor.net
-        [%no-sponsorship-guarantees-from who.sponsor.net]
-      ~
-    ==
+          *
+        ::  on-chain ships must be launched
+        ::
+        ?~  net.point
+          `%not-keyed
+        =*  net  u.net.point
+        ::  boot keys must match the contract
+        ::
+        ?.  =(pub:ex:cub pass.net)
+          ~&  [%key-mismatch pub:ex:cub pass.net]
+          `%key-mismatch
+        ::  life must match the contract
+        ::
+        ?.  =(lyf.seed life.net)
+          `%life-mismatch
+        ::  the boot life must be greater than and discontinuous with
+        ::  the last seen life (per the sponsor)
+        ::
+        ?:  ?&  ?=(^ live)
+                ?|  ?=(%| breach.u.live)
+                    (lte life.net life.u.live)
+            ==  ==
+          `%already-booted
+        ::  produce the sponsor for vere
+        ::
+        ~?  !has.sponsor.net
+          [%no-sponsorship-guarantees-from who.sponsor.net]
+        ~
+      ==
+    --
   ::  +sponsor:dawn: retreive sponsor from point
   ::
   ++  sponsor

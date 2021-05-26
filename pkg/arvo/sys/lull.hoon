@@ -1870,7 +1870,12 @@
         [%public-keys =public-keys-result]            ::  ethereum changes
         [%turf turf=(list turf)]                      ::  domains
     ==                                                ::
-  ::  +seed: private boot parameters
+  ::  +feed: potential boot parameters
+  ::
+  +$  feed
+    $^  [[%1 ~] seeds=(list seed)]
+    seed
+  ::  +seed: individual boot parameters
   ::
   +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
   ::
@@ -1894,7 +1899,7 @@
     ==                                                ::
   ::
   +$  dawn-event
-    $:  =seed
+    $:  [=life =feed]
         spon=(list [=ship point:azimuth-types])
         czar=(map ship [=rift =life =pass])
         turf=(list turf)

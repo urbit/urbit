@@ -250,10 +250,6 @@
     ::    ==
     ::
         %dawn
-      ::  single-homed
-      ::
-      ~|  [our who.seed.tac]
-      ?>  =(our who.seed.tac)
       ::  save our boot block
       ::
       =.  boq.own.pki  bloq.tac
@@ -264,21 +260,42 @@
         (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
       ::  save our parent signature (only for moons)
       ::
-      =.  sig.own.pki  sig.seed.tac
+      =.  sig.own.pki
+        ?@  -.feed.tac
+          sig.feed.tac
+        |-
+        ?~  seeds.feed.tac  ~
+        ?:  ?&  =(our who.i.seeds.feed.tac)
+                ?=(^ sig.i.seeds.feed.tac)
+            ==
+          sig.i.seeds.feed.tac
+        $(seeds.feed.tac t.seeds.feed.tac)
+      ::  store our private key(s)
+      ::
+      =.  lyf.own.pki  life.tac
+      =.  jaw.own.pki
+        ?@  -.feed.tac
+          (my [lyf key]:feed.tac ~)
+        =;  (list (pair life ring))
+          ~|  [%no-keys our]
+          ?>(?=(^ -) (my -))
+        %+  murn  seeds.feed.tac
+        |=  seed
+        ?.  =(our who)  ~
+        (some lyf key)
       ::  load our initial public key
       ::
       =/  spon-ship=(unit ship)
         =/  flopped-spon  (flop spon.tac)
         ?~(flopped-spon ~ `ship.i.flopped-spon)
       =.  pos.zim.pki
-        =/  cub  (nol:nu:crub:crypto key.seed.tac)
+        =/  cub
+          %-  nol:nu:crub:crypto
+          ~|  [%no-key-for-life lyf.own.pki]
+          (~(got by jaw.own.pki) lyf.own.pki)
         %+  ~(put by pos.zim.pki)
           our
-        [0 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) spon-ship]
-      ::  our initial private key
-      ::
-      =.  lyf.own.pki  lyf.seed.tac
-      =.  jaw.own.pki  (my [lyf.seed.tac key.seed.tac] ~)
+        [0 life.tac (my [life.tac [1 pub:ex:cub]] ~) spon-ship]
       ::  XX save sponsor in .own.pki
       ::  XX reconcile with .dns.eth
       ::  set initial domains
@@ -717,6 +734,14 @@
     =/  a-point=point  (~(gut by pos.zim.pki) ship.i.udiffs *point)
     =/  a-diff=(unit diff:point)  (udiff-to-diff:point udiff.i.udiffs a-point)
     =?  this-su  ?=(^ a-diff)
+      ::  if this about our keys, and we already know these, start using them
+      ::
+      =?  lyf.own
+          ?&  =(our ship.i.udiffs)
+              ?=(%keys -.u.a-diff)
+              (~(has by jaw.own) life.to.u.a-diff)
+          ==
+        life.to.u.a-diff
       (public-keys:feel original-pos %diff ship.i.udiffs u.a-diff)
     $(udiffs t.udiffs)
   ::
@@ -926,7 +951,16 @@
       ^+  ..feel
       ?:  &(=(lyf.own life) =((~(get by jaw.own) life) `ring))
         ..feel
-      =.  lyf.own  life
+      ::  only eagerly update lyf if we were behind the chain life
+      ::
+      =?  lyf.own
+          ?&  (gth life lyf.own)
+            ::
+              =+  pon=(~(get by pos.zim) our)
+              ?~  pon  |
+              (lth lyf.own life.u.pon)
+          ==
+        life
       =.  jaw.own  (~(put by jaw.own) life ring)
       (exec yen.own [%give %private-keys lyf.own jaw.own])
     ::
