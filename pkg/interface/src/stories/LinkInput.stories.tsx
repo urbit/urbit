@@ -9,7 +9,7 @@ import {
 } from '~/views/apps/links/components/LinkInput';
 
 export default {
-  title: 'Input/Collections',
+  title: 'Collections/Input',
   component: LinkInput,
   decorators: [withDesign]
 } as Meta;

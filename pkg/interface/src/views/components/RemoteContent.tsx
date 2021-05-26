@@ -32,9 +32,9 @@ interface RemoteContentState {
   showArrow: boolean;
 }
 
-const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
-const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg)$/i);
-const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
+export const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
+export const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg|m4a)$/i);
+export const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
 const TruncatedText = styled(Text)`
   white-space: pre;
