@@ -458,7 +458,7 @@
     (submatrix (gauss-elim u) [1 m] [+(n) (mul 2 n)])
   ++  abs
     |=  [s=@rs]  ^-  @rs
-    ?:  (gth s .0)  s  (sub:rs .0 s)
+    ?:  (gth:rs s .0)  s  (sub:rs .0 s)
   ::
   ::  |x-y| <= tol
   ++  isclose
