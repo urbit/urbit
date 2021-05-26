@@ -429,11 +429,13 @@
   ::++  catenate
   ::  |=  [u=@lms w=@lms]  ^-  @lms
   ::  (make (turn (paired (unmake u) (unmake w) catenate:lvs)))
+  ::++  ravel  !!
   ::++  augment
   ::  |=  u=@lms  ^-  @lms
   ::  =+  [m n]=[&1 &2]:(shape u)
-  ::  (catenate u (id m n))
-  ++  augment  :: TODO XX replace once ++paired written
+  ::  ?.  =(mu nu)  !!  :: make sure this is a valid operation (square matrix)
+  ::  (catenate u (id m))
+  ++  augment  :: TODO XX replace once ++catenate written
     ::~/  %augment
     |=  [u=@lms]  ^-  @lms
     ~_  leaf+"lagoon-fail"
