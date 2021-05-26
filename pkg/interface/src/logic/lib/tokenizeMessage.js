@@ -1,121 +1,86 @@
 import urbitOb from 'urbit-ob';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 
-const URL_REGEX = new RegExp(String(/^(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)/.source));
+const URL_REGEX = new RegExp(String(/^(.*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)(.*)/.source));
 
-const GROUP_REGEX = new RegExp(String(/^~[-a-z_]+\/[-a-z]+/.source));
+const PATP_REGEX = /^(.*)(~[a-z_-]+)(.*)/;
 
-const isUrl = (string) => {
+const GROUP_REGEX = new RegExp(String(/^(.*)(~[-a-z_]+\/[-a-z]+)(.*)/.source));
+
+const convertToGroupRef = group => `web+urbitgraph://group/${group}`;
+
+export const isUrl = (str) => {
   try {
-    return URL_REGEX.test(string);
+    return URL_REGEX.test(str);
   } catch (e) {
     return false;
   }
 };
-
-const isRef = (str) => {
-  return isUrl(str) && str.startsWith('web+urbitgraph://');
-};
-
-const isGroup = str => {
-  try {
-    return GROUP_REGEX.test(str);
-  } catch (e) {
-    return false;
-  }
-}
-
-const convertToGroupRef = (group) => `web+urbitgraph://group/${group}`;
 
 const tokenizeMessage = (text) => {
-  let messages = [];
+  const messages = [];
   // by line
-  let currTextBlock = [];
-  let isInCodeBlock = false;
-  let endOfCodeBlock = false;
-  text.split(/\r?\n/).forEach((line, index) => {
-    // by space
-    let currTextLine = [];
-    // A line of backticks enters and exits a codeblock
-    if (line.trim().startsWith('```')) {
-      // But we need to check if we've ended a codeblock
-      endOfCodeBlock = isInCodeBlock;
-      isInCodeBlock = (!isInCodeBlock);
-    } else {
-      endOfCodeBlock = false;
+  let blocks = [];
+  let currBlock = [];
+  const foo = text.split('`');
+  foo.forEach((str, index) => {
+    const isCode = index % 2 === 1;
+    if(isCode) {
+      blocks.push(str);
+      return;
     }
-
-    if (isInCodeBlock || endOfCodeBlock) {
-      currTextLine = [line];
-    } else {
-      const words = line.split(/\s/);
-      words.forEach((word, idx) => {
-        const str = isGroup(word) ?  convertToGroupRef(word) : word;
-
-        const last = words.length - 1 === idx;
-        if (
-          (str.startsWith('`') && str !== '`')
-          || (str === '`' && !isInCodeBlock)
-        ) {
-          isInCodeBlock = true;
-        } 
-        if(isRef(str) && !isInCodeBlock) {
-          if (currTextLine.length > 0 || currTextBlock.length > 0) {
-            // If we're in the middle of a message, add it to the stack and reset
-            currTextLine.push('');
-            messages.push({ text: currTextBlock.join('\n') + currTextLine.join(' ') });
-            currTextBlock = last ? [''] : [];
-            currTextLine = [];
-          }
-          const link = parsePermalink(str);
-          if(!link) {
-            messages.push({ url: str });
-          } else {
-            const reference = permalinkToReference(link);
-            messages.push(reference);
-          }
-          currTextLine = [];
-        } else if (isUrl(str) && !isInCodeBlock) {
-          if (currTextLine.length > 0 || currTextBlock.length > 0) {
-            // If we're in the middle of a message, add it to the stack and reset
-            currTextLine.push('');
-            messages.push({ text: currTextBlock.join('\n') + currTextLine.join(' ') });
-            currTextBlock = last ? [''] : [];
-            currTextLine = [];
-          }
-          messages.push({ url: str });
-          currTextLine = [];
-        } else if(urbitOb.isValidPatp(str) && !isInCodeBlock) {
-          if (currTextLine.length > 0 || currTextBlock.length > 0) {
-            // If we're in the middle of a message, add it to the stack and reset
-            currTextLine.push('');
-            messages.push({ text: currTextBlock.join('\n') + currTextLine.join(' ') });
-            currTextBlock = last ? [''] : [];
-            currTextLine = [];
-          }
-          messages.push({ mention: str });
-          currTextLine = [];
-
+    if(str.length === 0) {
+      blocks.push('');
+      return;
+    }
+    while(str.length > 0) {
+      const resetAndPush = (content) => {
+        blocks.push(currBlock.join(''));
+        messages.push({ text: blocks.join('`') });
+        currBlock = [];
+        blocks = [];
+        messages.push(content);
+      };
+      const groupRef = str.match(GROUP_REGEX);
+      if(groupRef) {
+        const [,pfix, group, sfix] = groupRef;
+        currBlock.push(pfix);
+        const perma = parsePermalink(convertToGroupRef(group));
+        resetAndPush(permalinkToReference(perma));
+        str = sfix;
+        continue;
+      }
+      const patp = str.match(PATP_REGEX);
+      if(Boolean(patp) && urbitOb.isValidPatp(patp[2])) {
+        const [,pfix, mention, sfix] = patp;
+        currBlock.push(pfix);
+        resetAndPush({ mention });
+        str = sfix;
+        continue;
+      }
+      const link = str.match(URL_REGEX);
+      if(link) {
+        const [,pfix, url, protocol, sfix] = link;
+        const perma = parsePermalink(url);
+        currBlock.push(pfix);
+        if(protocol === 'web+urbitgraph://' && perma) {
+          resetAndPush(permalinkToReference(perma));
         } else {
-          currTextLine.push(str);
+          resetAndPush({ url });
         }
-        if (
-          (str.endsWith('`') && str !== '`')
-          || (str === '`' && isInCodeBlock)
-        ) {
-          isInCodeBlock = false;
-        }
+        str = sfix;
+        continue;
+      }
 
-      });
+      currBlock.push(str);
+      str = '';
     }
-    currTextBlock.push(currTextLine.join(' '))
+    blocks.push(currBlock.join(''));
+    currBlock = [];
   });
+  messages.push({ text: blocks.join('`') });
 
-  if (currTextBlock.length) {
-    // Add any remaining message
-    messages.push({ text: currTextBlock.join('\n') });
-  }
   return messages;
 };
 
-export { tokenizeMessage as default, isUrl, URL_REGEX };
+export { tokenizeMessage as default, URL_REGEX };
