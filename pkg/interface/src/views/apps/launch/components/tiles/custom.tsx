@@ -1,8 +1,13 @@
-import { BaseImage, Box } from '@tlon/indigo-react';
+import { BaseImage } from '@tlon/indigo-react';
 import React from 'react';
 import Tile from './tile';
 
-export default class CustomTile extends React.PureComponent {
+interface CustomTileProps {
+  linkedUrl: string;
+  tileImage: string;
+}
+
+export default class CustomTile extends React.PureComponent<CustomTileProps> {
   render() {
     const { props } = this;
 
