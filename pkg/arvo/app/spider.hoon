@@ -516,14 +516,17 @@
   %+  bind  
     (~(get by serving.state) tid)
   |=  [eyre-id=@ta output=mark]
-  =+    .^
-      =tube:clay
-      %cc
-      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[output]/json
-    ==
+  =/  convert
+    .^  ^vase
+        %cf 
+        /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[output]/json
+      ==
   :_  state(serving (~(del by serving.state) tid))
-  %+  give-simple-payload:app:server  eyre-id
-  (json-response:gen:server !<(json (tube vase)))
+  :_  %+  give-simple-payload:app:server  eyre-id
+      (json-response:gen:server !<(json (slym convert q.vase)))
+  =/  =wire  /conversion-cache/[output]/json
+  =/  =rave:clay  [%sing %f [%da now.bowl] /[output]/json]
+  [%pass wire %arvo %c %warp our.bowl [%home `rave]]
 ::
 ++  thread-done
   |=  [=yarn =vase]
