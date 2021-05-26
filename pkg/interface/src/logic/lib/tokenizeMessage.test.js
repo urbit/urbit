@@ -20,10 +20,10 @@ describe('tokenizeMessage', () => {
     expect(mention).toEqual('~hastuc-dibtux');
   });
   it('should parse urls', () => {
-    const example = 'this is a url: http://tlon.io';
+    const example = 'this is a url: http://tlon.io/';
     const [{ text }, { url }] = tokenizeMessage(example);
     expect(text).toEqual('this is a url: ');
-    expect(url).toEqual('http://tlon.io');
+    expect(url).toEqual('http://tlon.io/');
   });
   it('should ignore urls in codemode', () => {
     const example = 'some urls `http://ignore.me` http://urbit.org';
