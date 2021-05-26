@@ -298,10 +298,10 @@
   ?~  who=(slaw %p i.p)  ~
   ?~  des=?~(i.t.p (some %$) (slaw %tas i.t.p))  ~  :: XX +sym ;~(pose low (easy %$))
   ?~  ved=(de-case i.t.t.p)  ~
-  `(unit beam)`[~ [`ship`u.who `desk`u.des `case`u.ved] t.t.t.p]
+  `[[`ship`u.who `desk`u.des u.ved] t.t.t.p]
 ::
 ++  de-case
-  ~/  %en-case
+  ~/  %de-case
   |=  =knot
   ^-  (unit case)
   ?^  num=(slaw %ud knot)  `[%ud u.num]
