@@ -242,8 +242,9 @@
         |-
         ?~  seeds.feed
           ?~(errs [%no-key ~] errs)
-        ?~  (test i.seeds.feed)
+        ?~  err=(test i.seeds.feed)
           lyf.i.seeds.feed
+        =.  errs  (snoc errs u.err)
         $(seeds.feed t.seeds.feed)
     ::
     ++  test
