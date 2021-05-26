@@ -99,7 +99,7 @@
 ++  graphs-of-group
   |=  group=resource
   =/  =associations:store
-    (metadata-for-group)
+    (metadata-for-group group)
   %+  murn  ~(tap in ~(key by associations))
   |=  [=app-name:store rid=resource]
   ?.(=(%graph app-name) ~ `rid)

@@ -724,7 +724,8 @@
       (graphs-of-group:met rid)
     |-
     ?~  graphs  poke-core
-    $(graphs t.graphs, poke-core (read-graph i.graphs))
+    =/  core=_poke-core  (read-graph i.graphs)
+    $(graphs t.graphs, poke-core core)
   ::
   ++  remove-graph
     |=  rid=resource
