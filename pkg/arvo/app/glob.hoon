@@ -110,8 +110,7 @@
   ::
       %0
     =/  globs
-      %-  ~(gas by *globs:glob)
-      [/'~landscape'/js/bundle hash.old glob.old]~
+      (~(put by globs.state) /'~landscape'/js/bundle [hash.old glob.old])
     %=  $
         old  [%1 globs]
     ::
