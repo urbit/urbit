@@ -25,8 +25,8 @@ const participantNames = (str: string, contacts, hideNicknames) => {
   if (_.includes(str, ',') && _.startsWith(str, '~')) {
     const names = _.split(str, ', ');
     return names.map((name, idx) => {
-      if (urbitOb.isValidPatp(name) && !hideNicknames) {
-        if (contacts[name]?.nickname)
+      if (urbitOb.isValidPatp(name)) {
+        if (contacts[name]?.nickname && !hideNicknames)
           return (
             <Text key={name} fontSize={2} fontWeight='600'>
               {contacts[name]?.nickname}

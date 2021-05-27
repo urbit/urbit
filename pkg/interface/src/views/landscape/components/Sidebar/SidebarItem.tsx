@@ -104,8 +104,8 @@ export function SidebarItem(props: {
     if (_.includes(str, ',') && _.startsWith(str, '~')) {
       const names = _.split(str, ', ');
       return names.map((name, idx) => {
-        if (urbitOb.isValidPatp(name) && !hideNicknames) {
-          if (contacts[name]?.nickname)
+        if (urbitOb.isValidPatp(name)) {
+          if (contacts[name]?.nickname && !hideNicknames)
             return (
             <Text key={name} color={color}>
               {contacts[name]?.nickname}
