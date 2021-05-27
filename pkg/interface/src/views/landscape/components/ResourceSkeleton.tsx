@@ -21,19 +21,30 @@ const TruncatedText = styled(RichText)`
   overflow: hidden;
 `;
 
-const participantNames = (str: string, contacts) => {
-  const { hideNicknames } = useSettingsState(selectCalmState);
+const participantNames = (str: string, contacts, hideNicknames) => {
   if (_.includes(str, ',') && _.startsWith(str, '~')) {
     const names = _.split(str, ', ');
-    return names.map((name) => {
+    return names.map((name, idx) => {
       if (urbitOb.isValidPatp(name) && !hideNicknames) {
         if (contacts[name]?.nickname)
-          return contacts[name]?.nickname;
-        return name;
+          return (
+            <Text key={name} fontSize={2} fontWeight='600'>
+              {contacts[name]?.nickname}
+              {idx + 1 != names.length ? ', ' : null}
+            </Text>
+          );
+        return (
+          <Text key={name} mono fontSize={2} fontWeight='600'>
+            {name}
+            <Text fontSize={2} fontWeight='600'>
+              {idx + 1 != names.length ? ', ' : null}
+            </Text>
+          </Text>
+        );
       } else {
         return name;
       }
-    }).join(', ');
+    });
   } else {
     return str;
   }
@@ -56,6 +67,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   }
   const rid = association.resource;
   const groups = useGroupState(state => state.groups);
+  const { hideNicknames } = useSettingsState(selectCalmState);
   const group = groups[association.group];
   let workspace = association.group;
   const [actionsWidth, setActionsWidth] = useState(0);
@@ -74,7 +86,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
 
   const contacts = useContactState(state => state.contacts);
 
-  if (urbitOb.isValidPatp(title)) {
+  if (urbitOb.isValidPatp(title) && !hideNicknames) {
     recipient = title;
     title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
   } else {
@@ -124,7 +136,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       flexShrink={1}
     >
       {workspace === '/messages' && !urbitOb.isValidPatp(title)
-        ? participantNames(title, contacts)
+        ? participantNames(title, contacts, hideNicknames)
         : title}
     </Text>
   );

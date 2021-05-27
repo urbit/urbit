@@ -100,18 +100,30 @@ export function SidebarItem(props: {
     img = <Box flexShrink={0} height={16} width={16} borderRadius={2} backgroundColor={`#${uxToHex(props?.association?.metadata?.color)}` || '#000000'} />;
   }
 
-  const participantNames = (str: string) => {
+  const participantNames = (str: string, color: string) => {
     if (_.includes(str, ',') && _.startsWith(str, '~')) {
       const names = _.split(str, ', ');
-      return names.map((name) => {
+      return names.map((name, idx) => {
         if (urbitOb.isValidPatp(name) && !hideNicknames) {
           if (contacts[name]?.nickname)
-            return contacts[name]?.nickname;
-          return name;
+            return (
+            <Text key={name} color={color}>
+              {contacts[name]?.nickname}
+              {idx + 1 != names.length ? ', ' : null}
+            </Text>
+          );
+          return (
+            <Text key={name} mono color={color}>
+              {name}
+              <Text color={color}>
+                {idx + 1 != names.length ? ', ' : null}
+              </Text>
+            </Text>
+          );
         } else {
           return name;
         }
-      }).join(', ');
+      });
     } else {
       return str;
     }
@@ -157,7 +169,7 @@ export function SidebarItem(props: {
             style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
           >
             {DM && !urbitOb.isValidPatp(title)
-              ? participantNames(title)
+              ? participantNames(title, color)
               : title}
           </Text>
         </Box>
