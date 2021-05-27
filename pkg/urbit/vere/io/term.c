@@ -1402,10 +1402,15 @@ _term_ef_blit(u3_utty* uty_u,
       _term_it_show_stub(uty_u, u3k(u3t(blt)));
     } break;
 
+    case c3__lin: {  //TMP  backwards compatibility
+      _term_it_move_cursor(uty_u, 0, 0);
+      _term_it_clear_line(uty_u);
+    }  //
     case c3__put: {
       _term_it_show_tour(uty_u, u3k(u3t(blt)));
     } break;
 
+    case c3__mor:  //TMP  backwards compatibility
     case c3__nel: {
       _term_it_show_nel(uty_u);
     } break;

@@ -127,6 +127,9 @@ data Blit
     | Sav Path Atom
     | Url Cord
     | Wyp ()
+    --TMP  backwards compatibility
+    | Lin [Char]
+    | Mor ()
   deriving (Eq, Ord)
 
 --NOTE  bottom-left-0-based coordinates
@@ -236,6 +239,9 @@ instance Show Blit where
   show (Sav path _) = "Sav " ++ (show path)
   show (Url c)      = "Url " ++ (show c)
   show (Wyp ())     = "Wyp ()"
+  --
+  show (Lin c)      = "Lin " ++ (show c)
+  show (Mor ())     = "Mor ()"
 
 {-|
     %blip -- TODO

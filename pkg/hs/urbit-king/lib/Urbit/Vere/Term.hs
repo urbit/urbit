@@ -420,6 +420,11 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       Sav path atom -> pure ls
       Url url       -> pure ls
       Wyp ()        -> termShowClear ls
+      --
+      Lin c         -> do termShowCursor ls ts 0 0
+                          termShowClear ls
+                          termShowLine ls (pack c)
+      Mor ()        -> termShowNewline ls
 
     termRenderDeco :: Deco -> Char
     termRenderDeco = \case
