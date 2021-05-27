@@ -160,8 +160,9 @@
       ::  +molt should never notify its client about agent changes
       ::
       =-  :_  ->
-          :_  (skip -< |=(move ?=([* %give %onto *] +<)))
-          [^duct %pass /whiz/gall %$ %whiz ~]
+          %+  welp
+            (skip -< |=(move ?=([* %give %onto *] +<)))
+          [^duct %pass /whiz/gall %$ %whiz ~]~
       =/  adult  adult-core
       =.  state.adult
         [%7 system-duct outstanding contacts yokes=~ blocked]:spore
