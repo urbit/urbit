@@ -155,7 +155,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
                 graphPath={graphPath}
                 isReply={isReply}
               />
-              { (isReply || (parentPost && index.length > 1 && isParent)) ? (
+              { ((isReply || (parentPost && index.length > 1 && isParent)) && parentPost?.author) ? (
                 <Row width="100%" alignItems="center" mb="2" pl="2" pr="2">
                   <Text color="gray" pr="1">Replying to</Text>
                   <Mention ship={parentPost?.author} api={api} />
