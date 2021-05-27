@@ -65,4 +65,12 @@ describe('tokenizeMessage', () => {
     expect(url).toEqual('https://urbit.org');
     expect(text3).toEqual(' a link is here!');
   });
+  it('should tokenize both mentions and links', () => {
+    const example = '~haddef-sigwen have you looked at https://urbit.org lately?';
+    const [{ mention }, { text }, { url }, { text: text2 }] = tokenizeMessage(example);
+    expect(mention).toEqual('~haddef-sigwen');
+    expect(text).toEqual(' have you looked at ');
+    expect(url).toEqual('https://urbit.org');
+    expect(text2).toEqual(' lately?');
+  });
 });
