@@ -5,8 +5,8 @@
 /-  glob, *resource
 /+  default-agent, verb, dbug
 |%
-++  landscape-hash  0v3.l561u.f9a2b.cn958.ddf81.mc707
-++  btc-hash        0v9t022.n8kv1.5emkt.s2p9i.hvsa9
+++  landscape-hash   0v3.l561u.f9a2b.cn958.ddf81.mc707
+++  btc-wallet-hash  0v2.k8l6a.tqs6n.8cg1q.7t1e4.fis67
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
 +$  state-1  [%1 =globs:glob]
 +$  all-states
@@ -50,7 +50,7 @@
 =.  globs.state
   (~(put by globs.state) /'~landscape'/js/bundle landscape-hash ~)
 =.  globs.state
-  (~(put by globs.state) /'~btc'/js/bundle btc-hash ~)
+  (~(put by globs.state) /'~btc'/js/bundle btc-wallet-hash ~)
 ::
 ^-  agent:gall
 %+  verb  |
@@ -175,7 +175,7 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
-    [%x %btc-wallet ~]  ``noun+!>(btc-hash)
+    [%x %btc-wallet ~]  ``noun+!>(btc-wallet-hash)
   ==
 ::
 ++  on-agent

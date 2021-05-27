@@ -42,12 +42,14 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.tsx']
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   plugins: [
     new CleanWebpackPlugin()
   ],
   output: {
-    filename: 'index.js',
+    filename: (pathData) => {
+      return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
+    },
     path: path.resolve(__dirname, `../../arvo/app/btc-wallet/js/bundle`),
     publicPath: '/',
   },
