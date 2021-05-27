@@ -34,7 +34,8 @@ describe('tokenizeMessage', () => {
 
   it('should autoexpand group references', () => {
     const example = 'test ~bitbet-bolbel/urbit-community foo';
-    const [{ text }, { reference }, { text: foo }] = tokenizeMessage(example);
+    const result = tokenizeMessage(example);
+    const [{ text }, { reference }, { text: foo }] = result;
     expect(text).toEqual('test ');
     expect(reference.group).toEqual('/ship/~bitbet-bolbel/urbit-community');
     expect(foo).toEqual(' foo');
@@ -48,8 +49,7 @@ describe('tokenizeMessage', () => {
 
   it('should handle multiline messages with references', () => {
     const example = 'web+urbitgraph://group/~fabled-faster/interface-testing-facility/graph/~hastuc-dibtux/test-book-7531/170141184505064871297992714192687202304\n\nlol here [is a link](https://urbit.org)';
-    const [{ text }, { reference }, { text: text2 }] = tokenizeMessage(example);
-    expect(text).toEqual('');
+    const [{ reference }, { text: text2 }] = tokenizeMessage(example);
     expect(reference.graph.graph).toEqual('/ship/~hastuc-dibtux/test-book-7531');
     expect(reference.graph.index).toEqual('/170141184505064871297992714192687202304');
     expect(text2).toEqual('\n\nlol here [is a link](https://urbit.org)');
@@ -57,17 +57,24 @@ describe('tokenizeMessage', () => {
 
   it('should handle links on newlines after references', () => {
     const example = 'web+urbitgraph://group/~fabled-faster/interface-testing-facility/graph/~hastuc-dibtux/test-book-7531/170141184505064871297992714192687202304\n\nhttps://urbit.org a link is here!';
-    const [{ text }, { reference }, { text: text2 }, { url }, { text: text3 }] = tokenizeMessage(example);
-    expect(text).toEqual('');
+    const [{ reference }, { text: text2 }, { url }, { text: text3 }] = tokenizeMessage(example);
     expect(reference.graph.graph).toEqual('/ship/~hastuc-dibtux/test-book-7531');
     expect(reference.graph.index).toEqual('/170141184505064871297992714192687202304');
     expect(text2).toEqual('\n\n');
     expect(url).toEqual('https://urbit.org');
     expect(text3).toEqual(' a link is here!');
   });
+  it('should tokenize mention at start of a line', () => {
+    const example = '~haddef-sigwen test';
+    const result = tokenizeMessage(example);
+    const [{ mention }, { text }] = result;
+    expect(mention).toEqual('~haddef-sigwen');
+    expect(text).toEqual(' test');
+  });
   it('should tokenize both mentions and links', () => {
     const example = '~haddef-sigwen have you looked at https://urbit.org lately?';
-    const [{ mention }, { text }, { url }, { text: text2 }] = tokenizeMessage(example);
+    const result = tokenizeMessage(example);
+    const [{ mention }, { text }, { url }, { text: text2 }] = result;
     expect(mention).toEqual('~haddef-sigwen');
     expect(text).toEqual(' have you looked at ');
     expect(url).toEqual('https://urbit.org');
