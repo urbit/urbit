@@ -159,7 +159,9 @@
       ~<  %slog.[0 leaf+"gall: molted"]
       ::  +molt should never notify its client about agent changes
       ::
-      =-  [(skip -< |=(move ?=([* %give %onto *] +<))) ->]
+      =-  :_  ->
+          :_  (skip -< |=(move ?=([* %give %onto *] +<)))
+          [^duct %pass /whiz/gall %$ %whiz ~]
       =/  adult  adult-core
       =.  state.adult
         [%7 system-duct outstanding contacts yokes=~ blocked]:spore

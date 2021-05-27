@@ -252,11 +252,13 @@
   ::  %what: update from files
   ::  %whey: produce $mass                    :: XX remove, scry
   ::  %verb: toggle laconicity
+  ::  %whiz: prime vane caches
   ::
   $%  [%trim p=@ud]
       [%what p=(list (pair path (cask)))]
       [%whey ~]
       [%verb p=(unit ?)]
+      [%whiz ~]
   ==
 +$  wasp
   ::  %crud: reroute $ovum with $goof
@@ -1483,6 +1485,9 @@
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
           %what  ~(kel what p.waif)
           %whey  ..pith(out [[//arvo mass/whey] out])
+        ::
+            %whiz
+          ..pith(van.mod (~(run by van.mod) |=(vane (settle:va:part vase))))
         ==
       ::
       ++  peek
