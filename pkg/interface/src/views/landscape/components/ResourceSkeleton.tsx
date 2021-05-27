@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Box, Col, Icon, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
 import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
@@ -8,6 +9,7 @@ import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import useGroupState from '~/logic/state/group';
 import { Dropdown } from '~/views/components/Dropdown';
 import RichText from '~/views/components/RichText';
@@ -18,6 +20,24 @@ const TruncatedText = styled(RichText)`
   text-overflow: ellipsis;
   overflow: hidden;
 `;
+
+const participantNames = (str: string, contacts) => {
+  const { hideNicknames } = useSettingsState(selectCalmState);
+  if (_.includes(str, ',') && _.startsWith(str, '~')) {
+    const names = _.split(str, ', ');
+    return names.map((name) => {
+      if (urbitOb.isValidPatp(name) && !hideNicknames) {
+        if (contacts[name]?.nickname)
+          return contacts[name]?.nickname;
+        return name;
+      } else {
+        return name;
+      }
+    }).join(', ');
+  } else {
+    return str;
+  }
+};
 
 type ResourceSkeletonProps = {
   association: Association;
@@ -103,7 +123,9 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       ml='1'
       flexShrink={1}
     >
-      {title}
+      {workspace === '/messages' && !urbitOb.isValidPatp(title)
+        ? participantNames(title, contacts)
+        : title}
     </Text>
   );
 

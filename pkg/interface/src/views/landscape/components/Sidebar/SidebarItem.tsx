@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { BaseImage, Box, Icon, Row, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api';
 import React, { ReactElement, useRef } from 'react';
@@ -99,6 +100,23 @@ export function SidebarItem(props: {
     img = <Box flexShrink={0} height={16} width={16} borderRadius={2} backgroundColor={`#${uxToHex(props?.association?.metadata?.color)}` || '#000000'} />;
   }
 
+  const participantNames = (str: string) => {
+    if (_.includes(str, ',') && _.startsWith(str, '~')) {
+      const names = _.split(str, ', ');
+      return names.map((name) => {
+        if (urbitOb.isValidPatp(name) && !hideNicknames) {
+          if (contacts[name]?.nickname)
+            return contacts[name]?.nickname;
+          return name;
+        } else {
+          return name;
+        }
+      }).join(', ');
+    } else {
+      return str;
+    }
+  };
+
   return (
     <HoverBoxLink
       ref={anchorRef}
@@ -138,7 +156,9 @@ export function SidebarItem(props: {
             fontWeight={fontWeight}
             style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
           >
-            {title}
+            {DM && !urbitOb.isValidPatp(title)
+              ? participantNames(title)
+              : title}
           </Text>
         </Box>
       </Row>
