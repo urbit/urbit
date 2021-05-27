@@ -337,6 +337,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     const data = await this.scry<any>('graph-store',
        `/node-siblings/older/${ship}/${resource}/${count}${idx}`
     );
+    data['graph-update'].fetch = true;
     this.store.handleEvent({ data });
   }
 
@@ -345,6 +346,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     const data = await this.scry<any>('graph-store',
        `/node-siblings/younger/${ship}/${resource}/${count}${idx}`
      );
+    data['graph-update'].fetch = true;
     this.store.handleEvent({ data });
   }
 
@@ -353,12 +355,13 @@ export default class GraphApi extends BaseApi<StoreState> {
     const data = await this.scry<any>('graph-store',
       `/deep-nodes-older-than/${ship}/${resource}/${count}/${start}`
     );
+    data['graph-update'].fetch = true;
     const node = data['graph-update'];
     this.store.handleEvent({
       data: {
         'graph-update-flat': node,
         'graph-update': node
-      },
+      }
     });
   }
 
@@ -367,6 +370,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     const data = await this.scry<any>('graph-store',
       `/firstborn/${ship}/${resource}${idx}`
     );
+    data['graph-update'].fetch = true;
     const node = data['graph-update'];
     this.store.handleEvent({
       data: {
@@ -375,7 +379,7 @@ export default class GraphApi extends BaseApi<StoreState> {
           ...node
         },
         'graph-update': node
-      },
+      }
     });
   }
 
@@ -396,6 +400,7 @@ export default class GraphApi extends BaseApi<StoreState> {
       'graph-store',
       `/node/${ship}/${resource}${idx}`
     );
+    data['graph-update'].fetch = true;
     const node = data['graph-update'];
     this.store.handleEvent({
       data: {
