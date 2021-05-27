@@ -32,7 +32,7 @@
       ==  ==
       $:  %c
           $>(%warp task:clay)
-      == 
+      ==
       ::  %d: to dill
       ::
       $:  %d
@@ -59,7 +59,7 @@
           ::
       ==
       $:  %clay
-          gift:clay
+          $>(%writ gift:clay)
   ==  ==
 --
 ::  more structures
