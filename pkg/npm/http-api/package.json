@@ -60,7 +60,7 @@
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.1.1"
   },
-  "bundledDependencies": {
+  "bundledDependencies": [
     "@urbit/api"
-  }
+  ]
 }
