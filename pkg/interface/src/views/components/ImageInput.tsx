@@ -11,7 +11,7 @@ import { useField } from 'formik';
 import React, { ReactElement, useCallback, useRef } from 'react';
 import useStorage from '~/logic/lib/useStorage';
 
-type ImageInputProps = Parameters<typeof Box>[0] & {
+export type ImageInputProps = Parameters<typeof Box>[0] & {
   id: string;
   label?: string;
   placeholder?: string;

@@ -1,13 +1,8 @@
 import {
   BaseImage, Box,
 
-
-
-
-
   BoxProps,
   Center, Col,
-
 
   Icon, Row,
 
@@ -52,6 +47,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
     children,
     ...rest
   } = props;
+
   const [open, _setOpen] = useState(false);
   const [coords, setCoords] = useState({});
   const [visible, setVisible] = useState(false);
@@ -64,6 +60,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`);
 
   const contact = useContact(`~${ship}`);
+  console.log(contact);
   const color = `#${uxToHex(contact?.color ?? '0x0')}`;
   const showNickname = useShowNickname(contact, hideNicknames);
 
