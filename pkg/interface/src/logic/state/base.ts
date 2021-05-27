@@ -9,9 +9,13 @@ enablePatches();
 
 export const stateSetter = <T extends {}>(
   fn: (state: Readonly<T & BaseState<T>>) => void,
-  set: (newState: T & BaseState<T>) => void
+  set: (newState: T & BaseState<T>) => void,
+  get: () => T & BaseState<T>
 ): void => {
-  set(produce(fn) as any);
+  const old = get();
+  const [state, patches] = produceWithPatches(old, fn) as readonly [(T & BaseState<T>), any, Patch[]];
+  //console.log(patches);
+  set(state);
 };
 
 export const optStateSetter = <T extends {}>(
@@ -84,7 +88,7 @@ export const createState = <T extends {}>(
   blacklist: (keyof BaseState<T> | keyof T)[] = []
 ): UseStore<T & BaseState<T>> => create<T & BaseState<T>>(persist<T & BaseState<T>>((set, get) => ({
   // @ts-ignore investigate zustand types
-  set: fn => stateSetter(fn, set),
+  set: fn => stateSetter(fn, set, get),
   optSet: fn => {
     return optStateSetter(fn, set, get);
   },

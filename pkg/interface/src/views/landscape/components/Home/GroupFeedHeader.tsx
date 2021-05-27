@@ -1,12 +1,20 @@
 import { Box, Row, Text } from '@tlon/indigo-react';
 import bigInt from 'big-integer';
-import React from 'react';
+import React, {
+  useEffect,
+  useState
+} from 'react';
 
 export function GroupFeedHeader(props) {
-  const { baseUrl, history, graphResource, vip } = props;
+  const { baseUrl, history, vip } = props;
+
   let graph = props.graph;
   const historyLocation = history.location.pathname;
-  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
+
+  const [locationList, setLocationList] = useState([]);
+  useEffect(() => {
+    setLocationList(ls => [...ls, history.location.pathname]);
+  }, [history.location.pathname]);
 
   const isHome =
     historyLocation === baseUrl ||
@@ -14,9 +22,15 @@ export function GroupFeedHeader(props) {
 
   const locationUrl =
     history.location.pathname.replace(`${baseUrl}/feed`, '');
-  const nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
-    return bigInt(ind);
-  });
+
+  let splitLoc = locationUrl.split('/');
+  let indicator = '';
+  if (splitLoc.length > 1) {
+    splitLoc = splitLoc.slice(1);
+    indicator = splitLoc[0];
+  }
+
+  const nodeIndex = splitLoc.slice(1).map(ind => bigInt(ind));
 
   let node;
   nodeIndex.forEach((i) => {
@@ -60,7 +74,17 @@ cursor="pointer" onClick={() => {
                 history.location.pathname.replace(`${baseUrl}`, '').split('/');
               loc.pop();
               loc = loc.join('/');
-              history.push(`${baseUrl}${loc}`);
+              if (history.location.pathname === `${baseUrl}/feed`) {
+                history.push(baseUrl);
+              } else if (indicator === 'thread' || indicator === 'replies') {
+                if (locationList.length === 1) {
+                  history.push(`${baseUrl}/feed`);
+                } else {
+                  history.goBack();
+                }
+              } else {
+                history.push(`${baseUrl}/feed`);
+              }
             }}
             >{'<- Back'}</Text>
           ) : null
@@ -71,10 +95,16 @@ cursor="pointer" onClick={() => {
           <Text bold fontSize={2} pl={1} pr={2}>Group Feed</Text>
           <Text fontSize={0} p={1} backgroundColor="washedGray">{permText}</Text>
         </>
-      ) : ( !authorText ? null : (
+      ) : ( authorText ? (
         <>
           <Text bold fontSize={2} pl={1} pr={2}>Post by </Text>
           <Text bold fontSize={2} mono>{`~${authorText}`}</Text>
+        </>
+      ) : (
+        <>
+          <Text bold fontSize={2} pl={1} pr={2}>{
+            indicator.charAt(0).toUpperCase() + indicator.slice(1)
+          }</Text>
         </>
       ))}
     </Row>
