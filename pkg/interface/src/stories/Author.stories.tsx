@@ -9,6 +9,8 @@ export default {
   component: Author
 } as Meta;
 
+const date = 1622093233566;
+
 const Template: Story<AuthorProps> = args => (
   <Box backgroundColor="white" p="2" width="fit-content">
     <Author {...args} />
@@ -22,7 +24,7 @@ WithNicknameTime.args = {
   showImage: true,
   size: 24,
   sigilPadding: 6,
-  date: Date.now()
+  date
 };
 
 export const WithNickname = Template.bind({});
@@ -42,7 +44,7 @@ NoContactTime.args = {
   showImage: true,
   size: 24,
   sigilPadding: 6,
-  date: Date.now()
+  date
 };
 
 export const NoContact = Template.bind({});
@@ -63,5 +65,5 @@ RelativeTime.args = {
   size: 24,
   sigilPadding: 6,
   isRelativeTime: true,
-  date: Date.now() - 3600000
+  date: date - 3600000
 };

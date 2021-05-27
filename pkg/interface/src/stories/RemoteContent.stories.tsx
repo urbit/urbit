@@ -35,5 +35,6 @@ export const Twitter = Template.bind({});
 
 Twitter.args = {
   url: 'https://twitter.com/urbit/status/1396947489656213504',
-  unfold: true
+  // massive test flake
+  unfold: false
 };
