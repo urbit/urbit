@@ -59,7 +59,9 @@
           ::
       ==
       $:  %clay
-          $>(%writ gift:clay)
+          gift:clay
+          ::  $>(%writ gift:clay)
+          ::
   ==  ==
 --
 ::  more structures
