@@ -54,9 +54,9 @@ const addNodesLoose = (json: any, state: GraphState): GraphState => {
 const addNodesFlat = (json: any, state: GraphState): GraphState => {
   const data = _.get(json, 'add-nodes', false);
   if (data) {
-    if (!('flatGraphs' in state)) {
- return state;
-}
+      if (!('flatGraphs' in state)) {
+   return state;
+  }
 
     const resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.flatGraphs)) {
@@ -71,12 +71,12 @@ const addNodesFlat = (json: any, state: GraphState): GraphState => {
 
     indices.forEach((index) => {
       if (index.split('/').length === 0) {
- return;
-}
+       return;
+      }
       const indexArr = stringToArr(index);
       if (indexArr.length === 0) {
- return state;
-}
+       return state;
+      }
 
       const node = data.nodes[index];
       node.children = mapifyChildren({});
@@ -107,13 +107,13 @@ const addNodesThread = (json: any, state: GraphState): GraphState => {
 
     indices.forEach((index) => {
       if (index.split('/').length === 0) {
- return;
-}
+       return;
+      }
       const indexArr = stringToArr(index);
 
       if (indexArr.length === 0) {
- return state;
-}
+       return state;
+      }
 
       const node = data.nodes[index];
       node.children = mapifyChildren({});
@@ -224,16 +224,16 @@ const addNodes = (json, state) => {
     resource
   ) => {
     if (!post.hash) {
- return [graph, flatGraph, threadGraphs];
-}
+     return [graph, flatGraph, threadGraphs];
+    }
     const timestamp = post['time-sent'];
 
     if (state.graphTimesentMap[resource][timestamp]) {
       const index = state.graphTimesentMap[resource][timestamp];
 
       if (index.split('/').length === 0) {
- return graph;
-}
+       return graph;
+      }
       const indexArr = stringToArr(index);
 
       delete state.graphTimesentMap[resource][timestamp];
@@ -264,14 +264,14 @@ const addNodes = (json, state) => {
   const data = _.get(json, 'add-nodes', false);
   if (data) {
     if (!('graphs' in state)) {
- return state;
-}
+     return state;
+    }
     if (!('flatGraphs' in state)) {
- return state;
-}
+     return state;
+    }
     if (!('threadGraphs' in state)) {
- return state;
-}
+     return state;
+    }
 
     const resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.graphs)) {
@@ -303,8 +303,8 @@ const addNodes = (json, state) => {
       const old = state.graphs[resource].size;
 
       if (index.split('/').length === 0) {
- return state;
-}
+       return state;
+      }
       const indexArr = stringToArr(index);
 
       const [graph, flatGraph, threadGraphs] =
