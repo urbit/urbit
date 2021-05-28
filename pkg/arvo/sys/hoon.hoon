@@ -10816,10 +10816,7 @@
     --
     =;  [=puny =_grub]
       ^-  [pony _grub]
-      ?~  p.puny
-        [q.puny grub]
-      ~_  %puny-full
-      !!
+      [q.puny grub]
     |-  ^-  [puny _grub]
     ?~  hyp
       :_  grub
