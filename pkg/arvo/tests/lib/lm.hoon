@@ -220,13 +220,13 @@
 ++  test-getc
   ;:  weld
     %+  expect-eq
-      !>  (make:lms ~[.1 .4 .7])
+      !>  (make:lvs `(list @rs)`~[.1 .4 .7])
       !>  (getc:lms (make:lms ~[~[.1 .2 .3] ~[.4 .5 .6] ~[.7 .8 .9]]) 1)
   ==
 ++  test-getr
   ;:  weld
     %+  expect-eq
-      !>  (make:lms ~[.1 .2 .3])
+      !>  (make:lvs `(list @rs)`~[.1 .2 .3])
       !>  (getr:lms (make:lms ~[~[.1 .2 .3] ~[.4 .5 .6] ~[.7 .8 .9]]) 1)
   ==
 ::
