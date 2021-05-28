@@ -65,5 +65,5 @@ RelativeTime.args = {
   size: 24,
   sigilPadding: 6,
   isRelativeTime: true,
-  date: date - 3600000
+  date: Date.now() - 3600000
 };
