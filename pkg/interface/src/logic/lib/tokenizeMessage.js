@@ -17,6 +17,36 @@ export const isUrl = (str) => {
   }
 };
 
+const raceRegexes = (str) => {
+  const link = str.match(URL_REGEX);
+  const groupRef = str.match(GROUP_REGEX);
+  const mention = str.match(PATP_REGEX);
+  let pfix = str;
+  let content, sfix;
+  if(link) {
+    pfix = link[1];
+    sfix = link[4];
+    const perma = parsePermalink(link[2]);
+    if(perma) {
+      content = permalinkToReference(perma);
+    } else {
+      content = { url: link[2] };
+    }
+  }
+  if(groupRef && groupRef[1].length < pfix?.length) {
+    pfix = groupRef[1];
+    const perma = parsePermalink(convertToGroupRef(groupRef[2]));
+    content = permalinkToReference(perma);
+    sfix = groupRef[3];
+  }
+  if(mention && urbitOb.isValidPatp(mention[2]) && mention[1].length < pfix?.length) {
+    pfix = mention[1];
+    content = { mention: mention[2] };
+    sfix = mention[3];
+  }
+  return [pfix, content, sfix];
+};
+
 const tokenizeMessage = (text) => {
   const messages = [];
   // by line
@@ -35,50 +65,38 @@ const tokenizeMessage = (text) => {
     }
     while(str.length > 0) {
       const resetAndPush = (content) => {
-        blocks.push(currBlock.join(''));
-        messages.push({ text: blocks.join('`') });
+        if(currBlock.length > 0) {
+          blocks.push(currBlock.join(''));
+        }
+        if(blocks.length > 0) {
+          //  ended on a `
+          if(blocks.length % 2 === 0) {
+            blocks.push('');
+          }
+          messages.push({ text: blocks.join('`') });
+        }
         currBlock = [];
         blocks = [];
         messages.push(content);
       };
-      const link = str.match(URL_REGEX);
-      if(link) {
-        const [,pfix, url, protocol, sfix] = link;
-        const perma = parsePermalink(url);
-        currBlock.push(pfix);
-        if(protocol === 'web+urbitgraph://' && perma) {
-          resetAndPush(permalinkToReference(perma));
-        } else {
-          resetAndPush({ url });
-        }
+      const [pfix, content, sfix] = raceRegexes(str);
+      if(content) {
+        pfix?.length > 0 && currBlock.push(pfix);
+        resetAndPush(content);
         str = sfix;
-        continue;
+      } else {
+        currBlock.push(str);
+        str = '';
       }
-      const groupRef = str.match(GROUP_REGEX);
-      if(groupRef) {
-        const [,pfix, group, sfix] = groupRef;
-        currBlock.push(pfix);
-        const perma = parsePermalink(convertToGroupRef(group));
-        resetAndPush(permalinkToReference(perma));
-        str = sfix;
-        continue;
-      }
-      const patp = str.match(PATP_REGEX);
-      if(Boolean(patp) && urbitOb.isValidPatp(patp[2])) {
-        const [,pfix, mention, sfix] = patp;
-        currBlock.push(pfix);
-        resetAndPush({ mention });
-        str = sfix;
-        continue;
-      }
-      currBlock.push(str);
-      str = '';
     }
     blocks.push(currBlock.join(''));
     currBlock = [];
   });
+  // ended on a `
+  if(blocks.length % 2 === 0) {
+    blocks.push('');
+  }
   messages.push({ text: blocks.join('`') });
-  console.log(messages);
   return messages;
 };
 
