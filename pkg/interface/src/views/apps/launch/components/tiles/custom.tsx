@@ -12,7 +12,7 @@ export default class CustomTile extends React.PureComponent<CustomTileProps> {
     const { props } = this;
 
     return (
-      <Tile to={props.linkedUrl} p="0px">
+      <Tile to={props.linkedUrl} p="0px" boxShadow="none">
         <BaseImage
           position='absolute'
           src={props.tileImage}

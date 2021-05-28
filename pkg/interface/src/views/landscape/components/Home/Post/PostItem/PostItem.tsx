@@ -31,6 +31,7 @@ export interface PostItemProps {
   vip: string;
   isThread?: boolean;
   isLast?: boolean;
+  isHierarchical?: boolean;
 }
 
 interface PostItemState {
@@ -71,7 +72,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
   }
 
   navigateToChildren() {
-    const { history, baseUrl, index, isParent, isThread } = this.props;
+    const { history, baseUrl, index, isParent, isThread, isHierarchical } = this.props;
     if (isParent) {
       return;
     }
@@ -81,8 +82,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
       indexString = indexString + '/' + i.toString();
     });
 
-    //  TODO: ensure that the logic here works properly
-    if (!isThread) {
+    if (!isThread && !isHierarchical) {
       history.push(`${baseUrl}/feed/thread${indexString}`);
     } else {
       history.push(`${baseUrl}/feed/replies${indexString}`);
@@ -155,7 +155,7 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
                 graphPath={graphPath}
                 isReply={isReply}
               />
-              { (isReply || (parentPost && index.length > 1 && isParent)) ? (
+              { ((isReply || (parentPost && index.length > 1 && isParent)) && parentPost?.author) ? (
                 <Row width="100%" alignItems="center" mb="2" pl="2" pr="2">
                   <Text color="gray" pr="1">Replying to</Text>
                   <Mention ship={parentPost?.author} api={api} />

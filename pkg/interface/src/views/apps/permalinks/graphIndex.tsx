@@ -33,7 +33,7 @@ function getPostPermalink(
   assoc: Association,
   index: string
 ) {
-  const base = `${groupPath}/feed`;
+  const base = `${groupPath}/feed/thread`;
   return base + index;
 }
 
