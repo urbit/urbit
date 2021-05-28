@@ -3,9 +3,9 @@ import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 
 const URL_REGEX = new RegExp(String(/^([^[\]]*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+[\w/])([\s\S]*)/.source));
 
-const PATP_REGEX = /^([\s\S]*)(~[a-z_-]+)([\s\S]*)/;
+const PATP_REGEX = /^([\s\S]*?)(~[a-z_-]+)([\s\S]*)/;
 
-const GROUP_REGEX = new RegExp(String(/^([\s\S ]*)(~[-a-z_]+\/[-a-z]+)([\s\S]*)/.source));
+const GROUP_REGEX = new RegExp(String(/^([\s\S ]*?)(~[-a-z_]+\/[-a-z]+)([\s\S]*)/.source));
 
 const convertToGroupRef = group => `web+urbitgraph://group/${group}`;
 

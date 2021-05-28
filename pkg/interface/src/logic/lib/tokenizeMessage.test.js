@@ -80,4 +80,17 @@ describe('tokenizeMessage', () => {
     expect(url).toEqual('https://urbit.org');
     expect(text2).toEqual(' lately?');
   });
+
+  it('should tokenize two links and a mention', () => {
+    const example = '~haddef-sigwen, test https://tlon.io test https://urbit.org test ~hastuc-dibtux';
+    const result = tokenizeMessage(example);
+    const [{ mention }, { text: one }, { url: tlon }, { text: two }, { url: urbit }, { text: three }, { mention: hastuc }] = result;
+    expect(mention).toEqual('~haddef-sigwen');
+    expect(one).toEqual(', test ');
+    expect(tlon).toEqual('https://tlon.io');
+    expect(two).toEqual(' test ');
+    expect(urbit).toEqual('https://urbit.org');
+    expect(three).toEqual(' test ');
+    expect(hastuc).toEqual('~hastuc-dibtux');
+  });
 });
