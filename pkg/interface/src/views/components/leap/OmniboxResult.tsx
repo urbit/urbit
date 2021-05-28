@@ -81,12 +81,15 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
     if (
       defaultApps.includes(icon.toLowerCase()) ||
       icon.toLowerCase() === 'links' ||
-      icon.toLowerCase() === 'terminal'
+      icon.toLowerCase() === 'terminal' ||
+      icon === 'btc-wallet'
     ) {
       if (icon === 'Link') {
         icon = 'Collection';
       } else if (icon === 'Terminal') {
         icon = 'Dojo';
+      } else if (icon === 'btc-wallet') {
+        icon = 'Bitcoin';
       }
       graphic = (
         <Icon
