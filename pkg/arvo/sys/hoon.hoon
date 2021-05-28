@@ -10852,53 +10852,20 @@
         ?~  taf  [~ grub]
         ?:  ?=([%| %| *] taf)
           :_  grub
-          =.  q.p.p.taf  (comb [%0 2] q.p.p.taf)
+          =.  q.p.p.taf  (scul 2 q.p.p.taf)
           taf
         ?:  ?=(%& -.taf)
-          ?:  ?=(%| -.q.p.taf)
-            =.  p.p.taf
-              ?~  p.p.taf
-                ~
-              ?:  ?=(~ i.p.p.taf)
-                p.p.taf
-              [`(peg 2 u.i.p.p.taf) t.p.p.taf]
-            [taf grub]
-          =.  p.p.taf
-            ?~  p.p.taf
-              ~
-            ?>  ?=(~ i.p.p.taf)
-            ?:  ?=(~ t.p.p.taf)
-              p.p.taf
-            ?:  ?=(~ i.t.p.p.taf)
-              p.p.taf
-            [~ `(peg 2 u.i.t.p.p.taf) t.t.p.p.taf]
-          [taf grub]
-        =^  raf  grub  $(p.heg p.p.taf, sut q.sut)
-        ?~  raf  [~ grub]
-        ?:  ?=([%| %| *] raf)
           :_  grub
-          =.  q.p.p.raf  (comb [%0 3] q.p.p.raf)
+          (gnat 2 p.taf)
+        =^  raf  grub  $(p.heg p.p.taf, sut q.sut)
+        :_  grub
+        ?~  raf  ~
+        ?:  ?=([%| %| *] raf)
+          =.  q.p.p.raf  (scul 3 q.p.p.raf)
           raf
         ?:  ?=(%& -.raf)
-          ?:  ?=(%| -.q.p.raf)
-            =.  p.p.raf
-              ?~  p.p.raf
-                ~
-              ?:  ?=(~ i.p.p.raf)
-                p.p.raf
-              [`(peg 3 u.i.p.p.raf) t.p.p.raf]
-            [raf grub]
-          =.  p.p.raf
-            ?~  p.p.raf
-              ~
-            ?>  ?=(~ i.p.p.raf)
-            ?:  ?=(~ t.p.p.raf)
-              p.p.raf
-            ?:  ?=(~ i.t.p.p.raf)
-              p.p.raf
-            [~ `(peg 3 u.i.t.p.p.raf) t.t.p.p.raf]
-          [raf grub]
-        [raf grub]
+          (gnat 3 p.raf)
+        raf
       ::
           [%core *]
         ?~  q.heg  [here grub]
@@ -10921,58 +10888,24 @@
         ?.  sam.pec  [lose grub]
         ?:  con.pec
           =^  taf  grub  $(sut p.sut)
-          ?~  taf  [~ grub]
+          :_  grub
+          ?~  taf  ~
           ?:  ?=([%| %| *] taf)
-            :_  grub
-            =.  q.p.p.taf  (comb [%0 3] q.p.p.taf)
+            =.  q.p.p.taf  (scul 3 q.p.p.taf)
             taf
           ?:  ?=(%& -.taf)
-            ?:  ?=(%| -.q.p.taf)
-              =.  p.p.taf
-                ?~  p.p.taf
-                  ~
-                ?:  ?=(~ i.p.p.taf)
-                  p.p.taf
-                [`(peg 3 u.i.p.p.taf) t.p.p.taf]
-              [taf grub]
-            =.  p.p.taf
-              ?~  p.p.taf
-                ~
-              ?>  ?=(~ i.p.p.taf)
-              ?:  ?=(~ t.p.p.taf)
-                p.p.taf
-              ?:  ?=(~ i.t.p.p.taf)
-                p.p.taf
-              [~ `(peg 3 u.i.t.p.p.taf) t.t.p.p.taf]
-            [taf grub]
-          [taf grub]
+            (gnat 3 p.taf)
+          taf
         =^  lef  grub  (caching-peek(sut p.sut) way 2)
         =^  raf  grub  $(sut lef)
-        ?~  raf  [~ grub]
+        :_  grub
+        ?~  raf  ~
         ?:  ?=([%| %| *] raf)
-          :_  grub
-          =.  q.p.p.raf  (comb [%0 6] q.p.p.raf)
+          =.  q.p.p.raf  (scul 6 q.p.p.raf)
           raf
         ?:  ?=(%& -.raf)
-          ?:  ?=(%| -.q.p.raf)
-            =.  p.p.raf
-              ?~  p.p.raf
-                ~
-              ?:  ?=(~ i.p.p.raf)
-                p.p.raf
-              [`(peg 6 u.i.p.p.raf) t.p.p.raf]
-            [raf grub]
-          =.  p.p.raf
-            ?~  p.p.raf
-              ~
-            ?>  ?=(~ i.p.p.raf)
-            ?:  ?=(~ t.p.p.raf)
-              p.p.raf
-            ?:  ?=(~ i.t.p.p.raf)
-              p.p.raf
-            [~ `(peg 6 u.i.t.p.p.raf) t.t.p.p.raf]
-          [raf grub]
-        [raf grub]
+          (gnat 6 p.raf)
+        raf
       ::
           [%hint *]
         =^  val  grub  caching-repo
@@ -10995,23 +10928,19 @@
           ^$(sut q.sut, lon [~ lon], p.heg +(p.heg))
         ?.  =(0 p.heg)
           next(p.heg (dec p.heg))
-        ::  XX does axis need adjusting?
-        ::
         =^  tor  grub  (caching-fund way u.u.tyr)
         :_  grub
         ?-  -.tor
-          %&  [%& (weld p.p.tor `vein`[~ `1 lon]) q.p.tor]
-          ::  XX comb [%0 1] is identity
+          ::  XX FIXME need to account for p.p.tor
           ::
-          %|  [%| %| p.p.tor (comb [%0 1] q.p.tor)]
+          %&  [%& (weld p.p.tor `vein`[~ `1 lon]) q.p.tor]
+          %|  [%| tor]
         ==
         ++  next
           |-  ^-  [pony _grub]
           ?~  q.zot
             ^^$(sut q.sut, lon [~ lon])
           =^  tiv  grub  (caching-mint(sut q.sut) %noun i.q.zot)
-          ::  XX does axis need adjusting?
-          ::
           =^  fid  grub  ^^$(sut p.tiv, lon ~, gil ~)
           ?~  fid  [~ grub]
           ?:  ?=({%| %& *} fid)
@@ -11022,9 +10951,7 @@
               %|  (caching-fine %| p.p.fid)
             ==
           :_  grub
-          ::  XX comb [%0 1] is identity
-          ::
-          [%| %| p.vat (comb (comb [%0 1] q.tiv) q.vat)]
+          [%| %| p.vat (comb q.tiv q.vat)]
         --
         ::
           [%fork *]
@@ -11085,9 +11012,42 @@
         =/  wal  (~(uni in q.q.p.hax) q.q.p.yor)
         :+  %&  p.p.hax
         [%| p.q.p.hax wal]
+      ::
+      ++  scul
+        |=  [axe=axis noc=nock]
+        ^-  nock
+        ?-  noc
+            [%0 *]
+          [%0 (peg axe p.noc)]
+            [%2 [%0 *] [%0 *]]
+          [%2 [%0 (peg axe p.p.noc)] [%0 (peg axe p.q.noc)]]
+            [%7 *]
+          (comb (comb [%0 axe] p.noc) q.noc)
+            [%8 *]
+          (comb (comb [%0 axe] [p.noc [%0 %1]]) q.noc)
+            *
+          (comb [%0 axe] noc)
+        ==
+      ::
+      ++  gnat
+        |=  [=axis =palo]
+        ^-  pony
+        =.  p.palo
+          ?~  p.palo
+            ~
+          ?:  ?=(%| -.q.palo)
+            ?:  ?=(~ i.p.palo)
+              p.palo
+            [`(peg axis u.i.p.palo) t.p.palo]
+          ?>  ?=(~ i.p.palo)
+          ?:  ?=(~ t.p.palo)
+            p.palo
+          ?:  ?=(~ i.t.p.palo)
+            p.palo
+          [~ `(peg axis u.i.t.p.palo) t.t.p.palo]
+        [%& palo]
       --
     ==
-
   ::
   ++  fond
     ~/  %fond
