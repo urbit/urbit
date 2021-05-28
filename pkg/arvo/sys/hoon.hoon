@@ -13998,7 +13998,7 @@
       (hint [sut p.gen] rig)
     ::
         [%sgzp *]
-      =^  rig  grub  $(gen p.gen) :: XX WEIRD original uses ket
+      =^  rig  grub  $(gen p.gen)
       ~_  duck(sut rig)
       $(gen q.gen)
     ::
