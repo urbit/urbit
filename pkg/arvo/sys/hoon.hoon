@@ -10948,7 +10948,7 @@
         :_  grub
         ?-  -.tor
           %&  [p.por %& (weld p.p.tor `vein`[~ `1 lon]) q.p.tor]
-          %|  `[%| tor]
+          %|  `[%| %| p.p.tor (comb [%0 1] q.p.tor)]
         ==
         ++  next
           |-  ^-  [puny _grub]
