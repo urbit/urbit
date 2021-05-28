@@ -10851,7 +10851,9 @@
         =^  taf  grub  $(sut p.sut)
         ?~  taf  [~ grub]
         ?:  ?=([%| %| *] taf)
-          [taf grub]
+          :_  grub
+          =.  q.p.p.taf  (comb [%0 2] q.p.p.taf)
+          taf
         ?:  ?=(%& -.taf)
           ?:  ?=(%| -.q.p.taf)
             =.  p.p.taf
@@ -10874,7 +10876,9 @@
         =^  raf  grub  $(p.heg p.p.taf, sut q.sut)
         ?~  raf  [~ grub]
         ?:  ?=([%| %| *] raf)
-          [raf grub]
+          :_  grub
+          =.  q.p.p.raf  (comb [%0 3] q.p.p.raf)
+          raf
         ?:  ?=(%& -.raf)
           ?:  ?=(%| -.q.p.raf)
             =.  p.p.raf
@@ -10919,7 +10923,9 @@
           =^  taf  grub  $(sut p.sut)
           ?~  taf  [~ grub]
           ?:  ?=([%| %| *] taf)
-            [taf grub]
+            :_  grub
+            =.  q.p.p.taf  (comb [%0 3] q.p.p.taf)
+            taf
           ?:  ?=(%& -.taf)
             ?:  ?=(%| -.q.p.taf)
               =.  p.p.taf
@@ -10944,7 +10950,9 @@
         =^  raf  grub  $(sut lef)
         ?~  raf  [~ grub]
         ?:  ?=([%| %| *] raf)
-          [raf grub]
+          :_  grub
+          =.  q.p.p.raf  (comb [%0 6] q.p.p.raf)
+          raf
         ?:  ?=(%& -.raf)
           ?:  ?=(%| -.q.p.raf)
             =.  p.p.raf
@@ -10987,10 +10995,14 @@
           ^$(sut q.sut, lon [~ lon], p.heg +(p.heg))
         ?.  =(0 p.heg)
           next(p.heg (dec p.heg))
+        ::  XX does axis need adjusting?
+        ::
         =^  tor  grub  (caching-fund way u.u.tyr)
         :_  grub
         ?-  -.tor
           %&  [%& (weld p.p.tor `vein`[~ `1 lon]) q.p.tor]
+          ::  XX comb [%0 1] is identity
+          ::
           %|  [%| %| p.p.tor (comb [%0 1] q.p.tor)]
         ==
         ++  next
@@ -10998,6 +11010,8 @@
           ?~  q.zot
             ^^$(sut q.sut, lon [~ lon])
           =^  tiv  grub  (caching-mint(sut q.sut) %noun i.q.zot)
+          ::  XX does axis need adjusting?
+          ::
           =^  fid  grub  ^^$(sut p.tiv, lon ~, gil ~)
           ?~  fid  [~ grub]
           ?:  ?=({%| %& *} fid)
@@ -11008,6 +11022,8 @@
               %|  (caching-fine %| p.p.fid)
             ==
           :_  grub
+          ::  XX comb [%0 1] is identity
+          ::
           [%| %| p.vat (comb (comb [%0 1] q.tiv) q.vat)]
         --
         ::
@@ -11071,6 +11087,7 @@
         [%| p.q.p.hax wal]
       --
     ==
+
   ::
   ++  fond
     ~/  %fond
