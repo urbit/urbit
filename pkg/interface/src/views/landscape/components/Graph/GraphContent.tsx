@@ -245,6 +245,7 @@ const renderers = {
     return (
       <Text
         mono
+        fontWeight='inherit'
         p={1}
         backgroundColor="washedGray"
         fontSize={0}
@@ -309,6 +310,7 @@ const renderers = {
         className="clamp-message"
         display="block"
         borderRadius={1}
+        fontWeight='inherit'
         mono
         fontSize={0}
         backgroundColor="washedGray"
