@@ -4,10 +4,10 @@
   ::
 =/  rtol  .1e-6
 |%
-::  +expect-close: compares :expected and :actual for nearness in floating-point
-::    @lm terms and pretty-prints the result
+::  +expect-near-lms: compares :expected and :actual for nearness in
+::    floating-point @lm terms and pretty-prints the result
 ::
-++  expect-close
+++  expect-near-lms
   |=  [expected=@lms actual=@lms]
   ^-  tang
   =|  result=tang
@@ -628,10 +628,10 @@
   ::    the interesting ways this can fail
   =/  mr  `@lms`(make:lms ~[~[.1 .2 .3] ~[.4 .5 .6] ~[.7 .8 .0]])
   ;:  weld
-    %+  expect-close
+    %+  expect-near-lms
       (make:lms ~[~[.-1.7777776 .8.8888884e-1 .-1.11111104e-1] ~[.1.5555553 .-7.7777773e-1 .2.2222221e-1] ~[.-1.1111108e-1 .2.2222221e-1 .-1.11111104e-1]])
       (invert:lms mr)
-    %+  expect-close
+    %+  expect-near-lms
       `@lms`0x2.0000.0003.bfe3.8e37.3f63.8e38.bde3.8e38.3fc7.1c70.bf47.1c71.3e63.8e38.bde3.8e35.3e63.8e38.bde3.8e38
       (invert:lms mr)
   ==
