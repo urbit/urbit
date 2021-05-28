@@ -42,7 +42,7 @@ if(urbitrc.URL) {
     ...devServer,
     index: '',
     proxy: {
-      '/~btc/js/bundle/index.js': {
+      '/~btc/js/bundle/index.*.js': {
         target: 'http://localhost:9000',
         pathRewrite: (req, path) => {
           return '/index.js'
