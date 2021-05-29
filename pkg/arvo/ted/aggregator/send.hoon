@@ -37,22 +37,10 @@
   ~&  [%insufficient-aggregator-balance address]
   not-sent
 ::
-=/  tx-data=@ux
-  %+  can:naive  3
-  :_  [batch-function ~]
-  =;  =cord
-    =/  parsed=(unit (pair @ud @ux))
-      (de:base16:mimes:html cord)
-    ?~(parsed !! u.parsed)
-  %-  crip
-  %-  encode-args:abi:ethereum
-  :_  ~
-  :-  %bytes
-  %+  cad:naive  3
-  %+  roll  txs
-  |=  [=raw-tx:naive out=(list octs)]
-  [raw.raw-tx 65^sig.raw-tx out]
-=/  tx=@ux
+::NOTE  this fails the thread if sending fails, which in the app gives us
+::      the "retry with same gas price" behavior we want
+;<  =response:rpc  bind:m
+  %+  send-batch  endpoint
   =;  tx=transaction:rpc:ethereum
     (sign-transaction:key:ethereum tx pk)
   :*  nonce
@@ -60,17 +48,19 @@
       gas-limit
       contract
       0
-      tx-data
+  ::
+    %+  can:naive  3
+    %+  roll  txs
+    |=  [=raw-tx:naive out=(list octs)]
+    :_  [raw.raw-tx out]
+    (met 3 sig.raw-tx)^sig.raw-tx
+  ::
       chain-id
   ==
-::
-::NOTE  this fails the thread if sending fails, which in the app gives us
-::      the "retry with same gas price" behavior we want
-;<  =response:rpc  bind:m  (send-batch endpoint tx)
 %-  pure:m
 !>  ^-  (each @ud @t)
 ?+  -.response  %.n^'unexpected rpc response'
-  %error   %.n^message.res
+  %error   %.n^message.response
   :: TODO:
   ::  check that tx-hash in +.response is non-zero?
   ::  log tx-hash to getTransactionReceipt(tx-hash)?

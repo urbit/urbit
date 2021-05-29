@@ -76,12 +76,7 @@
         [%log event-log]
       ?~  input.u.mined.i.logs
         [%bat *@]
-      =/  len  (met 3 u.input.u.mined.i.logs)
-      =/  fun
-        (rsh [3 (sub len 4)] u.input.u.mined.i.logs)
-      ?.  =(0x2688.7f26 fun)
-        [%bat *@]
-      [%bat (end [3 (sub len 4)] u.input.u.mined.i.logs)]
+      [%bat u.input.u.mined.i.logs]
     =/  res
       %-  mule
       |.((%*(. naive lac |) verifier chain-id:contracts:azimuth nas input))
