@@ -345,7 +345,8 @@
       ::
       !!
     [raw tx]:-.u.batch
-    :: %don  [(encode-tx:naive +.part-tx) +.part-tx]
+  ::
+    %don  [(gen-tx-octs:lib +.part-tx) +.part-tx]
     %ful  +.part-tx
   ==
 ::  +pending-state
