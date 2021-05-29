@@ -25,7 +25,7 @@
 ::  - it's a bit weird how we just assume the raw and tx in raw-tx to match...
 ::
 /-  *aggregator
-/+  naive, default-agent, ethereum, dbug, verb, lib=naive-transactions
+/+  azimuth, naive, default-agent, ethereum, dbug, verb, lib=naive-transactions
 ::
 ::TODO  /sur file for public types
 |%
@@ -45,10 +45,14 @@
       ::  pk: private key to send the roll
       ::  frequency: time to wait between sending batches (TODO fancier)
       ::  endpoint: ethereum rpc endpoint to use
+      ::  contract: ethereum contract address
+      ::  chain-id: mainnet, ropsten, local (https://chainid.network/)
       ::
       pk=@
       frequency=@dr
       endpoint=@t
+      contract=@ux
+      chain-id=@
   ==
 ::
 +$  action
@@ -56,21 +60,15 @@
       [%cancel sig=@ keccak=@]
     ::
       [%commit ~]  ::TODO  maybe pk=(unit @) later
-      [%config frequency=@dr]
+      [%frequency frequency=@dr]
       [%setkey pk=@]
       [%endpoint endpoint=@t]
+      [%network net=?(%mainnet %ropsten %local)]
       [%nonce nonce=@ud]
       [%subs ~]
-      ::TODO  contract address, chain..?
   ==
 ::
 +$  card  card:agent:gall
-::
-::TODO  config?
-:: ++  contract  0xb581.01cd.3bbb.cc6f.a40b.cdb0.4bb7.1623.b5c7.d39b  ::  Ropsten
-::  TODO: add this to action
-++  contract  0x4754.03bf.4e8e.b8d0.2f71.7b0e.553f.869f.a690.425e  :: Local
-++  chain-id  0x539  ::  '1337' (Geth private chain)
 ::
 ++  resend-time  ~m5
 ::
@@ -92,8 +90,10 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    ::TODO  set default frequency and endpoint?
+    ::TODO  set endpoint?
     =.  frequency  ~h1
+    =.  contract  naive:local-contracts:azimuth
+    =.  chain-id  chain-id:local-contracts:azimuth
     :_  this
     [%pass /azimuth %agent [our.bowl %azimuth] %watch /(scot %p our.bowl)]~
   ::
@@ -384,7 +384,8 @@
 ++  try-apply
   |=  [nas=^state:naive force=? =raw-tx:naive]
   ^-  [success=? _nas]
-  ?.  (verify-sig-and-nonce:naive verifier:lib `@`chain-id nas raw-tx)
+  =/  chain-id=@t  (scot %ud chain-id)
+  ?.  (verify-sig-and-nonce:naive verifier:lib chain-id nas raw-tx)
     [force nas]
   ::
   =^  out  points.nas  (increment-nonce:naive nas from.tx.raw-tx)
@@ -397,10 +398,22 @@
   |=  =action
   ^-  (quip card _state)
   ?-  -.action
-    %commit    on-timer
-    %config    [~ state(frequency frequency.action)]
-    %nonce     [~ state(next-nonce nonce.action)]
-    %endpoint  [~ state(endpoint endpoint.action)]
+    %commit     on-timer
+    %frequency  [~ state(frequency frequency.action)]
+    %nonce      [~ state(next-nonce nonce.action)]
+    %endpoint   [~ state(endpoint endpoint.action)]
+  ::
+      %network
+    :-  ~
+    =/  [contract=@ux chain-id=@]
+      =<  [naive chain-id]
+      =,  azimuth
+      ?-  net.action
+        %mainnet  mainnet-contracts
+        %ropsten  ropsten-contracts
+        %local    local-contracts
+      ==
+    state(contract contract, chain-id chain-id)
   ::
       %subs
     :_  state
