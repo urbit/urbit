@@ -31,12 +31,11 @@
 ::  if we cannot pay for the transaction, don't bother sending it out
 ::
 =/  max-cost=@ud  (mul gas-limit use-gas-price)
-::TODO  implement %eth-get-balance in /lib/ethio and /lib/ethereum
-:: ;<  balance=@ud  bind:m
-::   !!
-:: ?:  (gth max-cost balance)
-::   ~&  [%insufficient-aggregator-balance address]
-::   not-sent
+;<  balance=@ud  bind:m
+  (get-balance:ethio endpoint address)
+?:  (gth max-cost balance)
+  ~&  [%insufficient-aggregator-balance address]
+  not-sent
 ::
 =/  tx-data=@ux
   %+  can:naive  3

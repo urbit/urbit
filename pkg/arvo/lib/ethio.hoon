@@ -276,4 +276,14 @@
     [%eth-get-transaction-count address [%label %latest]]
   %-  pure:m
   (parse-eth-get-transaction-count:rpc:ethereum json)
+::
+++  get-balance
+  |=  [url=@ta =address]
+  =/  m  (strand:strandio ,@ud)
+  ^-  form:m
+  ;<  =json  bind:m
+    %^  request-rpc  url  `'balance'
+    [%eth-get-balance address]
+  %-  pure:m
+  (parse-eth-get-balance:rpc:ethereum json)
 --
