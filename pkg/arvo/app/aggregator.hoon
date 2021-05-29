@@ -195,21 +195,20 @@
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
-    ~&  wire+wire
     |^
-    ?:  ?=([%send @t *] wire)
-      (process-thread i.t.wire sign)
-    ?.  =(%azimuth -.wire)
-      (on-agent:def wire sign)
-    (process-azimuth-update wire sign)
+    ?+  wire  (on-agent:def wire sign)
+      [%send @t *]  (process-send-batch i.t.wire sign)
+      [%azimuth ~]  (process-azimuth-update sign)
+      [%nonce ~]    (process-nonce sign)
+    ==
     ::
-    ++  process-thread
+    ++  process-send-batch
       |=  [nonce=@t =sign:agent:gall]
       ^-  (quip card _this)
       ?-  -.sign
           %poke-ack
         ?~  p.sign
-          %-  (slog leaf+"Thread started successfully" ~)
+          %-  (slog leaf+"Send batch thread started successfully" ~)
           [~ this]
         %-  (slog leaf+"{(trip dap.bowl)} couldn't start thread" u.p.sign)
         :_  this
@@ -231,20 +230,19 @@
           =+  !<([=term =tang] q.cage.sign)
           %-  (slog leaf+"{(trip dap.bowl)} failed" leaf+<term> tang)
           =^  cards  state
-            (on-thread-result:do (rash nonce dem) %.n^'thread failed')
+            (on-batch-result:do (rash nonce dem) %.n^'thread failed')
           [cards this]
         ::
             %thread-done
           =+   !<(result=(each @ud @t) q.cage.sign)
           =^  cards  state
-            (on-thread-result:do (rash nonce dem) result)
+            (on-batch-result:do (rash nonce dem) result)
           [cards this]
         ==
       ==
-    ::  TODO: not tested
     ::
     ++  process-azimuth-update
-      |=  [=^wire =sign:agent:gall]
+      |=  =sign:agent:gall
       ^-  (quip card _this)
       ?+  -.sign  [~ this]
           %watch-ack
@@ -255,11 +253,46 @@
       ::
           %fact
         ?+  p.cage.sign  (on-agent:def wire sign)
-            %azimuth-udiffs
+            %naive-diffs
           =+   !<(=diff:naive q.cage.sign)
           =^  cards  state
             (on-naive-diff:do diff)
           [cards this]
+        ==
+      ==
+    ::
+    ++  process-nonce
+      |=  =sign:agent:gall
+      ^-  (quip card _this)
+      ?-  -.sign
+          %poke-ack
+        ?~  p.sign
+          %-  (slog leaf+"Nonce thread started successfully" ~)
+          [~ this]
+        %-  (slog leaf+"{(trip dap.bowl)} couldn't start thread" u.p.sign)
+        :_  this
+        [(leave:spider:do wire)]~
+      ::
+          %watch-ack
+        ?~  p.sign
+          [~ this]
+        =/  =tank  leaf+"{(trip dap.bowl)} couldn't start listen to thread"
+        %-  (slog tank u.p.sign)
+        [~ this]
+      ::
+          %kick
+        [~ this]
+      ::
+          %fact
+        ?+  p.cage.sign  (on-agent:def wire sign)
+            %thread-fail
+          =+  !<([=term =tang] q.cage.sign)
+          %-  (slog leaf+"{(trip dap.bowl)} failed" leaf+<term> tang)
+          [~ this]
+        ::
+            %thread-done
+          =+   !<(nonce=@ud q.cage.sign)
+          [~ this(next-nonce nonce)]
         ==
       ==
     --
@@ -375,7 +408,7 @@
   ::
       %setkey
     ::TODO  what about existing sending entries?
-    :-  ~
+    :-  get-nonce
     ?~  pk=(de:base16:mimes:html pk.action)
       state
     state(pk q.u.pk)
@@ -432,6 +465,12 @@
       ==
     [(send-roll nonce) state]
   [[set-timer cards] state]
+::  +get-nonce: retrieves the latest nonce
+::
+++  get-nonce
+  ^-  (list card)
+  (start-thread:spider /nonce [%aggregator-nonce !>([endpoint pk])])
+::
 ::  +send-roll: start thread to submit roll from :sending to l1
 ::
 ++  send-roll
@@ -456,9 +495,9 @@
       nonce
       (~(got by sending) nonce)
   ==
-::  +on-thread-result: await resend after thread success or failure
+::  +on-batch-result: await resend after thread success or failure
 ::
-++  on-thread-result
+++  on-batch-result
   |=  [nonce=@ud result=(each @ud @t)]
   ^-  (quip card _state)
   ::  update gas price for this tx in state
