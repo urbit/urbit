@@ -332,12 +332,13 @@
 ::
 ++  hash-raw-tx
   |=  =raw-tx:naive
+  ^-  @ux
   (hash-tx raw.raw-tx)
 ::
 ++  part-tx-to-full
   |=  =part-tx
   ^-  [octs tx:naive]
-  ?+    -.part-tx  !!
+  ?-    -.part-tx
       %raw
     ?~  batch=(parse-raw-tx:naive q.raw.part-tx)
       ~&  %parse-failed
@@ -395,6 +396,22 @@
     [force nas]
   [& +.u.nex]
 ::
+++  get-address
+  |=  [=tx:naive nas=^state:naive]
+  ^-  [address:ethereum nonce:naive]
+  ?~  point=(~(get by points.nas) ship.from.tx)
+    !!
+  :_  next-nonce
+  =,  own.u.point
+  =<  address
+  ?-  proxy.from.tx
+    %own       owner
+    %spawn     spawn-proxy
+    %manage    management-proxy
+    %vote      voting-proxy
+    %transfer  transfer-proxy
+  ==
+::
 ++  on-action
   |=  =action
   ^-  (quip card _state)
@@ -448,13 +465,16 @@
   |=  [force=? =raw-tx:naive]
   ^-  [success=? _state]
   =/  [nep=_pending nas=^state:naive]  pending-state
-  =|  success=?
-  ::  TODO: actually use try-apply when proper Tx signing in place
-  ::
-  :: =^  success  nas
-  ::   (try-apply nas force raw-tx)
+  =^  success  nas
+    (try-apply nas force raw-tx)
   ::TODO  want to notify about dropped pendings, or no? client prolly polls...
   =?  pending  success  (snoc nep [force raw-tx])
+  =.  finding
+    %+  ~(put by finding)
+      (hash-raw-tx raw-tx)
+    ?:  =(success %.n)
+      %failed
+    (get-address tx.raw-tx nas)
   ::TODO  cache nas?
   [success state]
 ::  +set-timer: %wait until next whole :frequency
