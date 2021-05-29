@@ -95,7 +95,7 @@
     =.  contract  naive:local-contracts:azimuth
     =.  chain-id  chain-id:local-contracts:azimuth
     :_  this
-    [%pass /azimuth %agent [our.bowl %azimuth] %watch /(scot %p our.bowl)]~
+    [%pass /azimuth %agent [our.bowl %azimuth] %watch /aggregator]~
   ::
   ++  on-save  !>(state)
   ++  on-load
@@ -418,7 +418,7 @@
   ::
       %subs
     :_  state
-    [%pass /azimuth %agent [our.bowl %azimuth] %watch /(scot %p our.bowl)]~
+    [%pass /azimuth %agent [our.bowl %azimuth] %watch /aggregator]~
   ::
       %setkey
     ::TODO  what about existing sending entries?
