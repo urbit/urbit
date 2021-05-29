@@ -125,6 +125,16 @@
   :-  [%give %fact ~[path] %azimuth-udiffs !>(~[i.udiffs])]
   $(udiffs t.udiffs)
 ::
+++  aggregator-update
+  |=  effects=(list tagged-diff)
+  ^-  (list card:agent:gall)
+  %+  murn  effects
+  |=  tag=tagged-diff
+  ^-  (unit card:agent:gall)
+  ?.  ?=(%tx +<.tag)  ~
+  %-  some
+  ^-  card:agent:gall
+  [%give %fact ~[/aggregator] %naive-diffs !>(+.tag)]
 ++  start
   |=  [state=app-state our=ship dap=term]
   ^-  card:agent:gall
@@ -242,9 +252,9 @@
   |=  =path
   ^-  (quip card:agent:gall _this)
   ?<  =(/sole/drum path)
-  ?>  ?=(?(~ [@ ~]) path)
   =/  who=(unit ship)
     ?~  path  ~
+    ?:  ?=([@ ~] path)  ~
     `(slav %p i.path)
   =.  whos.state
     ?~  who
@@ -298,7 +308,10 @@
       ==
     loglist.diff
   ::
-  [(jael-update (to-udiffs effects)) this]
+  :_  this
+  %+  weld
+    (aggregator-update effects)
+  (jael-update (to-udiffs effects))
 ::
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
