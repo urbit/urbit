@@ -27,9 +27,17 @@
       [%watch url=@ta]
   ==
 +$  tagged-diff  [=id:block diff:naive]
+::
++$  network  ?(%mainnet %ropsten %local)
 --
 ::
 |%
+++  net
+  ^-  network
+  ::  TODO: add poke action to allow switching?
+  ::        eth snapshot could also be considered
+  ::
+  %mainnet
 ::  TODO: maybe flop the endianness here so metamask signs it in normal
 ::  order?
 ::
@@ -61,15 +69,23 @@
   (hex-to-num:ethereum data)
 ::
 ++  run-logs
-  |=  [nas=^state:naive logs=(list event-log:rpc:ethereum)]
+  |=  [nas=^state:naive logs=(list event-log:rpc:ethereum) =network]
   ^-  [(list tagged-diff) ^state:naive]
+  =/  [contract=@ux chain-id=@]
+    =<  [azimuth chain-id]
+    =,  azimuth
+    ?-  network
+      %mainnet  mainnet-contracts
+      %ropsten  ropsten-contracts
+      %local    local-contracts
+    ==
   ?~  logs
     `nas
   ?~  mined.i.logs
     $(logs t.logs)
   =^  raw-effects  nas
     =/  =^input:naive
-      ?:  =(azimuth:contracts:azimuth address.i.logs)
+      ?:  =(contract address.i.logs)
         =/  data  (data-to-hex data.i.logs)
         =/  =event-log:naive
           [address.i.logs data topics.i.logs]
@@ -79,7 +95,7 @@
       [%bat u.input.u.mined.i.logs]
     =/  res
       %-  mule
-      |.((%*(. naive lac |) verifier chain-id:contracts:azimuth nas input))
+      |.((%*(. naive lac |) verifier chain-id nas input))
     ?-  -.res
       %&  p.res
       %|  ((slog 'naive-fail' p.res) `nas)
@@ -130,16 +146,36 @@
   %-  some
   ^-  card:agent:gall
   [%give %fact ~[/aggregator] %naive-diffs !>(+.tag)]
+::
+++  get-contract
+  |=  =network
+  ^-  [contract=@ux chain-id=@]
+  =<  [azimuth chain-id]
+  =,  azimuth
+  ?-  network
+    %mainnet  mainnet-contracts
+    %ropsten  ropsten-contracts
+    %local    local-contracts
+  ==
+::
 ++  start
-  |=  [state=app-state our=ship dap=term]
+  |=  [state=app-state =network our=ship dap=term]
   ^-  card:agent:gall
+  =/  [azimuth=@ux naive=@ux launch=@ud]
+    =<  [azimuth naive launch]
+    =,  azimuth
+    ?-  network
+      %mainnet  mainnet-contracts
+      %ropsten  ropsten-contracts
+      %local    local-contracts
+    ==
   =/  args=vase  !>
     :+  %watch  /[dap]
     ^-  config:eth-watcher
     :*  url.state  =(%czar (clan:title our))  ~m5  ~h30
-        (max launch:contracts:azimuth last-snap)
-        ~[azimuth:contracts:azimuth]
-        ~[naive:contracts:azimuth]
+        (max launch last-snap)
+        ~[azimuth]
+        ~[naive]
         (topics whos.state)
     ==
   [%pass /wa %agent [our %eth-watcher] %poke %eth-watcher-poke args]
@@ -217,7 +253,7 @@
     ?+    q.vase  !!
         %rerun
       ~&  [%rerunning (lent logs.state)]
-      =^  effects  nas.state  (run-logs *^state:naive logs.state)
+      =^  effects  nas.state  (run-logs *^state:naive logs.state net)
       `this
     ::
         %resub
@@ -240,7 +276,7 @@
       %listen  [[%pass /lo %arvo %j %listen (silt whos.poke) source.poke]~ this]
       %watch
     =.  url.state  url.poke
-    [[(start state [our dap]:bowl) ~] this]
+    [[(start state net [our dap]:bowl) ~] this]
   ==
 ::
 ++  on-watch
@@ -256,7 +292,7 @@
       ~
     (~(put in whos.state) u.who)
   :_  this  :_  ~
-  (start state [our dap]:bowl)
+  (start state net [our dap]:bowl)
 ::
 ++  on-leave  on-leave:def
 ++  on-peek
@@ -295,13 +331,14 @@
     ==
   =?  nas.state  ?=(%history -.diff)  *^state:naive
   =^  effects  nas.state
-    %+  run-logs
-      ?-  -.diff
-        ::  %history  *^state:naive
-        %history  nas.state
-        %logs     nas.state
-      ==
-    loglist.diff
+    %^    run-logs
+        ?-  -.diff
+          ::  %history  *^state:naive
+          %history  nas.state
+          %logs     nas.state
+        ==
+      loglist.diff
+    net
   ::
   :_  this
   %+  weld
