@@ -144,7 +144,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const Description = () => (
     <TruncatedText
       display={['none','inline']}
-      mono={workspace === '/messages' && !urbitOb.isValidPatp(title)}
+      mono={workspace === '/messages' && !association?.metadata?.description}
       color='gray'
       mb={0}
       minWidth={0}
@@ -152,7 +152,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       flexShrink={1}
       disableRemoteContent
     >
-      {workspace === '/messages'
+      {workspace === '/messages' && !association?.metadata?.description
         ? recipient
         : association?.metadata?.description}
     </TruncatedText>
