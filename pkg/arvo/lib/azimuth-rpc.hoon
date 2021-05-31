@@ -360,7 +360,8 @@
     [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
   %-  some
-  noun+!>([u.sig u.from u.data])
+  :-  %aggregator-action
+  !>([%submit | u.sig %ful u.raw u.from %transfer-point u.data])
 ::
 ++  configure-keys
   |=  [id=@t params=(map @t json)]
@@ -376,7 +377,8 @@
     [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
   %-  some
-  noun+!>([u.sig u.from u.data])
+  :-  %aggregator-action
+  !>([%submit | u.sig %ful u.raw u.from %configure-keys u.data])
 ::
 ++  spawn
   |=  [id=@t params=(map @t json)]
@@ -391,7 +393,8 @@
     [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
   %-  some
-  aggregator-action+!>([%submit | u.sig %ful u.raw u.from %spawn u.data])
+  :-  %aggregator-action
+  !>([%submit | u.sig %ful u.raw u.from %spawn u.data])
 ::
 ++  escape            sponsor:rpc-res
 ++  cancel-escape     sponsor:rpc-res
