@@ -71,14 +71,7 @@
 ++  run-logs
   |=  [nas=^state:naive logs=(list event-log:rpc:ethereum) =network]
   ^-  [(list tagged-diff) ^state:naive]
-  =/  [contract=@ux chain-id=@]
-    =<  [azimuth chain-id]
-    =,  azimuth
-    ?-  network
-      %mainnet  mainnet-contracts
-      %ropsten  ropsten-contracts
-      %local    local-contracts
-    ==
+  =/  [contract=@ux * chain-id=@ *]  (get-network network)
   ?~  logs
     `nas
   ?~  mined.i.logs
@@ -147,10 +140,10 @@
   ^-  card:agent:gall
   [%give %fact ~[/aggregator] %naive-diffs !>(+.tag)]
 ::
-++  get-contract
+++  get-network
   |=  =network
-  ^-  [contract=@ux chain-id=@]
-  =<  [azimuth chain-id]
+  ^-  [@ux @ux @ @]
+  =<  [azimuth naive chain-id launch]
   =,  azimuth
   ?-  network
     %mainnet  mainnet-contracts
@@ -161,14 +154,7 @@
 ++  start
   |=  [state=app-state =network our=ship dap=term]
   ^-  card:agent:gall
-  =/  [azimuth=@ux naive=@ux launch=@ud]
-    =<  [azimuth naive launch]
-    =,  azimuth
-    ?-  network
-      %mainnet  mainnet-contracts
-      %ropsten  ropsten-contracts
-      %local    local-contracts
-    ==
+  =/  [azimuth=@ux naive=@ux * launch=@ud]  (get-network network)
   =/  args=vase  !>
     :+  %watch  /[dap]
     ^-  config:eth-watcher
