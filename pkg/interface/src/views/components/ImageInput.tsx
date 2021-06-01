@@ -34,7 +34,7 @@ const prompt = (
         fontWeight='500'
         position='absolute'
         left={2}
-        top='6px'
+        top='6.5px'
         style={{ pointerEvents: 'none' }}
         onSelect={e => e.preventDefault}
       >
@@ -66,7 +66,7 @@ const uploadingStatus = (uploading, meta) => {
       <Text
         position="absolute"
         left={2}
-        top={2}
+        top='6.5px'
         gray
         onSelect={e => e.preventDefault}
       >
@@ -83,7 +83,7 @@ const errorRetry = (meta, focus, uploading, clickUploadButton) => {
       <Text
         position='absolute'
         left={2}
-        top='6px'
+        top='6.5px'
         color='red'
         style={{ pointerEvents: 'none' }}
         onSelect={e => e.preventDefault}
