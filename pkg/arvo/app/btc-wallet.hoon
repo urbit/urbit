@@ -19,10 +19,26 @@
 ::
 +$  versioned-state
     $%  state-0
+        state-1
     ==
 ::
 +$  state-0
   $:  %0
+      prov=(unit provider)
+      walts=(map xpub:bc walt-0)
+      =btc-state
+      =history
+      curr-xpub=(unit xpub:bc)
+      =scans
+      =params
+      feybs=(map ship sats)
+      =piym
+      =poym
+      ahistorical-txs=(set txid)
+  ==
+::
++$  state-1
+  $:  %1
       prov=(unit provider)
       walts=(map xpub:bc walt)
       =btc-state
@@ -39,7 +55,7 @@
 +$  card  card:agent:gall
 ::
 --
-=|  state-0
+=|  state-1
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -69,7 +85,7 @@
       ==
   %_  this
       state
-    :*  %0
+    :*  %1
         ~
         *(map xpub:bc walt)
         *^btc-state
@@ -96,8 +112,16 @@
   =|  cards=(list card)
   |-
   ?-  -.ver
-      %0
+      %1
     [cards this(state ver)]
+  ::
+      %0
+    =/  new-walts=(map xpub:bc walt)
+      %-  ~(run by walts.ver)
+      |=  old-walt=walt-0
+      ^-  walt
+      old-walt(wilt +6:wilt.old-walt)
+    $(ver [%1 +.ver(walts new-walts)])
   ==
 ::
 ++  on-poke
@@ -790,7 +814,7 @@
     (handle-address-info address.p.upd utxos.p.upd used.p.upd)
     ::
       %tx-info
-    =/  [cards=(list card) sty=state-0]
+    =/  [cards=(list card) sty=state-1]
       (handle-tx-info info.p.upd)
     :_  sty
     [(poke-internal [%close-pym info.p.upd]) cards]
