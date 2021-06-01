@@ -1,11 +1,12 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
 import { GraphNode } from '@urbit/api';
-import bigInt from 'big-integer';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
+import { useGraph } from '~/logic/state/graph';
 import { Loading } from '~/views/components/Loading';
 import PostFeed from './PostFeed';
 import PostItem from './PostItem/PostItem';
+import { stringToArr, arrToString } from '~/views/components/ArrayVirtualScroller';
 
 export default function PostReplies(props) {
   const {
@@ -19,10 +20,35 @@ export default function PostReplies(props) {
     pendingSize
   } = props;
 
-  const graphResource = resourceFromPath(graphPath);
+  const graphRid = resourceFromPath(graphPath);
+  let graph = useGraph(graphRid.ship, graphRid.name);
 
-  let graph = props.graph;
   const shouldRenderFeed = Boolean(graph);
+
+  const locationUrl =
+    props.locationUrl.replace(`${baseUrl}/feed/replies`, '');
+  const index = stringToArr(locationUrl);
+
+  useEffect(() => {
+    if (graphRid.ship === '~zod' && graphRid.name === 'null') {
+      return;
+    }
+
+    if (index.length < 1) {
+      return;
+    }
+
+    const i = [];
+    for (const k of index) {
+      i.push(k);
+      //  TODO: why can't I use await?
+      api.graph.getNode(
+        graphRid.ship,
+        graphRid.name,
+        arrToString(i)
+      );
+    }
+  }, [graphPath, arrToString(index)]);
 
   if (!shouldRenderFeed) {
     return (
@@ -32,20 +58,14 @@ export default function PostReplies(props) {
     );
   }
 
-  const locationUrl =
-    props.locationUrl.replace(`${baseUrl}/feed`, '');
-  const nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
-    return bigInt(ind);
-  });
-
   let node: GraphNode;
   let parentNode;
-  nodeIndex.forEach((i, idx) => {
+  index.forEach((i, idx) => {
     if (!graph) {
       return null;
     }
     node = graph.get(i);
-    if(idx < nodeIndex.length - 1) {
+    if(idx < index.length - 1) {
       parentNode = node;
     }
     if (!node) {
@@ -62,7 +82,7 @@ export default function PostReplies(props) {
   if (!first) {
     return (
       <Col
-        key={locationUrl}
+        key={`/replies/${locationUrl}`}
         width="100%"
         height="100%"
         alignItems="center" overflowY="scroll"
@@ -70,12 +90,11 @@ export default function PostReplies(props) {
         <Box mt={3} width="100%" alignItems="center">
           <PostItem
             key={node.post.index}
-            // @ts-ignore withHovering prop pass is broken?
             node={node}
             graphPath={graphPath}
             association={association}
             api={api}
-            index={nodeIndex}
+            index={index}
             baseUrl={baseUrl}
             history={history}
             isParent={true}
@@ -104,7 +123,7 @@ export default function PostReplies(props) {
   return (
     <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl={1} pt={3}>
       <PostFeed
-        key={locationUrl}
+        key={`/replies/${locationUrl}`}
         graphPath={graphPath}
         graph={graph}
         grandparentNode={parentNode}

@@ -1,4 +1,4 @@
-import { Association, deSig, GraphNode, Graphs, resourceFromPath } from '@urbit/api';
+import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs } from '@urbit/api';
 import { useCallback } from 'react';
 import { BaseState, createState } from './base';
 
@@ -10,8 +10,10 @@ export interface GraphState extends BaseState<GraphState> {
       [index: string]: GraphNode;
     }
   };
+  flatGraphs: FlatGraphs;
+  threadGraphs: ThreadGraphs;
   pendingIndices: Record<string, any>;
-  graphTimesentMap: Record<string, any>;
+  graphTimesentMap: Record<number, string>;
   // getKeys: () => Promise<void>;
   // getTags: () => Promise<void>;
   // getTagQueries: () => Promise<void>;
@@ -25,6 +27,8 @@ export interface GraphState extends BaseState<GraphState> {
 // @ts-ignore investigate zustand types
 const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
+  flatGraphs: {},
+  threadGraphs: {},
   graphKeys: new Set(),
   looseNodes: {},
   pendingIndices: {},
@@ -128,11 +132,40 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, ['graphs', 'graphKeys', 'looseNodes', 'graphTimesentMap']);
+}, [
+  'graphs',
+  'graphKeys',
+  'looseNodes',
+  'graphTimesentMap',
+  'flatGraphs',
+  'threadGraphs'
+]);
 
 export function useGraph(ship: string, name: string) {
   return useGraphState(
     useCallback(s => s.graphs[`${deSig(ship)}/${name}`], [ship, name])
+  );
+}
+
+export function useFlatGraph(ship: string, name: string) {
+  return useGraphState(
+    useCallback(s => s.flatGraphs[`${deSig(ship)}/${name}`], [ship, name])
+  );
+}
+
+export function useThreadGraph(ship: string, name: string, index: string) {
+  return useGraphState(
+    useCallback(s => s.threadGraphs[`${deSig(ship)}/${name}/${index}`], [
+      ship,
+      name,
+      index
+    ])
+  );
+}
+
+export function useGraphTimesentMap(ship: string, name: string) {
+  return useGraphState(
+    useCallback(s => s.graphTimesentMap[`${deSig(ship)}/${name}`], [ship, name])
   );
 }
 

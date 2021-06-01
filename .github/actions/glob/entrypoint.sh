@@ -10,7 +10,7 @@ chmod 600 service-account
 chmod 600 id_ssh
 chmod 600 id_ssh.pub
 
-janeway release glob --dev --no-pill \
+janeway release glob-all --dev --no-pill \
     --credentials service-account \
     --ssh-key id_ssh \
     --do-it-live \

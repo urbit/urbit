@@ -53,16 +53,16 @@ const appIndex = function (apps) {
   const applications = [];
   Object.keys(apps)
     .filter((e) => {
-      return apps[e]?.type?.basic;
+      return !['weather','clock'].includes(e);
     })
     .sort((a, b) => {
       return a.localeCompare(b);
     })
     .map((e) => {
       const obj = result(
-        apps[e].type.basic.title,
-        apps[e].type.basic.linkedUrl,
-        apps[e].type.basic.title,
+        apps[e].type?.basic?.title || apps[e].type.custom?.tile || e,
+        apps[e]?.type.basic?.linkedUrl || apps[e]?.type.custom?.linkedUrl || '',
+        apps[e]?.type?.basic?.title || apps[e].type.custom?.tile || e,
         null
       );
       applications.push(obj);

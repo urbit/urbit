@@ -8,6 +8,8 @@ import { AddFeedBanner } from './AddFeedBanner';
 import { EmptyGroupHome } from './EmptyGroupHome';
 import { EnableGroupFeed } from './EnableGroupFeed';
 import { GroupFeed } from './GroupFeed';
+import { GroupFlatFeed } from './GroupFlatFeed';
+
 
 function GroupHome(props) {
   const {
@@ -61,13 +63,24 @@ function GroupHome(props) {
         />
       ) : null }
       <Route path={`${baseUrl}/feed`}>
-        <GroupFeed
-          graphPath={graphPath}
-          groupPath={groupPath}
-          vip={graphMetadata?.vip || ''}
-          api={api}
-          baseUrl={baseUrl}
-        />
+        { (graphMetadata?.vip === 'admin-feed') ? (
+            <GroupFeed
+              graphPath={graphPath}
+              groupPath={groupPath}
+              vip={graphMetadata?.vip || ''}
+              api={api}
+              baseUrl={baseUrl}
+            />
+          ) : (
+            <GroupFlatFeed
+              graphPath={graphPath}
+              groupPath={groupPath}
+              vip={graphMetadata?.vip || ''}
+              api={api}
+              baseUrl={baseUrl}
+            />
+          )
+        }
       </Route>
       <Route path={baseUrl} exact>
         <EmptyGroupHome
