@@ -34,23 +34,27 @@ const prompt = (
         fontWeight='500'
         position='absolute'
         left={2}
-        top='6.5px'
+        display='flex'
+        height='100%'
+        alignItems='center'
+        lineHeight={1}
         style={{ pointerEvents: 'none' }}
         onSelect={e => e.preventDefault}
       >
         Paste a link here
         {canUpload ? (
           <>
-            , or{' '}
+            , or
             <Text
               fontWeight="500"
               cursor="pointer"
               color="blue"
               style={{ pointerEvents: 'all' }}
+              mx='0.5ch'
               onClick={clickUploadButton}
             >
               upload
-            </Text>{' '}
+            </Text>
             a file
           </>
         ) : null}
@@ -66,7 +70,10 @@ const uploadingStatus = (uploading, meta) => {
       <Text
         position="absolute"
         left={2}
-        top='6.5px'
+        display='flex'
+        height='100%'
+        alignItems='center'
+        lineHeight={1}
         gray
         onSelect={e => e.preventDefault}
       >
@@ -83,7 +90,10 @@ const errorRetry = (meta, focus, uploading, clickUploadButton) => {
       <Text
         position='absolute'
         left={2}
-        top='6.5px'
+        display='flex'
+        height='100%'
+        alignItems='center'
+        lineHeight={1}
         color='red'
         style={{ pointerEvents: 'none' }}
         onSelect={e => e.preventDefault}
@@ -93,6 +103,7 @@ const errorRetry = (meta, focus, uploading, clickUploadButton) => {
           fontWeight='500'
           cursor='pointer'
           color='blue'
+          mx='0.5ch'
           style={{ pointerEvents: 'all' }}
           onClick={clickUploadButton}
         >
