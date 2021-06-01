@@ -47,6 +47,7 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
   const [code, toggleCode] = useToggleState(false);
   const { canUpload, promptUpload, uploading } = useStorage();
   const [postContent, setPostContent] = useState('');
+
   const uploadImage = useCallback(async () => {
     try {
       setDisabled(true);

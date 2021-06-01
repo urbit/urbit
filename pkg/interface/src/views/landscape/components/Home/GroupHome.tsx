@@ -1,5 +1,4 @@
 import { Box } from '@tlon/indigo-react';
-import { GroupConfig, resourceFromPath } from '@urbit/api';
 import React from 'react';
 import { Route } from 'react-router-dom';
 import useGroupState from '~/logic/state/group';
@@ -8,7 +7,8 @@ import { AddFeedBanner } from './AddFeedBanner';
 import { EmptyGroupHome } from './EmptyGroupHome';
 import { EnableGroupFeed } from './EnableGroupFeed';
 import { GroupFeed } from './GroupFeed';
-import {getFeedPath} from '~/logic/lib/util';
+import { getFeedPath } from '~/logic/lib/util';
+import { GroupFlatFeed } from './GroupFlatFeed';
 
 function GroupHome(props) {
   const {
@@ -16,8 +16,6 @@ function GroupHome(props) {
     groupPath,
     baseUrl
   } = props;
-
-  const { ship } = resourceFromPath(groupPath);
 
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(state => state.groups);
@@ -27,8 +25,6 @@ function GroupHome(props) {
   const feedPath = getFeedPath(association);
 
   const askFeedBanner = feedPath === undefined;
-
-  const isFeedEnabled = !!feedPath;
 
   const graphMetadata = associations?.graph[feedPath]?.metadata;
 
@@ -54,13 +50,24 @@ function GroupHome(props) {
         />
       ) : null }
       <Route path={`${baseUrl}/feed`}>
-        <GroupFeed
-          graphPath={feedPath}
-          groupPath={groupPath}
-          vip={graphMetadata?.vip || ''}
-          api={api}
-          baseUrl={baseUrl}
-        />
+        { (graphMetadata?.vip === 'admin-feed') ? (
+            <GroupFeed
+              graphPath={feedPath}
+              groupPath={groupPath}
+              vip={graphMetadata?.vip || ''}
+              api={api}
+              baseUrl={baseUrl}
+            />
+          ) : (
+            <GroupFlatFeed
+              graphPath={feedPath}
+              groupPath={groupPath}
+              vip={graphMetadata?.vip || ''}
+              api={api}
+              baseUrl={baseUrl}
+            />
+          )
+        }
       </Route>
       <Route path={baseUrl} exact>
         <EmptyGroupHome

@@ -10,7 +10,7 @@ import { useField } from 'formik';
 import React, { FormEvent } from 'react';
 import { hexToUx } from '~/logic/lib/util';
 
-type ColorInputProps = Parameters<typeof Col>[0] & {
+export type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
   label?: string;
   placeholder?: string;

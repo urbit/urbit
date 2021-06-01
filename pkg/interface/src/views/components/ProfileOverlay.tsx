@@ -1,13 +1,8 @@
 import {
   BaseImage, Box,
 
-
-
-
-
   BoxProps,
   Center, Col,
-
 
   Icon, Row,
 
@@ -52,6 +47,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
     children,
     ...rest
   } = props;
+
   const [open, _setOpen] = useState(false);
   const [coords, setCoords] = useState({});
   const [visible, setVisible] = useState(false);
