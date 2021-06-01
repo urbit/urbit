@@ -245,7 +245,7 @@
       app-indices       (rebuild-app-indices associations.old)
     ==
   ?:  ?=(%10 -.old)
-    $(-.old %11, associations.old (strip-dm-assoc associations.old))
+    $(-.old %11, associations.old (hide-dm-assoc associations.old))
   ?:  ?=(%9 -.old)
     =/  groups  
       (fall (~(get by (rebuild-app-indices associations.old)) %groups) ~)
@@ -286,16 +286,19 @@
   ::  pre-breach, can safely throw away
   loop(old *state-8)
   ::
-  ++  strip-dm-assoc
+  ++  hide-dm-assoc
     |=  assoc=associations:store
     ^-  associations:store
     %-  ~(gas by *associations:store)
-    %+  murn  ~(tap by assoc)
+    %+  turn  ~(tap by assoc)
     |=  [m=md-resource:store [g=resource met=metadatum:store]]
-    ^-  (unit [md-resource:store association:store])
-    ?.  ?=(%graph app-name.m)  `[m [g met]]
-    ?^  (rush name.resource.m ;~(pfix (jest 'dm--') fed:ag))  ~
-    `[m [g met]]
+    ^-  [md-resource:store association:store]
+    =?    hidden.met
+        ?&  ?=(^ (rush name.resource.m ;~(pfix (jest 'dm--') fed:ag)))  
+            ?=(%graph app-name.m)
+        ==
+      %.y
+    [m [g met]]
   ::
   ++  associations-2-to-3
     |=  assoc=associations-2
