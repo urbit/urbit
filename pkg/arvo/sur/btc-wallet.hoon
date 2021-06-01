@@ -59,6 +59,7 @@
 +$  wach  (map address addi)
 +$  scon  $~([max-index max-index] (pair idx idx))
 +$  wilt  _bip32
++$  wamp  [prv=@ pub=[x=@ y=@] cad=@ dep=@ud ind=@ud pif=@]
 ::
 ::  walt: wallet datastructure
 ::  scanned: whether the wallet's addresses have been checked for prior activity
@@ -66,11 +67,25 @@
 ::  max-gap: maximum number of consec blank addresses before wallet stops scanning
 ::  confs:   confirmations required (after this is hit for an address, wallet stops refreshing it)
 ::
-+$  walt
++$  walt-0
   $:  =xpub
       =network
       =fprint
       =wilt
+      =bipt
+      =wach
+      =nixt
+      scanned=?
+      scan-to=scon
+      max-gap=@ud
+      confs=@ud
+  ==
+::
++$  walt
+  $:  =xpub
+      =network
+      =fprint
+      =wamp
       =bipt
       =wach
       =nixt

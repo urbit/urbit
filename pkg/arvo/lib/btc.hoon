@@ -39,7 +39,7 @@
   :*  xpub
       network
       fprint
-      (from-extended:bip32 (trip xpub))
+      +6:(from-extended:bip32 (trip xpub))
       bipt
       *wach
       [0 0]
@@ -170,7 +170,7 @@
     ^-  hexb:bc
     =/  pk=@ux
       %-  compress-point:ecc
-      pub:(derive-public:(derive-public:wilt.w (@ chyg)) idx)
+      pub:(derive-public:(~(derive-public bip32 wamp.w) chyg) idx)
     [(met 3 pk) pk]
   ::
   ++  hdkey
