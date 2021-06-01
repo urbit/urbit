@@ -55,7 +55,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
 
   const channelName = (values) => {
     if (values.name)
-      return value.name;
+      return values.name;
     if (!values.name && workspace?.type === 'messages') {
       const joinedShips = values.ships
         .filter(Boolean)
