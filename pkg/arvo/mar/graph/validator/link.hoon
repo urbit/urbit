@@ -49,7 +49,7 @@
 ++  grab
   |%
   ++  noun
-    |=  p=*
+    |:  p=`*`%*(. *indexed-post index.p [0 0 ~])
     =/  ip  ;;(indexed-post p)
     ?+    index.p.ip  ~|(index+index.p.ip !!)
         ::  top-level link post; title and url
