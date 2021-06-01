@@ -46,7 +46,13 @@ const prompt = (field, focus, uploading, meta, clickUploadButton) => {
 const uploadingStatus = (uploading, meta) => {
   if (uploading && meta.error === undefined) {
     return (
-      <Text position='absolute' left={2} top={2} gray>
+      <Text
+        position="absolute"
+        left={2}
+        top={2}
+        gray
+        onSelect={e => e.preventDefault}
+      >
         Uploading...
       </Text>
     );
@@ -63,6 +69,7 @@ const errorRetry = (meta, uploading, clickUploadButton) => {
         top='6px'
         color='red'
         style={{ pointerEvents: 'none' }}
+        onSelect={e => e.preventDefault}
       >
         {meta.error}{', '}please{' '}
         <Text
