@@ -390,6 +390,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     const data = await this.scry<any>('graph-store',
       `/shallow-children/${ship}/${name}${idx}`
     );
+    data['graph-update'].fetch = true;
     this.store.handleEvent({ data });
   }
 
