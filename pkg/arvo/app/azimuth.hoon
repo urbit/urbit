@@ -283,6 +283,9 @@
   |=  =path
   ^-  (quip card:agent:gall _this)
   ?<  =(/sole/drum path)
+  ?:  =(/aggregator path)
+    :_  this
+    [%give %fact ~ %naive-state !>(nas.state)]~
   =/  who=(unit ship)
     ?~  path  ~
     ?:  ?=([@ ~] path)  ~
