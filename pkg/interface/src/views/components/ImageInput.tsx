@@ -1,14 +1,11 @@
 import {
   BaseInput, Box,
-
   Button,
-
   Icon, Label, Row, StatelessTextInput as Input,
-
   Text
 } from '@tlon/indigo-react';
 import { useField } from 'formik';
-import React, { ReactElement, useCallback, useRef } from 'react';
+import React, { ReactElement, useCallback, useRef, useState } from 'react';
 import useStorage from '~/logic/lib/useStorage';
 
 export type ImageInputProps = Parameters<typeof Box>[0] & {
@@ -17,16 +14,17 @@ export type ImageInputProps = Parameters<typeof Box>[0] & {
   placeholder?: string;
 };
 
-const prompt = (field, uploading, meta, clickUploadButton) => {
-  if (!field.value && !uploading && meta.error === undefined) {
+const prompt = (field, focus, uploading, meta, clickUploadButton) => {
+  if (!focus && !field.value && !uploading && meta.error === undefined) {
     return (
       <Text
         color='black'
         fontWeight='500'
         position='absolute'
         left={2}
-        top={2}
+        top='6px'
         style={{ pointerEvents: 'none' }}
+        onSelect={e => e.preventDefault}
       >
         Paste a link here, or{' '}
         <Text
@@ -62,7 +60,7 @@ const errorRetry = (meta, uploading, clickUploadButton) => {
       <Text
         position='absolute'
         left={2}
-        top={2}
+        top='6px'
         color='red'
         style={{ pointerEvents: 'none' }}
       >
@@ -111,6 +109,7 @@ export function ImageInput(props: ImageInputProps): ReactElement {
   const { id, label, caption } = props;
   const { uploadDefault, canUpload, uploading } = useStorage();
   const [field, meta, { setValue, setError }] = useField(id);
+  const [focus, setFocus] = useState(false);
   const ref = useRef<HTMLInputElement | null>(null);
 
   const onImageUpload = useCallback(async () => {
@@ -135,6 +134,11 @@ export function ImageInput(props: ImageInputProps): ReactElement {
     setValue('');
   }, []);
 
+  const handleBlur = (e) => {
+    field.onBlur(e);
+    setFocus(false);
+  };
+
   return (
     <Box display="flex" flexDirection="column" {...props}>
       <Label htmlFor={id}>{label}</Label>
@@ -144,16 +148,18 @@ export function ImageInput(props: ImageInputProps): ReactElement {
         </Label>
       ) : null}
       <Row mt={2} alignItems="flex-end" position='relative' width='100%'>
-        {prompt(field, uploading, meta, clickUploadButton)}
+        {prompt(field, focus, uploading, meta, clickUploadButton)}
         {clearButton(field, uploading, clearEvt)}
         {uploadingStatus(uploading, meta)}
         {errorRetry(meta, uploading, clickUploadButton)}
         <Box background='white' borderRadius={2} width='100%'>
           <Input
+            {...field}
             width='100%'
             type={'text'}
+            onFocus={() => setFocus(true)}
+            onBlur={e => handleBlur(e)}
             hasError={meta.touched && meta.error !== undefined}
-            {...field}
           />
         </Box>
         {canUpload && (
