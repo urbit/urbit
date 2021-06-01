@@ -14,8 +14,20 @@ export type ImageInputProps = Parameters<typeof Box>[0] & {
   placeholder?: string;
 };
 
-const prompt = (field, focus, uploading, meta, clickUploadButton) => {
-  if (!focus && !field.value && !uploading && meta.error === undefined) {
+const prompt = (
+  field,
+  focus,
+  uploading,
+  meta,
+  clickUploadButton,
+  canUpload
+) => {
+  if (
+    !focus &&
+    !field.value &&
+    !uploading &&
+    meta.error === undefined
+  ) {
     return (
       <Text
         color='black'
@@ -26,17 +38,22 @@ const prompt = (field, focus, uploading, meta, clickUploadButton) => {
         style={{ pointerEvents: 'none' }}
         onSelect={e => e.preventDefault}
       >
-        Paste a link here, or{' '}
-        <Text
-          fontWeight='500'
-          cursor='pointer'
-          color='blue'
-          style={{ pointerEvents: 'all' }}
-          onClick={clickUploadButton}
-        >
-          upload
-        </Text>{' '}
-        a file
+        Paste a link here
+        {canUpload ? (
+          <>
+            , or{' '}
+            <Text
+              fontWeight="500"
+              cursor="pointer"
+              color="blue"
+              style={{ pointerEvents: 'all' }}
+              onClick={clickUploadButton}
+            >
+              upload
+            </Text>{' '}
+            a file
+          </>
+        ) : null}
       </Text>
     );
   }
@@ -157,7 +174,7 @@ export function ImageInput(props: ImageInputProps): ReactElement {
         </Label>
       ) : null}
       <Row mt={2} alignItems="flex-end" position='relative' width='100%'>
-        {prompt(field, focus, uploading, meta, clickUploadButton)}
+        {prompt(field, focus, uploading, meta, clickUploadButton, canUpload)}
         {clearButton(field, uploading, clearEvt)}
         {uploadingStatus(uploading, meta)}
         {errorRetry(meta, focus, uploading, clickUploadButton)}
