@@ -75,7 +75,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
         props.association.resource,
         msg.index
       );
-      return `${url}\n~${msg.author} : `;
+      return `${url}\n~${msg.author}: `;
     },
     [association]
   );

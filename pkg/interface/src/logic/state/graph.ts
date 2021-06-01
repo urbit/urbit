@@ -1,7 +1,7 @@
-import { Graphs, GraphNode, deSig, Association, resourceFromPath } from "@urbit/api";
-import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import { patp2dec } from 'urbit-ob';
 
+import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs } from '@urbit/api';
 import { useCallback } from 'react';
 import { BaseState, createState } from './base';
 
@@ -13,10 +13,12 @@ export interface GraphState extends BaseState<GraphState> {
       [index: string]: GraphNode;
     }
   };
+  flatGraphs: FlatGraphs;
+  threadGraphs: ThreadGraphs;
   pendingIndices: Record<string, any>;
   pendingDms: Set<string>;
   screening: boolean;
-  graphTimesentMap: Record<string, any>;
+  graphTimesentMap: Record<number, string>;
   // getKeys: () => Promise<void>;
   // getTags: () => Promise<void>;
   // getTagQueries: () => Promise<void>;
@@ -30,12 +32,14 @@ export interface GraphState extends BaseState<GraphState> {
 // @ts-ignore investigate zustand types
 const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
+  flatGraphs: {},
+  threadGraphs: {},
   graphKeys: new Set(),
   looseNodes: {},
   pendingIndices: {},
   graphTimesentMap: {},
   pendingDms: new Set(),
-  screening: false,
+  screening: false
   // getKeys: async () => {
   //   const api = useApi();
   //   const keys = await api.scry({
@@ -135,11 +139,41 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, ['graphs', 'pendingDms', 'graphKeys', 'looseNodes', 'graphTimesentMap']);
+}, [
+  'graphs',
+  'graphKeys',
+  'looseNodes',
+  'graphTimesentMap',
+  'flatGraphs',
+  'threadGraphs',
+  'pendingDms'
+]);
 
 export function useGraph(ship: string, name: string) {
   return useGraphState(
     useCallback(s => s.graphs[`${deSig(ship)}/${name}`], [ship, name])
+  );
+}
+
+export function useFlatGraph(ship: string, name: string) {
+  return useGraphState(
+    useCallback(s => s.flatGraphs[`${deSig(ship)}/${name}`], [ship, name])
+  );
+}
+
+export function useThreadGraph(ship: string, name: string, index: string) {
+  return useGraphState(
+    useCallback(s => s.threadGraphs[`${deSig(ship)}/${name}/${index}`], [
+      ship,
+      name,
+      index
+    ])
+  );
+}
+
+export function useGraphTimesentMap(ship: string, name: string) {
+  return useGraphState(
+    useCallback(s => s.graphTimesentMap[`${deSig(ship)}/${name}`], [ship, name])
   );
 }
 

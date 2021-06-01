@@ -35,6 +35,7 @@ const Template: Story<GraphContentProps> = args => (
 
 export const Omnibus = Template.bind({});
 Omnibus.args = {
+  tall: true,
   contents: [
     {
       text: `# Structure of Document

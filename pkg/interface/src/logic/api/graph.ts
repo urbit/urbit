@@ -6,9 +6,6 @@ import { decToUd, deSig, resourceAsPath, unixToDa } from '~/logic/lib/util';
 import { makeResource, resourceFromPath } from '../lib/group';
 import { StoreState } from '../store/type';
 import BaseApi from './base';
-import {doOptimistically} from '../state/base';
-import useGraphState from '../state/graph';
-import { addNodes } from '../reducers/graph-update';
 
 export const createBlankNodeWithChildPost = (
   parentIndex = '',
@@ -206,9 +203,9 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   addDmMessage(ship: Patp, contents: Content[]) {
-    const post = createPost(contents, `/${patp2dec(ship)}`)
+    const post = createPost(contents, `/${patp2dec(ship)}`);
     const action = {
-      "add-nodes": {
+      'add-nodes': {
         resource: { ship: `~${window.ship}`, name: 'dm-inbox' },
         nodes: {
           [post.index]: {
@@ -217,7 +214,7 @@ export default class GraphApi extends BaseApi<StoreState> {
           }
         }
       }
-    }
+    };
     this.action('dm-hook', 'graph-update-2', action);
     markPending(action['add-nodes'].nodes);
     action['add-nodes'].resource.ship =
@@ -228,13 +225,13 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   acceptDm(ship: Patp) {
-    return this.action('dm-hook', 'dm-hook-action', { "accept" : ship });
+    return this.action('dm-hook', 'dm-hook-action', { 'accept' : ship });
   }
 
   declineDm(ship: Patp) {
-    return this.action('dm-hook', 'dm-hook-action', { "decline" : ship });
+    return this.action('dm-hook', 'dm-hook-action', { 'decline' : ship });
   }
-  
+
   setScreen(screen: boolean) {
     return this.action('dm-hook', 'dm-hook-action', { screen });
   }
@@ -375,6 +372,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     const data = await this.scry<any>('graph-store',
        `/node-siblings/older/${ship}/${resource}/${count}${idx}`
     );
+    data['graph-update'].fetch = true;
     this.store.handleEvent({ data });
   }
 
@@ -383,6 +381,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     const data = await this.scry<any>('graph-store',
        `/node-siblings/younger/${ship}/${resource}/${count}${idx}`
      );
+    data['graph-update'].fetch = true;
     this.store.handleEvent({ data });
   }
 
@@ -390,8 +389,41 @@ export default class GraphApi extends BaseApi<StoreState> {
     const idx = index.split('/').map(decToUd).join('/');
     const data = await this.scry<any>('graph-store',
       `/shallow-children/${ship}/${name}${idx}`
-    )
+    );
     this.store.handleEvent({ data });
+  }
+
+  async getDeepOlderThan(ship: string, resource: string, startTime = null, count: number) {
+    const start = startTime ? decToUd(startTime) : 'null';
+    const data = await this.scry<any>('graph-store',
+      `/deep-nodes-older-than/${ship}/${resource}/${count}/${start}`
+    );
+    data['graph-update'].fetch = true;
+    const node = data['graph-update'];
+    this.store.handleEvent({
+      data: {
+        'graph-update-flat': node,
+        'graph-update': node
+      }
+    });
+  }
+
+  async getFirstborn(ship: string, resource: string, index = '') {
+    const idx = index.split('/').map(decToUd).join('/');
+    const data = await this.scry<any>('graph-store',
+      `/firstborn/${ship}/${resource}${idx}`
+    );
+    data['graph-update'].fetch = true;
+    const node = data['graph-update'];
+    this.store.handleEvent({
+      data: {
+        'graph-update-thread': {
+          index,
+          ...node
+        },
+        'graph-update': node
+      }
+    });
   }
 
   getGraphSubset(ship: string, resource: string, start: string, end: string) {
@@ -411,6 +443,7 @@ export default class GraphApi extends BaseApi<StoreState> {
       'graph-store',
       `/node/${ship}/${resource}${idx}`
     );
+    data['graph-update'].fetch = true;
     const node = data['graph-update'];
     this.store.handleEvent({
       data: {
