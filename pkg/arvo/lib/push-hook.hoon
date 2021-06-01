@@ -271,6 +271,10 @@
       ~/  %on-poke
       |=  [=mark =vase]
       ^-  (quip card:agent:gall agent:gall)
+      ?:  =(mark %kick)
+        ?>  (team:title [our src]:bowl)
+        :_  this
+        (kick:io (turn ~(val by sup.bowl) tail))^~
       ?:  =(mark %push-hook-action)
         ?>  (team:title our.bowl src.bowl)
         =^  cards  state
