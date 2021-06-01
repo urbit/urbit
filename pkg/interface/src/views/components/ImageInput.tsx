@@ -44,7 +44,7 @@ const prompt = (field, focus, uploading, meta, clickUploadButton) => {
 };
 
 const uploadingStatus = (uploading, meta) => {
-  if (uploading && meta.error === undefined) {
+  if (meta.error === undefined && uploading) {
     return (
       <Text
         position="absolute"
@@ -60,8 +60,8 @@ const uploadingStatus = (uploading, meta) => {
   return null;
 };
 
-const errorRetry = (meta, uploading, clickUploadButton) => {
-  if (meta.error !== undefined) {
+const errorRetry = (meta, focus, uploading, clickUploadButton) => {
+  if (!focus && meta.error !== undefined) {
     return (
       <Text
         position='absolute'
@@ -119,20 +119,6 @@ export function ImageInput(props: ImageInputProps): ReactElement {
   const [focus, setFocus] = useState(false);
   const ref = useRef<HTMLInputElement | null>(null);
 
-  const onImageUpload = useCallback(async () => {
-    const file = ref.current?.files?.item(0);
-
-    if (!file || !canUpload) {
-      return;
-    }
-    try {
-      const url = await uploadDefault(file);
-      setValue(url);
-    } catch (e) {
-      setError(e.message);
-    }
-  }, [ref.current, uploadDefault, canUpload, setValue]);
-
   const clickUploadButton = useCallback(() => {
     ref.current?.click();
   }, [ref]);
@@ -146,6 +132,22 @@ export function ImageInput(props: ImageInputProps): ReactElement {
     setFocus(false);
   };
 
+  const onImageUpload = useCallback(async () => {
+    const file = ref.current?.files?.item(0);
+
+    if (!file || !canUpload) {
+      return;
+    }
+    try {
+      const url = await uploadDefault(file);
+      setFocus(false);
+      setValue(url);
+    } catch (e) {
+      setFocus(false);
+      setError(e.message);
+    }
+  }, [ref.current, uploadDefault, canUpload, setValue]);
+
   return (
     <Box display="flex" flexDirection="column" {...props}>
       <Label htmlFor={id}>{label}</Label>
@@ -158,7 +160,7 @@ export function ImageInput(props: ImageInputProps): ReactElement {
         {prompt(field, focus, uploading, meta, clickUploadButton)}
         {clearButton(field, uploading, clearEvt)}
         {uploadingStatus(uploading, meta)}
-        {errorRetry(meta, uploading, clickUploadButton)}
+        {errorRetry(meta, focus, uploading, clickUploadButton)}
         <Box background='white' borderRadius={2} width='100%'>
           <Input
             {...field}
