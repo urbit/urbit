@@ -46,14 +46,8 @@
     pass      pass:io
 ::
 ++  on-init  on-init:def
-++  on-save  !>(state)
-++  on-load    
-  |=  old=vase
-  ^-  (quip card _this)
-  =+  !<(sta=versioned-state old)
-  ?^  sta  `this(state sta)
-  :_  this(state *state-zero)
-  (poke-self:pass noun+!>(%clean-dm))^~
+++  on-save  !>(~)
+++  on-load  on-load:def
 ::
 ++  on-poke
   |=  [=mark =vase]
