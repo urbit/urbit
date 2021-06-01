@@ -31,13 +31,16 @@
   $:  %0
       ::  pending: the next l2 txs to be sent
       ::  sending: the l2 txs currently sending/awaiting l2 confirmation
-      ::TODO  should maybe key by [address nonce] instead. same for wires
       ::  finding: raw-tx-hash reverse lookup for sending map
       ::  next-nonce: next l1 nonce to use
       ::  nas: cached naive state
       ::
       pending=(list pend-tx)
-      sending=(map nonce:naive [next-gas-price=@ud txs=(list raw-tx:naive)])
+    ::
+      $=  sending
+      %+  map  l1-tx-pointer
+      [next-gas-price=@ud txs=(list raw-tx:naive)]
+    ::
       finding=(map keccak $?(%confirmed %failed l1-tx-pointer))
       next-nonce=@ud
       nas=^state:naive
@@ -198,13 +201,13 @@
     ^-  (quip card _this)
     |^
     ?+  wire  (on-agent:def wire sign)
-      [%send @t *]  (process-send-batch i.t.wire sign)
-      [%azimuth ~]  (process-azimuth-update sign)
-      [%nonce ~]    (process-nonce sign)
+      [%send @t @t *]  (process-send-batch i.t.wire i.t.t.wire sign)
+      [%azimuth ~]     (process-azimuth-update sign)
+      [%nonce ~]       (process-nonce sign)
     ==
     ::
     ++  process-send-batch
-      |=  [nonce=@t =sign:agent:gall]
+      |=  [address=@t nonce=@t =sign:agent:gall]
       ^-  (quip card _this)
       ?-  -.sign
           %poke-ack
@@ -231,13 +234,19 @@
           =+  !<([=term =tang] q.cage.sign)
           %-  (slog leaf+"{(trip dap.bowl)} failed" leaf+<term> tang)
           =^  cards  state
-            (on-batch-result:do (rash nonce dem) %.n^'thread failed')
+            %^    on-batch-result:do
+                q:(need (de:base16:mimes:html address))
+              (rash nonce dem)
+            %.n^'thread failed'
           [cards this]
         ::
             %thread-done
           =+   !<(result=(each @ud @t) q.cage.sign)
           =^  cards  state
-            (on-batch-result:do (rash nonce dem) result)
+            %^    on-batch-result:do
+                q:(need (de:base16:mimes:html address))
+              (rash nonce dem)
+            result
           [cards this]
         ==
       ==
@@ -343,6 +352,13 @@
   |=  =raw-tx:naive
   ^-  @ux
   (hash-tx raw.raw-tx)
+::
+++  hex-to-cord
+  |=  h=@ux
+  ^-  @t
+  %-  crip
+  =-  ((x-co:co (mul 2 p)) q)
+  (as-octs:mimes:html h)
 ::
 ++  part-tx-to-full
   |=  =part-tx
@@ -463,6 +479,11 @@
       %cancel
     !!  ::TODO
   ==
+::  TODO: move address to state?
+::
+++  get-address
+  ^-  address:ethereum
+  (address-from-prv:key:ethereum pk)
 ::  +take-tx: accept submitted l2 tx into the :pending list
 ::TODO  rewrite
 ::
@@ -491,7 +512,8 @@
         next-nonce  +(next-nonce)
       ::
           sending
-        %+  ~(put by sending)  nonce
+        %+  ~(put by sending)
+          [get-address nonce]
         [0 (turn pending tail)]
       ::
           finding
@@ -500,7 +522,7 @@
         |=  [* =raw-tx:naive]
         [(hash-raw-tx raw-tx) (get-l1-pointer tx.raw-tx nas)]
       ==
-    [(send-roll nonce) state]
+    [(send-roll get-address nonce) state]
   [[set-timer cards] state]
 ::  +get-nonce: retrieves the latest nonce
 ::
@@ -512,18 +534,18 @@
 ::  +send-roll: start thread to submit roll from :sending to l1
 ::
 ++  send-roll
-  |=  nonce=@ud
+  |=  [=address:ethereum nonce=@ud]
   ^-  (list card)
   ::  if this nonce isn't in the sending queue anymore, it's done
   ::
-  ?.  (~(has by sending) nonce)
-    ~?  lverb  [dap.bowl %done-sending nonce]
+  ?.  (~(has by sending) [address nonce])
+    ~?  lverb  [dap.bowl %done-sending [address nonce]]
     ~
   ::  start the thread, passing in the l2 txs to use
   ::
   ::TODO  should go ahead and set resend timer in case thread hangs, or nah?
   %+  start-thread:spider
-    /send/(scot %ud nonce)
+    /send/(hex-to-cord address)/(scot %ud nonce)
   :-  %aggregator-send
   !>  ^-  rpc-send-roll
   :*  endpoint
@@ -531,17 +553,17 @@
       chain-id
       pk
       nonce
-      (~(got by sending) nonce)
+      (~(got by sending) [address nonce])
   ==
 ::  +on-batch-result: await resend after thread success or failure
 ::
 ++  on-batch-result
-  |=  [nonce=@ud result=(each @ud @t)]
+  |=  [=address:ethereum nonce=@ud result=(each @ud @t)]
   ^-  (quip card _state)
   ::  update gas price for this tx in state
   ::
   =?  sending  ?=(%& -.result)
-    %+  ~(jab by sending)  nonce
+    %+  ~(jab by sending)  [address nonce]
     (cork tail (lead p.result))
   ::  print error if there was one
   ::
@@ -549,7 +571,10 @@
   ::  resend the l1 tx in five minutes
   ::
   :_  state
-  [(wait:b:sys /resend/(scot %ud nonce) (add resend-time now.bowl))]~
+  :_  ~
+  %+  wait:b:sys
+    /resend/(hex-to-cord address)/(scot %ud nonce)
+  (add resend-time now.bowl)
 ::  +on-naive-diff: process l2 tx confirmations
 ::
 ++  on-naive-diff
@@ -570,7 +595,7 @@
   ::  remove the tx from the sending map
   ::
   =.  sending
-    ?~  sen=(~(get by sending) nonce)
+    ?~  sen=(~(get by sending) [get-address nonce])
       ~&  [dap.bowl %weird-double-remove]
       sending
     ?~  nin=(find [raw-tx.diff]~ txs.u.sen)
@@ -578,9 +603,9 @@
       sending
     =.  txs.u.sen  (oust [u.nin 1] txs.u.sen)
     ?~  txs.u.sen
-      ~?  lverb  [dap.bowl %done-with-nonce nonce]
-      (~(del by sending) nonce)
-    (~(put by sending) nonce u.sen)
+      ~?  lverb  [dap.bowl %done-with-nonce [get-address nonce]]
+      (~(del by sending) [get-address nonce])
+    (~(put by sending) [get-address nonce] u.sen)
   ::  update the finding map with the new status
   ::
   =.  finding
