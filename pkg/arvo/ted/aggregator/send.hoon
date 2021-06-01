@@ -4,10 +4,6 @@
 /+  naive, ethereum, ethio, strandio
 ::
 =/  gas-limit=@ud  30.000  ::TODO  verify, maybe scale with roll size
-=/  batch-function=octs
-  %-  as-octs:mimes:html
-  %+  rsh  [3 28]
-  (keccak-256:keccak:crypto (as-octs:mimes:html 'batch(bytes)'))
 ::
 |=  args=vase
 =+  !<(rpc-send-roll args)
