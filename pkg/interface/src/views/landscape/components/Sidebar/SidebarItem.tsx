@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { BaseImage, Box, Icon, Row, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api';
 import React, { ReactElement, useRef } from 'react';
@@ -99,6 +100,35 @@ export function SidebarItem(props: {
     img = <Box flexShrink={0} height={16} width={16} borderRadius={2} backgroundColor={`#${uxToHex(props?.association?.metadata?.color)}` || '#000000'} />;
   }
 
+  const participantNames = (str: string, color: string) => {
+    if (_.includes(str, ',') && _.startsWith(str, '~')) {
+      const names = _.split(str, ', ');
+      return names.map((name, idx) => {
+        if (urbitOb.isValidPatp(name)) {
+          if (contacts[name]?.nickname && !hideNicknames)
+            return (
+            <Text key={name} color={color}>
+              {contacts[name]?.nickname}
+              {idx + 1 != names.length ? ', ' : null}
+            </Text>
+          );
+          return (
+            <Text key={name} mono color={color}>
+              {name}
+              <Text color={color}>
+                {idx + 1 != names.length ? ', ' : null}
+              </Text>
+            </Text>
+          );
+        } else {
+          return name;
+        }
+      });
+    } else {
+      return str;
+    }
+  };
+
   return (
     <HoverBoxLink
       ref={anchorRef}
@@ -138,7 +168,9 @@ export function SidebarItem(props: {
             fontWeight={fontWeight}
             style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}
           >
-            {title}
+            {DM && !urbitOb.isValidPatp(title)
+              ? participantNames(title, color)
+              : title}
           </Text>
         </Box>
       </Row>
