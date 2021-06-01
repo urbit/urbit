@@ -18,7 +18,6 @@
 ::
 ::TODO  remaining general work:
 ::  - hook up timer callbacks
-::  - cache state, upate after every azimuth %fact
 ::  - properly support private key changes
 ::
 ::TODO  questions:
@@ -27,7 +26,6 @@
 /-  *aggregator
 /+  azimuth, naive, default-agent, ethereum, dbug, verb, lib=naive-transactions
 ::
-::TODO  /sur file for public types
 |%
 +$  state-0
   $:  %0
@@ -36,11 +34,13 @@
       ::TODO  should maybe key by [address nonce] instead. same for wires
       ::  finding: raw-tx-hash reverse lookup for sending map
       ::  next-nonce: next l1 nonce to use
+      ::  nas: cached naive state
       ::
       pending=(list pend-tx)
       sending=(map nonce:naive [next-gas-price=@ud txs=(list raw-tx:naive)])
       finding=(map keccak $?(%confirmed %failed l1-tx-pointer))
       next-nonce=@ud
+      nas=^state:naive
     ::
       ::  pk: private key to send the roll
       ::  frequency: time to wait between sending batches (TODO fancier)
@@ -171,7 +171,8 @@
       =+  proxy=i.t.t.t.path
       ?.  ?=(proxy:naive proxy)
         [~ ~]
-      =/  [* nas=^state:naive]  pending-state:do
+      ::  uses cached naive state
+      ::
       ::TODO  or should we ~ when !(~(has by points.nas) who) ?
       =/  =point:naive  (~(gut by points.nas) u.who *point:naive)
       =+  (proxy-from-point:naive proxy point)
@@ -258,6 +259,14 @@
           =^  cards  state
             (on-naive-diff:do diff)
           [cards this]
+        ::
+            %naive-state
+          ::  cache naive state, received upon innitializing subscription
+          ::
+          ~&  >  %get-naive-state
+          ::  TODO: this assumes that %azimuth has already processed eth data
+          ::
+          [~ this(nas !<(^state:naive q.cage.sign))]
         ==
       ==
     ::
@@ -360,6 +369,8 @@
 ++  pending-state
   ^-  [_pending ^state:naive]
   ::  load current, canonical state
+  ::  TODO: safe to use the cached naive state instead?
+  ::        problems if we eargerly update it with the submitted tx?
   ::
   =+  .^  nas=^state:naive
       %gx
@@ -386,31 +397,26 @@
 ++  try-apply
   |=  [nas=^state:naive force=? =raw-tx:naive]
   ^-  [success=? _nas]
-  =/  chain-id=@t  (scot %ud chain-id)
-  ?.  (verify-sig-and-nonce:naive verifier:lib chain-id nas raw-tx)
+  =/  chain-t=@t  (ud-to-ascii:naive chain-id)
+  ?.  (verify-sig-and-nonce:naive verifier:lib chain-t nas raw-tx)
+    ~&  [%verify-sig-and-nonce %failed]
     [force nas]
   ::
-  =^  out  points.nas  (increment-nonce:naive nas from.tx.raw-tx)
+  =^  *  points.nas
+    (increment-nonce:naive nas from.tx.raw-tx)
   ::
   ?~  nex=(receive-tx:naive nas tx.raw-tx)
     [force nas]
   [& +.u.nex]
 ::
-++  get-address
+++  get-l1-pointer
   |=  [=tx:naive nas=^state:naive]
-  ^-  [address:ethereum nonce:naive]
+  ^-  l1-tx-pointer
   ?~  point=(~(get by points.nas) ship.from.tx)
     !!
   :_  next-nonce
-  =,  own.u.point
   =<  address
-  ?-  proxy.from.tx
-    %own       owner
-    %spawn     spawn-proxy
-    %manage    management-proxy
-    %vote      voting-proxy
-    %transfer  transfer-proxy
-  ==
+  (proxy-from-point:naive proxy.from.tx u.point)
 ::
 ++  on-action
   |=  =action
@@ -439,10 +445,9 @@
   ::
       %setkey
     ::TODO  what about existing sending entries?
-    :-  get-nonce
     ?~  pk=(de:base16:mimes:html pk.action)
-      state
-    state(pk q.u.pk)
+      `state
+    [(get-nonce q.u.pk) state(pk q.u.pk)]
   ::
       %submit
     =^  success  state
@@ -451,8 +456,8 @@
           force.action
         sig.action
       (part-tx-to-full tx.action)
-    ::  TODO:  consider failure case
-    ?>  success
+    ~?  =(success |)
+      [dap.bowl %submit-failed action]
     [~ state]
   ::
       %cancel
@@ -465,17 +470,9 @@
   |=  [force=? =raw-tx:naive]
   ^-  [success=? _state]
   =/  [nep=_pending nas=^state:naive]  pending-state
-  =^  success  nas
-    (try-apply nas force raw-tx)
+  =^  success  nas  (try-apply nas force raw-tx)
   ::TODO  want to notify about dropped pendings, or no? client prolly polls...
   =?  pending  success  (snoc nep [force raw-tx])
-  =.  finding
-    %+  ~(put by finding)
-      (hash-raw-tx raw-tx)
-    ?:  =(success %.n)
-      %failed
-    (get-address tx.raw-tx nas)
-  ::TODO  cache nas?
   [success state]
 ::  +set-timer: %wait until next whole :frequency
 ::
@@ -496,12 +493,19 @@
           sending
         %+  ~(put by sending)  nonce
         [0 (turn pending tail)]
+      ::
+          finding
+        %-  ~(gas by finding)
+        %+  turn  pending
+        |=  [* =raw-tx:naive]
+        [(hash-raw-tx raw-tx) (get-l1-pointer tx.raw-tx nas)]
       ==
     [(send-roll nonce) state]
   [[set-timer cards] state]
 ::  +get-nonce: retrieves the latest nonce
 ::
 ++  get-nonce
+  |=  pk=@
   ^-  (list card)
   (start-thread:spider /nonce [%aggregator-nonce !>([endpoint pk])])
 ::
@@ -586,6 +590,10 @@
     ::  unexpected tx failures here. would that be useful? probably not?
     ::  ~?  !forced  [dap.bowl %aggregated-tx-failed-anyway err.diff]
     %failed
+  ::  update cached naive state
+  ::
+  =^  *  nas
+    (try-apply nas | raw-tx.diff)
   [~ state]
 ::
 --
