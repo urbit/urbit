@@ -2102,6 +2102,7 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
+      [%$ %whiz ~]
       [@tas %meta vase]
   ==
 ::  full vane names are required in vanes
