@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { useRef } from 'react';
+import React, { useRef, ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
 
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';

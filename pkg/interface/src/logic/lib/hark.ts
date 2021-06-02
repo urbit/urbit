@@ -142,9 +142,10 @@ export function getReferent(notification: IndexedNotification) {
       meta.associations.graph[notification.index.graph.graph]?.metadata
         ?.title ?? notification.index.graph
     );
+  } else if ('group' in notification.index) {
+    return (
+      meta.associations.groups[notification.index.group.group]?.metadata?.title ??
+      notification.index.group.group
+    );
   }
-  return (
-    meta.associations.groups[notification.index.group.group]?.metadata?.title ??
-    notification.index.group.group
-  );
 }
