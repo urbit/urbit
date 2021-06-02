@@ -215,8 +215,10 @@ _king_pier(u3_noun pier)
 **  XX deduplicate with dawn.c
 */
 static size_t
-_king_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, uv_buf_t* buf_u)
+_king_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, void* buf_v)
 {
+  uv_buf_t* buf_u = buf_v;
+
   size_t siz_t = uni_t * mem_t;
   buf_u->base = c3_realloc(buf_u->base, 1 + siz_t + buf_u->len);
 
