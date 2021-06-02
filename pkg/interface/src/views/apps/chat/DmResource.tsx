@@ -1,4 +1,4 @@
-import { cite, Content, createPost } from '@urbit/api';
+import { cite, Content } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import bigInt from 'big-integer';
 import { Box, Row, Col, Text } from '@tlon/indigo-react';
@@ -6,7 +6,7 @@ import { patp2dec } from 'urbit-ob';
 import GlobalApi from '~/logic/api/global';
 import { useContact } from '~/logic/state/contact';
 import useGraphState, { useDM } from '~/logic/state/graph';
-import useHarkState, { useHarkDm } from '~/logic/state/hark';
+import { useHarkDm } from '~/logic/state/hark';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
 import { patpToUd } from '~/logic/lib/util';
@@ -33,7 +33,7 @@ export function DmResource(props: DmResourceProps) {
   const unreadCount = (hark?.unreads as number) ?? 0;
   const contact = useContact(ship);
   const { hideNicknames } = useSettingsState(selectCalmState);
-  const showNickname = !hideNicknames && !!contact;
+  const showNickname = !hideNicknames && Boolean(contact);
   const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export function DmResource(props: DmResourceProps) {
           pageSize,
           `/${patpToUd(ship)}/${index.toString()}`
         );
-        return expectedSize !== getCurrDmSize(ship.slice(1));
+        return expectedSize !== getCurrDmSize(ship);
       } else {
         const index = dm.peekSmallest()?.[0];
         if (!index) {
@@ -76,7 +76,6 @@ export function DmResource(props: DmResourceProps) {
   const dismissUnread = useCallback(() => {
     api.hark.dismissReadCount(`/ship/~${window.ship}/dm-inbox`, `/${patp2dec(ship)}`);
   }, [ship]);
-    
 
   const onSubmit = useCallback(
     (contents: Content[]) => {

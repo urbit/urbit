@@ -34,10 +34,10 @@ function sidebarSort(
 
     const aUpdated = a.startsWith('~')
       ?  (inboxUnreads?.[`/${patp2dec(a)}`]?.last)
-      :  apps[aAppName]?.lastUpdated(a) || 0;
+      :  (apps[aAppName]?.lastUpdated(a) || 0);
     const bUpdated = b.startsWith('~')
       ?  (inboxUnreads?.[`/${patp2dec(b)}`]?.last || 0)
-      :  apps[bAppName]?.lastUpdated(b) || 0;
+      :  (apps[bAppName]?.lastUpdated(b) || 0);
 
     return bUpdated - aUpdated || alphabetical(a, b);
   };

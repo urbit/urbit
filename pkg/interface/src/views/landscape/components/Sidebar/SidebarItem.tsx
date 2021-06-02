@@ -231,6 +231,7 @@ export function SidebarAssociationItem(props: {
       to={to}
       selected={selected}
       hasUnread={hasUnread}
+      isSynced={isSynced}
       title={
         DM && !urbitOb.isValidPatp(title)
           ? participantNames(title, color)
