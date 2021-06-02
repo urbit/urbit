@@ -12,6 +12,7 @@ int kill(pid_t pid, int signum);
 #define SIGUSR1   10
 #define SIGALRM   14
 #define SIGVTALRM 26
+#define SIGSTK    31
 #define SIG_COUNT 32
 
 #endif//_MINGW_IO_H

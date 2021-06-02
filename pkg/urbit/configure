@@ -111,6 +111,7 @@ case $(tr A-Z a-z <<< $os) in
        CFLAGS="${CFLAGS-} -O3 -g"
      fi
 
+     deps="${deps/sigsegv}"
      compat="${compat-} mingw"
      CFLAGS="${CFLAGS-} ${cdirs[@]}"
      LDFLAGS="${LDFLAGS-} ${ldirs[@]} -static"

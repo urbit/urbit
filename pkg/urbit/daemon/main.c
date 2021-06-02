@@ -5,7 +5,9 @@
 #define C3_GLOBAL
 #include "all.h"
 #include "vere/vere.h"
+#if !defined(U3_OS_mingw)
 #include <sigsegv.h>
+#endif
 #include <openssl/conf.h>
 #include <openssl/engine.h>
 #include <openssl/err.h>
@@ -512,9 +514,11 @@ report(void)
 {
   printf("urbit %s\n", URBIT_VERSION);
   printf("gmp: %s\n", gmp_version);
+#if !defined(U3_OS_mingw)
   printf("sigsegv: %d.%d\n",
          (libsigsegv_version >> 8) & 0xff,
          libsigsegv_version & 0xff);
+#endif
   printf("openssl: %s\n", SSLeay_version(SSLEAY_VERSION));
   printf("libuv: %s\n", uv_version_string());
   printf("libh2o: %d.%d.%d\n",

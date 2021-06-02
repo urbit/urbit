@@ -1,5 +1,5 @@
 # ensure required mingw packages are installed
-mpkgs=(cmake curl gcc jq libsigsegv libuv make wslay)
+mpkgs=(cmake curl gcc jq libuv make wslay)
 pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w64-x86_64-}
 
 declare -a cdirs

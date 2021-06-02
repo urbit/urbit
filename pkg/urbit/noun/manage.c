@@ -8,7 +8,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#include <sigsegv.h>
 #include <openssl/crypto.h>
 
 //  XX stack-overflow recovery should be gated by -a
@@ -83,11 +82,37 @@
 //
 static rsignal_jmpbuf u3_Signal;
 
+#if defined(U3_OS_mingw)
+/* u3_exception_handler: replaces libsigsegv on MingW
+*/
+EXCEPTION_DISPOSITION u3_exception_handler(
+    IN PEXCEPTION_RECORD ExceptionRecord,
+    IN ULONG64 EstablisherFrame,
+    IN OUT PCONTEXT ContextRecord,
+    IN OUT PDISPATCHER_CONTEXT DispatcherContext)
+{
+    if (ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION &&
+        ExceptionRecord->ExceptionInformation[0] == 1 &&
+        u3e_fault((void*)ExceptionRecord->ExceptionInformation[1], 1))
+    {
+        return ExceptionContinueExecution;
+    }
+
+    if (ExceptionRecord->ExceptionCode == EXCEPTION_STACK_OVERFLOW) {
+        rsignal_raise(SIGSTK);
+    }
+
+    return ExceptionContinueSearch;
+}
+#else
+#include <sigsegv.h>
+
 #ifndef SIGSTKSZ
 # define SIGSTKSZ 16384
 #endif
 #ifndef NO_OVERFLOW
 static uint8_t Sigstk[SIGSTKSZ];
+#endif
 #endif
 
 #if 0
@@ -135,17 +160,25 @@ static void _cm_overflow(void *arg1, void *arg2, void *arg3)
 static void
 _cm_signal_handle(c3_l sig_l)
 {
+#ifndef U3_OS_mingw
   if ( c3__over == sig_l ) {
+#ifndef NO_OVERFLOW
     sigsegv_leave_handler(_cm_overflow, NULL, NULL, NULL);
-  }
-  else {
+#endif
+  } else
+#endif
+  {
     u3m_signal(sig_l);
   }
 }
 
 #ifndef NO_OVERFLOW
 static void
+#ifndef U3_OS_mingw
 _cm_signal_handle_over(int emergency, stackoverflow_context_t scp)
+#else
+_cm_signal_handle_over(int x)
+#endif
 {
   _cm_signal_handle(c3__over);
 }
@@ -336,7 +369,11 @@ _cm_signal_deep(c3_w mil_w)
   }
 
 #ifndef NO_OVERFLOW
+#ifndef U3_OS_mingw
   stackoverflow_install_handler(_cm_signal_handle_over, Sigstk, SIGSTKSZ);
+#else
+  rsignal_install_handler(SIGSTK, _cm_signal_handle_over);
+#endif
 #endif
   rsignal_install_handler(SIGINT, _cm_signal_handle_intr);
   rsignal_install_handler(SIGTERM, _cm_signal_handle_term);
@@ -376,7 +413,11 @@ _cm_signal_done()
   rsignal_deinstall_handler(SIGVTALRM);
 
 #ifndef NO_OVERFLOW
+#ifndef U3_OS_mingw
   stackoverflow_deinstall_handler();
+#else
+  rsignal_deinstall_handler(SIGSTK);
+#endif
 #endif
   {
     struct itimerval itm_u;
@@ -1624,10 +1665,12 @@ _cm_limits(void)
 static void
 _cm_signals(void)
 {
+# if !defined(U3_OS_mingw)
   if ( 0 != sigsegv_install_handler(u3e_fault) ) {
     u3l_log("boot: sigsegv install failed\n");
     exit(1);
   }
+# endif
 
 # if defined(U3_OS_PROF)
   //  Block SIGPROF, so that if/when we reactivate it on the

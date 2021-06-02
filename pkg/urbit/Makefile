@@ -77,9 +77,9 @@ build/urbit-worker: $(common_objs) $(worker_objs)
 	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-%.o: %.c $(headers)
+%.o: %.c $(headers) $(CCDEPS)
 	@echo CC $<
-	@$(CC) -I./include $(CFLAGS) -c $< -o $@
+	@$(CC) -I./include $(CFLAGS) $< $(CCEXTRA) -c -o $@
 
 tags: $(all_srcs) $(headers)
 	ctags $^
