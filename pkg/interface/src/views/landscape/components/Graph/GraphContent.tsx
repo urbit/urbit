@@ -13,7 +13,7 @@ import {
   Tr,
   Td
 } from '@tlon/indigo-react';
-import { Content } from '@urbit/api';
+import { Content, CodeContent } from '@urbit/api';
 import _ from 'lodash';
 import { BlockContent, Content as AstContent, Parent, Root } from 'ts-mdast';
 import React from 'react';
@@ -23,7 +23,6 @@ import { PropFunc } from '~/types';
 import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
 import { Mention } from '~/views/components/MentionText';
 import RemoteContent from '~/views/components/RemoteContent';
-import CodeContent from './content/code';
 import { parseTall, parseWide } from './parse';
 
 type StitchMode = 'merge' | 'block' | 'inline';
@@ -245,6 +244,7 @@ const renderers = {
     return (
       <Text
         mono
+        fontWeight='inherit'
         p={1}
         backgroundColor="washedGray"
         fontSize={0}
@@ -309,6 +309,7 @@ const renderers = {
         className="clamp-message"
         display="block"
         borderRadius={1}
+        fontWeight='inherit'
         mono
         fontSize={0}
         backgroundColor="washedGray"

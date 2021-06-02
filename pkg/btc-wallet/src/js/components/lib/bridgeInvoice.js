@@ -90,8 +90,6 @@ export default class BridgeInvoice extends Component {
       inputBorder = 'red';
     }
 
-    console.log('bridge invoice', error);
-
     return (
       <>
         { this.props.state.broadcastSuccess ?
