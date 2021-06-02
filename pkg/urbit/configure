@@ -111,14 +111,8 @@ case $(tr A-Z a-z <<< $os) in
        CFLAGS="${CFLAGS-} -O3 -g"
      fi
 
-     # increase default thread stack size and link Windows implibs
-     ldextra="-Wl,--stack,67108864 -lbcrypt -lntdll -lws2_32"
-     # libcurl implibs
-     ldextra="$ldextra -lzstd"
-     # libuv implibs
-     ldextra="$ldextra -luserenv -liphlpapi -lpsapi"
      compat="${compat-} mingw"
-     CFLAGS="${CFLAGS-} ${cdirs[@]} -DCURL_STATICLIB -DH2O_NO_UNIX_SOCKETS"
+     CFLAGS="${CFLAGS-} ${cdirs[@]}"
      LDFLAGS="${LDFLAGS-} ${ldirs[@]} -static"
      PKG_CONFIG=">/dev/null echo"
      ;;
@@ -164,7 +158,7 @@ done
 
 cat >config.mk <<EOF
 CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math -fcommon -std=gnu99
-LDFLAGS := $LDFLAGS ${ldextra-}
+LDFLAGS := $LDFLAGS
 CC      := ${CC-cc}
 compat  := $compat
 EOF

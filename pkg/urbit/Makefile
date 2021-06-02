@@ -1,4 +1,5 @@
 include config.mk
+include $(foreach dir,$(compat),$(wildcard compat/$(dir)/*.mk))
 
 jets = jets/tree.c $(wildcard jets/*/*.c)
 noun = $(wildcard noun/*.c)
@@ -31,7 +32,7 @@ CFLAGS := $(CFLAGS)
 
 ################################################################################
 
-.PHONY: all test clean mkproper
+.PHONY: all test clean mrproper
 
 ################################################################################
 
