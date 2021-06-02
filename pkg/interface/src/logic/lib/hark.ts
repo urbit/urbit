@@ -121,8 +121,7 @@ export function describeNotification(notification: IndexedNotification) {
     return group(notification.index.group);
   } else if ('graph' in notification.index) {
     // @ts-ignore needs better type guard
-    const contents =
-      notification.notification?.contents?.graph ?? ([] as Post[]);
+    const contents = notification.notification?.contents?.graph ?? ([] as Post[]);
     return graph(
       notification.index.graph,
       contents.length > 1,

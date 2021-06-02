@@ -1,6 +1,7 @@
 import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { Association, GraphNotificationContents, GraphNotifIndex, Post } from '@urbit/api';
 import { BigInteger } from 'big-integer';
+import { patp } from 'urbit-ob';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -122,27 +123,31 @@ function getNodeUrl(
   graph: string,
   index: string
 ) {
-  if (hidden && mod === 'chat') {
+  const graphValidator = 'graph-validator-';
+  const rmValidator = mod.slice(graphValidator.length);
+  if (hidden && mod === 'graph-validator-chat') {
     groupPath = '/messages';
   } else if (hidden) {
     groupPath = '/home';
   }
-  const graphUrl = `/~landscape${groupPath}/resource/${mod}${graph}`;
+  const graphUrl = `/~landscape${groupPath}/resource/${rmValidator}${graph}`;
   const idx = index.slice(1).split('/');
-  if (mod === 'publish') {
+  if (mod === 'graph-validator-publish') {
     const [noteId, kind, commId] = idx;
     const selected = kind === '2' ? `?selected=${commId}` : '';
     return `${graphUrl}/note/${noteId}${selected}`;
-  } else if (mod === 'link') {
+  } else if (mod === 'graph-validator-link') {
     const [linkId, commId] = idx;
     return `${graphUrl}/index/${linkId}${commId ? `?selected=${commId}` : ''}`;
-  } else if (mod === 'chat') {
+  } else if (mod === 'graph-validator-chat') {
     if (idx.length > 0) {
       return `${graphUrl}?msg=${idx[0]}`;
     }
     return graphUrl;
-  } else if (mod === 'post') {
+  } else if (mod === 'graph-validator-post') {
     return `/~landscape${groupPath}/feed/thread${index}`;
+  } else if (mod === 'graph-validator-dm') {
+    return `/~landscape${groupPath}/dm/${patp(idx[0])}`;
   }
   return '';
 }
