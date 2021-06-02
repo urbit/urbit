@@ -9,6 +9,7 @@ import { EnableGroupFeed } from './EnableGroupFeed';
 import { GroupFeed } from './GroupFeed';
 import { getFeedPath } from '~/logic/lib/util';
 import { GroupFlatFeed } from './GroupFlatFeed';
+import { resourceFromPath } from '@urbit/api';
 
 function GroupHome(props) {
   const {
@@ -19,12 +20,13 @@ function GroupHome(props) {
 
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(state => state.groups);
+  const { ship } = resourceFromPath(groupPath);
 
   const association = associations?.groups[groupPath];
 
   const feedPath = getFeedPath(association);
 
-  const askFeedBanner = feedPath === undefined;
+  const askFeedBanner = feedPath === undefined && `~${window.ship}` === ship;
 
   const graphMetadata = associations?.graph[feedPath]?.metadata;
 

@@ -38,7 +38,7 @@ function SidebarItemBase(props: {
     isSynced = false,
     mono = false
   } = props;
-  const color = isSynced ? 'black' : 'lightGray';
+  const color = isSynced ? (hasUnread || hasNotification) ? 'black' : 'gray' : 'lightGray';
 
   const fontWeight = hasUnread || hasNotification ? '500' : 'normal';
 
