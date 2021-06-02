@@ -44,6 +44,11 @@ void rsignal_raise(int sig)
   if (oldfn == 0)
     return;
 
+  if (_tid == GetCurrentThreadId()) {
+    oldfn(sig);
+    return;
+  }
+
   HANDLE hthread = OpenThread(THREAD_ALL_ACCESS, FALSE, _tid);
   if (!hthread) {
     fprintf(stderr, "\r\nrsignal_raise: OpenThread(%u): %d\r\n", _tid, GetLastError());

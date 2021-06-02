@@ -3,6 +3,7 @@
 **  the main loop of a serf process.
 */
 #include "all.h"
+#include "rsignal.h"
 #include <vere/vere.h>
 #include <vere/serf.h>
 
@@ -156,8 +157,6 @@ _cw_serf_exit(void)
 }
 
 #if defined(U3_OS_mingw)
-extern void rsignal_raise(int);
-
 /* _mingw_ctrlc_cb(): invoked when the lord signals the Ctrl-C event
 */
 static void

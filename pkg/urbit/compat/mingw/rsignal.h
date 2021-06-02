@@ -9,6 +9,7 @@ typedef struct {
 #define rsignal_setjmp(buf)        (buf.tid = GetCurrentThreadId(), setjmp(buf.jb))
 #define rsignal_longjmp(buf, val)  if (buf.tid != GetCurrentThreadId()) {buf.jb.retval = (val); rsignal_post_longjmp(buf.tid, buf.jb.buffer);} else longjmp(buf.jb, val)
 
+void rsignal_raise(int sig);
 void rsignal_install_handler(int sig, __p_sig_fn_t fn);
 void rsignal_deinstall_handler(int sig);
 void rsignal_post_longjmp(unsigned long tid, intptr_t* builtin_jb);
