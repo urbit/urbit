@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { useRef } from 'react';
+import React, { useRef, ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
 
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
@@ -231,6 +231,7 @@ export function SidebarAssociationItem(props: {
       to={to}
       selected={selected}
       hasUnread={hasUnread}
+      isSynced={isSynced}
       title={
         DM && !urbitOb.isValidPatp(title)
           ? participantNames(title, color)
