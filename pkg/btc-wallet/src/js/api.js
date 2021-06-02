@@ -1,6 +1,5 @@
 import _ from 'lodash';
 
-
 class UrbitApi {
   setChannel(ship, channel) {
     this.ship = ship;
