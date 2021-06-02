@@ -2,6 +2,7 @@ import { cite, Content } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import bigInt from 'big-integer';
 import { Box, Row, Col, Text } from '@tlon/indigo-react';
+import { Link } from 'react-router-dom';
 import { patp2dec } from 'urbit-ob';
 import GlobalApi from '~/logic/api/global';
 import { useContact } from '~/logic/state/contact';
@@ -95,15 +96,29 @@ export function DmResource(props: DmResourceProps) {
         borderBottom="1"
         borderBottomColor="lightGray"
       >
-        <Row gapX="2" alignItems="baseline">
+        <Row alignItems="baseline">
+          <Box
+            borderRight={1}
+            borderRightColor='gray'
+            pr={3}
+            fontSize={1}
+            mr={3}
+            my={1}
+            flexShrink={0}
+            display={['block','none']}
+          >
+            <Link to={'/~landscape/messages'}>
+              <Text>{'<- Back'}</Text>
+            </Link>
+          </Box>
           {showNickname && (
-            <Box>
+            <Box mr="3">
               <Text fontWeight="medium" fontSize={2} mono={!showNickname}>
                 {nickname}
               </Text>
             </Box>
           )}
-          <Box>
+          <Box display={[showNickname ? 'none' : 'block', 'block']}>
             <Text gray={showNickname} mono>
               {cite(ship)}
             </Text>
