@@ -1623,12 +1623,12 @@
     $%  [%boon payload=*]                               ::  ames response
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%onto p=(each suss tang)]                      ::  about agent
-        [%unto p=sign:agent]                            ::
+        [%unto p=unto]                                  ::  agent response
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
     $%  [%conf dap=term]                                ::  start agent
-        [%deal p=sock q=term r=deal]                    ::  full transmission
+        [%deal p=sock q=term r=deal]                    ::  agent request
         [%goad force=? agent=(unit dude)]               ::  rebuild agent(s)
         [%sear =ship]                                   ::  clear pending queues
         [%fade dap=term style=?(%slay %idle %jolt)]     ::  put app to sleep
@@ -1637,10 +1637,12 @@
         $>(%vega vane-task)                             ::  report upgrade
         $>(%plea vane-task)                             ::  network request
     ==                                                  ::
-  +$  bitt  (map duct (pair ship path))                 ::  incoming subs
+  +$  bitt  (map duct buzz)                             ::  incoming subs
+  +$  buzz  [=ship =path non=@]                         ::  subscription+nonce
   +$  boat                                              ::  outgoing subs
     %+  map  [=wire =ship =term]                        ::
-    [acked=? =path]                                     ::
+    [=brad =path non=@]                                 ::
+  +$  brad  ?(%pend %live %left)                        ::  subscription state
   +$  bowl                                              ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
@@ -1663,13 +1665,23 @@
     ==                                                  ::
   +$  suss  (trel dude @tas @da)                        ::  config report
   +$  well  (pair desk term)                            ::
-  +$  neat
-    $%  [%arvo =note-arvo]
-        [%agent [=ship name=term] =deal]
-    ==
+  ::  $deal: arvo-level $task:agent with subscription nonce
+  ::
   +$  deal
     $%  [%raw-poke =mark =noun]
-        task:agent
+        [%poke =cage]
+        [%poke-as =mark =cage]
+        [%watch non=@ =path]
+        [%watch-as non=@ =mark =path]
+        [%leave non=@ ~]
+    ==
+  ::  $unto: arvo-level $sign:agent with subscription nonce
+  ::
+  +$  unto
+    $%  [%fact non=@ =cage]
+        [%kick non=@ ~]
+        [%watch-ack non=@ p=(unit tang)]
+        [%poke-ack p=(unit tang)]
     ==
   ::
   ::  +agent: app core
