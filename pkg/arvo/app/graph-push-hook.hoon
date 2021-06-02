@@ -119,6 +119,9 @@
   ?-  -.q.update
       %add-nodes
     =|  cards=(list card)
+    ?:  ?=(^ (rush name.rid ;~(pfix (jest 'dm--') fed:ag)))
+      ::  block new DM messages
+      [~ ~]
     =^  allowed  cards  (is-allowed-add:hc rid nodes.q.update)
     ?.  allowed
       [cards ~]
