@@ -353,8 +353,8 @@ function archive(json: any, state: HarkState): HarkState {
         console.warn('Modifying nonexistent timebox');
         return state;
       }
-      const [unarchived] = _.partition(timebox, idxNotif =>
-        notifIdxEqual(index, idxNotif.index)
+      const unarchived = _.filter(timebox, idxNotif =>
+        !notifIdxEqual(index, idxNotif.index)
       );
       if(unarchived.length === 0) {
         console.log('deleting entire timebox');
