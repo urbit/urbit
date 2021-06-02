@@ -2,7 +2,7 @@ import React from 'react';
 import { Meta } from '@storybook/react';
 import { withDesign } from 'storybook-addon-designs';
 
-import { Col } from '@tlon/indigo-react';
+import { Col, Row } from '@tlon/indigo-react';
 import { LinkBlockItem } from '~/views/apps/links/components/LinkBlockItem';
 
 export default {
@@ -12,10 +12,11 @@ export default {
 } as Meta;
 
 export const Image = () => (
-  <Col gapY="2" p="2" width="500px" backgroundColor="white">
-    <LinkBlockItem url="https://media.urbit.org/site/posts/essays/value-of-address-space-pt1.jpg" />
-    <LinkBlockItem url="https://media.urbit.org/site/posts/essays/ocean.jpeg" />
-  </Col>
+  <Row flexWrap="wrap" m="2" width="700px" backgroundColor="white">
+    <LinkBlockItem m="2" url="https://media.urbit.org/site/posts/essays/value-of-address-space-pt1.jpg" />
+    <LinkBlockItem m="2" url="https://media.urbit.org/site/posts/essays/ocean.jpeg" />
+    <LinkBlockItem m="2" size="512px" url="https://media.urbit.org/site/posts/essays/ocean.jpeg" />
+  </Row>
 );
 
 Image.parameters = {

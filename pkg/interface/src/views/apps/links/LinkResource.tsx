@@ -3,18 +3,16 @@ import { Group } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
 import { StoreState } from '~/logic/store/type';
-import { Comments } from '~/views/components/Comments';
 import useGroupState from '../../../logic/state/group';
-import { LinkItem } from './components/LinkItem';
+import { LinkBlocks } from './components/LinkBlocks';
+import { LinkDetail } from './components/LinkDetail';
 import './css/custom.css';
 import LinkWindow from './LinkWindow';
-
-const emptyMeasure = () => {};
 
 type LinkResourceProps = StoreState & {
   association: Association;
@@ -58,12 +56,13 @@ export function LinkResource(props: LinkResourceProps) {
   return (
     <Col alignItems="center" height="100%" width="100%" overflowY="hidden">
       <Switch>
+        <Redirect exact from={relativePath('')} to={relativePath('/list')} />
         <Route
           exact
-          path={relativePath('')}
+          path={relativePath('/list')}
           render={(props) => {
             return (
-              // @ts-ignore
+              // @ts-ignore withState typings
               <LinkWindow
                 key={rid}
                 association={resource}
@@ -80,10 +79,20 @@ export function LinkResource(props: LinkResourceProps) {
           }}
         />
         <Route
-          path={relativePath('/index/:index')}
+          exact
+          path={relativePath('/grid')}
+          render={(props) => {
+            return (
+              // @ts-ignore wip
+              <LinkBlocks graph={graph} />
+            );
+          }}
+        />
+
+        <Route
+          path={[relativePath('/list/index/:index'), relativePath('/grid/index/:index')]}
           render={(props) => {
             const index = bigInt(props.match.params.index);
-            const editCommentId = props.match.params.commentId || null;
 
             if (!index) {
               return <div>Malformed URL</div>;
@@ -103,36 +112,11 @@ export function LinkResource(props: LinkResourceProps) {
               );
             }
             return (
-              <Col alignItems="center" overflowY="auto" width="100%">
-              <Col width="100%" p={3} maxWidth="768px">
-                <Link to={resourceUrl}><Text px={3} bold>{'<- Back'}</Text></Link>
-                <LinkItem
-                  key={node.post.index}
-                  resource={resourcePath}
-                  node={node}
-                  baseUrl={resourceUrl}
-                  association={association}
-                  group={group as Group}
-                  path={resource?.group}
-                  api={api}
-                  mt={3}
-                  measure={emptyMeasure}
-                />
-                <Comments
-                  ship={ship}
-                  name={name}
-                  comments={node}
-                  resource={resourcePath}
-                  association={association}
-                  api={api}
-                  editCommentId={editCommentId}
-                  history={props.history}
-                  baseUrl={`${resourceUrl}/index/${props.match.params.index}`}
-                  group={group as Group}
-                  px={3}
-                />
-              </Col>
-            </Col>
+              <LinkDetail
+                node={node}
+                association={association}
+                api={api}
+              />
             );
           }}
         />

@@ -1,15 +1,14 @@
 import {
-  BaseInput, Box,
-
+  BaseInput,
+  Box,
   Button,
-
-  Icon, Label, Row, StatelessTextInput as Input,
-
-  Text
+  Icon,
+  Label,
+  Row,
+  Text,
 } from '@tlon/indigo-react';
-import { useField } from 'formik';
 import React, { ReactElement, useCallback, useRef } from 'react';
-import useStorage from '~/logic/lib/useStorage';
+import { useUrlField } from '~/logic/lib/useUrlField';
 
 type ImageInputProps = Parameters<typeof Box>[0] & {
   id: string;
@@ -17,22 +16,29 @@ type ImageInputProps = Parameters<typeof Box>[0] & {
   placeholder?: string;
 };
 
-const prompt = (field, uploading, meta, clickUploadButton) => {
-  if (!field.value && !uploading && meta.error === undefined) {
+export const Prompt = ({
+  left = null,
+  top = null,
+  value,
+  uploading,
+  meta,
+  clickUploadButton,
+}) => {
+  if (!value && !uploading && meta.error === undefined) {
     return (
       <Text
-        color='black'
-        fontWeight='500'
-        position='absolute'
-        left={2}
-        top={2}
+        gray
+        fontWeight="500"
+        position="absolute"
+        left={left}
+        top={top}
         style={{ pointerEvents: 'none' }}
       >
         Paste a link here, or{' '}
         <Text
-          fontWeight='500'
-          cursor='pointer'
-          color='blue'
+          fontWeight="500"
+          cursor="pointer"
+          color="blue"
           style={{ pointerEvents: 'all' }}
           onClick={clickUploadButton}
         >
@@ -45,10 +51,10 @@ const prompt = (field, uploading, meta, clickUploadButton) => {
   return null;
 };
 
-const uploadingStatus = (uploading, meta) => {
-  if (uploading && meta.error === undefined) {
+export const UploadingStatus = ({ uploading, error }) => {
+  if (uploading && rror === undefined) {
     return (
-      <Text position='absolute' left={2} top={2} gray>
+      <Text position="absolute" left={2} top={2} gray>
         Uploading...
       </Text>
     );
@@ -56,23 +62,24 @@ const uploadingStatus = (uploading, meta) => {
   return null;
 };
 
-const errorRetry = (meta, uploading, clickUploadButton) => {
-  if (meta.error !== undefined) {
+export const ErrorRetry = ({ error, onClick }) => {
+  if (error !== undefined) {
     return (
       <Text
-        position='absolute'
+        position="absolute"
         left={2}
         top={2}
-        color='red'
+        color="red"
         style={{ pointerEvents: 'none' }}
       >
-        {meta.error}{', '}please{' '}
+        {error}
+        {', '}please{' '}
         <Text
-          fontWeight='500'
-          cursor='pointer'
-          color='blue'
+          fontWeight="500"
+          cursor="pointer"
+          color="blue"
           style={{ pointerEvents: 'all' }}
-          onClick={clickUploadButton}
+          onClick={onClick}
         >
           retry
         </Text>
@@ -82,25 +89,25 @@ const errorRetry = (meta, uploading, clickUploadButton) => {
   return null;
 };
 
-const clearButton = (field, uploading, clearEvt) => {
-  if (field.value && !uploading) {
+export const ClearButton = ({ value, uploading, onClick, height = null, top = 0 as string | number }) => {
+  if (value && !uploading) {
     return (
       <Box
-        position='absolute'
+        position="absolute"
         right={0}
-        top={0}
+        top={top}
         px={1}
-        height='100%'
-        cursor='pointer'
-        onClick={clearEvt}
-        backgroundColor='white'
-        display='flex'
-        alignItems='center'
-        borderRadius='0 4px 4px 0'
-        border='1px solid'
-        borderColor='lightGray'
+        height="100%"
+        cursor="pointer"
+        onClick={onClick}
+        backgroundColor="white"
+        display="flex"
+        alignItems="center"
+        borderRadius="0 4px 4px 0"
+        border="1px solid"
+        borderColor="lightGray"
       >
-        <Icon icon='X' />
+        <Icon icon="X" />
       </Box>
     );
   }
@@ -109,23 +116,13 @@ const clearButton = (field, uploading, clearEvt) => {
 
 export function ImageInput(props: ImageInputProps): ReactElement {
   const { id, label, caption } = props;
-  const { uploadDefault, canUpload, uploading } = useStorage();
-  const [field, meta, { setValue, setError }] = useField(id);
-  const ref = useRef<HTMLInputElement | null>(null);
-
-  const onImageUpload = useCallback(async () => {
-    const file = ref.current?.files?.item(0);
-
-    if (!file || !canUpload) {
-      return;
-    }
-    try {
-      const url = await uploadDefault(file);
-      setValue(url);
-    } catch (e) {
-      setError(e.message);
-    }
-  }, [ref.current, uploadDefault, canUpload, setValue]);
+  const ref = useRef<HTMLInputElement>(null);
+  const [
+    field,
+    meta,
+    { setValue },
+    { uploading, canUpload, onImageUpload },
+  ] = useUrlField(id, ref);
 
   const clickUploadButton = useCallback(() => {
     ref.current?.click();
@@ -137,31 +134,37 @@ export function ImageInput(props: ImageInputProps): ReactElement {
 
   return (
     <Box display="flex" flexDirection="column" {...props}>
-      <Label htmlFor={id}>{label}</Label>
+      {label ? <Label htmlFor={id}>{label}</Label> : null}
       {caption ? (
         <Label mt={2} gray>
           {caption}
         </Label>
       ) : null}
-      <Row mt={2} alignItems="flex-end" position='relative' width='100%'>
-        {prompt(field, uploading, meta, clickUploadButton)}
-        {clearButton(field, uploading, clearEvt)}
-        {uploadingStatus(uploading, meta)}
-        {errorRetry(meta, uploading, clickUploadButton)}
-        <Box background='white' borderRadius={2} width='100%'>
-          <Input
-            width='100%'
-            type={'text'}
-            hasError={meta.touched && meta.error !== undefined}
-            {...field}
-          />
-        </Box>
+      <Row
+        mt={2}
+        alignItems="flex-end"
+        position="relative"
+        height="100%"
+        width="100%"
+      >
+        <Prompt
+          left={2}
+          top={2}
+          value={field.value}
+          uploading={uploading}
+          meta={meta}
+          clickUploadButton={clickUploadButton}
+        />
+        <ClearButton
+          value={field.value}
+          uploading={uploading}
+          onClick={clearEvt}
+        />
+        <UploadingStatus uploading={uploading} error={meta.error} />
+        <ErrorRetry error={meta.error} onClick={clickUploadButton} />
         {canUpload && (
           <>
-            <Button
-              display='none'
-              onClick={clickUploadButton}
-            />
+            <Button display="none" onClick={clickUploadButton} />
             <BaseInput
               style={{ display: 'none' }}
               type="file"

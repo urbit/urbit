@@ -35,6 +35,7 @@ export function ShipImage(props: {
       alignItems="center"
       backgroundColor={`#${color}`}
       borderRadius={1}
+      className={sigilClass}
     >
       <Sigil
         ship={ship}
@@ -42,7 +43,6 @@ export function ShipImage(props: {
         color={`#${color}`}
         classes={sigilClass}
         icon
-        padding={2}
       />
     </Box>
   );

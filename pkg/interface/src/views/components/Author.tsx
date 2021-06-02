@@ -117,6 +117,9 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
           fontWeight={showNickname ? '500' : '400'}
           mr={showNickname ? 0 : '2px'}
           mt={showNickname ? 0 : '0px'}
+          overflow="hidden"
+          textOverflow="ellipsis"
+          whiteSpace="nowrap"
           onClick={doCopy}
         >
           {copyDisplay}

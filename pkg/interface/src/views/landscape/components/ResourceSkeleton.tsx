@@ -161,6 +161,17 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
         </Link>
       );
     }
+    const last = location.pathname.split('/').reverse()[0];
+    if( app === 'link' && ['list', 'grid'].includes(last)) {
+      const isList = last === 'list' ;
+      return (
+        <Link to={resourcePath(isList ? '/grid' : '/list')}>
+          <Text bold pr='3' color='blue'>
+            Switch to {isList ? 'grid' : 'list' }
+          </Text>
+        </Link>
+      ) ;
+    }
     return null;
   };
 

@@ -1,5 +1,5 @@
 import { Col } from '@tlon/indigo-react';
-import { Association, GraphNode, Group } from '@urbit/api';
+import { Association, GraphNode, Group, resourceFromPath } from '@urbit/api';
 import bigInt from 'big-integer';
 import { FormikHelpers } from 'formik';
 import React, { useEffect, useMemo } from 'react';
@@ -19,8 +19,6 @@ import { CommentItem } from './CommentItem';
 interface CommentsProps {
   comments: GraphNode;
   association: Association;
-  name: string;
-  ship: string;
   baseUrl: string;
   api: GlobalApi;
   group: Group;
@@ -30,14 +28,14 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   const {
     association,
     comments,
-    ship,
-    name,
     api,
     history,
     baseUrl,
     group,
     ...rest
   } = props;
+
+  const { ship, name } = resourceFromPath(association.resource);
 
   const { query } = useQuery();
   const selectedComment = useMemo(() => {
@@ -76,7 +74,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   ) => {
     try {
       const commentNode = comments.children.get(bigInt(editCommentId))!;
-      const [idx, _] = getLatestCommentRevision(commentNode);
+      const [idx] = getLatestCommentRevision(commentNode);
 
       const content = tokenizeMessage(comment);
       const post = createPost(
@@ -95,7 +93,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   let commentContent = null;
   if (editCommentId) {
     const commentNode = comments.children.get(bigInt(editCommentId));
-    const [_, post] = getLatestCommentRevision(commentNode);
+    const [, post] = getLatestCommentRevision(commentNode);
     commentContent = post.contents.reduce((val, curr) => {
       if ('text' in curr) {
         val = val + curr.text;
@@ -129,15 +127,6 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
   return (
     <Col {...rest} minWidth={0}>
-      {( !editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
-      {( editCommentId ? (
-        <CommentInput
-          onSubmit={onEdit}
-          label='Edit Comment'
-          loadingText='Editing...'
-          initial={commentContent}
-        />
-      ) : null )}
       {children.reverse()
           .map(([idx, comment], i) => {
           const highlighted = selectedComment?.eq(idx) ?? false;
@@ -155,7 +144,16 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
               pending={idx.toString() === editCommentId}
             />
           );
-      })}
+          })}
+      {( editCommentId ? (
+        <CommentInput
+          onSubmit={onEdit}
+          label='Edit Comment'
+          loadingText='Editing...'
+          initial={commentContent}
+        />
+      ) : null )}
+      {( !editCommentId && canComment ? <CommentInput placeholder="Comment" onSubmit={onSubmit} /> : null )}
     </Col>
   );
 }
