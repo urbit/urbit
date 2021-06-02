@@ -8,6 +8,8 @@ import './css/indigo-static.css';
 import './css/fonts.css';
 import './css/custom.css';
 
+// rebuild
+
 window.NETWORK = 'testnet'; // 'bitcoin'
 
 const channel = new window.channel();
