@@ -8,7 +8,7 @@ import './css/indigo-static.css';
 import './css/fonts.css';
 import './css/custom.css';
 
-// rebuild
+// rebuild x2
 
 window.NETWORK = 'testnet'; // 'bitcoin'
 
