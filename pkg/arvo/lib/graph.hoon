@@ -1,6 +1,14 @@
 /-  *resource
 /+  store=graph-store
 |_  =bowl:gall
+++  cg
+  |%
+  ++  update
+    |=  =update:store
+    ^-  cage
+    [%graph-update-2 !>(update)]
+  --
+::
 ++  scry-for
   |*  [=mold =path]
   .^  mold

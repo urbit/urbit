@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Box, Col, Icon, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
 import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
@@ -8,6 +9,7 @@ import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import useGroupState from '~/logic/state/group';
 import { Dropdown } from '~/views/components/Dropdown';
 import RichText from '~/views/components/RichText';
@@ -17,7 +19,40 @@ const TruncatedText = styled(RichText)`
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  display: none;
+  @media screen and (min-width: ${p => p.theme.breakpoints[0]}) {
+    display: inline;
+  }
 `;
+
+const participantNames = (str: string, contacts, hideNicknames) => {
+  if (_.includes(str, ',') && _.startsWith(str, '~')) {
+    const names = _.split(str, ', ');
+    return names.map((name, idx) => {
+      if (urbitOb.isValidPatp(name)) {
+        if (contacts[name]?.nickname && !hideNicknames)
+          return (
+            <Text key={name} fontSize={2} fontWeight='600'>
+              {contacts[name]?.nickname}
+              {idx + 1 != names.length ? ', ' : null}
+            </Text>
+          );
+        return (
+          <Text key={name} mono fontSize={2} fontWeight='600'>
+            {name}
+            <Text fontSize={2} fontWeight='600'>
+              {idx + 1 != names.length ? ', ' : null}
+            </Text>
+          </Text>
+        );
+      } else {
+        return name;
+      }
+    });
+  } else {
+    return str;
+  }
+};
 
 type ResourceSkeletonProps = {
   association: Association;
@@ -36,6 +71,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   }
   const rid = association.resource;
   const groups = useGroupState(state => state.groups);
+  const { hideNicknames } = useSettingsState(selectCalmState);
   const group = groups[association.group];
   let workspace = association.group;
   const [actionsWidth, setActionsWidth] = useState(0);
@@ -54,7 +90,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
 
   const contacts = useContactState(state => state.contacts);
 
-  if (urbitOb.isValidPatp(title)) {
+  if (urbitOb.isValidPatp(title) && !hideNicknames) {
     recipient = title;
     title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
   } else {
@@ -103,14 +139,16 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       ml='1'
       flexShrink={1}
     >
-      {title}
+      {workspace === '/messages' && !urbitOb.isValidPatp(title)
+        ? participantNames(title, contacts, hideNicknames)
+        : title}
     </Text>
   );
 
   const Description = () => (
     <TruncatedText
       display={['none','inline']}
-      mono={workspace === '/messages' && !urbitOb.isValidPatp(title)}
+      mono={workspace === '/messages' && !association?.metadata?.description}
       color='gray'
       mb={0}
       minWidth={0}
@@ -118,7 +156,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       flexShrink={1}
       disableRemoteContent
     >
-      {workspace === '/messages'
+      {workspace === '/messages' && !association?.metadata?.description
         ? recipient
         : association?.metadata?.description}
     </TruncatedText>

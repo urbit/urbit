@@ -35,6 +35,28 @@ const processNode = (node) => {
       ));
   });
 };
+const acceptOrRejectDm = (json: any, state: GraphState): GraphState => {
+  const data = _.get(json, 'accept', _.get(json, 'decline', false));
+  if(data) {
+    state.pendingDms.delete(data);
+  }
+  return state;
+};
+
+const pendings = (json: any, state: GraphState): GraphState => {
+  const data = _.get(json, 'pendings', false);
+  if(data) {
+    state.pendingDms = new Set(data);
+  }
+  return state;
+};
+
+const setScreen = (json: any, state: GraphState): GraphState => {
+  if('screen' in json) {
+    state.screening = json.screen;
+  }
+  return state;
+};
 
 const addNodesLoose = (json: any, state: GraphState): GraphState => {
   const data = _.get(json, 'add-nodes', false);
@@ -180,7 +202,7 @@ const removeGraph = (json, state: GraphState): GraphState => {
   return state;
 };
 
-const addNodes = (json, state) => {
+export const addNodes = (json, state) => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {
@@ -448,5 +470,14 @@ export const GraphReducer = (json) => {
   const thread = _.get(json, 'graph-update-thread', false);
   if (thread) {
     reduceState<GraphState, any>(useGraphState, thread, [addNodesThread]);
+  }
+  const dm = _.get(json, 'dm-hook-action', false);
+  if(dm) {
+    console.log(dm);
+    reduceState<GraphState, any>(useGraphState, dm, [
+      acceptOrRejectDm,
+      pendings,
+      setScreen
+    ]);
   }
 };

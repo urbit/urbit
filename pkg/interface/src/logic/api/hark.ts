@@ -26,8 +26,8 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.action('hark-group-hook', 'hark-group-hook-action', action);
   }
 
-  private actOnNotification(frond: string, intTime: BigInteger, index: NotifIndex) {
-    const time = decToUd(intTime.toString());
+  private actOnNotification(frond: string, intTime: BigInteger | undefined, index: NotifIndex) {
+    const time = intTime ? decToUd(intTime.toString()) : null;
     return this.harkAction({
       [frond]: {
         time,
@@ -55,7 +55,7 @@ export class HarkApi extends BaseApi<StoreState> {
   }
 
   async archive(intTime: BigInteger, index: NotifIndex) {
-    const time = decToUd(intTime.toString());
+    const time = intTime ? decToUd(intTime.toString()) : null;
     const action = {
       archive: {
         time,
@@ -66,7 +66,9 @@ export class HarkApi extends BaseApi<StoreState> {
   }
 
   read(time: BigInteger, index: NotifIndex) {
-    return this.actOnNotification('read-note', time, index);
+    return this.harkAction({
+      'read-note': index
+    });
   }
 
   readIndex(index: NotifIndex) {
@@ -77,6 +79,17 @@ export class HarkApi extends BaseApi<StoreState> {
 
   unread(time: BigInteger, index: NotifIndex) {
     return this.actOnNotification('unread-note', time, index);
+  }
+
+  dismissReadCount(graph: string, index: string) {
+    return this.harkAction({
+      'read-count': {
+        graph: {
+          graph,
+          index
+        }
+      }
+    });
   }
 
   markCountAsRead(association: Association, parent: string, description: GraphNotifDescription) {

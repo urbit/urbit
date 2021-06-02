@@ -6,7 +6,6 @@ export class UpdateReducer {
     if (!json) {
       return;
     }
-    console.log('reduce', json);
     if (json.providerStatus) {
       this.reduceProviderStatus(json.providerStatus, state);
     }

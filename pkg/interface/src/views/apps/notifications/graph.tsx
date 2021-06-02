@@ -1,14 +1,13 @@
 import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { Association, GraphNotificationContents, GraphNotifIndex, Post } from '@urbit/api';
 import { BigInteger } from 'big-integer';
+import { patp } from 'urbit-ob';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import GlobalApi from '~/logic/api/global';
-import {
-  isDm, pluralize
-} from '~/logic/lib/util';
+import { pluralize } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
 import {
   useAssocForGraph,
@@ -124,27 +123,31 @@ function getNodeUrl(
   graph: string,
   index: string
 ) {
-  if (hidden && mod === 'chat') {
+  const graphValidator = 'graph-validator-';
+  const rmValidator = mod.slice(graphValidator.length);
+  if (hidden && mod === 'graph-validator-chat') {
     groupPath = '/messages';
   } else if (hidden) {
     groupPath = '/home';
   }
-  const graphUrl = `/~landscape${groupPath}/resource/${mod}${graph}`;
+  const graphUrl = `/~landscape${groupPath}/resource/${rmValidator}${graph}`;
   const idx = index.slice(1).split('/');
-  if (mod === 'publish') {
+  if (mod === 'graph-validator-publish') {
     const [noteId, kind, commId] = idx;
     const selected = kind === '2' ? `?selected=${commId}` : '';
     return `${graphUrl}/note/${noteId}${selected}`;
-  } else if (mod === 'link') {
+  } else if (mod === 'graph-validator-link') {
     const [linkId, commId] = idx;
     return `${graphUrl}/index/${linkId}${commId ? `?selected=${commId}` : ''}`;
-  } else if (mod === 'chat') {
+  } else if (mod === 'graph-validator-chat') {
     if (idx.length > 0) {
       return `${graphUrl}?msg=${idx[0]}`;
     }
     return graphUrl;
-  } else if (mod === 'post') {
+  } else if (mod === 'graph-validator-post') {
     return `/~landscape${groupPath}/feed/thread${index}`;
+  } else if (mod === 'graph-validator-dm') {
+    return `/~landscape${groupPath}/dm/${patp(idx[0])}`;
   }
   return '';
 }
@@ -221,7 +224,6 @@ const GraphNodes = (props: {
 export function GraphNotification(props: {
   index: GraphNotifIndex;
   contents: GraphNotificationContents;
-  archived: boolean;
   read: boolean;
   time: number;
   timebox: BigInteger;
@@ -232,19 +234,23 @@ export function GraphNotification(props: {
 
   const authors = _.uniq(_.map(contents, 'author'));
   const singleAuthor = authors.length === 1;
-  const { graph, group } = index;
-  const association = useAssocForGraph(graph)!;
-  const dm = isDm(graph);
+  const { graph, mark } = index;
+  const association = useAssocForGraph(graph);
+  const dm = mark === 'graph-validator-dm';
   const desc = describeNotification(
     index.description,
     contents.length !== 1,
     dm,
     singleAuthor
   );
-  const groupAssociation = useAssocForGroup(association?.group);
+  const groupAssociation = useAssocForGroup(association?.group ?? '');
   const groups = useGroupState(state => state.groups);
 
   const onClick = useCallback(() => {
+    if(dm) {
+      history.push(`/~landscape/messages/dm/~${authors[0]}`);
+      return;
+    }
     if (
       !(
         (index.description === 'note' || index.description === 'link') &&
@@ -254,15 +260,15 @@ export function GraphNotification(props: {
       const first = contents[0];
       history.push(
         getNodeUrl(
-          index.module,
+          index.mark,
           groups[association?.group]?.hidden,
-          group,
+          association?.group,
           association?.resource,
           first.index
         )
       );
     }
-  }, [api, timebox, index, read]);
+  }, [api, timebox, index, read, history.push, authors, dm]);
 
   const authorsInHeader =
     dm ||
@@ -289,7 +295,7 @@ export function GraphNotification(props: {
         <GraphNodes
           hideAuthors={hideAuthors}
           posts={contents.slice(0, 4)}
-          mod={index.module}
+          mod={index.mark}
           index={contents?.[0].index}
           association={association}
           hidden={groups[association?.group]?.hidden}

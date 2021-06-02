@@ -106,6 +106,7 @@
 +$  state-8    [%8 base-state-3]
 +$  state-9    [%9 base-state-3]
 +$  state-10   [%10 base-state-3]
++$  state-11   [%11 base-state-3]
 +$  versioned-state
   $%  state-0
       state-1
@@ -118,10 +119,11 @@
       state-8
       state-9
       state-10
+      state-11
   ==
 ::
 +$  inflated-state
-  $:  state-10
+  $:  state-11
       cached-indices
   ==
 --
@@ -234,7 +236,7 @@
   =|  cards=(list card)
   |^
   =*  loop  $
-  ?:  ?=(%10 -.old)
+  ?:  ?=(%11 -.old)
     :-  cards
     %_  state
       associations      associations.old
@@ -242,6 +244,8 @@
       group-indices     (rebuild-group-indices associations.old)
       app-indices       (rebuild-app-indices associations.old)
     ==
+  ?:  ?=(%10 -.old)
+    $(-.old %11, associations.old (hide-dm-assoc associations.old))
   ?:  ?=(%9 -.old)
     =/  groups  
       (fall (~(get by (rebuild-app-indices associations.old)) %groups) ~)
@@ -281,6 +285,20 @@
     ==
   ::  pre-breach, can safely throw away
   loop(old *state-8)
+  ::
+  ++  hide-dm-assoc
+    |=  assoc=associations:store
+    ^-  associations:store
+    %-  ~(gas by *associations:store)
+    %+  turn  ~(tap by assoc)
+    |=  [m=md-resource:store [g=resource met=metadatum:store]]
+    ^-  [md-resource:store association:store]
+    =?    hidden.met
+        ?&  ?=(^ (rush name.resource.m ;~(pfix (jest 'dm--') fed:ag)))  
+            ?=(%graph app-name.m)
+        ==
+      %.y
+    [m [g met]]
   ::
   ++  associations-2-to-3
     |=  assoc=associations-2
