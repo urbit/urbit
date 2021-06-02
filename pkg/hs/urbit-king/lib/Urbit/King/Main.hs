@@ -500,7 +500,7 @@ newShip CLI.New{..} opts = do
       let seed = mineComet (Set.fromList starList) eny
       putStrLn ("boot: found comet " ++ renderShip (sShip seed))
       putStrLn ("code: " ++ (tshow $ deriveCode $ sRing seed))
-      bootFromSeed pill seed
+      bootFromSeed pill $ Feed0 seed
 
     CLI.BootFake name -> do
       pill <- pillFrom nPillSource
@@ -514,13 +514,13 @@ newShip CLI.New{..} opts = do
         Just (UW a) -> pure a
 
       asNoun <- cueExn asAtom
-      seed :: Seed <- case fromNoun asNoun of
+      feed :: Feed <- case fromNoun asNoun of
         Nothing -> error "Keyfile does not seem to contain a seed."
         Just s  -> pure s
 
       pill <- pillFrom nPillSource
 
-      bootFromSeed pill seed
+      bootFromSeed pill feed
 
   where
     shipFrom :: Text -> RIO HostEnv Ship
@@ -541,14 +541,13 @@ newShip CLI.New{..} opts = do
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> pure x
 
-    bootFromSeed :: Pill -> Seed -> RIO HostEnv ()
-    bootFromSeed pill seed = do
-      ethReturn <- dawnVent nEthNode seed
+    bootFromSeed :: Pill -> Feed -> RIO HostEnv ()
+    bootFromSeed pill feed = do
+      ethReturn <- dawnVent nEthNode feed
 
       case ethReturn of
         Left x -> error $ unpack x
-        Right dawn -> do
-          let ship = sShip $ dSeed dawn
+        Right (ship, dawn) -> do
           name <- nameFromShip ship
           runTryBootFromPill pill name ship (Dawn dawn)
 
@@ -642,13 +641,13 @@ checkDawn provider keyfilePath = do
     Just (UW a) -> pure a
 
   asNoun <- cueExn asAtom
-  seed :: Seed <- case fromNoun asNoun of
+  feed :: Feed <- case fromNoun asNoun of
     Nothing -> error "Keyfile does not seem to contain a seed."
     Just s  -> pure s
 
-  print $ show seed
+  print $ show feed
 
-  e <- dawnVent provider seed
+  e <- dawnVent provider feed
   print $ show e
 
 

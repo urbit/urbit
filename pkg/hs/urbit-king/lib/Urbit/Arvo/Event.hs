@@ -117,6 +117,35 @@ data Seed = Seed
     }
   deriving (Eq, Show)
 
+data Feed
+  = Feed0 Seed
+  | Feed1 [Seed]
+  deriving (Eq, Show)
+
+--NOTE  reify type environment
+$(pure [])
+
+instance ToNoun Feed where
+  toNoun = \case
+    Feed0 s -> toSeed s
+    Feed1 s -> C (C (A 1) (A 0)) $ toList s
+    where
+      toList :: [Seed] -> Noun
+      toList [] = A 0
+      toList (x:xs) = C (toSeed x) (toList xs)
+      toSeed = $(deriveToNounFunc ''Seed)
+
+instance FromNoun Feed where
+  parseNoun = \case
+    (C (C (A 1) (A 0)) s) -> Feed1 <$> parseList s
+    n                     -> Feed0 <$> parseSeed n
+    where
+      parseList = \case
+        Atom 0   -> pure []
+        Atom _   -> fail "list terminated with non-null atom"
+        Cell l r -> (:) <$> parseSeed l <*> parseList r
+      parseSeed = $(deriveFromNounFunc ''Seed)
+
 type Public = (Life, HoonMap Life Pass)
 
 data Dnses = Dnses { dPri::Cord, dSec::Cord, dTer::Cord }
@@ -133,7 +162,7 @@ data EthPoint = EthPoint
   deriving (Eq, Show)
 
 data Dawn = MkDawn
-    { dSeed    :: Seed
+    { dFeed    :: (Life, Feed)
     , dSponsor :: [(Ship, EthPoint)]
     , dCzar    :: HoonMap Ship (Rift, Life, Pass)
     , dTurf    :: [Turf]

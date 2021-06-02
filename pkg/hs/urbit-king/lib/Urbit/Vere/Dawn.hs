@@ -335,45 +335,65 @@ retrievePoint endpoint block ship =
       [x] -> pure x
       _   -> error "JSON server returned multiple return values."
 
-validateShipAndGetSponsor :: String -> TextBlockNum -> Seed -> RIO e Ship
-validateShipAndGetSponsor endpoint block (Seed ship life ring oaf) =
-  case clanFromShip ship of
-    Ob.Comet -> validateComet
-    Ob.Moon  -> validateMoon
-    _        -> validateRest
+validateFeedAndGetSponsor :: String
+                          -> TextBlockNum
+                          -> Feed
+                          -> RIO e (Ship, Life, Ship)
+validateFeedAndGetSponsor endpoint block = \case
+    Feed0 s -> do
+                 r <- (validateSeed s)
+                 pure (sShip s, sLife s, r)
+    Feed1 s -> validateSeeds s
+
   where
-    validateComet = do
-      -- A comet address is the fingerprint of the keypair
-      let shipFromPass = cometFingerprint $ ringToPass ring
-      when (ship /= shipFromPass) $
-        error ("comet name doesn't match fingerprint " <> show ship <> " vs " <>
-              show shipFromPass)
-      when (life /= 1) $
-        error ("comet can never be re-keyed")
-      pure (shipSein ship)
+    validateSeeds = \case
+      []    -> error ("no usable keys in keyfile")
+      (s:f) -> do
+                 r :: Either SomeException Ship
+                   <- try do validateSeed s
+                 case r of
+                   Left _  -> validateSeeds f
+                   Right r -> pure (sShip s, sLife s, r)
 
-    validateMoon = do
-      -- TODO: The current code in zuse does nothing, but we should be able to
-      -- try to validate the oath against the current as exists planet on
-      -- chain.
-      pure $ shipSein ship
+    validateSeed (Seed ship life ring oaf) =
+      case clanFromShip ship of
+        Ob.Comet -> validateComet
+        Ob.Moon  -> validateMoon
+        _        -> validateRest
+      where
+        validateComet = do
+          -- A comet address is the fingerprint of the keypair
+          let shipFromPass = cometFingerprint $ ringToPass ring
+          when (ship /= shipFromPass) $
+            error ("comet name doesn't match fingerprint " <> show ship <> " vs " <>
+                  show shipFromPass)
+          when (life /= 1) $
+            error ("comet can never be re-keyed")
+          pure (shipSein ship)
 
-    validateRest = do
-      putStrLn ("boot: retrieving " <> renderShip ship <> "'s public keys")
+        validateMoon = do
+          -- TODO: The current code in zuse does nothing, but we should be able
+          -- to try to validate the oath against the current as exists planet
+          -- on chain.
+          pure $ shipSein ship
 
-      whoP <- retrievePoint endpoint block ship
-      case epNet whoP of
-        Nothing -> error "ship not keyed"
-        Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
-          when (netLife /= life) $
-              error ("keyfile life mismatch; keyfile claims life " <>
-                    show life <> ", but Azimuth claims life " <>
-                    show netLife)
-          when ((ringToPass ring) /= pass) $
-              error "keyfile does not match blockchain"
-          -- TODO: The hoon code does a breach check, but the C code never
-          -- supplies the data necessary for it to function.
-          pure who
+        validateRest = do
+          putStrLn ("boot: retrieving " <> renderShip ship <> "'s public keys")
+
+          --TODO  could cache this lookup
+          whoP <- retrievePoint endpoint block ship
+          case epNet whoP of
+            Nothing -> error "ship not keyed"
+            Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
+              when (netLife /= life) $
+                  error ("keyfile life mismatch; keyfile claims life " <>
+                        show life <> ", but Azimuth claims life " <>
+                        show netLife)
+              when ((ringToPass ring) /= pass) $
+                  error "keyfile does not match blockchain"
+              -- TODO: The hoon code does a breach check, but the C code never
+              -- supplies the data necessary for it to function.
+              pure who
 
 
 -- Walk through the sponsorship chain retrieving the actual sponsorship chain
@@ -402,10 +422,11 @@ getSponsorshipChain endpoint block = loop
             pure $ chain <> [(ship, ethPoint)]
 
 -- Produces either an error or a validated boot event structure.
-dawnVent :: HasLogFunc e => String -> Seed -> RIO e (Either Text Dawn)
-dawnVent provider dSeed@(Seed ship life ring oaf) =
+dawnVent :: HasLogFunc e => String -> Feed -> RIO e (Either Text (Ship, Dawn))
+dawnVent provider feed =
   -- The type checker can't figure this out on its own.
-  (onLeft tshow :: Either SomeException Dawn -> Either Text Dawn) <$> try do
+  (onLeft tshow :: Either SomeException (Ship, Dawn)
+                -> Either Text (Ship, Dawn)) <$> try do
     putStrLn ("boot: requesting ethereum information from " <> pack provider)
     blockResponses
       <- dawnPostRequests provider parseBlockRequest [BlockRequest]
@@ -417,7 +438,8 @@ dawnVent provider dSeed@(Seed ship life ring oaf) =
     let dBloq = hexStrToAtom hexStrBlock
     putStrLn ("boot: ethereum block #" <> tshow dBloq)
 
-    immediateSponsor <- validateShipAndGetSponsor provider hexStrBlock dSeed
+    (ship, life, immediateSponsor)
+      <- validateFeedAndGetSponsor provider hexStrBlock feed
     dSponsor <- getSponsorshipChain provider hexStrBlock immediateSponsor
 
     putStrLn "boot: retrieving galaxy table"
@@ -429,9 +451,10 @@ dawnVent provider dSeed@(Seed ship life ring oaf) =
     dTurf <- nub <$> (dawnPostRequests provider parseTurfResponse $
       map (TurfRequest hexStrBlock) [0..2])
 
+    let dFeed = (life, feed)
     let dNode = Nothing
 
-    pure $ MkDawn{..}
+    pure (ship, MkDawn{..})
 
 
 -- Comet List ------------------------------------------------------------------
