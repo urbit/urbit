@@ -37,7 +37,7 @@
   ::  TODO: add poke action to allow switching?
   ::        eth snapshot could also be considered
   ::
-  %mainnet
+  %local
 ::  TODO: maybe flop the endianness here so metamask signs it in normal
 ::  order?
 ::
@@ -129,7 +129,7 @@
   :-  [%give %fact ~[path] %azimuth-udiffs !>(~[i.udiffs])]
   $(udiffs t.udiffs)
 ::
-++  aggregator-update
+++  tx-update
   |=  effects=(list tagged-diff)
   ^-  (list card:agent:gall)
   %+  murn  effects
@@ -138,7 +138,7 @@
   ?.  ?=(%tx +<.tag)  ~
   %-  some
   ^-  card:agent:gall
-  [%give %fact ~[/aggregator] %naive-diffs !>(+.tag)]
+  [%give %fact ~[/txs] %naive-diffs !>(+.tag)]
 ::
 ++  get-network
   |=  =network
@@ -269,7 +269,7 @@
   |=  =path
   ^-  (quip card:agent:gall _this)
   ?<  =(/sole/drum path)
-  ?:  =(/aggregator path)
+  ?:  =(/txs path)
     :_  this
     [%give %fact ~ %naive-state !>(nas.state)]~
   =/  who=(unit ship)
@@ -320,18 +320,17 @@
     ==
   =?  nas.state  ?=(%history -.diff)  *^state:naive
   =^  effects  nas.state
-    %^    run-logs
-        ?-  -.diff
-          ::  %history  *^state:naive
-          %history  nas.state
-          %logs     nas.state
-        ==
-      loglist.diff
-    net
+    =;  nas=^state:naive
+      (run-logs nas loglist.diff net)
+    ?-  -.diff
+      ::  %history  *^state:naive
+      %history  nas.state
+      %logs     nas.state
+    ==
   ::
   :_  this
   %+  weld
-    (aggregator-update effects)
+    (tx-update effects)
   (jael-update (to-udiffs effects))
 ::
 ++  on-arvo   on-arvo:def
