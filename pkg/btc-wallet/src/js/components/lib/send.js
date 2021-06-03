@@ -76,9 +76,9 @@ export default class Send extends Component {
         let high = estimates.length - 1;
         this.setState({
           feeChoices: {
-            low: [30, n.estimates[30]["sat_per_vbyte"]],
+            high: [30, n.estimates[30]["sat_per_vbyte"]],
             mid: [180, n.estimates[180]["sat_per_vbyte"]],
-            high: [360, n.estimates[360]["sat_per_vbyte"]],
+            low: [360, n.estimates[360]["sat_per_vbyte"]],
           }
         });
       })
