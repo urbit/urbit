@@ -102,7 +102,7 @@
     =.  contract  naive:local-contracts:azimuth
     =.  chain-id  chain-id:local-contracts:azimuth
     :_  this
-    [%pass /azimuth %agent [our.bowl %azimuth] %watch /aggregator]~
+    [%pass /azimuth-txs %agent [our.bowl %azimuth] %watch /txs]~
   ::
   ++  on-save  !>(state)
   ++  on-load
@@ -213,6 +213,8 @@
     ++  send-batch
       |=  [address=@t nonce=@t =sign:agent:gall]
       ^-  (quip card _this)
+      =/  [address=@ux nonce=@ud]
+        [(slav %ux address) (rash nonce dem)]
       ?-  -.sign
           %poke-ack
         ?~  p.sign
@@ -238,19 +240,13 @@
           =+  !<([=term =tang] q.cage.sign)
           %-  (slog leaf+"{(trip dap.bowl)} failed" leaf+<term> tang)
           =^  cards  state
-            %^    on-batch-result:do
-                q:(need (de:base16:mimes:html address))
-              (rash nonce dem)
-            %.n^'thread failed'
+            (on-batch-result:do address nonce %.n^'thread failed')
           [cards this]
         ::
             %thread-done
           =+   !<(result=(each @ud @t) q.cage.sign)
           =^  cards  state
-            %^    on-batch-result:do
-                q:(need (de:base16:mimes:html address))
-              (rash nonce dem)
-            result
+            (on-batch-result:do address nonce result)
           [cards this]
         ==
       ==
@@ -358,13 +354,6 @@
   |=  =raw-tx:naive
   ^-  @ux
   (hash-tx raw.raw-tx)
-::
-++  hex-to-cord
-  |=  h=@ux
-  ^-  @t
-  %-  crip
-  =-  ((x-co:co (mul 2 p)) q)
-  (as-octs:mimes:html h)
 ::
 ++  part-tx-to-full
   |=  =part-tx
@@ -550,7 +539,7 @@
   ::
   ::TODO  should go ahead and set resend timer in case thread hangs, or nah?
   %+  start-thread:spider
-    /send/(hex-to-cord address)/(scot %ud nonce)
+    /send/(scot %ux address)/(scot %ud nonce)
   :-  %aggregator-send
   !>  ^-  rpc-send-roll
   :*  endpoint
@@ -578,7 +567,7 @@
   :_  state
   :_  ~
   %+  wait:b:sys
-    /resend/(hex-to-cord address)/(scot %ud nonce)
+    /resend/(scot %ux address)/(scot %ud nonce)
   (add resend-time now.bowl)
 ::  +on-naive-diff: process l2 tx confirmations
 ::
