@@ -382,6 +382,7 @@ interface ChatMessageProps {
   isLastRead?: boolean;
   permalink?: string;
   transcluded?: number;
+  isAdmin: boolean;
   className?: string;
   isPending?: boolean;
   style?: unknown;
@@ -471,7 +472,8 @@ function ChatMessage(props: ChatMessageProps) {
     hideHover,
     transcluded,
     onReply,
-    onDelete
+    onDelete,
+    isAdmin
   };
 
   const message = useMemo(() => (
