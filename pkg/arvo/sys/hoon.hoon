@@ -8764,6 +8764,7 @@
       %peek   peek
       %repo   repo
       %rest   rest
+      %sink   sink
       %tack   tack
       %toss   toss
       %wrap   wrap
@@ -10838,7 +10839,7 @@
       |-  ^-  type
       ?~  lov  sut
       $(lov t.lov, sut (face i.lov sut))
-    ::                                                  ::
+    ::
     ++  sint                                            ::  reduce by reference
       |=  $:  ::  hod: expand holds
               ::
@@ -10910,6 +10911,80 @@
     %~  tap  in
     %-  ~(gas in *(set type))
     (turn leg |=([p=type q=hoon] (play(sut p) q)))
+  ::
+  ++  sink
+    ~/  %sink
+    |^  ^-  cord
+    ?-  sut
+        %void  'void'
+        %noun  'noun'
+        [%atom *]
+      %+  rap  3
+      :~  'atom '
+          p.sut
+          ' '
+          ?~(q.sut '~' u.q.sut)
+      ==
+    ::
+        [%cell *]
+      %+  rap  3
+      :~  'cell '
+          (scot %p (mup p.sut))
+          ' '
+          (scot %p (mup q.sut))
+      ==
+    ::
+        [%face *]
+      %+  rap  3
+      :~  'face '
+          ?@  p.sut
+            p.sut
+          (scot %p (mup p.sut))
+          ' '
+          (scot %p (mup q.sut))
+      ==
+    ::
+        [%fork *]
+      %+  rap  3
+      :~  'fork '
+          (scot %p (mup p.sut))
+      ==
+    ::
+        [%hint *]
+      %+  rap  3
+      :~  'hint '
+          (scot %p (mup p.sut))
+          ' '
+          (scot %p (mup q.sut))
+      ==
+    ::
+        [%hold *]
+      %+  rap  3
+      :~  'hold '
+          (scot %p (mup p.sut))
+          ' '
+          (scot %p (mup q.sut))
+      ==
+    ::
+        [%core *]
+      %+  rap  3
+      :~  'core '
+          (scot %p (mup p.sut))
+          ' '
+          ?~(p.p.q.sut '~' u.p.p.q.sut)
+          ' '
+          q.p.q.sut
+          ' '
+          r.p.q.sut
+          ' '
+          (scot %p (mup q.q.sut))
+          ' '
+          (scot %p (mup p.r.q.sut))
+      ==
+    ==
+    ::
+    ++  mup  |=(* `@p`(mug +<))
+    --
   ::
   ++  take
     |=  [vit=vein duz=$-(type type)]
