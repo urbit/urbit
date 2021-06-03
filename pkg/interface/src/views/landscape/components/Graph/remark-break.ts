@@ -6,7 +6,7 @@ function lineBreak(eat, value: string, silent) {
   while(++index < length ) {
     character = value.charAt(index);
     if(character === '\n') {
-      eat(character)({ type : 'break' });
+      eat(character)({ type: 'paragraph', contents: [{ type: 'break' }] });
     } else {
       return;
     }
