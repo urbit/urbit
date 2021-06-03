@@ -2,7 +2,7 @@ module Urbit.Vere.Serf.Types where
 
 import Urbit.Prelude
 
-import Urbit.Arvo      (Desk, Ev, FX)
+import Urbit.Arvo      (Desk, Ev, FX, Wynn)
 import Urbit.Noun.Time (Wen)
 
 
@@ -14,31 +14,27 @@ type PlayBail = (EventId, Mug, Goof)
 
 type Slog = (Atom, Tank)
 
+data Vers = Vers Wynn
+  deriving (Show)
+
+data Self = Self
+  { who    :: Ship
+  , isFake :: Bool
+  }
+  deriving (Eq, Ord, Show)
+
 data SerfState = SerfState
   { ssLast :: !EventId
   , ssHash :: !Mug
   }
  deriving (Show, Eq)
 
-data RipeInfo = RipeInfo
-  { riProt :: !Atom
-  , riHoon :: !Atom
-  , riNock :: !Atom
+data Ripe = Ripe
+  { riVers :: Vers
+  , riSelf :: Self
+  , riStat :: SerfState
   }
- deriving (Show)
-
-data SerfInfo = SerfInfo
-  { siRipe :: !RipeInfo
-  , siStat :: !SerfState
-  }
- deriving (Show)
-
-data Fact = Fact
-  { factEve :: EventId
-  , factMug :: Mug
-  , factWen :: Wen
-  , factNon :: Noun
-  }
+  deriving (Show)
 
 data Flag
   = DebugRam
@@ -82,7 +78,7 @@ data EvErr = EvErr Ev (WorkError -> IO ())
 data WorkError -- TODO Rename type and constructors
   = RunSwap EventId Mug Wen Noun FX -- TODO Maybe provide less info here?
   | RunBail [Goof]
-  | RunOkay EventId FX
+  | RunOkay FX
 
 {-
   - RRWork: Ask the serf to do work, will output (Fact, FX) if work
@@ -112,17 +108,13 @@ deriveNoun ''Demi
 -- Exceptions ------------------------------------------------------------------
 
 data SerfExn
-  = UnexpectedPlea Noun Text
-  | BadPleaAtom Atom
-  | BadPleaNoun Noun [Text] Text
+  = UnexpectedGift Noun Text
+  | BadGiftAtom Atom
+  | BadGiftNoun Noun [Text] Text
   | PeekBail Goof
   | SerfConnectionClosed
   | SerfHasShutdown
-  | BailDuringReplay EventId [Goof]
-  | SwapDuringReplay EventId Mug (Wen, Noun) FX
   | SerfNotRunning
-  | MissingBootEventsInEventLog Word Word
-  | SnapshotAheadOfLog EventId EventId
   | BailDuringWyrd [Goof]
   | SwapDuringWyrd Mug (Wen, Noun) FX
  deriving (Show, Exception)
@@ -130,6 +122,14 @@ data SerfExn
 
 -- Instances -------------------------------------------------------------------
 
-deriveNoun ''RipeInfo
-deriveNoun ''SerfInfo
+instance ToNoun Vers where
+  toNoun (Vers w) = C (A 2) $ toNoun w
+
+instance FromNoun Vers where
+  parseNoun = \case
+    C (A 2) w -> Vers <$> parseNoun w
+    v -> error ("Unexpected version in %ripe: " <> show v)
+
+deriveNoun ''Self
 deriveNoun ''SerfState
+deriveNoun ''Ripe

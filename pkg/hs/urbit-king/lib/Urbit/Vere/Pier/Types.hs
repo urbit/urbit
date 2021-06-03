@@ -24,8 +24,6 @@ import Urbit.Arvo
 import Urbit.Noun.Time
 import Urbit.Vere.Serf.Types
 
-import Urbit.EventLog.LMDB (LogIdentity(..))
-
 
 -- Avoid touching Nock values. -------------------------------------------------
 
@@ -55,7 +53,7 @@ data Pill
     }
  deriving (Eq, Show)
 
-data BootSeq = BootSeq !LogIdentity ![Nock] ![Ev]
+data BootSeq = BootSeq !Self ![Nock] ![Ev]
   deriving (Eq, Show)
 
 deriveNoun ''Pill

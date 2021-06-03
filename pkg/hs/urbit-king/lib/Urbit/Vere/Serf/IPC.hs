@@ -1,71 +1,24 @@
 {-|
   Low-Level IPC flows for interacting with the serf process.
 
-  - Serf process can be started and shutdown with `start` and `stop`.
-  - You can ask the serf what it's last event was with
+  - Serf process can be started and shutdown with `work` and `stop`.
+  - You can ask the serf what its last event was with
     `serfLastEventBlocking`.
-  - A running serf can be asked to compact it's heap or take a snapshot.
+  - A running serf can be asked to compact its heap or take a snapshot.
   - You can scry into a running serf.
-  - A running serf can be asked to execute a boot sequence, replay from
-    existing events, and run a ship with `boot`, `replay`, and `run`.
-
-  The `run` and `replay` flows will do batching of events to keep the
-  IPC pipe full.
-
-  ```
-  |%
-  ::  +writ: from king to serf
-  ::
-  +$  writ
-    $%  $:  %live
-            $%  [%cram eve=@]
-                [%exit cod=@]
-                [%save eve=@]
-                [%meld ~]
-                [%pack ~]
-        ==  ==
-        :: sam=[gang (each path $%([%once @tas @tas path] [beam @tas beam]))]
-        [%peek mil=@ sam=*]
-        [%play eve=@ lit=(list ?((pair @da ovum) *))]
-        [%work mil=@ job=(pair @da ovum)]
-    ==
-  ::  +plea: from serf to king
-  ::
-  +$  plea
-    $%  [%live ~]
-        [%ripe [pro=%1 hon=@ nok=@] eve=@ mug=@]
-        [%slog pri=@ tank]
-        [%flog cord]
-        $:  %peek
-            $%  [%done dat=(unit (cask))]
-                [%bail dud=goof]
-        ==  ==
-        $:  %play
-            $%  [%done mug=@]
-                [%bail eve=@ mug=@ dud=goof]
-        ==  ==
-        $:  %work
-            $%  [%done eve=@ mug=@ fec=(list ovum)]
-                [%swap eve=@ mug=@ job=(pair @da ovum) fec=(list ovum)]
-                [%bail lud=(list goof)]
-        ==  ==
-    ==
-  --
-  ```
+  - A running serf can be sent a boot event.
 -}
 
 module Urbit.Vere.Serf.IPC
   ( Serf
-  , start
+  , work
   , stop
   , serfLastEventBlocking
   , snapshot
   , compact
   , scry
   , boot
-  , replay
   , run
-  , swim
   , sendSIGINT
   , module Urbit.Vere.Serf.Types
   )
@@ -86,6 +39,7 @@ import Foreign.Marshal.Alloc        (alloca)
 import Foreign.Ptr                  (castPtr)
 import Foreign.Storable             (peek, poke)
 import RIO.Prelude                  (decodeUtf8Lenient)
+import System.Exit                  (ExitCode)
 import System.Posix.Signals         (sigINT, sigKILL, signalProcess)
 import Urbit.Arvo                   (FX)
 import Urbit.Arvo.Event
@@ -159,78 +113,74 @@ recvResp serf = do
   recvBytes serf len
 
 
--- Send Writ / Recv Plea -------------------------------------------------------
+-- Send Task / Recv Gift -------------------------------------------------------
 
-sendWrit :: Serf -> Writ -> IO ()
-sendWrit s = sendBytes s . jamBS . toNoun
+sendBoot :: Serf -> Boot -> IO ()
+sendBoot s = sendBytes s . jamBS . toNoun
 
-recvPlea :: Serf -> IO Plea
-recvPlea w = do
+sendTask :: Serf -> Task -> IO ()
+sendTask s = sendBytes s . jamBS . toNoun
+
+recvGift :: Serf -> IO Gift
+recvGift w = do
   b <- recvResp w
   n <- fromRightExn (cueBS b) (const $ BadPleaAtom $ bytesAtom b)
-  p <- fromRightExn (fromNounErr @Plea n) (\(p, m) -> BadPleaNoun n p m)
+  p <- fromRightExn (fromNounErr @Gift n) (\(p, m) -> BadGiftNoun n p m)
   pure p
 
-recvPleaHandlingSlog :: Serf -> IO Plea
-recvPleaHandlingSlog serf = loop
+recvGiftHandlingSlog :: Serf -> IO Gift
+recvGiftHandlingSlog serf = loop
  where
-  loop = recvPlea serf >>= \case
-    PSlog info        -> serfSlog serf info >> loop
-    PFlog (Cord ofni) -> serfSlog serf (0, Tank $ Leaf $ Tape $ ofni) >> loop
+  loop = recvGift serf >>= \case
+    GSlog info        -> serfSlog serf info >> loop
+    GFlog (Cord ofni) -> serfSlog serf (0, Tank $ Leaf $ Tape $ ofni) >> loop
     other             -> pure other
 
 -- Higher-Level IPC Functions --------------------------------------------------
 
-recvRipe :: Serf -> IO SerfInfo
-recvRipe serf = recvPleaHandlingSlog serf >>= \case
-  PRipe ripe -> pure ripe
-  plea       -> throwIO (UnexpectedPlea (toNoun plea) "expecting %play")
-
-recvPlay :: Serf -> IO Play
-recvPlay serf = recvPleaHandlingSlog serf >>= \case
-  PPlay play -> pure play
-  plea       -> throwIO (UnexpectedPlea (toNoun plea) "expecting %play")
-
 recvLive :: Serf -> IO ()
-recvLive serf = recvPleaHandlingSlog serf >>= \case
-  PLive () -> pure ()
-  plea     -> throwIO (UnexpectedPlea (toNoun plea) "expecting %live")
-
-recvWork :: Serf -> IO Work
-recvWork serf = do
-  recvPleaHandlingSlog serf >>= \case
-    PWork work -> pure work
-    plea       -> throwIO (UnexpectedPlea (toNoun plea) "expecting %work")
+recvLive serf = recvGiftHandlingSlog serf >>= \case
+  GLive () -> pure ()
+  gift     -> throwIO (UnexpectedGift (toNoun gift) "expecting %live")
 
 recvPeek :: Serf -> IO (Maybe (Term, Noun))
-recvPeek serf = do
-  recvPleaHandlingSlog serf >>= \case
-    PPeek (SDone peek) -> pure peek
-    -- XX surface error content
-    PPeek (SBail dud)  -> pure Nothing
-    plea               -> throwIO (UnexpectedPlea (toNoun plea) "expecting %peek")
+recvPeek serf = recvGiftHandlingSlog serf >>= \case
+  GPeek (EachYes peek) -> pure peek
+  -- XX surface error content ; change `scry` return type to Either Goof
+  GPeek (EachNo dud)   -> pure Nothing
+  gift                 -> throwIO (UnexpectedGift (toNoun gift) "expecting %peek")
+
+recvPoke :: Serf -> IO (Each FX [Goof])
+recvPoke serf = recvGiftHandlingSlog serf >>= \case
+  GPoke poke -> pure poke
+  gift       -> throwIO (UnexpectedGift (toNoun gift) "expecting %poke")
+
+recvRipe :: Serf -> IO Ripe
+recvRipe serf = recvGiftHandlingSlog serf >>= \case
+  GRipe ripe -> pure ripe
+  gift       -> throwIO (UnexpectedGift (toNoun gift) "expecting %play")
 
 
 -- Request-Response Points -- These don't touch the lock -----------------------
 
 sendSnapshotRequest :: Serf -> EventId -> IO ()
 sendSnapshotRequest serf eve = do
-  sendWrit serf (WLive $ LSave eve)
+  sendTask serf (WLive $ LSave eve)
   recvLive serf
 
 sendCompactionRequest :: Serf -> IO ()
 sendCompactionRequest serf = do
-  sendWrit serf (WLive $ LPack ())
+  sendTask serf (WLive $ LPack ())
   recvLive serf
 
 sendScryRequest :: Serf -> Gang -> ScryReq -> IO (Maybe (Term, Noun))
 sendScryRequest serf g r = do
-  sendWrit serf (WPeek 0 g r)
+  sendTask serf (WPeek 0 g r)
   recvPeek serf
 
 sendShutdownRequest :: Serf -> Atom -> IO ()
 sendShutdownRequest serf exitCode = do
-  sendWrit serf (WLive $ LExit exitCode)
+  sendTask serf (WLive $ LExit exitCode)
   pure ()
 
 
@@ -247,25 +197,43 @@ readStdErr h onLine onClose = loop
       Left exn -> onClose
       Right () -> loop
 
-start :: Config -> IO (Serf, SerfInfo)
-start (Config exePax pierPath flags onSlog onStdr onDead) = do
+start :: String -> Config -> IO Serf
+start mode (Config exePax pierPath flags onSlog onStdr onDead) = do
   (Just i, Just o, Just e, p) <- createProcess pSpec
   void $ async (readStdErr e onStdr onDead)
   vLock <- newEmptyMVar
-  let serf = Serf i o p onSlog vLock
-  info <- recvRipe serf
-  putMVar vLock (Just $ siStat info)
-  pure (serf, info)
+  Serf i o p onSlog vLock
  where
   diskKey = ""
   config  = show (compileFlags flags)
   rock    = "0"      -- XX support loading from rock
   cache   = "50000"  -- XX support memo-cache size
-  args    = ["serf", pierPath, diskKey, config, cache, rock]
+  args    = [mode, pierPath, diskKey, config, cache]
   pSpec   = (proc exePax args) { std_in  = CreatePipe
                                , std_out = CreatePipe
                                , std_err = CreatePipe
                                }
+
+
+work :: Config -> IO (Serf, Ripe)
+work fig = do
+  serf <- start "work" fig
+  info <- recvRipe serf
+  putMVar vLock (Just $ siStat info)
+  pure (serf, info)
+
+
+
+boot :: Config -> Boot -> IO ExitCode
+boot fig boot = do
+  serf <- start "boot" fig
+  sendBoot boot
+  tsFlog <- async loop
+  flip onException (cancel tSflog) $ waitForProcess serfProc
+  where
+    loop = do
+      x <- recvGiftHandlingSlog serf
+      fail ("Illegitimate gift during boot: " <> x)
 
 
 -- Taking the SerfState Lock ---------------------------------------------------
@@ -364,7 +332,7 @@ snapshot serf = withSerfLockIO serf $ \ss -> do
   pure (ss, ())
 
 {-|
-  Ask the serf to de-duplicate and de-fragment it's heap.
+  Ask the serf to de-duplicate and de-fragment its heap.
 -}
 compact :: Serf -> IO ()
 compact serf = withSerfLockIO serf $ \ss -> do
@@ -378,101 +346,6 @@ scry :: Serf -> Gang -> ScryReq -> IO (Maybe (Term, Noun))
 scry serf g r = withSerfLockIO serf $ \ss -> do
   (ss,) <$> sendScryRequest serf g r
 
-{-|
-  Given a list of boot events, send them to to the serf in a single
-  %play message. They must all be sent in a single %play event so that
-  the serf can determine the length of the boot sequence.
--}
-boot :: Serf -> [Noun] -> IO (Maybe PlayBail)
-boot serf@Serf {..} seq = do
-  withSerfLockIO serf $ \ss -> do
-    sendWrit serf (WPlay 1 seq)
-    recvPlay serf >>= \case
-      PBail bail -> pure (ss, Just bail)
-      PDone mug  -> pure (SerfState (fromIntegral $ length seq) mug, Nothing)
-
-{-|
-  Given a stream of nouns (from the event log), feed them into the serf
-  in batches of size `batchSize`.
-
-  - On `%bail` response, return early.
-  - On IPC errors, kill the serf and rethrow.
-  - On success, return `Nothing`.
--}
-replay
-  :: forall m
-   . (MonadResource m, MonadUnliftIO m, MonadIO m)
-  => Int
-  -> (Int -> IO ())
-  -> Serf
-  -> ConduitT Noun Void m (Maybe PlayBail)
-replay batchSize cb serf = do
-  withSerfLock serf $ \ss -> do
-    (r, ss') <- loop ss
-    pure (ss', r)
- where
-  loop :: SerfState -> ConduitT Noun Void m (Maybe PlayBail, SerfState)
-  loop ss@(SerfState lastEve lastMug) = do
-    awaitBatch batchSize >>= \case
-      []  -> pure (Nothing, SerfState lastEve lastMug)
-      evs -> do
-        let nexEve = lastEve + 1
-        let newEve = lastEve + fromIntegral (length evs)
-        io $ sendWrit serf (WPlay nexEve evs)
-        io (recvPlay serf) >>= \case
-          PBail bail   -> pure (Just bail, SerfState lastEve lastMug)
-          PDone newMug -> do
-            io (cb $ length evs)
-            loop (SerfState newEve newMug)
-
-{-|
-  TODO If this is slow, use a mutable vector instead of reversing a list.
--}
-awaitBatch :: Monad m => Int -> ConduitT i o m [i]
-awaitBatch = go []
- where
-  go acc 0 = pure (reverse acc)
-  go acc n = await >>= \case
-    Nothing -> pure (reverse acc)
-    Just x  -> go (x:acc) (n-1)
-
-
--- Special Replay for Collecting FX --------------------------------------------
-
-{-|
-  This does event-log replay using the running IPC flow so that we
-  can collect effects.
-
-  We don't tolerate replacement events or bails since we are actually
-  replaying the log, so we just throw exceptions in those cases.
--}
-swim
-  :: forall m
-   . (MonadIO m, MonadUnliftIO m, MonadResource m)
-  => Serf
-  -> ConduitT (Wen, Ev) (EventId, FX) m ()
-swim serf = do
-  withSerfLock serf $ \SerfState {..} -> do
-    (, ()) <$> loop ssHash ssLast
- where
-  loop
-    :: Mug
-    -> EventId
-    -> ConduitT (Wen, Ev) (EventId, FX) m SerfState
-  loop mug eve = await >>= \case
-    Nothing -> do
-      pure (SerfState eve mug)
-    Just (wen, evn) -> do
-      io (sendWrit serf (WWork 0 wen evn))
-      io (recvWork serf) >>= \case
-        WBail goofs -> do
-          throwIO (BailDuringReplay eve goofs)
-        WSwap eid hash (wen, noun) fx -> do
-          throwIO (SwapDuringReplay eid hash (wen, noun) fx)
-        WDone eid hash fx -> do
-          yield (eid, fx)
-          loop hash eid
-
 
 
 -- Running Ship Flow -----------------------------------------------------------
@@ -485,10 +358,9 @@ run
   -> Int
   -> STM EventId
   -> STM RunReq
-  -> ((Fact, FX) -> STM ())
   -> (Maybe Ev -> STM ())
   -> IO ()
-run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
+run serf maxBatchSize getLastEvInLog onInput spin = topLoop
  where
   topLoop :: IO ()
   topLoop = atomically onInput >>= \case
@@ -538,16 +410,10 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
     RRScry g r k   -> atomically (closeTBMQueue que) >> pure (doScry g r k)
     RRWork workErr -> atomically (writeTBMQueue que workErr) >> workLoop que
 
-  onWorkResp :: Wen -> EvErr -> Work -> IO ()
+  onWorkResp :: Wen -> EvErr -> Each FX [Goof] -> IO ()
   onWorkResp wen (EvErr evn err) = \case
-    WDone eid hash fx -> do
-      io $ err (RunOkay eid fx)
-      atomically $ sendOn ((Fact eid hash wen (toNoun evn)), fx)
-    WSwap eid hash (wen, noun) fx -> do
-      io $ err (RunSwap eid hash wen noun fx)
-      atomically $ sendOn (Fact eid hash wen noun, fx)
-    WBail goofs -> do
-      io $ err (RunBail goofs)
+    EachYes fx   -> io $ err (RunOkay fx)
+    EachNo goofs -> io $ err (RunBail goofs)
 
 
 {-|
@@ -590,7 +456,7 @@ processWork
   :: Serf
   -> Int
   -> TBMQueue EvErr
-  -> (Wen -> EvErr -> Work -> IO ())
+  -> (Wen -> EvErr -> Each FX [Goof] -> IO ())
   -> (Maybe Ev -> STM ())
   -> IO ()
 processWork serf maxSize q onResp spin = do
@@ -601,7 +467,7 @@ processWork serf maxSize q onResp spin = do
     loop vInFlightQueue vDoneFlag
     wait recvThread
  where
-  loop :: TVar (Seq (Ev, Work -> IO ())) -> TVar Bool -> IO ()
+  loop :: TVar (Seq (Ev, Each FX [Goof] -> IO ())) -> TVar Bool -> IO ()
   loop vInFlight vDone = do
     atomically (pullFromQueueBounded maxSize vInFlight q) >>= \case
       Nothing -> do
@@ -610,7 +476,7 @@ processWork serf maxSize q onResp spin = do
         now <- Time.now
         let cb = onResp now evErr
         atomically $ modifyTVar' vInFlight (:|> (ev, cb))
-        sendWrit serf (WWork 0 now ev)
+        sendTask serf (WWork 0 now ev)
         loop vInFlight vDone
 
 {-|
@@ -634,14 +500,13 @@ processWork serf maxSize q onResp spin = do
 recvLoop
   :: Serf
   -> TVar Bool
-  -> TVar (Seq (Ev, Work -> IO ()))
+  -> TVar (Seq (Ev, Each FX [Goof] -> IO ()))
   -> (Maybe Ev -> STM ())
   -> IO ()
 recvLoop serf vDone vWork spin = do
-  withSerfLockIO serf \SerfState {..} -> do
-    loop ssLast ssHash
+  withSerfLockIO serf \SerfState {..} -> loop
  where
-  loop eve mug = do
+  loop = do
     atomically $ do
       whenM (null <$> readTVar vWork) $ do
         spin Nothing
@@ -649,12 +514,11 @@ recvLoop serf vDone vWork spin = do
       Nothing -> pure (SerfState eve mug, ())
       Just (curEve, cb) -> do
         atomically (spin (Just curEve))
-        recvWork serf >>= \case
-          work@(WDone eid hash _)   -> cb work >> loop eid hash
-          work@(WSwap eid hash _ _) -> cb work >> loop eid hash
-          work@(WBail _)            -> cb work >> loop eve mug
+        work <- recvPoke serf
+        cb work
+        loop
 
-  takeCallback :: STM (Maybe (Ev, Work -> IO ()))
+  takeCallback :: STM (Maybe (Ev, Each FX [Goof] -> IO ()))
   takeCallback = do
     ((,) <$> readTVar vDone <*> readTVar vWork) >>= \case
       (False, Empty        ) -> retry

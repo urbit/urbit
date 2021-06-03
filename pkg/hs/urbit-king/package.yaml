@@ -107,7 +107,6 @@ dependencies:
   - unliftio-core
   - unordered-containers
   - urbit-atom
-  - urbit-eventlog-lmdb
   - urbit-hob
   - urbit-noun
   - urbit-noun-core

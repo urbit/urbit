@@ -7,7 +7,6 @@ packages:
   - terminal-progress-bar
   - urbit-atom
   - urbit-azimuth
-  - urbit-eventlog-lmdb
   - urbit-king
   - urbit-termsize
   - urbit-noun
