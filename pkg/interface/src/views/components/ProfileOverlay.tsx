@@ -156,7 +156,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
                icon='Chat'
                size={16}
                cursor='pointer'
-               onClick={() => history.push(`/~landscape/messages/dm/${ship}`)}
+               onClick={() => history.push(`/~landscape/messages/dm/~${ship}`)}
              />
            )}
          </Row>
