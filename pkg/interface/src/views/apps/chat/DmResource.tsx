@@ -1,5 +1,6 @@
-import { cite, Content } from '@urbit/api';
+import { cite, Content, Post } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
+import _ from 'lodash';
 import bigInt from 'big-integer';
 import { Box, Row, Col, Text } from '@tlon/indigo-react';
 import { Link } from 'react-router-dom';
@@ -27,6 +28,27 @@ const getCurrDmSize = (ship: string) => {
   return shipGraph?.children?.size ?? 0;
 };
 
+function quoteReply(post: Post) {
+  const reply = _.reduce(
+    post.contents,
+    (acc, content) => {
+      if ('text' in content) {
+        return `${acc}${content.text}`;
+      } else if ('url' in content) {
+        return `${acc}${content.url}`;
+      } else if ('mention' in content) {
+        return `${acc}${content.mention}`;
+      }
+      return acc;
+    },
+    ''
+  )
+    .split('\n')
+    .map(l => `> ${l}`)
+    .join('\n');
+  return `${reply}\n\n~${post.author}:`;
+}
+
 export function DmResource(props: DmResourceProps) {
   const { ship, api } = props;
   const dm = useDM(ship);
@@ -38,7 +60,12 @@ export function DmResource(props: DmResourceProps) {
   const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
 
   useEffect(() => {
-    api.graph.getNewest(`~${window.ship}`, 'dm-inbox', 100, `/${patpToUd(ship)}`);
+    api.graph.getNewest(
+      `~${window.ship}`,
+      'dm-inbox',
+      100,
+      `/${patpToUd(ship)}`
+    );
   }, [ship]);
 
   const fetchMessages = useCallback(
@@ -75,7 +102,10 @@ export function DmResource(props: DmResourceProps) {
   );
 
   const dismissUnread = useCallback(() => {
-    api.hark.dismissReadCount(`/ship/~${window.ship}/dm-inbox`, `/${patp2dec(ship)}`);
+    api.hark.dismissReadCount(
+      `/ship/~${window.ship}/dm-inbox`,
+      `/${patp2dec(ship)}`
+    );
   }, [ship]);
 
   const onSubmit = useCallback(
@@ -99,13 +129,13 @@ export function DmResource(props: DmResourceProps) {
         <Row alignItems="baseline">
           <Box
             borderRight={1}
-            borderRightColor='gray'
+            borderRightColor="gray"
             pr={3}
             fontSize={1}
             mr={3}
             my={1}
             flexShrink={0}
-            display={['block','none']}
+            display={['block', 'none']}
           >
             <Link to={'/~landscape/messages'}>
               <Text>{'<- Back'}</Text>
@@ -131,10 +161,10 @@ export function DmResource(props: DmResourceProps) {
         id={ship}
         graph={dm}
         unreadCount={unreadCount}
-        onReply={() => ''}
+        onReply={quoteReply}
         fetchMessages={fetchMessages}
         dismissUnread={dismissUnread}
-        getPermalink={() => ''}
+        getPermalink={() => undefined}
         isAdmin
         onSubmit={onSubmit}
       />

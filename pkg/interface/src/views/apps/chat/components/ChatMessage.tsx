@@ -329,9 +329,11 @@ const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink }) => {
               <MessageActionItem onClick={() => onReply(msg)}>
                 Reply
               </MessageActionItem>
-              <MessageActionItem onClick={doCopy}>
-                {copyDisplay}
-              </MessageActionItem>
+              {permalink ? (
+                <MessageActionItem onClick={doCopy}>
+                  {copyDisplay}
+                </MessageActionItem>
+              ) : null }
               {(isAdmin || isOwn()) ? (
                 <MessageActionItem onClick={e => onDelete(msg)} color='red'>
                   Delete Message
