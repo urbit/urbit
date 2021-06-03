@@ -50,7 +50,7 @@
   |=  =^state:naive
   ^-  [effects:naive ^state:naive]
   :: ~bud should already be spawned, though trying to init ~bud again shouldn't matter i think?
-  :: =^  f1  state  (init-bud state)
+  =^  f1  state  (init-bud state)
   =^  f2  state  (n state (owner-changed:l1 ~litbud (addr %litbud-key-0)))
   =^  f3  state  (n state (owner-changed:l1 ~litbud deposit-address:naive))
   [:(welp f2 f3) state]
@@ -63,6 +63,38 @@
    =^  f1  state  (init-bud state)
    =^  f2  state  (n state (owner-changed:l1 ~sambud (addr %sambud-key-0)))
    [:(welp f1 f2) state]
+::
+::  checks to see if a given proxy+event combo should work, assuming that
+::  the pk and nonce are correct
+::
+++  tx-succeed
+  |=  tx=tx:naive  ^-  ?
+  =*  prx  proxy.from.tx
+  ?:  =(prx %own)
+    %.y
+  ?:  =(prx %vote)
+    %.n
+  ?-  +<.tx
+    ?(%spawn %set-spawn-proxy)
+      ?+  prx      %.n
+        %spawn     %.y
+        %manage    %.n
+        %vote      %.n
+      ==
+    ?(%transfer-point %set-transfer-proxy)
+      ?+  prx      %.n
+        %spawn     %.n
+        %manage    %.n
+        %transfer  %.y
+      ==
+    :: TODO: how do i make the following two lines?
+    ?(%configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy)
+      ?+  prx      %.n
+        %spawn     %.n
+        %manage    %.y
+        %transfer  %.n
+      ==
+    ==
 ::
 ++  l1
   |%
@@ -412,18 +444,18 @@
     :: TODO: make sure nobody else can change these keys
   ==
 ::
-++  new-test-marbud-l2-change-keys  ^-  tang
+++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys suit encr auth |]
   =|  =^state:naive
   =^  f  state  (init-marbud state)
-  =/  expect-state  state
-  ::  not sure why this isn't working, maybe check the +increment-nonce code for an example
+  =/  marbud-point  (~(got by points.state) ~marbud)
+  =/  new-marbud  marbud-point(keys.net [1 suit auth encr], nonce.owner.own 1)
+  ::
   %+  expect-eq
-    !>  expect-state
-    ::!>  state(keys.net:(~(got by points.state ~marbud)) [1 suit auth encr])
+    !>  state(points (~(put by points.state) ~marbud new-marbud))
   ::
     !>
-    =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-1))
+    =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-0))
     state
   ::
 :: TODO: transfer breach via transfer proxy
