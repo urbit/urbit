@@ -53,8 +53,22 @@ export function NewChannel(props: NewChannelProps): ReactElement {
   const groups = useGroupState(state => state.groups);
   const waiter = useWaitForProps({ groups }, 5000);
 
+  const channelName = (values) => {
+    if (values.name)
+      return values.name;
+    if (!values.name && workspace?.type === 'messages') {
+      const joinedShips = values.ships
+        .filter(Boolean)
+        .map(ship => `~${deSig(ship)}`)
+        .join(', ')
+        .concat(`, ~${deSig(window.ship)}`);
+      return joinedShips;
+    }
+    return values.moduleType;
+  };
+
   const onSubmit = async (values: FormSchema, actions) => {
-    const name = values.name ? values.name : values.moduleType;
+    const name = channelName(values);
     const resId: string =
       stringToSymbol(values.name) +
       (workspace?.type !== 'messages'
@@ -64,7 +78,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
       let { description, moduleType, ships, writers } = values;
       ships = ships.filter(e => e !== '');
       if (workspace?.type === 'messages' && ships.length === 1) {
-        return history.push(`/~landscape/messages/dm/${deSig(ships[0])}`);
+        return history.push(`/~landscape/messages/dm/~${deSig(ships[0])}`);
       }
       if (group) {
         await api.graph.createManagedGraph(

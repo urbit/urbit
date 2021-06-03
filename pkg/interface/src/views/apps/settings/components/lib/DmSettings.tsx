@@ -1,9 +1,8 @@
 import {
+  Text,
   Col,
   Box,
-  Text,
-  ManagedRadioButtonField as Radio,
-  ManagedToggleSwitchField,
+  ManagedToggleSwitchField
 } from '@tlon/indigo-react';
 import { Form, Formik } from 'formik';
 import React, { useCallback } from 'react';
@@ -13,7 +12,7 @@ import { AsyncButton } from '~/views/components/AsyncButton';
 
 export function DmSettings(props: { api: GlobalApi }) {
   const { api } = props;
-  const screening = useGraphState((s) => s.screening);
+  const screening = useGraphState(s => s.screening);
   const initialValues = { accept: !screening };
   const onSubmit = useCallback(
     async (values, actions) => {
@@ -26,9 +25,13 @@ export function DmSettings(props: { api: GlobalApi }) {
   return (
     <Col p="5" gapY="5" width="100%" height="100%">
       <Col gapY="1">
-        <Box fontSize="2">Privacy</Box>
+        <Box>
+          <Text fontSize="2" >Privacy</Text>
+        </Box>
         <Box fontSize="1" color="gray">
-          Control other people's ability to message you
+          <Text gray>
+            Control other people&apos;s ability to message you
+          </Text>
         </Box>
       </Col>
       <Col>

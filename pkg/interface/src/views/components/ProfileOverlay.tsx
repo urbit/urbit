@@ -1,13 +1,8 @@
 import {
   BaseImage, Box,
 
-
-
-
-
   BoxProps,
   Center, Col,
-
 
   Icon, Row,
 
@@ -52,6 +47,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
     children,
     ...rest
   } = props;
+
   const [open, _setOpen] = useState(false);
   const [coords, setCoords] = useState({});
   const [visible, setVisible] = useState(false);
@@ -160,7 +156,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
                icon='Chat'
                size={16}
                cursor='pointer'
-               onClick={() => history.push(`/~landscape/dm/${ship}`)}
+               onClick={() => history.push(`/~landscape/messages/dm/${ship}`)}
              />
            )}
          </Row>

@@ -3,13 +3,13 @@ import { AppAssociations, Associations, Graph, UnreadStats } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
 
 import { SidebarAssociationItem, SidebarDmItem } from './SidebarItem';
-import useGraphState, {useInbox} from '~/logic/state/graph';
+import useGraphState, { useInbox } from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
 import { alphabeticalOrder, getResourcePath, modulo } from '~/logic/lib/util';
 import { SidebarAppConfigs, SidebarListConfig, SidebarSort } from './types';
 import { Workspace } from '~/types/workspace';
 import useMetadataState from '~/logic/state/metadata';
-import {useHistory} from 'react-router';
+import { useHistory } from 'react-router';
 import { useShortcut } from '~/logic/state/settings';
 
 function sidebarSort(
@@ -32,12 +32,12 @@ function sidebarSort(
     const aAppName = aAssoc?.['app-name'];
     const bAppName = bAssoc?.['app-name'];
 
-    const aUpdated = a.startsWith('~') 
+    const aUpdated = a.startsWith('~')
       ?  (inboxUnreads?.[`/${patp2dec(a)}`]?.last)
-      :  apps[aAppName]?.lastUpdated(a) || 0;
+      :  (apps[aAppName]?.lastUpdated(a) || 0);
     const bUpdated = b.startsWith('~')
       ?  (inboxUnreads?.[`/${patp2dec(b)}`]?.last || 0)
-      :  apps[bAppName]?.lastUpdated(b) || 0;
+      :  (apps[bAppName]?.lastUpdated(b) || 0);
 
     return bUpdated - aUpdated || alphabetical(a, b);
   };
@@ -56,6 +56,7 @@ function getItems(associations: Associations, workspace: Workspace, inbox: Graph
     }
       if (workspace?.type === 'messages') {
         return (
+          !assoc.metadata.hidden &&
           !(assoc.group in associations.groups) &&
           assoc.metadata.config.graph === 'chat'
         );
@@ -78,10 +79,9 @@ function getItems(associations: Associations, workspace: Workspace, inbox: Graph
       }
    });
   const direct: string[] = workspace.type !== 'messages' ? []
-    : inbox.keys().map(x => patp(x.toJSNumber()))
+    : inbox.keys().map(x => patp(x.toString()));
 
   return [...filtered, ...direct];
-
 }
 
 export function SidebarList(props: {
@@ -92,12 +92,11 @@ export function SidebarList(props: {
   selected?: string;
   workspace: Workspace;
 }): ReactElement {
-  const { selected, group, config, workspace } = props;
+  const { selected, config, workspace } = props;
   const associations = useMetadataState(state => state.associations);
   const inbox = useInbox();
   const unreads = useHarkState(s => s.unreads.graph?.[`/ship/~${window.ship}/dm-inbox`]);
   const graphKeys = useGraphState(s => s.graphKeys);
-
 
   const ordered = getItems(associations, workspace, inbox)
     .sort(sidebarSort(associations.graph, props.apps, unreads)[config.sortBy]);
@@ -106,7 +105,7 @@ export function SidebarList(props: {
 
   const cycleChannels = useCallback((backward: boolean) => {
     const idx = ordered.findIndex(s => s === selected);
-    const offset = backward ? -1 : 1
+    const offset = backward ? -1 : 1;
 
     const newIdx = modulo(idx+offset, ordered.length - 1);
     const { metadata, resource } = associations[ordered[newIdx]];
@@ -115,7 +114,7 @@ export function SidebarList(props: {
     if ('graph' in metadata.config) {
       path = getResourcePath(workspace, resource, joined, metadata.config.graph);
     }
-    history.push(path)
+    history.push(path);
   }, [selected, history.push]);
 
   useShortcut('cycleForward', useCallback((e: KeyboardEvent) => {
@@ -126,19 +125,17 @@ export function SidebarList(props: {
   useShortcut('cycleBack', useCallback((e: KeyboardEvent) => {
     cycleChannels(true);
     e.preventDefault();
-  }, [cycleChannels]))
-
+  }, [cycleChannels]));
 
   return (
     <>
       {ordered.map((pathOrShip) => {
-        
         return pathOrShip.startsWith('/') ? (
           <SidebarAssociationItem
             key={pathOrShip}
             path={pathOrShip}
             selected={pathOrShip === selected}
-            association={associations[pathOrShip]}
+            association={associations.graph[pathOrShip]}
             apps={props.apps}
             hideUnjoined={config.hideUnjoined}
             workspace={workspace}

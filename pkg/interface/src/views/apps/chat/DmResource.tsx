@@ -1,15 +1,16 @@
-import { cite, Content, createPost } from '@urbit/api';
+import { cite, Content } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import bigInt from 'big-integer';
 import { Box, Row, Col, Text } from '@tlon/indigo-react';
+import { Link } from 'react-router-dom';
 import { patp2dec } from 'urbit-ob';
 import GlobalApi from '~/logic/api/global';
 import { useContact } from '~/logic/state/contact';
 import useGraphState, { useDM } from '~/logic/state/graph';
-import useHarkState, { useHarkDm } from '~/logic/state/hark';
+import { useHarkDm } from '~/logic/state/hark';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
-import {patpToUd} from '~/logic/lib/util';
+import { patpToUd } from '~/logic/lib/util';
 
 interface DmResourceProps {
   ship: string;
@@ -33,7 +34,7 @@ export function DmResource(props: DmResourceProps) {
   const unreadCount = (hark?.unreads as number) ?? 0;
   const contact = useContact(ship);
   const { hideNicknames } = useSettingsState(selectCalmState);
-  const showNickname = !hideNicknames && !!contact;
+  const showNickname = !hideNicknames && Boolean(contact);
   const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
 
   useEffect(() => {
@@ -74,9 +75,8 @@ export function DmResource(props: DmResourceProps) {
   );
 
   const dismissUnread = useCallback(() => {
-    api.hark.dismissReadCount(`/ship/~${window.ship}/dm-inbox`, `/${patpToUd(ship)}`);
+    api.hark.dismissReadCount(`/ship/~${window.ship}/dm-inbox`, `/${patp2dec(ship)}`);
   }, [ship]);
-    
 
   const onSubmit = useCallback(
     (contents: Content[]) => {
@@ -96,15 +96,29 @@ export function DmResource(props: DmResourceProps) {
         borderBottom="1"
         borderBottomColor="lightGray"
       >
-        <Row gapX="2" alignItems="baseline">
+        <Row alignItems="baseline">
+          <Box
+            borderRight={1}
+            borderRightColor='gray'
+            pr={3}
+            fontSize={1}
+            mr={3}
+            my={1}
+            flexShrink={0}
+            display={['block','none']}
+          >
+            <Link to={'/~landscape/messages'}>
+              <Text>{'<- Back'}</Text>
+            </Link>
+          </Box>
           {showNickname && (
-            <Box>
+            <Box mr="3">
               <Text fontWeight="medium" fontSize={2} mono={!showNickname}>
                 {nickname}
               </Text>
             </Box>
           )}
-          <Box>
+          <Box display={[showNickname ? 'none' : 'block', 'block']}>
             <Text gray={showNickname} mono>
               {cite(ship)}
             </Text>

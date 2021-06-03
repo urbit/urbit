@@ -14,6 +14,7 @@
 +$  state-0  [%0 base-state-0]
 +$  card  card:agent:gall
 +$  nodes  (map index:store node:store)
+++  orm   orm:store
 --
 ::
 =|  state-0
@@ -51,16 +52,35 @@
     ?.  =(our.bowl ship)  ship
     entity.rid
   ::
+  ++  update-indices
+    |=  [pfix=index:store =graph:store]
+    =*  loop  $
+    ^-  graph:store
+    %+  gas:orm  *graph:store
+    %+  turn  (tap:orm graph)
+    |=  [=atom =node:store]
+    ^-  [^atom node:store]
+    =/  =index:store  (snoc pfix atom)
+    :-  atom 
+    =.  children.node
+      ?:  ?=(%empty -.children.node)  children.node
+      [%graph loop(pfix index, graph p.children.node)]
+    ?:  ?=(%| -.post.node)  node
+    node(index.p.post index)
+  ::
   ++  graph
     %+  roll  dms
     |=  [rid=resource =graph:store]
+    ^-  graph:store
     =/  =ship  (counterparty rid)
     =|  =post:store
     =:  author.post     our.bowl
         index.post      [ship ~]
         time-sent.post  now.bowl
       ==
-    (put:orm:store graph `@`ship [%& post] %graph graph)
+    =/  dm=graph:store
+      (update-indices ~[ship] (get-graph-mop:gra rid))
+    (put:orm:store graph `@`ship [%& post] %graph dm)
   --
 ::
 ++  on-save  !>(state)
@@ -203,10 +223,12 @@
         cards
       ;:  welp  
         cards
+        ::
         (add-missing-root ship)
-        :~  (~(poke pass wire) dock cage)
-            (poke-our:pass %graph-store cage)
-        ==
+        ::
+        :-  (poke-our:pass %graph-store cage)
+        ?:  =(our.bowl ship)  ~
+        (~(poke pass wire) dock cage)^~
       == 
     ==
   ::
