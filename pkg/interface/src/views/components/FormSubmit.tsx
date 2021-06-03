@@ -1,13 +1,14 @@
-import React, { useCallback, ReactNode } from "react";
-import { useFormikContext } from "formik";
-import { Row, Button } from "@tlon/indigo-react";
-import { AsyncButton } from "./AsyncButton";
+import React, { useCallback, ReactNode, ReactElement } from 'react';
+import { useFormikContext } from 'formik';
+import { Row, Button } from '@tlon/indigo-react';
+import { AsyncButton } from './AsyncButton';
 
 interface FormSubmitProps {
   children?: ReactNode;
+  start?: boolean;
 }
 
-export function FormSubmit<T = any>(props: FormSubmitProps) {
+export function FormSubmit<T = unknown>(props: FormSubmitProps): ReactElement {
   const { children } = props;
   const { initialValues, values, dirty, resetForm, isSubmitting } = useFormikContext<T>();
 
@@ -19,12 +20,11 @@ export function FormSubmit<T = any>(props: FormSubmitProps) {
     resetForm({ errors: {}, touched: {}, values: initialValues, status: {} });
   }, [resetForm, initialValues]);
 
-
   return (
     <Row
       p="2"
       bottom="0px"
-      justifyContent="flex-end"
+      justifyContent={props.start ? 'flex-start' : "flex-end"}
       gapX="2"
       alignItems="center"
     >
@@ -33,7 +33,7 @@ export function FormSubmit<T = any>(props: FormSubmitProps) {
           Cancel
         </Button>
       )}
-      <AsyncButton onSuccess={handleSuccess} primary>
+      <AsyncButton disabled={!dirty} onSuccess={handleSuccess} primary>
         {children}
       </AsyncButton>
     </Row>

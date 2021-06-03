@@ -468,9 +468,9 @@
     (strand-fail %build-mark >arg< ~)
   ?>  =(%dais p.r.u.riot)
   (pure:m !<(dais:clay q.r.u.riot))
-::  +build-cast: build a mark conversion gate ($tube)
+::  +build-tube: build a mark conversion gate ($tube)
 ::
-++  build-cast
+++  build-tube
   |=  [[=ship =desk =case] =mars:clay]
   =*  arg  +<
   =/  m  (strand ,tube:clay)
@@ -478,9 +478,36 @@
   ;<  =riot:clay  bind:m
     (warp ship desk ~ %sing %c case /[a.mars]/[b.mars])
   ?~  riot
-    (strand-fail %build-cast >arg< ~)
+    (strand-fail %build-tube >arg< ~)
   ?>  =(%tube p.r.u.riot)
   (pure:m !<(tube:clay q.r.u.riot))
+::
+::  +build-nave: build a mark definition to a $nave
+::
+++  build-nave
+  |=  [[=ship =desk =case] mak=mark]
+  =*  arg  +<
+  =/  m  (strand ,vase)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %b case /[mak])
+  ?~  riot
+    (strand-fail %build-nave >arg< ~)
+  ?>  =(%nave p.r.u.riot)
+  (pure:m q.r.u.riot)
+::  +build-cast: build a mark conversion gate (static)
+::
+++  build-cast
+  |=  [[=ship =desk =case] =mars:clay]
+  =*  arg  +<
+  =/  m  (strand ,vase)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %f case /[a.mars]/[b.mars])
+  ?~  riot
+    (strand-fail %build-cast >arg< ~)
+  ?>  =(%cast p.r.u.riot)
+  (pure:m q.r.u.riot)
 ::
 ::  Read from Clay
 ::
@@ -692,7 +719,7 @@
   (pure:m tid)
 ::
 +$  thread-result
-  (each vase [term (list tang)])
+  (each vase [term tang])
 ::
 ++  await-thread
   |=  [file=term args=vase]
@@ -700,14 +727,14 @@
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl
   =/  tid  (scot %ta (cat 3 'strand_' (scot %uv (sham file eny.bowl))))
-  =/  tid  (scot %ta (cat 3 'strand_' (scot %uv (sham file eny.bowl))))
   =/  poke-vase  !>([`tid.bowl `tid file args])
   ;<  ~      bind:m  (watch-our /awaiting/[tid] %spider /thread-result/[tid])
   ;<  ~      bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~      bind:m  (sleep ~s0)  ::  wait for thread to start
   ;<  =cage  bind:m  (take-fact /awaiting/[tid])
+  ;<  ~      bind:m  (take-kick /awaiting/[tid])
   ?+  p.cage  ~|([%strange-thread-result p.cage file tid] !!)
     %thread-done  (pure:m %& q.cage)
-    %thread-fail  (pure:m %| !<([term (list tang)] q.cage))
+    %thread-fail  (pure:m %| !<([term tang] q.cage))
   ==
 --

@@ -23,11 +23,13 @@
       state-2
       state-3
       state-4
+      state-5
+      state-6
   ==
 +$  unread-stats
   [indices=(set index:graph-store) last=@da]
 ::
-+$  base-state 
++$  base-state
   $:  unreads-each=(jug stats-index:store index:graph-store)
       unreads-count=(map stats-index:store @ud)
       last-seen=(map stats-index:store @da)
@@ -44,10 +46,16 @@
   [%3 state-two:store]
 ::
 +$  state-4
-  [%4 base-state]
+  [%4 state-three:store]
+::
++$  state-5
+  [%5 state-three:store]
+::
++$  state-6
+  [%6 base-state]
 ::
 +$  inflated-state
-  $:  state-4
+  $:  state-6
       cache
   ==
 ::  $cache: useful to have precalculated, but can be derived from state
@@ -88,9 +96,25 @@
   =|  cards=(list card)
   |^  
   ?-  -.old
-      %4  
+      %6  
     :-  (flop cards)
     this(-.state old, +.state (inflate-cache:ha old))
+    ::
+      %5
+    %_  $
+      -.old  %6
+      notifications.old  (convert-notifications-4 notifications.old)
+      archive.old        (convert-notifications-4 archive.old)
+    ==
+    ::
+      %4
+    %_  $
+      -.old  %5
+      ::
+        last-seen.old
+      %-  ~(run by last-seen.old)
+      |=(old=@da (min old now.bowl))
+    ==
     ::
       %3
     %_  $
@@ -136,15 +160,59 @@
     ==
   ==
   ::
-  ++  convert-notifications-3
-    |=  old=notifications:state-two:store
+  ++  convert-notifications-4
+    |=  old=notifications:state-three:store
     %+  gas:orm  *notifications:store
     ^-  (list [@da timebox:store])
     %+  murn  
-      (tap:orm:state-two:store old)
-    |=  [time=@da =timebox:state-two:store]
+      (tap:orm:state-three:store old)
+    |=  [time=@da =timebox:state-three:store]
     ^-  (unit [@da timebox:store])
     =/  new-timebox=timebox:store
+      (convert-timebox-4 timebox)
+    ?:  =(0 ~(wyt by new-timebox))
+      ~ 
+    `[time new-timebox]
+  ::
+  ++  convert-timebox-4
+    |=  =timebox:state-three:store
+    ^-  timebox:store
+    %-  ~(gas by *timebox:store)
+    ^-  (list [index:store notification:store])
+    %+  murn
+      ~(tap by timebox)
+    |=  [=index:store =notification:state-three:store]
+    ^-  (unit [index:store notification:store])
+    =/  new-notification=(unit notification:store)
+      (convert-notification-4 notification)
+    ?~  new-notification  ~
+    `[index u.new-notification]
+  ::
+  ++  convert-notification-4
+    |=  =notification:state-three:store
+    ^-  (unit notification:store)
+    ?:  ?=(%group -.contents.notification)
+      `notification
+    =/  con=(list post:post)
+      (convert-graph-contents-4 list.contents.notification)
+    ?:  =(~ con)  ~
+    =,  notification
+    `[date read %graph con]
+  ::
+  ++  convert-graph-contents-4
+    |=  con=(list post:post-zero:post)
+    ^-  (list post:post)
+    (turn con post-to-one:graph-store)
+  ::
+  ++  convert-notifications-3
+    |=  old=notifications:state-two:store
+    %+  gas:orm:state-three:store  *notifications:state-three:store
+    ^-  (list [@da timebox:state-three:store])
+    %+  murn  
+      (tap:orm:state-two:store old)
+    |=  [time=@da =timebox:state-two:store]
+    ^-  (unit [@da timebox:state-three:store])
+    =/  new-timebox=timebox:state-three:store
       (convert-timebox-3 timebox)
     ?:  =(0 ~(wyt by new-timebox))
       ~ 
@@ -152,21 +220,21 @@
   ::
   ++  convert-timebox-3
     |=  =timebox:state-two:store
-    ^-  timebox:store
-    %-  ~(gas by *timebox:store)
-    ^-  (list [index:store notification:store])
+    ^-  timebox:state-three:store
+    %-  ~(gas by *timebox:state-three:store)
+    ^-  (list [index:state-three:store notification:state-three:store])
     %+  murn
       ~(tap by timebox)
     |=  [=index:store =notification:state-two:store]
-    ^-  (unit [index:store notification:store])
-    =/  new-notification=(unit notification:store)
+    ^-  (unit [index:store notification:state-three:store])
+    =/  new-notification=(unit notification:state-three:store)
       (convert-notification-3 notification)
     ?~  new-notification  ~
     `[index u.new-notification]
   ::
   ++  convert-notification-3
     |=  =notification:state-two:store
-    ^-  (unit notification:store)
+    ^-  (unit notification:state-three:store)
     ?:  ?=(%graph -.contents.notification)
       `notification
     =/  con=(list group-contents:store)
@@ -279,9 +347,8 @@
     %+  turn
       ~(tap by unreads-count)
     |=  [=stats-index:store count=@ud]
-    ?>  ?=(%graph -.stats-index)
     :*  stats-index
-        ~(wyt in (~(gut by by-index) stats-index ~))
+        (~(gut by by-index) stats-index ~)
         [%count count]
         (~(gut by last-seen) stats-index *time)
     ==
@@ -292,15 +359,32 @@
       ~(tap by unreads-each)
     |=  [=stats-index:store indices=(set index:graph-store)]
     :*  stats-index
-        ~(wyt in (~(gut by by-index) stats-index ~))
+        (~(gut by by-index) stats-index ~)
         [%each indices]
         (~(gut by last-seen) stats-index *time)
+    ==
+  ::
+  ++  give-group-unreads
+    ^-  (list [stats-index:store stats:store])
+    %+  murn  ~(tap by by-index)
+    |=  [=stats-index:store nots=(set [time index:store])]
+    ?.  ?=(%group -.stats-index)
+      ~
+    :-  ~
+    :*  stats-index
+        nots
+        [%count 0]
+        *time
     ==
   ::
   ++  give-unreads
     ^-  update:store
     :-  %unreads
-    (weld give-each-unreads give-since-unreads)
+    ;:  weld 
+      give-each-unreads 
+      give-since-unreads
+      give-group-unreads
+    ==
   --
 ::
 ++  on-peek   
@@ -749,8 +833,10 @@
   ==
 ::
 ++  inflate-cache
-  |=  state-4
+  |=  state-6
   ^+  +.state
+  =.  +.state
+    *cache
   =/  nots=(list [p=@da =timebox:store])
     (tap:orm notifications)
   |-  =*  outer  $

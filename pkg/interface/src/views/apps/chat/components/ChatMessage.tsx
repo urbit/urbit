@@ -1,13 +1,17 @@
+/* eslint-disable max-lines-per-function */
+import bigInt from 'big-integer';
 import React, {
   useState,
   useEffect,
   useRef,
   Component,
-  PureComponent
+  PureComponent,
+  useCallback
 } from 'react';
 import moment from 'moment';
 import _ from 'lodash';
-import { Box, Row, Text, Rule, BaseImage } from '@tlon/indigo-react';
+import VisibilitySensor from 'react-visibility-sensor';
+import { Box, Row, Text, Rule, BaseImage, Icon, Col } from '@tlon/indigo-react';
 import { Sigil } from '~/logic/lib/sigil';
 import OverlaySigil from '~/views/components/OverlaySigil';
 import {
@@ -15,67 +19,241 @@ import {
   cite,
   writeText,
   useShowNickname,
-  useHovering
+  useHideAvatar,
+  useHovering,
+  daToUnix
 } from '~/logic/lib/util';
-import { Group, Association, Contacts, Post, Groups, Associations } from '~/types';
-import TextContent from './content/text';
-import CodeContent from './content/code';
+import {
+  Group,
+  Association,
+  Contacts,
+  Post,
+  Groups,
+  Associations
+} from '~/types';
+import TextContent from '../../../landscape/components/Graph/content/text';
+import CodeContent from '../../../landscape/components/Graph/content/code';
 import RemoteContent from '~/views/components/RemoteContent';
 import { Mention } from '~/views/components/MentionText';
+import { Dropdown } from '~/views/components/Dropdown';
 import styled from 'styled-components';
 import useLocalState from '~/logic/state/local';
+import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import Timestamp from '~/views/components/Timestamp';
+import useContactState from '~/logic/state/contact';
+import { useIdlingState } from '~/logic/lib/idling';
+import ProfileOverlay from '~/views/components/ProfileOverlay';
+import {useCopy} from '~/logic/lib/useCopy';
+import {GraphContentWide} from '~/views/landscape/components/Graph/GraphContentWide';
+
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
-export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
-  <Row
-    flexShrink={0}
-    ref={ref}
-    color='blue'
-    alignItems='center'
-    fontSize='0'
-    position='absolute'
-    width='100%'
-    py='2'
-  >
-    <Rule borderColor='blue' display={['none', 'block']} m='0' width='2rem' />
-    <Text flexShrink='0' display='block' zIndex='2' mx='4' color='blue'>
-      New messages below
-    </Text>
-    <Rule borderColor='blue' flexGrow='1' m='0' />
-    <Rule style={{ width: 'calc(50% - 48px)' }} borderColor='blue' m='0' />
-  </Row>
-));
+interface DayBreakProps {
+  when: string;
+  shimTop?: boolean;
+}
 
-export const DayBreak = ({ when }) => (
-  <Row pb='3' alignItems='center' justifyContent='center' width='100%'>
-    <Text gray>
+
+export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
+  <Row
+    px={2}
+    height={5}
+    mb={2}
+    justifyContent='center'
+    alignItems='center'
+    mt={shimTop ? '-8px' : '0'}
+  >
+    <Rule borderColor='lightGray' />
+    <Text
+      gray
+      flexShrink='0'
+      whiteSpace='nowrap'
+      textAlign='center'
+      fontSize={0}
+      px={2}
+    >
       {moment(when).calendar(null, { sameElse: DATESTAMP_FORMAT })}
     </Text>
+    <Rule borderColor='lightGray' />
   </Row>
 );
 
+export const UnreadMarker = React.forwardRef(
+  ({ dayBreak, when, api, association }, ref) => {
+    const [visible, setVisible] = useState(false);
+    const idling = useIdlingState();
+    const dismiss = useCallback(() => {
+      api.hark.markCountAsRead(association, '/', 'message');
+    }, [api, association]);
+
+    useEffect(() => {
+      if (visible && !idling) {
+        dismiss();
+      }
+    }, [visible, idling]);
+
+    return (
+      <Row
+        position='absolute'
+        ref={ref}
+        px={2}
+        mt={0}
+        height={5}
+        justifyContent='center'
+        alignItems='center'
+        width='100%'
+      >
+        <Rule borderColor='lightBlue' />
+        <VisibilitySensor onChange={setVisible}>
+          <Text
+            color='blue'
+            fontSize={0}
+            flexShrink='0'
+            whiteSpace='nowrap'
+            textAlign='center'
+            px={2}
+          >
+            New messages below
+          </Text>
+        </VisibilitySensor>
+        <Rule borderColor='lightBlue' />
+      </Row>
+    );
+  }
+);
+
+const MessageActionItem = (props) => {
+  return (
+    <Row
+      color='black'
+      cursor='pointer'
+      fontSize={1}
+      fontWeight='500'
+      px={3}
+      py={2}
+      onClick={props.onClick}
+    >
+      <Text fontWeight='500' color={props.color}>
+        {props.children}
+      </Text>
+    </Row>
+  );
+};
+
+const MessageActions = ({ api, onReply, association, history, msg, group }) => {
+  const isAdmin = () => group.tags.role.admin.has(window.ship);
+  const isOwn = () => msg.author === window.ship;
+  const { doCopy, copyDisplay } = useCopy(`web+urbitgraph://group${association.group.slice(5)}/graph${association.resource.slice(5)}${msg.index}`, 'Copy Message Link');
+
+  return (
+    <Box
+      borderRadius={1}
+      backgroundColor='white'
+      border='1px solid'
+      borderColor='lightGray'
+      position='absolute'
+      top='-12px'
+      right={2}
+    >
+      <Row>
+        <Box
+          padding={1}
+          size={'24px'}
+          cursor='pointer'
+          onClick={() => onReply(msg)}
+        >
+          <Icon icon='Chat' size={3} />
+        </Box>
+        <Dropdown
+          dropWidth='250px'
+          width='auto'
+          alignY='top'
+          alignX='right'
+          flexShrink={'0'}
+          offsetY={8}
+          offsetX={-24}
+          options={
+            <Col
+              py={2}
+              backgroundColor='white'
+              color='washedGray'
+              border={1}
+              borderRadius={2}
+              borderColor='lightGray'
+              boxShadow='0px 0px 0px 3px'
+            >
+              <MessageActionItem onClick={() => onReply(msg)}>
+                Reply
+              </MessageActionItem>
+              <MessageActionItem onClick={doCopy}>
+                {copyDisplay}
+              </MessageActionItem>
+              {false && (isAdmin() || isOwn()) ? (
+                <MessageActionItem onClick={(e) => console.log(e)} color='red'>
+                  Delete Message
+                </MessageActionItem>
+              ) : null}
+              {false && (
+                <MessageActionItem onClick={(e) => console.log(e)}>
+                  View Signature
+                </MessageActionItem>
+              )}
+            </Col>
+          }
+        >
+          <Box padding={1} size={'24px'} cursor='pointer'>
+            <Icon icon='Menu' size={3} />
+          </Box>
+        </Dropdown>
+      </Row>
+    </Box>
+  );
+};
+
+const MessageWrapper = (props) => {
+  const { hovering, bind } = useHovering();
+  const showHover = (props.transcluded === 0) && hovering && !props.hideHover;
+  return (
+    <Box
+      py='1'
+      backgroundColor={props.highlighted
+        ? showHover ? 'lightBlue' : 'washedBlue'
+        : showHover ? 'washedGray' : 'transparent'
+      }
+      position='relative'
+      {...bind}
+    >
+      {props.children}
+      {showHover ? <MessageActions {...props} /> : null}
+    </Box>
+  );
+};
+
 interface ChatMessageProps {
-  measure(element): void;
   msg: Post;
   previousMsg?: Post;
   nextMsg?: Post;
   isLastRead: boolean;
   group: Group;
   association: Association;
-  contacts: Contacts;
+  transcluded?: number;
   className?: string;
   isPending: boolean;
-  style?: any;
+  style?: unknown;
   scrollWindow: HTMLDivElement;
   isLastMessage?: boolean;
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
-  history: any;
-  api: any;
+  history: unknown;
+  api: GlobalApi;
   highlighted?: boolean;
+  renderSigil?: boolean;
+  hideHover?: boolean;
+  innerRef: (el: HTMLDivElement | null) => void;
+  onReply?: (msg: Post) => void;
 }
 
-export default class ChatMessage extends Component<ChatMessageProps> {
+class ChatMessage extends Component<ChatMessageProps> {
   private divRef: React.RefObject<HTMLDivElement>;
 
   constructor(props) {
@@ -83,11 +261,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     this.divRef = React.createRef();
   }
 
-  componentDidMount() {
-    if (this.divRef.current) {
-      this.props.measure(this.divRef.current);
-    }
-  }
+  componentDidMount() {}
 
   render() {
     const {
@@ -97,59 +271,65 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       isLastRead,
       group,
       association,
-      contacts,
       className = '',
       isPending,
       style,
-      measure,
       scrollWindow,
       isLastMessage,
       unreadMarkerRef,
       history,
       api,
       highlighted,
+      showOurContact,
       fontSize,
-      groups,
-      associations
+      hideHover
     } = this.props;
 
-    const renderSigil = Boolean(
-      (nextMsg && msg.author !== nextMsg.author) || !nextMsg || msg.number === 1
-    );
+    let onReply = this.props?.onReply ?? (() => {});
+    const transcluded = this.props?.transcluded ?? 0;
+    let { renderSigil } = this.props;
+
+    if (renderSigil === undefined) {
+      renderSigil = Boolean(
+        (nextMsg && msg.author !== nextMsg.author) ||
+          !nextMsg ||
+          msg.number === 1
+      );
+    }
+
+    const date = daToUnix(bigInt(msg.index.split('/')[1]));
+    const nextDate = nextMsg ? (
+      daToUnix(bigInt(nextMsg.index.split('/')[1]))
+    ) : null;
+
     const dayBreak =
       nextMsg &&
-      new Date(msg['time-sent']).getDate() !==
-        new Date(nextMsg['time-sent']).getDate();
+      new Date(date).getDate() !==
+      new Date(nextDate).getDate();
 
-    const containerClass = `${
-      renderSigil ? 'cf pl2 lh-copy' : 'items-top cf hide-child'
-    } ${isPending ? 'o-40' : ''} ${className}`;
+    const containerClass = `${isPending ? 'o-40' : ''} ${className}`;
 
     const timestamp = moment
-      .unix(msg['time-sent'] / 1000)
-      .format(renderSigil ? 'hh:mm a' : 'hh:mm');
-
-    const reboundMeasure = (event) => {
-      return measure(this.divRef.current);
-    };
+      .unix(date / 1000)
+      .format(renderSigil ? 'h:mm A' : 'h:mm');
 
     const messageProps = {
       msg,
       timestamp,
-      contacts,
       association,
       group,
-      measure: reboundMeasure.bind(this),
       style,
       containerClass,
       isPending,
+      showOurContact,
       history,
       api,
       scrollWindow,
       highlighted,
       fontSize,
-      associations,
-      groups,
+      hideHover,
+      transcluded,
+      onReply
     };
 
     const unreadContainerStyle = {
@@ -158,38 +338,33 @@ export default class ChatMessage extends Component<ChatMessageProps> {
 
     return (
       <Box
-        bg={highlighted ? 'washedBlue' : 'white'}
-        flexShrink={0}
-        width='100%'
-        display='flex'
-        flexWrap='wrap'
-        pt={this.props.pt ? this.props.pt : renderSigil ? 3 : 0}
-        pr={3}
-        pb={isLastMessage ? 3 : 0}
-        ref={this.divRef}
+        ref={this.props.innerRef}
+        pt={renderSigil ? 2 : 0}
+        width="100%"
+        pb={isLastMessage ? '20px' : 0}
         className={containerClass}
         style={style}
-        mb={1}
-        position='relative'
       >
-        {dayBreak && !isLastRead ? <DayBreak when={msg['time-sent']} /> : null}
+        {dayBreak && !isLastRead ? (
+          <DayBreak when={date} shimTop={renderSigil} />
+        ) : null}
         {renderSigil ? (
-          <MessageWithSigil {...messageProps} />
+          <MessageWrapper {...messageProps}>
+            <MessageAuthor pb={1} {...messageProps} />
+            <Message pl={'44px'} pr={4} {...messageProps} />
+          </MessageWrapper>
         ) : (
-          <MessageWithoutSigil {...messageProps} />
+          <MessageWrapper {...messageProps}>
+            <Message pl={'44px'} pr={4} timestampHover {...messageProps} />
+          </MessageWrapper>
         )}
-        <Box
-          flexShrink={0}
-          fontSize={0}
-          position='relative'
-          width='100%'
-          overflow='visible'
-          style={unreadContainerStyle}
-        >
+        <Box style={unreadContainerStyle}>
           {isLastRead ? (
             <UnreadMarker
+              association={association}
+              api={api}
               dayBreak={dayBreak}
-              when={msg['time-sent']}
+              when={date}
               ref={unreadMarkerRef}
             />
           ) : null}
@@ -199,46 +374,41 @@ export default class ChatMessage extends Component<ChatMessageProps> {
   }
 }
 
-interface MessageProps {
-  msg: Post;
-  timestamp: string;
-  group: Group;
-  association: Association;
-  contacts: Contacts;
-  containerClass: string;
-  isPending: boolean;
-  style: any;
-  measure(element): void;
-  scrollWindow: HTMLDivElement;
-  associations: Associations;
-  groups: Groups;
-}
+export default React.forwardRef((props, ref) => (
+  <ChatMessage {...props} innerRef={ref} />
+));
 
-export const MessageWithSigil = (props) => {
-  const {
-    msg,
-    timestamp,
-    contacts,
-    association,
-    associations,
-    groups,
-    group,
-    measure,
-    api,
-    history,
-    scrollWindow,
-    fontSize
-  } = props;
+export const MessageAuthor = ({
+  timestamp,
+  msg,
+  group,
+  api,
+  history,
+  scrollWindow,
+  showOurContact,
+  ...rest
+}) => {
+  const osDark = useLocalState((state) => state.dark);
 
-  const dark = useLocalState((state) => state.dark);
+  const theme = useSettingsState((s) => s.display.theme);
+  const dark = theme === 'dark' || (theme === 'auto' && osDark);
+  const contacts = useContactState((state) => state.contacts);
+
+  const date = daToUnix(bigInt(msg.index.split('/')[1]));
 
   const datestamp = moment
-    .unix(msg['time-sent'] / 1000)
+    .unix(date / 1000)
     .format(DATESTAMP_FORMAT);
-  const contact = `~${msg.author}` in contacts ? contacts[`~${msg.author}`] : false;
+  const contact =
+    ((msg.author === window.ship && showOurContact) ||
+      msg.author !== window.ship) &&
+    `~${msg.author}` in contacts
+      ? contacts[`~${msg.author}`]
+      : undefined;
+
   const showNickname = useShowNickname(contact);
-  const shipName = showNickname ? contact.nickname : cite(msg.author);
-  const copyNotice = 'Copied';
+  const { hideAvatars } = useSettingsState(selectCalmState);
+  const shipName = showNickname && contact?.nickname || cite(msg.author) || `~${msg.author}`;
   const color = contact
     ? `#${uxToHex(contact.color)}`
     : dark
@@ -249,74 +419,56 @@ export const MessageWithSigil = (props) => {
     : dark
     ? 'mix-blend-diff'
     : 'mix-blend-darken';
-  const [displayName, setDisplayName] = useState(shipName);
-  const [nameMono, setNameMono] = useState(showNickname ? false : true);
+
+  const { copyDisplay, doCopy, didCopy } = useCopy(`~${msg.author}`, shipName);
   const { hovering, bind } = useHovering();
-  const [showOverlay, setShowOverlay] = useState(false);
-
-  const toggleOverlay = () => {
-    setShowOverlay((value) => !value);
-  };
-
-  const showCopyNotice = () => {
-    setDisplayName(copyNotice);
-    setNameMono(false);
-  };
-
-  useEffect(() => {
-    const resetDisplay = () => {
-      setDisplayName(shipName);
-      setNameMono(showNickname ? false : true);
-    };
-    const timer = setTimeout(() => resetDisplay(), 800);
-    return () => clearTimeout(timer);
-  }, [displayName]);
+  const nameMono = !(showNickname || didCopy);
 
   const img =
-    contact && contact.avatar !== null ? (
+    contact?.avatar && !hideAvatars ? (
       <BaseImage
         display='inline-block'
+        referrerPolicy='no-referrer'
+        style={{ objectFit: 'cover' }}
         src={contact.avatar}
-        height={16}
-        width={16}
+        height={24}
+        width={24}
+        borderRadius={1}
       />
     ) : (
-      <Sigil
-        ship={msg.author}
-        size={16}
-        color={color}
-        classes={sigilClass}
-        icon
-        padding={2}
-      />
-    );
-
-  return (
-    <>
       <Box
-        onClick={() => {
-          setShowOverlay(true);
-        }}
-        className='fl v-top pt1'
-        height={16}
-        pr={3}
-        pl={2}
+        width={24}
+        height={24}
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        backgroundColor={color}
+        borderRadius={1}
+      >
+        <Sigil
+          ship={msg.author}
+          size={12}
+          display='block'
+          color={color}
+          classes={sigilClass}
+          icon
+          padding={0}
+        />
+      </Box>
+    );
+  return (
+    <Box display='flex' alignItems='flex-start' {...rest}>
+      <Box
+       height={24}
+        pr={2}
+        mt={'1px'}
+        pl={'12px'}
+        cursor='pointer'
         position='relative'
       >
-        {showOverlay && (
-          <OverlaySigil
-            ship={msg.author}
-            contact={contact}
-            color={`#${uxToHex(contact?.color ?? '0x0')}`}
-            group={group}
-            onDismiss={() => toggleOverlay()}
-            history={history}
-            className='relative'
-            scrollWindow={scrollWindow}
-            api={api}
-          />
-        )}
-        {img}
+        <ProfileOverlay cursor='auto' ship={msg.author} api={api}>
+          {img}
+        </ProfileOverlay>
       </Box>
       <Box flexGrow={1} display='block' className='clamp-message' {...bind}>
         <Box
@@ -325,186 +477,78 @@ export const MessageWithSigil = (props) => {
           pt={1}
           pb={1}
           display='flex'
-          alignItems='center'
+          alignItems='baseline'
         >
           <Text
-            fontSize={0}
-            mr={3}
-            flexShrink={0}
+            fontSize={1}
+            mr={2}
+            flexShrink={1}
             mono={nameMono}
             fontWeight={nameMono ? '400' : '500'}
-            className={'mw5 db truncate pointer'}
-            onClick={() => {
-              writeText(`~${msg.author}`);
-              showCopyNotice();
-            }}
+            cursor='pointer'
+            onClick={doCopy}
             title={`~${msg.author}`}
           >
-            {displayName}
+            {copyDisplay}
           </Text>
-          <Text flexShrink={0} fontSize={0} gray mono>
+          <Text flexShrink={0} fontSize={0} gray>
             {timestamp}
           </Text>
           <Text
             flexShrink={0}
             fontSize={0}
             gray
-            mono
             ml={2}
             display={['none', hovering ? 'block' : 'none']}
           >
             {datestamp}
           </Text>
         </Box>
-        <ContentBox flexShrink={0} fontSize={fontSize ? fontSize : '14px'}>
-          {msg.contents.map((c, i) => (
-            <MessageContent
-              key={i}
-              contacts={contacts}
-              content={c}
-              measure={measure}
-              scrollWindow={scrollWindow}
-              fontSize={fontSize}
-              group={group}
-              api={api}
-              associations={associations}
-              groups={groups}
-            />
-          ))}
-        </ContentBox>
       </Box>
-    </>
+    </Box>
   );
 };
 
-const ContentBox = styled(Box)`
-  & > :first-child {
-    margin-left: 0px;
-  }
-`;
-
-export const MessageWithoutSigil = ({
+export const Message = ({
   timestamp,
-  contacts,
   msg,
-  measure,
   group,
   api,
-  associations,
-  groups,
-  scrollWindow
+  scrollWindow,
+  timestampHover,
+  transcluded,
+  showOurContact,
+  ...rest
 }) => {
   const { hovering, bind } = useHovering();
   return (
-    <>
-      <Text
-        flexShrink={0}
-        mono
-        gray
-        display={hovering ? 'block' : 'none'}
-        pt='2px'
-        lineHeight='tall'
-        fontSize={0}
-        position='absolute'
-        left={1}
-      >
-        {timestamp}
-      </Text>
-      <ContentBox
-        flexShrink={0}
-        fontSize='14px'
-        className='clamp-message'
-        style={{ flexGrow: 1 }}
+    <Box width="100%" position='relative' {...rest}>
+      {timestampHover ? (
+        <Text
+          display={hovering ? 'block' : 'none'}
+          position='absolute'
+          width='36px'
+          textAlign='right'
+          left='0'
+          top='3px'
+          fontSize={0}
+          gray
+        >
+          {timestamp}
+        </Text>
+      ) : (
+        <></>
+      )}
+      <GraphContentWide
         {...bind}
-        pl={6}
-      >
-        {msg.contents.map((c, i) => (
-          <MessageContent
-            key={i}
-            contacts={contacts}
-            content={c}
-            group={group}
-            measure={measure}
-            scrollWindow={scrollWindow}
-            groups={groups}
-            associations={associations}
-            api={api}
-          />
-        ))}
-      </ContentBox>
-    </>
-  );
-};
-
-export const MessageContent = ({
-  content,
-  contacts,
-  api,
-  associations,
-  groups,
-  measure,
-  scrollWindow,
-  fontSize,
-  group
-}) => {
-  if ('code' in content) {
-    return <CodeContent content={content} />;
-  } else if ('url' in content) {
-    return (
-      <Box
-        mx='2px'
-        flexShrink={0}
-        fontSize={fontSize ? fontSize : '14px'}
-        lineHeight='tall'
-        color='black'
-      >
-        <RemoteContent
-          url={content.url}
-          onLoad={measure}
-          imageProps={{
-            style: {
-              maxWidth: 'min(100%,18rem)',
-              display: 'block'
-            }
-          }}
-          videoProps={{
-            style: {
-              maxWidth: '18rem',
-              display: 'block'
-            }
-          }}
-          textProps={{
-            style: {
-              fontSize: 'inherit',
-              borderBottom: '1px solid',
-              textDecoration: 'none'
-            }
-          }}
-        />
-      </Box>
-    );
-  } else if ('text' in content) {
-    return (
-      <TextContent
-        associations={associations}
-        groups={groups}
-        measure={measure}
+        width="100%"
+        post={msg}
+        transcluded={transcluded}
         api={api}
-        fontSize={fontSize}
-        content={content}
-      />);
-  } else if ('mention' in content) {
-    return (
-      <Mention
-        group={group}
-        scrollWindow={scrollWindow}
-        ship={content.mention}
-        contact={contacts?.[`~${content.mention}`]}
+        showOurContact={showOurContact}
       />
-    );
-  } else {
-    return null;
-  }
+    </Box>
+  );
 };
 
 export const MessagePlaceholder = ({

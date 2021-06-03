@@ -1,19 +1,24 @@
-import React, { useCallback } from "react";
+import React, { ReactElement, useCallback } from 'react';
+import { Formik, FormikHelpers } from 'formik';
 
 import {
   ManagedTextInputField as Input,
   ManagedForm as Form,
   Box,
+  Text,
   Button,
   Col,
-  Text,
-  Menu,
-} from "@tlon/indigo-react";
+  Anchor
+} from '@tlon/indigo-react';
+import { AsyncButton } from "~/views/components/AsyncButton";
 
-import { Formik } from "formik";
-import GlobalApi from "../../../../api/global";
-import { BucketList } from "./BucketList";
-import { S3State } from "../../../../types";
+import GlobalApi from '~/logic/api/global';
+import { BucketList } from './BucketList';
+import { S3State } from '~/types/s3-update';
+import useS3State from '~/logic/state/storage';
+import { BackButton } from './BackButton';
+import { StorageState } from '~/types';
+import useStorageState from '~/logic/state/storage';
 
 interface FormSchema {
   s3bucket: string;
@@ -25,31 +30,33 @@ interface FormSchema {
 
 interface S3FormProps {
   api: GlobalApi;
-  s3: S3State;
 }
 
-export default function S3Form(props: S3FormProps) {
-  const { api, s3 } = props;
+export default function S3Form(props: S3FormProps): ReactElement {
+  const { api } = props;
+  const s3 = useStorageState((state) => state.s3);
 
-  const onSubmit = useCallback(
-    (values: FormSchema) => {
+  const onSubmit = useCallback(async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       if (values.s3secretAccessKey !== s3.credentials?.secretAccessKey) {
-        api.s3.setSecretAccessKey(values.s3secretAccessKey);
+        await api.s3.setSecretAccessKey(values.s3secretAccessKey);
       }
 
       if (values.s3endpoint !== s3.credentials?.endpoint) {
-        api.s3.setEndpoint(values.s3endpoint);
+        await api.s3.setEndpoint(values.s3endpoint);
       }
 
       if (values.s3accessKeyId !== s3.credentials?.accessKeyId) {
-        api.s3.setAccessKeyId(values.s3accessKeyId);
+        await api.s3.setAccessKeyId(values.s3accessKeyId);
       }
+      actions.setStatus({ success: null });
     },
     [api, s3]
   );
+
   return (
     <>
-      <Col>
+      <BackButton />
+      <Col p='5' pt='4' borderBottom='1' borderBottomColor='washedGray'>
         <Formik
           initialValues={
             {
@@ -57,35 +64,55 @@ export default function S3Form(props: S3FormProps) {
               s3buckets: Array.from(s3.configuration.buckets),
               s3endpoint: s3.credentials?.endpoint,
               s3accessKeyId: s3.credentials?.accessKeyId,
-              s3secretAccessKey: s3.credentials?.secretAccessKey,
+              s3secretAccessKey: s3.credentials?.secretAccessKey
             } as FormSchema
           }
           onSubmit={onSubmit}
         >
-          <Form
-            display="grid"
-            gridTemplateColumns="100%"
-            gridAutoRows="auto"
-            gridRowGap={5}
-          >
-            <Box color="black" fontSize={1} fontWeight={900}>
-              S3 Credentials
-            </Box>
-            <Input label="Endpoint" id="s3endpoint" />
-            <Input label="Access Key ID" id="s3accessKeyId" />
-            <Input
-              type="password"
-              label="Secret Access Key"
-              id="s3secretAccessKey"
-            />
-            <Button style={{ cursor: 'pointer' }} type="submit">Submit</Button>
+          <Form>
+            <Col maxWidth='600px' gapY='5'>
+              <Col gapY='1' mt='0'>
+                <Text color='black' fontSize={2} fontWeight='medium'>
+                  S3 Storage Setup
+                </Text>
+                <Text gray>
+                  Store credentials for your S3 object storage buckets on your
+                  Urbit ship, and upload media freely to various modules.
+                  <Anchor
+                    target='_blank'
+                    style={{ textDecoration: 'none' }}
+                    borderBottom='1'
+                    ml='1'
+                    href='https://urbit.org/using/os/s3/'
+                  >
+                    Learn more
+                  </Anchor>
+                </Text>
+              </Col>
+              <Input label='Endpoint' id='s3endpoint' />
+              <Input label='Access Key ID' id='s3accessKeyId' />
+              <Input
+                type='password'
+                label='Secret Access Key'
+                id='s3secretAccessKey'
+              />
+              <AsyncButton primary style={{ cursor: 'pointer' }} type='submit'>
+                Submit
+              </AsyncButton>
+            </Col>
           </Form>
         </Formik>
       </Col>
-      <Col>
-        <Box color="black" mb={4} fontSize={1} fontWeight={700}>
-          S3 Buckets
-        </Box>
+      <Col maxWidth='600px' p='5' gapY='4'>
+        <Col gapY='1'>
+          <Text color='black' mb={4} fontSize={2} fontWeight='medium'>
+            S3 Buckets
+          </Text>
+          <Text gray>
+            Your 'active' bucket will be the one used when Landscape uploads a
+            file
+          </Text>
+        </Col>
         <BucketList
           buckets={s3.configuration.buckets}
           selected={s3.configuration.currentBucket}

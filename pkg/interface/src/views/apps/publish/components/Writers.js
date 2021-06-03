@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
 import { Box, Text } from '@tlon/indigo-react';
 import { ShipSearch } from '~/views/components/ShipSearch';
-import { Formik, Form, FormikHelpers } from 'formik';
+import { Formik, Form } from 'formik';
 import { resourceFromPath } from '~/logic/lib/group';
 import { AsyncButton } from '~/views/components/AsyncButton';
-import { cite } from '~/logic/lib/util';
 
 export class Writers extends Component {
   render() {
-    const { association, groups, contacts, api } = this.props;
+    const { association, groups, api } = this.props;
 
-    const [,,,name] = association?.resource.split('/');
     const resource = resourceFromPath(association?.group);
 
     const onSubmit = async (values, actions) => {
@@ -41,8 +39,6 @@ export class Writers extends Component {
         >
           <Form>
             <ShipSearch
-              groups={groups}
-              contacts={contacts}
               id="ships"
               label=""
               maxLength={undefined}

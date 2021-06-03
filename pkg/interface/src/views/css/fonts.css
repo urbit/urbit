@@ -2,6 +2,7 @@
   font-family: 'Inter';
   font-style:  normal;
   font-weight: 400;
+  font-display: swap;
   src: url("/~landscape/fonts/inter-regular.woff2") format("woff2"),
        url("https://media.urbit.org/fonts/Inter-Regular.woff2") format("woff2");
 }
@@ -10,22 +11,23 @@
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
-  src: url("/~landscape/fonts/inter-medium.woff2") format("woff2"),
-       url("https://media.urbit.org/fonts/Inter-Medium.woff2") format("woff2");
+  font-display: swap;
+  src: url("https://media.urbit.org/fonts/Inter-Medium.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 600;
-  src: url("/~landscape/fonts/inter-semibold.woff2") format("woff2"),
-       url("https://media.urbit.org/fonts/Inter-SemiBold.woff2") format("woff2");
+  font-display: swap;
+  src: url("https://media.urbit.org/fonts/Inter-SemiBold.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Inter';
   font-style:  italic;
   font-weight: 400;
+  font-display: swap;
   src: url("/~landscape/fonts/inter-italic.woff2") format("woff2"),
        url("https://media.urbit.org/fonts/Inter-Italic.woff2") format("woff2");
 }
@@ -34,6 +36,7 @@
   font-family: 'Inter';
   font-style:  normal;
   font-weight: 700;
+  font-display: swap;
   src: url("/~landscape/fonts/inter-bold.woff2") format("woff2"),
        url("https://media.urbit.org/fonts/Inter-Bold.woff2") format("woff2");
 }
@@ -41,6 +44,7 @@
   font-family: 'Inter';
   font-style:  italic;
   font-weight: 700;
+  font-display: swap;
   src: url("/~landscape/fonts/inter-bolditalic.woff2") format("woff2"),
        url("https://media.urbit.org/fonts/Inter-BoldItalic.woff2") format("woff2");
 }
@@ -50,6 +54,7 @@
   src: url("/~landscape/fonts/sourcecodepro-extralight.woff2"),
        url("https://storage.googleapis.com/media.urbit.org/fonts/scp-extralight.woff");
   font-weight: 200;
+  font-display: swap;
 }
 
 @font-face {
@@ -57,6 +62,7 @@
   src: url("/~landscape/fonts/sourcecodepro-light.woff2"),
        url("https://storage.googleapis.com/media.urbit.org/fonts/scp-light.woff");
   font-weight: 300;
+  font-display: swap;
 }
 
 @font-face {
@@ -64,6 +70,7 @@
   src: url("/~landscape/fonts/sourcecodepro-regular.woff2"),
        url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
   font-weight: 400;
+  font-display: swap;
 }
 
 @font-face {
@@ -71,6 +78,7 @@
   src: url("(/~landscape/fonts/sourcecodepro-medium.woff2"),
        url("https://storage.googleapis.com/media.urbit.org/fonts/scp-medium.woff");
   font-weight: 500;
+  font-display: swap;
 }
 
 @font-face {
@@ -78,6 +86,7 @@
   src: url("/~landscape/fonts/sourcecodepro-semibold.woff2"),
        url("https://storage.googleapis.com/media.urbit.org/fonts/scp-semibold.woff");
   font-weight: 600;
+  font-display: swap;
 }
 
 @font-face {
@@ -85,5 +94,6 @@
   src: url("/~landscape/fonts/sourcecodepro-bold.woff2"),
        url("https://storage.googleapis.com/media.urbit.org/fonts/scp-bold.woff");
   font-weight: 700;
+  font-display: swap;
 }
 

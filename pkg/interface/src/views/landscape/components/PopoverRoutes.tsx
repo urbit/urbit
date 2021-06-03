@@ -1,34 +1,32 @@
-import React, { useRef, useCallback } from "react";
-import { Route, Switch, RouteComponentProps, Link } from "react-router-dom";
-import { Box, Row, Col, Icon, Text } from "@tlon/indigo-react";
-import { HoverBoxLink } from "~/views/components/HoverBox";
-import { Contacts, Contact } from "~/types/contact-update";
-import { Group } from "~/types/group-update";
-import { Association } from "~/types/metadata-update";
-import GlobalApi from "~/logic/api/global";
-import { GroupNotificationsConfig, S3State, Associations } from "~/types";
+import React, { useRef, useCallback, ReactElement } from 'react';
+import { Route, Switch, RouteComponentProps, Link } from 'react-router-dom';
+import { Box,  Col, Text } from '@tlon/indigo-react';
 
-import { GroupSettings } from "./GroupSettings/GroupSettings";
-import { Participants } from "./Participants";
-import {useHashLink} from "~/logic/lib/useHashLink";
-import {DeleteGroup} from "./DeleteGroup";
-import {resourceFromPath} from "~/logic/lib/group";
-import {ModalOverlay} from "~/views/components/ModalOverlay";
-import { SidebarItem } from "~/views/landscape/components/SidebarItem";
+import { GroupNotificationsConfig, Associations } from '@urbit/api';
+import { Contacts, Contact } from '@urbit/api/contacts';
+import { Group } from '@urbit/api/groups';
+import { Association } from '@urbit/api/metadata';
+
+import GlobalApi from '~/logic/api/global';
+import { GroupSettings } from './GroupSettings/GroupSettings';
+import { Participants } from './Participants';
+import { useHashLink } from '~/logic/lib/useHashLink';
+import { DeleteGroup } from './DeleteGroup';
+import { resourceFromPath } from '~/logic/lib/group';
+import { ModalOverlay } from '~/views/components/ModalOverlay';
+import { SidebarItem } from '~/views/landscape/components/SidebarItem';
+import { StorageState } from '~/types';
 
 export function PopoverRoutes(
   props: {
     baseUrl: string;
-    contacts: Contacts;
     group: Group;
     association: Association;
-    associations: Associations;
-    s3: S3State;
     api: GlobalApi;
     notificationsGroupConfig: GroupNotificationsConfig;
     rootIdentity: Contact;
   } & RouteComponentProps
-) {
+): ReactElement {
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
   const innerRef = useRef(null);
 
@@ -47,7 +45,7 @@ export function PopoverRoutes(
   return (
     <Switch>
       <Route
-        path={[relativeUrl("/:view"), relativeUrl("")]}
+        path={[relativeUrl('/:view'), relativeUrl('')]}
         render={(routeProps) => {
           const { view } = routeProps.match.params;
           return (
@@ -64,13 +62,13 @@ export function PopoverRoutes(
             >
               <Box
                 display="grid"
-                gridTemplateRows={["32px 1fr", "100%"]}
-                gridTemplateColumns={["100%", "250px 1fr"]}
+                gridTemplateRows={['32px 1fr', '100%']}
+                gridTemplateColumns={['100%', '250px 1fr']}
                 height="100%"
                 width="100%"
               >
                 <Col
-                  display={!!view ? ["none", "flex"] : "flex"}
+                  display={view ? ['none', 'flex'] : 'flex'}
                   borderRight={1}
                   borderRightColor="washedGray"
                 >
@@ -79,14 +77,14 @@ export function PopoverRoutes(
                     <Text my="1" mx="3" gray>Group</Text>
                     <SidebarItem
                       icon="Inbox"
-                      to={relativeUrl("/settings#notifications")}
+                      to={relativeUrl('/settings#notifications')}
                       text="Notifications"
                     />
                     <SidebarItem
                       icon="Users"
-                      to={relativeUrl("/participants")}
+                      to={relativeUrl('/participants')}
                       text="Participants"
-                      selected={view === "participants"}
+                      selected={view === 'participants'}
                     ><Text gray>{groupSize}</Text>
                     </SidebarItem>
                     { admin && (
@@ -96,44 +94,47 @@ export function PopoverRoutes(
                         </Box>
                         <SidebarItem
                           icon="Groups"
-                          to={relativeUrl("/settings#group-details")}
+                          to={relativeUrl('/settings#group-details')}
                           text="Group Details"
                         />
                         <SidebarItem
                           icon="Spaces"
-                          to={relativeUrl("/settings#channels")}
+                          to={relativeUrl('/settings#channels')}
                           text="Channel Management"
                         />
+                        { owner && (
+                        <SidebarItem
+                          icon="Server"
+                          to={relativeUrl('/settings#feed')}
+                          text="Group Feed"
+                        />)}
+
                       </>
                     )}
                     <DeleteGroup owner={owner} api={props.api} association={props.association} />
                   </Col>
                 </Col>
                 <Box
-                  gridArea={"1 / 1 / 2 / 2"}
+                  gridArea={'1 / 1 / 2 / 2'}
                   p={2}
-                  display={["auto", "none"]}
+                  display={['auto', 'none']}
                 >
-                  <Link to={!!view ? relativeUrl("") : props.baseUrl}>
-                    <Text>{"<- Back"}</Text>
+                  <Link to={view ? relativeUrl('') : props.baseUrl}>
+                    <Text>{'<- Back'}</Text>
                   </Link>
                 </Box>
                 <Box overflow="hidden">
-                  {view === "settings" && (
+                  {view === 'settings' && (
                     <GroupSettings
                       baseUrl={`${props.baseUrl}/popover`}
                       group={props.group}
                       association={props.association}
                       api={props.api}
-                      notificationsGroupConfig={props.notificationsGroupConfig}
-                      associations={props.associations}
-                      s3={props.s3}
                     />
                   )}
-                  {view === "participants" && (
+                  {view === 'participants' && (
                     <Participants
                       group={props.group}
-                      contacts={props.contacts}
                       association={props.association}
                       api={props.api}
                     />

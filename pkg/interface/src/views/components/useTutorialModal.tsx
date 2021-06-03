@@ -1,21 +1,23 @@
-import { useEffect } from "react";
-import { TutorialProgress } from "~/types";
+import { useEffect, MutableRefObject } from "react";
+import { TutorialProgress } from "@urbit/api";
 import useLocalState, { selectLocalState } from "~/logic/state/local";
 
-const localSelector = selectLocalState(["tutorialProgress", "setTutorialRef"]);
+const localSelector = selectLocalState(['tutorialProgress', 'setTutorialRef']);
 
 export function useTutorialModal(
   onProgress: TutorialProgress,
   show: boolean,
-  anchorRef: HTMLElement | null
+  anchorRef: MutableRefObject<HTMLElement | null>
 ) {
   const { tutorialProgress, setTutorialRef } = useLocalState(localSelector);
 
   useEffect(() => {
-    if (show && onProgress === tutorialProgress && anchorRef) {
-      setTutorialRef(anchorRef);
+    if (show && (onProgress === tutorialProgress) && anchorRef?.current) {
+      setTutorialRef(anchorRef.current);
     }
-  }, [onProgress, tutorialProgress, show, anchorRef]);
+
+    return () => {}
+  }, [tutorialProgress, show, anchorRef]);
 
   return show && onProgress === tutorialProgress;
 }

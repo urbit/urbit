@@ -1,6 +1,7 @@
 import urbitOb from 'urbit-ob';
+import { parsePermalink, permalinkToReference } from "~/logic/lib/permalinks";
 
-const URL_REGEX = new RegExp(String(/^((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source));
+const URL_REGEX = new RegExp(String(/^(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)/.source));
 
 const isUrl = (string) => {
   try {
@@ -8,6 +9,10 @@ const isUrl = (string) => {
   } catch (e) {
     return false;
   }
+}
+
+const isRef = (str) => {
+  return isUrl(str) && str.startsWith("web+urbitgraph://");
 }
 
 const tokenizeMessage = (text) => {
@@ -44,7 +49,20 @@ const tokenizeMessage = (text) => {
           isInCodeBlock = false;
         }
 
-        if (isUrl(str) && !isInCodeBlock) {
+        if(isRef(str) && !isInCodeBlock) {
+          if (message.length > 0) {
+            // If we're in the middle of a message, add it to the stack and reset
+            messages.push({ text: message.join(' ') });
+          }
+          const link = parsePermalink(str);
+          if(!link) {
+            messages.push({ url: str });
+          } else {
+            const reference = permalinkToReference(link);
+            messages.push(reference);
+          }
+          message = [];
+        } else if (isUrl(str) && !isInCodeBlock) {
           if (message.length > 0) {
             // If we're in the middle of a message, add it to the stack and reset
             messages.push({ text: message.join(' ') });
@@ -52,16 +70,13 @@ const tokenizeMessage = (text) => {
           }
           messages.push({ url: str });
           message = [];
-        } else if (urbitOb.isValidPatp(str.replace(/[^a-z\-\~]/g, '')) && !isInCodeBlock) {
+        } else if(urbitOb.isValidPatp(str) && !isInCodeBlock) {
           if (message.length > 0) {
             // If we're in the middle of a message, add it to the stack and reset
             messages.push({ text: message.join(' ') });
             message = [];
           }
-          messages.push({ mention: str.replace(/[^a-z\-\~]/g, '') });
-          if (str.replace(/[a-z\-\~]/g, '').length > 0) {
-            messages.push({ text: str.replace(/[a-z\-\~]/g, '') });
-          }
+          messages.push({ mention: str });
           message = [];
 
         } else {

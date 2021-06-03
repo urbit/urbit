@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, PureComponent } from 'react';
-import { Contact, Group } from '~/types';
+import React, { useState, useRef, useEffect } from 'react';
+import { Contact, Group } from '@urbit/api';
 import ProfileOverlay, { OVERLAY_HEIGHT } from './ProfileOverlay';
 import { Box, ColProps } from '@tlon/indigo-react';
 
@@ -22,7 +22,7 @@ interface OverlaySigilState {
   };
 }
 
-export const OverlaySigil = (props: OverlaySigilProps): React.FC => {
+export const OverlaySigil = (props: OverlaySigilProps) => {
   const {
     api,
     className,

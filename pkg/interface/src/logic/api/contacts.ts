@@ -1,8 +1,7 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Patp, Path, Enc } from '~/types/noun';
-import { Contact, ContactEdit } from '~/types/contact-update';
-import { GroupPolicy, Resource } from '~/types/group-update';
+import { Patp } from '@urbit/api';
+import { ContactEdit } from '@urbit/api/contacts';
 
 export default class ContactsApi extends BaseApi<StoreState> {
   add(ship: Patp, contact: any) {
@@ -31,7 +30,7 @@ export default class ContactsApi extends BaseApi<StoreState> {
         ship,
         'edit-field': editField,
         timestamp: Date.now()
-      },
+      }
     });
   }
 
@@ -62,7 +61,7 @@ export default class ContactsApi extends BaseApi<StoreState> {
     return this.action(
       'contact-push-hook',
       'contact-share',
-      { share: recipient },
+      { share: recipient }
     );
   }
 
@@ -85,7 +84,7 @@ export default class ContactsApi extends BaseApi<StoreState> {
   }
 
   private storeAction(action: any): Promise<any> {
-    return this.action('contact-store', 'contact-update', action)
+    return this.action('contact-store', 'contact-update-0', action);
   }
 
   private viewAction(threadName: string, action: any) {
@@ -93,6 +92,6 @@ export default class ContactsApi extends BaseApi<StoreState> {
   }
 
   private hookAction(ship: Patp, action: any): Promise<any> {
-    return this.action('contact-push-hook', 'contact-update', action);
+    return this.action('contact-push-hook', 'contact-update-0', action);
   }
 }

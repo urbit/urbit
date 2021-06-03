@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { Box } from '@tlon/indigo-react';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
@@ -11,6 +11,9 @@ import Settings from '~/views/apps/settings/settings';
 import ErrorComponent from '~/views/components/Error';
 import Notifications from '~/views/apps/notifications/notifications';
 import GraphApp from '../../apps/graph/app';
+import { PermalinkRoutes } from '~/views/apps/permalinks/app';
+
+import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 
 
 export const Container = styled(Box)`
@@ -22,6 +25,24 @@ export const Container = styled(Box)`
 
 
 export const Content = (props) => {
+
+  const [hasProtocol, setHasProtocol] = useLocalStorageState(
+    'registeredProtocol', false
+  );
+
+  useEffect(() => {
+    if(!hasProtocol && window?.navigator?.registerProtocolHandler) {
+      try {
+        window.navigator.registerProtocolHandler('web+urbitgraph', '/perma?ext=%s', 'Urbit Links');
+        console.log('registered protocol');
+        setHasProtocol(true);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [hasProtocol]);
+
+
   return (
     <Container>
       <Switch>
@@ -79,6 +100,7 @@ export const Content = (props) => {
           )}
         />
         <GraphApp path="/~graph" {...props} />
+        <PermalinkRoutes {...props} />
         <Route
           render={p => (
             <ErrorComponent

@@ -1,12 +1,10 @@
 
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Path, Patp, Association, Metadata, MetadataUpdatePreview } from '~/types';
-import {uxToHex} from '../lib/util';
+import { Path, Patp, Association, Metadata, MetadataUpdatePreview } from '@urbit/api';
+import { uxToHex } from '../lib/util';
 
 export default class MetadataApi extends BaseApi<StoreState> {
-
-
   metadataAdd(appName: string, resource: Path, group: Path, title: string, description: string, dateCreated: string, color: string, moduleName: string) {
     const creator = `~${this.ship}`;
     return this.metadataAction({
@@ -22,8 +20,9 @@ export default class MetadataApi extends BaseApi<StoreState> {
           color,
           'date-created': dateCreated,
           creator,
-          'module': moduleName,
+          config: { graph: moduleName },
           picture: '',
+          hidden: false,
           preview: false,
           vip: ''
         }
@@ -44,9 +43,9 @@ export default class MetadataApi extends BaseApi<StoreState> {
   }
 
   update(association: Association, newMetadata: Partial<Metadata>) {
-    const metadata = {...association.metadata, ...newMetadata };
+    const metadata = { ...association.metadata, ...newMetadata };
     metadata.color = uxToHex(metadata.color);
-    return this.metadataAction({ 
+    return this.metadataAction({
       add: {
         group: association.group,
         resource: {
@@ -69,17 +68,16 @@ export default class MetadataApi extends BaseApi<StoreState> {
         }
         done = true;
         tempChannel.delete();
-        reject(new Error("offline"))
+        reject(new Error('offline'));
       }, 15000);
 
-      tempChannel.subscribe(window.ship, "metadata-pull-hook", `/preview${group}`,
+      tempChannel.subscribe(window.ship, 'metadata-pull-hook', `/preview${group}`,
         (err) => {
           console.error(err);
           reject(err);
           tempChannel.delete();
         },
         (ev: any) => {
-          console.log(ev);
           if ('metadata-hook-update' in ev) {
             done = true;
             tempChannel.delete();
@@ -88,25 +86,23 @@ export default class MetadataApi extends BaseApi<StoreState> {
           } else {
             done = true;
             tempChannel.delete();
-            reject(new Error("no-permissions"));
+            reject(new Error('no-permissions'));
           }
         },
         (quit) => {
           tempChannel.delete();
           if(!done) {
-            reject(new Error("offline"))
+            reject(new Error('offline'));
           }
         },
         (a) => {
           console.log(a);
         }
       );
-    })
+    });
   }
 
-
-
   private metadataAction(data) {
-    return this.action('metadata-push-hook', 'metadata-update', data);
+    return this.action('metadata-push-hook', 'metadata-update-1', data);
   }
 }

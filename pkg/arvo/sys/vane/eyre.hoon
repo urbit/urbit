@@ -249,6 +249,7 @@
                  font-family: "Source Code Pro";
                  src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
                  font-weight: 400;
+                 font-display: swap;
              }
              :root {
                --red05: rgba(255,65,54,0.05);

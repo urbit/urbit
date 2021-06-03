@@ -1,16 +1,11 @@
-import React, {
-  useState,
-  useCallback,
-  useEffect
-} from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 import {
   Row,
   Button,
   StatelessTextInput as Input,
   Text
-} from "@tlon/indigo-react";
-
+} from '@tlon/indigo-react';
 
 export const ProfileStatus = (props) => {
   const { contact, ship, api, callback } = props;
@@ -29,7 +24,7 @@ export const ProfileStatus = (props) => {
   }, [contact]);
 
   const editStatus = () => {
-    api.contacts.edit(ship, {status: _status});
+    api.contacts.edit(ship, { status: _status });
 
     setNotice('Success!');
     setTimeout(() => {
@@ -43,13 +38,13 @@ export const ProfileStatus = (props) => {
 
   return (
     <>
-      <Row width="100%" mt={3} mr={3} display="block">
+      <Row width='100%' mt={1}>
         <Input
           onChange={onStatusChange}
           value={_status}
-          autocomplete="off"
-          width="100%"
-          placeholder="Set Status"
+          autocomplete='off'
+          width='100%'
+          placeholder='Set Status'
           onKeyPress={(evt) => {
             if (evt.key === 'Enter') {
               editStatus();
@@ -60,7 +55,15 @@ export const ProfileStatus = (props) => {
           }}
         />
       </Row>
-      <Text display={notice !== ' ' ? 'block' : 'none'} mt={1} ml={1} whiteSpace="pre" gray>{notice}</Text>
+      <Text
+        display={notice !== ' ' ? 'block' : 'none'}
+        mt={1}
+        ml={1}
+        whiteSpace='pre'
+        gray
+      >
+        {notice}
+      </Text>
     </>
   );
 };

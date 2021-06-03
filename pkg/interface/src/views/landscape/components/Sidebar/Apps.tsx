@@ -1,8 +1,8 @@
-import { useEffect, useCallback } from "react";
-import { Graphs, UnreadStats } from "~/types";
-import { SidebarItemStatus, SidebarAppConfig } from "./types";
+import { useCallback } from 'react';
 
+import { Graphs, UnreadStats } from '@urbit/api';
 
+import { SidebarAppConfig } from './types';
 
 export function useGraphModule(
   graphKeys: Set<string>,
@@ -11,10 +11,19 @@ export function useGraphModule(
 ): SidebarAppConfig {
   const getStatus = useCallback(
     (s: string) => {
-      const [, , host, name] = s.split("/");
+      const [, , host, name] = s.split('/');
       const graphKey = `${host.slice(1)}/${name}`;
       if (!graphKeys.has(graphKey)) {
-        return "unsubscribed";
+        return 'unsubscribed';
+      }
+
+      const notifications = graphUnreads?.[s]?.['/']?.notifications;
+      if (
+        notifications &&
+        ((typeof notifications === 'number' && notifications > 0)
+        || notifications.length)
+      ) {
+        return 'notification';
       }
 
       const unreads = graphUnreads?.[s]?.['/']?.unreads;
@@ -38,7 +47,6 @@ export function useGraphModule(
       return 0;
     }
     return 1;
-
   }, [getStatus, graphUnreads]);
 
   return { getStatus, lastUpdated };

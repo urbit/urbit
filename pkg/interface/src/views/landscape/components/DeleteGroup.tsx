@@ -1,14 +1,13 @@
-import React from "react";
-import { Icon, Text, Col, Label, Row, Button, Action } from "@tlon/indigo-react";
-import { useHistory } from "react-router-dom";
+import React from 'react';
+import { Icon, Text, Col, Label, Row, Button } from '@tlon/indigo-react';
+import { useHistory } from 'react-router-dom';
 
-import GlobalApi from "~/logic/api/global";
-import { Association } from "~/types";
-import { resourceFromPath } from "~/logic/lib/group";
-import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
-import ModalButton from "~/views/apps/launch/components/ModalButton";
-import {useModal} from "~/logic/lib/useModal";
-import {SidebarItem} from "./Sidebar/SidebarItem";
+import { Association } from '@urbit/api';
+
+import GlobalApi from '~/logic/api/global';
+import { resourceFromPath } from '~/logic/lib/group';
+import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import { useModal } from '~/logic/lib/useModal';
 
 export function DeleteGroup(props: {
   owner: boolean;
@@ -21,23 +20,24 @@ export function DeleteGroup(props: {
     if (props.owner) {
       const shouldDelete =
         prompt(`To confirm deleting this group, type ${name}`) === name;
-      if (!shouldDelete) return;
+      if (!shouldDelete)
+return;
     }
     if(props.owner) {
-      await props.api.groups.deleteGroup(ship, name);
+      props.api.groups.deleteGroup(ship, name);
     } else {
-      await props.api.groups.leaveGroup(ship, name);
+      props.api.groups.leaveGroup(ship, name);
     }
-    history.push("/");
+    history.push('/');
   };
 
-  const action = props.owner ? "Archive" : "Leave";
+  const action = props.owner ? 'Archive' : 'Leave';
   const description = props.owner
-    ? "Permanently delete this group. (All current members will no longer see this group.)"
-    : "You can rejoin if it is an open group, or if you are reinvited";
+    ? 'Permanently delete this group. (All current members will no longer see this group.)'
+    : 'You can rejoin if it is an open group, or if you are reinvited';
 
-  const icon = props.owner ? "X" : "SignOut";
-  const { modal, showModal } = useModal({ modal: 
+  const icon = props.owner ? 'X' : 'SignOut';
+  const { modal, showModal } = useModal({ modal:
     (dismiss: () => void) => {
       const onCancel = (e) => {
         e.stopPropagation();
@@ -63,7 +63,7 @@ export function DeleteGroup(props: {
           </Row>
         </Col>
       );
-    }});
+    } });
   return (
     <Row px="3" py="1" onClick={showModal} cursor="pointer">
       {modal}

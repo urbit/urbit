@@ -12,6 +12,7 @@
       update:store
       %graph-update
       %graph-pull-hook
+      1  1
   ==
 ::
 +$  agent  (push-hook:push-hook config)
@@ -23,20 +24,20 @@
   state-zero
 --
 ::
-=|  state-zero
-=*  state  -
 %-  agent:dbug
 %+  verb  |
 ^-  agent:gall
 %-  (agent:push-hook config)
 ^-  agent
-=<
+=-
+=|  state-zero
+=*  state  -
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
     grp   ~(. group bowl)
     gra   ~(. graph bowl)
-    hc    ~(. +> bowl)
+    hc    ~(. hook-core bowl)
 ::
 ++  on-init   on-init:def
 ++  on-save   !>(state)
@@ -62,32 +63,111 @@
     ?>  ?=(?(%add %remove) i.t.t.wire)
     =*  mark  i.t.wire
     :_  this
-    (build-permissions mark i.t.t.wire %next)^~
+    (build-permissions:hc mark i.t.t.wire %next)^~
+  ::
+      [%transform-add @ ~]
+    =*  mark  i.t.wire
+    :_  this
+    (build-transform-add:hc mark %next)^~
   ==
 ::
 ++  on-fail   on-fail:def
-::
-++  should-proxy-update
-  |=  =vase
-  ^-  ?
-  =/  =update:store  !<(update:store vase)
+++  transform-proxy-update
+  |=  vas=vase
+  ^-  (unit vase)
+  =/  =update:store  !<(update:store vas)
   =*  rid  resource.q.update
+  =.  p.update  now.bowl
   ?-  -.q.update
-      %add-graph          %.n
-      %remove-graph       %.n
-      %add-nodes          (is-allowed-add:hc resource.q.update nodes.q.update)
-      %remove-nodes       (is-allowed-remove:hc resource.q.update indices.q.update)
-      %add-signatures     %.n
-      %remove-signatures  %.n
-      %archive-graph      %.n
-      %unarchive-graph    %.n
-      %add-tag            %.n
-      %remove-tag         %.n
-      %keys               %.n
-      %tags               %.n
-      %tag-queries        %.n
-      %run-updates        %.n
+      %add-nodes
+    ?.  (is-allowed-add:hc rid nodes.q.update)
+      ~
+    =/  mark  (get-mark:gra rid)
+    ?~  mark  `vas
+    |^
+    =/  transform
+      !<  $-([index:store post:store atom ?] [index:store post:store])
+      %.  !>(*indexed-post:store)
+      .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
+    =/  [* result=(list [index:store node:store])]
+      %+  roll
+        (flatten-node-map ~(tap by nodes.q.update))
+      (transform-list transform)
+    =.  nodes.q.update
+      %-  ~(gas by *(map index:store node:store))
+      result
+    [~ !>(update)]
+    ::
+    ++  flatten-node-map
+      |=  lis=(list [index:store node:store])
+      ^-  (list [index:store node:store])
+      |^
+      %-  sort-nodes
+      %+  welp
+        (turn lis empty-children)
+      %-  zing
+      %+  turn  lis
+      |=  [=index:store =node:store]
+      ^-  (list [index:store node:store])
+      ?:  ?=(%empty -.children.node)
+        ~
+      %+  turn
+        (tap-deep:gra index p.children.node)
+      empty-children
+      ::
+      ++  empty-children
+        |=  [=index:store =node:store]
+        ^-  [index:store node:store]
+        [index node(children [%empty ~])]
+      ::
+      ++  sort-nodes
+        |=  unsorted=(list [index:store node:store])
+        ^-  (list [index:store node:store])
+        %+  sort  unsorted
+        |=  [p=[=index:store *] q=[=index:store *]]
+        ^-  ?
+        (lth (lent index.p) (lent index.q))
+      --
+    ::
+    ++  transform-list
+      |=  transform=$-([index:store post:store atom ?] [index:store post:store])
+      |=  $:  [=index:store =node:store]
+              [indices=(set index:store) lis=(list [index:store node:store])]
+          ==
+      =/  l  (lent index)
+      =/  parent-modified=?
+        %-  ~(rep in indices)
+        |=  [i=index:store out=_|]
+        ?:  out  out
+        =/  k  (lent i)
+        ?:  (lte l k)
+          %.n
+        =((swag [0 k] index) i)
+      =/  [ind=index:store =post:store]
+        (transform index post.node now.bowl parent-modified)
+      :-  (~(put in indices) index)
+      (snoc lis [ind node(post post)])
+    --
+  ::
+      %remove-nodes
+    ?.  (is-allowed-remove:hc resource.q.update indices.q.update)
+      ~
+    `vas
+  ::
+    %add-graph          ~
+    %remove-graph       ~
+    %add-signatures     ~
+    %remove-signatures  ~
+    %archive-graph      ~
+    %unarchive-graph    ~
+    %add-tag            ~
+    %remove-tag         ~
+    %keys               ~
+    %tags               ~
+    %tag-queries        ~
+    %run-updates        ~
   ==
+::
 ++  resource-for-update  resource-for-update:gra
 ::
 ++  initial-watch
@@ -105,13 +185,13 @@
     (get-graph:gra resource)
   =/  =time  (slav %da i.path)
   =/  =update-log:store  (get-update-log-subset:gra resource time)
-  [%0 now.bowl [%run-updates resource update-log]]
+  [now.bowl [%run-updates resource update-log]]
 ::
 ++  take-update
   |=  =vase
   ^-  [(list card) agent]
   =/  =update:store  !<(update:store vase)
-  ?+  -.q.update       [~ this]
+  ?+    -.q.update   [~ this]
       %add-graph
     ?~  mark.q.update  `this
     =*  mark  u.mark.q.update
@@ -119,6 +199,7 @@
     :_  this(marks (~(put in marks) mark))
     :~  (build-permissions:hc mark %add %sing)
         (build-permissions:hc mark %remove %sing)
+        (build-transform-add:hc mark %sing)
     ==
   ::
       %remove-graph
@@ -130,21 +211,17 @@
     [%give %kick ~[resource+(en-path:res resource.q.update)] ~]~
   ==
 --
+^|  ^=  hook-core
 |_  =bowl:gall
 +*  grp  ~(. group bowl)
     met  ~(. mdl bowl)
-    gra   ~(. graph bowl)
+    gra  ~(. graph bowl)
+::
 ++  scry
   |=  [care=@t desk=@t =path]
   %+  weld
     /[care]/(scot %p our.bowl)/[desk]/(scot %da now.bowl)
   path
-::
-++  scry-mark
-  |=  =resource:res
-  .^  (unit mark)  
-    (scry %gx %graph-store /graph-mark/(scot %p entity.resource)/[name.resource]/noun)
-  ==
 ::
 ++  perm-mark-name
   |=  perm=@t
@@ -216,6 +293,11 @@
   %-  some  
   %+  levy  ~(tap by nodes)
   |=  [=index:store =node:store]
+  =/  parent-index=index:store
+    (scag (dec (lent index)) index)
+  ?:  (~(has by nodes) parent-index)  %.y
+  ?.  =(author.post.node src.bowl)
+    %.n
   =/  =permissions:store
     %^  add-mark  resource  vip
     (node-to-indexed-post node)
@@ -226,8 +308,6 @@
       %no   %.n
     ::
         %self
-      =/  parent-index=index:store
-        (scag (dec (lent index)) index)
       =/  parent-node=node:store
         (got-node:gra resource parent-index)
       =(author.post.parent-node src.bowl)
@@ -260,6 +340,14 @@
   ^-  card
   =/  =wire  /perms/[mark]/[kind]
   =/  =mood:clay  [%c da+now.bowl /[mark]/(perm-mark-name kind)]
+  =/  =rave:clay  ?:(?=(%sing mode) [mode mood] [mode mood])
+  [%pass wire %arvo %c %warp our.bowl %home `rave]
+::
+++  build-transform-add
+  |=  [=mark mode=?(%sing %next)]
+  ^-  card
+  =/  =wire  /transform-add/[mark]
+  =/  =mood:clay  [%c da+now.bowl /[mark]/transform-add-nodes]
   =/  =rave:clay  ?:(?=(%sing mode) [mode mood] [mode mood])
   [%pass wire %arvo %c %warp our.bowl %home `rave]
 --

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import {
   Box,
   ManagedTextInputField as Input,
@@ -14,13 +14,15 @@ import { FormError } from '~/views/components/FormError';
 import { RouteComponentProps } from 'react-router-dom';
 import { stringToSymbol, parentPath, deSig } from '~/logic/lib/util';
 import { resourceFromPath } from '~/logic/lib/group';
-import { Associations } from '~/types/metadata-update';
+import { Associations } from '@urbit/api/metadata';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import { Groups } from '~/types/group-update';
+import { Groups } from '@urbit/api/groups';
 import { ShipSearch, shipSearchSchemaInGroup, shipSearchSchema } from '~/views/components/ShipSearch';
-import { Rolodex, Workspace } from '~/types';
+import { Rolodex } from '@urbit/api';
 import { IconRadio } from '~/views/components/IconRadio';
 import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
+import { Workspace } from '~/types/workspace';
+import useGroupState from '~/logic/state/group';
 
 type FormSchema = {
   name: string;
@@ -40,18 +42,16 @@ const formSchema = (members?: string[]) => Yup.object({
 
 interface NewChannelProps {
   api: GlobalApi;
-  associations: Associations;
-  contacts: Rolodex;
-  groups: Groups;
   group?: string;
   workspace: Workspace;
 }
 
-export function NewChannel(props: NewChannelProps & RouteComponentProps) {
-  const { history, api, group, workspace, groups } = props;
+export function NewChannel(props: NewChannelProps & RouteComponentProps): ReactElement {
+  const { history, api, group, workspace } = props;
 
-  const waiter = useWaitForProps(props, 5000);
-
+  const groups = useGroupState(state => state.groups);
+  const waiter = useWaitForProps({ groups }, 5000);
+  
   const onSubmit = async (values: FormSchema, actions) => {
     const name = (values.name) ? values.name : values.moduleType;
     const resId: string = stringToSymbol(values.name)
@@ -59,7 +59,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
     : '');
     try {
       let { description, moduleType, ships, writers } = values;
-      ships = ships.filter(e => e !== "");
+      ships = ships.filter(e => e !== '');
       if (workspace?.type === 'messages' && ships.length === 1) {
         return history.push(`/~landscape/dm/${deSig(ships[0])}`);
       }
@@ -97,7 +97,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
       }
 
       if (!group) {
-        await waiter(p => Boolean(p?.groups?.[`/ship/~${window.ship}/${resId}`]));
+        await waiter(p => Boolean(p.groups?.[`/ship/~${window.ship}/${resId}`]));
       }
       actions.setStatus({ success: null });
       const resourceUrl = (location.pathname.includes("/messages")) ? "/~landscape/messages" : parentPath(location.pathname);
@@ -114,10 +114,14 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
 
   return (
     <Col overflowY="auto" p={3} backgroundColor="white">
-      <Box pb='3' display={['block', 'none']} onClick={() => history.push(props.baseUrl)}>
-        <Text fontSize='0' bold>{'<- Back'}</Text>
+      <Box
+        pb='3'
+        display={workspace?.type === 'messages' ? 'none' : ['block', 'none']}
+        onClick={() => history.push(props.baseUrl)}
+      >
+        <Text>{'<- Back'}</Text>
       </Box>
-      <Box color="black">
+      <Box>
         <Text fontSize={2} bold>{workspace?.type === 'messages' ? 'Direct Message' : 'New Channel'}</Text>
       </Box>
       <Formik
@@ -138,7 +142,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
           maxWidth="348px"
           gapY="4"
           >
-            <Col pt={4} gapY="2" display={(workspace?.type === "messages") ? 'none' : 'flex'}>
+            <Col pt={4} gapY="2" display={(workspace?.type === 'messages') ? 'none' : 'flex'}>
               <Box fontSize="1" color="black" mb={2}>Channel Type</Box>
               <IconRadio
                 display={!(workspace?.type === 'home') ? 'flex' : 'none'}
@@ -176,15 +180,10 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
             />
             {(workspace?.type === 'home' || workspace?.type === 'messages') ? (
             <ShipSearch
-            groups={props.groups}
-            contacts={props.contacts}
             id="ships"
             label="Invitees"
             />) : (
-            <ChannelWritePerms
-              groups={props.groups}
-              contacts={props.contacts}
-            />
+            <ChannelWritePerms />
           )}
             <Box justifySelf="start">
               <AsyncButton

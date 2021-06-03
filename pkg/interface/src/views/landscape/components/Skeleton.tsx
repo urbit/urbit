@@ -1,43 +1,33 @@
-import React, { ReactNode, useEffect, useMemo } from 'react';
-import { Box, Text } from '@tlon/indigo-react';
-import { Link } from 'react-router-dom';
+import React, { ReactElement, ReactNode, useMemo } from 'react';
+
+import { Groups, Graphs, Invites, Rolodex, Path, AppName } from '@urbit/api';
+import { Associations } from '@urbit/api/metadata';
 
 import { Sidebar } from './Sidebar/Sidebar';
-import { Associations } from '~/types/metadata-update';
-import { Notebooks } from '~/types/publish-update';
 import GlobalApi from '~/logic/api/global';
-import { Path, AppName } from '~/types/noun';
-import { LinkCollections } from '~/types/link-update';
-import GlobalSubscription from '~/logic/subscription/global';
-import { Workspace, Groups, Graphs, Invites, Rolodex } from '~/types';
 import { useGraphModule } from './Sidebar/Apps';
 import { Body } from '~/views/components/Body';
+import { Workspace } from '~/types/workspace';
+import useGraphState from '~/logic/state/graph';
+import useHarkState from '~/logic/state/hark';
+import ErrorBoundary from '~/views/components/ErrorBoundary';
 
 interface SkeletonProps {
-  contacts: Rolodex;
   children: ReactNode;
   recentGroups: string[];
-  groups: Groups;
-  associations: Associations;
-  graphKeys: Set<string>;
-  graphs: Graphs;
-  linkListening: Set<Path>;
-  links: LinkCollections;
-  notebooks: Notebooks;
-  invites: Invites;
   selected?: string;
   selectedApp?: AppName;
   baseUrl: string;
   mobileHide?: boolean;
   api: GlobalApi;
-  subscription: GlobalSubscription;
-  includeUnmanaged: boolean;
   workspace: Workspace;
-  unreads: any;
 }
 
-export function Skeleton(props: SkeletonProps) {
-  const graphConfig = useGraphModule(props.graphKeys, props.graphs, props.unreads.graph);
+export function Skeleton(props: SkeletonProps): ReactElement {
+  const graphs = useGraphState(state => state.graphs);
+  const graphKeys = useGraphState(state => state.graphKeys);
+  const unreads = useHarkState(state => state.unreads);
+  const graphConfig = useGraphModule(graphKeys, graphs, unreads.graph);
   const config = useMemo(
     () => ({
       graph: graphConfig
@@ -53,20 +43,18 @@ export function Skeleton(props: SkeletonProps) {
       }
       gridTemplateRows="100%"
     >
-      <Sidebar
-        contacts={props.contacts}
-        api={props.api}
-        recentGroups={props.recentGroups}
-        selected={props.selected}
-        associations={props.associations}
-        invites={props.invites}
-        apps={config}
-        baseUrl={props.baseUrl}
-        groups={props.groups}
-        mobileHide={props.mobileHide}
-        workspace={props.workspace}
-        history={props.history}
-      />
+      <ErrorBoundary>
+        <Sidebar
+          api={props.api}
+          recentGroups={props.recentGroups}
+          selected={props.selected}
+          apps={config}
+          baseUrl={props.baseUrl}
+          mobileHide={props.mobileHide}
+          workspace={props.workspace}
+          history={props.history}
+          />
+      </ErrorBoundary>
       {props.children}
     </Body>
   );

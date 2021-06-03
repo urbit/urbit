@@ -1,4 +1,5 @@
-import bigInt, { BigInteger } from "big-integer";
+import bigInt, { BigInteger } from 'big-integer';
+import { immerable } from 'immer';
 
 interface NonemptyNode<V> {
   n: [BigInteger, V];
@@ -14,7 +15,8 @@ type MapNode<V> = NonemptyNode<V> | null;
  */
 export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   private root: MapNode<V> = null;
-  size: number = 0;
+  [immerable] = true;
+  size = 0;
 
   constructor(initial: [BigInteger, V][] = []) {
     initial.forEach(([key, val]) => {
@@ -48,13 +50,12 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
    *  Put an item by a key
    */
   set(key: BigInteger, value: V): void {
-    
     const inner = (node: MapNode<V>) => {
       if (!node) {
         return {
           n: [key, value],
           l: null,
-          r: null,
+          r: null
         };
       }
       const [k] = node.n;
@@ -62,22 +63,22 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
         this.size--;
         return {
           ...node,
-          n: [k, value],
+          n: [k, value]
         };
       }
       if (key.gt(k)) {
         const l = inner(node.l);
         if (!l) {
-          throw new Error("invariant violation");
+          throw new Error('invariant violation');
         }
         return {
           ...node,
-          l,
+          l
         };
       }
       const r = inner(node.r);
       if (!r) {
-        throw new Error("invariant violation");
+        throw new Error('invariant violation');
       }
 
       return { ...node, r };
@@ -133,8 +134,8 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
           bool,
           {
             ...node,
-            l,
-          },
+            l
+          }
         ];
       }
 
@@ -143,8 +144,8 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
         bool,
         {
           ...node,
-          r,
-        },
+          r
+        }
       ];
     };
     const [ret, newRoot] = inner(this.root);
@@ -165,12 +166,12 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
       }
       return {
         ...node.l,
-        r: inner(node.r),
+        r: inner(node.r)
       };
     };
     return inner(nod);
   }
-  
+
   peekLargest(): [BigInteger, V] | undefined {
     const inner = (node: MapNode<V>) => {
       if(!node) {
@@ -180,7 +181,7 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
         return inner(node.l);
       }
       return node.n;
-    }
+    };
     return inner(this.root);
   }
 
@@ -193,7 +194,7 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
         return inner(node.r);
       }
       return node.n;
-    }
+    };
     return inner(this.root);
   }
 
@@ -208,7 +209,7 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
   }
 
   [Symbol.iterator](): IterableIterator<[BigInteger, V]> {
-    let result: [BigInteger, V][] = [];
+    const result: [BigInteger, V][] = [];
     const inner = (node: MapNode<V>) => {
       if (!node) {
         return;
@@ -227,7 +228,7 @@ export class BigIntOrderedMap<V> implements Iterable<[BigInteger, V]> {
           return { value: result[idx++], done: false };
         }
         return { done: true, value: null };
-      },
+      }
     };
   }
 }

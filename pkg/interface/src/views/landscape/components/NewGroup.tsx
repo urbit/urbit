@@ -1,25 +1,28 @@
-import React, { useState, useCallback } from "react";
-import { Body } from "~/views/components/Body";
+import React, { ReactElement, useCallback } from 'react';
+import { Formik, Form, FormikHelpers } from 'formik';
+import * as Yup from 'yup';
+import { RouteComponentProps } from 'react-router-dom';
+
 import {
   Col,
   Box,
   Text,
   ManagedTextInputField as Input,
   ManagedCheckboxField as Checkbox
-} from "@tlon/indigo-react";
-import { Formik, Form, FormikHelpers } from "formik";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import * as Yup from "yup";
-import { Groups, Rolodex, GroupPolicy, Enc, Associations } from "~/types";
-import { useWaitForProps } from "~/logic/lib/useWaitForProps";
-import GlobalApi from "~/logic/api/global";
-import { stringToSymbol } from "~/logic/lib/util";
-import {RouteComponentProps} from "react-router-dom";
+} from '@tlon/indigo-react';
+import { Groups, Rolodex, GroupPolicy, Enc, Associations } from '@urbit/api';
+
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import GlobalApi from '~/logic/api/global';
+import { stringToSymbol } from '~/logic/lib/util';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
 
 const formSchema = Yup.object({
-  title: Yup.string().required("Group must have a name"),
+  title: Yup.string().required('Group must have a name'),
   description: Yup.string(),
-  isPrivate: Yup.boolean(),
+  isPrivate: Yup.boolean()
 });
 
 interface FormSchema {
@@ -29,21 +32,20 @@ interface FormSchema {
 }
 
 interface NewGroupProps {
-  groups: Groups;
-  contacts: Rolodex;
-  associations: Associations;
   api: GlobalApi;
 }
 
-export function NewGroup(props: NewGroupProps & RouteComponentProps) {
+export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactElement {
   const { api, history } = props;
   const initialValues: FormSchema = {
-    title: "",
-    description: "",
-    isPrivate: false,
+    title: '',
+    description: '',
+    isPrivate: false
   };
 
-  const waiter = useWaitForProps(props);
+  const groups = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
+  const waiter = useWaitForProps({ groups, associations });
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
@@ -53,19 +55,19 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps) {
         const policy: Enc<GroupPolicy> = isPrivate
           ? {
               invite: {
-                pending: [],
-              },
+                pending: []
+              }
             }
           : {
               open: {
                 banRanks: [],
-                banned: [],
-              },
+                banned: []
+              }
             };
         await api.groups.create(name, policy, title, description);
         const path = `/ship/~${window.ship}/${name}`;
-        await waiter(({ groups, associations }) => {
-          return path in groups && path in associations.groups;
+        await waiter((p) => {
+          return path in p.groups && path in p.associations.groups;
         });
 
         actions.setStatus({ success: null });

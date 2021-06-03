@@ -2,33 +2,30 @@ import React, {
   useMemo,
   useCallback,
   ChangeEvent,
-  useState,
-  SyntheticEvent,
-  useEffect,
   useRef,
-} from "react";
+  ReactElement
+} from 'react';
+import _ from 'lodash';
+import ob from 'urbit-ob';
+import * as Yup from 'yup';
+import { FieldArray, useFormikContext } from 'formik';
+
 import {
-  Box,
   Label,
   Icon,
   Text,
   Row,
   Col,
-  ErrorLabel,
-} from "@tlon/indigo-react";
-import _ from "lodash";
-import ob from "urbit-ob";
-import * as Yup from "yup";
-import { useField, FieldArray, useFormikContext } from "formik";
-import styled from "styled-components";
+  ErrorLabel
+} from '@tlon/indigo-react';
+import { Rolodex, Groups } from '@urbit/api';
 
-import { DropdownSearch } from "./DropdownSearch";
-import { Associations, Association } from "~/types/metadata-update";
-import { cite, deSig } from "~/logic/lib/util";
-import { Rolodex, Groups } from "~/types";
-import { HoverBox } from "./HoverBox";
 
-const INVALID_SHIP_ERR = "Invalid ship";
+import { DropdownSearch } from './DropdownSearch';
+import { cite, deSig } from '~/logic/lib/util';
+import { HoverBox } from './HoverBox';
+import useContactState from '~/logic/state/contact';
+import useGroupState from '~/logic/state/group';
 
 interface InviteSearchProps<I extends string> {
   autoFocus?: boolean;
@@ -36,33 +33,33 @@ interface InviteSearchProps<I extends string> {
   label?: string;
   caption?: string;
   id: I;
-  contacts: Rolodex;
-  groups: Groups;
   hideSelection?: boolean;
   maxLength?: number;
 }
 
-const getNicknameForShips = (groups: Groups, contacts: Rolodex) => {
+const getNicknameForShips = (groups: Groups, contacts: Rolodex, selected: string[]): readonly [string[], Map<string, string[]>] => {
   const peerSet = new Set<string>();
   const nicknames = new Map<string, string[]>();
   _.forEach(groups, (group, path) => {
     if (group.members.size > 0) {
       const groupEntries = group.members.values();
       for (const member of groupEntries) {
-        peerSet.add(member);
+        if(!selected.includes(member)) {
+          peerSet.add(member);
+        }
       }
     }
 
-    const groupContacts = contacts[path];
+    const groupContacts = contacts;
 
     if (groupContacts) {
       const groupEntries = group.members.values();
       for (const member of groupEntries) {
-        if (groupContacts[member]) {
+        if (groupContacts[`~${member}`]) {
           if (nicknames.has(member)) {
-            nicknames.get(member)?.push(groupContacts[member].nickname);
+            nicknames.get(member)?.push(groupContacts[`~${member}`].nickname);
           } else {
-            nicknames.set(member, [groupContacts[member].nickname]);
+            nicknames.set(member, [groupContacts[`~${member}`].nickname]);
           }
         }
       }
@@ -71,7 +68,7 @@ const getNicknameForShips = (groups: Groups, contacts: Rolodex) => {
   return [Array.from(peerSet), nicknames] as const;
 };
 
-const Candidate = ({ title, detail, selected, onClick }) => (
+const Candidate = ({ title, detail, selected, onClick }): ReactElement => (
   <HoverBox
     display="flex"
     justifyContent="space-between"
@@ -83,6 +80,7 @@ const Candidate = ({ title, detail, selected, onClick }) => (
     bg="white"
     color="black"
     fontSize={0}
+    cursor="pointer"
     p={1}
     width="100%"
   >
@@ -96,44 +94,47 @@ type Value<I extends string> = {
 };
 
 const shipItemSchema = Yup.string().test(
-  "is-patp",
-  "${value} is not a valid @p",
+  'is-patp',
+  '${value} is not a valid @p',
   x => ob.isValidPatp(`~${x}`)
 );
 
 export const shipSearchSchema = Yup.array(shipItemSchema).compact();
 
 export const shipSearchSchemaInGroup = (members: string[]) =>
-  Yup.array(shipItemSchema.oneOf(members, "${value} not a member of this group")).compact();
+  Yup.array(shipItemSchema.oneOf(members, '${value} not a member of this group')).compact();
 
 export function ShipSearch<I extends string, V extends Value<I>>(
   props: InviteSearchProps<I>
-) {
+): ReactElement {
   const { id, label, caption } = props;
   const {
     values,
     touched,
     errors,
     initialValues,
-    setFieldValue,
+    setFieldValue
   } = useFormikContext<V>();
 
   const inputIdx = useRef(initialValues[id].length);
 
-  const selected: string[] = values[id] ?? [];
+  const selected: string[] = useMemo(() => values[id] ?? [], [values, id]);
 
   const name = () => `${props.id}[${inputIdx.current}]`;
 
   const pills = selected.slice(0, inputIdx.current);
 
+  const contacts = useContactState(state => state.contacts);
+  const groups = useGroupState(state => state.groups);
+
   const [peers, nicknames] = useMemo(
-    () => getNicknameForShips(props.groups, props.contacts),
-    [props.contacts, props.groups]
+    () => getNicknameForShips(groups, contacts, selected),
+    [contacts, groups, selected]
   );
 
   const renderCandidate = useCallback(
     (s: string, selected: boolean, onSelect: (s: string) => void) => {
-      const detail = _.uniq(nicknames.get(s)).join(", ");
+      const detail = _.uniq(nicknames.get(s)).join(', ');
       const onClick = () => {
         onSelect(s);
       };
@@ -152,11 +153,19 @@ export function ShipSearch<I extends string, V extends Value<I>>(
 
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue =
-      e.target.value?.length > 0 ? `~${deSig(e.target.value)}` : "";
+      e.target.value?.length > 0 ? `~${deSig(e.target.value)}` : '';
     setFieldValue(name(), newValue);
   };
 
-  const error = _.compact(errors[id] as string[]);
+  const error = _.compact((_.isString(errors[id]) ? [errors[id]] : errors[id] as string[]) as any);
+
+  const isExact = useCallback((s: string) => {
+    const ship = `~${deSig(s)}`;
+    const result = ob.isValidPatp(ship);
+    return (result && !selected.includes(deSig(s)))
+      ? deSig(s) ?? undefined
+      : undefined;
+  }, [selected]);
 
   return (
     <FieldArray
@@ -165,7 +174,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
         const onAdd = (ship: string) => {
           setFieldValue(name(), ship);
           inputIdx.current += 1;
-          arrayHelpers.push("");
+          arrayHelpers.push('');
         };
 
         const onRemove = (idx: number) => {
@@ -184,11 +193,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
 
             <DropdownSearch<string>
               mt="2"
-              isExact={(s) => {
-                const ship = `~${deSig(s)}`;
-                const result = ob.isValidPatp(ship);
-                return result ? deSig(s) ?? undefined : undefined;
-              }}
+              isExact={isExact}
               placeholder="Search for ships"
               candidates={peers}
               renderCandidate={renderCandidate}
@@ -196,7 +201,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
                 props.maxLength ? selected.length >= props.maxLength : false
               }
               search={(s: string, t: string) =>
-                (t || "").toLowerCase().startsWith(s.toLowerCase())
+                (t || '').toLowerCase().startsWith(s.toLowerCase())
               }
               getKey={(s: string) => s}
               onChange={onChange}
@@ -227,7 +232,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
               ))}
             </Row>
             <ErrorLabel mt="3" hasError={error.length > 0}>
-              {error.join(", ")}
+              {error.join(', ')}
             </ErrorLabel>
           </Col>
         );

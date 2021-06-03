@@ -593,10 +593,10 @@
                 %&  (ship p.lane)
               ::
                   %|
-                ?~  l=((soft ,[=@tas =@if =@ud]) (cue p.lane))
-                  s+(scot %x p.lane)
-                =,  u.l
-                (tape "%{(trip tas)}, {(scow %if if)}, {(scow %ud ud)}")
+                %-  tape
+                =/  ip=@if  (end [0 32] p.lane)
+                =/  pt=@ud  (cut 0 [32 16] p.lane)
+                "{(scow %if ip)}:{((d-co:co 1) pt)} ({(scow %ux p.lane)})"
               ==
           ==
         ::

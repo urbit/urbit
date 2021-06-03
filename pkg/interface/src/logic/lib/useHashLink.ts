@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import {useLocation} from "react-router-dom";
-
+import { useLocation } from 'react-router-dom';
 
 export function useHashLink() {
   const location = useLocation();
@@ -10,8 +9,5 @@ export function useHashLink() {
       return;
     }
     document.querySelector(location.hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
   }, [location.hash]);
-
-
 }

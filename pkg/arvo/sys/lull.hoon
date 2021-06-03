@@ -796,7 +796,7 @@
     $:  face=(unit term)
         file-path=term
     ==
-  +$  care  ?(%a %b %c %d %p %r %s %t %u %v %w %x %y %z)  ::  clay submode
+  +$  care  ?(%a %b %c %d %e %f %p %r %s %t %u %v %w %x %y %z)  ::  clay submode
   +$  case                                              ::  ship desk case spur
     $%  [%da p=@da]                                     ::  date
         [%tas p=@tas]                                   ::  label
@@ -928,12 +928,16 @@
   ::    /-  sur-file            ::  surface imports from /sur
   ::    /+  lib-file            ::  library imports from /lib
   ::    /=  face  /path         ::  imports built hoon file at path
+  ::    /%  face  %mark         ::  imports mark definition from /mar
+  ::    /$  face  %from  %to    ::  imports mark converter from /mar
   ::    /*  face  %mark  /path  ::  unbuilt file imports, as mark
   ::
   +$  pile
     $:  sur=(list taut)
         lib=(list taut)
         raw=(list [face=term =path])
+        maz=(list [face=term =mark])
+        caz=(list [face=term =mars])
         bar=(list [face=term =mark =path])
         =hoon
     ==
@@ -942,9 +946,25 @@
   +$  taut  [face=(unit term) pax=term]
   ::  $mars: mark conversion request
   ::  $tube: mark conversion gate
+  ::  $nave: typed mark core
   ::
   +$  mars  [a=mark b=mark]
   +$  tube  $-(vase vase)
+  ++  nave
+    |$  [typ dif]
+    $_
+    ^?
+    |%
+    ++  bunt  *typ
+    ++  diff  |~([old=typ new=typ] *dif)
+    ++  form  *mark
+    ++  join  |~([a=dif b=dif] *(unit (unit dif)))
+    ++  mash
+      |~  [a=[ship desk dif] b=[ship desk dif]]
+      *(unit dif)
+    ++  pact  |~([typ dif] *typ)
+    ++  vale  |~(noun *typ)
+    --
   ::  $dais: processed mark core
   ::
   +$  dais
@@ -959,7 +979,6 @@
       *(unit vase)
     ++  pact  |~(diff=vase sam)
     ++  vale  |~(noun sam)
-    ++  volt  |~(noun sam)
     --
   ::
   ++  get-fit
@@ -987,7 +1006,7 @@
     |=  suffix=@tas
     ^-  (list path)
     =/  parser
-      (most hep (cook crip ;~(plug low (star ;~(pose low nud)))))
+      (most hep (cook crip ;~(plug ;~(pose low nud) (star ;~(pose low nud)))))
     =/  torn=(list @tas)  (fall (rush suffix parser) ~[suffix])
     %-  flop
     |-  ^-  (list (list @tas))

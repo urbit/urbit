@@ -1,14 +1,14 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Path, Patp, Enc } from '~/types/noun';
+import { Path, Patp, Enc } from '@urbit/api';
 import {
   GroupAction,
   GroupPolicy,
   Resource,
   Tag,
-  GroupPolicyDiff,
-} from '~/types/group-update';
-import {makeResource} from '../lib/group';
+  GroupPolicyDiff
+} from '@urbit/api/groups';
+import { makeResource } from '../lib/group';
 
 export default class GroupsApi extends BaseApi<StoreState> {
   remove(resource: Resource, ships: Patp[]) {
@@ -38,7 +38,7 @@ export default class GroupsApi extends BaseApi<StoreState> {
   join(ship: string, name: string) {
     const resource = makeResource(ship, name);
 
-    return this.viewAction({ join: { resource, ship }});
+    return this.viewAction({ join: { resource, ship } });
   }
 
   create(name: string, policy: Enc<GroupPolicy>, title: string, description: string) {
@@ -76,15 +76,18 @@ export default class GroupsApi extends BaseApi<StoreState> {
         description
       }
     });
+  }
 
+  hide(resource: string) {
+    return this.viewAction({ hide: resource });
   }
 
   private proxyAction(action: GroupAction) {
-    return this.action('group-push-hook', 'group-update', action);
+    return this.action('group-push-hook', 'group-update-0', action);
   }
 
   private storeAction(action: GroupAction) {
-    return this.action('group-store', 'group-update', action);
+    return this.action('group-store', 'group-update-0', action);
   }
 
   private viewThread(thread: string, action: any) {
@@ -93,6 +96,5 @@ export default class GroupsApi extends BaseApi<StoreState> {
 
   private viewAction(action: any) {
     return this.action('group-view', 'group-view-action', action);
-
   }
 }

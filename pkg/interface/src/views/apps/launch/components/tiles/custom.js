@@ -12,12 +12,11 @@ export default class CustomTile extends React.PureComponent {
           position='relative'
           backgroundColor='white'
           border='1px solid'
-          borderColor='washedGray'
+          borderColor='lightGray'
           borderRadius='2'
         >
           <BaseImage
             position='absolute'
-            className="invert-d"
             style={{ left: 38, top: 38 }}
             src='/~launch/img/UnknownCustomTile.png'
             width='48px'

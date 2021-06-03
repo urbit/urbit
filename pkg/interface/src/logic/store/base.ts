@@ -5,10 +5,6 @@ export default class BaseStore<S extends object> {
     this.state = this.initialState();
   }
 
-  dehydrate() {}
-
-  rehydrate() {}
-
   initialState() {
     return {} as S;
   }
@@ -19,7 +15,7 @@ export default class BaseStore<S extends object> {
 
   clear() {
     this.handleEvent({
-      data: { clear: true },
+      data: { clear: true }
     });
   }
 
@@ -30,13 +26,15 @@ export default class BaseStore<S extends object> {
       return;
     }
 
-    if ("clear" in json && json.clear) {
+    if ('clear' in json && json.clear) {
       this.setState(this.initialState());
       return;
     }
 
     this.reduce(json, this.state);
-    this.setState(this.state);
+    if('connection' in json) {
+      this.setState(this.state);
+    }
   }
 
   reduce(data, state) {

@@ -1,30 +1,46 @@
 import { useMemo, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import _ from 'lodash';
+import _ from "lodash";
+
+function mergeQuery(search: URLSearchParams, added: Record<string, string>) {
+  _.forIn(added, (v, k) => {
+    if (v) {
+      search.append(k, v);
+    } else {
+      search.delete(k);
+    }
+  });
+}
 
 export function useQuery() {
-  const { search } = useLocation();
+  const { search, pathname } = useLocation();
 
   const query = useMemo(() => new URLSearchParams(search), [search]);
 
   const appendQuery = useCallback(
-    (q: Record<string, string>) => {
-      const newQuery = new URLSearchParams(search);
-      _.forIn(q, (value, key) => {
-        if (!value) {
-          newQuery.delete(key);
-        } else {
-          newQuery.append(key, value);
-        }
-      });
-
-      return newQuery.toString();
+    (added: Record<string, string>) => {
+      const q = new URLSearchParams(search);
+      mergeQuery(q, added);
+      return q.toString();
     },
     [search]
+  );
+
+  const toQuery = useCallback(
+    (params: Record<string, string>, path = pathname) => {
+      const q = new URLSearchParams(search);
+      mergeQuery(q, params);
+      return {
+        pathname: path,
+        search: q.toString(),
+      };
+    },
+    [search, pathname]
   );
 
   return {
     query,
     appendQuery,
+    toQuery,
   };
 }

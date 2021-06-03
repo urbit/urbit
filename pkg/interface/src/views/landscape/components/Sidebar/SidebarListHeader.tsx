@@ -1,5 +1,7 @@
-import React, { useCallback } from "react";
-import * as Yup from "yup";
+import React, { ReactElement, useCallback } from 'react';
+import { FormikHelpers } from 'formik';
+import { Link } from 'react-router-dom';
+
 import {
   Row,
   Box,
@@ -7,32 +9,31 @@ import {
   ManagedRadioButtonField as Radio,
   ManagedCheckboxField as Checkbox,
   Col,
-  Text,
-} from "@tlon/indigo-react";
-import { FormikOnBlur } from "~/views/components/FormikOnBlur";
-import { Dropdown } from "~/views/components/Dropdown";
-import { FormikHelpers } from "formik";
-import { SidebarListConfig, Workspace } from "./types";
-import { Link, useHistory } from 'react-router-dom';
-import { getGroupFromWorkspace } from "~/logic/lib/workspace";
-import { roleForShip } from "~/logic/lib/group";
-import {Groups, Rolodex, Associations} from "~/types";
-import { NewChannel } from "~/views/landscape/components/NewChannel";
-import GlobalApi from "~/logic/api/global";
+  Text
+} from '@tlon/indigo-react';
+import { Groups, Rolodex, Associations } from '@urbit/api';
+
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
+import { Dropdown } from '~/views/components/Dropdown';
+import { SidebarListConfig  } from './types';
+import { getGroupFromWorkspace } from '~/logic/lib/workspace';
+import { roleForShip } from '~/logic/lib/group';
+import { NewChannel } from '~/views/landscape/components/NewChannel';
+import GlobalApi from '~/logic/api/global';
+import { Workspace } from '~/types/workspace';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
+import {IS_SAFARI} from '~/logic/lib/platform';
+import useHarkState from '~/logic/state/hark';
 
 export function SidebarListHeader(props: {
   api: GlobalApi;
   initialValues: SidebarListConfig;
-  associations: Associations;
-  groups: Groups;
-  contacts: Rolodex;
   baseUrl: string;
   selected: string;
   workspace: Workspace;
   handleSubmit: (c: SidebarListConfig) => void;
-}) {
-
-  const history = useHistory();
+}): ReactElement {
   const onSubmit = useCallback(
     (values: SidebarListConfig, actions: FormikHelpers<SidebarListConfig>) => {
       props.handleSubmit(values);
@@ -40,17 +41,62 @@ export function SidebarListHeader(props: {
     },
     [props.handleSubmit]
   );
+  const groups = useGroupState(state => state.groups);
 
   const groupPath = getGroupFromWorkspace(props.workspace);
-  const role = groupPath && props.groups?.[groupPath] ? roleForShip(props.groups[groupPath], window.ship) : undefined;
+  const role = groupPath && groups?.[groupPath] ? roleForShip(groups[groupPath], window.ship) : undefined;
+  const associations = useMetadataState(state => state.associations);
+
+  const metadata = associations?.groups?.[groupPath]?.metadata;
   const memberMetadata =
-    groupPath ? props.associations.groups?.[groupPath].metadata.vip === 'member-metadata' : false;
+    groupPath ? metadata.vip === 'member-metadata' : false;
 
-  const isAdmin = memberMetadata || (role === "admin") || (props.workspace?.type === 'home') || (props.workspace?.type === "messages");
+  const isAdmin = memberMetadata || (role === 'admin') || (props.workspace?.type === 'home') || (props.workspace?.type === 'messages');
 
-  const noun = (props.workspace?.type === "messages") ? "Messages" : "Channels";
+  const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
+
+  const feedPath = metadata?.config?.group?.resource;
+
+  const unreadCount = useHarkState(
+    s => s.unreads?.graph?.[feedPath ?? ""]?.["/"]?.unreads as number ?? 0
+  );
 
   return (
+    <Box>
+    {( !!feedPath) ? (
+       <Row
+         flexShrink="0"
+         alignItems="center"
+         justifyContent="space-between"
+         py={2}
+         px={3}
+         height='48px'
+         borderBottom={1}
+         borderColor="lightGray"
+         backgroundColor={['transparent',
+           props.history.location.pathname.includes(`/~landscape${groupPath}/feed`) 
+           ? (
+            'washedGray'
+           ) : (
+            'transparent'
+           )]}
+           cursor={['pointer', (
+             props.history.location.pathname === `/~landscape${groupPath}/feed`
+             ? 'default' : 'pointer'
+           )]}
+         onClick={() => {
+           props.history.push(`/~landscape${groupPath}/feed`);
+         }}
+       >
+         <Text>
+           Group Feed
+         </Text>
+         <Text mr="1" color="blue">
+           { unreadCount > 0 && unreadCount}
+         </Text>
+       </Row>
+     ) : null
+    }
     <Row
       flexShrink="0"
       alignItems="center"
@@ -69,14 +115,14 @@ export function SidebarListHeader(props: {
         display='flex'
         alignItems='center'
       >
-        {props.workspace?.type === "messages"
+        {props.workspace?.type === 'messages'
         ? (
           <Dropdown
             flexShrink={0}
             dropWidth="300px"
             width="auto"
             alignY="top"
-            alignX={["right", "left"]}
+            alignX={['right', 'left']}
             options={
               <Col
                 background="white"
@@ -86,24 +132,22 @@ export function SidebarListHeader(props: {
               <NewChannel
                 api={props.api}
                 history={props.history}
-                associations={props.associations}
-                contacts={props.contacts}
-                groups={props.groups}
                 workspace={props.workspace}
               />
               </Col>
             }
           >
-           <Icon icon="Plus" color="gray" pr='12px'/>
+           <Icon icon="Plus" color="gray" pr='12px' />
           </Dropdown>
         )
         : (
        <Link style={{
-          display: isAdmin ? "inline-block" : "none" }}
-        to={!!groupPath
+          display: isAdmin ? 'inline-block' : 'none' }}
+        to={groupPath
           ? `/~landscape${groupPath}/new`
-          : `/~landscape/${props.workspace?.type}/new`}>
-           <Icon icon="Plus" color="gray" pr='12px'/>
+          : `/~landscape/${props.workspace?.type}/new`}
+       >
+           <Icon icon="Plus" color="gray" pr='12px' />
        </Link>
           )
         }
@@ -111,7 +155,7 @@ export function SidebarListHeader(props: {
         flexShrink='0'
         width="auto"
         alignY="top"
-        alignX={["right", "left"]}
+        alignX={['right', 'left']}
         options={
           <FormikOnBlur initialValues={props.initialValues} onSubmit={onSubmit}>
             <Col bg="white" borderRadius={1} border={1} borderColor="lightGray">
@@ -142,5 +186,6 @@ export function SidebarListHeader(props: {
       </Dropdown>
       </Box>
     </Row>
+    </Box>
   );
 }

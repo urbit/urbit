@@ -1,22 +1,23 @@
-import { BaseInput, Box, Button, LoadingSpinner, Text } from "@tlon/indigo-react";
-import React, { useCallback, useState } from "react";
-import GlobalApi from "~/logic/api/global";
-import { useFileDrag } from "~/logic/lib/useDrag";
-import useS3 from "~/logic/lib/useS3";
-import { S3State } from "~/types";
-import SubmitDragger from "~/views/components/SubmitDragger";
-import { createPost } from "~/logic/api/graph";
-import { hasProvider } from "oembed-parser";
+import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
+import React, { useCallback, useState } from 'react';
+import GlobalApi from '~/logic/api/global';
+import { useFileDrag } from '~/logic/lib/useDrag';
+import useStorage from '~/logic/lib/useStorage';
+import { StorageState } from '~/types';
+import SubmitDragger from '~/views/components/SubmitDragger';
+import { createPost } from '~/logic/api/graph';
+import { hasProvider } from 'oembed-parser';
+import {parsePermalink, permalinkToReference} from '~/logic/lib/permalinks';
 
 interface LinkSubmitProps {
   api: GlobalApi;
-  s3: S3State;
   name: string;
   ship: string;
-};
+}
 
 const LinkSubmit = (props: LinkSubmitProps) => {
-  let { canUpload, uploadDefault, uploading, promptUpload } = useS3(props.s3);
+  const { canUpload, uploadDefault, uploading, promptUpload } =
+    useStorage();
 
   const [submitFocused, setSubmitFocused] = useState(false);
   const [urlFocused, setUrlFocused] = useState(false);
@@ -28,12 +29,13 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   const doPost = () => {
     const url = linkValue;
     const text = linkTitle ? linkTitle : linkValue;
+    const contents = url.startsWith('web+urbitgraph:/') 
+      ?  [{ text }, permalinkToReference(parsePermalink(url)!) ]
+      :  [{ text }, { url }];
+
     setDisabled(true);
     const parentIndex = props.parentIndex || '';
-    const post = createPost([
-      { text },
-      { url }
-    ], parentIndex);
+    const post = createPost(contents, parentIndex);
 
     props.api.graph.addPost(
       `~${props.ship}`,
@@ -59,6 +61,13 @@ const LinkSubmit = (props: LinkSubmitProps) => {
       if (linkValid) {
         link = `http://${link}`;
         setLinkValue(link);
+      }
+    }
+    if(link.startsWith('web+urbitgraph://')) {
+      const permalink = parsePermalink(link);
+      if(!permalink) {
+        setLinkValid(false);
+        return;
       }
     }
 
@@ -100,7 +109,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
   const onLinkChange = (linkValue: string) => {
     setLinkValueHook(linkValue);
-    const link = validateLink(linkValue)
+    const link = validateLink(linkValue);
     setLinkValid(link);
   };
 
@@ -133,7 +142,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     px={2}
     pt={2}
     style={{ pointerEvents: 'none' }}
-  >{canUpload
+                      >{canUpload
     ? <>
       Drop or{' '}
       <Text
@@ -153,7 +162,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
         flexShrink={0}
         position='relative'
         border='1px solid'
-        borderColor={submitFocused ? 'black' : 'washedGray'}
+        borderColor={submitFocused ? 'black' : 'lightGray'}
         width='100%'
         borderRadius={2}
         {...bind}
@@ -169,7 +178,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
           zIndex={9}
           alignItems="center"
           justifyContent="center"
-        >
+                      >
           <LoadingSpinner />
         </Box>}
         {dragging && <SubmitDragger />}

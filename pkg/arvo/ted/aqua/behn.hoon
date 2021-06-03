@@ -74,13 +74,15 @@
     =.  next-timer  ~
     =.  this
       %-  emit-aqua-events
+      ?^  error
+        ::  Should pass through errors to aqua, but doesn't
+        ::
+        %-  (slog leaf+"aqua-behn: timer failed" u.error)
+        ~
       :_  ~
       ^-  aqua-event
       :+  %event  who
-      :-  //behn/0v1n.2m9vh
-      ?~  error
-        [%wake ~]
-      [%crud %fail u.error]
+      [//behn/0v1n.2m9vh [%wake ~]]
     ..abet-pe
   --
 --

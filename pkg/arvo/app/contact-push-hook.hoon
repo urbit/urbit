@@ -11,6 +11,7 @@
       update:store
       %contact-update
       %contact-pull-hook
+      0  0
   ==
 ::
 +$  agent  (push-hook:push-hook config)
@@ -67,18 +68,20 @@
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 ::
-++  should-proxy-update
-  |=  =vase
-  ^-  ?
-  =/  =update:store  !<(update:store vase)
+++  transform-proxy-update
+  |=  vas=vase
+  ^-  (unit vase)
+  ::  TODO: should check if user is allowed to %add, %remove, %edit
+  ::  contact
+  =/  =update:store  !<(update:store vas)
   ?-  -.update
-    %initial     %.n
-    %add         %.y
-    %remove      %.y
-    %edit        %.y
-    %allow       %.n
-    %disallow    %.n
-    %set-public  %.n
+    %initial     ~
+    %add         `vas
+    %remove      `vas
+    %edit        `vas
+    %allow       ~
+    %disallow    ~
+    %set-public  ~
   ==
 ::
 ++  resource-for-update  resource-for-update:con

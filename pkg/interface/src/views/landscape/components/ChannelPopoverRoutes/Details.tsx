@@ -1,22 +1,20 @@
 import React from "react";
+import { Formik, Form } from "formik";
+
 import {
-  Box,
   ManagedTextInputField as Input,
-  ManagedCheckboxField as Checkbox,
   Col,
   Label,
   Text,
-  Row,
 } from "@tlon/indigo-react";
-import { Formik, Form } from "formik";
+import { Association } from "@urbit/api";
 
 import { FormError } from "~/views/components/FormError";
 import { ColorInput } from "~/views/components/ColorInput";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import { uxToHex, wait } from "~/logic/lib/util";
+import { uxToHex } from "~/logic/lib/util";
 import GlobalApi from "~/logic/api/global";
-import { Association } from "~/types";
 import { FormSubmit } from "~/views/components/FormSubmit";
+import { FormGroupChild } from "~/views/components/FormGroup";
 
 interface FormSchema {
   title: string;
@@ -48,7 +46,8 @@ export function ChannelDetails(props: ChannelDetailsProps) {
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
       <Form style={{ display: "contents" }}>
-        <Col mb="4" flexShrink={0} gapY="4">
+        <FormGroupChild id="details" />
+        <Col mx="4" mb="4" flexShrink={0} gapY="4">
           <Col mb={3}>
             <Text id="details" fontSize="2" fontWeight="bold">
               Channel Details
@@ -72,9 +71,6 @@ export function ChannelDetails(props: ChannelDetailsProps) {
             label="Color"
             caption="Change the color of this channel"
           />
-          <FormSubmit>
-            Update Details
-          </FormSubmit>
           <FormError message="Failed to update settings" />
         </Col>
       </Form>

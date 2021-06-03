@@ -1,65 +1,54 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
-
-import { Box, Text, Row, Col, Button, Action } from "@tlon/indigo-react";
-import GlobalApi from "~/logic/api/global";
-import { Associations, Groups, PropFunc } from "~/types";
-import { MetadataIcon } from "../landscape/components/MetadataIcon";
-import { JoinGroup } from "../landscape/components/JoinGroup";
-import { useModal } from "~/logic/lib/useModal";
-import { GroupSummary } from "../landscape/components/GroupSummary";
+import React, { useEffect, useState, useLayoutEffect, ReactElement } from 'react';
+import { useHistory } from 'react-router-dom';
+import { Box, Text, Row, Col } from '@tlon/indigo-react';
+import { Associations, Groups } from '@urbit/api';
+import GlobalApi from '~/logic/api/global';
+import { MetadataIcon } from '../landscape/components/MetadataIcon';
+import { JoinGroup } from '../landscape/components/JoinGroup';
+import { useModal } from '~/logic/lib/useModal';
+import { GroupSummary } from '../landscape/components/GroupSummary';
+import { PropFunc } from '~/types';
+import useMetadataState from '~/logic/state/metadata';
+import {useVirtual} from '~/logic/lib/virtualContext';
 
 export function GroupLink(
   props: {
     api: GlobalApi;
     resource: string;
-    associations: Associations;
-    groups: Groups;
-    measure: () => void;
     detailed?: boolean;
   } & PropFunc<typeof Row>
-) {
-  const { resource, api, associations, groups, measure, ...rest } = props;
+): ReactElement {
+  const { resource, api, ...rest } = props;
   const name = resource.slice(6);
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
-
-  const joined = resource in props.associations.groups;
+  const associations = useMetadataState(state => state.associations);
+  const { save, restore } = useVirtual();
+  const history = useHistory();
+  const joined = resource in associations.groups;
 
   const { modal, showModal } = useModal({
-    modal:
-      joined && preview ? (
-        <Box width="fit-content" p="4">
-          <GroupSummary
-            metadata={preview.metadata}
-            memberCount={preview.members}
-            channelCount={preview?.["channel-count"]}
-          />
-        </Box>
-      ) : (
-        <JoinGroup
-          groups={groups}
-          associations={associations}
-          api={api}
-          autojoin={name}
-        />
-      ),
+    modal: <JoinGroup api={api} autojoin={name} />
   });
 
   useEffect(() => {
     (async () => {
-      setPreview(await api.metadata.preview(resource));
+      const prev = await api.metadata.preview(resource);
+      save();
+      setPreview(prev);
     })();
 
     return () => {
+      save();
       setPreview(null);
     };
   }, [resource]);
 
   useLayoutEffect(() => {
-    measure();
+    restore();
   }, [preview]);
 
   return (
-    <Box {...rest}>
+    <Box maxWidth="500px" {...rest} onClick={(e) => { e.stopPropagation(); }}>
       {modal}
       <Row
         width="fit-content"
@@ -67,22 +56,19 @@ export function GroupLink(
         alignItems="center"
         py="2"
         pr="2"
-        onClick={showModal}
+        onClick={
+          joined ? () => history.push(`/~landscape/ship/${name}`) : showModal
+        }
         cursor='pointer'
+        opacity={preview ? '1' : '0.6'}
       >
-        {preview ? (
-          <>
-            <MetadataIcon height={6} width={6} metadata={preview.metadata} />
-            <Col>
-            <Text ml="2" fontWeight="medium">
-              {preview.metadata.title}
-            </Text>
-            <Text pt='1' ml='2'>{preview.members} members</Text>
-            </Col>
-          </>
-        ) : (
-          <Text mono>{name}</Text>
-        )}
+        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : {"color": "0x0"}} />
+          <Col>
+          <Text ml="2" fontWeight="medium" mono={!preview}>
+            {preview ? preview.metadata.title : name}
+          </Text>
+          <Text pt='1' ml='2'>{preview ? `${preview.members} members` : "Fetching member count"}</Text>
+        </Col>
       </Row>
     </Box>
   );
