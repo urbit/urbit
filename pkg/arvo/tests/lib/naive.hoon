@@ -366,7 +366,7 @@
     =^  f  state  (n state %bat q:(gen-tx 0 marbud-mproxy %marbud-key-0))
     management-proxy.own:(~(got by points.state) ~marbud)
 ::
-++  test-l2-spawn-proxy-deposit  ^-  tang
+++  test-l2-dopbud-spawn-proxy-deposit  ^-  tang
   %+  expect-eq
     !>  %spawn
   ::
@@ -374,6 +374,43 @@
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
     dominion:(~(got by points.state) ~dopbud)
+::
+++  test-l2-sambud-spawn-proxy-predeposit  ^-  tang
+  %+  expect-eq
+    !>  [(addr %sambud-skey) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey)))
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+    spawn-proxy.own:(~(got by points.state) ~sambud)
+::
+++  test-l2-sambud-own-spawn-proxy-postdeposit  ^-  tang
+  =/  sambud-sproxy  [[~sambud %own] %set-spawn-proxy (addr %sambud-skey-0)]
+  %+  expect-eq
+    !>  [(addr %sambud-skey-0) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+    =^  f  state  (n state %bat q:(gen-tx 0 sambud-sproxy %sambud-key-0))
+    spawn-proxy.own:(~(got by points.state) ~sambud)
+::
+++  test-l2-sambud-spawn-spawn-proxy-postdeposit  ^-  tang
+  =/  sambud-sproxy  [[~sambud %spawn] %set-spawn-proxy (addr %sambud-skey-1)]
+  %+  expect-eq
+    !>  [(addr %sambud-skey-1) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey-0)))
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+    =^  f  state  (n state %bat q:(gen-tx 0 sambud-sproxy %sambud-skey-0))
+    spawn-proxy.own:(~(got by points.state) ~sambud)
+
 ::
 ++  test-marbud-l2-spawn  ^-  tang
   =/  marbud-sproxy  [marbud-own %set-spawn-proxy (addr %marbud-skey)]
