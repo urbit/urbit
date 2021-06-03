@@ -4,7 +4,6 @@ import {
   Timebox
 } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
-import { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import { compose } from 'lodash/fp';
 import { makePatDa } from '~/logic/lib/util';
@@ -152,7 +151,9 @@ function unreads(json: any, state: HarkState): HarkState {
       const { unreads, notifications, last } = stats;
       updateNotificationStats(state, index, 'last', () => last);
       _.each(notifications, ({ time, index }) => {
-        addNotificationToUnread(state, index, makePatDa(time));
+        if(!time) {
+          addNotificationToUnread(state, index);
+        }
       });
       if('count' in unreads) {
         updateUnreadCount(state, index, (u = 0) => u + unreads.count);
@@ -210,14 +211,16 @@ function updateUnreads(state: HarkState, index: NotifIndex, f: (us: Set<string>)
   return state;
 }
 
-function addNotificationToUnread(state: HarkState, index: NotifIndex, time: BigInteger) {
+function addNotificationToUnread(state: HarkState, index: NotifIndex) {
   if('graph' in index) {
     const path = [index.graph.graph, index.graph.index, 'notifications'];
     const curr = _.get(state.unreads.graph, path, []);
     _.set(state.unreads.graph, path,
       [
-        ...curr.filter(c => !(c.time.eq(time) && notifIdxEqual(c.index, index))),
-        { time, index }
+        ...curr.filter((c) => {
+          return !(notifIdxEqual(c.index, index));
+        }),
+        { index }
       ]
     );
   } else if ('group' in index) {
@@ -225,10 +228,21 @@ function addNotificationToUnread(state: HarkState, index: NotifIndex, time: BigI
     const curr = _.get(state.unreads.group, path, []);
     _.set(state.unreads.group, path,
       [
-        ...curr.filter(c => !(c.time.eq(time) && notifIdxEqual(c.index, index))),
-        { time, index }
+        ...curr.filter(c => !notifIdxEqual(c.index, index)),
+        { index }
       ]
     );
+  }
+}
+function removeNotificationFromUnread(state: HarkState, index: NotifIndex) {
+  if('graph' in index) {
+    const path = [index.graph.graph, index.graph.index, 'notifications'];
+    const curr = _.get(state.unreads.graph, path, []);
+    _.set(state.unreads.graph, path, curr.filter(c => !notifIdxEqual(c.index, index)));
+  } else if ('group' in index) {
+    const path = [index.group.group, 'notifications'];
+    const curr = _.get(state.unreads.group, path, []);
+    _.set(state.unreads.group, path, curr.filter(c => !notifIdxEqual(c.index, index)));
   }
 }
 
@@ -280,6 +294,9 @@ const timebox = (json: any, state: HarkState): HarkState => {
       state.notifications = state.notifications.set(time, data.notifications);
     } else {
       state.unreadNotes = data.notifications;
+      _.each(data.notifications, ({ index }) => {
+        addNotificationToUnread(state, index);
+      });
     }
   }
   return state;
@@ -338,6 +355,7 @@ function read(json: any, state: HarkState): HarkState {
       read[0].notification.contents = mergeNotifs(read[0].notification.contents, toMerge[0].notification.contents);
     }
     state.notifications = state.notifications.set(time, [...read, ...rest]);
+    removeNotificationFromUnread(state, index);
   }
   return state;
 }
@@ -364,6 +382,7 @@ function archive(json: any, state: HarkState): HarkState {
       }
     } else {
       state.unreadNotes = state.unreadNotes.filter(({ index: idx }) => !notifIdxEqual(idx, index));
+      removeNotificationFromUnread(state, index);
     }
   }
   return state;

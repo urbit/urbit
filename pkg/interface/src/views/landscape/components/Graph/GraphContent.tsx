@@ -122,6 +122,7 @@ function stitchInline(a: any, b: any) {
   }
   const lastParaIdx = a.children.length - 1;
   const last = a.children[lastParaIdx];
+  console.log(last);
   if (last?.children) {
     const ros = {
       ...a,
