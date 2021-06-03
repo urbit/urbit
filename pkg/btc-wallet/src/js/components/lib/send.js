@@ -224,6 +224,7 @@ export default class Send extends Component {
           state={this.props.state}
           api={api}
           psbt={psbt}
+          fee={fee}
           currencyRates={currencyRates}
           stopSending={stopSending}
           payee={payee}
