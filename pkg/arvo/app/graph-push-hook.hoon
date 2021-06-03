@@ -153,7 +153,9 @@
       =.  nodes.q.update
         %-  ~(gas by *(map index:store node:store))
         result
-      :_  [~ !>(update)]
+      :_  :-  ~
+          !>  ^-  update:store
+          update
       %+  weld  cards
       %-  zing
       :~  ?:  mark-cached   ~

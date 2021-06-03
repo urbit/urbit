@@ -62,8 +62,8 @@ export function getNotificationKey(
 ): string {
   const base = time.toString();
   if ('graph' in notification.index) {
-    const { graph, index } = notification.index.graph;
-    return `${base}-${graph}-${index}`;
+    const { graph, index, description } = notification.index.graph;
+    return `${base}-${graph}-${index}-${description}`;
   } else if ('group' in notification.index) {
     const { group } = notification.index.group;
     return `${base}-${group}`;

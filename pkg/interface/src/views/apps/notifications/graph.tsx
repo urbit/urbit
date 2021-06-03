@@ -97,13 +97,13 @@ export const GraphNodeContent = ({ post, mod, index, hidden, association }) => {
   const { contents } = post;
   const idx = index.slice(1).split('/');
   const url = getNodeUrl(mod, hidden, association?.group, association?.resource, index);
-  if (mod === 'link' && idx.length === 1) {
+  if (mod === 'graph-validator-link' && idx.length === 1) {
     const [{ text: title }] = contents;
     return (
       <ContentSummary to={url} icon="Links" name={title} author={post.author} />
     );
   }
-  if (mod === 'publish' && idx[1] === '1') {
+  if (mod === 'graph-validator-publish' && idx[1] === '1') {
     const [{ text: title }] = contents;
     return (
       <ContentSummary to={url} icon="Note" name={title} author={post.author} />
@@ -251,23 +251,16 @@ export function GraphNotification(props: {
       history.push(`/~landscape/messages/dm/~${authors[0]}`);
       return;
     }
-    if (
-      !(
-        (index.description === 'note' || index.description === 'link') &&
-        index.index === '/'
+    const first = contents[0];
+    history.push(
+      getNodeUrl(
+        index.mark,
+        groups[association?.group]?.hidden,
+        association?.group,
+        association?.resource,
+        first.index
       )
-    ) {
-      const first = contents[0];
-      history.push(
-        getNodeUrl(
-          index.mark,
-          groups[association?.group]?.hidden,
-          association?.group,
-          association?.resource,
-          first.index
-        )
-      );
-    }
+    );
   }, [api, timebox, index, read, history.push, authors, dm]);
 
   const authorsInHeader =
