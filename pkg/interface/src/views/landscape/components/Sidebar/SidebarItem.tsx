@@ -1,10 +1,8 @@
 import _ from 'lodash';
 import React, { useRef, ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
-
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
 import { Association, cite } from '@urbit/api';
-
 import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
@@ -151,7 +149,6 @@ export function SidebarAssociationItem(props: {
 }) {
   const { association, path, selected, apps } = props;
   const title = getItemTitle(association) || '';
-  const color = `#${uxToHex(association?.metadata?.color || '0x0')}`;
   const appName = association?.['app-name'];
   let mod = appName;
   if (association?.metadata?.config && 'graph' in association.metadata.config) {
@@ -174,15 +171,10 @@ export function SidebarAssociationItem(props: {
     return null;
   }
   const DM = isUnmanaged && props.workspace?.type === 'messages';
-
   const itemStatus = app.getStatus(path);
-
   const hasNotification = itemStatus === 'notification';
-
   const hasUnread = itemStatus === 'unread';
-
   const isSynced = itemStatus !== 'unsubscribed';
-
   let baseUrl = `/~landscape${groupPath}`;
 
   if (DM) {
@@ -199,22 +191,25 @@ export function SidebarAssociationItem(props: {
     return null;
   }
 
-  const participantNames = (str: string, color: string) => {
+  const participantNames = (str: string) => {
+    const color = isSynced ? (hasUnread || hasNotification) ? 'black' : 'gray' : 'lightGray';
     if (_.includes(str, ',') && _.startsWith(str, '~')) {
       const names = _.split(str, ', ');
       return names.map((name, idx) => {
         if (urbitOb.isValidPatp(name)) {
           if (contacts[name]?.nickname && !hideNicknames)
             return (
-              <Text key={name} color={color}>
+              <Text key={name} bold={hasUnread} color={color}>
                 {contacts[name]?.nickname}
                 {idx + 1 != names.length ? ', ' : null}
               </Text>
             );
           return (
-            <Text key={name} mono color={color}>
+            <Text key={name} mono bold={hasUnread} color={color}>
               {name}
-              <Text color={color}>{idx + 1 != names.length ? ', ' : null}</Text>
+              <Text color={color}>
+                {idx + 1 != names.length ? ', ' : null}
+              </Text>
             </Text>
           );
         } else {
@@ -234,7 +229,7 @@ export function SidebarAssociationItem(props: {
       isSynced={isSynced}
       title={
         DM && !urbitOb.isValidPatp(title)
-          ? participantNames(title, color)
+          ? participantNames(title)
           : title
       }
       hasNotification={hasNotification}
