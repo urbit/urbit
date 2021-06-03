@@ -340,7 +340,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
                     subtext={result.host}
                     link={result.link}
                     cursor={leapCursor}
-                    navigate={() => navigate(result.app, result.link)}
+                    navigate={() => navigate(result.app, result.link, false)}
                     setSelection={() => setSelection(result.app, result.link)}
                     selected={sel}
                   />
