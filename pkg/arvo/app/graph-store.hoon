@@ -19,7 +19,7 @@
 +$  debug-input  [%validate-graph =resource:store]
 ::
 +$  cache
-  $:  validators=(map mark dais:clay)
+  $:  validators=(map mark $-(indexed-post:store indexed-post:store))
   ==
 ::
 ::  TODO: come back to this and potentially use ford runes or otherwise
@@ -627,22 +627,27 @@
     |=  [=graph:store mark=(unit mark:store)]
     ^-  [? _state]
     ?~  mark   [%.y state]
-    =/  has-dais  (~(has by validators) u.mark)
-    =/  =dais:clay
-      ?:  has-dais
+    =/  has-validator  (~(has by validators) u.mark)
+    =/  validate=$-(indexed-post:store indexed-post:store)
+      ?:  has-validator
         (~(got by validators) u.mark)
-      .^  =dais:clay
-          %cb
-          /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[u.mark]
+      .^  $-(indexed-post:store indexed-post:store)
+          %cf
+          (scot %p our.bowl)
+          q.byk.bowl
+          (scot %da now.bowl)
+          u.mark
+          %graph-indexed-post
+          ~
       ==
-    :_  state(validators (~(put by validators) u.mark dais))
+    :_  state(validators (~(put by validators) u.mark validate))
     |-  ^-  ?
     ?~  graph  %.y
     %+  roll  (tap:orm graph)
     |=  [[=atom =node:store] out=?]
     ^-  ?
     ?&  ?|  ?=(%| -.post.node)
-            ?=(^ (vale:dais [atom p.post.node]))
+            ?=(^ (validate [atom p.post.node]))
         ==
       ::
         ?-  -.children.node
