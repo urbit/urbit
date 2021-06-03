@@ -410,7 +410,19 @@
     =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
     =^  f  state  (n state %bat q:(gen-tx 0 sambud-sproxy %sambud-skey-0))
     spawn-proxy.own:(~(got by points.state) ~sambud)
-
+::
+++  test-l2-sambud-spawn-proxy-predeposit-spawn  ^-  tang
+  =/  lf-spawn  [[~sambud %spawn] %spawn ~lisdur-fodrys (addr %lf-key-0)]
+  %+  expect-eq
+    !>  [`@ux`(addr %lf-key-0) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey)))
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+    =^  f  state  (n state %bat q:(gen-tx 0 lf-spawn %sambud-skey))
+    transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
 ::
 ++  test-marbud-l2-spawn  ^-  tang
   =/  marbud-sproxy  [marbud-own %set-spawn-proxy (addr %marbud-skey)]
