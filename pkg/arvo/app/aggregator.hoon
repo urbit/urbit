@@ -58,17 +58,19 @@
       chain-id=@
   ==
 ::
-+$  action
-  $%  [%submit force=? sig=@ tx=part-tx]
-      [%cancel sig=@ keccak=@]
-    ::
-      [%commit ~]  ::TODO  maybe pk=(unit @) later
-      [%frequency frequency=@dr]
++$  config
+  $%  [%frequency frequency=@dr]
       [%setkey pk=@]
       [%endpoint endpoint=@t]
       [%network net=?(%mainnet %ropsten %local)]
       [%nonce nonce=@ud]
-      [%subs ~]
+  ==
+::
++$  action
+  $%  [%submit force=? sig=@ tx=part-tx]
+      [%cancel sig=@ keccak=@]
+      [%commit ~]  ::TODO  maybe pk=(unit @) later
+      [%config config]
   ==
 ::
 +$  card  card:agent:gall
@@ -438,32 +440,9 @@
   |=  =action
   ^-  (quip card _state)
   ?-  -.action
-    %commit     on-timer
-    %frequency  [~ state(frequency frequency.action)]
-    %nonce      [~ state(next-nonce nonce.action)]
-    %endpoint   [~ state(endpoint endpoint.action)]
-  ::
-      %network
-    :-  ~
-    =/  [contract=@ux chain-id=@]
-      =<  [naive chain-id]
-      =,  azimuth
-      ?-  net.action
-        %mainnet  mainnet-contracts
-        %ropsten  ropsten-contracts
-        %local    local-contracts
-      ==
-    state(contract contract, chain-id chain-id)
-  ::
-      %subs
-    :_  state
-    [%pass /azimuth %agent [our.bowl %azimuth] %watch /aggregator]~
-  ::
-      %setkey
-    ::TODO  what about existing sending entries?
-    ?~  pk=(de:base16:mimes:html pk.action)
-      `state
-    [(get-nonce q.u.pk) state(pk q.u.pk)]
+    %commit  on-timer
+    %config  (on-config +.action)
+    %cancel  !!  ::TODO
   ::
       %submit
     =^  success  state
@@ -475,9 +454,33 @@
     ~?  =(success |)
       [dap.bowl %submit-failed action]
     [~ state]
+  ==
+::
+++  on-config
+  |=  =config
+  ^-  (quip card _state)
+  ?-  -.config
+    %frequency  [~ state(frequency frequency.config)]
+    %nonce      [~ state(next-nonce nonce.config)]
+    %endpoint   [~ state(endpoint endpoint.config)]
   ::
-      %cancel
-    !!  ::TODO
+      %network
+    :-  ~
+    =/  [contract=@ux chain-id=@]
+      =<  [naive chain-id]
+      =,  azimuth
+      ?-  net.config
+        %mainnet  mainnet-contracts
+        %ropsten  ropsten-contracts
+        %local    local-contracts
+      ==
+    state(contract contract, chain-id chain-id)
+  ::
+      %setkey
+    ::TODO  what about existing sending entries?
+    ?~  pk=(de:base16:mimes:html pk.config)
+      `state
+    [(get-nonce q.u.pk) state(pk q.u.pk)]
   ==
 ::  TODO: move address to state?
 ::
