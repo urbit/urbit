@@ -18,7 +18,6 @@
 ::
 ::TODO  remaining general work:
 ::  - hook up timer callbacks
-::  - properly support private key changes
 ::
 ::TODO  questions:
 ::  - it's a bit weird how we just assume the raw and tx in raw-tx to match...
@@ -34,6 +33,9 @@
       ::  finding: raw-tx-hash reverse lookup for sending map
       ::  next-nonce: next l1 nonce to use
       ::  nas: cached naive state
+      ::       when a new l2 tx comes in, via +take-tx or +on-naive-dif, the
+      ::       +canonical-state is retrieved from %azimuth, the pending txs
+      ::       and the new l2 tx are applied and the result is stored in +nas
       ::
       pending=(list pend-tx)
     ::
@@ -203,12 +205,12 @@
     ^-  (quip card _this)
     |^
     ?+  wire  (on-agent:def wire sign)
-      [%send @t @t *]  (process-send-batch i.t.wire i.t.t.wire sign)
-      [%azimuth ~]     (process-azimuth-update sign)
-      [%nonce ~]       (process-nonce sign)
+      [%send @ @ *]  (send-batch i.t.wire i.t.t.wire sign)
+      [%azimuth ~]   (azimuth-update sign)
+      [%nonce ~]     (nonce sign)
     ==
     ::
-    ++  process-send-batch
+    ++  send-batch
       |=  [address=@t nonce=@t =sign:agent:gall]
       ^-  (quip card _this)
       ?-  -.sign
@@ -253,7 +255,7 @@
         ==
       ==
     ::
-    ++  process-azimuth-update
+    ++  azimuth-update
       |=  =sign:agent:gall
       ^-  (quip card _this)
       ?+  -.sign  [~ this]
@@ -275,13 +277,15 @@
           ::  cache naive state, received upon innitializing subscription
           ::
           ~&  >  %get-naive-state
-          ::  TODO: this assumes that %azimuth has already processed eth data
+          ::  this assumes that %azimuth has already processed eth data
           ::
-          [~ this(nas !<(^state:naive q.cage.sign))]
+          =^  pending  nas
+            (pending-state !<(^state:naive q.cage.sign))
+          [~ this(pending pending)]
         ==
       ==
     ::
-    ++  process-nonce
+    ++  nonce
       |=  =sign:agent:gall
       ^-  (quip card _this)
       ?-  -.sign
@@ -377,26 +381,24 @@
     %don  [(gen-tx-octs:lib +.part-tx) +.part-tx]
     %ful  +.part-tx
   ==
+::  +canonical-state: load current state instead of cached state
+::
+++  canonical-state
+  .^  ^state:naive
+    %gx
+    (scot %p our.bowl)
+    %azimuth
+    (scot %da now.bowl)
+    /nas/nas
+  ==
 ::  +pending-state
 ::
 ::    derives tentative state from pending txs and canonical state,
 ::    discarding invalid pending txs in the process.
 ::
-::TODO  maybe want to cache locally, refresh on %fact from azimuth?
-::
 ++  pending-state
-  ^-  [_pending ^state:naive]
-  ::  load current, canonical state
-  ::  TODO: safe to use the cached naive state instead?
-  ::        problems if we eargerly update it with the submitted tx?
-  ::
-  =+  .^  nas=^state:naive
-      %gx
-      (scot %p our.bowl)
-      %azimuth
-      (scot %da now.bowl)
-      /nas/nas
-    ==
+  |=  nas=^state:naive
+  ^-  [_pending _nas]
   ::  apply our pending transactions
   ::TODO  should also apply txs from sending map!
   ::
@@ -493,7 +495,7 @@
 ++  take-tx
   |=  [force=? =raw-tx:naive]
   ^-  [success=? _state]
-  =/  [nep=_pending nas=^state:naive]  pending-state
+  =/  [nep=_pending nas=_nas]  (pending-state canonical-state)
   =^  success  nas  (try-apply nas force raw-tx)
   ::TODO  want to notify about dropped pendings, or no? client prolly polls...
   =?  pending  success  (snoc nep [force raw-tx])
@@ -618,10 +620,10 @@
     ::  unexpected tx failures here. would that be useful? probably not?
     ::  ~?  !forced  [dap.bowl %aggregated-tx-failed-anyway err.diff]
     %failed
-  ::  update cached naive state
+  =/  [nep=_pending nas=_nas]  (pending-state canonical-state)
+  ::  update cached naive state with confirmed tx from diff
   ::
-  =^  *  nas
-    (try-apply nas | raw-tx.diff)
-  [~ state]
+  =^  *  nas  (try-apply nas | raw-tx.diff)
+  [~ state(pending nep)]
 ::
 --
