@@ -338,22 +338,24 @@ retrievePoint endpoint block ship =
 validateFeedAndGetSponsor :: String
                           -> TextBlockNum
                           -> Feed
-                          -> RIO e (Ship, Life, Ship)
+                          -> RIO e (Seed, Ship)
 validateFeedAndGetSponsor endpoint block = \case
     Feed0 s -> do
                  r <- (validateSeed s)
-                 pure (sShip s, sLife s, r)
+                 pure (s, r)
     Feed1 s -> validateSeeds s
 
   where
-    validateSeeds = \case
-      []    -> error ("no usable keys in keyfile")
-      (s:f) -> do
-                 r :: Either SomeException Ship
-                   <- try do validateSeed s
-                 case r of
-                   Left _  -> validateSeeds f
-                   Right r -> pure (sShip s, sLife s, r)
+    validateSeeds Seeds{..} =
+      case gFeed of
+        []    -> error ("no usable keys in keyfile")
+        (Germ{..}:f) -> do
+                  let seed = Seed gShip gLife gRing Nothing
+                  r :: Either SomeException Ship
+                    <- try do validateSeed seed
+                  case r of
+                    Left _  -> validateSeeds $ Seeds gShip f
+                    Right r -> pure (seed, r)
 
     validateSeed (Seed ship life ring oaf) =
       case clanFromShip ship of
@@ -422,11 +424,10 @@ getSponsorshipChain endpoint block = loop
             pure $ chain <> [(ship, ethPoint)]
 
 -- Produces either an error or a validated boot event structure.
-dawnVent :: HasLogFunc e => String -> Feed -> RIO e (Either Text (Ship, Dawn))
+dawnVent :: HasLogFunc e => String -> Feed -> RIO e (Either Text Dawn)
 dawnVent provider feed =
   -- The type checker can't figure this out on its own.
-  (onLeft tshow :: Either SomeException (Ship, Dawn)
-                -> Either Text (Ship, Dawn)) <$> try do
+  (onLeft tshow :: Either SomeException Dawn -> Either Text Dawn) <$> try do
     putStrLn ("boot: requesting ethereum information from " <> pack provider)
     blockResponses
       <- dawnPostRequests provider parseBlockRequest [BlockRequest]
@@ -438,7 +439,7 @@ dawnVent provider feed =
     let dBloq = hexStrToAtom hexStrBlock
     putStrLn ("boot: ethereum block #" <> tshow dBloq)
 
-    (ship, life, immediateSponsor)
+    (dSeed, immediateSponsor)
       <- validateFeedAndGetSponsor provider hexStrBlock feed
     dSponsor <- getSponsorshipChain provider hexStrBlock immediateSponsor
 
@@ -451,10 +452,9 @@ dawnVent provider feed =
     dTurf <- nub <$> (dawnPostRequests provider parseTurfResponse $
       map (TurfRequest hexStrBlock) [0..2])
 
-    let dFeed = (life, feed)
     let dNode = Nothing
 
-    pure (ship, MkDawn{..})
+    pure MkDawn{..}
 
 
 -- Comet List ------------------------------------------------------------------

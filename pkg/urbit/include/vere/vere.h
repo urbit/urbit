@@ -1289,7 +1289,8 @@
                      u3_noun who,                   //  identity
                      u3_noun ven,                   //  boot event
                      u3_noun pil,                   //  type-of/path-to pill
-                     u3_noun pax);                  //  path to pier
+                     u3_noun pax,                   //  path to pier
+                     u3_weak fed);                  //  extra private keys
 
       /* u3_pier_stay(): restart the new pier system.
       */

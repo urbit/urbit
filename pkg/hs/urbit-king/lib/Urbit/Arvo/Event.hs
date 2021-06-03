@@ -85,7 +85,7 @@ instance FromNoun Pass where
 -- seed. These aren't actually private keys, but public/private keypairs which
 -- can be derived from these seeds.
 data Ring = Ring { ringSign :: BS.ByteString, ringCrypt :: BS.ByteString }
-  deriving (Eq)
+  deriving (Eq, Ord)
 
 instance ToNoun Ring where
   toNoun Ring{..} =
@@ -117,9 +117,21 @@ data Seed = Seed
     }
   deriving (Eq, Show)
 
+data Seeds = Seeds
+    { gShip :: Ship
+    , gFeed :: [Germ]
+    }
+  deriving (Eq, Show)
+
+data Germ = Germ
+    { gLife :: Life
+    , gRing :: Ring
+    }
+  deriving (Eq, Show)
+
 data Feed
   = Feed0 Seed
-  | Feed1 [Seed]
+  | Feed1 Seeds
   deriving (Eq, Show)
 
 --NOTE  reify type environment
@@ -127,24 +139,13 @@ $(pure [])
 
 instance ToNoun Feed where
   toNoun = \case
-    Feed0 s -> toSeed s
-    Feed1 s -> C (C (A 1) (A 0)) $ toList s
-    where
-      toList :: [Seed] -> Noun
-      toList [] = A 0
-      toList (x:xs) = C (toSeed x) (toList xs)
-      toSeed = $(deriveToNounFunc ''Seed)
+    Feed0 s -> $(deriveToNounFunc ''Seed) s
+    Feed1 s -> C (C (A 1) (A 0)) $ $(deriveToNounFunc ''Seeds) s
 
 instance FromNoun Feed where
   parseNoun = \case
-    (C (C (A 1) (A 0)) s) -> Feed1 <$> parseList s
-    n                     -> Feed0 <$> parseSeed n
-    where
-      parseList = \case
-        Atom 0   -> pure []
-        Atom _   -> fail "list terminated with non-null atom"
-        Cell l r -> (:) <$> parseSeed l <*> parseList r
-      parseSeed = $(deriveFromNounFunc ''Seed)
+    (C (C (A 1) (A 0)) s) -> Feed1 <$> $(deriveFromNounFunc ''Seeds) s
+    n                     -> Feed0 <$> $(deriveFromNounFunc ''Seed) n
 
 type Public = (Life, HoonMap Life Pass)
 
@@ -162,7 +163,7 @@ data EthPoint = EthPoint
   deriving (Eq, Show)
 
 data Dawn = MkDawn
-    { dFeed    :: (Life, Feed)
+    { dSeed    :: Seed
     , dSponsor :: [(Ship, EthPoint)]
     , dCzar    :: HoonMap Ship (Rift, Life, Pass)
     , dTurf    :: [Turf]
@@ -174,6 +175,7 @@ data Dawn = MkDawn
 deriveNoun ''Dnses
 deriveNoun ''EthPoint
 deriveNoun ''Seed
+deriveNoun ''Germ
 deriveNoun ''Dawn
 
 
@@ -268,6 +270,15 @@ data BoatEv
 deriveNoun ''BoatEv
 
 
+-- Boat Events -----------------------------------------------------------------
+
+data JaelEv
+    = JaelEvRekey Life Ring
+  deriving (Eq, Ord, Show)
+
+deriveNoun ''JaelEv
+
+
 -- Timer Events ----------------------------------------------------------------
 
 data BehnEv
@@ -342,6 +353,7 @@ data BlipEv
     | BlipEvBoat       BoatEv
     | BlipEvHttpClient HttpClientEv
     | BlipEvHttpServer HttpServerEv
+    | BlipEvJael       JaelEv
     | BlipEvNewt       NewtEv
     | BlipEvSync       SyncEv
     | BlipEvTerm       TermEv
@@ -364,6 +376,7 @@ instance ToNoun Ev where
     EvBlip v@BlipEvBoat{}       -> reorgThroughNoun ("clay", v)
     EvBlip v@BlipEvHttpClient{} -> reorgThroughNoun ("iris", v)
     EvBlip v@BlipEvHttpServer{} -> reorgThroughNoun ("eyre", v)
+    EvBlip v@BlipEvJael{}       -> reorgThroughNoun ("jael", v)
     EvBlip v@BlipEvNewt{}       -> reorgThroughNoun ("ames", v)
     EvBlip v@BlipEvSync{}       -> reorgThroughNoun ("clay", v)
     EvBlip v@BlipEvTerm{}       -> reorgThroughNoun ("dill", v)
@@ -391,6 +404,7 @@ getSpinnerNameForEvent = \case
         BlipEvBoat _           -> Just "boat"
         BlipEvHttpClient _     -> Just "iris"
         BlipEvHttpServer _     -> Just "eyre"
+        BlipEvJael _           -> Just "jael"
         BlipEvNewt _           -> Just "newt"
         BlipEvSync _           -> Just "clay"
         BlipEvTerm t | isRet t -> Nothing

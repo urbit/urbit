@@ -233,19 +233,20 @@
   ::
   ++  veri
     |=  [=ship =feed:jael =point:azimuth =live]
-    ^-  $@(life (lest error=term))
+    ^-  (each seed:jael (lest error=term))
     |^  ?@  -.feed
-          ?^  err=(test feed)  [u.err ~]
-          lyf.feed
+          ?^  err=(test feed)  |+[u.err ~]
+          &+feed
         ?>  ?=([%1 ~] -.feed)
         =|  errs=(list term)
         |-
-        ?~  seeds.feed
-          ?~(errs [%no-key ~] errs)
-        ?~  err=(test i.seeds.feed)
-          lyf.i.seeds.feed
+        ?~  kyz.feed
+          |+?~(errs [%no-key ~] errs)
+        =/  =seed:jael  [who [lyf key ~]:i.kyz]:feed
+        ?~  err=(test seed)
+          &+seed
         =.  errs  (snoc errs u.err)
-        $(seeds.feed t.seeds.feed)
+        $(kyz.feed t.kyz.feed)
     ::
     ++  test
       |=  =seed:jael
@@ -281,7 +282,6 @@
         ::  boot keys must match the contract
         ::
         ?.  =(pub:ex:cub pass.net)
-          ~&  [%key-mismatch pub:ex:cub pass.net]
           `%key-mismatch
         ::  life must match the contract
         ::

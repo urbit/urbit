@@ -184,8 +184,9 @@ tryBootFromPill
   -> Bool
   -> Ship
   -> LegacyBootEvent
+  -> Feed
   -> RIO PierEnv ()
-tryBootFromPill oExit pill lite ship boot = do
+tryBootFromPill oExit pill lite ship boot feed = do
   mStart <- newEmptyMVar
   vSlog  <- logSlogs
   runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart []
@@ -193,7 +194,7 @@ tryBootFromPill oExit pill lite ship boot = do
   bootedPier vSlog = do
     view pierPathL >>= lockFile
     rio $ logInfo "Starting boot"
-    sls <- Pier.booted vSlog pill lite ship boot
+    sls <- Pier.booted vSlog pill lite ship boot feed
     rio $ logInfo "Completed boot"
     pure sls
 
@@ -395,7 +396,12 @@ testPill pax showPil showSeq = do
   pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
   logInfo "Using pill to generate boot sequence."
-  bootSeq <- genBootSeq (Ship 0) pill False (Fake (Ship 0))
+  bootSeq <- genBootSeq
+               (Ship 0)
+               pill
+               False
+               (Fake (Ship 0))
+               (Feed1 $ Seeds (Ship 0) [])
 
   logInfo "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
@@ -505,7 +511,7 @@ newShip CLI.New{..} opts = do
     CLI.BootFake name -> do
       pill <- pillFrom nPillSource
       ship <- shipFrom name
-      runTryBootFromPill pill name ship (Fake ship)
+      runTryBootFromPill pill name ship (Fake ship) (Feed1 $ Seeds ship [])
 
     CLI.BootFromKeyfile keyFile -> do
       text <- readFileUtf8 keyFile
@@ -547,9 +553,10 @@ newShip CLI.New{..} opts = do
 
       case ethReturn of
         Left x -> error $ unpack x
-        Right (ship, dawn) -> do
+        Right dawn -> do
+          let ship = sShip $ dSeed dawn
           name <- nameFromShip ship
-          runTryBootFromPill pill name ship (Dawn dawn)
+          runTryBootFromPill pill name ship (Dawn dawn) feed
 
     -- Now that we have all the information for running an application with a
     -- PierConfig, do so.
@@ -557,13 +564,14 @@ newShip CLI.New{..} opts = do
                        -> Text
                        -> Ship
                        -> LegacyBootEvent
+                       -> Feed
                        -> RIO HostEnv ()
-    runTryBootFromPill pill name ship bootEvent = do
+    runTryBootFromPill pill name ship bootEvent feed = do
       vKill <- view (kingEnvL . kingEnvKillSignal)
       let pierConfig = toPierConfig (pierPath name) nSerfExe opts
       let networkConfig = toNetworkConfig opts
       runPierEnv pierConfig networkConfig vKill $
-        tryBootFromPill True pill nLite ship bootEvent
+        tryBootFromPill True pill nLite ship bootEvent feed
 
 runShipEnv :: Maybe Text -> CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a
            -> RIO HostEnv a

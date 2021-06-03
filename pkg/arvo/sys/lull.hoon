@@ -1873,7 +1873,7 @@
   ::  +feed: potential boot parameters
   ::
   +$  feed
-    $^  [[%1 ~] seeds=(list seed)]
+    $^  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
     seed
   ::  +seed: individual boot parameters
   ::
@@ -1899,7 +1899,7 @@
     ==                                                ::
   ::
   +$  dawn-event
-    $:  [=life =feed]
+    $:  =seed
         spon=(list [=ship point:azimuth-types])
         czar=(map ship [=rift =life =pass])
         turf=(list turf)

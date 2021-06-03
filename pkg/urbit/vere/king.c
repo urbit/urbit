@@ -159,7 +159,7 @@ _king_fake(u3_noun ship, u3_noun pill, u3_noun path)
   //  XX link properly
   //
   u3_noun vent = u3nc(c3__fake, u3k(ship));
-  u3K.pir_u    = u3_pier_boot(sag_w, ship, vent, pill, path);
+  u3K.pir_u    = u3_pier_boot(sag_w, ship, vent, pill, path, u3_none);
 }
 
 /* _king_come(): mine a comet under star (unit)
@@ -182,7 +182,7 @@ _king_slog(u3_noun hod)
 /* _king_dawn(): boot from keys, validating
 */
 void
-_king_dawn(u3_noun seed, u3_noun pill, u3_noun path)
+_king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
 {
   // enable ivory slog printfs
   //
@@ -192,8 +192,8 @@ _king_dawn(u3_noun seed, u3_noun pill, u3_noun path)
   //
   //NOTE  +slav is safe because _boothack_key already verified it
   u3_noun ship = u3dc("slav", 'p', u3i_string(u3_Host.ops_u.who_c));
-  u3_noun vent = u3_dawn_vent(u3k(ship), seed);
-  u3K.pir_u    = u3_pier_boot(sag_w, ship, vent, pill, path);
+  u3_noun vent = u3_dawn_vent(u3k(ship), u3k(feed));
+  u3K.pir_u    = u3_pier_boot(sag_w, ship, vent, pill, path, feed);
 
   // disable ivory slog printfs
   //

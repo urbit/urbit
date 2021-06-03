@@ -327,9 +327,9 @@ _dawn_sponsor(u3_noun who, u3_noun rac, u3_noun pot)
 /* u3_dawn_vent(): validated boot event
 */
 u3_noun
-u3_dawn_vent(u3_noun ship, u3_noun seed)
+u3_dawn_vent(u3_noun ship, u3_noun feed)
 {
-  u3_noun url, bok, lyf, pos, pon, zar, tuf;
+  u3_noun url, bok, sed, pos, pon, zar, tuf;
 
   u3_noun rank = u3do("clan:title", u3k(ship));
 
@@ -389,13 +389,13 @@ u3_dawn_vent(u3_noun ship, u3_noun seed)
 
     u3l_log("boot: verifying keys\r\n");
 
-    //  $@(life (lest error=@tas))
+    //  (each seed (lest error=@tas))
     //
-    lyf = u3dq("veri:dawn", u3k(ship), u3k(seed), u3k(pot), u3k(liv));
+    sed = u3dq("veri:dawn", u3k(ship), u3k(feed), u3k(pot), u3k(liv));
 
-    if ( c3y == u3du(lyf) ) {
+    if ( c3n == u3h(sed) ) {
       // bails, won't return
-      _dawn_fail(ship, rank, lyf);
+      _dawn_fail(ship, rank, u3t(sed));
       return u3_none;
     }
 
@@ -471,11 +471,14 @@ u3_dawn_vent(u3_noun ship, u3_noun seed)
     u3z(son);
   }
 
-  u3z(rank); u3z(pos); u3z(ship);
-
   //  [%dawn seed sponsors galaxies domains block eth-url snap]
   //
-  return u3nc(c3__dawn, u3nq(u3nc(lyf, seed), pon, zar, u3nt(tuf, bok, url)));
+  u3_noun ven = u3nc(c3__dawn,
+                     u3nq(u3k(u3t(sed)), pon, zar, u3nt(tuf, bok, url)));
+
+  u3z(sed); u3z(rank); u3z(pos); u3z(ship); u3z(feed);
+
+  return ven;
 }
 
 /* _dawn_come(): mine a comet under a list of stars

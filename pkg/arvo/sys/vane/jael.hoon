@@ -250,6 +250,10 @@
     ::    ==
     ::
         %dawn
+      ::  single-homed
+      ::
+      ~|  [our who.seed.tac]
+      ?>  =(our who.seed.tac)
       ::  save our boot block
       ::
       =.  boq.own.pki  bloq.tac
@@ -260,42 +264,21 @@
         (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
       ::  save our parent signature (only for moons)
       ::
-      =.  sig.own.pki
-        ?@  -.feed.tac
-          sig.feed.tac
-        |-
-        ?~  seeds.feed.tac  ~
-        ?:  ?&  =(our who.i.seeds.feed.tac)
-                ?=(^ sig.i.seeds.feed.tac)
-            ==
-          sig.i.seeds.feed.tac
-        $(seeds.feed.tac t.seeds.feed.tac)
-      ::  store our private key(s)
-      ::
-      =.  lyf.own.pki  life.tac
-      =.  jaw.own.pki
-        ?@  -.feed.tac
-          (my [lyf key]:feed.tac ~)
-        =;  (list (pair life ring))
-          ~|  [%no-keys our]
-          ?>(?=(^ -) (my -))
-        %+  murn  seeds.feed.tac
-        |=  seed
-        ?.  =(our who)  ~
-        (some lyf key)
+      =.  sig.own.pki  sig.seed.tac
       ::  load our initial public key
       ::
       =/  spon-ship=(unit ship)
         =/  flopped-spon  (flop spon.tac)
         ?~(flopped-spon ~ `ship.i.flopped-spon)
       =.  pos.zim.pki
-        =/  cub
-          %-  nol:nu:crub:crypto
-          ~|  [%no-key-for-life lyf.own.pki]
-          (~(got by jaw.own.pki) lyf.own.pki)
+        =/  cub  (nol:nu:crub:crypto key.seed.tac)
         %+  ~(put by pos.zim.pki)
           our
-        [0 life.tac (my [life.tac [1 pub:ex:cub]] ~) spon-ship]
+        [0 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) spon-ship]
+      ::  our initial private key
+      ::
+      =.  lyf.own.pki  lyf.seed.tac
+      =.  jaw.own.pki  (my [lyf.seed.tac key.seed.tac] ~)
       ::  XX save sponsor in .own.pki
       ::  XX reconcile with .dns.eth
       ::  set initial domains
@@ -451,7 +434,7 @@
       %-  curd  =<  abet
       (private-keys:~(feel su hen now pki etn) life.tac ring.tac)
     ::
-    ::  update private keys
+    ::  register moon keys
     ::
         %moon
       ?.  =(%earl (clan:title ship.tac))
