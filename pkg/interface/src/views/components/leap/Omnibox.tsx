@@ -100,9 +100,9 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     }
     Mousetrap.bind('escape', props.toggle);
     const touchstart = new Event('touchstart');
-    // @ts-ignore
+    // @ts-ignore ref typings
     inputRef?.current?.input?.dispatchEvent(touchstart);
-    // @ts-ignore
+    // @ts-ignore ref typings
     inputRef?.current?.input?.focus();
     return () => {
       Mousetrap.unbind('escape');
@@ -150,7 +150,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   }, [query, index]);
 
   const navigate = useCallback(
-    (app: string, link: string) => {
+    (app: string, link: string, shift: boolean) => {
       props.toggle();
       if (
         defaultApps.includes(app.toLowerCase()) ||
@@ -162,6 +162,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         app === 'home' ||
         app === 'inbox'
       ) {
+        if(shift && app === 'profile') {
+          // TODO: hacky, fix
+          link = link.replace('~profile', '~landscape/messages/dm');
+        }
         history.push(link);
       } else {
         window.location.href = link;
@@ -246,13 +250,14 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       if (evt.key === 'Enter') {
         evt.preventDefault();
         if (selected.length) {
-          navigate(selected[0], selected[1]);
+          navigate(selected[0], selected[1], evt.shiftKey);
         } else if (Array.from(results.values()).flat().length === 0) {
           return;
         } else {
           navigate(
             Array.from(results.values()).flat()[0].app,
-            Array.from(results.values()).flat()[0].link
+            Array.from(results.values()).flat()[0].link,
+            evt.shiftKey
           );
         }
       }
