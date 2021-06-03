@@ -1,27 +1,25 @@
-import React from 'react';
-import { Formik, Form, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
-
 import {
-  Box,
-  ManagedTextInputField as Input,
-  ManagedToggleSwitchField as Checkbox,
-  Col,
-  Text
+    Box,
+
+    Col, ManagedTextInputField as Input,
+    ManagedToggleSwitchField as Checkbox,
+
+    Text
 } from '@tlon/indigo-react';
 import { Enc } from '@urbit/api';
 import { Group, GroupPolicy } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
-
-import { AsyncButton } from '~/views/components/AsyncButton';
-import { FormError } from '~/views/components/FormError';
+import { Form, Formik, FormikHelpers } from 'formik';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
-import { ColorInput } from '~/views/components/ColorInput';
-import { useHistory } from 'react-router-dom';
 import { uxToHex } from '~/logic/lib/util';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { ColorInput } from '~/views/components/ColorInput';
+import { FormError } from '~/views/components/FormError';
 import { ImageInput } from '~/views/components/ImageInput';
-import { StorageState } from '~/types';
 
 interface FormSchema {
   title: string;
@@ -44,11 +42,10 @@ interface GroupAdminSettingsProps {
   group: Group;
   association: Association;
   api: GlobalApi;
-  storage: StorageState;
 }
 
 export function GroupAdminSettings(props: GroupAdminSettingsProps) {
-  const { group, association, storage } = props;
+  const { group, association } = props;
   const { metadata } = association;
   const history = useHistory();
   const currentPrivate = 'invite' in props.group.policy;
@@ -105,8 +102,8 @@ return null;
       onSubmit={onSubmit}
     >
       <Form>
-        <Box p="4" id="group-details"><Text fontWeight="600" fontSize="2">Group Details</Text></Box>
-        <Col pb="4" px="4" maxWidth="384px" gapY={4}>
+        <Box p={4} id="group-details"><Text fontWeight="600" fontSize={2}>Group Details</Text></Box>
+        <Col pb={4} px={4} maxWidth="384px" gapY={4}>
           <Input
             id="title"
             label="Group Name"
@@ -131,7 +128,6 @@ return null;
             caption="A picture for your group"
             placeholder="Enter URL"
             disabled={disabled}
-            storage={storage}
           />
           <Checkbox
             id="isPrivate"

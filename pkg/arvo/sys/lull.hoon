@@ -933,6 +933,7 @@
   ::    /-  sur-file            ::  surface imports from /sur
   ::    /+  lib-file            ::  library imports from /lib
   ::    /=  face  /path         ::  imports built hoon file at path
+  ::    /~  face  type   /path  ::  imports built hoon files from directory
   ::    /%  face  %mark         ::  imports mark definition from /mar
   ::    /$  face  %from  %to    ::  imports mark converter from /mar
   ::    /*  face  %mark  /path  ::  unbuilt file imports, as mark
@@ -941,6 +942,7 @@
     $:  sur=(list taut)
         lib=(list taut)
         raw=(list [face=term =path])
+        raz=(list [face=term =spec =path])
         maz=(list [face=term =mark])
         caz=(list [face=term =mars])
         bar=(list [face=term =mark =path])
@@ -960,7 +962,6 @@
     $_
     ^?
     |%
-    ++  bunt  *typ
     ++  diff  |~([old=typ new=typ] *dif)
     ++  form  *mark
     ++  join  |~([a=dif b=dif] *(unit (unit dif)))
@@ -975,7 +976,6 @@
   +$  dais
     $_  ^|
     |_  sam=vase
-    ++  bunt  sam
     ++  diff  |~(new=_sam *vase)
     ++  form  *mark
     ++  join  |~([a=vase b=vase] *(unit (unit vase)))
@@ -1011,7 +1011,7 @@
     |=  suffix=@tas
     ^-  (list path)
     =/  parser
-      (most hep (cook crip ;~(plug low (star ;~(pose low nud)))))
+      (most hep (cook crip ;~(plug ;~(pose low nud) (star ;~(pose low nud)))))
     =/  torn=(list @tas)  (fall (rush suffix parser) ~[suffix])
     %-  flop
     |-  ^-  (list (list @tas))

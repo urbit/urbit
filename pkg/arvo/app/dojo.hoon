@@ -875,7 +875,7 @@
           %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil)
           %sa
         =+  .^(=dais:clay cb+(en-beam he-beak /[p.bil]))
-        (dy-hand p.bil bunt:dais)
+        (dy-hand p.bil *vale:dais)
       ::
           %as
         =/  cag=cage  (dy-cage p.q.bil)
@@ -1077,7 +1077,12 @@
       ::
           %thread-done
         ?>  ?=(^ poy)
-        (~(dy-hand dy u.poy(pux ~)) %noun q.cage.sign)
+        ::  print the vase as a tang if it nests in tang
+        =/  =mark
+            ?:  (~(nest ut -:!>(*tang)) | p.q.cage.sign)
+              %tang
+            %noun
+        (~(dy-hand dy u.poy(pux ~)) mark q.cage.sign)
       ==
     ::
         %kick  +>.$
@@ -1157,6 +1162,7 @@
             %import      !!
             %export-all  !!
             %import-all  !!
+            %cancel      !!
             %as
           :*  %as  mar.source.com
               $(num +(num), source.com next.source.com)

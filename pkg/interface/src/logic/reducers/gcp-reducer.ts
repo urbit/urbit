@@ -1,37 +1,32 @@
-import _ from 'lodash';
-import {StoreState} from '../store/type';
-import {GcpToken} from '../../types/gcp-state';
+import type { Cage } from '~/types/cage';
+import type { GcpToken } from '../../types/gcp-state';
+import { reduceState } from '../state/base';
+import useStorageState, { StorageState } from '../state/storage';
 
-type GcpState = Pick<StoreState, 'gcp'>;
-
-export default class GcpReducer<S extends GcpState>{
-  reduce(json: Cage, state: S) {
-    this.reduceConfigured(json, state);
-    this.reduceToken(json, state);
-  }
-
-  reduceConfigured(json, state) {
-    let data = json['gcp-configured'];
-    if (data !== undefined) {
-      state.storage.gcp.configured = data;
-    }
-  }
-
-  reduceToken(json: Cage, state: S) {
-    let data = json['gcp-token'];
-    if (data) {
-      this.setToken(data, state);
-    }
-  }
-
-  setToken(data: any, state: S) {
-    if (this.isToken(data)) {
-      state.storage.gcp.token = data;
-    }
-  }
-
-  isToken(token: any): token is GcpToken {
-    return (typeof(token.accessKey) === 'string' &&
-            typeof(token.expiresIn) === 'number');
+export default class GcpReducer {
+  reduce(json: Cage) {
+    reduceState<StorageState, any>(useStorageState, json, [
+      reduceToken
+    ]);
   }
 }
+
+const reduceToken = (json: Cage, state: StorageState): StorageState => {
+  const data = json['gcp-token'];
+  if (data) {
+    setToken(data, state);
+  }
+  return state;
+};
+
+const setToken = (data: any, state: StorageState): StorageState => {
+  if (isToken(data)) {
+    state.gcp.token = data;
+  }
+  return state;
+};
+
+const isToken = (token: any): token is GcpToken => {
+  return (typeof(token.accessKey) === 'string' &&
+          typeof(token.expiresIn) === 'number');
+};

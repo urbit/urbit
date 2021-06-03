@@ -169,7 +169,7 @@
       ::
           %fact
         ?+  p.cage.sign  ~|([dap.bowl %bad-sub-mark wire p.cage.sign] !!)
-            %graph-update
+            %graph-update-2
           %-  on-graph-update:tc
           !<(update:graph q.cage.sign)
         ==
@@ -401,12 +401,16 @@
   ::  +read-post: add envelope to state and show it to user
   ::
   ++  read-post
-    |=  [=target =index:post =post:post]
+    |=  [=target =index:post =maybe-post:graph]
     ^-  (quip card _session)
-    :-  (show-post:sh-out target post)
-    %_  session
-      history  [[target index] history.session]
-      count    +(count.session)
+    ?-    -.maybe-post
+        %|  [~ session]
+        %&
+      :-  (show-post:sh-out target p.maybe-post)
+      %_  session
+        history  [[target index] history.session]
+        count    +(count.session)
+      ==
     ==
   ::
   ++  notice-remove
@@ -734,7 +738,8 @@
       ::
       ?.  (is-chat-graph target)
         [[(note:sh-out "no such chat")]~ put-ses]
-      =.  viewing  (~(put in viewing) target)
+      =.  audience  target
+      =.  viewing   (~(put in viewing) target)
       =^  cards  state
         ?:  (~(has by bound) target)
           [~ state]
@@ -758,15 +763,15 @@
       ::TODO  move creation into lib?
       %^  act  %out-message
         %graph-push-hook
-      :-  %graph-update
+      :-  %graph-update-2
       !>  ^-  update:graph
-      :+  %0  now.bowl
+      :-  now.bowl
       :+  %add-nodes  audience
       %-  ~(put by *(map index:post node:graph))
       :-  ~[now.bowl]
       :_  *internal-graph:graph
-      ^-  post:post
-      [our-self ~[now.bowl] now.bowl [msg]~ ~ ~]
+      ^-  maybe-post:graph
+      [%& `post:post`[our-self ~[now.bowl] now.bowl [msg]~ ~ ~]]
     ::  +eval: run hoon, send code and result as message
     ::
     ::    this double-virtualizes and clams to disable .^ for security reasons
@@ -890,10 +895,12 @@
         =/  =uid:post    (snag index history)
         =/  =node:graph  (got-node:libgraph uid)
         =.  audience     resource.uid
+        ?:  ?=(%| -.post.node)
+          [~ state]
         :_  put-ses
         ^-  (list card)
         :~  (print:sh-out ['?' ' ' number])
-            (effect:sh-out ~(render-activate mr resource.uid post.node))
+            (effect:sh-out ~(render-activate mr resource.uid p.post.node))
             prompt:sh-out
         ==
       --
@@ -1185,7 +1192,15 @@
     ?-  -.content
       %text       txt+(trip text.content)
       %url        url+url.content
-      %reference  txt+"[reference to msg in {~(phat tr resource.uid.content)}]"
+    ::
+        %reference
+      ?-  -.reference.content
+          %graph
+        txt+"[reference to msg in {~(phat tr resource.uid.reference.content)}]"
+        ::
+          %group
+        txt+"[reference to msg in {~(phat tr group.reference.content)}]"
+      ==
     ::
         %mention
       ?.  =(ship.content our-self)  txt+(scow %p ship.content)

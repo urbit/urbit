@@ -1,12 +1,11 @@
-import React, { useCallback } from 'react';
-import _ from 'lodash';
 import { Box, ErrorLabel } from '@tlon/indigo-react';
 import { useField } from 'formik';
+import _ from 'lodash';
+import React, { useCallback } from 'react';
 import { MarkdownEditor } from './MarkdownEditor';
 
 export const MarkdownField = ({
   id,
-  storage,
   ...rest
 }: { id: string } & Parameters<typeof Box>[0]) => {
   const [{ value, onBlur }, { error, touched }, { setValue }] = useField(id);
@@ -36,9 +35,8 @@ export const MarkdownField = ({
         onBlur={handleBlur}
         value={value}
         onChange={setValue}
-        storage={storage}
       />
-      <ErrorLabel mt="2" hasError={Boolean(error && touched)}>
+      <ErrorLabel mt={2} hasError={Boolean(error && touched)}>
         {error}
       </ErrorLabel>
     </Box>

@@ -1,83 +1,88 @@
+import { SettingsUpdate } from '@urbit/api/settings';
 import _ from 'lodash';
-import { SettingsUpdate } from '~/types/settings';
-import useSettingsState, { SettingsStateZus } from "~/logic/state/settings";
-import produce from 'immer';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
+import { reduceState } from '../state/base';
 
-export default class SettingsStateZusettingsReducer{
+export default class SettingsReducer {
   reduce(json: any) {
-    const old = useSettingsState.getState();
-    const newState = produce(old, state => {
-      let data = json["settings-event"];
-      if (data) {
-        console.log(data);
-        this.putBucket(data, state);
-        this.delBucket(data, state);
-        this.putEntry(data, state);
-        this.delEntry(data, state);
-      }
-      data = json["settings-data"];
-      if (data) {
-        console.log(data);
-        this.getAll(data, state);
-        this.getBucket(data, state);
-        this.getEntry(data, state);
-      }
-    });
-    useSettingsState.setState(newState);
+    let data = json['settings-event'];
+    if (data) {
+      reduceState<SettingsState, SettingsUpdate>(useSettingsState, data, [
+        this.putBucket,
+        this.delBucket,
+        this.putEntry,
+        this.delEntry
+      ]);
+    }
+    data = json['settings-data'];
+    if (data) {
+      reduceState<SettingsState, SettingsUpdate>(useSettingsState, data, [
+        this.getAll,
+        this.getBucket,
+        this.getEntry
+      ]);
+    }
   }
 
-  putBucket(json: SettingsUpdate, state: SettingsStateZus) {
+  putBucket(json: SettingsUpdate, state: SettingsState): SettingsState {
     const data = _.get(json, 'put-bucket', false);
     if (data) {
-      state[data["bucket-key"]] = data.bucket;
+      state[data['bucket-key']] = data.bucket;
     }
+    return state;
   }
 
-  delBucket(json: SettingsUpdate, state: SettingsStateZus) {
+  delBucket(json: SettingsUpdate, state: SettingsState): SettingsState {
     const data = _.get(json, 'del-bucket', false);
     if (data) {
-      delete settings[data['bucket-key']];
+      delete state[data['bucket-key']];
     }
+    return state;
   }
 
-  putEntry(json: SettingsUpdate, state: SettingsStateZus) {
-    const data = _.get(json, 'put-entry', false);
+  putEntry(json: SettingsUpdate, state: any): SettingsState {
+    const data: Record<string, string> = _.get(json, 'put-entry', false);
     if (data) {
-      if (!state[data["bucket-key"]]) {
-        state[data["bucket-key"]] = {};
+      if (!state[data['bucket-key']]) {
+        state[data['bucket-key']] = {};
       }
-      state[data["bucket-key"]][data["entry-key"]] = data.value;
+      state[data['bucket-key']][data['entry-key']] = data.value;
     }
+    return state;
   }
 
-  delEntry(json: SettingsUpdate, state: SettingsStateZus) {
+  delEntry(json: SettingsUpdate, state: any): SettingsState {
     const data = _.get(json, 'del-entry', false);
     if (data) {
-      delete state[data["bucket-key"]][data["entry-key"]];
+      delete state[data['bucket-key']][data['entry-key']];
     }
+    return state;
   }
 
-  getAll(json: any, state: SettingsStateZus) {
+  getAll(json: any, state: SettingsState): SettingsState {
     const data = _.get(json, 'all');
     if(data) {
-      _.mergeWith(state, data, (obj, src) => _.isArray(src) ? src : undefined)
+      _.mergeWith(state, data, (obj, src) => _.isArray(src) ? src : undefined);
     }
+    return state;
   }
 
-  getBucket(json: any, state: SettingsStateZus) {
+  getBucket(json: any, state: SettingsState): SettingsState {
     const key    = _.get(json, 'bucket-key', false);
     const bucket = _.get(json, 'bucket', false);
     if (key && bucket) {
       state[key] = bucket;
     }
+    return state;
   }
 
-  getEntry(json: any, state: SettingsStateZus) {
+  getEntry(json: any, state: any) {
     const bucketKey = _.get(json, 'bucket-key', false);
     const entryKey  = _.get(json, 'entry-key', false);
     const entry     = _.get(json, 'entry', false);
     if (bucketKey && entryKey && entry) {
       state[bucketKey][entryKey] = entry;
     }
+    return state;
   }
 }

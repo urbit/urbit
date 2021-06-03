@@ -1,26 +1,22 @@
-import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
-import {
-  GcpState,
-  S3State,
-  StorageState
-} from '../../types';
 import S3 from 'aws-sdk/clients/s3';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import useStorageState from '../state/storage';
 import GcpClient from './GcpClient';
-import { StorageClient, StorageAcl } from './StorageClient';
+import { StorageAcl, StorageClient } from './StorageClient';
 import { dateToDa, deSig } from './util';
-
 
 export interface IuseStorage {
   canUpload: boolean;
   upload: (file: File, bucket: string) => Promise<string>;
   uploadDefault: (file: File) => Promise<string>;
   uploading: boolean;
-  promptUpload: () => Promise<string | undefined>;
+  promptUpload: () => Promise<string>;
 }
 
-const useStorage = ({gcp, s3}: StorageState,
-                    { accept = '*' } = { accept: '*' }): IuseStorage => {
+const useStorage = ({ accept = '*' } = { accept: '*' }): IuseStorage => {
   const [uploading, setUploading] = useState(false);
+  const gcp = useStorageState(state => state.gcp);
+  const s3 = useStorageState(state => state.s3);
 
   const client = useRef<StorageClient | null>(null);
 
@@ -52,7 +48,7 @@ const useStorage = ({gcp, s3}: StorageState,
   );
 
   const upload = useCallback(
-    async (file: File, bucket: string) => {
+    async (file: File, bucket: string): Promise<string> => {
       if (client.current === null) {
         throw new Error('Storage not ready');
       }
@@ -81,7 +77,7 @@ const useStorage = ({gcp, s3}: StorageState,
     [client, setUploading]
   );
 
-  const uploadDefault = useCallback(async (file: File) => {
+  const uploadDefault = useCallback(async (file: File): Promise<string> => {
     if (s3.configuration.currentBucket === '') {
       throw new Error('current bucket not set');
     }
@@ -89,7 +85,7 @@ const useStorage = ({gcp, s3}: StorageState,
   }, [s3, upload]);
 
   const promptUpload = useCallback(
-    () => {
+    (): Promise<string> => {
       return new Promise((resolve, reject) => {
         const fileSelector = document.createElement('input');
         fileSelector.setAttribute('type', 'file');
@@ -99,10 +95,10 @@ const useStorage = ({gcp, s3}: StorageState,
           const files = fileSelector.files;
           if (!files || files.length <= 0) {
             reject();
-            return;
+          } else {
+            uploadDefault(files[0]).then(resolve);
+            document.body.removeChild(fileSelector);
           }
-          uploadDefault(files[0]).then(resolve);
-          document.body.removeChild(fileSelector);
         });
         document.body.appendChild(fileSelector);
         fileSelector.click();
@@ -111,7 +107,7 @@ const useStorage = ({gcp, s3}: StorageState,
     [uploadDefault]
   );
 
-  return {canUpload, upload, uploadDefault, uploading, promptUpload};
+  return { canUpload, upload, uploadDefault, uploading, promptUpload };
 };
 
 export default useStorage;

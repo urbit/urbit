@@ -1,10 +1,11 @@
-/-  *post, met=metadata-store
+/-  *post, met=metadata-store, graph=graph-store, hark=hark-graph-hook
 |_  i=indexed-post
 ++  grow
   |%
   ++  noun  i
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
+    ^-  permissions:graph
     ?+  index.p.i  !!
       [@ ~]            [%yes %yes %no]  :: new note
       [@ %1 @ ~]       [%self %self %no]
@@ -14,6 +15,7 @@
   ::
   ++  graph-permissions-remove
     |=  vip=vip-metadata:met
+    ^-  permissions:graph
     ?+  index.p.i  !!
       [@ ~]            [%yes %self %self]
       [@ %1 @ @ ~]     [%yes %self %self]
@@ -24,11 +26,10 @@
   ::    ignore all containers, only notify on content
   ::
   ++  notification-kind
+    ^-  (unit notif-kind:hark)
     ?+  index.p.i   ~
       [@ %1 %1 ~]    `[%note [0 1] %each %children]
-      [@ %1 @ ~]     `[%edit-note [0 1] %none %none]
       [@ %2 @ %1 ~]  `[%comment [1 3] %count %siblings]
-      [@ %2 @ @ ~]   `[%edit-comment [1 3] %none %none]
     ==
   ::
   ++  transform-add-nodes
@@ -54,10 +55,10 @@
   --
 ++  grab
   |%
-  :: +noun: validate publish post
+  :: +noun: validate publish note
   :: 
   ++  noun
-    |=  p=*
+    |:  p=`*`%*(. *indexed-post index.p [0 ~])
     =/  ip  ;;(indexed-post p)
     ?+    index.p.ip  !!
     ::  top level post must have no content

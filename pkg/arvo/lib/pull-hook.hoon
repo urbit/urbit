@@ -19,7 +19,7 @@
 ::   %pull-hook-action: Add/remove a resource from pulling.
 ::
 /-  *pull-hook
-/+  default-agent, resource
+/+  default-agent, resource, versioning, agentio, pull-hook-virt
 |%
 ::  JSON conversions
 ++  dejs
@@ -44,7 +44,8 @@
 ::  $config: configuration for the pull hook
 ::
 ::    .store-name: name of the store to send subscription updates to.
-::    .update-mark: mark that updates will be tagged with
+::    .update-mark: mark that updates will be tagged with, without
+::    version number
 ::    .push-hook-name: name of the corresponding push-hook
 ::    .no-validate: If true, don't validate that resource/wire/src match
 ::    up
@@ -54,6 +55,8 @@
       update=mold
       update-mark=term
       push-hook-name=term
+      version=@ud
+      min-version=@ud
       no-validate=_|
   ==
 ::  
@@ -73,17 +76,52 @@
       failed-kicks=(map resource ship)
   ==
 ::
++$  track
+  [=ship =status]
+::
++$  status
+  $%  [%active ~]
+      [%failed-kick ~]
+      [%pub-ver ver=@ud]
+      [%sub-ver ver=@ud]
+  ==
+::
++$  base-state-2
+  $:  tracking=(map resource track)
+      inner-state=vase
+  ==
+::
++$  base-state-3
+  $:  prev-version=@ud
+      prev-min-version=@ud
+      base-state-2
+  ==
+::
 +$  state-0  [%0 base-state-0]
 ::
 +$  state-1  [%1 base-state-0]
 ::
 +$  state-2  [%2 base-state-1]
 ::
++$  state-3  [%3 base-state-2]
+::
++$  state-4  [%4 base-state-3]
+::
 +$  versioned-state 
   $%  state-0
       state-1
       state-2
+      state-3
+      state-4
   ==
+::  +diplomatic: only renegotiate if versions changed
+::    
+::    If %.n please leave note as to why renegotiation necessary
+::    
+::
+++  diplomatic
+  ^-  ?
+  %.y
 ::
 ++  default
   |*  [pull-hook=* =config]
@@ -176,7 +214,7 @@
 ++  agent
   |*  =config
   |=  =(pull-hook config)
-  =|  state-2
+  =|  state-4
   =*  state  -
   ^-  agent:gall
   =<
@@ -185,6 +223,9 @@
         og   ~(. pull-hook bowl)
         hc   ~(. +> bowl)
         def  ~(. (default-agent this %|) bowl)
+        ver  ~(. versioning [bowl [update-mark version min-version]:config])
+        io   ~(. agentio bowl)
+        pass  pass:io
     ::
     ++  on-init
       ^-  [(list card:agent:gall) agent:gall]
@@ -199,61 +240,49 @@
       =|  cards=(list card:agent:gall)
       |^ 
       ?-  -.old
-          %2  
+          %4
         =^  og-cards   pull-hook
           (on-load:og inner-state.old)
         =.  state  old
-        =^  retry-cards  state
-          retry-failed-kicks
+        =/  kick=(list card)
+          ?:  ?&  =(min-version.config prev-min-version.old)
+                  =(version.config prev-version.old)
+                  diplomatic
+              ==
+            ~
+          (poke-self:pass kick+!>(%kick))^~
         :_  this
-        :(weld cards og-cards retry-cards) 
-        ::
+        :(weld cards og-cards kick)
+       ::
+          %3  $(old [%4 0 0 +.old])
+          %2  $(old (state-to-3 old))
           %1  $(old [%2 +.old ~])
-        ::
-          %0
-        %_    $
-            -.old  %1
-          ::
-            cards
-          (weld cards (missing-subscriptions tracking.old))
-        ==
+          %0  !!  :: pre-breach
       ==
       ::
-      ++  retry-failed-kicks
-        =|  acc-cards=(list card)
-        =/  failures=(list [rid=resource =ship])
-          ~(tap by failed-kicks)
-        =.  tracking
-          (~(uni by tracking) failed-kicks)
-        =.  failed-kicks  ~
-        |-  ^-  (quip card _state)
-        ?~  failures
-          [acc-cards state]
-        =,  failures
-        =^  crds  state
-          (handle-kick:hc i)
-        $(failures t, acc-cards (weld acc-cards crds))
+      ++  state-to-3
+        |=  old=state-2
+        %*  .  *state-3
+          tracking     (tracking-to-3 tracking.old)
+          inner-state  inner-state.old
+        ==
       ::
-      ++  missing-subscriptions
-        |=  tracking=(map resource ship)
-        ^-  (list card:agent:gall)
-        %+  murn
-          ~(tap by tracking)
-        |=  [rid=resource =ship]
-        ^-  (unit card:agent:gall)
-        =/  =path
-          resource+(en-path:resource rid)
-        =/  =wire
-          (make-wire pull+path)
-        ?:  (~(has by wex.bowl) [wire ship push-hook-name.config])
-          ~
-        `[%pass wire %agent [ship push-hook-name.config] %watch path]
+      ++  tracking-to-3
+        |=  trk=(map resource ship)
+        %-  ~(gas by *(map resource track))
+        %+  turn  ~(tap by trk)
+        |=  [=resource =ship]
+        :-  resource
+        [ship %active ~]
+      ::
       --
     ::
     ++  on-save
       ^-  vase
-      =.  inner-state
-        on-save:og
+      =:  inner-state       on-save:og
+          prev-min-version  min-version.config
+          prev-version      version.config
+        ==
       !>(state)
     ::
     ++  on-poke
@@ -262,6 +291,13 @@
       ?+   mark
         =^  cards  pull-hook
           (on-poke:og mark vase)
+        [cards this]
+        ::
+          %kick
+        ?>  (team:title [our src]:bowl)
+        =^  [cards=(list card:agent:gall) hook=_pull-hook]  state
+          restart-subs:hc
+        =.  pull-hook  hook
         [cards this]
       ::
           %sane
@@ -272,8 +308,9 @@
       ::
           %pull-hook-action
         ?>  (team:title [our src]:bowl)
-        =^  cards  state
-          (poke-hook-action:hc !<(action vase))
+        =^  [cards=(list card) hook=_pull-hook]  state
+          tr-abet:(tr-hook-act:track-engine:hc !<(action vase))
+        =.  pull-hook  hook
         [cards this]
       ==
     ::
@@ -295,72 +332,333 @@
         =^  cards  pull-hook
           (on-agent:og wire sign)
         [cards this]
-      ?.  ?=([%pull %resource *] t.t.wire)
+      ?:  ?=([%version ~] t.t.wire)
+        =^  [cards=(list card) hook=_pull-hook]  state
+          (take-version:hc src.bowl sign)
+        =.  pull-hook  hook
+        [cards this]
+      ?.  ?=([%pull ?(%unver-resource %resource) *] t.t.wire)
         (on-agent:def wire sign)
       =/  rid=resource
         (de-path:resource t.t.t.t.wire)
-      ?+   -.sign  (on-agent:def wire sign)
-          %kick
-        =^  cards  state
-          (handle-kick:hc rid src.bowl)
-        [cards this]
-      ::
-          %watch-ack
-        ?~  p.sign
-          [~ this]
-        =.  tracking
-          (~(del by tracking) rid)
-        =^  cards  pull-hook
-          (on-pull-nack:og rid u.p.sign)
-        :_  this
-        [give-update cards]
-      ::
-          %fact
-        ?.  =(update-mark.config p.cage.sign)
-          =^  cards  pull-hook
-            (on-agent:og wire sign)
-          [cards this]
-        :_  this
-        ~[(update-store:hc rid q.cage.sign)]
-      ==
-      ++  on-leave
-        |=  =path
-        ^-  [(list card:agent:gall) agent:gall]
-        =^  cards  pull-hook
-          (on-leave:og path)
-        [cards this]
-      ::
-      ++  on-arvo
-        |=  [=wire =sign-arvo]
-        ^-  [(list card:agent:gall) agent:gall]
-        =^  cards  pull-hook
-          (on-arvo:og wire sign-arvo)
-        [cards this]
-      ++  on-fail
-        |=  [=term =tang]
-        ^-  [(list card:agent:gall) agent:gall]
-        =^  cards  pull-hook
-          (on-fail:og term tang)
-        [cards this]
-      ++  on-peek   
-        |=  =path
-        ^-  (unit (unit cage))
-        ?:  =(/x/dbug/state path)
-          ``noun+(slop !>(state(inner-state *vase)) on-save:og)
-        ?.  =(/x/tracking path)
-          (on-peek:og path)
-        ``noun+!>(~(key by tracking))
+      =/  versioned=?
+        ?=(%resource i.t.t.t.wire)
+      =^  [cards=(list card) hook=_pull-hook]  state
+        tr-abet:(tr-sign:(tr-abed:track-engine:hc rid) sign versioned)
+      =.  pull-hook  hook
+      [cards this]
+    ::
+    ++  on-leave
+      |=  =path
+      ^-  [(list card:agent:gall) agent:gall]
+      =^  cards  pull-hook
+        (on-leave:og path)
+      [cards this]
+    ::
+    ++  on-arvo
+      |=  [=wire =sign-arvo]
+      ^-  [(list card:agent:gall) agent:gall]
+      =^  cards  pull-hook
+        (on-arvo:og wire sign-arvo)
+      [cards this]
+    ::
+    ++  on-fail
+      |=  [=term =tang]
+      ^-  [(list card:agent:gall) agent:gall]
+      =^  cards  pull-hook
+        (on-fail:og term tang)
+      [cards this]
+    ::
+    ++  on-peek   
+      |=  =path
+      ^-  (unit (unit cage))
+      ?:  =(/x/dbug/state path)
+        ``noun+(slop !>(state(inner-state *vase)) on-save:og)
+      ?.  =(/x/tracking path)
+        (on-peek:og path)
+      ``noun+!>(~(key by tracking))
     --
   |_  =bowl:gall
   +*  og   ~(. pull-hook bowl)
+      io   ~(. agentio bowl)
+      pass  pass:io
+      virt  ~(. pull-hook-virt bowl)
+      ver  ~(. versioning [bowl [update-mark version min-version]:config])
+  ::
+  ++  restart-subs
+    =|  acc-cards=(list card)
+    =/  subs=(list resource)
+      ~(tap in ~(key by tracking))
+    |-  ^-  [[(list card) _pull-hook] _state]
+    ?~  subs
+      [[acc-cards pull-hook] state]
+    =*  rid  i.subs
+    =^  [crds=(list card) hook=_pull-hook]  state
+      tr-abet:tr-on-load:(tr-abed:track-engine rid)
+    =.  pull-hook  hook
+    $(subs t.subs, acc-cards (weld acc-cards crds))
+
+  ::
+  ++  track-engine
+    |_  [cards=(list card) rid=resource =ship =status gone=_|]
+    ::  +|  %init: state machine setup and manipulation
+    ::
+    ++  tr-core  .
+    ++  tr-abed
+      |=  r=resource
+      =/  [s=^ship sta=^status]
+        (~(got by tracking) r)
+      tr-core(rid r, ship s, status sta)
+    ::
+    ++  tr-abet
+      ^-  [[(list card) _pull-hook] _state]
+      =.  tracking
+        ?:  gone
+          (~(del by tracking) rid)
+        (~(put by tracking) rid [ship status])
+      [[(flop cards) pull-hook] state]
+    ::
+    ++  tr-emit
+      |=  =card
+      tr-core(cards [card cards])
+    ::
+    ++  tr-emis
+      |=  caz=(list card)
+      tr-core(cards (welp (flop cards) cards))
+    ::
+    ++  tr-ap-og
+      |=  ap=_^?(|.(*(quip card _pull-hook)))
+      =^  caz  pull-hook
+        (ap)
+      (tr-emis caz)
+    ::  +|  %sign: sign handling
+    ::
+    ::
+    ++  tr-sign
+      |=  [=sign:agent:gall versioned=?]
+      |^
+      ?+   -.sign  !!
+        %kick       tr-kick
+        %watch-ack  (tr-wack +.sign)
+        %fact       (tr-fact +.sign)
+      ==
+      ::
+      ++  tr-wack
+        |=  tan=(unit tang)
+        ?~  tan  tr-core
+        ?.  versioned
+          (tr-ap-og:tr-cleanup |.((on-pull-nack:og rid u.tan)))
+        %-  (slog leaf+"versioned nack for {<rid>} in {<dap.bowl>}" u.tan)
+        =/  pax
+          (kick-mule:virt rid |.((on-pull-kick:og rid)))
+        ?~  pax  tr-failed-kick
+        ?~  u.pax  tr-cleanup
+        (tr-watch-unver u.u.pax)
+      ::
+      ++  tr-fact
+        |=  =cage
+        ?:  ?=(%version p.cage)
+          =/  req-ver=@ud
+            !<(@ud q.cage)
+          ?:  (lth req-ver min-version.config)
+            (tr-suspend-pub-ver min-version.config)
+          (tr-suspend-sub-ver req-ver)
+        ?>  (is-root:ver p.cage)
+        =/  fact-ver=@ud
+          (read-version:ver p.cage)
+        ?.  (gte fact-ver min-version.config)
+          ?.  versioned
+            ::  don't process unversioned, unsupported facts
+            ::  just wait for publisher to upgrade and kick the
+            ::  subscription
+            tr-core
+          (tr-suspend-pub-ver min-version.config)
+        =/  =^cage
+          (convert-to:ver cage)
+        =/  =wire
+          (make-wire /store)
+        =+  resources=(~(gas in *(set resource)) (resource-for-update:og q.cage))
+        ?>  ?|  no-validate.config
+            ?&  (check-src resources)
+                (~(has in resources) rid)
+            ==  ==
+        =/  =mark
+          (append-version:ver version.config)
+        (tr-emit (~(poke-our pass wire) store-name.config cage))
+      --
+    ::
+    ++  tr-kick
+      ?.  ?=(%active -.status)  tr-core
+      =/  pax
+        (kick-mule:virt rid |.((on-pull-kick:og rid)))
+      ?~  pax  tr-failed-kick
+      ?~  u.pax  tr-cleanup
+      (tr-watch u.u.pax)
+    ::  +|  %lifecycle: lifecycle management for tracked resource
+    ::
+    ::
+    ++  tr-add
+      |=  [s=^ship r=resource]
+      ?<  =(s our.bowl)
+      =:  ship  s
+          rid   r
+          status  [%active ~]
+        ==
+      (tr-watch /)
+    ::
+    ++  tr-remove
+      tr-leave:tr-cleanup
+    ::
+    ++  tr-hook-act
+      |=  =action
+      ^+  tr-core
+      ?-  -.action
+        %add  (tr-add +.action)
+        %remove  tr-remove:(tr-abed resource.action)
+      ==
+    ::
+    ++  tr-cleanup
+      =.  gone  %.y
+      (tr-emit give-update)
+    ::
+    ++  tr-failed-kick
+      tr-core(status [%failed-kick ~])
+    ::
+    ++  tr-suspend-pub-ver
+      |=  ver=@ud
+      =.  status  [%pub-ver ver]
+      tr-leave:tr-watch-ver
+    ::
+    ::  
+    ++  tr-suspend-sub-ver
+      |=  ver=@ud
+      tr-core(status [%sub-ver ver])
+    ::
+    ++  tr-on-load
+      ?+  -.status  tr-core
+        %failed-kick  tr-restart
+        %active       tr-rewatch
+        ::
+          %sub-ver
+        ?.  (supported:ver (append-version:ver ver.status))
+          tr-core
+        tr-restart
+      ==
+    ::
+    ++  tr-restart
+      =.  status  [%active ~]
+      tr-kick
+    ::
+    ++  tr-rewatch
+      tr-kick:tr-leave
+    ::
+    ::
+    ::  +|  %subscription: subscription cards
+    ::
+    ::
+    ++  tr-ver-wire
+      (make-wire /version)
+    ::
+    ++  tr-watch-ver
+      (tr-emit (watch-version ship))
+    ::
+    ++  tr-leave-ver
+      (tr-emit (~(leave pass tr-ver-wire) tr-sub-dock))
+    ++  tr-sub-wire
+      (make-wire pull+resource+(en-path:resource rid))
+    ++  tr-unver-sub-wire
+      (make-wire pull+unver-resource+(en-path:resource rid))
+    ::
+    ++  tr-sub-dock
+      ^-  dock
+      [ship push-hook-name.config]
+    ::
+    ++  tr-check-sub
+      ?:  (~(has by wex.bowl) [tr-sub-wire tr-sub-dock])
+        tr-core
+      tr-kick
+    ::
+    ++  tr-watch-unver
+      |=  pax=path
+      =/  =path
+        :-  %resource
+        (weld (en-path:resource rid) pax)
+      (tr-emit (~(watch pass tr-unver-sub-wire) tr-sub-dock path))
+    ::
+    ++  tr-watch
+      |=  pax=path
+      ^+  tr-core
+      =/  =path
+        :+  %resource  %ver
+        %+  weld
+          (snoc (en-path:resource rid) (scot %ud version.config))
+        pax
+      (tr-emit (~(watch pass tr-sub-wire) tr-sub-dock path))
+    ::
+    ++  tr-leave
+      (tr-emit (~(leave pass tr-sub-wire) tr-sub-dock))
+    --
+  ::
+  ++  take-version
+    |=  [who=ship =sign:agent:gall]
+    ^-  [[(list card) _pull-hook] _state]
+    ?+  -.sign  !!
+        %watch-ack
+      ?~  p.sign  [~^pull-hook state]
+      =/  =tank  leaf+"subscribe failed from {<dap.bowl>} on wire {<wire>}"
+      %-  (slog tank u.p.sign)
+      [~^pull-hook state]
+      ::
+        %kick
+      :_  state
+      [(watch-version who)^~ pull-hook]
+      ::
+        %fact
+      ?.  =(%version p.cage.sign)
+        [~^pull-hook state]
+      =+  !<(version=@ud q.cage.sign)
+      =/  tracks=(list [rid=resource =track])
+        ~(tap by tracking)
+      =|  cards=(list card)
+      =|  leave=_&
+      |-
+      ?~  tracks
+        =?  cards  leave
+          :_(cards (leave-version who))
+        [[cards pull-hook] state]
+      ?.  ?=(%pub-ver -.status.track.i.tracks)
+        $(tracks t.tracks)
+      ?.  =(who ship.track.i.tracks)
+        $(tracks t.tracks)
+      ?.  =(ver.status.track.i.tracks version)
+        =.  leave  %.n
+        $(tracks t.tracks)
+      =^  [caz=(list card) hook=_pull-hook]  state
+        tr-abet:tr-restart:(tr-abed:track-engine rid.i.tracks)
+      =.  pull-hook  hook
+      $(tracks t.tracks, cards (weld cards caz))
+    ==
+  ::
+  ++  version-wir 
+    (make-wire /version)
+  ::
+  ++  watch-version
+    |=  =ship
+    (~(watch pass version-wir) [ship push-hook-name.config] /version)
+  ::
+  ++  leave-version
+    |=  =ship
+    (~(leave pass version-wir) [ship push-hook-name.config])
+  ::
   ++  poke-sane
     ^-  (quip card:agent:gall _state)
     =/  cards
-      restart-subscriptions
+      ::  TODO revive
+      ~ :: restart-subscriptions
     ~?  >  ?=(^ cards)
       "Fixed subscriptions in {<dap.bowl>}"
-    :_  state
-    restart-subscriptions
+    [cards state]
+
   ::
   ++  check-subscription
     |=  [rid=resource =ship]
@@ -375,122 +673,6 @@
         =(`rid (de-path-soft:resource (slag 4 wire)))
     ==
   ::
-  ++  restart-subscriptions
-    ^-  (list card:agent:gall)
-    %-  zing
-    %+  turn
-      ~(tap by tracking)
-    |=  [rid=resource =ship] 
-    ^-  (list card:agent:gall)
-    ?:  (check-subscription rid ship)  ~
-    ~&  >>  "restarting: {<rid>}"
-    =/  pax=(unit path)
-      (on-pull-kick:og rid)
-    ?~  pax  ~
-    (watch-resource rid u.pax)
-  ::
-  ++  mule-scry
-    |=  [ref=* raw=*]
-    =/  pax=(unit path)
-      ((soft path) raw)
-    ?~  pax  ~
-    ?.  ?=([@ @ @ @ *] u.pax)  ~
-    =/  ship
-      (slaw %p i.t.u.pax)
-    =/  ved
-      (slay i.t.t.t.u.pax)
-    =/  dat
-      ?~  ved  now.bowl
-      =/  cas=(unit case)
-        ((soft case) p.u.ved)
-      ?~  cas  now.bowl
-      ?:  ?=(%da -.u.cas)
-        p.u.cas
-      now.bowl
-    ::  catch bad gall scries early
-    ?:  ?&  =((end 3 i.u.pax) %g)
-            ?|  !=(`our.bowl ship)
-                !=(dat now.bowl)
-            ==
-        ==
-      ~
-    ``.^(* u.pax)
-  ::
-  ++  handle-kick
-    |=  [rid=resource =ship]
-    ^-  (quip card _state)
-    =/  res=toon
-      (mock [|.((on-pull-kick:og rid)) %9 2 %0 1] mule-scry)
-    =/  pax=(unit path)
-      !<  (unit path) 
-      :-  -:!>(*(unit path)) 
-      ?:(?=(%0 -.res) p.res ~)
-    =?  failed-kicks  !?=(%0 -.res)
-      =/  =tang
-        :+  leaf+"failed kick handler, please report" 
-          leaf+"{<rid>} in {(trip dap.bowl)}"
-        ?:  ?=(%2 -.res)
-          p.res
-        ?>  ?=(%1 -.res)
-        =/  maybe-path=(unit path)  ((soft path) p.res)
-        ?~  maybe-path  ~
-        [(smyt u.maybe-path) ~]
-      %-  (slog tang)
-      (~(put by failed-kicks) rid ship)
-    ?^  pax
-      :_  state
-      (watch-resource rid u.pax)
-    =.  tracking
-      (~(del by tracking) rid)
-    :_  state
-    ~[give-update]
-  ::
-  ++  poke-hook-action
-    |=  =action
-    ^-  [(list card:agent:gall) _state]
-    |^
-    ?-  -.action
-      %add  (add +.action)
-      %remove  (remove +.action)
-    ==
-    ++  add
-      |=  [=ship =resource]
-      ~|  resource
-      ?<  |(=(our.bowl ship) =(our.bowl entity.resource))
-      ?:  (~(has by tracking) resource)
-        [~ state]
-      =.  tracking
-        (~(put by tracking) resource ship)
-      :_  state
-      (watch-resource resource /)
-    ::
-    ++  remove
-      |=  =resource
-      :-  (leave-resource resource)
-      state(tracking (~(del by tracking) resource))
-    --
-  ::
-  ++  leave-resource
-    |=  rid=resource
-    ^-  (list card)
-    =/  ship=(unit ship)
-      (~(get by tracking) rid)
-    ?~  ship  ~
-    =/  =wire
-      (make-wire pull+resource+(en-path:resource rid))
-    [%pass wire %agent [u.ship push-hook-name.config] %leave ~]~
-  ::
-  ++  watch-resource
-    |=  [rid=resource pax=path]
-    ^-  (list card)
-    =/  ship=(unit ship)
-      (~(get by tracking) rid)
-    ?~  ship  ~
-    =/  =path
-      (welp resource+(en-path:resource rid) pax)
-    =/  =wire
-      (make-wire pull+resource+(en-path:resource rid))
-    [%pass wire %agent [u.ship push-hook-name.config] %watch path]~
   ::
   ++  make-wire
     |=  =wire
@@ -509,20 +691,8 @@
     %+  roll  ~(tap in resources)
     |=  [rid=resource out=_|]
     ?:  out  %.y
-    ?~  ship=(~(get by tracking) rid)
+    ?~  status=(~(get by tracking) rid)
       %.n
-    =(src.bowl u.ship)
-  ::
-  ++  update-store
-    |=  [wire-rid=resource =vase]
-    ^-  card
-    =/  =wire
-      (make-wire /store)
-    =+  resources=(~(gas in *(set resource)) (resource-for-update:og vase))
-    ?>  ?|  no-validate.config
-        ?&  (check-src resources)
-            (~(has in resources) wire-rid)
-        ==  ==
-    [%pass wire %agent [our.bowl store-name.config] %poke update-mark.config vase]
+    =(src.bowl ship.u.status)
   --
 --

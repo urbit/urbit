@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
-import { Box, Col, Center, LoadingSpinner, Text } from '@tlon/indigo-react';
-import { Switch, Route, Link } from 'react-router-dom';
-import bigInt from 'big-integer';
-
-import GlobalApi from '~/logic/api/global';
-import { StoreState } from '~/logic/store/type';
-import { RouteComponentProps } from 'react-router-dom';
-
-import { LinkItem } from './components/LinkItem';
-import { LinkWindow } from './LinkWindow';
-import { Comments } from '~/views/components/Comments';
-
-import './css/custom.css';
+import { Box, Center, Col, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { Group } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
+import bigInt from 'big-integer';
+import React, { useEffect } from 'react';
+import { Link, Route, Switch } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
+import useGraphState from '~/logic/state/graph';
+import useMetadataState from '~/logic/state/metadata';
+import { StoreState } from '~/logic/store/type';
+import { Comments } from '~/views/components/Comments';
+import useGroupState from '../../../logic/state/group';
+import { LinkItem } from './components/LinkItem';
+import './css/custom.css';
+import LinkWindow from './LinkWindow';
 
 const emptyMeasure = () => {};
 
@@ -20,36 +20,31 @@ type LinkResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+};
 
 export function LinkResource(props: LinkResourceProps) {
   const {
     association,
     api,
-    baseUrl,
-    graphs,
-    contacts,
-    groups,
-    associations,
-    graphKeys,
-    unreads,
-    graphTimesentMap,
-    storage,
-    history
+    baseUrl
   } = props;
 
   const rid = association.resource;
 
   const relativePath = (p: string) => `${baseUrl}/resource/link${rid}${p}`;
+  const associations = useMetadataState(state => state.associations);
 
   const [, , ship, name] = rid.split('/');
   const resourcePath = `${ship.slice(1)}/${name}`;
-  const resource = associations.graph[rid]
+  const resource: any = associations.graph[rid]
     ? associations.graph[rid]
     : { metadata: {} };
+  const groups = useGroupState(state => state.groups);
   const group = groups[resource?.group] || {};
 
+  const graphs = useGraphState(state => state.graphs);
   const graph = graphs[resourcePath] || null;
+  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
 
   useEffect(() => {
     api.graph.getGraph(ship, name);
@@ -68,16 +63,14 @@ export function LinkResource(props: LinkResourceProps) {
           path={relativePath('')}
           render={(props) => {
             return (
+              // @ts-ignore
               <LinkWindow
                 key={rid}
-                storage={storage}
                 association={resource}
-                contacts={contacts}
                 resource={resourcePath}
                 graph={graph}
-                unreads={unreads}
                 baseUrl={resourceUrl}
-                group={group}
+                group={group as Group}
                 path={resource.group}
                 pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
                 api={api}
@@ -87,7 +80,7 @@ export function LinkResource(props: LinkResourceProps) {
           }}
         />
         <Route
-          path={relativePath('/:index(\\d+)/:commentId?')}
+          path={relativePath('/index/:index')}
           render={(props) => {
             const index = bigInt(props.match.params.index);
             const editCommentId = props.match.params.commentId || null;
@@ -101,18 +94,25 @@ export function LinkResource(props: LinkResourceProps) {
             if (!node) {
               return <Box>Not found</Box>;
             }
+
+            if (typeof node.post === 'string') {
+              return (
+                <Col width="100%" textAlign="center" pt="2">
+                  <Text gray>This link has been deleted.</Text>
+                </Col>
+              );
+            }
             return (
               <Col alignItems="center" overflowY="auto" width="100%">
               <Col width="100%" p={3} maxWidth="768px">
                 <Link to={resourceUrl}><Text px={3} bold>{'<- Back'}</Text></Link>
                 <LinkItem
-                  contacts={contacts}
                   key={node.post.index}
                   resource={resourcePath}
                   node={node}
                   baseUrl={resourceUrl}
-                  unreads={unreads}
-                  group={group}
+                  association={association}
+                  group={group as Group}
                   path={resource?.group}
                   api={api}
                   mt={3}
@@ -124,13 +124,11 @@ export function LinkResource(props: LinkResourceProps) {
                   comments={node}
                   resource={resourcePath}
                   association={association}
-                  unreads={unreads}
-                  contacts={contacts}
                   api={api}
                   editCommentId={editCommentId}
                   history={props.history}
-                  baseUrl={`${resourceUrl}/${props.match.params.index}`}
-                  group={group}
+                  baseUrl={`${resourceUrl}/index/${props.match.params.index}`}
+                  group={group as Group}
                   px={3}
                 />
               </Col>

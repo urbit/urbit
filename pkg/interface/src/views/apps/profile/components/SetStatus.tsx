@@ -1,18 +1,18 @@
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  ChangeEvent
-} from 'react';
-
 import {
-  Row,
-  Button,
+  Button, Row,
+
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
+import React, {
+  ChangeEvent, useCallback,
+  useEffect,
+
+  useRef, useState
+} from 'react';
 
 export function SetStatus(props: any) {
   const { contact, ship, api, callback } = props;
+  const inputRef = useRef(null);
   const [_status, setStatus] = useState('');
   const onStatusChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -27,19 +27,20 @@ export function SetStatus(props: any) {
 
   const editStatus = () => {
     api.contacts.edit(ship, { status: _status });
-
+    inputRef.current.blur();
     if (callback) {
       callback();
     }
   };
 
   return (
-    <Row width="100%" my={3}>
+    <Row width='100%' my={3}>
       <Input
+        ref={inputRef}
         onChange={onStatusChange}
         value={_status}
-        autocomplete="off"
-        width="75%"
+        autoComplete='off'
+        width='75%'
         mr={2}
         onKeyPress={(evt) => {
           if (evt.key === 'Enter') {
@@ -47,16 +48,9 @@ export function SetStatus(props: any) {
           }
         }}
       />
-      <Button
-        primary
-        color="white"
-        ml={2}
-        width="25%"
-        onClick={editStatus}
-      >
+      <Button primary color='white' ml={2} width='25%' onClick={editStatus}>
         Set Status
       </Button>
     </Row>
   );
 }
-

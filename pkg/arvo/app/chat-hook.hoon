@@ -154,7 +154,7 @@
   ++  poke-graph-store
     |=  =update:graph-store
     ^-  card
-    (poke-our %graph-store %graph-update !>(update))
+    (poke-our %graph-store %graph-update-2 !>(update))
   ::
   ++  nobody
     ^-  @p
@@ -190,7 +190,7 @@
          cards
         :_  cards
         %-  poke-graph-store
-        :+  %0  now.bol
+        :-  now.bol
         archive-graph+rid
       ==
     ?:  =(our.bol ship)

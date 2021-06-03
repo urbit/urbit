@@ -1,27 +1,27 @@
-import React, { useEffect } from 'react';
-import bigInt from 'big-integer';
 import { Col } from '@tlon/indigo-react';
-import { CommentItem } from './CommentItem';
-import CommentInput from './CommentInput';
-import { Contacts } from '@urbit/api/contacts';
-import GlobalApi from '~/logic/api/global';
+import { Association, GraphNode, Group } from '@urbit/api';
+import bigInt from 'big-integer';
 import { FormikHelpers } from 'formik';
-import { Group, GraphNode, Association } from '@urbit/api';
-import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
+import React, { useEffect, useMemo } from 'react';
+import GlobalApi from '~/logic/api/global';
+import { createBlankNodeWithChildPost, createPost } from '~/logic/api/graph';
+import { isWriter } from '~/logic/lib/group';
+import { getUnreadCount } from '~/logic/lib/hark';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
-import { getUnreadCount } from '~/logic/lib/hark';
+import { useQuery } from '~/logic/lib/useQuery';
+import useHarkState from '~/logic/state/hark';
 import { PropFunc } from '~/types/util';
-import { isWriter } from '~/logic/lib/group';
+import CommentInput from './CommentInput';
+import { CommentItem } from './CommentItem';
 
 interface CommentsProps {
   comments: GraphNode;
   association: Association;
   name: string;
   ship: string;
-  editCommentId: string;
   baseUrl: string;
-  contacts: Contacts;
   api: GlobalApi;
   group: Group;
 }
@@ -32,13 +32,23 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     comments,
     ship,
     name,
-    editCommentId,
     api,
     history,
     baseUrl,
     group,
     ...rest
   } = props;
+
+  const { query } = useQuery();
+  const selectedComment = useMemo(() => {
+    const id = query.get('selected');
+    return id ? bigInt(id) : null;
+  }, [query]);
+
+  const editCommentId = useMemo(() => {
+    const id = query.get('edit');
+    return id || '';
+  }, [query]);
 
   const onSubmit = async (
     { comment },
@@ -72,7 +82,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
       const post = createPost(
         content,
         commentNode.post.index,
-        parseInt(idx + 1, 10)
+        parseInt((idx + 1).toString(), 10).toString()
       );
       await api.graph.addPost(ship, name, post);
       history.push(baseUrl);
@@ -95,7 +105,10 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
         val = val + curr.url;
       } else if ('code' in curr) {
         val = val + curr.code.expression;
+      } else if ('reference' in curr) {
+        val = `${val}${referenceToPermalink(curr).link}`;
       }
+
       return val;
     }, '');
   }
@@ -109,14 +122,15 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     };
   }, [comments.post.index]);
 
-  const readCount = children.length - getUnreadCount(props?.unreads, association.resource, parentIndex);
+  const unreads = useHarkState(state => state.unreads);
+  const readCount = children.length - getUnreadCount(unreads, association.resource, parentIndex);
 
   const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
 
   return (
-    <Col {...rest}>
-      {( !props.editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
-      {( props.editCommentId ? (
+    <Col {...rest} minWidth={0}>
+      {( !editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
+      {( editCommentId ? (
         <CommentInput
           onSubmit={onEdit}
           label='Edit Comment'
@@ -125,12 +139,13 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
         />
       ) : null )}
       {children.reverse()
-        .map(([idx, comment], i) => {
+          .map(([idx, comment], i) => {
+          const highlighted = selectedComment?.eq(idx) ?? false;
           return (
             <CommentItem
+              highlighted={highlighted}
               comment={comment}
               key={idx.toString()}
-              contacts={props.contacts}
               api={api}
               name={name}
               ship={ship}

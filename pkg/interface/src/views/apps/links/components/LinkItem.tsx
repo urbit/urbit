@@ -1,43 +1,49 @@
-import React, { useState, useEffect, useRef, useCallback, ReactElement }  from 'react';
-import { Link } from 'react-router-dom';
-
-import { Row, Col, Anchor, Box, Text, Icon, Action } from '@tlon/indigo-react';
-import { GraphNode, Group, Rolodex, Unreads } from '@urbit/api';
-
-import { writeText } from '~/logic/lib/util';
-import Author from '~/views/components/Author';
-import { roleForShip } from '~/logic/lib/group';
+import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
+import { Association, GraphNode, Group, TextContent, UrlContent } from '@urbit/api';
+import React, { ReactElement, RefObject, useCallback, useEffect, useRef } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
+import { roleForShip } from '~/logic/lib/group';
+import { getPermalinkForGraph, referenceToPermalink } from '~/logic/lib/permalinks';
+import { useCopy } from '~/logic/lib/useCopy';
+import useHarkState from '~/logic/state/hark';
+import Author from '~/views/components/Author';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
+import { PermalinkEmbed } from '../../permalinks/embed';
 
 interface LinkItemProps {
   node: GraphNode;
+  association: Association;
   resource: string;
   api: GlobalApi;
   group: Group;
   path: string;
-  contacts: Rolodex;
-  unreads: Unreads;
+  baseUrl: string;
+  mt?: number;
+  measure?: any;
 }
-
-export const LinkItem = (props: LinkItemProps): ReactElement => {
+export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<HTMLDivElement>): ReactElement => {
   const {
+    association,
     node,
     resource,
     api,
     group,
     path,
-    contacts,
     ...rest
   } = props;
 
-  const ref = useRef<HTMLDivElement | null>(null);
+  if (typeof node.post === 'string' || !node.post) {
+    return <Redirect to="/~404" />;
+  }
+
   const remoteRef = useRef<typeof RemoteContent | null>(null);
+  const index = node.post.index.split('/')[1];
 
   const markRead = useCallback(() => {
     api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
-  }, [props.association, index]);
+  }, [association, index]);
 
   useEffect(() => {
     function onBlur() {
@@ -45,6 +51,7 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
       setTimeout(() => {
         console.log(remoteRef.current);
         if(document.activeElement instanceof HTMLIFrameElement
+          // @ts-ignore forwardref prop passing
           && remoteRef?.current?.containerRef?.contains(document.activeElement)) {
           markRead();
         }
@@ -61,36 +68,43 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
   );
 
   const author = node.post.author;
-  const index = node.post.index.split('/')[1];
   const size = node.children ? node.children.size : 0;
-  const contents = node.post.contents;
+  const contents = node.post.contents as [TextContent, UrlContent];
   const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
-  const href = URLparser.exec(contents[1].url) ? contents[1].url : `http://${contents[1].url}`
+  const href = URLparser.exec(contents[1].url) ? contents[1].url : `http://${contents[1].url}`;
 
   const baseUrl = props.baseUrl || `/~404/${resource}`;
 
   const ourRole = group ? roleForShip(group, window.ship) : undefined;
   const [ship, name] = resource.split('/');
 
-  const [locationText, setLocationText] = useState('Copy Link Location');
+  const permalink = getPermalinkForGraph(
+    association.group,
+    association.resource,
+    `/${index}`
+  );
 
-  const copyLocation = () => {
-    setLocationText('Copied');
-    writeText(contents[1].url);
-    setTimeout(() => {
-      setLocationText('Copy Link Location');
-    }, 2000);
-  };
+  const { doCopy: doCopyLink, copyDisplay: locationText } = useCopy(
+    contents[1].url,
+    'Copy block source'
+  );
+
+  const { doCopy: doCopyNode, copyDisplay: nodeText } = useCopy(
+    permalink,
+    'Copy reference'
+  );
 
   const deleteLink = () => {
     if (confirm('Are you sure you want to delete this link?')) {
-      api.graph.removeNodes(`~${ship}`, name, [node.post.index]);
+      api.graph.removePosts(`~${ship}`, name, [node.post.index]);
     }
   };
 
   const appPath = `/ship/~${resource}`;
-  const commColor = (props.unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
-  const isUnread = props.unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
+  const unreads = useHarkState(state => state.unreads);
+  const commColor = (unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+  // @ts-ignore hark will have to choose between sets and numbers
+  const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
 
   return (
     <Box
@@ -100,7 +114,8 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
       ref={ref}
       width="100%"
       opacity={node.post.pending ? '0.5' : '1'}
-      {...rest}>
+      {...rest}
+    >
       <Box
         lineHeight="tall"
         display='flex'
@@ -108,15 +123,26 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
         width="100%"
         color='washedGray'
         border={1}
-        borderColor={isUnread ? 'blue' : 'washedGray'}
+        borderColor={isUnread ? 'blue' : 'lightGray'}
         borderRadius={2}
         alignItems="flex-start"
         overflow="hidden"
         onClick={markRead}
       >
         <Text p={2}>{contents[0].text}</Text>
+        { 'reference' in contents[1] ? (
+          <>
+            <Rule />
+            <PermalinkEmbed full link={referenceToPermalink(contents[1]).link} api={api} transcluded={0} />
+          </>
+        ) : (
+        <>
         <RemoteContent
-          ref={r => { remoteRef.current = r }}
+          ref={(r) => {
+            // @ts-ignore RemoteContent weirdness
+            remoteRef.current = r;
+          }}
+          // @ts-ignore RemoteContent weirdness
           renderUrl={false}
           url={href}
           text={contents[0].text}
@@ -142,29 +168,29 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
           }}
         />
         <Text color="gray" p={2} flexShrink={0}>
-          <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={href}>
-            <Box display='flex'>
-              <Icon icon='ArrowExternal' mr={1} />{hostname}
-            </Box>
-          </Anchor>
-        </Text>
+            <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={href}>
+              <Box display='flex'>
+                <Icon icon='ArrowExternal' mr={1} />{hostname}
+              </Box>
+            </Anchor>
+          </Text>
+        </>
+      )}
       </Box>
-
-      <Row minWidth='0' flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
-
+      <Row minWidth={0} flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
       <Author
         showImage
-        contacts={contacts}
+        isRelativeTime
         ship={author}
         date={node.post['time-sent']}
         group={group}
-        api={api}
-      ></Author>
-
+        lineHeight={1}
+      />
       <Box ml="auto">
         <Link
-          to={node.post.pending ? '#' : `${baseUrl}/${index}`}
-          style={{ cursor: node.post.pending ? 'default' : 'pointer' }}>
+          to={node.post.pending ? '#' : `${baseUrl}/index/${index}`}
+          style={{ cursor: node.post.pending ? 'default' : 'pointer' }}
+        >
         <Box display='flex'>
           <Icon color={commColor} icon='Chat' />
           <Text color={commColor} ml={1}>{size}</Text>
@@ -179,8 +205,12 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
         options={
           <Col backgroundColor="white" border={1} borderRadius={1} borderColor="lightGray">
             <Row alignItems="center" p={1}>
-              <Action bg="white" m={1} color="black" onClick={copyLocation}>{locationText}</Action>
+              <Action bg="white" m={1} color="black" onClick={doCopyLink}>{locationText}</Action>
             </Row>
+            <Row alignItems="center" p={1}>
+              <Action bg="white" m={1} color="black" onClick={doCopyNode}>{nodeText}</Action>
+            </Row>
+
             {(ourRole === 'admin' || node.post.author === window.ship) &&
               <Row alignItems="center" p={1}>
                 <Action bg="white" m={1} color="red" destructive onClick={deleteLink}>Delete Link</Action>
@@ -189,10 +219,10 @@ export const LinkItem = (props: LinkItemProps): ReactElement => {
           </Col>
         }
       >
-        <Icon ml="2" display="block" icon="Ellipsis" color="gray" />
+        <Icon ml={2} display="block" icon="Ellipsis" color="gray" />
       </Dropdown>
 
     </Row>
   </Box>);
-};
+});
 

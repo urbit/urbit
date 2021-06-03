@@ -1,12 +1,11 @@
-import React from 'react';
 import { Box, Image } from '@tlon/indigo-react';
-
-import { uxToHex } from '~/logic/lib/util';
 import { Metadata } from '@urbit/api';
+import React from 'react';
+import { uxToHex } from '~/logic/lib/util';
 import { PropFunc } from '~/types/util';
 
 type MetadataIconProps = PropFunc<typeof Box> & {
-  metadata: Metadata;
+  metadata: Pick<Metadata, 'color' | 'picture'>;
 };
 
 export function MetadataIcon(props: MetadataIconProps) {
@@ -15,7 +14,7 @@ export function MetadataIcon(props: MetadataIconProps) {
   const bgColor = metadata.picture ? {} : { bg: `#${uxToHex(metadata.color)}` };
 
   return (
-    <Box {...bgColor} {...rest} borderRadius={2} boxShadow="inset 0 0 0 1px" color="lightGray" overflow="hidden">
+    <Box {...bgColor} {...rest} borderRadius={1} boxShadow="inset 0 0 0 1px" color="lightGray" overflow="hidden">
       {metadata.picture && <Image height="100%" src={metadata.picture} />}
     </Box>
   );

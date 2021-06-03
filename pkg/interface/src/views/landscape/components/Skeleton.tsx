@@ -1,38 +1,35 @@
-import React, { ReactElement, ReactNode, useMemo } from 'react';
-
-import { Groups, Graphs, Invites, Rolodex, Path, AppName } from '@urbit/api';
-import { Associations } from '@urbit/api/metadata';
-
+import React, { Children, ReactElement, ReactNode, useCallback, useMemo, useState } from 'react';
 import { Sidebar } from './Sidebar/Sidebar';
+import { AppName } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
-import GlobalSubscription from '~/logic/subscription/global';
-import { useGraphModule } from './Sidebar/Apps';
-import { Body } from '~/views/components/Body';
+import useGraphState from '~/logic/state/graph';
+import useHarkState from '~/logic/state/hark';
 import { Workspace } from '~/types/workspace';
+import { Body } from '~/views/components/Body';
+import ErrorBoundary from '~/views/components/ErrorBoundary';
+import { useShortcut } from '~/logic/state/settings';
+import { useGraphModule } from './Sidebar/Apps';
 
 interface SkeletonProps {
-  contacts: Rolodex;
   children: ReactNode;
   recentGroups: string[];
-  groups: Groups;
-  associations: Associations;
-  graphKeys: Set<string>;
-  graphs: Graphs;
-  linkListening: Set<Path>;
-  invites: Invites;
   selected?: string;
   selectedApp?: AppName;
   baseUrl: string;
   mobileHide?: boolean;
   api: GlobalApi;
-  subscription: GlobalSubscription;
-  includeUnmanaged: boolean;
   workspace: Workspace;
-  unreads: unknown;
 }
 
 export function Skeleton(props: SkeletonProps): ReactElement {
-  const graphConfig = useGraphModule(props.graphKeys, props.graphs, props.unreads.graph);
+  const [sidebar, setSidebar] = useState(true)
+  useShortcut('hideSidebar', useCallback(() => {
+    setSidebar(s => !s);
+  }, []));
+  const graphs = useGraphState(state => state.graphs);
+  const graphKeys = useGraphState(state => state.graphKeys);
+  const unreads = useHarkState(state => state.unreads);
+  const graphConfig = useGraphModule(graphKeys, graphs, unreads.graph);
   const config = useMemo(
     () => ({
       graph: graphConfig
@@ -40,7 +37,7 @@ export function Skeleton(props: SkeletonProps): ReactElement {
     [graphConfig]
   );
 
-  return (
+  return !sidebar ? (<Body> {props.children} </Body>) : (
     <Body
       display="grid"
       gridTemplateColumns={
@@ -48,20 +45,17 @@ export function Skeleton(props: SkeletonProps): ReactElement {
       }
       gridTemplateRows="100%"
     >
-      <Sidebar
-        contacts={props.contacts}
-        api={props.api}
-        recentGroups={props.recentGroups}
-        selected={props.selected}
-        associations={props.associations}
-        invites={props.invites}
-        apps={config}
-        baseUrl={props.baseUrl}
-        groups={props.groups}
-        mobileHide={props.mobileHide}
-        workspace={props.workspace}
-        history={props.history}
-      />
+      <ErrorBoundary>
+        <Sidebar
+          api={props.api}
+          recentGroups={props.recentGroups}
+          selected={props.selected}
+          apps={config}
+          baseUrl={props.baseUrl}
+          mobileHide={props.mobileHide}
+          workspace={props.workspace}
+        />
+      </ErrorBoundary>
       {props.children}
     </Body>
   );

@@ -1,36 +1,31 @@
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  ChangeEvent
-} from 'react';
 import {
-  Col,
-  Box,
-  Row,
-  Text,
-  Icon,
-  Image,
-  Action,
-  StatelessTextInput as Input
-} from '@tlon/indigo-react';
-import _ from 'lodash';
-import f from 'lodash/fp';
-import VisibilitySensor from 'react-visibility-sensor';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+    Action, Box, Col,
 
+    Icon,
+    Image, Row,
+
+    StatelessTextInput as Input, Text
+} from '@tlon/indigo-react';
 import { Contact, Contacts } from '@urbit/api/contacts';
 import { Group, RoleTags } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
-
+import _ from 'lodash';
+import f from 'lodash/fp';
+import React, {
+    ChangeEvent,
+    ReactElement, useCallback, useMemo, useState
+} from 'react';
+import { Link } from 'react-router-dom';
+import VisibilitySensor from 'react-visibility-sensor';
+import styled from 'styled-components';
+import GlobalApi from '~/logic/api/global';
+import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { Sigil } from '~/logic/lib/sigil';
 import { cite, uxToHex } from '~/logic/lib/util';
-import { roleForShip, resourceFromPath } from '~/logic/lib/group';
-import { Dropdown } from '~/views/components/Dropdown';
-import GlobalApi from '~/logic/api/global';
-import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import { Dropdown } from '~/views/components/Dropdown';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -53,15 +48,18 @@ const searchParticipant = (search: string) => (p: Participant) => {
 };
 
 function getParticipants(cs: Contacts, group: Group) {
-  const contacts: Participant[] = _.map(cs, (c, patp) => ({
-    ...c,
-    patp,
-    pending: false
-  }));
+  const contacts: Participant[] = _.flow(
+    f.omitBy<Contacts>((_c, patp) => !group.members.has(patp.slice(1))),
+    f.toPairs,
+    f.map(([patp, c]: [string, Contact]) => ({
+      ...c,
+      patp: patp.slice(1),
+      pending: false
+    }))
+  )(cs);
   const members: Participant[] = _.map(
-    Array.from(group.members)
-    .filter(e => group?.policy?.invite?.pending ? !group.policy.invite.pending.has(e) : true), m =>
-      emptyContact(m, false)
+    Array.from(group.members),
+    s => contacts[s] ?? emptyContact(s, false)
   );
   const allMembers = _.unionBy(contacts, members, 'patp');
   const pending: Participant[] =
@@ -71,10 +69,11 @@ function getParticipants(cs: Contacts, group: Group) {
         )
       : [];
 
+  const incPending = _.unionBy(allMembers, pending, 'patp');
   return [
-    _.unionBy(allMembers, pending, 'patp'),
-    pending.length,
-    allMembers.length
+    incPending,
+    incPending.length - group.members.size,
+    group.members.size
   ] as const;
 }
 
@@ -82,7 +81,7 @@ const emptyContact = (patp: string, pending: boolean): Participant => ({
   nickname: '',
   bio: '',
   status: '',
-  color: '',
+  color: '0x0',
   avatar: null,
   cover: null,
   groups: [],
@@ -105,7 +104,6 @@ const Tab = ({ selected, id, label, setSelected }) => (
 );
 
 export function Participants(props: {
-  contacts: Contacts;
   group: Group;
   association: Association;
   api: GlobalApi;
@@ -138,9 +136,10 @@ export function Participants(props: {
 
   const adminCount = props.group.tags?.role?.admin?.size || 0;
   const isInvite = 'invite' in props.group.policy;
+  const contacts = useContactState(state => state.contacts);
 
   const [participants, pendingCount, memberCount] = getParticipants(
-    props.contacts,
+    contacts,
     props.group
   );
 
@@ -174,9 +173,9 @@ export function Participants(props: {
         mb={2}
         px={2}
         zIndex={1}
-        flexShrink="0"
+        flexShrink={0}
       >
-        <Row mr="4" flexShrink="0">
+        <Row mr={4} flexShrink={0}>
           <Tab
             selected={filter}
             setSelected={setFilter}
@@ -199,14 +198,14 @@ export function Participants(props: {
           />
         </Row>
       </Row>
-      <Col flexShrink="0" width="100%" height="fit-content">
-        <Row alignItems="center" bg="washedGray" borderRadius="1" px="2" my="2">
-          <Icon color="gray" icon="MagnifyingGlass" />
+      <Col flexShrink={0} width="100%" height="fit-content">
+        <Row alignItems="center" bg="washedGray" borderRadius={1} px={2} my={2}>
+          <Icon color="gray" icon="Search" />
           <Input
             maxWidth="256px"
             color="gray"
             bg="transparent"
-            border="0"
+            border={0}
             placeholder="Search Participants"
             onChange={onSearchChange}
           />
@@ -288,7 +287,7 @@ function Participant(props: {
     const resource = resourceFromPath(association.group);
     if(contact.pending) {
       await api.groups.changePolicy(
-        resource, 
+        resource,
         { invite: { removeInvites: [`~${contact.patp}`] } }
       );
     } else {
@@ -297,13 +296,13 @@ function Participant(props: {
   }, [api, contact, association]);
 
   const avatar =
-    contact?.avatar !== null && !hideAvatars ? (
-      <Image 
-        src={contact.avatar} 
-        height={32} 
-        width={32} 
+    contact?.avatar && !hideAvatars ? (
+      <Image
+        src={contact.avatar}
+        height={32}
+        width={32}
         display='inline-block'
-        style={{ objectFit: 'cover' }} 
+        style={{ objectFit: 'cover' }}
       />
     ) : (
       <Sigil ship={contact.patp} size={32} color={`#${color}`} />
@@ -313,12 +312,12 @@ function Participant(props: {
 
   return (
     <>
-      <Row flexDirection={["column", "row"]} gapX="2" alignItems={["flex-start", "center"]} width="100%" justifyContent="space-between" height={["96px", "60px"]}>
-        <Row gapX="4" alignItems="center" height="100%">
+      <Row flexDirection={['column', 'row']} gapX={2} alignItems={['flex-start', 'center']} width="100%" justifyContent="space-between" height={['96px', '60px']}>
+        <Row gapX={4} alignItems="center" height="100%">
       <Box>{avatar}</Box>
-      <Col alignItems="self-start" justifyContent="center" gapY="1" height="100%" minWidth='0'>
+      <Col alignItems="self-start" justifyContent="center" gapY={1} height="100%" minWidth={0}>
         {hasNickname && (
-          <Row minWidth='0' flexShrink={1}>
+          <Row minWidth={0} flexShrink={1}>
           <TruncText title={contact.nickname} color="black">
             {contact.nickname}
           </TruncText>
@@ -331,12 +330,12 @@ function Participant(props: {
     </Row>
       <Row
         justifyContent="space-between"
-        width={["100%", "128px"]}
+        width={['100%', '128px']}
         alignItems="center"
-        gapX="4"
+        gapX={4}
       >
         <Col>
-          <Text color="lightGray" mb="1">
+          <Text color="lightGray" mb={1}>
             Role
           </Text>
           <Text>{_.capitalize(role)}</Text>
@@ -347,8 +346,8 @@ function Participant(props: {
           options={
             <Col
               bg="white"
-              border="1"
-              borderRadius="1"
+              border={1}
+              borderRadius={1}
               borderColor="lightGray"
               gapY={2}
               p={2}
@@ -379,9 +378,9 @@ function Participant(props: {
                     {(contact.patp !== window.ship) && (<StatelessAsyncAction onClick={onKick} bg="transparent">
                         <Text color="red">Kick from {title}</Text>
                       </StatelessAsyncAction>)}
-                      <StatelessAsyncAction onClick={onPromote} bg="transparent">
+                      {!contact.pending && <StatelessAsyncAction onClick={onPromote} bg="transparent">
                         Promote to Admin
-                      </StatelessAsyncAction>
+                      </StatelessAsyncAction>}
                     </>
                   )}
                 </>

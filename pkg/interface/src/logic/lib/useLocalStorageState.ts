@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function retrieve<T>(key: string, initial: T): T {
   const s = localStorage.getItem(key);
@@ -15,8 +15,9 @@ function retrieve<T>(key: string, initial: T): T {
 interface SetStateFunc<T> {
   (t: T): T;
 }
-type SetState<T> = T | SetStateFunc<T>;
-export function useLocalStorageState<T>(key: string, initial: T) {
+// See microsoft/typescript#37663 for filed bug
+type SetState<T> = T extends any ? SetStateFunc<T> : never;
+export function useLocalStorageState<T>(key: string, initial: T): any {
   const [state, _setState] = useState(() => retrieve(key, initial));
 
   useEffect(() => {

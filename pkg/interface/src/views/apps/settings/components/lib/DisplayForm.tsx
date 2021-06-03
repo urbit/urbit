@@ -1,30 +1,28 @@
-import React from "react";
-
 import {
-  Col,
-  Text,
-  Label,
-  ManagedRadioButtonField as Radio
-} from "@tlon/indigo-react";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
+    Col,
 
-import GlobalApi from "~/logic/api/global";
-import { uxToHex } from "~/logic/lib/util";
-import { S3State, BackgroundConfig, StorageState } from "~/types";
-import { BackgroundPicker, BgType } from "./BackgroundPicker";
-import useSettingsState, { SettingsState, selectSettingsState } from "~/logic/state/settings";
-import {AsyncButton} from "~/views/components/AsyncButton";
-import { BackButton } from "./BackButton";
+    Label,
+    ManagedRadioButtonField as Radio, Text
+} from '@tlon/indigo-react';
+import { Form, Formik } from 'formik';
+import React from 'react';
+import * as Yup from 'yup';
+import GlobalApi from '~/logic/api/global';
+import { uxToHex } from '~/logic/lib/util';
+import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import {FormikOnBlur} from '~/views/components/FormikOnBlur';
+import { BackButton } from './BackButton';
+import { BackgroundPicker, BgType } from './BackgroundPicker';
 
 const formSchema = Yup.object().shape({
   bgType: Yup.string()
-    .oneOf(["none", "color", "url"], "invalid")
-    .required("Required"),
+    .oneOf(['none', 'color', 'url'], 'invalid')
+    .required('Required'),
   background: Yup.string(),
   theme: Yup.string()
-    .oneOf(["light", "dark", "auto"])
-    .required("Required")
+    .oneOf(['light', 'dark', 'auto'])
+    .required('Required')
 });
 
 interface FormSchema {
@@ -36,13 +34,12 @@ interface FormSchema {
 
 interface DisplayFormProps {
   api: GlobalApi;
-  storage: StorageState;
 }
 
-const settingsSel = selectSettingsState(["display"]);
+const settingsSel = selectSettingsState(['display']);
 
 export default function DisplayForm(props: DisplayFormProps) {
-  const { api, storage } = props;
+  const { api } = props;
 
   const {
     display: {
@@ -52,36 +49,35 @@ export default function DisplayForm(props: DisplayFormProps) {
     }
   } = useSettingsState(settingsSel);
 
-
   let bgColor, bgUrl;
-  if (backgroundType === "url") {
+  if (backgroundType === 'url') {
     bgUrl = background;
   }
-  if (backgroundType === "color") {
+  if (backgroundType === 'color') {
     bgColor = background;
   }
-  const bgType = backgroundType || "none";
+  const bgType = backgroundType || 'none';
 
   return (
-    <Formik
+    <FormikOnBlur
       validationSchema={formSchema}
       initialValues={
         {
           bgType: backgroundType,
-          bgColor: bgColor || "",
+          bgColor: bgColor || '',
           bgUrl,
           theme
         } as FormSchema
       }
       onSubmit={async (values, actions) => {
-        let promises = [] as Promise<any>[];
+        const promises = [] as Promise<any>[];
         promises.push(api.settings.putEntry('display', 'backgroundType', values.bgType));
         promises.push(
           api.settings.putEntry('display', 'background',
-            values.bgType === "color"
-            ? `#${uxToHex(values.bgColor || "0x0")}`
-            : values.bgType === "url"
-            ? values.bgUrl || ""
+            values.bgType === 'color'
+            ? `#${uxToHex(values.bgColor || '0x0')}`
+            : values.bgType === 'url'
+            ? values.bgUrl || ''
             : false
           ));
 
@@ -89,14 +85,12 @@ export default function DisplayForm(props: DisplayFormProps) {
         await Promise.all(promises);
 
         actions.setStatus({ success: null });
-
       }}
     >
-      {(props) => (
         <Form>
-          <BackButton/>
-          <Col p="5" pt="4" gapY="5">
-              <Col gapY="1" mt="0">
+          <BackButton />
+          <Col p={5} pt={4} gapY={5}>
+              <Col gapY={1} mt={0}>
               <Text color="black" fontSize={2} fontWeight="medium">
                 Display Preferences
               </Text>
@@ -105,13 +99,11 @@ export default function DisplayForm(props: DisplayFormProps) {
               </Text>
             </Col>
             <BackgroundPicker
-              bgType={props.values.bgType}
-              bgUrl={props.values.bgUrl}
-              api={api}
-              storage={storage}
+            api={api}
+            bgType={bgType}
             />
             <Label>Theme</Label>
-            <Radio name="theme" id="light" label="Light"/>
+            <Radio name="theme" id="light" label="Light" />
             <Radio name="theme" id="dark" label="Dark" />
             <Radio name="theme" id="auto" label="Auto" />
             <AsyncButton primary width="fit-content" type="submit">
@@ -119,7 +111,6 @@ export default function DisplayForm(props: DisplayFormProps) {
             </AsyncButton>
           </Col>
         </Form>
-      )}
-    </Formik>
+    </FormikOnBlur>
   );
 }

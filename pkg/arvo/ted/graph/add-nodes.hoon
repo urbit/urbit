@@ -10,7 +10,6 @@
   ;<  =update:store  bind:m
     %+  scry:strandio  update:store
     /gx/graph-store/graph/(scot %p entity.rid)/[name.rid]/noun
-  ?>  ?=(%0 -.update)
   ?>  ?=(%add-graph -.q.update)
   (pure:m graph.q.update)
 --
@@ -33,7 +32,7 @@
 =/  hashes  (nodes-to-pending-indices nodes.q.update)
 ;<  ~  bind:m
   %^  poke-our  %graph-push-hook
-    %graph-update
+    %graph-update-2
   !>(update)
 (pure:m !>(`action:graph-view`[%pending-indices hashes]))
 ::
@@ -76,7 +75,8 @@
   ^-  [index:store node:store]
   =*  loop  $
   :-  index
-  =*  p  post.node
+  ?>  ?=(%& -.post.node)
+  =*  p  p.post.node
   =/  =hash:store
     =-  `@ux`(sham -)
     :^  ?^  parent-hash
@@ -86,12 +86,11 @@
       time-sent.p
     contents.p
   %_  node
-    hash.post  `hash
+    hash.p.post  `hash
   ::
-  ::  TODO: enable signing our own post as soon as we're ready
-  ::    signatures.post
-  ::  %-  ~(gas in *signatures:store)
-  ::  [(sign:sig our.bowl now.bowl hash)]~
+      signatures.p.post
+    %-  ~(gas in *signatures:store)
+    [(sign:sig our.bowl now.bowl hash)]~
   ::
       children
     ?:  ?=(%empty -.children.node)
@@ -117,7 +116,8 @@
   ?:  ?=([@ ~] index)
     ~
   =/  node  (got-deep:gra graph (snip `(list atom)`index))
-  hash.post.node
+  ?>  ?=(%& -.post.node)
+  hash.p.post.node
 ::
 ++  nodes-to-pending-indices
   |=  nodes=(map index:store node:store)
@@ -126,6 +126,7 @@
   %+  turn  ~(tap by nodes)
   |=  [=index:store =node:store]
   ^-  [hash:store index:store]
-  ?>  ?=(^ hash.post.node)
-  [u.hash.post.node index]
+  ?>  ?=(%& -.post.node)
+  ?>  ?=(^ hash.p.post.node)
+  [u.hash.p.post.node index]
 --

@@ -1,19 +1,14 @@
+import type { StoreState } from '../store/type';
 import BaseApi from './base';
-import {StoreState} from '../store/type';
-import {GcpToken} from '../types/gcp-state';
-
 
 export default class GcpApi extends BaseApi<StoreState> {
-  isConfigured() {
-    return this.spider('noun', 'json', 'gcp-is-configured', {})
-      .then((data) => {
-        this.store.handleEvent({
-          data
-        });
-      });
+  // Does not touch the store; use the value manually.
+  async isConfigured(): Promise<boolean> {
+    return this.spider('noun', 'json', 'gcp-is-configured', {});
   }
 
-  getToken() {
+  // Does not return the token; read it out of the store.
+  async getToken(): Promise<void> {
     return this.spider('noun', 'gcp-token', 'gcp-get-token', {})
       .then((token) => {
         this.store.handleEvent({
@@ -21,4 +16,4 @@ export default class GcpApi extends BaseApi<StoreState> {
         });
       });
   }
-};
+}

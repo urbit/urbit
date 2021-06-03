@@ -1,23 +1,25 @@
-import React, { useState, useCallback } from 'react';
-import _ from 'lodash';
-import { Text, Box } from '@tlon/indigo-react';
-import { Contact, Contacts, Content, Group } from '@urbit/api';
+import { Text } from '@tlon/indigo-react';
+import { Contact, Content, Group } from '@urbit/api';
+import React from 'react';
+import GlobalApi from '~/logic/api/global';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { cite, deSig, useShowNickname } from '~/logic/lib/util';
+import { useContact } from '~/logic/state/contact';
+import ProfileOverlay from '~/views/components/ProfileOverlay';
 import RichText from '~/views/components/RichText';
-import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
-import OverlaySigil from '~/views/components/OverlaySigil';
-import { useHistory } from 'react-router-dom';
 
 interface MentionTextProps {
   contact?: Contact;
-  contacts?: Contacts;
   content: Content[];
   group: Group;
+  transcluded: number;
+  api: GlobalApi;
 }
 export function MentionText(props: MentionTextProps) {
-  const { content, contacts, contact, group, ...rest } = props;
+  const { content, contact, group, ...rest } = props;
 
   return (
-    <RichText contacts={contacts} contact={contact} group={group} {...rest}>
+    <RichText contact={contact} group={group} {...rest}>
       {content.reduce((accum, c) => {
         if ('text' in c) {
           return accum + c.text;
@@ -25,6 +27,9 @@ export function MentionText(props: MentionTextProps) {
           return accum + `[~${c.mention}]`;
         } else if ('url' in c) {
           return accum + `\n ${c.url}`;
+        } else if ('reference' in c) {
+          const { link } = referenceToPermalink(c);
+          return accum + `\n [${link}]`;
         }
         return accum;
       }, '')}
@@ -33,30 +38,18 @@ export function MentionText(props: MentionTextProps) {
 }
 
 export function Mention(props: {
-  contact: Contact;
-  contacts?: Contacts;
-  group: Group;
-  scrollWindow?: HTMLElement;
   ship: string;
-  first?: Boolean;
+  first?: boolean;
+  api: GlobalApi;
 }) {
-  const { contacts, ship, scrollWindow, first, ...rest } = props;
-  let { contact } = props;
-  contact = contact?.color ? contact : contacts?.[`~${ship}`];
-  const history = useHistory();
+  const { ship, first, api, ...rest } = props;
+  const contact = useContact(`~${deSig(ship)}`);
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact?.nickname : cite(ship);
-  const group = props.group ?? { hidden: true };
-  const [showOverlay, setShowOverlay] = useState(false);
-
-  const toggleOverlay = useCallback(() => {
-    setShowOverlay((value) => !value);
-  }, [showOverlay]);
 
   return (
-    <Box position='relative' display='inline-block' cursor='pointer' {...rest}>
+    <ProfileOverlay ship={ship} api={api} display="inline">
       <Text
-        onClick={() => toggleOverlay()}
         marginLeft={first? 0 : 1}
         marginRight={1}
         px={1}
@@ -67,18 +60,6 @@ export function Mention(props: {
       >
         {name}
       </Text>
-      {showOverlay && (
-        <OverlaySigil
-          ship={ship}
-          contact={contact}
-          color={`#${uxToHex(contact?.color ?? '0x0')}`}
-          group={group}
-          onDismiss={() => toggleOverlay()}
-          history={history}
-          className='relative'
-          scrollWindow={scrollWindow}
-        />
-      )}
-    </Box>
+    </ProfileOverlay>
   );
 }

@@ -1,14 +1,12 @@
-import React from 'react';
-import { FormikHelpers } from 'formik';
-import GlobalApi from '~/logic/api/global';
-import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import { RouteComponentProps } from 'react-router-dom';
-import { PostForm, PostFormSchema } from './NoteForm';
-import { createPost } from '~/logic/api/graph';
-import { Graph } from '@urbit/api/graph';
 import { Association } from '@urbit/api';
-import { StorageState } from '~/types';
+import { Graph } from '@urbit/api/graph';
+import { FormikHelpers } from 'formik';
+import React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
 import { newPost } from '~/logic/lib/publish';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import { PostForm, PostFormSchema } from './NoteForm';
 
 interface NewPostProps {
   api: GlobalApi;
@@ -17,7 +15,6 @@ interface NewPostProps {
   graph: Graph;
   association: Association;
   baseUrl: string;
-  storage: StorageState;
 }
 
 export default function NewPost(props: NewPostProps & RouteComponentProps) {
@@ -51,7 +48,6 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
       onSubmit={onSubmit}
       submitLabel="Publish"
       loadingText="Posting..."
-      storage={props.storage}
     />
   );
 }

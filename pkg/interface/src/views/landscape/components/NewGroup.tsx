@@ -1,21 +1,19 @@
-import React, { ReactElement, useCallback } from 'react';
-import { Formik, Form, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
-import { RouteComponentProps } from 'react-router-dom';
-
 import {
-  Col,
-  Box,
-  Text,
-  ManagedTextInputField as Input,
-  ManagedCheckboxField as Checkbox
-} from '@tlon/indigo-react';
-import { Groups, Rolodex, GroupPolicy, Enc, Associations } from '@urbit/api';
+  Box, Col,
 
-import { AsyncButton } from '~/views/components/AsyncButton';
-import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+  ManagedCheckboxField as Checkbox, ManagedTextInputField as Input, Text
+} from '@tlon/indigo-react';
+import { Enc, GroupPolicy } from '@urbit/api';
+import { Form, Formik, FormikHelpers } from 'formik';
+import React, { ReactElement, useCallback } from 'react';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
+import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { stringToSymbol } from '~/logic/lib/util';
+import useGroupState from '~/logic/state/group';
+import useMetadataState from '~/logic/state/metadata';
+import { AsyncButton } from '~/views/components/AsyncButton';
 
 const formSchema = Yup.object({
   title: Yup.string().required('Group must have a name'),
@@ -30,21 +28,21 @@ interface FormSchema {
 }
 
 interface NewGroupProps {
-  groups: Groups;
-  contacts: Rolodex;
-  associations: Associations;
   api: GlobalApi;
 }
 
-export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactElement {
-  const { api, history } = props;
+export function NewGroup(props: NewGroupProps): ReactElement {
+  const { api } = props;
+  const history = useHistory();
   const initialValues: FormSchema = {
     title: '',
     description: '',
     isPrivate: false
   };
 
-  const waiter = useWaitForProps(props);
+  const groups = useGroupState(state => state.groups);
+  const associations = useMetadataState(state => state.associations);
+  const waiter = useWaitForProps({ groups, associations });
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
@@ -65,8 +63,8 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
             };
         await api.groups.create(name, policy, title, description);
         const path = `/ship/~${window.ship}/${name}`;
-        await waiter(({ groups, associations }) => {
-          return path in groups && path in associations.groups;
+        await waiter((p) => {
+          return path in p.groups && path in p.associations.groups;
         });
 
         actions.setStatus({ success: null });
@@ -81,7 +79,7 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
 
   return (
     <>
-      <Col overflowY="auto" p="3">
+      <Col overflowY="auto" p={3}>
         <Box mb={3}>
           <Text fontWeight="bold">New Group</Text>
         </Box>
@@ -91,7 +89,7 @@ export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactEleme
           onSubmit={onSubmit}
         >
           <Form>
-            <Col gapY="4">
+            <Col gapY={4}>
               <Input
                 id="title"
                 label="Name"

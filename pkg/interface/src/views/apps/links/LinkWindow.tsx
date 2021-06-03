@@ -1,46 +1,43 @@
+import { Box, Col, Text } from '@tlon/indigo-react';
+import { Association, Graph, Group } from '@urbit/api';
+import bigInt from 'big-integer';
 import React, {
-  useRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  Component,
-} from "react";
-
-import { Col, Text } from "@tlon/indigo-react";
-import bigInt from "big-integer";
-import { Association, Graph, Unreads, Group, Rolodex } from "@urbit/api";
-
-import GlobalApi from "~/logic/api/global";
-import VirtualScroller from "~/views/components/VirtualScroller";
-import { LinkItem } from "./components/LinkItem";
-import LinkSubmit from "./components/LinkSubmit";
-import { isWriter } from "~/logic/lib/group";
-import { StorageState } from "~/types";
+  Component, ReactNode
+} from 'react';
+import GlobalApi from '~/logic/api/global';
+import { isWriter } from '~/logic/lib/group';
+import VirtualScroller from '~/views/components/VirtualScroller';
+import { LinkItem } from './components/LinkItem';
+import LinkSubmit from './components/LinkSubmit';
 
 interface LinkWindowProps {
   association: Association;
-  contacts: Rolodex;
   resource: string;
   graph: Graph;
-  unreads: Unreads;
   hideNicknames: boolean;
   hideAvatars: boolean;
   baseUrl: string;
   group: Group;
   path: string;
   api: GlobalApi;
-  storage: StorageState;
+  pendingSize: number;
+  mb?: number;
 }
 
 const style = {
-  height: "100%",
-  width: "100%",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
+  height: '100%',
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center'
 };
 
-export class LinkWindow extends Component<LinkWindowProps, {}> {
+interface RendererProps {
+  index: BigInteger;
+  children?: ReactNode;
+}
+
+class LinkWindow extends Component<LinkWindowProps, {}> {
   fetchLinks = async () => true;
 
   canWrite() {
@@ -48,10 +45,11 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
     return isWriter(group, association.resource);
   }
 
-  renderItem = ({ index, scrollWindow }) => {
+  renderItem = React.forwardRef<HTMLDivElement>(({ index }: RendererProps, ref) => {
     const { props } = this;
     const { association, graph, api } = props;
-    const [, , ship, name] = association.resource.split("/");
+    const [, , ship, name] = association.resource.split('/');
+    // @ts-ignore Uint8Array vs. BigInt mismatch?
     const node = graph.get(index);
     const first = graph.peekLargest()?.[0];
     const post = node?.post;
@@ -60,44 +58,53 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
     }
     const linkProps = {
       ...props,
-      node,
+      node
     };
+    {/* @ts-ignore calling @liam-fitzgerald on Uint8Array props */}
     if (this.canWrite() && index.eq(first ?? bigInt.zero)) {
       return (
         <React.Fragment key={index.toString()}>
           <Col
+            ref={ref}
             key={index.toString()}
             mx="auto"
-            mt="4"
+            mt={4}
             maxWidth="768px"
             width="100%"
             flexShrink={0}
             px={3}
           >
             <LinkSubmit
-              storage={props.storage}
               name={name}
               ship={ship.slice(1)}
               api={api}
             />
           </Col>
-          <LinkItem {...linkProps} />
+          { typeof post !== 'string' && <LinkItem {...linkProps} /> }
         </React.Fragment>
       );
     }
-    return <LinkItem key={index.toString()} {...linkProps} />;
-  };
+
+    if (typeof post === 'string') {
+      return null;
+    }
+    return (
+      <Box ref={ref}>
+        <LinkItem key={index.toString()} {...linkProps} />
+      </Box>
+    );
+  });
 
   render() {
-    const { graph, api, association, storage, pendingSize } = this.props;
+    const { graph, api, association } = this.props;
     const first = graph.peekLargest()?.[0];
-    const [, , ship, name] = association.resource.split("/");
+    const [, , ship, name] = association.resource.split('/');
     if (!first) {
       return (
         <Col
           key={0}
           mx="auto"
-          mt="4"
+          mt={4}
           maxWidth="768px"
           width="100%"
           flexShrink={0}
@@ -105,7 +112,6 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
         >
           {this.canWrite() ? (
             <LinkSubmit
-              storage={storage}
               name={name}
               ship={ship.slice(1)}
               api={api}
@@ -122,6 +128,7 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
 
     return (
       <Col width="100%" height="100%" position="relative">
+        {/* @ts-ignore calling @liam-fitzgerald on virtualscroller */}
         <VirtualScroller
           origin="top"
           offset={0}
@@ -129,7 +136,7 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
           data={graph}
           averageHeight={100}
           size={graph.size}
-          pendingSize={pendingSize}
+          pendingSize={this.props.pendingSize}
           renderer={this.renderItem}
           loadRows={this.fetchLinks}
         />
@@ -137,3 +144,5 @@ export class LinkWindow extends Component<LinkWindowProps, {}> {
     );
   }
 }
+
+export default LinkWindow;

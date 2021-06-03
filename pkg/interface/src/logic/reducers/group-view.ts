@@ -1,29 +1,54 @@
-import { resourceAsPath } from '~/logic/lib/util';
+import { GroupUpdate } from '@urbit/api/groups';
+import { reduceState } from '../state/base';
+import useGroupState, { GroupState } from '../state/group';
 
-const initial = (json: any, state: any) => {
+const initial = (json: any, state: GroupState): GroupState => {
   const data = json.initial;
   if(data) {
     state.pendingJoin = data;
   }
+  return state;
 };
 
-const progress = (json: any, state: any) => {
+const started = (json: any, state: GroupState): GroupState => {
+  const data = json.started;
+  if(data) {
+    const { resource, request } = data;
+    state.pendingJoin[resource] = request;
+  }
+  return state;
+};
+
+const progress = (json: any, state: GroupState): GroupState => {
   const data = json.progress;
   if(data) {
     const { progress, resource } = data;
-    state.pendingJoin = { ...state.pendingJoin, [resource]: progress };
+    state.pendingJoin[resource].progress = progress;
     if(progress === 'done') {
       setTimeout(() => {
         delete state.pendingJoin[resource];
       }, 10000);
     }
   }
+  return state;
 };
 
-export const GroupViewReducer = (json: any, state: any) => {
-  const data = json['group-view-update'];
+const hide = (json: any, state: GroupState) => {
+  const data = json.hide;
   if(data) {
-    progress(data, state);
-    initial(data, state);
+    state.pendingJoin[data].hidden = true;
+  }
+  return state;
+};
+
+export const GroupViewReducer = (json: any) => {
+  const data = json['group-view-update'];
+  if (data) {
+    reduceState<GroupState, GroupUpdate>(useGroupState, data, [
+      progress,
+      hide,
+      started,
+      initial
+    ]);
   }
 };
