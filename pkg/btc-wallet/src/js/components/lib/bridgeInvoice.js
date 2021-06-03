@@ -10,8 +10,11 @@ import {
   LoadingSpinner,
 } from '@tlon/indigo-react';
 
+import { Sigil } from './sigil.js';
+
 import * as bitcoin from 'bitcoinjs-lib';
 import * as kg from 'urbit-key-generation';
+import { isValidPatp } from 'urbit-ob';
 
 import Sent from './sent.js'
 import Error from './error.js'
@@ -32,6 +35,8 @@ export default class BridgeInvoice extends Component {
     this.checkTxHex = this.checkTxHex.bind(this);
     this.broadCastTx = this.broadCastTx.bind(this);
     this.sendBitcoin = this.sendBitcoin.bind(this);
+    this.clickDismiss = this.clickDismiss.bind(this);
+    this.setInvoiceRef = this.setInvoiceRef.bind(this);
   }
 
   broadCastTx(hex) {
@@ -43,6 +48,21 @@ export default class BridgeInvoice extends Component {
 
   componentDidMount() {
     window.open('https://bridge.urbit.org/?kind=btc&utx=' + this.props.psbt);
+    document.addEventListener("click", this.clickDismiss);
+  }
+
+  componentWillUnmount(){
+    document.removeEventListener("click", this.clickDismiss);
+  }
+
+  setInvoiceRef(n){
+    this.invoiceRef = n;
+  }
+
+  clickDismiss(e){
+    if (this.invoiceRef && !(this.invoiceRef.contains(e.target))){
+      this.props.stopSending();
+    }
   }
 
   componentDidUpdate(prevProps){
@@ -77,7 +97,7 @@ export default class BridgeInvoice extends Component {
   }
 
   render() {
-    const { stopSending, payee, denomination, satsAmount, psbt, currencyRates } = this.props;
+    const { stopSending, payee, denomination, satsAmount, psbt, currencyRates, fee } = this.props;
     const { error, txHex } = this.state;
 
     let inputColor = 'black';
@@ -90,6 +110,19 @@ export default class BridgeInvoice extends Component {
       inputBorder = 'red';
     }
 
+    const isShip = isValidPatp(payee);
+
+    const icon = (isShip)
+      ? <Sigil ship={payee} size={24} color="black" classes={''} icon padding={5}/>
+      : <Box backgroundColor="lighterGray"
+          width="24px"
+          height="24px"
+          textAlign="center"
+          alignItems="center"
+          borderRadius="2px"
+          p={1}
+        ><Icon icon="Bitcoin" color="gray"/></Box>;
+
     return (
       <>
         { this.props.state.broadcastSuccess ?
@@ -101,60 +134,52 @@ export default class BridgeInvoice extends Component {
             satsAmount={satsAmount}
           /> :
           <Col
-            height='400px'
+            ref={this.setInvoiceRef}
             width='100%'
             backgroundColor='white'
             borderRadius='48px'
             mb={5}
             p={5}
           >
-            <Row
-              justifyContent='space-between'
-              alignItems='center'
-            >
-              <Text bold fontSize={1}>Invoice</Text>
-              <Icon
-                icon='X'
-                cursor='pointer'
-                onClick={() => stopSending()}
-              />
-            </Row>
-            <Box
+            <Col
+              p={5}
               mt={4}
-              backgroundColor='rgba(0, 159, 101, 0.05)'
-              borderRadius='12px'
+              backgroundColor='veryLightGreen'
+              borderRadius='24px'
+              alignItems="center"
             >
-              <Box
-                padding={4}
-              >
-                <Row>
-                  <Text fontSize='14px' fontWeight='500'>You are sending</Text>
-                </Row>
-                <Row
-                  mt={2}
-                >
-                  <Text
-                    color='green'
-                    fontSize='14px'
-                  >{satsToCurrency(satsAmount, denomination, currencyRates)}</Text>
-                  <Text
-                    ml={2}
-                    fontSize='14px'
-                    color='gray'
-                  >{`${satsAmount} sats`}</Text>
-                </Row>
-                <Row
-                  mt={2}
-                >
-                  <Text fontSize='14px'>To:</Text>
-                  <Text
-                    ml={2}
-                    fontSize='14px'
-                    style={{'display': 'block', 'overflow-wrap': 'anywhere'}}
-                  >{payee}</Text>
-                </Row>
-              </Box>
-            </Box>
+              <Row>
+                <Text
+                  color='green'
+                  fontSize='40px'
+                >{satsToCurrency(satsAmount, denomination, currencyRates)}</Text>
+              </Row>
+              <Row>
+                <Text
+                  fontWeight="bold"
+                  fontSize='16px'
+                  color='midGreen'
+                >{`${satsAmount} sats`}</Text>
+              </Row>
+              <Row mt={2}>
+                <Text
+                  fontSize='14px'
+                  color='midGreen'
+                >{`Fee: ${satsToCurrency(fee, denomination, currencyRates)} (${fee} sats)`}</Text>
+              </Row>
+              <Row mt={4} >
+                <Text fontSize='16px' fontWeight="bold" color="gray">You are paying</Text>
+              </Row>
+              <Row mt={2} alignItems="center">
+                {icon}
+                <Text ml={2}
+                  mono
+                  color="gray"
+                  fontSize='14px'
+                  style={{'display': 'block', 'overflow-wrap': 'anywhere'}}
+                >{payee}</Text>
+              </Row>
+            </Col>
             <Box mt={3}>
               <Text fontSize='14px' fontWeight='500'>
                 Bridge signed transaction

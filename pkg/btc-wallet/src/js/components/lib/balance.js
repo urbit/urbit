@@ -71,6 +71,7 @@ export default class Balance extends Component {
            state={this.props.state}
            api={api}
            psbt={this.props.state.psbt}
+           fee={this.props.state.fee}
            currencyRates={this.props.state.currencyRates}
            shipWallets={this.props.state.shipWallets}
            value={value}
