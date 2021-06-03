@@ -198,7 +198,7 @@ export default class Send extends Component {
     }
 
 
-    const { api, value, conversion, stopSending, denomination, psbt, currencyRates, error, network } = this.props;
+    const { api, value, conversion, stopSending, denomination, psbt, currencyRates, error, network, fee } = this.props;
     const { denomAmount, satsAmount, signing, payee, choosingSignMethod, signMethod } = this.state;
 
     const signReady = (this.state.ready && (parseInt(this.state.satsAmount) > 0)) && !signing;
@@ -210,6 +210,7 @@ export default class Send extends Component {
           network={network}
           api={api}
           psbt={psbt}
+          fee={fee}
           currencyRates={currencyRates}
           stopSending={stopSending}
           payee={payee}

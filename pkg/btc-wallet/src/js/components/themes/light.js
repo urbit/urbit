@@ -98,6 +98,7 @@ const theme = {
 
     green: base.green,
     lightGreen: scales.green30,
+    midGreen: scales.green60,
     washedGreen: scales.green10,
     veryLightGreen: scales.green05,
 
