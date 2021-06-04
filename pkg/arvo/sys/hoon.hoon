@@ -10945,11 +10945,11 @@
           ^$(sut q.sut, lon [~ lon], p.heg +(p.heg))
         ?.  =(0 p.heg)
           next(p.heg (dec p.heg))
-        =^  por  grub  (seek u.u.tyr)
-        =/  tor  q.por
+        =^  tor  grub  (caching-fund way u.u.tyr)
         :_  grub
         ?-  -.tor
-          %&  [p.por %& (weld p.p.tor `vein`[~ `1 lon]) q.p.tor]
+          %&  :-  `(lent p.p.tor)
+              [%& (weld p.p.tor `vein`[~ `1 lon]) q.p.tor]
           %|  `[%| %| p.p.tor (comb [%0 1] q.p.tor)]
         ==
         ++  next
@@ -11068,29 +11068,6 @@
         =?  p.palo  ?=(^ skip)
           (weld (scag u.skip vein) p.palo)
         [%& palo]
-      ::
-      ++  seek
-      |=  gen=hoon
-      ^-  [(pair (unit @) port) _grub]
-      =/  hup  ~(reek ap gen)
-      ?~  hup
-        =^  rig  grub  (caching-mint %noun gen)
-        :_  grub
-        `[%| rig]
-      ~_  (show [%c %seek] %l u.hup)
-      =^  val  grub  ^^^$(hyp u.hup)
-      :_  grub
-      ?@  val  !!
-      ?-    -.val
-          %&
-        [`(lent p.p.val) %& p.val]
-      ::
-          %|
-        ?-  -.p.val
-          %|  `[%| p.p.val]
-          %&  !!
-        ==
-      ==
       --
     ==
   ::
