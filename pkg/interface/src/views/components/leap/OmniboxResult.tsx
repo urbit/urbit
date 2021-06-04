@@ -40,7 +40,9 @@ interface OmniboxResultProps {
   setSelection: () =>  void;
   subtext: string;
   text: string;
-  shift?: string;
+  shiftLink?: string;
+  shiftDescription?: string;
+  description?: string;
 }
 
 interface OmniboxResultState {
