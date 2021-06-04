@@ -676,7 +676,7 @@
     =/  result=(unit marked-graph:store)
       (~(get by graphs) [ship term])
     ?~  result  [~ ~]
-    ``noun+!>(q.u.result)
+    ``noun+!>(`(unit mark)`q.u.result)
   ::
       [%x %keys ~]
     :-  ~  :-  ~  :-  %graph-update-2
@@ -745,7 +745,7 @@
       (turn t.t.t.t.path (cury slav %ud))
     =/  node=(unit node:store)
       (get-node ship term index)
-    ``noun+!>(?=(^ node))
+    ``noun+!>(`?`?=(^ node))
   ::
       [%x %node @ @ @ *]
     =/  =ship  (slav %p i.t.t.path)
@@ -973,14 +973,14 @@
     =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
     ?~  update-log  [~ ~]
     ::  orm-log is ordered backwards, so swap start and end
-    ``noun+!>((lot:orm-log u.update-log end start))
+    ``noun+!>(`update-log:store`(lot:orm-log u.update-log end start))
   ::
       [%x %update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
     =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
     ?~  update-log  [~ ~]
-    ``noun+!>(u.update-log)
+    ``noun+!>(`update-log:store`u.update-log)
   ::
       [%x %peek-update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
