@@ -329,7 +329,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
               );
             const sel = selected?.length ? selected[1] : '';
             return (
-              <Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
+              <Box key={i} width='max(50vw, 300px)' maxWidth='700px'>
                 {categoryTitle}
                 {categoryResults.sort(sortResults).map((result, i2) => (
                   <OmniboxResult
@@ -338,6 +338,9 @@ export function Omnibox(props: OmniboxProps): ReactElement {
                     icon={result.app}
                     text={result.title}
                     subtext={result.host}
+                    shiftLink={result.shiftLink}
+                    shiftDescription={result.shiftDescription}
+                    description={result.description}
                     link={result.link}
                     cursor={leapCursor}
                     navigate={() => navigate(result.app, result.link, false)}
@@ -366,9 +369,9 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       >
         <Row justifyContent='center'>
           <Box
-            mt={['10vh', '20vh']}
+            mt={['10vh', '15vh']}
             width='max(50vw, 300px)'
-            maxWidth='600px'
+            maxWidth='700px'
             borderRadius={2}
             backgroundColor='white'
             ref={(el) => {

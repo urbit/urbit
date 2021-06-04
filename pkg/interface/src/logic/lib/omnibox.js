@@ -11,19 +11,23 @@ const makeIndexes = () => new Map([
   ]);
 
 // result schematic
-const result = function(title, link, app, host) {
+const result = function(title, link, app, host, description = 'Open', shiftLink = null, shiftDescription = null) {
   return {
     'title': title,
     'link': link,
     'app': app,
-    'host': host
+    'host': host,
+    'description': description,
+    'shiftLink': shiftLink,
+    'shiftDescription': shiftDescription
+
   };
 };
 
 const shipIndex = function(contacts) {
   const ships = [];
   Object.keys(contacts).map((e) => {
-    return ships.push(result(e, `/~profile/${e}`, 'profile', contacts[e]?.status || ''));
+    return ships.push(result(e, `/~profile/${e}`, 'profile', contacts[e]?.status || '', 'Open Profile', `/~landscape/messages/dm/${e}`, 'Send Message'));
   });
   return ships;
 };
