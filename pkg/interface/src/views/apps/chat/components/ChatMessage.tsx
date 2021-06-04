@@ -329,9 +329,11 @@ const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink }) => {
               <MessageActionItem onClick={() => onReply(msg)}>
                 Reply
               </MessageActionItem>
-              <MessageActionItem onClick={doCopy}>
-                {copyDisplay}
-              </MessageActionItem>
+              {permalink ? (
+                <MessageActionItem onClick={doCopy}>
+                  {copyDisplay}
+                </MessageActionItem>
+              ) : null }
               {(isAdmin || isOwn()) ? (
                 <MessageActionItem onClick={e => onDelete(msg)} color='red'>
                   Delete Message
@@ -380,6 +382,7 @@ interface ChatMessageProps {
   isLastRead?: boolean;
   permalink?: string;
   transcluded?: number;
+  isAdmin?: boolean;
   className?: string;
   isPending?: boolean;
   style?: unknown;
@@ -405,6 +408,7 @@ function ChatMessage(props: ChatMessageProps) {
     isPending = false,
     style,
     isLastMessage,
+    isAdmin,
     api,
     showOurContact,
     hideHover,
@@ -469,7 +473,8 @@ function ChatMessage(props: ChatMessageProps) {
     hideHover,
     transcluded,
     onReply,
-    onDelete
+    onDelete,
+    isAdmin
   };
 
   const message = useMemo(() => (

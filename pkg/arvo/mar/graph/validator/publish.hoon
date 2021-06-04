@@ -3,6 +3,44 @@
 ++  grow
   |%
   ++  noun  i
+  ::
+  ++  graph-indexed-post
+    ^-  indexed-post
+    ?+    index.p.i  !!
+    ::  top level post must have no content
+        [@ ~]
+      ?>  ?=(~ contents.p.i)
+      i
+    ::  container for revisions
+    ::
+        [@ %1 ~]  
+      ?>  ?=(~ contents.p.i)
+      i
+    ::  specific revision
+    ::  first content is the title
+    ::  revisions are numbered by the revision count
+    ::  starting at one
+        [@ %1 @ ~]
+      ?>  ?=([* * *] contents.p.i)
+      ?>  ?=(%text -.i.contents.p.i)
+      i
+    ::  container for comments
+    ::
+        [@ %2 ~]
+      ?>  ?=(~ contents.p.i)
+      i
+    ::  container for comment revisions
+    ::
+        [@ %2 @ ~]
+      ?>  ?=(~ contents.p.i)
+      i
+    ::  specific comment revision
+    ::
+        [@ %2 @ @ ~]
+      ?>  ?=(^ contents.p.i)
+      i
+    ==
+  ::
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
     ^-  permissions:graph
@@ -55,45 +93,7 @@
   --
 ++  grab
   |%
-  :: +noun: validate publish note
-  :: 
-  ++  noun
-    |:  p=`*`%*(. *indexed-post index.p [0 ~])
-    =/  ip  ;;(indexed-post p)
-    ?+    index.p.ip  !!
-    ::  top level post must have no content
-        [@ ~]
-      ?>  ?=(~ contents.p.ip)
-      ip
-    ::  container for revisions
-    ::
-        [@ %1 ~]  
-      ?>  ?=(~ contents.p.ip)
-      ip
-    ::  specific revision
-    ::  first content is the title
-    ::  revisions are numbered by the revision count
-    ::  starting at one
-        [@ %1 @ ~]
-      ?>  ?=([* * *] contents.p.ip)
-      ?>  ?=(%text -.i.contents.p.ip)
-      ip
-    ::  container for comments
-    ::
-        [@ %2 ~]
-      ?>  ?=(~ contents.p.ip)
-      ip
-    ::  container for comment revisions
-    ::
-        [@ %2 @ ~]
-      ?>  ?=(~ contents.p.ip)
-      ip
-    ::  specific comment revision
-    ::
-        [@ %2 @ @ ~]
-      ?>  ?=(^ contents.p.ip)
-      ip
-    ==
+  ++  noun  indexed-post
   --
 ::
 ++  grad  %noun

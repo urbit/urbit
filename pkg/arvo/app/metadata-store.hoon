@@ -200,22 +200,21 @@
         [%x %associations ~]      ``noun+!>(associations)
         [%x %app-name @ ~]
       =/  =app-name:store  i.t.t.path
-      ``noun+!>((metadata-for-app:mc app-name))
+      ``noun+!>(`associations:store`(metadata-for-app:mc app-name))
     ::
         [%x %group *]
       =/  group=resource  (de-path:resource t.t.path)
-      ``noun+!>((metadata-for-group:mc group))
+      ``noun+!>(`associations:store`(metadata-for-group:mc group))
     ::
         [%x %metadata @ @ @ @ ~]
       =/  =md-resource:store
         [i.t.t.path (de-path:resource t.t.t.path)]
-      ``noun+!>((~(get by associations) md-resource))
+      ``noun+!>(`(unit association:store)`(~(get by associations) md-resource))
     ::
         [%x %resource @ *]
       =/  app=term        i.t.t.path
       =/  rid=resource    (de-path:resource t.t.t.path)
-      ``noun+!>((~(get by resource-indices) [app rid]))
-      
+      ``noun+!>(`(unit resource)`(~(get by resource-indices) [app rid]))
     ::
         [%x %export ~]
       ``noun+!>(-.state)
@@ -501,7 +500,7 @@
 ::
 ++  metadata-for-app
   |=  =app-name:store
-  ^+  associations
+  ^-  associations:store
   %+  roll  ~(tap in (~(gut by app-indices) app-name ~))
   |=  [[group=resource rid=resource] out=associations:store]
   =/  =md-resource:store
@@ -512,6 +511,7 @@
 ::
 ++  metadata-for-group
   |=  group=resource
+  ^-  associations:store
   =/  resources=(set md-resource:store)
     (~(get ju group-indices) group)
   %+  roll

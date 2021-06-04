@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Box, Col, Row, Text } from '@tlon/indigo-react';
+import { Box, Row, Text } from '@tlon/indigo-react';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import Author from '~/views/components/Author';
 import GlobalApi from '~/logic/api/global';
@@ -23,8 +23,12 @@ export function PendingDm(props: { ship: string; api: GlobalApi }) {
       bg="washedGray"
       borderRadius="2"
       gridTemplateColumns={['1fr 24px', '1fr 200px']}
+      gridRowGap={2}
       gridTemplateRows="auto"
-      gridTemplateAreas="'header actions' 'main main'"
+      gridTemplateAreas={[
+        '\'header header\' \'actions actions\'',
+        '\'header actions\' \'main main\''
+      ]}
       p={2}
       m={2}
     >
@@ -40,10 +44,17 @@ export function PendingDm(props: { ship: string; api: GlobalApi }) {
         gridArea="actions"
         justifyContent="flex-end"
       >
-        <StatelessAsyncAction height="auto" primary p="1" onClick={onAccept}>
+        <StatelessAsyncAction
+          backgroundColor="white"
+          height="auto"
+          primary
+          p="1"
+          onClick={onAccept}
+        >
           Accept
         </StatelessAsyncAction>
         <StatelessAsyncAction
+          backgroundColor="white"
           height="auto"
           destructive
           p="1"

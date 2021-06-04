@@ -26,12 +26,18 @@
       state-one
   ==
 ::
++$  cached-transform
+  $-([index:store post:store atom ?] [index:store post:store])
+::
++$  cached-permission
+  $-(indexed-post:store $-(vip-metadata:metadata permissions:store))
+::
 ::  TODO: come back to this and potentially use send a %t
 ::  to be notified of validator changes
 +$  cache
   $:  graph-to-mark=(map resource:res (unit mark))
-      perm-marks=(map [mark @tas] tube:clay)
-      transform-marks=(map mark tube:clay)
+      perm-marks=(map [mark @tas] cached-permission)
+      transform-marks=(map mark cached-transform)
   ==
 ::
 +$  inflated-state
@@ -41,8 +47,8 @@
 ::
 +$  cache-action
   $%  [%graph-to-mark (pair resource:res (unit mark))]
-      [%perm-marks (pair (pair mark @tas) tube:clay)]
-      [%transform-marks (pair mark tube:clay)]
+      [%perm-marks (pair (pair mark @tas) cached-permission)]
+      [%transform-marks (pair mark cached-transform)]
   ==
 --
 ::
@@ -138,12 +144,12 @@
     ++  $
       ^-  (quip card (unit vase))
       =/  transform-cached  (~(has by transform-marks) u.mark)
-      =/  =tube:clay
+      =/  transform=cached-transform
         ?:  transform-cached
           (~(got by transform-marks) u.mark)
-        .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
-      =/  transform
-        !<  $-([index:store post:store atom ?] [index:store post:store])
+        =/  =tube:clay
+          .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
+        !<  cached-transform
         %.  !>(*indexed-post:store)
         tube
       =/  [* result=(list [index:store node:store])]
@@ -153,7 +159,9 @@
       =.  nodes.q.update
         %-  ~(gas by *(map index:store node:store))
         result
-      :_  [~ !>(update)]
+      :_  :-  ~
+          !>  ^-  update:store
+          update
       %+  weld  cards
       %-  zing
       :~  ?:  mark-cached   ~
@@ -166,7 +174,7 @@
           :_  ~
           %+  poke-self:pass:io  %graph-cache-hook
           !>  ^-  cache-action
-          [%transform-marks u.mark tube]
+          [%transform-marks u.mark transform]
       ==
     ::
     ++  flatten-node-map
@@ -317,14 +325,11 @@
     [[%no %no %no] ~]
   =/  key  [u.mark (perm-mark-name perm)]
   =/  perms-cached  (~(has by perm-marks.cache) key)
-  =/  =tube:clay
+  =/  convert
     ?:  perms-cached
       (~(got by perm-marks.cache) key)
-    .^(tube:clay (scry %cc %home /[u.mark]/(perm-mark-name perm)))
-  =/  check
-    !<  $-(vip-metadata:metadata permissions:store)
-    (tube !>(indexed-post))
-  :-  (check vip)
+    .^(cached-permission (scry %cf %home /[u.mark]/(perm-mark-name perm)))
+  :-  ((convert indexed-post) vip)
   %-  zing
   :~  ?:  mark-cached   ~
       :_  ~
@@ -336,7 +341,7 @@
       :_  ~
       %+  poke-self:pass:io  %graph-cache-hook
       !>  ^-  cache-action
-      [%perm-marks [u.mark (perm-mark-name perm)] tube]
+      [%perm-marks [u.mark (perm-mark-name perm)] convert]
   ==
   ::
   ++  perm-mark-name

@@ -76,9 +76,9 @@ export default class Send extends Component {
         let high = estimates.length - 1;
         this.setState({
           feeChoices: {
-            low: [30, n.estimates[30]["sat_per_vbyte"]],
+            high: [30, n.estimates[30]["sat_per_vbyte"]],
             mid: [180, n.estimates[180]["sat_per_vbyte"]],
-            high: [360, n.estimates[360]["sat_per_vbyte"]],
+            low: [360, n.estimates[360]["sat_per_vbyte"]],
           }
         });
       })
@@ -198,7 +198,7 @@ export default class Send extends Component {
     }
 
 
-    const { api, value, conversion, stopSending, denomination, psbt, currencyRates, error, network } = this.props;
+    const { api, value, conversion, stopSending, denomination, psbt, currencyRates, error, network, fee } = this.props;
     const { denomAmount, satsAmount, signing, payee, choosingSignMethod, signMethod } = this.state;
 
     const signReady = (this.state.ready && (parseInt(this.state.satsAmount) > 0)) && !signing;
@@ -210,6 +210,7 @@ export default class Send extends Component {
           network={network}
           api={api}
           psbt={psbt}
+          fee={fee}
           currencyRates={currencyRates}
           stopSending={stopSending}
           payee={payee}
@@ -223,6 +224,7 @@ export default class Send extends Component {
           state={this.props.state}
           api={api}
           psbt={psbt}
+          fee={fee}
           currencyRates={currencyRates}
           stopSending={stopSending}
           payee={payee}
