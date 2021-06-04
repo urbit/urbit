@@ -3,11 +3,12 @@ import { Group } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
 import { StoreState } from '~/logic/store/type';
+import {Titlebar} from '~/views/components/Titlebar';
 import useGroupState from '../../../logic/state/group';
 import { LinkBlocks } from './components/LinkBlocks';
 import { LinkDetail } from './components/LinkDetail';
@@ -49,9 +50,21 @@ export function LinkResource(props: LinkResourceProps) {
   }, [association]);
 
   const resourceUrl = `${baseUrl}/resource/link${rid}`;
-  if (!graph) {
+  if (!graph || !resource) {
     return <Center width='100%' height='100%'><LoadingSpinner /></Center>;
   }
+  const { title, description } = resource.metadata;
+
+  const titlebar = (url: string, grid: boolean, back?: string) => (
+    <Titlebar back={back} title={title} description={description} workspace={baseUrl} baseUrl={resourceUrl} >
+      <Link to={`${url}/${grid ? 'list' : 'grid'}`}>
+        <Text bold pr='3' color='blue'>
+          Switch to {!grid ? 'grid' : 'list' }
+        </Text>
+      </Link>
+
+    </Titlebar>
+  );
 
   return (
     <Col alignItems="center" height="100%" width="100%" overflowY="hidden">
@@ -62,19 +75,22 @@ export function LinkResource(props: LinkResourceProps) {
           path={relativePath('/list')}
           render={(props) => {
             return (
-              // @ts-ignore withState typings
-              <LinkWindow
-                key={rid}
-                association={resource}
-                resource={resourcePath}
-                graph={graph}
-                baseUrl={resourceUrl}
-                group={group as Group}
-                path={resource.group}
-                pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
-                api={api}
-                mb={3}
-              />
+              <Col height="100%" width="100%">
+                {titlebar(relativePath(''), false)}
+                {/* @ts-ignore withState typings*/}
+                <LinkWindow
+                  key={rid}
+                  association={resource}
+                  resource={resourcePath}
+                  graph={graph}
+                  baseUrl={resourceUrl}
+                  group={group as Group}
+                  path={resource.group}
+                  pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
+                  api={api}
+                  mb={3}
+                />
+            </Col>
             );
           }}
         />
@@ -83,8 +99,10 @@ export function LinkResource(props: LinkResourceProps) {
           path={relativePath('/grid')}
           render={(props) => {
             return (
-              // @ts-ignore wip
-              <LinkBlocks graph={graph} />
+              <Col height="100%" width="100%">
+                {titlebar(relativePath(''), true)}
+                <LinkBlocks graph={graph} association={resource} api={api} />
+              </Col>
             );
           }}
         />
@@ -111,12 +129,17 @@ export function LinkResource(props: LinkResourceProps) {
                 </Col>
               );
             }
+            const { pathname } = props.location;
             return (
-              <LinkDetail
-                node={node}
-                association={association}
-                api={api}
-              />
+              <Col height="100%" width="100%">
+                {titlebar(relativePath()}
+                <LinkDetail
+                  node={node}
+                  association={association}
+                  api={api}
+                  baseUrl={pathname}
+                />
+              </Col>
             );
           }}
         />

@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback, useRef, useState } from 'react';
-import { Box, Text } from '@tlon/indigo-react';
+import { Icon, Box, Text } from '@tlon/indigo-react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import RichText from '~/views/components/RichText';
@@ -12,6 +12,8 @@ interface TitlebarProps {
   title: string;
   monoDescription?: boolean;
   workspace: string;
+  baseUrl: string;
+  back?: string;
 }
 
 const TruncatedText = styled(RichText)`
@@ -21,12 +23,17 @@ const TruncatedText = styled(RichText)`
 `;
 
 export function Titlebar(props: TitlebarProps) {
-  const { workspace, monoDescription = false } = props;
+  const { workspace, monoDescription = false, baseUrl, children, back } = props;
   const [actionsWidth, setActionsWidth] = useState(0);
   const bind = useResize<HTMLDivElement>(
     useCallback((entry) => {
       setActionsWidth(entry.borderBoxSize[0].inlineSize);
     }, [])
+  );
+  const menuControl = (
+    <Link to={`${baseUrl}/settings`}>
+      <Icon icon="Menu" color="gray" pr={2} />
+    </Link>
   );
 
   const title = (
@@ -71,9 +78,9 @@ export function Titlebar(props: TitlebarProps) {
       mr="12px"
       my={1}
       flexShrink={0}
-      display={['block', 'none']}
+      display={back ? 'block' : ['block', 'none']}
     >
-      <Link to={`/~landscape${workspace}`}>
+      <Link to={back || `/~landscape${workspace}`}>
         <Text>{'<- Back'}</Text>
       </Link>
     </Box>
@@ -102,8 +109,8 @@ export function Titlebar(props: TitlebarProps) {
         {description}
       </Box>
       <Box ml={3} display="flex" alignItems="center" flexShrink={0} {...bind}>
-        {ExtraControls()}
-        <MenuControl />
+        {children}
+        {menuControl}
       </Box>
     </Box>
   );

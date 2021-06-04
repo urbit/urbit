@@ -1,55 +1,75 @@
-import React, { ChangeEvent, useCallback, useRef, useState } from 'react';
-import { BaseInput, Box, Label, Button } from '@tlon/indigo-react';
+import React, { useCallback, useState } from 'react';
+import { Box, LoadingSpinner, Action, Row } from '@tlon/indigo-react';
 
-import {
-  Prompt,
-  ClearButton,
-  UploadingStatus,
-  ErrorRetry,
-} from '~/views/components/ImageInput';
 import useStorage from '~/logic/lib/useStorage';
+import { StatelessUrlInput } from '~/views/components/StatelessUrlInput';
+import { Association, GraphNode, resourceFromPath } from '@urbit/api';
+import { createPost } from '~/logic/api/graph';
+import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
+import GlobalApi from '~/logic/api/global';
 
 interface LinkBlockInputProps {
   size: string;
-  label: string;
-  caption: string;
-  id: string;
   url?: string;
+  api: GlobalApi;
+  association: Association;
 }
 export function LinkBlockInput(props: LinkBlockInputProps) {
-  const { id, size, label, caption } = props;
+  const { size, association, api } = props;
   const [url, setUrl] = useState(props.url || '');
   const [error, setError] = useState<string | undefined>();
+  const [disabled, setDisabled] = useState(false);
+  const [valid, setValid] = useState(false);
+  const [focussed, setFocussed] = useState(false);
 
-  const onUrlChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setUrl(e.target.value);
+  const { uploading, canUpload, promptUpload } = useStorage();
+
+  const onFocus = useCallback(() => {
+    setFocussed(true);
   }, []);
 
-  const ref = useRef<HTMLInputElement>();
-
-  const clickUploadButton = useCallback(() => {
-    ref.current?.click();
-  }, [ref]);
-
-  const { uploading, canUpload, uploadDefault } = useStorage();
-
-  const clearEvt = useCallback(() => {
-    setUrl('');
+  const onBlur = useCallback(() => {
+    setFocussed(false);
   }, []);
 
-  const onImageUpload = useCallback(async () => {
-    const file = ref.current?.files?.item(0);
+  const URLparser = new RegExp(
+    /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
+  );
 
-    if (!file || !canUpload) {
+  const handleChange = useCallback((val: string) => {
+    setUrl(val);
+    setValid(URLparser.test(val));
+  }, []);
+
+  const doPost = () => {
+    const text = '';
+    const { ship, name } = resourceFromPath(association.resource);
+    if (!(valid || url)) {
       return;
     }
-    try {
-      const url = await uploadDefault(file);
-      setUrl(url);
-    } catch (e) {
-      setError(e.message);
-    }
-  }, [ref.current, uploadDefault, canUpload]);
+    const contents = url.startsWith('web+urbitgraph:/')
+      ? [{ text }, permalinkToReference(parsePermalink(url)!)]
+      : [{ text }, { url }];
+
+    setDisabled(true);
+    const post = createPost(contents);
+
+    api.graph.addPost(ship, name, post).then(() => {
+      setDisabled(false);
+      setUrl('');
+      setValid(false);
+    });
+  };
+
+  const onKeyPress = useCallback(
+    (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        doPost();
+      }
+    },
+    [doPost]
+  );
 
   return (
     <Box
@@ -65,47 +85,45 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
       p="2"
       position="relative"
     >
-      {label ? <Label htmlFor={id}>{label}</Label> : null}
-      {caption ? (
-        <Label mt={2} gray>
-          {caption}
-        </Label>
-      ) : null}
-      <BaseInput
-        width="100%"
-        type={'text'}
-        lineHeight="tall"
-        backgroundColor="white"
-        color="black"
-        fontFamily="sans"
-        fontWeight="500"
-        fontSize="1"
-        flexGrow={1}
-        onChange={onUrlChange}
-        value={url}
-      />
-      <Prompt
-        left={2}
-        meta={{} as any}
-        uploading={false}
-        value={url}
-        clickUploadButton={clickUploadButton}
-      />
-      <UploadingStatus uploading={uploading} error={error} />
-      <ErrorRetry error={error} onClick={clickUploadButton} />
-      {canUpload && (
-        <>
-          <Button display="none" onClick={clickUploadButton} />
-          <BaseInput
-            style={{ display: 'none' }}
-            type="file"
-            id="fileElement"
-            ref={ref}
-            accept="image/*"
-            onChange={onImageUpload}
-          />
-        </>
+      {uploading ? (
+        <Box
+          display="flex"
+          width="100%"
+          height="100%"
+          position="absolute"
+          left={0}
+          right={0}
+          bg="white"
+          zIndex={9}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <LoadingSpinner />
+        </Box>
+      ) : (
+        <StatelessUrlInput
+          value={url}
+          onChange={handleChange}
+          canUpload={canUpload}
+          onFocus={onFocus}
+          focussed={focussed}
+          onBlur={onBlur}
+          promptUpload={promptUpload}
+          onKeyPress={onKeyPress}
+          placeholderOffset="-10px"
+        />
       )}
+      <Row
+        position="absolute"
+        right="0"
+        bottom="0"
+        p="2"
+        justifyContent="row-end"
+      >
+        <Action onClick={doPost} disabled={!valid} backgroundColor="white">
+          Post
+        </Action>
+      </Row>
     </Box>
   );
 }

@@ -13,14 +13,18 @@ export function AudioPlayer(props: { url: string; title?: string }) {
 
   const [playing, setPlaying] = useState(false);
 
-  const playPause = useCallback(() => {
-    if (playing) {
-      ref.current.pause();
-    } else {
-      ref.current.play();
-    }
-    setPlaying(p => !p);
-  }, [ref, playing]);
+  const playPause = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (playing) {
+        ref.current.pause();
+      } else {
+        ref.current.play();
+      }
+      setPlaying((p) => !p);
+    },
+    [ref, playing]
+  );
 
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState(0);

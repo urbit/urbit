@@ -1,15 +1,19 @@
 import { Col, Row, Text } from '@tlon/indigo-react';
-import { Graph } from '@urbit/api';
+import { Association, Graph } from '@urbit/api';
 import React, { useCallback, useState } from 'react';
 import _ from 'lodash';
 import { useResize } from '~/logic/lib/useResize';
 import { LinkBlockItem } from './LinkBlockItem';
 import { LinkBlockInput } from './LinkBlockInput';
+import GlobalApi from '~/logic/api/global';
 
 export interface LinkBlocksProps {
   graph: Graph;
+  association: Association;
+  api: GlobalApi;
 }
 export function LinkBlocks(props: LinkBlocksProps) {
+  const { association, api } = props;
   const [linkSize, setLinkSize] = useState(250);
   const linkSizePx = `${linkSize}px`;
   const bind = useResize<HTMLDivElement>(
@@ -25,10 +29,16 @@ export function LinkBlocks(props: LinkBlocksProps) {
   return (
     <Col overflowY="auto" width="100%" height="100%" {...bind}>
       {chunks.map((chunk, idx) => (
-        <Row key={idx} mt="2" px="2" gapX="2" height={linkSizePx}>
+        <Row key={idx} my="2" px="2" gapX="2" height={linkSizePx}>
           {chunk.map((block) => {
             if (!block) {
-              return <LinkBlockInput size={linkSizePx} />;
+              return (
+                <LinkBlockInput
+                  size={linkSizePx}
+                  association={association}
+                  api={api}
+                />
+              );
             }
             const [i, node] = block;
             return typeof node.post === 'string' ? (
@@ -39,7 +49,7 @@ export function LinkBlocks(props: LinkBlocksProps) {
                 height={linkSizePx}
                 width={linkSizePx}
               >
-                <Text> This link has been deleted</Text>
+                <Text>This link has been deleted</Text>
               </Col>
             ) : (
               <LinkBlockItem

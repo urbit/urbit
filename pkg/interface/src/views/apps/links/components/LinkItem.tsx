@@ -129,7 +129,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
         overflow="hidden"
         onClick={markRead}
       >
-        <Text p={2}>{contents[0].text}</Text>
+        {contents[0].text ? <Text p={2}>{contents[0].text}</Text> : null}
         { 'reference' in contents[1] ? (
           <>
             <Rule />
@@ -188,7 +188,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
       />
       <Box ml="auto">
         <Link
-          to={node.post.pending ? '#' : `${baseUrl}/index/${index}`}
+          to={node.post.pending ? '#' : `${baseUrl}/list/index/${index}`}
           style={{ cursor: node.post.pending ? 'default' : 'pointer' }}
         >
         <Box display='flex'>

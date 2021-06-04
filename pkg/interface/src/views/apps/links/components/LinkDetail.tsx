@@ -11,6 +11,7 @@ export interface LinkDetailProps {
   node: GraphNode;
   api: GlobalApi;
   association: Association;
+  baseUrl: string;
 }
 
 export function LinkDetail(props: LinkDetailProps) {
@@ -20,9 +21,9 @@ export function LinkDetail(props: LinkDetailProps) {
   const [{ text: title }, { url }] = post.contents as [TextContent, UrlContent];
   // XX deletion state, also typings
   return (
-    <Row height="100%" width="100%">
+    <Row flexDirection={['column', 'column', 'row']} height="100%" width="100%">
       <LinkBlockItem
-        size={['128px', '256px', 'min(55vw, 80vh)']}
+        size={['100%', '100%', 'min(55vw, 80vh)']}
         border={0}
         node={node}
       />
@@ -39,11 +40,17 @@ export function LinkDetail(props: LinkDetailProps) {
             date={post['time-sent']}
           />
         </Col>
-        <Col overflowY="auto" borderTop="1" borderTopColor="lightGray" p="4">
+        <Col
+          height="100%"
+          overflowY="auto"
+          borderTop="1"
+          borderTopColor="lightGray"
+          p="4"
+        >
           <Comments
             association={association}
             comments={node}
-            baseUrl=""
+            baseUrl={props.baseUrl}
             api={api}
             group={group}
           />

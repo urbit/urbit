@@ -6,6 +6,7 @@ import { createPost } from '~/logic/api/graph';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import useStorage from '~/logic/lib/useStorage';
+import {StatelessUrlInput} from '~/views/components/StatelessUrlInput';
 import SubmitDragger from '~/views/components/SubmitDragger';
 
 interface LinkSubmitProps {
@@ -136,25 +137,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     }
   };
 
-  const placeholder = <Text
-    gray
-    position="absolute"
-    px={2}
-    pt={2}
-    style={{ pointerEvents: 'none' }}
-                      >{canUpload
-    ? <>
-      Drop or{' '}
-      <Text
-        cursor='pointer'
-        color='blue'
-        style={{ pointerEvents: 'all' }}
-        onClick={() => promptUpload().then(setLinkValue)}
-      >upload</Text>
-      {' '}a file, or paste a link here
-      </>
-    : 'Paste a link here'
-    }</Text>;
+
 
   return (
     <>
@@ -182,26 +165,17 @@ const LinkSubmit = (props: LinkSubmitProps) => {
                       >
           <LoadingSpinner />
         </Box>}
-        {dragging && <SubmitDragger />}
-        <Box position='relative'>
-          {!(linkValue || urlFocused || disabled) && placeholder}
-          <BaseInput
-            type="url"
-            pl={2}
-            width="100%"
-            py={2}
-            color="black"
-            backgroundColor="transparent"
-            onChange={e => onLinkChange(e.target.value)}
-            onBlur={() => [setUrlFocused(false), setSubmitFocused(false)]}
-            onFocus={() => [setUrlFocused(true), setSubmitFocused(true)]}
-            spellCheck="false"
-            // @ts-ignore archaic event type mismatch error
-            onPaste={onPaste}
-            onKeyPress={onKeyPress}
-            value={linkValue}
-          />
-        </Box>
+  {dragging && <SubmitDragger />}
+      <StatelessUrlInput
+        value={linkValue}
+        promptUpload={promptUpload}
+        canUpload={canUpload}
+        onSubmit={doPost}
+        onChange={setLinkValue}
+        error={linkValid ? 'Invalid URL' : undefined}
+        onKeyPress={onKeyPress}
+        onPaste={onPaste}
+      />
         <BaseInput
           type="text"
           pl={2}

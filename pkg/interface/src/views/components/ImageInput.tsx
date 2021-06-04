@@ -22,9 +22,10 @@ export const Prompt = ({
   value,
   uploading,
   meta,
+  focussed = false,
   clickUploadButton,
 }) => {
-  if (!value && !uploading && meta.error === undefined) {
+  if (!value && !uploading && meta.error === undefined && !focussed) {
     return (
       <Text
         gray
@@ -52,7 +53,7 @@ export const Prompt = ({
 };
 
 export const UploadingStatus = ({ uploading, error }) => {
-  if (uploading && rror === undefined) {
+  if (uploading && error === undefined) {
     return (
       <Text position="absolute" left={2} top={2} gray>
         Uploading...
