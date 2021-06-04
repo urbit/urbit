@@ -11,6 +11,22 @@ import useHarkState from '~/logic/state/hark';
 import useLaunchState from '~/logic/state/launch';
 import useInviteState from '~/logic/state/invite';
 
+function OmniboxResultChord(props: {
+  label: string;
+  modifier?: string;
+
+}) {
+  const { label, modifier } = props;
+
+  return (
+    <Text display={['none', 'inline']} color="white" ml="2">
+      {label}
+      { modifier ? (<Text display="inline-block" ml="1" p="1" borderRadius="1" color="blue" backgroundColor="white">{modifier}</Text>) : null}
+      <Text display="inline-block" ml="1" color="blue" borderRadius="1" p="1" backgroundColor="white">↩</Text>
+    </Text>
+  );
+}
+
 interface OmniboxResultProps {
   contacts: Contacts;
   cursor: string;
@@ -24,6 +40,7 @@ interface OmniboxResultProps {
   setSelection: () =>  void;
   subtext: string;
   text: string;
+  shift?: string;
 }
 
 interface OmniboxResultState {
@@ -230,7 +247,10 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
       notificationsCount,
       runtimeLag,
       contacts,
-      setSelection
+      setSelection,
+      shiftDescription,
+      description = 'Go',
+      shiftLink
     } = this.props;
 
     const color = contacts?.[text]
@@ -249,8 +269,7 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
 
     return (
       <Row
-        py={2}
-        px={2}
+        p={1}
         cursor={cursor}
         onMouseMove={() => setSelection()}
         onMouseLeave={() => this.setHover(false)}
@@ -259,6 +278,8 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
         }
         onClick={navigate}
         width='100%'
+        height="32px"
+        alignItems="center"
         justifyContent='space-between'
         // @ts-ignore indigo-react doesn't allow us to pass refs
         ref={this.result}
@@ -284,8 +305,9 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
             {text.startsWith('~') ? cite(text) : text}
           </Text>
         </Box>
+
         <Text
-          pr={2}
+          pr={1}
           display='inline-block'
           verticalAlign='middle'
           color={this.state.hovered || selected === link ? 'white' : 'black'}
@@ -294,10 +316,15 @@ export class OmniboxResult extends Component<OmniboxResultProps, OmniboxResultSt
           textOverflow='ellipsis'
           whiteSpace='pre'
           overflow='hidden'
-          maxWidth='40%'
+          maxWidth='60%'
           textAlign='right'
         >
-          {subtext}
+          {(selected === link) ? (
+            <>
+              <OmniboxResultChord label={description} />
+              {(shiftLink && shiftDescription) ? (<OmniboxResultChord label={shiftDescription} modifier="Shift" />) : null}
+            </>
+          ) : subtext}
         </Text>
       </Row>
     );
