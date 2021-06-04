@@ -64,37 +64,128 @@
    =^  f2  state  (n state (owner-changed:l1 ~sambud (addr %sambud-key-0)))
    [:(welp f1 f2) state]
 ::
-::  checks to see if a given proxy+event combo should work, assuming that
-::  the pk and nonce are correct
-::
-++  tx-succeed
-  |=  tx=tx:naive  ^-  ?
-  =*  prx  proxy.from.tx
-  ?:  =(prx %own)
-    %.y
-  ?:  =(prx %vote)
-    %.n
-  ?-  +<.tx
-    ?(%spawn %set-spawn-proxy)
-      ?+  prx      %.n
-        %spawn     %.y
-        %manage    %.n
-        %vote      %.n
-      ==
-    ?(%transfer-point %set-transfer-proxy)
-      ?+  prx      %.n
-        %spawn     %.n
-        %manage    %.n
-        %transfer  %.y
-      ==
-    :: TODO: how do i make the following two lines?
-    ?(%configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy)
-      ?+  prx      %.n
-        %spawn     %.n
-        %manage    %.y
-        %transfer  %.n
-      ==
+::  generates all possible transactions and maps them to whether they ought to succeed
+++  l2-event-gen
+  |%
+  +$  rank     ?(%galaxy %star %planet)
+  +$  tx-type  ?(%transfer-point %spawn %configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy %set-spawn-proxy %set-transfer-proxy)
+  +$  event    [=rank owner=? nonce=? =dominion:naive =proxy:naive =tx-type]
+  +$  tx-deck  (list event)
+  +$  succeed  (map tx-type ?)
+  ::
+  ++  make-tx-deck  ^-  tx-deck
+    =|  =tx-deck
+    =/  rank-i      1
+    |-
+    ?:  (gth rank-i 3)
+      tx-deck
+    =/  owner-i     0
+    |-
+    ?.  (lte owner-i 1)
+      ^$(rank-i +(rank-i))
+    =/  nonce-i     0
+    |-
+    ?.  (lte nonce-i 1)
+      ^$(owner-i +(owner-i))
+    =/  dominion-i  1
+    |-
+    ?.  (lte dominion-i 3)
+      ^$(nonce-i +(nonce-i))
+    =/  proxy-i     1
+    |-
+    ?.  (lte proxy-i 5)
+      ^$(dominion-i +(dominion-i))
+    =/  tx-type-i   1
+    |-
+    ?.  (lte tx-type-i 11)
+      ^$(proxy-i +(proxy-i))
+    %=  $
+      tx-type-i  +(tx-type-i)
+      tx-deck    [(num-to-rank rank-i) (num-to-flag owner-i) (num-to-flag nonce-i) (num-to-dominion dominion-i) (num-to-proxy proxy-i) (num-to-tx-type tx-type-i)]^tx-deck
     ==
+  ::
+  ++  num-to-flag
+    |=  val=@ud  ^-  ?
+    ?+  val  !!
+      %0  %.y
+      %1  %.n
+    ==
+  ::
+  ++  num-to-rank
+    |=  val=@ud  ^-  rank
+    ?+  val  !!
+      %1  %galaxy
+      %2  %star
+      %3  %planet
+    ==
+  ::
+  ++  num-to-dominion
+    |=  val=@ud  ^-  dominion:naive
+    ?+  val  !!
+      %1  %l1
+      %2  %l2
+      %3  %spawn
+    ==
+  ::
+  ++  num-to-proxy
+    |=  val=@ud  ^-  proxy:naive
+    ?+  val  !!
+      %1  %own
+      %2  %spawn
+      %3  %manage
+      %4  %vote
+      %5  %transfer
+    ==
+  ::
+  ++  num-to-tx-type
+    |=  val=@ud  ^-  tx-type
+    ?+  val  !!
+      %1   %transfer-point
+      %2   %spawn
+      %3   %configure-keys
+      %4   %escape
+      %5   %cancel-escape
+      %6   %adopt
+      %7   %reject
+      %8   %detach
+      %9   %set-management-proxy
+      %10  %set-spawn-proxy
+      %11  %set-transfer-proxy
+    ==
+  ::
+  ::  checks to see if a given proxy+event combo should work, assuming that
+  ::  the pk and nonce are correct
+  ::
+  ++  tx-succeed
+    |=  tx=tx:naive  ^-  ?
+    =*  prx  proxy.from.tx
+    ?:  =(prx %own)
+      %.y
+    ?:  =(prx %vote)
+      %.n
+    ?-  +<.tx
+      ?(%spawn %set-spawn-proxy)
+        ?+  prx      %.n
+          %spawn     %.y
+          %manage    %.n
+          %vote      %.n
+        ==
+      ?(%transfer-point %set-transfer-proxy)
+        ?+  prx      %.n
+          %spawn     %.n
+          %manage    %.n
+          %transfer  %.y
+        ==
+      :: TODO: how do i make the following two lines?
+      ?(%configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy)
+        ?+  prx      %.n
+          %spawn     %.n
+          %manage    %.y
+          %transfer  %.n
+        ==
+      ==
+  ::
+  --
 ::
 ++  l1
   |%
