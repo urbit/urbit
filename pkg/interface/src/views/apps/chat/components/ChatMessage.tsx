@@ -408,6 +408,7 @@ function ChatMessage(props: ChatMessageProps) {
     isPending = false,
     style,
     isLastMessage,
+    isAdmin,
     api,
     showOurContact,
     hideHover,
