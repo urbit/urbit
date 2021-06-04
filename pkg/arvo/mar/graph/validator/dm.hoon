@@ -3,6 +3,13 @@
 ++  grow
   |%
   ++  noun  i
+  ::
+  ++  graph-indexed-post
+    ^-  indexed-post
+    ?>  ?=(?([@ ~] [@ @ ~]) index.p.i)
+    ?>  (lth i.index.p.i (bex 128))
+    i
+  ::
   ++  notification-kind
     ^-  (unit notif-kind:hark)
     ?+  index.p.i  ~
@@ -12,12 +19,7 @@
   --
 ++  grab
   |%
-  ++  noun
-    |:  p=`*`%*(. *indexed-post index.p [0 0 ~])
-    =/  ip  ;;(indexed-post p)
-    ?>  ?=(?([@ ~] [@ @ ~]) index.p.ip)
-    ?>  (lth i.index.p.ip (bex 128))
-    ip
+  ++  noun  indexed-post
   --
 ::
 ++  grad  %noun

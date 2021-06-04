@@ -4,6 +4,28 @@
   |%
   ++  noun  i
   ::
+  ++  graph-indexed-post
+    ^-  indexed-post
+    ?+    index.p.i  ~|(index+index.p.i !!)
+        ::  top-level link post; title and url
+        ::
+        [@ ~]
+      ?>  ?=([[%text @] $%([%url @] [%reference *]) ~] contents.p.i)
+      i
+    ::
+        ::  comment on link post; container structure
+        ::
+        [@ @ ~]
+      ?>  ?=(~ contents.p.i)
+      i
+    ::
+        ::  comment on link post; comment text
+        ::
+        [@ @ @ ~]
+      ?>  ?=(^ contents.p.i)
+      i
+    ==
+  ::
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
     ^-  permissions:graph
@@ -48,28 +70,7 @@
   --
 ++  grab
   |%
-  ++  noun
-    |:  p=`*`%*(. *indexed-post index.p [0 0 ~])
-    =/  ip  ;;(indexed-post p)
-    ?+    index.p.ip  ~|(index+index.p.ip !!)
-        ::  top-level link post; title and url
-        ::
-        [@ ~]
-      ?>  ?=([[%text @] $%([%url @] [%reference *]) ~] contents.p.ip)
-      ip
-    ::
-        ::  comment on link post; container structure
-        ::
-        [@ @ ~]
-      ?>  ?=(~ contents.p.ip)
-      ip
-    ::
-        ::  comment on link post; comment text
-        ::
-        [@ @ @ ~]
-      ?>  ?=(^ contents.p.ip)
-      ip
-    ==
+  ++  noun  indexed-post
   --
 ++  grad  %noun
 --
