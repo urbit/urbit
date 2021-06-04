@@ -48,7 +48,7 @@ export default class Send extends Component {
       showModal: false,
       note: '',
       choosingSignMethod: false,
-      signMethod: 'Sign Transaction',
+      signMethod: 'bridge',
     };
 
     this.initPayment  = this.initPayment.bind(this);
@@ -86,7 +86,7 @@ export default class Send extends Component {
   }
 
   setSignMethod(signMethod) {
-    this.setState({signMethod});
+    this.setState({signMethod, choosingSignMethod: false});
   }
 
   checkPayee(e){
@@ -204,7 +204,7 @@ export default class Send extends Component {
     const signReady = (this.state.ready && (parseInt(this.state.satsAmount) > 0)) && !signing;
 
     let invoice = null;
-    if (signMethod === 'Sign Transaction') {
+    if (signMethod === 'masterTicket') {
       invoice =
         <Invoice
           network={network}
@@ -218,7 +218,7 @@ export default class Send extends Component {
           satsAmount={satsAmount}
           state={this.props.state}
         />
-    } else if (signMethod === 'Sign with Bridge') {
+    } else if (signMethod === 'bridge') {
       invoice =
         <BridgeInvoice
           state={this.props.state}
@@ -439,6 +439,22 @@ export default class Send extends Component {
                 border='none'
                 style={{cursor: signReady ? 'pointer' : 'default'}} />
             </Row>
+            {signMethod === 'masterTicket' &&
+             <Row mt={4}>
+               <Box
+                 backgroundColor='orange'
+                 color='white'
+                 borderRadius='32px'
+                 p={3}
+               >
+                 <Col>
+                   <Text color='white' fontWeight='bold' fontSize={1}>
+                     To reduce the exposure of your master ticket we recommend signing transactions with Bridge
+                   </Text>
+                 </Col>
+               </Box>
+             </Row>
+            }
           </Col>
         }
       </>
