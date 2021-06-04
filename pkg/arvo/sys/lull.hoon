@@ -1070,15 +1070,15 @@
     ::
   +$  blew  [p=@ud q=@ud]                               ::  columns rows
   +$  belt                                              ::  client input
-    $%  bolt                                            ::  simple input
-        [%mod mod=?(%ctl %met %hyp) key=bolt]           ::  w/ modifier
+    $?  bolt                                            ::  simple input
+    $%  [%mod mod=?(%ctl %met %hyp) key=bolt]           ::  w/ modifier
         [%txt p=(list @c)]                              ::  utf32 text
         ::TODO  consider moving %hey, %rez, %yow here   ::
-        ::TMP  forward backwards-compatibility
-        ::
-        [%ctl p=@c]
-        [%met p=@c]
-    ==                                                  ::
+        ::TMP  forward backwards-compatibility          ::
+        ::                                              ::
+        [%ctl p=@c]                                     ::
+        [%met p=@c]                                     ::
+    ==  ==                                              ::
   +$  bolt                                              ::  simple input
     $@  @c                                              ::  simple keystroke
     $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
