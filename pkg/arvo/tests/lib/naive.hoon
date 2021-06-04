@@ -24,6 +24,54 @@
   ^-  [effects:naive ^state:naive]
   (n state (owner-changed:l1 ~wes (addr %wes-key-0)))
 ::
+::  ~rut is for "full testing"
+::  ~rigrut is L1 star
+::  ~larsyx-mapmeg is L1 planet under ~rigrut
+::  ~holrut is L1 star w/ L2 spawn proxy
+::  ~rabsum-ravtyd is L1 planet under ~holrut
+::  ~dovmul-mogryt is L2 planet under ~holrut made w/ %own proxy
+::  ~pidted-dacnum is L2 planet under ~holrut made w/ %spawn proxy predeposited
+::  TODO: L2 planet ~nacbes-mogmev made with L2 spawn proxy postdeposited (currently doesnt work)
+::
+::  ~losrut is L2 star
+::  ~radres-tinnyl is L1 planet under ~losrut
+::  ~pinpun-pilsun is L2 planet under ~losrut made w/ %own proxy
+::  ~habtyc-nibpyx is L2 planet under ~losrut made w/ %spawn proxy predeposited
+::  ~disryt-nolpet is L2 planet under ~losrut made w/ %spawn proxy postdeposited
+::
+::  nonces in the end state (0 if not stated):
+::  ~holrut %own 1
+::  ~losrut %own 2
+::  ~losrut %spawn 1
+::
+++  init-rut-full
+  |=  =^state:naive
+  ^-  [effects:naive ^state:naive]
+  =/  dm-spawn  [[~holrut %own] %spawn ~dovmul-mogryt (addr %holrut-dm-key-0)]
+  =/  pd-spawn  [[~holrut %spawn] %spawn ~pidted-dacnum (addr %holrut-pd-key-0)]
+  =/  pp-spawn  [[~losrut %own] %spawn ~pinpun-pilsun (addr %losrut-pp-key-0)]
+  =/  hn-spawn  [[~losrut %spawn] %spawn ~habtyc-nibpyx (addr %losurt-hn-key-0)]
+  =/  losrut-sproxy  [[~losrut %spawn] %set-spawn-proxy (addr %losrut-skey-1)]
+  =/  dn-spawn  [[~losrut %spawn] %spawn ~disryt-nolpet (addr %losrut-dn-key-0)]
+  =^  f1  state  (n state (owner-changed:l1 ~rut (addr %rut-key-0)))
+  =^  f2  state  (n state (owner-changed:l1 ~rigrut (addr %rigrut-key-0)))
+  =^  f3  state  (n state (owner-changed:l1 ~holrut (addr %holrut-key-0)))
+  =^  f4  state  (n state (owner-changed:l1 ~losrut (addr %losrut-key-0)))
+  =^  f5  state  (n state (owner-changed:l1 ~larsyx-mapmeg (addr %rigrut-lm-key-0)))
+  =^  f6  state  (n state (owner-changed:l1 ~rabsum-ravtyd (addr %holrut-rr-key-0)))
+  =^  f7  state  (n state (owner-changed:l1 ~radres-tinnyl (addr %losrut-rt-ket-0)))
+  =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut (addr %holrut-skey)))
+  =^  f8  state  (n state (changed-spawn-proxy:l1 ~losrut (addr %losrut-skey-0)))
+  =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut deposit-address:naive))
+  =^  f9  state  (n state %bat q:(gen-tx 0 dm-spawn %holrut-key-0))
+  =^  f10  state  (n state %bat q:(gen-tx 0 pd-spawn %holrut-skey))
+  =^  f11  state  (n state (owner-changed:l1 ~losrut deposit-address:naive))
+  =^  f12  state  (n state %bat q:(gen-tx 0 pp-spawn %losrut-key-0))
+  =^  f13  state  (n state %bat q:(gen-tx 0 hn-spawn %losrut-skey-0))
+  =^  f14  state  (n state %bat q:(gen-tx 1 losrut-sproxy %losrut-skey-0))
+  =^  f15  state  (n state %bat q:(gen-tx 2 dn-spawn %losrut-skey-1))
+  [:(welp f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15) state]
+::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
 ::
 ++  init-dopbud
@@ -284,6 +332,9 @@
 :: Tests
 ::
 |%
+::  new tests
+::
+::  old tests
 ++  test-log  ^-  tang
   %+  expect-eq
     !>
