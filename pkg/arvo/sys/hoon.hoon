@@ -10826,11 +10826,12 @@
     ?-    -.mor
         %|
       ?-    -.p.mor
-          %&  [`mor grub]
+          %&
+        [`mor grub]
           %|  =^  fex  grub
-                (caching-mint(sut p.p.p.mor) %noun [%wing i.hyp ~])
-              :_  grub
-              `[%| %| p.fex (comb q.p.p.mor q.fex)]
+          (caching-mint(sut p.p.p.mor) %noun [%wing i.hyp ~])
+        :_  grub
+        `[%| %| p.fex (comb q.p.p.mor q.fex)]
       ==
     ::
         %&
@@ -10869,13 +10870,14 @@
         =^  ruf  grub  $(p.heg p.p.taf, sut q.sut)
         =/  raf  q.ruf
         :_  grub
-        ?~  raf  `~
+        :-  ~
+        ?~  raf  ~
         ?:  ?=([%| %| *] raf)
           =.  q.p.p.raf  (scul 3 q.p.p.raf)
-          `raf
+          raf
         ?:  ?=(%& -.raf)
-          `(gnat 3 p.ruf p.raf)
-        `raf
+          (gnat 3 p.ruf p.raf)
+        raf
       ::
           [%core *]
         ?~  q.heg  [here grub]
@@ -11016,7 +11018,7 @@
                   ?=(%| -.p.yor)
                   =(q.p.p.hax q.p.p.yor)
               ==
-          [~ %| %| [(fork p.p.p.hax p.p.p.yor ~) q.p.p.hax]]
+          [~ %| %| (fork p.p.p.hax p.p.p.yor ~) q.p.p.hax]
         ?>  ?=(%& -.yor)
         ?>  &(=(p.p.hax p.p.yor) =(p.hox p.yar))
         ?:  &(?=(%& -.q.p.hax) ?=(%& -.q.p.yor))
