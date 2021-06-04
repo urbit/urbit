@@ -78,7 +78,6 @@
       %set-transfer-proxy  (get-ship-address +.tx)
     ==
   raw
-  ::%^  sign-tx  pk  nonce  raw
   ::
   ++  get-spawn
     |=  [child=ship to=address]  ^-  octs
