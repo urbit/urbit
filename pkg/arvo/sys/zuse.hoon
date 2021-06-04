@@ -3391,6 +3391,11 @@
     ::                                                  ::  ++no:dejs:format
     ++  no                                              ::  number as cord
       |=(jon=json ?>(?=([%n *] jon) p.jon))
+    ::                                                  ::  ++nu:dejs:format
+    ++  nu                                              ::  parse number as hex
+      |=  jon=json
+      ?>  ?=([%s *] jon)
+      (rash p.jon hex)
     ::                                                  ::  ++of:dejs:format
     ++  of                                              ::  object as frond
       |*  wer=(pole [cord fist])
@@ -3440,6 +3445,11 @@
         =/  ten  ~|(key+key.wer (wit.wer (~(get by jom) key.wer)))
         ?~(t.wer ten [ten ((ou-raw t.wer) jom)])
       ==
+    ::                                                  ::  ++oj:dejs:format
+    ++  oj                                              ::  object as jug
+      |*  =fist
+      ^-  $-(json (jug cord _(fist *json)))
+      (om (as fist))
     ::                                                  ::  ++om:dejs:format
     ++  om                                              ::  object as map
       |*  wit=fist
@@ -3466,6 +3476,12 @@
     ::                                                  ::  ++sa:dejs:format
     ++  sa                                              ::  string as tape
       |=(jon=json ?>(?=([%s *] jon) (trip p.jon)))
+    ::                                                  ::  ++sd:dejs:format
+    ++  sd                                              ::  string @ud as date
+      |=  jon=json
+      ^-  @da
+      ?>  ?=(%s -.jon)
+      `@da`(rash p.jon dem:ag)
     ::                                                  ::  ++se:dejs:format
     ++  se                                              ::  string as aura
       |=  aur=@tas
@@ -3580,6 +3596,15 @@
       ?.  ?=([%s *] jon)  ~
       (bind (stud:chrono:userlib p.jon) |=(a=date (year a)))
     ::
+    ++  dank                                            ::  tank
+      ^-  $-(json (unit tank))
+      %+  re  *tank  |.  ~+
+      %-  of  :~
+        leaf+sa
+        palm+(ot style+(ot mid+sa cap+sa open+sa close+sa ~) lines+(ar dank) ~)
+        rose+(ot style+(ot mid+sa open+sa close+sa ~) lines+(ar dank) ~)
+      ==
+    ::
     ++  di                                              ::  millisecond date
       (cu from-unix-ms:chrono:userlib ni)
     ::
@@ -3652,6 +3677,13 @@
     ++  pe                                              ::  prefix
       |*  [pre=* wit=fist]
       (cu |*(* [pre +<]) wit)
+    ::
+    ++  re                                              ::  recursive reparsers
+      |*  [gar=* sef=_|.(fist)]
+      |=  jon=json
+      ^-  (unit _gar)
+      =-  ~!  gar  ~!  (need -)  -
+      ((sef) jon)
     ::
     ++  sa                                              ::  string as tape
       |=  jon=json
