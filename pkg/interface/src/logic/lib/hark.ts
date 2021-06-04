@@ -96,7 +96,7 @@ export function describeNotification(notification: IndexedNotification) {
     }
     switch (idx.description) {
       case 'post':
-        return singleAuthor ? 'replied to you' : 'Your post received replies';
+        return 'Your post received replies in';
       case 'link':
         return `New link${plural ? 's' : ''} in`;
       case 'comment':
@@ -107,14 +107,13 @@ export function describeNotification(notification: IndexedNotification) {
       case 'edit-note':
         return `updated ${pluralize('note', plural)} in`;
       case 'mention':
-        return singleAuthor ? 'mentioned you in' : 'You were mentioned in';
+        return 'You were mentioned in';
       case 'message':
         if (isDm) {
           return 'messaged you';
         }
         return `New message${plural ? 's' : ''} in`;
-      default:
-        return idx.description;
+      default: return idx.description;
     }
   }
   if ('group' in notification.index) {
