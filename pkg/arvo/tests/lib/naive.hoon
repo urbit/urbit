@@ -112,21 +112,141 @@
    =^  f2  state  (n state (owner-changed:l1 ~sambud (addr %sambud-key-0)))
    [:(welp f1 f2) state]
 ::
-::  generates all possible transactions and maps them to whether they ought to succeed
+::  generates all possible transactions and maps them to whether they ought
+::  to succeed
+::
 ++  l2-event-gen
   |%
-  +$  rank     ?(%galaxy %star %planet)
-  +$  tx-type  ?(%transfer-point %spawn %configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy %set-spawn-proxy %set-transfer-proxy)
-  +$  event    [=rank owner=? nonce=? =dominion:naive =proxy:naive =tx-type]
-  +$  tx-deck  (list event)
-  +$  succeed  (map tx-type ?)
   ::
-  ++  make-tx-deck  ^-  tx-deck
-    =|  =tx-deck
+  +$  rank     ?(%galaxy %star %planet)
+  +$  tx-type  $?  %transfer-point
+                   %spawn
+                   %configure-keys
+                   %escape
+                   %cancel-escape
+                   %adopt
+                   %reject
+                   %detach
+                   %set-management-proxy
+                   %set-spawn-proxy
+                   %set-transfer-proxy
+               ==
+  +$  event    [=rank owner=? nonce=? =dominion:naive =proxy:naive =tx-type]
+  +$  event-list  (list event)
+  +$  success-map  (map event ?)
+  ::
+  ++  make-success-map
+    =/  =event-list  make-event-list
+    =|  =success-map
+    |^
+    ?~  event-list  success-map
+    =/  current-event  i.event-list
+    ::
+    ?:  ?|  =(owner.current-event %.n)
+            =(nonce.current-event %.n)
+        ==
+        (add-event-check current-event %.n)
+    ::
+    ::  galaxies and stars can do sponsorship options regardless of
+    ::  dominion (though see TODO below on edge cases)
+    ::
+    ?:  ?&  =(rank.current-event ?(%galaxy %star))
+            =(tx-type.current-event ?(%adopt %reject %detach))
+            =(proxy.current-event ?(%own %manage))
+        ==
+        (add-event-check current-event %.y)
+    ::
+    ::  otherwise, all events from %l1 points should fail
+    ::
+    ?:  =(dominion.current-event %l1)
+    (add-event-check current-event %.n)
+    ::
+    ::  planets cannot be sponsors
+    ?:  ?&  =(rank.current-event %planet)
+            =(tx-type.current-event ?(%adopt %reject %detach))
+        ==
+        (add-event-check current-event %.n)
+    ::
+    ::  planets cant use %spawn proxy
+    ::
+    ?:  ?&  =(dominion.current-event %spawn)
+            =(rank.current-event %planet)
+        ==
+        (add-event-check current-event %.n)
+    ::
+    :: %spawn stars can only %spawn with %own and %spawn proxies
+    ?:  ?&  =(dominion.current-event %spawn) :: this implies rank=%star
+            !=(proxy.current-event ?(%own %spawn))
+        ==
+        (add-event-check current-event %.n)
+    ::
+    =/  final-check  :+  dominion.current-event
+                       proxy.current-event
+                     tx-type.current-event
+    (add-event-check current-event (tx-succeed final-check))
+    ::
+    ++  add-event-check
+      |=  [=event suc=?]
+      %=  ^$
+          success-map  (~(put by success-map) event suc)
+          event-list   +.event-list
+      ==
+    ::
+    ::  galaxies and stars can %adopt %reject %detach regardless of
+    ::  dominion. planets cannot do any of these. though L2 sponsorship
+    ::  actions should only be possible if the sponsee is on L2, so this
+    ::  actually needs to check the content of the tx...
+    ::  TODO: gonna leave sponsorship tests aside for now because
+    ::  they're more complicated
+    ::
+    ::  ++  sponsorship-check
+    ::    |=  [=rank =proxy:naive =tx-type]  ^-  ?
+    ::    %.y
+    ::
+    ::  checks to see if a given proxy+event combo should work, assuming that
+    ::  the pk and nonce are correct
+    ::
+    ++  tx-succeed
+      |=  [=dominion:naive =proxy:naive =tx-type]  ^-  ?
+      ?:  =(proxy %own)
+        %.y
+      ?:  =(proxy %vote)
+        %.n
+      ::  planet case already excluded
+      ?-  tx-type
+        ?(%spawn %set-spawn-proxy)
+          ?+  proxy    %.n
+            %spawn     %.y
+            %manage    %.n
+            %vote      %.n
+          ==
+        ?(%transfer-point %set-transfer-proxy)
+          ?.  =(dominion %l2)
+            %.n
+          ?+  proxy    %.n
+            %spawn     %.n
+            %manage    %.n
+            %transfer  %.y
+          ==
+        :: TODO: how do i make the following two lines?
+        ?(%configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy)
+          ?.  =(dominion %l2)
+            %.n
+          ?+  proxy    %.n
+            %spawn     %.n
+            %manage    %.y
+            %transfer  %.n
+          ==
+        ==
+      ::
+      --
+  ::
+  ++  make-event-list  ^-  event-list
+    =|  =event-list
     =/  rank-i      1
     |-
     ?:  (gth rank-i 3)
-      tx-deck
+      event-list
     =/  owner-i     0
     |-
     ?.  (lte owner-i 1)
@@ -148,8 +268,15 @@
     ?.  (lte tx-type-i 11)
       ^$(proxy-i +(proxy-i))
     %=  $
-      tx-type-i  +(tx-type-i)
-      tx-deck    [(num-to-rank rank-i) (num-to-flag owner-i) (num-to-flag nonce-i) (num-to-dominion dominion-i) (num-to-proxy proxy-i) (num-to-tx-type tx-type-i)]^tx-deck
+      tx-type-i     +(tx-type-i)
+      event-list    :-  :*  (num-to-rank rank-i)
+                            (num-to-flag owner-i)
+                            (num-to-flag nonce-i)
+                            (num-to-dominion dominion-i)
+                            (num-to-proxy proxy-i)
+                            (num-to-tx-type tx-type-i)
+                        ==
+                    event-list
     ==
   ::
   ++  num-to-flag
@@ -200,38 +327,6 @@
       %10  %set-spawn-proxy
       %11  %set-transfer-proxy
     ==
-  ::
-  ::  checks to see if a given proxy+event combo should work, assuming that
-  ::  the pk and nonce are correct
-  ::
-  ++  tx-succeed
-    |=  tx=tx:naive  ^-  ?
-    =*  prx  proxy.from.tx
-    ?:  =(prx %own)
-      %.y
-    ?:  =(prx %vote)
-      %.n
-    ?-  +<.tx
-      ?(%spawn %set-spawn-proxy)
-        ?+  prx      %.n
-          %spawn     %.y
-          %manage    %.n
-          %vote      %.n
-        ==
-      ?(%transfer-point %set-transfer-proxy)
-        ?+  prx      %.n
-          %spawn     %.n
-          %manage    %.n
-          %transfer  %.y
-        ==
-      :: TODO: how do i make the following two lines?
-      ?(%configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy)
-        ?+  prx      %.n
-          %spawn     %.n
-          %manage    %.y
-          %transfer  %.n
-        ==
-      ==
   ::
   --
 ::
@@ -334,6 +429,20 @@
 |%
 ::  new tests
 ::
+++  test-marbud-l2-change-keys-new  ^-  tang
+  =/  new-keys       [%configure-keys suit encr auth |]
+  =|  =^state:naive
+  =^  f  state  (init-marbud state)
+  =/  marbud-point  (~(got by points.state) ~marbud)
+  =/  new-marbud  marbud-point(keys.net [1 suit auth encr], nonce.owner.own 1)
+  ::
+  %+  expect-eq
+    !>  state(points (~(put by points.state) ~marbud new-marbud))
+  ::
+    !>
+    =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-0))
+    state
+  ::
 ::  old tests
 ++  test-log  ^-  tang
   %+  expect-eq
@@ -635,20 +744,6 @@
     :: TODO: make sure nobody else can change these keys
   ==
 ::
-++  test-marbud-l2-change-keys-new  ^-  tang
-  =/  new-keys       [%configure-keys suit encr auth |]
-  =|  =^state:naive
-  =^  f  state  (init-marbud state)
-  =/  marbud-point  (~(got by points.state) ~marbud)
-  =/  new-marbud  marbud-point(keys.net [1 suit auth encr], nonce.owner.own 1)
-  ::
-  %+  expect-eq
-    !>  state(points (~(put by points.state) ~marbud new-marbud))
-  ::
-    !>
-    =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-0))
-    state
-  ::
 :: TODO: transfer breach via transfer proxy
 ++  test-marbud-l2-proxies-transfer  ^-  tang
   =/  marbud-new-keys            [marbud-own %configure-keys suit encr auth |]
