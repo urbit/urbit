@@ -10916,60 +10916,19 @@
     ~/  %sink
     |^  ^-  cord
     ?-  sut
-        %void  'void'
-        %noun  'noun'
-        [%atom *]
-      %+  rap  3
-      :~  'atom '
-          p.sut
-          ' '
-          ?~(q.sut '~' u.q.sut)
-      ==
-    ::
-        [%cell *]
-      %+  rap  3
-      :~  'cell '
-          (scot %p (mup p.sut))
-          ' '
-          (scot %p (mup q.sut))
-      ==
-    ::
-        [%face *]
-      %+  rap  3
-      :~  'face '
-          ?@  p.sut
-            p.sut
-          (scot %p (mup p.sut))
-          ' '
-          (scot %p (mup q.sut))
-      ==
-    ::
-        [%fork *]
-      %+  rap  3
-      :~  'fork '
-          (scot %p (mup p.sut))
-      ==
-    ::
-        [%hint *]
-      %+  rap  3
-      :~  'hint '
-          (scot %p (mup p.sut))
-          ' '
-          (scot %p (mup q.sut))
-      ==
-    ::
-        [%hold *]
-      %+  rap  3
-      :~  'hold '
-          (scot %p (mup p.sut))
-          ' '
-          (scot %p (mup q.sut))
-      ==
+      %void      'void'
+      %noun      'noun'
+      [%atom *]  (rap 3 'atom ' p.sut ' ' ?~(q.sut '~' u.q.sut) ~)
+      [%cell *]  (rap 3 'cell ' (mup p.sut) ' ' (mup q.sut) ~)
+      [%face *]  (rap 3 'face ' ?@(p.sut p.sut (mup p.sut)) ' ' (mup q.sut) ~)
+      [%fork *]  (rap 3 'fork ' (mup p.sut) ~)
+      [%hint *]  (rap 3 'hint ' (mup p.sut) ' ' (mup q.sut) ~)
+      [%hold *]  (rap 3 'hold ' (mup p.sut) ' ' (mup q.sut) ~)
     ::
         [%core *]
       %+  rap  3
       :~  'core '
-          (scot %p (mup p.sut))
+          (mup p.sut)
           ' '
           ?~(p.p.q.sut '~' u.p.p.q.sut)
           ' '
@@ -10977,13 +10936,13 @@
           ' '
           r.p.q.sut
           ' '
-          (scot %p (mup q.q.sut))
+          (mup q.q.sut)
           ' '
-          (scot %p (mup p.r.q.sut))
+          (mup p.r.q.sut)
       ==
     ==
     ::
-    ++  mup  |=(* `@p`(mug +<))
+    ++  mup  |=(* (scot %p (mug +<)))
     --
   ::
   ++  take
