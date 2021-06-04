@@ -9,10 +9,10 @@
         },
         "owner": "urbit",
         "repo": "argon2",
-        "rev": "4da94a611ee62bad87ab2b131ffda3bcc0723d9c",
-        "sha256": "0bqq1hg367l4jkb6cqhxlblpvdbwz3l586qsfakwzfd9wdvnm3yc",
+        "rev": "a4c1e3f7138c2e577376beb99f964cf71e1c8b1b",
+        "sha256": "1j8a15fx2kn5aa3scmb5qnsfk627kfvsq5ppz9j0pv2d1xck527x",
         "type": "tarball",
-        "url": "https://github.com/urbit/argon2/archive/4da94a611ee62bad87ab2b131ffda3bcc0723d9c.tar.gz",
+        "url": "https://github.com/urbit/argon2/archive/a4c1e3f7138c2e577376beb99f964cf71e1c8b1b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "ed25519": {
