@@ -12,12 +12,17 @@
   ==
 ::
 +$  state-0  [%0 base-state-0]
++$  state-1  [%1 base-state-0]
++$  versioned-state
+  $%  state-0
+      state-1
+  ==
 +$  card  card:agent:gall
 +$  nodes  (map index:store node:store)
 ++  orm   orm:store
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -36,7 +41,7 @@
     ?.  .^(? %gu (scry:io %graph-store ~))
       ~
     %+  skim  ~(tap in get-keys:gra)
-    |=([ship name=term] ?=(^ (rush name ;~(pfix (jest 'dm--') (star next)))))
+    |=([ship name=term] ?=(^ (rush name ;~(pfix (jest 'dm--') fed:ag))))
   |^
   %+  poke-our:pass  %graph-store
   %+  update:cg:gra  now.bowl
@@ -85,15 +90,26 @@
 ::
 ++  on-save  !>(state)
 ++  on-load
-  |=  old=vase
+  |=  =vase
   ^-  (quip card _this)
-  `this(state !<(state-0 old))
+  =+  !<(old=versioned-state vase)
+  ?:  ?=(%1 -.old)  `this(state old)
+  :_  this(state [%1 +.old])
+  (poke-self:pass noun+!>(%reinit))^~
 ::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
   ?+  mark  (on-poke:def mark vase)
+      %noun
+    ?+  q.vase  !!
+        %reinit
+      ?:  (~(has in get-keys:gra) [our.bowl %dm-inbox])  
+        `this
+      on-init
+    ==
+  ::
       %dm-hook-action
     =+  !<(=action:hook vase)
     =^  cards  state
