@@ -750,11 +750,11 @@
     ?:  ?=(%czar (clan:title ship))
       [a-point]~
     [a-point $(who ship)]
-  =/  life-rift  (~(got by lives.azi.piers) who)
-  =/  =life  lyfe.life-rift
   =/  =seed:jael
+    =/  life-rift  (~(got by lives.azi.piers) who)
+    =/  =life  lyfe.life-rift
     [who life sec:ex:(get-keys:aqua-azimuth who life) ~]
-  :*  [life seed]
+  :*  seed
       spon
       get-czars
       ~[~['arvo' 'netw' 'ork']]
