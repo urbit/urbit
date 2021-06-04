@@ -72,6 +72,9 @@
   =^  f15  state  (n state %bat q:(gen-tx 2 dn-spawn %losrut-skey-1))
   [:(welp f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15) state]
 ::
+::  TODO: add an "evil galaxy" whose points attempt to perform actions
+::  on ~rut's points
+::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
 ::
 ++  init-dopbud
@@ -134,9 +137,10 @@
   +$  event    [=rank owner=? nonce=? =dominion:naive =proxy:naive =tx-type]
   +$  event-list  (list event)
   +$  success-map  (map event ?)
+  +$  event-jar  (jar @p event)
   ::
   ++  make-success-map
-    =/  =event-list  make-event-list
+    |=  =event-list
     =|  =success-map
     |^
     ?~  event-list  success-map
@@ -241,12 +245,78 @@
       ::
       --
   ::
+  ++  filter-tx-type
+    |=  [=event-list =tx-type]
+    |^
+    (skim event-list filter)
+    ++  filter
+      |=  =event  ^-  ?
+      ?:  =(tx-type.event tx-type)
+        %.y
+      %.n
+    --
+  ::
+  ++  filter-proxy
+    |=  [=event-list =proxy:naive]
+    |^
+    (skim event-list filter)
+    ++  filter
+      |=  =event  ^-  ?
+      ?:  =(proxy.event proxy)
+        %.y
+      %.n
+    --
+  ::
+  ++  filter-rank
+    |=  [=event-list =rank]
+    |^
+    (skim event-list filter)
+    ++  filter
+      |=  =event  ^-  ?
+      ?:  =(rank.event rank)
+        %.y
+      %.n
+    --
+  ::
+  ++  filter-owner
+    |=  [=event-list owner=?]
+    |^
+    (skim event-list filter)
+    ++  filter
+      |=  =event  ^-  ?
+      ?:  =(owner.event owner)
+        %.y
+      %.n
+    --
+  ::
+  ++  filter-nonce
+    |=  [=event-list nonce=?]
+    |^
+    (skim event-list filter)
+    ++  filter
+      |=  =event  ^-  ?
+      ?:  =(nonce.event nonce)
+        %.y
+      %.n
+    --
+  ::
+  ++  filter-dominion
+    |=  [=event-list =dominion:naive]
+    |^
+    (skim event-list filter)
+    ++  filter
+      |=  =event  ^-  ?
+      ?:  =(dominion.event dominion)
+        %.y
+      %.n
+    --
+  ::
   ++  make-event-list  ^-  event-list
     =|  =event-list
     =/  rank-i      1
     |-
     ?:  (gth rank-i 3)
-      event-list
+      (remove-wrong-dominion event-list)
     =/  owner-i     0
     |-
     ?.  (lte owner-i 1)
@@ -277,6 +347,25 @@
                             (num-to-tx-type tx-type-i)
                         ==
                     event-list
+    ==
+  ::
+  ++  remove-wrong-dominion
+    |=  in=event-list
+    =|  =event-list
+    |-
+    ?~  in  event-list
+    =/  current-event  i.in
+    ?:  ?&  =(rank.current-event %galaxy)
+            !=(dominion.current-event %l1)
+        ==
+        $(in t.in)
+    ?:  ?&  =(rank.current-event %planet)
+            =(dominion.current-event %spawn)
+        ==
+        $(in t.in)
+    %=  $
+      in  t.in
+      event-list  current-event^event-list
     ==
   ::
   ++  num-to-flag
@@ -327,6 +416,25 @@
       %10  %set-spawn-proxy
       %11  %set-transfer-proxy
     ==
+  ::
+  ::  the following is for figuring out what points in ~rut
+  ::  should perform which events. maybe should be its own
+  ::  core?
+  ::
+  ++  gen-rut-mgmt-jar
+    =/  mgmt-proxies  %+  filter-owner
+                        %+  filter-tx-type
+                          make-event-list
+                        %set-management-proxy
+                      %.y
+    =/  own-only  (filter-proxy mgmt-proxies %own)
+    =/  =success-map  (make-success-map own-only)
+    =/  planet-events  (filter-rank own-only %planet)
+    =/  star-events  (filter-rank own-only %star)
+    =/  galaxy-events  (filter-rank own-only %galaxy)
+    =|  mgmt-jar  (jar @p event)
+    ::  how to add to the jar successively?  probably ;< ?
+    [planet-events star-events galaxy-events success-map]
   ::
   --
 ::
@@ -428,6 +536,23 @@
 ::
 |%
 ::  new tests
+::
+++  test-rut-mgmt-proxies  ^-  tang
+  =,  l2-event-gen
+  ::
+  ~&  gen-rut-mgmt-jar
+  =|  =^state:naive
+  =^  f  state  (init-rut-full state)
+  =/  initial-state  state
+  ::
+  ::  |-
+  ::  ?~  mgmt-proxies  ~
+  ::  =/  current-event  i.mgmt-proxies
+  %+  expect-eq
+    !>  1
+    !>  1
+::  =|  =^state:naive
+::  =^  f  state  (init-rut-full state)
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys suit encr auth |]
