@@ -1,7 +1,7 @@
 ::  azimuth-rpc: command parsing and utilities
 ::
 /-  rpc=json-rpc, *aggregator
-/+  naive, json-rpc
+/+  naive, json-rpc, lib=naive-transactions
 ::
 =>  ::  Utilities
     ::
@@ -252,6 +252,17 @@
             ['nonce' (numb nonce)]
         ==
       ::
+      ++  spawned
+        |=  children=(list [@p @ux])
+        ^-  json
+        :-  %a
+        %+  turn  children
+        |=  [child=@p addr=@ux]
+        %-  pairs
+        :~  ['ship' (ship child)]
+            ['address' s+(crip "0x{((x-co:co 20) addr)}")]
+        ==
+      ::
       ++  tx-status
         |=  =^tx-status
         ^-  json
@@ -346,6 +357,17 @@
   ?~  point=(scry u.ship)
     ~(params error:json-rpc id)
   [%result id (point:to-json u.point)]
+::
+++  get-spawned
+  |=  [id=@t params=(map @t json) scry=$-(ship (list [ship @ux]))]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 1)
+    ~(params error:json-rpc id)
+  ?~  ship=(~(get by params) 'ship')
+    ~(params error:json-rpc id)
+  ?~  ship=(rush (so:dejs:format u.ship) ;~(pfix sig fed:ag))
+    ~(params error:json-rpc id)
+  [%result id (spawned:to-json (scry u.ship))]
 ::
 ++  transfer-point
   |=  [id=@t params=(map @t json)]

@@ -127,6 +127,7 @@
     [~ ~(parse error:json-rpc id)]
   ?+    method  [~ ~(method error:json-rpc id)]
     %get-point             [~ (get-point id +.params point:scry)]
+    %get-spawned           [~ (get-spawned id +.params spawned:scry)]
     %transfer-point        (transfer-point id +.params)
     %configure-keys        (configure-keys id +.params)
     %spawn                 (spawn id +.params)
@@ -152,6 +153,13 @@
     .^  (unit point:naive)
         %gx
         (~(scry agentio bowl) %azimuth /nas/(scot %p ship)/noun)
+    ==
+  ::
+  ++  spawned
+    |=  =ship
+    .^  (list [@p @ux])
+        %gx
+        (~(scry agentio bowl) %aggregator /spawned/(scot %p ship)/noun)
     ==
   ::
   ++  pending

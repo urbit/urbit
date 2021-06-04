@@ -132,11 +132,19 @@
   ++  on-peek
     |=  =path
     ^-  (unit (unit cage))
+    |^
     ?+  path  ~
-      [%x %pending ~]  ``noun+!>(pending)
+      [%x %pending ~]       pending
+      [%x %pending @ ~]     (pending-by i.t.t.path)
+      [%x %tx @ %status ~]  (status i.t.t.path)
+      [%x %nonce @ @ ~]     (nonce i.t.t.path i.t.t.t.path)
+      [%x %spawned @ ~]     (spawned i.t.t.path)
+    ==
     ::
-        [%x %pending @ ~]
-      =*  wat  i.t.t.path
+    ++  pending  ``noun+!>(^pending)
+    ::
+    ++  pending-by
+      |=  wat=@t
       ?~  who=(slaw %p wat)
         ::  by-address
         ::
@@ -144,7 +152,7 @@
           [~ ~]
         =;  pending=(list pend-tx)
           ``noun+!>(pending)
-        %+  skim  pending
+        %+  skim  ^pending
         |=  pend-tx
         ::TODO  deduce address from sig.raw-tx ?
         !!
@@ -152,12 +160,13 @@
       ::
       =;  pending=(list pend-tx)
         ``noun+!>(pending)
-      %+  skim  pending
+      %+  skim  ^pending
       |=  pend-tx
       =(u.who ship.from.tx.raw-tx)
     ::
-        [%x %tx @ %status ~]
-      ?~  keccak=(slaw %ux i.t.t.path)
+    ++  status
+      |=  wat=@t
+      ?~  keccak=(slaw %ux wat)
         [~ ~]
       :+  ~  ~
       :-  %noun
@@ -168,14 +177,14 @@
       ::TODO  potentially slow!
       =;  known=?
         [?:(known %pending %unknown) ~]
-      %+  lien  pending
+      %+  lien  ^pending
       |=  [* raw-tx:naive]
       =(u.keccak (hash-tx raw))
     ::
-        [%x %nonce @ @ ~]
-      ?~  who=(slaw %p i.t.t.path)
+    ++  nonce
+      |=  [who=@t proxy=@t]
+      ?~  who=(slaw %p who)
         [~ ~]
-      =+  proxy=i.t.t.t.path
       ?.  ?=(proxy:naive proxy)
         [~ ~]
       ::  uses cached naive state
@@ -184,7 +193,21 @@
       =/  =point:naive  (~(gut by points.nas) u.who *point:naive)
       =+  (proxy-from-point:naive proxy point)
       ``atom+!>(nonce)
-    ==
+    ::
+    ++  spawned
+      |=  wat=@t
+      :+  ~  ~
+      :-  %noun
+      !>  ^-  (list [=^ship =address:ethereum])
+      ?~  star=(slaw %p wat)  ~
+      %+  murn  ~(tap by points.nas)
+      |=  [=ship =point:naive]
+      ^-  (unit [=^ship =address:ethereum])
+      ?.  =(star (^sein:title ship))  ~
+      %-  some
+      :-  ship
+      address:(proxy-from-point:naive %own point)
+    --
   ::
   ++  on-arvo
     |=  [=wire =sign-arvo]
