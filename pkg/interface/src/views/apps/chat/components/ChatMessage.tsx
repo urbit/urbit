@@ -382,7 +382,7 @@ interface ChatMessageProps {
   isLastRead?: boolean;
   permalink?: string;
   transcluded?: number;
-  isAdmin: boolean;
+  isAdmin?: boolean;
   className?: string;
   isPending?: boolean;
   style?: unknown;
