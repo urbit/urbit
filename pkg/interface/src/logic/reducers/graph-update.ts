@@ -35,6 +35,28 @@ const processNode = (node) => {
       ));
   });
 };
+const acceptOrRejectDm = (json: any, state: GraphState): GraphState => {
+  const data = _.get(json, 'accept', _.get(json, 'decline', false));
+  if(data) {
+    state.pendingDms.delete(data);
+  }
+  return state;
+};
+
+const pendings = (json: any, state: GraphState): GraphState => {
+  const data = _.get(json, 'pendings', false);
+  if(data) {
+    state.pendingDms = new Set(data);
+  }
+  return state;
+};
+
+const setScreen = (json: any, state: GraphState): GraphState => {
+  if('screen' in json) {
+    state.screening = json.screen;
+  }
+  return state;
+};
 
 const addNodesLoose = (json: any, state: GraphState): GraphState => {
   const data = _.get(json, 'add-nodes', false);
@@ -54,9 +76,9 @@ const addNodesLoose = (json: any, state: GraphState): GraphState => {
 const addNodesFlat = (json: any, state: GraphState): GraphState => {
   const data = _.get(json, 'add-nodes', false);
   if (data) {
-    if (!('flatGraphs' in state)) {
- return state;
-}
+      if (!('flatGraphs' in state)) {
+   return state;
+  }
 
     const resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.flatGraphs)) {
@@ -71,12 +93,12 @@ const addNodesFlat = (json: any, state: GraphState): GraphState => {
 
     indices.forEach((index) => {
       if (index.split('/').length === 0) {
- return;
-}
+       return;
+      }
       const indexArr = stringToArr(index);
       if (indexArr.length === 0) {
- return state;
-}
+       return state;
+      }
 
       const node = data.nodes[index];
       node.children = mapifyChildren({});
@@ -107,13 +129,13 @@ const addNodesThread = (json: any, state: GraphState): GraphState => {
 
     indices.forEach((index) => {
       if (index.split('/').length === 0) {
- return;
-}
+       return;
+      }
       const indexArr = stringToArr(index);
 
       if (indexArr.length === 0) {
- return state;
-}
+       return state;
+      }
 
       const node = data.nodes[index];
       node.children = mapifyChildren({});
@@ -180,7 +202,7 @@ const removeGraph = (json, state: GraphState): GraphState => {
   return state;
 };
 
-const addNodes = (json, state) => {
+export const addNodes = (json, state) => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
     if (index.length === 1) {
@@ -224,16 +246,16 @@ const addNodes = (json, state) => {
     resource
   ) => {
     if (!post.hash) {
- return [graph, flatGraph, threadGraphs];
-}
+     return [graph, flatGraph, threadGraphs];
+    }
     const timestamp = post['time-sent'];
 
     if (state.graphTimesentMap[resource][timestamp]) {
       const index = state.graphTimesentMap[resource][timestamp];
 
       if (index.split('/').length === 0) {
- return graph;
-}
+       return graph;
+      }
       const indexArr = stringToArr(index);
 
       delete state.graphTimesentMap[resource][timestamp];
@@ -264,14 +286,14 @@ const addNodes = (json, state) => {
   const data = _.get(json, 'add-nodes', false);
   if (data) {
     if (!('graphs' in state)) {
- return state;
-}
+     return state;
+    }
     if (!('flatGraphs' in state)) {
- return state;
-}
+     return state;
+    }
     if (!('threadGraphs' in state)) {
- return state;
-}
+     return state;
+    }
 
     const resource = data.resource.ship + '/' + data.resource.name;
     if (!(resource in state.graphs)) {
@@ -303,8 +325,8 @@ const addNodes = (json, state) => {
       const old = state.graphs[resource].size;
 
       if (index.split('/').length === 0) {
- return state;
-}
+       return state;
+      }
       const indexArr = stringToArr(index);
 
       const [graph, flatGraph, threadGraphs] =
@@ -448,5 +470,14 @@ export const GraphReducer = (json) => {
   const thread = _.get(json, 'graph-update-thread', false);
   if (thread) {
     reduceState<GraphState, any>(useGraphState, thread, [addNodesThread]);
+  }
+  const dm = _.get(json, 'dm-hook-action', false);
+  if(dm) {
+    console.log(dm);
+    reduceState<GraphState, any>(useGraphState, dm, [
+      acceptOrRejectDm,
+      pendings,
+      setScreen
+    ]);
   }
 };

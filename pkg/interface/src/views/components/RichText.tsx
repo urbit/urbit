@@ -48,7 +48,7 @@ type RichTextProps = ReactMarkdownProps & {
   py?: number;
   overflowX?: any;
   verticalAlign?: any;
-}
+};
 
 const RichText = React.memo(({ disableRemoteContent = false, api, ...props }: RichTextProps) => (
   <ReactMarkdown

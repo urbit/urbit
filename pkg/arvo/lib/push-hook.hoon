@@ -271,6 +271,10 @@
       ~/  %on-poke
       |=  [=mark =vase]
       ^-  (quip card:agent:gall agent:gall)
+      ?:  =(mark %kick)
+        ?>  (team:title [our src]:bowl)
+        :_  this
+        (kick:io (turn ~(val by sup.bowl) tail))^~
       ?:  =(mark %push-hook-action)
         ?>  (team:title our.bowl src.bowl)
         =^  cards  state
@@ -300,8 +304,10 @@
         unversioned
       =/  =resource
         (de-path:resource t.t.path)
+      =/  requested=@ud
+        (slav %ud i.t.t.t.t.t.path)
       =/  =mark
-        (append-version:ver (slav %ud i.t.t.t.t.t.path))
+        (append-version:ver (min requested version.config))
       ?.  (supported:ver mark)
         :_  this
         (fact-init-kick:io version+!>(min-version.config))
@@ -476,7 +482,7 @@
       %+  turn  ~(tap by paths)
       |=  [fact-ver=@ud paths=(set path)]
       =/  =mark
-        (append-version:ver fact-ver)
+        (append-version:ver (min version.config fact-ver))
       (fact:io (convert-from:ver mark q.cage) ~(tap in paths))
     ::  TODO: deprecate
     ++  unversioned

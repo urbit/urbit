@@ -98,6 +98,6 @@ const PostTimeline = (props: PostTimelineProps): ReactElement => {
       />
     </Box>
   );
-}
+};
 
 export default PostTimeline;

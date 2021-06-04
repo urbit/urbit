@@ -4,18 +4,14 @@ import {
 
   GroupNotificationContents,
 
-  GroupNotificationsConfig, IndexedNotification,
+  IndexedNotification
 
-  NotificationGraphConfig
 } from '@urbit/api';
 import { BigInteger } from 'big-integer';
-import _ from 'lodash';
 import React, { ReactNode, useCallback } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { getNotificationKey } from '~/logic/lib/hark';
-import { getParentIndex } from '~/logic/lib/notification';
 import { useHovering } from '~/logic/lib/util';
-import useHarkState from '~/logic/state/hark';
 import useLocalState from '~/logic/state/local';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { SwipeMenu } from '~/views/components/SwipeMenu';
@@ -26,68 +22,30 @@ export interface NotificationProps {
   notification: IndexedNotification;
   time: BigInteger;
   api: GlobalApi;
-  archived: boolean;
-}
-
-function getMuted(
-  idxNotif: IndexedNotification,
-  groups: GroupNotificationsConfig,
-  graphs: NotificationGraphConfig
-) {
-  const { index, notification } = idxNotif;
-  if ('graph' in idxNotif.index) {
-    const { graph } = idxNotif.index.graph;
-    if (!('graph' in notification.contents)) {
-      throw new Error();
-    }
-    const parent = getParentIndex(idxNotif.index.graph, notification.contents.graph);
-
-    return (
-      _.findIndex(
-        graphs?.watching || [],
-        g => g.graph === graph && g.index === parent
-      ) === -1
-    );
-  }
-  if ('group' in index) {
-    return _.findIndex(groups || [], g => g === index.group.group) === -1;
-  }
-  return false;
+  unread: boolean;
 }
 
 export function NotificationWrapper(props: {
   api: GlobalApi;
   time?: BigInteger;
+  read?: boolean;
   notification?: IndexedNotification;
   children: ReactNode;
 }) {
-  const { api, time, notification, children } = props;
+  const { api, time, notification, children, read = false } = props;
 
   const isMobile = useLocalState(s => s.mobile);
 
-  const onArchive = useCallback(async () => {
-    if (!(time && notification)) {
+  const onArchive = useCallback(async (e) => {
+    e.stopPropagation();
+    if (!notification) {
       return;
     }
     return api.hark.archive(time, notification.index);
   }, [time, notification]);
 
-  const groupConfig = useHarkState(state => state.notificationsGroupConfig);
-  const graphConfig = useHarkState(state => state.notificationsGraphConfig);
-
-  const isMuted =
-    time && notification && getMuted(notification, groupConfig, graphConfig);
-
-  const onChangeMute = useCallback(async () => {
-    if (!notification) {
-      return;
-    }
-    const func = isMuted ? 'unmute' : 'mute';
-    return api.hark[func](notification);
-  }, [notification, api, isMuted]);
-
   const onClick = (e: any) => {
-    if (!(time && notification) || notification.notification.read) {
+    if (!notification || read) {
       return;
     }
     return api.hark.read(time, notification.index);
@@ -109,11 +67,7 @@ export function NotificationWrapper(props: {
     >
       <Box
         onClick={onClick}
-        bg={
-          (notification ? notification?.notification?.read : false)
-            ? 'washedGray'
-            : 'washedBlue'
-        }
+        bg={read ? 'washedGray' : 'washedBlue'}
         borderRadius={2}
         display="grid"
         gridTemplateColumns={['1fr 24px', '1fr 200px']}
@@ -130,9 +84,9 @@ export function NotificationWrapper(props: {
           justifyContent="flex-end"
           opacity={[0, hovering ? 1 : 0]}
         >
-          {time && notification && (
+          {notification && (
             <StatelessAsyncAction
-              name={time.toString()}
+              name=""
               borderRadius={1}
               onClick={onArchive}
               backgroundColor="white"
@@ -147,11 +101,12 @@ export function NotificationWrapper(props: {
 }
 
 export function Notification(props: NotificationProps) {
-  const { notification, archived } = props;
-  const { read, contents, time } = notification.notification;
+  const { notification, unread } = props;
+  const { contents, time } = notification.notification;
 
   const wrapperProps = {
     notification,
+    read: !unread,
     time: props.time,
     api: props.api
   };
@@ -166,8 +121,7 @@ export function Notification(props: NotificationProps) {
           api={props.api}
           index={index}
           contents={c}
-          read={read}
-          archived={archived}
+          read={!unread}
           timebox={props.time}
           time={time}
         />
@@ -183,9 +137,8 @@ export function Notification(props: NotificationProps) {
           api={props.api}
           index={index}
           contents={c}
-          read={read}
+          read={!unread}
           timebox={props.time}
-          archived={archived}
           time={time}
         />
       </NotificationWrapper>

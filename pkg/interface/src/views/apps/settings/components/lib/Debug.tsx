@@ -16,7 +16,7 @@ import { BackButton } from './BackButton';
 
 interface StoreDebuggerProps {
   name: string;
-  useStore: UseStore<BaseState<any>>;
+  useStore: UseStore<BaseState<any> & any>;
 }
 
 const objectToString = (obj: any): string => JSON.stringify(obj, null, '  ');
@@ -32,7 +32,9 @@ const StoreDebugger = (props: StoreDebuggerProps) => {
     let output: any = false;
     try {
       output =  _.get(state, filterToTry, undefined);
-    } catch (e) { }
+    } catch (e) {
+      console.log('filter failed');
+    }
     if (output) {
       console.log(output);
       setText(objectToString(output));

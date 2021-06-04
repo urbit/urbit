@@ -1,4 +1,4 @@
-import produce, { applyPatches, Patch, produceWithPatches, setAutoFreeze, enablePatches } from 'immer';
+import { applyPatches, Patch, produceWithPatches, setAutoFreeze, enablePatches } from 'immer';
 import { compose } from 'lodash/fp';
 import _ from 'lodash';
 import create, { UseStore } from 'zustand';
@@ -13,8 +13,8 @@ export const stateSetter = <T extends {}>(
   get: () => T & BaseState<T>
 ): void => {
   const old = get();
-  const [state, patches] = produceWithPatches(old, fn) as readonly [(T & BaseState<T>), any, Patch[]];
-  //console.log(patches);
+  const [state] = produceWithPatches(old, fn) as readonly [(T & BaseState<T>), any, Patch[]];
+  // console.log(patches);
   set(state);
 };
 
@@ -24,12 +24,11 @@ export const optStateSetter = <T extends {}>(
   get: () => T & BaseState<T>
 ): string => {
   const old = get();
-  const id = _.uniqueId()
+  const id = _.uniqueId();
   const [state, ,patches] = produceWithPatches(old, fn) as readonly [(T & BaseState<T>), any, Patch[]];
-  set({ ...state, patches: { ...state.patches, [id]: patches }});
+  set({ ...state, patches: { ...state.patches, [id]: patches } });
   return id;
 };
-
 
 export const reduceState = <
   S extends {},
@@ -56,7 +55,6 @@ export const optReduceState = <S, U>(
   });
 };
 
-
 export let stateStorageKeys: string[] = [];
 
 export const stateStorageKey = (stateName: string) => {
@@ -71,7 +69,7 @@ export const stateStorageKey = (stateName: string) => {
   });
 };
 
-export interface BaseState<StateType> {
+export interface BaseState<StateType extends {}> {
   rollback: (id: string) => void;
   patches: {
     [id: string]: Patch[];
@@ -89,22 +87,22 @@ export const createState = <T extends {}>(
 ): UseStore<T & BaseState<T>> => create<T & BaseState<T>>(persist<T & BaseState<T>>((set, get) => ({
   // @ts-ignore investigate zustand types
   set: fn => stateSetter(fn, set, get),
-  optSet: fn => {
+  optSet: (fn) => {
     return optStateSetter(fn, set, get);
   },
   patches: {},
   addPatch: (id: string, ...patch: Patch[]) => {
       // @ts-ignore investigate immer types
-    set(({ patches }) => ({ patches: {...patches, [id]: patch }}));
+    set(({ patches }) => ({ patches: { ...patches, [id]: patch } }));
   },
   removePatch: (id: string) => {
       // @ts-ignore investigate immer types
-    set(({ patches }) => ({ patches: _.omit(patches, id)}));
+    set(({ patches }) => ({ patches: _.omit(patches, id) }));
   },
   rollback: (id: string) => {
-    set(state => {
-        const applying = state.patches[id]
-        return {...applyPatches(state, applying), patches: _.omit(state.patches, id) }
+    set((state) => {
+        const applying = state.patches[id];
+        return { ...applyPatches(state, applying), patches: _.omit(state.patches, id) };
     });
   },
   ...properties
@@ -119,7 +117,7 @@ export async function doOptimistically<A, S extends {}>(state: UseStore<S & Base
   try {
     num = optReduceState(state, action, reduce);
     await call(action);
-    state.getState().removePatch(num)
+    state.getState().removePatch(num);
   } catch (e) {
     console.error(e);
     if(num) {

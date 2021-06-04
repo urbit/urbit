@@ -271,16 +271,7 @@
             rid=resource
             assoc=(unit association:metadata)
         ==
-    ?~  assoc
-      ~&  no-assoc+rid
-      `state
-    =*  group      group.u.assoc
-    =*  metadatum  metadatum.u.assoc
-    =/  module=term
-      ?:  ?=(%empty -.config.metadatum)  %$
-      ?:  ?=(%group -.config.metadatum)  %$
-      module.config.metadatum
-    abet:check:(abed:handle-update:ha rid nodes group module)
+    abet:check:(abed:handle-update:ha rid nodes)
   --
 ::
 ++  on-peek  on-peek:def
@@ -345,24 +336,23 @@
   |=  [rid=resource assoc=(unit association:metadata)]
   ^-  ?
   ?~  assoc
-    %.n
-  ?|  !(is-managed:grp group.u.assoc)
-      &(watch-on-self =(our.bowl entity.rid))
-  ==
+    %.y
+  &(watch-on-self =(our.bowl entity.rid))
 ::
 ++  handle-update
   |_  $:  rid=resource  ::  input
           updates=(list node:graph-store)
-          group=resource
-          module=term
+          mark=(unit mark)
           hark-pokes=(list action:store)  :: output
           new-watches=(list index:graph-store)
       ==
   ++  update-core  .
   ::
   ++  abed
-    |=  [r=resource upds=(list node:graph-store) grp=resource mod=term]
-    update-core(rid r, updates upds, group grp, module mod)
+    |=  [r=resource upds=(list node:graph-store)]
+    =/  m=(unit ^mark)
+      (get-mark:gra r)
+    update-core(rid r, updates upds, mark m)
   ::
   ++  get-conversion
     ::  LA:  this tube should be cached in %hark-graph-hook state
@@ -433,7 +423,7 @@
     =/  parent=index:post
       (scag parent.index-len.not-kind index.pos)
     =/  notif-index=index:store
-      [%graph group rid module desc parent]
+      [%graph rid mark desc parent]
     ?:  =(our.bowl author.pos)
       (self-post node notif-index not-kind)
     =.  update-core
@@ -441,6 +431,7 @@
     =?    update-core
         ?|  =(desc %mention)
             (~(has in watching) [rid parent])
+            =(mark `%graph-validator-dm)
         ==
       =/  =contents:store
         [%graph (limo pos ~)]

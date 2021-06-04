@@ -3,8 +3,7 @@ import { Group } from '@urbit/api';
 import { GraphNode } from '@urbit/api/graph';
 import bigInt from 'big-integer';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
@@ -13,11 +12,6 @@ import { useCopy } from '~/logic/lib/useCopy';
 import useMetadataState from '~/logic/state/metadata';
 import Author from '~/views/components/Author';
 import { GraphContent } from '../landscape/components/Graph/GraphContent';
-
-const ClickBox = styled(Box)`
-  cursor: pointer;
-  padding-left: ${p => p.theme.space[2]}px;
-`;
 
 interface CommentItemProps {
   pending?: boolean;
@@ -60,7 +54,8 @@ export function CommentItem(props: CommentItemProps) {
   };
 
   const ourMention = post?.contents?.some((e) => {
-    if (!('mention' in e)) return false;
+    if (!('mention' in e))
+return false;
     return e?.mention && e?.mention === window.ship;
   });
 
@@ -98,7 +93,6 @@ export function CommentItem(props: CommentItemProps) {
       ref.current.scrollIntoView({ block: 'center' });
     }
   }, [ref, props.highlighted]);
-  const history = useHistory();
 
   const { copyDisplay, doCopy } = useCopy(
     getPermalinkForGraph(
@@ -109,7 +103,7 @@ export function CommentItem(props: CommentItemProps) {
     'Copy Link'
   );
 
-  if (!post || typeof post === 'string') {
+  if (!post || typeof post === 'string' || typeof comment.post === 'string') {
     return (
       <Box width="100%" textAlign="left" py="3">
         <Text gray>This comment has been deleted.</Text>

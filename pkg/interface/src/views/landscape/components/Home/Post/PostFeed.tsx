@@ -89,6 +89,7 @@ class PostFeed extends React.Component<PostFeedProps, any> {
               isRelativeTime={false}
               vip={vip}
               group={group}
+              isHierarchical={true}
             />
           </Col>
           <PostItem
@@ -104,6 +105,7 @@ class PostFeed extends React.Component<PostFeedProps, any> {
             isRelativeTime={true}
             vip={vip}
             group={group}
+            isHierarchical={true}
           />
         </React.Fragment>
       );
@@ -144,6 +146,7 @@ class PostFeed extends React.Component<PostFeedProps, any> {
             isRelativeTime={true}
             vip={vip}
             group={group}
+            isHierarchical={true}
           />
         </Col>
       );
@@ -164,6 +167,7 @@ class PostFeed extends React.Component<PostFeedProps, any> {
           isRelativeTime={true}
           vip={vip}
           group={group}
+          isHierarchical={true}
         />
       </Box>
     );

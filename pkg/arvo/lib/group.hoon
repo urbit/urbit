@@ -34,10 +34,12 @@
 ::
 ++  scry-group
   |=  rid=resource
+  ^-  (unit group)
   %+  scry-for  ,(unit group)
   `path`groups+(en-path:resource rid)
 ::
 ++  scry-groups
+  ^-  (set resource)
   .^  ,(set resource)
     %gy
     (scot %p our.bowl)
@@ -48,6 +50,7 @@
 ::
 ++  members
   |=  rid=resource
+  ^-  (set ship)
   =;  =group
     members.group
   (fall (scry-group rid) *group)
@@ -101,6 +104,7 @@
 ::
 ++  can-join
   |=  [rid=resource =ship]
+  ^-  ?
   %+  scry-for  ,?
   ^-  path
   :-  %groups
@@ -121,6 +125,7 @@
 ::
 ++  is-managed
   |=  rid=resource
+  ^-  ?
   =/  group=(unit group)
     (scry-group rid)
   ?~  group  %.n

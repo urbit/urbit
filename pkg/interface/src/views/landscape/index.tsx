@@ -1,18 +1,14 @@
 import { Box } from '@tlon/indigo-react';
 import { PatpNoSig } from '@urbit/api';
 import moment from 'moment';
-import React, { ReactElement, useCallback, useEffect } from 'react';
+import React  from 'react';
 import Helmet from 'react-helmet';
-import { Route, RouteComponentProps, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { cite } from '~/logic/lib/util';
-import useGraphState from '~/logic/state/graph';
-import useHarkState from '~/logic/state/hark';
 import { StoreState } from '~/logic/store/type';
 import GlobalSubscription from '~/logic/subscription/global';
 import { Workspace } from '~/types/workspace';
 import { Body } from '../components/Body';
-import { Loading } from '../components/Loading';
 import { GroupsPane } from './components/GroupsPane';
 import { JoinGroup } from './components/JoinGroup';
 import { NewGroup } from './components/NewGroup';
@@ -43,51 +39,10 @@ type LandscapeProps = StoreState & {
   ship: PatpNoSig;
   api: GlobalApi;
   subscription: GlobalSubscription;
+  notificationsCount: number;
 }
 
-export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }): ReactElement {
-  const { ship, api, history } = props;
-  const goToGraph = useCallback((graph: string) => {
-    history.push(`/~landscape/messages/resource/chat/ship/~${graph}`);
-  }, [history]);
-  const graphKeys = useGraphState(state => state.graphKeys);
-
-  useEffect(() => {
-    const station = `${window.ship}/dm--${ship}`;
-    const theirStation = `${ship}/dm--${window.ship}`;
-
-    if (graphKeys.has(station)) {
-      goToGraph(station);
-      return;
-    }
-
-    if (graphKeys.has(theirStation)) {
-      goToGraph(theirStation);
-      return;
-    }
-
-    const aud = ship !== window.ship ? [`~${ship}`] : [];
-    const title = `${cite(window.ship)} <-> ${cite(ship)}`;
-
-    api.graph.createUnmanagedGraph(
-      `dm--${ship}`,
-      title,
-      '',
-      { invite: { pending: aud } },
-      'chat'
-    ).then(() => {
-      goToGraph(station);
-    });
-  }, []);
-
-  return (
-    <Loading text="Creating DM" />
-  );
-}
-
-export default function Landscape(props) {
-  const notificationsCount = useHarkState(s => s.notificationsCount);
-
+export default function Landscape(props: LandscapeProps) {
   return (
     <>
       <Helmet defer={false}>
@@ -138,12 +93,6 @@ export default function Landscape(props) {
               </Body>
             );
           }}
-        />
-        <Route path='/~landscape/dm/:ship?'
-        render={(routeProps) => {
-          const { ship } = routeProps.match.params;
-          return <DMRedirect {...routeProps} {...props} ship={ship} />;
-        }}
         />
         <Route path="/~landscape/join/:ship?/:name?"
           render={(routeProps) => {
