@@ -405,25 +405,49 @@
   ==
 ::  +pending-state
 ::
-::    derives tentative state from pending txs and canonical state,
-::    discarding invalid pending txs in the process.
+::    derives tentative state from pending/sending txs and
+::    canonical state, discarding invalid txs in the process.
 ::
 ++  pending-state
   |=  nas=^state:naive
   ^-  [_pending _nas]
   ::  apply our pending transactions
-  ::TODO  should also apply txs from sending map!
   ::
-  =|  valid=_pending
-  |-  ^+  [valid nas]
-  ?~  pending  [(flop valid) nas]
+  |^
+  =^  new-sending  nas  apply-sending
+  =.  sending  new-sending
+  (update-txs pending)
   ::
-  =^  gud=?    nas  (try-apply nas i.pending)
-  =?  valid    gud  [i.pending valid]
-  =?  finding  =(gud %.n)
-    %-  ~(put by finding)
-    [(hash-raw-tx raw-tx.i.pending) %failed]
-  $(pending t.pending)
+  ++  apply-sending
+    =|  valid=_sending
+    =+  sending=~(tap by sending)
+    |-  ^+  [valid nas]
+    ?~  sending  [valid nas]
+    ::
+    =*  key  p.i.sending
+    =*  val  q.i.sending
+    =^  new-valid  nas
+      ::  prepends force=%.n to all txs
+      ::
+      (update-txs (turn txs.val (lead |)))
+    =.  valid
+      %+  ~(put by valid)  key
+      val(txs (turn new-valid tail))
+    $(sending t.sending)
+  ::
+  ++  update-txs
+    |=  txs=(list [force=? =raw-tx:naive])
+    =/  valid=_txs  ~
+    |-  ^+  [valid nas]
+    ?~  txs  [valid nas]
+    =*  tx  i.txs
+    =^  gud=?  nas  (try-apply nas tx)
+    =?  valid  gud  (snoc valid tx)
+    =?  finding  =(gud %.n)
+      %-  ~(put by finding)
+      [(hash-raw-tx raw-tx.tx) %failed]
+    $(txs t.txs)
+  --
 ::  +try-apply:
 ::
 ++  try-apply
@@ -632,10 +656,7 @@
     ::  unexpected tx failures here. would that be useful? probably not?
     ::  ~?  !forced  [dap.bowl %aggregated-tx-failed-anyway err.diff]
     %failed
-  =/  [nep=_pending nas=_nas]  (pending-state canonical-state)
-  ::  update cached naive state with confirmed tx from diff
   ::
-  =^  *  nas  (try-apply nas | raw-tx.diff)
-  [~ state(pending nep)]
+  [~ state]
 ::
 --
