@@ -563,7 +563,8 @@
                       ?.  ?=([%| *] +>.sign-arvo)
                         ?~  p.p.sign-arvo
                           abet
-                        %-  (slog [leaf+"fuse merge conflict for {<syd>}" >p.p.sign-arvo< ~])
+                        =/  msg=tape  "fuse merge conflict for {<syd>}"
+                        %-  (slog [leaf+msg >p.p.sign-arvo< ~])
                         abet
                       %-  (slog leaf+"failed fuse for {<syd>}" p.p.sign-arvo)
                       abet
@@ -690,7 +691,8 @@
       ?>  =(who.fs p.bec)
       ?>  =(des.fs q.bec)
       =/  hax=@ud  (mug [kf (~(got by hxs) syd)])
-      =/  wir=wire  /kiln/fuse-request/[syd]/(scot %p p.bec)/[q.bec]/(scot %ud hax)
+      =/  wir=wire
+          /kiln/fuse-request/[syd]/(scot %p p.bec)/[q.bec]/(scot %ud hax)
       =/  rav=rave  [%next %v r.bec /]
       =/  rif=riff  [q.bec `rav]
       `[%pass wir %arvo %c [%warp who.fs rif]]
@@ -724,7 +726,6 @@
     ?.  =(hax (mug [kf (~(got by hxs) syd)]))
       ::  If the hash in the wire doesn't match the current request
       ::  this is a response for a previous fuse that we can ignore.
-      %-  (slog [leaf+"|fuse take: hash mismatch for source {<src>} on {<who>} while fusing {<syd>}" ~])
       ..take
     ?>  ?=([%clay *] sign-arvo)
     =/  gif=gift:clay  +.sign-arvo
