@@ -77,6 +77,8 @@ build/urbit-worker: $(common_objs) $(worker_objs)
 	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
 
+# CCDEPS and CCEXTRA are empty except in MingW build,
+# which uses them to inject a C source transform step
 %.o: %.c $(headers) $(CCDEPS)
 	@echo CC $<
 	@$(CC) -I./include $(CFLAGS) $< $(CCEXTRA) -c -o $@

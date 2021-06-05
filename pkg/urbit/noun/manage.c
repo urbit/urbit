@@ -82,29 +82,7 @@
 //
 static rsignal_jmpbuf u3_Signal;
 
-#if defined(U3_OS_mingw)
-/* u3_exception_handler: replaces libsigsegv on MingW
-*/
-EXCEPTION_DISPOSITION u3_exception_handler(
-    IN PEXCEPTION_RECORD ExceptionRecord,
-    IN ULONG64 EstablisherFrame,
-    IN OUT PCONTEXT ContextRecord,
-    IN OUT PDISPATCHER_CONTEXT DispatcherContext)
-{
-    if (ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION &&
-        ExceptionRecord->ExceptionInformation[0] == 1 &&
-        u3e_fault((void*)ExceptionRecord->ExceptionInformation[1], 1))
-    {
-        return ExceptionContinueExecution;
-    }
-
-    if (ExceptionRecord->ExceptionCode == EXCEPTION_STACK_OVERFLOW) {
-        rsignal_raise(SIGSTK);
-    }
-
-    return ExceptionContinueSearch;
-}
-#else
+#if !defined(U3_OS_mingw)
 #include <sigsegv.h>
 
 #ifndef SIGSTKSZ
@@ -1665,7 +1643,16 @@ _cm_limits(void)
 static void
 _cm_signals(void)
 {
-# if !defined(U3_OS_mingw)
+# if defined(U3_OS_mingw)
+  //  vere using libsigsegv on MingW is very slow, because libsigsegv
+  //  works by installing a top-level SEH unhandled exception filter.
+  //  The top-level filter runs only after Windows walks the whole stack,
+  //  looking up registered exception filters for every stack frame, and
+  //  finds no filter to handle the exception.
+  //  Instead of libsigsegv, all vere functions register a SEH exception
+  //  filter (see compat/mingw/seh_handler.c) that handles both memory
+  //  access and stack overflow exceptions. It calls u3e_fault directly.
+# else
   if ( 0 != sigsegv_install_handler(u3e_fault) ) {
     u3l_log("boot: sigsegv install failed\n");
     exit(1);

@@ -4,7 +4,7 @@
 enum { INIT, CPAR, DQ, DQS, SQ, SQS };
 char line[1 << 16];
 
-/* seh_handler_decorator: registers u3_exception_handler for all non-inline functions
+/* seh_handler_decorator: registers u3_exception_handler for all functions in given source file
 */
 int main(int argc, const char* argv[])
 {
@@ -56,7 +56,7 @@ int main(int argc, const char* argv[])
             fputc(line[i], stdout);
             continue;
         emit_handler:
-            fputs("{__asm__(\".seh_handler u3_exception_handler,@except\\n\");", stdout);
+            fputs("{__asm__(\".seh_handler _mingw_exception_filter,@except\\n\");", stdout);
             state = INIT;
         }
     }
