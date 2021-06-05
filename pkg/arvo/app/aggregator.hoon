@@ -228,9 +228,9 @@
     ^-  (quip card _this)
     |^
     ?+  wire  (on-agent:def wire sign)
-      [%send @ @ *]  (send-batch i.t.wire i.t.t.wire sign)
-      [%azimuth ~]   (azimuth-update sign)
-      [%nonce ~]     (nonce sign)
+      [%send @ @ *]     (send-batch i.t.wire i.t.t.wire sign)
+      [%azimuth-txs ~]  (azimuth-update sign)
+      [%nonce ~]        (nonce sign)
     ==
     ::
     ++  send-batch
