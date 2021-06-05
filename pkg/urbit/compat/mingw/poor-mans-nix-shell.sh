@@ -8,6 +8,14 @@ declare -A hdeps
 sources=(../../nix/sources.json ../../nix/sources-mingw.json)
 deriver=urbit-mingw-build
 depdirs=
+nixpath=${NIX_STORE-../build}
+
+# LDFLAGS doesn't like absolute paths
+if [ "${nixpath:0:1}" == "/" ]
+then
+  mkdir -p $nixpath
+  nixpath=$(realpath --relative-to=. $nixpath)
+fi
 
 hex2nixbase32 () {
   local digits='0123456789abcdfghijklmnpqrsvwxyz'
@@ -41,7 +49,7 @@ buildnixdep () {
   if [ -n "$url" ]
   then
     hash=${hdeps[$key]}
-    dir=../$hash-$key
+    dir=$nixpath/$hash-$key
     if [ -e $dir/.mingw~ ]
     then
       # dependency present, don't reupload
@@ -122,7 +130,8 @@ do
   [ -e $patch ] && cat $patch)|sha256sum)
   hash=$(hex2nixbase32 $hash)
   hdeps[$key]=$hash
-  depdirs="$depdirs|gsub(\"\\\\.\\\\./$key\";\"../$hash-$key\")"
+  # NB: this path substitution works only in local dependencies
+  depdirs="$depdirs|gsub(\"\\\\.\\\\./$key\";\"$nixpath/$hash-$key\")"
 done < <(jq --arg deriver "$deriver" -Sscrj 'add|to_entries|.[]|select(.value.mingw)|select(.value.url)|.key," ",{($deriver):(.value)},"\u0000"' ${sources[@]})
 
 # build dependencies, create include and library directory arrays
