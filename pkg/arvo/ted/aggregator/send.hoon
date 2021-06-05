@@ -48,7 +48,9 @@
     %+  can:naive  3
     %+  roll  txs
     |=  [=raw-tx:naive out=(list octs)]
-    :_  [raw.raw-tx out]
+    %+  weld
+      out
+    :_  [raw.raw-tx ~]
     (met 3 sig.raw-tx)^sig.raw-tx
   ::
       chain-id
