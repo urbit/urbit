@@ -12,8 +12,32 @@
 |%
 +$  fuse-arg
   $:  des=desk
-      res=[?([%cancel ~] [bas=fuse-source con=(list [fuse-source germ]) ~])]
+      res=[?([%cancel ~] [bas=path con=(list [path germ])])]
   ==
+::
+++  parse-fuse-source
+  |=  bec=beak
+  ^-  fuse-source
+  ::  This is a slight overload of the label, but
+  ::  it provides a nicer interface for the user so
+  ::  we'll go with it.
+  ?:  ?=([%tas *] r.bec)
+    ?:  =(p.r.bec %track)
+      [p.bec q.bec %trak]
+    bec
+  bec
+::
+++  de-beak
+  |=  pax=path
+  ^-  beak
+  =/  bem=beam  (need (de-beam pax))
+  ?>  =(s.bem /)
+  -.bem
+::
+++  path-to-fuse-source
+  |=  pax=path
+  ^-  fuse-source
+  (parse-fuse-source (de-beak pax))
 --
 :-  %say
 |=  [* [arg=[?(~ fuse-arg)]] [overwrite=$~(| flag) ~]]
@@ -23,4 +47,10 @@
 :-  des.arg
 ?:  ?=([%cancel ~] res.arg)
   ~
-[overwrite bas.res.arg con.res.arg]
+:+  overwrite
+  (path-to-fuse-source bas.res.arg)
+%+  turn
+  con.res.arg
+|=  [pax=path g=germ]
+^-  [fuse-source germ]
+[(path-to-fuse-source pax) g]
