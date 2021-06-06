@@ -99,6 +99,9 @@
       bas=fuse-source
       con=(list [fuse-source germ])
   ==
+::  Request to list current fuses. ~ means "list all"
+::
++$  kiln-fuse-list  (unit desk)
 --
 |=  [bowl:gall state]
 ?>  =(src our)
@@ -435,6 +438,31 @@
   ?~  +<  abet
   abet:abet:(merge:(work syd) ali sud cas gim)
 ::
+++  poke-fuse-list
+  =>
+  |%
+  ++  format-fuse
+    |=  pf=per-fuse
+    ^-  tang
+    [>bas.kf.pf< (turn con.kf.pf |=(x=[fuse-source germ] >x<))]
+  --
+  |=  k=kiln-fuse-list
+  ^+  abet
+  %.  abet
+  ?~  k
+    ?~  fus
+      (slog [leaf+"no ongoing fuses" ~])
+    %-  slog
+    %+  roll
+      ~(tap by `(map desk per-fuse)`fus)
+    |=  [[syd=desk pf=per-fuse] acc=tang]
+    ^-  tang
+    [leaf+"{<syd>}" (weld (format-fuse pf) acc)]
+  =/  pfu=(unit per-fuse)  (~(get by fus) u.k)
+  ?~  pfu
+    (slog [leaf+"no ongoing fuse for {<u.k>}" ~])
+  (slog (format-fuse u.pfu))
+::
 ++  poke-fuse
   |=  k=kiln-fuse
   ?~  k  abet
@@ -506,6 +534,7 @@
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-fuse               =;(f (f !<(_+<.f vase)) poke-fuse)
+    %kiln-fuse-list          =;(f (f !<(_+<.f vase)) poke-fuse-list)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
     %kiln-ota                =;(f (f !<(_+<.f vase)) poke:update)
     %kiln-ota-info           =;(f (f !<(_+<.f vase)) poke-ota-info)
