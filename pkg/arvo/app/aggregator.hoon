@@ -99,7 +99,9 @@
     =.  contract  naive:local-contracts:azimuth
     =.  chain-id  chain-id:local-contracts:azimuth
     :_  this
-    [%pass /azimuth-txs %agent [our.bowl %azimuth] %watch /txs]~
+    :~  set-timer
+        [%pass /azimuth-txs %agent [our.bowl %azimuth] %watch /txs]
+    ==
   ::
   ++  on-save  !>(state)
   ++  on-load
