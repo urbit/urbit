@@ -890,7 +890,8 @@
     ::
     ++  collect-parents
       |=  [=graph:store =index:store =ship =term]
-      ^-  (unit [node:store index:store (map index:store node:store) ^ship ^term])
+      ^-  %-  unit
+          [node:store index:store (map index:store node:store) ^ship ^term]
       =|  =(map index:store node:store)
       =|  =node:store
       =|  ind=index:store
@@ -920,16 +921,16 @@
       ==
     ::
     ++  collect-firstborn
-      |=  [=node:store =index:store map=(map index:store node:store) =ship =term]
+      |=  [=node:store =index:store mp=(map index:store node:store) =ship =term]
       ^-  (unit (unit cage))
       ?:  ?=(%empty -.children.node)
         :-  ~  :-  ~  :-  %graph-update-2
         !>  ^-  update:store
-        [now.bowl [%add-nodes [ship term] map]]
+        [now.bowl [%add-nodes [ship term] mp]]
       =/  item=[k=atom v=node:store]
         (need (ram:orm p.children.node))
       =.  index  (snoc index k.item)
-      $(map (~(put by map) index v.item(children empty+~)), node v.item)
+      $(mp (~(put by mp) index v.item(children empty+~)), node v.item)
     --
   ::
       [%x %update-log-subset @ @ @ @ ~]
@@ -952,7 +953,8 @@
       [%x %peek-update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
-    =/  m-update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
+    =/  m-update-log=(unit update-log:store)
+      (~(get by update-logs) [ship term])
     :-  ~  :-  ~  :-  %noun
     !>  ^-  (unit time)
     %+  biff  m-update-log
