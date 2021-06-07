@@ -159,7 +159,7 @@ export const MessageAuthor = ({
             fontWeight={nameMono ? '400' : '500'}
             cursor='pointer'
             onClick={doCopy}
-            title={`~${msg.author}`}
+            title={showNickname ? `~${msg.author}` : contact?.nickname}
           >
             {copyDisplay}
           </Text>
