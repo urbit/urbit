@@ -49,7 +49,7 @@
   ^-  hexb:bc
   %-  flip:byt:bc
   %-  sha256:bc
-  (script-pubkey:bc a)
+  (to-script-pubkey:adr:bc a)
 ::
 ++  parse-json-rpc
   |=  =json
