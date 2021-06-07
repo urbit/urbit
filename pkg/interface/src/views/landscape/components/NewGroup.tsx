@@ -6,7 +6,7 @@ import {
 import { Enc, GroupPolicy } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
@@ -16,7 +16,9 @@ import useMetadataState from '~/logic/state/metadata';
 import { AsyncButton } from '~/views/components/AsyncButton';
 
 const formSchema = Yup.object({
-  title: Yup.string().required('Group must have a name'),
+  title: Yup.string()
+    .matches(/^(\D).+$/, 'Group names may not start with a number')
+    .required('Group must have a name'),
   description: Yup.string(),
   isPrivate: Yup.boolean()
 });
@@ -94,7 +96,7 @@ export function NewGroup(props: NewGroupProps): ReactElement {
                 id="title"
                 label="Name"
                 caption="Provide a name for your group"
-                placeholder="eg. My Channel"
+                placeholder="eg. My Group"
               />
               <Input
                 id="description"
