@@ -704,7 +704,7 @@
     |=  new=(list card:agent:gall)
     ^+  +>
     +>.$(moz (welp new moz))
-  ::  +make-requests: send requests for each %trak source
+  ::  +make-requests: send requests for each %trak source.
   ::
   ++  make-requests
     ^+  ..abet
@@ -722,7 +722,7 @@
       =/  hax=@ud  (mug [kf (~(got by hxs) syd)])
       =/  wir=wire
           /kiln/fuse-request/[syd]/(scot %p p.bec)/[q.bec]/(scot %ud hax)
-      =/  rav=rave  [%next %v r.bec /]
+      =/  rav=rave  [%next %w r.bec /]
       =/  rif=riff  [q.bec `rav]
       `[%pass wir %arvo %c [%warp who.fs rif]]
     ::  No need to keep state if all the sources are static
@@ -762,8 +762,8 @@
     ?~  p.gif
       %-  (slog leaf+"|fuse request failed for {<src>} on <who> - cancelling")
       delete
-    =/  dom=dome  !<(dome +.r.u.p.gif)
-    =.  mox  (~(put by mox) [who src] let.dom)
+    =/  cas=cass:clay  !<(cass:clay +.r.u.p.gif)
+    =.  mox  (~(put by mox) [who src] ud.cas)
     fuse
   ::
   ::  utility functions below
