@@ -3682,7 +3682,6 @@
       |*  [gar=* sef=_|.(fist)]
       |=  jon=json
       ^-  (unit _gar)
-      =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)
     ::
     ++  sa                                              ::  string as tape
