@@ -211,8 +211,18 @@
   ++  on-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
-    ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
-      %wake  =^(cards state on-timer:do [cards this])
+    ?+    wire  (on-arvo:def wire sign-arvo)
+        [%timer ~]
+      ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
+        %wake  =^(cards state on-timer:do [cards this])
+      ==
+    ::
+        [%resend @ @ ~]
+      =/  [address=@ux nonce=@ud]
+        [(slav %ux i.t.wire) (rash i.t.t.wire dem)]
+      ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
+        %wake  [(send-roll:do address nonce) this]
+      ==
     ==
   ::
   ++  on-fail
