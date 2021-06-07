@@ -655,7 +655,11 @@
     ::  unexpected tx failures here. would that be useful? probably not?
     ::  ~?  !forced  [dap.bowl %aggregated-tx-failed-anyway err.diff]
     %failed
+  ::  because we update the predicted state upon receiving
+  ::  a new L2 tx via the rpc-api, this will only succeed when
+  ::  we hear about a L2 tx that hasn't been submitted by us
   ::
+  =^  *  nas  (try-apply nas | raw-tx.diff)
   [~ state]
 ::
 --
