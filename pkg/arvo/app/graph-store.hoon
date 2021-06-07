@@ -5,9 +5,9 @@
 |%
 +$  card  card:agent:gall
 +$  versioned-state
-  $%  [%0 network:zero:store]
-      [%1 network:zero:store]
-      [%2 network:zero:store]
+  $%  [%0 *]
+      [%1 *]
+      [%2 *]
       [%3 network:one:store]
       [%4 network:store]
       state-5
@@ -50,43 +50,9 @@
   =|  cards=(list card)
   |-
   ?-    -.old
-      %0
-    =*  zro  zero-load:upgrade:store
-    %_    $
-      -.old  %1
-    ::
-        graphs.old
-      %-  ~(run by graphs.old)
-      |=  [=graph:zero:store q=(unit mark)]
-      ^-  [graph:zero:store (unit mark)]
-      :-  (convert-unix-timestamped-graph:zro graph)
-      ?^  q  q
-      `%graph-validator-link
-    ::
-        update-logs.old
-      %-  ~(run by update-logs.old)
-      |=(a=* *update-log:zero:store)
-    ==
-  ::
-      %1
-    =*  zro  zero-load:upgrade:store
-    %_  $
-      -.old       %2
-      graphs.old  (~(run by graphs.old) change-revision-graph:zro)
-    ::
-        update-logs.old
-      %-  ~(run by update-logs.old)
-      |=(a=* *update-log:zero:store)
-    ==
-  ::
-      %2
-    =*  upg  upgrade:store
-    %_  $
-      -.old            %3
-      update-logs.old  (~(run by update-logs.old) update-log-to-one:upg)
-      graphs.old       (~(run by graphs.old) marked-graph-to-one:upg)
-      archive.old      (~(run by archive.old) marked-graph-to-one:upg)
-    ==
+    %0  [~ this]
+    %1  [~ this]
+    %2  [~ this]
   ::
       %3
     =*  upg  upgrade:store
@@ -274,7 +240,7 @@
           ?~  index
             ?=(^ node)
           ?~  t.index
-            ?=(^ (get:orm graph i.index))
+            (has:orm graph i.index)
           =.  node  (get:orm graph i.index)
           ?~  node  %.n
           ?-  -.children.u.node
@@ -343,7 +309,7 @@
         ::
         =/  parent=node:store
           ~|  "index does not exist to add a node to!"
-          (need (get:orm graph atom))
+          (got:orm graph atom)
         %_  parent
             children
           ^-  internal-graph:store
@@ -416,7 +382,7 @@
         ?~  t.index
           =/  =node:store
             ~|  "cannot remove index that does not exist {<index>}"
-            (need (get:orm graph atom))
+            (got:orm graph atom)
           %_    node
               post
             ~|  "cannot remove post that has already been removed"
@@ -434,7 +400,7 @@
         ::
         =/  parent=node:store
           ~|  "parent index does not exist to remove a node from!"
-          (need (get:orm graph atom))
+          (got:orm graph atom)
         ~|  "child index does not exist to remove a node from!"
         ?>  ?=(%graph -.children.parent)
         %_    parent
@@ -478,7 +444,7 @@
         =*  atom   i.index
         =/  =node:store
           ~|  "node does not exist to add signatures to!"
-          (need (get:orm graph atom))
+          (got:orm graph atom)
         ::  last index in list
         ::
         %^  put:orm
@@ -525,7 +491,7 @@
         =*  atom   i.index
         =/  =node:store
           ~|  "node does not exist to add signatures to!"
-          (need (get:orm graph atom))
+          (got:orm graph atom)
         ::  last index in list
         ::
         %^  put:orm
@@ -627,10 +593,9 @@
     |=  [=graph:store mark=(unit mark:store)]
     ^-  [? _state]
     ?~  mark   [%.y state]
-    =/  has-validator  (~(has by validators) u.mark)
     =/  validate=$-(indexed-post:store indexed-post:store)
-      ?:  has-validator
-        (~(got by validators) u.mark)
+      %+  fall
+        (~(get by validators) u.mark)
       .^  $-(indexed-post:store indexed-post:store)
           %cf
           (scot %p our.bowl)
@@ -640,11 +605,13 @@
           %graph-indexed-post
           ~
       ==
-    :_  state(validators (~(put by validators) u.mark validate))
+    =?  validators  !(~(has by validators) u.mark)
+      (~(put by validators) u.mark validate)
+    :_  state
     |-  ^-  ?
     ?~  graph  %.y
-    %+  roll  (tap:orm graph)
-    |=  [[=atom =node:store] out=?]
+    %+  all:orm  graph
+    |=  [=atom =node:store]
     ^-  ?
     ?&  ?|  ?=(%| -.post.node)
             ?=(^ (validate [atom p.post.node]))
@@ -1044,40 +1011,12 @@
   ?+  wire  (on-arvo:def wire sign-arvo)
   ::
   ::  old wire, do nothing 
-      [%graph *]        [~ this]
-      [%validator @ ~]  [~ this]
-  ::
-      [%try-rejoin @ *]
-    =/  rid=resource:store  (de-path:res t.t.wire)
-    =/  nack-count    (slav %ud i.t.wire)
-    ?>  ?=([%behn %wake *] sign-arvo)
-    ~?  ?=(^ error.sign-arvo)
-      "behn errored in backoff timers, continuing anyway"
-    =/  new=^wire  [%try-rejoin (scot %ud +(nack-count)) t.t.wire]
-    :_  this
-    [%pass new %agent [entity.rid %graph-push-hook] %watch resource+t.t.wire]~
+    [%graph *]         [~ this]
+    [%validator @ ~]   [~ this]
+    [%try-rejoin @ *]  [~ this]
   ==
 ::
-++  on-agent
-  |=  [=wire =sign:agent:gall]
-  ^-  (quip card _this)
-  ?.  ?=([%try-rejoin @ *] wire)
-    (on-agent:def wire sign)
-  ?.  ?=(%watch-ack -.sign)
-    [~ this]
-  =/  rid=resource:store  (de-path:res t.t.wire)
-  ?~  p.sign
-    =/  =cage  [%pull-hook-action !>([%add entity.rid rid])]
-    :_  this
-    :~  [%pass / %agent [our.bowl %graph-pull-hook] %poke cage]
-        [%pass wire %agent [entity.rid %graph-push-hook] %leave ~]
-    ==
-  =/  nack-count=@ud  (slav %ud i.t.wire)
-  =/  wakeup=@da
-    (add now.bowl (mul ~s1 (bex (min 19 nack-count))))
-  :_  this
-  [%pass wire %arvo %b %wait wakeup]~
-::
+++  on-agent  on-agent:def
 ++  on-leave  on-leave:def
 ++  on-fail   on-fail:def
 --
