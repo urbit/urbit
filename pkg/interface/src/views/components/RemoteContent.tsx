@@ -8,7 +8,7 @@ import withState from '~/logic/lib/withState';
 import useSettingsState from '~/logic/state/settings';
 import { RemoteContentPolicy } from '~/types/local-update';
 
-type RemoteContentProps = VirtualContextProps & {
+export type RemoteContentProps = VirtualContextProps & {
   url: string;
   text?: string;
   unfold?: boolean;

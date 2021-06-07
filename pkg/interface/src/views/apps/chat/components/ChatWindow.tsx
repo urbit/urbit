@@ -25,7 +25,7 @@ type ChatWindowProps = {
   dismissUnread: () => void;
   pendingSize?: number;
   showOurContact: boolean;
-  getPermalink: (index: BigInteger) => string;
+  getPermalink: (index: BigInteger) => string | undefined;
   isAdmin: boolean;
 };
 
@@ -208,7 +208,7 @@ class ChatWindow extends Component<
           This message has been deleted.
         </Text>
       );
-    };
+    }
     if (!this.state.initialized) {
       return (
         <MessagePlaceholder
@@ -239,7 +239,7 @@ class ChatWindow extends Component<
     };
 
     return (
-      // @ts-ignore
+      // @ts-ignore virt typings
       <ChatMessage
         key={index.toString()}
         ref={ref}

@@ -1,5 +1,5 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association, FlatGraph, Group } from '@urbit/api';
+import { Association, Group } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { Loading } from '~/views/components/Loading';
@@ -102,6 +102,6 @@ const PostFlatTimeline = (props: PostTimelineProps): ReactElement => {
       />
     </Box>
   );
-}
+};
 
 export default PostFlatTimeline;

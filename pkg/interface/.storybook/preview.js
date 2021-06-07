@@ -1,3 +1,4 @@
+import React from 'react';
 import dark from '@tlon/indigo-dark';
 import light from '@tlon/indigo-light';
 import { Reset } from '@tlon/indigo-react';
@@ -130,6 +131,21 @@ export const decorators = [
             resource: '/ship/~darrux-landes/development',
             group: '/ship/~bitbet-bolbel/urbit-community',
           },
+        },
+      },
+    });
+
+    useContactState.setState({
+      contacts: {
+        '~sampel-palnet': {
+          status: 'Just urbiting',
+          'last-updated': 1621511447583,
+          avatar: null,
+          cover: null,
+          bio: 'An urbit user',
+          nickname: 'Sample Planet',
+          color: '0xee.5432',
+          groups: [],
         },
       },
     });

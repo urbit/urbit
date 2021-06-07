@@ -33,7 +33,8 @@
 ;<  ~  bind:m
   %^  poke-our  %graph-push-hook
     %graph-update-2
-  !>(update)
+  !>  ^-  update:store
+  update
 (pure:m !>(`action:graph-view`[%pending-indices hashes]))
 ::
 ++  sort-nodes

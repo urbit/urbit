@@ -1,14 +1,12 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
 import { GraphNode } from '@urbit/api';
-import bigInt from 'big-integer';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
 import { useGraph } from '~/logic/state/graph';
 import { Loading } from '~/views/components/Loading';
 import PostFeed from './PostFeed';
 import PostItem from './PostItem/PostItem';
-import { stringToArr } from '~/views/components/ArrayVirtualScroller';
-
+import { stringToArr, arrToString } from '~/views/components/ArrayVirtualScroller';
 
 export default function PostReplies(props) {
   const {
@@ -27,6 +25,31 @@ export default function PostReplies(props) {
 
   const shouldRenderFeed = Boolean(graph);
 
+  const locationUrl =
+    props.locationUrl.replace(`${baseUrl}/feed/replies`, '');
+  const index = stringToArr(locationUrl);
+
+  useEffect(() => {
+    if (graphRid.ship === '~zod' && graphRid.name === 'null') {
+      return;
+    }
+
+    if (index.length < 1) {
+      return;
+    }
+
+    const i = [];
+    for (const k of index) {
+      i.push(k);
+      //  TODO: why can't I use await?
+      api.graph.getNode(
+        graphRid.ship,
+        graphRid.name,
+        arrToString(i)
+      );
+    }
+  }, [graphPath, arrToString(index)]);
+
   if (!shouldRenderFeed) {
     return (
       <Box height="100%" width="100%" alignItems="center" pl={1} pt={3}>
@@ -35,18 +58,14 @@ export default function PostReplies(props) {
     );
   }
 
-  const locationUrl =
-    props.locationUrl.replace(`${baseUrl}/feed/replies`, '');
-  const nodeIndex = stringToArr(locationUrl);
-
   let node: GraphNode;
   let parentNode;
-  nodeIndex.forEach((i, idx) => {
+  index.forEach((i, idx) => {
     if (!graph) {
       return null;
     }
     node = graph.get(i);
-    if(idx < nodeIndex.length - 1) {
+    if(idx < index.length - 1) {
       parentNode = node;
     }
     if (!node) {
@@ -75,7 +94,7 @@ export default function PostReplies(props) {
             graphPath={graphPath}
             association={association}
             api={api}
-            index={nodeIndex}
+            index={index}
             baseUrl={baseUrl}
             history={history}
             isParent={true}

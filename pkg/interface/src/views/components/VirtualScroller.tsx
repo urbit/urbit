@@ -9,7 +9,6 @@ import { IS_IOS } from '~/logic/lib/platform';
 import { VirtualContext } from '~/logic/lib/virtualContext';
 import { clamp } from '~/logic/lib/util';
 
-
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
 
@@ -39,7 +38,7 @@ interface VirtualScrollerProps<T> {
    * The data to iterate over
    */
   data: BigIntOrderedMap<T>;
-  /**
+  /*
    * The component to render the items
    *
    * @remarks
@@ -53,7 +52,7 @@ interface VirtualScrollerProps<T> {
   size: number;
   pendingSize: number;
   totalSize: number;
-  /**
+  /*
    * Average height of a single rendered item
    *
    * @remarks
@@ -61,7 +60,7 @@ interface VirtualScrollerProps<T> {
    * size is variable, err on the lower side.
    */
   averageHeight: number;
-  /**
+  /*
    * The offset to begin rendering at, on load.
    *
    * @remarks
@@ -70,13 +69,13 @@ interface VirtualScrollerProps<T> {
    */
   offset: number;
   style?: any;
-  /**
+  /*
    * Callback to execute when finished loading from start
   */
   onBottomLoaded?: () => void;
 }
 
-interface VirtualScrollerState<T> {
+interface VirtualScrollerState {
   visibleItems: BigInteger[];
   scrollbar: number;
   loaded: {
@@ -99,36 +98,36 @@ const ZONE_SIZE = IS_IOS ? 20 : 80;
 // nb: in this file, an index refers to a BigInteger and an offset refers to a
 // number used to index a listified BigIntOrderedMap
 
-/**
+/*
  * A virtualscroller for a `BigIntOrderedMap`.
  *
  * VirtualScroller does not clean up or reset itself, so please use `key`
  * to ensure a new instance is created for each BigIntOrderedMap
  */
-export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T>, VirtualScrollerState<T>> {
-  /**
+export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T>, VirtualScrollerState> {
+  /*
    * A reference to our scroll container
    */
   window: HTMLDivElement | null = null;
-  /**
+  /*
    * A map of child refs, used to calculate scroll position
    */
   private childRefs = new Map<string, HTMLElement>();
-  /**
+  /*
    * A set of child refs which have been unmounted
    */
   private orphans = new Set<string>();
-  /**
+  /*
    *  If saving, the bottommost visible element that we pin our scroll to
    */
   private savedIndex: BigInteger | null = null;
-  /**
+  /*
    *  If saving, the distance between the top of `this.savedEl` and the bottom
    *  of the screen
    */
   private savedDistance = 0;
 
-  /**
+  /*
    *  If saving, the number of requested saves. If several images are loading
    *  at once, we save the scroll pos the first time we see it and restore
    *  once the number of requested saves is zero
@@ -189,19 +188,18 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     if(!this.window || !this.scrollRef) {
       return;
     }
-    const { scrollTop, scrollHeight, offsetHeight } = this.window;
+    const { scrollTop, scrollHeight } = this.window;
 
     const unloaded = (this.startOffset() / this.pageSize);
     const totalpages = this.props.size / this.pageSize;
 
     const loaded = (scrollTop / scrollHeight);
-    const total = unloaded +  loaded;
     const result = ((unloaded + loaded) / totalpages) *this.window.offsetHeight;
     this.scrollRef.style[this.props.origin] = `${result}px`;
   }, 50);
 
-  componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState<T>) {
-    const { size, data, offset, pendingSize } = this.props;
+  componentDidUpdate(prevProps: VirtualScrollerProps<T>, _prevState: VirtualScrollerState) {
+    const { size, pendingSize } = this.props;
 
     if(size !== prevProps.size || pendingSize !== prevProps.pendingSize) {
       if((this.window?.scrollTop ?? 0) < ZONE_SIZE) {
@@ -237,7 +235,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
     return offset;
   }
 
-  /**
+  /*
    *  Updates the `startOffset` and adjusts visible items accordingly.
    *  Saves the scroll positions before repainting and restores it afterwards
    */
@@ -364,7 +362,6 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
 
     const startOffset = this.startOffset();
 
-    const scrollEnd = scrollTop + windowHeight;
     if (scrollTop < ZONE_SIZE) {
       log('scroll', `Entered start zone ${scrollTop}`);
       if (startOffset === 0) {
@@ -372,7 +369,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
         this.scrollLocked = true;
       }
 
-      const newOffset = 
+      const newOffset =
         clamp(startOffset - this.pageDelta, 0, this.props.data.size - this.pageSize);
       if(newOffset < 10) {
         this.loadBottom();
@@ -385,7 +382,7 @@ export default class VirtualScroller<T> extends Component<VirtualScrollerProps<T
       this.scrollLocked = false;
       log('scroll', `Entered end zone ${scrollTop}`);
 
-      const newOffset = 
+      const newOffset =
         clamp(startOffset + this.pageDelta, 0, this.props.data.size - this.pageSize);
       if (onEndReached && startOffset === 0) {
         onEndReached();

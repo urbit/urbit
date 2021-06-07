@@ -90,7 +90,7 @@ return false;
     'Copy Link'
   );
 
-  if (!post || typeof post === 'string') {
+  if (!post || typeof post === 'string' || typeof comment.post === 'string') {
     return (
       <Box width="100%" textAlign="left" py="3">
         <Text gray>This comment has been deleted.</Text>

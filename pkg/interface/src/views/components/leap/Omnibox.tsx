@@ -100,9 +100,9 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     }
     Mousetrap.bind('escape', props.toggle);
     const touchstart = new Event('touchstart');
-    // @ts-ignore
+    // @ts-ignore ref typings
     inputRef?.current?.input?.dispatchEvent(touchstart);
-    // @ts-ignore
+    // @ts-ignore ref typings
     inputRef?.current?.input?.focus();
     return () => {
       Mousetrap.unbind('escape');
@@ -150,7 +150,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   }, [query, index]);
 
   const navigate = useCallback(
-    (app: string, link: string) => {
+    (app: string, link: string, shift: boolean) => {
       props.toggle();
       if (
         defaultApps.includes(app.toLowerCase()) ||
@@ -162,6 +162,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         app === 'home' ||
         app === 'inbox'
       ) {
+        if(shift && app === 'profile') {
+          // TODO: hacky, fix
+          link = link.replace('~profile', '~landscape/messages/dm');
+        }
         history.push(link);
       } else {
         window.location.href = link;
@@ -246,13 +250,14 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       if (evt.key === 'Enter') {
         evt.preventDefault();
         if (selected.length) {
-          navigate(selected[0], selected[1]);
+          navigate(selected[0], selected[1], evt.shiftKey);
         } else if (Array.from(results.values()).flat().length === 0) {
           return;
         } else {
           navigate(
             Array.from(results.values()).flat()[0].app,
-            Array.from(results.values()).flat()[0].link
+            Array.from(results.values()).flat()[0].link,
+            evt.shiftKey
           );
         }
       }
@@ -324,7 +329,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
               );
             const sel = selected?.length ? selected[1] : '';
             return (
-              <Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
+              <Box key={i} width='max(50vw, 300px)' maxWidth='700px'>
                 {categoryTitle}
                 {categoryResults.sort(sortResults).map((result, i2) => (
                   <OmniboxResult
@@ -333,9 +338,12 @@ export function Omnibox(props: OmniboxProps): ReactElement {
                     icon={result.app}
                     text={result.title}
                     subtext={result.host}
+                    shiftLink={result.shiftLink}
+                    shiftDescription={result.shiftDescription}
+                    description={result.description}
                     link={result.link}
                     cursor={leapCursor}
-                    navigate={() => navigate(result.app, result.link)}
+                    navigate={() => navigate(result.app, result.link, false)}
                     setSelection={() => setSelection(result.app, result.link)}
                     selected={sel}
                   />
@@ -361,9 +369,9 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       >
         <Row justifyContent='center'>
           <Box
-            mt={['10vh', '20vh']}
+            mt={['10vh', '15vh']}
             width='max(50vw, 300px)'
-            maxWidth='600px'
+            maxWidth='700px'
             borderRadius={2}
             backgroundColor='white'
             ref={(el) => {

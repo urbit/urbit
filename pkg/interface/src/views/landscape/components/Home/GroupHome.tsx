@@ -1,5 +1,4 @@
 import { Box } from '@tlon/indigo-react';
-import { GroupConfig, resourceFromPath } from '@urbit/api';
 import React from 'react';
 import { Route } from 'react-router-dom';
 import useGroupState from '~/logic/state/group';
@@ -8,8 +7,9 @@ import { AddFeedBanner } from './AddFeedBanner';
 import { EmptyGroupHome } from './EmptyGroupHome';
 import { EnableGroupFeed } from './EnableGroupFeed';
 import { GroupFeed } from './GroupFeed';
+import { getFeedPath } from '~/logic/lib/util';
 import { GroupFlatFeed } from './GroupFlatFeed';
-
+import { resourceFromPath } from '@urbit/api';
 
 function GroupHome(props) {
   const {
@@ -18,28 +18,17 @@ function GroupHome(props) {
     baseUrl
   } = props;
 
-  const { ship } = resourceFromPath(groupPath);
-
   const associations = useMetadataState(state => state.associations);
   const groups = useGroupState(state => state.groups);
+  const { ship } = resourceFromPath(groupPath);
 
-  const metadata = associations?.groups[groupPath]?.metadata;
+  const association = associations?.groups[groupPath];
 
-  const askFeedBanner =
-    ship === `~${window.ship}` &&
-    metadata &&
-    metadata.config &&
-    'group' in metadata.config &&
-    metadata.config.group === null;
+  const feedPath = getFeedPath(association);
 
-  const isFeedEnabled =
-    metadata &&
-    metadata.config &&
-    (metadata.config as GroupConfig).group &&
-    'resource' in (metadata.config as GroupConfig).group;
+  const askFeedBanner = feedPath === undefined && `~${window.ship}` === ship;
 
-  const graphPath = (metadata.config as GroupConfig)?.group?.resource;
-  const graphMetadata = associations?.graph[graphPath]?.metadata;
+  const graphMetadata = associations?.graph[feedPath]?.metadata;
 
   return (
     <Box width="100%" height="100%" overflow="hidden">
@@ -65,7 +54,7 @@ function GroupHome(props) {
       <Route path={`${baseUrl}/feed`}>
         { (graphMetadata?.vip === 'admin-feed') ? (
             <GroupFeed
-              graphPath={graphPath}
+              graphPath={feedPath}
               groupPath={groupPath}
               vip={graphMetadata?.vip || ''}
               api={api}
@@ -73,7 +62,7 @@ function GroupHome(props) {
             />
           ) : (
             <GroupFlatFeed
-              graphPath={graphPath}
+              graphPath={feedPath}
               groupPath={groupPath}
               vip={graphMetadata?.vip || ''}
               api={api}
