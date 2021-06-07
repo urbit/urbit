@@ -32,10 +32,7 @@
       ::  sending: the l2 txs currently sending/awaiting l2 confirmation
       ::  finding: raw-tx-hash reverse lookup for sending map
       ::  next-nonce: next l1 nonce to use
-      ::  nas: cached naive state
-      ::       when a new l2 tx comes in, via +take-tx or +on-naive-dif, the
-      ::       +canonical-state is retrieved from %azimuth, the pending txs
-      ::       and the new l2 tx are applied and the result is stored in +nas
+      ::  nas: predicted naive state
       ::
       pending=(list pend-tx)
     ::
@@ -299,7 +296,7 @@
           ::  this assumes that %azimuth has already processed eth data
           ::
           =^  pending  nas
-            (pending-state !<(^state:naive q.cage.sign))
+            (predicted-state !<(^state:naive q.cage.sign))
           [~ this(pending pending)]
         ==
       ==
@@ -403,12 +400,12 @@
     (scot %da now.bowl)
     /nas/nas
   ==
-::  +pending-state
+::  +predicted-state
 ::
-::    derives tentative state from pending/sending txs and
+::    derives predicted state from pending/sending txs and
 ::    canonical state, discarding invalid txs in the process.
 ::
-++  pending-state
+++  predicted-state
   |=  nas=^state:naive
   ^-  [_pending _nas]
   ::  apply our pending transactions
@@ -533,6 +530,8 @@
   ^-  [success=? _state]
   =/  [nep=_pending nas=_nas]  (pending-state canonical-state)
   =^  success  nas  (try-apply nas force raw-tx)
+  =/  [nep=_pending pred=_nas]  (predicted-state canonical-state)
+  =^  success  nas  (try-apply pred force raw-tx)
   ::TODO  want to notify about dropped pendings, or no? client prolly polls...
   =?  pending  success  (snoc nep [force raw-tx])
   [success state]
