@@ -28,8 +28,8 @@
     rose+(ot style+(ot mid+sa open+sa close+sa ~) lines+(ar dank) ~)
   ==
 ::
-++  orm      ((ordered-map atom node) gth)
-++  orm-log  ((ordered-map time logged-update) gth)
+++  orm      ((on atom node) gth)
+++  orm-log  ((on time logged-update) gth)
 ::
 ++  enjs
   =,  enjs:format
