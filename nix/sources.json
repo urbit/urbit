@@ -95,6 +95,18 @@
         "url": "https://github.com/nmattia/niv/archive/9d35b9e4837ab88517210b1701127612c260eccf.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "nix-haskell-hls": {
+        "branch": "master",
+        "description": "Nix builds of Haskell Language Server",
+        "homepage": null,
+        "owner": "shajra",
+        "repo": "nix-haskell-hls",
+        "rev": "3ab2de08ff62461ae60c5c0dfedde0d8ee873ed4",
+        "sha256": "1b7bhkjw3s8d5lvzfdb98h0cmx8yi9ddp8v20386glm7xj0lr1fy",
+        "type": "tarball",
+        "url": "https://github.com/shajra/nix-haskell-hls/archive/3ab2de08ff62461ae60c5c0dfedde0d8ee873ed4.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "nixpkgs": {
         "branch": "master",
         "description": "Nix Packages collection",
