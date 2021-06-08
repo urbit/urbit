@@ -3,8 +3,9 @@ import { Group } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
-import { Link, Redirect, Route, Switch } from 'react-router-dom';
+import { Link, Route, Switch, useLocation } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
+import { useQuery } from '~/logic/lib/useQuery';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
 import { StoreState } from '~/logic/store/type';
@@ -44,6 +45,8 @@ export function LinkResource(props: LinkResourceProps) {
   const graphs = useGraphState(state => state.graphs);
   const graph = graphs[resourcePath] || null;
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
+  const { query } = useQuery();
+  const isGrid = query.has('grid');
 
   useEffect(() => {
     api.graph.getGraph(ship, name);
@@ -54,61 +57,50 @@ export function LinkResource(props: LinkResourceProps) {
     return <Center width='100%' height='100%'><LoadingSpinner /></Center>;
   }
   const { title, description } = resource.metadata;
+  const { pathname, search } = useLocation();
 
-  const titlebar = (url: string, grid: boolean, back?: string) => (
-    <Titlebar back={back} title={title} description={description} workspace={baseUrl} baseUrl={resourceUrl} >
-      <Link to={`${url}/${grid ? 'list' : 'grid'}`}>
+  const titlebar = (back?: string) => (
+    <Titlebar back={back && `${back}${search}`} title={title} description={description} workspace={baseUrl} baseUrl={resourceUrl} >
+      <Link to={{ pathname, search: isGrid ? '' : '?grid=true' }}>
         <Text bold pr='3' color='blue'>
-          Switch to {!grid ? 'grid' : 'list' }
+          Switch to {!isGrid ? 'grid' : 'list' }
         </Text>
       </Link>
-
     </Titlebar>
   );
 
   return (
     <Col alignItems="center" height="100%" width="100%" overflowY="hidden">
       <Switch>
-        <Redirect exact from={relativePath('')} to={relativePath('/list')} />
         <Route
           exact
-          path={relativePath('/list')}
+          path={relativePath('')}
           render={(props) => {
             return (
               <Col height="100%" width="100%">
-                {titlebar(relativePath(''), false)}
-                {/* @ts-ignore withState typings*/}
-                <LinkWindow
-                  key={rid}
-                  association={resource}
-                  resource={resourcePath}
-                  graph={graph}
-                  baseUrl={resourceUrl}
-                  group={group as Group}
-                  path={resource.group}
-                  pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
-                  api={api}
-                  mb={3}
-                />
+                {titlebar()}
+                { isGrid ? (
+                  <LinkBlocks graph={graph} association={resource} api={api} />
+                  ) : /* @ts-ignore withState typings */ (
+                    <LinkWindow
+                      key={rid}
+                      association={resource}
+                      resource={resourcePath}
+                      graph={graph}
+                      baseUrl={resourceUrl}
+                      group={group as Group}
+                      path={resource.group}
+                      pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
+                      api={api}
+                      mb={3}
+                    />
+                  )}
             </Col>
             );
           }}
         />
         <Route
-          exact
-          path={relativePath('/grid')}
-          render={(props) => {
-            return (
-              <Col height="100%" width="100%">
-                {titlebar(relativePath(''), true)}
-                <LinkBlocks graph={graph} association={resource} api={api} />
-              </Col>
-            );
-          }}
-        />
-
-        <Route
-          path={[relativePath('/list/index/:index'), relativePath('/grid/index/:index')]}
+          path={relativePath('/index/:index')}
           render={(props) => {
             const index = bigInt(props.match.params.index);
 
@@ -129,10 +121,9 @@ export function LinkResource(props: LinkResourceProps) {
                 </Col>
               );
             }
-            const { pathname } = props.location;
             return (
               <Col height="100%" width="100%">
-                {titlebar(relativePath()}
+                {titlebar(relativePath(''))}
                 <LinkDetail
                   node={node}
                   association={association}

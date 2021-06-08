@@ -18,7 +18,6 @@ interface LinkItemProps {
   resource: string;
   api: GlobalApi;
   group: Group;
-  path: string;
   baseUrl: string;
   mt?: number;
   measure?: any;
@@ -30,7 +29,6 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
     resource,
     api,
     group,
-    path,
     ...rest
   } = props;
 
@@ -188,7 +186,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
       />
       <Box ml="auto">
         <Link
-          to={node.post.pending ? '#' : `${baseUrl}/list/index/${index}`}
+          to={node.post.pending ? '#' : `${baseUrl}/index/${index}`}
           style={{ cursor: node.post.pending ? 'default' : 'pointer' }}
         >
         <Box display='flex'>

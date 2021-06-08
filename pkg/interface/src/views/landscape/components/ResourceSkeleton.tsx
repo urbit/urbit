@@ -220,7 +220,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Link>
   );
 
-  const bind = useResize(useCallback((entry) => {
+  const bind = useResize<HTMLDivElement>(useCallback((entry) => {
     setActionsWidth(entry.borderBoxSize[0].inlineSize);
   }, []));
 

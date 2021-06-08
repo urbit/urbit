@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useRef, useState } from 'react';
+import React, { ReactNode, useCallback, useState } from 'react';
 import { Icon, Box, Text } from '@tlon/indigo-react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -80,7 +80,7 @@ export function Titlebar(props: TitlebarProps) {
       flexShrink={0}
       display={back ? 'block' : ['block', 'none']}
     >
-      <Link to={back || `/~landscape${workspace}`}>
+      <Link to={back || workspace}>
         <Text>{'<- Back'}</Text>
       </Link>
     </Box>
