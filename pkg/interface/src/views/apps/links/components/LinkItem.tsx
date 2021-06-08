@@ -1,5 +1,5 @@
 import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, Group, TextContent, UrlContent } from '@urbit/api';
+import { Association, GraphNode, Group, markEachAsRead, TextContent, UrlContent } from '@urbit/api';
 import React, { ReactElement, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
@@ -11,6 +11,7 @@ import Author from '~/views/components/Author';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
 import { PermalinkEmbed } from '../../permalinks/embed';
+import airlock from '~/logic/api';
 
 interface LinkItemProps {
   node: GraphNode;
@@ -30,7 +31,6 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
     resource,
     api,
     group,
-    path,
     ...rest
   } = props;
 
@@ -42,8 +42,8 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
   const index = node.post.index.split('/')[1];
 
   const markRead = useCallback(() => {
-    api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
-  }, [association, index]);
+    airlock.poke(markEachAsRead(resource, '/', `/${index}`));
+  }, [resource, index]);
 
   useEffect(() => {
     function onBlur() {

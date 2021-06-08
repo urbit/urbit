@@ -1,4 +1,5 @@
 import { Col } from '@tlon/indigo-react';
+import { markCountAsRead } from '@urbit/api';
 import React, {
   useEffect
 } from 'react';
@@ -11,6 +12,7 @@ import { Loading } from '~/views/components/Loading';
 import { GroupFeedHeader } from './GroupFeedHeader';
 import PostReplies from './Post/PostReplies';
 import PostTimeline from './Post/PostTimeline';
+import airlock from '~/logic/api';
 
 function GroupFeed(props) {
   const {
@@ -50,7 +52,7 @@ function GroupFeed(props) {
       return;
     }
     api.graph.getNewest(graphResource.ship, graphResource.name, 100);
-    api.hark.markCountAsRead(association, '/', 'post');
+    airlock.poke(markCountAsRead(graphPath));
   }, [graphPath]);
 
   if (!graphPath) {

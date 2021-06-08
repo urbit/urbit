@@ -8,6 +8,10 @@ import _ from 'lodash';
 import { compose } from 'lodash/fp';
 import { makePatDa } from '~/logic/lib/util';
 import { describeNotification, getReferent } from '../lib/hark';
+import { BaseState } from '../state/base';
+import { HarkState as State } from '../state/hark';
+
+type HarkState = State & BaseState<State>;
 
 function calculateCount(json: any, state: HarkState) {
   state.notificationsCount = Object.keys(state.unreadNotes).length;

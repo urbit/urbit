@@ -4,6 +4,8 @@ import {
 
     JoinRequests, Notifications,
 
+    seen,
+
     Timebox,
     unixToDa
 } from '@urbit/api';
@@ -11,15 +13,16 @@ import { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import moment from 'moment';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { getNotificationKey } from '~/logic/lib/hark';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useLaunchState from '~/logic/state/launch';
-import { daToUnix, MOMENT_CALENDAR_DATE } from '~/logic/lib/util';
+import { daToUnix } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
 import { Invites } from './invites';
 import { Notification } from './notification';
+import airlock from '~/logic/api';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -48,13 +51,13 @@ export default function Inbox(props: {
 }) {
   const { api } = props;
   useEffect(() => {
-    let seen = false;
+    let hasSeen = false;
     setTimeout(() => {
-      seen = true;
+      hasSeen = true;
     }, 3000);
     return () => {
-      if (seen) {
-        api.hark.seen();
+      if (hasSeen) {
+        airlock.poke(seen());
       }
     };
   }, []);
@@ -65,22 +68,14 @@ export default function Inbox(props: {
     s => Object.keys(s.unreads.graph).length > 0
   );
 
+  const getMore = useHarkState(s => s.getMore);
+
   const notificationState = useHarkState(state => state.notifications);
   const unreadNotes = useHarkState(s => s.unreadNotes);
   const archivedNotifications = useHarkState(state => state.archivedNotifications);
 
   const notifications =
     Array.from(props.showArchive ? archivedNotifications : notificationState) || [];
-
-  const calendar = {
-    ...MOMENT_CALENDAR_DATE, sameDay: function (now) {
-      if (this.subtract(6, 'hours').isBefore(now)) {
-        return '[Earlier Today]';
-      } else {
-        return MOMENT_CALENDAR_DATE.sameDay;
-      }
-    }
-  };
 
   const notificationsByDay = f.flow(
     f.map<DatedTimebox, DatedTimebox>(([date, nots]) => [
@@ -105,16 +100,12 @@ export default function Inbox(props: {
 
   const scrollRef = useRef(null);
 
-  const loadMore = useCallback(async () => {
-    return api.hark.getMore();
-  }, [api]);
-
   const { isDone, isLoading } = useLazyScroll(
     scrollRef,
     ready,
     0.2,
     _.flatten(notifications).length,
-    loadMore
+    getMore
   );
   const date = unixToDa(Date.now());
 

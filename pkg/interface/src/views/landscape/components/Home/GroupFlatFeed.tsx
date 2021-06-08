@@ -12,6 +12,8 @@ import { GroupFeedHeader } from './GroupFeedHeader';
 import PostThread from './Post/PostThread';
 import PostFlatTimeline from './Post/PostFlatTimeline';
 import PostReplies from './Post/PostReplies';
+import airlock from '~/logic/api';
+import { markCountAsRead } from '@urbit/api';
 
 function GroupFlatFeed(props) {
   const {
@@ -42,7 +44,7 @@ function GroupFlatFeed(props) {
       return;
     }
     api.graph.getDeepOlderThan(graphRid.ship, graphRid.name, null, 100);
-    api.hark.markCountAsRead(association, '/', 'post');
+    airlock.poke(markCountAsRead(graphPath));
   }, [graphPath]);
 
   if (!graphPath) {

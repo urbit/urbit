@@ -1,5 +1,5 @@
-import { Action, Anchor, Box, Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph, GraphNode, Group } from '@urbit/api';
+import { Action, Box, Col, Row, Text } from '@tlon/indigo-react';
+import { Association, Graph, GraphNode, Group, markEachAsRead } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -8,13 +8,12 @@ import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getComments, getLatestRevision } from '~/logic/lib/publish';
 import { useCopy } from '~/logic/lib/useCopy';
-import { useQuery } from '~/logic/lib/useQuery';
 import Author from '~/views/components/Author';
 import { Comments } from '~/views/components/Comments';
 import { Spinner } from '~/views/components/Spinner';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { NoteNavigation } from './NoteNavigation';
-import { Redirect } from 'react-router-dom';
+import airlock from '~/logic/api';
 
 interface NoteProps {
   ship: string;
@@ -56,14 +55,13 @@ export function Note(props: NoteProps & RouteComponentProps) {
     );
   }
 
-  const { query } = useQuery();
   const comments = getComments(note);
-  const [revNum, title, body, post] = getLatestRevision(note);
+  const [, title, , post] = getLatestRevision(note);
   const index = note.post.index.split('/');
 
   const noteId = bigInt(index[1]);
   useEffect(() => {
-    api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
+    airlock.poke(markEachAsRead(props.association.resource, '/',`/${index[1]}/1/1`));
   }, [props.association, props.note]);
 
   const adminLinks: JSX.Element[] = [];

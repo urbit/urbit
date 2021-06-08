@@ -1,4 +1,4 @@
-import { Content, createPost, Post } from '@urbit/api';
+import { Content, createPost, markCountAsRead, Post } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import { BigInteger } from 'big-integer';
 import React, {
@@ -16,6 +16,7 @@ import useHarkState from '~/logic/state/hark';
 import { StoreState } from '~/logic/store/type';
 import { Loading } from '~/views/components/Loading';
 import { ChatPane } from './components/ChatPane';
+import airlock from '~/logic/api';
 
 const getCurrGraphSize = (ship: string, name: string) => {
   const { graphs } = useGraphState.getState();
@@ -126,8 +127,8 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   }, [resource]);
 
   const dismissUnread = useCallback(() => {
-    api.hark.markCountAsRead(association, '/', 'message');
-  }, [association]);
+    airlock.poke(markCountAsRead(association.resource));
+  }, [association.resource]);
 
   const getPermalink = useCallback(
     (index: BigInteger) =>

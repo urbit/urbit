@@ -1,4 +1,4 @@
-import { cite, Content, Post } from '@urbit/api';
+import { cite, Content, markCountAsRead, Post } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import bigInt from 'big-integer';
@@ -12,6 +12,7 @@ import { useHarkDm } from '~/logic/state/hark';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
 import { patpToUd } from '~/logic/lib/util';
+import airlock from '~/logic/api';
 
 interface DmResourceProps {
   ship: string;
@@ -102,10 +103,7 @@ export function DmResource(props: DmResourceProps) {
   );
 
   const dismissUnread = useCallback(() => {
-    api.hark.dismissReadCount(
-      `/ship/~${window.ship}/dm-inbox`,
-      `/${patp2dec(ship)}`
-    );
+    airlock.poke(markCountAsRead(`/ship/~${window.ship}/dm-inbox`, `/${patp2dec(ship)}`));
   }, [ship]);
 
   const onSubmit = useCallback(

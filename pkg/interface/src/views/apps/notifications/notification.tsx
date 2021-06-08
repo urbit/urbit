@@ -1,58 +1,28 @@
 import { Box, Button, Icon, Row } from '@tlon/indigo-react';
 import {
+  archive,
   GraphNotificationContents,
-
   GroupNotificationContents,
-
-  GroupNotificationsConfig, IndexedNotification,
-
-  NotificationGraphConfig
+  IndexedNotification,
+  readNote
 } from '@urbit/api';
 import { BigInteger } from 'big-integer';
-import _ from 'lodash';
 import React, { ReactNode, useCallback } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { getNotificationKey } from '~/logic/lib/hark';
-import { getParentIndex } from '~/logic/lib/notification';
 import { useHovering } from '~/logic/lib/util';
-import useHarkState from '~/logic/state/hark';
 import useLocalState from '~/logic/state/local';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { SwipeMenu } from '~/views/components/SwipeMenu';
 import { GraphNotification } from './graph';
 import { GroupNotification } from './group';
+import airlock from '~/logic/api';
 
 export interface NotificationProps {
   notification: IndexedNotification;
   time: BigInteger;
   api: GlobalApi;
   unread: boolean;
-}
-
-function getMuted(
-  idxNotif: IndexedNotification,
-  groups: GroupNotificationsConfig,
-  graphs: NotificationGraphConfig
-) {
-  const { index, notification } = idxNotif;
-  if ('graph' in idxNotif.index) {
-    const { graph } = idxNotif.index.graph;
-    if (!('graph' in notification.contents)) {
-      throw new Error();
-    }
-    const parent = getParentIndex(idxNotif.index.graph, notification.contents.graph);
-
-    return (
-      _.findIndex(
-        graphs?.watching || [],
-        g => g.graph === graph && g.index === parent
-      ) === -1
-    );
-  }
-  if ('group' in index) {
-    return _.findIndex(groups || [], g => g === index.group.group) === -1;
-  }
-  return false;
 }
 
 export function NotificationWrapper(props: {
@@ -62,7 +32,7 @@ export function NotificationWrapper(props: {
   notification?: IndexedNotification;
   children: ReactNode;
 }) {
-  const { api, time, notification, children, read = false } = props;
+  const { time, notification, children, read = false } = props;
 
   const isMobile = useLocalState(s => s.mobile);
 
@@ -71,20 +41,14 @@ export function NotificationWrapper(props: {
     if (!notification) {
       return;
     }
-    return api.hark.archive(time, notification.index);
+    await airlock.poke(archive(notification.index, time));
   }, [time, notification]);
-
-  const groupConfig = useHarkState(state => state.notificationsGroupConfig);
-  const graphConfig = useHarkState(state => state.notificationsGraphConfig);
-
-  const isMuted =
-    time && notification && getMuted(notification, groupConfig, graphConfig);
 
   const onClick = (e: any) => {
     if (!notification || read) {
       return;
     }
-    return api.hark.read(time, notification.index);
+    return airlock.poke(readNote(notification.index));
   };
 
   const { hovering, bind } = useHovering();

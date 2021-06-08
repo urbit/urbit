@@ -1,5 +1,5 @@
 import { Col } from '@tlon/indigo-react';
-import { Association, GraphNode, Group } from '@urbit/api';
+import { Association, GraphNode, Group, markCountAsRead } from '@urbit/api';
 import bigInt from 'big-integer';
 import { FormikHelpers } from 'formik';
 import React, { useEffect, useMemo } from 'react';
@@ -15,6 +15,7 @@ import useHarkState from '~/logic/state/hark';
 import { PropFunc } from '~/types/util';
 import CommentInput from './CommentInput';
 import { CommentItem } from './CommentItem';
+import airlock from '~/logic/api';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -32,10 +33,10 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     comments,
     ship,
     name,
-    api,
     history,
     baseUrl,
     group,
+    api,
     ...rest
   } = props;
 
@@ -76,7 +77,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   ) => {
     try {
       const commentNode = comments.children.get(bigInt(editCommentId))!;
-      const [idx, _] = getLatestCommentRevision(commentNode);
+      const [idx] = getLatestCommentRevision(commentNode);
 
       const content = tokenizeMessage(comment);
       const post = createPost(
@@ -95,7 +96,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   let commentContent = null;
   if (editCommentId) {
     const commentNode = comments.children.get(bigInt(editCommentId));
-    const [_, post] = getLatestCommentRevision(commentNode);
+    const [,post] = getLatestCommentRevision(commentNode);
     commentContent = post.contents.reduce((val, curr) => {
       if ('text' in curr) {
         val = val + curr.text;
@@ -118,9 +119,9 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
   useEffect(() => {
     return () => {
-      api.hark.markCountAsRead(association, parentIndex, 'comment');
+      airlock.poke(markCountAsRead(association.resource));
     };
-  }, [comments.post.index]);
+  }, [comments.post?.index]);
 
   const unreads = useHarkState(state => state.unreads);
   const readCount = children.length - getUnreadCount(unreads, association.resource, parentIndex);
