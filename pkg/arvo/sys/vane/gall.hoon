@@ -1458,17 +1458,14 @@
       =?    outbound.watches.current-agent
           |(?=(%kick -.unto) &(?=(%watch-ack -.unto) ?=(^ p.unto)))
         (~(del by outbound.watches.current-agent) sub-key)
-      ::  if ok %watch-ack, mark subscription as acked
-      ::
-      ::    TODO: mark as acked if we receive a %fact
+      ::  if %fact or ok %watch-ack, mark subscription as acked
       ::
       =?    outbound.watches.current-agent
-          &(?=(%watch-ack -.unto) ?=(~ p.unto))
+          ?|  ?=(%fact -.unto)
+              &(?=(%watch-ack -.unto) ?=(~ p.unto))
+          ==
         %+  ~(jab by outbound.watches.current-agent)  sub-key
-        |=  [acked=? =path non=@]
-        ~_  leaf+"{<agent-name>}: 2nd watch-ack on {<wire dock path non>}"
-        ?<  acked
-        +<(acked &)
+        |=([acked=? =path non=@] +<(acked &))
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
