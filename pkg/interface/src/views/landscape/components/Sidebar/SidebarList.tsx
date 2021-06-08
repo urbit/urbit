@@ -20,7 +20,7 @@ function sidebarSort(
   const alphabetical = (a: string, b: string) => {
     const aAssoc = associations[a];
     const bAssoc = associations[b];
-    const aTitle = aAssoc?.metadata?.title || b;
+    const aTitle = aAssoc?.metadata?.title || a;
     const bTitle = bAssoc?.metadata?.title || b;
 
     return alphabeticalOrder(aTitle, bTitle);
