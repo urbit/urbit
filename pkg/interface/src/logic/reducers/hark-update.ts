@@ -8,8 +8,6 @@ import _ from 'lodash';
 import { compose } from 'lodash/fp';
 import { makePatDa } from '~/logic/lib/util';
 import { describeNotification, getReferent } from '../lib/hark';
-import { reduceState } from '../state/base';
-import useHarkState, { HarkState } from '../state/hark';
 
 function calculateCount(json: any, state: HarkState) {
   state.notificationsCount = Object.keys(state.unreadNotes).length;
@@ -263,7 +261,7 @@ function added(json: any, state: HarkState): HarkState {
     const [fresh] = _.partition(state.unreadNotes, ({ index: idx }) => !notifIdxEqual(index, idx));
     state.unreadNotes = [...fresh, { index, notification }];
 
-    if ('Notification' in window && !useHarkState.getState().doNotDisturb) {
+    if ('Notification' in window && !state.doNotDisturb) {
       const description = describeNotification(data);
       const referent = getReferent(data);
       new Notification(`${description} ${referent}`, {
@@ -412,37 +410,17 @@ export function reduce(data, state) {
   return reducer(state);
 }
 
-export const HarkReducer = (json: any) => {
-  const data = _.get(json, 'harkUpdate', false);
-  if (data) {
-    console.log(data);
-    reduceState(useHarkState, data, [reduce]);
-  }
-  const graphHookData = _.get(json, 'hark-graph-hook-update', false);
-  if (graphHookData) {
-    reduceState<HarkState, any>(useHarkState, graphHookData, [
-      // @ts-ignore investigate zustand types
-      graphInitial,
-      // @ts-ignore investigate zustand types
-      graphIgnore,
-      // @ts-ignore investigate zustand types
-      graphListen,
-      // @ts-ignore investigate zustand types
-      graphWatchSelf,
-      // @ts-ignore investigate zustand types
-      graphMentions
-    ]);
-  }
-  const groupHookData = _.get(json, 'hark-group-hook-update', false);
-  if (groupHookData) {
-    reduceState<HarkState, any>(useHarkState, groupHookData, [
-      // @ts-ignore investigate zustand types
-      groupInitial,
-      // @ts-ignore investigate zustand types
-      groupListen,
-      // @ts-ignore investigate zustand types
-      groupIgnore
-    ]);
-  }
-};
+export const reduceGraph = [
+  graphInitial,
+  graphIgnore,
+  graphListen,
+  graphWatchSelf,
+  graphMentions
+];
+
+export const reduceGroup = [
+  groupInitial,
+  groupListen,
+  groupIgnore
+];
 

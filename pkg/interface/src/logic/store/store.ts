@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { unstable_batchedUpdates } from 'react-dom';
+import { unstable_batchedUpdates as batchedUpdates } from 'react-dom';
 import { Cage } from '~/types/cage';
 import ConnectionReducer from '../reducers/connection';
 import { ContactReducer } from '../reducers/contact-update';
@@ -7,7 +7,6 @@ import GcpReducer from '../reducers/gcp-reducer';
 import { GraphReducer } from '../reducers/graph-update';
 import GroupReducer from '../reducers/group-update';
 import { GroupViewReducer } from '../reducers/group-view';
-import { HarkReducer } from '../reducers/hark-update';
 import InviteReducer from '../reducers/invite-update';
 import LaunchReducer from '../reducers/launch-update';
 import MetadataReducer from '../reducers/metadata-update';
@@ -45,7 +44,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
   }
 
   reduce(data: Cage, state: StoreState) {
-    unstable_batchedUpdates(() => {
+    batchedUpdates(() => {
       //  debug shim
       const tag = Object.keys(data)[0];
       const oldActions = this.pastActions[tag] || [];
@@ -58,7 +57,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
       this.launchReducer.reduce(data);
       this.connReducer.reduce(data, this.state);
       GraphReducer(data);
-      HarkReducer(data);
       ContactReducer(data);
       this.settingsReducer.reduce(data);
       this.gcpReducer.reduce(data);
