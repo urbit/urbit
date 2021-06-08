@@ -130,7 +130,6 @@ return false;
                 {(window.ship == post?.author && !disabled) ? (
                   <Link
                     component={Anchor}
-                    height="18px"
                     color="blue"
                     to={{
                       pathname: props.baseUrl,

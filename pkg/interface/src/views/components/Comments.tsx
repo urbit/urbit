@@ -149,7 +149,6 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
         <CommentInput
           onSubmit={onEdit}
           label='Edit Comment'
-          loadingText='Editing...'
           initial={commentContent}
         />
       ) : null )}

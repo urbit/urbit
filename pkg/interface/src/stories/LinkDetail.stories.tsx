@@ -33,10 +33,25 @@ const node = {
     hash: null
   },
   children: new BigIntOrderedMap<GraphNode>().gas([
-    makeComment('ridlur-figbud', moment().hour(12).minute(34).valueOf(), nodeIndex, [{ text: 'Beautiful' }]),
-    makeComment('roslet-tanner', moment().hour(12).minute(34).valueOf(), nodeIndex, [{ text: 'where did you find this?' }]),
+    makeComment(
+      'ridlur-figbud',
+      moment().hour(12).minute(34).valueOf(),
+      nodeIndex,
+      [{ text: 'Beautiful' }]
+    ),
+    makeComment(
+      'roslet-tanner',
+      moment().hour(12).minute(34).valueOf(),
+      nodeIndex,
+      [{ text: 'where did you find this?' }]
+    ),
 
-    makeComment('fabled-faster', moment().hour(12).minute(34).valueOf(), nodeIndex, [{ text: 'I dont\'t remember lol' }])
+    makeComment(
+      'fabled-faster',
+      moment().hour(12).minute(34).valueOf(),
+      nodeIndex,
+      [{ text: 'I dont\'t remember lol' }]
+    )
   ])
 };
 const fakeApi = {} as any;
@@ -47,7 +62,12 @@ export const Image = () => {
   );
   return (
     <Box width="1166px" p="1" backgroundColor="white">
-      <LinkDetail node={node} api={fakeApi} association={association} />
+      <LinkDetail
+        baseUrl="/"
+        node={node}
+        api={fakeApi}
+        association={association}
+      />
     </Box>
   );
 };

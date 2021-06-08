@@ -18,16 +18,19 @@ export function LinkDetail(props: LinkDetailProps) {
   const { node, api, association } = props;
   const group = useGroup(association.group);
   const { post } = node;
-  const [{ text: title }, { url }] = post.contents as [TextContent, UrlContent];
-  // XX deletion state, also typings
+  const [{ text: title }] = post.contents as [TextContent, UrlContent];
   return (
     <Row flexDirection={['column', 'column', 'row']} height="100%" width="100%">
-      <LinkBlockItem
-        size={['100%', '100%', 'min(55vw, 80vh)']}
-        border={0}
-        node={node}
-      />
-      <Col flexGrow={1} gapY="4" borderLeft="1" borderColor="lightGray" py="4">
+      <LinkBlockItem api={api} flexGrow={1} border={0} node={node} />
+      <Col
+        flexShrink={0}
+        width={['100%', '100%', '350px']}
+        flexGrow={0}
+        gapY="4"
+        borderLeft="1"
+        borderColor="lightGray"
+        py="4"
+      >
         <Col px="4" gapY="2">
           <Text fontWeight="medium" lineHeight="tall">
             {title}
