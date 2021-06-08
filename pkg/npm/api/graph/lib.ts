@@ -5,14 +5,14 @@ import { deSig, unixToDa } from '../lib';
 import { Enc, Path, Patp, PatpNoSig, Poke, Thread } from '../lib/types';
 import { Content, Graph, GraphChildrenPoke, GraphNode, GraphNodePoke, Post } from './types';
 
-export const GRAPH_UPDATE_VERSION: number = 1;
+export const GRAPH_UPDATE_VERSION: number = 2;
 
 export const createBlankNodeWithChildPost = (
   ship: PatpNoSig,
   parentIndex: string = '',
   childIndex: string = '',
   contents: Content[]
-): any => { // TODO should be GraphNode
+): GraphNodePoke => { 
   const date = unixToDa(Date.now()).toString();
   const nodeIndex = parentIndex + '/' + date;
 
@@ -256,9 +256,9 @@ export const addPost = (
 export const addNode = (
   ship: Patp,
   name: string,
-  node: GraphNode
+  node: GraphNodePoke
 ): Thread<any> => {
-  let nodes: Record<string, GraphNode> = {};
+  let nodes: Record<string, GraphNodePoke> = {};
   nodes[node.post.index] = node;
 
   return addNodes(ship, name, nodes);

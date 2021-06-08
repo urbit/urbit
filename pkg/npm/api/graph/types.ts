@@ -63,12 +63,12 @@ export interface GraphChildrenPoke {
 
 export interface GraphNode {
   children: Graph | null;
-  post: Post;
+  post: Post | string;
 }
 
 export interface FlatGraphNode {
   children: null;
-  post: Post;
+  post: Post | string;
 }
 
 export type Graph = BigIntOrderedMap<GraphNode>;
