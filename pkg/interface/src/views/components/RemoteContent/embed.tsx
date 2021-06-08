@@ -24,7 +24,7 @@ import { getModuleIcon, useHovering } from '~/logic/lib/util';
 import { IconRef, PropFunc } from '~/types';
 import { system } from 'styled-system';
 import { extract } from 'oembed-parser';
-import { Association, ReferenceContent } from '@urbit/api/dist';
+import { Association, GraphConfig, ReferenceContent } from '@urbit/api/dist';
 import { Link } from 'react-router-dom';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
@@ -186,7 +186,7 @@ function RemoteContentPermalinkEmbedGraph(props: {
     ])
   );
   const icon = association
-    ? getModuleIcon(association.metadata.config.graph)
+    ? getModuleIcon((association.metadata.config as GraphConfig).graph as any)
     : 'Groups';
   const title = association?.metadata?.title ?? graph.slice(6);
 

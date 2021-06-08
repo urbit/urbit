@@ -170,11 +170,9 @@ export function Notification(props: NotificationProps) {
     return (
       <NotificationWrapper {...wrapperProps}>
         <GroupNotification
-          api={props.api}
           index={index}
           contents={c}
           read={!unread}
-          timebox={props.time}
           time={time}
         />
       </NotificationWrapper>

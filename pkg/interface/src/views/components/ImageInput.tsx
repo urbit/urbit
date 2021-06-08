@@ -98,7 +98,7 @@ const errorRetry = (meta, focus, uploading, clickUploadButton) => {
         style={{ pointerEvents: 'none' }}
         onSelect={e => e.preventDefault}
       >
-        {error}
+        {meta.error()}
         {', '}please{' '}
         <Text
           fontWeight='500'
@@ -106,7 +106,7 @@ const errorRetry = (meta, focus, uploading, clickUploadButton) => {
           color='blue'
           mx='0.5ch'
           style={{ pointerEvents: 'all' }}
-          onClick={onClick}
+          onClick={clickUploadButton}
         >
           retry
         </Text>
@@ -116,17 +116,16 @@ const errorRetry = (meta, focus, uploading, clickUploadButton) => {
   return null;
 };
 
-export const ClearButton = ({ value, uploading, onClick, height = null, top = 0 as string | number }) => {
-  if (value && !uploading) {
+export const clearButton = (field, uploading, clearEvt) => {
+  if (field.value && !uploading) {
     return (
       <Box
         position="absolute"
         right={0}
-        top={top}
         px={1}
         height="100%"
         cursor="pointer"
-        onClick={onClick}
+        onClick={clearEvt}
         backgroundColor="white"
         display="flex"
         alignItems="center"
