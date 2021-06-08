@@ -16,7 +16,7 @@ import { BackButton } from './BackButton';
 
 interface StoreDebuggerProps {
   name: string;
-  useStore: UseStore<BaseState<any>>;
+  useStore: UseStore<BaseState<any> & any>;
 }
 
 const objectToString = (obj: any): string => JSON.stringify(obj, null, '  ');
@@ -57,7 +57,9 @@ const StoreDebugger = (props: StoreDebuggerProps) => {
           placeholder="Drill Down"
           width="100%"
           onKeyUp={(event) => {
+            // @ts-ignore clearly value is in eventtarget
             if (event.target.value) {
+            // @ts-ignore clearly value is in eventtarget
               tryFilter(event.target.value);
             } else {
               setFilter('');

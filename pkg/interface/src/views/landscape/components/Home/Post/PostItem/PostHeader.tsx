@@ -15,6 +15,7 @@ interface PostHeaderProps {
   association: Association;
   isReply: boolean;
   showTimestamp: boolean;
+  graphPath: any;
 }
 
 const PostHeader = (props: PostHeaderProps): ReactElement => {

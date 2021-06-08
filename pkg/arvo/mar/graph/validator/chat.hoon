@@ -4,6 +4,11 @@
   |%
   ++  noun  i
   ::
+  ++  graph-indexed-post
+    ^-  indexed-post
+    ?>  ?=([@ ~] index.p.i)
+    i
+  ::
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
     ^-  permissions:graph
@@ -30,13 +35,10 @@
     =-  [- post(index -)]
     [atom ~]
   --
-++  grab
+::
+++  grab  
   |%
-  ++  noun
-    |:  p=`*`%*(. *indexed-post index.p [0 ~])
-    =/  ip  ;;(indexed-post p)
-    ?>  ?=([@ ~] index.p.ip)
-    ip
+  ++  noun  indexed-post
   --
 ::
 ++  grad  %noun

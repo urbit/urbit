@@ -45,46 +45,6 @@ type LandscapeProps = StoreState & {
   subscription: GlobalSubscription;
 }
 
-export function DMRedirect(props: LandscapeProps & RouteComponentProps & { ship: string; }): ReactElement {
-  const { ship, api, history } = props;
-  const goToGraph = useCallback((graph: string) => {
-    history.push(`/~landscape/messages/resource/chat/ship/~${graph}`);
-  }, [history]);
-  const graphKeys = useGraphState(state => state.graphKeys);
-
-  useEffect(() => {
-    const station = `${window.ship}/dm--${ship}`;
-    const theirStation = `${ship}/dm--${window.ship}`;
-
-    if (graphKeys.has(station)) {
-      goToGraph(station);
-      return;
-    }
-
-    if (graphKeys.has(theirStation)) {
-      goToGraph(theirStation);
-      return;
-    }
-
-    const aud = ship !== window.ship ? [`~${ship}`] : [];
-    const title = `${cite(window.ship)} <-> ${cite(ship)}`;
-
-    api.graph.createUnmanagedGraph(
-      `dm--${ship}`,
-      title,
-      '',
-      { invite: { pending: aud } },
-      'chat'
-    ).then(() => {
-      goToGraph(station);
-    });
-  }, []);
-
-  return (
-    <Loading text="Creating DM" />
-  );
-}
-
 export default function Landscape(props) {
   const notificationsCount = useHarkState(s => s.notificationsCount);
 
@@ -138,12 +98,6 @@ export default function Landscape(props) {
               </Body>
             );
           }}
-        />
-        <Route path='/~landscape/dm/:ship?'
-        render={(routeProps) => {
-          const { ship } = routeProps.match.params;
-          return <DMRedirect {...routeProps} {...props} ship={ship} />;
-        }}
         />
         <Route path="/~landscape/join/:ship?/:name?"
           render={(routeProps) => {

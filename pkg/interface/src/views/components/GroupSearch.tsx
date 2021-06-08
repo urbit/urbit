@@ -6,6 +6,7 @@ import {
     ErrorLabel, Icon, Label,
     Row, Text
 } from '@tlon/indigo-react';
+import { OpenPolicy } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import { FieldArray, useFormikContext } from 'formik';
 import _ from 'lodash';
@@ -100,7 +101,7 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
        return Object.values(
          Object.keys(associations.groups)
            .filter(
-             e => groupState?.[e]?.policy?.open
+             e => (groupState?.[e]?.policy as OpenPolicy)?.open
            )
            .reduce((obj, key) => {
              obj[key] = associations.groups[key];

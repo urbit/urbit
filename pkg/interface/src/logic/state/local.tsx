@@ -82,6 +82,7 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
       state.suspendedFocus.blur();
     }
   })),
+  // @ts-ignore investigate zustand types
   set: fn => set(produce(fn))
   }), {
     blacklist: [
@@ -98,6 +99,7 @@ function withLocalState<P, S extends keyof LocalState, C extends React.Component
         (object, key) => ({ ...object, [key]: state[key] }), {}
       )
     ): useLocalState();
+    // @ts-ignore call signature forwarding unclear
     return <Component ref={ref} {...localState} {...props} />;
   });
 }

@@ -39,7 +39,7 @@ export function SetStatus(props: any) {
         ref={inputRef}
         onChange={onStatusChange}
         value={_status}
-        autocomplete='off'
+        autoComplete='off'
         width='75%'
         mr={2}
         onKeyPress={(evt) => {

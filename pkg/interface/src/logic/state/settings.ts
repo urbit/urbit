@@ -1,6 +1,16 @@
 import f from 'lodash/fp';
+import { RemoteContentPolicy, LeapCategories, leapCategories } from '~/types/local-update';
+import { useShortcut as usePlainShortcut } from '~/logic/lib/shortcutContext';
 import { BaseState, createState } from '~/logic/state/base';
-import { LeapCategories, leapCategories, RemoteContentPolicy } from '~/types/local-update';
+import { useCallback } from 'react';
+
+export interface ShortcutMapping {
+  cycleForward: string;
+  cycleBack: string;
+  navForward: string;
+  navBack: string;
+  hideSidebar: string;
+}
 
 export interface SettingsState extends BaseState<SettingsState> {
   display: {
@@ -16,6 +26,7 @@ export interface SettingsState extends BaseState<SettingsState> {
     hideGroups: boolean;
     hideUtilities: boolean;
   };
+  keyboard: ShortcutMapping;
   remoteContentPolicy: RemoteContentPolicy;
   leap: {
     categories: LeapCategories[];
@@ -33,6 +44,7 @@ export const selectCalmState = (s: SettingsState) => s.calm;
 
 export const selectDisplayState = (s: SettingsState) => s.display;
 
+// @ts-ignore investigate zustand types
 const useSettingsState = createState<SettingsState>('Settings', {
   display: {
     backgroundType: 'none',
@@ -59,7 +71,19 @@ const useSettingsState = createState<SettingsState>('Settings', {
   tutorial: {
     seen: true,
     joined: undefined
+  },
+  keyboard: {
+    cycleForward: 'ctrl+\'',
+    cycleBack: 'ctrl+;',
+    navForward: 'ctrl+]',
+    navBack: 'ctrl+[',
+    hideSidebar: 'ctrl+\\'
   }
 });
+
+export function useShortcut<T extends keyof ShortcutMapping>(name: T, cb: (e: KeyboardEvent) => void) {
+  const key = useSettingsState(useCallback(s => s.keyboard[name], [name]));
+  return usePlainShortcut(key, cb);
+}
 
 export default useSettingsState;

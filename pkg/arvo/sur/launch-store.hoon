@@ -1,4 +1,14 @@
 |%
++$  tiles-0        (map term tile-0)
++$  tile-0
+  $:  type=tile-type-0
+      is-shown=?
+  ==
++$  tile-type-0
+  $%  [%basic title=cord icon-url=cord linked-url=cord]
+      [%custom ~]
+  ==
+::
 +$  tiles          (map term tile)
 +$  tile-ordering  (list term)
 ::
@@ -9,7 +19,7 @@
 ::
 +$  tile-type
   $%  [%basic title=cord icon-url=cord linked-url=cord]
-      [%custom ~]
+      [%custom linked-url=(unit cord) image=(unit cord)]
   ==
 ::
 +$  action
