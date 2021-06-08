@@ -93,4 +93,11 @@ describe('tokenizeMessage', () => {
     expect(three).toEqual(' test ');
     expect(hastuc).toEqual('~hastuc-dibtux');
   });
+  it('should tokenize a url with a par', () => {
+    const example = 'test https://en.wikipedia.org/wiki/Turbo_(gastropod)';
+
+    const [{ text }, { url }] = tokenizeMessage(example);
+    expect(text).toBe('test ');
+    expect(url).toBe('https://en.wikipedia.org/wiki/Turbo_(gastropod)');
+  });
 });
