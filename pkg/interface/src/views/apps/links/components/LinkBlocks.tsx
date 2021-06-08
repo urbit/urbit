@@ -1,11 +1,12 @@
 import { Col, Row, Text } from '@tlon/indigo-react';
 import { Association, Graph } from '@urbit/api';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import _ from 'lodash';
 import { useResize } from '~/logic/lib/useResize';
 import { LinkBlockItem } from './LinkBlockItem';
 import { LinkBlockInput } from './LinkBlockInput';
 import GlobalApi from '~/logic/api/global';
+import useLocalState from '~/logic/state/local';
 
 export interface LinkBlocksProps {
   graph: Graph;
@@ -16,15 +17,18 @@ export function LinkBlocks(props: LinkBlocksProps) {
   const { association, api } = props;
   const [linkSize, setLinkSize] = useState(250);
   const linkSizePx = `${linkSize}px`;
+
+  const isMobile = useLocalState(s => s.mobile);
+  const colCount = useMemo(() => isMobile ? 2 : 5, [isMobile]);
   const bind = useResize<HTMLDivElement>(
     useCallback((entry) => {
-      setLinkSize((entry.borderBoxSize[0].inlineSize - 16) / 5 - 8);
-    }, [])
+      setLinkSize((entry.borderBoxSize[0].inlineSize - 16) / colCount - 8);
+    }, [colCount])
   );
 
   const nodes = [null, ...Array.from(props.graph)];
 
-  const chunks = _.chunk(nodes, 5);
+  const chunks = _.chunk(nodes, colCount);
 
   return (
     <Col overflowY="auto" width="100%" height="100%" {...bind}>
@@ -56,6 +60,7 @@ export function LinkBlocks(props: LinkBlocksProps) {
                 key={i.toString()}
                 size={linkSizePx}
                 node={node}
+                api={api}
                 summary
               />
             );
