@@ -59,7 +59,9 @@
     ++  contents
       |=  =contents:three
       ^-  (unit contents:four)
-      ~
+      ?.  ?=(%graph -.contents)
+        `contents
+      `[%graph (turn list.contents post-to-one:upgrade:graph-store)]
     ::
     ++  unreads-each
       upg-unreads-each:upg

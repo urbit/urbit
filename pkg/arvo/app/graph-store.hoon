@@ -7,7 +7,7 @@
 +$  versioned-state
   $%  [%0 *]
       [%1 *]
-      [%2 *]
+      [%2 network:zero:store]
       [%3 network:one:store]
       [%4 network:store]
       state-5
@@ -49,9 +49,17 @@
   =|  cards=(list card)
   |-
   ?-    -.old
-    %0  [~ this]
-    %1  [~ this]
-    %2  [~ this]
+    %0  !!
+    %1  !!
+  ::
+      %2
+    =*  upg  upgrade:store
+    %_  $
+      -.old            %3
+      update-logs.old  (~(run by update-logs.old) update-log-to-one:upg)
+      graphs.old       (~(run by graphs.old) marked-graph-to-one:upg)
+      archive.old      (~(run by archive.old) marked-graph-to-one:upg)
+    ==
   ::
       %3
     =*  upg  upgrade:store
@@ -265,8 +273,8 @@
         ?~  node-list  graph
         =*  index  -.i.node-list
         =*  node   +.i.node-list
-        ?.  ?=(%& -.post.node)
-          $(node-list t.node-list)
+        ~|  "cannot add deleted post"
+        ?>  ?=(%& -.post.node)
         =*  p  p.post.node
         ~|  "graph indexes must match"
         ?>  =(index index.p)
