@@ -1644,8 +1644,7 @@
   +$  buzz  [=ship =path non=@]                         ::  subscription+nonce
   +$  boat                                              ::  outgoing subs
     %+  map  [=wire =ship =term]                        ::
-    [=brad =path non=@]                                 ::
-  +$  brad  ?(%pend %live %left)                        ::  subscription state
+    [acked=? =path non=@]                               ::
   +$  bowl                                              ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
