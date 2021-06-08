@@ -2135,7 +2135,6 @@
     |-
     ^+  ..take-fuse
     ?~  merges
-      =/  t=tang  [leaf+"{<syd>} fused from {<bas.fiz>} {<con.fiz>}" ~]
       =.  ..take-fuse  (done-fuse clean-state %& ~)
       (park | [%| continuation-yaki(p (flop parents))] rag)
     =/  [bec=beak g=germ]  i.merges
@@ -2143,7 +2142,8 @@
     =/  result  (merge-helper p.bec q.bec g ali-dom `continuation-yaki)
     ?-    -.result
         %|
-      (done-fuse clean-state %| %fuse-merge-failed p.result)
+      =/  failing-merge=tape  "{<bec>} {<g>}"
+      (done-fuse clean-state %| %fuse-merge-failed leaf+failing-merge p.result)
     ::
         %&
       =/  merge-result=(unit merge-result)  +.result
