@@ -24,7 +24,7 @@ import { getModuleIcon, useHovering } from '~/logic/lib/util';
 import { IconRef, PropFunc } from '~/types';
 import { system } from 'styled-system';
 import { extract } from 'oembed-parser';
-import { Association, GraphConfig, ReferenceContent } from '@urbit/api/dist';
+import { Association, GraphConfig, ReferenceContent } from '@urbit/api';
 import { Link } from 'react-router-dom';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
