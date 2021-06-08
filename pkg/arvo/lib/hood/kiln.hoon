@@ -442,9 +442,34 @@
   =>
   |%
   ++  format-fuse
-    |=  pf=per-fuse
-    ^-  tang
-    [>bas.kf.pf< (turn con.kf.pf |=(x=[fuse-source germ] >x<))]
+    |=  [into=desk pf=per-fuse]
+    ^-  tank
+    =/  sources=tape
+        %+  reel
+          con.kf.pf
+        |=  [[fs=fuse-source g=germ] acc=tape]
+        ^-  tape
+        ;:  weld
+          " ["
+          (format-fuse-source fs)
+          " "
+          <g>
+          "]"
+          acc
+        ==
+    :-  %leaf
+    ;:  weld
+      "|fuse {<into>} "
+      (format-fuse-source bas.kf.pf)
+      sources
+    ==
+  ::  +format-fuse-source: fuse source -> beak -> path
+  ::
+  ++  format-fuse-source
+    |=  fs=fuse-source
+    ^-  tape
+    =/  bec=beak  [who.fs des.fs ?:(?=([%trak] ver.fs) [%tas %track] ver.fs)]
+    <(en-beam [bec /])>
   --
   |=  k=kiln-fuse-list
   ^+  abet
@@ -457,11 +482,11 @@
       ~(tap by `(map desk per-fuse)`fus)
     |=  [[syd=desk pf=per-fuse] acc=tang]
     ^-  tang
-    [leaf+"{<syd>}" (weld (format-fuse pf) acc)]
+    [(format-fuse syd pf) acc]
   =/  pfu=(unit per-fuse)  (~(get by fus) u.k)
   ?~  pfu
     (slog [leaf+"no ongoing fuse for {<u.k>}" ~])
-  (slog (format-fuse u.pfu))
+  (slog [(format-fuse u.k u.pfu) ~])
 ::
 ++  poke-fuse
   |=  k=kiln-fuse
