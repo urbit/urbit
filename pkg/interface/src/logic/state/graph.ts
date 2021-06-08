@@ -1,7 +1,9 @@
-import { Graphs, decToUd, numToUd, GraphNode, deSig, Association, resourceFromPath } from "@urbit/api";
-import {useCallback} from "react";
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import { patp2dec } from 'urbit-ob';
 
-import { BaseState, createState } from "./base";
+import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs } from '@urbit/api';
+import { useCallback } from 'react';
+import { BaseState, createState } from './base';
 
 export interface GraphState extends BaseState<GraphState> {
   graphs: Graphs;
@@ -11,8 +13,12 @@ export interface GraphState extends BaseState<GraphState> {
       [index: string]: GraphNode;
     }
   };
+  flatGraphs: FlatGraphs;
+  threadGraphs: ThreadGraphs;
   pendingIndices: Record<string, any>;
-  graphTimesentMap: Record<string, any>;
+  pendingDms: Set<string>;
+  screening: boolean;
+  graphTimesentMap: Record<number, string>;
   // getKeys: () => Promise<void>;
   // getTags: () => Promise<void>;
   // getTagQueries: () => Promise<void>;
@@ -22,14 +28,18 @@ export interface GraphState extends BaseState<GraphState> {
   // getYoungerSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
   // getGraphSubset: (ship: string, resource: string, start: string, end: string) => Promise<void>;
   // getNode: (ship: string, resource: string, index: string) => Promise<void>;
-};
-
+}
+// @ts-ignore investigate zustand types
 const useGraphState = createState<GraphState>('Graph', {
   graphs: {},
+  flatGraphs: {},
+  threadGraphs: {},
   graphKeys: new Set(),
   looseNodes: {},
   pendingIndices: {},
   graphTimesentMap: {},
+  pendingDms: new Set(),
+  screening: false
   // getKeys: async () => {
   //   const api = useApi();
   //   const keys = await api.scry({
@@ -129,11 +139,41 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, ['graphs', 'graphKeys', 'looseNodes', 'graphTimesentMap']);
+}, [
+  'graphs',
+  'graphKeys',
+  'looseNodes',
+  'graphTimesentMap',
+  'flatGraphs',
+  'threadGraphs',
+  'pendingDms'
+]);
 
 export function useGraph(ship: string, name: string) {
   return useGraphState(
     useCallback(s => s.graphs[`${deSig(ship)}/${name}`], [ship, name])
+  );
+}
+
+export function useFlatGraph(ship: string, name: string) {
+  return useGraphState(
+    useCallback(s => s.flatGraphs[`${deSig(ship)}/${name}`], [ship, name])
+  );
+}
+
+export function useThreadGraph(ship: string, name: string, index: string) {
+  return useGraphState(
+    useCallback(s => s.threadGraphs[`${deSig(ship)}/${name}/${index}`], [
+      ship,
+      name,
+      index
+    ])
+  );
+}
+
+export function useGraphTimesentMap(ship: string, name: string) {
+  return useGraphState(
+    useCallback(s => s.graphTimesentMap[`${deSig(ship)}/${name}`], [ship, name])
   );
 }
 
@@ -143,6 +183,14 @@ export function useGraphForAssoc(association: Association) {
   return useGraph(ship, name);
 }
 
-window.useGraphState = useGraphState;
+export function useInbox() {
+  return useGraphState(s => s.graphs[`${window.ship}/dm-inbox`] || new BigIntOrderedMap<GraphNode>());
+}
+
+export function useDM(ship: string) {
+  const inbox = useInbox();
+  const shipGraph = inbox.get(patp2dec(ship));
+  return shipGraph?.children ?? new BigIntOrderedMap();
+}
 
 export default useGraphState;

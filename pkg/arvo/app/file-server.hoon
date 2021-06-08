@@ -188,8 +188,11 @@
     ?:  ?=([%'~landscape' %js %session ~] site.req-line)
       %+  require-authorization-simple:app
         inbound-request
-      %-  js-response:gen
-      (as-octt:mimes:html "window.ship = '{+:(scow %p our.bowl)}';")
+      %.  %-  as-octs:mimes:html
+          (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~)
+      %*  .  js-response:gen
+        cache  %.n
+      ==
     ::
     =/  [payload=simple-payload:http public=?]  (get-file req-line is-file)
     ?:  public  payload
@@ -222,6 +225,8 @@
             [~ %js]    (js-response:gen file)
             [~ %css]   (css-response:gen file)
             [~ %png]   (png-response:gen file)
+            [~ %svg]   (svg-response:gen file)
+            [~ %ico]   (ico-response:gen file)
           ::
               [~ %html]
             %.  file
@@ -238,11 +243,9 @@
           [not-found:gen %.n]
         :_  public.u.content
         =/  mime-type=@t  (rsh 3 (crip <p.u.data>))
-        ::  Should maybe inspect to see how long cache should hold
-        ::
         =/  headers
           :~  content-type+mime-type 
-              max-1-da:gen 
+              max-1-wk:gen 
               'service-worker-allowed'^'/'
           ==
         [[200 headers] `q.u.data]
@@ -271,7 +274,10 @@
     ++  match-content-path
       |=  [pax=path =^serving is-file=?]
       ^-  (unit [content path ?])
-      %-  ~(rep by serving)
+      %+  roll
+        %+  sort  ~(tap by serving)
+        |=  [[a=path *] [b=path *]]
+        (gth (lent a) (lent b))
       |=  $:  [url-base=path =content public=? spa=?]
               out=(unit [content path ?])
           ==

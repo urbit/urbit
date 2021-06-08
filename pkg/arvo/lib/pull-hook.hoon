@@ -114,6 +114,14 @@
       state-3
       state-4
   ==
+::  +diplomatic: only renegotiate if versions changed
+::    
+::    If %.n please leave note as to why renegotiation necessary
+::    
+::
+++  diplomatic
+  ^-  ?
+  %.y
 ::
 ++  default
   |*  [pull-hook=* =config]
@@ -239,6 +247,7 @@
         =/  kick=(list card)
           ?:  ?&  =(min-version.config prev-min-version.old)
                   =(version.config prev-version.old)
+                  diplomatic
               ==
             ~
           (poke-self:pass kick+!>(%kick))^~
@@ -439,6 +448,7 @@
         ?~  tan  tr-core
         ?.  versioned
           (tr-ap-og:tr-cleanup |.((on-pull-nack:og rid u.tan)))
+        %-  (slog leaf+"versioned nack for {<rid>} in {<dap.bowl>}" u.tan)
         =/  pax
           (kick-mule:virt rid |.((on-pull-kick:og rid)))
         ?~  pax  tr-failed-kick
@@ -463,18 +473,18 @@
             ::  subscription
             tr-core
           (tr-suspend-pub-ver min-version.config)
-        =/  =vase
+        =/  =^cage
           (convert-to:ver cage)
         =/  =wire
           (make-wire /store)
-        =+  resources=(~(gas in *(set resource)) (resource-for-update:og vase))
+        =+  resources=(~(gas in *(set resource)) (resource-for-update:og q.cage))
         ?>  ?|  no-validate.config
             ?&  (check-src resources)
                 (~(has in resources) rid)
             ==  ==
         =/  =mark
           (append-version:ver version.config)
-        (tr-emit (~(poke-our pass wire) store-name.config mark vase))
+        (tr-emit (~(poke-our pass wire) store-name.config cage))
       --
     ::
     ++  tr-kick

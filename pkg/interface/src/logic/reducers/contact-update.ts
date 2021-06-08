@@ -1,32 +1,7 @@
+import { ContactUpdate, deSig } from '@urbit/api';
 import _ from 'lodash';
-import { compose } from 'lodash/fp';
-
-import { ContactUpdate } from '@urbit/api';
-
-import useContactState, { ContactState } from '../state/contact';
 import { reduceState } from '../state/base';
-
-
-export const ContactReducer = (json) => {
-  const data: ContactUpdate = _.get(json, 'contact-update', false);
-  if (data) {
-    reduceState<ContactState, ContactUpdate>(useContactState, data, [
-      initial,
-      add,
-      remove,
-      edit,
-      setPublic
-    ]);
-  }
-
-  // TODO: better isolation
-  const res = _.get(json, 'resource', false);
-  if (res) {
-    useContactState.setState({
-      nackedContacts: useContactState.getState().nackedContacts.add(`~${res.ship}`)
-    });
-  }
-};
+import useContactState, { ContactState } from '../state/contact';
 
 const initial = (json: ContactUpdate, state: ContactState): ContactState => {
   const data = _.get(json, 'initial', false);
@@ -56,9 +31,9 @@ const remove = (json: ContactUpdate, state: ContactState): ContactState => {
   return state;
 };
 
-const edit = (json: ContactUpdate, state: ContactState): ContactState => {
+export const edit = (json: ContactUpdate, state: ContactState): ContactState => {
   const data = _.get(json, 'edit', false);
-  const ship = `~${data.ship}`;
+  const ship = `~${deSig(data.ship)}`;
   if (
     data &&
     (ship in state.contacts)
@@ -69,12 +44,20 @@ const edit = (json: ContactUpdate, state: ContactState): ContactState => {
     }
 
     const value = data['edit-field'][field];
-    
     if(field === 'add-group') {
-      state.contacts[ship].groups.push(value);
+      if (typeof value !== 'string') {
+        state.contacts[ship].groups.push(`/ship/${Object.values(value).join('/')}`);
+      } else if (!(state.contacts[ship].groups.includes(value))) {
+        state.contacts[ship].groups.push(value);
+      }
     } else if (field === 'remove-group') {
+      if (typeof value !== 'string') {
+        state.contacts[ship].groups =
+          state.contacts[ship].groups.filter(g => g !== `/ship/${Object.values(value).join('/')}`);
+      } else {
       state.contacts[ship].groups =
         state.contacts[ship].groups.filter(g => g !== value);
+      }
     } else {
       state.contacts[ship][field] = value;
     }
@@ -88,3 +71,23 @@ const setPublic = (json: ContactUpdate, state: ContactState): ContactState => {
   return state;
 };
 
+export const ContactReducer = (json) => {
+  const data: ContactUpdate = _.get(json, 'contact-update', false);
+  if (data) {
+    reduceState<ContactState, ContactUpdate>(useContactState, data, [
+      initial,
+      add,
+      remove,
+      edit,
+      setPublic
+    ]);
+  }
+
+  // TODO: better isolation
+  const res = _.get(json, 'resource', false);
+  if (res) {
+    useContactState.setState({
+      nackedContacts: useContactState.getState().nackedContacts.add(`~${res.ship}`)
+    });
+  }
+};

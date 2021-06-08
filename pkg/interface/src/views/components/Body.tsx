@@ -1,6 +1,5 @@
-import React, { ReactNode } from 'react';
-
 import { Box } from '@tlon/indigo-react';
+import React, { ReactNode } from 'react';
 
 export function Body(
   props: { children: ReactNode } & Parameters<typeof Box>[0]
