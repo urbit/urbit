@@ -1,50 +1,68 @@
 import React from 'react';
 import {
-  BaseImage,
   Icon,
   Center,
   Row,
   Text,
-  BoxProps,
   Col,
   Box,
+  CenterProps
 } from '@tlon/indigo-react';
+import { hasProvider } from 'oembed-parser';
 import { AUDIO_REGEX, IMAGE_REGEX } from '~/views/components/RemoteContent';
 import { AudioPlayer } from '~/views/components/AudioPlayer';
 import { useHistory } from 'react-router';
 import { useHovering } from '~/logic/lib/util';
 import Author from '~/views/components/Author';
-import { GraphNode, Post, TextContent, UrlContent } from '@urbit/api';
+import {
+  GraphNode,
+  ReferenceContent,
+  TextContent,
+  UrlContent
+} from '@urbit/api';
+import {
+  RemoteContentEmbedFallback,
+  RemoteContentImageEmbed,
+  RemoteContentOembed,
+  RemoteContentPermalinkEmbed
+} from '~/views/components/RemoteContent/embed';
+import { PermalinkEmbed } from '../../permalinks/embed';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
+import GlobalApi from '~/logic/api/global';
 
 export interface LinkBlockItemProps {
   node: GraphNode;
-  size?: BoxProps['height'];
-  m?: BoxProps['m'];
-  border?: BoxProps['border'];
+  size?: CenterProps['height'];
+  border?: CenterProps['border'];
   summary?: boolean;
+  api: GlobalApi;
 }
 
-function getYoutubeId(str: string): string | null {
-  const youtube = str.match(/youtube\.com.*(\?v=|\/embed\/)(.{11})/);
-  if (!youtube) {
-    return null;
-  }
-  return youtube.pop();
-}
-
-export function LinkBlockItem(props: LinkBlockItemProps) {
-  const { node, summary, size = '256px', m, border = 1 } = props;
+export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
+  const { api, node, summary, size, m, border = 1, ...rest } = props;
   const { post, children } = node;
   const { contents, index, author } = post;
-  const [{ text: title }, { url }] = contents as [TextContent, UrlContent];
+
+  const [{ text: title }, ...content] = contents as [
+    TextContent,
+    UrlContent | ReferenceContent
+  ];
+  let url = '';
+  if ('url' in content?.[0]) {
+    url = content[0].url;
+  }
+
+  const isReference = 'reference' in content[0];
 
   const isImage = IMAGE_REGEX.test(url);
   const isAudio = AUDIO_REGEX.test(url);
-  const youtube = getYoutubeId(url);
+
+  const isOembed = hasProvider(url);
   const history = useHistory();
   const { hovering, bind } = useHovering();
   const onClick = () => {
-    history.push(`${history.location.pathname}/index${index}`);
+    const { pathname, search } = history.location;
+    history.push(`${pathname}/index${index}${search}`);
   };
   return (
     <Center
@@ -56,36 +74,29 @@ export function LinkBlockItem(props: LinkBlockItemProps) {
       height={size}
       width={size}
       m={m}
+      {...rest}
       {...bind}
     >
-      {isImage ? (
-        <BaseImage
-          style={{ objectFit: 'contain' }}
-          height="100%"
-          src={url}
-          width="100%"
-        />
+      {isReference ? (
+        summary ? (
+          <RemoteContentPermalinkEmbed
+            reference={content[0] as ReferenceContent}
+          />
+        ) : (
+          <PermalinkEmbed
+            link={referenceToPermalink(content[0] as ReferenceContent).link}
+            api={api}
+            transcluded={0}
+          />
+        )
+      ) : isImage ? (
+        <RemoteContentImageEmbed url={url} />
       ) : isAudio ? (
         <AudioPlayer title={title} url={url} />
-      ) : youtube ? (
-        <BaseImage
-          style={{ objectFit: 'contain' }}
-          height="100%"
-          src={`https://img.youtube.com/vi/${youtube}/${0}.jpg`}
-          width="100%"
-        />
+      ) : isOembed ? (
+        <RemoteContentOembed url={url} thumbnail={summary} />
       ) : (
-        <Row overflow="hidden" gapX="2" alignItems="center" p="2">
-          <Icon color="gray" icon="ArrowExternal" />
-          <Text
-            gray
-            overflow="hidden"
-            whiteSpace="nowrap"
-            textOverflow="ellipsis"
-          >
-            {url}
-          </Text>
-        </Row>
+        <RemoteContentEmbedFallback url={url} />
       )}
       <Box
         backgroundColor="white"
