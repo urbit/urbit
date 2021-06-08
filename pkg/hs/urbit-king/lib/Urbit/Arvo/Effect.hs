@@ -236,6 +236,10 @@ deriveNoun ''Stub
 deriveNoun ''Blit
 deriveNoun ''TermEf
 
+-- Khan Effects ----------------------------------------------------------------
+data KhanEf
+  = KhanEfAvow Path Noun
+  | KhanEfFyrd Path Noun
 
 -- IO-Driver Routing -----------------------------------------------------------
 
@@ -243,8 +247,10 @@ data VaneEf
     = VENewt       NewtEf
     | VEHttpClient HttpClientEf
     | VEHttpServer HttpServerEf
+    | VESocket     SocketEf
     | VEBehn       BehnEf
     | VETerm       TermEf
+    | VEKhan       KhanEf
     | VEClay       SyncEf
     | VESync       SyncEf
     | VEBoat       SyncEf

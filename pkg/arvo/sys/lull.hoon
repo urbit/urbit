@@ -2079,6 +2079,22 @@
     +$  oath  @                                         ::  signature
     --  ::  pki
   --  ::  jael
+::                                                      ::::
+::::                    ++khan                            ::  (1k) control plane
+  ::                                                    ::::
+++  khan  ^?
+  |%
+  +$  gift                                              ::  out result <-$
+    $%  [%avow syn=sign-arvo]                           ::  response to %fyrd
+    ==
+  +$  task                                              ::  in request ->$
+    $~  [%vega ~]                                       ::
+    $%  $>(%born vane-task)                             ::  new unix process
+        [%fyrd syn=sign-arvo]                           ::  jammed request
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+    ==
+  --  ::khan
 ::
 +$  gift-arvo                                           ::  out result <-$
   $~  [%doze ~]
@@ -2090,6 +2106,7 @@
       gift:gall
       gift:iris
       gift:jael
+      gift:khan
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -2100,6 +2117,7 @@
       task:gall
       task:iris
       task:jael
+      task:khan
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -2112,6 +2130,7 @@
       [%i task:iris]
       [%j task:jael]
       [%$ %whiz ~]
+      [%k task:khan]
       [@tas %meta vase]
   ==
 ::  full vane names are required in vanes
@@ -2132,6 +2151,7 @@
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
+      [%khan gift:khan]
   ==
 ::  $unix-task: input from unix
 ::
