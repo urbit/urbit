@@ -78,14 +78,18 @@ export const setDoNotDisturb = (
 });
 
 export const archive = (
-  time: BigInteger,
-  index: NotifIndex
-): Poke<unknown> => actOnNotification('archive', time, index);
+  index: NotifIndex,
+  time?: BigInteger,
+): Poke<unknown> => harkAction({
+  'archive': {
+    time: time ? decToUd(time.toString()) : null,
+    index
+  }
+});
 
-export const read = (
-  time: BigInteger,
+export const readNote = (
   index: NotifIndex
-): Poke<unknown> => actOnNotification('read-note', time, index);
+): Poke<unknown> => harkAction({ 'read-note': index });
 
 export const readIndex = (
   index: NotifIndex
@@ -99,38 +103,30 @@ export const unread = (
 ): Poke<unknown> => actOnNotification('unread-note', time, index);
 
 export const markCountAsRead = (
-  association: Association,
-  parent: string,
-  description: GraphNotifDescription
+  graph: string,
+  index = '/'
 ): Poke<unknown> => harkAction({
   'read-count': {
     graph: {
-      graph: association.resource,
-      group: association.group,
-      description: description,
-      index: parent
+      graph,
+      index
     }
   }
 });
 
 export const markEachAsRead = (
-  association: Association,
-  parent: string,
-  child: string,
-  description: GraphNotifDescription,
-  module: string
+  graph: string,
+  index: string,
+  target: string
 ): Poke<unknown> => harkAction({
   'read-each': {
     index: {
       graph: {
-        graph: association.resource,
-        group: association.group,
-        description: description,
-        module: module,
-        index: parent
+        graph,
+        index
       }
     },
-    target: child
+    target
   }
 });
 
