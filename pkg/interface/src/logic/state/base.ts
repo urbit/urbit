@@ -1,8 +1,9 @@
 import { applyPatches, Patch, produceWithPatches, setAutoFreeze, enablePatches } from 'immer';
 import { compose } from 'lodash/fp';
 import _ from 'lodash';
-import create, { UseStore } from 'zustand';
+import create, { GetState, SetState, UseStore } from 'zustand';
 import { persist } from 'zustand/middleware';
+import Urbit, { SubscriptionRequestInterface } from '@urbit/http-api';
 
 setAutoFreeze(false);
 enablePatches();
@@ -44,6 +45,18 @@ export const reduceState = <
   });
 };
 
+export const reduceStateN = <
+  S extends {},
+  U
+>(
+  state: S & BaseState<S>,
+  data: U,
+  reducers: ((data: U, state: S & BaseState<S>) => S & BaseState<S>)[]
+): void => {
+  const reducer = compose(reducers.map(r => sta => r(data, sta)));
+  state.set(reducer);
+};
+
 export const optReduceState = <S, U>(
   state: UseStore<S & BaseState<S>>,
   data: U,
@@ -78,13 +91,30 @@ export interface BaseState<StateType extends {}> {
   addPatch: (id: string, ...patch: Patch[]) => void;
   removePatch: (id: string) => void;
   optSet: (fn: (state: BaseState<StateType>) => void) => string;
+  initialize: (api: Urbit) => void;
+}
+
+export function createSubscription(app: string, path: string, e: (data: any) => void): SubscriptionRequestInterface {
+  const request = {
+    app,
+    path,
+    event: e,
+    err: () => {},
+    quit: () => {}
+  };
+  // TODO: err, quit handling (resubscribe?)
+  return request;
 }
 
 export const createState = <T extends {}>(
   name: string,
-  properties: T,
-  blacklist: (keyof BaseState<T> | keyof T)[] = []
+  properties: T | ((set: SetState<T & BaseState<T>>, get: GetState<T & BaseState<T>>) => T),
+  blacklist: (keyof BaseState<T> | keyof T)[] = [],
+  subscriptions: ((set: SetState<T & BaseState<T>>, get: GetState<T & BaseState<T>>) => SubscriptionRequestInterface)[] = []
 ): UseStore<T & BaseState<T>> => create<T & BaseState<T>>(persist<T & BaseState<T>>((set, get) => ({
+  initialize: (api: Urbit) => {
+    subscriptions.forEach(sub => api.subscribe(sub(set, get)));
+  },
   // @ts-ignore investigate zustand types
   set: fn => stateSetter(fn, set, get),
   optSet: (fn) => {
@@ -105,7 +135,7 @@ export const createState = <T extends {}>(
         return { ...applyPatches(state, applying), patches: _.omit(state.patches, id) };
     });
   },
-  ...properties
+  ...(typeof properties === 'function' ? (properties as any)(set, get) : properties)
 }), {
   blacklist,
   name: stateStorageKey(name),
