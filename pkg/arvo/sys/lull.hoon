@@ -1069,14 +1069,23 @@
   ::::                                                  ::  (1d2)
     ::
   +$  blew  [p=@ud q=@ud]                               ::  columns rows
-  +$  belt                                              ::  old belt
+  +$  belt                                              ::  client input
+    $?  bolt                                            ::  simple input
+    $%  [%mod mod=?(%ctl %met %hyp) key=bolt]           ::  w/ modifier
+        [%txt p=(list @c)]                              ::  utf32 text
+        ::TODO  consider moving %hey, %rez, %yow here   ::
+        ::TMP  forward backwards-compatibility          ::
+        ::                                              ::
+        [%ctl p=@c]                                     ::
+        [%met p=@c]                                     ::
+    ==  ==                                              ::
+  +$  bolt                                              ::  simple input
+    $@  @c                                              ::  simple keystroke
     $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
         [%bac ~]                                        ::  true backspace
-        [%ctl p=@c]                                     ::  control-key
         [%del ~]                                        ::  true delete
-        [%met p=@c]                                     ::  meta-key
+        [%hit r=@ud c=@ud]                              ::  mouse click
         [%ret ~]                                        ::  return
-        [%txt p=(list @c)]                              ::  utf32 text
     ==                                                  ::
   +$  blit                                              ::  old blit
     $%  [%bel ~]                                        ::  make a noise
