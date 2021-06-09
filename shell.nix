@@ -56,6 +56,7 @@ in pkgsLocal.hs.shellFor {
     pkgs.nixfmt
     pkgs.shfmt
     pkgs.stack
+    pkgs.haskell-language-server
     (import pkgs.sources.niv { }).niv
   ] ++ mergeFrom "buildInputs";
 
