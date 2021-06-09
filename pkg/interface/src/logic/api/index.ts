@@ -1,5 +1,6 @@
 import Urbit from '@urbit/http-api';
 import useHarkState from '~/logic/state/hark';
+import useMetadataState from '~/logic/state/metadata';
 
 const api = new Urbit('', '');
 api.ship = window.ship;
@@ -10,15 +11,11 @@ console.log(api);
 window.api = api;
 
 export const bootstrapApi = async () => {
-  console.log('a');
   await api.poke({ app: 'hood', mark: 'helm-hi', json: 'opening airlock' });
 
-  console.log('b');
   await api.eventSource();
-  console.log('c');
-  [useHarkState].forEach((state) => {
+  [useHarkState, useMetadataState].forEach((state) => {
     state.getState().initialize(api);
-    console.log('initialized');
   });
 };
 

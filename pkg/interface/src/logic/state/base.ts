@@ -87,10 +87,10 @@ export interface BaseState<StateType extends {}> {
   patches: {
     [id: string]: Patch[];
   };
-  set: (fn: (state: BaseState<StateType>) => void) => void;
+  set: (fn: (state: StateType & BaseState<StateType>) => void) => void;
   addPatch: (id: string, ...patch: Patch[]) => void;
   removePatch: (id: string) => void;
-  optSet: (fn: (state: BaseState<StateType>) => void) => string;
+  optSet: (fn: (state: StateType & BaseState<StateType>) => void) => string;
   initialize: (api: Urbit) => void;
 }
 
