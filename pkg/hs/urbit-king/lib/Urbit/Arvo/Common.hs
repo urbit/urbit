@@ -19,7 +19,7 @@ module Urbit.Arvo.Common
   , HttpServerConf(..), PEM(..), Key, Cert
   , HttpEvent(..), Method, Header(..), ResponseHeader(..)
   , ReOrg(..), reorgThroughNoun
-  , AmesDest, Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
+  , AmesDest, Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..), SocketConf(..)
   ) where
 
 import Urbit.Prelude
@@ -130,6 +130,13 @@ data HttpServerConf = HttpServerConf
 
 deriveNoun ''HttpServerConf
 
+-- Socket Configuration -------------------------------------------------------
+data SocketConf = SocketConf
+    { scfilePath :: FilePath
+    }
+  deriving (Eq, Ord, Show)
+
+deriveNoun ''SocketConf
 
 -- Desk and Mime ---------------------------------------------------------------
 

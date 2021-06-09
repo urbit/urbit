@@ -573,6 +573,7 @@ router slog waitFx Drivers {..} = do
         GoodParse (EfVega _ _              ) -> vega
         GoodParse (EfExit _ _              ) -> exit
         GoodParse (EfWend _                ) -> pure ()
+
         GoodParse (EfVane (VEBehn       ef)) -> io (dBehn ef)
         GoodParse (EfVane (VEBoat       ef)) -> io (dSync ef)
         GoodParse (EfVane (VEClay       ef)) -> io (dSync ef)
@@ -581,6 +582,7 @@ router slog waitFx Drivers {..} = do
         GoodParse (EfVane (VENewt       ef)) -> io (dNewt ef)
         GoodParse (EfVane (VESync       ef)) -> io (dSync ef)
         GoodParse (EfVane (VETerm       ef)) -> io (dTerm ef)
+        GoodParse (EfVane _                ) -> pure ()
         FailParse n -> logError $ display $ pack @Text (ppShow n)
 
 

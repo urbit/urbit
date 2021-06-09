@@ -240,7 +240,15 @@ deriveNoun ''TermEf
 data KhanEf
   = KhanEfAvow Path Noun
   | KhanEfFyrd Path Noun
+  deriving (Eq, Ord, Show)
 
+deriveNoun ''KhanEf
+
+data SocketEf
+  = SocketEfErr (KingId, ()) ()
+  deriving (Eq, Ord, Show)
+
+deriveNoun ''SocketEf
 -- IO-Driver Routing -----------------------------------------------------------
 
 data VaneEf
