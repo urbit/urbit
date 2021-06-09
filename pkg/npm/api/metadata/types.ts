@@ -42,7 +42,10 @@ export interface MetadataUpdatePreview {
   metadata: Metadata;
 }
 
-export type Associations = Record<AppName, AppAssociations>;
+export type Associations = {
+  groups: AppAssociations<GroupConfig>
+  graph: AppAssociations<GraphConfig>;
+}
 
 export type AppAssociations<C = MetadataConfig> = {
   [p in Path]: Association<C>;
