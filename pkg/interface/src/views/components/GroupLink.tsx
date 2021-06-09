@@ -1,11 +1,9 @@
 import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import { MetadataUpdatePreview } from '@urbit/api';
-import React, { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
+import React, { ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import { useModal } from '~/logic/lib/useModal';
-import { useVirtual } from '~/logic/lib/virtualContext';
-import useMetadataState from '~/logic/state/metadata';
+import useMetadataState, { usePreview } from '~/logic/state/metadata';
 import { PropFunc } from '~/types';
 import { JoinGroup } from '../landscape/components/JoinGroup';
 import { MetadataIcon } from '../landscape/components/MetadataIcon';
@@ -19,32 +17,15 @@ export function GroupLink(
 ): ReactElement {
   const { resource, api, ...rest } = props;
   const name = resource.slice(6);
-  const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
   const associations = useMetadataState(state => state.associations);
-  const { save, restore } = useVirtual();
   const history = useHistory();
   const joined = resource in associations.groups;
 
   const { modal, showModal } = useModal({
     modal: <JoinGroup api={api} autojoin={name} />
-  });
+    });
 
-  useEffect(() => {
-    (async () => {
-      const prev = await api.metadata.preview(resource);
-      save();
-      setPreview(prev);
-    })();
-
-    return () => {
-      save();
-      setPreview(null);
-    };
-  }, [resource]);
-
-  useLayoutEffect(() => {
-    restore();
-  }, [preview]);
+  const { preview } = usePreview(resource);
 
   return (
     <Box
@@ -69,7 +50,7 @@ export function GroupLink(
         }
         opacity={preview ? '1' : '0.6'}
       >
-        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : { color: '0x0' , picture: ''}} />
+        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : { color: '0x0' , picture: '' }} />
           <Col>
           <Text ml={2} fontWeight="medium" mono={!preview}>
             {preview ? preview.metadata.title : name}

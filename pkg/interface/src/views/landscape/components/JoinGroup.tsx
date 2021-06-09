@@ -1,10 +1,7 @@
 import {
     Box, Col,
-
     Icon,
-
     ManagedTextInputField as Input, Row,
-
     Text
 } from '@tlon/indigo-react';
 import { MetadataUpdatePreview } from '@urbit/api';
@@ -61,7 +58,7 @@ function Autojoin(props: { autojoin: string | null }) {
 
 export function JoinGroup(props: JoinGroupProps): ReactElement {
   const { api, autojoin } = props;
-  const associations = useMetadataState(state => state.associations);
+  const { associations, getPreview } = useMetadataState();
   const groups = useGroupState(state => state.groups);
   const history = useHistory();
   const initialValues: FormSchema = {
@@ -120,19 +117,19 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
     }
       //  skip if it's unmanaged
       try {
-        const prev = await api.metadata.preview(path);
+        const prev = await getPreview(path);
         actions.setStatus({ success: null });
         setPreview(prev);
       } catch (e) {
-        if (!(e instanceof Error)) {
-          actions.setStatus({ error: 'Unknown error' });
-        } else if (e.message === 'no-permissions') {
+        if (e === 'no-permissions') {
           actions.setStatus({
             error:
               'Unable to join group, you do not have the correct permissions'
           });
-        } else if (e.message === 'offline') {
+        } else if (e === 'offline') {
           setPreview(path);
+        } else {
+          actions.setStatus({ error: 'Unknown error' });
         }
       }
     },
@@ -179,8 +176,8 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
                   Channels
                 </Text>
                 <Box width="100%" flexShrink={0}>
-                  {Object.values(preview.channels).map(({ metadata }: any) => (
-                    <Row width="100%">
+                  {Object.values(preview.channels).map(({ metadata }: any, i) => (
+                    <Row key={i} width="100%">
                       <Icon
                         mr={2}
                         color="blue"

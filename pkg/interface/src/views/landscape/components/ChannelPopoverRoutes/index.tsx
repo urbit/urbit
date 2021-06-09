@@ -2,7 +2,8 @@ import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import {
     Association,
 
-    Group
+    Group,
+    metadataRemove
 } from '@urbit/api';
 import React, { useCallback, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -16,6 +17,7 @@ import { GraphPermissions } from './ChannelPermissions';
 import { ChannelDetails } from './Details';
 import { ChannelNotifications } from './Notifications';
 import { ChannelPopoverRoutesSidebar } from './Sidebar';
+import airlock from '~/logic/api';
 
 interface ChannelPopoverRoutesProps {
   baseUrl: string;
@@ -41,7 +43,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
     history.push(props.rootUrl);
   };
   const handleRemove = async () => {
-    await api.metadata.remove('graph', association.resource, association.group);
+    await airlock.poke(metadataRemove('graph', association.resource, association.group));
     history.push(props.rootUrl);
   };
   const handleArchive = async () => {

@@ -1,14 +1,13 @@
 import { BaseLabel, Col, Label, Text } from '@tlon/indigo-react';
-import { Association, Group, PermVariation, resourceFromPath } from '@urbit/api';
+import { Association, Group, metadataUpdate, PermVariation, resourceFromPath } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import GlobalApi from '~/logic/api/global';
 import useMetadataState from '~/logic/state/metadata';
 import { FormSubmit } from '~/views/components/FormSubmit';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
-import {
-    GroupFeedPermsInput
-} from '../Home/Post/GroupFeedPerms';
+import { GroupFeedPermsInput } from '../Home/Post/GroupFeedPerms';
+import airlock from '~/logic/api';
 
 interface FormSchema {
   permissions: PermVariation;
@@ -33,9 +32,6 @@ export function GroupFeedSettings(props: {
   const feedAssoc = useMetadataState(s => s.associations.graph[feedResource]);
   const isEnabled = Boolean(feedResource);
 
-  const associations = useMetadataState(state => state.associations);
-  const feedMetadata = associations?.graph[feedResource];
-
   const vip = feedAssoc?.metadata?.vip || ' ';
   const toggleFeed = async (actions: any) => {
     if (isEnabled) {
@@ -52,7 +48,7 @@ export function GroupFeedSettings(props: {
     values: FormSchema,
     actions: FormikHelpers<FormSchema>
   ) => {
-    await api.metadata.update(feedAssoc, { vip: values.permissions.trim() as PermVariation });
+    await airlock.poke(metadataUpdate(feedAssoc, { vip: values.permissions.trim() as PermVariation }));
 
     actions.setStatus({ success: null });
   };

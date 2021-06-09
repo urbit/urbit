@@ -5,7 +5,7 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { Association, Group, PermVariation } from '@urbit/api';
+import { Association, Group, metadataUpdate, PermVariation } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React from 'react';
@@ -15,6 +15,7 @@ import { resourceFromPath } from '~/logic/lib/group';
 import { FormGroupChild } from '~/views/components/FormGroup';
 import { shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
 import { ChannelWritePerms } from '../ChannelWritePerms';
+import airlock from '~/logic/api';
 
 function PermissionsSummary(props: {
   writersSize: number;
@@ -108,9 +109,9 @@ export function GraphPermissions(props: GraphPermissionsProps) {
     };
     const allWriters = Array.from(writers).map(w => `~${w}`);
     if (values.readerComments !== readerComments) {
-      await api.metadata.update(association, {
+      await airlock.poke(metadataUpdate(association, {
         vip: values.readerComments ? 'reader-comments' : ''
-      });
+      }));
     }
 
     if (values.writePerms === 'everyone') {
