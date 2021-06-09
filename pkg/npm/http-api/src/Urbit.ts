@@ -219,7 +219,7 @@ export class Urbit implements UrbitInterface {
               (data.response === 'poke' && this.outstandingSubscriptions.has(data.id))) {
               const funcs = this.outstandingSubscriptions.get(data.id);
               if (data.hasOwnProperty('err')) {
-                funcs.err(data.err);
+                funcs.err(data.err, data.id);
                 this.outstandingSubscriptions.delete(data.id);
               }
             } else if (data.response === 'diff' && this.outstandingSubscriptions.has(data.id)) {
@@ -344,6 +344,46 @@ export class Urbit implements UrbitInterface {
       this.debounceTimer = setTimeout(process, this.debounceInterval);
 
       
+    });
+  }
+
+  /**
+   * Creates a subscription, waits for a fact and then unsubscribes
+   *
+   * @param app Name of gall agent to subscribe to
+   * @param path Path to subscribe to
+   * @param timeout Optional timeout before ending subscription
+   *
+   * @returns The first fact on the subcription
+   */
+  async subscribeOnce<T = any>(app: string, path: string, timeout?: number) {
+    return new Promise<T>(async (resolve, reject) => {
+      let done = false;
+      let id: number | null = null;
+      const quit = () => {
+        if(!done) {
+          reject('quit');
+        }
+      };
+      const event = (e: T) => {
+        if(!done) {
+          resolve(e);
+          this.unsubscribe(id);
+        }
+      }
+      const request = { app, path, event, err: reject, quit };
+
+      id = await this.subscribe(request);
+
+      if(timeout) {
+        setTimeout(() => {
+          if(!done) {
+            done = true;
+            reject('timeout');
+            this.unsubscribe(id);
+          }
+        }, timeout);
+      }
     });
   }
 

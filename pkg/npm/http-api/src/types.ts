@@ -15,10 +15,12 @@ export interface AuthenticationInterface {
 }
 
 export interface SubscriptionInterface {
-  err?(error: any): void;
+  err?(error: any, id: string): void;
   event?(data: any): void;
   quit?(data: any): void;
 }
+
+export type OnceSubscriptionErr = 'quit' | 'nack' | 'timeout';
 
 export type SubscriptionRequestInterface = SubscriptionInterface & {
   app: string;
