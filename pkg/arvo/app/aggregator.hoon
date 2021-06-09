@@ -33,6 +33,7 @@
       ::  finding: raw-tx-hash reverse lookup for sending map
       ::  next-nonce: next l1 nonce to use
       ::  nas: predicted naive state
+      ::  next-batch: when then next l2 batch will be sent
       ::
       pending=(list pend-tx)
     ::
@@ -43,6 +44,7 @@
       finding=(map keccak $?(%confirmed %failed l1-tx-pointer))
       next-nonce=@ud
       nas=^state:naive
+      next-batch=time
     ::
       ::  pk: private key to send the roll
       ::  frequency: time to wait between sending batches (TODO fancier)
@@ -98,8 +100,9 @@
     =.  frequency  ~h1
     =.  contract  naive:local-contracts:azimuth
     =.  chain-id  chain-id:local-contracts:azimuth
+    =^  card  next-batch  set-timer
     :_  this
-    :~  set-timer
+    :~  card
         [%pass /azimuth-txs %agent [our.bowl %azimuth] %watch /txs]
     ==
   ::
@@ -127,20 +130,20 @@
   ::    /x/pending/[0xadd.ress]        ->  %noun  (list pend-tx)
   ::    /x/tx/[0xke.ccak]/status       ->  %noun  tx-status
   ::    /x/nonce/[~ship]/[0xadd.ress]  ->  %atom  @
+  ::    /x/next-batch                  ->  %atom  time
   ::
   ++  on-peek
     |=  =path
     ^-  (unit (unit cage))
     |^
     ?+  path  ~
-      [%x %pending ~]       pending
+      [%x %pending ~]       ``noun+!>(pending)
       [%x %pending @ ~]     (pending-by i.t.t.path)
       [%x %tx @ %status ~]  (status i.t.t.path)
       [%x %nonce @ @ ~]     (nonce i.t.t.path i.t.t.t.path)
       [%x %spawned @ ~]     (spawned i.t.t.path)
+      [%x %next-batch ~]    ``noun+!>(next-batch)
     ==
-    ::
-    ++  pending  ``noun+!>(^pending)
     ::
     ++  pending-by
       |=  wat=@t
@@ -151,7 +154,7 @@
           [~ ~]
         =;  pending=(list pend-tx)
           ``noun+!>(pending)
-        %+  skim  ^pending
+        %+  skim  pending
         |=  pend-tx
         ::TODO  deduce address from sig.raw-tx ?
         !!
@@ -159,7 +162,7 @@
       ::
       =;  pending=(list pend-tx)
         ``noun+!>(pending)
-      %+  skim  ^pending
+      %+  skim  pending
       |=  pend-tx
       =(u.who ship.from.tx.raw-tx)
     ::
@@ -176,7 +179,7 @@
       ::TODO  potentially slow!
       =;  known=?
         [?:(known %pending %unknown) ~]
-      %+  lien  ^pending
+      %+  lien  pending
       |=  [* raw-tx:naive]
       =(u.keccak (hash-tx raw))
     ::
@@ -550,9 +553,9 @@
 ::  +set-timer: %wait until next whole :frequency
 ::
 ++  set-timer
-  ^-  card
-  %+  wait:b:sys  /timer
-  (mul +((div now.bowl frequency)) frequency)
+  ^-  [=card =time]
+  =+  time=(mul +((div now.bowl frequency)) frequency)
+  [(wait:b:sys /timer time) time]
 ::  +on-timer: every :frequency, freeze :pending txs roll and start sending it
 ::
 ++  on-timer
@@ -575,7 +578,8 @@
         [(hash-raw-tx raw-tx) (get-l1-pointer tx.raw-tx nas)]
       ==
     [(send-roll get-address nonce) state]
-  [[set-timer cards] state]
+  =^  card  next-batch  set-timer
+  [[card cards] state]
 ::  +get-nonce: retrieves the latest nonce
 ::
 ++  get-nonce
