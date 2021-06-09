@@ -440,19 +440,14 @@ export default class Send extends Component {
                 style={{cursor: signReady ? 'pointer' : 'default'}} />
             </Row>
             {signMethod === 'masterTicket' &&
-             <Row mt={4}>
-               <Box
-                 backgroundColor='orange'
-                 color='white'
-                 borderRadius='32px'
-                 p={3}
-               >
-                 <Col>
-                   <Text color='white' fontWeight='bold' fontSize={1}>
-                     To reduce the exposure of your master ticket we recommend signing transactions with Bridge
-                   </Text>
-                 </Col>
-               </Box>
+             <Row
+               mt={4}
+               alignItems='center'
+             >
+               <Icon icon='Info' color='yellow' height={4} width={4}/>
+               <Text fontSize="14px" fontWeight="regular" color="gray" ml={2}>
+                 We recommend that you sign transactions using Bridge to protect your master ticket.
+               </Text>
              </Row>
             }
           </Col>
