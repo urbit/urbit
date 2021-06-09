@@ -7,7 +7,7 @@ import {
     StatelessTextInput as Input, Text
 } from '@tlon/indigo-react';
 import { Contact, Contacts } from '@urbit/api/contacts';
-import { Group, RoleTags } from '@urbit/api/groups';
+import { addTag, removeMembers, changePolicy, Group, removeTag, RoleTags } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
 import _ from 'lodash';
 import f from 'lodash/fp';
@@ -26,6 +26,7 @@ import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Dropdown } from '~/views/components/Dropdown';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import airlock from '~/logic/api';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -46,6 +47,19 @@ const searchParticipant = (search: string) => (p: Participant) => {
   s = (s.startsWith('~')) ? s.substr(1) : s;
   return p.patp.includes(s) || p.nickname.toLowerCase().includes(s);
 };
+
+const emptyContact = (patp: string, pending: boolean): Participant => ({
+  nickname: '',
+  bio: '',
+  status: '',
+  color: '0x0',
+  avatar: null,
+  cover: null,
+  groups: [],
+  patp,
+  'last-updated': 0,
+  pending
+});
 
 function getParticipants(cs: Contacts, group: Group) {
   const contacts: Participant[] = _.flow(
@@ -76,19 +90,6 @@ function getParticipants(cs: Contacts, group: Group) {
     group.members.size
   ] as const;
 }
-
-const emptyContact = (patp: string, pending: boolean): Participant => ({
-  nickname: '',
-  bio: '',
-  status: '',
-  color: '0x0',
-  avatar: null,
-  cover: null,
-  groups: [],
-  patp,
-  'last-updated': 0,
-  pending
-});
 
 const Tab = ({ selected, id, label, setSelected }) => (
   <Box
@@ -249,7 +250,7 @@ function Participant(props: {
   role?: RoleTags;
   api: GlobalApi;
 }) {
-  const { contact, association, group, api } = props;
+  const { contact, association, group } = props;
   const { title } = association.metadata;
   const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
 
@@ -266,34 +267,32 @@ function Participant(props: {
 
   const onPromote = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.addTag(resource, { tag: 'admin' }, [`~${contact.patp}`]);
-  }, [api, association]);
+    await airlock.poke(addTag(resource, { tag: 'admin' }, [`~${contact.patp}`]));
+  }, [contact.patp, association]);
 
   const onDemote = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.removeTag(resource, { tag: 'admin' }, [
-      `~${contact.patp}`
-    ]);
-  }, [api, association]);
+    await airlock.poke(removeTag({ tag: 'admin' }, resource, [`~${contact.patp}`]));
+  }, [association, contact.patp]);
 
   const onBan = useCallback(async () => {
     const resource = resourceFromPath(association.group);
-    await api.groups.changePolicy(resource, {
+    await airlock.poke(changePolicy(resource, {
       open: { banShips: [`~${contact.patp}`] }
-    });
-  }, [api, association]);
+    }));
+  }, [association, contact.patp]);
 
   const onKick = useCallback(async () => {
     const resource = resourceFromPath(association.group);
     if(contact.pending) {
-      await api.groups.changePolicy(
+      await airlock.poke(changePolicy(
         resource,
         { invite: { removeInvites: [`~${contact.patp}`] } }
-      );
+      ));
     } else {
-      await api.groups.remove(resource, [`~${contact.patp}`]);
+      await airlock.poke(removeMembers(resource, [`~${contact.patp}`]));
     }
-  }, [api, contact, association]);
+  }, [contact, association]);
 
   const avatar =
     contact?.avatar && !hideAvatars ? (

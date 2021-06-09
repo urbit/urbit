@@ -4,7 +4,7 @@ import {
     ManagedToggleSwitchField as Checkbox,
     Text
 } from '@tlon/indigo-react';
-import { Enc, metadataUpdate } from '@urbit/api';
+import { changePolicy, Enc, metadataUpdate } from '@urbit/api';
 import { Group, GroupPolicy } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
 import { Form, Formik, FormikHelpers } from 'formik';
@@ -76,7 +76,7 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
           ? { invite: { pending: [] } }
           : { open: { banRanks: [], banned: [] } };
         const diff = { replace: newPolicy };
-        await props.api.groups.changePolicy(resource, diff);
+        await airlock.poke(changePolicy(resource, diff));
       }
 
       actions.setStatus({ success: null });

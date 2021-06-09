@@ -32,6 +32,8 @@ import ModalButton from './components/ModalButton';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import './css/custom.css';
+import airlock from '~/logic/api';
+import { join } from '@urbit/api/groups';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -107,7 +109,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
       const onContinue = async (e) => {
         e.stopPropagation();
         if (!hasTutorialGroup({ associations })) {
-          await props.api.groups.join(TUTORIAL_HOST, TUTORIAL_GROUP);
+          await airlock.poke(join(TUTORIAL_HOST, TUTORIAL_GROUP));
           await props.api.settings.putEntry('tutorial', 'joined', Date.now());
           await waiter(hasTutorialGroup);
           await Promise.all(

@@ -1,4 +1,5 @@
 import { Box, Button, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { leaveGroup } from '@urbit/api';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -15,6 +16,7 @@ import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { Portal } from '~/views/components/Portal';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { Triangle } from '~/views/components/Triangle';
+import airlock from '~/logic/api';
 
 const localSelector = selectLocalState([
   'tutorialProgress',
@@ -31,8 +33,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
     tutorialRef,
     nextTutStep,
     prevTutStep,
-    hideTutorial,
-    set: setLocalState
+    hideTutorial
   } = useLocalState(localSelector);
   const {
     title,
@@ -105,10 +106,10 @@ export function TutorialModal(props: { api: GlobalApi }) {
     setPaused(true);
   }, []);
 
-  const leaveGroup = useCallback(async () => {
-    await props.api.groups.leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP);
+  const doLeaveGroup = useCallback(async () => {
+    await airlock.thread(leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP));
     await dismiss();
-  }, [props.api, dismiss]);
+  }, [dismiss]);
 
   const progressIdx = progress.findIndex(p => p === tutorialProgress);
 
@@ -149,7 +150,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
               <Button backgroundColor="washedGray" onClick={dismiss}>
                 Later
               </Button>
-              <StatelessAsyncButton primary destructive onClick={leaveGroup}>
+              <StatelessAsyncButton primary destructive onClick={doLeaveGroup}>
                 Leave Group
               </StatelessAsyncButton>
             </Row>
@@ -173,7 +174,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
             </Text>
           </Col>
           <Text lineHeight="tall">
-            You can always restart the tutorial by typing "tutorial" in Leap.
+            You can always restart the tutorial by typing &quot;tutorial&quot; in Leap.
           </Text>
           <Row mt={3} gapX={2} justifyContent="flex-end">
             <Button backgroundColor="washedGray" onClick={bailExit}>

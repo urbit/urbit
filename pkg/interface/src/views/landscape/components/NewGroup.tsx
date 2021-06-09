@@ -3,10 +3,10 @@ import {
 
   ManagedCheckboxField as Checkbox, ManagedTextInputField as Input, Text
 } from '@tlon/indigo-react';
-import { Enc, GroupPolicy } from '@urbit/api';
+import { createGroup, Enc, GroupPolicy } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
@@ -14,6 +14,7 @@ import { stringToSymbol } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 import { AsyncButton } from '~/views/components/AsyncButton';
+import airlock from '~/logic/api';
 
 const formSchema = Yup.object({
   title: Yup.string().required('Group must have a name'),
@@ -32,7 +33,6 @@ interface NewGroupProps {
 }
 
 export function NewGroup(props: NewGroupProps): ReactElement {
-  const { api } = props;
   const history = useHistory();
   const initialValues: FormSchema = {
     title: '',
@@ -61,7 +61,7 @@ export function NewGroup(props: NewGroupProps): ReactElement {
                 banned: []
               }
             };
-        await api.groups.create(name, policy, title, description);
+        await airlock.thread(createGroup(name, policy, title, description));
         const path = `/ship/~${window.ship}/${name}`;
         await waiter((p) => {
           return path in p.groups && path in p.associations.groups;
@@ -74,7 +74,7 @@ export function NewGroup(props: NewGroupProps): ReactElement {
         actions.setStatus({ error: e.message });
       }
     },
-    [api, waiter, history]
+    [waiter, history]
   );
 
   return (

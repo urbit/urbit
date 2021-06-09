@@ -1,11 +1,13 @@
 import { Button, Col, Icon, Label, Row, Text } from '@tlon/indigo-react';
-import { Association } from '@urbit/api';
+import { Association, leaveGroup } from '@urbit/api';
+import { deleteGroup } from '@urbit/api/dist';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { useModal } from '~/logic/lib/useModal';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
+import airlock from '~/logic/api';
 
 export function DeleteGroup(props: {
   owner: boolean;
@@ -22,9 +24,9 @@ export function DeleteGroup(props: {
 return;
     }
     if(props.owner) {
-      props.api.groups.deleteGroup(ship, name);
+      airlock.thread(deleteGroup(ship, name));
     } else {
-      props.api.groups.leaveGroup(ship, name);
+      airlock.thread(leaveGroup(ship, name));
     }
     history.push('/');
   };

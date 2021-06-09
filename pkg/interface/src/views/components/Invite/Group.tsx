@@ -5,7 +5,8 @@ import {
   LoadingSpinner, Row, Text
 } from '@tlon/indigo-react';
 import {
-  Invite, joinProgress,
+  hideGroup,
+  Invite, join, joinProgress,
   JoinRequest,
   Metadata, MetadataUpdatePreview,
   resourceFromPath
@@ -27,6 +28,7 @@ import { Header } from '~/views/apps/notifications/header';
 import { NotificationWrapper } from '~/views/apps/notifications/notification';
 import { MetadataIcon } from '~/views/landscape/components/MetadataIcon';
 import { StatelessAsyncButton } from '../StatelessAsyncButton';
+import airlock from '~/logic/api';
 
 interface GroupInviteProps {
   preview?: MetadataUpdatePreview;
@@ -164,7 +166,7 @@ export function useInviteAccept(
         return false;
       }
 
-      await api.groups.join(ship, name);
+      await airlock.poke(join(ship, name));
       await api.invite.accept(app, uid);
       await waiter((p) => {
         return (
@@ -216,15 +218,15 @@ function InviteActions(props: {
 
   const hideJoin = useCallback(async (e) => {
     if(status?.progress === 'done') {
-      set(s => {
+      set((s) => {
         // @ts-ignore investigate zustand types
-        delete s.pendingJoin[resource]
+        delete s.pendingJoin[resource];
       });
       e.stopPropagation();
       return;
     }
-    await api.groups.hide(resource);
-  }, [api, resource, status]);
+    await airlock.poke(hideGroup(resource));
+  }, [resource, status]);
 
   if (status) {
     return (

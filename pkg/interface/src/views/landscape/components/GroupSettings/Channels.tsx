@@ -24,14 +24,14 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
 
   const onChange = useCallback(
     async (resource: string, preview: boolean) => {
-      return airlock.poke(metadataUpdate(associations.graph[resource], { preview }));
+      await airlock.poke(metadataUpdate(associations.graph[resource], { preview }));
     },
     [associations.graph]
   );
 
   const onRemove = useCallback(
     async (resource: string) => {
-      return airlock.poke(metadataRemove('graph', resource, association.group));
+      await airlock.poke(metadataRemove('graph', resource, association.group));
     },
     [association]
   );

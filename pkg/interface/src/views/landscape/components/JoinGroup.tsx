@@ -4,7 +4,7 @@ import {
     ManagedTextInputField as Input, Row,
     Text
 } from '@tlon/indigo-react';
-import { MetadataUpdatePreview } from '@urbit/api';
+import { join, MetadataUpdatePreview } from '@urbit/api';
 import { Form, Formik, FormikHelpers, useFormikContext } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
@@ -22,6 +22,7 @@ import { AsyncButton } from '~/views/components/AsyncButton';
 import { FormError } from '~/views/components/FormError';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { GroupSummary } from './GroupSummary';
+import airlock from '~/logic/api';
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -80,7 +81,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
     if (group in groups) {
       return history.push(`/~landscape${group}`);
     }
-    await api.groups.join(ship, name);
+    await airlock.poke(join(ship, name));
     try {
       await waiter((p) => {
         return group in p.groups &&

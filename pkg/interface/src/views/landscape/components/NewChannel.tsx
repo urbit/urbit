@@ -4,6 +4,7 @@ import {
   ManagedTextInputField as Input,
   Text
 } from '@tlon/indigo-react';
+import { addTag } from '@urbit/api/dist';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement } from 'react';
@@ -21,6 +22,7 @@ import { FormError } from '~/views/components/FormError';
 import { IconRadio } from '~/views/components/IconRadio';
 import { ShipSearch, shipSearchSchema, shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
 import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
+import airlock from '~/logic/api';
 
 type FormSchema = {
   name: string;
@@ -98,10 +100,10 @@ export function NewChannel(props: NewChannelProps): ReactElement {
         writers = _.compact(writers).map(s => `~${s}`);
         const us = `~${window.ship}`;
         if (values.writePerms === 'self') {
-          await api.groups.addTag(resource, tag, [us]);
+          await airlock.poke(addTag(resource, tag, [us]));
         } else if (values.writePerms === 'subset') {
           writers.push(us);
-          await api.groups.addTag(resource, tag, writers);
+          await airlock.poke(addTag(resource, tag, writers));
         }
       } else {
         await api.graph.createUnmanagedGraph(

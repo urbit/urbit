@@ -5,6 +5,7 @@ import {
 
     Row, Text
 } from '@tlon/indigo-react';
+import { invite } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
@@ -19,6 +20,7 @@ import { Workspace } from '~/types/workspace';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { FormError } from '~/views/components/FormError';
 import { ShipSearch } from '~/views/components/ShipSearch';
+import airlock from '~/logic/api';
 
 interface InvitePopoverProps {
   baseUrl: string;
@@ -39,7 +41,7 @@ const formSchema = Yup.object({
 });
 
 export function InvitePopover(props: InvitePopoverProps) {
-  const { baseUrl, api, association } = props;
+  const { baseUrl, association } = props;
 
   const relativePath = (p: string) => baseUrl + p;
   const { title } = association?.metadata || { title: '' };
@@ -55,11 +57,11 @@ export function InvitePopover(props: InvitePopoverProps) {
     //  TODO: how to invite via email?
     try {
       const { ship, name }  = resourceFromPath(association.group);
-      await api.groups.invite(
+      await airlock.thread(invite(
         ship, name,
         _.compact(ships).map(s => `~${deSig(s)}`),
         description
-      );
+      ));
 
       actions.setStatus({ success: null });
       onOutsideClick();
