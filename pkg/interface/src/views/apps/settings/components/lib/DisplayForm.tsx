@@ -4,15 +4,17 @@ import {
     Label,
     ManagedRadioButtonField as Radio, Text
 } from '@tlon/indigo-react';
-import { Form, Formik } from 'formik';
+import { Form } from 'formik';
+import { putEntry } from '@urbit/api/settings';
 import React from 'react';
 import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
 import { AsyncButton } from '~/views/components/AsyncButton';
-import {FormikOnBlur} from '~/views/components/FormikOnBlur';
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { BackButton } from './BackButton';
+import airlock from '~/logic/api';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
 
 const formSchema = Yup.object().shape({
@@ -71,17 +73,17 @@ export default function DisplayForm(props: DisplayFormProps) {
       }
       onSubmit={async (values, actions) => {
         const promises = [] as Promise<any>[];
-        promises.push(api.settings.putEntry('display', 'backgroundType', values.bgType));
+        promises.push(airlock.poke(putEntry('display', 'backgroundType', values.bgType)));
         promises.push(
-          api.settings.putEntry('display', 'background',
+          airlock.poke(putEntry('display', 'background',
             values.bgType === 'color'
             ? `#${uxToHex(values.bgColor || '0x0')}`
             : values.bgType === 'url'
             ? values.bgUrl || ''
             : false
-          ));
+          )));
 
-        promises.push(api.settings.putEntry('display', 'theme', values.theme));
+        promises.push(airlock.poke(putEntry('display', 'theme', values.theme)));
         await Promise.all(promises);
 
         actions.setStatus({ success: null });

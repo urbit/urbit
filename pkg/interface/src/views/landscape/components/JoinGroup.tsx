@@ -4,7 +4,7 @@ import {
     ManagedTextInputField as Input, Row,
     Text
 } from '@tlon/indigo-react';
-import { join, MetadataUpdatePreview } from '@urbit/api';
+import { join, MetadataUpdatePreview, putEntry } from '@urbit/api';
 import { Form, Formik, FormikHelpers, useFormikContext } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
@@ -76,7 +76,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
   const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
     if(group === TUTORIAL_GROUP_RESOURCE) {
-      await api.settings.putEntry('tutorial', 'joined', Date.now());
+      await airlock.poke(putEntry('tutorial', 'joined', Date.now()));
     }
     if (group in groups) {
       return history.push(`/~landscape${group}`);

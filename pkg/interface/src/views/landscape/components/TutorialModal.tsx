@@ -1,5 +1,5 @@
 import { Box, Button, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import { leaveGroup } from '@urbit/api';
+import { leaveGroup, putEntry } from '@urbit/api';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -95,8 +95,8 @@ export function TutorialModal(props: { api: GlobalApi }) {
   const dismiss = useCallback(async () => {
     setPaused(false);
     hideTutorial();
-    await props.api.settings.putEntry('tutorial', 'seen', true);
-  }, [hideTutorial, props.api]);
+    await airlock.poke(putEntry('tutorial', 'seen', true));
+  }, [hideTutorial]);
 
   const bailExit = useCallback(() => {
     setPaused(false);

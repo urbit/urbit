@@ -107,7 +107,7 @@ class App extends React.Component {
     }, 500);
     this.api.local.getBaseHash();
     this.api.local.getRuntimeLag();  // TODO  consider polling periodically
-    this.api.settings.getAll();
+    this.props.getAll();
     gcpManager.start();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
@@ -194,6 +194,6 @@ class App extends React.Component {
 export default withState(process.env.NODE_ENV === 'production' ? App : hot(App), [
   [useGroupState],
   [useContactState],
-  [useSettingsState, ['display']],
+  [useSettingsState, ['display', 'getAll']],
   [useLocalState]
 ]);

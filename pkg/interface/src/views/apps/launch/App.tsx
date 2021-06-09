@@ -34,6 +34,7 @@ import Tile from './components/tiles/tile';
 import './css/custom.css';
 import airlock from '~/logic/api';
 import { join } from '@urbit/api/groups';
+import { putEntry } from '@urbit/api/settings';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -103,14 +104,14 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
     modal: function modal(dismiss) {
       const onDismiss = (e) => {
         e.stopPropagation();
-        props.api.settings.putEntry('tutorial', 'seen', true);
+        airlock.poke(putEntry('tutorial', 'seen', true));
         dismiss();
       };
       const onContinue = async (e) => {
         e.stopPropagation();
         if (!hasTutorialGroup({ associations })) {
           await airlock.poke(join(TUTORIAL_HOST, TUTORIAL_GROUP));
-          await props.api.settings.putEntry('tutorial', 'joined', Date.now());
+          await airlock.poke(putEntry('tutorial', 'joined', Date.now()));
           await waiter(hasTutorialGroup);
           await Promise.all(
             [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph => props.api.graph.joinGraph(TUTORIAL_HOST, graph)));
