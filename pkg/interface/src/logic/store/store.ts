@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { unstable_batchedUpdates as batchedUpdates } from 'react-dom';
 import { Cage } from '~/types/cage';
 import ConnectionReducer from '../reducers/connection';
-import { ContactReducer } from '../reducers/contact-update';
 import GcpReducer from '../reducers/gcp-reducer';
 import { GraphReducer } from '../reducers/graph-update';
 import GroupReducer from '../reducers/group-update';
@@ -55,7 +54,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
       this.launchReducer.reduce(data);
       this.connReducer.reduce(data, this.state);
       GraphReducer(data);
-      ContactReducer(data);
       this.settingsReducer.reduce(data);
       this.gcpReducer.reduce(data);
     });
