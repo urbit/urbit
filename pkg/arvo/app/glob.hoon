@@ -2,13 +2,16 @@
 ::
 ::  prompts content delivery and Gall state storage for Landscape JS blob
 ::
-/-  glob
+/-  glob, *resource
 /+  default-agent, verb, dbug
 |%
-++  hash  0v2.3mphd.voocg.covr7.iv5la.kkk8h
+++  landscape-hash  0v2.i41hn.un6g3.jucd7.rhrah.n0qmv
+++  btc-wallet-hash  0v2.3qak4.al612.8m1ig.kg03r.mfide
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
++$  state-1  [%1 =globs:glob]
 +$  all-states
   $%  state-0
+      state-1
   ==
 +$  card  card:agent:gall
 --
@@ -19,12 +22,12 @@
   [%pass [%timer path] %arvo %b %wait (add now ~m30)]
 ::
 ++  wait-start
-  |=  now=@da
+  |=  [now=@da =path]
   ^-  card
-  [%pass /start %arvo %b %wait now]
+  [%pass [%start path] %arvo %b %wait now]
 ::
 ++  poke-file-server
-  |=  [our=@p =cage]
+  |=  [our=@p hash=@uv =cage]
   ^-  card
   [%pass /serving/(scot %uv hash) %agent [our %file-server] %poke cage]
 ::
@@ -43,9 +46,12 @@
   ^-  card
   [%pass [%running path] %agent [our %spider] %leave ~]
 --
-=|  state=state-0
-=.  hash.state  hash
-=/  serve-path=path  /'~landscape'/js/bundle
+=|  state=state-1
+=.  globs.state
+  (~(put by globs.state) /'~landscape'/js/bundle landscape-hash ~)
+=.  globs.state
+  (~(put by globs.state) /'~btc'/js/bundle btc-wallet-hash ~)
+::
 ^-  agent:gall
 %+  verb  |
 %-  agent:dbug
@@ -56,77 +62,121 @@
 ++  on-init
   ^-  (quip card _this)
   ::  delay through timer to make sure %spider has started
-  [[(wait-start now.bowl) ~] this]
+  :_  this
+  %+  turn  ~(tap by ~(key by globs.state))
+  |=(=path (wait-start now.bowl path))
 ::
 ++  on-save   !>(state)
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
   =+  !<(old=all-states old-state)
-  ?>  ?=(%0 -.old)
-  ?~  glob.old
-    on-init
-  ?:  ?=(%& -.u.glob.old)
-    ?:  =(hash.old hash.state)
-      `this(state old)
-    on-init
-  =/  cancel-cards
-    =/  args  [tid.p.u.glob.old &]
-    :~  (leave-spider /(scot %uv hash.old) our.bowl)
-        (poke-spider /(scot %uv hash.old) our.bowl %spider-stop !>(args))
+  =|  cards=(list card)
+  =/  upgrading=?  %.n
+  |-
+  ?-  -.old
+      %1
+    =/  [cards-1=(list card) =globs:glob]
+      %-  ~(rep by globs.old)
+      |=  $:  [=serve=path =glob-details:glob]
+              cards=(list card)
+              globs=_globs.state
+          ==
+      ^-  [(list card) globs:glob]
+      =/  new-glob-details  (~(get by globs) serve-path)
+      ?~  new-glob-details
+        [cards globs]
+      ?~  glob.glob-details
+        :_  globs
+        [(wait-start now.bowl serve-path) cards]
+      ?:  ?=(%& -.u.glob.glob-details)
+        ?:  =(hash.u.new-glob-details hash.glob-details)
+          [cards (~(put by globs) serve-path glob-details)]
+        :_  globs
+        [(wait-start now.bowl serve-path) cards]
+      ?:  upgrading
+        :_  globs
+        [(wait-start now.bowl serve-path) cards]
+      =/  args  [tid.p.u.glob.glob-details &]
+      =/  spider-wire  [(scot %uv hash.glob-details) serve-path]
+      :_  globs
+      :*  (leave-spider spider-wire our.bowl)
+          (poke-spider spider-wire our.bowl %spider-stop !>(args))
+          (wait-start now.bowl serve-path)
+          cards
+      ==
+    :-  (weld cards cards-1)
+    this(globs.state globs)
+  ::
+      %0
+    =/  globs
+      (~(put by globs.state) /'~landscape'/js/bundle [hash.old glob.old])
+    %=  $
+        old  [%1 globs]
+    ::
+        cards
+      ?~  glob.old  ~
+      ?:  =(%& -.u.glob.old)  ~
+      ?>  ?=(%| -.u.glob.old)
+      =/  args  [tid.p.u.glob.old &]
+      :~  (leave-spider /(scot %uv hash.old) our.bowl)
+          (poke-spider /(scot %uv hash.old) our.bowl %spider-stop !>(args))
+      ==
+    ::
+        upgrading  %.y
     ==
-  =^  init-cards  this  on-init
-  [(weld cancel-cards init-cards) this]
+  ==
 ::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?+    mark  (on-poke:def mark vase)
       %glob-make
+    =+  !<(dir=path vase)
     :_  this
     =/  home=path  /(scot %p our.bowl)/home/(scot %da now.bowl)
+    =+  .^(paths=(list path) %ct (weld home dir))
     =+  .^(=js=tube:clay %cc (weld home /js/mime))
     =+  .^(=map=tube:clay %cc (weld home /map/mime))
-    =+  .^(arch %cy (weld home /app/landscape/js/bundle))
-    =/  bundle-hash=@t
-      %-  need
-      ^-  (unit @t)
-      %-  ~(rep by dir)
-      |=  [[file=@t ~] out=(unit @t)]
-      ?^  out  out
-      ?.  ?&  =((end [3 6] file) 'index.')
-              !=('sj.' (end [3 3] (swp 3 file)))
-          ==
-        out
-      ``@t`(rsh [3 6] file)
-    =/  js-name
-      (cat 3 'index.' bundle-hash)
-    =/  map-name
-      (cat 3 js-name '.js')
-    =+  .^(js=@t %cx :(weld home /app/landscape/js/bundle /[js-name]/js))
-    =+  .^(map=@t %cx :(weld home /app/landscape/js/bundle /[map-name]/map))
-    =+  .^(sw=@t %cx :(weld home /app/landscape/js/bundle /serviceworker/js))
-    =+  !<(=js=mime (js-tube !>(js)))
-    =+  !<(=sw=mime (js-tube !>(sw)))
-    =+  !<(=map=mime (map-tube !>(map)))
     =/  =glob:glob
       %-  ~(gas by *glob:glob)
-      :~  /[js-name]/js^js-mime
-          /[map-name]/map^map-mime
-          /serviceworker/js^sw-mime
+      %+  turn  paths
+      |=  pax=path
+      ^-  [path mime]
+      =+  .^(file=@t %cx (weld home pax))
+      =/  mar  (snag 0 (flop pax))
+      :-  (slag (lent dir) pax)
+      ?+  mar  ~|(unsupported-glob-type+mar !!)
+        %js   !<(mime (js-tube !>(file)))
+        %map  !<(mime (map-tube !>(file)))
       ==
     =/  =path  /(cat 3 'glob-' (scot %uv (sham glob)))/glob
+    ~&  globbed+`(set ^path)`~(key by glob)
     [%pass /make %agent [our.bowl %hood] %poke %drum-put !>([path (jam glob)])]~
   ::
       %noun
-    ?:  =(%kick q.vase)
-      (on-load !>(state(hash *@uv)))
+    ?:  =(%kick -.q.vase)
+      =+  !<([%kick =path] vase)
+      =/  glob-details  (~(get by globs.state) path)
+      ?~  glob-details
+        ~&  no-such-glob+path
+        `this
+      =/  new-state
+        state(globs (~(put by globs.state) path *@uv glob.u.glob-details))
+      (on-load !>(new-state))
     (on-poke:def mark vase)
   ==
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+::
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  (on-peek:def path)
+    [%x %btc-wallet ~]  ``noun+!>(btc-wallet-hash)
+  ==
+::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
@@ -134,83 +184,109 @@
     (on-agent:def wire sign)
   ?:  ?=([%make ~] wire)
     (on-agent:def wire sign)
-  ?.  ?=([%running @ ~] wire)
+  ?.  ?=([%running @ *] wire)
     %-  (slog leaf+"glob: strange on-agent! {<wire -.sign>}" ~)
     (on-agent:def wire sign)
+  ::
+  =/  produced-hash  (slav %uv i.t.wire)
+  =*  serve-path     t.t.wire
+  =/  glob-details   (~(get by globs.state) serve-path)
+  ?~  glob-details
+    [~ this]
+  ?.  =(hash.u.glob-details produced-hash)
+    [~ this]
   ?-    -.sign
       %poke-ack
     ?~  p.sign
       [~ this]
     %-  (slog leaf+"glob: couldn't start thread; will retry" u.p.sign)
-    :_  this(glob.state ~)  :_  ~
-    (leave-spider t.wire our.bowl)
+    :_  this(globs.state (~(put by globs.state) serve-path produced-hash ~))
+    [(leave-spider t.wire our.bowl)]~
   ::
       %watch-ack
     ?~  p.sign
       [~ this]
     %-  (slog leaf+"glob: couldn't listen to thread; will retry" u.p.sign)
-    [~ this(glob.state ~)]
+    [~ this(globs.state (~(put by globs.state) serve-path produced-hash ~))]
   ::
       %kick
-    =?  glob.state  ?=([~ %| *] glob.state)
-      ~
-    `this
+    ?.  ?=([~ %| *] glob.u.glob-details)
+      `this
+    [~ this(globs.state (~(put by globs.state) serve-path produced-hash ~))]
   ::
       %fact
-    =/  produced-hash  (slav %uv i.t.wire)
-    ?.  =(hash.state produced-hash)
-      [~ this]
     ?+    p.cage.sign  (on-agent:def wire sign)
         %thread-fail
       =+  !<([=term =tang] q.cage.sign)
       %-  (slog leaf+"glob: thread failed; will retry" leaf+<term> tang)
-      [~ this(glob.state ~)]
+      :-  ~
+      this(globs.state (~(put by globs.state) serve-path produced-hash ~))
     ::
         %thread-done
       =+  !<(=glob:glob q.cage.sign)
-      ?.  =(hash.state (sham glob))
+      ?.  =(hash.u.glob-details (sham glob))
         %:  mean
           leaf+"glob: hash doesn't match!"
-          >expected=hash.state<
+          >expected=hash.u.glob-details<
           >got=(sham glob)<
           ~
         ==
-      :_  this(glob.state `[%& glob])  :_  ~
-      %+  poke-file-server  our.bowl
-      [%file-server-action !>([%serve-glob serve-path glob %&])]
+      =.  globs.state
+        (~(put by globs.state) serve-path produced-hash `[%& glob])
+      :_  this  :_  ~
+      %:  poke-file-server
+          our.bowl
+          produced-hash
+          %file-server-action
+          !>([%serve-glob serve-path glob %&])
+      ==
     ==
   ==
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
-  ?:  ?=([%start ~] wire)
-    =/  new-tid=@ta  (cat 3 'glob--' (scot %uv eny.bowl))
-    =/  args  [~ `new-tid %glob !>([~ hash.state])]
-    =/  action  !>([%unserve-dir serve-path])
-    :_  this(glob.state `[%| new-tid])
-    :~  (poke-file-server our.bowl %file-server-action action)
-        (wait-timeout /[new-tid] now.bowl)
-        (watch-spider /(scot %uv hash.state) our.bowl /thread-result/[new-tid])
-        (poke-spider /(scot %uv hash.state) our.bowl %spider-start !>(args))
+  ?:  ?=([%start *] wire)
+    =*  serve-path  t.wire
+    =/  glob-details  (~(get by globs.state) serve-path)
+    ?~  glob-details
+      [~ this]
+    =/  new-tid=@ta  (cat 3 'glob--' (scot %uv (sham eny.bowl serve-path)))
+    =/  args  [~ `new-tid %glob !>([~ hash.u.glob-details])]
+    =/  action=cage  [%file-server-action !>([%unserve-dir serve-path])]
+    =/  spider-wire  [(scot %uv hash.u.glob-details) serve-path]
+    =.  globs.state
+      (~(put by globs.state) serve-path hash.u.glob-details `[%| new-tid])
+    :_  this
+    :~  (poke-file-server our.bowl hash.u.glob-details action)
+        (wait-timeout [new-tid serve-path] now.bowl)
+        (watch-spider spider-wire our.bowl /thread-result/[new-tid])
+        (poke-spider spider-wire our.bowl %spider-start !>(args))
     ==
-  ?.  ?=([%timer @ ~] wire)
+  ::
+  ?.  ?=([%timer @ *] wire)
     %-  (slog leaf+"glob: strange on-arvo wire: {<wire [- +<]:sign-arvo>}" ~)
     `this
   ?.  ?=(%wake +<.sign-arvo)
     %-  (slog leaf+"glob: strange on-arvo sign: {<wire [- +<]:sign-arvo>}" ~)
     `this
-  ?:  ?=([~ %& *] glob.state)
+  =*  serve-path  t.wire
+  =/  glob-details  (~(get by globs.state) serve-path)
+  ?~  glob-details
     `this
-  ?.  ?|  ?=(~ glob.state)
-          =(i.t.wire tid.p.u.glob.state)
+  ?:  ?=([~ %& *] glob.u.glob-details)
+    `this
+  ?.  ?|  ?=(~ glob.u.glob-details)
+          =(i.t.wire tid.p.u.glob.u.glob-details)
       ==
     `this
   ?^  error.sign-arvo
     %-  (slog leaf+"glob: timer handling failed; will retry" ~)
     [[(wait-timeout t.wire now.bowl)]~ this]
   %-  (slog leaf+"glob: timed out; retrying" ~)
-  (on-load !>(state(hash *@uv)))
+  =/  new-details  u.glob-details(hash *@uv)
+  =/  new-state    state(globs (~(put by globs.state) serve-path new-details))
+  (on-load !>(new-state))
 ::
 ++  on-fail   on-fail:def
 --

@@ -13,6 +13,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     this.subscribe('/groups', 'group-store');
     this.clearQueue();
 
+    this.subscribe('/updates', 'dm-hook');
     this.subscribe('/all', 'contact-store');
     this.subscribe('/all', 's3-store');
     this.subscribe('/keys', 'graph-store');

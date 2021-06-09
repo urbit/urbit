@@ -54,7 +54,12 @@ Omnibus.args = {
     { mention: 'sipfyn-pidmex' },
     { text: `: you can always use a pattern like this
 > blockquote demo
-should not be quoted` }
+should not be quoted
+> blockquote, then newline, then mention
+` },
+    { mention: '~sampel-palnet' },
+    { text: '> mention inside blockquote' },
+    { mention: '~sampel-palnet' }
   ]
 };
 

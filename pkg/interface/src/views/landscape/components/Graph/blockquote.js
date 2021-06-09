@@ -1,3 +1,4 @@
+/*  eslint-disable */
 /** pulled from remark-parse
  * 
  *  critical change is that blockquotes require a newline to be continued, see
@@ -106,6 +107,7 @@ function blockquote(eat, value, silent) {
 
     index = nextIndex + 1
   }
+  const trailingNewline = value.charAt(nextIndex) === '\n';
 
   index = -1
   length = indents.length
@@ -118,7 +120,9 @@ function blockquote(eat, value, silent) {
 
   exit = self.enterBlock()
   contents = self.tokenizeBlock(contents.join(lineFeed), now)
+  console.log(values);
   exit()
 
-  return add({type: 'blockquote', children: contents})
+  const added = add({type: 'blockquote', children: contents})
+  return trailingNewline ? add({ type: 'paragraph', children: [] }) : added;
 }

@@ -35,7 +35,6 @@ function getGroupUpdateParticipants(update: GroupUpdate): string[] {
 interface GroupNotificationProps {
   index: GroupNotifIndex;
   contents: GroupNotificationContents;
-  archived: boolean;
   read: boolean;
   time: number;
   timebox: bigInt.BigInteger;

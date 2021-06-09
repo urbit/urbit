@@ -106,6 +106,7 @@
 +$  state-8    [%8 base-state-3]
 +$  state-9    [%9 base-state-3]
 +$  state-10   [%10 base-state-3]
++$  state-11   [%11 base-state-3]
 +$  versioned-state
   $%  state-0
       state-1
@@ -118,10 +119,11 @@
       state-8
       state-9
       state-10
+      state-11
   ==
 ::
 +$  inflated-state
-  $:  state-10
+  $:  state-11
       cached-indices
   ==
 --
@@ -198,22 +200,21 @@
         [%x %associations ~]      ``noun+!>(associations)
         [%x %app-name @ ~]
       =/  =app-name:store  i.t.t.path
-      ``noun+!>((metadata-for-app:mc app-name))
+      ``noun+!>(`associations:store`(metadata-for-app:mc app-name))
     ::
         [%x %group *]
       =/  group=resource  (de-path:resource t.t.path)
-      ``noun+!>((metadata-for-group:mc group))
+      ``noun+!>(`associations:store`(metadata-for-group:mc group))
     ::
         [%x %metadata @ @ @ @ ~]
       =/  =md-resource:store
         [i.t.t.path (de-path:resource t.t.t.path)]
-      ``noun+!>((~(get by associations) md-resource))
+      ``noun+!>(`(unit association:store)`(~(get by associations) md-resource))
     ::
         [%x %resource @ *]
       =/  app=term        i.t.t.path
       =/  rid=resource    (de-path:resource t.t.t.path)
-      ``noun+!>((~(get by resource-indices) [app rid]))
-      
+      ``noun+!>(`(unit resource)`(~(get by resource-indices) [app rid]))
     ::
         [%x %export ~]
       ``noun+!>(-.state)
@@ -234,7 +235,7 @@
   =|  cards=(list card)
   |^
   =*  loop  $
-  ?:  ?=(%10 -.old)
+  ?:  ?=(%11 -.old)
     :-  cards
     %_  state
       associations      associations.old
@@ -242,6 +243,8 @@
       group-indices     (rebuild-group-indices associations.old)
       app-indices       (rebuild-app-indices associations.old)
     ==
+  ?:  ?=(%10 -.old)
+    $(-.old %11, associations.old (hide-dm-assoc associations.old))
   ?:  ?=(%9 -.old)
     =/  groups  
       (fall (~(get by (rebuild-app-indices associations.old)) %groups) ~)
@@ -281,6 +284,20 @@
     ==
   ::  pre-breach, can safely throw away
   loop(old *state-8)
+  ::
+  ++  hide-dm-assoc
+    |=  assoc=associations:store
+    ^-  associations:store
+    %-  ~(gas by *associations:store)
+    %+  turn  ~(tap by assoc)
+    |=  [m=md-resource:store [g=resource met=metadatum:store]]
+    ^-  [md-resource:store association:store]
+    =?    hidden.met
+        ?&  ?=(^ (rush name.resource.m ;~(pfix (jest 'dm--') fed:ag)))  
+            ?=(%graph app-name.m)
+        ==
+      %.y
+    [m [g met]]
   ::
   ++  associations-2-to-3
     |=  assoc=associations-2
@@ -483,7 +500,7 @@
 ::
 ++  metadata-for-app
   |=  =app-name:store
-  ^+  associations
+  ^-  associations:store
   %+  roll  ~(tap in (~(gut by app-indices) app-name ~))
   |=  [[group=resource rid=resource] out=associations:store]
   =/  =md-resource:store
@@ -494,6 +511,7 @@
 ::
 ++  metadata-for-group
   |=  group=resource
+  ^-  associations:store
   =/  resources=(set md-resource:store)
     (~(get ju group-indices) group)
   %+  roll

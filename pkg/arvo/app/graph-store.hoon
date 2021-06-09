@@ -19,7 +19,7 @@
 +$  debug-input  [%validate-graph =resource:store]
 ::
 +$  cache
-  $:  validators=(map mark dais:clay)
+  $:  validators=(map mark $-(indexed-post:store indexed-post:store))
   ==
 ::
 ::  TODO: come back to this and potentially use ford runes or otherwise
@@ -301,6 +301,11 @@
         ?~  node-list  graph
         =*  index  -.i.node-list
         =*  node   +.i.node-list
+        ~|  "cannot add deleted post"
+        ?>  ?=(%& -.post.node)
+        =*  p  p.post.node
+        ~|  "graph indexes must match"
+        ?>  =(index index.p)
         %_  $
             node-list  t.node-list
             graph      (add-node-at-index graph index node mark)
@@ -622,22 +627,27 @@
     |=  [=graph:store mark=(unit mark:store)]
     ^-  [? _state]
     ?~  mark   [%.y state]
-    =/  has-dais  (~(has by validators) u.mark)
-    =/  =dais:clay
-      ?:  has-dais
+    =/  has-validator  (~(has by validators) u.mark)
+    =/  validate=$-(indexed-post:store indexed-post:store)
+      ?:  has-validator
         (~(got by validators) u.mark)
-      .^  =dais:clay
-          %cb
-          /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[u.mark]
+      .^  $-(indexed-post:store indexed-post:store)
+          %cf
+          (scot %p our.bowl)
+          q.byk.bowl
+          (scot %da now.bowl)
+          u.mark
+          %graph-indexed-post
+          ~
       ==
-    :_  state(validators (~(put by validators) u.mark dais))
+    :_  state(validators (~(put by validators) u.mark validate))
     |-  ^-  ?
     ?~  graph  %.y
     %+  roll  (tap:orm graph)
     |=  [[=atom =node:store] out=?]
     ^-  ?
     ?&  ?|  ?=(%| -.post.node)
-            ?=(^ (vale:dais [atom p.post.node]))
+            ?=(^ (validate [atom p.post.node]))
         ==
       ::
         ?-  -.children.node
@@ -782,6 +792,26 @@
     ^-  [index:store node:store]
     [(snoc parent atom) node]
   ::
+      [%x %shallow-children @ @ *]
+    =/  newest  ?=(%newest i.t.path)
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  =index:store
+      (turn t.t.t.t.path (cury slav %ud))
+    =/  children
+      (get-node-children ship term index)
+    ?~  children  [~ ~]
+    :-  ~  :-  ~  :-  %graph-update-2
+    !>  ^-  update:store
+    :+  now.bowl  %add-nodes
+    :-  [ship term]
+    %-  ~(gas by *(map index:store node:store))
+    %+  turn  (tap:orm u.children)
+    |=  [=atom =node:store]
+    ^-  [index:store node:store]
+    :-  (snoc index atom)
+    node(children [%empty ~])
+  ::
       [%x ?(%newest %oldest) @ @ @ *]
     =/  newest  ?=(%newest i.t.path)
     =/  =ship  (slav %p i.t.t.path)
@@ -830,6 +860,110 @@
       ^-  [index:store node:store]
       [(snoc index atom) node]
     ==
+  ::
+      [%x %deep-nodes-older-than @ @ @ @ ~]
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  count=(unit atom)  (rush i.t.t.t.t.path dem:ag)
+    =/  start=(unit atom)  (rush i.t.t.t.t.t.path dem:ag)
+    ?:  ?=(~ count)
+      [~ ~]
+    =/  result=(unit marked-graph:store)
+      (~(get by graphs) [ship term])
+    ?~  result
+      [~ ~]
+    :-  ~  :-  ~  :-  %graph-update-2
+    !>  ^-  update:store
+    :-  now.bowl
+    :+  %add-nodes
+      [ship term]
+    =*  a  u.count
+    =/  b=(list (pair atom node:store))
+      (tab:orm p.u.result start u.count)
+    =|  c=index:store
+    =|  d=(map index:store node:store)
+    =|  e=@ud
+    =-  d
+    |-  ^-  [e=@ud d=(map index:store node:store)]
+    ?:  ?|(?=(~ b) =(e a))
+      [e d]
+    =*  atom  p.i.b
+    =*  node  q.i.b
+    =.  c  (snoc c atom)
+    ?-  -.children.node
+      %empty
+      $(b t.b, e +(e), d (~(put by d) c node), c (snip c))
+    ::
+        %graph
+      =/  f  $(b (tab:orm p.children.node ~ (sub a e)))
+      ?:  =(e.f a)  f
+      %_  $
+        b  t.b
+        e  +(e.f)
+        d  (~(put by d.f) c node(children [%empty ~]))
+        c  (snip c)
+      ==
+    ==
+  ::
+      [%x %firstborn @ @ @ *]
+    |^
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  =index:store
+      (turn t.t.t.t.path (cury slav %ud))
+    ?>  ?=(^ index)
+    =/  result=(unit marked-graph:store)
+      (~(get by graphs) [ship term])
+    ?~  result
+      [~ ~]
+    %-  (bond |.(`(unit (unit cage))`[~ ~]))
+    %+  biff
+      (collect-parents p.u.result index ship term)
+    (corl some collect-firstborn)
+    ::
+    ++  collect-parents
+      |=  [=graph:store =index:store =ship =term]
+      ^-  (unit [node:store index:store (map index:store node:store) ^ship ^term])
+      =|  =(map index:store node:store)
+      =|  =node:store
+      =|  ind=index:store
+      =/  len  (lent index)
+      |-  
+      ?:  (gte (lent ind) len)
+        `[node ind map ship term]
+      ?>  ?=(^ index)
+      =*  atom  i.index
+      ?.  (has:orm graph atom)
+        ~
+      =:  node   (got:orm graph atom)
+          ind    (snoc ind atom)
+        ==
+      ?:  ?=(%empty -.children.node)
+        ?.  (gte (lent ind) len)
+          ~
+        :-  ~
+        :*  node  ind
+            (~(put by map) ind node)
+            ship  term
+        ==
+      %_  $
+        index  t.index
+        graph  p.children.node
+        map    (~(put by map) ind node(children empty+~))
+      ==
+    ::
+    ++  collect-firstborn
+      |=  [=node:store =index:store map=(map index:store node:store) =ship =term]
+      ^-  (unit (unit cage))
+      ?:  ?=(%empty -.children.node)
+        :-  ~  :-  ~  :-  %graph-update-2
+        !>  ^-  update:store
+        [now.bowl [%add-nodes [ship term] map]]
+      =/  item=[k=atom v=node:store]
+        (need (ram:orm p.children.node))
+      =.  index  (snoc index k.item)
+      $(map (~(put by map) index v.item(children empty+~)), node v.item)
+    --
   ::
       [%x %update-log-subset @ @ @ @ ~]
     =/  =ship   (slav %p i.t.t.path)

@@ -21,6 +21,7 @@ import { Dropdown } from '~/views/components/Dropdown';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { NewChannel } from '~/views/landscape/components/NewChannel';
 import { SidebarListConfig } from './types';
+import {getFeedPath} from '~/logic/lib/util';
 
 export function SidebarListHeader(props: {
   api: GlobalApi;
@@ -52,10 +53,7 @@ export function SidebarListHeader(props: {
 
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
-  let feedPath: any = null;
-  if (metadata?.config && 'group' in metadata?.config && metadata.config?.group && 'resource' in metadata.config.group) {
-    feedPath = metadata.config.group.resource;
-  }
+  let feedPath = groupPath ? getFeedPath(associations.groups[groupPath]) : undefined;
 
   const unreadCount = useHarkState(
     s => s.unreads?.graph?.[feedPath ?? '']?.['/']?.unreads as number ?? 0
