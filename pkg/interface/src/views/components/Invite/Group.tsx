@@ -5,6 +5,8 @@ import {
   LoadingSpinner, Row, Text
 } from '@tlon/indigo-react';
 import {
+  accept,
+  decline,
   hideGroup,
   Invite, join, joinProgress,
   JoinRequest,
@@ -145,7 +147,6 @@ function InviteStatus(props: { status?: JoinRequest }) {
 
 export function useInviteAccept(
   resource: string,
-  api: GlobalApi,
   app?: string,
   uid?: string
 ) {
@@ -162,12 +163,12 @@ export function useInviteAccept(
         return false;
       }
       if (resource in groups) {
-        await api.invite.decline(app, uid);
+        await airlock.poke(decline(app, uid));
         return false;
       }
 
       await airlock.poke(join(ship, name));
-      await api.invite.accept(app, uid);
+      await airlock.poke(accept(app, uid));
       await waiter((p) => {
         return (
           (resource in p.groups &&
@@ -205,15 +206,15 @@ function InviteActions(props: {
   app?: string;
   uid?: string;
 }) {
-  const { status, resource, api, app, uid } = props;
-  const inviteAccept = useInviteAccept(resource, api, app, uid);
+  const { status, resource, app, uid } = props;
+  const inviteAccept = useInviteAccept(resource, app, uid);
   const set = useGroupState(s => s.set);
 
   const inviteDecline = useCallback(async () => {
     if (!(app && uid)) {
       return;
     }
-    await api.invite.decline(app, uid);
+    await airlock.poke(decline(app, uid));
   }, [app, uid]);
 
   const hideJoin = useCallback(async (e) => {
