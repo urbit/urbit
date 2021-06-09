@@ -79,6 +79,8 @@
 ++  resend-time  ~m5
 ::
 ++  lverb  &
+::
+++  orm  ((ordered-map ship point:naive) aor)
 --
 ::
 =|  state-0
@@ -202,11 +204,18 @@
       :-  %noun
       !>  ^-  (list [=^ship =address:ethereum])
       ?~  star=(slaw %p wat)  ~
-      %+  murn  ~(tap by points.nas)
+      ::  TODO: move to /lib/naive
+      ::
+      =/  points  (gas:orm ~ ~(tap by points.pre))
+      =/  range
+        %+  subset:orm  points.pre
+        ::  range exclusive [star first-planet-next-star]
+        ::  TODO: make range inclusive? [first-planet last-planet]
+        ::
+        [`u.star `(cat 3 +(u.star) 0x1)]
+      %+  turn  (tap:orm range)
       |=  [=ship =point:naive]
-      ^-  (unit [=^ship =address:ethereum])
-      ?.  =(star (^sein:title ship))  ~
-      %-  some
+      ^-  [=^ship =address:ethereum]
       :-  ship
       address:(proxy-from-point:naive %own point)
     --
