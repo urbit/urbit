@@ -42,7 +42,7 @@
       [next-gas-price=@ud txs=(list raw-tx:naive)]
     ::
       finding=(map keccak $?(%confirmed %failed l1-tx-pointer))
-      next-nonce=@ud
+      next-nonce=(unit @ud)
       next-batch=time
       pre=^state:naive
     ::
@@ -54,7 +54,7 @@
       ::
       pk=@
       frequency=@dr
-      endpoint=@t
+      endpoint=(unit @t)
       contract=@ux
       chain-id=@
   ==
@@ -97,7 +97,6 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    ::TODO  set endpoint?
     =.  frequency  ~h1
     =.  contract  naive:local-contracts:azimuth
     =.  chain-id  chain-id:local-contracts:azimuth
@@ -355,7 +354,7 @@
         ::
             %thread-done
           =+   !<(nonce=@ud q.cage.sign)
-          [~ this(next-nonce nonce)]
+          [~ this(next-nonce `nonce)]
         ==
       ==
     --
@@ -485,12 +484,11 @@
     [force nas]
   [& +.u.nex]
 ::
-++  get-l1-pointer
+++  get-l1-address
   |=  [=tx:naive nas=^state:naive]
-  ^-  l1-tx-pointer
+  ^-  address:ethereum
   ?~  point=(~(get by points.nas) ship.from.tx)
     !!
-  :_  next-nonce
   =<  address
   (proxy-from-point:naive proxy.from.tx u.point)
 ::
@@ -519,7 +517,7 @@
   ^-  (quip card _state)
   ?-  -.config
     %frequency  [~ state(frequency frequency.config)]
-    %endpoint   [~ state(endpoint endpoint.config)]
+    %endpoint   [~ state(endpoint `endpoint.config)]
   ::
       %network
     :-  ~
@@ -534,7 +532,6 @@
     state(contract contract, chain-id chain-id)
   ::
       %setkey
-    ::TODO  what about existing sending entries?
     ?~  pk=(de:base16:mimes:html pk.config)
       `state
     [(get-nonce q.u.pk) state(pk q.u.pk)]
@@ -567,9 +564,11 @@
   ^-  (quip card _state)
   =^  cards  state
     ?:  =(~ pending)  [~ state]
-    =/  nonce=@ud  next-nonce
+    ?~  next-nonce
+      ~&([dap.bowl %no-nonce] [~ state])
+    =/  nonce=@ud   u.next-nonce
     =:  pending     ~
-        next-nonce  +(next-nonce)
+        next-nonce  `+(u.next-nonce)
       ::
           sending
         %+  ~(put by sending)
@@ -580,7 +579,8 @@
         %-  ~(gas by finding)
         %+  turn  pending
         |=  [* =raw-tx:naive]
-        [(hash-raw-tx raw-tx) (get-l1-pointer tx.raw-tx pre)]
+        :-  (hash-raw-tx raw-tx)
+        [(get-l1-address tx.raw-tx pre) nonce]
       ==
     [(send-roll get-address nonce) state]
   =^  card  next-batch  set-timer
@@ -590,7 +590,8 @@
 ++  get-nonce
   |=  pk=@
   ^-  (list card)
-  (start-thread:spider /nonce [%aggregator-nonce !>([endpoint pk])])
+  ?~  endpoint  ~&([dap.bowl %no-endpoint] ~)
+  (start-thread:spider /nonce [%aggregator-nonce !>([u.endpoint pk])])
 ::
 ::  +send-roll: start thread to submit roll from :sending to l1
 ::
@@ -604,12 +605,13 @@
     ~
   ::  start the thread, passing in the l2 txs to use
   ::
+  ?~  endpoint  ~&([dap.bowl %no-endpoint] ~)
   ::TODO  should go ahead and set resend timer in case thread hangs, or nah?
   %+  start-thread:spider
     /send/(scot %ux address)/(scot %ud nonce)
   :-  %aggregator-send
   !>  ^-  rpc-send-roll
-  :*  endpoint
+  :*  u.endpoint
       contract
       chain-id
       pk
