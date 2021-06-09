@@ -32,8 +32,8 @@
       ::  sending: the l2 txs currently sending/awaiting l2 confirmation
       ::  finding: raw-tx-hash reverse lookup for sending map
       ::  next-nonce: next l1 nonce to use
-      ::  nas: predicted naive state
       ::  next-batch: when then next l2 batch will be sent
+      ::  pre: predicted l2 state
       ::
       pending=(list pend-tx)
     ::
@@ -43,8 +43,8 @@
     ::
       finding=(map keccak $?(%confirmed %failed l1-tx-pointer))
       next-nonce=@ud
-      nas=^state:naive
       next-batch=time
+      pre=^state:naive
     ::
       ::  pk: private key to send the roll
       ::  frequency: time to wait between sending batches (TODO fancier)
@@ -191,8 +191,8 @@
         [~ ~]
       ::  uses cached naive state
       ::
-      ::TODO  or should we ~ when !(~(has by points.nas) who) ?
-      =/  =point:naive  (~(gut by points.nas) u.who *point:naive)
+      ::TODO  or should we ~ when !(~(has by points.pre) who) ?
+      =/  =point:naive  (~(gut by points.pre) u.who *point:naive)
       =+  (proxy-from-point:naive proxy point)
       ``atom+!>(nonce)
     ::
@@ -310,7 +310,7 @@
           ~&  >  %get-naive-state
           ::  this assumes that %azimuth has already processed eth data
           ::
-          =^  pending  nas
+          =^  pending  pre
             (predicted-state !<(^state:naive q.cage.sign))
           [~ this(pending pending)]
         ==
@@ -543,10 +543,8 @@
 ++  take-tx
   |=  [force=? =raw-tx:naive]
   ^-  [success=? _state]
-  =/  [nep=_pending nas=_nas]  (pending-state canonical-state)
-  =^  success  nas  (try-apply nas force raw-tx)
-  =/  [nep=_pending pred=_nas]  (predicted-state canonical-state)
-  =^  success  nas  (try-apply pred force raw-tx)
+  =^  nep  pre  (predicted-state canonical-state)
+  =^  success  pre  (try-apply pre force raw-tx)
   ::TODO  want to notify about dropped pendings, or no? client prolly polls...
   =?  pending  success  (snoc nep [force raw-tx])
   [success state]
@@ -575,7 +573,7 @@
         %-  ~(gas by finding)
         %+  turn  pending
         |=  [* =raw-tx:naive]
-        [(hash-raw-tx raw-tx) (get-l1-pointer tx.raw-tx nas)]
+        [(hash-raw-tx raw-tx) (get-l1-pointer tx.raw-tx pre)]
       ==
     [(send-roll get-address nonce) state]
   =^  card  next-batch  set-timer
@@ -675,7 +673,7 @@
   ::  a new L2 tx via the rpc-api, this will only succeed when
   ::  we hear about a L2 tx that hasn't been submitted by us
   ::
-  =^  *  nas  (try-apply nas | raw-tx.diff)
-  [~ state]
+  =^  nep  pre  (predicted-state canonical-state)
+  [~ state(pending nep)]
 ::
 --
