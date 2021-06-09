@@ -11,7 +11,7 @@
 |%
 ++  lvs
   ^|
-  ::~%  %lvs  +>  ~
+  ~%  %lvs  ..part  ~
   |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
   ::
   ::  Manipulators
@@ -20,7 +20,7 @@
   ++  zeros
     ::~/  %zeros
     |=  n=@ud  ^-  @lvs
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     `@lvs`(lsh [5 n] 1)   :: pin at head for leading zeros
   ::
   ::    Fill value
@@ -31,13 +31,13 @@
   ::    Ones
   ++  ones
     |=  n=@ud  ^-  @lvs
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     (fill n .1)
   ::
   ::    Length of vector
   ++  length
     |=  u=@lvs  ^-  @ud
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     =/  ell  (met 5 u)
     ?:  (gth ell 1)  (dec ell)  0
   ::
@@ -52,11 +52,11 @@
     (make-nat (gulf 1 n))
   ++  make
     |=  [a=(list @rs)]  ^-  @lvs
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     `@lvs`(mix (rep [5 1] a) (zeros (lent a)))
   ++  unmake
     |=  [u=@lvs]  ^-  (list @rs)
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     (flop `(list @rs)`+:(flop (rip 5 u)))
   ++  append
     |=  [u=@lvs s=@rs]  ^-  @lvs
@@ -94,7 +94,7 @@
   ++  get
     ::~/  %get
     |=  [u=@lvs i=@ud]  ^-  @rs
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     (cut 5 [(dec i) 1] u)
   ::
   ::    Pretty-print the contents of the vector.
@@ -106,7 +106,7 @@
   ++  set
     ::~/  %set
     |=  [u=@lvs i=@ud s=@rs]  ^-  @lvs
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     ?:  (gth i (length u))  !!
     =/  full  0xffff.ffff
     =/  n  (length u)
@@ -123,14 +123,14 @@
   ::    Find maximum value in array.
   ++  max
     |=  [u=@lvs]  ^-  @rs
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     `@rs`(reel (unmake u) max-rs)
   ::
   ::    Return index of maximum value in array, 1-indexed
   ::    DOES NOT handle repeated values, returns first match
   ++  argmax
     |=  [u=@lvs]
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     +(+:(find ~[(max u)] (unmake u)))
   ::
   ::  Arithmetic operators
@@ -165,8 +165,10 @@
   ::
   ::    Turn on a gate of two variables.
   ++  turn2  :: I guess not in hoon.hoon
+    ~/  %turn2
     |=  [[a=(list @rs) b=(list @rs)] f=$-([@rs @rs] @rs)]
     ^-  (list @rs)
+    ~&  "hitting here instead of in jet"
     ?+  +<-  ~|(%turn2-length !!)
       [~ ~]  ~
       [^ ^]  [(f i.a i.b) $(a t.a, b t.b)]
@@ -174,23 +176,73 @@
   ::
   ::    Apply a two-variable function across a vector input.
   ++  funv
-    ::~/  %funv
+    ~/  %funv
     |=  f=$-([@rs @rs] @rs)
     |=  [u=@lvs v=@lvs]  ^-  @lvs
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
+    ~&  "hitting here instead of in jet"
     (make (turn2 [(unmake u) (unmake v)] f))
   ::
   ::    Vector addition
-  ++  addv  (funv add:rs)
+  ++  addv
+    ~/  %addv
+    |=  [u=@lvs v=@lvs]  ^-  @lvs
+    ~_  leaf+"lace-fail"
+    =/  n  (length u)
+    =/  uu  (unmake u)
+    =/  vv  (unmake v)
+    =/  ww  `(list @rs)`~
+    =/  count  0
+    =/  sum  0
+    ~&  "hallo frens"
+    |-  ^-  @lvs
+      ?:  =(count n)  (make ww)
+    $(count +(count), ww (snoc ww (add:rs (snag count uu) (snag count vv))))
   ::
   ::    Vector subtraction
-  ++  subv  (funv sub:rs)
+  ++  subv
+    ~/  %subv
+    |=  [u=@lvs v=@lvs]  ^-  @lvs
+    ~_  leaf+"lace-fail"
+    =/  n  (length u)
+    =/  uu  (unmake u)
+    =/  vv  (unmake v)
+    =/  ww  `(list @rs)`~
+    =/  count  0
+    =/  sum  0
+    |-  ^-  @lvs
+      ?:  =(count n)  (make ww)
+    $(count +(count), ww (snoc ww (sub:rs (snag count uu) (snag count vv))))
   ::
   ::    Vector multiplication
-  ++  mulv  (funv mul:rs)
+  ++  mulv
+    ~/  %mulv
+    |=  [u=@lvs v=@lvs]  ^-  @lvs
+    ~_  leaf+"lace-fail"
+    =/  n  (length u)
+    =/  uu  (unmake u)
+    =/  vv  (unmake v)
+    =/  ww  `(list @rs)`~
+    =/  count  0
+    =/  sum  0
+    |-  ^-  @lvs
+      ?:  =(count n)  (make ww)
+    $(count +(count), ww (snoc ww (mul:rs (snag count uu) (snag count vv))))
   ::
   ::    Vector division
-  ++  divv  (funv div:rs)
+  ++  divv
+    ~/  %divv
+    |=  [u=@lvs v=@lvs]  ^-  @lvs
+    ~_  leaf+"lace-fail"
+    =/  n  (length u)
+    =/  uu  (unmake u)
+    =/  vv  (unmake v)
+    =/  ww  `(list @rs)`~
+    =/  count  0
+    =/  sum  0
+    |-  ^-  @lvs
+      ?:  =(count n)  (make ww)
+    $(count +(count), ww (snoc ww (div:rs (snag count uu) (snag count vv))))
   ::
   ::    Sum of elements
   ++  sum
@@ -219,12 +271,12 @@
   ++  inner
     ::~/  %inner
     |=  [u=@lvs v=@lvs]  ^-  @rs
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     (sum (mulv u v))
   ++  outer  !!  :: unimplemented pending @lm type
   ++  catenate
     |=  [u=@lvs v=@lvs]
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     (make (weld (unmake u) (unmake v)))
     :: XX slow way, do in bits
   --
@@ -242,7 +294,7 @@
   ++  zeros
     ::~/  %zeros
     |=  n=@ud  ^-  @lvd
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     `@lvd`(lsh [6 n] 1)   :: pin at head for leading zeros
   ::
   ::    Fill value
@@ -253,13 +305,13 @@
   ::    Ones
   ++  ones
     |=  n=@ud  ^-  @lvd
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     (fill n .~1)
   ::
   ::    Length of vector
   ++  length
     |=  u=@lvd  ^-  @ud
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     =/  ell  (met 6 u)
     ?:  (gth ell 1)  (dec ell)  0
   ::
@@ -274,11 +326,11 @@
     (make-nat (gulf 1 n))
   ++  make
     |=  [a=(list @rd)]  ^-  @lvd
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     `@lvd`(mix (rep [6 1] a) (zeros (lent a)))
   ++  unmake
     |=  [u=@lvd]  ^-  (list @rd)
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     (flop `(list @rd)`+:(flop (rip 6 u)))
   ++  append
     |=  [u=@lvd s=@rd]  ^-  @lvd
@@ -316,7 +368,7 @@
   ++  get
     ::~/  %get
     |=  [u=@lvd i=@ud]  ^-  @rd
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     (cut 6 [(dec i) 1] u)
   ::
   ::    Pretty-print the contents of the vector.
@@ -328,7 +380,7 @@
   ++  set
     ::~/  %set
     |=  [u=@lvd i=@ud s=@rd]  ^-  @lvd
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     ?:  (gth i (length u))  !!
     =/  full  0xffff.ffff.ffff.ffff
     =/  n  (length u)
@@ -345,14 +397,14 @@
   ::    Find maximum value in array.
   ++  max
     |=  [u=@lvd]  ^-  @rd
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     `@rd`(reel (unmake u) max-rd)
   ::
   ::    Return index of maximum value in array, 1-indexed
   ::    DOES NOT handle repeated values, returns first match
   ++  argmax
     |=  [u=@lvd]
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     +(+:(find ~[(max u)] (unmake u)))
   ::
   ::  Arithmetic operators
@@ -399,7 +451,7 @@
     ::~/  %funv
     |=  f=$-([@rd @rd] @rd)
     |=  [u=@lvd v=@lvd]  ^-  @lvd
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     (make (turn2 [(unmake u) (unmake v)] f))
   ::
   ::    Vector addition
@@ -441,12 +493,12 @@
   ++  inner
     ::~/  %inner
     |=  [u=@lvd v=@lvd]  ^-  @rd
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     (sum (mulv u v))
   ++  outer  !!  :: unimplemented pending @lm type
   ++  catenate
     |=  [u=@lvd v=@lvd]
-    ~_  leaf+"lagoon-fail"
+    ~_  leaf+"lace-fail"
     (make (weld (unmake u) (unmake v)))
     :: XX slow way, do in bits
   --
