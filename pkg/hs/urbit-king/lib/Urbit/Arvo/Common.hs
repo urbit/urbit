@@ -11,7 +11,7 @@
     Types used in both Events and Effects.
 -}
 module Urbit.Arvo.Common
-  ( KingId(..), ServId(..)
+  ( KingId(..), ServId(..), SocketId(..), SocketType(..), SReqApi(..)
   , Vere(..), Wynn(..)
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
@@ -19,8 +19,7 @@ module Urbit.Arvo.Common
   , HttpServerConf(..), PEM(..), Key, Cert
   , HttpEvent(..), Method, Header(..), ResponseHeader(..)
   , ReOrg(..), reorgThroughNoun
-  , AmesDest, Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
-  ) where
+  , AmesDest, Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..), SocketConf(..), SocketEvent(..)) where
 
 import Urbit.Prelude
 
@@ -46,6 +45,9 @@ newtype KingId = KingId { unKingId :: UV }
   deriving newtype (Eq, Ord, Show, Num, Real, Enum, Integral, FromNoun, ToNoun)
 
 newtype ServId = ServId { unServId :: UV }
+  deriving newtype (Eq, Ord, Show, Num, Enum, Integral, Real, FromNoun, ToNoun)
+
+newtype SocketId = SocketId { unSocketId :: UV }
   deriving newtype (Eq, Ord, Show, Num, Enum, Integral, Real, FromNoun, ToNoun)
 
 -- Arvo Version Negotiation ----------------------------------------------------
@@ -130,6 +132,30 @@ data HttpServerConf = HttpServerConf
 
 deriveNoun ''HttpServerConf
 
+-- Socket Configuration -------------------------------------------------------
+data SocketConf = SocketConf
+    { scFilePath :: FilePath
+    , scType :: SocketType
+    }
+  deriving (Show)
+data SocketType = STGeneric
+    | STReq SReqApi
+data SReqApi = SReqApi
+  { sReq :: Ship -> Word64 -> STM ()
+  -- , sKil :: Ship -> Word64 -> STM ()
+  }
+instance Show SocketType where
+  show = \case
+    STReq _      -> "STReq"
+    STGeneric -> "STGeneric"
+
+data SocketEvent
+    = SocketStart Noun
+    | SocketContinue Noun
+    | SocketCancel ()
+  deriving (Eq, Ord, Show)
+
+deriveNoun ''SocketEvent
 
 -- Desk and Mime ---------------------------------------------------------------
 

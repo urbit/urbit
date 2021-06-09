@@ -51,6 +51,7 @@ import qualified Urbit.Vere.Serf             as Serf
 import qualified Urbit.Vere.Term             as Term
 import qualified Urbit.Vere.Term.API         as Term
 import qualified Urbit.Vere.Term.Demux       as Term
+import qualified Urbit.Vere.Khan as Khan
 
 
 -- Initialize pier directory. --------------------------------------------------
@@ -494,6 +495,7 @@ data Drivers = Drivers
   , dNewt :: NewtEf -> IO ()
   , dSync :: SyncEf -> IO ()
   , dTerm :: TermEf -> IO ()
+  , dKhan :: SocketEf -> IO ()
   }
 
 drivers
@@ -516,6 +518,7 @@ drivers env who isFake plan scry termSys stderr serfSIGINT stat sub = do
   (termBorn, runTerm) <- rio (Term.term' termSys (renderStat stat) serfSIGINT)
   (amesBorn, runAmes) <- rio (Ames.ames' who isFake statAmes scry stderr)
   (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr sub)
+  (khanBorn, runKhan) <- rio (Khan.khan' who isFake stderr)
   (clayBorn, runClay) <- rio Clay.clay'
   (irisBorn, runIris) <- rio Iris.client'
 
@@ -530,7 +533,7 @@ drivers env who isFake plan scry termSys stderr serfSIGINT stat sub = do
         iris <- runIris
         eyre <- runEyre
         clay <- runClay
-
+        khan <- runKhan
         -- Sources lower in the list are starved until sources above them
         -- have no events to offer.
         acquireWorker "Event Prioritization" $ forever $ atomically $ do
@@ -547,6 +550,7 @@ drivers env who isFake plan scry termSys stderr serfSIGINT stat sub = do
           , dIris = diOnEffect iris
           , dEyre = diOnEffect eyre
           , dSync = diOnEffect clay
+          , dKhan = diOnEffect khan
           }
 
   pure (initialEvents, runDrivers)
@@ -573,14 +577,17 @@ router slog waitFx Drivers {..} = do
         GoodParse (EfVega _ _              ) -> vega
         GoodParse (EfExit _ _              ) -> exit
         GoodParse (EfWend _                ) -> pure ()
+
         GoodParse (EfVane (VEBehn       ef)) -> io (dBehn ef)
         GoodParse (EfVane (VEBoat       ef)) -> io (dSync ef)
         GoodParse (EfVane (VEClay       ef)) -> io (dSync ef)
         GoodParse (EfVane (VEHttpClient ef)) -> io (dIris ef)
         GoodParse (EfVane (VEHttpServer ef)) -> io (dEyre ef)
+        GoodParse (EfVane (VESocket ef)) -> io (dKhan ef)
         GoodParse (EfVane (VENewt       ef)) -> io (dNewt ef)
         GoodParse (EfVane (VESync       ef)) -> io (dSync ef)
         GoodParse (EfVane (VETerm       ef)) -> io (dTerm ef)
+        GoodParse (EfVane _                ) -> pure ()
         FailParse n -> logError $ display $ pack @Text (ppShow n)
 
 

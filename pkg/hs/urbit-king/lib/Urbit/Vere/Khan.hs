@@ -13,41 +13,47 @@ import Urbit.Prelude hiding (Builder)
 import Urbit.Arvo                hiding (ServerId, reqUrl)
 import Urbit.King.App            ( killKingActionL
                                  , HasKingId(..)
-                                 , HasMultiKhanApi(..)
                                  , HasPierEnv(..)
                                  )
-import Urbit.King.Config
 
-import Data.List.NonEmpty          (NonEmpty((:|)))
-import Data.PEM                    (pemParseBS, pemWriteBS)
-import RIO.Prelude                 (decodeUtf8Lenient)
-import System.Random               (randomIO)
-
+import Urbit.Vere.Pier.Types
+import Urbit.Vere.Eyre.Service
+import Urbit.Vere.Khan.SocketFile
+import Urbit.Vere.Khan.Socket
+import System.Random (Random(randomIO))
 
 -- Types -----------------------------------------------------------------------
 
-type HasShipEnv e = (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
+socketEv :: SocketEv -> Ev
+socketEv = EvBlip . BlipEvSocket
 
-type ReqId = UD
+bornEv :: KingId -> Ev
+bornEv king = socketEv $ SocketEvBorn (king, ()) ()
+
+cancelFailed :: WorkError -> IO ()
+cancelFailed _ = pure ()
 
 newtype Drv = Drv (MVar (Maybe Sock))
 
 data Sock = Sock
   {
-    sLiveReqs  :: TVar LiveReqs
+    sSocketId :: SocketId,
+    sApi :: SockApi,
+    sConfig :: SocketConf,
+    sFile :: FilePath
+
   }
 
 -- Khan Driver -----------------------------------------------------------------
 
 khan'
-  :: (HasPierEnv e, HasMultiKhanApi e)
+  :: (HasPierEnv e)
   => Ship
   -> Bool
   -> (Text -> RIO e ())
-  -> KingSubsite
   -> RIO e ([Ev], RAcquire e (DriverApi SocketEf))
 
-khan' who isFake stderr sub = do
+khan' who isFake stderr = do
   ventQ :: TQueue EvErr <- newTQueueIO
   env <- ask
 
@@ -86,11 +92,8 @@ khan env who plan isFake stderr = (initialEvents, runSocket)
 
   kill :: HasLogFunc e => Sock -> RIO e ()
   kill Sock{..} = do
-    atomically (leaveMultiKhan multi who)
-    io (saKil sLop)
-    io (saKil sIns)
-    io $ for_ sSec (\sec -> (saKil sec))
-    io (removeSocketFile sSocketsFile)
+    io (saKil sApi)
+    io (removeSocketFile sFile)
 
   restart :: Drv -> SocketConf -> RIO e Sock
   restart (Drv var) conf = do
@@ -98,22 +101,59 @@ khan env who plan isFake stderr = (initialEvents, runSocket)
     let onFatal = runRIO env $ do
           stderr "A socket problem has occurred. Please restart your ship."
           view killKingActionL >>= atomically
-    let startAct = connectSocket who isFake conf plan stderr onFatal
+    let startAct = startServ plan onFatal
     res <- fromEither =<< restartService var startAct kill
     logInfo "Done reconnecting socket"
     pure res
 
-  liveFailed _ = pure ()
 
   handleEf :: Drv -> SocketEf -> IO ()
   handleEf drv = runRIO env . \case
-    HSESetConfig (i, ()) conf -> do
+    SESetConfig (i, ()) conf -> do
       logInfo (displayShow ("KHAN", "%set-config"))
       Sock {..} <- restart drv conf
-      logInfo (displayShow ("KHAN", "%set-config", "Sending %live"))
-      atomically $ plan (EvErr (liveEv sServId sSocket) liveFailed)
-      logInfo "Write ports file"
-      io (write sSocketFile sSocket)
-    HSEResponse (i, req, _seq, ()) ev -> do
+      -- logInfo (displayShow ("KHAN", "%set-config", "Sending %live"))
+      -- atomically $ plan (EvErr (liveEv sSocketId s) liveFailed)
+      logInfo (displayShow ("KHAN", "%open-socket", "opening khan socket"))
+    SEResponse (i, req, _seq, ()) ev -> do
       logDebug (displayShow ("KHAN", "%response"))
       execRespActs drv who (fromIntegral req) ev
+    SEError(i, ()) () -> logDebug (displayShow ("KHAN", "%error"))
+startServ :: HasLogFunc e => (EvErr -> STM ()) -> IO () -> RIO e Sock
+startServ plan onFatal = do
+    logInfo (displayShow ("EYRE", "startServ"))
+    sockId <- io $ SocketId . UV . fromIntegral <$> (randomIO :: IO Word32)
+    let onReq :: Ship -> Word64 -> STM ()
+        onReq _ship reqId =
+          plan $ (flip EvErr cancelFailed) $ socketEv $ SocketEvRequest (0, 1, 1, ()) (SocketReq {sFile = "khan.soc", sRequest = toNoun reqId})
+    let conf@SocketConf{..} = SocketConf {
+      scFilePath = "khan.soc"
+      , scType = STReq $ SReqApi { sReq = onReq }
+      }
+
+    api <- serv onFatal conf
+    pure (Sock sockId api conf scFilePath)
+
+-- runClient socketFile client = do
+--     let addr = SockAddrUnix $ socketFile
+--     E.bracket (open addr) close client
+--   where
+--     open addr = E.bracketOnError (socket AF_UNIX Stream 0) close $ \sock -> do
+--         connect sock $ addr
+--         return sock
+-- runServer = forever $
+--   E.bracketOnError (accept ss) (close . fst) $
+--   \(conn, _peer) -> void $ forkFinally (NBS.sendAll conn "pong") (const $ gracefulClose conn 500)
+execRespActs :: HasLogFunc e => Drv -> Ship -> Word64 -> SocketEvent -> RIO e ()
+execRespActs (Drv v) who reqId ev = readMVar v >>= \case
+  Nothing -> logError "Got a response to a request that does not exist."
+  Just sv -> do
+    logDebug $ displayShow ev
+    for_ (parseSocketEvent ev) $ \act -> do
+      logDebug (displayShow ("KHAN", "%exec"))
+
+parseSocketEvent :: SocketEvent -> [Noun]
+parseSocketEvent = \case
+  SocketStart n  -> [n]
+  SocketContinue n -> [n]
+  SocketCancel ()       -> [toNoun 'o']

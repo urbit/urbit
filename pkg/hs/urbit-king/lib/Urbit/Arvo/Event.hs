@@ -12,7 +12,7 @@ module Urbit.Arvo.Event where
 import Urbit.Prelude
 
 import Control.Monad.Fail (fail)
-import Urbit.Arvo.Common (KingId(..), ServId(..), Vere(..))
+import Urbit.Arvo.Common (SocketId, KingId(..), ServId(..), Vere(..))
 import Urbit.Arvo.Common (Desk, Mime)
 import Urbit.Arvo.Common (Header(..), HttpEvent)
 import Urbit.Arvo.Common (AmesDest, Ipv4, Ipv6, Port, Turf)
@@ -204,8 +204,23 @@ data AmesEv
   deriving (Eq, Ord, Show)
 
 deriveNoun ''AmesEv
+-- Socket Events ---------------------------------------------------------------
+data SocketReq = SocketReq
+  {
+    sFile :: FilePath
+  , sRequest :: Noun
+  } deriving (Eq , Ord, Show)
 
-
+data SocketEv
+    = SocketEvRequest       (SocketId, UD, UD, ()) SocketReq
+    | SocketEvCancelRequest (SocketId, UD, UD, ()) ()
+    | SocketEvRequestLocal  (SocketId, UD, UD, ()) SocketReq
+    | SocketEvLive          (SocketId, ())         Port (Maybe Port)
+    | SocketEvBorn          (KingId, ())         ()
+    | SocketEvCrud          Path                 Noun
+  deriving (Eq, Ord, Show)
+deriveNoun ''SocketEv
+deriveNoun ''SocketReq
 -- Arvo Events -----------------------------------------------------------------
 
 newtype Entropy = Entropy { entropyBits :: Word512 }
@@ -313,6 +328,7 @@ data BlipEv
     | BlipEvBoat       BoatEv
     | BlipEvHttpClient HttpClientEv
     | BlipEvHttpServer HttpServerEv
+    | BlipEvSocket     SocketEv
     | BlipEvNewt       NewtEv
     | BlipEvSync       SyncEv
     | BlipEvTerm       TermEv
@@ -335,6 +351,7 @@ instance ToNoun Ev where
     EvBlip v@BlipEvBoat{}       -> reorgThroughNoun ("clay", v)
     EvBlip v@BlipEvHttpClient{} -> reorgThroughNoun ("iris", v)
     EvBlip v@BlipEvHttpServer{} -> reorgThroughNoun ("eyre", v)
+    EvBlip v@BlipEvSocket{} -> reorgThroughNoun ("khan", v)
     EvBlip v@BlipEvNewt{}       -> reorgThroughNoun ("ames", v)
     EvBlip v@BlipEvSync{}       -> reorgThroughNoun ("clay", v)
     EvBlip v@BlipEvTerm{}       -> reorgThroughNoun ("dill", v)
@@ -362,6 +379,7 @@ getSpinnerNameForEvent = \case
         BlipEvBoat _           -> Just "boat"
         BlipEvHttpClient _     -> Just "iris"
         BlipEvHttpServer _     -> Just "eyre"
+        BlipEvSocket _     -> Just "khan"
         BlipEvNewt _           -> Just "newt"
         BlipEvSync _           -> Just "clay"
         BlipEvTerm t | isRet t -> Nothing

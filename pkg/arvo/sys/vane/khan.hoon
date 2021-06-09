@@ -1,4 +1,4 @@
-::  %behn, just a timer
+::  %khan
 !:
 !?  164
 ::
@@ -6,19 +6,23 @@
 |=  our=ship
 =>  |%
     +$  move  [p=duct q=(wite note gift)]
-    +$  note                                            ::  out request $->
-      $%  $:  %k                                        ::   to self
-                $>  $?  %crud                           ::
-                        %avow                           ::
-                        %fyrd                           ::
+    +$  note                                          ::  out request $->
+      $%
+        $:  %j                                        :: to %jael
+              $>(%step task:jael)
+          ==
+        $:  %k                                        ::   to self
+                $>  $?
+                        %fyrd
                 ==                                      ::
              task                                       ::
           ==                                            ::
           $:  %d                                        ::    to %dill
               $>(%flog task:dill)                       ::  log output
-      ==  ==                                            ::
+      ==  ==
+      ::
     +$  sign
-      $%  [%khan $>(%command gift)]
+      $%  [%khan $>(%avow gift)]                        :: avow
       ==
     ::
     +$  khan-state
@@ -38,15 +42,12 @@
   |%
   ::  %entry-points
   ::
-  ::  +born: urbit restarted; refresh?
-  ::
-  ++  born  !!
   ::  +crud: handle failure of previous arvo event
   ::
   ++  crud
     |=  [tag=@tas error=tang]
     ^+  [moves state]
-    !!
+    [[duct %slip %d %flog %crud tag error]~ state]
   ::  +avow: give back
   ::
   ++  avow
@@ -55,7 +56,19 @@
     event-core(moves [duct %give %avow syn]~)
   ::  +fyrd: commands
   ::
-  ++  fyrd  %command
+  ++  fyrd
+    |=  com=^fyrd
+    ^+  [moves state]
+    =<  [moves state]
+    ~&  >  fyrd+com
+    ~!  -.com
+    ?-  -.com
+      %mas  ~&  todo+com  event-core                    :: |mass
+      %cod
+        =/  cov
+          [duct %pass / %j %step ~]~
+        event-core(moves cov)
+    ==
   ::  +trim: in response to memory pressue
   ::
   ++  trim  [moves state]
@@ -67,6 +80,7 @@
   ::+|
   ::
   ++  event-core  .
+  --
 --
 ::
 =|  khan-state
@@ -94,12 +108,10 @@
     ::
     ?^  dud
       (crud:event-core -.task tang.u.dud)
-    ::
     ?-  -.task
-      %born  born:event-core
       %trim  trim:event-core
-      %vega  vega:event-core
-      %fyrd  fyrd:event-core
+      %vega  vega:event-core                            :: vega
+      %fyrd  (fyrd:event-core p.task)                   :: fyrd
     ==
   [moves khan-gate]
 ::  +load: migrate an old state to a new khan version
@@ -122,7 +134,7 @@
 
   ?:  &(=(ren %$) =(tyl /whey))
     =/  maz=(list mass)
-      :~  timers+&+state
+      :~  state+&+state
       ==
     ``mass+!>(maz)
   ::  only respond for the local identity, %$ desk, current timestamp
@@ -135,7 +147,7 @@
   ?.  ?=(%x ren)  ~
   ?+  tyl  [~ ~]
       [%debug %state ~]
-    [~ ~]
+    ``state+!>([~ state])
   ==
 ::
 ++  stay  state
@@ -145,9 +157,5 @@
   ?^  dud
     ~|(%khan-take-dud (mean tang.u.dud))
   ::
-  ?>  ?=([%drip @ ~] tea)
-  =/  event-core  (per-event [now hen] state)
-  =^  moves  state
-    (take-drip:event-core (slav %ud i.t.tea) error.hin)
-  [moves khan-gate]
+  [~ khan-gate]
 --

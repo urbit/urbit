@@ -1353,6 +1353,7 @@
       =.  way  (grow way)
       %+  push  [way duct bars.gem]
       ~|  bar-stack=`(list ^duct)`[duct bars.gem]
+      ~&  >  wayvv+way
       %.  task
       call:(spin:(plow way) duct eny dud)
     ::  +take: retreat along call-stack
@@ -1677,6 +1678,7 @@
     %g  %gall
     %i  %iris
     %j  %jael
+    %k  %khan
   ==
 --  =>
 ::
