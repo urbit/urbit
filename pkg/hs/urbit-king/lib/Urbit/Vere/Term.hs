@@ -566,7 +566,8 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                 loop rd
               else if w <= 26 then do
                 case pack [BS.w2c (w + 97 - 1)] of
-                    "d" -> atomically doneSignal
+                    -- TODO: send doneSignal only on empty dojo
+                    -- "d" -> atomically doneSignal
                     c   -> do sendBelt $ Ctl $ Cord c
                               loop rd
               else if w == 27 then do
