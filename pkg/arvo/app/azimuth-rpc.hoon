@@ -143,6 +143,7 @@
     %pending-by-ship       [~ (ship:pending id +.params ship:pending:scry)]
     %pending-by-address    [~ (addr:pending id +.params addr:pending:scry)]
     %status                [~ (status id +.params tx-status:scry)]
+    %next-batch            [~ (next-batch id +.params next-batch:scry)]
     :: %history               [~ (history id +.params all:history:scry)]
   ==
 ::
@@ -220,6 +221,12 @@
     .^  ^tx-status
         %gx
         (~(scry agentio bowl) %aggregator /tx/(scot %ux keccak)/status/noun)
+    ==
+  ::
+  ++  next-batch
+    .^  time
+        %gx
+        (~(scry agentio bowl) %aggregator /next-batch/noun)
     ==
   ::
   ++  nonce

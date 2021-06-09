@@ -482,6 +482,13 @@
     ~(parse error:json-rpc id)
   [%result id (tx-status:to-json (scry u.keccak))]
 ::
+++  next-batch
+  |=  [id=@t params=(map @t json) when=time]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 0)
+    ~(params error:json-rpc id)
+  [%result id (time:enjs:format when)]
+::
 :: ++  history
 ::   |=  $:  id=@t
 ::           params=(map @t json)
