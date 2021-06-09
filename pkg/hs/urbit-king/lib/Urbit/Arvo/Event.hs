@@ -127,7 +127,7 @@ data Germ = Germ
     { gLife :: Life
     , gRing :: Ring
     }
-  deriving (Eq, Show)
+  deriving (Eq, Ord, Show)
 
 data Feed
   = Feed0 Seed
@@ -273,8 +273,8 @@ deriveNoun ''BoatEv
 -- Boat Events -----------------------------------------------------------------
 
 data JaelEv
-    = JaelEvRekey Life Ring
-  deriving (Eq, Ord, Show)
+    = JaelEvRekey () (Life, Ring)
+  deriving (Eq, Show)
 
 deriveNoun ''JaelEv
 
