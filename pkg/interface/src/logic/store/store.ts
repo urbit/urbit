@@ -6,7 +6,6 @@ import { ContactReducer } from '../reducers/contact-update';
 import GcpReducer from '../reducers/gcp-reducer';
 import { GraphReducer } from '../reducers/graph-update';
 import GroupReducer from '../reducers/group-update';
-import { GroupViewReducer } from '../reducers/group-view';
 import InviteReducer from '../reducers/invite-update';
 import LaunchReducer from '../reducers/launch-update';
 import MetadataReducer from '../reducers/metadata-update';
@@ -53,7 +52,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
       this.metadataReducer.reduce(data);
       this.s3Reducer.reduce(data);
       this.groupReducer.reduce(data);
-      GroupViewReducer(data);
       this.launchReducer.reduce(data);
       this.connReducer.reduce(data, this.state);
       GraphReducer(data);
