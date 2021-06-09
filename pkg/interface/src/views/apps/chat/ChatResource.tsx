@@ -1,4 +1,4 @@
-import { Content, createPost, markCountAsRead, Post } from '@urbit/api';
+import { Content, createPost, fetchIsAllowed, markCountAsRead, Post } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import { BigInteger } from 'big-integer';
 import React, {
@@ -17,6 +17,7 @@ import { StoreState } from '~/logic/store/type';
 import { Loading } from '~/views/components/Loading';
 import { ChatPane } from './components/ChatPane';
 import airlock from '~/logic/api';
+import { disallowedShipsForOurContact } from '~/logic/lib/contact';
 
 const getCurrGraphSize = (ship: string, name: string) => {
   const { graphs } = useGraphState.getState();
@@ -48,7 +49,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
     setToShare(undefined);
     (async function () {
       if (group.hidden) {
-        const members = await props.api.contacts.disallowedShipsForOurContact(
+        const members = await disallowedShipsForOurContact(
           Array.from(group.members)
         );
         if (members.length > 0) {
@@ -56,12 +57,12 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
         }
       } else {
         const { ship: groupHost } = resourceFromPath(association.group);
-        const shared = await props.api.contacts.fetchIsAllowed(
+        const shared = await airlock.scry(fetchIsAllowed(
           `~${window.ship}`,
           'personal',
           groupHost,
           true
-        );
+        ));
         if (!shared) {
           setToShare(association.group);
         }

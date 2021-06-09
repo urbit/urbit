@@ -1,4 +1,5 @@
 import { BaseImage, Box, Center, Row, Text } from '@tlon/indigo-react';
+import { retrieve } from '@urbit/api';
 import React, { ReactElement, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
@@ -10,6 +11,7 @@ import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { EditProfile } from './EditProfile';
 import { ViewProfile } from './ViewProfile';
+import airlock from '~/logic/api';
 
 export function ProfileHeader(props: any): ReactElement {
   return (
@@ -169,21 +171,16 @@ export function ProfileActions(props: any): ReactElement {
 }
 
 export function Profile(props: any): ReactElement | null {
-  const { hideAvatars } = useSettingsState(selectCalmState);
-  const history = useHistory();
   const nackedContacts = useContactState(state => state.nackedContacts);
 
   const { contact, hasLoaded, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
-  const formRef = useRef(null);
 
   useEffect(() => {
     if (hasLoaded && !contact && !nacked) {
-      props.api.contacts.retrieve(ship);
+      airlock.poke(retrieve(ship));
     }
   }, [hasLoaded, contact]);
-
-  const anchorRef = useRef<HTMLElement | null>(null);
 
   if (!props.ship) {
     return null;

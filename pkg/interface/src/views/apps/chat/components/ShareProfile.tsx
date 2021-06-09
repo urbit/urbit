@@ -1,9 +1,10 @@
 import { BaseImage, Box, Row, Text } from '@tlon/indigo-react';
-import { Contact } from '@urbit/api';
+import { allowGroup, allowShips, Contact, share } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
+import airlock from '~/logic/api';
 
 interface ShareProfileProps {
   our?: Contact;
@@ -13,10 +14,7 @@ interface ShareProfileProps {
 }
 
 const ShareProfile = (props: ShareProfileProps): ReactElement | null => {
-  const {
-    api,
-    recipients
-  } = props;
+  const { recipients } = props;
 
   const image = (props?.our?.avatar)
   ? (
@@ -46,13 +44,13 @@ const ShareProfile = (props: ShareProfileProps): ReactElement | null => {
   const onClick = async () => {
     if(typeof recipients === 'string') {
       const [,,ship,name] = recipients.split('/');
-      await api.contacts.allowGroup(ship,name);
+      await airlock.poke(allowGroup(ship, name));
       if(ship !== `~${window.ship}`) {
-        await api.contacts.share(ship);
+        await airlock.poke(share(ship));
       }
     } else if(recipients.length > 0) {
-      await api.contacts.allowShips(recipients);
-      await Promise.all(recipients.map(r => api.contacts.share(r)));
+      await airlock.poke(allowShips(recipients));
+      await Promise.all(recipients.map(r => airlock.poke(share(r))));
     }
     props.onShare();
   };
