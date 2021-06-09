@@ -30,6 +30,7 @@ import './css/indigo-static.css';
 import { Content } from './landscape/components/Content';
 import './landscape/css/custom.css';
 import { bootstrapApi } from '~/logic/api';
+import useLaunchState from '../logic/state/launch';
 
 const Root = withState(styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -105,8 +106,8 @@ class App extends React.Component {
       this.updateMobile(this.mobileWatcher);
       this.updateTheme(this.themeWatcher);
     }, 500);
-    this.api.local.getBaseHash();
-    this.api.local.getRuntimeLag();  // TODO  consider polling periodically
+    this.props.getBaseHash();
+    this.props.getRuntimeLag();  // TODO  consider polling periodically
     this.props.getAll();
     gcpManager.start();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
@@ -195,5 +196,6 @@ export default withState(process.env.NODE_ENV === 'production' ? App : hot(App),
   [useGroupState],
   [useContactState],
   [useSettingsState, ['display', 'getAll']],
-  [useLocalState]
+  [useLocalState],
+  [useLaunchState, ['getRuntimeLag', 'getBaseHash']]
 ]);

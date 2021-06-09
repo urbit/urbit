@@ -6,7 +6,7 @@ import withState from '~/logic/lib/withState';
 import useLaunchState from '~/logic/state/launch';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
 import Tile from './tile';
-
+import airlock from '~/logic/api';
 
 export const weatherStyleMap = {
   Clear: 'rgba(67, 169, 255, 0.4)',
@@ -34,7 +34,7 @@ export const weatherStyleMap = {
 const imperialCountries = [
   'United States of America',
   'Myanmar',
-  'Liberia',
+  'Liberia'
 ];
 
 interface WeatherTileProps {
@@ -47,6 +47,14 @@ interface WeatherTileState {
   location: string;
   manualEntry: boolean;
   error: boolean;
+}
+
+function update(location: string) {
+  return {
+    mark: 'json',
+    json: location,
+    app: 'weather'
+  };
 }
 
 class WeatherTile extends React.Component<WeatherTileProps, WeatherTileState> {
@@ -64,7 +72,7 @@ class WeatherTile extends React.Component<WeatherTileProps, WeatherTileState> {
     navigator.geolocation.getCurrentPosition((res) => {
       const location = `${res.coords.latitude},${res.coords.longitude}`;
       this.setState({ location });
-      this.props.api.launch.weather(location);
+      airlock.poke(update(location));
       this.setState({ manualEntry: !this.state.manualEntry });
     });
   }
@@ -73,13 +81,13 @@ class WeatherTile extends React.Component<WeatherTileProps, WeatherTileState> {
     event.preventDefault();
     const location = (document.getElementById('location') as HTMLInputElement).value;
     this.setState({ location });
-      this.props.api.launch.weather(location);
+    airlock.poke(update(location));
       this.setState({ manualEntry: !this.state.manualEntry });
   }
 
   // set appearance based on weather
   colorFromCondition(data) {
-    let weatherDesc = data['current-condition'][0].weatherDesc[0].value;
+    const weatherDesc = data['current-condition'][0].weatherDesc[0].value;
     return weatherStyleMap[weatherDesc] || weatherStyleMap.default;
   }
 
@@ -258,7 +266,7 @@ class WeatherTile extends React.Component<WeatherTileProps, WeatherTileState> {
     }
 
     if ('currently' in data) { // Old weather source
-      this.props.api.launch.weather(this.props.location);
+      airlock.poke(update(this.props.location));
     }
 
     if ('current-condition' in data && 'weather' in data) {
@@ -287,7 +295,7 @@ class WeatherTile extends React.Component<WeatherTileProps, WeatherTileState> {
                 onClick={() =>
                   this.setState({ manualEntry: !this.state.manualEntry })
                 }
-              >
+            >
               {'->'}
             </Text>
           </Text>
