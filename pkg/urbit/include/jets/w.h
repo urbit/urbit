@@ -268,6 +268,13 @@
     u3_noun u3wes_gte(u3_noun);
     u3_noun u3wes_gth(u3_noun);
 
+    //u3_noun u3welvs_funv(u3_noun);
+    //u3_noun u3welvs_turn2(u3_noun);
+    u3_noun u3welvs_addv(u3_noun);
+    u3_noun u3welvs_subv(u3_noun);
+    u3_noun u3welvs_mulv(u3_noun);
+    u3_noun u3welvs_divv(u3_noun);
+
   /** Tier 6.
   **/
     u3_noun u3wf_bull(u3_noun);
