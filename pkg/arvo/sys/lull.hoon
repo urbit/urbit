@@ -2100,12 +2100,17 @@
     $%  [%avow syn=sign-arvo]                           ::  response to %fyrd
     ==
   +$  task                                              ::  in request ->$
-    $~  [%vega ~]                                       ::
-    $%  $>(%born vane-task)                             ::  new unix process
-        [%fyrd syn=sign-arvo]                           ::  jammed request
-        $>(%trim vane-task)                             ::  trim state
-        $>(%vega vane-task)                             ::  report upgrade
+    $~  [%vega ~]
+    $%
+        [%fyrd p=fyrd]                                  ::  jammed requests
+        $>(%vega vane-task)                             :: vega
+        $>(%trim vane-task)
     ==
+  +$  fyrd                                              ::  input
+    $%  [%mas ~]                                        ::  |mass ocmmand
+        [%cod ~]                                        ::  code reset
+    ==                                                  ::
+
   --  ::khan
 ::
 +$  gift-arvo                                           ::  out result <-$
@@ -2141,8 +2146,8 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
-      [%$ %whiz ~]
       [%k task:khan]
+      [%$ %whiz ~]
       [@tas %meta vase]
   ==
 ::  full vane names are required in vanes
@@ -2150,7 +2155,7 @@
 +$  sign-arvo                                           ::  in result $<-
   $%  [%ames gift:ames]
       $:  %behn
-          $%  gift:behn
+          $%  gift:behn                                 ::
               $>(%wris gift:clay)
               $>(%writ gift:clay)
               $>(%mere gift:clay)
@@ -2163,7 +2168,7 @@
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
-      [%khan gift:khan]
+      ::  [%khan gift:khan]
   ==
 ::  $unix-task: input from unix
 ::
@@ -2182,6 +2187,7 @@
       ::
       $>(%born vane-task)
       ::  %eyre: cancel request
+      ::
       ::
       [%cancel-request ~]
       ::  %dill: reset terminal configuration

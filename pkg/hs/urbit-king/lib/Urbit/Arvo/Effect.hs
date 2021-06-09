@@ -14,8 +14,8 @@ import Urbit.Prelude
 
 import Control.Monad.Fail (fail)
 import Numeric.Natural    (Natural)
-import Urbit.Arvo.Common (KingId(..), ServId(..))
-import Urbit.Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)
+import Urbit.Arvo.Common (SocketConf, KingId(..), ServId(..), SocketId(..))
+import Urbit.Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime, SocketEvent)
 import Urbit.Arvo.Common (AmesDest, Turf)
 import Urbit.Arvo.Common (ReOrg(..), reorgThroughNoun)
 import Urbit.Arvo.Common (Desk, Wynn)
@@ -240,7 +240,18 @@ deriveNoun ''TermEf
 data KhanEf
   = KhanEfAvow Path Noun
   | KhanEfFyrd Path Noun
+  deriving (Eq, Ord, Show)
 
+deriveNoun ''KhanEf
+
+data SocketEf
+  = SEError (KingId, ()) ()
+  | SESetConfig (SocketId, ()) SocketConf
+  | SEResponse  (SocketId, UD, UD, ()) SocketEvent
+
+  deriving (Eq, Ord, Show)
+
+deriveNoun ''SocketEf
 -- IO-Driver Routing -----------------------------------------------------------
 
 data VaneEf
