@@ -64,7 +64,6 @@
       [%setkey pk=@]
       [%endpoint endpoint=@t]
       [%network net=?(%mainnet %ropsten %local)]
-      [%nonce nonce=@ud]
   ==
 ::
 +$  action
@@ -520,7 +519,6 @@
   ^-  (quip card _state)
   ?-  -.config
     %frequency  [~ state(frequency frequency.config)]
-    %nonce      [~ state(next-nonce nonce.config)]
     %endpoint   [~ state(endpoint endpoint.config)]
   ::
       %network
