@@ -274,6 +274,7 @@ deriveNoun ''BoatEv
 
 data JaelEv
     = JaelEvRekey () (Life, Ring)
+      | JaelEvCrud Path Noun
   deriving (Eq, Show)
 
 deriveNoun ''JaelEv
