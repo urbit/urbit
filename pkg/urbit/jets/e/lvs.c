@@ -80,7 +80,7 @@
     }
     u3_atom* w_ = (u3_atom*)u3a_malloc(n_u*sizeof(u3_atom));
 
-    uint_32t i;
+    uint32_t i;
     for ( i = 0; i < n_u; i++ ) {
       w_[i] = u3i_cell(u3r_word(i, u), u3r_word(i, v));
     }
@@ -192,7 +192,7 @@
     }
     c3_w* w_ = (c3_w*)u3a_malloc((n_u+1)*sizeof(float32_t));
 
-    uint_32t i;
+    uint32_t i;
     union trip c, d;
     _set_rounding(r);
     w_[n_u] = 1;
@@ -239,7 +239,7 @@
     }
     c3_w* w_ = (c3_w*)u3a_malloc((n_u+1)*sizeof(float32_t));
 
-    uint_32t i;
+    uint32_t i;
     union trip c, d;
     _set_rounding(r);
     w_[n_u] = 1;
@@ -286,7 +286,7 @@
     }
     c3_w* w_ = (c3_w*)u3a_malloc((n_u+1)*sizeof(float32_t));
 
-    uint_32t i;
+    uint32_t i;
     union trip c, d;
     _set_rounding(r);
     w_[n_u] = 1;
@@ -333,7 +333,7 @@
     }
     c3_w* w_ = (c3_w*)u3a_malloc((n_u+1)*sizeof(float32_t));
 
-    uint_32t i;
+    uint32_t i;
     union trip c, d;
     _set_rounding(r);
     w_[n_u] = 1;
