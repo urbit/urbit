@@ -538,7 +538,7 @@ export class Urbit implements UrbitInterface {
    * @param threadName  The thread to run
    * @param body        The data to send to the thread
    */
-  async thread<T>(params: Thread<T>): Promise<T> {
+  async thread<R, T = any>(params: Thread<T>): Promise<R> {
     const { inputMark, outputMark, threadName, body } = params;
     const res = await fetch(`${this.url}/spider/${inputMark}/${threadName}/${outputMark}.json`, {
       ...this.fetchOptions,
