@@ -496,7 +496,7 @@
     ?+  tx-type.event  !!
       :: %spawn
       :: %transfer-point
-      :: %configure-keys
+   ::   %configure-keys        [%configure-keys encr auth 1 |]
       :: %escape
       :: %cancel-escape
       :: %adopt
@@ -729,7 +729,7 @@
     --
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
-  =/  new-keys       [%configure-keys suit encr auth |]
+  =/  new-keys       [%configure-keys encr auth suit |]
   =|  =^state:naive
   =^  f  state  (init-marbud state)
   =/  marbud-point  (~(got by points.state) ~marbud)
@@ -1016,8 +1016,9 @@
     =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn-1 %marbud-skey))
     state
 ::
+::
 ++  test-marbud-l2-change-keys  ^-  tang
-  =/  new-keys       [%configure-keys suit encr auth |]
+  =/  new-keys       [%configure-keys encr auth suit |]
   =/  marbud-mproxy  [marbud-own %set-management-proxy (addr %marbud-mkey)]
   ::
   ;:  weld
@@ -1045,7 +1046,7 @@
 ::
 :: TODO: transfer breach via transfer proxy
 ++  test-marbud-l2-proxies-transfer  ^-  tang
-  =/  marbud-new-keys            [marbud-own %configure-keys suit encr auth |]
+  =/  marbud-new-keys            [marbud-own %configure-keys encr auth suit |]
   =/  marbud-sproxy              [marbud-own %set-spawn-proxy (addr %marbud-skey)]
   =/  marbud-mproxy              [marbud-own %set-management-proxy (addr %marbud-mkey)]
   =/  marbud-tproxy              [marbud-own %set-transfer-proxy (addr %marbud-key-1)]
@@ -1124,8 +1125,8 @@
 :: TODO: life+rift changes via transfer proxy
 ::
 ++  test-marbud-life-rift  ^-  tang
-  =/  new-keys-no-reset           [marbud-own %configure-keys suit encr auth |]
-  =/  new-keys-yes-reset          [marbud-own %configure-keys suit encr auth &]
+  =/  new-keys-no-reset           [marbud-own %configure-keys encr auth suit |]
+  =/  new-keys-yes-reset          [marbud-own %configure-keys encr auth suit &]
   =/  zero-keys-no-reset          [marbud-own %configure-keys 0 0 0 |]
   =/  zero-keys-yes-reset         [marbud-own %configure-keys 0 0 0 &]
   =/  marbud-transfer-no-breach   [marbud-own %transfer-point (addr %marbud-key-1) |]

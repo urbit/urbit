@@ -101,7 +101,7 @@
     ==
   ::
   ++  get-keys
-    |=  [suite=@ud crypt=@ auth=@ breach=?]  ^-  octs
+    |=  [crypt=@ auth=@ suite=@ breach=?]  ^-  octs
     %:  cad:naive  3
       (from-proxy proxy.from.tx)
       4^ship.from.tx
