@@ -576,34 +576,36 @@
 ++  common-vote  %vote-key-0
 ++  common-ownr  %ownr-key-0
 ++  common-tran  %tran-key-0
-++  rut-ship-list  %-  ly  :*  ~rut
-                               ~holrut
-                               ~rigrut
-                               ~losrut
-                               ~rabsum-ravtyd
-                               ~disryt-nolpet
-                               ~pinpun-pilsun
-                               ~dovmul-mogryt
-                               ~habtyc-nibpyx
-                               ~pidreg-dacnum
-                               ~radres-tinnyl
-                               ~
-                           ==
+++  rut-ship-list  %-  ly
+                   :*  ~rut
+                       ~holrut
+                       ~rigrut
+                       ~losrut
+                       ~rabsum-ravtyd
+                       ~disryt-nolpet
+                       ~pinpun-pilsun
+                       ~dovmul-mogryt
+                       ~habtyc-nibpyx
+                       ~pidreg-dacnum
+                       ~radres-tinnyl
+                       ~
+                   ==
 ::
 :: initial ownership keys for each point under ~rut
-++  default-own-keys  %-  my:nl  :*  [~rut %rut-key-0]
-                                  [~holrut %holrut-key-0]
-                                  [~rigrut %rigrut-key-0]
-                                  [~losrut %losrut-key-0]
-                                  [~rabsum-ravtyd %holrut-rr-key-0]
-                                  [~disryt-nolpet %losrut-dn-key-0]
-                                  [~pinpun-pilsun %losrut-pp-key-0]
-                                  [~dovmul-mogryt %holrut-dm-key-0]
-                                  [~habtyc-nibpyx %losrut-hn-key-0]
-                                  [~pidreg-dacnum %holrut-pd-key-0]
-                                  [~radres-tinnyl %losrut-rt-key-0]
-                                  ~
-                              ==
+++  default-own-keys  %-  my:nl
+                      :*  [~rut %rut-key-0]
+                          [~holrut %holrut-key-0]
+                          [~rigrut %rigrut-key-0]
+                          [~losrut %losrut-key-0]
+                          [~rabsum-ravtyd %holrut-rr-key-0]
+                          [~disryt-nolpet %losrut-dn-key-0]
+                          [~pinpun-pilsun %losrut-pp-key-0]
+                          [~dovmul-mogryt %holrut-dm-key-0]
+                          [~habtyc-nibpyx %losrut-hn-key-0]
+                          [~pidreg-dacnum %holrut-pd-key-0]
+                          [~radres-tinnyl %losrut-rt-key-0]
+                          ~
+                      ==
 ::
 --
 ::
@@ -640,20 +642,22 @@
         !>  (~(got by suc-map) cur-event)
       ::
         !>
-        =^  f  state  %-  n
-                        :*  initial-state  ::state?
-                            %bat
-                            =<  q  %-  gen-tx
-                            :*  nonce.owner.own:(~(got by points.state) cur-ship)
-                                :*  [cur-ship proxy.cur-event]
-                                    %set-management-proxy  :: why does the tx-type not work?
-                                    ::tx-type.cur-event
-                                    (addr common-mgmt)
-                                ==
-                                (~(got by default-own-keys) cur-ship)
-                            ==
-                        ==
-        ?:  =(address.management-proxy.own:(~(got by points.state) cur-ship) (addr common-mgmt))
+        =^    f
+            state
+          %-  n
+          :*  initial-state  ::state?
+              %bat
+              =<  q
+              %-  gen-tx
+              :+  nonce.owner.own:(~(got by points.state) cur-ship)
+                :+  [cur-ship proxy.cur-event]
+                  %set-management-proxy  ::tx-type.cur-event why does the tx-type not work?
+                (addr common-mgmt)
+              (~(got by default-own-keys) cur-ship)
+          ==
+        ?:  .=  =<  address.management-proxy.own
+                (~(got by points.state) cur-ship)
+            (addr common-mgmt)
           %.y
         %.n
 ::
