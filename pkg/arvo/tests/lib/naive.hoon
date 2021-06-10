@@ -436,7 +436,9 @@
                     (cury filter-nonce %.y)
                     %-  cury
                     :-  filter-tx-type
-                    :*  %set-management-proxy
+                    :*  %transfer-point
+                        %configure-keys
+                        %set-management-proxy
                         %set-spawn-proxy
                         %set-transfer-proxy
                         ~
@@ -495,8 +497,8 @@
     |^  ^-  skim-tx:naive
     ?+  tx-type.event  !!
       :: %spawn
-      :: %transfer-point
-   ::   %configure-keys        [%configure-keys encr auth 1 |]
+      %transfer-point        [%transfer-point (addr %transfer-test) |]
+      %configure-keys        [%configure-keys encr auth suit |]
       :: %escape
       :: %cancel-escape
       :: %adopt
@@ -506,6 +508,10 @@
       %set-spawn-proxy       [%set-spawn-proxy (addr %proxy-test)]
       %set-transfer-proxy    [%set-transfer-proxy (addr %proxy-test)]
     ==
+    ::
+    ++  encr    (shax 'You will forget that you ever read this sentence.')
+    ++  auth    (shax 'You cant know that this sentence is true.')
+    ++  suit     1
     ::
     ::  ++  which-ship
     ::  ::  should only matter for spawn and sponsorship actions
@@ -676,9 +682,9 @@
   ?~  ship-list  ~
   %+  weld  $(ship-list t.ship-list)
   =/  cur-ship  i.ship-list
-  ::
   %+  category  (scow %p cur-ship)
   =/  current-events  (~(get ja event-jar) cur-ship)
+  ::
   |-  ^-  tang
   ?~  current-events  ~
   %+  weld  $(current-events t.current-events)
@@ -693,11 +699,11 @@
     !>  (~(got by suc-map) cur-event)
   ::
     !>
-    |^
+    |^  ^-  ?
     =^    f
         state
       %-  n
-      :+  initial-state  ::state?
+      :+  state
         %bat
       =<  q
       %-  gen-tx
@@ -706,22 +712,34 @@
         (rut-default-args cur-ship cur-event)
       (~(got by default-own-keys) cur-ship)
     ?+  tx-type.cur-event  !!
+      %transfer-point        check-xfer-point
+      %configure-keys        check-conf-keys
       %set-management-proxy  check-mgmt-proxy
       %set-spawn-proxy       check-spwn-proxy
       %set-transfer-proxy    check-xfer-proxy
     ==
     ::
-    ++  check-mgmt-proxy
+    ++  check-xfer-point  ^-  ?
+      .=  =<  address.owner.own
+          (~(got by points.state) cur-ship)
+      (addr %transfer-test)
+    ::
+    ++  check-conf-keys  ^-  ?
+      .=  =<  |1:keys.net
+          (~(got by points.state) cur-ship)
+      [suit auth encr]
+    ::
+    ++  check-mgmt-proxy  ^-  ?
       .=  =<  address.management-proxy.own
           (~(got by points.state) cur-ship)
       (addr %proxy-test)
     ::
-    ++  check-spwn-proxy
+    ++  check-spwn-proxy  ^-  ?
       .=  =<  address.spawn-proxy.own
           (~(got by points.state) cur-ship)
       (addr %proxy-test)
     ::
-    ++  check-xfer-proxy
+    ++  check-xfer-proxy  ^-  ?
       .=  =<  address.transfer-proxy.own
           (~(got by points.state) cur-ship)
       (addr %proxy-test)
