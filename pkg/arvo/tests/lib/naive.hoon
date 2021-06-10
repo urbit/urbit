@@ -629,36 +629,39 @@
   %+  weld  $(ship-list t.ship-list)
   =/  cur-ship  i.ship-list
   ::
-  ::%+  category  `@t`cur-ship
+  %+  category  (scow %p cur-ship)
   =/  current-events  (~(get ja event-jar) cur-ship)
   |-  ^-  tang
   ?~  current-events  ~
   %+  weld  $(current-events t.current-events)
   =/  cur-event  i.-.current-events
-  ::  %+  category  cur-event
+  %+  category  (weld "dominion " (scow %tas dominion.cur-event))
+  %+  category  (weld "proxy " (scow %tas proxy.cur-event))
+  %+  category  (weld "tx-type " (scow %tas tx-type.cur-event))
+  %+  category  (weld "owner? " (scow %f owner.cur-event))
+  %+  category  (weld "correct nonce? " (scow %f nonce.cur-event))
   =/  state  initial-state
-  ::  %+  category  i.current-events
-    %+  expect-eq
-      !>  (~(got by suc-map) cur-event)
-    ::
-      !>
-      =^    f
-          state
-        %-  n
-        :+  initial-state  ::state?
-          %bat
-        =<  q
-        %-  gen-tx
-        :+  nonce.owner.own:(~(got by points.state) cur-ship)
-          :+  [cur-ship proxy.cur-event]
-            %set-management-proxy  ::tx-type.cur-event why does the tx-type not work?
-          (addr common-mgmt)
-        (~(got by default-own-keys) cur-ship)
-      ?:  .=  =<  address.management-proxy.own
-              (~(got by points.state) cur-ship)
-          (addr common-mgmt)
-        %.y
-      %.n
+  %+  expect-eq
+    !>  (~(got by suc-map) cur-event)
+  ::
+    !>
+    =^    f
+        state
+      %-  n
+      :+  initial-state  ::state?
+        %bat
+      =<  q
+      %-  gen-tx
+      :+  +(nonce.owner.own:(~(got by points.state) cur-ship))
+        :+  [cur-ship proxy.cur-event]
+          %set-management-proxy  ::tx-type.cur-event why does the tx-type not work?
+        (addr common-mgmt)
+      (~(got by default-own-keys) cur-ship)
+    ?:  .=  =<  address.management-proxy.own
+            (~(got by points.state) cur-ship)
+        (addr common-mgmt)
+      %.y
+    %.n
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys suit encr auth |]
