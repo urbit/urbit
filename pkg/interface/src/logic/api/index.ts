@@ -2,6 +2,7 @@ import Urbit from '@urbit/http-api';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
 import useContactState from '../state/contact';
+import useGraphState from '../state/graph';
 import useGroupState from '../state/group';
 import useInviteState from '../state/invite';
 import useLaunchState from '../state/launch';
@@ -25,7 +26,8 @@ export const bootstrapApi = async () => {
     useContactState,
     useSettingsState,
     useLaunchState,
-    useInviteState
+    useInviteState,
+    useGraphState
   ].forEach((state) => {
     state.getState().initialize(api);
   });

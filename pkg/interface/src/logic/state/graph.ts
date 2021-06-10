@@ -1,11 +1,14 @@
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import { patp2dec } from 'urbit-ob';
 
-import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs } from '@urbit/api';
+import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs, getGraph, getShallowChildren } from '@urbit/api';
 import { useCallback } from 'react';
-import { BaseState, createState } from './base';
+import { createState, createSubscription, reduceStateN } from './base';
+import airlock from '~/logic/api';
+import { getDeepOlderThan, getFirstborn, getNewest, getNode, getOlderSiblings, getYoungerSiblings } from '@urbit/api/graph';
+import { GraphReducer, reduceDm } from '../reducers/graph-update';
 
-export interface GraphState extends BaseState<GraphState> {
+export interface GraphState {
   graphs: Graphs;
   graphKeys: Set<string>;
   looseNodes: {
@@ -19,18 +22,21 @@ export interface GraphState extends BaseState<GraphState> {
   pendingDms: Set<string>;
   screening: boolean;
   graphTimesentMap: Record<number, string>;
+  getDeepOlderThan: (ship: string, name: string, count: number, start?: number) => Promise<void>;
   // getKeys: () => Promise<void>;
   // getTags: () => Promise<void>;
   // getTagQueries: () => Promise<void>;
   // getGraph: (ship: string, resource: string) => Promise<void>;
-  // getNewest: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
-  // getOlderSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
-  // getYoungerSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
+  getNewest: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
+  getOlderSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
+  getYoungerSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
   // getGraphSubset: (ship: string, resource: string, start: string, end: string) => Promise<void>;
-  // getNode: (ship: string, resource: string, index: string) => Promise<void>;
+  getNode: (ship: string, resource: string, index: string) => Promise<void>;
+  getFirstborn: (ship: string, resource: string, index: string) => Promise<void>;
+  getGraph: (ship: string, name: string) => Promise<void>;
 }
 // @ts-ignore investigate zustand types
-const useGraphState = createState<GraphState>('Graph', {
+const useGraphState = createState<GraphState>('Graph', (set, get) => ({
   graphs: {},
   flatGraphs: {},
   threadGraphs: {},
@@ -39,7 +45,68 @@ const useGraphState = createState<GraphState>('Graph', {
   pendingIndices: {},
   graphTimesentMap: {},
   pendingDms: new Set(),
-  screening: false
+  screening: false,
+  getDeepOlderThan: async (ship, name, count, start) => {
+    const data = await airlock.scry(getDeepOlderThan(ship, name, count, start));
+
+    data['graph-update'].fetch = true;
+    const node = data['graph-update'];
+    GraphReducer({
+      'graph-update': node,
+      'graph-update-flat': node
+    });
+  },
+
+  getFirstborn: async (ship, name,index) => {
+    const data = await airlock.scry(getFirstborn(ship, name, index));
+    data['graph-update'].fetch = true;
+    const node = data['graph-update'];
+    GraphReducer({
+      'graph-update-thread': {
+        index,
+        ...node
+      },
+      'graph-update': node
+    });
+  },
+
+  getNode: (ship: string, name: string, index: string) => {
+    const data = await airlock.scry(getNode(ship, name, index));
+    data['graph-update'].fetch = true;
+    const node = data['graph-update'];
+    GraphReducer({
+      'graph-update-loose': node
+    });
+  },
+  getOlderSiblings: async (ship: string, name: string, count: number, index: string) => {
+    const data = await airlock.scry(getOlderSiblings(ship, name, count, index));
+    data['graph-update'].fetch = true;
+    GraphReducer(data);
+  },
+  getYoungerSiblings: async (ship: string, name: string, count: number, index: string) => {
+    const data = await airlock.scry(getYoungerSiblings(ship, name, count, index));
+    data['graph-update'].fetch = true;
+    GraphReducer(data);
+  },
+  getNewest: async (
+    ship: string,
+    name: string,
+    count: number,
+    index = ''
+  ) => {
+    const data = await airlock.scry(getNewest(ship, name, count, index));
+    data['graph-update'].fetch = true;
+    GraphReducer(data);
+  },
+  getGraph: async (ship, name) => {
+    const data = await airlock.scry(getGraph(ship, name));
+    GraphReducer(data);
+  },
+  getShallowChildren: async (ship: string, name: string, index = '') => {
+    const data = await airlock.scry(getShallowChildren(ship, name, index));
+    data['graph-update'].fetch = true;
+    GraphReducer(data);
+  }
   // getKeys: async () => {
   //   const api = useApi();
   //   const keys = await api.scry({
@@ -71,19 +138,6 @@ const useGraphState = createState<GraphState>('Graph', {
   //     path: `/graph/${ship}/${resource}`
   //   });
   //   graphReducer(graph);
-  // },
-  // getNewest: async (
-  //   ship: string,
-  //   resource: string,
-  //   count: number,
-  //   index: string = ''
-  // ) => {
-  //   const api = useApi();
-  //   const data = await api.scry({
-  //     app: 'graph-store',
-  //     path: `/newest/${ship}/${resource}/${count}${index}`
-  //   });
-  //   graphReducer(data);
   // },
   // getOlderSiblings: async (
   //   ship: string,
@@ -139,7 +193,7 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, [
+}), [
   'graphs',
   'graphKeys',
   'looseNodes',
@@ -147,6 +201,20 @@ const useGraphState = createState<GraphState>('Graph', {
   'flatGraphs',
   'threadGraphs',
   'pendingDms'
+], [
+  (set, get) => createSubscription('graph-store', '/updates', (e) => {
+    const j = _.get(e, 'graph-update', false);
+    if(j) {
+      GraphReducer(j);
+    }
+  }),
+  (set, get) => createSubscription('dm-hook', '/updates', (e) => {
+    const j = _.get(e, 'dm-hook-action', false);
+    if(j) {
+      reduceStateN(get(), j, reduceDm);
+    }
+  })
+
 ]);
 
 export function useGraph(ship: string, name: string) {
