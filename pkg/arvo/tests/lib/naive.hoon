@@ -242,8 +242,9 @@
             %manage    %.n
             %transfer  %.y
           ==
-        :: TODO: how do i make the following two lines?
-        ?(%configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy)
+        $?   %configure-keys  %escape  %cancel-escape  %adopt
+             %reject  %detach  %set-management-proxy
+        ==
           ?.  =(dominion %l2)
             %.n
           ?+  proxy    %.n
@@ -256,14 +257,20 @@
       --
   ::
   ++  filter-tx-type
-    |=  [=tx-type =event-list]
+    |=  [typs=(list =tx-type) =event-list]
     |^
     (skim event-list filter)
     ++  filter
+      :: I think I can shorten this a bit with a fold or something
       |=  =event  ^-  ?
-      ?:  =(tx-type.event tx-type)
-        %.y
-      %.n
+      =/  match=?  %.n
+      |-
+      ?~  typs  match
+      =/  cur-typ  i.typs
+      %=  $
+        match  |(match =(cur-typ tx-type.event))
+        typs   t.typs
+      ==
     --
   ::
   ++  filter-proxy
@@ -271,10 +278,8 @@
     |^
     (skim event-list filter)
     ++  filter
-      |=  =event  ^-  ?
-      ?:  =(proxy.event proxy)
-        %.y
-      %.n
+      |=  =event
+      =(proxy.event proxy)
     --
   ::
   ++  filter-rank
@@ -282,10 +287,8 @@
     |^
     (skim event-list filter)
     ++  filter
-      |=  =event  ^-  ?
-      ?:  =(rank.event rank)
-        %.y
-      %.n
+      |=  =event
+      =(rank.event rank)
     --
   ::
   ++  filter-owner
@@ -293,10 +296,8 @@
     |^
     (skim event-list filter)
     ++  filter
-      |=  =event  ^-  ?
-      ?:  =(owner.event owner)
-        %.y
-      %.n
+      |=  =event
+      =(owner.event owner)
     --
   ::
   ++  filter-nonce
@@ -304,10 +305,8 @@
     |^
     (skim event-list filter)
     ++  filter
-      |=  =event  ^-  ?
-      ?:  =(nonce.event nonce)
-        %.y
-      %.n
+      |=  =event
+      =(nonce.event nonce)
     --
   ::
   ++  filter-dominion
@@ -315,10 +314,8 @@
     |^
     (skim event-list filter)
     ++  filter
-      |=  =event  ^-  ?
-      ?:  =(dominion.event dominion)
-        %.y
-      %.n
+      |=  =event
+      =(dominion.event dominion)
     --
   ::
   ++  make-event-list  ^-  event-list
@@ -431,13 +428,19 @@
   ::  it ought to test, and +success-map says whether or not that
   ::  event should succed or fail
   ::
-  ++  gen-rut-mgmt-jar
+  ++  gen-rut-proxy-jar
     ^-  (jar @p event)
     =/  filter  ;:  cork
                     (cury filter-owner %.y)
-                    (cury filter-tx-type %set-management-proxy)
                     (cury filter-proxy %own)
                     (cury filter-nonce %.y)
+                    %-  cury
+                    :-  filter-tx-type
+                    :*  %set-management-proxy
+                        %set-spawn-proxy
+                        %set-transfer-proxy
+                        ~
+                    ==
                 ==
     =/  filtered-events  (filter make-event-list)
     =|  mgmt-jar=(jar @p event)
@@ -454,8 +457,22 @@
       ==
     ?:  =(rank.current-event %planet)
       ?+  dominion.current-event  !!
-        %l1     (list-in-jar (ly ~[~rabsum-ravtyd ~radres-tinnyl]) current-event)
-        %l2     (list-in-jar (ly ~[~dovmul-mogryt ~pidted-dacnum ~pinpun-pilsun ~habtyc-nibpyx ~disryt-nolpet]) current-event)
+        %l1     %-  list-in-jar
+                :-  %-  ly
+                    :+  ~rabsum-ravtyd
+                      ~radres-tinnyl
+                    ~
+                current-event
+        %l2     %-  list-in-jar
+                :-  %-  ly
+                    :*  ~dovmul-mogryt
+                        ~pidted-dacnum
+                        ~pinpun-pilsun
+                        ~habtyc-nibpyx
+                        ~disryt-nolpet
+                        ~
+                    ==
+                current-event
       ==
     $(filtered-events t.filtered-events)
     ::
@@ -470,6 +487,37 @@
                  ==
       =.  new-jar  (~(add ja new-jar) i.ships event)
       $(ships t.ships)
+    ::
+    --
+  ::
+  ++  rut-default-args
+    |=  [=ship =event]  ^-  skim-tx:naive
+    |^  ^-  skim-tx:naive
+    ?+  tx-type.event  !!
+      :: %spawn
+      :: %transfer-point
+      :: %configure-keys
+      :: %escape
+      :: %cancel-escape
+      :: %adopt
+      :: %reject
+      :: %detach
+      %set-management-proxy  [%set-management-proxy (addr %proxy-test)]
+      %set-spawn-proxy       [%set-spawn-proxy (addr %proxy-test)]
+      %set-transfer-proxy    [%set-transfer-proxy (addr %proxy-test)]
+    ==
+    ::
+    ::  ++  which-ship
+    ::  ::  should only matter for spawn and sponsorship actions
+    ::    ?+  ship  !!
+    ::      ~rut
+    ::      ~rigrut
+    ::    ==
+    ::  ::
+::    ++  set-proxy  ^-  skim-tx:naive  [tx-type.event (addr %proxy-test)]
+    ::  ++  transfer
+    ::  ++  configure-keys
+    ::  ++  sponsor  ~
     ::
     --
   ::
@@ -614,10 +662,10 @@
 |%
 ::  new tests
 ::
-++  test-rut-mgmt-proxies  ^-  tang
+++  test-rut-proxies  ^-  tang
   =,  l2-event-gen
   ::
-  =/  event-jar  gen-rut-mgmt-jar
+  =/  event-jar  gen-rut-proxy-jar
   =|  =^state:naive
   =^  f  state  (init-rut-full state)
   =/  initial-state  state
@@ -645,6 +693,7 @@
     !>  (~(got by suc-map) cur-event)
   ::
     !>
+    |^
     =^    f
         state
       %-  n
@@ -653,15 +702,31 @@
       =<  q
       %-  gen-tx
       :+  nonce.owner.own:(~(got by points.state) cur-ship)
-        :+  [cur-ship proxy.cur-event]
-          %set-management-proxy  ::tx-type.cur-event why does the tx-type not work?
-        (addr common-mgmt)
+        :-  [cur-ship proxy.cur-event]
+        (rut-default-args cur-ship cur-event)
       (~(got by default-own-keys) cur-ship)
-    ?:  .=  =<  address.management-proxy.own
-            (~(got by points.state) cur-ship)
-        (addr common-mgmt)
-      %.y
-    %.n
+    ?+  tx-type.cur-event  !!
+      %set-management-proxy  check-mgmt-proxy
+      %set-spawn-proxy       check-spwn-proxy
+      %set-transfer-proxy    check-xfer-proxy
+    ==
+    ::
+    ++  check-mgmt-proxy
+      .=  =<  address.management-proxy.own
+          (~(got by points.state) cur-ship)
+      (addr %proxy-test)
+    ::
+    ++  check-spwn-proxy
+      .=  =<  address.spawn-proxy.own
+          (~(got by points.state) cur-ship)
+      (addr %proxy-test)
+    ::
+    ++  check-xfer-proxy
+      .=  =<  address.transfer-proxy.own
+          (~(got by points.state) cur-ship)
+      (addr %proxy-test)
+    ::
+    --
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys suit encr auth |]
