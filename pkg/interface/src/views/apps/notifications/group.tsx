@@ -42,7 +42,7 @@ interface GroupNotificationProps {
 }
 
 export function GroupNotification(props: GroupNotificationProps): ReactElement {
-  const { contents, index, read, time, api, timebox } = props;
+  const { contents, index, time } = props;
 
   const authors = _.flatten(_.map(contents, getGroupUpdateParticipants));
 

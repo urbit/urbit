@@ -8,7 +8,7 @@ import GlobalApi from '~/logic/api/global';
 import { getChord } from '~/logic/lib/util';
 import useSettingsState, {
   selectSettingsState,
-  ShortcutMapping,
+  ShortcutMapping
 } from '~/logic/state/settings';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { BackButton } from './BackButton';
@@ -108,6 +108,7 @@ export default function ShortcutSettings(props: ShortcutSettingsProps) {
               label="Cycle backward through channel list"
             />
             <ChordInput id="hideSidebar" label="Show/hide group sidebar" />
+            <ChordInput id="readGroup" label="Read all in a group" />
           </Box>
           <AsyncButton primary width="fit-content">Save Changes</AsyncButton>
         </Col>

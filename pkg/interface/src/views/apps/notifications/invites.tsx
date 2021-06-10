@@ -1,16 +1,16 @@
-import React, { ReactElement, ReactNode } from 'react';
+import React, { ReactElement } from 'react';
 import _ from 'lodash';
 
 import {
   Invite,
   AppInvites,
-  JoinRequest,
+  JoinRequest
 } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
 import { alphabeticalOrder, resourceAsPath } from '~/logic/lib/util';
 import useInviteState from '~/logic/state/invite';
 import useGraphState from '~/logic/state/graph';
-import {PendingDm} from './PendingDm';
+import { PendingDm } from './PendingDm';
 import InviteItem from '~/views/components/Invite';
 
 interface InvitesProps {
@@ -26,9 +26,9 @@ interface InviteRef {
 
 export function Invites(props: InvitesProps): ReactElement {
   const { api } = props;
-  const invites = useInviteState((state) => state.invites);
+  const invites = useInviteState(state => state.invites);
 
-  const pendingDms = useGraphState((s) => s.pendingDms) ?? [];
+  const pendingDms = useGraphState(s => s.pendingDms) ?? [];
 
   const inviteArr: InviteRef[] = _.reduce(
     invites,
@@ -49,13 +49,12 @@ export function Invites(props: InvitesProps): ReactElement {
 
   const invitesAndStatus: { [rid: string]: JoinRequest | InviteRef } = {
     ..._.keyBy(inviteArr, ({ invite }) => resourceAsPath(invite.resource)),
-    ...pendingJoin,
+    ...pendingJoin
   };
-
 
   return (
     <>
-      {[...pendingDms].map((ship) => (
+      {[...pendingDms].map(ship => (
         <PendingDm key={ship} api={api} ship={`~${ship}`} />
       ))}
       {Object.keys(invitesAndStatus)
