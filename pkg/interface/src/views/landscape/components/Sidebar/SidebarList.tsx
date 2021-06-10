@@ -108,14 +108,19 @@ export function SidebarList(props: {
     const offset = backward ? -1 : 1;
 
     const newIdx = modulo(idx+offset, ordered.length - 1);
-    const { metadata, resource } = associations[ordered[newIdx]];
-    const joined = graphKeys.has(resource.slice(7));
-    let path = '/~landscape/home';
-    if ('graph' in metadata.config) {
-      path = getResourcePath(workspace, resource, joined, metadata.config.graph);
+    const newChannel = ordered[newIdx];
+    let path = '';
+    if(newChannel.startsWith('~')) {
+      path = `/~landscape/messages/dm/${newChannel}`;
+    } else {
+      const { metadata, resource } = associations.graph[ordered[newIdx]];
+      const joined = graphKeys.has(resource.slice(7));
+      if ('graph' in metadata.config) {
+        path = getResourcePath(workspace, resource, joined, metadata.config.graph);
+      }
     }
     history.push(path);
-  }, [selected, history.push]);
+  }, [ordered, selected, history.push]);
 
   useShortcut('cycleForward', useCallback((e: KeyboardEvent) => {
     cycleChannels(false);
