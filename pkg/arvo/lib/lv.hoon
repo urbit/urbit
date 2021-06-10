@@ -165,10 +165,8 @@
   ::
   ::    Turn on a gate of two variables.
   ++  turn2  :: I guess not in hoon.hoon
-    ~/  %turn2
     |=  [[a=(list @rs) b=(list @rs)] f=$-([@rs @rs] @rs)]
     ^-  (list @rs)
-    ~&  "hitting here instead of in jet"
     ?+  +<-  ~|(%turn2-length !!)
       [~ ~]  ~
       [^ ^]  [(f i.a i.b) $(a t.a, b t.b)]
@@ -176,73 +174,22 @@
   ::
   ::    Apply a two-variable function across a vector input.
   ++  funv
-    ~/  %funv
     |=  f=$-([@rs @rs] @rs)
     |=  [u=@lvs v=@lvs]  ^-  @lvs
     ~_  leaf+"lace-fail"
-    ~&  "hitting here instead of in jet"
     (make (turn2 [(unmake u) (unmake v)] f))
   ::
   ::    Vector addition
-  ++  addv
-    ~/  %addv
-    |=  [u=@lvs v=@lvs]  ^-  @lvs
-    ~_  leaf+"lace-fail"
-    =/  n  (length u)
-    =/  uu  (unmake u)
-    =/  vv  (unmake v)
-    =/  ww  `(list @rs)`~
-    =/  count  0
-    =/  sum  0
-    ~&  "hallo frens"
-    |-  ^-  @lvs
-      ?:  =(count n)  (make ww)
-    $(count +(count), ww (snoc ww (add:rs (snag count uu) (snag count vv))))
+  ++  addv  ~/  %addv  |=([@lvs @lvs] %.(+< (funv add:rs)))
   ::
   ::    Vector subtraction
-  ++  subv
-    ~/  %subv
-    |=  [u=@lvs v=@lvs]  ^-  @lvs
-    ~_  leaf+"lace-fail"
-    =/  n  (length u)
-    =/  uu  (unmake u)
-    =/  vv  (unmake v)
-    =/  ww  `(list @rs)`~
-    =/  count  0
-    =/  sum  0
-    |-  ^-  @lvs
-      ?:  =(count n)  (make ww)
-    $(count +(count), ww (snoc ww (sub:rs (snag count uu) (snag count vv))))
+  ++  subv  ~/  %subv  |=([@lvs @lvs] %.(+< (funv sub:rs)))
   ::
   ::    Vector multiplication
-  ++  mulv
-    ~/  %mulv
-    |=  [u=@lvs v=@lvs]  ^-  @lvs
-    ~_  leaf+"lace-fail"
-    =/  n  (length u)
-    =/  uu  (unmake u)
-    =/  vv  (unmake v)
-    =/  ww  `(list @rs)`~
-    =/  count  0
-    =/  sum  0
-    |-  ^-  @lvs
-      ?:  =(count n)  (make ww)
-    $(count +(count), ww (snoc ww (mul:rs (snag count uu) (snag count vv))))
+  ++  mulv  ~/  %mulv  |=([@lvs @lvs] %.(+< (funv mul:rs)))
   ::
   ::    Vector division
-  ++  divv
-    ~/  %divv
-    |=  [u=@lvs v=@lvs]  ^-  @lvs
-    ~_  leaf+"lace-fail"
-    =/  n  (length u)
-    =/  uu  (unmake u)
-    =/  vv  (unmake v)
-    =/  ww  `(list @rs)`~
-    =/  count  0
-    =/  sum  0
-    |-  ^-  @lvs
-      ?:  =(count n)  (make ww)
-    $(count +(count), ww (snoc ww (div:rs (snag count uu) (snag count vv))))
+  ++  divv  ~/  %divv  |=([@lvs @lvs] %.(+< (funv div:rs)))
   ::
   ::    Sum of elements
   ++  sum
