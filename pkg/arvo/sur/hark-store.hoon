@@ -44,6 +44,9 @@
       [%read-note =index]
     ::
       [%seen-index time=@da =stats-index]
+    ::
+      [%read-graph =resource]
+      [%read-group =resource]
       [%remove-graph =resource]
     ::
       [%read-all ~]
@@ -281,6 +284,7 @@
         [%unread-note time=@da index]
       ::
         [%seen-index time=@da =stats-index]
+      ::
         [%remove-graph =resource]
       ::
         [%read-all ~]

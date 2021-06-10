@@ -1,18 +1,14 @@
 import { Box } from '@tlon/indigo-react';
 import { PatpNoSig } from '@urbit/api';
 import moment from 'moment';
-import React, { ReactElement, useCallback, useEffect } from 'react';
+import React  from 'react';
 import Helmet from 'react-helmet';
-import { Route, RouteComponentProps, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { cite } from '~/logic/lib/util';
-import useGraphState from '~/logic/state/graph';
-import useHarkState from '~/logic/state/hark';
 import { StoreState } from '~/logic/store/type';
 import GlobalSubscription from '~/logic/subscription/global';
 import { Workspace } from '~/types/workspace';
 import { Body } from '../components/Body';
-import { Loading } from '../components/Loading';
 import { GroupsPane } from './components/GroupsPane';
 import { JoinGroup } from './components/JoinGroup';
 import { NewGroup } from './components/NewGroup';
@@ -43,11 +39,10 @@ type LandscapeProps = StoreState & {
   ship: PatpNoSig;
   api: GlobalApi;
   subscription: GlobalSubscription;
+  notificationsCount: number;
 }
 
-export default function Landscape(props) {
-  const notificationsCount = useHarkState(s => s.notificationsCount);
-
+export default function Landscape(props: LandscapeProps) {
   return (
     <>
       <Helmet defer={false}>

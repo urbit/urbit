@@ -422,7 +422,11 @@
       %read-note    (read-note +.in)
     ::
       %seen-index   (seen-index +.in)
+    ::
       %remove-graph  (remove-graph +.in)
+      %read-graph    (read-graph +.in)
+      %read-group    (read-group +.in)
+    ::
       %set-dnd      (set-dnd +.in)
       %seen         seen
       %read-all     read-all
@@ -566,10 +570,53 @@
       (~(put by last-seen) stats-index new-time)
     (give %seen-index new-time stats-index)
   ::
+  ++  get-stats-indices
+    |=  rid=resource
+    %-  ~(gas ^in *(set stats-index:store))
+    %+  skim
+      ;:  weld
+        ~(tap ^in ~(key by unreads-count))
+        ~(tap ^in ~(key by last-seen))
+        ~(tap ^in ~(key by unreads-each))
+      ==
+    |=  =stats-index:store
+    ?.  ?=(%graph -.stats-index)  %.n
+    =(graph.stats-index rid)
+  ::
+  ++  read-all-each
+    |=  =stats-index:store
+    =/  refs=(list index:graph-store)
+      ~(tap ^in (~(get ju unreads-each) stats-index))
+    |-
+    ?~  refs  poke-core
+    $(refs t.refs, poke-core (read-each stats-index i.refs))
+  ::
+  ++  read-graph
+    |=  rid=resource
+    =/  indices=(list stats-index:store)
+      ~(tap ^in (get-stats-indices rid))
+    |-  
+    ?~  indices  poke-core
+    =*  index  i.indices
+    =?  poke-core  (~(has by unreads-count) index)
+      (read-count i.indices)
+    =?  poke-core  (~(has by unreads-each) index)
+      (read-all-each i.indices)
+    $(indices t.indices)
+  ::
+  ++  read-group
+    |=  rid=resource
+    =/  graphs=(list resource)
+      (graphs-of-group:met rid)
+    |-
+    ?~  graphs  poke-core
+    =/  core=_poke-core  (read-graph i.graphs)
+    $(graphs t.graphs, poke-core core)
+  ::
   ++  remove-graph
     |=  rid=resource
     |^  
-    =/  indices  get-stats-indices
+    =/  indices  (get-stats-indices rid)
     =.  poke-core
       (give %remove-graph rid)
     =.  poke-core
@@ -582,18 +629,6 @@
     =.  last-seen
       ((dif-map-by-key ,@da) last-seen indices)
     poke-core
-    ::
-    ++  get-stats-indices
-      %-  ~(gas ^in *(set stats-index:store))
-      %+  skim
-        ;:  weld
-          ~(tap ^in ~(key by unreads-count))
-          ~(tap ^in ~(key by last-seen))
-          ~(tap ^in ~(key by unreads-each))
-        ==
-      |=  =stats-index:store
-      ?.  ?=(%graph -.stats-index)  %.n
-      =(graph.stats-index rid)
     ::
     ++  dif-map-by-key
       |*  value=mold

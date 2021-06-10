@@ -12,7 +12,7 @@ import { LeapSettings } from './components/lib/LeapSettings';
 import { NotificationPreferences } from './components/lib/NotificationPref';
 import S3Form from './components/lib/S3Form';
 import SecuritySettings from './components/lib/Security';
-import {DmSettings} from './components/lib/DmSettings';
+import { DmSettings } from './components/lib/DmSettings';
 import ShortcutSettings from './components/lib/ShortcutSettings';
 
 export const Skeleton = (props: { children: ReactNode }) => (

@@ -10,6 +10,7 @@ export interface ShortcutMapping {
   navForward: string;
   navBack: string;
   hideSidebar: string;
+  readGroup: string;
 }
 
 export interface SettingsState extends BaseState<SettingsState> {
@@ -77,7 +78,8 @@ const useSettingsState = createState<SettingsState>('Settings', {
     cycleBack: 'ctrl+;',
     navForward: 'ctrl+]',
     navBack: 'ctrl+[',
-    hideSidebar: 'ctrl+\\'
+    hideSidebar: 'ctrl+\\',
+    readGroup: 'shift+Escape'
   }
 });
 
