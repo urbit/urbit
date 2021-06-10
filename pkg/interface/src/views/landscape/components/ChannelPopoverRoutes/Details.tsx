@@ -6,7 +6,6 @@ import {
 import { Association, metadataUpdate } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import { ColorInput } from '~/views/components/ColorInput';
 import { FormError } from '~/views/components/FormError';
@@ -20,7 +19,6 @@ interface FormSchema {
 }
 
 interface ChannelDetailsProps {
-  api: GlobalApi;
   association: Association;
 }
 

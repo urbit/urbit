@@ -1,18 +1,11 @@
 import { Box } from '@tlon/indigo-react';
-import { PatpNoSig } from '@urbit/api';
 import moment from 'moment';
-import React, { ReactElement, useCallback, useEffect } from 'react';
+import React from 'react';
 import Helmet from 'react-helmet';
-import { Route, RouteComponentProps, Switch } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
-import { cite } from '~/logic/lib/util';
-import useGraphState from '~/logic/state/graph';
+import { Route, Switch } from 'react-router-dom';
 import useHarkState from '~/logic/state/hark';
-import { StoreState } from '~/logic/store/type';
-import GlobalSubscription from '~/logic/subscription/global';
 import { Workspace } from '~/types/workspace';
 import { Body } from '../components/Body';
-import { Loading } from '../components/Loading';
 import { GroupsPane } from './components/GroupsPane';
 import { JoinGroup } from './components/JoinGroup';
 import { NewGroup } from './components/NewGroup';
@@ -39,19 +32,13 @@ moment.updateLocale('en', {
   }
 });
 
-type LandscapeProps = StoreState & {
-  ship: PatpNoSig;
-  api: GlobalApi;
-  subscription: GlobalSubscription;
-}
-
 export default function Landscape(props) {
   const notificationsCount = useHarkState(s => s.notificationsCount);
 
   return (
     <>
       <Helmet defer={false}>
-        <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape</title>
+        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape</title>
       </Helmet>
       <Switch>
         <Route path="/~landscape/ship/:host/:name"
@@ -86,14 +73,11 @@ export default function Landscape(props) {
           }}
         />
         <Route path="/~landscape/new"
-          render={(routeProps) => {
+          render={() => {
             return (
               <Body>
                 <Box maxWidth="300px">
-                  <NewGroup
-                    api={props.api}
-                    {...routeProps}
-                  />
+                  <NewGroup />
                 </Box>
               </Body>
             );
@@ -107,7 +91,6 @@ export default function Landscape(props) {
               <Body>
                 <Box maxWidth="300px">
                   <JoinGroup
-                    api={props.api}
                     autojoin={autojoin}
                     {...routeProps}
                   />

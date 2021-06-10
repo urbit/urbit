@@ -1,13 +1,11 @@
 import { Box, Row, SegmentedProgressBar, Text } from '@tlon/indigo-react';
 import { joinError, joinProgress, JoinRequest, hideGroup } from '@urbit/api';
 import React, { useCallback } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import airlock from '~/logic/api';
 
 interface JoiningStatusProps {
   status: JoinRequest;
-  api: GlobalApi;
   resource: string;
 }
 

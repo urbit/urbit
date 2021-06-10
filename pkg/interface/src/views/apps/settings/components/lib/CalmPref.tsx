@@ -6,7 +6,6 @@ import {
 import { Form, FormikHelpers } from 'formik';
 import { putEntry } from '@urbit/api/settings';
 import React, { useCallback } from 'react';
-import GlobalApi from '~/logic/api/global';
 import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { BackButton } from './BackButton';
 import _ from 'lodash';
@@ -37,10 +36,7 @@ const settingsSel = (s: SettingsState): FormSchema => ({
   audioShown: !s.remoteContentPolicy.audioShown
 });
 
-export function CalmPrefs(props: {
-  api: GlobalApi;
-}) {
-  const { api } = props;
+export function CalmPrefs() {
   const initialValues = useSettingsState(settingsSel);
 
   const onSubmit = useCallback(async (v: FormSchema, actions: FormikHelpers<FormSchema>) => {
@@ -53,7 +49,7 @@ export function CalmPrefs(props: {
     });
     await Promise.all(promises);
     actions.setStatus({ success: null });
-  }, [api]);
+  }, []);
 
   return (
     <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>

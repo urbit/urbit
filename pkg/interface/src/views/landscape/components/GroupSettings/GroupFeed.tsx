@@ -2,7 +2,6 @@ import { BaseLabel, Col, Label, Text } from '@tlon/indigo-react';
 import { Association, createGroupFeed, disableGroupFeed, Group, metadataUpdate, PermVariation, resourceFromPath } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import useMetadataState from '~/logic/state/metadata';
 import { FormSubmit } from '~/views/components/FormSubmit';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
@@ -16,7 +15,6 @@ interface FormSchema {
 export function GroupFeedSettings(props: {
   association: Association;
   group: Group;
-  api: GlobalApi;
 }) {
   const { association } = props;
   const resource = resourceFromPath(association.group);

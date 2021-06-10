@@ -10,7 +10,6 @@ import _ from 'lodash';
 import React, { ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { deSig, parentPath, stringToSymbol } from '~/logic/lib/util';
@@ -42,7 +41,6 @@ const formSchema = (members?: string[]) =>
   });
 
 type NewChannelProps = {
-  api: GlobalApi;
   group?: string;
   workspace: Workspace;
   baseUrl?: string;

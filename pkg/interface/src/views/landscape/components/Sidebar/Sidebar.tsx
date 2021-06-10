@@ -3,7 +3,6 @@ import {
 } from '@tlon/indigo-react';
 import React, { ReactElement, useRef } from 'react';
 import styled from 'styled-components';
-import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
@@ -25,7 +24,6 @@ const ScrollbarLessCol = styled(Col)`
 
 interface SidebarProps {
   recentGroups: string[];
-  api: GlobalApi;
   selected?: string;
   selectedGroup?: string;
   apps: SidebarAppConfigs;
@@ -81,7 +79,6 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         handleSubmit={setConfig}
         selected={selected || ''}
         workspace={workspace}
-        api={props.api}
       />
       <SidebarList
         config={config}

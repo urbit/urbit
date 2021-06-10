@@ -9,7 +9,6 @@ import React, {
   useMemo, useState
 } from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
-import GlobalApi from '~/logic/api/global';
 import { useIdlingState } from '~/logic/lib/idling';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
@@ -57,7 +56,6 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
 export const MessageAuthor = ({
   timestamp,
   msg,
-  api,
   showOurContact,
   ...props
 }) => {
@@ -138,7 +136,7 @@ export const MessageAuthor = ({
         cursor='pointer'
         position='relative'
       >
-        <ProfileOverlay cursor='auto' ship={msg.author} api={api}>
+        <ProfileOverlay cursor='auto' ship={msg.author}>
           {img}
         </ProfileOverlay>
       </Box>
@@ -182,12 +180,11 @@ export const MessageAuthor = ({
 };
 
 type MessageProps = { timestamp: string; timestampHover: boolean; }
-  & Pick<ChatMessageProps, 'msg' | 'api' | 'transcluded' | 'showOurContact'>
+  & Pick<ChatMessageProps, 'msg' | 'transcluded' | 'showOurContact'>
 
 export const Message = React.memo(({
   timestamp,
   msg,
-  api,
   timestampHover,
   transcluded,
   showOurContact
@@ -217,7 +214,6 @@ export const Message = React.memo(({
         width="100%"
         contents={msg.contents}
         transcluded={transcluded}
-        api={api}
         showOurContact={showOurContact}
       />
     </Box>
@@ -388,7 +384,6 @@ interface ChatMessageProps {
   style?: unknown;
   isLastMessage?: boolean;
   dismissUnread?: () => void;
-  api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
   hideHover?: boolean;
@@ -409,7 +404,6 @@ function ChatMessage(props: ChatMessageProps) {
     style,
     isLastMessage,
     isAdmin,
-    api,
     showOurContact,
     hideHover,
     dismissUnread = () => null,
@@ -468,7 +462,6 @@ function ChatMessage(props: ChatMessageProps) {
     timestamp,
     isPending,
     showOurContact,
-    api,
     highlighted,
     hideHover,
     transcluded,
@@ -482,11 +475,10 @@ function ChatMessage(props: ChatMessageProps) {
       msg={msg}
       timestamp={timestamp}
       timestampHover={!renderSigil}
-      api={api}
       transcluded={transcluded}
       showOurContact={showOurContact}
     />
-  ), [renderSigil, msg, timestamp, api, transcluded, showOurContact]);
+  ), [renderSigil, msg, timestamp, transcluded, showOurContact]);
 
   const unreadContainerStyle = {
     height: isLastRead ? '2rem' : '0'

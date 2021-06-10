@@ -4,7 +4,6 @@ import { History } from 'history';
 import bigInt from 'big-integer';
 import React from 'react';
 import { useHistory } from 'react-router';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import VirtualScroller from '~/views/components/VirtualScroller';
 import PostItem from './PostItem/PostItem';
@@ -19,7 +18,6 @@ const virtualScrollerStyle = {
 interface PostFeedProps extends Pick<GraphState, 'getYoungerSiblings' | 'getOlderSiblings'> {
   graph: Graph;
   graphPath: string;
-  api: GlobalApi;
   history: History;
   baseUrl: string;
   parentNode?: GraphNode;
@@ -45,7 +43,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
     const {
       graph,
       graphPath,
-      api,
       history,
       baseUrl,
       parentNode,
@@ -83,7 +80,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
               node={parentNode}
               graphPath={graphPath}
               association={association}
-              api={api}
               index={nodeIndex}
               baseUrl={baseUrl}
               history={history}
@@ -98,7 +94,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
             node={node}
             graphPath={graphPath}
             association={association}
-            api={api}
             index={[...nodeIndex, index]}
             baseUrl={baseUrl}
             history={history}
@@ -128,7 +123,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
             mb={3}
           >
             <PostInput
-              api={api}
               group={group}
               association={association}
               vip={vip}
@@ -139,7 +133,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
             node={node}
             graphPath={graphPath}
             association={association}
-            api={api}
             index={[...nodeIndex, index]}
             baseUrl={baseUrl}
             history={history}
@@ -160,7 +153,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
           node={node}
           graphPath={graphPath}
           association={association}
-          api={api}
           index={[...nodeIndex, index]}
           baseUrl={baseUrl}
           history={history}

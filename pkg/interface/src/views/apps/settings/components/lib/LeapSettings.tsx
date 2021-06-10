@@ -7,7 +7,6 @@ import { Form, useFormikContext } from 'formik';
 import { putEntry } from '@urbit/api/settings';
 import _ from 'lodash';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
 import {
     LeapCategories,
@@ -45,7 +44,7 @@ function CategoryCheckbox(props: { index: number }) {
 
 const settingsSel = selectSettingsState(['leap', 'set']);
 
-export function LeapSettings(props: { api: GlobalApi; }) {
+export function LeapSettings() {
   const { leap } = useSettingsState(settingsSel);
   const categories = leap.categories as LeapCategories[];
   const missing = _.difference(leapCategories, categories);

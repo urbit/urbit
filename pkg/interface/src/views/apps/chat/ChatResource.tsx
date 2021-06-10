@@ -7,7 +7,6 @@ import React, {
 
   useMemo, useState
 } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { isWriter, resourceFromPath } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import useGraphState, { useGraphForAssoc } from '~/logic/state/graph';
@@ -28,12 +27,11 @@ const getCurrGraphSize = (ship: string, name: string) => {
 
 type ChatResourceProps = StoreState & {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 };
 
 const ChatResource = (props: ChatResourceProps): ReactElement => {
-  const { association, api } = props;
+  const { association } = props;
   const { resource } = association;
   const [toShare, setToShare] = useState<string[] | string | undefined>();
   const group = useGroupForAssoc(association)!;
@@ -47,7 +45,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
     getOlderSiblings,
     getYoungerSiblings
   ] = useGraphState(
-    s => [s.getYoungerSiblings, s.getOlderSiblings, s.getNewest],
+    s => [s.getNewest, s.getOlderSiblings, s.getYoungerSiblings],
     shallow
   );
 
@@ -102,6 +100,10 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
     const [, , ship, name] = resource.split('/');
     const graphSize = graph?.size ?? 0;
     const expectedSize = graphSize + pageSize;
+    if(graphSize === 0) {
+      // already loading the graph
+      return false;
+    }
     if (newer) {
       const index = graph.peekLargest()?.[0];
       if (!index) {
@@ -154,7 +156,6 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
       id={resource.slice(7)}
       graph={graph}
       unreadCount={unreadCount}
-      api={api}
       canWrite={canWrite}
       onReply={onReply}
       onDelete={onDelete}

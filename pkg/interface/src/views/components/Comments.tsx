@@ -3,7 +3,6 @@ import { createPost, createBlankNodeWithChildPost, addNode, Association, GraphNo
 import bigInt from 'big-integer';
 import { FormikHelpers } from 'formik';
 import React, { useEffect, useMemo } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getUnreadCount } from '~/logic/lib/hark';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
@@ -22,7 +21,6 @@ interface CommentsProps {
   name: string;
   ship: string;
   baseUrl: string;
-  api: GlobalApi;
   group: Group;
 }
 
@@ -35,7 +33,6 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     history,
     baseUrl,
     group,
-    api,
     ...rest
   } = props;
 
@@ -148,7 +145,6 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
               highlighted={highlighted}
               comment={comment}
               key={idx.toString()}
-              api={api}
               name={name}
               ship={ship}
               unread={i >= readCount}

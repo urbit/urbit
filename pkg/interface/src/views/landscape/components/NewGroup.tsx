@@ -8,7 +8,6 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { stringToSymbol } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
@@ -28,11 +27,7 @@ interface FormSchema {
   isPrivate: boolean;
 }
 
-interface NewGroupProps {
-  api: GlobalApi;
-}
-
-export function NewGroup(props: NewGroupProps): ReactElement {
+export function NewGroup(): ReactElement {
   const history = useHistory();
   const initialValues: FormSchema = {
     title: '',

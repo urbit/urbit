@@ -5,7 +5,6 @@ import {
 } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
 import React, { Component } from 'react';
-import GlobalApi from '~/logic/api/global';
 import VirtualScroller from '~/views/components/VirtualScroller';
 import ChatMessage, { MessagePlaceholder } from './ChatMessage';
 import UnreadNotice from './UnreadNotice';
@@ -18,7 +17,6 @@ type ChatWindowProps = {
   graphSize: number;
   station?: unknown;
   fetchMessages: (newer: boolean) => Promise<boolean>;
-  api: GlobalApi;
   scrollTo?: BigInteger;
   onReply: (msg: Post) => void;
   onDelete: (msg: Post) => void;
@@ -181,7 +179,6 @@ class ChatWindow extends Component<
 
   renderer = React.forwardRef(({ index, scrollWindow }: RendererProps, ref) => {
     const {
-      api,
       showOurContact,
       graph,
       onReply,
@@ -193,7 +190,6 @@ class ChatWindow extends Component<
     const permalink = getPermalink(index);
     const messageProps = {
       showOurContact,
-      api,
       onReply,
       onDelete,
       permalink,

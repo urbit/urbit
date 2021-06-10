@@ -5,8 +5,8 @@ import {
   Col,
   Icon,
   Row,
-  Text,
-} from "@tlon/indigo-react";
+  Text
+} from '@tlon/indigo-react';
 import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
@@ -26,7 +26,7 @@ import { useTutorialModal } from './useTutorialModal';
 const localSel = selectLocalState(['toggleOmnibox']);
 
 const StatusBar = (props) => {
-  const { api, ship } = props;
+  const { ship } = props;
   const history = useHistory();
   const runtimeLag = useLaunchState(state => state.runtimeLag);
   const ourContact = useContactState(state => state.contacts[`~${ship}`]);
@@ -181,7 +181,6 @@ const StatusBar = (props) => {
                 <ProfileStatus
                   contact={ourContact}
                   ship={`~${ship}`}
-                  api={api}
                 />
               </Row>
             </Col>

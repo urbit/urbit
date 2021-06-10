@@ -2,7 +2,6 @@ import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react
 import { addPost } from '@urbit/api/graph';
 import { hasProvider } from 'oembed-parser';
 import React, { useCallback, useEffect, useState } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { createPost } from '~/logic/api/graph';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import { useFileDrag } from '~/logic/lib/useDrag';
@@ -11,7 +10,6 @@ import SubmitDragger from '~/views/components/SubmitDragger';
 import airlock from '~/logic/api';
 
 interface LinkSubmitProps {
-  api: GlobalApi;
   name: string;
   ship: string;
   parentIndex?: any;
@@ -190,7 +188,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
             py={2}
             color="black"
             backgroundColor="transparent"
-            onChange={e => onLinkChange(e.target.value)}
+            onChange={e => setLinkValue(e.target.value)}
             onBlur={() => [setUrlFocused(false), setSubmitFocused(false)]}
             onFocus={() => [setUrlFocused(true), setSubmitFocused(true)]}
             spellCheck="false"

@@ -36,7 +36,6 @@ const FixedOverlay = styled(Col)`
 
 type ProfileOverlayProps = BoxProps & {
   ship: string;
-  api: any;
   children?: ReactNode;
   color?: string;
 };
@@ -202,7 +201,6 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
           </Row>
           {isOwn ? (
             <ProfileStatus
-              api={props.api}
               ship={`~${ship}`}
               contact={contact}
             />

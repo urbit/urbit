@@ -383,7 +383,7 @@ export const getNewest = (
   index = ''
 ): Scry => ({
   app: 'graph-store',
-  path: `/newest/${ship}/${name}/${count}/${encodeIndex(index)}`
+  path: `/newest/${ship}/${name}/${count}${encodeIndex(index)}`
 });
 
 /** 

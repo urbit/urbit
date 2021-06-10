@@ -12,7 +12,6 @@ import _ from 'lodash';
 import React, { useCallback, useRef } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { deSig } from '~/logic/lib/util';
@@ -25,7 +24,6 @@ import airlock from '~/logic/api';
 interface InvitePopoverProps {
   baseUrl: string;
   association: Association;
-  api: GlobalApi;
   workspace: Workspace;
 }
 

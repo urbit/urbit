@@ -1,7 +1,6 @@
 import { Action, Col, Icon, Row } from '@tlon/indigo-react';
 import { Association, Post } from '@urbit/api';
 import React, { ReactElement } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { useCopy } from '~/logic/lib/useCopy';
 import useContactState from '~/logic/state/contact';
@@ -12,7 +11,6 @@ import airlock from '~/logic/api';
 import { removePosts } from '@urbit/api/graph';
 interface PostHeaderProps {
   post: Post;
-  api: GlobalApi;
   association: Association;
   isReply: boolean;
   showTimestamp: boolean;
@@ -22,7 +20,6 @@ interface PostHeaderProps {
 const PostHeader = (props: PostHeaderProps): ReactElement => {
   const {
     post,
-    api,
     association,
     isReply,
     showTimestamp,
@@ -61,7 +58,6 @@ const PostHeader = (props: PostHeaderProps): ReactElement => {
         ship={post.author}
         date={post['time-sent']}
         unread={false}
-        api={api}
         size={24}
         sigilPadding={6}
         dontShowTime={!showTimestamp}

@@ -3,13 +3,11 @@ import { Graph } from '@urbit/api/graph';
 import { FormikHelpers } from 'formik';
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { newPost } from '~/logic/lib/publish';
 import { PostForm, PostFormSchema } from './NoteForm';
 import airlock from '~/logic/api';
 
 interface NewPostProps {
-  api: GlobalApi;
   book: string;
   ship: string;
   graph: Graph;

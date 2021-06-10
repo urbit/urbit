@@ -6,7 +6,6 @@ import {
 import { Form, FormikHelpers } from 'formik';
 import _ from 'lodash';
 import React, { useCallback, useState } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { isWatching } from '~/logic/lib/hark';
 import useHarkState from '~/logic/state/hark';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
@@ -28,10 +27,7 @@ interface FormSchema {
   }
 }
 
-export function NotificationPreferences(props: {
-  api: GlobalApi;
-}) {
-  const { api } = props;
+export function NotificationPreferences() {
   const dnd = useHarkState(state => state.doNotDisturb);
   const graphConfig = useHarkState(state => state.notificationsGraphConfig);
   const groupConfig = useHarkState(s => s.notificationsGroupConfig);
@@ -70,7 +66,7 @@ export function NotificationPreferences(props: {
       console.error(e);
       actions.setStatus({ error: e.message });
     }
-  }, [api, graphConfig, dnd]);
+  }, [graphConfig, dnd]);
 
   const [notificationsAllowed, setNotificationsAllowed] = useState('Notification' in window && Notification.permission !== 'default');
 

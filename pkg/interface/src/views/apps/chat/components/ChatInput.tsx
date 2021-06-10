@@ -1,7 +1,6 @@
 import { BaseImage, Box, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
 import { Contact, Content, evalCord } from '@urbit/api';
 import React, { Component, ReactNode } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { Sigil } from '~/logic/lib/sigil';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { IuseStorage } from '~/logic/lib/useStorage';
@@ -12,7 +11,6 @@ import ChatEditor from './ChatEditor';
 import airlock from '~/logic/api';
 
 type ChatInputProps = IuseStorage & {
-  api: GlobalApi;
   ourContact?: Contact;
   onUnmount(msg: string): void;
   placeholder: string;

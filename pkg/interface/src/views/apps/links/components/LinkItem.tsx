@@ -2,7 +2,6 @@ import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-re
 import { Association, GraphNode, Group, markEachAsRead, removePosts, TextContent, UrlContent } from '@urbit/api';
 import React, { ReactElement, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph, referenceToPermalink } from '~/logic/lib/permalinks';
 import { useCopy } from '~/logic/lib/useCopy';
@@ -17,7 +16,6 @@ interface LinkItemProps {
   node: GraphNode;
   association: Association;
   resource: string;
-  api: GlobalApi;
   group: Group;
   path: string;
   baseUrl: string;
@@ -29,7 +27,6 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
     association,
     node,
     resource,
-    api,
     group,
     ...rest
   } = props;
@@ -133,7 +130,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
         { 'reference' in contents[1] ? (
           <>
             <Rule />
-            <PermalinkEmbed full link={referenceToPermalink(contents[1]).link} api={api} transcluded={0} />
+            <PermalinkEmbed full link={referenceToPermalink(contents[1]).link} transcluded={0} />
           </>
         ) : (
         <>

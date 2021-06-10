@@ -3,7 +3,6 @@ import { addPost, Association, Content, evalCord, Group, Path } from '@urbit/api
 import React, {
   ReactElement, useCallback, useState
 } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { createPost } from '~/logic/api/graph';
 import { isChannelAdmin, isHost, isWriter, resourceFromPath } from '~/logic/lib/group';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
@@ -31,7 +30,6 @@ function canWrite(props) {
 }
 
 interface PostInputProps {
-  api: GlobalApi;
   association: Association;
   graphPath: Path;
   group: Group;

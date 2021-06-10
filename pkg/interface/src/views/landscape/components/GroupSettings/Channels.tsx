@@ -1,7 +1,6 @@
 import { Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { Association, Group, metadataRemove, metadataUpdate } from '@urbit/api';
 import React, { useCallback } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { getModuleIcon, GraphModule } from '~/logic/lib/util';
 import useMetadataState from '~/logic/state/metadata';
@@ -12,7 +11,6 @@ import airlock from '~/logic/api';
 interface GroupChannelSettingsProps {
   group: Group;
   association: Association;
-  api: GlobalApi;
 }
 
 export function GroupChannelSettings(props: GroupChannelSettingsProps) {

@@ -9,20 +9,17 @@ import {
 
     Row, Text
 } from '@tlon/indigo-react';
-import { addBucket, removeBucket, setCurrentBucket } from '@urbit/api/dist';
+import { addBucket, removeBucket, setCurrentBucket } from '@urbit/api';
 import { Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback, useState } from 'react';
-import GlobalApi from '~/logic/api/global';
 import airlock from '~/logic/api';
 
 export function BucketList({
   buckets,
-  selected,
-  api
+  selected
 }: {
   buckets: Set<string>;
   selected: string;
-  api: GlobalApi;
 }): ReactElement {
   const _buckets = Array.from(buckets);
 
@@ -33,7 +30,7 @@ export function BucketList({
       airlock.poke(addBucket(values.newBucket));
       actions.resetForm({ values: { newBucket: '' } });
     },
-    [api]
+    []
   );
 
   const onSelect = useCallback(
@@ -42,7 +39,7 @@ export function BucketList({
         airlock.poke(setCurrentBucket(bucket));
       };
     },
-    [api]
+    []
   );
 
   const onDelete = useCallback(
@@ -51,7 +48,7 @@ export function BucketList({
         airlock.poke(removeBucket(bucket));
       };
     },
-    [api]
+    []
   );
 
   return (

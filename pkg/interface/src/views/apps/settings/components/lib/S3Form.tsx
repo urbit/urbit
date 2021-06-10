@@ -101,7 +101,6 @@ export default function S3Form(_props: {}): ReactElement {
         <BucketList
           buckets={s3.configuration.buckets}
           selected={s3.configuration.currentBucket}
-          api={api}
         />
       </Col>
     </>

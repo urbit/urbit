@@ -4,7 +4,6 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import useGroupState from '~/logic/state/group';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import GroupSearch from '~/views/components/GroupSearch';
@@ -19,7 +18,6 @@ interface FormSchema {
 }
 
 interface GroupifyFormProps {
-  api: GlobalApi;
   association: Association;
 }
 

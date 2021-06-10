@@ -7,7 +7,6 @@ import {
 import bigInt from 'big-integer';
 import _ from 'lodash';
 import React, { ReactElement } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { useAssocForGroup } from '~/logic/state/metadata';
 import { Header } from './header';
 
@@ -35,14 +34,12 @@ function getGroupUpdateParticipants(update: GroupUpdate): string[] {
 interface GroupNotificationProps {
   index: GroupNotifIndex;
   contents: GroupNotificationContents;
-  read: boolean;
   time: number;
   timebox: bigInt.BigInteger;
-  api: GlobalApi;
 }
 
 export function GroupNotification(props: GroupNotificationProps): ReactElement {
-  const { contents, index, read, time, api, timebox } = props;
+  const { contents, index, time } = props;
 
   const authors = _.flatten(_.map(contents, getGroupUpdateParticipants));
 

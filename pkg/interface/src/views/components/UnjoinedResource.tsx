@@ -3,7 +3,6 @@ import { joinGraph } from '@urbit/api/graph';
 import { Association, GraphConfig } from '@urbit/api/metadata';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { useQuery } from '~/logic/lib/useQuery';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import useGraphState from '~/logic/state/graph';
@@ -15,7 +14,6 @@ import airlock from '~/logic/api';
 
 interface UnjoinedResourceProps {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 }
 
@@ -29,7 +27,6 @@ function isJoined(path: string) {
 }
 
 export function UnjoinedResource(props: UnjoinedResourceProps) {
-  const { api } = props;
   const history = useHistory();
   const { query } = useQuery();
   const rid = props.association.resource;
@@ -80,7 +77,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
           <Text>{title}</Text>
         </Box>
         <Box>
-          <RichText color="gray" api={api}>{description}</RichText>
+          <RichText color="gray">{description}</RichText>
         </Box>
         <StatelessAsyncButton
           name={rid}

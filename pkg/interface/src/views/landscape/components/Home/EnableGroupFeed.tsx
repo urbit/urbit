@@ -3,7 +3,6 @@ import { createGroupFeed, Resource, resourceFromPath } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import {
@@ -18,7 +17,6 @@ interface FormSchema {
 export function EnableGroupFeed(props: {
   groupPath: string;
   dismiss?: () => void;
-  api: GlobalApi;
   baseUrl: string;
 }) {
   const { groupPath, baseUrl } = props;

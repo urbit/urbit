@@ -7,20 +7,20 @@ import { Loading } from '~/views/components/Loading';
 import PostFeed from './PostFeed';
 import PostItem from './PostItem/PostItem';
 import { stringToArr, arrToString } from '~/views/components/ArrayVirtualScroller';
+import { useHistory } from 'react-router';
 
 const graphSel = (s: GraphState) => s.getNode;
 
 export default function PostReplies(props) {
   const {
     baseUrl,
-    api,
-    history,
     association,
     graphPath,
     group,
     vip,
     pendingSize
   } = props;
+  const history = useHistory();
   const getNode = useGraphState(graphSel);
 
   const graphRid = resourceFromPath(graphPath);
@@ -96,7 +96,6 @@ export default function PostReplies(props) {
             node={node}
             graphPath={graphPath}
             association={association}
-            api={api}
             index={index}
             baseUrl={baseUrl}
             history={history}
@@ -135,8 +134,6 @@ export default function PostReplies(props) {
         association={association}
         group={group}
         vip={vip}
-        api={api}
-        history={history}
         baseUrl={baseUrl}
       />
     </Box>

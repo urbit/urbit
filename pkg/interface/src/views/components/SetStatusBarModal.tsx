@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { SetStatus } from '~/views/apps/profile/components/SetStatus';
 
 export const SetStatusBarModal = (props) => {
-  const { ship, contact, api, isControl, ...rest } = props;
+  const { ship, contact, isControl, ...rest } = props;
   const [modalShown, setModalShown] = useState(false);
 
   const handleKeyDown = (event) => {
@@ -52,7 +52,6 @@ export const SetStatusBarModal = (props) => {
               <SetStatus
                 ship={ship}
                 contact={contact}
-                api={api}
                 callback={() => {
                   setModalShown(false);
                 }}

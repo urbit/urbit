@@ -18,7 +18,6 @@ import _ from 'lodash';
 import React, { ReactElement, ReactNode, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import GlobalApi from '~/logic/api/global';
 import { useRunIO } from '~/logic/lib/useRunIO';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { cite, isDm } from '~/logic/lib/util';
@@ -39,7 +38,6 @@ interface GroupInviteProps {
   uid?: string;
   invite?: Invite;
   resource: string;
-  api: GlobalApi;
 }
 
 function Elbow(
@@ -202,7 +200,6 @@ export function useInviteAccept(
 function InviteActions(props: {
   status?: JoinRequest;
   resource: string;
-  api: GlobalApi;
   app?: string;
   uid?: string;
 }) {
@@ -279,7 +276,7 @@ const responsiveStyle = ({ gapXY = 0 as number | number[] }) => {
 };
 const ResponsiveRow = styled(Row)(responsiveStyle);
 export function GroupInvite(props: GroupInviteProps): ReactElement {
-  const { resource, api, preview, invite, status, app, uid } = props;
+  const { resource, preview, invite, status, app, uid } = props;
   const dm = isDm(resource);
   const history = useHistory();
 
@@ -300,7 +297,7 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
   };
 
   return (
-    <NotificationWrapper api={api}>
+    <NotificationWrapper>
       <Header content {...headerProps} />
       <Row onClick={onClick} height={[null, 4]} alignItems="flex-start" gridArea="main">
         <Elbow mx={2} />
@@ -312,7 +309,6 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
           <InviteMetadata preview={preview} resource={resource} />
           <InviteStatus status={status} />
           <InviteActions
-            api={api}
             resource={resource}
             status={status}
             app={app}

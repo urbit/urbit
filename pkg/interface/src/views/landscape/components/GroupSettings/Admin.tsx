@@ -10,7 +10,6 @@ import { Association } from '@urbit/api/metadata';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { uxToHex } from '~/logic/lib/util';
 import { AsyncButton } from '~/views/components/AsyncButton';
@@ -39,7 +38,6 @@ const formSchema = Yup.object({
 interface GroupAdminSettingsProps {
   group: Group;
   association: Association;
-  api: GlobalApi;
 }
 
 export function GroupAdminSettings(props: GroupAdminSettingsProps) {

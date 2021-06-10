@@ -3,7 +3,6 @@ import { Association, Graph, GraphNode, Group, markEachAsRead, removePosts } fro
 import bigInt from 'big-integer';
 import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getComments, getLatestRevision } from '~/logic/lib/publish';
@@ -21,16 +20,15 @@ interface NoteProps {
   note: GraphNode;
   association: Association;
   notebook: Graph;
-  api: GlobalApi;
   rootUrl: string;
   baseUrl: string;
   group: Group;
 }
 
-export function NoteContent({ post, api }) {
+export function NoteContent({ post }) {
   return (
       <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <GraphContent tall={true} contents={post.contents.slice(1)} showOurContact api={api} />
+        <GraphContent tall={true} contents={post.contents.slice(1)} showOurContact />
       </Box>
   );
 }
@@ -122,7 +120,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           </Author>
         </Row>
       </Col>
-      <NoteContent api={props.api} post={post} />
+      <NoteContent post={post} />
       <NoteNavigation
         notebook={notebook}
         noteId={noteId}
@@ -133,7 +131,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         name={props.book}
         comments={comments}
         association={props.association}
-        api={props.api}
         baseUrl={baseUrl}
         history={props.history}
         group={group}

@@ -5,7 +5,6 @@ import { Box, Col, Text } from '@tlon/indigo-react';
 import { Formik, Form, useField } from 'formik';
 import { putEntry } from '@urbit/api/settings';
 
-import GlobalApi from '~/logic/api/global';
 import { getChord } from '~/logic/lib/util';
 import useSettingsState, {
   selectSettingsState,
@@ -14,10 +13,6 @@ import useSettingsState, {
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { BackButton } from './BackButton';
 import airlock from '~/logic/api';
-
-interface ShortcutSettingsProps {
-  api: GlobalApi;
-}
 
 const settingsSel = selectSettingsState(['keyboard']);
 
@@ -66,7 +61,7 @@ export function ChordInput(props: { id: string; label: string }) {
   );
 }
 
-export default function ShortcutSettings(props: ShortcutSettingsProps) {
+export default function ShortcutSettings() {
   const { keyboard } = useSettingsState(settingsSel);
 
   return (

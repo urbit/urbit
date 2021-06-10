@@ -1,5 +1,6 @@
 import airlock from '~/logic/api';
 import _ from 'lodash';
+import { fetchIsAllowed } from '@urbit/api';
 
 export async function disallowedShipsForOurContact(
   ships: string[]

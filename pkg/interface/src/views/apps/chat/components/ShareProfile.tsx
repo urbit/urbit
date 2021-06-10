@@ -1,14 +1,12 @@
 import { BaseImage, Box, Row, Text } from '@tlon/indigo-react';
 import { allowGroup, allowShips, Contact, share } from '@urbit/api';
 import React, { ReactElement } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
 import airlock from '~/logic/api';
 
 interface ShareProfileProps {
   our?: Contact;
-  api: GlobalApi;
   recipients: string | string[];
   onShare: () => void;
 }

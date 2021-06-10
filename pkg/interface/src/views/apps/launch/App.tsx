@@ -4,7 +4,6 @@ import f from 'lodash/fp';
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
-import GlobalApi from '~/logic/api/global';
 import {
     hasTutorialGroup,
 
@@ -32,10 +31,10 @@ import ModalButton from './components/ModalButton';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import './css/custom.css';
-import airlock from '~/logic/api';
 import { join } from '@urbit/api/groups';
 import { putEntry } from '@urbit/api/settings';
 import { joinGraph } from '@urbit/api/graph';
+import airlock from '~/logic/api';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -49,7 +48,6 @@ const tutSelector = f.pick(['tutorialProgress', 'nextTutStep', 'hideGroups']);
 
 interface LaunchAppProps {
   connection: string;
-  api: GlobalApi;
 }
 
 export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
@@ -219,9 +217,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
               </Row>
             </Box>
           </Tile>
-          <Tiles
-            api={props.api}
-          />
+          <Tiles />
           <ModalButton
             icon="Plus"
             bg="washedGray"
@@ -229,7 +225,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
             text="New Group"
             style={{ gridColumnStart: 1 }}
           >
-            <NewGroup {...props} />
+            <NewGroup />
           </ModalButton>
           <ModalButton
             icon="BootNode"
@@ -237,7 +233,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
             color="black"
             text="Join Group"
           >
-            <JoinGroup {...props} />
+            <JoinGroup />
           </ModalButton>
           </>}
           {!hideGroups &&

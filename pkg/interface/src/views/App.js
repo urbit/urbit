@@ -8,7 +8,6 @@ import 'react-hot-loader';
 import { hot } from 'react-hot-loader/root';
 import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
-import GlobalApi from '~/logic/api/global';
 import gcpManager from '~/logic/lib/gcpManager';
 import { favicon, svgDataURL } from '~/logic/lib/util';
 import withState from '~/logic/lib/withState';
@@ -19,8 +18,6 @@ import useSettingsState from '~/logic/state/settings';
 import useGraphState from '~/logic/state/graph';
 import { ShortcutContextProvider } from '~/logic/lib/shortcutContext';
 
-import GlobalStore from '~/logic/store/store';
-import GlobalSubscription from '~/logic/subscription/global';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
 import { TutorialModal } from '~/views/landscape/components/TutorialModal';
 import './apps/chat/css/custom.css';
@@ -77,16 +74,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.ship = window.ship;
-    this.store = new GlobalStore();
-    this.store.setStateHandler(this.setState.bind(this));
-    this.state = this.store.state;
 
     //  eslint-disable-next-line
-    this.appChannel = new window.channel();
-    this.api = new GlobalApi(this.ship, this.appChannel, this.store);
-    gcpManager.configure(this.api);
-    this.subscription =
-      new GlobalSubscription(this.store, this.api, this.appChannel);
 
     this.updateTheme = this.updateTheme.bind(this);
     this.updateMobile = this.updateMobile.bind(this);
@@ -94,7 +83,6 @@ class App extends React.Component {
 
   componentDidMount() {
     bootstrapApi();
-    this.subscription.start();
     this.props.getShallowChildren(`~${window.ship}`, 'dm-inbox');
     const theme = this.getTheme();
     this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
@@ -143,7 +131,6 @@ class App extends React.Component {
   }
 
   render() {
-    const { state } = this;
     const theme = this.getTheme();
 
     const ourContact = this.props.contacts[`~${this.ship}`] || null;
@@ -157,21 +144,18 @@ class App extends React.Component {
         </Helmet>
         <Root>
           <Router>
-            <TutorialModal api={this.api} />
+            <TutorialModal />
             <ErrorBoundary>
               <StatusBarWithRouter
                 props={this.props}
                 ourContact={ourContact}
-                api={this.api}
-                connection={this.state.connection}
+                connection={'foo'}
                 subscription={this.subscription}
                 ship={this.ship}
               />
             </ErrorBoundary>
             <ErrorBoundary>
               <Omnibox
-                associations={state.associations}
-                api={this.api}
                 show={this.props.omniboxShown}
                 toggle={this.props.toggleOmnibox}
               />
@@ -179,9 +163,8 @@ class App extends React.Component {
             <ErrorBoundary>
               <Content
                 ship={this.ship}
-                api={this.api}
                 subscription={this.subscription}
-                connection={this.state.connection}
+                connection={'aa'}
               />
             </ErrorBoundary>
           </Router>

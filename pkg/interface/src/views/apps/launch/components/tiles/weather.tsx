@@ -1,7 +1,6 @@
 import { BaseInput, Box, Icon, Text } from '@tlon/indigo-react';
 import moment from 'moment';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import withState from '~/logic/lib/withState';
 import useLaunchState from '~/logic/state/launch';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
@@ -39,7 +38,6 @@ const imperialCountries = [
 
 interface WeatherTileProps {
   weather: any;
-  api: GlobalApi;
   location: string;
 }
 

@@ -8,7 +8,6 @@ import { Form } from 'formik';
 import { putEntry } from '@urbit/api/settings';
 import React from 'react';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
 import { AsyncButton } from '~/views/components/AsyncButton';
@@ -34,15 +33,9 @@ interface FormSchema {
   theme: string;
 }
 
-interface DisplayFormProps {
-  api: GlobalApi;
-}
-
 const settingsSel = selectSettingsState(['display']);
 
-export default function DisplayForm(props: DisplayFormProps) {
-  const { api } = props;
-
+export default function DisplayForm() {
   const {
     display: {
       background,
@@ -58,7 +51,6 @@ export default function DisplayForm(props: DisplayFormProps) {
   if (backgroundType === 'color') {
     bgColor = background;
   }
-  const bgType = backgroundType || 'none';
 
   return (
     <FormikOnBlur
@@ -100,10 +92,7 @@ export default function DisplayForm(props: DisplayFormProps) {
                 Customize visual interfaces across your Landscape
               </Text>
             </Col>
-            <BackgroundPicker
-            api={api}
-            bgType={bgType}
-            />
+            <BackgroundPicker />
             <Label>Theme</Label>
             <Radio name="theme" id="light" label="Light" />
             <Radio name="theme" id="dark" label="Dark" />

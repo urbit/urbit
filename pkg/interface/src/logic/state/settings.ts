@@ -7,6 +7,7 @@ import {
 } from '~/types/local-update';
 import { useShortcut as usePlainShortcut } from '~/logic/lib/shortcutContext';
 import {
+  BaseState,
   createState,
   createSubscription,
   reduceStateN
@@ -50,8 +51,8 @@ export interface SettingsState {
   };
 }
 
-export const selectSettingsState = <K extends keyof SettingsState>(keys: K[]) =>
-  f.pick<SettingsState, K>(keys);
+export const selectSettingsState = <K extends keyof (SettingsState & BaseState<SettingsState>)>(keys: K[]) =>
+  f.pick<BaseState<SettingsState> & SettingsState, K>(keys);
 
 export const selectCalmState = (s: SettingsState) => s.calm;
 

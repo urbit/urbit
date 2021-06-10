@@ -1,7 +1,6 @@
 import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import React, { ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { useModal } from '~/logic/lib/useModal';
 import useMetadataState, { usePreview } from '~/logic/state/metadata';
 import { PropFunc } from '~/types';
@@ -10,19 +9,18 @@ import { MetadataIcon } from '../landscape/components/MetadataIcon';
 
 export function GroupLink(
   props: {
-    api: GlobalApi;
     resource: string;
     detailed?: boolean;
   } & PropFunc<typeof Row>
 ): ReactElement {
-  const { resource, api, ...rest } = props;
+  const { resource, ...rest } = props;
   const name = resource.slice(6);
   const associations = useMetadataState(state => state.associations);
   const history = useHistory();
   const joined = resource in associations.groups;
 
   const { modal, showModal } = useModal({
-    modal: <JoinGroup api={api} autojoin={name} />
+    modal: <JoinGroup autojoin={name} />
     });
 
   const { preview } = usePreview(resource);

@@ -5,7 +5,6 @@ import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import urbitOb from 'urbit-ob';
-import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
@@ -56,7 +55,6 @@ const participantNames = (str: string, contacts, hideNicknames) => {
 
 type ResourceSkeletonProps = {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
   children: ReactNode;
   title?: string;
@@ -64,7 +62,7 @@ type ResourceSkeletonProps = {
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
-  const { association, baseUrl, children, api } = props;
+  const { association, baseUrl, children } = props;
   let app = association['app-name'];
   if (association?.metadata?.config && 'graph' in association.metadata.config) {
     app = association.metadata.config.graph;
@@ -180,7 +178,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
               color='washedGray'
               boxShadow='0px 0px 0px 3px'
             >
-              <MessageInvite association={association} api={api} />
+              <MessageInvite association={association} />
             </Col>
           }
         >

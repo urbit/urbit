@@ -3,7 +3,6 @@ import { Content, Graph, Post } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { useOurContact } from '~/logic/state/contact';
@@ -29,7 +28,6 @@ interface ChatPaneProps {
    * User able to write to chat
    */
   canWrite: boolean;
-  api: GlobalApi;
   /**
    * Get contents of reply message
    */
@@ -67,7 +65,6 @@ interface ChatPaneProps {
 
 export function ChatPane(props: ChatPaneProps): ReactElement {
   const {
-    api,
     graph,
     unreadCount,
     canWrite,
@@ -136,11 +133,10 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   }
 
   return (
-    // @ts-ignore
+    // @ts-ignore bind typings
     <Col {...bind} height="100%" overflow="hidden" position="relative">
       <ShareProfile
         our={ourContact}
-        api={api}
         recipients={showBanner ? promptShare : []}
         onShare={() => setShowBanner(false)}
       />
@@ -158,13 +154,11 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
         fetchMessages={fetchMessages}
         isAdmin={isAdmin}
         getPermalink={getPermalink}
-        api={api}
         scrollTo={scrollTo ? bigInt(scrollTo) : undefined}
       />
       {canWrite && (
         <ChatInput
           ref={chatInput}
-          api={props.api}
           onSubmit={onSubmit}
           ourContact={(promptShare.length === 0 && ourContact) || undefined}
           onUnmount={appendUnsent}

@@ -3,7 +3,6 @@ import { Group } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
 import React, { ReactElement, useCallback, useRef } from 'react';
 import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { useHashLink } from '~/logic/lib/useHashLink';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
@@ -17,7 +16,6 @@ export function PopoverRoutes(
     baseUrl: string;
     group: Group;
     association: Association;
-    api: GlobalApi;
   } & RouteComponentProps
 ): ReactElement {
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
@@ -104,7 +102,7 @@ export function PopoverRoutes(
 
                       </>
                     )}
-                    <DeleteGroup owner={owner} api={props.api} association={props.association} />
+                    <DeleteGroup owner={owner} association={props.association} />
                   </Col>
                 </Col>
                 <Box
@@ -122,14 +120,12 @@ export function PopoverRoutes(
                       baseUrl={`${props.baseUrl}/popover`}
                       group={props.group}
                       association={props.association}
-                      api={props.api}
                     />
                   )}
                   {view === 'participants' && (
                     <Participants
                       group={props.group}
                       association={props.association}
-                      api={props.api}
                     />
                   )}
                 </Box>

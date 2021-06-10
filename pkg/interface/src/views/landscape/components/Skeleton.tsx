@@ -1,7 +1,6 @@
-import React, { Children, ReactElement, ReactNode, useCallback, useMemo, useState } from 'react';
+import React, { ReactElement, ReactNode, useCallback, useMemo, useState } from 'react';
 import { Sidebar } from './Sidebar/Sidebar';
 import { AppName } from '@urbit/api';
-import GlobalApi from '~/logic/api/global';
 import useGraphState from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
 import { Workspace } from '~/types/workspace';
@@ -17,12 +16,11 @@ interface SkeletonProps {
   selectedApp?: AppName;
   baseUrl: string;
   mobileHide?: boolean;
-  api: GlobalApi;
   workspace: Workspace;
 }
 
 export function Skeleton(props: SkeletonProps): ReactElement {
-  const [sidebar, setSidebar] = useState(true)
+  const [sidebar, setSidebar] = useState(true);
   useShortcut('hideSidebar', useCallback(() => {
     setSidebar(s => !s);
   }, []));
@@ -47,7 +45,6 @@ export function Skeleton(props: SkeletonProps): ReactElement {
     >
       <ErrorBoundary>
         <Sidebar
-          api={props.api}
           recentGroups={props.recentGroups}
           selected={props.selected}
           apps={config}

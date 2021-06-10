@@ -2,8 +2,7 @@ import { Box, Col } from '@tlon/indigo-react';
 import { Association, FlatGraph, FlatGraphNode, Group } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
-import GlobalApi from '~/logic/api/global';
+import { RouteComponentProps, useHistory } from 'react-router';
 import { resourceFromPath } from '~/logic/lib/group';
 import ArrayVirtualScroller, {
   indexEqual,
@@ -11,7 +10,6 @@ import ArrayVirtualScroller, {
 } from '~/views/components/ArrayVirtualScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
-import withState from '~/logic/lib/withState';
 import useGraphState, { GraphState } from '~/logic/state/graph';
 
 const virtualScrollerStyle = {
@@ -21,7 +19,6 @@ const virtualScrollerStyle = {
 interface PostFeedProps {
   flatGraph: FlatGraph;
   graphPath: string;
-  api: GlobalApi;
   getDeepOlderThan: GraphState['getDeepOlderThan'];
   history: RouteComponentProps['history'];
   baseUrl: string;
@@ -49,7 +46,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
     const {
       flatGraph,
       graphPath,
-      api,
       history,
       baseUrl,
       association,
@@ -86,7 +82,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
               node={node}
               graphPath={graphPath}
               association={association}
-              api={api}
               index={index}
               baseUrl={baseUrl}
               history={history}
@@ -118,7 +113,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
             mb={3}
           >
             <PostInput
-              api={api}
               group={group}
               association={association}
               vip={vip}
@@ -129,7 +123,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
             node={node}
             graphPath={graphPath}
             association={association}
-            api={api}
             index={index}
             baseUrl={baseUrl}
             history={history}
@@ -149,7 +142,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
           node={node}
           graphPath={graphPath}
           association={association}
-          api={api}
           index={index}
           baseUrl={baseUrl}
           history={history}
@@ -182,7 +174,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
     } else {
       const [index] = flatGraph.peekSmallest();
       if (index && index.length > 0) {
-        await getDeepOlderThan(ship, name, index[0].toString(), 100);
+        await getDeepOlderThan(ship, name, 100, index[0].toString());
       }
     }
 
@@ -220,4 +212,16 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
   }
 }
 
-export default withState(withRouter(PostFlatFeed), [[useGraphState, ['getDeepOlderThan']]]);
+export default React.forwardRef<PostFlatFeed, Omit<PostFeedProps, 'history' | 'getDeepOlderThan'>>(
+  (props, ref) => {
+    const history = useHistory();
+    const getDeepOlderThan = useGraphState(s => s.getDeepOlderThan);
+    return (
+      <PostFlatFeed
+        ref={ref}
+        {...props}
+        history={history}
+        getDeepOlderThan={getDeepOlderThan}
+      />
+    );
+  });

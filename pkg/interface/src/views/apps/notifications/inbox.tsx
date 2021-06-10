@@ -14,7 +14,6 @@ import _ from 'lodash';
 import f from 'lodash/fp';
 import moment from 'moment';
 import React, { useEffect, useRef } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { getNotificationKey } from '~/logic/lib/hark';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useLaunchState from '~/logic/state/launch';
@@ -45,11 +44,9 @@ function filterNotification(groups: string[]) {
 export default function Inbox(props: {
   archive: Notifications;
   showArchive?: boolean;
-  api: GlobalApi;
   filter: string[];
   pendingJoin: JoinRequests;
 }) {
-  const { api } = props;
   useEffect(() => {
     let hasSeen = false;
     setTimeout(() => {
@@ -119,15 +116,14 @@ export default function Inbox(props: {
           </Text>
         </Box>
       )}
-      <Invites pendingJoin={props.pendingJoin} api={api} />
-      <DaySection unread key="unread" timeboxes={[[date,unreadNotes]]} api={api} />
+      <Invites pendingJoin={props.pendingJoin} />
+      <DaySection unread key="unread" timeboxes={[[date,unreadNotes]]} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
           <DaySection
             key={day}
             timeboxes={timeboxes}
-            api={api}
           />
         );
       })}
@@ -160,8 +156,7 @@ function sortIndexedNotification(
 
 function DaySection({
   timeboxes,
-  unread = false,
-  api
+  unread = false
 }) {
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {
@@ -174,7 +169,6 @@ function DaySection({
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
           <Notification
             key={getNotificationKey(date, not)}
-            api={api}
             notification={not}
             unread={unread}
             time={!unread ? date : undefined}

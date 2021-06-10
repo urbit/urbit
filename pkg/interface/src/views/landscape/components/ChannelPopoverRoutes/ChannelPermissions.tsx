@@ -10,7 +10,6 @@ import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React from 'react';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { FormGroupChild } from '~/views/components/FormGroup';
 import { shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
@@ -54,7 +53,6 @@ function PermissionsSummary(props: {
 interface GraphPermissionsProps {
   association: Association;
   group: Group;
-  api: GlobalApi;
 }
 
 interface FormSchema {

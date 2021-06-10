@@ -4,7 +4,6 @@ import bigInt from 'big-integer';
 import React, {
   Component, ReactNode
 } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import VirtualScroller from '~/views/components/VirtualScroller';
 import { LinkItem } from './components/LinkItem';
@@ -19,7 +18,6 @@ interface LinkWindowProps {
   baseUrl: string;
   group: Group;
   path: string;
-  api: GlobalApi;
   pendingSize: number;
   mb?: number;
 }
@@ -47,7 +45,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
 
   renderItem = React.forwardRef<HTMLDivElement>(({ index }: RendererProps, ref) => {
     const { props } = this;
-    const { association, graph, api } = props;
+    const { association, graph } = props;
     const [, , ship, name] = association.resource.split('/');
     // @ts-ignore Uint8Array vs. BigInt mismatch?
     const node = graph.get(index);
@@ -60,7 +58,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
       ...props,
       node
     };
-    {/* @ts-ignore calling @liam-fitzgerald on Uint8Array props */}
+    { /* @ts-ignore calling @liam-fitzgerald on Uint8Array props */ }
     if (this.canWrite() && index.eq(first ?? bigInt.zero)) {
       return (
         <React.Fragment key={index.toString()}>
@@ -77,7 +75,6 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
             <LinkSubmit
               name={name}
               ship={ship.slice(1)}
-              api={api}
             />
           </Col>
           { typeof post !== 'string' && <LinkItem {...linkProps} /> }
@@ -96,7 +93,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
   });
 
   render() {
-    const { graph, api, association } = this.props;
+    const { graph, association } = this.props;
     const first = graph.peekLargest()?.[0];
     const [, , ship, name] = association.resource.split('/');
     if (!first) {
@@ -114,7 +111,6 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
             <LinkSubmit
               name={name}
               ship={ship.slice(1)}
-              api={api}
             />
           ) : (
             <Text>

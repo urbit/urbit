@@ -122,7 +122,7 @@ export function ProfileStatus(props: any): ReactElement {
 }
 
 export function ProfileActions(props: any): ReactElement {
-  const { ship, isPublic, contact, api } = props;
+  const { ship, isPublic, contact } = props;
   const history = useHistory();
   return (
     <Row>
@@ -149,7 +149,6 @@ export function ProfileActions(props: any): ReactElement {
             isControl
             py={2}
             ml={3}
-            api={api}
             ship={`~${window.ship}`}
             contact={contact}
           />
@@ -193,13 +192,11 @@ export function Profile(props: any): ReactElement | null {
           <EditProfile
             ship={ship}
             contact={contact}
-            api={props.api}
           />
         ) : (
           <ViewProfile
             nacked={nacked}
             ship={ship}
-            api={props.api}
             contact={contact}
           />
         )}

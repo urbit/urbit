@@ -17,7 +17,6 @@ import { Content, CodeContent } from '@urbit/api';
 import _ from 'lodash';
 import { BlockContent, Content as AstContent, Parent, Root } from 'ts-mdast';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import { PropFunc } from '~/types';
 import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
@@ -340,7 +339,7 @@ const renderers = {
   list: ({ depth, ordered, children }) => {
     return ordered ? <Ol>{children}</Ol> : <Ul>{children}</Ul>;
   },
-  'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
+  'graph-mention': ({ ship }) => <Mention ship={ship} />,
   image: ({ url, tall }) => (
     <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent
@@ -359,12 +358,11 @@ const renderers = {
       />
     </Box>
   ),
-  'graph-reference': ({ api, reference, transcluded }) => {
+  'graph-reference': ({ reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
     return (
       <Box my={2} flexShrink={0}>
         <PermalinkEmbed
-          api={api}
           link={link}
           transcluded={transcluded}
           showOurContact
@@ -433,7 +431,6 @@ export type GraphContentProps = PropFunc<typeof Box> & {
   tall?: boolean;
   transcluded?: number;
   contents: Content[];
-  api: GlobalApi;
   showOurContact: boolean;
 };
 
@@ -444,13 +441,12 @@ export const GraphContent = React.memo((
     contents,
     tall = false,
     transcluded = 0,
-    api,
     ...rest
   } = props;
   const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
   return (
     <Box {...rest}>
-      <Graphdown transcluded={transcluded} api={api} ast={ast} tall={tall} />
+      <Graphdown transcluded={transcluded} ast={ast} tall={tall} />
     </Box>
   );
 });

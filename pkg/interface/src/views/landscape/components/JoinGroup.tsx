@@ -11,7 +11,6 @@ import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import urbitOb from 'urbit-ob';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import { TUTORIAL_GROUP_RESOURCE } from '~/logic/lib/tutorialModal';
 import { useQuery } from '~/logic/lib/useQuery';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
@@ -41,7 +40,6 @@ interface FormSchema {
 }
 
 interface JoinGroupProps {
-  api: GlobalApi;
   autojoin?: string;
 }
 
@@ -58,7 +56,7 @@ function Autojoin(props: { autojoin: string | null }) {
 }
 
 export function JoinGroup(props: JoinGroupProps): ReactElement {
-  const { api, autojoin } = props;
+  const { autojoin } = props;
   const { associations, getPreview } = useMetadataState();
   const groups = useGroupState(state => state.groups);
   const history = useHistory();
@@ -107,7 +105,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
       //  drop them into inbox to show join request still pending
       history.push('/~notifications');
     }
-  }, [api, waiter, history, associations, groups]);
+  }, [waiter, history, associations, groups]);
 
   const onSubmit = useCallback(
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
@@ -134,7 +132,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
         }
       }
     },
-    [api, waiter, history, onConfirm]
+    [waiter, history, onConfirm]
   );
 
   return (

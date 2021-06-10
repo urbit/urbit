@@ -18,7 +18,6 @@ import React, {
 import { Link } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
 import styled from 'styled-components';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { Sigil } from '~/logic/lib/sigil';
 import { cite, uxToHex } from '~/logic/lib/util';
@@ -107,9 +106,7 @@ const Tab = ({ selected, id, label, setSelected }) => (
 export function Participants(props: {
   group: Group;
   association: Association;
-  api: GlobalApi;
 }): ReactElement {
-  const { api } = props;
   const tabFilters: Record<
     ParticipantsTabId,
     (p: Participant) => boolean
@@ -223,7 +220,6 @@ export function Participants(props: {
                 isVisible ? (
                   cs.map(c => (
                     <Participant
-                      api={api}
                       key={c.patp}
                       role={ourRole}
                       group={props.group}
@@ -248,7 +244,6 @@ function Participant(props: {
   association: Association;
   group: Group;
   role?: RoleTags;
-  api: GlobalApi;
 }) {
   const { contact, association, group } = props;
   const { title } = association.metadata;

@@ -10,7 +10,6 @@ import {
 } from '@urbit/api';
 import React, { useCallback, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { isChannelAdmin, isHost } from '~/logic/lib/group';
 import { useHashLink } from '~/logic/lib/useHashLink';
 import { FormGroup } from '~/views/components/FormGroup';
@@ -27,7 +26,6 @@ interface ChannelPopoverRoutesProps {
   rootUrl: string;
   association: Association;
   group: Group;
-  api: GlobalApi;
 }
 
 export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {

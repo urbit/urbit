@@ -7,13 +7,11 @@ import {
 import { ignoreGroup, listenGroup } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import useHarkState from '~/logic/state/hark';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
 import airlock from '~/logic/api';
 
 export function GroupPersonalSettings(props: {
-  api: GlobalApi;
   association: Association;
 }) {
   const groupPath = props.association.group;

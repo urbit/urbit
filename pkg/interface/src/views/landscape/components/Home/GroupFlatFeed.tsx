@@ -18,7 +18,6 @@ import { markCountAsRead } from '@urbit/api';
 function GroupFlatFeed(props) {
   const {
     baseUrl,
-    api,
     graphPath,
     groupPath,
     vip
@@ -44,7 +43,7 @@ function GroupFlatFeed(props) {
     if (graphRid.ship === '~zod' && graphRid.name === 'null') {
       return;
     }
-    getDeepOlderThan(graphRid.ship, graphRid.name, null, 100);
+    getDeepOlderThan(graphRid.ship, graphRid.name, 100);
     airlock.poke(markCountAsRead(graphPath));
   }, [graphPath]);
 
@@ -75,7 +74,6 @@ function GroupFlatFeed(props) {
             return (
               <PostFlatTimeline
                 baseUrl={baseUrl}
-                api={api}
                 graphPath={graphPath}
                 group={group}
                 association={association}
@@ -92,7 +90,6 @@ function GroupFlatFeed(props) {
               <PostThread
                 locationUrl={locationUrl}
                 baseUrl={baseUrl}
-                api={api}
                 history={history}
                 graphPath={graphPath}
                 group={group}
@@ -110,7 +107,6 @@ function GroupFlatFeed(props) {
               <PostReplies
                 locationUrl={locationUrl}
                 baseUrl={baseUrl}
-                api={api}
                 history={history}
                 graphPath={graphPath}
                 group={group}

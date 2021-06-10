@@ -3,7 +3,7 @@ import React from 'react';
 
 const ReconnectButton = ({ connection, subscription }) => {
   const connectedStatus = connection || 'connected';
-  const reconnect = subscription.restart.bind(subscription);
+  const reconnect = () => {}; // subscription.restart.bind(subscription);
 
   if (connectedStatus === 'disconnected') {
     return (

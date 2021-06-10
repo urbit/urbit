@@ -8,7 +8,6 @@ import {
 } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import React, { ReactNode, useCallback } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { getNotificationKey } from '~/logic/lib/hark';
 import { useHovering } from '~/logic/lib/util';
 import useLocalState from '~/logic/state/local';
@@ -21,12 +20,10 @@ import airlock from '~/logic/api';
 export interface NotificationProps {
   notification: IndexedNotification;
   time: BigInteger;
-  api: GlobalApi;
   unread: boolean;
 }
 
 export function NotificationWrapper(props: {
-  api: GlobalApi;
   time?: BigInteger;
   read?: boolean;
   notification?: IndexedNotification;
@@ -107,8 +104,7 @@ export function Notification(props: NotificationProps) {
   const wrapperProps = {
     notification,
     read: !unread,
-    time: props.time,
-    api: props.api
+    time: props.time
   };
 
   if ('graph' in notification.index) {
@@ -118,7 +114,6 @@ export function Notification(props: NotificationProps) {
     return (
       <NotificationWrapper {...wrapperProps}>
         <GraphNotification
-          api={props.api}
           index={index}
           contents={c}
           read={!unread}
@@ -134,10 +129,8 @@ export function Notification(props: NotificationProps) {
     return (
       <NotificationWrapper {...wrapperProps}>
         <GroupNotification
-          api={props.api}
           index={index}
           contents={c}
-          read={!unread}
           timebox={props.time}
           time={time}
         />

@@ -5,7 +5,6 @@ import bigInt from 'big-integer';
 import { Box, Row, Col, Text } from '@tlon/indigo-react';
 import { Link } from 'react-router-dom';
 import { patp2dec } from 'urbit-ob';
-import GlobalApi from '~/logic/api/global';
 import { useContact } from '~/logic/state/contact';
 import useGraphState, { useDM } from '~/logic/state/graph';
 import { useHarkDm } from '~/logic/state/hark';
@@ -17,7 +16,6 @@ import shallow from 'zustand/shallow';
 
 interface DmResourceProps {
   ship: string;
-  api: GlobalApi;
 }
 
 const getCurrDmSize = (ship: string) => {
@@ -52,7 +50,7 @@ function quoteReply(post: Post) {
 }
 
 export function DmResource(props: DmResourceProps) {
-  const { ship, api } = props;
+  const { ship } = props;
   const dm = useDM(ship);
   const hark = useHarkDm(ship);
   const unreadCount = (hark?.unreads as number) ?? 0;
@@ -109,7 +107,7 @@ export function DmResource(props: DmResourceProps) {
         return expectedSize !== getCurrDmSize(ship);
       }
     },
-    [ship, dm, api]
+    [ship, dm]
   );
 
   const dismissUnread = useCallback(() => {
@@ -165,7 +163,6 @@ export function DmResource(props: DmResourceProps) {
         </Row>
       </Row>
       <ChatPane
-        api={api}
         canWrite
         id={ship}
         graph={dm}

@@ -1,5 +1,4 @@
 import { Patp } from '@urbit/api';
-import GlobalStore from '../store/store';
 import { StoreState } from '../store/type';
 import BaseApi from './base';
 import ContactsApi from './contacts';
@@ -30,7 +29,7 @@ export default class GlobalApi extends BaseApi<StoreState> {
   constructor(
     public ship: Patp,
     public channel: any,
-    public store: GlobalStore
+    public store: any
   ) {
     super(ship, channel, store);
   }

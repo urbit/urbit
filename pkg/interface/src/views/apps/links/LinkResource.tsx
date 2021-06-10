@@ -4,7 +4,6 @@ import { Association } from '@urbit/api/metadata';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
 import { Link, Route, Switch } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
 import { StoreState } from '~/logic/store/type';
@@ -18,14 +17,12 @@ const emptyMeasure = () => {};
 
 type LinkResourceProps = StoreState & {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 };
 
 export function LinkResource(props: LinkResourceProps) {
   const {
     association,
-    api,
     baseUrl
   } = props;
 
@@ -74,7 +71,6 @@ export function LinkResource(props: LinkResourceProps) {
                 group={group as Group}
                 path={resource.group}
                 pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
-                api={api}
                 mb={3}
               />
             );
@@ -115,7 +111,6 @@ export function LinkResource(props: LinkResourceProps) {
                   association={association}
                   group={group as Group}
                   path={resource?.group}
-                  api={api}
                   mt={3}
                   measure={emptyMeasure}
                 />
@@ -125,7 +120,6 @@ export function LinkResource(props: LinkResourceProps) {
                   comments={node}
                   resource={resourcePath}
                   association={association}
-                  api={api}
                   editCommentId={editCommentId}
                   history={props.history}
                   baseUrl={`${resourceUrl}/index/${props.match.params.index}`}

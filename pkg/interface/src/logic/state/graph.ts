@@ -7,6 +7,7 @@ import { createState, createSubscription, reduceStateN } from './base';
 import airlock from '~/logic/api';
 import { getDeepOlderThan, getFirstborn, getNewest, getNode, getOlderSiblings, getYoungerSiblings } from '@urbit/api/graph';
 import { GraphReducer, reduceDm } from '../reducers/graph-update';
+import _ from 'lodash';
 
 export interface GraphState {
   graphs: Graphs;
@@ -22,7 +23,7 @@ export interface GraphState {
   pendingDms: Set<string>;
   screening: boolean;
   graphTimesentMap: Record<number, string>;
-  getDeepOlderThan: (ship: string, name: string, count: number, start?: number) => Promise<void>;
+  getDeepOlderThan: (ship: string, name: string, count: number, start?: string) => Promise<void>;
   // getKeys: () => Promise<void>;
   // getTags: () => Promise<void>;
   // getTagQueries: () => Promise<void>;
@@ -69,8 +70,7 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
       'graph-update': node
     });
   },
-
-  getNode: (ship: string, name: string, index: string) => {
+  getNode: async (ship: string, name: string, index: string) => {
     const data = await airlock.scry(getNode(ship, name, index));
     data['graph-update'].fetch = true;
     const node = data['graph-update'];
@@ -203,11 +203,12 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
   'pendingDms'
 ], [
   (set, get) => createSubscription('graph-store', '/updates', (e) => {
-    const j = _.get(e, 'graph-update', false);
-    if(j) {
-      GraphReducer(j);
-    }
+    GraphReducer(e);
   }),
+  (set, get) => createSubscription('graph-store', '/keys', (e) => {
+    GraphReducer(e);
+  }),
+
   (set, get) => createSubscription('dm-hook', '/updates', (e) => {
     const j = _.get(e, 'dm-hook-action', false);
     if(j) {

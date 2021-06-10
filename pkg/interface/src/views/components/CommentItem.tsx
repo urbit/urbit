@@ -4,7 +4,6 @@ import { GraphNode } from '@urbit/api/graph';
 import bigInt from 'big-integer';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
@@ -21,14 +20,13 @@ interface CommentItemProps {
   unread: boolean;
   name: string;
   ship: string;
-  api: GlobalApi;
   group: Group;
   highlighted: boolean;
 }
 
 export function CommentItem(props: CommentItemProps) {
   let { highlighted } = props;
-  const { ship, name, api, comment, group } = props;
+  const { ship, name, comment, group } = props;
   const association = useMetadataState(
     useCallback(s => s.associations.graph[`/ship/${ship}/${name}`], [ship,name])
   );
@@ -135,7 +133,6 @@ return false;
         mb={1}
         backgroundColor={highlighted ? 'washedBlue' : 'white'}
         transcluded={0}
-        api={api}
         contents={post.contents}
         showOurContact
       />

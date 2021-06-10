@@ -17,7 +17,6 @@ import airlock from '~/logic/api';
 function GroupFeed(props) {
   const {
     baseUrl,
-    api,
     graphPath,
     groupPath,
     vip
@@ -84,7 +83,6 @@ function GroupFeed(props) {
             return (
               <PostTimeline
                 baseUrl={baseUrl}
-                api={api}
                 history={history}
                 graphPath={graphPath}
                 group={group}
@@ -103,7 +101,6 @@ function GroupFeed(props) {
               <PostReplies
                 locationUrl={locationUrl}
                 baseUrl={baseUrl}
-                api={api}
                 history={history}
                 graphPath={graphPath}
                 group={group}

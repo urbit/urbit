@@ -3,7 +3,6 @@ import { leaveGroup, putEntry } from '@urbit/api';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { getRelativePosition } from '~/logic/lib/relativePosition';
 import {
     getTrianglePosition, MODAL_WIDTH_PX, progressDetails,
@@ -27,7 +26,7 @@ const localSelector = selectLocalState([
   'set'
 ]);
 
-export function TutorialModal(props: { api: GlobalApi }) {
+export function TutorialModal() {
   const {
     tutorialProgress,
     tutorialRef,
