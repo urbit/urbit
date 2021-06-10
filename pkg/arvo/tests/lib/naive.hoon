@@ -631,35 +631,34 @@
   ::
   ::%+  category  `@t`cur-ship
   =/  current-events  (~(get ja event-jar) cur-ship)
-    |-  ^-  tang
-    ?~  current-events  ~
-    %+  weld  $(current-events t.current-events)
-    =/  cur-event  i.-.current-events
+  |-  ^-  tang
+  ?~  current-events  ~
+  %+  weld  $(current-events t.current-events)
+  =/  cur-event  i.-.current-events
   ::  %+  category  cur-event
-    =/  state  initial-state
-    ::  %+  category  i.current-events
-      %+  expect-eq
-        !>  (~(got by suc-map) cur-event)
-      ::
-        !>
-        =^    f
-            state
-          %-  n
-          :*  initial-state  ::state?
-              %bat
-              =<  q
-              %-  gen-tx
-              :+  nonce.owner.own:(~(got by points.state) cur-ship)
-                :+  [cur-ship proxy.cur-event]
-                  %set-management-proxy  ::tx-type.cur-event why does the tx-type not work?
-                (addr common-mgmt)
-              (~(got by default-own-keys) cur-ship)
-          ==
-        ?:  .=  =<  address.management-proxy.own
-                (~(got by points.state) cur-ship)
-            (addr common-mgmt)
-          %.y
-        %.n
+  =/  state  initial-state
+  ::  %+  category  i.current-events
+    %+  expect-eq
+      !>  (~(got by suc-map) cur-event)
+    ::
+      !>
+      =^    f
+          state
+        %-  n
+        :+  initial-state  ::state?
+          %bat
+        =<  q
+        %-  gen-tx
+        :+  nonce.owner.own:(~(got by points.state) cur-ship)
+          :+  [cur-ship proxy.cur-event]
+            %set-management-proxy  ::tx-type.cur-event why does the tx-type not work?
+          (addr common-mgmt)
+        (~(got by default-own-keys) cur-ship)
+      ?:  .=  =<  address.management-proxy.own
+              (~(got by points.state) cur-ship)
+          (addr common-mgmt)
+        %.y
+      %.n
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys suit encr auth |]
