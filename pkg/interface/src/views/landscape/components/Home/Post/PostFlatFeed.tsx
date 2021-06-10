@@ -11,6 +11,8 @@ import ArrayVirtualScroller, {
 } from '~/views/components/ArrayVirtualScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
+import withState from '~/logic/lib/withState';
+import useGraphState, { GraphState } from '~/logic/state/graph';
 
 const virtualScrollerStyle = {
   height: '100%'
@@ -20,6 +22,7 @@ interface PostFeedProps {
   flatGraph: FlatGraph;
   graphPath: string;
   api: GlobalApi;
+  getDeepOlderThan: GraphState['getDeepOlderThan'];
   history: RouteComponentProps['history'];
   baseUrl: string;
   parentNode?: FlatGraphNode;
@@ -163,7 +166,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
   });
 
   async fetchPosts(newer) {
-    const { flatGraph, graphPath, api } = this.props;
+    const { flatGraph, graphPath, getDeepOlderThan } = this.props;
     const graphResource = resourceFromPath(graphPath);
 
     if (this.isFetching) {
@@ -179,9 +182,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
     } else {
       const [index] = flatGraph.peekSmallest();
       if (index && index.length > 0) {
-        await api.graph.getDeepOlderThan(ship, name, index[0].toString(), 100);
-      } else {
-        await api.graph.getDeepOlderThan(ship, name, null, 100);
+        await getDeepOlderThan(ship, name, index[0].toString(), 100);
       }
     }
 
@@ -219,4 +220,4 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
   }
 }
 
-export default withRouter(PostFlatFeed);
+export default withState(withRouter(PostFlatFeed), [[useGraphState, ['getDeepOlderThan']]]);

@@ -16,6 +16,7 @@ import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useLocalState from '~/logic/state/local';
 import useSettingsState from '~/logic/state/settings';
+import useGraphState from '~/logic/state/graph';
 import { ShortcutContextProvider } from '~/logic/lib/shortcutContext';
 
 import GlobalStore from '~/logic/store/store';
@@ -94,7 +95,7 @@ class App extends React.Component {
   componentDidMount() {
     bootstrapApi();
     this.subscription.start();
-    this.api.graph.getShallowChildren(`~${window.ship}`, 'dm-inbox');
+    this.props.getShallowChildren(`~${window.ship}`, 'dm-inbox');
     const theme = this.getTheme();
     this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
     this.mobileWatcher = window.matchMedia(`(max-width: ${theme.breakpoints[0]})`);
@@ -197,5 +198,6 @@ export default withState(process.env.NODE_ENV === 'production' ? App : hot(App),
   [useContactState],
   [useSettingsState, ['display', 'getAll']],
   [useLocalState],
+  [useGraphState, ['getShallowChildren']],
   [useLaunchState, ['getRuntimeLag', 'getBaseHash']]
 ]);

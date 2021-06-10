@@ -9,7 +9,7 @@ import {
 } from '~/logic/lib/permalinks';
 import { getModuleIcon, GraphModule } from '~/logic/lib/util';
 import { useVirtualResizeProp } from '~/logic/lib/virtualContext';
-import useGraphState from '~/logic/state/graph';
+import useGraphState  from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
 import { GroupLink } from '~/views/components/GroupLink';
 import { TranscludedNode } from './TranscludedNode';
@@ -90,6 +90,7 @@ function GraphPermalink(
   );
   const [errored, setErrored] = useState(false);
   const [loading, setLoading] = useState(false);
+  const getNode = useGraphState(s => s.getNode);
   const association = useMetadataState(
     useCallback(s => s.associations.graph[graph] as Association | null, [
       graph
@@ -104,7 +105,7 @@ function GraphPermalink(
       }
       try {
         setLoading(true);
-        await api.graph.getNode(ship, name, index);
+        await getNode(ship, name, index);
         setLoading(false);
       } catch (e) {
         console.log(e);

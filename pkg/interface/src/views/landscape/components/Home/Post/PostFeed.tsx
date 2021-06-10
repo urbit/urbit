@@ -3,18 +3,20 @@ import { Association, Graph, GraphNode, Group } from '@urbit/api';
 import { History } from 'history';
 import bigInt from 'big-integer';
 import React from 'react';
-import { withRouter } from 'react-router';
+import { useHistory } from 'react-router';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import VirtualScroller from '~/views/components/VirtualScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
+import useGraphState, { GraphState } from '~/logic/state/graph';
+import shallow from 'zustand/shallow';
 
 const virtualScrollerStyle = {
   height: '100%'
 };
 
-interface PostFeedProps {
+interface PostFeedProps extends Pick<GraphState, 'getYoungerSiblings' | 'getOlderSiblings'> {
   graph: Graph;
   graphPath: string;
   api: GlobalApi;
@@ -174,7 +176,7 @@ class PostFeed extends React.Component<PostFeedProps, any> {
   });
 
   async fetchPosts(newer) {
-    const { graph, graphPath, api } = this.props;
+    const { graph, graphPath, getYoungerSiblings, getOlderSiblings } = this.props;
     const graphResource = resourceFromPath(graphPath);
 
     if (this.isFetching) {
@@ -187,7 +189,7 @@ class PostFeed extends React.Component<PostFeedProps, any> {
 
     if (newer) {
       const [index] = graph.peekLargest();
-      await api.graph.getYoungerSiblings(
+      await getYoungerSiblings(
         ship,
         name,
         100,
@@ -195,7 +197,7 @@ class PostFeed extends React.Component<PostFeedProps, any> {
       );
     } else {
       const [index] = graph.peekSmallest();
-      await api.graph.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
+      await getOlderSiblings(ship, name, 100, `/${index.toString()}`);
     }
 
     this.isFetching = false;
@@ -234,4 +236,18 @@ class PostFeed extends React.Component<PostFeedProps, any> {
   }
 }
 
-export default withRouter(PostFeed);
+export default React.forwardRef<PostFeed, Omit<PostFeedProps, 'getYoungerSiblings' | 'getOlderSiblings' | 'history'>>((props, ref) => {
+  const [getOlderSiblings, getYoungerSiblings] = useGraphState(({ getOlderSiblings, getYoungerSiblings }) => [getOlderSiblings, getYoungerSiblings], shallow);
+  const history = useHistory();
+
+  return (
+    <PostFeed
+      ref={ref}
+      {...props}
+      history={history}
+      getYoungerSiblings={getYoungerSiblings}
+      getOlderSiblings={getOlderSiblings}
+    />
+    );
+});
+

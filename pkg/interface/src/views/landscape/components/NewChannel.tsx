@@ -4,7 +4,7 @@ import {
   ManagedTextInputField as Input,
   Text
 } from '@tlon/indigo-react';
-import { addTag } from '@urbit/api/dist';
+import { addTag, createManagedGraph, createUnmanagedGraph } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement } from 'react';
@@ -51,7 +51,7 @@ type NewChannelProps = {
 
 export function NewChannel(props: NewChannelProps): ReactElement {
   const history = useHistory();
-  const { api, group, workspace, existingMembers, ...rest } = props;
+  const { group, workspace, existingMembers, ...rest } = props;
   const groups = useGroupState(state => state.groups);
   const waiter = useWaitForProps({ groups }, 5000);
 
@@ -83,13 +83,14 @@ export function NewChannel(props: NewChannelProps): ReactElement {
         return history.push(`/~landscape/messages/dm/~${deSig(ships[0])}`);
       }
       if (group) {
-        await api.graph.createManagedGraph(
+        await airlock.thread(createManagedGraph(
+          `~${window.ship}`,
           resId,
           name,
           description,
           group,
           moduleType
-        );
+        ));
         const tag = {
           app: 'graph',
           resource: `/ship/~${window.ship}/${resId}`,
@@ -106,13 +107,14 @@ export function NewChannel(props: NewChannelProps): ReactElement {
           await airlock.poke(addTag(resource, tag, writers));
         }
       } else {
-        await api.graph.createUnmanagedGraph(
+        await airlock.thread(createUnmanagedGraph(
+          `~${window.ship}`,
           resId,
           name,
           description,
           { invite: { pending: ships.map(s => `~${deSig(s)}`) } },
           moduleType
-        );
+        ));
       }
 
       if (!group) {

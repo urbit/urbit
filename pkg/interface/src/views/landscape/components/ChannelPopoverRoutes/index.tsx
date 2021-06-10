@@ -2,7 +2,10 @@ import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import {
     Association,
 
+  deleteGraph,
+
     Group,
+    leaveGraph,
     metadataRemove
 } from '@urbit/api';
 import React, { useCallback, useRef } from 'react';
@@ -28,7 +31,7 @@ interface ChannelPopoverRoutesProps {
 }
 
 export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
-  const { association, group, api } = props;
+  const { association, group } = props;
   useHashLink();
   const overlayRef = useRef<HTMLElement>();
   const history = useHistory();
@@ -39,7 +42,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
 
   const handleUnsubscribe = async () => {
     const [,,ship,name] = association.resource.split('/');
-    await api.graph.leaveGraph(ship, name);
+    await airlock.thread(leaveGraph(ship, name));
     history.push(props.rootUrl);
   };
   const handleRemove = async () => {
@@ -48,7 +51,8 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
   };
   const handleArchive = async () => {
     const [,,,name] = association.resource.split('/');
-    api.graph.deleteGraph(name);
+
+    airlock.thread(deleteGraph(`~${window.ship}`, name));
     return history.push(props.rootUrl);
   };
 

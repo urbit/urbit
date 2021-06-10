@@ -1,4 +1,5 @@
 import { Box, Center, Col, Text } from '@tlon/indigo-react';
+import { joinGraph } from '@urbit/api/graph';
 import { Association, GraphConfig } from '@urbit/api/metadata';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -10,6 +11,7 @@ import RichText from '~/views/components/RichText';
 import {
   StatelessAsyncButton
 } from './StatelessAsyncButton';
+import airlock from '~/logic/api';
 
 interface UnjoinedResourceProps {
   association: Association;
@@ -42,7 +44,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
 
   const onJoin = async () => {
     const [, , ship, name] = rid.split('/');
-    await api.graph.joinGraph(ship, name);
+    await airlock.thread(joinGraph(ship, name));
     await waiter(isJoined(rid));
     const redir = query.get('redir') ?? `${props.baseUrl}/resource/${app}${rid}`;
     history.push(redir);

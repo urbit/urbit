@@ -1,5 +1,5 @@
 import { Action, Box, Row, Text } from '@tlon/indigo-react';
-import { Group } from '@urbit/api';
+import { Group, removePosts } from '@urbit/api';
 import { GraphNode } from '@urbit/api/graph';
 import bigInt from 'big-integer';
 import React, { useCallback, useEffect, useRef } from 'react';
@@ -12,6 +12,7 @@ import { useCopy } from '~/logic/lib/useCopy';
 import useMetadataState from '~/logic/state/metadata';
 import Author from '~/views/components/Author';
 import { GraphContent } from '../landscape/components/Graph/GraphContent';
+import airlock from '~/logic/api';
 
 interface CommentItemProps {
   pending?: boolean;
@@ -46,11 +47,11 @@ export function CommentItem(props: CommentItemProps) {
       }
     }
 
-    await api.graph.removePosts(ship, name, [
+    await airlock.poke(removePosts(ship, name, [
       comment.post?.index,
       revs?.post?.index,
       ...indices
-    ]);
+    ]));
   };
 
   const ourMention = post?.contents?.some((e) => {

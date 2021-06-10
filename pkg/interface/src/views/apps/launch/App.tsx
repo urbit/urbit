@@ -35,6 +35,7 @@ import './css/custom.css';
 import airlock from '~/logic/api';
 import { join } from '@urbit/api/groups';
 import { putEntry } from '@urbit/api/settings';
+import { joinGraph } from '@urbit/api/graph';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -114,7 +115,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
           await airlock.poke(putEntry('tutorial', 'joined', Date.now()));
           await waiter(hasTutorialGroup);
           await Promise.all(
-            [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph => props.api.graph.joinGraph(TUTORIAL_HOST, graph)));
+            [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph => airlock.thread(joinGraph(TUTORIAL_HOST, graph))));
 
           await waiter((p) => {
             return `/ship/${TUTORIAL_HOST}/${TUTORIAL_CHAT}` in p.associations.graph &&

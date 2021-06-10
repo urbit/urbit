@@ -25,9 +25,10 @@ export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
   const { ship, book, api, baseUrl, rootUrl } = props;
+  const getGraph = useGraphState(s => s.getGraph);
 
   useEffect(() => {
-    ship && book && api.graph.getGraph(ship, book);
+    ship && book && getGraph(ship, book);
   }, [ship, book]);
 
   const graphs = useGraphState(state => state.graphs);

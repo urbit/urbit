@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { resourceFromPath } from '~/logic/lib/group';
-import { useGraphTimesentMap } from '~/logic/state/graph';
+import useGraphState, { useGraphTimesentMap } from '~/logic/state/graph';
 import { useGroup } from '~/logic/state/group';
 import { useAssocForGraph } from '~/logic/state/metadata';
 import { Loading } from '~/views/components/Loading';
@@ -37,13 +37,14 @@ function GroupFlatFeed(props) {
   const relativePath = path => baseUrl + path;
   const history = useHistory();
   const locationUrl = history.location.pathname;
+  const getDeepOlderThan = useGraphState(s => s.getDeepOlderThan);
 
   useEffect(() => {
     //  TODO: VirtualScroller should support lower starting values than 100
     if (graphRid.ship === '~zod' && graphRid.name === 'null') {
       return;
     }
-    api.graph.getDeepOlderThan(graphRid.ship, graphRid.name, null, 100);
+    getDeepOlderThan(graphRid.ship, graphRid.name, null, 100);
     airlock.poke(markCountAsRead(graphPath));
   }, [graphPath]);
 

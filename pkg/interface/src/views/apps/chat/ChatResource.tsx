@@ -1,4 +1,4 @@
-import { Content, createPost, fetchIsAllowed, markCountAsRead, Post } from '@urbit/api';
+import { addPost, Content, createPost, fetchIsAllowed, markCountAsRead, Post, removePosts } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import { BigInteger } from 'big-integer';
 import React, {
@@ -18,6 +18,7 @@ import { Loading } from '~/views/components/Loading';
 import { ChatPane } from './components/ChatPane';
 import airlock from '~/logic/api';
 import { disallowedShipsForOurContact } from '~/logic/lib/contact';
+import shallow from 'zustand/shallow';
 
 const getCurrGraphSize = (ship: string, name: string) => {
   const { graphs } = useGraphState.getState();
@@ -41,11 +42,19 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   const unreadCount =
     (unreads.graph?.[resource]?.['/']?.unreads as number) || 0;
   const canWrite = group ? isWriter(group, resource) : false;
+  const [
+    getNewest,
+    getOlderSiblings,
+    getYoungerSiblings
+  ] = useGraphState(
+    s => [s.getYoungerSiblings, s.getOlderSiblings, s.getNewest],
+    shallow
+  );
 
   useEffect(() => {
     const count = Math.min(400, 100 + unreadCount);
     const { ship, name } = resourceFromPath(resource);
-    props.api.graph.getNewest(ship, name, count);
+    getNewest(ship, name, count);
     setToShare(undefined);
     (async function () {
       if (group.hidden) {
@@ -88,7 +97,6 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   );
 
   const fetchMessages = useCallback(async (newer: boolean) => {
-    const { api } = props;
     const pageSize = 100;
 
     const [, , ship, name] = resource.split('/');
@@ -99,7 +107,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
       if (!index) {
         return true;
       }
-      await api.graph.getYoungerSiblings(
+      await getYoungerSiblings(
         ship,
         name,
         pageSize,
@@ -111,7 +119,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
       if (!index) {
         return true;
       }
-      await api.graph.getOlderSiblings(ship, name, pageSize, `/${index.toString()}`);
+      await getOlderSiblings(ship, name, pageSize, `/${index.toString()}`);
       const done = expectedSize !== getCurrGraphSize(ship.slice(1), name);
       return done;
     }
@@ -119,12 +127,12 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
 
   const onSubmit = useCallback((contents: Content[]) => {
     const { ship, name } = resourceFromPath(resource);
-    api.graph.addPost(ship, name, createPost(window.ship, contents));
+    airlock.thread(addPost(ship, name, createPost(window.ship, contents)));
   }, [resource]);
 
   const onDelete = useCallback((msg: Post) => {
     const { ship, name } = resourceFromPath(resource);
-    api.graph.removePosts(ship, name, [msg.index]);
+    airlock.poke(removePosts(ship, name, [msg.index]));
   }, [resource]);
 
   const dismissUnread = useCallback(() => {

@@ -1,5 +1,5 @@
 import { Action, Box, Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph, GraphNode, Group, markEachAsRead } from '@urbit/api';
+import { Association, Graph, GraphNode, Group, markEachAsRead, removePosts } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -38,12 +38,12 @@ export function NoteContent({ post, api }) {
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
-  const { association, notebook, note, ship, book, api, rootUrl, baseUrl, group } = props;
+  const { association, notebook, note, ship, book, rootUrl, baseUrl, group } = props;
 
   const deletePost = async () => {
     setDeleting(true);
     const indices = [note.post.index];
-    await api.graph.removePosts(ship, book, indices);
+    await airlock.poke(removePosts(ship, book, indices));
     props.history.push(rootUrl);
   };
 

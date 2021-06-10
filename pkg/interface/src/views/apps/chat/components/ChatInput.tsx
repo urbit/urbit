@@ -1,5 +1,5 @@
 import { BaseImage, Box, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
-import { Contact, Content } from '@urbit/api';
+import { Contact, Content, evalCord } from '@urbit/api';
 import React, { Component, ReactNode } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { Sigil } from '~/logic/lib/sigil';
@@ -9,6 +9,7 @@ import { MOBILE_BROWSER_REGEX, uxToHex } from '~/logic/lib/util';
 import { withLocalState } from '~/logic/state/local';
 import withStorage from '~/views/components/withStorage';
 import ChatEditor from './ChatEditor';
+import airlock from '~/logic/api';
 
 type ChatInputProps = IuseStorage & {
   api: GlobalApi;
@@ -59,13 +60,13 @@ export class ChatInput extends Component<ChatInputProps, ChatInputState> {
 
   async submit(text) {
     const { props, state } = this;
-    const { onSubmit, api } = this.props;
+    const { onSubmit } = this.props;
     this.setState({
       inCodeMode: false
     });
     props.deleteMessage();
     if(state.inCodeMode) {
-      const output = await api.graph.eval(text) as string[];
+      const output = await airlock.thread<string[]>(evalCord(text));
       onSubmit([{ code: { output, expression: text } }]);
     } else {
       onSubmit(tokenizeMessage(text));

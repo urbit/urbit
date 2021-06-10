@@ -1,12 +1,14 @@
 import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { addPost } from '@urbit/api/graph';
 import { hasProvider } from 'oembed-parser';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { createPost } from '~/logic/api/graph';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import useStorage from '~/logic/lib/useStorage';
 import SubmitDragger from '~/views/components/SubmitDragger';
+import airlock from '~/logic/api';
 
 interface LinkSubmitProps {
   api: GlobalApi;
@@ -21,7 +23,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
   const [submitFocused, setSubmitFocused] = useState(false);
   const [urlFocused, setUrlFocused] = useState(false);
-  const [linkValue, setLinkValueHook] = useState('');
+  const [linkValue, setLinkValue] = useState('');
   const [linkTitle, setLinkTitle] = useState('');
   const [disabled, setDisabled] = useState(false);
   const [linkValid, setLinkValid] = useState(false);
@@ -37,11 +39,11 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     const parentIndex = props.parentIndex || '';
     const post = createPost(contents, parentIndex);
 
-    props.api.graph.addPost(
+    airlock.thread(addPost(
       `~${props.ship}`,
       props.name,
       post
-    ).then(() => {
+    )).then(() => {
       setDisabled(false);
       setLinkValue('');
       setLinkTitle('');
@@ -107,16 +109,12 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
   const { bind, dragging } = useFileDrag(onFileDrag);
 
-  const onLinkChange = (linkValue: string) => {
-    setLinkValueHook(linkValue);
+  const onLinkChange = () => {
     const link = validateLink(linkValue);
     setLinkValid(link);
   };
 
-  const setLinkValue = (linkValue: string) => {
-    onLinkChange(linkValue);
-    setLinkValueHook(linkValue);
-  };
+  useEffect(onLinkChange, [linkValue]);
 
   const onPaste = useCallback(
     (event: ClipboardEvent) => {

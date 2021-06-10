@@ -45,9 +45,10 @@ export function LinkResource(props: LinkResourceProps) {
   const graphs = useGraphState(state => state.graphs);
   const graph = graphs[resourcePath] || null;
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
+  const getGraph = useGraphState(s => s.getGraph);
 
   useEffect(() => {
-    api.graph.getGraph(ship, name);
+    getGraph(ship, name);
   }, [association]);
 
   const resourceUrl = `${baseUrl}/resource/link${rid}`;
@@ -63,7 +64,7 @@ export function LinkResource(props: LinkResourceProps) {
           path={relativePath('')}
           render={(props) => {
             return (
-              // @ts-ignore
+              // @ts-ignore state helper weirdness
               <LinkWindow
                 key={rid}
                 association={resource}

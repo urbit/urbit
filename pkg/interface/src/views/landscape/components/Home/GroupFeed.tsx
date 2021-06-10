@@ -28,6 +28,7 @@ function GroupFeed(props) {
 
   const associations = useMetadataState(state => state.associations);
   const graphs = useGraphState(state => state.graphs);
+  const getNewest = useGraphState(s => s.getNewest);
   const graphResource =
     graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
@@ -51,7 +52,7 @@ function GroupFeed(props) {
     if (graphResource.ship === '~zod' && graphResource.name === 'null') {
       return;
     }
-    api.graph.getNewest(graphResource.ship, graphResource.name, 100);
+    getNewest(graphResource.ship, graphResource.name, 100);
     airlock.poke(markCountAsRead(graphPath));
   }, [graphPath]);
 

@@ -1,4 +1,4 @@
-import { cite, Content, markCountAsRead, Post } from '@urbit/api';
+import { addDmMessage, cite, Content, markCountAsRead, Post } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import bigInt from 'big-integer';
@@ -13,6 +13,7 @@ import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
 import { patpToUd } from '~/logic/lib/util';
 import airlock from '~/logic/api';
+import shallow from 'zustand/shallow';
 
 interface DmResourceProps {
   ship: string;
@@ -60,8 +61,17 @@ export function DmResource(props: DmResourceProps) {
   const showNickname = !hideNicknames && Boolean(contact);
   const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
 
+  const [
+    getNewest,
+    getOlderSiblings,
+    getYoungerSiblings
+  ] = useGraphState(
+    s => [s.getYoungerSiblings, s.getOlderSiblings, s.getNewest],
+    shallow
+  );
+
   useEffect(() => {
-    api.graph.getNewest(
+    getNewest(
       `~${window.ship}`,
       'dm-inbox',
       100,
@@ -78,7 +88,7 @@ export function DmResource(props: DmResourceProps) {
         if (!index) {
           return true;
         }
-        await api.graph.getYoungerSiblings(
+        await getYoungerSiblings(
           `~${window.ship}`,
           'dm-inbox',
           pageSize,
@@ -90,7 +100,7 @@ export function DmResource(props: DmResourceProps) {
         if (!index) {
           return true;
         }
-        await api.graph.getOlderSiblings(
+        await getOlderSiblings(
           `~${window.ship}`,
           'dm-inbox',
           pageSize,
@@ -108,7 +118,8 @@ export function DmResource(props: DmResourceProps) {
 
   const onSubmit = useCallback(
     (contents: Content[]) => {
-      api.graph.addDmMessage(ship, contents);
+      // XX optimistic
+      airlock.poke(addDmMessage(`~${window.ship}`, ship, contents));
     },
     [ship]
   );

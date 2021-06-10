@@ -9,14 +9,15 @@ import React, { useCallback } from 'react';
 import GlobalApi from '~/logic/api/global';
 import useGraphState from '~/logic/state/graph';
 import { AsyncButton } from '~/views/components/AsyncButton';
+import airlock from '~/logic/api';
+import { setScreen } from '@urbit/api/graph';
 
 export function DmSettings(props: { api: GlobalApi }) {
-  const { api } = props;
   const screening = useGraphState(s => s.screening);
   const initialValues = { accept: !screening };
   const onSubmit = useCallback(
     async (values, actions) => {
-      await api.graph.setScreen(!values.accept);
+      await airlock.poke(setScreen(!values.accept));
       actions.setStatus({ success: null });
     },
     [screening]

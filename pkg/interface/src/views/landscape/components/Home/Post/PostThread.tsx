@@ -21,6 +21,8 @@ export default function PostThread(props) {
     pendingSize
   } = props;
 
+  const getFirstborn = useGraphState(s => s.getFirstborn);
+
   const graphResource =
     graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
 
@@ -36,7 +38,7 @@ export default function PostThread(props) {
       return;
     }
 
-    api.graph.getFirstborn(
+    getFirstborn(
       graphResource.ship,
       graphResource.name,
       arrToString(index)

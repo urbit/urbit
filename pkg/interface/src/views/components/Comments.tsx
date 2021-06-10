@@ -1,10 +1,9 @@
 import { Col } from '@tlon/indigo-react';
-import { Association, GraphNode, Group, markCountAsRead } from '@urbit/api';
+import { createPost, createBlankNodeWithChildPost, addNode, Association, GraphNode, Group, markCountAsRead, addPost } from '@urbit/api';
 import bigInt from 'big-integer';
 import { FormikHelpers } from 'formik';
 import React, { useEffect, useMemo } from 'react';
 import GlobalApi from '~/logic/api/global';
-import { createBlankNodeWithChildPost, createPost } from '~/logic/api/graph';
 import { isWriter } from '~/logic/lib/group';
 import { getUnreadCount } from '~/logic/lib/hark';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
@@ -58,11 +57,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     try {
       const content = tokenizeMessage(comment);
       const node = createBlankNodeWithChildPost(
+        `~${window.ship}`,
         comments?.post?.index,
         '1',
         content
       );
-      await api.graph.addNode(ship, name, node);
+      await airlock.thread(addNode(ship, name, node));
       actions.resetForm();
       actions.setStatus({ success: null });
     } catch (e) {
@@ -81,11 +81,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
       const content = tokenizeMessage(comment);
       const post = createPost(
+        `~${window.ship}`,
         content,
         commentNode.post.index,
         parseInt((idx + 1).toString(), 10).toString()
       );
-      await api.graph.addPost(ship, name, post);
+      await airlock.thread(addPost(ship, name, post));
       history.push(baseUrl);
     } catch (e) {
       console.error(e);

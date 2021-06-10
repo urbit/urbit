@@ -1,5 +1,5 @@
 import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, Group, markEachAsRead, TextContent, UrlContent } from '@urbit/api';
+import { Association, GraphNode, Group, markEachAsRead, removePosts, TextContent, UrlContent } from '@urbit/api';
 import React, { ReactElement, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
@@ -96,7 +96,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
 
   const deleteLink = () => {
     if (confirm('Are you sure you want to delete this link?')) {
-      api.graph.removePosts(`~${ship}`, name, [node.post.index]);
+      airlock.poke(removePosts(`~${ship}`, name, [node.post.index]));
     }
   };
 

@@ -1,5 +1,5 @@
 import { BaseLabel, Col, Label, Text } from '@tlon/indigo-react';
-import { Association, Group, metadataUpdate, PermVariation, resourceFromPath } from '@urbit/api';
+import { Association, createGroupFeed, disableGroupFeed, Group, metadataUpdate, PermVariation, resourceFromPath } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import GlobalApi from '~/logic/api/global';
@@ -18,7 +18,7 @@ export function GroupFeedSettings(props: {
   group: Group;
   api: GlobalApi;
 }) {
-  const { association, api } = props;
+  const { association } = props;
   const resource = resourceFromPath(association.group);
   let feedResource = '';
   if (
@@ -35,9 +35,9 @@ export function GroupFeedSettings(props: {
   const vip = feedAssoc?.metadata?.vip || ' ';
   const toggleFeed = async (actions: any) => {
     if (isEnabled) {
-      await api.graph.disableGroupFeed(resource);
+      await airlock.thread(disableGroupFeed(resource));
     } else {
-      await api.graph.enableGroupFeed(resource, vip.trim());
+      await airlock.thread(createGroupFeed(resource, vip.trim()));
     }
   };
   const initialValues: FormSchema = {
