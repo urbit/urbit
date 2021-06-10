@@ -1,14 +1,30 @@
 ::  L1 contract changes:
-::  - Enforce that once spawn proxy is set to deposit address, it can't
+::  t Enforce that once spawn proxy is set to deposit address, it can't
 ::    switched back
-::  - Enforce that once spawn proxy is set to deposit address, you can't
+::  t Enforce that once spawn proxy is set to deposit address, you can't
 ::    spawn children
-::  - Possibly the same for approveForAll
-::  - Enforce that only ownership key can set spawn proxy to rollup.
-::    maybe not though
-::  - Disallow depositing galaxy to L2
-::  - When depositing, clear proxies (maybe require reset)
-::  - Maybe require that we're not depositing from a contract?
+::  + Possibly the same for approveForAll.  No, because we're not going
+::    to support approveForAll on L2
+::  + Enforce that only ownership key can set spawn proxy to rollup.
+::    maybe not though.  Yeah, a spawn proxy should be able to set spawn
+::    proxy to the rollup
+::  t Disallow depositing galaxy to L2
+::  + When depositing, clear proxies (maybe require reset).  On L1 only,
+::    not L2.  If we don't do this, we need to make sure they can't keep
+::    doing stuff using the proxies.  Probably better to clear the
+::    proxies explicitly instead of requiring _reset
+::  t Maybe require that we're not depositing from a contract?  But
+::    what if they're depositing from something that's a contract, but the
+::    owner is not a contract?  Probably best for the only condition to
+::    be that the owner is not a contract
+::  + disallow spawning to deposit address?  maybe, else we need to
+::    default the ownership somehow.  Or maybe this happens automatically
+::    because it uses the safe transfer flow?  Yes, _direct will never
+::    be true unless we're depositing to ourself, so it'll go to the
+::    owner address, which will never be the deposit address.  So we're
+::    safe.
+::  - If either side is on L2, then all sponsorship happens on L2.  If
+::    both are on L1, sponsorship hapens on L1
 ::
 ::  TODO: can an L1 star adopt an L2 planet?  It's not obvious how --
 ::  maybe they need to adopt as an L2 transaction?  That sounds right I
@@ -20,8 +36,19 @@
 ::  TODO: is it possible to spawn directly to the deposit address?  if
 ::  so, should we find its parent's owner to control it?
 ::
+::  TODO: need to find out what happens when you transfer with reset.
+::  since the setOwner happens first, it might crash the rollup when the
+::  other changes come
+::
 ::  TODO: secp needs to not crash the process when you give it a bad
 ::  v/recid.  See #4797
+::
+::  TODO: check if spawning is gated on "link"ing
+::
+::  TODO: make process-set-spawn-proxy work if you're on domain %spawn
+::
+::  TODO: make sure you can spawn with the spawn proxy after on domain
+::  %spawn
 ::
 /+  std
 =>  =>  std
@@ -35,7 +62,7 @@
 ::
 ::    0x1234567890123456789012345678901234567890
 ::
-++  deposit-address  0x1234.5678.9012.3456.7890.1234.5678.9012.3456.7890
+++  deposit-address  0x1111.1111.1111.1111.1111.1111.1111.1111.1111.1111
 ++  log-names
   |%
   ::  Generated with (keccak-256:keccak:crypto (as-octs:mimes:html name))
@@ -511,7 +538,7 @@
   ^-  [=effects new-point=^point]
   ::
   ?:  =(log-name changed-spawn-proxy:log-names)
-    ?>  ?=(%l1 -.point)
+    ?.  ?=(%l1 -.point)  `point
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
     ::  Depositing to L2 is represented by a spawn proxy change on L1,
@@ -526,7 +553,7 @@
   ::  The rest can be done by any ship on L1, even if their spawn proxy
   ::  is set to L2
   ::
-  ?<  ?=(%l2 -.point)
+  ?:  ?=(%l2 -.point)  `point
   ::
   ?:  =(log-name broke-continuity:log-names)
     ?>  ?=(~ t.t.topics.log)
