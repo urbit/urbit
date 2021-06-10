@@ -204,7 +204,7 @@
       !>  ^-  (list [=^ship =address:ethereum])
       ?~  star=(slaw %p wat)  ~
       =/  range
-        %+  subset:orm:naive  points.pre
+        %+  lot:orm:naive  points.pre
         ::  range exclusive [star first-planet-next-star]
         ::  TODO: make range inclusive? [first-planet last-planet]
         ::

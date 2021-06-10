@@ -129,7 +129,7 @@
 +$  nonce     @ud
 +$  dominion  ?(%l1 %l2 %spawn)
 +$  keys      [=life suite=@ud auth=@ crypt=@]
-++  orm       ((ordered-map ship point) aor)
+++  orm       ((on ship point) por)
 ++  point
   $:  ::  domain
       ::
