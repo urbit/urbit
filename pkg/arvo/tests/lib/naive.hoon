@@ -436,7 +436,8 @@
                     (cury filter-nonce %.y)
                     %-  cury
                     :-  filter-tx-type
-                    :*  %transfer-point
+                    :*  ::  %spawn  ::  currently crashes
+                        %transfer-point
                         %configure-keys
                         %set-management-proxy
                         %set-spawn-proxy
@@ -492,40 +493,7 @@
     ::
     --
   ::
-  ++  rut-default-args
-    |=  [=ship =event]  ^-  skim-tx:naive
-    |^  ^-  skim-tx:naive
-    ?+  tx-type.event  !!
-      :: %spawn
-      %transfer-point        [%transfer-point (addr %transfer-test) |]
-      %configure-keys        [%configure-keys encr auth suit |]
-      :: %escape
-      :: %cancel-escape
-      :: %adopt
-      :: %reject
-      :: %detach
-      %set-management-proxy  [%set-management-proxy (addr %proxy-test)]
-      %set-spawn-proxy       [%set-spawn-proxy (addr %proxy-test)]
-      %set-transfer-proxy    [%set-transfer-proxy (addr %proxy-test)]
-    ==
-    ::
-    ++  encr    (shax 'You will forget that you ever read this sentence.')
-    ++  auth    (shax 'You cant know that this sentence is true.')
-    ++  suit     1
-    ::
-    ::  ++  which-ship
-    ::  ::  should only matter for spawn and sponsorship actions
-    ::    ?+  ship  !!
-    ::      ~rut
-    ::      ~rigrut
-    ::    ==
-    ::  ::
-::    ++  set-proxy  ^-  skim-tx:naive  [tx-type.event (addr %proxy-test)]
-    ::  ++  transfer
-    ::  ++  configure-keys
-    ::  ++  sponsor  ~
-    ::
-    --
+
   ::
   --
 ::
@@ -709,15 +677,21 @@
       %-  gen-tx
       :+  nonce.owner.own:(~(got by points.state) cur-ship)
         :-  [cur-ship proxy.cur-event]
-        (rut-default-args cur-ship cur-event)
+        def-args
       (~(got by default-own-keys) cur-ship)
     ?+  tx-type.cur-event  !!
+      %spawn                 check-spawn
       %transfer-point        check-xfer-point
       %configure-keys        check-conf-keys
       %set-management-proxy  check-mgmt-proxy
       %set-spawn-proxy       check-spwn-proxy
       %set-transfer-proxy    check-xfer-proxy
     ==
+    ::
+    ++  check-spawn  ^-  ?
+      .=  =<  address.transfer-proxy.own
+          (~(got by points.state) which-spawn)
+      (addr %spawn-test)
     ::
     ++  check-xfer-point  ^-  ?
       .=  =<  address.owner.own
@@ -744,7 +718,50 @@
           (~(got by points.state) cur-ship)
       (addr %proxy-test)
     ::
-    --
+    ++  def-args
+      ^-  skim-tx:naive
+      |^
+      ?+  tx-type.cur-event  !!
+        %spawn                 [%spawn which-spawn (addr %spawn-test)]
+        %transfer-point        [%transfer-point (addr %transfer-test) |]
+        %configure-keys        [%configure-keys encr auth suit |]
+        :: %escape
+        :: %cancel-escape
+        :: %adopt
+        :: %reject
+        :: %detach
+        %set-management-proxy  [%set-management-proxy (addr %proxy-test)]
+        %set-spawn-proxy       [%set-spawn-proxy (addr %proxy-test)]
+        %set-transfer-proxy    [%set-transfer-proxy (addr %proxy-test)]
+      ==
+      ::
+      ++  encr    (shax 'You will forget that you ever read this sentence.')
+      ++  auth    (shax 'You cant know that this sentence is true.')
+      ++  suit    1
+      ::
+      ::  TODO: these are spawns that ought to work, except for the planets
+      ::  attempting to spawn, which needs to be factored out differently
+      ::
+      --  :: +def-args
+    ::
+    ++  which-spawn  ^-  ship
+      ~&  cur-ship
+      ?+  cur-ship  !!
+        %~rut            ~hasrut
+        %~rigrut         ~batbec-tapmep
+        %~larsyx-mapmeg  ~nocryl-tobned
+        %~holrut         ~namtuc-ritnux
+        %~rabsum-ravtyd  ~docsec-wanlug
+        %~dovmul-mogryt  ~docsec-wanlug
+        %~pidted-dacnum  ~docsec-wanlug
+        %~losrut         ~mishus-loplus
+        %~radres-tinnyl  ~tapfur-fitsep
+        %~pinpun-pilsun  ~tapfur-fitsep
+        %~habtyc-nibpyx  ~tapfur-fitsep
+        %~disryt-nolpet  ~tapfur-fitsep
+      ==
+    ::
+    --  :: inner trap
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
