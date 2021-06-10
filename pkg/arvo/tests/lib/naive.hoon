@@ -634,7 +634,7 @@
   |-  ^-  tang
   ?~  current-events  ~
   %+  weld  $(current-events t.current-events)
-  =/  cur-event  i.-.current-events
+  =/  cur-event  i.current-events
   %+  category  (weld "dominion " (scow %tas dominion.cur-event))
   %+  category  (weld "proxy " (scow %tas proxy.cur-event))
   %+  category  (weld "tx-type " (scow %tas tx-type.cur-event))
@@ -652,7 +652,7 @@
         %bat
       =<  q
       %-  gen-tx
-      :+  +(nonce.owner.own:(~(got by points.state) cur-ship))
+      :+  nonce.owner.own:(~(got by points.state) cur-ship)
         :+  [cur-ship proxy.cur-event]
           %set-management-proxy  ::tx-type.cur-event why does the tx-type not work?
         (addr common-mgmt)
