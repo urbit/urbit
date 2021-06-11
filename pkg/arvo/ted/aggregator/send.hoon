@@ -41,7 +41,9 @@
     (sign-transaction:key:ethereum tx pk)
   :*  nonce
       use-gas-price
-      gas-limit
+      :: TODO: scale properly
+      ::
+      (mul gas-limit (lent txs))
       contract
       0
   ::
