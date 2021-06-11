@@ -132,6 +132,7 @@
   ::    /x/pending/[0xadd.ress]        ->  %noun  (list pend-tx)
   ::    /x/tx/[0xke.ccak]/status       ->  %noun  tx-status
   ::    /x/nonce/[~ship]/[0xadd.ress]  ->  %atom  @
+  ::    /x/spawned/[~ship]             ->  %noun  (list [ship address)
   ::    /x/next-batch                  ->  %atom  time
   ::
   ++  on-peek
@@ -204,16 +205,13 @@
       :-  %noun
       !>  ^-  (list [=^ship =address:ethereum])
       ?~  star=(slaw %p wat)  ~
-      ::  TODO: move to /lib/naive
-      ::
-      =/  points  (gas:orm ~ ~(tap by points.pre))
       =/  range
-        %+  subset:orm  points.pre
+        %+  lot:orm:naive  points.pre
         ::  range exclusive [star first-planet-next-star]
         ::  TODO: make range inclusive? [first-planet last-planet]
         ::
         [`u.star `(cat 3 +(u.star) 0x1)]
-      %+  turn  (tap:orm range)
+      %+  turn  (tap:orm:naive range)
       |=  [=ship =point:naive]
       ^-  [=^ship =address:ethereum]
       :-  ship
@@ -495,7 +493,7 @@
 ++  get-l1-address
   |=  [=tx:naive nas=^state:naive]
   ^-  address:ethereum
-  ?~  point=(~(get by points.nas) ship.from.tx)
+  ?~  point=(get:orm:naive points.nas ship.from.tx)
     !!
   =<  address
   (proxy-from-point:naive proxy.from.tx u.point)

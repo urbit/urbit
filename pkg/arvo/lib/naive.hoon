@@ -129,6 +129,7 @@
 +$  nonce     @ud
 +$  dominion  ?(%l1 %l2 %spawn)
 +$  keys      [=life suite=@ud auth=@ crypt=@]
+++  orm       ((on ship point) por)
 ++  point
   $:  ::  domain
       ::
@@ -177,7 +178,7 @@
       =operators
       dns=(list @t)
   ==
-+$  points     (map ship point)
++$  points     (tree [ship point])
 +$  operators  (jug address address)
 +$  effects    (list diff)
 +$  proxy      ?(%own %spawn %manage %vote %transfer)
@@ -445,7 +446,7 @@
 ++  get-point
   |=  [=state =ship]
   ^-  (unit point)
-  =/  existing  (~(get by points.state) ship)
+  =/  existing  (get:orm points.state ship)
   ?^  existing
     `u.existing
   =|  =point
@@ -507,7 +508,7 @@
   =/  the-point  (get-point state ship)
   ?>  ?=(^ the-point)
   =*  point  u.the-point
-  =-  [effects state(points (~(put by points.state) ship new-point))]
+  =-  [effects state(points (put:orm points.state ship new-point))]
   ^-  [=effects new-point=^point]
   ::
   ?:  =(log-name changed-spawn-proxy:log-names)
@@ -661,7 +662,7 @@
     ==
   ::
   :-  [%nonce ship proxy nonce]~
-  (~(put by points.state) ship u.point)
+  (put:orm points.state ship u.point)
 ::
 ::  Receive an individual L2 transaction
 ::
@@ -695,7 +696,7 @@
     =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
     ?~  res
       ~
-    `[effects.u.res state(points (~(put by points.state) ship new-point.u.res))]
+    `[effects.u.res state(points (put:orm points.state ship new-point.u.res))]
   ::
   ++  process-transfer-point
     |=  [=point to=address reset=?]
@@ -726,7 +727,7 @@
       ?:  =(0 life.keys.net.point)
         `rift.net.point
       :-  [%point ship %rift +(rift.net.point)]~
-      +(rift.net.point) 
+      +(rift.net.point)
     =/  effects-4
       :~  [%point ship %spawn-proxy *address]
           [%point ship %management-proxy *address]
@@ -759,7 +760,7 @@
     ::
     ::  TODO: verify this means the ship exists on neither L1 nor L2
     ::
-    ?:  (~(has by points.state) ship)  (debug %spawn-exists ~)
+    ?^  (get:orm points.state ship)  (debug %spawn-exists ~)
     ::  Assert one-level-down
     ::
     ?.  =(+((ship-rank parent)) (ship-rank ship))  (debug %bad-rank ~)
@@ -791,7 +792,7 @@
         address.owner.own           address.owner.own.u.parent-point
         address.transfer-proxy.own  to
       ==
-    `[effects state(points (~(put by points.state) ship new-point))]
+    `[effects state(points (put:orm points.state ship new-point))]
   ::
   ++  process-configure-keys
     |=  [=point crypt=@ auth=@ suite=@ breach=?]
