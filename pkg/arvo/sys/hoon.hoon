@@ -10904,7 +10904,6 @@
           =/  taf  q.tuf
           :_  grub
           :-  ~
-          ?~  taf  ~
           ?:  ?=([%| %| *] taf)
             =.  q.p.p.taf  (scul 3 q.p.p.taf)
             taf
@@ -10916,7 +10915,6 @@
         =/  raf  q.ruf
         :_  grub
         :-  ~
-        ?~  raf  ~
         ?:  ?=([%| %| *] raf)
           =.  q.p.p.raf  (scul 6 q.p.p.raf)
           raf
