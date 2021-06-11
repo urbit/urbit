@@ -34,6 +34,7 @@
       ::  next-nonce: next l1 nonce to use
       ::  next-batch: when then next l2 batch will be sent
       ::  pre: predicted l2 state
+      ::  flush: flag for deriving predicted state
       ::
       pending=(list pend-tx)
     ::
@@ -45,6 +46,7 @@
       next-nonce=(unit @ud)
       next-batch=time
       pre=^state:naive
+      flush=?
     ::
       ::  pk: private key to send the roll
       ::  frequency: time to wait between sending batches (TODO fancier)
@@ -227,6 +229,13 @@
         %wake  =^(cards state on-timer:do [cards this])
       ==
     ::
+        [%predict ~]
+      ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
+          %wake
+        =^  pending  pre  (predicted-state:do canonical-state:do)
+        [~ this(pending pending, flush &)]
+      ==
+    ::
         [%resend @ @ ~]
       =/  [address=@ux nonce=@ud]
         [(slav %ux i.t.wire) (rash i.t.t.wire dem)]
@@ -318,7 +327,7 @@
           ::  this assumes that %azimuth has already processed eth data
           ::
           =^  pending  pre
-            (predicted-state !<(^state:naive q.cage.sign))
+            (predicted-state:do !<(^state:naive q.cage.sign))
           [~ this(pending pending)]
         ==
       ==
@@ -466,23 +475,22 @@
       %-  ~(put by finding)
       [(hash-raw-tx raw-tx.tx) %failed]
     $(txs t.txs)
+  ::
+  ++  try-apply
+    |=  [nas=^state:naive force=? =raw-tx:naive]
+    ^-  [success=? _nas]
+    =/  chain-t=@t  (ud-to-ascii:naive chain-id)
+    ?.  (verify-sig-and-nonce:naive verifier:lib chain-t nas raw-tx)
+      ~&  [%verify-sig-and-nonce %failed]
+      [force nas]
+    ::
+    =^  *  points.nas
+      (increment-nonce:naive nas from.tx.raw-tx)
+    ::
+    ?~  nex=(receive-tx:naive nas tx.raw-tx)
+      [force nas]
+    [& +.u.nex]
   --
-::  +try-apply:
-::
-++  try-apply
-  |=  [nas=^state:naive force=? =raw-tx:naive]
-  ^-  [success=? _nas]
-  =/  chain-t=@t  (ud-to-ascii:naive chain-id)
-  ?.  (verify-sig-and-nonce:naive verifier:lib chain-t nas raw-tx)
-    ~&  [%verify-sig-and-nonce %failed]
-    [force nas]
-  ::
-  =^  *  points.nas
-    (increment-nonce:naive nas from.tx.raw-tx)
-  ::
-  ?~  nex=(receive-tx:naive nas tx.raw-tx)
-    [force nas]
-  [& +.u.nex]
 ::
 ++  get-l1-address
   |=  [=tx:naive nas=^state:naive]
@@ -501,15 +509,10 @@
     %cancel  !!  ::TODO
   ::
       %submit
-    =^  success  state
-      ^-  [? _state]
-      %^    take-tx
-          force.action
-        sig.action
-      (part-tx-to-full tx.action)
-    ~?  =(success |)
-      [dap.bowl %submit-failed action]
-    [~ state]
+    %^    take-tx
+        force.action
+      sig.action
+    (part-tx-to-full tx.action)
   ==
 ::
 ++  on-config
@@ -542,16 +545,18 @@
   ^-  address:ethereum
   (address-from-prv:key:ethereum pk)
 ::  +take-tx: accept submitted l2 tx into the :pending list
-::TODO  rewrite
 ::
 ++  take-tx
   |=  [force=? =raw-tx:naive]
-  ^-  [success=? _state]
-  =^  nep  pre  (predicted-state canonical-state)
-  =^  success  pre  (try-apply pre force raw-tx)
-  ::TODO  want to notify about dropped pendings, or no? client prolly polls...
-  =?  pending  success  (snoc nep [force raw-tx])
-  [success state]
+  ^-  (quip card _state)
+  =.  pending  (snoc pending [force raw-tx])
+  ::  toggle flush flag
+  ::
+  :_  state(flush ?:(flush | &))
+  ?.  flush  ~
+  ::  derive predicted state in 5m.
+  ::
+  [(wait:b:sys /predict (add ~m5 now.bowl))]~
 ::  +set-timer: %wait until next whole :frequency
 ::
 ++  set-timer
@@ -562,12 +567,15 @@
 ::
 ++  on-timer
   ^-  (quip card _state)
+  =^  new-pending  pre  (predicted-state canonical-state)
+  =.  pending  new-pending
   =^  cards  state
     ?:  =(~ pending)  [~ state]
     ?~  next-nonce
       ~&([dap.bowl %no-nonce] [~ state])
     =/  nonce=@ud   u.next-nonce
     =:  pending     ~
+        flush       &
         next-nonce  `+(u.next-nonce)
       ::
           sending
@@ -678,11 +686,10 @@
     ::  unexpected tx failures here. would that be useful? probably not?
     ::  ~?  !forced  [dap.bowl %aggregated-tx-failed-anyway err.diff]
     %failed
-  ::  because we update the predicted state upon receiving
-  ::  a new L2 tx via the rpc-api, this will only succeed when
-  ::  we hear about a L2 tx that hasn't been submitted by us
+  :_  state(flush ?:(flush | &))
+  ?.  flush  ~
+  ::  derive predicted state in 5m.
   ::
-  =^  nep  pre  (predicted-state canonical-state)
-  [~ state(pending nep)]
+  [(wait:b:sys /predict (add ~m5 now.bowl))]~
 ::
 --
