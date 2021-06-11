@@ -457,7 +457,7 @@
   (lth a b)
 ::
 ++  por                                                 ::  parent order
-  :: ~/  %aor TODO: jet?
+  ~/  %por
   |=  [a=@p b=@p]
   ^-  ?
   ?:  =(a b)  &
