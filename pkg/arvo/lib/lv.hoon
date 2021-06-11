@@ -18,7 +18,6 @@
   ::
   ::    Zeroes
   ++  zeros
-    ::~/  %zeros
     |=  n=@ud  ^-  @lvs
     ~_  leaf+"lace-fail"
     `@lvs`(lsh [5 n] 1)   :: pin at head for leading zeros
@@ -92,7 +91,6 @@
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
-    ::~/  %get
     |=  [u=@lvs i=@ud]  ^-  @rs
     ~_  leaf+"lace-fail"
     (cut 5 [(dec i) 1] u)
@@ -104,7 +102,6 @@
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
-    ::~/  %set
     |=  [u=@lvs i=@ud s=@rs]  ^-  @lvs
     ~_  leaf+"lace-fail"
     ?:  (gth i (length u))  !!
@@ -138,28 +135,24 @@
   ::    Scalar addition
   ++  adds
     |=  [u=@lvs s=@rs]  ^-  @lvs
-    ::~/  %adds
     =/  ss  (fill (length u) s)
     (addv u ss)
   ::
   ::    Scalar subtraction
   ++  subs
     |=  [u=@lvs s=@rs]  ^-  @lvs
-    ::~/  %subs
     =/  ss  (fill (length u) s)
     (subv u ss)
   ::
   ::    Scalar multiplication
   ++  muls
     |=  [u=@lvs s=@rs]  ^-  @lvs
-    ::~/  %muls
     =/  ss  (fill (length u) s)
     (mulv u ss)
   ::
   ::    Scalar division
   ++  divs
     |=  [u=@lvs s=@rs]  ^-  @lvs
-    ::~/  %divs
     =/  ss  (fill (length u) s)
     (divv u ss)
   ::
@@ -216,7 +209,6 @@
   ::
   ::    Inner or Euclidean dot product, a · b
   ++  inner
-    ::~/  %inner
     |=  [u=@lvs v=@lvs]  ^-  @rs
     ~_  leaf+"lace-fail"
     (sum (mulv u v))
@@ -232,14 +224,13 @@
   ::
 ++  lvd
   ^|
-  ::~%  %lvd  +>  ~
+  ~%  %lvd  ..part  ~
   |_  r=$?(%n %u %d %z)   :: round nearest, round up, round down, round to zero
   ::
   ::  Manipulators
   ::
   ::    Zeroes
   ++  zeros
-    ::~/  %zeros
     |=  n=@ud  ^-  @lvd
     ~_  leaf+"lace-fail"
     `@lvd`(lsh [6 n] 1)   :: pin at head for leading zeros
@@ -313,7 +304,6 @@
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
-    ::~/  %get
     |=  [u=@lvd i=@ud]  ^-  @rd
     ~_  leaf+"lace-fail"
     (cut 6 [(dec i) 1] u)
@@ -325,7 +315,6 @@
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
-    ::~/  %set
     |=  [u=@lvd i=@ud s=@rd]  ^-  @lvd
     ~_  leaf+"lace-fail"
     ?:  (gth i (length u))  !!
@@ -359,28 +348,24 @@
   ::    Scalar addition
   ++  adds
     |=  [u=@lvd s=@rd]  ^-  @lvd
-    ::~/  %adds
     =/  ss  (fill (length u) s)
     (addv u ss)
   ::
   ::    Scalar subtraction
   ++  subs
     |=  [u=@lvd s=@rd]  ^-  @lvd
-    ::~/  %subs
     =/  ss  (fill (length u) s)
     (subv u ss)
   ::
   ::    Scalar multiplication
   ++  muls
     |=  [u=@lvd s=@rd]  ^-  @lvd
-    ::~/  %muls
     =/  ss  (fill (length u) s)
     (mulv u ss)
   ::
   ::    Scalar division
   ++  divs
     |=  [u=@lvd s=@rd]  ^-  @lvd
-    ::~/  %divs
     =/  ss  (fill (length u) s)
     (divv u ss)
   ::
@@ -395,23 +380,22 @@
   ::
   ::    Apply a two-variable function across a vector input.
   ++  funv
-    ::~/  %funv
     |=  f=$-([@rd @rd] @rd)
     |=  [u=@lvd v=@lvd]  ^-  @lvd
     ~_  leaf+"lace-fail"
     (make (turn2 [(unmake u) (unmake v)] f))
   ::
   ::    Vector addition
-  ++  addv  (funv add:rd)
+  ++  addv  ~/  %addv  |=([@lvd @lvd] %.(+< (funv add:rd)))
   ::
   ::    Vector subtraction
-  ++  subv  (funv sub:rd)
+  ++  subv  ~/  %subv  |=([@lvd @lvd] %.(+< (funv sub:rd)))
   ::
   ::    Vector multiplication
-  ++  mulv  (funv mul:rd)
+  ++  mulv  ~/  %mulv  |=([@lvd @lvd] %.(+< (funv mul:rd)))
   ::
   ::    Vector division
-  ++  divv  (funv div:rd)
+  ++  divv  ~/  %divv  |=([@lvd @lvd] %.(+< (funv div:rd)))
   ::
   ::    Sum of elements
   ++  sum
@@ -438,7 +422,6 @@
   ::
   ::    Inner or Euclidean dot product, a · b
   ++  inner
-    ::~/  %inner
     |=  [u=@lvd v=@lvd]  ^-  @rd
     ~_  leaf+"lace-fail"
     (sum (mulv u v))
