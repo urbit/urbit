@@ -195,6 +195,9 @@
       ::
         %ping
       [%get-block-info ~]
+      ::
+        %block-info
+      [%get-block-info block.act]
     ==
   [~[(req-card act ract)] state]
 ::
@@ -284,6 +287,11 @@
     ?:  =(block.host-info block.r)
       ~[(send-status [%connected network.host-info block.r fee.r])]
     ~[(send-status [%new-block network.host-info block.r fee.r blockhash.r blockfilter.r])]
+    ::
+      %block-info
+    ?>  ?=([%get-block-info *] r)
+    :_  state
+    ~[(send-update [%.y %block-info network.host-info +.r])]
   ==
 ::
 ++  send-status

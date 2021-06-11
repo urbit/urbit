@@ -4,7 +4,7 @@
 ::  x/scanned: (list xpub) of all scanned wallets
 ::  x/balance/xpub: balance (in sats) of wallet
 /-  *btc-wallet, bp=btc-provider, file-server, launch-store
-/+  dbug, default-agent, bl=btc, bc=bitcoin, bip32
+/+  dbug, default-agent, bl=btc, bc=bitcoin, bip32, bip-b158
 |%
 ++  defaults
   |%
@@ -685,7 +685,6 @@
 ++  handle-provider-status
   |=  s=status:bp
   ^-  (quip card _state)
-  |^
   =^  cards  state
     ?~  prov  `state
     ?.  =(host.u.prov src.bowl)  `state
@@ -704,102 +703,143 @@
       (give-update %change-provider prov)
       cards
   ==
-  ::
-  ++  on-connected
-    |=  $:  p=provider
-            =network
-            block=@ud
-            fee=(unit sats)
-            blockhash=(unit hexb)
-            blockfilter=(unit hexb)
-        ==
-    ^-  (quip card _state)
-    :_  %_  state
-            prov  `p(connected %.y)
-            btc-state  [block fee now.bowl]
-        ==
-    ?:  ?|(?!(connected.p) (lth block.btc-state block))
-      ;:  weld
-        (retry-pend-piym network)
-        (retry-poym network)
-        (retry-addrs network)
-        (retry-txs network)
-        (retry-scans network)
-        retry-ahistorical-txs
+::
+++  on-connected
+  |=  $:  p=provider
+          =network
+          block=@ud
+          fee=(unit sats)
+          blockhash=(unit hexb)
+          blockfilter=(unit hexb)
       ==
+  ^-  (quip card _state)
+  ::  request block-info for missing blocks
+  ::  if blockhash or blockfilter are ~ request block-info for current block
+  ::
+  =|  blocks=(list @ud)
+  =/  gap  (sub block block.btc-state)
+  =?  blocks  (gth gap 1)
+    (gulf +(block.btc-state) (dec block))
+  =?  blocks  ?|(?=(~ blockhash) ?=(~ blockfilter))
+    (snoc blocks block)
+  ::
+  =/  cards=(list card)
     ;:  weld
-::      (retry-addrs network)
       retry-ahistorical-txs
       (retry-pend-piym network)
+      (retry-block-info blocks)
     ==
-  ::
-  ++  retry-ahistorical-txs
-    ^-  (list card)
-    %+  turn  ~(tap in ahistorical-txs)
-    |=  =txid
-    (poke-provider [%tx-info txid])
-
-  ::
-  ++  retry-scans
-    |=  =network
-    ^-  (list card)
-    %-  zing
-    %+  murn  ~(tap by scans)
-    |=  [[=xpub:bc =chyg] =batch]
-    ?.  =(network network:(~(got by walts) xpub))  ~
-    `-:(req-scan batch xpub chyg)
-  ::  +retry-addrs: get info on addresses with unconfirmed UTXOs
-  ::
-  ++  retry-addrs
-    |=  =network
-    ^-  (list card)
-    %-  zing
-    %+  murn  ~(val by walts)
-    |=  w=walt
-    ?.  =(network network.w)  ~
-    ^-  (unit (list card))
-    :-  ~
-    %+  turn  ~(tap by wach.w)
-    |=  [a=address *]
-    (poke-provider [%address-info a])
-  ::  +retry-txs: get info on txs without enough confirmations
-  ::
-  ++  retry-txs
-    |=  =network
-    ^-  (list card)
-    %+  murn  ~(tap by history)
-    |=  [=txid =hest]
-    =/  w  (~(get by walts) xpub.hest)
-    ?~  w  ~
-    ?.  =(network network.u.w)  ~
-    ?:  (gte confs.hest confs.u.w)  ~
-    `(poke-provider [%tx-info txid])
-  ::
-  ++  retry-poym
-    |=  =network
-    ^-  (list card)
-    ?~  txbu.poym  ~
-    =/  w  (~(get by walts) xpub.u.txbu.poym)
-    ?~  w  ~
-    ?.  =(network network.u.w)  ~
-    %+  weld
-      ?~  signed-tx.u.txbu.poym  ~
-      ~[(poke-provider [%broadcast-tx u.signed-tx.u.txbu.poym])]
-    %+  turn  txis.u.txbu.poym
-    |=  =txi
-    (poke-provider [%raw-tx ~(get-txid txb:bl u.txbu.poym)])
-  ::  +retry-pend-piym: check whether txids in pend-piym are in mempool
-  ::
-  ++  retry-pend-piym
-    |=  =network
-    ^-  (list card)
-    %+  murn  ~(tap by pend.piym)
-    |=  [=txid p=payment]
-    =/  w  (~(get by walts) xpub.p)
-    ?~  w  ~
-    ?.  =(network network.u.w)  ~
-    `(poke-provider [%tx-info txid])
-  --
+  =?  cards  ?|(!connected.p (gth gap 0))
+    ;:  weld  cards
+      (retry-poym network)
+      (retry-txs network)
+      (retry-scans network)
+    ==
+  =?  cards  ?&(?=(^ blockhash) ?=(^ blockfilter) (gth gap 0))
+    ;:  weld  cards
+      (retry-filtered-addrs network u.blockhash u.blockfilter)
+    ==
+  :-  cards
+  %_  state
+    prov  `p(connected %.y)
+    btc-state  [block fee now.bowl]
+  ==
+::
+++  retry-block-info
+  |=  blocks=(list @ud)
+  %+  turn  blocks
+  |=  block=@ud
+  (poke-provider %block-info `block)
+::
+++  retry-ahistorical-txs
+  ^-  (list card)
+  %+  turn  ~(tap in ahistorical-txs)
+  |=  =txid
+  (poke-provider [%tx-info txid])
+::
+++  retry-scans
+  |=  =network
+  ^-  (list card)
+  %-  zing
+  %+  murn  ~(tap by scans)
+  |=  [[=xpub:bc =chyg] =batch]
+  ?.  =(network network:(~(got by walts) xpub))  ~
+  `-:(req-scan batch xpub chyg)
+::  +retry-addrs: get info on addresses with unconfirmed UTXOs
+::
+++  retry-addrs
+  |=  =network
+  ^-  (list card)
+  %-  zing
+  %+  murn  ~(val by walts)
+  |=  w=walt
+  ?.  =(network network.w)  ~
+  ^-  (unit (list card))
+  :-  ~
+  %+  turn  ~(tap by wach.w)
+  |=  [a=address *]
+  (poke-provider [%address-info a])
+::
+::
+++  retry-filtered-addrs
+  |=  [=network blockhash=hexb blockfilter=hexb]
+  ^-  (list card)
+  %-  zing
+  %+  murn  ~(val by walts)
+  |=  w=walt
+  ^-  (unit (list card))
+  ?.  =(network network.w)  ~
+  :-  ~
+  %+  murn
+    %~  tap  in
+    %:  all-match:bip-b158
+        blockfilter
+        blockhash
+      ::
+        %+  turn  ~(tap by wach.w)
+        |=  [a=address *]
+        [a (to-script-pubkey:adr:bc a)]
+    ==
+  |=  [a=address spk=hexb]
+  ^-  (unit card)
+  `(poke-provider [%address-info a])
+::  +retry-txs: get info on txs without enough confirmations
+::
+++  retry-txs
+  |=  =network
+  ^-  (list card)
+  %+  murn  ~(tap by history)
+  |=  [=txid =hest]
+  =/  w  (~(get by walts) xpub.hest)
+  ?~  w  ~
+  ?.  =(network network.u.w)  ~
+  ?:  (gte confs.hest confs.u.w)  ~
+  `(poke-provider [%tx-info txid])
+::
+++  retry-poym
+  |=  =network
+  ^-  (list card)
+  ?~  txbu.poym  ~
+  =/  w  (~(get by walts) xpub.u.txbu.poym)
+  ?~  w  ~
+  ?.  =(network network.u.w)  ~
+  %+  weld
+    ?~  signed-tx.u.txbu.poym  ~
+    ~[(poke-provider [%broadcast-tx u.signed-tx.u.txbu.poym])]
+  %+  turn  txis.u.txbu.poym
+  |=  =txi
+  (poke-provider [%raw-tx ~(get-txid txb:bl u.txbu.poym)])
+::  +retry-pend-piym: check whether txids in pend-piym are in mempool
+::
+++  retry-pend-piym
+  |=  =network
+  ^-  (list card)
+  %+  murn  ~(tap by pend.piym)
+  |=  [=txid p=payment]
+  =/  w  (~(get by walts) xpub.p)
+  ?~  w  ~
+  ?.  =(network network.u.w)  ~
+  `(poke-provider [%tx-info txid])
 ::
 ++  handle-provider-update
   |=  upd=update:bp
@@ -833,6 +873,10 @@
     :~  (poke-internal [%fail-broadcast-tx txid.p.upd])
         (give-update %cancel-tx txid.p.upd)
     ==
+    ::
+      %block-info
+    :_  state
+    (retry-filtered-addrs network.p.upd blockhash.p.upd blockfilter.p.upd)
   ==
 ::
 ++  handle-tx-info
