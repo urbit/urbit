@@ -102,8 +102,10 @@ export function SidebarDmItem(props: {
 }) {
   const { ship, selected = false } = props;
   const contact = useContact(ship);
-  const title = contact?.nickname || (cite(ship) ?? ship);
-  const hideAvatars = false;
+  const { hideAvatars, hideNicknames }  = useSettingsState(s => s.calm);
+  const title = (!hideNicknames && contact?.nickname)
+    ? contact?.nickname
+    : (cite(ship) ?? ship);
   const { unreads } = useHarkDm(ship) || { unreads: 0 };
   const img =
     contact?.avatar && !hideAvatars ? (
@@ -131,7 +133,7 @@ export function SidebarDmItem(props: {
       hasUnread={(unreads as number) > 0}
       to={`/~landscape/messages/dm/${ship}`}
       title={title}
-      mono={!contact?.nickname}
+      mono={hideAvatars || !contact?.nickname}
       isSynced
     >
       {img}
