@@ -94,7 +94,7 @@
     c3_w n_ = u3r_word(0,n);
     c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+1)*sizeof(float32_t));
 
-    uint i;
+    uint32_t i;
     union trip c;
     c.c = 0x00000000;
     w_[m_*n_] = m_;
@@ -133,7 +133,7 @@
     c3_w n_ = u3r_word(0,n);
     c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+1)*sizeof(float32_t));
 
-    uint i;
+    uint32_t i;
     union trip c;
     c.c = 0x3F800000;
     w_[m_*n_] = m_;
@@ -172,7 +172,7 @@
     c3_w n_ = u3r_word(0,n);
     c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+1)*sizeof(float32_t));
 
-    uint i;
+    uint32_t i;
     union trip c, d;
     c.c = 0x00000000;
     d.c = 0x3F800000;
@@ -283,7 +283,7 @@
 
       c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
 
-      uint ii;
+      uint32_t ii;
       w_[m_u*n_u] = p_.c;
       for ( ii = 0; ii < m_u*n_u; ii++ ) {
         if ( ii == ((m_u*n_u)-((i_-1)*n_u+j_)) )
@@ -403,7 +403,7 @@
 
     c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
 
-    uint ii, jj;
+    uint32_t ii, jj;
     w_[m_u*n_u] = p_u.c;
     ii = n_v;
     for ( jj = 0; jj < m_u*n_u; jj++ ) {
@@ -523,7 +523,7 @@
 
     c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
 
-    uint ii, jj;
+    uint32_t ii, jj;
     w_[m_u*n_u] = p_u.c;
     jj = n_v;
     for ( ii = 0; ii < m_u*n_u; ii++ ) {
@@ -641,7 +641,7 @@
     c3_w m_u = mn.rows;
     c3_w n_u = mn.cols;
 
-    uint i;
+    uint32_t i;
     u3_noun w = u3qelms_zeros(n_u, m_u);
     for ( i = 0; i < m_u; i++ )
     {
