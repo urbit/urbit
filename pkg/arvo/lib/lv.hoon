@@ -209,8 +209,10 @@
   ::
   ::    Inner or Euclidean dot product, a · b
   ++  inner
+    ~/  %inner
     |=  [u=@lvs v=@lvs]  ^-  @rs
     ~_  leaf+"lace-fail"
+    ~&  "skipping"
     (sum (mulv u v))
   ++  outer  !!  :: unimplemented pending @lm type
   ++  catenate
@@ -422,6 +424,7 @@
   ::
   ::    Inner or Euclidean dot product, a · b
   ++  inner
+    ~/  %inner
     |=  [u=@lvd v=@lvd]  ^-  @rd
     ~_  leaf+"lace-fail"
     (sum (mulv u v))
