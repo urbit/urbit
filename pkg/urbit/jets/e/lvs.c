@@ -118,7 +118,7 @@
 
     c3_w* w_  = (c3_w*)u3a_malloc((n_u+1)*sizeof(float32_t));
 
-    uint ii;
+    uint32_t ii;
     w_[n_u] = n_u;
     for ( ii = 0; ii < n_u; ii++ ) {
       if ( ii == i_u-1 )  // math-indexing on i_u  //TODO checkme
