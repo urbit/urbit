@@ -91,6 +91,7 @@
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
+    /~  %get
     |=  [u=@lvs i=@ud]  ^-  @rs
     ~_  leaf+"lace-fail"
     (cut 5 [(dec i) 1] u)
@@ -102,6 +103,7 @@
   ::
   ::    Set the value of an element within a vector, using math indices 1..n.
   ++  set
+    /~  %set
     |=  [u=@lvs i=@ud s=@rs]  ^-  @lvs
     ~_  leaf+"lace-fail"
     ?:  (gth i (length u))  !!
