@@ -254,3 +254,48 @@
       return u3qelvd_divv(a, b, u3x_at(30, cor));
     }
   }
+
+/* inner product of lvd + lvd
+*/
+  u3_noun
+  u3qelvd_inner(u3_atom u,  /* @lvd */
+                u3_atom v,  /* @lvd */
+                u3_atom r)
+  {
+    c3_d n_u = u3r_met(3,u)/8;  // n_u is the vector length
+    c3_d n_v = u3r_met(3,v)/8;
+    if (n_u != n_v) {
+      return u3m_bail(c3__exit);
+    }
+
+    uint32_t i;
+    union trip c, d, e, t;
+    _set_rounding(r);
+    t.c = 0;
+    for ( i = 0; i < n_u; i++ ) {
+      c.c = u3r_chub(i, u);
+      d.c = u3r_chub(i, v);
+
+      e.s = _nan_unify(f64_mul(c.s,d.s));
+      t.s = _nan_unify(f64_add(t.s,e.s));
+    }
+
+    return u3i_chubs(1, &t.c);
+  }
+
+  u3_noun
+  u3welvd_inner(u3_noun cor)
+  {
+    u3_noun a, b;
+
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &a,
+                              u3x_sam_3, &b, 0) ||
+         c3n == u3ud(a) ||
+         c3n == u3ud(b) )
+    {
+      return u3m_bail(c3__exit);
+    }
+    else {
+      return u3qelvd_inner(a, b, u3x_at(30, cor));
+    }
+  }
