@@ -437,6 +437,119 @@ static c3_c* _140_hex_ripe_ha[] = {
   0
 };
 
+static u3j_harm _140_hex__lvs_get_a[] = {{".2", u3welvs_get, c3y}, {}};
+static c3_c* _140_hex__lvs_get_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvs_set_a[] = {{".2", u3welvs_set, c3y}, {}};
+static c3_c* _140_hex__lvs_set_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvs_addv_a[] = {{".2", u3welvs_addv, c3y}, {}};
+static c3_c* _140_hex__lvs_addv_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvs_subv_a[] = {{".2", u3welvs_subv, c3y}, {}};
+static c3_c* _140_hex__lvs_subv_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvs_mulv_a[] = {{".2", u3welvs_mulv, c3y}, {}};
+static c3_c* _140_hex__lvs_mulv_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvs_divv_a[] = {{".2", u3welvs_divv, c3y}, {}};
+static c3_c* _140_hex__lvs_divv_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvs_inner_a[] = {{".2", u3welvs_inner, c3y}, {}};
+static c3_c* _140_hex__lvs_inner_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_core _140_hex__lvs_d[] =
+  { { "get", 7, _140_hex__lvs_get_a, 0, _140_hex__lvs_get_ha },
+    { "set", 7, _140_hex__lvs_set_a, 0, _140_hex__lvs_set_ha },
+    { "addv", 7, _140_hex__lvs_addv_a, 0, _140_hex__lvs_addv_ha },
+    { "subv", 7, _140_hex__lvs_subv_a, 0, _140_hex__lvs_subv_ha },
+    { "mulv", 7, _140_hex__lvs_mulv_a, 0, _140_hex__lvs_mulv_ha },
+    { "divv", 7, _140_hex__lvs_divv_a, 0, _140_hex__lvs_divv_ha },
+    { "inner", 7, _140_hex__lvs_inner_a, 0, _140_hex__lvs_inner_ha },
+    {}
+  };
+static c3_c* _140_hex__lvs_ha[] = {
+  "0bac9c3c43634bb86f6721bbcc444f69c83395f204ff69d3175f3821b1f679ba",
+  0
+};
+
+static u3j_harm _140_hex__lvd_get_a[] = {{".2", u3welvd_get, c3y}, {}};
+static c3_c* _140_hex__lvd_get_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvd_set_a[] = {{".2", u3welvd_set, c3y}, {}};
+static c3_c* _140_hex__lvd_set_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvd_addv_a[] = {{".2", u3welvd_addv, c3y}, {}};
+static c3_c* _140_hex__lvd_addv_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvd_subv_a[] = {{".2", u3welvd_subv, c3y}, {}};
+static c3_c* _140_hex__lvd_subv_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvd_mulv_a[] = {{".2", u3welvd_mulv, c3y}, {}};
+static c3_c* _140_hex__lvd_mulv_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvd_divv_a[] = {{".2", u3welvd_divv, c3y}, {}};
+static c3_c* _140_hex__lvd_divv_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_harm _140_hex__lvd_inner_a[] = {{".2", u3welvd_inner, c3y}, {}};
+static c3_c* _140_hex__lvd_inner_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
+static u3j_core _140_hex__lvd_d[] =
+  { { "get", 7, _140_hex__lvd_get_a, 0, _140_hex__lvd_get_ha },
+    { "set", 7, _140_hex__lvd_set_a, 0, _140_hex__lvd_set_ha },
+    { "addv", 7, _140_hex__lvd_addv_a, 0, _140_hex__lvd_addv_ha },
+    { "subv", 7, _140_hex__lvd_subv_a, 0, _140_hex__lvd_subv_ha },
+    { "mulv", 7, _140_hex__lvd_mulv_a, 0, _140_hex__lvd_mulv_ha },
+    { "divv", 7, _140_hex__lvd_divv_a, 0, _140_hex__lvd_divv_ha },
+    { "inner", 7, _140_hex__lvd_inner_a, 0, _140_hex__lvd_inner_ha },
+    {}
+  };
+static c3_c* _140_hex__lvd_ha[] = {
+  "0bac9c3c43634bb86f6721bbcc444f69c83395f204ff69d3175f3821b1f679ba",
+  0
+};
 
 static u3j_core _140_hex_d[] =
 { { "lore",   63, _140_hex_lore_a, 0, _140_hex_lore_ha },
@@ -453,6 +566,9 @@ static u3j_core _140_hex_d[] =
   { "ripemd", 31, 0, _140_hex_ripe_d,  _140_hex_ripe_ha  },
   { "secp",    6, 0, _140_hex_secp_d, _140_hex_secp_ha },
   { "mimes",  31, 0, _140_hex_mimes_d, _140_hex_mimes_ha  },
+
+  { "lvs",    31, 0, _140_hex__lvs_d,  _140_hex__lvs_ha  },
+  { "lvd",    31, 0, _140_hex__lvd_d,  _140_hex__lvd_ha  },
   {}
 };
 static c3_c* _140_hex_ha[] = {
