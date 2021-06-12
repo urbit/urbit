@@ -461,11 +461,18 @@ static c3_c* _140_hex__lvs_divv_ha[] = {
   0
 };
 
+static u3j_harm _140_hex__lvs_inner_a[] = {{".2", u3welvs_inner, c3y}, {}};
+static c3_c* _140_hex__lvs_inner_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
 static u3j_core _140_hex__lvs_d[] =
   { { "addv", 7, _140_hex__lvs_addv_a, 0, _140_hex__lvs_addv_ha },
     { "subv", 7, _140_hex__lvs_subv_a, 0, _140_hex__lvs_subv_ha },
     { "mulv", 7, _140_hex__lvs_mulv_a, 0, _140_hex__lvs_mulv_ha },
     { "divv", 7, _140_hex__lvs_divv_a, 0, _140_hex__lvs_divv_ha },
+    { "inner", 7, _140_hex__lvs_inner_a, 0, _140_hex__lvs_inner_ha },
     {}
   };
 static c3_c* _140_hex__lvs_ha[] = {
@@ -497,11 +504,18 @@ static c3_c* _140_hex__lvd_divv_ha[] = {
   0
 };
 
+static u3j_harm _140_hex__lvd_inner_a[] = {{".2", u3welvd_inner, c3y}, {}};
+static c3_c* _140_hex__lvd_inner_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
+
 static u3j_core _140_hex__lvd_d[] =
   { { "addv", 7, _140_hex__lvd_addv_a, 0, _140_hex__lvd_addv_ha },
     { "subv", 7, _140_hex__lvd_subv_a, 0, _140_hex__lvd_subv_ha },
     { "mulv", 7, _140_hex__lvd_mulv_a, 0, _140_hex__lvd_mulv_ha },
     { "divv", 7, _140_hex__lvd_divv_a, 0, _140_hex__lvd_divv_ha },
+    { "inner", 7, _140_hex__lvd_inner_a, 0, _140_hex__lvd_inner_ha },
     {}
   };
 static c3_c* _140_hex__lvd_ha[] = {
