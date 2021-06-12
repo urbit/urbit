@@ -272,10 +272,12 @@
     u3_noun u3welvs_subv(u3_noun);
     u3_noun u3welvs_mulv(u3_noun);
     u3_noun u3welvs_divv(u3_noun);
+    u3_noun u3welvs_inner(u3_noun);
     u3_noun u3welvd_addv(u3_noun);
     u3_noun u3welvd_subv(u3_noun);
     u3_noun u3welvd_mulv(u3_noun);
     u3_noun u3welvd_divv(u3_noun);
+    u3_noun u3welvd_inner(u3_noun);
 
   /** Tier 6.
   **/
