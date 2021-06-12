@@ -67,6 +67,92 @@
     }
   }
 
+/* getter from @lvs, 1-indexed
+*/
+  u3_noun
+  u3qelvs_get(u3_atom u,  /* @lvs */
+              u3_atom i)  /* @ud */
+  {
+    c3_w n_u = u3r_met(3,u)/4;  // n_u is the vector length
+    c3_w i_u = u3r_word(0, i);
+    if ((i_u < 1) || (i_u > n_u))
+    {
+      return u3m_bail(c3__exit);
+    }
+
+    c3_w* w_  = (c3_w*)u3a_malloc(1*sizeof(float32_t));
+    w_[0] = u3r_word(i_u-1, u);
+    u3_atom w = u3i_words(1, w_);
+    return w;
+  }
+
+  u3_noun
+  u3welvs_get(u3_noun cor)
+  {
+    u3_noun a, i;
+
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &i, 0) ||
+         c3n == u3ud(a) ||
+         c3n == u3ud(i) )
+    {
+      return u3m_bail(c3__exit);
+    }
+    else {
+      return u3qelvs_get(a, i);
+    }
+  }
+
+/* setter for @lvs, 1-indexed
+*/
+  u3_noun
+  u3qelvs_set(u3_atom u,  /* @lvs */
+              u3_atom i,  /* @ud */
+              u3_atom a)  /* @rs */
+  {
+    c3_w n_u = u3r_met(3,u)/4;  // n_u is the vector length
+    c3_w i_u = u3r_word(0, i);
+    if ((i_u < 1) || (i_u > n_u))
+    {
+      return u3m_bail(c3__exit);
+    }
+
+    c3_w* w_  = (c3_w*)u3a_malloc((n_u+1)*sizeof(float32_t));
+
+    uint ii;
+    w_[n_u] = n_u;
+    for ( ii = 0; ii < n_u; ii++ ) {
+      if ( ii == i_u-1 )  // math-indexing on i_u  //TODO checkme
+      {
+        w_[ii] = u3r_word(0, a);
+      }
+      else
+      {
+        w_[ii] = u3r_word(ii, u);
+      }
+    }
+    u3_noun w = u3i_words(n_u+1, w_);
+    u3a_free(w_);
+
+    return w;
+  }
+
+  u3_noun
+  u3welvs_set(u3_noun cor)
+  {
+    u3_noun u, i, a;
+
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &a, 0) ||
+         c3n == u3ud(u) ||
+         c3n == u3ud(i) ||
+         c3n == u3ud(a) )
+    {
+      return u3m_bail(c3__exit);
+    }
+    else {
+      return u3qelvs_set(u, i, a);
+    }
+  }
+
 /* add lvs + lvs
 */
   u3_noun
