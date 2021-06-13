@@ -27,7 +27,7 @@ import './css/fonts.css';
 import './css/indigo-static.css';
 import { Content } from './landscape/components/Content';
 import './landscape/css/custom.css';
-import { bootstrapApi } from '~/logic/api';
+import { bootstrapApi } from '~/logic/api/bootstrap';
 import useLaunchState from '../logic/state/launch';
 
 const Root = withState(styled.div`

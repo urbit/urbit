@@ -103,10 +103,7 @@ const StatusBar = (props) => {
             {metaKey}/
           </Text>
         </StatusBarItem>
-        <ReconnectButton
-          connection={props.connection}
-          subscription={props.subscription}
-        />
+        <ReconnectButton />
       </Row>
       <Row justifyContent='flex-end'>
         <StatusBarItem
