@@ -15,8 +15,9 @@ import {
 } from '@tlon/indigo-react';
 import { Content, CodeContent } from '@urbit/api';
 import _ from 'lodash';
+import katex from 'katex';
 import { BlockContent, Content as AstContent, Parent, Root } from 'ts-mdast';
-import React from 'react';
+import React, { useMemo } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import { PropFunc } from '~/types';
@@ -388,7 +389,37 @@ const renderers = {
         </React.Fragment>
       ))}
     </>
-  )
+  ),
+  inlineMath: ({ value }) => {
+    const innerHtml = useMemo(() => {
+      try {
+        const result = katex.renderToString(value);
+        return result;
+      } catch (e) {
+        console.log(e);
+        return '<span>Parsing error</span>';
+      }
+    }, [value]);
+
+    return <span dangerouslySetInnerHTML={{ __html: innerHtml }}></span>;
+  },
+  math: ({ value }) => {
+    const innerHtml = useMemo(() => {
+      try {
+        const result = katex.renderToString(value, { displayMode: true });
+        return result;
+      } catch (e) {
+        console.log(e);
+        return '<span>Parsing error</span>';
+      }
+    }, [value]);
+
+    return (
+      <Box>
+        <div dangerouslySetInnerHTML={{ __html: innerHtml }}></div>
+      </Box>
+    );
+  }
 };
 
 export function Graphdown<T extends {} = {}>(

@@ -27,6 +27,7 @@ import Omnibox from './components/leap/Omnibox';
 import StatusBar from './components/StatusBar';
 import './css/fonts.css';
 import './css/indigo-static.css';
+import 'katex/dist/katex.css';
 import { Content } from './landscape/components/Content';
 import './landscape/css/custom.css';
 
