@@ -11,6 +11,7 @@ import { Workspace } from '~/types/workspace';
 import useMetadataState from '~/logic/state/metadata';
 import { useHistory } from 'react-router';
 import { useShortcut } from '~/logic/state/settings';
+import GlobalApi from '~/logic/api/global';
 
 function sidebarSort(
   associations: AppAssociations,
@@ -92,8 +93,9 @@ export function SidebarList(props: {
   group?: string;
   selected?: string;
   workspace: Workspace;
+  api: GlobalApi;
 }): ReactElement {
-  const { selected, config, workspace } = props;
+  const { selected, config, workspace, api } = props;
   const associations = useMetadataState(state => state.associations);
   const inbox = useInbox();
   const unreads = useHarkState(s => s.unreads.graph?.[`/ship/~${window.ship}/dm-inbox`]);
@@ -138,6 +140,7 @@ export function SidebarList(props: {
       {ordered.map((pathOrShip) => {
         return pathOrShip.startsWith('/') ? (
           <SidebarAssociationItem
+            api={api}
             key={pathOrShip}
             path={pathOrShip}
             selected={pathOrShip === selected}

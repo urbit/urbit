@@ -84,6 +84,7 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         api={props.api}
       />
       <SidebarList
+        api={props.api}
         config={config}
         selected={selected}
         group={groupPath}

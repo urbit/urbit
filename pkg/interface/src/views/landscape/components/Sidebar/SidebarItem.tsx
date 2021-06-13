@@ -15,9 +15,12 @@ import Dot from '~/views/components/Dot';
 import { SidebarAppConfigs } from './types';
 import { useHarkDm } from '~/logic/state/hark';
 import useSettingsState from '~/logic/state/settings';
+import { useModal } from '~/logic/lib/useModal';
+import { UnjoinedResource } from '~/views/components/UnjoinedResource';
+import GlobalApi from '~/logic/api/global';
 
 function SidebarItemBase(props: {
-  to: string;
+  to?: string;
   selected: boolean;
   hasNotification: boolean;
   hasUnread: boolean;
@@ -34,7 +37,8 @@ function SidebarItemBase(props: {
     hasNotification,
     hasUnread,
     isSynced = false,
-    mono = false
+    mono = false,
+    ...rest
   } = props;
   const color = isSynced ? (hasUnread || hasNotification) ? 'black' : 'gray' : 'lightGray';
 
@@ -50,10 +54,12 @@ function SidebarItemBase(props: {
       display="flex"
       justifyContent="space-between"
       alignItems="center"
+      pointer="cursor"
       py={1}
       pl={3}
       pr={3}
       selected={selected}
+      {...rest}
     >
       <Row width="100%" alignItems="center" flex="1 auto" minWidth="0">
         {hasNotification && (
@@ -140,6 +146,19 @@ export function SidebarDmItem(props: {
     </SidebarItemBase>
   );
 }
+
+const JoinResource = (props) => {
+  const { to, api, association } = { ...props };
+  return (
+    <UnjoinedResource
+      baseUrl={to}
+      api={api}
+      association={association}
+      modalContext={true}
+    />
+  );
+};
+
 // eslint-disable-next-line max-lines-per-function
 export function SidebarAssociationItem(props: {
   hideUnjoined: boolean;
@@ -148,8 +167,9 @@ export function SidebarAssociationItem(props: {
   selected: boolean;
   apps: SidebarAppConfigs;
   workspace: Workspace;
+  api: GlobalApi;
 }) {
-  const { association, path, selected, apps } = props;
+  const { association, path, selected, apps, api } = props;
   const title = getItemTitle(association) || '';
   const appName = association?.['app-name'];
   let mod = appName;
@@ -189,6 +209,10 @@ export function SidebarAssociationItem(props: {
     ? `${baseUrl}/resource/${mod}${rid}`
     : `${baseUrl}/join/${mod}${rid}`;
 
+  const { modal, showModal } = useModal({
+      modal: <JoinResource to={to} api={api} association={association} />
+  });
+
   if (props.hideUnjoined && !isSynced) {
     return null;
   }
@@ -225,7 +249,7 @@ export function SidebarAssociationItem(props: {
 
   return (
     <SidebarItemBase
-      to={to}
+      to={isSynced ? to : null}
       selected={selected}
       hasUnread={hasUnread}
       isSynced={isSynced}
@@ -235,7 +259,9 @@ export function SidebarAssociationItem(props: {
           : title
       }
       hasNotification={hasNotification}
+      onClick={e => isSynced ? e : showModal()}
     >
+      {!isSynced ? modal : null}
       {DM ? (
         <Box
           flexShrink={0}

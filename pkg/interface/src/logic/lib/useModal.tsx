@@ -51,7 +51,7 @@ export function useModal(props: UseModalProps & PropFunc<typeof Box>): UseModalR
           maxWidth="500px"
           width="100%"
           bg="white"
-          borderRadius={2}
+          borderRadius={8}
           border={[0, 1]}
           borderColor={['washedGray', 'washedGray']}
           display="flex"
