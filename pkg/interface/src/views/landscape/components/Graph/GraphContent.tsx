@@ -244,7 +244,7 @@ const renderers = {
     return (
       <Text
         mono
-        fontWeight='inherit'
+        fontWeight="inherit"
         p={1}
         backgroundColor="washedGray"
         fontSize={0}
@@ -284,7 +284,11 @@ const renderers = {
   paragraph: ({ children }) => {
     return (
       <Box display="block">
-        <Text fontSize={1} lineHeight="tall" style={{ 'overflowWrap': 'break-word' }}>
+        <Text
+          fontSize={1}
+          lineHeight="tall"
+          style={{ overflowWrap: 'break-word' }}
+        >
           {children}
         </Text>
       </Box>
@@ -309,7 +313,7 @@ const renderers = {
         className="clamp-message"
         display="block"
         borderRadius={1}
-        fontWeight='inherit'
+        fontWeight="inherit"
         mono
         fontSize={0}
         backgroundColor="washedGray"
@@ -342,20 +346,12 @@ const renderers = {
   'graph-mention': ({ ship }) => <Mention ship={ship} />,
   image: ({ url, tall }) => (
     <Box mt="1" mb="2" flexShrink={0}>
-      <RemoteContent
-        key={url}
-        url={url}
-        tall={tall}
-      />
+      <RemoteContent key={url} url={url} tall={tall} />
     </Box>
   ),
   'graph-url': ({ url, tall }) => (
     <Box mt={1} mb={2} flexShrink={0}>
-      <RemoteContent
-        key={url}
-        url={url}
-        tall={tall}
-      />
+      <RemoteContent key={url} url={url} tall={tall} />
     </Box>
   ),
   'graph-reference': ({ reference, transcluded }) => {

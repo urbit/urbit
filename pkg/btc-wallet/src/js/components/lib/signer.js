@@ -19,26 +19,26 @@ export default function Signer(props) {
         backgroundColor='transparent'
         fontWeight='bold'
         cursor='pointer'
-        color={(signMethod === 'Sign Transaction') ? 'blue' : 'lightBlue'}
+        color={(signMethod === 'masterTicket') ? 'blue' : 'lightBlue'}
         py='24px'
         px='24px'
-        onClick={() => setSignMethod('Sign Transaction')}
-        children='Sign Transaction' />
+        onClick={() => setSignMethod('masterTicket')}
+        children='Sign with Master Ticket' />
       <Button
         border='none'
         backgroundColor='transparent'
         fontWeight='bold'
         cursor='pointer'
-        color={(signMethod === 'Sign with Bridge') ? 'blue' : 'lightBlue'}
+        color={(signMethod === 'bridge') ? 'blue' : 'lightBlue'}
         py='24px'
         px='24px'
-        onClick={() => setSignMethod('Sign with Bridge')}
+        onClick={() => setSignMethod('bridge')}
         children='Sign with Bridge' />
     </Box>
     :
     <Button
       primary
-      children={signMethod}
+      children={signMethod === 'bridge' ? 'Sign with Bridge' : 'Sign with Master Ticket'}
       fontSize={1}
       fontWeight='bold'
       borderRadius='24px'

@@ -103,6 +103,7 @@ export default function ShortcutSettings() {
               label="Cycle backward through channel list"
             />
             <ChordInput id="hideSidebar" label="Show/hide group sidebar" />
+            <ChordInput id="readGroup" label="Read all in a group" />
           </Box>
           <AsyncButton primary width="fit-content">Save Changes</AsyncButton>
         </Col>

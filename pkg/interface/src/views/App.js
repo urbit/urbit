@@ -75,8 +75,6 @@ class App extends React.Component {
     super(props);
     this.ship = window.ship;
 
-    //  eslint-disable-next-line
-
     this.updateTheme = this.updateTheme.bind(this);
     this.updateMobile = this.updateMobile.bind(this);
   }

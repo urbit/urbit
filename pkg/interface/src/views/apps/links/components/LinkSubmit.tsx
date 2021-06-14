@@ -1,6 +1,6 @@
 import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState, DragEvent, useEffect } from 'react';
 import { createPost } from '~/logic/api/graph';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import { useFileDrag } from '~/logic/lib/useDrag';
@@ -93,6 +93,10 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     }
     return link;
   };
+
+  useEffect(() => {
+    setLinkValid(validateLink(linkValue));
+  }, [linkValue]);
 
   const onFileDrag = useCallback(
     (files: FileList | File[], e: DragEvent): void => {

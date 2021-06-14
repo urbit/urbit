@@ -243,3 +243,20 @@ export const getNotificationCount = (
     .map(index => unread[index]?.notifications as number || 0)
     .reduce(f.add, 0);
 }
+
+/** 
+ * Read all graphs belonging to a particular group
+ */
+export const readGroup = (group: string) => 
+  harkAction({
+    'read-group': group
+  });
+
+/** 
+ * Read all unreads in a graph
+ */
+export const readGraph = (graph: string) => 
+  harkAction({
+    'read-graph': graph
+  });
+

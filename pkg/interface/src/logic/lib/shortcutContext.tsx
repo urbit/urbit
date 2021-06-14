@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from 'react';
 import _ from 'lodash';
 import { getChord } from '~/logic/lib/util';
@@ -13,9 +13,8 @@ import { getChord } from '~/logic/lib/util';
 type Handler = (e: KeyboardEvent) => void;
 const fallback: ShortcutContextProps = {
   add: () => {},
-  remove: () => {},
+  remove: () => {}
 };
-
 
 export const ShortcutContext = createContext(fallback);
 export interface ShortcutContextProps {
@@ -27,19 +26,19 @@ export function ShortcutContextProvider({ children }) {
   const handlerRef = useRef<Handler>(() => {});
 
   const add = useCallback((cb: Handler, key: string) => {
-    setShortcuts((s) => ({ ...s, [key]: cb }));
+    setShortcuts(s => ({ ...s, [key]: cb }));
   }, []);
   const remove = useCallback((cb: Handler, key: string) => {
-    setShortcuts((s) => (key in s ? _.omit(s, key) : s));
+    setShortcuts(s => (key in s ? _.omit(s, key) : s));
   }, []);
 
   useEffect(() => {
     function onKeypress(e: KeyboardEvent) {
       handlerRef.current(e);
     }
-    document.addEventListener('keypress', onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener('keypress', onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, []);
 
@@ -50,7 +49,7 @@ export function ShortcutContextProvider({ children }) {
     };
   }, [shortcuts]);
 
-  const value = useMemo(() => ({ add, remove }), [add, remove])
+  const value = useMemo(() => ({ add, remove }), [add, remove]);
 
   return (
     <ShortcutContext.Provider value={value}>

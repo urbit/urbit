@@ -1,11 +1,12 @@
-import { AppName } from '@urbit/api';
+import { AppName, readGroup } from '@urbit/api';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import Helmet from 'react-helmet';
 import {
   Route,
   RouteComponentProps, Switch
 } from 'react-router-dom';
+import { useShortcut } from '~/logic/state/settings';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
@@ -25,6 +26,7 @@ import { NewChannel } from './NewChannel';
 import { PopoverRoutes } from './PopoverRoutes';
 import { Resource } from './Resource';
 import { Skeleton } from './Skeleton';
+import airlock from '~/logic/api';
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
@@ -39,6 +41,12 @@ export function GroupsPane(props: GroupsPaneProps) {
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
   const groups = useGroupState(state => state.groups);
+
+  useShortcut('readGroup', useCallback(() => {
+    if(groupPath) {
+      airlock.poke(readGroup(groupPath));
+    }
+  }, [groupPath]));
 
   const groupAssociation =
     (groupPath && associations.groups[groupPath]) || undefined;

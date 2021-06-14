@@ -22,7 +22,7 @@ export default class WalletModal extends Component {
     super(props);
 
     this.state = {
-      mode: 'masterTicket',
+      mode: 'xpub',
       masterTicket: '',
       confirmedMasterTicket: '',
       xpub: '',
@@ -103,13 +103,15 @@ export default class WalletModal extends Component {
               Step 2 of 2: Import your extended public key
             </Text>
           </Row>
-          <Box mt={3}>
-            <Text fontSize="14px" fontWeight="regular" color="gray">
-              To begin, you'll need to derive an XPub Bitcoin address using your
-              master ticket. 
-                <a fontSize="14px" target="_blank" href="https://urbit.org/bitcoin-wallet"> Learn More</a>
+          <Row
+            mt={3}
+            alignItems='center'
+          >
+            <Icon icon='Info' color='yellow' height={4} width={4}/>
+            <Text fontSize="14px" fontWeight="regular" color="gray" ml={2}>
+              We recommend that you import your wallet using Bridge to protect your master ticket.
             </Text>
-          </Box>
+          </Row>
           <Box
             display='flex'
             alignItems='center'
@@ -126,7 +128,7 @@ export default class WalletModal extends Component {
                  error: false
                })}/>}
             <Text fontSize="14px" fontWeight="500">
-              {this.state.confirmingMasterTicket ? 'Confirm Master Key' : 'Master Key'}
+              {this.state.confirmingMasterTicket ? 'Confirm Master Ticket' : 'Master Ticket'}
             </Text>
           </Box>
           <Row alignItems="center">
@@ -155,37 +157,38 @@ export default class WalletModal extends Component {
              </Text>
            </Row>
           }
-          <Box mt={3} mb={3}>
-            <Text fontSize="14px" fontWeight="regular"
-              color={(inputDisabled) ? "lighterGray" : "gray"}
-              style={{cursor: (inputDisabled) ? "default" : "pointer"}}
+          <Row mt={3}>
+            <Button
+              primary
+              color="black"
+              backgroundColor="veryLightGray"
+              borderColor="veryLightGray"
+              children="Cancel"
+              fontSize="14px"
+              mr={2}
+              style={{cursor: "pointer"}}
+              onClick={() => {this.setState({mode: 'xpub', masterTicket: '', xpub: '', readyToSubmit: false})}}
+            />
+            <Button
+              primary
+              disabled={buttonDisabled}
+              children="Next Step"
+              fontSize="14px"
+              style={{cursor: buttonDisabled ? "default" : "pointer"}}
               onClick={() => {
-                if (inputDisabled) return;
-                this.setState({mode: 'xpub', xpub: '', masterTicket: '', readyToSubmit: false})
-              }}
-            >
-              Manually import your extended public key ->
-            </Text>
-          </Box>
-          <Button
-            primary
-            disabled={buttonDisabled}
-            children="Next Step"
-            fontSize="14px"
-            style={{cursor: buttonDisabled ? "default" : "pointer"}}
-            onClick={() => {
-              if (!this.state.confirmingMasterTicket) {
-                this.setState({confirmingMasterTicket: true});
-              } else {
-                if (this.state.masterTicket === this.state.confirmedMasterTicket) {
-                  this.setState({error: false});
-                  this.submitMasterTicket(this.state.masterTicket);
+                if (!this.state.confirmingMasterTicket) {
+                  this.setState({confirmingMasterTicket: true});
                 } else {
-                  this.setState({error: true});
+                  if (this.state.masterTicket === this.state.confirmedMasterTicket) {
+                    this.setState({error: false});
+                    this.submitMasterTicket(this.state.masterTicket);
+                  } else {
+                    this.setState({error: true});
+                  }
                 }
-              }
-            }}
-          />
+              }}
+            />
+          </Row>
         </Box>
       );
     } else if (this.state.mode === 'xpub') {
@@ -203,7 +206,7 @@ export default class WalletModal extends Component {
           </Row>
           <Box mt={3}>
             <Text fontSize="14px" fontWeight="regular" color="gray">
-              Visit bridge.urbit.org to obtain your key
+              Visit <a href='https://bridge.urbit.org/?kind=xpub' target='_blank' style={{color: 'black'}} >bridge.urbit.org</a> to obtain your key
             </Text>
           </Box>
           <Box mt={3} mb={2}>
@@ -221,27 +224,27 @@ export default class WalletModal extends Component {
             autoCorrect="off"
             onChange={this.checkXPub}
           />
-          <Row mt={3}>
-            <Button
-              primary
-              color="black"
-              backgroundColor="veryLightGray"
-              borderColor="veryLightGray"
-              children="Cancel"
-              fontSize="14px"
-              mr={2}
-              style={{cursor: "pointer"}}
-              onClick={() => {this.setState({mode: 'masterTicket', masterTicket: '', xpub: '', readyToSubmit: false})}}
-            />
-            <Button
-              primary
-              disabled={buttonDisabled}
-              children="Next Step"
-              fontSize="14px"
-              style={{cursor: this.state.ready ? "pointer" : "default"}}
-              onClick={() => { this.submitXPub(this.state.xpub) }}
-            />
-          </Row>
+          <Box mt={3} mb={3}>
+            <Text fontSize="14px" fontWeight="regular"
+                  color={(inputDisabled) ? "lighterGray" : "gray"}
+                  style={{cursor: (inputDisabled) ? "default" : "pointer"}}
+                  onClick={() => {
+                    if (inputDisabled) return;
+                    this.setState({mode: 'masterTicket', xpub: '', masterTicket: '', readyToSubmit: false})
+                  }}
+            >
+              Import using master ticket ->
+            </Text>
+          </Box>
+          <Button
+            primary
+            mt={3}
+            disabled={buttonDisabled}
+            children="Next Step"
+            fontSize="14px"
+            style={{cursor: this.state.ready ? "pointer" : "default"}}
+            onClick={() => { this.submitXPub(this.state.xpub) }}
+          />
         </Box>
       );
     }
