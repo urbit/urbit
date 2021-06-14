@@ -144,6 +144,7 @@
     %pending-by-address    [~ (addr:pending id +.params addr:pending:scry)]
     %status                [~ (status id +.params tx-status:scry)]
     %next-batch            [~ (next-batch id +.params next-batch:scry)]
+    %nonce                 [~ (nonce id +.params nonce:scry)]
     :: %history               [~ (history id +.params all:history:scry)]
   ==
 ::
@@ -230,13 +231,12 @@
     ==
   ::
   ++  nonce
-    |=  [=ship =address:naive]
-    ::  FIXME: use proper type from aggregator/index
-    .^  @
+    |=  [=ship =proxy:naive]
+    .^  (unit @)
         %gx
         %+  ~(scry agentio bowl)
           %aggregator
-        /nonce/(scot %p ship)/[(scot %ux address)]/atom
+        /nonce/(scot %p ship)/[proxy]/noun
     ==
   --
 --

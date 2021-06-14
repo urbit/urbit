@@ -114,13 +114,13 @@
             ['proxy' (cu proxy:naive so)]
         ==
       ::
-      ++  keccak
+      ++  hash
         |=  params=(map @t json)
         ^-  (unit @ux)
-        ?~  keccak=(~(get by params) 'keccak')  ~
+        ?~  hash=(~(get by params) 'hash')  ~
         =;  ans=(unit (unit @ux))
           ?~(ans ~ u.ans)
-        ((cu to-hex so) u.keccak)
+        ((cu to-hex so) u.hash)
       ::
       ++  raw
         |=  params=(map @t json)
@@ -428,15 +428,15 @@
 ++  transfer-proxy    proxy:rpc-res
 :: - readNonce(from=[ship proxy]) -> @  :: automatically increment for pending wraps
 ::
-++  read-nonce
+++  nonce
   |=  [id=@t params=(map @t json) scry=$-([ship proxy:naive] (unit @))]
   ^-  response:rpc
-  ?.  =((lent ~(tap by params)) 3)
+  ?.  =((lent ~(tap by params)) 1)
     ~(params error:json-rpc id)
   ?~  from=(from:from-json params)
     ~(parse error:json-rpc id)
   ?~  nonce=(scry u.from)
-    ~(params error:json-rpc id)
+    ~(not-found error:json-rpc id)
   [%result id (numb:enjs:format u.nonce)]
 ::
 ++  pending
@@ -478,9 +478,9 @@
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 1)
     ~(params error:json-rpc id)
-  ?~  keccak=(keccak:from-json params)
+  ?~  hash=(hash:from-json params)
     ~(parse error:json-rpc id)
-  [%result id (tx-status:to-json (scry u.keccak))]
+  [%result id (tx-status:to-json (scry u.hash))]
 ::
 ++  next-batch
   |=  [id=@t params=(map @t json) when=time]

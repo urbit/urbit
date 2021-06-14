@@ -131,7 +131,7 @@
   ::    /x/pending/[~ship]             ->  %noun  (list pend-tx)
   ::    /x/pending/[0xadd.ress]        ->  %noun  (list pend-tx)
   ::    /x/tx/[0xke.ccak]/status       ->  %noun  tx-status
-  ::    /x/nonce/[~ship]/[0xadd.ress]  ->  %atom  @
+  ::    /x/nonce/[~ship]/[proxy]       ->  %noun  (unit @)
   ::    /x/spawned/[~ship]             ->  %noun  (list [ship address)
   ::    /x/next-batch                  ->  %atom  time
   ::
@@ -192,12 +192,13 @@
         [~ ~]
       ?.  ?=(proxy:naive proxy)
         [~ ~]
-      ::  uses cached naive state
-      ::
-      ::TODO  or should we ~ when !(~(has by points.pre) who) ?
-      =/  =point:naive  (~(gut by points.pre) u.who *point:naive)
-      =+  (proxy-from-point:naive proxy point)
-      ``atom+!>(nonce)
+      :+  ~  ~
+      :-  %noun
+      !>  ^-  (unit @)
+      ?~  point=(get:orm:naive points.pre u.who)
+        ~
+      =<  `nonce
+      (proxy-from-point:naive proxy u.point)
     ::
     ++  spawned
       |=  wat=@t
