@@ -187,7 +187,6 @@ export class Urbit {
             return; // everything's good
           } else {
             reject();
-            this.onError && this.onError(response?.statusText || 'Unknown Error');
             throw new Error();
           } 
         },

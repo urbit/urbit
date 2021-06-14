@@ -1,10 +1,8 @@
 import { Box, Button, Icon, Row } from '@tlon/indigo-react';
 import {
-  archive,
   GraphNotificationContents,
   GroupNotificationContents,
-  IndexedNotification,
-  readNote
+  IndexedNotification
 } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import React, { ReactNode, useCallback } from 'react';
@@ -16,6 +14,8 @@ import { SwipeMenu } from '~/views/components/SwipeMenu';
 import { GraphNotification } from './graph';
 import { GroupNotification } from './group';
 import airlock from '~/logic/api';
+import useHarkState from '~/logic/state/hark';
+import shallow from 'zustand/shallow';
 
 export interface NotificationProps {
   notification: IndexedNotification;
@@ -33,12 +33,14 @@ export function NotificationWrapper(props: {
 
   const isMobile = useLocalState(s => s.mobile);
 
+  const [archive, readNote] = useHarkState(s => [s.archive, s.readNote], shallow);
+
   const onArchive = useCallback(async (e) => {
     e.stopPropagation();
     if (!notification) {
       return;
     }
-    await airlock.poke(archive(notification.index, time));
+    await archive(notification.index, time);
   }, [time, notification]);
 
   const onClick = (e: any) => {

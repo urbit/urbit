@@ -1,5 +1,8 @@
 import {
+  archive,
   NotificationGraphConfig,
+  NotifIndex,
+  readNote,
   Timebox,
   Unreads
 } from '@urbit/api';
@@ -9,8 +12,9 @@ import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import api from '~/logic/api';
 import { useCallback } from 'react';
 
-import { createState, createSubscription, reduceState, reduceStateN } from './base';
+import { createState, createSubscription, pokeOptimisticallyN, reduceState, reduceStateN } from './base';
 import { reduce, reduceGraph, reduceGroup } from '../reducers/hark-update';
+import { BigInteger } from 'big-integer';
 
 export const HARK_FETCH_MORE_COUNT = 3;
 
@@ -26,6 +30,8 @@ export interface HarkState {
   notificationsGraphConfig: NotificationGraphConfig; // TODO unthread this everywhere
   notificationsGroupConfig: string[];
   unreads: Unreads;
+  archive: (index: NotifIndex, time?: BigInteger) => Promise<void>;
+  readNote: (index: NotifIndex) => Promise<void>;
 }
 
 const useHarkState = createState<HarkState>(
@@ -34,6 +40,13 @@ const useHarkState = createState<HarkState>(
     archivedNotifications: new BigIntOrderedMap<Timebox>(),
     doNotDisturb: false,
     unreadNotes: [],
+    archive: async (index: NotifIndex, time?: BigInteger) => {
+      const poke = archive(index, time);
+      await pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
+    readNote: async (index) => {
+      await pokeOptimisticallyN(useHarkState, readNote(index), [reduce]);
+    },
     getMore: async (): Promise<boolean> => {
        const state = get();
        const offset = state.notifications.size || 0;
@@ -49,6 +62,7 @@ const useHarkState = createState<HarkState>(
       });
       reduceState(useHarkState, harkUpdate, [reduce]);
     },
+
     notifications: new BigIntOrderedMap<Timebox>(),
     notificationsCount: 0,
     notificationsGraphConfig: {

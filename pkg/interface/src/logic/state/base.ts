@@ -4,6 +4,8 @@ import _ from 'lodash';
 import create, { GetState, SetState, UseStore } from 'zustand';
 import { persist } from 'zustand/middleware';
 import Urbit, { SubscriptionRequestInterface } from '@urbit/http-api';
+import { Poke } from '@urbit/api';
+import airlock from '~/logic/api';
 
 setAutoFreeze(false);
 enablePatches();
@@ -147,6 +149,20 @@ export async function doOptimistically<A, S extends {}>(state: UseStore<S & Base
   try {
     num = optReduceState(state, action, reduce);
     await call(action);
+    state.getState().removePatch(num);
+  } catch (e) {
+    console.error(e);
+    if(num) {
+      state.getState().rollback(num);
+    }
+  }
+}
+
+export async function pokeOptimisticallyN<A, S extends {}>(state: UseStore<S & BaseState<S>>, poke: Poke<any>, reduce: ((a: A, fn: S & BaseState<S>) => S & BaseState<S>)[]) {
+  let num: string | undefined = undefined;
+  try {
+    num = optReduceState(state, poke.json, reduce);
+    await airlock.poke(poke);
     state.getState().removePatch(num);
   } catch (e) {
     console.error(e);
