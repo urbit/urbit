@@ -1,6 +1,6 @@
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import React, { ChangeEvent, useCallback, useMemo } from 'react';
 
-import { Text, Box, BaseInput, BaseInputProps } from '@tlon/indigo-react';
+import { Text, Box, BaseInput } from '@tlon/indigo-react';
 import { PropFunc } from '~/types';
 
 type StatelessUrlInputProps = PropFunc<typeof BaseInput> & {
@@ -17,7 +17,6 @@ type StatelessUrlInputProps = PropFunc<typeof BaseInput> & {
 export function StatelessUrlInput(props: StatelessUrlInputProps) {
   const {
     value,
-    error,
     focussed,
     disabled,
     onChange = () => {},
@@ -26,8 +25,6 @@ export function StatelessUrlInput(props: StatelessUrlInputProps) {
     placeholderOffset = 0,
     ...rest
   } = props;
-
-  console.log(focussed);
 
   const placeholder = useMemo(
     () => (

@@ -100,9 +100,6 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     }
   }
 
-  componentDidMount() {
-  }
-
   onLoad = () => {
     window.requestAnimationFrame(() => {
       const { restore } = this;
@@ -257,35 +254,37 @@ return;
       if (!this.state.embed || this.state.embed?.html === '') {
         this.loadOembed();
       }
-     const renderEmbed = !(this.state.embed !== 'error' && this.state.embed?.html);
-     const embed = <Box
-            mb={2}
-            width='100%'
-            flexShrink={0}
-            display={this.state.unfold ? 'block' : 'none'}
-            className='embed-container'
-            style={style}
-            onLoad={this.onLoad}
-            {...oembedProps}
-            {...props}
-                   >
-            <TruncatedText
-            display={(renderUrl && this.state.embed?.title && this.state.embed.title !== url) ? 'inline-block' : 'none'}
-            fontWeight='bold' width='100%'
-            >
-              {this.state.embed?.title}
-            </TruncatedText>
-              {this.state.embed && this.state.embed.html && this.state.unfold
-              ? <EmbedContainer markup={this.state.embed.html}>
-                <div className="embed-container" ref={(el) => {
-                  this.onLoad();
-                  this.containerRef = el;
-                  }}
-                  dangerouslySetInnerHTML={{ __html: this.state.embed.html }}
-                ></div>
-              </EmbedContainer>
-              : null}
-          </Box>;
+      const renderEmbed = !(this.state.embed !== 'error' && this.state.embed?.html);
+      const embed = (
+        <Box
+          mb={2}
+          width='100%'
+          flexShrink={0}
+          display={this.state.unfold ? 'block' : 'none'}
+          className='embed-container'
+          style={style}
+          onLoad={this.onLoad}
+          {...oembedProps}
+          {...props}
+        >
+          <TruncatedText
+          display={(renderUrl && this.state.embed?.title && this.state.embed.title !== url) ? 'inline-block' : 'none'}
+          fontWeight='bold' width='100%'
+          >
+            {this.state.embed?.title}
+          </TruncatedText>
+            {this.state.embed && this.state.embed.html && this.state.unfold
+            ? <EmbedContainer markup={this.state.embed.html}>
+              <div className="embed-container" ref={(el) => {
+                this.onLoad();
+                this.containerRef = el;
+                }}
+                dangerouslySetInnerHTML={{ __html: this.state.embed.html }}
+              ></div>
+            </EmbedContainer>
+            : null}
+        </Box>
+      );
 
       return (
         <Fragment>
