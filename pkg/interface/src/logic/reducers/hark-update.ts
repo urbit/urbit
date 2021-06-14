@@ -152,6 +152,9 @@ function unreads(json: any, state: HarkState): HarkState {
     data.forEach(({ index, stats }) => {
       const { unreads, notifications, last } = stats;
       updateNotificationStats(state, index, 'last', () => last);
+      if(index.graph.graph === '/ship/~hastuc-dibtux/test-book-7531') {
+      console.log(index, stats);
+      }
       _.each(notifications, ({ time, index }) => {
         if(!time) {
           addNotificationToUnread(state, index);
@@ -197,6 +200,9 @@ function updateUnreadCount(state: HarkState, index: NotifIndex, count: (c: numbe
   }
   const property = [index.graph.graph, index.graph.index, 'unreads'];
   const curr = _.get(state.unreads.graph, property, 0);
+  if(typeof curr !== 'number') {
+    return state;
+  }
   const newCount = count(curr);
   _.set(state.unreads.graph, property, newCount);
   return state;

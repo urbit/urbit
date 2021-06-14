@@ -1,5 +1,5 @@
 import { Col } from '@tlon/indigo-react';
-import { createPost, createBlankNodeWithChildPost, addNode, Association, GraphNode, Group, markCountAsRead, addPost } from '@urbit/api';
+import { createPost, createBlankNodeWithChildPost, Association, GraphNode, Group, markCountAsRead, addPost } from '@urbit/api';
 import bigInt from 'big-integer';
 import { FormikHelpers } from 'formik';
 import React, { useEffect, useMemo } from 'react';
@@ -14,6 +14,7 @@ import { PropFunc } from '~/types/util';
 import CommentInput from './CommentInput';
 import { CommentItem } from './CommentItem';
 import airlock from '~/logic/api';
+import useGraphState from '~/logic/state/graph';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -35,6 +36,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     group,
     ...rest
   } = props;
+  const addNode = useGraphState(s => s.addNode);
 
   const { query } = useQuery();
   const selectedComment = useMemo(() => {
@@ -54,12 +56,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     try {
       const content = tokenizeMessage(comment);
       const node = createBlankNodeWithChildPost(
-        `~${window.ship}`,
+        window.ship,
         comments?.post?.index,
         '1',
         content
       );
-      await airlock.thread(addNode(ship, name, node));
+      addNode(ship, name, node);
       actions.resetForm();
       actions.setStatus({ success: null });
     } catch (e) {

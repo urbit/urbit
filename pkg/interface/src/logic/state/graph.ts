@@ -5,7 +5,7 @@ import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, Th
 import { useCallback } from 'react';
 import { createState, createSubscription, reduceStateN } from './base';
 import airlock from '~/logic/api';
-import { getDeepOlderThan, getFirstborn, getNewest, getNode, getOlderSiblings, getYoungerSiblings } from '@urbit/api/graph';
+import { addDmMessage, addPost, Content, getDeepOlderThan, getFirstborn, getNewest, getNode, getOlderSiblings, getYoungerSiblings, markPending, Post, addNode, GraphNodePoke } from '@urbit/api/graph';
 import { GraphReducer, reduceDm } from '../reducers/graph-update';
 import _ from 'lodash';
 
@@ -24,17 +24,16 @@ export interface GraphState {
   screening: boolean;
   graphTimesentMap: Record<number, string>;
   getDeepOlderThan: (ship: string, name: string, count: number, start?: string) => Promise<void>;
-  // getKeys: () => Promise<void>;
-  // getTags: () => Promise<void>;
-  // getTagQueries: () => Promise<void>;
-  // getGraph: (ship: string, resource: string) => Promise<void>;
   getNewest: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
   getOlderSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
   getYoungerSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
-  // getGraphSubset: (ship: string, resource: string, start: string, end: string) => Promise<void>;
   getNode: (ship: string, resource: string, index: string) => Promise<void>;
   getFirstborn: (ship: string, resource: string, index: string) => Promise<void>;
   getGraph: (ship: string, name: string) => Promise<void>;
+  addDmMessage: (ship: string, contents: Content[]) => Promise<void>;
+  addPost: (ship: string, name: string, post: Post) => Promise<void>;
+
+  addNode: (ship: string, name: string, post: GraphNodePoke) => Promise<void>;
 }
 // @ts-ignore investigate zustand types
 const useGraphState = createState<GraphState>('Graph', (set, get) => ({
@@ -47,6 +46,37 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
   graphTimesentMap: {},
   pendingDms: new Set(),
   screening: false,
+  addDmMessage: async (ship: string, contents: Content[]) => {
+    const promise = airlock.poke(addDmMessage(window.ship, ship, contents));
+    const { json } = addDmMessage(window.ship, ship, contents);
+    markPending(json['add-nodes'].nodes);
+    json['add-nodes'].resource.ship = json['add-nodes'].resource.ship.slice(1);
+    GraphReducer({
+      'graph-update': json
+    });
+    await promise;
+  },
+  addPost: async (ship, name, post) => {
+    const promise = airlock.thread(addPost(ship, name, post));
+    const { body } = addPost(ship, name, post);
+    markPending(body['add-nodes'].nodes);
+    body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
+    GraphReducer({
+      'graph-update': body,
+      'graph-update-flat': body
+    });
+    await promise;
+  },
+  addNode: async (ship, name, node) => {
+    const promise = airlock.thread(addNode(ship, name, node));
+    const { body } = addNode(ship, name, node);
+    markPending(body['add-nodes'].nodes);
+    body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
+    GraphReducer({
+      'graph-update': body
+    });
+    await promise;
+  },
   getDeepOlderThan: async (ship, name, count, start) => {
     const data = await airlock.scry(getDeepOlderThan(ship, name, count, start));
 

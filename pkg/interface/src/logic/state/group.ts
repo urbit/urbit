@@ -31,7 +31,7 @@ const useGroupState = createState<GroupState>(
           reduceStateN(get(), e.groupUpdate, reduce);
         }
       }),
-      (set, get) => createSubscription('group-view', '/groups', (e) => {
+      (set, get) => createSubscription('group-view', '/all', (e) => {
         const data = _.get(e, 'group-view-update', false);
         if (data) {
           reduceStateN(get(), data, reduceView);

@@ -1,4 +1,4 @@
-import { addDmMessage, cite, Content, markCountAsRead, Post } from '@urbit/api';
+import { cite, Content, markCountAsRead, Post } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import bigInt from 'big-integer';
@@ -10,7 +10,6 @@ import useGraphState, { useDM } from '~/logic/state/graph';
 import { useHarkDm } from '~/logic/state/hark';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
-import { patpToUd } from '~/logic/lib/util';
 import airlock from '~/logic/api';
 import shallow from 'zustand/shallow';
 
@@ -60,11 +59,12 @@ export function DmResource(props: DmResourceProps) {
   const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
 
   const [
-    getNewest,
+    getYoungerSiblings,
     getOlderSiblings,
-    getYoungerSiblings
+    getNewest,
+    addDmMessage
   ] = useGraphState(
-    s => [s.getYoungerSiblings, s.getOlderSiblings, s.getNewest],
+    s => [s.getYoungerSiblings, s.getOlderSiblings, s.getNewest, s.addDmMessage],
     shallow
   );
 
@@ -73,7 +73,7 @@ export function DmResource(props: DmResourceProps) {
       `~${window.ship}`,
       'dm-inbox',
       100,
-      `/${patpToUd(ship)}`
+      `/${patp2dec(ship)}`
     );
   }, [ship]);
 
@@ -90,7 +90,7 @@ export function DmResource(props: DmResourceProps) {
           `~${window.ship}`,
           'dm-inbox',
           pageSize,
-          `/${patpToUd(ship)}/${index.toString()}`
+          `/${patp2dec(ship)}/${index.toString()}`
         );
         return expectedSize !== getCurrDmSize(ship);
       } else {
@@ -102,7 +102,7 @@ export function DmResource(props: DmResourceProps) {
           `~${window.ship}`,
           'dm-inbox',
           pageSize,
-          `/${patpToUd(ship)}/${index.toString()}`
+          `/${patp2dec(ship)}/${index.toString()}`
         );
         return expectedSize !== getCurrDmSize(ship);
       }
@@ -116,10 +116,9 @@ export function DmResource(props: DmResourceProps) {
 
   const onSubmit = useCallback(
     (contents: Content[]) => {
-      // XX optimistic
-      airlock.poke(addDmMessage(`~${window.ship}`, ship, contents));
+      addDmMessage(ship, contents);
     },
-    [ship]
+    [ship, addDmMessage]
   );
 
   return (

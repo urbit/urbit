@@ -13,7 +13,6 @@ import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { SwipeMenu } from '~/views/components/SwipeMenu';
 import { GraphNotification } from './graph';
 import { GroupNotification } from './group';
-import airlock from '~/logic/api';
 import useHarkState from '~/logic/state/hark';
 import shallow from 'zustand/shallow';
 
@@ -47,7 +46,7 @@ export function NotificationWrapper(props: {
     if (!notification || read) {
       return;
     }
-    return airlock.poke(readNote(notification.index));
+    return readNote(notification.index);
   };
 
   const { hovering, bind } = useHovering();

@@ -24,7 +24,7 @@ export const bootstrapApi = async () => {
     })();
   };
 
-  airlock.onRetry = (e) => {
+  airlock.onRetry = () => {
     useLocalState.setState({ subscription: 'reconnecting' });
   };
 

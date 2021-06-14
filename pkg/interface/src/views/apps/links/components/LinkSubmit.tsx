@@ -1,5 +1,4 @@
 import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
-import { addPost } from '@urbit/api/graph';
 import { hasProvider } from 'oembed-parser';
 import React, { useCallback, useEffect, useState } from 'react';
 import { createPost } from '~/logic/api/graph';
@@ -7,7 +6,7 @@ import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import useStorage from '~/logic/lib/useStorage';
 import SubmitDragger from '~/views/components/SubmitDragger';
-import airlock from '~/logic/api';
+import useGraphState from '~/logic/state/graph';
 
 interface LinkSubmitProps {
   name: string;
@@ -18,6 +17,7 @@ interface LinkSubmitProps {
 const LinkSubmit = (props: LinkSubmitProps) => {
   const { canUpload, uploadDefault, uploading, promptUpload } =
     useStorage();
+  const addPost = useGraphState(s => s.addPost);
 
   const [submitFocused, setSubmitFocused] = useState(false);
   const [urlFocused, setUrlFocused] = useState(false);
@@ -37,16 +37,15 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     const parentIndex = props.parentIndex || '';
     const post = createPost(contents, parentIndex);
 
-    airlock.thread(addPost(
+    addPost(
       `~${props.ship}`,
       props.name,
       post
-    )).then(() => {
-      setDisabled(false);
-      setLinkValue('');
-      setLinkTitle('');
-      setLinkValid(false);
-    });
+    );
+    setDisabled(false);
+    setLinkValue('');
+    setLinkTitle('');
+    setLinkValid(false);
   };
 
   const validateLink = (link) => {

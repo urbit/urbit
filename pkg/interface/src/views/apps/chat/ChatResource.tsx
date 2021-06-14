@@ -1,4 +1,4 @@
-import { addPost, Content, createPost, fetchIsAllowed, markCountAsRead, Post, removePosts } from '@urbit/api';
+import { Content, createPost, fetchIsAllowed, markCountAsRead, Post, removePosts } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import { BigInteger } from 'big-integer';
 import React, {
@@ -43,9 +43,10 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   const [
     getNewest,
     getOlderSiblings,
-    getYoungerSiblings
+    getYoungerSiblings,
+    addPost
   ] = useGraphState(
-    s => [s.getNewest, s.getOlderSiblings, s.getYoungerSiblings],
+    s => [s.getNewest, s.getOlderSiblings, s.getYoungerSiblings, s.addPost],
     shallow
   );
 
@@ -129,8 +130,8 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
 
   const onSubmit = useCallback((contents: Content[]) => {
     const { ship, name } = resourceFromPath(resource);
-    airlock.thread(addPost(ship, name, createPost(window.ship, contents)));
-  }, [resource]);
+    addPost(ship, name, createPost(window.ship, contents));
+  }, [resource, addPost]);
 
   const onDelete = useCallback((msg: Post) => {
     const { ship, name } = resourceFromPath(resource);

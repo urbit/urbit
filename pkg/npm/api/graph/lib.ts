@@ -345,7 +345,7 @@ export const removePosts = (
  * @param ship recipient
  * @param contents contents of message
  */
-export const addDmMessage = (our: Patp, ship: Patp, contents: Content[]): Poke<any> => {
+export const addDmMessage = (our: PatpNoSig, ship: Patp, contents: Content[]): Poke<any> => {
   const post = createPost(our, contents, `/${patp2dec(ship)}`);
   const node: GraphNode = {
     post,
@@ -356,7 +356,7 @@ export const addDmMessage = (our: Patp, ship: Patp, contents: Content[]): Poke<a
     mark: `graph-update-${GRAPH_UPDATE_VERSION}`,
     json: {
       'add-nodes': {
-        resource: { ship: our, name: 'dm-inbox' },
+        resource: { ship: `~${our}`, name: 'dm-inbox' },
         nodes: {
           [post.index]: node
         }
