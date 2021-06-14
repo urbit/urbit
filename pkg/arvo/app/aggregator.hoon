@@ -17,13 +17,18 @@
 ::    on %tx diff from naive, remove the matching tx from the frozen group.
 ::
 ::TODO  remaining general work:
-::  - hook up timer callbacks
 ::
 ::TODO  questions:
 ::  - it's a bit weird how we just assume the raw and tx in raw-tx to match...
 ::
 /-  *aggregator
-/+  azimuth, naive, default-agent, ethereum, dbug, verb, lib=naive-transactions
+/+  azimuth,
+    naive,
+    lib=naive-transactions,
+    default-agent,
+    ethereum,
+    dbug,
+    verb
 ::
 |%
 +$  state-0
@@ -159,8 +164,7 @@
           ``noun+!>(pending)
         %+  skim  pending
         |=  pend-tx
-        ::TODO  deduce address from sig.raw-tx ?
-        !!
+        =(u.wer (get-l1-address tx.raw-tx pre))
       ::  by-ship
       ::
       =;  pending=(list pend-tx)
