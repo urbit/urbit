@@ -32,7 +32,9 @@ const StoreDebugger = (props: StoreDebuggerProps) => {
     let output: any = false;
     try {
       output =  _.get(state, filterToTry, undefined);
-    } catch (e) { }
+    } catch (e) {
+      console.log('filter failed');
+    }
     if (output) {
       console.log(output);
       setText(objectToString(output));

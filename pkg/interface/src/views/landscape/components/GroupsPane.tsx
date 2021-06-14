@@ -1,18 +1,19 @@
 import { AppName } from '@urbit/api';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import Helmet from 'react-helmet';
 import {
   Route,
   RouteComponentProps, Switch
 } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
+import { useShortcut } from '~/logic/state/settings';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
-import {DmResource} from '~/views/apps/chat/DmResource';
+import { DmResource } from '~/views/apps/chat/DmResource';
 import { StoreState } from '~/logic/store/type';
 import { Workspace } from '~/types/workspace';
 import '~/views/apps/links/css/custom.css';
@@ -42,6 +43,12 @@ export function GroupsPane(props: GroupsPaneProps) {
   const groupPath = getGroupFromWorkspace(workspace);
   const groups = useGroupState(state => state.groups);
 
+  useShortcut('readGroup', useCallback(() => {
+    if(groupPath) {
+      api.hark.readGroup(groupPath);
+    }
+  }, [groupPath, api]));
+
   const groupAssociation =
     (groupPath && associations.groups[groupPath]) || undefined;
   const group = (groupPath && groups[groupPath]) || undefined;
@@ -56,7 +63,7 @@ export function GroupsPane(props: GroupsPaneProps) {
     }
     return () => {
       setRecentGroups(gs => _.uniq([workspace.group, ...gs]));
-    }
+    };
   }, [workspace]);
 
   if (!(associations && (groupPath ? groupPath in groups : true))) {
@@ -180,7 +187,6 @@ export function GroupsPane(props: GroupsPaneProps) {
       <Route
         path={relativePath('/new')}
         render={(routeProps) => {
-          const newUrl = `${baseUrl}/new`;
           return (
             <Skeleton mobileHide recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
               <NewChannel

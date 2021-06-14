@@ -136,7 +136,6 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   }
 
   return (
-    // @ts-ignore
     <Col {...bind} height="100%" overflow="hidden" position="relative">
       <ShareProfile
         our={ourContact}

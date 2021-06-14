@@ -1,7 +1,8 @@
-import { Box, Col, Row, Text } from '@tlon/indigo-react';
+import { Box, Button, Col, Row, Text } from '@tlon/indigo-react';
 import { Association, Graph } from '@urbit/api';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
 import { useShowNickname } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
@@ -14,6 +15,7 @@ interface NotebookProps {
   association: Association;
   baseUrl: string;
   rootUrl: string;
+  api: GlobalApi;
 }
 
 export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement | null {
@@ -21,18 +23,22 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
     ship,
     book,
     association,
-    graph
+    graph,
+    api
   } = props;
 
   const groups = useGroupState(state => state.groups);
   const contacts = useContactState(state => state.contacts);
 
   const group = groups[association?.group];
-  const relativePath = (p: string) => props.baseUrl + p;
 
   const contact = contacts?.[`~${ship}`];
 
   const showNickname = useShowNickname(contact);
+
+  const readBook = useCallback(() => {
+    api.hark.readGraph(association.resource);
+  }, [association.resource]);
 
   if (!group) {
     return null; // Waiting on groups to populate
@@ -48,6 +54,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
             {showNickname ? contact?.nickname : ship}
           </Text>
         </Box>
+        <Button onClick={readBook}>Mark all as Read</Button>
       </Row>
       <Box borderBottom={1} borderBottomColor="lightGray" />
       <NotebookPosts

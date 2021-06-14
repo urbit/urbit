@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { DragEvent, useCallback, useEffect, useState } from 'react';
 
 function validateDragEvent(e: DragEvent): FileList | File[] | true | null {
   const files: File[] = [];
@@ -37,7 +37,7 @@ export function useFileDrag(dragged: (f: FileList | File[], e: DragEvent) => voi
   const [dragging, setDragging] = useState(false);
 
   const onDragEnter = useCallback(
-    (e: DragEvent) => {
+    (e: DragEvent<HTMLDivElement>) => {
       if (!validateDragEvent(e)) {
         return;
       }
@@ -47,7 +47,7 @@ export function useFileDrag(dragged: (f: FileList | File[], e: DragEvent) => voi
   );
 
   const onDrop = useCallback(
-    (e: DragEvent) => {
+    (e: DragEvent<HTMLDivElement>) => {
       setDragging(false);
       const files = validateDragEvent(e);
       if (!files || files === true) {
@@ -60,7 +60,7 @@ export function useFileDrag(dragged: (f: FileList | File[], e: DragEvent) => voi
   );
 
   const onDragOver = useCallback(
-    (e: DragEvent) => {
+    (e: DragEvent<HTMLDivElement>) => {
       if (!validateDragEvent(e)) {
         return;
       }
