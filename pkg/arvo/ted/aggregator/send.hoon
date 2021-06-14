@@ -3,7 +3,6 @@
 /-  rpc=json-rpc, *aggregator
 /+  naive, ethereum, ethio, strandio
 ::
-=/  gas-limit=@ud  30.000  ::TODO  verify, maybe scale with roll size
 ::
 |=  args=vase
 =+  !<(rpc-send-roll args)
@@ -24,6 +23,20 @@
 ;<  use-gas-price=@ud  bind:m
   ?:  =(0 next-gas-price)  fetch-gas-price
   (pure:(strand:strandio @ud) next-gas-price)
+::  TODO: verify, it seems to be slightly bigger when (lent txs) > 1 ?
+::
+::  each signed l2 tx is 65 bytes
+::  from the ethereum yellow paper:
+::  gasLimit = G_transaction + G_txdatanonzero × dataByteLength x batch_length
+::  where
+::      G_transaction = 21000 gas
+::    + G_txdatanonzero = 68 gas
+::    * dataByteLength = 65 bytes
+::  == 25.420 gas/l2-tx
+::
+:: TODO: enforce max number of tx in batch?
+::
+=/  gas-limit=@ud  (add 21.000 :(mul 68 65 (lent txs)))
 ::  if we cannot pay for the transaction, don't bother sending it out
 ::
 =/  max-cost=@ud  (mul gas-limit use-gas-price)
@@ -41,9 +54,7 @@
     (sign-transaction:key:ethereum tx pk)
   :*  nonce
       use-gas-price
-      :: TODO: scale properly
-      ::
-      (mul gas-limit (lent txs))
+      gas-limit
       contract
       0
   ::
