@@ -115,6 +115,7 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
             stamp={stamp}
             fontSize={0}
             time={time}
+            whiteSpace='nowrap'
             ml={2}
             color={unread ? 'blue' : 'gray'}
           />
