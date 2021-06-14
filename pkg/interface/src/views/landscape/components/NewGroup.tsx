@@ -17,7 +17,7 @@ import { AsyncButton } from '~/views/components/AsyncButton';
 
 const formSchema = Yup.object({
   title: Yup.string()
-    .matches(/^(\D).+$/, 'Group names may not start with a number')
+    .matches(/^(\D).*$/, 'Group names may not start with a number')
     .required('Group must have a name'),
   description: Yup.string(),
   isPrivate: Yup.boolean()
