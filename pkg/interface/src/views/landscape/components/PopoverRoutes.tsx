@@ -31,7 +31,7 @@ export function PopoverRoutes(
 
   const groupSize = props.group.members.size;
 
-  const owner = resourceFromPath(props.association.group).ship.slice(1) === window.ship;
+  const owner = resourceFromPath(props.association?.group ?? '~zod/group').ship.slice(1) === window.ship;
 
   const admin = props.group?.tags?.role?.admin.has(window.ship) || false;
 
