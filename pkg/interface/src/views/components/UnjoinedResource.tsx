@@ -46,10 +46,10 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
 
   const onJoin = async () => {
     const [, , ship, name] = rid.split('/');
-    await api.graph.joinGraph(ship, name);
-    await waiter(isJoined(rid));
     const redir = query.get('redir') ?? `${props.baseUrl}/resource/${app}${rid}`;
-    history.push(redir);
+    setLoading(true);
+    await api.graph.joinGraph(ship, name);
+    await waiter(isJoined(rid)).then(history.push(redir));
   };
 
   const resourceIcon = (app) => {
@@ -120,13 +120,11 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
               sigilPadding={6}
             />
           </Col>
-          {console.log(props.association)}
         </Box>
         <StatelessAsyncButton
           name={rid}
           primary
           loading={loading}
-
           width="fit-content"
           onClick={onJoin}
         >
