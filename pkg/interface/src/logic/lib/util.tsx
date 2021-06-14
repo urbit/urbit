@@ -56,8 +56,8 @@ export function parentPath(path: string) {
  * string -> enabled feed
  */
 export function getFeedPath(association: Association): string | null | undefined {
-  const { metadata } = association;
-  if(metadata.config && 'group' in metadata?.config && metadata.config?.group) {
+  const { metadata = { config: {} } } = association;
+  if (metadata.config && 'group' in metadata?.config && metadata.config?.group) {
     if ('resource' in metadata.config.group) {
       return metadata.config.group.resource;
     }
