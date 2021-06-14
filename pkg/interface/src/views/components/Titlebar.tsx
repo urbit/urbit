@@ -27,7 +27,7 @@ export function Titlebar(props: TitlebarProps) {
   const [actionsWidth, setActionsWidth] = useState(0);
   const bind = useResize<HTMLDivElement>(
     useCallback((entry) => {
-      setActionsWidth(entry.borderBoxSize[0].inlineSize);
+      setActionsWidth(entry.target.getBoundingClientRect().width);
     }, [])
   );
   const menuControl = (

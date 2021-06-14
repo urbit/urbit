@@ -19,11 +19,15 @@ export function LinkBlocks(props: LinkBlocksProps) {
   const linkSizePx = `${linkSize}px`;
 
   const isMobile = useLocalState(s => s.mobile);
-  const colCount = useMemo(() => isMobile ? 2 : 5, [isMobile]);
+  const colCount = useMemo(() => (isMobile ? 2 : 5), [isMobile]);
   const bind = useResize<HTMLDivElement>(
-    useCallback((entry) => {
-      setLinkSize((entry.borderBoxSize[0].inlineSize - 16) / colCount - 8);
-    }, [colCount])
+    useCallback(
+      (entry) => {
+        const { width } = entry.target.getBoundingClientRect();
+        setLinkSize((width - 8) / colCount - 8);
+      },
+      [colCount]
+    )
   );
 
   const nodes = [null, ...Array.from(props.graph)];
@@ -31,9 +35,17 @@ export function LinkBlocks(props: LinkBlocksProps) {
   const chunks = _.chunk(nodes, colCount);
 
   return (
-    <Col overflowY="auto" width="100%" height="100%" {...bind}>
+    <Col overflowX="hidden" overflowY="auto" height="100%" {...bind}>
       {chunks.map((chunk, idx) => (
-        <Row key={idx} my="2" px="2" gapX="2" height={linkSizePx}>
+        <Row
+          key={idx}
+          flexShrink={0}
+          my="2"
+          px="2"
+          gapX="2"
+          width="100%"
+          height={linkSizePx}
+        >
           {chunk.map((block) => {
             if (!block) {
               return (

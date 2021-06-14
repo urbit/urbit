@@ -102,7 +102,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
   const unreads = useHarkState(state => state.unreads);
   const commColor = (unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
   // @ts-ignore hark will have to choose between sets and numbers
-  const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
+  const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has?.(node.post.index);
 
   return (
     <Box
