@@ -46,7 +46,6 @@ export function Mention(props: {
   const contact = useContact(`~${deSig(ship)}`);
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact?.nickname : cite(ship);
-
   return (
     <ProfileOverlay ship={ship} api={api} display="inline">
       <Text
@@ -57,6 +56,8 @@ export function Mention(props: {
         color='blue'
         fontSize={showNickname ? 1 : 0}
         mono={!showNickname}
+        title={showNickname ? cite(ship) : contact?.nickname}
+        {...rest}
       >
         {name}
       </Text>
