@@ -550,8 +550,8 @@
                     %-  cury
                     :-  filter-tx-type
                     :*  :: %spawn
-                        ::%transfer-point
-                        %configure-keys
+                        %transfer-point
+                        ::%configure-keys
                         :: %set-management-proxy
                         :: %set-spawn-proxy
                         :: %set-transfer-proxy
@@ -810,7 +810,7 @@
     ++  set-xfer  ^-  ^state:naive
       =/  new-xfer
       %=  cur-point
-        address.transfer-proxy.own  (addr %transfer-test)
+        address.owner.own  (addr %transfer-test)
         nonce.owner.own  +(cur-nonce)
       ==
       (alter-state new-xfer)
