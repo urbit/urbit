@@ -545,15 +545,15 @@
                     (cury filter-owner %.y)
                     (cury filter-proxy %own)
                     (cury filter-nonce %.y)
-                    (cury filter-dominion %l1)
+            ::        (cury filter-dominion %l1)
                     %-  cury
                     :-  filter-tx-type
                     :*  :: %spawn  ::  currently crashes
-                        :: %transfer-point
-                        :: %configure-keys
+                        ::%transfer-point
+                        ::%configure-keys
                         %set-management-proxy
-                        :: %set-spawn-proxy
-                        :: %set-transfer-proxy
+                        %set-spawn-proxy
+                        ::%set-transfer-proxy
                         ~
                     ==
                 ==
@@ -789,8 +789,30 @@
         points  (~(put by points.expect-state) cur-ship new-nonce)
       ==
     ?+  tx-type.cur-event  !!
+      %transfer-point        set-xfer
+      %configure-keys        set-keys
       %set-management-proxy  set-mgmt-proxy
+      %set-spawn-proxy       set-spwn-proxy
+      %set-transfer-proxy    set-xfer-proxy
     ==
+    ::
+    ++  set-keys  ^-  ^state:naive
+      =/  new-keys
+      %=  cur-point
+        suite.keys.net  suit
+        auth.keys.net   auth
+        crypt.keys.net  encr
+        nonce.owner.own  +(cur-nonce)
+      ==
+      (alter-state new-keys)
+    ::
+    ++  set-xfer  ^-  ^state:naive
+      =/  new-xfer
+      %=  cur-point
+        address.transfer-proxy.own  (addr %transfer-test)
+        nonce.owner.own  +(cur-nonce)
+      ==
+      (alter-state new-xfer)
     ::
     ++  set-mgmt-proxy  ^-  ^state:naive
       =/  new-mgmt
@@ -798,11 +820,32 @@
         address.management-proxy.own  (addr %proxy-test)
         nonce.owner.own  +(cur-nonce)
       ==
-      %=  expect-state
-        points  (~(put by points.expect-state) cur-ship new-mgmt)
+      (alter-state new-mgmt)
+    ::
+    ++  set-spwn-proxy  ^-  ^state:naive
+      =/  new-spwn
+      %=  cur-point
+        address.spawn-proxy.own  (addr %proxy-test)
+        nonce.owner.own  +(cur-nonce)
       ==
-    --
-  ::
+      (alter-state new-spwn)
+    ::
+    ++  set-xfer-proxy  ^-  ^state:naive
+      =/  new-xfer
+      %=  cur-point
+        address.transfer-proxy.own  (addr %proxy-test)
+        nonce.owner.own  +(cur-nonce)
+      ==
+      (alter-state new-xfer)
+    ::
+    ++  alter-state
+      |=  new-point=point:naive
+      %=  expect-state
+        points  (~(put by points.expect-state) cur-ship new-point)
+      ==
+    ::
+    --  :: end of expected state
+  ::  actual state
     !>
     |^
     =^    f
@@ -817,44 +860,6 @@
         def-args
       (~(got by default-own-keys) cur-ship)
     state
-    ::  ?+  tx-type.cur-event  !!
-    ::    %spawn                 check-spawn
-    ::    %transfer-point        check-xfer-point
-    ::    %configure-keys        check-conf-keys
-    ::    %set-management-proxy  check-mgmt-proxy
-    ::    %set-spawn-proxy       check-spwn-proxy
-    ::    %set-transfer-proxy    check-xfer-proxy
-    ::  ==
-    ::
-    ++  check-spawn  ^-  ?
-      .=  =<  address.transfer-proxy.own
-          (~(got by points.state) which-spawn)
-      (addr %spawn-test)
-    ::
-    ++  check-xfer-point  ^-  ?
-      .=  =<  address.owner.own
-          (~(got by points.state) cur-ship)
-      (addr %transfer-test)
-    ::
-    ++  check-conf-keys  ^-  ?
-      .=  =<  |1:keys.net
-          (~(got by points.state) cur-ship)
-      [suit auth encr]
-    ::
-    ++  check-mgmt-proxy  ^-  ?
-      .=  =<  address.management-proxy.own
-          (~(got by points.state) cur-ship)
-      (addr %proxy-test)
-    ::
-    ++  check-spwn-proxy  ^-  ?
-      .=  =<  address.spawn-proxy.own
-          (~(got by points.state) cur-ship)
-      (addr %proxy-test)
-    ::
-    ++  check-xfer-proxy  ^-  ?
-      .=  =<  address.transfer-proxy.own
-          (~(got by points.state) cur-ship)
-      (addr %proxy-test)
     ::
     ++  def-args
       ^-  skim-tx:naive
@@ -898,7 +903,7 @@
         %~disryt-nolpet  ~tapfur-fitsep
       ==
     ::
-    --  :: inner trap
+    --  :: end of actual state
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
