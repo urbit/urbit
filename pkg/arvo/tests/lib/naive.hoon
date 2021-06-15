@@ -318,7 +318,7 @@
           |=  cur-event=event  ^-  ?
           ?+  tx-type.cur-event  %.n
             %transfer-point      %.y
-            %set-transfer-proxy  %.y  :: TODO: double check this
+            %set-transfer-proxy  %.n
           ==
         --  :: +star-check
       ++  planet-check
@@ -344,7 +344,7 @@
             %detach                %.n
             %set-management-proxy  %.y
             %set-spawn-proxy       %.n
-            %set-transfer-proxy    %.n
+            %set-transfer-proxy    %.y
           ==
         ++  managep-check
           |=  cur-event=event  ^-  ?
@@ -545,15 +545,16 @@
                     (cury filter-owner %.y)
                     (cury filter-proxy %own)
                     (cury filter-nonce %.y)
-            ::        (cury filter-dominion %l1)
+                    ::(cury filter-rank %star)
+                    ::(cury filter-dominion %l2)
                     %-  cury
                     :-  filter-tx-type
-                    :*  :: %spawn  ::  currently crashes
+                    :*  %spawn  ::  currently crashes
                         ::%transfer-point
                         ::%configure-keys
                         %set-management-proxy
-                        %set-spawn-proxy
-                        ::%set-transfer-proxy
+                        ::%set-spawn-proxy
+                        %set-transfer-proxy
                         ~
                     ==
                 ==
@@ -780,20 +781,19 @@
   ::
   =/  state  initial-state
   =/  expect-state  initial-state
+  |^
   %+  expect-eq
     !>
     |^
     ?.  (~(got by suc-map) cur-event)
-      =/  new-nonce  cur-point(nonce.owner.own +(cur-nonce))
-      %=  expect-state
-        points  (~(put by points.expect-state) cur-ship new-nonce)
-      ==
+      (alter-state cur-point(nonce.owner.own +(cur-nonce)))
     ?+  tx-type.cur-event  !!
       %transfer-point        set-xfer
       %configure-keys        set-keys
       %set-management-proxy  set-mgmt-proxy
       %set-spawn-proxy       set-spwn-proxy
       %set-transfer-proxy    set-xfer-proxy
+      %spawn                 (new-point which-spawn)
     ==
     ::
     ++  set-keys  ^-  ^state:naive
@@ -838,8 +838,31 @@
       ==
       (alter-state new-xfer)
     ::
+    ++  new-point
+      :: TODO clean up this horrifying gate
+      |=  =ship  ^-  ^state:naive
+      =|  new-point=point:naive
+      =/  spawned
+      %=  new-point
+        dominion  %l2
+        address.owner.own  (addr (~(got by default-own-keys) cur-ship))
+        address.transfer-proxy.own  (addr %spawn-test)
+        sponsor.net  [has=%.y who=cur-ship]
+      ==
+      =/  new-nonce
+      %=  cur-point
+        nonce.owner.own  +(cur-nonce)
+      ==
+      =/  new-spawn=^state:naive
+      %=  expect-state
+        points  (~(put by points.expect-state) ship spawned)
+      ==
+      %=  new-spawn
+        points  (~(put by points.new-spawn) cur-ship new-nonce)
+      ==
+    ::
     ++  alter-state
-      |=  new-point=point:naive
+      |=  new-point=point:naive  ^-  ^state:naive
       %=  expect-state
         points  (~(put by points.expect-state) cur-ship new-point)
       ==
@@ -887,23 +910,25 @@
       ::
       --  :: +def-args
     ::
-    ++  which-spawn  ^-  ship
-      ?+  cur-ship  !!
-        %~rut            ~hasrut
-        %~rigrut         ~batbec-tapmep
-        %~larsyx-mapmeg  ~nocryl-tobned
-        %~holrut         ~namtuc-ritnux
-        %~rabsum-ravtyd  ~docsec-wanlug
-        %~dovmul-mogryt  ~docsec-wanlug
-        %~pidted-dacnum  ~docsec-wanlug
-        %~losrut         ~mishus-loplus
-        %~radres-tinnyl  ~tapfur-fitsep
-        %~pinpun-pilsun  ~tapfur-fitsep
-        %~habtyc-nibpyx  ~tapfur-fitsep
-        %~disryt-nolpet  ~tapfur-fitsep
-      ==
-    ::
     --  :: end of actual state
+    ::
+  ++  which-spawn  ^-  ship
+    ?+  cur-ship  !!
+      %~rut            ~hasrut
+      %~rigrut         ~batbec-tapmep
+      %~larsyx-mapmeg  ~nocryl-tobned
+      %~holrut         ~namtuc-ritnux
+      %~rabsum-ravtyd  ~docsec-wanlug
+      %~dovmul-mogryt  ~docsec-wanlug
+      %~pidted-dacnum  ~docsec-wanlug
+      %~losrut         ~mishus-loplus
+      %~radres-tinnyl  ~tapfur-fitsep
+      %~pinpun-pilsun  ~tapfur-fitsep
+      %~habtyc-nibpyx  ~tapfur-fitsep
+      %~disryt-nolpet  ~tapfur-fitsep
+    ==
+  ::
+  --  :: end of +expect-eq
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
