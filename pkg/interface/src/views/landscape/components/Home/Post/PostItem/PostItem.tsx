@@ -3,6 +3,7 @@ import { Association, GraphNode, Group, Post } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import { History } from 'history';
 import React, { Ref } from 'react';
+import { getPostRoute } from '~/logic/lib/graph';
 import { isWriter } from '~/logic/lib/group';
 import { withHovering } from '~/logic/lib/util';
 import { Mention } from '~/views/components/MentionText';
@@ -70,21 +71,19 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
   }
 
   navigateToChildren() {
-    const { history, baseUrl, index, isParent, isThread, isHierarchical } = this.props;
+    const {
+      isHierarchical,
+      history,
+      index,
+      isParent,
+      isThread,
+      association
+    } = this.props;
     if (isParent) {
       return;
     }
-    let indexString = '';
 
-    index.forEach((i) => {
-      indexString = indexString + '/' + i.toString();
-    });
-
-    if (!isThread && !isHierarchical) {
-      history.push(`${baseUrl}/feed/thread${indexString}`);
-    } else {
-      history.push(`${baseUrl}/feed/replies${indexString}`);
-    }
+    history.push(getPostRoute(association.resource, index, !isThread && !isHierarchical));
   }
 
   submitCallback() {

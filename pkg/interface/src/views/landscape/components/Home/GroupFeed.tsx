@@ -10,7 +10,7 @@ import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 import { Loading } from '~/views/components/Loading';
 import { GroupFeedHeader } from './GroupFeedHeader';
-import PostReplies from './Post/PostReplies';
+import { PostRepliesRoutes } from './Post/PostReplies';
 import PostTimeline from './Post/PostTimeline';
 import airlock from '~/logic/api';
 
@@ -41,7 +41,6 @@ function GroupFeed(props) {
   const association = associations.graph[graphPath];
 
   const history = useHistory();
-  const locationUrl = history.location.pathname;
 
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
   const graph = graphs[graphId];
@@ -76,42 +75,26 @@ function GroupFeed(props) {
         graphResource={graphResource}
       />
       <Switch>
-        <Route
-          exact
-          path={[relativePath('/'), relativePath('/feed')]}
-          render={(routeProps) => {
-            return (
-              <PostTimeline
-                baseUrl={baseUrl}
-                history={history}
-                graphPath={graphPath}
-                group={group}
-                association={association}
-                vip={vip}
-                graph={graph}
-                pendingSize={pendingSize}
-              />
-            );
-          }}
-        />
-        <Route
-          path={relativePath('/feed/replies/:index+')}
-          render={(routeProps) => {
-            return (
-              <PostReplies
-                locationUrl={locationUrl}
-                baseUrl={baseUrl}
-                history={history}
-                graphPath={graphPath}
-                group={group}
-                association={association}
-                vip={vip}
-                graph={graph}
-                pendingSize={pendingSize}
-              />
-            );
-          }}
-        />
+        <Route exact path={relativePath('/feed')}>
+          <PostTimeline
+            baseUrl={relativePath('/feed')}
+            history={history}
+            graphPath={graphPath}
+            group={group}
+            association={association}
+            vip={vip}
+            graph={graph}
+            pendingSize={pendingSize}
+          />
+        </Route>
+        <Route path={relativePath('/feed/replies')}>
+          <PostRepliesRoutes
+            baseUrl={relativePath('/feed/replies')}
+            association={association}
+            vip={vip}
+            pendingSize={pendingSize}
+          />
+        </Route>
       </Switch>
     </Col>
   );

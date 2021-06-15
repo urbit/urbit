@@ -9,11 +9,11 @@ import { useGroup } from '~/logic/state/group';
 import { useAssocForGraph } from '~/logic/state/metadata';
 import { Loading } from '~/views/components/Loading';
 import { GroupFeedHeader } from './GroupFeedHeader';
-import PostThread from './Post/PostThread';
+import { PostThreadRoutes } from './Post/PostThread';
 import PostFlatTimeline from './Post/PostFlatTimeline';
-import PostReplies from './Post/PostReplies';
 import airlock from '~/logic/api';
 import { markCountAsRead } from '@urbit/api';
+import { PostRepliesRoutes } from './Post/PostReplies';
 
 function GroupFlatFeed(props) {
   const {
@@ -35,7 +35,6 @@ function GroupFlatFeed(props) {
 
   const relativePath = path => baseUrl + path;
   const history = useHistory();
-  const locationUrl = history.location.pathname;
   const getDeepOlderThan = useGraphState(s => s.getDeepOlderThan);
 
   useEffect(() => {
@@ -67,56 +66,32 @@ function GroupFlatFeed(props) {
         graphResource={graphRid}
       />
       <Switch>
-        <Route
-          exact
-          path={[relativePath('/'), relativePath('/feed')]}
-          render={(routeProps) => {
-            return (
-              <PostFlatTimeline
-                baseUrl={baseUrl}
-                graphPath={graphPath}
-                group={group}
-                association={association}
-                vip={vip}
-                pendingSize={pendingSize}
-              />
-            );
-          }}
-        />
-        <Route
-          path={relativePath('/feed/thread/:index+')}
-          render={(routeProps) => {
-            return (
-              <PostThread
-                locationUrl={locationUrl}
-                baseUrl={baseUrl}
-                history={history}
-                graphPath={graphPath}
-                group={group}
-                association={association}
-                vip={vip}
-                pendingSize={pendingSize}
-              />
-            );
-          }}
-        />
-        <Route
-          path={relativePath('/feed/replies/:index+')}
-          render={(routeProps) => {
-            return (
-              <PostReplies
-                locationUrl={locationUrl}
-                baseUrl={baseUrl}
-                history={history}
-                graphPath={graphPath}
-                group={group}
-                association={association}
-                vip={vip}
-                pendingSize={pendingSize}
-              />
-            );
-          }}
-        />
+        <Route exact path={[relativePath('/'), relativePath('/feed')]}>
+          <PostFlatTimeline
+            baseUrl={relativePath('/feed')}
+            graphPath={graphPath}
+            group={group}
+            association={association}
+            vip={vip}
+            pendingSize={pendingSize}
+          />
+        </Route>
+        <Route path={relativePath('/feed/thread')}>
+          <PostThreadRoutes
+            baseUrl={relativePath('/feed/thread')}
+            association={association}
+            vip={vip}
+            pendingSize={pendingSize}
+          />
+        </Route>
+        <Route path={relativePath('/feed/replies')}>
+          <PostRepliesRoutes
+            baseUrl={relativePath('/feed/replies')}
+            association={association}
+            vip={vip}
+            pendingSize={pendingSize}
+          />
+        </Route>
       </Switch>
     </Col>
   );
