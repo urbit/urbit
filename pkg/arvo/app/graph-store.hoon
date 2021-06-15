@@ -16,20 +16,9 @@
 +$  state-5  [%5 network:store]
 ++  orm      orm:store
 ++  orm-log  orm-log:store
-::
-+$  cache
-  $:  validators=(map mark $-(indexed-post:store indexed-post:store))
-  ==
-::
-::  TODO: come back to this and potentially use ford runes or otherwise
-::  send a %t to be notified of validator changes
-+$  inflated-state
-  $:  state-5
-      cache
-  ==
 --
 ::
-=|  inflated-state
+=|  state-5
 =*  state  -
 ::
 %-  agent:dbug
@@ -41,7 +30,7 @@
     def   ~(. (default-agent this %|) bowl)
 ::
 ++  on-init  [~ this]
-++  on-save  !>(-.state)
+++  on-save  !>(state)
 ++  on-load
   |=  =old=vase
   ^-  (quip card _this)
@@ -91,7 +80,7 @@
       (gas:orm-log ~ [now.bowl logged-update] ~)
     ==
   ::
-    %5  [cards this(-.state old, +.state *cache)]
+    %5  [cards this(state old)]
   ==
 ::
 ++  on-watch
@@ -593,8 +582,6 @@
     ?~  mark
       [%.y state]
     =/  validate=$-(indexed-post:store indexed-post:store)
-      %+  fall
-        (~(get by validators) u.mark)
       .^  $-(indexed-post:store indexed-post:store)
           %cf
           (scot %p our.bowl)
@@ -604,8 +591,6 @@
           %graph-indexed-post
           ~
       ==
-    =?  validators  !(~(has by validators) u.mark)
-      (~(put by validators) u.mark validate)
     :_  state
     |-  ^-  ?
     ?~  graph  %.y
@@ -624,7 +609,7 @@
   ++  poke-import
     |=  arc=*
     ^-  (quip card _state)
-    =^  cards  -.state
+    =^  cards  state
       (import:store arc our.bowl)
     [cards state]
   --

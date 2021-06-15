@@ -74,21 +74,9 @@
     ==
   :_  this(state old)
   =.  cards  (flop cards)
-  %+  welp
-    ?:  (~(has by wex.bowl) [/graph our.bowl %graph-store])
-      cards
-    [watch-graph:ha cards]
-  %+  turn
-    ^-  (list mark)
-    :~  %graph-validator-chat
-        %graph-validator-link
-        %graph-validator-publish
-    ==
-  |=  =mark
-  ^-  card
-  =/  =wire  /validator/[mark]
-  =/  =rave:clay  [%sing %f [%da now.bowl] /[mark]/notification-kind]
-  [%pass wire %arvo %c %warp our.bowl [%home `rave]]
+  ?:  (~(has by wex.bowl) [/graph our.bowl %graph-store])
+    cards
+  [watch-graph:ha cards]
 ::
 ++  on-watch
   |=  =path
@@ -281,11 +269,8 @@
   ^-  (quip card _this)
   ?+  wire  (on-arvo:def wire sign-arvo)
     ::
-      [%validator @ ~]
-    :_  this
-    =*  validator  i.t.wire
-    =/  =rave:clay  [%next %f [%da now.bowl] /[validator]/notification-kind]
-    [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
+    ::  no longer necessary
+    [%validator @ ~]  [~ this]
   ==
 ++  on-fail   on-fail:def
 --
