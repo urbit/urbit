@@ -12,7 +12,6 @@ import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import useGraphState, { useGraphForAssoc } from '~/logic/state/graph';
 import { useGroupForAssoc } from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
-import { StoreState } from '~/logic/store/type';
 import { Loading } from '~/views/components/Loading';
 import { ChatPane } from './components/ChatPane';
 import airlock from '~/logic/api';
@@ -25,7 +24,7 @@ const getCurrGraphSize = (ship: string, name: string) => {
   return graph?.size ?? 0;
 };
 
-type ChatResourceProps = StoreState & {
+type ChatResourceProps = {
   association: Association;
   baseUrl: string;
 };

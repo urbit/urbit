@@ -13,7 +13,6 @@ import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
 import { DmResource } from '~/views/apps/chat/DmResource';
-import { StoreState } from '~/logic/store/type';
 import { Workspace } from '~/types/workspace';
 import '~/views/apps/links/css/custom.css';
 import '~/views/apps/publish/css/custom.css';
@@ -28,7 +27,7 @@ import { Resource } from './Resource';
 import { Skeleton } from './Skeleton';
 import airlock from '~/logic/api';
 
-type GroupsPaneProps = StoreState & {
+type GroupsPaneProps = {
   baseUrl: string;
   workspace: Workspace;
 };

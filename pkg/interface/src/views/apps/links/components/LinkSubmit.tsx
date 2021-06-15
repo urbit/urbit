@@ -1,12 +1,12 @@
 import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import React, { useCallback, useState, DragEvent, useEffect } from 'react';
-import { createPost } from '~/logic/api/graph';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import useStorage from '~/logic/lib/useStorage';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import useGraphState from '~/logic/state/graph';
+import { createPost } from '@urbit/api';
 
 interface LinkSubmitProps {
   name: string;
@@ -35,7 +35,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
     setDisabled(true);
     const parentIndex = props.parentIndex || '';
-    const post = createPost(contents, parentIndex);
+    const post = createPost(`~${window.ship}`, contents, parentIndex);
 
     addPost(
       `~${props.ship}`,

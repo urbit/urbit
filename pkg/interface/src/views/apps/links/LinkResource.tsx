@@ -6,7 +6,6 @@ import React, { useEffect } from 'react';
 import { Link, Route, Switch } from 'react-router-dom';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
-import { StoreState } from '~/logic/store/type';
 import { Comments } from '~/views/components/Comments';
 import useGroupState from '../../../logic/state/group';
 import { LinkItem } from './components/LinkItem';
@@ -15,7 +14,7 @@ import LinkWindow from './LinkWindow';
 
 const emptyMeasure = () => {};
 
-type LinkResourceProps = StoreState & {
+type LinkResourceProps = {
   association: Association;
   baseUrl: string;
 };

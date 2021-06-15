@@ -1,9 +1,8 @@
 import { BaseTextArea, Box, Button, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
-import { addPost, Association, Content, evalCord, Group, Path } from '@urbit/api';
+import { addPost, Association, Content, createPost, evalCord, Group, Path } from '@urbit/api';
 import React, {
   ReactElement, useCallback, useState
 } from 'react';
-import { createPost } from '~/logic/api/graph';
 import { isChannelAdmin, isHost, isWriter, resourceFromPath } from '~/logic/lib/group';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import useStorage from '~/logic/lib/useStorage';
@@ -52,7 +51,7 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
       setDisabled(true);
       const url = await promptUpload();
       const { ship, name } = graphResource;
-      await airlock.thread(addPost(ship, name, createPost([{ url }], index || '')));
+      await airlock.thread(addPost(ship, name, createPost(`~${window.ship}`, [{ url }], index || '')));
     } catch (e) {
       // TODO: better handling
       console.error(e);
@@ -75,7 +74,7 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
     }
 
     setDisabled(true);
-    const post = createPost(contents, index || '');
+    const post = createPost(`~${window.ship}`, contents, index || '');
 
     await airlock.thread(addPost(
       graphResource.ship,

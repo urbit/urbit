@@ -2,10 +2,9 @@ import { Box } from '@tlon/indigo-react';
 import { Association } from '@urbit/api';
 import React, { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { StoreState } from '~/logic/store/type';
 import { NotebookRoutes } from './components/NotebookRoutes';
 
-type PublishResourceProps = StoreState & {
+type PublishResourceProps = {
   association: Association;
   baseUrl: string;
   history?: any;

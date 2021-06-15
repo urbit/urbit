@@ -6,7 +6,6 @@ import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
-import { StoreState } from '~/logic/store/type';
 import { Workspace } from '~/types';
 import { ChatResource } from '~/views/apps/chat/ChatResource';
 import { LinkResource } from '~/views/apps/links/LinkResource';
@@ -14,7 +13,7 @@ import { PublishResource } from '~/views/apps/publish/PublishResource';
 import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
 import { ResourceSkeleton } from './ResourceSkeleton';
 
-type ResourceProps = StoreState & {
+type ResourceProps = {
   association: Association;
   baseUrl: string;
   workspace: Workspace;
