@@ -10,6 +10,7 @@ import { GroupsPane } from './components/GroupsPane';
 import { JoinGroup } from './components/JoinGroup';
 import { NewGroup } from './components/NewGroup';
 import './css/custom.css';
+import _ from 'lodash';
 
 moment.updateLocale('en', {
   relativeTime : {
@@ -32,7 +33,12 @@ moment.updateLocale('en', {
   }
 });
 
-export default function Landscape(props) {
+const makeGroupWorkspace = _.memoize((group: string): Workspace => ({ type: 'group', group }));
+
+const homeWorkspace: Workspace = { type: 'home' };
+const messagesWorkspace: Workspace = { type: 'messages' };
+
+export default function Landscape() {
   const notificationsCount = useHarkState(s => s.notificationsCount);
 
   return (
@@ -49,40 +55,26 @@ export default function Landscape(props) {
             } = routeProps.match.params as Record<string, string>;
             const groupPath = `/ship/${host}/${name}`;
             const baseUrl = `/~landscape${groupPath}`;
-            const ws: Workspace = { type: 'group', group: groupPath };
+            const ws: Workspace = makeGroupWorkspace(groupPath);
 
             return (
-              <GroupsPane workspace={ws} baseUrl={baseUrl} {...props} />
+              <GroupsPane workspace={ws} baseUrl={baseUrl} />
             );
           }}
         />
-        <Route path="/~landscape/home"
-          render={() => {
-            const ws: Workspace = { type: 'home' };
-            return (
-              <GroupsPane workspace={ws} baseUrl="/~landscape/home" {...props} />
-            );
-          }}
-        />
-        <Route path="/~landscape/messages"
-          render={() => {
-            const ws: Workspace = { type: 'messages' };
-            return (
-              <GroupsPane workspace={ws} baseUrl="/~landscape/messages" {...props} />
-            );
-          }}
-        />
-        <Route path="/~landscape/new"
-          render={() => {
-            return (
-              <Body>
-                <Box maxWidth="300px">
-                  <NewGroup />
-                </Box>
-              </Body>
-            );
-          }}
-        />
+        <Route path="/~landscape/home">
+          <GroupsPane workspace={homeWorkspace} baseUrl="/~landscape/home" />
+        </Route>
+        <Route path="/~landscape/messages">
+          <GroupsPane workspace={messagesWorkspace} baseUrl="/~landscape/messages" />
+        </Route>
+        <Route path="/~landscape/new">
+          <Body>
+            <Box maxWidth="300px">
+              <NewGroup />
+            </Box>
+          </Body>
+        </Route>
         <Route path="/~landscape/join/:ship?/:name?"
           render={(routeProps) => {
             const { ship, name } = routeProps.match.params;
@@ -103,4 +95,3 @@ export default function Landscape(props) {
     </>
   );
 }
-

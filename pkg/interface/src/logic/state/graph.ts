@@ -1,5 +1,6 @@
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import { patp2dec } from 'urbit-ob';
+import shallow from 'zustand/shallow';
 
 import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs, getGraph, getShallowChildren } from '@urbit/api';
 import { useCallback } from 'react';
@@ -275,7 +276,11 @@ export function useGraphTimesentMap(ship: string, name: string) {
     useCallback(s => s.graphTimesentMap[`${deSig(ship)}/${name}`], [ship, name])
   );
 }
+const emptyObject = {};
 
+export function useGraphTimesent(key: string) {
+  return useGraphState(useCallback(s => s.graphTimesentMap[key] || emptyObject, [key]), shallow);
+}
 export function useGraphForAssoc(association: Association) {
   const { resource } = association;
   const { ship, name } = resourceFromPath(resource);

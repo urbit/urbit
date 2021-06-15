@@ -6,7 +6,7 @@ import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'r
 import { useFileDrag } from '~/logic/lib/useDrag';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { useOurContact } from '~/logic/state/contact';
-import useGraphState from '~/logic/state/graph';
+import { useGraphTimesent } from '~/logic/state/graph';
 import ShareProfile from '~/views/apps/chat/components/ShareProfile';
 import { Loading } from '~/views/components/Loading';
 import SubmitDragger from '~/views/components/SubmitDragger';
@@ -77,7 +77,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
     promptShare = [],
     fetchMessages
   } = props;
-  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
+  const graphTimesentMap = useGraphTimesent(id);
   const ourContact = useOurContact();
   const chatInput = useRef<NakedChatInput>();
 
@@ -88,7 +88,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
       }
       (chatInput.current as NakedChatInput)?.uploadFiles(files);
     },
-    [chatInput.current]
+    [chatInput]
   );
 
   const { bind, dragging } = useFileDrag(onFileDrag);
@@ -147,7 +147,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
         graphSize={graph.size}
         unreadCount={unreadCount}
         showOurContact={promptShare.length === 0 && !showBanner}
-        pendingSize={Object.keys(graphTimesentMap[id] || {}).length}
+        pendingSize={Object.keys(graphTimesentMap).length}
         onReply={onReply}
         onDelete={onDelete}
         dismissUnread={dismissUnread}
@@ -170,3 +170,5 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
     </Col>
   );
 }
+
+ChatPane.whyDidYouRender = true;

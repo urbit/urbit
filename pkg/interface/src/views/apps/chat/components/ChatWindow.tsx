@@ -6,7 +6,7 @@ import {
 import bigInt, { BigInteger } from 'big-integer';
 import React, { Component } from 'react';
 import VirtualScroller from '~/views/components/VirtualScroller';
-import ChatMessage, { MessagePlaceholder } from './ChatMessage';
+import ChatMessage from './ChatMessage';
 import UnreadNotice from './UnreadNotice';
 
 const IDLE_THRESHOLD = 64;
@@ -57,7 +57,7 @@ class ChatWindow extends Component<
     this.state = {
       fetchPending: false,
       idle: true,
-      initialized: false,
+      initialized: true,
       unreadIndex: bigInt.zero
     };
 
@@ -72,14 +72,10 @@ class ChatWindow extends Component<
 
   componentDidMount() {
     this.calculateUnreadIndex();
-    setTimeout(() => {
-      this.setState({ initialized: true }, () => {
-        if(this.props.scrollTo) {
-          this.virtualList!.scrollLocked = false;
-          this.virtualList!.scrollToIndex(this.props.scrollTo);
-        }
-      });
-    }, this.INITIALIZATION_MAX_TIME);
+    if(this.props.scrollTo) {
+      this.virtualList!.scrollLocked = false;
+      this.virtualList!.scrollToIndex(this.props.scrollTo);
+    }
   }
 
   calculateUnreadIndex() {
@@ -203,15 +199,6 @@ class ChatWindow extends Component<
         <Text pl="44px" pt="1" pb="1" gray display="block">
           This message has been deleted.
         </Text>
-      );
-    }
-    if (!this.state.initialized) {
-      return (
-        <MessagePlaceholder
-          key={index.toString()}
-          height='64px'
-          index={index}
-        />
       );
     }
     const isPending: boolean = 'pending' in msg && Boolean(msg.pending);

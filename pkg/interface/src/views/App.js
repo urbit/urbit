@@ -1,6 +1,7 @@
 import dark from '@tlon/indigo-dark';
 import light from '@tlon/indigo-light';
 import Mousetrap from 'mousetrap';
+import shallow from 'zustand/shallow';
 import 'mousetrap-global-bind';
 import * as React from 'react';
 import Helmet from 'react-helmet';
@@ -12,7 +13,6 @@ import gcpManager from '~/logic/lib/gcpManager';
 import { favicon, svgDataURL } from '~/logic/lib/util';
 import withState from '~/logic/lib/withState';
 import useContactState from '~/logic/state/contact';
-import useGroupState from '~/logic/state/group';
 import useLocalState from '~/logic/state/local';
 import useSettingsState from '~/logic/state/settings';
 import useGraphState from '~/logic/state/graph';
@@ -131,7 +131,7 @@ class App extends React.Component {
   render() {
     const theme = this.getTheme();
 
-    const ourContact = this.props.contacts[`~${this.ship}`] || null;
+    const { ourContact } = this.props;
     return (
       <ThemeProvider theme={theme}>
         <ShortcutContextProvider>
@@ -173,12 +173,38 @@ class App extends React.Component {
     );
   }
 }
+const WarmApp = process.env.NODE_ENV === 'production' ? App : hot(App);
 
-export default withState(process.env.NODE_ENV === 'production' ? App : hot(App), [
-  [useGroupState],
-  [useContactState],
-  [useSettingsState, ['display', 'getAll']],
-  [useLocalState],
-  [useGraphState, ['getShallowChildren']],
-  [useLaunchState, ['getRuntimeLag', 'getBaseHash']]
-]);
+const selContacts = s => s.contacts[`~${window.ship}`];
+const selLocal = s => [s.set, s.omniboxShown, s.toggleOmnibox];
+const selSettings = s => [s.display, s.getAll];
+const selGraph = s => s.getShallowChildren;
+const selLaunch = s => [s.getRuntimeLag, s.getBaseHash];
+
+const WithApp = React.forwardRef((props, ref) => {
+  const ourContact = useContactState(selContacts);
+  const [display, getAll] = useSettingsState(selSettings, shallow);
+  const [setLocal, omniboxShown, toggleOmnibox] = useLocalState(selLocal);
+  const getShallowChildren = useGraphState(selGraph);
+  const [getRuntimeLag, getBaseHash] = useLaunchState(selLaunch, shallow);
+
+  return (
+    <WarmApp
+      ref={ref}
+      ourContact={ourContact}
+      display={display}
+      getAll={getAll}
+      set={setLocal}
+      getShallowChildren={getShallowChildren}
+      getRuntimeLag={getRuntimeLag}
+      getBaseHash={getBaseHash}
+      toggleOmnibox={toggleOmnibox}
+      omniboxShown={omniboxShown}
+    />
+  );
+});
+
+WarmApp.whyDidYouRender = true;
+
+export default WithApp;
+

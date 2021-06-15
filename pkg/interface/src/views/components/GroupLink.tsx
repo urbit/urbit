@@ -1,5 +1,5 @@
 import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useModal } from '~/logic/lib/useModal';
 import useMetadataState, { usePreview } from '~/logic/state/metadata';
@@ -15,9 +15,10 @@ export function GroupLink(
 ): ReactElement {
   const { resource, ...rest } = props;
   const name = resource.slice(6);
-  const associations = useMetadataState(state => state.associations);
+  const joined = useMetadataState(
+    useCallback(s => resource in s.associations.groups, [resource])
+  );
   const history = useHistory();
-  const joined = resource in associations.groups;
 
   const { modal, showModal } = useModal({
     modal: <JoinGroup autojoin={name} />

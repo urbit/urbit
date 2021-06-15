@@ -130,4 +130,9 @@ function withLocalState<P, S extends keyof LocalState, C extends React.Component
   });
 }
 
+const selOsDark = (s: LocalState) => s.dark;
+export function useOsDark() {
+  return useLocalState(selOsDark);
+}
+
 export { useLocalState as default, withLocalState };

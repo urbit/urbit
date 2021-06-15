@@ -1,4 +1,4 @@
-import { AppName, readGroup } from '@urbit/api';
+import { readGroup } from '@urbit/api';
 import _ from 'lodash';
 import React, { useCallback, useEffect } from 'react';
 import Helmet from 'react-helmet';
@@ -27,10 +27,10 @@ import { Resource } from './Resource';
 import { Skeleton } from './Skeleton';
 import airlock from '~/logic/api';
 
-type GroupsPaneProps = {
+interface GroupsPaneProps {
   baseUrl: string;
   workspace: Workspace;
-};
+}
 
 export function GroupsPane(props: GroupsPaneProps) {
   const { baseUrl, workspace } = props;
@@ -114,8 +114,6 @@ export function GroupsPane(props: GroupsPaneProps) {
             string
           >;
 
-          const appName = app as AppName;
-
           const resource = `/ship/${host}/${name}`;
           const association = associations.graph[resource];
           const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
@@ -129,12 +127,11 @@ export function GroupsPane(props: GroupsPaneProps) {
               mobileHide
               recentGroups={recentGroups}
               selected={resource}
-              selectedApp={appName}
               {...props}
               baseUrl={resourceUrl}
             >
               <Resource
-                {...props}
+                workspace={props.workspace}
                 association={association}
                 baseUrl={baseUrl}
               />
