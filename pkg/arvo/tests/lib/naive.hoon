@@ -549,12 +549,12 @@
                     ::(cury filter-dominion %l2)
                     %-  cury
                     :-  filter-tx-type
-                    :*  %spawn  ::  currently crashes
+                    :*  :: %spawn
                         ::%transfer-point
-                        ::%configure-keys
-                        %set-management-proxy
-                        ::%set-spawn-proxy
-                        %set-transfer-proxy
+                        %configure-keys
+                        :: %set-management-proxy
+                        :: %set-spawn-proxy
+                        :: %set-transfer-proxy
                         ~
                     ==
                 ==
@@ -799,6 +799,7 @@
     ++  set-keys  ^-  ^state:naive
       =/  new-keys
       %=  cur-point
+        life.keys.net   +(life.keys.net:(~(got by points.initial-state) cur-ship))
         suite.keys.net  suit
         auth.keys.net   auth
         crypt.keys.net  encr
