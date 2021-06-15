@@ -62,13 +62,11 @@
       (warm-static %graph-validator-publish %graph-permissions-add)
       (warm-static %graph-validator-link %graph-permissions-add)
       (warm-static %graph-validator-post %graph-permissions-add)
-      (warm-static %graph-validator-dm %graph-permissions-add)
     ::
       (warm-static %graph-validator-chat %graph-permissions-remove)
       (warm-static %graph-validator-publish %graph-permissions-remove)
       (warm-static %graph-validator-link %graph-permissions-remove)
       (warm-static %graph-validator-post %graph-permissions-remove)
-      (warm-static %graph-validator-dm %graph-permissions-remove)
     ::
       (warm-static %graph-validator-chat %notification-kind)
       (warm-static %graph-validator-publish %notification-kind)
