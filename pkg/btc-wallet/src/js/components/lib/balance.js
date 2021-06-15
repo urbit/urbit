@@ -28,15 +28,7 @@ export default class Balance extends Component {
 
   copyAddress(arg) {
     let address = this.props.state.address;
-    function listener(e) {
-      e.clipboardData.setData('text/plain', address);
-      e.preventDefault();
-    }
-
-    document.addEventListener('copy', listener);
-    document.execCommand('copy');
-    document.removeEventListener('copy', listener);
-
+    navigator.clipboard.writeText(address);
     this.props.api.btcWalletCommand({'gen-new-address': null});
 
     if (arg === 'button'){
