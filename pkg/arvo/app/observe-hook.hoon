@@ -58,17 +58,17 @@
       (warm-static %graph-validator-post %graph-indexed-post)
       (warm-static %graph-validator-dm %graph-indexed-post)
     ::
-      (warm-static %graph-validator-chat %graph-permission-add)
-      (warm-static %graph-validator-publish %graph-permission-add)
-      (warm-static %graph-validator-link %graph-permission-add)
-      (warm-static %graph-validator-post %graph-permission-add)
-      (warm-static %graph-validator-dm %graph-permission-add)
+      (warm-static %graph-validator-chat %graph-permissions-add)
+      (warm-static %graph-validator-publish %graph-permissions-add)
+      (warm-static %graph-validator-link %graph-permissions-add)
+      (warm-static %graph-validator-post %graph-permissions-add)
+      (warm-static %graph-validator-dm %graph-permissions-add)
     ::
-      (warm-static %graph-validator-chat %graph-permission-remove)
-      (warm-static %graph-validator-publish %graph-permission-remove)
-      (warm-static %graph-validator-link %graph-permission-remove)
-      (warm-static %graph-validator-post %graph-permission-remove)
-      (warm-static %graph-validator-dm %graph-permission-remove)
+      (warm-static %graph-validator-chat %graph-permissions-remove)
+      (warm-static %graph-validator-publish %graph-permissions-remove)
+      (warm-static %graph-validator-link %graph-permissions-remove)
+      (warm-static %graph-validator-post %graph-permissions-remove)
+      (warm-static %graph-validator-dm %graph-permissions-remove)
     ::
       (warm-static %graph-validator-chat %notification-kind)
       (warm-static %graph-validator-publish %notification-kind)
@@ -80,7 +80,6 @@
       (warm-static %graph-validator-publish %transform-add-nodes)
       (warm-static %graph-validator-link %transform-add-nodes)
       (warm-static %graph-validator-post %transform-add-nodes)
-      (warm-static %graph-validator-dm %transform-add-nodes)
   ==
   ::
   ++  act
@@ -130,17 +129,17 @@
           (warm-static %graph-validator-post %graph-indexed-post)
           (warm-static %graph-validator-dm %graph-indexed-post)
         ::
-          (warm-static %graph-validator-chat %graph-permission-add)
-          (warm-static %graph-validator-publish %graph-permission-add)
-          (warm-static %graph-validator-link %graph-permission-add)
-          (warm-static %graph-validator-post %graph-permission-add)
-          (warm-static %graph-validator-dm %graph-permission-add)
+          (warm-static %graph-validator-chat %graph-permissions-add)
+          (warm-static %graph-validator-publish %graph-permissions-add)
+          (warm-static %graph-validator-link %graph-permissions-add)
+          (warm-static %graph-validator-post %graph-permissions-add)
+          (warm-static %graph-validator-dm %graph-permissions-add)
         ::
-          (warm-static %graph-validator-chat %graph-permission-remove)
-          (warm-static %graph-validator-publish %graph-permission-remove)
-          (warm-static %graph-validator-link %graph-permission-remove)
-          (warm-static %graph-validator-post %graph-permission-remove)
-          (warm-static %graph-validator-dm %graph-permission-remove)
+          (warm-static %graph-validator-chat %graph-permissions-remove)
+          (warm-static %graph-validator-publish %graph-permissions-remove)
+          (warm-static %graph-validator-link %graph-permissions-remove)
+          (warm-static %graph-validator-post %graph-permissions-remove)
+          (warm-static %graph-validator-dm %graph-permissions-remove)
         ::
           (warm-static %graph-validator-chat %notification-kind)
           (warm-static %graph-validator-publish %notification-kind)
@@ -152,7 +151,6 @@
           (warm-static %graph-validator-publish %transform-add-nodes)
           (warm-static %graph-validator-link %transform-add-nodes)
           (warm-static %graph-validator-post %transform-add-nodes)
-          (warm-static %graph-validator-dm %transform-add-nodes)
       ==
     $(old-state [%6 observers.old-state %.n ~])
   ::
