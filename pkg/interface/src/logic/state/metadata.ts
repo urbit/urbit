@@ -39,9 +39,9 @@ const useMetadataState = createState<MetadataState>(
         if('metadata-hook-update' in preview) {
           const newState = get();
           newState.set((s) => {
-            s.previews[group] = preview['metadata-hook-update'];
+            s.previews[group] = preview['metadata-hook-update'].preview;
           });
-          return preview['metadata-hook-update'];
+          return preview['metadata-hook-update'].preview;
         } else {
           throw 'no-permissions';
         }
@@ -82,9 +82,11 @@ export function useAssocForGroup(group: string) {
   );
 }
 
+const selPreview = (s: MetadataState) => [s.previews, s.getPreview] as const;
+
 export function usePreview(group: string) {
   const [error, setError] = useState(null);
-  const [previews, getPreview] = useMetadataState(s => [s.previews, s.getPreview]);
+  const [previews, getPreview] = useMetadataState(selPreview);
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -100,7 +102,7 @@ export function usePreview(group: string) {
     return () => {
       mounted = false;
     };
-  });
+  }, [group]);
 
   const preview = previews[group];
 
