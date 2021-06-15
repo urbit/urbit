@@ -64,7 +64,7 @@
   =^  f4  state  (n state (owner-changed:l1 ~losrut (addr %losrut-key-0)))
   =^  f5  state  (n state (owner-changed:l1 ~larsyx-mapmeg (addr %rigrut-lm-key-0)))
   =^  f6  state  (n state (owner-changed:l1 ~rabsum-ravtyd (addr %holrut-rr-key-0)))
-  =^  f7  state  (n state (owner-changed:l1 ~radres-tinnyl (addr %losrut-rt-ket-0)))
+  =^  f7  state  (n state (owner-changed:l1 ~radres-tinnyl (addr %losrut-rt-key-0)))
   =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut (addr %holrut-skey)))
   =^  f8  state  (n state (changed-spawn-proxy:l1 ~losrut (addr %losrut-skey-0)))
   =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut deposit-address:naive))
@@ -545,16 +545,15 @@
                     (cury filter-owner %.y)
                     (cury filter-proxy %own)
                     (cury filter-nonce %.y)
-                    (cury filter-dominion %l2)
-                    (cury filter-rank %star)
+                    (cury filter-dominion %l1)
                     %-  cury
                     :-  filter-tx-type
-                    :*  %spawn  ::  currently crashes
-                        %transfer-point
-                        %configure-keys
+                    :*  :: %spawn  ::  currently crashes
+                        :: %transfer-point
+                        :: %configure-keys
                         %set-management-proxy
-                        %set-spawn-proxy
-                        %set-transfer-proxy
+                        :: %set-spawn-proxy
+                        :: %set-transfer-proxy
                         ~
                     ==
                 ==
@@ -775,12 +774,37 @@
   %+  category  (weld "tx-type " (scow %tas tx-type.cur-event))
   %+  category  (weld "owner? " (scow %f owner.cur-event))
   %+  category  (weld "correct nonce? " (scow %f nonce.cur-event))
+  ::
+  =/  cur-point  (~(got by points.initial-state) cur-ship)
+  =/  cur-nonce  nonce.owner.own:(~(got by points.initial-state) cur-ship)
+  ::
   =/  state  initial-state
+  =/  expect-state  initial-state
   %+  expect-eq
-    !>  (~(got by suc-map) cur-event)
+    !>
+    |^
+    ?.  (~(got by suc-map) cur-event)
+      =/  new-nonce  cur-point(nonce.owner.own +(cur-nonce))
+      %=  expect-state
+        points  (~(put by points.expect-state) cur-ship new-nonce)
+      ==
+    ?+  tx-type.cur-event  !!
+      %set-management-proxy  set-mgmt-proxy
+    ==
+    ::
+    ++  set-mgmt-proxy  ^-  ^state:naive
+      =/  new-mgmt
+      %=  cur-point
+        address.management-proxy.own  (addr %proxy-test)
+        nonce.owner.own  +(cur-nonce)
+      ==
+      %=  expect-state
+        points  (~(put by points.expect-state) cur-ship new-mgmt)
+      ==
+    --
   ::
     !>
-    |^  ^-  ?
+    |^
     =^    f
         state
       %-  n
@@ -792,19 +816,19 @@
         :-  [cur-ship proxy.cur-event]
         def-args
       (~(got by default-own-keys) cur-ship)
-    ?+  tx-type.cur-event  !!
-      %spawn                 check-spawn
-      %transfer-point        check-xfer-point
-      %configure-keys        check-conf-keys
-      %set-management-proxy  check-mgmt-proxy
-      %set-spawn-proxy       check-spwn-proxy
-      %set-transfer-proxy    check-xfer-proxy
-    ==
+    state
+    ::  ?+  tx-type.cur-event  !!
+    ::    %spawn                 check-spawn
+    ::    %transfer-point        check-xfer-point
+    ::    %configure-keys        check-conf-keys
+    ::    %set-management-proxy  check-mgmt-proxy
+    ::    %set-spawn-proxy       check-spwn-proxy
+    ::    %set-transfer-proxy    check-xfer-proxy
+    ::  ==
     ::
     ++  check-spawn  ^-  ?
-      ~&  ['check-spawn' cur-ship]
       .=  =<  address.transfer-proxy.own
-          (~(got by points.state) `@p`which-spawn)
+          (~(got by points.state) which-spawn)
       (addr %spawn-test)
     ::
     ++  check-xfer-point  ^-  ?
@@ -859,7 +883,6 @@
       --  :: +def-args
     ::
     ++  which-spawn  ^-  ship
-      ~&  cur-ship
       ?+  cur-ship  !!
         %~rut            ~hasrut
         %~rigrut         ~batbec-tapmep
