@@ -8,6 +8,12 @@
 ::
 |%
 +$  card  card:agent:gall
++$  state-0
+  $:  observers=(map serial observer:sur)
+      warm-cache=_|
+      static-conversions=(set [term term])
+  ==
+::
 +$  versioned-state
   $%  [%0 observers=(map serial observer:sur)]
       [%1 observers=(map serial observer:sur)]
@@ -15,6 +21,7 @@
       [%3 observers=(map serial observer:sur)]
       [%4 observers=(map serial observer:sur)]
       [%5 observers=(map serial observer:sur) warm-cache=_|]
+      [%6 state-0]
   ==
 ::
 +$  serial   @uv
@@ -28,7 +35,7 @@
 --
 ::
 %-  agent:dbug
-=|  [%5 observers=(map serial observer:sur) warm-cache=_|]
+=|  [%6 state-0]
 =*  state  -
 ::
 ^-  agent:gall
@@ -44,6 +51,36 @@
       (act [%watch %group-store /groups %group-on-remove-member])
       (act [%watch %metadata-store /updates %md-on-add-group-feed])
       (act [%warm-cache-all ~])
+    ::
+      (warm-static %graph-validator-chat %graph-indexed-post)
+      (warm-static %graph-validator-publish %graph-indexed-post)
+      (warm-static %graph-validator-link %graph-indexed-post)
+      (warm-static %graph-validator-post %graph-indexed-post)
+      (warm-static %graph-validator-dm %graph-indexed-post)
+    ::
+      (warm-static %graph-validator-chat %graph-permission-add)
+      (warm-static %graph-validator-publish %graph-permission-add)
+      (warm-static %graph-validator-link %graph-permission-add)
+      (warm-static %graph-validator-post %graph-permission-add)
+      (warm-static %graph-validator-dm %graph-permission-add)
+    ::
+      (warm-static %graph-validator-chat %graph-permission-remove)
+      (warm-static %graph-validator-publish %graph-permission-remove)
+      (warm-static %graph-validator-link %graph-permission-remove)
+      (warm-static %graph-validator-post %graph-permission-remove)
+      (warm-static %graph-validator-dm %graph-permission-remove)
+    ::
+      (warm-static %graph-validator-chat %notification-kind)
+      (warm-static %graph-validator-publish %notification-kind)
+      (warm-static %graph-validator-link %notification-kind)
+      (warm-static %graph-validator-post %notification-kind)
+      (warm-static %graph-validator-dm %notification-kind)
+    ::
+      (warm-static %graph-validator-chat %transform-add-nodes)
+      (warm-static %graph-validator-publish %transform-add-nodes)
+      (warm-static %graph-validator-link %transform-add-nodes)
+      (warm-static %graph-validator-post %transform-add-nodes)
+      (warm-static %graph-validator-dm %transform-add-nodes)
   ==
   ::
   ++  act
@@ -57,6 +94,19 @@
         %observe-action
         !>(action)
     ==
+  ::
+  ++  warm-static
+    |=  [from=term to=term]
+    ^-  card
+    :*  %pass
+        /poke
+        %agent
+        [our.bowl %observe-hook]
+        %poke
+        %observe-action
+        !>  ^-  action:sur
+        [%warm-static-conversion from to]
+    ==
   --
 ::
 ++  on-save   !>(state)
@@ -68,8 +118,44 @@
   =|  cards=(list card)
   |-
   ?-  -.old-state
-      %5
+      %6
     [cards this(state old-state)]
+  ::
+      %5
+    =.  cards
+      %+  weld  cards
+      :~  (warm-static %graph-validator-chat %graph-indexed-post)
+          (warm-static %graph-validator-publish %graph-indexed-post)
+          (warm-static %graph-validator-link %graph-indexed-post)
+          (warm-static %graph-validator-post %graph-indexed-post)
+          (warm-static %graph-validator-dm %graph-indexed-post)
+        ::
+          (warm-static %graph-validator-chat %graph-permission-add)
+          (warm-static %graph-validator-publish %graph-permission-add)
+          (warm-static %graph-validator-link %graph-permission-add)
+          (warm-static %graph-validator-post %graph-permission-add)
+          (warm-static %graph-validator-dm %graph-permission-add)
+        ::
+          (warm-static %graph-validator-chat %graph-permission-remove)
+          (warm-static %graph-validator-publish %graph-permission-remove)
+          (warm-static %graph-validator-link %graph-permission-remove)
+          (warm-static %graph-validator-post %graph-permission-remove)
+          (warm-static %graph-validator-dm %graph-permission-remove)
+        ::
+          (warm-static %graph-validator-chat %notification-kind)
+          (warm-static %graph-validator-publish %notification-kind)
+          (warm-static %graph-validator-link %notification-kind)
+          (warm-static %graph-validator-post %notification-kind)
+          (warm-static %graph-validator-dm %notification-kind)
+        ::
+          (warm-static %graph-validator-chat %transform-add-nodes)
+          (warm-static %graph-validator-publish %transform-add-nodes)
+          (warm-static %graph-validator-link %transform-add-nodes)
+          (warm-static %graph-validator-post %transform-add-nodes)
+          (warm-static %graph-validator-dm %transform-add-nodes)
+      ==
+    $(old-state [%6 observers.old-state %.n ~])
+  ::
       %4
     =.  cards
       :_  cards
@@ -109,6 +195,19 @@
         %observe-action
         !>(action)
     ==
+  ::
+  ++  warm-static
+    |=  [from=term to=term]
+    ^-  card
+    :*  %pass
+        /poke
+        %agent
+        [our.bowl %observe-hook]
+        %poke
+        %observe-action
+        !>  ^-  action:sur
+        [%warm-static-conversion from to]
+    ==
   --
 ::
 ++  on-poke
@@ -122,10 +221,12 @@
   =*  observer  observer.action
   =/  vals  (silt ~(val by observers))
   ?-  -.action
-    %watch           (watch observer vals)
-    %ignore          (ignore observer vals)
-    %warm-cache-all  warm-cache-all
-    %cool-cache-all  cool-cache-all
+    %watch                   (watch observer vals)
+    %ignore                  (ignore observer vals)
+    %warm-cache-all          warm-cache-all
+    %cool-cache-all          cool-cache-all
+    %warm-static-conversion  (warm-static-conversion from.action to.action)
+    %cool-static-conversion  (cool-static-conversion from.action to.action)
   ==
   ::
   ++  watch
@@ -170,6 +271,23 @@
     ?.  warm-cache
       ~|('cannot cool down cache that is already cool' !!)
     [~ this(warm-cache %.n)]
+  ::
+  ++  warm-static-conversion
+    |=  [from=term to=term]
+    ^-  (quip card _this)
+    ?:  (~(has in static-conversions) [from to])
+      ~|('cannot warm up a static conversion that is already warm' !!)
+    :_  this(static-conversions (~(put in static-conversions) [from to]))
+    =/  =wire  /static-convert/[from]/[to]
+    =/  =rave:clay  [%sing %f [%da now.bowl] /[from]/[to]]
+    [%pass wire %arvo %c %warp our.bowl %home `rave]~
+  ::
+  ++  cool-static-conversion
+    |=  [from=term to=term]
+    ^-  (quip card _this)
+    ?.  (~(has in static-conversions) [from to])
+      ~|('cannot cool a static conversion that is already cool' !!)
+    [~ this(static-conversions (~(del in static-conversions) [from to]))]
   --
 ::
 ++  on-agent
@@ -325,6 +443,18 @@
     ?~  riot
       ~
     =/  =rave:clay  [%next %b q.p.u.riot mark]
+    [%pass wire %arvo %c %warp our.bowl %home `rave]~
+  ::
+      [%static-convert @ @ ~]
+    =*  from  i.t.wire
+    =*  to    i.t.t.wire
+    ?.  (~(has in static-conversions) [from to])
+      ~
+    ?>  ?=([%clay %writ *] sign-arvo)
+    =*  riot  p.sign-arvo
+    ?~  riot
+      ~
+    =/  =rave:clay  [%next %f q.p.u.riot /[from]/[to]]
     [%pass wire %arvo %c %warp our.bowl %home `rave]~
   ==
 ::
