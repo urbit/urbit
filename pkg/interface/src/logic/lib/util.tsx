@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 import { patp2dec } from 'urbit-ob';
-import f, { compose, memoize } from 'lodash/fp';
+import f  from 'lodash/fp';
 import { Association, Contact, Patp } from '@urbit/api';
-import produce, { enableMapSet } from 'immer';
+import { enableMapSet } from 'immer';
 import useSettingsState from '../state/settings';
 /* eslint-disable max-lines */
 import anyAscii from 'any-ascii';
@@ -50,14 +50,14 @@ export function parentPath(path: string) {
   return _.dropRight(path.split('/'), 1).join('/');
 }
 
-/**
+/*
  * undefined -> initial
  * null -> disabled feed
  * string -> enabled feed
  */
 export function getFeedPath(association: Association): string | null | undefined {
-  const { metadata } = association;
-  if(metadata.config && 'group' in metadata?.config && metadata.config?.group) {
+  const { metadata = { config: {} } } = association;
+  if (metadata.config && 'group' in metadata?.config && metadata.config?.group) {
     if ('resource' in metadata.config.group) {
       return metadata.config.group.resource;
     }
@@ -67,23 +67,26 @@ export function getFeedPath(association: Association): string | null | undefined
 }
 
 export const getChord = (e: KeyboardEvent) => {
-  let chord = [e.key];
+  const chord = [e.key];
   if(e.metaKey) {
     chord.unshift('meta');
   }
   if(e.ctrlKey) {
     chord.unshift('ctrl');
   }
+  if(e.shiftKey) {
+    chord.unshift('shift');
+  }
   return chord.join('+');
-}
+};
 
 export function getResourcePath(workspace: Workspace, path: string, joined: boolean, mod: string) {
   const base = workspace.type === 'group'
     ? `/~landscape${workspace.group}`
     : workspace.type === 'home'
-    ? `/~landscape/home`
-    : `/~landscape/messages`;
-  return `${base}/${joined ? 'resource' : 'join'}/${mod}${path}`
+    ? '/~landscape/home'
+    : '/~landscape/messages';
+  return `${base}/${joined ? 'resource' : 'join'}/${mod}${path}`;
 }
 
 const DA_UNIX_EPOCH = bigInt('170141184475152167957503069145530368000'); // `@ud` ~1970.1.1
@@ -135,14 +138,14 @@ export function decToUd(str: string): string {
   );
 }
 
-/**
+/*
  *  Clamp a number between a min and max
  */
 export function clamp(x: number, min: number, max: number) {
   return Math.max(min, Math.min(max, x));
 }
 
-/**
+/*
  * Euclidean modulo
  */
 export function modulo(x: number, mod: number) {
@@ -355,6 +358,7 @@ export function stringToTa(str: string) {
         add = '~~';
         break;
       default:
+        //  eslint-disable-next-line
         const charCode = str.charCodeAt(i);
         if (
           (charCode >= 97 && charCode <= 122) || // a-z
@@ -413,7 +417,7 @@ export function stringToSymbol(str: string) {
   }
   return result;
 }
-/**
+/*
  * Formats a numbers as a `@ud` inserting dot where needed
  */
 export function numToUd(num: number) {
@@ -428,7 +432,7 @@ export function numToUd(num: number) {
 }
 
 export function patpToUd(patp: Patp) {
-  return numToUd(patp2dec(patp))
+  return numToUd(patp2dec(patp));
 }
 
 export function usePreventWindowUnload(shouldPreventDefault: boolean, message = 'You have unsaved changes. Are you sure you want to exit?') {
@@ -443,7 +447,7 @@ export function usePreventWindowUnload(shouldPreventDefault: boolean, message = 
     window.onbeforeunload = handleBeforeUnload;
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      // @ts-ignore
+      // @ts-ignore  need better window typings
       window.onbeforeunload = undefined;
     };
   }, [shouldPreventDefault]);
@@ -484,8 +488,8 @@ export function withHovering<T>(Component: React.ComponentType<T>) {
   return React.forwardRef((props, ref) => {
     const { hovering, bind } = useHovering();
     // @ts-ignore needs type signature on return?
-    return <Component ref={ref} hovering={hovering} bind={bind} {...props} />
-  })
+    return <Component ref={ref} hovering={hovering} bind={bind} {...props} />;
+  });
 }
 
 const DM_REGEX = /ship\/~([a-z]|-)*\/dm--/;
@@ -500,14 +504,14 @@ export function getItemTitle(association: Association): string {
   return association.metadata.title ?? association.resource ?? '';
 }
 
-export const svgDataURL = (svg) => 'data:image/svg+xml;base64,' + btoa(svg);
+export const svgDataURL = svg => 'data:image/svg+xml;base64,' + btoa(svg);
 
-export const svgBlobURL = (svg) => URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+export const svgBlobURL = svg => URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
 
 export const favicon = () => {
   let background = '#ffffff';
   const contacts = useContactState.getState().contacts;
-  if (contacts.hasOwnProperty(`~${window.ship}`)) {
+  if (Object.prototype.hasOwnProperty.call(contacts, `~${window.ship}`)) {
     background = `#${uxToHex(contacts[`~${window.ship}`].color)}`;
   }
   const foreground = foregroundFromBackground(background);
@@ -518,4 +522,4 @@ export const favicon = () => {
     colors: [background, foreground]
   });
   return svg;
-}
+};
