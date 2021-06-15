@@ -1684,6 +1684,7 @@
         [%kick non=@ ~]
         [%watch-ack non=@ p=(unit tang)]
         [%poke-ack p=(unit tang)]
+        [%lost ~]
     ==
   ::
   ::  +agent: app core

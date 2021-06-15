@@ -100,14 +100,12 @@
 ::  $remote-request: kinds of agent actions that can cross the network
 ::
 ::    Used in wires to identify the kind of remote request we made.
-::    Bijective with the tags of $ames-request.
 ::
 +$  remote-request
-  $?  %watch
-      %watch-as
-      %poke
-      %leave
-      %missing
+  $%  [%watch non=@]
+      [%watch-as non=@]
+      [%poke ~]
+      [%leave non=@]
   ==
 ::  |migrate: data structures for upgrades
 ::
@@ -406,7 +404,7 @@
     =.  mo-core  (mo-track-ship ship)
     ?<  ?=(?(%raw-poke %poke-as) -.deal)
     =/  req=ames-request-all
-      :-  1
+      :-  %1
       ?-  -.deal
         %poke      m/[p q.q]:cage.deal
         %leave     u/non.deal^~
@@ -420,9 +418,14 @@
     ::
     =.  outstanding.state
       %+  ~(put by outstanding.state)  [wire hen]
-      =/  stand
-        (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
-      (~(put to stand) -.deal)
+      =/  qiu  (~(gut by outstanding.state) [wire hen] ~)
+      %-  ~(put to qiu)
+      ?-  -.deal
+        %watch     [%watch non.deal]
+        %watch-as  [%watch-as non.deal]
+        %poke      [%poke ~]
+        %leave     [%leave non.deal]
+      ==
     (mo-pass wire note-arvo)
   ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::
@@ -622,6 +625,8 @@
         ?~  p.unto  ~
         `[%watch-ack u.p.unto]
       (mo-give %done err)
+    ::
+        %lost  ~|(gall-lost+path !!)
     ==
   ::  +mo-handle-sys-way: handle response to outgoing remote request
   ::
@@ -632,59 +637,51 @@
     =/  =ship           (slav %p i.t.wire)
     =/  foreign-agent   i.t.t.wire
     ::
-    ?+    sign-arvo  !!
-        [%ames %done *]
-      =^  remote-request  outstanding.state
-        ?~  t.t.t.wire
-          =/  full-wire  sys+wire
-          =/  stand
-            (~(gut by outstanding.state) [full-wire hen] ~)
+    |^  ^+  mo-core
+        ?+    sign-arvo  !!
+            [%ames %done *]
+          =/  err=(unit tang)
+            ?~  error=error.sign-arvo
+              ~
+            `[[%leaf (trip tag.u.error)] tang.u.error]
           ::
-          ::  default is to send both ack types; should only hit if
-          ::  cleared queue in +load 3-to-4 or +load-4-to-5
+          =^  rem=(unit remote-request)  outstanding.state  pop-outstanding
+          ?~  rem
+            (mo-give %unto %poke-ack err)
+          ?-  -.u.rem
+            %watch-as  (mo-give %unto %watch-ack non.u.rem err)
+            %watch     (mo-give %unto %watch-ack non.u.rem err)
+            %poke      (mo-give %unto %poke-ack err)
+            %leave     mo-core
+          ==
+        ::
+            [%ames %boon *]
+          ::  kill subscriptions that use the old wire format
           ::
-          =?  stand  ?=(~ stand)
-            ~&  [%gall-missing wire hen]
-            (~(put to *(qeu remote-request)) %missing)
-          ~|  [full-wire=full-wire hen=hen stand=stand]
-          =^  rr  stand  ~(get to stand)
-          [rr (~(put by outstanding.state) [full-wire hen] stand)]
-        ::  non-null case of wire is old, remove on next breach after
-        ::  2019/12
+          ?>  ?=(^ t.t.t.wire)
+          =/  =ames-response  ;;(ames-response payload.sign-arvo)
+          (mo-handle-ames-response ames-response)
         ::
-        [;;(remote-request i.t.t.t.wire) outstanding.state]
-      ::
-      =/  err=(unit tang)
-        ?~  error=error.sign-arvo
-          ~
-        `[[%leaf (trip tag.u.error)] tang.u.error]
-      ::
-      ?-  remote-request
-        %watch-as  (mo-give %unto %watch-ack err)
-        %watch     (mo-give %unto %watch-ack err)
-        %poke      (mo-give %unto %poke-ack err)
-        %leave     mo-core
-        %missing   (mo-give:(mo-give %unto %watch-ack err) %unto %poke-ack err)
-      ==
+            [%ames %lost *]
+          ::  TODO: %drip %kick so app crash can't kill the remote %pull
+          ::
+          (mo-give %unto %lost ~)
+        ==
+    ::  +pop-outstanding: dequeue a $remote-request from .outstanding.state
     ::
-        [%ames %boon *]
-      ?^  t.t.t.wire
-        ::  kill subscriptions which use the old wire format
-        ::
-        !!
-      =/  =ames-response  ;;(ames-response payload.sign-arvo)
-      (mo-handle-ames-response ames-response)
+    ::    The queue should never be empty, but if it is, produce an
+    ::    empty unit to enable recovery.
     ::
-        [%ames %lost *]
-      ::  note this should only happen on reverse bones, so only facts
-      ::  and kicks
-      ::
-      ::  TODO: %drip %kick so app crash can't kill the remote %pull
-      ::
-      =.  mo-core  (mo-send-foreign-request ship foreign-agent %leave ~)
-      =.  mo-core  (mo-give %unto %kick ~)
-      mo-core
-    ==
+    ++  pop-outstanding
+      ^-  [(unit remote-request) _outstanding.state]
+      =/  key  [sys+wire hen]
+      =/  qiu  (~(gut by outstanding.state) key ~)
+      ?:  =(~ qiu)
+        ~&  [%gall-missing wire hen]
+        [~ outstanding.state]
+      =^  rem  qiu  ~(get to qiu)
+      [`rem (~(put by outstanding.state) key qiu)]
+    --
   ::  +mo-handle-use: handle a typed +sign incoming on /use.
   ::
   ::    (Note that /use implies the +sign should be routed to an agent.)
@@ -709,31 +706,30 @@
     ?.  =(nonce.u.yoke i.t.path)
       %-  (slog leaf+"gall: got old {<+<.sign-arvo>} for {<dap>}" ~)
       mo-core
-    ?.  ?=([?(%gall %behn) %unto *] sign-arvo)
+    ::
+    ?+  sign-arvo
       ?:  ?=(%| -.agent.u.yoke)
         %-  (slog leaf+"gall: {<dap>} dozing, dropping {<+<.sign-arvo>}" ~)
         mo-core
-      =/  app
-        =/  =ship  (slav %p i.t.t.path)
-        =/  =routes  [disclosing=~ attributing=ship]
-        (ap-abed:ap dap routes)
+      =/  ap-core  (ap-abed:ap dap `routes`[~ (slav %p i.t.t.path)])
+      ap-abet:(ap-generic-take:ap-core t.t.t.path sign-arvo)
+    ::
+        [?(%gall %behn) %unto *]
+      =/  =unto  +>.sign-arvo
+      ?>  ?=([%out @ @ *] t.t.path)
+      =/  =ship  (slav %p i.t.t.t.path)
+      =/  =routes  [disclosing=~ attributing=ship]
       ::
-      =.  app  (ap-generic-take:app t.t.t.path sign-arvo)
-      ap-abet:app
-    =/  =unto  +>.sign-arvo
-    ?>  ?=([%out @ @ *] t.t.path)
-    =/  =ship  (slav %p i.t.t.t.path)
-    =/  =routes  [disclosing=~ attributing=ship]
-    ?:  ?=(%| -.agent.u.yoke)
+      ?:  ?=(%& -.agent.u.yoke)
+        ap-abet:(ap-specific-take:(ap-abed:ap dap routes) t.t.path unto)
+      ::
       =/  blocked=(qeu blocked-move)
         =/  blocked  (~(gut by blocked.state) dap *(qeu blocked-move))
-        =/  move  [hen routes |+unto]
-        (~(put to blocked) move)
+        (~(put to blocked) [hen routes |+unto])
       ::
       %-  (slog leaf+"gall: {<dap>} dozing, got {<-.unto>}" ~)
       mo-core(blocked.state (~(put by blocked.state) dap blocked))
-    ::
-    ap-abet:(ap-specific-take:(ap-abed:ap dap routes) t.t.path unto)
+    ==
   ::  +mo-clear-queue: clear blocked tasks from the specified running agent.
   ::
   ++  mo-clear-queue
@@ -1435,6 +1431,10 @@
       =/  =dock  [other-ship other-agent]
       =/  agent-wire  t.t.t.wire
       =/  sub-key  [agent-wire dock]
+      ::  kill subscription if we lost an update message
+      ::
+      ?:  ?=(%lost -.unto)
+        (ap-update-subscription | p.dock q.dock agent-wire)
       ::  ignore anything on the wrong subscription nonce
       ::
       ::    TODO: silence printing on old nonces.
@@ -1463,6 +1463,7 @@
           ==
         %+  ~(jab by outbound.watches.current-agent)  sub-key
         |=([acked=? =path non=@] +<(acked &))
+      ::  convert $unto to $sign:agent and deliver to app
       ::
       =/  =sign:agent
         ?-  -.unto
@@ -1475,7 +1476,7 @@
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
         (on-agent:ap-agent-core agent-wire sign)
-      ::  if failed %fact handling, kill subscription
+      ::  if app failed %fact handling, kill subscription
       ::
       =?  ap-core  ?=(%fact -.unto)
         (ap-update-subscription =(~ maybe-tang) p.dock q.dock agent-wire)
