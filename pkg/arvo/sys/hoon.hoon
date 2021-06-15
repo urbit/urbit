@@ -10810,29 +10810,21 @@
   ::
   ++  caching-fond
     |=  [way=vial hyp=wing]
-    =>
-    |%
-    +$  puny  (pair (unit @) pony)
-    --
-    =;  [=puny =_grub]
-      ^-  [pony _grub]
-      [q.puny grub]
-    |-  ^-  [puny _grub]
+    |-  ^-  [pony _grub]
     ?~  hyp
       :_  grub
-      `[%& ~ %& sut]
-    =^  mur  grub  $(hyp t.hyp)
-    =/  mor  q.mur
+      [%& ~ %& sut]
+    =^  mor  grub  $(hyp t.hyp)
     ?-    -.mor
         %|
       ?-    -.p.mor
           %&
-        :_  grub
-        `mor
-          %|  =^  fex  grub
+        [mor grub]
+          %|
+        =^  fex  grub
           (caching-mint(sut p.p.p.mor) %noun [%wing i.hyp ~])
         :_  grub
-        `[%| %| p.fex (comb q.p.p.mor q.fex)]
+        [%| %| p.fex (comb q.p.p.mor q.fex)]
       ==
     ::
         %&
@@ -10842,8 +10834,13 @@
       ?:  ?=(%& -.heg)
         =^  rig  grub  (caching-peek way p.heg)
         :_  grub
-        `[%& [`p.heg lon] %& rig]
+        [%& [`p.heg lon] %& rig]
       =|  gil=(set type)
+      =>  |%  +$  puny  (pair (unit atom) pony)
+          --
+      =;  [=puny =_grub]
+        ^-  [pony _grub]
+        [q.puny grub]
       |^
       ^-  [puny _grub]
       ?-    sut
@@ -10869,17 +10866,19 @@
           [p.tuf taf]
         ?:  ?=(%& -.taf)
           :_  grub
+          :-  p.tuf
           (gnat 2 p.tuf p.taf)
         =^  ruf  grub  $(p.heg p.p.taf, sut q.sut)
         =/  raf  q.ruf
         :_  grub
-        ?~  raf  [p.ruf ~]
+        :-  p.ruf
+        ?~  raf  ~
         ?:  ?=([%| %| *] raf)
           =.  q.p.p.raf  (scul 3 q.p.p.raf)
-          [p.ruf raf]
+          raf
         ?:  ?=(%& -.raf)
           (gnat 3 p.ruf p.raf)
-        [p.ruf raf]
+        raf
       ::
           [%core *]
         ?~  q.heg  [here grub]
@@ -10906,22 +10905,24 @@
           =^  tuf  grub  $(sut p.sut)
           =/  taf  q.tuf
           :_  grub
+          :-  p.tuf
           ?:  ?=([%| %| *] taf)
             =.  q.p.p.taf  (scul 3 q.p.p.taf)
-            [p.tuf taf]
+            taf
           ?:  ?=(%& -.taf)
             (gnat 3 p.tuf p.taf)
-          [p.tuf taf]
+          taf
         =^  lef  grub  (caching-peek(sut p.sut) way 2)
         =^  ruf  grub  $(sut lef)
         =/  raf  q.ruf
         :_  grub
+        :-  p.ruf
         ?:  ?=([%| %| *] raf)
           =.  q.p.p.raf  (scul 6 q.p.p.raf)
-          [p.ruf raf]
+          raf
         ?:  ?=(%& -.raf)
           (gnat 6 p.ruf p.raf)
-        [p.ruf raf]
+        raf
       ::
           [%hint *]
         =^  val  grub  caching-repo
@@ -11047,7 +11048,7 @@
       ::
       ++  gnat
         |=  [=axis skip=(unit @) =palo]
-        ^-  puny
+        ^-  pony
         =/  vit=vein  p.palo
         =?  p.palo  ?=(^ skip)
           (slag u.skip p.palo)
@@ -11066,7 +11067,7 @@
           [~ `(peg axis u.i.t.p.palo) t.t.p.palo]
         =?  p.palo  ?=(^ skip)
           (weld (scag u.skip vit) p.palo)
-        [skip %& palo]
+        [%& palo]
       --
     ==
   ::
