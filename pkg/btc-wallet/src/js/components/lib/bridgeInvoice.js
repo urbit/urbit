@@ -221,8 +221,7 @@ export default class BridgeInvoice extends Component {
                 mr={3}
                 fontSize={1}
                 borderRadius='24px'
-                py='24px'
-                px='24px'
+                height='48px'
                 onClick={() => this.sendBitcoin(txHex)}
                 disabled={!this.state.ready || error}
                 style={{cursor: (this.state.ready && !error) ? "pointer" : "default"}}

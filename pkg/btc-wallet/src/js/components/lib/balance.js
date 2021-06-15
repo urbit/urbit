@@ -114,8 +114,7 @@ export default class Balance extends Component {
                      style={{cursor: sendDisabled ? "default" : "pointer" }}
                      borderColor="none"
                      borderRadius="24px"
-                     py="24px"
-                     px="24px"
+                     height="48px"
                      onClick={() => this.setState({sending: true})}
              />
              <Button children={(this.state.copiedButton) ? "Address Copied!" : "Copy Address"}
@@ -128,8 +127,7 @@ export default class Balance extends Component {
                      style={{cursor: (this.state.copiedButton) ? "default" : "pointer"}}
                      borderColor="none"
                      borderRadius="24px"
-                     py="24px"
-                     px="24px"
+                     height="48px"
                      onClick={() => {this.copyAddress('button')}}
              />
            </Row>
