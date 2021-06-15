@@ -23,20 +23,26 @@
 ;<  use-gas-price=@ud  bind:m
   ?:  =(0 next-gas-price)  fetch-gas-price
   (pure:(strand:strandio @ud) next-gas-price)
-::  TODO: verify, it seems to be slightly bigger when (lent txs) > 1 ?
 ::
-::  each signed l2 tx is 65 bytes
+=/  batch-data=octs
+  %+  cad:naive  3
+  %+  roll  txs
+  |=  [=raw-tx:naive out=(list octs)]
+  %+  weld
+    out
+  :_  [raw.raw-tx ~]
+  (met 3 sig.raw-tx)^sig.raw-tx
+::  each l2 signature is 65 bytes + XX bytes for the raw data
 ::  from the ethereum yellow paper:
-::  gasLimit = G_transaction + G_txdatanonzero × dataByteLength x batch_length
+::  gasLimit = G_transaction + G_txdatanonzero × dataByteLength
 ::  where
-::      G_transaction = 21000 gas
+::      G_transaction = 21000 gas (base fee)
 ::    + G_txdatanonzero = 68 gas
-::    * dataByteLength = 65 bytes
-::  == 25.420 gas/l2-tx
+::    * dataByteLength = (65 + raw) * (lent txs) bytes
 ::
 :: TODO: enforce max number of tx in batch?
 ::
-=/  gas-limit=@ud  (add 21.000 :(mul 68 65 (lent txs)))
+=/  gas-limit=@ud  (add 21.000 (mul 68 p.batch-data))
 ::  if we cannot pay for the transaction, don't bother sending it out
 ::
 =/  max-cost=@ud  (mul gas-limit use-gas-price)
@@ -57,15 +63,7 @@
       gas-limit
       contract
       0
-  ::
-    %+  can:naive  3
-    %+  roll  txs
-    |=  [=raw-tx:naive out=(list octs)]
-    %+  weld
-      out
-    :_  [raw.raw-tx ~]
-    (met 3 sig.raw-tx)^sig.raw-tx
-  ::
+      q.batch-data
       chain-id
   ==
 %-  pure:m
