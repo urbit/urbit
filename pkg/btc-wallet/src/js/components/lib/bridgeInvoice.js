@@ -221,9 +221,12 @@ export default class BridgeInvoice extends Component {
                 mr={3}
                 fontSize={1}
                 borderRadius='24px'
+                border='none'
                 height='48px'
                 onClick={() => this.sendBitcoin(txHex)}
-                disabled={!this.state.ready || error}
+                disabled={!this.state.ready || error || this.state.broadcasting}
+                color={(this.state.ready && !error && !this.state.broadcasting) ? "white" : "lighterGray"}
+                backgroundColor={(this.state.ready && !error && !this.state.broadcasting) ? "green" : "veryLightGray"}
                 style={{cursor: (this.state.ready && !error) ? "pointer" : "default"}}
               />
               {this.state.broadcasting ? <LoadingSpinner mr={3}/> : null}
