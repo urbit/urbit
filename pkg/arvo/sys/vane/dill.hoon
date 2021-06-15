@@ -264,13 +264,15 @@
         ::
             [%gall %unto *]
           ::  ~&  [%take-gall-unto +>.sih]
-          ?-  -.+>.sih
-            %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
+          =/  =unto:gall  p.sih
+          ?-  -.unto
+            %poke-ack   ?~(p.unto +>.$ (crud %coup u.p.unto))
             %kick       peer
-            %watch-ack  ?~  p.p.+>.sih
+            %watch-ack  ?~  p.unto
                           +>.$
-                        (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            %fact       (from ;;(dill-blit q:`vase`+>+>.sih))
+                        (dump:(crud %reap u.p.unto) %logo ~)
+            %fact       (from ;;(dill-blit q.cage.unto))
+            %lost       !!
           ==
         ::
             [%clay %note *]
