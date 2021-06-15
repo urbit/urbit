@@ -545,7 +545,8 @@
                     (cury filter-owner %.y)
                     (cury filter-proxy %own)
                     (cury filter-nonce %.y)
-                    (cury filter-dominion %spawn)
+                    (cury filter-dominion %l2)
+                    (cury filter-rank %star)
                     %-  cury
                     :-  filter-tx-type
                     :*  %spawn  ::  currently crashes
@@ -1121,6 +1122,22 @@
     =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
     =^  f  state  (n state %bat q:(gen-tx 0 lf-spawn %sambud-skey))
     transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
+::
+++  test-linnup-torsyx-spawn  ^-  tang
+  :: try to spawn a L2 planet with a L2 planet
+  =/  rt-spawn                  [lt-own %spawn ~radres-tinnyl (addr %rt-key-0)]
+  =/  lt-spawn                  [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-transfer-yes-breach    [lt-xfr %transfer-point (addr %lt-key-0) &]
+  ::
+  %-  expect-fail
+    |.
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (init-litbud state)
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx 0 rt-spawn %lt-key-0))
+    state
 ::
 ++  test-marbud-l2-spawn  ^-  tang
   =/  marbud-sproxy  [marbud-own %set-spawn-proxy (addr %marbud-skey)]
