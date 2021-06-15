@@ -106,7 +106,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     canWrite = isOwn;
   }
 
-  const BackLink = () => (
+  const backLink = (
     <Box
       borderRight={1}
       borderRightColor='gray'
@@ -123,7 +123,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Box>
   );
 
-  const Title = () => (
+  const titleText = (
     <Text
       mono={urbitOb.isValidPatp(title)}
       fontSize={2}
@@ -143,7 +143,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Text>
   );
 
-  const Description = () => (
+  const description = (
     <TruncatedText
       display={['none','inline']}
       mono={workspace === '/messages' && !association?.metadata?.description}
@@ -160,9 +160,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </TruncatedText>
   );
 
-  const ExtraControls = () => {
-    if (workspace === '/messages' && isOwn && !resource.startsWith('dm-')) {
-      return (
+  const extraControls =
+    (workspace === '/messages' && isOwn && !resource.startsWith('dm-')) ?  (
         <Dropdown
           flexShrink={0}
           dropWidth='300px'
@@ -186,21 +185,15 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
             + Add Ship
           </Text>
         </Dropdown>
-      );
-    }
-    if (canWrite) {
-      return (
+      ) : canWrite ? (
         <Link to={resourcePath('/new')}>
           <Text bold pr='3' color='blue'>
             + New Post
           </Text>
         </Link>
-      );
-    }
-    return null;
-  };
+      ) : null;
 
-  const MenuControl = () => (
+  const menuControl = (
     <Link to={`${baseUrl}/settings`}>
       <Icon icon='Menu' color='gray' pr={2} />
     </Link>
@@ -229,9 +222,9 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           width={`calc(100% - ${actionsWidth}px - 16px)`}
           flexShrink={0}
         >
-          <BackLink />
-          <Title />
-          <Description />
+          {backLink}
+          {titleText}
+          {description}
         </Box>
         <Box
           ml={3}
@@ -240,8 +233,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           flexShrink={0}
           ref={actionsRef}
         >
-          {ExtraControls()}
-          <MenuControl />
+          {extraControls}
+          {menuControl}
         </Box>
       </Box>
       {children}

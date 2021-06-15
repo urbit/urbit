@@ -12,7 +12,7 @@ import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { GroupSwitcher } from '../GroupSwitcher';
 import { SidebarList } from './SidebarList';
 import { SidebarListHeader } from './SidebarListHeader';
-import { SidebarAppConfigs, SidebarListConfig } from './types';
+import { SidebarListConfig } from './types';
 
 const ScrollbarLessCol = styled(Col)`
   scrollbar-width: none !important;
@@ -25,8 +25,6 @@ const ScrollbarLessCol = styled(Col)`
 interface SidebarProps {
   recentGroups: string[];
   selected?: string;
-  selectedGroup?: string;
-  apps: SidebarAppConfigs;
   baseUrl: string;
   mobileHide?: boolean;
   workspace: Workspace;
@@ -84,7 +82,6 @@ export function Sidebar(props: SidebarProps): ReactElement | null {
         config={config}
         selected={selected}
         group={groupPath}
-        apps={props.apps}
         baseUrl={props.baseUrl}
         workspace={workspace}
       />

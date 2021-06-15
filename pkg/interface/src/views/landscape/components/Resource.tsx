@@ -13,11 +13,11 @@ import { PublishResource } from '~/views/apps/publish/PublishResource';
 import { ChannelPopoverRoutes } from './ChannelPopoverRoutes';
 import { ResourceSkeleton } from './ResourceSkeleton';
 
-type ResourceProps = {
+interface ResourceProps {
   association: Association;
   baseUrl: string;
   workspace: Workspace;
-};
+}
 
 export function Resource(props: ResourceProps): ReactElement {
   const { association } = props;
