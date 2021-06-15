@@ -406,10 +406,10 @@
     =/  req=ames-request-all
       :-  %1
       ?-  -.deal
-        %poke      m/[p q.q]:cage.deal
-        %leave     u/non.deal^~
-        %watch-as  l/[non mark path]:deal
-        %watch     s/[non path]:deal
+        %poke      [%m [p q.q]:cage.deal]
+        %leave     [%u non.deal ~]
+        %watch-as  [%l [non mark path]:deal]
+        %watch     [%s [non path]:deal]
      ==
     =/  wire  /sys/way/(scot %p ship)/[foreign-agent]
     =/  =note-arvo
