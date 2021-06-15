@@ -554,6 +554,7 @@
 ::  +per-server-event: per-event server core
 ::
 ++  per-server-event
+  ~%  %eyre-per-server-event  ..part  ~
   ::  gate that produces the +per-server-event core from event information
   ::
   |=  [[eny=@ =duct now=@da rof=roof] state=server-state]
@@ -781,7 +782,7 @@
         :*  duct  %pass  /run-app-request/[eyre-id]
             %g  %deal  [our our]  app
             %poke  %handle-http-request
-            !>([eyre-id inbound-request])
+            !>(`[@ta inbound-request:eyre]`[eyre-id inbound-request])
         ==
     ==
   ::  +cancel-request: handles a request being externally aborted
