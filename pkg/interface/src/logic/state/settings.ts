@@ -124,4 +124,10 @@ export function useShortcut<T extends keyof ShortcutMapping>(
   return usePlainShortcut(key, cb);
 }
 
+const selTheme = (s: SettingsState) => s.display.theme;
+
+export function useTheme() {
+  return useSettingsState(selTheme);
+}
+
 export default useSettingsState;
