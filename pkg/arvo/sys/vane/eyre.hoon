@@ -215,7 +215,7 @@
   ?:  =('subscribe' u.maybe-key)
     %.  item
     %+  pe  %subscribe
-    (ot id+ni ship+(su fed:ag) app+so path+(su ;~(pfix fas (more fas urs:ab))) ~)
+    (ot id+ni ship+(su fed:ag) app+so path+(su stap) ~)
   ?:  =('unsubscribe' u.maybe-key)
     %.  item
     %+  pe  %unsubscribe
@@ -426,10 +426,12 @@
   :-  ~
   %-  as-octs:mimes:html
   %-  crip
-  %-  zing
+  %-  zing  ^-  ^wall
+  %-  zing  ^-  (list ^wall)
   %+  turn  wall
   |=  t=tape
-  "{t}\0a"
+  ^-  ^wall
+  ~[t "\0a"]
 ::  +internal-server-error: 500 page, with a tang
 ::
 ++  internal-server-error
@@ -1598,6 +1600,7 @@
     ::  +channel-event-to-sign: attempt to recover a sign from a channel-event
     ::
     ++  channel-event-to-sign
+      ~%  %eyre-channel-event-to-sign  ..part  ~
       |=  event=channel-event
       ^-  (unit sign:agent:gall)
       ?.  ?=(%fact -.event)  `event
@@ -1678,6 +1681,7 @@
       ==
     ::
     ++  event-json-to-wall
+      ~%  %eyre-json-to-wall  ..part  ~
       |=  [event-id=@ud =json]
       ^-  wall
       :~  (weld "id: " (format-ud-as-integer event-id))
@@ -2095,6 +2099,7 @@
 ~%  %http-server  ..part  ~
 |%
 ++  call
+  ~/  %eyre-call
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _http-server-gate]
   ::
@@ -2297,6 +2302,7 @@
   ==
 ::
 ++  take
+  ~/  %eyre-take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _http-server-gate]
   ?^  dud
@@ -2484,6 +2490,7 @@
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
+  ~/  %eyre-scry
   ^-  roon
   |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))

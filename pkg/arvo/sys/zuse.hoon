@@ -3286,7 +3286,7 @@
     ++  ship                                            ::  string from ship
       |=  a=^ship
       ^-  json
-      (tape (slag 1 (scow %p a)))
+      [%n (rap 3 '"' (rsh [3 1] (scot %p a)) '"' ~)]
     ::                                                  ::  ++numb:enjs:format
     ++  numb                                            ::  number from unsigned
       |=  a=@u
@@ -3458,7 +3458,7 @@
       [(rash a fel) b]
     ::                                                  ::  ++pa:dejs:format
     ++  pa                                              ::  string as path
-      (su ;~(pfix fas (more fas urs:ab)))
+      (su stap)
     ::                                                  ::  ++pe:dejs:format
     ++  pe                                              ::  prefix
       |*  [pre=* wit=fist]
@@ -5171,36 +5171,54 @@
   |=  ord=$-([key key] ?)
   |=  a=*
   =/  b  ;;((tree [key=key val=value]) a)
-  ?>  (check-balance:((ordered-map key value) ord) b)
+  ?>  (apt:((on key value) ord) b)
   b
 ::
-::  $mk-item: constructor for +ordered-map item type
 ::
-++  mk-item  |$  [key val]  [key=key val=val]
-::  +ordered-map: treap with user-specified horizontal order
-::
-::    Conceptually smaller items go on the left, so the item with the
-::    smallest key can be popped off the head. If $key is `@` and
-::    .compare is +lte, then the numerically smallest item is the head.
+++  ordered-map  on
+::  +on: treap with user-specified horizontal order, ordered-map
 ::
 ::  WARNING: ordered-map will not work properly if two keys can be
 ::  unequal under noun equality but equal via the compare gate
 ::
-++  ordered-map
+++  on
+  ~/  %on
   |*  [key=mold val=mold]
   =>  |%
-      +$  item  (mk-item key val)
+      +$  item  [key=key val=val]
       --
   ::  +compare: item comparator for horizontal order
   ::
+  ~%  %comp  +>+  ~
   |=  compare=$-([key key] ?)
+  ~%  %core    +  ~
   |%
-  ::  +check-balance: verify horizontal and vertical orderings
+  ::  +all: apply logical AND boolean test on all values
   ::
-  ++  check-balance
-    =|  [l=(unit key) r=(unit key)]
-    |=  a=(tree item)
+  ++  all
+    ~/  %all
+    |=  [a=(tree item) b=$-(item ?)]
     ^-  ?
+    |-
+    ?~  a
+      &
+    ?&((b n.a) $(a l.a) $(a r.a))
+  ::  +any: apply logical OR boolean test on all values
+  ::
+  ++  any
+    ~/  %any
+    |=  [a=(tree item) b=$-(item ?)]
+    |-  ^-  ?
+    ?~  a
+      |
+    ?|((b n.a) $(a l.a) $(a r.a))
+  ::  +apt: verify horizontal and vertical orderings
+  ::
+  ++  apt
+    ~/  %apt
+    |=  a=(tree item)
+    =|  [l=(unit key) r=(unit key)]
+    |-  ^-  ?
     ::  empty tree is valid
     ::
     ?~  a  %.y
@@ -5223,64 +5241,22 @@
         ::
         ?~(r.a %.y &((mor key.n.a key.n.r.a) $(a r.a, r `key.n.a)))
     ==
-  ::  +put: ordered item insert
+  ::  +bap: convert to list, right to left
   ::
-  ++  put
-    |=  [a=(tree item) =key =val]
-    ^-  (tree item)
-    ::  base case: replace null with single-item tree
-    ::
-    ?~  a  [n=[key val] l=~ r=~]
-    ::  base case: overwrite existing .key with new .val
-    ::
-    ?:  =(key.n.a key)  a(val.n val)
-    ::  if item goes on left, recurse left then rebalance vertical order
-    ::
-    ?:  (compare key key.n.a)
-      =/  l  $(a l.a)
-      ?>  ?=(^ l)
-      ?:  (mor key.n.a key.n.l)
-        a(l l)
-      l(r a(l r.l))
-    ::  item goes on right; recurse right then rebalance vertical order
-    ::
-    =/  r  $(a r.a)
-    ?>  ?=(^ r)
-    ?:  (mor key.n.a key.n.r)
-      a(r r)
-    r(l a(r l.r))
-  ::  +peek: produce head (smallest item) or null
-  ::
-  ++  peek
+  ++  bap
+    ~/  %bap
     |=  a=(tree item)
-    ^-  (unit item)
-    ::
-    ?~  a    ~
-    ?~  l.a  `n.a
-    $(a l.a)
-  ::
-  ::  +pop: produce .head (smallest item) and .rest or crash if empty
-  ::
-  ++  pop
-    |=  a=(tree item)
-    ^-  [head=item rest=(tree item)]
-    ::
-    ?~  a    !!
-    ?~  l.a  [n.a r.a]
-    ::
-    =/  l  $(a l.a)
-    :-  head.l
-    ::  load .rest.l back into .a and rebalance
-    ::
-    ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
-      a(l rest.l)
-    rest.l(r a(r r.rest.l))
+    ^-  (list item)
+    =|  b=(list item)
+    |-  ^+  b
+    ?~  a  b
+    $(a r.a, b [n.a $(a l.a)])
   ::  +del: delete .key from .a if it exists, producing value iff deleted
   ::
   ++  del
+    ~/  %del
     |=  [a=(tree item) =key]
     ^-  [(unit val) (tree item)]
-    ::
     ?~  a  [~ ~]
     ::  we found .key at the root; delete and rebalance
     ::
@@ -5293,30 +5269,15 @@
       [found a(l lef)]
     =+  [found rig]=$(a r.a)
     [found a(r rig)]
-  ::  +nip: remove root; for internal use
-  ::
-  ++  nip
-    |=  a=(tree item)
-    ^-  (tree item)
-    ::
-    ?>  ?=(^ a)
-    ::  delete .n.a; merge and balance .l.a and .r.a
-    ::
-    |-  ^-  (tree item)
-    ?~  l.a  r.a
-    ?~  r.a  l.a
-    ?:  (mor key.n.l.a key.n.r.a)
-      l.a(r $(l.a r.l.a))
-    r.a(l $(r.a l.r.a))
-  ::  +traverse: stateful partial inorder traversal
+  ::  +dip: stateful partial inorder traversal
   ::
   ::    Mutates .state on each run of .f.  Starts at .start key, or if
-  ::    .start is ~, starts at the head (item with smallest key).  Stops
-  ::    when .f produces .stop=%.y.  Traverses from smaller to larger
-  ::    keys.  Each run of .f can replace an item's value or delete the
-  ::    item.
+  ::    .start is ~, starts at the head.  Stops when .f produces .stop=%.y.
+  ::    Traverses from left to right keys.
+  ::    Each run of .f can replace an item's value or delete the item.
   ::
-  ++  traverse
+  ++  dip
+    ~/  %dip
     |*  state=mold
     |=  $:  a=(tree item)
             =state
@@ -5375,63 +5336,18 @@
       =/  rig  main(a r.a)
       rig(a a(r a.rig))
     --
-  ::  +tap: convert to list, smallest to largest
-  ::
-  ++  tap
-    |=  a=(tree item)
-    ^-  (list item)
-    ::
-    =|  b=(list item)
-    |-  ^+  b
-    ?~  a  b
-    ::
-    $(a l.a, b [n.a $(a r.a)])
-  ::  +bap: convert to list, largest to smallest
-  ::
-  ++  bap
-    |=  a=(tree item)
-    ^-  (list item)
-    ::
-    =|  b=(list item)
-    |-  ^+  b
-    ?~  a  b
-    ::
-    $(a r.a, b [n.a $(a l.a)])
   ::  +gas: put a list of items
   ::
   ++  gas
+    ~/  %gas
     |=  [a=(tree item) b=(list item)]
     ^-  (tree item)
-    ::
     ?~  b  a
     $(b t.b, a (put a i.b))
-  ::  +uni: unify two ordered maps
-  ::
-  ::    .b takes precedence over .a if keys overlap.
-  ::
-  ++  uni
-    |=  [a=(tree item) b=(tree item)]
-    ^-  (tree item)
-    ::
-    ?~  b  a
-    ?~  a  b
-    ?:  =(key.n.a key.n.b)
-      ::
-      [n=n.b l=$(a l.a, b l.b) r=$(a r.a, b r.b)]
-    ::
-    ?:  (mor key.n.a key.n.b)
-      ::
-      ?:  (compare key.n.b key.n.a)
-        $(l.a $(a l.a, r.b ~), b r.b)
-      $(r.a $(a r.a, l.b ~), b l.b)
-    ::
-    ?:  (compare key.n.a key.n.b)
-      $(l.b $(b l.b, r.a ~), a r.a)
-    $(r.b $(b r.b, l.a ~), a l.a)
-  ::
   ::  +get: get val at key or return ~
   ::
   ++  get
+    ~/  %get
     |=  [a=(tree item) b=key]
     ^-  (unit val)
     ?~  a  ~
@@ -5440,11 +5356,24 @@
     ?:  (compare b key.n.a)
       $(a l.a)
     $(a r.a)
+  ::  +got: need value at key
   ::
-  ::  +subset: take a range excluding start and/or end and all elements
+  ++  got
+    |=  [a=(tree item) b=key]
+    ^-  val
+    (need (get a b))
+  ::  +has: check for key existence
+  ::
+  ++  has
+    ~/  %has
+    |=  [a=(tree item) b=key]
+    ^-  ?
+    !=(~ (get a b))
+  ::  +lot: take a subset range excluding start and/or end and all elements
   ::  outside the range
   ::
-  ++  subset
+  ++  lot
+    ~/  %lot
     |=  $:  tre=(tree item)
             start=(unit key)
             end=(unit key)
@@ -5490,6 +5419,154 @@
         $(a (nip a(r ~)))
       ==
     --
+  ::  +nip: remove root; for internal use
+  ::
+  ++  nip
+    ~/  %nip
+    |=  a=(tree item)
+    ^-  (tree item)
+    ?>  ?=(^ a)
+    ::  delete .n.a; merge and balance .l.a and .r.a
+    ::
+    |-  ^-  (tree item)
+    ?~  l.a  r.a
+    ?~  r.a  l.a
+    ?:  (mor key.n.l.a key.n.r.a)
+      l.a(r $(l.a r.l.a))
+    r.a(l $(r.a l.r.a))
+  ::
+  ::  +pop: produce .head (leftmost item) and .rest or crash if empty
+  ::
+  ++  pop
+    ~/  %pop
+    |=  a=(tree item)
+    ^-  [head=item rest=(tree item)]
+    ?~  a    !!
+    ?~  l.a  [n.a r.a]
+    =/  l  $(a l.a)
+    :-  head.l
+    ::  load .rest.l back into .a and rebalance
+    ::
+    ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
+      a(l rest.l)
+    rest.l(r a(r r.rest.l))
+  ::  +pry: produce head (leftmost item) or null
+  ::
+  ++  pry
+    ~/  %pry
+    |=  a=(tree item)
+    ^-  (unit item)
+    ?~  a    ~
+    |-
+    ?~  l.a  `n.a
+    $(a l.a)
+  ::  +put: ordered item insert
+  ::
+  ++  put
+    ~/  %put
+    |=  [a=(tree item) =key =val]
+    ^-  (tree item)
+    ::  base case: replace null with single-item tree
+    ::
+    ?~  a  [n=[key val] l=~ r=~]
+    ::  base case: overwrite existing .key with new .val
+    ::
+    ?:  =(key.n.a key)  a(val.n val)
+    ::  if item goes on left, recurse left then rebalance vertical order
+    ::
+    ?:  (compare key key.n.a)
+      =/  l  $(a l.a)
+      ?>  ?=(^ l)
+      ?:  (mor key.n.a key.n.l)
+        a(l l)
+      l(r a(l r.l))
+    ::  item goes on right; recurse right then rebalance vertical order
+    ::
+    =/  r  $(a r.a)
+    ?>  ?=(^ r)
+    ?:  (mor key.n.a key.n.r)
+      a(r r)
+    r(l a(r l.r))
+  ::  +ram: produce tail (rightmost item) or null
+  ::
+  ++  ram
+    ~/  %ram
+    |=  a=(tree item)
+    ^-  (unit item)
+    ?~  a    ~
+    |-
+    ?~  r.a  `n.a
+    $(a r.a)
+  ::  +run: apply gate to transform all values in place
+  ::
+  ++  run
+    ~/  %run
+    |*  [a=(tree item) b=$-(val *)]
+    |-
+    ?~  a  a
+    [n=[key.n.a (b val.n.a)] l=$(a l.a) r=$(a r.a)]
+  ::  +tab: tabulate a subset excluding start element with a max count
+  ::
+  ++  tab
+    ~/  %tab
+    |=  [a=(tree item) b=(unit key) c=@]
+    ^-  (list item)
+    |^
+    (flop e:(tabulate (del-span a b) b c))
+    ::
+    ++  tabulate
+      |=  [a=(tree item) b=(unit key) c=@]
+      ^-  [d=@ e=(list item)]
+      ?:  ?&(?=(~ b) =(c 0))
+        [0 ~]
+      =|  f=[d=@ e=(list item)]
+      |-  ^+  f
+      ?:  ?|(?=(~ a) =(d.f c))  f
+      =.  f  $(a l.a)
+      ?:  =(d.f c)  f
+      =.  f  [+(d.f) [n.a e.f]]
+      ?:(=(d.f c) f $(a r.a))
+    ::
+    ++  del-span
+      |=  [a=(tree item) b=(unit key)]
+      ^-  (tree item)
+      ?~  a  a
+      ?~  b  a
+      ?:  =(key.n.a u.b)
+        r.a
+      ?:  (compare key.n.a u.b)
+        $(a r.a)
+      a(l $(a l.a))
+    --
+  ::  +tap: convert to list, left to right
+  ::
+  ++  tap
+    ~/  %tap
+    |=  a=(tree item)
+    ^-  (list item)
+    =|  b=(list item)
+    |-  ^+  b
+    ?~  a  b
+    $(a l.a, b [n.a $(a r.a)])
+  ::  +uni: unify two ordered maps
+  ::
+  ::    .b takes precedence over .a if keys overlap.
+  ::
+  ++  uni
+    ~/  %uni
+    |=  [a=(tree item) b=(tree item)]
+    ^-  (tree item)
+    ?~  b  a
+    ?~  a  b
+    ?:  =(key.n.a key.n.b)
+      [n=n.b l=$(a l.a, b l.b) r=$(a r.a, b r.b)]
+    ?:  (mor key.n.a key.n.b)
+      ?:  (compare key.n.b key.n.a)
+        $(l.a $(a l.a, r.b ~), b r.b)
+      $(r.a $(a r.a, l.b ~), b l.b)
+    ?:  (compare key.n.a key.n.b)
+      $(l.b $(b l.b, r.a ~), a r.a)
+    $(r.b $(b r.b, l.a ~), a l.a)
   --
 ::                                                      ::
 ::::                      ++userlib                     ::  (2u) non-vane utils
@@ -5636,7 +5713,8 @@
     ::                                                  ::  ++unm:chrono:userlib
     ++  unm                                             ::  Urbit to Unix ms
       |=  a=@da
-      (div (mul (sub a ~1970.1.1) 1.000) ~s1)
+      =-  (div (mul - 1.000) ~s1)
+      (sub (add a (div ~s1 2.000)) ~1970.1.1)
     ::                                                  ::  ++unt:chrono:userlib
     ++  unt                                             ::  Urbit to Unix time
       |=  a=@da

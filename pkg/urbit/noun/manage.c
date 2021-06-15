@@ -1,16 +1,14 @@
 /* n/m.c
 **
 */
+#include "all.h"
+#include "rsignal.h"
+#include "vere/vere.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#include <sigsegv.h>
-#include <curl/curl.h>
 #include <openssl/crypto.h>
-
-#include "all.h"
-#include "vere/vere.h"
 
 //  XX stack-overflow recovery should be gated by -a
 //
@@ -75,13 +73,24 @@
                      u3_noun   arg);
 
 
-static sigjmp_buf u3_Signal;
+//  u3m_signal uses restricted functionality signals for compatibility reasons:
+//  some platforms may not provide true POSIX asynchronous signals and their
+//  compat layer will then implement this restricted functionality subset.
+//  u3m_signal never needs to interrupt I/O operations, its signal handlers
+//  do not manipulate signals, do not modify shared state, and always either
+//  return or longjmp.
+//
+static rsignal_jmpbuf u3_Signal;
+
+#if !defined(U3_OS_mingw)
+#include <sigsegv.h>
 
 #ifndef SIGSTKSZ
 # define SIGSTKSZ 16384
 #endif
 #ifndef NO_OVERFLOW
 static uint8_t Sigstk[SIGSTKSZ];
+#endif
 #endif
 
 #if 0
@@ -129,17 +138,25 @@ static void _cm_overflow(void *arg1, void *arg2, void *arg3)
 static void
 _cm_signal_handle(c3_l sig_l)
 {
+#ifndef U3_OS_mingw
   if ( c3__over == sig_l ) {
+#ifndef NO_OVERFLOW
     sigsegv_leave_handler(_cm_overflow, NULL, NULL, NULL);
-  }
-  else {
+#endif
+  } else
+#endif
+  {
     u3m_signal(sig_l);
   }
 }
 
 #ifndef NO_OVERFLOW
 static void
+#ifndef U3_OS_mingw
 _cm_signal_handle_over(int emergency, stackoverflow_context_t scp)
+#else
+_cm_signal_handle_over(int x)
+#endif
 {
   _cm_signal_handle(c3__over);
 }
@@ -330,10 +347,14 @@ _cm_signal_deep(c3_w mil_w)
   }
 
 #ifndef NO_OVERFLOW
+#ifndef U3_OS_mingw
   stackoverflow_install_handler(_cm_signal_handle_over, Sigstk, SIGSTKSZ);
+#else
+  rsignal_install_handler(SIGSTK, _cm_signal_handle_over);
 #endif
-  signal(SIGINT, _cm_signal_handle_intr);
-  signal(SIGTERM, _cm_signal_handle_term);
+#endif
+  rsignal_install_handler(SIGINT, _cm_signal_handle_intr);
+  rsignal_install_handler(SIGTERM, _cm_signal_handle_term);
 
   // Provide a little emergency memory, for use in case things
   // go utterly haywire.
@@ -349,11 +370,11 @@ _cm_signal_deep(c3_w mil_w)
     itm_u.it_value.tv_sec  = (mil_w / 1000);
     itm_u.it_value.tv_usec = 1000 * (mil_w % 1000);
 
-    if ( setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
+    if ( rsignal_setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
       u3l_log("loom: set timer failed %s", strerror(errno));
     }
     else {
-      signal(SIGVTALRM, _cm_signal_handle_alrm);
+      rsignal_install_handler(SIGVTALRM, _cm_signal_handle_alrm);
     }
   }
 
@@ -365,12 +386,16 @@ _cm_signal_deep(c3_w mil_w)
 static void
 _cm_signal_done()
 {
-  signal(SIGINT, SIG_IGN);
-  signal(SIGTERM, SIG_IGN);
-  signal(SIGVTALRM, SIG_IGN);
+  rsignal_deinstall_handler(SIGINT);
+  rsignal_deinstall_handler(SIGTERM);
+  rsignal_deinstall_handler(SIGVTALRM);
 
 #ifndef NO_OVERFLOW
+#ifndef U3_OS_mingw
   stackoverflow_deinstall_handler();
+#else
+  rsignal_deinstall_handler(SIGSTK);
+#endif
 #endif
   {
     struct itimerval itm_u;
@@ -378,7 +403,7 @@ _cm_signal_done()
     timerclear(&itm_u.it_interval);
     timerclear(&itm_u.it_value);
 
-    if ( setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
+    if ( rsignal_setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
       u3l_log("loom: clear timer failed %s", strerror(errno));
     }
   }
@@ -397,7 +422,7 @@ _cm_signal_done()
 void
 u3m_signal(u3_noun sig_l)
 {
-  siglongjmp(u3_Signal, sig_l);
+  rsignal_longjmp(u3_Signal, sig_l);
 }
 
 /* u3m_file(): load file, as atom, or bail.
@@ -959,7 +984,7 @@ u3m_soft_top(c3_w    mil_w,                     //  timer ms
   */
   _cm_signal_deep(mil_w);
 
-  if ( 0 != (sig_l = sigsetjmp(u3_Signal, 1)) ) {
+  if ( 0 != (sig_l = rsignal_setjmp(u3_Signal)) ) {
     //  reinitialize trace state
     //
     u3t_init();
@@ -1559,6 +1584,10 @@ u3m_wall(u3_noun wol)
 static void
 _cm_limits(void)
 {
+# ifdef U3_OS_mingw
+  //  Windows doesn't have rlimits. Default maximum thread
+  //  stack size is set in the executable file header.
+# else
   struct rlimit rlm;
 
   //  Moar stack.
@@ -1606,6 +1635,7 @@ _cm_limits(void)
     }
   }
 # endif
+# endif
 }
 
 /* _cm_signals(): set up interrupts, etc.
@@ -1613,13 +1643,23 @@ _cm_limits(void)
 static void
 _cm_signals(void)
 {
+# if defined(U3_OS_mingw)
+  //  vere using libsigsegv on MingW is very slow, because libsigsegv
+  //  works by installing a top-level SEH unhandled exception filter.
+  //  The top-level filter runs only after Windows walks the whole stack,
+  //  looking up registered exception filters for every stack frame, and
+  //  finds no filter to handle the exception.
+  //  Instead of libsigsegv, all vere functions register a SEH exception
+  //  filter (see compat/mingw/seh_handler.c) that handles both memory
+  //  access and stack overflow exceptions. It calls u3e_fault directly.
+# else
   if ( 0 != sigsegv_install_handler(u3e_fault) ) {
     u3l_log("boot: sigsegv install failed");
     exit(1);
   }
-  // signal(SIGINT, _loom_stop);
+# endif
 
-
+# if defined(U3_OS_PROF)
   //  Block SIGPROF, so that if/when we reactivate it on the
   //  main thread for profiling, we won't get hits in parallel
   //  on other threads.
@@ -1634,6 +1674,7 @@ _cm_signals(void)
       exit(1);
     }
   }
+# endif
 }
 
 /* u3m_init(): start the environment.
@@ -1670,7 +1711,7 @@ u3m_init(void)
       u3l_log("boot: mapping %dMB failed", (len_w / (1024 * 1024)));
       u3l_log("see urbit.org/using/install/#about-swap-space"
               " for adding swap space\r\n");
-      if ( -1 != (c3_ps)map_v ) {
+      if ( -1 != (c3_ps)dyn_v ) {
         u3l_log("if porting to a new platform, try U3_OS_LoomBase %p",
                 dyn_v);
       }
