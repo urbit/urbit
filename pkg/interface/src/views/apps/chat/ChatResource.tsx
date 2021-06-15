@@ -86,7 +86,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
       );
       return `${url}\n~${msg.author}: `;
     },
-    [association]
+    [association.resource]
   );
 
   const isAdmin = useMemo(
@@ -107,7 +107,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
     if (newer) {
       const index = graph.peekLargest()?.[0];
       if (!index) {
-        return true;
+        return false;
       }
       await getYoungerSiblings(
         ship,
@@ -119,10 +119,12 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
     } else {
       const index = graph.peekSmallest()?.[0];
       if (!index) {
-        return true;
+        return false;
       }
       await getOlderSiblings(ship, name, pageSize, `/${index.toString()}`);
-      const done = expectedSize !== getCurrGraphSize(ship.slice(1), name);
+      const currSize = getCurrGraphSize(ship.slice(1), name);
+      console.log(currSize);
+      const done = expectedSize !== currSize;
       return done;
     }
   }, [graph, resource]);
@@ -144,7 +146,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   const getPermalink = useCallback(
     (index: BigInteger) =>
       getPermalinkForGraph(association.group, resource, `/${index.toString()}`),
-    [association]
+    [association.resource]
   );
 
   if (!graph) {
