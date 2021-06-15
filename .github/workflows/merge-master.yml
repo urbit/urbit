@@ -6,13 +6,13 @@ on:
 jobs:
   merge-to-next-js:
     runs-on: ubuntu-latest
-    name: "Merge master to release/next-js"
+    name: "Merge master to release/next-userspace"
     steps:
       - uses: actions/checkout@v2
       - uses: devmasx/merge-branch@v1.3.1
         with:
           type: now
-          target_branch: release/next-js
+          target_branch: release/next-userspace
           github_token: ${{ secrets.JANEWAY_BOT_TOKEN }}
 
   merge-to-group-timer:

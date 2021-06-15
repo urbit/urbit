@@ -252,11 +252,13 @@
   ::  %what: update from files
   ::  %whey: produce $mass                    :: XX remove, scry
   ::  %verb: toggle laconicity
+  ::  %whiz: prime vane caches
   ::
   $%  [%trim p=@ud]
       [%what p=(list (pair path (cask)))]
       [%whey ~]
       [%verb p=(unit ?)]
+      [%whiz ~]
   ==
 +$  wasp
   ::  %crud: reroute $ovum with $goof
@@ -291,14 +293,23 @@
   |=(b=beam =*(s scot `path`[(s %p p.b) q.b (s r.b) s.b]))
 ::
 ++  de-beam
+  ~/  %de-beam
   |=  p=path
   ^-  (unit beam)
   ?.  ?=([@ @ @ *] p)  ~
   ?~  who=(slaw %p i.p)  ~
   ?~  des=?~(i.t.p (some %$) (slaw %tas i.t.p))  ~  :: XX +sym ;~(pose low (easy %$))
-  ?~  ved=(slay i.t.t.p)  ~
-  ?.  ?=([%$ case] u.ved)  ~
-  `(unit beam)`[~ [`ship`u.who `desk`u.des `case`p.u.ved] t.t.t.p]
+  ?~  ved=(de-case i.t.t.p)  ~
+  `[[`ship`u.who `desk`u.des u.ved] t.t.t.p]
+::
+++  de-case
+  ~/  %de-case
+  |=  =knot
+  ^-  (unit case)
+  ?^  num=(slaw %ud knot)  `[%ud u.num]
+  ?^  wen=(slaw %da knot)  `[%da u.wen]
+  ?~  lab=(slaw %tas knot)  ~
+  `[%tas u.lab]
 ::
 ++  en-omen
   |=  [vis=view bem=beam]
@@ -308,6 +319,7 @@
   ~(rent co [%many $/tas/way.vis $/tas/car.vis ~])
 ::
 ++  de-omen
+  ~/  %de-omen
   |=  pax=path
   ^-  (unit [vis=view bem=beam])
   ?~  pax  ~
@@ -1000,8 +1012,11 @@
         ++  settle
           |=  van=vase
           ^-  (pair vase worm)
-          =/  [rig=vase wor=worm]  (~(slym wa *worm) van *vane-sample)
-          [van +:(~(slap wa wor) rig [%limb %scry])]
+          =|  sac=worm
+          =^  rig=vase  sac  (~(slym wa sac) van *vane-sample)
+          =^  gat=vase  sac  (~(slap wa sac) rig [%limb %scry])
+          =^  pro=vase  sac  (~(slap wa sac) gat [%limb %$])
+          [van +:(~(mint wa sac) p.pro [%$ 7])]
         ::
         ::  XX pass identity to preserve behavior?
         ::
@@ -1470,6 +1485,9 @@
           %verb  ..pith(lac.fad ?~(p.waif !lac.fad u.p.waif))
           %what  ~(kel what p.waif)
           %whey  ..pith(out [[//arvo mass/whey] out])
+        ::
+            %whiz
+          ..pith(van.mod (~(run by van.mod) |=(vane (settle:va:part vase))))
         ==
       ::
       ++  peek

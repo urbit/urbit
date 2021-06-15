@@ -1,90 +1,51 @@
-import React, { ReactNode, useCallback, useMemo, useState } from "react";
-import { Row, Box, Icon } from "@tlon/indigo-react";
-import _ from "lodash";
+import { Box, Button, Icon, Row } from '@tlon/indigo-react';
 import {
   GraphNotificationContents,
-  IndexedNotification,
-  GroupNotificationContents,
-  NotificationGraphConfig,
-  GroupNotificationsConfig,
-  Groups,
-  Associations,
-  Contacts,
-} from "@urbit/api";
-import GlobalApi from "~/logic/api/global";
-import { getParentIndex } from "~/logic/lib/notification";
-import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
-import { GroupNotification } from "./group";
-import { GraphNotification } from "./graph";
-import { BigInteger } from "big-integer";
-import { useHovering } from "~/logic/lib/util";
-import useHarkState from "~/logic/state/hark";
-import {IS_MOBILE} from "~/logic/lib/platform";
 
-interface NotificationProps {
+  GroupNotificationContents,
+
+  IndexedNotification
+
+} from '@urbit/api';
+import { BigInteger } from 'big-integer';
+import React, { ReactNode, useCallback } from 'react';
+import GlobalApi from '~/logic/api/global';
+import { getNotificationKey } from '~/logic/lib/hark';
+import { useHovering } from '~/logic/lib/util';
+import useLocalState from '~/logic/state/local';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import { SwipeMenu } from '~/views/components/SwipeMenu';
+import { GraphNotification } from './graph';
+import { GroupNotification } from './group';
+
+export interface NotificationProps {
   notification: IndexedNotification;
   time: BigInteger;
   api: GlobalApi;
-  archived: boolean;
-}
-
-function getMuted(
-  idxNotif: IndexedNotification,
-  groups: GroupNotificationsConfig,
-  graphs: NotificationGraphConfig
-) {
-  const { index, notification } = idxNotif;
-  if ("graph" in idxNotif.index) {
-    const { graph } = idxNotif.index.graph;
-    if (!("graph" in notification.contents)) {
-      throw new Error();
-    }
-    const parent = getParentIndex(index.graph, notification.contents.graph);
-
-    return (
-      _.findIndex(
-        graphs?.watching || [],
-        (g) => g.graph === graph && g.index === parent
-      ) === -1
-    );
-  }
-  if ("group" in index) {
-    return _.findIndex(groups || [], (g) => g === index.group.group) === -1;
-  }
-  return false;
+  unread: boolean;
 }
 
 export function NotificationWrapper(props: {
   api: GlobalApi;
   time?: BigInteger;
+  read?: boolean;
   notification?: IndexedNotification;
   children: ReactNode;
 }) {
-  const { api, time, notification, children } = props;
+  const { api, time, notification, children, read = false } = props;
 
-  const onArchive = useCallback(async () => {
-    if (!(time && notification)) {
+  const isMobile = useLocalState(s => s.mobile);
+
+  const onArchive = useCallback(async (e) => {
+    e.stopPropagation();
+    if (!notification) {
       return;
     }
     return api.hark.archive(time, notification.index);
   }, [time, notification]);
 
-  const groupConfig = useHarkState((state) => state.notificationsGroupConfig);
-  const graphConfig = useHarkState((state) => state.notificationsGraphConfig);
-
-  const isMuted =
-    time && notification && getMuted(notification, groupConfig, graphConfig);
-
-  const onChangeMute = useCallback(async () => {
-    if (!notification) {
-      return;
-    }
-    const func = isMuted ? "unmute" : "mute";
-    return api.hark[func](notification);
-  }, [notification, api, isMuted]);
-
-  const onClick = () => {
-    if (!(time && notification) || notification.notification.read) {
+  const onClick = (e: any) => {
+    if (!notification || read) {
       return;
     }
     return api.hark.read(time, notification.index);
@@ -92,58 +53,65 @@ export function NotificationWrapper(props: {
 
   const { hovering, bind } = useHovering();
 
-  const changeMuteDesc = isMuted ? "Unmute" : "Mute";
   return (
-    <Box
-      onClick={onClick}
-      bg={
-        (notification ? notification?.notification?.read : false)
-          ? "washedGray"
-          : "washedBlue"
-      }
-      borderRadius={2}
-      display="grid"
-      gridTemplateColumns={["1fr 24px", "1fr 200px"]}
-      gridTemplateRows="auto"
-      gridTemplateAreas="'header actions' 'main main'"
-      p={2}
+    <SwipeMenu
+      key={(time && notification && getNotificationKey(time, notification)) ?? 'unknown'}
       m={2}
-      {...bind}
+      menuWidth={100}
+      disabled={!isMobile}
+      menu={
+        <Button onClick={onArchive} ml={2} height="100%" width="92px" primary destructive>
+          Remove
+        </Button>
+      }
     >
-      {children}
-      <Row
-        alignItems="flex-start"
-        gapX="2"
-        gridArea="actions"
-        justifyContent="flex-end"
-        opacity={[1, (hovering || IS_MOBILE) ? 1 : 0]}
+      <Box
+        onClick={onClick}
+        bg={read ? 'washedGray' : 'washedBlue'}
+        borderRadius={2}
+        display="grid"
+        gridTemplateColumns={['1fr 24px', '1fr 200px']}
+        gridTemplateRows="auto"
+        gridTemplateAreas="'header actions' 'main main'"
+        p={2}
+        {...bind}
       >
-        {time && notification && (
-          <StatelessAsyncAction
-            name={time.toString()}
-            borderRadius={1}
-            onClick={onArchive}
-            backgroundColor="white"
-          >
-            <Icon lineHeight="24px" size={16} icon="X" />
-          </StatelessAsyncAction>
-        )}
-      </Row>
-    </Box>
+        {children}
+        <Row
+          alignItems="flex-start"
+          gapX={2}
+          gridArea="actions"
+          justifyContent="flex-end"
+          opacity={[0, hovering ? 1 : 0]}
+        >
+          {notification && (
+            <StatelessAsyncAction
+              name=""
+              borderRadius={1}
+              onClick={onArchive}
+              backgroundColor="white"
+            >
+              <Icon lineHeight="24px" size={16} icon="X" />
+            </StatelessAsyncAction>
+          )}
+        </Row>
+      </Box>
+    </SwipeMenu>
   );
 }
 
 export function Notification(props: NotificationProps) {
-  const { notification, associations, archived } = props;
-  const { read, contents, time } = notification.notification;
+  const { notification, unread } = props;
+  const { contents, time } = notification.notification;
 
   const wrapperProps = {
     notification,
+    read: !unread,
     time: props.time,
-    api: props.api,
+    api: props.api
   };
 
-  if ("graph" in notification.index) {
+  if ('graph' in notification.index) {
     const index = notification.index.graph;
     const c: GraphNotificationContents = (contents as any).graph;
 
@@ -153,15 +121,14 @@ export function Notification(props: NotificationProps) {
           api={props.api}
           index={index}
           contents={c}
-          read={read}
-          archived={archived}
+          read={!unread}
           timebox={props.time}
           time={time}
         />
       </NotificationWrapper>
     );
   }
-  if ("group" in notification.index) {
+  if ('group' in notification.index) {
     const index = notification.index.group;
     const c: GroupNotificationContents = (contents as any).group;
     return (
@@ -170,9 +137,8 @@ export function Notification(props: NotificationProps) {
           api={props.api}
           index={index}
           contents={c}
-          read={read}
+          read={!unread}
           timebox={props.time}
-          archived={archived}
           time={time}
         />
       </NotificationWrapper>

@@ -1,6 +1,6 @@
 /-  *group, metadata=metadata-store
 /+  store=graph-store, mdl=metadata, res=resource, graph, group, default-agent,
-    dbug, verb, push-hook
+    dbug, verb, push-hook, agentio
 ::
 ~%  %graph-push-hook-top  ..part  ~
 |%
@@ -12,16 +12,44 @@
       update:store
       %graph-update
       %graph-pull-hook
-      1  1
+      2  2
   ==
 ::
 +$  agent  (push-hook:push-hook config)
 ::
 +$  state-null  ~
 +$  state-zero  [%0 marks=(set mark)]
++$  state-one   [%1 ~]
 +$  versioned-state
   $@  state-null
-  state-zero
+  $%  state-zero
+      state-one
+  ==
+::
++$  cached-transform
+  $-([index:store post:store atom ?] [index:store post:store])
+::
++$  cached-permission
+  $-(indexed-post:store $-(vip-metadata:metadata permissions:store))
+::
+::  TODO: come back to this and potentially use send a %t
+::  to be notified of validator changes
++$  cache
+  $:  graph-to-mark=(map resource:res (unit mark))
+      perm-marks=(map [mark @tas] cached-permission)
+      transform-marks=(map mark cached-transform)
+  ==
+::
++$  inflated-state
+  $:  state-one
+      cache
+  ==
+::
++$  cache-action
+  $%  [%graph-to-mark (pair resource:res (unit mark))]
+      [%perm-marks (pair (pair mark @tas) cached-permission)]
+      [%transform-marks (pair mark cached-transform)]
+  ==
 --
 ::
 %-  agent:dbug
@@ -30,26 +58,48 @@
 %-  (agent:push-hook config)
 ^-  agent
 =-
-=|  state-zero
+~%  %graph-push-hook-agent  ..scry.hook-core  ~
+=|  inflated-state
 =*  state  -
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
     grp   ~(. group bowl)
     gra   ~(. graph bowl)
-    hc    ~(. hook-core bowl)
+    met   ~(. mdl bowl)
+    hc    ~(. hook-core bowl +.state)
+    io    ~(. agentio bowl)
 ::
 ++  on-init   on-init:def
-++  on-save   !>(state)
+++  on-save   !>(-.state)
 ++  on-load   
   |=  =vase
   =+  !<(old=versioned-state vase)
   =?  old  ?=(~ old)
     [%0 ~]
-  ?>  ?=(%0 -.old)
-  `this(state old)
+  =?  old  ?=(%0 -.old)
+    [%1 ~]
+  ?>  ?=(%1 -.old)
+  `this(-.state old, +.state *cache)
 ::
-++  on-poke   on-poke:def
+++  on-poke
+  |=  [=mark =vase]
+  ^-  (quip card _this)
+  ?.  =(mark %graph-cache-hook)
+    [~ this]
+  =/  a=cache-action  !<(cache-action vase)
+  =*  c                +.state
+  =*  graph-to-mark    graph-to-mark.c
+  =*  perm-marks       perm-marks.c
+  =*  transform-marks  transform-marks.c
+  =.  c
+    ?-  -.a
+      %graph-to-mark    c(graph-to-mark (~(put by graph-to-mark) p.a q.a))
+      %perm-marks       c(perm-marks (~(put by perm-marks) p.a q.a))
+      %transform-marks  c(transform-marks (~(put by transform-marks) p.a q.a))
+    ==
+  [~ this(+.state c)]
+::
 ++  on-agent  on-agent:def
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
@@ -58,47 +108,75 @@
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
   ?+  wire  (on-arvo:def wire sign-arvo)
+    ::  XX: no longer necessary
     ::
-      [%perms @ @ ~]
-    ?>  ?=(?(%add %remove) i.t.t.wire)
-    =*  mark  i.t.wire
-    :_  this
-    (build-permissions:hc mark i.t.t.wire %next)^~
-  ::
-      [%transform-add @ ~]
-    =*  mark  i.t.wire
-    :_  this
-    (build-transform-add:hc mark %next)^~
+    [%perms @ @ ~]        [~ this]
+    [%transform-add @ ~]  [~ this]
   ==
 ::
 ++  on-fail   on-fail:def
 ++  transform-proxy-update
+  ~/  %transform-proxy-update
   |=  vas=vase
-  ^-  (unit vase)
+  ^-  (quip card (unit vase))
   =/  =update:store  !<(update:store vas)
   =*  rid  resource.q.update
   =.  p.update  now.bowl
   ?-  -.q.update
       %add-nodes
-    ?.  (is-allowed-add:hc rid nodes.q.update)
-      ~
-    =/  mark  (get-mark:gra rid)
-    ?~  mark  `vas
-    |^
-    =/  transform
-      !<  $-([index:store post:store atom ?] [index:store post:store])
-      %.  !>(*indexed-post:store)
-      .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
-    =/  [* result=(list [index:store node:store])]
-      %+  roll
-        (flatten-node-map ~(tap by nodes.q.update))
-      (transform-list transform)
-    =.  nodes.q.update
-      %-  ~(gas by *(map index:store node:store))
-      result
-    [~ !>(update)]
+    =|  cards=(list card)
+    ?:  ?=(^ (rush name.rid ;~(pfix (jest 'dm--') fed:ag)))
+      ::  block new DM messages
+      [~ ~]
+    =^  allowed  cards  (is-allowed-add:hc rid nodes.q.update)
+    ?.  allowed
+      [cards ~]
+    =/  mark
+      %+  fall
+        (~(get by graph-to-mark) rid)
+      (get-mark:gra rid)
+    ?~  mark
+      [cards `vas]
+    =<  $
+    ~%  %transform-add-nodes  ..transform-proxy-update  ~
+    |%
+    ++  $
+      ^-  (quip card (unit vase))
+      =/  transform=cached-transform
+        %+  fall
+          (~(get by transform-marks) u.mark)
+        =/  =tube:clay
+          .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
+        !<(cached-transform (tube !>(*indexed-post:store)))
+      =/  [* result=(list [index:store node:store])]
+        %+  roll
+          (flatten-node-map ~(tap by nodes.q.update))
+        (transform-list transform)
+      =.  nodes.q.update
+        %-  ~(gas by *(map index:store node:store))
+        result
+      :_  :-  ~
+          !>  ^-  update:store
+          update
+      %+  weld  cards
+      %-  zing
+      :~  ?:  (~(has by graph-to-mark) rid)
+            ~
+          :_  ~
+          %+  poke-self:pass:io  %graph-cache-hook
+          !>  ^-  cache-action
+          [%graph-to-mark rid mark]
+        ::
+          ?:  (~(has by transform-marks) u.mark)
+            ~
+          :_  ~
+          %+  poke-self:pass:io  %graph-cache-hook
+          !>  ^-  cache-action
+          [%transform-marks u.mark transform]
+      ==
     ::
     ++  flatten-node-map
+      ~/  %flatten-node-map
       |=  lis=(list [index:store node:store])
       ^-  (list [index:store node:store])
       |^
@@ -130,10 +208,13 @@
       --
     ::
     ++  transform-list
+      ~/  %transform-list
       |=  transform=$-([index:store post:store atom ?] [index:store post:store])
       |=  $:  [=index:store =node:store]
               [indices=(set index:store) lis=(list [index:store node:store])]
           ==
+      ~|  "cannot put a deleted post into %add-nodes {<post.node>}"
+      ?>  ?=(%& -.post.node)
       =/  l  (lent index)
       =/  parent-modified=?
         %-  ~(rep in indices)
@@ -144,36 +225,42 @@
           %.n
         =((swag [0 k] index) i)
       =/  [ind=index:store =post:store]
-        (transform index post.node now.bowl parent-modified)
+        (transform index p.post.node now.bowl parent-modified)
       :-  (~(put in indices) index)
-      (snoc lis [ind node(post post)])
+      (snoc lis [ind node(p.post post)])
     --
   ::
-      %remove-nodes
-    ?.  (is-allowed-remove:hc resource.q.update indices.q.update)
+      %remove-posts
+    =|  cards=(list card)
+    =^  allowed  cards
+      (is-allowed-remove:hc rid indices.q.update)
+    :-  cards
+    ?.  allowed
       ~
     `vas
   ::
-    %add-graph          ~
-    %remove-graph       ~
-    %add-signatures     ~
-    %remove-signatures  ~
-    %archive-graph      ~
-    %unarchive-graph    ~
-    %add-tag            ~
-    %remove-tag         ~
-    %keys               ~
-    %tags               ~
-    %tag-queries        ~
-    %run-updates        ~
+    %add-graph          [~ ~]
+    %remove-graph       [~ ~]
+    %add-signatures     [~ ~]
+    %remove-signatures  [~ ~]
+    %archive-graph      [~ ~]
+    %unarchive-graph    [~ ~]
+    %add-tag            [~ ~]
+    %remove-tag         [~ ~]
+    %keys               [~ ~]
+    %tags               [~ ~]
+    %tag-queries        [~ ~]
+    %run-updates        [~ ~]
   ==
 ::
 ++  resource-for-update  resource-for-update:gra
 ::
 ++  initial-watch
+  ~/  %initial-watch
   |=  [=path =resource:res]
   ^-  vase
-  ?>  (is-allowed:hc resource)
+  |^
+  ?>  (is-allowed resource)
   !>  ^-  update:store
   ?~  path
     ::  new subscribe
@@ -186,22 +273,19 @@
   =/  =time  (slav %da i.path)
   =/  =update-log:store  (get-update-log-subset:gra resource time)
   [now.bowl [%run-updates resource update-log]]
+  ::
+  ++  is-allowed
+    |=  =resource:res
+    =/  group-res=resource:res
+      (need (peek-group:met %graph resource))
+    (is-member:grp src.bowl group-res)
+  --
 ::
 ++  take-update
   |=  =vase
   ^-  [(list card) agent]
   =/  =update:store  !<(update:store vase)
   ?+    -.q.update   [~ this]
-      %add-graph
-    ?~  mark.q.update  `this
-    =*  mark  u.mark.q.update
-    ?:  (~(has in marks) mark)  `this
-    :_  this(marks (~(put in marks) mark))
-    :~  (build-permissions:hc mark %add %sing)
-        (build-permissions:hc mark %remove %sing)
-        (build-transform-add:hc mark %sing)
-    ==
-  ::
       %remove-graph
     :_  this
     [%give %kick ~[resource+(en-path:res resource.q.update)] ~]~
@@ -211,11 +295,14 @@
     [%give %kick ~[resource+(en-path:res resource.q.update)] ~]~
   ==
 --
-^|  ^=  hook-core
-|_  =bowl:gall
+::
+~%  %graph-push-hook-helper  ..card.hook-core  ~
+^=  hook-core
+|_  [=bowl:gall =cache]
 +*  grp  ~(. group bowl)
     met  ~(. mdl bowl)
     gra  ~(. graph bowl)
+    io    ~(. agentio bowl)
 ::
 ++  scry
   |=  [care=@t desk=@t =path]
@@ -223,28 +310,42 @@
     /[care]/(scot %p our.bowl)/[desk]/(scot %da now.bowl)
   path
 ::
-++  perm-mark-name
-  |=  perm=@t
-  ^-  @t
-  (cat 3 'graph-permissions-' perm)
-::
 ++  perm-mark
   |=  [=resource:res perm=@t vip=vip-metadata:metadata =indexed-post:store]
-  ^-  permissions:store
-  =-  (check vip)
-  !<  check=$-(vip-metadata:metadata permissions:store)
-  %.  !>(indexed-post)
-  =/  mark  (get-mark:gra resource)
-  ?~  mark  |=(=vase !>([%no %no %no]))
-  .^(tube:clay (scry %cc %home /[u.mark]/(perm-mark-name perm)))
-::
-++  add-mark
-  |=  [=resource:res vip=vip-metadata:metadata =indexed-post:store]
-  (perm-mark resource %add vip indexed-post)
-::
-++  remove-mark
-  |=  [=resource:res vip=vip-metadata:metadata =indexed-post:store]
-  (perm-mark resource %remove vip indexed-post)
+  ^-  [permissions:store (list card)]
+  |^
+  =/  mark
+    %+  fall
+      (~(get by graph-to-mark.cache) resource)
+    (get-mark:gra resource)
+  ?~  mark
+    [[%no %no %no] ~]
+  =/  key  [u.mark (perm-mark-name perm)]
+  =/  convert
+    %+  fall
+      (~(get by perm-marks.cache) key)
+    .^(cached-permission (scry %cf %home /[u.mark]/(perm-mark-name perm)))
+  :-  ((convert indexed-post) vip)
+  %-  zing
+  :~  ?:  (~(has by graph-to-mark.cache) resource)
+        ~
+      :_  ~
+      %+  poke-self:pass:io  %graph-cache-hook
+      !>  ^-  cache-action
+      [%graph-to-mark resource mark]
+    ::
+      ?:  (~(has by perm-marks.cache) key)  ~
+      :_  ~
+      %+  poke-self:pass:io  %graph-cache-hook
+      !>  ^-  cache-action
+      [%perm-marks [u.mark (perm-mark-name perm)] convert]
+  ==
+  ::
+  ++  perm-mark-name
+    |=  perm=@t
+    ^-  @t
+    (cat 3 'graph-permissions-' perm)
+  --
 ::
 ++  get-permission
   |=  [=permissions:store is-admin=? writers=(set ship)]
@@ -257,22 +358,23 @@
     writer.permissions
   reader.permissions
 ::
-++  is-allowed
-  |=  =resource:res
-  =/  group-res=resource:res
-    (need (peek-group:met %graph resource))
-  (is-member:grp src.bowl group-res)
-::
 ++  get-roles-writers-variation
+  ~/  %get-roles-writers-variation
   |=  =resource:res
   ^-  (unit [is-admin=? writers=(set ship) vip=vip-metadata:metadata])
   =/  assoc=(unit association:metadata)
-     (peek-association:met %graph resource)
+    (peek-association:met %graph resource)
   ?~  assoc  ~
+  =/  group=(unit group:grp)
+    (scry-group:grp group.u.assoc)
+  ?~  group  ~
   =/  role=(unit (unit role-tag))
-    (role-for-ship:grp group.u.assoc src.bowl)
+    (role-for-ship-with-group:grp u.group group.u.assoc src.bowl)
   =/  writers=(set ship)
-    (get-tagged-ships:grp group.u.assoc [%graph resource %writers])
+    %^  get-tagged-ships-with-group:grp
+        u.group
+      group.u.assoc
+    [%graph resource %writers]
   ?~  role  ~
   =/  is-admin=?
     ?=(?([~ %admin] [~ %moderator]) u.role)
@@ -281,74 +383,111 @@
 ++  node-to-indexed-post
   |=  =node:store
   ^-  indexed-post:store
-  =*  index  index.post.node
-  [(snag (dec (lent index)) index) post.node]
+  ?>  ?=(%& -.post.node)
+  =*  index  index.p.post.node
+  [(snag (dec (lent index)) index) p.post.node]
 ::
 ++  is-allowed-add
+  ~/  %is-allowed-add
   |=  [=resource:res nodes=(map index:store node:store)] 
-  ^-  ?
-  %-  (bond |.(%.n))
+  ^-  [? (list card)]
+  |^
+  %-  (bond |.([%.n ~]))
   %+  biff  (get-roles-writers-variation resource)
   |=  [is-admin=? writers=(set ship) vip=vip-metadata:metadata]
+  ^-  (unit [? (list card)])
   %-  some  
-  %+  levy  ~(tap by nodes)
-  |=  [=index:store =node:store]
-  =/  parent-index=index:store
-    (scag (dec (lent index)) index)
-  ?:  (~(has by nodes) parent-index)  %.y
-  ?.  =(author.post.node src.bowl)
-    %.n
-  =/  =permissions:store
-    %^  add-mark  resource  vip
-    (node-to-indexed-post node)
-  =/  =permission-level:store
-    (get-permission permissions is-admin writers)
-  ?-  permission-level
-      %yes  %.y
-      %no   %.n
-    ::
-        %self
-      =/  parent-node=node:store
-        (got-node:gra resource parent-index)
-      =(author.post.parent-node src.bowl)
-  ==
+  =/  a  ~(tap by nodes)
+  =|  cards=(list card)
+  |-  ^-  [? (list card)]
+  ?~  a  [& cards]
+  =/  c  (check i.a is-admin writers vip)
+  ?.  -.c
+    [| (weld cards +.c)]
+  $(a t.a, cards (weld cards +.c))
+  ::
+  ++  check
+    |=  $:  [=index:store =node:store]
+            is-admin=?
+            writers=(set ship)
+            vip=vip-metadata:metadata
+        ==
+    ^-  [? (list card)]
+    =/  parent-index=index:store
+      (scag (dec (lent index)) index)
+    ?:  (~(has by nodes) parent-index)
+      [%.y ~]
+    ?:  ?=(%| -.post.node)
+      [%.n ~]
+    ?.  =(author.p.post.node src.bowl)
+      [%.n ~]
+    =/  added
+      %^  add-mark  resource  vip
+      (node-to-indexed-post node)
+    =*  permissions  -.added
+    =*  cards         +.added
+    =/  =permission-level:store
+      (get-permission permissions is-admin writers)
+    :_  cards
+    ?-  permission-level
+        %yes  %.y
+        %no   %.n
+      ::
+          %self
+        =/  parent-node=node:store
+          (got-node:gra resource parent-index)
+        ?:  ?=(%| -.post.parent-node)
+          %.n
+        =(author.p.post.parent-node src.bowl)
+    ==
+  ::
+  ++  add-mark
+    |=  [=resource:res vip=vip-metadata:metadata =indexed-post:store]
+    (perm-mark resource %add vip indexed-post)
+  --
 ::
 ++  is-allowed-remove
+  ~/  %is-allowed-remove
   |=  [=resource:res indices=(set index:store)]
-  ^-  ?
-  %-  (bond |.(%.n))
+  ^-  [? (list card)]
+  |^
+  %-  (bond |.([%.n ~]))
   %+  biff  (get-roles-writers-variation resource)
   |=  [is-admin=? writers=(set ship) vip=vip-metadata:metadata]
-  %-  some  
-  %+  levy  ~(tap by indices)
-  |=  =index:store
-  =/  =node:store
-    (got-node:gra resource index)
-  =/  =permissions:store
-    %^  remove-mark  resource  vip
-    (node-to-indexed-post node)
-  =/  =permission-level:store
-    (get-permission permissions is-admin writers)
-  ?-  permission-level
-    %yes   %.y
-    %no    %.n
-    %self  =(author.post.node src.bowl)
-  ==
-::
-++  build-permissions
-  |=  [=mark kind=?(%add %remove) mode=?(%sing %next)]
-  ^-  card
-  =/  =wire  /perms/[mark]/[kind]
-  =/  =mood:clay  [%c da+now.bowl /[mark]/(perm-mark-name kind)]
-  =/  =rave:clay  ?:(?=(%sing mode) [mode mood] [mode mood])
-  [%pass wire %arvo %c %warp our.bowl %home `rave]
-::
-++  build-transform-add
-  |=  [=mark mode=?(%sing %next)]
-  ^-  card
-  =/  =wire  /transform-add/[mark]
-  =/  =mood:clay  [%c da+now.bowl /[mark]/transform-add-nodes]
-  =/  =rave:clay  ?:(?=(%sing mode) [mode mood] [mode mood])
-  [%pass wire %arvo %c %warp our.bowl %home `rave]
+  %-  some
+  =/  a  ~(tap by indices)
+  =|  cards=(list card)
+  |-  ^-  [? (list card)]
+  ?~  a  [& cards]
+  =/  c  (check i.a is-admin writers vip)
+  ?.  -.c
+    [| (weld cards +.c)]
+  $(a t.a, cards (weld cards +.c))
+  ::
+  ++  check
+    |=  [=index:store is-admin=? writers=(set ship) vip=vip-metadata:metadata]
+    ^-  [? (list card)]
+    =/  =node:store
+      (got-node:gra resource index)
+    ?:  ?=(%| -.post.node)
+      [%.n ~]
+    =/  removed
+      %^  remove-mark  resource  vip
+      (node-to-indexed-post node)
+    =*  permissions   -.removed
+    =*  cards         +.removed
+    =/  =permission-level:store
+      (get-permission permissions is-admin writers)
+    :_  cards
+    ?-  permission-level
+      %yes   %.y
+      %no    %.n
+      %self  =(author.p.post.node src.bowl)
+    ==
+  ::
+  ++  remove-mark
+    |=  [=resource:res vip=vip-metadata:metadata =indexed-post:store]
+    (perm-mark resource %remove vip indexed-post)
+  --
 --
 

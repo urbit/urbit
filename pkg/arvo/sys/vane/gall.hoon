@@ -159,7 +159,10 @@
       ~<  %slog.[0 leaf+"gall: molted"]
       ::  +molt should never notify its client about agent changes
       ::
-      =-  [(skip -< |=(move ?=([* %give %onto *] +<))) ->]
+      =-  :_  ->
+          %+  welp
+            (skip -< |=(move ?=([* %give %onto *] +<)))
+          [^duct %pass /whiz/gall %$ %whiz ~]~
       =/  adult  adult-core
       =.  state.adult
         [%7 system-duct outstanding contacts yokes=~ blocked]:spore
@@ -646,6 +649,7 @@
           ::  cleared queue in +load 3-to-4 or +load-4-to-5
           ::
           =?  stand  ?=(~ stand)
+            ~&  [%gall-missing wire hen]
             (~(put to *(qeu remote-request)) %missing)
           ~|  [full-wire=full-wire hen=hen stand=stand]
           =^  rr  stand  ~(get to stand)

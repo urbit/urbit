@@ -1,31 +1,25 @@
-import React, { useEffect, useCallback, useRef } from 'react';
-import f from 'lodash/fp';
-import _ from 'lodash';
-import moment from 'moment';
-import { BigInteger } from 'big-integer';
-
-import { Col, Center, Box, Text, LoadingSpinner } from '@tlon/indigo-react';
+import { Box, Center, Col, LoadingSpinner, Text, Icon } from '@tlon/indigo-react';
 import {
-  Associations,
-  Notifications,
-  Rolodex,
-  Timebox,
-  IndexedNotification,
-  Groups,
-  JoinRequests,
-  GroupNotificationsConfig,
-  NotificationGraphConfig,
-  Invites as InviteType
-} from '@urbit/api';
+    IndexedNotification,
 
-import { MOMENT_CALENDAR_DATE, daToUnix } from '~/logic/lib/util';
+    JoinRequests, Notifications,
+
+    Timebox,
+    unixToDa
+} from '@urbit/api';
+import { BigInteger } from 'big-integer';
+import _ from 'lodash';
+import f from 'lodash/fp';
+import moment from 'moment';
+import React, { useCallback, useEffect, useRef } from 'react';
 import GlobalApi from '~/logic/api/global';
-import { Notification } from './notification';
-import { Invites } from './invites';
+import { getNotificationKey } from '~/logic/lib/hark';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
+import useLaunchState from '~/logic/state/launch';
+import { daToUnix } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
-import useInviteState from '~/logic/state/invite';
-import useMetadataState from '~/logic/state/metadata';
+import { Invites } from './invites';
+import { Notification } from './notification';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -65,25 +59,18 @@ export default function Inbox(props: {
     };
   }, []);
 
+  const runtimeLag = useLaunchState(state => state.runtimeLag);
+
   const ready = useHarkState(
     s => Object.keys(s.unreads.graph).length > 0
   );
 
   const notificationState = useHarkState(state => state.notifications);
+  const unreadNotes = useHarkState(s => s.unreadNotes);
   const archivedNotifications = useHarkState(state => state.archivedNotifications);
 
   const notifications =
     Array.from(props.showArchive ? archivedNotifications : notificationState) || [];
-
-  const calendar = {
-    ...MOMENT_CALENDAR_DATE, sameDay: function (now) {
-      if (this.subtract(6, 'hours').isBefore(now)) {
-        return '[Earlier Today]';
-      } else {
-        return MOMENT_CALENDAR_DATE.sameDay;
-      }
-    }
-  };
 
   const notificationsByDay = f.flow(
     f.map<DatedTimebox, DatedTimebox>(([date, nots]) => [
@@ -119,32 +106,40 @@ export default function Inbox(props: {
     _.flatten(notifications).length,
     loadMore
   );
+  const date = unixToDa(Date.now());
 
   return (
-    <Col p="1" ref={scrollRef} position="relative" height="100%" overflowY="auto">
+    <Col p={1} ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
+      {runtimeLag && (
+        <Box bg="yellow" borderRadius={2} p={2} m={2}>
+          <Icon verticalAlign="middle" mr={2} icon="Tutorial" />
+          <Text verticalAlign="middle">
+            Update your binary to continue receiving updates.
+          </Text>
+        </Box>
+      )}
       <Invites pendingJoin={props.pendingJoin} api={api} />
+      <DaySection unread key="unread" timeboxes={[[date,unreadNotes]]} api={api} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
           <DaySection
             key={day}
-            label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
             timeboxes={timeboxes}
-            archive={Boolean(props.showArchive)}
             api={api}
           />
         );
       })}
       {isDone ? (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
-          <Text gray fontSize="1">No more notifications</Text>
+        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
+          <Text gray fontSize={1}>No more notifications</Text>
         </Center>
     )  : isLoading ? (
-        <Center mt="2" borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
+        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
           <LoadingSpinner />
         </Center>
     ) : (
-      <Box mt="2" height="96px" />
+      <Box mt={2} height="96px" />
     )}
 
     </Col>
@@ -163,10 +158,9 @@ function sortIndexedNotification(
 }
 
 function DaySection({
-  label,
-  archive,
   timeboxes,
-  api,
+  unread = false,
+  api
 }) {
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {
@@ -178,11 +172,11 @@ function DaySection({
       {_.map(timeboxes.sort(sortTimeboxes), ([date, nots], i: number) =>
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
           <Notification
-            key={j}
+            key={getNotificationKey(date, not)}
             api={api}
             notification={not}
-            archived={archive}
-            time={date}
+            unread={unread}
+            time={!unread ? date : undefined}
           />
         ))
       )}

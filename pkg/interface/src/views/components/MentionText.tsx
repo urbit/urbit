@@ -1,14 +1,12 @@
-import React, { useState, useCallback } from 'react';
-import _ from 'lodash';
-import { Text, Box } from '@tlon/indigo-react';
-import { Contact, Contacts, Content, Group } from '@urbit/api';
-import RichText from '~/views/components/RichText';
-import { cite, useShowNickname, uxToHex, deSig } from '~/logic/lib/util';
-import ProfileOverlay from '~/views/components/ProfileOverlay';
-import { useHistory } from 'react-router-dom';
-import useContactState, {useContact} from '~/logic/state/contact';
-import {referenceToPermalink} from '~/logic/lib/permalinks';
+import { Text } from '@tlon/indigo-react';
+import { Contact, Content, Group } from '@urbit/api';
+import React from 'react';
 import GlobalApi from '~/logic/api/global';
+import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { cite, deSig, useShowNickname } from '~/logic/lib/util';
+import { useContact } from '~/logic/state/contact';
+import ProfileOverlay from '~/views/components/ProfileOverlay';
+import RichText from '~/views/components/RichText';
 
 interface MentionTextProps {
   contact?: Contact;
@@ -41,14 +39,13 @@ export function MentionText(props: MentionTextProps) {
 
 export function Mention(props: {
   ship: string;
-  first?: Boolean;
-  api: any;
+  first?: boolean;
+  api: GlobalApi;
 }) {
   const { ship, first, api, ...rest } = props;
   const contact = useContact(`~${deSig(ship)}`);
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact?.nickname : cite(ship);
-
   return (
     <ProfileOverlay ship={ship} api={api} display="inline">
       <Text
@@ -59,6 +56,8 @@ export function Mention(props: {
         color='blue'
         fontSize={showNickname ? 1 : 0}
         mono={!showNickname}
+        title={showNickname ? cite(ship) : contact?.nickname}
+        {...rest}
       >
         {name}
       </Text>

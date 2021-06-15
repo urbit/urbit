@@ -3,6 +3,12 @@
 ++  grow
   |%
   ++  noun  i
+  ::
+  ++  graph-indexed-post
+    ^-  indexed-post
+    ?>  ?=(^ contents.p.i)
+    i
+  ::
   ++  graph-permissions-add
     |=  vip=vip-metadata:met
     ^-  permissions:graph
@@ -40,13 +46,7 @@
   --
 ++  grab
   |%
-  :: +noun: validate post
-  :: 
-  ++  noun
-    |=  p=*
-    =/  ip  ;;(indexed-post p)
-    ?>  ?=(^ contents.p.ip)
-    ip
+  ++  noun  indexed-post
   --
 ::
 ++  grad  %noun

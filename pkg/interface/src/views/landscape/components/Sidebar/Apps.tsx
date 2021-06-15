@@ -1,7 +1,5 @@
-import { useCallback } from 'react';
-
 import { Graphs, UnreadStats } from '@urbit/api';
-
+import { useCallback } from 'react';
 import { SidebarAppConfig } from './types';
 
 export function useGraphModule(
@@ -21,7 +19,7 @@ export function useGraphModule(
       if (
         notifications &&
         ((typeof notifications === 'number' && notifications > 0)
-        || notifications.length)
+        || typeof notifications === 'object' && notifications.length)
       ) {
         return 'notification';
       }
