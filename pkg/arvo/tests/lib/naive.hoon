@@ -150,54 +150,31 @@
   +$  event-jar  (jar @p event)
   ::
   ++  make-success-map
+    :: +make-success-map maps each event to whether or not that combination of factors
+    :: ought to succeed or fail, for testing purposes. this is not a complete description atm
+    :: for instance, it does not take into account whether you are trying to spawn a planet
+    :: available to you or move to a sponsor of the correct rank.
+    ::
+    :: it is also done in a more verbose style than strictly necessary to make it easier
+    :: to read through and determine why a particular event is labeled with %.y or %.n
+    :: and to make it easier to do future modifications
+    ::
     |=  =event-list  ^-  success-map
     =|  =success-map
     |^
     ?~  event-list  success-map
-    =/  current-event  i.event-list
-    ::
-    ?:  ?|  =(owner.current-event %.n)
-            =(nonce.current-event %.n)
+    =/  cur-event  i.event-list
+    ::  check owner or nonce first
+    ?:  ?|  =(owner.cur-event %.n)
+            =(nonce.cur-event %.n)
         ==
-        (add-event-check current-event %.n)
-    ::
-    ::  galaxies and stars can do sponsorship options regardless of
-    ::  dominion (though see TODO below on edge cases)
-    ::
-    ?:  ?&  =(rank.current-event ?(%galaxy %star))
-            =(tx-type.current-event ?(%adopt %reject %detach))
-            =(proxy.current-event ?(%own %manage))
-        ==
-        (add-event-check current-event %.y)
-    ::
-    ::  otherwise, all events from %l1 points should fail
-    ::
-    ?:  =(dominion.current-event %l1)
-    (add-event-check current-event %.n)
-    ::
-    ::  planets cannot be sponsors
-    ?:  ?&  =(rank.current-event %planet)
-            =(tx-type.current-event ?(%adopt %reject %detach))
-        ==
-        (add-event-check current-event %.n)
-    ::
-    ::  planets cant use %spawn proxy
-    ::
-    ?:  ?&  =(dominion.current-event %spawn)
-            =(rank.current-event %planet)
-        ==
-        (add-event-check current-event %.n)
-    ::
-    :: %spawn stars can only %spawn with %own and %spawn proxies
-    ?:  ?&  =(dominion.current-event %spawn) :: this implies rank=%star
-            !=(proxy.current-event ?(%own %spawn))
-        ==
-        (add-event-check current-event %.n)
-    ::
-    =/  final-check  :+  dominion.current-event
-                       proxy.current-event
-                     tx-type.current-event
-    (add-event-check current-event (tx-succeed final-check))
+        (add-event-check cur-event %.n)
+    ::  check dominion next
+    ?-  dominion.cur-event
+      %l1     (add-event-check cur-event (l1-check cur-event))
+      %spawn  (add-event-check cur-event (spawnd-check cur-event))
+      %l2     (add-event-check cur-event (l2-check cur-event))
+    ==
     ::
     ++  add-event-check
       |=  [=event suc=?]
@@ -206,55 +183,189 @@
           event-list   +.event-list
       ==
     ::
-    ::  galaxies and stars can %adopt %reject %detach regardless of
-    ::  dominion. planets cannot do any of these. though L2 sponsorship
-    ::  actions should only be possible if the sponsee is on L2, so this
-    ::  actually needs to check the content of the tx...
-    ::  TODO: gonna leave sponsorship tests aside for now because
-    ::  they're more complicated
-    ::
-    ::  ++  sponsorship-check
-    ::    |=  [=rank =proxy:naive =tx-type]  ^-  ?
-    ::    %.y
-    ::
-    ::  checks to see if a given proxy+event combo should work, assuming that
-    ::  the pk and nonce are correct
-    ::
-    ++  tx-succeed
-      |=  [=dominion:naive =proxy:naive =tx-type]  ^-  ?
-      ?:  =(proxy %own)
-        %.y
-      ?:  =(proxy %vote)
-        %.n
-      ::  planet case already excluded
-      ?-  tx-type
-        ?(%spawn %set-spawn-proxy)
-          ?+  proxy    %.n
-            %spawn     %.y
-            %manage    %.n
-            %vote      %.n
-          ==
-        ?(%transfer-point %set-transfer-proxy)
-          ?.  =(dominion %l2)
-            %.n
-          ?+  proxy    %.n
-            %spawn     %.n
-            %manage    %.n
-            %transfer  %.y
-          ==
-        $?   %configure-keys  %escape  %cancel-escape  %adopt
-             %reject  %detach  %set-management-proxy
-        ==
-          ?.  =(dominion %l2)
-            %.n
-          ?+  proxy    %.n
-            %spawn     %.n
-            %manage    %.y
-            %transfer  %.n
-          ==
-        ==
+    ++  l1-check
+      |^
+      |=  cur-event=event  ^-  ?
+      ?-  proxy.cur-event
+        %own       (manage-own-check cur-event)
+        %spawn     %.n
+        %manage    (manage-own-check cur-event)
+        %vote      %.n
+        %transfer  %.n
+      ==
       ::
-      --
+      ++  manage-own-check
+        |^
+        |=  cur-event=event  ^-  ?
+        ?-  rank.cur-event
+          %galaxy  (galaxy-check cur-event)
+          %star    (star-check cur-event)
+          %planet  (planet-check cur-event)
+        ==
+        ++  galaxy-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %adopt   %.y
+            %reject  %.y
+            %detach  %.y
+          ==
+        ++  star-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %adopt          %.y
+            %reject         %.y
+            %detach         %.y
+            %escape         %.y
+            %cancel-escape  %.y
+          ==
+        ++  planet-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %escape         %.y
+            %cancel-escape  %.y
+          ==
+        ::
+        --  :: +manage-own-check
+      ::
+      --  ::  +l1-check
+    ::
+    ++  spawnd-check
+      |^
+      |=  cur-event=event  ^-  ?
+      ?-  rank.cur-event
+        %galaxy  %.n
+        %star    (star-check cur-event)
+        %planet  %.n
+      ==
+      ++  star-check
+        |^
+        |=  cur-event=event  ^-  ?
+        ?-  proxy.cur-event
+          %own       (ownp-check cur-event)
+          %manage    (managep-check cur-event)
+          %spawn     (spawnp-check cur-event)
+          %vote      %.n
+          %transfer  %.n
+        ==
+        ++  ownp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %spawn          %.y
+            %adopt          %.y
+            %reject         %.y
+            %detach         %.y
+            %escape         %.y
+            %cancel-escape  %.y
+          ==
+        ++  managep-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %adopt          %.y
+            %reject         %.y
+            %detach         %.y
+            %escape         %.y
+            %cancel-escape  %.y
+          ==
+        ++  spawnp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %spawn  %.y
+          ==
+        --  ::  +star-check
+      ::
+      --  :: +spawnd-check
+    ::
+    ++  l2-check
+      |^
+      |=  cur-event=event  ^-  ?
+      ?-  rank.cur-event
+        %galaxy  %.n
+        %star    (star-check cur-event)
+        %planet  (planet-check cur-event)
+      ==
+      ++  star-check
+        |^
+        |=  cur-event=event  ^-  ?
+        ?-  proxy.cur-event
+          %own       %.y
+          %manage    (managep-check cur-event)
+          %spawn     (spawnp-check cur-event)
+          %vote      %.n
+          %transfer  (transferp-check cur-event)
+        ==
+        ++  managep-check
+          |=  cur-event=event  ^-  ?
+          ?-  tx-type.cur-event
+            %configure-keys        %.y
+            %escape                %.y
+            %cancel-escape         %.y
+            %adopt                 %.y
+            %reject                %.y
+            %detach                %.y
+            %set-management-proxy  %.y
+            %set-spawn-proxy       %.n
+            %set-transfer-proxy    %.n
+            %transfer-point        %.n
+            %spawn                 %.n
+          ==
+        ++  spawnp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %spawn            %.y
+            %set-spawn-proxy  %.y
+          ==
+        ++  transferp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %transfer-point      %.y
+            %set-transfer-proxy  %.y  :: TODO: double check this
+          ==
+        --  :: +star-check
+      ++  planet-check
+        |^
+        |=  cur-event=event  ^-  ?
+        ?-  proxy.cur-event
+          %own       (ownp-check cur-event)
+          %manage    (managep-check cur-event)
+          %spawn     %.n
+          %vote      %.n
+          %transfer  (transferp-check cur-event)
+        ==
+        ++  ownp-check
+          |=  cur-event=event  ^-  ?
+          ?-  tx-type.cur-event
+            %transfer-point        %.y
+            %spawn                 %.n
+            %configure-keys        %.y
+            %escape                %.y
+            %cancel-escape         %.y
+            %adopt                 %.n
+            %reject                %.n
+            %detach                %.n
+            %set-management-proxy  %.y
+            %set-spawn-proxy       %.n
+            %set-transfer-proxy    %.n
+          ==
+        ++  managep-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event    %.n
+            %configure-keys        %.y
+            %escape                %.y
+            %cancel-escape         %.y
+            %set-management-proxy  %.y
+          ==
+        ++  transferp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.y
+            %transfer-point      %.y
+            %set-transfer-proxy  %.y
+          ==
+        ::
+        --  ::  +planet-check
+      ::
+      --  ::  +l2-check
+    ::
+    --  ::  make-success-map
   ::
   ++  filter-tx-type
     |=  [typs=(list =tx-type) =event-list]
@@ -434,9 +545,10 @@
                     (cury filter-owner %.y)
                     (cury filter-proxy %own)
                     (cury filter-nonce %.y)
+                    (cury filter-dominion %spawn)
                     %-  cury
                     :-  filter-tx-type
-                    :*  ::  %spawn  ::  currently crashes
+                    :*  %spawn  ::  currently crashes
                         %transfer-point
                         %configure-keys
                         %set-management-proxy
@@ -689,8 +801,9 @@
     ==
     ::
     ++  check-spawn  ^-  ?
+      ~&  ['check-spawn' cur-ship]
       .=  =<  address.transfer-proxy.own
-          (~(got by points.state) which-spawn)
+          (~(got by points.state) `@p`which-spawn)
       (addr %spawn-test)
     ::
     ++  check-xfer-point  ^-  ?
