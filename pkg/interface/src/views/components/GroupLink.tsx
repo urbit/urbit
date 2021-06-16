@@ -39,7 +39,7 @@ export function GroupLink(
     >
       {modal}
       <Row
-        width="fit-content"
+        width="100%"
         flexShrink={1}
         alignItems="center"
         py={2}

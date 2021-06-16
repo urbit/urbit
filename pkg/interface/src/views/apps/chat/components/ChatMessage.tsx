@@ -154,16 +154,17 @@ export const MessageAuthor = React.memo<any>(({
             fontWeight={nameMono ? '400' : '500'}
             cursor='pointer'
             onClick={doCopy}
-            title={`~${msg.author}`}
+            title={showNickname ? `~${msg.author}` : contact?.nickname}
           >
             {copyDisplay}
           </Text>
-          <Text flexShrink={0} fontSize={0} gray>
+          <Text whiteSpace='nowrap' flexShrink={0} fontSize={0} gray>
             {timestamp}
           </Text>
           <Text
             flexShrink={0}
             fontSize={0}
+            whiteSpace='nowrap'
             gray
             ml={2}
             display={['none', hovering ? 'block' : 'none']}
@@ -200,6 +201,7 @@ export const Message = React.memo(({
           top='2px'
           lineHeight="tall"
           fontSize={0}
+          whiteSpace='nowrap'
           gray
         >
           {timestamp}

@@ -4,6 +4,7 @@ import React from 'react';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import { cite, deSig, useShowNickname } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
+import { PropFunc } from '~/types';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
 import RichText from '~/views/components/RichText';
 
@@ -38,12 +39,11 @@ export function MentionText(props: MentionTextProps) {
 export function Mention(props: {
   ship: string;
   first?: boolean;
-}) {
-  const { ship, first = false } = props;
+} & PropFunc<typeof Text>) {
+  const { ship, first = false, ...rest } = props;
   const contact = useContact(`~${deSig(ship)}`);
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact?.nickname : cite(ship);
-
   return (
     <ProfileOverlay ship={ship} display="inline">
       <Text
@@ -54,6 +54,8 @@ export function Mention(props: {
         color='blue'
         fontSize={showNickname ? 1 : 0}
         mono={!showNickname}
+        title={showNickname ? cite(ship) : contact?.nickname}
+        {...rest}
       >
         {name}
       </Text>

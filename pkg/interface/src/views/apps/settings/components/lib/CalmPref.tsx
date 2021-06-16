@@ -3,9 +3,9 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { Form, FormikHelpers } from 'formik';
 import { putEntry } from '@urbit/api/settings';
 import React, { useCallback } from 'react';
+import { Form } from 'formik';
 import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { BackButton } from './BackButton';
 import _ from 'lodash';
@@ -39,17 +39,14 @@ const settingsSel = (s: SettingsState): FormSchema => ({
 export function CalmPrefs() {
   const initialValues = useSettingsState(settingsSel);
 
-  const onSubmit = useCallback(async (v: FormSchema, actions: FormikHelpers<FormSchema>) => {
-    const promises: Promise<any>[] = [];
+  const onSubmit = useCallback(async (v: FormSchema) => {
     _.forEach(v, (bool, key) => {
       const bucket = ['imageShown', 'videoShown', 'audioShown', 'oembedShown'].includes(key) ? 'remoteContentPolicy' : 'calm';
       if(initialValues[key] !== bool) {
-        promises.push(airlock.poke(putEntry(bucket, key, bool)));
+        airlock.poke(putEntry(bucket, key, bool));
       }
     });
-    await Promise.all(promises);
-    actions.setStatus({ success: null });
-  }, []);
+  }, [initialValues]);
 
   return (
     <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>

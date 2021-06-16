@@ -748,7 +748,7 @@
     %-  ~(gas by *(map index:store node:store))
     %+  turn  
       ?:  older
-        (tab:orm u.graph ~ count)
+        (tab:orm u.graph `(rear index) count)
       :: TODO time complexity not desirable for %younger case
       ::
       %+  slag  (safe-sub (lent -) count)
