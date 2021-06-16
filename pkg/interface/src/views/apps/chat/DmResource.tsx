@@ -165,7 +165,7 @@ export function DmResource(props: DmResourceProps) {
         fetchMessages={fetchMessages}
         dismissUnread={dismissUnread}
         getPermalink={() => undefined}
-        isAdmin
+        isAdmin={false}
         onSubmit={onSubmit}
       />
     </Col>
