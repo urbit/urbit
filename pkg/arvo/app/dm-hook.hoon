@@ -191,7 +191,9 @@
     =.  ship-screen  (~(uni in ship-screen) (normalize-incoming nodes))
     =.  screened  (~(put by screened) src.bowl ship-screen)
     :_  state
-    (fact:io dm-hook-action+!>([%pendings ~(key by screened)]) ~[/updates])^~
+    =/  =action:hook
+      [%pendings ~(key by screened)]
+    (fact:io dm-hook-action+!>(action) ~[/updates])^~
   ::
   ++  dm-exists
     |=  =ship
