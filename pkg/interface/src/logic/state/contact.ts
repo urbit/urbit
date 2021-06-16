@@ -1,18 +1,18 @@
-import { Patp, Rolodex, Scry } from "@urbit/api";
-
-import { BaseState, createState } from "./base";
+import { Contact, Patp, Rolodex } from '@urbit/api';
+import { useCallback } from 'react';
+import { BaseState, createState } from './base';
 
 export interface ContactState extends BaseState<ContactState> {
   contacts: Rolodex;
   isContactPublic: boolean;
   nackedContacts: Set<Patp>;
   // fetchIsAllowed: (entity, name, ship, personal) => Promise<boolean>;
-};
+}
 
 const useContactState = createState<ContactState>('Contact', {
   contacts: {},
   nackedContacts: new Set(),
-  isContactPublic: false,
+  isContactPublic: false
   // fetchIsAllowed: async (
   //   entity,
   //   name,
@@ -27,5 +27,15 @@ const useContactState = createState<ContactState>('Contact', {
   //   });
   // },
 }, ['nackedContacts']);
+
+export function useContact(ship: string) {
+  return useContactState(
+    useCallback(s => s.contacts[ship] as Contact | null, [ship])
+  );
+}
+
+export function useOurContact() {
+  return useContact(`~${window.ship}`);
+}
 
 export default useContactState;

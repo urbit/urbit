@@ -1,31 +1,26 @@
-import React, {
-  useMemo,
-  useCallback,
-  ChangeEvent,
-  useRef,
-  ReactElement
-} from 'react';
+import {
+    Col,
+    ErrorLabel, Icon, Label,
+
+    Row, Text
+} from '@tlon/indigo-react';
+import { Groups, Rolodex } from '@urbit/api';
+import { FieldArray, useFormikContext } from 'formik';
 import _ from 'lodash';
+import React, {
+    ChangeEvent,
+
+    ReactElement, useCallback, useMemo,
+
+    useRef
+} from 'react';
 import ob from 'urbit-ob';
 import * as Yup from 'yup';
-import { FieldArray, useFormikContext } from 'formik';
-
-import {
-  Label,
-  Icon,
-  Text,
-  Row,
-  Col,
-  ErrorLabel
-} from '@tlon/indigo-react';
-import { Rolodex, Groups } from '@urbit/api';
-
-
-import { DropdownSearch } from './DropdownSearch';
 import { cite, deSig } from '~/logic/lib/util';
-import { HoverBox } from './HoverBox';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import { DropdownSearch } from './DropdownSearch';
+import { HoverBox } from './HoverBox';
 
 interface InviteSearchProps<I extends string> {
   autoFocus?: boolean;
@@ -157,7 +152,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
     setFieldValue(name(), newValue);
   };
 
-  const error = _.compact(errors[id] as string[]);
+  const error = _.compact((_.isString(errors[id]) ? [errors[id]] : errors[id] as string[]) as any);
 
   const isExact = useCallback((s: string) => {
     const ship = `~${deSig(s)}`;
@@ -186,13 +181,13 @@ export function ShipSearch<I extends string, V extends Value<I>>(
           <Col>
             <Label htmlFor={id}>{label}</Label>
             {caption && (
-              <Label gray mt="2">
+              <Label gray mt={2}>
                 {caption}
               </Label>
             )}
 
             <DropdownSearch<string>
-              mt="2"
+              mt={2}
               isExact={isExact}
               placeholder="Search for ships"
               candidates={peers}
@@ -215,7 +210,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
                   py={1}
                   px={2}
                   color="black"
-                  borderRadius="2"
+                  borderRadius={2}
                   bg="washedGray"
                   fontSize={0}
                   mt={2}
@@ -231,7 +226,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
                 </Row>
               ))}
             </Row>
-            <ErrorLabel mt="3" hasError={error.length > 0}>
+            <ErrorLabel mt={3} hasError={error.length > 0}>
               {error.join(', ')}
             </ErrorLabel>
           </Col>

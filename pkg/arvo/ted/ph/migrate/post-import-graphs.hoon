@@ -12,9 +12,9 @@
   |=  [our=@p wen=@da rid=resource body=cord id=@]
   =/  =index:post  [id]~
   =/  =post:post  [our index wen [%text body]~ ~ ~]
-  =/  =node:graph-store  [post %empty ~]
-  =/  act=update:graph-store  [%0 wen %add-nodes rid (my [index node] ~)]
-  (poke-app our %graph-push-hook %graph-update-0 act)
+  =/  =node:graph-store  [[%& post] %empty ~]
+  =/  act=update:graph-store  [wen %add-nodes rid (my [index node] ~)]
+  (poke-app our %graph-push-hook %graph-update-2 act)
 --
 ::
 ^-  thread:spider

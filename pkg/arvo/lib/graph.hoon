@@ -19,7 +19,7 @@
       %add-graph          ~[resource.q.update]
       %remove-graph       ~[resource.q.update]
       %add-nodes          ~[resource.q.update]
-      %remove-nodes       ~[resource.q.update]
+      %remove-posts       ~[resource.q.update]
       %add-signatures     ~[resource.uid.q.update]
       %remove-signatures  ~[resource.uid.q.update]
       %archive-graph      ~[resource.q.update]
@@ -32,9 +32,51 @@
       %run-updates        ~[resource.q.update]
   ==
 ::
+++  upgrade
+  |*  [pst=mold out-pst=mold]
+  =>
+    |%
+    ++  orm
+      ((ordered-map atom node) gth)
+    +$  node
+      [post=pst children=internal-graph]
+    +$  graph
+      ((mop atom node) gth)
+    +$  internal-graph
+      $~  [%empty ~]
+      $%  [%graph p=graph]
+          [%empty ~]
+      ==
+    ::
+    ++  out-orm
+      ((ordered-map atom out-node) gth)
+    +$  out-node
+      [post=out-pst children=out-internal-graph]
+    +$  out-graph
+      ((mop atom out-node) gth)
+    +$  out-internal-graph
+      $~  [%empty ~]
+      $%  [%graph p=out-graph]
+          [%empty ~]
+      ==
+    --
+
+  |=  $:  gra=graph
+          fn=$-(pst out-pst)
+      ==
+  ^-  out-graph
+  %-  gas:out-orm
+  %+  turn  (tap:orm gra)
+  |=  [=atom =node]
+  :-  (fn post.node)
+  ?:  ?=(%empty -.children.node)
+    [%empty ~]
+  $(gra p.children.node)
+::
 ++  get-graph
   |=  res=resource
   ^-  update:store
+  =-  -(p *time)
   %+  scry-for  update:store
   /graph/(scot %p entity.res)/[name.res]
 ::
@@ -43,7 +85,6 @@
   ^-  graph:store
   =/  =update:store
     (get-graph res)
-  ?>  ?=(%0 -.update)
   ?>  ?=(%add-graph -.q.update)
   graph.q.update
 ::
@@ -54,7 +95,6 @@
       %+  weld
         /node-siblings/younger/(scot %p entity.res)/[name.res]/all
       (turn index (cury scot %ud))
-  ?>  ?=(%0 -.update)
   ?>  ?=(%add-nodes -.q.update)
   nodes.q.update
 ::
@@ -65,7 +105,6 @@
       %+  weld
         /node/(scot %p entity.res)/[name.res]
       (turn index (cury scot %ud))
-  ?>  ?=(%0 -.update)
   ?>  ?=(%add-nodes -.q.update)
   ?>  ?=(^ nodes.q.update)
   q.n.nodes.q.update
@@ -99,7 +138,6 @@
   ^-  resources
   =+  %+  scry-for  ,=update:store
       /keys
-  ?>  ?=(%0 -.update)
   ?>  ?=(%keys -.q.update)
   resources.q.update
 ::

@@ -24,15 +24,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "h2o": {
-        "branch": "master",
+        "branch": "v2.2.x",
         "description": "H2O - the optimized HTTP/1, HTTP/2, HTTP/3 server",
         "homepage": "https://h2o.examp1e.net",
         "owner": "h2o",
         "repo": "h2o",
-        "rev": "v2.2.4",
-        "sha256": "0176x0bzjry19zs074a9i5vhncc842xikmx43wj61jky318nq4w4",
+        "rev": "7359e98d78d018a35f5da7523feac69f64eddb4b",
+        "sha256": "0qni676wqvxx0sl0pw9j0ph7zf2krrzqc1zwj73mgpdnsr8rsib7",
         "type": "tarball",
-        "url": "https://github.com/h2o/h2o/archive/v2.2.4.tar.gz",
+        "url": "https://github.com/h2o/h2o/archive/7359e98d78d018a35f5da7523feac69f64eddb4b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "hackage.nix": {

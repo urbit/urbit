@@ -14,7 +14,7 @@
       update:store
       %metadata-update
       %metadata-pull-hook
-      0  0
+      1  1
   ==
 ::
 +$  agent  (push-hook:push-hook config)
@@ -36,7 +36,7 @@
 ++  on-init  on-init:def
 ++  on-save  !>(~)
 ++  on-load    on-load:def
-++  on-poke   
+++  on-poke
   |=  [=mark =vase]
   ?.  ?=(%metadata-hook-update mark)
     (on-poke:def mark vase)
@@ -59,8 +59,9 @@
 ::
 ++  transform-proxy-update
   |=  vas=vase
-  ^-  (unit vase)
+  ^-  (quip card (unit vase))
   =/  =update:store  !<(update:store vas)
+  :-  ~
   ?.  ?=(?(%add %remove) -.update)
     ~
   =/  role=(unit (unit role-tag))
@@ -76,7 +77,7 @@
           !(is-managed:grp group.update)
       ==
     ~
-  ?^  u.role  
+  ?^  u.role
     ?:  ?=(?(%admin %moderator) u.u.role)
       `vas
     ~

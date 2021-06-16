@@ -1,7 +1,6 @@
+import { Box, BoxProps, Text } from '@tlon/indigo-react';
 import moment, { Moment as MomentType } from 'moment';
 import React, { ReactElement } from 'react';
-
-import { Box, BoxProps, Text } from '@tlon/indigo-react';
 import { useHovering } from '~/logic/lib/util';
 
 export const DateFormat = 'YYYY.M.D';
@@ -11,27 +10,52 @@ export type TimestampProps = BoxProps & {
   stamp: MomentType;
   date?: boolean;
   time?: boolean;
+  relative?: boolean;
+  dateNotRelative?: boolean;
+  height?: string;
+  color?: string;
 };
 
 const Timestamp = (props: TimestampProps): ReactElement | null => {
-  const { stamp, date, time, color, fontSize, ...rest } = {
+  const {
+    stamp,
+    date,
+    time,
+    color,
+    relative,
+    dateNotRelative = false,
+    fontSize,
+    lineHeight,
+    ...rest
+  } = {
     time: true,
     color: 'gray',
     fontSize: 0,
     ...props
   };
-  if (!stamp) return null;
+  if (!stamp)
+return null;
   const { hovering, bind } =
     date === true ? { hovering: true, bind: {} } : useHovering();
   let datestamp = stamp.format(DateFormat);
-  if (stamp.format(DateFormat) === moment().format(DateFormat)) {
-    datestamp = 'Today';
-  } else if (
-    stamp.format(DateFormat) === moment().subtract(1, 'day').format(DateFormat)
-  ) {
-    datestamp = 'Yesterday';
+  if (!dateNotRelative) {
+    if (stamp.format(DateFormat) === moment().format(DateFormat)) {
+      datestamp = 'Today';
+    } else if (
+      stamp.format(DateFormat) === moment().subtract(1, 'day').format(DateFormat)
+    ) {
+      datestamp = 'Yesterday';
+    }
+  } else {
+    datestamp = `~${datestamp}`;
   }
-  const timestamp = stamp.format(TimeFormat);
+
+  let timestamp;
+  if (relative) {
+    timestamp = stamp.fromNow();
+  } else {
+    timestamp = stamp.format(TimeFormat);
+  }
   return (
     <Box
       {...bind}
@@ -42,14 +66,15 @@ const Timestamp = (props: TimestampProps): ReactElement | null => {
       title={stamp.format(DateFormat + ' ' + TimeFormat)}
     >
       {time && (
-        <Text flexShrink={0} color={color} fontSize={fontSize}>
+        <Text lineHeight={lineHeight} flexShrink={0} color={color} fontSize={fontSize}>
           {timestamp}
         </Text>
       )}
-      {date !== false && (
+      {date !== false && relative !== true && (
         <Text
           flexShrink={0}
           color={color}
+          lineHeight={lineHeight}
           fontSize={fontSize}
           display={time ? ['none', hovering ? 'block' : 'none'] : 'block'}
         >

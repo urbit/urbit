@@ -90,7 +90,12 @@
   $:  tracking=(map resource track)
       inner-state=vase
   ==
-      
+::
++$  base-state-3
+  $:  prev-version=@ud
+      prev-min-version=@ud
+      base-state-2
+  ==
 ::
 +$  state-0  [%0 base-state-0]
 ::
@@ -100,12 +105,23 @@
 ::
 +$  state-3  [%3 base-state-2]
 ::
++$  state-4  [%4 base-state-3]
+::
 +$  versioned-state 
   $%  state-0
       state-1
       state-2
       state-3
+      state-4
   ==
+::  +diplomatic: only renegotiate if versions changed
+::    
+::    If %.n please leave note as to why renegotiation necessary
+::    
+::
+++  diplomatic
+  ^-  ?
+  %.y
 ::
 ++  default
   |*  [pull-hook=* =config]
@@ -198,7 +214,7 @@
 ++  agent
   |*  =config
   |=  =(pull-hook config)
-  =|  state-3
+  =|  state-4
   =*  state  -
   ^-  agent:gall
   =<
@@ -224,13 +240,21 @@
       =|  cards=(list card:agent:gall)
       |^ 
       ?-  -.old
-          %3  
+          %4
         =^  og-cards   pull-hook
           (on-load:og inner-state.old)
         =.  state  old
+        =/  kick=(list card)
+          ?:  ?&  =(min-version.config prev-min-version.old)
+                  =(version.config prev-version.old)
+                  diplomatic
+              ==
+            ~
+          (poke-self:pass kick+!>(%kick))^~
         :_  this
-        :(weld cards og-cards (poke-self:pass kick+!>(%kick))^~)
+        :(weld cards og-cards kick)
        ::
+          %3  $(old [%4 0 0 +.old])
           %2  $(old (state-to-3 old))
           %1  $(old [%2 +.old ~])
           %0  !!  :: pre-breach
@@ -255,8 +279,10 @@
     ::
     ++  on-save
       ^-  vase
-      =.  inner-state
-        on-save:og
+      =:  inner-state       on-save:og
+          prev-min-version  min-version.config
+          prev-version      version.config
+        ==
       !>(state)
     ::
     ++  on-poke
@@ -422,6 +448,7 @@
         ?~  tan  tr-core
         ?.  versioned
           (tr-ap-og:tr-cleanup |.((on-pull-nack:og rid u.tan)))
+        %-  (slog leaf+"versioned nack for {<rid>} in {<dap.bowl>}" u.tan)
         =/  pax
           (kick-mule:virt rid |.((on-pull-kick:og rid)))
         ?~  pax  tr-failed-kick
@@ -440,19 +467,24 @@
         =/  fact-ver=@ud
           (read-version:ver p.cage)
         ?.  (gte fact-ver min-version.config)
+          ?.  versioned
+            ::  don't process unversioned, unsupported facts
+            ::  just wait for publisher to upgrade and kick the
+            ::  subscription
+            tr-core
           (tr-suspend-pub-ver min-version.config)
-        =/  =vase
+        =/  =^cage
           (convert-to:ver cage)
         =/  =wire
           (make-wire /store)
-        =+  resources=(~(gas in *(set resource)) (resource-for-update:og vase))
+        =+  resources=(~(gas in *(set resource)) (resource-for-update:og q.cage))
         ?>  ?|  no-validate.config
             ?&  (check-src resources)
                 (~(has in resources) rid)
             ==  ==
         =/  =mark
           (append-version:ver version.config)
-        (tr-emit (~(poke-our pass wire) store-name.config mark vase))
+        (tr-emit (~(poke-our pass wire) store-name.config cage))
       --
     ::
     ++  tr-kick
@@ -467,6 +499,7 @@
     ::
     ++  tr-add
       |=  [s=^ship r=resource]
+      ?<  =(s our.bowl)
       =:  ship  s
           rid   r
           status  [%active ~]

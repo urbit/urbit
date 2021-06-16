@@ -1,23 +1,19 @@
 import {
-  Notifications,
   NotifIndex,
-  NotificationGraphConfig,
-  GroupNotificationsConfig,
-  UnreadStats,
   Timebox
 } from '@urbit/api';
-import { makePatDa } from '~/logic/lib/util';
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import { BigInteger } from 'big-integer';
 import _ from 'lodash';
-import { BigIntOrderedMap } from '../lib/BigIntOrderedMap';
-import useHarkState, { HarkState } from '../state/hark';
 import { compose } from 'lodash/fp';
+import { makePatDa } from '~/logic/lib/util';
 import { reduceState } from '../state/base';
-import bigInt, {BigInteger} from 'big-integer';
+import useHarkState, { HarkState } from '../state/hark';
 
 export const HarkReducer = (json: any) => {
   const data = _.get(json, 'harkUpdate', false);
   if (data) {
-    reduce(data);
+    reduceState(useHarkState, data, [reduce]);
   }
   const graphHookData = _.get(json, 'hark-graph-hook-update', false);
   if (graphHookData) {
@@ -26,7 +22,7 @@ export const HarkReducer = (json: any) => {
       graphIgnore,
       graphListen,
       graphWatchSelf,
-      graphMentions,
+      graphMentions
     ]);
   }
   const groupHookData = _.get(json, 'hark-group-hook-update', false);
@@ -34,13 +30,14 @@ export const HarkReducer = (json: any) => {
     reduceState<HarkState, any>(useHarkState, groupHookData, [
       groupInitial,
       groupListen,
-      groupIgnore,
+      groupIgnore
     ]);
   }
 };
 
-function reduce(data) {
-  reduceState<HarkState, any>(useHarkState, data, [
+function reduce(data, state) {
+  const reducers = [
+    calculateCount,
     unread,
     read,
     archive,
@@ -55,21 +52,32 @@ function reduce(data) {
     unreadEach,
     seenIndex,
     removeGraph,
-    readAll,
-    calculateCount
-  ]);
+    readAll
+  ];
+  const reducer = compose(reducers.map(r => (s) => {
+    return r(data, s);
+  }));
+  return reducer(state);
 }
 
 function calculateCount(json: any, state: HarkState) {
   let count = 0;
   _.forEach(state.unreads.graph, (graphs) => {
-    _.forEach(graphs, graph => {
-      count += (graph?.notifications || []).length;
+    _.forEach(graphs, (graph) => {
+      if (typeof graph?.notifications === 'object') {
+        count += graph?.notifications.length;
+      } else {
+        count += 0;
+      }
     });
   });
-  _.forEach(state.unreads.group, group => {
-    count += (group?.notifications || []).length;
-  })
+  _.forEach(state.unreads.group, (group) => {
+    if (typeof group?.notifications === 'object') {
+      count += group?.notifications.length;
+    } else {
+      count += 0;
+    }
+  });
   state.notificationsCount = count;
   return state;
 }
@@ -147,8 +155,8 @@ function graphWatchSelf(json: any, state: HarkState): HarkState {
 
 function readAll(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-all');
-  if(data) { 
-    state = clearState(state);
+  if(data) {
+    clearState(state);
   }
   return state;
 }
@@ -164,7 +172,7 @@ function removeGraph(json: any, state: HarkState): HarkState {
 function seenIndex(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'seen-index');
   if(data) {
-    state = updateNotificationStats(state, data.index, 'last', () => data.time);
+    updateNotificationStats(state, data.index, 'last', () => data.time);
   }
   return state;
 }
@@ -172,7 +180,7 @@ function seenIndex(json: any, state: HarkState): HarkState {
 function readEach(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-each');
   if (data) {
-    state = updateUnreads(state, data.index, u => u.delete(data.target));
+    updateUnreads(state, data.index, u => u.delete(data.target));
   }
   return state;
 }
@@ -180,7 +188,7 @@ function readEach(json: any, state: HarkState): HarkState {
 function readSince(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'read-count');
   if(data) {
-    state = updateUnreadCount(state, data, () => 0);
+    updateUnreadCount(state, data, () => 0);
   }
   return state;
 }
@@ -188,7 +196,7 @@ function readSince(json: any, state: HarkState): HarkState {
 function unreadSince(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unread-count');
   if(data) {
-    state = updateUnreadCount(state, data.index, u => u + 1);
+    updateUnreadCount(state, data.index, u => u + 1);
   }
   return state;
 }
@@ -196,7 +204,7 @@ function unreadSince(json: any, state: HarkState): HarkState {
 function unreadEach(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unread-each');
   if(data) {
-    state = updateUnreads(state, data.index, us => us.add(data.target));
+    updateUnreads(state, data.index, us => us.add(data.target));
   }
   return state;
 }
@@ -204,7 +212,7 @@ function unreadEach(json: any, state: HarkState): HarkState {
 function unreads(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'unreads');
   if(data) {
-    state = clearState(state);
+    clearState(state);
     data.forEach(({ index, stats }) => {
       const { unreads, notifications, last } = stats;
       updateNotificationStats(state, index, 'last', () => last);
@@ -212,11 +220,11 @@ function unreads(json: any, state: HarkState): HarkState {
         addNotificationToUnread(state, index, makePatDa(time));
       });
       if('count' in unreads) {
-        state = updateUnreadCount(state, index, (u = 0) => u + unreads.count);
+        updateUnreadCount(state, index, (u = 0) => u + unreads.count);
       } else {
-        state = updateUnreads(state, index, s => new Set());
+        updateUnreads(state, index, s => new Set());
         unreads.each.forEach((u: string) => {
-          state = updateUnreads(state, index, s => s.add(u));
+          updateUnreads(state, index, s => s.add(u));
         });
       }
     });
@@ -240,10 +248,8 @@ function clearState(state: HarkState): HarkState {
     },
     notificationsCount: 0
   };
+  Object.assign(state, initialState);
 
-  Object.keys(initialState).forEach((key) => {
-    state[key] = initialState[key];
-  });
   return state;
 }
 
@@ -262,7 +268,7 @@ function updateUnreads(state: HarkState, index: NotifIndex, f: (us: Set<string>)
   if(!('graph' in index)) {
     return state;
   }
-  let unreads = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], new Set<string>());
+  const unreads: any = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], new Set<string>());
   f(unreads);
 
   _.set(state.unreads.graph, [index.graph.graph, index.graph.index, 'unreads'], unreads);
@@ -276,7 +282,7 @@ function addNotificationToUnread(state: HarkState, index: NotifIndex, time: BigI
     _.set(state.unreads.graph, path,
       [
         ...curr.filter(c => !(c.time.eq(time) && notifIdxEqual(c.index, index))),
-        { time, index}
+        { time, index }
       ]
     );
   } else if ('group' in index) {
@@ -285,7 +291,7 @@ function addNotificationToUnread(state: HarkState, index: NotifIndex, time: BigI
     _.set(state.unreads.group, path,
       [
         ...curr.filter(c => !(c.time.eq(time) && notifIdxEqual(c.index, index))),
-        { time, index}
+        { time, index }
       ]
     );
   }
@@ -296,24 +302,23 @@ function removeNotificationFromUnread(state: HarkState, index: NotifIndex, time:
     const path = [index.graph.graph, index.graph.index, 'notifications'];
     const curr = _.get(state.unreads.graph, path, []);
     _.set(state.unreads.graph, path,
-      curr.filter(c => !(c.time.eq(time) && notifIdxEqual(c.index, index))),
+      curr.filter(c => !(c.time.eq(time) && notifIdxEqual(c.index, index)))
     );
   } else if ('group' in index) {
     const path = [index.group.group, 'notifications'];
     const curr = _.get(state.unreads.group, path, []);
     _.set(state.unreads.group, path,
-      curr.filter(c => !(c.time.eq(time) && notifIdxEqual(c.index, index))),
+      curr.filter(c => !(c.time.eq(time) && notifIdxEqual(c.index, index)))
     );
   }
 }
 
 function updateNotificationStats(state: HarkState, index: NotifIndex, statField: 'unreads' | 'last', f: (x: number) => number) {
-
     if('graph' in index) {
-      const curr = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, statField], 0);
+      const curr: any = _.get(state.unreads.graph, [index.graph.graph, index.graph.index, statField], 0);
       _.set(state.unreads.graph, [index.graph.graph, index.graph.index, statField], f(curr));
     } else if('group' in index) {
-      const curr = _.get(state.unreads.group, [index.group.group, statField], 0);
+      const curr: any = _.get(state.unreads.group, [index.group.group, statField], 0);
       _.set(state.unreads.group, [index.group.group, statField], f(curr));
     }
 }
@@ -331,9 +336,9 @@ function added(json: any, state: HarkState): HarkState {
     );
     if (arrIdx !== -1) {
       timebox[arrIdx] = { index, notification };
-      state.notifications.set(time, timebox);
+      state.notifications = state.notifications.set(time, timebox);
     } else {
-      state.notifications.set(time, [...timebox, { index, notification }]);
+      state.notifications = state.notifications.set(time, [...timebox, { index, notification }]);
     }
   }
   return state;
@@ -352,7 +357,7 @@ const timebox = (json: any, state: HarkState): HarkState => {
   if (data) {
     const time = makePatDa(data.time);
     if (!data.archive) {
-      state.notifications.set(time, data.notifications);
+      state.notifications = state.notifications.set(time, data.notifications);
     }
   }
   return state;
@@ -361,7 +366,9 @@ const timebox = (json: any, state: HarkState): HarkState => {
 function more(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'more', false);
   if (data) {
-    _.forEach(data, d => reduce(d));
+    _.forEach(data, (d) => {
+      reduce(d, state);
+    });
   }
   return state;
 }
@@ -403,7 +410,7 @@ function setRead(
     return state;
   }
   timebox[arrIdx].notification.read = read;
-  state.notifications.set(patDa, timebox);
+  state.notifications = state.notifications.set(patDa, timebox);
   return state;
 }
 
@@ -431,7 +438,7 @@ function archive(json: any, state: HarkState): HarkState {
   const data = _.get(json, 'archive', false);
   if (data) {
     const { index } = data;
-    removeNotificationFromUnread(state, index, makePatDa(data.time))
+    removeNotificationFromUnread(state, index, makePatDa(data.time));
     const time = makePatDa(data.time);
     const timebox = state.notifications.get(time);
     if (!timebox) {
@@ -443,9 +450,9 @@ function archive(json: any, state: HarkState): HarkState {
     );
     if(unarchived.length === 0) {
       console.log('deleting entire timebox');
-      state.notifications.delete(time);
+      state.notifications = state.notifications.delete(time);
     } else {
-      state.notifications.set(time, unarchived);
+      state.notifications = state.notifications.set(time, unarchived);
     }
   }
   return state;

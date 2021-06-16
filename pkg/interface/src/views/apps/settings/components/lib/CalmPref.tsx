@@ -1,17 +1,14 @@
-import React, {useCallback} from "react";
 import {
-  Box,
-  ManagedToggleSwitchField as Toggle,
-  Button,
-  Col,
-  Text,
-} from "@tlon/indigo-react";
-import { Formik, Form, FormikHelpers } from "formik";
-import * as Yup from "yup";
-import { BackButton } from "./BackButton";
-import useSettingsState, {selectSettingsState} from "~/logic/state/settings";
-import GlobalApi from "~/logic/api/global";
-import {AsyncButton} from "~/views/components/AsyncButton";
+    Col, ManagedToggleSwitchField as Toggle,
+
+    Text
+} from '@tlon/indigo-react';
+import { Form, Formik, FormikHelpers } from 'formik';
+import React, { useCallback } from 'react';
+import GlobalApi from '~/logic/api/global';
+import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { BackButton } from './BackButton';
 
 interface FormSchema {
   hideAvatars: boolean;
@@ -25,7 +22,7 @@ interface FormSchema {
   videoShown: boolean;
 }
 
-const settingsSel = selectSettingsState(["calm", "remoteContentPolicy"]);
+const settingsSel = selectSettingsState(['calm', 'remoteContentPolicy']);
 
 export function CalmPrefs(props: {
   api: GlobalApi;
@@ -43,10 +40,9 @@ export function CalmPrefs(props: {
       imageShown,
       videoShown,
       oembedShown,
-      audioShown,
+      audioShown
     }
   } = useSettingsState(settingsSel);
-
 
   const initialValues: FormSchema = {
     hideAvatars,
@@ -70,7 +66,7 @@ export function CalmPrefs(props: {
       api.settings.putEntry('remoteContentPolicy', 'imageShown', !v.imageShown),
       api.settings.putEntry('remoteContentPolicy', 'videoShown', !v.videoShown),
       api.settings.putEntry('remoteContentPolicy', 'audioShown', !v.audioShown),
-      api.settings.putEntry('remoteContentPolicy', 'oembedShown', !v.oembedShown),
+      api.settings.putEntry('remoteContentPolicy', 'oembedShown', !v.oembedShown)
     ]);
     actions.setStatus({ success: null });
   }, [api]);
@@ -78,9 +74,9 @@ export function CalmPrefs(props: {
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
       <Form>
-        <BackButton/>
-        <Col borderBottom="1" borderBottomColor="washedGray" p="5" pt="4" gapY="5">
-          <Col gapY="1" mt="0">
+        <BackButton />
+        <Col borderBottom={1} borderBottomColor="washedGray" p={5} pt={4} gapY={5}>
+          <Col gapY={1} mt={0}>
             <Text color="black" fontSize={2} fontWeight="medium">
               CalmEngine
             </Text>

@@ -98,8 +98,15 @@ h2 {
   font-family: 'Inter', sans-serif;
 }
 
+.embed-container:not(.embed-container .embed-container):not(.links) {
+  padding: 0px 8px 8px 8px;
+}
+
 .embed-container iframe {
   max-width: 100%;
+  width: 100%;
+  height: 100%;
+  margin-top: 8px;
 }
 
 .mh-16 {
@@ -168,6 +175,7 @@ blockquote {
 }
 .chat .react-codemirror2 {
   width: 100%;
+  height: 100%;
 }
 
 .chat .CodeMirror {
@@ -184,6 +192,18 @@ blockquote {
 
 .chat .cm-s-tlon.CodeMirror {
   font-size: 14px;
+}
+
+.chat .CodeMirror-scroll {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.chat .CodeMirror-sizer {
+  min-height: 0 !important;
+  max-height: 100%;
 }
 
 .chat.code .react-codemirror2 .CodeMirror * {

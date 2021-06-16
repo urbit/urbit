@@ -1,9 +1,10 @@
 import React, {
-  useContext,
-  useState,
-  useCallback,
-  useLayoutEffect,
-} from "react";
+  useCallback, useContext,
+
+  useEffect, useState
+} from 'react';
+import { Primitive } from '~/types';
+import usePreviousValue from './usePreviousValue';
 
 export interface VirtualContextProps {
   save: () => void;
@@ -11,7 +12,7 @@ export interface VirtualContextProps {
 }
 const fallback: VirtualContextProps = {
   save: () => {},
-  restore: () => {},
+  restore: () => {}
 };
 
 export const VirtualContext = React.createContext(fallback);
@@ -23,7 +24,7 @@ export function useVirtual() {
 export const withVirtual = <P extends {}>(Component: React.ComponentType<P>) =>
   React.forwardRef((props: P, ref) => (
     <VirtualContext.Consumer>
-      {(context) => <Component ref={ref} {...props} {...context} />}
+      {context => <Component ref={ref} {...props} {...context} />}
     </VirtualContext.Consumer>
   ));
 
@@ -39,9 +40,22 @@ export function useVirtualResizeState(s: boolean) {
     [_setState, save]
   );
 
-  useLayoutEffect(() => {
-    restore();
+  useEffect(() => {
+    requestAnimationFrame(restore);
   }, [state]);
 
   return [state, setState] as const;
+}
+
+export function useVirtualResizeProp(prop: Primitive) {
+  const { save, restore } = useVirtual();
+  const oldProp = usePreviousValue(prop);
+
+  if(prop !== oldProp) {
+    save();
+  }
+
+  useEffect(() => {
+    requestAnimationFrame(restore);
+  }, [prop]);
 }

@@ -1,21 +1,20 @@
-import React, { ReactElement, ReactNode } from 'react';
-import { Icon, Box, Col, Row, Text } from '@tlon/indigo-react';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import urbitOb from 'urbit-ob';
-
+import { Box, Col, Icon, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
-import { Groups, Rolodex } from '@urbit/api';
-
-import RichText from '~/views/components/RichText';
+import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import urbitOb from 'urbit-ob';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import { Dropdown } from '~/views/components/Dropdown';
+import RichText from '~/views/components/RichText';
+import { MessageInvite } from '~/views/landscape/components/MessageInvite';
 
 const TruncatedText = styled(RichText)`
-  white-space: pre;
+  white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 `;
@@ -30,12 +29,16 @@ type ResourceSkeletonProps = {
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
-  const { association, baseUrl, children } = props;
-  const app = association?.metadata?.module || association['app-name'];
+  const { association, baseUrl, children, api } = props;
+  let app = association['app-name'];
+  if (association?.metadata?.config && 'graph' in association.metadata.config) {
+    app = association.metadata.config.graph;
+  }
   const rid = association.resource;
   const groups = useGroupState(state => state.groups);
   const group = groups[association.group];
   let workspace = association.group;
+  const [actionsWidth, setActionsWidth] = useState(0);
 
   if (group?.hidden && app === 'chat') {
     workspace = '/messages';
@@ -47,7 +50,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     ? getItemTitle(association)
     : association?.metadata?.title;
 
-  let recipient = "";
+  let recipient = '';
 
   const contacts = useContactState(state => state.contacts);
 
@@ -55,7 +58,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     recipient = title;
     title = (contacts?.[title]?.nickname) ? contacts[title].nickname : title;
   } else {
-    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(", ")
+    recipient = Array.from(group ? group.members : []).map(e => `~${e}`).join(', ');
   }
 
   const [, , ship, resource] = rid.split('/');
@@ -69,74 +72,141 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     canWrite = isOwn;
   }
 
+  const BackLink = () => (
+    <Box
+      borderRight={1}
+      borderRightColor='gray'
+      pr={3}
+      fontSize={1}
+      mr='12px'
+      my={1}
+      flexShrink={0}
+      display={['block','none']}
+    >
+      <Link to={`/~landscape${workspace}`}>
+        <Text>{'<- Back'}</Text>
+      </Link>
+    </Box>
+  );
+
+  const Title = () => (
+    <Text
+      mono={urbitOb.isValidPatp(title)}
+      fontSize={2}
+      fontWeight='600'
+      textOverflow='ellipsis'
+      overflow='hidden'
+      whiteSpace='nowrap'
+      minWidth={0}
+      maxWidth={association?.metadata?.description ? ['100%', '50%'] : 'none'}
+      mr='2'
+      ml='1'
+      flexShrink={1}
+    >
+      {title}
+    </Text>
+  );
+
+  const Description = () => (
+    <TruncatedText
+      display={['none','inline']}
+      mono={workspace === '/messages' && !urbitOb.isValidPatp(title)}
+      color='gray'
+      mb={0}
+      minWidth={0}
+      maxWidth='50%'
+      flexShrink={1}
+      disableRemoteContent
+    >
+      {workspace === '/messages'
+        ? recipient
+        : association?.metadata?.description}
+    </TruncatedText>
+  );
+
+  const ExtraControls = () => {
+    if (workspace === '/messages' && isOwn && !resource.startsWith('dm-')) {
+      return (
+        <Dropdown
+          flexShrink={0}
+          dropWidth='300px'
+          width='auto'
+          alignY='top'
+          alignX='right'
+          options={
+            <Col
+              backgroundColor='white'
+              border={1}
+              borderRadius={2}
+              borderColor='lightGray'
+              color='washedGray'
+              boxShadow='0px 0px 0px 3px'
+            >
+              <MessageInvite association={association} api={api} />
+            </Col>
+          }
+        >
+          <Text bold pr='3' color='blue'>
+            + Add Ship
+          </Text>
+        </Dropdown>
+      );
+    }
+    if (canWrite) {
+      return (
+        <Link to={resourcePath('/new')}>
+          <Text bold pr='3' color='blue'>
+            + New Post
+          </Text>
+        </Link>
+      );
+    }
+    return null;
+  };
+
+  const MenuControl = () => (
+    <Link to={`${baseUrl}/settings`}>
+      <Icon icon='Menu' color='gray' pr={2} />
+    </Link>
+  );
+
+  const actionsRef = useCallback((actionsRef) => {
+    setActionsWidth(actionsRef?.getBoundingClientRect().width);
+  }, [rid]);
+
   return (
-    <Col width="100%" height="100%" overflowY="hidden">
+    <Col width='100%' height='100%' overflow='hidden'>
       <Box
-        flexShrink="0"
+        flexShrink={0}
         height='48px'
-        py="2"
-        px="2"
-        display="flex"
-        alignItems="center"
+        py={2}
+        px={2}
         borderBottom={1}
-        borderBottomColor="washedGray"
+        borderBottomColor='lightGray'
+        display='flex'
+        justifyContent='space-between'
+        alignItems='center'
       >
         <Box
-          borderRight={1}
-          borderRightColor="gray"
-          pr={3}
-          fontSize='1'
-          mr={3}
-          my="1"
-          display={['block', 'none']}
+          display='flex'
+          alignItems='baseline'
+          width={`calc(100% - ${actionsWidth}px - 16px)`}
           flexShrink={0}
         >
-          <Link to={`/~landscape${workspace}`}><Text>{'<- Back'}</Text></Link>
+          <BackLink />
+          <Title />
+          <Description />
         </Box>
-        <Box px={1} mr={2} minWidth={0} display="flex" flexShrink={[1, 0]}>
-          <Text
-            mono={urbitOb.isValidPatp(title)}
-            fontSize='2'
-            fontWeight='700'
-            display="inline-block"
-            verticalAlign="middle"
-            textOverflow="ellipsis"
-            overflow="hidden"
-            whiteSpace="pre"
-            minWidth={0}
-            flexShrink={1}
-          >
-            {title}
-          </Text>
-        </Box>
-        <Row
-          display={['none', 'flex']}
-          verticalAlign="middle"
-          flexShrink={2}
-          minWidth={0}
-          title={association?.metadata?.description}
+        <Box
+          ml={3}
+          display='flex'
+          alignItems='center'
+          flexShrink={0}
+          ref={actionsRef}
         >
-          <TruncatedText
-            display={(workspace === '/messages' && (urbitOb.isValidPatp(title))) ? 'none' : 'inline-block'}
-            mono={(workspace === '/messages' && !(urbitOb.isValidPatp(title)))}
-            color="gray"
-            minWidth={0}
-            width="100%"
-            mb="0"
-            disableRemoteContent
-          >
-            {(workspace === '/messages') ? recipient : association?.metadata?.description}
-          </TruncatedText>
-        </Row>
-        <Box flexGrow={1} flexShrink={0} />
-        {canWrite && (
-          <Link to={resourcePath('/new')} style={{ flexShrink: '0' }}>
-            <Text bold pr='3' color='blue'>+ New Post</Text>
-          </Link>
-      )}
-      <Link to={`${baseUrl}/settings`}>
-        <Icon icon="Menu" color="gray" pr="2" />
-      </Link>
+          {ExtraControls()}
+          <MenuControl />
+        </Box>
       </Box>
       {children}
     </Col>

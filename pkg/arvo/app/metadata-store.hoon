@@ -23,7 +23,7 @@
 ::  /app-name/%app-name                            associations for app
 ::  /group/%path                             associations for group
 ::
-/-  store=metadata-store
+/-  store=metadata-store, pull-hook
 /+  default-agent, verb, dbug, resource, *migrate
 |%
 +$  card  card:agent:gall
@@ -64,6 +64,21 @@
       resource-indices=(jug md-resource-1 path)
   ==
 ::
++$  metadatum-2
+  $:  title=cord
+      description=cord
+      =color:store
+      date-created=time
+      creator=ship
+      module=term
+      picture=url:store
+      preview=?
+      vip=vip-metadata:store
+  ==
+::
++$  association-2   [group=resource =metadatum-2]
++$  associations-2  (map md-resource:store association-2)
+::
 +$  cached-indices
   $:  group-indices=(jug resource md-resource:store)
       app-indices=(jug app-name:store [group=resource =resource])
@@ -71,18 +86,26 @@
   ==
 ::
 +$  base-state-2
+  $:  associations=associations-2
+      ~
+  ==
+::
++$  base-state-3
   $:  =associations:store
       ~
   ==
 ::
-+$  state-0   [%0 base-state-0]
-+$  state-1   [%1 base-state-0]
-+$  state-2   [%2 base-state-0]
-+$  state-3   [%3 base-state-1]
-+$  state-4   [%4 base-state-1]
-+$  state-5   [%5 base-state-1]
-+$  state-6   [%6 base-state-1]
-+$  state-7   [%7 base-state-2]
++$  state-0    [%0 base-state-0]
++$  state-1    [%1 base-state-0]
++$  state-2    [%2 base-state-0]
++$  state-3    [%3 base-state-1]
++$  state-4    [%4 base-state-1]
++$  state-5    [%5 base-state-1]
++$  state-6    [%6 base-state-1]
++$  state-7    [%7 base-state-2]
++$  state-8    [%8 base-state-3]
++$  state-9    [%9 base-state-3]
++$  state-10   [%10 base-state-3]
 +$  versioned-state
   $%  state-0
       state-1
@@ -92,10 +115,13 @@
       state-5
       state-6
       state-7
+      state-8
+      state-9
+      state-10
   ==
 ::
 +$  inflated-state
-  $:  state-7
+  $:  state-10
       cached-indices
   ==
 --
@@ -126,7 +152,7 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-          ?(%metadata-action %metadata-update-0)
+          ?(%metadata-action %metadata-update-1)
         (poke-metadata-update:mc !<(update:store vase))
       ::
           %import
@@ -144,7 +170,7 @@
     =/  cards=(list card)
       ?+  path  (on-watch:def path)
           [%all ~]
-        (give %metadata-update-0 !>([%associations associations]))
+        (give %metadata-update-1 !>([%associations associations]))
       ::
           [%updates ~]
         ~
@@ -152,7 +178,7 @@
           [%app-name @ ~]
         =/  =app-name:store  i.t.path
         =/  app-indices  (metadata-for-app:mc app-name)
-        (give %metadata-update-0 !>([%associations app-indices]))
+        (give %metadata-update-1 !>([%associations app-indices]))
       ==
     [cards this]
     ::
@@ -208,21 +234,39 @@
   =|  cards=(list card)
   |^
   =*  loop  $
-  ?:  ?=(%7 -.old)
+  ?:  ?=(%10 -.old)
     :-  cards
     %_  state
-         associations
-       associations.old
-      ::
-         resource-indices
-       (rebuild-resource-indices associations.old)
-      ::
-         group-indices
-      (rebuild-group-indices associations.old)
-      ::
-        app-indices
-      (rebuild-app-indices associations.old)
+      associations      associations.old
+      resource-indices  (rebuild-resource-indices associations.old)
+      group-indices     (rebuild-group-indices associations.old)
+      app-indices       (rebuild-app-indices associations.old)
     ==
+  ?:  ?=(%9 -.old)
+    =/  groups  
+      (fall (~(get by (rebuild-app-indices associations.old)) %groups) ~)
+    =/  pokes=(list card)
+      %+  murn  ~(tap in ~(key by groups))
+      |=  group=resource
+      ^-  (unit card)
+      =/  =association:store  (~(got by associations.old) [%groups group])
+      =*  met  metadatum.association
+      ?.  ?=([%group [~ [~ [@ [@ @]]]]] config.met)
+        ~
+      =*  res  resource.u.u.feed.config.met
+      ?:  =(our.bowl entity.res)  ~
+      =-  `[%pass /fix-feed %agent [our.bowl %graph-pull-hook] %poke -]
+      :-  %pull-hook-action
+      !>  ^-  action:pull-hook
+      [%add entity.res res]
+    %_  $
+      cards  (weld cards pokes)
+      -.old  %10
+    ==
+  ?:  ?=(%8 -.old)
+    $(-.old %9)
+  ?:  ?=(%7 -.old)
+    $(old [%8 (associations-2-to-3 associations.old) ~])
   ?:  ?=(%6 -.old)
     =/  old-assoc=associations-1
       (migrate-app-to-graph-store %chat associations.old)
@@ -236,12 +280,37 @@
       associations.old  associations
     ==
   ::  pre-breach, can safely throw away
-  loop(old *state-7)
+  loop(old *state-8)
+  ::
+  ++  associations-2-to-3
+    |=  assoc=associations-2
+    ^-  associations:store
+    %-  ~(gas by *associations:store)
+    %+  turn  ~(tap by assoc)
+    |=  [m=md-resource:store [g=resource met=metadatum-2]]
+    [m [g (metadatum-2-to-3 met)]]
+  ::
+  ++  metadatum-2-to-3
+    |=  m=metadatum-2
+    %*  .  *metadatum:store
+      title         title.m
+      description   description.m
+      color         color.m
+      date-created  date-created.m
+      creator       creator.m
+      preview       preview.m
+      hidden        %|
+    ::
+        config
+      ?:  =(module.m %$)
+        [%group ~]
+      [%graph module.m]
+    ==
   ::
   ++  associations-1-to-2
     |=  assoc=associations-1
-    ^-  associations:store
-    %-  ~(gas by *associations:store)
+    ^-  associations-2
+    %-  ~(gas by *associations-2)
     %+  murn
       ~(tap by assoc)
     |=  [[group=path m=md-resource-1] met=metadata-1]
@@ -262,7 +331,7 @@
   ::
   ++  metadata-1-to-2
     |=  m=metadata-1
-    %*  .  *metadatum:store
+    %*  .  *metadatum-2
       title         title.m
       description   description.m
       color         color.m
@@ -309,6 +378,8 @@
       ship+path.md-resource
     [[path [%graph new-path]] m(module app)]
   --
+::
+::  TODO: refactor into a |^ inside the agent core
 ++  poke-metadata-update
   |=  upd=update:store
   ^-  (quip card _state)
@@ -319,12 +390,13 @@
       %initial-group  (handle-initial-group +.upd)
   ==
 ::
+::  TODO: refactor into a |^ inside the agent core
 ++  poke-import
   |=  arc=*
   ^-  (quip card _state)
   |^
   =^  cards  state  
-    (on-load !>([%7 (remake-metadata ;;(tree-metadata +.arc))]))
+    (on-load !>([%9 (remake-metadata ;;(tree-metadata +.arc))]))
   :_  state
   %+  weld  cards
   %+  turn  ~(tap in ~(key by group-indices))
@@ -348,7 +420,7 @@
   ::
   ++  remake-metadata
     |=  tm=tree-metadata
-    ^-  base-state-2
+    ^-  base-state-3
     :*  (remake-map associations.tm)
         ~
     ==
@@ -443,6 +515,6 @@
   ++  update-subscribers
     |=  [pax=path =update:store]
     ^-  (list card)
-    [%give %fact ~[pax] %metadata-update-0 !>(update)]~
+    [%give %fact ~[pax] %metadata-update-1 !>(update)]~
   --
 --

@@ -23,13 +23,13 @@
     %+  turn  ~(tap by associations)
     |=  [=md-resource [group=resource =^metadatum]]
     ^-  [cord json]
-    :-
-    %-  crip
-    ;:  weld
-        (trip (spat (en-path:resource group)))
-        (weld "/" (trip app-name.md-resource))
-        (trip (spat (en-path:resource resource.md-resource)))
-    ==
+    :-  %:  rap  3
+            (spat (en-path:resource group))
+            '/'
+            app-name.md-resource
+            (spat (en-path:resource resource.md-resource))
+            ~
+        ==
     %-  pairs
     :~  [%group s+(enjs-path:resource group)]
         [%app-name s+app-name.md-resource]
@@ -46,9 +46,28 @@
         [%color s+(scot %ux color.met)]
         [%date-created s+(scot %da date-created.met)]
         [%creator s+(scot %p creator.met)]
-        [%module s+module.met]
+      ::
+        :-  %config
+        ?+    -.config.met  o+~
+            %graph
+          %+  frond  %graph
+          s+module.config.met
+        ::
+            %group
+          %+  frond  %group
+          ?~  feed.config.met
+            ~
+          ?~  u.feed.config.met
+            o+~
+          %-  pairs
+          :~  [%app-name s+app-name.u.u.feed.config.met]
+              [%resource s+(enjs-path:resource resource.u.u.feed.config.met)]
+          ==
+        ==
+      ::
         [%picture s+picture.met]
         [%preview b+preview.met]
+        [%hidden b+hidden.met]
         [%vip s+`@t`vip.met]
     ==
   ::
@@ -145,6 +164,8 @@
     %-  perk
     :~  %reader-comments
         %member-metadata
+        %admin-feed
+        %host-feed
         %$
     ==
   ::
@@ -156,11 +177,40 @@
         [%color nu]
         [%date-created (se %da)]
         [%creator (su ;~(pfix sig fed:ag))]
-        [%module so]
+        [%config config]
         [%picture so]
         [%preview bo]
+        [%hidden bo]
         [%vip vip]
     ==
+  ::
+  ++  config
+    |=  jon=^json
+    ^-  md-config
+    ?~  jon
+      [%group ~]
+    ?>  ?=(%o -.jon)
+    ?:  (~(has by p.jon) %graph)
+      =/  mod
+        (~(got by p.jon) %graph)
+      ?>  ?=(%s -.mod)
+      [%graph p.mod]
+    =/  jin=json
+      (~(got by p.jon) %group)
+    :+  %group  ~
+    ?~  jin
+      ~  
+    ?>  ?=(%o -.jin)
+    ?.  ?&  (~(has by p.jin) 'app-name')
+            (~(has by p.jin) 'resource')
+        ==
+      ~
+    =/  app-name=^json  (~(got by p.jin) 'app-name')
+    ?>  ?=(%s -.app-name)
+    :+  ~
+      p.app-name
+    =/  res=^json  (~(got by p.jin) 'resource')
+    (dejs-path:resource res)
   ::
   ++  md-resource
     ^-  $-(json ^md-resource)

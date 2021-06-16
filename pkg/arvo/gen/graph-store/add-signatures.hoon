@@ -5,6 +5,6 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[[=resource =index] =signatures ~] ~]
     ==
-:-  %graph-update-0
+:-  %graph-update-2
 ^-  update
-[%0 now [%add-signatures [resource index] signatures]]
+[now [%add-signatures [resource index] signatures]]
