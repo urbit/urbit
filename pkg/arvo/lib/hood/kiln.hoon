@@ -781,9 +781,8 @@
       ::  If the hash in the wire doesn't match the current request
       ::  this is a response for a previous fuse that we can ignore.
       ..take
-    ?>  ?=([%clay *] sign-arvo)
-    =/  gif=gift:clay  +.sign-arvo
-    ?>  ?=([%writ *] gif)
+    ?>  ?=([?(%clay %behn) %writ *] sign-arvo)
+    =/  gif  +.sign-arvo
     ?~  p.gif
       %-  (slog leaf+"|fuse request failed for {<src>} on <who> - cancelling")
       delete
