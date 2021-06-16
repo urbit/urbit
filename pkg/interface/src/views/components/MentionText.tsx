@@ -39,7 +39,7 @@ export function Mention(props: {
   ship: string;
   first?: boolean;
 }) {
-  const { ship, first } = props;
+  const { ship, first = false } = props;
   const contact = useContact(`~${deSig(ship)}`);
   const showNickname = useShowNickname(contact);
   const name = showNickname ? contact?.nickname : cite(ship);
