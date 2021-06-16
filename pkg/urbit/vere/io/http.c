@@ -674,11 +674,17 @@ _http_start_respond(u3_hreq* req_u,
   c3_i has_len_i = 0;
 
   while ( 0 != hed_u ) {
+    if ( 0x200 <= rec_u->version ) {
+      h2o_strtolower(hed_u->nam_c, hed_u->nam_w);
+
+      if ( 0 == strncmp(hed_u->nam_c, "connection", 10) ) {
+        hed_u = hed_u->nex_u;
+        continue;
+      }
+    }
     if ( 0 == strncmp(hed_u->nam_c, "content-length", 14) ) {
       has_len_i = 1;
     }
-    // ignore connection specific headers for HTTP2
-    else if ( 0x200 <= rec_u->version && 0 == strncmp(hed_u->nam_c, "connection", 10) ) {}
     else {
       h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
                             hed_u->nam_c, hed_u->nam_w, 0, 0,
