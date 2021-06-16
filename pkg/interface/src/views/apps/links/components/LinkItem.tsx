@@ -30,7 +30,6 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
     resource,
     api,
     group,
-    path,
     ...rest
   } = props;
 
@@ -49,7 +48,6 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
     function onBlur() {
       // FF will only update on next tick
       setTimeout(() => {
-        console.log(remoteRef.current);
         if(document.activeElement instanceof HTMLIFrameElement
           // @ts-ignore forwardref prop passing
           && remoteRef?.current?.containerRef?.contains(document.activeElement)) {
