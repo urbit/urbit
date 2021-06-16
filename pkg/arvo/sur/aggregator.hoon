@@ -13,8 +13,23 @@
       nonce=@ud
   ==
 ::
-::TODO  cache sender address?
-+$  pend-tx  [force=? =raw-tx:naive]
++$  l2-tx
+  $?  %transfer-point
+      %spawn
+      %configure-keys
+      %escape
+      %cancel-escape
+      %adopt
+      %reject
+      %detach
+      %set-management-proxy
+      %set-spawn-proxy
+      %set-transfer-proxy
+  ==
+::
++$  roller-tx  [status=tx-status hash=keccak type=l2-tx]
+::
++$  pend-tx    [force=? =address:naive =raw-tx:naive]
 ::
 +$  part-tx
   $%  [%raw raw=octs]

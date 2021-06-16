@@ -36,6 +36,7 @@
       ::  pending: the next l2 txs to be sent
       ::  sending: the l2 txs currently sending/awaiting l2 confirmation
       ::  finding: raw-tx-hash reverse lookup for sending map
+      ::  history: status of l2 txs by ethereum address
       ::  next-nonce: next l1 nonce to use
       ::  next-batch: when then next l2 batch will be sent
       ::  pre: predicted l2 state
@@ -48,6 +49,7 @@
       [next-gas-price=@ud txs=(list raw-tx:naive)]
     ::
       finding=(map keccak $?(%confirmed %failed l1-tx-pointer))
+      history=(jug address:ethereum roller-tx)
       next-nonce=(unit @ud)
       next-batch=time
       pre=^state:naive
@@ -85,8 +87,6 @@
 ++  resend-time  ~m5
 ::
 ++  lverb  &
-::
-++  orm  ((ordered-map ship point:naive) aor)
 --
 ::
 =|  state-0
@@ -148,6 +148,7 @@
       [%x %pending ~]       ``noun+!>(pending)
       [%x %pending @ ~]     (pending-by i.t.t.path)
       [%x %tx @ %status ~]  (status i.t.t.path)
+      [%x %history @ ~]     (history i.t.t.path)
       [%x %nonce @ @ ~]     (nonce i.t.t.path i.t.t.t.path)
       [%x %spawned @ ~]     (spawned i.t.t.path)
       [%x %next-batch ~]    ``noun+!>(next-batch)
@@ -187,8 +188,17 @@
       =;  known=?
         [?:(known %pending %unknown) ~]
       %+  lien  pending
-      |=  [* raw-tx:naive]
-      =(u.keccak (hash-tx raw))
+      |=  pend-tx
+      =(u.keccak (hash-tx raw.raw-tx))
+    ::
+    ++  history
+      |=  wat=@t
+      :+  ~  ~
+      :-  %noun
+      !>  ^-  (list roller-tx)
+      ?~  addr=(slaw %ux wat)  ~
+      %~  tap  in
+      (~(get ju ^history) u.addr)
     ::
     ++  nonce
       |=  [who=@t proxy=@t]
@@ -459,20 +469,20 @@
     =*  val  q.i.sending
     =^  new-valid  nas
       ::  prepends force=%.n to all txs
-      ::
-      (update-txs (turn txs.val (lead |)))
+      %-  update-txs
+      (turn txs.val |=(=raw-tx:naive [| 0x0 raw-tx]))
     =.  valid
       %+  ~(put by valid)  key
-      val(txs (turn new-valid tail))
+      val(txs (turn new-valid (cork tail tail)))
     $(sending t.sending)
   ::
   ++  update-txs
-    |=  txs=(list [force=? =raw-tx:naive])
+    |=  txs=(list pend-tx)
     =/  valid=_txs  ~
     |-  ^+  [valid nas]
     ?~  txs  [valid nas]
     =*  tx  i.txs
-    =^  gud=?  nas  (try-apply nas tx)
+    =^  gud=?  nas  (try-apply nas [force raw-tx]:tx)
     =?  valid  gud  (snoc valid tx)
     =?  finding  =(gud %.n)
       %-  ~(put by finding)
@@ -552,7 +562,14 @@
 ++  take-tx
   |=  [force=? =raw-tx:naive]
   ^-  (quip card _state)
-  =.  pending  (snoc pending [force raw-tx])
+  =/  =address:ethereum
+    (get-l1-address tx.raw-tx pre)
+  =.  pending  (snoc pending [force address raw-tx])
+  =.  history
+    %+  ~(put ju history)  address
+    :+  [%pending ~]
+      (hash-raw-tx raw-tx)
+    (l2-tx +<.tx.raw-tx)
   ::  toggle flush flag
   ::
   :_  state(flush ?:(flush | &))
@@ -584,14 +601,24 @@
           sending
         %+  ~(put by sending)
           [get-address nonce]
-        [0 (turn pending tail)]
+        [0 (turn pending (cork tail tail))]
       ::
           finding
         %-  ~(gas by finding)
         %+  turn  pending
-        |=  [* =raw-tx:naive]
-        :-  (hash-raw-tx raw-tx)
-        [(get-l1-address tx.raw-tx pre) nonce]
+        |=  pend-tx
+        (hash-raw-tx raw-tx)^[address nonce]
+      ::
+          history
+        %+  roll  pending
+        |=  [pend-tx hist=_history]
+        =/  tx=roller-tx
+          :+  [%pending ~]
+            (hash-raw-tx raw-tx)
+          (l2-tx +<.tx.raw-tx)
+        %+  ~(put ju (~(del ju hist) address tx))
+          address
+        tx(status [%sending ~])
       ==
     [(send-roll get-address nonce) state]
   =^  card  next-batch  set-timer
@@ -689,6 +716,18 @@
     ::  unexpected tx failures here. would that be useful? probably not?
     ::  ~?  !forced  [dap.bowl %aggregated-tx-failed-anyway err.diff]
     %failed
+  =.  history
+    =/  tx=roller-tx
+      :+  [%sending ~]
+        keccak
+      (l2-tx +<.tx.raw-tx.diff)
+    =/  =address:ethereum
+      (get-l1-address tx.raw-tx.diff pre)
+    %+  ~(put ju (~(del ju history) address tx))
+      address
+    %_  tx
+      status  ?~(err.diff [%confirmed ~] [%failed ~])
+    ==
   :_  state(flush ?:(flush | &))
   ?.  flush  ~
   ::  derive predicted state in 5m.

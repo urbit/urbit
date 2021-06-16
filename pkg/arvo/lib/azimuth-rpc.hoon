@@ -205,6 +205,20 @@
         ^-  json
         a+(turn txs |=(=tx:naive (tx:to-json tx)))
       ::
+      ++  roller-txs
+        |=  txs=(list roller-tx)
+        ^-  json
+        :-  %a
+        %+  turn  txs
+        |=  roller-tx
+        ^-  json
+        %-  pairs
+        :: [status=tx-status hash=keccak type=l2-tx]
+        :~  ['status' s+status.status]
+            ['hash' s+(crip "0x{((x-co:co 20) hash)}")]
+            ['type' s+type]
+        ==
+      ::
       ++  point
         |=  =point:naive
         ^-  json
@@ -348,14 +362,14 @@
 ++  get-point
   |=  [id=@t params=(map @t json) scry=$-(ship (unit point:naive))]
   ^-  response:rpc
-  ?.  =((lent ~(tap by params)) 1)
+  ?.  =(~(wyt by params) 1)
     ~(params error:json-rpc id)
   ?~  ship=(~(get by params) 'ship')
     ~(params error:json-rpc id)
   ?~  ship=(rush (so:dejs:format u.ship) ;~(pfix sig fed:ag))
     ~(params error:json-rpc id)
   ?~  point=(scry u.ship)
-    ~(params error:json-rpc id)
+    ~(not-found error:json-rpc id)
   [%result id (point:to-json u.point)]
 ::
 ++  get-spawned
@@ -374,10 +388,10 @@
   ^-  [(unit cage) response:rpc]
   ?.  (params:validate params)
     [~ ~(params error:json-rpc id)]
-  =/  sig=(unit @ux)         (sig:from-json params)
-  =/  from=(unit [ship @t])  (from:from-json params)
-  =/  raw=(unit octs)        (raw:from-json params)
-  =/  data=(unit [@ux ?])    (address-transfer:data:from-json params)
+  =/  sig=(unit @ux)                  (sig:from-json params)
+  =/  from=(unit [ship proxy:naive])  (from:from-json params)
+  =/  raw=(unit octs)                 (raw:from-json params)
+  =/  data=(unit [@ux ?])             (address-transfer:data:from-json params)
   ?:  |(?=(~ sig) ?=(~ from) ?=(~ raw) ?=(~ data))
     [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
@@ -390,9 +404,9 @@
   ^-  [(unit cage) response:rpc]
   ?.  (params:validate params)
     [~ ~(params error:json-rpc id)]
-  =/  sig=(unit @ux)          (sig:from-json params)
-  =/  from=(unit [ship @t])   (from:from-json params)
-  =/  raw=(unit octs)         (raw:from-json params)
+  =/  sig=(unit @ux)                  (sig:from-json params)
+  =/  from=(unit [ship proxy:naive])  (from:from-json params)
+  =/  raw=(unit octs)                 (raw:from-json params)
   =/  data=(unit [encrypt=@ auth=@ crypto-suite=@ breach=?])
     (keys:data:from-json params)
   ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
@@ -426,7 +440,6 @@
 ++  management-proxy  proxy:rpc-res
 ++  spawn-proxy       proxy:rpc-res
 ++  transfer-proxy    proxy:rpc-res
-:: - readNonce(from=[ship proxy]) -> @  :: automatically increment for pending wraps
 ::
 ++  nonce
   |=  [id=@t params=(map @t json) scry=$-([ship proxy:naive] (unit @))]
@@ -440,10 +453,7 @@
   [%result id (numb:enjs:format u.nonce)]
 ::
 ++  pending
-  ::  FIXME: send raw-tx (i.e. tx with signature) instead?
-  ::
   |%
-  :: - readPendingRoll() -> (list pend-tx)
   ::
   ++  all
     |=  [id=@t params=(map @t json) pending=(list pend-tx)]
@@ -451,7 +461,6 @@
     ?.  =((lent ~(tap by params)) 0)
       ~(params error:json-rpc id)
     [%result id (pending:to-json pending)]
-  :: - readPendingByShip(ship) -> (list pend-tx)
   ::
   ++  ship
     |=  [id=@t params=(map @t json) scry=$-(@p (list pend-tx))]
@@ -461,7 +470,6 @@
     ?~  ship=(ship:from-json params)
       ~(parse error:json-rpc id)
     [%result id (pending:to-json (scry u.ship))]
-  :: - readPendingByAddress(address) -> (list pend-tx)
   ::
   ++  addr
     |=  [id=@t params=(map @t json) scry=$-(@ux (list pend-tx))]
@@ -489,17 +497,12 @@
     ~(params error:json-rpc id)
   [%result id (time:enjs:format when)]
 ::
-:: ++  history
-::   |=  $:  id=@t
-::           params=(map @t json)
-::           ::  FIXME: use proper type from aggregator/index
-::           ::
-::           scry=$-([@p proxy:naive] (list tx:naive))
-::       ==
-::   ^-  response:rpc
-::   ?.  =((lent ~(tap by params)) 1)
-::     ~(params error:json-rpc id)
-::   ?~  from=(from:from-json params)
-::     ~(parse error:json-rpc id)
-::   [%result id (txs:to-json (scry u.from))]
+++  history
+  |=  [id=@t params=(map @t json) scry=$-(address:naive (list roller-tx))]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 1)
+    ~(params error:json-rpc id)
+  ?~  address=(address:from-json params)
+    ~(parse error:json-rpc id)
+  [%result id (roller-txs:to-json (scry u.address))]
 --

@@ -145,7 +145,7 @@
     %status                [~ (status id +.params tx-status:scry)]
     %next-batch            [~ (next-batch id +.params next-batch:scry)]
     %nonce                 [~ (nonce id +.params nonce:scry)]
-    :: %history               [~ (history id +.params all:history:scry)]
+    %history               [~ (history id +.params addr:history:scry)]
   ==
 ::
 ++  scry
@@ -190,28 +190,9 @@
   ::
   ++  history
     |%
-    ++  all
-      ::  FIXME: use proper type from aggregator/index
-      ::
-      .^  (list tx:naive)
-          %gx
-          (~(scry agentio bowl) %aggregator /history/noun)
-      ==
-    ::
-    ++  ship
-      |=  =^ship
-      ::  FIXME: use proper type from aggregator/index
-      ::
-      .^  (list tx:naive)
-          %gx
-          (~(scry agentio bowl) %aggregator /history/(scot %p ship)/noun)
-      ==
-    ::
     ++  addr
       |=  =address:naive
-      ::  FIXME: use proper type from aggregator/index
-      ::
-      .^  (list tx:naive)
+      .^  (list roller-tx)
           %gx
           (~(scry agentio bowl) %aggregator /history/(scot %ux address)/noun)
       ==
