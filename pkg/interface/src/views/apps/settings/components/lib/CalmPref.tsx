@@ -48,7 +48,7 @@ export function CalmPrefs(props: {
         api.settings.putEntry(bucket, key, bool);
       }
     });
-  }, [api]);
+  }, [initialValues]);
 
   return (
     <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
