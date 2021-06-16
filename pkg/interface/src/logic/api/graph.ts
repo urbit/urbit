@@ -362,7 +362,8 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   async getNewest(ship: string, resource: string, count: number, index = '') {
-    const data = await this.scry<any>('graph-store', `/newest/${ship}/${resource}/${count}${index}`);
+    const idx = index.split('/').map(decToUd).join('/');
+    const data = await this.scry<any>('graph-store', `/newest/${ship}/${resource}/${count}${idx}`);
     data['graph-update'].fetch = true;
     this.store.handleEvent({ data });
   }

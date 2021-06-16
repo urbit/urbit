@@ -11,7 +11,6 @@ import useGraphState, { useDM } from '~/logic/state/graph';
 import { useHarkDm } from '~/logic/state/hark';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
-import { patpToUd } from '~/logic/lib/util';
 
 interface DmResourceProps {
   ship: string;
@@ -64,7 +63,7 @@ export function DmResource(props: DmResourceProps) {
       `~${window.ship}`,
       'dm-inbox',
       100,
-      `/${patpToUd(ship)}`
+      `/${patp2dec(ship)}`
     );
   }, [ship]);
 
@@ -81,7 +80,7 @@ export function DmResource(props: DmResourceProps) {
           `~${window.ship}`,
           'dm-inbox',
           pageSize,
-          `/${patpToUd(ship)}/${index.toString()}`
+          `/${patp2dec(ship)}/${index.toString()}`
         );
         return expectedSize !== getCurrDmSize(ship);
       } else {
@@ -93,7 +92,7 @@ export function DmResource(props: DmResourceProps) {
           `~${window.ship}`,
           'dm-inbox',
           pageSize,
-          `/${patpToUd(ship)}/${index.toString()}`
+          `/${patp2dec(ship)}/${index.toString()}`
         );
         return expectedSize !== getCurrDmSize(ship);
       }
