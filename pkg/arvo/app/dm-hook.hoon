@@ -189,7 +189,9 @@
     ?>  =(1 ~(wyt by nodes))
     =/  ship-screen  (~(get ju screened) src.bowl)
     =.  ship-screen  (~(uni in ship-screen) (normalize-incoming nodes))
-    `state(screened (~(put by screened) src.bowl ship-screen))
+    =.  screened  (~(put by screened) src.bowl ship-screen)
+    :_  state
+    (fact:io dm-hook-action+!>([%pendings ~(key by screened)]) ~[/updates])^~
   ::
   ++  dm-exists
     |=  =ship
