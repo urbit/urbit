@@ -79,16 +79,16 @@ buildnixdep () {
   fi
 
   # patch and build the dependency if necessary
-  pushd $dir
-  if [ ! -e .mingw~ ]
+  if [ ! -e $dir/.mingw~ ]
   then
-    local patch=../urbit/compat/mingw/$key.patch
-    [ -e $patch ] && patch -p 1 <$patch
+    local patch=compat/mingw/$key.patch
+    [ -e $patch ] && patch -d $dir -p 1 <$patch
+    pushd $dir
     eval "$cmdprep"
     eval make "$cmdmake"
     touch .mingw~
+    popd
   fi
-  popd
 
   # if configured, upload freshly built dependency to binary cache
   if [ -n "$hash" -a -n "${CACHIX_AUTH_TOKEN-}" ]
