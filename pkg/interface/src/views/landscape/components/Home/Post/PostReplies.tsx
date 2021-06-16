@@ -6,7 +6,7 @@ import { useGraph } from '~/logic/state/graph';
 import { Loading } from '~/views/components/Loading';
 import PostFeed from './PostFeed';
 import PostItem from './PostItem/PostItem';
-import { stringToArr, arrToString } from '~/views/components/ArrayVirtualScroller';
+import { stringToArr, arrToString } from '@urbit/api/lib/BigIntArrayOrderedMap';
 
 export default function PostReplies(props) {
   const {

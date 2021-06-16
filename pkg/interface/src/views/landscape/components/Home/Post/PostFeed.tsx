@@ -6,9 +6,9 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
-import VirtualScroller from '~/views/components/VirtualScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
+import { GraphScroller } from '~/views/components/GraphScroller';
 
 const virtualScrollerStyle = {
   height: '100%'
@@ -216,14 +216,13 @@ class PostFeed extends React.Component<PostFeedProps, any> {
 
     return (
       <Col width="100%" height="100%" position="relative">
-        <VirtualScroller
+        <GraphScroller
           key={history.location.pathname}
           origin="top"
           offset={0}
           data={graph}
           averageHeight={106}
           size={graph.size}
-          totalSize={graph.size}
           style={virtualScrollerStyle}
           pendingSize={pendingSize}
           renderer={this.renderItem}

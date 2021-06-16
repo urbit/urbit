@@ -5,10 +5,10 @@ import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
-import ArrayVirtualScroller, {
-  indexEqual,
+import {
   arrToString
-} from '~/views/components/ArrayVirtualScroller';
+} from '@urbit/api/lib/BigIntArrayOrderedMap';
+import { keyEq, ThreadScroller } from '~/views/components/ThreadScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
 
@@ -67,9 +67,9 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
 
     const first = flatGraph.peekLargest()?.[0];
     const last = flatGraph.peekSmallest()?.[0];
-    const isLast = last ? indexEqual(index, last) : false;
+    const isLast = last ? keyEq(index, last) : false;
 
-    if (indexEqual(index, (first ?? [bigInt.zero]))) {
+    if (keyEq(index, (first ?? [bigInt.zero]))) {
       if (isThread) {
         return (
           <Col
@@ -202,7 +202,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
 
     return (
       <Col width="100%" height="100%" position="relative">
-        <ArrayVirtualScroller
+        <ThreadScroller
           key={history.location.pathname}
           origin="top"
           offset={0}

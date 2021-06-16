@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
-import VirtualScroller from '~/views/components/VirtualScroller';
+import { GraphScroller } from '~/views/components/GraphScroller';
 import { LinkItem } from './components/LinkItem';
 import LinkSubmit from './components/LinkSubmit';
 
@@ -60,7 +60,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
       ...props,
       node
     };
-    {/* @ts-ignore calling @liam-fitzgerald on Uint8Array props */}
+    { /* @ts-ignore calling @liam-fitzgerald on Uint8Array props */ }
     if (this.canWrite() && index.eq(first ?? bigInt.zero)) {
       return (
         <React.Fragment key={index.toString()}>
@@ -129,7 +129,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
     return (
       <Col width="100%" height="100%" position="relative">
         {/* @ts-ignore calling @liam-fitzgerald on virtualscroller */}
-        <VirtualScroller
+        <GraphScroller
           origin="top"
           offset={0}
           style={style}

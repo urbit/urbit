@@ -6,6 +6,7 @@ import {
 import bigInt, { BigInteger } from 'big-integer';
 import React, { Component } from 'react';
 import GlobalApi from '~/logic/api/global';
+import { GraphScroller } from '~/views/components/GraphScroller';
 import VirtualScroller from '~/views/components/VirtualScroller';
 import ChatMessage, { MessagePlaceholder } from './ChatMessage';
 import UnreadNotice from './UnreadNotice';
@@ -47,7 +48,7 @@ class ChatWindow extends Component<
   ChatWindowProps,
   ChatWindowState
 > {
-  private virtualList: VirtualScroller<GraphNode> | null;
+  private virtualList: VirtualScroller<bigInt.BigInteger, GraphNode> | null;
   private prevSize = 0;
   private unreadSet = false;
 
@@ -274,7 +275,7 @@ class ChatWindow extends Component<
           dismissUnread={this.props.dismissUnread}
           onClick={this.scrollToUnread}
          />)}
-        <VirtualScroller<GraphNode>
+        <GraphScroller
           ref={(list) => {
             this.virtualList = list;
           }}
