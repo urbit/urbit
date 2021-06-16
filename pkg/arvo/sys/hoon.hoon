@@ -6595,18 +6595,19 @@
               r/(pair seminoun (map term tome))         ::  chapters
           ==                                            ::
 +$  garb  (trel (unit term) poly vair)                  ::  core
-+$  grub                                                     ::  ut cache
-  $:  nes=(map (pair type type) ?)                           ::  +nest
-      res=(map (pair type hoon) type)                        ::  +rest
-      mit=(map (pair type hoon) (pair type nock))            ::  +mint
-      mul=(map (qual type type type hoon) (pair type type))  ::  +mull
-      fis=(map (pair type axis) nock)                        ::  +fish
-      cro=(map (pair type type) type)                        ::  +crop
-      fus=(map (pair type type) type)                        ::  +fuse
-      nen=(map (pair type type) ?)                           ::  internal +nest
-      con=(map (pair type type) type)                        ::  internal +crop
-      fun=(map (pair type type) type)                        ::  internal +fuse
-      fin=(map (pair type axis) nock)                        ::  internal +fish
++$  grub                                                    ::  ut cache
+  $:  nes=(map (pair type type) ?)                          ::  +nest
+      res=(map (pair type hoon) type)                       ::  +rest
+      mit=(map (pair type hoon) (pair type nock))           ::  +mint
+      mul=(map (qual type type type hoon) (pair type type)) ::  +mull
+      fis=(map (pair type axis) nock)                       ::  +fish
+      cro=(map (pair type type) type)                       ::  +crop
+      fus=(map (pair type type) type)                       ::  +fuse
+      fon=(map (pair type limb) (pair (unit atom) pony))    ::  +fond
+      nen=(map (pair type type) ?)                          ::  internal +nest
+      con=(map (pair type type) type)                       ::  internal +crop
+      fun=(map (pair type type) type)                       ::  internal +fuse
+      fin=(map (pair type axis) nock)                       ::  internal +fish
   ==                                                    ::
 +$  pony                                                ::  raw match
   $@  ~                                                 ::  void
@@ -10829,23 +10830,32 @@
     ::
         %&
       =.  sut  (felt q.p.mor)
-      =/  lon  p.p.mor
       =/  heg  ?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
       ?:  ?=(%& -.heg)
         =^  rig  grub  (caching-peek way p.heg)
         :_  grub
-        [%& [`p.heg lon] %& rig]
+        [%& [`p.heg p.p.mor] %& rig]
       =|  gil=(set type)
       =>  |%  +$  puny  (pair (unit atom) pony)
           --
       =;  [=puny =_grub]
         ^-  [pony _grub]
-        [q.puny grub]
+        =/  =pony  q.puny
+        =?  pony  ?=([%& *] pony)
+          pony(p.p (weld p.p.pony p.p.mor))
+        [pony grub]
       |^
+      =/  cached  (~(get by fon.grub) [sut heg])
+      ?^  cached
+        [u.cached grub]
+      =;  [=puny =_grub]
+        :_  grub(fon (~(put by fon.grub) [sut heg] puny))
+        puny
       ^-  [puny _grub]
       ?-    sut
           %void
-        [`~ grub]
+        :_  grub
+        [~ ~]
       ::
           %noun
         [stop grub]
@@ -10890,7 +10900,7 @@
           :_  grub
           :^    ~
               %&
-            [`1 lon]
+            [`1 ~]
           =/  zut
             ^-  foot
             ?-  q.p.q.sut
@@ -10935,29 +10945,39 @@
         =*  zot  p.sut
         ?@  zot
           :_  grub
-          ?:(=(u.q.heg zot) here(sut q.sut) lose)
+          ?:  =(u.q.heg zot)
+            here(sut q.sut)
+          lose
         |^
         ^-  [puny _grub]
         =/  tyr  (~(get by p.zot) u.q.heg)
         ?~  tyr
           next
         ?~  u.tyr
-          ^$(sut q.sut, lon [~ lon], p.heg +(p.heg))
+          =^  val  grub  ^$(sut q.sut, p.heg +(p.heg))
+          :_  grub
+          =?  q.val  ?=([%& *] q.val)
+            q.val(p.p (snoc p.p.q.val ~))
+          val
         ?.  =(0 p.heg)
           next(p.heg (dec p.heg))
         =^  tor  grub  (caching-fund way u.u.tyr)
         :_  grub
         ?-  -.tor
           %&  :-  `(lent p.p.tor)
-              [%& (weld p.p.tor `vein`[~ `1 lon]) q.p.tor]
+              [%& (weld p.p.tor `vein`[~ `1 ~]) q.p.tor]
           %|  `[%| %| p.p.tor (comb [%0 1] q.p.tor)]
         ==
         ++  next
           |-  ^-  [puny _grub]
           ?~  q.zot
-            ^^$(sut q.sut, lon [~ lon])
+            =^  val  grub  ^^$(sut q.sut)
+            :_  grub
+            =?  q.val  ?=([%& *] q.val)
+              q.val(p.p (snoc p.p.q.val ~))
+            val
           =^  tiv  grub  (caching-mint(sut q.sut) %noun i.q.zot)
-          =^  fud  grub  ^^$(sut p.tiv, lon ~, gil ~)
+          =^  fud  grub  ^^$(sut p.tiv, gil ~)
           =/  fid  q.fud
           ?~  fid  [`~ grub]
           ?:  ?=({%| %& *} fid)
@@ -10996,10 +11016,11 @@
       ::
       ++  here
         ?:  =(0 p.heg)
-          `[%& [~ `1 lon] %& sut]
+          `[%& [~ `1 ~] %& sut]
         `[%| %& (dec p.heg)]
       ::
-      ++  lose  `[%| %& p.heg]
+      ++  lose
+        `[%| %& p.heg]
       ::
       ++  stop  ?~(q.heg here lose)
       ::
