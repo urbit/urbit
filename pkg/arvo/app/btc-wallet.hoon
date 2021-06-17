@@ -167,6 +167,11 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+  -.sign  (on-agent:def wire sign)
+      %watch-ack
+    ?~  p.sign  `this
+    %-  (slog leaf+"connection rejected by provider ({<src.bowl>})" u.p.sign)
+    `this
+    ::
       %kick
     ?~  prov  `this
     ?:  ?&  ?=(%set-provider -.wire)
@@ -724,13 +729,9 @@
       (retry-scans network)
     ==
   =?  cards  ?&(?=(^ blockhash) ?=(^ blockfilter) (gth gap 0))
-    ;:  weld  cards
-      (retry-filtered-addrs network u.blockhash u.blockfilter)
-    ==
+    (weld cards (retry-filtered-addrs network u.blockhash u.blockfilter))
   =?  cards  (gth gap 50)
-    ;:  weld  cards
-      (retry-addrs network)
-    ==
+    (weld cards (retry-addrs network))
   :-  cards
   %_  state
     prov  `p(connected %.y)
@@ -755,7 +756,9 @@
   %-  zing
   %+  murn  ~(tap by scans)
   |=  [[=xpub:bc =chyg] =batch]
-  ?.  =(network network:(~(got by walts) xpub))  ~
+  =/  w  (~(get by walts) xpub)
+  ?~  w  ~
+  ?.  =(network network.u.w)     ~
   `-:(req-scan batch xpub chyg)
 ::  +retry-addrs: get info on addresses with unconfirmed UTXOs
 ::

@@ -85,8 +85,7 @@
   ::
   ?>  ?=([%clients *] pax)
   ?.  (is-whitelisted:hc src.bowl)
-    ~&  >>>  "btc-provider: blocked client {<src.bowl>}"
-    [~[[%give %kick ~ ~]] this]
+    ~|("btc-provider: blocked client {<src.bowl>}" !!)
   ~&  >  "btc-provider: accepted client {<src.bowl>}"
   :-  [do-ping:hc]~
   this(clients.host-info (~(put in clients.host-info) src.bowl))
