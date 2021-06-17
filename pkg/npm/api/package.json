@@ -1,6 +1,6 @@
 {
   "name": "@urbit/api",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "repository": {
     "type": "git",
@@ -10,6 +10,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d",
   "scripts": {
+    "prepublish": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "onchange './**/*.ts' -e './dist/**' -- npm run build",
     "build": "npm run clean && npm run tsc",
