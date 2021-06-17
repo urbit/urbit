@@ -51,7 +51,7 @@ interface VirtualScrollerProps<T> {
   onEndReached?(): void;
   size: number;
   pendingSize: number;
-  totalSize: number;
+  totalSize?: number;
   /*
    * Average height of a single rendered item
    *

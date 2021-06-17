@@ -1,5 +1,5 @@
 import { Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph } from '@urbit/api';
+import { Association, Graph, GraphNode } from '@urbit/api';
 import React, { useCallback, useState, useMemo } from 'react';
 import _ from 'lodash';
 import { useResize } from '~/logic/lib/useResize';
@@ -7,12 +7,24 @@ import { LinkBlockItem } from './LinkBlockItem';
 import { LinkBlockInput } from './LinkBlockInput';
 import GlobalApi from '~/logic/api/global';
 import useLocalState from '~/logic/state/local';
+import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import bigInt from 'big-integer';
+import VirtualScroller from '~/views/components/VirtualScroller';
 
 export interface LinkBlocksProps {
   graph: Graph;
   association: Association;
   api: GlobalApi;
 }
+
+const style = {
+  height: '100%',
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center'
+};
+
 export function LinkBlocks(props: LinkBlocksProps) {
   const { association, api } = props;
   const [linkSize, setLinkSize] = useState(250);
@@ -30,15 +42,24 @@ export function LinkBlocks(props: LinkBlocksProps) {
     )
   );
 
-  const nodes = [null, ...Array.from(props.graph)];
+  const orm = useMemo(() => {
+    const nodes = [null, ...Array.from(props.graph)];
 
-  const chunks = _.chunk(nodes, colCount);
+    const chunks = _.chunk(nodes, colCount);
+    return new BigIntOrderedMap<[bigInt.BigInteger, GraphNode][]>().gas(
+      chunks.reverse().map((chunk, i) => {
+        return [bigInt(i), chunk];
+      })
+    );
+  }, [props.graph]);
 
-  return (
-    <Col overflowX="hidden" overflowY="auto" height="100%" {...bind}>
-      {chunks.map((chunk, idx) => (
+  const renderItem = useCallback(
+    React.forwardRef<any, any>(({ index }, ref) => {
+      const chunk = orm.get(index);
+
+      return (
         <Row
-          key={idx}
+          ref={ref}
           flexShrink={0}
           my="2"
           px="2"
@@ -78,7 +99,24 @@ export function LinkBlocks(props: LinkBlocksProps) {
             );
           })}
         </Row>
-      ))}
+      );
+    }),
+    [orm, linkSizePx]
+  );
+
+  return (
+    <Col overflowX="hidden" overflowY="auto" height="100%" {...bind}>
+      <VirtualScroller
+        origin="top"
+        offset={0}
+        style={style}
+        data={orm}
+        averageHeight={100}
+        size={orm.size}
+        pendingSize={0}
+        renderer={renderItem}
+        loadRows={() => Promise.resolve(true)}
+      />
     </Col>
   );
 }
