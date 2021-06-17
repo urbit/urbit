@@ -585,9 +585,9 @@
   ++  gen-rut-jar
     ^-  (jar @p event)
     =/  filter  ;:  cork
-                    (cury filter-owner %.y)
+                    ::(cury filter-owner %.y)
                     (cury filter-proxy %own)
-                    (cury filter-nonce %.n)
+                    :: (cury filter-nonce %.n)
                     ::(cury filter-rank %star)
                     (cury filter-dominion %l2)
                     %-  cury
@@ -836,7 +836,7 @@
   ::
   =/  cur-point  (~(got by points.initial-state) cur-ship)
   =/  cur-nonce  nonce.owner.own:(~(got by points.initial-state) cur-ship)
-  =/  new-nonce  ?:  nonce.cur-event  :: wrong nonces do not increment nonce
+  =/  new-nonce  ?:  &(nonce.cur-event owner.cur-event)  :: wrong nonce and/or wrong owner do not increment nonce
                    +(cur-nonce)
                  cur-nonce
   ::
@@ -956,7 +956,9 @@
         :-  :-  cur-ship
             proxy.cur-event
         def-args
-      (~(got by default-own-keys) cur-ship)
+      ?:  owner.cur-event
+        (~(got by default-own-keys) cur-ship)
+      %wrong-key
     state
     ::
     ++  def-args
