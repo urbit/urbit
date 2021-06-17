@@ -1,4 +1,4 @@
-import { Contact, Patp, Rolodex } from '@urbit/api';
+import { Contact, deSig, Patp, Rolodex } from '@urbit/api';
 import { useCallback } from 'react';
 import _ from 'lodash';
 import { reduce, reduceNacks } from '../reducers/contact-update';
@@ -43,7 +43,7 @@ const useContactState = createState<ContactState>(
 
 export function useContact(ship: string) {
   return useContactState(
-    useCallback(s => s.contacts[ship] as Contact | null, [ship])
+    useCallback(s => s.contacts[`~${deSig(ship)}`] as Contact | null, [ship])
   );
 }
 
