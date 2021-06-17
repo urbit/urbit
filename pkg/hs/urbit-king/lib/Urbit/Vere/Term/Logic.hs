@@ -113,8 +113,8 @@ drawState :: St -> [Ev]
 drawState St{..} = hist <> out <> cur <> spin
   where
     hist = drawHistory <$> toList sHistory
-    out  | null <- sLine = []
-         | otherwise     = [EvEdit sLine]
+    out  | null sLine = []
+         | otherwise  = [EvEdit sLine]
     cur  | (0, _) <- sCurPos = []
          | otherwise         = [EvMove sCurPos]
     spin = maybe [] (singleton . EvSpin . Just) sSpinner
