@@ -179,7 +179,7 @@
     ?.  processing-events
       ..abet-pe
     =^  ue  next-events  ~(get to next-events)
-    =/  poke-arm  (mox +47.snap)
+    =/  poke-arm  (mox +23.snap)
     ?>  ?=(%0 -.poke-arm)
     =/  poke  p.poke-arm
     =.  tym  (max +(tym) now.hid)
@@ -198,7 +198,7 @@
   ::
   ++  peek
     |=  p=*
-    =/  res  (mox +46.snap)
+    =/  res  (mox +22.snap)
     ?>  ?=(%0 -.res)
     =/  peek  p.res
     =/  pax  (path p)
@@ -211,7 +211,7 @@
   ::
   ++  wish
     |=  txt=@t
-    =/  res  (mox +22.snap)
+    =/  res  (mox +10.snap)
     ?>  ?=(%0 -.res)
     =/  wish  p.res
     ~&  [who=who %wished (slum wish txt)]
@@ -508,24 +508,37 @@
     ::      should be deleted now that aqua is capable of managing azimuth state
     ::      internally. Its been left this way for now until all the ph tests
     ::      can be rewritten
-    =/  keys=dawn-event:jael  (dawn who.ae)
+    =/  keys=dawn-event:jael  
+      ?~  keys.ae  *dawn-event:jael
+      (dawn who.ae)
     =.  this  abet-pe:(publish-effect:(pe who.ae) [/ %sleep ~])
     =/  initted
       =<  plow
       %-  push-events:apex:(pe who.ae)
       ^-  (list unix-event)
       :~  [/ %wack 0]  ::  eny
-          [/ %whom who.ae]  ::  eny
-          [//newt/0v1n.2m9vh %born ~]
-          [//behn/0v1n.2m9vh %born ~]
-          :^  //term/1  %boot  &
+          ::  [/ %verb `|]  possible verb
+          :^  /  %wyrd  [%urbit /test] :: negotiate XX what is .non and .rev
+          ^-  (list (pair term @))
+          :~  zuse+zuse
+              lull+lull
+              arvo+arvo
+              hoon+hoon-version
+              nock+4
+          ==
+          [/ %whom who.ae]  ::  who
+          -.kernel-ova.pil  :: load compiler
+          +<:kernel-ova.pil :: load arvo XX how to work with solid?
+          :^  /d/term/1  %boot  &
           ?~  keys.ae
             [%fake who.ae]
           [%dawn keys]
           -.userspace-ova.pil
-          [//http-client/0v1n.2m9vh %born ~]
-          [//http-server/0v1n.2m9vh %born ~]
-          [//http-server/0v1n.2m9vh %live 8.080 `8.445]
+          [/b/behn/0v1n.2m9vh %born ~]
+          [/i/http-client/0v1n.2m9vh %born ~]
+          [/e/http-server/0v1n.2m9vh %born ~]
+          [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
+          [/a/newt/0v1n.2m9vh %born ~]
       ==
     =.  this  abet-pe:initted
     (pe who.ae)
