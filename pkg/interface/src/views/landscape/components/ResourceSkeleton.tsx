@@ -5,7 +5,6 @@ import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import urbitOb from 'urbit-ob';
-import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
@@ -56,7 +55,6 @@ const participantNames = (str: string, contacts, hideNicknames) => {
 
 type ResourceSkeletonProps = {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
   children: ReactNode;
   title?: string;
@@ -64,7 +62,7 @@ type ResourceSkeletonProps = {
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
-  const { association, baseUrl, children, api } = props;
+  const { association, baseUrl, children } = props;
   let app = association['app-name'];
   if (association?.metadata?.config && 'graph' in association.metadata.config) {
     app = association.metadata.config.graph;
@@ -108,7 +106,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     canWrite = isOwn;
   }
 
-  const BackLink = () => (
+  const backLink = (
     <Box
       borderRight={1}
       borderRightColor='gray'
@@ -125,7 +123,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Box>
   );
 
-  const Title = () => (
+  const titleText = (
     <Text
       mono={urbitOb.isValidPatp(title)}
       fontSize={2}
@@ -145,7 +143,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Text>
   );
 
-  const Description = () => (
+  const description = (
     <TruncatedText
       display={['none','inline']}
       mono={workspace === '/messages' && !association?.metadata?.description}
@@ -162,9 +160,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </TruncatedText>
   );
 
-  const ExtraControls = () => {
-    if (workspace === '/messages' && isOwn && !resource.startsWith('dm-')) {
-      return (
+  const extraControls =
+    (workspace === '/messages' && isOwn && !resource.startsWith('dm-')) ?  (
         <Dropdown
           flexShrink={0}
           dropWidth='300px'
@@ -180,7 +177,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
               color='washedGray'
               boxShadow='0px 0px 0px 3px'
             >
-              <MessageInvite association={association} api={api} />
+              <MessageInvite association={association} />
             </Col>
           }
         >
@@ -188,21 +185,15 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
             + Add Ship
           </Text>
         </Dropdown>
-      );
-    }
-    if (canWrite) {
-      return (
+      ) : canWrite ? (
         <Link to={resourcePath('/new')}>
           <Text bold pr='3' color='blue'>
             + New Post
           </Text>
         </Link>
-      );
-    }
-    return null;
-  };
+      ) : null;
 
-  const MenuControl = () => (
+  const menuControl = (
     <Link to={`${baseUrl}/settings`}>
       <Icon icon='Menu' color='gray' pr={2} />
     </Link>
@@ -231,9 +222,9 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           width={`calc(100% - ${actionsWidth}px - 16px)`}
           flexShrink={0}
         >
-          <BackLink />
-          <Title />
-          <Description />
+          {backLink}
+          {titleText}
+          {description}
         </Box>
         <Box
           ml={3}
@@ -242,8 +233,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           flexShrink={0}
           ref={actionsRef}
         >
-          {ExtraControls()}
-          <MenuControl />
+          {extraControls}
+          {menuControl}
         </Box>
       </Box>
       {children}

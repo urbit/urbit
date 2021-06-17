@@ -2,23 +2,26 @@ import { Box, Col, Text } from '@tlon/indigo-react';
 import { GraphNode } from '@urbit/api';
 import React, { useEffect } from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
-import { useGraph } from '~/logic/state/graph';
+import useGraphState, { GraphState, useGraph } from '~/logic/state/graph';
 import { Loading } from '~/views/components/Loading';
 import PostFeed from './PostFeed';
 import PostItem from './PostItem/PostItem';
 import { stringToArr, arrToString } from '~/views/components/ArrayVirtualScroller';
+import { useHistory } from 'react-router';
+
+const graphSel = (s: GraphState) => s.getNode;
 
 export default function PostReplies(props) {
   const {
     baseUrl,
-    api,
-    history,
     association,
     graphPath,
     group,
     vip,
     pendingSize
   } = props;
+  const history = useHistory();
+  const getNode = useGraphState(graphSel);
 
   const graphRid = resourceFromPath(graphPath);
   let graph = useGraph(graphRid.ship, graphRid.name);
@@ -42,7 +45,7 @@ export default function PostReplies(props) {
     for (const k of index) {
       i.push(k);
       //  TODO: why can't I use await?
-      api.graph.getNode(
+      getNode(
         graphRid.ship,
         graphRid.name,
         arrToString(i)
@@ -93,7 +96,6 @@ export default function PostReplies(props) {
             node={node}
             graphPath={graphPath}
             association={association}
-            api={api}
             index={index}
             baseUrl={baseUrl}
             history={history}
@@ -132,8 +134,6 @@ export default function PostReplies(props) {
         association={association}
         group={group}
         vip={vip}
-        api={api}
-        history={history}
         baseUrl={baseUrl}
       />
     </Box>

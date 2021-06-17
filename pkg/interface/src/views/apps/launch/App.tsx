@@ -4,7 +4,6 @@ import f from 'lodash/fp';
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
-import GlobalApi from '~/logic/api/global';
 import {
     hasTutorialGroup,
 
@@ -32,6 +31,10 @@ import ModalButton from './components/ModalButton';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import './css/custom.css';
+import { join } from '@urbit/api/groups';
+import { putEntry } from '@urbit/api/settings';
+import { joinGraph } from '@urbit/api/graph';
+import airlock from '~/logic/api';
 
 const ScrollbarLessBox = styled(Box)`
   scrollbar-width: none !important;
@@ -45,7 +48,6 @@ const tutSelector = f.pick(['tutorialProgress', 'nextTutStep', 'hideGroups']);
 
 interface LaunchAppProps {
   connection: string;
-  api: GlobalApi;
 }
 
 export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
@@ -101,17 +103,17 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
     modal: function modal(dismiss) {
       const onDismiss = (e) => {
         e.stopPropagation();
-        props.api.settings.putEntry('tutorial', 'seen', true);
+        airlock.poke(putEntry('tutorial', 'seen', true));
         dismiss();
       };
       const onContinue = async (e) => {
         e.stopPropagation();
         if (!hasTutorialGroup({ associations })) {
-          await props.api.groups.join(TUTORIAL_HOST, TUTORIAL_GROUP);
-          await props.api.settings.putEntry('tutorial', 'joined', Date.now());
+          await airlock.poke(join(TUTORIAL_HOST, TUTORIAL_GROUP));
+          await airlock.poke(putEntry('tutorial', 'joined', Date.now()));
           await waiter(hasTutorialGroup);
           await Promise.all(
-            [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph => props.api.graph.joinGraph(TUTORIAL_HOST, graph)));
+            [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph => airlock.thread(joinGraph(TUTORIAL_HOST, graph))));
 
           await waiter((p) => {
             return `/ship/${TUTORIAL_HOST}/${TUTORIAL_CHAT}` in p.associations.graph &&
@@ -215,9 +217,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
               </Row>
             </Box>
           </Tile>
-          <Tiles
-            api={props.api}
-          />
+          <Tiles />
           <ModalButton
             icon="Plus"
             bg="washedGray"
@@ -225,7 +225,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
             text="New Group"
             style={{ gridColumnStart: 1 }}
           >
-            <NewGroup {...props} />
+            <NewGroup />
           </ModalButton>
           <ModalButton
             icon="BootNode"
@@ -233,7 +233,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
             color="black"
             text="Join Group"
           >
-            <JoinGroup {...props} />
+            <JoinGroup />
           </ModalButton>
           </>}
           {!hideGroups &&

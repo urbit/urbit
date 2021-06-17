@@ -3,10 +3,10 @@ import {
 
     ManagedCheckboxField, Text
 } from '@tlon/indigo-react';
-import { Form, useField, useFormikContext } from 'formik';
+import { Form, useFormikContext } from 'formik';
+import { putEntry } from '@urbit/api/settings';
 import _ from 'lodash';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
 import {
     LeapCategories,
@@ -15,6 +15,7 @@ import {
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { ShuffleFields } from '~/views/components/ShuffleFields';
 import { BackButton } from './BackButton';
+import airlock from '~/logic/api';
 
 const labels: Record<LeapCategories, string> = {
   mychannel: 'My Channel',
@@ -32,8 +33,6 @@ function CategoryCheckbox(props: { index: number }) {
   const { index } = props;
   const { values } = useFormikContext<FormSchema>();
   const cats = values.categories;
-  const catNameId = `categories[${index}].category`;
-  const [field] = useField(catNameId);
 
   const { category } = cats[index];
   const label = labels[category];
@@ -45,9 +44,8 @@ function CategoryCheckbox(props: { index: number }) {
 
 const settingsSel = selectSettingsState(['leap', 'set']);
 
-export function LeapSettings(props: { api: GlobalApi; }) {
-  const { api } = props;
-  const { leap, set: setSettingsState } = useSettingsState(settingsSel);
+export function LeapSettings() {
+  const { leap } = useSettingsState(settingsSel);
   const categories = leap.categories as LeapCategories[];
   const missing = _.difference(leapCategories, categories);
 
@@ -66,7 +64,7 @@ export function LeapSettings(props: { api: GlobalApi; }) {
       (acc, { display, category }) => (display ? [...acc, category] : acc),
       [] as LeapCategories[]
     );
-    await api.settings.putEntry('leap', 'categories', result);
+    await airlock.poke(putEntry('leap', 'categories', result));
   };
 
   return (

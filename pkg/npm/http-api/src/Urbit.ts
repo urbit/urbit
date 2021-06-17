@@ -1,30 +1,29 @@
 import { isBrowser, isNode } from 'browser-or-node';
-import { Action, Scry, Thread } from '@urbit/api';
-import { fetchEventSource, EventSourceMessage } from '@microsoft/fetch-event-source';
+import { fetchEventSource, EventSourceMessage, EventStreamContentType } from '@microsoft/fetch-event-source';
 
-import { AuthenticationInterface, SubscriptionInterface, CustomEventHandler, PokeInterface, SubscriptionRequestInterface, headers, UrbitInterface, SSEOptions, PokeHandlers } from './types';
+import { Action, Scry, Thread, AuthenticationInterface, SubscriptionInterface, CustomEventHandler, PokeInterface, SubscriptionRequestInterface, headers, SSEOptions, PokeHandlers, Message } from './types';
 import { uncamelize, hexString } from './utils';
 
 /**
  * A class for interacting with an urbit ship, given its URL and code
  */
-export class Urbit implements UrbitInterface {
+export class Urbit {
   /**
    * UID will be used for the channel: The current unix time plus a random hex string
    */
-  uid: string = `${Math.floor(Date.now() / 1000)}-${hexString(6)}`;
+  private uid: string = `${Math.floor(Date.now() / 1000)}-${hexString(6)}`;
 
   /**
    * Last Event ID is an auto-updated index of which events have been sent over this channel
    */
-  lastEventId: number = 0;
+  private lastEventId: number = 0;
 
-  lastAcknowledgedEventId: number = 0;
+  private lastAcknowledgedEventId: number = 0;
 
   /**
    * SSE Client is null for now; we don't want to start polling until it the channel exists
    */
-  sseClientInitialized: boolean = false;
+  private sseClientInitialized: boolean = false;
 
   /**
    * Cookie gets set when we log in.
@@ -40,7 +39,7 @@ export class Urbit implements UrbitInterface {
    * removed after calling the success or failure function.
    */
 
-  outstandingPokes: Map<number, PokeHandlers> = new Map();
+  private outstandingPokes: Map<number, PokeHandlers> = new Map();
 
   /**
    * A registry of requestId to subscription functions.
@@ -51,8 +50,7 @@ export class Urbit implements UrbitInterface {
    * subscription is available, which may be 0, 1, or many times. The
    * disconnect function may be called exactly once.
    */
-
-  outstandingSubscriptions: Map<number, SubscriptionInterface> = new Map();
+  private outstandingSubscriptions: Map<number, SubscriptionRequestInterface> = new Map();
 
   /**
    * Ship can be set, in which case we can do some magic stuff like send chats
@@ -64,12 +62,23 @@ export class Urbit implements UrbitInterface {
    */
   verbose?: boolean;
 
+  /**
+   * number of consecutive errors in connecting to the eventsource
+   */
+  private errorCount = 0;
+
+  onError?: (error: any) => void = null;
+
+  onRetry?: () => void = null;
+
+  onOpen?: () => void = null;
+
   /** This is basic interpolation to get the channel URL of an instantiated Urbit connection. */
-  get channelUrl(): string {
+  private get channelUrl(): string {
     return `${this.url}/~/channel/${this.uid}`;
   }
 
-  get fetchOptions(): any {
+  private get fetchOptions(): any {
     const headers: headers = {
       'Content-Type': 'application/json',
     };
@@ -78,6 +87,7 @@ export class Urbit implements UrbitInterface {
     }
     return {
       credentials: 'include',
+      accept: '*',
       headers
     };
   }
@@ -85,13 +95,18 @@ export class Urbit implements UrbitInterface {
   /**
    * Constructs a new Urbit connection.
    *
-   * @param url  The URL (with protocol and port) of the ship to be accessed
+   * @param url  The URL (with protocol and port) of the ship to be accessed. If
+   * the airlock is running in a webpage served by the ship, this should just 
+   * be the empty string.
    * @param code The access code for the ship at that address
    */
   constructor(
     public url: string,
-    public code: string
+    public code?: string
   ) {
+    if (isBrowser) {
+      window.addEventListener('beforeunload', this.delete);
+    }
     return this;
   }
 
@@ -102,7 +117,6 @@ export class Urbit implements UrbitInterface {
    * that is ready to go. It `|hi`s itself to create the channel,
    * then opens the channel via EventSource.
    * 
-   * @param AuthenticationInterface
    */
   static async authenticate({ ship, url, code, verbose = false }: AuthenticationInterface) {
     const airlock = new Urbit(`http://${url}`, code);
@@ -144,7 +158,8 @@ export class Urbit implements UrbitInterface {
   /**
    * Initializes the SSE pipe for the appropriate channel.
    */
-  eventSource(): void{
+  eventSource(): Promise<void> {
+    return new Promise((resolve, reject) => {
     if (!this.sseClientInitialized) {
       const sseOptions: SSEOptions = {
         headers: {}
@@ -154,15 +169,41 @@ export class Urbit implements UrbitInterface {
       } else if (isNode) {
         sseOptions.headers.Cookie = this.cookie;
       }
+      if (this.lastEventId === 0) {
+        // Can't receive events until the channel is open
+        this.poke({ app: 'hood', mark: 'helm-hi', json: 'Opening API channel' });
+      }
       fetchEventSource(this.channelUrl, {
-        // withCredentials: true,
+        ...this.fetchOptions,
+        openWhenHidden: true,
+        onopen: async (response) => {
+          if (this.verbose) {
+            console.log('Opened eventsource', response);
+          }
+          if (response.ok) {
+            this.errorCount = 0;
+            this.onOpen && this.onOpen();
+            resolve();
+            return; // everything's good
+          } else {
+            reject();
+            throw new Error();
+          } 
+        },
         onmessage: (event: EventSourceMessage) => {
           if (this.verbose) {
             console.log('Received SSE: ', event);
           }
+          if (!event.id) return;
           this.ack(Number(event.id));
           if (event.data && JSON.parse(event.data)) {
+            
             const data: any = JSON.parse(event.data);
+
+            if (data.response === 'diff') {
+              this.clearQueue();
+            }
+
             if (data.response === 'poke' && this.outstandingPokes.has(data.id)) {
               const funcs = this.outstandingPokes.get(data.id);
               if (data.hasOwnProperty('ok')) {
@@ -177,7 +218,7 @@ export class Urbit implements UrbitInterface {
               (data.response === 'poke' && this.outstandingSubscriptions.has(data.id))) {
               const funcs = this.outstandingSubscriptions.get(data.id);
               if (data.hasOwnProperty('err')) {
-                funcs.err(data.err);
+                funcs.err(data.err, data.id);
                 this.outstandingSubscriptions.delete(data.id);
               }
             } else if (data.response === 'diff' && this.outstandingSubscriptions.has(data.id)) {
@@ -193,18 +234,42 @@ export class Urbit implements UrbitInterface {
           }
         },
         onerror: (error) => {
-          console.error('pipe error', error);
-        }
+          if(this.errorCount++ < 5) {
+            console.log(this.errorCount);
+            this.onRetry && this.onRetry();
+            return Math.pow(2, this.errorCount - 1) * 750;
+          }
+          this.onError && this.onError(error);
+          throw error;
+        },
+        onclose: () => {
+          throw Error('Ship unexpectedly closed the connection');
+
+        },
       });
       this.sseClientInitialized = true;
     }
-    return;
+    resolve();
+  });
+  }
+
+  /**
+   * Reset airlock, abandoning current subscriptions and wiping state
+   *
+   */
+  reset() {
+    this.uid = `${Math.floor(Date.now() / 1000)}-${hexString(6)}`;
+    this.lastEventId = 0;
+    this.lastAcknowledgedEventId = 0;
+    this.outstandingSubscriptions = new Map();
+    this.outstandingPokes = new Map();
+    this.sseClientInitialized = false;
   }
 
   /**
    * Autoincrements the next event ID for the appropriate channel.
    */
-  getEventId(): number {
+  private getEventId(): number {
     this.lastEventId = Number(this.lastEventId) + 1;
     return this.lastEventId;
   }
@@ -214,8 +279,13 @@ export class Urbit implements UrbitInterface {
    *
    * @param eventId The event to acknowledge.
    */
-   ack(eventId: number): Promise<void | number> {
-    return this.sendMessage('ack', { 'event-id': eventId });
+  private async ack(eventId: number): Promise<number | void> {
+    const message: Message = {
+      action: 'ack',
+      'event-id': eventId
+    };
+    await this.sendJSONtoChannel(message);
+    return eventId;
   }
 
   /**
@@ -229,31 +299,128 @@ export class Urbit implements UrbitInterface {
    * 
    * @returns void | number If successful, returns the number of the message that was sent
    */
-  async sendMessage(action: Action, data?: object): Promise<void | number> {
-    
-    const id = this.getEventId();
-    if (this.verbose) {
-      console.log(`Sending message ${id}:`, action, data,);
-    }
-    let response: Response | undefined;
-    try {
-      response = await fetch(this.channelUrl, {
-        ...this.fetchOptions,
-        method: 'put',
-        body: JSON.stringify([{
-          id,
-          action,
-          ...data,
-        }]),
-      });
-    } catch (error) {
-      console.error('message error', error);
-      response = undefined;
-    }
-    if (this.verbose) {
-      console.log(`Received from message ${id}: `, response);
-    }
-    return id;
+  // async sendMessage(action: Action, data?: object): Promise<number | void> {
+  //   const id = this.getEventId();
+  //   if (this.verbose) {
+  //     console.log(`Sending message ${id}:`, action, data,);
+  //   }
+  //   const message: Message = { id, action, ...data };
+  //   await this.sendJSONtoChannel(message);
+  //   return id;
+  // }
+
+  private outstandingJSON: Message[] = [];
+
+  private debounceTimer: any = null;
+  private debounceInterval = 500;
+  private calm = true;
+
+  private sendJSONtoChannel(json: Message): Promise<boolean | void> {
+    this.outstandingJSON.push(json);
+    return this.processQueue();
+  }
+
+  private processQueue(): Promise<boolean | void> {
+    return new Promise(async (resolve, reject) => {
+      const process = async () => {
+        if (this.calm) {
+          if (this.outstandingJSON.length === 0) resolve(true);
+          this.calm = false; // We are now occupied
+          const json = this.outstandingJSON;
+          const body = JSON.stringify(json);
+          this.outstandingJSON = [];
+          if (body === '[]') {
+            this.calm = true;
+            return resolve(false);
+          }
+          try {
+            await fetch(this.channelUrl, {
+              ...this.fetchOptions,
+              method: 'PUT',
+              body
+            });
+          } catch (error) {
+            json.forEach(failed => this.outstandingJSON.push(failed));
+            if (this.onError) {
+              this.onError(error);
+            } else {
+              throw error;
+            }
+          }
+          this.calm = true;
+          if (!this.sseClientInitialized) {
+            this.eventSource(); // We can open the channel for subscriptions once we've sent data over it
+          }
+          resolve(true);
+        } else {
+          clearTimeout(this.debounceTimer);
+          this.debounceTimer = setTimeout(process, this.debounceInterval);
+          resolve(false);
+        }
+      }
+  
+      this.debounceTimer = setTimeout(process, this.debounceInterval);
+
+      
+    });
+  }
+
+  /**
+   * Creates a subscription, waits for a fact and then unsubscribes
+   *
+   * @param app Name of gall agent to subscribe to
+   * @param path Path to subscribe to
+   * @param timeout Optional timeout before ending subscription
+   *
+   * @returns The first fact on the subcription
+   */
+  async subscribeOnce<T = any>(app: string, path: string, timeout?: number) {
+    return new Promise<T>(async (resolve, reject) => {
+      let done = false;
+      let id: number | null = null;
+      const quit = () => {
+        if(!done) {
+          reject('quit');
+        }
+      };
+      const event = (e: T) => {
+        if(!done) {
+          resolve(e);
+          this.unsubscribe(id);
+        }
+      }
+      const request = { app, path, event, err: reject, quit };
+
+      id = await this.subscribe(request);
+
+      if(timeout) {
+        setTimeout(() => {
+          if(!done) {
+            done = true;
+            reject('timeout');
+            this.unsubscribe(id);
+          }
+        }, timeout);
+      }
+    });
+  }
+
+  
+
+  // resetDebounceTimer() {
+  //   if (this.debounceTimer) {
+  //     clearTimeout(this.debounceTimer);
+  //     this.debounceTimer = null;
+  //   }
+  //   this.calm = false;
+  //   this.debounceTimer = setTimeout(() => {
+  //     this.calm = true;
+  //   }, this.debounceInterval);
+  // }
+
+  clearQueue() {
+    clearTimeout(this.debounceTimer);
+    this.debounceTimer = null;
   }
 
   /**
@@ -263,51 +430,84 @@ export class Urbit implements UrbitInterface {
    * @param mark The mark of the data being sent
    * @param json The data to send
    */
-  poke<T>(params: PokeInterface<T>): Promise<void | number> {
-    const { app, mark, json, onSuccess, onError } = { onSuccess: () => {}, onError: () => {}, ...params };
+  poke<T>(params: PokeInterface<T>): Promise<number> {
+    const {
+      app,
+      mark,
+      json,
+      ship,
+      onSuccess,
+      onError
+    } = {
+      onSuccess: () => { },
+      onError: () => { },
+      ship: this.ship,
+      ...params
+    };
     return new Promise((resolve, reject) => {
-      this
-        .sendMessage('poke', { ship: this.ship, app, mark, json })
-        .then(pokeId => {
-          if (!pokeId) {
-            return reject('Poke failed');
-          }
-          if (!this.sseClientInitialized) resolve(pokeId); // A poke may occur before a listener has been opened
-          this.outstandingPokes.set(pokeId, {
-            onSuccess: () => {
-              onSuccess();
-              resolve(pokeId);
-            },
-            onError: (event) => {
-              onError(event);
-              reject(event.err);
-            }
-          });
-        }).catch(error => {
-          console.error(error);
-        });
+      const message: Message = {
+        id: this.getEventId(),
+        action: 'poke',
+        ship,
+        app,
+        mark,
+        json
+      };
+      this.outstandingPokes.set(message.id, {
+        onSuccess: () => {
+          onSuccess();
+          resolve(message.id);
+        },
+        onError: (event) => {
+          onError(event);
+          reject(event.err);
+        }
+      });
+      this.sendJSONtoChannel(message).then(() => {
+        resolve(message.id);
+      });
     });
   }
 
   /**
    * Subscribes to a path on an app on a ship.
    *
+   *
    * @param app The app to subsribe to
    * @param path The path to which to subscribe
    * @param handlers Handlers to deal with various events of the subscription
    */
-  async subscribe(params: SubscriptionRequestInterface): Promise<void | number> {
-    const { app, path, err, event, quit } = { err: () => {}, event: () => {}, quit: () => {}, ...params };
+  async subscribe(params: SubscriptionRequestInterface): Promise<number> {
+    const {
+      app,
+      path,
+      ship,
+      err,
+      event,
+      quit
+    } = {
+      err: () => { },
+      event: () => { },
+      quit: () => { },
+      ship: this.ship,
+      ...params
+    };
 
-    const subscriptionId = await this.sendMessage('subscribe', { ship: this.ship, app, path });
+    const message: Message = {
+      id: this.getEventId(),
+      action: 'subscribe',
+      ship,
+      app,
+      path
+    };
 
-    if (!subscriptionId) return;
-
-    this.outstandingSubscriptions.set(subscriptionId, {
-      err, event, quit
+    this.outstandingSubscriptions.set(message.id, {
+      app, path, err, event, quit
     });
 
-    return subscriptionId;
+    await this.sendJSONtoChannel(message);
+    
+    return message.id;
   }
 
   /**
@@ -315,38 +515,65 @@ export class Urbit implements UrbitInterface {
    *
    * @param subscription
    */
-  unsubscribe(subscription: string): Promise<void | number> {
-    return this.sendMessage('unsubscribe', { subscription });
+  async unsubscribe(subscription: number) {
+    return this.sendJSONtoChannel({
+      id: this.getEventId(),
+      action: 'unsubscribe',
+      subscription
+    }).then(() => {
+      this.outstandingSubscriptions.delete(subscription);
+    });
   }
 
   /**
    * Deletes the connection to a channel.
    */
-  delete(): Promise<void | number> {
-    return this.sendMessage('delete');
+  delete() {
+    if (isBrowser) {
+      navigator.sendBeacon(this.channelUrl, JSON.stringify([{
+        action: 'delete'
+      }]));
+    } else {
+      // TODO
+      // this.sendMessage('delete');
+    }
   }
 
   /**
+   * Scry into an gall agent at a path
    * 
-   * @param app   The app into which to scry
-   * @param path  The path at which to scry
+   * @typeParam T - Type of the scry result
+   *
+   * @remarks
+   *
+   * Equivalent to
+   * ```hoon
+   * .^(T %gx /(scot %p our)/[app]/(scot %da now)/[path]/json)
+   * ```
+   * The returned cage must have a conversion to JSON for the scry to succeed
+   *
+   * @param params The scry request
+   * @returns The scry result
    */
-  async scry(params: Scry): Promise<void | any> {
+  async scry<T = any>(params: Scry): Promise<T> {
     const { app, path } = params;
-    const response = await fetch(`/~/scry/${app}${path}.json`, this.fetchOptions);
+    const response = await fetch(`${this.url}/~/scry/${app}${path}.json`, this.fetchOptions);
     return await response.json();
   }
 
   /**
+   * Run a thread
+   *
    * 
    * @param inputMark   The mark of the data being sent
    * @param outputMark  The mark of the data being returned
    * @param threadName  The thread to run
    * @param body        The data to send to the thread
+   * @returns  The return value of the thread
    */
-  async thread<T>(params: Thread<T>): Promise<T> {
+  async thread<R, T = any>(params: Thread<T>): Promise<R> {
     const { inputMark, outputMark, threadName, body } = params;
-    const res = await fetch(`/spider/${inputMark}/${threadName}/${outputMark}.json`, {
+    const res = await fetch(`${this.url}/spider/${inputMark}/${threadName}/${outputMark}.json`, {
       ...this.fetchOptions,
       method: 'POST',
       body: JSON.stringify(body)

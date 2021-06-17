@@ -7,8 +7,10 @@ import BigIntArrayOrderedMap, {
 import bigInt, { BigInteger } from 'big-integer';
 import produce from 'immer';
 import _ from 'lodash';
-import { reduceState } from '../state/base';
-import useGraphState, { GraphState } from '../state/graph';
+import { BaseState, reduceState } from '../state/base';
+import useGraphState, { GraphState as State } from '../state/graph';
+
+type GraphState = State & BaseState<State>;
 
 const mapifyChildren = (children) => {
   return new BigIntOrderedMap().gas(
@@ -445,6 +447,12 @@ const removePosts = (json, state: GraphState): GraphState => {
   return state;
 };
 
+export const reduceDm = [
+  acceptOrRejectDm,
+  pendings,
+  setScreen
+];
+
 export const GraphReducer = (json) => {
   const data = _.get(json, 'graph-update', false);
 
@@ -470,14 +478,5 @@ export const GraphReducer = (json) => {
   const thread = _.get(json, 'graph-update-thread', false);
   if (thread) {
     reduceState<GraphState, any>(useGraphState, thread, [addNodesThread]);
-  }
-  const dm = _.get(json, 'dm-hook-action', false);
-  if(dm) {
-    console.log(dm);
-    reduceState<GraphState, any>(useGraphState, dm, [
-      acceptOrRejectDm,
-      pendings,
-      setScreen
-    ]);
   }
 };

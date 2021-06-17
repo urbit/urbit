@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { resourceFromPath } from '~/logic/lib/group';
-import { useGraphTimesentMap } from '~/logic/state/graph';
+import useGraphState, { useGraphTimesentMap } from '~/logic/state/graph';
 import { useGroup } from '~/logic/state/group';
 import { useAssocForGraph } from '~/logic/state/metadata';
 import { Loading } from '~/views/components/Loading';
@@ -12,11 +12,12 @@ import { GroupFeedHeader } from './GroupFeedHeader';
 import PostThread from './Post/PostThread';
 import PostFlatTimeline from './Post/PostFlatTimeline';
 import PostReplies from './Post/PostReplies';
+import airlock from '~/logic/api';
+import { markCountAsRead } from '@urbit/api';
 
 function GroupFlatFeed(props) {
   const {
     baseUrl,
-    api,
     graphPath,
     groupPath,
     vip
@@ -35,14 +36,15 @@ function GroupFlatFeed(props) {
   const relativePath = path => baseUrl + path;
   const history = useHistory();
   const locationUrl = history.location.pathname;
+  const getDeepOlderThan = useGraphState(s => s.getDeepOlderThan);
 
   useEffect(() => {
     //  TODO: VirtualScroller should support lower starting values than 100
     if (graphRid.ship === '~zod' && graphRid.name === 'null') {
       return;
     }
-    api.graph.getDeepOlderThan(graphRid.ship, graphRid.name, null, 100);
-    api.hark.markCountAsRead(association, '/', 'post');
+    getDeepOlderThan(graphRid.ship, graphRid.name, 100);
+    airlock.poke(markCountAsRead(graphPath));
   }, [graphPath]);
 
   if (!graphPath) {
@@ -72,7 +74,6 @@ function GroupFlatFeed(props) {
             return (
               <PostFlatTimeline
                 baseUrl={baseUrl}
-                api={api}
                 graphPath={graphPath}
                 group={group}
                 association={association}
@@ -89,7 +90,6 @@ function GroupFlatFeed(props) {
               <PostThread
                 locationUrl={locationUrl}
                 baseUrl={baseUrl}
-                api={api}
                 history={history}
                 graphPath={graphPath}
                 group={group}
@@ -107,7 +107,6 @@ function GroupFlatFeed(props) {
               <PostReplies
                 locationUrl={locationUrl}
                 baseUrl={baseUrl}
-                api={api}
                 history={history}
                 graphPath={graphPath}
                 group={group}

@@ -3,7 +3,6 @@ import { Association, GraphNode, Group, Post } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import { History } from 'history';
 import React, { Ref } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
 import { withHovering } from '~/logic/lib/util';
 import { Mention } from '~/views/components/MentionText';
@@ -13,7 +12,6 @@ import PostFooter from './PostFooter';
 import PostHeader from './PostHeader';
 
 export interface PostItemProps {
-  api: GlobalApi;
   association: Association;
   baseUrl: string
   bind?: unknown;
@@ -96,7 +94,6 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
   render() {
     const {
       node,
-      api,
       graphPath,
       association,
       index,
@@ -149,7 +146,6 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
             <>
               <PostHeader
                 post={node.post}
-                api={api}
                 association={association}
                 showTimestamp={isRelativeTime}
                 graphPath={graphPath}
@@ -158,14 +154,13 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
               { ((isReply || (parentPost && index.length > 1 && isParent)) && parentPost?.author) ? (
                 <Row width="100%" alignItems="center" mb="2" pl="2" pr="2">
                   <Text color="gray" pr="1">Replying to</Text>
-                  <Mention ship={parentPost?.author} api={api} />
+                  <Mention ship={parentPost?.author} />
                 </Row>
               ) : null }
               <PostContent
                 post={node.post}
                 isParent={isParent}
                 isReply={isReply}
-                api={api}
               />
             <PostFooter
               timeSent={node.post['time-sent']}
@@ -191,7 +186,6 @@ class PostItem extends React.Component<PostItemProps, PostItemState> {
               borderLeftColor="lightGray"
             ></Box>
             <PostInput
-              api={api}
               graphPath={graphPath}
               group={group}
               association={association}

@@ -13,13 +13,14 @@ import PostInput from './PostInput';
 export default function PostThread(props) {
   const {
     baseUrl,
-    api,
     association,
     graphPath,
     group,
     vip,
     pendingSize
   } = props;
+
+  const getFirstborn = useGraphState(s => s.getFirstborn);
 
   const graphResource =
     graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
@@ -36,7 +37,7 @@ export default function PostThread(props) {
       return;
     }
 
-    api.graph.getFirstborn(
+    getFirstborn(
       graphResource.ship,
       graphResource.name,
       arrToString(index)
@@ -80,7 +81,6 @@ export default function PostThread(props) {
           alignItems="center"
         >
           <PostInput
-            api={api}
             graphPath={graphPath}
             group={group}
             association={association}
@@ -114,7 +114,6 @@ export default function PostThread(props) {
         association={association}
         group={group}
         vip={vip}
-        api={api}
         baseUrl={baseUrl}
         isThread={true}
       />
