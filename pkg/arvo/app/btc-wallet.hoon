@@ -4,7 +4,7 @@
 ::  x/scanned: (list xpub) of all scanned wallets
 ::  x/balance/xpub: balance (in sats) of wallet
 /-  *btc-wallet, bp=btc-provider, file-server, launch-store
-/+  dbug, default-agent, bl=btc, bc=bitcoin, bip32, bip-b158
+/+  dbug, default-agent, bl=btc, bc=bitcoin, bip32
 |%
 ++  defaults
   |%
@@ -168,12 +168,14 @@
   ^-  (quip card _this)
   ?+  -.sign  (on-agent:def wire sign)
       %kick
-    ~&  >>>  "kicked from prov {<src.bowl>}"
     ?~  prov  `this
     ?:  ?&  ?=(%set-provider -.wire)
             =(host.u.prov src.bowl)
         ==
-      `this(prov ~)
+      :_  this(prov [~ src.bowl %.n])
+      :~  (watch-provider src.bowl)
+          (give-update %change-provider `[src.bowl %.n])
+      ==
     `this
     ::
       %fact
@@ -238,7 +240,6 @@
   ?>  (team:title our.bowl src.bowl)
   ?-  -.comm
       %set-provider
-    |^
     ?~  provider.comm
       ?~  prov  `state
       :_  state(prov ~)
@@ -252,20 +253,6 @@
         (watch-provider u.provider.comm)
         (give-update %change-provider `[u.provider.comm %.n])
     ==
-    ::
-    ++  watch-provider
-      |=  who=@p
-      ^-  card
-      :*  %pass  /set-provider/[(scot %p who)]  %agent  [who %btc-provider]
-          %watch  /clients
-      ==
-    ++  leave-provider
-      |=  who=@p
-      ^-  card
-      :*  %pass  /set-provider/[(scot %p who)]  %agent  [who %btc-provider]
-          %leave  ~
-      ==
-    --
   ::
       %check-provider
     =/  pax  /permitted/(scot %p provider.comm)
@@ -722,6 +709,7 @@
     (gulf +(block.btc-state) (dec block))
   =?  blocks  ?|(?=(~ blockhash) ?=(~ blockfilter))
     (snoc blocks block)
+  =?  blocks  (gth gap 50)  ~
   ::
   =/  cards=(list card)
     ;:  weld
@@ -738,6 +726,10 @@
   =?  cards  ?&(?=(^ blockhash) ?=(^ blockfilter) (gth gap 0))
     ;:  weld  cards
       (retry-filtered-addrs network u.blockhash u.blockfilter)
+    ==
+  =?  cards  (gth gap 50)
+    ;:  weld  cards
+      (retry-addrs network)
     ==
   :-  cards
   %_  state
@@ -792,7 +784,7 @@
   :-  ~
   %+  murn
     %~  tap  in
-    %:  all-match:bip-b158
+    %:  all-match:bip-b158:bc
         blockfilter
         blockhash
       ::
@@ -1125,6 +1117,19 @@
   |=  upd=update
   ^-  card
   [%give %fact ~[/all] %btc-wallet-update !>(upd)]
+::
+++  watch-provider
+  |=  who=@p
+  ^-  card
+  :*  %pass  /set-provider/[(scot %p who)]  %agent  [who %btc-provider]
+      %watch  /clients
+  ==
+++  leave-provider
+  |=  who=@p
+  ^-  card
+  :*  %pass  /set-provider/[(scot %p who)]  %agent  [who %btc-provider]
+      %leave  ~
+  ==
 ::
 ++  give-initial
   ^-  card
