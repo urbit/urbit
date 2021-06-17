@@ -44,6 +44,10 @@
 ::  ~losrut %own 2
 ::  ~losrut %spawn 1
 ::
+::  ~red is for testing escapes.
+::  ~rigred is L1 star
+::  ~losred is L2 star
+::
 ++  init-rut-full
   |=  =^state:naive
   ^-  [effects:naive ^state:naive]
@@ -80,10 +84,18 @@
   =^  f18  state  (n state %bat q:(gen-tx 0 pp-xfer %losrut-pp-key-0))
   =^  f19  state  (n state %bat q:(gen-tx 0 hn-xfer %losrut-hn-key-0))
   =^  f20  state  (n state %bat q:(gen-tx 0 dn-xfer %losrut-dn-key-0))
-  [:(welp f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20) state]
+  :: end of ~rut points, beginning of ~red
+  =^  f21  state  (n state (owner-changed:l1 ~red (addr %red-key-0)))
+  =^  f22  state  (n state (owner-changed:l1 ~rigred (addr %rigred-key-0)))
+  =^  f23  state  (n state (owner-changed:l1 ~losred (addr %losred-key-0)))
+  =^  f24  state  (n state (owner-changed:l1 ~losred deposit-address:naive))
+  :-  ;:  welp
+      f1  f2  f3  f4  f5  f6  f7  f8  f9  f10
+      f11  f12  f13  f14  f15  f16  f17  f18
+      f19  f20  f21  f22  f23  f24
+      ==
+  state
 ::
-::  TODO: add an "evil galaxy" whose points attempt to perform actions
-::  on ~rut's points
 ::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
 ::
@@ -545,16 +557,17 @@
                     (cury filter-owner %.y)
                     (cury filter-proxy %own)
                     (cury filter-nonce %.y)
-                    ::(cury filter-rank %star)
-                    ::(cury filter-dominion %l2)
+                    (cury filter-rank %star)
+                    (cury filter-dominion %l2)
                     %-  cury
                     :-  filter-tx-type
-                    :*  %spawn
-                        %transfer-point
-                        %configure-keys
-                        %set-management-proxy
+                    :*  ::%spawn
+                        ::%transfer-point
+                        ::%configure-keys
+                        ::%set-management-proxy
                         ::%set-spawn-proxy  :: planets can set spawn proxy atm
-                        %set-transfer-proxy
+                        ::%set-transfer-proxy
+                        %escape
                         ~
                     ==
                 ==
@@ -805,6 +818,7 @@
       %set-spawn-proxy       set-spwn-proxy
       %set-transfer-proxy    set-xfer-proxy
       %spawn                 (new-point which-spawn)
+      %escape                (set-escape which-escape-l2)
     ==
     ::
     ++  set-keys  ^-  ^state:naive
@@ -850,6 +864,15 @@
       ==
       (alter-state new-xfer)
     ::
+    ++  set-escape
+      |=  =ship  ^-  ^state:naive
+      =/  new-escp
+      %=  cur-point
+        escape.net  (some ship)
+        nonce.owner.own  +(cur-nonce)
+      ==
+      (alter-state new-escp)
+    ::
     ++  new-point
       :: TODO clean up this horrifying gate
       |=  =ship  ^-  ^state:naive
@@ -891,7 +914,8 @@
       =<  q
       %-  gen-tx
       :+  nonce.owner.own:(~(got by points.state) cur-ship)
-        :-  [cur-ship proxy.cur-event]
+        :-  :-  cur-ship
+            proxy.cur-event
         def-args
       (~(got by default-own-keys) cur-ship)
     state
@@ -903,7 +927,7 @@
         %spawn                 [%spawn which-spawn (addr %spawn-test)]
         %transfer-point        [%transfer-point (addr %transfer-test) |]
         %configure-keys        [%configure-keys encr auth suit |]
-        :: %escape
+        %escape                [%escape which-escape-l2]
         :: %cancel-escape
         :: %adopt
         :: %reject
@@ -912,10 +936,6 @@
         %set-spawn-proxy       [%set-spawn-proxy (addr %proxy-test)]
         %set-transfer-proxy    [%set-transfer-proxy (addr %proxy-test)]
       ==
-      ::
-      ::
-      ::  TODO: these are spawns that ought to work, except for the planets
-      ::  attempting to spawn, which needs to be factored out differently
       ::
       --  :: +def-args
     ::
@@ -939,6 +959,19 @@
       %~pinpun-pilsun  ~tapfur-fitsep
       %~habtyc-nibpyx  ~tapfur-fitsep
       %~disryt-nolpet  ~tapfur-fitsep
+    ==
+  ::
+  ++  which-escape-l1  ^-  ship
+    ?-  rank.cur-event
+      %galaxy  ~red
+      %star    ~red
+      %planet  ~rigred
+    ==
+  ++  which-escape-l2  ^-  ship
+    ?-  rank.cur-event
+      %galaxy  ~red
+      %star    ~red
+      %planet  ~losred
     ==
   ::
   --  :: end of +expect-eq
