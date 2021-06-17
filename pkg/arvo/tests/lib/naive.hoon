@@ -587,18 +587,18 @@
     =/  filter  ;:  cork
                     (cury filter-owner %.y)
                     (cury filter-proxy %own)
-                    (cury filter-nonce %.y)
-                    (cury filter-rank %star)
-                    (cury filter-dominion %spawn)
+                    (cury filter-nonce %.n)
+                    ::(cury filter-rank %star)
+                    (cury filter-dominion %l2)
                     %-  cury
                     :-  filter-tx-type
-                    :*  ::%spawn
-                        ::%transfer-point
-                        ::%configure-keys
-                        ::%set-management-proxy
-                        %set-spawn-proxy  :: planets can set spawn proxy atm
-                        ::%set-transfer-proxy
-                        ::%escape
+                    :*  %spawn
+                        %transfer-point
+                        %configure-keys
+                        %set-management-proxy
+                        :: set-spawn-proxy  :: planets can set spawn proxy atm
+                        %set-transfer-proxy
+                        %escape
                         ~
                     ==
                 ==
@@ -836,6 +836,9 @@
   ::
   =/  cur-point  (~(got by points.initial-state) cur-ship)
   =/  cur-nonce  nonce.owner.own:(~(got by points.initial-state) cur-ship)
+  =/  new-nonce  ?:  nonce.cur-event  :: wrong nonces do not increment nonce
+                   +(cur-nonce)
+                 cur-nonce
   ::
   =/  state  initial-state
   =/  expect-state  initial-state
@@ -844,7 +847,7 @@
     !>
     |^  ^-  ^state:naive
     ?.  (~(got by suc-map) cur-event)
-      (alter-state cur-point(nonce.owner.own +(cur-nonce)))
+      (alter-state cur-point(nonce.owner.own new-nonce))
     ?+  tx-type.cur-event  !!
       %transfer-point        set-xfer
       %configure-keys        set-keys
@@ -862,7 +865,7 @@
         suite.keys.net  suit
         auth.keys.net   auth
         crypt.keys.net  encr
-        nonce.owner.own  +(cur-nonce)
+        nonce.owner.own  new-nonce
       ==
       (alter-state new-keys)
     ::
@@ -870,7 +873,7 @@
       =/  new-xfer
       %=  cur-point
         address.owner.own  (addr %transfer-test)
-        nonce.owner.own  +(cur-nonce)
+        nonce.owner.own  new-nonce
       ==
       (alter-state new-xfer)
     ::
@@ -878,7 +881,7 @@
       =/  new-mgmt
       %=  cur-point
         address.management-proxy.own  (addr %proxy-test)
-        nonce.owner.own  +(cur-nonce)
+        nonce.owner.own  new-nonce
       ==
       (alter-state new-mgmt)
     ::
@@ -886,7 +889,7 @@
       =/  new-spwn
       %=  cur-point
         address.spawn-proxy.own  (addr %proxy-test)
-        nonce.owner.own  +(cur-nonce)
+        nonce.owner.own  new-nonce
       ==
       (alter-state new-spwn)
     ::
@@ -894,7 +897,7 @@
       =/  new-xfer
       %=  cur-point
         address.transfer-proxy.own  (addr %proxy-test)
-        nonce.owner.own  +(cur-nonce)
+        nonce.owner.own  new-nonce
       ==
       (alter-state new-xfer)
     ::
@@ -903,7 +906,7 @@
       =/  new-escp
       %=  cur-point
         escape.net  (some ship)
-        nonce.owner.own  +(cur-nonce)
+        nonce.owner.own  new-nonce
       ==
       (alter-state new-escp)
     ::
@@ -918,16 +921,16 @@
         address.transfer-proxy.own  (addr %spawn-test)
         sponsor.net  [has=%.y who=cur-ship]
       ==
-      =/  new-nonce
+      =/  new-point-nonce
       %=  cur-point
-        nonce.owner.own  +(cur-nonce)
+        nonce.owner.own  new-nonce
       ==
       =/  new-spawn=^state:naive
       %=  expect-state
         points  (~(put by points.expect-state) ship spawned)
       ==
       %=  new-spawn
-        points  (~(put by points.new-spawn) cur-ship new-nonce)
+        points  (~(put by points.new-spawn) cur-ship new-point-nonce)
       ==
     ::
     ++  alter-state
@@ -947,7 +950,9 @@
         %bat
       =<  q
       %-  gen-tx
-      :+  nonce.owner.own:(~(got by points.state) cur-ship)
+      :+  ?:  nonce.cur-event
+            cur-nonce
+          999 :: wrong nonce
         :-  :-  cur-ship
             proxy.cur-event
         def-args
