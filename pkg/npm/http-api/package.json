@@ -1,6 +1,6 @@
 {
   "name": "@urbit/http-api",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "license": "MIT",
   "description": "Library to interact with an Urbit ship over HTTP",
   "repository": {
@@ -15,6 +15,7 @@
     "src"
   ],
   "scripts": {
+    "prepublish": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "onchange './*.ts' -- npm run build",
     "build": "npm run clean && tsc -p tsconfig.json",
