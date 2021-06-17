@@ -85,7 +85,8 @@
   =^  f19  state  (n state %bat q:(gen-tx 0 hn-xfer %losrut-hn-key-0))
   =^  f20  state  (n state %bat q:(gen-tx 0 dn-xfer %losrut-dn-key-0))
   :: end of ~rut points, beginning of ~red. TODO this should be removed
-  :: once i move %escape to +test-red
+  :: once i move %escape to +test-red. or maybe %escape should stay here
+  :: because its the simplest?
   =^  f21  state  (n state (owner-changed:l1 ~red (addr %red-key-0)))
   =^  f22  state  (n state (owner-changed:l1 ~rigred (addr %rigred-key-0)))
   =^  f23  state  (n state (owner-changed:l1 ~losred (addr %losred-key-0)))
@@ -102,16 +103,27 @@
 :: ~rut because the concerns are different enough from the other actions that
 :: its cleaner to do them separately
 ::
-::  ++  init-red-full
-::    |=  =^state:naive
-::    ^-  [effects:naive ^state:naive]
-::    =^  f1  state  (init-rut-full state)
+++  init-red-full
+  |=  =^state:naive
+  ^-  [effects:naive ^state:naive]
+  =/  pp-escape  [[~pinpun-pilsun %own] %escape ~losred]
+  =/  dm-escape  [[~dovmul-mogryt %own] %escape ~rigred]
+  =/  lm-escape  [[~larsyx-mapmeg %own] %escape ~losred]
+  =^  f1  state  (init-rut-full state)
   ::  TODO uncomment the below once %escape is moved to +test-red
   ::  =^  f21  state  (n state (owner-changed:l1 ~red (addr %red-key-0)))
   ::  =^  f22  state  (n state (owner-changed:l1 ~rigred (addr %rigred-key-0)))
   ::  =^  f23  state  (n state (owner-changed:l1 ~losred (addr %losred-key-0)))
   ::  =^  f24  state  (n state (owner-changed:l1 ~losred deposit-address:naive))
-
+  ::  L1->L1 will happen later, its the most complicated
+  ::  each pending escape will be followed by an adopt, reject, or cancel-escape
+  ::  L2->L2
+  =^  f2  state  (n state %bat q:(gen-tx 0 pp-escape %losrut-pp-key-0))
+  ::  L2->L1
+  =^  f3  state  (n state %bat q:(gen-tx 0 dm-escape %holrut-dm-key-0))
+  ::  L1->L2
+  =^  f4  state  (n state %bat q:(gen-tx 0 lm-escape %rigrut-lm-key-0))
+  [:(welp f1 f2 f3 f4) state]
 ::
 ::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
@@ -999,6 +1011,8 @@
     ==
   ::
   --  :: end of +expect-eq
+::
+:: ++  test-red  ^-  tang
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
