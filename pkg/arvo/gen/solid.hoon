@@ -15,8 +15,8 @@
         arg=$@(~ [top=path ~])
         dub=_|
     ==
-:-  %pill
-^-  pill:pill
+:-  %boot-pill
+^-  boot-pill:pill
 ::  sys: root path to boot system, `/~me/[desk]/now/sys`
 ::
 =/  sys=path

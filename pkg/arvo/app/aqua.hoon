@@ -38,11 +38,7 @@
       ==
     ::  XX temporarily shadowed, fix and remove
     ::
-    +$  pill
-      $:  boot-ova=*
-          kernel-ova=(list unix-event)
-          userspace-ova=(list unix-event)
-      ==
+    +$  pill  boot-pill:pill-lib
     ::
     +$  fleet  [ships=(map ship pier) azi=az-state]
     +$  pier
@@ -86,7 +82,7 @@
     =^  cards  state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
           %aqua-events     (poke-aqua-events:ac !<((list aqua-event) vase))
-          %pill            (poke-pill:ac !<(pill vase))
+          %boot-pill       (poke-pill:ac !<(pill vase))
           %noun            (poke-noun:ac !<(* vase))
           %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
       ==
@@ -411,10 +407,11 @@
   ::
   ?+  val  ~|(%bad-noun-arg !!)
       [%swap-vanes vs=*]
-    ?>  ?=([[%7 * %1 installed=*] ~] boot-ova.pil)
-    =.  installed.boot-ova.pil
+    ?>  ?=(^ boot-ova.pil)
+    ?>  ?=([%7 * %1 installed=*] i.boot-ova.pil)
+    =.  installed.i.boot-ova.pil
       %+  roll  (,(list term) vs.val)
-      |=  [v=term =_installed.boot-ova.pil]
+      |=  [v=term =_installed.i.boot-ova.pil]
       %^  slum  installed  now.hid
       =/  vane
         ?+  v  ~|([%unknown-vane v] !!)

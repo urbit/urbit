@@ -5,12 +5,16 @@
 ::
 +$  pill
   $%  [%ivory p=(list)]
-      $:  %pill
-          nam=term
-          boot-ova=(list)
-          kernel-ova=(list unix-event)
-          userspace-ova=(list unix-event)
-  ==  ==
+      boot-pill
+  ==
+::
++$  boot-pill
+  $:  %pill
+      nam=term
+      boot-ova=(list)
+      kernel-ova=(list unix-event)
+      userspace-ova=(list unix-event)
+  ==
 ::
 +$  unix-event
   %+  pair  wire
