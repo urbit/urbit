@@ -179,7 +179,7 @@
       :_  ~
       :*  %event
           her
-          //http-client/0v1n.2m9vh
+          /i/http-client/0v1n.2m9vh
           %receive
           num.u.ask
           [%start [200 ~] `(as-octs:mimes:html resp) &]

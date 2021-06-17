@@ -28,10 +28,10 @@
   %+  send-events-to  who
   ^-  (list unix-event)
   :~
-    [//term/1 %belt %ctl `@c`%e]
-    [//term/1 %belt %ctl `@c`%u]
-    [//term/1 %belt %txt ((list @c) what)]
-    [//term/1 %belt %ret ~]
+    [/d/term/1 %belt %ctl `@c`%e]
+    [/d/term/1 %belt %ctl `@c`%u]
+    [/d/term/1 %belt %txt ((list @c) what)]
+    [/d/term/1 %belt %ret ~]
   ==
 ::
 ::  Control character
@@ -40,7 +40,7 @@
   |=  [who=ship what=term]
   ^-  (list ph-event)
   %+  send-events-to  who
-  :~  [//term/1 %belt %ctl (,@c what)]
+  :~  [/d/term/1 %belt %ctl (,@c what)]
   ==
 ::
 ::  Inject a file into a ship
@@ -54,7 +54,7 @@
     [path ~ /text/plain (as-octs:mimes:html txt)]
   %+  send-events-to  who
   :~
-    [//sync/0v1n.2m9vh %into des | input]
+    [/c/sync/0v1n.2m9vh %into des | input]
   ==
 ::
 ::  Checks whether the given event is a dojo output blit containing the

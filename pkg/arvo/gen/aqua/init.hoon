@@ -1,6 +1,8 @@
+:: Start an aqua ship
+::
 /-  aquarium
 =,  aquarium
 :-  %say
-|=  [* [her=ship ~] ~]
+|=  [* [her=ship fake=? ~] ~]
 :-  %aqua-events
-[%init-ship her `*dawn-event:jael]~
+[%init-ship her ?:(fake ~ `*dawn-event:jael)]~
