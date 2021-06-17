@@ -10,7 +10,6 @@ module Urbit.Vere.Term.Render
     , cursorRestore
     , putCsi
     , hijack
-    , lojack
     ) where
 
 import ClassyPrelude
@@ -45,13 +44,11 @@ putCsi c a = liftIO do
     putStr $ pack $ mconcat $ intersperse ";" (fmap show a)
     putStr $ pack [c]
 
-hijack :: MonadIO m => Int -> m ()
-hijack h = liftIO do
+hijack :: MonadIO m => Int -> IO () -> m ()
+hijack h d = liftIO do
     putCsi 'r' [1, h-1]  --  set scroll region to exclude bottom line
     putCsi 'S' [1]       --  scroll up one line
     cursorMove (h-2) 0   --  move cursor to empty space
-
-lojack :: MonadIO m => m ()
-lojack = liftIO do
-    putCsi 'r' []  --  reset scroll region
-    cursorRestore  --  restory cursor position
+    d
+    putCsi 'r' []        --  reset scroll region
+    cursorRestore        --  restory cursor position

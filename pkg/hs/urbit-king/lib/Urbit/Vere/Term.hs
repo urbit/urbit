@@ -294,29 +294,25 @@ localClient doneSignal = fst <$> mkRAcquire start stop
         writeBlank ls = do
           TermSize _ height <- readTVarIO termSizeVar
           --NOTE  hijack creates a blank line
-          T.hijack $ fromIntegral height
-          T.lojack
+          T.hijack (fromIntegral height) $ pure ()
           pure ls
 
         writeTrace :: LineState -> Text -> RIO e LineState
         writeTrace ls p = do
             TermSize _ height <- readTVarIO termSizeVar
-            T.hijack $ fromIntegral height
-            putStr p
-            T.lojack
+            T.hijack (fromIntegral height) $ putStr p
             pure ls
 
         writeSlog :: LineState -> (Atom, Tank) -> RIO e LineState
         writeSlog ls slog = do
             TermSize width height <- readTVarIO termSizeVar
-            T.hijack $ fromIntegral height
-            -- TODO: Ignoring priority for now. Priority changes the color of,
-            -- and adds a prefix of '>' to, the output.
-            let lines = fmap unTape $ wash (WashCfg 0 width) $ tankTree $ snd slog
-            T.putCsi 'm' [90]  --NOTE  print slogs in grey
-            forM (intersperse "\n" lines) $ \line -> putStr line
-            T.putCsi 'm' [0]
-            T.lojack
+            T.hijack (fromIntegral height) do
+              -- TODO: Ignoring priority for now. Priority changes the color of,
+              -- and adds a prefix of '>' to, the output.
+              let lines = fmap unTape $ wash (WashCfg 0 width) $ tankTree $ snd slog
+              T.putCsi 'm' [90]  --NOTE  print slogs in grey
+              forM (intersperse "\n" lines) $ \line -> putStr line
+              T.putCsi 'm' [0]
             pure ls
 
         {-
