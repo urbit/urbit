@@ -342,7 +342,9 @@ validateFeedAndGetSponsor :: String
 validateFeedAndGetSponsor endpoint block = \case
     Feed0 s -> do
       r <- validateSeed s
-      pure (s, r)
+      case r of
+        Left e  -> error e
+        Right r -> pure (s, r)
     Feed1 s -> validateGerms s
 
   where
@@ -351,8 +353,8 @@ validateFeedAndGetSponsor endpoint block = \case
         []    -> error "no usable keys in keyfile"
         (Germ{..}:f) -> do
                   let seed = Seed gShip gLife gRing Nothing
-                  r :: Either SomeException Ship
-                    <- try do validateSeed seed
+                  r :: Either String Ship
+                    <- validateSeed seed
                   case r of
                     Left _  -> validateGerms $ Germs gShip f
                     Right r -> pure (seed, r)
@@ -366,18 +368,20 @@ validateFeedAndGetSponsor endpoint block = \case
         validateComet = do
           -- A comet address is the fingerprint of the keypair
           let shipFromPass = cometFingerprint $ ringToPass ring
-          when (ship /= shipFromPass) $
-            error ("comet name doesn't match fingerprint " <> show ship <> " vs " <>
-                  show shipFromPass)
-          when (life /= 1) $
-            error ("comet can never be re-keyed")
-          pure (shipSein ship)
+          if (ship /= shipFromPass) then
+            pure $ Left ("comet name doesn't match fingerprint " <>
+                         show ship <> " vs " <>
+                         show shipFromPass)
+          else if (life /= 1) then
+            pure $ Left "comet can never be re-keyed"
+          else
+            pure $ Right (shipSein ship)
 
         validateMoon = do
           -- TODO: The current code in zuse does nothing, but we should be able
           -- to try to validate the oath against the current as exists planet
           -- on chain.
-          pure $ shipSein ship
+          pure $ Right $ shipSein ship
 
         validateRest = do
           putStrLn ("boot: retrieving " <> renderShip ship <> "'s public keys")
@@ -385,17 +389,18 @@ validateFeedAndGetSponsor endpoint block = \case
           --TODO  could cache this lookup
           whoP <- retrievePoint endpoint block ship
           case epNet whoP of
-            Nothing -> error "ship not keyed"
+            Nothing -> pure $ Left "ship not keyed"
             Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
-              when (netLife /= life) $
-                  error ("keyfile life mismatch; keyfile claims life " <>
-                        show life <> ", but Azimuth claims life " <>
-                        show netLife)
-              when ((ringToPass ring) /= pass) $
-                  error "keyfile does not match blockchain"
+              if (netLife /= life) then
+                pure $ Left ("keyfile life mismatch; keyfile claims life " <>
+                             show life <> ", but Azimuth claims life " <>
+                             show netLife)
+              else if ((ringToPass ring) /= pass) then
+                pure $ Left "keyfile does not match blockchain"
               -- TODO: The hoon code does a breach check, but the C code never
               -- supplies the data necessary for it to function.
-              pure who
+              else
+                pure $ Right who
 
 
 -- Walk through the sponsorship chain retrieving the actual sponsorship chain
