@@ -549,12 +549,12 @@
                     ::(cury filter-dominion %l2)
                     %-  cury
                     :-  filter-tx-type
-                    :*  :: %spawn
+                    :*  %spawn
                         %transfer-point
-                        ::%configure-keys
-                        :: %set-management-proxy
-                        :: %set-spawn-proxy
-                        :: %set-transfer-proxy
+                        %configure-keys
+                        %set-management-proxy
+                        ::%set-spawn-proxy  :: planets can set spawn proxy atm
+                        %set-transfer-proxy
                         ~
                     ==
                 ==
@@ -749,7 +749,18 @@
 |%
 ::  new tests
 ::
-++  test-rut-proxies  ^-  tang
+::  this test spawns a "full galaxy" containing all varieties of points. it then
+::  saves this initial state, and runs single transaction batches for all possible
+::  "event types". it compares the entire new state to the entire initial state and checks for
+::  the expected state change. it then resets the state to the initial state and
+::  tries the next event in on the list.
+::
+::  more specifically, there is a $jar called event-jar that maps ships to lists of
+::  events it should try. it then picks off a ship, tries all the events in the list
+::  associated to it as described above, and then moves on to the next ship, until
+::  the jar is empty.
+::
+++  test-rut  ^-  tang
   =,  l2-event-gen
   ::
   =/  event-jar  gen-rut-proxy-jar
@@ -784,7 +795,7 @@
   |^
   %+  expect-eq
     !>
-    |^
+    |^  ^-  ^state:naive
     ?.  (~(got by suc-map) cur-event)
       (alter-state cur-point(nonce.owner.own +(cur-nonce)))
     ?+  tx-type.cur-event  !!
@@ -871,7 +882,7 @@
     --  :: end of expected state
   ::  actual state
     !>
-    |^
+    |^  ^-  ^state:naive
     =^    f
         state
       %-  n
@@ -902,9 +913,6 @@
         %set-transfer-proxy    [%set-transfer-proxy (addr %proxy-test)]
       ==
       ::
-      ++  encr    (shax 'You will forget that you ever read this sentence.')
-      ++  auth    (shax 'You cant know that this sentence is true.')
-      ++  suit    1
       ::
       ::  TODO: these are spawns that ought to work, except for the planets
       ::  attempting to spawn, which needs to be factored out differently
@@ -913,6 +921,10 @@
     ::
     --  :: end of actual state
     ::
+  ++  encr    (shax 'You will forget that you ever read this sentence.')
+  ++  auth    (shax 'You cant know that this sentence is true.')
+  ++  suit    1
+  ::
   ++  which-spawn  ^-  ship
     ?+  cur-ship  !!
       %~rut            ~hasrut
