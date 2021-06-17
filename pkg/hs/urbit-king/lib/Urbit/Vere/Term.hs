@@ -307,13 +307,24 @@ localClient doneSignal = fst <$> mkRAcquire start stop
         writeSlog ls slog = do
             TermSize width height <- readTVarIO termSizeVar
             T.hijack (fromIntegral height) do
-              -- TODO: Ignoring priority for now. Priority changes the color of,
-              -- and adds a prefix of '>' to, the output.
-              let lines = fmap unTape $ wash (WashCfg 0 width) $ tankTree $ snd slog
-              T.putCsi 'm' [90]  --NOTE  print slogs in grey
+              let lines = fmap (pref . unTape) $
+                            wash (WashCfg 0 width) $ tankTree $ snd slog
+              T.putCsi 'm' styl
               forM (intersperse "\n" lines) $ \line -> putStr line
               T.putCsi 'm' [0]
             pure ls
+            where
+              prio = fromIntegral $ fst slog
+              maxp = 3
+              styl
+                | prio == 3 = [31]
+                | prio == 2 = [33]
+                | prio == 1 = [32]
+                | otherwise = [90]
+              pref
+                | prio > 0 && prio <= maxp =
+                    ((replicate prio '>' ++ replicate (1 + maxp - prio) ' ') ++)
+                | otherwise = id
 
         {-
             Figure out how long to wait to show the spinner. When we
