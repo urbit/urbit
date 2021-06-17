@@ -117,7 +117,7 @@ data Seed = Seed
     }
   deriving (Eq, Show)
 
-data Seeds = Seeds
+data Germs = Germs
     { gShip :: Ship
     , gFeed :: [Germ]
     }
@@ -131,7 +131,7 @@ data Germ = Germ
 
 data Feed
   = Feed0 Seed
-  | Feed1 Seeds
+  | Feed1 Germs
   deriving (Eq, Show)
 
 --NOTE  reify type environment
@@ -140,11 +140,11 @@ $(pure [])
 instance ToNoun Feed where
   toNoun = \case
     Feed0 s -> $(deriveToNounFunc ''Seed) s
-    Feed1 s -> C (C (A 1) (A 0)) $ $(deriveToNounFunc ''Seeds) s
+    Feed1 s -> C (C (A 1) (A 0)) $ $(deriveToNounFunc ''Germs) s
 
 instance FromNoun Feed where
   parseNoun = \case
-    (C (C (A 1) (A 0)) s) -> Feed1 <$> $(deriveFromNounFunc ''Seeds) s
+    (C (C (A 1) (A 0)) s) -> Feed1 <$> $(deriveFromNounFunc ''Germs) s
     n                     -> Feed0 <$> $(deriveFromNounFunc ''Seed) n
 
 type Public = (Life, HoonMap Life Pass)

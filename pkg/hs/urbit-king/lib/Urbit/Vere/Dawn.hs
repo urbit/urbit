@@ -341,20 +341,20 @@ validateFeedAndGetSponsor :: String
                           -> RIO e (Seed, Ship)
 validateFeedAndGetSponsor endpoint block = \case
     Feed0 s -> do
-                 r <- (validateSeed s)
-                 pure (s, r)
-    Feed1 s -> validateSeeds s
+      r <- validateSeed s
+      pure (s, r)
+    Feed1 s -> validateGerms s
 
   where
-    validateSeeds Seeds{..} =
+    validateGerms Germs{..} =
       case gFeed of
-        []    -> error ("no usable keys in keyfile")
+        []    -> error "no usable keys in keyfile"
         (Germ{..}:f) -> do
                   let seed = Seed gShip gLife gRing Nothing
                   r :: Either SomeException Ship
                     <- try do validateSeed seed
                   case r of
-                    Left _  -> validateSeeds $ Seeds gShip f
+                    Left _  -> validateGerms $ Germs gShip f
                     Right r -> pure (seed, r)
 
     validateSeed (Seed ship life ring oaf) =

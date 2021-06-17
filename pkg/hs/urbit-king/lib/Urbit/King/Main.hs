@@ -401,7 +401,7 @@ testPill pax showPil showSeq = do
                pill
                False
                (Fake (Ship 0))
-               (Feed1 $ Seeds (Ship 0) [])
+               (Feed1 $ Germs (Ship 0) [])
 
   logInfo "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
@@ -511,7 +511,7 @@ newShip CLI.New{..} opts = do
     CLI.BootFake name -> do
       pill <- pillFrom nPillSource
       ship <- shipFrom name
-      runTryBootFromPill pill name ship (Fake ship) (Feed1 $ Seeds ship [])
+      runTryBootFromPill pill name ship (Fake ship) (Feed1 $ Germs ship [])
 
     CLI.BootFromKeyfile keyFile -> do
       text <- readFileUtf8 keyFile

@@ -103,7 +103,7 @@ genBootSeq ship PillPill  {..} lite boot feed = do
     _      -> False
   extraKeys = case feed of
     Feed0 _         -> []
-    Feed1 Seeds{..} -> fmap rekey gFeed
+    Feed1 Germs{..} -> fmap rekey gFeed
   rekey Germ{..} = EvBlip $ BlipEvJael $ JaelEvRekey () (gLife, gRing)
 
 
