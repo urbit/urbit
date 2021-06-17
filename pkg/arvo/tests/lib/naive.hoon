@@ -84,7 +84,8 @@
   =^  f18  state  (n state %bat q:(gen-tx 0 pp-xfer %losrut-pp-key-0))
   =^  f19  state  (n state %bat q:(gen-tx 0 hn-xfer %losrut-hn-key-0))
   =^  f20  state  (n state %bat q:(gen-tx 0 dn-xfer %losrut-dn-key-0))
-  :: end of ~rut points, beginning of ~red
+  :: end of ~rut points, beginning of ~red. TODO this should be removed
+  :: once i move %escape to +test-red
   =^  f21  state  (n state (owner-changed:l1 ~red (addr %red-key-0)))
   =^  f22  state  (n state (owner-changed:l1 ~rigred (addr %rigred-key-0)))
   =^  f23  state  (n state (owner-changed:l1 ~losred (addr %losred-key-0)))
@@ -95,6 +96,22 @@
       f19  f20  f21  f22  f23  f24
       ==
   state
+::
+:: +init-red-full adds another galaxy to the ~rut universe, ~red, and additional
+:: points helpful for testing sponsorship actions. this has been separated from
+:: ~rut because the concerns are different enough from the other actions that
+:: its cleaner to do them separately
+::
+::  ++  init-red-full
+::    |=  =^state:naive
+::    ^-  [effects:naive ^state:naive]
+::    =^  f1  state  (init-rut-full state)
+  ::  TODO uncomment the below once %escape is moved to +test-red
+  ::  =^  f21  state  (n state (owner-changed:l1 ~red (addr %red-key-0)))
+  ::  =^  f22  state  (n state (owner-changed:l1 ~rigred (addr %rigred-key-0)))
+  ::  =^  f23  state  (n state (owner-changed:l1 ~losred (addr %losred-key-0)))
+  ::  =^  f24  state  (n state (owner-changed:l1 ~losred deposit-address:naive))
+
 ::
 ::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
@@ -262,12 +279,13 @@
         ++  ownp-check
           |=  cur-event=event  ^-  ?
           ?+  tx-type.cur-event  %.n
-            %spawn          %.y
-            %adopt          %.y
-            %reject         %.y
-            %detach         %.y
-            %escape         %.y
-            %cancel-escape  %.y
+            %spawn            %.y
+            %adopt            %.y
+            %reject           %.y
+            %detach           %.y
+            %escape           %.y
+            %cancel-escape    %.y
+            %set-spawn-proxy  %.y
           ==
         ++  managep-check
           |=  cur-event=event  ^-  ?
@@ -281,7 +299,8 @@
         ++  spawnp-check
           |=  cur-event=event  ^-  ?
           ?+  tx-type.cur-event  %.n
-            %spawn  %.y
+            %spawn            %.y
+            %set-spawn-proxy  %.y
           ==
         --  ::  +star-check
       ::
@@ -551,23 +570,23 @@
   ::  it ought to test, and +success-map says whether or not that
   ::  event should succed or fail
   ::
-  ++  gen-rut-proxy-jar
+  ++  gen-rut-jar
     ^-  (jar @p event)
     =/  filter  ;:  cork
                     (cury filter-owner %.y)
                     (cury filter-proxy %own)
                     (cury filter-nonce %.y)
                     (cury filter-rank %star)
-                    (cury filter-dominion %l2)
+                    (cury filter-dominion %spawn)
                     %-  cury
                     :-  filter-tx-type
                     :*  ::%spawn
                         ::%transfer-point
                         ::%configure-keys
                         ::%set-management-proxy
-                        ::%set-spawn-proxy  :: planets can set spawn proxy atm
+                        %set-spawn-proxy  :: planets can set spawn proxy atm
                         ::%set-transfer-proxy
-                        %escape
+                        ::%escape
                         ~
                     ==
                 ==
@@ -764,7 +783,7 @@
 ::
 ::  this test spawns a "full galaxy" containing all varieties of points. it then
 ::  saves this initial state, and runs single transaction batches for all possible
-::  "event types". it compares the entire new state to the entire initial state and checks for
+::  L2 "event types". it compares the entire new state to the entire initial state and checks for
 ::  the expected state change. it then resets the state to the initial state and
 ::  tries the next event in on the list.
 ::
@@ -773,10 +792,13 @@
 ::  associated to it as described above, and then moves on to the next ship, until
 ::  the jar is empty.
 ::
+::  this arm does not test any L1 transactions beyond the ones needed to spawn the
+::  galaxy (+init-rut).
+::
 ++  test-rut  ^-  tang
   =,  l2-event-gen
   ::
-  =/  event-jar  gen-rut-proxy-jar
+  =/  event-jar  gen-rut-jar
   =|  =^state:naive
   =^  f  state  (init-rut-full state)
   =/  initial-state  state
@@ -962,12 +984,14 @@
     ==
   ::
   ++  which-escape-l1  ^-  ship
+  :: escaping to a L1 point
     ?-  rank.cur-event
       %galaxy  ~red
       %star    ~red
       %planet  ~rigred
     ==
   ++  which-escape-l2  ^-  ship
+  :: escaping to a L2 point
     ?-  rank.cur-event
       %galaxy  ~red
       %star    ~red
