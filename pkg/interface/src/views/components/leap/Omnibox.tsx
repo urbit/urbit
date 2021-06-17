@@ -1,11 +1,10 @@
 import { Box, Row, Text } from '@tlon/indigo-react';
-import { omit } from 'lodash';
+import { debounce, omit } from 'lodash';
 import Mousetrap from 'mousetrap';
 import React, {
   ReactElement, useCallback,
   useEffect, useMemo,
   useRef,
-
   useState
 } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -50,6 +49,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [query, setQuery] = useState('');
+  const [results, setResults] = useState(initialResults);
   const [selected, setSelected] = useState<[] | [string, string]>([]);
   const contactState = useContactState(state => state.contacts);
   const notifications = useHarkState(state => state.notifications);
@@ -122,12 +122,9 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         return [category, []];
       })
     );
-  }, [index]);
+  }, []);
 
-  const results = useMemo(() => {
-    if (query.length <= 1) {
-      return initialResults;
-    }
+  const updateResults = () => {
     const q = query.toLowerCase();
     const resultsMap = new Map();
     SEARCHED_CATEGORIES.map((category) => {
@@ -146,8 +143,8 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         })
       );
     });
-    return resultsMap;
-  }, [query, index]);
+    setResults(resultsMap);
+  };
 
   const navigate = useCallback(
     (app: string, link: string, shift: boolean) => {
@@ -282,6 +279,8 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       setSelected(flattenedResultLinks[0] || []);
     }
   }, [results]);
+
+  useEffect(debounce(updateResults, 500), [query, index]);
 
   const search = useCallback((event) => {
     setQuery(event.target.value);
