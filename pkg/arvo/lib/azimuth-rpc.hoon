@@ -97,12 +97,9 @@
       ::
       ++  sig
         |=  params=(map @t json)
-        ^-  (unit @ux)
+        ^-  (unit @)
         ?~  sig=(~(get by params) 'sig')   ~
-        =;  ans=(unit (unit @ux))
-          ?~(ans ~ u.ans)
-        %.  u.sig
-        (cu to-hex so)
+        (so u.sig)
       ::
       ++  from
         |=  params=(map @t json)
@@ -126,11 +123,8 @@
         |=  params=(map @t json)
         ^-  (unit octs)
         ?~  raw=(~(get by params) 'raw')  ~
-        =;  ans=(unit (unit @ux))
-          ?~  ans  ~
-          ?~  u.ans  ~
-          (some (as-octs:mimes:html u.u.ans))
-        ((cu to-hex so) u.raw)
+        ?~  ans=(so u.raw)  ~
+        (some (as-octs:mimes:html u.ans))
       --
     ::
     ++  to-json
@@ -293,11 +287,7 @@
     ++  to-hex
       |=  =cord
       ^-  (unit @ux)
-      =/  parsed=(unit (pair @ud @ux))  (de:base16:mimes:html cord)
-      ?~  parsed
-        ::~|(%non-hex-cord !!)
-        ~
-      (some q.u.parsed)
+      (rush (rsh [3 2] cord) hex)
     ::
     ++  rpc-res
       |%
@@ -306,7 +296,7 @@
         ^-  [(unit cage) response:rpc]
         ?.  (params:validate params)
           [~ ~(params error:json-rpc id)]
-        =/  sig=(unit @ux)                (sig:from-json params)
+        =/  sig=(unit @)                  (sig:from-json params)
         =/  from=(unit [@p proxy:naive])  (from:from-json params)
         =/  raw=(unit octs)               (raw:from-json params)
         =/  data=(unit @p)                (ship:data:from-json params)
@@ -331,7 +321,7 @@
         ^-  [(unit cage) response:rpc]
         ?.  (params:validate params)
           [~ ~(params error:json-rpc id)]
-        =/  sig=(unit @ux)                (sig:from-json params)
+        =/  sig=(unit @)                  (sig:from-json params)
         =/  from=(unit [@p proxy:naive])  (from:from-json params)
         =/  raw=(unit octs)               (raw:from-json params)
         =/  data=(unit @ux)               (address:data:from-json params)
@@ -388,7 +378,7 @@
   ^-  [(unit cage) response:rpc]
   ?.  (params:validate params)
     [~ ~(params error:json-rpc id)]
-  =/  sig=(unit @ux)                  (sig:from-json params)
+  =/  sig=(unit @)                    (sig:from-json params)
   =/  from=(unit [ship proxy:naive])  (from:from-json params)
   =/  raw=(unit octs)                 (raw:from-json params)
   =/  data=(unit [@ux ?])             (address-transfer:data:from-json params)
@@ -404,7 +394,7 @@
   ^-  [(unit cage) response:rpc]
   ?.  (params:validate params)
     [~ ~(params error:json-rpc id)]
-  =/  sig=(unit @ux)                  (sig:from-json params)
+  =/  sig=(unit @)                    (sig:from-json params)
   =/  from=(unit [ship proxy:naive])  (from:from-json params)
   =/  raw=(unit octs)                 (raw:from-json params)
   =/  data=(unit [encrypt=@ auth=@ crypto-suite=@ breach=?])
@@ -421,7 +411,7 @@
   ^-  [(unit cage) response:rpc]
   ?.  (params:validate params)
     [~ ~(params error:json-rpc id)]
-  =/  sig=(unit @ux)                (sig:from-json params)
+  =/  sig=(unit @)                  (sig:from-json params)
   =/  from=(unit [@p proxy:naive])  (from:from-json params)
   =/  raw=(unit octs)               (raw:from-json params)
   =/  data=(unit [@p @ux])          (address-ship:data:from-json params)
