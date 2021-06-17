@@ -5,7 +5,6 @@
 -}
 module Urbit.Vere.Pier.Types
   ( module Urbit.Vere.Serf.Types
-  , LogIdentity(..)
   , Pill(..)
   , Job(..)
   , LifeCyc(..)

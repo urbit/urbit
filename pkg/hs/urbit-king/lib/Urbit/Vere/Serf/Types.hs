@@ -36,6 +36,13 @@ data Ripe = Ripe
   }
   deriving (Show)
 
+data Fact = Fact
+  { factEve :: EventId
+  , factMug :: Mug
+  , factWen :: Wen
+  , factNon :: Noun
+  }
+
 data Flag
   = DebugRam
   | DebugCpu

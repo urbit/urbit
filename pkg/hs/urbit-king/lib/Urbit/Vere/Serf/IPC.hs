@@ -9,14 +9,10 @@
   - A running serf can be sent a boot event.
 -}
 
-module Urbit.Vere.Serf.IPC
+module Urbit.Vere.Serf
   ( Serf
   , work
   , stop
-  , serfLastEventBlocking
-  , snapshot
-  , compact
-  , scry
   , boot
   , run
   , sendSIGINT
@@ -58,16 +54,7 @@ data Serf = Serf
   , serfRecv :: Handle
   , serfProc :: ProcessHandle
   , serfSlog :: Slog -> IO ()
-  , serfLock :: MVar (Maybe SerfState)
   }
-
-
--- Access Current Serf State ---------------------------------------------------
-
-serfLastEventBlocking :: Serf -> IO EventId
-serfLastEventBlocking Serf{serfLock} = readMVar serfLock >>= \case
-  Nothing -> throwIO SerfNotRunning
-  Just ss -> pure (ssLast ss)
 
 
 -- Low Level IPC Functions -----------------------------------------------------
@@ -124,64 +111,44 @@ sendTask s = sendBytes s . jamBS . toNoun
 recvGift :: Serf -> IO Gift
 recvGift w = do
   b <- recvResp w
-  n <- fromRightExn (cueBS b) (const $ BadPleaAtom $ bytesAtom b)
+  n <- fromRightExn (cueBS b) (const $ BadGiftAtom $ bytesAtom b)
   p <- fromRightExn (fromNounErr @Gift n) (\(p, m) -> BadGiftNoun n p m)
   pure p
 
-recvGiftHandlingSlog :: Serf -> IO Gift
-recvGiftHandlingSlog serf = loop
+-- | Block, polling the next non-out-of-order gift from the serf.
+recvGiftHandleOOOs :: Serf -> IO Gift
+recvGiftHandleOOOs serf = loop
  where
   loop = recvGift serf >>= \case
     GSlog info        -> serfSlog serf info >> loop
     GFlog (Cord ofni) -> serfSlog serf (0, Tank $ Leaf $ Tape $ ofni) >> loop
+    GSync num mug     -> loop  -- XX
     other             -> pure other
 
--- Higher-Level IPC Functions --------------------------------------------------
+
+-- Choosily "Accept" Gifts From Serf -------------------------------------------
 
 recvLive :: Serf -> IO ()
-recvLive serf = recvGiftHandlingSlog serf >>= \case
+recvLive serf = recvGiftHandleOOOs serf >>= \case
   GLive () -> pure ()
   gift     -> throwIO (UnexpectedGift (toNoun gift) "expecting %live")
 
 recvPeek :: Serf -> IO (Maybe (Term, Noun))
-recvPeek serf = recvGiftHandlingSlog serf >>= \case
+recvPeek serf = recvGiftHandleOOOs serf >>= \case
   GPeek (EachYes peek) -> pure peek
   -- XX surface error content ; change `scry` return type to Either Goof
   GPeek (EachNo dud)   -> pure Nothing
   gift                 -> throwIO (UnexpectedGift (toNoun gift) "expecting %peek")
 
 recvPoke :: Serf -> IO (Each FX [Goof])
-recvPoke serf = recvGiftHandlingSlog serf >>= \case
+recvPoke serf = recvGiftHandleOOOs serf >>= \case
   GPoke poke -> pure poke
   gift       -> throwIO (UnexpectedGift (toNoun gift) "expecting %poke")
 
 recvRipe :: Serf -> IO Ripe
-recvRipe serf = recvGiftHandlingSlog serf >>= \case
+recvRipe serf = recvGiftHandleOOOs serf >>= \case
   GRipe ripe -> pure ripe
   gift       -> throwIO (UnexpectedGift (toNoun gift) "expecting %play")
-
-
--- Request-Response Points -- These don't touch the lock -----------------------
-
-sendSnapshotRequest :: Serf -> EventId -> IO ()
-sendSnapshotRequest serf eve = do
-  sendTask serf (WLive $ LSave eve)
-  recvLive serf
-
-sendCompactionRequest :: Serf -> IO ()
-sendCompactionRequest serf = do
-  sendTask serf (WLive $ LPack ())
-  recvLive serf
-
-sendScryRequest :: Serf -> Gang -> ScryReq -> IO (Maybe (Term, Noun))
-sendScryRequest serf g r = do
-  sendTask serf (WPeek 0 g r)
-  recvPeek serf
-
-sendShutdownRequest :: Serf -> Atom -> IO ()
-sendShutdownRequest serf exitCode = do
-  sendTask serf (WLive $ LExit exitCode)
-  pure ()
 
 
 -- Starting the Serf -----------------------------------------------------------
@@ -201,8 +168,7 @@ start :: String -> Config -> IO Serf
 start mode (Config exePax pierPath flags onSlog onStdr onDead) = do
   (Just i, Just o, Just e, p) <- createProcess pSpec
   void $ async (readStdErr e onStdr onDead)
-  vLock <- newEmptyMVar
-  Serf i o p onSlog vLock
+  pure $ Serf i o p onSlog
  where
   diskKey = ""
   config  = show (compileFlags flags)
@@ -214,56 +180,23 @@ start mode (Config exePax pierPath flags onSlog onStdr onDead) = do
                                , std_err = CreatePipe
                                }
 
-
 work :: Config -> IO (Serf, Ripe)
 work fig = do
   serf <- start "work" fig
   info <- recvRipe serf
-  putMVar vLock (Just $ siStat info)
   pure (serf, info)
-
 
 
 boot :: Config -> Boot -> IO ExitCode
 boot fig boot = do
   serf <- start "boot" fig
-  sendBoot boot
-  tsFlog <- async loop
-  flip onException (cancel tSflog) $ waitForProcess serfProc
+  sendBoot serf boot
+  tsFlog <- async (loop serf)
+  flip onException (cancel tsFlog) $ waitForProcess $ serfProc serf
   where
-    loop = do
-      x <- recvGiftHandlingSlog serf
-      fail ("Illegitimate gift during boot: " <> x)
-
-
--- Taking the SerfState Lock ---------------------------------------------------
-
-takeLock :: MonadIO m => Serf -> m SerfState
-takeLock serf = io $ do
-  takeMVar (serfLock serf) >>= \case
-    Nothing -> putMVar (serfLock serf) Nothing >> throwIO SerfNotRunning
-    Just ss -> pure ss
-
-serfLockTaken
-  :: MonadResource m => Serf -> m (IORef (Maybe SerfState), SerfState)
-serfLockTaken serf = snd <$> allocate take release
- where
-  take = (,) <$> newIORef Nothing <*> takeLock serf
-  release (rv, _) = do
-    mRes <- readIORef rv
-    when (mRes == Nothing) (forcefullyKillSerf serf)
-    putMVar (serfLock serf) mRes
-
-withSerfLock
-  :: MonadResource m => Serf -> (SerfState -> m (SerfState, a)) -> m a
-withSerfLock serf act = do
-  (vState  , initialState) <- serfLockTaken serf
-  (newState, result      ) <- act initialState
-  writeIORef vState (Just newState)
-  pure result
-
-withSerfLockIO :: Serf -> (SerfState -> IO (SerfState, a)) -> IO a
-withSerfLockIO s a = runResourceT (withSerfLock s (io . a))
+    loop serf = do
+      x <- recvGiftHandleOOOs serf
+      error ("Illegitimate gift during boot: " <> show x)
 
 
 -- SIGINT ----------------------------------------------------------------------
@@ -304,7 +237,7 @@ stop serf = do
 -}
 gracefullyKillSerf :: Serf -> IO ()
 gracefullyKillSerf serf@Serf{..} = do
-  finalState <- takeMVar serfLock
+  -- XX some mechanism for waiting for all effects to be released
   sendShutdownRequest serf 0
   waitForProcess serfProc
   pure ()
@@ -320,208 +253,103 @@ forcefullyKillSerf serf = do
       io $ signalProcess sigKILL pid
       io $ void $ waitForProcess (serfProc serf)
 
-
--- Flows for Interacting with the Serf -----------------------------------------
-
-{-|
-  Ask the serf to write a snapshot to disk.
--}
-snapshot :: Serf -> IO ()
-snapshot serf = withSerfLockIO serf $ \ss -> do
-  sendSnapshotRequest serf (ssLast ss)
-  pure (ss, ())
-
-{-|
-  Ask the serf to de-duplicate and de-fragment its heap.
--}
-compact :: Serf -> IO ()
-compact serf = withSerfLockIO serf $ \ss -> do
-  sendCompactionRequest serf
-  pure (ss, ())
-
-{-|
-  Peek into the serf state.
--}
-scry :: Serf -> Gang -> ScryReq -> IO (Maybe (Term, Noun))
-scry serf g r = withSerfLockIO serf $ \ss -> do
-  (ss,) <$> sendScryRequest serf g r
-
+sendShutdownRequest :: Serf -> Atom -> IO ()
+sendShutdownRequest serf exitCode = do
+  sendTask serf (TExit ())
+  pure ()
 
 
 -- Running Ship Flow -----------------------------------------------------------
 
-{-|
-  TODO Don't take snapshot until event log has processed current event.
--}
 run
   :: Serf
   -> Int
-  -> STM EventId
   -> STM RunReq
   -> (Maybe Ev -> STM ())
   -> IO ()
-run serf maxBatchSize getLastEvInLog onInput spin = topLoop
+run serf maxBatchSize onInput spin = start
  where
-  topLoop :: IO ()
-  topLoop = atomically onInput >>= \case
-    RRWork workErr -> doWork workErr
-    RRSave ()      -> doSave
-    RRKill ()      -> doKill
-    RRPack ()      -> doPack
-    RRScry g r k   -> doScry g r k
+  -- New program.
+  -- spawn a thread to receive responses from the serf
+  -- loop on input:
+  --   {
+  --   send to serf
+  --   pass to recv thread action to take under "lock" expecting response
+  --   }
+  --   but block if the queue is too big
+  -- recv thread
+  --   wait to receive from serf by running the expectation action off deque
+  --   something about spinners
+  --
+  -- part 2: gracefully killing waits for in-flights to drain
+  --
+  -- part 3: spinner
+  start :: IO ()
+  start = do
+    inFlight <- newTBMQueueIO maxBatchSize
+    tRecv <- async (recvLoop inFlight)
+    sendLoop inFlight `onException` (print "KILLING: recvLoop" >> cancel tRecv)
 
-  doPack :: IO ()
-  doPack = compact serf >> topLoop
 
-  waitForLog :: IO ()
-  waitForLog = do
-    serfLast <- serfLastEventBlocking serf
-    atomically $ do
-      logLast <- getLastEvInLog
-      when (logLast < serfLast) retry
+  sendLoop :: TBMQueue (IO ()) -> IO ()
+  sendLoop inFlight = loop
+    where
+      loop :: IO ()
+      loop = atomically onInput >>= \case
+        RRWork workErr -> doWork workErr
+        RRSave ()      -> doSave
+        RRKill ()      -> doKill
+        RRPack ()      -> doPack
+        RRScry g r k   -> doScry g r k
 
-  doSave :: IO ()
-  doSave = waitForLog >> snapshot serf >> topLoop
+      doWork :: EvErr -> IO ()
+      doWork workErr@(EvErr ev _) = do
+        -- pass recv action into queue
+        -- send to serf
+        now <- Time.now
+        let act = do
+              work <- recvPoke serf
+              onWorkResp workErr work
+        atomically $ writeTBMQueue inFlight act
+        sendTask serf (TPoke 0 ev)
+        loop
 
-  doKill :: IO ()
-  doKill = waitForLog >> snapshot serf >> pure ()
+      doSave :: IO ()
+      doSave = do
+        sendTask serf (TSync $ SSave ())
+        loop
 
-  doScry :: Gang -> ScryReq -> (Maybe (Term, Noun) -> IO ()) -> IO ()
-  doScry g r k = (scry serf g r >>= k) >> topLoop
+      doKill :: IO ()
+      doKill = do
+        atomically $ closeTBMQueue inFlight
+        sendTask serf (TExit ())
+        pure ()
 
-  doWork :: EvErr -> IO ()
-  doWork firstWorkErr = do
-    que   <- newTBMQueueIO 1
-    ()    <- atomically (writeTBMQueue que firstWorkErr)
-    tWork <- async (processWork serf maxBatchSize que onWorkResp spin)
-    -- Avoid wrapping all subsequent runs of the event loop in an exception
-    -- handler which retains tWork.
-    nexSt <- flip onException (cancel tWork) $ do
-      nexSt <- workLoop que
-      wait tWork
-      pure nexSt
-    nexSt
+      doPack :: IO ()
+      doPack = do
+        atomically $ writeTBMQueue inFlight (recvLive serf)
+        sendTask serf (TLive $ LPack ())
+        loop
 
-  workLoop :: TBMQueue EvErr -> IO (IO ())
-  workLoop que = atomically onInput >>= \case
-    RRKill ()      -> atomically (closeTBMQueue que) >> pure doKill
-    RRSave ()      -> atomically (closeTBMQueue que) >> pure doSave
-    RRPack ()      -> atomically (closeTBMQueue que) >> pure doPack
-    RRScry g r k   -> atomically (closeTBMQueue que) >> pure (doScry g r k)
-    RRWork workErr -> atomically (writeTBMQueue que workErr) >> workLoop que
+      -- XX support meld
 
-  onWorkResp :: Wen -> EvErr -> Each FX [Goof] -> IO ()
-  onWorkResp wen (EvErr evn err) = \case
+      doScry :: Gang -> ScryReq -> (Maybe (Term, Noun) -> IO ()) -> IO ()
+      doScry g r k = do
+        atomically $ writeTBMQueue inFlight (recvPeek serf >>= k)
+        sendTask serf (TPeek 0 g r)
+        loop
+
+
+  onWorkResp :: EvErr -> Each FX [Goof] -> IO ()
+  onWorkResp (EvErr _ err) = \case
     EachYes fx   -> io $ err (RunOkay fx)
     EachNo goofs -> io $ err (RunBail goofs)
 
 
-{-|
-  Given:
-
-  - A stream of incoming requests
-  - A sequence of in-flight requests that haven't been responded to
-  - A maximum number of in-flight requests.
-
-  Wait until the number of in-fligh requests is smaller than the maximum,
-  and then take the next item from the stream of requests.
--}
-pullFromQueueBounded :: Int -> TVar (Seq a) -> TBMQueue b -> STM (Maybe b)
-pullFromQueueBounded maxSize vInFlight queue = do
-  inFlight <- length <$> readTVar vInFlight
-  if inFlight >= maxSize
-    then retry
-    else readTBMQueue queue
-
-{-|
-  Given
-
-  - `maxSize`: The maximum number of jobs to send to the serf before
-    getting a response.
-  - `q`: A bounded queue (which can be closed)
-  - `onResp`: a callback to call for each response from the serf.
-  - `spin`: a callback to tell the terminal driver which event is
-    currently being processed.
-
-  Pull jobs from the queue and send them to the serf (eagerly, up to
-  `maxSize`) and call the callback with each response from the serf.
-
-  When the queue is closed, wait for the serf to respond to all pending
-  work, and then return.
-
-  Whenever the serf is idle, call `spin Nothing` and whenever the serf
-  is working on an event, call `spin (Just ev)`.
--}
-processWork
-  :: Serf
-  -> Int
-  -> TBMQueue EvErr
-  -> (Wen -> EvErr -> Each FX [Goof] -> IO ())
-  -> (Maybe Ev -> STM ())
-  -> IO ()
-processWork serf maxSize q onResp spin = do
-  vDoneFlag      <- newTVarIO False
-  vInFlightQueue <- newTVarIO empty
-  recvThread     <- async (recvLoop serf vDoneFlag vInFlightQueue spin)
-  flip onException (print "KILLING: processWork" >> cancel recvThread) $ do
-    loop vInFlightQueue vDoneFlag
-    wait recvThread
- where
-  loop :: TVar (Seq (Ev, Each FX [Goof] -> IO ())) -> TVar Bool -> IO ()
-  loop vInFlight vDone = do
-    atomically (pullFromQueueBounded maxSize vInFlight q) >>= \case
-      Nothing -> do
-        atomically (writeTVar vDone True)
-      Just evErr@(EvErr ev _) -> do
-        now <- Time.now
-        let cb = onResp now evErr
-        atomically $ modifyTVar' vInFlight (:|> (ev, cb))
-        sendTask serf (WWork 0 now ev)
-        loop vInFlight vDone
-
-{-|
-  Given:
-
-  - `vDone`: A flag that no more work will be sent to the serf.
-
-  - `vWork`: A list of work requests that have been sent to the serf,
-     haven't been responded to yet.
-
-  If the serf has responded to all work requests, and no more work is
-  going to be sent to the serf, then return.
-
-  If we are going to send more work to the serf, but the queue is empty,
-  then wait.
-
-  If work requests have been sent to the serf, take the first one,
-  wait for a response from the serf, call the associated callback,
-  and repeat the whole process.
--}
-recvLoop
-  :: Serf
-  -> TVar Bool
-  -> TVar (Seq (Ev, Each FX [Goof] -> IO ()))
-  -> (Maybe Ev -> STM ())
-  -> IO ()
-recvLoop serf vDone vWork spin = do
-  withSerfLockIO serf \SerfState {..} -> loop
- where
-  loop = do
-    atomically $ do
-      whenM (null <$> readTVar vWork) $ do
-        spin Nothing
-    atomically takeCallback >>= \case
-      Nothing -> pure (SerfState eve mug, ())
-      Just (curEve, cb) -> do
-        atomically (spin (Just curEve))
-        work <- recvPoke serf
-        cb work
-        loop
-
-  takeCallback :: STM (Maybe (Ev, Each FX [Goof] -> IO ()))
-  takeCallback = do
-    ((,) <$> readTVar vDone <*> readTVar vWork) >>= \case
-      (False, Empty        ) -> retry
-      (True , Empty        ) -> pure Nothing
-      (_    , (e, x) :<| xs) -> writeTVar vWork xs $> Just (e, x)
-      (_    , _            ) -> error "impossible"
+  recvLoop :: TBMQueue (IO ()) -> IO ()
+  recvLoop inFlight = loop
+    where
+      loop = do
+        atomically (readTBMQueue inFlight) >>= \case
+          Nothing  -> print "recvLoop: shutting down"
+          Just act -> act >> loop

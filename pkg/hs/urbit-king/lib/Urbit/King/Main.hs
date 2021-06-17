@@ -304,82 +304,6 @@ checkEvs pierPath first last = do
 
 --------------------------------------------------------------------------------
 
-collectAllFx :: FilePath -> RIO KingEnv ()
-collectAllFx = error "TODO"
-
-{-
-{-|
-    This runs the serf at `$top/.tmpdir`, but we disable snapshots,
-    so this should never actually be created. We just do this to avoid
-    letting the serf use an existing snapshot.
--}
-collectAllFx :: FilePath -> RIO KingEnv ()
-collectAllFx top = do
-    logInfo $ display $ pack @Text top
-    vSlog <- logSlogs
-    rwith (collectedFX vSlog) $ \() ->
-        logInfo "Done collecting effects!"
-  where
-    tmpDir :: FilePath
-    tmpDir = top </> ".tmpdir"
-
-    collectedFX :: TVar (Text -> IO ()) -> RAcquire KingEnv ()
-    collectedFX vSlog = do
-        lockFile top
-        log  <- Log.existing (top <> "/.urb/log")
-        serf <- Pier.runSerf vSlog tmpDir serfFlags
-        rio $ Serf.collectFX serf log
-
-    serfFlags :: [Serf.Flag]
-    serfFlags = [Serf.Hashless, Serf.DryRun]
--}
-
-
---------------------------------------------------------------------------------
-
-replayPartEvs :: FilePath -> Word64 -> RIO KingEnv ()
-replayPartEvs top last = do
-    logInfo $ display $ pack @Text top
-    fetchSnapshot
-    rwith replayedEvs $ \() ->
-        logInfo "Done replaying events!"
-  where
-    fetchSnapshot :: RIO KingEnv ()
-    fetchSnapshot = do
-      snap <- Pier.getSnapshot top last
-      case snap of
-        Nothing -> pure ()
-        Just sn -> do
-          liftIO $ system $ "cp -r \"" <> sn <> "\" \"" <> tmpDir <> "\""
-          pure ()
-
-    tmpDir :: FilePath
-    tmpDir = top </> ".partial-replay" </> show last
-
-    replayedEvs :: RAcquire KingEnv ()
-    replayedEvs = do
-        lockFile top
-        log  <- Log.existing (top <> "/.urb/log")
-        let onSlog = print
-        let onStdr = print
-        let onDead = error "DIED"
-        let config = Serf.Config "urbit-worker" tmpDir serfFlags onSlog onStdr onDead
-        (serf, info) <- io (Serf.start config)
-        rio $ do
-          eSs <- Serf.execReplay serf log (Just last)
-          case eSs of
-            Left bail -> error (show bail)
-            Right 0   -> io (Serf.snapshot serf)
-            Right num -> pure ()
-          io $ threadDelay 500000 -- Copied from runOrExitImmediately
-          pure ()
-
-    serfFlags :: [Serf.Flag]
-    serfFlags = [Serf.Hashless]
-
-
---------------------------------------------------------------------------------
-
 {-|
     Interesting
 -}
@@ -679,7 +603,7 @@ main = do
     CLI.CmdBug (CLI.ValidatePill   pax pil s) -> testPill pax pil s
     CLI.CmdBug (CLI.ValidateEvents pax f   l) -> checkEvs pax f l
     CLI.CmdBug (CLI.ValidateFX     pax f   l) -> checkFx pax f l
-    CLI.CmdBug (CLI.ReplayEvents pax l      ) -> replayPartEvs pax l
+    CLI.CmdBug (CLI.ReplayEvents pax l      ) -> error "you show lack of discernment"
     CLI.CmdBug (CLI.CheckDawn provider pax  ) -> checkDawn provider pax
     CLI.CmdBug CLI.CheckComet                 -> checkComet
     CLI.CmdCon pier                           -> connTerm pier

@@ -8,48 +8,6 @@ import Urbit.Vere.Serf.Types
 
 -- Private data structures for Urbit.Vere.Serf.IPC, but made StrictData without
 -- making the rest of Urbit.Vere.Serf.IPC strict.
-{-}
-data Live
-  = LExit Atom -- exit status code
-  | LSave EventId
-  | LCram EventId
-  | LPack ()
- deriving (Show)
-
-data Play
-  = PDone Mug
-  | PBail PlayBail
- deriving (Show)
-
-data Scry
-  = SDone (Maybe (Term, Noun))
-  | SBail Goof
- deriving (Show)
-
-data Work
-  = WDone EventId Mug FX
-  | WSwap EventId Mug (Wen, Noun) FX
-  | WBail [Goof]
- deriving (Show)
-
-data Writ
-  = WLive Live
-  | WPeek Atom Gang ScryReq
-  | WPlay EventId [Noun]
-  | WWork Atom Wen Ev
- deriving (Show)
-
-data Plea
-  = PLive ()
-  | PRipe SerfInfo
-  | PSlog Slog
-  | PFlog Cord
-  | PPeek Scry
-  | PPlay Play
-  | PWork Work
- deriving (Show)
-
----}
 
 data Vent
   = VFake Ship
@@ -105,17 +63,6 @@ data Task
   | TSync Sync
   deriving (Show)
 
-{-}
-data Plea
-  = PLive ()
-  | PRipe SerfInfo
-  | PSlog Slog
-  | PFlog Cord
-  | PPeek Scry
-  | PPlay Play
-  | PWork Work
--}
-
 data Gift
   -- | %live: lifecycle mgmt task acknowledgement
   = GLive ()
@@ -145,15 +92,10 @@ data Gift
   -- mars has saved a new snapshot at event N, with kernel mug M.
   -- may be sent at any time, with or without a preceding %sync task.
   | GSync Atom Atom
+  deriving (Show)
 
-{-}
-deriveNoun ''Live
-deriveNoun ''Play
-deriveNoun ''Scry
-deriveNoun ''Work
-deriveNoun ''Writ
-deriveNoun ''Plea-}
-
+deriveNoun ''Vent
+deriveNoun ''Boot
 deriveNoun ''Live
 deriveNoun ''Sync
 deriveNoun ''Task

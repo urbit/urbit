@@ -6,7 +6,6 @@
 -}
 module Urbit.Vere.Pier
   ( booted
-  , runSerf
   , resumed
   , getSnapshot
   , pier
@@ -29,8 +28,6 @@ import Control.Monad.STM      (retry)
 import System.Environment     (getExecutablePath)
 import System.FilePath        (splitFileName)
 import System.Posix.Files     (ownerModes, setFileMode)
-import Urbit.EventLog.LMDB    (EventLog)
-import Urbit.EventLog.Event   (buildLogEvent)
 import Urbit.King.API         (TermConn)
 import Urbit.TermSize         (TermSize(..), termSize)
 import Urbit.Vere.Serf        (Serf)
@@ -38,7 +35,6 @@ import Urbit.Vere.Serf        (Serf)
 import qualified Data.Text                   as T
 import qualified Data.List as L
 import qualified System.Entropy              as Ent
-import qualified Urbit.EventLog.LMDB         as Log
 import qualified Urbit.King.API              as King
 import qualified Urbit.Noun.Time             as Time
 import qualified Urbit.Vere.Ames             as Ames
@@ -96,60 +92,6 @@ genBootSeq ship PillPill  {..} lite boot = do
   isFake   = case boot of
     Fake _ -> True
     _      -> False
-
-
--- Write to the log. -----------------------------------------------------------
-
--- | Write a batch of jobs to the event log.
-writeJobs :: EventLog -> Vector Job -> RIO e ()
-writeJobs log !jobs = do
-  expect <- atomically (Log.nextEv log)
-  events <- fmap fromList $ traverse fromJob (zip [expect ..] $ toList jobs)
-  Log.appendEvents log events
- where
-  fromJob :: (EventId, Job) -> RIO e ByteString
-  fromJob (expectedId, job) = do
-    unless (expectedId == jobId job) $ error $ show
-      ("bad job id!", expectedId, jobId job)
-    pure $ buildLogEvent (jobMug job) (jobPayload job)
-
-  jobMug :: Job -> Mug
-  jobMug (RunNok (LifeCyc _ m _)) = m
-  jobMug (DoWork (Work _ m _ _)) = m
-
-  jobPayload :: Job -> Noun
-  jobPayload (RunNok (LifeCyc _ _ n)) = toNoun n
-  jobPayload (DoWork (Work _ _ d o))  = toNoun (d, o)
-
-
--- Acquire a running serf. -----------------------------------------------------
-
-runSerf
-  :: HasPierEnv e
-  => TVar ((Atom, Tank) -> IO ())
-  -> FilePath
-  -> RAcquire e Serf
-runSerf vSlog pax = do
-  env <- ask
-  serfProg <- io getSerfProg
-  Serf.withSerf (config env serfProg)
- where
-  slog s = atomically (readTVar vSlog) >>= (\f -> f s)
-  config env serfProg = Serf.Config
-    { scSerf = env ^. pierConfigL . pcSerfExe . to (maybe serfProg unpack)
-    , scPier = pax
-    , scFlag = env ^. pierConfigL . pcSerfFlags
-    , scSlog = slog
-    , scStdr = \txt -> slog (0, (textToTank txt))
-    , scDead = pure () -- TODO: What can be done?
-    }
-  getSerfProg :: IO FilePath
-  getSerfProg = do
-    (path, filename) <- splitFileName <$> getExecutablePath
-    pure $ case filename of
-      "urbit"      -> path </> "urbit-worker"
-      "urbit-king" -> path </> "urbit-worker"
-      _            -> "urbit-worker"
 
 
 -- Boot a new ship. ------------------------------------------------------------
@@ -231,9 +173,8 @@ resumed vSlog replayUntil = do
         logInfo "No work during replay so no snapshot"
         pure ()
       Right _  -> do
-        logInfo "Taking snapshot"
-        io (Serf.snapshot serf)
-        logInfo "SNAPSHOT TAKEN"
+        logInfo "Not taking snapshot"
+        logInfo "SNAPSHOT NOT TAKEN"
 
   pure (serf, log)
 
@@ -336,7 +277,6 @@ pier (serf, log) vSlog startedSig injected = do
                                     , ccPutResult   = persist
                                     , ccShowSpinner = Term.spin muxed
                                     , ccHideSpinner = Term.stopSpin muxed
-                                    , ccLastEvInLog = Log.lastEv log
                                     }
 
   tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
@@ -612,7 +552,6 @@ data ComputeConfig = ComputeConfig
   , ccPutResult   :: (Fact, FX) -> STM ()
   , ccShowSpinner :: Maybe Text -> STM ()
   , ccHideSpinner :: STM ()
-  , ccLastEvInLog :: STM EventId
   }
 
 runCompute :: forall e . HasKingEnv e => Serf.Serf -> ComputeConfig -> RIO e ()
@@ -638,50 +577,4 @@ runCompute serf ComputeConfig {..} = do
 
   let maxBatchSize = 10
 
-  io (Serf.run serf maxBatchSize ccLastEvInLog onRR ccPutResult onSpin)
-
-
--- Event-Log Persistence Thread ------------------------------------------------
-
-data PersistExn = BadEventId EventId EventId
-  deriving Show
-
-instance Exception PersistExn where
-  displayException (BadEventId expected got) =
-    unlines [ "Out-of-order event id send to persist thread."
-            , "\tExpected " <> show expected <> " but got " <> show got
-            ]
-
-runPersist
-  :: forall e
-   . HasPierEnv e
-  => EventLog
-  -> TQueue (Fact, FX)
-  -> (FX -> STM ())
-  -> RIO e ()
-runPersist log inpQ out = do
-  dryRun <- view dryRunL
-  forever $ do
-    writs  <- atomically getBatchFromQueue
-    events <- validateFactsAndGetBytes (fst <$> toNullable writs)
-    unless dryRun (Log.appendEvents log events)
-    atomically $ for_ writs $ \(_, fx) -> do
-      out fx
-
- where
-  validateFactsAndGetBytes :: [Fact] -> RIO e (Vector ByteString)
-  validateFactsAndGetBytes facts = do
-    expect <- atomically (Log.nextEv log)
-    lis <- for (zip [expect ..] facts) $ \(expectedId, Fact eve mug wen non) ->
-      do
-        unless (expectedId == eve) $ do
-          throwIO (BadEventId expectedId eve)
-        pure $ buildLogEvent mug $ toNoun (wen, non)
-    pure (fromList lis)
-
-  getBatchFromQueue :: STM (NonNull [(Fact, FX)])
-  getBatchFromQueue = readTQueue inpQ >>= go . singleton
-   where
-    go acc = tryReadTQueue inpQ >>= \case
-      Nothing   -> pure (reverse acc)
-      Just item -> go (item <| acc)
+  io (Serf.run serf maxBatchSize onRR ccPutResult onSpin)
