@@ -92,7 +92,7 @@ step st@St{..} = \case
                  st { sLine = "", sCurPos = (0, 0) }
                  & recordText (sLine <> "\n")
              | otherwise ->
-                 st { sCurPos = (((fst sCurPos) - 1), 0) }
+                 st { sCurPos = (fst sCurPos - 1, 0) }
   where
     recordText :: Text -> St -> St
     recordText !t st@St{..} = st {

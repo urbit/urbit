@@ -389,19 +389,16 @@ instance FromNoun Ev where
 getSpinnerNameForEvent :: Ev -> Maybe Text
 getSpinnerNameForEvent = \case
     EvBlip b -> case b of
-        BlipEvAmes _            -> Just "ames"
-        BlipEvArvo _            -> Just "arvo"
-        BlipEvBehn _            -> Just "behn"
-        BlipEvBoat _            -> Just "boat"
-        BlipEvHttpClient _      -> Just "iris"
-        BlipEvHttpServer _      -> Just "eyre"
-        BlipEvNewt _            -> Just "newt"
-        BlipEvSync _            -> Just "clay"
-        BlipEvTerm t | isUser t -> Nothing
-        BlipEvTerm t            -> Just "term"
-  where
-    isUser (TermEvBelt _ _) = True
-    isUser _                = False
+        BlipEvAmes _                -> Just "ames"
+        BlipEvArvo _                -> Just "arvo"
+        BlipEvBehn _                -> Just "behn"
+        BlipEvBoat _                -> Just "boat"
+        BlipEvHttpClient _          -> Just "iris"
+        BlipEvHttpServer _          -> Just "eyre"
+        BlipEvNewt _                -> Just "newt"
+        BlipEvSync _                -> Just "clay"
+        BlipEvTerm (TermEvBelt _ _) -> Nothing
+        BlipEvTerm t                -> Just "term"
 
 summarizeEvent :: Ev -> Text
 summarizeEvent ev =

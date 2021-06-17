@@ -313,9 +313,9 @@ localClient doneSignal = fst <$> mkRAcquire start stop
             -- TODO: Ignoring priority for now. Priority changes the color of,
             -- and adds a prefix of '>' to, the output.
             let lines = fmap unTape $ wash (WashCfg 0 width) $ tankTree $ snd slog
-            T.putCSI 'm' [90]  --NOTE  print slogs in grey
+            T.putCsi 'm' [90]  --NOTE  print slogs in grey
             forM (intersperse "\n" lines) $ \line -> putStr line
-            T.putCSI 'm' [0]
+            T.putCsi 'm' [0]
             T.lojack
             pure ls
 
