@@ -1,5 +1,6 @@
 /-  bc=bitcoin
 /+  bcu=bitcoin-utils
+~%  %bip-158-top  ..part  ~
 |%
 ++  params
   |%
@@ -8,6 +9,7 @@
   --
 ::
 ++  siphash
+  ~/  %siphash
   |=  [k=byts m=byts]
   ^-  byts
   |^
@@ -214,6 +216,7 @@
 ::   - targets: scriptpubkeys to match
 ::
 ++  all-match
+  ~/  %all-match
   |=  [filter=hexb:bc blockhash=hexb:bc targets=(list [address:bc byts])]
   ^-  (set [address:bc hexb:bc])
   =/  k  (to-key (trip (to-cord:hxb:bcu blockhash)))

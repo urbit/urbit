@@ -5,6 +5,7 @@
 ::  x/balance/xpub: balance (in sats) of wallet
 /-  *btc-wallet, bp=btc-provider, file-server, launch-store
 /+  dbug, default-agent, bl=btc, bc=bitcoin, bip32
+~%  %btc-wallet-top  ..part  ~
 |%
 ++  defaults
   |%
@@ -60,6 +61,7 @@
 %-  agent:dbug
 ^-  agent:gall
 =<
+~%  %wallet-agent  ..handle-internal  ~
 |_  =bowl:gall
 +*  this      .
     def   ~(. (default-agent this %|) bowl)
@@ -164,6 +166,7 @@
     ``noun+!>((balance:hc (xpub:bc +>-.pax)))
   ==
 ++  on-agent
+  ~/  %on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+  -.sign  (on-agent:def wire sign)
@@ -238,6 +241,7 @@
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
+~%  %wallet-helper  ..card  ~
 |_  =bowl:gall
 ++  handle-command
   |=  comm=command
@@ -675,6 +679,7 @@
 ::    - if provider's network doesn't match network in our state, leave
 ::
 ++  handle-provider-status
+  ~/  %handle-provider-status 
   |=  s=status:bp
   ^-  (quip card _state)
   =^  cards  state
@@ -697,6 +702,7 @@
   ==
 ::
 ++  on-connected
+  ~/  %on-connected
   |=  $:  p=provider
           =network
           block=@ud
@@ -763,6 +769,7 @@
 ::  +retry-addrs: get info on addresses with unconfirmed UTXOs
 ::
 ++  retry-addrs
+  ~/  %retry-addrs
   |=  =network
   ^-  (list card)
   %-  zing
@@ -777,6 +784,7 @@
 ::
 ::
 ++  retry-filtered-addrs
+  ~/  %retry-filtered-addrs
   |=  [=network blockhash=hexb blockfilter=hexb]
   ^-  (list card)
   %-  zing
@@ -801,6 +809,7 @@
 ::  +retry-txs: get info on txs without enough confirmations
 ::
 ++  retry-txs
+  ~/  %retry-txs
   |=  =network
   ^-  (list card)
   %+  murn  ~(tap by history)
@@ -812,6 +821,7 @@
   `(poke-provider [%tx-info txid])
 ::
 ++  retry-poym
+  ~/  %retry-poym
   |=  =network
   ^-  (list card)
   ?~  txbu.poym  ~
@@ -827,6 +837,7 @@
 ::  +retry-pend-piym: check whether txids in pend-piym are in mempool
 ::
 ++  retry-pend-piym
+  ~/  %retry-pend-piym
   |=  =network
   ^-  (list card)
   %+  murn  ~(tap by pend.piym)
@@ -837,6 +848,7 @@
   `(poke-provider [%tx-info txid])
 ::
 ++  handle-provider-update
+  ~/  %handle-provider-status 
   |=  upd=update:bp
   ^-  (quip card _state)
   ?~  prov  `state
@@ -966,6 +978,7 @@
 ::  +handle-address-info: updates scans and wallet with address info
 ::
 ++  handle-address-info
+  ~/  %handle-address-info
   |=  [=address utxos=(set utxo) used=?]
   ^-  (quip card _state)
   =/  ac  (address-coords:bl address ~(val by walts))
@@ -1005,6 +1018,7 @@
 ::   - returns provider %address-info request cards
 ::
 ++  req-scan
+  ~/  %req-scan
   |=  [b=batch =xpub:bc =chyg]
   ^-  (quip card _state)
   =/  w=walt  (~(got by walts) xpub)
