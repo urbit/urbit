@@ -68,14 +68,13 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
   const waiter = useWaitForProps({ ...props, associations });
   const hashBox = (
     <Box
-      position={['relative', 'absolute']}
-      left={0}
-      bottom={0}
+      position="sticky"
+      left={3}
+      bottom={3}
+      mt={3}
       backgroundColor="white"
-      ml={3}
-      mb={3}
       borderRadius={2}
-      overflow='hidden'
+      width="fit-content"
       fontSize={0}
       cursor="pointer"
       onClick={() => {
@@ -87,8 +86,10 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
       }}
     >
       <Box
+        height="100%"
         backgroundColor={runtimeLag ? 'yellow' : 'washedGray'}
         p={2}
+        width="fit-content"
       >
         <Text mono bold>{hashText || baseHash}</Text>
       </Box>
@@ -240,9 +241,8 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
             (<Groups />)
           }
         </Box>
-        <Box alignSelf="flex-start" display={['block', 'none']}>{hashBox}</Box>
+        {hashBox}
       </ScrollbarLessBox>
-      <Box display={['none', 'block']}>{hashBox}</Box>
     </>
   );
 };
