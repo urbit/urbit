@@ -516,29 +516,37 @@
       =<  plow
       %-  push-events:apex:(pe who.ae)
       ^-  (list unix-event)
-      :~  [/ %wack 0]  ::  eny
-          ::  [/ %verb `|]  possible verb
-          :^  /  %wyrd  [%urbit /test] :: negotiate XX what is .non and .rev
-          ^-  (list (pair term @))
-          :~  zuse+zuse
-              lull+lull
-              arvo+arvo
-              hoon+hoon-version
-              nock+4
-          ==
-          [/ %whom who.ae]  ::  who
-          -.kernel-ova.pil  :: load compiler
-          +<:kernel-ova.pil :: load arvo XX how to work with solid?
-          :^  /d/term/1  %boot  &
-          ?~  keys.ae
-            [%fake who.ae]
-          [%dawn keys]
-          -.userspace-ova.pil
-          [/b/behn/0v1n.2m9vh %born ~]
-          [/i/http-client/0v1n.2m9vh %born ~]
-          [/e/http-server/0v1n.2m9vh %born ~]
-          [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
-          [/a/newt/0v1n.2m9vh %born ~]
+      %-  zing
+      :~
+        :~  [/ %wack 0]  ::  eny
+            ::  [/ %verb `|]  possible verb
+            :^  /  %wyrd  [%urbit /test] :: negotiate XX what is .non and .rev
+            ^-  (list (pair term @))
+            :~  zuse+zuse
+                lull+lull
+                arvo+arvo
+                hoon+hoon-version
+                nock+4
+            ==
+            [/ %whom who.ae]  ::  who
+        ==
+        ::
+        kernel-ova.pil  :: load compiler
+        ::
+        :_  ~
+        :^  /d/term/1  %boot  &
+        ?~  keys.ae
+          [%fake who.ae]
+        [%dawn keys]
+        ::
+        userspace-ova.pil  :: load os
+        ::
+        :~  [/b/behn/0v1n.2m9vh %born ~]
+            [/i/http-client/0v1n.2m9vh %born ~]
+            [/e/http-server/0v1n.2m9vh %born ~]
+            [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
+            [/a/newt/0v1n.2m9vh %born ~]
+        ==
       ==
     =.  this  abet-pe:initted
     (pe who.ae)
