@@ -8,7 +8,7 @@ module Urbit.Vere.Pier.Types
   , Pill(..)
   , Job(..)
   , LifeCyc(..)
-  , BootSeq(..)
+  -- , BootSeq(..)
   , Work(..)
   , jobId
   , jobMug
@@ -42,20 +42,10 @@ instance Show Nock where
 
 --------------------------------------------------------------------------------
 
-data Pill
-  = PillIvory [Noun]
-  | PillPill
-    { pName         :: Noun
-    , pBootFormulae :: ![Nock]  -- XX not actually nock, semantically
-    , pKernelOva    :: ![Ev]
-    , pUserspaceOva :: ![Ev]
-    }
- deriving (Eq, Show)
+type Pill = Atom
 
-data BootSeq = BootSeq !Self ![Nock] ![Ev]
-  deriving (Eq, Show)
-
-deriveNoun ''Pill
+-- data BootSeq = BootSeq !Self ![Nock] ![Ev]
+--   deriving (Eq, Show)
 
 
 -- Jobs ------------------------------------------------------------------------

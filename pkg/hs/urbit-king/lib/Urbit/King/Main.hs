@@ -188,18 +188,15 @@ tryBootFromPill
 tryBootFromPill oExit pill lite ship boot = do
   mStart <- newEmptyMVar
   vSlog  <- logSlogs
-  runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart []
- where
-  bootedPier vSlog = do
-    view pierPathL >>= lockFile
-    rio $ logInfo "Starting boot"
-    sls <- Pier.booted vSlog pill lite ship boot
-    rio $ logInfo "Completed boot"
-    pure sls
+  view pierPathL >>= lockFile
+  rio $ logInfo "Starting boot"
+  sls <- Pier.booted vSlog pill lite ship boot
+  rio $ logInfo "Completed boot"
+  pure sls
 
 runOrExitImmediately
   :: TVar ((Atom, Tank) -> IO ())
-  -> RAcquire PierEnv (Serf, Log.EventLog)
+  -> RAcquire PierEnv (Serf, Ripe)
   -> Bool
   -> MVar ()
   -> [Ev]
@@ -372,7 +369,7 @@ pillFrom :: CLI.PillSource -> RIO HostEnv Pill
 pillFrom = \case
   CLI.PillSourceFile pillPath -> do
     logInfo $ display $ "boot: reading pill from " ++ (pack pillPath :: Text)
-    io (loadFile pillPath >>= either throwIO pure)
+    io (loadFileAtom pillPath >>= either throwIO pure)
 
   CLI.PillSourceURL url -> do
     logInfo $ display $ "boot: retrieving pill from " ++ (pack url :: Text)
@@ -380,10 +377,7 @@ pillFrom = \case
     manager <- io $ C.newManager tlsManagerSettings
     request <- io $ C.parseRequest url
     response <- io $ C.httpLbs (C.setRequestCheckStatus request) manager
-    let body = toStrict $ C.responseBody response
-
-    noun <- cueBS body & either throwIO pure
-    fromNounErr noun & either (throwIO . uncurry ParseErr) pure
+    pure $ bytesAtom $ toStrict $ C.responseBody response
 
 multiOnFatal :: HasKingEnv e => e -> IO ()
 multiOnFatal env = runRIO env $ do

@@ -102,7 +102,7 @@ booted
   -> Bool
   -> Ship
   -> LegacyBootEvent
-  -> RAcquire PierEnv (Serf, EventLog)
+  -> RAcquire PierEnv (Serf, Ripe)
 booted vSlog pill lite ship boot = do
   rio $ bootNewShip pill lite ship boot
   resumed vSlog Nothing
@@ -142,69 +142,54 @@ bootNewShip pill lite ship bootEv = do
     jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
     writeJobs log (fromList jobs)
 
-  logInfo "Finsihed populating event log with boot sequence"
+  logInfo "Finished populating event log with boot sequence"
 
 
 -- Resume an existing ship. ----------------------------------------------------
 
 resumed
   :: TVar ((Atom, Tank) -> IO ())
-  -> Maybe Word64
-  -> RAcquire PierEnv (Serf, EventLog)
-resumed vSlog replayUntil = do
+  -> RAcquire PierEnv (Serf, Ripe)
+resumed vSlog = do
+  pax <- view pierPathL
   rio $ logTrace "Resuming ship"
-  top <- view pierPathL
-  tap <- fmap (fromMaybe top) $ rio $ runMaybeT $ do
-    ev <- MaybeT (pure replayUntil)
-    MaybeT (getSnapshot top ev)
 
   rio $ do
     logTrace $ display @Text ("pier: " <> pack top)
-    logTrace $ display @Text ("running serf in: " <> pack tap)
 
-  log  <- Log.existing (top </> ".urb/log")
-  serf <- runSerf vSlog tap
-
-  rio $ do
-    logInfo "Replaying events"
-    Serf.execReplay serf log replayUntil >>= \case
-      Left err -> error (show err)
-      Right 0  -> do
-        logInfo "No work during replay so no snapshot"
-        pure ()
-      Right _  -> do
-        logInfo "Not taking snapshot"
-        logInfo "SNAPSHOT NOT TAKEN"
-
-  pure (serf, log)
-
--- | Get a fake pier directory for partial snapshots.
-getSnapshot :: forall e . FilePath -> Word64 -> RIO e (Maybe FilePath)
-getSnapshot top last = do
-  lastSnapshot <- lastMay <$> listReplays
-  pure (replayToPath <$> lastSnapshot)
+  env <- ask
+  serfProg <- io getSerfProg
+  Serf.withSerf (config env serfProg)
  where
-  replayDir = top </> ".partial-replay"
-  replayToPath eId = replayDir </> show eId
-
-  listReplays :: RIO e [Word64]
-  listReplays = do
-    createDirectoryIfMissing True replayDir
-    snapshotNums <- mapMaybe readMay <$> listDirectory replayDir
-    pure $ sort (filter (<= fromIntegral last) snapshotNums)
+  slog s = atomically (readTVar vSlog) >>= (\f -> f s)
+  config env serfProg = Serf.Config
+    { scSerf = env ^. pierConfigL . pcSerfExe . to (maybe serfProg unpack)
+    , scPier = pax
+    , scFlag = env ^. pierConfigL . pcSerfFlags
+    , scSlog = slog
+    , scStdr = \txt -> slog (0, (textToTank txt))
+    , scDead = pure () -- TODO: What can be done?
+    }
+  getSerfProg :: IO FilePath
+  getSerfProg = do
+    (path, filename) <- splitFileName <$> getExecutablePath
+    pure $ case filename of
+      "urbit"      -> path </> "urbit-worker"
+      "urbit-king" -> path </> "urbit-worker"
+      _            -> "urbit-worker"
 
 
 -- Run Pier --------------------------------------------------------------------
 
 pier
-  :: (Serf, EventLog)
+  :: (Serf, Ripe)
   -> TVar ((Atom, Tank) -> IO ())
   -> MVar ()
   -> [Ev]
   -> RAcquire PierEnv ()
-pier (serf, log) vSlog startedSig injected = do
-  let logId = Log.identity log :: LogIdentity
-  let ship  = who logId :: Ship
+pier (serf, ripe) vSlog startedSig injected = do
+  let self = riSelf ripe :: Self
+  let ship  = who self :: Ship
 
   -- TODO Instead of using a TMVar, pull directly from the IO driver
   -- event sources.
@@ -267,7 +252,7 @@ pier (serf, log) vSlog startedSig injected = do
   (bootEvents, startDrivers) <- do
     env <- ask
     siz <- atomically $ Term.curDemuxSize demux
-    let fak = isFake logId
+    let fak = isFake self
     drivers env ship fak compute scry (siz, muxed) err sigint stat runtimeSubsite
 
   let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ

@@ -15,6 +15,7 @@ module Urbit.Vere.Serf
   , stop
   , boot
   , run
+  , withSerf
   , sendSIGINT
   , module Urbit.Vere.Serf.Types
   )
@@ -354,3 +355,13 @@ run serf maxBatchSize getLastEvInLog onInput spin = start
         atomically (readTBMQueue inFlight) >>= \case
           Nothing  -> print "recvLoop: shutting down"
           Just act -> act >> loop
+
+withSerf :: HasLogFunc e => Config -> RAcquire e (Serf, Ripe)
+withSerf config = mkRAcquire startup kill
+ where
+  startup = do
+    (serf, ripe) <- io $ work config
+    logInfo (displayShow ("serf state", ripe))
+    pure (serf, ripe)
+  kill (serf, _) = do
+    void $ rio $ stop serf
