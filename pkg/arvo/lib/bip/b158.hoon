@@ -14,9 +14,8 @@
   ?>  =(wid.k 16)
   ?>  (lte (met 3 dat.k) wid.k)
   ?>  (lte (met 3 dat.m) wid.m)
-  =.  k  (flim:sha k)
   =.  m  (flim:sha m)
-  (flim:sha (fin (comp m (init dat.k))))
+  (fin (comp m (init dat.k)))
   :: Initialise internal state
   ::
   ++  init
@@ -157,7 +156,7 @@
   ++  to-range
     |=  [item=byts f=@ k=byts]
     ^-  @
-    (rsh [0 64] (mul f (swp 3 dat:(siphash k item))))
+    (rsh [0 64] (mul f dat:(siphash k item)))
   ::  +set-construct: return sorted hashes of scriptpubkeys
   ::
   ++  set-construct
@@ -216,7 +215,7 @@
 ++  all-match
   |=  [filter=hexb:bc blockhash=hexb:bc targets=(list [address:bc byts])]
   ^-  (set [address:bc hexb:bc])
-  =/  k  (to-key (trip (to-cord:hxb:bcu blockhash)))
+  =/  k  16^(end 7 dat.blockhash)
   %-  ~(gas in *(set [address:bc hexb:bc]))
   =/  [p=@ m=@]  [p:params m:params]
   =/  [n=@ux gcs-set=bits:bc]  (parse-filter filter)
