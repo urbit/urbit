@@ -1,18 +1,14 @@
+import { BaseImage, Box, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
+import { Contact, Content } from '@urbit/api';
 import React, { Component, ReactNode } from 'react';
-import ChatEditor from './chat-editor';
-import { IuseStorage } from '~/logic/lib/useStorage';
-import { uxToHex } from '~/logic/lib/util';
-import { Sigil } from '~/logic/lib/sigil';
-import { createPost } from '~/logic/api/graph';
-import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
-import { Envelope } from '~/types/chat-update';
-import { StorageState } from '~/types';
-import { Contact, Contacts, Content, Post } from '@urbit/api';
-import { Row, BaseImage, Box, Icon, LoadingSpinner } from '@tlon/indigo-react';
-import withStorage from '~/views/components/withStorage';
+import { Sigil } from '~/logic/lib/sigil';
+import tokenizeMessage from '~/logic/lib/tokenizeMessage';
+import { IuseStorage } from '~/logic/lib/useStorage';
+import { MOBILE_BROWSER_REGEX, uxToHex } from '~/logic/lib/util';
 import { withLocalState } from '~/logic/state/local';
-import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
+import withStorage from '~/views/components/withStorage';
+import ChatEditor from './ChatEditor';
 
 type ChatInputProps = IuseStorage & {
   api: GlobalApi;
@@ -33,7 +29,7 @@ interface ChatInputState {
   currentInput: string;
 }
 
-class ChatInput extends Component<ChatInputProps, ChatInputState> {
+export class ChatInput extends Component<ChatInputProps, ChatInputState> {
   private chatEditor: React.RefObject<ChatEditor>;
 
   constructor(props) {
@@ -74,6 +70,8 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
     } else {
       onSubmit(tokenizeMessage(text));
     }
+    this.chatEditor.current.editor.focus();
+    this.setState({ currentInput: '' });
   }
 
   uploadSuccess(url: string) {
@@ -82,7 +80,7 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
       this.chatEditor.current.editor.setValue(url);
       this.setState({ uploadingPaste: false });
     } else {
-      props.onSubmit([{ url }])
+      props.onSubmit([{ url }]);
     }
   }
 
@@ -180,7 +178,14 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
           changeEvent={this.eventHandler}
           placeholder='Message...'
         />
-        <Box mx='12px' flexShrink={0} height='16px' width='16px' flexBasis='16px'>
+        <Box
+          mx='12px'
+          mr={this.props.canUpload ? '12px' : 3}
+          flexShrink={0}
+          height='16px'
+          width='16px'
+          flexBasis='16px'
+        >
           <Icon
             icon='Dojo'
             cursor='pointer'
@@ -188,9 +193,16 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
             color={state.inCodeMode ? 'blue' : 'black'}
           />
         </Box>
-        <Box ml='12px' mr={3} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
-          {this.props.canUpload ? (
-            this.props.uploading ? (
+        {this.props.canUpload ? (
+          <Box
+            ml='12px'
+            mr={3}
+            flexShrink={0}
+            height='16px'
+            width='16px'
+            flexBasis='16px'
+          >
+            {this.props.uploading ? (
               <LoadingSpinner />
             ) : (
               <Icon
@@ -202,9 +214,9 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
                   this.props.promptUpload().then(this.uploadSuccess)
                 }
               />
-            )
-          ) : null}
-        </Box>
+            )}
+          </Box>
+        ) : null}
         {MOBILE_BROWSER_REGEX.test(navigator.userAgent) ?
           <Box
             ml={2}
@@ -228,7 +240,9 @@ class ChatInput extends Component<ChatInputProps, ChatInputState> {
   }
 }
 
+// @ts-ignore withLocalState prop passing weirdness
 export default withLocalState<Omit<ChatInputProps, keyof IuseStorage>, 'hideAvatars', ChatInput>(
+  // @ts-ignore withLocalState prop passing weirdness
   withStorage<ChatInputProps, ChatInput>(ChatInput, { accept: 'image/*' }),
   ['hideAvatars']
-)
+);

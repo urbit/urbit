@@ -70,10 +70,11 @@
 ::
 ++  transform-proxy-update
   |=  vas=vase
-  ^-  (unit vase)
+  ^-  (quip card (unit vase))
   ::  TODO: should check if user is allowed to %add, %remove, %edit
   ::  contact
   =/  =update:store  !<(update:store vas)
+  :-  ~
   ?-  -.update
     %initial     ~
     %add         `vas

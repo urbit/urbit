@@ -1,0 +1,8 @@
+Usage:
+
+  |fuse %destination-desk base-beak ~[[source-beak %some-germ] [another-beak %another-germ]]
+
+A fuse replaces the contents of %destination-desk with the merge of the
+specified beaks according to their merge strategies. This has no dependence
+on the previous state of %destination-desk so any commits/work there will
+be overwritten.

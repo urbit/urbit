@@ -1,30 +1,27 @@
-import React, { ReactElement, useCallback } from 'react';
-import { FormikHelpers } from 'formik';
-import { Link, useHistory } from 'react-router-dom';
-
 import {
-  Row,
-  Box,
-  Icon,
-  ManagedRadioButtonField as Radio,
-  ManagedCheckboxField as Checkbox,
-  Col,
-  Text
-} from '@tlon/indigo-react';
-import { Groups, Rolodex, Associations } from '@urbit/api';
+    Box,
 
-import { FormikOnBlur } from '~/views/components/FormikOnBlur';
-import { Dropdown } from '~/views/components/Dropdown';
-import { SidebarListConfig  } from './types';
-import { getGroupFromWorkspace } from '~/logic/lib/workspace';
-import { roleForShip } from '~/logic/lib/group';
-import { NewChannel } from '~/views/landscape/components/NewChannel';
+    Col, Icon,
+
+    ManagedCheckboxField as Checkbox, ManagedRadioButtonField as Radio, Row,
+
+    Text
+} from '@tlon/indigo-react';
+import { FormikHelpers } from 'formik';
+import React, { ReactElement, useCallback } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import GlobalApi from '~/logic/api/global';
-import { Workspace } from '~/types/workspace';
+import { roleForShip } from '~/logic/lib/group';
+import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
-import useMetadataState from '~/logic/state/metadata';
-import {IS_SAFARI} from '~/logic/lib/platform';
 import useHarkState from '~/logic/state/hark';
+import useMetadataState from '~/logic/state/metadata';
+import { Workspace } from '~/types/workspace';
+import { Dropdown } from '~/views/components/Dropdown';
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
+import { NewChannel } from '~/views/landscape/components/NewChannel';
+import { SidebarListConfig } from './types';
+import {getFeedPath} from '~/logic/lib/util';
 
 export function SidebarListHeader(props: {
   api: GlobalApi;
@@ -32,7 +29,7 @@ export function SidebarListHeader(props: {
   baseUrl: string;
   selected: string;
   workspace: Workspace;
-  handleSubmit: (c: SidebarListConfig) => void;
+  handleSubmit: (s: any) => void;
 }): ReactElement {
   const history = useHistory();
   const onSubmit = useCallback(
@@ -56,10 +53,10 @@ export function SidebarListHeader(props: {
 
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
-  const feedPath = metadata?.config?.group?.resource;
+  let feedPath = groupPath ? getFeedPath(associations.groups[groupPath]) : undefined;
 
   const unreadCount = useHarkState(
-    s => s.unreads?.graph?.[feedPath ?? ""]?.["/"]?.unreads as number ?? 0
+    s => s.unreads?.graph?.[feedPath ?? '']?.['/']?.unreads as number ?? 0
   );
 
   return (
@@ -75,7 +72,7 @@ export function SidebarListHeader(props: {
          borderBottom={1}
          borderColor="lightGray"
          backgroundColor={['transparent',
-           history.location.pathname.includes(`/~landscape${groupPath}/feed`) 
+           history.location.pathname.includes(`/~landscape${groupPath}/feed`)
            ? (
             'washedGray'
            ) : (
@@ -92,7 +89,7 @@ export function SidebarListHeader(props: {
          <Text>
            Group Feed
          </Text>
-         <Text mr="1" color="blue">
+         <Text mr={1} color="blue">
            { unreadCount > 0 && unreadCount}
          </Text>
        </Row>
@@ -160,7 +157,7 @@ export function SidebarListHeader(props: {
           <FormikOnBlur initialValues={props.initialValues} onSubmit={onSubmit}>
             <Col bg="white" borderRadius={1} border={1} borderColor="lightGray">
               <Col
-                gapY="2"
+                gapY={2}
                 borderBottom={1}
                 borderBottomColor="washedGray"
                 p={2}
@@ -168,7 +165,7 @@ export function SidebarListHeader(props: {
                 <Box>
                   <Text color="gray">Sort Order</Text>
                 </Box>
-                <Radio mb="1" label="A -> Z" id="asc" name="sortBy" />
+                <Radio mb={1} label="A -> Z" id="asc" name="sortBy" />
                 <Radio label="Last Updated" id="lastUpdated" name="sortBy" />
               </Col>
               <Col px={2}>

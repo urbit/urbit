@@ -1,6 +1,6 @@
-import BaseApi from './base';
+import { Serial } from '@urbit/api';
 import { StoreState } from '../store/type';
-import { Serial, Path } from '@urbit/api';
+import BaseApi from './base';
 
 export default class InviteApi extends BaseApi<StoreState> {
   accept(app: string, uid: Serial) {

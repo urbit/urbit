@@ -30,6 +30,9 @@
           $%  [%rest p=@da]
               [%wait p=@da]
       ==  ==
+      $:  %c
+          $>(%warp task:clay)
+      ==
       ::  %d: to dill
       ::
       $:  %d
@@ -53,6 +56,12 @@
       $:  %gall
           gift:gall
           ::  $>(%unto gift:gall)
+          ::
+      ==
+      $:  %clay
+          gift:clay
+          ::  $>(%writ gift:clay)
+          ::
   ==  ==
 --
 ::  more structures
@@ -545,6 +554,7 @@
 ::  +per-server-event: per-event server core
 ::
 ++  per-server-event
+  ~%  %eyre-per-server-event  ..part  ~
   ::  gate that produces the +per-server-event core from event information
   ::
   |=  [[eny=@ =duct now=@da rof=roof] state=server-state]
@@ -772,7 +782,7 @@
         :*  duct  %pass  /run-app-request/[eyre-id]
             %g  %deal  [our our]  app
             %poke  %handle-http-request
-            !>([eyre-id inbound-request])
+            !>(`[@ta inbound-request:eyre]`[eyre-id inbound-request])
         ==
     ==
   ::  +cancel-request: handles a request being externally aborted
@@ -1231,9 +1241,9 @@
         ::NOTE  these will only fail if the mark and/or json types changed,
         ::      since conversion failure also gets caught during first receive.
         ::      we can't do anything about this, so consider it unsupported.
-        ?~  sign=(channel-event-to-sign channel-event)  $
-        ?~  json=(sign-to-json request-id u.sign)       $
-        $(events [(event-json-to-wall id u.json) events])
+        ?~  sign=(channel-event-to-sign channel-event)        $
+        ?~  jive=(sign-to-json request-id u.sign)  $
+        $(events [(event-json-to-wall id +.u.jive) events])
       ::  send the start event to the client
       ::
       =^  http-moves  state
@@ -1499,8 +1509,12 @@
       ::  if conversion succeeds, we *can* send it. if the client is actually
       ::  connected, we *will* send it immediately.
       ::
-      =/  json=(unit json)
+      =/  jive=(unit (quip move json))
         (sign-to-json request-id sign)
+      =/  json=(unit json)
+        ?~(jive ~ `+.u.jive)
+      =?  moves  ?=(^ jive)
+        (weld moves -.u.jive)
       =*  sending  &(?=([%| *] state.u.channel) ?=(^ json))
       ::
       =/  next-id  next-id.u.channel
@@ -1578,7 +1592,7 @@
             ^=  data
             %-  wall-to-octs
             %+  event-json-to-wall  next-id
-            (need (sign-to-json request-id %kick ~))
+            +:(need (sign-to-json request-id %kick ~))
         ::
             complete=%.n
         ==
@@ -1619,32 +1633,33 @@
     ::  +sign-to-json: render sign from request-id as json channel event
     ::
     ++  sign-to-json
+      ~%  %sign-to-json  ..part  ~
       |=  [request-id=@ud =sign:agent:gall]
-      ^-  (unit json)
+      ^-  (unit (quip move json))
       ::  for facts, we try to convert the result to json
       ::
-      =/  jsyn=(unit sign:agent:gall)
-        ?.  ?=(%fact -.sign)       `sign
-        ?:  ?=(%json p.cage.sign)  `sign
+      =/  [from=(unit mark) jsyn=(unit sign:agent:gall)]
+        ?.  ?=(%fact -.sign)       [~ `sign]
+        ?:  ?=(%json p.cage.sign)  [~ `sign]
         ::  find and use tube from fact mark to json
         ::
         =*  have=mark  p.cage.sign
         =*  desc=tape  "from {(trip have)} to json"
-        =/  tube=(unit tube:clay)
-          =/  tuc=(unit (unit cage))
-            (rof ~ %cc [our %home da+now] /[have]/json)
-          ?.  ?=([~ ~ *] tuc)  ~
-          `!<(tube:clay q.u.u.tuc)
-        ?~  tube
-          ((slog leaf+"eyre: no tube {desc}" ~) ~)
-        ::
-        =/  res  (mule |.((u.tube q.cage.sign)))
-        ?:  ?=(%& -.res)
-          `[%fact %json p.res]
-        ((slog leaf+"eyre: failed tube {desc}" ~) ~)
-      ::
+        =/  convert=(unit vase)
+          =/  cag=(unit (unit cage))
+            (rof ~ %cf [our %home da+now] /[have]/json)
+          ?.  ?=([~ ~ *] cag)  ~
+          `q.u.u.cag
+        ?~  convert
+          ((slog leaf+"eyre: no convert {desc}" ~) [~ ~])
+        ~|  "conversion failed {desc}"
+        [`have `[%fact %json (slym u.convert q.q.cage.sign)]]
       ?~  jsyn  ~
       %-  some
+      :-  ?~  from  ~
+          :_  ~
+          :^  duct  %pass  /conversion-cache/[u.from]
+          [%c %warp our %home `[%sing %f da+now /[u.from]/json]]
       =*  sign  u.jsyn
       =,  enjs:format
       %-  pairs
@@ -1665,7 +1680,7 @@
             :-  'json'
             ~|  [%unexpected-fact-mark p.cage.sign]
             ?>  =(%json p.cage.sign)
-            ;;(json q.q.cage.sign)
+            !<(json q.cage.sign)
         ==
       ::
           %kick
@@ -2320,14 +2335,15 @@
   ::
   |^  ^-  [(list move) _http-server-gate]
       ::
-      ?+     i.wire
-           ~|([%bad-take-wire wire] !!)
+      ?+    i.wire
+          ~|([%bad-take-wire wire] !!)
       ::
-         %run-app-request  run-app-request
-         %watch-response   watch-response
-         %sessions         sessions
-         %channel          channel
-         %acme             acme-ack
+        %run-app-request   run-app-request
+        %watch-response    watch-response
+        %sessions          sessions
+        %channel           channel
+        %acme              acme-ack
+        %conversion-cache  `http-server-gate
       ==
   ::
   ++  run-app-request

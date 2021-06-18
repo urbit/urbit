@@ -1,21 +1,20 @@
-import React from 'react';
-import _ from 'lodash';
-import * as Yup from 'yup';
 import {
-  Label,
-  ManagedToggleSwitchField as Checkbox,
-  Box,
-  Col,
-  Text
+    Box,
+    Col, Label,
+    ManagedToggleSwitchField as Checkbox,
+
+    Text
 } from '@tlon/indigo-react';
-import { Formik, Form } from 'formik';
-import { PermVariation, Association, Group, Groups, Rolodex } from '@urbit/api';
-import { shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
+import { Association, Group, PermVariation } from '@urbit/api';
+import { Form, Formik } from 'formik';
+import _ from 'lodash';
+import React from 'react';
+import * as Yup from 'yup';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
-import { FormSubmit } from '~/views/components/FormSubmit';
+import { FormGroupChild } from '~/views/components/FormGroup';
+import { shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
 import { ChannelWritePerms } from '../ChannelWritePerms';
-import {FormGroupChild} from '~/views/components/FormGroup';
 
 function PermissionsSummary(props: {
   writersSize: number;
@@ -37,10 +36,10 @@ function PermissionsSummary(props: {
 
   return (
     <Box
-      p="2"
-      border="1"
+      p={2}
+      border={1}
       borderColor="lightBlue"
-      borderRadius="1"
+      borderRadius={1}
       backgroundColor="washedBlue"
     >
       <Text>
@@ -160,9 +159,9 @@ export function GraphPermissions(props: GraphPermissionsProps) {
     >
       <Form style={{ display: 'contents' }}>
         <FormGroupChild id="permissions" />
-        <Col mx="4" mt="4" flexShrink={0} gapY="5">
-          <Col gapY="1" mt="0">
-            <Text id="permissions" fontWeight="bold" fontSize="2">
+        <Col mx={4} mt={4} flexShrink={0} gapY={5}>
+          <Col gapY={1} mt={0}>
+            <Text id="permissions" fontWeight="bold" fontSize={2}>
               Permissions
             </Text>
             <Text gray>
@@ -171,7 +170,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
             </Text>
           </Col>
           <Col>
-            <Label mb="2">Permissions Summary</Label>
+            <Label mb={2}>Permissions Summary</Label>
             <PermissionsSummary
               writersSize={writers.size}
               vip={association.metadata.vip}

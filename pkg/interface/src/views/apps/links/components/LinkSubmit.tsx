@@ -1,18 +1,18 @@
 import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { hasProvider } from 'oembed-parser';
 import React, { useCallback, useState } from 'react';
 import GlobalApi from '~/logic/api/global';
+import { createPost } from '~/logic/api/graph';
+import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import useStorage from '~/logic/lib/useStorage';
-import { StorageState } from '~/types';
 import SubmitDragger from '~/views/components/SubmitDragger';
-import { createPost } from '~/logic/api/graph';
-import { hasProvider } from 'oembed-parser';
-import {parsePermalink, permalinkToReference} from '~/logic/lib/permalinks';
 
 interface LinkSubmitProps {
   api: GlobalApi;
   name: string;
   ship: string;
+  parentIndex?: any;
 }
 
 const LinkSubmit = (props: LinkSubmitProps) => {
@@ -29,8 +29,8 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   const doPost = () => {
     const url = linkValue;
     const text = linkTitle ? linkTitle : linkValue;
-    const contents = url.startsWith('web+urbitgraph:/') 
-      ?  [{ text }, permalinkToReference(parsePermalink(url)!) ]
+    const contents = url.startsWith('web+urbitgraph:/')
+      ?  [{ text }, permalinkToReference(parsePermalink(url)!)]
       :  [{ text }, { url }];
 
     setDisabled(true);
@@ -158,6 +158,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
   return (
     <>
+    {/* @ts-ignore archaic event type mismatch */}
       <Box
         flexShrink={0}
         position='relative'
@@ -195,6 +196,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
             onBlur={() => [setUrlFocused(false), setSubmitFocused(false)]}
             onFocus={() => [setUrlFocused(true), setSubmitFocused(true)]}
             spellCheck="false"
+            // @ts-ignore archaic event type mismatch error
             onPaste={onPaste}
             onKeyPress={onKeyPress}
             value={linkValue}

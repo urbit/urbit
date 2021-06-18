@@ -112,7 +112,7 @@
     ;:  weld
       %+  expect-eq
         !>(*mime)
-        (slap res limb/%bunt)
+        (slap res !,(*hoon *vale))
     ::
       %+  expect-eq
         !>  (~(gas in *(set [? path])) |^/mar/mime/hoon ~)
@@ -139,7 +139,7 @@
     ;:  weld
       %+  expect-eq
         !>(*@t)
-        (slap res limb/%bunt)
+        (slap res !,(*hoon *vale))
     ::
       %+  expect-eq
         !>  (~(gas in *(set [? path])) |^/mar/udon/hoon |^/lib/cram/hoon ~)
@@ -170,7 +170,7 @@
   =/  changes
     %-  my
     :~  [/mar/mime/hoon &+hoon+mar-mime]
-        [/lib/foo/hoon &+hoon+'/%  moo  %mime\0abunt:moo']
+        [/lib/foo/hoon &+hoon+'/%  moo  %mime\0a*vale:moo']
     ==
   =/  ford
     %:  ford:fusion

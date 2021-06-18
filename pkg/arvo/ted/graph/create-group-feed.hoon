@@ -39,7 +39,7 @@
     ==
 ;<  ~  bind:m
   %+  poke-our  %graph-store
-  :-  %graph-update-1
+  :-  %graph-update-2
   !>  ^-  update:graph
   [now.bowl %add-graph feed-rid *graph:graph `%graph-validator-post %&]
 ;<  ~  bind:m

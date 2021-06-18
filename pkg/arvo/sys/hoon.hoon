@@ -259,6 +259,8 @@
 ++  head  |*(^ ,:+<-)                                   ::  get head
 ++  same  |*(* +<)                                      ::  identity
 ::
+++  succ  |=(@ +(+<))                                   ::  successor
+::
 ++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  test  |=(^ =(+<- +<+))                              ::  equality
 ::
@@ -5452,6 +5454,7 @@
 ::::  4k: atom printing
   ::
 ++  co
+  !:
   ~%  %co  ..co  ~
   =<  |_  lot=coin
       ++  rear  |=(rom=tape rend(rep rom))
@@ -5603,18 +5606,17 @@
         |=  a=dn
         ?:  ?=([%i *] a)  (weld ?:(s.a "inf" "-inf") rep)
         ?:  ?=([%n *] a)  (weld "nan" rep)
-        =/  f=(pair tape @)
-          %.  a.a
-          %+  ed-co(rep ~)  [10 1]
-          |=([a=? b=@ c=tape] [~(d ne b) ?.(a c ['.' c])])
-        =.  e.a  (sum:si e.a (sun:si (dec q.f)))
-        =/  res
-          %+  weld  p.f
-          ?~  e.a
-            rep
-          %+  weld  ?:((syn:si e.a) "e" "e-")
-          ((d-co 1) (abs:si e.a))
-        ?:(s.a res ['-' res])
+        =;  rep  ?:(s.a rep ['-' rep])
+        =/  f  ((d-co 1) a.a)
+        =^  e  e.a
+          =/  e=@s  (sun:si (lent f))
+          =/  sci  :(sum:si e.a e -1)
+          ?:  (syn:si (dif:si e.a --3))  [--1 sci]  :: 12000 -> 12e3 e>+2
+          ?:  !(syn:si (dif:si sci -2))  [--1 sci]  :: 0.001 -> 1e-3 e<-2
+          [(sum:si sci --1) --0] :: 1.234e2 -> '.'@3 -> 123 .4
+        =?  rep  !=(--0 e.a)
+          :(weld ?:((syn:si e.a) "e" "e-") ((d-co 1) (abs:si e.a)))
+        (weld (ed-co e f) rep)
       ::
       ++  s-co
         |=  esc=(list @)  ^-  tape
@@ -5660,20 +5662,13 @@
   ::    - used only for @r* floats
   ::
   ++  ed-co
-    |=  [[bas=@ min=@] par=$-([? @ tape] tape)]
-    =|  [fir=? cou=@ud]
-    |=  hol=@
-    ^-  [tape @]
-    ?:  &(=(0 hol) =(0 min))
-      [rep cou]
-    =/  [dar=@ rad=@]  (dvr hol bas)
-    %=  $
-      min  ?:(=(0 min) 0 (dec min))
-      hol  dar
-      rep  (par &(=(0 dar) !fir) rad rep)
-      fir  |
-      cou  +(cou)
-    ==
+    |=  [exp=@s int=tape]  ^-  tape
+    =/  [pos=? dig=@u]  [=(--1 (cmp:si exp --0)) (abs:si exp)]
+    ?.  pos
+      (into (weld (reap +(dig) '0') int) 1 '.')
+    =/  len  (lent int)
+    ?:  (lth dig len)  (into int dig '.')
+    (weld int (reap (sub dig len) '0'))
   ::
   ::  +ox-co: format '.'-separated digit sequences in numeric base
   ::
@@ -6647,7 +6642,7 @@
 +$  seminoun
   ::  partial noun; blocked subtrees are ~
   ::
-  $~  [[%full ~] ~]
+  $~  [[%full / ~ ~] ~]
   [mask=stencil data=noun]
 ::
 ::  +stencil: noun knowledge map
@@ -8793,6 +8788,7 @@
       %peek   peek
       %repo   repo
       %rest   rest
+      %sink   sink
       %tack   tack
       %toss   toss
       %wrap   wrap
@@ -14112,7 +14108,7 @@
       |-  ^-  type
       ?~  lov  sut
       $(lov t.lov, sut (face i.lov sut))
-    ::                                                  ::
+    ::
     ++  sint                                            ::  reduce by reference
       |=  $:  ::  hod: expand holds
               ::
@@ -14303,6 +14299,39 @@
       =^  val  grub  caching-repo
       $(sut val, vil (~(put in vil) sut))
     ==
+  ::
+  ++  sink
+    ~/  %sink
+    |^  ^-  cord
+    ?-  sut
+      %void      'void'
+      %noun      'noun'
+      [%atom *]  (rap 3 'atom ' p.sut ' ' ?~(q.sut '~' u.q.sut) ~)
+      [%cell *]  (rap 3 'cell ' (mup p.sut) ' ' (mup q.sut) ~)
+      [%face *]  (rap 3 'face ' ?@(p.sut p.sut (mup p.sut)) ' ' (mup q.sut) ~)
+      [%fork *]  (rap 3 'fork ' (mup p.sut) ~)
+      [%hint *]  (rap 3 'hint ' (mup p.sut) ' ' (mup q.sut) ~)
+      [%hold *]  (rap 3 'hold ' (mup p.sut) ' ' (mup q.sut) ~)
+    ::
+        [%core *]
+      %+  rap  3
+      :~  'core '
+          (mup p.sut)
+          ' '
+          ?~(p.p.q.sut '~' u.p.p.q.sut)
+          ' '
+          q.p.q.sut
+          ' '
+          r.p.q.sut
+          ' '
+          (mup q.q.sut)
+          ' '
+          (mup p.r.q.sut)
+      ==
+    ==
+    ::
+    ++  mup  |=(* (scot %p (mug +<)))
+    --
   ::
   ++  take
     |=  [vit=vein duz=$-(type type)]

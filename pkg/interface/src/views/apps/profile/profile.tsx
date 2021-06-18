@@ -1,12 +1,10 @@
-import React from 'react';
-import { Route, Link } from 'react-router-dom';
-import Helmet from 'react-helmet';
-
 import { Box } from '@tlon/indigo-react';
-
-import { Profile } from './components/Profile';
+import React from 'react';
+import Helmet from 'react-helmet';
+import { Route } from 'react-router-dom';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
+import { Profile } from './components/Profile';
 
 export default function ProfileScreen(props: any) {
   const contacts = useContactState(state => state.contacts);
@@ -38,7 +36,7 @@ export default function ProfileScreen(props: any) {
                 border={1}
                 borderColor='lightGray'
                 overflowY='auto'
-                flexGrow
+                flexGrow={1}
               >
                 <Box>
                   <Profile
