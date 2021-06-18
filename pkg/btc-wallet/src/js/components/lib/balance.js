@@ -28,15 +28,7 @@ export default class Balance extends Component {
 
   copyAddress(arg) {
     let address = this.props.state.address;
-    function listener(e) {
-      e.clipboardData.setData('text/plain', address);
-      e.preventDefault();
-    }
-
-    document.addEventListener('copy', listener);
-    document.execCommand('copy');
-    document.removeEventListener('copy', listener);
-
+    navigator.clipboard.writeText(address);
     this.props.api.btcWalletCommand({'gen-new-address': null});
 
     if (arg === 'button'){
@@ -122,8 +114,7 @@ export default class Balance extends Component {
                      style={{cursor: sendDisabled ? "default" : "pointer" }}
                      borderColor="none"
                      borderRadius="24px"
-                     py="24px"
-                     px="24px"
+                     height="48px"
                      onClick={() => this.setState({sending: true})}
              />
              <Button children={(this.state.copiedButton) ? "Address Copied!" : "Copy Address"}
@@ -136,8 +127,7 @@ export default class Balance extends Component {
                      style={{cursor: (this.state.copiedButton) ? "default" : "pointer"}}
                      borderColor="none"
                      borderRadius="24px"
-                     py="24px"
-                     px="24px"
+                     height="48px"
                      onClick={() => {this.copyAddress('button')}}
              />
            </Row>

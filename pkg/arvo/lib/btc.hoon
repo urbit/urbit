@@ -505,8 +505,10 @@
     (mk-url '/getblockcount' '')
     ::
       %get-block-info
+    =/  param=@t
+      ?~(block.ract '' (rsh [3 2] (scot %ui u.block.ract)))
     %-  get-request
-    (mk-url '/getblockinfo' '')
+    (mk-url '/getblockinfo/' param)
   ==
   ++  mk-url
     |=  [base=@t params=@t]
