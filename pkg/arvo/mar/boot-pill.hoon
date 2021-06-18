@@ -1,5 +1,5 @@
 ::
-::::  /hoon/pill/mar
+::::  /hoon/boot-pill/mar
   ::
 /+  *pill
 |_  pil=boot-pill
@@ -11,5 +11,5 @@
   |%
   ++  noun  boot-pill
   --
-++  grad  %mime
+++  grad  %noun
 --
