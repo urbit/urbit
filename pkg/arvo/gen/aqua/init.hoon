@@ -5,4 +5,4 @@
 :-  %say
 |=  [* [her=ship fake=? ~] ~]
 :-  %aqua-events
-[%init-ship her ?:(fake ~ `*dawn-event:jael)]~
+[%init-ship her fake]~
