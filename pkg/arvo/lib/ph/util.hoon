@@ -16,9 +16,9 @@
 ::  Start a ship (low-level; prefer +raw-ship)
 ::
 ++  init
-  |=  [who=ship keys=(unit dawn-event:jael)]
+  |=  [who=ship fake=?]
   ^-  (list aqua-event)
-  [%init-ship who keys]~
+  [%init-ship who fake]~
 ::
 ::  Send dojo command
 ::

@@ -204,9 +204,10 @@
     =/  pax  (path p)
     ?>  ?=([@ @ @ @ *] pax)
     =.  i.t.t.t.pax  (scot %da tym)
-    =/  pek  (slum peek [tym pax])
-    pek
-  ::
+    =/  pek  (slum peek [[~ ~] & pax])
+    =+  ;;(res=(unit (cask)) pek)
+    (bind res tail)
+      ::
   ::  Wish
   ::
   ++  wish
@@ -504,13 +505,6 @@
   ?-  -.ae
   ::
       %init-ship
-    ::  XX  Note that the keys that get passed in are unused. The keys field
-    ::      should be deleted now that aqua is capable of managing azimuth state
-    ::      internally. Its been left this way for now until all the ph tests
-    ::      can be rewritten
-    =/  keys=dawn-event:jael  
-      ?~  keys.ae  *dawn-event:jael
-      (dawn who.ae)
     =.  this  abet-pe:(publish-effect:(pe who.ae) [/ %sleep ~])
     =/  initted
       =<  plow
@@ -519,7 +513,7 @@
       %-  zing
       :~
         :~  [/ %wack 0]  ::  eny
-            ::  [/ %verb `|]  possible verb
+            :: [/ %verb `|]  :: possible verb
             :^  /  %wyrd  [%urbit /test] :: negotiate XX what is .non and .rev
             ^-  (list (pair term @))
             :~  zuse+zuse
@@ -535,9 +529,9 @@
         ::
         :_  ~
         :^  /d/term/1  %boot  &
-        ?~  keys.ae
+        ?:  fake.ae
           [%fake who.ae]
-        [%dawn keys]
+        [%dawn (dawn who.ae)]
         ::
         userspace-ova.pil  :: load os
         ::
