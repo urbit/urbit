@@ -157,7 +157,7 @@
   ++  to-range
     |=  [item=byts f=@ k=byts]
     ^-  @
-    (rsh [0 64] (mul f (swp 3 dat:(siphash k item))))
+    (rsh [0 64] (mul f +:(flim:sha (siphash k item))))
   ::  +set-construct: return sorted hashes of scriptpubkeys
   ::
   ++  set-construct
