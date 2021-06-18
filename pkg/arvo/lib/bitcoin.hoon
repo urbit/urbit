@@ -3,7 +3,7 @@
 ::  expose BIP libraries
 ::
 /-  sur=bitcoin
-/+  bech32=bip-b173, pbt=bip-b174, bcu=bitcoin-utils
+/+  bech32=bip-b173, pbt=bip-b174, bcu=bitcoin-utils, bip-b158
 =,  sur
 =,  bcu
 |%

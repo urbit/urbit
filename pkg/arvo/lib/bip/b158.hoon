@@ -211,19 +211,20 @@
   $(last-val (add delta last-val))
 ::  +all-match: returns all target byts that match
 ::   - filter: full block filter, with leading N
-::   - k: key for siphash (end of blockhash, reversed)
 ::   - targets: scriptpubkeys to match
 ::
 ++  all-match
-  |=  [filter=hexb:bc k=byts targets=(list byts)]
-  ^-  (set hexb:bc)
-  %-  ~(gas in *(set hexb:bc))
+  |=  [filter=hexb:bc blockhash=hexb:bc targets=(list [address:bc byts])]
+  ^-  (set [address:bc hexb:bc])
+  =/  k  (to-key (trip (to-cord:hxb:bcu blockhash)))
+  %-  ~(gas in *(set [address:bc hexb:bc]))
   =/  [p=@ m=@]  [p:params m:params]
   =/  [n=@ux gcs-set=bits:bc]  (parse-filter filter)
-  =/  target-map=(map @ hexb:bc)
-    %-  ~(gas by *(map @ hexb:bc))
+  =/  target-map=(map @ [address:bc hexb:bc])
+    %-  ~(gas by *(map @ [address:bc hexb:bc]))
     %+  turn  targets
-    |=(t=hexb:bc [(to-range:hsh t (mul n m) k) t])
+    |=  [a=address:bc t=hexb:bc]
+    [(to-range:hsh t (mul n m) k) a t]
   =+  target-hs=(sort ~(tap in ~(key by target-map)) lth)
   =+  last-val=0
   =|  matches=(list @)
@@ -244,4 +245,5 @@
   =^  delta  gcs-set
     (de:gol gcs-set p)
   $(last-val (add delta last-val))
+::
 --
