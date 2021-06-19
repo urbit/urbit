@@ -6,11 +6,14 @@
 |=  our=ship
 =>  |%
     +$  move  [p=duct q=(wite note gift)]
-    +$  note                                            ::  out request $->
-      $%  $:  %k                                        ::   to self
+    +$  note                                          ::  out request $->
+      $%
+        $:  %j                                        :: to %jael
+              $>(%step task:jael)
+          ==
+        $:  %k                                        ::   to self
                 $>  $?
                         %fyrd
-                        %born
                 ==                                      ::
              task                                       ::
           ==                                            ::
@@ -19,7 +22,7 @@
       ==  ==
       ::
     +$  sign
-      $%  [%khan $>(%avow gift)]
+      $%  [%khan $>(%avow gift)]                        :: avow
       ==
     ::
     +$  khan-state
@@ -63,7 +66,7 @@
     ~!  -.com
     ?-  -.com
       %mas  ~&  todo+com  event-core                    :: |mass
-      %cod  event-core(moves [[%pass / %arvo %j %step ~] moves]) :: code reset
+      %cod  event-core(moves [[duct %pass / %arvo %j %step ~] ~]) :: code reset
     ==
   ::  +trim: in response to memory pressue
   ::
