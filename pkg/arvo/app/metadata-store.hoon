@@ -194,10 +194,18 @@
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
-        [%y %group-indices ~]     ``noun+!>(group-indices)
-        [%y %app-indices ~]       ``noun+!>(app-indices)
-        [%y %resource-indices ~]  ``noun+!>(resource-indices)
-        [%x %associations ~]      ``noun+!>(associations)
+        [%y %group-indices ~]
+      ``noun+!>(`(jug resource md-resource:store)`group-indices)
+    ::
+        [%y %app-indices ~]
+      ``noun+!>(`(jug app-name:store [group=resource =resource])`app-indices)
+    ::
+        [%y %resource-indices ~]
+      ``noun+!>(`(map md-resource:store resource)`resource-indices)
+    ::
+        [%x %associations ~]
+      ``noun+!>(`associations:store`associations)
+    ::
         [%x %app-name @ ~]
       =/  =app-name:store  i.t.t.path
       ``noun+!>(`associations:store`(metadata-for-app:mc app-name))

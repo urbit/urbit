@@ -5,7 +5,7 @@ import 'codemirror/addon/edit/continuelist';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown';
 import { useFormikContext } from 'formik';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, DragEvent } from 'react';
 import { UnControlled as CodeEditor } from 'react-codemirror2';
 import { Prompt } from 'react-router-dom';
 import { useFileDrag } from '~/logic/lib/useDrag';
@@ -61,13 +61,6 @@ export function MarkdownEditor(
     [onChange]
   );
 
-  const handleBlur = useCallback(
-    (_i, e: any) => {
-      onBlur && onBlur(e);
-    },
-    [onBlur]
-  );
-
   const { uploadDefault, canUpload } = useStorage();
 
   const onFileDrag = useCallback(
@@ -110,10 +103,10 @@ export function MarkdownEditor(
         value={value}
         options={options}
         onChange={handleChange}
-        onDragLeave={(editor, e: DragEvent) => bind.onDragLeave(e)}
-        onDragOver={(editor, e: DragEvent) => bind.onDragOver(e)}
-        onDrop={(editor, e: DragEvent) => bind.onDrop(e)}
-        onDragEnter={(editor, e: DragEvent) => bind.onDragEnter(e)}
+        onDragLeave={(editor, e: any) => bind.onDragLeave(e)}
+        onDragOver={(editor, e: any) => bind.onDragOver(e)}
+        onDrop={(editor, e: any) => bind.onDrop(e)}
+        onDragEnter={(editor, e: any) => bind.onDragEnter(e)}
       />
       {dragging && <SubmitDragger />}
     </Box>

@@ -16,7 +16,7 @@ import GlobalApi from '~/logic/api/global';
 import { getNotificationKey } from '~/logic/lib/hark';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useLaunchState from '~/logic/state/launch';
-import { daToUnix, MOMENT_CALENDAR_DATE } from '~/logic/lib/util';
+import { daToUnix } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
 import { Invites } from './invites';
 import { Notification } from './notification';
@@ -71,16 +71,6 @@ export default function Inbox(props: {
 
   const notifications =
     Array.from(props.showArchive ? archivedNotifications : notificationState) || [];
-
-  const calendar = {
-    ...MOMENT_CALENDAR_DATE, sameDay: function (now) {
-      if (this.subtract(6, 'hours').isBefore(now)) {
-        return '[Earlier Today]';
-      } else {
-        return MOMENT_CALENDAR_DATE.sameDay;
-      }
-    }
-  };
 
   const notificationsByDay = f.flow(
     f.map<DatedTimebox, DatedTimebox>(([date, nots]) => [

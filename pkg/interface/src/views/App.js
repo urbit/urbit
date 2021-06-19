@@ -78,6 +78,7 @@ class App extends React.Component {
     this.store.setStateHandler(this.setState.bind(this));
     this.state = this.store.state;
 
+    // eslint-disable-next-line
     this.appChannel = new window.channel();
     this.api = new GlobalApi(this.ship, this.appChannel, this.store);
     gcpManager.configure(this.api);
@@ -103,7 +104,7 @@ class App extends React.Component {
       this.updateTheme(this.themeWatcher);
     }, 500);
     this.api.local.getBaseHash();
-    this.api.local.getRuntimeLag();  //TODO  consider polling periodically
+    this.api.local.getRuntimeLag();  // TODO  consider polling periodically
     this.api.settings.getAll();
     gcpManager.start();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {

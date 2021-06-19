@@ -4,18 +4,14 @@ import {
 
   GroupNotificationContents,
 
-  GroupNotificationsConfig, IndexedNotification,
+  IndexedNotification
 
-  NotificationGraphConfig
 } from '@urbit/api';
 import { BigInteger } from 'big-integer';
-import _ from 'lodash';
 import React, { ReactNode, useCallback } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { getNotificationKey } from '~/logic/lib/hark';
-import { getParentIndex } from '~/logic/lib/notification';
 import { useHovering } from '~/logic/lib/util';
-import useHarkState from '~/logic/state/hark';
 import useLocalState from '~/logic/state/local';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import { SwipeMenu } from '~/views/components/SwipeMenu';
@@ -27,32 +23,6 @@ export interface NotificationProps {
   time: BigInteger;
   api: GlobalApi;
   unread: boolean;
-}
-
-function getMuted(
-  idxNotif: IndexedNotification,
-  groups: GroupNotificationsConfig,
-  graphs: NotificationGraphConfig
-) {
-  const { index, notification } = idxNotif;
-  if ('graph' in idxNotif.index) {
-    const { graph } = idxNotif.index.graph;
-    if (!('graph' in notification.contents)) {
-      throw new Error();
-    }
-    const parent = getParentIndex(idxNotif.index.graph, notification.contents.graph);
-
-    return (
-      _.findIndex(
-        graphs?.watching || [],
-        g => g.graph === graph && g.index === parent
-      ) === -1
-    );
-  }
-  if ('group' in index) {
-    return _.findIndex(groups || [], g => g === index.group.group) === -1;
-  }
-  return false;
 }
 
 export function NotificationWrapper(props: {
@@ -73,12 +43,6 @@ export function NotificationWrapper(props: {
     }
     return api.hark.archive(time, notification.index);
   }, [time, notification]);
-
-  const groupConfig = useHarkState(state => state.notificationsGroupConfig);
-  const graphConfig = useHarkState(state => state.notificationsGraphConfig);
-
-  const isMuted =
-    time && notification && getMuted(notification, groupConfig, graphConfig);
 
   const onClick = (e: any) => {
     if (!notification || read) {

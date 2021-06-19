@@ -48,7 +48,7 @@ export default class Send extends Component {
       showModal: false,
       note: '',
       choosingSignMethod: false,
-      signMethod: 'Sign Transaction',
+      signMethod: 'bridge',
     };
 
     this.initPayment  = this.initPayment.bind(this);
@@ -86,7 +86,7 @@ export default class Send extends Component {
   }
 
   setSignMethod(signMethod) {
-    this.setState({signMethod});
+    this.setState({signMethod, choosingSignMethod: false});
   }
 
   checkPayee(e){
@@ -204,7 +204,7 @@ export default class Send extends Component {
     const signReady = (this.state.ready && (parseInt(this.state.satsAmount) > 0)) && !signing;
 
     let invoice = null;
-    if (signMethod === 'Sign Transaction') {
+    if (signMethod === 'masterTicket') {
       invoice =
         <Invoice
           network={network}
@@ -218,7 +218,7 @@ export default class Send extends Component {
           satsAmount={satsAmount}
           state={this.props.state}
         />
-    } else if (signMethod === 'Sign with Bridge') {
+    } else if (signMethod === 'bridge') {
       invoice =
         <BridgeInvoice
           state={this.props.state}
@@ -430,8 +430,7 @@ export default class Send extends Component {
                 fontWeight='bold'
                 borderRadius='24px'
                 mr={2}
-                py='24px'
-                px='24px'
+                height='48px'
                 onClick={() => this.toggleSignMethod(choosingSignMethod)}
                 color={signReady ? 'white' : 'lighterGray'}
                 backgroundColor={signReady ? 'rgba(33, 157, 255, 0.2)' : 'veryLightGray'}
@@ -439,6 +438,17 @@ export default class Send extends Component {
                 border='none'
                 style={{cursor: signReady ? 'pointer' : 'default'}} />
             </Row>
+            {signMethod === 'masterTicket' &&
+             <Row
+               mt={4}
+               alignItems='center'
+             >
+               <Icon icon='Info' color='yellow' height={4} width={4}/>
+               <Text fontSize="14px" fontWeight="regular" color="gray" ml={2}>
+                 We recommend that you sign transactions using Bridge to protect your master ticket.
+               </Text>
+             </Row>
+            }
           </Col>
         }
       </>

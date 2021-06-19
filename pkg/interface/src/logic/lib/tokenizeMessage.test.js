@@ -93,4 +93,24 @@ describe('tokenizeMessage', () => {
     expect(three).toEqual(' test ');
     expect(hastuc).toEqual('~hastuc-dibtux');
   });
+  it('should tokenize a url with a par', () => {
+    const example = 'test https://en.wikipedia.org/wiki/Turbo_(gastropod)';
+
+    const [{ text }, { url }] = tokenizeMessage(example);
+    expect(text).toBe('test ');
+    expect(url).toBe('https://en.wikipedia.org/wiki/Turbo_(gastropod)');
+  });
+  it('should ignore ending commas', () => {
+    const example = 'https://tlon.io/test, foo';
+    const [{ url }, { text }] = tokenizeMessage(example);
+    expect(text).toBe(', foo');
+    expect(url).toBe('https://tlon.io/test');
+  });
+
+  it('should ignore ending dots', () => {
+    const example = 'https://tlon.io/test. foo';
+    const [{ url }, { text }] = tokenizeMessage(example);
+    expect(text).toBe('. foo');
+    expect(url).toBe('https://tlon.io/test');
+  });
 });

@@ -28,8 +28,8 @@
     rose+(ot style+(ot mid+sa open+sa close+sa ~) lines+(ar dank) ~)
   ==
 ::
-++  orm      ((ordered-map atom node) gth)
-++  orm-log  ((ordered-map time logged-update) gth)
+++  orm      ((on atom node) gth)
+++  orm-log  ((on time logged-update) gth)
 ::
 ++  enjs
   =,  enjs:format
@@ -311,7 +311,7 @@
     ++  graph
       |=  a=json
       ^-  ^graph
-      =/  or-mp  ((ordered-map atom ^node) gth)
+      =/  or-mp  ((on atom ^node) gth)
       %+  gas:or-mp  ~
       %+  turn  ~(tap by ((om node) a))
       |*  [b=cord c=*]
@@ -559,7 +559,7 @@
     =>
       |%
       ++  in-orm
-        ((ordered-map atom in-node) gth)
+        ((on atom in-node) gth)
       +$  in-node
         [post=in-pst children=in-internal-graph]
       +$  in-graph
@@ -571,7 +571,7 @@
         ==
       ::
       ++  out-orm
-        ((ordered-map atom out-node) gth)
+        ((on atom out-node) gth)
       +$  out-node
         [post=out-pst children=out-internal-graph]
       +$  out-graph
@@ -823,7 +823,7 @@
   ++  remake-update-log
     |=  t=tree-update-log
     ^-  update-log
-    =/  ulm  ((ordered-map time logged-update) gth)
+    =/  ulm  ((on time logged-update) gth)
     %+  gas:ulm  *update-log
     %+  turn  ~(tap by t)
     |=  [=time tlu=tree-logged-update]
