@@ -736,7 +736,7 @@
     ::  attempt to find conversion gate to mime
     ::
     =/  tub=(unit tube:clay)
-      (find-tube mark %mime)
+      (find-tube i.site.req mark %mime)
     ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
     ::  attempt conversion, then send results
     ::
@@ -749,11 +749,15 @@
     ==
     ::
     ++  find-tube
-      |=  [from=mark to=mark]
+      |=  [dap=term from=mark to=mark]
       ^-  (unit tube:clay)
       ?:  =(from to)  `(bake same vase)
+      =/  des=(unit (unit cage))
+        (do-scry %gd dap ~)
+      ?.  ?=([~ ~ *] des)  ~
+      =+  !<(=desk q.u.u.des)
       =/  tub=(unit (unit cage))
-        (do-scry %cc %home /[from]/[to])
+        (do-scry %cc desk /[from]/[to])
       ?.  ?=([~ ~ %tube *] tub)  ~
       `!<(tube:clay q.u.u.tub)
     ::
@@ -1240,8 +1244,10 @@
         ::NOTE  these will only fail if the mark and/or json types changed,
         ::      since conversion failure also gets caught during first receive.
         ::      we can't do anything about this, so consider it unsupported.
-        ?~  sign=(channel-event-to-sign channel-event)        $
-        ?~  jive=(sign-to-json request-id u.sign)  $
+        =/  sign
+          (channel-event-to-sign u.maybe-channel request-id channel-event)
+        ?~  sign  $
+        ?~  jive=(sign-to-json u.maybe-channel request-id u.sign)  $
         $(events [(event-json-to-wall id +.u.jive) events])
       ::  send the start event to the client
       ::
@@ -1509,7 +1515,7 @@
       ::  connected, we *will* send it immediately.
       ::
       =/  jive=(unit (quip move json))
-        (sign-to-json request-id sign)
+        (sign-to-json u.channel request-id sign)
       =/  json=(unit json)
         ?~(jive ~ `+.u.jive)
       =?  moves  ?=(^ jive)
@@ -1591,7 +1597,7 @@
             ^=  data
             %-  wall-to-octs
             %+  event-json-to-wall  next-id
-            +:(need (sign-to-json request-id %kick ~))
+            +:(need (sign-to-json u.channel request-id %kick ~))
         ::
             complete=%.n
         ==
@@ -1610,18 +1616,33 @@
       ^-  channel-event
       ?.  ?=(%fact -.sign)  sign
       [%fact [p q.q]:cage.sign]
+    ::  +app-to-desk
+    ::
+    ++  app-to-desk
+      |=  [=channel request-id=@ud]
+      ^-  (unit desk)
+      =/  sub  (~(get by subscriptions.channel) request-id)
+      ?~  sub
+        ((slog leaf+"eyre: no subscription for request-id {<request-id>}" ~) ~)
+      =/  des=(unit (unit cage))
+        (rof ~ %gd [our app.u.sub da+now] ~)
+      ?.  ?=([~ ~ *] des)
+        ((slog leaf+"eyre: no desk for app {(trip app.u.sub)}" ~) ~)
+      `!<(=desk q.u.u.des)
     ::  +channel-event-to-sign: attempt to recover a sign from a channel-event
     ::
     ++  channel-event-to-sign
       ~%  %eyre-channel-event-to-sign  ..part  ~
-      |=  event=channel-event
+      |=  [=channel request-id=@ud event=channel-event]
       ^-  (unit sign:agent:gall)
       ?.  ?=(%fact -.event)  `event
       ::  rebuild vase for fact data
       ::
+      =/  des=(unit desk)  (app-to-desk channel request-id)
+      ?~  des  ~
       =*  have=mark  mark.event
       =/  val=(unit (unit cage))
-        (rof ~ %cb [our %home da+now] /[have])
+        (rof ~ %cb [our u.des da+now] /[have])
       ?.  ?=([~ ~ *] val)
         ((slog leaf+"eyre: no mark {(trip have)}" ~) ~)
       =+  !<(=dais:clay q.u.u.val)
@@ -1633,32 +1654,35 @@
     ::
     ++  sign-to-json
       ~%  %sign-to-json  ..part  ~
-      |=  [request-id=@ud =sign:agent:gall]
+      |=  [=channel request-id=@ud =sign:agent:gall]
       ^-  (unit (quip move json))
       ::  for facts, we try to convert the result to json
       ::
-      =/  [from=(unit mark) jsyn=(unit sign:agent:gall)]
+      =/  [from=(unit [=desk =mark]) jsyn=(unit sign:agent:gall)]
         ?.  ?=(%fact -.sign)       [~ `sign]
         ?:  ?=(%json p.cage.sign)  [~ `sign]
         ::  find and use tube from fact mark to json
+        ::
+        =/  des=(unit desk)  (app-to-desk channel request-id)
+        ?~  des  [~ ~]
         ::
         =*  have=mark  p.cage.sign
         =*  desc=tape  "from {(trip have)} to json"
         =/  convert=(unit vase)
           =/  cag=(unit (unit cage))
-            (rof ~ %cf [our %home da+now] /[have]/json)
+            (rof ~ %cf [our u.des da+now] /[have]/json)
           ?.  ?=([~ ~ *] cag)  ~
           `q.u.u.cag
         ?~  convert
           ((slog leaf+"eyre: no convert {desc}" ~) [~ ~])
         ~|  "conversion failed {desc}"
-        [`have `[%fact %json (slym u.convert q.q.cage.sign)]]
+        [`[u.des have] `[%fact %json (slym u.convert q.q.cage.sign)]]
       ?~  jsyn  ~
       %-  some
       :-  ?~  from  ~
           :_  ~
-          :^  duct  %pass  /conversion-cache/[u.from]
-          [%c %warp our %home `[%sing %f da+now /[u.from]/json]]
+          :^  duct  %pass  /conversion-cache/[mark.u.from]
+          [%c %warp our desk.u.from `[%sing %f da+now /[mark.u.from]/json]]
       =*  sign  u.jsyn
       =,  enjs:format
       %-  pairs
@@ -2439,8 +2463,9 @@
     ::
         ?(%poke %subscription)
       ?>  ?=([%gall %unto *] sign)
-      ~|  wire
+      ~|  eyre-sub=wire
       ?>  ?=([@ @ @t @ *] wire)
+      ?<  ?=(%raw-fact -.p.sign)
       =*  channel-id  i.t.t.wire
       =*  request-id  i.t.t.t.wire
       =*  extra-wire  t.t.t.t.wire

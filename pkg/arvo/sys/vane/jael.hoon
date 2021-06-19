@@ -563,7 +563,8 @@
       +>.$
     ::
         [%gall %unto *]
-      ?-  +>-.hin
+      ?-    +>-.hin
+          %raw-fact  !!
           %kick      ~|([%jael-unexpected-quit tea hin] !!)
           %poke-ack
         ?~  p.p.+>.hin

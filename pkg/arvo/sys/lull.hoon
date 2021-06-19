@@ -1635,11 +1635,11 @@
     $%  [%boon payload=*]                               ::  ames response
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%onto p=(each suss tang)]                      ::  about agent
-        [%unto p=sign:agent]                            ::
+        [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
-    $%  [%conf dap=term]                                ::  start agent
+    $%  [%conf =desk dap=term]                          ::  start agent
         [%deal p=sock q=term r=deal]                    ::  full transmission
         [%goad force=? agent=(unit dude)]               ::  rebuild agent(s)
         [%sear =ship]                                   ::  clear pending queues
@@ -1682,6 +1682,10 @@
   +$  deal
     $%  [%raw-poke =mark =noun]
         task:agent
+    ==
+  +$  unto
+    $%  [%raw-fact =mark =noun]
+        sign:agent
     ==
   ::
   ::  +agent: app core

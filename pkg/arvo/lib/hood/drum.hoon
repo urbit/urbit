@@ -1,9 +1,17 @@
 /-  *sole
 /+  sole
 |%
-+$  any-state  $%(state)
-+$  state  [%2 pith-2]
++$  any-state  $%(state state-2)
++$  state    [%3 pith-3]
++$  state-2  [%2 pith-2]
 ::
+++  pith-3                                              ::
+  $:  eel=(set gill:gall)                               ::  connect to
+      ray=(map dude:gall desk)                          ::
+      fur=(map dude:gall (unit server))                 ::  servers
+      bin=(map bone source)                             ::  terminals
+  ==                                                    ::
+::                                                      ::
 ++  pith-2                                              ::
   $:  eel=(set gill:gall)                               ::  connect to
       ray=(set well:gall)                               ::
@@ -56,11 +64,11 @@
 |%
 ++  deft-apes                                           ::  default servers
   |=  [our=ship lit=?]
-  %-  ~(gas in *(set well:gall))
+  %-  ~(gas by *(map dap=term desk))
   ^-  (list well:gall)
   ::  boot all default apps off the home desk
   ::
-  =-  (turn - |=(a=term home+a))
+  =-  (turn - |=(a=term [a %home]))
   ^-  (list term)
   %+  welp
     :~  %dojo
@@ -219,7 +227,7 @@
 ++  on-load
   |=  [hood-version=@ud old=any-state]
   =<  se-abet  =<  se-view
-  =.  sat  old
+  =.  sat  old(- %3)
   =.  dev  (~(gut by bin) ost *source)
   =?  ..on-load  (lte hood-version %4)
     ~>  %slog.0^leaf+"drum: starting os1 agents"
@@ -260,7 +268,8 @@
     =>  (se-born | %home %settings-store)
     (se-born | %home %group-view)
   =?  ..on-load  (lte hood-version %13)
-    (se-born | %home %dm-hook)
+    =>  (se-born | %home %dm-hook)
+    .(ray (~(gas by ray) (turn ~(tap in ray) |=(=well:gall [q.well p.well]))))
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect
@@ -340,13 +349,12 @@
 ++  se-adit                                           ::  update servers
   ^+  this
   |^
-  =/  servers=(list well:gall)
-    (sort ~(tap in ray) sort-by-priorities)
+  =/  servers=(list [dap=term =desk])
+    (sort ~(tap by ray) sort-by-priorities)
   |-
   ?~  servers
     this
-  =/  wel=well:gall
-    i.servers
+  =/  wel=well:gall  [+ -]:i.servers
   =/  =wire  [%drum p.wel q.wel ~]
   =/  hig=(unit (unit server))
     (~(get by fur) q.wel)
@@ -358,7 +366,7 @@
     (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   =.  this
     %-  se-emit
-    [%pass wire %arvo %g %conf q.wel]
+    [%pass wire %arvo %g %conf wel]
   $(servers t.servers)
   ::
   ++  priorities
@@ -397,7 +405,7 @@
   |-  ^+  this
   ?~  ruf
     this
-  ?:  (~(has in ray) [%home i.ruf])
+  ?:  (~(has by ray) i.ruf)
     $(ruf t.ruf)
   =/  wire  [%drum %fade i.ruf ~]
   =.  this  (se-emit %pass wire %arvo %g %fade i.ruf %slay)
@@ -490,21 +498,21 @@
 ++  se-born                                           ::  new server
   |=  [print-on-repeat=? wel=well:gall]
   ^+  +>
-  ?:  (~(has in ray) wel)
+  ?:  (~(has by ray) q.wel)
     ?.  print-on-repeat  +>
     (se-text "[already running {<p.wel>}/{<q.wel>}]")
   %=  +>
-    ray  (~(put in ray) wel)
+    ray  (~(put by ray) q.wel p.wel)
     eel  (~(put in eel) [our.hid q.wel])
   ==
 ::
 ++  se-fade                                           ::  delete server
   |=  wel=well:gall
   ^+  +>
-  ?.  (~(has in ray) wel)
+  ?.  (~(has by ray) q.wel)
     (se-text "[fade not running {<p.wel>}/{<q.wel>}]")
   %=  +>
-    ray  (~(del in ray) wel)
+    ray  (~(del by ray) q.wel)
   ==
 ::
 ++  se-drop                                           ::  disconnect
