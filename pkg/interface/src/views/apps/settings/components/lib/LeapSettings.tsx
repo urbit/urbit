@@ -18,7 +18,7 @@ import { BackButton } from './BackButton';
 import airlock from '~/logic/api';
 
 const labels: Record<LeapCategories, string> = {
-  mychannel: 'My Channel',
+  mychannel: 'My Channels',
   updates: 'Notifications',
   profile: 'Profile',
   messages: 'Messages',
