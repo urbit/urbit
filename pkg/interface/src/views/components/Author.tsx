@@ -3,9 +3,9 @@ import moment from 'moment';
 import React, { ReactElement, ReactNode } from 'react';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
-import { cite, deSig, useShowNickname, uxToHex } from '~/logic/lib/util';
-import useContactState from '~/logic/state/contact';
-import useLocalState from '~/logic/state/local';
+import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
+import { useContact } from '~/logic/state/contact';
+import { useDark } from '~/logic/state/join';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { PropFunc } from '~/types';
 import ProfileOverlay from './ProfileOverlay';
@@ -23,7 +23,7 @@ export interface AuthorProps {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export default function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
+function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
   const {
     ship = '',
     date,
@@ -41,16 +41,9 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
   const size = props.size || 16;
   const sigilPadding = props.sigilPadding || 2;
 
-  const osDark = useLocalState(state => state.dark);
+  const dark = useDark();
 
-  const theme = useSettingsState(s => s.display.theme);
-  const dark = theme === 'dark' || (theme === 'auto' && osDark);
-
-  let contact;
-  const contacts = useContactState(state => state.contacts);
-  if (contacts) {
-    contact = `~${deSig(ship)}` in contacts ? contacts[`~${deSig(ship)}`] : null;
-  }
+  const contact = useContact(ship);
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : dark ? '#000000' : '#FFFFFF';
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
@@ -124,3 +117,5 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
     </Row>
   );
 }
+
+export default React.memo(Author);

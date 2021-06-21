@@ -64,7 +64,8 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
     GraphReducer({
       'graph-update': body,
-      'graph-update-flat': body
+      'graph-update-flat': body,
+      'graph-update-thread': body
     });
     await promise;
   },
@@ -74,7 +75,9 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     markPending(body['add-nodes'].nodes);
     body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
     GraphReducer({
-      'graph-update': body
+      'graph-update': body,
+      'graph-update-flat': body,
+      'graph-update-thread': body
     });
     await promise;
   },
