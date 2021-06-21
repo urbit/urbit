@@ -12,7 +12,7 @@ import PostFlatFeed from './PostFlatFeed';
 import PostInput from './PostInput';
 import { Association, PermVariation } from '@urbit/api';
 import { useParams, Switch, Route } from 'react-router';
-import {useGroupForAssoc} from '~/logic/state/group';
+import { useGroupForAssoc } from '~/logic/state/group';
 
 export function PostThreadRoutes(props: PostThreadProps) {
   const { atom } = useParams<{ atom?: string }>();
