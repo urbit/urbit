@@ -5,7 +5,10 @@ import {
   LoadingSpinner, Row, Text
 } from '@tlon/indigo-react';
 import {
-  Invite, joinProgress,
+  accept,
+  decline,
+  hideGroup,
+  Invite, join, joinProgress,
   JoinRequest,
   Metadata, MetadataUpdatePreview,
   resourceFromPath
@@ -15,7 +18,6 @@ import _ from 'lodash';
 import React, { ReactElement, ReactNode, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import GlobalApi from '~/logic/api/global';
 import { useRunIO } from '~/logic/lib/useRunIO';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { cite, isDm } from '~/logic/lib/util';
@@ -27,6 +29,7 @@ import { Header } from '~/views/apps/notifications/header';
 import { NotificationWrapper } from '~/views/apps/notifications/notification';
 import { MetadataIcon } from '~/views/landscape/components/MetadataIcon';
 import { StatelessAsyncButton } from '../StatelessAsyncButton';
+import airlock from '~/logic/api';
 
 interface GroupInviteProps {
   preview?: MetadataUpdatePreview;
@@ -35,7 +38,6 @@ interface GroupInviteProps {
   uid?: string;
   invite?: Invite;
   resource: string;
-  api: GlobalApi;
 }
 
 function Elbow(
@@ -143,7 +145,6 @@ function InviteStatus(props: { status?: JoinRequest }) {
 
 export function useInviteAccept(
   resource: string,
-  api: GlobalApi,
   app?: string,
   uid?: string
 ) {
@@ -160,12 +161,12 @@ export function useInviteAccept(
         return false;
       }
       if (resource in groups) {
-        await api.invite.decline(app, uid);
+        await airlock.poke(decline(app, uid));
         return false;
       }
 
-      await api.groups.join(ship, name);
-      await api.invite.accept(app, uid);
+      await airlock.poke(join(ship, name));
+      await airlock.poke(accept(app, uid));
       await waiter((p) => {
         return (
           (resource in p.groups &&
@@ -199,32 +200,31 @@ export function useInviteAccept(
 function InviteActions(props: {
   status?: JoinRequest;
   resource: string;
-  api: GlobalApi;
   app?: string;
   uid?: string;
 }) {
-  const { status, resource, api, app, uid } = props;
-  const inviteAccept = useInviteAccept(resource, api, app, uid);
+  const { status, resource, app, uid } = props;
+  const inviteAccept = useInviteAccept(resource, app, uid);
   const set = useGroupState(s => s.set);
 
   const inviteDecline = useCallback(async () => {
     if (!(app && uid)) {
       return;
     }
-    await api.invite.decline(app, uid);
+    await airlock.poke(decline(app, uid));
   }, [app, uid]);
 
   const hideJoin = useCallback(async (e) => {
     if(status?.progress === 'done') {
-      set(s => {
+      set((s) => {
         // @ts-ignore investigate zustand types
-        delete s.pendingJoin[resource]
+        delete s.pendingJoin[resource];
       });
       e.stopPropagation();
       return;
     }
-    await api.groups.hide(resource);
-  }, [api, resource, status]);
+    await airlock.poke(hideGroup(resource));
+  }, [resource, status]);
 
   if (status) {
     return (
@@ -276,7 +276,7 @@ const responsiveStyle = ({ gapXY = 0 as number | number[] }) => {
 };
 const ResponsiveRow = styled(Row)(responsiveStyle);
 export function GroupInvite(props: GroupInviteProps): ReactElement {
-  const { resource, api, preview, invite, status, app, uid } = props;
+  const { resource, preview, invite, status, app, uid } = props;
   const dm = isDm(resource);
   const history = useHistory();
 
@@ -297,7 +297,7 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
   };
 
   return (
-    <NotificationWrapper api={api}>
+    <NotificationWrapper>
       <Header content {...headerProps} />
       <Row onClick={onClick} height={[null, 4]} alignItems="flex-start" gridArea="main">
         <Elbow mx={2} />
@@ -309,7 +309,6 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
           <InviteMetadata preview={preview} resource={resource} />
           <InviteStatus status={status} />
           <InviteActions
-            api={api}
             resource={resource}
             status={status}
             app={app}

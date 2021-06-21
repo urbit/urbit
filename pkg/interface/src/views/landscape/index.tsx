@@ -1,18 +1,16 @@
 import { Box } from '@tlon/indigo-react';
-import { PatpNoSig } from '@urbit/api';
 import moment from 'moment';
-import React  from 'react';
+import React from 'react';
 import Helmet from 'react-helmet';
 import { Route, Switch } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
-import { StoreState } from '~/logic/store/type';
-import GlobalSubscription from '~/logic/subscription/global';
+import useHarkState from '~/logic/state/hark';
 import { Workspace } from '~/types/workspace';
 import { Body } from '../components/Body';
 import { GroupsPane } from './components/GroupsPane';
 import { JoinGroup } from './components/JoinGroup';
 import { NewGroup } from './components/NewGroup';
 import './css/custom.css';
+import _ from 'lodash';
 
 moment.updateLocale('en', {
   relativeTime : {
@@ -35,18 +33,18 @@ moment.updateLocale('en', {
   }
 });
 
-type LandscapeProps = StoreState & {
-  ship: PatpNoSig;
-  api: GlobalApi;
-  subscription: GlobalSubscription;
-  notificationsCount: number;
-}
+const makeGroupWorkspace = _.memoize((group: string): Workspace => ({ type: 'group', group }));
 
-export default function Landscape(props: LandscapeProps) {
+const homeWorkspace: Workspace = { type: 'home' };
+const messagesWorkspace: Workspace = { type: 'messages' };
+
+export default function Landscape() {
+  const notificationsCount = useHarkState(s => s.notificationsCount);
+
   return (
     <>
       <Helmet defer={false}>
-        <title>{ props.notificationsCount ? `(${String(props.notificationsCount) }) `: '' }Landscape</title>
+        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape</title>
       </Helmet>
       <Switch>
         <Route path="/~landscape/ship/:host/:name"
@@ -57,43 +55,26 @@ export default function Landscape(props: LandscapeProps) {
             } = routeProps.match.params as Record<string, string>;
             const groupPath = `/ship/${host}/${name}`;
             const baseUrl = `/~landscape${groupPath}`;
-            const ws: Workspace = { type: 'group', group: groupPath };
+            const ws: Workspace = makeGroupWorkspace(groupPath);
 
             return (
-              <GroupsPane workspace={ws} baseUrl={baseUrl} {...props} />
+              <GroupsPane workspace={ws} baseUrl={baseUrl} />
             );
           }}
         />
-        <Route path="/~landscape/home"
-          render={() => {
-            const ws: Workspace = { type: 'home' };
-            return (
-              <GroupsPane workspace={ws} baseUrl="/~landscape/home" {...props} />
-            );
-          }}
-        />
-        <Route path="/~landscape/messages"
-          render={() => {
-            const ws: Workspace = { type: 'messages' };
-            return (
-              <GroupsPane workspace={ws} baseUrl="/~landscape/messages" {...props} />
-            );
-          }}
-        />
-        <Route path="/~landscape/new"
-          render={(routeProps) => {
-            return (
-              <Body>
-                <Box maxWidth="300px">
-                  <NewGroup
-                    api={props.api}
-                    {...routeProps}
-                  />
-                </Box>
-              </Body>
-            );
-          }}
-        />
+        <Route path="/~landscape/home">
+          <GroupsPane workspace={homeWorkspace} baseUrl="/~landscape/home" />
+        </Route>
+        <Route path="/~landscape/messages">
+          <GroupsPane workspace={messagesWorkspace} baseUrl="/~landscape/messages" />
+        </Route>
+        <Route path="/~landscape/new">
+          <Body>
+            <Box maxWidth="300px">
+              <NewGroup />
+            </Box>
+          </Body>
+        </Route>
         <Route path="/~landscape/join/:ship?/:name?"
           render={(routeProps) => {
             const { ship, name } = routeProps.match.params;
@@ -102,7 +83,6 @@ export default function Landscape(props: LandscapeProps) {
               <Body>
                 <Box maxWidth="300px">
                   <JoinGroup
-                    api={props.api}
                     autojoin={autojoin}
                     {...routeProps}
                   />
@@ -115,4 +95,3 @@ export default function Landscape(props: LandscapeProps) {
     </>
   );
 }
-

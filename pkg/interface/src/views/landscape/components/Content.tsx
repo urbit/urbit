@@ -37,7 +37,6 @@ export const Content = (props) => {
     history.goBack();
   }, [history.goBack]));
 
-
   const [hasProtocol, setHasProtocol] = useLocalStorageState(
     'registeredProtocol', false
   );
@@ -78,16 +77,9 @@ export const Content = (props) => {
             />
           )}
         />
-        <Route
-          path='/~landscape'
-          render={p => (
-            <Landscape
-              location={p.location}
-              match={p.match}
-              {...props}
-            />
-          )}
-        />
+        <Route path='/~landscape'>
+          <Landscape />
+        </Route>
         <Route
           path="/~profile"
           render={ p => (

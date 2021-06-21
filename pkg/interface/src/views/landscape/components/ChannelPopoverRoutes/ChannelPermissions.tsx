@@ -5,16 +5,16 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { Association, Group, PermVariation } from '@urbit/api';
+import { addTag, Association, Group, metadataUpdate, PermVariation, removeTag } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React from 'react';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { FormGroupChild } from '~/views/components/FormGroup';
 import { shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
 import { ChannelWritePerms } from '../ChannelWritePerms';
+import airlock from '~/logic/api';
 
 function PermissionsSummary(props: {
   writersSize: number;
@@ -53,7 +53,6 @@ function PermissionsSummary(props: {
 interface GraphPermissionsProps {
   association: Association;
   group: Group;
-  api: GlobalApi;
 }
 
 interface FormSchema {
@@ -71,7 +70,7 @@ const formSchema = (members: string[]) => {
 };
 
 export function GraphPermissions(props: GraphPermissionsProps) {
-  const { api, group, association } = props;
+  const { group, association } = props;
 
   const writers = _.get(
     group?.tags,
@@ -108,9 +107,9 @@ export function GraphPermissions(props: GraphPermissionsProps) {
     };
     const allWriters = Array.from(writers).map(w => `~${w}`);
     if (values.readerComments !== readerComments) {
-      await api.metadata.update(association, {
+      await airlock.poke(metadataUpdate(association, {
         vip: values.readerComments ? 'reader-comments' : ''
-      });
+      }));
     }
 
     if (values.writePerms === 'everyone') {
@@ -118,7 +117,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
         actions.setStatus({ success: null });
         return;
       }
-      await api.groups.removeTag(resource, tag, allWriters);
+      await airlock.poke(removeTag(tag, resource, allWriters));
     } else if (values.writePerms === 'self') {
       if (writePerms === 'self') {
         actions.setStatus({ success: null });
@@ -126,8 +125,8 @@ export function GraphPermissions(props: GraphPermissionsProps) {
       }
       const promises: Promise<any>[] = [];
       allWriters.length > 0 &&
-        promises.push(api.groups.removeTag(resource, tag, allWriters));
-      promises.push(api.groups.addTag(resource, tag, [`~${hostShip}`]));
+        promises.push(airlock.poke(removeTag(tag, resource, allWriters)));
+      promises.push(airlock.poke(addTag(resource, tag, [`~${hostShip}`])));
       await Promise.all(promises);
       actions.setStatus({ success: null });
     } else if (values.writePerms === 'subset') {
@@ -140,9 +139,9 @@ export function GraphPermissions(props: GraphPermissionsProps) {
 
       const promises: Promise<any>[] = [];
       toRemove.length > 0 &&
-        promises.push(api.groups.removeTag(resource, tag, toRemove));
+        promises.push(airlock.poke(removeTag(tag, resource, toRemove)));
       toAdd.length > 0 &&
-        promises.push(api.groups.addTag(resource, tag, toAdd));
+        promises.push(airlock.poke(addTag(resource, tag, toAdd)));
       await Promise.all(promises);
 
       actions.setStatus({ success: null });
