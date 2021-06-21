@@ -4,7 +4,7 @@
 |% 
 ++  strand  strand:spider
 ++  poke  poke:strandio
-++  raw-poke-our   poke-our:strandio
+++  raw-poke-our   raw-poke-our:strandio
 ::
 ++  scry-metadata
   |=  rid=resource
