@@ -12,6 +12,7 @@ type StatelessUrlInputProps = PropFunc<typeof BaseInput> & {
   promptUpload: () => Promise<string>;
   canUpload: boolean;
   placeholderOffset?: number | string | number[] | string[];
+  leftOffset?: number | string | number[] | string[];
 };
 
 export function StatelessUrlInput(props: StatelessUrlInputProps) {
@@ -23,6 +24,7 @@ export function StatelessUrlInput(props: StatelessUrlInputProps) {
     promptUpload,
     canUpload,
     placeholderOffset = 0,
+    leftOffset = 0,
     ...rest
   } = props;
 
@@ -32,6 +34,7 @@ export function StatelessUrlInput(props: StatelessUrlInputProps) {
         gray
         position="absolute"
         top={placeholderOffset}
+        left={leftOffset}
         px={2}
         pt={2}
         style={{ pointerEvents: 'none' }}

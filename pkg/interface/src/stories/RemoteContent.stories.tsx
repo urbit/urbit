@@ -12,7 +12,7 @@ export default {
 } as Meta;
 
 const Template: Story<RemoteContentProps> = args => (
-  <Box backgroundColor="white" p="2" width="500px">
+  <Box backgroundColor="white" p="2" width="800px">
     <RemoteContent {...args} />
   </Box>
 );
@@ -37,6 +37,12 @@ Twitter.args = {
   url: 'https://twitter.com/urbit/status/1396947489656213504',
   // massive test flake
   unfold: false
+};
+
+export const Image = Template.bind({});
+
+Image.args = {
+  url: 'https://pbs.twimg.com/media/E343N9_UUAIm0Iw.jpg'
 };
 
 export const Fallback = Template.bind({});

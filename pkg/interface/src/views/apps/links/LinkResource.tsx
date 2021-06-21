@@ -42,7 +42,7 @@ export function LinkResource(props: LinkResourceProps) {
   const graph = graphs[resourcePath] || null;
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
   const { query } = useQuery();
-  const isGrid = query.has('grid');
+  const isList = query.has('list');
   const { pathname, search } = useLocation();
   const getGraph = useGraphState(s => s.getGraph);
 
@@ -58,9 +58,9 @@ export function LinkResource(props: LinkResourceProps) {
 
   const titlebar = (back?: string) => (
     <Titlebar back={back && `${back}${search}`} title={title} description={description} workspace={baseUrl} baseUrl={resourceUrl} >
-      <Link to={{ pathname, search: isGrid ? '' : '?grid=true' }}>
+      <Link to={{ pathname, search: isList ? '' : '?list=true' }}>
         <Text bold pr='3' color='blue'>
-          Switch to {!isGrid ? 'grid' : 'list' }
+          Switch to {!isList ? 'list' : 'grid' }
         </Text>
       </Link>
     </Titlebar>
@@ -75,9 +75,7 @@ export function LinkResource(props: LinkResourceProps) {
           return (
             <Col minWidth="0" overflow="hidden">
               {titlebar()}
-              { isGrid ? (
-                <LinkBlocks graph={graph} association={resource} />
-                ) : /* @ts-ignore withState typings */ (
+              { isList ?  /* @ts-ignore withState typings */ (
                   <LinkWindow
                     key={rid}
                     association={resource}
@@ -89,6 +87,8 @@ export function LinkResource(props: LinkResourceProps) {
                     pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
                     mb={3}
                   />
+              ) : (
+                <LinkBlocks graph={graph} association={resource} />
                 )}
           </Col>
           );

@@ -2,7 +2,6 @@ import React, {
   MouseEvent,
   useState,
   useEffect,
-  useRef,
   useCallback
 } from 'react';
 import styled from 'styled-components';
@@ -102,8 +101,9 @@ export function RemoteContentAudioEmbed(props: RemoteContentEmbedProps) {
       controls
       src={url}
       objectFit="contain"
-      height="100%"
+      height="24px"
       width="100%"
+      minWidth={['90vw', '384px']}
       {...(noCors ? {} : { crossOrigin: 'anonymous' })}
       {...rest}
     />
@@ -143,12 +143,23 @@ const EmbedContainer = styled(UnstyledEmbedContainer)`
   height: 100%;
 `;
 
-const EmbedBox = styled.div`
-  & > * {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
+const EmbedBox = styled.div<{ aspect?: number }>`
+  ${p => p.aspect ? `
+  height: 0;
+  overflow: hidden;
+  padding-bottom: calc(100% / ${p.aspect});
+  position: relative;
+  ` : `
+  height: auto;
+  width: 100%;
+
+  `}
+
+  & iframe {
+    height: 100%;
+    width: 100%;
+    ${p => p.aspect && 'position: absolute;'}
+
   }
 `;
 
@@ -221,6 +232,7 @@ function RemoteContentPermalinkEmbedBase(props: {
 type RemoteContentOembedProps = {
   renderUrl?: boolean;
   thumbnail?: boolean;
+  tall?: boolean;
 } & RemoteContentEmbedProps &
   PropFunc<typeof Box>;
 
@@ -228,14 +240,30 @@ export const RemoteContentOembed = React.forwardRef<
   HTMLDivElement,
   RemoteContentOembedProps
 >((props, ref) => {
-  const ourRef = useRef<HTMLDivElement>();
-  const { url, renderUrl = false, thumbnail = false, ...rest } = props;
+  const { url, tall = false, renderUrl = false, thumbnail = false, ...rest } = props;
   const [embed, setEmbed] = useState<any>();
+  const [aspect, setAspect] = useState<number | undefined>();
 
   useEffect(() => {
     const getEmbed = async () => {
       try {
-        const oembed = await (await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`)).json();
+        const search = new URLSearchParams({
+          url
+        });
+        if(!tall) {
+          search.append('maxwidth', '500');
+        }
+
+        const oembed = await (
+          await fetch(`https://noembed.com/embed?${search.toString()}`)
+        ).json();
+
+        if('height' in oembed && typeof oembed.height === 'number' && 'width' in oembed && typeof oembed.width === 'number') {
+          const newAspect = (oembed.width / oembed.height);
+          setAspect(newAspect);
+        } else {
+          setAspect(undefined);
+        }
         setEmbed(oembed);
       } catch (e) {
         console.error(e);
@@ -246,14 +274,9 @@ export const RemoteContentOembed = React.forwardRef<
     getEmbed();
   }, [url]);
 
-  if (!renderUrl && !embed) {
-    return null;
-  }
-
   const detail = (
     <Col
-      ref={ourRef}
-      mb={2}
+      mb={embed?.html && !thumbnail ? 0 : 2}
       width="100%"
       flexShrink={0}
       height="100%"
@@ -269,13 +292,20 @@ export const RemoteContentOembed = React.forwardRef<
         />
       ) : !thumbnail && embed?.html ? (
         <EmbedContainer markup={embed.html}>
-          <EmbedBox ref={ref} dangerouslySetInnerHTML={{ __html: embed.html }}></EmbedBox>
+          <EmbedBox
+            ref={ref}
+            aspect={aspect}
+            dangerouslySetInnerHTML={{ __html: embed.html }}
+          ></EmbedBox>
         </EmbedContainer>
       ) : renderUrl ? (
         <RemoteContentEmbedFallback url={url} />
       ) : null}
     </Col>
   );
+  if (!renderUrl) {
+    return detail;
+  }
 
   return (
     <RemoteContentWrapper url={url} detail={detail}>

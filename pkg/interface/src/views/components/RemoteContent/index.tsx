@@ -1,7 +1,6 @@
 import { hasProvider } from 'oembed-parser';
 import React from 'react';
 import useSettingsState from '~/logic/state/settings';
-import { RemoteContentPolicy } from '~/types/local-update';
 import {
   RemoteContentAudioEmbed,
   RemoteContentImageEmbed,
@@ -12,20 +11,28 @@ import { TruncatedText } from '~/views/components/TruncatedText';
 import { RemoteContentWrapper } from './wrapper';
 
 export interface RemoteContentProps {
+  /**
+   * Url to render
+   */
   url: string;
-  text?: string;
-  unfold?: boolean;
+  /**
+   * Should render the URL as part of the display of the RemoteContent.
+   *
+   * If false, then only the embedded content, if any will be rendered
+   */
   renderUrl?: boolean;
-  remoteContentPolicy?: RemoteContentPolicy;
-  embedRef?: (el: HTMLDivElement | null ) => void;
-  imageProps?: any;
-  audioProps?: any;
-  videoProps?: any;
-  oembedProps?: any;
-  textProps?: any;
-  style?: any;
+  /**
+   * A ref to the div that contains an iframe
+   */
+  embedRef?: (el: HTMLDivElement | null) => void;
+  /**
+   * Is inside transclusion
+   */
   transcluded?: any;
-  className?: string;
+  /**
+   * Render in a tall formatting context, e.g. images will take the full width
+   * of their containers etc.
+   */
   tall?: boolean;
 }
 
@@ -40,14 +47,9 @@ export function RemoteContent(props: RemoteContentProps) {
   const {
     url,
     embedRef = emptyRef,
-    text,
     transcluded,
     tall = false,
-    renderUrl = true,
-    imageProps = {},
-    audioProps = {},
-    videoProps = {},
-    textProps = {}
+    renderUrl = true
   } = props;
 
   const remoteContentPolicy = useSettingsState(s => s.remoteContentPolicy);
@@ -58,43 +60,38 @@ export function RemoteContent(props: RemoteContentProps) {
   const wrapperProps = {
     url,
     tall,
-    embedOnly: (!renderUrl || tall)
+    embedOnly: !renderUrl || tall
   };
 
   if (isImage && remoteContentPolicy.imageShown) {
     return (
-      <RemoteContentWrapper {...wrapperProps} noOp={transcluded}>
-        <RemoteContentImageEmbed url={url} {...imageProps} />
+      <RemoteContentWrapper {...wrapperProps} noOp={transcluded} replaced>
+        <RemoteContentImageEmbed url={url} />
       </RemoteContentWrapper>
     );
   } else if (isAudio && remoteContentPolicy.audioShown) {
     return (
-      <RemoteContentWrapper
-        {...wrapperProps}
-        detail={<RemoteContentAudioEmbed url={url} {...audioProps} />}
-      >
-        <TruncatedText {...textProps}>{url}</TruncatedText>
+      <RemoteContentWrapper {...wrapperProps}>
+        <RemoteContentAudioEmbed url={url} />
       </RemoteContentWrapper>
     );
   } else if (isVideo && remoteContentPolicy.videoShown) {
     return (
       <RemoteContentWrapper
         {...wrapperProps}
-        detail={
-          <RemoteContentVideoEmbed url={url} {...videoProps} />
-        }
+        detail={<RemoteContentVideoEmbed url={url} />}
       >
-        <TruncatedText {...textProps}>{url}</TruncatedText>
+        <TruncatedText>{url}</TruncatedText>
       </RemoteContentWrapper>
     );
   } else if (isOembed && remoteContentPolicy.oembedShown) {
     return (
       <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} />
     );
-  } else if(renderUrl) {
+  } else if (renderUrl) {
     return (
       <RemoteContentWrapper {...wrapperProps}>
-        <TruncatedText {...textProps}>{text || url}</TruncatedText>
+        <TruncatedText>{url}</TruncatedText>
       </RemoteContentWrapper>
     );
   } else {

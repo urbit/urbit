@@ -9,6 +9,7 @@ interface RemoteContentWrapperProps {
   noOp?: boolean;
   tall?: boolean;
   embedOnly?: boolean;
+  replaced?: boolean;
 }
 
 export function RemoteContentWrapper(props: RemoteContentWrapperProps) {
@@ -16,7 +17,7 @@ export function RemoteContentWrapper(props: RemoteContentWrapperProps) {
     url,
     children,
     detail = null,
-    flushPadding = false,
+    replaced = false,
     noOp = false,
     tall = false,
     embedOnly = false
@@ -41,28 +42,28 @@ export function RemoteContentWrapper(props: RemoteContentWrapperProps) {
   }
 
   return (
-    <Box borderRadius={1} backgroundColor="washedGray" maxWidth={maxWidth}>
-      <Row alignItems="center" gapX={1}>
-        {!detail ? (
+    <Box width={detail ? '100%' : 'fit-content'} borderRadius={1} backgroundColor="washedGray" maxWidth={maxWidth}>
+      <Row width="100%" alignItems="center" gapX={1}>
+        {(!detail && !replaced) ? (
           <Icon ml={2} display="block" icon="ArrowExternal" />
-        ) : (
+        ) : !replaced ? (
           <Icon
             ml={2}
             display="block"
             onClick={toggleUnfold}
             icon={unfold ? 'TriangleSouth' : 'TriangleEast'}
           />
-        )}
+        ) : null }
         <BaseAnchor
           display="flex"
-          p={flushPadding ? 0 : 2}
+          p={replaced ? 0 : 2}
           onClick={onClick}
           href={url}
           whiteSpace="nowrap"
           overflow="hidden"
           textOverflow="ellipsis"
           minWidth={0}
-          width={!detail ? 'calc(100% - 24px)' : 'fit-content'}
+          width={detail ? 'calc(100% - 24px)' : replaced ? '100%' : 'fit-content'}
           maxWidth={maxWidth}
           style={{ color: 'inherit', textDecoration: 'none' }}
           target="_blank"
