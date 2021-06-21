@@ -140,27 +140,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
           // @ts-ignore RemoteContent weirdness
           renderUrl={false}
           url={href}
-          text={contents[0].text}
-          unfold={true}
-          style={{ alignSelf: 'center' }}
-          oembedProps={{
-            p: 2,
-            className: 'links embed-container',
-            onClick: markRead
-          }}
-          imageProps={{
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            display: 'block'
-          }}
-          textProps={{
-            overflow: 'hidden',
-            color: 'black',
-            display: 'block',
-            alignSelf: 'center',
-            style: { textOverflow: 'ellipsis', whiteSpace: 'pre', width: '100%' },
-            p: 2
-          }}
+          tall
         />
         <Text color="gray" p={2} flexShrink={0}>
             <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={href}>
