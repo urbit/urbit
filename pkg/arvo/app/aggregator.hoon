@@ -77,7 +77,7 @@
 ::
 +$  action
   $%  [%submit force=? sig=@ tx=part-tx]
-      [%cancel sig=@ keccak=@]
+      [%cancel sig=@ keccak=@ =l2-tx]
       [%commit ~]  ::TODO  maybe pk=(unit @) later
       [%config config]
   ==
@@ -130,14 +130,13 @@
       ==
     [cards this]
   ::  +on-peek: scry paths
-  ::TODO  reevaluate wrt recent flow changes
   ::
   ::    /x/pending                     ->  %noun  (list pend-tx)
   ::    /x/pending/[~ship]             ->  %noun  (list pend-tx)
   ::    /x/pending/[0xadd.ress]        ->  %noun  (list pend-tx)
   ::    /x/tx/[0xke.ccak]/status       ->  %noun  tx-status
   ::    /x/nonce/[~ship]/[proxy]       ->  %noun  (unit @)
-  ::    /x/spawned/[~ship]             ->  %noun  (list [ship address)
+  ::    /x/spawned/[~ship]             ->  %noun  (list [ship address])
   ::    /x/next-batch                  ->  %atom  time
   ::
   ++  on-peek
@@ -434,7 +433,7 @@
     %don  [(gen-tx-octs:lib +.part-tx) +.part-tx]
     %ful  +.part-tx
   ==
-::  +canonical-state: load current state instead of cached state
+::  +canonical-state: load current l2 state instead
 ::
 ++  canonical-state
   .^  ^state:naive
@@ -452,8 +451,6 @@
 ++  predicted-state
   |=  nas=^state:naive
   ^-  [_pending _nas]
-  ::  apply our pending transactions
-  ::
   |^
   =^  new-sending  nas  apply-sending
   =.  sending  new-sending
@@ -468,7 +465,6 @@
     =*  key  p.i.sending
     =*  val  q.i.sending
     =^  new-valid  nas
-      ::  prepends force=%.n to all txs
       %-  update-txs
       (turn txs.val |=(=raw-tx:naive [| 0x0 raw-tx]))
     =.  valid
@@ -519,13 +515,8 @@
   ?-  -.action
     %commit  on-timer
     %config  (on-config +.action)
-    %cancel  !!  ::TODO
-  ::
-      %submit
-    %^    take-tx
-        force.action
-      sig.action
-    (part-tx-to-full tx.action)
+    %cancel  (cancel-tx +.action)
+    %submit  (take-tx force.action sig.action (part-tx-to-full tx.action))
   ==
 ::
 ++  on-config
@@ -557,6 +548,62 @@
 ++  get-address
   ^-  address:ethereum
   (address-from-prv:key:ethereum pk)
+::  +cancel-tx: cancel a pending transaction
+::
+++  cancel-tx
+  |=  [sig=@ =keccak =l2-tx]
+  ^-  (quip card _state)
+  ?^  status=(~(get by finding) keccak)
+    ~?  lverb  [dap.bowl %tx-not-pending status+u.status]
+    [~ state]
+  ::  "cancel: 0x1234abcd"
+  ::
+  =/  message=octs
+    %:  cad:naive  3
+      8^'cancel: '
+    ::
+      =;  hash=@t
+        (met 3 hash)^hash
+      (crip "0x{((x-co:co 20) keccak)}")
+    ::
+      ~
+    ==
+  ?~  addr=(verify-sig sig message)
+    ~?  lverb  [dap.bowl %cancel-sig-fail]
+    [~ state]
+  =.  history
+    %+  ~(del ju history)  u.addr
+    [[%pending ~] keccak l2-tx]
+  =.  pending
+    %+  skip  pending
+    |=  pend-tx
+    =(keccak (hash-raw-tx raw-tx))
+  [~ state]
+::  TODO: move to /lib/naive-transactions
+::
+++  verify-sig
+  |=  [sig=@ txdata=octs]
+  ^-  (unit address:naive)
+  |^
+  ::  Reversed of the usual r-s-v order because Ethereum integers are
+  ::  big-endian
+  ::
+  =^  v  sig  (take 3)
+  =^  s  sig  (take 3 32)
+  =^  r  sig  (take 3 32)
+  ::  In Ethereum, v is generally 27 + recid, and verifier expects a
+  ::  recid.  Old versions of geth used 0 + recid, so most software
+  ::  now supports either format.  See:
+  ::
+  ::  https://github.com/ethereum/go-ethereum/issues/2053
+  ::
+  =?  v  (gte v 27)  (sub v 27)
+  (verifier:lib txdata v r s)
+  ::
+  ++  take
+    |=  =bite
+    [(end bite sig) (rsh bite sig)]
+  --
 ::  +take-tx: accept submitted l2 tx into the :pending list
 ::
 ++  take-tx
@@ -716,6 +763,7 @@
     ::  unexpected tx failures here. would that be useful? probably not?
     ::  ~?  !forced  [dap.bowl %aggregated-tx-failed-anyway err.diff]
     %failed
+  ::
   =.  history
     =/  tx=roller-tx
       :+  [%sending ~]

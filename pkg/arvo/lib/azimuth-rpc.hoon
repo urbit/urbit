@@ -99,7 +99,7 @@
         |=  params=(map @t json)
         ^-  (unit @)
         ?~  sig=(~(get by params) 'sig')   ~
-        (so u.sig)
+        (ni u.sig)
       ::
       ++  from
         |=  params=(map @t json)
@@ -125,6 +125,13 @@
         ?~  raw=(~(get by params) 'raw')  ~
         ?~  ans=(so u.raw)  ~
         (some (as-octs:mimes:html u.ans))
+      ::
+      ++  l2-tx
+        |=  params=(map @t json)
+        ^-  (unit ^l2-tx)
+        ?~  type=(~(get by params) 'type')  ~
+        %.  u.type
+        (cu ^l2-tx so)
       --
     ::
     ++  to-json
@@ -362,17 +369,6 @@
     ~(not-found error:json-rpc id)
   [%result id (point:to-json u.point)]
 ::
-++  get-spawned
-  |=  [id=@t params=(map @t json) scry=$-(ship (list [ship @ux]))]
-  ^-  response:rpc
-  ?.  =((lent ~(tap by params)) 1)
-    ~(params error:json-rpc id)
-  ?~  ship=(~(get by params) 'ship')
-    ~(params error:json-rpc id)
-  ?~  ship=(rush (so:dejs:format u.ship) ;~(pfix sig fed:ag))
-    ~(params error:json-rpc id)
-  [%result id (spawned:to-json (scry u.ship))]
-::
 ++  transfer-point
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]
@@ -385,9 +381,32 @@
   ?:  |(?=(~ sig) ?=(~ from) ?=(~ raw) ?=(~ data))
     [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
+::
+++  cancel-tx
+  |=  [id=@t params=(map @t json)]
+  ^-  [(unit cage) response:rpc]
+  ?.  =(~(wyt by params) 3)
+    [~ ~(params error:json-rpc id)]
+  =/  sig=(unit @)       (sig:from-json params)
+  =/  keccak=(unit @ux)  (hash:from-json params)
+  =/  l2=(unit l2-tx)    (l2-tx:from-json params)
+  ?.  &(?=(^ sig) ?=(^ keccak) ?=(^ l2))
+    [~ ~(parse error:json-rpc id)]
+  :_  [%result id s+'ok']
   %-  some
   :-  %aggregator-action
-  !>([%submit | u.sig %ful u.raw u.from %transfer-point u.data])
+  !>([%cancel u.sig u.keccak u.l2])
+::
+++  get-spawned
+  |=  [id=@t params=(map @t json) scry=$-(ship (list [ship @ux]))]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 1)
+    ~(params error:json-rpc id)
+  ?~  ship=(~(get by params) 'ship')
+    ~(params error:json-rpc id)
+  ?~  ship=(rush (so:dejs:format u.ship) ;~(pfix sig fed:ag))
+    ~(params error:json-rpc id)
+  [%result id (spawned:to-json (scry u.ship))]
 ::
 ++  configure-keys
   |=  [id=@t params=(map @t json)]
