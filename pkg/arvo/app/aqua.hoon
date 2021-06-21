@@ -514,7 +514,7 @@
       :~
         :~  [/ %wack 0]  ::  eny
             :: [/ %verb `|]  :: possible verb
-            :^  /  %wyrd  [%urbit /test] :: negotiate XX what is .non and .rev
+            :^  /  %wyrd  [%nonce /a-version] :: dummy runtime version + nonce
             ^-  (list (pair term @))
             :~  zuse+zuse
                 lull+lull
