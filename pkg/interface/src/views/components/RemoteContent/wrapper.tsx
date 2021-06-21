@@ -72,7 +72,7 @@ export function RemoteContentWrapper(props: RemoteContentWrapperProps) {
           {children}
         </BaseAnchor>
       </Row>
-      {detail}
+      {unfold ? detail : null}
     </Box>
   );
 }

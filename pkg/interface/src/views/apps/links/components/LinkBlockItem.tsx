@@ -92,7 +92,7 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
       ) : isAudio ? (
         <AudioPlayer title={title} url={url} />
       ) : isOembed ? (
-        <RemoteContentOembed renderUrl url={url} thumbnail={summary} />
+        <RemoteContentOembed tall={!summary} renderUrl url={url} thumbnail={summary} />
       ) : (
         <RemoteContentEmbedFallback url={url} />
       )}

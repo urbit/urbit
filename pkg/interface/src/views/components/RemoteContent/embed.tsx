@@ -22,11 +22,11 @@ import { TruncatedText } from '~/views/components/TruncatedText';
 import { getModuleIcon, useHovering } from '~/logic/lib/util';
 import { IconRef, PropFunc } from '~/types';
 import { system } from 'styled-system';
-import { extract } from 'oembed-parser';
 import { Association, GraphConfig, ReferenceContent } from '@urbit/api';
 import { Link } from 'react-router-dom';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
+import { RemoteContentWrapper } from './wrapper';
 
 interface RemoteContentEmbedProps {
   url: string;
@@ -235,9 +235,7 @@ export const RemoteContentOembed = React.forwardRef<
   useEffect(() => {
     const getEmbed = async () => {
       try {
-        // const { width, height } = ourRef.current.getBoundingClientRect();
-
-        const oembed = await extract(url);
+        const oembed = await (await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`)).json();
         setEmbed(oembed);
       } catch (e) {
         console.error(e);
@@ -251,11 +249,8 @@ export const RemoteContentOembed = React.forwardRef<
   if (!renderUrl && !embed) {
     return null;
   }
-  if (!embed) {
-    return <RemoteContentEmbedFallback url={url} />;
-  }
 
-  return (
+  const detail = (
     <Col
       ref={ourRef}
       mb={2}
@@ -266,17 +261,6 @@ export const RemoteContentOembed = React.forwardRef<
       alignItems="center"
       {...rest}
     >
-      <TruncatedText
-        display={
-          renderUrl && embed?.title && embed.title !== url
-            ? 'inline-block'
-            : 'none'
-        }
-        fontWeight="bold"
-        width="100%"
-      >
-        {embed?.title}
-      </TruncatedText>
       {thumbnail && embed?.['thumbnail_url'] ? (
         <BaseImage
           height="100%"
@@ -285,12 +269,18 @@ export const RemoteContentOembed = React.forwardRef<
         />
       ) : !thumbnail && embed?.html ? (
         <EmbedContainer markup={embed.html}>
-          <EmbedBox dangerouslySetInnerHTML={{ __html: embed.html }}></EmbedBox>
+          <EmbedBox ref={ref} dangerouslySetInnerHTML={{ __html: embed.html }}></EmbedBox>
         </EmbedContainer>
       ) : renderUrl ? (
         <RemoteContentEmbedFallback url={url} />
       ) : null}
     </Col>
+  );
+
+  return (
+    <RemoteContentWrapper url={url} detail={detail}>
+      <TruncatedText>{embed?.title ?? url}</TruncatedText>
+    </RemoteContentWrapper>
   );
 });
 

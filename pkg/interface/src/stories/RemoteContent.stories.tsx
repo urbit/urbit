@@ -38,3 +38,9 @@ Twitter.args = {
   // massive test flake
   unfold: false
 };
+
+export const Fallback = Template.bind({});
+
+Fallback.args = {
+  url: 'https://www.are.na/edouard-urcades/edouard'
+};

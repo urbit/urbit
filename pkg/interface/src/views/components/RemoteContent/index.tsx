@@ -58,7 +58,7 @@ export function RemoteContent(props: RemoteContentProps) {
   const wrapperProps = {
     url,
     tall,
-    embedOnly: !renderUrl
+    embedOnly: (!renderUrl || tall)
   };
 
   if (isImage && remoteContentPolicy.imageShown) {
@@ -89,14 +89,7 @@ export function RemoteContent(props: RemoteContentProps) {
     );
   } else if (isOembed && remoteContentPolicy.oembedShown) {
     return (
-      <RemoteContentWrapper
-        {...wrapperProps}
-        detail={(
-          <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} />
-        )}
-      >
-        <TruncatedText {...textProps}>{url}</TruncatedText>
-      </RemoteContentWrapper>
+      <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} />
     );
   } else if(renderUrl) {
     return (
