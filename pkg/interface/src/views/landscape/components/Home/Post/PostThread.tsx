@@ -1,6 +1,7 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import bigInt from 'big-integer';
+import bigInt, { BigInteger } from 'big-integer';
 import React, {
+  useCallback,
   useEffect
 } from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
@@ -9,45 +10,68 @@ import { arrToString } from '@urbit/api/lib/BigIntArrayOrderedMap';
 import useGraphState from '~/logic/state/graph';
 import PostFlatFeed from './PostFlatFeed';
 import PostInput from './PostInput';
+import { Association, PermVariation } from '@urbit/api';
+import { useParams, Switch, Route } from 'react-router';
+import { useGroupForAssoc } from '~/logic/state/group';
 
-export default function PostThread(props) {
+export function PostThreadRoutes(props: PostThreadProps) {
+  const { atom } = useParams<{ atom?: string }>();
+  const index = atom
+    ? [...(props.index || []), bigInt(atom)]
+    : (props.index || []);
+
+  const { baseUrl } = props;
+  const makePath = (s: string) => baseUrl + s;
+
+  return (
+    <Switch>
+      <Route path={makePath('/:atom')} render={(routeProps) => {
+        const { url } = routeProps.match;
+        return (
+          <PostThreadRoutes {...props} baseUrl={url} index={index} />
+          );
+      }}
+      />
+      <Route path={baseUrl}>
+        <PostThread {...props} index={index} />
+      </Route>
+    </Switch>
+  );
+}
+interface PostThreadProps {
+  baseUrl: string;
+  association: Association;
+  pendingSize: number;
+  vip: PermVariation;
+  index?: BigInteger[];
+}
+
+export default function PostThread(props: PostThreadProps) {
   const {
     baseUrl,
-    api,
     association,
-    graphPath,
-    group,
     vip,
-    pendingSize
+    pendingSize,
+    index = []
   } = props;
 
-  const graphResource =
-    graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
+  const getFirstborn = useGraphState(s => s.getFirstborn);
+  const group = useGroupForAssoc(association);
 
-  const locationUrl = props.locationUrl.replace(`${baseUrl}/feed/thread`, '');
-  const index = locationUrl.split('/').slice(1).map(ind => bigInt(ind));
+  const { ship, name } = resourceFromPath(association.resource);
 
   useEffect(() => {
-    if (graphResource.ship === '~zod' && graphResource.name === 'null') {
-      return;
-    }
-
     if (index.length < 1) {
       return;
     }
 
-    api.graph.getFirstborn(
-      graphResource.ship,
-      graphResource.name,
-      arrToString(index)
-    );
-  }, [graphPath, props.locationUrl]);
+    getFirstborn(ship, name, `/${index.map(i => i.toString()).join('/')}`);
+  }, [association.resource, index]);
 
-  const threadGraphs = useGraphState(state => state.threadGraphs);
-  const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
+  const graphId = `${ship.slice(1)}/${name}`;
+  const threadGraph = useGraphState(useCallback(s => s.threadGraphs[graphId] || {}, [graphId]));
 
-  const shouldRenderFeed =
-    graphId in threadGraphs && arrToString(index) in threadGraphs[graphId];
+  const shouldRenderFeed = arrToString(index) in threadGraph;
 
   if (!shouldRenderFeed) {
     return (
@@ -59,9 +83,9 @@ export default function PostThread(props) {
 
   //  TODO: improve performance characteristics of the useGraphState required
   //  to fetch this
-  const threadGraph = threadGraphs[graphId][arrToString(index)];
+  const thread = threadGraph[arrToString(index)];
 
-  const first = threadGraph.peekLargest()?.[0];
+  const first = thread.peekLargest()?.[0];
   if (!first) {
     return (
       <Col
@@ -80,8 +104,7 @@ export default function PostThread(props) {
           alignItems="center"
         >
           <PostInput
-            api={api}
-            graphPath={graphPath}
+            graphPath={association.resource}
             group={group}
             association={association}
             vip={vip}
@@ -107,14 +130,13 @@ export default function PostThread(props) {
   return (
     <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl={1}>
       <PostFlatFeed
-        key={`/thread/${locationUrl}`}
-        graphPath={graphPath}
-        flatGraph={threadGraph}
+        key={location.pathname}
+        graphPath={association.resource}
+        flatGraph={thread}
         pendingSize={pendingSize}
         association={association}
         group={group}
         vip={vip}
-        api={api}
         baseUrl={baseUrl}
         isThread={true}
       />

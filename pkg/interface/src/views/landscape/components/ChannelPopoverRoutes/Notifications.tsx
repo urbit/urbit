@@ -1,17 +1,16 @@
 import { BaseLabel, Col, Label, Text } from '@tlon/indigo-react';
-import { Association } from '@urbit/api';
+import { Association, ignoreGraph, listenGraph } from '@urbit/api';
 import React, { useRef } from 'react';
-import GlobalApi from '~/logic/api/global';
 import useHarkState from '~/logic/state/hark';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
+import airlock from '~/logic/api';
 
 interface ChannelNotificationsProps {
-  api: GlobalApi;
   association: Association;
 }
 
 export function ChannelNotifications(props: ChannelNotificationsProps) {
-  const { api, association } = props;
+  const { association } = props;
   const rid = association.resource;
   const notificationsGraphConfig = useHarkState(state => state.notificationsGraphConfig);
 
@@ -21,8 +20,8 @@ export function ChannelNotifications(props: ChannelNotificationsProps) {
     ) === -1;
 
   const onChangeMute = async () => {
-    const func = isMuted ? 'listenGraph' : 'ignoreGraph';
-    await api.hark[func](rid, '/');
+    const func = isMuted ? listenGraph : ignoreGraph;
+    await airlock.poke(func(rid, '/'));
   };
 
   const anchorRef = useRef<HTMLElement | null>(null);

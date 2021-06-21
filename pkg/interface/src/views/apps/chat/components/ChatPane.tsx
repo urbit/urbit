@@ -3,11 +3,10 @@ import { Content, Graph, Post } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { useOurContact } from '~/logic/state/contact';
-import useGraphState from '~/logic/state/graph';
+import { useGraphTimesent } from '~/logic/state/graph';
 import ShareProfile from '~/views/apps/chat/components/ShareProfile';
 import { Loading } from '~/views/components/Loading';
 import SubmitDragger from '~/views/components/SubmitDragger';
@@ -29,7 +28,6 @@ interface ChatPaneProps {
    * User able to write to chat
    */
   canWrite: boolean;
-  api: GlobalApi;
   /**
    * Get contents of reply message
    */
@@ -67,7 +65,6 @@ interface ChatPaneProps {
 
 export function ChatPane(props: ChatPaneProps): ReactElement {
   const {
-    api,
     graph,
     unreadCount,
     canWrite,
@@ -80,7 +77,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
     promptShare = [],
     fetchMessages
   } = props;
-  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
+  const graphTimesentMap = useGraphTimesent(id);
   const ourContact = useOurContact();
   const chatInput = useRef<NakedChatInput>();
 
@@ -91,7 +88,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
       }
       (chatInput.current as NakedChatInput)?.uploadFiles(files);
     },
-    [chatInput.current]
+    [chatInput]
   );
 
   const { bind, dragging } = useFileDrag(onFileDrag);
@@ -136,10 +133,10 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   }
 
   return (
+    // @ts-ignore bind typings
     <Col {...bind} height="100%" overflow="hidden" position="relative">
       <ShareProfile
         our={ourContact}
-        api={api}
         recipients={showBanner ? promptShare : []}
         onShare={() => setShowBanner(false)}
       />
@@ -150,20 +147,18 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
         graphSize={graph.size}
         unreadCount={unreadCount}
         showOurContact={promptShare.length === 0 && !showBanner}
-        pendingSize={Object.keys(graphTimesentMap[id] || {}).length}
+        pendingSize={Object.keys(graphTimesentMap).length}
         onReply={onReply}
         onDelete={onDelete}
         dismissUnread={dismissUnread}
         fetchMessages={fetchMessages}
         isAdmin={isAdmin}
         getPermalink={getPermalink}
-        api={api}
         scrollTo={scrollTo ? bigInt(scrollTo) : undefined}
       />
       {canWrite && (
         <ChatInput
           ref={chatInput}
-          api={props.api}
           onSubmit={onSubmit}
           ourContact={(promptShare.length === 0 && ourContact) || undefined}
           onUnmount={appendUnsent}
@@ -175,3 +170,5 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
     </Col>
   );
 }
+
+ChatPane.whyDidYouRender = true;

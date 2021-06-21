@@ -1,11 +1,11 @@
 import { Box, Button, Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph } from '@urbit/api';
+import { Association, Graph, readGraph } from '@urbit/api';
 import React, { ReactElement, useCallback } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { useShowNickname } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
+import airlock from '~/logic/api';
 import { NotebookPosts } from './NotebookPosts';
 
 interface NotebookProps {
@@ -15,7 +15,6 @@ interface NotebookProps {
   association: Association;
   baseUrl: string;
   rootUrl: string;
-  api: GlobalApi;
 }
 
 export function Notebook(props: NotebookProps & RouteComponentProps): ReactElement | null {
@@ -23,8 +22,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
     ship,
     book,
     association,
-    graph,
-    api
+    graph
   } = props;
 
   const groups = useGroupState(state => state.groups);
@@ -37,7 +35,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps): ReactEleme
   const showNickname = useShowNickname(contact);
 
   const readBook = useCallback(() => {
-    api.hark.readGraph(association.resource);
+    airlock.poke(readGraph(association.resource));
   }, [association.resource]);
 
   if (!group) {

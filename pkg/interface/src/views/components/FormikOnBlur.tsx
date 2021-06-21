@@ -17,10 +17,13 @@ export function FormikOnBlur<
     ) {
       setSubmitting(true);
       const { values } = formikBag;
-      formikBag.submitForm().then(() => {
-        formikBag.resetForm({ values });
-        setSubmitting(false);
-      });
+      formikBag.validateForm(values)
+        .then(valid => valid ?
+          formikBag.submitForm().then(() => {
+            formikBag.resetForm({ values });
+            setSubmitting(false);
+          }) : null
+        );
     }
   }, [
     formikBag.errors,

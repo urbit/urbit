@@ -47,6 +47,7 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
   private fetchController: AbortController | undefined;
   containerRef: HTMLDivElement | null = null;
   private saving = false;
+  private isOembed = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -60,6 +61,7 @@ class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
     this.wrapInLink = this.wrapInLink.bind(this);
     this.onError = this.onError.bind(this);
     this.toggleArrow = this.toggleArrow.bind(this);
+    this.isOembed = hasProvider(props.url);
   }
 
   save = () => {
@@ -204,7 +206,6 @@ return;
     const isImage = IMAGE_REGEX.test(url);
     const isAudio = AUDIO_REGEX.test(url);
     const isVideo = VIDEO_REGEX.test(url);
-    const isOembed = hasProvider(url);
 
     const isTranscluded = () => {
       return transcluded;
@@ -315,7 +316,7 @@ return;
             : null}
         </>
       );
-    } else if (isOembed && remoteContentPolicy.oembedShown) {
+    } else if (this.isOembed && remoteContentPolicy.oembedShown) {
       if (!this.state.embed || this.state.embed?.html === '') {
         this.loadOembed();
       }

@@ -4,14 +4,9 @@ import {
     StatelessCheckboxField, Text
 } from '@tlon/indigo-react';
 import React, { useState } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { BackButton } from './BackButton';
 
-interface SecuritySettingsProps {
-  api: GlobalApi;
-}
-
-export default function SecuritySettings({ api }: SecuritySettingsProps) {
+export default function SecuritySettings() {
   const [allSessions, setAllSessions] = useState(false);
   return (
     <>
