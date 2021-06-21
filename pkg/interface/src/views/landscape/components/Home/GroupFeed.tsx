@@ -13,6 +13,7 @@ import { GroupFeedHeader } from './GroupFeedHeader';
 import { PostRepliesRoutes } from './Post/PostReplies';
 import PostTimeline from './Post/PostTimeline';
 import airlock from '~/logic/api';
+import { PostThreadRoutes } from './Post/PostThread';
 
 function GroupFeed(props) {
   const {
@@ -84,6 +85,14 @@ function GroupFeed(props) {
             association={association}
             vip={vip}
             graph={graph}
+            pendingSize={pendingSize}
+          />
+        </Route>
+        <Route path={relativePath('/feed/thread')}>
+          <PostThreadRoutes
+            baseUrl={relativePath('/feed/thread')}
+            association={association}
+            vip={vip}
             pendingSize={pendingSize}
           />
         </Route>

@@ -151,7 +151,7 @@ function PostItem(props: PostItemProps) {
             group={group}
             association={association}
             vip={vip}
-            index={index.join('/')}
+            index={`/${index.join('/')}`}
             submitCallback={toggleReplyMode}
           />
         </Col>
