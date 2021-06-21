@@ -128,8 +128,5 @@
   "license": "MIT",
   "lint-staged": {
     "*.{js,ts,tsx}": "eslint --cache --fix"
-  },
-  "config": {
-    "unsafe-perm": true
   }
 }
