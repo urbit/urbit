@@ -1,9 +1,8 @@
-import { Action, Anchor, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { Action, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { Group, removePosts } from '@urbit/api';
 import { GraphNode } from '@urbit/api/graph';
 import bigInt from 'big-integer';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
@@ -11,6 +10,7 @@ import { useCopy } from '~/logic/lib/useCopy';
 import { useHovering } from '~/logic/lib/util';
 import useMetadataState from '~/logic/state/metadata';
 import Author from '~/views/components/Author';
+import { ActionLink } from '~/views/components/Link';
 import { GraphContent } from '../landscape/components/Graph/GraphContent';
 import { Dropdown } from './Dropdown';
 import airlock from '~/logic/api';
@@ -127,8 +127,7 @@ return false;
                   {copyDisplay}
                 </Action>
                 {(window.ship == post?.author && !disabled) ? (
-                  <Link
-                    component={Anchor}
+                  <ActionLink
                     color="blue"
                     to={{
                       pathname: props.baseUrl,
@@ -136,7 +135,7 @@ return false;
                     }}
                   >
                     Update
-                  </Link>
+                  </ActionLink>
                 ) : null}
                 {(window.ship == post?.author || ourRole == 'admin') &&
                 !disabled ? (

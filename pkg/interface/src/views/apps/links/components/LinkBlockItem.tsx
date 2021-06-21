@@ -72,6 +72,7 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
       height={size}
       width={size}
       m={m}
+      maxHeight="100%"
       {...rest}
       {...bind}
     >

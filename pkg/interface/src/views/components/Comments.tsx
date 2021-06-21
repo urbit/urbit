@@ -24,6 +24,7 @@ import CommentInput from './CommentInput';
 import { CommentItem } from './CommentItem';
 import airlock from '~/logic/api';
 import useGraphState from '~/logic/state/graph';
+import { useHistory } from 'react-router';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -36,12 +37,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   const {
     association,
     comments,
-    history,
     baseUrl,
     group,
     ...rest
   } = props;
   const addNode = useGraphState(s => s.addNode);
+  const history = useHistory();
 
   const { ship, name } = resourceFromPath(association.resource);
 
@@ -87,7 +88,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
       const content = tokenizeMessage(comment);
       const post = createPost(
-        `~${window.ship}`,
+        window.ship,
         content,
         commentNode.post.index,
         parseInt((idx + 1).toString(), 10).toString()

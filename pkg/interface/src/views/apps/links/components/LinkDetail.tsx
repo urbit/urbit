@@ -1,24 +1,26 @@
-import { Text, Col, Row } from '@tlon/indigo-react';
+import { Col, Row, RowProps } from '@tlon/indigo-react';
 import { Association, GraphNode, TextContent, UrlContent } from '@urbit/api';
 import React from 'react';
 import { useGroup } from '~/logic/state/group';
 import Author from '~/views/components/Author';
 import Comments from '~/views/components/Comments';
+import { TruncatedText } from '~/views/components/TruncatedText';
 import { LinkBlockItem } from './LinkBlockItem';
 
-export interface LinkDetailProps {
+export interface LinkDetailProps extends RowProps {
   node: GraphNode;
   association: Association;
   baseUrl: string;
 }
 
 export function LinkDetail(props: LinkDetailProps) {
-  const { node, association } = props;
+  const { node, association, baseUrl, ...rest } = props;
   const group = useGroup(association.group);
   const { post } = node;
   const [{ text: title }] = post.contents as [TextContent, UrlContent];
   return (
-    <Row flexDirection={['column', 'column', 'row']} height="100%" width="100%">
+    /*  @ts-ignore indio props?? */
+    <Row flexDirection={['column', 'column', 'row']} {...rest}>
       <LinkBlockItem flexGrow={1} border={0} node={node} />
       <Col
         flexShrink={0}
@@ -30,9 +32,11 @@ export function LinkDetail(props: LinkDetailProps) {
         py="4"
       >
         <Col px="4" gapY="2">
-          <Text fontWeight="medium" lineHeight="tall">
-            {title}
-          </Text>
+          {title.length > 0 ? (
+            <TruncatedText fontWeight="medium" lineHeight="tall">
+              {title}
+            </TruncatedText>
+          ) : null}
           <Author
             sigilPadding={4}
             size={24}
@@ -51,7 +55,7 @@ export function LinkDetail(props: LinkDetailProps) {
           <Comments
             association={association}
             comments={node}
-            baseUrl={props.baseUrl}
+            baseUrl={baseUrl}
             group={group}
           />
         </Col>

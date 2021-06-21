@@ -35,7 +35,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
     setDisabled(true);
     const parentIndex = props.parentIndex || '';
-    const post = createPost(`~${window.ship}`, contents, parentIndex);
+    const post = createPost(window.ship, contents, parentIndex);
 
     addPost(
       `~${props.ship}`,

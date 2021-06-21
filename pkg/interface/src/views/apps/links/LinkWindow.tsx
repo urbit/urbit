@@ -1,6 +1,6 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
 import { Association, Graph, Group } from '@urbit/api';
-import bigInt from 'big-integer';
+import bigInt, { BigInteger } from 'big-integer';
 import React, {
   Component, ReactNode
 } from 'react';
@@ -58,7 +58,6 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
       ...props,
       node
     };
-    { /* @ts-ignore calling @liam-fitzgerald on Uint8Array props */ }
     if (this.canWrite() && index.eq(first ?? bigInt.zero)) {
       return (
         <React.Fragment key={index.toString()}>

@@ -11,7 +11,7 @@ import {
   useField,
   useFormikContext
 } from 'formik';
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as Yup from 'yup';
 import { ShipImage } from './ShipImage';
 
@@ -38,6 +38,7 @@ const SubmitTextArea = (props) => {
   const onKeyDown = (e: KeyboardEvent) => {
     if ((e.getModifierState('Control') || e.metaKey) && e.key === 'Enter') {
       submitForm();
+      e.preventDefault();
     }
   };
   return (
@@ -57,10 +58,20 @@ const SubmitTextArea = (props) => {
   );
 };
 
+function FormikHelper(props: { initialValues: any }) {
+  const { initialValues } = props;
+  const { resetForm } = useFormikContext();
+
+  useEffect(() => {
+    resetForm(initialValues);
+  }, [initialValues]);
+
+  return null;
+}
+
 export default function CommentInput(props: CommentInputProps) {
   const initialValues: FormSchema = { comment: props.initial || '' };
   const label = props.label || 'Comment';
-  
 
   return (
     <Row
@@ -69,6 +80,7 @@ export default function CommentInput(props: CommentInputProps) {
       border="1"
       borderColor="lightGray"
       borderRadius="2"
+      flexShrink={0}
     >
       <Box p="2">
         <ShipImage ship={`~${window.ship}`} />
@@ -81,7 +93,8 @@ export default function CommentInput(props: CommentInputProps) {
         validateOnChange={false}
       >
        {({ submitForm }) => (
-        <Col pb="1" pr="2" pt="2" flexGrow={1}>
+         <Col pb="1" pr="2" pt="2" flexGrow={1}>
+          <FormikHelper initialValues={initialValues} />
           <SubmitTextArea
             width="100%"
             id="comment"

@@ -117,12 +117,14 @@ export function LinkResource(props: LinkResourceProps) {
             );
           }
           return (
-            <Col height="100%" width="100%">
+            <Col overflow="hidden">
               {titlebar(relativePath(''))}
               <LinkDetail
                 node={node}
                 association={association}
                 baseUrl={pathname}
+                flexGrow={1}
+                maxHeight="calc(100% - 48px)"
               />
             </Col>
           );
