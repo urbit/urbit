@@ -1,7 +1,6 @@
 import { Text, Col, Row } from '@tlon/indigo-react';
 import { Association, GraphNode, TextContent, UrlContent } from '@urbit/api';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import { useGroup } from '~/logic/state/group';
 import Author from '~/views/components/Author';
 import Comments from '~/views/components/Comments';
@@ -9,19 +8,18 @@ import { LinkBlockItem } from './LinkBlockItem';
 
 export interface LinkDetailProps {
   node: GraphNode;
-  api: GlobalApi;
   association: Association;
   baseUrl: string;
 }
 
 export function LinkDetail(props: LinkDetailProps) {
-  const { node, api, association } = props;
+  const { node, association } = props;
   const group = useGroup(association.group);
   const { post } = node;
   const [{ text: title }] = post.contents as [TextContent, UrlContent];
   return (
     <Row flexDirection={['column', 'column', 'row']} height="100%" width="100%">
-      <LinkBlockItem api={api} flexGrow={1} border={0} node={node} />
+      <LinkBlockItem flexGrow={1} border={0} node={node} />
       <Col
         flexShrink={0}
         width={['100%', '100%', '350px']}
@@ -54,7 +52,6 @@ export function LinkDetail(props: LinkDetailProps) {
             association={association}
             comments={node}
             baseUrl={props.baseUrl}
-            api={api}
             group={group}
           />
         </Col>

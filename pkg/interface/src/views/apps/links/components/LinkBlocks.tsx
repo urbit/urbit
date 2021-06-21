@@ -5,7 +5,6 @@ import _ from 'lodash';
 import { useResize } from '~/logic/lib/useResize';
 import { LinkBlockItem } from './LinkBlockItem';
 import { LinkBlockInput } from './LinkBlockInput';
-import GlobalApi from '~/logic/api/global';
 import useLocalState from '~/logic/state/local';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import bigInt from 'big-integer';
@@ -14,7 +13,6 @@ import VirtualScroller from '~/views/components/VirtualScroller';
 export interface LinkBlocksProps {
   graph: Graph;
   association: Association;
-  api: GlobalApi;
 }
 
 const style = {
@@ -26,7 +24,7 @@ const style = {
 };
 
 export function LinkBlocks(props: LinkBlocksProps) {
-  const { association, api } = props;
+  const { association } = props;
   const [linkSize, setLinkSize] = useState(250);
   const linkSizePx = `${linkSize}px`;
 
@@ -73,7 +71,6 @@ export function LinkBlocks(props: LinkBlocksProps) {
                 <LinkBlockInput
                   size={linkSizePx}
                   association={association}
-                  api={api}
                 />
               );
             }
@@ -93,7 +90,6 @@ export function LinkBlocks(props: LinkBlocksProps) {
                 key={i.toString()}
                 size={linkSizePx}
                 node={node}
-                api={api}
                 summary
               />
             );

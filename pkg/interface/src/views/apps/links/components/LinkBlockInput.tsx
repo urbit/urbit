@@ -3,25 +3,25 @@ import { Box, LoadingSpinner, Action, Row } from '@tlon/indigo-react';
 
 import useStorage from '~/logic/lib/useStorage';
 import { StatelessUrlInput } from '~/views/components/StatelessUrlInput';
-import { Association, GraphNode, resourceFromPath } from '@urbit/api';
-import { createPost } from '~/logic/api/graph';
+import { Association, resourceFromPath, createPost } from '@urbit/api';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
-import GlobalApi from '~/logic/api/global';
+import useGraphState, { GraphState } from '~/logic/state/graph';
 
 interface LinkBlockInputProps {
   size: string;
   url?: string;
-  api: GlobalApi;
   association: Association;
 }
+
+const selGraph = (s: GraphState) => s.addPost;
+
 export function LinkBlockInput(props: LinkBlockInputProps) {
-  const { size, association, api } = props;
+  const { size, association } = props;
   const [url, setUrl] = useState(props.url || '');
-  const [error, setError] = useState<string | undefined>();
-  const [disabled, setDisabled] = useState(false);
   const [valid, setValid] = useState(false);
   const [focussed, setFocussed] = useState(false);
 
+  const addPost = useGraphState(selGraph);
   const { uploading, canUpload, promptUpload } = useStorage();
 
   const onFocus = useCallback(() => {
@@ -51,11 +51,9 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
       ? [{ text }, permalinkToReference(parsePermalink(url)!)]
       : [{ text }, { url }];
 
-    setDisabled(true);
-    const post = createPost(contents);
+    const post = createPost(window.ship, contents);
 
-    api.graph.addPost(ship, name, post).then(() => {
-      setDisabled(false);
+    addPost(ship, name, post).then(() => {
       setUrl('');
       setValid(false);
     });

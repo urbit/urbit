@@ -6,9 +6,6 @@ import { Col, Row } from '@tlon/indigo-react';
 import { LinkBlockItem } from '~/views/apps/links/components/LinkBlockItem';
 import { createPost, GraphNode } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
-import { newApi } from '~/logic/lib/fakeApi';
-
-const api = newApi();
 
 export default {
   title: 'Collections/BlockItem',
@@ -24,7 +21,6 @@ const createLink = (text: string, url: string) => ({
 export const Image = () => (
   <Row flexWrap="wrap" m="2" width="700px" backgroundColor="white">
     <LinkBlockItem
-      api={api}
       summary
       m="2"
       node={createLink(
@@ -33,7 +29,6 @@ export const Image = () => (
       )}
     />
     <LinkBlockItem
-      api={api}
       summary
       m="2"
       node={createLink(
@@ -42,7 +37,6 @@ export const Image = () => (
       )}
     />
     <LinkBlockItem
-      api={api}
       m="2"
       size="512px"
       node={createLink(
@@ -64,10 +58,9 @@ Image.parameters = {
 export const Fallback = () => (
   <Col gapY="2" p="2" width="500px" backgroundColor="white">
     <LinkBlockItem
-      api={api}
       node={createLink('', 'https://www.are.na/edouard-urcades/edouard')}
     />
-    <LinkBlockItem api={api} node={createLink('', 'https://thejaymo.net')} />
+    <LinkBlockItem node={createLink('', 'https://thejaymo.net')} />
   </Col>
 );
 
@@ -82,7 +75,6 @@ Fallback.parameters = {
 export const Audio = () => (
   <Col gapY="2" p="2" width="500px" backgroundColor="white">
     <LinkBlockItem
-      api={api}
       node={createLink(
         'Artist · Track',
         'https://rovnys-public.s3.amazonaws.com/urbit-from-the-outside-in-1.m4a'
@@ -102,14 +94,12 @@ Audio.parameters = {
 export const Youtube = () => (
   <Col gapY="2" p="2" width="500px" backgroundColor="white">
     <LinkBlockItem
-      api={api}
       node={createLink(
         'Artist · Track',
         'https://www.youtube.com/watch?v=M04AKTCDavc&t=1s'
       )}
     />
     <LinkBlockItem
-      api={api}
       summary
       node={createLink(
         'Artist · Track',

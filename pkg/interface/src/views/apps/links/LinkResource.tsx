@@ -76,7 +76,7 @@ export function LinkResource(props: LinkResourceProps) {
             <Col minWidth="0" height="100%">
               {titlebar()}
               { isGrid ? (
-                <LinkBlocks graph={graph} association={resource} api={api} />
+                <LinkBlocks graph={graph} association={resource} />
                 ) : /* @ts-ignore withState typings */ (
                   <LinkWindow
                     key={rid}
@@ -87,7 +87,6 @@ export function LinkResource(props: LinkResourceProps) {
                     group={group as Group}
                     path={resource.group}
                     pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
-                    api={api}
                     mb={3}
                   />
                 )}

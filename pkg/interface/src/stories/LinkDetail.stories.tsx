@@ -54,7 +54,6 @@ const node = {
     )
   ])
 };
-const fakeApi = {} as any;
 
 export const Image = () => {
   const association = useMetadataState(
@@ -65,7 +64,6 @@ export const Image = () => {
       <LinkDetail
         baseUrl="/"
         node={node}
-        api={fakeApi}
         association={association}
       />
     </Box>

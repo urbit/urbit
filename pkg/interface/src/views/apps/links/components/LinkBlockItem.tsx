@@ -28,18 +28,16 @@ import {
 } from '~/views/components/RemoteContent/embed';
 import { PermalinkEmbed } from '../../permalinks/embed';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
-import GlobalApi from '~/logic/api/global';
 
 export interface LinkBlockItemProps {
   node: GraphNode;
   size?: CenterProps['height'];
   border?: CenterProps['border'];
   summary?: boolean;
-  api: GlobalApi;
 }
 
 export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
-  const { api, node, summary, size, m, border = 1, ...rest } = props;
+  const { node, summary, size, m, border = 1, ...rest } = props;
   const { post, children } = node;
   const { contents, index, author } = post;
 
@@ -85,7 +83,6 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
         ) : (
           <PermalinkEmbed
             link={referenceToPermalink(content[0] as ReferenceContent).link}
-            api={api}
             transcluded={0}
           />
         )
