@@ -14,13 +14,7 @@ export const bootstrapApi = async () => {
 
   airlock.onError = (e) => {
     (async () => {
-      try {
-        useLocalState.setState({ subscription: 'reconnecting' });
-        airlock.reset();
-        await bootstrapApi();
-      } catch (e) {
-        useLocalState.setState({ subscription: 'disconnected' });
-      }
+      useLocalState.setState({ subscription: 'disconnected' });
     })();
   };
 
