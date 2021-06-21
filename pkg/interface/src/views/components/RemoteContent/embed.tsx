@@ -15,8 +15,7 @@ import {
   allSystemStyle,
   Icon,
   Row,
-  Col,
-  Center
+  Col
 } from '@tlon/indigo-react';
 
 import { TruncatedText } from '~/views/components/TruncatedText';
@@ -144,6 +143,15 @@ const EmbedContainer = styled(UnstyledEmbedContainer)`
   height: 100%;
 `;
 
+const EmbedBox = styled.div`
+  & > * {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+`;
+
 export function RemoteContentPermalinkEmbed(props: {
   reference: ReferenceContent;
 }) {
@@ -210,22 +218,28 @@ function RemoteContentPermalinkEmbedBase(props: {
     </Row>
   );
 }
+type RemoteContentOembedProps = {
+  renderUrl?: boolean;
+  thumbnail?: boolean;
+} & RemoteContentEmbedProps &
+  PropFunc<typeof Box>;
 
-export function RemoteContentOembed(
-  props: {
-    renderUrl?: boolean;
-    thumbnail?: boolean;
-  } & RemoteContentEmbedProps &
-    PropFunc<typeof Box>
-) {
-  const ref = useRef<HTMLDivElement>();
+export const RemoteContentOembed = React.forwardRef<
+  HTMLDivElement,
+  RemoteContentOembedProps
+>((props, ref) => {
+  const ourRef = useRef<HTMLDivElement>();
+  const setRef = useCallback((r: HTMLDivElement | null) => {
+    typeof ref === 'function' ? ref(r) : (ref.current = r);
+    ourRef.current = r;
+  }, []);
   const { url, renderUrl = false, thumbnail = false, ...rest } = props;
   const [embed, setEmbed] = useState<any>();
 
   useEffect(() => {
     const getEmbed = async () => {
       try {
-        const { width, height } = ref.current.getBoundingClientRect();
+        const { width, height } = ourRef.current.getBoundingClientRect();
 
         const oembed = await extract(url, {
           maxheight: Math.floor(height),
@@ -240,9 +254,13 @@ export function RemoteContentOembed(
     getEmbed();
   }, [url]);
 
+  if (!renderUrl && !embed) {
+    return null;
+  }
+
   return (
     <Col
-      ref={ref}
+      ref={setRef}
       mb={2}
       width="100%"
       flexShrink={0}
@@ -270,18 +288,14 @@ export function RemoteContentOembed(
         />
       ) : !thumbnail && embed?.html ? (
         <EmbedContainer markup={embed.html}>
-          <Center
-            height="100%"
-            width="100%"
-            dangerouslySetInnerHTML={{ __html: embed.html }}
-          ></Center>
+          <EmbedBox dangerouslySetInnerHTML={{ __html: embed.html }}></EmbedBox>
         </EmbedContainer>
-      ) : (
+      ) : renderUrl ? (
         <RemoteContentEmbedFallback url={url} />
-      )}
+      ) : null}
     </Col>
   );
-}
+});
 
 export function RemoteContentEmbedFallback(props: RemoteContentEmbedProps) {
   const { url } = props;

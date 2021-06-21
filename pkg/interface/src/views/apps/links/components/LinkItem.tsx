@@ -34,7 +34,10 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
     return <Redirect to="/~404" />;
   }
 
-  const remoteRef = useRef<typeof RemoteContent | null>(null);
+  const remoteRef = useRef<HTMLDivElement>(null);
+  const setRef = useCallback((el: HTMLDivElement | null ) => {
+    remoteRef.current = el;
+  }, []);
   const index = node.post.index.split('/')[1];
 
   const markRead = useCallback(() => {
@@ -133,10 +136,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
         ) : (
         <>
         <RemoteContent
-          ref={(r) => {
-            // @ts-ignore RemoteContent weirdness
-            remoteRef.current = r;
-          }}
+          embedRef={setRef}
           // @ts-ignore RemoteContent weirdness
           renderUrl={false}
           url={href}

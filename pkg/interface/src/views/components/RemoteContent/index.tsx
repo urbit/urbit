@@ -1,20 +1,23 @@
-import { BaseAnchor, Box, Icon, Row } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
-import React, { Component, Fragment } from 'react';
-import EmbedContainer from 'react-oembed-container';
-import { VirtualContextProps, withVirtual } from '~/logic/lib/virtualContext';
-import withState from '~/logic/lib/withState';
+import React from 'react';
 import useSettingsState from '~/logic/state/settings';
 import { RemoteContentPolicy } from '~/types/local-update';
-import { RemoteContentAudioEmbed, RemoteContentImageEmbed, RemoteContentVideoEmbed } from './embed';
+import {
+  RemoteContentAudioEmbed,
+  RemoteContentImageEmbed,
+  RemoteContentOembed,
+  RemoteContentVideoEmbed
+} from './embed';
 import { TruncatedText } from '~/views/components/TruncatedText';
+import { RemoteContentWrapper } from './wrapper';
 
-type RemoteContentProps = VirtualContextProps & {
+export interface RemoteContentProps {
   url: string;
   text?: string;
   unfold?: boolean;
   renderUrl?: boolean;
   remoteContentPolicy?: RemoteContentPolicy;
+  embedRef?: (el: HTMLDivElement | null ) => void;
   imageProps?: any;
   audioProps?: any;
   videoProps?: any;
@@ -26,284 +29,82 @@ type RemoteContentProps = VirtualContextProps & {
   tall?: boolean;
 }
 
-interface RemoteContentState {
-  unfold: boolean;
-  embed: any | undefined;
-  noCors: boolean;
-  showArrow: boolean;
-}
-
-export const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
+export const IMAGE_REGEX = new RegExp(
+  /(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i
+);
 export const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg|m4a)$/i);
 export const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
-class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
-  private fetchController: AbortController | undefined;
-  containerRef: HTMLDivElement | null = null;
-  private saving = false;
-  constructor(props) {
-    super(props);
-    this.state = {
-      unfold: props.unfold || false,
-      embed: undefined,
-      noCors: false,
-      showArrow: false
-    };
-    this.unfoldEmbed = this.unfoldEmbed.bind(this);
-    this.loadOembed = this.loadOembed.bind(this);
-    this.wrapInLink = this.wrapInLink.bind(this);
-    this.onError = this.onError.bind(this);
-    this.toggleArrow = this.toggleArrow.bind(this);
-  }
+const emptyRef = () => {};
+export function RemoteContent(props: RemoteContentProps) {
+  const {
+    url,
+    embedRef = emptyRef,
+    text,
+    transcluded,
+    tall = false,
+    renderUrl = true,
+    imageProps = {},
+    audioProps = {},
+    videoProps = {},
+    textProps = {}
+  } = props;
 
-  save = () => {
-    if(this.saving) {
-      return;
-     }
-    this.saving = true;
-    this.props.save();
+  const remoteContentPolicy = useSettingsState(s => s.remoteContentPolicy);
+  const isImage = IMAGE_REGEX.test(url);
+  const isAudio = AUDIO_REGEX.test(url);
+  const isVideo = VIDEO_REGEX.test(url);
+  const isOembed = hasProvider(url);
+  const wrapperProps = {
+    url,
+    tall,
+    embedOnly: !renderUrl
   };
 
-  restore = () => {
-    this.saving = false;
-    this.props.restore();
-  }
-
-  componentWillUnmount() {
-    if(this.saving) {
-      this.restore();
-    }
-    if (this.fetchController) {
-      this.fetchController.abort();
-    }
-  }
-
-  unfoldEmbed(event: Event) {
-    event.stopPropagation();
-    let unfoldState = this.state.unfold;
-    unfoldState = !unfoldState;
-    this.save();
-    this.setState({ unfold: unfoldState });
-    requestAnimationFrame(() => {
-      this.restore();
-    });
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if(prevState.embed !== this.state.embed) {
-      // console.log('remotecontent: restoring');
-      // prevProps.shiftLayout.restore();
-    }
-    const { url } = this.props;
-    if(url !== prevProps.url && (IMAGE_REGEX.test(url) || AUDIO_REGEX.test(url) || VIDEO_REGEX.test(url))) {
-      this.save();
-    }
-  }
-
-  onLoad = () => {
-    window.requestAnimationFrame(() => {
-      const { restore } = this;
-      restore();
-    });
-  }
-
-  loadOembed() {
-    this.fetchController = new AbortController();
-    fetch(`https://noembed.com/embed?url=${this.props.url}`, {
-      signal: this.fetchController.signal
-    })
-    .then(response => response.clone().json())
-    .then((result) => {
-      this.setState({ embed: result });
-    }).catch((error) => {
-      if (error.name === 'AbortError')
-return;
-      this.setState({ embed: 'error' });
-    });
-  }
-
-  wrapInLink(contents, textOnly = false, unfold = false, unfoldEmbed = null, embedContainer = null, flushPadding = false, noOp = false) {
-    const { style, tall = false } = this.props;
-    const maxWidth = tall ? '100%' : 'min(500px, 100%)';
+  if (isImage && remoteContentPolicy.imageShown) {
     return (
-      <Box borderRadius={1} backgroundColor="washedGray" maxWidth={maxWidth}>
-      <Row
-        alignItems="center"
-        gapX={1}
-      >
-        { textOnly && (<Icon ml={2} display="block" icon="ArrowExternal" />)}
-        { !textOnly && unfoldEmbed && (
-          <Icon
-            ml={2}
-            display='block'
-            onClick={unfoldEmbed}
-            icon={unfold ? 'TriangleSouth' : 'TriangleEast'}
-          />
-          )}
-        <BaseAnchor
-          display="flex"
-          p={flushPadding ? 0 : 2}
-          onClick={(e) => {
- noOp ? e.preventDefault() : e.stopPropagation();
-}}
-          href={this.props.url}
-          whiteSpace="nowrap"
-          overflow="hidden"
-          textOverflow="ellipsis"
-          minWidth={0}
-          width={textOnly ? 'calc(100% - 24px)' : 'fit-content'}
-          maxWidth={maxWidth}
-          style={{ color: 'inherit', textDecoration: 'none', ...style }}
-          target="_blank"
-          rel="noopener noreferrer"
-          cursor={noOp ? 'default' : 'pointer'}
-        >
-        {contents}
-      </BaseAnchor>
-    </Row>
-    {embedContainer}
-    </Box>
+      <RemoteContentWrapper {...wrapperProps} noOp={transcluded}>
+        <RemoteContentImageEmbed url={url} {...imageProps} />
+      </RemoteContentWrapper>
     );
-  }
-
-  onError(e: Event) {
-    this.restore();
-    this.setState({ noCors: true });
-  }
-
-  toggleArrow() {
-    this.setState({ showArrow: !this.state.showArrow });
-  }
-
-  render() {
-    const {
-      remoteContentPolicy,
-      url,
-      text,
-      transcluded,
-      renderUrl = true,
-      imageProps = {},
-      audioProps = {},
-      videoProps = {},
-      oembedProps = {},
-      textProps = {},
-      style = {},
-      ...props
-    } = this.props;
-    const { noCors } = this.state;
-    const isImage = IMAGE_REGEX.test(url);
-    const isAudio = AUDIO_REGEX.test(url);
-    const isVideo = VIDEO_REGEX.test(url);
-    const isOembed = hasProvider(url);
-
-    const isTranscluded = () => {
-      return transcluded;
-    };
-
-    if (isImage && remoteContentPolicy.imageShown) {
-      return this.wrapInLink(
-        <RemoteContentImageEmbed
-          url={url}
-          noCors={noCors}
-          {...imageProps}
-        />,
-        false,
-        false,
-        null,
-        null,
-        true,
-        isTranscluded()
-      );
-    } else if (isAudio && remoteContentPolicy.audioShown) {
-      return (
-        <>
-          {renderUrl
-            ? this.wrapInLink(
-              <TruncatedText {...textProps}>{url}</TruncatedText>,
-              false,
-              this.state.unfold,
-              this.unfoldEmbed,
-              <RemoteContentAudioEmbed
-                url={url}
-                noCors={noCors}
-                {...audioProps}
-              />
-        )
-            : null}
-        </>
-      );
-    } else if (isVideo && remoteContentPolicy.videoShown) {
-      return (
-        <>
-          {renderUrl
-            ? this.wrapInLink(
-              <TruncatedText {...textProps}>{url}</TruncatedText>,
-              false,
-              this.state.unfold,
-              this.unfoldEmbed,
-              <RemoteContentVideoEmbed
-                url={url}
-                noCors={noCors}
-                {...videoProps}
-              />
-)
-            : null}
-        </>
-      );
-    } else if (isOembed && remoteContentPolicy.oembedShown) {
-      if (!this.state.embed || this.state.embed?.html === '') {
-        this.loadOembed();
-      }
-      const renderEmbed = !(this.state.embed !== 'error' && this.state.embed?.html);
-      const embed = (
-        <Box
-          mb={2}
-          width='100%'
-          flexShrink={0}
-          display={this.state.unfold ? 'block' : 'none'}
-          className='embed-container'
-          style={style}
-          onLoad={this.onLoad}
-          {...oembedProps}
-          {...props}
-        >
-          <TruncatedText
-          display={(renderUrl && this.state.embed?.title && this.state.embed.title !== url) ? 'inline-block' : 'none'}
-          fontWeight='bold' width='100%'
-          >
-            {this.state.embed?.title}
-          </TruncatedText>
-            {this.state.embed && this.state.embed.html && this.state.unfold
-            ? <EmbedContainer markup={this.state.embed.html}>
-              <div className="embed-container" ref={(el) => {
-                this.onLoad();
-                this.containerRef = el;
-                }}
-                dangerouslySetInnerHTML={{ __html: this.state.embed.html }}
-              ></div>
-            </EmbedContainer>
-            : null}
-        </Box>
-      );
-
-      return (
-        <Fragment>
-          {renderUrl
-            ? this.wrapInLink(
-            <TruncatedText {...textProps}>{url}</TruncatedText>,
-            renderEmbed,
-            this.state.unfold,
-            this.unfoldEmbed,
-            embed
-          ) : embed}
-        </Fragment>
-      );
-    } else {
-      return renderUrl
-        ? this.wrapInLink(<TruncatedText {...textProps}>{text || url}</TruncatedText>, true)
-        : null;
-    }
+  } else if (isAudio && remoteContentPolicy.audioShown) {
+    return (
+      <RemoteContentWrapper
+        {...wrapperProps}
+        detail={<RemoteContentAudioEmbed url={url} {...audioProps} />}
+      >
+        <TruncatedText {...textProps}>{url}</TruncatedText>
+      </RemoteContentWrapper>
+    );
+  } else if (isVideo && remoteContentPolicy.videoShown) {
+    return (
+      <RemoteContentWrapper
+        {...wrapperProps}
+        detail={
+          <RemoteContentVideoEmbed url={url} {...videoProps} />
+        }
+      >
+        <TruncatedText {...textProps}>{url}</TruncatedText>
+      </RemoteContentWrapper>
+    );
+  } else if (isOembed && remoteContentPolicy.oembedShown) {
+    return (
+      <RemoteContentWrapper
+        {...wrapperProps}
+        detail={(
+          <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} />
+        )}
+      >
+        <TruncatedText {...textProps}>{url}</TruncatedText>
+      </RemoteContentWrapper>
+    );
+  } else {
+    return (
+      <RemoteContentWrapper {...wrapperProps}>
+        <TruncatedText {...textProps}>{text || url}</TruncatedText>
+      </RemoteContentWrapper>
+    );
   }
 }
 
-export default withState(withVirtual(RemoteContent), [[useSettingsState, ['remoteContentPolicy']]]) as React.ComponentType<Omit<RemoteContentProps, 'save' | 'restore' | 'remoteContentPolicy'> & { ref?: any }>;
+export default React.memo(RemoteContent);
