@@ -276,8 +276,7 @@ export default class Invoice extends Component {
                 borderRadius='24px'
                 color={(this.state.ready && !error && !this.state.broadcasting) ? "white" : "lighterGray"}
                 backgroundColor={(this.state.ready && !error && !this.state.broadcasting) ? "green" : "veryLightGray"}
-                py='24px'
-                px='24px'
+                height='48px'
                 onClick={() => this.sendBitcoin(this.state.masterTicket, psbt)}
                 disabled={!this.state.ready || error || this.state.broadcasting}
                 style={{cursor: (this.state.ready && !error && !this.state.broadcasting) ? "pointer" : "default"}}

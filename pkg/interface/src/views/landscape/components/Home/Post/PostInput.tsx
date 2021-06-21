@@ -1,14 +1,13 @@
 import { BaseTextArea, Box, Button, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
-import { Association, Content, Group, Path } from '@urbit/api';
+import { addPost, Association, Content, createPost, evalCord, Group, Path } from '@urbit/api';
 import React, {
   ReactElement, useCallback, useState
 } from 'react';
-import GlobalApi from '~/logic/api/global';
-import { createPost } from '~/logic/api/graph';
 import { isChannelAdmin, isHost, isWriter, resourceFromPath } from '~/logic/lib/group';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import useStorage from '~/logic/lib/useStorage';
 import { useToggleState } from '~/logic/lib/useToggleState';
+import airlock from '~/logic/api';
 
 function canWrite(props) {
   const { group, association, vip, index } = props;
@@ -30,7 +29,6 @@ function canWrite(props) {
 }
 
 interface PostInputProps {
-  api: GlobalApi;
   association: Association;
   graphPath: Path;
   group: Group;
@@ -40,7 +38,7 @@ interface PostInputProps {
 }
 
 const PostInput = (props: PostInputProps): ReactElement | null => {
-  const { api, graphPath, index, submitCallback } = props;
+  const { graphPath, index, submitCallback } = props;
   const graphResource = resourceFromPath(graphPath);
 
   const [disabled, setDisabled] = useState(false);
@@ -53,7 +51,7 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
       setDisabled(true);
       const url = await promptUpload();
       const { ship, name } = graphResource;
-      await api.graph.addPost(ship, name, createPost([{ url }], index || ''));
+      await airlock.thread(addPost(ship, name, createPost(`~${window.ship}`, [{ url }], index || '')));
     } catch (e) {
       // TODO: better handling
       console.error(e);
@@ -69,30 +67,30 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
     }
     let contents: Content[] = [];
     if(code) {
-      const output = await props.api.graph.eval(postContent);
+      const output = await airlock.thread<string[]>(evalCord(postContent));
       contents = [{ code: { output, expression: postContent } }];
     } else {
       contents = tokenizeMessage(postContent);
     }
 
     setDisabled(true);
-    const post = createPost(contents, index || '');
+    const post = createPost(`~${window.ship}`, contents, index || '');
 
-    api.graph.addPost(
+    await airlock.thread(addPost(
       graphResource.ship,
       graphResource.name,
       post
-    ).then(() => {
-      setDisabled(false);
-      if(code) {
-        toggleCode();
-      }
-      setPostContent('');
+    ));
 
-      if (submitCallback) {
-        submitCallback();
-      }
-    });
+    setDisabled(false);
+    if(code) {
+      toggleCode();
+    }
+    setPostContent('');
+
+    if (submitCallback) {
+      submitCallback();
+    }
   };
 
   const handleKeyDown = (e) => {

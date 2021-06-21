@@ -1,7 +1,6 @@
 import { BaseImage, Box, Row, Text } from '@tlon/indigo-react';
 import moment from 'moment';
 import React, { ReactElement, ReactNode } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
 import { cite, deSig, useShowNickname, uxToHex } from '~/logic/lib/util';
@@ -18,7 +17,6 @@ export interface AuthorProps {
   showImage?: boolean;
   children?: ReactNode;
   unread?: boolean;
-  api?: GlobalApi;
   size?: number;
   lineHeight?: string | number;
   isRelativeTime?: boolean;
@@ -88,7 +86,7 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
         cursor='pointer'
       >
         {showImage && (
-          <ProfileOverlay ship={ship} api={props.api} >
+          <ProfileOverlay ship={ship}>
             {img}
           </ProfileOverlay>
         )}

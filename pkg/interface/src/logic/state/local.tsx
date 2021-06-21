@@ -4,6 +4,10 @@ import React from 'react';
 import create, { State } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { BackgroundConfig, LeapCategories, RemoteContentPolicy, TutorialProgress, tutorialProgress } from '~/types/local-update';
+import airlock from '~/logic/api';
+import { bootstrapApi } from '../api/bootstrap';
+
+export type SubscriptionStatus = 'connected' | 'disconnected' | 'reconnecting';
 
 export interface LocalState {
   theme: 'light' | 'dark' | 'auto';
@@ -25,7 +29,9 @@ export interface LocalState {
   omniboxShown: boolean;
   suspendedFocus?: HTMLElement;
   toggleOmnibox: () => void;
-  set: (fn: (state: LocalState) => void) => void
+  set: (fn: (state: LocalState) => void) => void;
+  subscription: SubscriptionStatus;
+  restartSubscription: () => Promise<void>;
 }
 
 type LocalStateZus = LocalState & State;
@@ -82,6 +88,26 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
       state.suspendedFocus.blur();
     }
   })),
+  subscription: 'connected',
+  restartSubscription: async () => {
+    try {
+      set({ subscription: 'reconnecting' });
+      await airlock.eventSource();
+      set({ subscription: 'connected' });
+    } catch (e) {
+      set({ subscription: 'disconnected' });
+    }
+  },
+  bootstrap: async () => {
+    try {
+      set({ subscription: 'reconnecting' });
+      airlock.reset();
+      await bootstrapApi();
+      set({ subscription: 'connected' });
+    } catch (e) {
+      set({ subscription: 'disconnected' });
+    }
+  },
   // @ts-ignore investigate zustand types
   set: fn => set(produce(fn))
   }), {
@@ -102,6 +128,11 @@ function withLocalState<P, S extends keyof LocalState, C extends React.Component
     // @ts-ignore call signature forwarding unclear
     return <Component ref={ref} {...localState} {...props} />;
   });
+}
+
+const selOsDark = (s: LocalState) => s.dark;
+export function useOsDark() {
+  return useLocalState(selOsDark);
 }
 
 export { useLocalState as default, withLocalState };

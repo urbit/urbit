@@ -2,8 +2,6 @@
 |%
 +$  cache-action
   $%  [%graph-to-mark (pair resource:res (unit mark))]
-      [%perm-marks (pair (pair mark @tas) tube:clay)]
-      [%transform-marks (pair mark tube:clay)]
   ==
 --
 ::

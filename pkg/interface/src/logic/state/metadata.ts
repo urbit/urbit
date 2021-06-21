@@ -1,70 +1,117 @@
-import { Association, Associations } from '@urbit/api';
+import { Association, Associations, MetadataUpdatePreview } from '@urbit/api';
 import _ from 'lodash';
-import { useCallback } from 'react';
-import { BaseState, createState } from './base';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  createState,
+  createSubscription,
+  reduceStateN
+} from './base';
+import airlock from '~/logic/api';
+import { reduce } from '../reducers/metadata-update';
 
 export const METADATA_MAX_PREVIEW_WAIT = 150000;
 
-export interface MetadataState extends BaseState<MetadataState> {
+export interface MetadataState {
   associations: Associations;
-  // preview: (group: string) => Promise<MetadataUpdatePreview>;
+  getPreview: (group: string) => Promise<MetadataUpdatePreview
+  >;
+  previews: {
+    [group: string]: MetadataUpdatePreview
+  }
 }
 
+// @ts-ignore investigate zustand types
+const useMetadataState = createState<MetadataState>(
+  'Metadata',
+  (set, get) => ({
+    associations: {
+      groups: {},
+      graph: {}
+    },
+    previews: {},
+    getPreview: async (group: string): Promise<MetadataUpdatePreview> => {
+      const state = get();
+      if(group in state.previews) {
+        return state.previews[group];
+      }
+      try {
+        const preview = await airlock.subscribeOnce('metadata-pull-hook', `/preview${group}`);
+        if('metadata-hook-update' in preview) {
+          const newState = get();
+          newState.set((s) => {
+            s.previews[group] = preview['metadata-hook-update'].preview;
+          });
+          return preview['metadata-hook-update'].preview;
+        } else {
+          throw 'no-permissions';
+        }
+      } catch (e) {
+        if(e === 'timeout') {
+          throw 'offline';
+        }
+        throw e;
+      }
+    }
+  }),
+  [],
+  [
+    (set, get) =>
+      createSubscription('metadata-store', '/all', (j) => {
+        const d = _.get(j, 'metadata-update', false);
+        if (d) {
+          reduceStateN(get(), d, reduce);
+        }
+      })
+  ]
+);
+
 export function useAssocForGraph(graph: string) {
-  return useMetadataState(useCallback(s => s.associations.graph[graph] as Association | undefined, [graph]));
+  return useMetadataState(
+    useCallback(s => s.associations.graph[graph] as Association | undefined, [
+      graph
+    ])
+  );
 }
 
 export function useAssocForGroup(group: string) {
-  return useMetadataState(useCallback(s => s.associations.groups[group] as Association | undefined, [group]));
+  return useMetadataState(
+    useCallback(
+      s => s.associations.groups[group] as Association | undefined,
+      [group]
+    )
+  );
+}
+
+const selPreview = (s: MetadataState) => [s.previews, s.getPreview] as const;
+
+export function usePreview(group: string) {
+  const [error, setError] = useState(null);
+  const [previews, getPreview] = useMetadataState(selPreview);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        await getPreview(group);
+      } catch (e) {
+        if(mounted) {
+          setError(e);
+        }
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [group]);
+
+  const preview = previews[group];
+
+  return { error, preview };
 }
 
 export function useGraphsForGroup(group: string) {
   const graphs = useMetadataState(s => s.associations.graph);
   return _.pickBy(graphs, (a: Association) => a.group === group);
 }
-// @ts-ignore investigate zustand types
-const useMetadataState = createState<MetadataState>('Metadata', {
-  associations: { groups: {}, graph: {}, contacts: {}, chat: {}, link: {}, publish: {} }
-  // preview: async (group): Promise<MetadataUpdatePreview> => {
-  //   return new Promise<MetadataUpdatePreview>((resolve, reject) => {
-  //     const api = useApi();
-  //     let done = false;
-
-  //     setTimeout(() => {
-  //       if (done) {
-  //         return;
-  //       }
-  //       done = true;
-  //       reject(new Error('offline'));
-  //     }, METADATA_MAX_PREVIEW_WAIT);
-
-  //     api.subscribe({
-  //       app: 'metadata-pull-hook',
-  //       path: `/preview${group}`,
-  //       // TODO type this message?
-  //       event: (message) => {
-  //         if ('metadata-hook-update' in message) {
-  //           done = true;
-  //           const update = message['metadata-hook-update'].preview as MetadataUpdatePreview;
-  //           resolve(update);
-  //         } else {
-  //           done = true;
-  //           reject(new Error('no-permissions'));
-  //         }
-  //         // TODO how to delete this subscription? Perhaps return the susbcription ID as the second parameter of all the handlers
-  //       },
-  //       err: (error) => {
-  //         console.error(error);
-  //         reject(error);
-  //       },
-  //       quit: () => {
-  //         if (!done) {
-  //           reject(new Error('offline'));
-  //         }
-  //       }
-  //     });
-  //   });
-  // },
-});
 
 export default useMetadataState;

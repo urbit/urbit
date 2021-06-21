@@ -4,28 +4,24 @@ import { Association } from '@urbit/api/metadata';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
 import { Link, Route, Switch, useLocation } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { useQuery } from '~/logic/lib/useQuery';
+import { Titlebar } from '~/views/components/Titlebar';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
-import { StoreState } from '~/logic/store/type';
-import { Titlebar } from '~/views/components/Titlebar';
 import useGroupState from '../../../logic/state/group';
 import { LinkBlocks } from './components/LinkBlocks';
 import { LinkDetail } from './components/LinkDetail';
 import './css/custom.css';
 import LinkWindow from './LinkWindow';
 
-type LinkResourceProps = StoreState & {
+interface LinkResourceProps {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
-};
+}
 
 export function LinkResource(props: LinkResourceProps) {
   const {
     association,
-    api,
     baseUrl
   } = props;
 
@@ -48,9 +44,10 @@ export function LinkResource(props: LinkResourceProps) {
   const { query } = useQuery();
   const isGrid = query.has('grid');
   const { pathname, search } = useLocation();
+  const getGraph = useGraphState(s => s.getGraph);
 
   useEffect(() => {
-    api.graph.getGraph(ship, name);
+    getGraph(ship, name);
   }, [association]);
 
   const resourceUrl = `${baseUrl}/resource/link${rid}`;
@@ -126,7 +123,6 @@ export function LinkResource(props: LinkResourceProps) {
               <LinkDetail
                 node={node}
                 association={association}
-                api={api}
                 baseUrl={pathname}
               />
             </Col>

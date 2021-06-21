@@ -63,7 +63,7 @@ export interface GraphChildrenPoke {
 
 export interface GraphNode {
   children: Graph | null;
-  post: Post;
+  post: Post; 
 }
 
 export interface FlatGraphNode {

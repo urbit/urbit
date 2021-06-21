@@ -1,4 +1,4 @@
-import { Content, createPost, Post } from '@urbit/api';
+import { Content, createPost, fetchIsAllowed, markCountAsRead, Post, removePosts } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import { BigInteger } from 'big-integer';
 import React, {
@@ -7,15 +7,16 @@ import React, {
 
   useMemo, useState
 } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { isWriter, resourceFromPath } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import useGraphState, { useGraphForAssoc } from '~/logic/state/graph';
 import { useGroupForAssoc } from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
-import { StoreState } from '~/logic/store/type';
 import { Loading } from '~/views/components/Loading';
 import { ChatPane } from './components/ChatPane';
+import airlock from '~/logic/api';
+import { disallowedShipsForOurContact } from '~/logic/lib/contact';
+import shallow from 'zustand/shallow';
 
 const getCurrGraphSize = (ship: string, name: string) => {
   const { graphs } = useGraphState.getState();
@@ -23,14 +24,13 @@ const getCurrGraphSize = (ship: string, name: string) => {
   return graph?.size ?? 0;
 };
 
-type ChatResourceProps = StoreState & {
+type ChatResourceProps = {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 };
 
 const ChatResource = (props: ChatResourceProps): ReactElement => {
-  const { association, api } = props;
+  const { association } = props;
   const { resource } = association;
   const [toShare, setToShare] = useState<string[] | string | undefined>();
   const group = useGroupForAssoc(association)!;
@@ -39,15 +39,24 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   const unreadCount =
     (unreads.graph?.[resource]?.['/']?.unreads as number) || 0;
   const canWrite = group ? isWriter(group, resource) : false;
+  const [
+    getNewest,
+    getOlderSiblings,
+    getYoungerSiblings,
+    addPost
+  ] = useGraphState(
+    s => [s.getNewest, s.getOlderSiblings, s.getYoungerSiblings, s.addPost],
+    shallow
+  );
 
   useEffect(() => {
     const count = Math.min(400, 100 + unreadCount);
     const { ship, name } = resourceFromPath(resource);
-    props.api.graph.getNewest(ship, name, count);
+    getNewest(ship, name, count);
     setToShare(undefined);
     (async function () {
       if (group.hidden) {
-        const members = await props.api.contacts.disallowedShipsForOurContact(
+        const members = await disallowedShipsForOurContact(
           Array.from(group.members)
         );
         if (members.length > 0) {
@@ -55,12 +64,12 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
         }
       } else {
         const { ship: groupHost } = resourceFromPath(association.group);
-        const shared = await props.api.contacts.fetchIsAllowed(
+        const shared = await airlock.scry(fetchIsAllowed(
           `~${window.ship}`,
           'personal',
           groupHost,
           true
-        );
+        ));
         if (!shared) {
           setToShare(association.group);
         }
@@ -77,7 +86,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
       );
       return `${url}\n~${msg.author}: `;
     },
-    [association]
+    [association.resource]
   );
 
   const isAdmin = useMemo(
@@ -86,18 +95,21 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   );
 
   const fetchMessages = useCallback(async (newer: boolean) => {
-    const { api } = props;
     const pageSize = 100;
 
     const [, , ship, name] = resource.split('/');
     const graphSize = graph?.size ?? 0;
     const expectedSize = graphSize + pageSize;
+    if(graphSize === 0) {
+      // already loading the graph
+      return false;
+    }
     if (newer) {
       const index = graph.peekLargest()?.[0];
       if (!index) {
-        return true;
+        return false;
       }
-      await api.graph.getYoungerSiblings(
+      await getYoungerSiblings(
         ship,
         name,
         pageSize,
@@ -107,32 +119,34 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
     } else {
       const index = graph.peekSmallest()?.[0];
       if (!index) {
-        return true;
+        return false;
       }
-      await api.graph.getOlderSiblings(ship, name, pageSize, `/${index.toString()}`);
-      const done = expectedSize !== getCurrGraphSize(ship.slice(1), name);
+      await getOlderSiblings(ship, name, pageSize, `/${index.toString()}`);
+      const currSize = getCurrGraphSize(ship.slice(1), name);
+      console.log(currSize);
+      const done = expectedSize !== currSize;
       return done;
     }
   }, [graph, resource]);
 
   const onSubmit = useCallback((contents: Content[]) => {
     const { ship, name } = resourceFromPath(resource);
-    api.graph.addPost(ship, name, createPost(window.ship, contents));
-  }, [resource]);
+    addPost(ship, name, createPost(window.ship, contents));
+  }, [resource, addPost]);
 
   const onDelete = useCallback((msg: Post) => {
     const { ship, name } = resourceFromPath(resource);
-    api.graph.removePosts(ship, name, [msg.index]);
+    airlock.poke(removePosts(ship, name, [msg.index]));
   }, [resource]);
 
   const dismissUnread = useCallback(() => {
-    api.hark.markCountAsRead(association, '/', 'message');
-  }, [association]);
+    airlock.poke(markCountAsRead(association.resource));
+  }, [association.resource]);
 
   const getPermalink = useCallback(
     (index: BigInteger) =>
       getPermalinkForGraph(association.group, resource, `/${index.toString()}`),
-    [association]
+    [association.resource]
   );
 
   if (!graph) {
@@ -144,7 +158,6 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
       id={resource.slice(7)}
       graph={graph}
       unreadCount={unreadCount}
-      api={api}
       canWrite={canWrite}
       onReply={onReply}
       onDelete={onDelete}

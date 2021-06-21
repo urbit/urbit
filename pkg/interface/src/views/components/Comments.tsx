@@ -1,10 +1,17 @@
 import { Col } from '@tlon/indigo-react';
-import { Association, GraphNode, Group, resourceFromPath } from '@urbit/api';
+import {
+  createPost,
+  createBlankNodeWithChildPost,
+  Association,
+  GraphNode,
+  Group,
+  markCountAsRead,
+  addPost,
+  resourceFromPath
+} from '@urbit/api';
 import bigInt from 'big-integer';
 import { FormikHelpers } from 'formik';
 import React, { useEffect, useMemo } from 'react';
-import GlobalApi from '~/logic/api/global';
-import { createBlankNodeWithChildPost, createPost } from '~/logic/api/graph';
 import { isWriter } from '~/logic/lib/group';
 import { getUnreadCount } from '~/logic/lib/hark';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
@@ -15,12 +22,13 @@ import useHarkState from '~/logic/state/hark';
 import { PropFunc } from '~/types/util';
 import CommentInput from './CommentInput';
 import { CommentItem } from './CommentItem';
+import airlock from '~/logic/api';
+import useGraphState from '~/logic/state/graph';
 
 interface CommentsProps {
   comments: GraphNode;
   association: Association;
   baseUrl: string;
-  api: GlobalApi;
   group: Group;
 }
 
@@ -28,12 +36,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   const {
     association,
     comments,
-    api,
     history,
     baseUrl,
     group,
     ...rest
   } = props;
+  const addNode = useGraphState(s => s.addNode);
 
   const { ship, name } = resourceFromPath(association.resource);
 
@@ -55,11 +63,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
     try {
       const content = tokenizeMessage(comment);
       const node = createBlankNodeWithChildPost(
+        window.ship,
         comments?.post?.index,
         '1',
         content
       );
-      await api.graph.addNode(ship, name, node);
+      addNode(ship, name, node);
       actions.resetForm();
       actions.setStatus({ success: null });
     } catch (e) {
@@ -78,11 +87,12 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
       const content = tokenizeMessage(comment);
       const post = createPost(
+        `~${window.ship}`,
         content,
         commentNode.post.index,
         parseInt((idx + 1).toString(), 10).toString()
       );
-      await api.graph.addPost(ship, name, post);
+      await airlock.thread(addPost(ship, name, post));
       history.push(baseUrl);
     } catch (e) {
       console.error(e);
@@ -116,9 +126,9 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
   useEffect(() => {
     return () => {
-      api.hark.markCountAsRead(association, parentIndex, 'comment');
+      airlock.poke(markCountAsRead(association.resource));
     };
-  }, [comments.post.index]);
+  }, [comments.post?.index]);
 
   const unreads = useHarkState(state => state.unreads);
   const readCount = children.length - getUnreadCount(unreads, association.resource, parentIndex);
@@ -135,7 +145,6 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
               highlighted={highlighted}
               comment={comment}
               key={idx.toString()}
-              api={api}
               name={name}
               ship={ship}
               unread={i >= readCount}

@@ -1,11 +1,16 @@
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import { patp2dec } from 'urbit-ob';
+import shallow from 'zustand/shallow';
 
-import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs } from '@urbit/api';
+import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs, getGraph, getShallowChildren } from '@urbit/api';
 import { useCallback } from 'react';
-import { BaseState, createState } from './base';
+import { createState, createSubscription, reduceStateN } from './base';
+import airlock from '~/logic/api';
+import { addDmMessage, addPost, Content, getDeepOlderThan, getFirstborn, getNewest, getNode, getOlderSiblings, getYoungerSiblings, markPending, Post, addNode, GraphNodePoke } from '@urbit/api/graph';
+import { GraphReducer, reduceDm } from '../reducers/graph-update';
+import _ from 'lodash';
 
-export interface GraphState extends BaseState<GraphState> {
+export interface GraphState {
   graphs: Graphs;
   graphKeys: Set<string>;
   looseNodes: {
@@ -19,18 +24,20 @@ export interface GraphState extends BaseState<GraphState> {
   pendingDms: Set<string>;
   screening: boolean;
   graphTimesentMap: Record<number, string>;
-  // getKeys: () => Promise<void>;
-  // getTags: () => Promise<void>;
-  // getTagQueries: () => Promise<void>;
-  // getGraph: (ship: string, resource: string) => Promise<void>;
-  // getNewest: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
-  // getOlderSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
-  // getYoungerSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
-  // getGraphSubset: (ship: string, resource: string, start: string, end: string) => Promise<void>;
-  // getNode: (ship: string, resource: string, index: string) => Promise<void>;
+  getDeepOlderThan: (ship: string, name: string, count: number, start?: string) => Promise<void>;
+  getNewest: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
+  getOlderSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
+  getYoungerSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
+  getNode: (ship: string, resource: string, index: string) => Promise<void>;
+  getFirstborn: (ship: string, resource: string, index: string) => Promise<void>;
+  getGraph: (ship: string, name: string) => Promise<void>;
+  addDmMessage: (ship: string, contents: Content[]) => Promise<void>;
+  addPost: (ship: string, name: string, post: Post) => Promise<void>;
+
+  addNode: (ship: string, name: string, post: GraphNodePoke) => Promise<void>;
 }
 // @ts-ignore investigate zustand types
-const useGraphState = createState<GraphState>('Graph', {
+const useGraphState = createState<GraphState>('Graph', (set, get) => ({
   graphs: {},
   flatGraphs: {},
   threadGraphs: {},
@@ -39,7 +46,98 @@ const useGraphState = createState<GraphState>('Graph', {
   pendingIndices: {},
   graphTimesentMap: {},
   pendingDms: new Set(),
-  screening: false
+  screening: false,
+  addDmMessage: async (ship: string, contents: Content[]) => {
+    const promise = airlock.poke(addDmMessage(window.ship, ship, contents));
+    const { json } = addDmMessage(window.ship, ship, contents);
+    markPending(json['add-nodes'].nodes);
+    json['add-nodes'].resource.ship = json['add-nodes'].resource.ship.slice(1);
+    GraphReducer({
+      'graph-update': json
+    });
+    await promise;
+  },
+  addPost: async (ship, name, post) => {
+    const promise = airlock.thread(addPost(ship, name, post));
+    const { body } = addPost(ship, name, post);
+    markPending(body['add-nodes'].nodes);
+    body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
+    GraphReducer({
+      'graph-update': body,
+      'graph-update-flat': body
+    });
+    await promise;
+  },
+  addNode: async (ship, name, node) => {
+    const promise = airlock.thread(addNode(ship, name, node));
+    const { body } = addNode(ship, name, node);
+    markPending(body['add-nodes'].nodes);
+    body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
+    GraphReducer({
+      'graph-update': body
+    });
+    await promise;
+  },
+  getDeepOlderThan: async (ship, name, count, start) => {
+    const data = await airlock.scry(getDeepOlderThan(ship, name, count, start));
+
+    data['graph-update'].fetch = true;
+    const node = data['graph-update'];
+    GraphReducer({
+      'graph-update': node,
+      'graph-update-flat': node
+    });
+  },
+
+  getFirstborn: async (ship, name,index) => {
+    const data = await airlock.scry(getFirstborn(ship, name, index));
+    data['graph-update'].fetch = true;
+    const node = data['graph-update'];
+    GraphReducer({
+      'graph-update-thread': {
+        index,
+        ...node
+      },
+      'graph-update': node
+    });
+  },
+  getNode: async (ship: string, name: string, index: string) => {
+    const data = await airlock.scry(getNode(ship, name, index));
+    data['graph-update'].fetch = true;
+    const node = data['graph-update'];
+    GraphReducer({
+      'graph-update-loose': node
+    });
+  },
+  getOlderSiblings: async (ship: string, name: string, count: number, index: string) => {
+    const data = await airlock.scry(getOlderSiblings(ship, name, count, index));
+    data['graph-update'].fetch = true;
+    GraphReducer(data);
+  },
+  getYoungerSiblings: async (ship: string, name: string, count: number, index: string) => {
+    const data = await airlock.scry(getYoungerSiblings(ship, name, count, index));
+    data['graph-update'].fetch = true;
+    GraphReducer(data);
+  },
+  getNewest: async (
+    ship: string,
+    name: string,
+    count: number,
+    index = ''
+  ) => {
+    const data = await airlock.scry(getNewest(ship, name, count, index));
+    data['graph-update'].fetch = true;
+    GraphReducer(data);
+  },
+  getGraph: async (ship, name) => {
+    const data = await airlock.scry(getGraph(ship, name));
+    GraphReducer(data);
+  },
+  getShallowChildren: async (ship: string, name: string, index = '') => {
+    const data = await airlock.scry(getShallowChildren(ship, name, index));
+    data['graph-update'].fetch = true;
+    GraphReducer(data);
+  }
   // getKeys: async () => {
   //   const api = useApi();
   //   const keys = await api.scry({
@@ -71,19 +169,6 @@ const useGraphState = createState<GraphState>('Graph', {
   //     path: `/graph/${ship}/${resource}`
   //   });
   //   graphReducer(graph);
-  // },
-  // getNewest: async (
-  //   ship: string,
-  //   resource: string,
-  //   count: number,
-  //   index: string = ''
-  // ) => {
-  //   const api = useApi();
-  //   const data = await api.scry({
-  //     app: 'graph-store',
-  //     path: `/newest/${ship}/${resource}/${count}${index}`
-  //   });
-  //   graphReducer(data);
   // },
   // getOlderSiblings: async (
   //   ship: string,
@@ -139,7 +224,7 @@ const useGraphState = createState<GraphState>('Graph', {
   //   });
   //   graphReducer(node);
   // },
-}, [
+}), [
   'graphs',
   'graphKeys',
   'looseNodes',
@@ -147,6 +232,21 @@ const useGraphState = createState<GraphState>('Graph', {
   'flatGraphs',
   'threadGraphs',
   'pendingDms'
+], [
+  (set, get) => createSubscription('graph-store', '/updates', (e) => {
+    GraphReducer(e);
+  }),
+  (set, get) => createSubscription('graph-store', '/keys', (e) => {
+    GraphReducer(e);
+  }),
+
+  (set, get) => createSubscription('dm-hook', '/updates', (e) => {
+    const j = _.get(e, 'dm-hook-action', false);
+    if(j) {
+      reduceStateN(get(), j, reduceDm);
+    }
+  })
+
 ]);
 
 export function useGraph(ship: string, name: string) {
@@ -176,7 +276,11 @@ export function useGraphTimesentMap(ship: string, name: string) {
     useCallback(s => s.graphTimesentMap[`${deSig(ship)}/${name}`], [ship, name])
   );
 }
+const emptyObject = {};
 
+export function useGraphTimesent(key: string) {
+  return useGraphState(useCallback(s => s.graphTimesentMap[key] || emptyObject, [key]), shallow);
+}
 export function useGraphForAssoc(association: Association) {
   const { resource } = association;
   const { ship, name } = resourceFromPath(resource);

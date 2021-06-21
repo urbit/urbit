@@ -1,4 +1,5 @@
 import { Col } from '@tlon/indigo-react';
+import { markCountAsRead } from '@urbit/api';
 import React, {
   useEffect
 } from 'react';
@@ -11,11 +12,11 @@ import { Loading } from '~/views/components/Loading';
 import { GroupFeedHeader } from './GroupFeedHeader';
 import PostReplies from './Post/PostReplies';
 import PostTimeline from './Post/PostTimeline';
+import airlock from '~/logic/api';
 
 function GroupFeed(props) {
   const {
     baseUrl,
-    api,
     graphPath,
     groupPath,
     vip
@@ -26,6 +27,7 @@ function GroupFeed(props) {
 
   const associations = useMetadataState(state => state.associations);
   const graphs = useGraphState(state => state.graphs);
+  const getNewest = useGraphState(s => s.getNewest);
   const graphResource =
     graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
@@ -49,8 +51,8 @@ function GroupFeed(props) {
     if (graphResource.ship === '~zod' && graphResource.name === 'null') {
       return;
     }
-    api.graph.getNewest(graphResource.ship, graphResource.name, 100);
-    api.hark.markCountAsRead(association, '/', 'post');
+    getNewest(graphResource.ship, graphResource.name, 100);
+    airlock.poke(markCountAsRead(graphPath));
   }, [graphPath]);
 
   if (!graphPath) {
@@ -81,7 +83,6 @@ function GroupFeed(props) {
             return (
               <PostTimeline
                 baseUrl={baseUrl}
-                api={api}
                 history={history}
                 graphPath={graphPath}
                 group={group}
@@ -100,7 +101,6 @@ function GroupFeed(props) {
               <PostReplies
                 locationUrl={locationUrl}
                 baseUrl={baseUrl}
-                api={api}
                 history={history}
                 graphPath={graphPath}
                 group={group}
