@@ -187,7 +187,8 @@ function clearState(state: HarkState): HarkState {
       graph: {},
       group: {}
     },
-    notificationsCount: 0
+    notificationsCount: 0,
+    unreadNotes: {}
   };
   Object.assign(state, initialState);
 
