@@ -35,7 +35,7 @@ const useMetadataState = createState<MetadataState>(
         return state.previews[group];
       }
       try {
-        const preview = await airlock.subscribeOnce('metadata-pull-hook', `/preview${group}`);
+        const preview = await airlock.subscribeOnce('metadata-pull-hook', `/preview${group}`, 20 * 1000);
         if('metadata-hook-update' in preview) {
           const newState = get();
           newState.set((s) => {
