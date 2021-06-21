@@ -101,7 +101,7 @@ export function LinkBlocks(props: LinkBlocksProps) {
   );
 
   return (
-    <Col overflowX="hidden" overflowY="auto" height="100%" {...bind}>
+    <Col overflowX="hidden" overflowY="auto" height="calc(100% - 48px)" {...bind}>
       <VirtualScroller
         origin="top"
         offset={0}

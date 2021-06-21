@@ -108,7 +108,7 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
           onBlur={onBlur}
           promptUpload={promptUpload}
           onKeyPress={onKeyPress}
-          placeholderOffset="-10px"
+          placeholderOffset="0px"
         />
       )}
       <Row

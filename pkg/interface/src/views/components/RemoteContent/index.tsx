@@ -98,12 +98,14 @@ export function RemoteContent(props: RemoteContentProps) {
         <TruncatedText {...textProps}>{url}</TruncatedText>
       </RemoteContentWrapper>
     );
-  } else {
+  } else if(renderUrl) {
     return (
       <RemoteContentWrapper {...wrapperProps}>
         <TruncatedText {...textProps}>{text || url}</TruncatedText>
       </RemoteContentWrapper>
     );
+  } else {
+    return null;
   }
 }
 

@@ -73,7 +73,7 @@ export function LinkResource(props: LinkResourceProps) {
         path={relativePath('')}
         render={(props) => {
           return (
-            <Col minWidth="0" height="100%">
+            <Col minWidth="0" overflow="hidden">
               {titlebar()}
               { isGrid ? (
                 <LinkBlocks graph={graph} association={resource} />

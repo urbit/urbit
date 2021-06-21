@@ -122,7 +122,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
     }
 
     return (
-      <Col width="100%" height="100%" position="relative">
+      <Col width="100%" height="calc(100% - 48px)" position="relative">
         {/* @ts-ignore calling @liam-fitzgerald on virtualscroller */}
         <VirtualScroller
           origin="top"

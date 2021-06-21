@@ -229,25 +229,19 @@ export const RemoteContentOembed = React.forwardRef<
   RemoteContentOembedProps
 >((props, ref) => {
   const ourRef = useRef<HTMLDivElement>();
-  const setRef = useCallback((r: HTMLDivElement | null) => {
-    typeof ref === 'function' ? ref(r) : (ref.current = r);
-    ourRef.current = r;
-  }, []);
   const { url, renderUrl = false, thumbnail = false, ...rest } = props;
   const [embed, setEmbed] = useState<any>();
 
   useEffect(() => {
     const getEmbed = async () => {
       try {
-        const { width, height } = ourRef.current.getBoundingClientRect();
+        // const { width, height } = ourRef.current.getBoundingClientRect();
 
-        const oembed = await extract(url, {
-          maxheight: Math.floor(height),
-          maxwidth: Math.floor(width)
-        });
+        const oembed = await extract(url);
         setEmbed(oembed);
       } catch (e) {
         console.error(e);
+        console.log(`${url} failed`);
       }
     };
 
@@ -257,10 +251,13 @@ export const RemoteContentOembed = React.forwardRef<
   if (!renderUrl && !embed) {
     return null;
   }
+  if (!embed) {
+    return <RemoteContentEmbedFallback url={url} />;
+  }
 
   return (
     <Col
-      ref={setRef}
+      ref={ourRef}
       mb={2}
       width="100%"
       flexShrink={0}
