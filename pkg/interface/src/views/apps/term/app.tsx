@@ -123,6 +123,164 @@ const stye = (s: Stye) => {
   return '\x1b[' + out + 'm';
 }
 
+const showBlit = (term: Terminal, blit: Blit) => {
+  let out = '';
+
+  if ('bel' in blit) {
+    out += '\x07';
+  }
+  else if ('clr' in blit) {
+    term.clear();
+    out += csi('u');
+  }
+  else if ('hop' in blit) {
+    if (typeof blit.hop === 'number') {
+      out += csi('H', term.rows, blit.hop + 1);
+    }
+    else {
+      out += csi('H', term.rows - blit.hop.r, blit.hop.c + 1);
+    }
+    out += csi('s');  //  save cursor position
+  }
+  else if ('put' in blit) {
+    out += blit.put.join('');
+    out += csi('u');
+  }
+  else if ('klr' in blit) {
+    out += blit.klr.reduce((lin: string, p: Stub) => {
+      lin += stye(p.stye);
+      lin += p.text.join('');
+      lin += csi('m', 0);
+      return lin;
+    }, '');
+    out += csi('u');
+  }
+  else if ('nel' in blit) {
+    out += '\n';
+  }
+  else if ('sag' in blit || 'sav' in blit) {
+    const sav = ('sag' in blit) ? blit.sag : blit.sav;
+    let name = sav.path.split('/').slice(-2).join('.');
+    let buff = new Buffer(sav.file, 'base64');
+    let blob = new Blob([buff], {type: 'application/octet-stream'});
+    saveAs(blob, name);
+  }
+  else if ('url' in blit) {
+    window.open(blit.url);
+  }
+  else if ('wyp' in blit) {
+    out += '\r' + csi('K');
+    out += csi('u');
+  }
+  else {
+    console.log('weird blit', blit);
+  }
+
+  term.write(out);
+};
+
+//NOTE  should generally only be passed the default terminal session
+const showSlog = (term: Terminal, slog: string) => {
+  //  set scroll region to exclude the bottom line,
+  //  scroll up one line,
+  //  move cursor to start of the newly created whitespace,
+  //  set text to grey,
+  //  print the slog,
+  //  restore color, scroll region, and cursor.
+  //
+  term.write(csi('r', 1, term.rows - 1)
+           + csi('S', 1)
+           + csi('H', term.rows - 1, 1)
+           + csi('m', 90)
+           + slog
+           + csi('m', 0)
+           + csi('r')
+           + csi('u'));
+};
+
+const readInput = (term: Terminal, e: string): Belt[] => {
+  let belts: Belt[] = [];
+  let strap = '';
+
+  while (e.length > 0) {
+    let c = e.charCodeAt(0);
+
+    //  text input
+    //
+    if (c >= 32 && c !== 127) {
+      strap += e[0];
+      e = e.slice(1);
+      continue;
+    } else if ('' !== strap) {
+      belts.push({ txt: strap.split('') });
+      strap = '';
+    }
+
+    //  special keys/characters
+    //
+    if (0 === c) {
+      term.write('\x07');  //  bel
+    }
+    else if (8 === c || 127 === c) {
+      belts.push({ bac: null });
+    }
+    else if (13 === c) {
+      belts.push({ ret: null });
+    }
+    else if (c <= 26) {
+      belts.push({ mod: { mod: 'ctl', key: String.fromCharCode(96 + c) } });
+    }
+
+    //  escape sequences
+    //
+    if (27 === c) {  //  ESC
+      e = e.slice(1);
+      c = e.charCodeAt(0);
+      if (91 === c || 79 === c) {  //  [ or O
+        e = e.slice(1);
+        c = e.charCodeAt(0);
+        switch (c) {
+          case 65: belts.push({ aro: 'u' }); break;
+          case 66: belts.push({ aro: 'd' }); break;
+          case 67: belts.push({ aro: 'r' }); break;
+          case 68: belts.push({ aro: 'l' }); break;
+        //
+          case 77:
+            const m = e.charCodeAt(1) - 31;
+            if (1 === m) {
+              const c = e.charCodeAt(2) - 32;
+              const r = e.charCodeAt(3) - 32;
+              belts.push({ hit: { r: term.rows - r, c: c - 1 } });
+            }
+            e = e.slice(3);
+            break;
+        //
+          default: term.write('\x07'); break;  //  bel
+        }
+      }
+      else if (c >= 97 && c <= 122) {  //  a <= c <= z
+        belts.push({ mod: { mod: 'met', key: e[0] } });
+      }
+      else if (c === 46) {  //  .
+        belts.push({ mod: { mod: 'met', key: '.' } });
+      }
+      else if (c === 8 || c === 127) {
+        belts.push({ mod: { mod: 'met', key: { bac: null } } });
+      }
+      else {
+        term.write('\x07'); break;  //  bel
+      }
+    }
+
+    e = e.slice(1);
+  }
+  if ('' !== strap) {
+    belts.push({ txt: strap.split('') });
+    strap = '';
+  }
+  return belts;
+}
+
 export default function TermApp(props: TermAppProps) {
   const { api } = props;
 
@@ -139,95 +297,6 @@ export default function TermApp(props: TermAppProps) {
   const theme = useSettingsState(s => s.display.theme);
   const dark = theme === 'dark' || (theme === 'auto' && osDark);
 
-  const onSlog = (slog) => {
-    let session = useTermState.getState().sessions[''];
-
-    if (!session) {
-      console.log('default session mia!', 'slog:', slog);
-      return;
-    }
-    const term = session.term;
-
-    //  set scroll region to exclude the bottom line,
-    //  scroll up one line,
-    //  move cursor to start of the newly created whitespace,
-    //  set text to grey,
-    //  print the slog,
-    //  restore color, scroll region, and cursor.
-    //
-    term.write(csi('r', 1, term.rows - 1)
-             + csi('S', 1)
-             + csi('H', term.rows - 1, 1)
-             + csi('m', 90)
-             + slog
-             + csi('m', 0)
-             + csi('r')
-             + csi('u'));
-  };
-
-  const onBlit = (sesId: string, blit: Blit) => {
-    const ses = useTermState.getState().sessions[sesId];
-    if (!ses) {
-      console.log('on blit: no such session', selected, sessions, useTermState.getState().sessions);
-      return;
-    }
-
-    const term = ses.term;
-    let out = '';
-
-    if ('bel' in blit) {
-      out += '\x07';
-    }
-    else if ('clr' in blit) {
-      term.clear();
-      out += csi('u');
-    }
-    else if ('hop' in blit) {
-      if (typeof blit.hop === 'number') {
-        out += csi('H', term.rows, blit.hop + 1);
-      }
-      else {
-        out += csi('H', term.rows - blit.hop.r, blit.hop.c + 1);
-      }
-      out += csi('s');  //  save cursor position
-    }
-    else if ('put' in blit) {
-      out += blit.put.join('');
-      out += csi('u');
-    }
-    else if ('klr' in blit) {
-      out += blit.klr.reduce((lin: string, p: Stub) => {
-        lin += stye(p.stye);
-        lin += p.text.join('');
-        lin += csi('m', 0);
-        return lin;
-      }, '');
-      out += csi('u');
-    }
-    else if ('nel' in blit) {
-      out += '\n';
-    }
-    else if ('sag' in blit || 'sav' in blit) {
-      const sav = ('sag' in blit) ? blit.sag : blit.sav;
-      let name = sav.path.split('/').slice(-2).join('.');
-      let buff = new Buffer(sav.file, 'base64');
-      let blob = new Blob([buff], {type: 'application/octet-stream'});
-      saveAs(blob, name);
-    }
-    else if ('url' in blit) {
-      window.open(blit.url);
-    }
-    else if ('wyp' in blit) {
-      out += '\r' + csi('K');
-      out += csi('u');
-    }
-    else {
-      console.log('weird blit', blit);
-    }
-
-    term.write(out);
-  };
-
   const setupSlog = useCallback(() => {
     console.log('slog: setting up...');
     let available = false;
@@ -239,7 +308,12 @@ export default function TermApp(props: TermAppProps) {
     }
 
     slog.onmessage = e => {
-      onSlog(e.data);
+      let session = useTermState.getState().sessions[''];
+      if (!session) {
+        console.log('default session mia!', 'slog:', slog);
+        return;
+      }
+      showSlog(session.term, e.data);
     }
 
     slog.onerror = e => {
@@ -258,84 +332,7 @@ export default function TermApp(props: TermAppProps) {
 
   const onInput = useCallback((ses: string, e: string) => {
     const term = useTermState.getState().sessions[ses].term;
-    let belts: Belt[] = [];
-    let strap = '';
-
-    while (e.length > 0) {
-      let c = e.charCodeAt(0);
-
-      //  text input
-      //
-      if (c >= 32 && c !== 127) {
-        strap += e[0];
-        e = e.slice(1);
-        continue;
-      } else if ('' !== strap) {
-        belts.push({ txt: strap.split('') });
-        strap = '';
-      }
-
-      //  special keys/characters
-      if (0 === c) {
-        term.write('\x07');  //  bel
-      }
-      else if (8 === c || 127 === c) {
-        belts.push({ bac: null });
-      }
-      else if (13 === c) {
-        belts.push({ ret: null });
-      }
-      else if (c <= 26) {
-        belts.push({ mod: { mod: 'ctl', key: String.fromCharCode(96 + c) } });
-      }
-
-      //  escape sequences
-      //
-      if (27 === c) {  //  ESC
-        e = e.slice(1);
-        c = e.charCodeAt(0);
-        if (91 === c || 79 === c) {  //  [ or O
-          e = e.slice(1);
-          c = e.charCodeAt(0);
-          switch (c) {
-            case 65: belts.push({ aro: 'u' }); break;
-            case 66: belts.push({ aro: 'd' }); break;
-            case 67: belts.push({ aro: 'r' }); break;
-            case 68: belts.push({ aro: 'l' }); break;
-          //
-            case 77:
-              const m = e.charCodeAt(1) - 31;
-              if (1 === m) {
-                const c = e.charCodeAt(2) - 32;
-                const r = e.charCodeAt(3) - 32;
-                belts.push({ hit: { r: term.rows - r, c: c - 1 } });
-              }
-              e = e.slice(3);
-              break;
-          //
-            default: term.write('\x07'); break;  //  bel
-          }
-        }
-        else if (c >= 97 && c <= 122) {  //  a <= c <= z
-          belts.push({ mod: { mod: 'met', key: e[0] } });
-        }
-        else if (c === 46) {  //  .
-          belts.push({ mod: { mod: 'met', key: '.' } });
-        }
-        else if (c === 8 || c === 127) {
-          belts.push({ mod: { mod: 'met', key: { bac: null } } });
-        }
-        else {
-          term.write('\x07'); break;  //  bel
-        }
-      }
-
-      e = e.slice(1);
-    }
-    if ('' !== strap) {
-      belts.push({ txt: strap.split('') });
-      strap = '';
-    }
+    const belts = readInput(term, e);
     belts.map(b => {  //NOTE  passing api.term.sendBelt makes `this` undefined!
       api.term.sendBelt(ses, b);
     });
@@ -403,7 +400,12 @@ export default function TermApp(props: TermAppProps) {
       //      once subscription refactor is in.
       api.subscribe('/session/'+selected, 'PUT', api.ship, 'herm',
         (e) => {
-          onBlit(selected, e.data);
+          const ses = useTermState.getState().sessions[selected];
+          if (!ses) {
+            console.log('on blit: no such session', selected, sessions, useTermState.getState().sessions);
+            return;
+          }
+          showBlit(ses.term, e.data);
         },
         (err) => {  //  fail
           console.log('sub error', selected, err);
