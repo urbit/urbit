@@ -585,11 +585,11 @@
   ++  gen-rut-jar
     ^-  (jar @p event)
     =/  filter  ;:  cork
-                    ::(cury filter-owner %.y)
+                    (cury filter-owner %.y)
                     (cury filter-proxy %own)
-                    :: (cury filter-nonce %.n)
+                    (cury filter-nonce %.y)
                     ::(cury filter-rank %star)
-                    (cury filter-dominion %l2)
+                    ::(cury filter-dominion %l2)
                     %-  cury
                     :-  filter-tx-type
                     :*  %spawn
@@ -835,8 +835,18 @@
   %+  category  (weld "correct nonce? " (scow %f nonce.cur-event))
   ::
   =/  cur-point  (~(got by points.initial-state) cur-ship)
-  =/  cur-nonce  nonce.owner.own:(~(got by points.initial-state) cur-ship)
-  =/  new-nonce  ?:  &(nonce.cur-event owner.cur-event)  :: wrong nonce and/or wrong owner do not increment nonce
+  ::=/  cur-nonce  nonce.owner.own:(~(got by points.initial-state) cur-ship)
+  =*  own  own.cur-point
+  =/  cur-nonce
+    ?-  proxy.cur-event
+      %own       nonce.owner.own
+      %spawn     nonce.spawn-proxy.own
+      %manage    nonce.management-proxy.own
+      %vote      nonce.voting-proxy.own
+      %transfer  nonce.transfer-proxy.own
+    ==
+  :: wrong nonce and/or wrong owner do not increment nonce
+  =/  new-nonce  ?:  &(nonce.cur-event owner.cur-event)
                    +(cur-nonce)
                  cur-nonce
   ::
@@ -847,7 +857,14 @@
     !>
     |^  ^-  ^state:naive
     ?.  (~(got by suc-map) cur-event)
-      (alter-state cur-point(nonce.owner.own new-nonce))
+      %-  alter-state
+      ?-  proxy.cur-event
+        %own       cur-point(nonce.owner.own new-nonce)
+        %spawn     cur-point(nonce.spawn-proxy.own new-nonce)
+        %manage    cur-point(nonce.management-proxy.own new-nonce)
+        %vote      cur-point(nonce.voting-proxy.own new-nonce)
+        %transfer  cur-point(nonce.transfer-proxy.own new-nonce)
+      ==
     ?+  tx-type.cur-event  !!
       %transfer-point        set-xfer
       %configure-keys        set-keys
@@ -858,14 +875,32 @@
       %escape                (set-escape which-escape-l2)
     ==
     ::
+    ::  ++  inc-nonce  ^-  ^state:naive
+    ::    =*  own  own.cur-point
+    ::    =^  nonce  cur-point
+    ::      ?-    proxy.cur-event
+    ::          %own
+    ::        :-  nonce.owner.own
+    ::        cur-point(nonce.owner.own +(nonce.owner.own))
+    ::  ++  inc-nonce  ^-  ^state:naive
+    ::    =/  up-nonce
+    ::    %=  cur-point
+    ::      ?+  proxy.cur-event  !!
+    ::        %own         nonce.owner.own
+    ::        %spawn       nonce.spawn-proxy.own
+    ::        %management  nonce.management-proxy.own
+    ::        %vote        nonce.voting-proxy.own
+    ::        %transfer    nonce.transfer-proxy.own
+    ::      ==  new-nonce
+    ::    (alter-state up-nonce)
+    ::
     ++  set-keys  ^-  ^state:naive
       =/  new-keys
       %=  cur-point
-        life.keys.net   +(life.keys.net:(~(got by points.initial-state) cur-ship))
-        suite.keys.net  suit
-        auth.keys.net   auth
-        crypt.keys.net  encr
-        nonce.owner.own  new-nonce
+        life.keys.net    +(life.keys.net:(~(got by points.initial-state) cur-ship))
+        suite.keys.net   suit
+        auth.keys.net    auth
+        crypt.keys.net   encr
       ==
       (alter-state new-keys)
     ::
@@ -873,7 +908,6 @@
       =/  new-xfer
       %=  cur-point
         address.owner.own  (addr %transfer-test)
-        nonce.owner.own  new-nonce
       ==
       (alter-state new-xfer)
     ::
@@ -881,7 +915,6 @@
       =/  new-mgmt
       %=  cur-point
         address.management-proxy.own  (addr %proxy-test)
-        nonce.owner.own  new-nonce
       ==
       (alter-state new-mgmt)
     ::
@@ -889,7 +922,6 @@
       =/  new-spwn
       %=  cur-point
         address.spawn-proxy.own  (addr %proxy-test)
-        nonce.owner.own  new-nonce
       ==
       (alter-state new-spwn)
     ::
@@ -897,7 +929,6 @@
       =/  new-xfer
       %=  cur-point
         address.transfer-proxy.own  (addr %proxy-test)
-        nonce.owner.own  new-nonce
       ==
       (alter-state new-xfer)
     ::
@@ -906,7 +937,6 @@
       =/  new-escp
       %=  cur-point
         escape.net  (some ship)
-        nonce.owner.own  new-nonce
       ==
       (alter-state new-escp)
     ::
@@ -921,22 +951,33 @@
         address.transfer-proxy.own  (addr %spawn-test)
         sponsor.net  [has=%.y who=cur-ship]
       ==
-      =/  new-point-nonce
-      %=  cur-point
-        nonce.owner.own  new-nonce
-      ==
-      =/  new-spawn=^state:naive
+      ::=/  new-spawn=^state:naive
+      =/  expect-state  (alter-state cur-point)  :: this updates the nonce of the spawner
       %=  expect-state
         points  (~(put by points.expect-state) ship spawned)
       ==
-      %=  new-spawn
-        points  (~(put by points.new-spawn) cur-ship new-point-nonce)
-      ==
+      ::  =/  new-point-nonce
+      ::  %=  cur-point
+      ::    nonce.owner.own  new-nonce
+      ::  ==
+      ::  %=  new-spawn
+      ::    points  (~(put by points.new-spawn) cur-ship new-point-nonce)
+      ::  ==
     ::
     ++  alter-state
-      |=  new-point=point:naive  ^-  ^state:naive
+      :: this updates the expect-state with the new point, and takes
+      :: care of incrementing the nonce as well.
+      |=  alt-point=point:naive  ^-  ^state:naive
+      =/  updated-point=point:naive
+      ?-  proxy.cur-event
+        %own       alt-point(nonce.owner.own new-nonce)
+        %spawn     alt-point(nonce.spawn-proxy.own new-nonce)
+        %manage    alt-point(nonce.management-proxy.own new-nonce)
+        %vote      alt-point(nonce.voting-proxy.own new-nonce)
+        %transfer  alt-point(nonce.transfer-proxy.own new-nonce)
+      ==
       %=  expect-state
-        points  (~(put by points.expect-state) cur-ship new-point)
+        points  (~(put by points.expect-state) cur-ship updated-point)
       ==
     ::
     --  :: end of expected state
