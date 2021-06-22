@@ -125,7 +125,7 @@
   =,  azimuth-rpc
   ?.  ?=([%map *] params)
     [~ ~(parse error:json-rpc id)]
-  ?+    method  [~ ~(method error:json-rpc id)]
+  ?+  method  [~ ~(method error:json-rpc id)]
     %get-point             [~ (get-point id +.params point:scry)]
     %transfer-point        (transfer-point id +.params)
     %cancel-tx             (cancel-tx id +.params)
@@ -155,7 +155,7 @@
     |=  =ship
     .^  (unit point:naive)
         %gx
-        (~(scry agentio bowl) %azimuth /nas/(scot %p ship)/noun)
+        (~(scry agentio bowl) %aggregator /point/(scot %p ship)/noun)
     ==
   ::
   ++  spawned

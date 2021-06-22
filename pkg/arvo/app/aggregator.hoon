@@ -151,6 +151,7 @@
       [%x %nonce @ @ ~]     (nonce i.t.t.path i.t.t.t.path)
       [%x %spawned @ ~]     (spawned i.t.t.path)
       [%x %next-batch ~]    ``noun+!>(next-batch)
+      [%x %point @ ~]       (point i.t.t.path)
     ==
     ::
     ++  pending-by
@@ -230,6 +231,12 @@
       ^-  [=^ship =address:ethereum]
       :-  ship
       address:(proxy-from-point:naive %own point)
+    ::
+    ++  point
+      |=  wat=@t
+      ?~  ship=(rush wat ;~(pfix sig fed:ag))
+        ``noun+!>(*(unit point:naive))
+      ``noun+!>((get:orm:naive points.pre u.ship))
     --
   ::
   ++  on-arvo
