@@ -99,6 +99,7 @@ import Urbit.Vere.LockFile    (lockFile)
 
 import qualified Data.Set                as Set
 import qualified Data.Text               as T
+import qualified Data.Conduit.Combinators as CC
 import qualified Network.HTTP.Client     as C
 import qualified System.Posix.Signals    as Sys
 import qualified System.Posix.Resource   as Sys
@@ -106,7 +107,6 @@ import qualified System.ProgressBar      as PB
 import qualified System.Random           as Sys
 import qualified Urbit.EventLog.LMDB     as Log
 import qualified Urbit.King.CLI          as CLI
-import qualified Urbit.King.EventBrowser as EventBrowser
 import qualified Urbit.Ob                as Ob
 import qualified Urbit.Vere.Pier         as Pier
 import qualified Urbit.Vere.Serf         as Serf
@@ -178,7 +178,7 @@ logStderr action = do
 logSlogs :: HasStderrLogFunc e => RIO e (TVar ((Atom, Tank) -> IO ()))
 logSlogs = logStderr $ do
   env <- ask
-  newTVarIO (runRIO env . logOther "serf" . display . T.strip . tankToText . snd)
+  newTVarIO (runRIO env . logOther "serf" . display . T.strip . toT . tankToText . snd)
 
 tryBootFromPill
   :: Bool
@@ -207,6 +207,7 @@ runOrExitImmediately
   -> [Ev]
   -> RIO PierEnv ()
 runOrExitImmediately vSlog getPier oExit mStart injected = do
+  putStrLn "runOrExitImmediately"
   rwith getPier (if oExit then shutdownImmediately else runPier)
  where
   shutdownImmediately :: (Serf, Log.EventLog) -> RIO PierEnv ()
@@ -217,6 +218,7 @@ runOrExitImmediately vSlog getPier oExit mStart injected = do
 
   runPier :: (Serf, Log.EventLog) -> RIO PierEnv ()
   runPier serfLog = do
+    putStrLn "runPier"
     runRAcquire (Pier.pier serfLog vSlog mStart injected)
 
 tryPlayShip
@@ -229,6 +231,7 @@ tryPlayShip
 tryPlayShip exitImmediately fullReplay playFrom mStart injected = do
   when fullReplay wipeSnapshot
   vSlog <- logSlogs
+  putStrLn "tryPlayShip"
   runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart injected
  where
   wipeSnapshot = do
@@ -271,7 +274,7 @@ checkEvs pierPath first last = do
 
     pb <- PB.newProgressBar pbSty 10 (PB.Progress 1 evCount ())
 
-    runConduit $ Log.streamEvents log first .| showEvents
+    runConduit $ Log.streamEvents log first .| CC.map toBS .| showEvents
       pb
       first
       (fromIntegral $ lifecycleLen ident)
@@ -504,7 +507,7 @@ newShip CLI.New{..} opts = do
 
     CLI.BootFromKeyfile keyFile -> do
       text <- readFileUtf8 keyFile
-      asAtom <- case cordToUW (Cord $ T.strip text) of
+      asAtom <- case cordToUW (Cord $ fromT $ T.strip text) of
         Nothing -> error "Couldn't parse keyfile. Hint: keyfiles start with 0w?"
         Just (UW a) -> pure a
 
@@ -519,7 +522,7 @@ newShip CLI.New{..} opts = do
 
   where
     shipFrom :: Text -> RIO HostEnv Ship
-    shipFrom name = case Ob.parsePatp name of
+    shipFrom name = case Ob.parsePatp $ toT name of
       Left x  -> error "Invalid ship name"
       Right p -> pure $ Ship $ fromIntegral $ Ob.fromPatp p
 
@@ -529,7 +532,7 @@ newShip CLI.New{..} opts = do
       Nothing -> "./" <> unpack name
 
     nameFromShip :: HasKingEnv e => Ship -> RIO e Text
-    nameFromShip s = name
+    nameFromShip s = fromT <$> name
       where
         nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral s
         name = case stripPrefix "~" nameWithSig of
@@ -564,6 +567,7 @@ newShip CLI.New{..} opts = do
 runShipEnv :: Maybe Text -> CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a
            -> RIO HostEnv a
 runShipEnv serfExe (CLI.Run pierPath) opts vKill act = do
+  putStrLn "uh"
   runPierEnv pierConfig netConfig vKill act
  where
   pierConfig = toPierConfig pierPath serfExe opts
@@ -590,6 +594,7 @@ runShip (CLI.Run pierPath) opts daemon = do
     runPier :: MVar () -> RIO PierEnv ()
     runPier mStart = do
       injections <- loadInjections (CLI.oInjectEvents opts)
+      putStrLn "runPier"
       tryPlayShip
         (CLI.oExit opts)
         (CLI.oFullReplay opts)
@@ -626,13 +631,13 @@ startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do
     -- lockFile pierPath
     log <- Log.existing (pierPath <> "/.urb/log")
-    rio $ EventBrowser.run log
+    pure ()
 
 checkDawn :: HasLogFunc e => String -> FilePath -> RIO e ()
 checkDawn provider keyfilePath = do
   -- The keyfile is a jammed Seed then rendered in UW format
   text <- readFileUtf8 keyfilePath
-  asAtom <- case cordToUW (Cord $ T.strip text) of
+  asAtom <- case cordToUW (Cord $ fromT $ T.strip text) of
     Nothing -> error "Couldn't parse keyfile. Hint: keyfiles start with 0w?"
     Just (UW a) -> pure a
 
@@ -822,6 +827,7 @@ runShips CLI.Host {..} ships = do
 -- TODO Duplicated logic.
 runSingleShip :: Maybe Text -> (CLI.Run, CLI.Opts, Bool) -> RIO HostEnv ()
 runSingleShip serfExe (r, o, d) = do
+  putStrLn "hi"
   shipThread <- async (runShipNoRestart serfExe r o d)
 
   {-
@@ -879,6 +885,7 @@ connTerm = Term.runTerminalClient
 checkFx pierPath first last =
     rwith (Log.existing logPath) $ \log ->
         runConduit $ streamFX log first last
+                  .| CC.map toBS
                   .| tryParseFXStream
   where
     logPath = pierPath <> "/.urb/log"

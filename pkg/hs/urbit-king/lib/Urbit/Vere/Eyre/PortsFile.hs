@@ -29,9 +29,9 @@ data Ports = Ports
 
 portsFileText :: Ports -> Text
 portsFileText Ports {..} = unlines $ catMaybes
-  [ pHttps <&> \p -> (tshow p <> " secure public")
-  , Just (tshow (unPort pHttp) <> " insecure public")
-  , Just (tshow (unPort pLoop) <> " insecure loopback")
+  [ pHttps <&> \p -> (show p <> " secure public")
+  , Just (show (unPort pHttp) <> " insecure public")
+  , Just (show (unPort pLoop) <> " insecure loopback")
   ]
 
 removePortsFile :: FilePath -> IO ()
@@ -41,4 +41,4 @@ removePortsFile pax = do
     False -> pure ()
 
 writePortsFile :: FilePath -> Ports -> IO ()
-writePortsFile f = writeFile f . encodeUtf8 . portsFileText
+writePortsFile f = writeFile f . toBS . encodeUtf8 . portsFileText

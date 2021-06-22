@@ -65,7 +65,7 @@ portsFile por =
     mkFile = do
         (dir, fil) <- portsFilePath
         createDirectoryIfMissing True dir
-        writeFile fil (encodeUtf8 $ tshow por)
+        writeFile fil (toBS $ encodeUtf8 $ show por)
         pure (dir, fil)
 
 {-|
@@ -75,7 +75,7 @@ readPortsFile :: HasPierPath e => RIO e (Maybe Word)
 readPortsFile = do
     (_, fil) <- portsFilePath
     bs <- readFile fil
-    evaluate (readMay $ unpack $ decodeUtf8 bs)
+    evaluate (readMay $ decodeUtf8 $ fromBS bs)
 
 kingServer :: HasLogFunc e => (Int, Socket) -> RAcquire e King
 kingServer is =

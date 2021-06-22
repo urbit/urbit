@@ -92,7 +92,7 @@ turfText :: Turf -> Text
 turfText = intercalate "." . reverse . fmap unCord . unTurf
 
 renderGalaxy :: Galaxy -> Text
-renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unPatp
+renderGalaxy = fromT . Ob.renderPatp . Ob.patp . fromIntegral . unPatp
 
 galaxyHostname :: Galaxy -> Turf -> Text
 galaxyHostname g t = galaName g ++ "." ++ turfText t
@@ -139,7 +139,7 @@ doResolv gal (prevWen, prevIP) turfs stderr = do
           pure (Just addr, tim)
  where
   galStr = renderGalaxy gal
-  printCzar addr = stderr $ "ames: czar " ++ galStr ++ ": ip " ++ tshow addr
+  printCzar addr = stderr $ "ames: czar " ++ galStr ++ ": ip " ++ show addr
 
 
 resolvWorker

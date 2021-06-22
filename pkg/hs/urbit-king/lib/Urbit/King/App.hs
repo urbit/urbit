@@ -292,5 +292,5 @@ runPierEnv pierConfig networkConfig vKill action = do
                         , _pierEnvNetworkConfig = networkConfig
                         , _pierEnvKillSignal    = vKill
                         }
-
+  putStrLn "runPierEnv"
   io (runRIO pierEnv action)

@@ -248,7 +248,7 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
         atomically $ writeTVar versSlot (Just v)
         if (v0 == Just v)
           then logInfo $ displayShow ("ames: proto version unchanged at", v)
-          else stderr ("ames: protocol version now " <> tshow v)
+          else stderr ("ames: protocol version now " <> show v)
 
       Nothing -> logError "ames: could not scry for version"
 
@@ -363,6 +363,6 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
   scryLane :: HasLogFunc e
            => Ship
            -> RIO e (Maybe [AmesDest])
-  scryLane ship = scryNow scry "ax" "" ["peers", tshow ship, "forward-lane"]
+  scryLane ship = scryNow scry "ax" "" ["peers", show ship, "forward-lane"]
 
   ipv4Addr (AAIpv4 a p) = SockAddrInet (fromIntegral p) (unIpv4 a)

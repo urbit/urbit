@@ -20,7 +20,7 @@ module Urbit.Prelude
     , hark
     ) where
 
-import ClassyPrelude hiding (ByteString)
+import ClassyPrelude hiding (ByteString, Text, encodeUtf8, decodeUtf8)
 import Urbit.Noun
 import Urbit.Noun.ByteString
 
@@ -42,6 +42,7 @@ import RIO (HasLogFunc, LogFunc, LogLevel(..), logDebug, logError, logFuncL,
             setLogMinLevel, setLogUseLoc, setLogUseTime, withLogFunc)
 
 import qualified RIO
+import qualified ClassyPrelude as CP
 
 io :: MonadIO m => IO a -> m a
 io = liftIO
@@ -54,7 +55,7 @@ logTrace = logOther "trace"
 
 -- | Composes a log message out of textual components.
 hark :: [Text] -> Utf8Builder
-hark = RIO.displayBytesUtf8 . foldMap encodeUtf8
+hark = RIO.displayBytesUtf8 . foldMap CP.encodeUtf8 . fmap toT
 
 -- Utils for Spawning Worker Threads -------------------------------------------
 

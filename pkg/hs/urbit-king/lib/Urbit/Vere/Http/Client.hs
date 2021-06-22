@@ -39,7 +39,7 @@ data HttpClientDrv = HttpClientDrv
 cvtReq :: HttpClientReq -> Maybe H.Request
 cvtReq r =
   H.parseRequest (unpack (unCord $ url r)) <&> \init -> init
-    { H.method = encodeUtf8 $ tshow (method r)
+    { H.method = toBS $ encodeUtf8 $ show (method r)
     , H.requestHeaders = unconvertHeaders (headerList r)
     , H.requestBody =
         H.RequestBodyBS $ case body r of

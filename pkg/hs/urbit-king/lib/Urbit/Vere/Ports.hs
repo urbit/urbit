@@ -120,10 +120,10 @@ portThread q stderr = do
  where
   warnBehindRouterAndErr (a, b, c, d) err = do
     stderr $ "port: you appear to be behind a router since your ip " ++
-             "is " ++ (tshow a) ++ "." ++ (tshow b) ++ "." ++ (tshow c) ++
-             "." ++ (tshow d) ++ ", but " ++
+             "is " ++ (show a) ++ "." ++ (show b) ++ "." ++ (show c) ++
+             "." ++ (show d) ++ ", but " ++
              "we could not request port forwarding (NAT-PMP error: " ++
-             (tshow err) ++ ")"
+             (show err) ++ ")"
     stderr $ "port: urbit performance will be degregaded unless you " ++
              "manually forward your ames port."
     loopErr q
@@ -139,12 +139,12 @@ portThread q stderr = do
       Left ErrNoGatewaySupport -> assumeOnPublicInternet
       Left err -> do
         stderr $ "port: received error when asking router for public ip: " ++
-          (tshow err)
+          (show err)
         loopErr q
       Right addr -> do
         let (a, b, c, d) = hostAddressToTuple addr
-        stderr $ "port: router reports that our public IP is " ++ (tshow a) ++
-                 "." ++ (tshow b) ++ "." ++ (tshow c) ++ "." ++ (tshow d)
+        stderr $ "port: router reports that our public IP is " ++ (show a) ++
+                 "." ++ (show b) ++ "." ++ (show c) ++ "." ++ (show d)
     loop pmp mempty
 
   loop :: NatPmpHandle -> DH.MinPrioHeap POSIXTime RenewAction -> RIO e ()

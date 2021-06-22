@@ -168,7 +168,7 @@ recvPlea :: Serf -> IO Plea
 recvPlea w = do
   b <- recvResp w
   n <- fromRightExn (cueBS b) (const $ BadPleaAtom $ bytesAtom b)
-  p <- fromRightExn (fromNounErr @Plea n) (\(p, m) -> BadPleaNoun n p m)
+  p <- fromRightExn (fromNounErr @Plea n) (\(p, m) -> BadPleaNoun n (fromT <$> p) (fromT m))
   pure p
 
 recvPleaHandlingSlog :: Serf -> IO Plea
@@ -243,7 +243,7 @@ readStdErr :: Handle -> (Text -> IO ()) -> IO () -> IO ()
 readStdErr h onLine onClose = loop
  where
   loop = do
-    IO.tryIOError (BS.hGetLine h >>= onLine . decodeUtf8Lenient) >>= \case
+    IO.tryIOError (BS.hGetLine h >>= onLine . fromT . decodeUtf8Lenient) >>= \case
       Left exn -> onClose
       Right () -> loop
 

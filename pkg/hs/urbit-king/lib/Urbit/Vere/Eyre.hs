@@ -124,11 +124,11 @@ httpServerPorts fak = do
 parseTlsConfig :: (Key, Cert) -> Maybe TlsConfig
 parseTlsConfig (PEM key, PEM certs) = do
   let (cerByt, keyByt) = (wainBytes certs, wainBytes key)
-  pems <- pemParseBS cerByt & either (const Nothing) Just
+  pems <- pemParseBS (toBS cerByt) & either (const Nothing) Just
   (cert, chain) <- case pems of
     []     -> Nothing
     p : ps -> pure (pemWriteBS p, pemWriteBS <$> ps)
-  pure $ TlsConfig (fromBS keyByt) (fromBS cert) (fromBS <$> chain)
+  pure $ TlsConfig (keyByt) (fromBS cert) (fromBS <$> chain)
  where
   wainBytes = encodeUtf8 . unWain
 
@@ -154,7 +154,7 @@ requestEvent srvId which reqId ReqInfo{..} = reqEv srvId reqUd which riAdr evReq
  where
   evBod = bodFile riBod
   evHdr = convertHeaders riHdr
-  evUrl = Cord (decodeUtf8Lenient $ toBS riUrl)
+  evUrl = Cord (fromT $ decodeUtf8Lenient $ toBS riUrl)
   evReq = HttpRequest riMet evUrl evHdr evBod
   reqUd = fromIntegral reqId
 
@@ -279,9 +279,9 @@ startServ who isFake conf plan stderr onFatal sub = do
 
   logInfo $ displayShow ("EYRE", "All Servers Started.", srvId, por, fil)
   for secPor $ \p ->
-    stderr ("http: secure web interface live on https://localhost:" <> tshow p)
-  stderr ("http: web interface live on http://localhost:" <> tshow insPor)
-  stderr ("http: loopback live on http://localhost:" <> tshow lopPor)
+    stderr ("http: secure web interface live on https://localhost:" <> show p)
+  stderr ("http: web interface live on http://localhost:" <> show insPor)
+  stderr ("http: loopback live on http://localhost:" <> show lopPor)
 
   pure (Serv srvId conf lop ins mSec por fil vLive)
 

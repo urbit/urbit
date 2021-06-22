@@ -239,7 +239,7 @@ onSniHdr
 onSniHdr env (MTC mtls) mHos = do
   tabl <- atomically (readTVar mtls)
   runRIO env $ logDbg ctx (tabl, mHos)
-  ship <- hostShip (encodeUtf8 . pack <$> mHos)
+  ship <- hostShip (toBS . encodeUtf8 <$> mHos)
   runRIO env $ logDbg ctx ship
   tcfg <- lookup ship tabl & maybe (notRunning ship) (pure . snd)
   runRIO env $ logDbg ctx tcfg

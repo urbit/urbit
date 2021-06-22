@@ -20,7 +20,8 @@ module Urbit.EventLog.LMDB
   )
 where
 
-import ClassyPrelude
+import ClassyPrelude hiding (ByteString, Text)
+import Urbit.Noun.ByteString
 
 import Data.RAcquire
 import Database.LMDB.Raw
@@ -410,7 +411,7 @@ assertExn False e = throwIO e
 
 byteStringAsMdbVal :: ByteString -> (MDB_val -> IO a) -> IO a
 byteStringAsMdbVal bs k =
-  BU.unsafeUseAsCStringLen bs $ \(ptr,sz) ->
+  BU.unsafeUseAsCStringLen (toBS bs) $ \(ptr,sz) ->
     k (MDB_val (fromIntegral sz) (castPtr ptr))
 
 mdbValToWord64 :: MDB_val -> IO Word64
@@ -441,7 +442,7 @@ getMb txn db key =
 
 mdbValToBytes :: MDB_val -> IO ByteString
 mdbValToBytes (MDB_val sz ptr) = do
-  BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
+  fromBS <$> BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
 
 mdbValToNoun :: ByteString -> MDB_val -> IO Noun
 mdbValToNoun key (MDB_val sz ptr) = do
@@ -453,7 +454,7 @@ putAtom flags txn db key val =
   case val of
     Atom a -> io $
       byteStringAsMdbVal key $ \mKey ->
-      byteStringAsMdbVal (atomBytes a) $ \mVal ->
+      byteStringAsMdbVal (fromBS $ atomBytes a) $ \mVal ->
       mdb_put flags txn db mKey mVal
     _ -> error "Impossible putAtom received cell"
 

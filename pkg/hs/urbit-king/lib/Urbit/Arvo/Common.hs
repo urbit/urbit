@@ -104,7 +104,7 @@ instance FromNoun H.StdMethod where
   parseNoun n = named "StdMethod" $ do
     MkBytes bs <- parseNoun n
     case H.parseMethod $ toBS bs of
-      Left md -> fail ("Unexpected method: " <> unpack (decodeUtf8 md))
+      Left md -> fail ("Unexpected method: " <> (decodeUtf8 $ fromBS md))
       Right m -> pure m
 
 

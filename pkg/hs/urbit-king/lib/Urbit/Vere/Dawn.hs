@@ -34,6 +34,7 @@ import qualified Data.Binary           as B
 import qualified Data.ByteString       as BS
 import qualified Data.ByteString.Char8 as C
 import qualified Data.ByteString.Lazy  as L
+import qualified Data.Text.Encoding    as E
 import qualified Network.HTTP.Client   as C
 import qualified Urbit.Ob              as Ob
 
@@ -60,12 +61,11 @@ clanFromShip = Ob.clan . Ob.patp . fromIntegral
 shipSein :: Ship -> Ship
 shipSein = Ship . fromIntegral . Ob.fromPatp . Ob.sein . Ob.patp . fromIntegral
 
-renderShip :: Ship -> Text
 renderShip = Ob.renderPatp . Ob.patp . fromIntegral
 
 hexStrToAtom :: Text -> Atom
 hexStrToAtom =
-  bytesAtom . reverse . toBytes . hexString . removePrefix . encodeUtf8
+  bytesAtom . reverse . toBytes . hexString . removePrefix . E.encodeUtf8 . toT
 
 onLeft :: (a -> b) -> Either a c -> Either b c
 onLeft fun = bimap fun id
@@ -212,7 +212,7 @@ instance ToJSON PointRequest where
   toJSON PointRequest{..} =
     Array $ fromList [object [ "to" .= azimuthAddr
                              , "data" .= encodeCall "0x63fa9a87" grqPointId],
-                      String grqHexBlockNum
+                      String $ toT grqHexBlockNum
                      ]
 
 parseAndChunkResultToBS :: Text -> [ByteString]
@@ -222,7 +222,8 @@ parseAndChunkResultToBS result =
   toBytes $
   hexString $
   removePrefix $
-  encodeUtf8 result
+  E.encodeUtf8 $
+  toT result
 
 -- The incoming result is a text bytestring. We need to take that text, and
 -- spit out the parsed data.
@@ -313,19 +314,19 @@ instance ToJSON TurfRequest where
   toJSON TurfRequest{..} =
     Array $ fromList [object [ "to" .= azimuthAddr
                              , "data" .= encodeCall "0xeccc8ff1" trqTurfId],
-                      String trqHexBlockNum
+                      String $ toT trqHexBlockNum
                      ]
 
 -- This is another hack instead of a full Ethereum ABI response.
 parseTurfResponse :: TurfRequest -> Text -> Turf
 parseTurfResponse a raw = turf
   where
-    without0x = removePrefix $ encodeUtf8 raw
+    without0x = removePrefix $ E.encodeUtf8 $ toT raw
     (_, blRest) = splitAt 64 without0x
     (utfLenStr, utfStr) = splitAt 64 blRest
     utfLen = fromIntegral $ bytesAtom $ reverse $ toBytes $ hexString utfLenStr
-    dnsStr = decodeUtf8 $ BS.take utfLen $ toBytes $ hexString utfStr
-    turf = Turf $ fmap Cord $ reverse $ splitOn "." dnsStr
+    dnsStr = E.decodeUtf8 $ BS.take utfLen $ toBytes $ hexString utfStr
+    turf = Turf $ fmap Cord $ reverse $ fmap fromT $ splitOn "." dnsStr
 
 -- Azimuth Functions -----------------------------------------------------------
 
@@ -406,7 +407,7 @@ getSponsorshipChain endpoint block = loop
 dawnVent :: HasLogFunc e => String -> Seed -> RIO e (Either Text Dawn)
 dawnVent provider dSeed@(Seed ship life ring oaf) =
   -- The type checker can't figure this out on its own.
-  (onLeft tshow :: Either SomeException Dawn -> Either Text Dawn) <$> try do
+  (onLeft show :: Either SomeException Dawn -> Either Text Dawn) <$> try do
     putStrLn ("boot: requesting ethereum information from " <> pack provider)
     blockResponses
       <- dawnPostRequests provider parseBlockRequest [BlockRequest]

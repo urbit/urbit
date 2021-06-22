@@ -35,7 +35,7 @@ streamSlog a = do
     KeepAlive -> pure ()
     Slog (_, t) -> for_ (wash (WashCfg 0 80) (tankTree t)) $ \l -> do
       yield $ Chunk "data:"
-      yield $ Chunk $ encodeUtf8Builder $ unTape l
+      yield $ Chunk $ encodeUtf8Builder $ toT $ unTape l
       yield $ Chunk "\n"
   yield $ Chunk "\n"
   yield $ Flush
@@ -85,7 +85,7 @@ kingSubsite who scry stat func = do
         then respond $ emptyResponse 403 "Permission Denied"
         else do
           lines <- stat
-          let msg = mconcat ((<> "\n") . encodeUtf8Builder <$> lines)
+          let msg = mconcat ((<> "\n") . encodeUtf8Builder . toT <$> lines)
                  <> "\nRefresh for more current data."
           respond $ W.responseBuilder (H.mkStatus 200 "OK") statHeads msg
 
@@ -104,7 +104,7 @@ kingSubsite who scry stat func = do
     emptyResponse cod mes = W.responseLBS (H.mkStatus cod mes) [] ""
 
     authenticated env req = runRIO env
-                          $ (scryAuth $ getCookie req)
+                          $ (scryAuth $ fromT $ getCookie req)
                           >>= pure . fromMaybe False
 
     getCookie req = intercalate "; "

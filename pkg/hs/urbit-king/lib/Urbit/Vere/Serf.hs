@@ -62,7 +62,7 @@ execReplay serf log last = do
 
     evs <- runConduit $ Log.streamEvents log 1
                      .| CC.take (fromIntegral bootSeqLen)
-                     .| CC.mapM (fmap snd . parseLogEvent)
+                     .| CC.mapM (fmap snd . parseLogEvent . toBS)
                      .| CC.sinkList
 
     let numEvs = fromIntegral (length evs)
@@ -115,7 +115,7 @@ execReplay serf log last = do
       $  runConduit
       $  Log.streamEvents log (lastEventInSnap + 1)
       .| CC.take (fromIntegral numEvs)
-      .| CC.mapM (fmap snd . parseLogEvent)
+      .| CC.mapM (fmap snd . parseLogEvent . toBS)
       .| replay 5 incProgress serf
 
     res & \case
@@ -151,10 +151,10 @@ collectFX serf log = do
   runResourceT
     $  runConduit
     $  Log.streamEvents log (lastEv + 1)
-    .| CC.mapM (parseLogEvent >=> fromNounExn . snd)
+    .| CC.mapM (parseLogEvent . toBS >=> fromNounExn . snd)
     .| swim serf
     .| persistFX log
 
 persistFX :: MonadIO m => Log.EventLog -> ConduitT (EventId, FX) Void m ()
 persistFX log = CC.mapM_ $ \(eId, fx) -> do
-  Log.writeEffectsRow log eId $ jamBS $ toNoun fx
+  Log.writeEffectsRow log eId $ fromBS $ jamBS $ toNoun fx

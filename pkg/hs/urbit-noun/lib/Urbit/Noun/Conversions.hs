@@ -16,7 +16,7 @@ module Urbit.Noun.Conversions
   , textAsT
   ) where
 
-import ClassyPrelude hiding (hash, ByteString)
+import ClassyPrelude hiding (encodeUtf8, hash, ByteString, Text)
 
 import Control.Lens         hiding (Each, Index, (<.>))
 import Control.Monad.Fail   (fail)
@@ -83,10 +83,10 @@ newtype Cord = Cord { unCord :: Text }
   deriving newtype (Eq, Ord, Show, IsString, NFData)
 
 instance ToNoun Cord where
-  toNoun = textToUtf8Atom . unCord
+  toNoun = textToUtf8Atom . toT . unCord
 
 instance FromNoun Cord where
-  parseNoun = named "Cord" . fmap Cord . parseNounUtf8Atom
+  parseNoun = named "Cord" . fmap Cord . fmap fromT . parseNounUtf8Atom
 
 
 -- Decimal Cords ---------------------------------------------------------------
@@ -95,7 +95,7 @@ newtype UD = UD { unUD :: Word }
   deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num)
 
 instance ToNoun UD where
-  toNoun = toNoun . Cord . tshow . unUD
+  toNoun = toNoun . Cord . show . unUD
 
 instance FromNoun UD where
   parseNoun n = named "UD" do
@@ -452,7 +452,7 @@ instance FromNoun Tape where
     as :: [Word8] <- parseNoun n
     T.decodeUtf8' (pack as) & \case
         Left err -> fail (show err)
-        Right tx -> pure (Tape tx)
+        Right tx -> pure (Tape $ fromT tx)
 
 
 -- Wain -- List of Lines -------------------------------------------------------
@@ -547,13 +547,13 @@ newtype Knot = MkKnot { unKnot :: Text }
   deriving newtype (Eq, Ord, Show, Semigroup, Monoid, IsString)
 
 instance ToNoun Knot where
-  toNoun = textToUtf8Atom . unKnot
+  toNoun = textToUtf8Atom . toT . unKnot
 
 instance FromNoun Knot where
   parseNoun n = named "Knot" $ do
     txt <- parseNounUtf8Atom n
     if all C.isAscii txt
-      then pure (MkKnot txt)
+      then pure (MkKnot $ fromT txt)
       else fail ("Non-ASCII chars in knot: " <> unpack txt)
 
 -- equivalent of (cury scot %t)
@@ -564,7 +564,7 @@ textAsT = ("~~" <>) . concatMap \case
   '~' -> "~~"
   c   ->
     if (C.isAlphaNum c && not (C.isUpper c)) || (c == '-') then
-      T.singleton c
+      singleton c
     else
       if C.ord c < 0x10 then "~0" else "~"
       <> (pack $ N.showHex (C.ord c) ".")
@@ -580,7 +580,7 @@ newtype Term = MkTerm { unTerm :: Text }
   deriving newtype (Eq, Ord, Show, Semigroup, Monoid, IsString)
 
 instance ToNoun Term where -- XX TODO
-  toNoun = textToUtf8Atom . unTerm
+  toNoun = textToUtf8Atom . toT . unTerm
 
 knotRegex :: Text
 knotRegex = "([a-z][a-z0-9]*(-[a-z0-9]+)*)?"

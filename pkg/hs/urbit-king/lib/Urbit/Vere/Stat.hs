@@ -56,20 +56,20 @@ renderStat Stat{statAmes = AmesStat{..}} =
   sequence
     [ pure "stat:"
     , pure "  ames:"
-    ,     ("    udp ingress:             " <>) <$> tshow <$> readTVarIO asUdp
-    ,     ("    udp queue evict:         " <>) <$> tshow <$> readTVarIO asUqf
-    ,     ("    udp recv fail:           " <>) <$> tshow <$> readTVarIO asUdf
-    ,     ("    udp dropped non-ipv4:    " <>) <$> tshow <$> readTVarIO asUi6
-    ,     ("    driver ingress:          " <>) <$> tshow <$> readTVarIO asRcv
-    ,     ("    enqueued for serf:       " <>) <$> tshow <$> readTVarIO asSup
-    ,     ("    sent to serf:            " <>) <$> tshow <$> readTVarIO asSrf
-    ,     ("    serf queue evict:        " <>) <$> tshow <$> readTVarIO asQuf
-    ,     ("    forwarded:               " <>) <$> tshow <$> readTVarIO asFwd
-    ,     ("    dropped (unroutable):    " <>) <$> tshow <$> readTVarIO asDrt
-    ,     ("    dropped (wrong version): " <>) <$> tshow <$> readTVarIO asDvr
-    ,     ("    dropped (malformed):     " <>) <$> tshow <$> readTVarIO asDml
-    ,     ("    serf swapped:            " <>) <$> tshow <$> readTVarIO asSwp
-    ,     ("    serf bailed:             " <>) <$> tshow <$> readTVarIO asBal
-    ,     ("    serf okay:               " <>) <$> tshow <$> readTVarIO asOky
+    ,     ("    udp ingress:             " <>) <$> show <$> readTVarIO asUdp
+    ,     ("    udp queue evict:         " <>) <$> show <$> readTVarIO asUqf
+    ,     ("    udp recv fail:           " <>) <$> show <$> readTVarIO asUdf
+    ,     ("    udp dropped non-ipv4:    " <>) <$> show <$> readTVarIO asUi6
+    ,     ("    driver ingress:          " <>) <$> show <$> readTVarIO asRcv
+    ,     ("    enqueued for serf:       " <>) <$> show <$> readTVarIO asSup
+    ,     ("    sent to serf:            " <>) <$> show <$> readTVarIO asSrf
+    ,     ("    serf queue evict:        " <>) <$> show <$> readTVarIO asQuf
+    ,     ("    forwarded:               " <>) <$> show <$> readTVarIO asFwd
+    ,     ("    dropped (unroutable):    " <>) <$> show <$> readTVarIO asDrt
+    ,     ("    dropped (wrong version): " <>) <$> show <$> readTVarIO asDvr
+    ,     ("    dropped (malformed):     " <>) <$> show <$> readTVarIO asDml
+    ,     ("    serf swapped:            " <>) <$> show <$> readTVarIO asSwp
+    ,     ("    serf bailed:             " <>) <$> show <$> readTVarIO asBal
+    ,     ("    serf okay:               " <>) <$> show <$> readTVarIO asOky
     ]
 

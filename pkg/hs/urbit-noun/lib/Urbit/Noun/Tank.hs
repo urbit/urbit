@@ -4,7 +4,8 @@
 
 module Urbit.Noun.Tank where
 
-import ClassyPrelude
+import ClassyPrelude hiding (Text, ByteString)
+import Urbit.Noun.ByteString
 import Urbit.Noun.Conversions
 import Urbit.Noun.TH
 import Urbit.Noun.Convert
@@ -72,7 +73,7 @@ wash _cfg t = [ram t]
 -- win = undefined
 
 flat :: Plum -> Tape
-flat = Tape . tshow
+flat = Tape . show
 
 ram :: TankTree -> Tape
 ram = \case

@@ -104,7 +104,7 @@ genBootSeq ship PillPill  {..} lite boot = do
 writeJobs :: EventLog -> Vector Job -> RIO e ()
 writeJobs log !jobs = do
   expect <- atomically (Log.nextEv log)
-  events <- fmap fromList $ traverse fromJob (zip [expect ..] $ toList jobs)
+  events <- fmap (fromList . fmap fromBS) $ traverse fromJob (zip [expect ..] $ toList jobs)
   Log.appendEvents log events
  where
   fromJob (expectedId, job) = do
@@ -264,6 +264,8 @@ pier (serf, log) vSlog startedSig injected = do
   let logId = Log.identity log :: LogIdentity
   let ship  = who logId :: Ship
 
+  putStrLn "wow"
+
   -- TODO Instead of using a TMVar, pull directly from the IO driver
   -- event sources.
   computeQ :: TMVar RunReq      <- newEmptyTMVarIO
@@ -319,7 +321,7 @@ pier (serf, log) vSlog startedSig injected = do
   atomically $ writeTVar vSlog $ \s@(_, tank) -> runRIO env $ do
       atomically $ Term.slog muxed s
       io $ readTVarIO siteSlog >>= ($ s)
-      logOther "serf" (display $ T.strip $ tankToText tank)
+      logOther "serf" (display $ T.strip $ toT $ tankToText tank)
 
   let err = atomically . Term.trace muxed . (<> "\r\n")
   (bootEvents, startDrivers) <- do
@@ -373,8 +375,8 @@ pier (serf, log) vSlog startedSig injected = do
   -- starting events have been dispatched, and the terminal is live, we can now
   -- handle injecting events requested from the command line.
   for_ (zip [1..] injected) $ \(num, ev) -> rio $ do
-    logTrace $ display @Text ("Injecting event " ++ (tshow num) ++ " of " ++
-                              (tshow $ length injected) ++ "...")
+    logTrace $ display @Text ("Injecting event " ++ (show num) ++ " of " ++
+                              (show $ length injected) ++ "...")
     okaySig :: MVar (Either [Goof] ()) <- newEmptyMVar
 
     let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
@@ -388,7 +390,7 @@ pier (serf, log) vSlog startedSig injected = do
 
     takeMVar okaySig >>= \case
       Left goof -> logError $ display @Text ("Goof in injected event: " <>
-                                             tshow goof)
+                                             show goof)
       Right ()  -> pure ()
 
 
@@ -397,6 +399,8 @@ pier (serf, log) vSlog startedSig injected = do
   void $ acquireWorker "Save" $ forever $ do
     threadDelay (snapshotEverySecs * 1_000_000)
     void $ atomically $ tryPutTMVar saveSig ()
+
+  putStrLn "amaze"
 
   putMVar startedSig ()
 
@@ -438,7 +442,7 @@ wyrd = do
                   ("arvo", 240),
                   ("hoon", 140),
                   ("nock", 4)]
-      sen = MkTerm king
+      sen = MkTerm $ fromT king
       v   = Vere sen [Cord "king-haskell", Cord "1.0"] k
 
   pure $ EvBlip $ BlipEvArvo $ ArvoEvWyrd () v
@@ -465,7 +469,7 @@ doVersionNegotiation compute stderr = do
   takeMVar okaySig >>= \case
     Left goof -> do
       rio $ stderr "pier: version negotation failed"
-      logError $ display @Text ("Goof in wyrd event: " <> tshow goof)
+      logError $ display @Text ("Goof in wyrd event: " <> show goof)
       throwIO PierVersionNegotiationFailed
 
     Right fx  -> do
@@ -675,7 +679,7 @@ runPersist log inpQ out = do
         unless (expectedId == eve) $ do
           throwIO (BadEventId expectedId eve)
         pure $ buildLogEvent mug $ toNoun (wen, non)
-    pure (fromList lis)
+    pure (fromBS <$> fromList lis)
 
   getBatchFromQueue :: STM (NonNull [(Fact, FX)])
   getBatchFromQueue = readTQueue inpQ >>= go . singleton

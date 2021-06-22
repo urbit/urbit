@@ -278,7 +278,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
         writeTrace ls p = do
             putStr "\r"
             T.clearLine
-            putStr p
+            putStr $ toT p
             termRefreshLine ls
 
         writeSlog :: LineState -> (Atom, Tank) -> RIO e LineState
@@ -289,7 +289,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
             -- TODO: Ignoring priority for now. Priority changes the color of,
             -- and adds a prefix of '>' to, the output.
             let lines = fmap unTape $ wash (WashCfg 0 width) $ tankTree $ snd slog
-            forM lines $ \line -> putStr (line <> "\r\n")
+            forM lines $ \line -> putStr $ toT (line <> "\r\n")
             termRefreshLine ls
 
         {-
@@ -354,7 +354,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                   Nothing  -> ""
                   Just str -> leftBracket ++ str ++ rightBracket
 
-            putStr (spinner <> pack (ANSI.cursorBackwardCode (length spinner)))
+            putStr $ pack (spinner <> (ANSI.cursorBackwardCode (length spinner)))
 
             let newFrame = (lsSpinFrame + 1) `mod` length spinners
 
@@ -432,8 +432,8 @@ localClient doneSignal = fst <$> mkRAcquire start stop
     termShowStub :: LineState -> Stub -> RIO e LineState
     termShowStub ls (Stub s) = do
       let visualLength = sum $ fmap (length . snd) s
-      let outText = pack $ mconcat $ fmap (uncurry termRenderStubSegment) s
-      putStr outText
+      let outText = mconcat $ fmap (uncurry termRenderStubSegment) s
+      putStr $ pack outText
       pure ls { lsLine = outText, lsCurPos = visualLength }
 
     -- Moves the cursor to the requested position
@@ -456,7 +456,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
     -- Displays and sets the current line
     termShowLine :: LineState -> Text -> RIO e LineState
     termShowLine ls newStr = do
-      putStr newStr
+      putStr $ toT newStr
       pure ls { lsLine = newStr, lsCurPos = (length newStr) }
 
     termShowClear :: LineState -> RIO e LineState
