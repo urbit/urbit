@@ -461,7 +461,7 @@
   |^
   =^  new-sending  nas  apply-sending
   =.  sending  new-sending
-  (update-txs pending)
+  (update-txs pending %pending)
   ::
   ++  apply-sending
     =|  valid=_sending
@@ -472,15 +472,16 @@
     =*  key  p.i.sending
     =*  val  q.i.sending
     =^  new-valid  nas
-      %-  update-txs
-      (turn txs.val |=(=raw-tx:naive [| 0x0 raw-tx]))
+      %+  update-txs
+        (turn txs.val |=(=raw-tx:naive [| 0x0 raw-tx]))
+      %sending
     =.  valid
       %+  ~(put by valid)  key
       val(txs (turn new-valid (cork tail tail)))
     $(sending t.sending)
   ::
   ++  update-txs
-    |=  txs=(list pend-tx)
+    |=  [txs=(list pend-tx) type=?(%pending %sending)]
     =/  valid=_txs  ~
     |-  ^+  [valid nas]
     ?~  txs  [valid nas]
@@ -490,6 +491,14 @@
     =?  finding  =(gud %.n)
       %-  ~(put by finding)
       [(hash-raw-tx raw-tx.tx) %failed]
+    =?  history  =(gud %.n)
+      =/  =roller-tx
+        :+  [type ~]
+          (hash-raw-tx raw-tx.tx)
+        (l2-tx +<.tx.raw-tx.tx)
+      %+  ~(put ju (~(del ju history) address.tx roller-tx))
+        address.tx
+      roller-tx(status [%failed ~])
     $(txs t.txs)
   ::
   ++  try-apply
