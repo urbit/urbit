@@ -6294,18 +6294,19 @@
               r=(pair seminoun (map term tome))         ::  chapters
           ==                                            ::
 +$  garb  (trel (unit term) poly vair)                  ::  core
-+$  grub                                                     ::  ut cache
-  $:  nes=(map (pair type type) ?)                           ::  +nest
-      res=(map (pair type hoon) type)                        ::  +rest
-      mit=(map (pair type hoon) (pair type nock))            ::  +mint
-      mul=(map (qual type type type hoon) (pair type type))  ::  +mull
-      fis=(map (pair type axis) nock)                        ::  +fish
-      cro=(map (pair type type) type)                        ::  +crop
-      fus=(map (pair type type) type)                        ::  +fuse
-      nen=(map (pair type type) ?)                           ::  internal +nest
-      con=(map (pair type type) type)                        ::  internal +crop
-      fun=(map (pair type type) type)                        ::  internal +fuse
-      fin=(map (pair type axis) nock)                        ::  internal +fish
++$  grub                                                    ::  ut cache
+  $:  nes=(map (pair type type) ?)                          ::  +nest
+      res=(map (pair type hoon) type)                       ::  +rest
+      mit=(map (pair type hoon) (pair type nock))           ::  +mint
+      mul=(map (qual type type type hoon) (pair type type)) ::  +mull
+      fis=(map (pair type axis) nock)                       ::  +fish
+      cro=(map (pair type type) type)                       ::  +crop
+      fus=(map (pair type type) type)                       ::  +fuse
+      fon=(map (pair type limb) (pair (unit atom) pony))    ::  +fond
+      nen=(map (pair type type) ?)                          ::  internal +nest
+      con=(map (pair type type) type)                       ::  internal +crop
+      fun=(map (pair type type) type)                       ::  internal +fuse
+      fin=(map (pair type axis) nock)                       ::  internal +fish
   ==                                                    ::
 +$  pony                                                ::  raw match
   $@  ~                                                 ::  void
@@ -10487,7 +10488,7 @@
   ::
   ++  caching-fond
     |=  [way=vial hyp=wing]
-    ^-  [pony _grub]
+    |-  ^-  [pony _grub]
     ?~  hyp
       :_  grub
       [%& ~ %& sut]
@@ -10495,11 +10496,13 @@
     ?-    -.mor
         %|
       ?-    -.p.mor
-          %&  [mor grub]
-          %|  =^  fex  grub
-                (caching-mint(sut p.p.p.mor) %noun [%wing i.hyp ~])
-              :_  grub
-              [%| %| p.fex (comb q.p.p.mor q.fex)]
+          %&
+        [mor grub]
+          %|
+        =^  fex  grub
+          (caching-mint(sut p.p.p.mor) %noun [%wing i.hyp ~])
+        :_  grub
+        [%| %| p.fex (comb q.p.p.mor q.fex)]
       ==
     ::
         %&
@@ -10509,20 +10512,32 @@
           %&  p.lap
           %|  (fork (turn ~(tap in q.lap) head))
         ==
-      =+  :*  axe=`axis`1
-              lon=p.p.mor
-              heg=?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
-          ==
+      =/  heg  ?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
       ?:  ?=(%& -.heg)
         =^  rig  grub  (caching-peek way p.heg)
         :_  grub
-        [%& [`p.heg lon] %& rig]
+        [%& [`p.heg p.p.mor] %& rig]
       =|  gil=(set type)
+      =>  |%  +$  puny  (pair (unit atom) pony)
+          --
+      =;  [=puny =_grub]
+        ^-  [pony _grub]
+        =/  =pony  q.puny
+        =?  pony  ?=([%& *] pony)
+          pony(p.p (weld p.p.pony p.p.mor))
+        [pony grub]
       |^
-      ^-  [pony _grub]
+      =/  cached  (~(get by fon.grub) [sut heg])
+      ?^  cached
+        [u.cached grub]
+      =;  [=puny =_grub]
+        :_  grub(fon (~(put by fon.grub) [sut heg] puny))
+        puny
+      ^-  [puny _grub]
       ?-    sut
           %void
-        [~ grub]
+        :_  grub
+        [~ ~]
       ::
           %noun
         [stop grub]
@@ -10532,11 +10547,30 @@
       ::
           [%cell *]
         ?~  q.heg  [here grub]
-        =^  taf  grub  $(axe (peg axe 2), sut p.sut)
-        ?~  taf  [~ grub]
-        ?:  |(?=(%& -.taf) ?=(%| -.p.taf))
-          [taf grub]
-        $(axe (peg axe 3), p.heg p.p.taf, sut q.sut)
+        =^  tuf  grub  $(sut p.sut)
+        =/  taf  q.tuf
+        ?~  taf
+          :_  grub
+          [p.tuf ~]
+        ?:  ?=([%| %| *] taf)
+          :_  grub
+          =.  q.p.p.taf  (scul 2 q.p.p.taf)
+          [p.tuf taf]
+        ?:  ?=(%& -.taf)
+          :_  grub
+          :-  p.tuf
+          (gnat 2 p.tuf p.taf)
+        =^  ruf  grub  $(p.heg p.p.taf, sut q.sut)
+        =/  raf  q.ruf
+        :_  grub
+        :-  p.ruf
+        ?~  raf  ~
+        ?:  ?=([%| %| *] raf)
+          =.  q.p.p.raf  (scul 3 q.p.p.raf)
+          raf
+        ?:  ?=(%& -.raf)
+          (gnat 3 p.ruf p.raf)
+        raf
       ::
           [%core *]
         ?~  q.heg  [here grub]
@@ -10546,8 +10580,9 @@
           ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
         ?^  zem
           :_  grub
-          :+  %&
-            [`axe lon]
+          :^    ~
+              %&
+            [`1 ~]
           =/  zut
             ^-  foot
             ?-  q.p.q.sut
@@ -10556,10 +10591,30 @@
             ==
           [%| (peg 2 p.u.zem) [[sut zut] ~ ~]]
         =/  pec  (peel way r.p.q.sut)
-        ?.  sam.pec  [lose grub]
-        ?:  con.pec  $(sut p.sut, axe (peg axe 3))
+        ?.  sam.pec
+          [lose grub]
+        ?:  con.pec
+          =^  tuf  grub  $(sut p.sut)
+          =/  taf  q.tuf
+          :_  grub
+          :-  p.tuf
+          ?:  ?=([%| %| *] taf)
+            =.  q.p.p.taf  (scul 3 q.p.p.taf)
+            taf
+          ?:  ?=(%& -.taf)
+            (gnat 3 p.tuf p.taf)
+          taf
         =^  lef  grub  (caching-peek(sut p.sut) way 2)
-        $(sut lef, axe (peg axe 6))
+        =^  ruf  grub  $(sut lef)
+        =/  raf  q.ruf
+        :_  grub
+        :-  p.ruf
+        ?:  ?=([%| %| *] raf)
+          =.  q.p.p.raf  (scul 6 q.p.p.raf)
+          raf
+        ?:  ?=(%& -.raf)
+          (gnat 6 p.ruf p.raf)
+        raf
       ::
           [%hint *]
         =^  val  grub  caching-repo
@@ -10572,30 +10627,42 @@
         =*  zot  p.sut
         ?@  zot
           :_  grub
-          ?:(=(u.q.heg zot) here(sut q.sut) lose)
+          ?:  =(u.q.heg zot)
+            here(sut q.sut)
+          lose
         |^
-        ^-  [pony _grub]
+        ^-  [puny _grub]
         =/  tyr  (~(get by p.zot) u.q.heg)
         ?~  tyr
           next
         ?~  u.tyr
-          ^$(sut q.sut, lon [~ lon], p.heg +(p.heg))
+          =^  val  grub  ^$(sut q.sut, p.heg +(p.heg))
+          :_  grub
+          =?  q.val  ?=([%& *] q.val)
+            q.val(p.p (snoc p.p.q.val ~))
+          val
         ?.  =(0 p.heg)
           next(p.heg (dec p.heg))
         =^  tor  grub  (caching-fund way u.u.tyr)
         :_  grub
         ?-  -.tor
-          %&  [%& (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
-          %|  [%| %| p.p.tor (comb [%0 axe] q.p.tor)]
+          %&  :-  `(lent p.p.tor)
+              [%& (weld p.p.tor `vein`[~ `1 ~]) q.p.tor]
+          %|  `[%| %| p.p.tor (comb [%0 1] q.p.tor)]
         ==
         ++  next
-          |-  ^-  [pony _grub]
+          |-  ^-  [puny _grub]
           ?~  q.zot
-            ^^$(sut q.sut, lon [~ lon])
+            =^  val  grub  ^^$(sut q.sut)
+            :_  grub
+            =?  q.val  ?=([%& *] q.val)
+              q.val(p.p (snoc p.p.q.val ~))
+            val
           =^  tiv  grub  (caching-mint(sut q.sut) %noun i.q.zot)
-          =^  fid  grub  ^^$(sut p.tiv, lon ~, axe 1, gil ~)
-          ?~  fid  [~ grub]
-          ?:  ?=({%| %& *} fid)
+          =^  fud  grub  ^^$(sut p.tiv, gil ~)
+          =/  fid  q.fud
+          ?~  fid  [`~ grub]
+          ?:  ?=([%| %& *] fid)
             $(q.zot t.q.zot, p.heg p.p.fid)
           =^  vat=(pair type nock)  grub
             ?-    -.fid
@@ -10603,67 +10670,107 @@
               %|  (caching-fine %| p.p.fid)
             ==
           :_  grub
-          [%| %| p.vat (comb (comb [%0 axe] q.tiv) q.vat)]
+          `[%| %| p.vat (comb q.tiv q.vat)]
         --
         ::
           [%fork *]
         =/  yed  ~(tap in p.sut)
-        =|  wiz=(list pony)
+        =|  wiz=(list puny)
         =^  woz  grub
-          |-  ^-  [(list pony) _grub]
+          |-  ^-  [(list puny) _grub]
           ?~  yed
             :_  grub
             wiz
           =^  val  grub  ^$(sut i.yed)
           $(yed t.yed, wiz [val wiz])
         :_  grub
-        ?~  woz  ~
-        |-  ^-  pony
+        ?~  woz  `~
+        |-  ^-  puny
         ?~  t.woz  i.woz
         (twin i.woz $(woz t.woz))
       ::
           [%hold *]
         ?:  (~(has in gil) sut)
-          [~ grub]
+          [`~ grub]
         =^  rig  grub  caching-repo
         $(gil (~(put in gil) sut), sut rig)
       ==
       ::
       ++  here
         ?:  =(0 p.heg)
-          [%& [~ `axe lon] %& sut]
-        [%| %& (dec p.heg)]
+          `[%& [~ `1 ~] %& sut]
+        `[%| %& (dec p.heg)]
       ::
-      ++  lose  [%| %& p.heg]
+      ++  lose
+        `[%| %& p.heg]
       ::
       ++  stop  ?~(q.heg here lose)
       ::
       ++  twin
-        |=  [hax=pony yor=pony]
-        ^-  pony
+        |=  [hox=puny yar=puny]
+        ^-  puny
         ~_  leaf+"find-fork"
-        ?:  =(hax yor)  hax
-        ?~  hax  yor
-        ?~  yor  hax
+        =/  hax  q.hox
+        =/  yor  q.yar
+        ?:  =(hox yar)  hox
+        ?~  hax  yar
+        ?~  yor  hox
         ?:  ?=(%| -.hax)
           ?>  ?&  ?=(%| -.yor)
                   ?=(%| -.p.hax)
                   ?=(%| -.p.yor)
                   =(q.p.p.hax q.p.p.yor)
               ==
-          :+  %|
-            %|
-          [(fork p.p.p.hax p.p.p.yor ~) q.p.p.hax]
+          [~ %| %| (fork p.p.p.hax p.p.p.yor ~) q.p.p.hax]
         ?>  ?=(%& -.yor)
-        ?>  =(p.p.hax p.p.yor)
+        ?>  &(=(p.p.hax p.p.yor) =(p.hox p.yar))
         ?:  &(?=(%& -.q.p.hax) ?=(%& -.q.p.yor))
-          :+  %&  p.p.hax
+          :^  p.hox  %&  p.p.hax
           [%& (fork p.q.p.hax p.q.p.yor ~)]
         ?>  &(?=(%| -.q.p.hax) ?=(%| -.q.p.yor))
         ?>  =(p.q.p.hax p.q.p.yor)
         =/  wal  (~(uni in q.q.p.hax) q.q.p.yor)
-        :+  %&  p.p.hax
+        :^  p.hox  %&  p.p.hax
         [%| p.q.p.hax wal]
+      ::
+      ++  scul
+        |=  [axe=axis noc=nock]
+        ^-  nock
+        ?-  noc
+            [%0 *]
+          [%0 (peg axe p.noc)]
+            [%2 [%0 *] [%0 *]]
+          [%2 [%0 (peg axe p.p.noc)] [%0 (peg axe p.q.noc)]]
+            [%7 *]
+          (comb (comb [%0 axe] p.noc) q.noc)
+            [%8 *]
+          (comb (comb [%0 axe] [p.noc [%0 %1]]) q.noc)
+            *
+          (comb [%0 axe] noc)
+        ==
+      ::
+      ++  gnat
+        |=  [=axis skip=(unit @) =palo]
+        ^-  pony
+        =/  vit=vein  p.palo
+        =?  p.palo  ?=(^ skip)
+          (slag u.skip p.palo)
+        =.  p.palo
+          ?~  p.palo
+            ~
+          ?:  ?=(%| -.q.palo)
+            ?:  ?=(~ i.p.palo)
+              p.palo
+            [`(peg axis u.i.p.palo) t.p.palo]
+          ?>  ?=(~ i.p.palo)
+          ?:  ?=(~ t.p.palo)
+            p.palo
+          ?:  ?=(~ i.t.p.palo)
+            p.palo
+          [~ `(peg axis u.i.t.p.palo) t.t.p.palo]
+        =?  p.palo  ?=(^ skip)
+          (weld (scag u.skip vit) p.palo)
+        [%& palo]
       --
     ==
   ::
@@ -11944,7 +12051,7 @@
         [%brcn *]
       (caching-grow %gold p.gen %dry [%$ 1] q.gen)
     ::
-        [%brvt *]
+        [%brpt *]
       (caching-grow %gold p.gen %wet [%$ 1] q.gen)
     ::
         [%cnts *]
@@ -12455,7 +12562,7 @@
         [%brcn *]
       (caching-grow %gold p.gen %dry [%$ 1] q.gen)
     ::
-        [%brvt *]
+        [%brpt *]
       (caching-grow %gold p.gen %wet [%$ 1] q.gen)
     ::
         [%cnts *]
@@ -13490,7 +13597,7 @@
       :_  grub
       (core sut [p.gen %dry %gold] sut *seminoun q.gen)
     ::
-        [%brvt *]
+        [%brpt *]
       :_  grub
       (core sut [p.gen %wet %gold] sut *seminoun q.gen)
     ::
