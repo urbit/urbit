@@ -62,6 +62,12 @@
   =/  dn-spawn  [[~losrut %spawn] %spawn ~disryt-nolpet (addr %losrut-dn-key-0)]
   =/  dn-xfer  [[~disryt-nolpet %transfer] %transfer-point (addr %losrut-dn-key-0) &]
   =/  losrut-sproxy  [[~losrut %spawn] %set-spawn-proxy (addr %losrut-skey-1)]
+  =/  losrut-mproxy  [[~losrut %own] %set-management-proxy (addr %losrut-mkey-0)]
+  =/  dm-mkey  [[~dovmul-mogryt %own] %set-management-proxy (addr %holrut-dm-mkey-0)]
+  =/  pd-mkey  [[~pidted-dacnum %own] %set-management-proxy (addr %holrut-pd-mkey-0)]
+  =/  pp-mkey  [[~pinpun-pilsun %own] %set-management-proxy (addr %losrut-pp-mkey-0)]
+  =/  hn-mkey  [[~habtyc-nibpyx %own] %set-management-proxy (addr %losrut-hn-mkey-0)]
+  =/  dn-mkey  [[~disryt-nolpet %own] %set-management-proxy (addr %losrut-dn-mkey-0)]
   =^  f1  state  (n state (owner-changed:l1 ~rut (addr %rut-key-0)))
   =^  f2  state  (n state (owner-changed:l1 ~rigrut (addr %rigrut-key-0)))
   =^  f3  state  (n state (owner-changed:l1 ~holrut (addr %holrut-key-0)))
@@ -69,11 +75,11 @@
   =^  f5  state  (n state (owner-changed:l1 ~larsyx-mapmeg (addr %rigrut-lm-key-0)))
   =^  f6  state  (n state (owner-changed:l1 ~rabsum-ravtyd (addr %holrut-rr-key-0)))
   =^  f7  state  (n state (owner-changed:l1 ~radres-tinnyl (addr %losrut-rt-key-0)))
-  =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut (addr %holrut-skey)))
+  =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut (addr %holrut-skey-0)))
   =^  f8  state  (n state (changed-spawn-proxy:l1 ~losrut (addr %losrut-skey-0)))
   =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut deposit-address:naive))
   =^  f9  state  (n state %bat q:(gen-tx 0 dm-spawn %holrut-key-0))
-  =^  f10  state  (n state %bat q:(gen-tx 0 pd-spawn %holrut-skey))
+  =^  f10  state  (n state %bat q:(gen-tx 0 pd-spawn %holrut-skey-0))
   =^  f11  state  (n state (owner-changed:l1 ~losrut deposit-address:naive))
   =^  f12  state  (n state %bat q:(gen-tx 0 pp-spawn %losrut-key-0))
   =^  f13  state  (n state %bat q:(gen-tx 0 hn-spawn %losrut-skey-0))
@@ -84,17 +90,33 @@
   =^  f18  state  (n state %bat q:(gen-tx 0 pp-xfer %losrut-pp-key-0))
   =^  f19  state  (n state %bat q:(gen-tx 0 hn-xfer %losrut-hn-key-0))
   =^  f20  state  (n state %bat q:(gen-tx 0 dn-xfer %losrut-dn-key-0))
+  :: the following sets proxies for testing with various proxies
+  =^  p1   state  (n state (changed-management-proxy:l1 ~rut (addr %rut-mkey-0)))
+  =^  p2   state  (n state (changed-management-proxy:l1 ~rigrut (addr %rigrut-mkey-0)))
+  =^  p3   state  (n state (changed-management-proxy:l1 ~larsyx-mapmeg (addr %rigrut-lm-mkey-0)))
+  =^  p4   state  (n state (changed-management-proxy:l1 ~holrut (addr %holrut-mkey-0)))
+  =^  p5   state  (n state (changed-management-proxy:l1 ~rabsum-ravtyd (addr %holrut-rr-mkey-0)))
+  =^  p6   state  (n state (changed-management-proxy:l1 ~radres-tinnyl (addr %losrut-rt-mkey-0)))
+  =^  p7   state  (n state %bat q:(gen-tx 0 dm-mkey %holrut-dm-key-0))
+  =^  p8   state  (n state %bat q:(gen-tx 0 pd-mkey %holrut-pd-key-0))
+  =^  p9   state  (n state %bat q:(gen-tx 0 pp-mkey %losrut-pp-key-0))
+  =^  p10  state  (n state %bat q:(gen-tx 0 hn-mkey %losrut-hn-key-0))
+  =^  p11  state  (n state %bat q:(gen-tx 0 dn-mkey %losrut-dn-key-0))
+  =^  p12  state  (n state %bat q:(gen-tx 1 losrut-mproxy %losrut-key-0))
   :: end of ~rut points, beginning of ~red. TODO this should be removed
   :: once i move %escape to +test-red. or maybe %escape should stay here
   :: because its the simplest?
-  =^  f21  state  (n state (owner-changed:l1 ~red (addr %red-key-0)))
-  =^  f22  state  (n state (owner-changed:l1 ~rigred (addr %rigred-key-0)))
-  =^  f23  state  (n state (owner-changed:l1 ~losred (addr %losred-key-0)))
-  =^  f24  state  (n state (owner-changed:l1 ~losred deposit-address:naive))
+  =^  g1  state  (n state (owner-changed:l1 ~red (addr %red-key-0)))
+  =^  g2  state  (n state (owner-changed:l1 ~rigred (addr %rigred-key-0)))
+  =^  g3  state  (n state (owner-changed:l1 ~losred (addr %losred-key-0)))
+  =^  g4  state  (n state (owner-changed:l1 ~losred deposit-address:naive))
   :-  ;:  welp
       f1  f2  f3  f4  f5  f6  f7  f8  f9  f10
       f11  f12  f13  f14  f15  f16  f17  f18
-      f19  f20  f21  f22  f23  f24
+      f19  f20
+      p1  p2  p3  p4  p5  p6  p7  p8  p9  p10
+      p11  p12
+      g1  g2  g3  g4
       ==
   state
 ::
@@ -586,7 +608,7 @@
     ^-  (jar @p event)
     =/  filter  ;:  cork
                     (cury filter-owner %.y)
-                    (cury filter-proxy %own)
+                    (cury filter-proxy %manage)
                     (cury filter-nonce %.y)
                     ::(cury filter-rank %star)
                     ::(cury filter-dominion %l2)
@@ -596,9 +618,9 @@
                         %transfer-point
                         %configure-keys
                         %set-management-proxy
-                        :: set-spawn-proxy  :: planets can set spawn proxy atm
+                        ::%set-spawn-proxy  :: planets can set spawn proxy atm
                         %set-transfer-proxy
-                        %escape
+                        ::%escape
                         ~
                     ==
                 ==
@@ -788,12 +810,13 @@
                           [~radres-tinnyl %losrut-rt-key-0]
                           ~
                       ==
+::
 ++  default-manage-keys  %-  my:nl
                          :*  [~rut %rut-mkey-0]
                              [~holrut %holrut-mkey-0]
                              [~rigrut %rigrut-mkey-0]
                              [~losrut %losrut-mkey-0]
-                             [~larsyx-mapmep %rigrut-lm-mkey-0]
+                             [~larsyx-mapmeg %rigrut-lm-mkey-0]
                              [~rabsum-ravtyd %holrut-rr-mkey-0]
                              [~disryt-nolpet %losrut-dn-mkey-0]
                              [~pinpun-pilsun %losrut-pp-mkey-0]
@@ -853,7 +876,6 @@
   %+  category  (weld "correct nonce? " (scow %f nonce.cur-event))
   ::
   =/  cur-point  (~(got by points.initial-state) cur-ship)
-  ::=/  cur-nonce  nonce.owner.own:(~(got by points.initial-state) cur-ship)
   =*  own  own.cur-point
   =/  cur-nonce
     ?-  proxy.cur-event
@@ -892,25 +914,6 @@
       %spawn                 (new-point which-spawn)
       %escape                (set-escape which-escape-l2)
     ==
-    ::
-    ::  ++  inc-nonce  ^-  ^state:naive
-    ::    =*  own  own.cur-point
-    ::    =^  nonce  cur-point
-    ::      ?-    proxy.cur-event
-    ::          %own
-    ::        :-  nonce.owner.own
-    ::        cur-point(nonce.owner.own +(nonce.owner.own))
-    ::  ++  inc-nonce  ^-  ^state:naive
-    ::    =/  up-nonce
-    ::    %=  cur-point
-    ::      ?+  proxy.cur-event  !!
-    ::        %own         nonce.owner.own
-    ::        %spawn       nonce.spawn-proxy.own
-    ::        %management  nonce.management-proxy.own
-    ::        %vote        nonce.voting-proxy.own
-    ::        %transfer    nonce.transfer-proxy.own
-    ::      ==  new-nonce
-    ::    (alter-state up-nonce)
     ::
     ++  set-keys  ^-  ^state:naive
       =/  new-keys
@@ -969,18 +972,10 @@
         address.transfer-proxy.own  (addr %spawn-test)
         sponsor.net  [has=%.y who=cur-ship]
       ==
-      ::=/  new-spawn=^state:naive
       =/  expect-state  (alter-state cur-point)  :: this updates the nonce of the spawner
       %=  expect-state
         points  (~(put by points.expect-state) ship spawned)
       ==
-      ::  =/  new-point-nonce
-      ::  %=  cur-point
-      ::    nonce.owner.own  new-nonce
-      ::  ==
-      ::  %=  new-spawn
-      ::    points  (~(put by points.new-spawn) cur-ship new-point-nonce)
-      ::  ==
     ::
     ++  alter-state
       :: this updates the expect-state with the new point, and takes
@@ -1016,7 +1011,10 @@
             proxy.cur-event
         def-args
       ?:  owner.cur-event
-        (~(got by default-own-keys) cur-ship)
+        ?+  proxy.cur-event  %wrong-key
+          %own     (~(got by default-own-keys) cur-ship)
+          %manage  (~(got by default-manage-keys) cur-ship)
+        ==
       %wrong-key
     state
     ::
