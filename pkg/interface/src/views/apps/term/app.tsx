@@ -67,7 +67,7 @@ const termConfig: ITerminalOptions = {
   macOptionClickForcesSelection: true,
 }
 
-const csi = (cmd: string, ...args: Array<number>) => {
+const csi = (cmd: string, ...args: number[]) => {
   return '\x1b[' + args.join(';') + cmd;
 }
 
@@ -92,7 +92,7 @@ const stye = (s: Stye) => {
   //  text decorations
   //
   if (s.deco.length > 0) {
-    out += s.deco.reduce((decs: Array<number>, deco: Deco) => {
+    out += s.deco.reduce((decs: number[], deco: Deco) => {
       switch (deco) {
         case null: decs.push(0); return decs;
         case 'br': decs.push(1); return decs;
@@ -258,7 +258,7 @@ export default function TermApp(props: TermAppProps) {
 
   const onInput = useCallback((ses: string, e: string) => {
     const term = useTermState.getState().sessions[ses].term;
-    let belts: Array<Belt> = [];
+    let belts: Belt[] = [];
     let strap = '';
 
     while (e.length > 0) {

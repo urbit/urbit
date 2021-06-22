@@ -10,22 +10,22 @@ export type Tint =
 export type Deco = null | 'br' | 'un' | 'bl';
 
 export type Stye = {
-  deco: Array<Deco>,
+  deco: Deco[],
   back: Tint,
   fore: Tint
 };
 
 export type Stub = {
   stye: Stye,
-  text: Array<string>
+  text: string[]
 }
 
 export type Blit =
   | { bel: null }                                       //  make a noise
   | { clr: null }                                       //  clear the screen
   | { hop: number | { r: number, c: number } }          //  set cursor col/pos
-  | { klr: Array<Stub> }                                //  put styled
-  | { put: Array<string> }                              //  put text at cursor
+  | { klr: Stub[] }                                     //  put styled
+  | { put: string[] }                                   //  put text at cursor
   | { nel: null }                                       //  newline
   | { sag: { path: string, file: string } }             //  save to jamfile
   | { sav: { path: string, file: string } }             //  save to file
