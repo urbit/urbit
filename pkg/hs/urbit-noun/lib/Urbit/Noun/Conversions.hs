@@ -43,7 +43,6 @@ import Urbit.Noun.Jam   (jam)
 import Urbit.Ob         (patp)
 
 import qualified Data.Char                as C
-import qualified Data.Text                as T
 import qualified Data.Text.Encoding       as T
 import qualified Numeric                  as N
 

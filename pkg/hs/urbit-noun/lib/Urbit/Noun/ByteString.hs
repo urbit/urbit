@@ -19,10 +19,10 @@ fromBS :: CP.ByteString -> ByteString
 fromBS = P.fromList . unpack
 
 toT :: Text -> CP.Text
-toT = undefined
+toT = pack
 
 fromT :: CP.Text -> Text
-fromT = undefined
+fromT = unpack
 
 w2c :: Word8 -> Char
 w2c = unsafeChr . fromIntegral
