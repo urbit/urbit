@@ -741,13 +741,13 @@
       ?^  ver.fs
         ::  static source, don't need to track
         ~
-      =/  bec=beak  (realize-fuse-source fs)
+      =/  bec=beak  (realize-fuse-source fs &)
       ?>  =(who.fs p.bec)
       ?>  =(des.fs q.bec)
       =/  hax=@ud  (mug [kf (~(got by hxs) syd)])
       =/  wir=wire
           /kiln/fuse-request/[syd]/(scot %p p.bec)/[q.bec]/(scot %ud hax)
-      =/  rav=rave  [%next %w r.bec /]
+      =/  rav=rave  [%sing %w r.bec /]
       =/  rif=riff  [q.bec `rav]
       `[%pass wir %arvo %c [%warp who.fs rif]]
     ::  No need to keep state if all the sources are static
@@ -757,12 +757,12 @@
   ::
   ++  send-fuse
     ^+  ..abet
-    =/  bas=beak  (realize-fuse-source bas.kf)
+    =/  bas=beak  (realize-fuse-source bas.kf |)
     =/  con=(list [beak germ])
       %+  turn
         con.kf
       |=  [fs=fuse-source g=germ]
-      [(realize-fuse-source fs) g]
+      [(realize-fuse-source fs |) g]
     %-  blab
     [%pass /kiln/fuse/[syd] %arvo %c [%fuse syd bas con]]~
   ::
@@ -796,22 +796,25 @@
   ::  fully realized beak.
   ::
   ++  realize-fuse-source
-    |=  fs=fuse-source
+    |=  [fs=fuse-source incr=flag]
     ^-  beak
     :+  who.fs
       des.fs
     ?@  ver.fs
-      (realize-case [who.fs des.fs])
+      (realize-case [who.fs des.fs incr])
     `case`ver.fs
   ::
   ++  realize-case
-    |=  [who=ship des=desk]
+    |=  [who=ship des=desk incr=flag]
     ^-  case
     =/  let=(unit @ud)  (~(get by mox) [who des])
     ^-  case
     ?~  let
       da+now
-    ud+u.let
+    :-  %ud
+    ?:  incr
+      +(u.let)
+    u.let
   --
 ::
 ++  auto
