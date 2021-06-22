@@ -761,6 +761,7 @@
                        ~holrut
                        ~rigrut
                        ~losrut
+                       ~larsyx-mapmeg
                        ~rabsum-ravtyd
                        ~disryt-nolpet
                        ~pinpun-pilsun
@@ -771,21 +772,37 @@
                        ~
                    ==
 ::
-:: initial ownership keys for each point under ~rut
+:: initial keys for each point under ~rut
 ++  default-own-keys  %-  my:nl
                       :*  [~rut %rut-key-0]
                           [~holrut %holrut-key-0]
                           [~rigrut %rigrut-key-0]
                           [~losrut %losrut-key-0]
+                          [~larsyx-mapmeg %rigrut-lm-key-0]
                           [~rabsum-ravtyd %holrut-rr-key-0]
                           [~disryt-nolpet %losrut-dn-key-0]
                           [~pinpun-pilsun %losrut-pp-key-0]
                           [~dovmul-mogryt %holrut-dm-key-0]
                           [~habtyc-nibpyx %losrut-hn-key-0]
-                          [~pidreg-dacnum %holrut-pd-key-0]
+                          [~pidted-dacnum %holrut-pd-key-0]
                           [~radres-tinnyl %losrut-rt-key-0]
                           ~
                       ==
+++  default-manage-keys  %-  my:nl
+                         :*  [~rut %rut-mkey-0]
+                             [~holrut %holrut-mkey-0]
+                             [~rigrut %rigrut-mkey-0]
+                             [~losrut %losrut-mkey-0]
+                             [~larsyx-mapmep %rigrut-lm-mkey-0]
+                             [~rabsum-ravtyd %holrut-rr-mkey-0]
+                             [~disryt-nolpet %losrut-dn-mkey-0]
+                             [~pinpun-pilsun %losrut-pp-mkey-0]
+                             [~dovmul-mogryt %holrut-dm-mkey-0]
+                             [~habtyc-nibpyx %losrut-hn-mkey-0]
+                             [~pidted-dacnum %holrut-pd-mkey-0]
+                             [~radres-tinnyl %losrut-rt-mkey-0]
+                             ~
+                         ==
 ::
 --
 ::
