@@ -284,7 +284,7 @@ const readInput = (term: Terminal, e: string): Belt[] => {
 export default function TermApp(props: TermAppProps) {
   const { api } = props;
 
-  const container = useRef<HTMLElement>(null);
+  const container = useRef<HTMLDivElement>(null);
   //TODO  allow switching of selected
   const { sessions, selected, slogstream, set } = useTermState();
 
@@ -429,7 +429,7 @@ export default function TermApp(props: TermAppProps) {
       //TODO  unload term from container
       //      but term.dispose is too powerful? maybe just empty the container?
     }
-  }, [set, session, container.current]);
+  }, [set, session, container]);
 
   return (
     <>
@@ -450,8 +450,7 @@ export default function TermApp(props: TermAppProps) {
             borderRadius={['0','2']}
             border={['0','1']}
             p='1'
-            //@ts-ignore  //NOTE  fix in indigo Soon™
-            ref={container}  //TODO  might somehow be undefined?
+            ref={container}
           >
         </Col>
       </Box>
