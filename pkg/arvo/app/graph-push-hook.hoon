@@ -131,10 +131,9 @@
     =^  allowed  cards  (is-allowed-add:hc rid nodes.q.update)
     ?.  allowed
       [cards ~]
-    =/  mark-cached  (~(has by graph-to-mark) rid)
     =/  mark
-      ?:  mark-cached
-        (~(got by graph-to-mark) rid)
+      %+  fall
+        (~(get by graph-to-mark) rid)
       (get-mark:gra rid)
     ?~  mark
       [cards `vas]
@@ -143,15 +142,12 @@
     |%
     ++  $
       ^-  (quip card (unit vase))
-      =/  transform-cached  (~(has by transform-marks) u.mark)
       =/  transform=cached-transform
-        ?:  transform-cached
-          (~(got by transform-marks) u.mark)
+        %+  fall
+          (~(get by transform-marks) u.mark)
         =/  =tube:clay
           .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
-        !<  cached-transform
-        %.  !>(*indexed-post:store)
-        tube
+        !<(cached-transform (tube !>(*indexed-post:store)))
       =/  [* result=(list [index:store node:store])]
         %+  roll
           (flatten-node-map ~(tap by nodes.q.update))
@@ -164,13 +160,15 @@
           update
       %+  weld  cards
       %-  zing
-      :~  ?:  mark-cached   ~
+      :~  ?:  (~(has by graph-to-mark) rid)
+            ~
           :_  ~
           %+  poke-self:pass:io  %graph-cache-hook
           !>  ^-  cache-action
           [%graph-to-mark rid mark]
         ::
-          ?:  transform-cached   ~
+          ?:  (~(has by transform-marks) u.mark)
+            ~
           :_  ~
           %+  poke-self:pass:io  %graph-cache-hook
           !>  ^-  cache-action
@@ -316,28 +314,27 @@
   |=  [=resource:res perm=@t vip=vip-metadata:metadata =indexed-post:store]
   ^-  [permissions:store (list card)]
   |^
-  =/  mark-cached  (~(has by graph-to-mark.cache) resource)
   =/  mark
-    ?:  mark-cached
-      (~(got by graph-to-mark.cache) resource)
+    %+  fall
+      (~(get by graph-to-mark.cache) resource)
     (get-mark:gra resource)
   ?~  mark
     [[%no %no %no] ~]
   =/  key  [u.mark (perm-mark-name perm)]
-  =/  perms-cached  (~(has by perm-marks.cache) key)
   =/  convert
-    ?:  perms-cached
-      (~(got by perm-marks.cache) key)
+    %+  fall
+      (~(get by perm-marks.cache) key)
     .^(cached-permission (scry %cf %home /[u.mark]/(perm-mark-name perm)))
   :-  ((convert indexed-post) vip)
   %-  zing
-  :~  ?:  mark-cached   ~
+  :~  ?:  (~(has by graph-to-mark.cache) resource)
+        ~
       :_  ~
       %+  poke-self:pass:io  %graph-cache-hook
       !>  ^-  cache-action
       [%graph-to-mark resource mark]
     ::
-      ?:  perms-cached  ~
+      ?:  (~(has by perm-marks.cache) key)  ~
       :_  ~
       %+  poke-self:pass:io  %graph-cache-hook
       !>  ^-  cache-action

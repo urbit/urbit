@@ -1,3 +1,4 @@
 bin/* filter=lfs diff=lfs merge=lfs -text
 bin/*/* filter=lfs diff=lfs merge=lfs -text
 pkg/arvo/**/*.css binary
+**/package-lock.json binary merge=theirs

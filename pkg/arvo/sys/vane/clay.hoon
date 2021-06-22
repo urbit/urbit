@@ -3661,7 +3661,7 @@
           =/  lower=@ud  1
           |-
           ::  a should be excluded, so wait until we're past it
-          ?:  =(lower +(a))
+          ?:  (gte lower +(a))
             acc
           =/  res=(set tako)  (reachable-takos (~(got by hit.dom) lower))
           $(acc (~(uni in acc) res), lower +(lower))
@@ -3669,7 +3669,7 @@
           =|  acc=(set tako)
           =/  upper=@ud  b
           |-
-          ?:  =(upper a)
+          ?:  (lte upper a)
             acc
           =/  res=(set tako)  (reachable-takos (~(got by hit.dom) upper))
           $(acc (~(uni in acc) res), upper (dec upper))

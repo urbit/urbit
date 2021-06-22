@@ -245,7 +245,7 @@ const renderers = {
     return (
       <Text
         mono
-        fontWeight='inherit'
+        fontWeight="inherit"
         p={1}
         backgroundColor="washedGray"
         fontSize={0}
@@ -285,7 +285,11 @@ const renderers = {
   paragraph: ({ children }) => {
     return (
       <Box display="block">
-        <Text fontSize={1} lineHeight="tall" style={{ 'overflowWrap': 'break-word' }}>
+        <Text
+          fontSize={1}
+          lineHeight="tall"
+          style={{ overflowWrap: 'break-word' }}
+        >
           {children}
         </Text>
       </Box>
@@ -310,7 +314,7 @@ const renderers = {
         className="clamp-message"
         display="block"
         borderRadius={1}
-        fontWeight='inherit'
+        fontWeight="inherit"
         mono
         fontSize={0}
         backgroundColor="washedGray"
@@ -340,23 +344,15 @@ const renderers = {
   list: ({ depth, ordered, children }) => {
     return ordered ? <Ol>{children}</Ol> : <Ul>{children}</Ul>;
   },
-  'graph-mention': ({ ship }) => <Mention api={{} as any} ship={ship} />,
+  'graph-mention': ({ api, ship }) => <Mention api={api} ship={ship} />,
   image: ({ url, tall }) => (
     <Box mt="1" mb="2" flexShrink={0}>
-      <RemoteContent
-        key={url}
-        url={url}
-        tall={tall}
-      />
+      <RemoteContent key={url} url={url} tall={tall} />
     </Box>
   ),
   'graph-url': ({ url, tall }) => (
     <Box mt={1} mb={2} flexShrink={0}>
-      <RemoteContent
-        key={url}
-        url={url}
-        tall={tall}
-      />
+      <RemoteContent key={url} url={url} tall={tall} />
     </Box>
   ),
   'graph-reference': ({ api, reference, transcluded }) => {
@@ -437,16 +433,8 @@ export type GraphContentProps = PropFunc<typeof Box> & {
   showOurContact: boolean;
 };
 
-export const GraphContent = React.memo((
-  props: GraphContentProps
-) => {
-  const {
-    contents,
-    tall = false,
-    transcluded = 0,
-    api,
-    ...rest
-  } = props;
+export const GraphContent = React.memo((props: GraphContentProps) => {
+  const { contents, tall = false, transcluded = 0, api, ...rest } = props;
   const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
   return (
     <Box {...rest}>
