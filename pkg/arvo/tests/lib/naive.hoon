@@ -767,7 +767,7 @@
                        ~pinpun-pilsun
                        ~dovmul-mogryt
                        ~habtyc-nibpyx
-                       ~pidreg-dacnum
+                       ~pidted-dacnum
                        ~radres-tinnyl
                        ~
                    ==
