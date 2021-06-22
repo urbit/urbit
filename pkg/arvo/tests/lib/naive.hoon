@@ -619,7 +619,8 @@
       ?+  dominion.current-event  !!
         %l1     %-  list-in-jar
                 :-  %-  ly
-                    :+  ~rabsum-ravtyd
+                    :^    ~larsyx-mapmeg
+                        ~rabsum-ravtyd
                       ~radres-tinnyl
                     ~
                 current-event
