@@ -2114,7 +2114,8 @@
       ::
       =.  fiz  *melt
       ((slog [leaf+"clay: fuse failed, missing {<bec>}"]~) ..take-fuse)
-    ?>  (~(has by sto.fiz) bec)
+    ?.  (~(has by sto.fiz) bec)
+      ((slog [leaf+"clay: got strange fuse response {<bec>}"]~) ..take-fuse)
     =.  fiz
         :+  bas.fiz  con.fiz
         (~(put by sto.fiz) bec `!<(dome:clay q.r.u.riot))
