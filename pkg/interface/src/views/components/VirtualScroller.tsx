@@ -101,7 +101,9 @@ interface VirtualScrollerState<K> {
 }
 
 type LogLevel = 'scroll' | 'network' | 'bail' | 'reflow';
-const logLevel = ['network', 'bail', 'scroll', 'reflow'] as LogLevel[];
+const logLevel = process.env.NODE_ENV === 'production'
+  ? []
+  : ['network', 'bail', 'scroll', 'reflow'] as LogLevel[];
 
 const log = (level: LogLevel, message: string) => {
   if(logLevel.includes(level)) {
@@ -485,6 +487,7 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
     if(!this.window || this.savedIndex) {
       return;
     }
+    log('reflow', `saving @ ${this.saveDepth}`);
     if(this.saveDepth !== 0) {
       return;
     }
@@ -493,13 +496,14 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
 
     this.saveDepth++;
     const { visibleItems } = this.state;
+    const { keyToString } = this.props;
 
     let bottomIndex = visibleItems[visibleItems.length - 1];
     const { scrollTop, scrollHeight } = this.window;
     const topSpacing = this.props.origin === 'top' ? scrollTop : scrollHeight - scrollTop;
     const items = this.props.origin === 'top' ? visibleItems : [...visibleItems].reverse();
     items.forEach((index) => {
-      const el = this.childRefs.get(index.toString());
+      const el = this.childRefs.get(keyToString(index));
       if(!el) {
         return;
       }
@@ -517,7 +521,7 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
     }
 
     this.savedIndex = bottomIndex;
-    const ref = this.childRefs.get(bottomIndex.toString())!;
+    const ref = this.childRefs.get(keyToString(bottomIndex))!;
     if(!ref) {
       this.saveDepth--;
       log('bail', 'missing ref');
@@ -550,7 +554,8 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
       renderer,
       style,
       keyEq,
-      keyBunt
+      keyBunt,
+      keyToString
     } = this.props;
 
     const isTop = origin === 'top';
@@ -580,7 +585,7 @@ backgroundColor="lightGray"
           <VirtualContext.Provider value={this.shiftLayout}>
             {children.map(index => (
               <VirtualChild<K>
-                key={index.toString()}
+                key={keyToString(index)}
                 setRef={this.setRef}
                 index={index}
                 scrollWindow={this.window}
