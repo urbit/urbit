@@ -24,6 +24,7 @@ import {
 } from './Profile';
 import airlock from '~/logic/api';
 import { editContact, setPublic } from '@urbit/api';
+import { TextLink } from '~/views/components/Link';
 
 const formSchema = Yup.object({
   nickname: Yup.string(),
@@ -151,17 +152,14 @@ export function EditProfile(props: any): ReactElement {
                   >
                     Save Edits
                   </Button>
-                  <Text
+                  <TextLink
                     py={2}
                     ml={3}
                     fontWeight='500'
-                    cursor='pointer'
-                    onClick={() => {
-                      history.push(`/~profile/${ship}`);
-                    }}
+                    to={`/~profile/${ship}`}
                   >
                     Cancel
-                  </Text>
+                  </TextLink>
                 </Row>
                 <ProfileStatus contact={contact} />
               </ProfileControls>

@@ -1,14 +1,10 @@
-import { BaseImage, Box, Row, Text } from '@tlon/indigo-react';
+import { Box, Row } from '@tlon/indigo-react';
 import moment from 'moment';
 import React, { ReactElement, ReactNode } from 'react';
-import { Sigil } from '~/logic/lib/sigil';
-import { useCopy } from '~/logic/lib/useCopy';
-import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
-import { useContact } from '~/logic/state/contact';
-import { useDark } from '~/logic/state/join';
-import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { PropFunc } from '~/types';
 import ProfileOverlay from './ProfileOverlay';
+import { ShipImage } from './ShipImage';
+import { ShipName } from './ShipName';
 import Timestamp from './Timestamp';
 
 export interface AuthorProps {
@@ -41,34 +37,7 @@ function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
   const size = props.size || 16;
   const sigilPadding = props.sigilPadding || 2;
 
-  const dark = useDark();
-
-  const contact = useContact(ship);
-  const color = contact?.color ? `#${uxToHex(contact?.color)}` : dark ? '#000000' : '#FFFFFF';
-  const showNickname = useShowNickname(contact);
-  const { hideAvatars } = useSettingsState(selectCalmState);
-  const name = showNickname && contact ? contact.nickname : cite(ship);
   const stamp = moment(date);
-  const { copyDisplay, doCopy } = useCopy(`~${ship}`, name);
-
-  const sigil = fullNotIcon ? (
-    <Sigil ship={ship} size={size} color={color} padding={sigilPadding} />
-  ) : (
-    <Sigil ship={ship} size={size} color={color} icon padding={sigilPadding} />
-  );
-
-  const img =
-    contact?.avatar && !hideAvatars ? (
-      <BaseImage
-        referrerPolicy="no-referrer"
-        display='inline-block'
-        src={contact.avatar}
-        style={{ objectFit: 'cover' }}
-        height={size}
-        width={size}
-        borderRadius={1}
-      />
-    ) : sigil;
 
   return (
     <Row {...rest} alignItems='center' width='auto'>
@@ -80,26 +49,17 @@ function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
       >
         {showImage && (
           <ProfileOverlay ship={ship}>
-            {img}
+            <ShipImage
+              icon={!fullNotIcon}
+              ship={`~${ship}`}
+              size={size}
+              sigilSize={size - (2*sigilPadding)}
+            />
           </ProfileOverlay>
         )}
       </Box>
       <Box display='flex' alignItems='baseline'>
-        <Text
-          ml={showImage ? 2 : 0}
-          color='black'
-          fontSize='1'
-          cursor='pointer'
-          lineHeight={lineHeight}
-          fontFamily={showNickname ? 'sans' : 'mono'}
-          fontWeight={showNickname ? '500' : '400'}
-          mr={showNickname ? 0 : '2px'}
-          mt={showNickname ? 0 : '0px'}
-          title={showNickname ? cite(ship) : contact?.nickname}
-          onClick={doCopy}
-        >
-          {copyDisplay}
-        </Text>
+        <ShipName ship={`~${ship}`} ml={showImage ? 2 : 0} lineHeight={lineHeight} />
         { !dontShowTime && time && (
           <Timestamp
             height="fit-content"

@@ -3,8 +3,8 @@ import { Graph } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import moment from 'moment';
 import React, { ReactElement } from 'react';
-import { Link } from 'react-router-dom';
 import { getLatestRevision } from '~/logic/lib/publish';
+import { BoxLink } from '~/views/components/Link';
 import Timestamp from '~/views/components/Timestamp';
 
 function NavigationItem(props: {
@@ -14,14 +14,14 @@ function NavigationItem(props: {
   prev?: boolean;
 }): ReactElement {
   return (
-    <Box
+    <BoxLink
+      to={props.url}
       justifySelf={props.prev ? 'start' : 'end'}
       display="flex"
       flexDirection="column"
       justifyContent="flex-end"
       textAlign={props.prev ? 'left' : 'right'}
     >
-      <Link to={props.url}>
         <Text display='block' color="gray">
           {props.prev ? 'Previous' : 'Next'}
         </Text>
@@ -32,8 +32,7 @@ function NavigationItem(props: {
           fontSize={1}
           justifyContent={props.prev ? 'flex-start' : 'flex-end'}
         />
-      </Link>
-    </Box>
+    </BoxLink>
   );
 }
 

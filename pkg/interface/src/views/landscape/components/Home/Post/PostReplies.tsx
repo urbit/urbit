@@ -9,7 +9,7 @@ import PostItem from './PostItem/PostItem';
 
 const graphSel = (s: GraphState) => s.getNode;
 import { useGroupForAssoc } from '~/logic/state/group';
-import { Switch, useParams, Route, useHistory } from 'react-router';
+import { Switch, useParams, Route } from 'react-router';
 import bigInt, { BigInteger } from 'big-integer';
 import { getNodeFromGraph } from '~/logic/lib/graph';
 
@@ -54,7 +54,6 @@ export default function PostReplies(props: PostRepliesProps) {
     pendingSize,
     index
   } = props;
-  const history = useHistory();
   const getNode = useGraphState(graphSel);
   const group = useGroupForAssoc(association);
   const graphPath = association.resource;
@@ -110,7 +109,6 @@ export default function PostReplies(props: PostRepliesProps) {
             isParent={true}
             parentPost={parentNode?.post}
             vip={vip}
-            history={history}
             group={group}
           />
         </Box>

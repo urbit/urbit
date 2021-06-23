@@ -3,8 +3,7 @@ import { Association, GraphNotificationContents, GraphNotifIndex, Post } from '@
 import { BigInteger } from 'big-integer';
 import { patp } from 'urbit-ob';
 import _ from 'lodash';
-import React, { useCallback } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React from 'react';
 import styled from 'styled-components';
 import { pluralize } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
@@ -15,6 +14,7 @@ import {
 import Author from '~/views/components/Author';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { Header } from './header';
+import { ColLink } from '~/views/components/Link';
 
 const TruncBox = styled(Box)<{ truncate?: number }>`
   -webkit-line-clamp: ${p => p.truncate ?? 'unset'};
@@ -55,40 +55,39 @@ function describeNotification(
 
 function ContentSummary({ icon, name, author, to }) {
   return (
-    <Link to={to}>
-      <Col
-        gapY={1}
-        flexDirection={['column', 'row']}
-        alignItems={['flex-start', 'center']}
+    <ColLink
+      to={to}
+      gapY={1}
+      flexDirection={['column', 'row']}
+      alignItems={['flex-start', 'center']}
+    >
+      <Row
+        alignItems="center"
+        gapX={2}
+        p={1}
+        width="fit-content"
+        borderRadius={2}
+        border={1}
+        borderColor="lightGray"
       >
-        <Row
-          alignItems="center"
-          gapX={2}
-          p={1}
-          width="fit-content"
-          borderRadius={2}
-          border={1}
-          borderColor="lightGray"
-        >
-          <Icon display="block" icon={icon} />
-          <Text verticalAlign="baseline" fontWeight="medium">
-            {name}
-          </Text>
-        </Row>
-        <Row ml={[0, 1]} alignItems="center">
-          <Text lineHeight={1} fontWeight="medium" mr={1}>
-            by
-          </Text>
-          <Author
-            sigilPadding={6}
-            size={24}
-            dontShowTime
-            ship={author}
-            showImage
-          />
-        </Row>
-      </Col>
-    </Link>
+        <Icon display="block" icon={icon} />
+        <Text verticalAlign="baseline" fontWeight="medium">
+          {name}
+        </Text>
+      </Row>
+      <Row ml={[0, 1]} alignItems="center">
+        <Text lineHeight={1} fontWeight="medium" mr={1}>
+          by
+        </Text>
+        <Author
+          sigilPadding={6}
+          size={24}
+          dontShowTime
+          ship={author}
+          showImage
+        />
+      </Row>
+    </ColLink>
   );
 }
 
@@ -227,8 +226,7 @@ export function GraphNotification(props: {
   time: number;
   timebox: BigInteger;
 }) {
-  const { contents, index, read, time, timebox } = props;
-  const history = useHistory();
+  const { contents, index, time } = props;
 
   const authors = _.uniq(_.map(contents, 'author'));
   const singleAuthor = authors.length === 1;
@@ -244,22 +242,15 @@ export function GraphNotification(props: {
   const groupAssociation = useAssocForGroup(association?.group ?? '');
   const groups = useGroupState(state => state.groups);
 
-  const onClick = useCallback(() => {
-    if(dm) {
-      history.push(`/~landscape/messages/dm/~${authors[0]}`);
-      return;
-    }
-    const first = contents[0];
-    history.push(
-      getNodeUrl(
-        index.mark,
-        groups[association?.group]?.hidden,
-        association?.group,
-        association?.resource,
-        first.index
-      )
-    );
-  }, [timebox, index, read, history.push, authors, dm]);
+  const to =
+   dm ?  `/~landscape/messages/dm/~${authors[0]}`
+      : getNodeUrl(
+          index.mark,
+          groups[association?.group]?.hidden,
+          association?.group,
+          association?.resource,
+          contents[0].index
+        );
 
   const authorsInHeader =
     dm ||
@@ -282,7 +273,7 @@ export function GraphNotification(props: {
         groupTitle={groupTitle}
         content
       />
-      <Col onClick={onClick} gapY={2} flexGrow={1} width="100%" gridArea="main">
+      <ColLink to={to} gapY={2} flexGrow={1} width="100%" gridArea="main">
         <GraphNodes
           hideAuthors={hideAuthors}
           posts={contents.slice(0, 4)}
@@ -296,7 +287,7 @@ export function GraphNotification(props: {
             + {contents.length - 4} more
           </Text>
         )}
-      </Col>
+      </ColLink>
     </>
   );
 }

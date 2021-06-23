@@ -1,9 +1,9 @@
-import { Box, Button, Col, Text } from '@tlon/indigo-react';
+import { Box, Col, Text } from '@tlon/indigo-react';
 import { Group } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
-import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
+import { ButtonLink } from '~/views/components/Link';
 import { GroupAdminSettings } from './Admin';
 import { GroupChannelSettings } from './Channels';
 import { GroupFeedSettings } from './GroupFeed';
@@ -19,13 +19,7 @@ interface GroupSettingsProps {
   baseUrl: string;
 }
 export function GroupSettings(props: GroupSettingsProps) {
-  const history = useHistory();
-
-  const linkRelative = useCallback(
-    (url: string) =>
-      useCallback(() => history.push(`${props.baseUrl}${url}`), [url]),
-    [history, props.baseUrl]
-  );
+  const linkRelative = (url: string) => `${props.baseUrl}${url}`;
 
   const isOwner =
     resourceFromPath(props.association.group).ship.slice(1) === window.ship;
@@ -43,7 +37,7 @@ export function GroupSettings(props: GroupSettingsProps) {
               Participants
             </Text>
             <Text gray>View list of all group participants and statuses</Text>
-            <Button primary mt={4} onClick={linkRelative('/participants')}>View List</Button>
+            <ButtonLink primary mt={4} to={linkRelative('/participants')}>View List</ButtonLink>
           </Col>
         </Section>
         { isAdmin && (

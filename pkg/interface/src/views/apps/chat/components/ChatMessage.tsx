@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
-import { BaseImage, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
-import { Contact, MentionContent, Post } from '@urbit/api';
+import { Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
+import { MentionContent, Post } from '@urbit/api';
 import bigInt from 'big-integer';
 import moment from 'moment';
 import React, {
@@ -10,16 +10,12 @@ import React, {
 } from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
 import { useIdlingState } from '~/logic/lib/idling';
-import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
-import {
-  cite, daToUnix, useHovering, useShowNickname, uxToHex
-} from '~/logic/lib/util';
-import { useContact } from '~/logic/state/contact';
-import { useDark } from '~/logic/state/join';
-import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import { daToUnix, useHovering } from '~/logic/lib/util';
 import { Dropdown } from '~/views/components/Dropdown';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
+import { ShipImage } from '~/views/components/ShipImage';
+import { ShipName } from '~/views/components/ShipName';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
@@ -59,70 +55,14 @@ export const MessageAuthor = React.memo<any>(({
   showOurContact,
   ...props
 }) => {
-  const dark = useDark();
-  let contact: Contact | null = useContact(`~${msg.author}`);
-
   const date = daToUnix(bigInt(msg.index.split('/').reverse()[0]));
 
   const datestamp = moment
     .unix(date / 1000)
     .format(DATESTAMP_FORMAT);
-  contact =
-    ((msg.author === window.ship && showOurContact) ||
-      msg.author !== window.ship)
-      ? contact
-      : null;
 
-  const showNickname = useShowNickname(contact);
-  const { hideAvatars } = useSettingsState(selectCalmState);
-  const shipName = showNickname && contact?.nickname || cite(msg.author) || `~${msg.author}`;
-  const color = contact
-    ? `#${uxToHex(contact.color)}`
-    : dark
-    ? '#000000'
-    : '#FFFFFF';
-  const sigilClass = contact
-    ? ''
-    : dark
-    ? 'mix-blend-diff'
-    : 'mix-blend-darken';
-
-  const { copyDisplay, doCopy, didCopy } = useCopy(`~${msg.author}`, shipName);
   const { hovering, bind } = useHovering();
-  const nameMono = !(showNickname || didCopy);
 
-  const img =
-    contact?.avatar && !hideAvatars ? (
-      <BaseImage
-        display='inline-block'
-        referrerPolicy='no-referrer'
-        style={{ objectFit: 'cover' }}
-        src={contact.avatar}
-        height={24}
-        width={24}
-        borderRadius={1}
-      />
-    ) : (
-      <Box
-        width={24}
-        height={24}
-        display='flex'
-        justifyContent='center'
-        alignItems='center'
-        backgroundColor={color}
-        borderRadius={1}
-      >
-        <Sigil
-          ship={msg.author}
-          size={12}
-          display='block'
-          color={color}
-          classes={sigilClass}
-          icon
-          padding={0}
-        />
-      </Box>
-    );
   return (
     <Box pb="1" display='flex' alignItems='center'>
       <Box
@@ -134,7 +74,7 @@ export const MessageAuthor = React.memo<any>(({
         position='relative'
       >
         <ProfileOverlay cursor='auto' ship={msg.author}>
-          {img}
+          <ShipImage icon ship={`~${msg.author}`} size={24} sigilSize={12} />
         </ProfileOverlay>
       </Box>
       <Box flexGrow={1} display='block' className='clamp-message' {...bind}>
@@ -146,18 +86,7 @@ export const MessageAuthor = React.memo<any>(({
           display='flex'
           alignItems='baseline'
         >
-          <Text
-            fontSize={1}
-            mr={2}
-            flexShrink={1}
-            mono={nameMono}
-            fontWeight={nameMono ? '400' : '500'}
-            cursor='pointer'
-            onClick={doCopy}
-            title={showNickname ? `~${msg.author}` : contact?.nickname}
-          >
-            {copyDisplay}
-          </Text>
+          <ShipName strong copiable ship={`~${msg.author}`} mr={2} flexShrink={1} />
           <Text whiteSpace='nowrap' flexShrink={0} fontSize={0} gray>
             {timestamp}
           </Text>
@@ -514,110 +443,3 @@ export default React.memo(React.forwardRef((props: Omit<ChatMessageProps, 'inner
   <ChatMessage {...props} innerRef={ref} />
 )));
 
-export const MessagePlaceholder = ({
-  height,
-  index,
-  className = '',
-  style = {},
-  ...props
-}) => (
-  <Box
-    width='100%'
-    fontSize={2}
-    pl={3}
-    pt={4}
-    pr={3}
-    display='flex'
-    lineHeight='tall'
-    className={className}
-    style={{ height, ...style }}
-    {...props}
-  >
-    <Box
-      pr={3}
-      verticalAlign='top'
-      backgroundColor='white'
-      style={{ float: 'left' }}
-    >
-      <Text
-        display='block'
-        background='washedGray'
-        width='24px'
-        height='24px'
-        borderRadius='50%'
-        style={{
-          visibility: index % 5 == 0 ? 'initial' : 'hidden'
-        }}
-      ></Text>
-    </Box>
-    <Box
-      style={{ float: 'right', flexGrow: 1 }}
-      color='black'
-      className='clamp-message'
-    >
-      <Box
-        className='hide-child'
-        paddingTop={4}
-        style={{ visibility: index % 5 == 0 ? 'initial' : 'hidden' }}
-      >
-        <Text
-          display='inline-block'
-          verticalAlign='middle'
-          fontSize={0}
-          color='washedGray'
-          cursor='default'
-        >
-          <Text maxWidth='32rem' display='block'>
-            <Text
-              backgroundColor='washedGray'
-              borderRadius={2}
-              display='block'
-              width='100%'
-              height='100%'
-            ></Text>
-          </Text>
-        </Text>
-        <Text
-          display='inline-block'
-          mono
-          verticalAlign='middle'
-          fontSize={0}
-          color='washedGray'
-        >
-          <Text
-            background='washedGray'
-            borderRadius={2}
-            display='block'
-            height='1em'
-            style={{ width: `${((index % 3) + 1) * 3}em` }}
-          ></Text>
-        </Text>
-        <Text
-          mono
-          verticalAlign='middle'
-          fontSize={0}
-          ml={2}
-          color='washedGray'
-          borderRadius={2}
-          display={['none', 'inline-block']}
-          className='child'
-        >
-          <Text
-            backgroundColor='washedGray'
-            borderRadius={2}
-            display='block'
-            width='100%'
-            height='100%'
-          ></Text>
-        </Text>
-      </Box>
-      <Text
-        display='block'
-        backgroundColor='washedGray'
-        borderRadius={2}
-        height='1em'
-        style={{ width: `${(index % 5) * 20}%` }}
-      ></Text>
-    </Box>
-  </Box>
-);

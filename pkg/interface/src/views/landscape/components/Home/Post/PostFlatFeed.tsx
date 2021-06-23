@@ -46,7 +46,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
     const {
       flatGraph,
       graphPath,
-      history,
       baseUrl,
       association,
       group,
@@ -84,7 +83,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
               association={association}
               index={index}
               baseUrl={baseUrl}
-              history={history}
               parentPost={parentNode?.post}
               isReply={index.length > 1}
               isRelativeTime={true}
@@ -125,7 +123,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
             association={association}
             index={index}
             baseUrl={baseUrl}
-            history={history}
             parentPost={parentNode?.post}
             isReply={index.length > 1}
             isRelativeTime={true}
@@ -144,7 +141,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
           association={association}
           index={index}
           baseUrl={baseUrl}
-          history={history}
           parentPost={parentNode?.post}
           isReply={index.length > 1}
           isRelativeTime={true}

@@ -3,7 +3,6 @@ import { Group, removePosts } from '@urbit/api';
 import { GraphNode } from '@urbit/api/graph';
 import bigInt from 'big-integer';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
@@ -12,6 +11,7 @@ import useMetadataState from '~/logic/state/metadata';
 import Author from '~/views/components/Author';
 import { GraphContent } from '../landscape/components/Graph/GraphContent';
 import airlock from '~/logic/api';
+import { ActionLink } from './Link';
 
 interface CommentItemProps {
   pending?: boolean;
@@ -71,11 +71,9 @@ return false;
   const ourRole = roleForShip(group, window.ship);
   if (window.ship == post?.author && !disabled) {
     adminLinks.push(
-      <Link to={{ pathname: props.baseUrl, search: `?edit=${commentIndex}` }}>
-        <Action bg="white">
-          Update
-        </Action>
-      </Link>
+      <ActionLink to={{ pathname: props.baseUrl, search: `?edit=${commentIndex}` }}>
+        Update
+      </ActionLink>
     );
   }
 

@@ -1,33 +1,26 @@
 import {
-  BaseImage, Box,
-
+  Box,
   BoxProps,
-  Center, Col,
-
-  Icon, Row,
-
-  Text
+  Col,
+  Icon, Row
 } from '@tlon/indigo-react';
-import { cite, uxToHex } from '@urbit/api';
-import shallow from 'zustand/shallow';
 import _ from 'lodash';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
 import styled from 'styled-components';
 import { getRelativePosition } from '~/logic/lib/relativePosition';
-import { Sigil } from '~/logic/lib/sigil';
-import { useCopy } from '~/logic/lib/useCopy';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
-import { useShowNickname } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
-import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { Portal } from './Portal';
 import { ProfileStatus } from './ProfileStatus';
 import RichText from './RichText';
+import { Container } from './Container';
+import { BoxLink, RowLink } from './Link';
+import { ShipImage } from './ShipImage';
+import { ShipName } from './ShipName';
 
 export const OVERLAY_HEIGHT = 250;
-const FixedOverlay = styled(Col)`
+const FixedOverlay = styled(Container)`
   position: fixed;
   -webkit-transition: all 0.1s ease-out;
   -moz-transition: all 0.1s ease-out;
@@ -41,8 +34,6 @@ type ProfileOverlayProps = BoxProps & {
   color?: string;
 };
 
-const selSettings = (s: SettingsState) => [s.calm.hideAvatars, s.calm.hideNicknames];
-
 const ProfileOverlay = (props: ProfileOverlayProps) => {
   const {
     ship,
@@ -53,16 +44,11 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   const [open, _setOpen] = useState(false);
   const [coords, setCoords] = useState({});
   const [visible, setVisible] = useState(false);
-  const history = useHistory();
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
-  const [hideAvatars, hideNicknames] = useSettingsState(selSettings, shallow);
   const isOwn = useMemo(() => window.ship === ship, [ship]);
-  const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`);
 
   const contact = useContact(`~${ship}`);
-  const color = `#${uxToHex(contact?.color ?? '0x0')}`;
-  const showNickname = useShowNickname(contact, hideNicknames);
 
   const setClosed = useCallback(() => {
     _setOpen(false);
@@ -109,25 +95,6 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
     };
   }, [open]);
 
-  const img =
-    contact?.avatar && !hideAvatars ? (
-      <BaseImage
-        referrerPolicy='no-referrer'
-        display='inline-block'
-        style={{ objectFit: 'cover' }}
-        src={contact.avatar}
-        height={60}
-        width={60}
-        borderRadius={2}
-      />
-    ) : (
-      <Box size={60} borderRadius={2} backgroundColor={color}>
-        <Center height={60}>
-          <Sigil ship={ship} size={32} color={color} />
-        </Center>
-      </Box>
-    );
-
   return (
     <Box ref={outerRef} {...rest} onClick={setOpen} cursor="pointer">
       <VisibilitySensor active={open} onChange={setVisible}>
@@ -138,12 +105,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
       <FixedOverlay
         ref={innerRef}
         {...coords}
-        backgroundColor='white'
-        color='washedGray'
-        border={1}
-        borderRadius={2}
-        borderColor='lightGray'
-        boxShadow='0px 0px 0px 3px'
+        round
         zIndex={3}
         fontSize={0}
         height='250px'
@@ -151,26 +113,24 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         padding={3}
         justifyContent='center'
       >
-        <Row color='black' padding={3} position='absolute' top={0} left={0}>
-           {!isOwn && (
-             <Icon
-               icon='Chat'
-               size={16}
-               cursor='pointer'
-               onClick={() => history.push(`/~landscape/messages/dm/~${ship}`)}
-             />
-           )}
-         </Row>
-        <Box
+        {!isOwn && (
+          <RowLink color='black' padding={3}
+position='absolute' top={0}
+left={0}
+             to={`/~landscape/messages/dm/~${ship}`}
+          >
+             <Icon icon='Chat' size={16} />
+         </RowLink>
+         )}
+        <BoxLink
           alignSelf='center'
           height='72px'
-          cursor='pointer'
-          onClick={() => history.push(`/~profile/~${ship}`)}
+          to={`/~profile/~${ship}`}
           overflow='hidden'
           borderRadius={2}
         >
-          {img}
-        </Box>
+          <ShipImage ship={`~${ship}`} size={72} />
+        </BoxLink>
         <Col
           position='absolute'
           overflow='hidden'
@@ -181,25 +141,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
           left={0}
         >
           <Row width='100%'>
-            <Text
-              fontWeight='600'
-              mono={!showNickname}
-              textOverflow='ellipsis'
-              overflow='hidden'
-              whiteSpace='pre'
-              marginBottom={0}
-              cursor='pointer'
-              display={didCopy ? 'none' : 'block'}
-              onClick={doCopy}
-            >
-              {showNickname ? contact?.nickname : cite(ship)}
-            </Text>
-            <Text
-              fontWeight='600'
-              marginBottom={0}
-            >
-              {copyDisplay}
-            </Text>
+            <ShipName copiable strong mb={0} ship={`~${ship}`} />
           </Row>
           {isOwn ? (
             <ProfileStatus

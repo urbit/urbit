@@ -13,6 +13,7 @@ import useGroupState from '~/logic/state/group';
 import { Dropdown } from '~/views/components/Dropdown';
 import RichText from '~/views/components/RichText';
 import { MessageInvite } from '~/views/landscape/components/MessageInvite';
+import { BoxLink } from '~/views/components/Link';
 
 const TruncatedText = styled(RichText)`
   white-space: nowrap;
@@ -107,7 +108,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   }
 
   const backLink = (
-    <Box
+    <BoxLink
       borderRight={1}
       borderRightColor='gray'
       pr={3}
@@ -116,11 +117,10 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
       my={1}
       flexShrink={0}
       display={['block','none']}
+      to={`/~landscape${workspace}`}
     >
-      <Link to={`/~landscape${workspace}`}>
-        <Text>{'<- Back'}</Text>
-      </Link>
-    </Box>
+      <Text>{'<- Back'}</Text>
+    </BoxLink>
   );
 
   const titleText = (

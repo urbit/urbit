@@ -1,33 +1,28 @@
 import {
-  BaseImage,
   Box,
-  Button,
-  Col,
   Icon,
   Row,
   Text
 } from '@tlon/indigo-react';
 import React, { useRef } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Sigil } from '~/logic/lib/sigil';
-import { uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
 import useLaunchState from '~/logic/state/launch';
 import useInviteState from '~/logic/state/invite';
 import useLocalState, { selectLocalState } from '~/logic/state/local';
-import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Dropdown } from './Dropdown';
 import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import { useTutorialModal } from './useTutorialModal';
+import { Container } from './Container';
+import { ButtonLink, RowLink } from './Link';
+import { ShipImage } from './ShipImage';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
 const StatusBar = (props) => {
   const { ship } = props;
-  const history = useHistory();
   const runtimeLag = useLaunchState(state => state.runtimeLag);
   const ourContact = useContactState(state => state.contacts[`~${ship}`]);
   const notificationsCount = useHarkState(state => state.notificationsCount);
@@ -38,23 +33,6 @@ const StatusBar = (props) => {
   );
   const metaKey = window.navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+';
   const { toggleOmnibox } = useLocalState(localSel);
-  const { hideAvatars } = useSettingsState(selectCalmState);
-
-  const color = ourContact ? `#${uxToHex(ourContact.color)}` : '#000';
-  const xPadding = !hideAvatars && ourContact?.avatar ? '0' : '2';
-  const bgColor = !hideAvatars && ourContact?.avatar ? '' : color;
-  const profileImage =
-    !hideAvatars && ourContact?.avatar ? (
-      <BaseImage
-        src={ourContact.avatar}
-        borderRadius={2}
-        width='32px'
-        height='32px'
-        style={{ objectFit: 'cover' }}
-      />
-    ) : (
-      <Sigil ship={ship} size={16} color={color} icon />
-    );
 
   const anchorRef = useRef(null);
 
@@ -74,16 +52,16 @@ const StatusBar = (props) => {
       pb={3}
     >
       <Row>
-        <Button
+        <ButtonLink
           width='32px'
           borderColor='lightGray'
           mr={2}
           px={2}
-          onClick={() => history.push('/')}
+          to="/"
           {...props}
         >
           <Icon icon='Dashboard' color='black' />
-        </Button>
+        </ButtonLink>
         <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
           {!doNotDisturb && runtimeLag && (
             <Box display='block' right='-8px' top='-8px' position='absolute'>
@@ -140,37 +118,22 @@ const StatusBar = (props) => {
           flexShrink={0}
           offsetY={-48}
           options={
-            <Col
+            <Container
+              round
               py={2}
-              backgroundColor='white'
               color='washedGray'
-              border={1}
-              borderRadius={2}
-              borderColor='lightGray'
               boxShadow='0px 0px 0px 3px'
             >
-              <Row
-                color='black'
-                cursor='pointer'
-                fontSize={1}
-                fontWeight='500'
-                px={3}
-                py={2}
-                onClick={() => history.push(`/~profile/~${ship}`)}
-              >
-                View Profile
-              </Row>
-              <Row
-                color='black'
-                cursor='pointer'
-                fontSize={1}
-                fontWeight='500'
-                px={3}
-                py={2}
-                onClick={() => history.push('/~settings')}
-              >
-                System Preferences
-              </Row>
+              <RowLink px={3} py={2} to={`/~profile/~${ship}`}>
+                <Text fontSize={1} fontWeight='500'>
+                  View Profile
+                </Text>
+              </RowLink>
+              <RowLink px={3} py={2} to={'/~settings'}>
+                <Text fontWeight='500' fontSize={1}>
+                  System Preferences
+                </Text>
+              </RowLink>
               <Row px={3} pt={2} pb={1} flexDirection='column'>
                 <Text color='gray' fontWeight='500' mb={1}>
                   Set Status:
@@ -180,18 +143,10 @@ const StatusBar = (props) => {
                   ship={`~${ship}`}
                 />
               </Row>
-            </Col>
+            </Container>
           }
         >
-          <StatusBarItem
-            px={xPadding}
-            width='32px'
-            flexShrink={0}
-            border={0}
-            backgroundColor={bgColor}
-          >
-            {profileImage}
-          </StatusBarItem>
+          <ShipImage icon ship={`~${ship}`} size={32} sigilSize={16} />
         </Dropdown>
       </Row>
     </Box>

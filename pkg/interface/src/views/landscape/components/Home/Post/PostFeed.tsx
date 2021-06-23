@@ -43,7 +43,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
     const {
       graph,
       graphPath,
-      history,
       baseUrl,
       parentNode,
       grandparentNode,
@@ -82,7 +81,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
               association={association}
               index={nodeIndex}
               baseUrl={baseUrl}
-              history={history}
               isParent={true}
               isRelativeTime={false}
               vip={vip}
@@ -96,7 +94,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
             association={association}
             index={[...nodeIndex, index]}
             baseUrl={baseUrl}
-            history={history}
             isReply={true}
             parentPost={parentNode.post}
             isRelativeTime={true}
@@ -135,7 +132,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
             association={association}
             index={[...nodeIndex, index]}
             baseUrl={baseUrl}
-            history={history}
             parentPost={parentNode?.post}
             isReply={Boolean(parentNode)}
             isRelativeTime={true}
@@ -155,7 +151,6 @@ class PostFeed extends React.Component<PostFeedProps, any> {
           association={association}
           index={[...nodeIndex, index]}
           baseUrl={baseUrl}
-          history={history}
           parentPost={parentNode?.post}
           isReply={Boolean(parentNode)}
           isRelativeTime={true}
