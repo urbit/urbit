@@ -1,8 +1,8 @@
 import { Box, Button, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { leaveGroup, putEntry } from '@urbit/api';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { getRelativePosition } from '~/logic/lib/relativePosition';
 import {
     getTrianglePosition, MODAL_WIDTH_PX, progressDetails,
@@ -15,6 +15,7 @@ import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { Portal } from '~/views/components/Portal';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { Triangle } from '~/views/components/Triangle';
+import airlock from '~/logic/api';
 
 const localSelector = selectLocalState([
   'tutorialProgress',
@@ -25,14 +26,13 @@ const localSelector = selectLocalState([
   'set'
 ]);
 
-export function TutorialModal(props: { api: GlobalApi }) {
+export function TutorialModal() {
   const {
     tutorialProgress,
     tutorialRef,
     nextTutStep,
     prevTutStep,
-    hideTutorial,
-    set: setLocalState
+    hideTutorial
   } = useLocalState(localSelector);
   const {
     title,
@@ -94,8 +94,8 @@ export function TutorialModal(props: { api: GlobalApi }) {
   const dismiss = useCallback(async () => {
     setPaused(false);
     hideTutorial();
-    await props.api.settings.putEntry('tutorial', 'seen', true);
-  }, [hideTutorial, props.api]);
+    await airlock.poke(putEntry('tutorial', 'seen', true));
+  }, [hideTutorial]);
 
   const bailExit = useCallback(() => {
     setPaused(false);
@@ -105,10 +105,10 @@ export function TutorialModal(props: { api: GlobalApi }) {
     setPaused(true);
   }, []);
 
-  const leaveGroup = useCallback(async () => {
-    await props.api.groups.leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP);
+  const doLeaveGroup = useCallback(async () => {
+    await airlock.thread(leaveGroup(TUTORIAL_HOST, TUTORIAL_GROUP));
     await dismiss();
-  }, [props.api, dismiss]);
+  }, [dismiss]);
 
   const progressIdx = progress.findIndex(p => p === tutorialProgress);
 
@@ -149,7 +149,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
               <Button backgroundColor="washedGray" onClick={dismiss}>
                 Later
               </Button>
-              <StatelessAsyncButton primary destructive onClick={leaveGroup}>
+              <StatelessAsyncButton primary destructive onClick={doLeaveGroup}>
                 Leave Group
               </StatelessAsyncButton>
             </Row>
@@ -173,7 +173,7 @@ export function TutorialModal(props: { api: GlobalApi }) {
             </Text>
           </Col>
           <Text lineHeight="tall">
-            You can always restart the tutorial by typing "tutorial" in Leap.
+            You can always restart the tutorial by typing &quot;tutorial&quot; in Leap.
           </Text>
           <Row mt={3} gapX={2} justifyContent="flex-end">
             <Button backgroundColor="washedGray" onClick={bailExit}>

@@ -1,18 +1,33 @@
 import { Button, LoadingSpinner, Text } from '@tlon/indigo-react';
 import React from 'react';
+import useLocalState from '~/logic/state/local';
+import api from '~/logic/api';
 
-const ReconnectButton = ({ connection, subscription }) => {
-  const connectedStatus = connection || 'connected';
-  const reconnect = subscription.restart.bind(subscription);
+const ReconnectButton = () => {
+  const { set, subscription } = useLocalState();
+  const reconnect = () => {
+    (async () => {
+      try {
+        await api.eventSource();
+        set((state) => {
+          state.subscription = 'connected';
+        });
+      } catch (e) {
+        set((state) => {
+          state.subscription = 'connected';
+        });
+      }
+    })();
+  };
 
-  if (connectedStatus === 'disconnected') {
+  if (subscription === 'disconnected') {
     return (
       <Button onClick={reconnect} borderColor='red' px={2}>
         <Text display={['none', 'inline']} textAlign='center' color='red'>Reconnect</Text>
         <Text color='red'> ↻</Text>
       </Button>
     );
-  } else if (connectedStatus === 'reconnecting') {
+  } else if (subscription === 'reconnecting') {
     return (
       <Button borderColor='yellow' px={2} onClick={() => {}} cursor='default'>
         <LoadingSpinner foreground='scales.yellow60' background='scales.yellow30' />

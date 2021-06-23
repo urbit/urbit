@@ -9,7 +9,6 @@ import React, {
   useMemo, useState
 } from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
-import GlobalApi from '~/logic/api/global';
 import { useIdlingState } from '~/logic/lib/idling';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
@@ -17,7 +16,7 @@ import {
   cite, daToUnix, useHovering, useShowNickname, uxToHex
 } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
-import useLocalState from '~/logic/state/local';
+import { useDark } from '~/logic/state/join';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Dropdown } from '~/views/components/Dropdown';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
@@ -54,17 +53,13 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
   </Row>
 );
 
-export const MessageAuthor = ({
+export const MessageAuthor = React.memo<any>(({
   timestamp,
   msg,
-  api,
   showOurContact,
   ...props
 }) => {
-  const osDark = useLocalState(state => state.dark);
-
-  const theme = useSettingsState(s => s.display.theme);
-  const dark = theme === 'dark' || (theme === 'auto' && osDark);
+  const dark = useDark();
   let contact: Contact | null = useContact(`~${msg.author}`);
 
   const date = daToUnix(bigInt(msg.index.split('/').reverse()[0]));
@@ -138,7 +133,7 @@ export const MessageAuthor = ({
         cursor='pointer'
         position='relative'
       >
-        <ProfileOverlay cursor='auto' ship={msg.author} api={api}>
+        <ProfileOverlay cursor='auto' ship={msg.author}>
           {img}
         </ProfileOverlay>
       </Box>
@@ -180,15 +175,15 @@ export const MessageAuthor = ({
       </Box>
     </Box>
   );
-};
+});
+MessageAuthor.displayName = 'MessageAuthor';
 
 type MessageProps = { timestamp: string; timestampHover: boolean; }
-  & Pick<ChatMessageProps, 'msg' | 'api' | 'transcluded' | 'showOurContact'>
+  & Pick<ChatMessageProps, 'msg' | 'transcluded' | 'showOurContact'>
 
 export const Message = React.memo(({
   timestamp,
   msg,
-  api,
   timestampHover,
   transcluded,
   showOurContact
@@ -219,7 +214,6 @@ export const Message = React.memo(({
         width="100%"
         contents={msg.contents}
         transcluded={transcluded}
-        api={api}
         showOurContact={showOurContact}
       />
     </Box>
@@ -390,7 +384,6 @@ interface ChatMessageProps {
   style?: unknown;
   isLastMessage?: boolean;
   dismissUnread?: () => void;
-  api: GlobalApi;
   highlighted?: boolean;
   renderSigil?: boolean;
   hideHover?: boolean;
@@ -399,6 +392,7 @@ interface ChatMessageProps {
   showOurContact: boolean;
   onDelete?: () => void;
 }
+const emptyCallback = () => {};
 
 function ChatMessage(props: ChatMessageProps) {
   let { highlighted } = props;
@@ -411,7 +405,6 @@ function ChatMessage(props: ChatMessageProps) {
     style,
     isLastMessage,
     isAdmin,
-    api,
     showOurContact,
     hideHover,
     dismissUnread = () => null,
@@ -424,10 +417,10 @@ function ChatMessage(props: ChatMessageProps) {
     );
   }
 
-  const onReply = props?.onReply ?? (() => {});
-  const onDelete = props?.onDelete ?? (() => {});
-  const transcluded = props?.transcluded ?? 0;
-  const renderSigil = props.renderSigil ?? (Boolean(nextMsg && msg.author !== nextMsg.author) ||
+  const onReply = props?.onReply || emptyCallback;
+  const onDelete = props?.onDelete || emptyCallback;
+  const transcluded = props?.transcluded || 0;
+  const renderSigil = props.renderSigil || (Boolean(nextMsg && msg.author !== nextMsg.author) ||
         !nextMsg
     );
 
@@ -470,7 +463,6 @@ function ChatMessage(props: ChatMessageProps) {
     timestamp,
     isPending,
     showOurContact,
-    api,
     highlighted,
     hideHover,
     transcluded,
@@ -484,11 +476,10 @@ function ChatMessage(props: ChatMessageProps) {
       msg={msg}
       timestamp={timestamp}
       timestampHover={!renderSigil}
-      api={api}
       transcluded={transcluded}
       showOurContact={showOurContact}
     />
-  ), [renderSigil, msg, timestamp, api, transcluded, showOurContact]);
+  ), [renderSigil, msg, timestamp, transcluded, showOurContact]);
 
   const unreadContainerStyle = {
     height: isLastRead ? '2rem' : '0'
@@ -519,9 +510,9 @@ function ChatMessage(props: ChatMessageProps) {
   );
 }
 
-export default React.forwardRef((props: Omit<ChatMessageProps, 'innerRef'>, ref: any) => (
+export default React.memo(React.forwardRef((props: Omit<ChatMessageProps, 'innerRef'>, ref: any) => (
   <ChatMessage {...props} innerRef={ref} />
-));
+)));
 
 export const MessagePlaceholder = ({
   height,

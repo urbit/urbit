@@ -4,10 +4,8 @@ import { Association } from '@urbit/api/metadata';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
 import { Link, Route, Switch } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
-import { StoreState } from '~/logic/store/type';
 import { Comments } from '~/views/components/Comments';
 import useGroupState from '../../../logic/state/group';
 import { LinkItem } from './components/LinkItem';
@@ -16,16 +14,14 @@ import LinkWindow from './LinkWindow';
 
 const emptyMeasure = () => {};
 
-type LinkResourceProps = StoreState & {
+type LinkResourceProps = {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 };
 
 export function LinkResource(props: LinkResourceProps) {
   const {
     association,
-    api,
     baseUrl
   } = props;
 
@@ -45,9 +41,10 @@ export function LinkResource(props: LinkResourceProps) {
   const graphs = useGraphState(state => state.graphs);
   const graph = graphs[resourcePath] || null;
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
+  const getGraph = useGraphState(s => s.getGraph);
 
   useEffect(() => {
-    api.graph.getGraph(ship, name);
+    getGraph(ship, name);
   }, [association]);
 
   const resourceUrl = `${baseUrl}/resource/link${rid}`;
@@ -63,7 +60,7 @@ export function LinkResource(props: LinkResourceProps) {
           path={relativePath('')}
           render={(props) => {
             return (
-              // @ts-ignore
+              // @ts-ignore state helper weirdness
               <LinkWindow
                 key={rid}
                 association={resource}
@@ -73,7 +70,6 @@ export function LinkResource(props: LinkResourceProps) {
                 group={group as Group}
                 path={resource.group}
                 pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
-                api={api}
                 mb={3}
               />
             );
@@ -114,7 +110,6 @@ export function LinkResource(props: LinkResourceProps) {
                   association={association}
                   group={group as Group}
                   path={resource?.group}
-                  api={api}
                   mt={3}
                   measure={emptyMeasure}
                 />
@@ -124,7 +119,6 @@ export function LinkResource(props: LinkResourceProps) {
                   comments={node}
                   resource={resourcePath}
                   association={association}
-                  api={api}
                   editCommentId={editCommentId}
                   history={props.history}
                   baseUrl={`${resourceUrl}/index/${props.match.params.index}`}

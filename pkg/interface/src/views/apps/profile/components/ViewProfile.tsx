@@ -13,7 +13,7 @@ import {
 
 export function ViewProfile(props: any): ReactElement {
   const { hideNicknames } = useSettingsState(selectCalmState);
-  const { api, contact, nacked, ship } = props;
+  const { contact, nacked, ship } = props;
 
   const isPublic = useContactState(state => state.isContactPublic);
 
@@ -25,7 +25,6 @@ export function ViewProfile(props: any): ReactElement {
             ship={ship}
             isPublic={isPublic}
             contact={contact}
-            api={props.api}
           />
           <ProfileStatus contact={contact} />
         </ProfileControls>
@@ -47,7 +46,7 @@ export function ViewProfile(props: any): ReactElement {
       </Row>
       <Col pb={2} mt={3} alignItems='center' justifyContent='center' width='100%'>
         <Center flexDirection='column' maxWidth='32rem'>
-          <RichText api={props.api} width='100%' disableRemoteContent>
+          <RichText width='100%' disableRemoteContent>
             {contact?.bio ? contact.bio : ''}
           </RichText>
         </Center>
@@ -58,7 +57,6 @@ export function ViewProfile(props: any): ReactElement {
           <Col>
             {contact?.groups.slice().sort(lengthOrder).map((g, i) => (
               <GroupLink
-                api={api}
                 key={i}
                 resource={g}
                 measure={() => {}}
