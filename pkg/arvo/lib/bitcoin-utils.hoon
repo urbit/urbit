@@ -3,6 +3,7 @@
 ::
 /-  sur=bitcoin
 =,  sur
+~%  %bitcoin-utils-lib  ..part  ~
 |%
 ::
 ::  TODO: move this bit/byt stuff to zuse
@@ -12,6 +13,7 @@
 ::  +blop: munge bit and byt sequences (cat, flip, take, drop)
 ::
 ++  blop
+  ~/  %blop
   |_  =bloq
   +$  biyts  [wid=@ud dat=@]
   ++  cat
@@ -48,6 +50,7 @@
 ++  byt  ~(. blop 3)
 ::
 ++  bit
+  ~/  %bit
   =/  bl    ~(. blop 0)
   |%
   ++  cat   cat:bl:bit
@@ -100,6 +103,7 @@
 ::  hxb: hex parsing utilities
 ::
 ++  hxb
+  ~/  %hxb
   |%
   ++  from-cord
     |=  h=@t
@@ -113,6 +117,7 @@
     =+  (rsh [3 2] -)
     ::  Parse hex to atom
     ::
+    ::  TODO: replace with (met 3 h)
     :-  (div (lent (trip h)) 2)
     `@ux`(rash - hex)
   ::
@@ -128,6 +133,7 @@
 ::   - decode: little endian to big endian
 ::
 ++  csiz
+  ~/  %csiz
   |%
   ++  en
     |=  a=@
@@ -162,5 +168,4 @@
     =>  (de h)
     [dat.n rest]
   --
-::
 --

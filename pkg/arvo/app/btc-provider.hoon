@@ -189,21 +189,21 @@
 ::
 ++  on-arvo
   ~/  %on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [wir=wire =sign-arvo]
   |^
   ^-  (quip card _this)
   ::  check for connectivity every 30 seconds
   ::
-  ?:  ?=([%ping-timer *] wire)
+  ?:  ?=([%ping-timer *] wir)
     :_  this
     :~  do-ping:hc
         (start-ping-timer:hc ~s30)
     ==
   =^  cards  state
-  ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
-      %http-response
-    (handle-rpc-response wire client-response.sign-arvo)
-  ==
+    ?+    +<.sign-arvo    (on-arvo:def wir sign-arvo)
+        %http-response
+      (handle-rpc-response wir client-response.sign-arvo)
+    ==
   [cards this]
   ::
   ::  Handles HTTP responses from RPC servers. Parses for errors, 

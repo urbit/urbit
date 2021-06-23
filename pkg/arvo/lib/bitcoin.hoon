@@ -6,6 +6,7 @@
 /+  bech32=bip-b173, pbt=bip-b174, bcu=bitcoin-utils, bip-b158
 =,  sur
 =,  bcu
+~%  %bitcoin-lib  ..part  ~
 |%
 ++  overhead-weight  ^-(vbytes 11)
 ++  input-weight
@@ -40,6 +41,7 @@
 ::  adr: address manipulation
 ::
 ++  adr
+  ~/  %adr
   |%
   ++  get-bipt
     |=  a=address
@@ -155,6 +157,7 @@
 ::   - ignores signatures in inputs
 ::
 ++  txu
+  ~/  %txu
   |%
   ++  en
     |%
