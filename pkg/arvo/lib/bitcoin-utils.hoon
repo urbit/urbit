@@ -120,9 +120,8 @@
     =+  (rsh [3 2] -)
     ::  Parse hex to atom
     ::
-    ::  TODO: replace with (met 3 h)
-    :-  (div (met 3 h) 2)
-    `@ux`(rash - hex)
+    =/  a  (need (de:base16:mimes:html -))
+    [-.a `@ux`+.a]
   ::
   ++  to-cord
     ~/  %to-cord
