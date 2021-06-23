@@ -21,6 +21,7 @@ import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { NewChannel } from '~/views/landscape/components/NewChannel';
 import { SidebarListConfig } from './types';
 import { getFeedPath } from '~/logic/lib/util';
+import { Container } from '~/views/components/Container';
 
 export function SidebarListHeader(props: {
   initialValues: SidebarListConfig;
@@ -120,13 +121,13 @@ export function SidebarListHeader(props: {
             alignY="top"
             alignX={['right', 'left']}
             options={
-              <Col
+              <Container
                 background="white"
                 border={1}
                 borderColor="washedGray"
               >
               <NewChannel workspace={props.workspace} />
-              </Col>
+              </Container>
             }
           >
            <Icon icon="Plus" color="gray" pr='12px' />

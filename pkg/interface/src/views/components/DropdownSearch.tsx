@@ -12,6 +12,7 @@ import React, {
 } from 'react';
 import { useDropdown } from '~/logic/lib/useDropdown';
 import { PropFunc } from '~/types/util';
+import { Container } from './Container';
 
 interface DropdownSearchExtraProps<C> {
   // check if entry is exact match
@@ -119,7 +120,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>): ReactElement {
       opts = options.includes(first) ? opts : [first, ...options];
     }
     return _.take(opts, 5).map((o, idx) =>
-      props.renderCandidate(
+      renderCandidate(
         o,
         !_.isUndefined(selected) && props.getKey(o) === props.getKey(selected),
         handleSelect
@@ -138,19 +139,16 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>): ReactElement {
         disabled={disabled}
         placeholder={placeholder}
         onBlur={onBlur}
+        onFocus={onFocus}
       />
       {dropdown.length !== 0 && query.length !== 0 && (
-        <Box
+        <Container
           mt={1}
-          border={1}
-          borderRadius={1}
-          borderColor="washedGray"
-          bg="white"
           width="100%"
           position="absolute"
         >
           {dropdown}
-        </Box>
+        </Container>
       )}
     </Box>
   );

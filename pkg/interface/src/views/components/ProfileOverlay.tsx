@@ -25,9 +25,10 @@ import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { Portal } from './Portal';
 import { ProfileStatus } from './ProfileStatus';
 import RichText from './RichText';
+import { Container } from './Container';
 
 export const OVERLAY_HEIGHT = 250;
-const FixedOverlay = styled(Col)`
+const FixedOverlay = styled(Container)`
   position: fixed;
   -webkit-transition: all 0.1s ease-out;
   -moz-transition: all 0.1s ease-out;
@@ -138,11 +139,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
       <FixedOverlay
         ref={innerRef}
         {...coords}
-        backgroundColor='white'
-        color='washedGray'
-        border={1}
-        borderRadius={2}
-        borderColor='lightGray'
+        round
         boxShadow='0px 0px 0px 3px'
         zIndex={3}
         fontSize={0}

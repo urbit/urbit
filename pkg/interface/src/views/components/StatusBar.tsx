@@ -2,7 +2,6 @@ import {
   BaseImage,
   Box,
   Button,
-  Col,
   Icon,
   Row,
   Text
@@ -22,6 +21,7 @@ import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import { useTutorialModal } from './useTutorialModal';
+import { Container } from './Container';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
@@ -140,13 +140,10 @@ const StatusBar = (props) => {
           flexShrink={0}
           offsetY={-48}
           options={
-            <Col
+            <Container
+              round
               py={2}
-              backgroundColor='white'
               color='washedGray'
-              border={1}
-              borderRadius={2}
-              borderColor='lightGray'
               boxShadow='0px 0px 0px 3px'
             >
               <Row
@@ -180,7 +177,7 @@ const StatusBar = (props) => {
                   ship={`~${ship}`}
                 />
               </Row>
-            </Col>
+            </Container>
           }
         >
           <StatusBarItem
