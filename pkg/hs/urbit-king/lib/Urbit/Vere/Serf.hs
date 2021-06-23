@@ -265,11 +265,10 @@ sendShutdownRequest serf exitCode = do
 run
   :: Serf
   -> Int
-  -> STM EventId
   -> STM RunReq
   -> (Maybe Ev -> STM ())
   -> IO ()
-run serf maxBatchSize getLastEvInLog onInput spin = start
+run serf maxBatchSize onInput spin = start
  where
   -- New program.
   -- spawn a thread to receive responses from the serf

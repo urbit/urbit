@@ -231,7 +231,6 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
     pure (AmesDrv { .. })
 
   hearFailed AmesStat {..} = runRIO env . \case
-    RunSwap{} -> bump asSwp
     RunBail gs -> do
       for gs \(t, es) ->
         for es \e ->

@@ -90,6 +90,7 @@ import Urbit.King.App
 
 import Control.Concurrent     (myThreadId)
 import Control.Exception      (AsyncException(UserInterrupt))
+import System.Exit            (ExitCode(..))
 import System.Process         (system)
 import System.IO              (hPutStrLn)
 import Urbit.Noun.Time        (Wen)
@@ -102,9 +103,7 @@ import qualified System.Posix.Signals    as Sys
 import qualified System.Posix.Resource   as Sys
 import qualified System.ProgressBar      as PB
 import qualified System.Random           as Sys
-import qualified Urbit.EventLog.LMDB     as Log
 import qualified Urbit.King.CLI          as CLI
-import qualified Urbit.King.EventBrowser as EventBrowser
 import qualified Urbit.Ob                as Ob
 import qualified Urbit.Vere.Pier         as Pier
 import qualified Urbit.Vere.Serf         as Serf
@@ -134,7 +133,7 @@ toSerfFlags CLI.Opts{..} = catMaybes m
         , setFrom (oHashless || True) Serf.Hashless
         , setFrom oQuiet Serf.Quiet
         , setFrom oVerbose Serf.Verbose
-        , setFrom (oDryRun || isJust oDryFrom) Serf.DryRun
+        , setFrom oDryRun Serf.DryRun
         ]
     setFrom True flag = Just flag
     setFrom False _   = Nothing
@@ -143,17 +142,16 @@ toPierConfig :: FilePath -> Maybe Text -> CLI.Opts -> PierConfig
 toPierConfig pierPath serfExe o@(CLI.Opts{..}) = PierConfig { .. }
  where
   _pcPierPath  = pierPath
-  _pcDryRun    = oDryRun || isJust oDryFrom
+  _pcDryRun    = oDryRun
   _pcSerfExe   = serfExe
   _pcSerfFlags = toSerfFlags o
 
 toNetworkConfig :: CLI.Opts -> NetworkConfig
 toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
  where
-  dryRun     = oDryRun || isJust oDryFrom
-  offline    = dryRun || oOffline
+  offline    = oDryRun || oOffline
 
-  mode = case (dryRun, offline, oLocalhost) of
+  mode = case (oDryRun, offline, oLocalhost) of
     (True, _   , _   ) -> NMNone
     (_   , True, _   ) -> NMNone
     (_   , _   , True) -> NMLocalhost
@@ -188,11 +186,14 @@ tryBootFromPill
 tryBootFromPill oExit pill lite ship boot = do
   mStart <- newEmptyMVar
   vSlog  <- logSlogs
-  view pierPathL >>= lockFile
-  rio $ logInfo "Starting boot"
-  sls <- Pier.booted vSlog pill lite ship boot
+  exitCode <- rwith (view pierPathL >>= lockFile) $ \_ -> do
+    rio $ logInfo "Starting boot"
+    Pier.booted vSlog pill lite ship boot
   rio $ logInfo "Completed boot"
-  pure sls
+  case exitCode of
+    ExitSuccess   -> pure ()
+    ExitFailure c -> logStderr $ logError
+                               $ "Mars terminated with exit code: " <> display c
 
 runOrExitImmediately
   :: TVar ((Atom, Tank) -> IO ())
@@ -204,163 +205,37 @@ runOrExitImmediately
 runOrExitImmediately vSlog getPier oExit mStart injected = do
   rwith getPier (if oExit then shutdownImmediately else runPier)
  where
-  shutdownImmediately :: (Serf, Log.EventLog) -> RIO PierEnv ()
-  shutdownImmediately (serf, log) = do
+  shutdownImmediately :: (Serf, Ripe) -> RIO PierEnv ()
+  shutdownImmediately (serf, _) = do
     logInfo "Sending shutdown signal"
     Serf.stop serf
     logInfo "Shutdown!"
 
-  runPier :: (Serf, Log.EventLog) -> RIO PierEnv ()
-  runPier serfLog = do
-    runRAcquire (Pier.pier serfLog vSlog mStart injected)
+  runPier :: (Serf, Ripe) -> RIO PierEnv ()
+  runPier serfRipe = do
+    runRAcquire (Pier.pier serfRipe vSlog mStart injected)
 
 tryPlayShip
   :: Bool
-  -> Bool
-  -> Maybe Word64
   -> MVar ()
   -> [Ev]
   -> RIO PierEnv ()
-tryPlayShip exitImmediately fullReplay playFrom mStart injected = do
-  when fullReplay wipeSnapshot
+tryPlayShip exitImmediately mStart injected = do
   vSlog <- logSlogs
   runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart injected
  where
-  wipeSnapshot = do
-    shipPath <- view pierPathL
-    logInfo "wipeSnapshot"
-    logInfo $ display $ pack @Text ("Wiping " <> north shipPath)
-    logInfo $ display $ pack @Text ("Wiping " <> south shipPath)
-    removeFileIfExists (north shipPath)
-    removeFileIfExists (south shipPath)
-
-  north shipPath = shipPath <> "/.urb/chk/north.bin"
-  south shipPath = shipPath <> "/.urb/chk/south.bin"
-
   resumeShip :: TVar ((Atom, Tank) -> IO ())
-             -> RAcquire PierEnv (Serf, Log.EventLog)
+             -> RAcquire PierEnv (Serf, Ripe)
   resumeShip vSlog = do
     view pierPathL >>= lockFile
     rio $ logInfo "RESUMING SHIP"
-    sls <- Pier.resumed vSlog playFrom
+    sir <- Pier.resumed vSlog
     rio $ logInfo "SHIP RESUMED"
-    pure sls
+    pure sir
 
 runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
-
-
---------------------------------------------------------------------------------
-
-checkEvs :: FilePath -> Word64 -> Word64 -> RIO KingEnv ()
-checkEvs pierPath first last = do
-  rwith (Log.existing logPath) $ \log -> do
-    let ident = Log.identity log
-    let pbSty = PB.defStyle { PB.stylePostfix = PB.exact }
-    logInfo (displayShow ident)
-
-    last <- atomically $ Log.lastEv log <&> \lastReal -> min last lastReal
-
-    let evCount = fromIntegral (last - first)
-
-    pb <- PB.newProgressBar pbSty 10 (PB.Progress 1 evCount ())
-
-    runConduit $ Log.streamEvents log first .| showEvents
-      pb
-      first
-      (fromIntegral $ lifecycleLen ident)
- where
-  logPath :: FilePath
-  logPath = pierPath <> "/.urb/log"
-
-  showEvents
-    :: PB.ProgressBar ()
-    -> EventId
-    -> EventId
-    -> ConduitT ByteString Void (RIO KingEnv) ()
-  showEvents pb eId _ | eId > last = pure ()
-  showEvents pb eId cycle          = await >>= \case
-    Nothing -> do
-      lift $ PB.killProgressBar pb
-      lift $ logInfo "Everything checks out."
-    Just bs -> do
-      lift $ PB.incProgress pb 1
-      lift $ do
-        n <- io $ cueBSExn bs
-        when (eId > cycle) $ do
-          (mug, wen, evNoun) <- unpackJob n
-          fromNounErr evNoun & \case
-            Left  err       -> logError (displayShow (eId, err))
-            Right (_ :: Ev) -> pure ()
-      showEvents pb (succ eId) cycle
-
-  unpackJob :: Noun -> RIO KingEnv (Mug, Wen, Noun)
-  unpackJob = io . fromNounExn
-
-
---------------------------------------------------------------------------------
-
-{-|
-    Interesting
--}
-testPill :: HasKingEnv e => FilePath -> Bool -> Bool -> RIO e ()
-testPill pax showPil showSeq = do
-  logInfo "Reading pill file."
-  pillBytes <- readFile pax
-
-  logInfo "Cueing pill file."
-  pillNoun <- io $ cueBS pillBytes & either throwIO pure
-
-  logInfo "Parsing pill file."
-  pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
-
-  logInfo "Using pill to generate boot sequence."
-  bootSeq <- genBootSeq (Ship 0) pill False (Fake (Ship 0))
-
-  logInfo "Validate jam/cue and toNoun/fromNoun on pill value"
-  reJam <- validateNounVal pill
-
-  logInfo "Checking if round-trip matches input file:"
-  unless (reJam == pillBytes) $ do
-    logInfo "    Our jam does not match the file...\n"
-    logInfo "    This is surprising, but it is probably okay."
-
-  when showPil $ do
-      logInfo "\n\n== Pill ==\n"
-      io $ pPrint pill
-
-  when showSeq $ do
-      logInfo "\n\n== Boot Sequence ==\n"
-      io $ pPrint bootSeq
-
-validateNounVal :: (HasLogFunc e, Eq a, ToNoun a, FromNoun a)
-                => a -> RIO e ByteString
-validateNounVal inpVal = do
-    logInfo "  jam"
-    inpByt <- evaluate $ jamBS $ toNoun inpVal
-
-    logInfo "  cue"
-    outNon <- cueBS inpByt & either throwIO pure
-
-    logInfo "  fromNoun"
-    outVal <- fromNounErr outNon & either (throwIO . uncurry ParseErr) pure
-
-    logInfo "  toNoun"
-    outNon <- evaluate (toNoun outVal)
-
-    logInfo "  jam"
-    outByt <- evaluate $ jamBS outNon
-
-    logInfo "Checking if: x == cue (jam x)"
-    unless (inpVal == outVal) $
-        error "Value fails test: x == cue (jam x)"
-
-    logInfo "Checking if: jam x == jam (cue (jam x))"
-    unless (inpByt == outByt) $
-        error "Value fails test: jam x == jam (cue (jam x))"
-
-    pure outByt
 
 
 --------------------------------------------------------------------------------
@@ -515,8 +390,6 @@ runShip (CLI.Run pierPath) opts daemon = do
       injections <- loadInjections (CLI.oInjectEvents opts)
       tryPlayShip
         (CLI.oExit opts)
-        (CLI.oFullReplay opts)
-        (CLI.oDryFrom opts)
         mStart
         injections
 
@@ -544,12 +417,6 @@ buildPortHandler CLI.NatNever  = pure buildInactivePorts
 buildPortHandler CLI.NatAlways = buildNatPorts (io . hPutStrLn stderr . unpack)
 buildPortHandler CLI.NatWhenPrivateNetwork =
   buildNatPortsWhenPrivate (io . hPutStrLn stderr . unpack)
-
-startBrowser :: HasLogFunc e => FilePath -> RIO e ()
-startBrowser pierPath = runRAcquire $ do
-    -- lockFile pierPath
-    log <- Log.existing (pierPath <> "/.urb/log")
-    rio $ EventBrowser.run log
 
 checkDawn :: HasLogFunc e => String -> FilePath -> RIO e ()
 checkDawn provider keyfilePath = do
@@ -590,17 +457,11 @@ main = do
   setRLimits
 
   runKingEnv args log $ case args of
-    CLI.CmdRun ko ships                       -> runShips ko ships
-    CLI.CmdNew n  o                           -> newShip n o
-    CLI.CmdBug (CLI.CollectAllFX pax        ) -> collectAllFx pax
-    CLI.CmdBug (CLI.EventBrowser pax        ) -> startBrowser pax
-    CLI.CmdBug (CLI.ValidatePill   pax pil s) -> testPill pax pil s
-    CLI.CmdBug (CLI.ValidateEvents pax f   l) -> checkEvs pax f l
-    CLI.CmdBug (CLI.ValidateFX     pax f   l) -> checkFx pax f l
-    CLI.CmdBug (CLI.ReplayEvents pax l      ) -> error "you show lack of discernment"
-    CLI.CmdBug (CLI.CheckDawn provider pax  ) -> checkDawn provider pax
-    CLI.CmdBug CLI.CheckComet                 -> checkComet
-    CLI.CmdCon pier                           -> connTerm pier
+    CLI.CmdRun ko ships                     -> runShips ko ships
+    CLI.CmdNew n  o                         -> newShip n o
+    CLI.CmdBug (CLI.CheckDawn provider pax) -> checkDawn provider pax
+    CLI.CmdBug CLI.CheckComet               -> checkComet
+    CLI.CmdCon pier                         -> connTerm pier
 
  where
   runKingEnv args log =
@@ -795,82 +656,3 @@ runMultipleShips serfExe ships = do
 
 connTerm :: forall e. HasLogFunc e => FilePath -> RIO e ()
 connTerm = Term.runTerminalClient
-
-
---------------------------------------------------------------------------------
-
-checkFx :: HasLogFunc e
-        => FilePath -> Word64 -> Word64 -> RIO e ()
-checkFx pierPath first last =
-    rwith (Log.existing logPath) $ \log ->
-        runConduit $ streamFX log first last
-                  .| tryParseFXStream
-  where
-    logPath = pierPath <> "/.urb/log"
-
-streamFX :: HasLogFunc e
-         => Log.EventLog -> Word64 -> Word64
-         -> ConduitT () ByteString (RIO e) ()
-streamFX log first last = do
-    Log.streamEffectsRows log first .| loop
-  where
-    loop = await >>= \case Nothing                     -> pure ()
-                           Just (eId, bs) | eId > last -> pure ()
-                           Just (eId, bs)              -> yield bs >> loop
-
-tryParseFXStream :: HasLogFunc e => ConduitT ByteString Void (RIO e) ()
-tryParseFXStream = loop
-  where
-    loop = await >>= \case
-        Nothing -> pure ()
-        Just bs -> do
-            n <- liftIO (cueBSExn bs)
-            fromNounErr n & either (logError . displayShow) pure
-            loop
-
-
-{-
-tryCopyLog :: IO ()
-tryCopyLog = do
-  let logPath      = "/Users/erg/src/urbit/zod/.urb/falselog/"
-      falselogPath = "/Users/erg/src/urbit/zod/.urb/falselog2/"
-
-  persistQ <- newTQueueIO
-  releaseQ <- newTQueueIO
-  (ident, nextEv, events) <-
-      with (do { log <- Log.existing logPath
-               ; Pier.runPersist log persistQ (writeTQueue releaseQ)
-               ; pure log
-               })
-        \log -> do
-          ident  <- pure $ Log.identity log
-          events <- runConduit (Log.streamEvents log 1 .| consume)
-          nextEv <- Log.nextEv log
-          pure (ident, nextEv, events)
-
-  print ident
-  print nextEv
-  print (length events)
-
-  persistQ2 <- newTQueueIO
-  releaseQ2 <- newTQueueIO
-  with (do { log <- Log.new falselogPath ident
-           ; Pier.runPersist log persistQ2 (writeTQueue releaseQ2)
-           ; pure log
-           })
-    $ \log2 -> do
-      let writs = zip [1..] events <&> \(id, a) ->
-                      (Writ id Nothing a, [])
-
-      print "About to write"
-
-      for_ writs $ \w ->
-        atomically (writeTQueue persistQ2 w)
-
-      print "About to wait"
-
-      replicateM_ 100 $ do
-        atomically $ readTQueue releaseQ2
-
-      print "Done"
--}

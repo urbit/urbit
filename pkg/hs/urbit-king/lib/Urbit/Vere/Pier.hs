@@ -7,11 +7,8 @@
 module Urbit.Vere.Pier
   ( booted
   , resumed
-  , getSnapshot
   , pier
-  , runPersist
   , runCompute
-  , genBootSeq
   )
 where
 
@@ -24,13 +21,15 @@ import Urbit.King.App
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Stat
 
-import Control.Monad.STM      (retry)
-import System.Environment     (getExecutablePath)
-import System.FilePath        (splitFileName)
-import System.Posix.Files     (ownerModes, setFileMode)
-import Urbit.King.API         (TermConn)
-import Urbit.TermSize         (TermSize(..), termSize)
-import Urbit.Vere.Serf        (Serf)
+import Control.Monad.STM         (retry)
+import System.Environment        (getExecutablePath)
+import System.Exit               (ExitCode)
+import System.FilePath           (splitFileName)
+import System.Posix.Files        (ownerModes, setFileMode)
+import Urbit.King.API            (TermConn)
+import Urbit.TermSize            (TermSize(..), termSize)
+import Urbit.Vere.Serf           (Serf)
+import Urbit.Vere.Serf.IPC.Types (Boot(..))
 
 import qualified Data.Text                   as T
 import qualified Data.List as L
@@ -49,23 +48,6 @@ import qualified Urbit.Vere.Term.API         as Term
 import qualified Urbit.Vere.Term.Demux       as Term
 
 
--- Initialize pier directory. --------------------------------------------------
-
-data PierDirectoryAlreadyExists = PierDirectoryAlreadyExists
- deriving (Show, Exception)
-
-setupPierDirectory :: FilePath -> RIO e ()
-setupPierDirectory shipPath = do
-  -- shipPath will already exist because we put a lock file there.
-  alreadyExists <- doesPathExist (shipPath </> ".urb")
-  when alreadyExists $ do
-    throwIO PierDirectoryAlreadyExists
-  for_ ["put", "get", "log", "chk"] $ \seg -> do
-    let pax = shipPath </> ".urb" </> seg
-    createDirectoryIfMissing True pax
-    io $ setFileMode pax ownerModes
-
-
 -- Load pill into boot sequence. -----------------------------------------------
 
 data CannotBootFromIvoryPill = CannotBootFromIvoryPill
@@ -73,26 +55,6 @@ data CannotBootFromIvoryPill = CannotBootFromIvoryPill
 
 genEntropy :: MonadIO m => m Entropy
 genEntropy = Entropy . fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
-
-genBootSeq :: HasKingEnv e
-           => Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
-genBootSeq _    PillIvory {}   _    _    = throwIO CannotBootFromIvoryPill
-genBootSeq ship PillPill  {..} lite boot = do
-  ent <- io genEntropy
-  wyr <- wyrd
-  let ova = preKern ent <> [wyr] <> pKernelOva <> postKern <> pUserspaceOva
-  pure $ BootSeq ident pBootFormulae ova
- where
-  ident = LogIdentity ship isFake (fromIntegral $ length pBootFormulae)
-  preKern ent =
-    [ EvBlip $ BlipEvArvo $ ArvoEvWhom () ship
-    , EvBlip $ BlipEvArvo $ ArvoEvWack () ent
-    ]
-  postKern = [EvBlip $ BlipEvTerm $ TermEvBoot (1, ()) lite boot]
-  isFake   = case boot of
-    Fake _ -> True
-    _      -> False
-
 
 -- Boot a new ship. ------------------------------------------------------------
 
@@ -102,48 +64,19 @@ booted
   -> Bool
   -> Ship
   -> LegacyBootEvent
-  -> RAcquire PierEnv (Serf, Ripe)
+  -> RIO PierEnv ExitCode
 booted vSlog pill lite ship boot = do
-  rio $ bootNewShip pill lite ship boot
-  resumed vSlog Nothing
-
-bootSeqJobs :: Time.Wen -> BootSeq -> [Job]
-bootSeqJobs now (BootSeq ident nocks ovums) = zipWith ($) bootSeqFns [1 ..]
- where
-  wen :: EventId -> Time.Wen
-  wen off = Time.addGap now ((fromIntegral off - 1) ^. from Time.microSecs)
-
-  bootSeqFns :: [EventId -> Job]
-  bootSeqFns = fmap nockJob nocks <> fmap ovumJob ovums
-   where
-    nockJob nok eId = RunNok $ LifeCyc eId 0 nok
-    ovumJob ov eId = DoWork $ Work eId 0 (wen eId) ov
-
-bootNewShip
-  :: HasPierEnv e
-  => Pill
-  -> Bool
-  -> Ship
-  -> LegacyBootEvent
-  -> RIO e ()
-bootNewShip pill lite ship bootEv = do
-  seq@(BootSeq ident x y) <- genBootSeq ship pill lite bootEv
-  logInfo "BootSeq Computed"
-
-  pierPath <- view pierPathL
-
-  rio (setupPierDirectory pierPath)
-  logInfo "Directory setup."
-
-  let logPath = (pierPath </> ".urb/log")
-
-  rwith (Log.new logPath ident) $ \log -> do
-    logInfo "Event log initialized."
-    jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
-    writeJobs log (fromList jobs)
-
-  logInfo "Finished populating event log with boot sequence"
-
+  --  TODO: send %boot in serf
+  scSerf <- undefined
+  scPier <- undefined
+  scFlag <- undefined
+  scSlog <- undefined
+  scStdr <- undefined
+  scDead <- undefined
+  bPill <- undefined
+  bVent <- undefined
+  bMore <- undefined
+  io $ Serf.boot Config {..} Boot {..}
 
 -- Resume an existing ship. ----------------------------------------------------
 
@@ -155,14 +88,14 @@ resumed vSlog = do
   rio $ logTrace "Resuming ship"
 
   rio $ do
-    logTrace $ display @Text ("pier: " <> pack top)
+    logTrace $ display @Text ("pier: " <> pack pax)
 
   env <- ask
   serfProg <- io getSerfProg
-  Serf.withSerf (config env serfProg)
+  Serf.withSerf (config env serfProg pax)
  where
   slog s = atomically (readTVar vSlog) >>= (\f -> f s)
-  config env serfProg = Serf.Config
+  config env serfProg pax = Serf.Config
     { scSerf = env ^. pierConfigL . pcSerfExe . to (maybe serfProg unpack)
     , scPier = pax
     , scFlag = env ^. pierConfigL . pcSerfFlags
@@ -194,7 +127,6 @@ pier (serf, ripe) vSlog startedSig injected = do
   -- TODO Instead of using a TMVar, pull directly from the IO driver
   -- event sources.
   computeQ :: TMVar RunReq      <- newEmptyTMVarIO
-  persistQ :: TQueue (Fact, FX) <- newTQueueIO
   executeQ :: TQueue FX         <- newTQueueIO
   saveSig :: TMVar ()           <- newEmptyTMVarIO
   kingApi :: King.King          <- King.kingAPI
@@ -226,7 +158,6 @@ pier (serf, ripe) vSlog startedSig injected = do
   -- add them.
   let compute = putTMVar computeQ
   let execute = writeTQueue executeQ
-  let persist = writeTQueue persistQ
   let sigint  = Serf.sendSIGINT serf
   let scry    = \g r -> do
         res <- newEmptyMVar
@@ -249,7 +180,7 @@ pier (serf, ripe) vSlog startedSig injected = do
       logOther "serf" (display $ T.strip $ tankToText tank)
 
   let err = atomically . Term.trace muxed . (<> "\r\n")
-  (bootEvents, startDrivers) <- do
+  (bornEvents, startDrivers) <- do
     env <- ask
     siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake self
@@ -259,7 +190,6 @@ pier (serf, ripe) vSlog startedSig injected = do
                                     , ccOnKill      = onKill
                                     , ccOnSave      = takeTMVar saveSig
                                     , ccOnScry      = readTQueue scryQ
-                                    , ccPutResult   = persist
                                     , ccShowSpinner = Term.spin muxed
                                     , ccHideSpinner = Term.stopSpin muxed
                                     }
@@ -270,7 +200,7 @@ pier (serf, ripe) vSlog startedSig injected = do
 
   -- Run all born events and retry them until they succeed.
   wackEv <- EvBlip . BlipEvArvo . ArvoEvWack () <$> genEntropy
-  rio $ for_ (wackEv : bootEvents) $ \ev -> do
+  rio $ for_ (wackEv : bornEvents) $ \ev -> do
     okaySig <- newEmptyMVar
 
     let inject n = atomically $ compute $ RRWork $ EvErr ev $ cb n
@@ -279,9 +209,8 @@ pier (serf, ripe) vSlog startedSig injected = do
         cb :: Int -> WorkError -> IO ()
         cb n | n >= 3 = error ("boot event failed: " <> show ev)
         cb n          = \case
-          RunOkay _ _       -> putMVar okaySig ()
-          RunSwap _ _ _ _ _ -> putMVar okaySig ()
-          RunBail _         -> inject (n + 1)
+          RunOkay _ -> putMVar okaySig ()
+          RunBail _ -> inject (n + 1)
 
     -- logTrace ("[BOOT EVENT]: " <> display (summarizeEvent ev))
     io (inject 0)
@@ -293,7 +222,6 @@ pier (serf, ripe) vSlog startedSig injected = do
 
   drivz <- startDrivers
   tExec <- acquireWorker "Effects" (router slog (readTQueue executeQ) drivz)
-  tDisk <- acquireWorkerBound "Persist" (runPersist log persistQ execute)
 
   -- Now that the Serf is configured, the IO drivers are hooked up, their
   -- starting events have been dispatched, and the terminal is live, we can now
@@ -306,9 +234,8 @@ pier (serf, ripe) vSlog startedSig injected = do
     let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
         cb :: WorkError -> IO ()
         cb = \case
-          RunOkay _ _       -> putMVar okaySig (Right ())
-          RunSwap _ _ _ _ _ -> putMVar okaySig (Right ())
-          RunBail goofs     -> putMVar okaySig (Left goofs)
+          RunOkay _     -> putMVar okaySig (Right ())
+          RunBail goofs -> putMVar okaySig (Left goofs)
 
     io inject
 
@@ -330,7 +257,6 @@ pier (serf, ripe) vSlog startedSig injected = do
 
   let ded = asum
         [ death "effects thread" tExec
-        , death "persist thread" tDisk
         , death "compute thread" tSerf
         ]
 
@@ -381,9 +307,8 @@ doVersionNegotiation compute stderr = do
   let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
       cb :: WorkError -> IO ()
       cb = \case
-        RunOkay _ fx       -> putMVar okaySig (Right fx)
-        RunSwap _ _ _ _ fx -> putMVar okaySig (Right fx)
-        RunBail goofs      -> putMVar okaySig (Left goofs)
+        RunOkay fx    -> putMVar okaySig (Right fx)
+        RunBail goofs -> putMVar okaySig (Left goofs)
 
   rio $ stderr "vere: checking version compatibility"
   io inject
@@ -534,7 +459,6 @@ data ComputeConfig = ComputeConfig
   , ccOnKill      :: STM ()
   , ccOnSave      :: STM ()
   , ccOnScry      :: STM (Gang, ScryReq, Maybe (Term, Noun) -> IO ())
-  , ccPutResult   :: (Fact, FX) -> STM ()
   , ccShowSpinner :: Maybe Text -> STM ()
   , ccHideSpinner :: STM ()
   }
@@ -562,4 +486,4 @@ runCompute serf ComputeConfig {..} = do
 
   let maxBatchSize = 10
 
-  io (Serf.run serf maxBatchSize onRR ccPutResult onSpin)
+  io (Serf.run serf maxBatchSize onRR onSpin)

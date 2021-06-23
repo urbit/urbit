@@ -19,7 +19,6 @@ data AmesStat = AmesStat
   , asDrt :: TVar Word
   , asDvr :: TVar Word
   , asDml :: TVar Word
-  , asSwp :: TVar Word
   , asBal :: TVar Word
   , asOky :: TVar Word
   }
@@ -38,7 +37,6 @@ newStat = do
   asDrt <- newTVarIO 0
   asDvr <- newTVarIO 0
   asDml <- newTVarIO 0
-  asSwp <- newTVarIO 0
   asBal <- newTVarIO 0
   asOky <- newTVarIO 0
   pure Stat{statAmes = AmesStat{..}}
@@ -68,7 +66,6 @@ renderStat Stat{statAmes = AmesStat{..}} =
     ,     ("    dropped (unroutable):    " <>) <$> tshow <$> readTVarIO asDrt
     ,     ("    dropped (wrong version): " <>) <$> tshow <$> readTVarIO asDvr
     ,     ("    dropped (malformed):     " <>) <$> tshow <$> readTVarIO asDml
-    ,     ("    serf swapped:            " <>) <$> tshow <$> readTVarIO asSwp
     ,     ("    serf bailed:             " <>) <$> tshow <$> readTVarIO asBal
     ,     ("    serf okay:               " <>) <$> tshow <$> readTVarIO asOky
     ]

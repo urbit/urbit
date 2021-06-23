@@ -83,8 +83,7 @@ data EvErr = EvErr Ev (WorkError -> IO ())
     with a failure-notice event also caused crashes. We are really fucked.
 -}
 data WorkError -- TODO Rename type and constructors
-  = RunSwap EventId Mug Wen Noun FX -- TODO Maybe provide less info here?
-  | RunBail [Goof]
+  = RunBail [Goof]
   | RunOkay FX
 
 {-

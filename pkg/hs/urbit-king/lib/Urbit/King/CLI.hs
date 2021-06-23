@@ -30,7 +30,6 @@ data Opts = Opts
     , oHashless     :: Bool
     , oExit         :: Bool
     , oDryRun       :: Bool
-    , oDryFrom      :: Maybe Word64
     , oVerbose      :: Bool
     , oAmesPort     :: Maybe Word16
     , oNoAmes       :: Bool
@@ -40,7 +39,6 @@ data Opts = Opts
     , oCollectFx    :: Bool
     , oLocalhost    :: Bool
     , oOffline      :: Bool
-    , oFullReplay   :: Bool
     , oHttpPort     :: Maybe Word16
     , oHttpsPort    :: Maybe Word16
     , oLoopbackPort :: Maybe Word16
@@ -100,32 +98,7 @@ data Run = Run
   deriving (Show)
 
 data Bug
-    = ValidatePill
-        { bPillPath :: FilePath
-        , bPrintPil :: Bool
-        , bPrintSeq :: Bool
-        }
-    | CollectAllFX
-        { bPierPath :: FilePath
-        }
-    | EventBrowser
-        { bPierPath :: FilePath
-        }
-    | ValidateEvents
-        { bPierPath :: FilePath
-        , bFirstEvt :: Word64
-        , bFinalEvt :: Word64
-        }
-    | ValidateFX
-        { bPierPath :: FilePath
-        , bFirstEvt :: Word64
-        , bFinalEvt :: Word64
-        }
-    | ReplayEvents
-        { bPierPath :: FilePath
-        , bFinalEvt :: Word64
-        }
-    | CheckDawn
+    = CheckDawn
         { bEthNode     :: String
         , bKeyfilePath :: FilePath
         }
@@ -360,13 +333,8 @@ opts = do
                         <> hidden
 
     oDryRun    <- switch $ long "dry-run"
-                        <> help "Persist no events and turn off Ames networking"
+                        <> help "Turn off persistence [UNSUPPORTED] and Ames"
                         <> hidden
-
-    oDryFrom   <- optional $ option auto $ metavar "EVENT"
-                             <> long "dry-from"
-                             <> help "Dry run from event number"
-                             <> hidden
 
     oTrace     <- switch $ short 't'
                         <> long "trace"
@@ -375,7 +343,7 @@ opts = do
 
     oLocalhost <- switch $ short 'L'
                         <> long "local"
-                        <> help "Localhost-only networking"
+                        <> help "Localhost-only Ames networking"
                         <> hidden
 
     oCollectFx <- switch $ short 'f'
@@ -387,11 +355,6 @@ opts = do
                         <> long "offline"
                         <> help "Run without any networking"
                         <> hidden
-
-    oFullReplay <- switch
-          $ long "full-log-replay"
-         <> help "Ignores snapshot and recomputes state from event log"
-         <> hidden
 
     pure (Opts{..})
 
@@ -494,44 +457,8 @@ host = do
 runShip :: Parser (Cmd, Log)
 runShip = (,) <$> (CmdRun <$> host <*> some runOneShip) <*> log
 
-valPill :: Parser Bug
-valPill = do
-    bPillPath <- strArgument (metavar "PILL" <> help "Path to pill")
-
-    bPrintPil <- switch $ long "print-pill"
-                       <> help "Print pill"
-
-    bPrintSeq <- switch $ long "print-boot"
-                       <> help "Print boot sequence"
-
-    pure ValidatePill{..}
-
 keyfilePath :: Parser FilePath
 keyfilePath = strArgument (metavar "KEYFILE" <> help "Path to key file")
-
-firstEv :: Parser Word64
-firstEv = option auto $ long "first"
-                     <> metavar "FST"
-                     <> help "starting from event FST"
-                     <> value 1
-
-lastEv :: Parser Word64
-lastEv = option auto $ long "last"
-                    <> metavar "LAS"
-                    <> help "ending with event LAS"
-                    <> value maxBound
-
-checkEvs :: Parser Bug
-checkEvs = ValidateEvents <$> pierPath <*> firstEv <*> lastEv
-
-checkFx :: Parser Bug
-checkFx = ValidateFX <$> pierPath <*> firstEv <*> lastEv
-
-replayEvs :: Parser Bug
-replayEvs = ReplayEvents <$> pierPath <*> lastEv
-
-browseEvs :: Parser Bug
-browseEvs = EventBrowser <$> pierPath
 
 checkDawn :: Parser Bug
 checkDawn = CheckDawn <$> ethNode <*> keyfilePath
@@ -539,31 +466,7 @@ checkDawn = CheckDawn <$> ethNode <*> keyfilePath
 bugCmd :: Parser (Cmd, Log)
 bugCmd = (flip (,) <$> log <*>) $ fmap CmdBug
         $ subparser
-        $ command "validate-pill"
-            ( info (valPill <**> helper)
-            $ progDesc "Validate a pill file."
-            )
-       <> command "collect-all-fx"
-            ( info (allFx <**> helper)
-            $ progDesc "Replay entire event log, collecting all effects"
-            )
-       <> command "validate-events"
-            ( info (checkEvs <**> helper)
-            $ progDesc "Parse all data in event log"
-            )
-       <> command "event-browser"
-            ( info (browseEvs <**> helper)
-            $ progDesc "Interactively view (and prune) event log"
-            )
-       <> command "validate-effects"
-            ( info (checkFx <**> helper)
-            $ progDesc "Parse all data in event log"
-            )
-       <> command "partial-replay"
-            ( info (replayEvs <**> helper)
-            $ progDesc "Replay up to N events"
-            )
-       <> command "dawn"
+        $ command "dawn"
             ( info (checkDawn <**> helper)
             $ progDesc "Test run dawn"
             )
@@ -574,11 +477,6 @@ bugCmd = (flip (,) <$> log <*>) $ fmap CmdBug
 
 conCmd :: Parser (Cmd, Log)
 conCmd = (,) <$> (CmdCon <$> pierPath) <*> log
-
-allFx :: Parser Bug
-allFx = do
-    bPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
-    pure CollectAllFX{..}
 
 cmd :: Parser (Cmd, Log)
 cmd = subparser
