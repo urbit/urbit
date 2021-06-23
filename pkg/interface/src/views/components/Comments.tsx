@@ -1,5 +1,14 @@
 import { Col } from '@tlon/indigo-react';
-import { createPost, createBlankNodeWithChildPost, Association, GraphNode, Group, markCountAsRead, addPost } from '@urbit/api';
+import {
+  createPost,
+  createBlankNodeWithChildPost,
+  Association,
+  GraphNode,
+  Group,
+  markCountAsRead,
+  addPost,
+  resourceFromPath
+} from '@urbit/api';
 import bigInt from 'big-integer';
 import { FormikHelpers } from 'formik';
 import React, { useEffect, useMemo } from 'react';
@@ -15,12 +24,11 @@ import CommentInput from './CommentInput';
 import { CommentItem } from './CommentItem';
 import airlock from '~/logic/api';
 import useGraphState from '~/logic/state/graph';
+import { useHistory } from 'react-router';
 
 interface CommentsProps {
   comments: GraphNode;
   association: Association;
-  name: string;
-  ship: string;
   baseUrl: string;
   group: Group;
 }
@@ -29,14 +37,14 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   const {
     association,
     comments,
-    ship,
-    name,
-    history,
     baseUrl,
     group,
     ...rest
   } = props;
   const addNode = useGraphState(s => s.addNode);
+  const history = useHistory();
+
+  const { ship, name } = resourceFromPath(association.resource);
 
   const { query } = useQuery();
   const selectedComment = useMemo(() => {
@@ -80,7 +88,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
       const content = tokenizeMessage(comment);
       const post = createPost(
-        `~${window.ship}`,
+        window.ship,
         content,
         commentNode.post.index,
         parseInt((idx + 1).toString(), 10).toString()
@@ -96,7 +104,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   let commentContent = null;
   if (editCommentId) {
     const commentNode = comments.children.get(bigInt(editCommentId));
-    const [,post] = getLatestCommentRevision(commentNode);
+    const [, post] = getLatestCommentRevision(commentNode);
     commentContent = post.contents.reduce((val, curr) => {
       if ('text' in curr) {
         val = val + curr.text;
@@ -130,15 +138,6 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
   return (
     <Col {...rest} minWidth={0}>
-      {( !editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
-      {( editCommentId ? (
-        <CommentInput
-          onSubmit={onEdit}
-          label='Edit Comment'
-          loadingText='Editing...'
-          initial={commentContent}
-        />
-      ) : null )}
       {children.reverse()
           .map(([idx, comment], i) => {
           const highlighted = selectedComment?.eq(idx) ?? false;
@@ -155,7 +154,15 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
               pending={idx.toString() === editCommentId}
             />
           );
-      })}
+          })}
+      {( editCommentId ? (
+        <CommentInput
+          onSubmit={onEdit}
+          label='Edit Comment'
+          initial={commentContent}
+        />
+      ) : null )}
+      {( !editCommentId && canComment ? <CommentInput placeholder="Comment" onSubmit={onSubmit} /> : null )}
     </Col>
   );
 }

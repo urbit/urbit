@@ -1,16 +1,18 @@
-import { Action, Box, Row, Text } from '@tlon/indigo-react';
+import { Action, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { Group, removePosts } from '@urbit/api';
 import { GraphNode } from '@urbit/api/graph';
 import bigInt from 'big-integer';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import { useCopy } from '~/logic/lib/useCopy';
+import { useHovering } from '~/logic/lib/util';
 import useMetadataState from '~/logic/state/metadata';
 import Author from '~/views/components/Author';
+import { ActionLink } from '~/views/components/Link';
 import { GraphContent } from '../landscape/components/Graph/GraphContent';
+import { Dropdown } from './Dropdown';
 import airlock from '~/logic/api';
 
 interface CommentItemProps {
@@ -28,7 +30,10 @@ export function CommentItem(props: CommentItemProps) {
   let { highlighted } = props;
   const { ship, name, comment, group } = props;
   const association = useMetadataState(
-    useCallback(s => s.associations.graph[`/ship/${ship}/${name}`], [ship,name])
+    useCallback(s => s.associations.graph[`/ship/${ship}/${name}`], [
+      ship,
+      name
+    ])
   );
   const ref = useRef<HTMLDivElement>(null);
   const [, post] = getLatestCommentRevision(comment);
@@ -63,32 +68,14 @@ return false;
       highlighted = true;
     }
   }
+  const { hovering, bind } = useHovering();
 
   const commentIndexArray = (comment.post?.index || '/').split('/');
   const commentIndex = commentIndexArray[commentIndexArray.length - 1];
 
-  const adminLinks: JSX.Element[] = [];
   const ourRole = roleForShip(group, window.ship);
-  if (window.ship == post?.author && !disabled) {
-    adminLinks.push(
-      <Link to={{ pathname: props.baseUrl, search: `?edit=${commentIndex}` }}>
-        <Action bg="white">
-          Update
-        </Action>
-      </Link>
-    );
-  }
-
-  if ((window.ship == post?.author || ourRole == 'admin') && !disabled) {
-    adminLinks.push(
-      <Action bg="white" onClick={onDelete} destructive>
-        Delete
-      </Action>
-    );
-  }
-
   useEffect(() => {
-    if(ref.current && props.highlighted) {
+    if (ref.current && props.highlighted) {
       ref.current.scrollIntoView({ block: 'center' });
     }
   }, [ref, props.highlighted]);
@@ -111,26 +98,68 @@ return false;
   }
 
   return (
-    <Box ref={ref} mb={4} opacity={post?.pending ? '60%' : '100%'}>
-      <Row px={1} my={3}>
+    <Box {...bind} ref={ref} mb={4} opacity={post?.pending ? '60%' : '100%'}>
+      <Row justifyContent="space-between" alignItems="center" my={1} pr="1">
         <Author
+          size={24}
+          sigilPadding={4}
           showImage
           ship={post?.author}
           date={post?.['time-sent']}
           unread={props.unread}
           group={group}
           isRelativeTime
-        >
-          <Row px={2} gapX={2} height="18px">
-            <Action bg="white" onClick={doCopy}>{copyDisplay}</Action>
-            {adminLinks}
-          </Row>
-        </Author>
+        ></Author>
+        <Box opacity={hovering ? '100%' : '0%'}>
+          <Dropdown
+            alignX="right"
+            alignY="top"
+            options={
+              <Col
+                p="2"
+                border="1"
+                borderRadius="1"
+                borderColor="lightGray"
+                backgroundColor="white"
+                gapY="2"
+              >
+                <Action bg="white" onClick={doCopy}>
+                  {copyDisplay}
+                </Action>
+                {(window.ship == post?.author && !disabled) ? (
+                  <ActionLink
+                    color="blue"
+                    to={{
+                      pathname: props.baseUrl,
+                      search: `?edit=${commentIndex}`
+                    }}
+                  >
+                    Update
+                  </ActionLink>
+                ) : null}
+                {(window.ship == post?.author || ourRole == 'admin') &&
+                !disabled ? (
+                  <Action
+                    height="unset"
+                    bg="white"
+                    onClick={onDelete}
+                    destructive
+                  >
+                    Delete
+                  </Action>
+                ) : null}
+              </Col>
+            }
+          >
+            <Icon icon="Ellipsis" />
+          </Dropdown>
+        </Box>
       </Row>
       <GraphContent
         borderRadius={1}
         p={1}
         mb={1}
+        ml="28px"
         backgroundColor={highlighted ? 'washedBlue' : 'white'}
         transcluded={0}
         contents={post.contents}

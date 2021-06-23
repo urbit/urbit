@@ -82,7 +82,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
       }
       if (group) {
         await airlock.thread(createManagedGraph(
-          `~${window.ship}`,
+          window.ship,
           resId,
           name,
           description,
@@ -106,7 +106,7 @@ export function NewChannel(props: NewChannelProps): ReactElement {
         }
       } else {
         await airlock.thread(createUnmanagedGraph(
-          `~${window.ship}`,
+          window.ship,
           resId,
           name,
           description,
