@@ -215,7 +215,7 @@ class PostFeed extends React.Component<PostFeedProps, any> {
           origin="top"
           offset={0}
           data={graph}
-          averageHeight={106}
+          averageHeight={80}
           size={graph.size}
           style={virtualScrollerStyle}
           pendingSize={pendingSize}
