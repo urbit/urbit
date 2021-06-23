@@ -61,7 +61,7 @@
   ?+  wire  !!
     ::  pass on dill blits for the session
     ::
-      [?(%view %dill) @ ~]  ::NOTE  /view for backwards compat
+      [%dill @ ~]
     =*  ses  i.t.wire
     ?.  ?=([%dill %blit *] sign-arvo)
       ~|  [%unexpected-sign [- +<]:sign-arvo]
@@ -70,6 +70,13 @@
     %+  turn  p.sign-arvo
     |=  =blit:dill
     [%give %fact [%session ses ~]~ %blit !>(blit)]
+  ::
+    ::  clean up old-style subscriptions
+    ::
+      [%view @ ~]
+    =*  ses  i.t.wire
+    :_  this
+    [%pass wire %arvo %d %shot ses %flee ~]~
   ==
 ::
 ++  on-poke
