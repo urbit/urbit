@@ -1,8 +1,6 @@
 /-  bp=btc-provider, json-rpc
 /+  bc=bitcoin
-^?
-::=<  [sur .]
-::=,  sur
+~%  %btc-provider-lib  ..part  ~
 |%
 ::  +from-epoch: time since Jan 1, 1970 in seconds.
 ::
@@ -25,8 +23,8 @@
       ~[['Content-Type' 'application/json']]
       =,  html
       %-  some
-        %-  as-octt:mimes
-        (en-json body)
+      %-  as-octt:mimes
+      (en-json body)
   ==
 ::
 ++  gen-request
@@ -36,6 +34,7 @@
   api-url.host-info  ract
 ::
 ++  rpc
+  ~/  %rpc
   =,  dejs:format
   |%
   ++  parse-result
@@ -62,6 +61,7 @@
         %get-block-info
       [id.res (block-info res.res)]
     ==
+    ::
     ++  address-info
       %-  ot
       :~  [%address (cu from-cord:adr:bc so)]
@@ -69,14 +69,16 @@
           [%used bo]
           [%block ni]
       ==
+    ::
     ++  utxo
-    %-  ot
+      %-  ot
       :~  ['tx_pos' ni]
           ['tx_hash' (cu from-cord:hxb:bc so)]
           [%height ni]
           [%value ni]
           [%recvd (cu from-epoch ni)]
       ==
+    ::
     ++  tx-vals
       %-  ot
       :~  [%included bo]
@@ -86,6 +88,7 @@
           [%inputs (ar tx-val)]
           [%outputs (ar tx-val)]
       ==
+    ::
     ++  tx-val
       %-  ot
       :~  [%txid (cu from-cord:hxb:bc so)]
@@ -93,17 +96,20 @@
           [%address (cu from-cord:adr:bc so)]
           [%value ni]
       ==
+    ::
     ++  raw-tx
       %-  ot
       :~  [%txid (cu from-cord:hxb:bc so)]
           [%rawtx (cu from-cord:hxb:bc so)]
       ==
+    ::
     ++  broadcast-tx
       %-  ot
       :~  [%txid (cu from-cord:hxb:bc so)]
           [%broadcast bo]
           [%included bo]
       ==
+    ::
     ++  block-info
       %-  ot
       :~  [%block ni]
