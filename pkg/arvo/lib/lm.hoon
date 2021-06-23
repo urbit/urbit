@@ -26,6 +26,7 @@
   ::  Manipulators
   ::    Zeroes
   ++  zeros
+    ~/  %zeros
     |=  [m=@ud n=@ud]  ^-  @lms
     ~_  leaf+"lace-fail"
     =/  mn  (mul m n)
@@ -38,12 +39,14 @@
   ::
   ::    Ones
   ++  ones
+    ~/  %ones
     |=  [m=@ud n=@ud]  ^-  @lms
     ~_  leaf+"lace-fail"
     (fill m n .1)
   ::
   ::    Identity
   ++  id
+    ~/  %id
     |=  [m=@ud]  ^-  @lms
     ~_  leaf+"lace-fail"
     =/  u  (zeros m m)
@@ -84,7 +87,7 @@
     =+  [m n]=[&1 &2]:(shape u)
     =/  size  (mul m n)
     =/  i  0  :: index over rows
-    =/  a  `(list @rs)`(oust [0 2] (flop (rip 5 u)))
+    =/  a  `(list @rs)`(oust [size (add size 2)] (rip 5 u))
     =/  b  `(list (list @rs))`~
     |-  ^-  (list (list @rs))
       ?:  =(i m)  `(list (list @rs))`b
@@ -98,6 +101,7 @@
   ::
   ::    Get the value at an index, using mathematical indices 1..n.
   ++  get
+    ~/  %get
     |=  [u=@lms i=@ud j=@ud]  ^-  @rs
     ~_  leaf+"lace-fail"
     =+  [m n]=[&1 &2]:(shape u)
@@ -105,6 +109,7 @@
   ::
   ::    Set the value of an element within a matrix, using math indices 1..n.
   ++  set
+    ~/  %set
     |=  [u=@lms i=@ud j=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lace-fail"
     `@lms`(setr u i (set:lvs (getr u i) j s))
@@ -157,7 +162,7 @@
     =/  v  u
     |-  ^-  @lms
       ?:  (gth jj n)  v
-    $(jj +(jj), v (sew 5 [(sub (mul m n) (add (mul n i) jj)) 1 (get:lvs w jj)] v))
+    $(jj +(jj), v (sew 5 [(dec (add (mul n i) jj)) 1 (get:lvs w jj)] v))
   ::
   ::    Swap the value of two columns
   ++  swapc
@@ -352,16 +357,16 @@
     (make (process [(unmake u) (unmake v)] f))
   ::
   ::    Elementwise addition of @lms
-  ++  addm  ~/  %addm  |=([@lms @lms] %.(+< (funv add:rs)))
+  ++  addm  ~/  %addm  |=([@lms @lms] %.(+< (funm add:rs)))
   ::
   ::    Elementwise subtraction of @lms
-  ++  subm  ~/  %subm  |=([@lms @lms] %.(+< (funv sub:rs)))
+  ++  subm  ~/  %subm  |=([@lms @lms] %.(+< (funm sub:rs)))
   ::
   ::    Elementwise multiplication by @lms
-  ++  mulm  ~/  %mulm  |=([@lms @lms] %.(+< (funv mul:rs)))
+  ++  mulm  ~/  %mulm  |=([@lms @lms] %.(+< (funm mul:rs)))
   ::
   ::    Elementwise division by @lms
-  ++  divm  ~/  %divm  |=([@lms @lms] %.(+< (funv div:rs)))
+  ++  divm  ~/  %divm  |=([@lms @lms] %.(+< (funm div:rs)))
   ::
   ::    Matrix--matrix multiplication
   ::    Note:  We opt here for clarity NOT efficiency.  Leave that to the jets.
@@ -398,6 +403,7 @@
   ::    Operations related to matrix inversion
   ::    As with matrix multiplication, we're opting for clarity, not efficiency.
   ++  submatrix
+    ~/  %submatrix
     |=  [u=@lms [ia=@ud ib=@ud] [ja=@ud jb=@ud]]  ^-  @lms
     =+  [is js]=[(dec ia)^(sub ib (dec ia)) (dec ja)^(sub jb (dec ja))]
     (make (turn (swag is (unmake u)) |=(a=(list @rs) (swag js a))))
