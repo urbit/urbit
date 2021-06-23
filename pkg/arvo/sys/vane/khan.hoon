@@ -66,8 +66,8 @@
       %mas  ~&  todo+com  event-core                    :: |mass
       %cod
         =/  cov
-          [duct %pass %j %step ~]~
-        ~!  move+cov  event-core(moves cov)
+          [duct %pass / %j %step ~]~
+        event-core(moves cov)
     ==
   ::  +trim: in response to memory pressue
   ::
@@ -106,15 +106,12 @@
     ::
     ::  handle error notifications
     ::
-    ::
     ?^  dud
       (crud:event-core -.task tang.u.dud)
-    ::
-    ~!  -.task
     ?-  -.task
       %trim  trim:event-core
       %vega  vega:event-core                            :: vega
-      %fyrd  (fyrd:event-core p.task)
+      %fyrd  (fyrd:event-core p.task)                   :: fyrd
     ==
   [moves khan-gate]
 ::  +load: migrate an old state to a new khan version

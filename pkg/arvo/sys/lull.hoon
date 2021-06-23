@@ -2090,8 +2090,8 @@
   +$  task                                              ::  in request ->$
     $~  [%vega ~]
     $%
-        [%fyrd p=fyrd]                                  ::  jammed request
-        $>(%vega vane-task)
+        [%fyrd p=fyrd]                                  ::  jammed requests
+        $>(%vega vane-task)                             :: vega
         $>(%trim vane-task)
     ==
   +$  fyrd                                              ::  input
@@ -2156,7 +2156,7 @@
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
-      [%khan gift:khan]
+      ::  [%khan gift:khan]
   ==
 ::  $unix-task: input from unix
 ::
