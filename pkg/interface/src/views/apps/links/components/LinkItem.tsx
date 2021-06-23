@@ -141,6 +141,12 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
           renderUrl={false}
           url={href}
           tall
+          title={
+            contents[0].text
+            || `Link to ${hostname} from ${
+              association?.metadata?.title ?? association?.resource
+            }`
+          }
         />
         <Text color="gray" p={2} flexShrink={0}>
             <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={href}>

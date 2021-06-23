@@ -345,12 +345,12 @@ const renderers = {
   'graph-mention': ({ ship }) => <Mention ship={ship} />,
   image: ({ url, tall }) => (
     <Box mt="1" mb="2" flexShrink={0}>
-      <RemoteContent key={url} url={url} tall={tall} />
+      <RemoteContent title="Chat Message" key={url} url={url} tall={tall} />
     </Box>
   ),
   'graph-url': ({ url, tall }) => (
     <Box mt={1} mb={2} flexShrink={0}>
-      <RemoteContent key={url} url={url} tall={tall} />
+      <RemoteContent title="Chat Message" key={url} url={url} tall={tall} />
     </Box>
   ),
   'graph-reference': ({ reference, transcluded }) => {

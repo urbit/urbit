@@ -1,5 +1,5 @@
 import { Box, Center, Col, LoadingSpinner, Text } from '@tlon/indigo-react';
-import { Group } from '@urbit/api';
+import { Group, TextContent, UrlContent } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
@@ -13,6 +13,9 @@ import { LinkBlocks } from './components/LinkBlocks';
 import { LinkDetail } from './components/LinkDetail';
 import './css/custom.css';
 import LinkWindow from './LinkWindow';
+import useAudioState, { Track } from '~/logic/state/audio';
+import { AUDIO_REGEX } from '~/logic/lib/util';
+import _ from 'lodash';
 
 interface LinkResourceProps {
   association: Association;
@@ -47,7 +50,35 @@ export function LinkResource(props: LinkResourceProps) {
   const getGraph = useGraphState(s => s.getGraph);
 
   useEffect(() => {
-    getGraph(ship, name);
+    (async () => {
+      await getGraph(ship, name);
+
+      const { graphs } = useGraphState.getState();
+      const gra = graphs[association.resource.slice(7)];
+      const { queueTracks, queue } = useAudioState.getState();
+      if(queue.length !== 0) {
+        return;
+      }
+      const tracks = _.reduce(Array.from(gra), (acc, [idx, node]) => {
+        const post = node?.post;
+        if(!post || typeof post === 'string') {
+          return acc;
+        }
+        const [{ text: title }, { url }] = post.contents as [TextContent, UrlContent];
+        if(AUDIO_REGEX.test(url)) {
+          return [...acc, { title, url }];
+        }
+        return acc;
+      }, [] as Track[]);
+
+      queueTracks(tracks);
+    })();
+    return () => {
+      const { playing, clearQueue } = useAudioState.getState();
+      if(!playing) {
+        clearQueue();
+      }
+    };
   }, [association]);
 
   const resourceUrl = `${baseUrl}/resource/link${rid}`;
