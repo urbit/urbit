@@ -118,7 +118,7 @@
     ::  Parse hex to atom
     ::
     ::  TODO: replace with (met 3 h)
-    :-  (div (lent (trip h)) 2)
+    :-  (div (met 3 h) 2)
     `@ux`(rash - hex)
   ::
   ++  to-cord
