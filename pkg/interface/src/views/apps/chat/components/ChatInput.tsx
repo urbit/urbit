@@ -178,7 +178,14 @@ export class ChatInput extends Component<ChatInputProps, ChatInputState> {
           changeEvent={this.eventHandler}
           placeholder='Message...'
         />
-        <Box mx='12px' flexShrink={0} height='16px' width='16px' flexBasis='16px'>
+        <Box
+          mx='12px'
+          mr={this.props.canUpload ? '12px' : 3}
+          flexShrink={0}
+          height='16px'
+          width='16px'
+          flexBasis='16px'
+        >
           <Icon
             icon='Dojo'
             cursor='pointer'
@@ -186,9 +193,16 @@ export class ChatInput extends Component<ChatInputProps, ChatInputState> {
             color={state.inCodeMode ? 'blue' : 'black'}
           />
         </Box>
-        <Box ml='12px' mr={3} flexShrink={0} height='16px' width='16px' flexBasis='16px'>
-          {this.props.canUpload ? (
-            this.props.uploading ? (
+        {this.props.canUpload ? (
+          <Box
+            ml='12px'
+            mr={3}
+            flexShrink={0}
+            height='16px'
+            width='16px'
+            flexBasis='16px'
+          >
+            {this.props.uploading ? (
               <LoadingSpinner />
             ) : (
               <Icon
@@ -200,9 +214,9 @@ export class ChatInput extends Component<ChatInputProps, ChatInputState> {
                   this.props.promptUpload().then(this.uploadSuccess)
                 }
               />
-            )
-          ) : null}
-        </Box>
+            )}
+          </Box>
+        ) : null}
         {MOBILE_BROWSER_REGEX.test(navigator.userAgent) ?
           <Box
             ml={2}
@@ -226,7 +240,9 @@ export class ChatInput extends Component<ChatInputProps, ChatInputState> {
   }
 }
 
+// @ts-ignore withLocalState prop passing weirdness
 export default withLocalState<Omit<ChatInputProps, keyof IuseStorage>, 'hideAvatars', ChatInput>(
+  // @ts-ignore withLocalState prop passing weirdness
   withStorage<ChatInputProps, ChatInput>(ChatInput, { accept: 'image/*' }),
   ['hideAvatars']
 );

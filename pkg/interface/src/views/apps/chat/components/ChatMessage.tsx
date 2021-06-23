@@ -23,7 +23,6 @@ import { Dropdown } from '~/views/components/Dropdown';
 import ProfileOverlay from '~/views/components/ProfileOverlay';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 
-
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
 interface DayBreakProps {
@@ -54,6 +53,180 @@ export const DayBreak = ({ when, shimTop = false }: DayBreakProps) => (
     <Rule borderColor='lightGray' />
   </Row>
 );
+
+export const MessageAuthor = ({
+  timestamp,
+  msg,
+  api,
+  showOurContact,
+  ...props
+}) => {
+  const osDark = useLocalState(state => state.dark);
+
+  const theme = useSettingsState(s => s.display.theme);
+  const dark = theme === 'dark' || (theme === 'auto' && osDark);
+  let contact: Contact | null = useContact(`~${msg.author}`);
+
+  const date = daToUnix(bigInt(msg.index.split('/').reverse()[0]));
+
+  const datestamp = moment
+    .unix(date / 1000)
+    .format(DATESTAMP_FORMAT);
+  contact =
+    ((msg.author === window.ship && showOurContact) ||
+      msg.author !== window.ship)
+      ? contact
+      : null;
+
+  const showNickname = useShowNickname(contact);
+  const { hideAvatars } = useSettingsState(selectCalmState);
+  const shipName = showNickname && contact?.nickname || cite(msg.author) || `~${msg.author}`;
+  const color = contact
+    ? `#${uxToHex(contact.color)}`
+    : dark
+    ? '#000000'
+    : '#FFFFFF';
+  const sigilClass = contact
+    ? ''
+    : dark
+    ? 'mix-blend-diff'
+    : 'mix-blend-darken';
+
+  const { copyDisplay, doCopy, didCopy } = useCopy(`~${msg.author}`, shipName);
+  const { hovering, bind } = useHovering();
+  const nameMono = !(showNickname || didCopy);
+
+  const img =
+    contact?.avatar && !hideAvatars ? (
+      <BaseImage
+        display='inline-block'
+        referrerPolicy='no-referrer'
+        style={{ objectFit: 'cover' }}
+        src={contact.avatar}
+        height={24}
+        width={24}
+        borderRadius={1}
+      />
+    ) : (
+      <Box
+        width={24}
+        height={24}
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        backgroundColor={color}
+        borderRadius={1}
+      >
+        <Sigil
+          ship={msg.author}
+          size={12}
+          display='block'
+          color={color}
+          classes={sigilClass}
+          icon
+          padding={0}
+        />
+      </Box>
+    );
+  return (
+    <Box pb="1" display='flex' alignItems='center'>
+      <Box
+       height={24}
+        pr={2}
+        mt={'1px'}
+        pl={props.transcluded ? '11px' : '12px'}
+        cursor='pointer'
+        position='relative'
+      >
+        <ProfileOverlay cursor='auto' ship={msg.author} api={api}>
+          {img}
+        </ProfileOverlay>
+      </Box>
+      <Box flexGrow={1} display='block' className='clamp-message' {...bind}>
+        <Box
+          flexShrink={0}
+          className='hide-child'
+          pt={1}
+          pb={1}
+          display='flex'
+          alignItems='baseline'
+        >
+          <Text
+            fontSize={1}
+            mr={2}
+            flexShrink={1}
+            mono={nameMono}
+            fontWeight={nameMono ? '400' : '500'}
+            cursor='pointer'
+            onClick={doCopy}
+            title={showNickname ? `~${msg.author}` : contact?.nickname}
+          >
+            {copyDisplay}
+          </Text>
+          <Text whiteSpace='nowrap' flexShrink={0} fontSize={0} gray>
+            {timestamp}
+          </Text>
+          <Text
+            flexShrink={0}
+            fontSize={0}
+            whiteSpace='nowrap'
+            gray
+            ml={2}
+            display={['none', hovering ? 'block' : 'none']}
+          >
+            {datestamp}
+          </Text>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+type MessageProps = { timestamp: string; timestampHover: boolean; }
+  & Pick<ChatMessageProps, 'msg' | 'api' | 'transcluded' | 'showOurContact'>
+
+export const Message = React.memo(({
+  timestamp,
+  msg,
+  api,
+  timestampHover,
+  transcluded,
+  showOurContact
+}: MessageProps) => {
+  const { hovering, bind } = useHovering();
+  return (
+    <Box pl="44px" pr={4} width="100%" position='relative'>
+      {timestampHover ? (
+        <Text
+          display={hovering ? 'block' : 'none'}
+          position='absolute'
+          width='36px'
+          textAlign='right'
+          left={0}
+          top='2px'
+          lineHeight="tall"
+          fontSize={0}
+          whiteSpace='nowrap'
+          gray
+        >
+          {timestamp}
+        </Text>
+      ) : (
+        <></>
+      )}
+      <GraphContent
+        {...bind}
+        width="100%"
+        contents={msg.contents}
+        transcluded={transcluded}
+        api={api}
+        showOurContact={showOurContact}
+      />
+    </Box>
+  );
+});
+
+Message.displayName = 'Message';
 
 export const UnreadMarker = React.forwardRef(
   ({ dismissUnread }: any, ref: Ref<HTMLDivElement>) => {
@@ -158,11 +331,13 @@ const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink }) => {
               <MessageActionItem onClick={() => onReply(msg)}>
                 Reply
               </MessageActionItem>
-              <MessageActionItem onClick={doCopy}>
-                {copyDisplay}
-              </MessageActionItem>
+              {permalink ? (
+                <MessageActionItem onClick={doCopy}>
+                  {copyDisplay}
+                </MessageActionItem>
+              ) : null }
               {(isAdmin || isOwn()) ? (
-                <MessageActionItem onClick={(e) => onDelete(msg)} color='red'>
+                <MessageActionItem onClick={e => onDelete(msg)} color='red'>
                   Delete Message
                 </MessageActionItem>
               ) : null}
@@ -209,6 +384,7 @@ interface ChatMessageProps {
   isLastRead?: boolean;
   permalink?: string;
   transcluded?: number;
+  isAdmin?: boolean;
   className?: string;
   isPending?: boolean;
   style?: unknown;
@@ -234,6 +410,7 @@ function ChatMessage(props: ChatMessageProps) {
     isPending = false,
     style,
     isLastMessage,
+    isAdmin,
     api,
     showOurContact,
     hideHover,
@@ -247,12 +424,11 @@ function ChatMessage(props: ChatMessageProps) {
     );
   }
 
-  let onReply = props?.onReply ?? (() => {});
-  let onDelete = props?.onDelete ?? (() => {});
+  const onReply = props?.onReply ?? (() => {});
+  const onDelete = props?.onDelete ?? (() => {});
   const transcluded = props?.transcluded ?? 0;
   const renderSigil = props.renderSigil ?? (Boolean(nextMsg && msg.author !== nextMsg.author) ||
-        !nextMsg ||
-        msg.number === 1
+        !nextMsg
     );
 
     const ourMention = msg?.contents?.some((e: MentionContent) => {
@@ -265,9 +441,12 @@ function ChatMessage(props: ChatMessageProps) {
       }
     }
 
-  const date = useMemo(() => daToUnix(bigInt(msg.index.split('/')[1])), [msg.index]);
-  const nextDate = useMemo(() => nextMsg && typeof nextMsg !== 'string' ? (
-    daToUnix(bigInt(nextMsg.index.split('/')[1]))
+  const date = useMemo(() =>
+    daToUnix(bigInt(msg.index.split('/').reverse()[0])),
+    [msg.index]
+  );
+  const nextDate = useMemo(() => nextMsg && typeof nextMsg !== 'string'  ? (
+    daToUnix(bigInt(nextMsg.index.split('/').reverse()[0]))
   ) : null,
     [nextMsg]
   );
@@ -296,7 +475,8 @@ function ChatMessage(props: ChatMessageProps) {
     hideHover,
     transcluded,
     onReply,
-    onDelete
+    onDelete,
+    isAdmin
   };
 
   const message = useMemo(() => (
@@ -342,178 +522,6 @@ function ChatMessage(props: ChatMessageProps) {
 export default React.forwardRef((props: Omit<ChatMessageProps, 'innerRef'>, ref: any) => (
   <ChatMessage {...props} innerRef={ref} />
 ));
-
-export const MessageAuthor = ({
-  timestamp,
-  msg,
-  api,
-  showOurContact,
-  ...props
-}) => {
-  const osDark = useLocalState(state => state.dark);
-
-  const theme = useSettingsState(s => s.display.theme);
-  const dark = theme === 'dark' || (theme === 'auto' && osDark);
-  let contact: Contact | null = useContact(`~${msg.author}`);
-
-  const date = daToUnix(bigInt(msg.index.split('/')[1]));
-
-  const datestamp = moment
-    .unix(date / 1000)
-    .format(DATESTAMP_FORMAT);
-  contact =
-    ((msg.author === window.ship && showOurContact) ||
-      msg.author !== window.ship)
-      ? contact
-      : null;
-
-  const showNickname = useShowNickname(contact);
-  const { hideAvatars } = useSettingsState(selectCalmState);
-  const shipName = showNickname && contact?.nickname || cite(msg.author) || `~${msg.author}`;
-  const color = contact
-    ? `#${uxToHex(contact.color)}`
-    : dark
-    ? '#000000'
-    : '#FFFFFF';
-  const sigilClass = contact
-    ? ''
-    : dark
-    ? 'mix-blend-diff'
-    : 'mix-blend-darken';
-
-  const { copyDisplay, doCopy, didCopy } = useCopy(`~${msg.author}`, shipName);
-  const { hovering, bind } = useHovering();
-  const nameMono = !(showNickname || didCopy);
-
-  const img =
-    contact?.avatar && !hideAvatars ? (
-      <BaseImage
-        display='inline-block'
-        referrerPolicy='no-referrer'
-        style={{ objectFit: 'cover' }}
-        src={contact.avatar}
-        height={24}
-        width={24}
-        borderRadius={1}
-      />
-    ) : (
-      <Box
-        width={24}
-        height={24}
-        display='flex'
-        justifyContent='center'
-        alignItems='center'
-        backgroundColor={color}
-        borderRadius={1}
-      >
-        <Sigil
-          ship={msg.author}
-          size={12}
-          display='block'
-          color={color}
-          classes={sigilClass}
-          icon
-          padding={0}
-        />
-      </Box>
-    );
-  return (
-    <Box pb="1" display='flex' alignItems='center'>
-      <Box
-       height={24}
-        pr={2}
-        mt={'1px'}
-        pl={props.transcluded ? '11px' : '12px'}
-        cursor='pointer'
-        position='relative'
-      >
-        <ProfileOverlay cursor='auto' ship={msg.author} api={api}>
-          {img}
-        </ProfileOverlay>
-      </Box>
-      <Box flexGrow={1} display='block' className='clamp-message' {...bind}>
-        <Box
-          flexShrink={0}
-          className='hide-child'
-          pt={1}
-          pb={1}
-          display='flex'
-          alignItems='baseline'
-        >
-          <Text
-            fontSize={1}
-            mr={2}
-            flexShrink={1}
-            mono={nameMono}
-            fontWeight={nameMono ? '400' : '500'}
-            cursor='pointer'
-            onClick={doCopy}
-            title={`~${msg.author}`}
-          >
-            {copyDisplay}
-          </Text>
-          <Text flexShrink={0} fontSize={0} gray>
-            {timestamp}
-          </Text>
-          <Text
-            flexShrink={0}
-            fontSize={0}
-            gray
-            ml={2}
-            display={['none', hovering ? 'block' : 'none']}
-          >
-            {datestamp}
-          </Text>
-        </Box>
-      </Box>
-    </Box>
-  );
-};
-
-type MessageProps = { timestamp: string; timestampHover: boolean; }
-  & Pick<ChatMessageProps, 'msg' | 'api' | 'transcluded' | 'showOurContact'>
-
-export const Message = React.memo(({
-  timestamp,
-  msg,
-  api,
-  timestampHover,
-  transcluded,
-  showOurContact
-}: MessageProps) => {
-  const { hovering, bind } = useHovering();
-  return (
-    <Box pl="44px" pr={4} width="100%" position='relative'>
-      {timestampHover ? (
-        <Text
-          display={hovering ? 'block' : 'none'}
-          position='absolute'
-          width='36px'
-          textAlign='right'
-          left={0}
-          top='2px'
-          lineHeight="tall"
-          fontSize={0}
-          gray
-        >
-          {timestamp}
-        </Text>
-      ) : (
-        <></>
-      )}
-      <GraphContent
-        {...bind}
-        width="100%"
-        contents={msg.contents}
-        transcluded={transcluded}
-        api={api}
-        showOurContact={showOurContact}
-      />
-    </Box>
-  );
-});
-
-Message.displayName = 'Message';
 
 export const MessagePlaceholder = ({
   height,

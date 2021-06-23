@@ -56,9 +56,10 @@ export function ViewProfile(props: any): ReactElement {
         <Col gapY={3} mb={3} mt={6} alignItems='flex-start'>
           <Text gray>Pinned Groups</Text>
           <Col>
-            {contact?.groups.slice().sort(lengthOrder).map(g => (
+            {contact?.groups.slice().sort(lengthOrder).map((g, i) => (
               <GroupLink
                 api={api}
+                key={i}
                 resource={g}
                 measure={() => {}}
               />

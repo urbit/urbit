@@ -13,16 +13,23 @@
       [%4 state-zero]
       [%5 state-zero]
       [%6 state-zero]
+      [%7 state-7]
   ==
 ::
 +$  state-zero
+  $:  tiles=tiles-0:store
+      =tile-ordering:store
+      first-time=?
+  ==
+::
++$  state-7
   $:  =tiles:store
       =tile-ordering:store
       first-time=?
   ==
 --
 ::
-=|  [%6 state-zero]
+=|  [%7 state-7]
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -32,7 +39,7 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  =/  new-state  *state-zero
+  =/  new-state  *state-7
   =.  new-state
     %_  new-state
         tiles
@@ -41,12 +48,12 @@
       |=  =term
       :-  term
       ^-  tile:store
-      ?+  term  [[%custom ~] %.y]
+      ?+  term  [[%custom ~ ~] %.y]
         %term   [[%basic 'Terminal' '/~landscape/img/term.png' '/~term'] %.y]
       ==
         tile-ordering  [%weather %clock %term ~]
     ==
-  [~ this(state [%6 new-state])]
+  [~ this(state [%7 new-state])]
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -55,8 +62,22 @@
   =/  old-state  !<(versioned-state old)
   =|  cards=(list card)
   |-  ^-  (quip card _this)
-  ?:  ?=(%6 -.old-state)
+  ?:  ?=(%7 -.old-state)
     [cards this(state old-state)]
+  ::
+  ?:  ?=(%6 -.old-state)
+    =/  new-tiles=tiles:store
+      %-  ~(gas by *tiles:store)
+      %+  turn  ~(tap by tiles.old-state)
+      |=  [=term =tile-0:store]
+      :-  term
+      :_  is-shown.tile-0
+      ?-  -.type.tile-0
+        %basic   type.tile-0
+        %custom  [%custom ~ ~]
+      ==
+    $(old-state [%7 new-tiles tile-ordering.old-state first-time.old-state])
+  ::
   ?:  ?=(%5 -.old-state)
     ::  replace %dojo with %term
     ::
@@ -86,11 +107,11 @@
   =.  new-state
     %_  new-state
         tiles
-      %-  ~(gas by *tiles:store)
+      %-  ~(gas by *tiles-0:store)
       %+  turn  `(list term)`[%weather %clock %dojo ~]
       |=  =term
       :-  term
-      ^-  tile:store
+      ^-  tile-0:store
       ?+  term      [[%custom ~] %.y]
           %dojo     [[%basic 'Dojo' '/~landscape/img/Dojo.png' '/~dojo'] %.y]
       ==

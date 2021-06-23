@@ -158,7 +158,7 @@ export function ProfileActions(props: any): ReactElement {
             py={2}
             cursor='pointer'
             fontWeight='500'
-            onClick={() => history.push(`/~landscape/dm/${ship.substring(1)}`)}
+            onClick={() => history.push(`/~landscape/messages/dm/${ship}`)}
           >
             Message
           </Text>
@@ -169,21 +169,16 @@ export function ProfileActions(props: any): ReactElement {
 }
 
 export function Profile(props: any): ReactElement | null {
-  const { hideAvatars } = useSettingsState(selectCalmState);
-  const history = useHistory();
   const nackedContacts = useContactState(state => state.nackedContacts);
 
   const { contact, hasLoaded, isEdit, ship } = props;
   const nacked = nackedContacts.has(ship);
-  const formRef = useRef(null);
 
   useEffect(() => {
     if (hasLoaded && !contact && !nacked) {
       props.api.contacts.retrieve(ship);
     }
   }, [hasLoaded, contact]);
-
-  const anchorRef = useRef<HTMLElement | null>(null);
 
   if (!props.ship) {
     return null;

@@ -56,15 +56,14 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
         const path = group?.group;
         const unreadCount = graphUnreads(path);
         const notCount = graphNotifications(path);
-
         return (
           <Group
+            key={group?.group}
             updates={notCount}
             first={index === 0}
             unreads={unreadCount}
             path={group?.group}
             title={group.metadata.title}
-            picture={group.metadata.picture}
           />
         );
       })}
@@ -96,7 +95,7 @@ function Group(props: GroupProps) {
         .diff(moment()))
     .as('days'))) || 0;
   return (
-    <Tile ref={anchorRef} position="relative" bg={isTutorialGroup ? 'lightBlue' : undefined} to={`/~landscape${path}`} gridColumnStart={first ? '1' : null}>
+    <Tile ref={anchorRef} position="relative" bg={isTutorialGroup ? 'lightBlue' : undefined} to={`/~landscape${path}`} gridColumnStart={first ? 1 : null}>
       <Col height="100%" justifyContent="space-between">
         <Text>{title}</Text>
         {!hideUnreads && (<Col>

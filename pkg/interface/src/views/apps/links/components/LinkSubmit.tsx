@@ -1,6 +1,6 @@
 import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, DragEvent, useEffect } from 'react';
 import GlobalApi from '~/logic/api/global';
 import { createPost } from '~/logic/api/graph';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
@@ -12,6 +12,7 @@ interface LinkSubmitProps {
   api: GlobalApi;
   name: string;
   ship: string;
+  parentIndex?: any;
 }
 
 const LinkSubmit = (props: LinkSubmitProps) => {
@@ -20,33 +21,10 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
   const [submitFocused, setSubmitFocused] = useState(false);
   const [urlFocused, setUrlFocused] = useState(false);
-  const [linkValue, setLinkValueHook] = useState('');
+  const [linkValue, setLinkValue] = useState('');
   const [linkTitle, setLinkTitle] = useState('');
   const [disabled, setDisabled] = useState(false);
   const [linkValid, setLinkValid] = useState(false);
-
-  const doPost = () => {
-    const url = linkValue;
-    const text = linkTitle ? linkTitle : linkValue;
-    const contents = url.startsWith('web+urbitgraph:/')
-      ?  [{ text }, permalinkToReference(parsePermalink(url)!)]
-      :  [{ text }, { url }];
-
-    setDisabled(true);
-    const parentIndex = props.parentIndex || '';
-    const post = createPost(contents, parentIndex);
-
-    props.api.graph.addPost(
-      `~${props.ship}`,
-      props.name,
-      post
-    ).then(() => {
-      setDisabled(false);
-      setLinkValue('');
-      setLinkTitle('');
-      setLinkValid(false);
-    });
-  };
 
   const validateLink = (link) => {
     const URLparser = new RegExp(
@@ -94,6 +72,33 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     return link;
   };
 
+  useEffect(() => {
+    setLinkValid(validateLink(linkValue));
+  }, [linkValue]);
+
+  const doPost = () => {
+    const url = linkValue;
+    const text = linkTitle ? linkTitle : linkValue;
+    const contents = url.startsWith('web+urbitgraph:/')
+      ?  [{ text }, permalinkToReference(parsePermalink(url)!)]
+      :  [{ text }, { url }];
+
+    setDisabled(true);
+    const parentIndex = props.parentIndex || '';
+    const post = createPost(contents, parentIndex);
+
+    props.api.graph.addPost(
+      `~${props.ship}`,
+      props.name,
+      post
+    ).then(() => {
+      setDisabled(false);
+      setLinkValue('');
+      setLinkTitle('');
+      setLinkValid(false);
+    });
+  };
+
   const onFileDrag = useCallback(
     (files: FileList | File[], e: DragEvent): void => {
       if (!canUpload) {
@@ -105,17 +110,6 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   );
 
   const { bind, dragging } = useFileDrag(onFileDrag);
-
-  const onLinkChange = (linkValue: string) => {
-    setLinkValueHook(linkValue);
-    const link = validateLink(linkValue);
-    setLinkValid(link);
-  };
-
-  const setLinkValue = (linkValue: string) => {
-    onLinkChange(linkValue);
-    setLinkValueHook(linkValue);
-  };
 
   const onPaste = useCallback(
     (event: ClipboardEvent) => {
@@ -157,6 +151,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
   return (
     <>
+    {/* @ts-ignore archaic event type mismatch */}
       <Box
         flexShrink={0}
         position='relative'
@@ -190,10 +185,11 @@ const LinkSubmit = (props: LinkSubmitProps) => {
             py={2}
             color="black"
             backgroundColor="transparent"
-            onChange={e => onLinkChange(e.target.value)}
+            onChange={e => setLinkValue(e.target.value)}
             onBlur={() => [setUrlFocused(false), setSubmitFocused(false)]}
             onFocus={() => [setUrlFocused(true), setSubmitFocused(true)]}
             spellCheck="false"
+            // @ts-ignore archaic event type mismatch error
             onPaste={onPaste}
             onKeyPress={onKeyPress}
             value={linkValue}

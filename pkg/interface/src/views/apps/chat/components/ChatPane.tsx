@@ -34,7 +34,7 @@ interface ChatPaneProps {
    * Get contents of reply message
    */
   onReply: (msg: Post) => string;
-  onDelete: (msg: Post) => void;
+  onDelete?: (msg: Post) => void;
   /**
    * Fetch more messages
    *

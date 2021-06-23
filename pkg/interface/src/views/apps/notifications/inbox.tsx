@@ -4,7 +4,8 @@ import {
 
     JoinRequests, Notifications,
 
-    Timebox
+    Timebox,
+    unixToDa
 } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import _ from 'lodash';
@@ -15,7 +16,7 @@ import GlobalApi from '~/logic/api/global';
 import { getNotificationKey } from '~/logic/lib/hark';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useLaunchState from '~/logic/state/launch';
-import { daToUnix, MOMENT_CALENDAR_DATE } from '~/logic/lib/util';
+import { daToUnix } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
 import { Invites } from './invites';
 import { Notification } from './notification';
@@ -65,20 +66,11 @@ export default function Inbox(props: {
   );
 
   const notificationState = useHarkState(state => state.notifications);
+  const unreadNotes = useHarkState(s => s.unreadNotes);
   const archivedNotifications = useHarkState(state => state.archivedNotifications);
 
   const notifications =
     Array.from(props.showArchive ? archivedNotifications : notificationState) || [];
-
-  const calendar = {
-    ...MOMENT_CALENDAR_DATE, sameDay: function (now) {
-      if (this.subtract(6, 'hours').isBefore(now)) {
-        return '[Earlier Today]';
-      } else {
-        return MOMENT_CALENDAR_DATE.sameDay;
-      }
-    }
-  };
 
   const notificationsByDay = f.flow(
     f.map<DatedTimebox, DatedTimebox>(([date, nots]) => [
@@ -114,6 +106,7 @@ export default function Inbox(props: {
     _.flatten(notifications).length,
     loadMore
   );
+  const date = unixToDa(Date.now());
 
   return (
     <Col p={1} ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
@@ -126,15 +119,13 @@ export default function Inbox(props: {
         </Box>
       )}
       <Invites pendingJoin={props.pendingJoin} api={api} />
+      <DaySection unread key="unread" timeboxes={[[date,unreadNotes]]} api={api} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
           <DaySection
             key={day}
-            time={day}
-            label={day === 'latest' ? 'Today' : moment(day).calendar(null, calendar)}
             timeboxes={timeboxes}
-            archive={Boolean(props.showArchive)}
             api={api}
           />
         );
@@ -167,10 +158,8 @@ function sortIndexedNotification(
 }
 
 function DaySection({
-  label,
-  archive,
   timeboxes,
-  time,
+  unread = false,
   api
 }) {
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
@@ -186,8 +175,8 @@ function DaySection({
             key={getNotificationKey(date, not)}
             api={api}
             notification={not}
-            archived={archive}
-            time={date}
+            unread={unread}
+            time={!unread ? date : undefined}
           />
         ))
       )}

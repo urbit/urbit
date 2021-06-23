@@ -22,7 +22,7 @@ export function useGraphsForGroup(group: string) {
   const graphs = useMetadataState(s => s.associations.graph);
   return _.pickBy(graphs, (a: Association) => a.group === group);
 }
-
+// @ts-ignore investigate zustand types
 const useMetadataState = createState<MetadataState>('Metadata', {
   associations: { groups: {}, graph: {}, contacts: {}, chat: {}, link: {}, publish: {} }
   // preview: async (group): Promise<MetadataUpdatePreview> => {

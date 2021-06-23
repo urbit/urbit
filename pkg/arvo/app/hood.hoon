@@ -15,7 +15,11 @@
       [%9 drum=state:drum helm=state:helm kiln=state:kiln]
       [%10 drum=state:drum helm=state:helm kiln=state:kiln]
       [%11 drum=state:drum helm=state:helm kiln=state:kiln]
+<<<<<<< HEAD
       [%12 drum=any-state:drum helm=state:helm kiln=state:kiln]
+=======
+      [%12 drum=state:drum helm=state:helm kiln=state:kiln]
+>>>>>>> cd400dfa69059e211dc88f4ce5d53479b9da7542
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum

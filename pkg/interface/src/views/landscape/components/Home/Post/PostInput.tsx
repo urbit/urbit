@@ -47,6 +47,7 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
   const [code, toggleCode] = useToggleState(false);
   const { canUpload, promptUpload, uploading } = useStorage();
   const [postContent, setPostContent] = useState('');
+
   const uploadImage = useCallback(async () => {
     try {
       setDisabled(true);
@@ -120,7 +121,7 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
         fontSize={1}
         minHeight="62px"
         fontFamily={code ? 'mono' : 'sans'}
-        lineNumber={3}
+        rows={3}
         style={{
           resize: 'vertical'
         }}

@@ -59,7 +59,7 @@ export function GroupLink(
     >
       {modal}
       <Row
-        width="fit-content"
+        width="100%"
         flexShrink={1}
         alignItems="center"
         py={2}
@@ -69,7 +69,7 @@ export function GroupLink(
         }
         opacity={preview ? '1' : '0.6'}
       >
-        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : { color: '0x0' , picture: ''}} />
+        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : { color: '0x0' , picture: '' }} />
           <Col>
           <Text ml={2} fontWeight="medium" mono={!preview}>
             {preview ? preview.metadata.title : name}
@@ -77,16 +77,6 @@ export function GroupLink(
           <Box pt='1' ml='2' display='flex' alignItems='center'>
             {preview ?
               <>
-                <Box pr='2' display='flex' alignItems='center'>
-                  <Icon 
-                    icon={preview.metadata.hidden ? 'Locked' : 'Public'}
-                    color='gray'
-                    mr='1'
-                   />
-                  <Text fontSize='0' color='gray'>
-                    {preview.metadata.hidden ? 'Private' : 'Public'}
-                  </Text>
-                </Box>
                 <Box display='flex' alignItems='center'>
                   <Icon icon='Users' color='gray' mr='1' />
                   <Text fontSize='0'color='gray' >

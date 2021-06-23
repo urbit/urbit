@@ -2,6 +2,8 @@ import { Association, GraphNotifDescription, IndexedNotification, NotifIndex } f
 import { BigInteger } from 'big-integer';
 import { getParentIndex } from '../lib/notification';
 import { dateToDa, decToUd } from '../lib/util';
+import { reduce } from '../reducers/hark-update';
+import { doOptimistically } from '../state/base';
 import useHarkState from '../state/hark';
 import { StoreState } from '../store/type';
 import BaseApi from './base';
@@ -23,8 +25,8 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.action('hark-group-hook', 'hark-group-hook-action', action);
   }
 
-  private actOnNotification(frond: string, intTime: BigInteger, index: NotifIndex) {
-    const time = decToUd(intTime.toString());
+  private actOnNotification(frond: string, intTime: BigInteger | undefined, index: NotifIndex) {
+    const time = intTime ? decToUd(intTime.toString()) : null;
     return this.harkAction({
       [frond]: {
         time,
@@ -51,12 +53,21 @@ export class HarkApi extends BaseApi<StoreState> {
     });
   }
 
-  archive(time: BigInteger, index: NotifIndex) {
-    return this.actOnNotification('archive', time, index);
+  async archive(intTime: BigInteger, index: NotifIndex) {
+    const time = intTime ? decToUd(intTime.toString()) : null;
+    const action = {
+      archive: {
+        time,
+        index
+      }
+    };
+    await doOptimistically(useHarkState, action, this.harkAction.bind(this), [reduce]);
   }
 
   read(time: BigInteger, index: NotifIndex) {
-    return this.actOnNotification('read-note', time, index);
+    return this.harkAction({
+      'read-note': index
+    });
   }
 
   readIndex(index: NotifIndex) {
@@ -69,16 +80,39 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.actOnNotification('unread-note', time, index);
   }
 
+  readGroup(group: string) {
+    return this.harkAction({
+      'read-group': group
+    });
+  }
+
+  readGraph(graph: string) {
+    return this.harkAction({
+      'read-graph': graph
+    });
+  }
+
+  dismissReadCount(graph: string, index: string) {
+    return this.harkAction({
+      'read-count': {
+        graph: {
+          graph,
+          index
+        }
+      }
+    });
+  }
+
   markCountAsRead(association: Association, parent: string, description: GraphNotifDescription) {
-    return this.harkAction(
-      {  'read-count': {
+    const action = {  'read-count': {
          graph: {
         graph: association.resource,
         group: association.group,
         description,
         index: parent
       } }
-    });
+    };
+    doOptimistically(useHarkState, action, this.harkAction.bind(this), [reduce]);
   }
 
   markEachAsRead(association: Association, parent: string, child: string, description: GraphNotifDescription, mod: string) {

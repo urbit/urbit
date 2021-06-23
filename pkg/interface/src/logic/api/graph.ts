@@ -1,3 +1,4 @@
+import { patp2dec } from 'urbit-ob';
 import { Content, Enc, GraphNode, GroupPolicy, Path, Patp, Post, Resource } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import _ from 'lodash';
@@ -201,6 +202,40 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
+  addDmMessage(ship: Patp, contents: Content[]) {
+    const post = createPost(contents, `/${patp2dec(ship)}`);
+    const action = {
+      'add-nodes': {
+        resource: { ship: `~${window.ship}`, name: 'dm-inbox' },
+        nodes: {
+          [post.index]: {
+            post,
+            children: null
+          }
+        }
+      }
+    };
+    this.action('dm-hook', 'graph-update-2', action);
+    markPending(action['add-nodes'].nodes);
+    action['add-nodes'].resource.ship =
+      action['add-nodes'].resource.ship.slice(1);
+    this.store.handleEvent({ data: {
+      'graph-update': action
+    } });
+  }
+
+  acceptDm(ship: Patp) {
+    return this.action('dm-hook', 'dm-hook-action', { 'accept' : ship });
+  }
+
+  declineDm(ship: Patp) {
+    return this.action('dm-hook', 'dm-hook-action', { 'decline' : ship });
+  }
+
+  setScreen(screen: boolean) {
+    return this.action('dm-hook', 'dm-hook-action', { screen });
+  }
+
   addPost(ship: Patp, name: string, post: Post) {
     const nodes = {};
     nodes[post.index] = {
@@ -328,6 +363,7 @@ export default class GraphApi extends BaseApi<StoreState> {
 
   async getNewest(ship: string, resource: string, count: number, index = '') {
     const data = await this.scry<any>('graph-store', `/newest/${ship}/${resource}/${count}${index}`);
+    data['graph-update'].fetch = true;
     this.store.handleEvent({ data });
   }
 
@@ -335,7 +371,8 @@ export default class GraphApi extends BaseApi<StoreState> {
     const idx = index.split('/').map(decToUd).join('/');
     const data = await this.scry<any>('graph-store',
        `/node-siblings/older/${ship}/${resource}/${count}${idx}`
-     );
+    );
+    data['graph-update'].fetch = true;
     this.store.handleEvent({ data });
   }
 
@@ -344,7 +381,50 @@ export default class GraphApi extends BaseApi<StoreState> {
     const data = await this.scry<any>('graph-store',
        `/node-siblings/younger/${ship}/${resource}/${count}${idx}`
      );
+    data['graph-update'].fetch = true;
     this.store.handleEvent({ data });
+  }
+
+  async getShallowChildren(ship: string, name: string, index = '') {
+    const idx = index.split('/').map(decToUd).join('/');
+    const data = await this.scry<any>('graph-store',
+      `/shallow-children/${ship}/${name}${idx}`
+    );
+    data['graph-update'].fetch = true;
+    this.store.handleEvent({ data });
+  }
+
+  async getDeepOlderThan(ship: string, resource: string, startTime = null, count: number) {
+    const start = startTime ? decToUd(startTime) : 'null';
+    const data = await this.scry<any>('graph-store',
+      `/deep-nodes-older-than/${ship}/${resource}/${count}/${start}`
+    );
+    data['graph-update'].fetch = true;
+    const node = data['graph-update'];
+    this.store.handleEvent({
+      data: {
+        'graph-update-flat': node,
+        'graph-update': node
+      }
+    });
+  }
+
+  async getFirstborn(ship: string, resource: string, index = '') {
+    const idx = index.split('/').map(decToUd).join('/');
+    const data = await this.scry<any>('graph-store',
+      `/firstborn/${ship}/${resource}${idx}`
+    );
+    data['graph-update'].fetch = true;
+    const node = data['graph-update'];
+    this.store.handleEvent({
+      data: {
+        'graph-update-thread': {
+          index,
+          ...node
+        },
+        'graph-update': node
+      }
+    });
   }
 
   getGraphSubset(ship: string, resource: string, start: string, end: string) {
@@ -364,6 +444,7 @@ export default class GraphApi extends BaseApi<StoreState> {
       'graph-store',
       `/node/${ship}/${resource}${idx}`
     );
+    data['graph-update'].fetch = true;
     const node = data['graph-update'];
     this.store.handleEvent({
       data: {

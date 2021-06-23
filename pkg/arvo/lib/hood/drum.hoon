@@ -144,6 +144,7 @@
       %metadata-pull-hook
       %group-view
       %settings-store
+      %dm-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -261,6 +262,7 @@
   ==
 ::
 ++  on-load
+<<<<<<< HEAD
   |^  |=  [hood-version=@ud old=any-state]
       =<  se-abet  =<  se-view
       =.  sat  (load-state old)
@@ -340,6 +342,53 @@
       (se-born | %home %group-view)
     ..on-load
   --
+=======
+  |=  [hood-version=@ud old=any-state]
+  =<  se-abet  =<  se-view
+  =.  sat  old
+  =.  dev  (~(gut by bin) ost *source)
+  =?  ..on-load  (lte hood-version %4)
+    ~>  %slog.0^leaf+"drum: starting os1 agents"
+    =>  (se-born | %home %s3-store)
+    =>  (se-born | %home %contact-view)
+    =>  (se-born | %home %contact-hook)
+    =>  (se-born | %home %contact-store)
+    =>  (se-born | %home %metadata-hook)
+    =>  (se-born | %home %metadata-store)
+    =>  (se-born | %home %goad)
+    ~>  %slog.0^leaf+"drum: resubscribing to %dojo and %chat-cli"
+    =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
+    (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
+  =?  ..on-load  (lte hood-version %5)
+    (se-born | %home %file-server)
+  =?  ..on-load  (lte hood-version %7)
+    (se-born | %home %glob)
+  =?  ..on-load  (lte hood-version %8)
+    =>  (se-born | %home %group-push-hook)
+    (se-born | %home %group-pull-hook)
+  =?  ..on-load  (lte hood-version %9)
+    (se-born | %home %graph-store)
+  =?  ..on-load  (lte hood-version %10)
+    =>  (se-born | %home %graph-push-hook)
+    (se-born | %home %graph-pull-hook)
+  =?  ..on-load  (lte hood-version %11)
+    =>  (se-born | %home %hark-graph-hook)
+    =>  (se-born | %home %hark-group-hook)
+    =>  (se-born | %home %hark-chat-hook)
+    =>  (se-born | %home %hark-store)
+    =>  (se-born | %home %observe-hook)
+    =>  (se-born | %home %metadata-pull-hook)
+    =>  (se-born | %home %metadata-push-hook)
+    (se-born | %home %herm)
+  =?  ..on-load  (lte hood-version %12)
+    =>  (se-born | %home %contact-push-hook)
+    =>  (se-born | %home %contact-pull-hook)
+    =>  (se-born | %home %settings-store)
+    (se-born | %home %group-view)
+  =?  ..on-load  (lte hood-version %13)
+    (se-born | %home %dm-hook)
+  ..on-load
+>>>>>>> cd400dfa69059e211dc88f4ce5d53479b9da7542
 ::
 ++  reap-phat                                         ::  ack connect
   |=  [way=wire saw=(unit tang)]

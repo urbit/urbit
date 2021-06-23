@@ -5,7 +5,7 @@
 	  "outDir": "./dist",
     "module": "ES2020",
     "noImplicitAny": true,
-    "target": "ES2020",
+    "target": "ES2017",
     "pretty": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
