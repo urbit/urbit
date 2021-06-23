@@ -1,7 +1,6 @@
 import { BaseImage, Box, Center, Row, Text } from '@tlon/indigo-react';
 import { retrieve } from '@urbit/api';
 import React, { ReactElement, useEffect, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
@@ -12,6 +11,7 @@ import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { EditProfile } from './EditProfile';
 import { ViewProfile } from './ViewProfile';
 import airlock from '~/logic/api';
+import { TextLink } from '~/views/components/Link';
 
 export function ProfileHeader(props: any): ReactElement {
   return (
@@ -123,28 +123,23 @@ export function ProfileStatus(props: any): ReactElement {
 
 export function ProfileActions(props: any): ReactElement {
   const { ship, isPublic, contact } = props;
-  const history = useHistory();
   return (
     <Row>
       {ship === `~${window.ship}` ? (
         <>
-          <Text
+          <TextLink
             py={2}
-            cursor='pointer'
             fontWeight='500'
-            onClick={() => {
-              history.push(`/~profile/${ship}/edit`);
-            }}
+            to={`/~profile/${ship}/edit`}
           >
             Edit
             <Text
               fontWeight='500'
-              cursor='pointer'
               display={['none','inline']}
             >
                 {isPublic ? ' Public' : ' Private'} Profile
             </Text>
-          </Text>
+          </TextLink>
           <SetStatusBarModal
             isControl
             py={2}
@@ -155,14 +150,13 @@ export function ProfileActions(props: any): ReactElement {
         </>
       ) : (
         <>
-          <Text
+          <TextLink
             py={2}
-            cursor='pointer'
             fontWeight='500'
-            onClick={() => history.push(`/~landscape/messages/dm/${ship}`)}
+            to={`/~landscape/messages/dm/${ship}`}
           >
             Message
-          </Text>
+          </TextLink>
         </>
       )}
     </Row>

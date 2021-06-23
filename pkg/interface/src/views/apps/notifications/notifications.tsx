@@ -1,7 +1,7 @@
-import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { Col, Icon, Row, Text } from '@tlon/indigo-react';
 import React, { ReactElement, useCallback, useRef } from 'react';
 import Helmet from 'react-helmet';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import { Body } from '~/views/components/Body';
@@ -10,6 +10,7 @@ import { useTutorialModal } from '~/views/components/useTutorialModal';
 import Inbox from './inbox';
 import airlock from '~/logic/api';
 import { readAll } from '@urbit/api';
+import { BoxLink } from '~/views/components/Link';
 
 const baseUrl = '/~notifications';
 
@@ -62,11 +63,9 @@ export default function NotificationsScreen(props: any): ReactElement {
                       >
                         Mark All Read
                       </StatelessAsyncAction>
-                      <Link to="/~settings#notifications">
-                        <Box>
-                          <Icon lineHeight={1} icon="Adjust" />
-                        </Box>
-                      </Link>
+                      <BoxLink to="/~settings#notifications">
+                        <Icon lineHeight={1} icon="Adjust" />
+                      </BoxLink>
                     </Row>
                   </Row>
                   {!view && <Inbox

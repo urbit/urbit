@@ -1,9 +1,7 @@
 import {
-    Action, Box, Col,
-
+    Box, Col,
     Icon,
     Image, Row,
-
     StatelessTextInput as Input, Text
 } from '@tlon/indigo-react';
 import { Contact, Contacts } from '@urbit/api/contacts';
@@ -15,7 +13,6 @@ import React, {
     ChangeEvent,
     ReactElement, useCallback, useMemo, useState
 } from 'react';
-import { Link } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
 import styled from 'styled-components';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
@@ -26,6 +23,8 @@ import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Dropdown } from '~/views/components/Dropdown';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import airlock from '~/logic/api';
+import { ActionLink } from '~/views/components/Link';
+import { Container } from '~/views/components/Container';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -338,29 +337,18 @@ function Participant(props: {
           alignX="right"
           alignY="top"
           options={
-            <Col
-              bg="white"
-              border={1}
-              borderRadius={1}
-              borderColor="lightGray"
-              gapY={2}
-              p={2}
-            >
-              <Action bg="transparent">
-                <Link to={`/~profile/~${contact.patp}`}>
-                  <Text color="black">View Profile</Text>
-                </Link>
-              </Action>
-              <Action bg="transparent">
-                <Link to={`/~landscape/dm/${contact.patp}`}>
-                  <Text color="green">Send Message</Text>
-                </Link>
-              </Action>
+            <Container gapY={2} p={2}>
+              <ActionLink color="black" bg="transparent" to={`/~profile/~${contact.patp}`}>
+                View Profile
+              </ActionLink>
+              <ActionLink color="green" bg="transparent" to={`/~landscape/dm/~${contact.patp}`}>
+                Send Message
+              </ActionLink>
               {props.role === 'admin' && (
                 <>
                   {(!isInvite && contact.patp !== window.ship) && (
-                    <StatelessAsyncAction onClick={onBan} bg="transparent">
-                      <Text color="red">Ban from {title}</Text>
+                    <StatelessAsyncAction destructive onClick={onBan} bg="transparent">
+                      Ban from {title}
                     </StatelessAsyncAction>
                   )}
                   {role === 'admin' ? (
@@ -369,8 +357,8 @@ function Participant(props: {
                     </StatelessAsyncAction>)
                   ) : (
                     <>
-                    {(contact.patp !== window.ship) && (<StatelessAsyncAction onClick={onKick} bg="transparent">
-                        <Text color="red">Kick from {title}</Text>
+                    {(contact.patp !== window.ship) && (<StatelessAsyncAction destructive onClick={onKick} bg="transparent">
+                        Kick from {title}
                       </StatelessAsyncAction>)}
                       {!contact.pending && <StatelessAsyncAction onClick={onPromote} bg="transparent">
                         Promote to Admin
@@ -379,7 +367,7 @@ function Participant(props: {
                   )}
                 </>
               )}
-            </Col>
+            </Container>
           }
         >
           <Icon display="block" icon="Ellipsis" />

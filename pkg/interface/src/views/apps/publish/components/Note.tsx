@@ -2,7 +2,7 @@ import { Action, Box, Col, Row, Text } from '@tlon/indigo-react';
 import { Association, Graph, GraphNode, Group, markEachAsRead, removePosts } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, { useEffect, useState } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getComments, getLatestRevision } from '~/logic/lib/publish';
@@ -13,6 +13,7 @@ import { Spinner } from '~/views/components/Spinner';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { NoteNavigation } from './NoteNavigation';
 import airlock from '~/logic/api';
+import { ActionLink, TextLink } from '~/views/components/Link';
 
 interface NoteProps {
   ship: string;
@@ -66,9 +67,9 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const ourRole = roleForShip(group, window.ship);
   if (window.ship === note?.post?.author) {
     adminLinks.push(
-      <Link to={`${baseUrl}/edit`}>
-        <Action backgroundColor="white">Update</Action>
-      </Link>
+      <ActionLink to={`${baseUrl}/edit`}>
+        Update
+      </ActionLink>
     );
   }
 
@@ -100,9 +101,9 @@ export function Note(props: NoteProps & RouteComponentProps) {
       gridRowGap={4}
       mx="auto"
     >
-      <Link to={rootUrl}>
-        <Text>{'<- Notebook Index'}</Text>
-      </Link>
+      <TextLink to={rootUrl}>
+        {'<- Notebook Index'}
+      </TextLink>
       <Col>
         <Text display="block" mb={2}>{title || ''}</Text>
         <Row alignItems="center">

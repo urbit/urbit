@@ -1,8 +1,9 @@
 import { Button, Icon, Row, Text } from '@tlon/indigo-react';
 import { disableGroupFeed } from '@urbit/api/graph';
 import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { resourceFromPath } from '~/logic/lib/group';
+import { ButtonLink } from '~/views/components/Link';
 import airlock from '~/logic/api';
 
 export const AddFeedBanner = (props) => {
@@ -76,11 +77,9 @@ export const AddFeedBanner = (props) => {
             <Button onClick={() => setDismissing(true)}>
               Dismiss
             </Button>
-            <Link replace to={`/~landscape${groupPath}/enable`}>
-              <Button primary cursor="pointer">
-                Enable Feed
-              </Button>
-            </Link>
+            <ButtonLink primary replace to={`/~landscape${groupPath}/enable`}>
+              Enable Feed
+            </ButtonLink>
           </>
         )}
 

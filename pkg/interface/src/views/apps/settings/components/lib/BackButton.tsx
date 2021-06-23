@@ -1,11 +1,10 @@
-import { Text } from '@tlon/indigo-react';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { TextLink } from '~/views/components/Link';
 
-export function BackButton(props: {}) {
+export function BackButton() {
   return (
-    <Link to='/~settings'>
-      <Text
+      <TextLink
+        to="/~settings"
         display={['block', 'none']}
         fontSize={2}
         fontWeight='medium'
@@ -13,7 +12,6 @@ export function BackButton(props: {}) {
         pb={0}
       >
         {'<- Back to System Preferences'}
-      </Text>
-    </Link>
+    </TextLink>
   );
 }

@@ -11,7 +11,7 @@ export function Body(
       <Container
         expand
         round
-        border={border ? border : [0, 1]}
+        borderWidth={border ? border : [0, 1]}
         {...boxProps}
       >
         {children}

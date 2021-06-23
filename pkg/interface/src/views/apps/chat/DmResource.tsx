@@ -3,7 +3,6 @@ import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import bigInt from 'big-integer';
 import { Box, Row, Col, Text } from '@tlon/indigo-react';
-import { Link } from 'react-router-dom';
 import { patp2dec } from 'urbit-ob';
 import { useContact } from '~/logic/state/contact';
 import useGraphState, { useDM } from '~/logic/state/graph';
@@ -12,6 +11,7 @@ import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
 import airlock from '~/logic/api';
 import shallow from 'zustand/shallow';
+import { TextLink } from '~/views/components/Link';
 
 interface DmResourceProps {
   ship: string;
@@ -143,9 +143,9 @@ export function DmResource(props: DmResourceProps) {
             flexShrink={0}
             display={['block', 'none']}
           >
-            <Link to={'/~landscape/messages'}>
-              <Text>{'<- Back'}</Text>
-            </Link>
+            <TextLink to='/~landscape/messages'>
+              {'<- Back'}
+            </TextLink>
           </Box>
           {showNickname && (
             <Box mr="3">

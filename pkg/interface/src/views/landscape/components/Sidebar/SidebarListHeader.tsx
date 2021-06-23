@@ -1,15 +1,12 @@
 import {
     Box,
-
     Col, Icon,
-
     ManagedCheckboxField as Checkbox, ManagedRadioButtonField as Radio, Row,
-
     Text
 } from '@tlon/indigo-react';
 import { FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { roleForShip } from '~/logic/lib/group';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
@@ -22,6 +19,7 @@ import { NewChannel } from '~/views/landscape/components/NewChannel';
 import { SidebarListConfig } from './types';
 import { getFeedPath } from '~/logic/lib/util';
 import { Container } from '~/views/components/Container';
+import { RowLink, TextLink } from '~/views/components/Link';
 
 export function SidebarListHeader(props: {
   initialValues: SidebarListConfig;
@@ -57,33 +55,23 @@ export function SidebarListHeader(props: {
   const unreadCount = useHarkState(
     s => s.unreads?.graph?.[feedPath ?? '']?.['/']?.unreads as number ?? 0
   );
+  const { pathname } = history.location;
+  const feedLink = `/~landscape${groupPath}/feed`;
 
   return (
     <Box>
     {( feedPath) ? (
-       <Row
+       <RowLink
          flexShrink={0}
-         alignItems="center"
          justifyContent="space-between"
          py={2}
          px={3}
          height='48px'
          borderBottom={1}
          borderColor="lightGray"
-         backgroundColor={['transparent',
-           history.location.pathname.includes(`/~landscape${groupPath}/feed`)
-           ? (
-            'washedGray'
-           ) : (
-            'transparent'
-           )]}
-           cursor={(
-             history.location.pathname === `/~landscape${groupPath}/feed`
-             ? 'default' : 'pointer'
-           )}
-         onClick={() => {
-           history.push(`/~landscape${groupPath}/feed`);
-         }}
+         backgroundColor={pathname.includes(feedLink) ?  'washedGray' : 'transparent'}
+         cursor={pathname === feedLink? 'default' : 'pointer' }
+         to={feedLink}
        >
          <Text>
            Group Feed
@@ -91,7 +79,7 @@ export function SidebarListHeader(props: {
          <Text mr={1} color="blue">
            { unreadCount > 0 && unreadCount}
          </Text>
-       </Row>
+       </RowLink>
      ) : null
     }
     <Row
@@ -134,14 +122,13 @@ export function SidebarListHeader(props: {
           </Dropdown>
         )
         : (
-       <Link style={{
-          display: isAdmin ? 'inline-block' : 'none' }}
-        to={groupPath
-          ? `/~landscape${groupPath}/new`
-          : `/~landscape/${props.workspace?.type}/new`}
+       <TextLink display={isAdmin ? 'inline-block' : 'none' }
+          to={groupPath
+            ? `/~landscape${groupPath}/new`
+            : `/~landscape/${props.workspace?.type}/new`}
        >
            <Icon icon="Plus" color="gray" pr='12px' />
-       </Link>
+       </TextLink>
           )
         }
       <Dropdown

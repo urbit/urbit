@@ -11,22 +11,23 @@ import { uxToHex } from '~/logic/lib/util';
 import { getTitleFromWorkspace } from '~/logic/lib/workspace';
 import useMetadataState from '~/logic/state/metadata';
 import { Workspace } from '~/types/workspace';
+import { Container } from '~/views/components/Container';
 import { Dropdown } from '~/views/components/Dropdown';
+import { BoxLink, RowLink } from '~/views/components/Link';
 import { MetadataIcon } from './MetadataIcon';
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
-  <Link to={to}>
-    <Box
-      py={1}
-      {...rest}
-      borderBottom={bottom ? 0 : 1}
-      borderBottomColor="lightGray"
-    >
-      <Row p={2} alignItems="center">
-        {children}
-      </Row>
-    </Box>
-  </Link>
+  <BoxLink
+    to={to}
+    py={1}
+    {...rest}
+    borderBottom={bottom ? 0 : 1}
+    borderBottomColor="lightGray"
+  >
+    <Row p={2} alignItems="center">
+      {children}
+    </Row>
+  </BoxLink>
 );
 
 function RecentGroups(props: { recent: string[] }) {
@@ -47,8 +48,12 @@ function RecentGroups(props: { recent: string[] }) {
         const assoc = associations.groups[g];
         const color = uxToHex(assoc?.metadata?.color || '0x0');
         return (
-          <Link key={g} style={{ minWidth: 0 }} to={`/~landscape${g}`}>
-          <Row px={1} pb={2} alignItems="center">
+          <RowLink
+            key={g}
+            minWidth="0" to={`/~landscape${g}`}
+px={1} pb={2}
+alignItems="center"
+          >
             <Box
               borderRadius={1}
               border={1}
@@ -61,8 +66,7 @@ function RecentGroups(props: { recent: string[] }) {
               flexShrink={0}
             />
               <Text verticalAlign='top' maxWidth='100%' overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{assoc?.metadata?.title}</Text>
-            </Row>
-          </Link>
+          </RowLink>
         );
       })}
     </Col>
@@ -106,14 +110,7 @@ export function GroupSwitcher(props: {
             dropWidth="231px"
             alignY="top"
             options={
-              <Col
-                borderRadius={1}
-                border={1}
-                borderColor="lightGray"
-                bg="white"
-                width="100%"
-                alignItems="stretch"
-              >
+              <Container width="100%" alignItems="stretch">
                 {(props.baseUrl === '/~landscape/home') ?
                   <GroupSwitcherItem to="">
                   <Icon
@@ -173,7 +170,7 @@ export function GroupSwitcher(props: {
                     </GroupSwitcherItem>)}
                   </>
                 )}
-              </Col>
+              </Container>
             }
           >
             <Row flexGrow={1} alignItems="center" width='100%' minWidth={0} flexShrink={0}>

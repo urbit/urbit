@@ -12,7 +12,6 @@ import { cite, uxToHex } from '@urbit/api';
 import shallow from 'zustand/shallow';
 import _ from 'lodash';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
 import styled from 'styled-components';
 import { getRelativePosition } from '~/logic/lib/relativePosition';
@@ -26,6 +25,7 @@ import { Portal } from './Portal';
 import { ProfileStatus } from './ProfileStatus';
 import RichText from './RichText';
 import { Container } from './Container';
+import { BoxLink, RowLink } from './Link';
 
 export const OVERLAY_HEIGHT = 250;
 const FixedOverlay = styled(Container)`
@@ -54,7 +54,6 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
   const [open, _setOpen] = useState(false);
   const [coords, setCoords] = useState({});
   const [visible, setVisible] = useState(false);
-  const history = useHistory();
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const [hideAvatars, hideNicknames] = useSettingsState(selSettings, shallow);
@@ -148,26 +147,24 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
         padding={3}
         justifyContent='center'
       >
-        <Row color='black' padding={3} position='absolute' top={0} left={0}>
-           {!isOwn && (
-             <Icon
-               icon='Chat'
-               size={16}
-               cursor='pointer'
-               onClick={() => history.push(`/~landscape/messages/dm/~${ship}`)}
-             />
-           )}
-         </Row>
-        <Box
+        {!isOwn && (
+          <RowLink color='black' padding={3}
+position='absolute' top={0}
+left={0}
+             to={`/~landscape/messages/dm/~${ship}`}
+          >
+             <Icon icon='Chat' size={16} />
+         </RowLink>
+         )}
+        <BoxLink
           alignSelf='center'
           height='72px'
-          cursor='pointer'
-          onClick={() => history.push(`/~profile/~${ship}`)}
+          to={`/~profile/~${ship}`}
           overflow='hidden'
           borderRadius={2}
         >
           {img}
-        </Box>
+        </BoxLink>
         <Col
           position='absolute'
           overflow='hidden'

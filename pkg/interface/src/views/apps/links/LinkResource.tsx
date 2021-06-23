@@ -3,10 +3,11 @@ import { Group } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
 import { Comments } from '~/views/components/Comments';
+import { TextLink } from '~/views/components/Link';
 import useGroupState from '../../../logic/state/group';
 import { LinkItem } from './components/LinkItem';
 import './css/custom.css';
@@ -101,7 +102,7 @@ export function LinkResource(props: LinkResourceProps) {
             return (
               <Col alignItems="center" overflowY="auto" width="100%">
               <Col width="100%" p={3} maxWidth="768px">
-                <Link to={resourceUrl}><Text px={3} bold>{'<- Back'}</Text></Link>
+                <TextLink to={resourceUrl} px={3} bold>{'<- Back'}</TextLink>
                 <LinkItem
                   key={node.post.index}
                   resource={resourcePath}

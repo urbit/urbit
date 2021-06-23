@@ -1,9 +1,8 @@
-import { Box, Col, Icon, Image, Row, Text } from '@tlon/indigo-react';
+import { Box, Icon, Image, Row, Text } from '@tlon/indigo-react';
 import { Group } from '@urbit/api';
 import { GraphNode } from '@urbit/api/graph';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import {
     getComments,
@@ -12,6 +11,7 @@ import {
 } from '~/logic/lib/publish';
 import useHarkState from '~/logic/state/hark';
 import Author from '~/views/components/Author';
+import { BoxLink, ColLink } from '~/views/components/Link';
 
 interface NotePreviewProps {
   host: string;
@@ -80,28 +80,25 @@ export function NotePreview(props: NotePreviewProps) {
 
   return (
     <Box width='100%' opacity={post.pending ? '0.5' : '1'}>
-      <Link
+      <ColLink
         to={post.pending ? '#' : url}
         style={ { cursor: cursorStyle } }
+        lineHeight='tall'
+        width='100%'
+        color={!isUnread ? 'lightGray' : 'blue'}
+        border={1}
+        borderRadius={2}
+        alignItems='flex-start'
+        overflow='hidden'
+        p={2}
       >
-        <Col
-          lineHeight='tall'
-          width='100%'
-          color={!isUnread ? 'lightGray' : 'blue'}
-          border={1}
-          borderRadius={2}
-          alignItems='flex-start'
-          overflow='hidden'
-          p={2}
-        >
-          <WrappedBox mb={2}><Text bold>{title}</Text></WrappedBox>
-          <WrappedBox>
-            <Text fontSize='14px' lineHeight='tall'>
-              <NotePreviewContent snippet={snippet} />
-            </Text>
-          </WrappedBox>
-        </Col>
-      </Link>
+        <WrappedBox mb={2}><Text bold>{title}</Text></WrappedBox>
+        <WrappedBox>
+          <Text fontSize='14px' lineHeight='tall'>
+            <NotePreviewContent snippet={snippet} />
+          </Text>
+        </WrappedBox>
+      </ColLink>
       <Row minWidth={0} flexShrink={0} width="100%" justifyContent="space-between" py={3} bg="white">
         <Author
           showImage
@@ -111,12 +108,10 @@ export function NotePreview(props: NotePreviewProps) {
           unread={isUnread}
         />
         <Box ml="auto" mr={1}>
-          <Link to={url}>
-            <Box display='flex'>
-              <Icon color={commColor} icon='Chat' />
-              <Text color={commColor} ml={1}>{numComments}</Text>
-            </Box>
-          </Link>
+          <BoxLink to={url} display='flex'>
+            <Icon color={commColor} icon='Chat' />
+            <Text color={commColor} ml={1}>{numComments}</Text>
+          </BoxLink>
         </Box>
       </Row>
     </Box>

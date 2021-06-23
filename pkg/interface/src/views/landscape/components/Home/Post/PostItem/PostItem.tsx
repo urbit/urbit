@@ -1,12 +1,11 @@
 import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import { Association, GraphNode, Group, Post } from '@urbit/api';
 import { BigInteger } from 'big-integer';
-import { History } from 'history';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useHistory } from 'react-router';
 import { getPostRoute } from '~/logic/lib/graph';
 import { isWriter } from '~/logic/lib/group';
 import { useHovering } from '~/logic/lib/util';
+import { ColLink } from '~/views/components/Link';
 import { Mention } from '~/views/components/MentionText';
 import PostInput from '../PostInput';
 import PostContent from './PostContent';
@@ -19,7 +18,6 @@ export interface PostItemProps {
   bind?: unknown;
   graphPath: string;
   group: Group;
-  history: History;
   hovering?: boolean;
   index: BigInteger[];
   isParent?: boolean;
@@ -52,8 +50,6 @@ function PostItem(props: PostItemProps) {
   const [inReplyMode, setInReplyMode] = useState(false);
   const toggleReplyMode = useCallback(() => setInReplyMode(m => !m), []);
 
-  const history = useHistory();
-
   const canWrite = useMemo(() => {
     if (vip === '') {
       return true;
@@ -63,19 +59,6 @@ function PostItem(props: PostItemProps) {
     }
     return isWriter(group, association.resource);
   }, [group, association.resource, vip, index]);
-
-  const navigateToChildren = useCallback(() => {
-    history.push(
-      getPostRoute(association.resource, index, !isThread && !isHierarchical)
-    );
-  }, [
-    isHierarchical,
-    history.push,
-    index,
-    isParent,
-    isThread,
-    association.resource
-  ]);
 
   const postExists = Boolean(node.post) && typeof node.post !== 'string';
   const { hovering, bind } = useHovering();
@@ -88,7 +71,7 @@ function PostItem(props: PostItemProps) {
       width="100%"
       alignItems="center"
     >
-      <Col
+      <ColLink
         pt={2}
         border={1}
         borderColor={isParent ? 'gray' : 'lightGray'}
@@ -96,7 +79,7 @@ function PostItem(props: PostItemProps) {
         width="100%"
         maxWidth="600px"
         backgroundColor={hovering ? 'washedGray' : 'transparent'}
-        onClick={navigateToChildren}
+        to={getPostRoute(association.resource, index, !isThread && !isHierarchical)}
         cursor={isParent ? 'default' : 'pointer'}
         {...bind}
       >
@@ -137,7 +120,7 @@ function PostItem(props: PostItemProps) {
             <Text gray>This post has been deleted</Text>
           </Box>
         )}
-      </Col>
+      </ColLink>
       {inReplyMode ? (
         <Col width="100%" maxWidth="600px">
           <Box

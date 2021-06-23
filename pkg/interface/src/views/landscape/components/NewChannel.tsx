@@ -22,6 +22,7 @@ import { IconRadio } from '~/views/components/IconRadio';
 import { ShipSearch, shipSearchSchema, shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
 import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
 import airlock from '~/logic/api';
+import { BoxLink } from '~/views/components/Link';
 
 type FormSchema = {
   name: string;
@@ -142,13 +143,13 @@ export function NewChannel(props: NewChannelProps): ReactElement {
       backgroundColor='white'
       {...rest}
     >
-      <Box
+      <BoxLink
         pb={3}
         display={workspace?.type === 'messages' ? 'none' : ['block', 'none']}
-        onClick={() => history.push(props?.baseUrl ?? '/')}
+        to={props?.baseUrl ?? '/'}
       >
         <Text>{'<- Back'}</Text>
-      </Box>
+      </BoxLink>
       <Box>
         <Text fontSize={2} bold>
           {workspace?.type === 'messages' && existingMembers ? 'New Group ' : null}

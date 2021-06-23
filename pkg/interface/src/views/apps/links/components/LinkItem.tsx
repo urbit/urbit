@@ -1,7 +1,7 @@
 import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
 import { Association, GraphNode, Group, markEachAsRead, removePosts, TextContent, UrlContent } from '@urbit/api';
 import React, { ReactElement, RefObject, useCallback, useEffect, useRef } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph, referenceToPermalink } from '~/logic/lib/permalinks';
 import { useCopy } from '~/logic/lib/useCopy';
@@ -11,6 +11,7 @@ import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
 import { PermalinkEmbed } from '../../permalinks/embed';
 import airlock from '~/logic/api';
+import { BoxLink } from '~/views/components/Link';
 
 interface LinkItemProps {
   node: GraphNode;
@@ -183,16 +184,15 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
         lineHeight={1}
       />
       <Box ml="auto">
-        <Link
+        <BoxLink
+          display="flex"
           to={node.post.pending ? '#' : `${baseUrl}/index/${index}`}
           style={{ cursor: node.post.pending ? 'default' : 'pointer' }}
         >
-        <Box display='flex'>
           <Icon color={commColor} icon='Chat' />
           <Text color={commColor} ml={1}>{size}</Text>
-        </Box>
-      </Link>
-        </Box>
+        </BoxLink>
+      </Box>
 
       <Dropdown
         dropWidth="200px"

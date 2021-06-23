@@ -9,7 +9,7 @@ import {
     metadataRemove
 } from '@urbit/api';
 import React, { useCallback, useRef } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { isChannelAdmin, isHost } from '~/logic/lib/group';
 import { useHashLink } from '~/logic/lib/useHashLink';
 import { FormGroup } from '~/views/components/FormGroup';
@@ -20,6 +20,7 @@ import { ChannelDetails } from './Details';
 import { ChannelNotifications } from './Notifications';
 import { ChannelPopoverRoutesSidebar } from './Sidebar';
 import airlock from '~/logic/api';
+import { TextLink } from '~/views/components/Link';
 
 interface ChannelPopoverRoutesProps {
   baseUrl: string;
@@ -75,9 +76,9 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
         height="100%"
       >
         <Box pt={4} px={4} display={['block', 'none']}>
-          <Link to={props.baseUrl}>
-            <Text fontSize={1}>{'<- Back'}</Text>
-          </Link>
+          <TextLink fontSize={1} to={props.baseUrl}>
+            {'<- Back'}
+          </TextLink>
         </Box>
         <ChannelPopoverRoutesSidebar
           isAdmin={canAdmin}

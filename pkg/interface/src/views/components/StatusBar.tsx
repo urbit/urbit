@@ -1,13 +1,11 @@
 import {
   BaseImage,
   Box,
-  Button,
   Icon,
   Row,
   Text
 } from '@tlon/indigo-react';
 import React, { useRef } from 'react';
-import { useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
@@ -22,12 +20,12 @@ import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import { useTutorialModal } from './useTutorialModal';
 import { Container } from './Container';
+import { ButtonLink, RowLink } from './Link';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
 const StatusBar = (props) => {
   const { ship } = props;
-  const history = useHistory();
   const runtimeLag = useLaunchState(state => state.runtimeLag);
   const ourContact = useContactState(state => state.contacts[`~${ship}`]);
   const notificationsCount = useHarkState(state => state.notificationsCount);
@@ -74,16 +72,16 @@ const StatusBar = (props) => {
       pb={3}
     >
       <Row>
-        <Button
+        <ButtonLink
           width='32px'
           borderColor='lightGray'
           mr={2}
           px={2}
-          onClick={() => history.push('/')}
+          to="/"
           {...props}
         >
           <Icon icon='Dashboard' color='black' />
-        </Button>
+        </ButtonLink>
         <StatusBarItem float={floatLeap} mr={2} onClick={() => toggleOmnibox()}>
           {!doNotDisturb && runtimeLag && (
             <Box display='block' right='-8px' top='-8px' position='absolute'>
@@ -146,28 +144,16 @@ const StatusBar = (props) => {
               color='washedGray'
               boxShadow='0px 0px 0px 3px'
             >
-              <Row
-                color='black'
-                cursor='pointer'
-                fontSize={1}
-                fontWeight='500'
-                px={3}
-                py={2}
-                onClick={() => history.push(`/~profile/~${ship}`)}
-              >
-                View Profile
-              </Row>
-              <Row
-                color='black'
-                cursor='pointer'
-                fontSize={1}
-                fontWeight='500'
-                px={3}
-                py={2}
-                onClick={() => history.push('/~settings')}
-              >
-                System Preferences
-              </Row>
+              <RowLink px={3} py={2} to={`/~profile/~${ship}`}>
+                <Text fontSize={1} fontWeight='500'>
+                  View Profile
+                </Text>
+              </RowLink>
+              <RowLink px={3} py={2} to={'/~settings'}>
+                <Text fontWeight='500' fontSize={1}>
+                  System Preferences
+                </Text>
+              </RowLink>
               <Row px={3} pt={2} pb={1} flexDirection='column'>
                 <Text color='gray' fontWeight='500' mb={1}>
                   Set Status:
