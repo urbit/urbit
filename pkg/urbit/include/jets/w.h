@@ -283,6 +283,36 @@
     u3_noun u3welvd_divv(u3_noun);
     u3_noun u3welvd_inner(u3_noun);
 
+    u3_noun u3welms_zeros(u3_noun);
+    u3_noun u3welms_ones(u3_noun);
+    u3_noun u3welms_id(u3_noun);
+    u3_noun u3welms_get(u3_noun);
+    u3_noun u3welms_set(u3_noun);
+    u3_noun u3welms_getc(u3_noun);
+    u3_noun u3welms_setc(u3_noun);
+    u3_noun u3welms_getr(u3_noun);
+    u3_noun u3welms_setr(u3_noun);
+    u3_noun u3welms_swapc(u3_noun);
+    u3_noun u3welms_swapr(u3_noun);
+    u3_noun u3welms_trans(u3_noun);
+    u3_noun u3welms_addvc(u3_noun);
+    u3_noun u3welms_subvc(u3_noun);
+    u3_noun u3welms_mulvc(u3_noun);
+    u3_noun u3welms_divvc(u3_noun);
+    u3_noun u3welms_addvr(u3_noun);
+    u3_noun u3welms_subvr(u3_noun);
+    u3_noun u3welms_mulvr(u3_noun);
+    u3_noun u3welms_divvr(u3_noun);
+    u3_noun u3welms_addm(u3_noun);
+    u3_noun u3welms_subm(u3_noun);
+    u3_noun u3welms_mulm(u3_noun);
+    u3_noun u3welms_divm(u3_noun);
+    u3_noun u3welms_mmul(u3_noun);
+    u3_noun u3welms_submatrix(u3_noun);
+    u3_noun u3welms_minor(u3_noun);
+    u3_noun u3welms_augment(u3_noun);
+    u3_noun u3welms_invert(u3_noun);
+
   /** Tier 6.
   **/
     u3_noun u3wf_bull(u3_noun);
