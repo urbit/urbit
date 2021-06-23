@@ -4,7 +4,7 @@
 ::  x/scanned: (list xpub) of all scanned wallets
 ::  x/balance/xpub: balance (in sats) of wallet
 /-  *btc-wallet, bp=btc-provider, file-server, launch-store
-/+  dbug, default-agent, bl=btc, bc=bitcoin, bip32
+/+  dbug, default-agent, bl=btc, bc=bitcoin, bcu=bitcoin-utils, bip32
 |%
 ++  defaults
   |%
@@ -345,7 +345,7 @@
   ::
       %broadcast-tx
     ?~  prov  ~|("Provider not connected" !!)
-    =+  signed=(from-cord:hxb:bc txhex.comm)
+    =+  signed=(from-cord:hxb:bcu txhex.comm)
     =/  tx-match=?
       ?~  txbu.poym  %.n
       =((get-id:txu:bc (decode:txu:bc signed)) ~(get-txid txb:bl u.txbu.poym))

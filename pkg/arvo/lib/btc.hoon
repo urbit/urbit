@@ -424,6 +424,7 @@
         %get-block-info
       [id.res (block-info res.res)]
     ==
+    ::
     ++  address-info
       %-  ot
       :~  [%address (cu from-cord:adr:bc so)]
