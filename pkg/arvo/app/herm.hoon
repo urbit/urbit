@@ -61,7 +61,7 @@
   ?+  wire  !!
     ::  pass on dill blits for the session
     ::
-      [%dill @ ~]
+      [?(%view %dill) @ ~]  ::NOTE  /view for backwards compat
     =*  ses  i.t.wire
     ?.  ?=([%dill %blit *] sign-arvo)
       ~|  [%unexpected-sign [- +<]:sign-arvo]
