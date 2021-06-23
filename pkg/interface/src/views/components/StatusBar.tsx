@@ -22,6 +22,7 @@ import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import { useTutorialModal } from './useTutorialModal';
+import { StatusBarMedia } from './StatusBarMedia';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
@@ -68,7 +69,7 @@ const StatusBar = (props) => {
       display='grid'
       width='100%'
       gridTemplateRows='30px'
-      gridTemplateColumns='3fr 1fr'
+      gridTemplateColumns='2fr 2fr 2fr'
       py={3}
       px={3}
       pb={3}
@@ -105,7 +106,8 @@ const StatusBar = (props) => {
         </StatusBarItem>
         <ReconnectButton />
       </Row>
-      <Row justifyContent='flex-end'>
+      <StatusBarMedia />
+      <Row alignItems="center" justifyContent='flex-end'>
         <StatusBarItem
           width='32px'
           mr={2}

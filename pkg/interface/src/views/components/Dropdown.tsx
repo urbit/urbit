@@ -1,4 +1,4 @@
-import { Box } from '@tlon/indigo-react';
+import { Box, BoxProps } from '@tlon/indigo-react';
 import React, {
     ReactElement, ReactNode,
 
@@ -20,6 +20,7 @@ interface DropdownProps {
   width?: string;
   dropWidth?: string;
   flexShrink?: number;
+  display?: BoxProps['display'];
 }
 
 const ClickBox = styled(Box)`
@@ -84,7 +85,7 @@ export function Dropdown(props: DropdownProps): ReactElement {
   }, []);
 
   return (
-    <Box flexShrink={flexShrink} position={open ? 'relative' : 'static'} minWidth={0} width={props?.width ? props.width : 'auto'}>
+    <Box display={props.display} flexShrink={flexShrink} position={open ? 'relative' : 'static'} minWidth={0} width={props?.width ? props.width : 'auto'}>
       <ClickBox width='100%' ref={anchorRef} onClick={onOpen}>
         {children}
       </ClickBox>

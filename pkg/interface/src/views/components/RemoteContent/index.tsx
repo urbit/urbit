@@ -9,12 +9,18 @@ import {
 } from './embed';
 import { TruncatedText } from '~/views/components/TruncatedText';
 import { RemoteContentWrapper } from './wrapper';
+import { IMAGE_REGEX, AUDIO_REGEX, VIDEO_REGEX } from '~/logic/lib/util';
 
 export interface RemoteContentProps {
   /**
    * Url to render
    */
   url: string;
+  /**
+   * The title for the url, or a string describing it
+   *
+   */
+  title: string;
   /**
    * Should render the URL as part of the display of the RemoteContent.
    *
@@ -36,18 +42,13 @@ export interface RemoteContentProps {
   tall?: boolean;
 }
 
-export const IMAGE_REGEX = new RegExp(
-  /(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i
-);
-export const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg|m4a)$/i);
-export const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
-
 const emptyRef = () => {};
 export function RemoteContent(props: RemoteContentProps) {
   const {
     url,
     embedRef = emptyRef,
     transcluded,
+    title,
     tall = false,
     renderUrl = true
   } = props;
@@ -66,20 +67,20 @@ export function RemoteContent(props: RemoteContentProps) {
   if (isImage && remoteContentPolicy.imageShown) {
     return (
       <RemoteContentWrapper {...wrapperProps} noOp={transcluded} replaced>
-        <RemoteContentImageEmbed url={url} />
+        <RemoteContentImageEmbed title={title} url={url} />
       </RemoteContentWrapper>
     );
   } else if (isAudio && remoteContentPolicy.audioShown) {
     return (
       <RemoteContentWrapper {...wrapperProps}>
-        <RemoteContentAudioEmbed url={url} />
+        <RemoteContentAudioEmbed title={title} url={url} />
       </RemoteContentWrapper>
     );
   } else if (isVideo && remoteContentPolicy.videoShown) {
     return (
       <RemoteContentWrapper
         {...wrapperProps}
-        detail={<RemoteContentVideoEmbed url={url} />}
+        detail={<RemoteContentVideoEmbed title={title} url={url} />}
       >
         <TruncatedText>{url}</TruncatedText>
       </RemoteContentWrapper>
