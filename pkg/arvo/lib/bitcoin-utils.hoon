@@ -81,16 +81,19 @@
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
+  ~/  %sha256
   |=  =byts
   ^-  hexb
   %-  flip:byt
   [32 (shay (flip:byt byts))]
 ::
 ++  dsha256
+  ~/  %dsha256
   |=  =byts
   (sha256 (sha256 byts))
 ::
 ++  hash-160
+  ~/  %hash-160
   |=  val=byts
   ^-  hexb
   =,  ripemd:crypto
@@ -102,9 +105,10 @@
 ::  hxb: hex parsing utilities
 ::
 ++  hxb
-  ~/  %hxb
+  ~%  %hxb  ..blop  ~
   |%
   ++  from-cord
+    ~/  %from-cord
     |=  h=@t
     ^-  hexb
     ?:  =('' h)  1^0x0
@@ -121,6 +125,7 @@
     `@ux`(rash - hex)
   ::
   ++  to-cord
+    ~/  %to-cord
     |=  =hexb
     ^-  cord
     (en:base16:mimes:html hexb)
@@ -132,9 +137,10 @@
 ::   - decode: little endian to big endian
 ::
 ++  csiz
-  ~/  %csiz
+  ~%  %csiz  ..blop  ~
   |%
   ++  en
+    ~/  %en
     |=  a=@
     ^-  hexb
     =/  l=@  (met 3 a)
@@ -145,6 +151,7 @@
     ~|("Cannot encode CompactSize longer than 8 bytes" !!)
   ::
   ++  de
+    ~/  %de
     |=  h=hexb
     ^-  [n=hexb rest=hexb]
     =/  s=@ux  dat:(take:byt 1 h)
