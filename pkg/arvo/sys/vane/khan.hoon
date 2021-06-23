@@ -42,9 +42,6 @@
   |%
   ::  %entry-points
   ::
-  ::  +born: urbit restarted; refresh?
-  ::
-  ++  born  [~ state]
   ::  +crud: handle failure of previous arvo event
   ::
   ++  crud
@@ -61,12 +58,16 @@
   ::
   ++  fyrd
     |=  com=^fyrd
+    ^+  [moves state]
     =<  [moves state]
     ~&  >  fyrd+com
     ~!  -.com
     ?-  -.com
       %mas  ~&  todo+com  event-core                    :: |mass
-      %cod  event-core(moves [[duct %pass / %arvo %j %step ~] ~]) :: code reset
+      %cod
+        =/  cov
+          [duct %pass %j %step ~]~
+        ~!  move+cov  event-core(moves cov)
     ==
   ::  +trim: in response to memory pressue
   ::
@@ -111,7 +112,6 @@
     ::
     ~!  -.task
     ?-  -.task
-      %born  born:event-core
       %trim  trim:event-core
       %vega  vega:event-core                            :: vega
       %fyrd  (fyrd:event-core p.task)
@@ -160,6 +160,5 @@
   ?^  dud
     ~|(%khan-take-dud (mean tang.u.dud))
   ::
-  ?>  ?=([%drip @ ~] tea)
   [~ khan-gate]
 --
