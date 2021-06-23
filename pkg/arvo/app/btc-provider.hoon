@@ -53,6 +53,7 @@
   `this(state !<(versioned-state old-state))
 ::
 ++  on-poke
+  ~/  %on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
@@ -62,6 +63,7 @@
         %btc-provider-command
       ?>  (team:title our.bowl src.bowl)
       (handle-command !<(command vase))
+    ::
         %btc-provider-action
       (handle-action !<(action vase))
     ==
@@ -161,6 +163,7 @@
   --
 ::
 ++  on-watch
+  ~/  %on-watch
   |=  pax=path
   ^-  (quip card _this)
   ::  checking provider permissions before trying to subscribe
@@ -185,6 +188,7 @@
   this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
 ++  on-arvo
+  ~/  %on-arvo
   |=  [=wire =sign-arvo]
   |^
   ^-  (quip card _this)
@@ -277,6 +281,7 @@
   --
 ::
 ++  on-peek
+  ~/  %on-peek
   |=  pax=path
   ^-  (unit (unit cage))
   ?+  pax  (on-peek:def pax)
@@ -306,13 +311,14 @@
   ^-  card
   =+  c=[%give %fact ~[/clients] %btc-provider-update !>(update)]
   ?:  ?=(%.y -.update)
-::    ~&  >>  "prov. update: {<p.update>}"
     c
   ~&   >>  "prov. err: {<p.update>}"
   c
 ::
 ++  is-whitelisted
-  |=  user=ship  ^-  ?
+  ~/  %is-whitelisted
+  |=  user=ship
+  ^-  ?
   |^
   ?|  public.whitelist
       =(our.bowl user)
@@ -333,11 +339,13 @@
   --
 ::
 ++  is-client
-  |=  user=ship  ^-  ?
+  |=  user=ship
+  ^-  ?
   (~(has in clients.host-info) user)
 ::
 ++  start-ping-timer
-  |=  interval=@dr  ^-  card
+  |=  interval=@dr
+  ^-  card
   [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
 ::
 ++  do-ping
