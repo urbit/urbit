@@ -1,10 +1,7 @@
 import { BaseImage, Box, Center, Row, Text } from '@tlon/indigo-react';
 import { retrieve } from '@urbit/api';
 import React, { ReactElement, useEffect, useRef } from 'react';
-import { Sigil } from '~/logic/lib/sigil';
-import { uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
-import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import RichText from '~/views/components/RichText';
 import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
@@ -12,6 +9,7 @@ import { EditProfile } from './EditProfile';
 import { ViewProfile } from './ViewProfile';
 import airlock from '~/logic/api';
 import { TextLink } from '~/views/components/Link';
+import { ShipImage } from '~/views/components/ShipImage';
 
 export function ProfileHeader(props: any): ReactElement {
   return (
@@ -28,9 +26,7 @@ export function ProfileHeader(props: any): ReactElement {
 }
 
 export function ProfileImages(props: any): ReactElement {
-  const { hideAvatars } = useSettingsState(selectCalmState);
   const { contact, hideCover, ship } = props;
-  const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : '#000000';
 
   const anchorRef = useRef<HTMLDivElement>(null);
 
@@ -54,19 +50,6 @@ export function ProfileImages(props: any): ReactElement {
       />
     );
 
-  const image =
-    !hideAvatars && contact?.avatar ? (
-      <BaseImage
-        src={contact.avatar}
-        width='100%'
-        height='100%'
-        referrerPolicy="no-referrer"
-        style={{ objectFit: 'cover' }}
-      />
-    ) : (
-      <Sigil padding={24} ship={ship} size={128} color={hexColor} />
-    );
-
   return (
     <>
       <Row ref={anchorRef} width='100%' height='400px' position='relative'>
@@ -85,7 +68,7 @@ export function ProfileImages(props: any): ReactElement {
         marginTop='-64px'
         marginLeft='-64px'
       >
-        {image}
+        <ShipImage size={128} sigilSize={80} ship={ship} />
       </Box>
     </>
   );
@@ -130,6 +113,7 @@ export function ProfileActions(props: any): ReactElement {
           <TextLink
             py={2}
             fontWeight='500'
+            fontSize={1}
             to={`/~profile/${ship}/edit`}
           >
             Edit

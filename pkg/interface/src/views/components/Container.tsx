@@ -7,7 +7,7 @@ const style = ({ borderWidth, round = false, expand = false, gapY }) => {
   return css({
     ...expandRules,
     borderRadius: round ? 2 : 1,
-    borderColor: ['lightGray', 'lightGray', 'lightGray'],
+    borderColor: 'lightGray',
     borderWidth: typeof borderWidth === 'undefined' ? 1 : borderWidth,
     borderStyle: 'solid',
     backgroundColor: 'white',

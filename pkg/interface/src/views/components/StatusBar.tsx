@@ -1,19 +1,15 @@
 import {
-  BaseImage,
   Box,
   Icon,
   Row,
   Text
 } from '@tlon/indigo-react';
 import React, { useRef } from 'react';
-import { Sigil } from '~/logic/lib/sigil';
-import { uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useHarkState from '~/logic/state/hark';
 import useLaunchState from '~/logic/state/launch';
 import useInviteState from '~/logic/state/invite';
 import useLocalState, { selectLocalState } from '~/logic/state/local';
-import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Dropdown } from './Dropdown';
 import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
@@ -21,6 +17,7 @@ import { StatusBarItem } from './StatusBarItem';
 import { useTutorialModal } from './useTutorialModal';
 import { Container } from './Container';
 import { ButtonLink, RowLink } from './Link';
+import { ShipImage } from './ShipImage';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
@@ -36,23 +33,6 @@ const StatusBar = (props) => {
   );
   const metaKey = window.navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+';
   const { toggleOmnibox } = useLocalState(localSel);
-  const { hideAvatars } = useSettingsState(selectCalmState);
-
-  const color = ourContact ? `#${uxToHex(ourContact.color)}` : '#000';
-  const xPadding = !hideAvatars && ourContact?.avatar ? '0' : '2';
-  const bgColor = !hideAvatars && ourContact?.avatar ? '' : color;
-  const profileImage =
-    !hideAvatars && ourContact?.avatar ? (
-      <BaseImage
-        src={ourContact.avatar}
-        borderRadius={2}
-        width='32px'
-        height='32px'
-        style={{ objectFit: 'cover' }}
-      />
-    ) : (
-      <Sigil ship={ship} size={16} color={color} icon />
-    );
 
   const anchorRef = useRef(null);
 
@@ -166,15 +146,7 @@ const StatusBar = (props) => {
             </Container>
           }
         >
-          <StatusBarItem
-            px={xPadding}
-            width='32px'
-            flexShrink={0}
-            border={0}
-            backgroundColor={bgColor}
-          >
-            {profileImage}
-          </StatusBarItem>
+          <ShipImage icon ship={`~${ship}`} size={32} sigilSize={16} />
         </Dropdown>
       </Row>
     </Box>

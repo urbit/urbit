@@ -1,7 +1,7 @@
 import {
     Box, Col,
     Icon,
-    Image, Row,
+    Row,
     StatelessTextInput as Input, Text
 } from '@tlon/indigo-react';
 import { Contact, Contacts } from '@urbit/api/contacts';
@@ -16,8 +16,7 @@ import React, {
 import VisibilitySensor from 'react-visibility-sensor';
 import styled from 'styled-components';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
-import { Sigil } from '~/logic/lib/sigil';
-import { cite, uxToHex } from '~/logic/lib/util';
+import { cite } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { Dropdown } from '~/views/components/Dropdown';
@@ -25,6 +24,7 @@ import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 import airlock from '~/logic/api';
 import { ActionLink } from '~/views/components/Link';
 import { Container } from '~/views/components/Container';
+import { ShipImage } from '~/views/components/ShipImage';
 
 const TruncText = styled(Text)`
   white-space: nowrap;
@@ -246,9 +246,8 @@ function Participant(props: {
 }) {
   const { contact, association, group } = props;
   const { title } = association.metadata;
-  const { hideAvatars, hideNicknames } = useSettingsState(selectCalmState);
+  const { hideNicknames } = useSettingsState(selectCalmState);
 
-  const color = uxToHex(contact.color);
   const isInvite = 'invite' in group.policy;
 
   const role = useMemo(
@@ -288,26 +287,13 @@ function Participant(props: {
     }
   }, [contact, association]);
 
-  const avatar =
-    contact?.avatar && !hideAvatars ? (
-      <Image
-        src={contact.avatar}
-        height={32}
-        width={32}
-        display='inline-block'
-        style={{ objectFit: 'cover' }}
-      />
-    ) : (
-      <Sigil ship={contact.patp} size={32} color={`#${color}`} />
-    );
-
   const hasNickname = contact.nickname && !hideNicknames;
 
   return (
     <>
       <Row flexDirection={['column', 'row']} gapX={2} alignItems={['flex-start', 'center']} width="100%" justifyContent="space-between" height={['96px', '60px']}>
         <Row gapX={4} alignItems="center" height="100%">
-      <Box>{avatar}</Box>
+          <Box><ShipImage sigilSize={30} ship={`~${contact.patp}`} size={32} /> </Box>
       <Col alignItems="self-start" justifyContent="center" gapY={1} height="100%" minWidth={0}>
         {hasNickname && (
           <Row minWidth={0} flexShrink={1}>

@@ -1,10 +1,9 @@
 import _ from 'lodash';
 import React, { useRef, ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
-import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
+import { Icon, Row, Box, Text } from '@tlon/indigo-react';
 import { Association, cite } from '@urbit/api';
 import { HoverBoxLink } from '~/views/components/HoverBox';
-import { Sigil } from '~/logic/lib/sigil';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { TUTORIAL_HOST, TUTORIAL_GROUP } from '~/logic/lib/tutorialModal';
 import { Workspace } from '~/types/workspace';
@@ -15,6 +14,7 @@ import Dot from '~/views/components/Dot';
 import useHarkState, { useHarkDm } from '~/logic/state/hark';
 import useSettingsState from '~/logic/state/settings';
 import useGraphState from '~/logic/state/graph';
+import { ShipImage } from '~/views/components/ShipImage';
 
 function useAssociationStatus(resource: string) {
   const [, , ship, name] = resource.split('/');
@@ -133,24 +133,6 @@ export const SidebarDmItem = React.memo((props: {
       ? contact?.nickname
       : cite(ship) ?? ship;
   const { unreads } = useHarkDm(ship) || { unreads: 0 };
-  const img =
-    contact?.avatar && !hideAvatars ? (
-      <BaseImage
-        referrerPolicy="no-referrer"
-        src={contact.avatar}
-        width="16px"
-        height="16px"
-        borderRadius={2}
-      />
-    ) : (
-      <Sigil
-        ship={ship}
-        color={`#${uxToHex(contact?.color || '0x0')}`}
-        icon
-        padding={2}
-        size={16}
-      />
-    );
 
   return (
     <SidebarItemBase
@@ -162,7 +144,7 @@ export const SidebarDmItem = React.memo((props: {
       mono={hideAvatars || !contact?.nickname}
       isSynced
     >
-      {img}
+      <ShipImage borderRadius={1} icon size={16} sigilSize={12} ship={ship} />
     </SidebarItemBase>
   );
 });

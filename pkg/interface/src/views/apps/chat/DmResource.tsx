@@ -12,6 +12,7 @@ import { ChatPane } from './components/ChatPane';
 import airlock from '~/logic/api';
 import shallow from 'zustand/shallow';
 import { TextLink } from '~/views/components/Link';
+import { ShipName } from '~/views/components/ShipName';
 
 interface DmResourceProps {
   ship: string;
@@ -55,8 +56,7 @@ export function DmResource(props: DmResourceProps) {
   const unreadCount = (hark?.unreads as number) ?? 0;
   const contact = useContact(ship);
   const { hideNicknames } = useSettingsState(selectCalmState);
-  const showNickname = !hideNicknames && Boolean(contact);
-  const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
+  const showNickname = !hideNicknames && contact?.nickname?.length > 0;
 
   const [
     getYoungerSiblings,
@@ -147,15 +147,11 @@ export function DmResource(props: DmResourceProps) {
               {'<- Back'}
             </TextLink>
           </Box>
-          {showNickname && (
-            <Box mr="3">
-              <Text fontWeight="medium" fontSize={2} mono={!showNickname}>
-                {nickname}
-              </Text>
-            </Box>
-          )}
-          <Box display={[showNickname ? 'none' : 'block', 'block']}>
-            <Text gray={showNickname} mono>
+          <Box mr="3">
+            <ShipName strong ship={ship} />
+          </Box>
+          <Box display={['none', showNickname ? 'block' : 'none']}>
+            <Text gray mono>
               {cite(ship)}
             </Text>
           </Box>
