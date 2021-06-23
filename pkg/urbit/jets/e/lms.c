@@ -10,7 +10,6 @@
 ::  a,b,c   always lists
 ::  u,v,w   always vector/matrix atoms
 ::  s,t     always real/floats
-::  `1` suffix indicates 1-indexed value (default 0-indexed as conventional C)
 ::  `_` suffix indicates a C array unpacking of an @lv atom
 */
 #include "all.h"
@@ -74,12 +73,13 @@
   struct dims
   shape(u3_atom p)  /* @ud */
   {
-    c3_w m = u3r_word(0, p);
-    c3_w mn = u3r_met(3, p)/4;
+    c3_w mn = u3r_met(3, p)/4 - 1;  // total elements
+    c3_w d = u3r_word(mn+1, p);     // dimensionality, for now presumptively 2
+    c3_w m = u3r_word(mn, p);       // number of rows
 
     struct dims shp;
     shp.rows = m;
-    shp.cols = mn / m;
+    shp.cols = (c3_w)(mn / m);              // number of columns
 
     return shp;
   }
@@ -90,18 +90,19 @@
   u3qelms_zeros(u3_atom m,  /* @ud */
                 u3_atom n)  /* @ud */
   {
-    c3_w m_ = u3r_word(0,m);
-    c3_w n_ = u3r_word(0,n);
-    c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+1)*sizeof(float32_t));
+    c3_w m_ = u3r_word(0, m);
+    c3_w n_ = u3r_word(0, n);
+    c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+2)*sizeof(float32_t));
 
     uint32_t i;
     union trip c;
     c.c = 0x00000000;
+    w_[m_*n_+1] = 2;
     w_[m_*n_] = m_;
-    for ( i = 0; i < n_*m_; i++ ) {
+    for ( i = 0; i < m_*n_; i++ ) {
       w_[i] = (c3_w)c.s.v;
     }
-    u3_noun w = u3i_words(m_*n_+1, w_);
+    u3_noun w = u3i_words(m_*n_+2, w_);
     u3a_free(w_);
 
     return w;
@@ -112,14 +113,16 @@
   {
     u3_noun a, b;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &a,
+                              u3x_sam_3, &b, 0) ||
          c3n == u3ud(a) ||
          c3n == u3ud(b) )
     {
       return u3m_bail(c3__exit);
     }
     else {
-      return u3qelms_zeros(a, b);
+      u3_noun c = u3qelms_zeros(a, b);
+      return c;
     }
   }
 
@@ -129,15 +132,17 @@
   u3qelms_ones(u3_atom m,  /* @ud */
                u3_atom n)  /* @ud */
   {
-    c3_w m_ = u3r_word(0,m);
-    c3_w n_ = u3r_word(0,n);
-    c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+1)*sizeof(float32_t));
+    c3_w m_ = u3r_word(0, m);
+    c3_w n_ = u3r_word(0, n);
+
+    c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+2)*sizeof(float32_t));
 
     uint32_t i;
     union trip c;
     c.c = 0x3F800000;
+    w_[m_*n_+1] = 2;
     w_[m_*n_] = m_;
-    for ( i = 0; i < n_*m_; i++ ) {
+    for ( i = 0; i < m_*n_; i++ ) {
       w_[i] = (c3_w)c.s.v;
     }
     u3_noun w = u3i_words(m_*n_+1, w_);
@@ -151,7 +156,8 @@
   {
     u3_noun a, b;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &a,
+                              u3x_sam_3, &b, 0) ||
          c3n == u3ud(a) ||
          c3n == u3ud(b) )
     {
@@ -168,16 +174,17 @@
   u3qelms_id(u3_atom m,  /* @ud */
              u3_atom n)  /* @ud */
   {
-    c3_w m_ = u3r_word(0,m);
-    c3_w n_ = u3r_word(0,n);
-    c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+1)*sizeof(float32_t));
+    c3_w m_ = u3r_word(0, m);
+    c3_w n_ = u3r_word(0, n);
+    c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+2)*sizeof(float32_t));
 
     uint32_t i;
     union trip c, d;
     c.c = 0x00000000;
     d.c = 0x3F800000;
+    w_[m_*n_+1] = 2;
     w_[m_*n_] = m_;
-    for ( i = 0; i < n_*m_; i++ ) {
+    for ( i = 0; i < m_*n_; i++ ) {
       if ( i % (n_+1) == 0 )
       {
         w_[i] = (c3_w)d.s.v;
@@ -187,7 +194,7 @@
         w_[i] = (c3_w)c.s.v;
       }
     }
-    u3_noun w = u3i_words(m_*n_+1, w_);
+    u3_noun w = u3i_words(m_*n_+2, w_);
     u3a_free(w_);
 
     return w;
@@ -198,7 +205,8 @@
   {
     u3_noun a, b;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &a,
+                              u3x_sam_3, &b, 0) ||
          c3n == u3ud(a) ||
          c3n == u3ud(b) )
     {
@@ -216,13 +224,8 @@
                 u3_atom i,  /* @ud */
                 u3_atom j)  /* @ud */
     {
-      c3_w mnt_ = u3r_met(3,u)/4;  // mnt_ is the vector length
-      c3_w i_ = u3r_word(0, i);
-      c3_w j_ = u3r_word(0, j);
-
-      union trip p_;
-      p_.c = u3r_word(mnt_, u);
-      u3_atom p__ = u3i_words(1,&(p_.c));
+      c3_w i_ = u3r_word(0, i);   // 1-indexed
+      c3_w j_ = u3r_word(0, j);   // 1-indexed
 
       struct dims mn = shape(u);
       c3_w m_u = mn.rows;
@@ -233,9 +236,10 @@
         return u3m_bail(c3__exit);
       }
 
-      c3_w* w_  = (c3_w*)u3a_malloc(1*sizeof(float32_t));
-      w_[0] = u3r_word((m_u*n_u)-((i_-1)*n_u+j_), u);
-      u3_atom w = u3i_words(1, w_);
+      c3_w offset = (i_-1)*n_u+j_-1;
+      c3_w w_ = u3r_word(offset, u);
+      u3_atom w = u3i_word(w_);
+
       return w;
     }
 
@@ -244,7 +248,9 @@
     {
       u3_noun a, i, j;
 
-      if ( c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_6, &i, u3x_sam_7, &j, 0) ||
+      if ( c3n == u3r_mean(cor, u3x_sam_2, &a,
+                                u3x_sam_6, &i,
+                                u3x_sam_7, &j, 0) ||
            c3n == u3ud(a) ||
            c3n == u3ud(i) ||
            c3n == u3ud(j) )
@@ -264,13 +270,8 @@
                 u3_atom j,  /* @ud */
                 u3_atom a)  /* @rs */
     {
-      c3_w mnt_ = u3r_met(3,u)/4;  // mnt_ is the vector length
       c3_w i_ = u3r_word(0, i);
-      c3_w j_ = u3r_word(0, j);
-
-      union trip p_;
-      p_.c = u3r_word(mnt_, u);
-      u3_atom p__ = u3i_words(1,&(p_.c));
+      c3_w j_ = u3r_word(0, j); // TODO FIXME math in this sxn is bad for atom
 
       struct dims mn = shape(u);
       c3_w m_u = mn.rows;
@@ -281,12 +282,14 @@
         return u3m_bail(c3__exit);
       }
 
-      c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
+      c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+2)*sizeof(float32_t));
 
       uint32_t ii;
-      w_[m_u*n_u] = p_.c;
+      w_[m_u*n_u+1] = 2;
+      w_[m_u*n_u] = m_u;
+      c3_w offset = (i_-1)*n_u+(j_-1);
       for ( ii = 0; ii < m_u*n_u; ii++ ) {
-        if ( ii == ((m_u*n_u)-((i_-1)*n_u+j_)) )
+        if ( ii == ((m_u*n_u+2)-offset) )
         {
           w_[ii] = u3r_word(0, a);
         }
@@ -295,7 +298,7 @@
           w_[ii] = u3r_word(ii, u);
         }
       }
-      u3_noun w = u3i_words(m_u*n_u+1, w_);
+      u3_atom w = u3i_words(m_u*n_u+2, w_);
       u3a_free(w_);
 
       return w;
@@ -306,7 +309,10 @@
     {
       u3_noun u, i, j, a;
 
-      if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_14, &j, u3x_sam_15, &a, 0) ||
+      if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                                u3x_sam_6, &i,
+                                u3x_sam_14, &j,
+                                u3x_sam_15, &a, 0) ||
            c3n == u3ud(u) ||
            c3n == u3ud(i) ||
            c3n == u3ud(j) ||
@@ -325,36 +331,31 @@
   u3qelms_getc(u3_atom u,  /* @lms */
                u3_atom j)  /* @ud */
   {
-    c3_w mnt_u = u3r_met(3,u)/4;  // mnt_u is the matrix size (total)
     c3_w j_    = u3r_word(0, j);  // 1-indexed
-
-    union trip p_u;
-    p_u.c = u3r_word(mnt_u, u);
-    u3_atom p__ = u3i_words(1,&(p_u.c));
 
     struct dims mn = shape(u);
     c3_w m_u = mn.rows;
     c3_w n_u = mn.cols;
-    c3_w n_v   = n_u;  // n_v is the vector length
 
-    if ((j_ < 1) || (j_ > m_u))
+    c3_w m_v   = m_u;  // n_v is the vector length
+
+    if ((j_ < 1) || (j_ > n_u))
     {
       return u3m_bail(c3__exit);
     }
 
-    c3_w* w_  = (c3_w*)u3a_malloc((n_v+1)*sizeof(float32_t));
+    c3_w* w_  = (c3_w*)u3a_malloc((m_v+1)*sizeof(float32_t));
 
-    c3_w ii, jj;
-    w_[n_v] = n_v;
-    ii = 1;
-    for ( jj = 0; jj < m_u*n_u; jj++ ) {
-      if ( ((m_u*n_u) - jj) % n_u == j_ % n_u )  // %n_u is b/c 1-indexed
-      {
-        w_[ii-1] = u3qelms_get(u, ii, j_);
-        ii++;  if ( ii > n_v ) { break; }  // underflow check (0-indexed at 4294967295)
-      }
+    uint32_t ii;
+    c3_w offset;
+    union trip d;
+    w_[m_v] = m_v;
+    for ( ii = 1; ii < m_u+1; ii++ ) {
+      offset = ((ii-1)*n_u)+j_-1;
+      d.c = u3r_word(0, u3qelms_get(u, ii, j_));
+      w_[ii-1] = d.s.v;
     }
-    u3_noun w = u3i_words(n_v+1, w_);
+    u3_noun w = u3i_words(m_v+1, w_);
     u3a_free(w_);
 
     return w;
@@ -365,7 +366,8 @@
   {
     u3_noun a, i;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &i, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &a,
+                              u3x_sam_3, &i, 0) ||
          c3n == u3ud(a) ||
          c3n == u3ud(i) )
     {
@@ -383,42 +385,35 @@
                u3_atom j,  /* @ud */
                u3_atom v)  /* @lvs */
   {
-    c3_w mnt_u = u3r_met(3,u)/4;  // mnt_u is the matrix size (total)
-    c3_w n_v   = u3r_met(3,v)/4;  // n_v is the vector length
     c3_w j_    = u3r_word(0, j);
-    // TODO: alternatively just use set to do this across the array
-
-    union trip p_u;
-    p_u.c = u3r_word(mnt_u, u);
-    u3_atom p__ = u3i_words(1,&(p_u.c));
 
     struct dims mn = shape(u);
     c3_w m_u = mn.rows;
     c3_w n_u = mn.cols;
 
-    if ((j_ < 1) || (j_ > m_u) || !(n_v == n_u))
+    c3_w m_v = u3r_met(3,v)/4;  // m_v is the vector length
+
+    if ((j_ < 1) || (j_ > n_u) || !(m_v == m_u))
     {
       return u3m_bail(c3__exit);
     }
 
-    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
+    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+2)*sizeof(float32_t));
+    u3r_words(0, m_u*n_u+2, w_, u);
 
-    uint32_t ii, jj;
-    w_[m_u*n_u] = p_u.c;
-    ii = n_v;
-    for ( jj = 0; jj < m_u*n_u; jj++ ) {
-      if ( ((m_u*n_u) - jj) % n_u == j_ % n_u )  // %n_u is b/c 1-indexed
-      {
-        w_[jj] = u3qelvs_get(v, ii);
-        ii--;
-      }
-      else
-      {
-        w_[jj] = u3r_word(jj, u);
-      }
+    uint32_t ii;
+    c3_w offset;
+    union trip d;
+    for ( ii = 1; ii < m_u+1; ii++ ) {
+      d.c = u3r_word(0, u3qelvs_get(v, ii));
+      //w_[(m_u*n_u-1)-offset] = d.s.v;
+      offset = ((ii-1)*n_u)+j_-1;
+      w_[offset] = d.s.v;
+      //fprintf(stderr, "(%u, %u) @ %u : 0x%x %f\n\r", ii, j_, offset, d.c, d.b);
     }
-    u3_noun w = u3i_words(m_u*n_u+1, w_);
-    u3a_free(w_);
+    u3_noun w = u3i_words(m_u*n_u+2, w_);
+    //u3m_p("w",w);
+    //u3a_free(w_);  // TODO FIXME causes allocate/bail:meme failure
 
     return w;
   }
@@ -428,7 +423,9 @@
   {
     u3_noun u, i, a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &a, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &a, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(a) )
@@ -446,37 +443,35 @@
   u3qelms_getr(u3_atom u,  /* @lms */
                u3_atom i)  /* @ud */
   {
-    c3_w mnt_u = u3r_met(3,u)/4;  // mnt_u is the matrix size (total)
     c3_w i_    = u3r_word(0, i);  // 1-indexed
-
-    union trip p_u;
-    p_u.c = u3r_word(mnt_u, u);
-    u3_atom p__ = u3i_words(1,&(p_u.c));
 
     struct dims mn = shape(u);
     c3_w m_u = mn.rows;
     c3_w n_u = mn.cols;
-    c3_w m_v   = m_u;  // m_v is the vector length
 
     if ((i_ < 1) || (i_ > m_u))
     {
       return u3m_bail(c3__exit);
     }
 
-    c3_w* w_  = (c3_w*)u3a_malloc((m_v+1)*sizeof(float32_t));
+    c3_w offset;
+    offset = ((i_-1)*n_u);
+    c3_w* w_  = (c3_w*)u3a_malloc((n_u+1)*sizeof(float32_t));
+    u3r_words(offset, offset+n_u, w_, u);
+    w_[n_u] = 1;
 
-    c3_w ii, jj;
-    w_[m_v] = m_v;
-    jj = 1;
-    for ( ii = 0; ii < m_u*n_u; ii++ ) {
-      if ( (((m_u*n_u) - i_*n_u) <= ii) && (ii < ((m_u*n_u) - (i_-1)*n_u)) )
-      {
-        w_[jj-1] = u3qelms_get(u, i_, jj);
-        jj++;  if ( jj > m_v ) { break; }  // underflow check (0-indexed at 4294967295)
-      }
-    }
-    u3_noun w = u3i_words(m_v+1, w_);
-    u3a_free(w_);
+    u3_noun w = u3i_words(n_u+1, w_);
+    //u3m_p("w", w);
+    //fprintf(stderr, "here4\n\r");
+    /*union trip d;
+    uint32_t jj;
+    for ( jj = 1; jj < n_u+1; jj++ ) {
+      d.c = u3r_word(0, u3qelvs_get(w, jj));
+      fprintf(stderr, "(%u) : %f 0x%x\n\r", jj, d.b, w_[jj-1]);
+    }*/
+    //fprintf(stderr, "(%u) : %u 0x%x\n\r", jj, w_[n_w], w_[n_w]);
+    //u3a_free(w_);  // <- TODO FIXME this fails on last row of matrix
+    //fprintf(stderr, "here5\n\r");
 
     return w;
   }
@@ -486,7 +481,8 @@
   {
     u3_noun a, i;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &i, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &a,
+                              u3x_sam_3, &i, 0) ||
          c3n == u3ud(a) ||
          c3n == u3ud(i) )
     {
@@ -503,52 +499,45 @@
   u3qelms_setr(u3_atom u,  /* @lms */
                u3_atom i,  /* @ud */
                u3_atom v)  /* @lvs */
+{
+  c3_w i_    = u3r_word(0, i);  // 1-indexed
+
+  struct dims mn = shape(u);
+  c3_w m_u = mn.rows;
+  c3_w n_u = mn.cols;
+
+  c3_w n_v = u3r_met(3,v)/4;  // n_v is the vector length
+
+  if ((i_ < 1) || (i_ > m_u) || !(n_v == n_u))
   {
-    c3_w mnt_u = u3r_met(3,u)/4;  // mnt_u is the matrix size (total)
-    c3_w n_v   = u3r_met(3,v)/4;  // n_v is the vector length
-    c3_w i_    = u3r_word(0, i);
-
-    union trip p_u;
-    p_u.c = u3r_word(mnt_u, u);
-    u3_atom p__ = u3i_words(1,&(p_u.c));
-
-    struct dims mn = shape(u);
-    c3_w m_u = mn.rows;
-    c3_w n_u = mn.cols;
-
-    if ((i_ < 1) || (i_ > m_u) || !(n_v == n_u))
-    {
-      return u3m_bail(c3__exit);
-    }
-
-    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
-
-    uint32_t ii, jj;
-    w_[m_u*n_u] = p_u.c;
-    jj = n_v;
-    for ( ii = 0; ii < m_u*n_u; ii++ ) {
-      if ( (((m_u*n_u) - i_*n_u) <= ii) && (ii < ((m_u*n_u) - (i_-1)*n_u)) )
-      {
-        w_[ii] = (double)u3qelvs_get(v, jj);
-        jj--;
-      }
-      else
-      {
-        w_[ii] = (double)u3r_word(ii, u);
-      }
-    }
-    u3_noun w = u3i_words(m_u*n_u+1, w_);
-    u3a_free(w_);
-
-    return w;
+    return u3m_bail(c3__exit);
   }
+
+  c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+2)*sizeof(float32_t));
+  u3r_words(0, m_u*n_u+2, w_, u);
+
+  uint32_t jj;
+  c3_w offset;
+  union trip d;
+  for ( jj = 1; jj < n_u+1; jj++ ) {
+    offset = ((i_-1)*n_u)+jj-1;
+    d.c = u3r_word(0, u3qelvs_get(v, jj));
+    w_[offset] = d.s.v;
+  }
+  u3_noun w = u3i_words(m_u*n_u+2, w_);
+  //u3a_free(w_);
+
+  return w;
+}
 
   u3_noun
   u3welms_setr(u3_noun cor)
   {
     u3_noun u, i, a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &a, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &a, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(a) )
@@ -581,7 +570,9 @@
   {
     u3_noun u, i, j;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &j, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &j, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(j) )
@@ -614,7 +605,9 @@
   {
     u3_noun u, i, j;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &j, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &j, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(j) )
@@ -632,10 +625,6 @@
   u3qelms_trans(u3_atom u)  /* @lms */
   {
     c3_w mnt_u = u3r_met(3,u)/4;  // mnt_u is the matrix size (total)
-
-    union trip p_u;
-    p_u.c = u3r_word(mnt_u, u);
-    u3_atom p__ = u3i_words(1,&(p_u.c));
 
     struct dims mn = shape(u);
     c3_w m_u = mn.rows;
@@ -682,7 +671,9 @@
   {
     u3_noun u, i, a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &a, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &a, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(a) )
@@ -710,7 +701,9 @@
   {
     u3_noun u, i, a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &a, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &a, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(a) )
@@ -738,7 +731,9 @@
   {
     u3_noun u, i, a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &a, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &a, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(a) )
@@ -766,7 +761,9 @@
   {
     u3_noun u, i, a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &a, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &a, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(a) )
@@ -794,7 +791,9 @@
   {
     u3_noun u, i, a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &a, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &a, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(a) )
@@ -822,7 +821,9 @@
   {
     u3_noun u, i, a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &a, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &a, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(a) )
@@ -850,7 +851,9 @@
   {
     u3_noun u, i, a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &a, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &a, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(a) )
@@ -878,7 +881,9 @@
   {
     u3_noun u, i, a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &a, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &a, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(a) )
@@ -897,41 +902,24 @@
                u3_atom v,  /* @lms */
                u3_atom r)
   {
-    c3_w mnt_u = u3r_met(3,u)/4;  // mnt_u is the matrix size (total)
-    c3_w mnt_v = u3r_met(3,v)/4;  // mnt_v is the matrix size (total)
+    struct dims mn = shape(u);
+    c3_w m_u = mn.rows;
+    c3_w n_u = mn.cols;
+    mn = shape(v);
+    c3_w m_v = mn.rows;
+    c3_w n_v = mn.cols;
 
-    union trip p_u, p_v;
-    p_u.c = u3r_word(mnt_u, u);
-    p_v.c = u3r_word(mnt_v, v);
-    u3_atom p__u = u3i_words(1,&(p_u.c));
-    u3_atom p__v = u3i_words(1,&(p_v.c));
-
-    if ( (mnt_u != mnt_v) || (p__u != p__v) )
+    if ( (m_u != m_v) || (n_u != n_v) )
     {
       return u3m_bail(c3__exit);
     }
 
-    struct dims mn = shape(u);
-    c3_w m_u = mn.rows;
-    c3_w n_u = mn.cols;
-
-    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
-
-    union trip c, d;
-    c3_w ii, jj, index;
-    w_[m_u*n_u] = p_u.c;
-    for ( ii = 0; ii < n_u; ii++ )
+    uint32_t ii;
+    u3_atom w = u;
+    for ( ii = 0; ii < m_u; ii++ )
     {
-      for ( jj = 0; jj < m_u; jj++ )
-      {
-        index = ii*n_u+jj;
-        d.c = u3r_word(index, u);
-        c.c = u3r_word(index, v);
-        w_[index] = (c3_w)_nan_unify(f32_add(c.s,d.s)).v;
-      }
+      w = u3qelms_setr(w, ii, u3qelvs_addv(u3qelms_getr(u, ii), u3qelms_getr(v, ii), r));
     }
-    u3_noun w = u3i_words(m_u*n_u+1, w_);
-    u3a_free(w_);
 
     return w;
   }
@@ -941,7 +929,8 @@
   {
     u3_noun u, v;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_3, &v, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_3, &v, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(v) )
     {
@@ -959,41 +948,24 @@
                u3_atom v,  /* @lms */
                u3_atom r)
   {
-    c3_w mnt_u = u3r_met(3,u)/4;  // mnt_u is the matrix size (total)
-    c3_w mnt_v = u3r_met(3,v)/4;  // mnt_v is the matrix size (total)
+    struct dims mn = shape(u);
+    c3_w m_u = mn.rows;
+    c3_w n_u = mn.cols;
+    mn = shape(v);
+    c3_w m_v = mn.rows;
+    c3_w n_v = mn.cols;
 
-    union trip p_u, p_v;
-    p_u.c = u3r_word(mnt_u, u);
-    p_v.c = u3r_word(mnt_v, v);
-    u3_atom p__u = u3i_words(1,&(p_u.c));
-    u3_atom p__v = u3i_words(1,&(p_v.c));
-
-    if ( (mnt_u != mnt_v) || (p__u != p__v) )
+    if ( (m_u != m_v) || (n_u != n_v) )
     {
       return u3m_bail(c3__exit);
     }
 
-    struct dims mn = shape(u);
-    c3_w m_u = mn.rows;
-    c3_w n_u = mn.cols;
-
-    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
-
-    union trip c, d;
-    c3_w ii, jj, index;
-    w_[m_u*n_u] = p_u.c;
-    for ( ii = 0; ii < n_u; ii++ )
+    uint32_t ii;
+    u3_atom w = u;
+    for ( ii = 0; ii < m_u; ii++ )
     {
-      for ( jj = 0; jj < m_u; jj++ )
-      {
-        index = ii*n_u+jj;
-        d.c = u3r_word(index, u);
-        c.c = u3r_word(index, v);
-        w_[index] = (c3_w)_nan_unify(f32_sub(c.s,d.s)).v;
-      }
+      w = u3qelms_setr(w, ii, u3qelvs_subv(u3qelms_getr(u, ii), u3qelms_getr(v, ii), r));
     }
-    u3_noun w = u3i_words(m_u*n_u+1, w_);
-    u3a_free(w_);
 
     return w;
   }
@@ -1003,7 +975,8 @@
   {
     u3_noun u, v;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_3, &v, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_3, &v, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(v) )
     {
@@ -1021,41 +994,24 @@
                u3_atom v,  /* @lms */
                u3_atom r)
   {
-    c3_w mnt_u = u3r_met(3,u)/4;  // mnt_u is the matrix size (total)
-    c3_w mnt_v = u3r_met(3,v)/4;  // mnt_v is the matrix size (total)
+    struct dims mn = shape(u);
+    c3_w m_u = mn.rows;
+    c3_w n_u = mn.cols;
+    mn = shape(v);
+    c3_w m_v = mn.rows;
+    c3_w n_v = mn.cols;
 
-    union trip p_u, p_v;
-    p_u.c = u3r_word(mnt_u, u);
-    p_v.c = u3r_word(mnt_v, v);
-    u3_atom p__u = u3i_words(1,&(p_u.c));
-    u3_atom p__v = u3i_words(1,&(p_v.c));
-
-    if ( (mnt_u != mnt_v) || (p__u != p__v) )
+    if ( (m_u != m_v) || (n_u != n_v) )
     {
       return u3m_bail(c3__exit);
     }
 
-    struct dims mn = shape(u);
-    c3_w m_u = mn.rows;
-    c3_w n_u = mn.cols;
-
-    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
-
-    union trip c, d;
-    c3_w ii, jj, index;
-    w_[m_u*n_u] = p_u.c;
-    for ( ii = 0; ii < n_u; ii++ )
+    uint32_t ii;
+    u3_atom w = u;
+    for ( ii = 0; ii < m_u; ii++ )
     {
-      for ( jj = 0; jj < m_u; jj++ )
-      {
-        index = ii*n_u+jj;
-        d.c = u3r_word(index, u);
-        c.c = u3r_word(index, v);
-        w_[index] = (c3_w)_nan_unify(f32_mul(c.s,d.s)).v;
-      }
+      w = u3qelms_setr(w, ii, u3qelvs_mulv(u3qelms_getr(u, ii), u3qelms_getr(v, ii), r));
     }
-    u3_noun w = u3i_words(m_u*n_u+1, w_);
-    u3a_free(w_);
 
     return w;
   }
@@ -1065,7 +1021,8 @@
   {
     u3_noun u, v;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_3, &v, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_3, &v, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(v) )
     {
@@ -1083,41 +1040,24 @@
                u3_atom v,  /* @lms */
                u3_atom r)
   {
-    c3_w mnt_u = u3r_met(3,u)/4;  // mnt_u is the matrix size (total)
-    c3_w mnt_v = u3r_met(3,v)/4;  // mnt_v is the matrix size (total)
+    struct dims mn = shape(u);
+    c3_w m_u = mn.rows;
+    c3_w n_u = mn.cols;
+    mn = shape(v);
+    c3_w m_v = mn.rows;
+    c3_w n_v = mn.cols;
 
-    union trip p_u, p_v;
-    p_u.c = u3r_word(mnt_u, u);
-    p_v.c = u3r_word(mnt_v, v);
-    u3_atom p__u = u3i_words(1,&(p_u.c));
-    u3_atom p__v = u3i_words(1,&(p_v.c));
-
-    if ( (mnt_u != mnt_v) || (p__u != p__v) )
+    if ( (m_u != m_v) || (n_u != n_v) )
     {
       return u3m_bail(c3__exit);
     }
 
-    struct dims mn = shape(u);
-    c3_w m_u = mn.rows;
-    c3_w n_u = mn.cols;
-
-    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
-
-    union trip c, d;
-    c3_w ii, jj, index;
-    w_[m_u*n_u] = p_u.c;
-    for ( ii = 0; ii < n_u; ii++ )
+    uint32_t ii;
+    u3_atom w = u;
+    for ( ii = 0; ii < m_u; ii++ )
     {
-      for ( jj = 0; jj < m_u; jj++ )
-      {
-        index = ii*n_u+jj;
-        d.c = u3r_word(index, u);
-        c.c = u3r_word(index, v);
-        w_[index] = (c3_w)_nan_unify(f32_div(c.s,d.s)).v;
-      }
+      w = u3qelms_setr(w, ii, u3qelvs_divv(u3qelms_getr(u, ii), u3qelms_getr(v, ii), r));
     }
-    u3_noun w = u3i_words(m_u*n_u+1, w_);
-    u3a_free(w_);
 
     return w;
   }
@@ -1127,7 +1067,8 @@
   {
     u3_noun u, v;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_3, &v, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_3, &v, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(v) )
     {
@@ -1146,54 +1087,30 @@
                u3_atom v,  /* @lms */
                u3_atom r)
   {
-    c3_w mnt_u = u3r_met(3,u)/4;  // mnt_u is the matrix size (total)
-    c3_w mnt_v = u3r_met(3,v)/4;  // mnt_v is the matrix size (total)
-
-    union trip p_u, p_v;
-    p_u.c = u3r_word(mnt_u, u);
-    p_v.c = u3r_word(mnt_v, v);
-    u3_atom p__u = u3i_words(1,&(p_u.c));
-    u3_atom p__v = u3i_words(1,&(p_v.c));
-
-    if ( (mnt_u != mnt_v) || (p__u != p__v) )
-    {
-      return u3m_bail(c3__exit);
-    }
-
     struct dims mn = shape(u);
     c3_w m_u = mn.rows;
     c3_w n_u = mn.cols;
-
     mn = shape(v);
     c3_w m_v = mn.rows;
     c3_w n_v = mn.cols;
 
-    if (n_u != m_v )
+    if ( (m_u != m_v) || (n_u != n_v) || (n_u != m_v))
     {
       return u3m_bail(c3__exit);
     }
 
-    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
-
-    union trip c, d, sum;
-    c3_w ii, jj, kk;
-    w_[m_u*n_v] = p_u.c;
+    uint32_t ii, jj;
+    u3_atom w = u3qelms_zeros(m_u, n_v);
+    u3_atom t;
+    // XXX not strictly speaking the most efficient way but very clean code
     for ( ii = 0; ii < m_u; ii++ )
     {
       for ( jj = 0; jj < n_v; jj++ )
       {
-        sum.c = 0x00000000;
-        for ( kk = 0; kk < m_v; kk++ )
-        {
-          d.c = u3r_word(ii*n_u+kk, u);
-          c.c = u3r_word(kk*n_v+jj, v);
-          sum.c = (c3_w)_nan_unify(f32_add(sum.s,f32_mul(c.s,d.s))).v;
-        }
-        w_[ii*n_u+jj] = sum.c;
+        t = u3qelvs_inner(u3qelms_getr(u, ii), u3qelms_getc(v, jj), r);
+        w = u3qelms_set(w, ii, jj, t);
       }
     }
-    u3_noun w = u3i_words(m_u*n_v+1, w_);
-    u3a_free(w_);
 
     return w;
   }
@@ -1203,7 +1120,8 @@
   {
     u3_noun u, v;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_3, &v, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_3, &v, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(v) )
     {
@@ -1238,7 +1156,8 @@
   {
     u3_noun u, i;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_3, &i, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_3, &i, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) )
     {
@@ -1256,13 +1175,8 @@
                 u3_atom i,  /* @ud */
                 u3_atom j)  /* @ud */
   {
-    c3_w mnt_ = u3r_met(3,u)/4;  // mnt_ is the vector length
     c3_w i_ = u3r_word(0, i);
     c3_w j_ = u3r_word(0, j);
-
-    union trip p_;
-    p_.c = u3r_word(mnt_, u);
-    u3_atom p__ = u3i_words(1,&(p_.c));
 
     struct dims mn = shape(u);
     c3_w m_u = mn.rows;
@@ -1277,8 +1191,9 @@
     m_w = m_u - 1;
     n_w = n_u - 1;
     c3_w* w_  = (c3_w*)u3a_malloc((m_w*n_w+1)*sizeof(float32_t));
-    w_[m_w*n_w] = m_w;
-    c3_w ii, jj, mi, mj;
+    w_[m_w*n_w] = 2;
+    w_[m_w*n_w-1] = m_w;
+    uint32_t ii, jj, mi, mj;
     i_ = m_u - i_ + 1;
     j_ = n_u - j_ + 1;
     for ( ii = 0; ii < m_u; ii++ )
@@ -1302,7 +1217,9 @@
   {
     u3_noun u, i, j;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &i, u3x_sam_7, &j, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &i,
+                              u3x_sam_7, &j, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(i) ||
          c3n == u3ud(j) )
@@ -1323,16 +1240,12 @@
                     u3_atom ja,  /* @ud */
                     u3_atom jb)  /* @ud */
   {
-    c3_w mnt_ = u3r_met(3,u)/4;  // mnt_ is the vector length
+    c3_w mnt_ = u3r_met(3,u)/4 - 1;  // mnt_ is the vector length
     c3_w ia_ = u3r_word(0, ia);
     c3_w ib_ = u3r_word(0, ib);
     c3_w ja_ = u3r_word(0, ja);
     c3_w jb_ = u3r_word(0, jb);
     //fprintf(stderr, "sub:  %u %u %u %u\n", ia_, ib_, ja_, jb_);
-
-    union trip p_;
-    p_.c = u3r_word(mnt_, u);
-    u3_atom p__ = u3i_words(1,&(p_.c));
 
     struct dims mn = shape(u);
     c3_w m_u = mn.rows;
@@ -1350,7 +1263,7 @@
     u3r_words(0, m_u*n_u+1, u__, u);
     c3_w* u_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
     u_[m_u*n_u] = u__[m_u*n_u];
-    c3_w iii;
+    uint32_t iii;
     for ( iii = 0; iii < m_u*n_u; iii++ )
     {
       u_[m_u*n_u-1-iii] = u__[iii];
@@ -1362,7 +1275,7 @@
     n_w = jb_ - ja_ + 1;
     c3_w* w_  = (c3_w*)u3a_malloc((m_w*n_w+1)*sizeof(float32_t));
     w_[m_w*n_w] = m_w;
-    c3_w ii, jj, mi, mj;
+    uint32_t ii, jj, mi, mj;
     for ( ii = ia_-1, mi = 0; ii <= ib_-1; ii++, mi++ )
     {
       for ( jj = ja_-1, mj = 0; jj <= jb_-1; jj++, mj++ )
@@ -1381,7 +1294,11 @@
   {
     u3_noun u, ia, ib, ja, jb;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &u, u3x_sam_6, &ia, u3x_sam_14, &ib, u3x_sam_30, &ja, u3x_sam_31, &jb, 0) ||
+    if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
+                              u3x_sam_6, &ia,
+                              u3x_sam_14, &ib,
+                              u3x_sam_30, &ja,
+                              u3x_sam_31, &jb, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(ia) ||
          c3n == u3ud(ib) ||
@@ -1400,12 +1317,6 @@
   u3_noun
   u3qelms_augment(u3_atom u)  /* @lms */
   {
-    c3_w mnt_ = u3r_met(3,u)/4;  // mnt_ is the vector length
-
-    union trip p_;
-    p_.c = u3r_word(mnt_, u);
-    u3_atom p__ = u3i_words(1,&(p_.c));
-
     struct dims mn = shape(u);
     c3_w m_u = mn.rows;
     c3_w n_u = mn.cols;
@@ -1416,7 +1327,7 @@
 
     c3_w* w_  = (c3_w*)u3a_malloc((m_w*n_w+1)*sizeof(float32_t));
     w_[m_w*n_w] = m_w;
-    c3_w ii, jj;
+    uint32_t ii, jj;
     for ( ii = 0; ii < m_u; ii++ )
     {
       for ( jj = 0; jj < n_u; jj++ )
@@ -1455,12 +1366,6 @@
   u3_noun
   u3qelms_invert(u3_atom u)  /* @lms */
   {
-    c3_w mnt_ = u3r_met(3,u)/4;  // mnt_ is the vector length
-
-    union trip p_;
-    p_.c = u3r_word(mnt_, u);
-    u3_atom p__ = u3i_words(1,&(p_.c));
-
     struct dims mn = shape(u);
     c3_w m_u = mn.rows;
     c3_w n_u = mn.cols;
@@ -1480,23 +1385,19 @@
     c3_w* w__  = (c3_w*)u3a_malloc((m_u*n_v+1)*sizeof(float32_t));
     u3r_words(0, m_u*n_v+1, w__, v);
     c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_v+1)*sizeof(float32_t));
-    //w_[m_u*n_v] = w__[m_u*n_v];
-    c3_w ii, jj, kk, max_row;
+    uint32_t ii, jj, kk, max_row;
     for ( ii = 0; ii < m_u*n_v; ii++ )
     {
       w_[m_u*n_v-1-ii] = w__[ii];
     }
-    //fprintf(stderr,"%u %u => %u %u\n",m_u,n_v,p___,w_[m_u*n_v]);
-    //u3a_free(w__);
 
     union trip el, max_el, t, c, d, e;
-    c3_w iii, jjj;
+    uint32_t iii, jjj;
     for ( ii = 0; ii < m_u; ii++ )
     {
       //  Locate maximum value in column for pivot.
       max_el.c = abs(w_[ii*n_v+ii]);
       max_row = ii;
-      //fprintf(stderr, "%u %f %u\n", ii, max_el.b, max_row);
       for ( kk = ii+1; kk < m_u; kk++ )
       {
         el.c = abs(w_[kk*n_v+ii]);
@@ -1549,42 +1450,16 @@
         }
       }
     }
-    /*fprintf(stderr, "***\n");
-    for ( ii = 0; ii < m_u; ii++ )
-    {
-      for ( jj = 0; jj < n_v; jj++ )
-      {
-        c.c = w_[ii*n_v+jj];
-        fprintf(stderr,"%f ",c.b);
-      }
-      fprintf(stderr,"\n");
-    }*/
     w_[m_u*n_v] = m_u;
-    //c3_w asdf = u3qelms_cantor(m_u,n_u);
-    //fprintf(stderr, "cantor:  %u %u -> %u v. %u\n", m_u, n_v, w_[m_u*n_v], asdf);
+
     //  Reverse back out, as we flipped the order up above to ease the math.
-    //c3_w* w  = (c3_w*)u3a_malloc((m_u*n_v+1)*sizeof(float32_t));
-    //u3r_words(0, m_u*n_v+1, w__, v);
     for ( ii = 0; ii < m_u*n_v; ii++ )
     {
       w__[m_u*n_v-1-ii] = w_[ii];
     }
-    /*
-    fprintf(stderr, "---\n");
-    for ( ii = 0; ii < m_u; ii++ )
-    {
-      for ( jj = 0; jj < n_v; jj++ )
-      {
-        c.c = w__[ii*n_v+jj];
-        fprintf(stderr,"%f ",c.b);
-      }
-      fprintf(stderr,"\n");
-    }*/
 
     u3_noun w = u3i_words(m_u*n_v+1, w__);
-    //fprintf(stderr, "***\n");
     u3_noun w___ = u3qelms_submatrix(w, 1, m_u, n_u+1, n_v);
-    //fprintf(stderr, "***\n");
     u3a_free(w__);
     u3a_free(w_);
 
