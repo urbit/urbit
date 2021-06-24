@@ -759,5 +759,14 @@
     ^+  a
     =+  d=(get b)
     (~(put by a) b (~(put in d) c))
+  ::  TODO: remove in favour of only using put?
+  ::
+  ++  gas
+    |*  b=(list [p=* q=*])
+    =>  .(b `(list _?>(?=([[* ^] ^] a) [p=p q=n.q]:n.a))`b)
+    |-  ^+  a
+    ?~  b
+      a
+    $(b t.b, a (put p.i.b q.i.b))
   --
 --
