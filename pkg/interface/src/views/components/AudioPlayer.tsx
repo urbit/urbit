@@ -21,7 +21,7 @@ export function AudioPlayer(props: { url: string; title?: string }) {
       } else {
         ref.current.play();
       }
-      setPlaying((p) => !p);
+      setPlaying(p => !p);
     },
     [ref, playing]
   );
