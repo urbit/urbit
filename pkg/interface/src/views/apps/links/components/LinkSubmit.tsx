@@ -1,9 +1,10 @@
-import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { BaseInput, Box, Button, LoadingSpinner } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import React, { useCallback, useState, DragEvent, useEffect } from 'react';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import useStorage from '~/logic/lib/useStorage';
+import { StatelessUrlInput } from '~/views/components/StatelessUrlInput';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import useGraphState from '~/logic/state/graph';
 import { createPost } from '@urbit/api';
@@ -20,7 +21,6 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   const addPost = useGraphState(s => s.addPost);
 
   const [submitFocused, setSubmitFocused] = useState(false);
-  const [urlFocused, setUrlFocused] = useState(false);
   const [linkValue, setLinkValue] = useState('');
   const [linkTitle, setLinkTitle] = useState('');
   const [disabled, setDisabled] = useState(false);
@@ -35,7 +35,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
 
     setDisabled(true);
     const parentIndex = props.parentIndex || '';
-    const post = createPost(`~${window.ship}`, contents, parentIndex);
+    const post = createPost(window.ship, contents, parentIndex);
 
     addPost(
       `~${props.ship}`,
@@ -135,26 +135,6 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     }
   };
 
-  const placeholder = <Text
-    gray
-    position="absolute"
-    px={2}
-    pt={2}
-    style={{ pointerEvents: 'none' }}
-                      >{canUpload
-    ? <>
-      Drop or{' '}
-      <Text
-        cursor='pointer'
-        color='blue'
-        style={{ pointerEvents: 'all' }}
-        onClick={() => promptUpload().then(setLinkValue)}
-      >upload</Text>
-      {' '}a file, or paste a link here
-      </>
-    : 'Paste a link here'
-    }</Text>;
-
   return (
     <>
     {/* @ts-ignore archaic event type mismatch */}
@@ -181,26 +161,17 @@ const LinkSubmit = (props: LinkSubmitProps) => {
                       >
           <LoadingSpinner />
         </Box>}
-        {dragging && <SubmitDragger />}
-        <Box position='relative'>
-          {!(linkValue || urlFocused || disabled) && placeholder}
-          <BaseInput
-            type="url"
-            pl={2}
-            width="100%"
-            py={2}
-            color="black"
-            backgroundColor="transparent"
-            onChange={e => setLinkValue(e.target.value)}
-            onBlur={() => [setUrlFocused(false), setSubmitFocused(false)]}
-            onFocus={() => [setUrlFocused(true), setSubmitFocused(true)]}
-            spellCheck="false"
-            // @ts-ignore archaic event type mismatch error
-            onPaste={onPaste}
-            onKeyPress={onKeyPress}
-            value={linkValue}
-          />
-        </Box>
+      {dragging && <SubmitDragger />}
+      <StatelessUrlInput
+        value={linkValue}
+        promptUpload={promptUpload}
+        canUpload={canUpload}
+        onSubmit={doPost}
+        onChange={setLinkValue}
+        error={linkValid ? 'Invalid URL' : undefined}
+        onKeyPress={onKeyPress}
+        onPaste={onPaste}
+      />
         <BaseInput
           type="text"
           pl={2}

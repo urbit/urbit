@@ -88,7 +88,7 @@ const errorRetry = (meta, focus, uploading, clickUploadButton) => {
   if (!focus && meta.error !== undefined) {
     return (
       <Text
-        position='absolute'
+        position="absolute"
         left={2}
         display='flex'
         height='100%'
@@ -98,7 +98,8 @@ const errorRetry = (meta, focus, uploading, clickUploadButton) => {
         style={{ pointerEvents: 'none' }}
         onSelect={e => e.preventDefault}
       >
-        {meta.error}{', '}please{' '}
+        {meta.error()}
+        {', '}please{' '}
         <Text
           fontWeight='500'
           cursor='pointer'
@@ -115,25 +116,24 @@ const errorRetry = (meta, focus, uploading, clickUploadButton) => {
   return null;
 };
 
-const clearButton = (field, uploading, clearEvt) => {
+export const clearButton = (field, uploading, clearEvt) => {
   if (field.value && !uploading) {
     return (
       <Box
-        position='absolute'
+        position="absolute"
         right={0}
-        top={0}
         px={1}
-        height='100%'
-        cursor='pointer'
+        height="100%"
+        cursor="pointer"
         onClick={clearEvt}
-        backgroundColor='white'
-        display='flex'
-        alignItems='center'
-        borderRadius='0 4px 4px 0'
-        border='1px solid'
-        borderColor='lightGray'
+        backgroundColor="white"
+        display="flex"
+        alignItems="center"
+        borderRadius="0 4px 4px 0"
+        border="1px solid"
+        borderColor="lightGray"
       >
-        <Icon icon='X' />
+        <Icon icon="X" />
       </Box>
     );
   }
@@ -178,7 +178,7 @@ export function ImageInput(props: ImageInputProps): ReactElement {
 
   return (
     <Box display="flex" flexDirection="column" {...props}>
-      <Label htmlFor={id}>{label}</Label>
+      {label ? <Label htmlFor={id}>{label}</Label> : null}
       {caption ? (
         <Label mt={2} gray>
           {caption}
@@ -201,10 +201,7 @@ export function ImageInput(props: ImageInputProps): ReactElement {
         </Box>
         {canUpload && (
           <>
-            <Button
-              display='none'
-              onClick={clickUploadButton}
-            />
+            <Button display="none" onClick={clickUploadButton} />
             <BaseInput
               style={{ display: 'none' }}
               type="file"

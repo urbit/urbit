@@ -52,6 +52,11 @@ export class Urbit {
    */
   private outstandingSubscriptions: Map<number, SubscriptionRequestInterface> = new Map();
 
+  /** 
+   * Our abort controller, used to close the connection
+   */
+  private abort = new AbortController();
+
   /**
    * Ship can be set, in which case we can do some magic stuff like send chats
    */
@@ -88,7 +93,8 @@ export class Urbit {
     return {
       credentials: 'include',
       accept: '*',
-      headers
+      headers,
+      signal: this.abort.signal
     };
   }
 
@@ -258,6 +264,9 @@ export class Urbit {
    *
    */
   reset() {
+    this.delete();
+    this.abort.abort();
+    this.abort = new AbortController();
     this.uid = `${Math.floor(Date.now() / 1000)}-${hexString(6)}`;
     this.lastEventId = 0;
     this.lastAcknowledgedEventId = 0;
