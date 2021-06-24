@@ -240,7 +240,8 @@ export class Urbit {
           }
         },
         onerror: (error) => {
-          if(this.errorCount++ < 5) {
+          //  Channel resume currently broken in eyre
+          if(false && this.errorCount++ < 5) {
             console.log(this.errorCount);
             this.onRetry && this.onRetry();
             return Math.pow(2, this.errorCount - 1) * 750;

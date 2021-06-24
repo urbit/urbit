@@ -9,12 +9,16 @@ import useLaunchState from '../state/launch';
 import useSettingsState from '../state/settings';
 import useLocalState from '../state/local';
 
-export const bootstrapApi = async () => {
-  await airlock.poke({ app: 'hood', mark: 'helm-hi', json: 'opening airlock' });
-
+export async function bootstrapApi() {
   airlock.onError = (e) => {
     (async () => {
-      useLocalState.setState({ subscription: 'disconnected' });
+      const { reconnect } = useLocalState.getState();
+      try {
+        useLocalState.setState({ subscription: 'reconnecting' });
+        await reconnect();
+      } catch (e) {
+        useLocalState.setState({ subscription: 'disconnected' });
+      }
     })();
   };
 
@@ -26,8 +30,7 @@ export const bootstrapApi = async () => {
     useLocalState.setState({ subscription: 'connected' });
   };
 
-  await airlock.eventSource();
-  [
+  const promises = [
     useHarkState,
     useMetadataState,
     useGroupState,
@@ -36,8 +39,7 @@ export const bootstrapApi = async () => {
     useLaunchState,
     useInviteState,
     useGraphState
-  ].forEach((state) => {
-    state.getState().initialize(airlock);
-  });
-};
+  ].map(state => state.getState().initialize(airlock));
+  await Promise.all(promises);
+}
 

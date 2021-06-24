@@ -276,7 +276,6 @@ export const RemoteContentOembed = React.forwardRef<
 
   const detail = (
     <Col
-      mb={embed?.html && !thumbnail ? 0 : 2}
       width="100%"
       flexShrink={0}
       height="100%"

@@ -93,7 +93,7 @@ export interface BaseState<StateType extends {}> {
   addPatch: (id: string, ...patch: Patch[]) => void;
   removePatch: (id: string) => void;
   optSet: (fn: (state: StateType & BaseState<StateType>) => void) => string;
-  initialize: (api: Urbit) => void;
+  initialize: (api: Urbit) => Promise<void>;
 }
 
 export function createSubscription(app: string, path: string, e: (data: any) => void): SubscriptionRequestInterface {
@@ -114,8 +114,8 @@ export const createState = <T extends {}>(
   blacklist: (keyof BaseState<T> | keyof T)[] = [],
   subscriptions: ((set: SetState<T & BaseState<T>>, get: GetState<T & BaseState<T>>) => SubscriptionRequestInterface)[] = []
 ): UseStore<T & BaseState<T>> => create<T & BaseState<T>>(persist<T & BaseState<T>>((set, get) => ({
-  initialize: (api: Urbit) => {
-    subscriptions.forEach(sub => api.subscribe(sub(set, get)));
+  initialize: async (api: Urbit) => {
+    await Promise.all(subscriptions.map(sub => api.subscribe(sub(set, get))));
   },
   // @ts-ignore investigate zustand types
   set: fn => stateSetter(fn, set, get),
