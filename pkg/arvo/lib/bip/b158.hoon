@@ -95,18 +95,18 @@
     |=  s=bits:bc
     ^-  [bit=@ub rest=bits:bc]
     ?>  (gth wid.s 0)
-    :*  ?:((gth wid.s (met 0 dat.s)) 0b0 0b1)
-        [(dec wid.s) (end [0 (dec wid.s)] dat.s)]
-    ==
+    :+  ?:((gth wid.s (met 0 dat.s)) 0b0 0b1)
+      (dec wid.s)
+    (end [0 (dec wid.s)] dat.s)
+  ::
   ::
   ++  read-bits
+    ~/  %read-bits
     |=  [n=@ s=bits:bc]
     ^-  [bits:bc rest=bits:bc]
-    =|  bs=bits:bc
-    |-
-    ?:  =(n 0)  [bs s]
-    =^  b  s  (read-bit s)
-    $(n (dec n), bs (write-bits bs [1 b]))
+    =/  r=@  (sub wid.s n)
+    :-  n^(cut 0 [r n] dat.s)
+    r^(cut 0 [0 r] dat.s)
   ::
   ++  write-bits
     ~/  %write-bits
