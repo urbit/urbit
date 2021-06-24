@@ -465,7 +465,7 @@
   |-
   ?:  =(i 2)
     ::  second two bytes
-    (lth a b)
+    (lte a b)
   ::  first two bytes
   =+  [c=(end 3 a) d=(end 3 b)]
   ?:  =(c d)
