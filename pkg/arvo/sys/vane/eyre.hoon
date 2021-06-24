@@ -1211,19 +1211,16 @@
       ::  and replace it
       ::
       =^  cancel-moves  state
-        ?.  ?=([%| *] state.u.maybe-channel)  
+        ?.  ?=([%| *] state.u.maybe-channel)
           :_  state
           (cancel-timeout-move channel-id p.state.u.maybe-channel)^~
-        =/  cancel-heartbeat  
+        =/  cancel-heartbeat
           ?~  heartbeat.u.maybe-channel  ~
           :_  ~
-          %+  cancel-heartbeat-move  channel-id 
+          %+  cancel-heartbeat-move  channel-id
           [date duct]:u.heartbeat.u.maybe-channel
         =-  [(weld cancel-heartbeat -<) ->]
-        %.  [%cancel ~]
-        %*  .  handle-response
-          duct  p.state.u.maybe-channel
-        ==
+        (handle-response(duct p.state.u.maybe-channel) [%cancel ~])
       ::  the request may include a 'Last-Event-Id' header
       ::
       =/  maybe-last-event-id=(unit @ud)
