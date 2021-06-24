@@ -94,7 +94,7 @@ export class Urbit {
       credentials: 'include',
       accept: '*',
       headers,
-      signal: this.abort
+      signal: this.abort.signal
     };
   }
 
