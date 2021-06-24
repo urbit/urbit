@@ -8,9 +8,9 @@ import { LinkBlockInput } from './LinkBlockInput';
 import useLocalState from '~/logic/state/local';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import bigInt from 'big-integer';
-import VirtualScroller from '~/views/components/VirtualScroller';
 import airlock from '~/logic/api';
 import useHarkState from '~/logic/state/hark';
+import { BlockScroller } from '~/views/components/BlockScroller';
 
 export interface LinkBlocksProps {
   graph: Graph;
@@ -112,7 +112,7 @@ export function LinkBlocks(props: LinkBlocksProps) {
 
   return (
     <Col overflowX="hidden" overflowY="auto" height="calc(100% - 48px)" {...bind}>
-      <VirtualScroller
+      <BlockScroller
         origin="top"
         offset={0}
         style={style}

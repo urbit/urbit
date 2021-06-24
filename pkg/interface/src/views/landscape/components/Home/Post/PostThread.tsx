@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
 import { Loading } from '~/views/components/Loading';
-import { arrToString } from '~/views/components/ArrayVirtualScroller';
+import { arrToString } from '@urbit/api/lib/BigIntArrayOrderedMap';
 import useGraphState from '~/logic/state/graph';
 import PostFlatFeed from './PostFlatFeed';
 import PostInput from './PostInput';

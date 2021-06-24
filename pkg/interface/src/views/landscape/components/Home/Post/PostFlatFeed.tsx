@@ -4,10 +4,10 @@ import bigInt from 'big-integer';
 import React from 'react';
 import { RouteComponentProps, useHistory } from 'react-router';
 import { resourceFromPath } from '~/logic/lib/group';
-import ArrayVirtualScroller, {
-  indexEqual,
+import {
   arrToString
-} from '~/views/components/ArrayVirtualScroller';
+} from '@urbit/api/lib/BigIntArrayOrderedMap';
+import { keyEq, ThreadScroller } from '~/views/components/ThreadScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
 import useGraphState, { GraphState } from '~/logic/state/graph';
@@ -66,9 +66,9 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
 
     const first = flatGraph.peekLargest()?.[0];
     const last = flatGraph.peekSmallest()?.[0];
-    const isLast = last ? indexEqual(index, last) : false;
+    const isLast = last ? keyEq(index, last) : false;
 
-    if (indexEqual(index, (first ?? [bigInt.zero]))) {
+    if (keyEq(index, (first ?? [bigInt.zero]))) {
       if (isThread) {
         return (
           <Col
@@ -195,12 +195,12 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
 
     return (
       <Col width="100%" height="100%" position="relative">
-        <ArrayVirtualScroller
+        <ThreadScroller
           key={history.location.pathname}
           origin="top"
           offset={0}
           data={flatGraph}
-          averageHeight={122}
+          averageHeight={80}
           size={flatGraph.size}
           style={virtualScrollerStyle}
           pendingSize={pendingSize}

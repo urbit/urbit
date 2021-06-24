@@ -5,7 +5,7 @@ import React, {
   Component, ReactNode
 } from 'react';
 import { isWriter } from '~/logic/lib/group';
-import VirtualScroller from '~/views/components/VirtualScroller';
+import { GraphScroller } from '~/views/components/GraphScroller';
 import { LinkItem } from './components/LinkItem';
 import LinkSubmit from './components/LinkSubmit';
 
@@ -124,7 +124,7 @@ class LinkWindow extends Component<LinkWindowProps, {}> {
     return (
       <Col width="100%" height="calc(100% - 48px)" position="relative">
         {/* @ts-ignore calling @liam-fitzgerald on virtualscroller */}
-        <VirtualScroller
+        <GraphScroller
           origin="top"
           offset={0}
           style={style}
