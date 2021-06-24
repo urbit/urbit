@@ -95,7 +95,7 @@
     take-maybe-response:strandio
   =*  fallback
     ~&  %fallback-gas-price
-    (pure:m 40.000.000.000)  ::TODO  maybe even lower, considering we increment?
+    (pure:m 10.000.000.000)
   ?.  ?&  ?=([~ %finished *] rep)
           ?=(^ full-file.u.rep)
       ==
