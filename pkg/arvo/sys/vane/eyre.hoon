@@ -1206,15 +1206,24 @@
       ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
         %^  return-static-data-on-duct  404  'text/html'
         (error-page 404 %.y url.request ~)
-      ::  if there's already a duct listening to this channel, we must 400
-      ::
-      ?:  ?=([%| *] state.u.maybe-channel)
-        %^  return-static-data-on-duct  400  'text/html'
-        (error-page 400 %.y url.request "channel already bound")
       ::  when opening an event-stream, we must cancel our timeout timer
+      ::  if there's no duct already bound. Else, kill the old request
+      ::  and replace it
       ::
-      =.  moves
-        [(cancel-timeout-move channel-id p.state.u.maybe-channel) moves]
+      =^  cancel-moves  state
+        ?.  ?=([%| *] state.u.maybe-channel)  
+          :_  state
+          (cancel-timeout-move channel-id p.state.u.maybe-channel)^~
+        =/  cancel-heartbeat  
+          ?~  heartbeat.u.maybe-channel  ~
+          :_  ~
+          %+  cancel-heartbeat-move  channel-id 
+          [date duct]:u.heartbeat.u.maybe-channel
+        =-  [(weld cancel-heartbeat -<) ->]
+        %.  [%cancel ~]
+        %*  .  handle-response
+          duct  p.state.u.maybe-channel
+        ==
       ::  the request may include a 'Last-Event-Id' header
       ::
       =/  maybe-last-event-id=(unit @ud)
@@ -1283,7 +1292,7 @@
         |=  =channel
         channel(events ~, state [%| duct], heartbeat (some [heartbeat-time duct]))
       ::
-      [[heartbeat (weld http-moves moves)] state]
+      [[heartbeat :(weld http-moves cancel-moves moves)] state]
     ::  +acknowledge-events: removes events before :last-event-id on :channel-id
     ::
     ++  acknowledge-events
