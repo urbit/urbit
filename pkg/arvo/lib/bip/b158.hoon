@@ -1,5 +1,6 @@
 /-  bc=bitcoin
 /+  bcu=bitcoin-utils
+~%  %bip-158-top  ..part  ~
 |%
 ++  params
   |%
@@ -8,6 +9,7 @@
   --
 ::
 ++  siphash
+  ~/  %siphash
   |=  [k=byts m=byts]
   ^-  byts
   |^
@@ -86,6 +88,7 @@
 ::   write appends to the back
 ::
 ++  str
+  ~/  %str
   |%
   ++  read-bit
     |=  s=bits:bc
@@ -112,6 +115,7 @@
 ::  +gol: Golomb-Rice encoding/decoding
 ::
 ++  gol
+  ~%  %gol  ..params  ~
   |%
   ::  +en: encode x and append to end of s
   ::   - s: bits stream
@@ -119,6 +123,7 @@
   ::   - p: golomb-rice p param
   ::
   ++  en
+    ~/  %en
     |=  [s=bits:bc x=@ p=@]
     ^-  bits:bc
     =+  q=(rsh [0 p] x)
@@ -128,6 +133,7 @@
     (write-bits:str unary r)
   ::
   ++  de
+    ~/  %de
     |=  [s=bits:bc p=@]
     ^-  [delta=@ rest=bits:bc]
     |^  ?>  (gth wid.s 0)
@@ -148,6 +154,7 @@
 ::  +hsh
 ::
 ++  hsh
+  ~%  %hsh  ..params  ~
   |%
   ::  +to-range
   ::   - item: scriptpubkey to hash
@@ -155,6 +162,7 @@
   ::   - k: key for siphash (end of blockhash, reversed)
   ::
   ++  to-range
+    ~/  %to-range
     |=  [item=byts f=@ k=byts]
     ^-  @
     (rsh [0 64] (mul f (swp 3 dat:(siphash k item))))
@@ -171,6 +179,7 @@
   --
 ::
 ++  parse-filter
+  ~/  %parse-filter
   |=  filter=hexb:bc
   ^-  [n=@ux gcs-set=bits:bc]
   =/  n  n:(de:csiz:bcu filter)
@@ -180,6 +189,7 @@
 ::  +to-key: blockhash (little endian) to key for siphash
 ::
 ++  to-key
+  ~/  %to-key
   |=  blockhash=tape
   ^-  byts
   %+  take:byt:bcu  16
@@ -191,6 +201,7 @@
 ::   - targets: scriptpubkeys to match
 ::
 ++  match
+  ~/  %match
   |=  [filter=hexb:bc k=byts targets=(list byts)]
   ^-  ?
   =/  [p=@ m=@]  [p:params m:params]
@@ -214,6 +225,7 @@
 ::   - targets: scriptpubkeys to match
 ::
 ++  all-match
+  ~/  %all-match
   |=  [filter=hexb:bc blockhash=hexb:bc targets=(list [address:bc byts])]
   ^-  (set [address:bc hexb:bc])
   =/  k  (to-key (trip (to-cord:hxb:bcu blockhash)))
