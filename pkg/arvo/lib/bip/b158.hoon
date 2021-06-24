@@ -88,9 +88,10 @@
 ::   write appends to the back
 ::
 ++  str
-  ~/  %str
+  ~%  %str  ..params  ~
   |%
   ++  read-bit
+    ~/  %read-bit
     |=  s=bits:bc
     ^-  [bit=@ub rest=bits:bc]
     ?>  (gth wid.s 0)
@@ -108,6 +109,7 @@
     $(n (dec n), bs (write-bits bs [1 b]))
   ::
   ++  write-bits
+    ~/  %write-bits
     |=  [s1=bits:bc s2=bits:bc]
     ^-  bits:bc
     [(add wid.s1 wid.s2) (can 0 ~[s2 s1])]
