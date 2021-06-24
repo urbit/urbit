@@ -6,6 +6,7 @@ import { persist } from 'zustand/middleware';
 import { BackgroundConfig, LeapCategories, RemoteContentPolicy, TutorialProgress, tutorialProgress } from '~/types/local-update';
 import airlock from '~/logic/api';
 import { bootstrapApi } from '../api/bootstrap';
+import { wait } from '~/logic/lib/util';
 
 export type SubscriptionStatus = 'connected' | 'disconnected' | 'reconnecting';
 
@@ -31,7 +32,9 @@ export interface LocalState {
   toggleOmnibox: () => void;
   set: (fn: (state: LocalState) => void) => void;
   subscription: SubscriptionStatus;
-  restartSubscription: () => Promise<void>;
+  reconnect: () => Promise<void>;
+  bootstrap: () => Promise<void>;
+  errorCount: number;
 }
 
 type LocalStateZus = LocalState & State;
@@ -89,31 +92,39 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
     }
   })),
   subscription: 'connected',
-  restartSubscription: async () => {
-    try {
-      set({ subscription: 'reconnecting' });
-      await airlock.eventSource();
-      set({ subscription: 'connected' });
-    } catch (e) {
+  errorCount: 0,
+  // XX this logic should be handled by eventsource lib, but channel$a
+  // resume doesn't work properly
+  reconnect: async () => {
+    const { errorCount } = get();
+
+    if(errorCount > 5) {
       set({ subscription: 'disconnected' });
+      return;
+    }
+
+    try {
+      airlock.reset();
+      await bootstrapApi();
+    } catch (e) {
+      await wait(Math.pow(2, errorCount) * 750);
+      set({ errorCount: errorCount + 1 });
+      const { reconnect } = get();
+      await reconnect();
     }
   },
   bootstrap: async () => {
-    try {
-      set({ subscription: 'reconnecting' });
-      airlock.reset();
-      await bootstrapApi();
-      set({ subscription: 'connected' });
-    } catch (e) {
-      set({ subscription: 'disconnected' });
-    }
+    set({ subscription: 'reconnecting' });
+    airlock.reset();
+    await bootstrapApi();
+    set({ subscription: 'connected' });
   },
   // @ts-ignore investigate zustand types
   set: fn => set(produce(fn))
   }), {
     blacklist: [
       'suspendedFocus', 'toggleOmnibox', 'omniboxShown', 'tutorialProgress',
-      'prevTutStep', 'nextTutStep', 'tutorialRef', 'setTutorialRef'
+      'prevTutStep', 'nextTutStep', 'tutorialRef', 'setTutorialRef', 'subscription'
     ],
   name: 'localReducer'
 }));
