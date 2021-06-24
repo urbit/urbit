@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import urbitOb from 'urbit-ob';
 import { isWriter } from '~/logic/lib/group';
+import { useResize } from '~/logic/lib/useResize';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
@@ -199,9 +200,9 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Link>
   );
 
-  const actionsRef = useCallback((actionsRef) => {
-    setActionsWidth(actionsRef?.getBoundingClientRect().width);
-  }, [rid]);
+  const bind = useResize<HTMLDivElement>(useCallback((entry) => {
+    setActionsWidth(entry.borderBoxSize[0].inlineSize);
+  }, []));
 
   return (
     <Col width='100%' height='100%' overflow='hidden'>
@@ -231,7 +232,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           display='flex'
           alignItems='center'
           flexShrink={0}
-          ref={actionsRef}
+          {...bind}
         >
           {extraControls}
           {menuControl}

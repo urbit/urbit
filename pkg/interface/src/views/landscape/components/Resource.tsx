@@ -42,6 +42,9 @@ export function Resource(props: ResourceProps): ReactElement {
       <Helmet defer={false}>
         <title>{notificationsCount ? `(${String(notificationsCount)}) ` : ''}{ title }</title>
       </Helmet>
+      { app === 'link' ? (
+        <LinkResource {...props} />
+      ) :  (
       <ResourceSkeleton
         {...skelProps}
         baseUrl={relativePath('')}
@@ -50,10 +53,9 @@ export function Resource(props: ResourceProps): ReactElement {
           <ChatResource {...props} />
         ) : app === 'publish' ? (
           <PublishResource {...props} />
-        ) : (
-          <LinkResource {...props} />
-        )}
+        ) : null }
       </ResourceSkeleton>
+      )}
       <Switch>
         <Route
           path={relativePath('/settings')}

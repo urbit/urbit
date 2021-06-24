@@ -4,7 +4,6 @@ import {
   GroupNotifIndex,
   GroupUpdate
 } from '@urbit/api';
-import bigInt from 'big-integer';
 import _ from 'lodash';
 import React, { ReactElement } from 'react';
 import { useAssocForGroup } from '~/logic/state/metadata';
@@ -35,7 +34,6 @@ interface GroupNotificationProps {
   index: GroupNotifIndex;
   contents: GroupNotificationContents;
   time: number;
-  timebox: bigInt.BigInteger;
 }
 
 export function GroupNotification(props: GroupNotificationProps): ReactElement {

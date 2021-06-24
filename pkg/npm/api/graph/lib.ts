@@ -13,7 +13,7 @@ export const createBlankNodeWithChildPost = (
   parentIndex: string = '',
   childIndex: string = '',
   contents: Content[]
-): GraphNodePoke => { 
+): GraphNodePoke => {
   const date = unixToDa(Date.now()).toString();
   const nodeIndex = parentIndex + '/' + date;
 
@@ -40,7 +40,7 @@ export const createBlankNodeWithChildPost = (
       signatures: []
     },
     children: childGraph
-  };  
+  };
 };
 
 export const markPending = (nodes: any): any => {
@@ -310,7 +310,7 @@ export const setScreen = (screen: boolean): Poke<any> => dmAction({ screen });
  *
  * @param ship the ship to accept
  */
-export const acceptDm = (ship: string) => dmAction({ 
+export const acceptDm = (ship: string) => dmAction({
   accept: ship
 });
 
@@ -319,7 +319,7 @@ export const acceptDm = (ship: string) => dmAction({
  *
  * @param ship the ship to accept
  */
-export const declineDm = (ship: string) => dmAction({ 
+export const declineDm = (ship: string) => dmAction({
   decline: ship
 });
 
@@ -368,7 +368,7 @@ export const addDmMessage = (our: PatpNoSig, ship: Patp, contents: Content[]): P
 
 const encodeIndex = (idx: string) => idx.split('/').map(decToUd).join('/');
 
-/** 
+/**
  * Fetch newest (larger keys) nodes in a graph under some index
  *
  * @param ship ship of graph
@@ -386,8 +386,8 @@ export const getNewest = (
   path: `/newest/${ship}/${name}/${count}${encodeIndex(index)}`
 });
 
-/** 
- * Fetch nodes in a graph that are older (key is smaller) and direct 
+/**
+ * Fetch nodes in a graph that are older (key is smaller) and direct
  * siblings of some index
  *
  * @param ship ship of graph
@@ -405,8 +405,8 @@ export const getOlderSiblings = (
   path: `/node-siblings/older/${ship}/${name}/${count}${encodeIndex(index)}`
 });
 
-/** 
- * Fetch nodes in a graph that are younger (key is larger) and direct 
+/**
+ * Fetch nodes in a graph that are younger (key is larger) and direct
  * siblings of some index
  *
  * @param ship ship of graph
@@ -437,8 +437,8 @@ export const getShallowChildren = (ship: string, name: string, index = '') => ({
 });
 
 
-/** 
- * Fetch newest nodes in a graph as a flat map, including children, 
+/**
+ * Fetch newest nodes in a graph as a flat map, including children,
  * optionally starting at a specified key
  *
  * @param ship ship of graph
@@ -472,7 +472,7 @@ export const getFirstborn = (
   index: string
 ): Scry => ({
   app: 'graph-store',
-  path: `/firstborn/${ship}/${name}/${encodeIndex(index)}`
+  path: `/firstborn/${ship}/${name}${encodeIndex(index)}`
 });
 
 /**
@@ -489,7 +489,7 @@ export const getNode = (
   index: string
 ): Scry => ({
   app: 'graph-store',
-  path: `/node/${ship}/${name}/${encodeIndex(index)}`
+  path: `/node/${ship}/${name}${encodeIndex(index)}`
 });
 
 /**

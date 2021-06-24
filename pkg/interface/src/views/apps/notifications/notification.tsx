@@ -132,7 +132,6 @@ export function Notification(props: NotificationProps) {
         <GroupNotification
           index={index}
           contents={c}
-          timebox={props.time}
           time={time}
         />
       </NotificationWrapper>

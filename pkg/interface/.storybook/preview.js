@@ -36,7 +36,33 @@ export const globalTypes = {
 
 export const decorators = [
   (Story, context) => {
+    window.ship = 'sampel-palnet';
     const theme = context.globals.theme === 'light' ? light : dark;
+
+    useContactState.setState({
+      contacts: {
+        '~ridlur-figbud': {
+          status: 'please like and subscribe',
+          'last-updated': 1616609090555,
+          avatar: null,
+          cover: null,
+          bio: '',
+          nickname: 'Gav',
+          color: '0x26.3e0f',
+          groups: [],
+        },
+'~sampel-palnet': {
+          status: 'A test status',
+          'last-updated': 1616609090555,
+          avatar: null,
+          cover: null,
+          bio: '',
+          nickname: 'You',
+          color: '0x26.3e0f',
+          groups: [],
+        }
+      },
+    });
 
     useMetadataState.setState({
       associations: {
@@ -66,6 +92,25 @@ export const decorators = [
           },
         },
         graph: {
+          '/ship/~bitbet-bolbel/links': {
+            metadata: {
+              preview: false,
+              vip: '',
+              title: 'Link Collection',
+              description: '',
+              creator: '~darrux-landes',
+              picture: '',
+              hidden: false,
+              config: {
+                graph: 'link',
+              },
+              'date-created': '~2020.4.6..21.53.30..dc68',
+              color: '0x0',
+            },
+            'app-name': 'graph',
+            resource: '/ship/~bitbet-bolbel/links',
+            group: '/ship/~bitbet-bolbel/urbit-community',
+          },
           '/ship/~darrux-landes/development': {
             metadata: {
               preview: false,
