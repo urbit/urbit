@@ -149,10 +149,10 @@
   ++  handle-command
     |=  comm=command
     ^-  (quip card _state)
-    |^
     ?>  (team:title our.bowl src.bowl)
     ?-  -.comm
         %set-provider
+      |^
       ?~  provider.comm
         ?~  prov  `state
         :_  state(prov ~)
@@ -166,6 +166,12 @@
           (watch-provider:hc u.provider.comm)
           (give-update:hc %change-provider `[u.provider.comm %.n])
       ==
+      ::
+      ++  leave-provider
+        |=  who=@p
+        ^-  card
+        [%pass /set-provider/[(scot %p who)] %agent who^%btc-provider %leave ~]
+      --
     ::
         %check-provider
       =/  pax  /permitted/(scot %p provider.comm)
@@ -181,6 +187,7 @@
       (set-curr-xpub:hc xpub.comm)
     ::
         %add-wallet
+      |^
       ?~  (~(has by walts) xpub.comm)
         ((slog ~[leaf+"xpub already in wallet"]) `state)
       =/  w=walt  (from-xpub:bl +.comm)
@@ -188,6 +195,16 @@
       =^  c1  state  (init-batches xpub.comm (dec max-gap.w))
       =^  c2  state  (set-curr-xpub:hc xpub.comm)
       [(weld c1 c2) state]
+      ::
+      ++  init-batches
+        |=  [=xpub:bc endpoint=idx]
+        ^-  (quip card _state)
+        =/  b=batch
+          [(silt (gulf 0 endpoint)) endpoint %.n]
+        =^  cards0  state  (req-scan:hc b xpub %0)
+        =^  cards1  state  (req-scan:hc b xpub %1)
+        [(weld cards0 cards1) state]
+      --
     ::
         %delete-wallet
       =*  cw  curr-xpub.state
@@ -284,21 +301,6 @@
       :_  state(walts (~(put by walts) u.curr-xpub w))
       [(give-update:hc %new-address addr)]~
     ==
-    ::
-    ++  leave-provider
-      |=  who=@p
-      ^-  card
-      [%pass /set-provider/[(scot %p who)] %agent [who %btc-provider] %leave ~]
-    ::
-    ++  init-batches
-      |=  [=xpub:bc endpoint=idx]
-      ^-  (quip card _state)
-      =/  b=batch
-        [(silt (gulf 0 endpoint)) endpoint %.n]
-      =^  cards0  state  (req-scan:hc b xpub %0)
-      =^  cards1  state  (req-scan:hc b xpub %1)
-      [(weld cards0 cards1) state]
-    --
   ::
   ++  handle-action
     |=  act=action
@@ -462,8 +464,9 @@
          (snap txis i `txi`ith(rawtx `rawtx))
         $(i +(i))
       --
-      ::  delete an incoming/outgoing payment when we see it included in a tx
-      ::
+    ::
+    ::  delete an incoming/outgoing payment when we see it included in a tx
+    ::
         %close-pym
       ?>  =(src.bowl our.bowl)
       |^
@@ -596,13 +599,13 @@
             note
          ==
       --
-      ::
+    ::
         %fail-broadcast-tx
       ?>  =(src.bowl our.bowl)
       ~&  >>>  "%fail-broadcast-tx"
       :_  state(poym [~ ~])
       [(give-update:hc %error %broadcast-fail)]~
-      ::
+    ::
         %succeed-broadcast-tx
       ?>  =(src.bowl our.bowl)
       ~&  >  "%succeed-broadcast-tx"
@@ -635,14 +638,14 @@
   ::
       %kick
     ?~  prov  `this
-    ?:  ?&  ?=(%set-provider -.wire)
+    ?.  ?&  ?=(%set-provider -.wire)
             =(host.u.prov src.bowl)
         ==
-      :_  this(prov [~ src.bowl %.n])
-      :~  (watch-provider:hc src.bowl)
-          (give-update:hc %change-provider `[src.bowl %.n])
-      ==
-    `this
+      `this
+    :_  this(prov [~ src.bowl %.n])
+    :~  (watch-provider:hc src.bowl)
+        (give-update:hc %change-provider `[src.bowl %.n])
+    ==
   ::
       %fact
     =^  cards  state
@@ -701,10 +704,9 @@
         `state(prov `u.prov(connected %.n))
       ==
     :_  state
-    :*  (give-update:hc %btc-state btc-state)
-        (give-update:hc %change-provider prov)
-        cards
-    ==
+    :+  (give-update:hc %btc-state btc-state)
+      (give-update:hc %change-provider prov)
+    cards
   ::
   ++  on-connected
     |=  $:  p=provider
@@ -726,27 +728,30 @@
     =?  blocks  ?|(?=(~ blockhash) ?=(~ blockfilter))
       (snoc blocks block)
     =?  blocks  (gth gap 50)  ~
-    ::
-    =/  cards=(list card)
-      ;:  weld
-        retry-ahistorical-txs
+    :_  %_  state
+          prov       `p(connected %.y)
+          btc-state  [block fee now.bowl]
+        ==
+    %-  zing
+    :~  retry-ahistorical-txs
         (retry-pend-piym net)
         (retry-block-info blocks)
-      ==
-    =?  cards  ?|(!connected.p (gth gap 0))
-      ;:  weld  cards
-        (retry-poym net)
-        (retry-txs net)
-        (retry-scans net)
-      ==
-    =?  cards  ?&(?=(^ blockhash) ?=(^ blockfilter) (gth gap 0))
-      (weld cards (retry-filtered-addrs:hc net u.blockhash u.blockfilter))
-    =?  cards  (gth gap 50)
-      (weld cards (retry-addrs net))
-    :-  cards
-    %_  state
-      prov       `p(connected %.y)
-      btc-state  [block fee now.bowl]
+      ::
+        ?.  ?|(!connected.p (gth gap 0))
+          ~
+        %-  zing
+        :~  (retry-poym net)
+            (retry-txs net)
+            (retry-scans net)
+        ==
+      ::
+        ?.  ?&(?=(^ blockhash) ?=(^ blockfilter) (gth gap 0))
+          ~
+        (retry-filtered-addrs:hc net u.blockhash u.blockfilter)
+      ::
+        ?.  (gth gap 50)
+          ~
+        (retry-addrs net)
     ==
     ::
     ++  retry-ahistorical-txs
@@ -839,31 +844,36 @@
       ::  located in the helper in Scan Logic to keep all of that unified
       ::
       (handle-address-info address.p.upd utxos.p.upd used.p.upd)
-      ::
+    ::
         %tx-info
+      ::  TODO: why do we get a nest-fail when using =^ ?
       =/  [cards=(list card) sty=state-1]
         (handle-tx-info:hc info.p.upd)
       :_  sty
-      [(poke-internal:hc [%close-pym info.p.upd]) cards]
-      ::
+      :_  cards
+      (poke-internal:hc [%close-pym info.p.upd])
+    ::
         %raw-tx
       :_  state
       ~[(poke-internal:hc [%add-poym-raw-txi +.p.upd])]
-      ::
+    ::
         %broadcast-tx
-      ?~  txbu.poym  `state
-      ?.  =(~(get-txid txb:bl u.txbu.poym) txid.p.upd)
-        `state
       :_  state
+      ?~  txbu.poym  ~
+      ?.  =(~(get-txid txb:bl u.txbu.poym) txid.p.upd)
+        ~
       ?:  ?|(broadcast.p.upd included.p.upd)
         ~[(poke-internal:hc [%succeed-broadcast-tx txid.p.upd])]
       :~  (poke-internal:hc [%fail-broadcast-tx txid.p.upd])
           (give-update:hc %cancel-tx txid.p.upd)
       ==
-      ::
+    ::
         %block-info
       :_  state
-      (retry-filtered-addrs:hc network.p.upd blockhash.p.upd blockfilter.p.upd)
+      %^  retry-filtered-addrs:hc
+          network.p.upd
+        blockhash.p.upd
+      blockfilter.p.upd
     ==
     ::
     ::  Scan Logic
@@ -1092,22 +1102,22 @@
     =/  new-hest=hest  (mk-hest xpub our-inputs our-outputs)
     =.  history  (~(put by history) txid.ti new-hest)
     :_  state
-    :_  :_  addr-info-cards
+    :+  (give-update %balance current-balance)
       (give-update %new-tx new-hest)
-    (give-update %balance current-balance)
+    addr-info-cards
   ::  tx in history, but not in mempool/blocks
   ::
   ?.  included.ti
     :_  state(history (~(del by history) txid.ti))
-    :_  :_  addr-info-cards
+    :+  (give-update %balance current-balance)
       (give-update %cancel-tx txid.ti)
-    (give-update %balance current-balance)
+    addr-info-cards
   =/  new-hest  u.h(confs confs.ti, recvd recvd.ti)
   =.  history  (~(put by history) txid.ti new-hest)
   :_  state
-  :_  :_  addr-info-cards
+  :+  (give-update %balance current-balance)
     (give-update %new-tx new-hest)
-  (give-update %balance current-balance)
+  addr-info-cards
   ::
   ++  mk-hest
     :: has tx-info
@@ -1155,9 +1165,10 @@
     |-  ?~  as  w
     $(as t.as, w (~(update-address wad:bl w chyg) -.i.as +.i.as))
   :-  (turn as |=([a=address *] (poke-provider [%address-info a])))
-  %=  state
+  %_    state
       scans
     (~(put by scans) [xpub chyg] b)
+  ::
       walts
     (~(put by walts) xpub w)
   ==
