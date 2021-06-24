@@ -259,6 +259,17 @@
                 ['escape' (ship u.escape.net)]~
         ==  ==
       ::
+      ++  points
+        |=  points=(list [@p point:naive])
+        ^-  json
+        :-  %a
+        %+  turn  points
+        |=  [ship=@p =point:naive]
+        %-  pairs
+        :~  ['ship' (^ship ship)]
+            ['point' (^point point)]
+        ==
+      ::
       ++  ownership
         |=  [=address:naive =nonce:naive]
         ^-  json
@@ -368,6 +379,16 @@
   ?~  point=(scry u.ship)
     ~(not-found error:json-rpc id)
   [%result id (point:to-json u.point)]
+::
+++  get-points
+  |=  [id=@t params=(map @t json) scry=$-(@ux (list [@p point:naive]))]
+  ^-  response:rpc
+  ~&  ~(wyt by params)
+  ?.  =(~(wyt by params) 1)
+    ~(params error:json-rpc id)
+  ?~  address=(address:from-json params)
+    ~(parse error:json-rpc id)
+  [%result id (points:to-json (scry u.address))]
 ::
 ++  transfer-point
   |=  [id=@t params=(map @t json)]

@@ -127,6 +127,7 @@
     [~ ~(parse error:json-rpc id)]
   ?+  method  [~ ~(method error:json-rpc id)]
     %get-point             [~ (get-point id +.params point:scry)]
+    %get-points            [~ (get-points id +.params points:scry)]
     %transfer-point        (transfer-point id +.params)
     %cancel-tx             (cancel-tx id +.params)
     %get-spawned           [~ (get-spawned id +.params spawned:scry)]
@@ -156,6 +157,13 @@
     .^  (unit point:naive)
         %gx
         (~(scry agentio bowl) %aggregator /point/(scot %p ship)/noun)
+    ==
+  ::
+  ++  points
+    |=  =address:naive
+    .^  (list [ship point:naive])
+        %gx
+        (~(scry agentio bowl) %aggregator /points/(scot %ux address)/noun)
     ==
   ::
   ++  spawned

@@ -16,8 +16,6 @@
 ::    when retrying, only do so if l2 txs remain in the "frozen" txs group.
 ::    on %tx diff from naive, remove the matching tx from the frozen group.
 ::
-::TODO  remaining general work:
-::
 ::TODO  questions:
 ::  - it's a bit weird how we just assume the raw and tx in raw-tx to match...
 ::
@@ -48,7 +46,7 @@
       %+  map  l1-tx-pointer
       [next-gas-price=@ud txs=(list raw-tx:naive)]
     ::
-      finding=(map keccak $?(%confirmed %failed l1-tx-pointer))
+      finding=(map keccak ?(%confirmed %failed l1-tx-pointer))
       history=(jug address:ethereum roller-tx)
       next-nonce=(unit @ud)
       next-batch=time
@@ -138,6 +136,8 @@
   ::    /x/nonce/[~ship]/[proxy]       ->  %noun  (unit @)
   ::    /x/spawned/[~ship]             ->  %noun  (list [ship address])
   ::    /x/next-batch                  ->  %atom  time
+  ::    /x/point/[~ship]               ->  %noun  point:naive
+  ::    /x/points/[0xadd.ress]         ->  %noun  (list [ship point:naive])
   ::
   ++  on-peek
     |=  =path
@@ -152,6 +152,7 @@
       [%x %spawned @ ~]     (spawned i.t.t.path)
       [%x %next-batch ~]    ``noun+!>(next-batch)
       [%x %point @ ~]       (point i.t.t.path)
+      [%x %points @ ~]      (points i.t.t.path)
     ==
     ::
     ++  pending-by
@@ -222,8 +223,8 @@
       ?~  star=(slaw %p wat)  ~
       =/  range
         %+  lot:orm:naive  points.pre
-        ::  range exclusive [star first-planet-next-star]
-        ::  TODO: make range inclusive? [first-planet last-planet]
+        ::  range exclusive [star next-star-first-planet-]
+        ::  TODO: make range inclusive ([first-planet last-planet])?
         ::
         [`u.star `(cat 3 +(u.star) 0x1)]
       %+  turn  (tap:orm:naive range)
@@ -237,6 +238,16 @@
       ?~  ship=(rush wat ;~(pfix sig fed:ag))
         ``noun+!>(*(unit point:naive))
       ``noun+!>((get:orm:naive points.pre u.ship))
+    ::
+    ++  points
+      |=  wat=@t
+      :+  ~  ~
+      :-  %noun
+      !>  ^-  (list [ship point:naive])
+      ?~  addr=(slaw %ux wat)
+        ~
+      %~  tap  in
+      (~(get ju owners.pre) u.addr)
     --
   ::
   ++  on-arvo
