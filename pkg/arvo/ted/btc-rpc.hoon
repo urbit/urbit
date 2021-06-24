@@ -1,7 +1,7 @@
 ::  Note: these are for BTC testnet
 ::
 /-  spider, rpc=json-rpc
-/+  strandio, bc=bitcoin
+/+  strandio, bc=bitcoin, bcu=bitcoin-utils
 =,  strand=strand:spider
 =>
 |%
@@ -47,8 +47,8 @@
 ++  electrs-script-hash
   |=  a=address:bc
   ^-  hexb:bc
-  %-  flip:byt:bc
-  %-  sha256:bc
+  %-  flip:byt:bcu
+  %-  sha256:bcu
   (to-script-pubkey:adr:bc a)
 ::
 ++  parse-json-rpc

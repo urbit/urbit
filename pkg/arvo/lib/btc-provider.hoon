@@ -1,5 +1,5 @@
 /-  bp=btc-provider, json-rpc
-/+  bc=bitcoin
+/+  bc=bitcoin, bcu=bitcoin-utils
 ~%  %btc-provider-lib  ..part  ~
 |%
 ::  +from-epoch: time since Jan 1, 1970 in seconds.
@@ -73,7 +73,7 @@
     ++  utxo
       %-  ot
       :~  ['tx_pos' ni]
-          ['tx_hash' (cu from-cord:hxb:bc so)]
+          ['tx_hash' (cu from-cord:hxb:bcu so)]
           [%height ni]
           [%value ni]
           [%recvd (cu from-epoch ni)]
@@ -82,7 +82,7 @@
     ++  tx-vals
       %-  ot
       :~  [%included bo]
-          [%txid (cu from-cord:hxb:bc so)]
+          [%txid (cu from-cord:hxb:bcu so)]
           [%confs ni]
           [%recvd (cu from-epoch ni)]
           [%inputs (ar tx-val)]
@@ -91,7 +91,7 @@
     ::
     ++  tx-val
       %-  ot
-      :~  [%txid (cu from-cord:hxb:bc so)]
+      :~  [%txid (cu from-cord:hxb:bcu so)]
           [%pos ni]
           [%address (cu from-cord:adr:bc so)]
           [%value ni]
@@ -99,13 +99,13 @@
     ::
     ++  raw-tx
       %-  ot
-      :~  [%txid (cu from-cord:hxb:bc so)]
-          [%rawtx (cu from-cord:hxb:bc so)]
+      :~  [%txid (cu from-cord:hxb:bcu so)]
+          [%rawtx (cu from-cord:hxb:bcu so)]
       ==
     ::
     ++  broadcast-tx
       %-  ot
-      :~  [%txid (cu from-cord:hxb:bc so)]
+      :~  [%txid (cu from-cord:hxb:bcu so)]
           [%broadcast bo]
           [%included bo]
       ==
@@ -114,8 +114,8 @@
       %-  ot
       :~  [%block ni]
           [%fee (mu ni)]
-          [%blockhash (cu from-cord:hxb:bc so)]
-          [%blockfilter (cu from-cord:hxb:bc so)]
+          [%blockhash (cu from-cord:hxb:bcu so)]
+          [%blockfilter (cu from-cord:hxb:bcu so)]
       ==
     --
   --
@@ -132,17 +132,17 @@
       %get-tx-vals
     %-  get-request
     %+  mk-url  '/gettxvals/'
-    (to-cord:hxb:bc txid.ract)
+    (to-cord:hxb:bcu txid.ract)
     ::
       %get-raw-tx
     %-  get-request
     %+  mk-url  '/getrawtx/'
-    (to-cord:hxb:bc txid.ract)
+    (to-cord:hxb:bcu txid.ract)
     ::
       %broadcast-tx
     %-  get-request
     %+  mk-url  '/broadcasttx/'
-    (to-cord:hxb:bc rawtx.ract)
+    (to-cord:hxb:bcu rawtx.ract)
     ::
       %get-block-count
     %-  get-request
