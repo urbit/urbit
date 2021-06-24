@@ -472,7 +472,7 @@ export const getFirstborn = (
   index: string
 ): Scry => ({
   app: 'graph-store',
-  path: `/firstborn/${ship}/${name}/${encodeIndex(index)}`
+  path: `/firstborn/${ship}/${name}${encodeIndex(index)}`
 });
 
 /**
