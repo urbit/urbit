@@ -262,8 +262,8 @@
         [%predict ~]
       ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
           %wake
-        =^  pending  pre  (predicted-state:do canonical-state:do)
-        [~ this(pending pending, flush &)]
+        :-  ~
+        this(flush &, pre (predicted-state canonical-state):do)
       ==
     ::
         [%resend @ @ ~]
@@ -351,14 +351,12 @@
           [cards this]
         ::
             %naive-state
+          ~&  >  %received-naive-state
+          :-  ~
           ::  cache naive state, received upon innitializing subscription
+          ::  this assumes that /app/azimuth has already processed eth data
           ::
-          ~&  >  %get-naive-state
-          ::  this assumes that %azimuth has already processed eth data
-          ::
-          =^  pending  pre
-            (predicted-state:do !<(^state:naive q.cage.sign))
-          [~ this(pending pending)]
+          this(pre (predicted-state:do !<(^state:naive q.cage.sign)))
         ==
       ==
     ::
@@ -451,7 +449,7 @@
     %don  [(gen-tx-octs:lib +.part-tx) +.part-tx]
     %ful  +.part-tx
   ==
-::  +canonical-state: load current l2 state instead
+::  +canonical-state: load current l2 state from /app/azimuth
 ::
 ++  canonical-state
   .^  ^state:naive
@@ -468,11 +466,13 @@
 ::
 ++  predicted-state
   |=  nas=^state:naive
-  ^-  [_pending _nas]
+  ^+  nas
   |^
-  =^  new-sending  nas  apply-sending
-  =.  sending  new-sending
-  (update-txs pending %pending)
+  =^  sending  nas  apply-sending
+  =^  pending  nas  (update-txs pending %pending)
+  =.  sending.state  sending
+  =.  pending.state  pending
+  nas
   ::
   ++  apply-sending
     =|  valid=_sending
@@ -496,6 +496,7 @@
     =/  valid=_txs  ~
     |-  ^+  [valid nas]
     ?~  txs  [valid nas]
+    ::
     =*  tx  i.txs
     =^  gud=?  nas  (try-apply nas [force raw-tx]:tx)
     =?  valid  gud  (snoc valid tx)
@@ -519,10 +520,8 @@
     ?.  (verify-sig-and-nonce:naive verifier:lib chain-t nas raw-tx)
       ~&  [%verify-sig-and-nonce %failed]
       [force nas]
-    ::
     =^  *  points.nas
       (increment-nonce:naive nas from.tx.raw-tx)
-    ::
     ?~  nex=(receive-tx:naive nas tx.raw-tx)
       [force nas]
     [& +.u.nex]
@@ -661,8 +660,7 @@
 ::
 ++  on-timer
   ^-  (quip card _state)
-  =^  new-pending  pre  (predicted-state canonical-state)
-  =.  pending  new-pending
+  =.  pre  (predicted-state canonical-state)
   =^  cards  state
     ?:  =(~ pending)  [~ state]
     ?~  next-nonce
