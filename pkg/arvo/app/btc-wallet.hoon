@@ -622,29 +622,6 @@
     ==
   --
 ::
-++  on-peek
-  ~/  %on-peek
-  |=  pax=path
-  ^-  (unit (unit cage))
-  ?+  pax  (on-peek:def pax)
-      [%x %configured ~]
-    =/  provider=json
-      ?~  prov  ~
-      [%s (scot %p host.u.prov)]
-    =/  result=json
-      %-  pairs:enjs:format
-      :~  [%provider provider]
-          [%'hasWallet' b+?=(^ walts)]
-      ==
-    ``json+!>(result)
-  ::
-      [%x %scanned ~]
-    ``noun+!>(scanned-wallets:hc)
-  ::
-      [%x %balance @ ~]
-    ``noun+!>((balance:hc (xpub:bc +>-.pax)))
-  ==
-::
 ++  on-agent
   ~/  %on-agent
   |=  [=wire =sign:agent:gall]
@@ -1001,6 +978,29 @@
       (req-scan:hc newb xpub chyg)
     --
   --
+::
+++  on-peek
+  ~/  %on-peek
+  |=  pax=path
+  ^-  (unit (unit cage))
+  ?+  pax  (on-peek:def pax)
+      [%x %configured ~]
+    =/  provider=json
+      ?~  prov  ~
+      [%s (scot %p host.u.prov)]
+    =/  result=json
+      %-  pairs:enjs:format
+      :~  [%provider provider]
+          [%'hasWallet' b+?=(^ walts)]
+      ==
+    ``json+!>(result)
+  ::
+      [%x %scanned ~]
+    ``noun+!>(scanned-wallets:hc)
+  ::
+      [%x %balance @ ~]
+    ``noun+!>((balance:hc (xpub:bc +>-.pax)))
+  ==
 ::
 ++  on-watch
   ~/  %on-watch
