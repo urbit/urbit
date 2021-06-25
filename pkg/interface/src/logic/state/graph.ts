@@ -9,6 +9,7 @@ import airlock from '~/logic/api';
 import { addDmMessage, addPost, Content, getDeepOlderThan, getFirstborn, getNewest, getNode, getOlderSiblings, getYoungerSiblings, markPending, Post, addNode, GraphNodePoke } from '@urbit/api/graph';
 import { GraphReducer, reduceDm } from '../reducers/graph-update';
 import _ from 'lodash';
+import { clone } from '../lib/util';
 
 export interface GraphState {
   graphs: Graphs;
@@ -48,18 +49,20 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
   pendingDms: new Set(),
   screening: false,
   addDmMessage: async (ship: string, contents: Content[]) => {
-    const promise = airlock.poke(addDmMessage(window.ship, ship, contents));
-    const { json } = addDmMessage(window.ship, ship, contents);
-    markPending(json['add-nodes'].nodes);
-    json['add-nodes'].resource.ship = json['add-nodes'].resource.ship.slice(1);
+    const poke = addDmMessage(window.ship, ship, contents);
+    const promise = airlock.poke(poke);
+    const pending = clone(poke);
+    markPending(pending.json['add-nodes'].nodes);
+    pending.json['add-nodes'].resource.ship = pending.json['add-nodes'].resource.ship.slice(1);
     GraphReducer({
-      'graph-update': json
+      'graph-update': pending.json
     });
     await promise;
   },
   addPost: async (ship, name, post) => {
-    const promise = airlock.thread(addPost(ship, name, post));
-    const { body } = addPost(ship, name, post);
+    const thread = addPost(ship, name, post);
+    const promise = airlock.thread(thread);
+    const { body } = clone(thread);
     markPending(body['add-nodes'].nodes);
     body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
     GraphReducer({
@@ -70,8 +73,9 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     await promise;
   },
   addNode: async (ship, name, node) => {
-    const promise = airlock.thread(addNode(ship, name, node));
-    const { body } = addNode(ship, name, node);
+    const thread = addNode(ship, name, node);
+    const promise = airlock.thread(thread);
+    const { body } = clone(thread);
     markPending(body['add-nodes'].nodes);
     body['add-nodes'].resource.ship = body['add-nodes'].resource.ship.slice(1);
     GraphReducer({
