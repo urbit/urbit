@@ -84,6 +84,7 @@
   ++  unmake
     |=  [u=@lms]  ^-  (list (list @rs))
     ~_  leaf+"lace-fail"
+    ::%-  flop
     =+  [m n]=[&1 &2]:(shape u)
     =/  size  (mul m n)
     =/  i  0  :: index over rows
@@ -93,6 +94,7 @@
       ?:  =(i m)  `(list (list @rs))`b
       =/  c  `(list @rs)`(scag n (slag (mul i n) a))
     $(i +(i), b `(list (list @rs))`(weld b ~[c]))
+    ::$(i +(i), b `(list (list @rs))`(weld ~[c] b))
   ::
   ::    Pretty-print the contents of the matrix.  XX deal with rows better
   ++  pprint
@@ -175,7 +177,7 @@
   ::
   ::    Swap the value of two rows
   ++  swapr
-    ~/  %swapc
+    ~/  %swapr
     |=  [u=@lms i=@ud j=@ud]  ^-  @lms
     ~_  leaf+"lace-fail"
     =/  v  (getr u j)
