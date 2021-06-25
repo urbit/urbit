@@ -74,27 +74,25 @@
     ^-  (quip card _state)
     ?-  -.comm
         %set-credentials
-      :-  :~  do-ping:hc
-              (start-ping-timer:hc ~s30)
-          ==
-      %_  state
-          host-info
-        [api-url.comm connected=%.n network.comm block=0 clients=*(set ship)]
+      :_  state(host-info [api-url.comm %.n network.comm 0 *(set ship)])
+      :~  do-ping:hc
+          (start-ping-timer:hc ~s30)
       ==
       ::
         %add-whitelist
+      :-  ~
       ?-  -.wt.comm
           %public
-        `state(public.whitelist %.y)
+        state(public.whitelist %.y)
       ::
           %kids
-        `state(kids.whitelist %.y)
+        state(kids.whitelist %.y)
       ::
           %users
-        `state(users.whitelist (~(uni in users.whitelist) users.wt.comm))
+        state(users.whitelist (~(uni in users.whitelist) users.wt.comm))
       ::
           %groups
-        `state(groups.whitelist (~(uni in groups.whitelist) groups.wt.comm))
+        state(groups.whitelist (~(uni in groups.whitelist) groups.wt.comm))
       ==
       ::
         %remove-whitelist
@@ -134,10 +132,10 @@
   ++  handle-action
     |=  act=action
     ^-  (quip card _state)
+    :_  state
     ?.  ?|(connected.host-info ?=(%ping -.act))
       ~&  >>>  "Not connected to RPC"
-      [~[(send-update:hc [%| %not-connected 500])] state]
-    :_  state
+      ~[(send-update:hc [%| %not-connected 500])]
     :_  ~
     %+  req-card  act
     ^-  action:rpc-types
@@ -326,8 +324,10 @@
       (~(has in users.whitelist) user)
       in-group
   ==
+  ::
   ++  is-kid
     =(our.bowl (sein:title our.bowl now.bowl user))
+  ::
   ++  in-group
     =/  gs  ~(tap in groups.whitelist)
     |-
@@ -335,7 +335,6 @@
     ?:  (~(is-member groupl bowl) user i.gs)
       %.y
     $(gs t.gs)
-    ::  .^((unit group:g) %gx ;:(weld /=group-store=/groups p /noun))
   --
 ::
 ++  is-client
