@@ -234,7 +234,7 @@
       ~|  "no wallet with xpub"
       =/  wal  (~(got by walts) u.curr-xpub)
       ~|  "wallet not scanned yet"
-      ?>  ?!(scanned.wal)
+      ?>  scanned.wal
       =/  [tb=(unit txbu) chng=(unit sats)]
         %~  with-change  sut:bl
         :*  wal  eny.bowl
@@ -295,7 +295,7 @@
       ~|  "no wallet with xpub"
       =/  wal  (~(got by walts) u.curr-xpub)
       ~|  "wallet not scanned yet"
-      ?>  ?!(scanned.wal)
+      ?>  scanned.wal
       =/  [addr=address =idx w=walt]
         ~(gen-address wad:bl wal %0)
       :_  state(walts (~(put by walts) u.curr-xpub w))
@@ -337,7 +337,7 @@
         ~|  "no wallet with xpub"
         =/  wal=walt  (~(got by walts) xpub)
         ~|  "wallet not scanned yet"
-        ?>  ?!(scanned.wal)
+        ?>  scanned.wal
         =/  [addr=address =idx w=walt]
           ~(gen-address wad:bl wal chyg)
         [addr state(walts (~(put by walts) xpub w))]
@@ -356,9 +356,9 @@
       ::
         %give-pay-address
       ~|  "Can't pay ourselves"
-      ?>  =(src.bowl our.bowl)  
+      ?<  =(src.bowl our.bowl)
       ~|  "Broadcasting a transaction"
-      ?>  is-broadcasting:hc
+      ?<  is-broadcasting:hc
       ?~  curr-xpub  ~|("btc-wallet-hook: no curr-xpub set" !!)
       ?:  (is-dust:hc value.act address.act)
         %-  (slog ~[leaf+"sending dust"])
@@ -384,7 +384,7 @@
         ~|  "no wallet with xpub"
         =/  wal  (~(got by walts) xpub)
         ~|  "wallet not scanned yet"
-        ?>  ?!(scanned.wal)
+        ?>  scanned.wal
         =/  [tb=(unit txbu) chng=(unit sats)]
           %~  with-change  sut:bl
           [wal eny.bowl block.btc-state payee feyb txos]
