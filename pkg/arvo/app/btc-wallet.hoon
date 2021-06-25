@@ -226,7 +226,8 @@
       ?:  is-broadcasting:hc
         %-  (slog ~[leaf+"broadcasting a transaction"])
         [[(give-update:hc %error %tx-being-signed)]~ state]
-      ?~  curr-xpub        ~|("btc-wallet: no curr-xpub set" !!)
+      ?~  curr-xpub
+        ~|("btc-wallet: no curr-xpub set" !!)
       ?:  (is-dust:hc value.comm address.comm)
         %-  (slog ~[leaf+"sending dust"])
         [[(give-update:hc %error %no-dust)]~ state]
@@ -291,7 +292,8 @@
       state(signed-tx.u.txbu.poym `signed)
     ::
         %gen-new-address
-      ?~  curr-xpub  ~|("btc-wallet: no curr-xpub set" !!)
+      ?~  curr-xpub
+        ~|("btc-wallet: no curr-xpub set" !!)
       ~|  "no wallet with xpub"
       =/  wal  (~(got by walts) u.curr-xpub)
       ~|  "wallet not scanned yet"
@@ -312,7 +314,8 @@
         %gen-pay-address
       ~|  "no comets"
       ?<  ?=(%pawn (clan:title src.bowl))
-      ?~  curr-xpub  ~|("btc-wallet: no curr-xpub set" !!)
+      ?~  curr-xpub
+        ~|("btc-wallet: no curr-xpub set" !!)
       |^
       =^  cards  state  reuse-address
       ?^  cards
@@ -322,7 +325,7 @@
       =+  n=(~(gut by num-fam.piym) f 0)
       ?:  (gte n fam-limit.params)
         ~|("More than {<fam-limit.params>} addresses for moons + planet" !!)
-      =.  state  state(num-fam.piym (~(put by num-fam.piym) f +(n)))
+      =.  num-fam.piym  (~(put by num-fam.piym) f +(n))
       =^  a=address  state
         (generate-address u.curr-xpub %0)
       :-  ~[(poke-peer:hc src.bowl [%give-pay-address a value.act])]
@@ -359,7 +362,8 @@
       ?<  =(src.bowl our.bowl)
       ~|  "Broadcasting a transaction"
       ?<  is-broadcasting:hc
-      ?~  curr-xpub  ~|("btc-wallet-hook: no curr-xpub set" !!)
+      ?~  curr-xpub
+        ~|("btc-wallet-hook: no curr-xpub set" !!)
       ?:  (is-dust:hc value.act address.act)
         %-  (slog ~[leaf+"sending dust"])
         [[(give-update:hc %error %no-dust)]~ state]
@@ -409,11 +413,10 @@
       ::
         %expect-payment
       |^
-      =+  pay=(~(get by ps.piym) src.bowl)
       ~|  "%expect-payment: matching payment not in piym"
-      ?~  pay  !!
-      ?>  (piym-matches u.pay)
-      :_  (update-pend-piym txid.act u.pay(pend `txid.act))
+      =/  pay  (~(got by ps.piym) src.bowl)
+      ?>  (piym-matches pay)
+      :_  (update-pend-piym txid.act pay(pend `txid.act))
       ?~  prov  ~
       ~[(poke-provider:hc [%tx-info txid.act])]
       ::
@@ -546,7 +549,7 @@
           (mk-hest ti xpub.u.pay payer.u.pay `our.bowl u.vout note.u.pay)
         =.  state  (del-all-piym txid.ti payer.u.pay)
         :-  [(give-update:hc %new-tx new-hest)]~
-        %=  state
+        %_  state
           history  (~(put by history) txid.ti new-hest)
         ==
         ::
@@ -696,10 +699,10 @@
           block.s       fee.s
           `blockhash.s  `blockfilter.s
         ==
-        ::
+      ::
           %connected
         (on-connected u.prov network.s block.s fee.s ~ ~)
-        ::
+      ::
           %disconnected
         `state(prov `u.prov(connected %.n))
       ==
@@ -963,9 +966,10 @@
       ^-  (quip card _state)
       =/  w=walt  (~(got by walts) xpub)
       =.  scans  (~(del by scans) [xpub %0])
-      =.  scans  (~(del by scans) [xpub %1])
+      =:  scans  (~(del by scans) [xpub %1])
+          walts  (~(put by walts) xpub w(scanned %.y))
+        ==
       %-  (slog ~[leaf+"Scanned xpub {<xpub>}"])
-      =.  state  state(walts (~(put by walts) xpub w(scanned %.y)))
       (set-curr-xpub:hc xpub)
     ::
     ::  +bump-batch
@@ -981,10 +985,9 @@
         `state
       =/  w=walt  (~(got by walts) xpub)
       =/  newb=batch
-        :*  (silt (gulf +(endpoint.b) (add endpoint.b max-gap.w)))
-            (add endpoint.b max-gap.w)
-            %.n
-        ==
+        :+  (silt (gulf +(endpoint.b) (add endpoint.b max-gap.w)))
+          (add endpoint.b max-gap.w)
+        %.n
       (req-scan:hc newb xpub chyg)
     --
   --
@@ -1277,8 +1280,6 @@
   ^-  ?
   ?~  txbu.poym  %.n
   ?=(^ signed-tx.u.txbu.poym)
-::
-::  Scry Helpers
 ::
 ++  scanned-wallets
   ^-  (list xpub:bc)
