@@ -338,6 +338,9 @@
       [%x %clay %base %hash ~]
     =/  versions  (base-hash:version [our now]:bowl)
     ``hash+!>(?~(versions 0v0 (end [0 25] i.versions)))
+  ::
+      [%x %our ~]
+    ``json+!>(s+(scot %p our.bowl))
   ==
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
