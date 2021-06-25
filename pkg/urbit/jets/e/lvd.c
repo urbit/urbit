@@ -117,7 +117,7 @@
     }
 
     c3_d* w_  = (c3_d*)u3a_malloc((n_u+1)*sizeof(float64_t));
-    w_[n_u] = n_u;
+    w_[n_u] = 1;  // dimensionality of vector
     for ( i = 0; i < n_u; i++ ) {
       if ( i == i_u )
       {
@@ -168,7 +168,7 @@
     uint32_t i;
     union trip c, d;
     _set_rounding(r);
-    w_[n_u] = 1;
+    w_[n_u] = 1;  // dimensionality of vector
     for ( i = 0; i < n_u; i++ ) {
       c.c = u3r_chub(i, u);
       d.c = u3r_chub(i, v);
@@ -215,7 +215,7 @@
     uint32_t i;
     union trip c, d;
     _set_rounding(r);
-    w_[n_u] = 1;
+    w_[n_u] = 1;  // dimensionality of vector
     for ( i = 0; i < n_u; i++ ) {
       c.c = u3r_chub(i, u);
       d.c = u3r_chub(i, v);
@@ -262,7 +262,7 @@
     uint32_t i;
     union trip c, d;
     _set_rounding(r);
-    w_[n_u] = 1;
+    w_[n_u] = 1;  // dimensionality of vector
     for ( i = 0; i < n_u; i++ ) {
       c.c = u3r_chub(i, u);
       d.c = u3r_chub(i, v);
@@ -309,7 +309,7 @@
     uint32_t i;
     union trip c, d;
     _set_rounding(r);
-    w_[n_u] = 1;
+    w_[n_u] = 1;  // dimensionality of vector
     for ( i = 0; i < n_u; i++ ) {
       c.c = u3r_chub(i, u);
       d.c = u3r_chub(i, v);
