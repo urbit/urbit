@@ -100,8 +100,8 @@
     c.c = 0x00000000;
     w_[m_*n_+1] = 2;
     w_[m_*n_] = m_;
-    for ( i = 0; i < m_*n_; i++ ) {
-      w_[i] = (c3_w)c.s.v;
+    for ( i = 1; i <= m_*n_; i++ ) {
+      w_[i-1] = (c3_w)c.s.v;
     }
     u3_noun w = u3i_words(m_*n_+2, w_);
     u3a_free(w_);
@@ -143,8 +143,8 @@
     c.c = 0x3F800000;
     w_[m_*n_+1] = 2;
     w_[m_*n_] = m_;
-    for ( i = 0; i < m_*n_; i++ ) {
-      w_[i] = (c3_w)c.s.v;
+    for ( i = 1; i <= m_*n_; i++ ) {
+      w_[i-1] = (c3_w)c.s.v;
     }
     u3_noun w = u3i_words(m_*n_+1, w_);
     u3a_free(w_);
@@ -185,7 +185,7 @@
     d.c = 0x3F800000;
     w_[m_*n_+1] = 2;
     w_[m_*n_] = m_;
-    for ( i = 0; i < m_*n_; i++ ) {
+    for ( i = 0; i < m_*n_; i++ ) { // TODO fix one-indexing
       if ( i % (n_+1) == 0 )
       {
         w_[i] = (c3_w)d.s.v;
@@ -289,7 +289,7 @@
       w_[m_u*n_u+1] = 2;
       w_[m_u*n_u] = m_u;
       c3_w offset = (i_-1)*n_u+(j_-1);
-      for ( ii = 0; ii < m_u*n_u; ii++ ) {
+      for ( ii = 0; ii < m_u*n_u; ii++ ) { //TODO fix one-indexing
         if ( ii == ((m_u*n_u+2)-offset) )
         {
           w_[ii] = u3r_word(0, a);
@@ -633,7 +633,7 @@
 
     uint32_t i;
     u3_noun w = u3qelms_zeros(n_u, m_u);
-    for ( i = 0; i < m_u; i++ )
+    for ( i = 1; i <= m_u; i++ )
     {
       w = u3qelms_setc(w, i, u3qelms_getr(u, i));
     }
@@ -1104,9 +1104,9 @@
     u3_atom w = u3qelms_zeros(m_u, n_v);
     u3_atom t;
     // XXX not strictly speaking the most efficient way but very clean code
-    for ( ii = 0; ii < m_u; ii++ )
+    for ( ii = 1; ii <= m_u; ii++ )
     {
-      for ( jj = 0; jj < n_v; jj++ )
+      for ( jj = 1; jj <= n_v; jj++ )
       {
         t = u3qelvs_inner(u3qelms_getr(u, ii), u3qelms_getc(v, jj), r);
         w = u3qelms_set(w, ii, jj, t);
@@ -1144,7 +1144,7 @@
     i_ = u3r_word(0, i);
 
     u3_atom w = u;
-    for ( ii = 0; ii < i_; ii++ )
+    for ( ii = 1; ii <= i_; ii++ )
     {
       w = u3qelms_mmul(u, w, r);
     }
@@ -1333,6 +1333,7 @@
     {
       for ( jj = 0; jj < n_u; jj++ )
       {
+        // TODO switch offset + one-indexing
         w_[ii*n_w+n_u+jj] = u3r_word(ii*n_u+jj, u);
       }
       for ( jj = 0; jj < n_u; jj++ )
