@@ -607,7 +607,7 @@
       ==
     :_  state
     %+  murn  ~(tap by wex.bowl)
-    |=  [[=wire =ship =term] [acked=? =path]]
+    |=  [[=wire =ship =term] [acked=? =path nonce=@]]
     ^-  (unit card)
     ?.  ?&  ?=([%thread @ *] wire)
             =(tid i.t.wire)
