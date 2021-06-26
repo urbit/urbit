@@ -15,6 +15,7 @@
 #include "all.h"
 #include <softfloat.h>
 #include <stdio.h>
+#include <math.h>
 /*#include <atlas.h>*/
 
 #define SINGNAN 0x7fc00000
@@ -916,7 +917,7 @@
 
     uint32_t ii;
     u3_atom w = u;
-    for ( ii = 0; ii < m_u; ii++ )
+    for ( ii = 1; ii <= m_u; ii++ )
     {
       w = u3qelms_setr(w, ii, u3qelvs_addv(u3qelms_getr(u, ii), u3qelms_getr(v, ii), r));
     }
@@ -962,7 +963,7 @@
 
     uint32_t ii;
     u3_atom w = u;
-    for ( ii = 0; ii < m_u; ii++ )
+    for ( ii = 1; ii <= m_u; ii++ )
     {
       w = u3qelms_setr(w, ii, u3qelvs_subv(u3qelms_getr(u, ii), u3qelms_getr(v, ii), r));
     }
@@ -1008,7 +1009,7 @@
 
     uint32_t ii;
     u3_atom w = u;
-    for ( ii = 0; ii < m_u; ii++ )
+    for ( ii = 1; ii <= m_u; ii++ )
     {
       w = u3qelms_setr(w, ii, u3qelvs_mulv(u3qelms_getr(u, ii), u3qelms_getr(v, ii), r));
     }
@@ -1054,7 +1055,7 @@
 
     uint32_t ii;
     u3_atom w = u;
-    for ( ii = 0; ii < m_u; ii++ )
+    for ( ii = 1; ii <= m_u; ii++ )
     {
       w = u3qelms_setr(w, ii, u3qelvs_divv(u3qelms_getr(u, ii), u3qelms_getr(v, ii), r));
     }
@@ -1391,18 +1392,20 @@
       w_[m_u*n_v-1-ii] = w__[ii];
     }
 
-    union trip el, max_el, t, c, d, e;
+    union trip el, tmp_el, max_el, t, c, d, e;
     uint32_t iii, jjj;
     for ( ii = 0; ii < m_u; ii++ )
     {
       //  Locate maximum value in column for pivot.
-      max_el.c = abs(w_[ii*n_v+ii]);
+      max_el.c = w_[ii*n_v+ii];
+      max_el.b = fabs(max_el.b);
       max_row = ii;
       for ( kk = ii+1; kk < m_u; kk++ )
       {
-        el.c = abs(w_[kk*n_v+ii]);
+        el.c = w_[kk*n_v+ii];
+        el.b = fabs(el.b);
         if ( el.b > max_el.b ) {
-          max_el.c = abs(w_[kk*n_v+ii]);
+          max_el.c = el.c;
           max_row = kk;
         }
       }
