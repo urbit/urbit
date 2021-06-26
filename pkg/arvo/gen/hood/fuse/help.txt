@@ -1,7 +1,7 @@
 Usage:
 
-  |fuse %dest base-beak ~[[/~nel/home= %mate] [/~zod/kids/track %meet]]
-  |fuse %old-desk base-beak ~[[/~nus/test= %only-that]], =overwrite &
+  |fuse %dest base-beak mate//~nel/home= meet//~zod/kids/track
+  |fuse %old-desk base-beak only-that//~nus/test=, =overwrite &
   |fuse %desk-to-cancel-fuse-into %cancel
 
 A %fuse request in clay replaces the contents of %destination-desk
@@ -10,7 +10,7 @@ strategies. This has no dependence on the previous state of %dest
 so any commits/work there will be overwritten.
 
 |fuse extends this concept with the idea of a tracked source. When
-specifying beaks to include in your fuse, specify %trak instead of
+specifying beaks to include in your fuse, specify %track instead of
 a case. This will tell |fuse to retrieve the latest version of the
 source beak AND to rerun the %fuse request whenever that tracked
 source changes. A fuse can have many tracked sources, or none. The

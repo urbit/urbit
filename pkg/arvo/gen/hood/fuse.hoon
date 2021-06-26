@@ -12,7 +12,10 @@
 |%
 +$  fuse-arg
   $:  des=desk
-      res=[?([%cancel ~] [bas=path con=(list [path germ])])]
+      ::  specified as [germ path] instead of [path germ] so
+      ::  users can write mate//=home= instead of [/=home= %mate]
+      ::
+      res=[?([%cancel ~] [bas=path con=(list [germ path])])]
   ==
 ::
 ++  parse-fuse-source
@@ -21,6 +24,7 @@
   ::  This is a slight overload of the label, but
   ::  it provides a nicer interface for the user so
   ::  we'll go with it.
+  ::
   ?:  ?=([%tas *] r.bec)
     ?:  =(p.r.bec %track)
       [p.bec q.bec %trak]
@@ -51,6 +55,6 @@
   (path-to-fuse-source bas.res.arg)
 %+  turn
   con.res.arg
-|=  [pax=path g=germ]
+|=  [g=germ pax=path]
 ^-  [fuse-source germ]
 [(path-to-fuse-source pax) g]
