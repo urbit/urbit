@@ -1360,8 +1360,8 @@
               attributing.agent-routes                ::  guest
               agent-name                              ::  agent
           ==                                          ::
-          :*  wex=outbound.watches.current-agent  ::  outgoing
-              sup=inbound.watches.current-agent  ::  incoming
+          :*  wex=outbound.watches.current-agent      ::  outgoing
+              sup=inbound.watches.current-agent       ::  incoming
           ==                                          ::
           :*  act=change.stats.current-agent          ::  tick
               eny=eny.stats.current-agent             ::  entropy
@@ -1456,64 +1456,79 @@
       =/  other-agent  i.t.t.wire
       =/  =dock  [other-ship other-agent]
       =/  agent-wire  t.t.t.wire
+      =/  nonce=@  0
       |^  ^+  ap-core
-      ::  %poke-ack has no nonce
+          ::  %poke-ack has no nonce; ingest directly
+          ::
+          ?:  ?=(%poke-ack -.sign)
+            ingest-and-check-error
+          ::  if .agent-wire matches, it's an old pre-nonce subscription
+          ::
+          ?:  (~(has by outbound.watches.current-agent) sub-key)
+            run-sign
+          ::  if an app happened to use a null wire, no-op
+          ::
+          ?:  =(~ agent-wire)
+            on-missing
+          ::  pop nonce off .agent-wire and match against stored subscription
+          ::
+          =:  nonce       (slav %ud (head agent-wire))
+              agent-wire  (tail agent-wire)
+            ==
+          =/  got  (~(get by outbound.watches.current-agent) sub-key)
+          ?~  got
+            on-missing
+          ?.  =(nonce.u.got nonce)
+            (on-bad-nonce nonce.u.got)
+          run-sign
       ::
-      ?:  ?=(%poke-ack -.sign)
-        ingest-and-check-error
-      ::  pop nonce off .agent-wire and match against stored subscription
-      ::
-      =^  nonce=@  agent-wire  [(slav %ud (head agent-wire)) (tail agent-wire)]
-      =/  sub-key  [agent-wire dock]
-      =/  wat  (~(get by outbound.watches.current-agent) sub-key)
-      ?~  wat
-        ::  we should be subscribed, but if not, no-op for integrity
+      ++  run-sign
+        ?-    -.sign
+            %poke-ack  !!
+            %fact
+          =^  tan  ap-core  ingest
+          ?~  tan  ap-core
+          =.  ap-core  (ap-kill-down sub-key)
+          (ap-error -.sign leaf/"take %fact failed, closing subscription" u.tan)
         ::
+            %kick
+          =.  outbound.watches.current-agent
+            (~(del by outbound.watches.current-agent) sub-key)
+          ::
+          ingest-and-check-error
+        ::
+            %watch-ack
+          =.  outbound.watches.current-agent
+            ?^  p.sign
+              (~(del by outbound.watches.current-agent) sub-key)
+            ::
+            %+  ~(jab by outbound.watches.current-agent)  sub-key
+            |=  val=[acked=? =path nonce=@]
+            =?  .  acked.val
+              %.(. (slog leaf+"{<agent-name>} 2nd watch-ack on {<val>}" ~))
+            val(acked &)
+          ::
+          ingest-and-check-error
+        ==
+      ++  on-missing
         %.  ap-core
         %-  slog  :~
           leaf+"{<agent-name>}: got {<-.sign>} for nonexistent subscription"
-          leaf+"{<dock>}: {<agent-wire>}"
+          leaf+"{<dock>}: {<[nonce=nonce agent-wire]>}"
           >wire=wire<
         ==
-      ::  make sure wire nonce matches stored nonce
-      ::
-      ?.  =(nonce.u.wat nonce)
+      ++  on-bad-nonce
+        |=  stored-nonce=@
         %.  ap-core
         %-  slog  :~
-          =/  nonces  [expected=nonce.u.wat got=nonce]
+          =/  nonces  [expected=stored-nonce got=nonce]
           =/  ok  |(?=(?(%fact %kick) -.sign) =(~ p.sign))
           leaf+"{<agent-name>}: stale %watch-ack {<nonces>} ok={<ok>}"
         ::
           leaf+"{<dock>}: {<agent-wire>}"
           >wire=wire<
         ==
-      ::
-      ?-    -.sign
-          %fact
-        =^  tan  ap-core  ingest
-        ?~  tan  ap-core
-        =.  ap-core  (ap-kill-down sub-key)
-        (ap-error -.sign leaf/"take %fact failed, closing subscription" u.tan)
-      ::
-          %kick
-        =.  outbound.watches.current-agent
-          (~(del by outbound.watches.current-agent) sub-key)
-        ::
-        ingest-and-check-error
-      ::
-          %watch-ack
-        =.  outbound.watches.current-agent
-          ?^  p.sign
-            (~(del by outbound.watches.current-agent) sub-key)
-          ::
-          %+  ~(jab by outbound.watches.current-agent)  sub-key
-          |=  val=[acked=? =path nonce=@]
-          =?  .  acked.val
-            %.(. (slog leaf+"{<agent-name>} 2nd watch-ack on {<val>}" ~))
-          val(acked &)
-        ::
-        ingest-and-check-error
-      ==
+      ++  sub-key  [agent-wire dock]
       ++  ingest  (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
       ++  ingest-and-check-error
         ^+  ap-core
