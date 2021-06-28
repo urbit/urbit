@@ -11,34 +11,29 @@
   ++  mime  [/text/x-bill (as-octs:mimes:html hoon)]
   ++  noun  bil
   ++  hoon
-    |^  (crip (wrap-chits (turn bil spit-chit)))
+    ^-  @t
+    |^  (crip (of-wall:format (wrap-lines (zing (turn bil spit-chit)))))
     ::
-    ++  wrap-chits
-      =/  res=tape  ":~  "
-      |=  taz=(list tape)
-      ^-  tape
-      ?:  =(~ taz)  "~"
-      |-  ^+  res
-      ?~  taz  (weld res "==\0a")
-      $(taz t.taz, res :(weld res "    " i.taz "\0a"))
+    ++  wrap-lines
+      |=  taz=wall
+      ^-  wall
+      ?~  taz  ["~"]~
+      :-  (weld ":~  " i.taz)
+      %-  snoc  :_  "=="
+      (turn t.taz |=(t=tape (weld "    " t)))
     ::
     ++  spit-chit
       |=  =chit
-      ^-  tape
+      ^-  wall
       ?-  -.chit
-        %apes  (weld (spit-tag %apes) (spit-list duz.chit))
-        %fish  (weld (spit-tag %fish) (spit-list duz.chit))
+        %apes  [":-  %apes" (wrap-lines (spit-duz duz.chit))]
+        %fish  [":-  %fish" (wrap-lines (spit-duz duz.chit))]
       ==
     ::
-    ++  spit-tag  |=(tag=term ":-  {<tag>}\0a")
-    ++  spit-list
-      =/  res=tape  ":~  "
+    ++  spit-duz
       |=  duz=(list dude:gall)
-      ^-  tape
-      ?:  =(~ duz)  "~"
-      |-  ^+  res
-      ?~  duz  (weld res "==\0a")
-      $(duz t.duz, res :(weld res "    " (trip i.duz) "\0a"))
+      ^-  wall
+      (turn duz |=(=dude:gall "%{<dude>}"))
     --
   ++  txt   (to-wain:format hoon)
   --
