@@ -19,9 +19,10 @@
     ==
 ::
 +$  state-0  [%0 =host-info =whitelist]
++$  state-1  [%1 =host-info =whitelist timer=@da]
 --
 %-  agent:dbug
-=|  state-0
+=|  state-1
 =*  state  -
 ^-  agent:gall
 =<
@@ -36,9 +37,9 @@
   =|  wl=^whitelist
   :-  ~
   %_  this
-      host-info
-    ['' connected=%.n %main block=0 clients=*(set ship)]
+      host-info  ['' connected=%.n %main block=0 clients=*(set ship)]
       whitelist  wl(public %.n, kids %.n)
+      timer      *@da
   ==
 ::
 ++  on-save
@@ -48,6 +49,16 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
+  =/  old  !<(versioned-state old-state)
+  ?-  -.old
+      %1
+    [~ this(state old)]
+  ::
+      %0
+    :_  this(state [%1 host-info.old whitelist.old *@da])
+    ?:  =('' api-url.host-info.old)  ~
+    ~[(start-ping-timer:hc ~s0)]
+  ==
   `this(state !<(versioned-state old-state))
 ::
 ++  on-poke
@@ -72,8 +83,10 @@
     ^-  (quip card _state)
     ?-  -.comm
         %set-credentials
-      :-  ~[(start-ping-timer:hc ~s0)]
-      state(host-info [api-url.comm %.n network.comm 0 *(set ship)])
+      :_  state(host-info [api-url.comm %.n network.comm 0 *(set ship)])
+      :~  (start-ping-timer:hc ~s0)
+          [%pass /ping %arvo %b %rest timer]
+      ==
       ::
         %add-whitelist
       :-  ~
@@ -187,7 +200,9 @@
   ::  check for connectivity every 30 seconds
   ::
   ?:  ?=([%ping-timer *] wir)
-    :_  this
+    `this
+  ?:  ?=([%ping *] wir)
+    :_  this(timer (add now.bowl ~s30))
     :~  do-ping
         (start-ping-timer:hc ~s30)
     ==
@@ -348,5 +363,5 @@
 ++  start-ping-timer
   |=  interval=@dr
   ^-  card
-  [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
+  [%pass /ping %arvo %b %wait (add now.bowl interval)]
 --
