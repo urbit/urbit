@@ -71,7 +71,7 @@ export function LinkResource(props: LinkResourceProps) {
         return acc;
       }, [] as Track[]);
 
-      queueTracks(tracks);
+      queueTracks(tracks, association.resource);
     })();
     return () => {
       const { playing, clearQueue } = useAudioState.getState();

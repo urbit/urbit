@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import create from 'zustand';
+import shallow from 'zustand/shallow';
 
 export interface Track {
   title: string;
@@ -21,11 +22,12 @@ export interface AudioState {
   playing: boolean;
   //  queueing
   queue: Track[];
-  queueTracks: (ts: Track[]) => void;
+  queueTracks: (ts: Track[], from: string) => void;
   clearQueue: () => void;
   cursor?: number;
   updateCursor: (cur: number) => void;
   changeTrack: (t: Track) => void;
+  playingFrom?: string;
   //  playback
   domNode?: HTMLAudioElement;
   initDom: (url: string) => HTMLAudioElement;
@@ -38,6 +40,7 @@ const useAudioState = create<AudioState>((set, get) => ({
   playing: false,
   domNode: undefined,
   cursor: undefined,
+  playingFrom: undefined,
   play: () => {
     const { initDom, playing, domNode, cursor, queue } = get();
     if (playing) {
@@ -66,9 +69,9 @@ const useAudioState = create<AudioState>((set, get) => ({
     }
   },
   queue: [] as Track[],
-  queueTracks: (ts) => {
+  queueTracks: (ts, resource) => {
     const { queue } = get();
-    set({ queue: [...queue, ...ts] });
+    set({ queue: [...queue, ...ts], playingFrom: resource });
   },
   updateCursor: (cur: number) => {
     const { queue, initDom, domNode } = get();
@@ -92,7 +95,7 @@ const useAudioState = create<AudioState>((set, get) => ({
     updateCursor((cursor ?? -1) + 1);
   },
   clearQueue: () => {
-    set({ queue: [], cursor: undefined });
+    set({ queue: [], cursor: undefined, playingFrom: undefined });
   },
   next: () => {
     const { cursor, updateCursor } = get();
@@ -136,18 +139,19 @@ const useAudioState = create<AudioState>((set, get) => ({
   }
 }));
 
-const selQueueAndCursor = (s: AudioState) => [s.cursor, s.queue] as const;
+const selQueueAndCursor = (s: AudioState) => [s.cursor, s.queue, s.playingFrom] as const;
 
 export function useFutureQueue() {
-  const [cursor, queue] = useAudioState(selQueueAndCursor);
+  const [cursor, queue, playingFrom] = useAudioState(selQueueAndCursor, shallow);
 
-  return useMemo(() => queue.slice((cursor ?? 0) + 1), [cursor, queue]);
+  return useMemo(
+    () => [queue.slice((cursor ?? 0) + 1), playingFrom] as const,
+    [cursor, queue]
+  );
 }
 
 export function useCurrentTrack() {
-  const [cursor, queue] = useAudioState(selQueueAndCursor);
-  console.log(cursor);
-  console.log(queue[cursor]?.url?.length);
+  const [cursor, queue] = useAudioState(selQueueAndCursor, shallow);
   return useMemo(() => queue[cursor], [queue, cursor]);
 }
 const selTransport = (s: AudioState) =>

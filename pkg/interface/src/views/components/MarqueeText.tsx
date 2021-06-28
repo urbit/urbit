@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Box, Text } from '@tlon/indigo-react';
+import { Box, Text, Row } from '@tlon/indigo-react';
 import { PropFunc } from '~/types';
 
 const MarqueeBox = styled(Box)<{ length: number; enable: boolean; }>`
@@ -30,9 +30,9 @@ const MarqueeBox = styled(Box)<{ length: number; enable: boolean; }>`
 `;
 
   export const MarqueeText = (props: PropFunc<typeof Text> & { children: string; }) => (
-  <Box height="100%" width="100%" position="relative" overflow="hidden">
+  <Row justifyContent="center" height="100%" width="100%" position="relative" overflow="hidden">
     <MarqueeBox enable={props.children.length > 60} length={props.children.length}>
       <Text whiteSpace="pre" {...props} />
     </MarqueeBox>
-  </Box>
+  </Row>
 );

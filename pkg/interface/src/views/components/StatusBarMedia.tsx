@@ -19,6 +19,7 @@ import { Dropdown } from './Dropdown';
 import { TruncatedText } from './TruncatedText';
 import { MarqueeText } from './MarqueeText';
 import { PropFunc } from '~/types';
+import { useAssocForGraph } from '~/logic/state/metadata';
 
 export const Backdrop = (
   props: React.PropsWithChildren<PropFunc<typeof Box>>
@@ -45,12 +46,14 @@ function QueuedTrack(props: { track: Track; first?: boolean }) {
 }
 
 function StatusBarMediaDropdown() {
-  const queue = useFutureQueue();
+  const [queue, resource] = useFutureQueue();
+  const association = useAssocForGraph(resource);
+  const title = association?.metadata?.title ?? resource;
 
   return (
     <Col gapY="2">
       <Row p="1">
-        <Text fontWeight="medium">Next Up</Text>
+        <Text fontWeight="medium">Next up from {title}</Text>
       </Row>
       <Col p="1">
         {queue.map((t, i) => (
@@ -125,7 +128,7 @@ function StatusBarMediaTransport(
             icon="ArrowEast"
           />
         </Row>
-        <Row width="300px" height="32px" flexGrow={1}>
+        <Row justifyContent="center" width="280px" height="32px" flexGrow={1}>
           <MarqueeText>{title ?? 'Unknown track'}</MarqueeText>
         </Row>
       </Row>

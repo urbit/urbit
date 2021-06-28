@@ -6,6 +6,7 @@ import useAudioState, {
   useFormattedSeek,
   useTransport
 } from '~/logic/state/audio';
+import { TruncatedText } from './TruncatedText';
 
 const selChange = (s: AudioState) => s.changeTrack;
 
@@ -35,8 +36,8 @@ export function AudioPlayer(props: { url: string; title?: string }) {
       width="100%"
       position="relative"
     >
-      <Row p="2" position="absolute" left="0" top="0">
-        <Text lineHeight="tall">{title}</Text>
+      <Row width="100%" p="2" position="absolute" left="0" top="0">
+        <TruncatedText lineHeight="tall">{title}</TruncatedText>
       </Row>
       <Action backgroundColor="white" height="unset" onClick={playPause}>
         <Icon

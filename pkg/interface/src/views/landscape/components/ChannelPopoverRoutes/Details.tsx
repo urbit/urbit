@@ -30,6 +30,7 @@ export function ChannelDetails(props: ChannelDetailsProps) {
     description: metadata?.description || '',
     color: metadata?.color || '0x0'
   };
+  console.log(association);
 
   const onSubmit = async (values: FormSchema, actions) => {
     const { title, description } = values;
