@@ -2,13 +2,13 @@
 ::  top-level Bitcoin constants
 ::  expose BIP libraries
 ::
-/-  sur=bitcoin
+/-  *bitcoin
 /+  bech32=bip-b173, pbt=bip-b174, bcu=bitcoin-utils, bip-b158
-=,  sur
-=,  bcu
+~%  %bitcoin-lib  ..part  ~
 |%
 ++  overhead-weight  ^-(vbytes 11)
 ++  input-weight
+  ~/  %input-weight
   |=  =bipt
   ^-  vbytes
   ?-  bipt
@@ -40,8 +40,10 @@
 ::  adr: address manipulation
 ::
 ++  adr
+  ~%  %adr  ..overhead-weight  ~
   |%
   ++  get-bipt
+    ~/  %get-bipt
     |=  a=address
     ^-  bipt
     =/  spk=hexb  (to-script-pubkey:adr a)
@@ -52,35 +54,37 @@
     ~|("Invalid address" !!)
   ::
   ++  to-cord
+    ~/  %to-cord
     |=  a=address  ^-  cord
     ?:  ?=([%base58 *] a)
       (scot %uc +.a)
     +.a
   ::
   ++  from-pubkey
+    ~/  %from-pubkey
     |=  [=bipt =network pubkey=hexb]
     ^-  address
     ?-  bipt
         %44
       :-  %base58
       =<  ^-(@uc dat)
-      %-  cat:byt
+      %-  cat:byt:bcu
       :-  ?-  network
               %main     1^0x0
               %testnet  1^0x6f
           ==
-      ~[(hash-160 pubkey)]
+      ~[(hash-160:bcu pubkey)]
       ::
         %49
       :-  %base58
       =<  ^-(@uc dat)
-      %-  cat:byt
+      %-  cat:byt:bcu
       :~  ?-  network
             %main     1^0x5
             %testnet  1^0xc4
           ==
-          %-  hash-160
-          (cat:byt ~[2^0x14 (hash-160 pubkey)])
+          %-  hash-160:bcu
+          (cat:byt:bcu ~[2^0x14 (hash-160:bcu pubkey)])
       ==
       ::
         %84
@@ -89,6 +93,7 @@
     ==
   ::
   ++  from-cord
+    ~/  %from-cord
     |=  addrc=@t
     |^
     =/  addrt=tape  (trip addrc)
@@ -117,12 +122,13 @@
     --
   ::
   ++  to-script-pubkey
+    ~/  %to-script-pubkey
     |=  =address
     ^-  hexb
     ?-  -.address
         %bech32
       =+  h=(from-address:bech32 +.address)
-      %-  cat:byt
+      %-  cat:byt:bcu
       :~  1^0x0
           1^wid.h
           h
@@ -130,21 +136,21 @@
       ::
         %base58
       =/  h=hexb  [21 `@ux`+.address]
-      =+  lead-byt=dat:(take:byt 1 h)
+      =+  lead-byt=dat:(take:byt:bcu 1 h)
       =/  version-network=[bipt network]
         ?:  =(0x0 lead-byt)   [%44 %main]
         ?:  =(0x6f lead-byt)  [%44 %testnet]
         ?:  =(0x5 lead-byt)   [%49 %main]
         ?:  =(0xc4 lead-byt)  [%49 %testnet]
         ~|("Invalid base58 address: {<+.address>}" !!)
-      %-  cat:byt
+      %-  cat:byt:bcu
       ?:  ?=(%44 -.version-network)
         :~  3^0x76.a914
-            (drop:byt 1 h)
+            (drop:byt:bcu 1 h)
             2^0x88ac
         ==
       :~  2^0xa914
-          (drop:byt 1 h)
+          (drop:byt:bcu 1 h)
           1^0x87
       ==
     ==
@@ -155,6 +161,8 @@
 ::   - ignores signatures in inputs
 ::
 ++  txu
+  ~%  %bitcoin-lib-txu  ..overhead-weight  ~
+  =,  bcu
   |%
   ++  en
     |%
