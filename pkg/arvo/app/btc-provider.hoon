@@ -33,7 +33,6 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  '%btc-provider initialized successfully'
   =|  wl=^whitelist
   :-  ~
   %_  this
@@ -49,7 +48,6 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ~&  >  '%btc-provider recompiled successfully '
   `this(state !<(versioned-state old-state))
 ::
 ++  on-poke
@@ -132,7 +130,6 @@
     ^-  (quip card _state)
     :_  state
     ?.  ?|(connected.host-info ?=(%ping -.act))
-      ~&  >>>  "Not connected to RPC"
       ~[(send-update:hc [%| %not-connected 500])]
     :_  ~
     %+  req-card  act
@@ -303,7 +300,8 @@
 ~%  %btc-provider-helper  ..card  ~
 |_  =bowl:gall
 ++  send-status
-  |=  =status  ^-  card
+  |=  =status
+  ^-  card
   %-  ?:  ?=(%new-block -.status)
         ~&(>> "%new-block: {<block.status>}" same)
       same
