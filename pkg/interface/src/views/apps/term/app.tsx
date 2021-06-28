@@ -393,8 +393,6 @@ export default function TermApp(props: TermAppProps) {
 
       //  open subscription
       //
-      // TODO  start default session alongside other landscape subscriptions,
-      //      once subscription refactor is in.
       api.subscribe({ app: 'herm', path: '/session/'+selected,
         event: (e) => {
           const ses = useTermState.getState().sessions[selected];
@@ -402,7 +400,7 @@ export default function TermApp(props: TermAppProps) {
             console.log('on blit: no such session', selected, sessions, useTermState.getState().sessions);
             return;
           }
-          showBlit(ses.term, e.data);
+          showBlit(ses.term, e);
         },
         quit: () => {  //  quit
           // TODO  show user a message

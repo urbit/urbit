@@ -57,7 +57,4 @@ export type Task =
   | { hail: null }
   | { hook: null }
 
-export type SessionTask = {
-  session: string,
-  task: Task
-}
+export type SessionTask = { session: string } & Task
