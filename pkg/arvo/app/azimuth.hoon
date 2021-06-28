@@ -345,6 +345,7 @@
   ?+  path  (on-peek:def path)
       [%x %logs ~]      ``logs+!>(logs.state)
       [%x %nas ~]       ``nas+!>(nas.state)
+      [%x %dns ~]       ``nas+!>(dns.nas.state)
       [%x %points @ ~]
     =*  wat  i.t.t.path
     :+  ~  ~

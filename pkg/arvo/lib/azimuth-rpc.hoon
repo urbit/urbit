@@ -397,6 +397,13 @@
     ~(parse error:json-rpc id)
   [%result id (points:to-json (scry u.address))]
 ::
+++  get-dns
+  |=  [id=@t params=(map @t json) dns=(list @t)]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 0)
+    ~(params error:json-rpc id)
+  [%result id a+(turn dns (cork same (lead %s)))]
+::
 ++  transfer-point
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]

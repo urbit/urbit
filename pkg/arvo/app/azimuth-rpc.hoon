@@ -128,6 +128,7 @@
   ?+  method  [~ ~(method error:json-rpc id)]
     %get-point             [~ (get-point id +.params point:scry)]
     %get-points            [~ (get-points id +.params points:scry)]
+    %get-dns               [~ (get-dns id +.params dns:scry)]
     %transfer-point        (transfer-point id +.params)
     %cancel-tx             (cancel-tx id +.params)
     %get-spawned           [~ (get-spawned id +.params spawned:scry)]
@@ -227,6 +228,13 @@
         %+  ~(scry agentio bowl)
           %aggregator
         /nonce/(scot %p ship)/[proxy]/noun
+    ==
+  ++  dns
+    .^  (list @t)
+        %gx
+        %+  ~(scry agentio bowl)
+          %azimuth
+        /dns/noun
     ==
   --
 --
