@@ -163,7 +163,7 @@
     |=  =address:naive
     .^  (list [ship point:naive])
         %gx
-        (~(scry agentio bowl) %aggregator /points/(scot %ux address)/noun)
+        (~(scry agentio bowl) %azimuth /points/(scot %ux address)/noun)
     ==
   ::
   ++  spawned

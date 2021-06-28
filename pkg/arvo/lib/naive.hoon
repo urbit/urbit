@@ -176,12 +176,10 @@
 +$  state
   $:  =points
       =operators
-      =owners
       dns=(list @t)
   ==
 +$  points     (tree [ship point])
 +$  operators  (jug address address)
-+$  owners     (jug address [ship point])
 +$  effects    (list diff)
 +$  proxy      ?(%own %spawn %manage %vote %transfer)
 +$  roll       (list raw-tx)
@@ -468,35 +466,6 @@
       ==
     ==
   ==
-::
-++  is-ownership-log
-  |=  log=@ux
-  ^-  ?
-  =,  log-names
-  ?|  =(log owner-changed)
-      =(log changed-transfer-proxy)
-      =(log changed-management-proxy)
-      =(log changed-voting-proxy)
-      =(log changed-spawn-proxy)
-  ==
-::
-++  address-from-log
-  |=  [log=@ux point]
-  ^-  (unit address)
-  =,  log-names
-  ?:  =(log owner-changed)
-    `address.owner.own
-  ?:  =(log changed-transfer-proxy)
-    `address.transfer-proxy.own
-  ?:  =(log changed-management-proxy)
-    `address.management-proxy.own
-  ?:  =(log changed-voting-proxy)
-    `address.voting-proxy.own
-  ?.  =(log changed-spawn-proxy)
-    ::  TODO: better way to handle this?
-    ::
-    ~>(%slog.[0 %unknown-log] ~)
-  `address.spawn-proxy.own
 --  =>
 |%
 :: Receive log from L1 transaction
@@ -539,19 +508,8 @@
   =/  the-point  (get-point state ship)
   ?>  ?=(^ the-point)
   =*  point  u.the-point
-  =;  [=effects new-point=^point]
-    =?  owners.state  (is-ownership-log log-name)
-      ?>  ?=([@ ~] t.t.topics.log)
-      =*  to  i.t.t.topics.log
-      ?~  address=(address-from-log log-name new-point)
-        owners.state
-      ?:  =(deposit-address to)
-        (~(put ju owners.state) u.address [ship new-point])
-      ::  remove point from previous owner and add it to new one
-      ::
-      %.  [to ship new-point]
-      ~(put ju (~(del ju owners.state) u.address [ship point]))
-    [effects state(points (put:orm points.state ship new-point))]
+  =-  [effects state(points (put:orm points.state ship new-point))]
+  ^-  [=effects new-point=^point]
   ::
   ?:  =(log-name changed-spawn-proxy:log-names)
     ?>  ?=(%l1 -.point)
@@ -738,9 +696,7 @@
     =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
     ?~  res
       ~
-    :-  ~
-    :-  effects.u.res
-    state(points (put:orm points.state ship new-point.u.res))
+    `[effects.u.res state(points (put:orm points.state ship new-point.u.res))]
   ::
   ++  process-transfer-point
     |=  [=point to=address reset=?]
@@ -749,7 +705,6 @@
     ::
     ?.  |(=(%own proxy.from.tx) =(%transfer proxy.from.tx))
       (debug %bad-permission ~)
-    =/  previous-owner  address.owner.own.point
     ::  Execute transfer
     ::
     =/  effects-1
@@ -757,17 +712,10 @@
     =:  address.owner.own.point           to
         address.transfer-proxy.own.point  *address
       ==
-    =;  [=effects new-point=^point]
-      =.  owners.state
-        ::  remove point from previous owner and add it to new one
-        ::
-        %.  [to ship new-point]
-        ~(put ju (~(del ju owners.state) previous-owner [ship point]))
-      `[effects point]
     ::  Execute reset if requested
     ::
     ?.  reset
-      [effects-1 point]
+      `[effects-1 point]
     ::
     =^  effects-2  net.point
       ?:  =([0 0 0] +.keys.net.point)
@@ -791,7 +739,7 @@
         address.voting-proxy.own.point      *address
         address.transfer-proxy.own.point    *address
       ==
-    [:(welp effects-1 effects-2 effects-3 effects-4) point]
+    `[:(welp effects-1 effects-2 effects-3 effects-4) point]
   ::
   ++  process-spawn
     |=  [=ship to=address]
@@ -818,7 +766,7 @@
     ?.  =(+((ship-rank parent)) (ship-rank ship))  (debug %bad-rank ~)
     ::  TODO check spawnlimit
     ::
-    =^  [=effects new-point=point]  owners.state
+    =/  [=effects new-point=point]
       =/  point=(unit point)  (get-point state ship)
       ?>  ?=(^ point)  ::  only parsed 4 bytes
       ::  If spawning to self, just do it
@@ -830,30 +778,19 @@
                   =(to address.spawn-proxy.own.u.parent-point)
               ==
           ==
-        =+  new-point=u.point(address.owner.own to)
         ::  TODO: use get-point or duplicate sponsor logic
         ::
-        :_  (~(put ju owners.state) to [ship new-point])
-        :_  new-point
-        ~[[%point ship %dominion %l2] [%point ship %owner to]]
+        :-  ~[[%point ship %dominion %l2] [%point ship %owner to]]
+        u.point(address.owner.own to)
       ::  Else spawn to parent and set transfer proxy
       ::
-      =*  parent-address  address.owner.own.u.parent-point
-      =/  new-point
-        %=  u.point
-          address.owner.own           parent-address
-          address.transfer-proxy.own  to
-        ==
-      ::  TODO: use put instead so gas is not in /lib/std?
-      ::
-      :_  %-  ~(gas ju owners.state)
-          :~  [to [ship new-point]]
-              [parent-address [ship new-point]]
+      :-  :~  [%point ship %dominion %l2]
+              [%point ship %owner address.owner.own.u.parent-point]
+              [%point ship %transfer-proxy to]
           ==
-      :_  new-point
-      :~  [%point ship %dominion %l2]
-          [%point ship %owner parent-address]
-          [%point ship %transfer-proxy to]
+      %=  u.point
+        address.owner.own           address.owner.own.u.parent-point
+        address.transfer-proxy.own  to
       ==
     `[effects state(points (put:orm points.state ship new-point))]
   ::
@@ -935,42 +872,24 @@
     |=  [=point =address]
     ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
       (debug %bad-permission ~)
-    =*  ship  ship.from.tx
-    =/  previous  address.management-proxy.own.point
-    =;  [=effects new-point=^point]
-      =.  owners.state
-        %.  [address ship new-point]
-        ~(put ju (~(del ju owners.state) previous [ship point]))
-      `[effects new-point]
-    :-  [%point ship.from.tx %management-proxy address]~
+    ::
+    :+  ~  [%point ship.from.tx %management-proxy address]~
     point(address.management-proxy.own address)
   ::
   ++  process-set-spawn-proxy
     |=  [=point =address]
     ?.  |(=(%own proxy.from.tx) =(%spawn proxy.from.tx))
       (debug %bad-permission ~)
-    =*  ship  ship.from.tx
-    =/  previous  address.spawn-proxy.own.point
-    =;  [=effects new-point=^point]
-      =.  owners.state
-        %.  [address ship new-point]
-        ~(put ju (~(del ju owners.state) previous [ship point]))
-      `[effects new-point]
-    :-  [%point ship.from.tx %spawn-proxy address]~
+    ::
+    :+  ~  [%point ship.from.tx %spawn-proxy address]~
     point(address.spawn-proxy.own address)
   ::
   ++  process-set-transfer-proxy
     |=  [=point =address]
     ?.  |(=(%own proxy.from.tx) =(%transfer proxy.from.tx))
       (debug %bad-permission ~)
-    =*  ship  ship.from.tx
-    =/  previous  address.transfer-proxy.own.point
-    =;  [=effects new-point=^point]
-      =.  owners.state
-        %.  [address ship new-point]
-        ~(put ju (~(del ju owners.state) previous [ship point]))
-      `[effects new-point]
-    :-  [%point ship.from.tx %transfer-proxy address]~
+    ::
+    :+  ~  [%point ship.from.tx %transfer-proxy address]~
     point(address.transfer-proxy.own address)
   --
 --
