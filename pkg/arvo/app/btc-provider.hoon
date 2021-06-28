@@ -72,8 +72,8 @@
     ^-  (quip card _state)
     ?-  -.comm
         %set-credentials
-      :_  state(host-info [api-url.comm %.n network.comm 0 *(set ship)])
-      ~[(start-ping-timer:hc ~s30)]
+      :-  ~[(start-ping-timer:hc ~s0)]
+      state(host-info [api-url.comm %.n network.comm 0 *(set ship)])
       ::
         %add-whitelist
       :-  ~
