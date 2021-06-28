@@ -46,8 +46,8 @@ export function LinkBlocks(props: LinkBlocksProps) {
   );
 
   useEffect(() => {
-    const { unreads } = useHarkState
-      .getState().unreads.graph?.[association.resource]?.['/'];
+    const unreads = useHarkState.getState()
+      .unreads.graph?.[association.resource]?.['/']?.unreads || new Set<string>();
     Array.from((unreads as Set<string>)).forEach((u) => {
       airlock.poke(markEachAsRead(association.resource, '/', u));
     });
