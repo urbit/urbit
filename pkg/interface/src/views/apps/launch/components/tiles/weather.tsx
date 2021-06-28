@@ -202,19 +202,20 @@ class WeatherTile extends React.Component<WeatherTileProps, WeatherTileState> {
     const d = data['weather'][0];
     const bg = this.colorFromCondition(data);
 
-    const sunset = moment(moment().format('YYYY-MM-DD') + ' '  + d.astronomy[0].sunset, 'YYYY-MM-DD hh:mm A');
-    const sunsetDiff = sunset.diff(moment(), 'hours');
+    const sunset = moment(moment().hours(1).format('YYYY-MM-DD') + ' '  + d.astronomy[0].sunset, 'YYYY-MM-DD hh:mm A');
+    let sunsetDiff = sunset.diff(moment(), 'hours');
 
-    const sunrise = moment(moment().format('YYYY-MM-DD') + ' '  + d.astronomy[0].sunrise, 'YYYY-MM-DD hh:mm A');
+    const sunrise = moment(moment().hours(1).format('YYYY-MM-DD') + ' '  + d.astronomy[0].sunrise, 'YYYY-MM-DD hh:mm A');
     let sunriseDiff = sunrise.diff(moment(), 'hours');
 
-    if (sunriseDiff > 24) {
-      sunriseDiff = sunriseDiff - 24;
-    } else if (sunriseDiff < 0) {
+    if (sunsetDiff < 0) {
+      sunsetDiff = sunsetDiff + 24;
+    }
+    if (sunriseDiff < 0) {
       sunriseDiff = sunriseDiff + 24;
     }
 
-    const nextSolarEvent = sunsetDiff > 0
+    const nextSolarEvent = sunsetDiff < sunriseDiff
       ? `Sun sets in ${sunsetDiff}h`
       : `Sun rises in ${sunriseDiff}h`;
 
