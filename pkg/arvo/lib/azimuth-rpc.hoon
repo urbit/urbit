@@ -20,6 +20,14 @@
           %set-transfer-proxy
       ==
     ::
+    ++  parse-ship
+      |=  jon=json
+      ^-  (unit @p)
+      ?:  ?=([%n *] jon)
+        `(rash p.jon dem)
+      ?.  ?=([%s *] jon)  ~
+      `(rash p.jon ;~(pfix sig fed:ag))
+    ::
     ++  from-json
       =,  dejs-soft:format
       |%
@@ -59,7 +67,7 @@
             (some [ship.u.ans u.add.u.ans])
           %.  u.data
           %-  ot
-          :~  ['ship' (su ;~(pfix ^sig fed:ag))]
+          :~  ['ship' parse-ship]
               ['address' (cu to-hex so)]
           ==
         ::
@@ -77,15 +85,14 @@
           ^-  (unit @p)
           ?~  data=(~(get by params) 'data')  ~
           %.  u.data
-          (ot ['ship' (su ;~(pfix ^sig fed:ag))]~)
+          (ot ['ship' parse-ship]~)
         --
       ::
       ++  ship
         |=  params=(map @t json)
         ^-  (unit @p)
         ?~  data=(~(get by params) 'ship')  ~
-        %.  u.data
-        (su ;~(pfix ^sig fed:ag))
+        (parse-ship u.data)
       ::
       ++  address
         |=  params=(map @t json)
@@ -107,7 +114,7 @@
         ?~  from=(~(get by params) 'from')  ~
         %.  u.from
         %-  ot
-        :~  ['ship' (su ;~(pfix ^sig fed:ag))]
+        :~  ['ship' parse-ship]
             ['proxy' (cu proxy:naive so)]
         ==
       ::
@@ -374,7 +381,7 @@
     ~(params error:json-rpc id)
   ?~  ship=(~(get by params) 'ship')
     ~(params error:json-rpc id)
-  ?~  ship=(rush (so:dejs:format u.ship) ;~(pfix sig fed:ag))
+  ?~  ship=(parse-ship u.ship)
     ~(params error:json-rpc id)
   ?~  point=(scry u.ship)
     ~(not-found error:json-rpc id)
@@ -425,7 +432,7 @@
     ~(params error:json-rpc id)
   ?~  ship=(~(get by params) 'ship')
     ~(params error:json-rpc id)
-  ?~  ship=(rush (so:dejs:format u.ship) ;~(pfix sig fed:ag))
+  ?~  ship=(parse-ship u.ship)
     ~(params error:json-rpc id)
   [%result id (spawned:to-json (scry u.ship))]
 ::
