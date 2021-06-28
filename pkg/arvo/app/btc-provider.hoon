@@ -16,12 +16,14 @@
 +$  card  card:agent:gall
 +$  versioned-state
     $%  state-0
+        state-1
     ==
 ::
 +$  state-0  [%0 =host-info =whitelist]
++$  state-1  [%1 =host-info =whitelist timer=(unit @da)]
 --
 %-  agent:dbug
-=|  state-0
+=|  state-1
 =*  state  -
 ^-  agent:gall
 =<
@@ -36,9 +38,9 @@
   =|  wl=^whitelist
   :-  ~
   %_  this
-      host-info
-    ['' connected=%.n %main block=0 clients=*(set ship)]
+      host-info  ['' connected=%.n %main block=0 clients=*(set ship)]
       whitelist  wl(public %.n, kids %.n)
+      timer      ~
   ==
 ::
 ++  on-save
@@ -48,7 +50,16 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  `this(state !<(versioned-state old-state))
+  =/  old  !<(versioned-state old-state)
+  ?-  -.old
+      %1
+    [~ this(state old)]
+  ::
+      %0
+    :_  this(state [%1 host-info.old whitelist.old ~])
+    ?:  =('' api-url.host-info.old)  ~
+    ~[(start-ping-timer:hc ~s0)]
+  ==
 ::
 ++  on-poke
   ~/  %on-poke
@@ -64,6 +75,14 @@
     ::
         %btc-provider-action
       (handle-action !<(action vase))
+    ::
+        %noun
+      ?.  =(q.vase %kick-timer)  `state
+      :_  state(timer `now.bowl)
+      :*  (start-ping-timer ~s0)
+          ?~  timer  ~
+          [[%pass /ping-time %arvo %b %rest u.timer] ~]
+      ==
     ==
   [cards this]
   ::
@@ -72,8 +91,14 @@
     ^-  (quip card _state)
     ?-  -.comm
         %set-credentials
-      :-  ~[(start-ping-timer:hc ~s0)]
-      state(host-info [api-url.comm %.n network.comm 0 *(set ship)])
+      :_  %_  state
+              host-info  [api-url.comm %.n network.comm 0 *(set ship)]
+              timer      `now.bowl
+          ==
+      :*  (start-ping-timer:hc ~s0)
+          ?~  timer  ~
+          [[%pass /ping-time %arvo %b %rest u.timer] ~]
+      ==
       ::
         %add-whitelist
       :-  ~
@@ -187,7 +212,9 @@
   ::  check for connectivity every 30 seconds
   ::
   ?:  ?=([%ping-timer *] wir)
-    :_  this
+    `this
+  ?:  ?=([%block-ping *] wir)
+    :_  this(timer `(add now.bowl ~s30))
     :~  do-ping
         (start-ping-timer:hc ~s30)
     ==
@@ -206,9 +233,9 @@
         %btc-provider-action  !>(act)
     ==
   ::
-  ::  Handles HTTP responses from RPC servers. Parses for errors, 
+  ::  Handles HTTP responses from RPC servers. Parses for errors,
   ::  then handles response. For actions that require collating multiple
-  ::  RPC calls, uses req-card to call out to RPC again if more 
+  ::  RPC calls, uses req-card to call out to RPC again if more
   ::  information is required.
   ++  handle-rpc-response
     |=  [=wire response=client-response:iris]
@@ -348,5 +375,5 @@
 ++  start-ping-timer
   |=  interval=@dr
   ^-  card
-  [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
+  [%pass /block-ping %arvo %b %wait (add now.bowl interval)]
 --
