@@ -75,9 +75,7 @@
     ?-  -.comm
         %set-credentials
       :_  state(host-info [api-url.comm %.n network.comm 0 *(set ship)])
-      :~  do-ping:hc
-          (start-ping-timer:hc ~s30)
-      ==
+      ~[(start-ping-timer:hc ~s30)]
       ::
         %add-whitelist
       :-  ~
@@ -182,8 +180,7 @@
   ?.  (is-whitelisted:hc src.bowl)
     ~|("btc-provider: blocked client {<src.bowl>}" !!)
   ~&  >  "btc-provider: accepted client {<src.bowl>}"
-  :-  [do-ping:hc]~
-  this(clients.host-info (~(put in clients.host-info) src.bowl))
+  `this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
 ++  on-arvo
   ~/  %on-arvo
@@ -194,7 +191,7 @@
   ::
   ?:  ?=([%ping-timer *] wir)
     :_  this
-    :~  do-ping:hc
+    :~  do-ping
         (start-ping-timer:hc ~s30)
     ==
   =^  cards  state
@@ -203,6 +200,14 @@
       (handle-rpc-response wir client-response.sign-arvo)
     ==
   [cards this]
+  ::
+  ++  do-ping
+    ^-  card
+    =/  act=action  [%ping ~]
+    :*  %pass  /ping/[(scot %da now.bowl)]  %agent
+        [our.bowl %btc-provider]  %poke
+        %btc-provider-action  !>(act)
+    ==
   ::
   ::  Handles HTTP responses from RPC servers. Parses for errors, 
   ::  then handles response. For actions that require collating multiple
@@ -346,12 +351,4 @@
   |=  interval=@dr
   ^-  card
   [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
-::
-++  do-ping
-  ^-  card
-  =/  act=action  [%ping ~]
-  :*  %pass  /ping/[(scot %da now.bowl)]  %agent
-      [our.bowl %btc-provider]  %poke
-      %btc-provider-action  !>(act)
-  ==
 --
