@@ -1,6 +1,6 @@
 import { Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph, GraphNode } from '@urbit/api';
-import React, { useCallback, useState, useMemo } from 'react';
+import { Association, Graph, GraphNode, markEachAsRead } from '@urbit/api';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import _ from 'lodash';
 import { useResize } from '~/logic/lib/useResize';
 import { LinkBlockItem } from './LinkBlockItem';
@@ -8,7 +8,9 @@ import { LinkBlockInput } from './LinkBlockInput';
 import useLocalState from '~/logic/state/local';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import bigInt from 'big-integer';
-import VirtualScroller from '~/views/components/VirtualScroller';
+import airlock from '~/logic/api';
+import useHarkState from '~/logic/state/hark';
+import { BlockScroller } from '~/views/components/BlockScroller';
 
 export interface LinkBlocksProps {
   graph: Graph;
@@ -39,6 +41,14 @@ export function LinkBlocks(props: LinkBlocksProps) {
       [colCount]
     )
   );
+
+  useEffect(() => {
+    const { unreads } = useHarkState
+      .getState().unreads.graph?.[association.resource]?.['/'];
+    Array.from((unreads as Set<string>)).forEach((u) => {
+      airlock.poke(markEachAsRead(association.resource, '/', u));
+    });
+}, [association.resource]);
 
   const orm = useMemo(() => {
     const nodes = [null, ...Array.from(props.graph)];
@@ -102,7 +112,7 @@ export function LinkBlocks(props: LinkBlocksProps) {
 
   return (
     <Col overflowX="hidden" overflowY="auto" height="calc(100% - 48px)" {...bind}>
-      <VirtualScroller
+      <BlockScroller
         origin="top"
         offset={0}
         style={style}

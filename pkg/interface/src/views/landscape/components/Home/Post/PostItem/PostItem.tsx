@@ -2,9 +2,11 @@ import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import { Association, GraphNode, Group, Post } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import { History } from 'history';
-import React, { Ref } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useHistory } from 'react-router';
+import { getPostRoute } from '~/logic/lib/graph';
 import { isWriter } from '~/logic/lib/group';
-import { withHovering } from '~/logic/lib/util';
+import { useHovering } from '~/logic/lib/util';
 import { Mention } from '~/views/components/MentionText';
 import PostInput from '../PostInput';
 import PostContent from './PostContent';
@@ -13,14 +15,13 @@ import PostHeader from './PostHeader';
 
 export interface PostItemProps {
   association: Association;
-  baseUrl: string
+  baseUrl: string;
   bind?: unknown;
   graphPath: string;
   group: Group;
   history: History;
   hovering?: boolean;
   index: BigInteger[];
-  innerRef?: Ref<HTMLDivElement>;
   isParent?: boolean;
   isRelativeTime?: boolean;
   isReply?: boolean;
@@ -32,182 +33,142 @@ export interface PostItemProps {
   isHierarchical?: boolean;
 }
 
-interface PostItemState {
-  inReplyMode: boolean;
-}
+function PostItem(props: PostItemProps) {
+  const {
+    node,
+    group,
+    association,
+    index,
+    vip,
+    isHierarchical,
+    isParent,
+    isThread,
+    isLast,
+    isReply,
+    isRelativeTime,
+    parentPost
+  } = props;
 
-class PostItem extends React.Component<PostItemProps, PostItemState> {
-  constructor(props) {
-    super(props);
+  const [inReplyMode, setInReplyMode] = useState(false);
+  const toggleReplyMode = useCallback(() => setInReplyMode(m => !m), []);
 
-    this.state = { inReplyMode: false };
-    this.toggleReplyMode = this.toggleReplyMode.bind(this);
-    this.navigateToChildren = this.navigateToChildren.bind(this);
-    this.submitCallback = this.submitCallback.bind(this);
-  }
+  const history = useHistory();
 
-  canWrite() {
-    const {
-      group,
-      association,
-      vip,
-      index
-    } = this.props;
-
+  const canWrite = useMemo(() => {
     if (vip === '') {
       return true;
     }
-
     if (index && index.length > 0) {
       return true;
     }
-
     return isWriter(group, association.resource);
-  }
+  }, [group, association.resource, vip, index]);
 
-  toggleReplyMode() {
-    this.setState({ inReplyMode: !this.state.inReplyMode });
-  }
+  const navigateToChildren = useCallback(() => {
+    history.push(
+      getPostRoute(association.resource, index, !isThread && !isHierarchical)
+    );
+  }, [
+    isHierarchical,
+    history.push,
+    index,
+    isParent,
+    isThread,
+    association.resource
+  ]);
 
-  navigateToChildren() {
-    const { history, baseUrl, index, isParent, isThread, isHierarchical } = this.props;
-    if (isParent) {
-      return;
-    }
-    let indexString = '';
+  const postExists = Boolean(node.post) && typeof node.post !== 'string';
+  const { hovering, bind } = useHovering();
 
-    index.forEach((i) => {
-      indexString = indexString + '/' + i.toString();
-    });
-
-    if (!isThread && !isHierarchical) {
-      history.push(`${baseUrl}/feed/thread${indexString}`);
-    } else {
-      history.push(`${baseUrl}/feed/replies${indexString}`);
-    }
-  }
-
-  submitCallback() {
-    this.toggleReplyMode();
-  }
-
-  render() {
-    const {
-      node,
-      graphPath,
-      association,
-      index,
-      innerRef,
-      isParent = false,
-      isReply = false,
-      isRelativeTime = true,
-      parentPost,
-      vip,
-      group,
-      hovering,
-      bind,
-      isThread,
-      isLast
-    } = this.props;
-
-    let indexString = '';
-
-    index.forEach((i) => {
-      indexString = indexString + '/' + i.toString();
-    });
-
-    const { inReplyMode } = this.state;
-
-    const canComment = this.canWrite();
-    const postExists = Boolean(node.post) && typeof node.post !== 'string';
-
-    return (
+  return (
+    <Col
+      pl={1}
+      pr={1}
+      mb={isThread && !isLast && !inReplyMode ? 0 : 3}
+      width="100%"
+      alignItems="center"
+    >
       <Col
-        ref={innerRef}
-        pl={1}
-        pr={1}
-        mb={isThread && !isLast && !inReplyMode ? 0 : 3}
+        pt={2}
+        border={1}
+        borderColor={isParent ? 'gray' : 'lightGray'}
+        borderRadius={2}
         width="100%"
-        alignItems="center"
+        maxWidth="600px"
+        backgroundColor={hovering ? 'washedGray' : 'transparent'}
+        onClick={navigateToChildren}
+        cursor={isParent ? 'default' : 'pointer'}
+        {...bind}
       >
-        <Col
-          pt={2}
-          border={1}
-          borderColor={ isParent ? 'gray' : 'lightGray' }
-          borderRadius={2}
-          width="100%"
-          maxWidth="600px"
-          backgroundColor={ hovering ? 'washedGray' : 'transparent' }
-          onClick={this.navigateToChildren}
-          cursor={isParent ? 'default': 'pointer'}
-          {...bind}
-        >
-          { (postExists) ? (
-            <>
-              <PostHeader
-                post={node.post}
-                association={association}
-                showTimestamp={isRelativeTime}
-                graphPath={graphPath}
-                isReply={isReply}
-              />
-              { ((isReply || (parentPost && index.length > 1 && isParent)) && parentPost?.author) ? (
-                <Row width="100%" alignItems="center" mb="2" pl="2" pr="2">
-                  <Text color="gray" pr="1">Replying to</Text>
-                  <Mention ship={parentPost?.author} />
-                </Row>
-              ) : null }
-              <PostContent
-                post={node.post}
-                isParent={isParent}
-                isReply={isReply}
-              />
+        {postExists ? (
+          <>
+            <PostHeader
+              post={node.post}
+              association={association}
+              showTimestamp={isRelativeTime}
+              graphPath={association.resource}
+              isReply={isReply}
+            />
+            {(isReply || (parentPost && index.length > 1 && isParent)) &&
+            parentPost?.author ? (
+              <Row width="100%" alignItems="center" mb="2" pl="2" pr="2">
+                <Text color="gray" pr="1">
+                  Replying to
+                </Text>
+                <Mention ship={parentPost?.author} />
+              </Row>
+            ) : null}
+            <PostContent
+              post={node.post}
+              isParent={isParent}
+              isReply={isReply}
+            />
             <PostFooter
               timeSent={node.post['time-sent']}
               replyCount={node.children.size}
               showTimestamp={!isRelativeTime}
               isParent={isParent}
-              canComment={canComment}
-              toggleReplyMode={this.toggleReplyMode}
+              canComment={canWrite}
+              toggleReplyMode={toggleReplyMode}
             />
-            </>
-          ) : (
-            <Box px="2" pb="2">
-              <Text gray>This post has been deleted</Text>
-            </Box>
-          ) }
-        </Col>
-        { inReplyMode ? (
-          <Col width="100%" maxWidth="600px">
-            <Box
-              ml={3}
-              height="16px"
-              borderLeft={1}
-              borderLeftColor="lightGray"
-            ></Box>
-            <PostInput
-              graphPath={graphPath}
-              group={group}
-              association={association}
-              vip={vip}
-              index={indexString}
-              submitCallback={this.submitCallback}
-            />
-          </Col>
-        ) : null }
-      { isThread && !isLast && !inReplyMode ? (
-          <Col width="100%" maxWidth="600px">
-            <Box
-              ml={3}
-              height="16px"
-              borderLeft={1}
-              borderLeftColor="lightGray"
-            ></Box>
-          </Col>
-        ) : null }
+          </>
+        ) : (
+          <Box px="2" pb="2">
+            <Text gray>This post has been deleted</Text>
+          </Box>
+        )}
       </Col>
-    );
-  }
+      {inReplyMode ? (
+        <Col width="100%" maxWidth="600px">
+          <Box
+            ml={3}
+            height="16px"
+            borderLeft={1}
+            borderLeftColor="lightGray"
+          ></Box>
+          <PostInput
+            graphPath={association.resource}
+            group={group}
+            association={association}
+            vip={vip}
+            index={`/${index.join('/')}`}
+            submitCallback={toggleReplyMode}
+          />
+        </Col>
+      ) : null}
+      {isThread && !isLast && !inReplyMode ? (
+        <Col width="100%" maxWidth="600px">
+          <Box
+            ml={3}
+            height="16px"
+            borderLeft={1}
+            borderLeftColor="lightGray"
+          ></Box>
+        </Col>
+      ) : null}
+    </Col>
+  );
 }
 
-export default withHovering<PostItemProps>(PostItem) as React.ComponentType<PostItemProps>;
+export default React.memo(PostItem);
+

@@ -9,6 +9,9 @@ import produce from 'immer';
 import _ from 'lodash';
 import { BaseState, reduceState } from '../state/base';
 import useGraphState, { GraphState as State } from '../state/graph';
+/* eslint-disable camelcase */
+
+import { unstable_batchedUpdates } from 'react-dom';
 
 type GraphState = State & BaseState<State>;
 
@@ -456,27 +459,29 @@ export const reduceDm = [
 export const GraphReducer = (json) => {
   const data = _.get(json, 'graph-update', false);
 
-  if (data) {
-    reduceState<GraphState, any>(useGraphState, data, [
-      keys,
-      addGraph,
-      removeGraph,
-      addNodes,
-      removePosts
-    ]);
-  }
-  const loose = _.get(json, 'graph-update-loose', false);
-  if(loose) {
-    reduceState<GraphState, any>(useGraphState, loose, [addNodesLoose]);
-  }
+  unstable_batchedUpdates(() => {
+    if (data) {
+      reduceState<GraphState, any>(useGraphState, data, [
+        keys,
+        addGraph,
+        removeGraph,
+        addNodes,
+        removePosts
+      ]);
+    }
+    const loose = _.get(json, 'graph-update-loose', false);
+    if(loose) {
+      reduceState<GraphState, any>(useGraphState, loose, [addNodesLoose]);
+    }
 
-  const flat = _.get(json, 'graph-update-flat', false);
-  if (flat) {
-    reduceState<GraphState, any>(useGraphState, flat, [addNodesFlat]);
-  }
+    const flat = _.get(json, 'graph-update-flat', false);
+    if (flat) {
+      reduceState<GraphState, any>(useGraphState, flat, [addNodesFlat]);
+    }
 
-  const thread = _.get(json, 'graph-update-thread', false);
-  if (thread) {
-    reduceState<GraphState, any>(useGraphState, thread, [addNodesThread]);
-  }
+    const thread = _.get(json, 'graph-update-thread', false);
+    if (thread) {
+      reduceState<GraphState, any>(useGraphState, thread, [addNodesThread]);
+    }
+  });
 };

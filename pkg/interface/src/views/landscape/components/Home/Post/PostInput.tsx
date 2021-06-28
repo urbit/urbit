@@ -1,5 +1,5 @@
 import { BaseTextArea, Box, Button, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
-import { addPost, Association, Content, createPost, evalCord, Group, Path } from '@urbit/api';
+import { Association, Content, createPost, evalCord, Group, Path } from '@urbit/api';
 import React, {
   ReactElement, useCallback, useState
 } from 'react';
@@ -8,6 +8,7 @@ import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import useStorage from '~/logic/lib/useStorage';
 import { useToggleState } from '~/logic/lib/useToggleState';
 import airlock from '~/logic/api';
+import useGraphState, { GraphState } from '~/logic/state/graph';
 
 function canWrite(props) {
   const { group, association, vip, index } = props;
@@ -37,9 +38,12 @@ interface PostInputProps {
   vip: string;
 }
 
+const selGraph = (s: GraphState) => s.addPost;
+
 const PostInput = (props: PostInputProps): ReactElement | null => {
   const { graphPath, index, submitCallback } = props;
   const graphResource = resourceFromPath(graphPath);
+  const addPost = useGraphState(selGraph);
 
   const [disabled, setDisabled] = useState(false);
   const [code, toggleCode] = useToggleState(false);
@@ -51,14 +55,14 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
       setDisabled(true);
       const url = await promptUpload();
       const { ship, name } = graphResource;
-      await airlock.thread(addPost(ship, name, createPost(`~${window.ship}`, [{ url }], index || '')));
+      await addPost(ship, name, createPost(window.ship, [{ url }], index || ''));
     } catch (e) {
       // TODO: better handling
       console.error(e);
     } finally {
       setDisabled(false);
     }
-  }, [promptUpload]);
+  }, [promptUpload, addPost]);
 
   const sendPost = async () => {
     if (!graphResource) {
@@ -74,13 +78,13 @@ const PostInput = (props: PostInputProps): ReactElement | null => {
     }
 
     setDisabled(true);
-    const post = createPost(`~${window.ship}`, contents, index || '');
+    const post = createPost(window.ship, contents, index || '');
 
-    await airlock.thread(addPost(
+    await addPost(
       graphResource.ship,
       graphResource.name,
       post
-    ));
+    );
 
     setDisabled(false);
     if(code) {

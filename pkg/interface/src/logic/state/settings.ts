@@ -108,7 +108,7 @@ const useSettingsState = createState<SettingsState>(
   [
     (set, get) =>
       createSubscription('settings-store', '/all', (e) => {
-        const data = _.get(e, 'settings-update', false);
+        const data = _.get(e, 'settings-event', false);
         if (data) {
           reduceStateN(get(), data, reduceUpdate);
         }

@@ -28,8 +28,8 @@ function sidebarSort(
   const lastUpdated = (a: string, b: string) => {
     const aAssoc = associations[a];
     const bAssoc = associations[b];
-    const aResource = aAssoc.resource;
-    const bResource = bAssoc.resource;
+    const aResource = aAssoc?.resource;
+    const bResource = bAssoc?.resource;
 
     const aUpdated = a.startsWith('~')
       ?  (unreads?.[`/ship/~${window.ship}/dm-inbox`]?.[`/${patp2dec(a)}`]?.last || 0)
