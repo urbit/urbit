@@ -81,7 +81,7 @@
       :_  state(timer `now.bowl)
       :*  (start-ping-timer ~s0)
           ?~  timer  ~
-          [[%pass /ping-time %arvo %b %rest u.timer] ~]
+          [[%pass /block-time %arvo %b %rest u.timer] ~]
       ==
     ==
   [cards this]
@@ -97,7 +97,7 @@
           ==
       :*  (start-ping-timer:hc ~s0)
           ?~  timer  ~
-          [[%pass /ping-time %arvo %b %rest u.timer] ~]
+          [[%pass /block-time %arvo %b %rest u.timer] ~]
       ==
       ::
         %add-whitelist
