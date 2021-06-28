@@ -1,0 +1,16 @@
+:~  :-  %apes
+    :~  %acme
+        %azimuth-tracker
+        %dbug
+        %dojo
+        %eth-watcher
+        %goad
+        %lens
+        %ping
+        %spider
+    ==
+::
+    :-  %fish
+    :~  %dojo
+    ==
+==
