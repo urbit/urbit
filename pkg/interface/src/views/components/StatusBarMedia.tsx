@@ -73,7 +73,6 @@ type StatusBarMediaTransportProps = ReturnType<typeof useTransport> &
   ReturnType<typeof useFormattedSeek> &
   PropFunc<typeof Row> & {
     title: string;
-    border?: boolean;
   };
 
 function StatusBarMediaTransport(
@@ -94,13 +93,13 @@ function StatusBarMediaTransport(
 
   return (
     <Row
+      {...rest}
       flexDirection={['column', 'row']}
       borderRadius="2"
-      borderColor="lightGray"
       backgroundColor="white"
       alignItems="center"
       justifyContent="space-between"
-      {...rest}
+      borderColor="lightGray"
     >
       <Row
         flexDirection={['column', 'row']}
@@ -179,7 +178,6 @@ export function StatusBarMedia(props: {}) {
           <Backdrop p="2" width="300px">
             <StatusBarMediaTransport
               title={current?.title ?? 'Unknown Track'}
-              border={false}
               {...seek}
               {...transport}
             />
@@ -193,6 +191,8 @@ export function StatusBarMedia(props: {}) {
           backgroundColor="white"
           borderRadius="2"
           height="32px"
+          border="1"
+          borderColor="lightGray"
           width="32px"
         >
           <Icon display="inline-block" icon="Bitcoin" />
@@ -201,6 +201,7 @@ export function StatusBarMedia(props: {}) {
       <StatusBarMediaTransport
         display={['none', 'flex']}
         title={current?.title ?? 'Unknown Track'}
+        border={1}
         {...seek}
         {...transport}
       >
