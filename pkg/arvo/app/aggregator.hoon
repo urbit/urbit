@@ -262,8 +262,8 @@
         [%predict ~]
       ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
           %wake
-        :-  ~
-        this(flush &, pre (predicted-state canonical-state):do)
+        =.  state  (predicted-state canonical-state):do
+        `this(flush &)
       ==
     ::
         [%resend @ @ ~]
@@ -356,7 +356,8 @@
           ::  cache naive state, received upon innitializing subscription
           ::  this assumes that /app/azimuth has already processed eth data
           ::
-          this(pre (predicted-state:do !<(^state:naive q.cage.sign)))
+          =.  state  (predicted-state:do !<(^state:naive q.cage.sign))
+          this
         ==
       ==
     ::
@@ -467,22 +468,25 @@
 ++  predicted-state
   |=  nas=^state:naive
   ^+  nas
+  ^+  state
+  =.  pre.state  nas
   |^
-  =^  sending  nas  apply-sending
-  =^  pending  nas  (update-txs pending %pending)
-  =.  sending.state  sending
-  =.  pending.state  pending
-  nas
+  =^  nes  state  apply-sending
+  =^  nep  state  (update-txs pending %pending)
+  %_  state
+    sending  nes
+    pending  nep
+  ==
   ::
   ++  apply-sending
     =|  valid=_sending
     =+  sending=~(tap by sending)
-    |-  ^+  [valid nas]
-    ?~  sending  [valid nas]
+    |-  ^+  [valid state]
+    ?~  sending  [valid state]
     ::
     =*  key  p.i.sending
     =*  val  q.i.sending
-    =^  new-valid  nas
+    =^  new-valid  state
       %+  update-txs
         (turn txs.val |=(=raw-tx:naive [| 0x0 raw-tx]))
       %sending
@@ -494,24 +498,27 @@
   ++  update-txs
     |=  [txs=(list pend-tx) type=?(%pending %sending)]
     =/  valid=_txs  ~
-    |-  ^+  [valid nas]
-    ?~  txs  [valid nas]
+    =|  local=(set keccak)
+    |-  ^+  [valid state]
+    ?~  txs  [valid state]
     ::
-    =*  tx  i.txs
-    =^  gud=?  nas  (try-apply nas [force raw-tx]:tx)
+    =*  tx        i.txs
+    =/  hash=@ux  (hash-raw-tx raw-tx.tx)
+    ?:  (~(has in local) hash)
+      ::  if tx was already seen here, skip
+      ::
+      $(txs t.txs)
+    =^  gud=?  pre.state
+      (try-apply pre.state [force raw-tx]:tx)
     =?  valid  gud  (snoc valid tx)
-    =?  finding  =(gud %.n)
-      %-  ~(put by finding)
-      [(hash-raw-tx raw-tx.tx) %failed]
-    =?  history  =(gud %.n)
+    =?  finding.state  !gud
+      (~(put by finding.state) [hash %failed])
+    =?  history.state  !gud
       =/  =roller-tx
-        :+  [type ~]
-          (hash-raw-tx raw-tx.tx)
-        (l2-tx +<.tx.raw-tx.tx)
-      %+  ~(put ju (~(del ju history) address.tx roller-tx))
-        address.tx
-      roller-tx(status [%failed ~])
-    $(txs t.txs)
+        [[type ~] hash (l2-tx +<.tx.raw-tx.tx)]
+      %.  [address.tx roller-tx(status [%failed ~])]
+      ~(put ju (~(del ju history.state) address.tx roller-tx))
+    $(txs t.txs, local (~(put in local) hash))
   ::
   ++  try-apply
     |=  [nas=^state:naive force=? =raw-tx:naive]
@@ -637,12 +644,19 @@
   ^-  (quip card _state)
   =/  =address:ethereum
     (get-l1-address tx.raw-tx pre)
-  =.  pending  (snoc pending [force address raw-tx])
+  =/  hash=@ux   (hash-raw-tx raw-tx)
+  ::  TODO: what if this hash/tx is already in the history?
+  ::  check in finding that hash doesn't exist ?
+  ::
+  :: =/  not-sent=?  !(~(has by finding) hash)
+  :: =?  pending  not-sent
+  =.  pending
+    (snoc pending [force address raw-tx])
+  :: =?  history  not-sent
   =.  history
     %+  ~(put ju history)  address
-    :+  [%pending ~]
-      (hash-raw-tx raw-tx)
-    (l2-tx +<.tx.raw-tx)
+    [[%pending ~] hash (l2-tx +<.tx.raw-tx)]
+  :: ?.  not-sent  ~&  "skip"  [~ state]
   ::  toggle flush flag
   ::
   :_  state(flush ?:(flush | &))
@@ -660,7 +674,7 @@
 ::
 ++  on-timer
   ^-  (quip card _state)
-  =.  pre  (predicted-state canonical-state)
+  =.  state  (predicted-state canonical-state)
   =^  cards  state
     ?:  =(~ pending)  [~ state]
     ?~  next-nonce
