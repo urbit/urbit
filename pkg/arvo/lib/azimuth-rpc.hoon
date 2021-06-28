@@ -98,15 +98,15 @@
         |=  params=(map @t json)
         ^-  (unit @ux)
         ?~  data=(~(get by params) 'address')  ~
-        =;  ans=(unit (unit @ux))
-          ?~(ans ~ u.ans)
-        ((cu to-hex so) u.data)
+        ?~  ans=((cu to-hex so) u.data)  ~
+        u.ans
       ::
       ++  sig
         |=  params=(map @t json)
         ^-  (unit @)
         ?~  sig=(~(get by params) 'sig')   ~
-        (ni u.sig)
+        ?~  ans=((cu to-hex so) u.sig)  ~
+        u.ans
       ::
       ++  from
         |=  params=(map @t json)
@@ -122,16 +122,16 @@
         |=  params=(map @t json)
         ^-  (unit @ux)
         ?~  hash=(~(get by params) 'hash')  ~
-        =;  ans=(unit (unit @ux))
-          ?~(ans ~ u.ans)
-        ((cu to-hex so) u.hash)
+        ?~  ans=((cu to-hex so) u.hash)  ~
+        u.ans
       ::
       ++  raw
         |=  params=(map @t json)
         ^-  (unit octs)
         ?~  raw=(~(get by params) 'raw')  ~
-        ?~  ans=(so u.raw)  ~
-        (some (as-octs:mimes:html u.ans))
+        ?~  ans=((cu to-hex so) u.raw)  ~
+        ?~  u.ans  ~
+        (some (as-octs:mimes:html u.u.ans))
       ::
       ++  l2-tx
         |=  params=(map @t json)
