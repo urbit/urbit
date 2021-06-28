@@ -29,7 +29,7 @@ export function LinkDetail(props: LinkDetailProps) {
         gapY="4"
         borderLeft="1"
         borderColor="lightGray"
-        py="4"
+        pt="4"
       >
         <Col px="4" gapY="2">
           {title.length > 0 ? (
