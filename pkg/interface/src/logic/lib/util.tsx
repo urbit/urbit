@@ -539,3 +539,7 @@ export function binaryIndexOf(arr: BigInteger[], target: BigInteger): number | u
   }
   return undefined;
 }
+
+export function clone<T>(a: T) {
+  return JSON.parse(JSON.stringify(a)) as T;
+}
