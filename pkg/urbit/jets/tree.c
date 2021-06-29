@@ -437,7 +437,22 @@ static c3_c* _140_hex_ripe_ha[] = {
   0
 };
 
+/* Jet registration of ++factorial arm under trig */
+static u3j_harm _140_hex__trig_factorial_a[] = {{".2", u3we_trig_factorial, c3y}, {}};
+/* Associated hash */
+static c3_c* _140_hex__trig_factorial_ha[] = {
+  "903dbafb8e59427eced0b35379ad617c2eb6083a235075e9cdd9dd80e732efa4",
+  0
+};
 
+static u3j_core _140_hex__trig_d[] =
+  { { "factorial", 7, _140_hex__trig_factorial_a, 0, _140_hex__trig_factorial_ha },
+  {}
+  };
+static c3_c* _140_hex__trig_ha[] = {
+  "0bac9c3c43634bb86f6721bbcc444f69c83395f204ff69d3175f3821b1f679ba",
+  0
+};
 static u3j_core _140_hex_d[] =
 { { "lore",   63, _140_hex_lore_a, 0, _140_hex_lore_ha },
   { "leer",   63, _140_hex_leer_a, 0, _140_hex_leer_ha },
@@ -453,6 +468,8 @@ static u3j_core _140_hex_d[] =
   { "ripemd", 31, 0, _140_hex_ripe_d,  _140_hex_ripe_ha  },
   { "secp",    6, 0, _140_hex_secp_d, _140_hex_secp_ha },
   { "mimes",  31, 0, _140_hex_mimes_d, _140_hex_mimes_ha  },
+  
+  { "trig",   31, 0, _140_hex__trig_d, _140_hex__trig_ha  },
   {}
 };
 static c3_c* _140_hex_ha[] = {

@@ -227,6 +227,8 @@
     u3_noun u3qes_gte(u3_atom, u3_atom);
     u3_noun u3qes_gth(u3_atom, u3_atom);
 
+    u3_noun u3qe_trig_factorial(u3_atom);
+
   /** Tier 6.
   **/
     u3_noun u3qf_bull(u3_noun, u3_noun);
