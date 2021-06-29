@@ -1509,6 +1509,18 @@
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
       ==
+    ::  assert desk kelvin matches kernel kelvin, except on %base
+    ::
+    ?>  ?:  =(%base syd)  &
+        .=  zuse/zuse
+        ?-  -.yoki
+          %&  =/  fil  (~(got by q.p.yoki) /sys/kelvin)
+              ?-  -.fil
+                %&  q.p.fil
+                %|  
+              ==
+          %|
+        ==
     =/  new-data=(map path (each page lobe))
       ?-  -.yoki
         %&  q.p.yoki
