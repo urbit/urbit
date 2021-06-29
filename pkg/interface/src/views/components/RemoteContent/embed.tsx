@@ -100,7 +100,12 @@ const BaseAudio = styled.audio<React.PropsWithChildren<BaseAudioProps>>(
 );
 
 export function RemoteContentAudioEmbed(props: RemoteContentEmbedProps) {
-  const { url, noCors, ...rest } = props;
+  const { url, ...rest } = props;
+  const [noCors, setNoCors] = useState(false);
+  // maybe audio isn't set up for CORS embeds
+  const onError = useCallback(() => {
+    setNoCors(true);
+  }, []);
 
   return (
     <BaseAudio
@@ -111,6 +116,7 @@ export function RemoteContentAudioEmbed(props: RemoteContentEmbedProps) {
       height="24px"
       width="100%"
       minWidth={['90vw', '384px']}
+      onError={onError}
       {...(noCors ? {} : { crossOrigin: 'anonymous' })}
       {...rest}
     />
@@ -129,7 +135,7 @@ const BaseVideo = styled.video<React.PropsWithChildren<BaseVideoProps>>(
 export function RemoteContentVideoEmbed(
   props: RemoteContentEmbedProps & PropFunc<typeof BaseVideo>
 ) {
-  const { url, noCors, ...rest } = props;
+  const { url, ...rest } = props;
 
   return (
     <BaseVideo
@@ -139,7 +145,6 @@ export function RemoteContentVideoEmbed(
       objectFit="contain"
       height="100%"
       width="100%"
-      {...(noCors ? {} : { crossOrigin: 'anonymous' })}
       {...rest}
     />
   );
