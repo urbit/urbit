@@ -728,7 +728,7 @@
     =/  gap  (sub block block.btc-state)
     =?  blocks  (gth gap 1)
       (gulf +(block.btc-state) (dec block))
-    =?  blocks  ?|(?=(~ blockhash) ?=(~ blockfilter))
+    =?  blocks  ?&((gth gap 0) ?|(?=(~ blockhash) ?=(~ blockfilter)))
       (snoc blocks block)
     =?  blocks  (gth gap 50)  ~
     :_  %_  state
