@@ -20,6 +20,19 @@
           %set-transfer-proxy
       ==
     ::
+    ++  pk
+      ^-  @
+      =;  key=@t
+        q:(need (de:base16:mimes:html key))
+      :: 'a44de2416ee6beb2f323fab48b432925c9785808d33a6ca6d7ba00b45e9370c3'
+      '2480c5256d843c73cba67cc966a11a647c943a41db2fa138de4e4f16d0861a6b'
+    ::
+    ++  fake-raw
+      |=  [nonce=@ud =tx:naive]
+      :: ~&  nonce+nonce
+      ^-  octs
+      (gen-tx:lib nonce tx pk)
+    ::
     ++  parse-ship
       |=  jon=json
       ^-  (unit @p)
@@ -307,6 +320,17 @@
             =*  pointer  u.pointer.tx-status
             (ownership address.pointer nonce.pointer)
         ==
+      ::
+      ++  config
+        |=  roller-config
+        ^-  json
+        %-  pairs
+        :~  ['next-batch' (time next-batch)]
+            ['frequency' (numb (div frequency ~s1))]
+            ['refresh-time' (numb (div refresh-time ~s1))]
+            ['contract' s+(crip "0x{((x-co:co 20) contract)}")]
+            ['chain-id' (numb chain-id)]
+        ==
       --
     ::
     ++  to-hex
@@ -549,4 +573,11 @@
   ?~  address=(address:from-json params)
     ~(parse error:json-rpc id)
   [%result id (roller-txs:to-json (scry u.address))]
+::
+++  get-config
+  |=  [id=@t params=(map @t json) =roller-config]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 0)
+    ~(params error:json-rpc id)
+  [%result id (config:to-json roller-config)]
 --

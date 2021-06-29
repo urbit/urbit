@@ -82,6 +82,8 @@
 ::
 +$  card  card:agent:gall
 ::
+::  TODO: add to config
+::
 ++  resend-time  ~m5
 ::
 ++  lverb  &
@@ -138,6 +140,7 @@
   ::    /x/next-batch                  ->  %atom  time
   ::    /x/point/[~ship]               ->  %noun  point:naive
   ::    /x/points/[0xadd.ress]         ->  %noun  (list [ship point:naive])
+  ::    /x/config                      ->  %noun  config
   ::
   ++  on-peek
     |=  =path
@@ -153,6 +156,7 @@
       [%x %next-batch ~]    ``noun+!>(next-batch)
       [%x %point @ ~]       (point i.t.t.path)
       [%x %points @ ~]      (points i.t.t.path)
+      [%x %config ~]        config
     ==
     ::
     ++  pending-by
@@ -248,6 +252,17 @@
         ~
       %~  tap  in
       (~(get ju owners.pre) u.addr)
+    ::
+    ++  config
+      :+  ~  ~
+      :-  %noun
+      !>  ^-  roller-config
+      :*  next-batch
+          frequency
+          resend-time
+          contract
+          chain-id
+      ==
     --
   ::
   ++  on-arvo

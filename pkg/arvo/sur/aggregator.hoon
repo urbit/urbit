@@ -1,6 +1,14 @@
 /+  naive, ethereum
 ::
 |%
++$  roller-config
+  $:  next-batch=time
+      frequency=@dr
+      refresh-time=@dr
+      contract=@ux
+      chain-id=@
+  ==
+::
 +$  keccak  @ux
 ::
 +$  tx-status

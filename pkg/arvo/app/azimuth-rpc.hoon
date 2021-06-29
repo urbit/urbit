@@ -149,6 +149,7 @@
     %next-batch            [~ (next-batch id +.params next-batch:scry)]
     %nonce                 [~ (nonce id +.params nonce:scry)]
     %history               [~ (history id +.params addr:history:scry)]
+    %get-config            [~ (get-config id +.params config:scry)]
   ==
 ::
 ++  scry
@@ -229,12 +230,21 @@
           %aggregator
         /nonce/(scot %p ship)/[proxy]/noun
     ==
+  ::
   ++  dns
     .^  (list @t)
         %gx
         %+  ~(scry agentio bowl)
           %azimuth
         /dns/noun
+    ==
+  ::
+  ++  config
+    .^  roller-config
+        %gx
+        %+  ~(scry agentio bowl)
+          %aggregator
+        /config/noun
     ==
   --
 --
