@@ -2,7 +2,7 @@
 /+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
 |%
 +$  state
-  $:  %13
+  $:  %14
       drum=state:drum
       helm=state:helm
       kiln=state:kiln
@@ -10,12 +10,13 @@
 +$  any-state
   $%  state
       [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
-      [%7 drum=state:drum helm=state:helm kiln=state:kiln]
-      [%8 drum=state:drum helm=state:helm kiln=state:kiln]
-      [%9 drum=state:drum helm=state:helm kiln=state:kiln]
-      [%10 drum=state:drum helm=state:helm kiln=state:kiln]
-      [%11 drum=state:drum helm=state:helm kiln=state:kiln]
-      [%12 drum=state:drum helm=state:helm kiln=state:kiln]
+      [%7 drum=any-state:drum helm=state:helm kiln=state:kiln]
+      [%8 drum=any-state:drum helm=state:helm kiln=state:kiln]
+      [%9 drum=any-state:drum helm=state:helm kiln=state:kiln]
+      [%10 drum=any-state:drum helm=state:helm kiln=state:kiln]
+      [%11 drum=any-state:drum helm=state:helm kiln=state:kiln]
+      [%12 drum=any-state:drum helm=state:helm kiln=state:kiln]
+      [%13 drum=any-state:drum helm=state:helm kiln=state:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum
@@ -81,8 +82,7 @@
   ::
   ?+  mark  (on-poke:def mark vase)
     %atom            poke-helm(mark %helm-atom)
-    %dill-belt       poke-drum(mark %drum-dill-belt)
-    %dill-blit       poke-drum(mark %drum-dill-blit)
+    %dill-poke       poke-drum
     %hood-sync       poke-kiln(mark %kiln-sync)
     %write-sec-atom  poke-helm(mark %helm-write-sec-atom)
   ==
@@ -95,7 +95,7 @@
   |=  =path
   ^-  step:agent:gall
   ?+  path  (on-watch:def +<)
-    [%drum *]  =^(c drum.state (peer:drum-core +<) [c this])
+    [%dill *]  =^(c drum.state (peer:drum-core +<) [c this])
   ==
 ::
 ++  on-agent
@@ -112,7 +112,6 @@
   |=  [=wire syn=sign-arvo]
   ^-  step:agent:gall
   ?+  wire  ~|([%hood-bad-wire wire] !!)
-    [%drum *]  =^(c drum.state (take-arvo:drum-core t.wire syn) [c this])
     [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire syn) [c this])
     [%kiln *]  =^(c kiln.state (take-arvo:kiln-core t.wire syn) [c this])
   ==

@@ -4,9 +4,12 @@
 module Urbit.Vere.Term.Render
     ( clearScreen
     , clearLine
-    , cursorRight
-    , cursorLeft
     , soundBell
+    , cursorMove
+    , cursorSave
+    , cursorRestore
+    , putCsi
+    , hijack
     ) where
 
 import ClassyPrelude
@@ -25,8 +28,27 @@ clearLine = liftIO $ ANSI.clearLine
 soundBell :: MonadIO m => m ()
 soundBell = liftIO $ putStr "\a"
 
-cursorLeft :: MonadIO m => Int -> m ()
-cursorLeft = liftIO . ANSI.cursorBackward
+--NOTE  top-left-0-based coordinates
+cursorMove :: MonadIO m => Int -> Int -> m ()
+cursorMove r c = liftIO $ ANSI.setCursorPosition r c
 
-cursorRight :: MonadIO m => Int -> m ()
-cursorRight = liftIO . ANSI.cursorForward
+cursorSave :: MonadIO m => m ()
+cursorSave = liftIO ANSI.saveCursor
+
+cursorRestore :: MonadIO m => m ()
+cursorRestore = liftIO ANSI.restoreCursor
+
+putCsi :: MonadIO m => Char -> [Int] -> m ()
+putCsi c a = liftIO do
+    putStr "\x1b["
+    putStr $ pack $ mconcat $ intersperse ";" (fmap show a)
+    putStr $ pack [c]
+
+hijack :: MonadIO m => Int -> IO () -> m ()
+hijack h d = liftIO do
+    putCsi 'r' [1, h-1]  --  set scroll region to exclude bottom line
+    putCsi 'S' [1]       --  scroll up one line
+    cursorMove (h-2) 0   --  move cursor to empty space
+    d
+    putCsi 'r' []        --  reset scroll region
+    cursorRestore        --  restory cursor position

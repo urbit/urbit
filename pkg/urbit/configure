@@ -90,7 +90,7 @@ do LDFLAGS="${LDFLAGS-} -I$header"
 done
 
 cat >config.mk <<EOF
-CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math -std=gnu99
+CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math -std=gnu99 -Wno-format-zero-length
 LDFLAGS := $LDFLAGS
 CC      := ${CC-cc}
 EOF
