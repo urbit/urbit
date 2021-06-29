@@ -14,10 +14,11 @@ class AsyncFallback extends React.Component<
     this.state = { error: false };
   }
 
-  componentDidCatch() {
-    this.setState({ error: true });
-    return false;
+  static getDerivedStateFromError(error) {
+    return { error: true };
   }
+
+  componentDidCatch(error, info) {}
 
   render() {
     const { fallback, children } = this.props;
