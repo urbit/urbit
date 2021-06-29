@@ -221,7 +221,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           display='flex'
           alignItems='baseline'
           width={`calc(100% - ${actionsWidth}px - 16px)`}
-          flexShrink={0}
+          flexShrink={1}
+          minWidth={0}
         >
           {backLink}
           {titleText}
