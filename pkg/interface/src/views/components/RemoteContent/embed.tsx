@@ -1,7 +1,5 @@
 import React, {
   MouseEvent,
-  useState,
-  useEffect,
   useCallback
 } from 'react';
 import styled from 'styled-components';
@@ -26,6 +24,7 @@ import { Link } from 'react-router-dom';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
 import { RemoteContentWrapper } from './wrapper';
+import { useEmbed } from '~/logic/state/embed';
 
 interface RemoteContentEmbedProps {
   url: string;
@@ -236,43 +235,22 @@ type RemoteContentOembedProps = {
 } & RemoteContentEmbedProps &
   PropFunc<typeof Box>;
 
+const YOUTUBE = /youtu(\.?)be/;
+
 export const RemoteContentOembed = React.forwardRef<
   HTMLDivElement,
   RemoteContentOembedProps
 >((props, ref) => {
-  const { url, tall = false, renderUrl = false, thumbnail = false, ...rest } = props;
-  const [embed, setEmbed] = useState<any>();
-  const [aspect, setAspect] = useState<number | undefined>();
+  const { url, renderUrl = false, thumbnail = false, ...rest } = props;
+  const oembed = useEmbed(url);
+  const embed = oembed.read();
+  const fallbackError  = new Error('fallback');
 
-  useEffect(() => {
-    const getEmbed = async () => {
-      try {
-        const search = new URLSearchParams({
-          url
-        });
-        if(!tall) {
-          search.append('maxwidth', '500');
-        }
-
-        const oembed = await (
-          await fetch(`https://noembed.com/embed?${search.toString()}`)
-        ).json();
-
-        if('height' in oembed && typeof oembed.height === 'number' && 'width' in oembed && typeof oembed.width === 'number') {
-          const newAspect = (oembed.width / oembed.height);
-          setAspect(newAspect);
-        } else {
-          setAspect(undefined);
-        }
-        setEmbed(oembed);
-      } catch (e) {
-        console.error(e);
-        console.log(`${url} failed`);
-      }
-    };
-
-    getEmbed();
-  }, [url]);
+  const aspect =
+    YOUTUBE.test(url) &&
+    'height' in embed && typeof embed.height === 'number'
+    && 'width' in embed && typeof embed.width === 'number'
+    ? (embed.width / embed.height) : undefined;
 
   const detail = (
     <Col
@@ -299,7 +277,10 @@ export const RemoteContentOembed = React.forwardRef<
         </EmbedContainer>
       ) : renderUrl ? (
         <RemoteContentEmbedFallback url={url} />
-      ) : null}
+        ) : (() => {
+ throw fallbackError;
+})()
+      }
     </Col>
   );
   if (!renderUrl) {
