@@ -96,7 +96,6 @@
       lab=(map @tas aeon)                               ::  labels
       mim=(map path mime)                               ::  mime cache
       fod=ford-cache                                    ::  ford cache
-      fer=(unit reef-cache)                             ::  reef cache
   ==                                                    ::
 ::
 ::  Commit state.
@@ -130,14 +129,6 @@
       marks=(map mark [res=dais dez=(set [dir=? =path])])
       casts=(map mars [res=vase dez=(set [dir=? =path])])
       tubes=(map mars [res=tube dez=(set [dir=? =path])])
-  ==
-::  $reef-cache: built system files
-::
-+$  reef-cache
-  $:  hoon=vase
-      arvo=vase
-      lull=vase
-      zuse=vase
   ==
 ::
 ::  Hash of a blob, for lookup in the object store (lat.ran)
@@ -490,8 +481,7 @@
               cycle=(set build)
           ==
         +$  args
-          $:  bud=vase
-              =ankh
+          $:  =ankh
               deletes=(set path)
               changes=(map path (each page lobe))
               file-store=(map lobe blob)
@@ -588,7 +578,7 @@
         --
       :_  nub
       ^-  vase  ::  vase of nave
-      %+  slap  (slop (with-face cor+cor) bud)
+      %+  slap  (slop (with-face cor+cor) !>(..zuse))
       !,  *hoon
       =/  typ  _+<.cor
       =/  dif  _*diff:grad:cor
@@ -873,7 +863,8 @@
     ::
     ++  run-pile
       |=  =pile
-      =^  sut=vase  nub  (run-tauts bud %sur sur.pile)
+      =/  sut=vase  !>(..zuse)
+      =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
       =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
       =^  sut=vase  nub  (run-raw sut raw.pile)
       =^  sut=vase  nub  (run-raz sut raz.pile)
@@ -1315,8 +1306,7 @@
   ++  balk-all  (duct-lift balk)
   ++  bleb-all  (duct-lift bleb)
   ::
-  ++  static-ford-args
-    [zuse:(need fer.dom) ank.dom ~ ~ lat.ran fod.dom]
+  ++  static-ford-args  [ank.dom ~ ~ lat.ran fod.dom]
   ::
   ::  Transfer a request to another ship's clay.
   ::
@@ -1536,25 +1526,19 @@
     ::  promote and fill in ankh
     ::  promote and fill in mime cache
     ::
-    ?:  &(=(%home syd) !updated)
+    ?:  &(=(%base syd) !updated)
       (sys-update yoki new-data)
     ::  clear caches if zuse reloaded
     ::
-    =/  is-zuse-new=?  (need-reef-update changes)
     =.  fod.dom
-      ?:  is-zuse-new
-        *ford-cache
+      ?:  updated  *ford-cache
       (promote-ford fod.dom deletes ~(key by changes))
-    =.  fer.dom  `(build-reef fer.dom ~(key by changes) new-data)
-    =?  ank.dom  is-zuse-new  *ankh
-    =?  changes  is-zuse-new
-      (changes-for-upgrade q.old-yaki deletes changes)
+    =?  ank.dom  updated  *ankh
+    =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
-    =/  =args:ford:fusion
-      [zuse:(need fer.dom) ank.dom deletes changes lat.ran fod.dom]
+    =/  =args:ford:fusion  [ank.dom deletes changes lat.ran fod.dom]
     ::
-    =^  change-cages  ford-cache.args
-      (checkout-changes args changes)
+    =^  change-cages  ford-cache.args  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
     =/  new-blobs=(map lobe blob)
       %-  malt
@@ -1692,62 +1676,6 @@
           &(=(path (scag l i)) ?=([@ %hoon ~] (slag l i)))
         $(builds t.builds)
       (~(put by $(builds t.builds)) i.builds)
-    ::
-    ++  build-reef
-      =>  |%
-          +$  reef-step
-            ::  vary: source or dependencies changed
-            ::  deep: source and dependencies match kernel
-            ::
-            [vary=? deep=?]
-          --
-      ::
-      |=  $:  fer=(unit reef-cache)
-              invalid=(set path)
-              data=(map path (each page lobe))
-          ==
-      |^  ^-  reef-cache
-          =/  [tep=reef-step ref=reef-cache]
-            ?^  fer
-              [[vary=| deep=&] u.fer]
-            [[vary=& deep=&] *reef-cache]
-          ::
-          =^  hon  tep  (build tep /sys/hoon hoon.ref !>(**) !,(*hoon ..ride))
-          =^  rav  tep  (build tep /sys/arvo arvo.ref hon !,(*hoon ..part))
-          =^  lul  tep  (build tep /sys/lull lull.ref rav !,(*hoon .))
-          =^  zus  tep  (build tep /sys/zuse zuse.ref lul !,(*hoon .))
-          [hon rav lul zus]
-      ::
-      ++  build
-        |=  [tep=reef-step pax=path pre=vase sub=vase pro=hoon]
-        ^-  (pair vase reef-step)
-        =/  ful  (weld pax /hoon)
-        ?.  ?|  vary.tep
-                (~(has in invalid) ful)
-            ==
-          [pre tep]
-        =.  vary.tep  &
-        =/  src  (path-to-cord data ful)
-        ::
-        ?:  &(deep.tep (deep pax src))
-          [(slap !>(..zuse) pro) tep]
-        ::
-        =/  nam=term  ?.(?=([@ta @ta *] pax) %$ i.t.pax)
-        ~>  %slog.0^leaf+"clay: building %{(trip nam)} on %{(trip syd)}"
-        =/  gen
-          ~_  leaf+"%{(trip nam)}-parse-fail"
-          (rain ful src)
-        ~_  leaf+"%{(trip nam)}-compile-fail"
-        [(slap (slap sub gen) pro) tep(deep |)]
-      ::
-      ++  deep
-        |=  [pax=path src=cord]
-        ^-  ?
-        =/  dat  (rof `[our ~ ~] $/[[our $/da/now] mod/fat/pax])
-        ?:  |(?=(~ dat) ?=(~ u.dat))  |
-        =/  nod  !<((axal (cask)) q.u.u.dat)
-        &(?=(^ fil.nod) ?=(%hoon p.u.fil.nod) =(src q.u.fil.nod))
-      --
     ::
     ++  page-to-cord
       |=  =page
@@ -1936,8 +1864,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion
-        [zuse:(need fer.dom) *ankh ~ all-changes lat.ran *ford-cache]
+      =/  =args:ford:fusion  [*ankh ~ all-changes lat.ran *ford-cache]
       =^  all-change-cages  ford-cache.args
         (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
@@ -2000,19 +1927,6 @@
         path       (snoc path ta)
         ankh       child-ankh
         test-ankh  (~(got by dir.test-ankh) ta)
-      ==
-    ::
-    ::  Find reef dependency changes
-    ::
-    ++  need-reef-update
-      |=  changes=(map path (each page lobe))
-      ^-  ?
-      %+  lien  ~(tap by changes)
-      |=  [=path *]
-      ?|  =(/sys/hoon/hoon path)
-          =(/sys/arvo/hoon path)
-          =(/sys/lull/hoon path)
-          =(/sys/zuse/hoon path)
       ==
     ::
     ::  Delay current update until sys update is complete
@@ -2802,8 +2716,7 @@
     =.  mon  (~(put by mon) pot [her syd case] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) let.dom))
     =/  changes  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:ford:fusion
-      [zuse:(need fer.dom) ank.dom ~ changes lat.ran fod.dom]
+    =/  =args:ford:fusion  [ank.dom ~ changes lat.ran fod.dom]
     =^  mim  ford-cache.args
       (checkout-mime args ~ ~(key by changes))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
@@ -3004,10 +2917,10 @@
       =/  vale-result
         %-  mule  |.
         %-  wrap:fusion
-        ::  Use %home's marks to validate, so we don't have to build the
+        ::  Use %base's marks to validate, so we don't have to build the
         ::  foreign hoon/zuse
         ::
-        =/  args  %*(static-ford-args . dom dom:(~(got by dos.rom) %home))
+        =/  args  %*(static-ford-args . dom dom:(~(got by dos.rom) %base))
         (page-to-cage:(ford:fusion args) peg)
       ?:  ?=(%| -.vale-result)
         %-  (slog >%validate-x-failed< p.vale-result)
@@ -4210,7 +4123,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%8                                        ::  vane version
+    $:  ver=%9                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4312,7 +4225,7 @@
     =/  bem=beam
         ?^  bem
           u.bem
-        [[our %home %ud 1] ~]
+        [[our %home %ud 1] ~]  ::  TODO: remove this fallback?
     =/  dos  (~(get by dos.rom.ruf) q.bem)
     ?~  dos
       !!  ::  fire next in queue
@@ -4464,41 +4377,83 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%8 raft-8]
+        $%  [%9 raft-9]
+            [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-8  raft
+      +$  raft-9  raft
+      +$  raft-8
+        $:  rom=room-8
+            hoy=(map ship rung-8)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            pud=(unit [=desk =yoki])
+        ==
+      +$  room-8
+        $:  hun=duct
+            dos=(map desk dojo-8)
+        ==
+      +$  rung-8
+        $:  rus=(map desk rede-8)
+        ==
+      +$  dojo-8
+        $:  qyx=cult
+            dom=dome-8
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  dome-8
+        $:  ank=ankh
+            let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            mim=(map path mime)
+            fod=ford-cache
+            fer=*  ::  reef cache, obsolete
+        ==
+      +$  rede-8
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-8
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
       +$  raft-7
-          $:  rom=room-7
-              hoy=(map ship rung-7)
-              ran=rang
-              mon=(map term beam)
-              hez=(unit duct)
-              cez=(map @ta crew)
-              pud=(unit [=desk =yoki])
-          ==
+        $:  rom=room-7
+            hoy=(map ship rung-7)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            pud=(unit [=desk =yoki])
+        ==
       +$  room-7
-          $:  hun=duct
-              dos=(map desk dojo-7)
-          ==
+        $:  hun=duct
+            dos=(map desk dojo-7)
+        ==
       +$  rung-7
-          $:  rus=(map desk rede-7)
-          ==
+        $:  rus=(map desk rede-7)
+        ==
       +$  dojo-7
-          $:  qyx=cult
-              dom=dome
-              per=regs
-              pew=regs
-          ==
+        $:  qyx=cult
+            dom=dome-8
+            per=regs
+            pew=regs
+        ==
       +$  rede-7
-          $:  lim=@da
-              ref=(unit rind)
-              qyx=cult
-              dom=dome
-              per=regs
-              pew=regs
-          ==
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-8
+            per=regs
+            pew=regs
+        ==
       +$  ford-cache-7  ford-cache
       +$  raft-6
         $:  rom=room-6                                  ::  domestic
@@ -4523,7 +4478,7 @@
             lab=(map @tas aeon)                         ::  labels
             mim=(map path mime)                         ::  mime cache
             fod=ford-cache-6                            ::  ford cache
-            fer=(unit reef-cache)                       ::  reef cache
+            fer=*                                       ::  reef cache
         ==
       +$  rung-6
         $:  rus=(map desk rede-6)
@@ -4542,7 +4497,8 @@
   |^
   =?  old  ?=(%6 -.old)  7+(raft-6-to-7 +.old)
   =?  old  ?=(%7 -.old)  8+(raft-7-to-8 +.old)
-  ?>  ?=(%8 -.old)
+  =?  old  ?=(%8 -.old)  9+(raft-8-to-9 +.old)
+  ?>  ?=(%9 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -4572,7 +4528,7 @@
         dos.rom
       %-  ~(run by dos.rom.raf)
       |=  doj=dojo-7
-      ^-  dojo
+      ^-  dojo-8
       [qyx.doj dom.doj per.doj pew.doj *melt]
     ::
         hoy
@@ -4580,8 +4536,30 @@
       |=  =rung-7
       %-  ~(run by rus.rung-7)
       |=  r=rede-7
-      ^-  rede
+      ^-  rede-8
       [lim.r ref.r qyx.r dom.r per.r pew.r *melt]
+    ==
+  ::  +raft-8-to-9: remove reef cache
+  ::
+  ++  raft-8-to-9
+    |=  raf=raft-8
+    ^-  raft-9
+    %=    raf
+        dos.rom
+      %-  ~(run by dos.rom.raf)
+      |=  =dojo-8
+      ^-  dojo
+      =/  dom  dom.dojo-8
+      dojo-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *ford-cache])
+    ::
+        hoy
+      %-  ~(run by hoy.raf)
+      |=  =rung-8
+      %-  ~(run by rus.rung-8)
+      |=  =rede-8
+      ^-  rede
+      =/  dom  dom.rede-8
+      rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *ford-cache])
     ==
   --
 ::
