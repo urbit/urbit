@@ -169,8 +169,11 @@
           ::
             :-  'raw-tx'
             %-  pairs
-            :~  ['sig' (numb sig.raw-tx)]
-                ['tx' (tx:to-json tx.raw-tx)]
+            :~  ['tx' (tx:to-json tx.raw-tx)]
+              ::
+                :+  'sig'  %s
+                %-  crip
+                "0x{((x-co:co (met 3 sig.raw-tx)) sig.raw-tx)}"
         ==  ==
       ::
       ++  tx
