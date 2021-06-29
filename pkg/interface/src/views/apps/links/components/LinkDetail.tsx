@@ -20,8 +20,8 @@ export function LinkDetail(props: LinkDetailProps) {
   const [{ text: title }] = post.contents as [TextContent, UrlContent];
   return (
     /*  @ts-ignore indio props?? */
-    <Row flexDirection={['column', 'column', 'row']} {...rest}>
-      <LinkBlockItem flexGrow={1} border={0} node={node} />
+    <Row width="100%" flexDirection={['column', 'column', 'row']} {...rest}>
+      <LinkBlockItem maxWidth={['100%', '100%', 'calc(100% - 350px)']} flexGrow={1} border={0} node={node} />
       <Col
         flexShrink={0}
         width={['100%', '100%', '350px']}

@@ -1,6 +1,7 @@
 import React, {
   MouseEvent,
-  useCallback
+  useCallback,
+  useMemo
 } from 'react';
 import styled from 'styled-components';
 import UnstyledEmbedContainer from 'react-oembed-container';
@@ -142,22 +143,32 @@ const EmbedContainer = styled(UnstyledEmbedContainer)`
   height: 100%;
 `;
 
-const EmbedBox = styled.div<{ aspect?: number }>`
+const EmbedBox = styled.div<{ aspect?: number; iHeight?: number; iWidth?: number; }>`
   ${p => p.aspect ? `
   height: 0;
   overflow: hidden;
   padding-bottom: calc(100% / ${p.aspect});
   position: relative;
   ` : `
-  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
   width: 100%;
 
   `}
 
   & iframe {
+    ${p => (p.iHeight && p.iWidth) ? `
+      height: ${p.iHeight}px !important;
+      width: ${p.iWidth}px !important;
+    ` : `
     height: 100%;
     width: 100%;
+    `
+    }
     ${p => p.aspect && 'position: absolute;'}
+
 
   }
 `;
@@ -235,7 +246,11 @@ type RemoteContentOembedProps = {
 } & RemoteContentEmbedProps &
   PropFunc<typeof Box>;
 
-const YOUTUBE = /youtu(\.?)be/;
+/**
+ * Some providers do not report sizes correctly, so we report an aspect ratio
+ * instead of a height/width
+ */
+const BAD_SIZERS = [/youtu(\.?)be/];
 
 export const RemoteContentOembed = React.forwardRef<
   HTMLDivElement,
@@ -246,11 +261,17 @@ export const RemoteContentOembed = React.forwardRef<
   const embed = oembed.read();
   const fallbackError  = new Error('fallback');
 
-  const aspect =
-    YOUTUBE.test(url) &&
-    'height' in embed && typeof embed.height === 'number'
-    && 'width' in embed && typeof embed.width === 'number'
-    ? (embed.width / embed.height) : undefined;
+  const [aspect, width, height] = useMemo(() => {
+    if(!('height' in embed && typeof embed.height === 'number'
+      && 'width' in embed && typeof embed.width === 'number')) {
+      return [undefined, undefined, undefined];
+    }
+    const { height, width } = embed;
+    if(BAD_SIZERS.some(r => r.test(url))) {
+      return [width/height, undefined, undefined];
+    }
+    return [undefined, width, height];
+  }, [embed, url]);
 
   const detail = (
     <Col
@@ -272,6 +293,8 @@ export const RemoteContentOembed = React.forwardRef<
           <EmbedBox
             ref={ref}
             aspect={aspect}
+            iHeight={height}
+            iWidth={width}
             dangerouslySetInnerHTML={{ __html: embed.html }}
           ></EmbedBox>
         </EmbedContainer>
@@ -300,7 +323,6 @@ export function RemoteContentEmbedFallback(props: RemoteContentEmbedProps) {
   return (
     <Row maxWidth="100%" overflow="hidden" gapX="2" alignItems="center" p="2">
       <Icon color="gray" icon="ArrowExternal" />
-      <TruncatedText maxWidth="100%" gray>
         <BaseAnchor
           href={url}
           target="_blank"
@@ -311,9 +333,10 @@ export function RemoteContentEmbedFallback(props: RemoteContentEmbedProps) {
           textOverflow="ellipsis"
           color="gray"
         >
+        <TruncatedText maxWidth="100%" gray>
           {url}
-        </BaseAnchor>
-      </TruncatedText>
+        </TruncatedText>
+      </BaseAnchor>
     </Row>
   );
 }
