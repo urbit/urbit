@@ -1509,23 +1509,17 @@
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
       ==
-    ::  assert desk kelvin matches kernel kelvin, except on %base
-    ::
-    ?>  ?:  =(%base syd)  &
-        .=  zuse/zuse
-        ?-  -.yoki
-          %&  =/  fil  (~(got by q.p.yoki) /sys/kelvin)
-              ?-  -.fil
-                %&  q.p.fil
-                %|  
-              ==
-          %|
-        ==
     =/  new-data=(map path (each page lobe))
       ?-  -.yoki
         %&  q.p.yoki
         %|  (~(run by q.p.yoki) |=(=lobe |+lobe))
       ==
+    ::  find desk kelvin
+    ::
+    =/  kel=[@tas @ud]  (get-kelvin yoki)
+    ?.  |(=(%base syd) =(kel [%zuse zuse]))
+      ~>(%mean.|.(leaf/"clay: bad-kelvin, {<[need=zuse/zuse have=kel]>}") !!)
+    ::
     =/  old-yaki
       ?:  =(0 let.dom)
         *yaki
@@ -1595,6 +1589,35 @@
     =.  ..park  (emil (print q.old-yaki data))
     ::
     wake:(ergo mim)
+    ::
+    ::  +get-kelvin: read the desk's kernel version from /sys/kelvin
+    ::
+    ++  get-kelvin
+      |=  =yoki
+      ;;  [@tas @ud]
+      |^  ?-    -.yoki
+              %|
+            %-  lobe-to-noun
+            ~>  %mean.'clay: missing /sys/kelvin'
+            (~(got by q.p.yoki) /sys/kelvin)
+          ::
+              %&
+            =/  fil=(each page lobe)
+              ~>  %mean.'clay: missing /sys/kelvin'
+              (~(got by q.p.yoki) /sys/kelvin)
+            ?-    -.fil
+                %&  q.p.fil
+                %|  (lobe-to-noun p.fil)
+            ==
+          ==
+      ++  lobe-to-noun
+        |=  =lobe
+        =/  bob  (lobe-to-blob:ze lobe)
+        ?-  -.bob
+          %direct  q.q.bob
+          %delta  q.r.bob
+        ==
+      --
     ::
     ::  Find which files changed or were deleted
     ::
