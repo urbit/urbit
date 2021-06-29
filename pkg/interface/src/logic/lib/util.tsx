@@ -539,3 +539,12 @@ export function binaryIndexOf(arr: BigInteger[], target: BigInteger): number | u
   }
   return undefined;
 }
+
+export async function jsonFetch<T>(info: RequestInfo, init?: RequestInit): Promise<T> {
+  const res = await fetch(info, init);
+  if(!res.ok) {
+    throw new Error('Bad Fetch Response');
+  }
+  const data = await res.json();
+  return data as T;
+}
