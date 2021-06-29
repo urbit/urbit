@@ -6,8 +6,7 @@ import React, {
 import Helmet from 'react-helmet';
 
 import useTermState from '~/logic/state/term';
-import useSettingsState from '~/logic/state/settings';
-import useLocalState from '~/logic/state/local';
+import { useDark } from '~/logic/state/join';
 
 import { Terminal, ITerminalOptions, ITheme } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
@@ -278,15 +277,8 @@ export default function TermApp(props: TermAppProps) {
   const container = useRef<HTMLDivElement>(null);
   // TODO  allow switching of selected
   const { sessions, selected, slogstream, set } = useTermState();
-
-  const session = useTermState(useCallback(
-    state => state.sessions[state.selected],
-    [selected, sessions]
-  ));
-
-  const osDark = useLocalState(state => state.dark);
-  const theme = useSettingsState(s => s.display.theme);
-  const dark = theme === 'dark' || (theme === 'auto' && osDark);
+  const session = sessions[selected];
+  const dark = useDark();
 
   const setupSlog = useCallback(() => {
     console.log('slog: setting up...');
