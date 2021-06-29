@@ -85,7 +85,7 @@ class ChatWindow extends Component<
     if(state.unreadIndex.neq(bigInt.zero)) {
       return;
     }
-    const unreadIndex = graph.keys()[unreadCount];
+    let unreadIndex = graph.keys()[unreadCount];
     if (!unreadIndex || unreadCount === 0) {
       if(state.unreadIndex.neq(bigInt.zero)) {
         this.setState({
@@ -94,6 +94,13 @@ class ChatWindow extends Component<
       }
       return;
     }
+    /* Loop until we can find a index with an actual post */
+    let attemptedCount = unreadCount;
+    while(attemptedCount > 0 && typeof graph.get(unreadIndex)?.post === 'string') {
+      attemptedCount--;
+      unreadIndex = graph.keys()[attemptedCount];
+    }
+
     this.setState({
       unreadIndex
     });

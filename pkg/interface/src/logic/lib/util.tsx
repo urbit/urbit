@@ -548,3 +548,7 @@ export async function jsonFetch<T>(info: RequestInfo, init?: RequestInit): Promi
   const data = await res.json();
   return data as T;
 }
+
+export function clone<T>(a: T) {
+  return JSON.parse(JSON.stringify(a)) as T;
+}

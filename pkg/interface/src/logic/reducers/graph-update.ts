@@ -250,9 +250,6 @@ export const addNodes = (json, state) => {
     post,
     resource
   ) => {
-    if (!post.hash) {
-     return [graph, flatGraph, threadGraphs];
-    }
     const timestamp = post['time-sent'];
 
     if (state.graphTimesentMap[resource][timestamp]) {

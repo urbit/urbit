@@ -82,6 +82,7 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
       flexDirection="column"
       p="2"
       position="relative"
+      backgroundColor="washedGray"
     >
       {uploading ? (
         <Box
@@ -118,7 +119,7 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
         p="2"
         justifyContent="row-end"
       >
-        <Action onClick={doPost} disabled={!valid} backgroundColor="white">
+        <Action onClick={doPost} disabled={!valid} backgroundColor="transparent">
           Post
         </Action>
       </Row>

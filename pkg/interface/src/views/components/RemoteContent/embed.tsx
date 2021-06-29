@@ -1,7 +1,8 @@
 import React, {
   MouseEvent,
   useCallback,
-  useMemo
+  useMemo,
+  useState
 } from 'react';
 import styled from 'styled-components';
 import UnstyledEmbedContainer from 'react-oembed-container';
@@ -44,8 +45,13 @@ const Image = styled.img(system({ objectFit: true }), ...allSystemStyle);
 export function RemoteContentImageEmbed(
   props: ImageProps & RemoteContentEmbedProps
 ) {
-  const { url, noCors = false, ...rest } = props;
+  const { url, ...rest } = props;
+  const [noCors, setNoCors] = useState(false);
   const { hovering, bind } = useHovering();
+  // maybe images aren't set up for CORS embeds
+  const onError = useCallback(() => {
+    setNoCors(true);
+  }, []);
 
   return (
     <Box height="100%" width="100%" position="relative" {...bind} {...rest}>
@@ -77,6 +83,7 @@ export function RemoteContentImageEmbed(
         width="100%"
         objectFit="contain"
         borderRadius={2}
+        onError={onError}
         {...props}
       />
     </Box>

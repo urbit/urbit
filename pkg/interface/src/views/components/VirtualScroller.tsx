@@ -498,10 +498,10 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
     const { visibleItems } = this.state;
     const { keyToString } = this.props;
 
-    let bottomIndex = visibleItems[visibleItems.length - 1];
     const { scrollTop, scrollHeight } = this.window;
     const topSpacing = this.props.origin === 'top' ? scrollTop : scrollHeight - scrollTop;
     const items = this.props.origin === 'top' ? visibleItems : [...visibleItems].reverse();
+    let bottomIndex = items[0];
     items.forEach((index) => {
       const el = this.childRefs.get(keyToString(index));
       if(!el) {
