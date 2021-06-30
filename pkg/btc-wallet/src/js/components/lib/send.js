@@ -125,7 +125,6 @@ const Send = ({ stopSending, value, conversion }) => {
   };
 
   useEffect(() => {
-    console.log({ network });
     if (network === 'bitcoin') {
       let url = 'https://bitcoiner.live/api/fees/estimates/latest';
       fetch(url)
@@ -134,7 +133,6 @@ const Send = ({ stopSending, value, conversion }) => {
           // let estimates = Object.keys(n.estimates);
           // let mid = Math.floor(estimates.length / 2);
           // let high = estimates.length - 1;
-          console.log('hello');
           setFeeChoices({
             high: [30, n.estimates[30]['sat_per_vbyte']],
             mid: [180, n.estimates[180]['sat_per_vbyte']],

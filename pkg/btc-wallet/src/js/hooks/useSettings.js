@@ -27,6 +27,8 @@ export const SettingsContext = createContext({
   setBtcState: () => {},
   history: [],
   setHistory: () => {},
+  fee: 0,
+  setFee: () => {},
   psbt: '',
   setPsbt: () => {},
   address: null,
@@ -58,6 +60,7 @@ export const SettingsProvider = ({ channel, children }) => {
   const [btcState, setBtcState] = useState(null);
   const [history, setHistory] = useState([]);
   const [psbt, setPsbt] = useState('');
+  const [fee, setFee] = useState(0);
   const [address, setAddress] = useState(null);
   const [currencyRates, setCurrencyRates] = useState({
     BTC: { last: 1, symbol: 'BTC' },
@@ -223,6 +226,7 @@ export const SettingsProvider = ({ channel, children }) => {
     }
     if (psbtData) {
       setPsbt(psbtData.pb);
+      setFee(psbtData.fee);
     }
     if (cancelTx) {
       handleCancelTx(cancelTx);
@@ -281,6 +285,8 @@ export const SettingsProvider = ({ channel, children }) => {
         setHistory,
         psbt,
         setPsbt,
+        fee,
+        setFee,
         address,
         setAddress,
         currencyRates,
