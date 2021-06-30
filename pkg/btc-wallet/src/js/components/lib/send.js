@@ -27,6 +27,12 @@ const focusFields = {
   note: 'note',
 };
 
+export const feeLevels = {
+  low: 'low',
+  mid: 'mid',
+  high: 'high',
+};
+
 const Send = ({ stopSending, value, conversion }) => {
   const { error, setError, network, psbt, denomination, shipWallets } =
     useSettings();
@@ -44,7 +50,7 @@ const Send = ({ stopSending, value, conversion }) => {
     mid: [10, 1],
     high: [10, 1],
   });
-  const [feeValue, setFeeValue] = useState('mid');
+  const [feeValue, setFeeValue] = useState(feeLevels.mid);
   const [showModal, setShowModal] = useState(false);
   const [note, setNote] = useState('');
   const [choosingSignMethod, setChoosingSignMethod] = useState(false);
@@ -52,10 +58,6 @@ const Send = ({ stopSending, value, conversion }) => {
 
   const feeDismiss = () => {
     setShowModal(false);
-  };
-
-  const feeSelect = (which) => {
-    setFeeValue(which);
   };
 
   const handleSetSignMethod = (signMethod) => {
@@ -123,6 +125,7 @@ const Send = ({ stopSending, value, conversion }) => {
   };
 
   useEffect(() => {
+    console.log({ network });
     if (network === 'bitcoin') {
       let url = 'https://bitcoiner.live/api/fees/estimates/latest';
       fetch(url)
@@ -131,6 +134,7 @@ const Send = ({ stopSending, value, conversion }) => {
           // let estimates = Object.keys(n.estimates);
           // let mid = Math.floor(estimates.length / 2);
           // let high = estimates.length - 1;
+          console.log('hello');
           setFeeChoices({
             high: [30, n.estimates[30]['sat_per_vbyte']],
             mid: [180, n.estimates[180]['sat_per_vbyte']],
@@ -354,7 +358,8 @@ const Send = ({ stopSending, value, conversion }) => {
               {!showModal ? null : (
                 <FeePicker
                   feeChoices={feeChoices}
-                  feeSelect={feeSelect}
+                  feeValue={feeValue}
+                  setFeeValue={setFeeValue}
                   feeDismiss={feeDismiss}
                 />
               )}
