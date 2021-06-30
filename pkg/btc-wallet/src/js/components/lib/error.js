@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Text } from '@tlon/indigo-react';
 
 const errorToString = (error) => {
@@ -26,16 +26,12 @@ const errorToString = (error) => {
   if (error === 'invalid-signed') {
     return 'Invalid signed bitcoin transaction';
   }
-}
+};
 
-export default function Error(props) {
-  const error = errorToString(props.error);
+const Error = ({ error, ...rest }) => (
+  <Text color="red" {...rest}>
+    {errorToString(error)}
+  </Text>
+);
 
-  return(
-    <Text
-      color='red'
-      {...props}>
-      {error}
-    </Text>
-  );
-}
+export default Error;

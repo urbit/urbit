@@ -1,52 +1,44 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Box } from '@tlon/indigo-react';
+import WalletModal from './walletModal.js';
+import ProviderModal from './providerModal.js';
+import { useSettings } from '../../hooks/useSettings.js';
 
-import WalletModal from './walletModal.js'
-import ProviderModal from './providerModal.js'
+const StartupModal = () => {
+  const { wallet, provider } = useSettings();
+  let modal = null;
 
-
-export default class StartupModal extends Component {
-  constructor(props) {
-    super(props);
+  if (wallet && provider) {
+    return null;
+  } else if (!provider) {
+    modal = <ProviderModal />;
+  } else if (!wallet) {
+    modal = <WalletModal />;
   }
-
-
-  render() {
-    let modal = null;
-
-    if (this.props.state.wallet && this.props.state.provider) {
-      return null;
-    } else if (!this.props.state.provider){
-      modal =
-        <ProviderModal
-          api={this.props.api}
-          providerPerms={this.props.state.providerPerms}
-        />
-    } else if (!this.props.state.wallet){
-      modal = <WalletModal api={this.props.api} network={this.props.network}/>
-    }
-    return (
+  return (
+    <Box
+      backgroundColor="scales.black20"
+      left="0px"
+      top="0px"
+      width="100%"
+      height="100%"
+      position="fixed"
+      display="flex"
+      zIndex={10}
+      justifyContent="center"
+      alignItems="center"
+    >
       <Box
-        backgroundColor="scales.black20"
-        left="0px"
-        top="0px"
-        width="100%"
-        height="100%"
-        position="fixed"
         display="flex"
-        zIndex={10}
-        justifyContent="center"
-        alignItems="center"
+        flexDirection="column"
+        width="400px"
+        backgroundColor="white"
+        borderRadius={3}
       >
-        <Box display="flex"
-          flexDirection="column"
-          width='400px'
-          backgroundColor="white"
-          borderRadius={3}
-        >
-          {modal}
-        </Box>
+        {modal}
       </Box>
-    );
-  }
-}
+    </Box>
+  );
+};
+
+export default StartupModal;

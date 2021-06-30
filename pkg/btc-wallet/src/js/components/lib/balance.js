@@ -1,170 +1,140 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Row, Text, Button, Col } from '@tlon/indigo-react';
 import Send from './send.js';
 import CurrencyPicker from './currencyPicker.js';
 import { satsToCurrency } from '../../lib/util.js';
-import { store } from '../../store.js';
+import { useSettings } from '../../hooks/useSettings.js';
+import { api } from '../../api';
 
-export default class Balance extends Component {
-  constructor(props) {
-    super(props);
+const Balance = () => {
+  const {
+    address,
+    confirmedBalance: sats,
+    unconfirmedBalance: unconfirmedSats,
+    denomination,
+    currencyRates,
+    setPsbt,
+    setFee,
+    setError,
+  } = useSettings();
+  const [sending, setSending] = useState(false);
+  const [copiedButton, setCopiedButton] = useState(false);
+  const [copiedString, setCopiedString] = useState(false);
 
-    this.state = {
-      sending: false,
-      copiedButton: false,
-      copiedString: false,
-    };
-
-    this.copyAddress = this.copyAddress.bind(this);
-  }
-
-  copyAddress(arg) {
-    let address = this.props.state.address;
+  const copyAddress = (arg) => {
     navigator.clipboard.writeText(address);
-    this.props.api.btcWalletCommand({ 'gen-new-address': null });
+    api.btcWalletCommand({ 'gen-new-address': null });
 
     if (arg === 'button') {
-      this.setState({ copiedButton: true });
+      setCopiedButton(true);
       setTimeout(() => {
-        this.setState({ copiedButton: false });
+        setCopiedButton(false);
       }, 2000);
     } else if (arg === 'string') {
-      this.setState({ copiedString: true });
+      setCopiedString(true);
       setTimeout(() => {
-        this.setState({ copiedString: false });
+        setCopiedString(false);
       }, 2000);
     }
-  }
+  };
 
-  render() {
-    const sats = this.props.state.confirmedBalance || 0;
-    const unconfirmedSats = this.props.state.unconfirmedBalance;
+  const unconfirmedString = unconfirmedSats ? ` (${unconfirmedSats}) ` : '';
 
-    const unconfirmedString = unconfirmedSats ? ` (${unconfirmedSats}) ` : '';
+  const value = satsToCurrency(sats, denomination, currencyRates);
+  const sendDisabled = sats === 0;
+  const addressText =
+    address === null ? '' : address.slice(0, 6) + '...' + address.slice(-6);
 
-    const denomination = this.props.state.denomination;
-    const value = satsToCurrency(
-      sats,
-      denomination,
-      this.props.state.currencyRates
-    );
-    const sendDisabled = sats === 0;
-    const addressText =
-      this.props.state.address === null
-        ? ''
-        : this.props.state.address.slice(0, 6) +
-          '...' +
-          this.props.state.address.slice(-6);
+  const conversion = currencyRates[denomination]?.last;
 
-    const conversion = this.props.state.currencyRates[denomination].last;
-
-    return (
-      <>
-        {this.state.sending ? (
-          <Send
-            state={this.props.state}
-            api={this.props.api}
-            psbt={this.props.state.psbt}
-            fee={this.props.state.fee}
-            currencyRates={this.props.state.currencyRates}
-            shipWallets={this.props.state.shipWallets}
-            value={value}
-            denomination={denomination}
-            sats={sats}
-            conversion={conversion}
-            network={this.props.network}
-            error={this.props.state.error}
-            stopSending={() => {
-              this.setState({ sending: false });
-              store.handleEvent({
-                data: { psbt: '', fee: 0, error: '', 'broadcast-fail': null },
-              });
-            }}
-          />
-        ) : (
-          <Col
-            height="400px"
-            width="100%"
-            backgroundColor="white"
-            borderRadius="48px"
-            justifyContent="space-between"
-            mb={5}
-            p={5}
-          >
-            <Row justifyContent="space-between">
-              <Text color="orange" fontSize={1}>
-                Balance
-              </Text>
-              <Text
-                color="lightGray"
-                fontSize="14px"
-                mono
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  this.copyAddress('string');
-                }}
-              >
-                {this.state.copiedString ? 'copied' : addressText}
-              </Text>
-              <CurrencyPicker
-                api={this.props.api}
-                denomination={denomination}
-                currencies={this.props.state.currencyRates}
-              />
-            </Row>
-            <Col justifyContent="center" alignItems="center">
-              <Text
-                fontSize="40px"
-                color="orange"
-                style={{ whiteSpace: 'nowrap' }}
-              >
-                {value}
-              </Text>
-              <Text
-                fontSize={1}
-                color="orange"
-              >{`${sats}${unconfirmedString} sats`}</Text>
-            </Col>
-            <Row flexDirection="row-reverse">
-              <Button
-                disabled={sendDisabled}
-                fontSize={1}
-                fontWeight="bold"
-                color={sendDisabled ? 'lighterGray' : 'white'}
-                backgroundColor={sendDisabled ? 'veryLightGray' : 'orange'}
-                style={{ cursor: sendDisabled ? 'default' : 'pointer' }}
-                borderColor="none"
-                borderRadius="24px"
-                height="48px"
-                onClick={() => this.setState({ sending: true })}
-              >
-                Send
-              </Button>
-              <Button
-                mr={3}
-                disabled={this.state.copiedButton}
-                fontSize={1}
-                fontWeight="bold"
-                color={this.state.copiedButton ? 'green' : 'orange'}
-                backgroundColor={
-                  this.state.copiedButton ? 'veryLightGreen' : 'midOrange'
-                }
-                style={{
-                  cursor: this.state.copiedButton ? 'default' : 'pointer',
-                }}
-                borderColor="none"
-                borderRadius="24px"
-                height="48px"
-                onClick={() => {
-                  this.copyAddress('button');
-                }}
-              >
-                {this.state.copiedButton ? 'Address Copied!' : 'Copy Address'}
-              </Button>
-            </Row>
+  return (
+    <>
+      {sending ? (
+        <Send
+          value={value}
+          conversion={conversion}
+          stopSending={() => {
+            setSending(false);
+            setPsbt('');
+            setFee(0);
+            setError('');
+          }}
+        />
+      ) : (
+        <Col
+          height="400px"
+          width="100%"
+          backgroundColor="white"
+          borderRadius="48px"
+          justifyContent="space-between"
+          mb={5}
+          p={5}
+        >
+          <Row justifyContent="space-between">
+            <Text color="orange" fontSize={1}>
+              Balance
+            </Text>
+            <Text
+              color="lightGray"
+              fontSize="14px"
+              mono
+              style={{ cursor: 'pointer' }}
+              onClick={() => copyAddress('string')}
+            >
+              {copiedString ? 'copied' : addressText}
+            </Text>
+            <CurrencyPicker />
+          </Row>
+          <Col justifyContent="center" alignItems="center">
+            <Text
+              fontSize="40px"
+              color="orange"
+              style={{ whiteSpace: 'nowrap' }}
+            >
+              {value}
+            </Text>
+            <Text
+              fontSize={1}
+              color="orange"
+            >{`${sats}${unconfirmedString} sats`}</Text>
           </Col>
-        )}
-      </>
-    );
-  }
-}
+          <Row flexDirection="row-reverse">
+            <Button
+              disabled={sendDisabled}
+              fontSize={1}
+              fontWeight="bold"
+              color={sendDisabled ? 'lighterGray' : 'white'}
+              backgroundColor={sendDisabled ? 'veryLightGray' : 'orange'}
+              style={{ cursor: sendDisabled ? 'default' : 'pointer' }}
+              borderColor="none"
+              borderRadius="24px"
+              height="48px"
+              onClick={() => setSending(true)}
+            >
+              Send
+            </Button>
+            <Button
+              mr={3}
+              disabled={copiedButton}
+              fontSize={1}
+              fontWeight="bold"
+              color={copiedButton ? 'green' : 'orange'}
+              backgroundColor={copiedButton ? 'veryLightGreen' : 'midOrange'}
+              style={{
+                cursor: copiedButton ? 'default' : 'pointer',
+              }}
+              borderColor="none"
+              borderRadius="24px"
+              height="48px"
+              onClick={() => copyAddress('button')}
+            >
+              {copiedButton ? 'Address Copied!' : 'Copy Address'}
+            </Button>
+          </Row>
+        </Col>
+      )}
+    </>
+  );
+};
+
+export default Balance;
