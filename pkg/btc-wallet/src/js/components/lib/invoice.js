@@ -214,7 +214,7 @@ const Invoice = ({ stopSending, payee, satsAmount }) => {
                 mono
                 color="gray"
                 fontSize="14px"
-                style={{ display: 'block', 'overflow-wrap': 'anywhere' }}
+                style={{ display: 'block', overflowWrap: 'anywhere' }}
               >
                 {payee}
               </Text>
