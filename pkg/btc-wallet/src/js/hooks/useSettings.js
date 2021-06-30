@@ -44,6 +44,7 @@ export const SettingsContext = createContext({
 });
 
 export const SettingsProvider = ({ channel, children }) => {
+  const [network, setNetwork] = useState('bitcoin');
   const [channelData, setChannelData] = useState(null);
   const [loadedBtc, setLoadedBtc] = useState(false);
   const [loadedSettings, setLoadedSettings] = useState(false);
@@ -255,6 +256,8 @@ export const SettingsProvider = ({ channel, children }) => {
   return (
     <Provider
       value={{
+        network,
+        setNetwork,
         loadedBtc,
         setLoadedBtc,
         loadedSettings,
