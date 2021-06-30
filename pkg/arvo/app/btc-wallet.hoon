@@ -3,7 +3,7 @@
 ::  Scrys
 ::  x/scanned: (list xpub) of all scanned wallets
 ::  x/balance/xpub: balance (in sats) of wallet
-/-  *btc-wallet, bp=btc-provider, file-server, launch-store
+/-  *btc-wallet, bp=btc-provider, file-server, launch-store, settings
 /+  dbug, default-agent, bl=btc, bc=bitcoin, bcu=bitcoin-utils, bip32
 ~%  %btc-wallet-top  ..part  ~
 |%
@@ -70,28 +70,25 @@
 ^-  (quip card _this)
   ~&  >  '%btc-wallet initialized'
   ::
-  =/  warning  [%settings-event !>([%put-entry %btc-wallet %warning %b %.y])]
-  =/  currency
-    [%settings-event !>([%put-entry %btc-wallet %currency %s 'USD'])]
+  =/  warning=event:settings   [%put-entry %btc-wallet %warning %b %.y]
+  =/  currency=event:settings  [%put-entry %btc-wallet %currency %s 'USD']
   =/  cards=(list card)
-    :~  [%pass /warn %agent [our.bowl %settings-store] %poke warning]
-        [%pass /warn %agent [our.bowl %settings-store] %poke currency]
+    :~  (poke-our:hc %settings-store %settings-event !>(warning))
+        (poke-our:hc %settings-store %settings-event !>(currency))
     ==
   ::
   =/  has-file=?  (gall-scry:hc ? %file-server /url/'~btc'/noun)
   =/  has-tile=?
     (~(has in (gall-scry:hc (set @tas) %launch /keys/noun)) %btc-wallet)
   =?  cards  !has-file
-    =/  file
-      [%file-server-action !>([%serve-dir /'~btc' /app/btc-wallet %.n %.y])]
+    =/  file=action:file-server  [%serve-dir /'~btc' /app/btc-wallet %.n %.y]
     :_  cards
-    [%pass /btc-wallet-server %agent [our.bowl %file-server] %poke file]
+    (poke-our:hc %file-server %file-server-action !>(file))
   =?  cards  !has-tile
-    =/  tile
-      :-  %launch-action
-      !>([%add %btc-wallet [%custom `'/~btc' `'/~btc/img/tile.svg'] %.y])
+    =/  tile=action:launch-store
+      [%add %btc-wallet [%custom `'/~btc' `'/~btc/img/tile.svg'] %.y]
     :_  cards
-    [%pass /btc-wallet-tile %agent [our.bowl %launch] %poke tile]
+    (poke-our:hc %launch %launch-action !>(tile))
   ::
   :-  cards
   %_  this
@@ -1210,6 +1207,11 @@
       [our.bowl %btc-wallet]  %poke
       %btc-wallet-internal  !>(intr)
   ==
+::
+++  poke-our
+  |=  [app=term =cage]
+  ^-  card
+  [%pass / %agent [our.bowl app] %poke cage]
 ::
 ++  give-update
   |=  upd=update
