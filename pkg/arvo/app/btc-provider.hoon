@@ -348,12 +348,16 @@
   |=  user=ship
   ^-  ?
   |^
-  ?|  public.whitelist
-      =(our.bowl user)
-      ?&(kids.whitelist is-kid)
-      (~(has in users.whitelist) user)
-      in-group
-  ==
+  ?&  ?|  ?!(?=(%pawn (clan:title user)))
+          (~(has in users.whitelist) user)
+          =(our.bowl user)
+      ==
+      ?|  public.whitelist
+          ?&(kids.whitelist is-kid)
+          (~(has in users.whitelist) user)
+          =(our.bowl user)
+          in-group
+  ==  ==
   ::
   ++  is-kid
     =(our.bowl (sein:title our.bowl now.bowl user))
