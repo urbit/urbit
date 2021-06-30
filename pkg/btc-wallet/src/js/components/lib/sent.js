@@ -19,7 +19,7 @@ const Sent = ({ payee, stopSending, satsAmount }) => {
       </Row>
       <Center>
         <Text
-          style={{ display: 'block', 'overflow-wrap': 'anywhere' }}
+          style={{ display: 'block', overflowWrap: 'anywhere' }}
           color="white"
         >{`You sent BTC to ${payee}`}</Text>
       </Center>

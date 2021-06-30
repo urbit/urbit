@@ -143,7 +143,7 @@ const BridgeInvoice = ({ payee, stopSending, satsAmount }) => {
                 mono
                 color="gray"
                 fontSize="14px"
-                style={{ display: 'block', 'overflow-wrap': 'anywhere' }}
+                style={{ display: 'block', overflowWrap: 'anywhere' }}
               >
                 {payee}
               </Text>
@@ -168,7 +168,7 @@ const BridgeInvoice = ({ payee, stopSending, satsAmount }) => {
             color={inputColor}
             backgroundColor={inputBg}
             borderColor={inputBorder}
-            style={{ 'line-height': '4' }}
+            style={{ lineHeight: '4' }}
             onChange={(e) => checkTxHex(e)}
           />
           {localError !== '' && (
