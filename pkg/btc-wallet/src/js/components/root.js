@@ -1,28 +1,16 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route } from "react-router-dom";
-import _ from 'lodash';
+import { BrowserRouter } from 'react-router-dom';
 import { api } from '../api.js';
 import { store } from '../store.js';
-
-import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
+import { ThemeProvider } from 'styled-components';
 import light from './themes/light';
-import dark from './themes/dark';
-import {
-  Text,
-  Box,
-  Reset,
-  Col,
-  LoadingSpinner,
-} from '@tlon/indigo-react';
+// import dark from './themes/dark';
+import { Box, Reset } from '@tlon/indigo-react';
 import StartupModal from './lib/startupModal.js';
-import Header from './lib/header.js'
-import Balance from './lib/balance.js'
-import Transactions from './lib/transactions.js'
-import Warning from './lib/warning.js'
-import Body from './lib/body.js'
-import { subscription } from '../subscription.js'
+import Body from './lib/body.js';
+import { subscription } from '../subscription.js';
 
-const network = "bitcoin";
+const network = 'bitcoin';
 
 export class Root extends Component {
   constructor(props) {
@@ -32,8 +20,8 @@ export class Root extends Component {
     store.setStateHandler(this.setState.bind(this));
   }
 
-  componentDidMount(){
-    this.props.channel.setOnChannelError((e) => {
+  componentDidMount() {
+    this.props.channel.setOnChannelError(() => {
       subscription.start();
     });
     subscription.start();
@@ -42,34 +30,38 @@ export class Root extends Component {
   render() {
     const loaded = this.state.loaded;
     const warning = this.state.showWarning;
-    const blur = (!loaded) ? false :
-      !(this.state.wallet && this.state.provider);
+    const blur = !loaded ? false : !(this.state.wallet && this.state.provider);
 
     return (
       <BrowserRouter>
         <ThemeProvider theme={light}>
-        <Reset/>
-        { (loaded) ? <StartupModal api={api} state={this.state} network={network}/> : null }
-          <Box display="flex"
-            flexDirection='column'
-            position='absolute'
-            alignItems='center'
-            backgroundColor='lightOrange'
-            width='100%'
+          <Reset />
+          {loaded ? (
+            <StartupModal api={api} state={this.state} network={network} />
+          ) : null}
+          <Box
+            display="flex"
+            flexDirection="column"
+            position="absolute"
+            alignItems="center"
+            backgroundColor="lightOrange"
+            width="100%"
             minHeight={loaded ? '100%' : 'none'}
             height={loaded ? 'none' : '100%'}
-            style={{filter: (blur ? 'blur(8px)' : 'none')}}
-            px={[0,4]}
-            pb={[0,4]}
+            style={{ filter: blur ? 'blur(8px)' : 'none' }}
+            px={[0, 4]}
+            pb={[0, 4]}
           >
-            <Body loaded={loaded}
+            <Body
+              loaded={loaded}
               state={this.state}
-              api={api} network={network}
+              api={api}
+              network={network}
               warning={warning}
             />
           </Box>
         </ThemeProvider>
       </BrowserRouter>
-    )
+    );
   }
 }

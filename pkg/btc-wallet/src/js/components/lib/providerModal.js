@@ -6,7 +6,6 @@ import {
   StatelessTextInput,
   Icon,
   Row,
-  Input,
   LoadingSpinner,
 } from '@tlon/indigo-react';
 
@@ -23,9 +22,9 @@ export default class ProviderModal extends Component {
       ready: false,
       provider: null,
       connecting: false,
-    }
+    };
 
-    this.checkProvider  = this.checkProvider.bind(this);
+    this.checkProvider = this.checkProvider.bind(this);
     this.submitProvider = this.submitProvider.bind(this);
   }
 
@@ -38,77 +37,88 @@ export default class ProviderModal extends Component {
 
     if (isValidPatp(provider)) {
       let command = {
-        "check-provider": provider
-      }
+        'check-provider': provider,
+      };
       potentialProvider = provider;
       checkingProvider = true;
       this.props.api.btcWalletCommand(command);
       setTimeout(() => {
-        this.setState({providerFailed: true, checkingProvider: false});
+        this.setState({ providerFailed: true, checkingProvider: false });
       }, 5000);
     }
-    this.setState({provider, ready, checkingProvider, potentialProvider});
+    this.setState({ provider, ready, checkingProvider, potentialProvider });
   }
 
-  componentDidUpdate(prevProps, prevState){
-    if (!this.state.ready){
+  componentDidUpdate() {
+    if (!this.state.ready) {
       if (this.props.providerPerms[this.state.provider]) {
-        this.setState({ready: true, checkingProvider: false, providerFailed: false});
+        this.setState({
+          ready: true,
+          checkingProvider: false,
+          providerFailed: false,
+        });
       }
     }
   }
 
-  submitProvider(e){
-    if (this.state.ready){
+  submitProvider() {
+    if (this.state.ready) {
       let command = {
-        "set-provider": this.state.provider
-      }
+        'set-provider': this.state.provider,
+      };
       this.props.api.btcWalletCommand(command);
-      this.setState({connecting: true});
+      this.setState({ connecting: true });
     }
   }
 
   render() {
-
     let workingNode = null;
     let workingColor = null;
     let workingBg = null;
     if (this.state.ready) {
-      workingColor = "green";
-      workingBg = "veryLightGreen"
-      workingNode =
+      workingColor = 'green';
+      workingBg = 'veryLightGreen';
+      workingNode = (
         <Box mt={3}>
           <Text fontSize="14px" color="green">
             {this.state.provider} is a working provider node
           </Text>
         </Box>
+      );
     } else if (this.state.providerFailed) {
-      workingColor = "red";
-      workingBg = "veryLightRed"
-      workingNode =
+      workingColor = 'red';
+      workingBg = 'veryLightRed';
+      workingNode = (
         <Box mt={3}>
           <Text fontSize="14px" color="red">
             {this.state.potentialProvider} is not a working provider node
           </Text>
         </Box>
+      );
     }
 
     return (
-      <Box
-        width="100%"
-        height="100%"
-        padding={3}
-      >
+      <Box width="100%" height="100%" padding={3}>
         <Row>
-          <Icon icon="Bitcoin" mr={2}/>
+          <Icon icon="Bitcoin" mr={2} />
           <Text fontSize="14px" fontWeight="bold">
             Step 1 of 2: Set up Bitcoin Provider Node
           </Text>
         </Row>
         <Box mt={3}>
           <Text fontSize="14px" fontWeight="regular" color="gray">
-            In order to perform Bitcoin transaction in Landscape, you'll need to set a provider node. A provider node is an urbit which maintains a synced Bitcoin ledger. 
-            <a fontSize="14px" target="_blank" href="https://urbit.org/bitcoin-wallet"> Learn More</a>
+            In order to perform Bitcoin transaction in Landscape, you&apos;ll
+            need to set a provider node. A provider node is an urbit which
+            maintains a synced Bitcoin ledger.
+            <a
+              fontSize="14px"
+              target="_blank"
+              href="https://urbit.org/bitcoin-wallet"
+              rel="noreferrer"
+            >
+              {' '}
+              Learn More
+            </a>
           </Text>
         </Box>
         <Box mt={3} mb={2}>
@@ -132,7 +142,7 @@ export default class ProviderModal extends Component {
             borderColor={workingColor}
             onChange={this.checkProvider}
           />
-          {(this.state.checkingProvider) ? <LoadingSpinner/> : null}
+          {this.state.checkingProvider ? <LoadingSpinner /> : null}
         </Row>
         {workingNode}
         <Row alignItems="center" mt={3}>
@@ -140,12 +150,15 @@ export default class ProviderModal extends Component {
             mr={2}
             primary
             disabled={!this.state.ready}
-            children="Set Peer Node"
             fontSize="14px"
-            style={{cursor: this.state.ready ? "pointer" : "default"}}
-            onClick={() => {this.submitProvider(this.state.provider)}}
-          />
-          {(this.state.connecting) ? <LoadingSpinner/> : null}
+            style={{ cursor: this.state.ready ? 'pointer' : 'default' }}
+            onClick={() => {
+              this.submitProvider(this.state.provider);
+            }}
+          >
+            Set Peer Node
+          </Button>
+          {this.state.connecting ? <LoadingSpinner /> : null}
         </Row>
       </Box>
     );
