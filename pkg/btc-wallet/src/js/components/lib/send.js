@@ -64,15 +64,12 @@ const Send = ({ stopSending, value, conversion }) => {
   };
 
   const checkPayee = (e) => {
-    console.log('checkPayee', { e });
     setError('');
 
     let payeeReceived = e.target.value;
     let isPatp = ob.isValidPatp(payeeReceived);
     let isAddress = validate(payeeReceived);
-    console.log({ payeeReceived, isPatp, isAddress });
     if (isPatp) {
-      console.log('isPatp', isPatp);
       let command = { 'check-payee': payeeReceived };
       api.btcWalletCommand(command);
       setTimeout(() => {
@@ -144,16 +141,14 @@ const Send = ({ stopSending, value, conversion }) => {
   }, []);
 
   useEffect(() => {
-    if (!ready && checkingPatp) {
-      console.log({ ready, checkingPatp, shipWallets, payee });
+    if (!ready && !checkingPatp) {
       if (shipWallets.payee === payee.slice(1) && shipWallets.hasWallet) {
-        console.log('good');
         setReady(true);
         setCheckingPatp(false);
         setValidPayee(true);
       }
     }
-  }, [ready, checkingPatp, shipWallets]);
+  }, [ready, checkingPatp, shipWallets, payee]);
 
   let payeeColor = 'black';
   let payeeBg = 'white';
