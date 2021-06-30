@@ -3,6 +3,7 @@ import { Content, Graph, Post } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import create from 'zustand';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
 import { useOurContact } from '~/logic/state/contact';
@@ -12,6 +13,26 @@ import { Loading } from '~/views/components/Loading';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import ChatInput, { ChatInput as NakedChatInput } from './ChatInput';
 import ChatWindow from './ChatWindow';
+
+interface useChatStoreType {
+  message: string;
+  setMessage: (message: string) => void;
+}
+
+export const useChatStore = create<useChatStoreType>(set => ({
+  message: '',
+  setMessage: (message: string) => set({ message })
+}));
+
+// const unsentKey = 'chat-unsent';
+
+// export const useChatStore = create<useChatStoreType>(set => ({
+//   message: retrieve(unsentKey, ''),
+//   setMessage: (message: string) => {
+//     set({ message });
+//     localStorage.setItem(unsentKey, message);
+//   }
+// }));
 
 interface ChatPaneProps {
   /**
@@ -80,6 +101,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   const graphTimesentMap = useGraphTimesent(id);
   const ourContact = useOurContact();
   const chatInput = useRef<NakedChatInput>();
+  const setMessage = useChatStore(s => s.setMessage);
 
   const onFileDrag = useCallback(
     (files: FileList | File[]) => {
@@ -93,7 +115,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
 
   const { bind, dragging } = useFileDrag(onFileDrag);
 
-  const [unsent, setUnsent] = useLocalStorageState<Record<string, string>>(
+  const [, setUnsent] = useLocalStorageState<Record<string, string>>(
     'chat-unsent',
     {}
   );
@@ -123,7 +145,9 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   const onReply = useCallback(
     (msg: Post) => {
       const message = props.onReply(msg);
-      setUnsent(s => ({ ...s, [id]: message }));
+      console.log(message);
+      // setUnsent(s => ({ ...s, [id]: message }));
+      setMessage(message);
     },
     [id, props.onReply]
   );
@@ -163,7 +187,6 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
           ourContact={(promptShare.length === 0 && ourContact) || undefined}
           onUnmount={appendUnsent}
           placeholder="Message..."
-          message={unsent[id] || ''}
           deleteMessage={clearUnsent}
         />
       )}
