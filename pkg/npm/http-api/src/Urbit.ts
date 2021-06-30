@@ -269,6 +269,12 @@ export class Urbit {
     this.abort.abort();
     this.abort = new AbortController();
     this.uid = `${Math.floor(Date.now() / 1000)}-${hexString(6)}`;
+    if(this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = null;
+    }
+    this.calm = true;
+    this.outstandingJSON = [];
     this.lastEventId = 0;
     this.lastAcknowledgedEventId = 0;
     this.outstandingSubscriptions = new Map();
@@ -321,7 +327,7 @@ export class Urbit {
 
   private outstandingJSON: Message[] = [];
 
-  private debounceTimer: any = null;
+  private debounceTimer: NodeJS.Timeout = null;
   private debounceInterval = 500;
   private calm = true;
 
@@ -350,6 +356,7 @@ export class Urbit {
               body
             });
           } catch (error) {
+            console.log(error);
             json.forEach(failed => this.outstandingJSON.push(failed));
             if (this.onError) {
               this.onError(error);
