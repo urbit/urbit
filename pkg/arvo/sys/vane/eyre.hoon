@@ -1717,7 +1717,7 @@
       =/  res
         %-  handle-response
         :*  %continue
-            data=(some (as-octs:mimes:html '\0a'))
+            data=(some (as-octs:mimes:html ':\0a'))
             complete=%.n
         ==
       =/  http-moves  -.res
