@@ -216,7 +216,6 @@ export const SettingsProvider = ({ channel, children }) => {
       for (let c in checkPayee) {
         newShipWallets[c] = checkPayee[c];
       }
-      console.log({ newShipWallets });
       setShipWallets(newShipWallets);
     }
     if (changeWallet) {

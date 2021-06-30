@@ -10,7 +10,6 @@ import { feeLevels } from './send';
 
 const FeePicker = ({ feeChoices, feeValue, setFeeValue, feeDismiss }) => {
   const select = (which) => {
-    console.log(which);
     setFeeValue(feeLevels[which]);
     feeDismiss();
   };
