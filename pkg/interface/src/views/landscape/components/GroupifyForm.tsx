@@ -1,5 +1,5 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association, groupifyGraph } from '@urbit/api';
+import { Association, GraphConfig, groupifyGraph } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
@@ -18,7 +18,7 @@ interface FormSchema {
 }
 
 interface GroupifyFormProps {
-  association: Association;
+  association: Association<GraphConfig>;
 }
 
 export function GroupifyForm(props: GroupifyFormProps) {
@@ -36,10 +36,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
         name,
         values.group?.toString() || undefined
       ));
-      let mod = association['app-name'];
-      if (association?.metadata?.config && 'graph' in association.metadata.config) {
-        mod = association.metadata.config.graph;
-      }
+      const mod = association?.metadata?.config?.graph;
       const newGroup = values.group || association.group;
       history.push(`/~landscape${newGroup}/resource/${mod}${rid}`);
       actions.setStatus({ success: null });

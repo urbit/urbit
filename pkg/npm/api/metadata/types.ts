@@ -31,7 +31,7 @@ export type MetadataUpdateRemove = {
 
 export interface MdResource {
   resource: string;
-  app: AppName;
+  "app-name": AppName;
 }
 
 export interface MetadataUpdatePreview {
@@ -77,8 +77,10 @@ export interface Metadata<C = MetadataConfig> {
 
 export type MetadataConfig = GroupConfig | GraphConfig;
 
+export type GraphModule = 'link' | 'post' | 'chat' | 'publish';
+
 export interface GraphConfig {
-  graph: string;
+  graph: GraphModule;
 }
 
 export interface GroupConfig {

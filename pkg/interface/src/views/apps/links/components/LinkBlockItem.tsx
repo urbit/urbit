@@ -9,10 +9,10 @@ import {
   CenterProps
 } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
-import { AUDIO_REGEX, IMAGE_REGEX } from '~/views/components/RemoteContent';
+import { } from '~/logic/lib/util';
 import { AudioPlayer } from '~/views/components/AudioPlayer';
 import { useHistory } from 'react-router';
-import { useHovering } from '~/logic/lib/util';
+import { useHovering, AUDIO_REGEX, IMAGE_REGEX } from '~/logic/lib/util';
 import Author from '~/views/components/Author';
 import {
   GraphNode,
@@ -88,13 +88,13 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
           />
         )
       ) : isImage ? (
-        <RemoteContentImageEmbed url={url} />
+        <RemoteContentImageEmbed title={title} url={url} />
       ) : isAudio ? (
         <AudioPlayer title={title} url={url} />
       ) : isOembed ? (
-        <RemoteContentOembed tall={!summary} renderUrl={false} url={url} thumbnail={summary} />
+        <RemoteContentOembed title={title} tall={!summary} renderUrl={false} url={url} thumbnail={summary} />
       ) : (
-        <RemoteContentEmbedFallback url={url} />
+        <RemoteContentEmbedFallback title={title} url={url} />
       )}
       <Box
         backgroundColor="white"

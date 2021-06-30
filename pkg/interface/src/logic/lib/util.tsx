@@ -15,6 +15,12 @@ import useContactState from '../state/contact';
 
 enableMapSet();
 
+export const IMAGE_REGEX = new RegExp(
+  /(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i
+);
+export const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg|m4a)$/i);
+export const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
+
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
 export const MOMENT_CALENDAR_DATE = {
