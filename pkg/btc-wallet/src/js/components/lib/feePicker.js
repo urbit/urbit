@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React from 'react';
 import {
   Box,
   Text,
@@ -6,37 +6,14 @@ import {
   StatelessRadioButtonField as RadioButton,
   Label,
 } from '@tlon/indigo-react';
+import { feeLevels } from './send';
 
-const feeLevels = {
-  low: 'low',
-  mid: 'mid',
-  high: 'high',
-};
-
-const FeePicker = ({ feeChoices, feeSelect, feeDismiss }) => {
-  const [feeSelected, setFeeSelected] = useState(feeLevels.mid);
-  const [modalElement, setModalElement] = useState();
-  const modalRef = useRef();
-
-  // const clickDismiss = (e) => {
-  // console.log(modalElement, e);
-  // // if (modalRef && !modalRef.contains(e.target)) {
-  // // feeDismiss();
-  // // }
-  // };
-
+const FeePicker = ({ feeChoices, feeValue, setFeeValue, feeDismiss }) => {
   const select = (which) => {
-    setFeeSelected(which);
-    feeSelect(which);
+    console.log(which);
+    setFeeValue(feeLevels[which]);
     feeDismiss();
   };
-
-  // useEffect(() => {
-  // document.addEventListener('click', (e) => clickDismiss(e));
-  // setModalElement(modalRef.current);
-  // console.log(modalRef.current);
-  // return () => document.addEventListener('click', clickDismiss);
-  // }, []);
 
   return (
     <Box
@@ -55,10 +32,10 @@ const FeePicker = ({ feeChoices, feeSelect, feeDismiss }) => {
       <Col mt={4}>
         <RadioButton
           name="feeRadio"
-          selected={feeSelected === feeLevels.low}
+          selected={feeValue === feeLevels.low}
           p="2"
           onChange={() => {
-            select('low');
+            select(feeLevels.low);
           }}
         >
           <Label fontSize="14px">
@@ -68,10 +45,10 @@ const FeePicker = ({ feeChoices, feeSelect, feeDismiss }) => {
 
         <RadioButton
           name="feeRadio"
-          selected={feeSelected === feeLevels.mid}
+          selected={feeValue === feeLevels.mid}
           p="2"
           onChange={() => {
-            select('mid');
+            select(feeLevels.low);
           }}
         >
           <Label fontSize="14px">
@@ -81,10 +58,10 @@ const FeePicker = ({ feeChoices, feeSelect, feeDismiss }) => {
 
         <RadioButton
           name="feeRadio"
-          selected={feeSelected === feeLevels.high}
+          selected={feeValue === feeLevels.high}
           p="2"
           onChange={() => {
-            select('high');
+            select(feeLevels.high);
           }}
         >
           <Label fontSize="14px">
