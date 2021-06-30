@@ -97,24 +97,23 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   // resume doesn't work properly
   reconnect: async () => {
     const { errorCount } = get();
+    set(s => ({ errorCount: s.errorCount+1, subscription: 'reconnecting' }));
 
     if(errorCount > 5) {
       set({ subscription: 'disconnected' });
       return;
     }
+    await wait(Math.pow(2, errorCount) * 750);
 
     try {
       airlock.reset();
       await bootstrapApi();
     } catch (e) {
-      await wait(Math.pow(2, errorCount) * 750);
-      set({ errorCount: errorCount + 1 });
-      const { reconnect } = get();
-      await reconnect();
+      console.error(`Retrying connection, attempt #${errorCount}`);
     }
   },
   bootstrap: async () => {
-    set({ subscription: 'reconnecting' });
+    set({ subscription: 'reconnecting', errorCount: 0 });
     airlock.reset();
     await bootstrapApi();
     set({ subscription: 'connected' });
@@ -124,7 +123,8 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   }), {
     blacklist: [
       'suspendedFocus', 'toggleOmnibox', 'omniboxShown', 'tutorialProgress',
-      'prevTutStep', 'nextTutStep', 'tutorialRef', 'setTutorialRef', 'subscription'
+      'prevTutStep', 'nextTutStep', 'tutorialRef', 'setTutorialRef', 'subscription',
+      'errorCount'
     ],
   name: 'localReducer'
 }));

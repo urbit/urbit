@@ -193,7 +193,6 @@ export class Urbit {
             return; // everything's good
           } else {
             reject();
-            throw new Error();
           } 
         },
         onmessage: (event: EventSourceMessage) => {
