@@ -3,5 +3,10 @@
   "private": true,
   "devDependencies": {
     "lerna": "^4.0.0"
+  },
+  "scripts": {
+    "watch-libs": "lerna run watch --no-private --parallel",
+    "build-libs": "lerna run build --no-private",
+    "test": "lerna run test"
   }
 }
