@@ -14,10 +14,10 @@ export async function bootstrapApi() {
     (async () => {
       const { reconnect } = useLocalState.getState();
       try {
-        useLocalState.setState({ subscription: 'reconnecting' });
         await reconnect();
       } catch (e) {
-        useLocalState.setState({ subscription: 'disconnected' });
+        console.log(e);
+        console.log('onError');
       }
     })();
   };
