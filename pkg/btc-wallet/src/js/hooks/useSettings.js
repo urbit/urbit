@@ -134,22 +134,28 @@ export const SettingsProvider = ({ channel, children }) => {
     }
   };
 
-  const handleNewTx = ({ txid, recvd }) => {
+  const handleNewTx = (newTx) => {
+    const { txid, recvd } = newTx;
     let old = _.findIndex(history, (h) => {
       return h.txid.dat === txid.dat && h.txid.wid === txid.wid;
     });
     if (old !== -1) {
-      delete history.splice(old, 1);
+      const newHistory = history.filter((o, i) => i !== old);
+      setHistory(newHistory);
     }
-    if (recvd === null) {
-      history.unshift({ txid, recvd });
-    } else {
+    if (recvd === null && old === -1) {
+      const newHistory = [...history, newTx];
+      setHistory(newHistory);
+    } else if (recvd !== null && old === -1) {
       // we expect history to have null recvd values first, and the rest in
       // descending order
       let insertionIndex = _.findIndex(history, (h) => {
         return h.recvd < recvd && h.recvd !== null;
       });
-      history.splice(insertionIndex, 0, { txid, recvd });
+      const newHistory = history.map((o, i) =>
+        i === insertionIndex ? newTx : o
+      );
+      setHistory(newHistory);
     }
   };
 
