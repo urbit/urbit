@@ -1,4 +1,4 @@
-import { Patp } from "..";
+import { Patp } from "../lib";
 import BigIntOrderedMap from "../lib/BigIntOrderedMap";
 import BigIntArrayOrderedMap from "../lib/BigIntArrayOrderedMap";
 
