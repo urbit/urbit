@@ -1,8 +1,8 @@
 import React, {
   MouseEvent,
-  useState,
-  useEffect,
-  useCallback
+  useCallback,
+  useMemo,
+  useState
 } from 'react';
 import styled from 'styled-components';
 import UnstyledEmbedContainer from 'react-oembed-container';
@@ -26,6 +26,8 @@ import { Link } from 'react-router-dom';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
 import { RemoteContentWrapper } from './wrapper';
+import { useEmbed } from '~/logic/state/embed';
+import { IS_SAFARI } from '~/logic/lib/platform';
 
 interface RemoteContentEmbedProps {
   url: string;
@@ -99,7 +101,12 @@ const BaseAudio = styled.audio<React.PropsWithChildren<BaseAudioProps>>(
 );
 
 export function RemoteContentAudioEmbed(props: RemoteContentEmbedProps) {
-  const { url, noCors, ...rest } = props;
+  const { url, ...rest } = props;
+  const [noCors, setNoCors] = useState(false);
+  // maybe audio isn't set up for CORS embeds
+  const onError = useCallback(() => {
+    setNoCors(true);
+  }, []);
 
   return (
     <BaseAudio
@@ -110,6 +117,7 @@ export function RemoteContentAudioEmbed(props: RemoteContentEmbedProps) {
       height="24px"
       width="100%"
       minWidth={['90vw', '384px']}
+      onError={onError}
       {...(noCors ? {} : { crossOrigin: 'anonymous' })}
       {...rest}
     />
@@ -128,7 +136,7 @@ const BaseVideo = styled.video<React.PropsWithChildren<BaseVideoProps>>(
 export function RemoteContentVideoEmbed(
   props: RemoteContentEmbedProps & PropFunc<typeof BaseVideo>
 ) {
-  const { url, noCors, ...rest } = props;
+  const { url, ...rest } = props;
 
   return (
     <BaseVideo
@@ -138,7 +146,6 @@ export function RemoteContentVideoEmbed(
       objectFit="contain"
       height="100%"
       width="100%"
-      {...(noCors ? {} : { crossOrigin: 'anonymous' })}
       {...rest}
     />
   );
@@ -146,25 +153,55 @@ export function RemoteContentVideoEmbed(
 
 const EmbedContainer = styled(UnstyledEmbedContainer)`
   width: 100%;
+  grid-template-rows: 1fr max-content 1fr;
+  grid-template-rows: 1fr -webkit-max-content 1fr;
+  grid-template-columns: 1fr max-content 1fr;
+  grid-template-columns: 1fr -webkit-max-content 1fr;
   height: 100%;
+  display: ${IS_SAFARI ? 'flex' : 'grid'};
+  flex-direction: column;
+  flex-grow: 1;
+  ${IS_SAFARI ? `
+    align-items: center;
+    justify-content: center;
+  ` : ''}
+  overflow: auto;
 `;
 
-const EmbedBox = styled.div<{ aspect?: number }>`
-  ${p => p.aspect ? `
+const EmbedBox = styled.div<{ aspect?: number; iHeight?: number; iWidth?: number; }>`
+  display: flex;
+  grid-row: 2 / 3;
+  ${p => (p.aspect && !IS_SAFARI) ? `
   height: 0;
   overflow: hidden;
-  padding-bottom: calc(100% / ${p.aspect});
+  padding-bottom: min(100vh - 130px, calc(100% / ${p.aspect}));
+  @media screen and (max-width: ${p => p.theme.breakpoints[1]}) {
+    padding-bottom: min(25vh, calc(100% / ${p.aspect}));
+  }
   position: relative;
-  ` : `
-  height: auto;
-  width: 100%;
+  grid-column: 1 / 4;
+  ` : IS_SAFARI ? `
+    width: max-content;
+    height: max-content;
+    max-height: 100%;
+    flex-grow: 1;
 
+  ` : `
+    grid-column: 2 / 3;
   `}
 
+
   & iframe {
+    ${p => (p.iHeight && p.iWidth) ? `
+      height: ${p.iHeight}px !important;
+      width: ${p.iWidth}px !important;
+    ` : `
     height: 100%;
     width: 100%;
-    ${p => p.aspect && 'position: absolute;'}
+    `
+    }
+    ${p => p.aspect && !IS_SAFARI && 'position: absolute;'}
+
 
   }
 `;
@@ -242,48 +279,36 @@ type RemoteContentOembedProps = {
 } & RemoteContentEmbedProps &
   PropFunc<typeof Box>;
 
+/**
+ * Some providers do not report sizes correctly, so we report an aspect ratio
+ * instead of a height/width
+ */
+const BAD_SIZERS = [/youtu(\.?)be/];
+
 export const RemoteContentOembed = React.forwardRef<
   HTMLDivElement,
   RemoteContentOembedProps
 >((props, ref) => {
-  const { url, tall = false, renderUrl = false, thumbnail = false, ...rest } = props;
-  const [embed, setEmbed] = useState<any>();
-  const [aspect, setAspect] = useState<number | undefined>();
+  const { url, renderUrl = false, thumbnail = false, ...rest } = props;
+  const oembed = useEmbed(url);
+  const embed = oembed.read();
+  const fallbackError  = new Error('fallback');
 
-  useEffect(() => {
-    const getEmbed = async () => {
-      try {
-        const search = new URLSearchParams({
-          url
-        });
-        if(!tall) {
-          search.append('maxwidth', '500');
-        }
-
-        const oembed = await (
-          await fetch(`https://noembed.com/embed?${search.toString()}`)
-        ).json();
-
-        if('height' in oembed && typeof oembed.height === 'number' && 'width' in oembed && typeof oembed.width === 'number') {
-          const newAspect = (oembed.width / oembed.height);
-          setAspect(newAspect);
-        } else {
-          setAspect(undefined);
-        }
-        setEmbed(oembed);
-      } catch (e) {
-        console.error(e);
-        console.log(`${url} failed`);
-      }
-    };
-
-    getEmbed();
-  }, [url]);
+  const [aspect, width, height] = useMemo(() => {
+    if(!('height' in embed && typeof embed.height === 'number'
+      && 'width' in embed && typeof embed.width === 'number')) {
+      return [undefined, undefined, undefined];
+    }
+    const { height, width } = embed;
+    if(BAD_SIZERS.some(r => r.test(url))) {
+      return [width/height, undefined, undefined];
+    }
+    return [undefined, width, height];
+  }, [embed, url]);
 
   const detail = (
     <Col
       width="100%"
-      flexShrink={0}
       height="100%"
       justifyContent="center"
       alignItems="center"
@@ -300,12 +325,17 @@ export const RemoteContentOembed = React.forwardRef<
           <EmbedBox
             ref={ref}
             aspect={aspect}
+            iHeight={height}
+            iWidth={width}
             dangerouslySetInnerHTML={{ __html: embed.html }}
           ></EmbedBox>
         </EmbedContainer>
       ) : renderUrl ? (
         <RemoteContentEmbedFallback url={url} />
-      ) : null}
+        ) : (() => {
+ throw fallbackError;
+})()
+      }
     </Col>
   );
   if (!renderUrl) {
@@ -325,7 +355,6 @@ export function RemoteContentEmbedFallback(props: RemoteContentEmbedProps) {
   return (
     <Row maxWidth="100%" overflow="hidden" gapX="2" alignItems="center" p="2">
       <Icon color="gray" icon="ArrowExternal" />
-      <TruncatedText maxWidth="100%" gray>
         <BaseAnchor
           href={url}
           target="_blank"
@@ -336,9 +365,10 @@ export function RemoteContentEmbedFallback(props: RemoteContentEmbedProps) {
           textOverflow="ellipsis"
           color="gray"
         >
+        <TruncatedText maxWidth="100%" gray>
           {url}
-        </BaseAnchor>
-      </TruncatedText>
+        </TruncatedText>
+      </BaseAnchor>
     </Row>
   );
 }

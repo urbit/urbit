@@ -8,6 +8,7 @@ import useInviteState from '../state/invite';
 import useLaunchState from '../state/launch';
 import useSettingsState from '../state/settings';
 import useLocalState from '../state/local';
+import useStorageState from '../state/storage';
 
 export async function bootstrapApi() {
   airlock.onError = (e) => {
@@ -38,7 +39,8 @@ export async function bootstrapApi() {
     useSettingsState,
     useLaunchState,
     useInviteState,
-    useGraphState
+    useGraphState,
+    useStorageState
   ].map(state => state.getState().initialize(airlock));
   await Promise.all(promises);
 }

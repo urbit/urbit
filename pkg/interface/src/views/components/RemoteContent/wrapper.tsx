@@ -1,5 +1,6 @@
 import React, { MouseEvent, useCallback, useState } from 'react';
 import { Row, Box, Icon, BaseAnchor } from '@tlon/indigo-react';
+import AsyncFallback from '../AsyncFallback';
 
 interface RemoteContentWrapperProps {
   children: JSX.Element;
@@ -74,7 +75,7 @@ export function RemoteContentWrapper(props: RemoteContentWrapperProps) {
           {children}
         </BaseAnchor>
       </Row>
-      {unfold ? detail : null}
+      {unfold ? <AsyncFallback fallback={null} >{detail}</AsyncFallback> : null}
     </Box>
   );
 }

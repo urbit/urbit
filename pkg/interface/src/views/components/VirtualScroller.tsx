@@ -15,6 +15,19 @@ const ScrollbarLessBox = styled(Box)`
   }
 `;
 
+const Scrollbar = styled(Box)`
+  &:hover {
+    width: 8px;
+  }
+  z-index: 3;
+  width: 4px;
+  border-radius: 999px;
+  right: 0;
+  height: 50px;
+  position: absolute;
+  pointer: cursor;
+`;
+
 interface RendererProps<K> {
   index: K;
   scrollWindow: any;
@@ -162,6 +175,8 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
 
   private cleanupRefInterval: NodeJS.Timeout | null = null;
 
+  private scrollDragging = false;
+
   constructor(props: VirtualScrollerProps<K,V>) {
     super(props);
     this.state = {
@@ -200,6 +215,39 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
     this.orphans.clear();
   };
 
+  onDown = (e: PointerEvent) => {
+    this.scrollRef.setPointerCapture(e.pointerId);
+    this.scrollDragging = true;
+  }
+
+  onUp = (e: PointerEvent) => {
+    this.scrollRef.releasePointerCapture(e.pointerId);
+    this.scrollDragging = false;
+  }
+
+  onMove = (e: MouseEvent) => {
+    if(!this.scrollDragging) {
+      return;
+    }
+    const scrollProgress = e.movementY / this.window.offsetHeight;
+    const scrollDir = this.props.origin === 'top' ? 1 : -1;
+    const windowScroll = scrollDir * scrollProgress * this.window.scrollHeight;
+    this.window.scrollBy(0, windowScroll);
+  }
+
+  setScrollRef = (el: HTMLDivElement | null) => {
+    if(!el) {
+      this.scrollRef.removeEventListener('pointerdown', this.onDown);
+      this.scrollRef.removeEventListener('pointermove', this.onMove);
+      this.scrollRef.removeEventListener('pointerup', this.onUp);
+      this.scrollRef = null;
+      return;
+    }
+    this.scrollRef = el;
+    this.scrollRef.addEventListener('pointerdown', this.onDown);
+    this.scrollRef.addEventListener('pointermove', this.onMove);
+    this.scrollRef.addEventListener('pointerup', this.onUp);
+  }
   // manipulate scrollbar manually, to dodge change detection
   updateScroll = IS_IOS ? () => {} : _.throttle(() => {
     if(!this.window || !this.scrollRef) {
@@ -207,12 +255,15 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
     }
     const { scrollTop, scrollHeight } = this.window;
 
-    const unloaded = (this.startOffset() / this.pageSize);
-    const totalpages = this.props.size / this.pageSize;
+    // const unloaded = (this.startOffset() / this.pageSize);
+    // const totalpages = this.props.size / this.pageSize;
 
     const loaded = (scrollTop / scrollHeight);
-    const result = ((unloaded + loaded) / totalpages) *this.window.offsetHeight;
-    this.scrollRef.style[this.props.origin] = `${result}px`;
+    //  unused, maybe useful
+    /* const result = this.scrollDragging
+      ? (loaded * this.window.offsetHeight)
+      : ((unloaded + loaded) / totalpages) *this.window.offsetHeight;*/
+    this.scrollRef.style[this.props.origin] = `${loaded * this.window.offsetHeight}px`;
   }, 50);
 
   componentDidUpdate(prevProps: VirtualScrollerProps<K,V>, _prevState: VirtualScrollerState<K>) {
@@ -568,13 +619,10 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
 
     return (
       <>
-        {!IS_IOS && (<Box borderRadius={3} top ={isTop ? '0' : undefined}
-bottom={!isTop ? '0' : undefined} ref={(el) => {
- this.scrollRef = el;
-}}
-right={0} height="50px"
-position="absolute" width="4px"
-backgroundColor="lightGray"
+        {!IS_IOS && (<Scrollbar
+          top ={isTop ? '0' : undefined}
+          bottom={!isTop ? '0' : undefined} ref={this.setScrollRef}
+          backgroundColor="lightGray"
                      />)}
 
       <ScrollbarLessBox overflowY='scroll' ref={this.setWindow} onScroll={this.onScroll} style={{ ...style, ...{ transform }, 'WebkitOverflowScrolling': 'auto' }}>
