@@ -113,4 +113,10 @@ describe('tokenizeMessage', () => {
     expect(text).toBe('. foo');
     expect(url).toBe('https://tlon.io/test');
   });
+
+  it('should ignore malformed group links', () => {
+    const example = 'test ~zoid/fakegroup';
+    const [{ text }, ...rest] = tokenizeMessage(example);
+    expect(text).toBe(example);
+  });
 });

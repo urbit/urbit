@@ -33,9 +33,10 @@ const raceRegexes = (str) => {
       content = { url: link[2] };
     }
   }
-  if(groupRef && groupRef[1].length < pfix?.length) {
+  let perma = parsePermalink(convertToGroupRef(groupRef?.[2]));
+  const [,,host] = perma?.group.split('/') ?? [];
+  if(groupRef && groupRef[1].length < pfix?.length && !!perma && urbitOb.isValidPatp(host)) {
     pfix = groupRef[1];
-    const perma = parsePermalink(convertToGroupRef(groupRef[2]));
     content = permalinkToReference(perma);
     sfix = groupRef[3];
   }
