@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Box, Text, Col } from '@tlon/indigo-react';
 import Transaction from './transaction.js';
 import { useSettings } from '../../hooks/useSettings.js';

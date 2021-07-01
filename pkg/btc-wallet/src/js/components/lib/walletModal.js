@@ -39,11 +39,7 @@ const WalletModal = () => {
     }
   };
 
-  const checkXPub = ({
-    event: {
-      target: { value: xpubGiven },
-    },
-  }) => {
+  const checkXPub = ({ target: { value: xpubGiven } }) => {
     setXpub(xpubGiven);
     setReadyToSubmit(xpubGiven.length > 0);
   };
