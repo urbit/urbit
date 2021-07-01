@@ -113,7 +113,6 @@ interface ChatEditorProps {
   inCodeMode: boolean;
   placeholder: string;
   submit: (message: string) => void;
-  onUnmount: (message: string) => void;
   onPaste: (codemirrorInstance, event: ClipboardEvent) => void;
 }
 

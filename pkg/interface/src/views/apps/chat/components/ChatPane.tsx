@@ -1,38 +1,39 @@
 import { Col } from '@tlon/indigo-react';
 import { Content, Graph, Post } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
-import _ from 'lodash';
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import create from 'zustand';
 import { useFileDrag } from '~/logic/lib/useDrag';
-import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
+import { retrieve } from '~/logic/lib/useLocalStorageState';
 import { useOurContact } from '~/logic/state/contact';
 import { useGraphTimesent } from '~/logic/state/graph';
 import ShareProfile from '~/views/apps/chat/components/ShareProfile';
 import { Loading } from '~/views/components/Loading';
 import SubmitDragger from '~/views/components/SubmitDragger';
-import ChatInput, { ChatInput as NakedChatInput } from './ChatInput';
+import ChatInput from './ChatInput';
 import ChatWindow from './ChatWindow';
 
 interface useChatStoreType {
+  id: string;
   message: string;
+  messageStore: Record<string, string>;
   setMessage: (message: string) => void;
 }
 
-export const useChatStore = create<useChatStoreType>(set => ({
+const unsentKey = 'chat-unsent';
+
+export const useChatStore = create<useChatStoreType>((set, get) => ({
+  id: '',
   message: '',
-  setMessage: (message: string) => set({ message })
+  messageStore: retrieve(unsentKey, {}),
+  setMessage: (message: string) => {
+    const store = get().messageStore;
+    store[get().id] = message;
+
+    localStorage.setItem(unsentKey, JSON.stringify(store));
+    set({ message });
+  }
 }));
-
-// const unsentKey = 'chat-unsent';
-
-// export const useChatStore = create<useChatStoreType>(set => ({
-//   message: retrieve(unsentKey, ''),
-//   setMessage: (message: string) => {
-//     set({ message });
-//     localStorage.setItem(unsentKey, message);
-//   }
-// }));
 
 interface ChatPaneProps {
   /**
@@ -100,7 +101,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   } = props;
   const graphTimesentMap = useGraphTimesent(id);
   const ourContact = useOurContact();
-  const chatInput = useRef<NakedChatInput>();
+  const chatInput = useRef<{ uploadFiles: (files: FileList | File[]) => void }>();
   const setMessage = useChatStore(s => s.setMessage);
 
   const onFileDrag = useCallback(
@@ -108,29 +109,19 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
       if (!chatInput.current) {
         return;
       }
-      (chatInput.current as NakedChatInput)?.uploadFiles(files);
+      chatInput.current?.uploadFiles(files);
     },
     [chatInput]
   );
 
   const { bind, dragging } = useFileDrag(onFileDrag);
 
-  const [, setUnsent] = useLocalStorageState<Record<string, string>>(
-    'chat-unsent',
-    {}
-  );
-
-  const appendUnsent = useCallback(
-    (u: string) => setUnsent(s => ({ ...s, [id]: u })),
-    [id]
-  );
-
-  const clearUnsent = useCallback(() => {
-    setUnsent((s) => {
-      if (id in s) {
-        return _.omit(s, id);
-      }
-      return s;
+  useEffect(() => {
+    const messageStore = retrieve(unsentKey, {});
+    useChatStore.setState({
+      id,
+      messageStore,
+      message: messageStore[id] || ''
     });
   }, [id]);
 
@@ -145,8 +136,6 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   const onReply = useCallback(
     (msg: Post) => {
       const message = props.onReply(msg);
-      console.log(message);
-      // setUnsent(s => ({ ...s, [id]: message }));
       setMessage(message);
     },
     [id, props.onReply]
@@ -185,9 +174,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
           ref={chatInput}
           onSubmit={onSubmit}
           ourContact={(promptShare.length === 0 && ourContact) || undefined}
-          onUnmount={appendUnsent}
           placeholder="Message..."
-          deleteMessage={clearUnsent}
         />
       )}
     </Col>

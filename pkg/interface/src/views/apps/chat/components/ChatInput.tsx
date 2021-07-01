@@ -5,18 +5,16 @@ import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import useStorage, { IuseStorage } from '~/logic/lib/useStorage';
 import { MOBILE_BROWSER_REGEX } from '~/logic/lib/util';
 import { withLocalState } from '~/logic/state/local';
-import withStorage from '~/views/components/withStorage';
 import ChatEditor, { CodeMirrorShim } from './ChatEditor';
 import airlock from '~/logic/api';
 import { ChatAvatar } from './ChatAvatar';
 import { useChatStore } from './ChatPane';
+import { useImperativeHandle } from 'react';
 
 type ChatInputProps = PropsWithChildren<IuseStorage & {
   hideAvatars: boolean;
   ourContact?: Contact;
   placeholder: string;
-  onUnmount(msg: string): void;
-  deleteMessage(): void;
   onSubmit: (contents: Content[]) => void;
 }>;
 
@@ -69,8 +67,9 @@ const MobileSubmitButton = ({ enabled, onSubmit }) => (
   </Box>
 );
 
-export function ChatInput({ ourContact, hideAvatars, placeholder, onSubmit, onUnmount }: ChatInputProps) {
+export const ChatInput = React.forwardRef(({ ourContact, hideAvatars, placeholder, onSubmit }: ChatInputProps, ref) => {
   const chatEditor = useRef<CodeMirrorShim>(null);
+  useImperativeHandle(ref, () => ({ uploadFiles }));
   const {
     message,
     setMessage
@@ -104,15 +103,6 @@ export function ChatInput({ ourContact, hideAvatars, placeholder, onSubmit, onUn
     chatEditor.current.focus();
   }
 
-  function uploadSuccess(url: string) {
-    if (uploadingPaste) {
-      chatEditor.current.setValue(url);
-      setUploadingPaste(false);
-    } else {
-      onSubmit([{ url }]);
-    }
-  }
-
   function onPaste(codemirrorInstance, event: React.ClipboardEvent<HTMLTextAreaElement>) {
     if (!event.clipboardData || !event.clipboardData.files.length) {
       return;
@@ -130,9 +120,22 @@ export function ChatInput({ ourContact, hideAvatars, placeholder, onSubmit, onUn
     }
     Array.from(files).forEach((file) => {
       uploadDefault(file)
-        .then(this.uploadSuccess)
-        .catch(this.uploadError);
+        .then(uploadSuccess)
+        .catch(uploadError);
     });
+  }
+
+  function uploadSuccess(url: string) {
+    if (uploadingPaste) {
+      chatEditor.current.setValue(url);
+      setUploadingPaste(false);
+    } else {
+      onSubmit([{ url }]);
+    }
+  }
+
+  function uploadError(error: Error) {
+    console.log(error);
   }
 
   return (
@@ -144,7 +147,6 @@ export function ChatInput({ ourContact, hideAvatars, placeholder, onSubmit, onUn
         ref={chatEditor}
         inCodeMode={inCodeMode}
         submit={submit}
-        onUnmount={onUnmount}
         onPaste={onPaste}
         placeholder={placeholder}
       />
@@ -181,11 +183,10 @@ export function ChatInput({ ourContact, hideAvatars, placeholder, onSubmit, onUn
       )}
     </InputBox>
   );
-}
+});
 
 // @ts-ignore withLocalState prop passing weirdness
 export default withLocalState<Omit<ChatInputProps, keyof IuseStorage>, 'hideAvatars', ChatInput>(
-  // @ts-ignore withLocalState prop passing weirdness
-  withStorage<ChatInputProps, ChatInput>(ChatInput, { accept: 'image/*' }),
+  ChatInput,
   ['hideAvatars']
 );
