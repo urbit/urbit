@@ -181,8 +181,11 @@
   ++  install
     |=  [lac=desk her=ship rem=desk]
     ^+  ..abet
-    ::  TODO: check if same args, then make idempotent
-    =?  ..vats  (~(has by ark) lac)  (uninstall lac)
+    =/  got  (~(get by ark) lac)
+    ?:  =(`[her rem] got)
+      ~>  %slog.0^leaf/"kiln: already tracking {here:(abed lac)}, ignoring"
+      ..abet
+    =?  ..vats  ?=(^ got)  (uninstall lac)
     =:  loc  lac
         rak  [her rem *aeon next=~]
       ==
