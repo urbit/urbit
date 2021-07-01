@@ -11,7 +11,7 @@ export interface EmbedState {
   fetch: (url: string) => Promise<any>;
 }
 
-const OEMBED_PROVIDER = 'http://noembed.com/embed';
+const OEMBED_PROVIDER = 'https://noembed.com/embed';
 
 const useEmbedState = create<EmbedState>((set, get) => ({
   embeds: {},
