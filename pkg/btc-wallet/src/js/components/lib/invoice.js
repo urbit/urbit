@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Icon,
@@ -57,24 +57,12 @@ const Invoice = ({ stopSending, payee, satsAmount }) => {
   const [ready, setReady] = useState(false);
   const [localError, setLocalError] = useState(error);
   const [broadcasting, setBroadcasting] = useState(false);
-  const invoiceRef = useRef();
 
   useEffect(() => {
     if (broadcasting && localError !== '') {
       setBroadcasting(false);
     }
   }, [error, broadcasting, setBroadcasting]);
-
-  const clickDismiss = (e) => {
-    if (invoiceRef && !invoiceRef.contains(e.target)) {
-      stopSending();
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('click', clickDismiss);
-    return () => document.removeEventListener('click', clickDismiss);
-  }, []);
 
   const broadCastTx = (psbtHex) => {
     let command = {
@@ -90,6 +78,7 @@ const Invoice = ({ stopSending, payee, satsAmount }) => {
       ticket,
       ship: parseInt(patp2dec('~' + window.ship)),
     }).then((urbitWallet) => {
+      // this wasn't being used, not clear why it was pulled out.
       // const { xpub } =
       // network === 'testnet'
       // ? urbitWallet.bitcoinTestnet.keys
@@ -127,11 +116,11 @@ const Invoice = ({ stopSending, payee, satsAmount }) => {
     });
   };
 
-  const checkTicket = (e) => {
+  const checkTicket = ({ target: { value } }) => {
     // TODO: port over bridge ticket validation logic
-    setMasterTicket(e.target.value);
-    setReady(isValidPatq(e.target.value));
-    setLocalError(isValidPatq(e.target.value) ? '' : 'invalid-master-ticket');
+    setMasterTicket(value);
+    setReady(isValidPatq(value));
+    setLocalError(isValidPatq(value) ? '' : 'invalid-master-ticket');
   };
 
   let inputColor = 'black';
@@ -168,13 +157,11 @@ const Invoice = ({ stopSending, payee, satsAmount }) => {
         <Sent payee={payee} stopSending={stopSending} satsAmount={satsAmount} />
       ) : (
         <Col
-          ref={invoiceRef}
           width="100%"
           backgroundColor="white"
           borderRadius="48px"
           mb={5}
           p={5}
-          onClick={() => stopSending()}
         >
           <Col
             p={5}
@@ -236,7 +223,7 @@ const Invoice = ({ stopSending, payee, satsAmount }) => {
               color={inputColor}
               backgroundColor={inputBg}
               borderColor={inputBorder}
-              onChange={() => checkTicket()}
+              onChange={(e) => checkTicket(e)}
             />
           </Row>
           {error !== '' && (
