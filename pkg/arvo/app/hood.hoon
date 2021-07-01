@@ -2,7 +2,7 @@
 /+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
 |%
 +$  state
-  $:  %14
+  $:  %15
       drum=state:drum
       helm=state:helm
       kiln=state:kiln
@@ -17,6 +17,7 @@
       [%11 drum=state-2:drum helm=state:helm kiln=state:kiln]
       [%12 drum=state-2:drum helm=state:helm kiln=state:kiln]
       [%13 drum=state-2:drum helm=state:helm kiln=state:kiln]
+      [%14 drum=state:drum helm=state:helm kiln=state-1:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum

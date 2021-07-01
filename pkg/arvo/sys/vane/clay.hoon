@@ -422,30 +422,13 @@
   [ducts (print-wove wove)]
 ::
 ++  fusion
-  =>
   |%
-  ::  +an: $ankh interface door
+  ::  +wrap: external wrapper
   ::
-  ++  an
-    |_  nak=ankh
-    ::  +dug: produce ankh at path
-    ::
-    ++  dug
-      |=  =path
-      ^-  (unit ankh)
-      ?~  path  `nak
-      ?~  kid=(~(get by dir.nak) i.path)
-        ~
-      $(nak u.kid, path t.path)
-    ::  +get: produce file at path
-    ::
-    ++  get
-      |=  =path
-      ^-  (unit cage)
-      ?~  nik=(dug path)  ~
-      ?~  fil.u.nik       ~
-      `q.u.fil.u.nik
-    --
+  ++  wrap
+    |*  [* state:ford]
+    [+<- +<+>-]  ::  cache.state
+  ::
   ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
   ++  with-faces
     =|  res=(unit vase)
@@ -455,13 +438,6 @@
     =/  faz  (with-face i.vaz)
     =.  res  `?~(res faz (slop faz u.res))
     $(vaz t.vaz)
-  --
-  |%
-  ::  +wrap: external wrapper
-  ::
-  ++  wrap
-    |*  [* state:ford]
-    [+<- +<+>-]  ::  cache.state
   ::
   ++  ford
     !.
@@ -527,7 +503,7 @@
         [cage nub]
       ?<  (~(has in deletes) path)
       ~|  %file-not-found^path
-      :_(nub (need (~(get an ankh) path)))
+      :_(nub (need (~(get an:cloy ankh) path)))
     ::  +build-nave: build a statically typed mark core
     ::
     ++  build-nave
@@ -844,7 +820,7 @@
       |=  =path
       ^-  [(map @ta vase) state]
       =/  fiz=(list @ta)
-        =/  nuk=(unit _ankh)  (~(dug an ankh) path)
+        =/  nuk=(unit _ankh)  (~(dug an:cloy ankh) path)
         ?~  nuk  ~
         %+  murn
           ~(tap by dir.u.nuk)
@@ -1042,7 +1018,7 @@
         $(paz t.paz)
       ?:  (~(has by changes) pux)
         pux
-      ?^  (~(get an ankh) pux)
+      ?^  (~(get an:cloy ankh) pux)
         pux
       $(paz t.paz)
     --
