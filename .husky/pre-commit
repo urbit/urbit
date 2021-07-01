@@ -1,8 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-cd pkg/interface
-
 command -v npx > /dev/null || {
   exit 0
 }

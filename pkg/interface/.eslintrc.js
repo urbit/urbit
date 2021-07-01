@@ -1,5 +1,5 @@
 module.exports = {
-  extends: '@urbit',
+  extends: '@urbit/eslint-config',
   env: {
     'jest': true
   }
