@@ -40,6 +40,24 @@
         `(rash p.jon dem)
       ?.  ?=([%s *] jon)  ~
       `(rash p.jon ;~(pfix sig fed:ag))
+    ::  TODO: from /lib/group-store (move to zuse?)
+    ++  enkebab
+      |=  str=cord
+      ^-  @tas
+      ~|  str
+      =-  (fall - str)
+      %+  rush  str
+      =/  name
+        %+  cook
+          |=  part=tape
+          ^-  tape
+          ?~  part  part
+          :-  (add i.part 32)
+          t.part
+        ;~(plug hig (star low))
+      %+  cook
+        |=(a=(list tape) (crip (zing (join "-" a))))
+      ;~(plug (star low) (star name))
     ::
     ++  from-json
       =,  dejs-soft:format
@@ -52,7 +70,7 @@
         %-  ot
         :~  ['encrypt' so]
             ['auth' so]
-            ['crypto-suite' so]
+            ['cryptoSuite' so]
             ['breach' bo]
         ==
       ::
@@ -166,8 +184,9 @@
         ^-  json
         %-  pairs
         :~  ['force' b+force]
+            ['address' s+(crip "0x{((x-co:co 20) address)}")]
           ::
-            :-  'raw-tx'
+            :-  'rawTx'
             %-  pairs
             :~  ['tx' (tx:to-json tx.raw-tx)]
               ::
@@ -219,7 +238,7 @@
           ^-  (list [@t json])
           :~  ['encrypt' (numb encrypt)]
               ['auth' (numb auth)]
-              ['crypto-suite' (numb crypto-suite)]
+              ['cryptoSuite' (numb crypto-suite)]
               ['breach' b+breach]
           ==
         --
@@ -312,27 +331,17 @@
             ['address' s+(crip "0x{((x-co:co 20) addr)}")]
         ==
       ::
-      ++  tx-status
-        |=  =^tx-status
-        ^-  json
-        %-  pairs
-        :~  ['status' s+status.tx-status]
-          ::
-            :-  'pointer'
-            ?~  pointer.tx-status  ~
-            =*  pointer  u.pointer.tx-status
-            (ownership address.pointer nonce.pointer)
-        ==
+      ++  tx-status  |=(=^tx-status ^-(json s+status.tx-status))
       ::
       ++  config
         |=  roller-config
         ^-  json
         %-  pairs
-        :~  ['next-batch' (time next-batch)]
+        :~  ['nextBatch' (time next-batch)]
             ['frequency' (numb (div frequency ~s1))]
-            ['refresh-time' (numb (div refresh-time ~s1))]
+            ['refreshTime' (numb (div refresh-time ~s1))]
             ['contract' s+(crip "0x{((x-co:co 20) contract)}")]
-            ['chain-id' (numb chain-id)]
+            ['chainId' (numb chain-id)]
         ==
       --
     ::
