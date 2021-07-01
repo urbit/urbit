@@ -10,7 +10,6 @@
   "main": "dist/index.js",
   "types": "dist/index.d",
   "scripts": {
-    "prepublish": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "onchange './**/*.ts' -e './dist/**' -- npm run build",
     "build": "npm run clean && npm run tsc",
@@ -29,6 +28,7 @@
     "urbit-ob": "^5.0.1"
   },
   "devDependencies": {
+    "@types/node": "^15.12.5",
     "onchange": "^7.1.0",
     "typescript": "^4.3.2"
   }
