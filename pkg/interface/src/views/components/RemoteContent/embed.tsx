@@ -27,6 +27,7 @@ import { referenceToPermalink } from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
 import { RemoteContentWrapper } from './wrapper';
 import { useEmbed } from '~/logic/state/embed';
+import { IS_SAFARI } from '~/logic/lib/platform';
 
 interface RemoteContentEmbedProps {
   url: string;
@@ -152,23 +153,43 @@ export function RemoteContentVideoEmbed(
 
 const EmbedContainer = styled(UnstyledEmbedContainer)`
   width: 100%;
+  grid-template-rows: 1fr max-content 1fr;
+  grid-template-rows: 1fr -webkit-max-content 1fr;
+  grid-template-columns: 1fr max-content 1fr;
+  grid-template-columns: 1fr -webkit-max-content 1fr;
   height: 100%;
+  display: ${IS_SAFARI ? 'flex' : 'grid'};
+  flex-direction: column;
+  flex-grow: 1;
+  ${IS_SAFARI ? `
+    align-items: center;
+    justify-content: center;
+  ` : ''}
+  overflow: auto;
 `;
 
 const EmbedBox = styled.div<{ aspect?: number; iHeight?: number; iWidth?: number; }>`
-  ${p => p.aspect ? `
+  display: flex;
+  grid-row: 2 / 3;
+  ${p => (p.aspect && !IS_SAFARI) ? `
   height: 0;
   overflow: hidden;
-  padding-bottom: calc(100% / ${p.aspect});
+  padding-bottom: min(100vh - 130px, calc(100% / ${p.aspect}));
+  @media screen and (max-width: ${p => p.theme.breakpoints[1]}) {
+    padding-bottom: min(25vh, calc(100% / ${p.aspect}));
+  }
   position: relative;
-  ` : `
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
+  grid-column: 1 / 4;
+  ` : IS_SAFARI ? `
+    width: max-content;
+    height: max-content;
+    max-height: 100%;
+    flex-grow: 1;
 
+  ` : `
+    grid-column: 2 / 3;
   `}
+
 
   & iframe {
     ${p => (p.iHeight && p.iWidth) ? `
@@ -179,7 +200,7 @@ const EmbedBox = styled.div<{ aspect?: number; iHeight?: number; iWidth?: number
     width: 100%;
     `
     }
-    ${p => p.aspect && 'position: absolute;'}
+    ${p => p.aspect && !IS_SAFARI && 'position: absolute;'}
 
 
   }
@@ -288,7 +309,6 @@ export const RemoteContentOembed = React.forwardRef<
   const detail = (
     <Col
       width="100%"
-      flexShrink={0}
       height="100%"
       justifyContent="center"
       alignItems="center"
