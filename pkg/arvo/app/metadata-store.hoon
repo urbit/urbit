@@ -307,7 +307,6 @@
     =?  hidden.met  ?=(%groups app-name.m)
       %.n
     [m [g met]]
-
   ::
   ++  hide-dm-assoc
     |=  assoc=associations:store
