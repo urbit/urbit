@@ -165,6 +165,7 @@
 ::  $vile: reflexive constants
 ::  $waif: arvo task, from anywhere
 ::  $wasp: arvo task, from Outside
+::  $weft: kelvin version, tag and number
 ::  $worm: compiler cache
 ::  $wisp: arvo task, larval stage
 ::  $wynn: kelvin stack
@@ -269,6 +270,7 @@
       [%wack p=@uvJ]
       [%wyrd p=vere]
   ==
++$  weft  [lal=@tas num=@ud]
 +$  worm
   $:  ::  +nest, +play, and +mint
       ::
@@ -281,7 +283,7 @@
       $>(?(%wack %wyrd) wasp)
       [%whom p=ship]
   ==
-+$  wynn  (list (pair term @ud))
++$  wynn  (list weft)
 --  =>
 ::
 ~%  %hex  ..ut  ~
@@ -364,10 +366,10 @@
     |=  kel=wynn
     ^-  ?
     ?:  =(~ kel)  &
-    =^  las=(pair term @ud)  kel  kel
+    =^  las=weft  kel  kel
     |-  ^-  ?
     ?~  kel  &
-    ?&  (gte q.las q.i.kel)
+    ?&  (gte num.las num.i.kel)
         $(las i.kel, kel t.kel)
     ==
   ::  +need: require kelvins
@@ -384,7 +386,7 @@
       ~_  :+  %rose
             [" " ~ ~]
           :~  =+  p.u.wyr
-              leaf/"%{(trip p)} %{(scow %ud q)} required;"
+              leaf/"%{(trip lal)} %{(scow %ud num)} required;"
               ?~  q.u.wyr
                 leaf/"runtime missing support"
               leaf/"runtime only supports %{(scow %ud u.q.u.wyr)}"
@@ -393,20 +395,20 @@
       ~>  %mean.'wyrd'
       !!
     ::
-    |-  ^-  (unit (pair (pair term @ud) (unit @ud)))
+    |-  ^-  (unit (pair weft (unit @ud)))
     ?~  hav  ~
     ::
     ::  fel: %&: runtime kelvin for [i.hav]
     ::       %|: no specified runtime support
     ::
     =/  fel
-      |-  ^-  (each @ud (pair term @ud))
+      |-  ^-  (each @ud weft)
       ?~  run  |/i.hav
-      ?:(=(p.i.hav p.i.run) &/q.i.run $(run t.run))
+      ?:(=(lal.i.hav lal.i.run) &/num.i.run $(run t.run))
     ::
     ?-  -.fel
       %|  `[p.fel ~]
-      %&  ?.((lte p.fel q.i.hav) `[i.hav `p.fel] $(hav t.hav))
+      %&  ?.((lte p.fel num.i.hav) `[i.hav `p.fel] $(hav t.hav))
     ==
   --
 ::
@@ -1539,7 +1541,7 @@
           %wyrd  ?.  (sane:wyrd kel.p.buz)
                    ~>(%mean.'wyrd: insane' !!)
                  %-  %+  need:wyrd  kel.p.buz
-                     ^-  (list (pair term @))
+                     ^-  wynn
                      :~  hoon/hoon-version
                          arvo/arvo
                          lull/;;(@ud q:(slap lul.mod limb/%lull))
@@ -1707,7 +1709,7 @@
   =.  van.mod  (~(run by van.mod) |=(=vane vane(worm *worm)))
   ::
   %-  %+  need:wyrd  kel.ver.zen
-      ^-  (list (pair term @))
+      ^-  wynn
       :~  hoon/hoon-version
           arvo/arvo
           lull/;;(@ud q:(slap lul.mod limb/%lull))
@@ -1799,7 +1801,7 @@
       =/  lul  $:u.lul
       =/  zus  $:u.zus
       %-  %+  need:wyrd  kel.u.ver
-          ^-  (list (pair term @))
+          ^-  wynn
           :~  hoon/hoon-version
               arvo/arvo
               lull/;;(@ud q:(slap lul limb/%lull))
@@ -1886,7 +1888,7 @@
       %wyrd  ?.  (sane:wyrd kel.p.wip)
                    ~>(%mean.'wyrd: insane' !!)
              %-  %+  need:wyrd  kel.p.wip
-                 ^-  (list (pair term @))
+                 ^-  wynn
                  :*  hoon/hoon-version
                      arvo/arvo
                      ?~  lul  ~
