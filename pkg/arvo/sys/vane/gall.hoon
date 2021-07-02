@@ -1775,6 +1775,20 @@
       [~ ~]
     [~ ~ desk+!>(q.beak.u.yok)]
   ::
+  ?:  ?&  =(%e care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    :+  ~  ~
+    :-  %apps  !>  ^-  (set dude)
+    =*  syd=desk  dap
+    %+  roll  ~(tap by yokes.state)
+    |=  [[=dude =yoke] acc=(set dude)]
+    ?.  =(syd q.beak.yoke)
+      acc
+    (~(put in acc) dude)
+  ::
   ?.  =(our ship)
     ~
   ?.  =([%$ %da now] coin)
