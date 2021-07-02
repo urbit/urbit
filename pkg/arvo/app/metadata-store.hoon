@@ -107,6 +107,7 @@
 +$  state-9    [%9 base-state-3]
 +$  state-10   [%10 base-state-3]
 +$  state-11   [%11 base-state-3]
++$  state-12   [%12 base-state-3]
 +$  versioned-state
   $%  state-0
       state-1
@@ -120,10 +121,11 @@
       state-9
       state-10
       state-11
+      state-12
   ==
 ::
 +$  inflated-state
-  $:  state-11
+  $:  state-12
       cached-indices
   ==
 --
@@ -243,7 +245,7 @@
   =|  cards=(list card)
   |^
   =*  loop  $
-  ?:  ?=(%11 -.old)
+  ?:  ?=(%12 -.old)
     :-  cards
     %_  state
       associations      associations.old
@@ -251,6 +253,8 @@
       group-indices     (rebuild-group-indices associations.old)
       app-indices       (rebuild-app-indices associations.old)
     ==
+  ?:  ?=(%11 -.old)
+    $(-.old %12, associations.old (reset-group-hidden associations.old))
   ?:  ?=(%10 -.old)
     $(-.old %11, associations.old (hide-dm-assoc associations.old))
   ?:  ?=(%9 -.old)
@@ -292,6 +296,18 @@
     ==
   ::  pre-breach, can safely throw away
   loop(old *state-8)
+  ::
+  ++  reset-group-hidden
+    |=  assoc=associations:store
+    ^-  associations:store
+    %-  ~(gas by *associations:store)
+    %+  turn  ~(tap by assoc)
+    |=  [m=md-resource:store [g=resource met=metadatum:store]]
+    ^-  [md-resource:store association:store]
+    =?  hidden.met  ?=(%groups app-name.m)
+      %.n
+    [m [g met]]
+
   ::
   ++  hide-dm-assoc
     |=  assoc=associations:store
