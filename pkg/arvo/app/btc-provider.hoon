@@ -155,7 +155,7 @@
     ^-  (quip card _state)
     :_  state
     ?.  ?|(connected.host-info ?=(%ping -.act))
-      ~[(send-update:hc [%| %not-connected 500])]
+      ~[(send-update:hc [%| %not-connected 500] ~)]
     :_  ~
     %+  req-card  act
     ^-  action:rpc-types
@@ -177,7 +177,7 @@
   ++  rpc-wire
     |=  act=action
     ^-  wire
-    /[-.act]/[(scot %ux (cut 3 [0 20] eny.bowl))]
+    /[-.act]/(scot %p src.bowl)/(scot %ux (cut 3 [0 20] eny.bowl))
   --
 ::
 ++  on-watch
@@ -198,7 +198,11 @@
       ==
     [%give %fact ~ %json !>(jon)]~
   ::
-  ?>  ?=([%clients *] pax)
+  ?>  ?|  ?=([%clients ~] pax)
+          ?&  ?=([%clients @ ~] pax)
+              =(src.bowl (slav %p i.t.pax))
+          ==
+      ==
   ?.  (is-whitelisted:hc src.bowl)
     ~|("btc-provider: blocked client {<src.bowl>}" !!)
   ~&  >  "btc-provider: accepted client {<src.bowl>}"
@@ -248,8 +252,8 @@
       (connection-error status)
     ?^  conn-err
       :_  state(connected.host-info %.n)
-      :~  (send-status:hc [%disconnected ~])
-          (send-update:hc [%| u.conn-err])
+      :~  (send-status:hc [%disconnected ~] ~)
+          (send-update:hc [%| u.conn-err] ~)
       ==
     ::
     %+  handle-rpc-result  wire
@@ -259,32 +263,35 @@
   ++  handle-rpc-result
     |=  [=wire r=result:rpc-types]
     ^-  (quip card _state)
+    =/  ship=(unit ship)
+      (slaw %p (snag 1 wire))
     ?+  -.wire  ~|("Unexpected HTTP response" !!)
         %address-info
       ?>  ?=([%get-address-info *] r)
       :_  state
-      ~[(send-update:hc [%.y %address-info +.r])]
+      ~[(send-update:hc [%.y %address-info +.r] ship)]
       ::
         %tx-info
       ?>  ?=([%get-tx-vals *] r)
       :_  state
-      ~[(send-update:hc [%.y %tx-info +.r])]
+      ~[(send-update:hc [%.y %tx-info +.r] ship)]
       ::
         %raw-tx
       ?>  ?=([%get-raw-tx *] r)
       :_  state
-      ~[(send-update:hc [%.y %raw-tx +.r])]
+      ~[(send-update:hc [%.y %raw-tx +.r] ship)]
       ::
         %broadcast-tx
       ?>  ?=([%broadcast-tx *] r)
       :_  state
-      ~[(send-update:hc [%.y %broadcast-tx +.r])]
+      ~[(send-update:hc [%.y %broadcast-tx +.r] ship)]
       ::
         %ping
       ?>  ?=([%get-block-info *] r)
       :_  state(connected.host-info %.y, block.host-info block.r)
       :_  ~
       %-  send-status:hc
+      :_  ~
       ?:  =(block.host-info block.r)
         [%connected network.host-info block.r fee.r]
       [%new-block network.host-info block.r fee.r blockhash.r blockfilter.r]
@@ -292,7 +299,7 @@
         %block-info
       ?>  ?=([%get-block-info *] r)
       :_  state
-      ~[(send-update:hc [%.y %block-info network.host-info +.r])]
+      ~[(send-update:hc [%.y %block-info network.host-info +.r] ship)]
     ==
   ::
   ++  connection-error
@@ -327,21 +334,24 @@
 ~%  %btc-provider-helper  ..card  ~
 |_  =bowl:gall
 ++  send-status
-  |=  =status
+  |=  [=status ship=(unit ship)]
   ^-  card
   %-  ?:  ?=(%new-block -.status)
         ~&(>> "%new-block: {<block.status>}" same)
       same
-  [%give %fact ~[/clients] %btc-provider-status !>(status)]
+  =-  [%give %fact ~[-] %btc-provider-status !>(status)]
+  ?~  ship  /clients
+  /clients/(scot %p u.ship)
 ::
 ++  send-update
-  |=  =update
+  |=  [=update ship=(unit ship)]
   ^-  card
-  =+  c=[%give %fact ~[/clients] %btc-provider-update !>(update)]
-  ?:  ?=(%.y -.update)
-    c
-  ~&   >>  "prov. err: {<p.update>}"
-  c
+  %-  ?:  ?=(%.y -.update)
+        same
+      ~&(>> "prov. err: {<p.update>}" same)
+  =-  [%give %fact ~[-] %btc-provider-update !>(update)]
+  ?~  ship  /clients
+  /clients/(scot %p u.ship)
 ::
 ++  is-whitelisted
   ~/  %is-whitelisted
