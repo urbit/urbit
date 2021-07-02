@@ -2,7 +2,7 @@ import { Box, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
 import { Contact, Content, evalCord } from '@urbit/api';
 import React, { FC, PropsWithChildren, useRef, useState } from 'react';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
-import useStorage, { IuseStorage } from '~/logic/lib/useStorage';
+import { IuseStorage } from '~/logic/lib/useStorage';
 import { MOBILE_BROWSER_REGEX } from '~/logic/lib/util';
 import { withLocalState } from '~/logic/state/local';
 import ChatEditor, { CodeMirrorShim } from './ChatEditor';
@@ -10,6 +10,7 @@ import airlock from '~/logic/api';
 import { ChatAvatar } from './ChatAvatar';
 import { useChatStore } from './ChatPane';
 import { useImperativeHandle } from 'react';
+import { FileUploadSource, useFileUpload } from '~/logic/lib/useFileUpload';
 
 type ChatInputProps = PropsWithChildren<IuseStorage & {
   hideAvatars: boolean;
@@ -69,16 +70,24 @@ const MobileSubmitButton = ({ enabled, onSubmit }) => (
 
 export const ChatInput = React.forwardRef(({ ourContact, hideAvatars, placeholder, onSubmit }: ChatInputProps, ref) => {
   const chatEditor = useRef<CodeMirrorShim>(null);
-  useImperativeHandle(ref, () => ({ uploadFiles }));
+  useImperativeHandle(ref, () => chatEditor.current);
+  const [inCodeMode, setInCodeMode] = useState(false);
+
   const {
     message,
     setMessage
   } = useChatStore();
-  const {
-    canUpload, promptUpload, uploading, uploadDefault
-  } = useStorage();
-  const [inCodeMode, setInCodeMode] = useState(false);
-  const [uploadingPaste, setUploadingPaste] = useState(false);
+  const { canUpload, uploading, promptUpload, onPaste } = useFileUpload({
+    onSuccess: uploadSuccess
+  });
+
+  function uploadSuccess(url: string, source: FileUploadSource) {
+    if (source === 'paste') {
+      setMessage(url);
+    } else {
+      onSubmit([{ url }]);
+    }
+  }
 
   function toggleCode() {
     setInCodeMode(!inCodeMode);
@@ -103,41 +112,6 @@ export const ChatInput = React.forwardRef(({ ourContact, hideAvatars, placeholde
     chatEditor.current.focus();
   }
 
-  function onPaste(codemirrorInstance, event: React.ClipboardEvent<HTMLTextAreaElement>) {
-    if (!event.clipboardData || !event.clipboardData.files.length) {
-      return;
-    }
-
-    setUploadingPaste(true);
-    event.preventDefault();
-    event.stopPropagation();
-    uploadFiles(event.clipboardData.files);
-  }
-
-  function uploadFiles(files: FileList | File[]) {
-    if (!canUpload) {
-      return;
-    }
-    Array.from(files).forEach((file) => {
-      uploadDefault(file)
-        .then(uploadSuccess)
-        .catch(uploadError);
-    });
-  }
-
-  function uploadSuccess(url: string) {
-    if (uploadingPaste) {
-      chatEditor.current.setValue(url);
-      setUploadingPaste(false);
-    } else {
-      onSubmit([{ url }]);
-    }
-  }
-
-  function uploadError(error: Error) {
-    console.log(error);
-  }
-
   return (
     <InputBox>
       <Row p='12px 4px 12px 12px' flexShrink={0} alignItems='center'>
@@ -147,7 +121,7 @@ export const ChatInput = React.forwardRef(({ ourContact, hideAvatars, placeholde
         ref={chatEditor}
         inCodeMode={inCodeMode}
         submit={submit}
-        onPaste={onPaste}
+        onPaste={(cm, e) => onPaste(e)}
         placeholder={placeholder}
       />
       <IconBox mr={canUpload ? '12px' : 3}>
@@ -169,7 +143,7 @@ export const ChatInput = React.forwardRef(({ ourContact, hideAvatars, placeholde
               width='16'
               height='16'
               onClick={() =>
-                promptUpload().then(uploadSuccess)
+                promptUpload().then(url => uploadSuccess(url, 'direct'))
               }
             />
           )}

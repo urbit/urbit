@@ -1,9 +1,9 @@
 import { Col } from '@tlon/indigo-react';
 import { Content, Graph, Post } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import create from 'zustand';
-import { useFileDrag } from '~/logic/lib/useDrag';
+import { useFileUpload } from '~/logic/lib/useFileUpload';
 import { retrieve } from '~/logic/lib/useLocalStorageState';
 import { useOurContact } from '~/logic/state/contact';
 import { useGraphTimesent } from '~/logic/state/graph';
@@ -101,20 +101,10 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   } = props;
   const graphTimesentMap = useGraphTimesent(id);
   const ourContact = useOurContact();
-  const chatInput = useRef<{ uploadFiles: (files: FileList | File[]) => void }>();
   const setMessage = useChatStore(s => s.setMessage);
-
-  const onFileDrag = useCallback(
-    (files: FileList | File[]) => {
-      if (!chatInput.current) {
-        return;
-      }
-      chatInput.current?.uploadFiles(files);
-    },
-    [chatInput]
-  );
-
-  const { bind, dragging } = useFileDrag(onFileDrag);
+  const { canUpload, drag } = useFileUpload({
+    onSuccess: url => onSubmit([{ url }])
+  });
 
   useEffect(() => {
     const messageStore = retrieve(unsentKey, {});
@@ -147,13 +137,13 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
 
   return (
     // @ts-ignore bind typings
-    <Col {...bind} height="100%" overflow="hidden" position="relative">
+    <Col {...drag.bind} height="100%" overflow="hidden" position="relative">
       <ShareProfile
         our={ourContact}
         recipients={showBanner ? promptShare : []}
         onShare={() => setShowBanner(false)}
       />
-      {dragging && <SubmitDragger />}
+      {canUpload && drag.dragging && <SubmitDragger />}
       <ChatWindow
         key={id}
         graph={graph}
@@ -171,7 +161,6 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
       />
       {canWrite && (
         <ChatInput
-          ref={chatInput}
           onSubmit={onSubmit}
           ourContact={(promptShare.length === 0 && ourContact) || undefined}
           placeholder="Message..."
