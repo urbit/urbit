@@ -41,7 +41,7 @@
   $:  =ship
       =desk
       =aeon
-      next=(list [=aeon kelvin=[@tas @ud]])
+      next=(list [=aeon =weft])
   ==
 +$  per-desk                                            ::  per-desk state
   $:  auto=?                                            ::  escalate on failure
@@ -169,8 +169,9 @@
     |=  =wire
     ?>  ?=([%kiln %vats @ @ ~] wire)
     (abed i.t.t.wire)
+  ::  +uninstall: stop tracking apps on desk, and suspend apps
   ::
-  ++  uninstall 
+  ++  uninstall
     |=  lac=desk
     ^+  ..vats
     =.  ..abet  (abed lac)
@@ -182,6 +183,7 @@
       [%pass /kiln/vats/uninstall %arvo %g %fade dude %idle]
     ::
     ..vats(ark (~(del by ark) lac))
+  ::  +install: set up desk sync to .lac to install all apps from [her rem]
   ::
   ++  install
     |=  [lac=desk her=ship rem=desk]
@@ -195,10 +197,41 @@
         rak  [her rem *aeon next=~]
       ==
     ~>  %slog.0^leaf/"kiln: beginning install into {here}"
-    %:  emit
-      %pass  (make-wire %find)  %arvo  %c
-      %warp  ship.rak  desk.rak  `[%sing %y ud+1 /]
-    ==
+    (emit find:pass)
+  ::  +reset: resync after failure
+  ::
+  ++  reset
+    ^+  ..abet
+    =.  ark  (~(del by ark) loc)
+    (install loc [ship desk]:rak)
+  ::  +get-blockers: find desks that would block a kernel update
+  ::
+  ++  get-blockers
+    |=  kel=weft
+    ^-  (set desk)
+    %-  ~(gas in *(set desk))
+    %+  murn  ~(tap by ark)
+    |=  [=desk =arak]
+    ?:  (lien next.arak |=([* k=weft] =(k kel)))
+      ~
+    `desk
+  ::  +bump: handle kernel kelvin upgrade
+  ::
+  ::    Apply merges and revive faded agents on all paused desks.
+  ::
+  ++  bump
+    |=  except=(set desk)
+    ^+  ..vats
+    =/  kel=weft  [%zuse zuse]
+    =/  ded  (~(dif in (get-blockers kel)) except)
+    ?^  ded
+      ~>  %slog.0^leaf/"kiln: desks blocked upgrade {<ded>}"
+      !!
+    =/  liv  (skip ~(tap by ark) |=([d=desk *] (~(has in except) d)))
+    =<  ..vats
+    |-  ^+  ..abet
+    ?~  liv  ..abet
+    $(liv t.liv, ..abet (emit merge:pass(loc p.i.liv, rak q.i.liv)))
   ::
   ++  take
     |=  [=wire syn=sign-arvo]
@@ -218,42 +251,33 @@
     |=  syn=sign-arvo
     ?>  ?=(%writ +<.syn)
     ~>  %slog.0^leaf/"kiln: activated install into {here}"
-    %:  emit
-      %pass  (make-wire %sync)  %arvo  %c
-      %warp  ship.rak  desk.rak  `[%sing %w da+now /]
-    ==
+    (emit sync:pass)
   ::
   ++  take-sync
     |=  syn=sign-arvo
     ?>  ?=(%writ +<.syn)
     ?~  p.syn
       ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, retrying"
-      (install loc [ship desk]:rak)  ::  TODO reset aeon?
+      reset
     ~>  %slog.0^leaf/"kiln: downloading update for {here}"
     =?  aeon.rak  ?=(%w p.p.u.p.syn)  ud:;;(cass:clay q.q.r.u.p.syn)
-    %:  emit
-      %pass  (make-wire %download)  %arvo  %c
-      %warp  ship.rak  desk.rak  `[%sing %v ud+aeon.rak /]
-    ==
+    (emit download:pass)
   ::
   ++  take-download
     |=  syn=sign-arvo
     ?>  ?=(%writ +<.syn)
     ?~  p.syn
       ~>  %slog.0^leaf/"kiln: cancelled (2) install into {here}, retrying"
-      (install loc [ship desk]:rak)  ::  TODO reset aeon?
+      reset
     ~>  %slog.0^leaf/"kiln: finished downloading update for {here}"
-    ::  TODO: check kelvin here
     =.  aeon.rak  +(aeon.rak)
-    =/  =germ  (get-germ loc)
+    =/  kel  (get-kelvin (get-ankh u.p.syn))
+    ?.  =(kel [%zuse zuse])
+      ~>  %slog.0^leaf/"kiln: future version {<kel>}, enqueueing"
+      =.  next.rak  :_(next.rak [(dec aeon.rak) kel])
+      (emit sync:pass)
     ~>  %slog.0^leaf/"kiln: merging into {here}"
-    %-  emil
-    :~  :*  %pass  (make-wire %merge)  %arvo  %c
-            %merg  loc  ship.rak  desk.rak  ud+(dec aeon.rak)  germ
-        ==
-        :*  %pass  (make-wire %sync)  %arvo  %c
-            %warp  ship.rak  desk.rak  `[%sing %z ud+aeon.rak /]
-    ==  ==
+    (emil ~[merge sync]:pass)
   ::
   ++  take-merge
     |=  syn=sign-arvo
@@ -263,7 +287,7 @@
             :-  %leaf
             "kiln: merge into {here} failed, maybe because sunk; restarting"
           p.p.syn
-      (install loc [ship desk]:rak)  ::  TODO reset aeon?
+      reset
     ?:  ?=(%| -.p.syn)
       %-  %+  slog
             :-  %leaf
@@ -273,16 +297,44 @@
     ::
     ~>  %slog.0^leaf/"merge into {here} succeeded"
     ..abet
+  ::
+  ++  pass
+    |%
+    ++  find      (warp %find [%sing %y ud+1 /])
+    ++  sync      (warp %sync [%sing %w da+now /])
+    ++  download  (warp %download [%sing %v ud+aeon.rak /])
+    ++  merge
+      =/  germ  (get-germ loc)
+      =/  =aeon  (dec aeon.rak)
+      (clay-card %merge [%merg loc ship.rak desk.rak ud+aeon germ])
+    ::
+    ++  warp  |=([s=term r=rave] (clay-card s %warp ship.rak desk.rak `r))
+    ++  clay-card
+      |=  [step=@tas =task:clay]
+      ^-  card:agent:gall
+      [%pass (make-wire step) %arvo %c task]
+    --
   --
 ::  +get-apps: find which apps Gall is running on a desk
-::
-::    TODO: move to zuse?
 ::
 ++  get-apps
   |=  =desk
   ^-  (list dude:gall)
   %~  tap  in
   .^((set dude:gall) ge+/(scot %p our)/[desk]/(scot %da now))
+::  +get-kelvin: read /sys.kelvin from an $ankh
+::
+++  get-kelvin
+  |=  =ankh
+  !<  [lal=@tas num=@ud]
+  q:(need (~(get an:cloy ankh) /sys/kelvin))
+::  +get-ankh: extract $ankh from clay %v response $rant
+::
+++  get-ankh
+  |=  =rant
+  ^-  ankh
+  ?>  ?=(%dome p.r.rant)
+  !<(ankh q.r.rant)
 ::  +get-germ: select merge strategy into local desk
 ::
 ::  If destination desk doesn't exist, need a %init merge.  If this is
