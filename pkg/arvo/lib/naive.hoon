@@ -1,27 +1,71 @@
 ::  L1 contract changes:
-::  - Enforce that once spawn proxy is set to deposit address, it can't
+::  t Enforce that once spawn proxy is set to deposit address, it can't
 ::    switched back
-::  - Enforce that once spawn proxy is set to deposit address, you can't
+::  t Enforce that once spawn proxy is set to deposit address, you can't
 ::    spawn children
-::  - Possibly the same for approveForAll
-::  - Enforce that only ownership key can set spawn proxy to rollup.
-::    maybe not though
-::  - Disallow depositing galaxy to L2
-::  - When depositing, clear proxies (maybe require reset)
-::  - Maybe require that we're not depositing from a contract?
+::  + Possibly the same for approveForAll.  No, because we're not going
+::    to support approveForAll on L2
+::  + Enforce that only ownership key can set spawn proxy to rollup.
+::    maybe not though.  Yeah, a spawn proxy should be able to set spawn
+::    proxy to the rollup
+::  t Disallow depositing galaxy to L2
+::  + When depositing, clear proxies (maybe require reset).  On L1 only,
+::    not L2.  If we don't do this, we need to make sure they can't keep
+::    doing stuff using the proxies.  Probably better to clear the
+::    proxies explicitly instead of requiring _reset
+::  t Maybe require that we're not depositing from a contract?  But
+::    what if they're depositing from something that's a contract, but the
+::    owner is not a contract?  Probably best for the only condition to
+::    be that the owner is not a contract
+::  + disallow spawning to deposit address?  maybe, else we need to
+::    default the ownership somehow.  Or maybe this happens automatically
+::    because it uses the safe transfer flow?  Yes, _direct will never
+::    be true unless we're depositing to ourself, so it'll go to the
+::    owner address, which will never be the deposit address.  So we're
+::    safe.
+::  t If either side is on L2, then all sponsorship happens on L2.  If
+::    both are on L1, sponsorship happens on L1
+::  - Maybe should special-case spawning directly to L2?  Acceptable
+::    right now but not ideal.
 ::
 ::  TODO: can an L1 star adopt an L2 planet?  It's not obvious how --
 ::  maybe they need to adopt as an L2 transaction?  That sounds right I
 ::  think.  Can an L2 star adopt an L1 planet?  I guess, but L1 wouldn't
 ::  know about it.  Should L1 check whether the escape target is on L2
 ::  for some reason?  IMO if either side is on L2, then both sides
-::  should operate on L2
+::  should operate on L2.
+::
+::  I think the answer is that if either side is on L2, it's on L2; if
+::  both are on L1, then it can be on either.  L1 reading sponsorship
+::  state cannot know the sponsorship info is correct; only L2 knows.
+::  However, you can still use an on-chain multi-sig to control your
+::  sponsorship as long as you don't create a proxy that could send
+::  stuff on L2.
 ::
 ::  TODO: is it possible to spawn directly to the deposit address?  if
 ::  so, should we find its parent's owner to control it?
 ::
+::  TODO: need to find out what happens when you transfer with reset.
+::  since the setOwner happens first, it might crash the rollup when the
+::  other changes come
+::
 ::  TODO: secp needs to not crash the process when you give it a bad
 ::  v/recid.  See #4797
+::
+::  TODO: check if spawning is gated on "link"ing
+::
+::  TODO: make process-set-spawn-proxy work if you're on domain %spawn
+::
+::  TODO: make sure you can spawn with the spawn proxy after on domain
+::  %spawn
+::
+::  TODO: planet shouldn't be able to set spawn proxy
+::
+::  TODO: make sure that if we've already been deposited to L2, no
+::  further L1 logs count except detach.
+::
+::  TODO: change sponsorship to reject adoptions from L1 if they don't
+::  accord with our local escape state?
 ::
 /+  std
 =>  =>  std
@@ -35,7 +79,7 @@
 ::
 ::    0x1234567890123456789012345678901234567890
 ::
-++  deposit-address  0x1234.5678.9012.3456.7890.1234.5678.9012.3456.7890
+++  deposit-address  0x1111.1111.1111.1111.1111.1111.1111.1111.1111.1111
 ++  log-names
   |%
   ::  Generated with (keccak-256:keccak:crypto (as-octs:mimes:html name))
@@ -512,7 +556,7 @@
   ^-  [=effects new-point=^point]
   ::
   ?:  =(log-name changed-spawn-proxy:log-names)
-    ?>  ?=(%l1 -.point)
+    ?.  ?=(%l1 -.point)  `point
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
     ::  Depositing to L2 is represented by a spawn proxy change on L1,
@@ -524,10 +568,55 @@
     :-  [%point ship %spawn-proxy to]~
     point(address.spawn-proxy.own to)
   ::
+  ?:  =(log-name escape-accepted:log-names)
+    ?>  ?=([@ ~] t.t.topics.log)
+    =*  parent=@  i.t.t.topics.log
+    =/  parent-point  (get-point state parent)
+    ?>  ?=(^ parent-point)
+    ?:  |(?=(%l2 -.point) ?=(%l2 -.u.parent-point))  `point
+    :-  [%point ship %sponsor `parent]~
+    point(escape.net ~, sponsor.net [%& parent])
+  ::
+  ?:  =(log-name lost-sponsor:log-names)
+    ?>  ?=([@ ~] t.t.topics.log)
+    =*  parent=@  i.t.t.topics.log
+    ::  If the sponsor we lost was not our actual sponsor, we didn't
+    ::  actually lose anything.
+    ::
+    ?.  =(parent who.sponsor.net.point)  `point
+    ::
+    =/  parent-point  (get-point state parent)
+    ?>  ?=(^ parent-point)
+    ::
+    ::  We can detach even if the child is on L2, as long as the parent
+    ::  is on L1.
+    ::
+    ?:  ?=(%l2 -.u.parent-point)  `point
+    :-  [%point ship %sponsor ~]~
+    point(has.sponsor.net %|)
+  ::
+  ?:  =(log-name escape-requested:log-names)
+    ?>  ?=([@ ~] t.t.topics.log)
+    =*  parent=@  i.t.t.topics.log
+    =/  parent-point  (get-point state parent)
+    ?>  ?=(^ parent-point)
+    ?:  |(?=(%l2 -.point) ?=(%l2 -.u.parent-point))  `point
+    :-  [%point ship %escape `parent]~
+    point(escape.net `parent)
+  ::
+  ?:  =(log-name escape-canceled:log-names)
+    ?>  ?=([@ ~] t.t.topics.log)
+    =*  parent=@  i.t.t.topics.log
+    =/  parent-point  (get-point state parent)
+    ?>  ?=(^ parent-point)
+    ?:  |(?=(%l2 -.point) ?=(%l2 -.u.parent-point))  `point
+    :-  [%point ship %escape ~]~
+    point(escape.net ~)
+  ::
   ::  The rest can be done by any ship on L1, even if their spawn proxy
   ::  is set to L2
   ::
-  ?<  ?=(%l2 -.point)
+  ?:  ?=(%l2 -.point)  `point
   ::
   ?:  =(log-name broke-continuity:log-names)
     ?>  ?=(~ t.t.topics.log)
@@ -545,30 +634,6 @@
       ==
     :-  [%point ship %keys keys]~
     point(keys.net keys)
-  ::
-  ?:  =(log-name escape-accepted:log-names)
-    ?>  ?=([@ ~] t.t.topics.log)
-    =*  parent=@  i.t.t.topics.log
-    :-  [%point ship %sponsor `parent]~
-    point(escape.net ~, sponsor.net [%& parent])
-  ::
-  ?:  =(log-name lost-sponsor:log-names)
-    ?>  ?=([@ ~] t.t.topics.log)
-    =*  parent  i.t.t.topics.log
-    :-  [%point ship %sponsor ~]~
-    point(has.sponsor.net %|)
-  ::
-  ?:  =(log-name escape-requested:log-names)
-    ?>  ?=([@ ~] t.t.topics.log)
-    =*  parent=@  i.t.t.topics.log
-    :-  [%point ship %escape `parent]~
-    point(escape.net `parent)
-  ::
-  ?:  =(log-name escape-canceled:log-names)
-    ?>  ?=([@ ~] t.t.topics.log)
-    =*  parent  i.t.t.topics.log
-    :-  [%point ship %escape ~]~
-    point(escape.net ~)
   ::
   ?:  =(log-name owner-changed:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
@@ -671,15 +736,15 @@
   |^
   ^-  (unit [effects ^state])
   ?-    +<.tx
-      %spawn               (process-spawn +>.tx)
-      %transfer-point      (w-point process-transfer-point ship.from.tx +>.tx)
-      %configure-keys      (w-point process-configure-keys ship.from.tx +>.tx)
-      %escape              (w-point process-escape ship.from.tx +>.tx)
-      %cancel-escape       (w-point process-cancel-escape ship.from.tx +>.tx)
-      %adopt               (w-point process-adopt ship.tx +>.tx)
-      %reject              (w-point process-reject ship.tx +>.tx)
-      %detach              (w-point process-detach ship.tx +>.tx)
-      %set-spawn-proxy     (w-point process-set-spawn-proxy ship.from.tx +>.tx)
+      %spawn            (process-spawn +>.tx)
+      %transfer-point   (w-point process-transfer-point ship.from.tx +>.tx)
+      %configure-keys   (w-point process-configure-keys ship.from.tx +>.tx)
+      %escape           (w-point-esc process-escape ship.from.tx +>.tx)
+      %cancel-escape    (w-point-esc process-cancel-escape ship.from.tx +>.tx)
+      %adopt            (w-point-esc process-adopt ship.tx +>.tx)
+      %reject           (w-point-esc process-reject ship.tx +>.tx)
+      %detach           (w-point-esc process-detach ship.tx +>.tx)
+      %set-spawn-proxy  (w-point process-set-spawn-proxy ship.from.tx +>.tx)
       %set-transfer-proxy
     (w-point process-set-transfer-proxy ship.from.tx +>.tx)
   ::
@@ -692,7 +757,16 @@
     ^-  (unit [effects ^state])
     =/  point  (get-point state ship)
     ?~  point  (debug %strange-ship ~)
-    ?.  ?=(%l2 -.u.point)  (debug %ship-not-on-l2 ~)
+    =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
+    ?~  res
+      ~
+    `[effects.u.res state(points (~(put by points.state) ship new-point.u.res))]
+  ::
+  ++  w-point-esc
+    |*  [fun=$-([ship point *] (unit [effects point])) =ship rest=*]
+    ^-  (unit [effects ^state])
+    =/  point  (get-point state ship)
+    ?~  point  (debug %strange-ship ~)
     =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
     ?~  res
       ~
@@ -880,6 +954,9 @@
     |=  [=point =address]
     ?.  |(=(%own proxy.from.tx) =(%spawn proxy.from.tx))
       (debug %bad-permission ~)
+    ::
+    ?:  (gte (ship-rank ship.from.tx) 2)
+      (debug %spawn-proxy-planet ~)
     ::
     :+  ~  [%point ship.from.tx %spawn-proxy address]~
     point(address.spawn-proxy.own address)

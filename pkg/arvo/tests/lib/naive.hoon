@@ -24,6 +24,54 @@
   ^-  [effects:naive ^state:naive]
   (n state (owner-changed:l1 ~wes (addr %wes-key-0)))
 ::
+::  ~rut is for "full testing"
+::  ~rigrut is L1 star
+::  ~larsyx-mapmeg is L1 planet under ~rigrut
+::  ~holrut is L1 star w/ L2 spawn proxy
+::  ~rabsum-ravtyd is L1 planet under ~holrut
+::  ~dovmul-mogryt is L2 planet under ~holrut made w/ %own proxy
+::  ~pidted-dacnum is L2 planet under ~holrut made w/ %spawn proxy predeposited
+::  TODO: L2 planet ~nacbes-mogmev made with L2 spawn proxy postdeposited (currently doesnt work)
+::
+::  ~losrut is L2 star
+::  ~radres-tinnyl is L1 planet under ~losrut
+::  ~pinpun-pilsun is L2 planet under ~losrut made w/ %own proxy
+::  ~habtyc-nibpyx is L2 planet under ~losrut made w/ %spawn proxy predeposited
+::  ~disryt-nolpet is L2 planet under ~losrut made w/ %spawn proxy postdeposited
+::
+::  nonces in the end state (0 if not stated):
+::  ~holrut %own 1
+::  ~losrut %own 2
+::  ~losrut %spawn 1
+::
+++  init-rut-full
+  |=  =^state:naive
+  ^-  [effects:naive ^state:naive]
+  =/  dm-spawn  [[~holrut %own] %spawn ~dovmul-mogryt (addr %holrut-dm-key-0)]
+  =/  pd-spawn  [[~holrut %spawn] %spawn ~pidted-dacnum (addr %holrut-pd-key-0)]
+  =/  pp-spawn  [[~losrut %own] %spawn ~pinpun-pilsun (addr %losrut-pp-key-0)]
+  =/  hn-spawn  [[~losrut %spawn] %spawn ~habtyc-nibpyx (addr %losurt-hn-key-0)]
+  =/  losrut-sproxy  [[~losrut %spawn] %set-spawn-proxy (addr %losrut-skey-1)]
+  =/  dn-spawn  [[~losrut %spawn] %spawn ~disryt-nolpet (addr %losrut-dn-key-0)]
+  =^  f1  state  (n state (owner-changed:l1 ~rut (addr %rut-key-0)))
+  =^  f2  state  (n state (owner-changed:l1 ~rigrut (addr %rigrut-key-0)))
+  =^  f3  state  (n state (owner-changed:l1 ~holrut (addr %holrut-key-0)))
+  =^  f4  state  (n state (owner-changed:l1 ~losrut (addr %losrut-key-0)))
+  =^  f5  state  (n state (owner-changed:l1 ~larsyx-mapmeg (addr %rigrut-lm-key-0)))
+  =^  f6  state  (n state (owner-changed:l1 ~rabsum-ravtyd (addr %holrut-rr-key-0)))
+  =^  f7  state  (n state (owner-changed:l1 ~radres-tinnyl (addr %losrut-rt-ket-0)))
+  =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut (addr %holrut-skey)))
+  =^  f8  state  (n state (changed-spawn-proxy:l1 ~losrut (addr %losrut-skey-0)))
+  =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut deposit-address:naive))
+  =^  f9  state  (n state %bat q:(gen-tx 0 dm-spawn %holrut-key-0))
+  =^  f10  state  (n state %bat q:(gen-tx 0 pd-spawn %holrut-skey))
+  =^  f11  state  (n state (owner-changed:l1 ~losrut deposit-address:naive))
+  =^  f12  state  (n state %bat q:(gen-tx 0 pp-spawn %losrut-key-0))
+  =^  f13  state  (n state %bat q:(gen-tx 0 hn-spawn %losrut-skey-0))
+  =^  f14  state  (n state %bat q:(gen-tx 1 losrut-sproxy %losrut-skey-0))
+  =^  f15  state  (n state %bat q:(gen-tx 2 dn-spawn %losrut-skey-1))
+  [:(welp f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15) state]
+::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
 ::
 ++  init-dopbud
@@ -50,7 +98,7 @@
   |=  =^state:naive
   ^-  [effects:naive ^state:naive]
   :: ~bud should already be spawned, though trying to init ~bud again shouldn't matter i think?
-  :: =^  f1  state  (init-bud state)
+  =^  f1  state  (init-bud state)
   =^  f2  state  (n state (owner-changed:l1 ~litbud (addr %litbud-key-0)))
   =^  f3  state  (n state (owner-changed:l1 ~litbud deposit-address:naive))
   [:(welp f2 f3) state]
@@ -63,6 +111,129 @@
    =^  f1  state  (init-bud state)
    =^  f2  state  (n state (owner-changed:l1 ~sambud (addr %sambud-key-0)))
    [:(welp f1 f2) state]
+::
+::  generates all possible transactions and maps them to whether they ought to succeed
+++  l2-event-gen
+  |%
+  +$  rank     ?(%galaxy %star %planet)
+  +$  tx-type  ?(%transfer-point %spawn %configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy %set-spawn-proxy %set-transfer-proxy)
+  +$  event    [=rank owner=? nonce=? =dominion:naive =proxy:naive =tx-type]
+  +$  tx-deck  (list event)
+  +$  succeed  (map tx-type ?)
+  ::
+  ++  make-tx-deck  ^-  tx-deck
+    =|  =tx-deck
+    =/  rank-i      1
+    |-
+    ?:  (gth rank-i 3)
+      tx-deck
+    =/  owner-i     0
+    |-
+    ?.  (lte owner-i 1)
+      ^$(rank-i +(rank-i))
+    =/  nonce-i     0
+    |-
+    ?.  (lte nonce-i 1)
+      ^$(owner-i +(owner-i))
+    =/  dominion-i  1
+    |-
+    ?.  (lte dominion-i 3)
+      ^$(nonce-i +(nonce-i))
+    =/  proxy-i     1
+    |-
+    ?.  (lte proxy-i 5)
+      ^$(dominion-i +(dominion-i))
+    =/  tx-type-i   1
+    |-
+    ?.  (lte tx-type-i 11)
+      ^$(proxy-i +(proxy-i))
+    %=  $
+      tx-type-i  +(tx-type-i)
+      tx-deck    [(num-to-rank rank-i) (num-to-flag owner-i) (num-to-flag nonce-i) (num-to-dominion dominion-i) (num-to-proxy proxy-i) (num-to-tx-type tx-type-i)]^tx-deck
+    ==
+  ::
+  ++  num-to-flag
+    |=  val=@ud  ^-  ?
+    ?+  val  !!
+      %0  %.y
+      %1  %.n
+    ==
+  ::
+  ++  num-to-rank
+    |=  val=@ud  ^-  rank
+    ?+  val  !!
+      %1  %galaxy
+      %2  %star
+      %3  %planet
+    ==
+  ::
+  ++  num-to-dominion
+    |=  val=@ud  ^-  dominion:naive
+    ?+  val  !!
+      %1  %l1
+      %2  %l2
+      %3  %spawn
+    ==
+  ::
+  ++  num-to-proxy
+    |=  val=@ud  ^-  proxy:naive
+    ?+  val  !!
+      %1  %own
+      %2  %spawn
+      %3  %manage
+      %4  %vote
+      %5  %transfer
+    ==
+  ::
+  ++  num-to-tx-type
+    |=  val=@ud  ^-  tx-type
+    ?+  val  !!
+      %1   %transfer-point
+      %2   %spawn
+      %3   %configure-keys
+      %4   %escape
+      %5   %cancel-escape
+      %6   %adopt
+      %7   %reject
+      %8   %detach
+      %9   %set-management-proxy
+      %10  %set-spawn-proxy
+      %11  %set-transfer-proxy
+    ==
+  ::
+  ::  checks to see if a given proxy+event combo should work, assuming that
+  ::  the pk and nonce are correct
+  ::
+  ++  tx-succeed
+    |=  tx=tx:naive  ^-  ?
+    =*  prx  proxy.from.tx
+    ?:  =(prx %own)
+      %.y
+    ?:  =(prx %vote)
+      %.n
+    ?-  +<.tx
+      ?(%spawn %set-spawn-proxy)
+        ?+  prx      %.n
+          %spawn     %.y
+          %manage    %.n
+          %vote      %.n
+        ==
+      ?(%transfer-point %set-transfer-proxy)
+        ?+  prx      %.n
+          %spawn     %.n
+          %manage    %.n
+          %transfer  %.y
+        ==
+      :: TODO: how do i make the following two lines?
+      ?(%configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy)
+        ?+  prx      %.n
+          %spawn     %.n
+          %manage    %.y
+          %transfer  %.n
+        ==
+      ==
+  ::
+  --
 ::
 ++  l1
   |%
@@ -161,6 +332,9 @@
 :: Tests
 ::
 |%
+::  new tests
+::
+::  old tests
 ++  test-log  ^-  tang
   %+  expect-eq
     !>
@@ -334,7 +508,7 @@
     =^  f  state  (n state %bat q:(gen-tx 0 marbud-mproxy %marbud-key-0))
     management-proxy.own:(~(got by points.state) ~marbud)
 ::
-++  test-l2-spawn-proxy-deposit  ^-  tang
+++  test-l2-dopbud-spawn-proxy-deposit  ^-  tang
   %+  expect-eq
     !>  %spawn
   ::
@@ -342,6 +516,55 @@
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
     dominion:(~(got by points.state) ~dopbud)
+::
+++  test-l2-sambud-spawn-proxy-predeposit  ^-  tang
+  %+  expect-eq
+    !>  [(addr %sambud-skey) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey)))
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+    spawn-proxy.own:(~(got by points.state) ~sambud)
+::
+++  test-l2-sambud-own-spawn-proxy-postdeposit  ^-  tang
+  =/  sambud-sproxy  [[~sambud %own] %set-spawn-proxy (addr %sambud-skey-0)]
+  %+  expect-eq
+    !>  [(addr %sambud-skey-0) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+    =^  f  state  (n state %bat q:(gen-tx 0 sambud-sproxy %sambud-key-0))
+    spawn-proxy.own:(~(got by points.state) ~sambud)
+::
+++  test-l2-sambud-spawn-spawn-proxy-postdeposit  ^-  tang
+  =/  sambud-sproxy  [[~sambud %spawn] %set-spawn-proxy (addr %sambud-skey-1)]
+  %+  expect-eq
+    !>  [(addr %sambud-skey-1) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey-0)))
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+    =^  f  state  (n state %bat q:(gen-tx 0 sambud-sproxy %sambud-skey-0))
+    spawn-proxy.own:(~(got by points.state) ~sambud)
+::
+++  test-l2-sambud-spawn-proxy-predeposit-spawn  ^-  tang
+  =/  lf-spawn  [[~sambud %spawn] %spawn ~lisdur-fodrys (addr %lf-key-0)]
+  %+  expect-eq
+    !>  [`@ux`(addr %lf-key-0) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-sambud state)
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey)))
+    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+    =^  f  state  (n state %bat q:(gen-tx 0 lf-spawn %sambud-skey))
+    transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
 ::
 ++  test-marbud-l2-spawn  ^-  tang
   =/  marbud-sproxy  [marbud-own %set-spawn-proxy (addr %marbud-skey)]
@@ -412,18 +635,18 @@
     :: TODO: make sure nobody else can change these keys
   ==
 ::
-++  new-test-marbud-l2-change-keys  ^-  tang
+++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys suit encr auth |]
   =|  =^state:naive
   =^  f  state  (init-marbud state)
-  =/  expect-state  state
-  ::  not sure why this isn't working, maybe check the +increment-nonce code for an example
+  =/  marbud-point  (~(got by points.state) ~marbud)
+  =/  new-marbud  marbud-point(keys.net [1 suit auth encr], nonce.owner.own 1)
+  ::
   %+  expect-eq
-    !>  expect-state
-    ::!>  state(keys.net:(~(got by points.state ~marbud)) [1 suit auth encr])
+    !>  state(points (~(put by points.state) ~marbud new-marbud))
   ::
     !>
-    =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-1))
+    =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-0))
     state
   ::
 :: TODO: transfer breach via transfer proxy
