@@ -1,27 +1,5 @@
 /-  *resource
 |%
-::
-++  post-zero
-  |%
-  ::
-  +$  content
-    $%  [%text text=cord]
-        [%mention =ship]
-        [%url url=cord]
-        [%code expression=cord output=(list tank)]
-        [%reference =uid]
-    ==
-  ::
-  +$  post
-    $:  author=ship
-        =index
-        time-sent=time
-        contents=(list content)
-        hash=(unit hash)
-        =signatures
-    ==
-  --
-
 +$  index       (list atom)
 +$  uid         [=resource =index]
 ::
@@ -60,4 +38,25 @@
       [%code expression=cord output=(list tank)]
       [%reference =reference]
   ==
+::
+++  post-zero
+  |%
+  ::
+  +$  content
+    $%  [%text text=cord]
+        [%mention =ship]
+        [%url url=cord]
+        [%code expression=cord output=(list tank)]
+        [%reference =uid]
+    ==
+  ::
+  +$  post
+    $:  author=ship
+        =index
+        time-sent=time
+        contents=(list content)
+        hash=(unit hash)
+        =signatures
+    ==
+  --
 --

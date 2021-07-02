@@ -47,8 +47,9 @@
 ::
 ++  transform-proxy-update
   |=  vas=vase
-  ^-  (unit vase)
+  ^-  (quip card (unit vase))
   =/  =update:store  !<(update:store vas)
+  :-  ~
   ?:  ?=(%initial -.update)
     ~
   |^

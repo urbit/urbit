@@ -1,96 +1,103 @@
 import urbitOb from 'urbit-ob';
-import { parsePermalink, permalinkToReference } from "~/logic/lib/permalinks";
+import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 
-const URL_REGEX = new RegExp(String(/^(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+\w)/.source));
+const URL_REGEX = new RegExp(String(/^([^[\]]*?)(([\w\-\+]+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+[\w/])([\s\S]*)/.source));
 
-const isUrl = (string) => {
+const PATP_REGEX = /^([\s\S]*?)(~[a-z_-]+)([\s\S]*)/;
+
+const GROUP_REGEX = new RegExp(String(/^([\s\S ]*?)(~[-a-z_]+\/[-a-z]+)([\s\S]*)/.source));
+
+const convertToGroupRef = group => `web+urbitgraph://group/${group}`;
+
+export const isUrl = (str) => {
   try {
-    return URL_REGEX.test(string);
+    return URL_REGEX.test(str);
   } catch (e) {
     return false;
   }
-}
+};
 
-const isRef = (str) => {
-  return isUrl(str) && str.startsWith("web+urbitgraph://");
-}
+const raceRegexes = (str) => {
+  const link = str.match(URL_REGEX);
+  const groupRef = str.match(GROUP_REGEX);
+  const mention = str.match(PATP_REGEX);
+  let pfix = str;
+  let content, sfix;
+  if(link) {
+    pfix = link[1];
+    sfix = link[4];
+    const perma = parsePermalink(link[2]);
+    if(perma) {
+      content = permalinkToReference(perma);
+    } else {
+      content = { url: link[2] };
+    }
+  }
+  if(groupRef && groupRef[1].length < pfix?.length) {
+    pfix = groupRef[1];
+    const perma = parsePermalink(convertToGroupRef(groupRef[2]));
+    content = permalinkToReference(perma);
+    sfix = groupRef[3];
+  }
+  if(mention && urbitOb.isValidPatp(mention[2]) && mention[1].length < pfix?.length) {
+    pfix = mention[1];
+    content = { mention: mention[2] };
+    sfix = mention[3];
+  }
+  return [pfix, content, sfix];
+};
 
 const tokenizeMessage = (text) => {
-  let messages = [];
-  let message = [];
-  let isInCodeBlock = false;
-  let endOfCodeBlock = false;
-  text.split(/\r?\n/).forEach((line, index) => {
-    if (index !== 0) {
-      message.push('\n');
+  const messages = [];
+  // by line
+  let blocks = [];
+  let currBlock = [];
+  const foo = text.split('`');
+  foo.forEach((str, index) => {
+    const isCode = index % 2 === 1;
+    if(isCode) {
+      blocks.push(str);
+      return;
     }
-    // A line of backticks enters and exits a codeblock
-    if (line.startsWith('```')) {
-      // But we need to check if we've ended a codeblock
-      endOfCodeBlock = isInCodeBlock;
-      isInCodeBlock = (!isInCodeBlock);
-    } else {
-      endOfCodeBlock = false;
+    if(str.length === 0) {
+      blocks.push('');
+      return;
     }
-
-    if (isInCodeBlock || endOfCodeBlock) {
-      message.push(line);
-    } else {
-      line.split(/\s/).forEach((str) => {
-        if (
-          (str.startsWith('`') && str !== '`')
-          || (str === '`' && !isInCodeBlock)
-        ) {
-          isInCodeBlock = true;
-        } else if (
-          (str.endsWith('`') && str !== '`')
-          || (str === '`' && isInCodeBlock)
-        ) {
-          isInCodeBlock = false;
+    while(str.length > 0) {
+      const resetAndPush = (content) => {
+        if(currBlock.length > 0) {
+          blocks.push(currBlock.join(''));
         }
-
-        if(isRef(str) && !isInCodeBlock) {
-          if (message.length > 0) {
-            // If we're in the middle of a message, add it to the stack and reset
-            messages.push({ text: message.join(' ') });
+        if(blocks.length > 0) {
+          //  ended on a `
+          if(blocks.length % 2 === 0) {
+            blocks.push('');
           }
-          const link = parsePermalink(str);
-          if(!link) {
-            messages.push({ url: str });
-          } else {
-            const reference = permalinkToReference(link);
-            messages.push(reference);
-          }
-          message = [];
-        } else if (isUrl(str) && !isInCodeBlock) {
-          if (message.length > 0) {
-            // If we're in the middle of a message, add it to the stack and reset
-            messages.push({ text: message.join(' ') });
-            message = [];
-          }
-          messages.push({ url: str });
-          message = [];
-        } else if(urbitOb.isValidPatp(str) && !isInCodeBlock) {
-          if (message.length > 0) {
-            // If we're in the middle of a message, add it to the stack and reset
-            messages.push({ text: message.join(' ') });
-            message = [];
-          }
-          messages.push({ mention: str });
-          message = [];
-
-        } else {
-          message.push(str);
+          messages.push({ text: blocks.join('`') });
         }
-      });
+        currBlock = [];
+        blocks = [];
+        messages.push(content);
+      };
+      const [pfix, content, sfix] = raceRegexes(str);
+      if(content) {
+        pfix?.length > 0 && currBlock.push(pfix);
+        resetAndPush(content);
+        str = sfix;
+      } else {
+        currBlock.push(str);
+        str = '';
+      }
     }
+    blocks.push(currBlock.join(''));
+    currBlock = [];
   });
-
-  if (message.length) {
-    // Add any remaining message
-    messages.push({ text: message.join(' ') });
+  // ended on a `
+  if(blocks.length % 2 === 0) {
+    blocks.push('');
   }
+  messages.push({ text: blocks.join('`') });
   return messages;
 };
 
-export { tokenizeMessage as default, isUrl, URL_REGEX };
+export { tokenizeMessage as default, URL_REGEX };

@@ -136,13 +136,13 @@
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
         [%y %groups ~]
-      ``noun+!>(~(key by groups))
+      ``noun+!>(`(set resource)`~(key by groups))
     ::
         [%x %groups %ship @ @ ~]
       =/  rid=(unit resource)
         (de-path-soft:resource t.t.path)
       ?~  rid   ~
-      ``noun+!>((peek-group u.rid))
+      ``noun+!>(`(unit group)`(peek-group u.rid))
     ::
        [%x %groups %ship @ @ %join @ ~]
       =/  rid=(unit resource)
@@ -150,7 +150,7 @@
       =/  =ship
         (slav %p i.t.t.t.t.t.t.path)
       ?~  rid  ~
-      ``noun+!>((peek-group-join u.rid ship))
+      ``noun+!>(`?`(peek-group-join u.rid ship))
     ::
         [%x %export ~]
       ``noun+!>(state)
@@ -199,6 +199,7 @@
 ::
 ++  peek-group-join
   |=  [rid=resource =ship]
+  ^-  ?
   =/  ugroup
     (~(get by groups) rid)
   ?~  ugroup

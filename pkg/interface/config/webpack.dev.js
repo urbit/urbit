@@ -111,7 +111,7 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light)\/).*/
+        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light|@tlon\/indigo-react)\/).*/
       },
       {
         test: /\.css$/i,

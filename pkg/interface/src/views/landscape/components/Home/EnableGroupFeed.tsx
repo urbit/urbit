@@ -1,27 +1,24 @@
-import React, { useCallback } from "react";
-import { ModalOverlay } from "~/views/components/ModalOverlay";
-import { Formik, Form, FormikHelpers } from "formik";
-import {
-  GroupFeedPermissions,
-  GroupFeedPermsInput,
-} from "./Post/GroupFeedPerms";
-import { Text, Button, Col, Row } from "@tlon/indigo-react";
-import { AsyncButton } from "~/views/components/AsyncButton";
-import GlobalApi from "~/logic/api/global";
-import { resourceFromPath, Tag, resourceAsPath } from "@urbit/api";
-import useGroupState, { useGroup } from "~/logic/state/group";
+import { Button, Col, Row, Text } from '@tlon/indigo-react';
+import { resourceAsPath, resourceFromPath } from '@urbit/api';
+import { Form, Formik, FormikHelpers } from 'formik';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
-import useMetadataState from "~/logic/state/metadata";
-
+import GlobalApi from '~/logic/api/global';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { ModalOverlay } from '~/views/components/ModalOverlay';
+import {
+  GroupFeedPermsInput
+} from './Post/GroupFeedPerms';
 
 interface FormSchema {
-  permissions: GroupFeedPermissions;
+  permissions: any;
 }
 
 export function EnableGroupFeed(props: {
   groupPath: string;
-  dismiss: () => void;
+  dismiss?: () => void;
   api: GlobalApi;
+  baseUrl: string;
 }) {
   const { api, groupPath, baseUrl } = props;
 
@@ -31,9 +28,9 @@ export function EnableGroupFeed(props: {
   };
 
   const initialValues: FormSchema = {
-    permissions: "everyone",
+    permissions: 'everyone'
   };
-  const onSubmit = 
+  const onSubmit =
     async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
       const resource = resourceFromPath(groupPath);
       const feed = resourceAsPath(
@@ -47,9 +44,9 @@ export function EnableGroupFeed(props: {
     <ModalOverlay spacing={[3, 5, 7]} bg="white" dismiss={dismiss}>
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
         <Form>
-          <Col gapY="3" p="3">
-            <Col gapY="1">
-              <Text fontWeight="medium" fontSize="2">
+          <Col gapY={3} p={3}>
+            <Col gapY={1}>
+              <Text fontWeight="medium" fontSize={2}>
                 Enable Feed
               </Text>
               <Text gray>
@@ -57,7 +54,7 @@ export function EnableGroupFeed(props: {
               </Text>
             </Col>
             <GroupFeedPermsInput id="permissions" />
-            <Row gapX="2">
+            <Row gapX={2}>
               <AsyncButton primary>Enable Feed</AsyncButton>
               <Button color="gray" onClick={dismiss}>Cancel</Button>
             </Row>

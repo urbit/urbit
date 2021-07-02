@@ -1,5 +1,5 @@
 /-  gr=group, md=metadata-store, ga=graph-store
-/+  re=resource
+/+  re=resource, graph=graph-store
 !:
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
@@ -67,7 +67,7 @@
 =/  real=(set resource:re)
   =/  upd=update:ga
     %+  scry  update:ga
-    [%x %graph-store /keys/graph-update-1]
+    [%x %graph-store /keys/graph-update-2]
   ?>  ?=(%keys -.q.upd)
   resources.q.upd
 ::  count activity per channel
@@ -86,14 +86,17 @@
     %+  scry  update:ga
     [%x %graph-store /graph/(scot %p entity.r)/[name.r]/noun]
   ?>  ?=(%add-graph -.q.upd)
-  =/  mo  ((ordered-map atom node:ga) gth)
+  =*  mo  orm:graph
   =/  week=(list [@da node:ga])
-    (tap:mo (subset:mo graph.q.upd ~ `(sub now ~d7)))
+    (tap:mo (lot:mo graph.q.upd ~ `(sub now ~d7)))
   :-  (lent week)
   %~  wyt  in
   %+  roll  week
-  |=  [[* [author=ship *] *] a=(set ship)]
-  (~(put in a) author)
+  |=  [[* mp=maybe-post:ga *] a=(set ship)]
+  ?-  -.mp
+    %|  a
+    %&  (~(put in a) author.p.mp)
+  ==
 ::  render results
 ::
 :-  (tac 'the date is ' (scot %da now))
