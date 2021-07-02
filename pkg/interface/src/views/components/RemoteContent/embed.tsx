@@ -184,6 +184,7 @@ const EmbedBox = styled.div<{ aspect?: number; iHeight?: number; iWidth?: number
     width: max-content;
     height: max-content;
     max-height: 100%;
+    max-width: 100%;
     flex-grow: 1;
 
   ` : `
