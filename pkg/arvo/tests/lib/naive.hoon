@@ -44,33 +44,109 @@
 ::  ~losrut %own 2
 ::  ~losrut %spawn 1
 ::
+::  ~red is for testing escapes.
+::  ~rigred is L1 star
+::  ~losred is L2 star
+::
 ++  init-rut-full
   |=  =^state:naive
   ^-  [effects:naive ^state:naive]
   =/  dm-spawn  [[~holrut %own] %spawn ~dovmul-mogryt (addr %holrut-dm-key-0)]
+  =/  dm-xfer  [[~dovmul-mogryt %transfer] %transfer-point (addr %holrut-dm-key-0) &]
   =/  pd-spawn  [[~holrut %spawn] %spawn ~pidted-dacnum (addr %holrut-pd-key-0)]
+  =/  pd-xfer  [[~pidted-dacnum %transfer] %transfer-point (addr %holrut-pd-key-0) &]
   =/  pp-spawn  [[~losrut %own] %spawn ~pinpun-pilsun (addr %losrut-pp-key-0)]
-  =/  hn-spawn  [[~losrut %spawn] %spawn ~habtyc-nibpyx (addr %losurt-hn-key-0)]
-  =/  losrut-sproxy  [[~losrut %spawn] %set-spawn-proxy (addr %losrut-skey-1)]
+  =/  pp-xfer  [[~pinpun-pilsun %transfer] %transfer-point (addr %losrut-pp-key-0) &]
+  =/  hn-spawn  [[~losrut %spawn] %spawn ~habtyc-nibpyx (addr %losrut-hn-key-0)]
+  =/  hn-xfer  [[~habtyc-nibpyx %transfer] %transfer-point (addr %losrut-hn-key-0) &]
   =/  dn-spawn  [[~losrut %spawn] %spawn ~disryt-nolpet (addr %losrut-dn-key-0)]
+  =/  dn-xfer  [[~disryt-nolpet %transfer] %transfer-point (addr %losrut-dn-key-0) &]
+  =/  losrut-sproxy  [[~losrut %spawn] %set-spawn-proxy (addr %losrut-skey-1)]
+  =/  losrut-mproxy  [[~losrut %own] %set-management-proxy (addr %losrut-mkey-0)]
+  =/  dm-mkey  [[~dovmul-mogryt %own] %set-management-proxy (addr %holrut-dm-mkey-0)]
+  =/  pd-mkey  [[~pidted-dacnum %own] %set-management-proxy (addr %holrut-pd-mkey-0)]
+  =/  pp-mkey  [[~pinpun-pilsun %own] %set-management-proxy (addr %losrut-pp-mkey-0)]
+  =/  hn-mkey  [[~habtyc-nibpyx %own] %set-management-proxy (addr %losrut-hn-mkey-0)]
+  =/  dn-mkey  [[~disryt-nolpet %own] %set-management-proxy (addr %losrut-dn-mkey-0)]
   =^  f1  state  (n state (owner-changed:l1 ~rut (addr %rut-key-0)))
   =^  f2  state  (n state (owner-changed:l1 ~rigrut (addr %rigrut-key-0)))
   =^  f3  state  (n state (owner-changed:l1 ~holrut (addr %holrut-key-0)))
   =^  f4  state  (n state (owner-changed:l1 ~losrut (addr %losrut-key-0)))
   =^  f5  state  (n state (owner-changed:l1 ~larsyx-mapmeg (addr %rigrut-lm-key-0)))
   =^  f6  state  (n state (owner-changed:l1 ~rabsum-ravtyd (addr %holrut-rr-key-0)))
-  =^  f7  state  (n state (owner-changed:l1 ~radres-tinnyl (addr %losrut-rt-ket-0)))
-  =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut (addr %holrut-skey)))
+  =^  f7  state  (n state (owner-changed:l1 ~radres-tinnyl (addr %losrut-rt-key-0)))
+  =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut (addr %holrut-skey-0)))
   =^  f8  state  (n state (changed-spawn-proxy:l1 ~losrut (addr %losrut-skey-0)))
   =^  f8  state  (n state (changed-spawn-proxy:l1 ~holrut deposit-address:naive))
   =^  f9  state  (n state %bat q:(gen-tx 0 dm-spawn %holrut-key-0))
-  =^  f10  state  (n state %bat q:(gen-tx 0 pd-spawn %holrut-skey))
+  =^  f10  state  (n state %bat q:(gen-tx 0 pd-spawn %holrut-skey-0))
   =^  f11  state  (n state (owner-changed:l1 ~losrut deposit-address:naive))
   =^  f12  state  (n state %bat q:(gen-tx 0 pp-spawn %losrut-key-0))
   =^  f13  state  (n state %bat q:(gen-tx 0 hn-spawn %losrut-skey-0))
   =^  f14  state  (n state %bat q:(gen-tx 1 losrut-sproxy %losrut-skey-0))
   =^  f15  state  (n state %bat q:(gen-tx 2 dn-spawn %losrut-skey-1))
-  [:(welp f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15) state]
+  =^  f16  state  (n state %bat q:(gen-tx 0 dm-xfer %holrut-dm-key-0))
+  =^  f17  state  (n state %bat q:(gen-tx 0 pd-xfer %holrut-pd-key-0))
+  =^  f18  state  (n state %bat q:(gen-tx 0 pp-xfer %losrut-pp-key-0))
+  =^  f19  state  (n state %bat q:(gen-tx 0 hn-xfer %losrut-hn-key-0))
+  =^  f20  state  (n state %bat q:(gen-tx 0 dn-xfer %losrut-dn-key-0))
+  :: the following sets proxies for testing with various proxies
+  =^  p1   state  (n state (changed-management-proxy:l1 ~rut (addr %rut-mkey-0)))
+  =^  p2   state  (n state (changed-management-proxy:l1 ~rigrut (addr %rigrut-mkey-0)))
+  =^  p3   state  (n state (changed-management-proxy:l1 ~larsyx-mapmeg (addr %rigrut-lm-mkey-0)))
+  =^  p4   state  (n state (changed-management-proxy:l1 ~holrut (addr %holrut-mkey-0)))
+  =^  p5   state  (n state (changed-management-proxy:l1 ~rabsum-ravtyd (addr %holrut-rr-mkey-0)))
+  =^  p6   state  (n state (changed-management-proxy:l1 ~radres-tinnyl (addr %losrut-rt-mkey-0)))
+  =^  p7   state  (n state %bat q:(gen-tx 0 dm-mkey %holrut-dm-key-0))
+  =^  p8   state  (n state %bat q:(gen-tx 0 pd-mkey %holrut-pd-key-0))
+  =^  p9   state  (n state %bat q:(gen-tx 0 pp-mkey %losrut-pp-key-0))
+  =^  p10  state  (n state %bat q:(gen-tx 0 hn-mkey %losrut-hn-key-0))
+  =^  p11  state  (n state %bat q:(gen-tx 0 dn-mkey %losrut-dn-key-0))
+  =^  p12  state  (n state %bat q:(gen-tx 1 losrut-mproxy %losrut-key-0))
+  :: end of ~rut points, beginning of ~red. TODO this should be removed
+  :: once i move %escape to +test-red. or maybe %escape should stay here
+  :: because its the simplest?
+  =^  g1  state  (n state (owner-changed:l1 ~red (addr %red-key-0)))
+  =^  g2  state  (n state (owner-changed:l1 ~rigred (addr %rigred-key-0)))
+  =^  g3  state  (n state (owner-changed:l1 ~losred (addr %losred-key-0)))
+  =^  g4  state  (n state (owner-changed:l1 ~losred deposit-address:naive))
+  :-  ;:  welp
+      f1  f2  f3  f4  f5  f6  f7  f8  f9  f10
+      f11  f12  f13  f14  f15  f16  f17  f18
+      f19  f20
+      p1  p2  p3  p4  p5  p6  p7  p8  p9  p10
+      p11  p12
+      g1  g2  g3  g4
+      ==
+  state
+::
+:: +init-red-full adds another galaxy to the ~rut universe, ~red, and additional
+:: points helpful for testing sponsorship actions. this has been separated from
+:: ~rut because the concerns are different enough from the other actions that
+:: its cleaner to do them separately
+::
+++  init-red-full
+  |=  =^state:naive
+  ^-  [effects:naive ^state:naive]
+  =/  pp-escape  [[~pinpun-pilsun %own] %escape ~losred]
+  =/  dm-escape  [[~dovmul-mogryt %own] %escape ~rigred]
+  =/  lm-escape  [[~larsyx-mapmeg %own] %escape ~losred]
+  =^  f1  state  (init-rut-full state)
+  ::  TODO uncomment the below once %escape is moved to +test-red
+  ::  =^  f21  state  (n state (owner-changed:l1 ~red (addr %red-key-0)))
+  ::  =^  f22  state  (n state (owner-changed:l1 ~rigred (addr %rigred-key-0)))
+  ::  =^  f23  state  (n state (owner-changed:l1 ~losred (addr %losred-key-0)))
+  ::  =^  f24  state  (n state (owner-changed:l1 ~losred deposit-address:naive))
+  ::  L1->L1 will happen later, its the most complicated
+  ::  each pending escape will be followed by an adopt, reject, or cancel-escape
+  ::  L2->L2
+  =^  f2  state  (n state %bat q:(gen-tx 0 pp-escape %losrut-pp-key-0))
+  ::  L2->L1
+  =^  f3  state  (n state %bat q:(gen-tx 0 dm-escape %holrut-dm-key-0))
+  ::  L1->L2
+  =^  f4  state  (n state %bat q:(gen-tx 0 lm-escape %rigrut-lm-key-0))
+  [:(welp f1 f2 f3 f4) state]
+::
 ::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
 ::
@@ -112,21 +188,318 @@
    =^  f2  state  (n state (owner-changed:l1 ~sambud (addr %sambud-key-0)))
    [:(welp f1 f2) state]
 ::
-::  generates all possible transactions and maps them to whether they ought to succeed
+::  generates all possible transactions and maps them to whether they ought
+::  to succeed
+::
 ++  l2-event-gen
   |%
-  +$  rank     ?(%galaxy %star %planet)
-  +$  tx-type  ?(%transfer-point %spawn %configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy %set-spawn-proxy %set-transfer-proxy)
-  +$  event    [=rank owner=? nonce=? =dominion:naive =proxy:naive =tx-type]
-  +$  tx-deck  (list event)
-  +$  succeed  (map tx-type ?)
   ::
-  ++  make-tx-deck  ^-  tx-deck
-    =|  =tx-deck
+  +$  rank     ?(%galaxy %star %planet)
+  +$  tx-type  $?  %transfer-point
+                   %spawn
+                   %configure-keys
+                   %escape
+                   %cancel-escape
+                   %adopt
+                   %reject
+                   %detach
+                   %set-management-proxy
+                   %set-spawn-proxy
+                   %set-transfer-proxy
+               ==
+  +$  event    [=rank owner=? nonce=? =dominion:naive =proxy:naive =tx-type]
+  +$  event-list  (list event)
+  +$  success-map  (map event ?)
+  +$  event-jar  (jar @p event)
+  ::
+  ++  make-success-map
+    :: +make-success-map maps each event to whether or not that combination of factors
+    :: ought to succeed or fail, for testing purposes. this is not a complete description atm
+    :: for instance, it does not take into account whether you are trying to spawn a planet
+    :: available to you or move to a sponsor of the correct rank.
+    ::
+    :: it is also done in a more verbose style than strictly necessary to make it easier
+    :: to read through and determine why a particular event is labeled with %.y or %.n
+    :: and to make it easier to do future modifications
+    ::
+    |=  =event-list  ^-  success-map
+    =|  =success-map
+    |^
+    ?~  event-list  success-map
+    =/  cur-event  i.event-list
+    ::  check owner or nonce first
+    ?:  ?|  =(owner.cur-event %.n)
+            =(nonce.cur-event %.n)
+        ==
+        (add-event-check cur-event %.n)
+    ::  check dominion next
+    ?-  dominion.cur-event
+      %l1     (add-event-check cur-event (l1-check cur-event))
+      %spawn  (add-event-check cur-event (spawnd-check cur-event))
+      %l2     (add-event-check cur-event (l2-check cur-event))
+    ==
+    ::
+    ++  add-event-check
+      |=  [=event suc=?]
+      %=  ^$
+          success-map  (~(put by success-map) event suc)
+          event-list   +.event-list
+      ==
+    ::
+    ++  l1-check
+      |^
+      |=  cur-event=event  ^-  ?
+      ?-  proxy.cur-event
+        %own       (manage-own-check cur-event)
+        %spawn     %.n
+        %manage    (manage-own-check cur-event)
+        %vote      %.n
+        %transfer  %.n
+      ==
+      ::
+      ++  manage-own-check
+        |^
+        |=  cur-event=event  ^-  ?
+        ?-  rank.cur-event
+          %galaxy  (galaxy-check cur-event)
+          %star    (star-check cur-event)
+          %planet  (planet-check cur-event)
+        ==
+        ++  galaxy-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %adopt   %.y
+            %reject  %.y
+            %detach  %.y
+          ==
+        ++  star-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %adopt          %.y
+            %reject         %.y
+            %detach         %.y
+            %escape         %.y
+            %cancel-escape  %.y
+          ==
+        ++  planet-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %escape         %.y
+            %cancel-escape  %.y
+          ==
+        ::
+        --  :: +manage-own-check
+      ::
+      --  ::  +l1-check
+    ::
+    ++  spawnd-check
+      |^
+      |=  cur-event=event  ^-  ?
+      ?-  rank.cur-event
+        %galaxy  %.n
+        %star    (star-check cur-event)
+        %planet  %.n
+      ==
+      ++  star-check
+        |^
+        |=  cur-event=event  ^-  ?
+        ?-  proxy.cur-event
+          %own       (ownp-check cur-event)
+          %manage    (managep-check cur-event)
+          %spawn     (spawnp-check cur-event)
+          %vote      %.n
+          %transfer  %.n
+        ==
+        ++  ownp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %spawn            %.y
+            %adopt            %.y
+            %reject           %.y
+            %detach           %.y
+            %escape           %.y
+            %cancel-escape    %.y
+            %set-spawn-proxy  %.y
+          ==
+        ++  managep-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %adopt          %.y
+            %reject         %.y
+            %detach         %.y
+            %escape         %.y
+            %cancel-escape  %.y
+          ==
+        ++  spawnp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %spawn            %.y
+            %set-spawn-proxy  %.y
+          ==
+        --  ::  +star-check
+      ::
+      --  :: +spawnd-check
+    ::
+    ++  l2-check
+      |^
+      |=  cur-event=event  ^-  ?
+      ?-  rank.cur-event
+        %galaxy  %.n
+        %star    (star-check cur-event)
+        %planet  (planet-check cur-event)
+      ==
+      ++  star-check
+        |^
+        |=  cur-event=event  ^-  ?
+        ?-  proxy.cur-event
+          %own       %.y
+          %manage    (managep-check cur-event)
+          %spawn     (spawnp-check cur-event)
+          %vote      %.n
+          %transfer  (transferp-check cur-event)
+        ==
+        ++  managep-check
+          |=  cur-event=event  ^-  ?
+          ?-  tx-type.cur-event
+            %configure-keys        %.y
+            %escape                %.y
+            %cancel-escape         %.y
+            %adopt                 %.y
+            %reject                %.y
+            %detach                %.y
+            %set-management-proxy  %.y
+            %set-spawn-proxy       %.n
+            %set-transfer-proxy    %.n
+            %transfer-point        %.n
+            %spawn                 %.n
+          ==
+        ++  spawnp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %spawn            %.y
+            %set-spawn-proxy  %.y
+          ==
+        ++  transferp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n
+            %transfer-point      %.y
+            %set-transfer-proxy  %.n
+          ==
+        --  :: +star-check
+      ++  planet-check
+        |^
+        |=  cur-event=event  ^-  ?
+        ?-  proxy.cur-event
+          %own       (ownp-check cur-event)
+          %manage    (managep-check cur-event)
+          %spawn     %.n
+          %vote      %.n
+          %transfer  (transferp-check cur-event)
+        ==
+        ++  ownp-check
+          |=  cur-event=event  ^-  ?
+          ?-  tx-type.cur-event
+            %transfer-point        %.y
+            %spawn                 %.n
+            %configure-keys        %.y
+            %escape                %.y
+            %cancel-escape         %.y
+            %adopt                 %.n
+            %reject                %.n
+            %detach                %.n
+            %set-management-proxy  %.y
+            %set-spawn-proxy       %.n
+            %set-transfer-proxy    %.y
+          ==
+        ++  managep-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event    %.n
+            %configure-keys        %.y
+            %escape                %.y
+            %cancel-escape         %.y
+            %set-management-proxy  %.y
+          ==
+        ++  transferp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.y
+            %transfer-point      %.y
+            %set-transfer-proxy  %.y
+          ==
+        ::
+        --  ::  +planet-check
+      ::
+      --  ::  +l2-check
+    ::
+    --  ::  make-success-map
+  ::
+  ++  filter-tx-type
+    |=  [typs=(list =tx-type) =event-list]
+    |^
+    (skim event-list filter)
+    ++  filter
+      :: I think I can shorten this a bit with a fold or something
+      |=  =event  ^-  ?
+      =/  match=?  %.n
+      |-
+      ?~  typs  match
+      =/  cur-typ  i.typs
+      %=  $
+        match  |(match =(cur-typ tx-type.event))
+        typs   t.typs
+      ==
+    --
+  ::
+  ++  filter-proxy
+    |=  [=proxy:naive =event-list]
+    |^
+    (skim event-list filter)
+    ++  filter
+      |=  =event
+      =(proxy.event proxy)
+    --
+  ::
+  ++  filter-rank
+    |=  [=rank =event-list]
+    |^
+    (skim event-list filter)
+    ++  filter
+      |=  =event
+      =(rank.event rank)
+    --
+  ::
+  ++  filter-owner
+    |=  [owner=? =event-list]
+    |^
+    (skim event-list filter)
+    ++  filter
+      |=  =event
+      =(owner.event owner)
+    --
+  ::
+  ++  filter-nonce
+    |=  [nonce=? =event-list]
+    |^
+    (skim event-list filter)
+    ++  filter
+      |=  =event
+      =(nonce.event nonce)
+    --
+  ::
+  ++  filter-dominion
+    |=  [=dominion:naive =event-list]
+    |^
+    (skim event-list filter)
+    ++  filter
+      |=  =event
+      =(dominion.event dominion)
+    --
+  ::
+  ++  make-event-list  ^-  event-list
+    =|  =event-list
     =/  rank-i      1
     |-
     ?:  (gth rank-i 3)
-      tx-deck
+      (remove-wrong-dominion event-list)
     =/  owner-i     0
     |-
     ?.  (lte owner-i 1)
@@ -148,8 +521,34 @@
     ?.  (lte tx-type-i 11)
       ^$(proxy-i +(proxy-i))
     %=  $
-      tx-type-i  +(tx-type-i)
-      tx-deck    [(num-to-rank rank-i) (num-to-flag owner-i) (num-to-flag nonce-i) (num-to-dominion dominion-i) (num-to-proxy proxy-i) (num-to-tx-type tx-type-i)]^tx-deck
+      tx-type-i     +(tx-type-i)
+      event-list    :-  :*  (num-to-rank rank-i)
+                            (num-to-flag owner-i)
+                            (num-to-flag nonce-i)
+                            (num-to-dominion dominion-i)
+                            (num-to-proxy proxy-i)
+                            (num-to-tx-type tx-type-i)
+                        ==
+                    event-list
+    ==
+  ::
+  ++  remove-wrong-dominion
+    |=  in=event-list
+    =|  =event-list
+    |-
+    ?~  in  event-list
+    =/  current-event  i.in
+    ?:  ?&  =(rank.current-event %galaxy)
+            !=(dominion.current-event %l1)
+        ==
+        $(in t.in)
+    ?:  ?&  =(rank.current-event %planet)
+            =(dominion.current-event %spawn)
+        ==
+        $(in t.in)
+    %=  $
+      in  t.in
+      event-list  current-event^event-list
     ==
   ::
   ++  num-to-flag
@@ -201,37 +600,80 @@
       %11  %set-transfer-proxy
     ==
   ::
-  ::  checks to see if a given proxy+event combo should work, assuming that
-  ::  the pk and nonce are correct
+  ::  jar of events for rut. each @p is mapped to a list of events
+  ::  it ought to test, and +success-map says whether or not that
+  ::  event should succed or fail
   ::
-  ++  tx-succeed
-    |=  tx=tx:naive  ^-  ?
-    =*  prx  proxy.from.tx
-    ?:  =(prx %own)
-      %.y
-    ?:  =(prx %vote)
-      %.n
-    ?-  +<.tx
-      ?(%spawn %set-spawn-proxy)
-        ?+  prx      %.n
-          %spawn     %.y
-          %manage    %.n
-          %vote      %.n
-        ==
-      ?(%transfer-point %set-transfer-proxy)
-        ?+  prx      %.n
-          %spawn     %.n
-          %manage    %.n
-          %transfer  %.y
-        ==
-      :: TODO: how do i make the following two lines?
-      ?(%configure-keys %escape %cancel-escape %adopt %reject %detach %set-management-proxy)
-        ?+  prx      %.n
-          %spawn     %.n
-          %manage    %.y
-          %transfer  %.n
-        ==
+  ++  gen-rut-jar
+    ^-  (jar @p event)
+    =/  filter  ;:  cork
+                    (cury filter-owner %.y)
+                    (cury filter-proxy %manage)
+                    (cury filter-nonce %.y)
+                    ::(cury filter-rank %star)
+                    ::(cury filter-dominion %l2)
+                    %-  cury
+                    :-  filter-tx-type
+                    :*  %spawn
+                        %transfer-point
+                        %configure-keys
+                        %set-management-proxy
+                        ::%set-spawn-proxy  :: planets can set spawn proxy atm
+                        %set-transfer-proxy
+                        ::%escape
+                        ~
+                    ==
+                ==
+    =/  filtered-events  (filter make-event-list)
+    =|  mgmt-jar=(jar @p event)
+    |^
+    ?~  filtered-events  mgmt-jar
+    =/  current-event  i.filtered-events
+    ?:  =(rank.current-event %galaxy)
+      (list-in-jar (ly ~[~rut]) current-event)
+    ?:  =(rank.current-event %star)
+      ?-  dominion.current-event
+        %l1     (list-in-jar (ly ~[~rigrut]) current-event)
+        %spawn  (list-in-jar (ly ~[~holrut]) current-event)
+        %l2     (list-in-jar (ly ~[~losrut]) current-event)
       ==
+    ?:  =(rank.current-event %planet)
+      ?+  dominion.current-event  !!
+        %l1     %-  list-in-jar
+                :-  %-  ly
+                    :^    ~larsyx-mapmeg
+                        ~rabsum-ravtyd
+                      ~radres-tinnyl
+                    ~
+                current-event
+        %l2     %-  list-in-jar
+                :-  %-  ly
+                    :*  ~dovmul-mogryt
+                        ~pidted-dacnum
+                        ~pinpun-pilsun
+                        ~habtyc-nibpyx
+                        ~disryt-nolpet
+                        ~
+                    ==
+                current-event
+      ==
+    $(filtered-events t.filtered-events)
+    ::
+    ++  list-in-jar
+      |=  [ships=(list ship) =event]
+      ^+  mgmt-jar
+      =/  new-jar  mgmt-jar
+      |-
+      ?~  ships  %=  ^^$
+                   mgmt-jar  new-jar
+                   filtered-events  +.filtered-events
+                 ==
+      =.  new-jar  (~(add ja new-jar) i.ships event)
+      $(ships t.ships)
+    ::
+    --
+  ::
+
   ::
   --
 ::
@@ -327,6 +769,64 @@
 ::
 ++  lt-own      [~linnup-torsyx %own] :: key %lt-key-0
 ++  lt-xfr      [~linnup-torsyx %transfer] :: key %lt-key-0
+::
+::  rut tests
+::
+::
+++  common-mgmt  %mgmt-key-0
+++  common-spwn  %spwn-key-0
+++  common-vote  %vote-key-0
+++  common-ownr  %ownr-key-0
+++  common-tran  %tran-key-0
+++  rut-ship-list  %-  ly
+                   :*  ~rut
+                       ~holrut
+                       ~rigrut
+                       ~losrut
+                       ~larsyx-mapmeg
+                       ~rabsum-ravtyd
+                       ~disryt-nolpet
+                       ~pinpun-pilsun
+                       ~dovmul-mogryt
+                       ~habtyc-nibpyx
+                       ~pidted-dacnum
+                       ~radres-tinnyl
+                       ~
+                   ==
+::
+:: initial keys for each point under ~rut
+++  default-own-keys  %-  my:nl
+                      :*  [~rut %rut-key-0]
+                          [~holrut %holrut-key-0]
+                          [~rigrut %rigrut-key-0]
+                          [~losrut %losrut-key-0]
+                          [~larsyx-mapmeg %rigrut-lm-key-0]
+                          [~rabsum-ravtyd %holrut-rr-key-0]
+                          [~disryt-nolpet %losrut-dn-key-0]
+                          [~pinpun-pilsun %losrut-pp-key-0]
+                          [~dovmul-mogryt %holrut-dm-key-0]
+                          [~habtyc-nibpyx %losrut-hn-key-0]
+                          [~pidted-dacnum %holrut-pd-key-0]
+                          [~radres-tinnyl %losrut-rt-key-0]
+                          ~
+                      ==
+::
+++  default-manage-keys  %-  my:nl
+                         :*  [~rut %rut-mkey-0]
+                             [~holrut %holrut-mkey-0]
+                             [~rigrut %rigrut-mkey-0]
+                             [~losrut %losrut-mkey-0]
+                             [~larsyx-mapmeg %rigrut-lm-mkey-0]
+                             [~rabsum-ravtyd %holrut-rr-mkey-0]
+                             [~disryt-nolpet %losrut-dn-mkey-0]
+                             [~pinpun-pilsun %losrut-pp-mkey-0]
+                             [~dovmul-mogryt %holrut-dm-mkey-0]
+                             [~habtyc-nibpyx %losrut-hn-mkey-0]
+                             [~pidted-dacnum %holrut-pd-mkey-0]
+                             [~radres-tinnyl %losrut-rt-mkey-0]
+                             ~
+                         ==
+::
 --
 ::
 :: Tests
@@ -334,6 +834,264 @@
 |%
 ::  new tests
 ::
+::  this test spawns a "full galaxy" containing all varieties of points. it then
+::  saves this initial state, and runs single transaction batches for all possible
+::  L2 "event types". it compares the entire new state to the entire initial state and checks for
+::  the expected state change. it then resets the state to the initial state and
+::  tries the next event in on the list.
+::
+::  more specifically, there is a $jar called event-jar that maps ships to lists of
+::  events it should try. it then picks off a ship, tries all the events in the list
+::  associated to it as described above, and then moves on to the next ship, until
+::  the jar is empty.
+::
+::  this arm does not test any L1 transactions beyond the ones needed to spawn the
+::  galaxy (+init-rut).
+::
+++  test-rut  ^-  tang
+  =,  l2-event-gen
+  ::
+  =/  event-jar  gen-rut-jar
+  =|  =^state:naive
+  =^  f  state  (init-rut-full state)
+  =/  initial-state  state
+  =/  ship-list  rut-ship-list
+  =/  suc-map  (make-success-map make-event-list)
+  ::
+  |-  ^-  tang
+  ?~  ship-list  ~
+  %+  weld  $(ship-list t.ship-list)
+  =/  cur-ship  i.ship-list
+  %+  category  (scow %p cur-ship)
+  =/  current-events  (~(get ja event-jar) cur-ship)
+  ::
+  |-  ^-  tang
+  ?~  current-events  ~
+  %+  weld  $(current-events t.current-events)
+  =/  cur-event  i.current-events
+  %+  category  (weld "dominion " (scow %tas dominion.cur-event))
+  %+  category  (weld "proxy " (scow %tas proxy.cur-event))
+  %+  category  (weld "tx-type " (scow %tas tx-type.cur-event))
+  %+  category  (weld "owner? " (scow %f owner.cur-event))
+  %+  category  (weld "correct nonce? " (scow %f nonce.cur-event))
+  ::
+  =/  cur-point  (~(got by points.initial-state) cur-ship)
+  =*  own  own.cur-point
+  =/  cur-nonce
+    ?-  proxy.cur-event
+      %own       nonce.owner.own
+      %spawn     nonce.spawn-proxy.own
+      %manage    nonce.management-proxy.own
+      %vote      nonce.voting-proxy.own
+      %transfer  nonce.transfer-proxy.own
+    ==
+  :: wrong nonce and/or wrong owner do not increment nonce
+  =/  new-nonce  ?:  &(nonce.cur-event owner.cur-event)
+                   +(cur-nonce)
+                 cur-nonce
+  ::
+  =/  state  initial-state
+  =/  expect-state  initial-state
+  |^
+  %+  expect-eq
+    !>
+    |^  ^-  ^state:naive
+    ?.  (~(got by suc-map) cur-event)
+      %-  alter-state
+      ?-  proxy.cur-event
+        %own       cur-point(nonce.owner.own new-nonce)
+        %spawn     cur-point(nonce.spawn-proxy.own new-nonce)
+        %manage    cur-point(nonce.management-proxy.own new-nonce)
+        %vote      cur-point(nonce.voting-proxy.own new-nonce)
+        %transfer  cur-point(nonce.transfer-proxy.own new-nonce)
+      ==
+    ?+  tx-type.cur-event  !!
+      %transfer-point        set-xfer
+      %configure-keys        set-keys
+      %set-management-proxy  set-mgmt-proxy
+      %set-spawn-proxy       set-spwn-proxy
+      %set-transfer-proxy    set-xfer-proxy
+      %spawn                 (new-point which-spawn)
+      %escape                (set-escape which-escape-l2)
+    ==
+    ::
+    ++  set-keys  ^-  ^state:naive
+      =/  new-keys
+      %=  cur-point
+        life.keys.net    +(life.keys.net:(~(got by points.initial-state) cur-ship))
+        suite.keys.net   suit
+        auth.keys.net    auth
+        crypt.keys.net   encr
+      ==
+      (alter-state new-keys)
+    ::
+    ++  set-xfer  ^-  ^state:naive
+      =/  new-xfer
+      %=  cur-point
+        address.owner.own  (addr %transfer-test)
+      ==
+      (alter-state new-xfer)
+    ::
+    ++  set-mgmt-proxy  ^-  ^state:naive
+      =/  new-mgmt
+      %=  cur-point
+        address.management-proxy.own  (addr %proxy-test)
+      ==
+      (alter-state new-mgmt)
+    ::
+    ++  set-spwn-proxy  ^-  ^state:naive
+      =/  new-spwn
+      %=  cur-point
+        address.spawn-proxy.own  (addr %proxy-test)
+      ==
+      (alter-state new-spwn)
+    ::
+    ++  set-xfer-proxy  ^-  ^state:naive
+      =/  new-xfer
+      %=  cur-point
+        address.transfer-proxy.own  (addr %proxy-test)
+      ==
+      (alter-state new-xfer)
+    ::
+    ++  set-escape
+      |=  =ship  ^-  ^state:naive
+      =/  new-escp
+      %=  cur-point
+        escape.net  (some ship)
+      ==
+      (alter-state new-escp)
+    ::
+    ++  new-point
+      :: TODO clean up this horrifying gate
+      |=  =ship  ^-  ^state:naive
+      =|  new-point=point:naive
+      =/  spawned
+      %=  new-point
+        dominion  %l2
+        address.owner.own  (addr (~(got by default-own-keys) cur-ship))
+        address.transfer-proxy.own  (addr %spawn-test)
+        sponsor.net  [has=%.y who=cur-ship]
+      ==
+      =/  expect-state  (alter-state cur-point)  :: this updates the nonce of the spawner
+      %=  expect-state
+        points  (~(put by points.expect-state) ship spawned)
+      ==
+    ::
+    ++  alter-state
+      :: this updates the expect-state with the new point, and takes
+      :: care of incrementing the nonce as well.
+      |=  alt-point=point:naive  ^-  ^state:naive
+      =/  updated-point=point:naive
+      ?-  proxy.cur-event
+        %own       alt-point(nonce.owner.own new-nonce)
+        %spawn     alt-point(nonce.spawn-proxy.own new-nonce)
+        %manage    alt-point(nonce.management-proxy.own new-nonce)
+        %vote      alt-point(nonce.voting-proxy.own new-nonce)
+        %transfer  alt-point(nonce.transfer-proxy.own new-nonce)
+      ==
+      %=  expect-state
+        points  (~(put by points.expect-state) cur-ship updated-point)
+      ==
+    ::
+    --  :: end of expected state
+  ::  actual state
+    !>
+    |^  ^-  ^state:naive
+    =^    f
+        state
+      %-  n
+      :+  state
+        %bat
+      =<  q
+      %-  gen-tx
+      :+  ?:  nonce.cur-event
+            cur-nonce
+          999 :: wrong nonce
+        :-  :-  cur-ship
+            proxy.cur-event
+        def-args
+      ?:  owner.cur-event
+        ?+  proxy.cur-event  %wrong-key
+          %own     (~(got by default-own-keys) cur-ship)
+          %manage  (~(got by default-manage-keys) cur-ship)
+        ==
+      %wrong-key
+    state
+    ::
+    ++  def-args
+      ^-  skim-tx:naive
+      |^
+      ?+  tx-type.cur-event  !!
+        %spawn                 [%spawn which-spawn (addr %spawn-test)]
+        %transfer-point        [%transfer-point (addr %transfer-test) |]
+        %configure-keys        [%configure-keys encr auth suit |]
+        %escape                [%escape which-escape-l2]
+        :: %cancel-escape
+        :: %adopt
+        :: %reject
+        :: %detach
+        %set-management-proxy  [%set-management-proxy (addr %proxy-test)]
+        %set-spawn-proxy       [%set-spawn-proxy (addr %proxy-test)]
+        %set-transfer-proxy    [%set-transfer-proxy (addr %proxy-test)]
+      ==
+      ::
+      --  :: +def-args
+    ::
+    --  :: end of actual state
+    ::
+  ++  encr    (shax 'You will forget that you ever read this sentence.')
+  ++  auth    (shax 'You cant know that this sentence is true.')
+  ++  suit    1
+  ::
+  ++  which-spawn  ^-  ship
+    ?+  cur-ship  !!
+      %~rut            ~hasrut
+      %~rigrut         ~batbec-tapmep
+      %~larsyx-mapmeg  ~nocryl-tobned
+      %~holrut         ~namtuc-ritnux
+      %~rabsum-ravtyd  ~docsec-wanlug
+      %~dovmul-mogryt  ~docsec-wanlug
+      %~pidted-dacnum  ~docsec-wanlug
+      %~losrut         ~mishus-loplus
+      %~radres-tinnyl  ~tapfur-fitsep
+      %~pinpun-pilsun  ~tapfur-fitsep
+      %~habtyc-nibpyx  ~tapfur-fitsep
+      %~disryt-nolpet  ~tapfur-fitsep
+    ==
+  ::
+  ++  which-escape-l1  ^-  ship
+  :: escaping to a L1 point
+    ?-  rank.cur-event
+      %galaxy  ~red
+      %star    ~red
+      %planet  ~rigred
+    ==
+  ++  which-escape-l2  ^-  ship
+  :: escaping to a L2 point
+    ?-  rank.cur-event
+      %galaxy  ~red
+      %star    ~red
+      %planet  ~losred
+    ==
+  ::
+  --  :: end of +expect-eq
+::
+:: ++  test-red  ^-  tang
+::
+++  test-marbud-l2-change-keys-new  ^-  tang
+  =/  new-keys       [%configure-keys encr auth suit |]
+  =|  =^state:naive
+  =^  f  state  (init-marbud state)
+  =/  marbud-point  (~(got by points.state) ~marbud)
+  =/  new-marbud  marbud-point(keys.net [1 suit auth encr], nonce.owner.own 1)
+  ::
+  %+  expect-eq
+    !>  state(points (~(put by points.state) ~marbud new-marbud))
+  ::
+    !>
+    =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-0))
+    state
+  ::
 ::  old tests
 ++  test-log  ^-  tang
   %+  expect-eq
@@ -566,6 +1324,22 @@
     =^  f  state  (n state %bat q:(gen-tx 0 lf-spawn %sambud-skey))
     transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
 ::
+++  test-linnup-torsyx-spawn  ^-  tang
+  :: try to spawn a L2 planet with a L2 planet
+  =/  rt-spawn                  [lt-own %spawn ~radres-tinnyl (addr %rt-key-0)]
+  =/  lt-spawn                  [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
+  =/  lt-transfer-yes-breach    [lt-xfr %transfer-point (addr %lt-key-0) &]
+  ::
+  %-  expect-fail
+    |.
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (init-litbud state)
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
+    =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
+    =^  f  state  (n state %bat q:(gen-tx 0 rt-spawn %lt-key-0))
+    state
+::
 ++  test-marbud-l2-spawn  ^-  tang
   =/  marbud-sproxy  [marbud-own %set-spawn-proxy (addr %marbud-skey)]
   =/  lt-spawn       [%spawn ~linnup-torsyx (addr %lt-key-0)]
@@ -608,8 +1382,9 @@
     =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn-1 %marbud-skey))
     state
 ::
+::
 ++  test-marbud-l2-change-keys  ^-  tang
-  =/  new-keys       [%configure-keys suit encr auth |]
+  =/  new-keys       [%configure-keys encr auth suit |]
   =/  marbud-mproxy  [marbud-own %set-management-proxy (addr %marbud-mkey)]
   ::
   ;:  weld
@@ -635,23 +1410,9 @@
     :: TODO: make sure nobody else can change these keys
   ==
 ::
-++  test-marbud-l2-change-keys-new  ^-  tang
-  =/  new-keys       [%configure-keys suit encr auth |]
-  =|  =^state:naive
-  =^  f  state  (init-marbud state)
-  =/  marbud-point  (~(got by points.state) ~marbud)
-  =/  new-marbud  marbud-point(keys.net [1 suit auth encr], nonce.owner.own 1)
-  ::
-  %+  expect-eq
-    !>  state(points (~(put by points.state) ~marbud new-marbud))
-  ::
-    !>
-    =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-0))
-    state
-  ::
 :: TODO: transfer breach via transfer proxy
 ++  test-marbud-l2-proxies-transfer  ^-  tang
-  =/  marbud-new-keys            [marbud-own %configure-keys suit encr auth |]
+  =/  marbud-new-keys            [marbud-own %configure-keys encr auth suit |]
   =/  marbud-sproxy              [marbud-own %set-spawn-proxy (addr %marbud-skey)]
   =/  marbud-mproxy              [marbud-own %set-management-proxy (addr %marbud-mkey)]
   =/  marbud-tproxy              [marbud-own %set-transfer-proxy (addr %marbud-key-1)]
@@ -730,8 +1491,8 @@
 :: TODO: life+rift changes via transfer proxy
 ::
 ++  test-marbud-life-rift  ^-  tang
-  =/  new-keys-no-reset           [marbud-own %configure-keys suit encr auth |]
-  =/  new-keys-yes-reset          [marbud-own %configure-keys suit encr auth &]
+  =/  new-keys-no-reset           [marbud-own %configure-keys encr auth suit |]
+  =/  new-keys-yes-reset          [marbud-own %configure-keys encr auth suit &]
   =/  zero-keys-no-reset          [marbud-own %configure-keys 0 0 0 |]
   =/  zero-keys-yes-reset         [marbud-own %configure-keys 0 0 0 &]
   =/  marbud-transfer-no-breach   [marbud-own %transfer-point (addr %marbud-key-1) |]
