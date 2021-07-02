@@ -23,6 +23,7 @@
 +$  versioned-state
     $%  state-0
         state-1
+        state-2
     ==
 ::
 +$  state-0
@@ -40,9 +41,8 @@
       ahistorical-txs=(set txid)
   ==
 ::
-+$  state-1
-  $:  %1
-      prov=(unit provider)
++$  base-state
+  $:  prov=(unit provider)
       walts=(map xpub:bc walt)
       =btc-state
       =history
@@ -54,8 +54,11 @@
       =poym
       ahistorical-txs=(set txid)
   ==
+::
++$  state-1  [%1 base-state]
++$  state-2  [%2 base-state]
 --
-=|  state-1
+=|  state-2
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -113,8 +116,17 @@
   =|  cards=(list card)
   |-
   ?-  -.ver
-      %1
+      %2
     [cards this(state ver)]
+  ::
+      %1
+    =?  cards  ?=(^ prov.ver)
+      :_  cards
+      =/  =dock  [u.prov.ver %btc-provider]
+      =/  wir=wire  /set-provider/(scot %p u.prov.ver)
+      =/  priv-wire=^wire  (welp wir [%priv ~])
+      [%pass priv-wire %agent dock %watch /clients/(scot %p our.bowl)]
+    $(-.ver %2)
   ::
       %0
     =/  new-walts=(map xpub:bc walt)
@@ -161,10 +173,11 @@
         ==
       :_  state(prov `[u.provider.comm %.n])
       ?~  prov
-        [(watch-provider:hc u.provider.comm)]~
-      :~  (leave-provider host.u.prov)
+        (watch-provider:hc u.provider.comm)
+      %-  zing
+      :~  (leave-provider host.u.prov)^~
           (watch-provider:hc u.provider.comm)
-          (give-update:hc %change-provider `[u.provider.comm %.n])
+          (give-update:hc %change-provider `[u.provider.comm %.n])^~
       ==
       ::
       ++  leave-provider
@@ -646,8 +659,9 @@
         ==
       `this
     :_  this(prov [~ src.bowl %.n])
+    %-  zing
     :~  (watch-provider:hc src.bowl)
-        (give-update:hc %change-provider `[src.bowl %.n])
+        (give-update:hc %change-provider `[src.bowl %.n])^~
     ==
   ::
       %fact
@@ -1208,10 +1222,13 @@
 ::
 ++  watch-provider
   |=  who=@p
-  ^-  card
-  :*  %pass  /set-provider/[(scot %p who)]  %agent  [who %btc-provider]
-      %watch  /clients
-  ==
+  ^-  (list card)
+  =/  =dock  [who %btc-provider]
+  =/  wir=wire  /set-provider/(scot %p who)
+  =/  priv-wire=^wire  (welp wir [%priv ~])
+  :+  [%pass wir %agent dock %watch /clients]
+    [%pass priv-wire %agent dock %watch /clients/(scot %p our.bowl)]
+  ~
 ::
 ++  give-initial
   ^-  card
