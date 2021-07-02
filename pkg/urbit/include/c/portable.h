@@ -116,15 +116,15 @@
 #       define U3_OS_LoomBase 0x36000000
 #     endif
 #       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
+#   elif defined(U3_OS_osx) && defined(U3_CPU_aarch64) || defined(U3_OS_mingw)
+#       define U3_OS_LoomBase 0x28000000000
+#       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
 #   elif defined(U3_OS_osx) || defined(U3_OS_bsd)
 #     ifdef __LP64__
 #       define U3_OS_LoomBase 0x200000000
 #     else
 #       define U3_OS_LoomBase 0x4000000
 #     endif
-#       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
-#   elif defined(U3_OS_mingw)
-#       define U3_OS_LoomBase 0x28000000000
 #       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
 #   else
 #     error "port: LoomBase"

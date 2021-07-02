@@ -3,7 +3,7 @@
         "branch": "master",
         "description": "With argon2u. Based off https://github.com/P-H-C/phc-winner-argon2",
         "homepage": "",
-        "mingw": {
+        "pmnsh": {
             "include": ["include", "src/blake2"],
             "make": "libargon2.a"
         },
@@ -19,7 +19,7 @@
         "branch": "master",
         "description": "Submodule included by Urbit",
         "homepage": null,
-        "mingw": {
+        "pmnsh": {
             "strip": 1,
             "make": "all"
         },
@@ -35,10 +35,15 @@
         "branch": "master",
         "description": "H2O - the optimized HTTP/1, HTTP/2, HTTP/3 server",
         "homepage": "https://h2o.examp1e.net",
-        "mingw": {
+        "pmnsh": {
              "include": "include",
-             "prepare": "cmake -G\"MSYS Makefiles\" .",
-             "make": "libh2o"
+             "prepare": "cmake .",
+             "make": "libh2o",
+             "compat": {
+                 "mingw": {
+                      "prepare": "cmake -G\"MSYS Makefiles\" ."
+                 }
+             }
         },
         "owner": "h2o",
         "repo": "h2o",
@@ -76,7 +81,7 @@
         "branch": "master",
         "description": null,
         "homepage": null,
-        "mingw": {
+        "pmnsh": {
             "make": "libscrypt.a CFLAGS_EXTRA=-ffast-math"
         },
         "owner": "urbit",
@@ -91,7 +96,7 @@
         "branch": "master",
         "description": null,
         "homepage": null,
-        "mingw": {
+        "pmnsh": {
             "make": "static"
         },
         "owner": "urbit",
@@ -130,10 +135,18 @@
         "branch": "master",
         "description": null,
         "homepage": null,
-        "mingw": {
+        "pmnsh": {
             "include": "source/include",
-            "lib": "build/Win64-MinGW-w64",
-            "make": "-C build/Win64-MinGW-w64 libsoftfloat3.a"
+            "compat": {
+                "m1brew": {
+                    "lib": "build/template-FAST_INT64",
+                    "make": "-C build/template-FAST_INT64 libsoftfloat3.a"
+                },
+                "mingw": {
+                    "lib": "build/Win64-MinGW-w64",
+                    "make": "-C build/Win64-MinGW-w64 libsoftfloat3.a"
+                }
+            }
         },
         "owner": "urbit",
         "repo": "berkeley-softfloat-3",

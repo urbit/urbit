@@ -3,7 +3,7 @@
         "branch": "master",
         "description": "A command line tool and library for transferring data with URL syntax",
         "homepage": "http://curl.se/",
-        "mingw": {
+        "pmnsh": {
             "include": "include",
             "lib": "lib/.libs",
             "prepare": "autoreconf -vfi && ./configure --disable-shared --disable-ldap --disable-rtsp --without-brotli --without-libidn2 --without-libpsl --without-nghttp2 --with-openssl",
@@ -20,7 +20,7 @@
         "branch": "mdb.master",
         "description": "LMDB library",
         "homepage": "http://www.lmdb.tech/",
-        "mingw": {
+        "pmnsh": {
             "strip": 2,
             "make": "liblmdb.a"
         },
@@ -35,7 +35,7 @@
         "branch": "master",
         "description": "Optimized C library for ECDSA signatures and secret/public key operations on curve secp256k1.",
         "homepage": null,
-        "mingw": {
+        "pmnsh": {
             "include": "include",
             "lib": ".libs",
             "prepare": "./autogen.sh && ./configure --disable-shared --enable-module-recovery CFLAGS=-DSECP256K1_API=",
@@ -52,11 +52,14 @@
         "branch": "v1.x",
         "description": "Cross-platform asynchronous I/O",
         "homepage": "http://libuv.org/",
-        "mingw": {
+        "pmnsh": {
             "include": "include",
             "lib": ".libs",
             "prepare": "./autogen.sh && ./configure --disable-shared",
-            "make": "libuv.la"
+            "make": "libuv.la",
+            "compat": {
+                "m1brew": false
+            }
         },
         "owner": "libuv",
         "repo": "libuv",
@@ -66,17 +69,22 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "ent": {
-        "mingw": {
+        "pmnsh": {
             "prepare": "./configure"
         }
     },
     "ge-additions": {
-        "mingw": {
+        "pmnsh": {
             "make": "CFLAGS=-I../ed25519"
         }
     },
     "libaes_siv": {
-        "mingw": {
+        "pmnsh": {
+            "compat": {
+                "m1brew": {
+                    "make": "CFLAGS=$(pkg-config --cflags openssl)"
+                }
+            }
         }
     }
 }

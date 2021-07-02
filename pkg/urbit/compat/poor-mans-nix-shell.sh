@@ -1,12 +1,10 @@
-# ensure required mingw packages are installed
-mpkgs=(cmake curl gcc jq libuv make wslay)
-pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w64-x86_64-}
-
 declare -a cdirs
 declare -a ldirs
 declare -A hdeps
-sources=(../../nix/sources.json ../../nix/sources-mingw.json)
-deriver=urbit-mingw-build
+sources=(../../nix/sources.json ../../nix/sources-pmnsh.json)
+patches=compat/$1
+deriver=urbit-$1-build
+markfil=.$1~
 depdirs=
 nixpath=${NIX_STORE-../build}
 
@@ -50,7 +48,7 @@ buildnixdep () {
   then
     hash=${hdeps[$key]}
     dir=$nixpath/$hash-$key
-    if [ -e $dir/.mingw~ ]
+    if [ -e $dir/$markfil ]
     then
       # dependency present, don't reupload
       hash=
@@ -79,14 +77,14 @@ buildnixdep () {
   fi
 
   # patch and build the dependency if necessary
-  if [ ! -e $dir/.mingw~ ]
+  if [ ! -e $dir/$markfil ]
   then
-    local patch=compat/mingw/$key.patch
+    local patch=$patches/$key.patch
     [ -e $patch ] && patch -d $dir -p 1 <$patch
     pushd $dir
     eval "$cmdprep"
     eval make "$cmdmake"
-    touch .mingw~
+    touch $markfil
     popd
   fi
 
@@ -118,30 +116,30 @@ EOF
 
 # I have to go over the sources files several times
 # because jq does not have a way to invoke external programs
+jqprep='add|to_entries|.[]|.value.pmnsh as $p|select($p and $p.compat.'$1' != false)|(($p + $p.compat.'$1')|del(.compat)) as $o|'
 
 # list external dependencies, create hash map and directory replacement regex
 # use -j and \u0000 to work around https://github.com/stedolan/jq/issues/1870
 while read -rd "" key json
 do
   # create 'store hash' from sources.json data and patch
-  patch=compat/mingw/$key.patch
+  patch=$patches/$key.patch
   read hash _ < <((
   echo -n $json
   [ -e $patch ] && cat $patch)|sha256sum)
   hash=$(hex2nixbase32 $hash)
   hdeps[$key]=$hash
-  # NB: this path substitution works only in local dependencies
-  depdirs="$depdirs|gsub(\"\\\\.\\\\./$key\";\"$nixpath/$hash-$key\")"
-done < <(jq --arg deriver "$deriver" -Sscrj 'add|to_entries|.[]|select(.value.mingw)|select(.value.url)|.key," ",{($deriver):(.value)},"\u0000"' ${sources[@]})
+  depdirs="$depdirs|gsub(\"\\\\.\\\\./$key\";\"\\(\$d)/$hash-$key\")"
+done < <(jq --arg deriver "$deriver" -Sscrj "$jqprep"'select(.value.url)|.key," ",{($deriver):(.value|del(.pmnsh) + ({'$1':$o}))},"\u0000"' ${sources[@]})
 
 # build dependencies, create include and library directory arrays
-. <(jq -sr 'add|to_entries|.[]|select(.value.mingw)|"
+. <(jq --arg nixpath "$nixpath" -sr "$jqprep"'(if .value.url then ".." else $nixpath end) as $d|"
 unset dir
 key=\(.key|@sh) \\
 url=\(.value.url//""|@sh) \\
-strip=\(.value.mingw.strip+1) \\
-cmdprep=\(.value.mingw.prepare//""'"$depdirs"'|@sh) \\
-cmdmake=\(.value.mingw.make//""'"$depdirs"'|@sh) \\
+strip=\($o.strip+1) \\
+cmdprep=\($o.prepare//""'"$depdirs"'|@sh) \\
+cmdmake=\($o.make//""'"$depdirs"'|@sh) \\
 buildnixdep # sets dir
-\(.value.mingw.include//"."|if type == "array" then . else [.] end|map("cdirs+=(-I$dir/\(.))")|join("\n"))
-\(.value.mingw.lib//"."|if type == "array" then . else [.] end|map("ldirs+=(-L$dir/\(.))")|join("\n"))"' ${sources[@]})
+\($o.include//"."|if type == "array" then . else [.] end|map("cdirs+=(-I$dir/\(.))")|join("\n"))
+\($o.lib//"."|if type == "array" then . else [.] end|map("ldirs+=(-L$dir/\(.))")|join("\n"))"' ${sources[@]})

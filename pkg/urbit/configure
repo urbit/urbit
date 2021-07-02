@@ -19,7 +19,7 @@ defmacro () {
   echo "#define $1 $2" >>include/config.h
 }
 
-xxd () {
+poor_mans_xxd () {
   cch=0
   echo "unsigned char $2[] = {"
   while IFS='' read line
@@ -93,14 +93,18 @@ esac
 # TODO Determine if the target cpu is little or big endian.
 case $(tr A-Z a-z <<< $os) in
   *mingw*)
+     # ensure required mingw packages are installed
+     mpkgs=(cmake curl gcc jq make)
+     pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w64-x86_64-}
+
      # set up dependencies and create cdirs and ldirs arrays
-     . compat/mingw/poor-mans-nix-shell.sh
+     . compat/poor-mans-nix-shell.sh mingw
 
      # support running off a tarball that doesn't contain binary pills
      (( $(stat -c %s ../../bin/ivory.pill) > 512 )) || curl -L https://github.com/urbit/urbit/raw/urbit-v$URBIT_VERSION/bin/ivory.pill > ../../bin/ivory.pill
 
-     [ -e include/ca-bundle.h ] || xxd /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt include_ca_bundle_crt >include/ca-bundle.h
-     [ -e include/ivory.h     ] || xxd ../../bin/ivory.pill u3_Ivory_pill >include/ivory.h
+     [ -e include/ca-bundle.h ] || poor_mans_xxd /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt include_ca_bundle_crt >include/ca-bundle.h
+     [ -e include/ivory.h     ] || poor_mans_xxd ../../bin/ivory.pill u3_Ivory_pill >include/ivory.h
 
      defmacro U3_OS_mingw 1
 
@@ -115,7 +119,45 @@ case $(tr A-Z a-z <<< $os) in
      compat="${compat-} mingw"
      CFLAGS="${CFLAGS-} ${cdirs[@]}"
      LDFLAGS="${LDFLAGS-} ${ldirs[@]} -static"
-     PKG_CONFIG=">/dev/null echo"
+     PKG_CONFIG=false
+     ;;
+  m1brew)
+     # ensure required packages are installed
+     brew install -q autoconf automake bash cmake coreutils gmp jq libsigsegv libtool libuv openssl pkgconfig
+
+     if (( ${BASH_VERSION%%.*} < 5 ))
+     then
+       echo Running bash version $BASH_VERSION is too low, please restart bash to use freshly installed one
+       exit 1
+     fi
+
+     # for some reason pkg-config does not pick up openssl
+     export PKG_CONFIG_PATH="$(brew --prefix openssl)/lib/pkgconfig:${PKG_CONFIG_PATH-}"
+
+     # set up dependencies and create cdirs and ldirs arrays
+     . compat/poor-mans-nix-shell.sh m1brew
+
+     # support running off a tarball that doesn't contain binary pills
+     (( $(stat -f %z ../../bin/ivory.pill) > 512 )) || curl -L https://github.com/urbit/urbit/raw/urbit-v$URBIT_VERSION/bin/ivory.pill > ../../bin/ivory.pill
+
+     [ -e include/ca-bundle.h ] || poor_mans_xxd /etc/ssl/cert.pem include_ca_bundle_crt >include/ca-bundle.h
+     [ -e include/ivory.h     ] || poor_mans_xxd ../../bin/ivory.pill u3_Ivory_pill >include/ivory.h
+
+     defmacro U3_OS_osx 1
+
+     deps="${deps/ssl/openssl}"
+     deps="${deps/uv/libuv}"
+     if ((opt_debug))
+     then
+       CFLAGS="${CFLAGS-} -O0 -g"
+     else
+       # clang hangs on noun/allocate.c if -g is specified
+       CFLAGS="${CFLAGS-} -O3"
+     fi
+
+     compat="${compat-} posix m1brew"
+     CFLAGS="${CFLAGS-} ${cdirs[@]}"
+     LDFLAGS="${LDFLAGS-} ${ldirs[@]}"
      ;;
   *linux*)
      defmacro U3_OS_linux 1
@@ -143,8 +185,9 @@ case $(tr A-Z a-z <<< $os) in
 esac
 
 for dep in ${osdeps-} $deps
-do LDFLAGS="${LDFLAGS-} -l$dep"
-   ${PKG_CONFIG-pkg-config} --cflags --libs $dep 2>/dev/null || true
+do
+   LDFLAGS="${LDFLAGS-} $(${PKG_CONFIG-pkg-config} --libs $dep 2>/dev/null || echo -l$dep)"
+   CFLAGS="${CFLAGS-} $(${PKG_CONFIG-pkg-config} --cflags $dep 2>/dev/null || true)"
 done
 
 for header in $headers
