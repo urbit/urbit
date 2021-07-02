@@ -3,7 +3,7 @@
 ::  Scrys
 ::  x/scanned: (list xpub) of all scanned wallets
 ::  x/balance/xpub: balance (in sats) of wallet
-/-  *btc-wallet, bp=btc-provider, file-server, launch-store
+/-  *btc-wallet, bp=btc-provider, file-server, launch-store, settings
 /+  dbug, default-agent, bl=btc, bc=bitcoin, bcu=bitcoin-utils, bip32
 ~%  %btc-wallet-top  ..part  ~
 |%
@@ -69,21 +69,28 @@
 ++  on-init
 ^-  (quip card _this)
   ~&  >  '%btc-wallet initialized'
-  =/  file
-    [%file-server-action !>([%serve-dir /'~btc' /app/btc-wallet %.n %.y])]
-  =/  tile
-    :-  %launch-action
-    !>  :+  %add
-      %btc-wallet
-    [[%custom `'/~btc' `'/~btc/img/tile.svg'] %.y]
-  =/  warning  [%settings-event !>([%put-entry %btc-wallet %warning %b %.y])]
-  =/  currency
-    [%settings-event !>([%put-entry %btc-wallet %currency %s 'USD'])]
-  :-  :~  [%pass /btc-wallet-server %agent [our.bowl %file-server] %poke file]
-          [%pass /btc-wallet-tile %agent [our.bowl %launch] %poke tile]
-          [%pass /warn %agent [our.bowl %settings-store] %poke warning]
-          [%pass /warn %agent [our.bowl %settings-store] %poke currency]
-      ==
+  ::
+  =/  warning=event:settings   [%put-entry %btc-wallet %warning %b %.y]
+  =/  currency=event:settings  [%put-entry %btc-wallet %currency %s 'USD']
+  =/  cards=(list card)
+    :~  (poke-our:hc %settings-store %settings-event !>(warning))
+        (poke-our:hc %settings-store %settings-event !>(currency))
+    ==
+  ::
+  =/  has-file=?  (gall-scry:hc ? %file-server /url/'~btc'/noun)
+  =/  has-tile=?
+    (~(has in (gall-scry:hc (set @tas) %launch /keys/noun)) %btc-wallet)
+  =?  cards  !has-file
+    =/  file=action:file-server  [%serve-dir /'~btc' /app/btc-wallet %.n %.y]
+    :_  cards
+    (poke-our:hc %file-server %file-server-action !>(file))
+  =?  cards  !has-tile
+    =/  tile=action:launch-store
+      [%add %btc-wallet [%custom `'/~btc' `'/~btc/img/tile.svg'] %.y]
+    :_  cards
+    (poke-our:hc %launch %launch-action !>(tile))
+  ::
+  :-  cards
   %_  this
       state
     :*  %1
@@ -1201,6 +1208,11 @@
       %btc-wallet-internal  !>(intr)
   ==
 ::
+++  poke-our
+  |=  [app=term =cage]
+  ^-  card
+  [%pass / %agent [our.bowl app] %poke cage]
+::
 ++  give-update
   |=  upd=update
   ^-  card
@@ -1287,4 +1299,8 @@
   |=  [=xpub:bc w=walt]
   ^-  (unit xpub:bc)
   ?:(scanned.w `xpub ~)
+::
+++  gall-scry
+  |*  [=mold app=@tas =path]
+  .^(mold %gx (weld /(scot %p our.bowl)/[app]/(scot %da now.bowl) path))
 --
