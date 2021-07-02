@@ -3,8 +3,8 @@ import { Content, Graph, Post } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import create from 'zustand';
+import { persist } from 'zustand/middleware';
 import { useFileUpload } from '~/logic/lib/useFileUpload';
-import { retrieve } from '~/logic/lib/useLocalStorageState';
 import { useOurContact } from '~/logic/state/contact';
 import { useGraphTimesent } from '~/logic/state/graph';
 import ShareProfile from '~/views/apps/chat/components/ShareProfile';
@@ -17,22 +17,32 @@ interface useChatStoreType {
   id: string;
   message: string;
   messageStore: Record<string, string>;
+  restore: (id: string) => void;
   setMessage: (message: string) => void;
 }
 
 const unsentKey = 'chat-unsent';
-
-export const useChatStore = create<useChatStoreType>((set, get) => ({
+export const useChatStore = create<useChatStoreType>(persist((set, get) => ({
   id: '',
   message: '',
-  messageStore: retrieve(unsentKey, {}),
+  messageStore: {},
+  restore: (id: string) => {
+    const store = get().messageStore;
+    set({
+      id,
+      messageStore: store,
+      message: store[id] || ''
+    });
+  },
   setMessage: (message: string) => {
     const store = get().messageStore;
     store[get().id] = message;
 
-    localStorage.setItem(unsentKey, JSON.stringify(store));
-    set({ message });
+    set({ message, messageStore: store });
   }
+}), {
+  name: unsentKey,
+  whitelist: ['messageStore']
 }));
 
 interface ChatPaneProps {
@@ -101,18 +111,13 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   } = props;
   const graphTimesentMap = useGraphTimesent(id);
   const ourContact = useOurContact();
-  const setMessage = useChatStore(s => s.setMessage);
+  const { restore, setMessage } = useChatStore(s => ({ setMessage: s.setMessage, restore: s.restore }));
   const { canUpload, drag } = useFileUpload({
     onSuccess: url => onSubmit([{ url }])
   });
 
   useEffect(() => {
-    const messageStore = retrieve(unsentKey, {});
-    useChatStore.setState({
-      id,
-      messageStore,
-      message: messageStore[id] || ''
-    });
+    restore(id);
   }, [id]);
 
   const scrollTo = new URLSearchParams(location.search).get('msg');
