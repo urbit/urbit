@@ -175,7 +175,12 @@
     ^+  ..vats
     =.  ..abet  (abed lac)
     ~>  %slog.0^leaf/"kiln: uninstalling {here}"
-    ::  TODO: ask gall to doze
+    =.  ..abet
+      %-  emil
+      %+  turn  (get-apps lac)
+      |=  =dude:gall
+      [%pass /kiln/vats/uninstall %arvo %g %fade dude %idle]
+    ::
     ..vats(ark (~(del by ark) lac))
   ::
   ++  install
@@ -269,6 +274,15 @@
     ~>  %slog.0^leaf/"merge into {here} succeeded"
     ..abet
   --
+::  +get-apps: find which apps Gall is running on a desk
+::
+::    TODO: move to zuse?
+::
+++  get-apps
+  |=  =desk
+  ^-  (list dude:gall)
+  %~  tap  in
+  .^((set dude:gall) ge+/(scot %p our)/[desk]/(scot %da now))
 ::  +get-germ: select merge strategy into local desk
 ::
 ::  If destination desk doesn't exist, need a %init merge.  If this is
