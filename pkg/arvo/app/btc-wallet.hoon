@@ -979,7 +979,9 @@
           walts  (~(put by walts) xpub w(scanned %.y))
         ==
       %-  (slog ~[leaf+"Scanned xpub {<xpub>}"])
-      (set-curr-xpub:hc xpub)
+      =^  cards  state
+        (set-curr-xpub:hc xpub)
+      [[(give-update:hc [%scan-progress ~ ~]) cards] state]
     ::
     ::  +bump-batch
     ::  if the batch is done but the wallet isn't done scanning,
