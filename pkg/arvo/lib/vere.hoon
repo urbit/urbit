@@ -1,7 +1,7 @@
 ::  runtime support code
 ::
-/+  ethereum, azimuth
-=>  [ethereum=ethereum azimuth=azimuth ..zuse]  =>
+/+  ethereum, azimuth, json-rpc
+=>  [ethereum=ethereum azimuth=azimuth json-rpc=json-rpc ..zuse]  =>
 |%
 ::
 ::  |dawn: pre-boot request/response de/serialization and validation
@@ -44,64 +44,45 @@
   ::  |give:dawn: produce requests for pre-boot validation
   ::
   ++  give
-    =,  rpc:ethereum
-    =,  abi:ethereum
     =/  tract  azimuth:contracts:azimuth
     |%
-    ::  +bloq:give:dawn: Eth RPC for latest block number
-    ::
-    ++  bloq
-      ^-  octs
-      %-  as-octt:mimes:html
-      %-  en-json:html
-      %+  request-to-json
-        `~.0
-      [%eth-block-number ~]
     ::  +czar:give:dawn: Eth RPC for galaxy table
     ::
     ++  czar
-      |=  boq=@ud
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
       :-  %a
       %+  turn  (gulf 0 255)
       |=  gal=@
-      %+  request-to-json
-        `(cat 3 'gal-' (scot %ud gal))
-      :+  %eth-call
-        =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
-        (encode-call 'points(uint32)' [%uint gal]~)
-      [%number boq]
+      %+  request-to-json:json-rpc
+        (cat 3 'gal-' (scot %ud gal))
+      :+  'xx version field remove me!'
+        'getPoint'
+      map+(~(put by *(map @t json)) 'ship' s+(scot %p gal))
     ::  +point:give:dawn: Eth RPC for ship's contract state
     ::
     ++  point
-      |=  [boq=@ud who=ship]
+      |=  who=ship
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      %+  request-to-json
-        `~.0
-      :+  %eth-call
-        =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
-        (encode-call 'points(uint32)' [%uint `@`who]~)
-      [%number boq]
+      %+  request-to-json:json-rpc
+        ~.
+      :+  'xx version field remove me!'
+        'getPoint'
+      map+(~(put by *(map @t json)) 'ship' s+(scot %p who))
     ::  +turf:give:dawn: Eth RPC for network domains
     ::
     ++  turf
-      |=  boq=@ud
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      :-  %a
-      %+  turn  (gulf 0 2)
-      |=  idx=@
-      %+  request-to-json
-        `(cat 3 'turf-' (scot %ud idx))
-      :+  %eth-call
-        =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
-        (encode-call 'dnsDomains(uint256)' [%uint idx]~)
-      [%number boq]
+      %+  request-to-json:json-rpc
+        'turf'
+      :+  'xx version field remove me!'
+        'getDns'
+      map+~
     --
   ::  |take:dawn: parse responses for pre-boot validation
   ::
@@ -111,23 +92,6 @@
     =,  azimuth
     =,  dejs-soft:format
     |%
-    ::  +bloq:take:dawn: parse block number
-    ::
-    ++  bloq
-      |=  rep=octs
-      ^-  (unit @ud)
-      =/  jon=(unit json)  (de-json:html q.rep)
-      ?~  jon
-        ~&([%bloq-take-dawn %invalid-json] ~)
-      =/  res=(unit cord)  ((ot result+so ~) u.jon)
-      ?~  res
-        ~&([%bloq-take-dawn %invalid-response rep] ~)
-      =/  out
-        %-  mule  |.
-        (hex-to-num:ethereum u.res)
-      ?:  ?=(%& -.out)
-        (some p.out)
-      ~&([%bloq-take-dawn %invalid-block-number] ~)
     ::  +czar:take:dawn: parse galaxy table
     ::
     ++  czar
@@ -136,58 +100,94 @@
       =/  jon=(unit json)  (de-json:html q.rep)
       ?~  jon
         ~&([%czar-take-dawn %invalid-json] ~)
-      =/  res=(unit (list [@t @t]))
-        ((ar (ot id+so result+so ~)) u.jon)
+      =/  res=(unit (list [@t @ud @ud @]))
+        %.  u.jon
+        =,  dejs-soft:format
+        =-  (ar (ot id+so result+(ot network+- ~) ~))
+        %-  ot
+        :~  :-  'rift'  ni
+            :-  'keys'  (ot 'life'^ni ~)
+            :-  'keys'  %+  cu  pass-from-eth:azimuth
+                        %-  ot
+                        :~  'crypt'^(cu (lead 32) ni)
+                            'auth'^(cu (lead 32) ni)
+                            'suite'^ni
+                        ==
+        ==
       ?~  res
-        ~&([%czar-take-dawn %invalid-response rep] ~)
-      =/  dat=(unit (list [who=@p point:azimuth-types]))
-        =-  ?:(?=(%| -.out) ~ (some p.out))
-        ^=  out  %-  mule  |.
-        %+  turn  u.res
-        |=  [id=@t result=@t]
-        ^-  [who=ship point:azimuth-types]
-        =/  who  `@p`(slav %ud (rsh [3 4] id))
-        :-  who
-        %+  point-from-eth
-          who
-        :_  *deed:eth-noun
-        %+  decode-results
-          result
-        point:eth-type
-      ?~  dat
-        ~&([%bloq-take-dawn %invalid-galaxy-table] ~)
+        ~&([%czar-take-dawn %invalid-json] ~)
       :-  ~
-      %+  roll  u.dat
-      |=  $:  [who=ship =point:azimuth-types]
+      %+  roll  u.res
+      |=  $:  [id=@t deet=[rift life =pass]]
               kyz=(map ship [=rift =life =pass])
           ==
       ^+  kyz
-      ?~  net.point
+      ?:  =(0 life.deet)
         kyz
-      (~(put by kyz) who [continuity-number life pass]:u.net.point)
+      %+  ~(put by kyz)
+        (slav %ud (rsh [3 4] id))
+      deet
     ::  +point:take:dawn: parse ship's contract state
     ::
     ++  point
       |=  [who=ship rep=octs]
       ^-  (unit point:azimuth)
+      ~!  *point:azimuth
       =/  jon=(unit json)  (de-json:html q.rep)
       ?~  jon
         ~&([%point-take-dawn %invalid-json] ~)
-      =/  res=(unit cord)  ((ot result+so ~) u.jon)
-      ?~  res
-        ~&([%point-take-dawn %invalid-response rep] ~)
-      ~?  =(u.res '0x')
-        :-  'bad result from node; is azimuth address correct?'
-        azimuth:contracts
-      =/  out
-        %-  mule  |.
-        %+  point-from-eth
-          who
-        :_  *deed:eth-noun  ::TODO  call rights to fill
-        (decode-results u.res point:eth-type)
-      ?:  ?=(%& -.out)
-        (some p.out)
-      ~&([%point-take-dawn %invalid-point] ~)
+      =;  ^=  res
+          %-  unit
+          $:  [spawn=@ own=[@ @ @ @]]
+              [=rift =life =pass sponsor=[? ship]]
+          ==
+          ?~  res
+            ~&([%point-take-dawn %incomplete-json] ~)
+          =,  u.res
+          %-  some
+          :+  own
+            ?:  =(0 life)  ~
+            `[life pass rift sponsor ~]  ::NOTE  escape unknown ::TODO could be!
+          ?.  (gth who 0xffff)  ~
+          `[spawn ~]  ::NOTE  spawned unknown
+      %.  u.jon
+      =,  dejs-soft:format
+      =-  (ot result+- ~)
+      %-  ot
+      :~  :-  'ownership'
+          %-  ot
+          |^  :~  'spawnProxy'^address
+                  'owner'^address
+                  'managementProxy'^address
+                  'votingProxy'^address
+                  'transferProxy'^address
+              ==
+          ::
+          ++  address
+            (ot 'address'^(cu hex-to-num:ethereum so) ~)
+          --
+        ::
+          :-  'network'
+          %-  ot
+          ::TODO  dedupe with +czar
+          :~  'rift'^ni
+              'keys'^(ot 'life'^ni ~)
+            ::
+              :-  'keys'
+              %+  cu  pass-from-eth:azimuth
+              %-  ot
+              :~  'crypt'^(cu (lead 32) ni)
+                  'auth'^(cu (lead 32) ni)
+                  'suite'^ni
+              ==
+            ::
+              ::TODO  inconsistent @p string
+              'sponsor'^(ot 'has'^bo 'who'^(su fed:ag) ~)
+            ::
+              ::TODO  escape
+              ::TODO  what if escape or sponsor not present? possible?
+          ==
+      ==
     ::  +turf:take:dawn: parse network domains
     ::
     ++  turf
@@ -196,38 +196,21 @@
       =/  jon=(unit json)  (de-json:html q.rep)
       ?~  jon
         ~&([%turf-take-dawn %invalid-json] ~)
-      =/  res=(unit (list [@t @t]))
-        ((ar (ot id+so result+so ~)) u.jon)
+      =/  res=(unit (list @t))
+        ((ot result+(ar so) ~) u.jon)
       ?~  res
         ~&([%turf-take-dawn %invalid-response rep] ~)
-      =/  dat=(unit (list (pair @ud ^turf)))
-        =-  ?:(?=(%| -.out) ~ (some p.out))
-        ^=  out  %-  mule  |.
-        %+  turn  u.res
-        |=  [id=@t result=@t]
-        ^-  (pair @ud ^turf)
-        :-  (slav %ud (rsh [3 5] id))
-        =/  dom=tape
-          (decode-results result [%string]~)
-        =/  hot=host:eyre
-          (scan dom thos:de-purl:html)
-        ?>(?=(%& -.hot) p.hot)
-      ?~  dat
-        ~&([%turf-take-dawn %invalid-domains] ~)
-      :-  ~
-      =*  dom  u.dat
-      :: sort by id, ascending, removing duplicates
+      ::  remove duplicates, parse into turfs
       ::
-      =|  tuf=(map ^turf @ud)
-      |-  ^-  (list ^turf)
-      ?~  dom
-        %+  turn
-          %+  sort  ~(tap by tuf)
-          |=([a=(pair ^turf @ud) b=(pair ^turf @ud)] (lth q.a q.b))
-        head
-      =?  tuf  !(~(has by tuf) q.i.dom)
-        (~(put by tuf) q.i.dom p.i.dom)
-      $(dom t.dom)
+      =-  `doz
+      %+  roll  u.res
+      |=  [dom=@t doh=(set @t) doz=(list ^turf)]
+      ?:  (~(has in doh) dom)  [doh doz]
+      :-  (~(put in doh) dom)
+      =/  hot=host:eyre
+        (rash dom thos:de-purl:html)
+      ?.  ?=(%& -.hot)  doz
+      (snoc doz p.hot)
     --
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::
