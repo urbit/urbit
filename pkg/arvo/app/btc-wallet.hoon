@@ -210,7 +210,8 @@
           [(silt (gulf 0 endpoint)) endpoint %.n]
         =^  cards0  state  (req-scan:hc b xpub %0)
         =^  cards1  state  (req-scan:hc b xpub %1)
-        [(weld cards0 cards1) state]
+        :_  state
+        [(scan-progress:hc xpub) (weld cards0 cards1)]
       --
     ::
         %delete-wallet
@@ -602,7 +603,7 @@
             (turn inputs.ti |=(i=val:tx [i `payer]))
             %+  turn  outputs.ti
               |=  o=val:tx
-              ?:  =(pos.o vout) 
+              ?:  =(pos.o vout)
                 ::  check whether this is the output that went to payee
                 [o payee]
               [o `payer]
@@ -964,7 +965,8 @@
         (bump-batch xpub %0)
       =^  cards1=(list card)  state
         (bump-batch xpub %1)
-      [(weld cards0 cards1) state]
+      :_  state
+      [(scan-progress:hc xpub) (weld cards0 cards1)]
     ::
     ::  delete the xpub from scans and set wallet to scanned
     ::
@@ -977,7 +979,9 @@
           walts  (~(put by walts) xpub w(scanned %.y))
         ==
       %-  (slog ~[leaf+"Scanned xpub {<xpub>}"])
-      (set-curr-xpub:hc xpub)
+      =^  cards  state
+        (set-curr-xpub:hc xpub)
+      [[(give-update:hc [%scan-progress ~ ~]) cards] state]
     ::
     ::  +bump-batch
     ::  if the batch is done but the wallet isn't done scanning,
@@ -1217,6 +1221,21 @@
   |=  upd=update
   ^-  card
   [%give %fact ~[/all] %btc-wallet-update !>(upd)]
+::
+++  scan-progress
+  |=  [=xpub:bc]
+  |^  ^-  card
+  %-  give-update
+  :+  %scan-progress
+  (to-idx (~(gut by scans.state) [xpub %0] *batch))
+  (to-idx (~(gut by scans.state) [xpub %1] *batch))
+  ++  to-idx
+    |=  b=batch
+    ^-  (unit idx:bc)
+    =/  s=(list idx:bc)
+      (sort ~(tap in todo.b) lth)
+    ?~  s  ~  `i.s
+  --
 ::
 ++  watch-provider
   |=  who=@p
