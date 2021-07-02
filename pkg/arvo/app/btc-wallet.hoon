@@ -89,7 +89,7 @@
       ==
   %_  this
       state
-    :*  %1
+    :*  %2
         ~
         *(map xpub:bc walt)
         *^btc-state
@@ -122,8 +122,8 @@
       %1
     =?  cards  ?=(^ prov.ver)
       :_  cards
-      =/  =dock  [u.prov.ver %btc-provider]
-      =/  wir=wire  /set-provider/(scot %p u.prov.ver)
+      =/  =dock  [host.u.prov.ver %btc-provider]
+      =/  wir=wire  /set-provider/(scot %p host.u.prov.ver)
       =/  priv-wire=^wire  (welp wir [%priv ~])
       [%pass priv-wire %agent dock %watch /clients/(scot %p our.bowl)]
     $(-.ver %2)
@@ -168,22 +168,27 @@
       ?~  provider.comm
         ?~  prov  `state
         :_  state(prov ~)
+        %-  zing
         :~  (leave-provider host.u.prov)
-            (give-update:hc %change-provider ~)
+            (give-update:hc %change-provider ~)^~
         ==
       :_  state(prov `[u.provider.comm %.n])
       ?~  prov
         (watch-provider:hc u.provider.comm)
       %-  zing
-      :~  (leave-provider host.u.prov)^~
+      :~  (leave-provider host.u.prov)
           (watch-provider:hc u.provider.comm)
           (give-update:hc %change-provider `[u.provider.comm %.n])^~
       ==
       ::
       ++  leave-provider
         |=  who=@p
-        ^-  card
-        [%pass /set-provider/[(scot %p who)] %agent who^%btc-provider %leave ~]
+        ^-  (list card)
+        =/  wir=wire  /set-provider/(scot %p who)
+        =/  priv-wir=wire  (welp wir %priv^~)
+        :+  [%pass wir %agent who^%btc-provider %leave ~]
+          [%pass priv-wir %agent who^%btc-provider %leave ~]
+        ~
       --
     ::
         %check-provider
@@ -864,7 +869,7 @@
     ::
         %tx-info
       ::  TODO: why do we get a nest-fail when using =^ ?
-      =/  [cards=(list card) sty=state-1]
+      =/  [cards=(list card) sty=state-2]
         (handle-tx-info:hc info.p.upd)
       :_  sty
       :_  cards
