@@ -482,7 +482,6 @@
 ::
 ++  predicted-state
   |=  nas=^state:naive
-  ^+  nas
   ^+  state
   =.  pre.state  nas
   |^
