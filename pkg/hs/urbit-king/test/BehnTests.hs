@@ -9,7 +9,6 @@ import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 import Urbit.Arvo
-import Urbit.EventLog.LMDB
 import Urbit.Noun
 import Urbit.Noun.Time
 import Urbit.Prelude
@@ -22,7 +21,6 @@ import GHC.Natural        (Natural)
 import Network.Socket     (tupleToHostAddress)
 import Urbit.King.App     (runKingEnvNoLog, HasKingId(..))
 
-import qualified Urbit.EventLog.LMDB as Log
 import qualified Urbit.Noun.Time     as Time
 
 

@@ -19,7 +19,6 @@ import qualified DawnTests
 import qualified DeriveNounTests
 import qualified HoonMapSetTests
 import qualified JamTests
-import qualified LogTests
 import qualified NounConversionTests
 import qualified Options
 import qualified Test.Tasty.Runners as Runners
@@ -43,6 +42,5 @@ main = do
           , DeriveNounTests.tests
           , HoonMapSetTests.tests
           , JamTests.tests
-          , LogTests.tests
           , NounConversionTests.tests
           ]

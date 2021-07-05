@@ -8,7 +8,6 @@ import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 import Urbit.Arvo
-import Urbit.EventLog.LMDB
 import Urbit.King.Config
 import Urbit.Noun
 import Urbit.Noun.Time
@@ -25,7 +24,6 @@ import GHC.Natural        (Natural)
 import Network.Socket     (tupleToHostAddress)
 import Urbit.King.App     (HasKingId(..))
 
-import qualified Urbit.EventLog.LMDB as Log
 import qualified Urbit.Noun.Time     as Time
 
 packetSplitMorphism :: Packet -> Bool
@@ -101,9 +99,6 @@ instance Arbitrary Ship where
     , 430_648_908_188_615_680
     , 2^60 + 1337
     ]
-
-instance Arbitrary LogIdentity where
-  arbitrary = LogIdentity <$> arb <*> arb <*> arb
 
 instance Arbitrary Packet where
   arbitrary = do
