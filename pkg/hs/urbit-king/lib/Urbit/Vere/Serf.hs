@@ -24,14 +24,10 @@ where
 import Urbit.Prelude hiding ((<|))
 
 import Data.Bits
-import Data.Conduit
 import System.Process
 import Urbit.Vere.Serf.Types
 import Urbit.Vere.Serf.IPC.Types
 
-import Control.Monad.STM            (retry)
-import Control.Monad.Trans.Resource (MonadResource, allocate, runResourceT)
-import Data.Sequence                (Seq((:<|), (:|>)))
 import Foreign.Marshal.Alloc        (alloca)
 import Foreign.Ptr                  (castPtr)
 import Foreign.Storable             (peek, poke)
@@ -40,7 +36,6 @@ import System.Exit                  (ExitCode)
 import System.Posix.Signals         (sigINT, sigKILL, signalProcess)
 import Urbit.Arvo                   (FX)
 import Urbit.Arvo.Event
-import Urbit.Noun.Time              (Wen)
 
 import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Unsafe as BS
@@ -173,7 +168,6 @@ start mode (Config exePax pierPath flags onSlog onStdr onDead) = do
  where
   diskKey = ""
   config  = show (compileFlags flags)
-  rock    = "0"      -- XX support loading from rock
   cache   = "50000"  -- XX support memo-cache size
   args    = [mode, pierPath, diskKey, config, cache]
   pSpec   = (proc exePax args) { std_in  = CreatePipe
@@ -266,9 +260,10 @@ run
   :: Serf
   -> Int
   -> STM RunReq
+  -> (FX -> STM ())
   -> (Maybe Ev -> STM ())
   -> IO ()
-run serf maxBatchSize onInput spin = start
+run serf maxBatchSize onInput affect spin = start
  where
   -- New program.
   -- spawn a thread to receive responses from the serf
@@ -343,8 +338,8 @@ run serf maxBatchSize onInput spin = start
 
   onWorkResp :: EvErr -> Each FX [Goof] -> IO ()
   onWorkResp (EvErr _ err) = \case
-    EachYes fx   -> io $ err (RunOkay fx)
-    EachNo goofs -> io $ err (RunBail goofs)
+    EachYes fx   -> io (err $ RunOkay fx) >> atomically (affect fx)
+    EachNo goofs -> io (err $ RunBail goofs)
 
 
   recvLoop :: TBMQueue (IO ()) -> IO ()

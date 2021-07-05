@@ -14,8 +14,6 @@ where
 
 import Urbit.Prelude
 
-import Control.Monad.Trans.Maybe
-import RIO.Directory
 import Urbit.Arvo
 import Urbit.King.App
 import Urbit.Vere.Pier.Types
@@ -25,17 +23,15 @@ import Control.Monad.STM         (retry)
 import System.Environment        (getExecutablePath)
 import System.Exit               (ExitCode)
 import System.FilePath           (splitFileName)
-import System.Posix.Files        (ownerModes, setFileMode)
 import Urbit.King.API            (TermConn)
 import Urbit.TermSize            (TermSize(..), termSize)
 import Urbit.Vere.Serf           (Serf)
-import Urbit.Vere.Serf.IPC.Types (Boot(..))
+import Urbit.Vere.Serf.IPC.Types (Boot(..), Vent(..))
 
 import qualified Data.Text                   as T
 import qualified Data.List as L
 import qualified System.Entropy              as Ent
 import qualified Urbit.King.API              as King
-import qualified Urbit.Noun.Time             as Time
 import qualified Urbit.Vere.Ames             as Ames
 import qualified Urbit.Vere.Behn             as Behn
 import qualified Urbit.Vere.Clay             as Clay
@@ -62,21 +58,27 @@ booted
   :: TVar ((Atom, Tank) -> IO ())
   -> Pill
   -> Bool
-  -> Ship
+  -> Ship  -- XX duplication between this and LegacyBootEvent?
   -> LegacyBootEvent
   -> RIO PierEnv ExitCode
 booted vSlog pill lite ship boot = do
-  --  TODO: send %boot in serf
-  scSerf <- undefined
-  scPier <- undefined
-  scFlag <- undefined
-  scSlog <- undefined
-  scStdr <- undefined
-  scDead <- undefined
-  bPill <- undefined
-  bVent <- undefined
-  bMore <- undefined
-  io $ Serf.boot Config {..} Boot {..}
+  rio $ logTrace "Booting ship"
+
+  config@Config{ scPier } <- getSerfConfig vSlog
+
+  rio $ do
+    logTrace $ display @Text ("pier: " <> pack scPier)
+
+  io $ Serf.boot config shoe
+ where
+  shoe = Boot
+    { bPill = (pill, Nothing) 
+    , bVent = case boot of
+        Fake ship' -> VFake ship'
+        Dawn dawn  -> VDawn $ dSeed dawn
+    , bMore = []
+    }
+
 
 -- Resume an existing ship. ----------------------------------------------------
 
@@ -84,18 +86,26 @@ resumed
   :: TVar ((Atom, Tank) -> IO ())
   -> RAcquire PierEnv (Serf, Ripe)
 resumed vSlog = do
-  pax <- view pierPathL
   rio $ logTrace "Resuming ship"
 
-  rio $ do
-    logTrace $ display @Text ("pier: " <> pack pax)
+  config@Config{ scPier } <- rio $ getSerfConfig vSlog
 
+  rio $ do
+    logTrace $ display @Text ("pier: " <> pack scPier)
+
+  Serf.withSerf config
+
+
+-- Get Serf.Config for booting or resuming -------------------------------------
+
+getSerfConfig
+  :: TVar ((Atom, Tank) -> IO ())
+  -> RIO PierEnv Serf.Config
+getSerfConfig vSlog = do
+  pax <- view pierPathL
   env <- ask
   serfProg <- io getSerfProg
-  Serf.withSerf (config env serfProg pax)
- where
-  slog s = atomically (readTVar vSlog) >>= (\f -> f s)
-  config env serfProg pax = Serf.Config
+  pure Config
     { scSerf = env ^. pierConfigL . pcSerfExe . to (maybe serfProg unpack)
     , scPier = pax
     , scFlag = env ^. pierConfigL . pcSerfFlags
@@ -103,6 +113,9 @@ resumed vSlog = do
     , scStdr = \txt -> slog (0, (textToTank txt))
     , scDead = pure () -- TODO: What can be done?
     }
+ where
+  slog s = atomically (readTVar vSlog) >>= (\f -> f s)
+
   getSerfProg :: IO FilePath
   getSerfProg = do
     (path, filename) <- splitFileName <$> getExecutablePath
@@ -157,7 +170,6 @@ pier (serf, ripe) vSlog startedSig injected = do
   -- the c serf code. Logging output from our haskell process must manually
   -- add them.
   let compute = putTMVar computeQ
-  let execute = writeTQueue executeQ
   let sigint  = Serf.sendSIGINT serf
   let scry    = \g r -> do
         res <- newEmptyMVar
@@ -190,6 +202,7 @@ pier (serf, ripe) vSlog startedSig injected = do
                                     , ccOnKill      = onKill
                                     , ccOnSave      = takeTMVar saveSig
                                     , ccOnScry      = readTQueue scryQ
+                                    , ccExecute     = writeTQueue executeQ
                                     , ccShowSpinner = Term.spin muxed
                                     , ccHideSpinner = Term.stopSpin muxed
                                     }
@@ -459,6 +472,7 @@ data ComputeConfig = ComputeConfig
   , ccOnKill      :: STM ()
   , ccOnSave      :: STM ()
   , ccOnScry      :: STM (Gang, ScryReq, Maybe (Term, Noun) -> IO ())
+  , ccExecute     :: FX -> STM ()
   , ccShowSpinner :: Maybe Text -> STM ()
   , ccHideSpinner :: STM ()
   }
@@ -486,4 +500,4 @@ runCompute serf ComputeConfig {..} = do
 
   let maxBatchSize = 10
 
-  io (Serf.run serf maxBatchSize onRR onSpin)
+  io (Serf.run serf maxBatchSize onRR ccExecute onSpin)

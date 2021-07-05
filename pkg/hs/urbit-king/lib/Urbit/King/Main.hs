@@ -17,71 +17,14 @@
   never let the king go down.
 -}
 
-{-
-    TODO These some old scribbled notes. They don't belong here
-    anymore. Do something about it.
-
-    # Event Pruning
-
-    - `king discard-events NUM_EVENTS`: Delete the last `n` events from
-      the event log.
-
-    - `king discard-events-interactive`: Iterate through the events in
-      the event log, from last to first, pretty-print each event, and
-      ask if it should be pruned.
-
-    # Implement subcommands to test event and effect parsing.
-
-    - `king * --collect-fx`: All effects that come from the serf get
-      written into the `effects` LMDB database.
-
-    - `king clear-fx PIER`: Deletes all collected effects.
-
-    - `king full-replay PIER`: Replays the whole event log events, print
-      any failures. On success, replace the snapshot.
-
-
-    # Full Replay -- An Integration Test
-
-    - Copy the event log:
-
-      - Create a new event log at the destination.
-      - Stream events from the first event log.
-      - Parse each event.
-      - Re-Serialize each event.
-      - Verify that the round-trip was successful.
-      - Write the event into the new database.
-
-    - Replay the event log at the destination.
-      - If `--collect-fx` is set, then record effects as well.
-
-    - Snapshot.
-
-    - Verify that the final mug is the same as it was before.
-
-    # Implement Remaining Serf Flags
-
-    - `DebugRam`: Memory debugging.
-    - `DebugCpu`: Profiling
-    - `CheckCorrupt`: Heap Corruption Tests
-    - `CheckFatal`: TODO What is this?
-    - `Verbose`: TODO Just the `-v` flag?
-    - `DryRun`: TODO Just the `-N` flag?
-    - `Quiet`: TODO Just the `-q` flag?
-    - `Hashless`: Don't use hashboard for jets.
--}
-
 module Urbit.King.Main (main) where
 
 import Urbit.Prelude
 
-import Data.Conduit
 import Network.HTTP.Client.TLS
-import RIO.Directory
 import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Dawn
-import Urbit.Vere.Pier
 import Urbit.Vere.Ports
 import Urbit.Vere.Eyre.Multi (multiEyre, MultiEyreConf(..))
 import Urbit.Vere.Pier.Types
@@ -91,9 +34,7 @@ import Urbit.King.App
 import Control.Concurrent     (myThreadId)
 import Control.Exception      (AsyncException(UserInterrupt))
 import System.Exit            (ExitCode(..))
-import System.Process         (system)
 import System.IO              (hPutStrLn)
-import Urbit.Noun.Time        (Wen)
 import Urbit.Vere.LockFile    (lockFile)
 
 import qualified Data.Set                as Set
@@ -101,22 +42,12 @@ import qualified Data.Text               as T
 import qualified Network.HTTP.Client     as C
 import qualified System.Posix.Signals    as Sys
 import qualified System.Posix.Resource   as Sys
-import qualified System.ProgressBar      as PB
 import qualified System.Random           as Sys
 import qualified Urbit.King.CLI          as CLI
 import qualified Urbit.Ob                as Ob
 import qualified Urbit.Vere.Pier         as Pier
 import qualified Urbit.Vere.Serf         as Serf
 import qualified Urbit.Vere.Term         as Term
-
-
---------------------------------------------------------------------------------
-
-removeFileIfExists :: HasLogFunc env => FilePath -> RIO env ()
-removeFileIfExists pax = do
-  exists <- doesFileExist pax
-  when exists $ do
-      removeFile pax
 
 
 -- Compile CLI Flags to Pier Configuration -------------------------------------

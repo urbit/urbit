@@ -15,8 +15,9 @@ data Vent
   deriving (Show)
 
 data Boot = Boot
-  { bPill :: (Atom, Maybe Ev)  -- XX maybe clay event?
+  { bPill :: (Atom, Maybe Ev)  -- XX maybe clay event for (unimplemented) `-A`?
   , bVent :: Vent
+  -- | For future flexibility, currently unused.
   , bMore :: [Ev]
   }
   deriving (Show)

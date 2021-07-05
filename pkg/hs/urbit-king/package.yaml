@@ -96,7 +96,6 @@ dependencies:
   - tasty-quickcheck
   - tasty-th
   - template-haskell
-  - terminal-progress-bar
   - text
   - these
   - time
