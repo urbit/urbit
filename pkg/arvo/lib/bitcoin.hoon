@@ -57,7 +57,9 @@
     ~/  %to-cord
     |=  a=address  ^-  cord
     ?:  ?=([%base58 *] a)
-      (scot %uc +.a)
+      %-  crip
+      %+  slag  2
+      (trip (scot %uc +.a))
     +.a
   ::
   ++  from-pubkey
