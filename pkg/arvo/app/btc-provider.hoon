@@ -17,13 +17,15 @@
 +$  versioned-state
     $%  state-0
         state-1
+        state-2
     ==
 ::
 +$  state-0  [%0 =host-info =whitelist]
 +$  state-1  [%1 =host-info =whitelist timer=(unit @da)]
++$  state-2  [%2 =host-info =whitelist timer=(unit @da) interval=@dr]
 --
 %-  agent:dbug
-=|  state-1
+=|  state-2
 =*  state  -
 ^-  agent:gall
 =<
@@ -38,9 +40,10 @@
   =|  wl=^whitelist
   :-  ~
   %_  this
-      host-info  ['' connected=%.n %main block=0 clients=*(set ship)]
-      whitelist  wl(public %.n, kids %.n)
-      timer      ~
+    host-info  ['' connected=%.n %main block=0 clients=*(set ship)]
+    whitelist  wl(public %.n, kids %.n)
+    timer      ~
+    interval   ~m1
   ==
 ::
 ++  on-save
@@ -52,11 +55,14 @@
   ^-  (quip card _this)
   =/  old  !<(versioned-state old-state)
   ?-  -.old
-      %1
+      %2
     [~ this(state old)]
   ::
+      %1
+    `this(state [%2 host-info.old whitelist.old timer.old ~m1])
+  ::
       %0
-    :_  this(state [%1 host-info.old whitelist.old ~])
+    :_  this(state [%2 host-info.old whitelist.old ~ ~m1])
     ?:  =('' api-url.host-info.old)  ~
     ~[(start-ping-timer:hc ~s0)]
   ==
@@ -99,7 +105,7 @@
           ?~  timer  ~
           [[%pass /block-time %arvo %b %rest u.timer] ~]
       ==
-      ::
+    ::
         %add-whitelist
       :-  ~
       ?-  -.wt.comm
@@ -115,7 +121,7 @@
           %groups
         state(groups.whitelist (~(uni in groups.whitelist) groups.wt.comm))
       ==
-      ::
+    ::
         %remove-whitelist
       =.  state
         ?-  -.wt.comm
@@ -132,6 +138,9 @@
           state(groups.whitelist (~(dif in groups.whitelist) groups.wt.comm))
         ==
       clean-client-list
+    ::
+        %set-interval
+      `state(interval inte.comm)
     ==
   ::
   ::  +clean-client-list: remove clients who are no longer whitelisted
@@ -218,9 +227,9 @@
   ?:  ?=([%ping-timer *] wir)
     `this
   ?:  ?=([%block-ping *] wir)
-    :_  this(timer `(add now.bowl ~s30))
+    :_  this(timer `(add now.bowl interval))
     :~  do-ping
-        (start-ping-timer:hc ~s30)
+        (start-ping-timer:hc interval)
     ==
   =^  cards  state
     ?+    +<.sign-arvo    (on-arvo:def wir sign-arvo)
