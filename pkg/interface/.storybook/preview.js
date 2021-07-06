@@ -51,7 +51,7 @@ export const decorators = [
           color: '0x26.3e0f',
           groups: [],
         },
-'~sampel-palnet': {
+        '~sampel-palnet': {
           status: 'A test status',
           'last-updated': 1616609090555,
           avatar: null,
@@ -60,7 +60,7 @@ export const decorators = [
           nickname: 'You',
           color: '0x26.3e0f',
           groups: [],
-        }
+        },
       },
     });
 
@@ -130,6 +130,47 @@ export const decorators = [
             'app-name': 'graph',
             resource: '/ship/~darrux-landes/development',
             group: '/ship/~bitbet-bolbel/urbit-community',
+          },
+        },
+      },
+      previews: {
+        '/ship/~bollug-worlus/urbit-index': {
+          group: '/ship/~bollug-worlus/urbit-index',
+          channels: {
+            '/ship/~darrux-landes/index-weekly': {
+              metadata: {
+                preview: false,
+                vip: '',
+                title: 'Index Weekly',
+                description: '',
+                creator: '~bollug-worlus',
+                picture: '',
+                hidden: false,
+                config: {
+                  graph: 'publish',
+                },
+                'date-created': '~2020.4.6..21.53.30..dc68',
+                color: '0x0',
+              },
+              'app-name': 'graph',
+              resource: '/ship/~bollug-worlus/index-weekly',
+              group: '/ship/~bollug-worlus/urbit-index',
+            },
+          },
+          members: 1237,
+          metadata: {
+            preview: false,
+            vip: '',
+            title: 'Urbit Index',
+            description: '',
+            creator: '~bollug-worlus',
+            picture: '',
+            hidden: false,
+            config: {
+              group: null,
+            },
+            'date-created': '~2020.4.6..21.53.30..dc68',
+            color: '0x0',
           },
         },
       },
