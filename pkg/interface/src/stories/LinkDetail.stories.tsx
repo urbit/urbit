@@ -56,7 +56,7 @@ const node = {
   ])
 };
 
-const youtubeNode = {
+const twitterNode = {
   post: {
     index: '/170141184504850861030994857749504231212',
     author: 'fabled-faster',
@@ -108,7 +108,7 @@ export const Image = () => {
   );
 };
 
-export const Youtube = () => {
+export const Twitter = () => {
   const association = useMetadataState(
     s => s.associations.graph['/ship/~bitbet-bolbel/links']
   );
@@ -116,7 +116,7 @@ export const Youtube = () => {
     <Box height="100%" width="100%" border="1" borderColor="lightGray" maxWidth="1166px" backgroundColor="white">
       <LinkDetail
         baseUrl="/"
-        node={youtubeNode}
+        node={twitterNode}
         association={association}
       />
     </Box>
