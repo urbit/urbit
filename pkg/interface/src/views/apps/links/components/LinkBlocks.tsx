@@ -32,7 +32,7 @@ export function LinkBlocks(props: LinkBlocksProps) {
   const [linkSize, setLinkSize] = useState(250);
   const linkSizePx = `${linkSize}px`;
 
-  const isMobile = useLocalState(s => s.mobile);
+  const isMobile = useLocalState(s => s.mobile || s.mdBreak);
   const colCount = useMemo(() => (isMobile ? 2 : 4), [isMobile]);
   const bind = useResize<HTMLDivElement>(
     useCallback(
@@ -46,12 +46,13 @@ export function LinkBlocks(props: LinkBlocksProps) {
   );
 
   useEffect(() => {
-    const unreads = useHarkState.getState()
-      .unreads.graph?.[association.resource]?.['/']?.unreads || new Set<string>();
-    Array.from((unreads as Set<string>)).forEach((u) => {
+    const unreads =
+      useHarkState.getState().unreads.graph?.[association.resource]?.['/']
+        ?.unreads || new Set<string>();
+    Array.from(unreads as Set<string>).forEach((u) => {
       airlock.poke(markEachAsRead(association.resource, '/', u));
     });
-}, [association.resource]);
+  }, [association.resource]);
 
   const orm = useMemo(() => {
     const nodes = [null, ...Array.from(props.graph)];
@@ -62,12 +63,12 @@ export function LinkBlocks(props: LinkBlocksProps) {
         return [bigInt(i), chunk];
       })
     );
-  }, [props.graph]);
+  }, [props.graph, colCount]);
 
   const renderItem = useCallback(
     React.forwardRef<any, any>(({ index }, ref) => {
-      const chunk = orm.get(index);
-      const space = [3,4];
+      const chunk = orm.get(index) ?? [];
+      const space = [3, 3, 4];
 
       return (
         <Row
@@ -82,10 +83,7 @@ export function LinkBlocks(props: LinkBlocksProps) {
           {chunk.map((block) => {
             if (!block) {
               return (
-                <LinkBlockInput
-                  size={linkSizePx}
-                  association={association}
-                />
+                <LinkBlockInput size={linkSizePx} association={association} />
               );
             }
             const [i, node] = block;
@@ -115,7 +113,13 @@ export function LinkBlocks(props: LinkBlocksProps) {
   );
 
   return (
-    <Col overflowX="hidden" overflowY="auto" height="calc(100% - 48px)" {...bind}>
+    <Col
+      width="100%"
+      overflowX="hidden"
+      overflowY="auto"
+      height="calc(100% - 48px)"
+      {...bind}
+    >
       <BlockScroller
         origin="top"
         offset={0}
