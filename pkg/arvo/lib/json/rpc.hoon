@@ -64,15 +64,8 @@
   ^-  (unit request)
   ?~  body  ~
   ?~  jon=(de-json:html q.u.body)  ~
-  ::  ignores non-object responses
-  ::
-  :: ?.  ?=([%o *] json)  ~|([%format-not-valid json] !!)
-  ?.  ?=([%o *] u.jon)  ~
-  %-  some
   %.  u.jon
-  =,  dejs:format
-  ::  TODO: If parsing fails, return a proper error (not 500)
-  ::
+  =,  dejs-soft:format
   %-  ot
   :~  ::  FIXME: parse 'id' as string, number or NULL
       ::
@@ -82,10 +75,10 @@
     ::
       :-  'params'
       |=  =json
-      ^-  request-params
-      ?+  -.json  !!
-        %a  [%list ((ar same) json)]
-        %o  [%map ((om same) json)]
+      ^-  (unit request-params)
+      ?+  -.json  ~
+        %a  `[%list ((ar:dejs:format same) json)]
+        %o  `[%map ((om:dejs:format same) json)]
   ==  ==
 ::
 ++  error
