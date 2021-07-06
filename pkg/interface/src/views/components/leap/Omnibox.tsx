@@ -13,7 +13,7 @@ import React, {
 import { useHistory, useLocation } from 'react-router-dom';
 import * as ob from 'urbit-ob';
 import defaultApps from '~/logic/lib/default-apps';
-import makeIndex from '~/logic/lib/omnibox';
+import makeIndex, { OmniboxItem } from '~/logic/lib/omnibox';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { deSig } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
@@ -114,7 +114,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   }, [props.show]);
 
   const initialResults = useMemo(() => {
-    return new Map(
+    return new Map<string, OmniboxItem[]>(
       SEARCHED_CATEGORIES.map((category) => {
         if (category === 'other') {
           return [
@@ -132,7 +132,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       return initialResults;
     }
     const q = query.toLowerCase();
-    const resultsMap = new Map();
+    const resultsMap = new Map<string, OmniboxItem[]>();
     SEARCHED_CATEGORIES.map((category) => {
       const categoryIndex = index.get(category);
       resultsMap.set(
@@ -317,7 +317,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         borderBottomRightRadius={2}
       >
         {SEARCHED_CATEGORIES.map(category =>
-          Object({
+          ({
             category,
             categoryResults: _.take(results.get(category).sort(sortResults), CAT_LIMIT)
           })
