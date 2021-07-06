@@ -1919,6 +1919,32 @@
   $|  (tree item)
   |=(a=(tree) ?:(=(~ a) & ~(apt in a)))
 ::
+++  pry                                                 ::  psq
+  |$  [k p v]
+  $@(~ [n=(lelem k p v) t=(ltree k p v) m=k])
+::
+++  lelem                                               ::  pry element
+  |$  [k p v]
+  [k=k p=p v=v]
+::
+++  lnode                                               ::  pry internal node
+  |$  [k p v]
+  [n=(lelem k p v) l=(ltree k p v) m=k r=(ltree k p v)]
+::
+++  ltree                                               ::  pry internal tree
+  |$  [k p v]
+  $@  ~
+  $%  [%llos s=@ p=(lnode k p v)]
+      [%rlos s=@ p=(lnode k p v)]
+  ==
+::
+++  tour                                                ::  pry tourney view
+  |$  [k p v]
+  $@  ~
+  $%  [%sing n=(lelem k p v)]
+      [%play l=(pry k p v) r=(pry k p v)]
+  ==
+::
 ::::  2l: container from container                      ::
   ::                                                    ::
   ::
