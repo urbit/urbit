@@ -84,7 +84,7 @@ export function DmResource(props: DmResourceProps) {
       if (newer) {
         const index = dm.peekLargest()?.[0];
         if (!index) {
-          return true;
+          return false;
         }
         await getYoungerSiblings(
           `~${window.ship}`,
@@ -96,7 +96,7 @@ export function DmResource(props: DmResourceProps) {
       } else {
         const index = dm.peekSmallest()?.[0];
         if (!index) {
-          return true;
+          return false;
         }
         await getOlderSiblings(
           `~${window.ship}`,
