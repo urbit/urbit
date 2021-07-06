@@ -59,7 +59,7 @@
     ?:  ?=([%base58 *] a)
       %-  crip
       %+  slag  2
-      (trip (scot %uc +.a))
+      (scow %uc +.a)
     +.a
   ::
   ++  from-pubkey
