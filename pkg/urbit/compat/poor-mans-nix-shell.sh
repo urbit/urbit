@@ -143,3 +143,6 @@ cmdmake=\($o.make//""'"$depdirs"'|@sh) \\
 buildnixdep # sets dir
 \($o.include//"."|if type == "array" then . else [.] end|map("cdirs+=(-I$dir/\(.))")|join("\n"))
 \($o.lib//"."|if type == "array" then . else [.] end|map("ldirs+=(-L$dir/\(.))")|join("\n"))"' ${sources[@]})
+
+CFLAGS="${CFLAGS-} ${cdirs[@]}"
+LDFLAGS="${LDFLAGS-} ${ldirs[@]}"
