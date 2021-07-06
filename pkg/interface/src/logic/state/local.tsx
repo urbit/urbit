@@ -26,6 +26,7 @@ export interface LocalState {
   setTutorialRef: (el: HTMLElement | null) => void;
   dark: boolean;
   mobile: boolean;
+  mdBreak: boolean;
   background: BackgroundConfig;
   omniboxShown: boolean;
   suspendedFocus?: HTMLElement;
@@ -45,6 +46,7 @@ export const selectLocalState =
 const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   dark: false,
   mobile: false,
+  mdBreak: false,
   background: undefined,
   theme: 'auto',
   hideAvatars: false,
