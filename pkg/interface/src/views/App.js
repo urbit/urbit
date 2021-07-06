@@ -83,15 +83,20 @@ class App extends React.Component {
     bootstrapApi();
     this.props.getShallowChildren(`~${window.ship}`, 'dm-inbox');
     const theme = this.getTheme();
-    this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
-    this.mobileWatcher = window.matchMedia(`(max-width: ${theme.breakpoints[0]})`);
-    this.themeWatcher.onchange = this.updateTheme;
-    this.mobileWatcher.onchange = this.updateMobile;
     setTimeout(() => {
       // Something about how the store works doesn't like changing it
       // before the app has actually rendered, hence the timeout.
+      this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
+      this.mobileWatcher = window.matchMedia(`(max-width: ${theme.breakpoints[0]})`);
+      this.mediumWatcher = window.matchMedia(`(max-width: ${theme.breakpoints[1]})`);
+      // TODO: addListener is deprecated, but safari 13 requires it
+      this.themeWatcher.addListener(this.updateTheme);
+      this.mobileWatcher.addListener(this.updateMobile);
+      this.mediumWatcher.addListener(this.updateMedium);
+
       this.updateMobile(this.mobileWatcher);
       this.updateTheme(this.themeWatcher);
+      this.updateMedium(this.mediumWatcher);
     }, 500);
     this.props.getBaseHash();
     this.props.getRuntimeLag();  // TODO  consider polling periodically
@@ -105,8 +110,9 @@ class App extends React.Component {
   }
 
   componentWillUnmount() {
-    this.themeWatcher.onchange = undefined;
-    this.mobileWatcher.onchange = undefined;
+    this.themeWatcher.removeListener(this.updateTheme);
+    this.mobileWatcher.removeListener(this.updateMobile);
+    this.mediumWatcher.removeListener(this.updateMedium);
   }
 
   updateTheme(e) {
@@ -118,6 +124,12 @@ class App extends React.Component {
   updateMobile(e) {
     this.props.set((state) => {
       state.mobile = e.matches;
+    });
+  }
+
+  updateMedium = (e) => {
+    this.props.set((state) => {
+      state.mdBreak = e.matches;
     });
   }
 
