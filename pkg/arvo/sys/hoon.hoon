@@ -1897,6 +1897,198 @@
     ?~  a  ~
     ?~(r.a [~ n.a] $(a r.a))
   --
+::                                                      ::
+::::  2r: psq logic                                     ::
+  ::                                                    ::
+  ::
+++  up
+  =>
+  ::  balancing, tournament internals
+  ::
+  |%
+  ++  mega  4
+  ::
+  ++  size
+    |*  t=(ltree)
+    ^-  atom
+    ?~(t 0 s.t)
+  ::
+  ++  llos
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    [%llos +((add (size l.a) (size r.a))) a]
+  ::
+  ++  rlos
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    [%rlos +((add (size l.a) (size r.a))) a]
+  ::
+  ++  lbal
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?:  (lth (add (size l.a) (size r.a)) 2)
+      (llos a)
+    ?:  (gth (size r.a) (mul mega (size l.a)))
+      (llbal a)
+    ?:  (gth (size l.a) (mul mega (size r.a)))
+      (lrbal a)
+    (llos a)
+  ::
+  ++  rbal
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?:  (lth (add (size l.a) (size r.a)) 2)
+      (rlos a)
+    ?:  (gth (size r.a) (mul mega (size l.a)))
+      (rlbal a)
+    ?:  (gth (size l.a) (mul mega (size r.a)))
+      (rrbal a)
+    (rlos a)
+  ::
+  ++  llbal
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ r.a)
+    ?:  (lth (size l.p.r.a) (size r.p.r.a))
+      (llsin a)
+    (lldub a)
+  ::
+  ++  lrbal
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ l.a)
+    ?:  (gth (size l.p.l.a) (size r.p.l.a))
+      (lrsin a)
+    (lrdub a)
+  ::
+  ++  rlbal
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ r.a)
+    ?:  (lth (size l.p.r.a) (size r.p.r.a))
+      (rlsin a)
+    (rldub a)
+  ::
+  ++  rrbal
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ l.a)
+    ?:  (gth (size l.p.l.a) (size r.p.l.a))
+      (rrsin a)
+    (rrdub a)
+  ::
+  ++  llsin
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ r.a)
+    ?-  -.r.a
+        %llos
+      ?:  (beat [p.n.a k.n.a] [p.n.p.r.a k.n.p.r.a])
+        (llos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+      (llos n.p.r.a (llos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+        %rlos
+      (rlos n.p.r.a (llos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+    ==
+  ::
+  ++  rlsin
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ r.a)
+    ?-  -.r.a
+        %llos
+      (rlos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+        %rlos
+      (rlos n.p.r.a (rlos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+    ==
+  ::
+  ++  lrsin
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ l.a)
+    ?-  -.l.a
+        %llos
+      (llos n.p.l.a l.p.l.a m.p.l.a (llos n.a r.p.l.a m.a r.a))
+        %rlos
+      (llos n.a l.a m.a (llos n.p.l.a r.p.l.a m.a r.a))
+    ==
+  ::
+  ++  rrsin
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ l.a)
+    ?-  -.l.a
+        %llos
+      (llos n.p.l.a l.p.l.a m.p.l.a (rlos n.a r.p.l.a m.a r.a))
+        %rlos
+      ?:  (beat [p.n.a k.n.a] [p.n.p.l.a k.n.p.l.a])
+        (rlos n.a l.p.l.a m.p.l.a (llos n.p.l.a r.p.l.a m.a r.a))
+      (rlos n.p.l.a (rlos n.a r.p.l.a m.a r.a))
+    ==
+  ::
+  ++  lldub
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ r.a)
+    ?-  -.r.a
+        %llos
+      (llsin n.a l.a m.a (lrsin p.r.a))
+        %rlos
+      (llsin n.a l.a m.a (rrsin p.r.a))
+    ==
+  ::
+  ++  lrdub
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ l.a)
+    ?-  -.l.a
+        %llos
+      (lrsin n.a (llsin p.l.a) m.a r.a)
+        %rlos
+      (lrsin n.a (rlsin p.l.a) m.a r.a)
+    ==
+  ::
+  ++  rldub
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ r.a)
+    ?-  -.r.a
+        %llos
+      (rlsin n.a l.a m.a (lrsin p.r.a))
+        %rlos
+      (rlsin n.a l.a m.a (rrsin p.r.a))
+    ==
+  ::
+  ++  rrdub
+    |*  a=(lnode)
+    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ?>  ?=(^ l.a)
+    ?-  -.l.a
+        %llos
+      (rrsin n.a (llsin p.l.a) m.a r.a)
+        %rlos
+      (rrsin n.a (rlsin p.l.a) m.a r.a)
+    ==
+  ::  play
+  ::
+  ++  toy
+    |*  [a=(pry) b=(pry)]
+    ?>  =(_a _b)
+    |-  ^+  a
+    ?~  a
+      b
+    ?~  b
+      a
+    ?:  (beat [p.n.a k.n.a] [p.n.b k.n.b])
+      [n.a (rbal n.b t.a m.a t.b) m.b]
+    [n.b (lbal n.a t.a m.a t.b) m.b]
+  ::
+  ++  beat
+    |*  [[p=* q=*] [r=* s=*]]
+    ?|  (gor p r)
+        ?&(=(p r) (gor q s))
+    ==
+  --
+  !!
 ::
 ::::  2o: containers                                    ::
   ::                                                    ::
