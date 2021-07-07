@@ -98,7 +98,7 @@ const errorRetry = (meta, focus, uploading, clickUploadButton) => {
         style={{ pointerEvents: 'none' }}
         onSelect={e => e.preventDefault}
       >
-        {meta.error()}
+        {meta.error}
         {', '}please{' '}
         <Text
           fontWeight='500'
