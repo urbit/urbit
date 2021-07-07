@@ -1,7 +1,7 @@
 ::  runtime support code
 ::
-/+  ethereum, azimuth, json-rpc
-=>  [ethereum=ethereum azimuth=azimuth json-rpc=json-rpc ..zuse]  =>
+/+  ethereum, azimuth
+=>  [ethereum=ethereum azimuth=azimuth ..zuse]  =>
 |%
 ::
 ::  |dawn: pre-boot request/response de/serialization and validation
@@ -44,7 +44,6 @@
   ::  |give:dawn: produce requests for pre-boot validation
   ::
   ++  give
-    =/  tract  azimuth:contracts:azimuth
     |%
     ::  +czar:give:dawn: Eth RPC for galaxy table
     ::
@@ -55,11 +54,10 @@
       :-  %a
       %+  turn  (gulf 0 255)
       |=  gal=@
-      %+  request-to-json:json-rpc
+      %+  request-to-json
         (cat 3 'gal-' (scot %ud gal))
-      :+  'xx version field remove me!'
-        'getPoint'
-      map+(~(put by *(map @t json)) 'ship' s+(scot %p gal))
+      :-  'getPoint'
+      (~(put by *(map @t json)) 'ship' s+(scot %p gal))
     ::  +point:give:dawn: Eth RPC for ship's contract state
     ::
     ++  point
@@ -67,22 +65,33 @@
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      %+  request-to-json:json-rpc
+      %+  request-to-json
         ~.
-      :+  'xx version field remove me!'
-        'getPoint'
-      map+(~(put by *(map @t json)) 'ship' s+(scot %p who))
+      :-  'getPoint'
+      (~(put by *(map @t json)) 'ship' s+(scot %p who))
     ::  +turf:give:dawn: Eth RPC for network domains
     ::
     ++  turf
       ^-  octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      %+  request-to-json:json-rpc
+      %+  request-to-json
         'turf'
-      :+  'xx version field remove me!'
-        'getDns'
-      map+~
+      ['getDns' ~]
+    ::  +request-to-json:give:dawn: internally used for request generation
+    ::
+    ::NOTE  we could import this from /lib/json/rpc, but adding that as a
+    ::      dependency seems a bit unclean
+    ::
+    ++  request-to-json
+      |=  [id=@t method=@t params=(map @t json)]
+      ^-  json
+      %-  pairs:enjs:format
+      :~  jsonrpc+s+'2.0'
+          id+s+id
+          method+s+method
+          params+o+params
+      ==
     --
   ::  |take:dawn: parse responses for pre-boot validation
   ::
