@@ -173,6 +173,13 @@
           [%g %wiping-eyre-subs]
         |-  ^+  mo-core
         ?~  apps  mo-core
+        ?.  =(%base q.beak.egg.i.apps)
+          ~>  %slog.[0 leaf+"gall: suspending {<dap.i.apps>}"]
+          =.  old-state.egg.i.apps
+            =/  old  old-state.egg.i.apps
+            |/?-(-.old %| p.old, %& p.old)
+          =/  ap-core  (ap-abut:ap:mo-core i.apps)
+          $(apps t.apps, mo-core ap-abet:ap-core)
         ~>  %slog.[0 leaf+"gall: upgrading {<dap.i.apps>}"]
         =/  ap-core  (ap-abut:ap:mo-core i.apps)
         =?  ap-core  ?=(%& -.old-state.egg.i.apps)
@@ -1468,13 +1475,11 @@
       =^  maybe-tang  ap-core  (ap-upgrade-state old-agent-state)
       ::
       =.  agent-config
-        =/  =term  ?~(old-agent-state %boot %bump)
-        =/  possibly-suss
-          ?~  maybe-tang
-            =/  =suss  [agent-name term now]
-            [%.y suss]
-          [%.n u.maybe-tang]
-        [possibly-suss agent-config]
+        :_  agent-config
+        ^-  (each suss tang)
+        ?^  maybe-tang
+          |/u.maybe-tang
+        &/[agent-name ?~(old-agent-state %boot %bump) now]
       ::
       [maybe-tang ap-core]
     ::  +ap-upgrade-state: low-level install.
