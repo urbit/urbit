@@ -473,7 +473,7 @@
     (scot %p our.bowl)
     %azimuth
     (scot %da now.bowl)
-    /nas/nas
+    /nas/noun
   ==
 ::  +predicted-state
 ::
