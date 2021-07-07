@@ -329,30 +329,18 @@ _dawn_sponsor(u3_noun who, u3_noun rac, u3_noun pot)
 u3_noun
 u3_dawn_vent(u3_noun ship, u3_noun feed)
 {
-  u3_noun url, bok, sed, pos, pon, zar, tuf;
+  u3_noun url, sed, pos, pon, zar, tuf;
 
   u3_noun rank = u3do("clan:title", u3k(ship));
 
   url = _dawn_purl(rank);
 
   //  XX require https?
+  //TODO  make L2 endpoint real
   //
   c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
     u3_Host.ops_u.eth_c :
-    "http://eth-mainnet.urbit.org:8545";
-
-  //  pin block number
-  //
-  {
-    u3l_log("boot: retrieving latest block\r\n");
-
-    u3_noun oct = u3v_wish("bloq:give:dawn");
-    u3_noun kob = _dawn_eth_rpc(url_c, u3k(oct));
-
-    bok = _dawn_need_unit(u3do("bloq:take:dawn", u3k(kob)),
-                          "boot: block retrieval failed");
-    u3z(oct); u3z(kob);
-  }
+    "http://l2.urbit.org:1234";
 
   {
     //  +point:azimuth: on-chain state
@@ -372,7 +360,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
               u3_Host.ops_u.who_c);
 
       {
-        u3_noun oct = u3dc("point:give:dawn", u3k(bok), u3k(ship));
+        u3_noun oct = u3do("point:give:dawn", u3k(ship));
         u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
 
         pot = _dawn_need_unit(u3dc("point:take:dawn", u3k(ship), u3k(luh)),
@@ -410,7 +398,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
   {
     u3l_log("boot: retrieving galaxy table\r\n");
 
-    u3_noun oct = u3do("czar:give:dawn", u3k(bok));
+    u3_noun oct = u3v_wish("czar:give:dawn");
     u3_noun raz = _dawn_eth_rpc(url_c, u3k(oct));
 
     zar = _dawn_need_unit(u3do("czar:take:dawn", u3k(raz)),
@@ -426,7 +414,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
   else {
     u3l_log("boot: retrieving network domains\r\n");
 
-    u3_noun oct = u3do("turf:give:dawn", u3k(bok));
+    u3_noun oct = u3v_wish("turf:give:dawn");
     u3_noun fut = _dawn_eth_rpc(url_c, u3k(oct));
 
     tuf = _dawn_need_unit(u3do("turf:take:dawn", u3k(fut)),
@@ -450,7 +438,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     //  retrieve +point:azimuth of pos (sponsor of ship)
     //
     {
-      u3_noun oct = u3dc("point:give:dawn", u3k(bok), u3k(pos));
+      u3_noun oct = u3do("point:give:dawn", u3k(pos));
       u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
 
       son = _dawn_need_unit(u3dc("point:take:dawn", u3k(pos), u3k(luh)),
@@ -473,8 +461,10 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
 
   //  [%dawn seed sponsors galaxies domains block eth-url snap]
   //
+  //NOTE  blocknum of 0 is fine because jael ignores it.
+  //      should probably be removed from dawn event.
   u3_noun ven = u3nc(c3__dawn,
-                     u3nq(u3k(u3t(sed)), pon, zar, u3nt(tuf, bok, url)));
+                     u3nq(u3k(u3t(sed)), pon, zar, u3nt(tuf, 0, url)));
 
   u3z(sed); u3z(rank); u3z(pos); u3z(ship); u3z(feed);
 
