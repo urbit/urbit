@@ -1,4 +1,4 @@
-import { DragEvent, useCallback, useEffect, useState } from 'react';
+import { DragEvent, useCallback, useEffect, useState, useMemo } from 'react';
 
 function validateDragEvent(e: DragEvent): FileList | File[] | true | null {
   const files: File[] = [];
@@ -43,7 +43,7 @@ export function useFileDrag(dragged: (f: FileList | File[], e: DragEvent) => voi
       }
       setDragging(true);
     },
-    [setDragging]
+    []
   );
 
   const onDrop = useCallback(
@@ -56,7 +56,7 @@ export function useFileDrag(dragged: (f: FileList | File[], e: DragEvent) => voi
       e.preventDefault();
       dragged(files, e);
     },
-    [setDragging, dragged]
+    [dragged]
   );
 
   const onDragOver = useCallback(
@@ -77,7 +77,7 @@ export function useFileDrag(dragged: (f: FileList | File[], e: DragEvent) => voi
         setDragging(false);
       }
     },
-    [setDragging]
+    []
   );
 
   useEffect(() => {
@@ -92,12 +92,12 @@ export function useFileDrag(dragged: (f: FileList | File[], e: DragEvent) => voi
     };
   }, []);
 
-  const bind = {
+  const bind = useMemo(() => ({
     onDragLeave,
     onDragOver,
     onDrop,
     onDragEnter
-  };
+  }), [onDragEnter, onDragOver, onDrop, onDragEnter]);
 
-  return { bind, dragging };
+  return useMemo(() => ({ bind, dragging }), [bind, dragging]);
 }

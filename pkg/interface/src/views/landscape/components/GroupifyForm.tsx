@@ -1,13 +1,13 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association } from '@urbit/api';
+import { Association, groupifyGraph } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import useGroupState from '~/logic/state/group';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import GroupSearch from '~/views/components/GroupSearch';
+import airlock from '~/logic/api';
 
 const formSchema = Yup.object({
   group: Yup.string().nullable()
@@ -18,7 +18,6 @@ interface FormSchema {
 }
 
 interface GroupifyFormProps {
-  api: GlobalApi;
   association: Association;
 }
 
@@ -32,11 +31,11 @@ export function GroupifyForm(props: GroupifyFormProps) {
     try {
       const rid = association.resource;
       const [, , ship, name] = rid;
-      await props.api.graph.groupifyGraph(
+      await airlock.thread(groupifyGraph(
         ship,
         name,
         values.group?.toString() || undefined
-      );
+      ));
       let mod = association['app-name'];
       if (association?.metadata?.config && 'graph' in association.metadata.config) {
         mod = association.metadata.config.graph;

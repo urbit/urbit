@@ -1,0 +1,8 @@
+{
+  "packages": [
+    "pkg/npm/*",
+    "pkg/btc-wallet",
+    "pkg/interface"
+  ],
+  "version": "independent"
+}

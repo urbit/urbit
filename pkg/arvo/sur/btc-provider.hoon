@@ -24,6 +24,7 @@
   $%  [%set-credentials api-url=@t =network]
       [%add-whitelist wt=whitelist-target]
       [%remove-whitelist wt=whitelist-target]
+      [%set-interval inte=@dr]
   ==
 +$  action
   $%  [%address-info =address]
@@ -31,6 +32,7 @@
       [%raw-tx txid=hexb]
       [%broadcast-tx rawtx=hexb]
       [%ping ~]
+      [%block-info block=(unit @ud)]
   ==
 ::
 +$  result
@@ -38,6 +40,7 @@
       [%tx-info =info:tx]
       [%raw-tx txid=hexb rawtx=hexb]
       [%broadcast-tx txid=hexb broadcast=? included=?]
+      [%block-info =network block=@ud fee=(unit sats) blockhash=hexb blockfilter=hexb]
   ==
 +$  error
   $%  [%not-connected status=@ud]
@@ -60,7 +63,7 @@
         [%get-raw-tx txid=hexb]
         [%broadcast-tx rawtx=hexb]
         [%get-block-count ~]
-        [%get-block-info ~]
+        [%get-block-info block=(unit @ud)]
     ==
   ::
   +$  result

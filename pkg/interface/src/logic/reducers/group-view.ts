@@ -1,6 +1,7 @@
-import { GroupUpdate } from '@urbit/api/groups';
-import { reduceState } from '../state/base';
-import useGroupState, { GroupState } from '../state/group';
+import { BaseState } from '../state/base';
+import { GroupState as State } from '../state/group';
+
+type GroupState = State & BaseState<State>;
 
 const initial = (json: any, state: GroupState): GroupState => {
   const data = json.initial;
@@ -41,14 +42,9 @@ const hide = (json: any, state: GroupState) => {
   return state;
 };
 
-export const GroupViewReducer = (json: any) => {
-  const data = json['group-view-update'];
-  if (data) {
-    reduceState<GroupState, GroupUpdate>(useGroupState, data, [
-      progress,
-      hide,
-      started,
-      initial
-    ]);
-  }
-};
+export const reduce = [
+  progress,
+  hide,
+  started,
+  initial
+];

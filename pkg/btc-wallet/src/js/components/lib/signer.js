@@ -20,8 +20,7 @@ export default function Signer(props) {
         fontWeight='bold'
         cursor='pointer'
         color={(signMethod === 'masterTicket') ? 'blue' : 'lightBlue'}
-        py='24px'
-        px='24px'
+        height='48px'
         onClick={() => setSignMethod('masterTicket')}
         children='Sign with Master Ticket' />
       <Button
@@ -30,8 +29,7 @@ export default function Signer(props) {
         fontWeight='bold'
         cursor='pointer'
         color={(signMethod === 'bridge') ? 'blue' : 'lightBlue'}
-        py='24px'
-        px='24px'
+        height='48px'
         onClick={() => setSignMethod('bridge')}
         children='Sign with Bridge' />
     </Box>
@@ -42,8 +40,7 @@ export default function Signer(props) {
       fontSize={1}
       fontWeight='bold'
       borderRadius='24px'
-      py='24px'
-      px='24px'
+      height='48px'
       onClick={initPayment}
       color={signReady ? 'white' : 'lighterGray'}
       backgroundColor={signReady ? 'blue' : 'veryLightGray'}

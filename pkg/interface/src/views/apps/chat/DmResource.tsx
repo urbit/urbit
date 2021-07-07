@@ -5,17 +5,15 @@ import bigInt from 'big-integer';
 import { Box, Row, Col, Text } from '@tlon/indigo-react';
 import { Link } from 'react-router-dom';
 import { patp2dec } from 'urbit-ob';
-import GlobalApi from '~/logic/api/global';
 import { useContact } from '~/logic/state/contact';
 import useGraphState, { useDM } from '~/logic/state/graph';
-import { useHarkDm } from '~/logic/state/hark';
+import useHarkState, { useHarkDm } from '~/logic/state/hark';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
-import { patpToUd } from '~/logic/lib/util';
+import shallow from 'zustand/shallow';
 
 interface DmResourceProps {
   ship: string;
-  api: GlobalApi;
 }
 
 const getCurrDmSize = (ship: string) => {
@@ -50,7 +48,7 @@ function quoteReply(post: Post) {
 }
 
 export function DmResource(props: DmResourceProps) {
-  const { ship, api } = props;
+  const { ship } = props;
   const dm = useDM(ship);
   const hark = useHarkDm(ship);
   const unreadCount = (hark?.unreads as number) ?? 0;
@@ -59,12 +57,22 @@ export function DmResource(props: DmResourceProps) {
   const showNickname = !hideNicknames && Boolean(contact);
   const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
 
+  const [
+    getYoungerSiblings,
+    getOlderSiblings,
+    getNewest,
+    addDmMessage
+  ] = useGraphState(
+    s => [s.getYoungerSiblings, s.getOlderSiblings, s.getNewest, s.addDmMessage],
+    shallow
+  );
+
   useEffect(() => {
-    api.graph.getNewest(
+    getNewest(
       `~${window.ship}`,
       'dm-inbox',
       100,
-      `/${patpToUd(ship)}`
+      `/${patp2dec(ship)}`
     );
   }, [ship]);
 
@@ -75,44 +83,42 @@ export function DmResource(props: DmResourceProps) {
       if (newer) {
         const index = dm.peekLargest()?.[0];
         if (!index) {
-          return true;
+          return false;
         }
-        await api.graph.getYoungerSiblings(
+        await getYoungerSiblings(
           `~${window.ship}`,
           'dm-inbox',
           pageSize,
-          `/${patpToUd(ship)}/${index.toString()}`
+          `/${patp2dec(ship)}/${index.toString()}`
         );
         return expectedSize !== getCurrDmSize(ship);
       } else {
         const index = dm.peekSmallest()?.[0];
         if (!index) {
-          return true;
+          return false;
         }
-        await api.graph.getOlderSiblings(
+        await getOlderSiblings(
           `~${window.ship}`,
           'dm-inbox',
           pageSize,
-          `/${patpToUd(ship)}/${index.toString()}`
+          `/${patp2dec(ship)}/${index.toString()}`
         );
         return expectedSize !== getCurrDmSize(ship);
       }
     },
-    [ship, dm, api]
+    [ship, dm]
   );
 
   const dismissUnread = useCallback(() => {
-    api.hark.dismissReadCount(
-      `/ship/~${window.ship}/dm-inbox`,
-      `/${patp2dec(ship)}`
-    );
+    const resource = `/ship/~${window.ship}/dm-inbox`;
+    useHarkState.getState().readCount(resource, `/${patp2dec(ship)}`);
   }, [ship]);
 
   const onSubmit = useCallback(
     (contents: Content[]) => {
-      api.graph.addDmMessage(ship, contents);
+      addDmMessage(ship, contents);
     },
-    [ship]
+    [ship, addDmMessage]
   );
 
   return (
@@ -156,7 +162,6 @@ export function DmResource(props: DmResourceProps) {
         </Row>
       </Row>
       <ChatPane
-        api={api}
         canWrite
         id={ship}
         graph={dm}
@@ -165,7 +170,7 @@ export function DmResource(props: DmResourceProps) {
         fetchMessages={fetchMessages}
         dismissUnread={dismissUnread}
         getPermalink={() => undefined}
-        isAdmin
+        isAdmin={false}
         onSubmit={onSubmit}
       />
     </Col>
