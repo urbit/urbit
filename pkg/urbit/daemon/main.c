@@ -676,12 +676,19 @@ main(c3_i   argc,
     u3_Host.bot_f = _stop_on_boot_completed_cb;
   }
 
-#if 0
-  if ( 0 == getuid() ) {
-    chroot(u3_Host.dir_c);
-    u3_Host.dir_c = "/";
+  {
+    mkdir(u3_Host.dir_c, 0700);
+
+    //  Some day, it might be nice to chroot() here or something.
+    if ( 0 != chdir(u3_Host.dir_c) ) {
+      u3l_log("boot: chdir to %s failed: %s\r\n", u3_Host.dir_c,
+              strerror(errno));
+      exit(1);
+    }
+    c3_free(u3_Host.dir_c);
+    u3_Host.dir_c = ".";
   }
-#endif
+
   u3_ve_sysopt();
 
   //  Block profiling signal, which should be delivered to exactly one thread.
@@ -727,7 +734,7 @@ main(c3_i   argc,
       mprint_i *= 2;
       abs_c = c3_malloc(mprint_i);
     }
-    printf("boot: home is %s/%s\n", abs_c, u3_Host.dir_c);
+    printf("boot: home is %s\n", abs_c);
     c3_free(abs_c);
   } else {
     printf("boot: home is %s\n", abs_c);
