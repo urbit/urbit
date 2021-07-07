@@ -642,7 +642,7 @@
     :-  ~  :-  ~  :-  %graph-update-2
     !>(`update:store`[now.bowl [%add-graph [ship term] graph mark %.y]])
   ::
-      [%x %update-logs @ @ *]
+      [%x %update-log @ @ *]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
     =/  update-log
@@ -723,20 +723,26 @@
         ?:  ?=(%kith i.t.pax)  u.node
         u.node(children [%empty ~])
       ::
-          [%children ?(%lone %kith) @ @ ^]
-        =/  =index:store
-          (turn t.t.t.t.pax (cury slav %ud))
+          [%children ?(%lone %kith) @ @ *]
         =/  start=(unit atom)  (rush i.t.t.path dem:ag)
         =/  end=(unit atom)    (rush i.t.t.t.path dem:ag)
+        =/  =index:store
+          (turn t.t.t.t.pax (cury slav %ud))
         =/  node  (get-node graph index)
-        ?~  node  [~ ~]
+        ?:  ?&  ?=(~ node)
+                ?=(^ index)
+            ==
+          [~ ~]
+        =/  children=graph:store
+          ?~  node
+            graph
+          ?:  ?=(%empty -.children.u.node)
+            ~
+          p.children.u.node
         :-  ~  :-  ~  :-  %graph-update-2
         !>  ^-  update:store
         :^  now.bowl  %add-nodes  [ship term]
         %-  ~(gas by *(map index:store node:store))
-        ?:  ?=(%empty -.children.u.node)
-          ~
-        =*  children  p.children.u.node
         %+  turn  (tap:orm (lot:orm children end start))
         |=  [=atom =node:store]
         ^-  [index:store node:store]
@@ -744,20 +750,31 @@
         ?:  ?=(%kith i.t.pax)  node
         node(children [%empty ~])
       ::
-          [%siblings ?(%older %newer %oldest %newest) ?(%lone %kith) @ ^]
-        =/  =index:store
-          (turn t.t.t.t.t.pax (cury slav %ud))
-        =/  parent=index:store  (snip index)
+          [%siblings ?(%older %newer %oldest %newest) ?(%lone %kith) @ *]
         =/  count  (slav %ud i.t.t.t.pax)
+        =/  =index:store
+          (turn t.t.t.t.pax (cury slav %ud))
+        =/  parent=index:store  (snip index)
         =/  node  (get-node graph parent)
-        ?~  node  [~ ~]
+        ?:  ?|  ?&  ?=(~ node)
+                    ?=(^ parent)
+                ==
+              ::
+                ?&  ?=(^ parent)
+                    ?|  ?=(%oldest i.t.pax)
+                        ?=(%newest i.t.pax)
+            ==  ==  ==
+          [~ ~]
+        =/  children=graph:store
+          ?~  node
+            graph
+          ?:  ?=(%empty -.children.u.node)
+            ~
+          p.children.u.node
         :-  ~  :-  ~  :-  %graph-update-2
         !>  ^-  update:store
         :^  now.bowl  %add-nodes  [ship term]
         %-  ~(gas by *(map index:store node:store))
-        ?:  ?=(%empty -.children.u.node)
-          ~
-        =*  children  p.children.u.node
         %+  turn
           ?-    i.t.pax
             %oldest  (scag count (bap:orm children))
