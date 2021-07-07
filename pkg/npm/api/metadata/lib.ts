@@ -1,4 +1,4 @@
-import { AppName, Path, Poke, uxToHex, PatpNoSig } from "../lib";
+import { AppName, Path, Poke, uxToHex, PatpNoSig } from '../lib';
 import { Association, Metadata, MetadataUpdate, MetadataUpdateAdd, MetadataUpdateRemove } from './types';
 
 export const METADATA_UPDATE_VERSION = 1;
@@ -18,13 +18,13 @@ export const add = (
   description: string,
   dateCreated: string,
   color: string,
-  moduleName: string,
+  moduleName: string
 ): Poke<MetadataUpdateAdd> => metadataAction({
   add: {
     group,
     resource: {
       resource,
-      app: appName
+      'app-name': appName
     },
     metadata: {
       title,
@@ -52,7 +52,7 @@ export const remove = (
     group,
     resource: {
       resource,
-      app: appName
+      'app-name': appName
     }
   }
 });
@@ -70,11 +70,11 @@ export const update = (
         group: association.group,
         resource: {
           resource: association.resource,
-          app: association.app
+          'app-name': association['app-name']
         },
         metadata
       }
     });
-}
+};
 
 export { update as metadataUpdate };
