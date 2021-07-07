@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { Box, Col, Icon, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
+import { AppName } from '@urbit/api';
 import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -66,7 +67,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const { association, baseUrl, children } = props;
   let app = association['app-name'];
   if (association?.metadata?.config && 'graph' in association.metadata.config) {
-    app = association.metadata.config.graph;
+    app = association.metadata.config.graph as AppName;
   }
   const rid = association.resource;
   const groups = useGroupState(state => state.groups);

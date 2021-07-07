@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 export class Input extends Component {
   inputRef: React.RefObject<unknown>;
-  props: any;
+  declare props: any;
   constructor(props) {
     super(props);
     this.state = {};
@@ -90,9 +90,8 @@ belt = { met: 'bac' };
     if (line) {
       if (line.lin) {
         prompt = line.lin.join('');
-      }
-      // TODO  render prompt style
-      else if (line.klr) {
+      } else if (line.klr) {
+        // TODO  render prompt style
         prompt = line.klr.reduce((l, p) => (l + p.text.join('')), '');
       }
     }

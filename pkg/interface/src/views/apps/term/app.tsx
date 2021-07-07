@@ -15,8 +15,8 @@ class TermApp extends Component {
   store: Store;
   api: any;
   subscription: any;
-  props: any;
-  state: any;
+  declare props: any;
+  declare state: any;
   constructor(props) {
     super(props);
     this.store = new Store();
@@ -32,6 +32,7 @@ class TermApp extends Component {
 
   componentDidMount() {
     this.resetControllers();
+    // eslint-disable-next-line new-cap
     const channel = new (window as any).channel();
     this.api = new Api(this.props.ship, channel);
     this.store.api = this.api;
