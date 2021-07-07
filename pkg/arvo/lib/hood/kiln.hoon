@@ -161,14 +161,31 @@
     ~_  leaf/"kiln: {<lac>} not installed"
     ..abet(loc lac, rak (~(got by ark) lac))
   ::
-  ++  emit  |=(card:agent:gall ..abet(..vats (^emit +<)))
-  ++  emil  |=((list card:agent:gall) ..abet(..vats (^emil +<)))
   ++  here  "{<loc>} from {<[ship desk]:rak>}"
   ++  make-wire  |=(step=@tas /kiln/vats/[loc]/[step])
   ++  from-wire
     |=  =wire
     ?>  ?=([%kiln %vats @ @ ~] wire)
     (abed i.t.t.wire)
+  ::
+  ++  emit  |=(card:agent:gall ..abet(..vats (^emit +<)))
+  ++  emil  |=((list card:agent:gall) ..abet(..vats (^emil +<)))
+  ++  pass
+    |%
+    ++  find      (warp %find [%sing %y ud+1 /])
+    ++  sync      (warp %sync [%sing %w da+now /])
+    ++  download  (warp %download [%sing %v ud+aeon.rak /])
+    ++  merge
+      =/  germ  (get-germ loc)
+      =/  =aeon  (dec aeon.rak)
+      (clay-card %merge [%merg loc ship.rak desk.rak ud+aeon germ])
+    ::
+    ++  warp  |=([s=term r=rave] (clay-card s %warp ship.rak desk.rak `r))
+    ++  clay-card
+      |=  [step=@tas =task:clay]
+      ^-  card:agent:gall
+      [%pass (make-wire step) %arvo %c task]
+    --
   ::  +uninstall: stop tracking apps on desk, and suspend apps
   ::
   ++  uninstall
@@ -283,37 +300,15 @@
     |=  syn=sign-arvo
     ?>  ?=(%mere +<.syn)
     ?:  ?=([%| %ali-unavailable *] p.syn)
-      %-  %+  slog
-            :-  %leaf
-            "kiln: merge into {here} failed, maybe because sunk; restarting"
-          p.p.syn
+      =+  "kiln: merge into {here} failed, maybe because sunk; restarting"
+      %-  (slog leaf/- p.p.syn)
       reset
     ?:  ?=(%| -.p.syn)
-      %-  %+  slog
-            :-  %leaf
-            "kiln: merge into {here} failed, waiting for next revision"
-          p.p.syn
+      =+  "kiln: merge into {here} failed, waiting for next revision"
+      %-  (slog leaf/- p.p.syn)
       ..abet
-    ::
     ~>  %slog.0^leaf/"merge into {here} succeeded"
     ..abet
-  ::
-  ++  pass
-    |%
-    ++  find      (warp %find [%sing %y ud+1 /])
-    ++  sync      (warp %sync [%sing %w da+now /])
-    ++  download  (warp %download [%sing %v ud+aeon.rak /])
-    ++  merge
-      =/  germ  (get-germ loc)
-      =/  =aeon  (dec aeon.rak)
-      (clay-card %merge [%merg loc ship.rak desk.rak ud+aeon germ])
-    ::
-    ++  warp  |=([s=term r=rave] (clay-card s %warp ship.rak desk.rak `r))
-    ++  clay-card
-      |=  [step=@tas =task:clay]
-      ^-  card:agent:gall
-      [%pass (make-wire step) %arvo %c task]
-    --
   --
 ::  +get-apps: find which apps Gall is running on a desk
 ::
