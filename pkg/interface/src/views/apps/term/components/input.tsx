@@ -1,9 +1,8 @@
 import { BaseInput, Box, Row } from '@tlon/indigo-react';
 import React, { Component } from 'react';
 
-export class Input extends Component {
+export class Input extends Component<any, {}> {
   inputRef: React.RefObject<unknown>;
-  declare props: any;
   constructor(props) {
     super(props);
     this.state = {};
