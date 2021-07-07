@@ -307,8 +307,11 @@
       =+  "kiln: merge into {here} failed, waiting for next revision"
       %-  (slog leaf/- p.p.syn)
       ..abet
-    ~>  %slog.0^leaf/"merge into {here} succeeded"
-    ..abet
+    ~>  %slog.0^leaf/"merge into {here} succeeded; reviving agents"
+    %-  emil
+    %+  turn  (get-apps loc)
+    |=  =dude:gall
+    [/kiln/fade/[dude] %pass %arvo %g %fade dude %jolt]
   --
 ::  +get-apps: find which apps Gall is running on a desk
 ::
