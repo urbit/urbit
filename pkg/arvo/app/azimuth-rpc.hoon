@@ -75,14 +75,15 @@
         ::  TODO: malformed request
         ::
         (give-simple-payload:app id not-found:gen)
-      =/  [data=(unit cage) response=simple-payload:http]
+      =/  [data=(list cage) response=simple-payload:http]
         (process-rpc-request:do u.rpc-request)
       %+  weld
         (give-simple-payload:app id response)
+      |-
       ?~  data  ~
-      :_  ~
+      :_  $(data t.data)
       ^-  card
-      [%pass / %agent [our.bowl %aggregator] %poke u.data]
+      [%pass / %agent [our.bowl %aggregator] %poke i.data]
       ::  TODO: validate that format is e.g. 'getPoint'
       ::  TODO: maybe use getPoint and translate to %get-point
       ::
@@ -116,42 +117,65 @@
 ::
 |_  =bowl:gall
 ++  process-rpc-request
-  |=  request:rpc
-  ^-  [(unit cage) simple-payload:http]
-  =;  [data=(unit cage) =response:rpc]
-    :-  data
+  |=  req=batch-request:rpc
+  ^-  [(list cage) simple-payload:http]
+  |^
+    ?-  -.req
+        %o
+      =/  [data=(unit cage) =response:rpc]
+        (process p.req)
+      [(drop data) (render response)]
+    ::
+        %a
+      =|  data=(list cage)
+      =|  resp=(list response:rpc)
+      |-
+      ?~  p.req
+        [(flop data) (render %batch (flop resp))]
+      =/  [dat=(unit cage) res=response:rpc]
+        (process i.p.req)
+      =?  data  ?=(^ dat)  [u.dat data]
+      $(p.req t.p.req, resp [res resp])
+    ==
+  ::
+  ++  render
+    |=  res=response:rpc
     %-  json-response:gen
-    (response-to-json:json-rpc response)
-  =,  azimuth-rpc
-  ?.  ?=([%map *] params)
-    [~ ~(parse error:json-rpc id)]
-  =/  method=@tas  (enkebab method)
-  ?+  method  [~ ~(method error:json-rpc id)]
-    %get-point               `(get-point id +.params point:scry)
-    %get-points              `(get-points id +.params points:scry)
-    %get-dns                 `(get-dns id +.params dns:scry)
-    %transfer-point          (transfer-point id +.params)
-    %cancel-transaction      (cancel-tx id +.params)
-    %get-spawned             `(get-spawned id +.params spawned:scry)
-    %configure-keys          (configure-keys id +.params)
-    %spawn                   (spawn id +.params)
-    %escape                  (escape id +.params method)
-    %cancel-escape           (cancel-escape id +.params method)
-    %adopt                   (adopt id +.params method)
-    %detach                  (detach id +.params method)
-    %reject                  (reject id +.params method)
-    %set-management-proxy    (management-proxy id +.params method)
-    %set-spawn-proxy         (spawn-proxy id +.params method)
-    %set-transfer-proxy      (transfer-proxy id +.params method)
-    %get-all-pending         `(all:pending id +.params all:pending:scry)
-    %get-pending-by-ship     `(ship:pending id +.params ship:pending:scry)
-    %get-pending-by-address  `(addr:pending id +.params addr:pending:scry)
-    %get-transaction-status  `(status id +.params tx-status:scry)
-    %when-next-batch         `(next-batch id +.params next-batch:scry)
-    %get-nonce               `(nonce id +.params nonce:scry)
-    %get-history             `(history id +.params addr:history:scry)
-    %get-roller-config       `(get-config id +.params config:scry)
-  ==
+    (response-to-json:json-rpc res)
+  ::
+  ++  process
+    |=  request:rpc
+    =,  azimuth-rpc
+    ?.  ?=([%map *] params)
+      [~ ~(parse error:json-rpc id)]
+    =/  method=@tas  (enkebab method)
+    ?+  method  [~ ~(method error:json-rpc id)]
+      %get-point               `(get-point id +.params point:scry)
+      %get-points              `(get-points id +.params points:scry)
+      %get-dns                 `(get-dns id +.params dns:scry)
+      %transfer-point          (transfer-point id +.params)
+      %cancel-transaction      (cancel-tx id +.params)
+      %get-spawned             `(get-spawned id +.params spawned:scry)
+      %configure-keys          (configure-keys id +.params)
+      %spawn                   (spawn id +.params)
+      %escape                  (escape id +.params method)
+      %cancel-escape           (cancel-escape id +.params method)
+      %adopt                   (adopt id +.params method)
+      %detach                  (detach id +.params method)
+      %reject                  (reject id +.params method)
+      %set-management-proxy    (management-proxy id +.params method)
+      %set-spawn-proxy         (spawn-proxy id +.params method)
+      %set-transfer-proxy      (transfer-proxy id +.params method)
+      %get-all-pending         `(all:pending id +.params all:pending:scry)
+      %get-pending-by-ship     `(ship:pending id +.params ship:pending:scry)
+      %get-pending-by-address  `(addr:pending id +.params addr:pending:scry)
+      %get-transaction-status  `(status id +.params tx-status:scry)
+      %when-next-batch         `(next-batch id +.params next-batch:scry)
+      %get-nonce               `(nonce id +.params nonce:scry)
+      %get-history             `(history id +.params addr:history:scry)
+      %get-roller-config       `(get-config id +.params config:scry)
+    ==
+  --
 ::
 ++  scry
   |%
