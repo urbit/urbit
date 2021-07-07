@@ -1,6 +1,6 @@
 {
   "name": "@urbit/http-api",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "license": "MIT",
   "description": "Library to interact with an Urbit ship over HTTP",
   "repository": {
@@ -21,7 +21,6 @@
     "watch": "tsc -p tsconfig.json --watch",
     "clean": "rm -rf dist/*"
   },
-  "peerDependencies": {},
   "prettier": {
     "printWidth": 80,
     "semi": true,
