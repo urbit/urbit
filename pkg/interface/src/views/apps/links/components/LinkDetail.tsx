@@ -24,7 +24,7 @@ export function LinkDetail(props: LinkDetailProps) {
       <LinkBlockItem minWidth="0" minHeight="0" height={['50%', '50%', '100%']} width={['100%', '100%', 'calc(100% - 350px)']} flexGrow={0} border={0} node={node} />
       <Col
         minHeight="0"
-        flexShrink={0}
+        flexShrink={1}
         width={['100%', '100%', '350px']}
         flexGrow={0}
         gapY={[2,4]}
@@ -33,7 +33,7 @@ export function LinkDetail(props: LinkDetailProps) {
         borderColor={['lightGray', 'lightGray', 'lightGray']}
         pt={[2,4]}
       >
-        <Col minHeight="0" px={[3,4]} gapY="2">
+        <Col minHeight="0" px={[3,4]} gapY="2" flexShrink={0}>
           {title.length > 0 ? (
             <TruncatedText fontWeight="medium" lineHeight="tall">
               {title}
