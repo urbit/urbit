@@ -396,7 +396,7 @@
         control-duct  hen
         beak          bek
         agent         &+agent
-        run-nonce         (scot %uw (end 5 (shas %yoke-nonce eny)))
+        run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
       ==
     ::
     =/  old  mo-core
@@ -1189,7 +1189,8 @@
         ==
       ::
           %pass
-        =/  [=wire =neet]  [p q]:card
+        =*  wire  p.card
+        =*  neet  q.card
         =.  wire
           :^  %use  agent-name  run-nonce.current-agent
           ?-  -.neet
@@ -1727,10 +1728,10 @@
       ?:  ?=([* %pass * %g %deal * * %leave *] move)
         =/  =wire  p.move.move
         ?>  ?=([%use @ @ %out @ @ *] wire)
-        =/  short-wire  t.t.t.t.t.t.wire
+        =/  sub-wire  t.t.t.t.t.t.wire
         =/  =dock  [q.p q]:q.move.move
         =.  outbound.watches.current-agent
-          (~(del by outbound.watches.current-agent) [short-wire dock])
+          (~(del by outbound.watches.current-agent) [sub-wire dock])
         $(moves t.moves, new-moves [move new-moves])
       ?.  ?=([* %pass * %g %deal * * ?(%watch %watch-as) *] move)
         $(moves t.moves, new-moves [move new-moves])
@@ -1752,7 +1753,7 @@
       ::
       =.  p.move.move
         (weld sys-wire [(scot %ud sub-nonce.current-agent) sub-wire])
-      %=    $
+      %_    $
           moves  t.moves
           new-moves  [move new-moves]
           sub-nonce.current-agent  +(sub-nonce.current-agent)
