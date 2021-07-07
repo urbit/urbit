@@ -3,13 +3,12 @@ import { Association, GraphNode, resourceFromPath, GraphConfig } from '@urbit/ap
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { useHistory, useLocation } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import {
   getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
 } from '~/logic/lib/permalinks';
 import { getModuleIcon, GraphModule } from '~/logic/lib/util';
 import { useVirtualResizeProp } from '~/logic/lib/virtualContext';
-import useGraphState from '~/logic/state/graph';
+import useGraphState  from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
 import { GroupLink } from '~/views/components/GroupLink';
 import { TranscludedNode } from './TranscludedNode';
@@ -55,12 +54,11 @@ function Placeholder(type) {
   );
 }
 
-function GroupPermalink(props: { group: string; api: GlobalApi }) {
-  const { group, api } = props;
+function GroupPermalink(props: { group: string; }) {
+  const { group } = props;
   return (
     <GroupLink
       resource={group}
-      api={api}
       pl={2}
       border={1}
       borderRadius={2}
@@ -71,14 +69,13 @@ function GroupPermalink(props: { group: string; api: GlobalApi }) {
 
 function GraphPermalink(
   props: IGraphPermalink & {
-    api: GlobalApi;
     transcluded: number;
     pending?: boolean;
     showOurContact?: boolean;
     full?: boolean;
   }
 ) {
-  const { full = false, showOurContact, pending, graph, group, index, api, transcluded } = props;
+  const { full = false, showOurContact, pending, graph, group, index, transcluded } = props;
   const history = useHistory();
   const location = useLocation();
   const { ship, name } = resourceFromPath(graph);
@@ -90,6 +87,7 @@ function GraphPermalink(
   );
   const [errored, setErrored] = useState(false);
   const [loading, setLoading] = useState(false);
+  const getNode = useGraphState(s => s.getNode);
   const association = useMetadataState(
     useCallback(s => s.associations.graph[graph] as Association | null, [
       graph
@@ -104,7 +102,7 @@ function GraphPermalink(
       }
       try {
         setLoading(true);
-        await api.graph.getNode(ship, name, index);
+        await getNode(ship, name, index);
         setLoading(false);
       } catch (e) {
         console.log(e);
@@ -157,7 +155,6 @@ function GraphPermalink(
       {loading && association && !errored && Placeholder((association.metadata.config as GraphConfig).graph)}
       {showTransclusion && index && !loading && (
         <TranscludedNode
-          api={api}
           transcluded={transcluded + 1}
           node={node}
           assoc={association!}
@@ -232,7 +229,6 @@ function PermalinkDetails(props: {
 export function PermalinkEmbed(props: {
   link: string;
   association?: Association;
-  api: GlobalApi;
   transcluded: number;
   showOurContact?: boolean;
   full?: boolean;
@@ -246,13 +242,12 @@ export function PermalinkEmbed(props: {
 
   switch (permalink.type) {
     case 'group':
-      return <GroupPermalink group={permalink.group} api={props.api} />;
+      return <GroupPermalink group={permalink.group} />;
     case 'graph':
       return (
         <GraphPermalink
           transcluded={props.transcluded}
           {...permalink}
-          api={props.api}
           full={props.full}
           showOurContact={props.showOurContact}
         />

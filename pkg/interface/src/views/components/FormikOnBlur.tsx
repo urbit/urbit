@@ -11,16 +11,19 @@ export function FormikOnBlur<
   useEffect(() => {
     if (
       Object.keys(formikBag.errors || {}).length === 0 &&
-      formikBag.dirty && 
+      formikBag.dirty &&
       !formikBag.isSubmitting &&
       !submitting
     ) {
       setSubmitting(true);
       const { values } = formikBag;
-      formikBag.submitForm().then(() => {
-        formikBag.resetForm({ values })
-        setSubmitting(false);
-      });
+      formikBag.validateForm(values)
+        .then(valid => valid ?
+          formikBag.submitForm().then(() => {
+            formikBag.resetForm({ values });
+            setSubmitting(false);
+          }) : null
+        );
     }
   }, [
     formikBag.errors,
@@ -28,6 +31,10 @@ export function FormikOnBlur<
     submitting,
     formikBag.isSubmitting
   ]);
+
+  useEffect(() => {
+    formikBag.resetForm({ values: props.initialValues });
+  }, [props.initialValues]);
 
   const { children, innerRef } = props;
 

@@ -3,14 +3,14 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { Form, Formik, FormikHelpers } from 'formik';
+import { putEntry } from '@urbit/api/settings';
 import React, { useCallback } from 'react';
-import GlobalApi from '~/logic/api/global';
-import useSettingsState, { selectSettingsState, SettingsState } from '~/logic/state/settings';
-import { AsyncButton } from '~/views/components/AsyncButton';
+import { Form } from 'formik';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { BackButton } from './BackButton';
 import _ from 'lodash';
-import {FormikOnBlur} from '~/views/components/FormikOnBlur';
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
+import airlock from '~/logic/api';
 
 interface FormSchema {
   hideAvatars: boolean;
@@ -36,24 +36,17 @@ const settingsSel = (s: SettingsState): FormSchema => ({
   audioShown: !s.remoteContentPolicy.audioShown
 });
 
-
-export function CalmPrefs(props: {
-  api: GlobalApi;
-}) {
-  const { api } = props;
+export function CalmPrefs() {
   const initialValues = useSettingsState(settingsSel);
 
-  const onSubmit = useCallback(async (v: FormSchema, actions: FormikHelpers<FormSchema>) => {
-    let promises: Promise<any>[] = [];
+  const onSubmit = useCallback(async (v: FormSchema) => {
     _.forEach(v, (bool, key) => {
       const bucket = ['imageShown', 'videoShown', 'audioShown', 'oembedShown'].includes(key) ? 'remoteContentPolicy' : 'calm';
       if(initialValues[key] !== bool) {
-        promises.push(api.settings.putEntry(bucket, key, bool));
+        airlock.poke(putEntry(bucket, key, bool));
       }
-    })
-    await Promise.all(promises);
-    actions.setStatus({ success: null });
-  }, [api]);
+    });
+  }, [initialValues]);
 
   return (
     <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>

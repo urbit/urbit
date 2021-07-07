@@ -1,15 +1,15 @@
-import { BaseInput, Box, Button, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { BaseInput, Box, Button, LoadingSpinner } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import React, { useCallback, useState, DragEvent, useEffect } from 'react';
-import GlobalApi from '~/logic/api/global';
-import { createPost } from '~/logic/api/graph';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import { useFileDrag } from '~/logic/lib/useDrag';
 import useStorage from '~/logic/lib/useStorage';
+import { StatelessUrlInput } from '~/views/components/StatelessUrlInput';
 import SubmitDragger from '~/views/components/SubmitDragger';
+import useGraphState from '~/logic/state/graph';
+import { createPost } from '@urbit/api';
 
 interface LinkSubmitProps {
-  api: GlobalApi;
   name: string;
   ship: string;
   parentIndex?: any;
@@ -18,13 +18,35 @@ interface LinkSubmitProps {
 const LinkSubmit = (props: LinkSubmitProps) => {
   const { canUpload, uploadDefault, uploading, promptUpload } =
     useStorage();
+  const addPost = useGraphState(s => s.addPost);
 
   const [submitFocused, setSubmitFocused] = useState(false);
-  const [urlFocused, setUrlFocused] = useState(false);
   const [linkValue, setLinkValue] = useState('');
   const [linkTitle, setLinkTitle] = useState('');
   const [disabled, setDisabled] = useState(false);
   const [linkValid, setLinkValid] = useState(false);
+
+  const doPost = () => {
+    const url = linkValue;
+    const text = linkTitle ? linkTitle : linkValue;
+    const contents = url.startsWith('web+urbitgraph:/')
+      ?  [{ text }, permalinkToReference(parsePermalink(url)!)]
+      :  [{ text }, { url }];
+
+    setDisabled(true);
+    const parentIndex = props.parentIndex || '';
+    const post = createPost(window.ship, contents, parentIndex);
+
+    addPost(
+      `~${props.ship}`,
+      props.name,
+      post
+    );
+    setDisabled(false);
+    setLinkValue('');
+    setLinkTitle('');
+    setLinkValid(false);
+  };
 
   const validateLink = (link) => {
     const URLparser = new RegExp(
@@ -76,29 +98,6 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     setLinkValid(validateLink(linkValue));
   }, [linkValue]);
 
-  const doPost = () => {
-    const url = linkValue;
-    const text = linkTitle ? linkTitle : linkValue;
-    const contents = url.startsWith('web+urbitgraph:/')
-      ?  [{ text }, permalinkToReference(parsePermalink(url)!)]
-      :  [{ text }, { url }];
-
-    setDisabled(true);
-    const parentIndex = props.parentIndex || '';
-    const post = createPost(contents, parentIndex);
-
-    props.api.graph.addPost(
-      `~${props.ship}`,
-      props.name,
-      post
-    ).then(() => {
-      setDisabled(false);
-      setLinkValue('');
-      setLinkTitle('');
-      setLinkValid(false);
-    });
-  };
-
   const onFileDrag = useCallback(
     (files: FileList | File[], e: DragEvent): void => {
       if (!canUpload) {
@@ -110,6 +109,13 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   );
 
   const { bind, dragging } = useFileDrag(onFileDrag);
+
+  const onLinkChange = () => {
+    const link = validateLink(linkValue);
+    setLinkValid(link);
+  };
+
+  useEffect(onLinkChange, [linkValue]);
 
   const onPaste = useCallback(
     (event: ClipboardEvent) => {
@@ -128,26 +134,6 @@ const LinkSubmit = (props: LinkSubmitProps) => {
       doPost();
     }
   };
-
-  const placeholder = <Text
-    gray
-    position="absolute"
-    px={2}
-    pt={2}
-    style={{ pointerEvents: 'none' }}
-                      >{canUpload
-    ? <>
-      Drop or{' '}
-      <Text
-        cursor='pointer'
-        color='blue'
-        style={{ pointerEvents: 'all' }}
-        onClick={() => promptUpload().then(setLinkValue)}
-      >upload</Text>
-      {' '}a file, or paste a link here
-      </>
-    : 'Paste a link here'
-    }</Text>;
 
   return (
     <>
@@ -175,26 +161,17 @@ const LinkSubmit = (props: LinkSubmitProps) => {
                       >
           <LoadingSpinner />
         </Box>}
-        {dragging && <SubmitDragger />}
-        <Box position='relative'>
-          {!(linkValue || urlFocused || disabled) && placeholder}
-          <BaseInput
-            type="url"
-            pl={2}
-            width="100%"
-            py={2}
-            color="black"
-            backgroundColor="transparent"
-            onChange={e => setLinkValue(e.target.value)}
-            onBlur={() => [setUrlFocused(false), setSubmitFocused(false)]}
-            onFocus={() => [setUrlFocused(true), setSubmitFocused(true)]}
-            spellCheck="false"
-            // @ts-ignore archaic event type mismatch error
-            onPaste={onPaste}
-            onKeyPress={onKeyPress}
-            value={linkValue}
-          />
-        </Box>
+      {dragging && <SubmitDragger />}
+      <StatelessUrlInput
+        value={linkValue}
+        promptUpload={promptUpload}
+        canUpload={canUpload}
+        onSubmit={doPost}
+        onChange={setLinkValue}
+        error={linkValid ? 'Invalid URL' : undefined}
+        onKeyPress={onKeyPress}
+        onPaste={onPaste}
+      />
         <BaseInput
           type="text"
           pl={2}

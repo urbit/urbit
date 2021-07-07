@@ -2,13 +2,11 @@ import { Box, Col, Text } from '@tlon/indigo-react';
 import { Association, Graph, Group } from '@urbit/api';
 import { History } from 'history';
 import React, { ReactElement } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { Loading } from '~/views/components/Loading';
 import PostFeed from './PostFeed';
 import PostInput from './PostInput';
 
 interface PostTimelineProps {
-  api: GlobalApi;
   association: Association;
   baseUrl: string;
   graph: Graph;
@@ -22,7 +20,6 @@ interface PostTimelineProps {
 const PostTimeline = (props: PostTimelineProps): ReactElement => {
   const {
     baseUrl,
-    api,
     association,
     graphPath,
     group,
@@ -59,7 +56,6 @@ const PostTimeline = (props: PostTimelineProps): ReactElement => {
           alignItems="center"
         >
           <PostInput
-            api={api}
             graphPath={graphPath}
             group={group}
             association={association}
@@ -93,7 +89,6 @@ const PostTimeline = (props: PostTimelineProps): ReactElement => {
         association={association}
         group={group}
         vip={vip}
-        api={api}
         baseUrl={baseUrl}
       />
     </Box>

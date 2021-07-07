@@ -50,7 +50,6 @@ function FallbackRoutes(props: { query: URLSearchParams }) {
   if (query.has('ext')) {
     const ext = query.get('ext')!;
     const url = `/perma${ext.slice(16)}`;
-    console.log(url);
     return <Redirect to={{ pathname: url }} />;
   }
 

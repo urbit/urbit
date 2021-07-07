@@ -1,8 +1,19 @@
-import { ManagedTextAreaField as TextArea } from '@tlon/indigo-react';
-import { Form, Formik, FormikHelpers, useFormikContext } from 'formik';
-import React from 'react';
+import {
+  Action,
+  BaseTextArea as TextArea,
+  Box,
+  Col,
+  Row
+} from '@tlon/indigo-react';
+import {
+  Formik,
+  FormikHelpers,
+  useField,
+  useFormikContext
+} from 'formik';
+import React, { useEffect } from 'react';
 import * as Yup from 'yup';
-import { AsyncButton } from './AsyncButton';
+import { ShipImage } from './ShipImage';
 
 interface FormSchema {
   comment: string;
@@ -18,42 +29,90 @@ interface CommentInputProps {
     actions: FormikHelpers<FormSchema>
   ) => Promise<void>;
   initial?: string;
-  loadingText?: string;
   label?: string;
   placeholder?: string;
 }
 const SubmitTextArea = (props) => {
   const { submitForm } = useFormikContext<FormSchema>();
+  const [field] = useField(props.id);
   const onKeyDown = (e: KeyboardEvent) => {
     if ((e.getModifierState('Control') || e.metaKey) && e.key === 'Enter') {
       submitForm();
+      e.preventDefault();
     }
   };
-  return <TextArea onKeyDown={onKeyDown} {...props} />;
+  return (
+    <TextArea
+      lineHeight="tall"
+      backgroundColor="white"
+      color="black"
+      fontFamily="sans"
+      fontWeight="500"
+      fontSize="1"
+      flexGrow={1}
+      style={{ resize: 'vertical' }}
+      {...field}
+      onKeyDown={onKeyDown}
+      {...props}
+    />
+  );
 };
+
+function FormikHelper(props: { initialValues: any }) {
+  const { initialValues } = props;
+  const { resetForm } = useFormikContext();
+
+  useEffect(() => {
+    resetForm(initialValues);
+  }, [initialValues]);
+
+  return null;
+}
 
 export default function CommentInput(props: CommentInputProps) {
   const initialValues: FormSchema = { comment: props.initial || '' };
-  const label = props.label || 'Add Comment';
-  const loading = props.loadingText || 'Commenting...';
+  const label = props.label || 'Comment';
 
   return (
-    <Formik
-      validationSchema={formSchema}
-      onSubmit={props.onSubmit}
-      initialValues={initialValues}
-      validateOnBlur={false}
-      validateOnChange={false}
+    <Row
+      marginLeft="-8px"
+      width="105%"
+      border="1"
+      borderColor="lightGray"
+      borderRadius="2"
+      flexShrink={0}
     >
-      <Form>
-        <SubmitTextArea
-          id="comment"
-          placeholder={props.placeholder || ''}
-        />
-        <AsyncButton mt={2} loadingText={loading} border type="submit">
-          {label}
-        </AsyncButton>
-      </Form>
-    </Formik>
+      <Box p="2">
+        <ShipImage ship={`~${window.ship}`} />
+      </Box>
+      <Formik
+        validationSchema={formSchema}
+        onSubmit={props.onSubmit}
+        initialValues={initialValues}
+        validateOnBlur={false}
+        validateOnChange={false}
+      >
+       {({ submitForm }) => (
+         <Col pb="1" pr="2" pt="2" flexGrow={1}>
+          <FormikHelper initialValues={initialValues} />
+          <SubmitTextArea
+            width="100%"
+            id="comment"
+            placeholder={props.placeholder || ''}
+          />
+          <Action
+            type="submit"
+            my="1"
+            width="fit-content"
+            alignSelf="flex-end"
+            backgroundColor="white"
+            onClick={submitForm}
+          >
+            {label}
+          </Action>
+        </Col>
+       )}
+      </Formik>
+    </Row>
   );
 }

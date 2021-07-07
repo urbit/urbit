@@ -10,3 +10,5 @@ for i in $(find . -type d -maxdepth 1) ; do
         cd ..
     fi
 done
+cd http-api
+npm run build

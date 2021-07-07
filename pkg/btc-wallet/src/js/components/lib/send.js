@@ -430,8 +430,7 @@ export default class Send extends Component {
                 fontWeight='bold'
                 borderRadius='24px'
                 mr={2}
-                py='24px'
-                px='24px'
+                height='48px'
                 onClick={() => this.toggleSignMethod(choosingSignMethod)}
                 color={signReady ? 'white' : 'lighterGray'}
                 backgroundColor={signReady ? 'rgba(33, 157, 255, 0.2)' : 'veryLightGray'}
