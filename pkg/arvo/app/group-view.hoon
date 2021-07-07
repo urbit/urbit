@@ -127,8 +127,13 @@
 ++  hide
   |=  rid=resource
   ^-  (quip card _state)
+  =/  =request:view  (~(got by joining) rid)
+  ?:  ?=(final:view progress.request)
+    =.  joining  (~(del by joining) rid)
+    :_  state
+    (fact:io group-view-update+!>(`update:view`[%initial joining]) /all ~)^~
   :-  (fact:io group-view-update+!>([%hide rid]) /all ~)^~
-  state(joining (~(jab by joining) rid |=(request:view +<(hidden %.y))))
+  state(joining (~(put by joining) rid request(hidden %.y)))
 ::
 ++  has-joined
   |=  rid=resource
@@ -160,7 +165,7 @@
   ++  tx-progress
     |=  =progress:view
     =.  joining
-      (~(jab by joining) rid |=(request:view +<(progress progress)))
+      (~(jab by joining) rid |=(req=request:view req(progress progress)))
     =;  =cage
       (emit (fact:io cage /all tx+(en-path:resource rid) ~))
     group-view-update+!>([%progress rid progress]) 
@@ -217,10 +222,11 @@
       ?>  ?=(%poke-ack -.sign)
       ?^  p.sign
         (cleanup %no-perms)
-      =>  %-  emit
-          %+  poke-our:(jn-pass-io /pull-groups)  %group-pull-hook 
-          pull-hook-action+!>([%add ship rid])
-      (tx-progress %added)
+      =.  jn-core
+        (tx-progress %added)
+      %-  emit
+      %+  poke-our:(jn-pass-io /pull-groups)  %group-pull-hook 
+      pull-hook-action+!>([%add ship rid])
     ::
         %pull-groups
       ?>  ?=(%poke-ack -.sign)
@@ -324,7 +330,6 @@
       |=  =progress:view
       =.  jn-core
         (tx-progress progress)
-      =.  joining  (~(del by joining) rid)
       =.  jn-core
         (emit (leave-our:(jn-pass-io /groups) %group-store))
       (emit (leave-our:(jn-pass-io /md) %metadata-store))

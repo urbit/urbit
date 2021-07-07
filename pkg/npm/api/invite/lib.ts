@@ -1,4 +1,4 @@
-import { Poke, Serial } from "..";
+import { Poke, Serial } from "../lib";
 import { InviteUpdate, InviteUpdateAccept, InviteUpdateDecline } from "./types";
 
 export const inviteAction = <T extends InviteUpdate>(data: T): Poke<T> => ({

@@ -1,17 +1,16 @@
 import {
-    Col,
-    Label, ManagedTextInputField as Input,
-
-    Text
+  Col,
+  Label, ManagedTextInputField as Input,
+  Text
 } from '@tlon/indigo-react';
-import { Association } from '@urbit/api';
+import { Association, metadataUpdate } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
 import { ColorInput } from '~/views/components/ColorInput';
 import { FormError } from '~/views/components/FormError';
 import { FormGroupChild } from '~/views/components/FormGroup';
+import airlock from '~/logic/api';
 
 interface FormSchema {
   title: string;
@@ -20,12 +19,11 @@ interface FormSchema {
 }
 
 interface ChannelDetailsProps {
-  api: GlobalApi;
   association: Association;
 }
 
 export function ChannelDetails(props: ChannelDetailsProps) {
-  const { association, api } = props;
+  const { association } = props;
   const { metadata } = association;
   const initialValues: FormSchema = {
     title: metadata?.title || '',
@@ -36,7 +34,7 @@ export function ChannelDetails(props: ChannelDetailsProps) {
   const onSubmit = async (values: FormSchema, actions) => {
     const { title, description } = values;
     const color = uxToHex(values.color);
-    await api.metadata.update(association, { title, color, description });
+    await airlock.poke(metadataUpdate(association, { title, color, description }));
     actions.setStatus({ success: null });
   };
 

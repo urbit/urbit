@@ -13,10 +13,11 @@ const hash = process.env.LANDSCAPE_SHORTHASH;
 
 self.addEventListener('install', (ev) => {
   self.skipWaiting();
+  console.log('registed sw', hash);
 });
 
 self.addEventListener('activate', (ev) => {
-  ev.waitUntil(clients.claim());
+  ev.waitUntil(self.clients.claim());
 });
 
 // Cache page navigations (html) with a Network First strategy
@@ -51,6 +52,24 @@ registerRoute(
       // Ensure that only requests that result in a 200 status are cached
       new CacheableResponsePlugin({
         statuses: [200]
+      })
+    ]
+  })
+);
+
+registerRoute(
+  ({ url }) => url.orign === 'https://noembed.com',
+  new CacheFirst({
+    cacheName: 'embeds',
+    plugins: [
+      // Ensure that only requests that result in a 200 status are cached
+      new CacheableResponsePlugin({
+        statuses: [200]
+      }),
+      // Don't cache more than 150 items, and expire them after 30 days
+      new ExpirationPlugin({
+        maxEntries: 150,
+        maxAgeSeconds: 60 * 60 * 24 * 30 // 30 Days
       })
     ]
   })

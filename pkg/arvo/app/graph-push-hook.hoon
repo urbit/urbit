@@ -26,18 +26,15 @@
       state-one
   ==
 ::
-+$  cached-transform
++$  post-transform
+  $-  indexed-post:store
   $-([index:store post:store atom ?] [index:store post:store])
 ::
-+$  cached-permission
++$  post-to-permission
   $-(indexed-post:store $-(vip-metadata:metadata permissions:store))
 ::
-::  TODO: come back to this and potentially use send a %t
-::  to be notified of validator changes
 +$  cache
   $:  graph-to-mark=(map resource:res (unit mark))
-      perm-marks=(map [mark @tas] cached-permission)
-      transform-marks=(map mark cached-transform)
   ==
 ::
 +$  inflated-state
@@ -47,8 +44,6 @@
 ::
 +$  cache-action
   $%  [%graph-to-mark (pair resource:res (unit mark))]
-      [%perm-marks (pair (pair mark @tas) cached-permission)]
-      [%transform-marks (pair mark cached-transform)]
   ==
 --
 ::
@@ -90,13 +85,9 @@
   =/  a=cache-action  !<(cache-action vase)
   =*  c                +.state
   =*  graph-to-mark    graph-to-mark.c
-  =*  perm-marks       perm-marks.c
-  =*  transform-marks  transform-marks.c
   =.  c
     ?-  -.a
       %graph-to-mark    c(graph-to-mark (~(put by graph-to-mark) p.a q.a))
-      %perm-marks       c(perm-marks (~(put by perm-marks) p.a q.a))
-      %transform-marks  c(transform-marks (~(put by transform-marks) p.a q.a))
     ==
   [~ this(+.state c)]
 ::
@@ -142,12 +133,9 @@
     |%
     ++  $
       ^-  (quip card (unit vase))
-      =/  transform=cached-transform
-        %+  fall
-          (~(get by transform-marks) u.mark)
-        =/  =tube:clay
-          .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
-        !<(cached-transform (tube !>(*indexed-post:store)))
+      =/  transform
+        %.  *indexed-post:store
+        .^(post-transform (scry:hc %cf %home /[u.mark]/transform-add-nodes))
       =/  [* result=(list [index:store node:store])]
         %+  roll
           (flatten-node-map ~(tap by nodes.q.update))
@@ -166,13 +154,6 @@
           %+  poke-self:pass:io  %graph-cache-hook
           !>  ^-  cache-action
           [%graph-to-mark rid mark]
-        ::
-          ?:  (~(has by transform-marks) u.mark)
-            ~
-          :_  ~
-          %+  poke-self:pass:io  %graph-cache-hook
-          !>  ^-  cache-action
-          [%transform-marks u.mark transform]
       ==
     ::
     ++  flatten-node-map
@@ -322,9 +303,7 @@
     [[%no %no %no] ~]
   =/  key  [u.mark (perm-mark-name perm)]
   =/  convert
-    %+  fall
-      (~(get by perm-marks.cache) key)
-    .^(cached-permission (scry %cf %home /[u.mark]/(perm-mark-name perm)))
+    .^(post-to-permission (scry %cf %home /[u.mark]/(perm-mark-name perm)))
   :-  ((convert indexed-post) vip)
   %-  zing
   :~  ?:  (~(has by graph-to-mark.cache) resource)
@@ -333,12 +312,6 @@
       %+  poke-self:pass:io  %graph-cache-hook
       !>  ^-  cache-action
       [%graph-to-mark resource mark]
-    ::
-      ?:  (~(has by perm-marks.cache) key)  ~
-      :_  ~
-      %+  poke-self:pass:io  %graph-cache-hook
-      !>  ^-  cache-action
-      [%perm-marks [u.mark (perm-mark-name perm)] convert]
   ==
   ::
   ++  perm-mark-name

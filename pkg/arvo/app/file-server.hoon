@@ -219,30 +219,35 @@
         ?~  ext.req-line  site.req-line
         (snoc site.req-line u.ext.req-line)
       =/  content=(unit [=content suffix=path public=?])
-        (get-content pax is-file)
+        (match-content-path pax is-file)
       ?~  content  [not-found:gen %.n]
       ?-  -.content.u.content
           %clay
-        =/  scry-path=path
+        =/  scry-start=path
           :*  (scot %p our.bowl)
               q.byk.bowl
               (scot %da now.bowl)
-              (lowercase (weld path.content.u.content suffix.u.content))
+              path.content.u.content
           ==
+        =/  scry-path=path
+          (weld scry-start (lowercase suffix.u.content))
+        =?  scry-path  !.^(? %cu scry-path)
+          (weld scry-start /index/html)
         ?.  .^(? %cu scry-path)  [not-found:gen %.n]
         ?:  ?=([~ %woff2] ext.req-line)
           :_  public.u.content
           [[200 [['content-type' '/font/woff2'] ~]] `.^(octs %cx scry-path)]
         =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
         :_  public.u.content
-        ?+  ext.req-line  not-found:gen
-            [~ %js]    (js-response:gen file)
-            [~ %css]   (css-response:gen file)
-            [~ %png]   (png-response:gen file)
-            [~ %svg]   (svg-response:gen file)
-            [~ %ico]   (ico-response:gen file)
+        =/  ext  (rear scry-path)
+        ?+  ext  not-found:gen
+            %js    (js-response:gen file)
+            %css   (css-response:gen file)
+            %png   (png-response:gen file)
+            %svg   (svg-response:gen file)
+            %ico   (ico-response:gen file)
           ::
-              [~ %html]
+              %html
             %.  file
             %*    .   html-response:gen
                 cache
@@ -276,17 +281,8 @@
         char
       (add char ^~((sub 'a' 'A')))
     ::
-    ++  get-content
-      |=  [pax=path is-file=?]
-      ^-  (unit [content path ?])
-      =/  first-try  (match-content-path pax (~(del by serving) /) is-file)
-      ?^  first-try  first-try
-      =/  root  (~(get by serving) /)
-      ?~  root  ~
-      (match-content-path pax (~(gas by *^serving) [[/ u.root] ~]) is-file)
-    ::
     ++  match-content-path
-      |=  [pax=path =^serving is-file=?]
+      |=  [pax=path is-file=?]
       ^-  (unit [content path ?])
       %+  roll
         %+  sort  ~(tap by serving)
@@ -352,6 +348,13 @@
       [%x %clay %base %hash ~]
     =/  versions  (base-hash:version [our now]:bowl)
     ``hash+!>(?~(versions 0v0 (end [0 25] i.versions)))
+  ::
+      [%x %our ~]
+    ``json+!>(s+(scot %p our.bowl))
+  ::
+      [%x %url *]
+    =/  url  t.t.path
+    ``noun+!>((~(has by serving) url))
   ==
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def

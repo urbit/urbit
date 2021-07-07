@@ -5,8 +5,8 @@ import {
   Col,
   Icon,
   Row,
-  Text,
-} from "@tlon/indigo-react";
+  Text
+} from '@tlon/indigo-react';
 import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
@@ -26,7 +26,7 @@ import { useTutorialModal } from './useTutorialModal';
 const localSel = selectLocalState(['toggleOmnibox']);
 
 const StatusBar = (props) => {
-  const { api, ship } = props;
+  const { ship } = props;
   const history = useHistory();
   const runtimeLag = useLaunchState(state => state.runtimeLag);
   const ourContact = useContactState(state => state.contacts[`~${ship}`]);
@@ -103,10 +103,7 @@ const StatusBar = (props) => {
             {metaKey}/
           </Text>
         </StatusBarItem>
-        <ReconnectButton
-          connection={props.connection}
-          subscription={props.subscription}
-        />
+        <ReconnectButton />
       </Row>
       <Row justifyContent='flex-end'>
         <StatusBarItem
@@ -181,7 +178,6 @@ const StatusBar = (props) => {
                 <ProfileStatus
                   contact={ourContact}
                   ship={`~${ship}`}
-                  api={api}
                 />
               </Row>
             </Col>
