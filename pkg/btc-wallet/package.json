@@ -1,5 +1,5 @@
 {
-  "name": "bitcoin-wallet",
+  "name": "btc-wallet",
   "version": "0.1.0",
   "main": "node install.js",
   "scripts": {
