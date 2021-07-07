@@ -118,7 +118,7 @@
         ~&([%czar-take-dawn %invalid-json] ~)
       :-  ~
       %+  roll  u.res
-      |=  $:  [id=@t deet=[rift life =pass]]
+      |=  $:  [id=@t deet=[=rift =life =pass]]
               kyz=(map ship [=rift =life =pass])
           ==
       ^+  kyz
@@ -136,12 +136,7 @@
       =/  jon=(unit json)  (de-json:html q.rep)
       ?~  jon
         ~&([%point-take-dawn %invalid-json] ~)
-      =;  ^=  res
-          %-  unit
-          $:  [spawn=@ own=[@ @ @ @]]
-              [=rift =life =pass sponsor=[? ship]]
-          ==
-          ?~  res
+      =-  ?~  res
             ~&([%point-take-dawn %incomplete-json] ~)
           =,  u.res
           %-  some
@@ -150,6 +145,11 @@
             `[life pass rift sponsor ~]  ::NOTE  escape unknown ::TODO could be!
           ?.  (gth who 0xffff)  ~
           `[spawn ~]  ::NOTE  spawned unknown
+      ^-  $=  res
+          %-  unit
+          $:  [spawn=@ own=[@ @ @ @]]
+              [=rift =life =pass sponsor=[? ship]]
+          ==
       %.  u.jon
       =,  dejs-soft:format
       =-  (ot result+- ~)
