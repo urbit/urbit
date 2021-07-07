@@ -33,7 +33,7 @@ of the repository
 
 ```bash
 npm i
-npm run bootstrp
+npm run bootstrap
 cd pkg/interface && npm run start
 ```
 
