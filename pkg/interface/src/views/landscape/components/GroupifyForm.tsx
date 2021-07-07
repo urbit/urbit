@@ -1,5 +1,5 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association, groupifyGraph } from '@urbit/api';
+import { Association, groupifyGraph, AppName } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
@@ -38,7 +38,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
       ));
       let mod = association['app-name'];
       if (association?.metadata?.config && 'graph' in association.metadata.config) {
-        mod = association.metadata.config.graph;
+        mod = association.metadata.config.graph as AppName;
       }
       const newGroup = values.group || association.group;
       history.push(`/~landscape${newGroup}/resource/${mod}${rid}`);
