@@ -452,6 +452,9 @@
   ?:  |(?=(~ sig) ?=(~ from) ?=(~ raw) ?=(~ data))
     [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
+  %-  some
+  :-  %aggregator-action
+  !>([%submit | u.sig %ful u.raw u.from %transfer-point u.data])
 ::
 ++  cancel-tx
   |=  [id=@t params=(map @t json)]
