@@ -1,4 +1,4 @@
-import { Content, createPost, fetchIsAllowed, markCountAsRead, Post, removePosts } from '@urbit/api';
+import { Content, createPost, fetchIsAllowed, Post, removePosts } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
 import { BigInteger } from 'big-integer';
 import React, {
@@ -140,7 +140,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   }, [resource]);
 
   const dismissUnread = useCallback(() => {
-    airlock.poke(markCountAsRead(association.resource));
+    useHarkState.getState().readCount(association.resource);
   }, [association.resource]);
 
   const getPermalink = useCallback(

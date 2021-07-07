@@ -1,5 +1,6 @@
 import {
   archive,
+  markCountAsRead,
   NotificationGraphConfig,
   NotifIndex,
   readNote,
@@ -32,6 +33,7 @@ export interface HarkState {
   unreads: Unreads;
   archive: (index: NotifIndex, time?: BigInteger) => Promise<void>;
   readNote: (index: NotifIndex) => Promise<void>;
+  readCount: (resource: string, index?: string) => Promise<void>;
 }
 
 const useHarkState = createState<HarkState>(
@@ -40,6 +42,10 @@ const useHarkState = createState<HarkState>(
     archivedNotifications: new BigIntOrderedMap<Timebox>(),
     doNotDisturb: false,
     unreadNotes: [],
+    readCount: async (resource: string, index?: string) => {
+      const poke = markCountAsRead(resource, index);
+      await pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
     archive: async (index: NotifIndex, time?: BigInteger) => {
       const poke = archive(index, time);
       await pokeOptimisticallyN(useHarkState, poke, [reduce]);

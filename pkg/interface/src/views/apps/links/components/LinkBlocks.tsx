@@ -25,23 +25,23 @@ const style = {
   alignItems: 'center'
 };
 const PADDING = 24;
-const MOBILE_PADDING = 16;
+const SMALL_PADDING = 16;
 
 export function LinkBlocks(props: LinkBlocksProps) {
   const { association } = props;
   const [linkSize, setLinkSize] = useState(250);
   const linkSizePx = `${linkSize}px`;
 
-  const isMobile = useLocalState(s => s.mobile || s.mdBreak);
-  const colCount = useMemo(() => (isMobile ? 2 : 4), [isMobile]);
+  const isSmall = useLocalState(s => !s.breaks.lg);
+  const colCount = useMemo(() => (isSmall ? 2 : 4), [isSmall]);
   const bind = useResize<HTMLDivElement>(
     useCallback(
       (entry) => {
         const { width } = entry.target.getBoundingClientRect();
-        const pad = isMobile ? MOBILE_PADDING : PADDING;
+        const pad = isSmall ? SMALL_PADDING : PADDING;
         setLinkSize((width - pad) / colCount - pad);
       },
-      [colCount, isMobile]
+      [colCount, isSmall]
     )
   );
 
@@ -68,7 +68,7 @@ export function LinkBlocks(props: LinkBlocksProps) {
   const renderItem = useCallback(
     React.forwardRef<any, any>(({ index }, ref) => {
       const chunk = orm.get(index) ?? [];
-      const space = [3, 3, 4];
+      const space = [3, 3, 3, 4];
 
       return (
         <Row

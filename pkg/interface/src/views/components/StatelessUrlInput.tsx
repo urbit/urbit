@@ -11,8 +11,7 @@ type StatelessUrlInputProps = PropFunc<typeof BaseInput> & {
   onChange?: (value: string) => void;
   promptUpload: () => Promise<string>;
   canUpload: boolean;
-  placeholderOffset?: number | string | number[] | string[];
-  leftOffset?: number | string | number[] | string[];
+  center?: boolean;
 };
 
 export function StatelessUrlInput(props: StatelessUrlInputProps) {
@@ -23,41 +22,51 @@ export function StatelessUrlInput(props: StatelessUrlInputProps) {
     onChange = () => {},
     promptUpload,
     canUpload,
-    placeholderOffset = 0,
-    leftOffset = 0,
+    center = false,
     ...rest
   } = props;
 
   const placeholder = useMemo(
-    () => (
-      <Text
-        gray
-        position="absolute"
-        top={placeholderOffset}
-        left={leftOffset}
-        px={2}
-        pt={2}
-        style={{ pointerEvents: 'none' }}
-      >
-        {canUpload ? (
-          <>
-            Drop or{' '}
-            <Text
-              cursor="pointer"
-              color="blue"
-              style={{ pointerEvents: 'all' }}
-              onClick={() => promptUpload().then(onChange)}
-            >
-              upload
-            </Text>{' '}
-            a file, or paste a link here
-          </>
-        ) : (
-          'Paste a link here'
-        )}
-      </Text>
-    ),
-    [canUpload, promptUpload, onChange]
+    () => {
+      const centerProps = !center
+        ? {}
+        : {
+            width: '100%',
+            height: '100%',
+            alignItems: 'center',
+            justifyContent: 'center'
+          };
+
+      return (
+        <Box
+          px={2}
+          pt={2}
+          position="absolute"
+          {...centerProps}
+          style={{ pointerEvents: 'none' }}
+        >
+          <Text gray>
+            {canUpload ? (
+              <>
+                Drop or{' '}
+                <Text
+                  cursor="pointer"
+                  color="blue"
+                  style={{ pointerEvents: 'all' }}
+                  onClick={() => promptUpload().then(onChange)}
+                >
+                  upload
+                </Text>{' '}
+                a file, or paste a link here
+              </>
+            ) : (
+              'Paste a link here'
+            )}
+          </Text>
+        </Box>
+      );
+    },
+    [canUpload, promptUpload, onChange, center]
   );
 
   const handleChange = useCallback(
