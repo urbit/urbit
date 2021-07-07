@@ -1,5 +1,5 @@
 {
-  "name": "urbit-bitcoin-wallet",
+  "name": "bitcoin-wallet",
   "version": "0.1.0",
   "main": "node install.js",
   "scripts": {
