@@ -221,17 +221,6 @@
     ^+  ..abet
     =.  ark  (~(del by ark) loc)
     (install loc [ship desk]:rak)
-  ::  +get-blockers: find desks that would block a kernel update
-  ::
-  ++  get-blockers
-    |=  kel=weft
-    ^-  (set desk)
-    %-  ~(gas in *(set desk))
-    %+  murn  ~(tap by ark)
-    |=  [=desk =arak]
-    ?:  (lien next.arak |=([* k=weft] =(k kel)))
-      ~
-    `desk
   ::  +bump: handle kernel kelvin upgrade
   ::
   ::    Apply merges and revive faded agents on all paused desks.
@@ -313,19 +302,6 @@
     |=  =dude:gall
     [/kiln/fade/[dude] %pass %arvo %g %fade dude %jolt]
   --
-::  +get-apps: find which apps Gall is running on a desk
-::
-++  get-apps
-  |=  =desk
-  ^-  (list dude:gall)
-  %~  tap  in
-  .^((set dude:gall) ge+/(scot %p our)/[desk]/(scot %da now))
-::  +get-kelvin: read /sys.kelvin from an $ankh
-::
-++  get-kelvin
-  |=  =ankh
-  !<  [lal=@tas num=@ud]
-  q:(need (~(get an:cloy ankh) /sys/kelvin))
 ::  +get-ankh: extract $ankh from clay %v response $rant
 ::
 ++  get-ankh
@@ -333,6 +309,24 @@
   ^-  ankh
   ?>  ?=(%dome p.r.rant)
   !<(ankh q.r.rant)
+::  +get-apps: find which apps Gall is running on a desk
+::
+++  get-apps
+  |=  =desk
+  ^-  (list dude:gall)
+  %~  tap  in
+  .^((set dude:gall) ge+/(scot %p our)/[desk]/(scot %da now))
+::  +get-blockers: find desks that would block a kernel update
+::
+++  get-blockers
+  |=  kel=weft
+  ^-  (set desk)
+  %-  ~(gas in *(set desk))
+  %+  murn  ~(tap by ark)
+  |=  [=desk =arak]
+  ?:  (lien next.arak |=([* k=weft] =(k kel)))
+    ~
+  `desk
 ::  +get-germ: select merge strategy into local desk
 ::
 ::  If destination desk doesn't exist, need a %init merge.  If this is
@@ -347,6 +341,12 @@
     %1  %take-that
     *   %mate
   ==
+::  +get-kelvin: read /sys.kelvin from an $ankh
+::
+++  get-kelvin
+  |=  =ankh
+  !<  weft
+  q:(need (~(get an:cloy ankh) /sys/kelvin))
 ::
 ++  update
   |%
@@ -458,31 +458,52 @@
       (poke `[ship desk]:u.ota)
     =.  ..abet  (render-ket "finished downloading OTA" ~)
     =.  aeon.u.ota  +(aeon.u.ota)
-    =/  =germ  (get-germ %home)
-    =.  ..abet  (render-ket "applying OTA to %home" ~)
+    ::
+    =/  old-ankh  ank:.^(dome cv+/(scot %p our)/base/(scot %da now))
+    =/  old-weft  (get-kelvin old-ankh)
+    ::
+    =/  new-ankh  (get-ankh u.p.sign-arvo)
+    =/  new-weft  (get-kelvin new-ankh)
+    ::
+    =/  blockers
+      ?:  =(new-weft old-weft)
+        ~
+      (get-blockers new-weft)
+    ::
+    ?^  blockers
+      =.  ..abet  (render-ket "OTA to %base blocked on {<blockers>}"
+      %-  emil  :~
+        :*  %pass  (make-wire /sync)  %arvo  %c
+            %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
+        ==
+        ::  TODO: emit subscription update here
+      ==
+    ::
+    =/  =germ  (get-germ %base)
+    =.  ..abet  (render-ket "applying OTA to %base" ~)
     %-  emil
-    :~  :*  %pass  (make-wire /merge-home)  %arvo  %c
-            %merg  %home  ship.u.ota  desk.u.ota  ud+(dec aeon.u.ota)  germ
+    :~  :*  %pass  (make-wire /merge-base)  %arvo  %c
+            %merg  %base  ship.u.ota  desk.u.ota  ud+(dec aeon.u.ota)  germ
         ==
         :*  %pass  (make-wire /sync)  %arvo  %c
             %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
         ==
     ==
   ::
-  ++  take-merge-home
+  ++  take-merge-base
     |=  =sign-arvo
     ?>  ?=(%mere +<.sign-arvo)
     ?>  ?=(^ ota)
     ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
       =.  ..abet
-        =/  =tape  "OTA to %home failed, maybe because sunk; restarting"
+        =/  =tape  "OTA to %base failed, maybe because sunk; restarting"
         (render-ket tape `p.p.sign-arvo)
       (poke `[ship desk]:u.ota)
     ::
     ?:  ?=(%| -.p.sign-arvo)
-      =/  =tape  "OTA to %home failed, waiting for next revision"
+      =/  =tape  "OTA to %base failed, waiting for next revision"
       (render-ket tape `p.p.sign-arvo)
-    =.  ..abet  (render-ket "OTA to %home succeeded" ~)
+    =.  ..abet  (render-ket "OTA to %base succeeded" ~)
     =.  ..abet  (render-ket "applying OTA to %kids" ~)
     =/  =germ  (get-germ %kids)
     %:  emit
