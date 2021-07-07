@@ -26,7 +26,11 @@ export interface LocalState {
   setTutorialRef: (el: HTMLElement | null) => void;
   dark: boolean;
   mobile: boolean;
-  mdBreak: boolean;
+  breaks: {
+    sm: boolean;
+    md: boolean;
+    lg: boolean;
+  }
   background: BackgroundConfig;
   omniboxShown: boolean;
   suspendedFocus?: HTMLElement;
@@ -46,7 +50,11 @@ export const selectLocalState =
 const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   dark: false,
   mobile: false,
-  mdBreak: false,
+  breaks: {
+    sm: false,
+    md: false,
+    lg: false
+  },
   background: undefined,
   theme: 'auto',
   hideAvatars: false,
@@ -126,7 +134,7 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
     blacklist: [
       'suspendedFocus', 'toggleOmnibox', 'omniboxShown', 'tutorialProgress',
       'prevTutStep', 'nextTutStep', 'tutorialRef', 'setTutorialRef', 'subscription',
-      'errorCount'
+      'errorCount', 'breaks'
     ],
   name: 'localReducer'
 }));

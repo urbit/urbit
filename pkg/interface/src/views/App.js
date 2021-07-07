@@ -88,15 +88,21 @@ class App extends React.Component {
       // before the app has actually rendered, hence the timeout.
       this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
       this.mobileWatcher = window.matchMedia(`(max-width: ${theme.breakpoints[0]})`);
-      this.mediumWatcher = window.matchMedia(`(max-width: ${theme.breakpoints[1]})`);
+      this.smallWatcher = window.matchMedia(`(min-width: ${theme.breakpoints[0]})`);
+      this.mediumWatcher = window.matchMedia(`(min-width: ${theme.breakpoints[1]})`);
+      this.largeWatcher = window.matchMedia(`(min-width: ${theme.breakpoints[2]})`);
       // TODO: addListener is deprecated, but safari 13 requires it
       this.themeWatcher.addListener(this.updateTheme);
       this.mobileWatcher.addListener(this.updateMobile);
+      this.smallWatcher.addListener(this.updateSmall);
       this.mediumWatcher.addListener(this.updateMedium);
+      this.largeWatcher.addListener(this.updateLarge);
 
       this.updateMobile(this.mobileWatcher);
+      this.updateSmall(this.updateSmall);
       this.updateTheme(this.themeWatcher);
       this.updateMedium(this.mediumWatcher);
+      this.updateLarge(this.largeWatcher);
     }, 500);
     this.props.getBaseHash();
     this.props.getRuntimeLag();  // TODO  consider polling periodically
@@ -112,7 +118,9 @@ class App extends React.Component {
   componentWillUnmount() {
     this.themeWatcher.removeListener(this.updateTheme);
     this.mobileWatcher.removeListener(this.updateMobile);
+    this.smallWatcher.removeListener(this.updateSmall);
     this.mediumWatcher.removeListener(this.updateMedium);
+    this.largeWatcher.removeListener(this.updateLarge);
   }
 
   updateTheme(e) {
@@ -127,9 +135,21 @@ class App extends React.Component {
     });
   }
 
+  updateSmall = (e) => {
+    this.props.set((state) => {
+      state.breaks.sm = e.matches;
+    });
+  }
+
   updateMedium = (e) => {
     this.props.set((state) => {
-      state.mdBreak = e.matches;
+      state.breaks.md = e.matches;
+    });
+  }
+
+  updateLarge = (e) => {
+    this.props.set((state) => {
+      state.breaks.lg = e.matches;
     });
   }
 
