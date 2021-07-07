@@ -3,7 +3,7 @@
 ::  Scrys
 ::  x/scanned: (list xpub) of all scanned wallets
 ::  x/balance/xpub: balance (in sats) of wallet
-/-  *btc-wallet, bp=btc-provider, file-server, launch-store
+/-  *btc-wallet, bp=btc-provider, file-server, launch-store, settings
 /+  dbug, default-agent, bl=btc, bc=bitcoin, bcu=bitcoin-utils, bip32
 ~%  %btc-wallet-top  ..part  ~
 |%
@@ -23,6 +23,7 @@
 +$  versioned-state
     $%  state-0
         state-1
+        state-2
     ==
 ::
 +$  state-0
@@ -40,9 +41,8 @@
       ahistorical-txs=(set txid)
   ==
 ::
-+$  state-1
-  $:  %1
-      prov=(unit provider)
++$  base-state
+  $:  prov=(unit provider)
       walts=(map xpub:bc walt)
       =btc-state
       =history
@@ -54,8 +54,11 @@
       =poym
       ahistorical-txs=(set txid)
   ==
+::
++$  state-1  [%1 base-state]
++$  state-2  [%2 base-state]
 --
-=|  state-1
+=|  state-2
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -69,24 +72,31 @@
 ++  on-init
 ^-  (quip card _this)
   ~&  >  '%btc-wallet initialized'
-  =/  file
-    [%file-server-action !>([%serve-dir /'~btc' /app/btc-wallet %.n %.y])]
-  =/  tile
-    :-  %launch-action
-    !>  :+  %add
-      %btc-wallet
-    [[%custom `'/~btc' `'/~btc/img/tile.svg'] %.y]
-  =/  warning  [%settings-event !>([%put-entry %btc-wallet %warning %b %.y])]
-  =/  currency
-    [%settings-event !>([%put-entry %btc-wallet %currency %s 'USD'])]
-  :-  :~  [%pass /btc-wallet-server %agent [our.bowl %file-server] %poke file]
-          [%pass /btc-wallet-tile %agent [our.bowl %launch] %poke tile]
-          [%pass /warn %agent [our.bowl %settings-store] %poke warning]
-          [%pass /warn %agent [our.bowl %settings-store] %poke currency]
-      ==
+  ::
+  =/  warning=event:settings   [%put-entry %btc-wallet %warning %b %.y]
+  =/  currency=event:settings  [%put-entry %btc-wallet %currency %s 'USD']
+  =/  cards=(list card)
+    :~  (poke-our:hc %settings-store %settings-event !>(warning))
+        (poke-our:hc %settings-store %settings-event !>(currency))
+    ==
+  ::
+  =/  has-file=?  (gall-scry:hc ? %file-server /url/'~btc'/noun)
+  =/  has-tile=?
+    (~(has in (gall-scry:hc (set @tas) %launch /keys/noun)) %btc-wallet)
+  =?  cards  !has-file
+    =/  file=action:file-server  [%serve-dir /'~btc' /app/btc-wallet %.n %.y]
+    :_  cards
+    (poke-our:hc %file-server %file-server-action !>(file))
+  =?  cards  !has-tile
+    =/  tile=action:launch-store
+      [%add %btc-wallet [%custom `'/~btc' `'/~btc/img/tile.svg'] %.y]
+    :_  cards
+    (poke-our:hc %launch %launch-action !>(tile))
+  ::
+  :-  cards
   %_  this
       state
-    :*  %1
+    :*  %2
         ~
         *(map xpub:bc walt)
         *^btc-state
@@ -113,8 +123,17 @@
   =|  cards=(list card)
   |-
   ?-  -.ver
-      %1
+      %2
     [cards this(state ver)]
+  ::
+      %1
+    =?  cards  ?=(^ prov.ver)
+      :_  cards
+      =/  =dock  [host.u.prov.ver %btc-provider]
+      =/  wir=wire  /set-provider/(scot %p host.u.prov.ver)
+      =/  priv-wire=^wire  (welp wir [%priv ~])
+      [%pass priv-wire %agent dock %watch /clients/(scot %p our.bowl)]
+    $(-.ver %2)
   ::
       %0
     =/  new-walts=(map xpub:bc walt)
@@ -156,21 +175,27 @@
       ?~  provider.comm
         ?~  prov  `state
         :_  state(prov ~)
+        %-  zing
         :~  (leave-provider host.u.prov)
-            (give-update:hc %change-provider ~)
+            (give-update:hc %change-provider ~)^~
         ==
       :_  state(prov `[u.provider.comm %.n])
       ?~  prov
-        [(watch-provider:hc u.provider.comm)]~
+        (watch-provider:hc u.provider.comm)
+      %-  zing
       :~  (leave-provider host.u.prov)
           (watch-provider:hc u.provider.comm)
-          (give-update:hc %change-provider `[u.provider.comm %.n])
+          (give-update:hc %change-provider `[u.provider.comm %.n])^~
       ==
       ::
       ++  leave-provider
         |=  who=@p
-        ^-  card
-        [%pass /set-provider/[(scot %p who)] %agent who^%btc-provider %leave ~]
+        ^-  (list card)
+        =/  wir=wire  /set-provider/(scot %p who)
+        =/  priv-wir=wire  (welp wir %priv^~)
+        :+  [%pass wir %agent who^%btc-provider %leave ~]
+          [%pass priv-wir %agent who^%btc-provider %leave ~]
+        ~
       --
     ::
         %check-provider
@@ -203,7 +228,8 @@
           [(silt (gulf 0 endpoint)) endpoint %.n]
         =^  cards0  state  (req-scan:hc b xpub %0)
         =^  cards1  state  (req-scan:hc b xpub %1)
-        [(weld cards0 cards1) state]
+        :_  state
+        [(scan-progress:hc xpub) (weld cards0 cards1)]
       --
     ::
         %delete-wallet
@@ -595,7 +621,7 @@
             (turn inputs.ti |=(i=val:tx [i `payer]))
             %+  turn  outputs.ti
               |=  o=val:tx
-              ?:  =(pos.o vout) 
+              ?:  =(pos.o vout)
                 ::  check whether this is the output that went to payee
                 [o payee]
               [o `payer]
@@ -646,8 +672,9 @@
         ==
       `this
     :_  this(prov [~ src.bowl %.n])
+    %-  zing
     :~  (watch-provider:hc src.bowl)
-        (give-update:hc %change-provider `[src.bowl %.n])
+        (give-update:hc %change-provider `[src.bowl %.n])^~
     ==
   ::
       %fact
@@ -850,7 +877,7 @@
     ::
         %tx-info
       ::  TODO: why do we get a nest-fail when using =^ ?
-      =/  [cards=(list card) sty=state-1]
+      =/  [cards=(list card) sty=state-2]
         (handle-tx-info:hc info.p.upd)
       :_  sty
       :_  cards
@@ -957,7 +984,8 @@
         (bump-batch xpub %0)
       =^  cards1=(list card)  state
         (bump-batch xpub %1)
-      [(weld cards0 cards1) state]
+      :_  state
+      [(scan-progress:hc xpub) (weld cards0 cards1)]
     ::
     ::  delete the xpub from scans and set wallet to scanned
     ::
@@ -970,7 +998,9 @@
           walts  (~(put by walts) xpub w(scanned %.y))
         ==
       %-  (slog ~[leaf+"Scanned xpub {<xpub>}"])
-      (set-curr-xpub:hc xpub)
+      =^  cards  state
+        (set-curr-xpub:hc xpub)
+      [[(give-update:hc [%scan-progress ~ ~]) cards] state]
     ::
     ::  +bump-batch
     ::  if the batch is done but the wallet isn't done scanning,
@@ -1201,17 +1231,40 @@
       %btc-wallet-internal  !>(intr)
   ==
 ::
+++  poke-our
+  |=  [app=term =cage]
+  ^-  card
+  [%pass / %agent [our.bowl app] %poke cage]
+::
 ++  give-update
   |=  upd=update
   ^-  card
   [%give %fact ~[/all] %btc-wallet-update !>(upd)]
 ::
+++  scan-progress
+  |=  [=xpub:bc]
+  |^  ^-  card
+  %-  give-update
+  :+  %scan-progress
+  (to-idx (~(gut by scans.state) [xpub %0] *batch))
+  (to-idx (~(gut by scans.state) [xpub %1] *batch))
+  ++  to-idx
+    |=  b=batch
+    ^-  (unit idx:bc)
+    =/  s=(list idx:bc)
+      (sort ~(tap in todo.b) lth)
+    ?~  s  ~  `i.s
+  --
+::
 ++  watch-provider
   |=  who=@p
-  ^-  card
-  :*  %pass  /set-provider/[(scot %p who)]  %agent  [who %btc-provider]
-      %watch  /clients
-  ==
+  ^-  (list card)
+  =/  =dock  [who %btc-provider]
+  =/  wir=wire  /set-provider/(scot %p who)
+  =/  priv-wire=^wire  (welp wir [%priv ~])
+  :+  [%pass wir %agent dock %watch /clients]
+    [%pass priv-wire %agent dock %watch /clients/(scot %p our.bowl)]
+  ~
 ::
 ++  give-initial
   ^-  card
@@ -1287,4 +1340,8 @@
   |=  [=xpub:bc w=walt]
   ^-  (unit xpub:bc)
   ?:(scanned.w `xpub ~)
+::
+++  gall-scry
+  |*  [=mold app=@tas =path]
+  .^(mold %gx (weld /(scot %p our.bowl)/[app]/(scot %da now.bowl) path))
 --

@@ -110,6 +110,7 @@
       %cancel-tx           (hexb txid.upd)
       %new-address         (address address.upd)
       %balance             (balance balance.upd)
+      %scan-progress       (scan-progress main.upd change.upd)
       %error               s+error.upd
       %broadcast-success   ~
     ==
@@ -160,6 +161,19 @@
     :~  confirmed+(numb p.u.b)
         unconfirmed+(numb q.u.b)
     ==
+  ::
+  ++  scan-progress
+    |=  [main=(unit idx:bitcoin) change=(unit idx:bitcoin)]
+    |^  ^-  json
+    %-  pairs
+    :~  main+(from-unit main)
+        change+(from-unit change)
+    ==
+    ++  from-unit
+      |=  i=(unit idx:bitcoin)
+      ?~  i  ~
+      (numb u.i)
+    --
   ::
   ++  btc-state
     |=  bs=btc-state:btc-wallet

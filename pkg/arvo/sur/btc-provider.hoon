@@ -24,6 +24,7 @@
   $%  [%set-credentials api-url=@t =network]
       [%add-whitelist wt=whitelist-target]
       [%remove-whitelist wt=whitelist-target]
+      [%set-interval inte=@dr]
   ==
 +$  action
   $%  [%address-info =address]

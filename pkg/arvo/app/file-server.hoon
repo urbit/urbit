@@ -351,6 +351,10 @@
   ::
       [%x %our ~]
     ``json+!>(s+(scot %p our.bowl))
+  ::
+      [%x %url *]
+    =/  url  t.t.path
+    ``noun+!>((~(has by serving) url))
   ==
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
