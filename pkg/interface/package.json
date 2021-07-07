@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@reach/disclosure": "^0.10.5",

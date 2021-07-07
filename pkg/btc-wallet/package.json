@@ -2,11 +2,11 @@
   "name": "btc-wallet",
   "version": "0.1.0",
   "main": "node install.js",
+  "private": true,
   "scripts": {
     "start": "webpack-dev-server --config config/webpack.dev.js",
     "build:dev": "cross-env NODE_ENV=production webpack --config config/webpack.dev.js",
-    "build:prod": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
-    "prepare": "cd ../.. && husky install pkg/btc-wallet/.husky"
+    "build:prod": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js"
   },
   "author": "Tlon Corp",
   "license": "MIT",
