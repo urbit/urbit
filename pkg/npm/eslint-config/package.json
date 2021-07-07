@@ -8,9 +8,7 @@
     "directory": "pkg/npm/eslint-config"
   },
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "author": "",
   "license": "MIT",
   "devDependencies": {
