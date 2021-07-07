@@ -217,11 +217,13 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
 
   onDown = (e: PointerEvent) => {
     this.scrollRef.setPointerCapture(e.pointerId);
+    document.documentElement.style.setProperty('--user-select', 'none');
     this.scrollDragging = true;
   }
 
   onUp = (e: PointerEvent) => {
     this.scrollRef.releasePointerCapture(e.pointerId);
+    document.documentElement.style.removeProperty('--user-select');
     this.scrollDragging = false;
   }
 
@@ -238,14 +240,14 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
   setScrollRef = (el: HTMLDivElement | null) => {
     if(!el) {
       this.scrollRef.removeEventListener('pointerdown', this.onDown);
-      this.scrollRef.removeEventListener('pointermove', this.onMove);
+      this.scrollRef.removeEventListener('mousemove', this.onMove);
       this.scrollRef.removeEventListener('pointerup', this.onUp);
       this.scrollRef = null;
       return;
     }
     this.scrollRef = el;
     this.scrollRef.addEventListener('pointerdown', this.onDown);
-    this.scrollRef.addEventListener('pointermove', this.onMove);
+    this.scrollRef.addEventListener('mousemove', this.onMove);
     this.scrollRef.addEventListener('pointerup', this.onUp);
   }
   // manipulate scrollbar manually, to dodge change detection
