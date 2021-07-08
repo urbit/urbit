@@ -2234,6 +2234,10 @@
       %play  (weld $(a l.tor) $(a r.tor))
     ==
   ::
+  ++  key                                               ::  list of keys
+    ^-  (list _?>(?=(^ a) k.n.a))
+    (turn tap |*(^ +<-))
+  ::
   ++  see                                               ::  tournament view
     ^-  (torn _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
     ?~  a  ~
