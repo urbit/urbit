@@ -1910,7 +1910,7 @@
   ::
   ++  size
     |*  t=(ltree)
-    ^-  atom
+    ^-  @
     ?~(t 0 s.t)
   ::
   ++  one                                               ::  singleton
@@ -2102,7 +2102,7 @@
     =>  .(k `_?>(?=(^ a) k.n.a)`k)
     |-  ^-  (unit (pair _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a)))
     ?~  a  ~
-    =/  tor=(tour _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
+    =/  tor=(torn _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
       see
     ?~  tor  ~
     ?-    -.tor
@@ -2223,7 +2223,7 @@
     $(b t.b, a (put k.i.b p.i.b v.i.b))
   ::
   ++  see                                               ::  tournament view
-    ^-  (tour _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
+    ^-  (torn _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
     ?~  a  ~
     ?~  t.a  ~
     ?-  -.t.a
@@ -2326,7 +2326,7 @@
       [%rlos s=@ p=(lnode k p v)]
   ==
 ::
-++  tour                                                ::  pry tourney view
+++  torn                                                ::  pry tourney view
   |$  [k p v]
   $@  ~
   $%  [%sing n=(lelem k p v)]
