@@ -208,7 +208,7 @@ class App extends React.Component {
 const WarmApp = process.env.NODE_ENV === 'production' ? App : hot(App);
 
 const selContacts = s => s.contacts[`~${window.ship}`];
-const selLocal = s => [s.set, s.omniboxShown, s.toggleOmnibox];
+const selLocal = s => [s.set, s.omniboxShown, s.toggleOmnibox, s.dark];
 const selSettings = s => [s.display, s.getAll];
 const selGraph = s => s.getShallowChildren;
 const selLaunch = s => [s.getRuntimeLag, s.getBaseHash];
@@ -216,7 +216,7 @@ const selLaunch = s => [s.getRuntimeLag, s.getBaseHash];
 const WithApp = React.forwardRef((props, ref) => {
   const ourContact = useContactState(selContacts);
   const [display, getAll] = useSettingsState(selSettings, shallow);
-  const [setLocal, omniboxShown, toggleOmnibox] = useLocalState(selLocal);
+  const [setLocal, omniboxShown, toggleOmnibox, dark] = useLocalState(selLocal);
   const getShallowChildren = useGraphState(selGraph);
   const [getRuntimeLag, getBaseHash] = useLaunchState(selLaunch, shallow);
 
@@ -227,6 +227,7 @@ const WithApp = React.forwardRef((props, ref) => {
       display={display}
       getAll={getAll}
       set={setLocal}
+      dark={dark}
       getShallowChildren={getShallowChildren}
       getRuntimeLag={getRuntimeLag}
       getBaseHash={getBaseHash}

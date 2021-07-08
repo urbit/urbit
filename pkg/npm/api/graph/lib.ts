@@ -1,17 +1,16 @@
-import _ from 'lodash';
 import { GroupPolicy, makeResource, Resource, resourceFromPath } from '../groups';
 
 import { decToUd, deSig, unixToDa, Scry } from '../lib';
 import { Enc, Path, Patp, PatpNoSig, Poke, Thread } from '../lib/types';
-import { Content, Graph, GraphChildrenPoke, GraphNode, GraphNodePoke, Post } from './types';
+import { Content, GraphChildrenPoke, GraphNode, GraphNodePoke, Post } from './types';
 import { patp2dec } from 'urbit-ob';
 
-export const GRAPH_UPDATE_VERSION: number = 2;
+export const GRAPH_UPDATE_VERSION = 2;
 
 export const createBlankNodeWithChildPost = (
   ship: PatpNoSig,
-  parentIndex: string = '',
-  childIndex: string = '',
+  parentIndex = '',
+  childIndex = '',
   contents: Content[]
 ): GraphNodePoke => {
   const date = unixToDa(Date.now()).toString();
@@ -57,8 +56,8 @@ export const markPending = (nodes: any): any => {
 export const createPost = (
   ship: PatpNoSig,
   contents: Content[],
-  parentIndex: string = '',
-  childIndex:string = 'DATE_PLACEHOLDER'
+  parentIndex = '',
+  childIndex = 'DATE_PLACEHOLDER'
 ): Post => {
   if (childIndex === 'DATE_PLACEHOLDER') {
     childIndex = unixToDa(Date.now()).toString();
@@ -117,7 +116,6 @@ const dmAction = <T>(data: T): Poke<T> => ({
 
 export { hookAction as graphHookAction };
 
-
 export const createManagedGraph = (
   ship: PatpNoSig,
   name: string,
@@ -139,7 +137,7 @@ export const createManagedGraph = (
       mark: moduleToMark(mod)
     }
   });
-}
+};
 
 export const createUnmanagedGraph = (
   ship: PatpNoSig,
@@ -165,7 +163,7 @@ export const joinGraph = (
 ): Thread<any> => viewAction('graph-join', {
   join: {
     resource: makeResource(ship, name),
-    ship,
+    ship
   }
 });
 
@@ -173,7 +171,7 @@ export const deleteGraph = (
   ship: PatpNoSig,
   name: string
 ): Thread<any> => viewAction('graph-delete', {
-  "delete": {
+  'delete': {
     resource: makeResource(`~${ship}`, name)
   }
 });
@@ -182,7 +180,7 @@ export const leaveGraph = (
   ship: Patp,
   name: string
 ): Thread<any> => viewAction('graph-leave', {
-  "leave": {
+  'leave': {
     resource: makeResource(ship, name)
   }
 });
@@ -201,7 +199,7 @@ export const groupifyGraph = (
       to
     }
   });
-}
+};
 
 export const evalCord = (
   cord: string
@@ -214,7 +212,7 @@ export const evalCord = (
       eval: cord
     }
   });
-}
+};
 
 export const addGraph = (
   ship: Patp,
@@ -229,7 +227,7 @@ export const addGraph = (
       mark
     }
   });
-}
+};
 
 export const addNodes = (
   ship: Patp,
@@ -252,24 +250,24 @@ export const addPost = (
   name: string,
   post: Post
 ): Thread<any> => {
-  let nodes: Record<string, GraphNode> = {};
+  const nodes: Record<string, GraphNode> = {};
   nodes[post.index] = {
     post,
     children: null
   };
   return addNodes(ship, name, nodes);
-}
+};
 
 export const addNode = (
   ship: Patp,
   name: string,
   node: GraphNodePoke
 ): Thread<any> => {
-  let nodes: Record<string, GraphNodePoke> = {};
+  const nodes: Record<string, GraphNodePoke> = {};
   nodes[node.post.index] = node;
 
   return addNodes(ship, name, nodes);
-}
+};
 
 export const createGroupFeed = (
   group: Resource,
@@ -332,7 +330,7 @@ export const removePosts = (
   name: string,
   indices: string[]
 ): Poke<any> => hookAction({
-  'remove-nodes': {
+  'remove-posts': {
     resource: { ship, name },
     indices
   }
@@ -363,8 +361,7 @@ export const addDmMessage = (our: PatpNoSig, ship: Patp, contents: Content[]): P
       }
     }
   };
-}
-
+};
 
 const encodeIndex = (idx: string) => idx.split('/').map(decToUd).join('/');
 
@@ -436,7 +433,6 @@ export const getShallowChildren = (ship: string, name: string, index = '') => ({
   path: `/shallow-children/${ship}/${name}${encodeIndex(index)}`
 });
 
-
 /**
  * Fetch newest nodes in a graph as a flat map, including children,
  * optionally starting at a specified key
@@ -456,7 +452,6 @@ export const getDeepOlderThan = (
   app: 'graph-store',
   path: `/deep-nodes-older-than/${ship}/${name}/${count}/${start ? decToUd(start) : 'null'}`
 });
-
 
 /**
  * Fetch a flat map of a nodes ancestors and firstborn children
