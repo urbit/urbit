@@ -50,7 +50,7 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
   const handleArchive = async () => {
     const [,,,name] = association.resource.split('/');
 
-    airlock.thread(deleteGraph(`~${window.ship}`, name));
+    airlock.thread(deleteGraph(window.ship, name));
     return history.push(props.rootUrl);
   };
 
