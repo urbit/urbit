@@ -2222,6 +2222,18 @@
       a
     $(b t.b, a (put k.i.b p.i.b v.i.b))
   ::
+  ++  tap                                               ::  convert to list
+    =<  $
+    =+  b=`(list _?>(?=(^ a) n.a))`~
+    |.  ^+  b
+    =/  tor  see
+    ?~  tor
+      b
+    ?-  -.tor
+      %sing  [n.tor b]
+      %play  (weld $(a l.tor) $(a r.tor))
+    ==
+  ::
   ++  see                                               ::  tournament view
     ^-  (torn _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
     ?~  a  ~
