@@ -38,7 +38,9 @@
       ::  next-nonce: next l1 nonce to use
       ::  next-batch: when then next l2 batch will be sent
       ::  pre: predicted l2 state
-      ::  flush: flag for deriving predicted state
+      ::  own: ownership of azimuth points
+      ::  derive-p: flag (derive predicted state)
+      ::  derive-o: flag (derive ownership state)
       ::
       pending=(list pend-tx)
     ::
@@ -51,7 +53,9 @@
       next-nonce=(unit @ud)
       next-batch=time
       pre=^state:naive
-      flush=?
+      own=owners
+      derive-p=?
+      derive-o=?
     ::
       ::  pk: private key to send the roll
       ::  frequency: time to wait between sending batches (TODO fancier)
@@ -66,6 +70,8 @@
       chain-id=@
   ==
 ::
++$  init     [nas=^state:naive own=owners]
++$  owners   (jug address:naive [ship point:naive])
 +$  config
   $%  [%frequency frequency=@dr]
       [%setkey pk=@]
@@ -110,7 +116,7 @@
     =^  card  next-batch  set-timer
     :_  this
     :~  card
-        [%pass /azimuth-txs %agent [our.bowl %azimuth] %watch /txs]
+        [%pass /azimuth-events %agent [our.bowl %azimuth] %watch /event]
     ==
   ::
   ++  on-save  !>(state)
@@ -170,7 +176,7 @@
           ``noun+!>(pending)
         %+  skim  pending
         |=  pend-tx
-        =(u.wer (get-l1-address tx.raw-tx pre))
+        =(u.wer (need (get-l1-address tx.raw-tx pre)))
       ::  by-ship
       ::
       =;  pending=(list pend-tx)
@@ -251,7 +257,7 @@
       ?~  addr=(slaw %ux wat)
         ~
       %~  tap  in
-      (~(get ju owners.pre) u.addr)
+      (~(get ju own) u.addr)
     ::
     ++  config
       :+  ~  ~
@@ -278,7 +284,14 @@
       ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
           %wake
         =.  state  (predicted-state canonical-state):do
-        `this(flush &)
+        `this(derive-p &)
+      ==
+    ::
+        [%owners ~]
+      ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
+          %wake
+        =.  own.state  canonical-owners:do
+        `this(derive-o &)
       ==
     ::
         [%resend @ @ ~]
@@ -301,9 +314,9 @@
     ^-  (quip card _this)
     |^
     ?+  wire  (on-agent:def wire sign)
-      [%send @ @ *]     (send-batch i.t.wire i.t.t.wire sign)
-      [%azimuth-txs ~]  (azimuth-update sign)
-      [%nonce ~]        (nonce sign)
+      [%send @ @ *]        (send-batch i.t.wire i.t.t.wire sign)
+      [%azimuth-events ~]  (azimuth-event sign)
+      [%nonce ~]           (nonce sign)
     ==
     ::
     ++  send-batch
@@ -347,7 +360,7 @@
         ==
       ==
     ::
-    ++  azimuth-update
+    ++  azimuth-event
       |=  =sign:agent:gall
       ^-  (quip card _this)
       ?+  -.sign  [~ this]
@@ -366,13 +379,12 @@
           [cards this]
         ::
             %naive-state
-          ~&  >  %received-naive-state
-          :-  ~
-          ::  cache naive state, received upon innitializing subscription
-          ::  this assumes that /app/azimuth has already processed eth data
+          ~&  >  %received-azimuth-state
+          ::  cache naive and ownership state
           ::
-          =.  state  (predicted-state:do !<(^state:naive q.cage.sign))
-          this
+          =^  nas  own.state  !<(init q.cage.sign)
+          =.  state  (predicted-state:do nas)
+          `this
         ==
       ==
     ::
@@ -475,6 +487,16 @@
     (scot %da now.bowl)
     /nas/nas
   ==
+::  +canonical-owners: load current azimuth point ownership
+::
+++  canonical-owners
+  .^  owners
+    %gx
+    (scot %p our.bowl)
+    %azimuth
+    (scot %da now.bowl)
+    /own/own
+  ==
 ::  +predicted-state
 ::
 ::    derives predicted state from pending/sending txs and
@@ -522,7 +544,7 @@
       ::  if tx was already seen here, skip
       ::
       $(txs t.txs)
-    =^  gud=?  pre.state
+    =^  gud=?  state
       (try-apply pre.state [force raw-tx]:tx)
     =?  valid  gud  (snoc valid tx)
     =?  finding.state  !gud
@@ -536,24 +558,74 @@
   ::
   ++  try-apply
     |=  [nas=^state:naive force=? =raw-tx:naive]
-    ^-  [success=? _nas]
+    ^-  [success=? _state]
+    =/  cache-nas  nas
     =/  chain-t=@t  (ud-to-ascii:naive chain-id)
     ?.  (verify-sig-and-nonce:naive verifier:lib chain-t nas raw-tx)
       ~&  [%verify-sig-and-nonce %failed]
-      [force nas]
+      [force state]
     =^  *  points.nas
       (increment-nonce:naive nas from.tx.raw-tx)
     ?~  nex=(receive-tx:naive nas tx.raw-tx)
-      [force nas]
-    [& +.u.nex]
+      ::  TODO: confirm this works:
+      ::    before, we incremented nonce all the time,
+      ::    even if nex failed. now, only when =(& force)
+      ::
+      [force state(pre ?:(force nas cache-nas))]
+    =*  predicted  +.u.nex
+    =*  diffs      -.u.nex
+    |^
+    :-  &
+    %_  state
+      pre  predicted
+      own  update-ownership
+    ==
+    ::
+    ::  +update-ownership
+    ::
+    ::    updates ownership of azimuth points based on diffs received
+    ::    from /app/azimuth and a previous naive state
+    ::
+    ::   TODO: move to /lib
+    ::
+    ++  update-ownership
+      %+  roll  diffs
+      |=  [=diff:naive owners=_own.state]
+      ^+  owners
+      =,  orm:naive
+      ?.  ?=([%point *] diff)  owners
+      =/  old=(unit point:naive)  (get points.cache-nas ship.diff)
+      =/  new=point:naive  (need (get points.predicted ship.diff))
+      =*  event  +>.diff
+      =;  [to=@ux from=@ux]
+        =?  owners  !=(from 0x0)
+          ?>  ?=(^ old)
+        ?:  =(to 0x0)  owners
+        (~(put ju owners) to [ship.diff new])
+      ?+    -.event  [0x0 0x0]
+          %owner
+        [+.event ?~(old 0x0 address.owner.own.u.old)]
+      ::
+          %spawn-proxy
+        [+.event ?~(old 0x0 address.spawn-proxy.own.u.old)]
+      ::
+          %management-proxy
+        [+.event ?~(old 0x0 address.management-proxy.own.u.old)]
+      ::
+          %voting-proxy
+        [+.event ?~(old 0x0 address.voting-proxy.own.u.old)]
+      ::
+          %transfer-proxy
+        [+.event ?~(old 0x0 address.transfer-proxy.own.u.old)]
+      ==
+    --
   --
 ::
 ++  get-l1-address
   |=  [=tx:naive nas=^state:naive]
-  ^-  address:ethereum
-  ?~  point=(get:orm:naive points.nas ship.from.tx)
-    !!
-  =<  address
+  ^-  (unit address:ethereum)
+  ?~  point=(get:orm:naive points.nas ship.from.tx)  ~
+  =<  `address
   (proxy-from-point:naive proxy.from.tx u.point)
 ::
 ++  on-action
@@ -656,25 +728,32 @@
 ++  take-tx
   |=  [force=? =raw-tx:naive]
   ^-  (quip card _state)
-  =/  =address:ethereum
+  =/  address=(unit address:ethereum)
     (get-l1-address tx.raw-tx pre)
+  ?~  address
+    ::  TODO: add tx to the history as failed?
+    ::
+    [~ state]
   =/  hash=@ux   (hash-raw-tx raw-tx)
   ::  TODO: what if this hash/tx is already in the history?
-  ::  check in finding that hash doesn't exist ?
+  ::    e.g. if previously failed, but now it will go through
+  ::    a) check in :finding that hash doesn't exist and if so, skip ?
+  ::    b) extract the status from :finding, use it to delete
+  ::      the entry in :history, and then insert it as %pending ?
   ::
   :: =/  not-sent=?  !(~(has by finding) hash)
   :: =?  pending  not-sent
   =.  pending
-    (snoc pending [force address raw-tx])
+    (snoc pending [force u.address raw-tx])
   :: =?  history  not-sent
   =.  history
-    %+  ~(put ju history)  address
+    %+  ~(put ju history)  u.address
     [[%pending ~] hash (l2-tx +<.tx.raw-tx)]
   :: ?.  not-sent  ~&  "skip"  [~ state]
   ::  toggle flush flag
   ::
-  :_  state(flush ?:(flush | &))
-  ?.  flush  ~
+  :_  state(derive-p ?:(derive-p | derive-p))
+  ?.  derive-p  ~
   ::  derive predicted state in 5m.
   ::
   [(wait:b:sys /predict (add ~m5 now.bowl))]~
@@ -695,7 +774,7 @@
       ~&([dap.bowl %no-nonce] [~ state])
     =/  nonce=@ud   u.next-nonce
     =:  pending     ~
-        flush       &
+        derive-p     &
         next-nonce  `+(u.next-nonce)
       ::
           sending
@@ -781,6 +860,12 @@
 ++  on-naive-diff
   |=  =diff:naive
   ^-  (quip card _state)
+  ?:  ?=(%point -.diff)
+    :_  state(derive-o ?:(derive-o | derive-o))
+    ?.  derive-o  ~
+    ::  calculate ownership in 5m.
+    ::
+    [(wait:b:sys /owners (add ~m5 now.bowl))]~
   ?.  ?=(%tx -.diff)
     [~ state]
   =/  =keccak  (hash-raw-tx raw-tx.diff)
@@ -822,15 +907,15 @@
       :+  [%sending ~]
         keccak
       (l2-tx +<.tx.raw-tx.diff)
-    =/  =address:ethereum
-      (get-l1-address tx.raw-tx.diff pre)
-    %+  ~(put ju (~(del ju history) address tx))
-      address
+    ?~  addr=(get-l1-address tx.raw-tx.diff pre)
+      history
+    %+  ~(put ju (~(del ju history) u.addr tx))
+      u.addr
     %_  tx
       status  ?~(err.diff [%confirmed ~] [%failed ~])
     ==
-  :_  state(flush ?:(flush | &))
-  ?.  flush  ~
+  :_  state(derive-p ?:(derive-p | derive-p))
+  ?.  derive-p  ~
   ::  derive predicted state in 5m.
   ::
   [(wait:b:sys /predict (add ~m5 now.bowl))]~

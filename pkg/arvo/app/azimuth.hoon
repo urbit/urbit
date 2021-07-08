@@ -69,6 +69,7 @@
   ?~  data  *@ux
   ?:  =(data '0x')  *@ux
   (hex-to-num:ethereum data)
+::  TODO: move to /lib
 ::
 ++  update-ownership
   |=  [=diff:naive own=owners old=(unit point:naive) new=point:naive]
@@ -86,7 +87,7 @@
     [+.event ?~(old 0x0 address.owner.own.u.old)]
   ::
       %spawn-proxy
-    [+.event ?~(old 0x0 address.transfer-proxy.own.u.old)]
+    [+.event ?~(old 0x0 address.spawn-proxy.own.u.old)]
   ::
       %management-proxy
     [+.event ?~(old 0x0 address.management-proxy.own.u.old)]
@@ -95,7 +96,7 @@
     [+.event ?~(old 0x0 address.voting-proxy.own.u.old)]
   ::
       %transfer-proxy
-    [+.event ?~(old 0x0 address.spawn-proxy.own.u.old)]
+    [+.event ?~(old 0x0 address.transfer-proxy.own.u.old)]
   ==
 ::
 ++  run-logs
@@ -169,16 +170,16 @@
   :-  [%give %fact ~[path] %azimuth-udiffs !>(~[i.udiffs])]
   $(udiffs t.udiffs)
 ::
-++  tx-update
+++  event-update
   |=  effects=(list tagged-diff)
   ^-  (list card:agent:gall)
   %+  murn  effects
   |=  tag=tagged-diff
   ^-  (unit card:agent:gall)
-  ?.  ?=(%tx +<.tag)  ~
+  ?.  |(?=(%tx +<.tag) ?=(%point +<.tag))  ~
   %-  some
   ^-  card:agent:gall
-  [%give %fact ~[/txs] %naive-diffs !>(+.tag)]
+  [%give %fact ~[/event] %naive-diffs !>(+.tag)]
 ::
 ++  get-network
   |=  =network
@@ -324,9 +325,9 @@
   |=  =path
   ^-  (quip card:agent:gall _this)
   ?<  =(/sole/drum path)
-  ?:  =(/txs path)
+  ?:  =(/event path)
     :_  this
-    [%give %fact ~ %naive-state !>(nas.state)]~
+    [%give %fact ~ %naive-state !>([nas.state own.state])]~
   =/  who=(unit ship)
     ?~  path  ~
     ?:  ?=([@ ~] path)  ~
@@ -343,18 +344,10 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
-      [%x %logs ~]      ``logs+!>(logs.state)
-      [%x %nas ~]       ``nas+!>(nas.state)
-      [%x %dns ~]       ``nas+!>(dns.nas.state)
-      [%x %points @ ~]
-    =*  wat  i.t.t.path
-    :+  ~  ~
-    :-  %noun
-    !>  ^-  (list [ship point:naive])
-    ?~  addr=(slaw %ux wat)
-      ~
-    %~  tap  in
-    (~(get ju own.state) u.addr)
+      [%x %logs ~]  ``noun+!>(logs.state)
+      [%x %nas ~]   ``noun+!>(nas.state)
+      [%x %dns ~]   ``noun+!>(dns.nas.state)
+      [%x %own ~]   ``noun+!>(own.state)
   ==
 ::
 ++  on-agent
@@ -387,7 +380,7 @@
   ::
   :_  this
   %+  weld
-    (tx-update effects)
+    (event-update effects)
   (jael-update (to-udiffs effects))
 ::
 ++  on-arvo   on-arvo:def
