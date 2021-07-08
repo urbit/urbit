@@ -98,6 +98,7 @@
   ^-  step:agent:gall
   ?+  path  (on-watch:def +<)
     [%drum *]  =^(c drum.state (peer:drum-core +<) [c this])
+    [%kiln *]  =^(c kiln.state (peer:kiln-core +<) [c this])
   ==
 ::
 ++  on-agent

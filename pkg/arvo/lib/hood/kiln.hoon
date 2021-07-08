@@ -3,8 +3,8 @@
 =,  space:userlib
 =,  format
 |%
-+$  state  [%2 pith-2]
-+$  state-2  state
++$  state    state-2
++$  state-2  [%2 pith-2]
 +$  state-1  [%1 pith-1]
 +$  state-0  [%0 pith-0]
 +$  any-state
@@ -83,9 +83,9 @@
 --
 |=  [bowl:gall state]
 ?>  =(src our)
-|_  moz=(list card:agent:gall)
-+$  state      ^state      ::  proxy
-+$  any-state  ^any-state  ::  proxy
+=|  moz=(list card:agent:gall)
+|%
+++  kiln  .
 ++  abet                                                ::  resolve
   [(flop moz) `state`+<+.$]
 ::
@@ -154,12 +154,12 @@
 ::
 ++  vats
   |_  [loc=desk rak=arak]
-  ::
-  ++  abet  ..vats(ark (~(put by ark) loc rak))
+  ++  vats  .
+  ++  abet  kiln(ark (~(put by ark) loc rak))
   ++  abed
     |=  lac=desk
     ~_  leaf/"kiln: {<lac>} not installed"
-    ..abet(loc lac, rak (~(got by ark) lac))
+    vats(loc lac, rak (~(got by ark) lac))
   ::
   ++  here  "{<loc>} from {<[ship desk]:rak>}"
   ++  make-wire  |=(step=@tas /kiln/vats/[loc]/[step])
@@ -168,8 +168,8 @@
     ?>  ?=([%kiln %vats @ @ ~] wire)
     (abed i.t.t.wire)
   ::
-  ++  emit  |=(card:agent:gall ..abet(..vats (^emit +<)))
-  ++  emil  |=((list card:agent:gall) ..abet(..vats (^emil +<)))
+  ++  emit  |=(card:agent:gall vats(kiln (^emit +<)))
+  ++  emil  |=((list card:agent:gall) vats(kiln (^emil +<)))
   ++  pass
     |%
     ++  find      (warp %find [%sing %y ud+1 /])
@@ -190,26 +190,26 @@
   ::
   ++  uninstall
     |=  lac=desk
-    ^+  ..vats
-    =.  ..abet  (abed lac)
+    ^+  kiln
+    =.  vats  (abed lac)
     ~>  %slog.0^leaf/"kiln: uninstalling {here}"
-    =.  ..abet
+    =.  vats
       %-  emil
       %+  turn  (get-apps lac)
       |=  =dude:gall
       [%pass /kiln/vats/uninstall %arvo %g %fade dude %idle]
     ::
-    ..vats(ark (~(del by ark) lac))
+    kiln(ark (~(del by ark) lac))
   ::  +install: set up desk sync to .lac to install all apps from [her rem]
   ::
   ++  install
     |=  [lac=desk her=ship rem=desk]
-    ^+  ..abet
+    ^+  vats
     =/  got  (~(get by ark) lac)
     ?:  =(`[her rem] got)
       ~>  %slog.0^leaf/"kiln: already tracking {here:(abed lac)}, ignoring"
-      ..abet
-    =?  ..vats  ?=(^ got)  (uninstall lac)
+      vats
+    =?  kiln  ?=(^ got)  (uninstall lac)
     =:  loc  lac
         rak  [her rem *aeon next=~]
       ==
@@ -218,35 +218,35 @@
   ::  +reset: resync after failure
   ::
   ++  reset
-    ^+  ..abet
+    ^+  vats
     =.  ark  (~(del by ark) loc)
     (install loc [ship desk]:rak)
   ::  +bump: handle kernel kelvin upgrade
   ::
-  ::    Apply merges and revive faded agents on all paused desks.
+  ::    Apply merges to revive faded agents on all paused desks.
   ::
   ++  bump
     |=  except=(set desk)
-    ^+  ..vats
+    ^+  kiln
     =/  kel=weft  [%zuse zuse]
     =/  ded  (~(dif in (get-blockers kel)) except)
     ?^  ded
       ~>  %slog.0^leaf/"kiln: desks blocked upgrade {<ded>}"
       !!
     =/  liv  (skip ~(tap by ark) |=([d=desk *] (~(has in except) d)))
-    =<  ..vats
-    |-  ^+  ..abet
-    ?~  liv  ..abet
-    $(liv t.liv, ..abet (emit merge:pass(loc p.i.liv, rak q.i.liv)))
+    =<  kiln
+    |-  ^+  vats
+    ?~  liv  vats
+    $(liv t.liv, vats (emit merge:pass(loc p.i.liv, rak q.i.liv)))
   ::
   ++  take
     |=  [=wire syn=sign-arvo]
-    ^+  ..abet
-    =.  ..abet  (from-wire wire)
+    ^+  vats
+    =.  vats  (from-wire wire)
     ?>  ?=([%kiln %vats @ @ ~] wire)
     ?+    i.t.t.t.wire
         ~>  %slog.0^leaf/"kiln: vats-bad-take {<t.t.t.wire>}"
-        ..abet
+        vats
       %find      (take-find syn)
       %sync      (take-sync syn)
       %download  (take-download syn)
@@ -295,12 +295,12 @@
     ?:  ?=(%| -.p.syn)
       =+  "kiln: merge into {here} failed, waiting for next revision"
       %-  (slog leaf/- p.p.syn)
-      ..abet
+      vats
     ~>  %slog.0^leaf/"merge into {here} succeeded; reviving agents"
     %-  emil
     %+  turn  (get-apps loc)
     |=  =dude:gall
-    [/kiln/fade/[dude] %pass %arvo %g %fade dude %jolt]
+    [%pass /kiln/fade/[dude] %arvo %g %fade dude %jolt]
   --
 ::  +get-ankh: extract $ankh from clay %v response $rant
 ::
@@ -419,7 +419,7 @@
       %find        (take-find sign-arvo)
       %sync        (take-sync sign-arvo)
       %download    (take-download sign-arvo)
-      %merge-home  (take-merge-home sign-arvo)
+      %merge-base  (take-merge-base sign-arvo)
       %merge-kids  (take-merge-kids sign-arvo)
     ==
   ::
@@ -470,25 +470,28 @@
         ~
       (get-blockers new-weft)
     ::
-    ?^  blockers
-      =.  ..abet  (render-ket "OTA to %base blocked on {<blockers>}"
-      %-  emil  :~
-        :*  %pass  (make-wire /sync)  %arvo  %c
-            %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
-        ==
-        ::  TODO: emit subscription update here
-      ==
+    ?.  =(~ blockers)
+      =.  ..abet  (render-ket "OTA to %base blocked on {<blockers>}" ~)
+      %-  emil
+      :~  :*  %pass  (make-wire /sync)  %arvo  %c
+              %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
+          ==
+          :*  %give  %fact  [/vats]~  %kiln-vats-diff
+              !>([%blocked ota=u.ota weft=new-weft blockers=blockers])
+      ==  ==
     ::
     =/  =germ  (get-germ %base)
     =.  ..abet  (render-ket "applying OTA to %base" ~)
-    %-  emil
-    :~  :*  %pass  (make-wire /merge-base)  %arvo  %c
-            %merg  %base  ship.u.ota  desk.u.ota  ud+(dec aeon.u.ota)  germ
-        ==
-        :*  %pass  (make-wire /sync)  %arvo  %c
-            %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
-        ==
-    ==
+    =.  ..abet
+      =<  ?>(?=(^ ota) .)
+      %-  emil
+      :~  :*  %pass  (make-wire /merge-base)  %arvo  %c
+              %merg  %base  ship.u.ota  desk.u.ota  ud+(dec aeon.u.ota)  germ
+          ==
+          :*  %pass  (make-wire /sync)  %arvo  %c
+              %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
+      ==  ==
+    (bump:vats blockers=~)
   ::
   ++  take-merge-base
     |=  =sign-arvo
@@ -498,13 +501,25 @@
       =.  ..abet
         =/  =tape  "OTA to %base failed, maybe because sunk; restarting"
         (render-ket tape `p.p.sign-arvo)
+      =.  ..abet
+        =<  ?>(?=(^ ota) .)
+        =/  fact  merge-base-fail/[u.ota p.p.sign-arvo]
+        (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
       (poke `[ship desk]:u.ota)
     ::
     ?:  ?=(%| -.p.sign-arvo)
-      =/  =tape  "OTA to %base failed, waiting for next revision"
-      (render-ket tape `p.p.sign-arvo)
+      =.  ..abet
+        =/  =tape  "OTA to %base failed, waiting for next revision"
+        (render-ket tape `p.p.sign-arvo)
+      =/  fact  merge-base-fail/[u.ota p.p.sign-arvo]
+      (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
+    ::
     =.  ..abet  (render-ket "OTA to %base succeeded" ~)
     =.  ..abet  (render-ket "applying OTA to %kids" ~)
+    =.  ..abet
+      =<  ?>(?=(^ ota) .)
+      =/  fact  merge-base/u.ota
+      (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
     =/  =germ  (get-germ %kids)
     %:  emit
       %pass  (make-wire /merge-kids)  %arvo  %c
@@ -519,7 +534,16 @@
       =.  ..abet
         =/  =tape  "OTA to %kids failed, maybe because sunk; restarting"
         (render-ket tape `p.p.sign-arvo)
+      =.  ..abet
+        =<  ?>(?=(^ ota) .)
+        =/  fact  merge-kids-fail/[u.ota p.p.sign-arvo]
+        (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
       (poke `[ship desk]:u.ota)
+    ::
+    =.  ..abet
+      =<  ?>(?=(^ ota) .)
+      =/  fact  merge-kids/u.ota
+      (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
     ::
     ?-  -.p.sign-arvo
       %&  (render-ket "OTA to %kids succeeded" ~)
@@ -583,7 +607,7 @@
   =/  recur  ~s1
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
-    (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
+  (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
 ::
 ++  poke-fuse
   |=  k=kiln-fuse
@@ -706,6 +730,16 @@
   ?~  ota
     "OTAs disabled"
   "OTAs enabled from {<desk.u.ota>} on {<ship.u.ota>}"
+::  +peer: handle %watch
+::
+++  peer
+  |=  =path
+  ?>  (team:title our src)
+  ?+    path  ~|(kiln-path/path !!)
+      [%vats ~]
+    =/  snap  [ota=ota ark=ark]
+    abet(moz :_(moz [%give %fact ~ kiln-vats-snap/!>(snap)]))
+  ==
 ::
 ++  take-agent
   |=  [=wire =sign:agent:gall]
