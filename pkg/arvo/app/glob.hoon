@@ -5,8 +5,8 @@
 /-  glob, *resource
 /+  default-agent, verb, dbug
 |%
-++  landscape-hash  0v4.obfai.util8.gamp7.dil69.e9amp
-++  btc-wallet-hash  0v2.ifoe4.fbv35.aigir.66su4.fbspu
+++  landscape-hash  0v1qbab.k47iv.q3fmj.is15l.a1r81
+++  btc-wallet-hash  0v7.v4dng.o33qi.kc497.5jc02.ke5es
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
 +$  state-1  [%1 =globs:glob]
 +$  all-states

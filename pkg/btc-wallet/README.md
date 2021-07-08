@@ -5,4 +5,4 @@ dojo:
 
 it should return with the following hash:
 
-`0v2.ifoe4.fbv35.aigir.66su4.fbspu`
+`0v7.v4dng.o33qi.kc497.5jc02.ke5es`
