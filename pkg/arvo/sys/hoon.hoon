@@ -2225,12 +2225,11 @@
   ++  see                                               ::  tournament view
     ^-  (torn _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
     ?~  a  ~
-    ?~  t.a  ~
+    ?~  t.a
+      [%sing n.a]
     ?-  -.t.a
-        %llos
-      [%play [n.p.t.a l.p.t.a m.p.t.a] [n.a r.p.t.a m.a]]
-        %rlos
-      [%play [n.a l.p.t.a m.p.t.a] [n.p.t.a r.p.t.a m.a]]
+      %llos  [%play [n.p.t.a l.p.t.a m.p.t.a] [n.a r.p.t.a m.a]]
+      %rlos  [%play [n.a l.p.t.a m.p.t.a] [n.p.t.a r.p.t.a m.a]]
     ==
   ::
   ++  top                                               ::  maximum key
