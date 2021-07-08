@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Root } from './js/components/root.js';
+import Root from './js/components/root.js';
 import { api } from './js/api.js';
-import { subscription } from "./js/subscription.js";
+import { SettingsProvider } from './js/hooks/useSettings';
 
 import './css/indigo-static.css';
 import './css/fonts.css';
@@ -13,11 +13,13 @@ import './css/custom.css';
 const channel = new window.channel();
 api.setChannel(window.ship, channel);
 
-
 if (module.hot) {
-  module.hot.accept()
+  module.hot.accept();
 }
 
-ReactDOM.render((
-  <Root channel={channel}/>
-), document.querySelectorAll("#root")[0]);
+ReactDOM.render(
+  <SettingsProvider channel={channel}>
+    <Root />
+  </SettingsProvider>,
+  document.querySelectorAll('#root')[0]
+);
