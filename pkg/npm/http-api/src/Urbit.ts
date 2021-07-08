@@ -214,6 +214,7 @@ export class Urbit {
               if (data.hasOwnProperty('ok')) {
                 funcs.onSuccess();
               } else if (data.hasOwnProperty('err')) {
+                console.error(data.err);
                 funcs.onError(data.err);
               } else {
                 console.error('Invalid poke response', data);
@@ -223,6 +224,7 @@ export class Urbit {
               (data.response === 'poke' && this.outstandingSubscriptions.has(data.id))) {
               const funcs = this.outstandingSubscriptions.get(data.id);
               if (data.hasOwnProperty('err')) {
+                console.error(data.err);
                 funcs.err(data.err, data.id);
                 this.outstandingSubscriptions.delete(data.id);
               }
