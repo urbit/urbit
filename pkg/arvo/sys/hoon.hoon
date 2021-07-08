@@ -1906,19 +1906,24 @@
   ::  balancing, tournament internals
   ::
   |%
-  ++  mega  4
+  ++  mega  4                                           ::  balancing factor
   ::
   ++  size
     |*  t=(ltree)
     ^-  atom
     ?~(t 0 s.t)
   ::
-  ++  llos
+  ++  one                                               ::  singleton
+    |*  [k=* p=* v=*]
+    ^-  (pry)
+    [[k p v] ~ k]
+  ::
+  ++  llos                                              ::  left loser
     |*  a=(lnode)
     ^-  (ltree _k.n.a _p.n.a _v.n.a)
     [%llos +((add (size l.a) (size r.a))) a]
   ::
-  ++  rlos
+  ++  rlos                                              ::  right loser
     |*  a=(lnode)
     ^-  (ltree _k.n.a _p.n.a _v.n.a)
     [%rlos +((add (size l.a) (size r.a))) a]
@@ -1983,7 +1988,7 @@
     ?>  ?=(^ r.a)
     ?-  -.r.a
         %llos
-      ?:  (beat [p.n.a k.n.a] [p.n.p.r.a k.n.p.r.a])
+      ?:  (win [p.n.a k.n.a] [p.n.p.r.a k.n.p.r.a])
         (llos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
       (llos n.p.r.a (llos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
         %rlos
@@ -1995,10 +2000,8 @@
     ^-  (ltree _k.n.a _p.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?-  -.r.a
-        %llos
-      (rlos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
-        %rlos
-      (rlos n.p.r.a (rlos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+        %llos  (rlos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+        %rlos  (rlos n.p.r.a (rlos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
     ==
   ::
   ++  lrsin
@@ -2006,10 +2009,8 @@
     ^-  (ltree _k.n.a _p.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?-  -.l.a
-        %llos
-      (llos n.p.l.a l.p.l.a m.p.l.a (llos n.a r.p.l.a m.a r.a))
-        %rlos
-      (llos n.a l.a m.a (llos n.p.l.a r.p.l.a m.a r.a))
+        %llos  (llos n.p.l.a l.p.l.a m.p.l.a (llos n.a r.p.l.a m.a r.a))
+        %rlos  (llos n.a l.p.l.a m.p.l.a (llos n.p.l.a r.p.l.a m.a r.a))
     ==
   ::
   ++  rrsin
@@ -2020,9 +2021,9 @@
         %llos
       (llos n.p.l.a l.p.l.a m.p.l.a (rlos n.a r.p.l.a m.a r.a))
         %rlos
-      ?:  (beat [p.n.a k.n.a] [p.n.p.l.a k.n.p.l.a])
+      ?:  (win [p.n.a k.n.a] [p.n.p.l.a k.n.p.l.a])
         (rlos n.a l.p.l.a m.p.l.a (llos n.p.l.a r.p.l.a m.a r.a))
-      (rlos n.p.l.a (rlos n.a r.p.l.a m.a r.a))
+      (rlos n.p.l.a l.p.l.a m.p.l.a (rlos n.a r.p.l.a m.a r.a))
     ==
   ::
   ++  lldub
@@ -2030,10 +2031,8 @@
     ^-  (ltree _k.n.a _p.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?-  -.r.a
-        %llos
-      (llsin n.a l.a m.a (lrsin p.r.a))
-        %rlos
-      (llsin n.a l.a m.a (rrsin p.r.a))
+        %llos  (llsin n.a l.a m.a (lrsin p.r.a))
+        %rlos  (llsin n.a l.a m.a (rrsin p.r.a))
     ==
   ::
   ++  lrdub
@@ -2041,10 +2040,8 @@
     ^-  (ltree _k.n.a _p.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?-  -.l.a
-        %llos
-      (lrsin n.a (llsin p.l.a) m.a r.a)
-        %rlos
-      (lrsin n.a (rlsin p.l.a) m.a r.a)
+        %llos  (lrsin n.a (llsin p.l.a) m.a r.a)
+        %rlos  (lrsin n.a (rlsin p.l.a) m.a r.a)
     ==
   ::
   ++  rldub
@@ -2052,10 +2049,8 @@
     ^-  (ltree _k.n.a _p.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?-  -.r.a
-        %llos
-      (rlsin n.a l.a m.a (lrsin p.r.a))
-        %rlos
-      (rlsin n.a l.a m.a (rrsin p.r.a))
+        %llos  (rlsin n.a l.a m.a (lrsin p.r.a))
+        %rlos  (rlsin n.a l.a m.a (rrsin p.r.a))
     ==
   ::
   ++  rrdub
@@ -2063,32 +2058,233 @@
     ^-  (ltree _k.n.a _p.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?-  -.l.a
-        %llos
-      (rrsin n.a (llsin p.l.a) m.a r.a)
-        %rlos
-      (rrsin n.a (rlsin p.l.a) m.a r.a)
+        %llos  (rrsin n.a (llsin p.l.a) m.a r.a)
+        %rlos  (rrsin n.a (rlsin p.l.a) m.a r.a)
     ==
-  ::  play
   ::
-  ++  toy
+  ++  toy                                               ::  play
     |*  [a=(pry) b=(pry)]
-    ?>  =(_a _b)
     |-  ^+  a
     ?~  a
       b
     ?~  b
       a
-    ?:  (beat [p.n.a k.n.a] [p.n.b k.n.b])
+    ?:  (win [p.n.a k.n.a] [p.n.b k.n.b])
       [n.a (rbal n.b t.a m.a t.b) m.b]
     [n.b (lbal n.a t.a m.a t.b) m.b]
   ::
-  ++  beat
+  ++  sec                                               ::  second best
+    |*  [l=(ltree) m=*]
+    |-
+    ^-  (pry _?>(?=(^ l) k.n.p.l) _?>(?=(^ l) p.n.p.l) _?>(?=(^ l) v.n.p.l))
+    ?~  l
+      ~
+    ?-  -.l
+      %llos  (toy [n.p.l l.p.l m.p.l] $(l r.p.l))
+      %rlos  (toy $(l l.p.l, m m.p.l) [n.p.l r.p.l m])
+    ==
+  ::
+  ++  win                                               ::  compare
     |*  [[p=* q=*] [r=* s=*]]
     ?|  (gor p r)
         ?&(=(p r) (gor q s))
     ==
   --
-  !!
+  ::
+  =|  a=(pry)
+  |@
+  ++  deb  +>                                           ::  internals access
+  ::
+  ++  wyt  ?~(a 0 +((size t.a)))                        ::  queue size
+  ::
+  ++  get                                               ::  get binding by key
+    |*  k=*
+    =>  .(k `_?>(?=(^ a) k.n.a)`k)
+    |-  ^-  (unit (pair _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a)))
+    ?~  a  ~
+    =/  tor=(tour _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
+      see
+    ?~  tor  ~
+    ?-    -.tor
+        %sing
+      ?.  =(k k.n.tor)
+        ~
+      (some [p.n.tor v.n.tor])
+    ::
+        %play
+      ?:  (gor k top(a l.tor))
+        $(a l.tor)
+      $(a r.tor)
+    ==
+  ::
+  ++  has                                               ::  key existence check
+    |*  k=*
+    !=(~ (get k))
+  ::
+  ++  min                                               ::  lowest-pri element
+    ^-  (unit _?>(?=(^ a) n.a))
+    ?~  a
+      ~
+    (some n.a)
+  ::
+  ++  put                                               :: add [key prio val]
+    |*  [k=* p=* v=*]
+    |-  ^+  a
+    ?~  a
+      (one k p v)
+    ?:  ?=(~ t.a)
+      ?:  =(k m.a)
+        (one k p v)
+      ?:  (gor k m.a)
+        (toy (one k p v) (one n.a))
+      (toy (one n.a) (one k p v))
+    ?-    -.t.a
+        %rlos
+      ?:  (gor k m.p.t.a)
+        (toy $(a [n.a l.p.t.a m.p.t.a]) [n.p.t.a r.p.t.a m.a])
+      (toy [n.a l.p.t.a m.p.t.a] $(a [n.p.t.a r.p.t.a m.a]))
+    ::
+        %llos
+      ?:  (gor k m.p.t.a)
+        (toy $(a [n.p.t.a l.p.t.a m.p.t.a]) [n.a r.p.t.a m.a])
+      (toy [n.p.t.a l.p.t.a m.p.t.a] $(a [n.a r.p.t.a m.a]))
+    ==
+  ::
+  ++  del                                               ::  delete at key k
+    |*  k=*
+    |-  ^+  a
+    ?~  a
+      ~
+    ?:  ?=(~ t.a)
+      ?:  =(k k.n.a)  ~
+      (one n.a)
+    ?-    -.t.a
+        %rlos
+      ?:  (gor k m.p.t.a)
+        (toy $(a [n.a l.p.t.a m.p.t.a]) [n.p.t.a r.p.t.a m.a])
+      (toy [n.a l.p.t.a m.p.t.a] $(a [n.p.t.a r.p.t.a m.a]))
+    ::
+        %llos
+      ?:  (gor k m.p.t.a)
+        (toy $(a [n.p.t.a l.p.t.a m.p.t.a]) [n.a r.p.t.a m.a])
+      (toy [n.p.t.a l.p.t.a m.p.t.a] $(a [n.a r.p.t.a m.a]))
+    ==
+  ::
+  ++  cut                                               ::  delete min-prio val
+    ^+  a
+    =/  b  bot
+    ?~  b  a
+    q.u.b
+  ::
+  ++  jab                                               ::  update at key k
+    =/  typ  (unit (pair _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a)))
+    |*  [k=_?>(?=(^ a) k.n.a) f=$-(typ (pair * typ))]
+    ^-  (pair * _a)
+    =/  ped  (pet k)
+    =?  a  ?=(^ ped)
+      q.u.ped
+    =/  pav
+      ?~  ped
+        ~
+      (some p.u.ped)
+    =/  bee  (f pav)
+    ?~  q.bee
+      [p.bee a]
+    [p.bee (put k p.u.q.bee q.u.q.bee)]
+  ::
+  ++  jib                                               ::  update at min-prio
+    =/  typ
+      (unit (trel _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a)))
+    |*  f=$-(typ (pair * typ))
+    =/  vue  bot
+    =/  may
+      |=  l=(unit (lelem))
+      ^+  a
+      ?~  l  a
+      (put k.u.l p.u.l v.u.l)
+    ?~  vue
+      =/  bee  (f ~)
+      :-  p.bee
+      ?~  q.bee
+        a
+      (put p.u.q.bee q.u.q.bee r.u.q.bee)
+    =/  bee  (f u.vue)
+    :-  p.bee
+    ?~  q.bee
+      a
+    (put p.u.q.bee q.u.q.bee r.u.q.bee)
+  ::
+  ++  gas                                               ::  concatenate
+    |=  b=(list [k=* p=* v=*])
+    =>  .(b `(list _?>(?=(^ a) n.a))`b)
+    |-  ^+  a
+    ?~  b
+      a
+    $(b t.b, a (put k.i.b p.i.b v.i.b))
+  ::
+  ++  see                                               ::  tournament view
+    ^-  (tour _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
+    ?~  a  ~
+    ?~  t.a  ~
+    ?-  -.t.a
+        %llos
+      [%play [n.p.t.a l.p.t.a m.p.t.a] [n.a r.p.t.a m.a]]
+        %rlos
+      [%play [n.a l.p.t.a m.p.t.a] [n.p.t.a r.p.t.a m.a]]
+    ==
+  ::
+  ++  top                                               ::  maximum key
+    ?~  a  !!
+    m.a
+  ::
+  ++  bot                                               ::  lowest-prio view
+    ^-  (unit (pair _?>(?=(^ a) n.a) _a))
+    ?~  a  ~
+    (some [n.a (sec t.a m.a)])
+  ::
+  ++  pet                                               ::  delete view
+    |*  k=_?>(?=(^ a) k.n.a)
+    ^-  (unit (pair _?>(?=(^ a) n.a) _a))
+    |-
+    ?~  a  ~
+    ?~  t.a
+      ?.  =(k k.n.a)  ~
+      (some [n.a ~])
+    ?-    -.t.a
+        %llos
+      ?:  (gor k m.p.t.a)
+        %+  biff
+        |=  z=(pair _?>(?=(^ a) n.a) _a)
+          [p.z (toy q.z [n.a r.p.t.a m.a])]
+        $(a [n.p.t.a l.p.t.a m.p.t.a])
+      %+  biff
+      |=  z=(pair _?>(?=(^ a) n.a) _a)
+        [p.z (toy [n.p.t.a l.p.t.a m.p.t.a] q.z)]
+      $(a [n.a r.p.t.a m.a])
+    ::
+        %rlos
+      ?:  (gor k m.p.t.a)
+        %+  biff
+        |=  z=(pair _?>(?=(^ a) n.a) _a)
+          [p.z (toy q.z [n.p.t.a r.p.t.a m.a])]
+        $(a [n.a l.p.t.a m.p.t.a])
+      %+  biff
+      |=  z=(pair _?>(?=(^ a) n.a) _a)
+        [p.z (toy [n.a l.p.t.a m.p.t.a] q.z)]
+      $(a [n.p.t.a r.p.t.a m.a])
+    ==
+  ::
+  ++  pan                                               ::  insert view
+    |*  e=(lelem _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
+    ^-
+      %+  pair
+        (unit (lelem _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a)))
+      _a
+    =/  vue  (pet k.e)
+    ?~  vue
+      [~ (put e)]
+    [(some p.u.vue) (put e)]
+  --
 ::
 ::::  2o: containers                                    ::
   ::                                                    ::
