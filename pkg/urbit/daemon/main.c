@@ -686,7 +686,7 @@ main(c3_i   argc,
       exit(1);
     }
     c3_free(u3_Host.dir_c);
-    u3_Host.dir_c = ".";
+    u3_Host.dir_c = strdup(".");
   }
 
   u3_ve_sysopt();
