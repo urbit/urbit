@@ -175,10 +175,14 @@
     ++  find      (warp %find [%sing %y ud+1 /])
     ++  sync      (warp %sync [%sing %w da+now /])
     ++  download  (warp %download [%sing %v ud+aeon.rak /])
-    ++  merge
+    ++  merge-main
       =/  germ  (get-germ loc)
       =/  =aeon  (dec aeon.rak)
-      (clay-card %merge [%merg loc ship.rak desk.rak ud+aeon germ])
+      (clay-card %merge-main [%merg loc ship.rak desk.rak ud+aeon germ])
+    ++  merge-kids
+      =/  germ  (get-germ %kids)
+      =/  =aeon  (dec aeon.rak)
+      (clay-card %merge-kids [%merg %kids ship.rak desk.rak ud+aeon germ])
     ::
     ++  warp  |=([s=term r=rave] (clay-card s %warp ship.rak desk.rak `r))
     ++  clay-card
@@ -239,7 +243,7 @@
     =<  kiln
     |-  ^+  vats
     ?~  liv  vats
-    $(liv t.liv, vats (emit merge:pass(loc p.i.liv, rak q.i.liv)))
+    $(liv t.liv, vats (emit merge-main:pass(loc p.i.liv, rak q.i.liv)))
   ::
   ++  take
     |=  [=wire syn=sign-arvo]
@@ -249,10 +253,11 @@
     ?+    i.t.t.t.wire
         ~>  %slog.0^leaf/"kiln: vats-bad-take {<t.t.t.wire>}"
         vats
-      %find      (take-find syn)
-      %sync      (take-sync syn)
-      %download  (take-download syn)
-      %merge     (take-merge syn)
+      %find        (take-find syn)
+      %sync        (take-sync syn)
+      %download    (take-download syn)
+      %merge-main  (take-merge-main syn)
+      %merge-kids  (take-merge-kids syn)
     ==
   ::
   ++  take-find
@@ -287,7 +292,7 @@
         =.  next.rak  (snoc next.rak [(dec aeon.rak) kel])
         (emit sync:pass)
       ~>  %slog.0^leaf/"kiln: merging into {here}"
-      (emil ~[merge sync]:pass)
+      (emil ~[merge-main sync]:pass)
     ::
     =/  old-ankh  ank:.^(dome cv+/(scot %p our)/base/(scot %da now))
     =/  old-weft  (get-kelvin old-ankh)
@@ -307,9 +312,9 @@
           !>([%blocked arak=rak weft=new-weft blockers=blockers])
       ==
     ~>  %slog.0^leaf/"kiln: applying OTA to {here}"
-    (emil ~[merge sync]:pass)
+    (emil ~[merge-main sync]:pass)
   ::
-  ++  take-merge
+  ++  take-merge-main
     |=  syn=sign-arvo
     ?>  ?=(%mere +<.syn)
     ?:  ?=([%| %ali-unavailable *] p.syn)
@@ -328,7 +333,26 @@
       [%pass /kiln/fade/[dude] %arvo %g %fade dude %jolt]
     ?.  =(%base loc)
       vats
-    vats(kiln (bump (sy %base ~)))
+    =.  kiln  (bump (sy %base %kids ~))
+    (emit merge-kids:pass)
+  ::
+  ++  take-merge-kids
+    |=  syn=sign-arvo
+    ?>  ?=(%mere +<.syn)
+    ?:  ?=([%| %ali-unavailable *] p.syn)
+      ~>  %slog.0^leaf/"kiln: OTA to %kids failed, maybe peer sunk; restarting"
+      =.  vats
+        =/  fact  merge-kids-sunk/[rak p.p.syn]
+        (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
+      reset
+    =/  fact
+      ?-  -.p.syn
+        %&  ~>  %slog.0^leaf/"kiln: OTA to %kids succeeded"
+            merge-kids/rak
+        %|  ~>  %slog.0^leaf/"kiln: OTA to %kids failed {<p.p.syn>}"
+            merge-kids-fail/[rak p.p.syn]
+      ==
+    (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
   --
 ::  +get-ankh: extract $ankh from clay %v response $rant
 ::
