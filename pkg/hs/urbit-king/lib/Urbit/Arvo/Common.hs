@@ -11,7 +11,7 @@
     Types used in both Events and Effects.
 -}
 module Urbit.Arvo.Common
-  ( KingId(..), ServId(..), SocketId(..), SocketType(..), SReqApi(..)
+  ( KingId(..), ServId(..), SocketId(..)
   , Vere(..), Wynn(..)
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
@@ -133,21 +133,6 @@ data HttpServerConf = HttpServerConf
 deriveNoun ''HttpServerConf
 
 -- Socket Configuration -------------------------------------------------------
-data SocketConf = SocketConf
-    { scFilePath :: FilePath
-    , scType :: SocketType
-    }
-  deriving (Show)
-data SocketType = STGeneric
-    | STReq SReqApi
-data SReqApi = SReqApi
-  { sReq :: Ship -> Word64 -> STM ()
-  -- , sKil :: Ship -> Word64 -> STM ()
-  }
-instance Show SocketType where
-  show = \case
-    STReq _      -> "STReq"
-    STGeneric -> "STGeneric"
 
 data SocketEvent
     = SocketStart Noun
@@ -156,6 +141,13 @@ data SocketEvent
   deriving (Eq, Ord, Show)
 
 deriveNoun ''SocketEvent
+
+data SocketConf = SocketConf
+    { scFilePath :: FilePath
+    }
+  deriving (Eq, Ord, Show)
+
+deriveNoun ''SocketConf
 
 -- Desk and Mime ---------------------------------------------------------------
 

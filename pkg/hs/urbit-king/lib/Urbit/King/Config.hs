@@ -16,12 +16,16 @@ data PierConfig = PierConfig
   , _pcDryRun    :: Bool
   , _pcSerfExe   :: Maybe Text
   , _pcSerfFlags :: [Serf.Flag]
+  , _pcSocketPath :: FilePath
   } deriving (Show)
 
 makeLenses ''PierConfig
 
 class HasPierPath a where
   pierPathL :: Lens' a FilePath
+
+class HasSocketPath a where
+  socketPathL :: Lens' a FilePath
 
 class HasDryRun a where
   dryRunL :: Lens' a Bool
@@ -34,6 +38,9 @@ instance HasPierPath PierConfig where
 
 instance HasDryRun PierConfig where
   dryRunL = pcDryRun
+
+instance HasSocketPath PierConfig where
+  socketPathL = pcSocketPath
 
 
 -------------------------------------------------------------------------------

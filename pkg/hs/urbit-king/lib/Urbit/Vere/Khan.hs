@@ -8,7 +8,7 @@ module Urbit.Vere.Khan
   )
 where
 
-import Urbit.Prelude hiding (Builder)
+import Urbit.Prelude
 
 import Urbit.Arvo                hiding (ServerId, reqUrl)
 import Urbit.King.App            ( killKingActionL
@@ -23,12 +23,14 @@ import Urbit.Vere.Khan.Socket
 import System.Random (Random(randomIO))
 
 -- Types -----------------------------------------------------------------------
-
+-- type HasKhanEnv e = (HasLogFunc e, HasPierConfig e)
 socketEv :: SocketEv -> Ev
 socketEv = EvBlip . BlipEvSocket
 
 bornEv :: KingId -> Ev
 bornEv king = socketEv $ SocketEvBorn (king, ()) ()
+liveEv :: SocketId ->  FilePath -> Ev
+liveEv sId file = socketEv $ SocketEvLive (sId, ()) file
 
 cancelFailed :: WorkError -> IO ()
 cancelFailed _ = pure ()
@@ -39,7 +41,7 @@ data Sock = Sock
   {
     sSocketId :: SocketId,
     sApi :: SockApi,
-    sConfig :: SocketConf,
+    sConfig :: SockConf,
     sFile :: FilePath
 
   }
@@ -106,30 +108,35 @@ khan env who plan isFake stderr = (initialEvents, runSocket)
     logInfo "Done reconnecting socket"
     pure res
 
+  liveFailed _ = pure ()
 
   handleEf :: Drv -> SocketEf -> IO ()
   handleEf drv = runRIO env . \case
     SESetConfig (i, ()) conf -> do
       logInfo (displayShow ("KHAN", "%set-config"))
       Sock {..} <- restart drv conf
-      -- logInfo (displayShow ("KHAN", "%set-config", "Sending %live"))
-      -- atomically $ plan (EvErr (liveEv sSocketId s) liveFailed)
+      logInfo (displayShow ("KHAN", "%set-config", "Sending %live"))
+      atomically $ plan (EvErr (liveEv sSocketId sFile) liveFailed)
+
       logInfo (displayShow ("KHAN", "%open-socket", "opening khan socket"))
     SEResponse (i, req, _seq, ()) ev -> do
       logDebug (displayShow ("KHAN", "%response"))
       execRespActs drv who (fromIntegral req) ev
     SEError(i, ()) () -> logDebug (displayShow ("KHAN", "%error"))
+
+
+
 startServ :: HasLogFunc e => (EvErr -> STM ()) -> IO () -> RIO e Sock
 startServ plan onFatal = do
-    logInfo (displayShow ("EYRE", "startServ"))
+    logInfo (displayShow ("KHAN", "startServ"))
     sockId <- io $ SocketId . UV . fromIntegral <$> (randomIO :: IO Word32)
     let onReq :: Ship -> Word64 -> STM ()
         onReq _ship reqId =
           plan $ (flip EvErr cancelFailed) $ socketEv $ SocketEvRequest (0, 1, 1, ()) (SocketReq {sFile = "khan.soc", sRequest = toNoun reqId})
-    let conf@SocketConf{..} = SocketConf {
-      scFilePath = "khan.soc"
-      , scType = STReq $ SReqApi { sReq = onReq }
-      }
+    let conf@SockConf{..} = SockConf {
+            scFilePath = "khan.soc"
+          , scType = STReq $ SReqApi { sReq = onReq }
+          }
 
     api <- serv onFatal conf
     pure (Sock sockId api conf scFilePath)

@@ -524,7 +524,7 @@ drivers env who isFake plan scry termSys stderr serfSIGINT stat sub = do
 
   putStrLn ("ship is " <> tshow who)
 
-  let initialEvents = mconcat [behnBorn,clayBorn,amesBorn,httpBorn,irisBorn,termBorn]
+  let initialEvents = mconcat [behnBorn,clayBorn,amesBorn,httpBorn,irisBorn,khanBorn,termBorn]
 
   let runDrivers = do
         behn <- runBehn
@@ -538,7 +538,7 @@ drivers env who isFake plan scry termSys stderr serfSIGINT stat sub = do
         -- have no events to offer.
         acquireWorker "Event Prioritization" $ forever $ atomically $ do
           let x = diEventSource
-          let eventSources = [x term, x clay, x behn, x iris, x eyre, x ames]
+          let eventSources = [x term, x khan, x clay, x behn, x iris, x eyre, x ames]
           pullEvent eventSources >>= \case
             Nothing -> retry
             Just rr -> plan rr

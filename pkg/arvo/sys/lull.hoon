@@ -2089,15 +2089,21 @@
   ::                                                    ::::
 ++  khan  ^?
   |%
+  +$  socket-config
+    $:
+        file=path
+    ==
   +$  gift                                              ::  out result <-$
     $%  [%avow syn=sign-arvo]                           ::  response to %fyrd
-    ==
+        [%set-config =socket-config]
+==
   +$  task                                              ::  in request ->$
     $~  [%vega ~]
     $%
         [%fyrd p=fyrd]                                  ::  jammed requests
         $>(%vega vane-task)                             :: vega
         $>(%trim vane-task)
+        $>(%born vane-task)
     ==
   +$  fyrd                                              ::  input
     $%  [%mas ~]                                        ::  |mass ocmmand
