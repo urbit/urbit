@@ -1,7 +1,7 @@
 Usage:
 
-  |fuse %dest base-beak mate//~nel/home= meet//~zod/kids/track
-  |fuse %old-desk base-beak only-that//~nus/test=, =overwrite &
+  |fuse %dest /=kids= mate//~nel/home= meet//~zod/kids/track
+  |fuse %old-desk /=kids= only-that//~nus/test=, =overwrite &
   |fuse %desk-to-cancel-fuse-into %cancel
 
 A %fuse request in clay replaces the contents of %destination-desk
