@@ -387,6 +387,46 @@
   ::
   _|?($:product)
 ::
+++  pri
+  |$  [k p v]
+  ::    priority search queue
+  ::
+  ::  a  `++pri` can be empty, or can contain a key/priority/value
+  ::  element, so-called 'loser tree' with the same type parameters, and
+  ::  maximum key.
+  ::
+  $@(~ [n=(lelem k p v) t=(ltree k p v) m=k])
+::
+++  lelem
+  |$  [k p v]
+  ::    pri element
+  ::
+  [k=k p=p v=v]
+::
+++  lnode
+  |$  [k p v]
+  ::    pri loser tree node
+  ::
+  [n=(lelem k p v) l=(ltree k p v) m=k r=(ltree k p v)]
+::
+++  ltree
+  |$  [k p v]
+  ::    pri loser tree
+  ::
+  $@  ~
+  $%  [%llos s=@ p=(lnode k p v)]
+      [%rlos s=@ p=(lnode k p v)]
+  ==
+::
+++  torn
+  |$  [k p v]
+  ::    pri tournament view
+  ::
+  $@  ~
+  $%  [%sing n=(lelem k p v)]
+      [%play l=(pri k p v) r=(pri k p v)]
+  ==
+::
 ++  tree
   |$  [node]
   ::    tree mold generator
@@ -433,6 +473,7 @@
   ::    2o: normalizing containers                      ::
   ::    2p: serialization                               ::
   ::    2q: molds and mold builders                     ::
+  ::    2r: psq logic                                   ::
   ::
 ~%  %two  +  ~
 |%
@@ -1915,7 +1956,7 @@
   ::
   ++  one                                               ::  singleton
     |*  [k=* p=* v=*]
-    ^-  (pry)
+    ^-  (pri)
     [[k p v] ~ k]
   ::
   ++  llos                                              ::  left loser
@@ -2063,7 +2104,7 @@
     ==
   ::
   ++  toy                                               ::  play
-    |*  [a=(pry) b=(pry)]
+    |*  [a=(pri) b=(pri)]
     |-  ^+  a
     ?~  a
       b
@@ -2076,7 +2117,7 @@
   ++  sec                                               ::  second best
     |*  [l=(ltree) m=*]
     |-
-    ^-  (pry _?>(?=(^ l) k.n.p.l) _?>(?=(^ l) p.n.p.l) _?>(?=(^ l) v.n.p.l))
+    ^-  (pri _?>(?=(^ l) k.n.p.l) _?>(?=(^ l) p.n.p.l) _?>(?=(^ l) v.n.p.l))
     ?~  l
       ~
     ?-  -.l
@@ -2091,7 +2132,7 @@
     ==
   --
   ::
-  =|  a=(pry)
+  =|  a=(pri)
   |@
   ++  deb  +>                                           ::  internals access
   ::
@@ -2402,30 +2443,9 @@
   |=(a=(tree) ?:(=(~ a) & ~(apt in a)))
 ::
 ++  pry                                                 ::  psq
-  |$  [k p v]
-  $@(~ [n=(lelem k p v) t=(ltree k p v) m=k])
-::
-++  lelem                                               ::  pry element
-  |$  [k p v]
-  [k=k p=p v=v]
-::
-++  lnode                                               ::  pry internal node
-  |$  [k p v]
-  [n=(lelem k p v) l=(ltree k p v) m=k r=(ltree k p v)]
-::
-++  ltree                                               ::  pry internal tree
-  |$  [k p v]
-  $@  ~
-  $%  [%llos s=@ p=(lnode k p v)]
-      [%rlos s=@ p=(lnode k p v)]
-  ==
-::
-++  torn                                                ::  pry tourney view
-  |$  [k p v]
-  $@  ~
-  $%  [%sing n=(lelem k p v)]
-      [%play l=(pry k p v) r=(pry k p v)]
-  ==
+  |$  [key prio value]
+  $|  (pri key prio value)
+  |=(a=(pri key prio value) ?:(=(~ a) & ~(apt up a)))
 ::
 ::::  2l: container from container                      ::
   ::                                                    ::
