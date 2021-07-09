@@ -2096,7 +2096,7 @@
         |=  [k=beak v=(unit dome:clay)]
         ^-  tank
         =/  received=tape  ?~(v "missing" "received")
-        leaf+"{<k>} {received}"
+        leaf+"{<(en-beam k ~)>} {received}"
       :_  discarded
       leaf+"fusing into {<syd>} from {<bas>} {<con>} - overwriting prior fuse"
     =.  fiz  (make-melt bas con)
@@ -2113,9 +2113,11 @@
       ::  responses we get for the merge will cause take-fuse to crash
       ::
       =.  fiz  *melt
-      ((slog [leaf+"clay: fuse failed, missing {<bec>}"]~) ..take-fuse)
+      =/  msg=tape  <(en-beam bec ~)>
+      ((slog [leaf+"clay: fuse failed, missing {msg}"]~) ..take-fuse)
     ?.  (~(has by sto.fiz) bec)
-      ((slog [leaf+"clay: got strange fuse response {<bec>}"]~) ..take-fuse)
+      =/  msg=tape  <(en-beam bec ~)>
+      ((slog [leaf+"clay: got strange fuse response {<msg>}"]~) ..take-fuse)
     =.  fiz
         :+  bas.fiz  con.fiz
         (~(put by sto.fiz) bec `!<(dome:clay q.r.u.riot))
