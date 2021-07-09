@@ -4,9 +4,10 @@ import {
     ManagedToggleSwitchField as Checkbox,
     Text
 } from '@tlon/indigo-react';
-import { changePolicy, Enc, metadataUpdate } from '@urbit/api';
+import _ from 'lodash';
+import { changePolicy, Enc } from '@urbit/api';
 import { Group, GroupPolicy } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
+import { Association, metadataEdit, MetadataEditField } from '@urbit/api/metadata';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
@@ -58,16 +59,26 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      const { title, description, picture, color, isPrivate, adminMetadata } = values;
+      const { color, isPrivate, adminMetadata } = values;
+      const update = (upd: MetadataEditField) =>
+        airlock.poke(metadataEdit(association, upd));
+
       const uxColor = uxToHex(color);
       const vip = adminMetadata ? '' : 'member-metadata';
-      await airlock.poke(metadataUpdate(props.association, {
-        title,
-        description,
-        picture,
-        color: uxColor,
-        vip
-      }));
+      const promises = _.compact(_.map(['title', 'description', 'picture'] as const,
+        (k) => {
+          const edit: MetadataEditField = { [k]: values[k] };
+          return (values[k] !== initialValues[k])
+            ? update(edit)
+            : null;
+        }));
+      if(vip !== metadata.vip) {
+        promises.push(update({ vip }));
+      }
+      if(uxColor !== metadata.color) {
+        promises.push(update({ color: uxColor }));
+      }
+      await Promise.all(promises);
       if (isPrivate !== currentPrivate) {
         const resource = resourceFromPath(props.association.group);
         const newPolicy: Enc<GroupPolicy> = isPrivate
