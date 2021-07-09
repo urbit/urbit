@@ -11,7 +11,7 @@ import {
   useField,
   useFormikContext
 } from 'formik';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import * as Yup from 'yup';
 import { ShipImage } from './ShipImage';
 
@@ -68,9 +68,13 @@ function FormikHelper(props: { initialValues: any }) {
 
   return null;
 }
+const emptyStr = '';
 
 export default function CommentInput(props: CommentInputProps) {
-  const initialValues: FormSchema = { comment: props.initial || '' };
+  const initialValues: FormSchema = useMemo(
+    () => ({ comment: props.initial || emptyStr }),
+  [props.initial]);
+
   const label = props.label || 'Comment';
 
   return (
