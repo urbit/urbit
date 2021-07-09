@@ -2299,6 +2299,85 @@
     ?~  vue
       [~ (put e)]
     [(some p.u.vue) (put e)]
+  ::
+  ++  apt                                               ::  check correctness
+    |^  &(uni hep bin ann)
+    ::  lexicographic mug order
+    ::
+    ++  lex
+      |=  [[a=* b=*] [l=* r=*]]
+      ^-  ?
+      |((gor a l) (gor b r))
+    ::  has unique keys
+    ::
+    ++  uni
+      =/  l  (sort key gor)
+      =|  [a=(unit _?>(?=(^ l) i.l))]
+      |-  ^-  ?
+      ?~  l
+        %&
+      ?:  =(a (some i.l))
+        %|
+      $(l t.l, a (some i.l))
+    ::  has min-heap property
+    ::
+    ++  hep
+      ?~  a
+        %&
+      |-  ^-  ?
+      ?~  t.a
+        %&
+      ?-  -.t.a
+          %llos
+        ?&  (lex [p.n.a k.n.a] [p.n.p.t.a k.n.p.t.a])
+            $(k.n.a k.n.p.t.a, p.n.a p.n.p.t.a, t.a l.p.t.a)
+            $(t.a r.p.t.a)
+        ==
+          %rlos
+        ?&  (lex [p.n.a k.n.a] [p.n.p.t.a k.n.p.t.a])
+            $(t.a l.p.t.a)
+            $(k.n.a k.n.p.t.a, p.n.a p.n.p.t.a, t.a r.p.t.a)
+        ==
+      ==
+    ::  has binary search tree property
+    ::
+    ++  bin
+      |-  ^-  ?
+      =/  tor  see
+      ?~  tor
+        %&
+      ?-  -.tor
+          %sing
+        %&
+          %play
+        =/  k  top(a l.tor)
+        ?&  (levy key(a l.tor) |=(* (gor +< k)))
+            (levy key(a r.tor) |=(* |(=(k +<) !(gor +< k))))
+            $(a l.tor)
+            $(a r.tor)
+        ==
+      ==
+    ::  has correct size annotations
+    ::
+    ++  ann
+      =/  calc
+        |*  t=(ltree)
+        ^-  @
+        ?~  t  0
+        ?-  -.t
+          %llos  +((add $(t l.p.t) $(t r.p.t)))
+          %rlos  +((add $(t l.p.t) $(t r.p.t)))
+        ==
+      ?~  a
+        %&
+      |-  ^-  ?
+      ?~  t.a
+        =(0 (calc t.a))
+      ?&  =(s.t.a (calc t.a))
+          $(t.a l.p.t.a)
+          $(t.a r.p.t.a)
+      ==
+    --
   --
 ::
 ::::  2o: containers                                    ::
