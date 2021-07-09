@@ -90,6 +90,18 @@
       ==
   ==
 ::  historical
+++  one
+  |%
+  ::
+  +$  action
+    $~  [%remove *resource *md-resource]
+    $<  %edit  ^action
+  ::
+  +$  update
+    $~  [%remove *resource *md-resource]
+    $<  %edit  ^update
+  ::
+  --
 ++  zero
   |%
   ::

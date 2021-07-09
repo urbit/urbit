@@ -14,7 +14,7 @@
       update:store
       %metadata-update
       %metadata-pull-hook
-      1  1
+      2  2
   ==
 ::
 +$  agent  (push-hook:push-hook config)
