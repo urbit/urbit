@@ -44,6 +44,16 @@
       [%empty ~]
   ==
 ::
++$  edit-field
+  $%  [%title title=cord]
+      [%description description=cord]
+      [%color color=@ux]
+      [%picture =url]
+      [%preview preview=?]
+      [%hidden hidden=?]
+      [%vip vip=vip-metadata]
+  ==
+::
 +$  metadatum
   $:  title=cord
       description=cord
@@ -60,6 +70,7 @@
 +$  action
   $%  [%add group=resource resource=md-resource =metadatum]
       [%remove group=resource resource=md-resource]
+      [%edit group=resource resource=md-resource =edit-field]
       [%initial-group group=resource =associations]
   ==
 ::
