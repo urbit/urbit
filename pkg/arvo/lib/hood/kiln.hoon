@@ -123,8 +123,9 @@
       (~(del by syn.old) [syd her sud]:u.recognized-ota)
     ::  note that the new state has not yet been initialized
     ::
-    =?  ..abet  ?=(^ recognized-ota)
-      (poke:update `[her sud]:u.recognized-ota)
+::  TODO reinstate with +vats
+::    =?  ..abet  ?=(^ recognized-ota)
+::      (poke:update `[her sud]:u.recognized-ota)
     ::
     +>(old [%1 rem.old syn=sen ota=~ commit-timer.old])
   ::
@@ -400,209 +401,6 @@
   !<  weft
   q:(need (~(get an:cloy ankh) /sys/kelvin))
 ::
-++  update
-  |%
-  ++  poke
-    |=  arg=(unit [=ship =desk])
-    ^+  ..abet
-    =?  ..abet  =(arg (bind ota |=([=ship =desk =aeon] [ship desk])))
-      (render "restarting OTA sync" ~)
-    =?  ..abet  ?=(^ ota)
-      =.  ..abet  (render-ket "cancelling OTA sync" ~)
-      ..abet(ota ~)
-    ?~  arg
-      ..abet
-    =.  ota  `[ship.u.arg desk.u.arg *aeon]
-    =.  ..abet  (render "starting OTA sync" ~)
-    %:  emit
-      %pass  (make-wire /find)  %arvo  %c
-      %warp  ship.u.arg  desk.u.arg  `[%sing %y ud+1 /]
-    ==
-  ::
-  ++  make-wire
-    |=  =path
-    ^-  wire
-    ?>  ?=(^ ota)
-    %-  welp  :_  path
-    /kiln/ota/(scot %p ship.u.ota)/[desk.u.ota]/(scot %ud aeon.u.ota)
-  ::
-  ++  check-ota
-    |=  =wire
-    ^-  ?
-    ?~  ota
-      |
-    ?&  ?=([@ @ @ *] wire)
-        =(i.wire (scot %p ship.u.ota))
-        =(i.t.wire desk.u.ota)
-        =(i.t.t.wire (scot %ud aeon.u.ota))
-    ==
-  ::
-  ++  render
-    |=  [mez=tape error=(unit (pair term tang))]
-    %+  spam
-      ?~  ota
-        leaf+mez
-      :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
-      ~[leaf+"from {<desk.u.ota>}" leaf+"on {<ship.u.ota>}"]
-    ?~  error
-      ~
-    [>p.u.error< q.u.error]
-  ::
-  ++  render-ket
-    |=  [mez=tape error=(unit (pair term tang))]
-    ?>  ?=(^ ota)
-    =<  ?>(?=(^ ota) .)
-    %+  spam
-      :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
-      ~[leaf+"from {<desk.u.ota>}" leaf+"on {<ship.u.ota>}"]
-    ?~  error
-      ~
-    [>p.u.error< q.u.error]
-  ::
-  ++  take
-    |=  [=wire =sign-arvo]
-    ^+  ..abet
-    ?>  ?=(^ ota)
-    ?.  (check-ota wire)
-      ..abet
-    ?.  ?=([@ @ @ @ *] wire)
-      ..abet
-    ?+  i.t.t.t.wire  ~&([%strange-ota-take t.t.t.wire] ..abet)
-      %find        (take-find sign-arvo)
-      %sync        (take-sync sign-arvo)
-      %download    (take-download sign-arvo)
-      %merge-base  (take-merge-base sign-arvo)
-      %merge-kids  (take-merge-kids sign-arvo)
-    ==
-  ::
-  ++  take-find
-    |=  =sign-arvo
-    ?>  ?=(%writ +<.sign-arvo)
-    ?>  ?=(^ ota)
-    =.  ..abet  (render-ket "activated OTA" ~)
-    %:  emit
-      %pass  (make-wire /sync)  %arvo  %c
-      %warp  ship.u.ota  desk.u.ota  `[%sing %w da+now /]
-    ==
-  ::
-  ++  take-sync
-    |=  =sign-arvo
-    ?>  ?=(%writ +<.sign-arvo)
-    ?>  ?=(^ ota)
-    ?~  p.sign-arvo
-      =.  ..abet  (render-ket "OTA cancelled (1), retrying" ~)
-      (poke `[ship desk]:u.ota)
-    =.  ..abet  (render-ket "downloading OTA update" ~)
-    =?  aeon.u.ota  ?=(%w p.p.u.p.sign-arvo)
-      ud:;;(cass:clay q.q.r.u.p.sign-arvo)
-    %:  emit
-      %pass  (make-wire /download)  %arvo  %c
-      %warp  ship.u.ota  desk.u.ota  `[%sing %v ud+aeon.u.ota /]
-    ==
-  ::
-  ++  take-download
-    |=  =sign-arvo
-    ^+  ..abet
-    ?>  ?=(%writ +<.sign-arvo)
-    ?>  ?=(^ ota)
-    ?~  p.sign-arvo
-      =.  ..abet  (render-ket "OTA cancelled (2), retrying" ~)
-      (poke `[ship desk]:u.ota)
-    =.  ..abet  (render-ket "finished downloading OTA" ~)
-    =.  aeon.u.ota  +(aeon.u.ota)
-    ::
-    =/  old-ankh  ank:.^(dome cv+/(scot %p our)/base/(scot %da now))
-    =/  old-weft  (get-kelvin old-ankh)
-    ::
-    =/  new-ankh  (get-ankh u.p.sign-arvo)
-    =/  new-weft  (get-kelvin new-ankh)
-    ::
-    =/  blockers
-      ?:  =(new-weft old-weft)
-        ~
-      (get-blockers new-weft)
-    ::
-    ?.  =(~ blockers)
-      =.  ..abet  (render-ket "OTA to %base blocked on {<blockers>}" ~)
-      %-  emil
-      :~  :*  %pass  (make-wire /sync)  %arvo  %c
-              %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
-          ==
-          :*  %give  %fact  [/vats]~  %kiln-vats-diff
-              !>([%blocked ota=u.ota weft=new-weft blockers=blockers])
-      ==  ==
-    ::
-    =/  =germ  (get-germ %base)
-    =.  ..abet  (render-ket "applying OTA to %base" ~)
-    =.  ..abet
-      =<  ?>(?=(^ ota) .)
-      %-  emil
-      :~  :*  %pass  (make-wire /merge-base)  %arvo  %c
-              %merg  %base  ship.u.ota  desk.u.ota  ud+(dec aeon.u.ota)  germ
-          ==
-          :*  %pass  (make-wire /sync)  %arvo  %c
-              %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
-      ==  ==
-    (bump:vats blockers=~)
-  ::
-  ++  take-merge-base
-    |=  =sign-arvo
-    ?>  ?=(%mere +<.sign-arvo)
-    ?>  ?=(^ ota)
-    ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
-      =.  ..abet
-        =/  =tape  "OTA to %base failed, maybe because sunk; restarting"
-        (render-ket tape `p.p.sign-arvo)
-      =.  ..abet
-        =<  ?>(?=(^ ota) .)
-        =/  fact  merge-base-fail/[u.ota p.p.sign-arvo]
-        (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
-      (poke `[ship desk]:u.ota)
-    ::
-    ?:  ?=(%| -.p.sign-arvo)
-      =.  ..abet
-        =/  =tape  "OTA to %base failed, waiting for next revision"
-        (render-ket tape `p.p.sign-arvo)
-      =/  fact  merge-base-fail/[u.ota p.p.sign-arvo]
-      (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
-    ::
-    =.  ..abet  (render-ket "OTA to %base succeeded" ~)
-    =.  ..abet  (render-ket "applying OTA to %kids" ~)
-    =.  ..abet
-      =<  ?>(?=(^ ota) .)
-      =/  fact  merge-base/u.ota
-      (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
-    =/  =germ  (get-germ %kids)
-    %:  emit
-      %pass  (make-wire /merge-kids)  %arvo  %c
-      %merg  %kids  ship.u.ota  desk.u.ota  ud+(dec aeon.u.ota)  germ
-    ==
-  ::
-  ++  take-merge-kids
-    |=  =sign-arvo
-    ?>  ?=(%mere +<.sign-arvo)
-    ?>  ?=(^ ota)
-    ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
-      =.  ..abet
-        =/  =tape  "OTA to %kids failed, maybe because sunk; restarting"
-        (render-ket tape `p.p.sign-arvo)
-      =.  ..abet
-        =<  ?>(?=(^ ota) .)
-        =/  fact  merge-kids-fail/[u.ota p.p.sign-arvo]
-        (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
-      (poke `[ship desk]:u.ota)
-    ::
-    =.  ..abet
-      =<  ?>(?=(^ ota) .)
-      =/  fact  merge-kids/u.ota
-      (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
-    ::
-    ?-  -.p.sign-arvo
-      %&  (render-ket "OTA to %kids succeeded" ~)
-      %|  (render-ket "OTA to %kids failed" `p.p.sign-arvo)
-    ==
-  --
-::
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
@@ -618,8 +416,6 @@
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
-    %kiln-ota                =;(f (f !<(_+<.f vase)) poke-ota)
-    %kiln-ota-info           =;(f (f !<(_+<.f vase)) poke-ota-info)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
@@ -701,17 +497,6 @@
     =+  "can't mount bad path: {<pax>}"
     abet:(spam leaf+- ~)
   abet:(emit %pass /mount %arvo %c [%mont pot u.bem])
-::
-++  poke-ota
-  |=  arg=(unit [=ship =desk])
-  abet:(poke:update arg)
-::
-++  poke-ota-info
-  |=  *
-  =<  abet  %-  spam
-  :~  [%leaf get-ota-info]
-      [%leaf "use |ota %disable or |ota ~sponsor %kids to reset it"]
-  ==
 ::
 ++  poke-permission
   |=  [syd=desk pax=path pub=?]
@@ -813,7 +598,7 @@
                         ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
       [%autocommit *]   %+  take-wake-autocommit  t.wire
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
-      [%ota *]          abet:(take:update t.wire sign-arvo)
+      [%vats *]         abet:(take:vats t.wire sign-arvo)
       *
     ?+    +<.sign-arvo
         ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
