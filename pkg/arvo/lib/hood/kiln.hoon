@@ -219,6 +219,7 @@
   ::
   ++  reset
     ^+  vats
+    ~>  %slog.0^leaf/"kiln: resetting tracking for {here}"
     =.  ark  (~(del by ark) loc)
     (install loc [ship desk]:rak)
   ::  +bump: handle kernel kelvin upgrade
@@ -234,6 +235,7 @@
       ~>  %slog.0^leaf/"kiln: desks blocked upgrade {<ded>}"
       !!
     =/  liv  (skip ~(tap by ark) |=([d=desk *] (~(has in except) d)))
+    ~>  %slog.0^leaf/"kiln: bump {<liv>}"
     =<  kiln
     |-  ^+  vats
     ?~  liv  vats
@@ -277,12 +279,34 @@
       reset
     ~>  %slog.0^leaf/"kiln: finished downloading update for {here}"
     =.  aeon.rak  +(aeon.rak)
-    =/  kel  (get-kelvin (get-ankh u.p.syn))
-    ?.  =(kel [%zuse zuse])
-      ~>  %slog.0^leaf/"kiln: future version {<kel>}, enqueueing"
-      =.  next.rak  :_(next.rak [(dec aeon.rak) kel])
-      (emit sync:pass)
-    ~>  %slog.0^leaf/"kiln: merging into {here}"
+    ::
+    ?.  =(%base loc)
+      =/  kel  (get-kelvin (get-ankh u.p.syn))
+      ?.  =(kel [%zuse zuse])
+        ~>  %slog.0^leaf/"kiln: future version {<kel>}, enqueueing"
+        =.  next.rak  (snoc next.rak [(dec aeon.rak) kel])
+        (emit sync:pass)
+      ~>  %slog.0^leaf/"kiln: merging into {here}"
+      (emil ~[merge sync]:pass)
+    ::
+    =/  old-ankh  ank:.^(dome cv+/(scot %p our)/base/(scot %da now))
+    =/  old-weft  (get-kelvin old-ankh)
+    ::
+    =/  new-ankh  (get-ankh u.p.syn)
+    =/  new-weft  (get-kelvin new-ankh)
+    ::
+    =/  blockers
+      ?:  =(new-weft old-weft)
+        ~
+      (get-blockers new-weft)
+    ::
+    ?.  =(~ blockers)
+      ~>  %slog.0^leaf/"kiln: OTA blocked on {<blockers>}"
+      =-  (emil sync:pass - ~)
+      :*  %give  %fact  [/vats]~  %kiln-vats-diff
+          !>([%blocked arak=rak weft=new-weft blockers=blockers])
+      ==
+    ~>  %slog.0^leaf/"kiln: applying OTA to {here}"
     (emil ~[merge sync]:pass)
   ::
   ++  take-merge
@@ -296,11 +320,15 @@
       =+  "kiln: merge into {here} failed, waiting for next revision"
       %-  (slog leaf/- p.p.syn)
       vats
-    ~>  %slog.0^leaf/"merge into {here} succeeded; reviving agents"
-    %-  emil
-    %+  turn  (get-apps loc)
-    |=  =dude:gall
-    [%pass /kiln/fade/[dude] %arvo %g %fade dude %jolt]
+    =.  vats
+      ~>  %slog.0^leaf/"merge into {here} succeeded; reviving agents"
+      %-  emil
+      %+  turn  (get-apps loc)
+      |=  =dude:gall
+      [%pass /kiln/fade/[dude] %arvo %g %fade dude %jolt]
+    ?.  =(%base loc)
+      vats
+    vats(kiln (bump (sy %base ~)))
   --
 ::  +get-ankh: extract $ankh from clay %v response $rant
 ::
