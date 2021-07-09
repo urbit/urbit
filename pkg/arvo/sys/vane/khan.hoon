@@ -48,6 +48,12 @@
     |=  [tag=@tas error=tang]
     ^+  [moves state]
     [[duct %slip %d %flog %crud tag error]~ state]
+  ++  born
+    ^+  [moves state]
+    =<  [moves state]
+    event-core(moves [duct %give %set-config "khan.soc"]~)
+
+
   ::  +avow: give back
   ::
   ++  avow
@@ -111,6 +117,7 @@
     ?-  -.task
       %trim  trim:event-core
       %vega  vega:event-core                            :: vega
+      %born  born:event-core
       %fyrd  (fyrd:event-core p.task)                   :: fyrd
     ==
   [moves khan-gate]

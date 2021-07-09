@@ -146,6 +146,7 @@ toPierConfig pierPath serfExe o@(CLI.Opts{..}) = PierConfig { .. }
   _pcDryRun    = oDryRun || isJust oDryFrom
   _pcSerfExe   = serfExe
   _pcSerfFlags = toSerfFlags o
+  _pcSocketPath = (pierPath <> "/khan.soc")
 
 toNetworkConfig :: CLI.Opts -> NetworkConfig
 toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
