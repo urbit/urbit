@@ -1,12 +1,13 @@
-import BaseApi from './base';
-import { StoreState } from '../store/type';
-import { Key,
-  Value,
-  Bucket
+import {
+  Bucket, Key,
+
+  SettingsUpdate, Value
 } from '@urbit/api/settings';
+import { StoreState } from '../store/type';
+import BaseApi from './base';
 
 export default class SettingsApi extends BaseApi<StoreState> {
-  private storeAction(action: SettingsEvent): Promise<any> {
+  private storeAction(action: SettingsUpdate): Promise<any> {
     return this.action('settings-store', 'settings-event', action);
   }
 
@@ -47,14 +48,14 @@ export default class SettingsApi extends BaseApi<StoreState> {
   }
 
   async getAll() {
-    const { all } = await this.scry("settings-store", "/all");
-    this.store.handleEvent({data: 
-      {"settings-data": { all } }
+    const { all } = await this.scry('settings-store', '/all');
+    this.store.handleEvent({ data:
+      { 'settings-data': { all } }
     });
   }
 
   async getBucket(bucket: Key) {
-    const data = await this.scry('settings-store', `/bucket/${bucket}`);
+    const data: Record<string, unknown> = await this.scry('settings-store', `/bucket/${bucket}`);
     this.store.handleEvent({ data: { 'settings-data': {
       'bucket-key': bucket,
       'bucket': data.bucket
@@ -62,7 +63,7 @@ export default class SettingsApi extends BaseApi<StoreState> {
   }
 
   async getEntry(bucket: Key, entry: Key) {
-    const data = await this.scry('settings-store', `/entry/${bucket}/${entry}`);
+    const data: Record<string, unknown> = await this.scry('settings-store', `/entry/${bucket}/${entry}`);
     this.store.handleEvent({ data: { 'settings-data': {
       'bucket-key': bucket,
       'entry-key': entry,

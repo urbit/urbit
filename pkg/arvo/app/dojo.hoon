@@ -875,7 +875,7 @@
           %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil)
           %sa
         =+  .^(=dais:clay cb+(en-beam he-beak /[p.bil]))
-        (dy-hand p.bil bunt:dais)
+        (dy-hand p.bil *vale:dais)
       ::
           %as
         =/  cag=cage  (dy-cage p.q.bil)
@@ -1162,6 +1162,7 @@
             %import      !!
             %export-all  !!
             %import-all  !!
+            %cancel      !!
             %as
           :*  %as  mar.source.com
               $(num +(num), source.com next.source.com)

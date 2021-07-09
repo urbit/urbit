@@ -1,5 +1,5 @@
-import { cite } from '~/logic/lib/util';
 import { isChannelAdmin } from '~/logic/lib/group';
+import { cite } from '~/logic/lib/util';
 
 const makeIndexes = () => new Map([
     ['ships', []],
@@ -11,19 +11,23 @@ const makeIndexes = () => new Map([
   ]);
 
 // result schematic
-const result = function(title, link, app, host) {
+const result = function(title, link, app, host, description = 'Open', shiftLink = null, shiftDescription = null) {
   return {
     'title': title,
     'link': link,
     'app': app,
-    'host': host
+    'host': host,
+    'description': description,
+    'shiftLink': shiftLink,
+    'shiftDescription': shiftDescription
+
   };
 };
 
 const shipIndex = function(contacts) {
   const ships = [];
   Object.keys(contacts).map((e) => {
-    return ships.push(result(e, `/~profile/${e}`, 'profile', contacts[e]?.status || ""));
+    return ships.push(result(e, `/~profile/${e}`, 'profile', contacts[e]?.status || '', 'Open Profile', `/~landscape/messages/dm/${e}`, 'Send Message'));
   });
   return ships;
 };
@@ -38,11 +42,11 @@ const commandIndex = function (currentGroup, groups, associations) {
     ? (association.metadata.vip === 'member-metadata' || isChannelAdmin(group, currentGroup))
     : !currentGroup; // home workspace or hasn't loaded
   const workspace = currentGroup || '/home';
-  commands.push(result(`Groups: Create`, `/~landscape/new`, 'Groups', null));
+  commands.push(result('Groups: Create', '/~landscape/new', 'Groups', null));
   if (canAdd) {
-    commands.push(result(`Channel: Create`, `/~landscape${workspace}/new`, 'Groups', null));
+    commands.push(result('Channel: Create', `/~landscape${workspace}/new`, 'Groups', null));
   }
-  commands.push(result(`Groups: Join`, `/~landscape/join`, 'Groups', null));
+  commands.push(result('Groups: Join', '/~landscape/join', 'Groups', null));
 
   return commands;
 };
@@ -53,16 +57,16 @@ const appIndex = function (apps) {
   const applications = [];
   Object.keys(apps)
     .filter((e) => {
-      return apps[e]?.type?.basic;
+      return !['weather','clock'].includes(e);
     })
     .sort((a, b) => {
       return a.localeCompare(b);
     })
     .map((e) => {
       const obj = result(
-        apps[e].type.basic.title,
-        apps[e].type.basic.linkedUrl,
-        apps[e].type.basic.title,
+        apps[e].type?.basic?.title || apps[e].type.custom?.tile || e,
+        apps[e]?.type.basic?.linkedUrl || apps[e]?.type.custom?.linkedUrl || '',
+        apps[e]?.type?.basic?.title || apps[e].type.custom?.tile || e,
         null
       );
       applications.push(obj);
@@ -80,7 +84,7 @@ const otherIndex = function(config) {
     logout: result('Log Out', '/~/logout', 'logout', null)
   };
   other.push(result('Tutorial', '/?tutorial=true', 'tutorial', null));
-  for(let cat of config.categories) {
+  for(const cat of config.categories) {
     if(idx[cat]) {
       other.push(idx[cat]);
     }
@@ -99,9 +103,11 @@ export default function index(contacts, associations, apps, currentGroup, groups
   Object.keys(associations).filter((e) => {
     // skip apps with no metadata
     return Object.keys(associations[e]).length > 0;
-    }).map((e) => {
-      // iterate through each app's metadata object
-      Object.keys(associations[e]).map((association) => {
+  }).map((e) => {
+    // iterate through each app's metadata object
+    Object.keys(associations[e])
+      .filter(association => !associations?.[e]?.[association]?.metadata?.hidden)
+      .map((association) => {
         const each = associations[e][association];
         let title = each.resource;
         if (each.metadata.title !== '') {

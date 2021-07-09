@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export type SubmitHandler = () => Promise<any>;
 interface IFormGroupContext {
@@ -6,6 +6,7 @@ interface IFormGroupContext {
   onDirty: (id: string, touched: boolean) => void;
   onErrors: (id: string, errors: boolean) => void;
   submitAll: () => Promise<any>;
+  addReset: (id: string, r: any) => any;
 }
 
 const fallback: IFormGroupContext = {
@@ -13,6 +14,7 @@ const fallback: IFormGroupContext = {
   onDirty: () => {},
   onErrors: () => {},
   submitAll: () => Promise.resolve(),
+  addReset: () => {}
 };
 
 export const FormGroupContext = React.createContext(fallback);
