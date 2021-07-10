@@ -43,6 +43,8 @@ export const SettingsContext = createContext({
   setError: () => {},
   broadcastSuccess: false,
   setBroadcastSuccess: () => {},
+  scanProgress: { main: null, change: null },
+  setScanProgress: () => {},
 });
 
 export const SettingsProvider = ({ channel, children }) => {
@@ -69,6 +71,10 @@ export const SettingsProvider = ({ channel, children }) => {
   const [showWarning, setShowWarning] = useState(false);
   const [error, setError] = useState('');
   const [broadcastSuccess, setBroadcastSuccess] = useState(false);
+  const [scanProgress, setScanProgress] = useState({
+    main: null,
+    change: null,
+  });
 
   const { Provider } = SettingsContext;
 
@@ -184,6 +190,7 @@ export const SettingsProvider = ({ channel, children }) => {
     const errorData = channelData?.data?.error;
     const broadcastSuccessData = channelData?.data?.['broadcast-success'];
     const broadcastFailData = channelData?.data?.['broadcast-fail'];
+    const scanProgressData = channelData?.data?.['scan-progress'];
     if (initialData) {
       setProvider(initialData.provider);
       setWallet(initialData.wallet);
@@ -253,6 +260,9 @@ export const SettingsProvider = ({ channel, children }) => {
     if (broadcastFailData) {
       setBroadcastSuccess(false);
     }
+    if (scanProgressData) {
+      setScanProgress(scanProgressData);
+    }
   }, [channelData]);
 
   useEffect(() => {
@@ -305,6 +315,8 @@ export const SettingsProvider = ({ channel, children }) => {
         setError,
         broadcastSuccess,
         setBroadcastSuccess,
+        scanProgress,
+        setScanProgress,
       }}
     >
       {children}
