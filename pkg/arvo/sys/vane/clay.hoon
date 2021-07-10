@@ -1570,7 +1570,7 @@
     ::
     ++  get-kelvin
       |=  =yoki
-      ;;  [@tas @ud]
+      ;;  weft
       |^  ?-    -.yoki
               %|
             %-  lobe-to-noun
