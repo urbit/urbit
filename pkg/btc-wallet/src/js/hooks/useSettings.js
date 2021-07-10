@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { api } from '../api';
-import { reduceHistory } from '../lib/util';
+import { mapDenominationToSymbol, reduceHistory } from '../lib/util';
 
 export const SettingsContext = createContext({
   network: 'bitcoin',
@@ -120,6 +120,7 @@ export const SettingsProvider = ({ channel, children }) => {
         const newCurrencyRates = currencyRates;
         for (let c in n) {
           newCurrencyRates[c] = n[c];
+          newCurrencyRates[c].symbol = mapDenominationToSymbol(c);
         }
         setCurrencyRates(newCurrencyRates);
         setTimeout(() => initializeCurrencyPoll(), 1000 * 60 * 15);
