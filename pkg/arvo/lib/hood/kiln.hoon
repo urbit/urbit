@@ -284,22 +284,22 @@
       ~>  %slog.0^leaf/"kiln: cancelled (2) install into {here}, retrying"
       reset
     ~>  %slog.0^leaf/"kiln: finished downloading update for {here}"
+    =/  old-weft  `weft`[%zuse zuse]
+    =/  new-weft  (read-kelvin [ship desk aeon]:rak)
     =.  aeon.rak  +(aeon.rak)
     ::
     ?.  =(%base loc)
-      =/  kel  (get-kelvin (get-ankh u.p.syn))
-      ?.  =(kel [%zuse zuse])
-        ~>  %slog.0^leaf/"kiln: future version {<kel>}, enqueueing"
-        =.  next.rak  (snoc next.rak [(dec aeon.rak) kel])
+      ::  TODO: ?>  =(%zuse lal.new-weft) but more flexible for future renames
+      ?:  (gth num.new-weft num.old-weft)
+        ~>  %slog.0^leaf/"kiln: cannot install {here}, old kelvin {<new-weft>}"
+        ~>  %slog.0^leaf/"kiln: will retry at foreign kelvin {<old-weft>}"
+        (emit sync:pass)
+      ?:  (lth num.new-weft num.old-weft)
+        ~>  %slog.0^leaf/"kiln: future version {<new-weft>}, enqueueing"
+        =.  next.rak  (snoc next.rak [(dec aeon.rak) new-weft])
         (emit sync:pass)
       ~>  %slog.0^leaf/"kiln: merging into {here}"
       (emil ~[merge-main sync]:pass)
-    ::
-    =/  old-ankh  ank:.^(dome cv+/(scot %p our)/base/(scot %da now))
-    =/  old-weft  (get-kelvin old-ankh)
-    ::
-    =/  new-ankh  (get-ankh u.p.syn)
-    =/  new-weft  (get-kelvin new-ankh)
     ::
     =/  blockers
       ?:  =(new-weft old-weft)
@@ -312,7 +312,7 @@
       :*  %give  %fact  [/vats]~  %kiln-vats-diff
           !>([%blocked arak=rak weft=new-weft blockers=blockers])
       ==
-    ~>  %slog.0^leaf/"kiln: applying OTA to {here}"
+    ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
     (emil ~[merge-main sync]:pass)
   ::
   ++  take-merge-main
@@ -394,12 +394,31 @@
     %1  %take-that
     *   %mate
   ==
-::  +get-kelvin: read /sys.kelvin from an $ankh
+::  +ankh-to-kelvin: read /sys.kelvin from an $ankh
 ::
-++  get-kelvin
+++  ankh-to-kelvin
   |=  =ankh
   !<  weft
   q:(need (~(get an:cloy ankh) /sys/kelvin))
+::
+++  read-kelvin
+  |=  [=ship =desk =aeon]
+  ^-  weft
+  =/  her  (scot %p ship)
+  =/  syd  (scot %tas desk)
+  =/  yon  (scot %ud aeon)
+  ::
+  =/  dom  .^(dome cs/~[her syd yon])
+  =/  tak  (scot %uv (~(got by hit.dom) let.dom))
+  =/  yak  .^(yaki cs/~[her syd yon %taki tak])
+  =/  lob  (scot %uv (~(got by q.yak) /sys/kelvin))
+  =/  bob  .^(blob cs/~[her syd yon %blob lob])
+  ::
+  ;;  weft
+  ?-  -.bob
+    %direct  q.q.bob
+    %delta   q.r.bob
+  ==
 ::
 ++  poke
   |=  [=mark =vase]
