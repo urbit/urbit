@@ -1,0 +1,48 @@
+page changes -> mark as dirty -> write page eventually -> mark clean
+can check beforehand but branching per write, or do exception-y things
+hence segfaults -> trap, mark dirty -> go back to work
+mprotect loom whenever a snapshot is written so the next time someone writes
+we can segfault, mark as dirty, un mprotect, and move on with life.
+
+Joshin = ~silsyn-wathep, person to talk to about runtime stuff
+
+introductory runtime task: cache reclamation for compiled nock programs
+when we run nock, we had a tree talking interpreter for a while
+now when we see a formula, compile to bytecode + compile, store in hashtable
+(map original-formula compiled-bytecode)
+subsequent formulas just get looked up.
+
+this hashtable (formula to program) grows to be "every formula we run"
+this isn't without bound since it's rare to dynamically create formulas (unless
+we get them over the network as OTAs).
+olden days: hashtable grew without bound as OTAs happened, disaster.
+now: every 1k events, clear the cache. we can surely be smarter.
+
+LRU would be improvement, LFU too, CLOCK algorithm (look this up)
+for our hashtables there is a CLOCK algorithm, already implemented in the hoon
+compiler! after ~50k entries it drops with CLOCK.
+
+problem: freeing fcn asssumes it's a noun. free atom directly, cell free
+entries, etc. this is a bytecode (some C struct)
+
+parameterize the hashtable with some sort of "freeing" function -> problem solved?
+current impl of freeing: traverses the hashtable, traversal frees elements.
+then we free the map itself.
+
+nock.c: u3n_free() does this
+
+u3a_noun: noun struct
+u3_noun is a 32bit "pointer". if high bit not set, it's a direct atom.
+u3_noun + loom offset == pointer to u3a_noun
+
+u3a_noun implicit union between u3a_atom and u3a_cellS
+to tell what it is, need a u3_noun pointer - second highest bit tells this
+0 for ptr, 1 for cell. see u3a_is_atom
+
+u3a_noun always in a u3a_box
+box has size on both sides, and a refcount (use_w)
+so bytecode program - 1 gives you use_w, the refcount!
+
+[ ] find CLOCK algo somwhere, u3h_trim_to
+  clock is always pointing at the next thing to remove
+
