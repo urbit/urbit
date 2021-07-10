@@ -68,18 +68,22 @@ const Send = ({ stopSending, value, conversion }) => {
   const checkPayee = (e) => {
     setError('');
 
-    let payeeReceived = e.target.value;
-    let isPatp = ob.isValidPatp(payeeReceived);
-    let isAddress = validate(payeeReceived);
-    if (isPatp) {
-      let command = { 'check-payee': payeeReceived };
+    const validPatPCommand = (validPatP) => {
+      let command = { 'check-payee': validPatP };
       api.btcWalletCommand(command);
       setTimeout(() => {
         setCheckingPatp(false);
       }, 5000);
       setCheckingPatp(true);
       setPayeeType('ship');
-      setPayee(payeeReceived);
+      setPayee(validPatP);
+    };
+
+    let payeeReceived = e.target.value;
+    let isPatp = ob.isValidPatp(payeeReceived);
+    let isAddress = validate(payeeReceived);
+    if (isPatp) {
+      validPatPCommand(payeeReceived);
     } else if (isAddress) {
       setPayee(payeeReceived);
       setReady(true);
@@ -87,11 +91,16 @@ const Send = ({ stopSending, value, conversion }) => {
       setPayeeType('address');
       setValidPayee(true);
     } else {
-      setPayee(payeeReceived);
-      setReady(false);
-      setCheckingPatp(false);
-      setPayeeType('');
-      setValidPayee(false);
+      const possibleValidPatPMissingSig = '~'.concat(payeeReceived);
+      if (ob.isValidPatp(possibleValidPatPMissingSig)) {
+        validPatPCommand(possibleValidPatPMissingSig);
+      } else {
+        setPayee(payeeReceived);
+        setReady(false);
+        setCheckingPatp(false);
+        setPayeeType('');
+        setValidPayee(false);
+      }
     }
   };
 
