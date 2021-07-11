@@ -241,7 +241,7 @@
 
     u3_noun u3qelms_zeros(u3_atom, u3_atom);
     u3_noun u3qelms_ones(u3_atom, u3_atom);
-    u3_noun u3qelms_id(u3_atom, u3_atom);
+    u3_noun u3qelms_id(u3_atom);
     u3_noun u3qelms_get(u3_atom, u3_atom, u3_atom);
     u3_noun u3qelms_set(u3_atom, u3_atom, u3_atom, u3_atom);
     u3_noun u3qelms_getc(u3_atom, u3_atom);
