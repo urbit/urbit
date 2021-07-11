@@ -272,7 +272,9 @@
   ++  divsr
     |=  [u=@lms i=@ud s=@rs]  ^-  @lms
     ~_  leaf+"lace-fail"
-    (setr u i (divs:lvs (getr u i) s))
+    =/  ur  (getr u i)
+    =/  dr  (divs:lvs ur s)
+    (setr u i dr)
   ::
   ::    Column-wise addition of @lvs
   ++  addvc
