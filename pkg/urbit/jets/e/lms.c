@@ -18,6 +18,15 @@
 #include <math.h>
 /*#include <atlas.h>*/
 
+#define max(a,b) \
+  ({ __typeof__ (a) _a = (a); \
+      __typeof__ (b) _b = (b); \
+    _a > _b ? _a : _b; })
+#define min(a,b) \
+  ({ __typeof__ (a) _a = (a); \
+      __typeof__ (b) _b = (b); \
+    _a < _b ? _a : _b; })
+
 #define SINGNAN 0x7fc00000
 
   union trip {
@@ -67,7 +76,9 @@
     }
   }
 
-  struct dims {
+  struct
+  dims
+  {
     c3_w rows, cols;
   };
 
@@ -85,25 +96,45 @@
     return shp;
   }
 
+  void
+  print_matrix(c3_w* u,
+               uint32_t m_u,
+               uint32_t n_u)
+  {
+    c3_w ii, jj;
+    union trip a;
+    fprintf(stderr, "[%u x %u] matrix:\n\r", m_u, n_u);
+    for ( ii = 1; ii <= m_u; ii++ )
+    {
+      fprintf(stderr, "[ ");
+      for ( jj = 1; jj <= n_u; jj++ )
+      {
+        a.c = u[(ii-1)*n_u+jj-1];
+        fprintf(stderr, "%f ", a.b);
+      }
+      fprintf(stderr, " ]\n\r");
+    }
+  }
+
 /* zeros in @lms
 */
   u3_noun
   u3qelms_zeros(u3_atom m,  /* @ud */
                 u3_atom n)  /* @ud */
   {
-    c3_w m_ = u3r_word(0, m);
-    c3_w n_ = u3r_word(0, n);
-    c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+2)*sizeof(float32_t));
+    c3_w m_u = u3r_word(0, m);
+    c3_w n_u = u3r_word(0, n);
+    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+2)*sizeof(float32_t));
 
     uint32_t i;
     union trip c;
     c.c = 0x00000000;
-    w_[m_*n_+1] = 2;
-    w_[m_*n_] = m_;
-    for ( i = 1; i <= m_*n_; i++ ) {
+    w_[m_u*n_u+1] = 2;
+    w_[m_u*n_u] = m_u;
+    for ( i = 1; i <= m_u*n_u; i++ ) {
       w_[i-1] = (c3_w)c.s.v;
     }
-    u3_noun w = u3i_words(m_*n_+2, w_);
+    u3_noun w = u3i_words(m_u*n_u+2, w_);
     u3a_free(w_);
 
     return w;
@@ -133,20 +164,20 @@
   u3qelms_ones(u3_atom m,  /* @ud */
                u3_atom n)  /* @ud */
   {
-    c3_w m_ = u3r_word(0, m);
-    c3_w n_ = u3r_word(0, n);
+    c3_w m_u = u3r_word(0, m);
+    c3_w n_u = u3r_word(0, n);
 
-    c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+2)*sizeof(float32_t));
+    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+2)*sizeof(float32_t));
 
     uint32_t i;
     union trip c;
     c.c = 0x3F800000;
-    w_[m_*n_+1] = 2;
-    w_[m_*n_] = m_;
-    for ( i = 1; i <= m_*n_; i++ ) {
+    w_[m_u*n_u+1] = 2;
+    w_[m_u*n_u] = m_u;
+    for ( i = 1; i <= m_u*n_u; i++ ) {
       w_[i-1] = (c3_w)c.s.v;
     }
-    u3_noun w = u3i_words(m_*n_+1, w_);
+    u3_noun w = u3i_words(m_u*n_u+2, w_);
     u3a_free(w_);
 
     return w;
@@ -172,30 +203,22 @@
 /* identity in @lms
 */
   u3_noun
-  u3qelms_id(u3_atom m,  /* @ud */
-             u3_atom n)  /* @ud */
+  u3qelms_id(u3_atom m)  /* @ud */
   {
-    c3_w m_ = u3r_word(0, m);
-    c3_w n_ = u3r_word(0, n);
-    c3_w* w_  = (c3_w*)u3a_malloc((m_*n_+2)*sizeof(float32_t));
+    c3_w m_u = u3r_word(0, m);
+
+    u3_noun w = u3qelms_zeros(m, m);
+
+    c3_w* w_  = (c3_w*)u3a_malloc((m_u*m_u+2)*sizeof(float32_t));
+    u3r_words(0, m_u*m_u+2, w_, w);
 
     uint32_t i;
-    union trip c, d;
-    c.c = 0x00000000;
-    d.c = 0x3F800000;
-    w_[m_*n_+1] = 2;
-    w_[m_*n_] = m_;
-    for ( i = 0; i < m_*n_; i++ ) { // TODO fix one-indexing
-      if ( i % (n_+1) == 0 )
-      {
-        w_[i] = (c3_w)d.s.v;
-      }
-      else
-      {
-        w_[i] = (c3_w)c.s.v;
-      }
+    union trip c;
+    c.c = 0x3F800000;
+    for ( i = 1; i <= m_u; i++ ) {
+      w_[(i-1)*m_u+(i-1)] = (c3_w)c.s.v;
     }
-    u3_noun w = u3i_words(m_*n_+2, w_);
+    w = u3i_words(m_u*m_u+2, w_);
     u3a_free(w_);
 
     return w;
@@ -204,17 +227,15 @@
   u3_noun
   u3welms_id(u3_noun cor)
   {
-    u3_noun a, b;
+    u3_noun a;
 
-    if ( c3n == u3r_mean(cor, u3x_sam_2, &a,
-                              u3x_sam_3, &b, 0) ||
-         c3n == u3ud(a) ||
-         c3n == u3ud(b) )
+    if ( c3n == u3r_mean(cor, u3x_sam, &a, 0) ||
+         c3n == u3ud(a) )
     {
       return u3m_bail(c3__exit);
     }
     else {
-      return u3qelms_id(a, b);
+      return u3qelms_id(a);
     }
   }
 
@@ -272,7 +293,7 @@
                 u3_atom a)  /* @rs */
     {
       c3_w i_ = u3r_word(0, i);
-      c3_w j_ = u3r_word(0, j); // TODO FIXME math in this sxn is bad for atom
+      c3_w j_ = u3r_word(0, j);
 
       struct dims mn = shape(u);
       c3_w m_u = mn.rows;
@@ -283,22 +304,15 @@
         return u3m_bail(c3__exit);
       }
 
-      c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+2)*sizeof(float32_t));
+      c3_w* w_  = (c3_w*)u3a_malloc((m_u*m_u+2)*sizeof(float32_t));
+      u3r_words(0, m_u*n_u+2, w_, u);
 
       uint32_t ii;
       w_[m_u*n_u+1] = 2;
       w_[m_u*n_u] = m_u;
       c3_w offset = (i_-1)*n_u+(j_-1);
-      for ( ii = 0; ii < m_u*n_u; ii++ ) { //TODO fix one-indexing
-        if ( ii == ((m_u*n_u+2)-offset) )
-        {
-          w_[ii] = u3r_word(0, a);
-        }
-        else
-        {
-          w_[ii] = u3r_word(ii, u);
-        }
-      }
+      w_[offset] = u3r_word(0, a);
+
       u3_atom w = u3i_words(m_u*n_u+2, w_);
       u3a_free(w_);
 
@@ -350,7 +364,7 @@
     uint32_t ii;
     c3_w offset;
     union trip d;
-    w_[m_v] = m_v;
+    w_[m_v] = 1;
     for ( ii = 1; ii < m_u+1; ii++ ) {
       offset = ((ii-1)*n_u)+j_-1;
       d.c = u3r_word(0, u3qelms_get(u, ii, j_));
@@ -401,20 +415,19 @@
 
     c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+2)*sizeof(float32_t));
     u3r_words(0, m_u*n_u+2, w_, u);
+    w_[m_u*n_u+1] = 2;
+    w_[m_u*n_u] = m_u;
 
     uint32_t ii;
     c3_w offset;
     union trip d;
     for ( ii = 1; ii < m_u+1; ii++ ) {
       d.c = u3r_word(0, u3qelvs_get(v, ii));
-      //w_[(m_u*n_u-1)-offset] = d.s.v;
       offset = ((ii-1)*n_u)+j_-1;
       w_[offset] = d.s.v;
-      //fprintf(stderr, "(%u, %u) @ %u : 0x%x %f\n\r", ii, j_, offset, d.c, d.b);
     }
     u3_noun w = u3i_words(m_u*n_u+2, w_);
-    //u3m_p("w",w);
-    //u3a_free(w_);  // TODO FIXME causes allocate/bail:meme failure
+    u3a_free(w_);  // TODO FIXME causes allocate/bail:meme failure
 
     return w;
   }
@@ -444,6 +457,7 @@
   u3qelms_getr(u3_atom u,  /* @lms */
                u3_atom i)  /* @ud */
   {
+    //fprintf(stderr, "u3qelms_getr in\n\r");
     c3_w i_    = u3r_word(0, i);  // 1-indexed
 
     struct dims mn = shape(u);
@@ -457,13 +471,13 @@
 
     c3_w offset;
     offset = ((i_-1)*n_u);
+    //fprintf(stderr, "u3qelms_getr %i \n\r", offset);
     c3_w* w_  = (c3_w*)u3a_malloc((n_u+1)*sizeof(float32_t));
     u3r_words(offset, offset+n_u, w_, u);
     w_[n_u] = 1;
 
-    u3_noun w = u3i_words(n_u+1, w_);
-    //u3m_p("w", w);
-    //fprintf(stderr, "here4\n\r");
+    u3_noun w = u3i_words(n_u+1, w_);  /* @lvd */
+    //u3m_p("u", u);
     /*union trip d;
     uint32_t jj;
     for ( jj = 1; jj < n_u+1; jj++ ) {
@@ -473,6 +487,7 @@
     //fprintf(stderr, "(%u) : %u 0x%x\n\r", jj, w_[n_w], w_[n_w]);
     //u3a_free(w_);  // <- TODO FIXME this fails on last row of matrix
     //fprintf(stderr, "here5\n\r");
+    //fprintf(stderr, "u3qelms_getr out\n\r");
 
     return w;
   }
@@ -502,6 +517,8 @@
                u3_atom v)  /* @lvs */
 {
   c3_w i_    = u3r_word(0, i);  // 1-indexed
+  //fprintf(stderr, "u3qelms_setr in\n\r");
+  //u3m_p("u", u);
 
   struct dims mn = shape(u);
   c3_w m_u = mn.rows;
@@ -516,17 +533,20 @@
 
   c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_u+2)*sizeof(float32_t));
   u3r_words(0, m_u*n_u+2, w_, u);
+  w_[m_u*n_u+1] = 2;
+  w_[m_u*n_u] = m_u;
 
   uint32_t jj;
   c3_w offset;
   union trip d;
-  for ( jj = 1; jj < n_u+1; jj++ ) {
+  for ( jj = 1; jj < n_u+1; jj++ ) {  // TODO faster w/ direct copy than get
     offset = ((i_-1)*n_u)+jj-1;
     d.c = u3r_word(0, u3qelvs_get(v, jj));
     w_[offset] = d.s.v;
   }
   u3_noun w = u3i_words(m_u*n_u+2, w_);
   //u3a_free(w_);
+  //fprintf(stderr, "u3qelms_setr out\n\r");
 
   return w;
 }
@@ -1095,7 +1115,7 @@
     c3_w m_v = mn.rows;
     c3_w n_v = mn.cols;
 
-    if ( (m_u != m_v) || (n_u != n_v) || (n_u != m_v))
+    if ((n_u != m_v))
     {
       return u3m_bail(c3__exit);
     }
@@ -1191,9 +1211,9 @@
     c3_w m_w, n_w;
     m_w = m_u - 1;
     n_w = n_u - 1;
-    c3_w* w_  = (c3_w*)u3a_malloc((m_w*n_w+1)*sizeof(float32_t));
-    w_[m_w*n_w] = 2;
-    w_[m_w*n_w-1] = m_w;
+    c3_w* w_  = (c3_w*)u3a_malloc((m_w*n_w+2)*sizeof(float32_t));
+    w_[m_w*n_w+1] = 2;
+    w_[m_w*n_w] = m_w;
     uint32_t ii, jj, mi, mj;
     i_ = m_u - i_ + 1;
     j_ = n_u - j_ + 1;
@@ -1207,7 +1227,7 @@
         w_[mi*n_w+mj] = u3r_word(ii*n_u+jj, u);
       }
     }
-    u3_noun w = u3i_words(m_w*n_w+1, w_);
+    u3_noun w = u3i_words(m_w*n_w+2, w_);
     u3a_free(w_);
 
     return w;
@@ -1235,56 +1255,45 @@
 /* submatrix
 */
   u3_noun
-  u3qelms_submatrix(u3_atom u,  /* @lms */
+  u3qelms_submatrix(u3_atom u,   /* @lms */
                     u3_atom ia,  /* @ud */
                     u3_atom ib,  /* @ud */
                     u3_atom ja,  /* @ud */
                     u3_atom jb)  /* @ud */
   {
-    c3_w mnt_ = u3r_met(3,u)/4 - 1;  // mnt_ is the vector length
     c3_w ia_ = u3r_word(0, ia);
     c3_w ib_ = u3r_word(0, ib);
     c3_w ja_ = u3r_word(0, ja);
     c3_w jb_ = u3r_word(0, jb);
-    //fprintf(stderr, "sub:  %u %u %u %u\n", ia_, ib_, ja_, jb_);
 
     struct dims mn = shape(u);
     c3_w m_u = mn.rows;
     c3_w n_u = mn.cols;
-    //fprintf(stderr, "sub:  %u %u %u %u %u %u\n", ia_, ib_, ja_, jb_, m_u, n_u);
 
-    if ((ia_ < 1) || (ib_ > m_u) || (ja_ < 1) || (jb_ > n_u) || (ia_ > ib_) || (ja > jb_))
+    if ((ia_ < 1) || (ib_ > m_u) || (ja_ < 1) || (jb_ > n_u) || (ia_ > ib_) || (ja_ > jb_))
     {
       return u3m_bail(c3__exit);
     }
 
-    //  Flip the order around so it feels natural.
-    //  This isn't formally necessary, but it's a lot easier to think about.
-    c3_w* u__  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
-    u3r_words(0, m_u*n_u+1, u__, u);
-    c3_w* u_  = (c3_w*)u3a_malloc((m_u*n_u+1)*sizeof(float32_t));
-    u_[m_u*n_u] = u__[m_u*n_u];
-    uint32_t iii;
-    for ( iii = 0; iii < m_u*n_u; iii++ )
-    {
-      u_[m_u*n_u-1-iii] = u__[iii];
-    }
-    u3a_free(u__);
+    c3_w* u_  = (c3_w*)u3a_malloc((m_u*n_u+2)*sizeof(float32_t));
+    u3r_words(0, m_u*n_u+2, u_, u);
 
     c3_w m_w, n_w;
-    m_w = ib_ - ia_ + 1;
-    n_w = jb_ - ja_ + 1;
-    c3_w* w_  = (c3_w*)u3a_malloc((m_w*n_w+1)*sizeof(float32_t));
+    m_w = (ib_ - ia_) + 1;
+    n_w = (jb_ - ja_) + 1;
+    c3_w* w_  = (c3_w*)u3a_malloc((m_w*n_w+2)*sizeof(float32_t));
+    w_[m_w*n_w+1] = 2;
     w_[m_w*n_w] = m_w;
     uint32_t ii, jj, mi, mj;
-    for ( ii = ia_-1, mi = 0; ii <= ib_-1; ii++, mi++ )
+    for ( ii = ia_, mi = 1; ii <= ib_; ii++, mi++ )
     {
-      for ( jj = ja_-1, mj = 0; jj <= jb_-1; jj++, mj++ )
+      for ( jj = ja_, mj = 1; jj <= jb_; jj++, mj++ )
       {
-        w_[m_w*n_w-(mi*n_w+mj)-1] = u_[ii*n_u+jj];
+        w_[(mi-1)*n_w+mj-1] = u_[(ii-1)*n_u+jj-1];
       }
     }
-    u3_noun w = u3i_words(m_w*n_w+1, w_);
+    u3_noun w = u3i_words(m_w*n_w+2, w_);
+    u3a_free(u_);
     u3a_free(w_);
 
     return w;
@@ -1296,10 +1305,10 @@
     u3_noun u, ia, ib, ja, jb;
 
     if ( c3n == u3r_mean(cor, u3x_sam_2, &u,
-                              u3x_sam_6, &ia,
-                              u3x_sam_14, &ib,
-                              u3x_sam_30, &ja,
-                              u3x_sam_31, &jb, 0) ||
+                              u3x_sam_12, &ia,
+                              u3x_sam_13, &ib,
+                              u3x_sam_14, &ja,
+                              u3x_sam_15, &jb, 0) ||
          c3n == u3ud(u) ||
          c3n == u3ud(ia) ||
          c3n == u3ud(ib) ||
@@ -1324,24 +1333,25 @@
     c3_w m_w = m_u;
     c3_w n_w = 2*n_u;
 
-    u3_atom v = u3qelms_id(m_u, n_u);
+    u3_atom v = u3qelms_id(m_u);
 
-    c3_w* w_  = (c3_w*)u3a_malloc((m_w*n_w+1)*sizeof(float32_t));
+    c3_w* w_  = (c3_w*)u3a_malloc((m_w*n_w+2)*sizeof(float32_t));
+    w_[m_w*n_w+1] = 2;
     w_[m_w*n_w] = m_w;
     uint32_t ii, jj;
-    for ( ii = 0; ii < m_u; ii++ )
+    c3_w offset,  // offset within source matrices
+         offset_; // offset within target matrix
+    for ( ii = 1; ii <= m_u; ii++ )
     {
-      for ( jj = 0; jj < n_u; jj++ )
+      for ( jj = 1; jj <= n_u; jj++ )
       {
-        // TODO switch offset + one-indexing
-        w_[ii*n_w+n_u+jj] = u3r_word(ii*n_u+jj, u);
-      }
-      for ( jj = 0; jj < n_u; jj++ )
-      {
-        w_[ii*n_w+jj] = u3r_word(ii*n_u+jj, v);
+        offset  = (ii-1)*n_u+jj-1;  // offset within source matrices
+        offset_ = (ii-1)*n_w+jj-1;  // offset within target matrix
+        w_[offset_]     = u3r_word(offset, u);
+        w_[offset_+n_u] = u3r_word(offset, v);
       }
     }
-    u3_noun w = u3i_words(m_w*n_w+1, w_);
+    u3_noun w = u3i_words(m_w*n_w+2, w_);
     u3a_free(w_);
 
     return w;
@@ -1364,6 +1374,7 @@
 
 /* invert matrix
    XXX this should become a wrapper not an implementation
+   https://www.codesansar.com/numerical-methods/matrix-inverse-using-gauss-jordan-cpp-output.htm TODO
 */
   u3_noun
   u3qelms_invert(u3_atom u)  /* @lms */
@@ -1377,97 +1388,92 @@
       return u3m_bail(c3__exit);
     }
 
-    u3_atom v = u3qelms_augment(u);
-    c3_w m_v, n_v;
-    m_v = m_u;
-    n_v = 2*n_u;
+    u3_atom w = u3qelms_augment(u);
+    mn = shape(w);
+    c3_w m_w = mn.rows;
+    c3_w n_w = mn.cols;
 
-    //  Flip the order around so it feels natural.
-    //  This isn't formally necessary, but it's a lot easier to think about.
-    c3_w* w__  = (c3_w*)u3a_malloc((m_u*n_v+1)*sizeof(float32_t));
-    u3r_words(0, m_u*n_v+1, w__, v);
-    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_v+1)*sizeof(float32_t));
-    uint32_t ii, jj, kk, max_row;
-    for ( ii = 0; ii < m_u*n_v; ii++ )
-    {
-      w_[m_u*n_v-1-ii] = w__[ii];
-    }
+    c3_w* w_  = (c3_w*)u3a_malloc((m_u*n_w+2)*sizeof(float32_t));
+    u3r_words(0, m_w*n_w+2, w_, w);
 
-    union trip el, tmp_el, max_el, t, c, d, e;
-    uint32_t iii, jjj;
-    for ( ii = 0; ii < m_u; ii++ )
+    uint32_t ii, jj, kk, i;   // misc indices
+    uint32_t lead = 1;        // index of current leading diagonal
+    c3_w offset, final_offset, offset_r, offset_s;  // misc array offsets
+    c3_w* t_  = (c3_w*)u3a_malloc((n_w)*sizeof(float32_t));  // temp storage
+    union trip a, b, c, ratio;
+    for ( ii = 1; ii <= m_u; ii++ )
     {
-      //  Locate maximum value in column for pivot.
-      max_el.c = w_[ii*n_v+ii];
-      max_el.b = fabs(max_el.b);
-      max_row = ii;
-      for ( kk = ii+1; kk < m_u; kk++ )
+      if ( lead > n_u )  // because not working through augmented solution cols
       {
-        el.c = w_[kk*n_v+ii];
-        el.b = fabs(el.b);
-        if ( el.b > max_el.b ) {
-          max_el.c = el.c;
-          max_row = kk;
-        }
+        break;
       }
-      //  Swap max row with current row.
-      for ( jj = ii; jj < n_v; jj++ )
+
+      //  Identify leading row of column.
+      i = ii;
+      while (w_[(i-1)*n_w+lead-1] == 0.0)
       {
-        t.c = w_[max_row*n_v+jj];
-        w_[max_row*n_v+jj] = w_[ii*n_v+jj];
-        w_[ii*n_v+jj] = t.c;
-      }
-      //  Divide current row across by leading value.
-      c.c = w_[ii*n_v+ii];  // leading value, leftmost value of current row
-      if ( c.b == 1.0 )  continue;
-      for ( jj = ii; jj < n_v; jj++ )  // divide across current row
-      {
-        d.c = w_[ii*n_v+jj];
-        w_[ii*n_v+jj] = (c3_w)_nan_unify(f32_div(d.s, c.s)).v;
-      }
-      //  Set all rows below this to zero in current column.
-      for ( kk = ii+1; kk < m_u; kk++ )
-      {
-        d.c = w_[kk*n_v+ii];  // reference row first element
-        for ( jj = ii; jj < n_v; jj++ )
+        i++;
+        if ( i > m_w )
         {
-          c.c = w_[ii*n_v+jj];  // reference row element
-          e.c = w_[kk*n_v+jj];  // current row element
-          el.c = f32_sub(e.s, f32_mul(d.s,c.s)).v;
-          w_[kk*n_v+jj] = (c3_w)_nan_unify(f32_sub(e.s, f32_mul(d.s,c.s))).v;
+          i = ii;
+          lead++;
+          if ( lead > n_w )
+          {
+            break;
+          }
         }
       }
-    }
-    // then replace up
-    //  rowj = rowj - rowi*elemij
-    for ( ii = m_u-1; (ii >= 0) && (ii < m_u); ii-- )  // watch underflow
-    {
-      for ( kk = ii-1; (kk >= 0) && (kk < m_u); kk-- )  // watch underflow
+
+      //  Swap rows.
+      if ( i != ii )
       {
-        d.c = w_[kk*n_v+ii];
-        for ( jj = kk; jj < n_v; jj++ )
+        offset_r = (i-1)*n_w;
+        offset_s = (ii-1)*n_w;
+        memcpy(t_, &(w_[offset_r]), (n_w)*sizeof(float32_t));
+        memcpy(&(w_[offset_r]), &(w_[offset_s]), (n_w)*sizeof(float32_t));
+        memcpy(&(w_[offset_s]), t_, (n_w)*sizeof(float32_t));
+      }
+
+      //  Multiply by ratio so 1.0 is on diagonal.
+      offset = (ii-1)*n_w+lead-1;
+      a.c = w_[offset];
+      ratio.b = 1.0 / a.b;
+      for ( jj = 1; jj <= n_w; jj++ )
+      {
+        offset = (ii-1)*n_w+jj-1;
+        a.c = w_[offset];
+        b.b = ratio.b * a.b;
+        w_[offset] = b.c;
+      }
+      //  Subtract row i's leading value times the row ii from row i.
+      for ( i = 1; i <= m_w; i++ )
+      {
+        if ( i != ii )
         {
-          c.c = w_[ii*n_v+jj];  // reference row element
-          e.c = w_[kk*n_v+jj];  // current row element
-          el.c = f32_sub(e.s, f32_mul(d.s,c.s)).v;
-          w_[kk*n_v+jj] = (c3_w)_nan_unify(f32_sub(e.s, f32_mul(d.s,c.s))).v;
+          offset = (i-1)*n_w+lead-1;
+          ratio.c = w_[offset];
+          for ( jj = 1; jj <= n_w; jj++ )
+          {
+            offset = (ii-1)*n_w+jj-1;
+            a.c = w_[offset];
+            final_offset = (i-1)*n_w+jj-1;
+            b.c = w_[final_offset];
+            c.b = b.b - a.b * ratio.b;
+            w_[final_offset] = c.c;
+          }
         }
       }
-    }
-    w_[m_u*n_v] = m_u;
-
-    //  Reverse back out, as we flipped the order up above to ease the math.
-    for ( ii = 0; ii < m_u*n_v; ii++ )
-    {
-      w__[m_u*n_v-1-ii] = w_[ii];
+      lead++;
     }
 
-    u3_noun w = u3i_words(m_u*n_v+1, w__);
-    u3_noun w___ = u3qelms_submatrix(w, 1, m_u, n_u+1, n_v);
-    u3a_free(w__);
+    w = u3i_words(m_w*n_w+2, w_);
+    u3_noun w__ = u3qelms_submatrix(w, 1, m_u, n_u+1, n_w);
+    //fprintf(stderr, "****** u3qelms_invert done ******\n\r");
+    //TODO main issue here is memory leak causing crash
     u3a_free(w_);
+    u3a_free(t_);
 
-    return w___;
+    return w__;
   }
 
   u3_noun
