@@ -36,9 +36,17 @@ const StatusBar = (props) => {
   const invites = [].concat(
     ...Object.values(inviteState).map(obj => Object.values(obj))
   );
+
+  let metaKey = 'Super+';
+  if (window.navigator.platform.includes('Mac')) {
+    metaKey = '⌘';
+  } else if (window.navigator.platform.includes('Win')) {
+    metaKey = '⊞ Win+';
+  }
+
   const leapKey: string = useSettingsState(
     useCallback(s => s.keyboard['leap'], ['leap'])
-    )?.replace('meta+', '⌘') || '';
+    )?.replace('meta+', metaKey) || '';
   const { toggleOmnibox } = useLocalState(localSel);
   const { hideAvatars } = useSettingsState(selectCalmState);
 
