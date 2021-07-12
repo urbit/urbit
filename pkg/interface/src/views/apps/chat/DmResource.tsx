@@ -1,4 +1,4 @@
-import { cite, Content, Post } from '@urbit/api';
+import { cite, Content, Post, removeDmMessage } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import bigInt from 'big-integer';
@@ -11,6 +11,7 @@ import useHarkState, { useHarkDm } from '~/logic/state/hark';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
 import shallow from 'zustand/shallow';
+import airlock from '~/logic/api';
 
 interface DmResourceProps {
   ship: string;
@@ -121,6 +122,9 @@ export function DmResource(props: DmResourceProps) {
     [ship, addDmMessage]
   );
 
+  const onDelete = useCallback((msg: Post) => {
+    airlock.poke(removeDmMessage(`~${window.ship}`, msg.index));
+  }, []);
   return (
     <Col width="100%" height="100%" overflow="hidden">
       <Row
@@ -169,6 +173,7 @@ export function DmResource(props: DmResourceProps) {
         onReply={quoteReply}
         fetchMessages={fetchMessages}
         dismissUnread={dismissUnread}
+        onDelete={onDelete}
         getPermalink={() => undefined}
         isAdmin={false}
         onSubmit={onSubmit}
