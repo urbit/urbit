@@ -165,6 +165,11 @@ export class Urbit {
    * Initializes the SSE pipe for the appropriate channel.
    */
   eventSource(): Promise<void> {
+    if(this.lastEventId === 0) {
+      // Can't receive events until the channel is open
+      this.skipDebounce = true;
+      return this.poke({ app: 'hood', mark: 'helm-hi', json: 'Opening API channel' }).then(() => {});
+    }
     return new Promise((resolve, reject) => {
     if (!this.sseClientInitialized) {
       const sseOptions: SSEOptions = {
@@ -174,10 +179,6 @@ export class Urbit {
         sseOptions.withCredentials = true;
       } else if (isNode) {
         sseOptions.headers.Cookie = this.cookie;
-      }
-      if (this.lastEventId === 0) {
-        // Can't receive events until the channel is open
-        this.poke({ app: 'hood', mark: 'helm-hi', json: 'Opening API channel' });
       }
       fetchEventSource(this.channelUrl, {
         ...this.fetchOptions,
@@ -236,6 +237,7 @@ export class Urbit {
               funcs.quit(data);
               this.outstandingSubscriptions.delete(data.id);
             } else {
+              console.log([...this.outstandingSubscriptions.keys()]);
               console.log('Unrecognized response', data);
             }
           }
@@ -329,7 +331,8 @@ export class Urbit {
   private outstandingJSON: Message[] = [];
 
   private debounceTimer: NodeJS.Timeout = null;
-  private debounceInterval = 500;
+  private debounceInterval = 10;
+  private skipDebounce = false;
   private calm = true;
 
   private sendJSONtoChannel(json: Message): Promise<boolean | void> {
@@ -351,11 +354,14 @@ export class Urbit {
             return resolve(false);
           }
           try {
-            await fetch(this.channelUrl, {
+            const response = await fetch(this.channelUrl, {
               ...this.fetchOptions,
               method: 'PUT',
               body
             });
+            if(!response.ok) {
+              throw new Error('failed to PUT');
+            }
           } catch (error) {
             console.log(error);
             json.forEach(failed => this.outstandingJSON.push(failed));
@@ -367,7 +373,7 @@ export class Urbit {
           }
           this.calm = true;
           if (!this.sseClientInitialized) {
-            this.eventSource(); // We can open the channel for subscriptions once we've sent data over it
+            this.eventSource().then(resolve); // We can open the channel for subscriptions once we've sent data over it
           }
           resolve(true);
         } else {
@@ -375,6 +381,10 @@ export class Urbit {
           this.debounceTimer = setTimeout(process, this.debounceInterval);
           resolve(false);
         }
+      }
+      if(this.skipDebounce) {
+        process();
+        this.skipDebounce = false;
       }
   
       this.debounceTimer = setTimeout(process, this.debounceInterval);
