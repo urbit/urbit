@@ -37,6 +37,12 @@ export const Content = (props) => {
     history.goBack();
   }, [history.goBack]));
 
+  useShortcut('leap', useCallback((e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    props.toggleOmnibox();
+  }, []));
+
   const [hasProtocol, setHasProtocol] = useLocalStorageState(
     'registeredProtocol', false
   );

@@ -104,6 +104,7 @@ export default function ShortcutSettings() {
             />
             <ChordInput id="hideSidebar" label="Show/hide group sidebar" />
             <ChordInput id="readGroup" label="Read all in a group" />
+            <ChordInput id="leap" label="Leap" />
           </Box>
           <AsyncButton primary width="fit-content">Save Changes</AsyncButton>
         </Col>

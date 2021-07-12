@@ -1,6 +1,5 @@
 import dark from '@tlon/indigo-dark';
 import light from '@tlon/indigo-light';
-import Mousetrap from 'mousetrap';
 import shallow from 'zustand/shallow';
 import 'mousetrap-global-bind';
 import * as React from 'react';
@@ -108,11 +107,6 @@ class App extends React.Component {
     this.props.getRuntimeLag();  // TODO  consider polling periodically
     this.props.getAll();
     gcpManager.start();
-    Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      this.props.toggleOmnibox();
-    });
   }
 
   componentWillUnmount() {
@@ -195,6 +189,7 @@ class App extends React.Component {
                 ship={this.ship}
                 subscription={this.subscription}
                 connection={'aa'}
+                toggleOmnibox={this.props.toggleOmnibox}
               />
             </ErrorBoundary>
           </Router>
