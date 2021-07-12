@@ -104,7 +104,8 @@ const Balance = () => {
                 </Row>
                 <Row>
                   <Text fontSize={1} color="orange">
-                    {scanProgress.main}/24 addresses scanned
+                    {scanProgress.main} main wallet addresses scanned
+                    {scanProgress.change} change wallet addresses scanned
                   </Text>
                 </Row>
               </Col>
