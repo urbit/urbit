@@ -1,7 +1,6 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
 import { Association, Group } from '@urbit/api';
 import React, { ReactElement } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { Loading } from '~/views/components/Loading';
 import { useFlatGraph } from '~/logic/state/graph';
 import { resourceFromPath } from '~/logic/lib/group';
@@ -9,7 +8,6 @@ import PostFlatFeed from './PostFlatFeed';
 import PostInput from './PostInput';
 
 interface PostTimelineProps {
-  api: GlobalApi;
   association: Association;
   baseUrl: string;
   graphPath: string;
@@ -21,7 +19,6 @@ interface PostTimelineProps {
 const PostFlatTimeline = (props: PostTimelineProps): ReactElement => {
   const {
     baseUrl,
-    api,
     association,
     graphPath,
     group,
@@ -62,7 +59,6 @@ const PostFlatTimeline = (props: PostTimelineProps): ReactElement => {
           alignItems="center"
         >
           <PostInput
-            api={api}
             graphPath={graphPath}
             group={group}
             association={association}
@@ -96,7 +92,6 @@ const PostFlatTimeline = (props: PostTimelineProps): ReactElement => {
         association={association}
         group={group}
         vip={vip}
-        api={api}
         baseUrl={baseUrl}
         isThread={false}
       />

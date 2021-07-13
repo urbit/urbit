@@ -1,4 +1,4 @@
-import { AppName, Path, Patp } from "../lib";
+import { AppName, Path, Patp } from '../lib';
 
 export type MetadataUpdate =
   MetadataUpdateInitial
@@ -31,26 +31,29 @@ export type MetadataUpdateRemove = {
 
 export interface MdResource {
   resource: string;
-  app: AppName;
+  'app-name': AppName;
 }
 
 export interface MetadataUpdatePreview {
   group: string;
   channels: Associations;
-  "channel-count": number;
+  'channel-count': number;
   members: number;
   metadata: Metadata;
 }
 
-export type Associations = Record<AppName, AppAssociations>;
-
-export type AppAssociations = {
-  [p in Path]: Association;
+export type Associations = {
+  groups: AppAssociations<GroupConfig>
+  graph: AppAssociations<GraphConfig>;
 }
 
-export type Association = MdResource & {
+export type AppAssociations<C = MetadataConfig> = {
+  [p in Path]: Association<C>;
+}
+
+export type Association<C = MetadataConfig> = MdResource & {
   group: Path;
-  metadata: Metadata;
+  metadata: Metadata<C>;
 };
 
 export interface AssociationPoke {
@@ -59,13 +62,13 @@ export interface AssociationPoke {
   metadata: Metadata;
 }
 
-export interface Metadata {
+export interface Metadata<C = MetadataConfig> {
   color: string;
   creator: Patp;
   'date-created': string;
   description: string;
   title: string;
-  config: MetadataConfig;
+  config: C;
   hidden: boolean;
   picture: string;
   preview: boolean;

@@ -1,4 +1,4 @@
-import { Patp } from "..";
+import { Patp } from "../lib";
 import BigIntOrderedMap from "../lib/BigIntOrderedMap";
 import BigIntArrayOrderedMap from "../lib/BigIntArrayOrderedMap";
 
@@ -63,7 +63,7 @@ export interface GraphChildrenPoke {
 
 export interface GraphNode {
   children: Graph | null;
-  post: Post;
+  post: Post; 
 }
 
 export interface FlatGraphNode {

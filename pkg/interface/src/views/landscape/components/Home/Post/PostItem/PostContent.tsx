@@ -2,7 +2,6 @@ import { Col, ColProps } from '@tlon/indigo-react';
 import { Post } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import styled from 'styled-components';
-import GlobalApi from '~/logic/api/global';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 
 type TruncateProps = ColProps & {
@@ -17,13 +16,12 @@ const TruncatedBox = styled(Col)<TruncateProps>`
 
 interface PostContentProps {
   post: Post;
-  api: GlobalApi;
   isParent: boolean;
   isReply: boolean;
 }
 
 const PostContent = (props: PostContentProps): ReactElement => {
-  const { post, isParent, api } = props;
+  const { post, isParent } = props;
 
   return (
     <TruncatedBox
@@ -38,7 +36,6 @@ const PostContent = (props: PostContentProps): ReactElement => {
       <GraphContent
         transcluded={0}
         contents={post.contents}
-        api={api}
         showOurContact
       />
     </TruncatedBox>

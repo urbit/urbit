@@ -16,12 +16,16 @@
 +$  card  card:agent:gall
 +$  versioned-state
     $%  state-0
+        state-1
+        state-2
     ==
 ::
 +$  state-0  [%0 =host-info =whitelist]
++$  state-1  [%1 =host-info =whitelist timer=(unit @da)]
++$  state-2  [%2 =host-info =whitelist timer=(unit @da) interval=@dr]
 --
 %-  agent:dbug
-=|  state-0
+=|  state-2
 =*  state  -
 ^-  agent:gall
 =<
@@ -33,13 +37,13 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  '%btc-provider initialized successfully'
   =|  wl=^whitelist
   :-  ~
   %_  this
-      host-info
-    ['' connected=%.n %main block=0 clients=*(set ship)]
-      whitelist  wl(public %.n, kids %.n)
+    host-info  ['' connected=%.n %main block=0 clients=*(set ship)]
+    whitelist  wl(public %.n, kids %.n)
+    timer      ~
+    interval   ~m1
   ==
 ::
 ++  on-save
@@ -49,8 +53,19 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ~&  >  '%btc-provider recompiled successfully '
-  `this(state !<(versioned-state old-state))
+  =/  old  !<(versioned-state old-state)
+  ?-  -.old
+      %2
+    [~ this(state old)]
+  ::
+      %1
+    `this(state [%2 host-info.old whitelist.old timer.old ~m1])
+  ::
+      %0
+    :_  this(state [%2 host-info.old whitelist.old ~ ~m1])
+    ?:  =('' api-url.host-info.old)  ~
+    ~[(start-ping-timer:hc ~s0)]
+  ==
 ::
 ++  on-poke
   ~/  %on-poke
@@ -66,6 +81,14 @@
     ::
         %btc-provider-action
       (handle-action !<(action vase))
+    ::
+        %noun
+      ?.  =(q.vase %kick-timer)  `state
+      :_  state(timer `now.bowl)
+      :*  (start-ping-timer ~s0)
+          ?~  timer  ~
+          [[%pass /block-time %arvo %b %rest u.timer] ~]
+      ==
     ==
   [cards this]
   ::
@@ -74,11 +97,15 @@
     ^-  (quip card _state)
     ?-  -.comm
         %set-credentials
-      :_  state(host-info [api-url.comm %.n network.comm 0 *(set ship)])
-      :~  do-ping:hc
-          (start-ping-timer:hc ~s30)
+      :_  %_  state
+              host-info  [api-url.comm %.n network.comm 0 *(set ship)]
+              timer      `now.bowl
+          ==
+      :*  (start-ping-timer:hc ~s0)
+          ?~  timer  ~
+          [[%pass /block-time %arvo %b %rest u.timer] ~]
       ==
-      ::
+    ::
         %add-whitelist
       :-  ~
       ?-  -.wt.comm
@@ -94,7 +121,7 @@
           %groups
         state(groups.whitelist (~(uni in groups.whitelist) groups.wt.comm))
       ==
-      ::
+    ::
         %remove-whitelist
       =.  state
         ?-  -.wt.comm
@@ -111,6 +138,9 @@
           state(groups.whitelist (~(dif in groups.whitelist) groups.wt.comm))
         ==
       clean-client-list
+    ::
+        %set-interval
+      `state(interval inte.comm)
     ==
   ::
   ::  +clean-client-list: remove clients who are no longer whitelisted
@@ -134,8 +164,7 @@
     ^-  (quip card _state)
     :_  state
     ?.  ?|(connected.host-info ?=(%ping -.act))
-      ~&  >>>  "Not connected to RPC"
-      ~[(send-update:hc [%| %not-connected 500])]
+      ~[(send-update:hc [%| %not-connected 500] ~)]
     :_  ~
     %+  req-card  act
     ^-  action:rpc-types
@@ -157,7 +186,7 @@
   ++  rpc-wire
     |=  act=action
     ^-  wire
-    /[-.act]/[(scot %ux (cut 3 [0 20] eny.bowl))]
+    /[-.act]/(scot %p src.bowl)/(scot %ux (cut 3 [0 20] eny.bowl))
   --
 ::
 ++  on-watch
@@ -178,12 +207,15 @@
       ==
     [%give %fact ~ %json !>(jon)]~
   ::
-  ?>  ?=([%clients *] pax)
+  ?>  ?|  ?=([%clients ~] pax)
+          ?&  ?=([%clients @ ~] pax)
+              =(src.bowl (slav %p i.t.pax))
+          ==
+      ==
   ?.  (is-whitelisted:hc src.bowl)
     ~|("btc-provider: blocked client {<src.bowl>}" !!)
   ~&  >  "btc-provider: accepted client {<src.bowl>}"
-  :-  [do-ping:hc]~
-  this(clients.host-info (~(put in clients.host-info) src.bowl))
+  `this(clients.host-info (~(put in clients.host-info) src.bowl))
 ::
 ++  on-arvo
   ~/  %on-arvo
@@ -193,9 +225,11 @@
   ::  check for connectivity every 30 seconds
   ::
   ?:  ?=([%ping-timer *] wir)
-    :_  this
-    :~  do-ping:hc
-        (start-ping-timer:hc ~s30)
+    `this
+  ?:  ?=([%block-ping *] wir)
+    :_  this(timer `(add now.bowl interval))
+    :~  do-ping
+        (start-ping-timer:hc interval)
     ==
   =^  cards  state
     ?+    +<.sign-arvo    (on-arvo:def wir sign-arvo)
@@ -204,9 +238,17 @@
     ==
   [cards this]
   ::
-  ::  Handles HTTP responses from RPC servers. Parses for errors, 
+  ++  do-ping
+    ^-  card
+    =/  act=action  [%ping ~]
+    :*  %pass  /ping/[(scot %da now.bowl)]  %agent
+        [our.bowl %btc-provider]  %poke
+        %btc-provider-action  !>(act)
+    ==
+  ::
+  ::  Handles HTTP responses from RPC servers. Parses for errors,
   ::  then handles response. For actions that require collating multiple
-  ::  RPC calls, uses req-card to call out to RPC again if more 
+  ::  RPC calls, uses req-card to call out to RPC again if more
   ::  information is required.
   ++  handle-rpc-response
     |=  [=wire response=client-response:iris]
@@ -219,8 +261,8 @@
       (connection-error status)
     ?^  conn-err
       :_  state(connected.host-info %.n)
-      :~  (send-status:hc [%disconnected ~])
-          (send-update:hc [%| u.conn-err])
+      :~  (send-status:hc [%disconnected ~] ~)
+          (send-update:hc [%| u.conn-err] ~)
       ==
     ::
     %+  handle-rpc-result  wire
@@ -230,32 +272,35 @@
   ++  handle-rpc-result
     |=  [=wire r=result:rpc-types]
     ^-  (quip card _state)
+    =/  ship=(unit ship)
+      (slaw %p (snag 1 wire))
     ?+  -.wire  ~|("Unexpected HTTP response" !!)
         %address-info
       ?>  ?=([%get-address-info *] r)
       :_  state
-      ~[(send-update:hc [%.y %address-info +.r])]
+      ~[(send-update:hc [%.y %address-info +.r] ship)]
       ::
         %tx-info
       ?>  ?=([%get-tx-vals *] r)
       :_  state
-      ~[(send-update:hc [%.y %tx-info +.r])]
+      ~[(send-update:hc [%.y %tx-info +.r] ship)]
       ::
         %raw-tx
       ?>  ?=([%get-raw-tx *] r)
       :_  state
-      ~[(send-update:hc [%.y %raw-tx +.r])]
+      ~[(send-update:hc [%.y %raw-tx +.r] ship)]
       ::
         %broadcast-tx
       ?>  ?=([%broadcast-tx *] r)
       :_  state
-      ~[(send-update:hc [%.y %broadcast-tx +.r])]
+      ~[(send-update:hc [%.y %broadcast-tx +.r] ship)]
       ::
         %ping
       ?>  ?=([%get-block-info *] r)
       :_  state(connected.host-info %.y, block.host-info block.r)
       :_  ~
       %-  send-status:hc
+      :_  ~
       ?:  =(block.host-info block.r)
         [%connected network.host-info block.r fee.r]
       [%new-block network.host-info block.r fee.r blockhash.r blockfilter.r]
@@ -263,7 +308,7 @@
         %block-info
       ?>  ?=([%get-block-info *] r)
       :_  state
-      ~[(send-update:hc [%.y %block-info network.host-info +.r])]
+      ~[(send-update:hc [%.y %block-info network.host-info +.r] ship)]
     ==
   ::
   ++  connection-error
@@ -298,20 +343,24 @@
 ~%  %btc-provider-helper  ..card  ~
 |_  =bowl:gall
 ++  send-status
-  |=  =status  ^-  card
+  |=  [=status ship=(unit ship)]
+  ^-  card
   %-  ?:  ?=(%new-block -.status)
         ~&(>> "%new-block: {<block.status>}" same)
       same
-  [%give %fact ~[/clients] %btc-provider-status !>(status)]
+  =-  [%give %fact ~[-] %btc-provider-status !>(status)]
+  ?~  ship  /clients
+  /clients/(scot %p u.ship)
 ::
 ++  send-update
-  |=  =update
+  |=  [=update ship=(unit ship)]
   ^-  card
-  =+  c=[%give %fact ~[/clients] %btc-provider-update !>(update)]
-  ?:  ?=(%.y -.update)
-    c
-  ~&   >>  "prov. err: {<p.update>}"
-  c
+  %-  ?:  ?=(%.y -.update)
+        same
+      ~&(>> "prov. err: {<p.update>}" same)
+  =-  [%give %fact ~[-] %btc-provider-update !>(update)]
+  ?~  ship  /clients
+  /clients/(scot %p u.ship)
 ::
 ++  is-whitelisted
   ~/  %is-whitelisted
@@ -345,13 +394,5 @@
 ++  start-ping-timer
   |=  interval=@dr
   ^-  card
-  [%pass /ping-timer %arvo %b %wait (add now.bowl interval)]
-::
-++  do-ping
-  ^-  card
-  =/  act=action  [%ping ~]
-  :*  %pass  /ping/[(scot %da now.bowl)]  %agent
-      [our.bowl %btc-provider]  %poke
-      %btc-provider-action  !>(act)
-  ==
+  [%pass /block-ping %arvo %b %wait (add now.bowl interval)]
 --
