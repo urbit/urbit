@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { Box, LoadingSpinner, Action, Row } from '@tlon/indigo-react';
 
-import useStorage from '~/logic/lib/useStorage';
 import { StatelessUrlInput } from '~/views/components/StatelessUrlInput';
+import SubmitDragger from '~/views/components/SubmitDragger';
 import { Association, resourceFromPath, createPost } from '@urbit/api';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
 import useGraphState, { GraphState } from '~/logic/state/graph';
+import { useFileUpload } from '~/logic/lib/useFileUpload';
 
 interface LinkBlockInputProps {
   size: string;
@@ -22,7 +23,6 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
   const [focussed, setFocussed] = useState(false);
 
   const addPost = useGraphState(selGraph);
-  const { uploading, canUpload, promptUpload } = useStorage();
 
   const onFocus = useCallback(() => {
     setFocussed(true);
@@ -40,6 +40,10 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
     setUrl(val);
     setValid(URLparser.test(val) || Boolean(parsePermalink(val)));
   }, []);
+
+  const { uploading, canUpload, promptUpload, drag } = useFileUpload({
+    onSuccess: handleChange
+  });
 
   const doPost = () => {
     const text = '';
@@ -83,7 +87,9 @@ export function LinkBlockInput(props: LinkBlockInputProps) {
       p="2"
       position="relative"
       backgroundColor="washedGray"
+      {...drag.bind}
     >
+      {drag.dragging && <SubmitDragger />}
       {uploading ? (
         <Box
           display="flex"

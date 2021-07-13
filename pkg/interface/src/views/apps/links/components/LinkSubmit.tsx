@@ -1,13 +1,12 @@
 import { BaseInput, Box, Button, LoadingSpinner } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
-import React, { useCallback, useState, DragEvent, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { parsePermalink, permalinkToReference } from '~/logic/lib/permalinks';
-import { useFileDrag } from '~/logic/lib/useDrag';
-import useStorage from '~/logic/lib/useStorage';
 import { StatelessUrlInput } from '~/views/components/StatelessUrlInput';
 import SubmitDragger from '~/views/components/SubmitDragger';
 import useGraphState from '~/logic/state/graph';
 import { createPost } from '@urbit/api';
+import { useFileUpload } from '~/logic/lib/useFileUpload';
 
 interface LinkSubmitProps {
   name: string;
@@ -16,8 +15,6 @@ interface LinkSubmitProps {
 }
 
 const LinkSubmit = (props: LinkSubmitProps) => {
-  const { canUpload, uploadDefault, uploading, promptUpload } =
-    useStorage();
   const addPost = useGraphState(s => s.addPost);
 
   const [submitFocused, setSubmitFocused] = useState(false);
@@ -25,6 +22,17 @@ const LinkSubmit = (props: LinkSubmitProps) => {
   const [linkTitle, setLinkTitle] = useState('');
   const [disabled, setDisabled] = useState(false);
   const [linkValid, setLinkValid] = useState(false);
+
+  const {
+    canUpload,
+    uploading,
+    promptUpload,
+    drag,
+    onPaste
+  } = useFileUpload({
+    onSuccess: setLinkValue,
+    multiple: false
+  });
 
   const doPost = () => {
     const url = linkValue;
@@ -98,35 +106,12 @@ const LinkSubmit = (props: LinkSubmitProps) => {
     setLinkValid(validateLink(linkValue));
   }, [linkValue]);
 
-  const onFileDrag = useCallback(
-    (files: FileList | File[], e: DragEvent): void => {
-      if (!canUpload) {
-        return;
-      }
-      uploadDefault(files[0]).then(setLinkValue);
-    },
-    [uploadDefault, canUpload]
-  );
-
-  const { bind, dragging } = useFileDrag(onFileDrag);
-
   const onLinkChange = () => {
     const link = validateLink(linkValue);
     setLinkValid(link);
   };
 
   useEffect(onLinkChange, [linkValue]);
-
-  const onPaste = useCallback(
-    (event: ClipboardEvent) => {
-      if (!event.clipboardData || !event.clipboardData.files.length) {
-        return;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-      uploadDefault(event.clipboardData.files[0]).then(setLinkValue);
-    }, [setLinkValue, uploadDefault]
-  );
 
   const onKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -145,7 +130,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
         borderColor={submitFocused ? 'black' : 'lightGray'}
         width='100%'
         borderRadius={2}
-        {...bind}
+        {...drag.bind}
       >
         {uploading && <Box
           display="flex"
@@ -161,7 +146,7 @@ const LinkSubmit = (props: LinkSubmitProps) => {
                       >
           <LoadingSpinner />
         </Box>}
-      {dragging && <SubmitDragger />}
+      {drag.dragging && <SubmitDragger />}
       <StatelessUrlInput
         value={linkValue}
         promptUpload={promptUpload}
