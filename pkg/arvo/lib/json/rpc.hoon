@@ -62,7 +62,7 @@
   ==
 ::
 ++  validate-request
-  |=  [body=(unit octs) parse-method=$-(@t term)]
+  |=  body=(unit octs)
   ^-  (unit batch-request)
   ?~  body  ~
   ?~  jon=(de-json:html q.u.body)  ~
@@ -76,7 +76,7 @@
       ::
       ['id' so]
       ['jsonrpc' (su (jest '2.0'))]
-      ['method' (cu parse-method so)]
+      ['method' so]
     ::
       :-  'params'
       |=  =json
@@ -96,5 +96,6 @@
   ++  params     [%error id '-32602' 'Invalid params']
   ++  internal   [%error id '-32603' 'Internal error']
   ++  not-found  [%error id '-32000' 'Resource not found']
+  ++  todo       [%error id '-32001' 'Method not implemented']
   --
 --
