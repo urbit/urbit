@@ -359,16 +359,15 @@
           [~ ~(params error:json-rpc id)]
         =/  sig=(unit @)                  (sig:from-json params)
         =/  from=(unit [@p proxy:naive])  (from:from-json params)
-        =/  raw=(unit octs)               (raw:from-json params)
         =/  data=(unit @p)                (ship:data:from-json params)
-        ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
+        ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
           [~ ~(parse error:json-rpc id)]
         :_  [%result id s+'ok']
         %-  some
         :-  %aggregator-action
         !>
         =;  =skim-tx:naive
-          [%submit | u.sig %ful u.raw u.from skim-tx]
+          [%submit | u.sig %don u.from skim-tx]
         ?-  action
           %escape         [%escape u.data]
           %cancel-escape  [%cancel-escape u.data]
@@ -384,16 +383,15 @@
           [~ ~(params error:json-rpc id)]
         =/  sig=(unit @)                  (sig:from-json params)
         =/  from=(unit [@p proxy:naive])  (from:from-json params)
-        =/  raw=(unit octs)               (raw:from-json params)
         =/  data=(unit @ux)               (address:data:from-json params)
-        ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
+        ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
           [~ ~(parse error:json-rpc id)]
         :_  [%result id s+'ok']
         %-  some
         :-  %aggregator-action
         !>
         =;  =skim-tx:naive
-          [%submit | u.sig %ful u.raw u.from skim-tx]
+          [%submit | u.sig %don u.from skim-tx]
         ?-  action
           %set-management-proxy  [%set-management-proxy u.data]
           %set-spawn-proxy       [%set-spawn-proxy u.data]
@@ -406,7 +404,7 @@
       ++  params
         |=  params=(map @t json)
         ^-  ?
-        =((lent ~(tap by params)) 4)
+        =((lent ~(tap by params)) 3)
       --
     --
 |%
@@ -447,14 +445,13 @@
     [~ ~(params error:json-rpc id)]
   =/  sig=(unit @)                    (sig:from-json params)
   =/  from=(unit [ship proxy:naive])  (from:from-json params)
-  =/  raw=(unit octs)                 (raw:from-json params)
   =/  data=(unit [@ux ?])             (address-transfer:data:from-json params)
-  ?:  |(?=(~ sig) ?=(~ from) ?=(~ raw) ?=(~ data))
+  ?:  |(?=(~ sig) ?=(~ from) ?=(~ data))
     [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
   %-  some
   :-  %aggregator-action
-  !>([%submit | u.sig %ful u.raw u.from %transfer-point u.data])
+  !>([%submit | u.sig %don u.from %transfer-point u.data])
 ::
 ++  cancel-tx
   |=  [id=@t params=(map @t json)]
@@ -489,15 +486,14 @@
     [~ ~(params error:json-rpc id)]
   =/  sig=(unit @)                    (sig:from-json params)
   =/  from=(unit [ship proxy:naive])  (from:from-json params)
-  =/  raw=(unit octs)                 (raw:from-json params)
   =/  data=(unit [encrypt=@ auth=@ crypto-suite=@ breach=?])
     (keys:data:from-json params)
-  ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
+  ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
     [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
   %-  some
   :-  %aggregator-action
-  !>([%submit | u.sig %ful u.raw u.from %configure-keys u.data])
+  !>([%submit | u.sig %don u.from %configure-keys u.data])
 ::
 ++  spawn
   |=  [id=@t params=(map @t json)]
@@ -506,14 +502,13 @@
     [~ ~(params error:json-rpc id)]
   =/  sig=(unit @)                  (sig:from-json params)
   =/  from=(unit [@p proxy:naive])  (from:from-json params)
-  =/  raw=(unit octs)               (raw:from-json params)
   =/  data=(unit [@p @ux])          (address-ship:data:from-json params)
-  ?.  &(?=(^ sig) ?=(^ from) ?=(^ raw) ?=(^ data))
+  ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
     [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
   %-  some
   :-  %aggregator-action
-  !>([%submit | u.sig %ful u.raw u.from %spawn u.data])
+  !>([%submit | u.sig %done u.from %spawn u.data])
 ::
 ++  escape            sponsor:rpc-res
 ++  cancel-escape     sponsor:rpc-res
