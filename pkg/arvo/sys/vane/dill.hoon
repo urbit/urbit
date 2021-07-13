@@ -267,6 +267,9 @@
         ^+  +>
         ?-    sih
             [%gall %onto *]
+          ::  NOTE effects during initial boot sequence are ignored,
+          ::  so :hood compilation errors will not print; slog if desired
+          ::
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)

@@ -4083,7 +4083,7 @@
       ::
       !.
       =-  ?:  ?=(%& -<)  p.-
-          ((slog leaf+"gall: read-at-aeon fail {<mun>}" p.-) [[~ ~] fod])
+          ((slog leaf+"clay: read-at-aeon fail {<mun>}" p.-) [[~ ~] fod])
       %-  mule  |.
       ?-  care.mun
           %d
