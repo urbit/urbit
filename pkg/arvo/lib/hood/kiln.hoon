@@ -264,6 +264,9 @@
   ++  take-find
     |=  syn=sign-arvo
     ?>  ?=(%writ +<.syn)
+    ?~  p.syn
+      ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, aborting"
+      vats(ark (~(del by ark) loc))
     ~>  %slog.0^leaf/"kiln: activated install into {here}"
     (emit sync:pass)
   ::
