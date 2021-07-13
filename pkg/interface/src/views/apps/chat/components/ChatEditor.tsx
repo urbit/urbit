@@ -5,7 +5,7 @@ import 'codemirror/addon/hint/show-hint';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown';
 import React, { useRef, ClipboardEvent, useEffect, useImperativeHandle } from 'react';
-import { UnControlled as CodeEditor } from 'react-codemirror2';
+import { Controlled as CodeEditor } from 'react-codemirror2';
 import styled from 'styled-components';
 import { MOBILE_BROWSER_REGEX } from '~/logic/lib/util';
 import '../css/custom.css';
@@ -228,36 +228,37 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMo
               }
             }}
           >
-          <BaseTextArea
-            fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
-            fontSize={1}
-            lineHeight="tall"
-            rows={1}
-            style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
-            placeholder={inCodeMode ? 'Code...' : 'Message...'}
-            onChange={event =>
-              messageChange(null, null, event.target.value)
-            }
-            onKeyDown={event =>
-              messageChange(null, null, (event.target as any).value)
-            }
-            onPaste={e => onPaste(null, e)}
-            ref={(input) => {
-              if (!input)
-                return;
-              editorRef.current = inputProxy(input);
-            }}
-          />
-        </MobileBox>
+            <BaseTextArea
+              fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
+              fontSize={1}
+              lineHeight="tall"
+              value={message}
+              rows={1}
+              style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
+              placeholder={inCodeMode ? 'Code...' : 'Message...'}
+              onChange={event =>
+                messageChange(null, null, event.target.value)
+              }
+              onKeyDown={event =>
+                messageChange(null, null, (event.target as any).value)
+              }
+              onPaste={e => onPaste(null, e)}
+              ref={(input) => {
+                if (!input)
+                  return;
+                editorRef.current = inputProxy(input);
+              }}
+            />
+          </MobileBox>
         : <CodeEditor
-        className="lh-copy"
-        value={message}
-        options={options}
-        onChange={(e, d, v) => messageChange(e, d, v)}
-        editorDidMount={(codeEditor) => {
-          editorRef.current = codeEditor;
-        }}
-        onPaste={onPaste as any}
+            className="lh-copy"
+            value={message}
+            options={options}
+            onBeforeChange={(e, d, v) => messageChange(e, d, v)}
+            editorDidMount={(codeEditor) => {
+              editorRef.current = codeEditor;
+            }}
+            onPaste={onPaste as any}
           />
       }
 
