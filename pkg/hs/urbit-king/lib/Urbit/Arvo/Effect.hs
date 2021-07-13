@@ -186,7 +186,7 @@ instance ToNoun Tint where
     TintW          -> toNoun $ Cord "w"
     TintNull       -> Atom 0
     TintTrue r g b -> Cell (atom r) $ Cell (atom g) (atom b)
-                      where atom a = Atom (fromIntegral a :: Natural)
+                      where atom a = Atom (fromIntegral a)
 
 instance FromNoun Tint where
   parseNoun = named "Tint" . \case

@@ -23,6 +23,7 @@ dependencies:
   - lmdb-static
   - conduit
   - racquire
+  - urbit-atom
   - urbit-noun-core
   - urbit-noun
 

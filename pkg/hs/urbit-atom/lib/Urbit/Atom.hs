@@ -7,6 +7,8 @@
 
 module Urbit.Atom
   ( Atom
+  , fromN
+  , toN
   , atomBytes
   , bytesAtom
   , atomWords
@@ -20,7 +22,7 @@ where
 
 import Prelude
 
-import Data.ByteString       (ByteString)
+import qualified Data.ByteString       as B (ByteString)
 import Data.Vector.Primitive (Vector)
 import GHC.Natural           (Natural)
 
@@ -34,10 +36,53 @@ import qualified Urbit.Atom.Slow as Slow
 
 import qualified Urbit.Atom.Fast as A
 
+import Urbit.Noun.ByteString
+
 
 --------------------------------------------------------------------------------
 
-type Atom = Natural
+--type Atom = Natural
+newtype Atom = At { unA :: ByteString }
+  deriving (Show)
+
+fromN :: Natural -> Atom
+fromN = At . fromBS .
+#if defined(__GHCJS__)
+  A.exportBytes
+#else
+  A.atomBytes
+#endif
+
+toN :: Atom -> Natural
+toN = A.importBytes . toBS . unA
+
+-- leading 0s shouldn't break equality
+instance Eq Atom where
+  a == b = toN a == toN b
+
+-- who knows whether the inherent order is right
+instance Ord Atom where
+  compare a b = compare (toN a) (toN b)
+
+instance Num Atom where
+  a + b = fromN $ toN a + toN b
+  a * b = fromN $ toN a * toN b
+  a - b = fromN $ toN a - toN b
+  abs n = fromN $ abs $ toN n
+  signum = fromN . signum . toN
+  negate = fromN . negate . toN
+  fromInteger = fromN . fromInteger
+
+instance Enum Atom where
+  toEnum = fromN . toEnum
+  fromEnum = fromEnum . toN
+
+instance Real Atom where
+  toRational = toRational . toN
+
+instance Integral Atom where
+  quotRem a b = let (q, r) = quotRem (toN a) (toN b) in (fromN q, fromN r)
+  toInteger = toInteger . toN
 
 
 -- Choose Implementation Based on Platform -------------------------------------
@@ -51,13 +96,15 @@ type Atom = Natural
   TODO GMP's `export` routine also handles big endian machines, so use
   in that case too.
 -}
-atomBytes :: Atom -> ByteString
-atomBytes =
+atomBytes :: Atom -> B.ByteString
+atomBytes = toBS . unA
+{-}
 #if defined(__GHCJS__)
   A.exportBytes
 #else
   A.atomBytes
 #endif
+-}
 
 {- |
   Convert a bytestring to an Atom. O(n), copies.
@@ -65,8 +112,8 @@ atomBytes =
   This always uses GMP's `export` routine, since it's portable and faster
   than my hand-rolled implementation.
 -}
-bytesAtom :: ByteString -> Atom
-bytesAtom = A.importBytes
+bytesAtom :: B.ByteString -> Atom
+bytesAtom = At . fromBS --A.importBytes
 
 {- |
   Cast an atom to a vector. O(1), does not copy.
@@ -81,6 +128,7 @@ atomWords =
 #else
   A.atomWords
 #endif
+  . toN
 
 {- |
   Cast a vector to an atom. O(1), does not copy unless given a slice,
@@ -90,7 +138,7 @@ atomWords =
   implementation on that platform for now.
 -}
 wordsAtom :: Vector Word -> Atom
-wordsAtom =
+wordsAtom = fromN .
 #if defined(__GHCJS__)
   Slow.wordsAtom
 #else

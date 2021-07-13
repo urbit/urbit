@@ -17,9 +17,11 @@ library:
   dependencies:
     - base
     - bytestring
+    - classy-prelude
     - ghc-prim
     - integer-gmp
     - primitive
+    - rio
     - text
     - vector
 

@@ -144,8 +144,8 @@ genNatural = fromInteger . abs <$> arbitrary
 genAtom :: Gen Atom
 genAtom = do
   arbitrary >>= \case
-    False -> genNatural
-    True  -> (`mod` 16) <$> genNatural
+    False -> fromN <$> genNatural
+    True  -> (`mod` 16) <$> (fromN <$> genNatural)
 
 -- From http://hackage.haskell.org/package/hashable-1.2.7.0/docs/src/Data-Hashable-Class.html
 combine :: Int -> Int -> Int
