@@ -1492,7 +1492,7 @@
       ==
     ::  find desk kelvin
     ::
-    =/  kel=[@tas @ud]  (get-kelvin yoki)
+    =/  kel=weft  (get-kelvin yoki)
     ?.  |(=(%base syd) =(kel [%zuse zuse]))
       ~>(%mean.|.(leaf/"clay: bad-kelvin, {<[need=zuse/zuse have=kel]>}") !!)
     ::
@@ -1570,10 +1570,10 @@
     ::
     ++  get-kelvin
       |=  =yoki
-      ;;  weft
+      ^-  weft
       |^  ?-    -.yoki
               %|
-            %-  lobe-to-noun
+            %-  lobe-to-weft
             ~>  %mean.'clay: missing /sys/kelvin'
             (~(got by q.p.yoki) /sys/kelvin)
           ::
@@ -1582,16 +1582,28 @@
               ~>  %mean.'clay: missing /sys/kelvin'
               (~(got by q.p.yoki) /sys/kelvin)
             ?-    -.fil
-                %&  q.p.fil
-                %|  (lobe-to-noun p.fil)
+                %&  (page-to-weft p.fil)
+                %|  (lobe-to-weft p.fil)
             ==
           ==
-      ++  lobe-to-noun
+      ++  lobe-to-weft
         |=  =lobe
-        =/  bob  (lobe-to-blob:ze lobe)
-        ?-  -.bob
-          %direct  q.q.bob
-          %delta  q.r.bob
+        ^-  weft
+        =/  =blob  (lobe-to-blob:ze lobe)
+        =/  =page
+          ?-  -.blob
+            %direct  q.blob
+            %delta  r.blob
+          ==
+        (page-to-weft page)
+      ++  page-to-weft
+        |=  =page
+        ^-  weft
+        ?+    p.page  ~|(clay-bad-kelvin-mark/p.page !!)
+            %kelvin  ;;(weft q.page)
+            %mime
+          =+  ;;(=mime q.page)
+          !<(weft (slap !>(~) (ream q.q.mime)))
         ==
       --
     ::

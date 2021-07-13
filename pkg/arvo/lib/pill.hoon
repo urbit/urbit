@@ -1,5 +1,6 @@
 ::  |pill: helper functions for making pills
 ::
+/$  weft-to-mime  %kelvin  %mime
 ^?
 |%
 ::
@@ -77,7 +78,9 @@
   =?  hav  ?=(^ fil.lon)
       ::  XX  this whitelist needs to be reviewed
       ::
-      ?.  ?=  ?(%css %hoon %html %js %json %md %png %txt %udon %umd)
+      ?.  ?=  $?  %css  %hoon  %html  %js  %json  %md  %png  %txt
+                  %udon  %umd  %kelvin  %bill  %woff2
+              ==
           -.tyl
         ::
         ::  install only files with whitelisted marks
@@ -97,6 +100,15 @@
           [?(%md %txt) *]
         =/  dat  .^(wain %cx pax)
         (as-octs:mimes:html (of-wain:format dat))
+      ::
+          [%kelvin *]
+        =/  weft  ,[lal=@tas num=@ud]  ::  TODO remove after merge
+        =/  dat  .^(weft %cx pax)
+        q:(weft-to-mime dat)
+      ::
+          [%woff2 *]
+        =/  dat  .^(octs %cx pax)
+        dat
       ::
           *
         =/  dat  .^(@t %cx pax)
