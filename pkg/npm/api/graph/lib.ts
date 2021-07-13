@@ -337,6 +337,26 @@ export const removePosts = (
 });
 
 /**
+ * Remove a DM message from our inbox
+ *
+ * @remarks
+ * This does not remove the message from the recipients inbox
+ */
+export const removeDmMessage = (
+  our: Patp,
+  index: string
+): Poke<any> => ({
+  app: 'graph-store',
+  mark: `graph-update-${GRAPH_UPDATE_VERSION}`,
+  json: {
+    'remove-posts': {
+      resource: { ship: our, name: 'dm-inbox' },
+      indices: [index]
+    }
+  }
+});
+
+/**
  * Send a DM to a ship
  *
  * @param our sender

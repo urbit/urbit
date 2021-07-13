@@ -232,6 +232,7 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMo
             fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
             fontSize={1}
             lineHeight="tall"
+            value={message}
             rows={1}
             style={{ width: '100%', background: 'transparent', color: 'currentColor' }}
             placeholder={inCodeMode ? 'Code...' : 'Message...'}
