@@ -4248,7 +4248,7 @@
     =/  bem=beam
         ?^  bem
           u.bem
-        [[our %home %ud 1] ~]  ::  TODO: remove this fallback?
+        [[our %base %ud 1] ~]  ::  TODO: remove this fallback?
     =/  dos  (~(get by dos.rom.ruf) q.bem)
     ?~  dos
       !!  ::  fire next in queue

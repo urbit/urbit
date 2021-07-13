@@ -620,7 +620,7 @@
                         ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
       [%autocommit *]   %+  take-wake-autocommit  t.wire
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
-      [%vats *]         abet:(take:vats t.wire sign-arvo)
+      [%vats *]         abet:abet:(take:vats t.wire sign-arvo)
       *
     ?+    +<.sign-arvo
         ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
