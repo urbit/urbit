@@ -2,7 +2,7 @@ import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import { patp2dec } from 'urbit-ob';
 import shallow from 'zustand/shallow';
 
-import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs, getGraph, getShallowChildren } from '@urbit/api';
+import { Association, deSig, GraphNode, Graphs, resourceFromPath, getGraph, getShallowChildren } from '@urbit/api';
 import { useCallback } from 'react';
 import { createState, createSubscription, reduceStateN } from './base';
 import airlock from '~/logic/api';
@@ -14,13 +14,18 @@ import { clone } from '../lib/util';
 export interface GraphState {
   graphs: Graphs;
   graphKeys: Set<string>;
-  looseNodes: {
+  nodes: {
     [graph: string]: {
-      [index: string]: GraphNode;
+      [index: string]: Post;
     }
   };
-  flatGraphs: FlatGraphs;
-  threadGraphs: ThreadGraphs;
+  views: {
+    [graph: string]: {
+      [index: string]: {
+        [name: string]: string[]; // name is usually 'latest'
+      }
+    }
+  };
   pendingIndices: Record<string, any>;
   pendingDms: Set<string>;
   screening: boolean;
@@ -43,6 +48,8 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
   flatGraphs: {},
   threadGraphs: {},
   graphKeys: new Set(),
+  views: {},
+  nodes: {},
   looseNodes: {},
   pendingIndices: {},
   graphTimesentMap: {},
@@ -234,10 +241,8 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
 }), [
   'graphs',
   'graphKeys',
-  'looseNodes',
+  'nodes',
   'graphTimesentMap',
-  'flatGraphs',
-  'threadGraphs',
   'pendingDms'
 ], [
   (set, get) => createSubscription('graph-store', '/updates', (e) => {
@@ -304,4 +309,33 @@ export function useDM(ship: string) {
   return shipGraph?.children ?? new BigIntOrderedMap();
 }
 
+export function useToplevelGraphKeys(ship: string, name: string, view = 'latest') {
+  return useGraphState(useCallback((s) => {
+    const res = ship + '/' + name;
+    return s.views?.[res]?.['/']?.[view];
+  }, [ship, name, view]));
+}
+
+export function useGraphView(ship: string, name: string, index = '/', view = 'latest') {
+  return useGraphState(useCallback((s) => {
+    const res = ship + '/' + name;
+    return s.views?.[res]?.[index]?.[view] ?? [];
+  }, [ship,name, index,view]));
+}
+
+export function useFreshGraphView(ship: string, name: string, index = '/', view = 'latest') {
+  return useGraphState(useCallback((s) => {
+    const res = ship + '/' + name;
+    const result = s.views?.[res]?.[index]?.[view] ?? [];
+    return result.filter(r => (r in s.nodes?.[res] || {})
+      && typeof s.nodes?.[res]?.[r] !== 'string');
+  }, [ship,name, index,view]));
+}
+
+export function usePost(ship: string, name: string, index: string) {
+  return useGraphState(useCallback((s) => {
+    const res = ship + '/' + name;
+    return s.nodes?.[res]?.[index];
+  }, [ship, name, index]));
+}
 export default useGraphState;
