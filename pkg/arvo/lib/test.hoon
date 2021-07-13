@@ -13,7 +13,7 @@
     %+  weld  result
     ^-  tang
     :~  [%palm [": " ~ ~ ~] [leaf+"expected" (sell expected) ~]]
-        [%palm [": " ~ ~ ~] [leaf+"actual" (sell actual) ~]]
+        [%palm [": " ~ ~ ~] [leaf+"actual  " (sell actual) ~]]
     ==
   ::
   =?  result  !(~(nest ut p.actual) | p.expected)
