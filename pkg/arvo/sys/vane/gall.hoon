@@ -825,8 +825,11 @@
   ++  mo-fade
     |=  [dap=term style=?(%slay %idle %jolt)]
     ^+  mo-core
-    =/  =routes  [disclosing=~ attributing=our]
-    =/  app  (ap-abed:ap dap routes)
+    ?.  |(=(%jolt style) (~(has by yokes.state) dap))
+      mo-core
+    =/  app
+      ~_  leaf/"gall: fade {<style>} missing agent {<dap>}"
+      (ap-abed:ap dap `routes`[disclosing=~ attributing=our])
     =.  mo-core  ap-abet:(ap-fade:app style)
     =.  mo-core
       ?-  style
