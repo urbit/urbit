@@ -1,18 +1,22 @@
 import {
     Box,
-    Button, ManagedForm as Form, ManagedTextInputField as Input,
-
+    Button,
+    ManagedForm as Form,
+    ManagedTextInputField as Input,
     Menu,
     MenuButton,
-
     MenuItem, MenuList,
-
     Row, Text
 } from '@tlon/indigo-react';
 import { addBucket, removeBucket, setCurrentBucket } from '@urbit/api';
 import { Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback, useState } from 'react';
+import * as Yup from 'yup';
 import airlock from '~/logic/api';
+
+const validationSchema = Yup.object({
+  newBucket: Yup.string().required('Required')
+});
 
 export function BucketList({
   buckets,
@@ -29,8 +33,9 @@ export function BucketList({
     (values: { newBucket: string }, actions: FormikHelpers<any>) => {
       airlock.poke(addBucket(values.newBucket));
       actions.resetForm({ values: { newBucket: '' } });
+      setAdding(false);
     },
-    []
+    [setAdding]
   );
 
   const onSelect = useCallback(
@@ -52,7 +57,7 @@ export function BucketList({
   );
 
   return (
-    <Formik initialValues={{ newBucket: '' }} onSubmit={onSubmit}>
+    <Formik validationSchema={validationSchema} initialValues={{ newBucket: '' }} onSubmit={onSubmit}>
       <Form
         display="grid"
         gridTemplateColumns="100%"
@@ -103,14 +108,25 @@ export function BucketList({
           <Button type="button" onClick={() => setAdding(false)}>
             Cancel
           </Button>
-          <Button
-            width="fit-content"
-            primary
-            type={adding ? 'submit' : 'button'}
-            onClick={() => setAdding(s => !s)}
-          >
-            {adding ? 'Submit' : 'Add new bucket'}
-          </Button>
+          {!adding &&
+            <Button
+              width="fit-content"
+              primary
+              type="button"
+              onClick={() => setAdding(true)}
+            >
+              Add new bucket
+            </Button>
+          }
+          {adding &&
+            <Button
+              width="fit-content"
+              primary
+              type="submit"
+            >
+              Submit
+            </Button>
+          }
         </Row>
       </Form>
     </Formik>
