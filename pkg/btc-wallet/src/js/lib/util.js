@@ -118,3 +118,12 @@ export function reduceHistory(history) {
     return hest2.recvd - hest1.recvd;
   });
 }
+
+export function mapDenominationToSymbol(denomination) {
+  switch (denomination) {
+    case 'USD':
+      return '$';
+    default:
+      return denomination;
+  }
+}

@@ -24,11 +24,7 @@ const WalletModal = () => {
   const [confirmingMasterTicket, setConfirmingMasterTicket] = useState(false);
   const [error, setError] = useState(false);
 
-  const checkTicket = ({
-    event: {
-      target: { value },
-    },
-  }) => {
+  const checkTicket = ({ target: { value } }) => {
     // TODO: port over bridge ticket validation logic
     if (confirmingMasterTicket) {
       setConfirmedMasterTicket(value);
