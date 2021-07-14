@@ -2,6 +2,8 @@
 
 module Urbit.Vere.Serf.IPC.Types where
 
+import Data.Void
+
 import Urbit.Prelude hiding ((<|))
 import Urbit.Arvo                   (Ev, FX, Seed)
 import Urbit.Vere.Serf.Types
@@ -20,6 +22,7 @@ data Boot = Boot
   -- | For future flexibility, currently unused.
   , bMore :: [Ev]
   }
+  | MootVoid Void
   deriving (Show)
 
 data Live
