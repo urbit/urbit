@@ -18,6 +18,7 @@ import { validate } from 'bitcoin-address-validation';
 import * as ob from 'urbit-ob';
 import { useSettings } from '../../hooks/useSettings.js';
 import { api } from '../../api';
+import { deSig } from '../../lib/util.js';
 
 const focusFields = {
   empty: '',
@@ -91,7 +92,7 @@ const Send = ({ stopSending, value, conversion }) => {
       setPayeeType('address');
       setValidPayee(true);
     } else {
-      const possibleValidPatPMissingSig = '~'.concat(payeeReceived);
+      const possibleValidPatPMissingSig = `~${deSig(payeeReceived)}`;
       if (ob.isValidPatp(possibleValidPatPMissingSig)) {
         validPatPCommand(possibleValidPatPMissingSig);
       } else {
