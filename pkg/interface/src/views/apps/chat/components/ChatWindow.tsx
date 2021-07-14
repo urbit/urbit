@@ -138,7 +138,8 @@ class ChatWindow extends Component<
       }
       if(this.unreadSet &&
         this.dismissedInitialUnread() &&
-        this.virtualList!.startOffset() < 5) {
+        this.virtualList!.startOffset() < 5 &&
+        document.hasFocus()) {
         this.props.dismissUnread();
       }
     }
