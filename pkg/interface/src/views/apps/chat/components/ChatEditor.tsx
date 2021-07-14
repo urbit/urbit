@@ -177,9 +177,6 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMo
   }, [inCodeMode, placeholder]);
 
   function messageChange(editor, data, value) {
-    if(value.endsWith('/')) {
-      editor.showHint(['test', 'foo']);
-    }
     if (message !== '' && value == '') {
       setMessage(value);
     }
