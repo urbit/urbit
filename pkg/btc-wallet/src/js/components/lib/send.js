@@ -81,10 +81,10 @@ const Send = ({ stopSending, value, conversion }) => {
     };
 
     let payeeReceived = e.target.value;
-    let isPatp = ob.isValidPatp(payeeReceived);
+    let isPatp = ob.isValidPatp(`~${deSig(payeeReceived)}`);
     let isAddress = validate(payeeReceived);
     if (isPatp) {
-      validPatPCommand(payeeReceived);
+      validPatPCommand(`~${deSig(payeeReceived)}`);
     } else if (isAddress) {
       setPayee(payeeReceived);
       setReady(true);
@@ -92,16 +92,11 @@ const Send = ({ stopSending, value, conversion }) => {
       setPayeeType('address');
       setValidPayee(true);
     } else {
-      const possibleValidPatPMissingSig = `~${deSig(payeeReceived)}`;
-      if (ob.isValidPatp(possibleValidPatPMissingSig)) {
-        validPatPCommand(possibleValidPatPMissingSig);
-      } else {
-        setPayee(payeeReceived);
-        setReady(false);
-        setCheckingPatp(false);
-        setPayeeType('');
-        setValidPayee(false);
-      }
+      setPayee(payeeReceived);
+      setReady(false);
+      setCheckingPatp(false);
+      setPayeeType('');
+      setValidPayee(false);
     }
   };
 
