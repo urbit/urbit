@@ -201,16 +201,20 @@ const WalletModal = () => {
             Extended Public Key (XPub)
           </Text>
         </Box>
-        <StatelessTextInput
-          value={xpub}
-          disabled={inputDisabled}
-          fontSize="14px"
-          type="password"
-          name="xpub"
-          autoCapitalize="none"
-          autoCorrect="off"
-          onChange={(e) => checkXPub(e)}
-        />
+        <Row alignItems="center">
+          <StatelessTextInput
+            value={xpub}
+            disabled={inputDisabled}
+            fontSize="14px"
+            type="password"
+            name="xpub"
+            autoCapitalize="none"
+            autoCorrect="off"
+            onChange={(e) => checkXPub(e)}
+            mr={1}
+          />
+          {!inputDisabled ? null : <LoadingSpinner />}
+        </Row>
         <Box mt={3} mb={3}>
           <Text
             fontSize="14px"

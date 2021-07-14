@@ -16,10 +16,12 @@ const Balance = () => {
     setPsbt,
     setFee,
     setError,
+    scanProgress,
   } = useSettings();
   const [sending, setSending] = useState(false);
   const [copiedButton, setCopiedButton] = useState(false);
   const [copiedString, setCopiedString] = useState(false);
+  const scanning = scanProgress?.main !== null || scanProgress?.change !== null;
 
   const copyAddress = (arg) => {
     navigator.clipboard.writeText(address);
@@ -93,10 +95,26 @@ const Balance = () => {
             >
               {value}
             </Text>
-            <Text
-              fontSize={1}
-              color="orange"
-            >{`${sats}${unconfirmedString} sats`}</Text>
+            {scanning ? (
+              <Col alignItems="center">
+                <Row>
+                  <Text fontSize={1} color="orange">
+                    Balance will be updated shortly:
+                  </Text>
+                </Row>
+                <Row>
+                  <Text fontSize={1} color="orange">
+                    {scanProgress.main} main wallet addresses scanned
+                    {scanProgress.change} change wallet addresses scanned
+                  </Text>
+                </Row>
+              </Col>
+            ) : (
+              <Text
+                fontSize={1}
+                color="orange"
+              >{`${sats}${unconfirmedString} sats`}</Text>
+            )}
           </Col>
           <Row flexDirection="row-reverse">
             <Button
