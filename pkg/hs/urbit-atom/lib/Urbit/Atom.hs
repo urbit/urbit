@@ -82,6 +82,7 @@ instance Real Atom where
 
 instance Integral Atom where
   quotRem a b = let (q, r) = quotRem (toN a) (toN b) in (fromN q, fromN r)
+  divMod a b = let (d, m) = divMod (toN a) (toN b) in (fromN d, fromN m)
   toInteger = toInteger . toN
 
 
