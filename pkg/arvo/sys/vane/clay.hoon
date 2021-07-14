@@ -1657,6 +1657,8 @@
     ++  promote-ford
       |=  [=ford-cache deletes=(set path) changes=(set path)]
       ^+  ford-cache
+      ?:  (~(has in changes) /sys/kelvin)
+        *^ford-cache
       =/  invalid=(set path)  (~(uni in deletes) changes)
       =.  invalid
         %-  ~(gas in invalid)
