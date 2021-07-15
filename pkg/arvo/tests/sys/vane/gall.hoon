@@ -33,7 +33,7 @@
   =/  ship  ~nec
   ::
   =/  call-args
-    =/  =task:gall  [%conf dap]
+    =/  =task:gall  [%conf dap %home]
     [duct task]
   ::
   =/  =move:gall-gate

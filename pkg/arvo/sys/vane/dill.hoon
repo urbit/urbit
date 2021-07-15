@@ -224,7 +224,7 @@
         =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  +>  (pass / %g %conf ram)
+        =.  +>  (pass / %g %conf ram %home)
         =?  +>  ?=(?(%earl %duke %king) can)
           (ota sein %kids)
         ::  make kids desk publicly readable, so syncs work.
@@ -276,6 +276,7 @@
             [%gall %unto *]
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
+            %raw-fact   !!
             %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
             %kick       peer
             %watch-ack  ?~  p.p.+>.sih
