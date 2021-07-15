@@ -2,6 +2,9 @@
 **
 ** This file is in the public domain.
 */
+
+#include <openssl/opensslv.h>
+
   /**  Constants.
   **/
     /* u3a_bits: number of bits in word-addressed pointer.  29 == 2GB.

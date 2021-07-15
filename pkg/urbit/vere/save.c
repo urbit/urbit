@@ -1,13 +1,6 @@
 /* vere/save.c
 **
 */
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <termios.h>
-#include <uv.h>
-
 #include "all.h"
 #include "vere/vere.h"
 
@@ -20,6 +13,7 @@ _save_time_cb(uv_timer_t* tim_u)
   u3_pier_save(pir_u);
 }
 
+#if 0
 /* u3_save_ef_chld(): report save termination.
 */
 void
@@ -41,6 +35,7 @@ u3_save_ef_chld(u3_pier *pir_u)
   }
   sav_u->pid_w = 0;
 }
+#endif
 
 /* u3_save_io_init(): initialize autosave.
 */

@@ -43,7 +43,7 @@
   :: +noun: validate post
   :: 
   ++  noun
-    |=  p=*
+    |:  p=`*`%*(. *indexed-post contents.p [%text '']~)
     =/  ip  ;;(indexed-post p)
     ?>  ?=(^ contents.p.ip)
     ip

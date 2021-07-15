@@ -1,13 +1,12 @@
 /* noun/urth.c
 **
 */
+#include "all.h"
+#include "ur/ur.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <ctype.h>
-
-#include "all.h"
-#include "ur/ur.h"
 
 /* _cu_atom_to_ref(): allocate indirect atom off-loom.
 */
