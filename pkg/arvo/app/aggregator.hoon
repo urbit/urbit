@@ -81,7 +81,7 @@
 ::
 +$  action
   $%  [%submit force=? sig=@ tx=part-tx]
-      [%cancel sig=@ keccak=@ =l2-tx]
+      [%cancel sig=@ keccak=@ =l2-tx =ship]
       [%commit ~]  ::TODO  maybe pk=(unit @) later
       [%config config]
   ==
@@ -531,7 +531,9 @@
     |-  ^+  [valid state]
     ?~  txs  [valid state]
     ::
-    =*  tx        i.txs
+    =*  tx      i.txs
+    =*  raw-tx  raw-tx.i.txs
+    =*  ship    ship.from.tx.raw-tx.i.txs
     =/  hash=@ux  (hash-raw-tx:lib raw-tx)
     ?:  (~(has in local) hash)
       ::  if tx was already seen here, skip
@@ -544,7 +546,7 @@
       (~(put by finding.state) [hash %failed])
     =?  history.state  !gud
       =/  =roller-tx
-        [[type ~] hash (l2-tx +<.tx.raw-tx.tx)]
+        [ship [type ~] hash (l2-tx +<.tx.raw-tx)]
       %.  [address.tx roller-tx(status [%failed ~])]
       ~(put ju (~(del ju history.state) address.tx roller-tx))
     $(txs t.txs, local (~(put in local) hash))
@@ -593,6 +595,7 @@
       =;  [to=@ux from=@ux]
         =?  owners  !=(from 0x0)
           ?>  ?=(^ old)
+          (~(del ju owners) from [ship.diff u.old])
         ?:  =(to 0x0)  owners
         (~(put ju owners) to [ship.diff new])
       ?+    -.event  [0x0 0x0]
@@ -663,7 +666,7 @@
 ::  +cancel-tx: cancel a pending transaction
 ::
 ++  cancel-tx
-  |=  [sig=@ =keccak =l2-tx]
+  |=  [sig=@ =keccak =l2-tx =ship]
   ^-  (quip card _state)
   ?^  status=(~(get by finding) keccak)
     ~?  lverb  [dap.bowl %tx-not-pending status+u.status]
@@ -685,7 +688,7 @@
     [~ state]
   =.  history
     %+  ~(del ju history)  u.addr
-    [[%pending ~] keccak l2-tx]
+    [ship [%pending ~] keccak l2-tx]
   =.  pending
     %+  skip  pending
     |=  pend-tx
@@ -741,7 +744,7 @@
   :: =?  history  not-sent
   =.  history
     %+  ~(put ju history)  u.address
-    [[%pending ~] hash (l2-tx +<.tx.raw-tx)]
+    [ship.from.tx.raw-tx [%pending ~] hash (l2-tx +<.tx.raw-tx)]
   :: ?.  not-sent  ~&  "skip"  [~ state]
   ::  toggle flush flag
   ::
@@ -785,7 +788,8 @@
         %+  roll  pending
         |=  [pend-tx hist=_history]
         =/  tx=roller-tx
-          :+  [%pending ~]
+          :^      ship.from.tx.raw-tx
+              [%pending ~]
             (hash-raw-tx:lib raw-tx)
           (l2-tx +<.tx.raw-tx)
         %+  ~(put ju (~(del ju hist) address tx))
@@ -897,7 +901,8 @@
   ::
   =.  history
     =/  tx=roller-tx
-      :+  [%sending ~]
+      :^    ship.from.tx.raw-tx.diff
+          [%sending ~]
         keccak
       (l2-tx +<.tx.raw-tx.diff)
     ?~  addr=(get-l1-address tx.raw-tx.diff pre)

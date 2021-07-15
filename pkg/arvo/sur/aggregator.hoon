@@ -37,7 +37,7 @@
 ::
 ::  TODO:  add submission time?
 ::
-+$  roller-tx  [status=tx-status hash=keccak type=l2-tx]
++$  roller-tx  [=ship status=tx-status hash=keccak type=l2-tx]
 ::
 +$  pend-tx    [force=? =address:naive =raw-tx:naive]
 ::
