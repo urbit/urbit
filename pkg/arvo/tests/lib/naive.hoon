@@ -131,21 +131,23 @@
   =/  pp-escape  [[~pinpun-pilsun %own] %escape ~losred]
   =/  dm-escape  [[~dovmul-mogryt %own] %escape ~rigred]
   =/  lm-escape  [[~larsyx-mapmeg %own] %escape ~losred]
+  =/  rm-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
   =^  f1  state  (init-rut-full state)
   ::  TODO uncomment the below once %escape is moved to +test-red
   ::  =^  f21  state  (n state (owner-changed:l1 ~red (addr %red-key-0)))
   ::  =^  f22  state  (n state (owner-changed:l1 ~rigred (addr %rigred-key-0)))
   ::  =^  f23  state  (n state (owner-changed:l1 ~losred (addr %losred-key-0)))
   ::  =^  f24  state  (n state (owner-changed:l1 ~losred deposit-address:naive))
-  ::  L1->L1 will happen later, its the most complicated
   ::  each pending escape will be followed by an adopt, reject, or cancel-escape
+  ::  L1->L1
+  =^  f2  state  (n state %bat q:(gen-tx 0 rm-escape %holrut-rr-key-0))
   ::  L2->L2
-  =^  f2  state  (n state %bat q:(gen-tx 0 pp-escape %losrut-pp-key-0))
+  =^  f3  state  (n state %bat q:(gen-tx 1 pp-escape %losrut-pp-key-0))
   ::  L2->L1
-  =^  f3  state  (n state %bat q:(gen-tx 0 dm-escape %holrut-dm-key-0))
+  =^  f4  state  (n state %bat q:(gen-tx 1 dm-escape %holrut-dm-key-0))
   ::  L1->L2
-  =^  f4  state  (n state %bat q:(gen-tx 0 lm-escape %rigrut-lm-key-0))
-  [:(welp f1 f2 f3 f4) state]
+  =^  f5  state  (n state %bat q:(gen-tx 0 lm-escape %rigrut-lm-key-0))
+  [:(welp f1 f2 f3 f4 f5) state]
 ::
 ::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
@@ -608,19 +610,19 @@
     ^-  (jar @p event)
     =/  filter  ;:  cork
                     (cury filter-owner %.y)
-                    (cury filter-proxy %manage)
+                    (cury filter-proxy %own)
                     (cury filter-nonce %.y)
                     ::(cury filter-rank %star)
-                    ::(cury filter-dominion %l2)
+                    ::(cury filter-dominion %l1)
                     %-  cury
                     :-  filter-tx-type
-                    :*  %spawn
-                        %transfer-point
-                        %configure-keys
-                        %set-management-proxy
+                    :*  ::%spawn
+                        ::%transfer-point
+                        ::%configure-keys
+                        ::%set-management-proxy
                         ::%set-spawn-proxy  :: planets can set spawn proxy atm
-                        %set-transfer-proxy
-                        ::%escape
+                        ::%set-transfer-proxy
+                        %escape
                         ~
                     ==
                 ==
@@ -672,8 +674,6 @@
       $(ships t.ships)
     ::
     --
-  ::
-
   ::
   --
 ::
@@ -770,6 +770,7 @@
 ++  lt-own      [~linnup-torsyx %own] :: key %lt-key-0
 ++  lt-xfr      [~linnup-torsyx %transfer] :: key %lt-key-0
 ::
+::
 ::  rut tests
 ::
 ::
@@ -826,6 +827,10 @@
                              [~radres-tinnyl %losrut-rt-mkey-0]
                              ~
                          ==
+::
+::  sponsorship tests
+++  losred-own  [~losred %own]
+++  rigred-own  [~rigred %own]
 ::
 --
 ::
@@ -1076,7 +1081,159 @@
   ::
   --  :: end of +expect-eq
 ::
-:: ++  test-red  ^-  tang
+::  the following are sponsorship tests. they ought to eventually be consolidated
+::  into one large test, but for now it will be easier to tell which one is failing
+::  by splitting them up
+::
+::  the following are L2 sponsorship tests. the syntax is test-red-X-Y-action. X is the
+::  layer of the sponsee, Y is the layer of the sponsor
+::
+++  test-red-l2-l2-adopt  ^-  tang
+  =/  pp-adopt  [losred-own %adopt ~pinpun-pilsun]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~losred]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 pp-adopt %losred-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+::
+++  test-red-l1-l2-adopt
+  =/  lm-adopt  [losred-own %adopt ~larsyx-mapmeg]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~losred]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 lm-adopt %losred-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+::
+++  test-red-l2-l1-adopt
+  =/  dm-adopt  [rigred-own %adopt ~dovmul-mogryt]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~rigred]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 dm-adopt %rigred-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+::
+++  test-red-l1-l1-adopt
+  =/  rr-adopt  [rigred-own %adopt ~rabsum-ravtyd]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~rigred]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
+::  the following tests L2 %rejects
+++  test-red-l2-l2-reject  ^-  tang
+  =/  pp-reject  [losred-own %reject ~pinpun-pilsun]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~losrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 pp-reject %losred-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+::
+++  test-red-l2-l1-reject  ^-  tang
+  =/  dm-reject  [rigred-own %reject ~dovmul-mogryt]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 dm-reject %rigred-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+::
+++  test-red-l1-l2-reject  ^-  tang
+  =/  lm-reject  [losred-own %reject ~larsyx-mapmeg]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~rigrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 lm-reject %losred-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+::
+++  test-red-l1-l1-reject  ^-  tang
+  =/  rr-reject  [rigred-own %reject ~rabsum-ravtyd]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 rr-reject %rigred-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
+::  the following tests L2 %cancel-escape
+::
+++  test-red-l2-l2-cancel-escape  ^-  tang
+  =/  pp-cancel-escape  [[~pinpun-pilsun %own] %cancel-escape ~losred]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~losrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 2 pp-cancel-escape %losrut-pp-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+::
+++  test-red-l2-l1-cancel-escape  ^-  tang
+  =/  dm-cancel-escape  [[~dovmul-mogryt %own] %cancel-escape ~rigred]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 2 dm-cancel-escape %holrut-dm-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+::
+++  test-red-l1-l2-cancel-escape  ^-  tang
+  =/  lm-cancel-escape  [[~larsyx-mapmeg %own] %cancel-escape ~losred]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~rigrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 1 lm-cancel-escape %rigrut-lm-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+::
+++  test-red-l1-l1-cancel-escape  ^-  tang
+  =/  rr-cancel-escape  [[~rabsum-ravtyd %own] %cancel-escape ~rigred]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 1 rr-cancel-escape %holrut-rr-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
