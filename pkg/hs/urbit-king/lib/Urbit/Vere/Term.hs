@@ -230,7 +230,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
     stop :: HasLogFunc e
          => (Client, Private) -> RIO e ()
-    stop (Client{..}, Private{..}) = do
+    stop (Client{}, Private{..}) = do
       -- Note that we don't `cancel pReaderThread` here. This is a deliberate
       -- decision because fdRead calls into a native function which the runtime
       -- can't kill. If we were to cancel here, the internal `waitCatch` would

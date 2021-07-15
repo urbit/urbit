@@ -2,8 +2,7 @@
 , enableStatic ? stdenv.hostPlatform.isStatic }:
 
 haskell-nix.stackProject {
-  compiler-nix-name = "ghc884";
-  index-state = "2020-09-24T00:00:00Z";
+  compiler-nix-name = "ghc8104";
 
   # This is incredibly difficult to get right, almost everything goes wrong.
   # See: https://github.com/input-output-hk/haskell.nix/issues/496
@@ -16,48 +15,6 @@ haskell-nix.stackProject {
   };
 
   modules = [{
-    # This corresponds to the set of packages (boot libs) that ship with GHC.
-    # We declare them yere to ensure any dependency gets them from GHC itself
-    # rather than trying to re-install them into the package database.
-    nonReinstallablePkgs = [
-      "Cabal"
-      "Win32"
-      "array"
-      "base"
-      "binary"
-      "bytestring"
-      "containers"
-      "deepseq"
-      "directory"
-      "filepath"
-      "ghc"
-      "ghc-boot"
-      "ghc-boot-th"
-      "ghc-compact"
-      "ghc-heap"
-      "ghc-prim"
-      "ghci"
-      "ghcjs-prim"
-      "ghcjs-th"
-      "haskeline"
-      "hpc"
-      "integer-gmp"
-      "integer-simple"
-      "mtl"
-      "parsec"
-      "pretty"
-      "process"
-      "rts"
-      "stm"
-      "template-haskell"
-      "terminfo"
-      "text"
-      "time"
-      "transformers"
-      "unix"
-      "xhtml"
-    ];
-
     # Override various project-local flags and build configuration.
     packages = {
       urbit-king.components.exes.urbit-king = {

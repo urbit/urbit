@@ -204,7 +204,7 @@ data PointRequest = PointRequest
   } deriving (Show, Eq)
 
 instance RequestMethod PointRequest where
-  getRequestMethod PointRequest{..} = "eth_call"
+  getRequestMethod PointRequest{} = "eth_call"
 
 instance ToJSON PointRequest where
   -- 0x63fa9a87 is the points(uint32) call.
@@ -305,7 +305,7 @@ data TurfRequest = TurfRequest
   } deriving (Show, Eq)
 
 instance RequestMethod TurfRequest where
-  getRequestMethod TurfRequest{..} = "eth_call"
+  getRequestMethod TurfRequest{} = "eth_call"
 
 instance ToJSON TurfRequest where
   -- 0xeccc8ff1 is the dnsDomains(uint32) call.

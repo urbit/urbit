@@ -44,7 +44,7 @@ let
     (import ./overlays/musl.nix)
   ] ++ overlays;
 
-  pkgs = import sourcesFinal.nixpkgs {
+  pkgs = import haskellNix.sources.nixpkgs-2009 {
     inherit system crossSystem crossOverlays;
 
     config = configFinal;

@@ -33,6 +33,7 @@ import Data.LargeWord   (LargeKey, Word128, Word256)
 import GHC.Exts         (chr#, isTrue#, leWord#, word2Int#)
 import GHC.Natural      (Natural)
 import GHC.Types        (Char(C#))
+import GHC.Tuple
 import GHC.Word         (Word32(W32#))
 import Prelude          ((!!))
 import RIO.FilePath     (joinPath, splitDirectories, takeBaseName,
@@ -746,6 +747,12 @@ instance FromNoun () where
         Atom 0 -> pure ()
         x      -> fail ("expecting `~`, but got " <> show x)
 
+instance ToNoun a => ToNoun (Unit a) where
+  toNoun (Unit x) = toNoun x
+
+instance FromNoun a => FromNoun (Unit a) where
+  parseNoun n = named "Unit" (Unit <$> parseNoun n)
+ 
 instance (ToNoun a, ToNoun b) => ToNoun (a, b) where
     toNoun (x, y) = Cell (toNoun x) (toNoun y)
 
