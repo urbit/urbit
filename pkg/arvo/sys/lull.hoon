@@ -1652,7 +1652,7 @@
   +$  bitt  (map duct (pair ship path))                 ::  incoming subs
   +$  boat                                              ::  outgoing subs
     %+  map  [=wire =ship =term]                        ::
-    [acked=? =path]                                     ::
+    [acked=? =path nonce=@]                             ::
   +$  bowl                                              ::  standard app state
           $:  $:  our=ship                              ::  host
                   src=ship                              ::  guest
