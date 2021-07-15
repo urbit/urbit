@@ -362,19 +362,18 @@
         =/  data=(unit @p)                (ship:data:from-json params)
         ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
           [~ ~(parse error:json-rpc id)]
-        :_  [%result id s+'ok']
+        =/  =tx:naive
+          ?-  action
+            %escape         [u.from %escape u.data]
+            %cancel-escape  [u.from %cancel-escape u.data]
+            %adopt          [u.from %adopt u.data]
+            %reject         [u.from %reject u.data]
+            %detach         [u.from %detach u.data]
+          ==
+        =/  =keccak  (hash-tx:lib (gen-tx-octs:lib tx))
+        :_  [%result id (l2-hash:to-json keccak)]
         %-  some
-        :-  %aggregator-action
-        !>
-        =;  =skim-tx:naive
-          [%submit | u.sig %don u.from skim-tx]
-        ?-  action
-          %escape         [%escape u.data]
-          %cancel-escape  [%cancel-escape u.data]
-          %adopt          [%adopt u.data]
-          %reject         [%reject u.data]
-          %detach         [%detach u.data]
-        ==
+        aggregator-action+!>([%submit | u.sig %don tx])
       ::
       ++  proxy
         |=  [id=@t params=(map @t json) action=proxy-action]
@@ -387,16 +386,16 @@
         ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
           [~ ~(parse error:json-rpc id)]
         :_  [%result id s+'ok']
+        =/  =tx:naive
+          ?-  action
+          %set-management-proxy  [u.from %set-management-proxy u.data]
+          %set-spawn-proxy       [u.from %set-spawn-proxy u.data]
+          %set-transfer-proxy    [u.from %set-transfer-proxy u.data]
+          ==
+        =/  =keccak  (hash-tx:lib (gen-tx-octs:lib tx))
+        :_  [%result id (l2-hash:to-json keccak)]
         %-  some
-        :-  %aggregator-action
-        !>
-        =;  =skim-tx:naive
-          [%submit | u.sig %don u.from skim-tx]
-        ?-  action
-          %set-management-proxy  [%set-management-proxy u.data]
-          %set-spawn-proxy       [%set-spawn-proxy u.data]
-          %set-transfer-proxy    [%set-transfer-proxy u.data]
-        ==
+        aggregator-action+!>([%submit | u.sig %don tx])
       --
     ::
     ++  validate
@@ -406,6 +405,10 @@
         ^-  ?
         =((lent ~(tap by params)) 3)
       --
+    ++  l2-hash
+      |=  =keccak
+      ^-  json
+      s+(crip "0x{((x-co:co 20) keccak)}")
     --
 |%
 ++  get-point
@@ -438,21 +441,6 @@
     ~(params error:json-rpc id)
   [%result id a+(turn dns (cork same (lead %s)))]
 ::
-++  transfer-point
-  |=  [id=@t params=(map @t json)]
-  ^-  [(unit cage) response:rpc]
-  ?.  (params:validate params)
-    [~ ~(params error:json-rpc id)]
-  =/  sig=(unit @)                    (sig:from-json params)
-  =/  from=(unit [ship proxy:naive])  (from:from-json params)
-  =/  data=(unit [@ux ?])             (address-transfer:data:from-json params)
-  ?:  |(?=(~ sig) ?=(~ from) ?=(~ data))
-    [~ ~(parse error:json-rpc id)]
-  :_  [%result id s+'ok']
-  %-  some
-  :-  %aggregator-action
-  !>([%submit | u.sig %don u.from %transfer-point u.data])
-::
 ++  cancel-tx
   |=  [id=@t params=(map @t json)]
   ^-  [(unit cage) response:rpc]
@@ -468,6 +456,21 @@
   :-  %aggregator-action
   !>([%cancel u.sig u.keccak u.l2])
 ::
+++  transfer-point
+  |=  [id=@t params=(map @t json)]
+  ^-  [(unit cage) response:rpc]
+  ?.  (params:validate params)
+    [~ ~(params error:json-rpc id)]
+  =/  sig=(unit @)                    (sig:from-json params)
+  =/  from=(unit [ship proxy:naive])  (from:from-json params)
+  =/  data=(unit [@ux ?])             (address-transfer:data:from-json params)
+  ?:  |(?=(~ sig) ?=(~ from) ?=(~ data))
+    [~ ~(parse error:json-rpc id)]
+  =/  =tx:naive  [u.from %transfer-point u.data]
+  =/  =keccak    (hash-tx:lib (gen-tx-octs:lib tx))
+  :_  [%result id (l2-hash:to-json keccak)]
+  %-  some
+  aggregator-action+!>([%submit | u.sig %don tx])
 ++  get-spawned
   |=  [id=@t params=(map @t json) scry=$-(ship (list [ship @ux]))]
   ^-  response:rpc
@@ -490,10 +493,11 @@
     (keys:data:from-json params)
   ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
     [~ ~(parse error:json-rpc id)]
-  :_  [%result id s+'ok']
+  =/  =tx:naive  [u.from %configure-keys u.data]
+  =/  =keccak    (hash-tx:lib (gen-tx-octs:lib tx))
+  :_  [%result id (l2-hash:to-json keccak)]
   %-  some
-  :-  %aggregator-action
-  !>([%submit | u.sig %don u.from %configure-keys u.data])
+  aggregator-action+!>([%submit | u.sig %don tx])
 ::
 ++  spawn
   |=  [id=@t params=(map @t json)]
@@ -505,10 +509,11 @@
   =/  data=(unit [@p @ux])          (address-ship:data:from-json params)
   ?.  &(?=(^ sig) ?=(^ from) ?=(^ data))
     [~ ~(parse error:json-rpc id)]
-  :_  [%result id s+'ok']
+  =/  =tx:naive  [u.from %spawn u.data]
+  =/  =keccak   (hash-tx:lib (gen-tx-octs:lib tx))
+  :_  [%result id (l2-hash:to-json keccak)]
   %-  some
-  :-  %aggregator-action
-  !>([%submit | u.sig %done u.from %spawn u.data])
+  aggregator-action+!>([%submit | u.sig %done tx])
 ::
 ++  escape            sponsor:rpc-res
 ++  cancel-escape     sponsor:rpc-res

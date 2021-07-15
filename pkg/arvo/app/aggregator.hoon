@@ -200,7 +200,7 @@
         [?:(known %pending %unknown) ~]
       %+  lien  pending
       |=  pend-tx
-      =(u.keccak (hash-tx raw.raw-tx))
+      =(u.keccak (hash-tx:lib raw.raw-tx))
     ::
     ++  history
       |=  wat=@t
@@ -455,13 +455,6 @@
     [%pass path %agent [our.bowl %spider] %leave ~]
   --
 ::
-++  hash-tx  keccak-256:keccak:crypto
-::
-++  hash-raw-tx
-  |=  =raw-tx:naive
-  ^-  @ux
-  (hash-tx raw.raw-tx)
-::
 ++  part-tx-to-full
   |=  =part-tx
   ^-  [octs tx:naive]
@@ -539,7 +532,7 @@
     ?~  txs  [valid state]
     ::
     =*  tx        i.txs
-    =/  hash=@ux  (hash-raw-tx raw-tx.tx)
+    =/  hash=@ux  (hash-raw-tx:lib raw-tx)
     ?:  (~(has in local) hash)
       ::  if tx was already seen here, skip
       ::
@@ -696,7 +689,7 @@
   =.  pending
     %+  skip  pending
     |=  pend-tx
-    =(keccak (hash-raw-tx raw-tx))
+    =(keccak (hash-raw-tx:lib raw-tx))
   [~ state]
 ::  TODO: move to /lib/naive-transactions
 ::
@@ -734,7 +727,7 @@
     ::  TODO: add tx to the history as failed?
     ::
     [~ state]
-  =/  hash=@ux   (hash-raw-tx raw-tx)
+  =/  hash=@ux  (hash-raw-tx:lib raw-tx)
   ::  TODO: what if this hash/tx is already in the history?
   ::    e.g. if previously failed, but now it will go through
   ::    a) check in :finding that hash doesn't exist and if so, skip ?
@@ -786,14 +779,14 @@
         %-  ~(gas by finding)
         %+  turn  pending
         |=  pend-tx
-        (hash-raw-tx raw-tx)^[address nonce]
+        (hash-raw-tx:lib raw-tx)^[address nonce]
       ::
           history
         %+  roll  pending
         |=  [pend-tx hist=_history]
         =/  tx=roller-tx
           :+  [%pending ~]
-            (hash-raw-tx raw-tx)
+            (hash-raw-tx:lib raw-tx)
           (l2-tx +<.tx.raw-tx)
         %+  ~(put ju (~(del ju hist) address tx))
           address
@@ -868,7 +861,7 @@
     [(wait:b:sys /owners (add ~m5 now.bowl))]~
   ?.  ?=(%tx -.diff)
     [~ state]
-  =/  =keccak  (hash-raw-tx raw-tx.diff)
+  =/  =keccak  (hash-raw-tx:lib raw-tx.diff)
   ?~  wer=(~(get by finding) keccak)
     [~ state]
   ::  if we had already seen the tx, no-op

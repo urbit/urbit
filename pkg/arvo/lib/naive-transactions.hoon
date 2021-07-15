@@ -19,7 +19,7 @@
     =,  secp256k1:secp:crypto
     %-  address-from-pub:key:ethereum
     %-  serialize-point
-    (ecdsa-raw-recover (keccak-256:keccak:crypto dat) v r s)
+    (ecdsa-raw-recover (hash-tx dat) v r s)
   ?-  -.result
     %|  ~
     %&  `p.result
@@ -30,7 +30,7 @@
   =/  prepared-data  (prepare-for-sig 1.337 nonce tx)
   =/  sign-data
     =/  len  (rsh [3 2] (scot %ui p.prepared-data))
-    %-  keccak-256:keccak:crypto
+    %-  hash-tx
     %:  cad:naive  3
       26^'\19Ethereum Signed Message:\0a'
       (met 3 len)^len
@@ -160,5 +160,12 @@
     1^(can 0 3^proxy 5^0 ~)
   ::
   --
+::
+++  hash-tx  keccak-256:keccak:crypto
+::
+++  hash-raw-tx
+  |=  =raw-tx:naive
+  ^-  @ux
+  (hash-tx raw.raw-tx)
 ::
 --
