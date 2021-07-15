@@ -1,3 +1,4 @@
+jolt  *bill
 /+  version
 =,  clay
 =,  space:userlib
@@ -15,7 +16,6 @@
 +$  pith-2                                              ::
   $:  rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
-      ota=(unit [=ship =desk =aeon])                    ::
       ark=(map desk arak)                               ::
       commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
   ==                                                    ::
@@ -37,11 +37,23 @@
   ==
 ::  $arak: foreign vat tracker
 ::
+::    .next is a list of pending commits with future kelvins
+::
 +$  arak
   $:  =ship
       =desk
       =aeon
       next=(list [=aeon =weft])
+      =rein
+  ==
+::  $rein: diff from desk manifest
+::
+::    .add: agents not in manifest that should be running
+::    .sub: agents in manifest that should not be running
+::
++$  rein
+  $:  add=(set dude:gall)
+      sub=(set dude:gall)
   ==
 +$  per-desk                                            ::  per-desk state
   $:  auto=?                                            ::  escalate on failure
@@ -146,7 +158,7 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  [~ ~]
-      [%x %kiln %ota ~]        ``noun+!>(ota)
+      [%x %kiln %ark ~]        ``noun+!>(ark)
       [%x %kiln %our ~]        ``noun+!>(our)
       [%x %kiln %base-hash ~]
     =/  ver  (base-hash:version our now)
@@ -200,9 +212,9 @@
     ~>  %slog.0^leaf/"kiln: uninstalling {here}"
     =.  vats
       %-  emil
-      %+  turn  (get-apps lac)
+      %+  turn  (get-apps-have lac)
       |=  =dude:gall
-      [%pass /kiln/vats/uninstall %arvo %g %fade dude %idle]
+      [%pass /kiln/vats/uninstall %arvo %g %idle dude]
     ::
     kiln(ark (~(del by ark) lac))
   ::  +install: set up desk sync to .lac to install all apps from [her rem]
@@ -216,7 +228,7 @@
       vats
     =?  kiln  ?=(^ got)  (uninstall lac)
     =:  loc  lac
-        rak  [her rem *aeon next=~]
+        rak  [her rem *aeon next=~ *rein]
       ==
     ~>  %slog.0^leaf/"kiln: beginning install into {here}"
     (emit find:pass)
@@ -259,10 +271,12 @@
       %download    (take-download syn)
       %merge-main  (take-merge-main syn)
       %merge-kids  (take-merge-kids syn)
+      %jolt        (take-onto syn)
     ==
   ::
   ++  take-find
     |=  syn=sign-arvo
+    ^+  vats
     ?>  ?=(%writ +<.syn)
     ?~  p.syn
       ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, aborting"
@@ -272,6 +286,7 @@
   ::
   ++  take-sync
     |=  syn=sign-arvo
+    ^+  vats
     ?>  ?=(%writ +<.syn)
     ?~  p.syn
       ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, retrying"
@@ -282,6 +297,7 @@
   ::
   ++  take-download
     |=  syn=sign-arvo
+    ^+  vats
     ?>  ?=(%writ +<.syn)
     ?~  p.syn
       ~>  %slog.0^leaf/"kiln: cancelled (2) install into {here}, retrying"
@@ -320,6 +336,7 @@
   ::
   ++  take-merge-main
     |=  syn=sign-arvo
+    ^+  vats
     ?>  ?=(%mere +<.syn)
     ?:  ?=([%| %ali-unavailable *] p.syn)
       =+  "kiln: merge into {here} failed, maybe because sunk; restarting"
@@ -332,9 +349,9 @@
     =.  vats
       ~>  %slog.0^leaf/"merge into {here} succeeded; reviving agents"
       %-  emil
-      %+  turn  (get-apps loc)
+      %+  turn  (get-apps-want loc rein.rak)
       |=  =dude:gall
-      [%pass /kiln/fade/[dude] %arvo %g %fade dude %jolt]
+      [%pass /kiln/jolt/[dude] %arvo %g %jolt loc dude]
     ?.  =(%base loc)
       vats
     =.  kiln  (bump (sy %base %kids ~))
@@ -342,6 +359,7 @@
   ::
   ++  take-merge-kids
     |=  syn=sign-arvo
+    ^+  vats
     ?>  ?=(%mere +<.syn)
     ?:  ?=([%| %ali-unavailable *] p.syn)
       ~>  %slog.0^leaf/"kiln: OTA to %kids failed, maybe peer sunk; restarting"
@@ -357,6 +375,15 @@
             merge-kids-fail/[rak p.p.syn]
       ==
     (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
+  ::
+  ++  take-onto
+    |=  syn=sign-arvo
+    ^+  vats
+    =/  onto  ?>(?=(%onto -.syn) p.syn)
+    ?-  -.onto
+      %&  vats
+      %|  (mean p.onto)  ::  TODO: kill arvo event on failure
+    ==
   --
 ::  +get-ankh: extract $ankh from clay %v response $rant
 ::
@@ -365,13 +392,25 @@
   ^-  ankh
   ?>  ?=(%dome p.r.rant)
   !<(ankh q.r.rant)
-::  +get-apps: find which apps Gall is running on a desk
+::  +get-apps-have: find which apps Gall is running on a desk
 ::
-++  get-apps
+++  get-apps-have
   |=  =desk
   ^-  (list dude:gall)
   %~  tap  in
   .^((set dude:gall) ge+/(scot %p our)/[desk]/(scot %da now))
+::  +get-apps-want: find which apps should be running on a desk
+::
+::    TODO: preserve list order?
+::
+++  get-apps-want
+  |=  [=desk =rein]
+  ^-  (list dude:gall)
+  =/  duz  (read-apes .^(=bill cx+(weld pax /desk/bill)))
+  =/  daz  ~(tap in duz)
+  =.  daz  (~(dif in daz) sub.rein)
+  =.  daz  (~(uni in daz) add.rein)
+  ~(tap in daz)
 ::  +get-blockers: find desks that would block a kernel update
 ::
 ++  get-blockers

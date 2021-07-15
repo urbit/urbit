@@ -115,7 +115,6 @@
   |=  [=wire syn=sign-arvo]
   ^-  step:agent:gall
   ?+  wire  ~|([%hood-bad-wire wire] !!)
-    [%drum *]  =^(c drum.state (take-arvo:drum-core t.wire syn) [c this])
     [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire syn) [c this])
     [%kiln *]  =^(c kiln.state (take-arvo:kiln-core t.wire syn) [c this])
   ==

@@ -1639,11 +1639,11 @@
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
-    $%  [%conf =desk dap=term]                          ::  start agent
-        [%deal p=sock q=term r=deal]                    ::  full transmission
-        [%goad force=? agent=(unit dude)]               ::  rebuild agent(s)
+    $%  [%deal p=sock q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
-        [%fade dap=term style=?(%slay %idle %jolt)]     ::  put app to sleep
+        [%jolt =desk =dude]                             ::  (re)start agent
+        [%idle =dude]                                   ::  suspend agent
+        [%nuke =dude]                                   ::  delete agent
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade

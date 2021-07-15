@@ -52,7 +52,7 @@
           task:dill                                     ::
       ==                                                ::
       $:  %g                                            ::
-          $>  $?  %conf                                 ::
+          $>  $?  %jolt                                 ::
                   %deal                                 ::
                   %goad                                 ::
               ==                                        ::
@@ -224,7 +224,7 @@
         =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  +>  (pass / %g %conf %base ram)
+        =.  +>  (pass / %g %jolt %base ram)
         =?  +>  ?=(?(%earl %duke %king) can)
           (ota sein %kids)
         ::  make kids desk publicly readable, so syncs work.

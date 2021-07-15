@@ -370,7 +370,7 @@
   :_  state
   :_  ~
   :+  %pass  /build/[new-tid]
-  [%arvo %c %warp our.bowl %home ~ %sing %a da+now.bowl pax]
+  [%arvo %c %warp our.bowl %base ~ %sing %a da+now.bowl pax]
 ::
 ++  handle-build
   ~/  %handle-build
@@ -478,7 +478,7 @@
   =/  moz  (thread-say-fail tid term tang)
   ?.  ?=([~ %build *] (~(get by starting.state) yarn))
     moz
-  :_(moz [%pass /build/[tid] %arvo %c %warp our.bowl %home ~])
+  :_(moz [%pass /build/[tid] %arvo %c %warp our.bowl %base ~])
 ::
 ++  thread-say-fail
   |=  [=tid =term =tang]

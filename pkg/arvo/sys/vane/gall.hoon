@@ -302,18 +302,6 @@
     =/  gent  (~(got by yokes.state) dap)
     =*  desk  q.beak.gent
     (mo-boot:(mo-abed control-duct.gent) dap ship desk)
-  ::  +mo-goad: rebuild agent(s)
-  ::
-  ++  mo-goad
-    |=  agent=(unit dude)
-    ^+  mo-core
-    ?^  agent
-      ~|  goad-gone+u.agent
-      (mo-reboot u.agent our)
-    =/  agents=(list term)  ~(tap in ~(key by yokes.state))
-    |-  ^+  mo-core
-    ?~  agents  mo-core
-    $(agents t.agents, mo-core (mo-reboot i.agents our))
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -331,15 +319,19 @@
     |=  [dap=term bek=beak =agent]
     ^+  mo-core
     ::
-    =/  existing  (~(get by yokes.state) dap)
-    =/  re  ?~(existing "" "re")
-    ~>  %slog.[0 leaf+"gall: {re}loading {<dap>}"]
+    =/  yak  (~(get by yokes.state) dap)
+    =/  tex
+      ?~  yak  "installing"
+      ?-  -.agent.u.yak
+        %&  "reloading"
+        %|  "reviving"
+      ==
+    ~>  %slog.[0 leaf+"gall: {tex} {<dap>}"]
     ::
     ?^  existing
       =.  yokes.state
-        (~(put by yokes.state) dap u.existing(beak bek))
-      =/  =routes  [disclosing=~ attributing=our]
-      =/  ap-core  (ap-abed:ap dap routes)
+        (~(put by yokes.state) dap u.yak(beak bek))
+      =/  ap-core  (ap-abed:ap dap `our)
       =.  ap-core  (ap-reinstall:ap-core agent)
       =.  mo-core  ap-abet:ap-core
       (mo-clear-queue dap)
@@ -355,8 +347,7 @@
     ::
     =/  old  mo-core
     =/  wag
-      =/  =routes  [disclosing=~ attributing=our]
-      =/  ap-core  (ap-abed:ap dap routes)
+      =/  ap-core  (ap-abed:ap dap `our)
       (ap-upgrade-state:ap-core ~)
     ::
     =/  maybe-tang  -.wag
@@ -617,8 +608,7 @@
     ?~  agents  mo-core
     ::
     =.  mo-core
-      =/  =routes  [disclosing=~ attributing=our]
-      =/  app  (ap-abed:ap i.agents routes)
+      =/  app  (ap-abed:ap i.agents `our)
       ap-abet:(ap-clog:app ship.sign-arvo)
     ::
     $(agents t.agents)
@@ -820,25 +810,25 @@
     =?  new-blocked  !=(ship attributing.routes.mov)
       (~(put to new-blocked) mov)
     $
-  ::  +mo-fade: put app to sleep
+  ::  +mo-idle: put agent to sleep
   ::
-  ++  mo-fade
-    |=  [dap=term style=?(%slay %idle %jolt)]
+  ++  mo-idle
+    |=  dap=dude
     ^+  mo-core
-    ?.  |(=(%jolt style) (~(has by yokes.state) dap))
+    ?.  (~(has by yokes.state) dap)
+      ~>  %slog.0^leaf/"gall: ignoring %idle for {<dap>}, not running"
       mo-core
-    =/  app
-      ~_  leaf/"gall: fade {<style>} missing agent {<dap>}"
-      (ap-abed:ap dap `routes`[disclosing=~ attributing=our])
-    =.  mo-core  ap-abet:(ap-fade:app style)
-    =.  mo-core
-      ?-  style
-        %slay  mo-core(yokes.state (~(del by yokes.state) dap))
-        %idle  mo-core
-        %jolt  (mo-boot dap our q.beak:(~(got by yokes.state) dap))
-      ==
-    =?  mo-core  !?=(%jolt style)  (mo-subscribe-to-agent-builds now)
-    mo-core
+    ap-abet:ap-idle:(ap-abed:ap dap `our)
+  ::  +mo-nuke: delete agent completely
+  ::
+  ++  mo-nuke
+    |=  dap=dude
+    ^+  mo-core
+    ?.  (~(has by yokes.state) dap)
+      ~>  %slog.0^leaf/"gall: ignoring %nuke for {<dap>}, not running"
+      mo-core
+    =.  mo-core  ap-abet:ap-nuke:(ap-abed:ap dap `our)
+    mo-core(yokes.state (~(del by yokes.state) dap))
   ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
   ::
   ++  mo-peek
@@ -1002,8 +992,7 @@
         ?:  ?=(%| -.res)
           (mean p.res)
         egg(p.old-state `agent`p.res)
-      =/  =routes  [disclosing=~ attributing=our]
-      (ap-yoke dap routes yak)
+      (ap-yoke dap `our yak)
     ::  +ap-yoke: initialize agent state, starting from a $yoke
     ::
     ++  ap-yoke
@@ -1033,38 +1022,27 @@
         yokes.state  running
         moves        moves
       ==
-    ::  +ap-fade:  put affairs in order.
     ::
-    ::    For %gone, remove all incoming and outgoing subscriptions.
-    ::
-    ++  ap-fade
-      |=  style=?(%slay %idle %jolt)
+    ++  ap-idle  ap-core(agent.yoke |+on-save:ap-agent-core)
+    ++  ap-nuke
       ^+  ap-core
-      ?-    style
-          %jolt  ap-core
-          %idle
-        =.  agent.yoke  |+on-save:ap-agent-core
-        ap-core
-      ::
-          %slay
-        =/  out=(list [[=wire =ship =term] ? =path])
-          ~(tap by outbound.watches.yoke)
-        =/  inbound-paths=(set path)
-          %-  silt
-          %+  turn  ~(tap by inbound.watches.yoke)
-          |=  [=duct =ship =path]
-          path
-        =/  will=(list card:agent:gall)
-          %+  welp
-            ?:  =(~ inbound-paths)
-              ~
-            [%give %kick ~(tap in inbound-paths) ~]~
-          %+  turn  ~(tap by outbound.watches.yoke)
-          |=  [[=wire =ship =term] ? =path]
-          [%pass wire %agent [ship term] %leave ~]
-        =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
-        ap-core
-      ==
+      =/  out=(list [[=wire =ship =term] ? =path])
+        ~(tap by outbound.watches.yoke)
+      =/  inbound-paths=(set path)
+        %-  silt
+        %+  turn  ~(tap by inbound.watches.yoke)
+        |=  [=duct =ship =path]
+        path
+      =/  will=(list card:agent:gall)
+        %+  welp
+          ?:  =(~ inbound-paths)
+            ~
+          [%give %kick ~(tap in inbound-paths) ~]~
+        %+  turn  ~(tap by outbound.watches.yoke)
+        |=  [[=wire =ship =term] ? =path]
+        [%pass wire %agent [ship term] %leave ~]
+      =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
+      ap-core
     ::  +ap-from-internal: internal move to move.
     ::
     ::    We convert from cards to duct-indexed moves when resolving
@@ -1703,7 +1681,6 @@
   ::
   =/  mo-core  (mo-abed:mo duct)
   ?-    -.task
-      %conf  mo-abet:(mo-boot:mo-core dap.task our desk.task)
       %deal
     =/  [=sock =term =deal]  [p q r]:task
     ?.  =(q.sock our)
@@ -1711,7 +1688,6 @@
       mo-abet:(mo-send-foreign-request:mo-core q.sock term deal)
     mo-abet:(mo-handle-local:mo-core p.sock term deal)
   ::
-      %goad  mo-abet:(mo-goad:mo-core agent.task)
       %init  [~ gall-payload(system-duct.state duct)]
       %plea
     =/  =ship  ship.task
@@ -1728,7 +1704,9 @@
     mo-abet
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
-      %fade  mo-abet:(mo-fade:mo-core dap.task style.task)
+      %jolt  mo-abet:(mo-boot:mo-core dude.task our desk.task)
+      %idle  mo-abet:(mo-idle:mo-core dude.task)
+      %nuke  mo-abet:(mo-nuke:mo-core dude.task)
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
   ==
@@ -1807,7 +1785,9 @@
     ~
   =/  =routes  [~ ship]
   (mo-peek:mo dap routes care path)
-::  +stay: save without cache
+::  +stay: save without cache; suspend non-%base agents
+::
+::    TODO: superfluous? see +molt
 ::
 ++  stay
   ^-  spore
@@ -1817,9 +1797,11 @@
   ^-  egg
   %=    yoke
       agent
-    ?:  ?=(%& -.agent.yoke)
+    ?:  ?=(%| -.agent.yoke)
+      [%| p.agent.yoke]
+    ?:  =(%base q.beak.yoke)
       [%& on-save:p.agent.yoke]
-    [%| p.agent.yoke]
+    [%| on-save:p.agent-yoke]
   ==
 ::  +take: response
 ::
