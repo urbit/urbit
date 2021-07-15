@@ -829,8 +829,16 @@
                          ==
 ::
 ::  sponsorship tests
-++  losred-own  [~losred %own]
-++  rigred-own  [~rigred %own]
+++  losrut-own   [~losrut %own]
+++  losrut-mgmt  [~losrut %manage]
+++  holrut-own   [~holrut %own]
+++  holrut-mgmt  [~holrut %manage]
+++  rigrut-own   [~rigrut %own]
+++  rigrut-mgmt  [~rigrut %manage]
+++  losred-own   [~losred %own]
+++  losred-mgmt  [~losred %manage]
+++  rigred-own   [~rigred %own]
+++  rigred-mgmt  [~rigred %manage]
 ::
 --
 ::
@@ -1234,6 +1242,57 @@
     =^  f  state  (init-red-full state)
     =^  f  state  (n state %bat q:(gen-tx 1 rr-cancel-escape %holrut-rr-key-0))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
+::  the following tests L2 %detach. the format test-rut-X-Y-detach means
+::  X is the layer of the sponsor, Y is the layer of the sponsee
+::
+++  test-rut-l2-l2-detach  ^-  tang
+  =/  pp-detach  [losrut-own %detach ~pinpun-pilsun]
+  ::
+  %+  expect-eq
+    !>  [~ %.n ~losrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state %bat q:(gen-tx 2 pp-detach %losrut-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+::
+++  test-rut-l2-l1-detach  ^-  tang
+  =/  rt-detach  [losrut-own %detach ~radres-tinnyl]
+  ::
+  %+  expect-eq
+    !>  [~ %.n ~losrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state %bat q:(gen-tx 2 rt-detach %losrut-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~radres-tinnyl)
+::
+++  test-rut-l1-l2-detach  ^-  tang
+  =/  dm-detach  [holrut-own %detach ~dovmul-mogryt]
+  ::
+  %+  expect-eq
+    !>  [~ %.n ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state %bat q:(gen-tx 1 dm-detach %holrut-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+::
+++  test-rut-l1-l1-detach  ^-  tang
+  =/  lm-detach  [rigrut-own %detach ~larsyx-mapmeg]
+  ::
+  %+  expect-eq
+    !>  [~ %.n ~rigrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 lm-detach %rigrut-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
