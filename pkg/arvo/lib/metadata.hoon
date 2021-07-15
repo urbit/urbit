@@ -30,7 +30,7 @@
   |=  =vase
   ^-  (list resource)
   =/  =update:store  !<(update:store vase)
-  ?.  ?=(?(%add %remove %initial-group) -.update)  ~
+  ?.  ?=(?(%add %remove %initial-group %edit) -.update)  ~
   ~[group.update]
 ::  
 ++  app-paths-from-group

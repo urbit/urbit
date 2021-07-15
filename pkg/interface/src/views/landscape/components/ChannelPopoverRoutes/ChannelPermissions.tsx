@@ -5,7 +5,7 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { addTag, Association, Group, metadataUpdate, PermVariation, removeTag } from '@urbit/api';
+import { addTag, Association, Group, PermVariation, removeTag, metadataEdit } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React from 'react';
@@ -107,7 +107,7 @@ export function GraphPermissions(props: GraphPermissionsProps) {
     };
     const allWriters = Array.from(writers).map(w => `~${w}`);
     if (values.readerComments !== readerComments) {
-      await airlock.poke(metadataUpdate(association, {
+      await airlock.poke(metadataEdit(association, {
         vip: values.readerComments ? 'reader-comments' : ''
       }));
     }
