@@ -1,5 +1,5 @@
 import { Col, Icon, Row, Text } from '@tlon/indigo-react';
-import { Association, Group, metadataRemove, metadataUpdate } from '@urbit/api';
+import { Association, Group, metadataRemove, metadataEdit } from '@urbit/api';
 import React, { useCallback } from 'react';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { getModuleIcon, GraphModule } from '~/logic/lib/util';
@@ -22,7 +22,8 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
 
   const onChange = useCallback(
     async (resource: string, preview: boolean) => {
-      await airlock.poke(metadataUpdate(associations.graph[resource], { preview }));
+      const association = associations.graph[resource];
+      await airlock.poke(metadataEdit(association, { preview }));
     },
     [associations.graph]
   );
