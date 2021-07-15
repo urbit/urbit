@@ -30,7 +30,9 @@ import './landscape/css/custom.css';
 import { bootstrapApi } from '~/logic/api/bootstrap';
 import useLaunchState from '../logic/state/launch';
 
-const Root = withState(styled.div`
+const Root = withState(styled.div.withConfig({
+  shouldForwardProp: prop => !['display'].includes(prop)
+})`
   font-family: ${p => p.theme.fonts.sans};
   height: 100%;
   width: 100%;
