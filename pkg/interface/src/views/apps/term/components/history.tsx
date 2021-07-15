@@ -21,7 +21,9 @@ export class History extends Component {
         <Box
           mt='auto'
         >
+          {/* @ts-ignore declare props in later pass */}
           {this.props.log.map((line, i) => {
+            // @ts-ignore react memo not passing props
             return <Line key={i} line={line} />;
           })}
         </Box>

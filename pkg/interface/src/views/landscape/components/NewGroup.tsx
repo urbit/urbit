@@ -31,7 +31,7 @@ interface NewGroupProps {
   api: GlobalApi;
 }
 
-export function NewGroup(props: NewGroupProps & RouteComponentProps): ReactElement {
+export function NewGroup(props: NewGroupProps): ReactElement {
   const { api } = props;
   const history = useHistory();
   const initialValues: FormSchema = {

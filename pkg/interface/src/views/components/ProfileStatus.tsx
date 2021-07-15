@@ -41,7 +41,7 @@ export const ProfileStatus = (props) => {
         <Input
           onChange={onStatusChange}
           value={_status}
-          autocomplete='off'
+          autoComplete='off'
           width='100%'
           placeholder='Set Status'
           onKeyPress={(evt) => {

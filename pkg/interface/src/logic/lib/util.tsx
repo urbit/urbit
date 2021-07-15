@@ -1,13 +1,17 @@
-/* eslint-disable max-lines */
-import { Association, Contact } from '@urbit/api';
-import anyAscii from 'any-ascii';
-import bigInt, { BigInteger } from 'big-integer';
-import { enableMapSet } from 'immer';
-import _ from 'lodash';
-import f from 'lodash/fp';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { IconRef } from '~/types';
+import _ from 'lodash';
+import { patp2dec } from 'urbit-ob';
+import f, { compose, memoize } from 'lodash/fp';
+import { Association, Contact, Patp } from '@urbit/api';
+import produce, { enableMapSet } from 'immer';
 import useSettingsState from '../state/settings';
+/* eslint-disable max-lines */
+import anyAscii from 'any-ascii';
+import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
+import bigInt, { BigInteger } from 'big-integer';
+import { foregroundFromBackground } from '~/logic/lib/sigil';
+import { IconRef, Workspace } from '~/types';
+import useContactState from '../state/contact';
 
 enableMapSet();
 
@@ -44,6 +48,42 @@ export function wait(ms: number) {
 
 export function parentPath(path: string) {
   return _.dropRight(path.split('/'), 1).join('/');
+}
+
+/**
+ * undefined -> initial
+ * null -> disabled feed
+ * string -> enabled feed
+ */
+export function getFeedPath(association: Association): string | null | undefined {
+  const { metadata } = association;
+  if(metadata.config && 'group' in metadata?.config && metadata.config?.group) {
+    if ('resource' in metadata.config.group) {
+      return metadata.config.group.resource;
+    }
+    return null;
+  }
+  return undefined;
+}
+
+export const getChord = (e: KeyboardEvent) => {
+  let chord = [e.key];
+  if(e.metaKey) {
+    chord.unshift('meta');
+  }
+  if(e.ctrlKey) {
+    chord.unshift('ctrl');
+  }
+  return chord.join('+');
+}
+
+export function getResourcePath(workspace: Workspace, path: string, joined: boolean, mod: string) {
+  const base = workspace.type === 'group'
+    ? `/~landscape${workspace.group}`
+    : workspace.type === 'home'
+    ? `/~landscape/home`
+    : `/~landscape/messages`;
+  return `${base}/${joined ? 'resource' : 'join'}/${mod}${path}`
 }
 
 const DA_UNIX_EPOCH = bigInt('170141184475152167957503069145530368000'); // `@ud` ~1970.1.1
@@ -100,6 +140,13 @@ export function decToUd(str: string): string {
  */
 export function clamp(x: number, min: number, max: number) {
   return Math.max(min, Math.min(max, x));
+}
+
+/**
+ * Euclidean modulo
+ */
+export function modulo(x: number, mod: number) {
+  return x < 0 ? (x % mod + mod) % mod : x % mod;
 }
 
 // color is a #000000 color
@@ -248,13 +295,19 @@ export function cite(ship: string): string {
   return `~${patp}`;
 }
 
+export function stripNonWord(string: string): string {
+  return string.replace(/[^\p{L}\p{N}\p{Z}]/gu, '');
+}
+
 export function alphabeticalOrder(a: string, b: string) {
-  return a.toLowerCase().localeCompare(b.toLowerCase());
+  return stripNonWord(a).toLowerCase().trim().localeCompare(stripNonWord(b).toLowerCase().trim());
 }
 
 export function lengthOrder(a: string, b: string) {
   return b.length - a.length;
 }
+
+export const keys = <T extends {}>(o: T) => Object.keys(o) as (keyof T)[];
 
 //  TODO: deprecated
 export function alphabetiseAssociations(associations: any) {
@@ -369,9 +422,13 @@ export function numToUd(num: number) {
     f.reverse,
     f.chunk(3),
     f.reverse,
-    f.map(s => s.join('')),
+    f.map(f.flow(f.reverse, f.join(''))),
     f.join('.')
   )(num.toString());
+}
+
+export function patpToUd(patp: Patp) {
+  return numToUd(patp2dec(patp))
 }
 
 export function usePreventWindowUnload(shouldPreventDefault: boolean, message = 'You have unsaved changes. Are you sure you want to exit?') {
@@ -426,6 +483,7 @@ export const useHovering = (): useHoveringInterface => {
 export function withHovering<T>(Component: React.ComponentType<T>) {
   return React.forwardRef((props, ref) => {
     const { hovering, bind } = useHovering();
+    // @ts-ignore needs type signature on return?
     return <Component ref={ref} hovering={hovering} bind={bind} {...props} />
   })
 }
@@ -442,3 +500,22 @@ export function getItemTitle(association: Association): string {
   return association.metadata.title ?? association.resource ?? '';
 }
 
+export const svgDataURL = (svg) => 'data:image/svg+xml;base64,' + btoa(svg);
+
+export const svgBlobURL = (svg) => URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+
+export const favicon = () => {
+  let background = '#ffffff';
+  const contacts = useContactState.getState().contacts;
+  if (contacts.hasOwnProperty(`~${window.ship}`)) {
+    background = `#${uxToHex(contacts[`~${window.ship}`].color)}`;
+  }
+  const foreground = foregroundFromBackground(background);
+  const svg = sigiljs({
+    patp: window.ship,
+    renderer: stringRenderer,
+    size: 16,
+    colors: [background, foreground]
+  });
+  return svg;
+}

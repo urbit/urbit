@@ -15,6 +15,8 @@ const Tiles = (props: TileProps): ReactElement => {
   const weather = useLaunchState(state => state.weather) as WeatherState;
   const tileOrdering = useLaunchState(state => state.tileOrdering);
   const tileState = useLaunchState(state => state.tiles);
+  console.log('tileOrdering', tileOrdering);
+  console.log('tileState', tileState);
   const tiles = tileOrdering.filter((key) => {
     const tile = tileState[key];
 
@@ -35,6 +37,7 @@ const Tiles = (props: TileProps): ReactElement => {
         return (
           <WeatherTile
             key={key}
+            // @ts-ignore withState not passing props
             api={props.api}
           />
         );
@@ -43,9 +46,15 @@ const Tiles = (props: TileProps): ReactElement => {
         return (
           <ClockTile key={key} location={location} />
         );
+      } else {
+        return (
+          <CustomTile
+            key={key}
+            tileImage={tile.type.custom.image}
+            linkedUrl={tile.type.custom.linkedUrl}
+          />
+        );
       }
-    } else {
-      return <CustomTile key={key} />;
     }
     return null;
   });

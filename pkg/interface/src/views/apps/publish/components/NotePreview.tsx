@@ -69,6 +69,7 @@ export function NotePreview(props: NotePreviewProps) {
   const [rev, title, body, content] = getLatestRevision(node);
   const appPath = `/ship/${props.host}/${props.book}`;
   const unreads = useHarkState(state => state.unreads);
+  // @ts-ignore hark will have to choose between sets and numbers
   const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(`/${noteId}/1/1`);
 
   const snippet = getSnippet(body);

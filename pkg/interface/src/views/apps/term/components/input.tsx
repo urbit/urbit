@@ -15,10 +15,11 @@ export class Input extends Component {
 
   componentDidUpdate() {
     if (
-      !document.activeElement == document.body
-      || document.activeElement == this.inputRef.current
+      document.activeElement == this.inputRef.current
     ) {
+      // @ts-ignore ref type issues
       this.inputRef.current.focus();
+      // @ts-ignore ref type issues
       this.inputRef.current.setSelectionRange(this.props.cursor, this.props.cursor);
     }
   }
@@ -26,7 +27,7 @@ export class Input extends Component {
   keyPress(e) {
     const key = e.key;
     //  let paste and leap events pass
-    if ((e.getModifierState('Control') || event.getModifierState('Meta'))
+    if ((e.getModifierState('Control') || e.getModifierState('Meta'))
         && (e.key === 'v' || e.key === '/')) {
       return;
     }
@@ -115,6 +116,7 @@ belt = { met: 'bac' };
             onKeyDown={this.keyPress}
             onClick={this.click}
             onPaste={this.paste}
+            // @ts-ignore indigo-react doesn't let us pass refs
             ref={this.inputRef}
             defaultValue="connecting..."
             value={prompt}

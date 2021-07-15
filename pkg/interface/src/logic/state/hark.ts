@@ -1,17 +1,21 @@
-import { NotificationGraphConfig, Timebox, Unreads } from '@urbit/api';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import { NotificationGraphConfig, Timebox, Unreads, dateToDa } from "@urbit/api";
+import { patp2dec } from 'urbit-ob';
+import BigIntOrderedMap from "@urbit/api/lib/BigIntOrderedMap";
+import {useCallback} from "react";
+
 // import { harkGraphHookReducer, harkGroupHookReducer, harkReducer } from "~/logic/subscription/hark";
-import { BaseState, createState } from './base';
+import { createState } from './base';
 
 export const HARK_FETCH_MORE_COUNT = 3;
 
-export interface HarkState extends BaseState<HarkState> {
+export interface HarkState {
   archivedNotifications: BigIntOrderedMap<Timebox>;
   doNotDisturb: boolean;
   // getMore: () => Promise<boolean>;
   // getSubset: (offset: number, count: number, isArchive: boolean) => Promise<void>;
   // getTimeSubset: (start?: Date, end?: Date) => Promise<void>;
   notifications: BigIntOrderedMap<Timebox>;
+  unreadNotes: Timebox;
   notificationsCount: number;
   notificationsGraphConfig: NotificationGraphConfig; // TODO unthread this everywhere
   notificationsGroupConfig: string[];
@@ -21,6 +25,7 @@ export interface HarkState extends BaseState<HarkState> {
 const useHarkState = createState<HarkState>('Hark', {
   archivedNotifications: new BigIntOrderedMap<Timebox>(),
   doNotDisturb: false,
+  unreadNotes: [],
   // getMore: async (): Promise<boolean> => {
   //   const state = get();
   //   const offset = state.notifications.size || 0;
@@ -62,6 +67,12 @@ const useHarkState = createState<HarkState>('Hark', {
     graph: {},
     group: {}
   }
-}, ['notifications', 'archivedNotifications', 'unreads', 'notificationsCount']);
+}, ['unreadNotes', 'notifications', 'archivedNotifications', 'unreads', 'notificationsCount']);
+
+export function useHarkDm(ship: string) {
+  return useHarkState(useCallback(s => {
+    return s.unreads.graph[`/ship/~${window.ship}/dm-inbox`]?.[`/${patp2dec(ship)}`];
+  }, [ship]));
+}
 
 export default useHarkState;
