@@ -45,13 +45,12 @@ import qualified Urbit.Vere.Ames             as Ames
 import qualified Urbit.Vere.Behn             as Behn
 import qualified Urbit.Vere.Clay             as Clay
 import qualified Urbit.Vere.Eyre             as Eyre
-import qualified Urbit.Vere.Eyre.KingSubsite as Site
 import qualified Urbit.Vere.Http.Client      as Iris
 import qualified Urbit.Vere.Serf             as Serf
 import qualified Urbit.Vere.Term             as Term
 import qualified Urbit.Vere.Term.API         as Term
 import qualified Urbit.Vere.Term.Demux       as Term
-
+import qualified Urbit.Vere.Eyre.KingSubsite as Site
 
 -- Initialize pier directory. --------------------------------------------------
 
@@ -314,7 +313,6 @@ pier (serf, log) vSlog startedSig injected = do
   -- and display stats.
   siteSlog <- newTVarIO (const $ pure ())
   runtimeSubsite <- Site.kingSubsite ship scry (renderStat stat) siteSlog
-
   --  Slogs go to stderr, to the runtime subsite, and to the terminal.
   env <- ask
   atomically $ writeTVar vSlog $ \s@(_, tank) -> runRIO env $ do
@@ -515,7 +513,7 @@ drivers env who isFake plan scry termSys stderr serfSIGINT stat sub = do
   (behnBorn, runBehn) <- rio Behn.behn'
   (termBorn, runTerm) <- rio (Term.term' termSys (renderStat stat) serfSIGINT)
   (amesBorn, runAmes) <- rio (Ames.ames' who isFake statAmes scry stderr)
-  (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr sub)
+  (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr scry sub)
   (clayBorn, runClay) <- rio Clay.clay'
   (irisBorn, runIris) <- rio Iris.client'
 

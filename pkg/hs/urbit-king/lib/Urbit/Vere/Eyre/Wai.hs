@@ -26,7 +26,7 @@ where
 
 import Urbit.Prelude hiding (Builder)
 
-import Data.Binary.Builder         (Builder, fromByteString)
+import Data.Binary.Builder         (fromByteString)
 import Data.Bits                   (shiftL, (.|.))
 import Data.Conduit                (ConduitT, Flush(Chunk, Flush), yield)
 import Network.Socket              (SockAddr(..))
@@ -37,6 +37,9 @@ import Urbit.Vere.Eyre.KingSubsite (KingSubsite, runKingSubsite)
 import qualified Network.HTTP.Types  as H
 import qualified Network.Wai         as W
 import qualified Network.Wai.Conduit as W
+import Urbit.Vere.Pier.Types (ScryFunc)
+import Data.ByteString.Builder
+import Urbit.King.Scry (scryNow)
 
 
 -- Types -----------------------------------------------------------------------
@@ -66,6 +69,9 @@ data ReqInfo = ReqInfo
   , riBod :: ByteString
   }
 
+data ScryExn = BadScry deriving (Show)
+
+instance Exception ScryExn
 
 -- Live Requests Table -- All Requests Still Waiting for Responses -------------
 
@@ -199,36 +205,68 @@ sendResponse cb waitAct = do
 
 liveReq :: Ship -> TVar LiveReqs -> RAcquire e (Word64, STM RespAct)
 liveReq who vLiv = mkRAcquire ins del
- where
-  ins = atomically (newLiveReq who vLiv)
-  del = atomically . rmLiveReq vLiv . fst
+  where
+    ins = atomically (newLiveReq who vLiv)
+    del = atomically . rmLiveReq vLiv . fst
 
-app
-  :: HasLogFunc e
-  => e
-  -> Ship
-  -> TVar LiveReqs
-  -> (Word64 -> ReqInfo -> STM ())
-  -> (Word64 -> STM ())
-  -> KingSubsite
-  -> W.Application
-app env who liv inform cancel sub req respond =
+app ::
+  HasLogFunc e =>
+  e ->
+  Ship ->
+  TVar LiveReqs ->
+  (Word64 -> ReqInfo -> STM ()) ->
+  (Word64 -> STM ()) ->
+  ScryFunc ->
+  KingSubsite ->
+  W.Application
+app env who liv inform cancel scry sub req respond = do
+  let met <- maybe (error "bad method") id (cookMeth req)
   case W.pathInfo req of
-    ("~_~":_) -> runKingSubsite sub req respond
-    _ ->
-      runRIO env $ rwith (liveReq who liv) $ \(reqId, respApi) -> do
-        bod <- io (toStrict <$> W.strictRequestBody req)
-        met <- maybe (error "bad method") pure (cookMeth req)
+    ("~_~" : _) -> runKingSubsite sub req respond
+    _ | met == H.GET -> scryFlow `onException` normalFlow met
+    _ -> normalFlow met
+  where
+    normalFlow met = runRIO env $
+      rwith (liveReq who liv) $ \(reqId, respApi) -> do
+      bod <- io (toStrict <$> W.strictRequestBody req)
 
-        let adr = reqAddr req
-            hdr = W.requestHeaders req
-            url = reqUrl req
+      let adr = reqAddr req
+          hdr = W.requestHeaders req
+          url = reqUrl req
 
-        atomically $ inform reqId $ ReqInfo adr met url hdr bod
+      atomically $ inform reqId $ ReqInfo adr met url hdr bod
 
-        try (sendResponse respond respApi) >>= \case
-          Right rr  -> pure rr
-          Left  exn -> do
-            atomically (cancel reqId)
-            logError $ display ("Exception during request" <> tshow exn)
-            throwIO (exn :: SomeException)
+      try (sendResponse respond respApi) >>= \case
+        Right rr -> pure rr
+        Left exn -> do
+          atomically (cancel reqId)
+          logError $ display ("Exception during request" <> tshow exn)
+          throwIO (exn :: SomeException)
+    scryFlow = do
+      let url =  filter (/= '"') $ tshow $ reqUrl req
+          host = filter (/= '"') $ maybe "" tshow (W.requestHeaderHost req)
+
+      res <- runRIO env $ scryPath $ ["scry", host, url]
+      respond $ (scryResp res)
+          where
+            scryPath path = do
+              logDebug $ display ("scrying for " <> tshow path)
+              s <- scryOcts path
+              case s of
+                Just octs -> do
+                  logDebug $ display ("scry result: " <> tshow octs)
+                  pure $ unOcts octs
+                Nothing -> do
+                  logError $ display ("exception during scry on path: " <> tshow path)
+                  throwIO BadScry
+
+            scryOcts :: HasLogFunc e => [Text] -> RIO e (Maybe Octs)
+            scryOcts path = scryNow scry "ex" "" path
+
+            scryResp msg =
+              W.responseBuilder (H.mkStatus 200 "OK") scryHeads $ fromByteString msg
+
+            scryHeads =
+              [ ("Content-Type", "text/plain"),
+                ("Cache-Control", "no-cache")
+              ]

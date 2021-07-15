@@ -22,6 +22,7 @@ import Urbit.Vere.Eyre.Wai
 
 import Network.TLS                 (Credential)
 import Urbit.Vere.Eyre.KingSubsite (KingSubsite, fourOhFourSubsite)
+import Urbit.Vere.Pier.Types (ScryFunc)
 
 
 -- Types -----------------------------------------------------------------------
@@ -46,6 +47,7 @@ data MultiEyreApi = MultiEyreApi
   , meaPlan :: TVar (Map Ship OnMultiReq)
   , meaCanc :: TVar (Map Ship OnMultiKil)
   , meaTlsC :: TVar (Map Ship (TlsConfig, Credential))
+  , meaScry :: TVar (Map Ship ScryFunc)
   , meaSite :: TVar (Map Ship KingSubsite)
   , meaKill :: IO ()
   }
@@ -59,14 +61,16 @@ joinMultiEyre
   -> Maybe (TlsConfig, Credential)
   -> OnMultiReq
   -> OnMultiKil
+  -> ScryFunc
   -> KingSubsite
   -> STM ()
-joinMultiEyre api who mTls onReq onKil sub = do
+joinMultiEyre api who mTls onReq onKil scry sub = do
   modifyTVar' (meaPlan api) (insertMap who onReq)
   modifyTVar' (meaCanc api) (insertMap who onKil)
   for_ mTls $ \creds -> do
     modifyTVar' (meaTlsC api) (insertMap who creds)
   modifyTVar' (meaSite api) (insertMap who sub)
+  modifyTVar' (meaScry api) (insertMap who scry)
 
 leaveMultiEyre :: MultiEyreApi -> Ship -> STM ()
 leaveMultiEyre MultiEyreApi {..} who = do
@@ -74,6 +78,7 @@ leaveMultiEyre MultiEyreApi {..} who = do
   modifyTVar' meaPlan (deleteMap who)
   modifyTVar' meaTlsC (deleteMap who)
   modifyTVar' meaSite (deleteMap who)
+  modifyTVar' meaScry (deleteMap who)
 
 multiEyre :: HasLogFunc e => IO () -> MultiEyreConf -> RIO e MultiEyreApi
 multiEyre onFatal conf@MultiEyreConf {..} = do
@@ -84,11 +89,16 @@ multiEyre onFatal conf@MultiEyreConf {..} = do
   vCanc <- newTVarIO (mempty :: Map Ship (Ship -> Word64 -> STM ()))
   vTlsC <- newTVarIO mempty
   vSite <- newTVarIO mempty
+  vMain <- newTVarIO mempty
 
   let site :: Ship -> STM KingSubsite
       site who = do
         sites <- readTVar vSite
         pure $ maybe (fourOhFourSubsite who) id $ lookup who sites
+  let main :: Ship -> STM (Maybe ScryFunc)
+      main who = do
+        mains <- readTVar vMain
+        pure $ lookup who mains
 
   let host = if mecLocalhostOnly then SHLocalhost else SHAnyHostOk
 
@@ -113,7 +123,7 @@ multiEyre onFatal conf@MultiEyreConf {..} = do
       , scPort = SPChoices $ singleton $ fromIntegral por
       , scRedi = Nothing -- TODO
       , scFake = False
-      , scType = STMultiHttp site $ ReqApi
+      , scType = STMultiHttp main site $ ReqApi
           { rcReq = onReq Insecure
           , rcKil = onKil
           }
@@ -126,7 +136,7 @@ multiEyre onFatal conf@MultiEyreConf {..} = do
       , scPort = SPChoices $ singleton $ fromIntegral por
       , scRedi = Nothing
       , scFake = False
-      , scType = STMultiHttps (MTC vTlsC) site $ ReqApi
+      , scType = STMultiHttps (MTC vTlsC) main site $ ReqApi
           { rcReq = onReq Secure
           , rcKil = onKil
           }
@@ -138,6 +148,7 @@ multiEyre onFatal conf@MultiEyreConf {..} = do
     , meaCanc = vCanc
     , meaTlsC = vTlsC
     , meaSite = vSite
+    , meaScry = vMain
     , meaConf = conf
     , meaKill = traverse_ saKil (toList mIns <> toList mSec)
     }
