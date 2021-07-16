@@ -618,12 +618,12 @@
                     ::(cury filter-dominion %l1)
                     %-  cury
                     :-  filter-tx-type
-                    :*  ::%spawn
-                        ::%transfer-point
-                        ::%configure-keys
-                        ::%set-management-proxy
-                        ::%set-spawn-proxy  :: planets can set spawn proxy atm
-                        ::%set-transfer-proxy
+                    :*  %spawn
+                        %transfer-point
+                        %configure-keys
+                        %set-management-proxy
+                        %set-spawn-proxy  :: planets can set spawn proxy atm
+                        %set-transfer-proxy
                         %escape
                         ~
                     ==
@@ -1712,7 +1712,7 @@
 ++  test-l2-sambud-spawn-spawn-proxy-postdeposit  ^-  tang
   =/  sambud-sproxy  [[~sambud %spawn] %set-spawn-proxy (addr %sambud-skey-1)]
   %+  expect-eq
-    !>  [(addr %sambud-skey-1) 0]
+    !>  [(addr %sambud-skey-1) 1]
   ::
     !>
     =|  =^state:naive
