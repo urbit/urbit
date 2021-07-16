@@ -1514,20 +1514,32 @@
     =^  f  state  (n state (escape-accepted:l1 ~rigred ~rabsum-ravtyd))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
-++  test-l1-adoption-on-l2-wrong-key
+++  test-l1-adoption-on-l2-wrong-key-or-nonce
   ::  this is really bad
   =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
   =/  rr-adopt   [rigred-own %adopt ~rabsum-ravtyd]
   ::
-  %+  expect-eq
-    !>  [~ %.y ~holrut]
-  ::
-    !>
-    =|  =^state:naive
-    =^  f  state  (init-red-full state)
-    =^  f  state  (n state %bat q:(gen-tx 1 rr-escape %wrong-key))
-    =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
-    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+  ;:  weld
+    %+  expect-eq
+      !>  [~ %.y ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 1 rr-escape %wrong-key))
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    ::
+    %+  expect-eq
+      !>  [~ %.y ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 999 rr-escape %holrut-rr-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+  ==
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
