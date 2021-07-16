@@ -1514,7 +1514,7 @@
     =^  f  state  (n state (escape-accepted:l1 ~rigred ~rabsum-ravtyd))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
-++  test-l1-adoption-wrong-keys
+++  test-l1-adoption-on-l2-wrong-key
   ::  this is really bad
   =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
   =/  rr-adopt   [rigred-own %adopt ~rabsum-ravtyd]
@@ -1526,7 +1526,7 @@
     =|  =^state:naive
     =^  f  state  (init-red-full state)
     =^  f  state  (n state %bat q:(gen-tx 1 rr-escape %wrong-key))
-    =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %wrong-key))
+    =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
