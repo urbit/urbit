@@ -534,9 +534,8 @@
         %c  ta-bel
         %d  ?^  buf.say.inp
               ta-del
-            ::  TODO: reinstate?
-            ::?:  (~(has in (deft-fish our.hid)) gyl)
-            ::  +>(..ta (se-blit qit+~))                ::  quit pier
+            ?:  =(%dojo gyl)
+              +>(..ta (se-blit qit+~))                ::  quit pier
             +>(..ta (se-klin gyl))                    ::  unlink app
         %e  +>(pos.inp (lent buf.say.inp))
         %f  (ta-aro %r)
