@@ -683,7 +683,7 @@
     ::
       ~
     ==
-  ?~  addr=(verify-sig sig message)
+  ?~  addr=(verify-sig:lib sig message)
     ~?  lverb  [dap.bowl %cancel-sig-fail]
     [~ state]
   =.  history
@@ -694,31 +694,6 @@
     |=  pend-tx
     =(keccak (hash-raw-tx:lib raw-tx))
   [~ state]
-::  TODO: move to /lib/naive-transactions
-::
-++  verify-sig
-  |=  [sig=@ txdata=octs]
-  ^-  (unit address:naive)
-  |^
-  ::  Reversed of the usual r-s-v order because Ethereum integers are
-  ::  big-endian
-  ::
-  =^  v  sig  (take 3)
-  =^  s  sig  (take 3 32)
-  =^  r  sig  (take 3 32)
-  ::  In Ethereum, v is generally 27 + recid, and verifier expects a
-  ::  recid.  Old versions of geth used 0 + recid, so most software
-  ::  now supports either format.  See:
-  ::
-  ::  https://github.com/ethereum/go-ethereum/issues/2053
-  ::
-  =?  v  (gte v 27)  (sub v 27)
-  (verifier:lib txdata v r s)
-  ::
-  ++  take
-    |=  =bite
-    [(end bite sig) (rsh bite sig)]
-  --
 ::  +take-tx: accept submitted l2 tx into the :pending list
 ::
 ++  take-tx
