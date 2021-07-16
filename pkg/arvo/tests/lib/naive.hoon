@@ -828,6 +828,11 @@
                              [~radres-tinnyl %losrut-rt-mkey-0]
                              ~
                          ==
+++  default-spawn-keys  %-  my:nl
+                        :*  [~holrut %holrut-skey-0]
+                            [~losrut %losrut-skey-0]
+                            ~
+                        ==
 ::
 ::  sponsorship tests
 ++  losrut-own   [~losrut %own]
@@ -1029,6 +1034,9 @@
         ?+  proxy.cur-event  %wrong-key
           %own     (~(got by default-own-keys) cur-ship)
           %manage  (~(got by default-manage-keys) cur-ship)
+          %spawn   ?:  =(rank.cur-event %star)
+                     (~(got by default-spawn-keys) cur-ship)
+                   %wrong-key
         ==
       %wrong-key :: if not owner then use wrong key
     state
