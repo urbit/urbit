@@ -2,7 +2,7 @@
 |_  bil=bill
 ++  grow
   |%
-  ++  mime  [/text/x-bill (as-octs:mimes:html hoon)]
+  ++  mime  `^mime`[/text/x-bill (as-octs:mimes:html hoon)]
   ++  noun  bil
   ++  hoon
     ^-  @t
@@ -36,6 +36,7 @@
   ++  noun  bill
   ++  mime
     |=  [=mite len=@ud tex=@]
+    ~_  tex
     !<(bill (slap !>(~) (ream tex)))
   --
 ++  grad  %noun
