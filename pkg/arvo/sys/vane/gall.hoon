@@ -328,7 +328,7 @@
       ==
     ~>  %slog.[0 leaf+"gall: {tex} {<dap>}"]
     ::
-    ?^  existing
+    ?^  yak
       =.  yokes.state
         (~(put by yokes.state) dap u.yak(beak bek))
       =/  ap-core  (ap-abed:ap dap `our)
@@ -543,26 +543,16 @@
     =/  tim  (slav da+dat)
     =/  =beak  [(slav %p her) desk da+tim]
     ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
-    |^  ^+  mo-core
     ?~  p.sign-arvo
-      (fail leaf+"gall: failed to build agent {<dap>}" ~)
+      (mean leaf+"gall: failed to build agent {<dap>}" ~)
     =/  cag=cage  r.u.p.sign-arvo
     ?.  =(%vase p.cag)
-      (fail leaf+"gall: bad %writ {<p.cag>} for {<dap>}" ~)
+      (mean leaf+"gall: bad %writ {<p.cag>} for {<dap>}" ~)
     =/  res  (mule |.(!<(agent !<(vase q.cag))))
     ?:  ?=(%| -.res)
-      (fail leaf+["gall: bad agent {<dap>}"] p.res)
+      (mean leaf+["gall: bad agent {<dap>}"] p.res)
     =.  mo-core  (mo-receive-core dap beak p.res)
     (mo-subscribe-to-agent-builds tim)
-    ::
-    ++  fail
-      |=  =tang
-      ^+  mo-core
-      =.  mo-core  (mo-give %onto |+tang)
-      =/  =case  [%da tim]
-      =/  =^wire  /sys/cor/[dap]/[her]/[desk]/(scot case)
-      (mo-pass wire %c %warp p.beak desk ~ %next %a case /app/[dap]/hoon)
-    --
   ::  +mo-handle-sys-lyv: handle notice that agents have been rebuilt
   ::
   ++  mo-handle-sys-lyv
@@ -1801,7 +1791,7 @@
       [%| p.agent.yoke]
     ?:  =(%base q.beak.yoke)
       [%& on-save:p.agent.yoke]
-    [%| on-save:p.agent-yoke]
+    [%| on-save:p.agent.yoke]
   ==
 ::  +take: response
 ::
