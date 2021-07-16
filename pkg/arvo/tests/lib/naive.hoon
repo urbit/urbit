@@ -1489,6 +1489,46 @@
       [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
   ==
 ::
+::  the following tests are for sponsorship actions between two L1 points
+++  test-red-l1-escape-l2-adopt  ^-  tang
+  =/  rr-adopt  [rigred-own %adopt ~rabsum-ravtyd]
+  %+  expect-eq
+    !>  [~ %.y ~rigred]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
+    =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
+++  test-red-l2-escape-l1-adopt  ^-  tang
+  =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
+  %+  expect-eq
+    !>  [[~ ~rigred] %.y ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 1 rr-escape %holrut-rr-key-0))
+    =^  f  state  (n state (escape-accepted:l1 ~rigred ~rabsum-ravtyd))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
+++  test-l1-adoption-wrong-keys
+  ::  this is really bad
+  =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
+  =/  rr-adopt   [rigred-own %adopt ~rabsum-ravtyd]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 1 rr-escape %wrong-key))
+    =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %wrong-key))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
   =|  =^state:naive
