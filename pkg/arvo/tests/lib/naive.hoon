@@ -1829,7 +1829,6 @@
       =^  f  state  (n state %bat q:(gen-tx 0 [marbud-mgt new-keys] %marbud-mkey))
       |1:keys.net:(~(got by points.state) ~marbud)
     ::
-    :: TODO: make sure nobody else can change these keys
   ==
 ::
 :: TODO: transfer breach via transfer proxy
@@ -1978,7 +1977,6 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx 0 new-keys-no-reset %marbud-key-0))
       =^  f  state  (n state %bat q:(gen-tx 1 marbud-transfer-no-breach %marbud-key-0))
-      ::  TODO: shouldn't the nonce by zero for the next tx?
       =^  f  state  (n state %bat q:(gen-tx 2 zero-keys-yes-reset %marbud-key-1))
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
@@ -1992,15 +1990,12 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx 0 new-keys-no-reset %marbud-key-0)) :: inc life
       =^  f  state  (n state %bat q:(gen-tx 1 marbud-transfer-yes-breach %marbud-key-0)) :: inc life and rift
-      ::  TODO: shouldn't the nonce by zero for the next tx?
       =^  f  state  (n state %bat q:(gen-tx 2 new-keys-no-reset %marbud-key-1)) ::inc life
       [rift.net life.keys.net]:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
     ::  networking keys set incremenets life, reset=%.y
     ::  then zero keys and transfer, should increment rift but not life
-    ::  TODO: transferring and reset with already zeroed keys ought to incr rift but not life, right?
-    ::  but currently the transfer w/ reset increments both life and rift, despite keys already being 0
     ::
       !>  [2 2]
     ::
@@ -2040,36 +2035,6 @@
     =^  f  state  (n state (owner-changed:l1 ~dopbud (addr %dopbud-key-1)))
     =^  f  state  (n state %bat q:(gen-tx 1 lr-spawn %dopbud-key-1))
     transfer-proxy.own:(~(got by points.state) ~laclur-rachul)
-::
-::  ++  test-sambud-double-spawn  ^-  tang
-::    ::
-::    ::  TODO: Not sure of the right way to write this test yet. Current iteration
-::    ::  doesn't even compile
-::    ::
-::    %-  expect-fail
-::      |.
-::      ?<
-::        ?=  [`@ux`(addr %ld-key-1) 0]
-::        =|  =^state:naive
-::        =^  f  state  (init-sambud state)
-::        =^  f  state  (n state (owner-changed:l1 ~lisdur-fodrys (addr %ld-key-0)))
-::        =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
-::        =^  f  state  (n state %bat q:(spawn:l2 0 ~sambud %sambud-key-0 %own ~lisdur-fodrys (addr %ld-key-1)))
-::        transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
-::      %.n
-::
-::  ++  test-sambud-double-spawn-w-proxy  ^-  tang
-::    ::
-::    ::  Same confusion as above
-::    ::
-::    %-  expect-fail
-::      |.
-::      =|  =^state:naive
-::      =^  f  state  (init-sambud state)
-::      =^  f  state  (n state (owner-changed:l1 ~lisdur-fodrys (addr %ld-key-0)))
-::      =^  f  state  (n state (owner-changed:l1 ~sambud deposit-address:naive))
-::      =^  f  state  (n state %bat q:(spawn:l2 0 ~sambud %sambud-key-0 %own ~lisdur-fodrys (addr %ld-key-1)))
-::      state
 ::
 ++  test-linnup-torsyx-l2-transfer-ownership  ^-  tang
   =/  lt-spawn                [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
