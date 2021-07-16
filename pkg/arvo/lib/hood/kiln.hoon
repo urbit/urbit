@@ -1,22 +1,31 @@
-jolt  *bill
+/-  *bill
 /+  version
 =,  clay
 =,  space:userlib
 =,  format
 |%
-+$  state    state-2
++$  state    state-3
++$  state-3  [%3 pith-3]
 +$  state-2  [%2 pith-2]
 +$  state-1  [%1 pith-1]
 +$  state-0  [%0 pith-0]
 +$  any-state
-  $%  state-2
+  $%  state-3
+      state-2
       state-1
       state-0
   ==
-+$  pith-2                                              ::
++$  pith-3
   $:  rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
       ark=(map desk arak)                               ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+  ==                                                    ::
++$  pith-2                                              ::
+  $:  rem=(map desk per-desk)                           ::
+      syn=(map kiln-sync let=@ud)                       ::
+      ota=(unit [=ship =desk =aeon])                    ::
+      ark=(map desk *)                               ::
       commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
   ==                                                    ::
 +$  pith-1                                              ::
@@ -115,6 +124,15 @@ jolt  *bill
   :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
 ::
+++  on-init
+  =<  abet
+  ~>  %slog.0^leaf/"kiln: init"
+  %-  emil
+  %+  turn  (get-apps-want %base *rein)
+  |=  =dude:gall
+  ~>  %slog.0^leaf/"kiln: %jolt {<dude>}"
+  [%pass /kiln/jolt/[dude] %arvo %g %jolt %base dude]
+::
 ++  on-load
   |=  [hood-version=@ud old=any-state]
   =<  abet
@@ -146,11 +164,18 @@ jolt  *bill
         rem.old
         syn.old
         ota.old
+        ark=~  ::  TODO reinstate old ota here?
+        commit-timer.old
+    ==
+  =?  old  ?=(%2 -.old)
+    :*  %3
+        rem.old
+        syn.old
         ark=~
         commit-timer.old
     ==
   ::
-  ?>  ?=(%2 -.old)
+  ?>  ?=(%3 -.old)
   =.  +<+.$.abet  old
   ..abet
 ::
@@ -188,6 +213,7 @@ jolt  *bill
     ++  find      (warp %find [%sing %y ud+1 /])
     ++  sync      (warp %sync [%sing %w da+now /])
     ++  download  (warp %download [%sing %v ud+aeon.rak /])
+    ++  warp  |=([s=term r=rave] (clay-card s %warp ship.rak desk.rak `r))
     ++  merge-main
       =/  germ  (get-germ loc)
       =/  =aeon  (dec aeon.rak)
@@ -196,8 +222,6 @@ jolt  *bill
       =/  germ  (get-germ %kids)
       =/  =aeon  (dec aeon.rak)
       (clay-card %merge-kids [%merg %kids ship.rak desk.rak ud+aeon germ])
-    ::
-    ++  warp  |=([s=term r=rave] (clay-card s %warp ship.rak desk.rak `r))
     ++  clay-card
       |=  [step=@tas =task:clay]
       ^-  card:agent:gall
@@ -379,7 +403,7 @@ jolt  *bill
   ++  take-onto
     |=  syn=sign-arvo
     ^+  vats
-    =/  onto  ?>(?=(%onto -.syn) p.syn)
+    =/  onto  ?>(?=([%gall %onto *] syn) p.syn)
     ?-  -.onto
       %&  vats
       %|  (mean p.onto)  ::  TODO: kill arvo event on failure
@@ -401,16 +425,15 @@ jolt  *bill
   .^((set dude:gall) ge+/(scot %p our)/[desk]/(scot %da now))
 ::  +get-apps-want: find which apps should be running on a desk
 ::
-::    TODO: preserve list order?
-::
 ++  get-apps-want
   |=  [=desk =rein]
   ^-  (list dude:gall)
-  =/  duz  (read-apes .^(=bill cx+(weld pax /desk/bill)))
-  =/  daz  ~(tap in duz)
-  =.  daz  (~(dif in daz) sub.rein)
-  =.  daz  (~(uni in daz) add.rein)
-  ~(tap in daz)
+  =+  .^(=bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
+  ~>  %slog.0^leaf/"kiln: bill {<bill>}"
+  =/  duz  (read-apes bill)
+  =.  duz  (skip duz ~(has in sub.rein))
+  =.  duz  (weld duz ~(tap in add.rein))
+  duz
 ::  +get-blockers: find desks that would block a kernel update
 ::
 ++  get-blockers
@@ -471,7 +494,6 @@ jolt  *bill
     %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
     %kiln-fuse               =;(f (f !<(_+<.f vase)) poke-fuse)
     %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
-    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
     %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
     %kiln-install            =;(f (f !<(_+<.f vase)) poke-install)
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
@@ -526,10 +548,6 @@ jolt  *bill
 ++  poke-gall-sear
   |=  =ship
   abet:(emit %pass /kiln %arvo %g %sear ship)
-::
-++  poke-goad-gall
-  |=  [force=? agent=(unit dude:gall)]
-  abet:(emit %pass /kiln %arvo %g %goad force agent)
 ::
 ++  poke-info
   |=  [mez=tape tor=(unit toro)]
@@ -590,9 +608,8 @@ jolt  *bill
 ++  poke-syncs                                        ::  print sync config
   |=  ~
   =<  abet  %-  spam
-  :-  [%leaf get-ota-info]
   ?:  =(0 ~(wyt by syn))
-    [%leaf "no other syncs configured"]~
+    [%leaf "no syncs configured"]~
   %+  turn  ~(tap in ~(key by syn))
   |=(a=kiln-sync (render "sync configured" [sud her syd]:a))
 ::
@@ -623,20 +640,14 @@ jolt  *bill
   %*  .  abet:abet:stop:(auto hus)
     syn  (~(del by syn) hus)
   ==
-::
-++  get-ota-info
-  ?~  ota
-    "OTAs disabled"
-  "OTAs enabled from {<desk.u.ota>} on {<ship.u.ota>}"
 ::  +peer: handle %watch
 ::
 ++  peer
   |=  =path
   ?>  (team:title our src)
   ?+    path  ~|(kiln-path/path !!)
-      [%vats ~]
-    =/  snap  [ota=ota ark=ark]
-    abet(moz :_(moz [%give %fact ~ kiln-vats-snap/!>(snap)]))
+      [%ark ~]
+    abet(moz :_(moz [%give %fact ~ kiln-ark/!>(ark)]))
   ==
 ::
 ++  take-agent
