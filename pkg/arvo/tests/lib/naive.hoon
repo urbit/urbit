@@ -617,12 +617,12 @@
                     (cury filter-dominion %l1)
                     %-  cury
                     :-  filter-tx-type
-                    :*  ::%spawn
-                        ::%transfer-point
-                        ::%configure-keys
-                        ::%set-management-proxy
-                        ::%set-spawn-proxy  :: planets can set spawn proxy atm
-                        ::%set-transfer-proxy
+                    :*  %spawn
+                        %transfer-point
+                        %configure-keys
+                        %set-management-proxy
+                        %set-spawn-proxy  :: planets can set spawn proxy atm
+                        %set-transfer-proxy
                         %escape
                         ~
                     ==

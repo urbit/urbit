@@ -59,8 +59,6 @@
 ::  TODO: make sure you can spawn with the spawn proxy after on domain
 ::  %spawn
 ::
-::  TODO: planet shouldn't be able to set spawn proxy
-::
 ::  TODO: make sure that if we've already been deposited to L2, no
 ::  further L1 logs count except detach.
 ::
@@ -572,7 +570,7 @@
     =*  parent=@  i.t.t.topics.log
     =/  parent-point  (get-point state parent)
     ?>  ?=(^ parent-point)
-    ?:  |(?=(%l2 -.point) ?=(%l2 -.u.parent-point))  `point
+    ?:  ?=(%l2 -.u.parent-point)  `point
     :-  [%point ship %sponsor `parent]~
     point(escape.net ~, sponsor.net [%& parent])
   ::
@@ -594,12 +592,16 @@
     :-  [%point ship %sponsor ~]~
     point(has.sponsor.net %|)
   ::
+  ::  The rest can be done by any ship on L1, even if their spawn proxy
+  ::  is set to L2
+  ::
+  ?:  ?=(%l2 -.point)  `point
+  ::
   ?:  =(log-name escape-requested:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent=@  i.t.t.topics.log
     =/  parent-point  (get-point state parent)
     ?>  ?=(^ parent-point)
-    ?:  |(?=(%l2 -.point) ?=(%l2 -.u.parent-point))  `point
     :-  [%point ship %escape `parent]~
     point(escape.net `parent)
   ::
@@ -608,14 +610,8 @@
     =*  parent=@  i.t.t.topics.log
     =/  parent-point  (get-point state parent)
     ?>  ?=(^ parent-point)
-    ?:  |(?=(%l2 -.point) ?=(%l2 -.u.parent-point))  `point
     :-  [%point ship %escape ~]~
     point(escape.net ~)
-  ::
-  ::  The rest can be done by any ship on L1, even if their spawn proxy
-  ::  is set to L2
-  ::
-  ?:  ?=(%l2 -.point)  `point
   ::
   ?:  =(log-name broke-continuity:log-names)
     ?>  ?=(~ t.t.topics.log)
@@ -743,7 +739,9 @@
       %adopt            (w-point-esc process-adopt ship.tx +>.tx)
       %reject           (w-point-esc process-reject ship.tx +>.tx)
       %detach           (w-point-esc process-detach ship.tx +>.tx)
-      %set-spawn-proxy  (w-point process-set-spawn-proxy ship.from.tx +>.tx)
+      %set-spawn-proxy
+    (w-point-spawn process-set-spawn-proxy ship.from.tx +>.tx)
+  ::
       %set-transfer-proxy
     (w-point process-set-transfer-proxy ship.from.tx +>.tx)
   ::
@@ -756,6 +754,7 @@
     ^-  (unit [effects ^state])
     =/  point  (get-point state ship)
     ?~  point  (debug %strange-ship ~)
+    ?.  ?=(%l2 -.u.point)  (debug %ship-not-on-l2 ~)
     =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
     ?~  res
       ~
@@ -766,6 +765,17 @@
     ^-  (unit [effects ^state])
     =/  point  (get-point state ship)
     ?~  point  (debug %strange-ship ~)
+    =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
+    ?~  res
+      ~
+    `[effects.u.res state(points (~(put by points.state) ship new-point.u.res))]
+  ::
+  ++  w-point-spawn
+    |*  [fun=$-([ship point *] (unit [effects point])) =ship rest=*]
+    ^-  (unit [effects ^state])
+    =/  point  (get-point state ship)
+    ?~  point  (debug %strange-ship ~)
+    ?:  ?=(%l1 -.u.point)  (debug %ship-on-l2 ~)
     =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
     ?~  res
       ~
