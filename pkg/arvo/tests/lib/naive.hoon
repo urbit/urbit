@@ -1783,16 +1783,20 @@
   =/  marbud-sproxy   [marbud-own %set-spawn-proxy (addr %marbud-skey)]
   =/  lt-spawn-0      [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
   =/  lt-spawn-1      [marbud-spn %spawn ~linnup-torsyx (addr %lt-key-1)]
+  =|  =^state:naive
+  =^  f  state  (init-marbud state)
+  =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
+  =^  f  state  (n state %bat q:(gen-tx 1 lt-spawn-0 %marbud-key-0))
+  =/  marbud-point  (~(got by points.state) ~marbud)
+  =/  new-marbud  marbud-point(nonce.spawn-proxy.own 1)
+  =/  no-op-state  state(points (~(put by points.state) ~marbud new-marbud))
   ::
-  %-  expect-fail
-    |.
-    =|  =^state:naive
-    =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 1 lt-spawn-0 %marbud-key-0))
+  %+  expect-eq
+    !>  no-op-state
+  ::
+    !>
     =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn-1 %marbud-skey))
     state
-::
 ::
 ++  test-marbud-l2-change-keys  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
@@ -2139,8 +2143,6 @@
     [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-adopt-reject  ^-  tang
-  ::  TODO: at the moment the default sponsor is always ~zod, but it should probably
-  ::  be ~marbud here
   =/  lt-spawn                  [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
   =/  lt-transfer-yes-breach    [lt-xfr %transfer-point (addr %lt-key-0) &]
   ::
