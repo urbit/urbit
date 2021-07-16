@@ -151,7 +151,6 @@
   =^  f5  state  (n state %bat q:(gen-tx 0 lm-escape %rigrut-lm-key-0))
   [:(welp f1 f2 f3 f4 f5) state]
 ::
-::
 ::  ~dopbud is for testing L1 ownership with L2 spawn proxy
 ::
 ++  init-dopbud
@@ -611,11 +610,11 @@
   ++  gen-rut-jar
     ^-  (jar @p event)
     =/  filter  ;:  cork
-                    (cury filter-owner %.y)
+                    (cury filter-owner %.n)
                     (cury filter-proxy %own)
                     (cury filter-nonce %.y)
-                    ::(cury filter-rank %star)
-                    ::(cury filter-dominion %l1)
+                    (cury filter-rank %planet)
+                    (cury filter-dominion %l1)
                     %-  cury
                     :-  filter-tx-type
                     :*  ::%spawn
@@ -872,6 +871,7 @@
   =/  initial-state  state
   =/  ship-list  rut-ship-list
   =/  suc-map  (make-success-map make-event-list)
+  ~&  event-jar
   ::
   |-  ^-  tang
   ?~  ship-list  ~
@@ -927,7 +927,7 @@
       %set-spawn-proxy       set-spwn-proxy
       %set-transfer-proxy    set-xfer-proxy
       %spawn                 (new-point which-spawn)
-      %escape                (set-escape which-escape-l2)
+      %escape                (set-escape which-escape-l1)
     ==
     ::
     ++  set-keys  ^-  ^state:naive
@@ -1030,7 +1030,7 @@
           %own     (~(got by default-own-keys) cur-ship)
           %manage  (~(got by default-manage-keys) cur-ship)
         ==
-      %wrong-key
+      %wrong-key :: if not owner then use wrong key
     state
     ::
     ++  def-args
@@ -1075,6 +1075,7 @@
     ==
   ::
   ++  which-escape-l1  ^-  ship
+  :: currently unused
   :: escaping to a L1 point
     ?-  rank.cur-event
       %galaxy  ~red
@@ -1514,8 +1515,7 @@
     =^  f  state  (n state (escape-accepted:l1 ~rigred ~rabsum-ravtyd))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
-++  test-l1-adoption-on-l2-wrong-key-or-nonce
-  ::  this is really bad
+++  test-rut-l1-adoption-on-l2-wrong-key-or-nonce
   =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
   =/  rr-adopt   [rigred-own %adopt ~rabsum-ravtyd]
   ::
@@ -1525,7 +1525,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 1 rr-escape %wrong-key))
       =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
@@ -1535,7 +1535,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 999 rr-escape %holrut-rr-key-0))
       =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
