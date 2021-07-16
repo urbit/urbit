@@ -222,8 +222,8 @@
 ++  take-agent
   |=  [=wire =sign:agent:gall]
   ?+  wire  ~|([%helm-bad-take-agent wire -.sign] !!)
-    [%helm %hi *]  ?>  ?=(%poke-ack -.sign)
-                   (coup-hi t.t.wire p.sign)
+    [%hi *]  ?>  ?=(%poke-ack -.sign)
+                   (coup-hi t.wire p.sign)
   ==
 ::
 ++  take-bound

@@ -493,6 +493,7 @@
       ?:  (~(has in cycle.nub) vale+path)
         ~|(cycle+vale+path^stack.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) vale+path)
+      ::~>  %slog.0^leaf/"ford: read file {(spud path)}"
       ?^  change=(~(get by changes) path)
         =^  page  nub
           ?:  ?=(%& -.u.change)
@@ -523,6 +524,7 @@
         =^  top  stack.nub  pop-stack
         =.  naves.cache.nub  (~(put by naves.cache.nub) mak [vase.res top])
         [vase.res nub]
+      ~>  %slog.0^leaf/"ford: make mark {<mak>}"
       =^  cor=vase  nub  (build-fit %mar mak)
       =/  gad=vase  (slap cor limb/%grad)
       ?@  q.gad
@@ -597,6 +599,7 @@
         =.  marks.cache.nub  (~(put by marks.cache.nub) mak [dais.res top])
         [dais.res nub]
       =^  nav=vase  nub  (build-nave mak)
+      ~>  %slog.0^leaf/"ford: make dais {<mak>}"
       :_  nub
       ^-  dais
       |_  sam=vase
@@ -651,6 +654,7 @@
         [vase.res nub]
       ::  try +grow; is there a +grow core with a .b arm?
       ::
+      ~>  %slog.0^leaf/"ford: make cast {<a>} -> {<b>}"
       =^  old=vase  nub  (build-fit %mar a)
       ?:  =/  ram  (mule |.((slap old !,(*hoon grow))))
           ?:  ?=(%| -.ram)  %.n
@@ -710,6 +714,7 @@
         =.  tubes.cache.nub  (~(put by tubes.cache.nub) [a b] [tube.res top])
         [tube.res nub]
       =^  gat=vase  nub  (build-cast a b)
+      ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
       :_(nub |=(v=vase (slam gat v)))
     ::
     ++  lobe-to-page
@@ -798,6 +803,7 @@
       =.  stack.nub
         =-  [(sy - ~) stack.nub]
         ?:(?=(%| -.dep) dep [& dir.p.dep])
+      ~>  %slog.0^leaf/"ford: make file {(spud path)}"
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
@@ -1508,13 +1514,18 @@
     ::  promote and fill in ankh
     ::  promote and fill in mime cache
     ::
-    ?:  &(=(%base syd) !updated)
+    =/  invalid  (~(uni in deletes) ~(key by changes))
+    ?:  &(=(%base syd) !updated (~(any in invalid) is-kernel-path))
       (sys-update yoki new-data)
+    ::
+    =?  updated  updated  (did-kernel-update invalid)
+    =>  ?.  updated  .
+        ~>(%slog.0^leaf/"clay: rebuilding {<syd>} after after kernel update" .)
     ::  clear caches if zuse reloaded
     ::
     =.  fod.dom
       ?:  updated  *ford-cache
-      (promote-ford fod.dom deletes ~(key by changes))
+      (promote-ford fod.dom invalid)
     =?  ank.dom  updated  *ankh
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
@@ -1565,7 +1576,14 @@
     =.  ..park  (emil (print q.old-yaki data))
     ::
     wake:(ergo mim)
+    ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
+    ++  is-kernel-path  |=(pax=path ?=([%sys *] pax))
+    ::
+    ++  did-kernel-update
+      |=  invalid=(set path)
+      %-  ~(any in invalid)
+      |=(p=path &((is-kernel-path p) !?=([%sys %vane *] p)))
     ::  +get-kelvin: read the desk's kernel version from /sys/kelvin
     ::
     ++  get-kelvin
@@ -1654,13 +1672,13 @@
     ::    Make sure to invalidate any paths whose '-'s or '/'s could be
     ::    converted in an import; i.e. /mar, /lib, and /sur hoon files.
     ::
+    ::    If anything in the kernel other than a vane updated,
+    ::    clear the cache.
+    ::
     ++  promote-ford
-      |=  [=ford-cache deletes=(set path) changes=(set path)]
+      |=  [=ford-cache invalid=(set path)]
       ^+  ford-cache
-      ?:  (~(has in changes) /sys/kelvin)
-        ~>  %slog.0^'clay: desk kelvin changed, clearing ford cache'
-        *^ford-cache
-      =/  invalid=(set path)  (~(uni in deletes) changes)
+      ::
       =.  invalid
         %-  ~(gas in invalid)
         %-  zing
@@ -1677,6 +1695,8 @@
         =/  pux  (tail (flop xup))         ::  lose static prefix
         %+  turn  (tail (spud pux))        ::  lose leading '/'
         |=(c=@tD `@tD`?:(=('/' c) '-' c))  ::  convert '/' to '-'
+      ::
+      ~>  %slog.0^leaf/"ford: {<~(wyt in invalid)>} cache invalidations"
       ::
       :*  ((invalidate path vase) files.ford-cache invalid)
           ((invalidate mark vase) naves.ford-cache invalid)
@@ -3660,19 +3680,23 @@
       |=  [=aeon =path]
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
+        ~>  %slog.0^leaf/"clay: %a unknown aeon {<[aeon path]>}"
         [~ fod.dom]
       =/  cached=(unit [=vase *])  (~(get by files.fod.dom) path)
       ?^  cached
         :_(fod.dom [~ ~ %& %vase !>(vase.u.cached)])
       =/  x  (read-x aeon path)
       ?~  x
+        ~>  %slog.0^leaf/"clay: %a can't resolve file at path {<path>}"
         [~ fod.dom]
       ?~  u.x
+        ~>  %slog.0^leaf/"clay: %a no file at path {<path>}"
         [[~ ~] fod.dom]
       ::  should never happen at current aeon
       ?:  ?=(%| -.u.u.x)
         [~ fod.dom]
       =^  =vase  fod.dom
+        ~_  leaf/"clay: %a build failed {<path>}"
         %-  wrap:fusion
         (build-file:(ford:fusion static-ford-args) path)
       :_(fod.dom [~ ~ %& %vase !>(vase)])

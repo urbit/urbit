@@ -102,7 +102,7 @@
 ++  peer                                              ::
   |=  pax=path
   ~|  [%drum-unauthorized our+our.hid src+src.hid]    ::  ourself
-  ?>  (team:title our.hid src.hid)               ::  or our own moon
+  ?>  (team:title our.hid src.hid)                    ::  or our own moon
   =<  se-abet  =<  se-view
   (se-text "[{<src.hid>}, driving {<our.hid>}]")
 ::
@@ -178,14 +178,14 @@
 ::
 ++  take-agent
   |=  [=wire =sign:agent:gall]
-  ?+  wire  ~|([%drum-bad-take-agent wire -.sign] !!)
-      [%drum %phat *]
+  ?+    wire  ~|([%drum-bad-take-agent wire -.sign] !!)
+      [%phat *]
     ?-  -.sign
-        %poke-ack   (take-coup-phat t.t.wire p.sign)
-        %watch-ack  (reap-phat t.t.wire p.sign)
-        %kick       (quit-phat t.t.wire)
+        %poke-ack   (take-coup-phat t.wire p.sign)
+        %watch-ack  (reap-phat t.wire p.sign)
+        %kick       (quit-phat t.wire)
         %fact
-      %+  diff-sole-effect-phat  t.t.wire
+      %+  diff-sole-effect-phat  t.wire
       ?>  ?=(%sole-effect p.cage.sign)
       !<(sole-effect q.cage.sign)
    ==

@@ -407,8 +407,9 @@
     ^+  vats
     =/  onto  ?>(?=([%gall %onto *] syn) p.syn)
     ?-  -.onto
-      %&  ?>  ?=([@ @ ~] wire)
-          =+  ;;([=desk =dude:gall] [i i.t]:wire)
+      %&  ~_  leaf/"kiln: %onto bad wire {<wire>}"
+          ?>  ?=([@ @ @ ~] wire)
+          =+  ;;([=desk =dude:gall] [i i.t.t]:wire)
           ?.  (is-fish dude desk)
             vats
           =/  =cage  [%drum-link !>([our dude])]
@@ -665,16 +666,19 @@
 ::
 ++  take-agent
   |=  [=wire =sign:agent:gall]
-  ?+  wire  ~|([%kiln-bad-take-agent wire -.sign] !!)
-    [%kiln %fancy *]   ?>  ?=(%poke-ack -.sign)
-                       (take-coup-fancy t.t.wire p.sign)
-    [%kiln %spam *]    ?>  ?=(%poke-ack -.sign)
-                       (take-coup-spam t.t.wire p.sign)
+  ?+    wire  ~|([%kiln-bad-take-agent wire -.sign] !!)
+      [%fancy *]
+    ?>  ?=(%poke-ack -.sign)
+    (take-coup-fancy t.wire p.sign)
+  ::
+      [%spam *]
+    ?>  ?=(%poke-ack -.sign)
+    (take-coup-spam t.wire p.sign)
   ==
 ::
 ++  take-arvo
   |=  [=wire =sign-arvo]
-  ?-  wire
+  ?-    wire
       [%sync %merg *]   %+  take-mere-sync  t.t.wire
                         ?>(?=(%mere +<.sign-arvo) +>.sign-arvo)
       [%find-ship *]    %+  take-writ-find-ship  t.wire

@@ -100,19 +100,18 @@
   |=  =path
   ^-  step:agent:gall
   ?+  path  (on-watch:def +<)
-    [%drum *]  =^(c drum.state (peer:drum-core +<) [c this])
-    [%kiln *]  =^(c kiln.state (peer:kiln-core +<) [c this])
+    [%drum *]  =^(c drum.state (peer:drum-core t.path) [c this])
+    [%kiln *]  =^(c kiln.state (peer:kiln-core t.path) [c this])
   ==
 ::
 ++  on-agent
-  |=  [=wire =sign:agent:gall]
+  |=  [=wire syn=sign:agent:gall]
   ^-  step:agent:gall
   ?+  wire  ~|([%hood-bad-wire wire] !!)
-    [%drum *]  =^(c drum.state (take-agent:drum-core +<) [c this])
-    [%helm *]  =^(c helm.state (take-agent:helm-core +<) [c this])
-    [%kiln *]  =^(c kiln.state (take-agent:kiln-core +<) [c this])
+    [%drum *]  =^(c drum.state (take-agent:drum-core t.wire syn) [c this])
+    [%helm *]  =^(c helm.state (take-agent:helm-core t.wire syn) [c this])
+    [%kiln *]  =^(c kiln.state (take-agent:kiln-core t.wire syn) [c this])
   ==
-::  TODO: symmetry between adding and stripping wire prefixes
 ::
 ++  on-arvo
   |=  [=wire syn=sign-arvo]
