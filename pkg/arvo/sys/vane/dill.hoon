@@ -230,7 +230,6 @@
         ::  make kids desk publicly readable, so syncs work.
         ::
         =.  +>  (show %kids)
-        =.  +>  hood-set-boot-apps
         =.  +>  peer
         |-  ^+  +>+
         ?~  myt  +>+
@@ -247,9 +246,6 @@
         ?^  tem
           +>(tem `[bet u.tem])
         (deal / [%poke [%dill-belt -:!>(bet) bet]])
-      ::
-      ++  hood-set-boot-apps
-        (deal / [%poke %drum-set-boot-apps !>(lit.all)])
       ::
       ++  peer
         (deal / [%watch /drum])
