@@ -1,6 +1,8 @@
 ::  |pill: helper functions for making pills
 ::
+/-  *bill
 /$  weft-to-mime  %kelvin  %mime
+/$  bill-to-mime  %bill    %mime
 ^?
 |%
 ::
@@ -45,6 +47,7 @@
         /ted    ::  :spider strands
         /tests  ::  unit tests
         /web    ::  %eyre web content
+        /desk
     ==
   |=  bas=path
   ^-  unix-event
@@ -105,6 +108,10 @@
         =/  weft  ,[lal=@tas num=@ud]  ::  TODO remove after merge
         =/  dat  .^(weft %cx pax)
         q:(weft-to-mime dat)
+      ::
+          [%bill *]
+        =/  dat  .^(bill %cx pax)
+        q:(bill-to-mime dat)
       ::
           [%woff2 *]
         =/  dat  .^(octs %cx pax)
