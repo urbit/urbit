@@ -879,6 +879,9 @@
       ::
           %as
         =/  cag=cage  (dy-cage p.q.bil)
+        =/  has-mark  .?((get-fit:clay he-beak %mar p.bil))
+        ?.  has-mark  ::  yolo
+          (dy-hand p.bil q.cag)
         =+  .^(=tube:clay cc+(en-beam he-beak /[p.cag]/[p.bil]))
         (dy-hand p.bil (tube q.cag))
       ::
@@ -1039,6 +1042,7 @@
     ?+    way  !!
         [%hand *]
       ?~  riot
+        ~>  %slog.0^leaf/"dojo: %writ fail {<way>}"
         (he-diff(poy ~) %tan >%generator-build-fail< >(snoc t.way %hoon)< ~)
       (~(dy-hand dy u.poy(pux ~)) noun+!<(vase q.r.u.riot))
     ==
