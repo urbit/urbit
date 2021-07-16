@@ -1658,6 +1658,7 @@
       |=  [=ford-cache deletes=(set path) changes=(set path)]
       ^+  ford-cache
       ?:  (~(has in changes) /sys/kelvin)
+        ~>  %slog.0^'clay: desk kelvin changed, clearing ford cache'
         *^ford-cache
       =/  invalid=(set path)  (~(uni in deletes) changes)
       =.  invalid

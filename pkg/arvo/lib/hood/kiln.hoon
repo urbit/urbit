@@ -126,12 +126,12 @@
 ::
 ++  on-init
   =<  abet
-  ~>  %slog.0^leaf/"kiln: init"
+  ~>  %slog.0^leaf/"kiln: boot"
   %-  emil
   %+  turn  (get-apps-want %base *rein)
   |=  =dude:gall
   ~>  %slog.0^leaf/"kiln: %jolt {<dude>}"
-  [%pass /kiln/jolt/[dude] %arvo %g %jolt %base dude]
+  [%pass /kiln/vats/base/jolt/[dude] %arvo %g %jolt %base dude]
 ::
 ++  on-load
   |=  [hood-version=@ud old=any-state]
@@ -203,8 +203,9 @@
   ++  make-wire  |=(step=@tas /kiln/vats/[loc]/[step])
   ++  from-wire
     |=  =wire
-    ?>  ?=([%kiln %vats @ @ ~] wire)
-    (abed i.t.t.wire)
+    ~|  wire
+    ?>  ?=([@ @ *] wire)
+    (abed i.wire)
   ::
   ++  emit  |=(card:agent:gall vats(kiln (^emit +<)))
   ++  emil  |=((list card:agent:gall) vats(kiln (^emil +<)))
@@ -238,7 +239,7 @@
       %-  emil
       %+  turn  (get-apps-have lac)
       |=  =dude:gall
-      [%pass /kiln/vats/uninstall %arvo %g %idle dude]
+      [%pass /kiln/vats/[lac]/uninstall %arvo %g %idle dude]
     ::
     kiln(ark (~(del by ark) lac))
   ::  +install: set up desk sync to .lac to install all apps from [her rem]
@@ -285,17 +286,18 @@
   ++  take
     |=  [=wire syn=sign-arvo]
     ^+  vats
+    ?>  ?=([@ @ *] wire)
+    ?:  ?=(%jolt i.t.wire)
+      (take-onto wire syn)
     =.  vats  (from-wire wire)
-    ?>  ?=([%kiln %vats @ @ ~] wire)
-    ?+    i.t.t.t.wire
-        ~>  %slog.0^leaf/"kiln: vats-bad-take {<t.t.t.wire>}"
+    ?+    i.t.wire
+        ~>  %slog.0^leaf/"kiln: vats-bad-take {<wire>}"
         vats
       %find        (take-find syn)
       %sync        (take-sync syn)
       %download    (take-download syn)
       %merge-main  (take-merge-main syn)
       %merge-kids  (take-merge-kids syn)
-      %jolt        (take-onto syn)
     ==
   ::
   ++  take-find
@@ -375,7 +377,7 @@
       %-  emil
       %+  turn  (get-apps-want loc rein.rak)
       |=  =dude:gall
-      [%pass /kiln/jolt/[dude] %arvo %g %jolt loc dude]
+      [%pass /kiln/vats/[loc]/jolt/[dude] %arvo %g %jolt loc dude]
     ?.  =(%base loc)
       vats
     =.  kiln  (bump (sy %base %kids ~))
@@ -401,11 +403,16 @@
     (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
   ::
   ++  take-onto
-    |=  syn=sign-arvo
+    |=  [=wire syn=sign-arvo]
     ^+  vats
     =/  onto  ?>(?=([%gall %onto *] syn) p.syn)
     ?-  -.onto
-      %&  vats
+      %&  ?>  ?=([@ @ ~] wire)
+          =+  ;;([=desk =dude:gall] [i i.t]:wire)
+          ?.  (is-fish dude desk)
+            vats
+          =/  =cage  [%drum-link !>([our dude])]
+          (emit %pass /kiln/link %agent [our %hood] %poke cage)
       %|  (mean p.onto)  ::  TODO: kill arvo event on failure
     ==
   --
@@ -423,13 +430,19 @@
   ^-  (list dude:gall)
   %~  tap  in
   .^((set dude:gall) ge+/(scot %p our)/[desk]/(scot %da now))
+::  +is-fish: should dill link .dude?
+::
+++  is-fish
+  |=  [=dude:gall =desk]
+  ^-  ?
+  =+  .^(=bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
+  .?((find ~[dude] (read-fish bill)))
 ::  +get-apps-want: find which apps should be running on a desk
 ::
 ++  get-apps-want
   |=  [=desk =rein]
   ^-  (list dude:gall)
   =+  .^(=bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
-  ~>  %slog.0^leaf/"kiln: bill {<bill>}"
   =/  duz  (read-apes bill)
   =.  duz  (skip duz ~(has in sub.rein))
   =.  duz  (weld duz ~(tap in add.rein))

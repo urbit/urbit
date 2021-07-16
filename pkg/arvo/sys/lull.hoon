@@ -2168,6 +2168,11 @@
       ::  %clay: external edit
       ::
       $>(%into task:clay)
+      ::  %clay: synchronous commit
+      ::
+      ::    TODO: make $yuki an option for %into?
+      ::
+      $>(%park task:clay)
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:eyre)

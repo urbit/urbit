@@ -54,7 +54,6 @@
       $:  %g                                            ::
           $>  $?  %jolt                                 ::
                   %deal                                 ::
-                  %goad                                 ::
               ==                                        ::
           task:gall                                     ::
       ==                                                ::
