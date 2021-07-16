@@ -1737,17 +1737,24 @@
 ::
 ++  test-linnup-torsyx-spawn  ^-  tang
   :: try to spawn a L2 planet with a L2 planet
+  :: this test is deprecated, covered by +test-rut
   =/  rt-spawn                  [lt-own %spawn ~radres-tinnyl (addr %rt-key-0)]
   =/  lt-spawn                  [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
   =/  lt-transfer-yes-breach    [lt-xfr %transfer-point (addr %lt-key-0) &]
   ::
-  %-  expect-fail
-    |.
-    =|  =^state:naive
-    =^  f  state  (init-marbud state)
-    =^  f  state  (init-litbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
+  =|  =^state:naive
+  =^  f  state  (init-marbud state)
+  =^  f  state  (init-litbud state)
+  =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
+  =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
+  =/  lt-point  (~(got by points.state) ~linnup-torsyx)
+  =/  new-lt  lt-point(nonce.owner.own 1)
+  =/  no-op-state  state(points (~(put by points.state) ~linnup-torsyx new-lt))
+  ::
+  %+  expect-eq
+    !>  no-op-state
+  ::
+    !>
     =^  f  state  (n state %bat q:(gen-tx 0 rt-spawn %lt-key-0))
     state
 ::
