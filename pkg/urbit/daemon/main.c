@@ -660,8 +660,16 @@ main(c3_i   argc,
 
   //  Set `u3_Host.wrk_c` to the worker executable path.
   c3_i worker_exe_len = 1 + strlen(argv[0]) + strlen("-worker");
-  u3_Host.wrk_c = c3_malloc(worker_exe_len);
-  snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
+  c3_c* wrk_c = c3_malloc(worker_exe_len);
+  snprintf(wrk_c, worker_exe_len, "%s-worker", argv[0]);
+  u3_Host.wrk_c = realpath(wrk_c, NULL);
+  c3_free(wrk_c);
+
+  if ( NULL == u3_Host.wrk_c ) {
+    fprintf(stderr, "failed to resolve urbit-worker: realpath: %s\n",
+            uv_strerror(errno));
+    u3_king_bail();
+  }
 
   if ( c3y == u3_Host.ops_u.dem ) {
     _fork_into_background_process();
