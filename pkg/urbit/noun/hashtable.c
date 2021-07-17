@@ -15,7 +15,7 @@ static void
 _ch_slot_put(u3h_slot* sot_w, u3_noun kev, c3_w lef_w, c3_w rem_w, c3_w* use_w);
 
 static c3_o
-_ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w);
+_ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w, u3h_free_fcn fre);
 
 c3_w
 _ch_skip_slot(c3_w mug_w, c3_w lef_w);
@@ -229,7 +229,7 @@ u3h_put(u3p(u3h_root) har_p, u3_noun key, u3_noun val)
 
   _ch_slot_put(&(har_u->sot_w[inx_w]), kev, 25, rem_w, &(har_u->use_w));
   if ( har_u->max_w > 0 ) {
-    u3h_trim_to(har_p, har_u->max_w);
+    u3h_trim_to(har_p, har_u->max_w, &u3a_lose);
   }
 }
 
@@ -256,7 +256,7 @@ u3h_uni(u3p(u3h_root) har_p, u3p(u3h_root) rah_p)
 /* _ch_trim_node(): trim one entry from a node slot or its children
 */
 static c3_o
-_ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
+_ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w, u3h_free_fcn fre)
 {
   c3_w bit_w, map_w, inx_w;
   u3h_slot* tos_w;
@@ -275,7 +275,7 @@ _ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
   inx_w = _ch_popcount(CUT_END(map_w, bit_w));
   tos_w = &(han_u->sot_w[inx_w]);
 
-  if ( c3n == _ch_trim_slot(har_u, tos_w, lef_w, rem_w) ) {
+  if ( c3n == _ch_trim_slot(har_u, tos_w, lef_w, rem_w, fre) ) {
     // nothing trimmed
     return c3n;
   }
@@ -306,10 +306,10 @@ _ch_trim_node(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
   }
 }
 
-/* _ch_trim_node(): trim one entry from a bucket slot
+/* _ch_trim_buck(): trim one entry from a bucket slot
 */
 static c3_o
-_ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w)
+_ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w, u3h_free_fcn fre)
 {
   c3_w i_w, len_w;
   u3h_buck* hab_u = u3h_slot_to_node(*sot_w);
@@ -319,7 +319,7 @@ _ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w)
         har_u->arm_u.inx_w += 1 )
   {
     u3h_slot* tos_w = &(hab_u->sot_w[har_u->arm_u.inx_w]);
-    if ( c3y == _ch_trim_slot(har_u, tos_w, 0, 0) ) {
+    if ( c3y == _ch_trim_slot(har_u, tos_w, 0, 0, fre) ) {
       if ( 2 == len_w ) {
         // 2 things in bucket: debucketize to key-value pair, the next
         // run will point at this pair (same mug_w, no longer in bucket)
@@ -350,13 +350,13 @@ _ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w)
 /* _ch_trim_some(): trim one entry from a bucket or node slot
 */
 static c3_o
-_ch_trim_some(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w)
+_ch_trim_some(u3h_root* har_u, u3h_slot* sot_w, c3_w lef_w, c3_w rem_w, u3h_free_fcn fre)
 {
   if ( 0 == lef_w ) {
-    return _ch_trim_buck(har_u, sot_w);
+    return _ch_trim_buck(har_u, sot_w, fre);
   }
   else {
-    return _ch_trim_node(har_u, sot_w, lef_w, rem_w);
+    return _ch_trim_node(har_u, sot_w, lef_w, rem_w, fre);
   }
 }
 
@@ -373,14 +373,14 @@ _ch_skip_slot(c3_w mug_w, c3_w lef_w)
 /* _ch_trim_slot(): trim one entry from a slot
 */
 static c3_o
-_ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
+_ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w, u3h_free_fcn fre)
 {
   if ( _(u3h_slot_is_null(*sot_w)) ) {
     har_u->arm_u.mug_w = _ch_skip_slot(har_u->arm_u.mug_w, lef_w);
     return c3n;
   }
   else if ( _(u3h_slot_is_node(*sot_w)) ) {
-    return _ch_trim_some(har_u, sot_w, lef_w, rem_w);
+    return _ch_trim_some(har_u, sot_w, lef_w, rem_w, fre);
   }
   else if ( _(u3h_slot_is_warm(*sot_w)) ) {
     *sot_w = u3h_noun_be_cold(*sot_w);
@@ -393,7 +393,7 @@ _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
     u3_noun kev = u3h_slot_to_noun(*sot_w);
     *sot_w = 0;
     // u3l_log("trim: freeing %x, use count %d\r\n", kev, u3a_use(kev)));
-    u3z(kev);
+    fre(kev);
 
     har_u->arm_u.mug_w = _ch_skip_slot(har_u->arm_u.mug_w, lef_w);
     return c3y;
@@ -403,25 +403,25 @@ _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
 /* _ch_trim_slot(): trim one entry from a hashtable
 */
 static c3_o
-_ch_trim_root(u3h_root* har_u)
+_ch_trim_root(u3h_root* har_u, u3h_free_fcn fre)
 {
   c3_w      mug_w = har_u->arm_u.mug_w;
   c3_w      inx_w = mug_w >> 25; // 6 bits
   c3_w      rem_w = CUT_END(mug_w, 25);
   u3h_slot* sot_w = &(har_u->sot_w[inx_w]);
 
-  return _ch_trim_slot(har_u, sot_w, 25, rem_w);
+  return _ch_trim_slot(har_u, sot_w, 25, rem_w, fre);
 }
 
 /* u3h_trim_to(): trim to n key-value pairs
 */
 void
-u3h_trim_to(u3p(u3h_root) har_p, c3_w n_w)
+u3h_trim_to(u3p(u3h_root) har_p, c3_w n_w, u3h_free_fcn fre)
 {
   u3h_root* har_u = u3to(u3h_root, har_p);
 
   while ( har_u->use_w > n_w ) {
-    if ( c3y == _ch_trim_root(har_u) ) {
+    if ( c3y == _ch_trim_root(har_u, fre) ) {
       har_u->use_w -= 1;
     }
     /* TODO: remove
@@ -642,7 +642,7 @@ _ch_free_buck(u3h_buck* hab_u)
 /* _ch_free_node(): free node.
 */
 static void
-_ch_free_node(u3h_node* han_u, c3_w lef_w)
+_ch_free_node(u3h_node* han_u, c3_w lef_w, u3h_free_fcn fre)
 {
   c3_w len_w = _ch_popcount(han_u->map_w);
   c3_w i_w;
@@ -653,7 +653,7 @@ _ch_free_node(u3h_node* han_u, c3_w lef_w)
     c3_w sot_w = han_u->sot_w[i_w];
 
     if ( _(u3h_slot_is_noun(sot_w)) ) {
-      u3z(u3h_slot_to_noun(sot_w));
+      fre(u3h_slot_to_noun(sot_w));
     }
     else {
       void* hav_v = u3h_slot_to_node(sot_w);
@@ -661,18 +661,18 @@ _ch_free_node(u3h_node* han_u, c3_w lef_w)
       if ( 0 == lef_w ) {
         _ch_free_buck(hav_v);
       } else {
-        _ch_free_node(hav_v, lef_w);
+        _ch_free_node(hav_v, lef_w, fre);
       }
     }
   }
   u3a_wfree(han_u);
 }
 
-/* u3h_free(): free hashtable.
+/* u3h_libr(): free hashtable with specified fcn
 */
 void
-u3h_free(u3p(u3h_root) har_p)
-{
+u3h_libr(u3p(u3h_root) har_p, u3h_free_fcn fre) {
+  // get pointer to hashtable root
   u3h_root* har_u = u3to(u3h_root, har_p);
   c3_w        i_w;
 
@@ -680,15 +680,23 @@ u3h_free(u3p(u3h_root) har_p)
     c3_w sot_w = har_u->sot_w[i_w];
 
     if ( _(u3h_slot_is_noun(sot_w)) ) {
-      u3z(u3h_slot_to_noun(sot_w));
+      fre(u3h_slot_to_noun(sot_w));
     }
     else if ( _(u3h_slot_is_node(sot_w)) ) {
       u3h_node* han_u = u3h_slot_to_node(sot_w);
-
-      _ch_free_node(han_u, 25);
+      _ch_free_node(han_u, 25, fre);
     }
   }
   u3a_wfree(har_u);
+
+}
+
+/* u3h_free(): free hashtable.
+*/
+void
+u3h_free(u3p(u3h_root) har_p)
+{
+  u3h_libr(har_p, &u3a_lose);
 }
 
 /* _ch_walk_buck(): walk bucket for gc.

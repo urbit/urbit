@@ -2859,12 +2859,15 @@ u3n_rewrite_compact()
 }
 
 
-/* _n_feb(): u3h_walk helper for u3n_free
+/* _n_feb(): helper to free contents of the bytecode cache
  */
 static void
 _n_feb(u3_noun kev)
 {
+  // call _n_prog_free on the values in the map
   _n_prog_free(u3to(u3n_prog, u3t(kev)));
+  // free the key-value pair itself
+  u3z(kev);
 }
 
 /* u3n_free(): free bytecode cache
@@ -2873,8 +2876,9 @@ void
 u3n_free()
 {
   u3p(u3h_root) har_p = u3R->byc.har_p;
-  u3h_walk(har_p, _n_feb);
-  u3h_free(har_p);
+  u3h_root* har_u = u3to(u3h_root, har_p);
+  c3_w n_siz = (har_u->use_w / 2);
+  u3h_trim_to(har_p, n_siz, &_n_feb);
 }
 
 /* u3n_kick_on(): fire `gat` without changing the sample.

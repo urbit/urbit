@@ -46,3 +46,8 @@ so bytecode program - 1 gives you use_w, the refcount!
 [ ] find CLOCK algo somwhere, u3h_trim_to
   clock is always pointing at the next thing to remove
 
+so now what should u3n_free actually do?
+maybe drop half the cache? divide by 2 and add 1 I guess?
+or just divide by 2, not freeing from a size 1 map doesn't really matter.
+
+but what is the "hank cache"? must also be freed?

@@ -408,7 +408,7 @@ _ca_reclaim_half(void)
   fprintf(stderr, "allocate: reclaim: half of %d entries\r\n",
           u3to(u3h_root, u3R->cax.har_p)->use_w);
 
-  u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2);
+  u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2, &u3a_lose);
 #else
   /*  brutal and guaranteed effective
   */

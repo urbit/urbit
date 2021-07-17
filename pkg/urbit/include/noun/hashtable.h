@@ -58,6 +58,10 @@
           u3h_slot sot_w[0];  // filled slots
         } u3h_buck;
 
+      /* u3h_free_fcn: function pointer to free a noun in a map
+      */
+        typedef void(*u3h_free_fcn)(u3_noun);
+
     /**  HAMT macros.
     ***
     ***  Coordinate with u3_noun definition!
@@ -127,7 +131,13 @@
       /* u3h_trim_to(): trim to n key-value pairs
       */
         void
-        u3h_trim_to(u3p(u3h_root) har_p, c3_w n_w);
+        u3h_trim_to(u3p(u3h_root) har_p, c3_w n_w, u3h_free_fcn fre);
+
+      /* u3h_libr(): free hashtable with specified fcn
+      */
+        void
+        u3h_libr(u3p(u3h_root) har_p, u3h_free_fcn fre);
+
 
       /* u3h_free(): free hashtable.
       */
