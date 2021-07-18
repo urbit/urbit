@@ -534,7 +534,7 @@
         %c  ta-bel
         %d  ?^  buf.say.inp
               ta-del
-            ?:  =(%dojo gyl)
+            ?:  =([our.hid %dojo] gyl)
               +>(..ta (se-blit qit+~))                ::  quit pier
             +>(..ta (se-klin gyl))                    ::  unlink app
         %e  +>(pos.inp (lent buf.say.inp))
