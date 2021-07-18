@@ -413,7 +413,7 @@
           ?.  (is-fish dude desk)
             vats
           =/  =cage  [%drum-link !>([our dude])]
-          (emit %pass /kiln/link %agent [our %hood] %poke cage)
+          (emit %pass /kiln/link/[dude] %agent [our %hood] %poke cage)
       %|  (mean p.onto)  ::  TODO: kill arvo event on failure
     ==
   --
@@ -674,6 +674,11 @@
       [%spam *]
     ?>  ?=(%poke-ack -.sign)
     (take-coup-spam t.wire p.sign)
+  ::
+      [%link @ ~]
+    ?>  ?=(%poke-ack -.sign)
+    ~>  %slog.0^leaf/"kiln: linked {<i.t.wire>} to console"
+    abet
   ==
 ::
 ++  take-arvo

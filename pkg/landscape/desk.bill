@@ -1,0 +1,51 @@
+:~  :-  %apes
+    :~  %btc-provider
+        %btc-wallet
+        %chat-cli
+        %chat-hook
+        %chat-store
+        %chat-view
+        %clock
+        %contact-hook
+        %contact-pull-hook
+        %contact-push-hook
+        %contact-store
+        %contact-view
+        %demo-pull-hook
+        %demo-push-hook
+        %demo-store
+        %dm-hook
+        %file-server
+        %glob
+        %graph-pull-hook
+        %graph-push-hook
+        %graph-store
+        %group-pull-hook
+        %group-push-hook
+        %group-store
+        %group-view
+        %hark-chat-hook
+        %hark-graph-hook
+        %hark-group-hook
+        %hark-store
+        %herm
+        %invite-hook
+        %invite-store
+        %invite-view
+        %landscape
+        %launch
+        %metadata-hook
+        %metadata-pull-hook
+        %metadata-push-hook
+        %metadata-store
+        %observe-hook
+        %pool-group-hook
+        %s3-store
+        %sane
+        %settings-store
+        %weather
+    ==    
+    :-  %fish
+    :~  %chat-cli
+    ==
+==
