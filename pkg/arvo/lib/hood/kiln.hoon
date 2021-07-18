@@ -379,7 +379,7 @@
     =.  vats
       =/  dif  (get-apps-diff loc rein.rak)
       ~>  %slog.0^leaf/"merge into {here} succeeded"
-      ~>  %slog.0^leaf/"starting {<add>}, pausing {<sub>}"
+      ~>  %slog.0^leaf/"starting {<liv.dif>}, pausing {<ded.dif>}"
       %-  emil
       %+  weld
         ^-  (list card:agent:gall)
