@@ -1018,7 +1018,7 @@
       ^-  path
       =/  paz  (segments pax)
       |-  ^-  path
-      ?~  paz  ~|(no-file+pre^pax !!)
+      ?~  paz  ~_(leaf/"clay: no files match /{<pre>}/{<pax>}/hoon" !!)
       =/  pux=path  pre^(snoc i.paz %hoon)
       ?:  (~(has in deletes) pux)
         $(paz t.paz)
