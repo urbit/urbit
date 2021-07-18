@@ -3,6 +3,7 @@
 =,  clay
 =,  space:userlib
 =,  format
+=*  dude  dude:gall
 |%
 +$  state    state-3
 +$  state-3  [%3 pith-3]
@@ -61,8 +62,8 @@
 ::    .sub: agents in manifest that should not be running
 ::
 +$  rein
-  $:  add=(set dude:gall)
-      sub=(set dude:gall)
+  $:  add=(set dude)
+      sub=(set dude)
   ==
 +$  per-desk                                            ::  per-desk state
   $:  auto=?                                            ::  escalate on failure
@@ -129,7 +130,7 @@
   ~>  %slog.0^leaf/"kiln: boot"
   %-  emil
   %+  turn  (get-apps-want %base *rein)
-  |=  =dude:gall
+  |=  =dude
   ~>  %slog.0^leaf/"kiln: %jolt {<dude>}"
   [%pass /kiln/vats/base/jolt/[dude] %arvo %g %jolt %base dude]
 ::
@@ -233,12 +234,15 @@
   ++  uninstall
     |=  lac=desk
     ^+  kiln
+    ?.  (~(has by ark) lac)
+      ~>  %slog.0^leaf/"kiln: |uninstall: {<lac>} not installed, ignoring"
+      kiln
     =.  vats  (abed lac)
     ~>  %slog.0^leaf/"kiln: uninstalling {here}"
     =.  vats
       %-  emil
       %+  turn  (get-apps-have lac)
-      |=  =dude:gall
+      |=  =dude
       [%pass /kiln/vats/[lac]/uninstall %arvo %g %idle dude]
     ::
     kiln(ark (~(del by ark) lac))
@@ -344,7 +348,7 @@
         =.  next.rak  (snoc next.rak [(dec aeon.rak) new-weft])
         (emit sync:pass)
       ~>  %slog.0^leaf/"kiln: merging into {here}"
-      (emil ~[merge-main sync]:pass)
+      (emil ~[merge-main download]:pass)
     ::
     =/  blockers
       ?:  =(new-weft old-weft)
@@ -373,11 +377,19 @@
       %-  (slog leaf/- p.p.syn)
       vats
     =.  vats
-      ~>  %slog.0^leaf/"merge into {here} succeeded; reviving agents"
+      =/  dif  (get-apps-diff loc rein.rak)
+      ~>  %slog.0^leaf/"merge into {here} succeeded"
+      ~>  %slog.0^leaf/"starting {<add>}, pausing {<sub>}"
       %-  emil
-      %+  turn  (get-apps-want loc rein.rak)
-      |=  =dude:gall
-      [%pass /kiln/vats/[loc]/jolt/[dude] %arvo %g %jolt loc dude]
+      %+  weld
+        ^-  (list card:agent:gall)
+        %+  turn  liv.dif
+        |=  =dude
+        [%pass /kiln/vats/[loc]/jolt/[dude] %arvo %g %jolt loc dude]
+      ^-  (list card:agent:gall)
+      %+  turn  ded.dif
+      |=  =dude
+      [%pass /kiln/vats/[loc]/idle/[dude] %arvo %g %idle dude]
     ?.  =(%base loc)
       vats
     =.  kiln  (bump (sy %base %kids ~))
@@ -409,7 +421,7 @@
     ?-  -.onto
       %&  ~_  leaf/"kiln: %onto bad wire {<wire>}"
           ?>  ?=([@ @ @ ~] wire)
-          =+  ;;([=desk =dude:gall] [i i.t.t]:wire)
+          =+  ;;([=desk =dude] [i i.t.t]:wire)
           ?.  (is-fish dude desk)
             vats
           =/  =cage  [%drum-link !>([our dude])]
@@ -424,25 +436,35 @@
   ^-  ankh
   ?>  ?=(%dome p.r.rant)
   !<(ankh q.r.rant)
+::  +is-fish: should dill link .dude?
+::
+++  is-fish
+  |=  [=dude =desk]
+  ^-  ?
+  =+  .^(=bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
+  .?((find ~[dude] (read-fish bill)))
+::  +get-apps-diff: which agents should be started and stopped
+::
+++  get-apps-diff
+  |=  [=desk =rein]
+  ^-  [liv=(list dude) ded=(list dude)]
+  =/  wan  (sy (get-apps-want desk rein))
+  =/  hav  (sy (get-apps-have desk))
+  =/  liv  ~(tap in (~(dif in wan) hav))
+  =/  ded  ~(tap in (~(dif in hav) wan))
+  [liv ded]
 ::  +get-apps-have: find which apps Gall is running on a desk
 ::
 ++  get-apps-have
   |=  =desk
-  ^-  (list dude:gall)
+  ^-  (list dude)
   %~  tap  in
-  .^((set dude:gall) ge+/(scot %p our)/[desk]/(scot %da now))
-::  +is-fish: should dill link .dude?
-::
-++  is-fish
-  |=  [=dude:gall =desk]
-  ^-  ?
-  =+  .^(=bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
-  .?((find ~[dude] (read-fish bill)))
+  .^((set dude) ge+/(scot %p our)/[desk]/(scot %da now))
 ::  +get-apps-want: find which apps should be running on a desk
 ::
 ++  get-apps-want
   |=  [=desk =rein]
-  ^-  (list dude:gall)
+  ^-  (list dude)
   =+  .^(=bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
   =/  duz  (read-apes bill)
   =.  duz  (skip duz ~(has in sub.rein))
@@ -470,8 +492,9 @@
   =+  .^(=cass:clay %cw /(scot %p our)/[desk]/(scot %da now))
   ?-  ud.cass
     %0  %init
-    %1  %take-that
-    *   %mate
+    *  %take-that
+    ::%1  %take-that
+    ::*   %mate
   ==
 ::  +ankh-to-kelvin: read /sys.kelvin from an $ankh
 ::
@@ -487,9 +510,9 @@
   =/  syd  (scot %tas desk)
   =/  yon  (scot %ud aeon)
   ::
-  =/  dom  .^(dome cs/~[her syd yon])
+  =/  dom  .^(dome cv/~[her syd yon])
   =/  tak  (scot %uv (~(got by hit.dom) let.dom))
-  =/  yak  .^(yaki cs/~[her syd yon %taki tak])
+  =/  yak  .^(yaki cs/~[her syd yon %yaki tak])
   =/  lob  (scot %uv (~(got by q.yak) /sys/kelvin))
   =/  bob  .^(blob cs/~[her syd yon %blob lob])
   ::
@@ -677,7 +700,7 @@
   ::
       [%link @ ~]
     ?>  ?=(%poke-ack -.sign)
-    ~>  %slog.0^leaf/"kiln: linked {<i.t.wire>} to console"
+    ~>  %slog.0^leaf/"kiln: linked {<`@tas`i.t.wire>} to console"
     abet
   ==
 ::
