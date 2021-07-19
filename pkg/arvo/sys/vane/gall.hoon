@@ -1013,7 +1013,10 @@
         moves        moves
       ==
     ::
-    ++  ap-idle  ap-core(agent.yoke |+on-save:ap-agent-core)
+    ++  ap-idle
+      ?:  ?=(%| -.agent.yoke)  ap-core
+      ap-core(agent.yoke |+on-save:ap-agent-core)
+    ::
     ++  ap-nuke
       ^+  ap-core
       =/  out=(list [[=wire =ship =term] ? =path])
@@ -1757,13 +1760,13 @@
           =(our ship)
       ==
     :+  ~  ~
-    :-  %apps  !>  ^-  (set dude)
+    :-  %apps  !>  ^-  (set [=dude live=?])
     =*  syd=desk  dap
     %+  roll  ~(tap by yokes.state)
-    |=  [[=dude =yoke] acc=(set dude)]
+    |=  [[=dude =yoke] acc=(set [=dude live=?])]
     ?.  =(syd q.beak.yoke)
       acc
-    (~(put in acc) dude)
+    (~(put in acc) [dude -.agent.yoke])
   ::
   ?.  =(our ship)
     ~

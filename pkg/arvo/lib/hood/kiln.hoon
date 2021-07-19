@@ -229,6 +229,22 @@
       |=  [step=@tas =task:clay]
       ^-  card:agent:gall
       [%pass (make-wire step) %arvo %c task]
+    ++  start-dude
+      |=  =dude
+      ^-  (list card:agent:gall)
+      :-  [%pass /kiln/vats/[loc]/jolt/[dude] %arvo %g %jolt loc dude]
+      ?.  (is-fish loc dude)
+        ~
+      =/  =cage  [%drum-link !>([our dude])]
+      [%pass /kiln/link/[dude] %agent [our %hood] %poke cage]~
+    ++  stop-dude
+      |=  =dude
+      ^-  (list card:agent:gall)
+      :-  [%pass /kiln/vats/[loc]/uninstall %arvo %g %idle dude]
+      ?.  (is-fish loc dude)
+        ~
+      =/  =cage  [%drum-unlink !>([our dude])]
+      [%pass /kiln/link/[dude] %agent [our %hood] %poke cage]~
     --
   ::  +uninstall: stop tracking apps on desk, and suspend apps
   ::
@@ -240,12 +256,7 @@
       kiln
     =.  vats  (abed lac)
     ~>  %slog.0^leaf/"kiln: uninstalling {here}"
-    =.  vats
-      %-  emil
-      %+  turn  (get-apps-have lac)
-      |=  =dude
-      [%pass /kiln/vats/[lac]/uninstall %arvo %g %idle dude]
-    ::
+    =.  vats  (update-running-apps liv=~ ded=(get-apps-live lac))
     kiln(ark (~(del by ark) lac))
   ::  +install: set up desk sync to .lac to install all apps from [her rem]
   ::
@@ -378,20 +389,8 @@
       %-  (slog leaf/- p.p.syn)
       vats
     =.  vats
-      =/  dif  (get-apps-diff loc rein.rak)
       ~>  %slog.0^leaf/"kiln: merge into {here} succeeded"
-      ~>  %slog.0^leaf/"kiln: starting {<liv.dif>}"
-      ~>  %slog.0^leaf/"kiln: stopping {<ded.dif>}"
-      %-  emil
-      %+  weld
-        ^-  (list card:agent:gall)
-        %+  turn  liv.dif
-        |=  =dude
-        [%pass /kiln/vats/[loc]/jolt/[dude] %arvo %g %jolt loc dude]
-      ^-  (list card:agent:gall)
-      %+  turn  ded.dif
-      |=  =dude
-      [%pass /kiln/vats/[loc]/idle/[dude] %arvo %g %idle dude]
+      (update-running-apps (get-apps-diff loc rein.rak))
     ?.  =(%base loc)
       vats
     =.  kiln  (bump (sy %base %kids ~))
@@ -421,15 +420,19 @@
     ^+  vats
     =/  onto  ?>(?=([%gall %onto *] syn) p.syn)
     ?-  -.onto
-      %&  ~_  leaf/"kiln: %onto bad wire {<wire>}"
-          ?>  ?=([@ @ @ ~] wire)
-          =+  ;;([=desk =dude] [i i.t.t]:wire)
-          ?.  (is-fish dude desk)
-            vats
-          =/  =cage  [%drum-link !>([our dude])]
-          (emit %pass /kiln/link/[dude] %agent [our %hood] %poke cage)
-      %|  (mean p.onto)  ::  TODO: kill arvo event on failure
+      %&  vats
+      %|  (mean p.onto)
     ==
+  ::
+  ++  update-running-apps
+    |=  [liv=(list dude) ded=(list dude)]
+    ^+  vats
+    ~>  %slog.0^leaf/"kiln: starting {<liv>}"
+    ~>  %slog.0^leaf/"kiln: stopping {<ded>}"
+    %-  emil
+    %+  weld
+      `(list card:agent:gall)`(zing (turn liv start-dude:pass))
+    `(list card:agent:gall)`(zing (turn ded stop-dude:pass))
   --
 ::  +get-ankh: extract $ankh from clay %v response $rant
 ::
@@ -441,7 +444,7 @@
 ::  +is-fish: should dill link .dude?
 ::
 ++  is-fish
-  |=  [=dude =desk]
+  |=  [=desk =dude]
   ^-  ?
   =+  .^(=bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
   .?((find ~[dude] (read-fish bill)))
@@ -451,17 +454,23 @@
   |=  [=desk =rein]
   ^-  [liv=(list dude) ded=(list dude)]
   =/  wan  (sy (get-apps-want desk rein))
-  =/  hav  (sy (get-apps-have desk))
+  =/  hav  (sy (get-apps-live desk))
   =/  liv  ~(tap in (~(dif in wan) hav))
   =/  ded  ~(tap in (~(dif in hav) wan))
   [liv ded]
+::
+++  get-apps-live
+  |=  =desk
+  ^-  (list dude)
+  %+  murn  (get-apps-have desk)
+  |=([=dude live=?] ?.(live ~ `dude))
 ::  +get-apps-have: find which apps Gall is running on a desk
 ::
 ++  get-apps-have
   |=  =desk
-  ^-  (list dude)
+  ^-  (list [=dude live=?])
   %~  tap  in
-  .^((set dude) ge+/(scot %p our)/[desk]/(scot %da now))
+  .^((set [=dude live=?]) ge+/(scot %p our)/[desk]/(scot %da now))
 ::  +get-apps-want: find which apps should be running on a desk
 ::
 ++  get-apps-want
