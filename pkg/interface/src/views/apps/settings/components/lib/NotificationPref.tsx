@@ -43,13 +43,13 @@ export function NotificationPreferences() {
         ignoreGraph,
         ignoreGroup,
         setDoNotDisturb,
-        setWatchOnSelf
+        watchOnSelf
       } = useHarkState.getState();
       if (values.mentions !== graphConfig.mentions) {
         setMentions(values.mentions);
       }
       if (values.watchOnSelf !== graphConfig.watchOnSelf) {
-        setWatchOnSelf(values.watchOnSelf);
+        watchOnSelf(values.watchOnSelf);
       }
       if (values.dnd !== dnd && !_.isUndefined(values.dnd)) {
         setDoNotDisturb(values.dnd);
