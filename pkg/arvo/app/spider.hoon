@@ -56,7 +56,7 @@
   ==
 ::
 +$  start-args
-  [parent=(unit tid) use=(unit tid) file=term =vase]
+  [parent=(unit tid) use=(unit tid) =beak file=term =vase]
 --
 ::
 ::  Trie operations
@@ -145,6 +145,7 @@
       spider-core  +>
       sc           ~(. spider-core bowl)
       def          ~(. (default-agent this %|) bowl)
+      bec          byk.bowl(r da+now.bowl)
   ::
   ++  on-init   
     ^-  (quip card _this)
@@ -271,7 +272,7 @@
 ::
 ~%  %spider-helper  ..get-yarn  ~
 |_  =bowl:gall
-::
+++  bec  byk.bowl(r da+now.bowl)
 ++  bind-eyre
   ^-  card
   [%pass /bind %arvo %e %connect [~ /spider] %spider]
@@ -302,15 +303,10 @@
       /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/json/[input-mark]
     ==
   ?>  ?=(^ body.request.inbound-request)
-  =/  body=json
-    (need (de-json:html q.u.body.request.inbound-request))
-  =/  input=vase
-    (slop !>(~) (tube !>(body)))
-  =/  =start-args
-    [~ `tid thread input]
-  =^  cards  state
-    (handle-start-thread start-args)
-  [cards state]
+  =/  body=json  (need (de-json:html q.u.body.request.inbound-request))
+  =/  input=vase  (slop !>(~) (tube !>(body)))
+  =/  =start-args  [~ `tid bec thread input]
+  (handle-start-thread start-args)
 ::
 ++  on-poke-input
   |=  input
@@ -345,7 +341,7 @@
 ::
 ++  handle-start-thread
   ~/  %handle-start-thread
-  |=  [parent-tid=(unit tid) use=(unit tid) file=term =vase]
+  |=  [parent-tid=(unit tid) use=(unit tid) =beak file=term =vase]
   ^-  (quip card ^state)
   =/  parent-yarn=yarn
     ?~  parent-tid
@@ -366,11 +362,11 @@
     ==
   =/  pax=path
     ~|  no-file-for-thread+file
-    (need (get-fit:clay [our q.byk da+now]:bowl %ted file))
+    (need (get-fit:clay beak %ted file))
   :_  state
   :_  ~
   :+  %pass  /build/[new-tid]
-  [%arvo %c %warp our.bowl %base ~ %sing %a da+now.bowl pax]
+  [%arvo %c %warp p.beak q.beak ~ %sing %a r.beak pax]
 ::
 ++  handle-build
   ~/  %handle-build

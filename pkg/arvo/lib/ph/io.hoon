@@ -81,7 +81,7 @@
   =/  tid
     %+  scot  %ta
     (cat 3 (cat 3 'strand_' i.threads) (scot %uv (sham i.threads eny.bowl)))
-  =/  poke-vase  !>([`tid.bowl ~ i.threads *vase])
+  =/  poke-vase  !>([`tid.bowl ~ byk.bowl i.threads *vase])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   loop(threads t.threads, tids (~(put by tids) i.threads tid))
 ::

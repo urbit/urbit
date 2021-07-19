@@ -860,7 +860,8 @@
         [%pass /wool %agent [our.hid %spider] %watch /thread-result/[tid]]
       %-  he-card
       =/  =cage  ::  also sub
-        [%spider-start !>([~ `tid fil (dy-some src)])]
+        ::  TODO: support threads on other desks
+        [%spider-start !>([~ `tid he-beak fil (dy-some src)])]
       [%pass /wool %agent [our.hid %spider] %poke cage]
     ::
     ++  dy-make                                         ::  build step

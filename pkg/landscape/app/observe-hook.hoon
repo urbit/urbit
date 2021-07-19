@@ -35,6 +35,7 @@
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
+    bec   byk.bowl(r da+now.bowl)
     desk  q.byk.bowl
 ::
 ++  on-init
@@ -225,7 +226,7 @@
               [our.bowl %spider]
               %poke
               %spider-start
-              !>([~ `tid thread.observer (slop !>(~) q.cage.sign)])
+              !>([~ `tid bec thread.observer (slop !>(~) q.cage.sign)])
       ==  ==
     ==
   ::

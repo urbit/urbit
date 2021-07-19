@@ -49,6 +49,7 @@
   +*  this  .
       do    ~(. +> bowl)
       def   ~(. (default-agent this %|) bowl)
+      bec   byk.bowl(r da+now.bowl)
   ::
   ++  on-init   on-init:def
   ++  on-save   !>(state)
@@ -137,9 +138,7 @@
   ^-  (list card)
   =/  tid=@ta
     :((cury cat 3) dap.bowl '--' node-id '--' (scot %uv eny.bowl))
-  =/  args
-    :^  ~  `tid  %eth-send-txs
-    !>([node step txs])
+  =/  args  [~ `tid bec %eth-send-txs !>([node step txs]]
   :~  (watch-spider /send/[tid] our.bowl /thread-result/[tid])
       (poke-spider /send/[tid] our.bowl %spider-start !>(args))
   ==

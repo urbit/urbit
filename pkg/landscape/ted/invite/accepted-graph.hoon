@@ -20,7 +20,7 @@
   (pure:m !>(~))
 ;<  ~  bind:m
   %+  poke-our  %spider
-  =-  spider-start+!>([`tid.bowl ~ %graph-join -])
+  =-  spider-start+!>([`tid.bowl ~ byk.bowl %graph-join -])
   %+  slop  !>(~)
   !>  ^-  action:graph-view
   [%join resource.invite ship.invite]

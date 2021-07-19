@@ -37,6 +37,7 @@
   +*  this  .
       do    ~(. +> bowl)
       def   ~(. (default-agent this %|) bowl)
+      bec   byk.bowl(r da+now.bowl)
   ::
   ++  on-init
     ^-  (quip card _this)
@@ -124,6 +125,7 @@
   --
 ::
 |_  =bowl:gall
+++  bec   byk.bowl(r da+now.bowl)
 ++  poke-spider
   |=  [=path =cage]
   ^-  card
@@ -150,7 +152,7 @@
   ^-  (quip card _state)
   =/  new-tid  (new-tid eny.bowl)
   =/  args
-    [~ `new-tid %eth-read-contract !>([url.state req])]
+    [~ `new-tid bec %eth-read-contract !>([url.state req])]
   :_  state(running `new-tid)
   :~  (watch-spider wire /thread-result/[new-tid])
       (poke-spider wire %spider-start !>(args))

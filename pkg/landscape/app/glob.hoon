@@ -59,6 +59,7 @@
 |_  =bowl:gall
 +*  this  .
     def  ~(. (default-agent this %|) bowl)
+    bec   byk.bowl(r da+now.bowl)
 ++  on-init
   ^-  (quip card _this)
   ::  delay through timer to make sure %spider has started
@@ -252,7 +253,7 @@
     ?~  glob-details
       [~ this]
     =/  new-tid=@ta  (cat 3 'glob--' (scot %uv (sham eny.bowl serve-path)))
-    =/  args  [~ `new-tid %glob !>([~ hash.u.glob-details])]
+    =/  args  [~ `new-tid bec %glob !>([~ hash.u.glob-details])]
     =/  action=cage  [%file-server-action !>([%unserve-dir serve-path])]
     =/  spider-wire  [(scot %uv hash.u.glob-details) serve-path]
     =.  globs.state
