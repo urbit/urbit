@@ -285,7 +285,7 @@
   ^-  $-(indexed-post:graph-store (unit notif-kind:hook))
   =+  %^  scry  [our now]:bowl
          ,mark=(unit mark)
-      /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun
+      /gx/graph-store/graph/(scot %p entity.rid)/[name.rid]/mark/noun
   ?~  mark
     |=(=indexed-post:graph-store ~)
   (scry-notif-conversion [our now]:bowl q.byk.bowl u.mark)
