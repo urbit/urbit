@@ -488,7 +488,7 @@
     (scot %p our.bowl)
     %azimuth
     (scot %da now.bowl)
-    /own/own
+    /own/noun
   ==
 ::  +predicted-state
 ::
