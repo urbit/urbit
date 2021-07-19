@@ -88,7 +88,7 @@
   ^-  card
   =/  =wire  /validator/[mark]
   =/  =rave:clay  [%sing %f [%da now.bowl] /[mark]/notification-kind]
-  [%pass wire %arvo %c %warp our.bowl [%home `rave]]
+  [%pass wire %arvo %c %warp our.bowl [q.byk.bowl `rave]]
 ::
 ++  on-watch
   |=  =path
@@ -285,7 +285,7 @@
     :_  this
     =*  validator  i.t.wire
     =/  =rave:clay  [%next %f [%da now.bowl] /[validator]/notification-kind]
-    [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
+    [%pass wire %arvo %c %warp our.bowl [q.byk.bowl `rave]]~
   ==
 ++  on-fail   on-fail:def
 --
