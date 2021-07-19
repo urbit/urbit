@@ -1,4 +1,3 @@
-::
 /+  skeleton
 |*  [agent=* help=*]
 ?:  ?=(%& help)
