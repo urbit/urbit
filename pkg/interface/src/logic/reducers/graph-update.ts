@@ -1,4 +1,4 @@
-import { GraphNode } from '@urbit/api';
+import { GraphNode, Post } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import BigIntArrayOrderedMap, {
   arrToString,
@@ -22,6 +22,17 @@ const mapifyChildren = (children) => {
       const nd = { ...node, children: mapifyChildren(node.children || {}) };
       return [bigInt(idx), nd];
     }));
+};
+
+const flattenChildren = (children, index = ''): Record<string, Post> => {
+  const result = {};
+  for(const key in children) {
+    const node = children[key];
+    const idx = `${index}/${key}`;
+    Object.assign(result, flattenChildren(node.children, idx));
+    result[idx] = node?.post;
+  }
+  return result;
 };
 
 const processNode = (node) => {
@@ -162,6 +173,26 @@ const keys = (json, state: GraphState): GraphState => {
   return state;
 };
 
+const sortKeys = (a: BigInteger, b: BigInteger) => {
+  return b.compare(a);
+};
+const getViews = (children, index ='') => {
+  if(!children) {
+    return {};
+  }
+  const result = {};
+  const latest = [];
+  for(const i in children) {
+    const key = bigInt(i);
+    Object.assign(result, getViews(children[i].children, `${index}/${i}`));
+    latest.unshift(key);
+  }
+  result[index || '/'] = {
+    latest: latest.sort(sortKeys).map(i => `${index}/${i.toString()}`)
+  };
+  return result;
+};
+
 const addGraph = (json, state: GraphState): GraphState => {
   const data = _.get(json, 'add-graph', false);
   if (data) {
@@ -176,12 +207,9 @@ const addGraph = (json, state: GraphState): GraphState => {
     }
 
     const resource = data.resource.ship + '/' + data.resource.name;
-    state.graphs[resource] = new BigIntOrderedMap();
+    state.views[resource] = getViews(data.graph);
     state.graphTimesentMap[resource] = {};
-
-    state.graphs[resource] = state.graphs[resource].gas(Object.keys(data.graph).map((idx) => {
-      return [bigInt(idx), processNode(data.graph[idx])];
-    }));
+    state.nodes[resource] = flattenChildren(data.graph);
 
     state.graphKeys.add(resource);
   }
@@ -202,7 +230,7 @@ const removeGraph = (json, state: GraphState): GraphState => {
     }
     const resource = data.ship + '/' + data.name;
     state.graphKeys.delete(resource);
-    delete state.graphs[resource];
+    delete state.nodes[resource];
   }
   return state;
 };
