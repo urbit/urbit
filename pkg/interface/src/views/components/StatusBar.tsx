@@ -7,7 +7,7 @@ import {
   Row,
   Text
 } from '@tlon/indigo-react';
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
@@ -36,7 +36,17 @@ const StatusBar = (props) => {
   const invites = [].concat(
     ...Object.values(inviteState).map(obj => Object.values(obj))
   );
-  const metaKey = window.navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+';
+
+  let metaKey = 'Super+';
+  if (window.navigator.platform.includes('Mac')) {
+    metaKey = '⌘';
+  } else if (window.navigator.platform.includes('Win')) {
+    metaKey = '⊞ Win+';
+  }
+
+  const leapKey: string = useSettingsState(
+    useCallback(s => s.keyboard['leap'], ['leap'])
+    )?.replace('meta+', metaKey) || '';
   const { toggleOmnibox } = useLocalState(localSel);
   const { hideAvatars } = useSettingsState(selectCalmState);
 
@@ -100,7 +110,7 @@ const StatusBar = (props) => {
             Leap
           </Text>
           <Text display={['none', 'inline']} ml={2} color='gray'>
-            {metaKey}/
+            {leapKey}
           </Text>
         </StatusBarItem>
         <ReconnectButton />

@@ -24,6 +24,7 @@ export interface ShortcutMapping {
   navBack: string;
   hideSidebar: string;
   readGroup: string;
+  leap: string;
 }
 
 export interface SettingsState {
@@ -95,7 +96,8 @@ const useSettingsState = createState<SettingsState>(
       navForward: 'ctrl+]',
       navBack: 'ctrl+[',
       hideSidebar: 'ctrl+\\',
-      readGroup: 'shift+Escape'
+      readGroup: 'shift+Escape',
+      leap: 'meta+/'
     },
     getAll: async () => {
       const { all } = await airlock.scry(getAll);
