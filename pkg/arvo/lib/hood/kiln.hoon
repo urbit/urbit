@@ -213,7 +213,8 @@
   ++  pass
     |%
     ++  find      (warp %find [%sing %y ud+1 /])
-    ++  sync      (warp %sync [%sing %w da+now /])
+    ++  sync-da   (warp %sync [%sing %w da+now /])
+    ++  sync-ud   (warp %sync [%sing %w ud+aeon.rak /])
     ++  download  (warp %download [%sing %v ud+aeon.rak /])
     ++  warp  |=([s=term r=rave] (clay-card s %warp ship.rak desk.rak `r))
     ++  merge-main
@@ -312,7 +313,7 @@
       ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, aborting"
       vats(ark (~(del by ark) loc))
     ~>  %slog.0^leaf/"kiln: activated install into {here}"
-    (emit sync:pass)
+    (emit sync-da:pass)
   ::
   ++  take-sync
     |=  syn=sign-arvo
@@ -342,13 +343,13 @@
       ?:  (gth num.new-weft num.old-weft)
         ~>  %slog.0^leaf/"kiln: cannot install {here}, old kelvin {<new-weft>}"
         ~>  %slog.0^leaf/"kiln: will retry at foreign kelvin {<old-weft>}"
-        (emit sync:pass)
+        (emit sync-ud:pass)
       ?:  (lth num.new-weft num.old-weft)
         ~>  %slog.0^leaf/"kiln: future version {<new-weft>}, enqueueing"
         =.  next.rak  (snoc next.rak [(dec aeon.rak) new-weft])
-        (emit sync:pass)
+        (emit sync-ud:pass)
       ~>  %slog.0^leaf/"kiln: merging into {here}"
-      (emil ~[merge-main download]:pass)
+      (emil ~[merge-main sync-ud]:pass)
     ::
     =/  blockers
       ?:  =(new-weft old-weft)
@@ -357,12 +358,12 @@
     ::
     ?.  =(~ blockers)
       ~>  %slog.0^leaf/"kiln: OTA blocked on {<blockers>}"
-      =-  (emil sync:pass - ~)
+      =-  (emil sync-ud:pass - ~)
       :*  %give  %fact  [/vats]~  %kiln-vats-diff
           !>([%blocked arak=rak weft=new-weft blockers=blockers])
       ==
     ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
-    (emil ~[merge-main sync]:pass)
+    (emil ~[merge-main sync-ud]:pass)
   ::
   ++  take-merge-main
     |=  syn=sign-arvo
@@ -378,8 +379,9 @@
       vats
     =.  vats
       =/  dif  (get-apps-diff loc rein.rak)
-      ~>  %slog.0^leaf/"merge into {here} succeeded"
-      ~>  %slog.0^leaf/"starting {<liv.dif>}, pausing {<ded.dif>}"
+      ~>  %slog.0^leaf/"kiln: merge into {here} succeeded"
+      ~>  %slog.0^leaf/"kiln: starting {<liv.dif>}"
+      ~>  %slog.0^leaf/"kiln: stopping {<ded.dif>}"
       %-  emil
       %+  weld
         ^-  (list card:agent:gall)
