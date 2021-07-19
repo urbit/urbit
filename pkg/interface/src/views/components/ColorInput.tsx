@@ -37,8 +37,7 @@ function padHex(hex: string) {
 export function ColorInput(props: ColorInputProps) {
   const { id, placeholder, label, caption, disabled, ...rest } = props;
   const [{ value, onBlur }, meta, { setValue, setTouched }] = useField(id);
-  const [field, setField] = useState('');
- // const [error, setError] = useState<string | undefined>();
+  const [field, setField] = useState(uxToHex(value));
 
   useEffect(() => {
     const newValue = hexToUx(padHex(field));
