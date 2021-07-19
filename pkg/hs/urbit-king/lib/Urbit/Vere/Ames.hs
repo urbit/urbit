@@ -214,7 +214,7 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
   start :: RIO e AmesDrv
   start = do
     mode <- rio (netMode isFake)
-    cachedScryLane <- cache scryLane
+    cachedScryLane <- pure scryLane
 
     aTurfs   <- newTVarIO Nothing
     aVersion <- newTVarIO Nothing
