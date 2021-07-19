@@ -35,6 +35,7 @@
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
+    desk  q.byk.bowl
 ::
 ++  on-init
   |^  ^-  (quip card _this)
@@ -134,6 +135,7 @@
       ~|('we avoid infinite loops' !!)
     ?:  (~(has in vals) observer)
       ~|('duplicate observer' !!)
+    ~&  'OBSERVE_WATCH'^app.observer
     :_  this(observers (~(put by observers) (sham eny.bowl) observer))  
     :_  ~
     :*  %pass
@@ -164,7 +166,7 @@
       ~|('cannot warm up cache that is already warm' !!)
     :_  this(warm-cache %.y)
     =/  =rave:clay  [%sing [%t da+now.bowl /mar]]
-    [%pass /warm-cache %arvo %c %warp our.bowl %home `rave]~
+    [%pass /warm-cache %arvo %c %warp our.bowl desk `rave]~
   ::
   ++  cool-cache-all
     ?.  warm-cache
@@ -184,6 +186,7 @@
   ::
   ++  on-observer
     ?>  ?=([%observer @ ~] wire)
+    ~&  'ON_OBSERVER'^i.t.wire^-.sign
     ?+    -.sign  (on-agent:def wire sign)
         %watch-ack
       ?~  p.sign  [~ this]
@@ -300,9 +303,9 @@
     =*  riot  p.sign-arvo
     ?~  riot
       =/  =rave:clay  [%next [%t da+now.bowl /mar]]
-      [%pass /warm-cache %arvo %c %warp our.bowl %home `rave]~
+      [%pass /warm-cache %arvo %c %warp our.bowl desk `rave]~
     :-  =/  =rave:clay  [%next [%t q.p.u.riot /mar]]
-        [%pass /warm-cache %arvo %c %warp our.bowl %home `rave]
+        [%pass /warm-cache %arvo %c %warp our.bowl desk `rave]
     %+  turn  !<((list path) q.r.u.riot)
     |=  pax=path
     ^-  card
@@ -314,7 +317,7 @@
         term
       :((cury cat 3) mark '-' term)
     =/  =rave:clay  [%sing %b da+now.bowl /[mark]]
-    [%pass [%mar mark ~] %arvo %c %warp our.bowl %home `rave]
+    [%pass [%mar mark ~] %arvo %c %warp our.bowl desk `rave]
   ::
       [%mar ^]
     ?.  warm-cache
@@ -325,7 +328,7 @@
     ?~  riot
       ~
     =/  =rave:clay  [%next %b q.p.u.riot mark]
-    [%pass wire %arvo %c %warp our.bowl %home `rave]~
+    [%pass wire %arvo %c %warp our.bowl desk `rave]~
   ==
 ::
 ++  on-watch  on-watch:def

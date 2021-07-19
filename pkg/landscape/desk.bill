@@ -32,7 +32,6 @@
         %invite-hook
         %invite-store
         %invite-view
-        %landscape
         %launch
         %metadata-hook
         %metadata-pull-hook
