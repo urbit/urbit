@@ -1018,7 +1018,7 @@
       ^-  path
       =/  paz  (segments pax)
       |-  ^-  path
-      ?~  paz  ~_(leaf/"clay: no files match /{<pre>}/{<pax>}/hoon" !!)
+      ?~  paz  ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
       =/  pux=path  pre^(snoc i.paz %hoon)
       ?:  (~(has in deletes) pux)
         $(paz t.paz)
@@ -1695,8 +1695,6 @@
         =/  pux  (tail (flop xup))         ::  lose static prefix
         %+  turn  (tail (spud pux))        ::  lose leading '/'
         |=(c=@tD `@tD`?:(=('/' c) '-' c))  ::  convert '/' to '-'
-      ::
-      ~>  %slog.0^leaf/"ford: {<~(wyt in invalid)>} cache invalidations"
       ::
       :*  ((invalidate path vase) files.ford-cache invalid)
           ((invalidate mark vase) naves.ford-cache invalid)
