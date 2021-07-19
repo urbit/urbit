@@ -11,9 +11,6 @@ import useHarkState from '~/logic/state/hark';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { BackButton } from './BackButton';
 import { GroupChannelPicker } from './GroupChannelPicker';
-import airlock from '~/logic/api';
-import { ignoreGraph, ignoreGroup, listenGraph, listenGroup, setDoNotDisturb, setMentions } from '@urbit/api';
-import { setWatchOnSelf } from '@urbit/api';
 
 interface FormSchema {
   mentions: boolean;
@@ -39,28 +36,34 @@ export function NotificationPreferences() {
 
   const onSubmit = useCallback(async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
     try {
-      const promises: Promise<any>[] = [];
+      const {
+        setMentions,
+        listenGraph,
+        listenGroup,
+        ignoreGraph,
+        ignoreGroup,
+        setDoNotDisturb,
+        setWatchOnSelf
+      } = useHarkState.getState();
       if (values.mentions !== graphConfig.mentions) {
-        promises.push(airlock.poke(setMentions(values.mentions)));
+        setMentions(values.mentions);
       }
       if (values.watchOnSelf !== graphConfig.watchOnSelf) {
-        promises.push(airlock.poke(setWatchOnSelf(values.watchOnSelf)));
+        setWatchOnSelf(values.watchOnSelf);
       }
       if (values.dnd !== dnd && !_.isUndefined(values.dnd)) {
-        promises.push(airlock.poke(setDoNotDisturb(values.dnd)));
+        setDoNotDisturb(values.dnd);
       }
       _.forEach(values.graph, (listen: boolean, graph: string) => {
         if(listen !== isWatching(graphConfig, graph)) {
-          promises.push(airlock.poke((listen ? listenGraph : ignoreGraph)(graph, '/')));
+          (listen ? listenGraph : ignoreGraph)(graph, '/');
         }
       });
       _.forEach(values.groups, (listen: boolean, group: string) => {
         if(listen !== groupConfig.includes(group)) {
-          promises.push(airlock.poke((listen ? listenGroup : ignoreGroup)(group)));
+          (listen ? listenGroup : ignoreGroup)(group);
         }
       });
-
-      await Promise.all(promises);
       actions.setStatus({ success: null });
     } catch (e) {
       console.error(e);

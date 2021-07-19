@@ -5,7 +5,14 @@ import {
   NotifIndex,
   readNote,
   Timebox,
-  Unreads
+  Unreads,
+  setMentions,
+  listenGroup,
+  ignoreGroup,
+  listenGraph,
+  ignoreGraph,
+  setWatchOnSelf,
+  setDoNotDisturb
 } from '@urbit/api';
 import { patp2dec } from 'urbit-ob';
 import _ from 'lodash';
@@ -34,6 +41,13 @@ export interface HarkState {
   archive: (index: NotifIndex, time?: BigInteger) => Promise<void>;
   readNote: (index: NotifIndex) => Promise<void>;
   readCount: (resource: string, index?: string) => Promise<void>;
+  setMentions: (mentions: boolean) => Promise<void>;
+  listenGraph: (graph: string, index: string) => Promise<void>;
+  ignoreGraph: (graph: string, index: string) => Promise<void>;
+  listenGroup: (group: string) => Promise<void>;
+  ignoreGroup: (group: string) => Promise<void>;
+  watchOnSelf: (watch: boolean) => Promise<void>;
+  setDoNotDisturb: (dnd: boolean) => Promise<void>;
 }
 
 const useHarkState = createState<HarkState>(
@@ -68,7 +82,34 @@ const useHarkState = createState<HarkState>(
       });
       reduceState(useHarkState, harkUpdate, [reduce]);
     },
-
+    setMentions: async (mentions) => {
+      const poke = setMentions(mentions);
+      pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
+    listenGroup: async (group) => {
+      const poke = listenGroup(group);
+      pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
+    ignoreGroup: async (group) => {
+      const poke = ignoreGroup(group);
+      pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
+    listenGraph: async (graph, index) => {
+      const poke = listenGraph(graph, index);
+      pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
+    ignoreGraph: async (graph, index) => {
+      const poke = ignoreGraph(graph, index);
+      pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
+    watchOnSelf: async (watch) => {
+      const poke = setWatchOnSelf(watch);
+      pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
+    setDoNotDisturb: async (dnd) => {
+      const poke = setDoNotDisturb(dnd);
+      pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
     notifications: new BigIntOrderedMap<Timebox>(),
     notificationsCount: 0,
     notificationsGraphConfig: {
