@@ -707,7 +707,7 @@
 ::      .ok: %.y unless previous failed attempt
 ::
 +$  message-sink-task
-  $%  [%done ok=?]
+  $%  [%done ok=? cork=?]
       [%drop =message-num]
       [%hear =lane =shut-packet ok=?]
   ==
@@ -719,6 +719,7 @@
 +$  message-sink-gift
   $%  [%memo =message-num message=*]
       [%send =message-num =ack-meat]
+      [%cork ~]
   ==
 --
 ::  external vane interface
@@ -904,6 +905,7 @@
       %trim  on-trim:event-core
       %vega  on-vega:event-core
       %plea  (on-plea:event-core [ship plea]:task)
+      %cork  (on-cork:event-core ship.task)
     ==
   ::
   [moves ames-gate]
@@ -929,6 +931,7 @@
       [%jael %turf *]          (on-take-turf:event-core turfs.sign)
       [%jael %private-keys *]  (on-priv:event-core [life vein]:sign)
       [%jael %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
+    ::
     ==
   ::
   [moves ames-gate]
@@ -1105,7 +1108,7 @@
     ^+  event-core
     ::  relay the vane ack to the foreign peer
     ::
-    =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
+    =+  ^-  [her=ship =bone]  ~&("{wire}" (parse-bone-wire wire))
     ::
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now channel-state -.peer-state]
@@ -1113,10 +1116,12 @@
     ::  if processing succeded, send positive ack packet and exit
     ::
     ?~  error
-      abet:(run-message-sink:peer-core bone %done ok=%.y)
+    ?:  (~(has in closing.peer-state) (mix 1 bone))
+      ~&("done with bone {(scow %ud bone)} at duct {(trip +<:(flop i.-.duct))}" abet:(run-message-sink:peer-core bone %done ok=%.y cork=%.y))
+    abet:(run-message-sink:peer-core bone %done ok=%.y cork=%.n)
     ::  failed; send message nack packet
     ::
-    =.  event-core  abet:(run-message-sink:peer-core bone %done ok=%.n)
+    =.  event-core  abet:(run-message-sink:peer-core bone %done ok=%.n cork=%.n)
     =/  =^peer-state  (got-peer-state her)
     =/  =^channel     [[our her] now channel-state -.peer-state]
     ::  construct nack-trace message, referencing .failed $message-num
@@ -1394,7 +1399,7 @@
   ++  on-plea
     |=  [=ship =plea]
     ^+  event-core
-    ::  .plea is from local vane to foreign ship
+    ::  .plea is from local vane to foreign ship;
     ::
     =/  ship-state  (~(get by peers.ames-state) ship)
     ::
@@ -1412,8 +1417,28 @@
         =/  sndr  [our our-life.channel]
         =/  rcvr  [ship her-life.channel]
         "plea {<sndr^rcvr^bone=bone^vane.plea^path.plea>}"
+    ::  if it's %cork plea, just give %done and process flow closing after +on-take-done call
     ::
+    ?:  &(=(vane.plea %a) =(path.plea `path`/flow) ?=([%cork *] payload.plea))
+      (emit duct %give %done ~)
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
+  ::  +on-cork
+  ::
+  ++  on-cork
+    |=  =ship
+    ^+  event-core
+    =/  ship-state  (~(get by peers.ames-state) ship)
+    ::
+    ?>  ?=([~ %known *] ship-state)
+    =/  =peer-state  +.u.ship-state
+    =/  =channel     [[our ship] now channel-state -.peer-state]
+    ::
+    =/  =plea  [%a /flow [%cork ~]]
+    ::
+    =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
+    ::
+    =.  closing.peer-state  (~(put in closing.peer-state) bone)
+      abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake
@@ -1975,6 +2000,16 @@
           ==
         check-clog
       peer-core
+    ::  on-cork: handle flow kill on %cork sender side
+    ::
+    ++  on-cork
+      |=  =bone
+      ^+  peer-core
+      =.  by-duct.ossuary.peer-state  (~(del by by-duct.ossuary.peer-state) (got-duct bone))
+      =.  by-bone.ossuary.peer-state  (~(del by by-bone.ossuary.peer-state) bone)
+      =.  snd.peer-state  (~(del by snd.peer-state) bone)
+      =.  rcv.peer-state  (~(del by rcv.peer-state) bone)
+        peer-core
     ::  +dedup-message: replace with any existing copy of this message
     ::
     ++  dedup-message
@@ -2135,6 +2170,10 @@
       ++  on-pump-done
         |=  [=message-num error=(unit error)]
         ^+  peer-core
+        ::  if bone marked as closing, do on-cork
+        ::
+        ?:  (~(has in closing.peer-state) bone)
+          ~&("doing on-cork with bone {(scow %ud bone)}" (on-cork bone))
         ::  if odd bone, ack is on "subscription update" message; no-op
         ::
         ?:  =(1 (end 0 bone))
@@ -2195,8 +2234,19 @@
             ?-  -.gift
               %memo  (on-sink-memo [message-num message]:gift)
               %send  (on-sink-send [message-num ack-meat]:gift)
+              %cork  on-cork
             ==
           $(sink-gifts t.sink-gifts)
+      ::  +on-cork
+      ::
+      ++  on-cork
+      ::  delete (n)acks
+      ::
+        =.  rcv.peer-state  (~(del by rcv.peer-state) bone)
+      ::  delete %boons
+      ::
+        =.  snd.peer-state  (~(del by snd.peer-state) bone)
+          peer-core
       ::  +on-sink-send: emit ack packet as requested by |message-sink
       ::
       ++  on-sink-send
@@ -2233,7 +2283,7 @@
         ::  send ack unconditionally
         ::
         =.  peer-core  (emit (got-duct bone) %give %boon message)
-        =.  peer-core  (run-message-sink bone %done ok=%.y)
+        =.  peer-core  (run-message-sink bone %done ok=%.y cork=%.n)
         ::
         ?.  ?=([%hear * * ok=%.n] task)
           ::  fresh boon; give message to client vane
@@ -2271,7 +2321,7 @@
         =+  ;;  =naxplanation  message
         ::  ack nack-trace message (only applied if we don't later crash)
         ::
-        =.  peer-core  (run-message-sink bone %done ok=%.y)
+        =.  peer-core  (run-message-sink bone %done ok=%.y cork=%.n)
         ::  flip .bone's second bit to find referenced flow
         ::
         =/  target-bone=^bone  (mix 0b10 bone)
@@ -2292,6 +2342,9 @@
           ::  fresh plea; pass to client vane
           ::
           =+  ;;  =plea  message
+          ::  if this plea is %cork, put to closing
+          ::
+          =?  closing.peer-state  ?=([%cork *] payload.plea)  (~(put in closing.peer-state) (mix 1 bone))
           ::
           =/  =wire  (make-bone-wire her.channel bone)
           ::
@@ -2303,7 +2356,7 @@
           ==
         ::  we previously crashed on this message; send nack
         ::
-        =.  peer-core  (run-message-sink bone %done ok=%.n)
+        =.  peer-core  (run-message-sink bone %done ok=%.n cork=%.n)
         ::  also send nack-trace with blank .error for security
         ::
         =/  nack-trace-bone=^bone  (mix 0b10 bone)
@@ -2312,7 +2365,7 @@
         ::
         (run-message-pump nack-trace-bone %memo message-blob)
       --
-    --
+  --
   --
 ::  +make-message-pump: constructor for |message-pump
 ::
@@ -2980,7 +3033,7 @@
     =-  [(flop gifts) state]
     ::
     ?-  -.task
-      %done  (on-done ok.task)
+      %done  (on-done ok.task cork.task)
       %drop  (on-drop message-num.task)
       %hear  (on-hear [lane shut-packet ok]:task)
     ==
@@ -3129,7 +3182,7 @@
   ::  +on-done: handle confirmation of message processing from vane
   ::
   ++  on-done
-    |=  ok=?
+    |=  [ok=? cork=?]
     ^+  message-sink
     ::
     =^  pending  pending-vane-ack.state  ~(get to pending-vane-ack.state)
@@ -3139,6 +3192,7 @@
     =?  nax.state  !ok  (~(put in nax.state) message-num)
     ::
     =.  message-sink  (give %send message-num %| ok lag=`@dr`0)
+    =.  message-sink  ?:(=(& cork) (give %cork ~) message-sink)
     =/  next  ~(top to pending-vane-ack.state)
     ?~  next
       message-sink
