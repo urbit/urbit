@@ -50,6 +50,7 @@
     ::
       finding=(map keccak ?(%confirmed %failed l1-tx-pointer))
       history=(jug address:ethereum roller-tx)
+      transfers=(map ship address:ethereum)
       next-nonce=(unit @ud)
       next-batch=time
       pre=^state:naive
