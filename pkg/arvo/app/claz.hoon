@@ -22,6 +22,7 @@
   +*  this  .
       do    ~(. +> bowl)
       def   ~(. (default-agent this %|) bowl)
+      bec   byk.bowl(r da+now.bowl)
   ::
   ++  on-init   on-init:def
   ++  on-save   !>(state)
@@ -108,7 +109,7 @@
   =/  new-tid=@ta
     :((cury cat 3) dap.bowl '--' (scot %uv eny.bowl))
   =/  args
-    [~ `new-tid %claz-prep-command !>([node-url command])]
+    [~ `new-tid bec %claz-prep-command !>([node-url command])]
   :~  (watch-spider /prepare our.bowl /thread-result/[new-tid])
       (poke-spider /prepare our.bowl %spider-start !>(args))
   ==

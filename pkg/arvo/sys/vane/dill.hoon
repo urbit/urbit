@@ -52,9 +52,8 @@
           task:dill                                     ::
       ==                                                ::
       $:  %g                                            ::
-          $>  $?  %conf                                 ::
+          $>  $?  %jolt                                 ::
                   %deal                                 ::
-                  %goad                                 ::
               ==                                        ::
           task:gall                                     ::
       ==                                                ::
@@ -217,20 +216,19 @@
         ;;(ship q.q:(need (need dat)))
       ::
       ++  init                                          ::  initialize
-        (pass /merg/home [%c %merg %kids our %home da+now %init])
+        (pass /merg/base [%c %merg %kids our %base da+now %init])
       ::
       ++  mere                                          ::  continue init
         ^+  .
         =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  +>  (pass / %g %conf ram)
+        =.  +>  (pass / %g %jolt %base ram)
         =?  +>  ?=(?(%earl %duke %king) can)
           (ota sein %kids)
         ::  make kids desk publicly readable, so syncs work.
         ::
         =.  +>  (show %kids)
-        =.  +>  hood-set-boot-apps
         =.  +>  peer
         |-  ^+  +>+
         ?~  myt  +>+
@@ -239,7 +237,7 @@
       ++  into                                          ::  preinitialize
         |=  gyl=(list gill)
         =.  tem  `(turn gyl |=(a=gill [%yow a]))
-        (pass / [%c %warp our %home `[%sing %y [%ud 1] /]])
+        (pass / [%c %warp our %base `[%sing %y [%ud 1] /]])
       ::
       ++  send                                          ::  send action
         |=  bet=dill-belt
@@ -247,9 +245,6 @@
         ?^  tem
           +>(tem `[bet u.tem])
         (deal / [%poke [%dill-belt -:!>(bet) bet]])
-      ::
-      ++  hood-set-boot-apps
-        (deal / [%poke %drum-set-boot-apps !>(lit.all)])
       ::
       ++  peer
         (deal / [%watch /drum])
@@ -260,13 +255,16 @@
       ::
       ++  ota
         |=  syn=[ship desk]
-        (deal /sync %poke %kiln-ota !>(`syn))
+        (deal /sync %poke %kiln-install !>([%base syn]))
       ::
       ++  take                                          ::  receive
         |=  [tea=wire sih=sign]
         ^+  +>
         ?-    sih
             [%gall %onto *]
+          ::  NOTE effects during initial boot sequence are ignored,
+          ::  so :hood compilation errors will not print; slog if desired
+          ::
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)
@@ -276,6 +274,7 @@
             [%gall %unto *]
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
+            %raw-fact   !!
             %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
             %kick       peer
             %watch-ack  ?~  p.p.+>.sih

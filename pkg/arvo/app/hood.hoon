@@ -2,7 +2,7 @@
 /+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
 |%
 +$  state
-  $:  %13
+  $:  %16
       drum=state:drum
       helm=state:helm
       kiln=state:kiln
@@ -10,12 +10,16 @@
 +$  any-state
   $%  state
       [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
-      [%7 drum=state:drum helm=state:helm kiln=state:kiln]
-      [%8 drum=state:drum helm=state:helm kiln=state:kiln]
-      [%9 drum=state:drum helm=state:helm kiln=state:kiln]
-      [%10 drum=state:drum helm=state:helm kiln=state:kiln]
-      [%11 drum=state:drum helm=state:helm kiln=state:kiln]
-      [%12 drum=state:drum helm=state:helm kiln=state:kiln]
+      [%7 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%8 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%9 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%10 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%11 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%12 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%13 drum=state-2:drum helm=state:helm kiln=state-1:kiln]
+      [%14 drum=state-3:drum helm=state:helm kiln=state-1:kiln]
+      [%15 drum=state-3:drum helm=state:helm kiln=state-2:kiln]
+      [%16 drum=state-4:drum helm=state:helm kiln=state-3:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum
@@ -42,7 +46,8 @@
 ++  on-init
   ^-  step:agent:gall
   =^  d  drum.state  on-init:drum-core
-  [d this]
+  =^  k  kiln.state  on-init:kiln-core
+  [:(welp d k) this]
 ::
 ++  on-leave  on-leave:def
 ++  on-peek
@@ -95,24 +100,23 @@
   |=  =path
   ^-  step:agent:gall
   ?+  path  (on-watch:def +<)
-    [%drum *]  =^(c drum.state (peer:drum-core +<) [c this])
+    [%drum *]  =^(c drum.state (peer:drum-core t.path) [c this])
+    [%kiln *]  =^(c kiln.state (peer:kiln-core t.path) [c this])
   ==
 ::
 ++  on-agent
-  |=  [=wire =sign:agent:gall]
+  |=  [=wire syn=sign:agent:gall]
   ^-  step:agent:gall
   ?+  wire  ~|([%hood-bad-wire wire] !!)
-    [%drum *]  =^(c drum.state (take-agent:drum-core +<) [c this])
-    [%helm *]  =^(c helm.state (take-agent:helm-core +<) [c this])
-    [%kiln *]  =^(c kiln.state (take-agent:kiln-core +<) [c this])
+    [%drum *]  =^(c drum.state (take-agent:drum-core t.wire syn) [c this])
+    [%helm *]  =^(c helm.state (take-agent:helm-core t.wire syn) [c this])
+    [%kiln *]  =^(c kiln.state (take-agent:kiln-core t.wire syn) [c this])
   ==
-::  TODO: symmetry between adding and stripping wire prefixes
 ::
 ++  on-arvo
   |=  [=wire syn=sign-arvo]
   ^-  step:agent:gall
   ?+  wire  ~|([%hood-bad-wire wire] !!)
-    [%drum *]  =^(c drum.state (take-arvo:drum-core t.wire syn) [c this])
     [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire syn) [c this])
     [%kiln *]  =^(c kiln.state (take-arvo:kiln-core t.wire syn) [c this])
   ==

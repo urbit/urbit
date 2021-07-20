@@ -512,7 +512,7 @@
           $?(%eny %now %our)  !!
           %lib  .(lib ~)
           %sur  .(sur ~)
-          %dir  .(dir [[our.hid %home ud+0] /])
+          %dir  .(dir [[our.hid %base ud+0] /])
         ==
       =+  cay=(~(got by rez) p.q.mad)
       ?-    -.p.mad
@@ -538,8 +538,8 @@
         ::
             %dir  =+  ^=  pax  ^-  path
                       =+  pax=((dy-cast path !>(*path)) q.cay)
-                      ?:  ?=(~ pax)  ~[(scot %p our.hid) %home '0']
-                      ?:  ?=([@ ~] pax)  ~[i.pax %home '0']
+                      ?:  ?=(~ pax)  ~[(scot %p our.hid) %base '0']
+                      ?:  ?=([@ ~] pax)  ~[i.pax %base '0']
                       ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
                       pax
                   =.  dir  (need (de-beam pax))
@@ -860,7 +860,8 @@
         [%pass /wool %agent [our.hid %spider] %watch /thread-result/[tid]]
       %-  he-card
       =/  =cage  ::  also sub
-        [%spider-start !>([~ `tid fil (dy-some src)])]
+        ::  TODO: support threads on other desks
+        [%spider-start !>([~ `tid he-beak fil (dy-some src)])]
       [%pass /wool %agent [our.hid %spider] %poke cage]
     ::
     ++  dy-make                                         ::  build step
@@ -879,6 +880,9 @@
       ::
           %as
         =/  cag=cage  (dy-cage p.q.bil)
+        =/  has-mark  .?((get-fit:clay he-beak %mar p.bil))
+        ?.  has-mark  ::  yolo
+          (dy-hand p.bil q.cag)
         =+  .^(=tube:clay cc+(en-beam he-beak /[p.cag]/[p.bil]))
         (dy-hand p.bil (tube q.cag))
       ::
@@ -1015,13 +1019,13 @@
   ::
   ++  he-prow                                           ::  where we are
     ^-  tape
-    ?:  &(=(our.hid p.dir) =(%home q.dir) =([%ud 0] r.dir) =(~ s.dir))  ~
+    ?:  &(=(our.hid p.dir) =(%base q.dir) =([%ud 0] r.dir) =(~ s.dir))  ~
     %+  weld
       ?:  &(=(our.hid p.dir) =([%ud 0] r.dir))
         (weld "/" (trip q.dir))
       ;:  weld
         "/"  ?:(=(our.hid p.dir) "=" (scow %p p.dir))
-        "/"  ?:(=(%home q.dir) "=" (trip q.dir))
+        "/"  ?:(=(%base q.dir) "=" (trip q.dir))
         "/"  ?:(=([%ud 0] r.dir) "=" (scow r.dir))
       ==
     ?:(=(~ s.dir) "" (spud s.dir))
@@ -1039,6 +1043,7 @@
     ?+    way  !!
         [%hand *]
       ?~  riot
+        ~>  %slog.0^leaf/"dojo: %writ fail {<way>}"
         (he-diff(poy ~) %tan >%generator-build-fail< >(snoc t.way %hoon)< ~)
       (~(dy-hand dy u.poy(pux ~)) noun+!<(vase q.r.u.riot))
     ==
@@ -1140,7 +1145,7 @@
           :+  %clhp
             [%rock %tas %cx]
           %+  rash  pax.source.com
-          rood:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
+          rood:(vang | /(scot %p our.hid)/base/(scot %da now.hid))
         ::
             %url         [%ur (crip (en-purl:html url.source.com))]
             %api         !!
@@ -1171,7 +1176,7 @@
             %hoon
           :*  %do
               %+  rash  code.source.com
-              tall:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
+              tall:(vang | /(scot %p our.hid)/base/(scot %da now.hid))
               $(num +(num), source.com next.source.com)
           ==
         ::
@@ -1555,7 +1560,7 @@
   =?  hoc  (~(has by hoc) id)
     ~&  [%dojo-peer-replaced id]
     (~(del by hoc) id)
-  =/  =session  %*(. *session -.dir [our.hid %home ud+0])
+  =/  =session  %*(. *session -.dir [our.hid %base ud+0])
   =^  moves  state
     he-abet:~(he-prom he hid id ~ session)
   [moves ..on-init]

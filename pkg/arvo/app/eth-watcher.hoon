@@ -64,6 +64,7 @@
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
+    bec   byk.bowl(r da+now.bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
@@ -462,8 +463,9 @@
         (cat 3 'eth-watcher--' (scot %uv eny.bowl))
       :_  dog(running `[now.bowl new-tid])
       =/  args
-        :^  ~  `new-tid  %eth-watcher
-        !>([~ `watchpup`[- number pending-logs blocks]:dog])
+        :*  ~  `new-tid  bec  %eth-watcher
+            !>([~ `watchpup`[- number pending-logs blocks]:dog])
+        ==
       :~  (watch-spider path our.bowl /thread-result/[new-tid])
           (poke-spider path our.bowl %spider-start !>(args))
       ==

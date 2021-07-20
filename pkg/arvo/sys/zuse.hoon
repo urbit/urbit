@@ -3729,6 +3729,34 @@
       (some (~(run by lum) need))
     --  ::dejs-soft
   --
+::  |cloy: clay helpers
+::
+++  cloy
+  =,  clay
+  |%
+  ::  +an: $ankh interface door
+  ::
+  ++  an
+    |_  nak=ankh
+    ::  +dug: produce ankh at path
+    ::
+    ++  dug
+      |=  =path
+      ^-  (unit ankh)
+      ?~  path  `nak
+      ?~  kid=(~(get by dir.nak) i.path)
+        ~
+      $(nak u.kid, path t.path)
+    ::  +get: produce file at path
+    ::
+    ++  get
+      |=  =path
+      ^-  (unit cage)
+      ?~  nik=(dug path)  ~
+      ?~  fil.u.nik       ~
+      `q.u.fil.u.nik
+    --
+  --
 ::                                                      ::
 ::::                      ++differ                      ::  (2d) hunt-mcilroy
   ::                                                    ::::
