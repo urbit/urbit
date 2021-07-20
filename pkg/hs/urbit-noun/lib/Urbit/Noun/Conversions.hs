@@ -1,3 +1,5 @@
+{-# LANGUAGE StrictData #-}
+
 {-|
     Large Library of conversion between various types and Nouns.
 -}
