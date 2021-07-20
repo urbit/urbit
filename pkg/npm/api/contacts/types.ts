@@ -1,4 +1,4 @@
-import { Path, Patp } from "..";
+import { Path, Patp } from "../lib";
 import { Resource } from "../groups";
 
 export type ContactUpdate =

@@ -1,21 +1,19 @@
 import {
   Button,
   Col,
-
-
-
-
   ManagedToggleSwitchField as Toggle, Text
 } from '@tlon/indigo-react';
 import { Form, FormikHelpers } from 'formik';
 import _ from 'lodash';
 import React, { useCallback, useState } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { isWatching } from '~/logic/lib/hark';
 import useHarkState from '~/logic/state/hark';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { BackButton } from './BackButton';
 import { GroupChannelPicker } from './GroupChannelPicker';
+import airlock from '~/logic/api';
+import { ignoreGraph, ignoreGroup, listenGraph, listenGroup, setDoNotDisturb, setMentions } from '@urbit/api';
+import { setWatchOnSelf } from '@urbit/api';
 
 interface FormSchema {
   mentions: boolean;
@@ -29,10 +27,7 @@ interface FormSchema {
   }
 }
 
-export function NotificationPreferences(props: {
-  api: GlobalApi;
-}) {
-  const { api } = props;
+export function NotificationPreferences() {
   const dnd = useHarkState(state => state.doNotDisturb);
   const graphConfig = useHarkState(state => state.notificationsGraphConfig);
   const groupConfig = useHarkState(s => s.notificationsGroupConfig);
@@ -46,22 +41,22 @@ export function NotificationPreferences(props: {
     try {
       const promises: Promise<any>[] = [];
       if (values.mentions !== graphConfig.mentions) {
-        promises.push(api.hark.setMentions(values.mentions));
+        promises.push(airlock.poke(setMentions(values.mentions)));
       }
       if (values.watchOnSelf !== graphConfig.watchOnSelf) {
-        promises.push(api.hark.setWatchOnSelf(values.watchOnSelf));
+        promises.push(airlock.poke(setWatchOnSelf(values.watchOnSelf)));
       }
       if (values.dnd !== dnd && !_.isUndefined(values.dnd)) {
-        promises.push(api.hark.setDoNotDisturb(values.dnd));
+        promises.push(airlock.poke(setDoNotDisturb(values.dnd)));
       }
       _.forEach(values.graph, (listen: boolean, graph: string) => {
         if(listen !== isWatching(graphConfig, graph)) {
-          promises.push(api.hark[listen ? 'listenGraph' : 'ignoreGraph'](graph, '/'));
+          promises.push(airlock.poke((listen ? listenGraph : ignoreGraph)(graph, '/')));
         }
       });
       _.forEach(values.groups, (listen: boolean, group: string) => {
         if(listen !== groupConfig.includes(group)) {
-          promises.push(api.hark[listen ? 'listenGroup' : 'ignoreGroup'](group));
+          promises.push(airlock.poke((listen ? listenGroup : ignoreGroup)(group)));
         }
       });
 
@@ -71,7 +66,7 @@ export function NotificationPreferences(props: {
       console.error(e);
       actions.setStatus({ error: e.message });
     }
-  }, [api, graphConfig, dnd]);
+  }, [graphConfig, dnd]);
 
   const [notificationsAllowed, setNotificationsAllowed] = useState('Notification' in window && Notification.permission !== 'default');
 
