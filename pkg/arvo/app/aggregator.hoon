@@ -80,7 +80,16 @@
   ==
 ::
 +$  action
-  $%  [%submit force=? sig=@ tx=part-tx]
+  $%  ::  we need to include the address here so pending txs show up
+      ::  in the tx history, but because users can send the wrong
+      ::  address, in +update-tx:predicted state, we just replace
+      ::  the provided address, with the one used when the message was signed;
+      ::
+      ::  we need to do it there to know the correct nonce that the signed
+      ::  message should have included.
+      ::  note: currently turned off (extract-address is giving the wrong address)
+      ::
+      [%submit force=? =address:naive sig=@ tx=part-tx]
       [%cancel sig=@ keccak=@ =l2-tx =ship]
       [%commit ~]  ::TODO  maybe pk=(unit @) later
       [%config config]
@@ -541,6 +550,14 @@
       $(txs t.txs)
     =^  gud=?  state
       (try-apply pre.state [force raw-tx]:tx)
+    :: FIXME: sign-address doesn't match address.tx (??)
+    ::
+    :: =/  sign-address=(unit @ux)
+    ::   (extract-address raw-tx.i.txs pre.state)
+    :: TODO: only replace address if !=(address.tx sign-address)?
+    ::
+    :: =?  tx  &(gud ?=(^ sign-address))
+    ::   tx(address u.sign-address)
     =?  valid  gud  (snoc valid tx)
     =?  finding.state  !gud
       (~(put by finding.state) [hash %failed])
@@ -608,8 +625,9 @@
           %management-proxy
         [+.event ?~(old 0x0 address.management-proxy.own.u.old)]
       ::
-          %voting-proxy
-        [+.event ?~(old 0x0 address.voting-proxy.own.u.old)]
+        ::  FIXME: remove (galaxies are not on l2)
+        ::   %voting-proxy
+        :: [+.event ?~(old 0x0 address.voting-proxy.own.u.old)]
       ::
           %transfer-proxy
         [+.event ?~(old 0x0 address.transfer-proxy.own.u.old)]
@@ -631,7 +649,13 @@
     %commit  on-timer
     %config  (on-config +.action)
     %cancel  (cancel-tx +.action)
-    %submit  (take-tx force.action sig.action (part-tx-to-full tx.action))
+  ::
+      %submit
+    %-  take-tx
+    :^    force.action
+        address.action
+      sig.action
+    (part-tx-to-full tx.action)
   ==
 ::
 ++  on-config
@@ -697,14 +721,8 @@
 ::  +take-tx: accept submitted l2 tx into the :pending list
 ::
 ++  take-tx
-  |=  [force=? =raw-tx:naive]
+  |=  pend-tx
   ^-  (quip card _state)
-  =/  address=(unit address:ethereum)
-    (get-l1-address tx.raw-tx pre)
-  ?~  address
-    ::  TODO: add tx to the history as failed?
-    ::
-    [~ state]
   =/  hash=@ux  (hash-raw-tx:lib raw-tx)
   ::  TODO: what if this hash/tx is already in the history?
   ::    e.g. if previously failed, but now it will go through
@@ -714,12 +732,13 @@
   ::
   :: =/  not-sent=?  !(~(has by finding) hash)
   :: =?  pending  not-sent
-  =.  pending
-    (snoc pending [force u.address raw-tx])
+  =.  pending  (snoc pending [force address raw-tx])
   :: =?  history  not-sent
   =.  history
-    %+  ~(put ju history)  u.address
+    %+  ~(put ju history)  address
     [ship.from.tx.raw-tx [%pending ~] hash (l2-tx +<.tx.raw-tx)]
+  =?  transfers  =(%transfer-point (l2-tx +<.tx.raw-tx))
+    (~(put by transfers) ship.from.tx.raw-tx address)
   :: ?.  not-sent  ~&  "skip"  [~ state]
   ::  toggle flush flag
   ::
@@ -728,6 +747,34 @@
   ::  derive predicted state in 5m.
   ::
   [(wait:b:sys /predict (add ~m5 now.bowl))]~
+::   TODO: move to /lib/naive-transactions
+::
+++  extract-address
+  |=  [=raw-tx:naive nas=^state:naive]
+  ^-  (unit @ux)
+  ?~  point=(get:orm:naive points.nas ship.from.tx.raw-tx)
+    ~
+  =/  need=[=address:naive =nonce:naive]
+    (proxy-from-point:naive proxy.from.tx.raw-tx u.point)
+  =/  chain-t=@t  (ud-to-ascii:naive chain-id)
+  =/  prepared-data=octs
+    %:  cad:naive  3
+      14^'UrbitIDV1Chain'
+      (met 3 chain-t)^chain-t
+      1^':'
+      4^nonce.need
+      raw.raw-tx
+      ~
+    ==
+  =/  message=octs
+    =/  len  (ud-to-ascii:naive p.prepared-data)
+    %:  cad:naive  3
+      26^'\19Ethereum Signed Message:\0a'
+      (met 3 len)^len
+      prepared-data
+      ~
+    ==
+  (verify-sig:lib sig.raw-tx message)
 ::  +set-timer: %wait until next whole :frequency
 ::
 ++  set-timer
@@ -745,7 +792,7 @@
       ~&([dap.bowl %no-nonce] [~ state])
     =/  nonce=@ud   u.next-nonce
     =:  pending     ~
-        derive-p     &
+        derive-p    &
         next-nonce  `+(u.next-nonce)
       ::
           sending
@@ -850,6 +897,7 @@
       [dap.bowl %weird-double-confirm from.tx.raw-tx.diff]
     [~ state]
   =*  nonce  nonce.u.wer
+  =*  ship   ship.from.tx.raw-tx.diff
   ::  remove the tx from the sending map
   ::
   =.  sending
@@ -875,15 +923,18 @@
     %failed
   ::
   =.  history
-    =/  tx=roller-tx
-      :^    ship.from.tx.raw-tx.diff
-          [%sending ~]
-        keccak
-      (l2-tx +<.tx.raw-tx.diff)
+    =/  l2-tx  (l2-tx +<.tx.raw-tx.diff)
+    =/  tx=roller-tx  [ship [%sending ~] keccak l2-tx]
     ?~  addr=(get-l1-address tx.raw-tx.diff pre)
       history
-    %+  ~(put ju (~(del ju history) u.addr tx))
-      u.addr
+    =/  =address:ethereum
+      ?.  =(%transfer-point l2-tx)
+        u.addr
+      ::  TODO: delete this ship from the transfer?
+      ::
+      (~(got by transfers) ship)
+    %+  ~(put ju (~(del ju history) address tx))
+      address
     %_  tx
       status  ?~(err.diff [%confirmed ~] [%failed ~])
     ==
