@@ -168,13 +168,13 @@ export class Urbit {
     if(this.sseClientInitialized) {
       return Promise.resolve();
     }
-    this.sseClientInitialized = true;
     if(this.lastEventId === 0) {
       // Can't receive events until the channel is open,
       // so poke and open then
       await this.poke({ app: 'hood', mark: 'helm-hi', json: 'Opening API channel' });
       return;
     }
+    this.sseClientInitialized = true;
     return new Promise((resolve, reject) => {
       const sseOptions: SSEOptions = {
         headers: {}
@@ -197,6 +197,7 @@ export class Urbit {
             resolve();
             return; // everything's good
           } else {
+            this.onError && this.onError(new Error('bad response'));
             reject();
           } 
         },
@@ -367,7 +368,7 @@ export class Urbit {
    * @param mark The mark of the data being sent
    * @param json The data to send
    */
-  poke<T>(params: PokeInterface<T>): Promise<number> {
+  async poke<T>(params: PokeInterface<T>): Promise<number> {
     const {
       app,
       mark,
@@ -381,29 +382,30 @@ export class Urbit {
       ship: this.ship,
       ...params
     };
-    return new Promise((resolve, reject) => {
-      const message: Message = {
-        id: this.getEventId(),
-        action: 'poke',
-        ship,
-        app,
-        mark,
-        json
-      };
-      this.outstandingPokes.set(message.id, {
-        onSuccess: () => {
-          onSuccess();
-          resolve(message.id);
-        },
-        onError: (event) => {
-          onError(event);
-          reject(event.err);
-        }
-      });
-      this.sendJSONtoChannel(message).then(() => {
-        resolve(message.id);
-      });
-    });
+    const message: Message = {
+      id: this.getEventId(),
+      action: 'poke',
+      ship,
+      app,
+      mark,
+      json
+    };
+    const [send, result] = await Promise.all([
+      this.sendJSONtoChannel(message),
+      new Promise<number>((resolve, reject) => {
+        this.outstandingPokes.set(message.id, {
+          onSuccess: () => {
+            onSuccess();
+            resolve(message.id);
+          },
+          onError: (event) => {
+            onError(event);
+            reject(event.err);
+          }
+        });
+      })
+    ]);
+    return result;
   }
 
   /**

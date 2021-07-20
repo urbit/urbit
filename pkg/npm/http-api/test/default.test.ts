@@ -1,5 +1,7 @@
+
 import Urbit from '../src';
 import { Readable } from 'streams';
+import 'jest';
 
 function fakeSSE(messages = [], timeout = 0) {
   const ourMessages = [...messages];
@@ -60,7 +62,6 @@ describe('Initialisation', () => {
   let fetchSpy;
   beforeEach(() => {
     airlock = new Urbit('', '+code');
-    airlock.debounceInterval = 10;
   });
   afterEach(() => {
     fetchSpy.mockReset();
@@ -73,7 +74,7 @@ describe('Initialisation', () => {
         Promise.resolve({ ok: true, body: fakeSSE() })
       )
       .mockImplementationOnce(() =>
-        Promise.resolve({ ok: true, body: fakeSSE() })
+        Promise.resolve({ ok: true, body: fakeSSE([ack(1)]) })
       );
     await airlock.eventSource();
 
@@ -82,13 +83,16 @@ describe('Initialisation', () => {
   it('should handle failures', async () => {
     fetchSpy = jest.spyOn(window, 'fetch');
     fetchSpy
-      .mockImplementation(() =>
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, body: fakeSSE() })
+      )
+      .mockImplementationOnce(() =>
         Promise.resolve({ ok: false, body: fakeSSE() })
       )
+
     airlock.onError = jest.fn();
     try {
       await airlock.eventSource();
-      wait(100);
     } catch (e) {
       expect(airlock.onError).toHaveBeenCalled();
     }
