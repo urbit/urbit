@@ -47,10 +47,10 @@ export function ColorInput(props: ColorInputProps) {
 
   const onChange = (e: FormEvent<HTMLInputElement>) => {
     const { value: newValue } = e.target as HTMLInputElement;
-    setField(newValue);
+    setField(newValue.slice(1));
   };
-  const isValid = value.match(COLOR_REGEX);
   const hex = uxToHex(value);
+  const isValid = COLOR_REGEX.test(hex);
 
   return (
     <Box display='flex' flexDirection='column' {...rest}>
@@ -90,6 +90,7 @@ export function ColorInput(props: ColorInputProps) {
             type='color'
             opacity={0}
             overflow='hidden'
+            onChange={onChange}
           />
         </Box>
       </Row>
