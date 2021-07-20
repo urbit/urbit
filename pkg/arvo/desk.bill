@@ -4,6 +4,7 @@
         %dbug
         %dojo
         %eth-watcher
+        %hood
         %lens
         %ping
         %spider
