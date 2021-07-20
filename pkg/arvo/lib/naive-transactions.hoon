@@ -63,7 +63,7 @@
       ~
     ==
   =+  (ecdsa-raw-sign:secp256k1:secp:crypto sign-data pk)
-  (cad:naive 3 1^v 32^s 32^r tx ~)
+  (cad:naive 3 1^v 32^s 32^r ~)
 ::
 ++  prepare-for-sig
   |=  [chain-id=@ud =nonce tx=octs]
