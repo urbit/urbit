@@ -285,7 +285,17 @@
       mo-core
     =.  mo-core  (mo-pass i.list)
     $(list t.list)
+  ::  +mo-jolt: start agent if not already started
   ::
+  ++  mo-jolt
+    |=  [dap=term =ship =desk]
+    ^+  mo-core
+    =/  yak  (~(get by yokes.state) dap)
+    ?~  yak
+      (mo-boot dap ship desk)
+    ?.  -.agent.u.yak
+      (mo-boot dap ship desk)
+    mo-core
   ::  +mo-boot: ask %ford to build us a core for the specified agent.
   ::
   ++  mo-boot
@@ -294,14 +304,6 @@
     =/  =case  [%da now]
     =/  =wire  /sys/cor/[dap]/(scot %p ship)/[desk]/(scot case)
     (mo-pass wire %c %warp ship desk ~ %sing %a case /app/[dap]/hoon)
-  ::  +mo-reboot: ask %ford to rebuild the specified agent
-  ::
-  ++  mo-reboot
-    |=  [dap=term =ship]
-    ^+  mo-core
-    =/  gent  (~(got by yokes.state) dap)
-    =*  desk  q.beak.gent
-    (mo-boot:(mo-abed control-duct.gent) dap ship desk)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -1697,7 +1699,7 @@
     mo-abet
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
-      %jolt  mo-abet:(mo-boot:mo-core dude.task our desk.task)
+      %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core dude.task)
       %nuke  mo-abet:(mo-nuke:mo-core dude.task)
       %trim  [~ gall-payload]
