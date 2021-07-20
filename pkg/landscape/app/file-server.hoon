@@ -331,14 +331,7 @@
   ==
 ::
 ++  on-leave  on-leave:def
-++  on-peek
-  |=  =path
-  ^-  (unit (unit cage))
-  ?+  path  (on-peek:def path)
-      [%x %clay %base %hash ~]
-    =/  versions  (base-hash:version [our now]:bowl)
-    ``hash+!>(?~(versions 0v0 (end [0 25] i.versions)))
-  ==
+++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 --
