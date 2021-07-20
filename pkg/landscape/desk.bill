@@ -38,7 +38,6 @@
         %metadata-push-hook
         %metadata-store
         %observe-hook
-        %pool-group-hook
         %s3-store
         %sane
         %settings-store
