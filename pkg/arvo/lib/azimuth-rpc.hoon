@@ -1,7 +1,7 @@
 ::  azimuth-rpc: command parsing and utilities
 ::
 /-  rpc=json-rpc, *aggregator
-/+  naive, json-rpc, lib=naive-transactions
+/+  naive, json-rpc, lib=naive-transactions, *fake-roller
 ::
 =>  ::  Utilities
     ::
@@ -19,19 +19,6 @@
           %set-spawn-proxy
           %set-transfer-proxy
       ==
-    ::
-    ++  pk
-      ^-  @
-      =;  key=@t
-        q:(need (de:base16:mimes:html key))
-      :: 'a44de2416ee6beb2f323fab48b432925c9785808d33a6ca6d7ba00b45e9370c3'
-      '2480c5256d843c73cba67cc966a11a647c943a41db2fa138de4e4f16d0861a6b'
-    ::
-    ++  fake-raw
-      |=  [nonce=@ud =tx:naive]
-      :: ~&  nonce+nonce
-      ^-  octs
-      (gen-tx:lib nonce tx pk)
     ::
     ++  parse-ship
       |=  jon=json
@@ -377,7 +364,7 @@
         =/  =keccak  (hash-tx:lib (gen-tx-octs:lib tx))
         :_  [%result id (l2-hash:to-json keccak)]
         %-  some
-        aggregator-action+!>([%submit | u.addr u.sig %don tx])
+        aggregator-action+!>([%submit | u.addr q:(fake-sig tx u.addr (rash id dem)) %don tx])
       ::
       ++  proxy
         |=  [id=@t params=(map @t json) action=proxy-action]
@@ -399,7 +386,7 @@
         =/  =keccak  (hash-tx:lib (gen-tx-octs:lib tx))
         :_  [%result id (l2-hash:to-json keccak)]
         %-  some
-        aggregator-action+!>([%submit | u.addr u.sig %don tx])
+        aggregator-action+!>([%submit | u.addr q:(fake-sig tx u.addr (rash id dem)) %don tx])
       --
     ::
     ++  validate
@@ -474,7 +461,8 @@
   =/  =keccak    (hash-tx:lib (gen-tx-octs:lib tx))
   :_  [%result id (l2-hash:to-json keccak)]
   %-  some
-  aggregator-action+!>([%submit | u.addr u.sig %don tx])
+  aggregator-action+!>([%submit | u.addr q:(fake-sig tx u.addr (rash id dem)) %don tx])
+::
 ++  get-spawned
   |=  [id=@t params=(map @t json) scry=$-(ship (list [ship @ux]))]
   ^-  response:rpc
@@ -502,7 +490,7 @@
   =/  =keccak    (hash-tx:lib (gen-tx-octs:lib tx))
   :_  [%result id (l2-hash:to-json keccak)]
   %-  some
-  aggregator-action+!>([%submit | u.addr u.sig %don tx])
+  aggregator-action+!>([%submit | u.addr q:(fake-sig tx u.addr (rash id dem)) %don tx])
 ::
 ++  spawn
   |=  [id=@t params=(map @t json)]
@@ -519,7 +507,7 @@
   =/  =keccak   (hash-tx:lib (gen-tx-octs:lib tx))
   :_  [%result id (l2-hash:to-json keccak)]
   %-  some
-  aggregator-action+!>([%submit | u.addr u.sig %don tx])
+  aggregator-action+!>([%submit | u.addr q:(fake-sig tx u.addr (rash id dem)) %don tx])
 ::
 ++  escape            sponsor:rpc-res
 ++  cancel-escape     sponsor:rpc-res

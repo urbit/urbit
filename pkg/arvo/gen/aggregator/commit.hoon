@@ -1,0 +1,4 @@
+::
+:-  %say
+|=  *
+[%aggregator-action %commit ~]
