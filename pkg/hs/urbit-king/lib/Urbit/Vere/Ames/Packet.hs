@@ -1,5 +1,3 @@
-{-# LANGUAGE StrictData #-}
-
 {-|
   Parsing of Ames packets
 -}
