@@ -819,6 +819,7 @@
     ?.  (~(has by yokes.state) dap)
       ~>  %slog.0^leaf/"gall: ignoring %nuke for {<dap>}, not running"
       mo-core
+    ~>  %slog.0^leaf/"gall: nuking {<dap>}"
     =.  mo-core  ap-abet:ap-nuke:(ap-abed:ap dap `our)
     mo-core(yokes.state (~(del by yokes.state) dap))
   ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
@@ -1808,6 +1809,9 @@
     ~&(%gall-take-dud ((slog tang.u.dud) [~ gall-payload]))
   ?:  =(/nowhere wire)
     [~ gall-payload]
+  ?:  =(/clear-huck wire)
+    =/  =gift  ?>(?=([%behn %heck %gall *] syn) +>+.syn)
+    [[duct %give gift]~ gall-payload]
   ::
   ~|  [%gall-take-failed wire]
   ?>  ?=([?(%sys %use) *] wire)
