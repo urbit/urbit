@@ -2,7 +2,7 @@ import { BaseAnchor, Box, Center, Col, Icon, Row, Text } from '@tlon/indigo-reac
 import { Association, GraphNode, resourceFromPath, GraphConfig } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
-import { useHistory, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
 } from '~/logic/lib/permalinks';
@@ -76,7 +76,6 @@ function GraphPermalink(
   }
 ) {
   const { full = false, showOurContact, pending, graph, group, index, transcluded } = props;
-  const history = useHistory();
   const location = useLocation();
   const { ship, name } = resourceFromPath(graph);
   const node = useGraphState(
@@ -114,11 +113,6 @@ function GraphPermalink(
   const showTransclusion = Boolean(association && node && transcluded < 1);
   const permalink = getPermalinkForGraph(group, graph, index);
 
-  const navigate = (e) => {
-    e.stopPropagation();
-    history.push(`/perma${permalink.slice(16)}`);
-  };
-
   const [nodeGroupHost, nodeGroupName] = association?.group.split('/').slice(-2) ?? ['Unknown', 'Unknown'];
   const [nodeChannelHost, nodeChannelName] = association?.resource
     .split('/')
@@ -141,15 +135,16 @@ function GraphPermalink(
 
   return (
     <Col
+      as={Link}
+      to={`/perma${permalink.slice(16)}`}
       width="100%"
       bg="white"
       maxWidth={full ? null : '500px'}
       border={full ? null : '1'}
       borderColor="lightGray"
       borderRadius={2}
-      cursor="pointer"
       onClick={(e) => {
-        navigate(e);
+        e.stopPropagation();
       }}
     >
       {loading && association && !errored && Placeholder((association.metadata.config as GraphConfig).graph)}
@@ -167,7 +162,6 @@ function GraphPermalink(
           showTransclusion={showTransclusion}
           icon={getModuleIcon((association.metadata.config as GraphConfig).graph as GraphModule)}
           title={association.metadata.title}
-          permalink={permalink}
         />
       )}
       {association && isInSameResource && transcluded === 2 && !loading && (
@@ -176,7 +170,6 @@ function GraphPermalink(
           showTransclusion={showTransclusion}
           icon={getModuleIcon((association.metadata.config as GraphConfig).graph as GraphModule)}
           title={association.metadata.title}
-          permalink={permalink}
         />
       )}
       {isInSameResource && transcluded !== 2 && !loading && <Row height='2' />}
@@ -185,7 +178,6 @@ function GraphPermalink(
           icon="Groups"
           showDetails={false}
           title={graph.slice(5)}
-          permalink={permalink}
         />
       )}
     </Col>
@@ -195,7 +187,6 @@ function GraphPermalink(
 function PermalinkDetails(props: {
   title: string;
   icon: any;
-  permalink: string;
   showTransclusion?: boolean;
   showDetails?: boolean;
   known?: boolean;
