@@ -272,7 +272,7 @@
 ::
 ~%  %spider-helper  ..get-yarn  ~
 |_  =bowl:gall
-++  bec  byk.bowl(r da+now.bowl)
+++  bec  `beak`byk.bowl(r da+now.bowl)
 ++  bind-eyre
   ^-  card
   [%pass /bind %arvo %e %connect [~ /spider] %spider]
@@ -295,17 +295,19 @@
   =/  =tid         (new-thread-id thread)
   =.  serving.state
     (~(put by serving.state) tid [eyre-id output-mark])
+  =/  =desk  %landscape  ::  TODO: make this generic
   ::  TODO: speed this up somehow. we spend about 15ms in this arm alone
   ::
   =+  .^
       =tube:clay
       %cc 
-      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/json/[input-mark]
+      /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/json/[input-mark]
     ==
   ?>  ?=(^ body.request.inbound-request)
   =/  body=json  (need (de-json:html q.u.body.request.inbound-request))
   =/  input=vase  (slop !>(~) (tube !>(body)))
-  =/  =start-args  [~ `tid bec thread input]
+  =/  boc  bec
+  =/  =start-args  [~ `tid boc(q desk) thread input]
   (handle-start-thread start-args)
 ::
 ++  on-poke-input
