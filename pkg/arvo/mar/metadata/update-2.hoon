@@ -3,13 +3,13 @@
 ++  grad  %noun
 ++  grow
   |%
-  ++  noun               update
+  ++  noun   update
   ++  json   (update:enjs:store update)
   --
 ::
 ++  grab
   |%
   ++  noun  update:store
-  ++  json  update:dejs:store
+  ++  json  action:dejs:store
   --
 --
