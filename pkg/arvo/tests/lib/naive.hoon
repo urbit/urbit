@@ -1882,6 +1882,21 @@
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
   ==
 ::
+++  test-own-sponsor-l2-escape
+  ::  You can't escape to your own sponsor on L1, so you shouldn't be able
+  ::  to on L2 either
+  ::
+  =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~holrut]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 rr-escape %holrut-rr-key-0))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
 ++  test-rut-l1-detach-1
   ::  L1-detach A1 | *   | *   | A1  | A1  | -> | *   | *   | ~   | ~
   ::  this checks that if you have the same sponsor on L1 and L2, then
@@ -1891,6 +1906,10 @@
   ::  already be sponsored by ~holrut on L1. this already appears in
   ::  the L2 state as being sponsored by ~holrut, but we will go through
   ::  with adopting ~rabsum-ravtyd on L2 anyways before the L1 detach
+  ::
+  ::  TODO: escaping to your own sponsor shouldn't be allowed since it isn't
+  ::  on L1, so I should remove the lines that have RR escaping to its
+  ::  own sponsor
   ::
   =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~holrut]
   =/  rr-adopt   [holrut-own %adopt ~rabsum-ravtyd]
