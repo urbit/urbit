@@ -19,6 +19,7 @@ import * as ob from 'urbit-ob';
 import { useSettings } from '../../hooks/useSettings.js';
 import { api } from '../../api';
 import { deSig } from '../../lib/util.js';
+import ExternalInvoice from './externalInvoice.js';
 
 const focusFields = {
   empty: '',
@@ -32,6 +33,12 @@ export const feeLevels = {
   low: 'low',
   mid: 'mid',
   high: 'high',
+};
+
+export const signMethods = {
+  bridge: 'bridge',
+  masterTicket: 'masterTicket',
+  external: 'external',
 };
 
 const Send = ({ stopSending, value, conversion }) => {
@@ -55,7 +62,7 @@ const Send = ({ stopSending, value, conversion }) => {
   const [showModal, setShowModal] = useState(false);
   const [note, setNote] = useState('');
   const [choosingSignMethod, setChoosingSignMethod] = useState(false);
-  const [signMethod, setSignMethod] = useState('bridge');
+  const [signMethod, setSignMethod] = useState(signMethods.bridge);
 
   const feeDismiss = () => {
     setShowModal(false);
@@ -190,22 +197,40 @@ const Send = ({ stopSending, value, conversion }) => {
   const signReady = ready && parseInt(satsAmount) > 0 && !signing;
 
   let invoice = null;
-  if (signMethod === 'masterTicket') {
-    invoice = (
-      <Invoice
-        stopSending={stopSending}
-        payee={payee}
-        satsAmount={satsAmount}
-      />
-    );
-  } else if (signMethod === 'bridge') {
-    invoice = (
-      <BridgeInvoice
-        stopSending={stopSending}
-        payee={payee}
-        satsAmount={satsAmount}
-      />
-    );
+
+  switch (signMethod) {
+    case signMethods.masterTicket: {
+      invoice = (
+        <Invoice
+          stopSending={stopSending}
+          payee={payee}
+          satsAmount={satsAmount}
+        />
+      );
+      break;
+    }
+    case signMethods.bridge: {
+      invoice = (
+        <BridgeInvoice
+          stopSending={stopSending}
+          payee={payee}
+          satsAmount={satsAmount}
+        />
+      );
+      break;
+    }
+    case signMethods.external: {
+      invoice = (
+        <ExternalInvoice
+          stopSending={stopSending}
+          payee={payee}
+          satsAmount={satsAmount}
+        />
+      );
+      break;
+    }
+    default:
+      break;
   }
 
   return (
@@ -435,7 +460,7 @@ const Send = ({ stopSending, value, conversion }) => {
               />
             </Button>
           </Row>
-          {signMethod === 'masterTicket' && (
+          {signMethod === signMethod.masterTicket && (
             <Row mt={4} alignItems="center">
               <Icon icon="Info" color="yellow" height={4} width={4} />
               <Text fontSize="14px" fontWeight="regular" color="gray" ml={2}>
