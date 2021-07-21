@@ -32,7 +32,7 @@ import Urbit.Noun.Convert
 import Urbit.Noun.Core
 import Urbit.Noun.TH
 
-import Data.LargeWord   (LargeKey, Word128, Word256)
+import Data.LargeWord   (LargeKey(..), Word128, Word256)
 import GHC.Exts         (chr#, isTrue#, leWord#, word2Int#)
 import GHC.Natural      (Natural)
 import GHC.Types        (Char(C#))
@@ -607,6 +607,9 @@ newtype Ship = Ship Word128 -- @p
 
 instance Show Ship where
   show = show . patp . fromIntegral
+
+instance Hashable Ship where
+  hashWithSalt s (Ship (LargeKey a b)) = s `hashWithSalt` a `hashWithSalt` b
 
 
 -- Path ------------------------------------------------------------------------
