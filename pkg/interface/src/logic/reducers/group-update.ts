@@ -103,6 +103,9 @@ const addMembers = (json: GroupUpdate, state: GroupState): GroupState => {
   if ('addMembers' in json) {
     const { resource, ships } = json.addMembers;
     const resourcePath = resourceAsPath(resource);
+    if(!(resourcePath in state.groups)) {
+      return;
+    }
     for (const member of ships) {
       state.groups[resourcePath].members.add(member);
       if (
