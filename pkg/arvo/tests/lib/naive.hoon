@@ -1929,7 +1929,6 @@
   ::
   ::  L1-detach A1 | *   | *   | A1  | A2  | -> | *   | *   | ~   | A2
   ::
-  ::
   =/  lm-adopt  [losred-own %adopt ~larsyx-mapmeg]
   ::
   %+  expect-eq
@@ -1942,7 +1941,7 @@
     =^  f  state  (n state (lost-sponsor:l1 ~larsyx-mapmeg ~rigrut))
    [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
 ::
-++  test-red-l1-detach-3
+++  test-rut-l1-detach-3
   ::  L1-detach A1 | *   | *   | A1  | ~   | -> | *   | *   | ~   | ~
   ::  Since we don't see L1 state explicitly, we can't really test
   ::  this transition here. But I've included it for completeness sake
@@ -1960,7 +1959,89 @@
     =^  f  state  (n state (lost-sponsor:l1 ~rabsum-ravtyd ~holrut))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
-++  test-marbud-l2-change-keys-new  ^-  tang
+++  test-rut-l1-cancel-1
+  ::  L1-cancel A1 | ~   | *   | *   | *   | -> !! :: no cancel if not escaping
+  ::  Note we're using ~rut so there are no initial escapes
+  %+  expect-eq
+    !>  ~
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state (escape-canceled:l1 ~rabsum-ravtyd ~rigred))
+    escape.net:(~(got by points.state) ~rabsum-ravtyd)
+::
+++  test-rut-l1-cancel-2
+  ::  L1-cancel A1 | A1  | *   | *   | *   | -> | ~   | ~   | *   | *
+  %+  expect-eq
+    !>  ~
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
+    =^  f  state  (n state (escape-canceled:l1 ~rabsum-ravtyd ~rigred))
+    escape.net:(~(got by points.state) ~rabsum-ravtyd)
+::
+++  test-rut-l1-adopt-1
+  ::  L1-adopt  A1 | A1  | *   | *   | *   | -> | ~   | ~   | A1  | A2
+  %+  expect-eq
+    !>  [~ %.y ~rigred]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
+    =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
+++  test-rut-l1-adopt-2
+  ::  L1-adopt  A1 | ~   | *   | *   | *   | -> !! :: no adopt if not escaping
+  %+  expect-eq
+    !>  [~ %.y ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
+++  test-rut-l1-adopt-3
+  ::  L1-adopt  A1 | A1  | *   | *   | *   | -> | ~   | ~   | A1  | A2
+  %+  expect-eq
+    !>  [[~ ~rigrut] %.y ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigrut))
+    =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
+++  test-rut-l1-adopt-4
+  ::  Trying to L1 adopt a L1 planet with an L2 star
+  %+  expect-eq
+    !>  [~ %.y ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~losred))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
+++  test-rut-l1-adopt-5
+  ::  Trying to L1 adopt a L2 planet with an L1 star
+  %+  expect-eq
+    !>  [~ %.y ~losrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state (escape-accepted:l1 ~pinpun-pilsun ~rigred))
+    [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+::
+::
+++  test-marbud-l2-change-keys-whole-state  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
   =|  =^state:naive
   =^  f  state  (init-marbud state)
@@ -2109,8 +2190,6 @@
     =^  f  state  (init-sambud state)
     =^  f  state  (n state (lost-sponsor:l1 ~sambud ~bud))
     [escape.net sponsor.net]:(~(got by points.state) ~sambud)
-::
-::  TODO: sponsorship tests for l1 planets, and L1/L2 sponsorship tests
 ::
 ++  test-l2-set-spawn-proxy  ^-  tang
   =/  marbud-sproxy  [marbud-own %set-spawn-proxy (addr %marbud-skey)]
