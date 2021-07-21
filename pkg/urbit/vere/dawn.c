@@ -2,11 +2,10 @@
 **
 ** ethereum-integrated pre-boot validation
 */
-#include <curl/curl.h>
-#include <uv.h>
-
 #include "all.h"
 #include "vere/vere.h"
+#include <curl/curl.h>
+#include <uv.h>
 
 /* _dawn_oct_to_buf(): +octs to uv_buf_t
 */
@@ -45,8 +44,10 @@ _dawn_buf_to_oct(uv_buf_t buf_u)
 /* _dawn_curl_alloc(): allocate a response buffer for curl
 */
 static size_t
-_dawn_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, uv_buf_t* buf_u)
+_dawn_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, void* buf_v)
 {
+  uv_buf_t* buf_u = buf_v;
+
   size_t siz_t = uni_t * mem_t;
   buf_u->base = c3_realloc(buf_u->base, 1 + siz_t + buf_u->len);
 
@@ -80,7 +81,7 @@ _dawn_post_json(c3_c* url_c, uv_buf_t lod_u)
 
   //  XX require TLS, pin default cert?
   //
-  curl_easy_setopt(curl, CURLOPT_CAINFO, u3K.certs_c);
+  u3K.ssl_curl_f(curl);
   curl_easy_setopt(curl, CURLOPT_URL, url_c);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _dawn_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
@@ -127,7 +128,7 @@ _dawn_get_jam(c3_c* url_c)
 
   //  XX require TLS, pin default cert?
   //
-  curl_easy_setopt(curl, CURLOPT_CAINFO, u3K.certs_c);
+  u3K.ssl_curl_f(curl);
   curl_easy_setopt(curl, CURLOPT_URL, url_c);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _dawn_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);

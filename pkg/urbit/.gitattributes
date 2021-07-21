@@ -3,3 +3,4 @@
 tests export-ignore
 hashtable_tests export-ignore
 shell.nix export-ignore
+*.patch -text

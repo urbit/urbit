@@ -2,15 +2,7 @@
 **
 */
 #include "all.h"
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <uv.h>
-#include <errno.h>
-#include <libgen.h>
 #include <ftw.h>
-
 #include "vere/vere.h"
 
 struct _u3_umon;

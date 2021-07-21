@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
 URBIT_VERSION="$(cat ./version)"
 
 deps="                                                                \
   curl gmp sigsegv argon2 ed25519 ent h2o scrypt uv murmur3 secp256k1 \
-  softfloat3 ssl crypto z lmdb ge-additions aes_siv pthread           \
+  softfloat3 aes_siv ssl crypto z lmdb ge-additions pthread           \
 "
 
 headers="             \
@@ -21,10 +21,28 @@ defmacro () {
 
 defmacro URBIT_VERSION "\"$URBIT_VERSION\""
 
-[ -n "$MEMORY_DEBUG" ]     && defmacro U3_MEMORY_DEBUG 1
-[ -n "$MEMORY_LOG" ]       && defmacro U3_MEMORY_LOG 1
-[ -n "$CPU_DEBUG" ]        && defmacro U3_CPU_DEBUG 1
-[ -n "$EVENT_TIME_DEBUG" ] && defmacro U3_EVENT_TIME_DEBUG 1
+opt_debug=
+
+while test $# != 0
+do
+  case $1 in
+  --enable-debug)
+    opt_debug=1
+    ;;
+  --disable-debug)
+    opt_debug=
+    ;;
+  *)
+    echo "unrecognized option: $1"
+    ;;
+  esac
+  shift
+done
+
+[ -n "${MEMORY_DEBUG-}" ]     && defmacro U3_MEMORY_DEBUG 1
+[ -n "${MEMORY_LOG-}" ]       && defmacro U3_MEMORY_LOG 1
+[ -n "${CPU_DEBUG-}" ]        && defmacro U3_CPU_DEBUG 1
+[ -n "${EVENT_TIME_DEBUG-}" ] && defmacro U3_EVENT_TIME_DEBUG 1
 
 if [ -n "${HOST-}" ]
 then os=$(sed 's$^[^-]*-\([^-]*\)-.*$\1$' <<< "$HOST")
@@ -58,14 +76,53 @@ esac
 
 # TODO Determine if the target cpu is little or big endian.
 case $(tr A-Z a-z <<< $os) in
+  *mingw*)
+     # ensure required mingw packages are installed
+     mpkgs=(cmake curl gcc jq make)
+     pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w64-x86_64-}
+
+     . compat/poor-mans-nix-shell.sh mingw
+     compat/create-include-files.sh 'stat -c %s' /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt
+
+     defmacro U3_OS_mingw 1
+
+     deps="${deps/sigsegv}"
+     compat="${compat-} mingw"
+     PKG_CONFIG=false
+     ;;
+  m1brew)
+     # ensure required packages are installed
+     brew install -q autoconf automake bash cmake coreutils gmp jq libsigsegv libtool libuv openssl pkgconfig
+
+     if (( ${BASH_VERSION%%.*} < 5 ))
+     then
+       echo Running bash version $BASH_VERSION is too low, please restart bash to use freshly installed one
+       exit 1
+     fi
+
+     # for some reason pkg-config does not pick up openssl
+     export PKG_CONFIG_PATH="$(brew --prefix openssl)/lib/pkgconfig:${PKG_CONFIG_PATH-}"
+
+     . compat/poor-mans-nix-shell.sh m1brew
+     compat/create-include-files.sh 'stat -f %z' /etc/ssl/cert.pem
+
+     defmacro U3_OS_osx 1
+
+     deps="${deps/ssl/openssl}"
+     deps="${deps/uv/libuv}"
+     compat="${compat-} posix m1brew"
+     ;;
   *linux*)
      defmacro U3_OS_linux 1
+     defmacro U3_OS_PROF 1
      ;;
   *darwin*)
      defmacro U3_OS_osx 1
+     defmacro U3_OS_PROF 1
      ;;
   *apple*)
      defmacro U3_OS_osx 1
+     defmacro U3_OS_PROF 1
      ;;
   *freebsd*)
      defmacro U3_OS_bsd 1
@@ -81,18 +138,27 @@ case $(tr A-Z a-z <<< $os) in
 esac
 
 for dep in ${osdeps-} $deps
-do LDFLAGS="${LDFLAGS-} -l$dep"
-   ${PKG_CONFIG-pkg-config} --cflags --libs $dep 2>/dev/null || true
+do
+   LDFLAGS="${LDFLAGS-} $(${PKG_CONFIG-pkg-config} --libs $dep 2>/dev/null || echo -l$dep)"
+   CFLAGS="${CFLAGS-} $(${PKG_CONFIG-pkg-config} --cflags $dep 2>/dev/null || true)"
 done
 
 for header in $headers
 do LDFLAGS="${LDFLAGS-} -I$header"
 done
 
+compat="${compat-posix}"
+for citem in $compat
+do
+   CFLAGS="${CFLAGS-} -Icompat/$citem"
+done
+
 cat >config.mk <<EOF
-CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math -std=gnu99
+CFLAGS  := $CFLAGS -funsigned-char -ffast-math -fcommon -std=gnu99
 LDFLAGS := $LDFLAGS
 CC      := ${CC-cc}
+compat  := $compat
+debug   := $opt_debug
 EOF
 
 echo == config.mk == >&2

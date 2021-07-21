@@ -55,6 +55,7 @@ release/
 dist/
 out/
 work/
+pkg/*/*.a
 *.o
 
 # Landscape Dev

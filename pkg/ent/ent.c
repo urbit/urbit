@@ -57,6 +57,16 @@ int ent_getentropy(void* buf, size_t len) {
     return 0;
 }
 
+
+// Use `BCryptGenRandom` on Windows ////////////////////////////////////////////
+
+#elif defined(ENT_GETENTROPY_BCRYPTGENRANDOM)
+#include <windows.h>
+#include <bcrypt.h>
+int ent_getentropy(void* buf, size_t len) {
+  return BCryptGenRandom(NULL, (PUCHAR)buf, len, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+}
+
 #else
-#error "One of these must be set: ENT_DEV_URANDOM, ENT_GETENTROPY_UNISTD, ENT_GETENTROPY_SYSRANDOM, ENT_GETRANDOM_SYSCALL"
+#error "One of these must be set: ENT_GETENTROPY_BCRYPTGENRANDOM, ENT_DEV_URANDOM, ENT_GETENTROPY_UNISTD, ENT_GETENTROPY_SYSRANDOM, ENT_GETRANDOM_SYSCALL"
 #endif

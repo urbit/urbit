@@ -1,0 +1,74 @@
+diff --git a/mdb.c b/mdb.c
+--- a/mdb.c
++++ b/mdb.c
+@@ -1707,28 +1707,27 @@ static char *const mdb_errstr[] = {
+ 	"MDB_PROBLEM: Unexpected problem - txn should abort",
+ };
+ 
+-char *
+-mdb_strerror(int err)
++void
++mdb_logerror(FILE* f, int err, const char* fmt, ...)
+ {
+-#ifdef _WIN32
+-	/** HACK: pad 4KB on stack over the buf. Return system msgs in buf.
+-	 *	This works as long as no function between the call to mdb_strerror
+-	 *	and the actual use of the message uses more than 4K of stack.
+-	 */
+-#define MSGSIZE	1024
+-#define PADSIZE	4096
+-	char buf[MSGSIZE+PADSIZE], *ptr = buf;
+-#endif
++	va_list ap;
++	va_start(ap, fmt);
++	vfprintf(f, fmt, ap);
++	va_end(ap);
++
+ 	int i;
+ 	if (!err)
+-		return ("Successful return: 0");
++	{
++		fprintf(stderr, ": %s\r\n", "Successful return: 0");
++		return;
++	}
+ 
+ 	if (err >= MDB_KEYEXIST && err <= MDB_LAST_ERRCODE) {
+ 		i = err - MDB_KEYEXIST;
+-		return mdb_errstr[i];
++		fprintf(stderr, ": %s\r\n", mdb_errstr[i]);
++		return;
+ 	}
+ 
+-#ifdef _WIN32
+ 	/* These are the C-runtime error codes we use. The comment indicates
+ 	 * their numeric value, and the Win32 error they would correspond to
+ 	 * if the error actually came from a Win32 API. A major mess, we should
+@@ -1742,18 +1741,20 @@ mdb_strerror(int err)
+ 	case EBUSY:		/* 16, CURRENT_DIRECTORY */
+ 	case EINVAL:	/* 22, BAD_COMMAND */
+ 	case ENOSPC:	/* 28, OUT_OF_PAPER */
+-		return strerror(err);
++		fprintf(stderr, ": %s\r\n", strerror(err));
+ 	default:
+ 		;
+ 	}
+-	buf[0] = 0;
+-	FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM |
++	LPSTR ptr;
++	if (FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM |
++		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+ 		FORMAT_MESSAGE_IGNORE_INSERTS,
+-		NULL, err, 0, ptr, MSGSIZE, (va_list *)buf+MSGSIZE);
+-	return ptr;
+-#else
+-	return strerror(err);
+-#endif
++		NULL, err, 0, (LPSTR)&ptr, sizeof (LPSTR), NULL))
++	{
++		fprintf(stderr, ": %s\r\n", ptr);
++		LocalFree(ptr);
++	} else
++		fprintf(stderr, ": <%d>\r\n", err);
+ }
+ 
+ /** assert(3) variant in cursor context */

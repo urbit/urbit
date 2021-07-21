@@ -1,0 +1,1834 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5a04e1426..9ddad60d1 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -69,6 +69,18 @@ OPTION(WITH_BUNDLED_SSL "whether or not to use the bundled libressl" ${WITH_BUND
+ 
+ OPTION(WITHOUT_LIBS "skip building libs even when possible" OFF)
+ OPTION(BUILD_SHARED_LIBS "whether to build a shared library" OFF)
++OPTION(WITHOUT_FASTCGI "don't include fastcgi" OFF)
++OPTION(WITHOUT_MEMCACHED "don't include memcached" OFF)
++
++IF (MINGW)
++    SET(WITHOUT_FASTCGI "ON")
++    SET(WITHOUT_MEMCACHED "ON")
++    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_POSIX_C_SOURCE -DO_CLOEXEC=0 -DH2O_NO_UNIX_SOCKETS")
++ENDIF (MINGW)
++
++IF (WITHOUT_MEMCACHED)
++    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DH2O_NO_MEMCACHED")
++ENDIF (WITHOUT_MEMCACHED)
+ 
+ FIND_PROGRAM(RUBY ruby)
+ FIND_PROGRAM(BISON bison)
+@@ -228,16 +240,7 @@ SET(PICOTLS_SOURCE_FILES
+     deps/picotls/lib/openssl.c)
+ 
+ SET(LIB_SOURCE_FILES
+-    deps/cloexec/cloexec.c
+     deps/libgkc/gkc.c
+-    deps/libyrmcds/close.c
+-    deps/libyrmcds/connect.c
+-    deps/libyrmcds/recv.c
+-    deps/libyrmcds/send.c
+-    deps/libyrmcds/send_text.c
+-    deps/libyrmcds/socket.c
+-    deps/libyrmcds/strerror.c
+-    deps/libyrmcds/text_mode.c
+     deps/picohttpparser/picohttpparser.c
+ 
+     lib/common/cache.c
+@@ -245,7 +248,6 @@ SET(LIB_SOURCE_FILES
+     lib/common/filecache.c
+     lib/common/hostinfo.c
+     lib/common/http1client.c
+-    lib/common/memcached.c
+     lib/common/memory.c
+     lib/common/multithread.c
+     lib/common/serverutil.c
+@@ -272,7 +274,6 @@ SET(LIB_SOURCE_FILES
+     lib/handler/compress/gzip.c
+     lib/handler/errordoc.c
+     lib/handler/expires.c
+-    lib/handler/fastcgi.c
+     lib/handler/file.c
+     lib/handler/headers.c
+     lib/handler/mimemap.c
+@@ -290,7 +291,6 @@ SET(LIB_SOURCE_FILES
+     lib/handler/configurator/compress.c
+     lib/handler/configurator/errordoc.c
+     lib/handler/configurator/expires.c
+-    lib/handler/configurator/fastcgi.c
+     lib/handler/configurator/file.c
+     lib/handler/configurator/headers.c
+     lib/handler/configurator/proxy.c
+@@ -314,6 +314,33 @@ SET(LIB_SOURCE_FILES
+     lib/http2/stream.c
+     lib/http2/http2_debug_state.c)
+ 
++IF (NOT MINGW)
++    SET(LIB_SOURCE_FILES
++        ${LIB_SOURCE_FILES}
++        deps/cloexec/cloexec.c)
++ENDIF (NOT MINGW)
++
++IF (NOT WITHOUT_FASTCGI)
++    SET(LIB_SOURCE_FILES
++        ${LIB_SOURCE_FILES}
++        lib/handler/fastcgi.c
++        lib/handler/configurator/fastcgi.c)
++ENDIF (NOT WITHOUT_FASTCGI)
++
++IF (NOT WITHOUT_MEMCACHED)
++    SET(LIB_SOURCE_FILES
++        ${LIB_SOURCE_FILES}
++        deps/libyrmcds/close.c
++        deps/libyrmcds/connect.c
++        deps/libyrmcds/recv.c
++        deps/libyrmcds/send.c
++        deps/libyrmcds/send_text.c
++        deps/libyrmcds/socket.c
++        deps/libyrmcds/strerror.c
++        deps/libyrmcds/text_mode.c
++        lib/common/memcached.c)
++ENDIF (NOT WITHOUT_MEMCACHED)
++
+ SET(UNIT_TEST_SOURCE_FILES
+     ${LIB_SOURCE_FILES}
+     ${LIBYAML_SOURCE_FILES}
+diff --git a/examples/libh2o/http1client.c b/examples/libh2o/http1client.c
+index bcf9b94b2..592376759 100644
+--- a/examples/libh2o/http1client.c
++++ b/examples/libh2o/http1client.c
+@@ -134,6 +134,11 @@ h2o_http1client_head_cb on_connect(h2o_http1client_t *client, const char *errstr
+ 
+ int main(int argc, char **argv)
+ {
++#ifdef _WIN32
++    WSADATA wsaData;
++    WSAStartup(MAKEWORD(2, 0), &wsaData);
++#endif
++
+     h2o_multithread_queue_t *queue;
+     h2o_multithread_receiver_t getaddr_receiver;
+     h2o_timeout_t io_timeout;
+diff --git a/examples/libh2o/simple.c b/examples/libh2o/simple.c
+index bb72bf60c..be7045d1c 100644
+--- a/examples/libh2o/simple.c
++++ b/examples/libh2o/simple.c
+@@ -21,11 +21,15 @@
+  */
+ #include <errno.h>
+ #include <limits.h>
+-#include <netinet/in.h>
+ #include <signal.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#ifdef _WIN32
++#include <winsock2.h>
++#else
++#include <netinet/in.h>
+ #include <sys/socket.h>
++#endif
+ #include <sys/stat.h>
+ #include "h2o.h"
+ #include "h2o/http1.h"
+@@ -219,7 +223,12 @@ int main(int argc, char **argv)
+ {
+     h2o_hostconf_t *hostconf;
+ 
++#ifdef _WIN32
++    WSADATA wsaData;
++    WSAStartup(MAKEWORD(2, 0), &wsaData);
++#else
+     signal(SIGPIPE, SIG_IGN);
++#endif
+ 
+     h2o_config_init(&config);
+     hostconf = h2o_config_register_host(&config, h2o_iovec_init(H2O_STRLIT("default")), 65535);
+diff --git a/include/h2o.h b/include/h2o.h
+index 57877bd12..84822b792 100644
+--- a/include/h2o.h
++++ b/include/h2o.h
+@@ -32,7 +32,11 @@ extern "C" {
+ #include <string.h>
+ #include <stdlib.h>
+ #include <sys/time.h>
++#ifdef _WIN32
++#include <winsock2.h>
++#else
+ #include <sys/socket.h>
++#endif
+ #include <time.h>
+ #include <unistd.h>
+ #include <openssl/ssl.h>
+diff --git a/include/h2o/configurator.h b/include/h2o/configurator.h
+index d1a2e2515..d59d070dd 100644
+--- a/include/h2o/configurator.h
++++ b/include/h2o/configurator.h
+@@ -145,7 +145,7 @@ int h2o_configurator_apply_commands(h2o_configurator_context_t *ctx, yoml_t *nod
+  * emits configuration error
+  */
+ void h2o_configurator_errprintf(h2o_configurator_command_t *cmd, yoml_t *node, const char *reason, ...)
+-    __attribute__((format(printf, 3, 4)));
++    __attribute__((format(gnu_printf, 3, 4)));
+ /**
+  * interprets the configuration value using sscanf, or prints an error upon failure
+  * @param configurator configurator
+@@ -154,7 +154,7 @@ void h2o_configurator_errprintf(h2o_configurator_command_t *cmd, yoml_t *node, c
+  * @return 0 if successful, -1 if not
+  */
+ int h2o_configurator_scanf(h2o_configurator_command_t *cmd, yoml_t *node, const char *fmt, ...)
+-    __attribute__((format(scanf, 3, 4)));
++    __attribute__((format(gnu_scanf, 3, 4)));
+ /**
+  * interprets the configuration value and returns the index of the matched string within the candidate strings, or prints an error
+  * upon failure
+diff --git a/include/h2o/filecache.h b/include/h2o/filecache.h
+index a000c4c6d..494f61fb1 100644
+--- a/include/h2o/filecache.h
++++ b/include/h2o/filecache.h
+@@ -61,6 +61,7 @@ void h2o_filecache_destroy(h2o_filecache_t *cache);
+ void h2o_filecache_clear(h2o_filecache_t *cache);
+ 
+ h2o_filecache_ref_t *h2o_filecache_open_file(h2o_filecache_t *cache, const char *path, int oflag);
++ssize_t h2o_filecache_read_file(h2o_filecache_ref_t *ref, void *buf, size_t count, off_t offset);
+ void h2o_filecache_close_file(h2o_filecache_ref_t *ref);
+ struct tm *h2o_filecache_get_last_modified(h2o_filecache_ref_t *ref, char *outbuf);
+ size_t h2o_filecache_get_etag(h2o_filecache_ref_t *ref, char *outbuf);
+diff --git a/include/h2o/hostinfo.h b/include/h2o/hostinfo.h
+index 14ac30c6c..b39fea520 100644
+--- a/include/h2o/hostinfo.h
++++ b/include/h2o/hostinfo.h
+@@ -22,13 +22,16 @@
+ #ifndef h2o__hostinfo_h
+ #define h2o__hostinfo_h
+ 
+-#include <arpa/inet.h>
++#ifdef _WIN32
++#include <ws2tcpip.h>
++#else
+ #include <netdb.h>
+ #include <netinet/in.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/socket.h>
+ #include <sys/types.h>
++#endif
+ #include "h2o/multithread.h"
+ 
+ typedef struct st_h2o_hostinfo_getaddr_req_t h2o_hostinfo_getaddr_req_t;
+diff --git a/include/h2o/memory.h b/include/h2o/memory.h
+index 10c137c88..354fa4359 100644
+--- a/include/h2o/memory.h
++++ b/include/h2o/memory.h
+@@ -78,8 +78,19 @@ typedef struct st_h2o_buffer_prototype_t h2o_buffer_prototype_t;
+  * buffer structure compatible with iovec
+  */
+ typedef struct st_h2o_iovec_t {
++#ifdef __MINGW32__
++#define H2O_IOVEC_NULL      {0, NULL}
++#define H2O_IOVEC_EMPTY     {0, ""}
++#define H2O_IOVEC_STRLIT(s) {sizeof(s) - 1, (s)}
++    unsigned int len;
++    char *base;
++#else
++#define H2O_IOVEC_NULL      {NULL}
++#define H2O_IOVEC_EMPTY     {"", 0}
++#define H2O_IOVEC_STRLIT(s) {(s), sizeof(s) - 1}
+     char *base;
+     size_t len;
++#endif
+ } h2o_iovec_t;
+ 
+ typedef struct st_h2o_mem_recycle_t {
+diff --git a/include/h2o/socket.h b/include/h2o/socket.h
+index 58ada8509..268dd8a2e 100644
+--- a/include/h2o/socket.h
++++ b/include/h2o/socket.h
+@@ -27,7 +27,11 @@ extern "C" {
+ #endif
+ 
+ #include <stdint.h>
++#ifdef _WIN32
++#include <ws2tcpip.h>
++#else
+ #include <sys/socket.h>
++#endif
+ #include <openssl/ssl.h>
+ #include "h2o/cache.h"
+ #include "h2o/memory.h"
+diff --git a/include/h2o/socketpool.h b/include/h2o/socketpool.h
+index cc4161df4..f1c4eb3c3 100644
+--- a/include/h2o/socketpool.h
++++ b/include/h2o/socketpool.h
+@@ -26,8 +26,10 @@
+ extern "C" {
+ #endif
+ 
++#ifndef _WIN32
+ #include <netinet/in.h>
+ #include <arpa/inet.h>
++#endif
+ #include <pthread.h>
+ #include "h2o/linklist.h"
+ #include "h2o/multithread.h"
+diff --git a/include/h2o/url.h b/include/h2o/url.h
+index 231c9a263..6a707a567 100644
+--- a/include/h2o/url.h
++++ b/include/h2o/url.h
+@@ -22,7 +22,9 @@
+ #ifndef h2o__url_h
+ #define h2o__url_h
+ 
++#ifndef H2O_NO_UNIX_SOCKETS
+ #include <sys/un.h>
++#endif
+ #include "h2o/memory.h"
+ 
+ typedef struct st_h2o_url_scheme_t {
+@@ -92,11 +94,13 @@ static h2o_iovec_t h2o_url_stringify(h2o_mem_pool_t *pool, const h2o_url_t *url)
+  * copies a URL object (null-terminates all the string elements)
+  */
+ void h2o_url_copy(h2o_mem_pool_t *pool, h2o_url_t *dest, const h2o_url_t *src);
++#ifndef H2O_NO_UNIX_SOCKETS
+ /**
+  * extracts sockaddr_un from host and returns NULL (or returns an error string if failed)
+  */
+ const char *h2o_url_host_to_sun(h2o_iovec_t host, struct sockaddr_un *sa);
+ extern const char *h2o_url_host_to_sun_err_is_not_unix_socket;
++#endif
+ 
+ /* inline definitions */
+ 
+diff --git a/lib/common/file.c b/lib/common/file.c
+index 3cf5ac5d1..d3e0048b6 100644
+--- a/lib/common/file.c
++++ b/lib/common/file.c
+@@ -25,7 +25,6 @@
+ #include <stdlib.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
+-#include <sys/uio.h>
+ #include <unistd.h>
+ #include "h2o/file.h"
+ 
+@@ -33,7 +32,7 @@ h2o_iovec_t h2o_file_read(const char *fn)
+ {
+     int fd;
+     struct stat st;
+-    h2o_iovec_t ret = {NULL};
++    h2o_iovec_t ret = H2O_IOVEC_NULL;
+ 
+     /* open */
+     if ((fd = open(fn, O_RDONLY | O_CLOEXEC)) == -1)
+@@ -64,5 +63,5 @@ Error:
+     if (fd != -1)
+         close(fd);
+     free(ret.base);
+-    return (h2o_iovec_t){NULL};
++    return (h2o_iovec_t)H2O_IOVEC_NULL;
+ }
+diff --git a/lib/common/filecache.c b/lib/common/filecache.c
+index 747a1ffa6..e37e1f498 100644
+--- a/lib/common/filecache.c
++++ b/lib/common/filecache.c
+@@ -136,6 +136,24 @@ Exit:
+     return ref;
+ }
+ 
++ssize_t h2o_filecache_read_file(h2o_filecache_ref_t *ref, void *buf, size_t count, off_t offset)
++{
++    #ifdef _WIN32
++    // h2o reads from h2o_filecache_ref_t.fd only with pread (comment it out to verify)
++    // this allows me to ignore the existence of the file pointer position maintained
++    // by Windows I/O manager and use NtReadFile() without opening extra file handles
++    /*
++    #include <ntifs.h>
++    IO_STATUS_BLOCK sb;
++    LARGE_INTEGER li;
++    NTSTATUS s = NtReadFile(_get_osfhandle(fd), NULL, NULL, NULL, &sb, buf, count, &li, NULL);
++    */
++    return -1;
++    #else
++    return pread(ref->fd, buf, count, offset);
++    #endif
++}
++
+ void h2o_filecache_close_file(h2o_filecache_ref_t *ref)
+ {
+     if (--ref->_refcnt != 0)
+diff --git a/lib/common/http1client.c b/lib/common/http1client.c
+index 8547ea817..a9de3d67d 100644
+--- a/lib/common/http1client.c
++++ b/lib/common/http1client.c
+@@ -19,12 +19,18 @@
+  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  * IN THE SOFTWARE.
+  */
++#ifdef _WIN32
++#include <ws2tcpip.h>
++#else
+ #include <arpa/inet.h>
+ #include <netdb.h>
+ #include <netinet/in.h>
+ #include <sys/socket.h>
++#endif
+ #include <sys/types.h>
++#ifndef H2O_NO_UNIX_SOCKETS
+ #include <sys/un.h>
++#endif
+ #include "picohttpparser.h"
+ #include "h2o.h"
+ 
+@@ -535,6 +541,7 @@ void h2o_http1client_connect(h2o_http1client_t **_client, void *data, h2o_http1c
+             return;
+         }
+     }
++    #ifndef _WIN32
+     { /* directly call connect(2) if `host` refers to an UNIX-domain socket */
+         struct sockaddr_un sa;
+         const char *to_sa_err;
+@@ -547,6 +554,7 @@ void h2o_http1client_connect(h2o_http1client_t **_client, void *data, h2o_http1c
+             return;
+         }
+     }
++    #endif
+     /* resolve destination and then connect */
+     client->_getaddr_req =
+         h2o_hostinfo_getaddr(ctx->getaddr_receiver, host, h2o_iovec_init(serv, sprintf(serv, "%u", (unsigned)port)), AF_UNSPEC,
+diff --git a/lib/common/memory.c b/lib/common/memory.c
+index ba9f2dba2..3a505d8ea 100644
+--- a/lib/common/memory.c
++++ b/lib/common/memory.c
+@@ -27,7 +27,9 @@
+ #include <stdint.h>
+ #include <stdlib.h>
+ #include <string.h>
++#ifndef _WIN32
+ #include <sys/mman.h>
++#endif
+ #include <unistd.h>
+ #include "h2o/memory.h"
+ 
+@@ -190,20 +192,24 @@ void h2o_mem_link_shared(h2o_mem_pool_t *pool, void *p)
+     link_shared(pool, H2O_STRUCT_FROM_MEMBER(struct st_h2o_mem_pool_shared_entry_t, bytes, p));
+ }
+ 
++#ifndef _WIN32
+ static size_t topagesize(size_t capacity)
+ {
+     size_t pagesize = getpagesize();
+     return (offsetof(h2o_buffer_t, _buf) + capacity + pagesize - 1) / pagesize * pagesize;
+ }
++#endif
+ 
+ void h2o_buffer__do_free(h2o_buffer_t *buffer)
+ {
+     /* caller should assert that the buffer is not part of the prototype */
+     if (buffer->capacity == buffer->_prototype->_initial_buf.capacity) {
+         h2o_mem_free_recycle(&buffer->_prototype->allocator, buffer);
++    #ifndef _WIN32
+     } else if (buffer->_fd != -1) {
+         close(buffer->_fd);
+         munmap((void *)buffer, topagesize(buffer->capacity));
++    #endif
+     } else {
+         free(buffer);
+     }
+@@ -240,6 +246,7 @@ h2o_iovec_t h2o_buffer_reserve(h2o_buffer_t **_inbuf, size_t min_guarantee)
+             do {
+                 new_capacity *= 2;
+             } while (new_capacity - inbuf->size < min_guarantee);
++            #ifndef _WIN32
+             if (inbuf->_prototype->mmap_settings != NULL && inbuf->_prototype->mmap_settings->threshold <= new_capacity) {
+                 size_t new_allocsize = topagesize(new_capacity);
+                 int fd;
+@@ -287,7 +294,9 @@ h2o_iovec_t h2o_buffer_reserve(h2o_buffer_t **_inbuf, size_t min_guarantee)
+                     inbuf->capacity = new_capacity;
+                     inbuf->bytes = newp->_buf + offset;
+                 }
+-            } else {
++            } else
++            #endif
++            {
+                 h2o_buffer_t *newp = h2o_mem_alloc(offsetof(h2o_buffer_t, _buf) + new_capacity);
+                 newp->size = inbuf->size;
+                 newp->bytes = newp->_buf;
+@@ -306,10 +315,12 @@ h2o_iovec_t h2o_buffer_reserve(h2o_buffer_t **_inbuf, size_t min_guarantee)
+ 
+     return ret;
+ 
++#ifndef _WIN32
+ MapError:
+     ret.base = NULL;
+     ret.len = 0;
+     return ret;
++#endif
+ }
+ 
+ void h2o_buffer_consume(h2o_buffer_t **_inbuf, size_t delta)
+diff --git a/lib/common/multithread.c b/lib/common/multithread.c
+index b4e8ba836..9a3dbe7d4 100644
+--- a/lib/common/multithread.c
++++ b/lib/common/multithread.c
+@@ -22,7 +22,6 @@
+  */
+ #include <assert.h>
+ #include <pthread.h>
+-#include "cloexec.h"
+ #include "h2o/multithread.h"
+ 
+ struct st_h2o_multithread_queue_t {
+@@ -73,6 +72,7 @@ pthread_mutex_t h2o_conn_id_mutex = PTHREAD_MUTEX_INITIALIZER;
+ #if H2O_USE_LIBUV
+ #else
+ 
++#include "cloexec.h"
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+diff --git a/lib/common/serverutil.c b/lib/common/serverutil.c
+index 8226f6efc..a599e7412 100644
+--- a/lib/common/serverutil.c
++++ b/lib/common/serverutil.c
+@@ -21,26 +21,30 @@
+  */
+ #include <errno.h>
+ #include <fcntl.h>
++#ifndef _WIN32
+ #include <grp.h>
+-#include <pthread.h>
+ #include <pwd.h>
+-#include <signal.h>
+ #include <spawn.h>
++#include <sys/wait.h>
++#if !defined(_SC_NPROCESSORS_ONLN)
++#include <sys/sysctl.h>
++#endif
++#endif
++#include <pthread.h>
++#include <signal.h>
+ #include <stdint.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/types.h>
+-#include <sys/wait.h>
+ #include <unistd.h>
+-#if !defined(_SC_NPROCESSORS_ONLN)
+-#include <sys/sysctl.h>
+-#endif
+-#include "cloexec.h"
+ #include "h2o/memory.h"
+ #include "h2o/serverutil.h"
+ #include "h2o/socket.h"
+ #include "h2o/string_.h"
+-
++#if !H2O_USE_LIBUV
++#include "cloexec.h"
++#endif
++#if 0
+ void h2o_set_signal_handler(int signo, void (*cb)(int signo))
+ {
+     struct sigaction action;
+@@ -137,6 +141,7 @@ static char **build_spawn_env(void)
+     return newenv;
+ }
+ 
++#ifndef _WIN32
+ pid_t h2o_spawnp(const char *cmd, char *const *argv, const int *mapped_fds, int cloexec_mutex_is_locked)
+ {
+ #if defined(__linux__)
+@@ -235,6 +240,7 @@ Error:
+ 
+ #endif
+ }
++#endif
+ 
+ int h2o_read_command(const char *cmd, char **argv, h2o_buffer_t **resp, int *child_status)
+ {
+@@ -315,3 +321,4 @@ size_t h2o_numproc(void)
+     return 1;
+ #endif
+ }
++#endif
+\ No newline at end of file
+diff --git a/lib/common/socket.c b/lib/common/socket.c
+index 5b1c37e04..86ebbd8b4 100644
+--- a/lib/common/socket.c
++++ b/lib/common/socket.c
+@@ -23,11 +23,18 @@
+ #include <fcntl.h>
+ #include <inttypes.h>
+ #include <limits.h>
++#ifdef _WIN32
++#include <ws2tcpip.h>
++#include <pthread.h>
++#else
+ #include <netdb.h>
+ #include <netinet/in.h>
+ #include <netinet/tcp.h>
++#endif
+ #include <string.h>
++#ifndef H2O_NO_UNIX_SOCKETS
+ #include <sys/un.h>
++#endif
+ #include <unistd.h>
+ #include <openssl/err.h>
+ #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
+@@ -861,12 +868,7 @@ int h2o_socket_compare_address(struct sockaddr *x, struct sockaddr *y)
+ 
+     CMP(x->sa_family, y->sa_family);
+ 
+-    if (x->sa_family == AF_UNIX) {
+-        struct sockaddr_un *xun = (void *)x, *yun = (void *)y;
+-        int r = strcmp(xun->sun_path, yun->sun_path);
+-        if (r != 0)
+-            return r;
+-    } else if (x->sa_family == AF_INET) {
++    if (x->sa_family == AF_INET) {
+         struct sockaddr_in *xin = (void *)x, *yin = (void *)y;
+         CMP(ntohl(xin->sin_addr.s_addr), ntohl(yin->sin_addr.s_addr));
+         CMP(ntohs(xin->sin_port), ntohs(yin->sin_port));
+@@ -878,6 +880,13 @@ int h2o_socket_compare_address(struct sockaddr *x, struct sockaddr *y)
+         CMP(ntohs(xin6->sin6_port), ntohs(yin6->sin6_port));
+         CMP(xin6->sin6_flowinfo, yin6->sin6_flowinfo);
+         CMP(xin6->sin6_scope_id, yin6->sin6_scope_id);
++    #ifndef H2O_NO_UNIX_SOCKETS
++    } else if (x->sa_family == AF_UNIX) {
++        struct sockaddr_un *xun = (void *)x, *yun = (void *)y;
++        int r = strcmp(xun->sun_path, yun->sun_path);
++        if (r != 0)
++            return r;
++    #endif
+     } else {
+         assert(!"unknown sa_family");
+     }
+@@ -1015,7 +1024,7 @@ static void on_handshake_complete(h2o_socket_t *sock, const char *err)
+ 
+ static void proceed_handshake(h2o_socket_t *sock, const char *err)
+ {
+-    h2o_iovec_t first_input = {NULL};
++    h2o_iovec_t first_input = H2O_IOVEC_NULL;
+     int ret = 0;
+ 
+     sock->_cb.write = NULL;
+diff --git a/lib/common/socketpool.c b/lib/common/socketpool.c
+index da69933f7..730d3d22f 100644
+--- a/lib/common/socketpool.c
++++ b/lib/common/socketpool.c
+@@ -21,12 +21,18 @@
+  */
+ #include <assert.h>
+ #include <errno.h>
++#ifdef _WIN32
++#include <ws2tcpip.h>
++#else
+ #include <netdb.h>
++#include <netinet/in.h>
+ #include <stdlib.h>
+ #include <sys/socket.h>
++#endif
+ #include <sys/types.h>
++#ifndef H2O_NO_UNIX_SOCKETS
+ #include <sys/un.h>
+-#include <netinet/in.h>
++#endif
+ #include "h2o/hostinfo.h"
+ #include "h2o/linklist.h"
+ #include "h2o/socketpool.h"
+@@ -110,11 +116,15 @@ void h2o_socketpool_init_by_address(h2o_socketpool_t *pool, struct sockaddr *sa,
+     assert(salen <= sizeof(pool->peer.sockaddr.bytes));
+ 
+     if ((host_len = h2o_socket_getnumerichost(sa, salen, host)) == SIZE_MAX) {
++        #ifndef H2O_NO_UNIX_SOCKETS
+         if (sa->sa_family != AF_UNIX)
+             h2o_fatal("failed to convert a non-unix socket address to a numerical representation");
+         /* use the sockaddr_un::sun_path as the SNI indicator (is that the right thing to do?) */
+         strcpy(host, ((struct sockaddr_un *)sa)->sun_path);
+         host_len = strlen(host);
++        #else
++        h2o_fatal("failed to convert a socket address to a numerical representation");
++        #endif
+     }
+ 
+     common_init(pool, H2O_SOCKETPOOL_TYPE_SOCKADDR, h2o_iovec_init(host, host_len), is_ssl, capacity);
+diff --git a/lib/common/string.c b/lib/common/string.c
+index 3c068f3ad..2c33624b7 100644
+--- a/lib/common/string.c
++++ b/lib/common/string.c
+@@ -441,16 +441,21 @@ const char *h2o_next_token(h2o_iovec_t *iter, int separator, size_t *element_len
+     *iter = h2o_iovec_init(cur, end - cur);
+     *element_len = token_end - token_start;
+     if (value != NULL)
+-        *value = (h2o_iovec_t){NULL};
++        *value = (h2o_iovec_t)H2O_IOVEC_NULL;
+     return token_start;
+ 
+ FindValue:
+     *iter = h2o_iovec_init(cur, end - cur);
+     *element_len = token_end - token_start;
+-    if ((value->base = (char *)h2o_next_token(iter, separator, &value->len, NULL)) == NULL) {
+-        *value = (h2o_iovec_t){"", 0};
+-    } else if (h2o_memis(value->base, value->len, H2O_STRLIT(","))) {
+-        *value = (h2o_iovec_t){"", 0};
++
++    size_t tmp;    
++    if ((value->base = (char *)h2o_next_token(iter, separator, &tmp, NULL)) == NULL) {
++        *value = (h2o_iovec_t)H2O_IOVEC_EMPTY;
++        return token_start;
++    }
++    value->len = tmp;
++    if (h2o_memis(value->base, value->len, H2O_STRLIT(","))) {
++        *value = (h2o_iovec_t)H2O_IOVEC_EMPTY;
+         iter->base -= 1;
+         iter->len += 1;
+     }
+@@ -499,7 +504,7 @@ h2o_iovec_t h2o_htmlescape(h2o_mem_pool_t *pool, const char *src, size_t len)
+     /* escape and return the result if necessary */
+     if (add_size != 0) {
+         /* allocate buffer and fill in the chars that are known not to require escaping */
+-        h2o_iovec_t escaped = {h2o_mem_alloc_pool(pool, len + add_size + 1), 0};
++        h2o_iovec_t escaped = h2o_iovec_init(h2o_mem_alloc_pool(pool, len + add_size + 1), 0);
+         /* fill-in the rest */
+         for (s = src; s != end; ++s) {
+             switch (*s) {
+@@ -529,7 +534,7 @@ h2o_iovec_t h2o_htmlescape(h2o_mem_pool_t *pool, const char *src, size_t len)
+ 
+ h2o_iovec_t h2o_concat_list(h2o_mem_pool_t *pool, h2o_iovec_t *list, size_t count)
+ {
+-    h2o_iovec_t ret = {NULL, 0};
++    h2o_iovec_t ret = H2O_IOVEC_NULL;
+     size_t i;
+ 
+     /* calc the length */
+diff --git a/lib/common/url.c b/lib/common/url.c
+index d65d18fb5..9b9ec85bb 100644
+--- a/lib/common/url.c
++++ b/lib/common/url.c
+@@ -19,15 +19,21 @@
+  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  * IN THE SOFTWARE.
+  */
++#ifdef _WIN32
++#include <ws2tcpip.h>
++#else
+ #include <sys/socket.h>
++#endif
+ #include <sys/types.h>
++#ifndef H2O_NO_UNIX_SOCKETS
+ #include <sys/un.h>
++#endif
+ #include "h2o/memory.h"
+ #include "h2o/string_.h"
+ #include "h2o/url.h"
+ 
+-const h2o_url_scheme_t H2O_URL_SCHEME_HTTP = {{H2O_STRLIT("http")}, 80};
+-const h2o_url_scheme_t H2O_URL_SCHEME_HTTPS = {{H2O_STRLIT("https")}, 443};
++const h2o_url_scheme_t H2O_URL_SCHEME_HTTP = {H2O_IOVEC_STRLIT("http"), 80};
++const h2o_url_scheme_t H2O_URL_SCHEME_HTTPS = {H2O_IOVEC_STRLIT("https"), 443};
+ 
+ static int decode_hex(int ch)
+ {
+@@ -277,8 +283,8 @@ int h2o_url_parse_relative(const char *url, size_t url_len, h2o_url_t *parsed)
+         return parse_authority_and_path(p + 2, url_end, parsed);
+ 
+     /* reset authority, host, port, and set path */
+-    parsed->authority = (h2o_iovec_t){NULL};
+-    parsed->host = (h2o_iovec_t){NULL};
++    parsed->authority = (h2o_iovec_t)H2O_IOVEC_NULL;
++    parsed->host = (h2o_iovec_t)H2O_IOVEC_NULL;
+     parsed->_port = 65535;
+     parsed->path = h2o_iovec_init(p, url_end - p);
+ 
+@@ -324,7 +330,7 @@ h2o_iovec_t h2o_url_resolve(h2o_mem_pool_t *pool, const h2o_url_t *base, const h
+         h2o_url_resolve_path(&base_path, &relative_path);
+     } else {
+         assert(relative->path.len == 0);
+-        relative_path = (h2o_iovec_t){NULL};
++        relative_path = (h2o_iovec_t)H2O_IOVEC_NULL;
+     }
+ 
+ Build:
+@@ -388,6 +394,7 @@ void h2o_url_copy(h2o_mem_pool_t *pool, h2o_url_t *dest, const h2o_url_t *src)
+     dest->_port = src->_port;
+ }
+ 
++#ifndef H2O_NO_UNIX_SOCKETS
+ const char *h2o_url_host_to_sun(h2o_iovec_t host, struct sockaddr_un *sa)
+ {
+ #define PREFIX "unix:"
+@@ -407,3 +414,4 @@ const char *h2o_url_host_to_sun(h2o_iovec_t host, struct sockaddr_un *sa)
+ }
+ 
+ const char *h2o_url_host_to_sun_err_is_not_unix_socket = "supplied name does not look like an unix-domain socket";
++#endif
+diff --git a/lib/core/config.c b/lib/core/config.c
+index ce1d32018..267708723 100644
+--- a/lib/core/config.c
++++ b/lib/core/config.c
+@@ -246,7 +246,7 @@ h2o_hostconf_t *h2o_config_register_host(h2o_globalconf_t *config, h2o_iovec_t h
+     /* create hostconf */
+     hostconf = create_hostconf(config);
+     hostconf->authority.host = host_lc;
+-    host_lc = (h2o_iovec_t){NULL};
++    host_lc = (h2o_iovec_t)H2O_IOVEC_NULL;
+     hostconf->authority.port = port;
+     if (hostconf->authority.port == 65535) {
+         hostconf->authority.hostport = hostconf->authority.host;
+diff --git a/lib/core/context.c b/lib/core/context.c
+index 8d1101381..f472adbe6 100644
+--- a/lib/core/context.c
++++ b/lib/core/context.c
+@@ -23,7 +23,6 @@
+ #include <stdlib.h>
+ #include <sys/time.h>
+ #include "h2o.h"
+-#include "h2o/memcached.h"
+ 
+ void h2o_context_init_pathconf_context(h2o_context_t *ctx, h2o_pathconf_t *pathconf)
+ {
+@@ -194,7 +193,9 @@ void h2o_context_update_timestamp_cache(h2o_context_t *ctx)
+         if (ctx->_timestamp_cache.value != NULL)
+             h2o_mem_release_shared(ctx->_timestamp_cache.value);
+         ctx->_timestamp_cache.value = h2o_mem_alloc_shared(NULL, sizeof(h2o_timestamp_string_t), NULL);
+-        gmtime_r(&ctx->_timestamp_cache.tv_at.tv_sec, &gmt);
++        /* work around pointer type collision in MingW */
++        time_t tmp = ctx->_timestamp_cache.tv_at.tv_sec;
++        gmtime_r(&tmp, &gmt);
+         h2o_time2str_rfc1123(ctx->_timestamp_cache.value->rfc1123, &gmt);
+         h2o_time2str_log(ctx->_timestamp_cache.value->log, ctx->_timestamp_cache.tv_at.tv_sec);
+     }
+diff --git a/lib/core/logconf.c b/lib/core/logconf.c
+index 4d79736cc..74c198ce7 100644
+--- a/lib/core/logconf.c
++++ b/lib/core/logconf.c
+@@ -597,8 +597,11 @@ char *h2o_log_request(h2o_logconf_t *logconf, h2o_req_t *req, size_t *len, char
+                 goto EmitNull;
+             {
+                 size_t bufsz, len;
+-                if (localt.tm_year == 0)
+-                    localtime_r(&req->processed_at.at.tv_sec, &localt);
++                if (localt.tm_year == 0) {
++                    /* work around pointer type collision in MingW */
++                    time_t tmp = req->processed_at.at.tv_sec;
++                    localtime_r(&tmp, &localt);
++                }
+                 for (bufsz = 128;; bufsz *= 2) {
+                     RESERVE(bufsz);
+                     if ((len = strftime(pos, bufsz, element->data.name.base, &localt)) != 0)
+diff --git a/lib/core/proxy.c b/lib/core/proxy.c
+index edb4baf9d..448dc103d 100644
+--- a/lib/core/proxy.c
++++ b/lib/core/proxy.c
+@@ -19,10 +19,14 @@
+  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  * IN THE SOFTWARE.
+  */
+-#include <netdb.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#ifdef _WIN32
++#include <ws2tcpip.h>
++#else
++#include <netdb.h>
+ #include <sys/socket.h>
++#endif
+ #include "picohttpparser.h"
+ #include "h2o.h"
+ #include "h2o/http1.h"
+@@ -79,7 +83,7 @@ static h2o_iovec_t rewrite_location(h2o_mem_pool_t *pool, const char *location,
+                       h2o_iovec_init(loc_parsed.path.base + match->path.len, loc_parsed.path.len - match->path.len));
+ 
+ NoRewrite:
+-    return (h2o_iovec_t){NULL};
++    return (h2o_iovec_t)H2O_IOVEC_NULL;
+ }
+ 
+ static h2o_iovec_t build_request_merge_headers(h2o_mem_pool_t *pool, h2o_iovec_t merged, h2o_iovec_t added, int seperator)
+@@ -136,7 +140,7 @@ static h2o_iovec_t build_request(h2o_req_t *req, int keepalive, int is_websocket
+     char remote_addr[NI_MAXHOST];
+     struct sockaddr_storage ss;
+     socklen_t sslen;
+-    h2o_iovec_t cookie_buf = {NULL}, xff_buf = {NULL}, via_buf = {NULL};
++    h2o_iovec_t cookie_buf = H2O_IOVEC_NULL, xff_buf = H2O_IOVEC_NULL, via_buf = H2O_IOVEC_NULL;
+     int preserve_x_forwarded_proto = req->conn->ctx->globalconf->proxy.preserve_x_forwarded_proto;
+     int emit_x_forwarded_headers = req->conn->ctx->globalconf->proxy.emit_x_forwarded_headers;
+     int emit_via_header = req->conn->ctx->globalconf->proxy.emit_via_header;
+@@ -202,7 +206,7 @@ static h2o_iovec_t build_request(h2o_req_t *req, int keepalive, int is_websocket
+     assert(offset <= buf.len);
+     if (req->entity.base != NULL || req_requires_content_length(req)) {
+         RESERVE(sizeof("content-length: " H2O_UINT64_LONGEST_STR) - 1);
+-        offset += sprintf(buf.base + offset, "content-length: %zu\r\n", req->entity.len);
++        offset += sprintf(buf.base + offset, "content-length: %zu\r\n", (size_t)req->entity.len);
+     }
+ 
+     /* rewrite headers if necessary */
+diff --git a/lib/core/request.c b/lib/core/request.c
+index 96aabb22d..65810ed91 100644
+--- a/lib/core/request.c
++++ b/lib/core/request.c
+@@ -22,7 +22,9 @@
+ #include <limits.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#ifndef _WIN32
+ #include <sys/uio.h>
++#endif
+ #include "h2o.h"
+ 
+ #ifndef IOV_MAX
+@@ -595,10 +597,16 @@ void h2o_req_log_error(h2o_req_t *req, const char *module, const char *fmt, ...)
+             p += 3;
+         }
+         *p++ = ':';
++        #ifdef _WIN32
++        write(2, prefix, p - prefix);
++        write(2, errbuf, errlen);
++        write(2, "\n", 1);
++        #else
+         /* use writev(2) to emit error atomically */
+         struct iovec vecs[] = {{prefix, p - prefix}, {errbuf, errlen}, {"\n", 1}};
+         H2O_BUILD_ASSERT(sizeof(vecs) / sizeof(vecs[0]) < IOV_MAX);
+         writev(2, vecs, sizeof(vecs) / sizeof(vecs[0]));
++        #endif
+     }
+ }
+ 
+@@ -611,8 +619,8 @@ void h2o_send_redirect(h2o_req_t *req, int status, const char *reason, const cha
+     }
+ 
+     static h2o_generator_t generator = {NULL, NULL};
+-    static const h2o_iovec_t body_prefix = {H2O_STRLIT("<!DOCTYPE html><TITLE>Moved</TITLE><P>The document has moved <A HREF=\"")};
+-    static const h2o_iovec_t body_suffix = {H2O_STRLIT("\">here</A>")};
++    static const h2o_iovec_t body_prefix = H2O_IOVEC_STRLIT("<!DOCTYPE html><TITLE>Moved</TITLE><P>The document has moved <A HREF=\"");
++    static const h2o_iovec_t body_suffix = H2O_IOVEC_STRLIT("\">here</A>");
+ 
+     /* build and send response */
+     h2o_iovec_t bufs[3];
+diff --git a/lib/core/token_table.h b/lib/core/token_table.h
+index ae26aa6c4..fa74f1e08 100644
+--- a/lib/core/token_table.h
++++ b/lib/core/token_table.h
+@@ -21,68 +21,68 @@
+  */
+ 
+ /* DO NOT EDIT! generated by tokens.pl */
+-h2o_token_t h2o__tokens[] = {{{H2O_STRLIT(":authority")}, 1, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT(":method")}, 2, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT(":path")}, 4, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT(":scheme")}, 6, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT(":status")}, 8, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("accept")}, 19, 0, 0, 0, 0, 1, 0},
+-                             {{H2O_STRLIT("accept-charset")}, 15, 0, 0, 0, 0, 1, 0},
+-                             {{H2O_STRLIT("accept-encoding")}, 16, 0, 0, 0, 0, 1, 0},
+-                             {{H2O_STRLIT("accept-language")}, 17, 0, 0, 0, 0, 1, 0},
+-                             {{H2O_STRLIT("accept-ranges")}, 18, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("access-control-allow-origin")}, 20, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("age")}, 21, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("allow")}, 22, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("authorization")}, 23, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("cache-control")}, 24, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("cache-digest")}, 0, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("connection")}, 0, 1, 1, 0, 1, 0, 0},
+-                             {{H2O_STRLIT("content-disposition")}, 25, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("content-encoding")}, 26, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("content-language")}, 27, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("content-length")}, 28, 0, 0, 1, 0, 0, 0},
+-                             {{H2O_STRLIT("content-location")}, 29, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("content-range")}, 30, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("content-type")}, 31, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("cookie")}, 32, 0, 0, 0, 0, 0, 1},
+-                             {{H2O_STRLIT("date")}, 33, 0, 1, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("etag")}, 34, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("expect")}, 35, 0, 0, 1, 0, 0, 0},
+-                             {{H2O_STRLIT("expires")}, 36, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("from")}, 37, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("host")}, 38, 0, 0, 1, 1, 0, 0},
+-                             {{H2O_STRLIT("http2-settings")}, 0, 1, 0, 0, 1, 0, 0},
+-                             {{H2O_STRLIT("if-match")}, 39, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("if-modified-since")}, 40, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("if-none-match")}, 41, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("if-range")}, 42, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("if-unmodified-since")}, 43, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("keep-alive")}, 0, 1, 1, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("last-modified")}, 44, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("link")}, 45, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("location")}, 46, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("max-forwards")}, 47, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("proxy-authenticate")}, 48, 1, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("proxy-authorization")}, 49, 1, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("range")}, 50, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("referer")}, 51, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("refresh")}, 52, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("retry-after")}, 53, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("server")}, 54, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("set-cookie")}, 55, 0, 0, 0, 0, 0, 1},
+-                             {{H2O_STRLIT("strict-transport-security")}, 56, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("te")}, 0, 1, 0, 0, 1, 0, 0},
+-                             {{H2O_STRLIT("transfer-encoding")}, 57, 1, 1, 1, 1, 0, 0},
+-                             {{H2O_STRLIT("upgrade")}, 0, 1, 1, 1, 1, 0, 0},
+-                             {{H2O_STRLIT("user-agent")}, 58, 0, 0, 0, 0, 1, 0},
+-                             {{H2O_STRLIT("vary")}, 59, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("via")}, 60, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("www-authenticate")}, 61, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("x-compress-hint")}, 0, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("x-forwarded-for")}, 0, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("x-reproxy-url")}, 0, 0, 0, 0, 0, 0, 0},
+-                             {{H2O_STRLIT("x-traffic")}, 0, 0, 0, 0, 0, 0, 0}};
++h2o_token_t h2o__tokens[] = {{H2O_IOVEC_STRLIT(":authority"), 1, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT(":method"), 2, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT(":path"), 4, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT(":scheme"), 6, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT(":status"), 8, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("accept"), 19, 0, 0, 0, 0, 1, 0},
++                             {H2O_IOVEC_STRLIT("accept-charset"), 15, 0, 0, 0, 0, 1, 0},
++                             {H2O_IOVEC_STRLIT("accept-encoding"), 16, 0, 0, 0, 0, 1, 0},
++                             {H2O_IOVEC_STRLIT("accept-language"), 17, 0, 0, 0, 0, 1, 0},
++                             {H2O_IOVEC_STRLIT("accept-ranges"), 18, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("access-control-allow-origin"), 20, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("age"), 21, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("allow"), 22, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("authorization"), 23, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("cache-control"), 24, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("cache-digest"), 0, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("connection"), 0, 1, 1, 0, 1, 0, 0},
++                             {H2O_IOVEC_STRLIT("content-disposition"), 25, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("content-encoding"), 26, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("content-language"), 27, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("content-length"), 28, 0, 0, 1, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("content-location"), 29, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("content-range"), 30, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("content-type"), 31, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("cookie"), 32, 0, 0, 0, 0, 0, 1},
++                             {H2O_IOVEC_STRLIT("date"), 33, 0, 1, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("etag"), 34, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("expect"), 35, 0, 0, 1, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("expires"), 36, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("from"), 37, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("host"), 38, 0, 0, 1, 1, 0, 0},
++                             {H2O_IOVEC_STRLIT("http2-settings"), 0, 1, 0, 0, 1, 0, 0},
++                             {H2O_IOVEC_STRLIT("if-match"), 39, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("if-modified-since"), 40, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("if-none-match"), 41, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("if-range"), 42, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("if-unmodified-since"), 43, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("keep-alive"), 0, 1, 1, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("last-modified"), 44, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("link"), 45, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("location"), 46, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("max-forwards"), 47, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("proxy-authenticate"), 48, 1, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("proxy-authorization"), 49, 1, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("range"), 50, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("referer"), 51, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("refresh"), 52, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("retry-after"), 53, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("server"), 54, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("set-cookie"), 55, 0, 0, 0, 0, 0, 1},
++                             {H2O_IOVEC_STRLIT("strict-transport-security"), 56, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("te"), 0, 1, 0, 0, 1, 0, 0},
++                             {H2O_IOVEC_STRLIT("transfer-encoding"), 57, 1, 1, 1, 1, 0, 0},
++                             {H2O_IOVEC_STRLIT("upgrade"), 0, 1, 1, 1, 1, 0, 0},
++                             {H2O_IOVEC_STRLIT("user-agent"), 58, 0, 0, 0, 0, 1, 0},
++                             {H2O_IOVEC_STRLIT("vary"), 59, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("via"), 60, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("www-authenticate"), 61, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("x-compress-hint"), 0, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("x-forwarded-for"), 0, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("x-reproxy-url"), 0, 0, 0, 0, 0, 0, 0},
++                             {H2O_IOVEC_STRLIT("x-traffic"), 0, 0, 0, 0, 0, 0, 0}};
+ size_t h2o__num_tokens = 62;
+ 
+ const h2o_token_t *h2o_lookup_token(const char *name, size_t len)
+diff --git a/lib/core/util.c b/lib/core/util.c
+index 50d2b2493..13c363ee1 100644
+--- a/lib/core/util.c
++++ b/lib/core/util.c
+@@ -63,6 +63,7 @@ static void free_accept_data(struct st_h2o_accept_data_t *data)
+     free(data);
+ }
+ 
++#ifndef H2O_NO_MEMCACHED
+ static struct {
+     h2o_memcached_context_t *memc;
+     unsigned expiration;
+@@ -97,15 +98,18 @@ void h2o_accept_setup_async_ssl_resumption(h2o_memcached_context_t *memc, unsign
+     async_resumption_context.expiration = expiration;
+     h2o_socket_ssl_async_resumption_init(async_resumption_get, async_resumption_new);
+ }
++#endif
+ 
+ void on_accept_timeout(h2o_timeout_entry_t *entry)
+ {
+     /* TODO log */
+     struct st_h2o_accept_data_t *data = H2O_STRUCT_FROM_MEMBER(struct st_h2o_accept_data_t, timeout, entry);
++    #ifndef H2O_NO_MEMCACHED
+     if (data->async_resumption_get_req != NULL) {
+         h2o_memcached_cancel_get(async_resumption_context.memc, data->async_resumption_get_req);
+         data->async_resumption_get_req = NULL;
+     }
++    #endif
+     h2o_socket_t *sock = data->sock;
+     free_accept_data(data);
+     h2o_socket_close(sock);
+@@ -158,7 +162,11 @@ static ssize_t parse_proxy_line(char *src, size_t len, struct sockaddr *sa, sock
+ 
+     char *p = src, *end = p + len;
+     void *addr;
++    #if _WIN32
++    u_short *port;
++    #else
+     in_port_t *port;
++    #endif
+ 
+     /* "PROXY "*/
+     EXPECT_CHAR('P');
+@@ -369,7 +377,7 @@ static void push_one_path(h2o_mem_pool_t *pool, h2o_iovec_vector_t *paths_to_pus
+     }
+ 
+     /* check scheme and authority if given URL contains either of the two, or if base is specified */
+-    h2o_url_t base = {input_scheme, input_authority, {NULL}, base_path, 65535};
++    h2o_url_t base = {input_scheme, input_authority, H2O_IOVEC_NULL, base_path, 65535};
+     if (base_scheme != NULL) {
+         base.scheme = base_scheme;
+         base.authority = *base_authority;
+@@ -528,7 +536,7 @@ h2o_iovec_t h2o_build_destination(h2o_req_t *req, const char *prefix, size_t pre
+             if (req->path.base[0] != '/' && next_unnormalized == 1) {
+                 next_unnormalized = 0;
+             }
+-            parts[num_parts++] = (h2o_iovec_t){req->path.base + next_unnormalized, req->path.len - next_unnormalized};
++            parts[num_parts++] = h2o_iovec_init(req->path.base + next_unnormalized, req->path.len - next_unnormalized);
+         }
+     }
+ 
+@@ -536,10 +544,7 @@ h2o_iovec_t h2o_build_destination(h2o_req_t *req, const char *prefix, size_t pre
+ }
+ 
+ /* h2-14 and h2-16 are kept for backwards compatibility, as they are often used */
+-#define ALPN_ENTRY(s)                                                                                                              \
+-    {                                                                                                                              \
+-        H2O_STRLIT(s)                                                                                                              \
+-    }
++#define ALPN_ENTRY(s) H2O_IOVEC_STRLIT(s)
+ #define ALPN_PROTOCOLS_CORE ALPN_ENTRY("h2"), ALPN_ENTRY("h2-16"), ALPN_ENTRY("h2-14")
+ #define NPN_PROTOCOLS_CORE                                                                                                         \
+     "\x02"                                                                                                                         \
+@@ -549,10 +554,10 @@ h2o_iovec_t h2o_build_destination(h2o_req_t *req, const char *prefix, size_t pre
+     "\x05"                                                                                                                         \
+     "h2-14"
+ 
+-static const h2o_iovec_t http2_alpn_protocols[] = {ALPN_PROTOCOLS_CORE, {NULL}};
++static const h2o_iovec_t http2_alpn_protocols[] = {ALPN_PROTOCOLS_CORE, H2O_IOVEC_NULL};
+ const h2o_iovec_t *h2o_http2_alpn_protocols = http2_alpn_protocols;
+ 
+-static const h2o_iovec_t alpn_protocols[] = {ALPN_PROTOCOLS_CORE, {H2O_STRLIT("http/1.1")}, {NULL}};
++static const h2o_iovec_t alpn_protocols[] = {ALPN_PROTOCOLS_CORE, H2O_IOVEC_STRLIT("http/1.1"), H2O_IOVEC_NULL};
+ const h2o_iovec_t *h2o_alpn_protocols = alpn_protocols;
+ 
+ const char *h2o_http2_npn_protocols = NPN_PROTOCOLS_CORE;
+diff --git a/lib/handler/access_log.c b/lib/handler/access_log.c
+index 4a7704174..d56c21add 100644
+--- a/lib/handler/access_log.c
++++ b/lib/handler/access_log.c
+@@ -22,12 +22,16 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <inttypes.h>
++#include <stdio.h>
++#include <stdlib.h>
++#ifdef _WIN32
++#include <ws2tcpip.h>
++#else
+ #include <netdb.h>
+ #include <netinet/in.h>
+ #include <spawn.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+ #include <sys/socket.h>
++#endif
+ #include <sys/types.h>
+ #include "h2o.h"
+ #include "h2o/serverutil.h"
+@@ -73,6 +77,7 @@ int h2o_access_log_open_log(const char *path)
+ {
+     int fd;
+ 
++    #ifndef _WIN32
+     if (path[0] == '|') {
+         int pipefds[2];
+         pid_t pid;
+@@ -96,7 +101,9 @@ int h2o_access_log_open_log(const char *path)
+         /* close the read side of the pipefds and return the write side */
+         close(pipefds[0]);
+         fd = pipefds[1];
+-    } else {
++    } else
++    #endif
++    {
+         if ((fd = open(path, O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC, 0644)) == -1) {
+             fprintf(stderr, "failed to open log file:%s:%s\n", path, strerror(errno));
+             return -1;
+diff --git a/lib/handler/configurator/headers_util.c b/lib/handler/configurator/headers_util.c
+index c05b9b7c2..56e47842e 100644
+--- a/lib/handler/configurator/headers_util.c
++++ b/lib/handler/configurator/headers_util.c
+@@ -87,7 +87,7 @@ static int on_config_header_unset(h2o_configurator_command_t *cmd, h2o_configura
+         h2o_configurator_errprintf(cmd, node, "invalid header name");
+         return -1;
+     }
+-    if (add_cmd(cmd, node, H2O_HEADERS_CMD_UNSET, name, (h2o_iovec_t){NULL}, self->get_commands(self->child)) != 0) {
++    if (add_cmd(cmd, node, H2O_HEADERS_CMD_UNSET, name, (h2o_iovec_t)H2O_IOVEC_NULL, self->get_commands(self->child)) != 0) {
+         if (!h2o_iovec_is_token(name))
+             free(name->base);
+         return -1;
+diff --git a/lib/handler/file.c b/lib/handler/file.c
+index 5d7c7a2a4..c0bc486ec 100644
+--- a/lib/handler/file.c
++++ b/lib/handler/file.c
+@@ -128,7 +128,7 @@ static void do_proceed(h2o_generator_t *_self, h2o_req_t *req)
+     rlen = self->bytesleft;
+     if (rlen > MAX_BUF_SIZE)
+         rlen = MAX_BUF_SIZE;
+-    while ((rret = pread(self->file.ref->fd, self->buf, rlen, self->file.off)) == -1 && errno == EINTR)
++    while ((rret = h2o_filecache_read_file(self->file.ref, self->buf, rlen, self->file.off)) == -1 && errno == EINTR)
+         ;
+     if (rret == -1) {
+         h2o_send(req, NULL, 0, H2O_SEND_STATE_ERROR);
+@@ -177,7 +177,7 @@ static void do_multirange_proceed(h2o_generator_t *_self, h2o_req_t *req)
+     rlen = self->bytesleft;
+     if (rlen + used_buf > MAX_BUF_SIZE)
+         rlen = MAX_BUF_SIZE - used_buf;
+-    while ((rret = pread(self->file.ref->fd, self->buf + used_buf, rlen, self->file.off)) == -1 && errno == EINTR)
++    while ((rret = h2o_filecache_read_file(self->file.ref, self->buf + used_buf, rlen, self->file.off)) == -1 && errno == EINTR)
+         ;
+     if (rret == -1)
+         goto Error;
+@@ -213,7 +213,7 @@ static h2o_send_state_t do_pull(h2o_generator_t *_self, h2o_req_t *req, h2o_iove
+ 
+     if (self->bytesleft < buf->len)
+         buf->len = self->bytesleft;
+-    while ((rret = pread(self->file.ref->fd, buf->base, buf->len, self->file.off)) == -1 && errno == EINTR)
++    while ((rret = h2o_filecache_read_file(self->file.ref, buf->base, buf->len, self->file.off)) == -1 && errno == EINTR)
+         ;
+     if (rret <= 0) {
+         buf->len = 0;
+@@ -237,7 +237,7 @@ static struct st_h2o_sendfile_generator_t *create_generator(h2o_req_t *req, cons
+ {
+     struct st_h2o_sendfile_generator_t *self;
+     h2o_filecache_ref_t *fileref;
+-    h2o_iovec_t content_encoding = (h2o_iovec_t){NULL};
++    h2o_iovec_t content_encoding = H2O_IOVEC_NULL;
+     unsigned gunzip = 0;
+ 
+     *is_dir = 0;
+diff --git a/lib/handler/proxy.c b/lib/handler/proxy.c
+index 1d87225e1..7de3c4ec5 100644
+--- a/lib/handler/proxy.c
++++ b/lib/handler/proxy.c
+@@ -19,7 +19,9 @@
+  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  * IN THE SOFTWARE.
+  */
++#ifndef H2O_NO_UNIX_SOCKETS
+ #include <sys/un.h>
++#endif
+ #include "h2o.h"
+ #include "h2o/socketpool.h"
+ 
+@@ -136,29 +138,37 @@ static void on_handler_dispose(h2o_handler_t *_self)
+ 
+ void h2o_proxy_register_reverse_proxy(h2o_pathconf_t *pathconf, h2o_url_t *upstream, h2o_proxy_config_vars_t *config)
+ {
+-    struct sockaddr_un sa;
++    #ifndef H2O_NO_UNIX_SOCKETS
+     const char *to_sa_err;
++    #endif
+     struct rp_handler_t *self = (void *)h2o_create_handler(pathconf, sizeof(*self));
+     self->super.on_context_init = on_context_init;
+     self->super.on_context_dispose = on_context_dispose;
+     self->super.dispose = on_handler_dispose;
+     self->super.on_req = on_req;
+-    to_sa_err = h2o_url_host_to_sun(upstream->host, &sa);
+     if (config->keepalive_timeout != 0) {
+         self->sockpool = h2o_mem_alloc(sizeof(*self->sockpool));
+         int is_ssl = upstream->scheme == &H2O_URL_SCHEME_HTTPS;
++        #ifndef H2O_NO_UNIX_SOCKETS
++        struct sockaddr_un sa;
++        to_sa_err = h2o_url_host_to_sun(upstream->host, &sa);
+         if (to_sa_err == h2o_url_host_to_sun_err_is_not_unix_socket) {
++        #endif
+             h2o_socketpool_init_by_hostport(self->sockpool, upstream->host, h2o_url_get_port(upstream), is_ssl,
+                                             SIZE_MAX /* FIXME */);
++        #ifndef H2O_NO_UNIX_SOCKETS
+         } else {
+             assert(to_sa_err == NULL);
+             h2o_socketpool_init_by_address(self->sockpool, (void *)&sa, sizeof(sa), is_ssl, SIZE_MAX /* FIXME */);
+         }
++        #endif
+     }
+     h2o_url_copy(NULL, &self->upstream, upstream);
++    #ifndef H2O_NO_UNIX_SOCKETS
+     if (to_sa_err) {
+         h2o_strtolower(self->upstream.host.base, self->upstream.host.len);
+     }
++    #endif
+     self->config = *config;
+     if (self->config.ssl_ctx != NULL)
+         SSL_CTX_up_ref(self->config.ssl_ctx);
+diff --git a/lib/handler/redirect.c b/lib/handler/redirect.c
+index c8b9c5086..9eb5d4552 100644
+--- a/lib/handler/redirect.c
++++ b/lib/handler/redirect.c
+@@ -68,7 +68,7 @@ static void redirect_internally(h2o_redirect_handler_t *self, h2o_req_t *req, h2
+         break;
+     default:
+         method = h2o_iovec_init(H2O_STRLIT("GET"));
+-        req->entity = (h2o_iovec_t){NULL};
++        req->entity = (h2o_iovec_t)H2O_IOVEC_NULL;
+         break;
+     }
+ 
+diff --git a/lib/handler/reproxy.c b/lib/handler/reproxy.c
+index 369386d27..2639045c6 100644
+--- a/lib/handler/reproxy.c
++++ b/lib/handler/reproxy.c
+@@ -47,7 +47,7 @@ static void on_setup_ostream(h2o_filter_t *self, h2o_req_t *req, h2o_ostream_t *
+         break;
+     default:
+         method = h2o_iovec_init(H2O_STRLIT("GET"));
+-        req->entity = (h2o_iovec_t){NULL};
++        req->entity = (h2o_iovec_t)H2O_IOVEC_NULL;
+         break;
+     }
+ 
+diff --git a/lib/handler/status.c b/lib/handler/status.c
+index 93befed3b..95f9ce823 100644
+--- a/lib/handler/status.c
++++ b/lib/handler/status.c
+@@ -95,7 +95,7 @@ static void send_response(struct st_h2o_status_collector_t *collector)
+     h2o_iovec_t resp[nr_resp];
+ 
+     memset(resp, 0, sizeof(resp[0]) * nr_resp);
+-    resp[cur_resp++] = (h2o_iovec_t){H2O_STRLIT("{\n")};
++    resp[cur_resp++] = h2o_iovec_init(H2O_STRLIT("{\n"));
+ 
+     int coma_removed = 0;
+     for (i = 0; i < req->conn->ctx->globalconf->statuses.size; i++) {
+@@ -110,7 +110,7 @@ static void send_response(struct st_h2o_status_collector_t *collector)
+             coma_removed = 1;
+         }
+     }
+-    resp[cur_resp++] = (h2o_iovec_t){H2O_STRLIT("\n}\n")};
++    resp[cur_resp++] = h2o_iovec_init(H2O_STRLIT("\n}\n"));
+ 
+     req->res.status = 200;
+     h2o_add_header(&req->pool, &req->res.headers, H2O_TOKEN_CONTENT_TYPE, NULL, H2O_STRLIT("text/plain; charset=utf-8"));
+@@ -213,7 +213,7 @@ static int on_req(h2o_handler_t *_self, h2o_req_t *req)
+     } else if (h2o_memis(local_path.base, local_path.len, H2O_STRLIT("/json"))) {
+         int ret;
+         /* "/json" maps to the JSON API */
+-        h2o_iovec_t status_list = {NULL, 0}; /* NULL means we'll show all statuses */
++        h2o_iovec_t status_list = H2O_IOVEC_NULL; /* NULL means we'll show all statuses */
+         if (req->query_at != SIZE_MAX && (req->path.len - req->query_at > 6)) {
+             if (h2o_memis(&req->path.base[req->query_at], 6, "?show=", 6)) {
+                 status_list = h2o_iovec_init(&req->path.base[req->query_at + 6], req->path.len - req->query_at - 6);
+diff --git a/lib/handler/status/durations.c b/lib/handler/status/durations.c
+index f011107bf..0e45e3eed 100644
+--- a/lib/handler/status/durations.c
++++ b/lib/handler/status/durations.c
+@@ -203,5 +203,5 @@ void h2o_duration_stats_register(h2o_globalconf_t *conf)
+ }
+ 
+ h2o_status_handler_t durations_status_handler = {
+-    {H2O_STRLIT("durations")}, durations_status_init, durations_status_per_thread, durations_status_final,
++    H2O_IOVEC_STRLIT("durations"), durations_status_init, durations_status_per_thread, durations_status_final,
+ };
+diff --git a/lib/handler/status/events.c b/lib/handler/status/events.c
+index e6ed0b7c6..64fb6546f 100644
+--- a/lib/handler/status/events.c
++++ b/lib/handler/status/events.c
+@@ -108,5 +108,5 @@ static h2o_iovec_t events_status_final(void *priv, h2o_globalconf_t *gconf, h2o_
+ }
+ 
+ h2o_status_handler_t events_status_handler = {
+-    {H2O_STRLIT("events")}, events_status_init, events_status_per_thread, events_status_final,
++    H2O_IOVEC_STRLIT("events"), events_status_init, events_status_per_thread, events_status_final,
+ };
+diff --git a/lib/handler/status/requests.c b/lib/handler/status/requests.c
+index 4854e4a1f..56c28c36c 100644
+--- a/lib/handler/status/requests.c
++++ b/lib/handler/status/requests.c
+@@ -123,7 +123,7 @@ static void *requests_status_init(void)
+         /* log format compilation error is an internal logic flaw, therefore we need not send the details to the client */
+         fprintf(stderr, "[lib/handler/status/requests.c] failed to compile log format: %s", errbuf);
+ 
+-    rsc->req_data = (h2o_iovec_t){NULL};
++    rsc->req_data = (h2o_iovec_t)H2O_IOVEC_NULL;
+     pthread_mutex_init(&rsc->mutex, NULL);
+ 
+     return rsc;
+@@ -131,7 +131,7 @@ static void *requests_status_init(void)
+ 
+ static h2o_iovec_t requests_status_final(void *priv, h2o_globalconf_t *gconf, h2o_req_t *req)
+ {
+-    h2o_iovec_t ret = {NULL};
++    h2o_iovec_t ret = H2O_IOVEC_NULL;
+     struct st_requests_status_ctx_t *rsc = priv;
+ 
+     if (rsc->logconf != NULL) {
+@@ -147,5 +147,5 @@ static h2o_iovec_t requests_status_final(void *priv, h2o_globalconf_t *gconf, h2
+ }
+ 
+ h2o_status_handler_t requests_status_handler = {
+-    {H2O_STRLIT("requests")}, requests_status_init, requests_status_per_thread, requests_status_final,
++    H2O_IOVEC_STRLIT("requests"), requests_status_init, requests_status_per_thread, requests_status_final,
+ };
+diff --git a/lib/http1.c b/lib/http1.c
+index 98c4e55ab..b765b8aae 100644
+--- a/lib/http1.c
++++ b/lib/http1.c
+@@ -323,7 +323,7 @@ static ssize_t fixup_request(struct st_h2o_http1_conn_t *conn, struct phr_header
+                              h2o_iovec_t *expect)
+ {
+     ssize_t entity_header_index;
+-    h2o_iovec_t connection = {NULL, 0}, host = {NULL, 0}, upgrade = {NULL, 0};
++    h2o_iovec_t connection = H2O_IOVEC_NULL, host = H2O_IOVEC_NULL, upgrade = H2O_IOVEC_NULL;
+ 
+     expect->base = NULL;
+     expect->len = 0;
+@@ -406,12 +406,12 @@ static void send_bad_request_on_complete(h2o_socket_t *sock, const char *err)
+ 
+ static void send_bad_request(struct st_h2o_http1_conn_t *conn)
+ {
+-    const static h2o_iovec_t resp = {H2O_STRLIT("HTTP/1.1 400 Bad Request\r\n"
++    const static h2o_iovec_t resp = H2O_IOVEC_STRLIT("HTTP/1.1 400 Bad Request\r\n"
+                                                 "Content-Type: text/plain; charset=utf-8\r\n"
+                                                 "Connection: close\r\n"
+                                                 "Content-Length: 11\r\n"
+                                                 "\r\n"
+-                                                "Bad Request")};
++                                                "Bad Request");
+ 
+     assert(conn->req.version == 0 && "request has not been parsed successfully");
+     assert(conn->req.http1_is_persistent == 0);
+@@ -421,7 +421,7 @@ static void send_bad_request(struct st_h2o_http1_conn_t *conn)
+ 
+ static void handle_incoming_request(struct st_h2o_http1_conn_t *conn)
+ {
+-    size_t inreqlen = conn->sock->input->size < H2O_MAX_REQLEN ? conn->sock->input->size : H2O_MAX_REQLEN;
++    size_t methodlen, pathlen, inreqlen = conn->sock->input->size < H2O_MAX_REQLEN ? conn->sock->input->size : H2O_MAX_REQLEN;
+     int reqlen, minor_version;
+     struct phr_header headers[H2O_MAX_HEADERS];
+     size_t num_headers = H2O_MAX_HEADERS;
+@@ -433,8 +433,10 @@ static void handle_incoming_request(struct st_h2o_http1_conn_t *conn)
+         conn->req.timestamps.request_begin_at = *h2o_get_timestamp(conn->super.ctx, NULL, NULL);
+ 
+     reqlen = phr_parse_request(conn->sock->input->bytes, inreqlen, (const char **)&conn->req.input.method.base,
+-                               &conn->req.input.method.len, (const char **)&conn->req.input.path.base, &conn->req.input.path.len,
++                               &methodlen, (const char **)&conn->req.input.path.base, &pathlen,
+                                &minor_version, headers, &num_headers, conn->_prevreqlen);
++    conn->req.input.method.len = methodlen;
++    conn->req.input.path.len = pathlen;
+     conn->_prevreqlen = inreqlen;
+ 
+     switch (reqlen) {
+@@ -455,7 +457,7 @@ static void handle_incoming_request(struct st_h2o_http1_conn_t *conn)
+                 return;
+             }
+             if (expect.base != NULL) {
+-                static const h2o_iovec_t res = {H2O_STRLIT("HTTP/1.1 100 Continue\r\n\r\n")};
++                static const h2o_iovec_t res = H2O_IOVEC_STRLIT("HTTP/1.1 100 Continue\r\n\r\n");
+                 h2o_socket_write(conn->sock, (void *)&res, 1, on_continue_sent);
+                 /* processing of the incoming entity is postponed until the 100 response is sent */
+                 h2o_socket_read_stop(conn->sock);
+@@ -477,7 +479,7 @@ static void handle_incoming_request(struct st_h2o_http1_conn_t *conn)
+         /* upgrade to HTTP/2 if the request starts with: PRI * HTTP/2 */
+         if (conn->super.ctx->globalconf->http1.upgrade_to_http2) {
+             /* should check up to the first octet that phr_parse_request returns an error */
+-            static const h2o_iovec_t HTTP2_SIG = {H2O_STRLIT("PRI * HTTP/2")};
++            static const h2o_iovec_t HTTP2_SIG = H2O_IOVEC_STRLIT("PRI * HTTP/2");
+             if (conn->sock->input->size >= HTTP2_SIG.len && memcmp(conn->sock->input->bytes, HTTP2_SIG.base, HTTP2_SIG.len) == 0) {
+                 h2o_accept_ctx_t accept_ctx = {conn->super.ctx, conn->super.hosts};
+                 h2o_socket_t *sock = conn->sock;
+@@ -638,7 +640,7 @@ static size_t flatten_headers(char *buf, h2o_req_t *req, const char *connection)
+                  * - https://www.igvita.com/2013/05/01/deploying-webp-via-accept-content-negotiation/
+                  */
+                 if (is_msie(req)) {
+-                    static h2o_header_t cache_control_private = {&H2O_TOKEN_CACHE_CONTROL->buf, NULL, {H2O_STRLIT("private")}};
++                    static h2o_header_t cache_control_private = {&H2O_TOKEN_CACHE_CONTROL->buf, NULL, H2O_IOVEC_STRLIT("private")};
+                     header = &cache_control_private;
+                 }
+             }
+@@ -660,11 +662,11 @@ static size_t flatten_headers(char *buf, h2o_req_t *req, const char *connection)
+ 
+ static void proceed_pull(struct st_h2o_http1_conn_t *conn, size_t nfilled)
+ {
+-    h2o_iovec_t buf = {conn->_ostr_final.pull.buf, nfilled};
++    h2o_iovec_t buf = h2o_iovec_init(conn->_ostr_final.pull.buf, nfilled);
+     h2o_send_state_t send_state;
+ 
+     if (buf.len < MAX_PULL_BUF_SZ) {
+-        h2o_iovec_t cbuf = {buf.base + buf.len, MAX_PULL_BUF_SZ - buf.len};
++        h2o_iovec_t cbuf = h2o_iovec_init(buf.base + buf.len, MAX_PULL_BUF_SZ - buf.len);
+         send_state = h2o_pull(&conn->req, conn->_ostr_final.pull.cb, &cbuf);
+         if (send_state == H2O_SEND_STATE_ERROR) {
+             conn->req.http1_is_persistent = 0;
+diff --git a/lib/http2/casper.c b/lib/http2/casper.c
+index 56e00d71f..e5c9a0ed7 100644
+--- a/lib/http2/casper.c
++++ b/lib/http2/casper.c
+@@ -56,7 +56,7 @@ h2o_http2_casper_t *h2o_http2_casper_create(unsigned capacity_bits, unsigned rem
+     memset(&casper->keys, 0, sizeof(casper->keys));
+     casper->capacity_bits = capacity_bits;
+     casper->remainder_bits = remainder_bits;
+-    casper->cookie_cache = (h2o_iovec_t){NULL};
++    casper->cookie_cache = (h2o_iovec_t)H2O_IOVEC_NULL;
+ 
+     return casper;
+ }
+@@ -89,7 +89,7 @@ int h2o_http2_casper_lookup(h2o_http2_casper_t *casper, const char *path, size_t
+ 
+     /* we need to set a new value */
+     free(casper->cookie_cache.base);
+-    casper->cookie_cache = (h2o_iovec_t){NULL};
++    casper->cookie_cache = (h2o_iovec_t)H2O_IOVEC_NULL;
+     h2o_vector_reserve(NULL, &casper->keys, casper->keys.size + 1);
+     memmove(casper->keys.entries + i + 1, casper->keys.entries + i, (casper->keys.size - i) * sizeof(casper->keys.entries[0]));
+     ++casper->keys.size;
+@@ -99,7 +99,7 @@ int h2o_http2_casper_lookup(h2o_http2_casper_t *casper, const char *path, size_t
+ 
+ void h2o_http2_casper_consume_cookie(h2o_http2_casper_t *casper, const char *cookie, size_t cookie_len)
+ {
+-    h2o_iovec_t binary = {NULL};
++    h2o_iovec_t binary = H2O_IOVEC_NULL;
+     uint64_t tiny_keys_buf[128], *keys = tiny_keys_buf;
+ 
+     /* check the name of the cookie */
+@@ -177,7 +177,7 @@ h2o_iovec_t h2o_http2_casper_get_cookie(h2o_http2_casper_t *casper)
+         return casper->cookie_cache;
+ 
+     if (casper->keys.size == 0)
+-        return (h2o_iovec_t){NULL};
++        return (h2o_iovec_t)H2O_IOVEC_NULL;
+ 
+     /* encode as binary */
+     char tiny_bin_buf[128], *bin_buf = tiny_bin_buf;
+diff --git a/lib/http2/connection.c b/lib/http2/connection.c
+index 2f8cad620..c7ba5d6b2 100644
+--- a/lib/http2/connection.c
++++ b/lib/http2/connection.c
+@@ -27,7 +27,7 @@
+ #include "h2o/http2.h"
+ #include "h2o/http2_internal.h"
+ 
+-static const h2o_iovec_t CONNECTION_PREFACE = {H2O_STRLIT("PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n")};
++static const h2o_iovec_t CONNECTION_PREFACE = H2O_IOVEC_STRLIT("PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n");
+ 
+ const h2o_http2_priority_t h2o_http2_default_priority = {
+     0, /* exclusive */
+@@ -43,7 +43,7 @@ const h2o_http2_settings_t H2O_HTTP2_SETTINGS_HOST = {
+     16384     /* max_frame_size */
+ };
+ 
+-static const h2o_iovec_t SETTINGS_HOST_BIN = {H2O_STRLIT("\x00\x00\x0c"     /* frame size */
++static const h2o_iovec_t SETTINGS_HOST_BIN = H2O_IOVEC_STRLIT("\x00\x00\x0c"/* frame size */
+                                                          "\x04"             /* settings frame */
+                                                          "\x00"             /* no flags */
+                                                          "\x00\x00\x00\x00" /* stream id */
+@@ -51,7 +51,7 @@ static const h2o_iovec_t SETTINGS_HOST_BIN = {H2O_STRLIT("\x00\x00\x0c"     /* f
+                                                          "\x00\x00\x00\x64" /* max_concurrent_streams = 100 */
+                                                          "\x00\x04"
+                                                          "\x01\x00\x00\x00" /* initial_window_size = 16777216 */
+-                                                         )};
++                                                         );
+ 
+ static __thread h2o_buffer_prototype_t wbuf_buffer_prototype = {{16}, {H2O_HTTP2_DEFAULT_OUTBUF_SIZE}};
+ 
+@@ -103,7 +103,7 @@ static void graceful_shutdown_resend_goaway(h2o_timeout_entry_t *entry)
+     for (node = ctx->http2._conns.next; node != &ctx->http2._conns; node = node->next) {
+         h2o_http2_conn_t *conn = H2O_STRUCT_FROM_MEMBER(h2o_http2_conn_t, _conns, node);
+         if (conn->state < H2O_HTTP2_CONN_STATE_HALF_CLOSED) {
+-            enqueue_goaway(conn, H2O_HTTP2_ERROR_NONE, (h2o_iovec_t){NULL});
++            enqueue_goaway(conn, H2O_HTTP2_ERROR_NONE, (h2o_iovec_t)H2O_IOVEC_NULL);
+             do_close_stragglers = 1;
+         }
+     }
+@@ -135,7 +135,7 @@ static void initiate_graceful_shutdown(h2o_context_t *ctx)
+         h2o_http2_conn_t *conn = H2O_STRUCT_FROM_MEMBER(h2o_http2_conn_t, _conns, node);
+         if (conn->state < H2O_HTTP2_CONN_STATE_HALF_CLOSED) {
+             h2o_http2_encode_goaway_frame(&conn->_write.buf, INT32_MAX, H2O_HTTP2_ERROR_NONE,
+-                                          (h2o_iovec_t){H2O_STRLIT("graceful shutdown")});
++                                          (h2o_iovec_t)H2O_IOVEC_STRLIT("graceful shutdown"));
+             h2o_http2_conn_request_write(conn);
+         }
+     }
+@@ -876,7 +876,7 @@ static int parse_input(h2o_http2_conn_t *conn)
+         } else if (ret < 0) {
+             if (ret != H2O_HTTP2_ERROR_PROTOCOL_CLOSE_IMMEDIATELY) {
+                 enqueue_goaway(conn, (int)ret,
+-                               err_desc != NULL ? (h2o_iovec_t){(char *)err_desc, strlen(err_desc)} : (h2o_iovec_t){NULL});
++                               err_desc != NULL ? h2o_iovec_init((char *)err_desc, strlen(err_desc)) : (h2o_iovec_t)H2O_IOVEC_NULL);
+             }
+             return close_connection(conn);
+         }
+@@ -1046,7 +1046,7 @@ void do_emit_writereq(h2o_http2_conn_t *conn)
+ 
+     if (conn->_write.buf->size != 0) {
+         /* write and wait for completion */
+-        h2o_iovec_t buf = {conn->_write.buf->bytes, conn->_write.buf->size};
++        h2o_iovec_t buf = h2o_iovec_init(conn->_write.buf->bytes, conn->_write.buf->size);
+         h2o_socket_write(conn->sock, &buf, 1, on_write_complete);
+         conn->_write.buf_in_flight = conn->_write.buf;
+         h2o_buffer_init(&conn->_write.buf, &wbuf_buffer_prototype);
+@@ -1290,7 +1290,7 @@ static void push_path(h2o_req_t *src_req, const char *abspath, size_t abspath_le
+     h2o_http2_stream_prepare_for_request(conn, stream);
+ 
+     /* setup request */
+-    stream->req.input.method = (h2o_iovec_t){H2O_STRLIT("GET")};
++    stream->req.input.method = (h2o_iovec_t)H2O_IOVEC_STRLIT("GET");
+     stream->req.input.scheme = src_stream->req.input.scheme;
+     stream->req.input.authority =
+         h2o_strdup(&stream->req.pool, src_stream->req.input.authority.base, src_stream->req.input.authority.len);
+diff --git a/lib/http2/hpack.c b/lib/http2/hpack.c
+index 4adb15cd7..f4e4679e2 100644
+--- a/lib/http2/hpack.c
++++ b/lib/http2/hpack.c
+@@ -902,7 +902,7 @@ void h2o_hpack_flatten_response(h2o_buffer_t **buf, h2o_hpack_header_table_t *he
+     if (server_name->len) {
+         dst = encode_header(header_table, dst, &H2O_TOKEN_SERVER->buf, server_name);
+     }
+-    h2o_iovec_t date_value = {ts->str->rfc1123, H2O_TIMESTR_RFC1123_LEN};
++    h2o_iovec_t date_value = h2o_iovec_init(ts->str->rfc1123, H2O_TIMESTR_RFC1123_LEN);
+     dst = encode_header(header_table, dst, &H2O_TOKEN_DATE->buf, &date_value);
+ #endif
+     size_t i;
+diff --git a/lib/http2/hpack_static_table.h b/lib/http2/hpack_static_table.h
+index 4c1243103..fae748537 100644
+--- a/lib/http2/hpack_static_table.h
++++ b/lib/http2/hpack_static_table.h
+@@ -23,65 +23,65 @@
+ /* automatically generated by tokens.pl */
+ 
+ static const struct st_h2o_hpack_static_table_entry_t h2o_hpack_static_table[61] = {
+-    { H2O_TOKEN_AUTHORITY, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_METHOD, { H2O_STRLIT("GET") } },
+-    { H2O_TOKEN_METHOD, { H2O_STRLIT("POST") } },
+-    { H2O_TOKEN_PATH, { H2O_STRLIT("/") } },
+-    { H2O_TOKEN_PATH, { H2O_STRLIT("/index.html") } },
+-    { H2O_TOKEN_SCHEME, { H2O_STRLIT("http") } },
+-    { H2O_TOKEN_SCHEME, { H2O_STRLIT("https") } },
+-    { H2O_TOKEN_STATUS, { H2O_STRLIT("200") } },
+-    { H2O_TOKEN_STATUS, { H2O_STRLIT("204") } },
+-    { H2O_TOKEN_STATUS, { H2O_STRLIT("206") } },
+-    { H2O_TOKEN_STATUS, { H2O_STRLIT("304") } },
+-    { H2O_TOKEN_STATUS, { H2O_STRLIT("400") } },
+-    { H2O_TOKEN_STATUS, { H2O_STRLIT("404") } },
+-    { H2O_TOKEN_STATUS, { H2O_STRLIT("500") } },
+-    { H2O_TOKEN_ACCEPT_CHARSET, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_ACCEPT_ENCODING, { H2O_STRLIT("gzip, deflate") } },
+-    { H2O_TOKEN_ACCEPT_LANGUAGE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_ACCEPT_RANGES, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_ACCEPT, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_ACCESS_CONTROL_ALLOW_ORIGIN, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_AGE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_ALLOW, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_AUTHORIZATION, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_CACHE_CONTROL, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_CONTENT_DISPOSITION, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_CONTENT_ENCODING, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_CONTENT_LANGUAGE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_CONTENT_LENGTH, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_CONTENT_LOCATION, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_CONTENT_RANGE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_CONTENT_TYPE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_COOKIE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_DATE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_ETAG, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_EXPECT, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_EXPIRES, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_FROM, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_HOST, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_IF_MATCH, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_IF_MODIFIED_SINCE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_IF_NONE_MATCH, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_IF_RANGE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_IF_UNMODIFIED_SINCE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_LAST_MODIFIED, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_LINK, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_LOCATION, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_MAX_FORWARDS, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_PROXY_AUTHENTICATE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_PROXY_AUTHORIZATION, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_RANGE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_REFERER, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_REFRESH, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_RETRY_AFTER, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_SERVER, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_SET_COOKIE, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_STRICT_TRANSPORT_SECURITY, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_TRANSFER_ENCODING, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_USER_AGENT, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_VARY, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_VIA, { H2O_STRLIT("") } },
+-    { H2O_TOKEN_WWW_AUTHENTICATE, { H2O_STRLIT("") } }
++    { H2O_TOKEN_AUTHORITY, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_METHOD, H2O_IOVEC_STRLIT("GET") },
++    { H2O_TOKEN_METHOD, H2O_IOVEC_STRLIT("POST") },
++    { H2O_TOKEN_PATH, H2O_IOVEC_STRLIT("/") },
++    { H2O_TOKEN_PATH, H2O_IOVEC_STRLIT("/index.html") },
++    { H2O_TOKEN_SCHEME, H2O_IOVEC_STRLIT("http") },
++    { H2O_TOKEN_SCHEME, H2O_IOVEC_STRLIT("https") },
++    { H2O_TOKEN_STATUS, H2O_IOVEC_STRLIT("200") },
++    { H2O_TOKEN_STATUS, H2O_IOVEC_STRLIT("204") },
++    { H2O_TOKEN_STATUS, H2O_IOVEC_STRLIT("206") },
++    { H2O_TOKEN_STATUS, H2O_IOVEC_STRLIT("304") },
++    { H2O_TOKEN_STATUS, H2O_IOVEC_STRLIT("400") },
++    { H2O_TOKEN_STATUS, H2O_IOVEC_STRLIT("404") },
++    { H2O_TOKEN_STATUS, H2O_IOVEC_STRLIT("500") },
++    { H2O_TOKEN_ACCEPT_CHARSET, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_ACCEPT_ENCODING, H2O_IOVEC_STRLIT("gzip, deflate") },
++    { H2O_TOKEN_ACCEPT_LANGUAGE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_ACCEPT_RANGES, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_ACCEPT, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_ACCESS_CONTROL_ALLOW_ORIGIN, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_AGE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_ALLOW, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_AUTHORIZATION, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_CACHE_CONTROL, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_CONTENT_DISPOSITION, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_CONTENT_ENCODING, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_CONTENT_LANGUAGE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_CONTENT_LENGTH, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_CONTENT_LOCATION, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_CONTENT_RANGE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_CONTENT_TYPE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_COOKIE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_DATE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_ETAG, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_EXPECT, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_EXPIRES, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_FROM, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_HOST, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_IF_MATCH, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_IF_MODIFIED_SINCE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_IF_NONE_MATCH, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_IF_RANGE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_IF_UNMODIFIED_SINCE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_LAST_MODIFIED, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_LINK, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_LOCATION, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_MAX_FORWARDS, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_PROXY_AUTHENTICATE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_PROXY_AUTHORIZATION, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_RANGE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_REFERER, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_REFRESH, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_RETRY_AFTER, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_SERVER, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_SET_COOKIE, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_STRICT_TRANSPORT_SECURITY, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_TRANSFER_ENCODING, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_USER_AGENT, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_VARY, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_VIA, H2O_IOVEC_STRLIT("") },
++    { H2O_TOKEN_WWW_AUTHENTICATE, H2O_IOVEC_STRLIT("") }
+ };
+diff --git a/lib/http2/http2_debug_state.c b/lib/http2/http2_debug_state.c
+index 3ef8de37f..e9245ddcd 100644
+--- a/lib/http2/http2_debug_state.c
++++ b/lib/http2/http2_debug_state.c
+@@ -62,7 +62,7 @@ static const char *get_debug_state_string(h2o_http2_stream_t *stream)
+     return NULL;
+ }
+ 
+-__attribute__((format(printf, 3, 4))) static void append_chunk(h2o_mem_pool_t *pool, h2o_iovec_vector_t *chunks, const char *fmt,
++__attribute__((format(gnu_printf, 3, 4))) static void append_chunk(h2o_mem_pool_t *pool, h2o_iovec_vector_t *chunks, const char *fmt,
+                                                                ...)
+ {
+     va_list args;
+diff --git a/misc/tokens.pl b/misc/tokens.pl
+index 1fcf173fa..1407f6681 100755
+--- a/misc/tokens.pl
++++ b/misc/tokens.pl
+@@ -94,7 +94,7 @@ print $fh render_mt(<< 'EOT', \@tokens, LICENSE)->as_string;
+ /* DO NOT EDIT! generated by tokens.pl */
+ h2o_token_t h2o__tokens[] = {
+ ? for my $i (0..$#$tokens) {
+-    { { H2O_STRLIT("<?= $tokens->[$i][0] ?>") }, <?= join(", ", map { $tokens->[$i][$_] } (1..$#{$tokens->[$i]})) ?> }<?= $i == $#$tokens ? '' : ',' ?>
++    { H2O_IOVEC_STRLIT("<?= $tokens->[$i][0] ?>"), <?= join(", ", map { $tokens->[$i][$_] } (1..$#{$tokens->[$i]})) ?> }<?= $i == $#$tokens ? '' : ',' ?>
+ ? }
+ };
+ size_t h2o__num_tokens = <?= scalar @$tokens ?>;
+@@ -135,7 +135,7 @@ print $fh render_mt(<< 'EOT', \@hpack, LICENSE)->as_string;
+ 
+ static const struct st_h2o_hpack_static_table_entry_t h2o_hpack_static_table[<?= scalar @$entries ?>] = {
+ ? for my $i (0..$#$entries) {
+-    { <?= normalize_name($entries->[$i][0]) ?>, { H2O_STRLIT("<?= $entries->[$i][1] || "" ?>") } }<?= $i == $#$entries ? "" : "," ?>
++    { <?= normalize_name($entries->[$i][0]) ?>, H2O_IOVEC_STRLIT("<?= $entries->[$i][1] || "" ?>") }<?= $i == $#$entries ? "" : "," ?>
+ ? }
+ };
+ EOT
+diff --git a/src/main.c b/src/main.c
+index af0867f29..7c801755d 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -43,7 +43,9 @@
+ #include <sys/socket.h>
+ #include <sys/time.h>
+ #include <sys/types.h>
++#ifndef H2O_NO_UNIX_SOCKETS
+ #include <sys/un.h>
++#endif
+ #include <sys/wait.h>
+ #include <openssl/crypto.h>
+ #include <openssl/err.h>
+@@ -886,6 +888,7 @@ Found:
+     return conf.server_starter.fds[i];
+ }
+ 
++#ifndef H2O_NO_UNIX_SOCKETS
+ static int open_unix_listener(h2o_configurator_command_t *cmd, yoml_t *node, struct sockaddr_un *sa)
+ {
+     struct stat st;
+@@ -948,6 +951,7 @@ ErrorExit:
+         close(fd);
+     return -1;
+ }
++#endif
+ 
+ static int open_tcp_listener(h2o_configurator_command_t *cmd, yoml_t *node, const char *hostname, const char *servname, int domain,
+                              int type, int protocol, struct sockaddr *addr, socklen_t addrlen)
+@@ -1067,6 +1071,7 @@ static int on_config_listen(h2o_configurator_command_t *cmd, h2o_configurator_co
+         return -1;
+     }
+ 
++    #ifndef H2O_NO_UNIX_SOCKETS
+     if (strcmp(type, "unix") == 0) {
+ 
+         /* unix socket */
+@@ -1110,7 +1115,9 @@ static int on_config_listen(h2o_configurator_command_t *cmd, h2o_configurator_co
+         if (listener->hosts != NULL && ctx->hostconf != NULL)
+             h2o_append_to_null_terminated_list((void *)&listener->hosts, ctx->hostconf);
+ 
+-    } else if (strcmp(type, "tcp") == 0) {
++    } else
++    #endif
++    if (strcmp(type, "tcp") == 0) {
+ 
+         /* TCP socket */
+         struct addrinfo hints, *res, *ai;
+@@ -1712,11 +1719,13 @@ static char **build_server_starter_argv(const char *h2o_cmd, const char *config_
+                 sprintf(newarg, "--port=%s:%s", host, serv);
+             }
+         } break;
++        #ifndef H2O_NO_UNIX_SOCKETS
+         case AF_UNIX: {
+             struct sockaddr_un *sa = (void *)&conf.listeners[i]->addr;
+             newarg = h2o_mem_alloc(sizeof("--path=") + strlen(sa->sun_path));
+             sprintf(newarg, "--path=%s", sa->sun_path);
+         } break;
++        #endif
+         }
+         h2o_vector_reserve(NULL, &args, args.size + 1);
+         args.entries[args.size++] = newarg;

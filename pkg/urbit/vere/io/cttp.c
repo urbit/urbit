@@ -1,18 +1,10 @@
 /* vere/cttp.c
 **
 */
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <uv.h>
-#include <errno.h>
-#include <openssl/ssl.h>
-#include <h2o.h>
-
 #include "all.h"
 #include "vere/vere.h"
+#include <openssl/ssl.h>
+#include <h2o.h>
 
 /* u3_csat: client connection state.
 */
@@ -985,8 +977,8 @@ _cttp_init_tls(void)
                              // SSL_OP_NO_TLSv1 | // XX test
                              SSL_OP_NO_COMPRESSION);
 
+  u3K.ssl_x509_f(SSL_CTX_get_cert_store(tls_u));
   SSL_CTX_set_verify(tls_u, SSL_VERIFY_PEER, 0);
-  SSL_CTX_set_default_verify_paths(tls_u);
   SSL_CTX_set_session_cache_mode(tls_u, SSL_SESS_CACHE_OFF);
   SSL_CTX_set_cipher_list(tls_u,
                           "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:"

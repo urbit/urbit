@@ -1,21 +1,5 @@
 /* vere/lord.c
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
-#include <sigsegv.h>
-#include <stdint.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <uv.h>
-#include <errno.h>
-
 #include "all.h"
 #include "vere/vere.h"
 #include "ur/hashcons.h"
@@ -156,6 +140,8 @@ _lord_stop(u3_lord* god_u)
 
   u3_newt_moat_stop(&god_u->out_u, _lord_stop_cb);
   u3_newt_mojo_stop(&god_u->inn_u, _lord_bail_noop);
+
+  uv_read_stop((uv_stream_t*)&(god_u->err_u));
 
   uv_close((uv_handle_t*)&god_u->cub_u, 0);
 
@@ -1044,6 +1030,42 @@ u3_lord_halt(u3_lord* god_u)
   _lord_stop(god_u);
 }
 
+/* _lord_serf_err_alloc(): libuv buffer allocator.
+*/
+static void
+_lord_serf_err_alloc(uv_handle_t* had_u, size_t len_i, uv_buf_t* buf)
+{
+  //  error/info messages as a rule don't exceed one line
+  //
+  *buf = uv_buf_init(c3_malloc(80), 80);
+}
+
+/* _lord_on_serf_err_cb(): subprocess stderr callback.
+*/
+static void
+_lord_on_serf_err_cb(uv_stream_t* pyp_u,
+              ssize_t             siz_i,
+              const uv_buf_t*     buf_u)
+{
+  if ( siz_i >= 0 ) {
+    //  serf used to write to 2 directly
+    //  this can't be any worse than that
+    //
+    u3_write_fd(2, buf_u->base, siz_i);
+  } else {
+    uv_read_stop(pyp_u);
+
+    if ( siz_i != UV_EOF ) {
+      u3l_log("lord: serf stderr: %s\r\n", uv_strerror(siz_i));
+    }
+  }
+
+  if ( buf_u->base != NULL ) {
+    c3_free(buf_u->base);
+  }
+}
+
+
 /* _lord_on_serf_exit(): handle subprocess exit.
 */
 static void
@@ -1123,6 +1145,7 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
     c3_c  key_c[256];
     c3_c  wag_c[11];
     c3_c  hap_c[11];
+    c3_c  cev_c[11];
     c3_i  err_i;
 
     sprintf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
@@ -1151,11 +1174,18 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
       arg_c[6] = "0";
     }
 
+    #if defined(U3_OS_mingw)
+    sprintf(cev_c, "%u", u3_Host.cev_u);
+    arg_c[7] = cev_c;
+    arg_c[8] = 0;
+    #else
     arg_c[7] = 0;
+    #endif
 
     uv_pipe_init(u3L, &god_u->inn_u.pyp_u, 0);
     uv_timer_init(u3L, &god_u->out_u.tim_u);
     uv_pipe_init(u3L, &god_u->out_u.pyp_u, 0);
+    uv_pipe_init(u3L, &god_u->err_u, 0);
 
     god_u->cod_u[0].flags = UV_CREATE_PIPE | UV_READABLE_PIPE;
     god_u->cod_u[0].data.stream = (uv_stream_t *)&god_u->inn_u;
@@ -1163,12 +1193,14 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
     god_u->cod_u[1].flags = UV_CREATE_PIPE | UV_WRITABLE_PIPE;
     god_u->cod_u[1].data.stream = (uv_stream_t *)&god_u->out_u;
 
-    god_u->cod_u[2].flags = UV_INHERIT_FD;
-    god_u->cod_u[2].data.fd = 2;
+    god_u->cod_u[2].flags = UV_CREATE_PIPE | UV_WRITABLE_PIPE;
+    god_u->cod_u[2].data.stream = (uv_stream_t *)&god_u->err_u;
 
     god_u->ops_u.stdio = god_u->cod_u;
     god_u->ops_u.stdio_count = 3;
 
+    // if any fds are inherited, libuv ignores UV_PROCESS_WINDOWS_HIDE*
+    god_u->ops_u.flags = UV_PROCESS_WINDOWS_HIDE;
     god_u->ops_u.exit_cb = _lord_on_serf_exit;
     god_u->ops_u.file = arg_c[0];
     god_u->ops_u.args = arg_c;
@@ -1178,6 +1210,8 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
 
       return 0;
     }
+
+    uv_read_start((uv_stream_t *)&god_u->err_u, _lord_serf_err_alloc, _lord_on_serf_err_cb);
   }
 
 #if defined(LORD_TRACE_JAM) || defined(LORD_TRACE_CUE)

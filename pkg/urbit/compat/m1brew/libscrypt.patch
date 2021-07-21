@@ -1,0 +1,17 @@
+diff --git a/Makefile b/Makefile
+index 783c537..3156ee2 100644
+--- a/Makefile
++++ b/Makefile
+@@ -12,10 +12,9 @@ LDFLAGS_EXTRA?=-Wl,-z,relro
+ 
+ all: reference
+ 
+-OBJS= crypto_scrypt-nosse.o sha256.o crypto-mcf.o b64.o crypto-scrypt-saltgen.o crypto_scrypt-check.o crypto_scrypt-hash.o slowequals.o
++OBJS= crypto_scrypt-nosse.o sha256.o crypto-mcf.o b64.o slowequals.o
+ 
+-libscrypt.so.0: $(OBJS) 
+-	$(CC) $(LDFLAGS) -shared -o libscrypt.so.0  $(OBJS) -lm -lc
++libscrypt.a: $(OBJS) 
+ 	ar rcs libscrypt.a  $(OBJS)
+ 
+ reference: libscrypt.so.0 main.o crypto_scrypt-hexconvert.o

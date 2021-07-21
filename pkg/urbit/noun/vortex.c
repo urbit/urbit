@@ -1,8 +1,8 @@
 /* g/v.c
 **
 */
-#include <stdio.h>
 #include "all.h"
+#include <stdio.h>
 
 #define _CVX_LOAD  4
 #define _CVX_PEEK 22
