@@ -225,6 +225,8 @@
     :: to read through and determine why a particular event is labeled with %.y or %.n
     :: and to make it easier to do future modifications
     ::
+    :: TODO: heavily comment this so its obviously correct. can use
+    :: comments on the right hand side since its narrow
     |=  =event-list  ^-  success-map
     =|  =success-map
     |^
@@ -607,23 +609,24 @@
   ::  it ought to test, and +success-map says whether or not that
   ::  event should succed or fail
   ::
+  ::
   ++  gen-rut-jar
     ^-  (jar @p event)
     =/  filter  ;:  cork
-                    (cury filter-owner %.n)
-                    (cury filter-proxy %own)
+                    (cury filter-owner %.y)
+                    (cury filter-proxy %spawn)
                     (cury filter-nonce %.y)
                     (cury filter-rank %planet)
-                    (cury filter-dominion %l1)
+                    ::(cury filter-dominion %spawn)
                     %-  cury
                     :-  filter-tx-type
-                    :*  %spawn
-                        %transfer-point
+                    :*  ::%spawn
+                        ::%transfer-point
                         %configure-keys
-                        %set-management-proxy
-                        %set-spawn-proxy  :: planets can set spawn proxy atm
-                        %set-transfer-proxy
-                        %escape
+                        ::%set-management-proxy
+                        ::%set-spawn-proxy  :: planets can set spawn proxy atm
+                        ::%set-transfer-proxy
+                        ::%escape
                         ~
                     ==
                 ==
@@ -906,6 +909,7 @@
       %transfer  nonce.transfer-proxy.own
     ==
   :: wrong nonce and/or wrong owner do not increment nonce
+  :: TODO: fix nonce calculation for e.g. %spawn proxy for planets
   =/  new-nonce  ?:  &(nonce.cur-event owner.cur-event)
                    +(cur-nonce)
                  cur-nonce
@@ -1105,10 +1109,87 @@
 ::  into one large test, but for now it will be easier to tell which one is failing
 ::  by splitting them up
 ::
-::  the following are L2 sponsorship tests. the syntax is test-red-X-Y-action. X is the
-::  layer of the sponsee, Y is the layer of the sponsor
+::  the following are L2 sponsorship tests. the syntax is test-galaxy-X-Y-action. X is the
+::  layer of the sponsee, Y is the layer of the sponsor.
 ::
-++  test-red-l2-l2-adopt  ^-  tang
+::  * on the left means all possible states, on the right it means no change.
+::  !! means that case can never happen per L1 contract
+::  L1-cancel can be triggered by "cancel escape" by the child or "reject" by the sponsor
+::  A1 and A2 are arbitrary but distinct ships one class above the main ship
+::  Event        | E_1 | E_2 | S_1 | S_2 | -> | E_1 | E_2 | S_1 | S_2
+::  L1-escape A1 | *   | *   | *   | *   | -> | A1  | A1  | *   | *
+::  L1-cancel A1 | ~   | *   | *   | *   | -> !! :: no cancel if not escaping
+::  L1-cancel A1 | A1  | *   | *   | *   | -> | ~   | ~   | *   | *
+::  L1-adopt  A1 | A1  | *   | *   | *   | -> | ~   | ~   | A1  | A2
+::  L1-adopt  A1 | ~   | *   | *   | *   | -> !! :: no adopt if not escaping
+::  L1-adopt  A1 | A2  | *   | *   | *   | -> !! :: no adopt if not escaping
+::  L1-detach A1 | *   | *   | A1  | A1  | -> | *   | *   | ~   | ~
+::  L1-detach A1 | *   | *   | A1  | A2  | -> | *   | *   | ~   | A2
+::  L1-detach A1 | *   | *   | A1  | ~   | -> | *   | *   | ~   | ~
+::  L2-escape A1 | *   | *   | *   | *   | -> | *   | A1  | *   | *
+::  L2-cancel A1 | *   | *   | *   | *   | -> | *   | ~   | *   | *
+::  L2-adopt  A1 | *   | A1  | *   | *   | -> | *   | ~   | *   | A1
+::  L2-adopt  A1 | *   | A2  | *   | *   | -> | *   | A2  | *   | *
+::  L2-adopt  A1 | *   | ~   | *   | *   | -> | *   | ~   | *   | *
+::  L2-reject A1 | *   | A1  | *   | *   | -> | *   | ~   | *   | *
+::  L2-reject A1 | *   | A2  | *   | *   | -> | *   | A2  | *   | *
+::  L2-reject A1 | *   | ~   | *   | *   | -> | *   | ~   | *   | *
+::  L2-detach A1 | *   | *   | *   | A1  | -> | *   | *   | *   | ~
+::  L2-detach A1 | *   | *   | *   | A2  | -> | *   | *   | *   | A2
+::  L2-detach A1 | *   | *   | *   | ~   | -> | *   | *   | *   | ~
+::
+::  the following test L1 escape actions
+::
+++  test-rut-l1-l1-escape-l1  ^-  tang
+::  L1-escape A1 | *   | *   | *   | *   | -> | A1  | A1  | *   | *
+  %+  expect-eq
+    !>  [[~ ~rigred] %.y ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
+++  test-rut-l1-l2-escape-l1  ^-  tang
+  ::  L1-escape A1 | *   | *   | *   | *   | -> | A1  | A1  | *   | *
+  :: An L1 ship can L1 escape to an L2 ship, but the L2 ship must
+  :: adopt on L2
+  %+  expect-eq
+    !>  [[~ ~losred] %.y ~rigrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state (escape-requested:l1 ~larsyx-mapmeg ~losred))
+    [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+::
+++  test-rut-l2-lx-escape-l1  ^-  tang
+  ::  L2 ships can't escape on L1
+  ;:  weld
+    ::  escaping to L1 ship
+    %+  expect-eq
+      !>  [~ %.y ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-rut-full state)
+      =^  f  state  (n state (escape-requested:l1 ~dovmul-mogryt ~rigred))
+      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+    ::
+    ::  escaping to L2 ship
+    %+  expect-eq
+      !>  [~ %.y ~losrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-rut-full state)
+      =^  f  state  (n state (escape-requested:l1 ~pinpun-pilsun ~losred))
+      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+  ==
+::
+++  test-red-l2-l2-adopt-l2-1  ^-  tang
+  ::  L2-adopt  A1 | *   | A1  | *   | *   | -> | *   | ~   | *   | A1
   =/  pp-adopt  [losred-own %adopt ~pinpun-pilsun]
   =/  pp-m-adopt  [losred-mgmt %adopt ~pinpun-pilsun]
   ::
@@ -1132,7 +1213,8 @@
       [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
   ==
 ::
-++  test-red-l1-l2-adopt
+++  test-red-l1-l2-adopt-l2-1
+  ::  L2-adopt  A1 | *   | A1  | *   | *   | -> | *   | ~   | *   | A1
   =/  lm-adopt  [losred-own %adopt ~larsyx-mapmeg]
   =/  lm-m-adopt  [losred-mgmt %adopt ~larsyx-mapmeg]
   ::
@@ -1156,7 +1238,8 @@
     [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
   ==
 ::
-++  test-red-l2-l1-adopt
+++  test-red-l2-l1-adopt-l2-1
+  ::  L2-adopt  A1 | *   | A1  | *   | *   | -> | *   | ~   | *   | A1
   =/  dm-adopt  [rigred-own %adopt ~dovmul-mogryt]
   =/  dm-m-adopt  [rigred-mgmt %adopt ~dovmul-mogryt]
   ::
@@ -1180,7 +1263,8 @@
       [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
   ==
 ::
-++  test-red-l1-l1-adopt
+++  test-red-l1-l1-adopt-l2-1
+  ::  L2-adopt  A1 | *   | A1  | *   | *   | -> | *   | ~   | *   | A1
   =/  rr-adopt  [rigred-own %adopt ~rabsum-ravtyd]
   =/  rr-m-adopt  [rigred-mgmt %adopt ~rabsum-ravtyd]
   ::
@@ -1204,8 +1288,64 @@
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
   ==
 ::
+++  test-red-l1-l1-adopt-l2-2
+  ::  L2-adopt  A1 | *   | A2  | *   | *   | -> | *   | A2  | *   | *
+  =/  rr-adopt  [losred-own %adopt ~rabsum-ravtyd]
+  =/  rr-m-adopt  [losred-mgmt %adopt ~rabsum-ravtyd]
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [[~ ~rigred] %.y ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %losred-key-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    ::
+    %+  expect-eq
+      !>  [[~ ~rigred] %.y ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-m-adopt %losred-mkey-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+  ==
+::
+++  test-rut-l1-l1-adopt-l2-3  ^-  tang
+  ::  L2-adopt  A1 | *   | ~   | *   | *   | -> | *   | ~   | *   | *
+  ::
+  =/  rr-h-detach  [holrut-own %detach ~rabsum-ravtyd]
+  =/  rr-h-m-detach  [holrut-mgmt %detach ~rabsum-ravtyd]
+  =/  rr-adopt  [losred-own %adopt ~rabsum-ravtyd]
+  =/  rr-m-adopt  [losred-mgmt %adopt ~rabsum-ravtyd]
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [~ %.n ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-rut-full state)
+      =^  f  state  (n state %bat q:(gen-tx 1 rr-h-detach %holrut-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %losred-key-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    ::
+    %+  expect-eq
+      !>  [~ %.n ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-rut-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-h-m-detach %holrut-mkey-0))
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-m-adopt %losred-mkey-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+  ==
+::
 ::  the following tests L2 %rejects
-++  test-red-l2-l2-reject  ^-  tang
+++  test-red-l2-l2-reject-l2-1  ^-  tang
+  ::  L2-reject A1 | *   | A1  | *   | *   | -> | *   | ~   | *   | *
   =/  pp-reject  [losred-own %reject ~pinpun-pilsun]
   =/  pp-m-reject  [losred-mgmt %reject ~pinpun-pilsun]
   ::
@@ -1229,7 +1369,8 @@
       [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
   ==
 ::
-++  test-red-l2-l1-reject  ^-  tang
+++  test-red-l2-l1-reject-l2-1  ^-  tang
+  ::  L2-reject A1 | *   | A1  | *   | *   | -> | *   | ~   | *   | *
   =/  dm-reject  [rigred-own %reject ~dovmul-mogryt]
   =/  dm-m-reject  [rigred-mgmt %reject ~dovmul-mogryt]
   ::
@@ -1253,7 +1394,8 @@
       [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
   ==
 ::
-++  test-red-l1-l2-reject  ^-  tang
+++  test-red-l1-l2-reject-l2-1  ^-  tang
+  ::  L2-reject A1 | *   | A1  | *   | *   | -> | *   | ~   | *   | *
   =/  lm-reject  [losred-own %reject ~larsyx-mapmeg]
   =/  lm-m-reject  [losred-mgmt %reject ~larsyx-mapmeg]
   ::
@@ -1277,7 +1419,8 @@
       [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
   ==
 ::
-++  test-red-l1-l1-reject  ^-  tang
+++  test-red-l1-l1-reject-l2-1  ^-  tang
+  ::  L2-reject A1 | *   | A1  | *   | *   | -> | *   | ~   | *   | *
   =/  rr-reject  [rigred-own %reject ~rabsum-ravtyd]
   =/  rr-m-reject  [rigred-mgmt %reject ~rabsum-ravtyd]
   ::
@@ -1300,10 +1443,135 @@
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-reject %rigred-mkey-0))
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
   ==
+++  test-red-l2-l2-reject-l2-2  ^-  tang
+  ::  L2-reject A1 | *   | A2  | *   | *   | -> | *   | A2  | *   | *
+  =/  pp-reject  [losrut-own %reject ~pinpun-pilsun]
+  =/  pp-m-reject  [losrut-mgmt %reject ~pinpun-pilsun]
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [[~ ~losred] %.y ~losrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 2 pp-reject %losrut-key-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+    ::
+    %+  expect-eq
+      !>  [[~ ~losred] %.y ~losrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 pp-m-reject %losrut-mkey-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+  ==
+::
+++  test-red-l2-l1-reject-l2-2  ^-  tang
+  ::  L2-reject A1 | *   | A2  | *   | *   | -> | *   | A2  | *   | *
+  =/  dm-reject  [holrut-own %reject ~dovmul-mogryt]
+  =/  dm-m-reject  [holrut-mgmt %reject ~dovmul-mogryt]
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [[~ ~rigred] %.y ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 1 dm-reject %holrut-key-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+    ::
+    %+  expect-eq
+      !>  [[~ ~rigred] %.y ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 dm-m-reject %holrut-mkey-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+  ==
+::
+++  test-red-l1-l2-reject-l2-2  ^-  tang
+  ::  L2-reject A1 | *   | A2  | *   | *   | -> | *   | A2  | *   | *
+  =/  lm-reject  [rigrut-own %reject ~larsyx-mapmeg]
+  =/  lm-m-reject  [rigrut-mgmt %reject ~larsyx-mapmeg]
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [[~ ~losred] %.y ~rigrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 lm-reject %rigrut-key-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+    ::
+    %+  expect-eq
+      !>  [[~ ~losred] %.y ~rigrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 lm-m-reject %rigrut-mkey-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+  ==
+::
+++  test-red-l1-l1-reject-l2-2  ^-  tang
+  ::  L2-reject A1 | *   | A2  | *   | *   | -> | *   | A2  | *   | *
+  =/  rr-reject  [holrut-own %reject ~rabsum-ravtyd]
+  =/  rr-m-reject  [holrut-mgmt %reject ~rabsum-ravtyd]
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [[~ ~rigred] %.y ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 1 rr-reject %holrut-key-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    ::
+    %+  expect-eq
+      !>  [[~ ~rigred] %.y ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-m-reject %holrut-mkey-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+  ==
+::
+++  test-red-l1-l1-reject-l2-3  ^-  tang
+  ::  L2-reject A1 | *   | ~   | *   | *   | -> | *   | ~   | *   | *
+  =/  rt-reject  [holrut-own %reject ~radres-tinnyl]
+  =/  rt-m-reject  [holrut-mgmt %reject ~radres-tinnyl]
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [~ %.y ~losrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 1 rt-reject %holrut-key-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~radres-tinnyl)
+    ::
+    %+  expect-eq
+      !>  [~ %.y ~losrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-red-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 rt-m-reject %holrut-mkey-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~radres-tinnyl)
+  ==
 ::
 ::  the following tests L2 %cancel-escape
 ::
-++  test-red-l2-l2-cancel-escape  ^-  tang
+++  test-red-l2-l2-cancel-escape-l2  ^-  tang
+  ::  L2-cancel A1 | *   | *   | *   | *   | -> | *   | ~   | *   | *
   =/  pp-cancel-escape  [[~pinpun-pilsun %own] %cancel-escape ~losred]
   =/  pp-m-cancel-escape  [[~pinpun-pilsun %manage] %cancel-escape ~losred]
   ::
@@ -1327,7 +1595,8 @@
       [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
   ==
 ::
-++  test-red-l2-l1-cancel-escape  ^-  tang
+++  test-red-l2-l1-cancel-escape-l2  ^-  tang
+  ::  L2-cancel A1 | *   | *   | *   | *   | -> | *   | ~   | *   | *
   =/  dm-cancel-escape  [[~dovmul-mogryt %own] %cancel-escape ~rigred]
   =/  dm-m-cancel-escape  [[~dovmul-mogryt %manage] %cancel-escape ~rigred]
   ::
@@ -1351,7 +1620,8 @@
       [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
   ==
 ::
-++  test-red-l1-l2-cancel-escape  ^-  tang
+++  test-red-l1-l2-cancel-escape-l2  ^-  tang
+  ::  L2-cancel A1 | *   | *   | *   | *   | -> | *   | ~   | *   | *
   =/  lm-cancel-escape  [[~larsyx-mapmeg %own] %cancel-escape ~losred]
   =/  lm-m-cancel-escape  [[~larsyx-mapmeg %manage] %cancel-escape ~losred]
   ::
@@ -1375,7 +1645,8 @@
       [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
   ==
 ::
-++  test-red-l1-l1-cancel-escape  ^-  tang
+++  test-red-l1-l1-cancel-escape-l2  ^-  tang
+  ::  L2-cancel A1 | *   | *   | *   | *   | -> | *   | ~   | *   | *
   =/  rr-cancel-escape  [[~rabsum-ravtyd %own] %cancel-escape ~rigred]
   =/  rr-m-cancel-escape  [[~rabsum-ravtyd %manage] %cancel-escape ~rigred]
   ::
@@ -1402,7 +1673,8 @@
 ::  the following tests L2 %detach. the format test-rut-X-Y-detach means
 ::  X is the layer of the sponsor, Y is the layer of the sponsee
 ::
-++  test-rut-l2-l2-detach  ^-  tang
+++  test-rut-l2-l2-detach-l2-1  ^-  tang
+  ::  L2-detach A1 | *   | *   | *   | A1  | -> | *   | *   | *   | ~
   =/  pp-detach  [losrut-own %detach ~pinpun-pilsun]
   =/  pp-m-detach  [losrut-mgmt %detach ~pinpun-pilsun]
   ::
@@ -1426,7 +1698,8 @@
       [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
   ==
 ::
-++  test-rut-l2-l1-detach  ^-  tang
+++  test-rut-l2-l1-detach-l2-1  ^-  tang
+  ::  L2-detach A1 | *   | *   | *   | A1  | -> | *   | *   | *   | ~
   =/  rt-detach  [losrut-own %detach ~radres-tinnyl]
   =/  rt-m-detach  [losrut-mgmt %detach ~radres-tinnyl]
   ::
@@ -1450,7 +1723,8 @@
       [escape.net sponsor.net]:(~(got by points.state) ~radres-tinnyl)
   ==
 ::
-++  test-rut-l1-l2-detach  ^-  tang
+++  test-rut-l1-l2-detach-l2-1  ^-  tang
+  ::  L2-detach A1 | *   | *   | *   | A1  | -> | *   | *   | *   | ~
   =/  dm-detach  [holrut-own %detach ~dovmul-mogryt]
   =/  dm-m-detach  [holrut-mgmt %detach ~dovmul-mogryt]
   ::
@@ -1474,7 +1748,8 @@
       [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
   ==
 ::
-++  test-rut-l1-l1-detach  ^-  tang
+++  test-rut-l1-l1-detach-l2-1  ^-  tang
+  ::  L2-detach A1 | *   | *   | *   | A1  | -> | *   | *   | *   | ~
   =/  lm-detach  [rigrut-own %detach ~larsyx-mapmeg]
   =/  lm-m-detach  [rigrut-mgmt %detach ~larsyx-mapmeg]
   ::
@@ -1496,6 +1771,64 @@
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 lm-m-detach %rigrut-mkey-0))
       [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+  ==
+::
+++  test-rut-l1-l1-detach-l2-2  ^-  tang
+  ::  L2-detach A1 | *   | *   | *   | A2  | -> | *   | *   | *   | A2
+  ::  makes sure that you cannot detach someone who your arent sponsoring
+  ::
+  =/  rr-detach  [rigrut-own %detach ~rabsum-ravtyd]
+  =/  rr-m-detach  [rigrut-mgmt %detach ~rabsum-ravtyd]
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [~ %.y ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-rut-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-detach %rigrut-key-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    ::
+    %+  expect-eq
+      !>  [~ %.y ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-rut-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-m-detach %rigrut-mkey-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+  ==
+::
+++  test-rut-l1-l1-detach-l2-3  ^-  tang
+  ::  L2-detach A1 | *   | *   | *   | ~   | -> | *   | *   | *   | ~
+  ::  makes sure detach on someone without a sponsor is a no-op
+  ::
+  =/  rr-h-detach  [holrut-own %detach ~rabsum-ravtyd]
+  =/  rr-h-m-detach  [holrut-mgmt %detach ~rabsum-ravtyd]
+  =/  rr-detach  [rigrut-own %detach ~rabsum-ravtyd]
+  =/  rr-m-detach  [rigrut-mgmt %detach ~rabsum-ravtyd]
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [~ %.n ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-rut-full state)
+      =^  f  state  (n state %bat q:(gen-tx 1 rr-h-detach %holrut-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-detach %rigrut-key-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    ::
+    %+  expect-eq
+      !>  [~ %.n ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-rut-full state)
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-h-m-detach %holrut-mkey-0))
+      =^  f  state  (n state %bat q:(gen-tx 0 rr-m-detach %rigrut-mkey-0))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
   ==
 ::
 ::  the following tests are for sponsorship actions between two L1 points
@@ -1548,6 +1881,47 @@
       =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
   ==
+::
+++  test-rut-l1-detach-1
+  ::  L1-detach A1 | *   | *   | A1  | A1  | -> | *   | *   | ~   | ~
+  ::  this checks that if you have the same sponsor on L1 and L2, then
+  ::  a L1 detach makes you lose both
+  ::
+  ::  ~rabsum-ravtyd is a L1 planet under a L1 star so would theortically
+  ::  already be sponsored by ~holrut on L1. this already appears in
+  ::  the L2 state as being sponsored by ~holrut, but we will go through
+  ::  with adopting ~rabsum-ravtyd on L2 anyways before the L1 detach
+  ::
+  =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~holrut]
+  =/  rr-adopt   [holrut-own %adopt ~rabsum-ravtyd]
+  %+  expect-eq
+    !>  [~ %.n ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 rr-escape %holrut-rr-key-0))
+    =^  f  state  (n state %bat q:(gen-tx 1 rr-adopt %holrut-key-0))
+    =^  f  state  (n state (lost-sponsor:l1 ~holrut ~rabsum-ravtyd))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::
+++  test-red-l1-detach-2
+  ::  this takes a L1 planet with L1 sponsor that acquires a L2 sponsor
+  ::  and is then detached by their L1 sponsor
+  ::
+  ::  L1-detach A1 | *   | *   | A1  | A2  | -> | *   | *   | ~   | A2
+  ::
+  =/  lm-adopt  [losred-own %adopt ~larsyx-mapmeg]
+  ::
+  %+  expect-eq
+    !>  [~ %.y ~losred]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-red-full state)
+    =^  f  state  (n state %bat q:(gen-tx 0 lm-adopt %losred-key-0))
+    =^  f  state  (n state (lost-sponsor:l1 ~rigrut ~larsyx-mapmeg))
+   [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
