@@ -133,7 +133,7 @@
   =/  pp-escape  [[~pinpun-pilsun %own] %escape ~losred]
   =/  dm-escape  [[~dovmul-mogryt %own] %escape ~rigred]
   =/  lm-escape  [[~larsyx-mapmeg %own] %escape ~losred]
-  =/  rm-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
+  =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
   =^  f1  state  (init-rut-full state)
   ::  TODO uncomment the below once %escape is moved to +test-red
   ::  =^  f21  state  (n state (owner-changed:l1 ~red (addr %red-key-0)))
@@ -142,7 +142,7 @@
   ::  =^  f24  state  (n state (owner-changed:l1 ~losred deposit-address:naive))
   ::  each pending escape will be followed by an adopt, reject, or cancel-escape
   ::  L1->L1
-  =^  f2  state  (n state %bat q:(gen-tx 0 rm-escape %holrut-rr-key-0))
+  =^  f2  state  (n state %bat q:(gen-tx 0 rr-escape %holrut-rr-key-0))
   ::  L2->L2
   =^  f3  state  (n state %bat q:(gen-tx 1 pp-escape %losrut-pp-key-0))
   ::  L2->L1
@@ -1845,15 +1845,14 @@
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
 ++  test-red-l2-escape-l1-adopt  ^-  tang
-  =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
+  ::  shouldn't be possible to accept a L2 escape with a L1 adopt
   %+  expect-eq
     !>  [[~ ~rigred] %.y ~holrut]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-red-full state)
-    =^  f  state  (n state %bat q:(gen-tx 1 rr-escape %holrut-rr-key-0))
-    =^  f  state  (n state (escape-accepted:l1 ~rigred ~rabsum-ravtyd))
+    =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
 ++  test-rut-l1-adoption-on-l2-wrong-key-or-nonce
@@ -1921,7 +1920,7 @@
     =^  f  state  (init-rut-full state)
     =^  f  state  (n state %bat q:(gen-tx 0 rr-escape %holrut-rr-key-0))
     =^  f  state  (n state %bat q:(gen-tx 1 rr-adopt %holrut-key-0))
-    =^  f  state  (n state (lost-sponsor:l1 ~holrut ~rabsum-ravtyd))
+    =^  f  state  (n state (lost-sponsor:l1 ~rabsum-ravtyd ~holrut))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
 ++  test-red-l1-detach-2
@@ -1929,6 +1928,7 @@
   ::  and is then detached by their L1 sponsor
   ::
   ::  L1-detach A1 | *   | *   | A1  | A2  | -> | *   | *   | ~   | A2
+  ::
   ::
   =/  lm-adopt  [losred-own %adopt ~larsyx-mapmeg]
   ::
@@ -1939,8 +1939,26 @@
     =|  =^state:naive
     =^  f  state  (init-red-full state)
     =^  f  state  (n state %bat q:(gen-tx 0 lm-adopt %losred-key-0))
-    =^  f  state  (n state (lost-sponsor:l1 ~rigrut ~larsyx-mapmeg))
+    =^  f  state  (n state (lost-sponsor:l1 ~larsyx-mapmeg ~rigrut))
    [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+::
+++  test-red-l1-detach-3
+  ::  L1-detach A1 | *   | *   | A1  | ~   | -> | *   | *   | ~   | ~
+  ::  Since we don't see L1 state explicitly, we can't really test
+  ::  this transition here. But I've included it for completeness sake
+  =/  rr-detach  [holrut-own %detach ~rabsum-ravtyd]
+  ::
+  %+  expect-eq
+    !>  [~ %.n ~holrut]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-rut-full state)
+    =^  f  state  (n state %bat q:(gen-tx 1 rr-detach %holrut-key-0))
+    =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~holrut))
+    =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~holrut))
+    =^  f  state  (n state (lost-sponsor:l1 ~rabsum-ravtyd ~holrut))
+    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
 ++  test-marbud-l2-change-keys-new  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
