@@ -1,5 +1,4 @@
 /-  *hood
-/+  version
 =,  clay
 =,  space:userlib
 =,  format
@@ -476,6 +475,7 @@
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
+    %kiln-nuke               =;(f (f !<(_+<.f vase)) poke-nuke)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
@@ -553,6 +553,15 @@
     =+  "can't mount bad path: {<pax>}"
     abet:(spam leaf+- ~)
   abet:(emit %pass /mount %arvo %c [%mont pot u.bem])
+::
+++  poke-nuke
+  |=  [=term desk=?]
+  =<  abet
+  ?.  desk
+    (emit %pass /nuke %arvo %g [%nuke term])
+  %-  emil
+  %+  turn  (get-apps-have our now term)
+  |=([=dude ?] [%pass /nuke %arvo %g [%nuke dude]])
 ::
 ++  poke-permission
   |=  [syd=desk pax=path pub=?]
