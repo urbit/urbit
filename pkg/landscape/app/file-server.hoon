@@ -331,7 +331,16 @@
   ==
 ::
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  (on-peek:def path)
+      [%x %clay %base %hash ~]
+    ::  TODO: have web client ask kiln directly
+    =/  ego  (scot %p our.bowl)
+    =/  wen  (scot %da now.bowl)
+    ``hash+!>(.^(@ %gx /[ego]/hood/[wen]/kiln/base-hash/noun))
+  ==
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 --
