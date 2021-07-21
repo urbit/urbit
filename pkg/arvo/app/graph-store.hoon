@@ -756,14 +756,10 @@
           (turn t.t.t.t.pax (cury slav %ud))
         =/  parent=index:store  (snip index)
         =/  node  (get-node graph parent)
-        ?:  ?|  ?&  ?=(~ node)
-                    ?=(^ parent)
-                ==
-              ::
-                ?&  ?=(^ parent)
-                    ?|  ?=(%oldest i.t.pax)
-                        ?=(%newest i.t.pax)
-            ==  ==  ==
+        ?:  ?&  ?=(~ node)
+                ?=(^ parent)
+                ?=(?(%older %newer) i.t.pax)
+            ==
           [~ ~]
         =/  children=graph:store
           ?~  node
