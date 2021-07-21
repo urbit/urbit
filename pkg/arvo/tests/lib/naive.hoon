@@ -614,7 +614,7 @@
     ^-  (jar @p event)
     =/  filter  ;:  cork
                     (cury filter-owner %.y)
-                    (cury filter-proxy %spawn)
+                    (cury filter-proxy %own)
                     (cury filter-nonce %.y)
                     (cury filter-rank %planet)
                     ::(cury filter-dominion %spawn)
@@ -1111,6 +1111,12 @@
 ::
 ::  the following are L2 sponsorship tests. the syntax is test-galaxy-X-Y-action. X is the
 ::  layer of the sponsee, Y is the layer of the sponsor.
+::
+::  Each row of the following table has one or more tests that cover it.
+::  The corresponding row is listed as a comment in that test. Thus
+::  you can grep for the line and fine the appropriate test. A few of
+::  the tests cannot be performed here - there are the ones marked by !!
+::  but we include what the tests would look like anyways as a comment
 ::
 ::  * on the left means all possible states, on the right it means no change.
 ::  !! means that case can never happen per L1 contract
@@ -1844,16 +1850,19 @@
     =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
-++  test-red-l2-escape-l1-adopt  ^-  tang
-  ::  shouldn't be possible to accept a L2 escape with a L1 adopt
-  %+  expect-eq
-    !>  [[~ ~rigred] %.y ~holrut]
-  ::
-    !>
-    =|  =^state:naive
-    =^  f  state  (init-red-full state)
-    =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
-    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::  The following test fails but only because ecliptic.sol only allows
+::  an adopt when its valid to do so.
+::
+::  ++  test-red-l2-escape-l1-adopt  ^-  tang
+::    ::  shouldn't be possible to accept a L2 escape with a L1 adopt
+::    %+  expect-eq
+::      !>  [[~ ~rigred] %.y ~holrut]
+::    ::
+::      !>
+::      =|  =^state:naive
+::      =^  f  state  (init-red-full state)
+::      =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
+::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
 ++  test-rut-l1-adoption-on-l2-wrong-key-or-nonce
   =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
@@ -1959,17 +1968,20 @@
     =^  f  state  (n state (lost-sponsor:l1 ~rabsum-ravtyd ~holrut))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
-++  test-rut-l1-cancel-1
-  ::  L1-cancel A1 | ~   | *   | *   | *   | -> !! :: no cancel if not escaping
-  ::  Note we're using ~rut so there are no initial escapes
-  %+  expect-eq
-    !>  ~
-  ::
-    !>
-    =|  =^state:naive
-    =^  f  state  (init-rut-full state)
-    =^  f  state  (n state (escape-canceled:l1 ~rabsum-ravtyd ~rigred))
-    escape.net:(~(got by points.state) ~rabsum-ravtyd)
+::  This test is commented since ecliptic.sol will not allow a cancel
+::  if not escaping, so this row of the table cannot be tested here.
+::  ++  test-rut-l1-cancel-1
+::    ::  L1-cancel A1 | ~   | *   | *   | *   | -> !! :: no cancel if not escaping
+::    ::  Note we're using ~rut so there are no initial escapes
+::    ::
+::    %+  expect-eq
+::      !>  ~
+::    ::
+::      !>
+::      =|  =^state:naive
+::      =^  f  state  (init-rut-full state)
+::      =^  f  state  (n state (escape-canceled:l1 ~rabsum-ravtyd ~rigred))
+::      escape.net:(~(got by points.state) ~rabsum-ravtyd)
 ::
 ++  test-rut-l1-cancel-2
   ::  L1-cancel A1 | A1  | *   | *   | *   | -> | ~   | ~   | *   | *
@@ -1995,51 +2007,32 @@
     =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
-++  test-rut-l1-adopt-2
-  ::  L1-adopt  A1 | ~   | *   | *   | *   | -> !! :: no adopt if not escaping
-  %+  expect-eq
-    !>  [~ %.y ~holrut]
-  ::
-    !>
-    =|  =^state:naive
-    =^  f  state  (init-rut-full state)
-    =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
-    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::  These commented out tests fail, but it is because L1 adopt is only
+::  accepted if the ecliptic.sol allows it. So these rows of the table
+::  cannot be tested here.
 ::
-++  test-rut-l1-adopt-3
-  ::  L1-adopt  A1 | A1  | *   | *   | *   | -> | ~   | ~   | A1  | A2
-  %+  expect-eq
-    !>  [[~ ~rigrut] %.y ~holrut]
-  ::
-    !>
-    =|  =^state:naive
-    =^  f  state  (init-rut-full state)
-    =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigrut))
-    =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
-    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
-::
-++  test-rut-l1-adopt-4
-  ::  Trying to L1 adopt a L1 planet with an L2 star
-  %+  expect-eq
-    !>  [~ %.y ~holrut]
-  ::
-    !>
-    =|  =^state:naive
-    =^  f  state  (init-rut-full state)
-    =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~losred))
-    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
-::
-++  test-rut-l1-adopt-5
-  ::  Trying to L1 adopt a L2 planet with an L1 star
-  %+  expect-eq
-    !>  [~ %.y ~losrut]
-  ::
-    !>
-    =|  =^state:naive
-    =^  f  state  (init-rut-full state)
-    =^  f  state  (n state (escape-accepted:l1 ~pinpun-pilsun ~rigred))
-    [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
-::
+::  ++  test-rut-l1-adopt-2
+::    ::  L1-adopt  A1 | ~   | *   | *   | *   | -> !! :: no adopt if not escaping
+::    %+  expect-eq
+::      !>  [~ %.y ~holrut]
+::    ::
+::      !>
+::      =|  =^state:naive
+::      =^  f  state  (init-rut-full state)
+::      =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
+::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::  ::
+::  ++  test-rut-l1-adopt-3
+::    :: L1-adopt  A1 | A2  | *   | *   | *   | -> !! :: no adopt if not escaping
+::    %+  expect-eq
+::      !>  [[~ ~rigrut] %.y ~holrut]
+::    ::
+::      !>
+::      =|  =^state:naive
+::      =^  f  state  (init-rut-full state)
+::      =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigrut))
+::      =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
+::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
 ++  test-marbud-l2-change-keys-whole-state  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
