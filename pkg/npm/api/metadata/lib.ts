@@ -1,7 +1,7 @@
 import { AppName, Path, Poke, uxToHex, PatpNoSig } from '../lib';
 import { Association, Metadata, MetadataUpdate, MetadataUpdateAdd, MetadataUpdateRemove, MetadataEditField, MetadataUpdateEdit } from './types';
 
-export const METADATA_UPDATE_VERSION = 1;
+export const METADATA_UPDATE_VERSION = 2;
 
 export const metadataAction = <T extends MetadataUpdate>(data: T, version: number = METADATA_UPDATE_VERSION): Poke<T> => ({
   app: 'metadata-push-hook',

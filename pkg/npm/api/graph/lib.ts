@@ -400,8 +400,8 @@ export const getNewest = (
   index = ''
 ): Scry => ({
   app: 'graph-store',
-  path: `/graph/${ship}/${name}/node/siblings` + 
-        `/newest/lone/${count}${encodeIndex(index)}`
+  path: `/graph/${ship}/${name}/node/siblings` +
+        `/newest/lone/${count}${encodeIndex(index)}/1`
 });
 
 /**
@@ -451,7 +451,7 @@ export const getYoungerSiblings = (
  */
 export const getShallowChildren = (ship: string, name: string, index = '') => ({
   app: 'graph-store',
-  path: `/graph/${ship}/${name}/node/children/lone/~/~/${encodeIndex(index)}`
+  path: `/graph/${ship}/${name}/node/children/lone/~/~${encodeIndex(index)}`
 });
 
 /**
@@ -468,12 +468,12 @@ export const getDeepOlderThan = (
   ship: string,
   name: string,
   count: number,
-  start?: string
+  start = ''
 ) => ({
   app: 'graph-store',
   path: `/graph/${ship}/${name}/node/siblings` +
-        `/${start ? 'older' : 'oldest'}` +
-        `/kith/${count}/${start ? decToUd(start) : '~'}`
+        `/${start.length > 0 ? 'older' : 'oldest'}` +
+        `/kith/${count}${encodeIndex(start)}`
 });
 
 /**
