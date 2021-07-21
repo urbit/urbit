@@ -1,5 +1,12 @@
 import React from 'react';
 import { Box, Button } from '@tlon/indigo-react';
+import { signMethods } from './send';
+
+const signMethodLabels = {
+  bridge: 'Sign with Bridge',
+  masterTicket: 'Sign with Master Ticket',
+  external: 'Sign Externally',
+};
 
 const Signer = ({
   signReady,
@@ -10,28 +17,20 @@ const Signer = ({
 }) => {
   return choosingSignMethod ? (
     <Box borderRadius="24px" backgroundColor="rgba(33, 157, 255, 0.2)">
-      <Button
-        border="none"
-        backgroundColor="transparent"
-        fontWeight="bold"
-        cursor="pointer"
-        color={signMethod === 'masterTicket' ? 'blue' : 'lightBlue'}
-        height="48px"
-        onClick={() => setSignMethod('masterTicket')}
-      >
-        Sign with Master Ticket
-      </Button>
-      <Button
-        border="none"
-        backgroundColor="transparent"
-        fontWeight="bold"
-        cursor="pointer"
-        color={signMethod === 'bridge' ? 'blue' : 'lightBlue'}
-        height="48px"
-        onClick={() => setSignMethod('bridge')}
-      >
-        Sign with Bridge
-      </Button>
+      {Object.keys(signMethods).map((method) => (
+        <Button
+          key={method}
+          border="none"
+          backgroundColor="transparent"
+          fontWeight="bold"
+          cursor="pointer"
+          color={signMethod === signMethods[method] ? 'blue' : 'lightBlue'}
+          height="48px"
+          onClick={() => setSignMethod(signMethods[method])}
+        >
+          {signMethodLabels[method]}
+        </Button>
+      ))}
     </Box>
   ) : (
     <Button
@@ -47,7 +46,7 @@ const Signer = ({
       border="none"
       style={{ cursor: signReady ? 'pointer' : 'default' }}
     >
-      {signMethod === 'bridge' ? 'Sign with Bridge' : 'Sign with Master Ticket'}
+      {signMethodLabels[signMethod]}
     </Button>
   );
 };
