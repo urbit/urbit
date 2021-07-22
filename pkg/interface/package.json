@@ -118,7 +118,7 @@
     "tsc:watch": "tsc --watch",
     "build:dev": "cross-env NODE_ENV=development webpack --config config/webpack.dev.js",
     "build:prod": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
-    "start": "webpack-dev-server --config config/webpack.dev.js",
+    "start": "cross-env NODE_ENV=serviceworker webpack-dev-server --config config/webpack.dev.js",
     "test": "tsc && jest",
     "jest": "jest",
     "storybook": "start-storybook -p 6006",

@@ -16,6 +16,7 @@ export async function bootstrapApi() {
       const { reconnect } = useLocalState.getState();
       try {
         await reconnect();
+        console.log('reconnecting');
       } catch (e) {
         console.log(e);
         console.log('onError');

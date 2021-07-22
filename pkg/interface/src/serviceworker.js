@@ -96,3 +96,139 @@ registerRoute(
     ]
   })
 );
+
+/**
+ * EventStream Proxy
+ */
+
+// Headers for SSE response
+const sseHeaders = {
+  'content-type': 'text/event-stream',
+  'Transfer-Encoding': 'chunked',
+  'Connection': 'keep-alive'
+};
+const encoder = new TextEncoder();
+// Map with server connections, where key - url, value - EventSource
+const serverConnection = {};
+// For each request opens only one server connection and use it for next requests with the same url
+const getServerConnection = (url) => {
+  if (!serverConnection.url) {
+    serverConnection.url = url;
+  }
+
+  if (!serverConnection.source) {
+    const source = new EventSource(serverConnection.url);
+    const listeners = [];
+    source.onmessage = ({ data, type, retry, lastEventId }) => {
+      const responseText = sseChunkData(data, type, retry, lastEventId);
+      const responseData = encoder.encode(responseText);
+      const parsedData = JSON.parse(data);
+
+      serverConnection.eventId = parseInt(parsedData.id, 10);
+      listeners.forEach(({ handle }) => handle(responseData));
+    };
+
+    serverConnection.source = source;
+    serverConnection.listeners = listeners;
+    serverConnection.count = 0;
+    serverConnection.eventId = 0;
+  }
+
+  return serverConnection;
+};
+
+registerRoute(
+  ({ url, request }) => {
+    return url.pathname.startsWith('/~channel') && request.method === 'PUT';
+  },
+  async ({ url, request }) => {
+    if (!serverConnection.url) {
+      serverConnection.url = url.href;
+    }
+
+    await fetch(serverConnection.url, request);
+
+    return new Response(undefined, {
+      status: 204
+    });
+  }
+);
+
+registerRoute(
+  ({ request }) => {
+    const { headers } = request;
+    return headers.get('Accept') === 'text/event-stream';
+  },
+  ({ url }) => {
+    const id = url.pathname.substr(url.pathname.lastIndexOf('/'));
+    const stream = new ReadableStream({
+      start: (controller) => {
+        const connection = getServerConnection(url.href);
+        connection.count += 1;
+        console.log('current', connection.count);
+
+        connection.listeners.push({
+          id,
+          handle: responseData => controller.enqueue(responseData)
+        });
+      }
+    });
+
+    console.log('initiating stream', serverConnection.url);
+    return new Response(stream, { headers: sseHeaders });
+  }
+);
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'GET_CHANNEL') {
+    self.clients.matchAll({
+      includeUncontrolled: true,
+      type: 'window'
+    }).then((clients) => {
+      const message = {
+        type: 'CURRENT_CHANNEL',
+        eventId: serverConnection.eventId,
+        channel: serverConnection.url
+      };
+
+      console.log(message);
+      if (clients && clients.length) {
+        // Send a response - the clients
+        // array is ordered by last focused
+        clients.forEach(client => client.postMessage(message));
+      }
+    });
+  }
+
+  if (event.data && event.data.type === 'CLOSE_STREAM') {
+    const url = event.data.url;
+    const id = event.data.id;
+    const connection = getServerConnection(url);
+
+    if (connection.count <= 1) {
+      connection.source.close();
+      delete serverConnection.url;
+      delete serverConnection.source;
+      delete serverConnection.listeners;
+      delete serverConnection.count;
+
+      navigator.sendBeacon(this.channelUrl, JSON.stringify([{
+        action: 'delete'
+      }]));
+      console.log('closing', url);
+    } else {
+      const index = connection.listeners.find(item => item.id === id);
+      connection.listeners.splice(index, 1);
+      connection.count -= 1;
+      console.log({ url, count: connection.count, listeners: connection.listeners });
+    }
+  }
+});
+
+// Function for formatting message to SSE response
+function sseChunkData(data, event, retry, id) {
+  return Object.entries({ event, id, data, retry })
+              .filter(([, value]) => ![undefined, null].includes(value))
+              .map(([key, value]) => `${key}: ${value}`)
+              .join('\n') + '\n\n';
+}
