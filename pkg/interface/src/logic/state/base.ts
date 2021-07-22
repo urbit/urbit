@@ -3,7 +3,7 @@ import { compose } from 'lodash/fp';
 import _ from 'lodash';
 import create, { GetState, SetState, UseStore } from 'zustand';
 import { persist } from 'zustand/middleware';
-import Urbit, { SubscriptionRequestInterface } from '@urbit/http-api';
+import Urbit, { SubscriptionRequestInterface, FatalError } from '@urbit/http-api';
 import { Poke } from '@urbit/api';
 import airlock from '~/logic/api';
 
@@ -102,7 +102,9 @@ export function createSubscription(app: string, path: string, e: (data: any) => 
     path,
     event: e,
     err: () => {},
-    quit: () => {}
+    quit: () => {
+      throw new FatalError('subscription clogged');
+    }
   };
   // TODO: err, quit handling (resubscribe?)
   return request;
