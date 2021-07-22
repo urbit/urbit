@@ -11,6 +11,15 @@ import useHarkState from '~/logic/state/hark';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { BackButton } from './BackButton';
 import { GroupChannelPicker } from './GroupChannelPicker';
+import {
+  setMentions,
+  setWatchOnSelf,
+  setDoNotDisturb,
+  listenGraph,
+  listenGroup,
+  ignoreGraph,
+  ignoreGroup
+} from '@urbit/api';
 
 interface FormSchema {
   mentions: boolean;
@@ -36,32 +45,24 @@ export function NotificationPreferences() {
 
   const onSubmit = useCallback(async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
     try {
-      const {
-        setMentions,
-        listenGraph,
-        listenGroup,
-        ignoreGraph,
-        ignoreGroup,
-        setDoNotDisturb,
-        watchOnSelf
-      } = useHarkState.getState();
+      const { poke } = useHarkState.getState();
       if (values.mentions !== graphConfig.mentions) {
-        setMentions(values.mentions);
+        poke(setMentions(values.mentions));
       }
       if (values.watchOnSelf !== graphConfig.watchOnSelf) {
-        watchOnSelf(values.watchOnSelf);
+        poke(setWatchOnSelf(values.watchOnSelf));
       }
       if (values.dnd !== dnd && !_.isUndefined(values.dnd)) {
-        setDoNotDisturb(values.dnd);
+        poke(setDoNotDisturb(values.dnd));
       }
       _.forEach(values.graph, (listen: boolean, graph: string) => {
         if(listen !== isWatching(graphConfig, graph)) {
-          (listen ? listenGraph : ignoreGraph)(graph, '/');
+          poke((listen ? listenGraph : ignoreGraph)(graph, '/'));
         }
       });
       _.forEach(values.groups, (listen: boolean, group: string) => {
         if(listen !== groupConfig.includes(group)) {
-          (listen ? listenGroup : ignoreGroup)(group);
+          poke((listen ? listenGroup : ignoreGroup)(group));
         }
       });
       actions.setStatus({ success: null });

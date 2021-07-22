@@ -5,15 +5,9 @@ import {
   NotifIndex,
   readNote,
   Timebox,
-  Unreads,
-  setMentions,
-  listenGroup,
-  ignoreGroup,
-  listenGraph,
-  ignoreGraph,
-  setWatchOnSelf,
-  setDoNotDisturb
+  Unreads
 } from '@urbit/api';
+import { Poke } from '@urbit/http-api';
 import { patp2dec } from 'urbit-ob';
 import _ from 'lodash';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
@@ -29,6 +23,7 @@ export const HARK_FETCH_MORE_COUNT = 3;
 export interface HarkState {
   archivedNotifications: BigIntOrderedMap<Timebox>;
   doNotDisturb: boolean;
+  poke: (poke: Poke<any>) => Promise<void>;
   getMore: () => Promise<boolean>;
   getSubset: (offset: number, count: number, isArchive: boolean) => Promise<void>;
   // getTimeSubset: (start?: Date, end?: Date) => Promise<void>;
@@ -41,13 +36,6 @@ export interface HarkState {
   archive: (index: NotifIndex, time?: BigInteger) => Promise<void>;
   readNote: (index: NotifIndex) => Promise<void>;
   readCount: (resource: string, index?: string) => Promise<void>;
-  setMentions: (mentions: boolean) => Promise<void>;
-  listenGraph: (graph: string, index: string) => Promise<void>;
-  ignoreGraph: (graph: string, index: string) => Promise<void>;
-  listenGroup: (group: string) => Promise<void>;
-  ignoreGroup: (group: string) => Promise<void>;
-  watchOnSelf: (watch: boolean) => Promise<void>;
-  setDoNotDisturb: (dnd: boolean) => Promise<void>;
 }
 
 const useHarkState = createState<HarkState>(
@@ -56,6 +44,9 @@ const useHarkState = createState<HarkState>(
     archivedNotifications: new BigIntOrderedMap<Timebox>(),
     doNotDisturb: false,
     unreadNotes: [],
+    poke: async (poke: Poke<any>) => {
+      await pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
     readCount: async (resource: string, index?: string) => {
       const poke = markCountAsRead(resource, index);
       await pokeOptimisticallyN(useHarkState, poke, [reduce]);
@@ -81,34 +72,6 @@ const useHarkState = createState<HarkState>(
         path: `/recent/${where}/${offset}/${count}`
       });
       reduceState(useHarkState, harkUpdate, [reduce]);
-    },
-    setMentions: async (mentions) => {
-      const poke = setMentions(mentions);
-      pokeOptimisticallyN(useHarkState, poke, [reduce]);
-    },
-    listenGroup: async (group) => {
-      const poke = listenGroup(group);
-      pokeOptimisticallyN(useHarkState, poke, [reduce]);
-    },
-    ignoreGroup: async (group) => {
-      const poke = ignoreGroup(group);
-      pokeOptimisticallyN(useHarkState, poke, [reduce]);
-    },
-    listenGraph: async (graph, index) => {
-      const poke = listenGraph(graph, index);
-      pokeOptimisticallyN(useHarkState, poke, [reduce]);
-    },
-    ignoreGraph: async (graph, index) => {
-      const poke = ignoreGraph(graph, index);
-      pokeOptimisticallyN(useHarkState, poke, [reduce]);
-    },
-    watchOnSelf: async (watch) => {
-      const poke = setWatchOnSelf(watch);
-      pokeOptimisticallyN(useHarkState, poke, [reduce]);
-    },
-    setDoNotDisturb: async (dnd) => {
-      const poke = setDoNotDisturb(dnd);
-      pokeOptimisticallyN(useHarkState, poke, [reduce]);
     },
     notifications: new BigIntOrderedMap<Timebox>(),
     notificationsCount: 0,
