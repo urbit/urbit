@@ -140,10 +140,10 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMo
     const focusedTag = document.activeElement?.nodeName?.toLowerCase();
     const shouldCapture = !(focusedTag === 'textarea' || focusedTag === 'input' || e.metaKey || e.ctrlKey);
     if(/^[a-z]|[A-Z]$/.test(e.key) && shouldCapture) {
-      editor.focus();
+      editorRef.current.focus();
     }
     if(e.key === 'Escape') {
-      editor.getInputField().blur();
+      editorRef.current.getInputField().blur();
     }
   }
 
