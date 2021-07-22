@@ -1,6 +1,10 @@
+::  dice: structures for L2 Rollers
+::
 /+  naive, ethereum
 ::
 |%
++$  owners  (jug address:naive ship)
+::
 +$  roller-config
   $:  next-batch=time
       frequency=@dr

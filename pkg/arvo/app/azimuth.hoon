@@ -1,5 +1,11 @@
-/-  eth-watcher
-/+  ethereum, azimuth, naive, default-agent, verb, dbug
+/-  eth-watcher, *dice
+/+  ethereum,
+    azimuth,
+    naive,
+    dice,
+    default-agent,
+    verb,
+    dbug
 /*  snap  %eth-logs  /app/azimuth/logs/eth-logs
 ::
 =/  last-snap  ::  maybe just use the last one?
@@ -30,7 +36,6 @@
 +$  tagged-diff  [=id:block diff:naive]
 ::
 +$  network  ?(%mainnet %ropsten %local)
-+$  owners   (jug address:naive [ship point:naive])
 --
 ::
 |%
@@ -69,35 +74,6 @@
   ?~  data  *@ux
   ?:  =(data '0x')  *@ux
   (hex-to-num:ethereum data)
-::  TODO: move to /lib
-::
-++  update-ownership
-  |=  [=diff:naive own=owners old=(unit point:naive) new=point:naive]
-  ^+  own
-  ?.  ?=([%point *] diff)  own
-  =*  event  +>.diff
-  =;  [to=@ux from=@ux]
-    =?  own  !=(from 0x0)
-      ?>  ?=(^ old)
-      (~(del ju own) from [ship.diff u.old])
-    ?:  =(to 0x0)  own
-    (~(put ju own) to [ship.diff new])
-  ?+    -.event  [0x0 0x0]
-      %owner
-    [+.event ?~(old 0x0 address.owner.own.u.old)]
-  ::
-      %spawn-proxy
-    [+.event ?~(old 0x0 address.spawn-proxy.own.u.old)]
-  ::
-      %management-proxy
-    [+.event ?~(old 0x0 address.management-proxy.own.u.old)]
-  ::
-      %voting-proxy
-    [+.event ?~(old 0x0 address.voting-proxy.own.u.old)]
-  ::
-      %transfer-proxy
-    [+.event ?~(old 0x0 address.transfer-proxy.own.u.old)]
-  ==
 ::
 ++  run-logs
   |=  [state=app-state logs=(list event-log:rpc:ethereum)]
@@ -125,14 +101,11 @@
       %|  ((slog 'naive-fail' p.res) `nas.state)
     ==
   =.  own.state
-    %+  roll  raw-effects
-    |=  [=diff:naive own=_own.state]
-    ^+  own
-    =,  orm:naive
-    ?.  ?=([%point *] diff)  own
-    =/  old=(unit point:naive)  (get points.nas.state ship.diff)
-    =/  new=point:naive  (need (get points.new-nas ship.diff))
-    (update-ownership diff own old new)
+    =,  dice
+    ?.  =(contract address.i.logs)
+      =<  own
+      (apply-effects raw-effects nas.state own.state chain-id)
+    (update-ownership raw-effects nas.state new-nas own.state)
   =.  nas.state  new-nas
   =/  effects-1
     =/  =id:block  [block-hash block-number]:u.mined.i.logs

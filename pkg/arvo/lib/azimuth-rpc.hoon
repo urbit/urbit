@@ -1,6 +1,6 @@
 ::  azimuth-rpc: command parsing and utilities
 ::
-/-  rpc=json-rpc, *aggregator
+/-  rpc=json-rpc, *dice
 /+  naive, json-rpc, lib=naive-transactions, *fake-roller
 ::
 =>  ::  Utilities
@@ -246,7 +246,6 @@
         |=  roller-tx
         ^-  json
         %-  pairs
-        :: [status=tx-status hash=keccak type=l2-tx]
         :~  ['status' s+status.status]
             ['hash' s+(crip "0x{((x-co:co 20) hash)}")]
             ['type' s+type]
@@ -418,7 +417,6 @@
 ++  get-points
   |=  [id=@t params=(map @t json) scry=$-(@ux (list [@p point:naive]))]
   ^-  response:rpc
-  ~&  ~(wyt by params)
   ?.  =(~(wyt by params) 1)
     ~(params error:json-rpc id)
   ?~  address=(address:from-json params)
