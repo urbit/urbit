@@ -160,7 +160,7 @@
       %get-nonce               `(nonce id +.params nonce:scry)
       %get-history             `(history id +.params addr:history:scry)
       %get-roller-config       `(get-config id +.params config:scry)
-      %unsign-transaction      `(unsign-transaction id +.params chain-id:scry)
+      %hash-transaction        `(hash-transaction id +.params chain-id:scry)
     ==
   --
 ::

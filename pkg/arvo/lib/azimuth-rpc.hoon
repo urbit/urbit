@@ -556,7 +556,7 @@
     ~(params error:json-rpc id)
   [%result id (config:to-json roller-config)]
 ::
-++  unsign-transaction
+++  hash-transaction
   |=  [id=@t params=(map @t json) chain-id=@]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 4)
@@ -574,5 +574,5 @@
   ?~  tx  ~(parse error:json-rpc id)
   :+  %result  id
   %-  l2-hash:to-json
-  (unsign-tx:lib u.nonce chain-id (gen-tx-octs:lib u.tx))
+  (unsigned-tx:lib u.nonce chain-id (gen-tx-octs:lib u.tx))
 --

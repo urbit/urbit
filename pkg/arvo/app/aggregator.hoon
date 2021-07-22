@@ -171,10 +171,11 @@
       [%x %history @ ~]     (history i.t.t.path)
       [%x %nonce @ @ ~]     (nonce i.t.t.path i.t.t.t.path)
       [%x %spawned @ ~]     (spawned i.t.t.path)
-      [%x %next-batch ~]    ``noun+!>(next-batch)
+      [%x %next-batch ~]    ``atom+!>(next-batch)
       [%x %point @ ~]       (point i.t.t.path)
       [%x %points @ ~]      (points i.t.t.path)
       [%x %config ~]        config
+      [%x %chain-id ~]      ``atom+!>(chain-id)
     ==
     ::
     ++  pending-by
@@ -570,31 +571,14 @@
       %.  [address.tx roller-tx(status [%failed ~])]
       ~(put ju (~(del ju history.state) address.tx roller-tx))
     $(txs t.txs, local (~(put in local) hash))
-  ::  TODO: replace with (refactored) /lib/dice
   ::
   ++  try-apply
     |=  [nas=^state:naive force=? =raw-tx:naive]
-    ^-  [success=? _state]
-    =/  cache-nas  nas
-    =/  chain-t=@t  (ud-to-ascii:naive chain-id)
-    ?.  (verify-sig-and-nonce:naive verifier:lib chain-t nas raw-tx)
-      ~&  [%verify-sig-and-nonce %failed]
-      [force state]
-    =^  *  points.nas
-      (increment-nonce:naive nas from.tx.raw-tx)
-    ?~  nex=(receive-tx:naive nas tx.raw-tx)
-      ::  TODO: confirm this works:
-      ::    before, we incremented nonce all the time,
-      ::    even if nex failed. now, only when =(& force)
-      ::
-      [force state(pre ?:(force nas cache-nas))]
-    =*  predicted  +.u.nex
-    =*  diffs      -.u.nex
-    :-  &
-    %_  state
-      pre  predicted
-      own  (update-ownership:dice diffs cache-nas predicted own.state)
-    ==
+    ^-  [? _state]
+    =/  [success=? predicted=_nas owners=_own]
+      (apply-raw-tx:dice force raw-tx nas own chain-id)
+    :-  success
+    state(pre predicted, own owners)
   --
 ::
 ++  get-l1-address
