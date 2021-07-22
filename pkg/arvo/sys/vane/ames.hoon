@@ -847,7 +847,7 @@
                   ==
                   [%adult state=_ames-state.adult-gate]
               ==  ==
-          ==
+         ==
       ?-    old
           [%4 %adult *]  (load:adult-core %4 state.old)
       ::
@@ -864,7 +864,8 @@
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %5 state.old)
         larval-gate
-      ==
+       ::
+     ==
     --
 ::  adult ames, after metamorphosis from larva
 ::
@@ -937,19 +938,21 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%5 %adult ames-state]
+++  stay  [%6 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   |=  $=  old-state
       $%  [%4 ^ames-state]
           [%5 ^ames-state]
+          [%6 ^ames-state]
       ==
   |^
   ^+  ames-gate
   =?  old-state  ?=(%4 -.old-state)  %5^(state-4-to-5 +.old-state)
+  =?  old-state  ?=(%5 -.old-state)  %6^(state-5-to-6 +.old-state)
   ::
-  ?>  ?=(%5 -.old-state)
+  ?>  ?=(%6 -.old-state)
   ames-gate(ames-state +.old-state)
   ::
   ++  state-4-to-5
@@ -968,6 +971,18 @@
         message-pump-state
       ship-state
     ames-state
+  ::
+  ++  state-5-to-6
+    |=  =^ames-state
+    ^-  ^^ames-state
+    =.  peers.ames-state
+      %-  ~(run by peers.ames-state)
+      |=  =ship-state
+      ?.  ?=(%known -.ship-state)
+        ship-state
+      =.  closing.ship-state  ~
+        ship-state
+      ames-state
   --
 ::  +scry: dereference namespace
 ::
@@ -1399,7 +1414,7 @@
   ++  on-plea
     |=  [=ship =plea]
     ^+  event-core
-    ::  .plea is from local vane to foreign ship;
+    ::  .plea is from local vane to foreign ship
     ::
     =/  ship-state  (~(get by peers.ames-state) ship)
     ::
@@ -1417,7 +1432,9 @@
         =/  sndr  [our our-life.channel]
         =/  rcvr  [ship her-life.channel]
         "plea {<sndr^rcvr^bone=bone^vane.plea^path.plea>}"
-    ::  if it's %cork plea, just give %done and process flow closing after +on-take-done call
+    ::  since flow kill goes like:
+    ::  client vane cork task -> client ames pass cork as plea -> server ames sinks plea -> server ames +on-plea (we are here)
+    ::  if it's %cork plea passed to ames from its sink, give %done and process flow closing after +on-take-done call
     ::
     ?:  &(=(vane.plea %a) =(path.plea `path`/flow) ?=([%cork *] payload.plea))
       (emit duct %give %done ~)
@@ -2234,12 +2251,12 @@
             ?-  -.gift
               %memo  (on-sink-memo [message-num message]:gift)
               %send  (on-sink-send [message-num ack-meat]:gift)
-              %cork  on-cork
+              %cork  on-sink-cork
             ==
           $(sink-gifts t.sink-gifts)
       ::  +on-cork
       ::
-      ++  on-cork
+      ++  on-sink-cork
       ::  delete (n)acks
       ::
         =.  rcv.peer-state  (~(del by rcv.peer-state) bone)
@@ -3192,7 +3209,7 @@
     =?  nax.state  !ok  (~(put in nax.state) message-num)
     ::
     =.  message-sink  (give %send message-num %| ok lag=`@dr`0)
-    =.  message-sink  ?:(=(& cork) (give %cork ~) message-sink)
+    =?  message-sink  cork  (give %cork ~)
     =/  next  ~(top to pending-vane-ack.state)
     ?~  next
       message-sink
