@@ -574,5 +574,6 @@
   ?~  tx  ~(parse error:json-rpc id)
   :+  %result  id
   %-  l2-hash:to-json
+  %-  hash-tx:lib
   (unsigned-tx:lib u.nonce chain-id (gen-tx-octs:lib u.tx))
 --
