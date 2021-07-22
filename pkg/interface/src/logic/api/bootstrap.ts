@@ -29,6 +29,7 @@ export async function bootstrapApi() {
 
   airlock.onOpen = () => {
     useLocalState.setState({ subscription: 'connected' });
+    [useGraphState].map(s => s.getState()?.clear?.());
   };
 
   const promises = [

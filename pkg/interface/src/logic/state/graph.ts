@@ -252,9 +252,17 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     if(j) {
       reduceStateN(get(), j, reduceDm);
     }
-  })
+  })],
+  {
+    graphs: {},
+    looseNodes: {},
+    graphTimesentMap: {},
+    flatGraphs: {},
+    threadGraphs: {},
+    pendingDms: new Set<string>()
+  }
 
-]);
+);
 
 export function useGraph(ship: string, name: string) {
   return useGraphState(

@@ -1,7 +1,7 @@
 import { applyPatches, Patch, produceWithPatches, setAutoFreeze, enablePatches } from 'immer';
 import { compose } from 'lodash/fp';
 import _ from 'lodash';
-import create, { GetState, SetState, UseStore } from 'zustand';
+import create, { GetState, SetState, UseStore, PartialState } from 'zustand';
 import { persist } from 'zustand/middleware';
 import Urbit, { SubscriptionRequestInterface, FatalError } from '@urbit/http-api';
 import { Poke } from '@urbit/api';
@@ -94,6 +94,7 @@ export interface BaseState<StateType extends {}> {
   removePatch: (id: string) => void;
   optSet: (fn: (state: StateType & BaseState<StateType>) => void) => string;
   initialize: (api: Urbit) => Promise<void>;
+  clear: () => void;
 }
 
 export function createSubscription(app: string, path: string, e: (data: any) => void): SubscriptionRequestInterface {
@@ -114,8 +115,12 @@ export const createState = <T extends {}>(
   name: string,
   properties: T | ((set: SetState<T & BaseState<T>>, get: GetState<T & BaseState<T>>) => T),
   blacklist: (keyof BaseState<T> | keyof T)[] = [],
-  subscriptions: ((set: SetState<T & BaseState<T>>, get: GetState<T & BaseState<T>>) => SubscriptionRequestInterface)[] = []
+  subscriptions: ((set: SetState<T & BaseState<T>>, get: GetState<T & BaseState<T>>) => SubscriptionRequestInterface)[] = [],
+  clear?: PartialState<T & BaseState<T>>
 ): UseStore<T & BaseState<T>> => create<T & BaseState<T>>(persist<T & BaseState<T>>((set, get) => ({
+  clear: () => {
+    set(clear);
+  },
   initialize: async (api: Urbit) => {
     await Promise.all(subscriptions.map(sub => api.subscribe(sub(set, get))));
   },
