@@ -145,22 +145,13 @@
     ?.  ?=([%map *] params)
       [~ ~(parse error:json-rpc id)]
     =/  method=@tas  (enkebab method)
+    ?:  ?=(l2-tx method)
+      (process-rpc id +.params method)
     ?+  method  [~ ~(method error:json-rpc id)]
       %get-point               `(get-point id +.params point:scry)
       %get-points              `(get-points id +.params points:scry)
-      %transfer-point          (transfer-point id +.params)
       %cancel-transaction      (cancel-tx id +.params)
       %get-spawned             `(get-spawned id +.params spawned:scry)
-      %configure-keys          (configure-keys id +.params)
-      %spawn                   (spawn id +.params)
-      %escape                  (escape id +.params method)
-      %cancel-escape           (cancel-escape id +.params method)
-      %adopt                   (adopt id +.params method)
-      %detach                  (detach id +.params method)
-      %reject                  (reject id +.params method)
-      %set-management-proxy    (management-proxy id +.params method)
-      %set-spawn-proxy         (spawn-proxy id +.params method)
-      %set-transfer-proxy      (transfer-proxy id +.params method)
       %get-all-pending         `(all:pending id +.params all:pending:scry)
       %get-pending-by-ship     `(ship:pending id +.params ship:pending:scry)
       %get-pending-by-address  `(addr:pending id +.params addr:pending:scry)
@@ -169,6 +160,7 @@
       %get-nonce               `(nonce id +.params nonce:scry)
       %get-history             `(history id +.params addr:history:scry)
       %get-roller-config       `(get-config id +.params config:scry)
+      %unsign-transaction      `(unsign-transaction id +.params chain-id:scry)
     ==
   --
 ::
@@ -183,7 +175,7 @@
   ::
   ++  points
     |=  =address:naive
-    .^  (list [ship point:naive])
+    .^  (list ship)
         %gx
         (~(scry agentio bowl) %aggregator /points/(scot %ux address)/noun)
     ==
@@ -257,6 +249,14 @@
         %+  ~(scry agentio bowl)
           %aggregator
         /config/noun
+    ==
+  ::
+  ++  chain-id
+    .^  @
+        %gx
+        %+  ~(scry agentio bowl)
+          %aggregator
+        /chain-id/noun
     ==
   --
 --
