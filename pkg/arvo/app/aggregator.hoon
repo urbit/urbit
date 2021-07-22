@@ -552,16 +552,14 @@
       ::  if tx was already seen here, skip
       ::
       $(txs t.txs)
+    =/  sign-address=(unit @ux)
+      (extract-address:lib raw-tx pre.state chain-id)
     =^  gud=?  state
-      (try-apply pre.state [force raw-tx]:tx)
-    :: FIXME: sign-address doesn't match address.tx (??)
+      (try-apply pre.state force.tx raw-tx)
+    ::  TODO: only replace address if !=(address.tx sign-address)?
     ::
-    :: =/  sign-address=(unit @ux)
-    ::   (extract-address raw-tx.i.txs pre.state)
-    :: TODO: only replace address if !=(address.tx sign-address)?
-    ::
-    :: =?  tx  &(gud ?=(^ sign-address))
-    ::   tx(address u.sign-address)
+    =?  tx  &(gud ?=(^ sign-address))
+      tx(address u.sign-address)
     =?  valid  gud  (snoc valid tx)
     =?  finding.state  !gud
       (~(put by finding.state) [hash %failed])
@@ -695,34 +693,6 @@
   ::  derive predicted state in 5m.
   ::
   [(wait:b:sys /predict (add ~m5 now.bowl))]~
-::   TODO: move to /lib/naive-transactions
-::
-++  extract-address
-  |=  [=raw-tx:naive nas=^state:naive]
-  ^-  (unit @ux)
-  ?~  point=(get:orm:naive points.nas ship.from.tx.raw-tx)
-    ~
-  =/  need=[=address:naive =nonce:naive]
-    (proxy-from-point:naive proxy.from.tx.raw-tx u.point)
-  =/  chain-t=@t  (ud-to-ascii:naive chain-id)
-  =/  prepared-data=octs
-    %:  cad:naive  3
-      14^'UrbitIDV1Chain'
-      (met 3 chain-t)^chain-t
-      1^':'
-      4^nonce.need
-      raw.raw-tx
-      ~
-    ==
-  =/  message=octs
-    =/  len  (ud-to-ascii:naive p.prepared-data)
-    %:  cad:naive  3
-      26^'\19Ethereum Signed Message:\0a'
-      (met 3 len)^len
-      prepared-data
-      ~
-    ==
-  (verify-sig:lib sig.raw-tx message)
 ::  +set-timer: %wait until next whole :frequency
 ::
 ++  set-timer

@@ -52,10 +52,9 @@
 ::
 ++  unsigned-tx
   |=  [chain-id=@ud =nonce tx=octs]
-  ^-  @
+  ^-  octs
   =/  prepared-data  (prepare-for-sig chain-id nonce tx)
   =/  len  (rsh [3 2] (scot %ui p.prepared-data))
-  %-  hash-tx
   %:  cad:naive  3
     26^'\19Ethereum Signed Message:\0a'
     (met 3 len)^len
@@ -65,7 +64,9 @@
 ::
 ++  sign-tx
   |=  [pk=@ =nonce tx=octs]  ^-  octs
-  =/  sign-data  (unsigned-tx 1.337 nonce tx)
+  =/  sign-data
+    %-  hash-tx
+    (unsigned-tx 1.337 nonce tx)
   =+  (ecdsa-raw-sign:secp256k1:secp:crypto sign-data pk)
   (cad:naive 3 1^v 32^s 32^r ~)
 ::
@@ -81,6 +82,18 @@
     tx
     ~
   ==
+::
+++  extract-address
+  |=  [=raw-tx:naive nas=^state:naive chain-id=@]
+  ^-  (unit @ux)
+  ?~  point=(get:orm:naive points.nas ship.from.tx.raw-tx)
+    ~
+  =/  =nonce:naive
+    =<  nonce
+    (proxy-from-point:naive proxy.from.tx.raw-tx u.point)
+  =/  message=octs
+    (unsigned-tx chain-id nonce raw.raw-tx)
+  (verify-sig sig.raw-tx message)
 ::
 ++  gen-tx
   |=  [=nonce tx=tx:naive pk=@]
