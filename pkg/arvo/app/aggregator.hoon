@@ -19,9 +19,10 @@
 ::TODO  questions:
 ::  - it's a bit weird how we just assume the raw and tx in raw-tx to match...
 ::
-/-  *aggregator
+/-  *dice
 /+  azimuth,
     naive,
+    dice,
     lib=naive-transactions,
     default-agent,
     ethereum,
@@ -35,6 +36,7 @@
       ::  sending: the l2 txs currently sending/awaiting l2 confirmation
       ::  finding: raw-tx-hash reverse lookup for sending map
       ::  history: status of l2 txs by ethereum address
+      ::  transfers: index that keeps track of transfer-proxy changes
       ::  next-nonce: next l1 nonce to use
       ::  next-batch: when then next l2 batch will be sent
       ::  pre: predicted l2 state
@@ -72,7 +74,6 @@
   ==
 ::
 +$  init     [nas=^state:naive own=owners]
-+$  owners   (jug address:naive [ship point:naive])
 +$  config
   $%  [%frequency frequency=@dr]
       [%setkey pk=@]
@@ -151,6 +152,7 @@
   ::    /x/pending/[~ship]             ->  %noun  (list pend-tx)
   ::    /x/pending/[0xadd.ress]        ->  %noun  (list pend-tx)
   ::    /x/tx/[0xke.ccak]/status       ->  %noun  tx-status
+  ::    /x/history/[0xadd.ress]        ->  %noun  (list roller-tx)
   ::    /x/nonce/[~ship]/[proxy]       ->  %noun  (unit @)
   ::    /x/spawned/[~ship]             ->  %noun  (list [ship address])
   ::    /x/next-batch                  ->  %atom  time
@@ -263,7 +265,7 @@
       |=  wat=@t
       :+  ~  ~
       :-  %noun
-      !>  ^-  (list [ship point:naive])
+      !>  ^-  (list ship)
       ?~  addr=(slaw %ux wat)
         ~
       %~  tap  in
@@ -568,6 +570,7 @@
       %.  [address.tx roller-tx(status [%failed ~])]
       ~(put ju (~(del ju history.state) address.tx roller-tx))
     $(txs t.txs, local (~(put in local) hash))
+  ::  TODO: replace with (refactored) /lib/dice
   ::
   ++  try-apply
     |=  [nas=^state:naive force=? =raw-tx:naive]
@@ -587,53 +590,11 @@
       [force state(pre ?:(force nas cache-nas))]
     =*  predicted  +.u.nex
     =*  diffs      -.u.nex
-    |^
     :-  &
     %_  state
       pre  predicted
-      own  update-ownership
+      own  (update-ownership:dice diffs cache-nas predicted own.state)
     ==
-    ::
-    ::  +update-ownership
-    ::
-    ::    updates ownership of azimuth points based on diffs received
-    ::    from /app/azimuth and a previous naive state
-    ::
-    ::   TODO: move to /lib
-    ::
-    ++  update-ownership
-      %+  roll  diffs
-      |=  [=diff:naive owners=_own.state]
-      ^+  owners
-      =,  orm:naive
-      ?.  ?=([%point *] diff)  owners
-      =/  old=(unit point:naive)  (get points.cache-nas ship.diff)
-      =/  new=point:naive  (need (get points.predicted ship.diff))
-      =*  event  +>.diff
-      =;  [to=@ux from=@ux]
-        =?  owners  !=(from 0x0)
-          ?>  ?=(^ old)
-          (~(del ju owners) from [ship.diff u.old])
-        ?:  =(to 0x0)  owners
-        (~(put ju owners) to [ship.diff new])
-      ?+    -.event  [0x0 0x0]
-          %owner
-        [+.event ?~(old 0x0 address.owner.own.u.old)]
-      ::
-          %spawn-proxy
-        [+.event ?~(old 0x0 address.spawn-proxy.own.u.old)]
-      ::
-          %management-proxy
-        [+.event ?~(old 0x0 address.management-proxy.own.u.old)]
-      ::
-        ::  FIXME: remove (galaxies are not on l2)
-        ::   %voting-proxy
-        :: [+.event ?~(old 0x0 address.voting-proxy.own.u.old)]
-      ::
-          %transfer-proxy
-        [+.event ?~(old 0x0 address.transfer-proxy.own.u.old)]
-      ==
-    --
   --
 ::
 ++  get-l1-address
@@ -711,6 +672,8 @@
   ?~  addr=(verify-sig:lib sig message)
     ~?  lverb  [dap.bowl %cancel-sig-fail]
     [~ state]
+  ::  TODO: mark as failed instead? add a %cancelled to tx-status?
+  ::
   =.  history
     %+  ~(del ju history)  u.addr
     [ship [%pending ~] keccak l2-tx]

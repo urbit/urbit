@@ -1,6 +1,6 @@
 ::  azimuth-rpc: command parsing and utilities
 ::
-/-  rpc=json-rpc, *aggregator
+/-  rpc=json-rpc, *dice
 /+  naive, json-rpc, lib=naive-transactions
 ::
 =>  ::  Utilities
@@ -19,19 +19,6 @@
           %set-spawn-proxy
           %set-transfer-proxy
       ==
-    ::
-    ++  pk
-      ^-  @
-      =;  key=@t
-        q:(need (de:base16:mimes:html key))
-      :: 'a44de2416ee6beb2f323fab48b432925c9785808d33a6ca6d7ba00b45e9370c3'
-      '2480c5256d843c73cba67cc966a11a647c943a41db2fa138de4e4f16d0861a6b'
-    ::
-    ++  fake-raw
-      |=  [nonce=@ud =tx:naive]
-      :: ~&  nonce+nonce
-      ^-  octs
-      (gen-tx:lib nonce tx pk)
     ::
     ++  parse-ship
       |=  jon=json
@@ -259,7 +246,6 @@
         |=  roller-tx
         ^-  json
         %-  pairs
-        :: [status=tx-status hash=keccak type=l2-tx]
         :~  ['status' s+status.status]
             ['hash' s+(crip "0x{((x-co:co 20) hash)}")]
             ['type' s+type]
@@ -431,7 +417,6 @@
 ++  get-points
   |=  [id=@t params=(map @t json) scry=$-(@ux (list [@p point:naive]))]
   ^-  response:rpc
-  ~&  ~(wyt by params)
   ?.  =(~(wyt by params) 1)
     ~(params error:json-rpc id)
   ?~  address=(address:from-json params)
@@ -475,6 +460,7 @@
   :_  [%result id (l2-hash:to-json keccak)]
   %-  some
   aggregator-action+!>([%submit | u.addr u.sig %don tx])
+::
 ++  get-spawned
   |=  [id=@t params=(map @t json) scry=$-(ship (list [ship @ux]))]
   ^-  response:rpc

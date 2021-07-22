@@ -1,6 +1,6 @@
 ::  Aggregator JSON-RPC API
 ::
-/-  rpc=json-rpc, *aggregator
+/-  rpc=json-rpc, *dice
 /+  naive,
     azimuth-rpc,
     json-rpc,
