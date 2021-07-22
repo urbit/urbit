@@ -4,14 +4,13 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
-;<  az=tid:spider
-  bind:m  start-azimuth
-;<  ~  bind:m  (spawn az ~bud)
-;<  ~  bind:m  (spawn az ~marbud)
-;<  ~  bind:m  (spawn az ~linnup-torsyx)
-;<  ~  bind:m  (real-ship az ~linnup-torsyx)
-;<  ~  bind:m  (real-ship az ~marbud)
-;<  ~  bind:m  (real-ship az ~bud)
+;<  ~  bind:m  start-azimuth
+;<  ~  bind:m  (spawn ~bud)
+;<  ~  bind:m  (spawn ~marbud)
+;<  ~  bind:m  (spawn ~linnup-torsyx)
+;<  ~  bind:m  (init-ship ~linnup-torsyx |)
+;<  ~  bind:m  (init-ship ~marbud |)
+;<  ~  bind:m  (init-ship ~bud |)
 ;<  ~  bind:m  (send-hi ~linnup-torsyx ~marbud)
-;<  ~  bind:m  end-azimuth
+;<  ~  bind:m  end
 (pure:m *vase)

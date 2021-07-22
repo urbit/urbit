@@ -40,7 +40,7 @@
     ^+  ..abet-pe
     =.  this
       %-  emit-aqua-events
-      [%event who [//behn/0v1n.2m9vh %born ~]]~
+      [%event who [/b/behn/0v1n.2m9vh %born ~]]~
     ..abet-pe
   ::
   ++  handle-doze
@@ -82,7 +82,7 @@
       :_  ~
       ^-  aqua-event
       :+  %event  who
-      [//behn/0v1n.2m9vh [%wake ~]]
+      [/b/behn/0v1n.2m9vh [%wake ~]]
     ..abet-pe
   --
 --

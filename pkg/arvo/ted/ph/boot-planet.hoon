@@ -5,8 +5,8 @@
 |=  vase
 =/  m  (strand ,vase)
 ;<  ~  bind:m  start-simple
-;<  ~  bind:m  (raw-ship ~bud ~)
-;<  ~  bind:m  (raw-ship ~marbud ~)
-;<  ~  bind:m  (raw-ship ~linnup-torsyx ~)
-;<  ~  bind:m  end-simple
+;<  ~  bind:m  (init-ship ~bud &)
+;<  ~  bind:m  (init-ship ~marbud &)
+;<  ~  bind:m  (init-ship ~linnup-torsyx &)
+;<  ~  bind:m  end
 (pure:m *vase)

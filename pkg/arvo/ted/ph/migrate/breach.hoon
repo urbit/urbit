@@ -17,6 +17,6 @@
 ::  ;<  ~  bind:m  (send-hi ~web ~zod)
 ::  ;<  ~  bind:m  (send-hi ~web ~bus)
   (pure:m *vase)
-;<  ~  bind:m  (breach-aqua i.who)
-;<  ~  bind:m  (init-ship i.who)
+;<  ~  bind:m  (breach i.who)
+;<  ~  bind:m  (init-ship i.who |)
 loop(who t.who)

@@ -5,10 +5,10 @@
 :-  %aqua-events
 %+  turn
   ^-  (list unix-event)
-  :~  [//term/1 %belt %ctl `@c`%e]
-      [//term/1 %belt %ctl `@c`%u]
-      [//term/1 %belt %txt ((list @c) command)]
-      [//term/1 %belt %ret ~]
+  :~  [/d/term/1 %belt %ctl `@c`%e]
+      [/d/term/1 %belt %ctl `@c`%u]
+      [/d/term/1 %belt %txt ((list @c) command)]
+      [/d/term/1 %belt %ret ~]
   ==
 |=  ue=unix-event
 [%event her ue]

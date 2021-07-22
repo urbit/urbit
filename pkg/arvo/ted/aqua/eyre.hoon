@@ -39,7 +39,7 @@
     ^+  ..abet-pe
     =.  this
       %-  emit-aqua-events
-      [%event who [//http/0v1n.2m9vh %born ~]]~
+      [%event who [/i/http/0v1n.2m9vh %born ~]]~
     ..abet-pe
   ::
   ++  handle-thus
@@ -81,7 +81,7 @@
       ..abet-pe
     =.  http-requests  (~(del in http-requests) num)
     =.  this
-      (emit-aqua-events [%event who [//http/0v1n.2m9vh %receive num [%start [p.res q.res] r.res &]]]~)
+      (emit-aqua-events [%event who [/i/http/0v1n.2m9vh %receive num [%start [p.res q.res] r.res &]]]~)
     ..abet-pe
   ::
   ::  Got error in HTTP response
