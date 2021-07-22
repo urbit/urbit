@@ -2096,7 +2096,7 @@
         |=  [k=beak v=(unit dome:clay)]
         ^-  tank
         =/  received=tape  ?~(v "missing" "received")
-        leaf+"{<k>} {received}"
+        leaf+"{<(en-beam k ~)>} {received}"
       :_  discarded
       leaf+"fusing into {<syd>} from {<bas>} {<con>} - overwriting prior fuse"
     =.  fiz  (make-melt bas con)
@@ -2113,8 +2113,11 @@
       ::  responses we get for the merge will cause take-fuse to crash
       ::
       =.  fiz  *melt
-      ((slog [leaf+"clay: fuse failed, missing {<bec>}"]~) ..take-fuse)
-    ?>  (~(has by sto.fiz) bec)
+      =/  msg=tape  <(en-beam bec ~)>
+      ((slog [leaf+"clay: fuse failed, missing {msg}"]~) ..take-fuse)
+    ?.  (~(has by sto.fiz) bec)
+      =/  msg=tape  <(en-beam bec ~)>
+      ((slog [leaf+"clay: got strange fuse response {<msg>}"]~) ..take-fuse)
     =.  fiz
         :+  bas.fiz  con.fiz
         (~(put by sto.fiz) bec `!<(dome:clay q.r.u.riot))
@@ -2135,7 +2138,6 @@
     |-
     ^+  ..take-fuse
     ?~  merges
-      =/  t=tang  [leaf+"{<syd>} fused from {<bas.fiz>} {<con.fiz>}" ~]
       =.  ..take-fuse  (done-fuse clean-state %& ~)
       (park | [%| continuation-yaki(p (flop parents))] rag)
     =/  [bec=beak g=germ]  i.merges
@@ -2143,7 +2145,8 @@
     =/  result  (merge-helper p.bec q.bec g ali-dom `continuation-yaki)
     ?-    -.result
         %|
-      (done-fuse clean-state %| %fuse-merge-failed p.result)
+      =/  failing-merge=tape  "{<bec>} {<g>}"
+      (done-fuse clean-state %| %fuse-merge-failed leaf+failing-merge p.result)
     ::
         %&
       =/  merge-result=(unit merge-result)  +.result
