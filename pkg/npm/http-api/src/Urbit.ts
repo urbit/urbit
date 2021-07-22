@@ -1,7 +1,7 @@
 import { isBrowser, isNode } from 'browser-or-node';
 import { fetchEventSource, EventSourceMessage, EventStreamContentType } from '@microsoft/fetch-event-source';
 
-import { Action, Scry, Thread, AuthenticationInterface, SubscriptionInterface, CustomEventHandler, PokeInterface, SubscriptionRequestInterface, headers, SSEOptions, PokeHandlers, Message } from './types';
+import { Action, Scry, Thread, AuthenticationInterface, SubscriptionInterface, CustomEventHandler, PokeInterface, SubscriptionRequestInterface, headers, SSEOptions, PokeHandlers, Message, FatalError } from './types';
 import { uncamelize, hexString } from './utils';
 
 /**
@@ -197,7 +197,6 @@ export class Urbit {
             resolve();
             return; // everything's good
           } else {
-            this.onError && this.onError(new Error('bad response'));
             reject();
           } 
         },
@@ -251,9 +250,7 @@ export class Urbit {
           }
         },
         onerror: (error) => {
-          //  Channel resume currently broken in eyre
-          if(false && this.errorCount++ < 5) {
-            console.log(this.errorCount);
+          if(!(error instanceof FatalError) && this.errorCount++ < 5) {
             this.onRetry && this.onRetry();
             return Math.pow(2, this.errorCount - 1) * 750;
           }
@@ -262,7 +259,6 @@ export class Urbit {
         },
         onclose: () => {
           throw Error('Ship unexpectedly closed the connection');
-
         },
       });
     })
