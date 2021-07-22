@@ -250,7 +250,8 @@ export class Urbit {
           }
         },
         onerror: (error) => {
-          if(!(error instanceof FatalError) && this.errorCount++ < 5) {
+          console.warn(error);
+          if(!(error instanceof FatalError) && this.errorCount++ < 4) {
             this.onRetry && this.onRetry();
             return Math.pow(2, this.errorCount - 1) * 750;
           }
