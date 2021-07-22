@@ -11,24 +11,30 @@
   |=  [=diff:naive nas=_nas own=_own]
   ^+  [nas own]
   ?.  ?=([%tx *] diff)  [nas own]
+  =<  [nas own]
+  (apply-raw-tx | raw-tx.diff nas own chain-t)
+::
+++  apply-raw-tx
+  |=  [force=? =raw-tx:naive nas=^state:naive own=owners chain-t=@]
+  ^-  [? nas=_nas own=_own]
   =+  cache-nas=nas
-  =*  raw-tx  raw-tx.diff
   =/  chain-t=@t  (ud-to-ascii:naive chain-t)
   ?.  (verify-sig-and-nonce:naive verifier chain-t nas raw-tx)
-    [nas own]
+    [force nas own]
   =^  *  points.nas
     (increment-nonce:naive nas from.tx.raw-tx)
   ?~  nex=(receive-tx:naive nas tx.raw-tx)
-    [cache-nas own]
-  =*  up-nas  +.u.nex
-  =*  diffs   -.u.nex
-  :-  up-nas
-  (update-ownership diffs cache-nas up-nas own)
+    [force ?:(force nas cache-nas) own]
+  =*  new-nas   +.u.nex
+  =*  effects   -.u.nex
+  :+  &
+    new-nas
+  (update-ownership effects cache-nas new-nas own)
 ::
 ++  update-ownership
   |=  $:  =effects:naive
           cache-nas=^state:naive
-          up-nas=^state:naive
+          nas=^state:naive
           =owners
       ==
   ^+  owners
@@ -39,7 +45,7 @@
   =/  old=(unit point:naive)
     (get points.cache-nas ship.diff)
   =/  new=point:naive
-    (need (get points.up-nas ship.diff))
+    (need (get points.nas ship.diff))
   =*  event  +>.diff
   =;  [to=@ux from=@ux]
     =?  owners  !=(from 0x0)
