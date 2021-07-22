@@ -29,8 +29,10 @@ export async function bootstrapApi() {
 
   airlock.onOpen = () => {
     useLocalState.setState({ subscription: 'connected' });
-    [useGraphState].map(s => s.getState()?.clear?.());
   };
+
+  [useGraphState].map(s => s.getState()?.clear?.());
+  useGraphState.getState().getShallowChildren(`~${window.ship}`, 'dm-inbox');
 
   const promises = [
     useHarkState,
