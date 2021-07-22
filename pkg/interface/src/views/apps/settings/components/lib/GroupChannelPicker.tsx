@@ -101,19 +101,18 @@ function Channel(props: { association: Association }) {
     return isWatching(config, association.resource);
   });
 
-  const [, , { setValue, setTouched }] = useField(
+  const [{ value }, , { setValue, setTouched }] = useField(
     `graph["${association.resource}"]`
   );
-  const [optValue, setOptValue] = useState(watching);
-
-  useEffect(() => {
-    setValue(optValue);
-    setTouched(true);
-  }, [watching]);
 
   const onClick = () => {
-    setOptValue(v => !v);
+    setValue(!value);
+    setTouched(true);
   };
+
+  useEffect(() => {
+    setValue(watching);
+  }, [watching]);
 
   const icon = getModuleIcon((metadata.config as GraphConfig)?.graph as GraphModule);
 
@@ -126,7 +125,7 @@ function Channel(props: { association: Association }) {
         <Text> {metadata.title}</Text>
       </Box>
       <Box gridColumn={4}>
-        <StatelessToggleSwitchField selected={optValue} onClick={onClick} />
+        <StatelessToggleSwitchField selected={value} onClick={onClick} />
       </Box>
     </>
   );

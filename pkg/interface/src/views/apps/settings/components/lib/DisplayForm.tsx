@@ -5,15 +5,14 @@ import {
   Text
 } from '@tlon/indigo-react';
 import { Form } from 'formik';
-import { putEntry } from '@urbit/api/settings';
-import React, { useMemo } from 'react';
+import React, { useCallback } from 'react';
 import * as Yup from 'yup';
 import { uxToHex } from '~/logic/lib/util';
-import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { BackButton } from './BackButton';
-import airlock from '~/logic/api';
 import { BackgroundPicker, BgType } from './BackgroundPicker';
+import shallow from 'zustand/shallow';
 
 const formSchema = Yup.object().shape({
   bgType: Yup.string()
@@ -30,59 +29,54 @@ interface FormSchema {
   bgUrl: string | undefined;
   theme: string;
 }
+const emptyString = '';
 
-const settingsSel = selectSettingsState(['display']);
+const settingsSel = (s: SettingsState): FormSchema => {
+  const { display } = s;
+  let bgColor = emptyString;
+  let bgUrl = emptyString;
+  if (display.backgroundType === 'url') {
+    bgUrl = display.background;
+  }
+  if (display.backgroundType === 'color') {
+    bgColor = display.background;
+  }
+  return {
+    bgType: display.backgroundType,
+    bgColor,
+    bgUrl,
+    theme: display.theme
+  };
+};
 
 export default function DisplayForm() {
-  const {
-    display: { background, backgroundType, theme }
-  } = useSettingsState(settingsSel);
+  const initialValues = useSettingsState(settingsSel, shallow);
 
-  const initialValues: FormSchema = useMemo(() => {
-    let bgColor, bgUrl;
-    if (backgroundType === 'url') {
-      bgUrl = background;
-    }
-    if (backgroundType === 'color') {
-      bgColor = background;
-    }
-    return {
-      bgType: backgroundType,
-      bgColor: bgColor || '',
-      bgUrl,
-      theme
-    };
-  }, [backgroundType, background, theme]);
+  const onSubmit = useCallback(async (values) => {
+    const { putEntry } = useSettingsState.getState();
+    putEntry('display', 'backgroundType', values.bgType);
+    putEntry(
+      'display',
+      'background',
+      values.bgType === 'color'
+        ? `#${uxToHex(values.bgColor || '0x0')}`
+        : values.bgType === 'url'
+        ? values.bgUrl || ''
+        : false
+    );
+    putEntry('display', 'theme', values.theme);
+  }, []);
 
   return (
     <FormikOnBlur
       validationSchema={formSchema}
       initialValues={initialValues}
-      onSubmit={async (values, actions) => {
-        const promises = [] as Promise<any>[];
-        promises.push(
-          airlock.poke(putEntry('display', 'backgroundType', values.bgType))
-        );
-        promises.push(
-          airlock.poke(
-            putEntry(
-              'display',
-              'background',
-              values.bgType === 'color'
-                ? `#${uxToHex(values.bgColor || '0x0')}`
-                : values.bgType === 'url'
-                ? values.bgUrl || ''
-                : false
-            )
-          )
-        );
-        promises.push(airlock.poke(putEntry('display', 'theme', values.theme)));
-      }}
+      onSubmit={onSubmit}
     >
       <Form>
         <BackButton />
         <Col p={5} pt={4} gapY={5}>
-          <Col gapY={1} mt={0}>
+          <Col overflowY="auto" gapY={1} mt={0}>
             <Text color="black" fontSize={2} fontWeight="medium">
               Display Preferences
             </Text>

@@ -7,6 +7,7 @@ import {
   Timebox,
   Unreads
 } from '@urbit/api';
+import { Poke } from '@urbit/http-api';
 import { patp2dec } from 'urbit-ob';
 import _ from 'lodash';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
@@ -22,6 +23,7 @@ export const HARK_FETCH_MORE_COUNT = 3;
 export interface HarkState {
   archivedNotifications: BigIntOrderedMap<Timebox>;
   doNotDisturb: boolean;
+  poke: (poke: Poke<any>) => Promise<void>;
   getMore: () => Promise<boolean>;
   getSubset: (offset: number, count: number, isArchive: boolean) => Promise<void>;
   // getTimeSubset: (start?: Date, end?: Date) => Promise<void>;
@@ -42,6 +44,9 @@ const useHarkState = createState<HarkState>(
     archivedNotifications: new BigIntOrderedMap<Timebox>(),
     doNotDisturb: false,
     unreadNotes: [],
+    poke: async (poke: Poke<any>) => {
+      await pokeOptimisticallyN(useHarkState, poke, [reduce]);
+    },
     readCount: async (resource: string, index?: string) => {
       const poke = markCountAsRead(resource, index);
       await pokeOptimisticallyN(useHarkState, poke, [reduce]);
@@ -68,7 +73,6 @@ const useHarkState = createState<HarkState>(
       });
       reduceState(useHarkState, harkUpdate, [reduce]);
     },
-
     notifications: new BigIntOrderedMap<Timebox>(),
     notificationsCount: 0,
     notificationsGraphConfig: {
