@@ -50,18 +50,22 @@
     [(end bite sig) (rsh bite sig)]
   --
 ::
+++  unsign-tx
+  |=  [chain-id=@ud =nonce tx=octs]
+  ^-  @u
+  =/  prepared-data  (prepare-for-sig chain-id nonce tx)
+  =/  len  (rsh [3 2] (scot %ui p.prepared-data))
+  %-  hash-tx
+  %:  cad:naive  3
+    26^'\19Ethereum Signed Message:\0a'
+    (met 3 len)^len
+    prepared-data
+    ~
+  ==
+::
 ++  sign-tx
   |=  [pk=@ =nonce tx=octs]  ^-  octs
-  =/  prepared-data  (prepare-for-sig 1.337 nonce tx)
-  =/  sign-data
-    =/  len  (rsh [3 2] (scot %ui p.prepared-data))
-    %-  hash-tx
-    %:  cad:naive  3
-      26^'\19Ethereum Signed Message:\0a'
-      (met 3 len)^len
-      prepared-data
-      ~
-    ==
+  =/  sign-data  (unsign-tx 1.337 nonce tx)
   =+  (ecdsa-raw-sign:secp256k1:secp:crypto sign-data pk)
   (cad:naive 3 1^v 32^s 32^r ~)
 ::
