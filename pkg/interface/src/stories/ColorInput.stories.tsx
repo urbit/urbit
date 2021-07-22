@@ -6,7 +6,7 @@ import { Formik } from 'formik';
 import { ColorInput, ColorInputProps } from '~/views/components/ColorInput';
 
 const initialValues = {
-  color: '#33FF22'
+  color: '33FF22'
 };
 
 export default {

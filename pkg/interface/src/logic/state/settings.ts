@@ -10,12 +10,14 @@ import {
   BaseState,
   createState,
   createSubscription,
-  reduceStateN
+  reduceStateN,
+  pokeOptimisticallyN
 } from '~/logic/state/base';
 import { useCallback } from 'react';
 import { reduceUpdate } from '../reducers/settings-update';
 import airlock from '~/logic/api';
-import { getAll } from '@urbit/api';
+import { getAll, Value } from '@urbit/api';
+import { putEntry } from '@urbit/api/settings';
 
 export interface ShortcutMapping {
   cycleForward: string;
@@ -43,6 +45,7 @@ export interface SettingsState {
   keyboard: ShortcutMapping;
   remoteContentPolicy: RemoteContentPolicy;
   getAll: () => Promise<void>;
+  putEntry: (bucket: string, key: string, value: Value) => void;
   leap: {
     categories: LeapCategories[];
   };
@@ -102,6 +105,10 @@ const useSettingsState = createState<SettingsState>(
       get().set((s) => {
         Object.assign(s, all);
       });
+    },
+    putEntry: (bucket: string, entry: string, value: Value) => {
+      const poke = putEntry(bucket, entry, value);
+      pokeOptimisticallyN(useSettingsState, poke, reduceUpdate);
     }
   }),
   [],
