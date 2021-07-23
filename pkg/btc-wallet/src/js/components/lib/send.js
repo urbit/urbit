@@ -18,6 +18,7 @@ import { validate } from 'bitcoin-address-validation';
 import * as ob from 'urbit-ob';
 import { useSettings } from '../../hooks/useSettings.js';
 import { api } from '../../api';
+import { deSig } from '../../lib/util.js';
 
 const focusFields = {
   empty: '',
@@ -68,18 +69,22 @@ const Send = ({ stopSending, value, conversion }) => {
   const checkPayee = (e) => {
     setError('');
 
-    let payeeReceived = e.target.value;
-    let isPatp = ob.isValidPatp(payeeReceived);
-    let isAddress = validate(payeeReceived);
-    if (isPatp) {
-      let command = { 'check-payee': payeeReceived };
+    const validPatPCommand = (validPatP) => {
+      let command = { 'check-payee': validPatP };
       api.btcWalletCommand(command);
       setTimeout(() => {
         setCheckingPatp(false);
       }, 5000);
       setCheckingPatp(true);
       setPayeeType('ship');
-      setPayee(payeeReceived);
+      setPayee(validPatP);
+    };
+
+    let payeeReceived = e.target.value;
+    let isPatp = ob.isValidPatp(`~${deSig(payeeReceived)}`);
+    let isAddress = validate(payeeReceived);
+    if (isPatp) {
+      validPatPCommand(`~${deSig(payeeReceived)}`);
     } else if (isAddress) {
       setPayee(payeeReceived);
       setReady(true);
