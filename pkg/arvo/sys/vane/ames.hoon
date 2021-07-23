@@ -942,10 +942,58 @@
 ::  +load: load in old state after reload
 ::
 ++  load
+  =>  |%
+      +$  ames-state-4  ames-state-5
+      +$  ames-state-6  ^ames-state
+      +$  ames-state-5
+        $:  peers=(map ship ship-state-5)
+            =unix=duct
+            =life
+            crypto-core=acru:ames
+            =bug
+        ==
+      +$  ship-state-6
+        $%  [%alien alien-agenda]
+            [%known peer-state-6]
+        ==
+      +$  peer-state-6
+        $:  $:  =symmetric-key
+                =life
+                =public-key
+                sponsor=ship
+            ==
+            route=(unit [direct=? =lane])
+            =qos
+            =ossuary
+            snd=(map bone message-pump-state)
+            rcv=(map bone message-sink-state)
+            nax=(set [=bone =message-num])
+            heeds=(set duct)
+            closing=(set bone)
+        ==
+    +$  ship-state-5
+        $%  [%alien alien-agenda]
+            [%known peer-state-5]
+        ==
+      +$  peer-state-5
+        $:  $:  =symmetric-key
+               =life
+               =public-key
+               sponsor=ship
+            ==
+            route=(unit [direct=? =lane])
+            =qos
+            =ossuary
+            snd=(map bone message-pump-state)
+            rcv=(map bone message-sink-state)
+            nax=(set [=bone =message-num])
+            heeds=(set duct)
+        ==
+      --  
   |=  $=  old-state
-      $%  [%4 ^ames-state]
-          [%5 ^ames-state]
-          [%6 ^ames-state]
+      $%  [%4 ames-state-4]
+          [%5 ames-state-5]
+          [%6 ames-state-6]
       ==
   |^
   ^+  ames-gate
@@ -956,11 +1004,11 @@
   ames-gate(ames-state +.old-state)
   ::
   ++  state-4-to-5
-    |=  =^ames-state
-    ^-  ^^ames-state
+    |=  ames-state=ames-state-4
+    ^-  ames-state-5
     =.  peers.ames-state
       %-  ~(run by peers.ames-state)
-      |=  =ship-state
+      |=  ship-state=ship-state-5
       ?.  ?=(%known -.ship-state)
         ship-state
       =.  snd.ship-state
@@ -973,16 +1021,29 @@
     ames-state
   ::
   ++  state-5-to-6
-    |=  =^ames-state
-    ^-  ^^ames-state
-    =.  peers.ames-state
+    |=  ames-state=ames-state-5
+    ^-  ames-state-6
+    %=  ames-state
+      peers
+      ^-  (map ship ship-state)
       %-  ~(run by peers.ames-state)
-      |=  =ship-state
+      |=  ship-state=ship-state-5
+      ^-  ship-state-6
       ?.  ?=(%known -.ship-state)
         ship-state
-      =.  closing.ship-state  ~
-        ship-state
-      ames-state
+      :-  %known
+      ^-  peer-state-6
+      :*  [symmetric-key.ship-state life.ship-state public-key.ship-state sponsor.ship-state]
+          route.ship-state
+          qos.ship-state
+          ossuary.ship-state
+          snd.ship-state
+          rcv.ship-state
+          nax.ship-state
+          heeds.ship-state
+          closing=*(set bone)
+      ==
+    ==
   --
 ::  +scry: dereference namespace
 ::
