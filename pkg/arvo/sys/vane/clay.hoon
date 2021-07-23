@@ -3678,23 +3678,23 @@
       |=  [=aeon =path]
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
-        ~>  %slog.0^leaf/"clay: %a unknown aeon {<[aeon path]>}"
+        ~>  %slog.0^leaf/"clay: %a unknown aeon {<[syd aeon path]>}"
         [~ fod.dom]
       =/  cached=(unit [=vase *])  (~(get by files.fod.dom) path)
       ?^  cached
         :_(fod.dom [~ ~ %& %vase !>(vase.u.cached)])
       =/  x  (read-x aeon path)
       ?~  x
-        ~>  %slog.0^leaf/"clay: %a can't resolve file at path {<path>}"
+        ~>  %slog.0^leaf/"clay: %a can't read file at path {<[syd aeon path]>}"
         [~ fod.dom]
       ?~  u.x
-        ~>  %slog.0^leaf/"clay: %a no file at path {<path>}"
+        ~>  %slog.0^leaf/"clay: %a no file at path {<[syd aeon path]>}"
         [[~ ~] fod.dom]
       ::  should never happen at current aeon
       ?:  ?=(%| -.u.u.x)
         [~ fod.dom]
       =^  =vase  fod.dom
-        ~_  leaf/"clay: %a build failed {<path>}"
+        ~_  leaf/"clay: %a build failed {<[syd aeon path]>}"
         %-  wrap:fusion
         (build-file:(ford:fusion static-ford-args) path)
       :_(fod.dom [~ ~ %& %vase !>(vase)])
