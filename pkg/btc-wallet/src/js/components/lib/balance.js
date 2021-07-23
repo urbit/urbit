@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Row, Text, Button, Col } from '@tlon/indigo-react';
 import Send from './send.js';
 import CurrencyPicker from './currencyPicker.js';
-import { satsToCurrency } from '../../lib/util.js';
+import { copyToClipboard, satsToCurrency } from '../../lib/util.js';
 import { useSettings } from '../../hooks/useSettings.js';
 import { api } from '../../api';
 
@@ -23,8 +23,8 @@ const Balance = () => {
   const [copiedString, setCopiedString] = useState(false);
   const scanning = scanProgress?.main !== null || scanProgress?.change !== null;
 
-  const copyAddress = (arg) => {
-    navigator.clipboard.writeText(address);
+  const copyAddress = async (arg) => {
+    await copyToClipboard(address);
     api.btcWalletCommand({ 'gen-new-address': null });
 
     if (arg === 'button') {
