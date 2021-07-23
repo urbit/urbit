@@ -755,12 +755,8 @@
         =/  =index:store
           (turn t.t.t.t.pax (cury slav %ud))
         =/  parent=index:store  (snip index)
-        =/  node  (get-node graph parent)
-        ?:  ?&  ?=(~ node)
-                ?=(^ parent)
-                ?=(?(%older %newer) i.t.pax)
-            ==
-          [~ ~]
+        =/  node
+          (get-node graph ?:(?=(?(%oldest %newest) i.t.pax) index parent))
         =/  children=graph:store
           ?~  node
             graph
@@ -783,7 +779,9 @@
           ==
         |=  [=atom =node:store]
         ^-  [index:store node:store]
-        :-  (snoc parent atom)
+        :-  %-  snoc
+            :_  atom
+            ?:(?=(?(%newest %oldest) i.t.pax) index parent)
         ?:  ?=(%kith i.t.t.pax)  node
         node(children [%empty ~])
       ::
