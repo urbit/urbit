@@ -479,7 +479,6 @@ shaf salt ruz = (mix a b)
 -- scrambled.
 deriveCode :: Ring -> Ob.Patp
 deriveCode Ring {..} = Ob.patp $
-                       toN $
                        bytesAtom $
                        take 8 $
                        shaf (C.pack "pass") $

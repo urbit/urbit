@@ -45,11 +45,11 @@ loob = \case
 
 textToAtom :: Text -> Atom
 textToAtom t = case N.textToUtf8Atom t of
-  N.A a   -> N.toN a
+  N.A a   -> a
   N.C _ _ -> error "textToAtom: nani!?"
 
 showA :: Atom -> String
-showA a = undefined
+showA a = show (N.A a)
 
 tshowA :: Atom -> Text
 tshowA = pack . showA

@@ -68,12 +68,6 @@ instance FromNoun Atom where
     Atom a   -> pure a
     Cell _ _ -> fail "Expecting an atom, but got a cell"
 
-instance ToNoun Natural where
-  toNoun = toNoun . fromN
-
-instance FromNoun Natural where
-  parseNoun n = toN <$> parseNoun n
-
 
 -- Void ------------------------------------------------------------------------
 

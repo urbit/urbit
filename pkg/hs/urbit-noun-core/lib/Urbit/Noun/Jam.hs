@@ -196,8 +196,8 @@ writeAtomBigNat !(Atom.bigNatWords -> words) = do
 
 {-# INLINE writeAtomBits #-}
 writeAtomBits :: Atom -> Put ()
-writeAtomBits a = case toN a of NatS# wd -> writeAtomWord# wd
-                                NatJ# bn -> writeAtomBigNat bn
+writeAtomBits = \case NatS# wd -> writeAtomWord# wd
+                      NatJ# bn -> writeAtomBigNat bn
 
 
 -- Put Instances ---------------------------------------------------------------
@@ -276,7 +276,7 @@ writeMat atm = do
     writeBitsFromWord (preWid-1) atmWid
     writeAtomBits atm
   where
-    atmWid = Atom.atomBitWidth $ toN atm
+    atmWid = Atom.atomBitWidth atm
     preWid = fromIntegral (Atom.wordBitWidth atmWid)
 
 {-# INLINE writeCell #-}
@@ -306,9 +306,10 @@ writeBackRef !a = do
 
 {-# INLINE matSz #-}
 matSz :: Atom -> Word
-matSz !a = W# (matSz# $ toN a)
+matSz !a = W# (matSz# a)
 
 {-# INLINE matSz# #-}
+matSz# :: Atom -> Word#
 matSz# 0 = 1##
 matSz# a = preW `plusWord#` preW `plusWord#` atmW
   where
