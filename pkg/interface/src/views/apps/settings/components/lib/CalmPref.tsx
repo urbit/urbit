@@ -23,14 +23,14 @@ interface FormSchema {
 }
 
 const settingsSel = (s: SettingsState): FormSchema => ({
-    hideAvatars: s.calm.hideAvatars,
-    hideNicknames: s.calm.hideNicknames,
-    hideUnreads: s.calm.hideUnreads,
-    hideGroups: s.calm.hideGroups,
-    hideUtilities: s.calm.hideUtilities,
-    imageShown: !s.remoteContentPolicy.imageShown,
-    videoShown: !s.remoteContentPolicy.videoShown,
-    oembedShown: !s.remoteContentPolicy.oembedShown,
+  hideAvatars: s.calm.hideAvatars,
+  hideNicknames: s.calm.hideNicknames,
+  hideUnreads: s.calm.hideUnreads,
+  hideGroups: s.calm.hideGroups,
+  hideUtilities: s.calm.hideUtilities,
+  imageShown: !s.remoteContentPolicy.imageShown,
+  videoShown: !s.remoteContentPolicy.videoShown,
+  oembedShown: !s.remoteContentPolicy.oembedShown,
   audioShown: !s.remoteContentPolicy.audioShown
 });
 
@@ -42,7 +42,7 @@ export function CalmPrefs() {
     _.forEach(v, (bool, key) => {
       const bucket = ['imageShown', 'videoShown', 'audioShown', 'oembedShown'].includes(key) ? 'remoteContentPolicy' : 'calm';
       if(initialValues[key] !== bool) {
-        putEntry(bucket, key, bool);
+        putEntry(bucket, key, bucket === 'calm' ? bool : !bool);
       }
     });
   }, [initialValues]);
