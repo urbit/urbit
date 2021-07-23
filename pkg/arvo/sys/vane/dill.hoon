@@ -225,7 +225,7 @@
         =.  tem  ~
         =.  +>  (pass / %g %jolt %base ram)
         =?  +>  ?=(?(%earl %duke %king) can)
-          (ota sein %kids)
+          (ota sein %base)
         ::  make kids desk publicly readable, so syncs work.
         ::
         =.  +>  (show %kids)
