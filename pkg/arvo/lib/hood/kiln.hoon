@@ -1,4 +1,5 @@
 /-  *hood
+/*  base-bill  %bill  /desk/bill
 =,  clay
 =,  space:userlib
 =,  format
@@ -107,11 +108,11 @@
 ++  on-init
   =<  abet
   ~>  %slog.0^leaf/"kiln: boot"
+  =/  =rein  [add=(sy %hood %dojo ~) sub=~]
+  =/  daz  (get-apps-want base-bill rein)
   %-  emil
-  %+  turn  (get-apps-want our now %base *rein)
-  |=  =dude
-  ~>  %slog.0^leaf/"kiln: %jolt {<dude>}"
-  [%pass /kiln/vats/base/jolt/[dude] %arvo %g %jolt %base dude]
+  %-  zing  ^-  (list (list card:agent:gall))
+  (turn daz start-dude:~(pass vats [%base *arak]))
 ::
 ++  on-load
   |=  [hood-version=@ud old=any-state]
@@ -177,7 +178,7 @@
       [%x %kiln %ark ~]        ``noun+!>(ark)
       [%x %kiln %our ~]        ``noun+!>(our)
       [%x %kiln %base-hash ~]
-    =/  ver  (mergebase-hashes our now %base (~(got by ark) %base))
+    =/  ver  (mergebase-hashes our %base now (~(got by ark) %base))
     ``noun+!>(?~(ver 0v0 i.ver))
   ==
 ::
@@ -223,16 +224,20 @@
       |=  =dude
       ^-  (list card:agent:gall)
       :-  [%pass /kiln/vats/[loc]/jolt/[dude] %arvo %g %jolt loc dude]
-      ?.  (is-fish our now loc dude)
+      ?.  (is-fish dude (read-bill our loc now))
+        ~>  %slog.0^leaf/"kiln: jolt {<dude>}"
         ~
+      ~>  %slog.0^leaf/"kiln: jolt {<dude>}, binding console"
       =/  =cage  [%drum-link !>([our dude])]
       [%pass /kiln/link/[dude] %agent [our %hood] %poke cage]~
     ++  stop-dude
       |=  =dude
       ^-  (list card:agent:gall)
       :-  [%pass /kiln/vats/[loc]/uninstall %arvo %g %idle dude]
-      ?.  (is-fish our now loc dude)
+      ?.  (is-fish dude (read-bill our loc now))
+        ~>  %slog.0^leaf/"kiln: idle {<dude>}"
         ~
+      ~>  %slog.0^leaf/"kiln: idle {<dude>}, unbinding console"
       =/  =cage  [%drum-unlink !>([our dude])]
       [%pass /kiln/link/[dude] %agent [our %hood] %poke cage]~
     --
@@ -246,7 +251,11 @@
       kiln
     =.  vats  (abed lac)
     ~>  %slog.0^leaf/"kiln: uninstalling {here}"
-    =.  vats  (update-running-apps liv=~ ded=(get-apps-live our now lac))
+    =/  ded  (get-apps-live our lac now)
+    ::  hood and dojo must never die
+    ::
+    =.  ded  (skip ded |=(d=dude ?=(?(%hood %base) d)))
+    =.  vats  (stop-dudes ded)
     kiln(ark (~(del by ark) lac))
   ::  +install: set up desk sync to .lac to install all apps from [her rem]
   ::
@@ -381,7 +390,7 @@
       vats
     =.  vats
       ~>  %slog.0^leaf/"kiln: merge into {here} succeeded"
-      (update-running-apps (get-apps-diff our now loc rein.rak))
+      (update-running-apps (get-apps-diff our loc now rein.rak))
     ?.  =(%base loc)
       vats
     =.  kiln  (bump (sy %base %kids ~))
@@ -417,13 +426,18 @@
   ::
   ++  update-running-apps
     |=  [liv=(list dude) ded=(list dude)]
-    ^+  vats
-    ~>  %slog.0^leaf/"kiln: starting {<liv>}"
-    ~>  %slog.0^leaf/"kiln: stopping {<ded>}"
-    %-  emil
-    %+  weld
-      `(list card:agent:gall)`(zing (turn liv start-dude:pass))
-    `(list card:agent:gall)`(zing (turn ded stop-dude:pass))
+    =.  vats  (start-dudes liv)
+    =.  vats  (stop-dudes ded)
+    vats
+  ::
+  ++  start-dudes
+    |=  daz=(list dude)
+    (emil `(list card:agent:gall)`(zing (turn daz start-dude:pass)))
+  ::
+  ++  stop-dudes
+    |=  daz=(list dude)
+    ~>  %slog.0^leaf/"kiln: stopping {<daz>}"
+    (emil `(list card:agent:gall)`(zing (turn daz stop-dude:pass)))
   --
 ::  +get-ankh: extract $ankh from clay %v response $rant
 ::
@@ -560,7 +574,7 @@
   ?.  desk
     (emit %pass /nuke %arvo %g [%nuke term])
   %-  emil
-  %+  turn  (get-apps-have our now term)
+  %+  turn  (get-apps-have our term now)
   |=([=dude ?] [%pass /nuke %arvo %g [%nuke dude]])
 ::
 ++  poke-permission

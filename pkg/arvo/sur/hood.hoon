@@ -44,7 +44,7 @@
   =-  ?:  =(~ next.arak)  -
       (snoc - leaf/"pending: {<next.arak>}")
   ^-  tang
-  =/  meb  (mergebase-hashes our now desk arak)
+  =/  meb  (mergebase-hashes our desk now arak)
   =/  len  (lent meb)
   :~  leaf/"/sys/kelvin: {<[lal num]:weft>}"
       leaf/"base hash:   {?:((gth len 1) <meb> <(head meb)>)}"
@@ -81,49 +81,50 @@
     %direct  q.q.bob
     %delta   q.r.bob
   ==
+::  +read-bill: read contents of /desk/bill manifest
+::
+++  read-bill
+  |=  [our=ship =desk now=@da] 
+  .^(bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
 ::  +is-fish: should dill link .dude?
 ::
-++  is-fish
-  |=  [our=ship now=@da =desk =dude]
-  ^-  ?
-  =+  .^(=bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
-  .?((find ~[dude] (read-fish bill)))
+++  is-fish  |=([=dude =bill] .?((find ~[dude] (read-fish bill))))
 ::  +get-apps-diff: which agents should be started and stopped
 ::
 ++  get-apps-diff
-  |=  [our=ship now=@da =desk =rein]
+  |=  [our=ship =desk now=@da =rein]
   ^-  [liv=(list dude) ded=(list dude)]
-  =/  wan  (sy (get-apps-want our now desk rein))
-  =/  hav  (sy (get-apps-live our now desk))
+  =/  =bill  (read-bill our desk now)
+  =/  wan  (sy (get-apps-want bill rein))
+  =/  hav  (sy (get-apps-live our desk now))
   =/  liv  ~(tap in (~(dif in wan) hav))
   =/  ded  ~(tap in (~(dif in hav) wan))
   [liv ded]
 ::
 ++  get-apps-live
-  |=  [our=ship now=@da =desk]
+  |=  [our=ship =desk now=@da]
   ^-  (list dude)
-  %+  murn  (get-apps-have our now desk)
+  %+  murn  (get-apps-have our desk now)
   |=([=dude live=?] ?.(live ~ `dude))
 ::  +get-apps-have: find which apps Gall is running on a desk
 ::
 ++  get-apps-have
-  |=  [our=ship now=@da =desk]
+  |=  [our=ship =desk now=@da]
   ^-  (list [=dude live=?])
   %~  tap  in
   .^((set [=dude live=?]) ge+/(scot %p our)/[desk]/(scot %da now))
 ::  +get-apps-want: find which apps should be running on a desk
 ::
 ++  get-apps-want
-  |=  [our=ship now=@da =desk =rein]
+  |=  [=bill =rein]
   ^-  (list dude)
-  =+  .^(=bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
   =/  duz  (read-apes bill)
   =.  duz  (skip duz ~(has in sub.rein))
   =.  duz  (weld duz ~(tap in add.rein))
   duz
 ::
 ++  mergebase-hashes
-  |=  [our=@p now=@da =desk =arak]
+  |=  [our=@p =desk now=@da =arak]
   =/  her  (scot %p ship.arak)
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)

@@ -435,6 +435,7 @@
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl=gill:gall
+  ~>  %slog.0^leaf/"drum: link {<[p q]:gyl>}"
   =/  =path  /sole/(cat 3 'drum_' (scot %p our.hid))
   %-  se-emit(fug (~(put by fug) gyl ~))
   [%pass (en-gill gyl) %agent gyl %watch path]
