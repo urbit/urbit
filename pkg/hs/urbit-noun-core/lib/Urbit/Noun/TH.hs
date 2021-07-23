@@ -107,12 +107,14 @@ addErrTag :: String -> Exp -> Exp
 addErrTag tag exp =
     -- This spurious let is inserted so we can get better cost center data
     -- during heap profiling.
-    LetE [ValD (VarP nom) (NormalB bod) []] (VarE nom)
+    LetE [ValD (VarP nom) (NormalB nam) []]
+      $ InfixE (Just $ VarE nom) (VarE (mkName ".")) (Just exp)
   where
     -- XX arguably we should use newName rather than mkName here
     nom = mkName $ "named_" ++ filter C.isAlphaNum tag
     str = LitE $ StringL tag
-    bod = InfixE (Just $ AppE (VarE 'named) str) (VarE (mkName ".")) (Just exp)
+    nam = LamE [VarP $ mkName "x"] $ AppE (AppE (VarE 'named) str)
+                                   $ VarE (mkName "x")
 
 deriveFromNoun :: Name -> Q [Dec]
 deriveFromNoun tyName = do
