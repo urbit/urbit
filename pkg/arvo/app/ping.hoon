@@ -10,7 +10,7 @@
 ::  talk to its own star.
 ::
 /+  default-agent, verb
-=*  point  point:able:kale
+=*  point  point:kale
 ::
 |%
 +$  card  card:agent:gall

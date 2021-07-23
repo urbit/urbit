@@ -44,7 +44,7 @@ data Server i o a = Server
 
 --------------------------------------------------------------------------------
 
-withRIOThread ∷ RIO e a → RIO e (Async a)
+withRIOThread :: RIO e a -> RIO e (Async a)
 withRIOThread act = do
     env <- ask
     io $ async $ runRIO env $ act
@@ -82,12 +82,12 @@ wsConn pre inp out wsc = do
 
     flip finally cleanup $ do
          res <- atomically (waitCatchSTM writer <|> waitCatchSTM reader)
-         logDebug $ displayShow (res :: Either SomeException ())
+         logInfo $ displayShow (res :: Either SomeException ())
 
 
 --------------------------------------------------------------------------------
 
-wsClient :: ∀i o e. (ToNoun o, FromNoun i, Show o, Show i, HasLogFunc e)
+wsClient :: forall i o e. (ToNoun o, FromNoun i, Show o, Show i, HasLogFunc e)
          => Text -> W.Port -> RIO e (Client i o)
 wsClient pax por = do
     env <- ask
@@ -95,7 +95,7 @@ wsClient pax por = do
     out <- io $ newTBMChanIO 5
     con <- pure (mkConn inp out)
 
-    logDebug "NOUNSERV (wsClie) Trying to connect"
+    logInfo "NOUNSERV (wsClie) Trying to connect"
 
     tid <- io $ async
               $ WS.runClient "127.0.0.1" por (unpack pax)
@@ -111,24 +111,24 @@ wsServApp :: (HasLogFunc e, ToNoun o, FromNoun i, Show i, Show o)
           -> WS.PendingConnection
           -> RIO e ()
 wsServApp cb pen = do
-    logDebug "NOUNSERV (wsServer) Got connection!"
+    logInfo "NOUNSERV (wsServer) Got connection!"
     wsc <- io $ WS.acceptRequest pen
     inp <- io $ newTBMChanIO 5
     out <- io $ newTBMChanIO 5
     atomically $ cb (mkConn inp out)
     wsConn "NOUNSERV (wsServ) " inp out wsc
 
-wsServer :: ∀i o e. (ToNoun o, FromNoun i, Show i, Show o, HasLogFunc e)
+wsServer :: forall i o e. (ToNoun o, FromNoun i, Show i, Show o, HasLogFunc e)
          => RIO e (Server i o W.Port)
 wsServer = do
     con <- io $ newTBMChanIO 5
 
     tid <- async $ do
         env <- ask
-        logDebug "NOUNSERV (wsServer) Starting server"
+        logInfo "NOUNSERV (wsServer) Starting server"
         io $ WS.runServer "127.0.0.1" 9999
            $ runRIO env . wsServApp (writeTBMChan con)
-        logDebug "NOUNSERV (wsServer) Server died"
+        logInfo "NOUNSERV (wsServer) Server died"
         atomically $ closeTBMChan con
 
     pure $ Server (readTBMChan con) tid 9999

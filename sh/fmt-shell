@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Usage: fmt-shell
+
+set -euo pipefail
+
+cd "${0%/*}/.."
+
+echo "Formatting Shell"
+
+# FIXME: Avoid inplace (-w) modifications for now.
+find sh -type f \
+    -exec shfmt -s -i 2 -ln bash -l {} \+ \
+    -exec shellcheck --shell=bash --format=tty {} \+

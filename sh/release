@@ -1,33 +1,21 @@
 #!/usr/bin/env bash
 
-set -ex
+# Usage: release
 
-if [ -n "${TRAVIS_TAG-}" ]
-then
-  ver="$TRAVIS_TAG"
-elif [ -n "${TRAVIS_COMMIT-}" ]
-then
-  ver="$TRAVIS_COMMIT"
-else
-  ver="$(git rev-parse HEAD)"
-fi
+# Create a static tarball under ./release named with the current git revision.
 
-traced () {
-  echo '$' "$@" >&2; "$@"
-}
+set -xeuo pipefail
+
+cd "${0%/*}/.."
+
+rev="$(git rev-parse HEAD)"
+sha="${rev:0:5}"
+ver="$(cat pkg/urbit/version)"
+tgz="release/urbit-v${ver}-${sha}.tar.gz"
+out="$(nix-build -A tarball --arg enableStatic true --no-out-link)"
 
 mkdir -p release
 
-for plat in linux64 darwin
-do
-  sh/cross urbit "$plat"
+cp -f "$out" "$tgz"
 
-  tmp=$(mktemp -d)
-  mkdir -p $tmp/vere-$ver-$plat
-  traced cp -r cross/$plat/* $tmp/vere-$ver-$plat
-
-  echo "packaging release/vere-$ver-$plat.tgz"
-  (cd $tmp; tar cz vere-$ver-$plat) > release/vere-$ver-$plat.tgz
-
-  rm -rf $tmp
-done
+chmod 0644 "$tgz"

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# Usage: fmt-nix
+
+set -euo pipefail
+
+cd "${0%/*}/.."
+
+echo "Formatting Nix"
+
+find . -type f -name '*.nix' \
+    -exec nixfmt {} \+

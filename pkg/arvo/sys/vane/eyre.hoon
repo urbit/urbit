@@ -1,7 +1,7 @@
 !:
 ::  lighter than eyre
 ::
-|=  pit=vase
+|=  our=ship
 =,  eyre
 ::  internal data structures
 ::
@@ -17,7 +17,7 @@
       =duct
       ::
       ::
-      card=(wind note gift:able)
+      card=(wind note gift)
   ==
 ::  +note: private request from eyre to another vane
 ::
@@ -42,25 +42,17 @@
       $:  %g
           ::
           ::
-          $>(%deal task:able:gall)
+          $>(%deal task:gall)
   ==  ==
 ::  +sign: private response from another vane to eyre
 ::
 +$  sign
-  $%  ::  %b: from behn
-      ::
-      $:  %b
-          ::
-          ::
+  $%  $:  %behn
           $%  [%wake error=(unit tang)]
       ==  ==
-      ::  %g: from gall
-      ::
-      $:  %g
-          ::
-          ::
-          gift:able:gall
-          ::  $>(%unto gift:able:gall)
+      $:  %gall
+          gift:gall
+          ::  $>(%unto gift:gall)
   ==  ==
 --
 ::  more structures
@@ -69,7 +61,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2020.5.29
+      date=%~2020.10.18
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -87,6 +79,9 @@
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
       bindings=(list [=binding =duct =action])
+      ::  cors-registry: state used and managed by the +cors core
+      ::
+      =cors-registry
       ::  connections: open http connections not fully complete
       ::
       connections=(map duct outstanding-connection)
@@ -128,6 +123,12 @@
       ::
       [%delete ~]
   ==
+::  clog-timeout: the delay between acks after which clog-threshold kicks in
+::
+++  clog-timeout     ~s30
+::  clog-threshold: maximum per-subscription event buildup, after clog-timeout
+::
+++  clog-threshold   50
 ::  channel-timeout: the delay before a channel should be reaped
 ::
 ++  channel-timeout  ~h12
@@ -149,22 +150,45 @@
   (can 3 a)
 ::  +prune-events: removes all items from the front of the queue up to :id
 ::
+::    also produces, per request-id, the amount of events that have got acked,
+::    for use with +subtract-acked-events.
+::
 ++  prune-events
-  |=  [q=(qeu [id=@ud lines=wall]) id=@ud]
-  ^+  q
+  =|  acked=(map @ud @ud)
+  |=  [q=(qeu [id=@ud @ud channel-event]) id=@ud]
+  ^+  [acked q]
   ::  if the queue is now empty, that's fine
   ::
   ?:  =(~ q)
-    ~
+    [acked ~]
   ::
-  =/  next=[item=[id=@ud lines=wall] _q]  ~(get to q)
+  =/  next=[item=[id=@ud request-id=@ud channel-event] _q]  ~(get to q)
   ::  if the head of the queue is newer than the acknowledged id, we're done
   ::
   ?:  (gth id.item.next id)
-    q
-  ::  otherwise, check next item
+    [acked q]
+  ::  otherwise, note the ack, and check next item
   ::
-  $(q +:next)
+  %_  $
+    q  +:next
+  ::
+      acked
+    =,  item.next
+    %+  ~(put by acked)  request-id
+    +((~(gut by acked) request-id 0))
+  ==
+::  +subtract-acked-events: update the subscription map's pending ack counts
+::
+++  subtract-acked-events
+  |=  [acked=(map @ud @ud) unacked=(map @ud @ud)]
+  ^+  unacked
+  %+  roll  ~(tap by acked)
+  |=  [[rid=@ud ack=@ud] unacked=_unacked]
+  ?~  sus=(~(get by unacked) rid)
+    unacked
+  %+  ~(put by unacked)  rid
+  ?:  (lte u.sus ack)  0
+  (sub u.sus ack)
 ::  +parse-channel-request: parses a list of channel-requests
 ::
 ::    Parses a json array into a list of +channel-request. If any of the items
@@ -204,16 +228,20 @@
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
-  |=  [redirect-url=(unit @t) our=@p]
+  |=  [redirect-url=(unit @t) our=@p failed=?]
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
   %-  as-octs:mimes:html
   %-  crip
   %-  en-xml:html
+  =/  favicon  %+
+    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
+          "<circle r='3.09' cx='5' cy='5' /></svg>"
   ;html
     ;head
       ;meta(charset "utf-8");
       ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
       ;title:"OS1"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
@@ -221,175 +249,161 @@
                  font-family: "Source Code Pro";
                  src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-regular.woff");
                  font-weight: 400;
+                 font-display: swap;
              }
-             html, body {
+             :root {
+               --red05: rgba(255,65,54,0.05);
+               --red100: rgba(255,65,54,1);
+               --blue05: rgba(33,157,255,0.05);
+               --blue30: rgba(33,157,255,0.3);
+               --blue100: rgba(33,157,255,1);
+               --black05: rgba(0,0,0,0.05);
+               --black20: rgba(0,0,0,0.2);
+               --black60: rgba(0,0,0,0.6);
+               --white: rgba(255,255,255,1);
+             }
+             html {
                font-family: Inter, sans-serif;
                height: 100%;
-               margin: 0 !important;
+               margin: 0;
                width: 100%;
-               background: #fff;
-               color: #000;
+               background: var(--white);
+               color: var(--black100);
                -webkit-font-smoothing: antialiased;
                line-height: 1.5;
-               font-size: 12pt;
+               font-size: 12px;
+               display: flex;
+               flex-flow: row nowrap;
+               justify-content: center;
              }
-             a, a:visited {
-               color: #000;
-               text-decoration: none;
-               font-size: 0.875rem;
+             body {
+               display: flex;
+               flex-flow: column nowrap;
+               justify-content: center;
+               max-width: 300px;
+               padding: 1rem;
+               width: 100%;
              }
-             p {
-               margin-block-start: 0;
-               margin-block-end: 0;
-               font-size: 0.875rem;
+             body > *,
+             form > input {
+               width: 100%;
+             }
+             form {
+               display: flex;
+               flex-flow: column;
+               align-items: flex-start;
              }
              input {
-               width: 100%;
-               padding: 0.75rem;
-               border: 1px solid #e6e6e6;
-               margin-top: 0.25rem;
-               margin-bottom: 1rem;
-               font-size: 0.875rem;
+               background: transparent;
+               border: 1px solid var(--black20);
+               padding: 8px;
+               border-radius: 4px;
+               font-size: inherit;
+               color: var(--black);
+               box-shadow: none;
+             }
+             input:disabled {
+               background: var(--black05);
+               color: var(--black60);
              }
              input:focus {
-               outline: 0;
-               border: 1px solid #000;
+               outline: none;
+               border-color: var(--blue30);
              }
-             button {
-               -webkit-appearance: none;
-               padding: 0.75rem;
-               background-color: #eee;
-               border: 1px solid #d1d2d3;
-               color: #666;
-               font-size: 0.875rem;
-               border-radius: 0;
+             input:invalid:not(:focus) {
+               background: var(--red05);
+               border-color: var(--red100);
+               outline: none;
+               color: var(--red100);
              }
-             footer {
-               position: absolute;
-               bottom: 0;
+             button[type=submit] {
+               margin-top: 16px;
+               padding: 8px 16px;
+               border-radius: 4px;
+               background: var(--blue100);
+               color: var(--white);
+               border: 1px solid var(--blue100);
+             }
+             input:invalid ~ button[type=submit] {
+               border-color: currentColor;
+               background: var(--blue05);
+               color: var(--blue30);
+               pointer-events: none;
+             }
+             span.failed {
+               display: flex;
+               flex-flow: row nowrap;
+               height: 16px;
+               align-items: center;
+               margin-top: 6px;
+               color: var(--red100);
+             }
+             span.failed svg {
+               height: 12px;
+              margin-right: 6px;
+             }
+             span.failed circle,
+             span.failed line {
+               fill: transparent;
+               stroke: currentColor
              }
              .mono {
-               font-family: "Source Code Pro", monospace;
-             }
-             .gray2 {
-               color: #7f7f7f;
-             }
-             .f9 {
-               font-size: 0.75rem;
-             }
-             .relative {
-               position: relative;
-             }
-             .absolute {
-               position: absolute;
-             }
-             .w-100 {
-               width: 100%;
-             }
-             .tr {
-               text-align: right;
-             }
-             .pb2 {
-               padding-bottom: 0.5rem;
-             }
-             .pr1 {
-               padding-right: 0.25rem;
-             }
-             .pr2 {
-               padding-right: .5rem;
-             }
-             .dn {
-               display: none;
-             }
-             #main {
-               width: 100%;
-               height: 100%;
-             }
-             #inner {
-               position: fixed;
-               top: 50%;
-               left: 50%;
-               transform: translate(-50%, -50%);
+               font-family: 'Source Code Pro', monospace;
              }
              @media all and (prefers-color-scheme: dark) {
-               html, body {
-                 background-color: #333;
-                 color: #fff;
-               }
-               a, a:visited {
-                 color: #fff;
-               }
-               input {
-                 background: #333;
-                 color: #fff;
-                 border: 1px solid #7f7f7f;
-               }
-               input:focus {
-                 border: 1px solid #fff;
-               }
-             }
-             @media all and (min-width: 34.375rem) {
-               .tc-ns {
-                 text-align: center;
-               }
-               .pr0-ns {
-                 padding-right: 0;
-               }
-               .dib-ns {
-                 display: inline-block;
+               :root {
+                 --white: rgb(51, 51, 51);
+                 --black100: rgba(255,255,255,1);
+                 --black05: rgba(255,255,255,0.05);
+                 --black20: rgba(255,255,255,0.2);
                }
              }
              '''
     ==
     ;body
-      ;div#main
-        ;div#inner
-          ;p:"Urbit ID"
-          ;input(value "{(scow %p our)}", disabled "true", class "mono");
-          ;p:"Access Key"
-          ;p.f9.gray2
-            ; Get key from Bridge, or
-            ;span.mono.pr1:"+code"
-            ; in dojo
-          ==
-          ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
-            ;input
-              =type  "password"
-              =name  "password"
-              =placeholder  "sampel-ticlyt-migfun-falmel"
-              =class  "mono"
-              =autofocus  "true";
-            ;input(type "hidden", name "redirect", value redirect-str);
-            ;button(type "submit"):"Continue"
-          ==
-        ==
-        ;footer.absolute.w-100
-          ;div.relative.w-100.tr.tc-ns
-            ;p.pr2.pr0-ns.pb2
-              ;a(href "https://bridge.urbit.org", target "_blank")
-                ;span.dn.dib-ns.pr1:"Open"
-                ; Bridge ↗
-              ==
-              ;a
-                =href  "https://urbit.org/using/install/#id"
-                =style  "margin-left: 8px; color: #2aa779;"
-                =target  "_blank"
-                ; Purchase
-                ;span.dn.dib-ns.pr1:"an Urbit ID"
-                ; ↗
-              ==
+      ;p:"Urbit ID"
+      ;input(value "{(scow %p our)}", disabled "true", class "mono");
+      ;p:"Access Key"
+      ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+        ;input
+          =type  "password"
+          =name  "password"
+          =placeholder  "sampel-ticlyt-migfun-falmel"
+          =class  "mono"
+          =required  "true"
+          =minlength  "27"
+          =maxlength  "27"
+          =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))"
+          =autofocus  "true";
+        ;input(type "hidden", name "redirect", value redirect-str);
+        ;+  ?.  failed  ;span;
+          ;span.failed
+            ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 12 12")
+              ;circle(cx "6", cy "6", r "5.5");
+              ;line(x1 "3.27", y1 "3.27", x2 "8.73", y2 "8.73");
+              ;line(x1 "8.73", y1 "3.27", x2 "3.27", y2 "8.73");
             ==
+            Key is incorrect
           ==
-        ==
+          ;button(type "submit"):"Continue"
       ==
     ==
+    ;script:'''
+            var failSpan = document.querySelector('.failed');
+            if (failSpan) {
+              document.querySelector("input[type=password]")
+                .addEventListener('keyup', function (event) {
+                  failSpan.style.display = 'none';
+                });
+            }
+            '''
   ==
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
 ++  render-tang-to-marl
-  |=  {wid/@u tan/tang}
+  |=  [wid=@u tan=tang]
   ^-  marl
-  =/  raw=(list tape)  (zing (turn tan |=(a/tank (wash 0^wid a))))
+  =/  raw=(list tape)  (zing (turn tan |=(a=tank (wash 0^wid a))))
   ::
   |-  ^-  marl
   ?~  raw  ~
@@ -397,7 +411,7 @@
 ::  +render-tang-to-wall: renders tang as text lines
 ::
 ++  render-tang-to-wall
-  |=  {wid/@u tan/tang}
+  |=  [wid=@u tan=tang]
   ^-  wall
   (zing (turn tan |=(a=tank (wash 0^wid a))))
 ::  +wall-to-octs: text to binary output
@@ -430,7 +444,7 @@
     ==
     ;body
       ;h1:"Internal Server Error"
-      ;p:"There was an error while handling the request for {<(trip url)>}."
+      ;p:"There was an error while handling the request for {(trip url)}."
       ;*  ?:  authorized
             ;=
               ;code:"*{(render-tang-to-marl 80 t)}"
@@ -446,7 +460,7 @@
   ::
   =/  code-as-tape=tape  (format-ud-as-integer code)
   =/  message=tape
-    ?+  code  "{<code>} Error"
+    ?+  code  "{(scow %ud code)} Error"
       %400  "Bad Request"
       %403  "Forbidden"
       %404  "Not Found"
@@ -463,7 +477,7 @@
     ==
     ;body
       ;h1:"{message}"
-      ;p:"There was an error while handling the request for {<(trip url)>}."
+      ;p:"There was an error while handling the request for {(trip url)}."
       ;*  ?:  authorized
             ;=
               ;code:"{t}"
@@ -531,7 +545,7 @@
 ++  per-server-event
   ::  gate that produces the +per-server-event core from event information
   ::
-  |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
+  |=  [[eny=@ =duct now=@da rof=roof] state=server-state]
   =/  eyre-id  (scot %ta (cat 3 'eyre_' (scot %uv (sham duct))))
   |%
   ::  +request-local: bypass authentication for local lens connections
@@ -555,12 +569,17 @@
   ++  request
     |=  [secure=? =address =request:http]
     ^-  [(list move) server-state]
+    =*  headers  header-list.request
     ::  for requests from localhost, respect the "forwarded" header
     ::
-    =?  address  =([%ipv4 .127.0.0.1] address)
-      (fall (forwarded-for header-list.request) address)
+    =/  [secure=? =^address]
+      =*  same  [secure address]
+      ?.  =([%ipv4 .127.0.0.1] address)        same
+      ?~  forwards=(forwarded-params headers)  same
+      :-  (fall (forwarded-secure u.forwards) secure)
+      (fall (forwarded-for u.forwards) address)
     ::
-    =/  host  (get-header:http 'host' header-list.request)
+    =/  host  (get-header:http 'host' headers)
     =/  [=action suburl=@t]
       (get-action-for-binding host url.request)
     ::
@@ -571,17 +590,49 @@
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
+    ::  figure out whether this is a cors request,
+    ::  whether the origin is approved or not,
+    ::  and maybe add it to the "pending approval" set
+    ::
+    =/  origin=(unit origin)
+      (get-header:http 'origin' headers)
+    =^  cors-approved  requests.cors-registry.state
+      =,  cors-registry.state
+      ?~  origin                         [| requests]
+      ?:  (~(has in approved) u.origin)  [& requests]
+      ?:  (~(has in rejected) u.origin)  [| requests]
+      [| (~(put in requests) u.origin)]
+    ::  if this is a cors preflight request from an approved origin
+    ::  handle it synchronously
+    ::
+    ?:  &(?=(^ origin) cors-approved ?=(%'OPTIONS' method.request))
+      %-  handle-response
+      =;  =header-list:http
+        [%start [204 header-list] ~ &]
+      ::  allow the method and headers that were asked for,
+      ::  falling back to wildcard if none specified
+      ::
+      ::NOTE  +handle-response will add the rest of the headers
+      ::
+      :~  :-  'Access-Control-Allow-Methods'
+          =-  (fall - '*')
+          (get-header:http 'access-control-request-method' headers)
+        ::
+          :-  'Access-Control-Allow-Headers'
+          =-  (fall - '*')
+          (get-header:http 'access-control-request-headers' headers)
+      ==
     ::
     ?-    -.action
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
-      =/  sup=spur  (flop path.generator.action)
-      =/  ski       (scry [%141 %noun] ~ %ca bek sup)
+      =/  sup=spur  path.generator.action
+      =/  ski       (rof ~ %ca bek sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
       =/  res=toon
-        %-  mock  :_  (sloy scry)
+        %-  mock  :_  (look rof ~)
         :_  [%9 2 %0 1]  |.
         %+  slam
           %+  slam  gat
@@ -603,8 +654,7 @@
             authenticated.inbound-request.connection
             url.request.inbound-request.connection
             leaf+"scry blocked on"
-            >p.res<
-            ~
+            (fall (bind (bind ((soft path) p.res) smyt) (late ~)) ~)
         ==
       =/  result  ;;(simple-payload:http +.p.res)
       ::  ensure we have a valid content-length header
@@ -684,7 +734,7 @@
     ?-  -.mym
       %|  (error-response 500 "failed tube from {(trip mark)} to mime")
       %&  %+  return-static-data-on-duct  200
-          [(rsh 3 1 (spat p.p.mym)) q.p.mym]
+          [(rsh 3 (spat p.p.mym)) q.p.mym]
     ==
     ::
     ++  find-tube
@@ -699,7 +749,7 @@
     ++  do-scry
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
-      (scry [%141 %noun] ~ care [our desk da+now] (flop path))
+      (rof ~ care [our desk da+now] path)
     ::
     ++  error-response
       |=  [status=@ud =tape]
@@ -793,28 +843,28 @@
         ::
         =+  request-line=(parse-request-line url.request)
         %^  return-static-data-on-duct  200  'text/html'
-        (login-page (get-header:http 'redirect' args.request-line) our)
+        (login-page (get-header:http 'redirect' args.request-line) our %.n)
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::  we are a post, and must process the body type as form data
       ::
       ?~  body.request
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our %.n))
       ::
       =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
       ?~  password=(get-header:http 'password' u.parsed)
-        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our %.n))
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
-        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our %.y))
       ::  mint a unique session cookie
       ::
       =/  session=@uv
@@ -843,7 +893,7 @@
       ?~  redirect
         %-  handle-response
         :*  %start
-            :-  status-code=200
+            :-  status-code=204
             ^=  headers
               :~  ['set-cookie' cookie-line]
               ==
@@ -930,7 +980,7 @@
         ~
       ::  is there an urbauth cookie?
       ::
-      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
+      ?~  urbauth=(get-header:http (crip "urbauth-{(scow %p our)}") u.cookies)
         ~
       ::  if it's formatted like a valid session cookie, produce it
       ::
@@ -958,11 +1008,9 @@
     ::
     ++  code
       ^-  @ta
-      ::
-      =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
-      =+  res=((sloy scry) [151 %noun] %j pax)
-      ::
-      (rsh 3 1 (scot %p (@ (need (need res)))))
+      =/  res=(unit (unit cage))
+        (rof ~ %j [our %code da+now] /(scot %p our))
+      (rsh 3 (scot %p ;;(@ q.q:(need (need res)))))
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
@@ -970,7 +1018,7 @@
       ^-  @t
       %-  crip
       =;  max-age=tape
-        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+        "urbauth-{(scow %p our)}={(scow %uv session)}; Path=/; Max-Age={max-age}"
       %-  format-ud-as-integer
       ?.  extend  0
       (div (msec:milly session-timeout) 1.000)
@@ -1087,7 +1135,7 @@
         %_    ..update-timeout-timer-for
             session.channel-state.state
           %+  ~(put by session.channel-state.state)  channel-id
-          [[%& expiration-time duct] 0 ~ ~ ~]
+          [[%& expiration-time duct] 0 now ~ ~ ~ ~]
         ::
             moves
           [(set-timeout-move channel-id expiration-time) moves]
@@ -1177,7 +1225,13 @@
         ?:  =(~ queue)
           events
         =^  head  queue  ~(get to queue)
-        $(events [lines.p.head events])
+        =,  p.head
+        ::NOTE  these will only fail if the mark and/or json types changed,
+        ::      since conversion failure also gets caught during first receive.
+        ::      we can't do anything about this, so consider it unsupported.
+        ?~  sign=(channel-event-to-sign channel-event)  $
+        ?~  json=(sign-to-json request-id u.sign)       $
+        $(events [(event-json-to-wall id u.json) events])
       ::  send the start event to the client
       ::
       =^  http-moves  state
@@ -1228,7 +1282,11 @@
         %+  ~(jab by session.channel-state.state)  channel-id
         |=  =channel
         ^+  channel
-        channel(events (prune-events events.channel last-event-id))
+        =^  acked  events.channel
+          (prune-events events.channel last-event-id)
+        =.  unacked.channel
+          (subtract-acked-events acked unacked.channel)
+        channel(last-ack now)
       ==
     ::  +on-put-request: handles a PUT request
     ::
@@ -1282,7 +1340,7 @@
         =^  http-moves  state
           %-  handle-response
           :*  %start
-              [status-code=200 headers=~]
+              [status-code=204 headers=~]
               data=~
               complete=%.y
           ==
@@ -1313,47 +1371,48 @@
       ::
           %subscribe
         ::
-        =/  channel-wire=wire
-          /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
+        =,  i.requests
         ::
         =.  gall-moves
           :_  gall-moves
           ^-  move
-          :^  duct  %pass  channel-wire
-          =,  i.requests
+          :^  duct  %pass
+            (subscription-wire channel-id request-id ship app)
           :*  %g  %deal  [our ship]  app
-              `task:agent:gall`[%watch-as %json path]
+              `task:agent:gall`[%watch path]
           ==
         ::
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
           |=  =channel
-          =,  i.requests
-          channel(subscriptions (~(put by subscriptions.channel) channel-wire [ship app path duct]))
+          =-  channel(subscriptions -)
+          %+  ~(put by subscriptions.channel)
+            request-id
+          [ship app path duct]
         ::
         $(requests t.requests)
       ::
           %unsubscribe
-        =/  channel-wire=wire
-          /channel/subscription/[channel-id]/(scot %ud subscription-id.i.requests)
+        =,  i.requests
         ::
         =/  usession  (~(get by session.channel-state.state) channel-id)
         ?~  usession
           $(requests t.requests)
         =/  subscriptions  subscriptions:u.usession
         ::
-        ?~  maybe-subscription=(~(get by subscriptions) channel-wire)
+        ?~  maybe-subscription=(~(get by subscriptions) subscription-id)
           ::  the client sent us a weird request referring to a subscription
           ::  which isn't active.
           ::
-          ~&  [%missing-subscription-in-unsubscribe channel-wire]
+          ~&  [%missing-subscription-in-unsubscribe channel-id subscription-id]
           $(requests t.requests)
         ::
         =.  gall-moves
           :_  gall-moves
           ^-  move
-          :^  duc.u.maybe-subscription  %pass  channel-wire
           =,  u.maybe-subscription
+          :^  duc  %pass
+            (subscription-wire channel-id subscription-id.i.requests ship app)
           :*  %g  %deal  [our ship]  app
               `task:agent:gall`[%leave ~]
           ==
@@ -1361,7 +1420,10 @@
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
           |=  =channel
-          channel(subscriptions (~(del by subscriptions.channel) channel-wire))
+          %_  channel
+            subscriptions  (~(del by subscriptions.channel) subscription-id)
+            unacked        (~(del by unacked.channel) subscription-id)
+          ==
         ::
         $(requests t.requests)
       ::
@@ -1373,75 +1435,47 @@
         $(requests t.requests)
       ::
       ==
-    ::  +on-gall-response: turns a gall response into an event
+    ::  +on-gall-response: sanity-check a gall response, send as event
     ::
     ++  on-gall-response
-      |=  [channel-id=@t request-id=@ud =sign:agent:gall]
+      |=  [channel-id=@t request-id=@ud extra=wire =sign:agent:gall]
       ^-  [(list move) server-state]
+      ::  if the channel doesn't exist, we should clean up subscriptions
       ::
-      ?-    -.sign
-          %poke-ack
-        =/  =json
-          =,  enjs:format
-          %-  pairs  :~
-            ['response' [%s 'poke']]
-            ['id' (numb request-id)]
-            ?~  p.sign
-              ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.sign))]
-          ==
-        ::
-        (emit-event channel-id [(en-json:html json)]~)
+      ::    this is a band-aid solution. you really want eyre to have cleaned
+      ::    these up on-channel-delete in the first place.
+      ::    until the source of that bug is discovered though, we keep this
+      ::    in place to ensure a slightly tidier home.
       ::
-          %fact
-        =/  =json
-          =,  enjs:format
-          %-  pairs  :~
-            ['response' [%s 'diff']]
-            ['id' (numb request-id)]
-            :-  'json'
-            ?>  =(%json p.cage.sign)
-            ;;(json q.q.cage.sign)
+      ?.  ?&  !(~(has by session.channel-state.state) channel-id)
+              ?=(?(%fact %watch-ack) -.sign)
+              ?=([@ @ ~] extra)
           ==
-        ::
-        (emit-event channel-id [(en-json:html json)]~)
-      ::
-          %kick
-        =/  =json
-          =,  enjs:format
-          %-  pairs  :~
-            ['response' [%s 'quit']]
-            ['id' (numb request-id)]
-          ==
-        ::
-        (emit-event channel-id [(en-json:html json)]~)
-      ::
-          %watch-ack
-        =/  =json
-          =,  enjs:format
-          %-  pairs  :~
-            ['response' [%s 'subscribe']]
-            ['id' (numb request-id)]
-            ?~  p.sign
-              ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.sign))]
-          ==
-        ::
-        (emit-event channel-id [(en-json:html json)]~)
-      ==
+        (emit-event channel-id request-id sign)
+      =/  =ship     (slav %p i.extra)
+      =*  app=term  i.t.extra
+      =/  =tape
+        %+  weld  "eyre: removing watch for "
+        "non-existent channel {(trip channel-id)} on {(trip app)}"
+      %-  (slog leaf+tape ~)
+      :_  state
+      :_  ~
+      ^-  move
+      :^  duct  %pass
+        (subscription-wire channel-id request-id ship app)
+      [%g %deal [our ship] app `task:agent:gall`[%leave ~]]
     ::  +emit-event: records an event occurred, possibly sending to client
     ::
     ::    When an event occurs, we need to record it, even if we immediately
     ::    send it to a connected browser so in case of disconnection, we can
     ::    resend it.
     ::
-    ::    This function is responsible for taking the raw json lines and
-    ::    converting them into a text/event-stream. The :event-stream-lines
-    ::    then may get sent, and are stored for later resending until
-    ::    acknowledged by the client.
+    ::    This function is responsible for taking the event sign and converting
+    ::    it into a text/event-stream. The :sign then may get sent, and is
+    ::    stored for later resending until acknowledged by the client.
     ::
     ++  emit-event
-      |=  [channel-id=@t json-text=wall]
+      |=  [channel-id=@t request-id=@ud =sign:agent:gall]
       ^-  [(list move) server-state]
       ::
       =/  channel=(unit channel)
@@ -1449,51 +1483,211 @@
       ?~  channel
         :_  state  :_  ~
         [duct %pass /flog %d %flog %crud %eyre-no-channel >id=channel-id< ~]
+      ::  it's possible that this is a sign emitted directly alongside a fact
+      ::  that triggered a clog & closed the subscription. in that case, just
+      ::  drop the sign.
+      ::  poke-acks are not paired with subscriptions, so we can process them
+      ::  regardless.
       ::
-      =/  event-id  next-id.u.channel
+      ?:  ?&  !?=(%poke-ack -.sign)
+              !(~(has by subscriptions.u.channel) request-id)
+          ==
+        [~ state]
+      ::  attempt to convert the sign to json.
+      ::  if conversion succeeds, we *can* send it. if the client is actually
+      ::  connected, we *will* send it immediately.
       ::
-      =/  event-stream-lines=wall
-        %-  weld  :_  [""]~
-        :-  (weld "id: " (format-ud-as-integer event-id))
-        %+  turn  json-text
-        |=  =tape
-        (weld "data: " tape)
-      ::  if a client is connected, send this event to them.
+      =/  json=(unit json)
+        (sign-to-json request-id sign)
+      =*  sending  &(?=([%| *] state.u.channel) ?=(^ json))
       ::
-      =?  moves  ?=([%| *] state.u.channel)
+      =/  next-id  next-id.u.channel
+      ::  if we can send it, store the event as unacked
+      ::
+      =?  events.u.channel  ?=(^ json)
+        %-  ~(put to events.u.channel)
+        [next-id request-id (sign-to-channel-event sign)]
+      ::  if it makes sense to do so, send the event to the client
+      ::
+      =?  moves  sending
         ^-  (list move)
         :_  moves
+        ::NOTE  assertions in this block because =* is flimsy
+        ?>  ?=([%| *] state.u.channel)
         :+  p.state.u.channel  %give
-        ^-  gift:able
+        ^-  gift
         :*  %response  %continue
         ::
             ^=  data
-            :-  ~
-            %-  as-octs:mimes:html
-            (crip (of-wall:format event-stream-lines))
+            %-  wall-to-octs
+            (event-json-to-wall next-id (need json))
         ::
             complete=%.n
         ==
+      =?  next-id  ?=(^ json)  +(next-id)
+      ::  update channel's unacked counts, find out if clogged
       ::
-      :-  moves
+      =^  clogged  unacked.u.channel
+        ::  only apply clog logic to facts.
+        ::  and of course don't count events we can't send as unacked.
+        ::
+        ?:  ?|  !?=(%fact -.sign)
+                ?=(~ json)
+            ==
+          [| unacked.u.channel]
+        =/  num=@ud
+          (~(gut by unacked.u.channel) request-id 0)
+        :_  (~(put by unacked.u.channel) request-id +(num))
+        ?&  (gte num clog-threshold)
+            (lth (add last-ack.u.channel clog-timeout) now)
+        ==
+      ~?  clogged  [%e %clogged channel-id request-id]
+      ::  if we're clogged, or we ran into an event we can't serialize,
+      ::  kill this gall subscription.
+      ::
+      =*  kicking    |(clogged ?=(~ json))
+      =?  moves      kicking
+        :_  moves
+        ::NOTE  this shouldn't crash because we
+        ::      - never fail to serialize subscriptionless signs (%poke-ack),
+        ::      - only clog on %facts, which have a subscription associated,
+        ::      - and already checked whether we still have that subscription.
+        =+  (~(got by subscriptions.u.channel) request-id)
+        :^  duct  %pass
+          (subscription-wire channel-id request-id ship app)
+        [%g %deal [our ship] app %leave ~]
+      ::  update channel state to reflect the %kick
+      ::
+      =?  u.channel  kicking
+        %_  u.channel
+          subscriptions  (~(del by subscriptions.u.channel) request-id)
+          unacked        (~(del by unacked.u.channel) request-id)
+          events         %-  ~(put to events.u.channel)
+                         [next-id request-id (sign-to-channel-event %kick ~)]
+        ==
+      ::  if a client is connected, send the kick event to them
+      ::
+      =?  moves  &(kicking ?=([%| *] state.u.channel))
+        :_  moves
+        :+  p.state.u.channel  %give
+        ^-  gift
+        :*  %response  %continue
+        ::
+            ^=  data
+            %-  wall-to-octs
+            %+  event-json-to-wall  next-id
+            (need (sign-to-json request-id %kick ~))
+        ::
+            complete=%.n
+        ==
+      =?  next-id   kicking  +(next-id)
+      ::
+      :-  (flop moves)
       %_    state
           session.channel-state
-        %+  ~(jab by session.channel-state.state)  channel-id
-        |=  =^channel
-        ^+  channel
+        %+  ~(put by session.channel-state.state)  channel-id
+        u.channel(next-id next-id)
+      ==
+    ::  +sign-to-channel-event: strip the vase from a sign:agent:gall
+    ::
+    ++  sign-to-channel-event
+      |=  =sign:agent:gall
+      ^-  channel-event
+      ?.  ?=(%fact -.sign)  sign
+      [%fact [p q.q]:cage.sign]
+    ::  +channel-event-to-sign: attempt to recover a sign from a channel-event
+    ::
+    ++  channel-event-to-sign
+      |=  event=channel-event
+      ^-  (unit sign:agent:gall)
+      ?.  ?=(%fact -.event)  `event
+      ::  rebuild vase for fact data
+      ::
+      =*  have=mark  mark.event
+      =/  val=(unit (unit cage))
+        (rof ~ %cb [our %home da+now] /[have])
+      ?.  ?=([~ ~ *] val)
+        ((slog leaf+"eyre: no mark {(trip have)}" ~) ~)
+      =+  !<(=dais:clay q.u.u.val)
+      =/  res  (mule |.((vale:dais noun.event)))
+      ?:  ?=(%| -.res)
+        ((slog leaf+"eyre: stale fact of mark {(trip have)}" ~) ~)
+      `[%fact have p.res]
+    ::  +sign-to-json: render sign from request-id as json channel event
+    ::
+    ++  sign-to-json
+      |=  [request-id=@ud =sign:agent:gall]
+      ^-  (unit json)
+      ::  for facts, we try to convert the result to json
+      ::
+      =/  jsyn=(unit sign:agent:gall)
+        ?.  ?=(%fact -.sign)       `sign
+        ?:  ?=(%json p.cage.sign)  `sign
+        ::  find and use tube from fact mark to json
         ::
-        %_  channel
-          next-id  +(next-id.channel)
-          events  (~(put to events.channel) [event-id event-stream-lines])
+        =*  have=mark  p.cage.sign
+        =*  desc=tape  "from {(trip have)} to json"
+        =/  tube=(unit tube:clay)
+          =/  tuc=(unit (unit cage))
+            (rof ~ %cc [our %home da+now] /[have]/json)
+          ?.  ?=([~ ~ *] tuc)  ~
+          `!<(tube:clay q.u.u.tuc)
+        ?~  tube
+          ((slog leaf+"eyre: no tube {desc}" ~) ~)
+        ::
+        =/  res  (mule |.((u.tube q.cage.sign)))
+        ?:  ?=(%& -.res)
+          `[%fact %json p.res]
+        ((slog leaf+"eyre: failed tube {desc}" ~) ~)
+      ::
+      ?~  jsyn  ~
+      %-  some
+      =*  sign  u.jsyn
+      =,  enjs:format
+      %-  pairs
+      ^-  (list [@t json])
+      :-  ['id' (numb request-id)]
+      ?-    -.sign
+          %poke-ack
+        :~  ['response' [%s 'poke']]
+          ::
+            ?~  p.sign
+              ['ok' [%s 'ok']]
+            ['err' (wall (render-tang-to-wall 100 u.p.sign))]
         ==
+      ::
+          %fact
+        :~  ['response' [%s 'diff']]
+          ::
+            :-  'json'
+            ~|  [%unexpected-fact-mark p.cage.sign]
+            ?>  =(%json p.cage.sign)
+            ;;(json q.q.cage.sign)
+        ==
+      ::
+          %kick
+        ['response' [%s 'quit']]~
+      ::
+          %watch-ack
+        :~  ['response' [%s 'subscribe']]
+          ::
+            ?~  p.sign
+              ['ok' [%s 'ok']]
+            ['err' (wall (render-tang-to-wall 100 u.p.sign))]
+        ==
+      ==
+    ::
+    ++  event-json-to-wall
+      |=  [event-id=@ud =json]
+      ^-  wall
+      :~  (weld "id: " (format-ud-as-integer event-id))
+          (weld "data: " (en-json:html json))
+          ""
       ==
     ::
     ++  on-channel-heartbeat
       |=  channel-id=@t
       ^-  [(list move) server-state]
-      ::
-      ?~  connection-state=(~(get by connections.state) duct)
-        [~ state]
       ::
       =/  res
         %-  handle-response
@@ -1550,10 +1744,11 @@
       ::  produce a list of moves which cancels every gall subscription
       ::
       %+  turn  ~(tap by subscriptions.session)
-      |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
+      |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
-      ::
-      [duc %pass channel-wire [%g %deal [our ship] app %leave ~]]
+      :^  duc  %pass
+        (subscription-wire channel-id request-id ship app)
+      [%g %deal [our ship] app %leave ~]
     --
   ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup
   ::
@@ -1632,10 +1827,25 @@
               (session-cookie-string u.session-id &)
             headers.response-header.http-event
           ::
+          =/  connection=outstanding-connection
+            (~(got by connections.state) duct)
+          ::  if the request was a simple cors request from an approved origin
+          ::  append the necessary cors headers to the response
+          ::
+          =/  origin=(unit origin)
+            %+  get-header:http  'origin'
+            header-list.request.inbound-request.connection
+          =?  headers.response-header
+              ?&  ?=(^ origin)
+                  (~(has in approved.cors-registry.state) u.origin)
+              ==
+            %^  set-header:http  'Access-Control-Allow-Origin'       u.origin
+            %^  set-header:http  'Access-Control-Allow-Credentials'  'true'
+            headers.response-header
+          ::
           =.  response-header.http-event  response-header
           =.  connections.state
-            %+  ~(jab by connections.state)  duct
-            |=  connection=outstanding-connection
+            %+  ~(put by connections.state)  duct
             %_  connection
               response-header  `response-header
               bytes-sent  ?~(data.http-event 0 p.u.data.http-event)
@@ -1709,6 +1919,12 @@
     |=  [=binding =action]
     ^-  [(list move) server-state]
     =^  success  bindings.state
+      ::  prevent binding in reserved namespaces
+      ::
+      ?:  ?|  ?=([%'~' *] path.binding)    ::  eyre
+              ?=([%'~_~' *] path.binding)  ::  runtime
+          ==
+        [| bindings.state]
       (insert-binding [binding duct action] bindings.state)
     :_  state
     [duct %give %bound success binding]~
@@ -1794,29 +2010,39 @@
     (cat 3 '.' u.ext.request-line)
   --
 ::
-++  forwarded-for
+++  forwarded-params
   |=  =header-list:http
-  ^-  (unit address)
-  =/  forwarded=(unit @t)
+  ^-  (unit (list (map @t @t)))
+  %+  biff
     (get-header:http 'forwarded' header-list)
-  ?~  forwarded  ~
-  |^  =/  forwards=(unit (list (map @t @t)))
-        (unpack-header:http u.forwarded)
-      ?.  ?=([~ ^] forwards)  ~
-      =*  forward  i.u.forwards
-      ?~  for=(~(get by forward) 'for')  ~
-      ::NOTE  per rfc7239, non-ip values are also valid. they're not useful
-      ::      for the general case, so we ignore them here. if needed,
-      ::      request handlers are free to inspect the headers themselves.
-      ::
-      (rush u.for ip-address)
+  unpack-header:http
+::
+++  forwarded-for
+  |=  forwards=(list (map @t @t))
+  ^-  (unit address)
+  ?.  ?=(^ forwards)  ~
+  =*  forward  i.forwards
+  ?~  for=(~(get by forward) 'for')  ~
+  ::NOTE  per rfc7239, non-ip values are also valid. they're not useful
+  ::      for the general case, so we ignore them here. if needed,
+  ::      request handlers are free to inspect the headers themselves.
   ::
-  ++  ip-address
-    ;~  sfix
-      ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [lac rac] ip6)))
-      ;~(pose ;~(pfix col dim:ag) (easy ~))
-    ==
-  --
+  %+  rush  u.for
+  ;~  sfix
+    ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [sel ser] ip6)))
+    ;~(pose ;~(pfix col dim:ag) (easy ~))
+  ==
+::
+++  forwarded-secure
+  |=  forwards=(list (map @t @t))
+  ^-  (unit ?)
+  ?.  ?=(^ forwards)  ~
+  =*  forward  i.forwards
+  ?~  proto=(~(get by forward) 'proto')  ~
+  ?+  u.proto  ~
+    %http   `|
+    %https  `&
+  ==
 ::
 ++  parse-request-line
   |=  url=@t
@@ -1844,6 +2070,16 @@
   ::  alphabetize based on site
   ::
   (aor ?~(site.a '' u.site.a) ?~(site.b '' u.site.b))
+::
+++  channel-wire
+  |=  [channel-id=@t request-id=@ud]
+  ^-  wire
+  /channel/subscription/[channel-id]/(scot %ud request-id)
+::
+++  subscription-wire
+  |=  [channel-id=@t request-id=@ud =ship app=term]
+  ^-  wire
+  (weld (channel-wire channel-id request-id) /(scot %p ship)/[app])
 --
 ::  end the =~
 ::
@@ -1853,29 +2089,22 @@
 =|  ax=axle
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
-|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
+|=  [now=@da eny=@uvJ rof=roof]
 ::  allow jets to be registered within this core
 ::
-~%  %http-server  ..is  ~
+~%  %http-server  ..part  ~
 |%
 ++  call
-  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _http-server-gate]
   ::
-  =/  task=task:able  ((harden task:able) wrapped-task)
+  =/  task=task  ((harden task) wrapped-task)
   ::
-  ::  error notifications "downcast" to %crud
+  ::  XX handle error notifications
   ::
-  =?  task  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.task)
-    [%crud -.task tang.u.dud]
-  ::
-  ::  %crud: notifies us of an event failure
-  ::
-  ?:  ?=(%crud -.task)
+  ?^  dud
     =/  moves=(list move)
-      [[duct %slip %d %flog task] ~]
+      [[duct %slip %d %flog %crud [-.task tang.u.dud]] ~]
     [moves http-server-gate]
   ::  %init: tells us what our ship name is
   ::
@@ -1895,7 +2124,7 @@
   ::    XX cancel active too if =(0 trim-priority) ?
   ::
   ?:  ?=(%trim -.task)
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     =*  by-channel  by-channel:(per-server-event event-args)
     =*  channel-state  channel-state.server-state.ax
     ::
@@ -1943,7 +2172,7 @@
         [closed-connections server-state.ax]
       ::
       =/  event-args
-        [[our eny duct.i.connections now scry-gate] server-state.ax]
+        [[eny duct.i.connections now rof] server-state.ax]
       =/  cancel-request  cancel-request:(per-server-event event-args)
       =^  moves  server-state.ax  cancel-request
       ::
@@ -1960,9 +2189,28 @@
     ::
       closed-connections
     ==
+  ::
+  ?:  ?=(%code-changed -.task)
+    ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
+    =.  authentication-state.server-state.ax  *authentication-state
+    ::
+    =/  event-args  [[eny duct now rof] server-state.ax]
+    =*  by-channel  by-channel:(per-server-event event-args)
+    =*  channel-state  channel-state.server-state.ax
+    ::
+    =/  channel-ids=(list @t)  ~(tap in ~(key by session.channel-state))
+    =|  moves=(list (list move))
+    |-  ^-  [(list move) _http-server-gate]
+    ?~  channel-ids
+      [(zing (flop moves)) http-server-gate]
+    ::  discard channel state, and cancel any active gall subscriptions
+    ::
+    =^  mov  server-state.ax  (discard-channel:by-channel i.channel-ids |)
+    $(moves [mov moves], channel-ids t.channel-ids)
+  ::
   ::  all other commands operate on a per-server-event
   ::
-  =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+  =/  event-args  [[eny duct now rof] server-state.ax]
   =/  server  (per-server-event event-args)
   ::
   ?-    -.task
@@ -1990,7 +2238,7 @@
         ::
         %turf
       =*  domains  domains.server-state.ax
-      =/  mod/(set turf)
+      =/  mod=(set turf)
         ?:  ?=(%put action.http-rule.task)
           (~(put in domains) turf.http-rule.task)
         (~(del in domains) turf.http-rule.task)
@@ -2030,19 +2278,32 @@
       %disconnect
     =.  server-state.ax  (remove-binding:server binding.task)
     [~ http-server-gate]
+  ::
+      %approve-origin
+    =.  cors-registry.server-state.ax
+      =,  cors-registry.server-state.ax
+      :+  (~(del in requests) origin.task)
+        (~(put in approved) origin.task)
+      (~(del in rejected) origin.task)
+    [~ http-server-gate]
+  ::
+      %reject-origin
+    =.  cors-registry.server-state.ax
+      =,  cors-registry.server-state.ax
+      :+  (~(del in requests) origin.task)
+        (~(del in approved) origin.task)
+      (~(put in rejected) origin.task)
+    [~ http-server-gate]
   ==
 ::
 ++  take
-  |=  [=wire =duct dud=(unit goof) wrapped-sign=(hypo sign)]
+  |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _http-server-gate]
   ?^  dud
     ~|(%eyre-take-dud (mean tang.u.dud))
-  ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
-  ::
-  =/  =sign  q.wrapped-sign
   =>  %=    .
           sign
-        ?:  ?=(%g -.sign)
+        ?:  ?=(%gall -.sign)
           ?>  ?=(%unto +<.sign)
           sign
         sign
@@ -2065,7 +2326,7 @@
   ::
   ++  run-app-request
     ::
-    ?>  ?=([%g %unto *] sign)
+    ?>  ?=([%gall %unto *] sign)
     ::
     ::
     ?>  ?=([%poke-ack *] p.sign)
@@ -2076,7 +2337,7 @@
       [~ http-server-gate]
     ::  we have an error; propagate it to the client
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     =/  handle-gall-error
       handle-gall-error:(per-server-event event-args)
     =^  moves  server-state.ax
@@ -2085,10 +2346,10 @@
   ::
   ++  watch-response
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     ::
     ?>  ?=([@ *] t.wire)
-    ?:  ?=([%g %unto %watch-ack *] sign)
+    ?:  ?=([%gall %unto %watch-ack *] sign)
       ?~  p.p.sign
         ::  received a positive acknowledgment: take no action
         ::
@@ -2100,13 +2361,13 @@
       =^  moves  server-state.ax  (handle-gall-error u.p.p.sign)
       [moves http-server-gate]
     ::
-    ?:  ?=([%g %unto %kick ~] sign)
+    ?:  ?=([%gall %unto %kick ~] sign)
       =/  handle-response  handle-response:(per-server-event event-args)
       =^  moves  server-state.ax
         (handle-response %continue ~ &)
       [moves http-server-gate]
     ::
-    ?>  ?=([%g %unto %fact *] sign)
+    ?>  ?=([%gall %unto %fact *] sign)
     =/  =mark  p.cage.p.sign
     =/  =vase  q.cage.p.sign
     ?.  ?=  ?(%http-response-header %http-response-data %http-response-cancel)
@@ -2114,7 +2375,7 @@
       =/  handle-gall-error
         handle-gall-error:(per-server-event event-args)
       =^  moves  server-state.ax
-        (handle-gall-error leaf+"eyre bad mark {<mark>}" ~)
+        (handle-gall-error leaf+"eyre bad mark {(trip mark)}" ~)
       [moves http-server-gate]
     ::
     =/  =http-event:http
@@ -2130,7 +2391,7 @@
   ::
   ++  channel
     ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[eny duct now rof] server-state.ax]
     ::  channel callback wires are triples.
     ::
     ?>  ?=([@ @ @t *] wire)
@@ -2139,7 +2400,7 @@
         ~|([%bad-channel-wire wire] !!)
     ::
         %timeout
-      ?>  ?=([%b %wake *] sign)
+      ?>  ?=([%behn %wake *] sign)
       ?^  error.sign
         [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
       =/  discard-channel
@@ -2156,19 +2417,24 @@
       [moves http-server-gate]
     ::
         ?(%poke %subscription)
-      ?>  ?=([%g %unto *] sign)
+      ?>  ?=([%gall %unto *] sign)
+      ~|  wire
       ?>  ?=([@ @ @t @ *] wire)
+      =*  channel-id  i.t.t.wire
+      =*  request-id  i.t.t.t.wire
+      =*  extra-wire  t.t.t.t.wire
       =/  on-gall-response
         on-gall-response:by-channel:(per-server-event event-args)
       ::  ~&  [%gall-response sign]
       =^  moves  server-state.ax
-        (on-gall-response i.t.t.wire `@ud`(slav %ud i.t.t.t.wire) p.sign)
+        %-  on-gall-response
+        [channel-id (slav %ud request-id) extra-wire p.sign]
       [moves http-server-gate]
     ==
   ::
   ++  sessions
     ::
-    ?>  ?=([%b %wake *] sign)
+    ?>  ?=([%behn %wake *] sign)
     ::
     ?^  error.sign
       [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
@@ -2193,7 +2459,7 @@
     (min next expiry-time)
   ::
   ++  acme-ack
-    ?>  ?=([%g %unto *] sign)
+    ?>  ?=([%gall %unto *] sign)
     ::
     ?>  ?=([%poke-ack *] p.sign)
     ?~  p.p.sign
@@ -2209,57 +2475,27 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  =>  |%
-      +$  axle-2019-10-6
-        [date=%~2019.10.6 server-state=server-state-2019-10-6]
-      ::
-      +$  server-state-2019-10-6
-        $:  bindings=(list [=binding =duct =action])
-            connections=(map duct outstanding-connection)
-            authentication-state=sessions=(map @uv @da)
-            =channel-state
-            domains=(set turf)
-            =http-config
-            ports=[insecure=@ud secure=(unit @ud)]
-            outgoing-duct=duct
-        ==
-      --
-  |=  old=$%(axle axle-2019-10-6)
+  |=  old=axle
   ^+  ..^$
-  ::
-  ~!  %loading
-  ?-  -.old
-    %~2020.5.29  ..^$(ax old)
-  ::
-      %~2019.10.6
-    =^  success  bindings.server-state.old
-      %+  insert-binding
-        [[~ /~/logout] [/e/load/logout]~ [%logout ~]]
-      bindings.server-state.old
-    ~?  !success  [%e %failed-to-setup-logout-endpoint]
-    =^  success  bindings.server-state.old
-      %+  insert-binding
-        [[~ /~/scry] [/e/load/scry]~ [%scry ~]]
-      bindings.server-state.old
-    ~?  !success  [%e %failed-to-setup-scry-endpoint]
-    %_  $
-      date.old  %~2020.5.29
-      sessions.authentication-state.server-state.old  ~
-    ==
-  ==
+  ..^$(ax old)
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  car
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =/  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ?.  ?=(%& -.why)
     ~
   =*  who  p.why
-  ?.  ?=(%$ ren)
-    [~ ~]
   ?:  =(tyl /whey)
     =/  maz=(list mass)
       :~  bindings+&+bindings.server-state.ax
@@ -2276,6 +2512,33 @@
       [~ ~]
     ~&  [%r %scry-foreign-host who]
     ~
+  ?:  &(?=(%x ren) ?=(~ syd))
+    =,  server-state.ax
+    ?+  tyl  [~ ~]
+      [%cors ~]            ``noun+!>(cors-registry)
+      [%cors %requests ~]  ``noun+!>(requests.cors-registry)
+      [%cors %approved ~]  ``noun+!>(approved.cors-registry)
+      [%cors %rejected ~]  ``noun+!>(rejected.cors-registry)
+    ::
+        [%cors ?(%approved %rejected) @ ~]
+      =*  kind  i.t.tyl
+      =*  orig  i.t.t.tyl
+      ?~  origin=(slaw %t orig)  [~ ~]
+      ?-  kind
+        %approved  ``noun+!>((~(has in approved.cors-registry) u.origin))
+        %rejected  ``noun+!>((~(has in rejected.cors-registry) u.origin))
+      ==
+    ::
+        [%authenticated %cookie @ ~]
+      ?~  cookies=(slaw %t i.t.t.tyl)  [~ ~]
+      :^  ~  ~  %noun
+      !>  ^-  ?
+      %-  =<  request-is-logged-in:authentication
+          (per-server-event [eny *duct now rof] server-state.ax)
+      %*(. *request:http header-list ['cookie' u.cookies]~)
+    ==
+  ?.  ?=(%$ ren)
+    [~ ~]
   ?+  syd  [~ ~]
     %bindings              ``noun+!>(bindings.server-state.ax)
     %connections           ``noun+!>(connections.server-state.ax)

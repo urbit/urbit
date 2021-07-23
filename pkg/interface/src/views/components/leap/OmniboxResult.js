@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
-import { Row, Icon, Text } from '@tlon/indigo-react';
+import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 import defaultApps from '~/logic/lib/default-apps';
 import Sigil from '~/logic/lib/sigil';
+import { uxToHex, cite } from '~/logic/lib/util';
+import withState from '~/logic/lib/withState';
+import useHarkState from '~/logic/state/hark';
+import useContactState from '~/logic/state/contact';
+import useInviteState from '~/logic/state/invite';
 
 export class OmniboxResult extends Component {
   constructor(props) {
@@ -16,53 +21,143 @@ export class OmniboxResult extends Component {
 
   componentDidUpdate(prevProps) {
     const { props, state } = this;
-    if (prevProps &&
+    if (
+      prevProps &&
       !state.hovered &&
       prevProps.selected !== props.selected &&
       props.selected === props.link
-      ) {
-        this.result.current.scrollIntoView({ block: 'nearest' });
-      }
+    ) {
+      this.result.current.scrollIntoView({ block: 'nearest' });
+    }
   }
 
-  getIcon(icon, dark, selected, link) {
-    // graphicStyle is only necessary for pngs
-    //
-    //TODO can be removed after indigo-react 1.2
-    //which includes icons for apps
-    let graphicStyle = {};
+  getIcon(icon, selected, link, invites, notifications, text, color) {
+    const iconFill =
+      this.state.hovered || selected === link ? 'white' : 'black';
+    const bulletFill =
+      this.state.hovered || selected === link ? 'white' : 'blue';
 
-    if (icon.toLowerCase() !== 'dojo') {
-      graphicStyle = (!dark && this.state.hovered) ||
-        selected === link ||
-        (dark && !(this.state.hovered || selected === link))
-        ? { filter: 'invert(1)' }
-        : { filter: 'invert(0)' };
-    } else {
-      graphicStyle =
-        (!dark && this.state.hovered) ||
-          selected === link ||
-          (dark && !(this.state.hovered || selected === link))
-          ? { filter: 'invert(0)' }
-          : { filter: 'invert(1)' };
-    }
-
-    const iconFill = this.state.hovered || selected === link ? 'white' : 'black';
-    const sigilFill = this.state.hovered || selected === link ? '#3a8ff7' : '#ffffff';
+    const inviteCount = [].concat(
+      ...Object.values(invites).map((obj) => Object.values(obj))
+    );
 
     let graphic = <div />;
-    if (defaultApps.includes(icon.toLowerCase()) || icon.toLowerCase() === 'links') {
-      graphic =
-        <img className="mr2 v-mid dib" height="16"
-          width="16" src={`/~landscape/img/${icon.toLowerCase()}.png`}
-          style={graphicStyle}
-        />;
+    if (
+      defaultApps.includes(icon.toLowerCase()) ||
+      icon.toLowerCase() === 'links' ||
+      icon.toLowerCase() === 'terminal'
+    ) {
+      icon =
+        icon === 'Link' ? 'Collection' : icon === 'Terminal' ? 'Dojo' : icon;
+      graphic = (
+        <Icon
+          display='inline-block'
+          verticalAlign='middle'
+          icon={icon}
+          mr='2'
+          size='18px'
+          color={iconFill}
+        />
+      );
+    } else if (icon === 'inbox') {
+      graphic = (
+        <Box display='flex' verticalAlign='middle' position='relative'>
+          <Icon
+            display='inline-block'
+            verticalAlign='middle'
+            icon='Inbox'
+            mr='2'
+            size='18px'
+            color={iconFill}
+          />
+          {(notifications > 0 || inviteCount.length > 0) && (
+            <Icon
+              display='inline-block'
+              icon='Bullet'
+              style={{ position: 'absolute', top: -5, left: 5 }}
+              color={bulletFill}
+            />
+          )}
+        </Box>
+      );
     } else if (icon === 'logout') {
-      graphic = <Icon display="inline-block" verticalAlign="middle" icon='ArrowWest' mr='2' size='16px' fill={iconFill} />;
+      graphic = (
+        <Icon
+          display='inline-block'
+          verticalAlign='middle'
+          icon='SignOut'
+          mr='2'
+          size='18px'
+          color={iconFill}
+        />
+      );
     } else if (icon === 'profile') {
-      graphic = <Sigil color={sigilFill} classes='dib v-mid mr2' ship={window.ship} size={16} />;
+      text = text.startsWith('Profile') ? window.ship : text;
+      graphic = (
+        <Sigil
+          color={color}
+          classes='dib flex-shrink-0 v-mid mr2'
+          ship={text}
+          size={18}
+          icon
+          padding={2}
+        />
+      );
+    } else if (icon === 'home') {
+      graphic = (
+        <Icon
+          display='inline-block'
+          verticalAlign='middle'
+          icon='Home'
+          mr='2'
+          size='18px'
+          color={iconFill}
+        />
+      );
+    } else if (icon === 'notifications') {
+      graphic = (
+        <Icon
+          display='inline-block'
+          verticalAlign='middle'
+          icon='Inbox'
+          mr='2'
+          size='18px'
+          color={iconFill}
+        />
+      );
+    } else if (icon === 'messages') {
+      graphic = (
+        <Icon
+          display='inline-block'
+          verticalAlign='middle'
+          icon='Users'
+          mr='2'
+          size='18px'
+          color={iconFill}
+        />
+      );
+    } else if (icon === 'tutorial') {
+      graphic = (
+        <Icon
+          display='inline-block'
+          verticalAlign='middle'
+          icon='Tutorial'
+          mr='2'
+          size='18px'
+          color={iconFill}
+        />
+      );
     } else {
-      graphic = <Icon verticalAlign="middle" mr='2' size="16px" fill={iconFill} />;
+      graphic = (
+        <Icon
+          display='inline-block'
+          icon='NullIcon'
+          verticalAlign='middle'
+          mr='2'
+          size='16px'
+          color={iconFill}
+        />
+      );
     }
 
     return graphic;
@@ -73,75 +168,91 @@ export class OmniboxResult extends Component {
   }
 
   render() {
-    const { icon, text, subtext, link, navigate, selected, dark } = this.props;
+    const {
+      icon,
+      text,
+      subtext,
+      link,
+      cursor,
+      navigate,
+      selected,
+      invites,
+      notificationsCount,
+      contacts,
+      setSelection
+    } = this.props;
 
-    const graphic = this.getIcon(icon, dark, selected, link);
+    const color = contacts?.[text]
+      ? `#${uxToHex(contacts[text].color)}`
+      : '#000000';
+    const graphic = this.getIcon(
+      icon,
+      selected,
+      link,
+      invites,
+      notificationsCount,
+      text,
+      color
+    );
 
     return (
-        <Row
-          py='2'
-          px='2'
+      <Row
+        py='2'
+        px='2'
+        cursor={cursor}
+        onMouseMove={() => setSelection()}
+        onMouseLeave={() => this.setHover(false)}
+        backgroundColor={
+          this.state.hovered || selected === link ? 'blue' : 'white'
+        }
+        onClick={navigate}
+        width='100%'
+        justifyContent='space-between'
+        ref={this.result}
+      >
+        <Box
           display='flex'
-          flexDirection='row'
-          style={{ cursor: 'pointer' }}
-          onMouseEnter={() => this.setHover(true)}
-          onMouseLeave={() => this.setHover(false)}
-          backgroundColor={
-            this.state.hovered || selected === link ? 'blue' : 'white'
-          }
-          onClick={navigate}
-          width="100%"
-          ref={this.result}
+          verticalAlign='middle'
+          maxWidth='60%'
+          flexShrink={0}
         >
-          {this.state.hovered || selected === link ? (
-            <>
-            {graphic}
-              <Text
-                display="inline-block"
-                verticalAlign="middle"
-                color='white'
-                maxWidth="60%"
-                style={{ flexShrink: 0 }}
-                mr='1'>
-                {text}
-              </Text>
-            <Text pr='2'
-            display="inline-block"
-            verticalAlign="middle"
-            color='white'
+          {graphic}
+          <Text
+            mono={icon == 'profile' && text.startsWith('~')}
+            color={this.state.hovered || selected === link ? 'white' : 'black'}
+            display='inline-block'
+            verticalAlign='middle'
             width='100%'
-            textAlign='right'
-            >
-                {subtext}
-              </Text>
-            </>
-          ) : (
-            <>
-            {graphic}
-              <Text
-                mr='1'
-                display="inline-block"
-                verticalAlign="middle"
-                maxWidth="60%"
-                style={{ flexShrink: 0 }}
-              >
-              {text}
-            </Text>
-              <Text
-                pr='2'
-                display="inline-block"
-                verticalAlign="middle"
-                gray
-                width='100%'
-                textAlign='right'
-              >
-                {subtext}
-              </Text>
-            </>
-          )}
-        </Row>
+            overflow='hidden'
+            textOverflow='ellipsis'
+            whiteSpace='pre'
+            mr='1'
+          >
+            {text.startsWith('~') ? cite(text) : text}
+          </Text>
+        </Box>
+        <Text
+          pr='2'
+          display='inline-block'
+          verticalAlign='middle'
+          color={this.state.hovered || selected === link ? 'white' : 'black'}
+          width='100%'
+          minWidth={0}
+          textOverflow='ellipsis'
+          whiteSpace='pre'
+          overflow='hidden'
+          maxWidth='40%'
+          textAlign='right'
+        >
+          {subtext}
+        </Text>
+      </Row>
     );
   }
 }
 
-export default OmniboxResult;
+export default withState(OmniboxResult, [
+  [useInviteState],
+  [useHarkState, ['notificationsCount']],
+  [useContactState]
+]);

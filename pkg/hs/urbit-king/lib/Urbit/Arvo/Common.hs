@@ -1,20 +1,34 @@
+{-# LANGUAGE StrictData #-}
+
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun' which generates an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
+-- Hack. See comment above instance ToNoun H.StdMethod
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 {-|
     Types used in both Events and Effects.
 -}
 module Urbit.Arvo.Common
   ( KingId(..), ServId(..)
+  , Vere(..), Wynn(..)
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
   , Port(..), Turf(..)
   , HttpServerConf(..), PEM(..), Key, Cert
   , HttpEvent(..), Method, Header(..), ResponseHeader(..)
   , ReOrg(..), reorgThroughNoun
-  , AmesDest(..), Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
+  , AmesDest, Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
   ) where
 
-import Urbit.Prelude hiding (Term)
+import Urbit.Prelude
+
+import Control.Monad.Fail (fail)
+import Data.Serialize
 
 import qualified Network.HTTP.Types.Method as H
+import qualified Network.Socket            as N
 import qualified Urbit.Ob                  as Ob
 
 
@@ -34,6 +48,25 @@ newtype KingId = KingId { unKingId :: UV }
 newtype ServId = ServId { unServId :: UV }
   deriving newtype (Eq, Ord, Show, Num, Enum, Integral, Real, FromNoun, ToNoun)
 
+-- Arvo Version Negotiation ----------------------------------------------------
+
+-- Information about the king runtime passed to Arvo.
+data Vere = Vere { vereName :: Term,
+                   vereRev  :: [Cord],
+                   vereWynn :: Wynn }
+  deriving (Eq, Ord, Show)
+
+instance ToNoun Vere where
+  toNoun Vere{..} = toNoun ((vereName, vereRev), vereWynn)
+
+instance FromNoun Vere where
+  parseNoun n = named "Vere" $ do
+    ((vereName, vereRev), vereWynn) <- parseNoun n
+    pure $ Vere {..}
+
+-- A list of names and their kelvin numbers, used in version negotiations.
+newtype Wynn = Wynn { unWynn :: [(Term, Word)] }
+  deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
 
 -- Http Common -----------------------------------------------------------------
 
@@ -101,7 +134,7 @@ deriveNoun ''HttpServerConf
 -- Desk and Mime ---------------------------------------------------------------
 
 newtype Desk = Desk { unDesk :: Cord }
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun, IsString)
 
 data Mime = Mime Path File
   deriving (Eq, Ord, Show)
@@ -126,6 +159,19 @@ deriveNoun ''JsonNode
 
 -- Ames Destinations -------------------------------------------------
 
+serializeToNoun :: Serialize a => a -> Noun
+serializeToNoun = A . bytesAtom . encode
+
+serializeParseNoun :: Serialize a => String -> Int -> Noun -> Parser a
+serializeParseNoun desc len = named (pack desc) . \case
+    A (atomBytes -> bs)
+      -- Atoms lose leading 0s, but since lsb, these become trailing NULs
+      | length bs <= len -> case decode $ bs <> replicate (len - length bs) 0 of
+        Right aa -> pure aa
+        Left msg -> fail msg
+      | otherwise -> fail ("putative " <> desc <> " " <> show bs <> " too long")
+    C{} -> fail ("unexpected cell in " <> desc)
+
 newtype Patp a = Patp { unPatp :: a }
   deriving newtype (Eq, Ord, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
@@ -134,10 +180,29 @@ newtype Port = Port { unPort :: Word16 }
   deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
 -- @if
-newtype Ipv4 = Ipv4 { unIpv4 :: Word32 }
-  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
+newtype Ipv4 = Ipv4 { unIpv4 :: N.HostAddress }
+  deriving newtype (Eq, Ord, Enum)
+
+instance Serialize Ipv4 where
+  get = (\a b c d -> Ipv4 $ N.tupleToHostAddress $ (d, c, b, a))
+    <$> getWord8 <*> getWord8 <*> getWord8 <*> getWord8
+  put (Ipv4 (N.hostAddressToTuple -> (a, b, c, d))) = for_ [d, c, b, a] putWord8
+
+instance ToNoun Ipv4 where
+  toNoun = serializeToNoun
+
+instance FromNoun Ipv4 where
+  parseNoun = serializeParseNoun "Ipv4" 4
+
+instance Show Ipv4 where
+  show (Ipv4 (N.hostAddressToTuple -> (a, b, c, d))) =
+    show a ++ "." ++
+    show b ++ "." ++
+    show c ++ "." ++
+    show d
 
 -- @is
+-- should probably use hostAddress6ToTuple here, but no one uses it right now
 newtype Ipv6 = Ipv6 { unIpv6 :: Word128 }
   deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
@@ -146,14 +211,20 @@ type Galaxy = Patp Word8
 instance Integral a => Show (Patp a) where
   show = show . Ob.renderPatp . Ob.patp . fromIntegral . unPatp
 
-data AmesAddress
-    = AAIpv4 Ipv4 Port
-    | AAVoid Void
+data AmesAddress = AAIpv4 Ipv4 Port
   deriving (Eq, Ord, Show)
 
-deriveNoun ''AmesAddress
+instance Serialize AmesAddress where
+  get = AAIpv4 <$> get <*> (Port <$> getWord16le)
+  put (AAIpv4 ip (Port port)) = put ip >> putWord16le port
 
-type AmesDest = Each Galaxy (Jammed AmesAddress)
+instance FromNoun AmesAddress where
+  parseNoun = serializeParseNoun "AmesAddress" 6
+
+instance ToNoun AmesAddress where
+  toNoun = serializeToNoun
+
+type AmesDest = Each Galaxy AmesAddress
 
 
 -- Path+Tagged Restructuring ---------------------------------------------------

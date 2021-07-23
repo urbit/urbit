@@ -16,11 +16,12 @@ where
 
 import Urbit.Prelude hiding (Builder)
 
-import Urbit.Arvo           hiding (ServerId, reqUrl, secure)
+import Urbit.Arvo           hiding (ServerId, reqUrl)
 import Urbit.Vere.Eyre.Serv
 import Urbit.Vere.Eyre.Wai
 
-import Network.TLS (Credential)
+import Network.TLS                 (Credential)
+import Urbit.Vere.Eyre.KingSubsite (KingSubsite, fourOhFourSubsite)
 
 
 -- Types -----------------------------------------------------------------------
@@ -45,7 +46,8 @@ data MultiEyreApi = MultiEyreApi
   , meaPlan :: TVar (Map Ship OnMultiReq)
   , meaCanc :: TVar (Map Ship OnMultiKil)
   , meaTlsC :: TVar (Map Ship (TlsConfig, Credential))
-  , meaKill :: STM ()
+  , meaSite :: TVar (Map Ship KingSubsite)
+  , meaKill :: IO ()
   }
 
 
@@ -57,27 +59,36 @@ joinMultiEyre
   -> Maybe (TlsConfig, Credential)
   -> OnMultiReq
   -> OnMultiKil
+  -> KingSubsite
   -> STM ()
-joinMultiEyre api who mTls onReq onKil = do
+joinMultiEyre api who mTls onReq onKil sub = do
   modifyTVar' (meaPlan api) (insertMap who onReq)
   modifyTVar' (meaCanc api) (insertMap who onKil)
   for_ mTls $ \creds -> do
     modifyTVar' (meaTlsC api) (insertMap who creds)
+  modifyTVar' (meaSite api) (insertMap who sub)
 
 leaveMultiEyre :: MultiEyreApi -> Ship -> STM ()
 leaveMultiEyre MultiEyreApi {..} who = do
   modifyTVar' meaCanc (deleteMap who)
   modifyTVar' meaPlan (deleteMap who)
   modifyTVar' meaTlsC (deleteMap who)
+  modifyTVar' meaSite (deleteMap who)
 
-multiEyre :: HasLogFunc e => MultiEyreConf -> RIO e MultiEyreApi
-multiEyre conf@MultiEyreConf {..} = do
-  logDebug (displayShow ("EYRE", "MULTI", conf))
+multiEyre :: HasLogFunc e => IO () -> MultiEyreConf -> RIO e MultiEyreApi
+multiEyre onFatal conf@MultiEyreConf {..} = do
+  logInfo (displayShow ("EYRE", "MULTI", conf))
 
   vLive <- io emptyLiveReqs >>= newTVarIO
   vPlan <- newTVarIO mempty
   vCanc <- newTVarIO (mempty :: Map Ship (Ship -> Word64 -> STM ()))
   vTlsC <- newTVarIO mempty
+  vSite <- newTVarIO mempty
+
+  let site :: Ship -> STM KingSubsite
+      site who = do
+        sites <- readTVar vSite
+        pure $ maybe (fourOhFourSubsite who) id $ lookup who sites
 
   let host = if mecLocalhostOnly then SHLocalhost else SHAnyHostOk
 
@@ -96,26 +107,26 @@ multiEyre conf@MultiEyreConf {..} = do
           Just cb -> cb who reqId
 
   mIns <- for mecHttpPort $ \por -> do
-    logDebug (displayShow ("EYRE", "MULTI", "HTTP", por))
-    serv vLive $ ServConf
+    logInfo (displayShow ("EYRE", "MULTI", "HTTP", por))
+    serv vLive onFatal $ ServConf
       { scHost = host
       , scPort = SPChoices $ singleton $ fromIntegral por
       , scRedi = Nothing -- TODO
       , scFake = False
-      , scType = STMultiHttp $ ReqApi
+      , scType = STMultiHttp site $ ReqApi
           { rcReq = onReq Insecure
           , rcKil = onKil
           }
       }
 
   mSec <- for mecHttpsPort $ \por -> do
-    logDebug (displayShow ("EYRE", "MULTI", "HTTPS", por))
-    serv vLive $ ServConf
+    logInfo (displayShow ("EYRE", "MULTI", "HTTPS", por))
+    serv vLive onFatal $ ServConf
       { scHost = host
       , scPort = SPChoices $ singleton $ fromIntegral por
       , scRedi = Nothing
       , scFake = False
-      , scType = STMultiHttps (MTC vTlsC) $ ReqApi
+      , scType = STMultiHttps (MTC vTlsC) site $ ReqApi
           { rcReq = onReq Secure
           , rcKil = onKil
           }
@@ -126,6 +137,7 @@ multiEyre conf@MultiEyreConf {..} = do
     , meaPlan = vPlan
     , meaCanc = vCanc
     , meaTlsC = vTlsC
+    , meaSite = vSite
     , meaConf = conf
     , meaKill = traverse_ saKil (toList mIns <> toList mSec)
     }

@@ -32,12 +32,37 @@ same (if [developing on a local development ship][local]). Then, from
 'pkg/interface':
 
 ```
-npm install
+npm ci
 npm run start
 ```
 
 The dev server will start at `http://localhost:9000`. Sign in as you would
 normally. Landscape will refresh automatically as you make changes.
+
+#### Multi ship environments
+
+If you are testing across multiple ships at once, and you would like to be able
+to run the development server against all of the ships simulataneously, then do
+the following.
+
+Add an object under the `FLEET` key to your urbitrc.
+```javascript
+module.exports = {
+  URL: 'http://localhost:80',
+  FLEET: {
+    'zod': 'http://localhost:8080',
+    'bus': 'http://localhost:8081',
+    'nus': 'http://localhost:8082'
+  }
+};
+
+```
+
+The dev environment will attempt to match the subdomain against the keys of this
+object, and if matched will proxy to the corresponding URL. For example, the
+above config will proxy `zod.localhost:9000` to `http://localhost:8080`,
+`bus.localhost:9000` to `http://localhost:8081` and so on and so forth. If no
+match is found, then it will fallback to the `URL` property.
 
 ## Linting
 
@@ -46,7 +71,7 @@ linter and for usage through the command, do the following:
 
 ```bash
 $ cd ./pkg/interface
-$ npm install
+$ npm ci
 $ npm run lint
 ```
 

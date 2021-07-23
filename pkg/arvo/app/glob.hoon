@@ -5,7 +5,7 @@
 /-  glob
 /+  default-agent, verb, dbug
 |%
-++  hash  0v5.6e3d0.3hm4q.iib09.rb2jb.9h4k4
+++  hash  0v3.g6u13.haedt.jt4hd.61ek5.6t30q
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
 +$  all-states
   $%  state-0
@@ -85,20 +85,36 @@
       %glob-make
     :_  this
     =/  home=path  /(scot %p our.bowl)/home/(scot %da now.bowl)
-    =+  .^(=tube:clay %cc (weld home /js/mime))
+    =+  .^(=js=tube:clay %cc (weld home /js/mime))
+    =+  .^(=map=tube:clay %cc (weld home /map/mime))
     =+  .^(arch %cy (weld home /app/landscape/js/bundle))
-    =/  bundle=path
+    =/  bundle-hash=@t
       %-  need
-      ^-  (unit path)
+      ^-  (unit @t)
       %-  ~(rep by dir)
-      |=  [[file=@t ~] out=(unit path)]
+      |=  [[file=@t ~] out=(unit @t)]
       ?^  out  out
-      ?.  =((end 3 5 file) 'index')
-        ~
-      `/[file]/js
-    =+  .^(js=@t %cx :(weld home /app/landscape/js/bundle bundle))
-    =+  !<(=mime (tube !>(js)))
-    =/  =glob:glob  (~(put by *glob:glob) bundle mime)
+      ?.  ?&  =((end [3 6] file) 'index.')
+              !=('sj.' (end [3 3] (swp 3 file)))
+          ==
+        out
+      ``@t`(rsh [3 6] file)
+    =/  js-name
+      (cat 3 'index.' bundle-hash)
+    =/  map-name
+      (cat 3 js-name '.js')
+    =+  .^(js=@t %cx :(weld home /app/landscape/js/bundle /[js-name]/js))
+    =+  .^(map=@t %cx :(weld home /app/landscape/js/bundle /[map-name]/map))
+    =+  .^(sw=@t %cx :(weld home /app/landscape/js/bundle /serviceworker/js))
+    =+  !<(=js=mime (js-tube !>(js)))
+    =+  !<(=sw=mime (js-tube !>(sw)))
+    =+  !<(=map=mime (map-tube !>(map)))
+    =/  =glob:glob
+      %-  ~(gas by *glob:glob)
+      :~  /[js-name]/js^js-mime
+          /[map-name]/map^map-mime
+          /serviceworker/js^sw-mime
+      ==
     =/  =path  /(cat 3 'glob-' (scot %uv (sham glob)))/glob
     [%pass /make %agent [our.bowl %hood] %poke %drum-put !>([path (jam glob)])]~
   ::
@@ -170,7 +186,7 @@
   ^-  (quip card _this)
   ?:  ?=([%start ~] wire)
     =/  new-tid=@ta  (cat 3 'glob--' (scot %uv eny.bowl))
-    =/  args  [~ `new-tid %glob !>([hash.state ~])]
+    =/  args  [~ `new-tid %glob !>([~ hash.state])]
     =/  action  !>([%unserve-dir serve-path])
     :_  this(glob.state `[%| new-tid])
     :~  (poke-file-server our.bowl %file-server-action action)

@@ -2,10 +2,10 @@
 ::
 ::  allow syncing group data from foreign paths to local paths
 ::
-/-  *group, hook=group-hook, *invite-store
+/-  *group, *invite-store
 /+  default-agent, verb, dbug, store=group-store, grpl=group, push-hook,
     resource
-~%  %group-hook-top  ..is  ~
+~%  %group-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
 
@@ -17,6 +17,7 @@
       update:store
       %group-update
       %group-pull-hook
+      0  0
   ==
 ::
 +$  agent  (push-hook:push-hook config)
@@ -36,20 +37,20 @@
 ++  on-init  on-init:def
 ++  on-save  !>(~)
 ++  on-load    on-load:def
-++  on-poke   on-poke:def
-++  on-agent  on-agent:def
-++  on-watch    on-watch:def
-++  on-leave    on-leave:def
-++  on-peek   on-peek:def
-++  on-arvo   on-arvo:def
-++  on-fail   on-fail:def
+++  on-poke    on-poke:def
+++  on-agent   on-agent:def
+++  on-watch   on-watch:def
+++  on-leave   on-leave:def
+++  on-peek    on-peek:def
+++  on-arvo    on-arvo:def
+++  on-fail    on-fail:def
 ::
-++  should-proxy-update
-  |=  =vase
-  =/  =update:store
-    !<(update:store vase)
+++  transform-proxy-update
+  |=  vas=vase
+  ^-  (unit vase)
+  =/  =update:store  !<(update:store vas)
   ?:  ?=(%initial -.update)
-    %.n
+    ~
   |^
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp resource.update src.bowl)
@@ -62,33 +63,37 @@
     %moderator  moderator
     %janitor    member
   ==
+  ::
   ++  member
-    ?:  ?=(%add-members -.update)
-      =(~(tap in ships.update) ~[src.bowl])
-    ?:  ?=(%remove-members -.update)
-      =(~(tap in ships.update) ~[src.bowl])
-    %.n
+    ?:  ?|  ?&  ?=(%add-members -.update)
+                =(~(tap in ships.update) ~[src.bowl])    
+            ==
+            ?&  ?=(%remove-members -.update)
+                =(~(tap in ships.update) ~[src.bowl])    
+        ==  ==
+      `vas
+    ~
+  ::
   ++  admin
-    !?=(?(%remove-group %add-group) -.update)
+    ?.  ?=(?(%remove-group %add-group) -.update)
+      `vas
+    ~
+  ::
   ++  moderator
-    ?=  $?  %add-members  %remove-members
-            %add-tag      %remove-tag   ==
-    -.update
+    ?:  ?=(?(%add-members %remove-members %add-tag %remove-tag) -.update)
+      `vas
+    ~
+  ::
   ++  non-member
-    ?&  ?=(%add-members -.update)
-        (can-join:grp resource.update src.bowl)
-        =(~(tap in ships.update) ~[src.bowl])
-    ==
+    ?:  ?&  ?=(%add-members -.update)
+            (can-join:grp resource.update src.bowl)
+            =(~(tap in ships.update) ~[src.bowl])
+        ==
+      `vas
+    ~
   --
 ::
-++  resource-for-update
-  |=  =vase
-  ^-  (unit resource)
-  =/  =update:store
-    !<(update:store vase)
-  ?:  ?=(%initial -.update)
-    ~
-  `resource.update
+++  resource-for-update  resource-for-update:grp
 ::
 ++  take-update
   |=   =vase

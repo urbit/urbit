@@ -1,8 +1,14 @@
-import React from "react";
-import RemoteContent from "~/views/components/RemoteContent";
+import React from 'react';
+import RemoteContent from '~/views/components/RemoteContent';
 import { hasProvider } from 'oembed-parser';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
+import { Anchor, Text } from '@tlon/indigo-react';
+import { isValidPatp } from 'urbit-ob';
+import { PermalinkEmbed } from "~/views/apps/permalinks/embed"
+
+import { deSig } from '~/logic/lib/util';
+import { Mention } from '~/views/components/MentionText';
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -17,24 +23,70 @@ const DISABLED_BLOCK_TOKENS = [
 
 const DISABLED_INLINE_TOKENS = [];
 
-const RichText = React.memo(({remoteContentPolicy, ...props}) => (
+const RichText = React.memo(({ disableRemoteContent, api, ...props }) => (
   <ReactMarkdown
     {...props}
     renderers={{
-      link: (props) => {
-        if (hasProvider(props.href)) {
-          return <RemoteContent className="mw-100" url={props.href} remoteContentPolicy={remoteContentPolicy}/>;
+      link: (linkProps) => {
+        const remoteContentPolicy = disableRemoteContent ? {
+          imageShown: false,
+          audioShown: false,
+          videoShown: false,
+          oembedShown: false
+        } : null;
+        if (!disableRemoteContent) {
+          return <RemoteContent className="mw-100" url={linkProps.href} />;
         }
-        return <a {...props} className="bb b--white-d b--black">{props.children}</a>
+
+        return (
+          <Anchor
+            display="inline"
+            target='_blank'
+            rel='noreferrer noopener'
+            borderBottom='1px solid'
+            remoteContentPolicy={remoteContentPolicy}
+            onClick={(e) => { e.stopPropagation(); }}
+            {...linkProps}>{linkProps.children}</Anchor>
+        );
       },
-      paragraph: (props) => {
-        return <p {...props} className="mb2 lh-copy">{props.children}</p>
+      linkReference: (linkProps) => {
+        const linkText = String(linkProps.children[0].props.children);
+        if (isValidPatp(linkText)) {
+          return <Mention contact={props.contact || {}} group={props.group} ship={deSig(linkText)} api={api} />;
+        } else if(linkText.startsWith('web+urbitgraph://')) {
+          return (
+            <PermalinkEmbed
+              pending={props.pending}
+              link={linkText}
+              transcluded={props.transcluded}
+              api={api}/>
+          );
+        }
+        return linkText;
+      },
+      blockquote: (blockquoteProps) => {
+        return (
+          <Text
+            lineHeight="20px"
+            display="block"
+            borderLeft="1px solid"
+            color="black"
+            paddingLeft={2} {...props}>
+            {blockquoteProps.children}
+          </Text>
+        )
+      },
+      paragraph: (paraProps) => {
+        return <Text display={props.inline ? 'inline' : 'block'} mb='2' {...props}>{paraProps.children}</Text>;
       }
     }}
     plugins={[[
       RemarkDisableTokenizers,
       { block: DISABLED_BLOCK_TOKENS, inline: DISABLED_INLINE_TOKENS }
-    ]]} />
+    ]]}
+  />
 ));
+
+RichText.displayName = 'RichText';
 
 export default RichText;

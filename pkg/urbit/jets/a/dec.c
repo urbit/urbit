@@ -32,11 +32,7 @@
       }
     }
   }
-  u3_noun
-  u3ka_dec(u3_atom a)
-  {
-    return u3qa_dec(u3k(a));
-  }
+
   u3_noun
   u3wa_dec(u3_noun cor)
   {
@@ -49,4 +45,12 @@
     } else {
       return u3qa_dec(a);
     }
+  }
+
+  u3_noun
+  u3ka_dec(u3_atom a)
+  {
+    u3_noun b = u3qa_dec(a);
+    u3z(a);
+    return b;
   }

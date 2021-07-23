@@ -18,6 +18,7 @@
       u3_noun u3z_key_2(c3_m, u3_noun, u3_noun);
       u3_noun u3z_key_3(c3_m, u3_noun, u3_noun, u3_noun);
       u3_noun u3z_key_4(c3_m, u3_noun, u3_noun, u3_noun, u3_noun);
+      u3_noun u3z_key_5(c3_m, u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
 
     /* u3z_find*(): find in memo cache. Arguments retained
     */

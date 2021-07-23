@@ -1,5 +1,5 @@
-/-  sur=graph-view
-/+  resource, group-store
+/-  sur=graph-view, store=graph-store
+/+  resource, group-store, metadata-store
 ^?
 =<  [sur .]
 =,  sur
@@ -16,6 +16,10 @@
         join+join
         leave+leave
         groupify+groupify
+        eval+so
+        pending-indices+pending-indices
+        create-group-feed+create-group-feed
+        disable-group-feed+disable-group-feed
         ::invite+invite
     ==
     ::
@@ -50,6 +54,9 @@
       :~  resource+(un dejs:resource)
           to+(uf ~ (mu dejs:resource))
       ==
+    ::
+    ++  pending-indices  (op hex (su ;~(pfix fas (more fas dem))))
+    ::
     ++  invite    !!
     ::
     ++  associated
@@ -57,6 +64,48 @@
       :~  group+dejs:resource
           policy+policy:dejs:group-store
       ==
+    ::
+    ++  create-group-feed
+      %-  ot
+      :~  resource+dejs:resource
+          vip+vip:dejs:metadata-store
+      ==
+    ::
+    ++  disable-group-feed
+      %-  ot
+      :~  resource+dejs:resource
+      ==
     --
+  --
+::
+++  enjs
+  =,  enjs:format
+  |%
+  ++  action
+    |=  act=^action
+    ^-  json
+    ?>  ?=(%pending-indices -.act)
+    %+  frond  %pending-indices
+    %-  pairs
+    %+  turn  ~(tap by pending.act)
+    |=  [h=hash:store i=index:store]
+    ^-  [@t json]
+    =/  idx  (index i)
+    ?>  ?=(%s -.idx)
+    [p.idx s+(scot %ux h)]
+  ::
+  ++  index
+    |=  i=index:store
+    ^-  json
+    ?:  =(~ i)  s+'/'
+    =/  j=^tape  ""
+    |-
+    ?~  i  [%s (crip j)]
+    =/  k=json  (numb i.i)
+    ?>  ?=(%n -.k)
+    %_  $
+        i  t.i
+        j  (weld j (weld "/" (trip +.k)))
+    ==
   --
 --

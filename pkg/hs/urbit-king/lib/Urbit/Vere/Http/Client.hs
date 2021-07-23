@@ -7,7 +7,7 @@
 
 module Urbit.Vere.Http.Client where
 
-import Urbit.Prelude hiding (Builder)
+import Urbit.Prelude hiding (Builder, finally)
 
 import Urbit.Vere.Http
 import Urbit.Vere.Pier.Types
@@ -16,8 +16,10 @@ import Urbit.King.App
 import Urbit.Arvo (BlipEv(..), Ev(..), HttpClientEf(..), HttpClientEv(..),
                    HttpClientReq(..), HttpEvent(..), KingId, ResponseHeader(..))
 
+import RIO.Orphans ()
+import Control.Monad.Catch (finally)
 
-import qualified Data.Map                as M
+import qualified Data.Map.Strict         as M
 import qualified Network.HTTP.Client     as H
 import qualified Network.HTTP.Client.TLS as TLS
 import qualified Network.HTTP.Types      as HT
@@ -126,7 +128,11 @@ client env plan = (initialEvents, runHttpClient)
     newReq :: HttpClientDrv -> ReqId -> HttpClientReq -> RIO e ()
     newReq drv id req = do
       async <- runReq drv id req
-      atomically $ modifyTVar (hcdLive drv) (insertMap id async)
+      -- If the async has somehow already completed, don't put it in the map,
+      -- because then it might never get out.
+      atomically $ pollSTM async >>= \case
+        Nothing -> modifyTVar' (hcdLive drv) (insertMap id async)
+        Just _  -> pure ()
 
     -- The problem with the original http client code was that it was written
     -- to the idea of what the events "should have" been instead of what they
@@ -137,16 +143,21 @@ client env plan = (initialEvents, runHttpClient)
     -- Continue (with File) event, and the Continue (completed) event are three
     -- separate things.
     runReq :: HttpClientDrv -> ReqId -> HttpClientReq -> RIO e (Async ())
-    runReq HttpClientDrv{..} id req = async $
+    runReq HttpClientDrv{..} id req = async $ flip finally aftr $
       case cvtReq req of
         Nothing -> do
-          logDebug $ displayShow ("(malformed http client request)", id, req)
+          logInfo $ displayShow ("(malformed http client request)", id, req)
           planEvent id (Cancel ())
         Just r -> do
           logDebug $ displayShow ("(http client request)", id, req)
           withRunInIO $ \run ->
             H.withResponse r hcdManager $ \x -> run (exec x)
       where
+        -- Make sure to remove our entry from hcdLive after we're done so the
+        -- map doesn't grow without bound.
+        aftr :: RIO e ()
+        aftr = atomically $ modifyTVar' hcdLive (deleteMap id)
+
         recv :: H.BodyReader -> RIO e (Maybe ByteString)
         recv read = io $ read <&> \case chunk | null chunk -> Nothing
                                               | otherwise  -> Just chunk

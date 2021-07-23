@@ -1,4 +1,4 @@
-import { PatpNoSig } from "./noun";
+import { PatpNoSig } from '@urbit/api';
 
 declare global {
   interface Window {

@@ -1,6 +1,6 @@
 ::  :acme domain validation request handler
 ::
-|=  [[now=@da eny=@ bek=beak] $~ $~]
+|=  [[now=@da eny=@ bek=beak] ~ ~]
 |=  [authorized=? =request:http]
 ^-  simple-payload:http
 =/  url=(unit (pair pork:eyre quay:eyre))

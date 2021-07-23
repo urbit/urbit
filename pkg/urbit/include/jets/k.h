@@ -4,9 +4,11 @@
 */
   /** Tier 1.
   **/
-    u3_noun u3ka_dec(u3_noun a);
     u3_noun u3ka_add(u3_noun a, u3_noun b);
+    u3_noun u3ka_dec(u3_atom a);
+    u3_noun u3ka_div(u3_noun a, u3_noun b);
     u3_noun u3ka_sub(u3_noun a, u3_noun b);
+    u3_noun u3ka_mod(u3_noun a, u3_noun b);
     u3_noun u3ka_mul(u3_noun a, u3_noun b);
     u3_noun u3ka_gth(u3_noun a, u3_noun b);
     u3_noun u3ka_lte(u3_noun a, u3_noun b);
@@ -19,11 +21,16 @@
 
 /* u3kc: tier 3 functions
 */
-
   /* u3kc_bex(): binary exponent.
   */
     u3_noun
     u3kc_bex(u3_atom);
+
+  /* u3kc_con(): binary loobean conjunction.
+  */
+    u3_noun
+    u3kc_con(u3_noun a,
+             u3_noun b);
 
   /* u3kc_mix(): binary xor.
   */
@@ -43,12 +50,16 @@
   /* u3kc_rep(): assemble single.
   */
     u3_noun
-    u3kc_rep(u3_atom a, u3_noun b);
+    u3kc_rep(u3_atom a,
+             u3_atom b,
+             u3_noun c);
 
   /* u3kc_rip(): disassemble.
   */
     u3_noun
-    u3kc_rip(u3_atom a, u3_atom b);
+    u3kc_rip(u3_atom a,
+             u3_atom b,
+             u3_atom c);
 
   /* u3kc_rev(): reverse block order, accounting for leading zeroes.
   */
@@ -86,6 +97,11 @@
   */
     u3_noun
     u3kdb_gas(u3_noun a, u3_noun b);
+
+  /* u3kdb_uni(): map union.
+  */
+    u3_noun
+    u3kdb_uni(u3_noun a, u3_noun b);
 
   /* u3kdi_gas(): list to map.
   */

@@ -66,7 +66,7 @@
   ++  on-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
-    ?.  ?=([%e %bound *] sign-arvo)
+    ?.  ?=([%eyre %bound *] sign-arvo)
       (on-arvo:def wire sign-arvo)
     ~?  !accepted.sign-arvo
       [dap.bowl "bind rejected!" binding.sign-arvo]
@@ -362,7 +362,7 @@
       (gth expiry-time.a expiry-time.b)
     |=  [cookie=@uv session:eyre]
     %-  pairs
-    :~  'cookie'^s+(end 3 4 (rsh 3 2 (scot %x (shax cookie))))
+    :~  'cookie'^s+(end [3 4] (rsh [3 2] (scot %x (shax cookie))))
         'expiry'^(time expiry-time)
         'channels'^(numb ~(wyt in channels))
     ==
@@ -380,17 +380,19 @@
         'connected'^b+!-.state
         'expiry'^?-(-.state %& (time date.p.state), %| ~)
         'next-id'^(numb next-id)
+        'last-ack'^(time last-ack)
         'unacked'^a+(turn (sort (turn ~(tap in events) head) dor) numb)
       ::
         :-  'subscriptions'
         :-  %a
         %+  turn  ~(tap by subscriptions)
-        |=  [=wire [=^ship app=term =^path *]]
+        |=  [id=@ud [=^ship app=term =^path *]]
         %-  pairs
-        :~  'wire'^(^path wire)
+        :~  'id'^(numb id)
             'ship'^(^ship ship)
             'app'^s+app
             'path'^(^path path)
+            'unacked'^(numb (~(gut by unacked) id 0))
         ==
     ==
   ==
@@ -591,10 +593,10 @@
                 %&  (ship p.lane)
               ::
                   %|
-                ?~  l=((soft ,[=@tas =@if =@ud]) (cue p.lane))
-                  s+(scot %x p.lane)
-                =,  u.l
-                (tape "%{(trip tas)}, {(scow %if if)}, {(scow %ud ud)}")
+                %-  tape
+                =/  ip=@if  (end [0 32] p.lane)
+                =/  pt=@ud  (cut 0 [32 16] p.lane)
+                "{(scow %if ip)}:{((d-co:co 1) pt)} ({(scow %ux p.lane)})"
               ==
           ==
         ::

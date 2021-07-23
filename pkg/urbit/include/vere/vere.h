@@ -40,11 +40,11 @@
 
     /* u3_moor_poke: poke callback function.
     */
-      typedef void (*u3_moor_poke)(void*, u3_atom);
+      typedef void (*u3_moor_poke)(void*, c3_d, c3_y*);
 
     /* u3_moor_bail: bailout callback function.
     */
-      typedef void (*u3_moor_bail)(void*, const c3_c* err_c);
+      typedef void (*u3_moor_bail)(void*, ssize_t err_i, const c3_c* err_c);
 
     /* u3_meat: blob message block.
     */
@@ -136,14 +136,6 @@
         c3_w        pid_w;                  //  pid of checkpoint process
       } u3_save;
 
-    /* u3_ubuf: unix tty i/o buffer.
-    */
-      typedef struct _u3_ubuf {
-        struct _u3_ubuf* nex_u;
-        c3_w             len_w;
-        c3_y             hun_y[0];          //  bytes to send
-      } u3_ubuf;
-
     /* u3_utat: unix terminal state.
     */
       typedef struct {
@@ -153,8 +145,10 @@
         } siz;
 
         struct {
-          c3_w* lin_w;                      //  current line (utf32)
-          c3_w  len_w;                      //  length of current line
+          c3_y* lin_y;                      //  current line (utf8)
+          c3_w  byt_w;                      //  utf8 line-length
+          c3_w  wor_w;                      //  utf32 line-length
+          c3_w  sap_w;                      //  escape chars in line
           c3_w  cus_w;                      //  cursor position
         } mir;
 
@@ -189,25 +183,26 @@
     /* u2_utfo: unix terminfo strings.
     */
       typedef struct {
+        //    disabled, currently unused
+        //
+        // struct {
+        //   uv_buf_t kcuu1_u;              //  key_up
+        //   uv_buf_t kcud1_u;              //  key_down
+        //   uv_buf_t kcub1_u;              //  key_back
+        //   uv_buf_t kcuf1_u;              //  key_forward
+        // } inn;
         struct {
-          const c3_y* kcuu1_y;              //  key_up
-          const c3_y* kcud1_y;              //  key_down
-          const c3_y* kcub1_y;              //  key_back
-          const c3_y* kcuf1_y;              //  key_forward
-          c3_w        max_w;                //  maximum input sequence length
-        } inn;
-        struct {
-          const c3_y* clear_y;              //  clear_screen
-          const c3_y* el_y;                 //  clr_bol clear to beginning
-          // const c3_y* el1_y;                //  clr_eol clear to end
-          const c3_y* ed_y;                 //  clear to end of screen
-          const c3_y* bel_y;                //  bel sound bell
-          const c3_y* cub1_y;               //  parm_left
-          const c3_y* cuf1_y;               //  parm_right
-          const c3_y* cuu1_y;               //  parm_up
-          const c3_y* cud1_y;               //  parm_down
-          // const c3_y* cub_y;                //  parm_left_cursor #num
-          // const c3_y* cuf_y;                //  parm_right_cursor #num
+          uv_buf_t clear_u;              //  clear_screen
+          uv_buf_t el_u;                 //  clr_bol clear to beginning
+          // uv_buf_t el1_u;             //  clr_eol clear to end
+          uv_buf_t ed_u;                 //  clear to end of screen
+          uv_buf_t bel_u;                //  bel sound bell
+          uv_buf_t cub1_u;               //  parm_left
+          uv_buf_t cuf1_u;               //  parm_right
+          uv_buf_t cuu1_u;               //  parm_up
+          uv_buf_t cud1_u;               //  parm_down
+          // uv_buf_t cub_u;             //  parm_left_cursor #num
+          // uv_buf_t cuf_u;             //  parm_right_cursor #num
         } out;
       } u3_utfo;
 
@@ -261,6 +256,7 @@
         c3_c*   arv_c;                      //  -A, initial sync from
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
+        c3_c*   bin_c;                      //  -b, http server bind ip
         c3_o    nuu;                        //  -c, new pier
         c3_o    dry;                        //  -D, dry compute, no checkpoint
         c3_o    dem;                        //  -d, daemon
@@ -270,6 +266,7 @@
         c3_o    gab;                        //  -g, test garbage collection
         c3_c*   dns_c;                      //  -H, ames bootstrap domain
         c3_c*   jin_c;                      //  -I, inject raw event
+        c3_c*   imp_c;                      //  -i, import pier state
         c3_w    hap_w;                      //  -C, cap memo cache
         c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
         c3_o    tra;                        //  -j, json trace
@@ -292,6 +289,7 @@
         c3_o    tex;                        //  -x, exit after loading
         c3_c*   pek_c;                      //  -X, scry path (/vc/desk/path)
         c3_c*   puk_c;                      //  -Y, scry result filename
+        c3_c*   puf_c;                      //  -Z, scry result format
       } u3_opts;
 
     /* u3_host: entire host.
@@ -356,7 +354,6 @@
       */
         typedef struct _u3_fact {
           c3_d             eve_d;               //  event number
-          c3_l             bug_l;               //  kernel mug before XX remove
           c3_l             mug_l;               //  kernel mug after
           u3_noun            job;               //  (pair date ovum)
           struct _u3_fact* nex_u;               //  next in queue
@@ -381,14 +378,38 @@
       */
         typedef void (*u3_peek_cb)(void*, u3_noun);
 
+      /* u3_pico_type: kinds of proto-peek
+      */
+        typedef enum {
+          u3_pico_full = 0,
+          u3_pico_once = 1
+        } u3_pico_type;
+
+      /* u3_pico: proto-peek
+      */
+        typedef struct _u3_pico {
+          struct _u3_pico* nex_u;               //  next in queue
+          void*            ptr_v;               //  context
+          u3_peek_cb       fun_f;               //  callback
+          u3_noun            gan;               //  leakset
+          u3_pico_type     typ_e;               //  type-tagged
+          union {                               //
+            u3_noun          ful;               //  (each path [%beam term beam])
+            struct {                            //  once:
+              c3_m         car_m;               //    care
+              u3_atom        des;               //    desk
+              u3_noun        pax;               //    /path
+            } las_u;
+          };
+        } u3_pico;
+
       /* u3_peek: namespace read request
       */
         typedef struct _u3_peek {
           void*            ptr_v;               //  context
           u3_peek_cb       fun_f;               //  callback
-          u3_noun            now;               //  XX
-          u3_noun            gan;               //  leakset
-          u3_noun            ful;               //  /care/beam
+          u3_pico_type     typ_e;               //  type
+          u3_noun            sam;               //  +peek sample
         } u3_peek;
 
       /* u3_writ_type: king->serf ipc message types
@@ -399,15 +420,14 @@
           u3_writ_play = 2,
           u3_writ_save = 3,
           u3_writ_cram = 4,
-          u3_writ_pack = 5,
-          u3_writ_exit = 6
+          u3_writ_meld = 5,
+          u3_writ_pack = 6,
+          u3_writ_exit = 7
         } u3_writ_type;
 
       /* u3_writ: ipc message from king to serf
       */
         typedef struct _u3_writ {
-          struct timeval   tim_u;               //  time enqueued
-          u3_atom            mat;               //  serialized
           struct _u3_writ* nex_u;               //  next in queue
           u3_writ_type     typ_e;               //  type-tagged
           union {                               //
@@ -445,6 +465,7 @@
           uv_process_t         cub_u;           //  process handle
           uv_process_options_t ops_u;           //  process configuration
           uv_stdio_container_t cod_u[3];        //  process options
+          u3_cue_xeno*         sil_u;           //  cue handle
           time_t               wen_t;           //  process creation time
           u3_mojo              inn_u;           //  client's stdin
           u3_moat              out_u;           //  client's stdout
@@ -516,8 +537,9 @@
           u3_psat_init = 0,                   //  initialized
           u3_psat_boot = 1,                   //  bootstrap
           u3_psat_play = 2,                   //  replaying
-          u3_psat_work = 3,                   //  working
-          u3_psat_done = 4                    //  shutting down
+          u3_psat_wyrd = 3,                   //  versioning
+          u3_psat_work = 4,                   //  working
+          u3_psat_done = 5                    //  shutting down
         } u3_psat;
 
       /* u3_boot: bootstrap event sequence
@@ -603,6 +625,13 @@
             u3_play*       pay_u;               //    recompute
             u3_work*       wok_u;               //    work
           };
+          struct {
+            u3_pico*       ent_u;
+            u3_pico*       ext_u;
+          } pec_u;
+          void*            sop_p;               //  slog stream data
+          void           (*sog_f)               //  slog stream callback
+                         (void*, c3_w, u3_noun);//
           // XX remove
           c3_s             por_s;               //  UDP port
           u3_save*         sav_u;               //  autosave
@@ -758,6 +787,16 @@
       */
         void
         u3_ovum_free(u3_ovum *egg_u);
+
+      /* u3_pico_init(): initialize a scry request struct
+      */
+        u3_pico*
+        u3_pico_init();
+
+      /* u3_pico_free(): dispose a scry request struct
+      */
+        void
+        u3_pico_free(u3_pico* pic_u);
 
       /* u3_mcut_char(): measure/cut character.
       */
@@ -948,45 +987,30 @@
         c3_o
         u3_lord_cram(u3_lord* god_u);
 
+      /* u3_lord_meld(): globally deduplicate persistent state.
+      */
+        void
+        u3_lord_meld(u3_lord* god_u);
+
+      /* u3_lord_pack(): defragment persistent state.
+      */
+        void
+        u3_lord_pack(u3_lord* god_u);
+
       /* u3_lord_work(): attempt work.
       */
         void
-        u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo);
+        u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun job);
 
       /* u3_lord_play(): recompute batch.
       */
         void
         u3_lord_play(u3_lord* god_u, u3_info fon_u);
 
-      /* u3_lord_peek(): read namespace.
+      /* u3_lord_peek(): read namespace, injecting what's missing.
       */
         void
-        u3_lord_peek(u3_lord*   god_u,
-                     u3_noun      gan,
-                     u3_noun      ful,
-                     void*      ptr_v,
-                     u3_peek_cb fun_f);
-
-      /* u3_lord_peek_mine(): read namespace, injecting ship.
-      */
-        void
-        u3_lord_peek_mine(u3_lord*   god_u,
-                          u3_noun      gan,
-                          c3_m       car_m,
-                          u3_noun      pax,
-                          void*      ptr_v,
-                          u3_peek_cb fun_f);
-
-      /* u3_lord_peek_last(): read namespace, injecting ship and case.
-      */
-        void
-        u3_lord_peek_last(u3_lord*   god_u,
-                          u3_noun      gan,
-                          c3_m       car_m,
-                          u3_atom      des,
-                          u3_noun      pax,
-                          void*      ptr_v,
-                          u3_peek_cb fun_f);
+        u3_lord_peek(u3_lord* god_u, u3_pico* pic_u);
 
     /**  Filesystem (new api).
     **/
@@ -1169,10 +1193,10 @@
         void
         u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d);
 
-      /* u3_newt_write(): write atom to stream; free atom.
+      /* u3_newt_send(): write buffer to stream.
       */
         void
-        u3_newt_write(u3_mojo* moj_u, u3_atom mat);
+        u3_newt_send(u3_mojo* moj_u, c3_d len_d, c3_y* byt_y);
 
       /* u3_newt_read_sync(): start reading; multiple msgs synchronous.
       */
@@ -1199,6 +1223,28 @@
         void
         u3_newt_mojo_stop(u3_mojo* moj_u, u3_moor_bail bal_f);
 
+    /** Pier scries.
+    **/
+      /* u3_pier_peek(): read namespace.
+      */
+        void
+        u3_pier_peek(u3_pier*   pir_u,
+                     u3_noun      gan,
+                     u3_noun      ful,
+                     void*      ptr_v,
+                     u3_peek_cb fun_f);
+
+      /* u3_pier_peek_last(): read namespace, injecting ship and case.
+      */
+        void
+        u3_pier_peek_last(u3_pier*   pir_u,
+                          u3_noun      gan,
+                          c3_m       car_m,
+                          u3_atom      des,
+                          u3_noun      pax,
+                          void*      ptr_v,
+                          u3_peek_cb fun_f);
+
     /** Pier control.
     **/
       /* u3_pier_exit(): trigger a gentle shutdown.
@@ -1220,6 +1266,16 @@
       */
         c3_o
         u3_pier_cram(u3_pier* pir_u);
+
+      /* u3_pier_meld(): globally deduplicate persistent state.
+      */
+        void
+        u3_pier_meld(u3_pier* pir_u);
+
+      /* u3_pier_pack(): defragment persistent state.
+      */
+        void
+        u3_pier_pack(u3_pier* pir_u);
 
       /* u3_pier_info(): print status info.
       */

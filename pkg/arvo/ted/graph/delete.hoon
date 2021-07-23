@@ -1,4 +1,4 @@
-/-  spider, graph-view, graph=graph-store, *metadata-store, *group
+/-  spider, graph-view, graph=graph-store, metadata=metadata-store, *group, group-store
 /+  strandio, resource
 =>
 |% 
@@ -8,17 +8,15 @@
 ::
 ++  scry-metadata
   |=  rid=resource
-  =/  m  (strand ,(unit resource))
-  ;<  paxs=(unit (set path))  bind:m
-    %+  scry:strandio   ,(unit (set path))
+  =/  m  (strand ,resource)
+  ;<  group=(unit resource)  bind:m
+    %+  scry:strandio   ,(unit resource)
     ;:  weld
       /gx/metadata-store/resource/graph
       (en-path:resource rid)
       /noun
     ==
-  ?~  paxs  (pure:m ~)
-  ?~  u.paxs  (pure:m ~)
-  (pure:m `(de-path:resource n.u.paxs))
+  (pure:m (need group))
 ::
 ++  scry-group
   |=  rid=resource
@@ -33,38 +31,64 @@
   (pure:m (need ugroup))
 ::
 ++  delete-graph
-  |=  rid=resource
+  |=  [group-rid=resource rid=resource]
   =/  m  (strand ,~)
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   ;<  ~  bind:m
-    (poke-our %graph-store %graph-update !>([%0 now.bowl %remove-graph rid]))
+    (poke-our %graph-store %graph-update-1 !>([now.bowl %remove-graph rid]))
   ;<  ~  bind:m
     (poke-our %graph-push-hook %push-hook-action !>([%remove rid]))
+  ;<  ~  bind:m
+    %+  poke-our  %metadata-push-hook
+    :-  %metadata-update-1
+    !>  ^-  action:metadata
+    [%remove group-rid [%graph rid]]
   (pure:m ~)
+::
+++  delete-tags
+  |=  [graph=resource grp-rid=resource =group]
+  =/  m  (strand ,~)
+  ^-  form:m
+  =/  tags=(list [=tag tagged=(set ship)])
+    %+  skim  ~(tap by tags.group) 
+    |=  [=tag tagged=(set ship)]
+    ?@  tag  %.n
+    ?&  =(app.tag %graph)
+        =(resource.tag graph)
+    ==
+  |-  =*  loop  $
+  ^-  form:m
+  ?~  tags
+    (pure:m ~)
+  ;<  ~  bind:m
+    %+  poke  [entity.grp-rid %group-push-hook]
+    :-  %group-update-0
+    !>  ^-  update:group-store
+    [%remove-tag grp-rid tag.i.tags tagged.i.tags]
+  loop(tags t.tags)
 --
 ::
 ^-  thread:spider
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<(=action:graph-view arg)
+=+  !<([~ =action:graph-view] arg)
 ?>  ?=(%delete -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ?.  =(our.bowl entity.rid.action)
   (strand-fail:strandio %bad-request ~)
-;<  ugroup-rid=(unit resource)  bind:m  
+;<  group-rid=resource  bind:m  
   (scry-metadata rid.action)
-?~  ugroup-rid  !!
 ;<  =group  bind:m
-  (scry-group u.ugroup-rid)
+  (scry-group group-rid)
+;<  ~  bind:m
+  (delete-tags rid.action group-rid group)
+;<  ~  bind:m
+  (delete-graph group-rid rid.action)
 ?.  hidden.group
-  ;<  ~  bind:m
-    (delete-graph rid.action)
   (pure:m !>(~))
-;<  ~  bind:m
-  (poke-our %group-store %group-action !>([%remove-group rid.action ~]))
-;<  ~  bind:m
-  (poke-our %group-push-hook %push-hook-action !>([%remove rid.action]))
-;<  ~  bind:m  (delete-graph rid.action)
+;<  =thread-result:strandio  bind:m
+  (await-thread:strandio %group-delete !>(`[%remove rid.action]))
 (pure:m !>(~))
+

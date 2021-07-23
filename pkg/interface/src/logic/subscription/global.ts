@@ -1,86 +1,55 @@
 import BaseSubscription from './base';
 import { StoreState } from '../store/type';
-import { Path } from '~/types/noun';
+import { Path } from '@urbit/api';
 import _ from 'lodash';
 
 
-/**
- * Path to subscribe on and app to subscribe to
- */
-type AppSubscription = [Path, string];
-
-const chatSubscriptions: AppSubscription[] = [
-  ['/primary', 'chat-view'],
-  ['/synced', 'chat-hook']
-];
-
-const publishSubscriptions: AppSubscription[] = [
-  ['/primary', 'publish'],
-];
-
-const linkSubscriptions: AppSubscription[] = [
-  ['/json/seen', 'link-view'],
-  ['/listening', 'link-listen-hook']
-]
-
-const groupSubscriptions: AppSubscription[] = [
-  ['/synced', 'contact-hook']
-];
-
-const graphSubscriptions: AppSubscription[] = [
-  ['/updates', 'graph-store']
-];
-
-type AppName = 'publish' | 'chat' | 'link' | 'groups' | 'graph';
-const appSubscriptions: Record<AppName, AppSubscription[]> = {
-  chat: chatSubscriptions,
-  publish: publishSubscriptions,
-  link: linkSubscriptions,
-  groups: groupSubscriptions,
-  graph: graphSubscriptions
-};
-
 export default class GlobalSubscription extends BaseSubscription<StoreState> {
-  openSubscriptions: Record<AppName, number[]> = {
-    chat: [],
-    publish: [],
-    link: [],
-    groups: [],
-    graph: []
-  };
+  openSubscriptions: any = {};
 
   start() {
-    this.subscribe('/all', 'invite-store');
-    this.subscribe('/groups', 'group-store');
-    this.subscribe('/primary', 'contact-view');
     this.subscribe('/all', 'metadata-store');
-    this.subscribe('/all', 's3-store');
+    this.subscribe('/all', 'invite-store');
     this.subscribe('/all', 'launch');
     this.subscribe('/all', 'weather');
+    this.subscribe('/groups', 'group-store');
+    this.clearQueue();
+
+    this.subscribe('/all', 'contact-store');
+    this.subscribe('/all', 's3-store');
     this.subscribe('/keys', 'graph-store');
+    this.subscribe('/updates', 'hark-store');
+    this.subscribe('/updates', 'hark-graph-hook');
+    this.subscribe('/updates', 'hark-group-hook');
+    this.subscribe('/all', 'settings-store');
+    this.subscribe('/all', 'group-view');
+    this.subscribe('/nacks', 'contact-pull-hook');
+    this.clearQueue();
+    
+    this.subscribe('/updates', 'graph-store');
+  }
+
+  subscribe(path: Path, app: string) {
+    if (`${app}${path}` in this.openSubscriptions) {
+      return;
+    }
+
+    const id = super.subscribe(path, app);
+    this.openSubscriptions[`${app}${path}`] = { app, path, id };
+  }
+
+  unsubscribe(id) {
+    for (let key in Object.keys(this.openSubscriptions)) {
+      let val = this.openSubscriptions[key];
+      if (id === val.id) {
+        delete this.openSubscriptions[`${val.app}${val.path}`];
+        super.unsubscribe(id);
+      }
+    }
   }
 
   restart() {
+    this.openSubscriptions = {};
     super.restart();
-    _.mapValues(this.openSubscriptions, (subs, app: AppName) => {
-      if(subs.length > 0) {
-        this.stopApp(app);
-        this.startApp(app);
-      }
-    });
-  }
-
-  startApp(app: AppName) {
-    if(this.openSubscriptions[app].length > 0) {
-      console.log(`${app} already started`);
-      return;
-    }
-    this.openSubscriptions[app] =
-      appSubscriptions[app].map(([path, agent]) => this.subscribe(path, agent));
-  }
-
-  stopApp(app: AppName) {
-    this.openSubscriptions[app].map(id => this.unsubscribe(id))
-    this.openSubscriptions[app] = [];
   }
 }

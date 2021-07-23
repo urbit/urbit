@@ -243,7 +243,10 @@
         %+  rose  (tufa buf.cli-state)
         (command-parser:og sole-id)
       ?:  ?=(%& -.res)
-        ?.  &(?=(^ p.res) run.u.p.res)
+        ::  only auto-run eligible commands if they were typed out
+        ::  (that is, not retrieved from command history)
+        ::
+        ?.  &(?=(^ p.res) run.u.p.res !?=(%set -.ted.sole-change))
           [[~ cli-state] shoe]
         (run-command cmd.u.p.res)
       :_  shoe
@@ -288,7 +291,7 @@
     ++  tab
       |=  pos=@ud
       ^-  (quip card _cli-state)
-      =+  (get-id:auto pos (tufa buf.cli-state))
+      =+  (get-id-cord:auto pos (tufa buf.cli-state))
       =/  needle=term
         (fall id %$)
       ::  autocomplete empty command iff user at start of command
@@ -299,7 +302,7 @@
         (longest-match:auto options)
       =/  to-send=tape
         %-  trip
-        (rsh 3 (met 3 needle) advance)
+        (rsh [3 (met 3 needle)] advance)
       =/  send-pos=@ud
         %+  add  pos
         (met 3 (fall forward ''))

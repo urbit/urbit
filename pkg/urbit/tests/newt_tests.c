@@ -7,7 +7,7 @@ static void
 _setup(void)
 {
   u3m_init();
-  u3m_pave(c3y, c3n);
+  u3m_pave(c3y);
 }
 
 /* _newt_encode(): synchronous serialization into a single buffer, for test purposes
@@ -342,6 +342,10 @@ main(int argc, char* argv[])
 
   _test_newt_smol();
   _test_newt_vast();
+
+  //  GC
+  //
+  u3m_grab(u3_none);
 
   fprintf(stderr, "test_newt: ok\n");
 

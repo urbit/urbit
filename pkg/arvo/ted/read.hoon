@@ -7,7 +7,7 @@
 ^-  form:m
 ::  Parse arguments as ship, desk, and path
 ::
-=+  !<([=care:clay =ship =desk =case =target=path ~] arg)
+=+  !<([~ =care:clay =ship =desk =case =target=path] arg)
 ::  Read the file, possibly asyncrhonously
 ::
 ;<  =bowl:spider  bind:m  get-bowl:strandio

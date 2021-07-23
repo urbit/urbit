@@ -24,15 +24,18 @@
     */
 #     define u3a_bytes  (c3_w)((1 << (2 + u3a_bits)))
 
-    /* u3a_minimum: minimum number of words in a box.
-    **
-    **  wiseof(u3a_cell) + wiseof(u3a_box) + 1 (trailing siz_w)
+    /* u3a_cells: number of representable cells.
     */
-#ifdef U3_MEMORY_DEBUG
-#     define u3a_minimum   8
-#else
-#     define u3a_minimum   6
-#endif
+#     define u3a_cells  (c3_w)(u3a_words / u3a_minimum)
+
+    /* u3a_maximum: maximum loom object size (largest possible atom).
+    */
+#     define u3a_maximum   \
+        (c3_w)(u3a_words - (c3_wiseof(u3a_box) + c3_wiseof(u3a_atom)))
+
+    /* u3a_minimum: minimum loom object size (actual size of a cell).
+    */
+#     define u3a_minimum   (c3_w)(1 + c3_wiseof(u3a_box) + c3_wiseof(u3a_cell))
 
     /* u3a_fbox_no: number of free lists per size.
     */
@@ -168,6 +171,16 @@
         u3a_flag_sand  = 0x1,                 //  bump allocation (XX not impl)
       };
 
+    /* u3a_pile: stack control, abstracted over road direction.
+    */
+      typedef struct _u3a_pile {
+        c3_ws    mov_ws;
+        c3_ws    off_ws;
+        u3_post   top_p;
+#ifdef U3_MEMORY_DEBUG
+        u3a_road* rod_u;
+#endif
+      } u3a_pile;
 
   /**  Macros.  Should be better commented.
   **/
@@ -302,6 +315,87 @@
 
 #   define u3_Loom      ((c3_w *)(void *)U3_OS_LoomBase)
 
+  /**  inline functions.
+  **/
+    /**  road stack.
+    **/
+        /* u3a_drop(): drop a road stack frame per [pil_u].
+        */
+          inline void
+          u3a_drop(const u3a_pile* pil_u)
+          {
+            u3R->cap_p -= pil_u->mov_ws;
+          }
+
+        /* u3a_peek(): examine the top of the road stack.
+        */
+          inline void*
+          u3a_peek(const u3a_pile* pil_u)
+          {
+            return u3to(void, (u3R->cap_p + pil_u->off_ws));
+          }
+
+        /* u3a_pop(): drop a road stack frame, peek at the new top.
+        */
+          inline void*
+          u3a_pop(const u3a_pile* pil_u)
+          {
+            u3a_drop(pil_u);
+            return u3a_peek(pil_u);
+          }
+
+        /* u3a_push(): push a frame onto the road stack, per [pil_u].
+        */
+          inline void*
+          u3a_push(const u3a_pile* pil_u)
+          {
+            u3R->cap_p += pil_u->mov_ws;
+            return u3a_peek(pil_u);
+          }
+
+        //  we have to forward-declare u3m_bail() here, as our
+        //  headers don't have the necessary guards.
+        //
+          c3_i
+          u3m_bail(c3_m how_m) __attribute__((noreturn));
+
+        /* u3a_pile_sane(): bail on invalid road stack state.
+        */
+          inline void
+          u3a_pile_sane(const u3a_pile* pil_u)
+          {
+            //  !off means we're on a north road
+            //
+            if ( !pil_u->off_ws ) {
+              if( !(u3R->cap_p > u3R->hat_p) ) {
+                u3m_bail(c3__meme);
+              }
+#ifdef U3_MEMORY_DEBUG
+              c3_assert( pil_u->top_p >= u3R->cap_p );
+#endif
+            }
+            else {
+              if( !(u3R->cap_p < u3R->hat_p) ) {
+                u3m_bail(c3__meme);
+              }
+#ifdef U3_MEMORY_DEBUG
+              c3_assert( pil_u->top_p <= u3R->cap_p );
+#endif
+            }
+
+#ifdef U3_MEMORY_DEBUG
+            c3_assert( pil_u->rod_u == u3R );
+#endif
+          }
+
+        /* u3a_pile_done(): assert valid upon completion.
+        */
+          inline c3_o
+          u3a_pile_done(const u3a_pile* pil_u)
+          {
+            return (pil_u->top_p == u3R->cap_p) ? c3y : c3n;
+          }
+
   /**  Functions.
   **/
     /**  Allocation.
@@ -323,26 +417,20 @@
           void
           u3a_wfree(void* lag_v);
 
+        /* u3a_wtrim(): trim storage.
+        */
+          void
+          u3a_wtrim(void* tox_v, c3_w old_w, c3_w len_w);
+
         /* u3a_wealloc(): word realloc.
         */
           void*
           u3a_wealloc(void* lag_v, c3_w len_w);
 
-        /* u3a_push(): allocate space on the road stack
-        */
-          void*
-          u3a_push(c3_w len_w);
-
-        /* u3a_pop(): deallocate space on the road stack
+        /* u3a_pile_prep(): initialize stack control.
         */
           void
-          u3a_pop(c3_w len_w);
-
-        /* u3a_peek(): examine the top of the road stack
-        */
-          void*
-          u3a_peek(c3_w len_w);
-
+          u3a_pile_prep(u3a_pile* pil_u, c3_w len_w);
 
       /* C-style aligned allocation - *not* compatible with above.
       */
@@ -563,33 +651,6 @@
           void
           u3a_deadbeef(void);
 
-      /* Atoms from proto-atoms.
-      */
-        /* u3a_slab(): create a length-bounded proto-atom.
-        */
-          c3_w*
-          u3a_slab(c3_w len_w);
-
-        /* u3a_slaq(): u3a_slab() with a defined blocksize.
-        */
-          c3_w*
-          u3a_slaq(c3_g met_g, c3_w len_w);
-
-        /* u3a_malt(): measure and finish a proto-atom.
-        */
-          u3_noun
-          u3a_malt(c3_w* sal_w);
-
-        /* u3a_moot(): finish a pre-measured proto-atom; dangerous.
-        */
-          u3_noun
-          u3a_moot(c3_w* sal_w);
-
-        /* u3a_mint(): finish a measured proto-atom.
-        */
-          u3_noun
-          u3a_mint(c3_w* sal_w, c3_w len_w);
-
         /* u3a_walk_fore(): preorder traversal, visits ever limb of a noun.
         **
         **   cells are visited *before* their heads and tails
@@ -608,3 +669,8 @@
                                void*      ptr_v,
                                void     (*pat_f)(u3_atom, void*),
                                c3_o     (*cel_f)(u3_noun, void*));
+
+        /* u3a_string(): `a` as an on-loom c-string.
+        */
+          c3_c*
+          u3a_string(u3_atom a);

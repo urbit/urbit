@@ -19,6 +19,7 @@ import Urbit.Vere.Serf.IPC
 import Control.Monad.Trans.Resource (runResourceT)
 import Urbit.Arvo                   (FX)
 import Urbit.King.App.Class         (HasStderrLogFunc(..))
+import Urbit.EventLog.Event         (parseLogEvent)
 
 import qualified Data.Conduit.Combinators as CC
 import qualified System.ProgressBar       as PB
@@ -32,15 +33,12 @@ import qualified Urbit.Vere.Serf.IPC as X (Config (..), EvErr (..), Flag (..),
 
 --------------------------------------------------------------------------------
 
-parseLogRow :: MonadIO m => ByteString -> m (Mug, Noun)
-parseLogRow = cueBSExn >=> fromNounExn
-
 withSerf :: HasLogFunc e => Config -> RAcquire e Serf
 withSerf config = mkRAcquire startup kill
  where
   startup = do
     (serf, st) <- io $ start config
-    logDebug (displayShow ("serf state", st))
+    logInfo (displayShow ("serf state", st))
     pure serf
   kill serf = do
     void $ rio $ stop serf
@@ -58,13 +56,13 @@ execReplay serf log last = do
  where
   doBoot :: RIO e (Either PlayBail Word)
   doBoot = do
-    logDebug "Beginning boot sequence"
+    logInfo "Beginning boot sequence"
 
     let bootSeqLen = lifecycleLen (Log.identity log)
 
     evs <- runConduit $ Log.streamEvents log 1
                      .| CC.take (fromIntegral bootSeqLen)
-                     .| CC.mapM (fmap snd . parseLogRow)
+                     .| CC.mapM (fmap snd . parseLogEvent)
                      .| CC.sinkList
 
     let numEvs = fromIntegral (length evs)
@@ -72,14 +70,14 @@ execReplay serf log last = do
     when (numEvs /= bootSeqLen) $ do
       throwIO (MissingBootEventsInEventLog numEvs bootSeqLen)
 
-    logDebug $ display ("Sending " <> tshow numEvs <> " boot events to serf")
+    logInfo $ display ("Sending " <> tshow numEvs <> " boot events to serf")
 
     io (boot serf evs) >>= \case
       Just err -> do
-        logDebug "Error on replay, exiting"
+        logInfo "Error on replay, exiting"
         pure (Left err)
       Nothing  -> do
-        logDebug "Finished boot events, moving on to more events from log."
+        logInfo "Finished boot events, moving on to more events from log."
         doReplay <&> \case
           Left err  -> Left err
           Right num -> Right (num + numEvs)
@@ -117,7 +115,7 @@ execReplay serf log last = do
       $  runConduit
       $  Log.streamEvents log (lastEventInSnap + 1)
       .| CC.take (fromIntegral numEvs)
-      .| CC.mapM (fmap snd . parseLogRow)
+      .| CC.mapM (fmap snd . parseLogEvent)
       .| replay 5 incProgress serf
 
     res & \case
@@ -153,7 +151,7 @@ collectFX serf log = do
   runResourceT
     $  runConduit
     $  Log.streamEvents log (lastEv + 1)
-    .| CC.mapM (parseLogRow >=> fromNounExn . snd)
+    .| CC.mapM (parseLogEvent >=> fromNounExn . snd)
     .| swim serf
     .| persistFX log
 

@@ -27,30 +27,36 @@ textarea, select, input, button { outline: none; }
   mix-blend-mode: difference;
 }
 
+
+button {
+  background-color: transparent;
+  cursor: pointer;
+}
+
+* {
+  -webkit-user-drag: none;
+}
+
+/*  stolen from  indigo-react reset.css
+ *  TODO: remove and add reset.css properly
+ */
+
+@keyframes loadingSpinnerRotation {
+    from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+}
+
 /* dark */
 @media all and (prefers-color-scheme: dark) {
-  body {
-    background-color: #333;
-  }
-  .bg-gray0-d {
-    background-color: #333;
-  }
-  .bg-gray1-d {
-    background-color: #4d4d4d;
-  }
   .bg-gray2-d {
     background-color: #7f7f7f;
   }
   .b--gray1-d {
     border-color: #4d4d4d;
-  }
-  .white-d {
-    color: #fff;
-  }
-  .invert-d {
-    filter: invert(1);
-  }
-  .hover-bg-gray1-d:hover {
-    background-color: #4d4d4d;
   }
 }

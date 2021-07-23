@@ -5,7 +5,7 @@
 /?    310
 =,  space:userlib
 :-  %say
-|=  {^ {input/path output/path ~} ~}
+|=  [^ [input=path output=path ~] ~]
 :-  %kiln-info
 ?.  =(-:(flop input) -:(flop output))
   ["Can't move to a different mark" ~]

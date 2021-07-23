@@ -1,10 +1,16 @@
+-- This is required due to the use of 'Void' in a constructor slot in
+-- combination with 'deriveNoun', which will generate an unreachable pattern.
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 {-|
     Behn: Timer Driver
 -}
 
 module Urbit.Vere.Behn (behn, DriverApi(..), behn') where
 
-import Urbit.Arvo            hiding (Behn)
+import Data.Time.Clock.System (SystemTime)
+
+import Urbit.Arvo
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
 
@@ -35,6 +41,7 @@ bornEv king = EvBlip $ BlipEvBehn $ BehnEvBorn (king, ()) ()
 wakeEv :: Ev
 wakeEv = EvBlip $ BlipEvBehn $ BehnEvWake () ()
 
+sysTime :: Wen -> SystemTime
 sysTime = view Time.systemTime
 
 wakeErr :: WorkError -> IO ()

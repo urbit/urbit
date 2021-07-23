@@ -16,6 +16,7 @@ import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
 import Urbit.King.App     (KingEnv, runKingEnvNoLog)
 
+import qualified Options
 import qualified Urbit.EventLog.LMDB as Log
 
 
@@ -123,15 +124,17 @@ tryAppend = forAll arbitrary (ioProperty . runApp . runTest)
                     readDb log >>= assertEqual db'
         pure True
 
-tryAppendHuge :: Property
-tryAppendHuge = forAll arbitrary (ioProperty . runApp . runTest)
+tryAppendHuge :: Options.Brass -> Property
+tryAppendHuge brass =
+  forAll arbitrary (ioProperty . runApp . runTest)
   where
     runTest :: ([ByteString], Db) -> RIO KingEnv Bool
     runTest (extra, db) = do
         env <- ask
         io $ runInBoundThread $ runRIO env $ do
-            extra <- do b <- readFile "./bin/brass.pill"
-                        pure (extra <> [b] <> extra)
+            extra <- do
+              b <- readFile =<< Options.getPillPath brass
+              pure (extra <> [b] <> extra)
             withTestDir $ \dir -> do
                 db' <- pure (addEvents db extra)
                 withDb dir db $ \log -> do
@@ -147,20 +150,21 @@ tests :: TestTree
 tests =
   testGroup "Log"
     [ localOption (QuickCheckTests 10) $
-          testProperty "Read/Write Log Identity" $
-              tryReadIdentity
+        testProperty "Read/Write Log Identity" $
+          tryReadIdentity
     , localOption (QuickCheckTests 15) $
-          testProperty "Read/Write Database" $
-              tryReadDatabase
+        testProperty "Read/Write Database" $
+          tryReadDatabase
     , localOption (QuickCheckTests 5) $
-          testProperty "Read/Write Database Multiple Times" $
-              tryReadDatabaseFuzz
+        testProperty "Read/Write Database Multiple Times" $
+          tryReadDatabaseFuzz
     , localOption (QuickCheckTests 10) $
-          testProperty "Append Random Events" $
-              tryAppend
+        testProperty "Append Random Events" $
+          tryAppend
     , localOption (QuickCheckTests 1) $
+        askOption $ \path ->
           testProperty "Append Huge Events" $
-              tryAppendHuge
+            tryAppendHuge path
     ]
 
 

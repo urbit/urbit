@@ -1,4 +1,10 @@
-/-  spider, graph=graph-store, *metadata-store, *group, group-store
+/-  spider,
+    graph=graph-store,
+    met=metadata-store,
+    *group,
+    group-store,
+    inv=invite-store,
+    push-hook
 /+  strandio, resource, graph-view
 =>
 |% 
@@ -11,11 +17,22 @@
   =/  m  (strand ,resource)
   ?:  ?=(%group -.associated)
     (pure:m rid.associated)
-  =/  =action:group-store
-    [%add-group rid policy.associated %&]
-  ;<  ~  bind:m  (poke-our %group-store %group-action !>(action))
+  =/  push-hook-act=cage
+    :-  %push-hook-action 
+    !>  ^-  action:push-hook
+    [%add rid]
+  ;<  ~  bind:m    
+    (poke-our %metadata-push-hook push-hook-act)
   ;<  ~  bind:m
-    (poke-our %group-push-hook %push-hook-action !>([%add rid]))
+     %+  poke-our  %group-store
+     :-  %group-update-0
+     !>  ^-  update:group-store
+     [%add-group rid policy.associated %.y]
+  ;<  =bowl:spider  bind:m  get-bowl:strandio
+  ;<  ~  bind:m
+    (poke-our %group-store group-update-0+!>([%add-members rid (sy our.bowl ~)]))
+  ;<  ~  bind:m
+    (poke-our %group-push-hook push-hook-act)
   (pure:m rid)
 --
 ::
@@ -24,38 +41,62 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<(=action:graph-view arg)
+=+  !<([~ =action:graph-view] arg)
 ?>  ?=(%create -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
+::
 ::  Add graph to graph-store
 ::
 ?.  =(our.bowl entity.rid.action)
   (strand-fail:strandio %bad-request ~)
+=/  overwrite=?
+  ?=(%policy -.associated.action)
 =/  =update:graph
-  [%0 now.bowl %add-graph rid.action *graph:graph mark.action]
+  [now.bowl %add-graph rid.action *graph:graph mark.action overwrite]
 ;<  ~  bind:m
-  (poke-our %graph-store graph-update+!>(update))
+  (poke-our %graph-store graph-update-1+!>(update))
 ;<  ~  bind:m
   (poke-our %graph-push-hook %push-hook-action !>([%add rid.action]))
+::
 ::  Add group, if graph is unmanaged
 ::
 ;<  group=resource  bind:m
   (handle-group rid.action associated.action)
-=/  group-path=path
-  (en-path:resource group)
+::
 ::  Setup metadata
 ::
-=/  =metadata
-  %*  .  *metadata
+=/  =metadatum:met
+  %*  .  *metadatum:met
     title         title.action
     description   description.action
     date-created  now.bowl
     creator       our.bowl
-    module        module.action
+    config        [%graph module.action]
+    preview       %.n
+    hidden        %.n
   ==
-=/  act=metadata-action
-  [%add group-path graph+(en-path:resource rid.action) metadata]
-;<  ~  bind:m  (poke-our %metadata-hook %metadata-action !>(act))
+=/  met-action=action:met
+  [%add group graph+rid.action metadatum]
 ;<  ~  bind:m
-  (poke-our %metadata-hook %metadata-hook-action !>([%add-owned group-path]))
-(pure:m !>(~))
+  (poke-our %metadata-push-hook metadata-update-1+!>(met-action))
+::
+::  Send invites
+::
+?:  ?=(%group -.associated.action)
+  (pure:m !>(~))
+?-    -.policy.associated.action
+    %open  (pure:m !>(~))
+    %invite
+  =/  inv-action=action:inv
+    :^  %invites  %graph  (shaf %graph-uid eny.bowl)
+    ^-  multi-invite:inv
+    :*  our.bowl
+        %graph-push-hook
+        rid.action
+        pending.policy.associated.action
+        description.action
+    ==
+  ;<  ~  bind:m
+    (poke-our %invite-hook %invite-action !>(inv-action))
+  (pure:m !>(~))
+==

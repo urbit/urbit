@@ -100,7 +100,7 @@
   --
 --
 ::
-%+  aqua-vane-thread  ~[%sleep %restore %thus]
+%+  aqua-vane-thread  ~[%sleep %restore %thus %kill]
 |_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect
@@ -111,13 +111,14 @@
       %sleep    abet-pe:handle-sleep:(pe bowl who)
       %restore  abet-pe:handle-restore:(pe bowl who)
       %thus     abet-pe:(handle-thus:(pe bowl who) ue)
+      %kill     `(~(del by piers) who)
     ==
   [cards this]
 ::
 ++  handle-arvo-response
   |=  [=wire =sign-arvo]
   ^-  (quip card:agent:gall _this)
-  ?>  ?=([%i %http-response %finished *] sign-arvo)
+  ?>  ?=([%iris %http-response %finished *] sign-arvo)
   ?>  ?=([@ *] wire)
   =/  who  (,@p (slav %p i.wire))
   =/  =httr:eyre

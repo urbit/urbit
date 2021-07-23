@@ -35,7 +35,6 @@ struct _u3_ufil;
     c3_c*             pax_c;            //  absolute path
     struct _u3_udir*  par_u;            //  parent
     struct _u3_unod*  nex_u;            //  internal list
-    c3_w              mug_w;            //  mug of last %into
     c3_w              gum_w;            //  mug of last %ergo
   } u3_ufil;
 
@@ -62,6 +61,7 @@ struct _u3_ufil;
 */
   typedef struct _u3_unix {
     u3_auto     car_u;
+    c3_l        sev_l;                  //  instance number
     u3_umon*    mon_u;                  //  mount points
     c3_c*       pax_c;                  //  pier directory
     c3_o        alm;                    //  timer set
@@ -78,7 +78,7 @@ struct _u3_ufil;
   } u3_unix;
 
 void
-u3_unix_ef_look(u3_unix* unx_u, u3_noun all);
+u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all);
 
 /* u3_readdir_r():
 */
@@ -608,8 +608,7 @@ static void
 _unix_commit_mount_point(u3_unix* unx_u, u3_noun mon)
 {
   unx_u->dyr = c3y;
-  u3z(mon);
-  u3_unix_ef_look(unx_u, c3n);
+  u3_unix_ef_look(unx_u, mon, c3n);
   return;
 }
 
@@ -626,7 +625,6 @@ _unix_watch_file(u3_unix* unx_u, u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
   strcpy(fil_u->pax_c, pax_c);
   fil_u->par_u = par_u;
   fil_u->nex_u = NULL;
-  fil_u->mug_w = 0;
   fil_u->gum_w = 0;
 
   if ( par_u ) {
@@ -685,8 +683,8 @@ static u3_noun _unix_update_node(u3_unix* unx_u, u3_unod* nod_u);
  * when scanning through files, if dry, do nothing.  otherwise, mark as
  * dry, then check if file exists.  if not, remove self from node list
  * and add path plus sig to %into event.  otherwise, read the file and
- * get a mug checksum.  if same as mug_w, move on.  otherwise, overwrite
- * mug_w with new mug and add path plus data to %into event.
+ * get a mug checksum.  if same as gum_w, move on.  otherwise, overwrite
+ * add path plus data to %into event.
 */
 static u3_noun
 _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
@@ -739,18 +737,11 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
   }
   else {
     c3_w mug_w = u3r_mug_bytes(dat_y, len_ws);
-    if ( mug_w == fil_u->mug_w ) {
-      c3_free(dat_y);
-      return u3_nul;
-    }
-    else if ( mug_w == fil_u->gum_w ) {
-      fil_u->mug_w = mug_w;
+    if ( mug_w == fil_u->gum_w ) {
       c3_free(dat_y);
       return u3_nul;
     }
     else {
-      fil_u->mug_w = mug_w;
-
       u3_noun pax = _unix_string_to_path(unx_u, fil_u->pax_c);
       u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
       u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
@@ -956,7 +947,9 @@ _unix_update_mount(u3_unix* unx_u, u3_umon* mon_u, u3_noun all)
     {
       //  XX remove u3A->sen
       //
-      u3_noun wir = u3nt(c3__sync, u3k(u3A->sen), u3_nul);
+      u3_noun wir = u3nt(c3__sync,
+                        u3dc("scot", c3__uv, unx_u->sev_l),
+                        u3_nul);
       u3_noun cad = u3nq(c3__into, u3i_string(mon_u->nam_c), all, can);
 
       u3_auto_plan(&unx_u->car_u, u3_ovum_init(0, c3__c, wir, cad));
@@ -1090,7 +1083,7 @@ u3_unix_initial_into_card(c3_c* arv_c)
 {
   u3_noun can = _unix_initial_update_dir(arv_c, arv_c);
 
-  return u3nc(u3nt(u3_blip, c3__sync, u3_nul),
+  return u3nc(u3nt(c3__c, c3__sync, u3_nul),
               u3nq(c3__into, u3_nul, c3y, can));
 }
 
@@ -1352,19 +1345,25 @@ u3_unix_release(c3_c* pax_c)
   c3_free(paf_c);
 }
 
-/* u3_unix_ef_look(): update the root.
+/* u3_unix_ef_look(): update the root of a specific mount point.
 */
 void
-u3_unix_ef_look(u3_unix* unx_u, u3_noun all)
+u3_unix_ef_look(u3_unix* unx_u, u3_noun mon, u3_noun all)
 {
   if ( c3y == unx_u->dyr ) {
     unx_u->dyr = c3n;
-    u3_umon* mon_u;
+    u3_umon* mon_u = unx_u->mon_u;
 
-    for ( mon_u = unx_u->mon_u; mon_u; mon_u = mon_u->nex_u ) {
+    while ( mon_u && ( c3n == u3r_sing_c(mon_u->nam_c, mon) ) ) {
+      mon_u = mon_u->nex_u;
+    }
+
+    if ( mon_u ) {
       _unix_update_mount(unx_u, mon_u, all);
     }
   }
+
+  u3z(mon);
 }
 
 /* _unix_io_talk(): start listening for fs events.
@@ -1472,6 +1471,16 @@ u3_unix_io_init(u3_pier* pir_u)
   //  XX wat do
   //
   // car_u->ev.bail_f = ...l;
+
+  {
+    u3_noun now;
+    struct timeval tim_u;
+    gettimeofday(&tim_u, 0);
+
+    now = u3_time_in_tv(&tim_u);
+    unx_u->sev_l = u3r_mug(now);
+    u3z(now);
+  }
 
   return car_u;
 }

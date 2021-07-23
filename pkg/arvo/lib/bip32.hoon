@@ -18,7 +18,7 @@
 ::  pif:  parent fingerprint (4 bytes)
 |_  [prv=@ pub=point.ecc cad=@ dep=@ud ind=@ud pif=@]
 ::
-+=  keyc  [key=@ cai=@]  ::  prv/pub key + chain code
++$  keyc  [key=@ cai=@]  ::  prv/pub key + chain code
 ::
 ::  elliptic curve operations and values
 ::
@@ -56,8 +56,8 @@
       ++  take
         |=  b=@ud
         ^-  [v=@ x=@]
-        :-  (end 3 b x)
-        (rsh 3 b x)
+        :-  (end [3 b] x)
+        (rsh [3 b] x)
       --
   =^  k  x  (take 33)
   =^  c  x  (take 32)
@@ -67,9 +67,9 @@
   ?>  =(0 x)  ::  sanity check
   %.  [d i p]
   =<  set-metadata
-  =+  v=(scag 4 t)
-  ?:  =("xprv" v)  (from-private k c)
-  ?:  =("xpub" v)  (from-public k c)
+  =+  v=(swag [1 3] t)
+  ?:  =("prv" v)  (from-private k c)
+  ?:  =("pub" v)  (from-public k c)
   !!
 ::
 ++  set-metadata
@@ -81,11 +81,11 @@
 ++  derivation-path
   ;~  pfix
     ;~(pose (jest 'm/') (easy ~))
-  %+  most  net
+  %+  most  fas
   ;~  pose
     %+  cook
       |=(i=@ (add i (bex 31)))
-    ;~(sfix dem say)
+    ;~(sfix dem soq)
   ::
     dem
   ==  ==
@@ -168,12 +168,24 @@
 ++  identity        (hash160 public-key)
 ++  fingerprint     (cut 3 [16 4] identity)
 ::
+++  address
+  |=  network=?(%main %regtest %testnet)
+  ^-  @uc
+  ::  removes checksum
+  ::
+  %+  rsh  [3 4]
+  %+  en-base58check
+    [4 (version-bytes network %pub %.n)]
+  [20 identity]
+::
 ++  prv-extended
-  %+  en-b58c-bip32  0x488.ade4
+  |=  network=?(%main %regtest %testnet)
+  %+  en-b58c-bip32  (version-bytes network %prv %.y)
   (build-extended private-key)
 ::
 ++  pub-extended
-  %+  en-b58c-bip32  0x488.b21e
+  |=  network=?(%main %regtest %testnet)
+  %+  en-b58c-bip32  (version-bytes network %pub %.y)
   (build-extended public-key)
 ::
 ++  build-extended
@@ -188,6 +200,7 @@
 ::
 ++  en-b58c-bip32
   |=  [v=@ k=@]
+  %-  en-base58:mimes:html
   (en-base58check [4 v] [74 k])
 ::
 ::  base58check
@@ -196,21 +209,35 @@
   ::  v: version bytes
   ::  d: data
   |=  [v=byts d=byts]
-  %-  en-base58:mimes:html
   =+  p=[(add wid.v wid.d) (can 3 ~[d v])]
   =-  (can 3 ~[4^- p])
-  %^  rsh  3  28
+  %+  rsh  [3 28]
   (sha-256l:sha 32 (sha-256l:sha p))
 ::
 ++  de-base58check
   ::  vw: amount of version bytes
   |=  [vw=@u t=tape]
   =+  x=(de-base58:mimes:html t)
-  =+  hash=(sha-256l:sha 32 (sha-256:sha (rsh 3 4 x)))
-  ?>  =((end 3 4 x) (rsh 3 28 hash))
+  =+  hash=(sha-256l:sha 32 (sha-256:sha (rsh [3 4] x)))
+  ?>  =((end [3 4] x) (rsh [3 28] hash))
   (cut 3 [vw (sub (met 3 x) (add 4 vw))] x)
 ::
 ++  hash160
   |=  d=@
   (ripemd-160:ripemd:crypto 32 (sha-256:sha d))
+::
+++  version-bytes
+  |=  [network=?(%main %regtest %testnet) type=?(%pub %prv) bip32=?]
+  ^-  @ux
+  |^
+  ?-  type
+    %pub  ?:(bip32 xpub-key pay-to-pubkey)
+    %prv  ?:(bip32 xprv-key private-key)
+  ==
+  ::
+  ++  pay-to-pubkey  ?:(=(network %main) 0x0 0x6f)
+  ++  private-key    ?:(=(network %main) 0x80 0xef)
+  ++  xpub-key       ?:(=(network %main) 0x488.b21e 0x435.87cf)
+  ++  xprv-key       ?:(=(network %main) 0x488.ade4 0x435.8394)
+  --
 --

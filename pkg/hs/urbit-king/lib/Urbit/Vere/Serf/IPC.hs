@@ -16,15 +16,16 @@
   |%
   ::  +writ: from king to serf
   ::
-  +$  gang  (unit (set ship))
   +$  writ
     $%  $:  %live
             $%  [%cram eve=@]
                 [%exit cod=@]
                 [%save eve=@]
+                [%meld ~]
                 [%pack ~]
         ==  ==
-        [%peek mil=@ now=@da lyc=gang pat=path]
+        :: sam=[gang (each path $%([%once @tas @tas path] [beam @tas beam]))]
+        [%peek mil=@ sam=*]
         [%play eve=@ lit=(list ?((pair @da ovum) *))]
         [%work mil=@ job=(pair @da ovum)]
     ==
@@ -33,7 +34,8 @@
   +$  plea
     $%  [%live ~]
         [%ripe [pro=%1 hon=@ nok=@] eve=@ mug=@]
-        [%slog pri=@ ?(cord tank)]
+        [%slog pri=@ tank]
+        [%flog cord]
         $:  %peek
             $%  [%done dat=(unit (cask))]
                 [%bail dud=goof]
@@ -48,6 +50,7 @@
                 [%bail lud=(list goof)]
         ==  ==
     ==
+  --
   ```
 -}
 
@@ -74,6 +77,7 @@ import Data.Bits
 import Data.Conduit
 import System.Process
 import Urbit.Vere.Serf.Types
+import Urbit.Vere.Serf.IPC.Types
 
 import Control.Monad.STM            (retry)
 import Control.Monad.Trans.Resource (MonadResource, allocate, runResourceT)
@@ -83,7 +87,8 @@ import Foreign.Ptr                  (castPtr)
 import Foreign.Storable             (peek, poke)
 import RIO.Prelude                  (decodeUtf8Lenient)
 import System.Posix.Signals         (sigINT, sigKILL, signalProcess)
-import Urbit.Arvo                   (Ev, FX)
+import Urbit.Arvo                   (FX)
+import Urbit.Arvo.Event
 import Urbit.Noun.Time              (Wen)
 
 import qualified Data.ByteString        as BS
@@ -101,55 +106,6 @@ data Serf = Serf
   , serfSlog :: Slog -> IO ()
   , serfLock :: MVar (Maybe SerfState)
   }
-
-
--- Internal Protocol Types -----------------------------------------------------
-
-data Live
-  = LExit Atom -- exit status code
-  | LSave EventId
-  | LCram EventId
-  | LPack ()
- deriving (Show)
-
-data Play
-  = PDone Mug
-  | PBail PlayBail
- deriving (Show)
-
-data Scry
-  = SDone (Maybe (Term, Noun))
-  | SBail Goof
- deriving (Show)
-
-data Work
-  = WDone EventId Mug FX
-  | WSwap EventId Mug (Wen, Noun) FX
-  | WBail [Goof]
- deriving (Show)
-
-data Writ
-  = WLive Live
-  | WPeek Atom Wen Gang Path
-  | WPlay EventId [Noun]
-  | WWork Atom Wen Ev
- deriving (Show)
-
-data Plea
-  = PLive ()
-  | PRipe SerfInfo
-  | PSlog Slog
-  | PPeek Scry
-  | PPlay Play
-  | PWork Work
- deriving (Show)
-
-deriveNoun ''Live
-deriveNoun ''Play
-deriveNoun ''Scry
-deriveNoun ''Work
-deriveNoun ''Writ
-deriveNoun ''Plea
 
 
 -- Access Current Serf State ---------------------------------------------------
@@ -219,9 +175,9 @@ recvPleaHandlingSlog :: Serf -> IO Plea
 recvPleaHandlingSlog serf = loop
  where
   loop = recvPlea serf >>= \case
-    PSlog info -> serfSlog serf info >> loop
-    other      -> pure other
-
+    PSlog info        -> serfSlog serf info >> loop
+    PFlog (Cord ofni) -> serfSlog serf (0, Tank $ Leaf $ Tape $ ofni) >> loop
+    other             -> pure other
 
 -- Higher-Level IPC Functions --------------------------------------------------
 
@@ -250,8 +206,8 @@ recvPeek :: Serf -> IO (Maybe (Term, Noun))
 recvPeek serf = do
   recvPleaHandlingSlog serf >>= \case
     PPeek (SDone peek) -> pure peek
-    -- XX produce error
-    PPeek (SBail dud)  -> throwIO (PeekBail dud)
+    -- XX surface error content
+    PPeek (SBail dud)  -> pure Nothing
     plea               -> throwIO (UnexpectedPlea (toNoun plea) "expecting %peek")
 
 
@@ -267,9 +223,9 @@ sendCompactionRequest serf = do
   sendWrit serf (WLive $ LPack ())
   recvLive serf
 
-sendScryRequest :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
-sendScryRequest serf w g p = do
-  sendWrit serf (WPeek 0 w g p)
+sendScryRequest :: Serf -> Gang -> ScryReq -> IO (Maybe (Term, Noun))
+sendScryRequest serf g r = do
+  sendWrit serf (WPeek 0 g r)
   recvPeek serf
 
 sendShutdownRequest :: Serf -> Atom -> IO ()
@@ -418,10 +374,9 @@ compact serf = withSerfLockIO serf $ \ss -> do
 {-|
   Peek into the serf state.
 -}
-scry :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
-scry serf w g p = withSerfLockIO serf $ \ss -> do
-  (ss,) <$> sendScryRequest serf w g p
-
+scry :: Serf -> Gang -> ScryReq -> IO (Maybe (Term, Noun))
+scry serf g r = withSerfLockIO serf $ \ss -> do
+  (ss,) <$> sendScryRequest serf g r
 
 {-|
   Given a list of boot events, send them to to the serf in a single
@@ -541,7 +496,7 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
     RRSave ()      -> doSave
     RRKill ()      -> doKill
     RRPack ()      -> doPack
-    RRScry w g p k -> doScry w g p k
+    RRScry g r k   -> doScry g r k
 
   doPack :: IO ()
   doPack = compact serf >> topLoop
@@ -559,37 +514,41 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
   doKill :: IO ()
   doKill = waitForLog >> snapshot serf >> pure ()
 
-  doScry :: Wen -> Gang -> Path -> (Maybe (Term, Noun) -> IO ()) -> IO ()
-  doScry w g p k = (scry serf w g p >>= k) >> topLoop
+  doScry :: Gang -> ScryReq -> (Maybe (Term, Noun) -> IO ()) -> IO ()
+  doScry g r k = (scry serf g r >>= k) >> topLoop
 
   doWork :: EvErr -> IO ()
   doWork firstWorkErr = do
     que   <- newTBMQueueIO 1
     ()    <- atomically (writeTBMQueue que firstWorkErr)
     tWork <- async (processWork serf maxBatchSize que onWorkResp spin)
-    flip onException (cancel tWork) $ do
+    -- Avoid wrapping all subsequent runs of the event loop in an exception
+    -- handler which retains tWork.
+    nexSt <- flip onException (cancel tWork) $ do
       nexSt <- workLoop que
       wait tWork
-      nexSt
+      pure nexSt
+    nexSt
 
   workLoop :: TBMQueue EvErr -> IO (IO ())
   workLoop que = atomically onInput >>= \case
     RRKill ()      -> atomically (closeTBMQueue que) >> pure doKill
     RRSave ()      -> atomically (closeTBMQueue que) >> pure doSave
     RRPack ()      -> atomically (closeTBMQueue que) >> pure doPack
-    RRScry w g p k -> atomically (closeTBMQueue que) >> pure (doScry w g p k)
+    RRScry g r k   -> atomically (closeTBMQueue que) >> pure (doScry g r k)
     RRWork workErr -> atomically (writeTBMQueue que workErr) >> workLoop que
 
   onWorkResp :: Wen -> EvErr -> Work -> IO ()
   onWorkResp wen (EvErr evn err) = \case
     WDone eid hash fx -> do
-      io $ err (RunOkay eid)
+      io $ err (RunOkay eid fx)
       atomically $ sendOn ((Fact eid hash wen (toNoun evn)), fx)
     WSwap eid hash (wen, noun) fx -> do
       io $ err (RunSwap eid hash wen noun fx)
       atomically $ sendOn (Fact eid hash wen noun, fx)
     WBail goofs -> do
       io $ err (RunBail goofs)
+
 
 {-|
   Given:

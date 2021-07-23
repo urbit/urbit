@@ -14,12 +14,13 @@ library:
 
 dependencies:
   - base
+  - cereal
   - classy-prelude
   - stm
   - rio
   - vector
   - bytestring
-  - lmdb-static
+  - lmdb
   - conduit
   - racquire
   - urbit-noun-core

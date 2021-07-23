@@ -18,6 +18,10 @@
 
 #include "all.h"
 #include "vere/vere.h"
+#include "ur/hashcons.h"
+
+#undef LORD_TRACE_JAM
+#undef LORD_TRACE_CUE
 
 /*
 |%
@@ -28,9 +32,10 @@
           $%  [%cram eve=@]
               [%exit cod=@]
               [%save eve=@]
+              [%meld ~]
               [%pack ~]
       ==  ==
-      [%peek mil=@ now=@da lyc=gang pat=path]
+      [%peek mil=@ sam=*]  :: gang (each path $%([%once @tas @tas path] [beam @tas beam]))
       [%play eve=@ lit=(list ?((pair @da ovum) *))]
       [%work mil=@ job=(pair @da ovum)]
   ==
@@ -39,7 +44,8 @@
 +$  plea
   $%  [%live ~]
       [%ripe [pro=%1 hon=@ nok=@] eve=@ mug=@]
-      [%slog pri=@ ?(cord tank)]
+      [%slog pri=@ tank]
+      [%flog cord]
       $:  %peek
           $%  [%done dat=(unit (cask))]
               [%bail dud=goof]
@@ -61,6 +67,7 @@
 */
 static void
 _lord_stop_cb(void*       ptr_v,
+              ssize_t     err_i,
               const c3_c* err_c)
 {
   u3_lord* god_u = ptr_v;
@@ -68,6 +75,7 @@ _lord_stop_cb(void*       ptr_v,
   void (*exit_f)(void*) = god_u->cb_u.exit_f;
   void* exit_v = god_u->cb_u.ptr_v;
 
+  u3s_cue_xeno_done(god_u->sil_u);
   c3_free(god_u);
 
   if ( exit_f ) {
@@ -92,9 +100,7 @@ _lord_writ_free(u3_writ* wit_u)
     } break;
 
     case u3_writ_peek: {
-      u3z(wit_u->pek_u->now);
-      u3z(wit_u->pek_u->gan);
-      u3z(wit_u->pek_u->ful);
+      u3z(wit_u->pek_u->sam);
     } break;
 
     case u3_writ_play: {
@@ -110,6 +116,7 @@ _lord_writ_free(u3_writ* wit_u)
 
     case u3_writ_save:
     case u3_writ_cram:
+    case u3_writ_meld:
     case u3_writ_pack:
     case u3_writ_exit: {
     } break;
@@ -122,6 +129,7 @@ _lord_writ_free(u3_writ* wit_u)
 */
 static void
 _lord_bail_noop(void*       ptr_v,
+                ssize_t     err_i,
                 const c3_c* err_c)
 {
 }
@@ -150,6 +158,10 @@ _lord_stop(u3_lord* god_u)
   u3_newt_mojo_stop(&god_u->inn_u, _lord_bail_noop);
 
   uv_close((uv_handle_t*)&god_u->cub_u, 0);
+
+#if defined(LORD_TRACE_JAM) || defined(LORD_TRACE_CUE)
+  u3t_trace_close();
+#endif
 }
 
 /* _lord_bail(): serf/lord error.
@@ -199,6 +211,7 @@ _lord_writ_str(u3_writ_type typ_e)
     case u3_writ_play: return "play";
     case u3_writ_save: return "save";
     case u3_writ_cram: return "cram";
+    case u3_writ_meld: return "meld";
     case u3_writ_pack: return "pack";
     case u3_writ_exit: return "exit";
   }
@@ -263,6 +276,12 @@ _lord_plea_live(u3_lord* god_u, u3_noun dat)
 
     case u3_writ_cram: {
       god_u->cb_u.cram_f(god_u->cb_u.ptr_v);
+    } break;
+
+    case u3_writ_meld: {
+      //  XX wire into cb
+      //
+      u3l_log("pier: meld complete\n");
     } break;
 
     case u3_writ_pack: {
@@ -342,6 +361,27 @@ _lord_plea_slog(u3_lord* god_u, u3_noun dat)
   u3z(dat);
 }
 
+/* _lord_plea_flog(): hear serf debug output
+*/
+static void
+_lord_plea_flog(u3_lord* god_u, u3_noun dat)
+{
+  u3_pier* pir_u = god_u->cb_u.ptr_v;
+
+  if ( c3n == u3a_is_atom(dat) ) {
+    return _lord_plea_foul(god_u, c3__flog, dat);
+  }
+
+  c3_c* tan_c = u3r_string(dat);
+  u3C.stderr_log_f(tan_c);
+  c3_free(tan_c);
+
+  if ( 0 != pir_u->sog_f ) {
+    pir_u->sog_f(pir_u->sop_p, 0, u3k(dat));
+  }
+  u3z(dat);
+}
+
 /* _lord_plea_peek_bail(): hear serf %peek %bail
 */
 static void
@@ -349,12 +389,10 @@ _lord_plea_peek_bail(u3_lord* god_u, u3_peek* pek_u, u3_noun dud)
 {
   u3_pier_punt_goof("peek", dud);
 
-  u3z(pek_u->now);
-  u3z(pek_u->gan);
-  u3z(pek_u->ful);
-  c3_free(pek_u);
+  pek_u->fun_f(pek_u->ptr_v, u3_nul);
 
-  _lord_bail(god_u);
+  u3z(pek_u->sam);
+  c3_free(pek_u);
 }
 
 /* _lord_plea_peek_done(): hear serf %peek %done
@@ -362,13 +400,25 @@ _lord_plea_peek_bail(u3_lord* god_u, u3_peek* pek_u, u3_noun dud)
 static void
 _lord_plea_peek_done(u3_lord* god_u, u3_peek* pek_u, u3_noun rep)
 {
+  //  XX review
+  //
+  if (  (u3_pico_once == pek_u->typ_e)
+     && (u3_nul != rep) )
+  {
+    u3_noun dat;
+
+    if ( c3y == u3r_pq(u3t(rep), c3__omen, 0, &dat) ) {
+      u3k(dat);
+      u3z(rep);
+      rep = u3nc(u3_nul, dat);
+    }
+  }
+
   //  XX cache [dat] (unless last)
   //
   pek_u->fun_f(pek_u->ptr_v, rep);
 
-  u3z(pek_u->now);
-  u3z(pek_u->gan);
-  u3z(pek_u->ful);
+  u3z(pek_u->sam);
   c3_free(pek_u);
 }
 
@@ -526,10 +576,8 @@ _lord_work_done(u3_lord* god_u,
                 u3_noun    act)
 {
   u3_fact* tac_u = u3_fact_init(eve_d, mug_l, job);
-  tac_u->bug_l   = god_u->mug_l; // XX
-
-  god_u->mug_l = mug_l;
-  god_u->eve_d = eve_d;
+  god_u->mug_l   = mug_l;
+  god_u->eve_d   = eve_d;
 
   u3_gift* gif_u = u3_gift_init(eve_d, act);
 
@@ -652,14 +700,26 @@ _lord_plea_work(u3_lord* god_u, u3_noun dat)
 /* _lord_on_plea(): handle plea from serf.
 */
 static void
-_lord_on_plea(void* ptr_v, u3_noun mat)
+_lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
   u3_lord* god_u = ptr_v;
-  u3_noun    jar = u3ke_cue(mat);
   u3_noun    tag, dat;
+  u3_weak    jar;
 
-  if ( c3n == u3r_cell(jar, &tag, &dat) ) {
-    u3m_p("jar", jar);
+#ifdef LORD_TRACE_CUE
+  u3t_event_trace("king ipc cue", 'B');
+#endif
+
+  jar = u3s_cue_xeno_with(god_u->sil_u, len_d, byt_y);
+
+#ifdef LORD_TRACE_CUE
+  u3t_event_trace("king ipc cue", 'E');
+#endif
+
+  if ( u3_none == jar ) {
+    return _lord_plea_foul(god_u, 0, u3_blip);
+  }
+  else if ( c3n == u3r_cell(jar, &tag, &dat) ) {
     return _lord_plea_foul(god_u, 0, jar);
   }
 
@@ -678,6 +738,10 @@ _lord_on_plea(void* ptr_v, u3_noun mat)
 
     case  c3__slog: {
       _lord_plea_slog(god_u, u3k(dat));
+    } break;
+
+    case  c3__flog: {
+      _lord_plea_flog(god_u, u3k(dat));
     } break;
 
     case c3__play: {
@@ -702,68 +766,68 @@ static u3_writ*
 _lord_writ_new(u3_lord* god_u)
 {
   u3_writ* wit_u = c3_calloc(sizeof(*wit_u));
-  gettimeofday(&wit_u->tim_u, 0);
   return wit_u;
 }
 
-/* _lord_writ_jam(): serialize writ.
+/* _lord_writ_make(): cons writ.
 */
-static void
-_lord_writ_jam(u3_lord* god_u, u3_writ* wit_u)
+static u3_noun
+_lord_writ_make(u3_lord* god_u, u3_writ* wit_u)
 {
-  if ( 0 == wit_u->mat ) {
-    u3_noun msg;
+  u3_noun msg;
 
-    switch ( wit_u->typ_e ) {
-      default: c3_assert(0);
+  switch ( wit_u->typ_e ) {
+    default: c3_assert(0);
 
-      case u3_writ_work: {
-        u3_noun mil = u3i_words(1, &wit_u->wok_u.egg_u->mil_w);
-        msg = u3nt(c3__work, mil, u3k(wit_u->wok_u.job));
-      } break;
+    case u3_writ_work: {
+      u3_noun mil = u3i_words(1, &wit_u->wok_u.egg_u->mil_w);
+      msg = u3nt(c3__work, mil, u3k(wit_u->wok_u.job));
+    } break;
 
-      case u3_writ_peek: {
-        msg = u3nc(c3__peek, u3nq(0,  //  XX support timeouts
-                                  u3k(wit_u->pek_u->now),
-                                  u3k(wit_u->pek_u->gan),
-                                  u3k(wit_u->pek_u->ful)));
-      } break;
+    case u3_writ_peek: {
+      //  XX support timeouts,
+      //
+      msg = u3nc(c3__peek, u3nc(0, u3k(wit_u->pek_u->sam)));
+    } break;
 
-      case u3_writ_play: {
-        u3_fact* tac_u = wit_u->fon_u.ext_u;
-        c3_d     eve_d = tac_u->eve_d;
-        u3_noun    lit = u3_nul;
+    case u3_writ_play: {
+      u3_fact* tac_u = wit_u->fon_u.ext_u;
+      c3_d     eve_d = tac_u->eve_d;
+      u3_noun    lit = u3_nul;
 
-        while ( tac_u ) {
-          lit   = u3nc(u3k(tac_u->job), lit);
-          tac_u = tac_u->nex_u;
-        }
+      while ( tac_u ) {
+        lit   = u3nc(u3k(tac_u->job), lit);
+        tac_u = tac_u->nex_u;
+      }
 
-        msg = u3nt(c3__play, u3i_chubs(1, &eve_d), u3kb_flop(lit));
+      msg = u3nt(c3__play, u3i_chubs(1, &eve_d), u3kb_flop(lit));
 
-      } break;
+    } break;
 
-      case u3_writ_save: {
-        msg = u3nt(c3__live, c3__save, u3i_chubs(1, &god_u->eve_d));
-      } break;
+    case u3_writ_save: {
+      msg = u3nt(c3__live, c3__save, u3i_chubs(1, &god_u->eve_d));
+    } break;
 
-      case u3_writ_cram: {
-        msg = u3nt(c3__live, c3__cram, u3i_chubs(1, &god_u->eve_d));
-      } break;
+    case u3_writ_cram: {
+      msg = u3nt(c3__live, c3__cram, u3i_chubs(1, &god_u->eve_d));
+    } break;
 
-      case u3_writ_pack: {
-        msg = u3nt(c3__live, c3__pack, u3_nul);
-      } break;
+    case u3_writ_meld: {
+      msg = u3nt(c3__live, c3__meld, u3_nul);
+    } break;
 
-      case u3_writ_exit: {
-        //  requested exit code is always 0
-        //
-        msg = u3nt(c3__live, c3__exit, 0);
-      } break;
-    }
+    case u3_writ_pack: {
+      msg = u3nt(c3__live, c3__pack, u3_nul);
+    } break;
 
-    wit_u->mat = u3ke_jam(msg);
+    case u3_writ_exit: {
+      //  requested exit code is always 0
+      //
+      msg = u3nt(c3__live, c3__exit, 0);
+    } break;
   }
+
+  return msg;
 }
 
 /* _lord_writ_send(): send writ to serf.
@@ -778,9 +842,24 @@ _lord_writ_send(u3_lord* god_u, u3_writ* wit_u)
     god_u->inn_u.bal_f = _lord_bail_noop;
   }
 
-  _lord_writ_jam(god_u, wit_u);
-  u3_newt_write(&god_u->inn_u, wit_u->mat);
-  wit_u->mat = 0;
+  {
+    u3_noun jar = _lord_writ_make(god_u, wit_u);
+    c3_d  len_d;
+    c3_y* byt_y;
+
+#ifdef LORD_TRACE_JAM
+    u3t_event_trace("king ipc jam", 'B');
+#endif
+
+    u3s_jam_xeno(jar, &len_d, &byt_y);
+
+#ifdef LORD_TRACE_JAM
+    u3t_event_trace("king ipc jam", 'E');
+#endif
+
+    u3_newt_send(&god_u->inn_u, len_d, byt_y);
+    u3z(jar);
+  }
 }
 
 /* _lord_writ_plan(): enqueue a writ and send.
@@ -803,92 +882,41 @@ _lord_writ_plan(u3_lord* god_u, u3_writ* wit_u)
   _lord_writ_send(god_u, wit_u);
 }
 
-/* u3_lord_peek(): read namespace.
+/* u3_lord_peek(): read namespace, injecting what's missing.
 */
 void
-u3_lord_peek(u3_lord*   god_u,
-             u3_noun      gan,
-             u3_noun      ful,
-             void*      ptr_v,
-             u3_peek_cb fun_f)
+u3_lord_peek(u3_lord* god_u, u3_pico* pic_u)
 {
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_peek;
   wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
-  wit_u->pek_u->ptr_v = ptr_v;
-  wit_u->pek_u->fun_f = fun_f;
-  wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
-  wit_u->pek_u->gan   = gan;
-  wit_u->pek_u->ful   = ful;
+  wit_u->pek_u->ptr_v = pic_u->ptr_v;
+  wit_u->pek_u->fun_f = pic_u->fun_f;
+  wit_u->pek_u->typ_e = pic_u->typ_e;
 
-  //  XX cache check
+  //  construct the full scry path
   //
-
-  _lord_writ_plan(god_u, wit_u);
-}
-
-/* u3_lord_peek_mine(): read namespace, injecting ship (our).
-*/
-void
-u3_lord_peek_mine(u3_lord*   god_u,
-                  u3_noun      gan,
-                  c3_m       car_m,
-                  u3_noun      pax,
-                  void*      ptr_v,
-                  u3_peek_cb fun_f)
-{
-  u3_writ* wit_u = _lord_writ_new(god_u);
-  wit_u->typ_e = u3_writ_peek;
-  wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
-  wit_u->pek_u->ptr_v = ptr_v;
-  wit_u->pek_u->fun_f = fun_f;
-  wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
-  wit_u->pek_u->gan   = gan;
-
   {
-    //  XX cache
-    //
-    u3_pier* pir_u = god_u->cb_u.ptr_v;  //  XX do better
-    u3_noun our = u3dc("scot", 'p', u3i_chubs(2, pir_u->who_d));
-    wit_u->pek_u->ful = u3nt(car_m, our, pax);
+    u3_noun sam;
+    switch ( pic_u->typ_e ) {
+      default: c3_assert(0);
+
+      case u3_pico_full: {
+        sam = u3k(pic_u->ful);
+      } break;
+
+      case u3_pico_once: {
+        sam = u3nc(c3n, u3nq(c3__once,
+                             pic_u->las_u.car_m,
+                             u3k(pic_u->las_u.des),
+                             u3k(pic_u->las_u.pax)));
+      } break;
+    }
+
+    wit_u->pek_u->sam = u3nc(u3k(pic_u->gan), sam);
   }
 
-  //  XX cache check
-  //
-
-  _lord_writ_plan(god_u, wit_u);
-}
-
-/* u3_lord_peek_last(): read namespace, injecting ship (our) and case (now).
-*/
-void
-u3_lord_peek_last(u3_lord*   god_u,
-                  u3_noun      gan,
-                  c3_m       car_m,
-                  u3_atom      des,
-                  u3_noun      pax,
-                  void*      ptr_v,
-                  u3_peek_cb fun_f)
-{
-  u3_writ* wit_u = _lord_writ_new(god_u);
-  wit_u->typ_e = u3_writ_peek;
-  wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
-  wit_u->pek_u->ptr_v = ptr_v;
-  wit_u->pek_u->fun_f = fun_f;
-  wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
-  wit_u->pek_u->gan   = gan;
-
-  {
-    //  XX cache
-    //
-    u3_pier* pir_u = god_u->cb_u.ptr_v;  //  XX do better
-    u3_noun our = u3dc("scot", 'p', u3i_chubs(2, pir_u->who_d));
-    u3_noun cas = u3dc("scot", c3__da, u3k(wit_u->pek_u->now));
-
-    wit_u->pek_u->ful = u3nc(car_m, u3nq(our, des, cas, pax));
-  }
-
-  //  NB, won't be cached, result shouldn't be
+  //  XX cache check, unless last
   //
   _lord_writ_plan(god_u, wit_u);
 }
@@ -912,16 +940,12 @@ u3_lord_play(u3_lord* god_u, u3_info fon_u)
 /* u3_lord_work(): attempt work.
 */
 void
-u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo)
+u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun job)
 {
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_work;
   wit_u->wok_u.egg_u = egg_u;
-
-  {
-    u3_noun now = u3_time_in_tv(&wit_u->tim_u);
-    wit_u->wok_u.job = u3nc(now, ovo);
-  }
+  wit_u->wok_u.job = job;
 
   //  if not spinning, start
   //
@@ -965,6 +989,26 @@ u3_lord_cram(u3_lord* god_u)
     _lord_writ_plan(god_u, wit_u);
     return c3y;
   }
+}
+
+/* u3_lord_meld(): globally deduplicate persistent state.
+*/
+void
+u3_lord_meld(u3_lord* god_u)
+{
+  u3_writ* wit_u = _lord_writ_new(god_u);
+  wit_u->typ_e = u3_writ_meld;
+  _lord_writ_plan(god_u, wit_u);
+}
+
+/* u3_lord_pack(): defragment persistent state.
+*/
+void
+u3_lord_pack(u3_lord* god_u)
+{
+  u3_writ* wit_u = _lord_writ_new(god_u);
+  wit_u->typ_e = u3_writ_pack;
+  _lord_writ_plan(god_u, wit_u);
 }
 
 /* u3_lord_exit(): shutdown gracefully.
@@ -1026,10 +1070,18 @@ _lord_on_serf_exit(uv_process_t* req_u,
 */
 static void
 _lord_on_serf_bail(void*       ptr_v,
+                   ssize_t     err_i,
                    const c3_c* err_c)
 {
   u3_lord* god_u = ptr_v;
-  u3l_log("pier: serf error: %s\r\n", err_c);
+
+  if ( UV_EOF == err_i ) {
+    u3l_log("pier: serf unexpectedly shut down\r\n");
+  }
+  else {
+    u3l_log("pier: serf error: %s\r\n", err_c);
+  }
+
   _lord_bail(god_u);
 }
 
@@ -1053,6 +1105,7 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
 {
   u3_lord* god_u = c3_calloc(sizeof *god_u);
   god_u->liv_o = c3n;
+  god_u->pin_o = c3n;
   god_u->wag_w = wag_w;
   god_u->bin_c = u3_Host.wrk_c; //  XX strcopy
   god_u->pax_c = pax_c;  //  XX strcopy
@@ -1125,6 +1178,14 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
 
       return 0;
     }
+  }
+
+#if defined(LORD_TRACE_JAM) || defined(LORD_TRACE_CUE)
+  u3t_trace_open(god_u->pax_c);
+#endif
+
+  {
+    god_u->sil_u = u3s_cue_xeno_init();
   }
 
   //  start reading from proc

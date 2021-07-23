@@ -10,13 +10,16 @@ module Urbit.Noun.Conversions
   , BigTape(..), BigCord(..)
   , Wain(..), Wall, Each(..)
   , UD(..), UV(..), UW(..), cordToUW
-  , Mug(..), Path(..), EvilPath(..), Ship(..)
+  , Path(..), EvilPath(..), Ship(..)
   , Lenient(..), pathToFilePath, filePathToPath
+  , showUD, tshowUD
+  , textAsT
   ) where
 
 import ClassyPrelude hiding (hash)
 
 import Control.Lens         hiding (Each, Index, (<.>))
+import Control.Monad.Fail   (fail)
 import Data.Void
 import Data.Word
 import Text.Regex.TDFA
@@ -33,12 +36,15 @@ import GHC.Types        (Char(C#))
 import GHC.Word         (Word32(W32#))
 import Prelude          ((!!))
 import RIO.FilePath     (joinPath, splitDirectories, takeBaseName,
-                         takeDirectory, takeExtension, (<.>))
+                         takeDirectory, takeExtension)
 import Urbit.Noun.Cue   (cue)
 import Urbit.Noun.Jam   (jam)
+import Urbit.Ob         (patp)
 
 import qualified Data.Char                as C
+import qualified Data.Text                as T
 import qualified Data.Text.Encoding       as T
+import qualified Numeric                  as N
 
 
 -- Noun ------------------------------------------------------------------------
@@ -97,22 +103,28 @@ instance FromNoun UD where
       Nothing -> fail ("invalid decimal atom: " <> unpack (filter (/= '.') t))
       Just vl -> pure (UD vl)
 
+showUD :: (Show i, Integral i) => i -> String
+showUD = uTypeAddDots 3 . show
+
+tshowUD :: (Show i, Integral i) => i -> Text
+tshowUD = pack . uTypeAddDots 3 . show
+
 
 --------------------------------------------------------------------------------
 
-uTypeAddDots :: String -> String
-uTypeAddDots = reverse . go . reverse
+uTypeAddDots :: Int -> String -> String
+uTypeAddDots n = reverse . go . reverse
   where
     go s = if null tel then hed
                        else hed <> "." <> go tel
       where
-        hed = take 5 s
-        tel = drop 5 s
+        hed = take n s
+        tel = drop n s
 
 convertToU :: [Char] -> [Char] -> Atom -> String
 convertToU baseMap prefix = go []
   where
-    go acc 0 = "0" <> prefix <> uTypeAddDots acc
+    go acc 0 = "0" <> prefix <> uTypeAddDots 5 acc
     go acc n = go (char n : acc) (n `div` len)
 
     char n = baseMap !! (fromIntegral (n `mod` len))
@@ -482,7 +494,7 @@ instance Show BigTape where
 -- Bytes -----------------------------------------------------------------------
 
 newtype Bytes = MkBytes { unBytes :: ByteString }
-  deriving newtype (Eq, Ord, Show)
+  deriving newtype (Eq, Ord, Show, IsString)
 
 instance ToNoun Bytes where
     toNoun = Atom . bytesAtom . unBytes
@@ -543,6 +555,18 @@ instance FromNoun Knot where
       then pure (MkKnot txt)
       else fail ("Non-ASCII chars in knot: " <> unpack txt)
 
+-- equivalent of (cury scot %t)
+textAsT :: Text -> Text
+textAsT = ("~~" <>) . concatMap \case
+  ' ' -> "."
+  '.' -> "~."
+  '~' -> "~~"
+  c   ->
+    if (C.isAlphaNum c && not (C.isUpper c)) || (c == '-') then
+      T.singleton c
+    else
+      if C.ord c < 0x10 then "~0" else "~"
+      <> (pack $ N.showHex (C.ord c) ".")
 
 -- Term ------------------------------------------------------------------------
 
@@ -571,7 +595,10 @@ instance FromNoun Term where -- XX TODO
 -- Ship ------------------------------------------------------------------------
 
 newtype Ship = Ship Word128 -- @p
-  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Enum, Real, Integral, Num, ToNoun, FromNoun)
+
+instance Show Ship where
+  show = show . patp . fromIntegral
 
 
 -- Path ------------------------------------------------------------------------
@@ -611,11 +638,6 @@ filePathToPath fp = Path path
     ext = case takeExtension fp of
       ('.':xs) -> xs
       x        -> x
-
--- Mug -------------------------------------------------------------------------
-
-newtype Mug = Mug Word32
-  deriving newtype (Eq, Ord, Show, Num, ToNoun, FromNoun)
 
 
 -- Bool ------------------------------------------------------------------------

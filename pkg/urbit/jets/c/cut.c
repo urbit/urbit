@@ -38,14 +38,12 @@
         return u3k(d);
       }
       else {
-        c3_w* sal_w = u3a_slaq(a_g, c_w);
+        u3i_slab sab_u;
+        u3i_slab_init(&sab_u, a_g, c_w);
 
-        if ( 0 == sal_w ) {
-          return u3m_bail(c3__fail);
-        }
-        u3r_chop(a_g, b_w, c_w, 0, sal_w, d);
+        u3r_chop(a_g, b_w, c_w, 0, sab_u.buf_w, d);
 
-        return u3a_malt(sal_w);
+        return u3i_slab_mint(&sab_u);
       }
     }
   }

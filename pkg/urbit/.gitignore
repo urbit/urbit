@@ -1,14 +1,3 @@
-#
 # Configuration Result
-#
 /config.mk
-include/config.h
-#
-# Build Outputs
-#
-*.o
-/build/*
-#
-# Editor Bullshit
-#
-cscope.*
+/include/config.h

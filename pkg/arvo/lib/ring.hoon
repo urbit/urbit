@@ -319,28 +319,28 @@
   ::  +seed-to-private-key-scalar: keyfile form to scalar we can multiply with
   ::
   ++  seed-to-private-key-scalar
-    |=  sk/@I  ^-  @udscalar
+    |=  sk=@I  ^-  @udscalar
     ?:  (gth (met 3 sk) 32)  !!
-    =+  h=(shal (rsh 0 3 b:ed:crypto) sk)
+    =+  h=(shal (rsh [0 3] b:ed:crypto) sk)
     %+  add
       (bex (sub b:ed:crypto 2))
-    (lsh 0 3 (cut 0 [3 (sub b:ed:crypto 5)] h))
+    (lsh [0 3] (cut 0 [3 (sub b:ed:crypto 5)] h))
   ::  +get-public-key-from-pass: decode the raw @ public key structure
   ::
   ++  get-public-key-from-pass
     |=  a=pass
     ^-  [@ @]
-    =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+    =+  [mag=(end 3 a) bod=(rsh 3 a)]
     ~|  %not-crub-pubkey  ?>  =('b' mag)
-    [cry=(rsh 8 1 bod) sgn=(end 8 1 bod)]
+    [cry=(rsh 8 bod) sgn=(end 8 bod)]
   ::
   ::
   ++  get-private-key-from-ring
     |=  a=ring
     ^-  [@ @]
-    =+  [mag=(end 3 1 a) bod=(rsh 3 1 a)]
+    =+  [mag=(end 3 a) bod=(rsh 3 a)]
     ~|  %not-crub-seckey  ?>  =('B' mag)
-    =+  [c=(rsh 8 1 bod) s=(end 8 1 bod)]
+    =+  [c=(rsh 8 bod) s=(end 8 bod)]
     ::  todo: do we puck here?
     [c s]
   ::  +ship-life-to-pubid: fetches public key information from jael

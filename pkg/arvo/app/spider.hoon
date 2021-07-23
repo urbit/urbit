@@ -1,5 +1,5 @@
 /-  spider
-/+  libstrand=strand, default-agent, verb, server 
+/+  libstrand=strand, default-agent, verb, server
 =,  strand=strand:libstrand
 |%
 +$  card         card:agent:gall
@@ -267,6 +267,10 @@
   ^-  card
   [%pass /bind %arvo %e %connect [~ /spider] %spider]
 ::
+++  new-thread-id
+  |=  file=term
+  :((cury cat 3) file '--' (scot %uv (sham eny.bowl)))
+::
 ++  handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
   ^-  (quip card _state)
@@ -277,8 +281,7 @@
   =*  input-mark   i.t.site.url
   =*  thread       i.t.t.site.url
   =*  output-mark  i.t.t.t.site.url
-  =/  =tid
-    (scot %uv (sham eny.bowl))
+  =/  =tid         (new-thread-id thread)
   =.  serving.state
     (~(put by serving.state) tid [eyre-id output-mark])
   =+  .^
@@ -290,7 +293,7 @@
   =/  body=json
     (need (de-json:html q.u.body.request.inbound-request))
   =/  input=vase
-    (tube !>(body))
+    (slop !>(~) (tube !>(body)))
   =/  =start-args
     [~ `tid thread input]
   =^  cards  state
@@ -334,7 +337,7 @@
     ?~  parent-tid
       /
     (~(got by tid.state) u.parent-tid)
-  =/  new-tid  (fall use (scot %uv (sham eny.bowl)))
+  =/  new-tid  (fall use (new-thread-id file))
   =/  =yarn  (snoc parent-yarn new-tid)
   ::
   ?:  (has-yarn running.state yarn)
@@ -362,7 +365,7 @@
   =.  starting.state
     (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
   ~|  sign+[- +<]:sign-arvo
-  ?>  ?=([?(%b %c) %writ *] sign-arvo)
+  ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
   =/  =riot:clay  p.sign-arvo
   ?~  riot
     (thread-fail-not-running tid %build-thread-error *tang)
@@ -392,17 +395,20 @@
 ++  handle-stop-thread
   |=  [=tid nice=?]
   ^-  (quip card ^state)
-  =/  =yarn  (~(got by tid.state) tid)
-  ?:  (has-yarn running.state yarn)
+  =/  yarn=(unit yarn)  (~(get by tid.state) tid)
+  ?~  yarn
+    ~&  %stopping-nonexistent-thread
+    [~ state]
+  ?:  (has-yarn running.state u.yarn)
     ?:  nice
-      (thread-done yarn *vase)
-    (thread-fail yarn %cancelled ~)
-  ?:  (~(has by starting.state) yarn)
+      (thread-done u.yarn *vase)
+    (thread-fail u.yarn %cancelled ~)
+  ?:  (~(has by starting.state) u.yarn)
     (thread-fail-not-running tid %stopped-before-started ~)
-  ~&  [%thread-not-started yarn]
+  ~&  [%thread-not-started u.yarn]
   ?:  nice
-    (thread-done yarn *vase)
-  (thread-fail yarn %cancelled ~)
+    (thread-done u.yarn *vase)
+  (thread-fail u.yarn %cancelled ~)
 ::
 ++  take-input
   |=  [=yarn input=(unit input:strand)]
@@ -486,7 +492,7 @@
 ++  thread-fail
   |=  [=yarn =term =tang]
   ^-  (quip card ^state)
-  ::  %-  (slog leaf+"strand {<yarn>} failed" leaf+<term> tang)
+  ::%-  (slog leaf+"strand {<yarn>} failed" leaf+<term> tang)
   =/  =tid  (yarn-to-tid yarn)
   =/  fail-cards  (thread-say-fail tid term tang)
   =^  cards  state  (thread-clean yarn)

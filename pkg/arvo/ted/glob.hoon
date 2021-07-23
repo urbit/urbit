@@ -5,7 +5,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([hash=@uv ~] arg)
+=+  !<([~ hash=@uv] arg)
 =/  url  "https://bootstrap.urbit.org/glob-{(scow %uv hash)}.glob"
 ;<  =cord  bind:m  (fetch-cord:strandio url)
 =+  ;;(=glob:glob (cue cord))

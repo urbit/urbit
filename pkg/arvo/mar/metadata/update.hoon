@@ -1,15 +1,14 @@
-/+  *metadata-json
-|_  upd=metadata-update
+/+  store=metadata-store
+|_  =update:zero:store
 ++  grad  %noun
 ++  grow
   |%
-  ++  noun  upd
-  ++  json  (update-to-json upd)
+  ++  noun  update
+  ++  metadata-update-0  update
   --
 ::
 ++  grab
   |%
-  ++  noun  metadata-update
+  ++  noun  update:zero:store
   --
-::
 --

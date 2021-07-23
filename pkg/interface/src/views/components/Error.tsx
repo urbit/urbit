@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, Box, Col } from '@tlon/indigo-react';
+import { Text, Box, Col, Button, BaseAnchor } from '@tlon/indigo-react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -13,9 +13,21 @@ const Summary = styled.summary`
   color: ${ p => p.theme.colors.black };
 `;
 
+const Details = styled.details``;
+
 class ErrorComponent extends Component<ErrorProps> {
   render () {
     const { code, error, history, description } = this.props;
+    let title = '';
+    if (error) {
+      title = error.message;
+    } else if (description) {
+      title = description;
+    }
+    let body = '';
+    if (error) {
+      body =`\`\`\`%0A${error.stack?.replaceAll('\n', '%0A')}%0A\`\`\``;
+    }
     return (
       <Col alignItems="center" justifyContent="center" height="100%" p="4" backgroundColor="white" maxHeight="100%">
         <Box mb={4}>
@@ -25,20 +37,29 @@ class ErrorComponent extends Component<ErrorProps> {
        </Box>
        { description && (<Box mb={4}><Text>{description}</Text></Box>) }
        {error && (
-         <Box mb={4} style={{maxWidth: '100%'}}>
+         <Box mb={4} style={{ maxWidth: '100%' }}>
            <Box mb={2}>
-             <Text fontFamily="mono"><code>&ldquo;{error.message}&rdquo;</code></Text>
+             <Text mono>&ldquo;{error.message}&rdquo;</Text>
            </Box>
-           <details>
-               <Summary>Stack trace</Summary>
-              <Text><pre style={{ wordWrap: 'break-word', overflowX: 'scroll' }} className="tl">{error.stack}</pre></Text>
-           </details>
+           <Details>
+              <Summary>Stack trace</Summary>
+              <Text
+                mono
+                p={1}
+                borderRadius={1}
+                display='block'
+                overflow='scroll'
+                maxHeight='50vh'
+                backgroundColor='washedGray'
+                style={{ whiteSpace: 'pre', wordWrap: 'break-word' }}
+              >{error.stack}</Text>
+           </Details>
           </Box>
        )}
-          <Text mb={4} textAlign="center">If this is unexpected, email <code>support@tlon.io</code> or <a className="bb" href="https://github.com/urbit/urbit/issues/new/choose">submit an issue</a>.</Text>
+          <Text mb={4} textAlign="center">If this is unexpected, email <code>support@tlon.io</code> or <BaseAnchor borderBottom={1} color='black' href={`https://github.com/urbit/landscape/issues/new?assignees=&labels=bug&title=${title}&body=${body}`} target="_blank">submit an issue</BaseAnchor>.</Text>
           {history.length > 1
-            ? <button className="bg-light-green green2 pa2 pointer" onClick={() => history.go(-1) }>Go back</button>
-            : <button className="bg-light-green green2 pa2 pointer" onClick={() => history.push('/') }>Go home</button>
+            ? <Button primary onClick={() => history.go(-1) }>Go back</Button>
+            : <Button primary onClick={() => history.push('/') }>Go home</Button>
           }
         </Col>
       );

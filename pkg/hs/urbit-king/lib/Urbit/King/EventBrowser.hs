@@ -15,6 +15,7 @@ import Urbit.Vere.Pier.Types
 
 import Control.Monad.Trans.Maybe (MaybeT(..))
 import Urbit.EventLog.LMDB       (EventLog)
+import Urbit.EventLog.Event      (parseLogEvent)
 
 import qualified Data.Conduit.Combinators as C
 import qualified Urbit.EventLog.LMDB      as Log
@@ -186,8 +187,8 @@ peekEffect log eId = runMaybeT $ do
 
 peekEvent :: HasLogFunc e => EventLog -> Word64 -> RIO e (Maybe Event)
 peekEvent log eId = runMaybeT $ do
-    octs    <- MaybeT $ runConduit (Log.streamEvents log eId .| C.head)
-    noun    <- io $ cueBSExn octs
-    (m,w,e) <- io $ fromNounExn noun
-    ovum    <- fromNounExn e
+    octs  <- MaybeT $ runConduit (Log.streamEvents log eId .| C.head)
+    (m,n) <- io $ parseLogEvent octs
+    (w,e) <- io $ fromNounExn n
+    ovum  <- fromNounExn e
     pure (Event eId m w ovum)

@@ -3,20 +3,20 @@
 !?  164
 ::
 =,  behn
-|=  pit=vase
+|=  our=ship
 =>  |%
-    +$  move  [p=duct q=(wite note gift:able)]
+    +$  move  [p=duct q=(wite note gift)]
     +$  note                                            ::  out request $->
       $~  [%b %wait *@da]                               ::
       $%  $:  %b                                        ::   to self
-              $>(%wait task:able)                       ::  set timer
+              $>(%wait task)                       ::  set timer
           ==                                            ::
           $:  %d                                        ::    to %dill
-              $>(%flog task:able:dill)                  ::  log output
+              $>(%flog task:dill)                  ::  log output
       ==  ==                                            ::
     +$  sign
-      $~  [%b %wake ~]
-      $%  [%b $>(%wake gift:able)]
+      $~  [%behn %wake ~]
+      $%  [%behn $>(%wake gift)]
       ==
     ::
     +$  behn-state
@@ -38,11 +38,11 @@
     --
 ::
 =>
-~%  %behn  ..is  ~
+~%  %behn  ..part  ~
 |%
 ++  per-event
   =|  moves=(list move)
-  |=  [[our=ship now=@da =duct] state=behn-state]
+  |=  [[now=@da =duct] state=behn-state]
   ::
   |%
   ::  %entry-points
@@ -179,7 +179,7 @@
   ::
   ++  set-unix-wake
     =<  [moves state]
-    ~%  %set-unix-wake  ..is  ~  |-
+    ~%  %set-unix-wake  ..part  ~  |-
     ^+  event-core
     ::
     =*  next-wake  next-wake.state
@@ -213,7 +213,7 @@
   ::  +set-timer: set a timer, maintaining order
   ::
   ++  set-timer
-    ~%  %set-timer  ..is  ~
+    ~%  %set-timer  ..part  ~
     |=  t=timer
     ^+  timers.state
     =/  found  (find-ducts date.t)
@@ -254,36 +254,32 @@
 ::
 =|  behn-state
 =*  state  -
-|=  [our=ship now=@da eny=@uvJ ski=sley]
+|=  [now=@da eny=@uvJ rof=roof]
 =*  behn-gate  .
 ^?
 |%
-::  +call: handle a +task:able:behn request
+::  +call: handle a +task:behn request
 ::
 ++  call
-  ~%  %behn-call  ..is  ~
+  ~%  %behn-call  ..part  ~
   |=  $:  hen=duct
           dud=(unit goof)
-          type=*
-          wrapped-task=(hobo task:able)
+          wrapped-task=(hobo task)
       ==
   ^-  [(list move) _behn-gate]
   ::
-  =/  =task:able  ((harden task:able) wrapped-task)
-  ::
-  ::  error notifications "downcast" to %crud
-  ::
-  =?  task  ?=(^ dud)
-    ~|  %crud-in-crud
-    ?<  ?=(%crud -.task)
-    [%crud -.task tang.u.dud]
-  ::
-  =/  event-core  (per-event [our now hen] state)
+  =/  =task  ((harden task) wrapped-task)
+  =/  event-core  (per-event [now hen] state)
   ::
   =^  moves  state
+    ::
+    ::  handle error notifications
+    ::
+    ?^  dud
+      (crud:event-core -.task tang.u.dud)
+    ::
     ?-  -.task
       %born  born:event-core
-      %crud  (crud:event-core [p q]:task)
       %rest  (rest:event-core date=p.task)
       %drip  (drip:event-core move=p.task)
       %huck  (huck:event-core syn.task)
@@ -296,88 +292,24 @@
 ::  +load: migrate an old state to a new behn version
 ::
 ++  load
-  |^
-  |=  old=state
+  |=  old=behn-state
   ^+  behn-gate
-  =?  old  ?=(^ -.old)
-    (ket-to-1 old)
-  =?  old  ?=(~ -.old)
-    (load-0-to-1 old)
-  =?  old  ?=(%1 -.old)
-    (load-1-to-2 old)
-  ?>  ?=(%2 -.old)
   behn-gate(state old)
-  ::
-  ++  state
-    $^  behn-state-ket
-    $%  behn-state-0
-        behn-state-1
-        behn-state
-    ==
-  ::
-  ++  load-1-to-2
-    |=  old=behn-state-1
-    ^-  behn-state
-    =;  new-timers  old(- %2, timers new-timers)
-    =/  timers=(list timer)  ~(tap in ~(key by timers.old))
-    %+  roll  timers
-    |=  [t=timer acc=(tree [@da (qeu duct)])]
-    ^+  acc
-    =|  mock=behn-state
-    =.  timers.mock  acc
-    =/  event-core  (per-event *[@p @da duct] mock)
-    (set-timer:event-core t)
-  ::
-  ++  timer-map-1
-    %-  (ordered-map ,timer ,~)
-    |=  [a=timer b=timer]
-    (lth date.a date.b)
-  ::
-  +$  behn-state-1
-    $:  %1
-        timers=(tree [timer ~])
-        unix-duct=duct
-        next-wake=(unit @da)
-        drips=drip-manager
-    ==
-  ::
-  +$  behn-state-0
-    $:  ~
-        unix-duct=duct
-        next-wake=(unit @da)
-        drips=drip-manager
-    ==
-  ::
-  +$  behn-state-ket
-    $:  timers=(list timer)
-        unix-duct=duct
-        next-wake=(unit @da)
-        drips=drip-manager
-    ==
-  ::
-  ++  ket-to-1
-    |=  old=behn-state-ket
-    ^-  behn-state-1
-    :-  %1
-    %=    old
-        timers
-      %+  gas:timer-map-1  *(tree [timer ~])
-      (turn timers.old |=(=timer [timer ~]))
-    ==
-  ::
-  ++  load-0-to-1
-    |=  old=behn-state-0
-    ^-  behn-state-1
-    [%1 old]
-  --
 ::  +scry: view timer state
 ::
 ::    TODO: not referentially transparent w.r.t. elapsed timers,
 ::    which might or might not show up in the product
 ::
 ++  scry
-  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  ^-  roon
+  |=  [lyc=gang car=term bem=beam]
   ^-  (unit (unit cage))
+  =*  ren  car
+  =*  why=shop  &/p.bem
+  =*  syd  q.bem
+  =*  lot=coin  $/r.bem
+  =*  tyl  s.bem
+  ::
   ::TODO  don't special-case whey scry
   ::
   ?:  &(=(ren %$) =(tyl /whey))
@@ -438,14 +370,14 @@
 ::
 ++  stay  state
 ++  take
-  |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
+  |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _behn-gate]
   ?^  dud
     ~|(%behn-take-dud (mean tang.u.dud))
   ::
   ?>  ?=([%drip @ ~] tea)
-  =/  event-core  (per-event [our now hen] state)
+  =/  event-core  (per-event [now hen] state)
   =^  moves  state
-    (take-drip:event-core (slav %ud i.t.tea) error.q.hin)
+    (take-drip:event-core (slav %ud i.t.tea) error.hin)
   [moves behn-gate]
 --

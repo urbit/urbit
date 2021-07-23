@@ -3,7 +3,7 @@
 ::  mounts HTTP endpoints for Landscape (and third-party) user applications
 ::
 /-  srv=file-server, glob
-/+  *server, default-agent, verb, dbug
+/+  *server, default-agent, verb, dbug, version
 |%
 +$  card  card:agent:gall
 +$  serving    (map url-base=path [=content public=? single-page=?])
@@ -213,6 +213,9 @@
               (lowercase (weld path.content.u.content suffix.u.content))
           ==
         ?.  .^(? %cu scry-path)  [not-found:gen %.n]
+        ?:  ?=([~ %woff2] ext.req-line)
+          :_  public.u.content
+          [[200 [['content-type' '/font/woff2'] ~]] `.^(octs %cx scry-path)]
         =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
         :_  public.u.content
         ?+  ext.req-line  not-found:gen
@@ -234,10 +237,15 @@
         ?~  data
           [not-found:gen %.n]
         :_  public.u.content
-        =/  mime-type=@t  (rsh 3 1 (crip <p.u.data>))
+        =/  mime-type=@t  (rsh 3 (crip <p.u.data>))
         ::  Should maybe inspect to see how long cache should hold
         ::
-        [[200 ['content-type' mime-type] max-1-da:gen ~] `q.u.data]
+        =/  headers
+          :~  content-type+mime-type 
+              max-1-da:gen 
+              'service-worker-allowed'^'/'
+          ==
+        [[200 headers] `q.u.data]
       ==
     ::
     ++  lowercase
@@ -320,24 +328,11 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
-  |^
   ?+  path  (on-peek:def path)
-    [%x %clay %base %hash ~]  ``hash+!>(base-hash)
+      [%x %clay %base %hash ~]
+    =/  versions  (base-hash:version [our now]:bowl)
+    ``hash+!>(?~(versions 0v0 (end [0 25] i.versions)))
   ==
-  ::  stolen from +trouble
-  ::  TODO: move to a lib?
-  ++  base-hash
-    ^-  @uv
-    =+  .^  ota=(unit [=ship =desk =aeon:clay])
-            %gx  /(scot %p our.bowl)/hood/(scot %da now.bowl)/kiln/ota/noun
-        ==
-    ?~  ota
-      *@uv
-    =/  parent  (scot %p ship.u.ota)
-    =+  .^(=cass:clay %cs /[parent]/[desk.u.ota]/1/late/foo)
-    %^  end  0  25
-    .^(@uv %cz /[parent]/[desk.u.ota]/(scot %ud ud.cass))
-  --
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 --

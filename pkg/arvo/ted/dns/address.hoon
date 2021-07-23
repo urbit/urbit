@@ -6,7 +6,7 @@
 |^
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<  [adr=address:dns ~]  arg
+=+  !<  [~ adr=address:dns]  arg
 ::
 ;<  our=ship  bind:m  get-our:strandio
 =/  rac  (clan:title our)

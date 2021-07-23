@@ -23,30 +23,34 @@ import RIO.Directory
 import Urbit.Arvo
 import Urbit.King.App
 import Urbit.Vere.Pier.Types
+import Urbit.Vere.Stat
 
 import Control.Monad.STM      (retry)
+import System.Environment     (getExecutablePath)
+import System.FilePath        (splitFileName)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
+import Urbit.EventLog.Event   (buildLogEvent)
 import Urbit.King.API         (TermConn)
-import Urbit.Noun.Time        (Wen)
-import Urbit.TermSize         (TermSize(..))
-import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
+import Urbit.TermSize         (TermSize(..), termSize)
 import Urbit.Vere.Serf        (Serf)
 
-import qualified Data.Text              as T
-import qualified System.Entropy         as Ent
-import qualified Urbit.EventLog.LMDB    as Log
-import qualified Urbit.King.API         as King
-import qualified Urbit.Noun.Time        as Time
-import qualified Urbit.Vere.Ames        as Ames
-import qualified Urbit.Vere.Behn        as Behn
-import qualified Urbit.Vere.Clay        as Clay
-import qualified Urbit.Vere.Eyre        as Eyre
-import qualified Urbit.Vere.Http.Client as Iris
-import qualified Urbit.Vere.Serf        as Serf
-import qualified Urbit.Vere.Term        as Term
-import qualified Urbit.Vere.Term.API    as Term
-import qualified Urbit.Vere.Term.Demux  as Term
+import qualified Data.Text                   as T
+import qualified Data.List as L
+import qualified System.Entropy              as Ent
+import qualified Urbit.EventLog.LMDB         as Log
+import qualified Urbit.King.API              as King
+import qualified Urbit.Noun.Time             as Time
+import qualified Urbit.Vere.Ames             as Ames
+import qualified Urbit.Vere.Behn             as Behn
+import qualified Urbit.Vere.Clay             as Clay
+import qualified Urbit.Vere.Eyre             as Eyre
+import qualified Urbit.Vere.Eyre.KingSubsite as Site
+import qualified Urbit.Vere.Http.Client      as Iris
+import qualified Urbit.Vere.Serf             as Serf
+import qualified Urbit.Vere.Term             as Term
+import qualified Urbit.Vere.Term.API         as Term
+import qualified Urbit.Vere.Term.Demux       as Term
 
 
 -- Initialize pier directory. --------------------------------------------------
@@ -68,16 +72,22 @@ setupPierDirectory shipPath = do
 
 -- Load pill into boot sequence. -----------------------------------------------
 
+data CannotBootFromIvoryPill = CannotBootFromIvoryPill
+  deriving (Show, Exception)
+
 genEntropy :: MonadIO m => m Entropy
 genEntropy = Entropy . fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
 
-genBootSeq :: MonadIO m => Ship -> Pill -> Bool -> LegacyBootEvent -> m BootSeq
-genBootSeq ship Pill {..} lite boot = io $ do
-  ent <- genEntropy
-  let ovums = preKern ent <> pKernelOvums <> postKern <> pUserspaceOvums
-  pure $ BootSeq ident pBootFormulas ovums
+genBootSeq :: HasKingEnv e
+           => Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
+genBootSeq _    PillIvory {}   _    _    = throwIO CannotBootFromIvoryPill
+genBootSeq ship PillPill  {..} lite boot = do
+  ent <- io genEntropy
+  wyr <- wyrd
+  let ova = preKern ent <> [wyr] <> pKernelOva <> postKern <> pUserspaceOva
+  pure $ BootSeq ident pBootFormulae ova
  where
-  ident = LogIdentity ship isFake (fromIntegral $ length pBootFormulas)
+  ident = LogIdentity ship isFake (fromIntegral $ length pBootFormulae)
   preKern ent =
     [ EvBlip $ BlipEvArvo $ ArvoEvWhom () ship
     , EvBlip $ BlipEvArvo $ ArvoEvWack () ent
@@ -101,44 +111,51 @@ writeJobs log !jobs = do
   fromJob (expectedId, job) = do
     unless (expectedId == jobId job) $ error $ show
       ("bad job id!", expectedId, jobId job)
-    pure $ jamBS $ jobPayload job
+    pure $ buildLogEvent (jobMug job) (jobPayload job)
+
+  jobMug :: Job -> Mug
+  jobMug (RunNok (LifeCyc _ m _)) = m
+  jobMug (DoWork (Work _ m _ _)) = m
 
   jobPayload :: Job -> Noun
-  jobPayload (RunNok (LifeCyc _ m n)) = toNoun (m, n)
-  jobPayload (DoWork (Work _ m d o )) = toNoun (m, d, o)
+  jobPayload (RunNok (LifeCyc _ _ n)) = toNoun n
+  jobPayload (DoWork (Work _ _ d o))  = toNoun (d, o)
 
 
 -- Acquire a running serf. -----------------------------------------------------
 
-printTank :: (Text -> IO ()) -> Atom -> Tank -> IO ()
-printTank f _priority = f . unlines . fmap unTape . wash (WashCfg 0 80) . tankTree
- where
-  tankTree (Tank t) = t
-
 runSerf
   :: HasPierEnv e
-  => TVar (Text -> IO ())
+  => TVar ((Atom, Tank) -> IO ())
   -> FilePath
   -> RAcquire e Serf
 runSerf vSlog pax = do
   env <- ask
-  Serf.withSerf (config env)
+  serfProg <- io getSerfProg
+  Serf.withSerf (config env serfProg)
  where
-  slog txt = atomically (readTVar vSlog) >>= (\f -> f txt)
-  config env = Serf.Config
-    { scSerf = env ^. pierConfigL . pcSerfExe . to unpack
+  slog s = atomically (readTVar vSlog) >>= (\f -> f s)
+  config env serfProg = Serf.Config
+    { scSerf = env ^. pierConfigL . pcSerfExe . to (maybe serfProg unpack)
     , scPier = pax
     , scFlag = env ^. pierConfigL . pcSerfFlags
-    , scSlog = \(pri, tank) -> printTank slog pri tank
-    , scStdr = \txt -> slog (txt <> "\r\n")
+    , scSlog = slog
+    , scStdr = \txt -> slog (0, (textToTank txt))
     , scDead = pure () -- TODO: What can be done?
     }
+  getSerfProg :: IO FilePath
+  getSerfProg = do
+    (path, filename) <- splitFileName <$> getExecutablePath
+    pure $ case filename of
+      "urbit"      -> path </> "urbit-worker"
+      "urbit-king" -> path </> "urbit-worker"
+      _            -> "urbit-worker"
 
 
 -- Boot a new ship. ------------------------------------------------------------
 
 booted
-  :: TVar (Text -> IO ())
+  :: TVar ((Atom, Tank) -> IO ())
   -> Pill
   -> Bool
   -> Ship
@@ -169,27 +186,27 @@ bootNewShip
   -> RIO e ()
 bootNewShip pill lite ship bootEv = do
   seq@(BootSeq ident x y) <- genBootSeq ship pill lite bootEv
-  logDebug "BootSeq Computed"
+  logInfo "BootSeq Computed"
 
   pierPath <- view pierPathL
 
   rio (setupPierDirectory pierPath)
-  logDebug "Directory setup."
+  logInfo "Directory setup."
 
   let logPath = (pierPath </> ".urb/log")
 
   rwith (Log.new logPath ident) $ \log -> do
-    logDebug "Event log onitialized."
+    logInfo "Event log initialized."
     jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
     writeJobs log (fromList jobs)
 
-  logDebug "Finsihed populating event log with boot sequence"
+  logInfo "Finsihed populating event log with boot sequence"
 
 
 -- Resume an existing ship. ----------------------------------------------------
 
 resumed
-  :: TVar (Text -> IO ())
+  :: TVar ((Atom, Tank) -> IO ())
   -> Maybe Word64
   -> RAcquire PierEnv (Serf, EventLog)
 resumed vSlog replayUntil = do
@@ -207,16 +224,16 @@ resumed vSlog replayUntil = do
   serf <- runSerf vSlog tap
 
   rio $ do
-    logDebug "Replaying events"
+    logInfo "Replaying events"
     Serf.execReplay serf log replayUntil >>= \case
       Left err -> error (show err)
       Right 0  -> do
-        logDebug "No work during replay so no snapshot"
+        logInfo "No work during replay so no snapshot"
         pure ()
       Right _  -> do
-        logDebug "Taking snapshot"
+        logInfo "Taking snapshot"
         io (Serf.snapshot serf)
-        logDebug "SNAPSHOT TAKEN"
+        logInfo "SNAPSHOT TAKEN"
 
   pure (serf, log)
 
@@ -236,40 +253,21 @@ getSnapshot top last = do
     pure $ sort (filter (<= fromIntegral last) snapshotNums)
 
 
--- Utils for Spawning Worker Threads -------------------------------------------
-
-acquireWorker :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
-acquireWorker nam act = mkRAcquire (async act) kill
- where
-  kill tid = do
-    logDebug ("Killing worker thread: " <> display nam)
-    cancel tid
-
-acquireWorkerBound :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
-acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
- where
-  kill tid = do
-    logDebug ("Killing worker thread: " <> display nam)
-    cancel tid
-
-
-
 -- Run Pier --------------------------------------------------------------------
 
 pier
   :: (Serf, EventLog)
-  -> TVar (Text -> IO ())
+  -> TVar ((Atom, Tank) -> IO ())
   -> MVar ()
-  -> MultiEyreApi
+  -> [Ev]
   -> RAcquire PierEnv ()
-pier (serf, log) vSlog startedSig multi = do
+pier (serf, log) vSlog startedSig injected = do
   let logId = Log.identity log :: LogIdentity
   let ship  = who logId :: Ship
 
   -- TODO Instead of using a TMVar, pull directly from the IO driver
   -- event sources.
   computeQ :: TMVar RunReq      <- newEmptyTMVarIO
-
   persistQ :: TQueue (Fact, FX) <- newTQueueIO
   executeQ :: TQueue FX         <- newTQueueIO
   saveSig :: TMVar ()           <- newEmptyTMVarIO
@@ -280,22 +278,21 @@ pier (serf, log) vSlog startedSig multi = do
     writeTVar (King.kTermConn kingApi) (Just $ writeTQueue q)
     pure q
 
+  initialTermSize <- io $ termSize
+
   (demux :: Term.Demux, muxed :: Term.Client) <- atomically $ do
-    res <- Term.mkDemux
+    res <- Term.mkDemux initialTermSize
     pure (res, Term.useDemux res)
 
   void $ acquireWorker "TERMSERV Listener" $ forever $ do
-    logDebug "TERMSERV Waiting for external terminal."
+    logInfo "TERMSERV Waiting for external terminal."
     atomically $ do
       ext <- Term.connClient <$> readTQueue termApiQ
       Term.addDemux ext demux
-    logDebug "TERMSERV External terminal connected."
+    logInfo "TERMSERV External terminal connected."
 
-  --  Slogs go to both stderr and to the terminal.
-  env <- ask
-  atomically $ writeTVar vSlog $ \txt -> runRIO env $ do
-      atomically $ Term.trace muxed txt
-      logOther "serf" (display $ T.strip txt)
+  scryQ <- newTQueueIO
+  onKill  <- view onKillPierSigL
 
   -- Our call above to set the logging function which echos errors from the
   -- Serf doesn't have the appended \r\n because those \r\n s are added in
@@ -305,21 +302,37 @@ pier (serf, log) vSlog startedSig multi = do
   let execute = writeTQueue executeQ
   let persist = writeTQueue persistQ
   let sigint  = Serf.sendSIGINT serf
+  let scry    = \g r -> do
+        res <- newEmptyMVar
+        atomically $ writeTQueue scryQ (g, r, putMVar res)
+        takeMVar res
 
+  -- Set up the runtime stat counters.
+  stat <- newStat
+
+  -- Set up the runtime subsite server and its capability to slog
+  -- and display stats.
+  siteSlog <- newTVarIO (const $ pure ())
+  runtimeSubsite <- Site.kingSubsite ship scry (renderStat stat) siteSlog
+
+  --  Slogs go to stderr, to the runtime subsite, and to the terminal.
+  env <- ask
+  atomically $ writeTVar vSlog $ \s@(_, tank) -> runRIO env $ do
+      atomically $ Term.slog muxed s
+      io $ readTVarIO siteSlog >>= ($ s)
+      logOther "serf" (display $ T.strip $ tankToText tank)
+
+  let err = atomically . Term.trace muxed . (<> "\r\n")
   (bootEvents, startDrivers) <- do
     env <- ask
-    let err = atomically . Term.trace muxed . (<> "\r\n")
-    let siz = TermSize { tsWide = 80, tsTall = 24 }
+    siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
-    drivers env multi ship fak compute (siz, muxed) err sigint
-
-  scrySig <- newEmptyTMVarIO
-  onKill  <- view onKillPierSigL
+    drivers env ship fak compute scry (siz, muxed) err sigint stat runtimeSubsite
 
   let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ
                                     , ccOnKill      = onKill
                                     , ccOnSave      = takeTMVar saveSig
-                                    , ccOnScry      = takeTMVar scrySig
+                                    , ccOnScry      = readTQueue scryQ
                                     , ccPutResult   = persist
                                     , ccShowSpinner = Term.spin muxed
                                     , ccHideSpinner = Term.stopSpin muxed
@@ -327,6 +340,8 @@ pier (serf, log) vSlog startedSig multi = do
                                     }
 
   tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
+
+  doVersionNegotiation compute err
 
   -- Run all born events and retry them until they succeed.
   wackEv <- EvBlip . BlipEvArvo . ArvoEvWack () <$> genEntropy
@@ -339,7 +354,7 @@ pier (serf, log) vSlog startedSig multi = do
         cb :: Int -> WorkError -> IO ()
         cb n | n >= 3 = error ("boot event failed: " <> show ev)
         cb n          = \case
-          RunOkay _         -> putMVar okaySig ()
+          RunOkay _ _       -> putMVar okaySig ()
           RunSwap _ _ _ _ _ -> putMVar okaySig ()
           RunBail _         -> inject (n + 1)
 
@@ -349,30 +364,40 @@ pier (serf, log) vSlog startedSig multi = do
   let slog :: Text -> IO ()
       slog txt = do
         fn <- atomically (readTVar vSlog)
-        fn txt
+        fn (0, textToTank txt)
 
   drivz <- startDrivers
   tExec <- acquireWorker "Effects" (router slog (readTQueue executeQ) drivz)
   tDisk <- acquireWorkerBound "Persist" (runPersist log persistQ execute)
+
+  -- Now that the Serf is configured, the IO drivers are hooked up, their
+  -- starting events have been dispatched, and the terminal is live, we can now
+  -- handle injecting events requested from the command line.
+  for_ (zip [1..] injected) $ \(num, ev) -> rio $ do
+    logTrace $ display @Text ("Injecting event " ++ (tshow num) ++ " of " ++
+                              (tshow $ length injected) ++ "...")
+    okaySig :: MVar (Either [Goof] ()) <- newEmptyMVar
+
+    let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
+        cb :: WorkError -> IO ()
+        cb = \case
+          RunOkay _ _       -> putMVar okaySig (Right ())
+          RunSwap _ _ _ _ _ -> putMVar okaySig (Right ())
+          RunBail goofs     -> putMVar okaySig (Left goofs)
+
+    io inject
+
+    takeMVar okaySig >>= \case
+      Left goof -> logError $ display @Text ("Goof in injected event: " <>
+                                             tshow goof)
+      Right ()  -> pure ()
+
 
   let snapshotEverySecs = 120
 
   void $ acquireWorker "Save" $ forever $ do
     threadDelay (snapshotEverySecs * 1_000_000)
     void $ atomically $ tryPutTMVar saveSig ()
-
-  --  TODO bullshit scry tester
-  when False $ do
-    void $ acquireWorker "bullshit scry tester" $ do
-      env <- ask
-      forever $ do
-        threadDelay 15_000_000
-        wen <- io Time.now
-        let kal = \mTermNoun -> runRIO env $ do
-              logDebug $ displayShow ("scry result: ", mTermNoun)
-        let nkt = MkKnot $ tshow $ Time.MkDate wen
-        let pax = Path ["j", "~zod", "life", nkt, "~zod"]
-        atomically $ putTMVar scrySig (wen, Nothing, pax, kal)
 
   putMVar startedSig ()
 
@@ -397,6 +422,68 @@ death tag tid = do
     Left  exn -> Left (tag, exn)
     Right ()  -> Right tag
 
+-- %wyrd version negotiation ---------------------------------------------------
+
+data PierVersionNegotiationFailed = PierVersionNegotiationFailed
+ deriving (Show, Exception)
+
+zuseVersion :: Word
+zuseVersion = 420
+
+wyrd :: HasKingEnv e => RIO e Ev
+wyrd = do
+  king <- tshow <$> view kingIdL
+
+  let k   = Wynn [("zuse", zuseVersion),
+                  ("lull", 330),
+                  ("arvo", 240),
+                  ("hoon", 140),
+                  ("nock", 4)]
+      sen = MkTerm king
+      v   = Vere sen [Cord "king-haskell", Cord "1.0"] k
+
+  pure $ EvBlip $ BlipEvArvo $ ArvoEvWyrd () v
+
+doVersionNegotiation
+  :: HasPierEnv e
+  => (RunReq -> STM ())
+  -> (Text -> RIO e ())
+  -> RAcquire e ()
+doVersionNegotiation compute stderr = do
+  ev <- rio wyrd
+
+  okaySig :: MVar (Either [Goof] FX) <- newEmptyMVar
+  let inject = atomically $ compute $ RRWork $ EvErr ev $ cb
+      cb :: WorkError -> IO ()
+      cb = \case
+        RunOkay _ fx       -> putMVar okaySig (Right fx)
+        RunSwap _ _ _ _ fx -> putMVar okaySig (Right fx)
+        RunBail goofs      -> putMVar okaySig (Left goofs)
+
+  rio $ stderr "vere: checking version compatibility"
+  io inject
+
+  takeMVar okaySig >>= \case
+    Left goof -> do
+      rio $ stderr "pier: version negotation failed"
+      logError $ display @Text ("Goof in wyrd event: " <> tshow goof)
+      throwIO PierVersionNegotiationFailed
+
+    Right fx  -> do
+      -- Walk through the returned fx looking for a wend effect. If we find
+      -- one, check the zuse versions.
+      rio $ for_ fx $ \case
+        GoodParse (EfWend (Wynn xs)) -> case L.lookup "zuse" xs of
+          Nothing -> pure ()
+          Just zuseVerInWynn ->
+            if zuseVerInWynn /= zuseVersion
+            then do
+              rio $ stderr "pier: pier: version negotiation failed; downgrade"
+              throwIO PierVersionNegotiationFailed
+            else
+              pure ()
+        _ -> pure ()
+
 
 -- Start All Drivers -----------------------------------------------------------
 
@@ -412,21 +499,27 @@ data Drivers = Drivers
 drivers
   :: HasPierEnv e
   => e
-  -> MultiEyreApi
   -> Ship
   -> Bool
   -> (RunReq -> STM ())
+  -> ScryFunc
   -> (TermSize, Term.Client)
   -> (Text -> RIO e ())
   -> IO ()
+  -> Stat
+  -> Site.KingSubsite
   -> RAcquire e ([Ev], RAcquire e Drivers)
-drivers env multi who isFake plan termSys stderr serfSIGINT = do
+drivers env who isFake plan scry termSys stderr serfSIGINT stat sub = do
+  let Stat{..} = stat
+
   (behnBorn, runBehn) <- rio Behn.behn'
-  (termBorn, runTerm) <- rio (Term.term' termSys serfSIGINT)
-  (amesBorn, runAmes) <- rio (Ames.ames' who isFake stderr)
-  (httpBorn, runEyre) <- rio (Eyre.eyre' multi who isFake)
+  (termBorn, runTerm) <- rio (Term.term' termSys (renderStat stat) serfSIGINT)
+  (amesBorn, runAmes) <- rio (Ames.ames' who isFake statAmes scry stderr)
+  (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr sub)
   (clayBorn, runClay) <- rio Clay.clay'
   (irisBorn, runIris) <- rio Iris.client'
+
+  putStrLn ("ship is " <> tshow who)
 
   let initialEvents = mconcat [behnBorn,clayBorn,amesBorn,httpBorn,irisBorn,termBorn]
 
@@ -479,6 +572,7 @@ router slog waitFx Drivers {..} = do
       case ef of
         GoodParse (EfVega _ _              ) -> vega
         GoodParse (EfExit _ _              ) -> exit
+        GoodParse (EfWend _                ) -> pure ()
         GoodParse (EfVane (VEBehn       ef)) -> io (dBehn ef)
         GoodParse (EfVane (VEBoat       ef)) -> io (dSync ef)
         GoodParse (EfVane (VEClay       ef)) -> io (dSync ef)
@@ -494,7 +588,7 @@ router slog waitFx Drivers {..} = do
 
 logEvent :: HasLogFunc e => Ev -> RIO e ()
 logEvent ev = do
-  logTrace $ "<- " <> display (summarizeEvent ev)
+  --logInfo  $ "<- " <> display (summarizeEvent ev)
   logDebug $ "[EVENT]\n" <> display pretty
  where
   pretty :: Text
@@ -502,7 +596,7 @@ logEvent ev = do
 
 logEffect :: HasLogFunc e => Lenient Ef -> RIO e ()
 logEffect ef = do
-  logTrace $ "  -> " <> display (summarizeEffect ef)
+  --logInfo  $ "  -> " <> display (summarizeEffect ef)
   logDebug $ display $ "[EFFECT]\n" <> pretty ef
  where
   pretty :: Lenient Ef -> Text
@@ -514,7 +608,7 @@ data ComputeConfig = ComputeConfig
   { ccOnWork      :: STM RunReq
   , ccOnKill      :: STM ()
   , ccOnSave      :: STM ()
-  , ccOnScry      :: STM (Wen, Gang, Path, Maybe (Term, Noun) -> IO ())
+  , ccOnScry      :: STM (Gang, ScryReq, Maybe (Term, Noun) -> IO ())
   , ccPutResult   :: (Fact, FX) -> STM ()
   , ccShowSpinner :: Maybe Text -> STM ()
   , ccHideSpinner :: STM ()
@@ -528,7 +622,7 @@ runCompute serf ComputeConfig {..} = do
   let onRR = asum [ ccOnKill <&> Serf.RRKill
                   , ccOnSave <&> Serf.RRSave
                   , ccOnWork
-                  , ccOnScry <&> \(w,g,p,k) -> Serf.RRScry w g p k
+                  , ccOnScry <&> \(g,r,k) -> Serf.RRScry g r k
                   ]
 
   vEvProcessing :: TMVar Ev <- newEmptyTMVarIO
@@ -582,7 +676,7 @@ runPersist log inpQ out = do
       do
         unless (expectedId == eve) $ do
           throwIO (BadEventId expectedId eve)
-        pure $ jamBS $ toNoun (mug, wen, non)
+        pure $ buildLogEvent mug $ toNoun (wen, non)
     pure (fromList lis)
 
   getBatchFromQueue :: STM (NonNull [(Fact, FX)])

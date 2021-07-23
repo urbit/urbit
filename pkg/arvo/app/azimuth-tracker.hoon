@@ -1,6 +1,6 @@
 /-  eth-watcher
-/+  default-agent, verb
-=,  able:jael
+/+  ethereum, azimuth, default-agent, verb
+=,  jael
 |%
 ++  app-state
   $:  %0
@@ -75,13 +75,15 @@
 ++  jael-update
   |=  =udiffs:point
   ^-  (list card:agent:gall)
+  :-  [%give %fact ~[/] %azimuth-udiffs !>(udiffs)]
+  |-  ^-  (list card:agent:gall)
   ?~  udiffs
     ~
   =/  =path  /(scot %p ship.i.udiffs)
-  :*  [%give %fact ~[/] %azimuth-udiff !>(i.udiffs)]
-      [%give %fact ~[path] %azimuth-udiff !>(i.udiffs)]
-      $(udiffs t.udiffs)
-  ==
+  ::  Should really give all diffs involving each ship at the same time
+  ::
+  :-  [%give %fact ~[path] %azimuth-udiffs !>(~[i.udiffs])]
+  $(udiffs t.udiffs)
 ::
 ++  start
   |=  [state=app-state our=ship dap=term]
@@ -158,7 +160,7 @@
   %-  jael-update
   ?-  -.diff
     %history  (event-logs-to-udiffs loglist.diff)
-    %log      (event-logs-to-udiffs event-log.diff ~)
+    %logs     (event-logs-to-udiffs loglist.diff)
     %disavow  [*ship id.diff %disavow ~]~
   ==
 ::

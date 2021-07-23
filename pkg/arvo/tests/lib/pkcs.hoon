@@ -327,7 +327,7 @@
     :: echo "hello" | openssl dgst -sha256 -sign private.pem | base64
     %+  expect-eq
       !>  exp2b64
-      !>  (en:base64 (met 3 sig) (swp 3 sig))
+      !>  (en:base64:mimes:html (met 3 sig) (swp 3 sig))
   ==
 ::
 ++  test-csr

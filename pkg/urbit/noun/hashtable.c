@@ -1180,3 +1180,12 @@ u3h_discount(u3p(u3h_root) har_p)
 
   return tot_w;
 }
+
+/* u3h_wyt(): number of entries
+*/
+c3_w
+u3h_wyt(u3p(u3h_root) har_p)
+{
+  u3h_root* har_u = u3to(u3h_root, har_p);
+  return har_u->use_w;
+}

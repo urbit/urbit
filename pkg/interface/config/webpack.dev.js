@@ -1,10 +1,15 @@
 const path = require('path');
+const webpack = require('webpack');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const urbitrc = require('./urbitrc');
 const fs = require('fs');
 const util = require('util');
-const exec = util.promisify(require('child_process').exec);
+const _ = require('lodash');
+const { execSync } = require('child_process');
+
+const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
+
 
 function copyFile(src,dest) {
   return new Promise((res,rej) =>
@@ -44,8 +49,12 @@ let devServer = {
   contentBase: path.join(__dirname, '../dist'),
   hot: true,
   port: 9000,
+  host: '0.0.0.0',
+  disableHostCheck: true,
   historyApiFallback: true
 };
+
+const router =  _.mapKeys(urbitrc.FLEET || {}, (value, key) => `${key}.localhost:9000`);
 
 if(urbitrc.URL) {
   devServer = {
@@ -54,13 +63,23 @@ if(urbitrc.URL) {
     proxy: {
       '/~landscape/js/bundle/index.*.js': {
         target: 'http://localhost:9000',
-        pathRewrite: (req, path) => '/index.js'
+        pathRewrite: (req, path) => {
+          return '/index.js'
+        }
       },
+      // '/~landscape/js/serviceworker.js': {
+      //   target: 'http://localhost:9000',
+      //   pathRewrite: (req, path) => {
+      //     return '/serviceworker.js'
+      //   }
+      // },
       '**': {
+        changeOrigin: true,
         target: urbitrc.URL,
+        router,
         // ensure proxy doesn't timeout channels
-        proxyTimeout: 0
-      }
+        proxyTimeout: 0,
+     }
     }
   };
 }
@@ -68,7 +87,8 @@ if(urbitrc.URL) {
 module.exports = {
   mode: 'development',
   entry: {
-    app: './src/index.js'
+    app: './src/index.js',
+    // serviceworker: './src/serviceworker.js'
   },
   module: {
     rules: [
@@ -77,7 +97,11 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/typescript', '@babel/preset-react'],
+            presets: ['@babel/preset-env', '@babel/typescript', ['@babel/preset-react', {
+              runtime: 'automatic',
+              development: true,
+              importSource: '@welldone-software/why-did-you-render',
+            }]],
             plugins: [
               '@babel/transform-runtime',
               '@babel/plugin-proposal-object-rest-spread',
@@ -87,7 +111,7 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules/
+        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light)\/).*/
       },
       {
         test: /\.css$/i,
@@ -108,7 +132,16 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: devServer,
   plugins: [
-    new UrbitShipPlugin(urbitrc)
+    new UrbitShipPlugin(urbitrc),
+    new webpack.DefinePlugin({
+      'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
+      'process.env.TUTORIAL_HOST': JSON.stringify('~difmex-passed'),
+      'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
+      'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),
+      'process.env.TUTORIAL_BOOK': JSON.stringify('guides-9684'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143'),
+    })
+
     // new CleanWebpackPlugin(),
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',
@@ -117,10 +150,13 @@ module.exports = {
   ],
   watch: true,
   output: {
-    filename: 'index.js',
-    chunkFilename: 'index.js',
+    filename: (pathData) => {
+      return pathData.chunk.name === 'app' ? 'index.js' : '[name].js';
+    },
+    chunkFilename: '[name].js',
     path: path.resolve(__dirname, '../dist'),
-    publicPath: '/'
+    publicPath: '/',
+    globalObject: 'this'
   },
   optimization: {
     minimize: false,

@@ -18,12 +18,12 @@
     ::  empty string works fine
     ::
     %+  expect-eq
-      !>  ~['']
+      !>  ~
       !>  (to-wain '')
     ::  leading/trailing/consecutive newlines all work fine
     ::
     %+  expect-eq
-      !>  ~['' 'hi' '' '' 'there' '']
+      !>  ~['' 'hi' '' '' 'there']
       !>  (to-wain '\0ahi\0a\0a\0athere\0a')
   ==
 ::  join a list of lines (cords) into a single cord
@@ -85,7 +85,7 @@
 ::    path)
 ::
 ++  test-beam
-  =/  b=beam  [[p=~zod q=%home r=[%ud p=12]] s=/hoon/zuse/sys]
+  =/  b=beam  [[p=~zod q=%home r=[%ud p=12]] s=/sys/zuse/hoon]
   =/  p=path  /~zod/home/12/sys/zuse/hoon
   ;:  weld
     ::  proper encode
@@ -170,11 +170,15 @@
     %+  expect-eq
       !>  [%o (molt props)]
       !>  (pairs props)
+    ::  sect - stored as integer number of seconds since the unix epoch
+    %+  expect-eq
+      !>  [%n '1']
+      !>  (sect ~1970.1.1..0.0.1)
     ::  time - stored as integer number of milliseconds since the unix epoch
     ::
     %+  expect-eq
-      !>   [%n '1000']
-      !>   (time ~1970.1.1..0.0.1)
+      !>  [%n '1000']
+      !>  (time ~1970.1.1..0.0.1)
     :: ship - store ship identity as a string
     ::
     %+  expect-eq

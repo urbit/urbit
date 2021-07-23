@@ -1,9 +1,6 @@
 ::  claz: command line azimuth, for the power-user
 ::
-/+  *claz, verb, default-agent
-::
-=,  ethereum
-=,  azimuth
+/+  *claz, *ethereum, *azimuth, verb, default-agent
 ::
 |%
 +$  state-0

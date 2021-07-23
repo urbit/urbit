@@ -18,6 +18,7 @@
     |=  [b=blit:dill line=tape]
     ?-    -.b
         %lin  (tape p.b)
+        %klr  (tape (zing (turn p.b tail)))
         %mor  ~&  "{<who>}: {line}"  ""
         %hop  line
         %bel  line

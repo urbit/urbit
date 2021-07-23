@@ -5,7 +5,7 @@
     easy-print=language-server-easy-print,
     rune-snippet=language-server-rune-snippet,
     build=language-server-build,
-    default-agent
+    default-agent, verb
 |%
 +$  card  card:agent:gall
 +$  lsp-req
@@ -44,6 +44,7 @@
   ==
 --
 ^-  agent:gall
+%+  verb  |
 =|  state-zero
 =*  state  -
 =<
@@ -69,7 +70,7 @@
     |=  old-state=vase
     ^-  (quip card _this)
     ~&  >  %lsp-upgrade
-    [~ this(state *state-zero)]
+    [~ this(state !<(state-zero old-state))]
   ::
   ++  on-poke
     ^+  on-poke:*agent:gall
@@ -100,8 +101,8 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+  sign-arvo  (on-arvo:def wire sign-arvo)
-        [%e %bound *]  `state
-        [%c *]  (handle-build:lsp wire +.sign-arvo)
+        [%eyre %bound *]  `state
+        [%clay *]  (handle-build:lsp wire +.sign-arvo)
       ==
     [cards this]
   ::
@@ -234,7 +235,7 @@
   `state
 ::
 ++  handle-build
-  |=  [=path =gift:able:clay]
+  |=  [=path =gift:clay]
   ^-  (quip card _state)
   ?>  ?=([%writ *] gift)
   =/  uri=@t
@@ -247,7 +248,7 @@
     (~(put by builds) uri q.r.u.p.gift)
   =.  ford-diagnostics
     (~(del by ford-diagnostics) uri)
-  =+  .^(=open:clay %cs /(scot %p our.bow)/home/(scot %da now.bow)/open)
+  =+  .^(=open:clay %cs /(scot %p our.bow)/home/(scot %da now.bow)/open/foo)
   =/  =type  -:(open (uri-to-path:build uri))
   =.  preludes
     (~(put by preludes) uri type)
@@ -275,12 +276,14 @@
 ++  handle-did-open
   |=  item=text-document-item:lsp-sur
   ^-  (quip card _state)
+  =/  =path
+    (uri-to-path:build uri.item)
+  ?:  ?=(%sys -.path)
+    `state
   =/  buf=wall
     (to-wall (trip text.item))
   =.  bufs
     (~(put by bufs) uri.item buf)
-  =/  =path
-    (uri-to-path:build uri.item)
   :_  state
   %+  weld
     (give-rpc-notification (get-diagnostics uri.item))
@@ -318,12 +321,12 @@
   ?~  p.tab-list  ~
   ?~  u.p.tab-list  ~
   :-  ~
-  %-  crip
-  ;:  weld
-    "`"
-    ~(ram re ~(duck easy-print detail.i.u.p.tab-list))
-    "`"
-  ==
+  =-  (crip :(weld "```hoon\0a" tape "\0a```"))
+  ^-  =tape
+  %-  zing
+  %+  join  "\0a"
+  %+  scag  40
+  (~(win re ~(duck easy-print detail.i.u.p.tab-list)) 0 140)
 ::
 ++  sync-buf
   |=  [buf=wall changes=(list change:lsp-sur)]

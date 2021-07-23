@@ -1,4 +1,5 @@
-/-  spider, graph-view, graph=graph-store, *metadata-store, *group, *metadata-store
+/-  spider, graph-view, graph=graph-store,
+    met=metadata-store, *group, *metadata-store
 /+  strandio, resource
 =>
 |% 
@@ -28,11 +29,11 @@
 ::
 ++  scry-metadatum
   |=  rid=resource
-  =/  m  (strand ,metadata)
+  =/  m  (strand ,metadatum:met)
   ^-  form:m
   =/  enc-path=@t  (scot %t (spat (en-path:resource rid)))
-  ;<  umeta=(unit metadata)  bind:m
-    %+  scry:strandio  (unit metadata)
+  ;<  umeta=(unit metadatum:met)  bind:m
+    %+  scry:strandio  (unit metadatum:met)
     %+  weld  /gx/metadata-store/metadata
     /[enc-path]/graph/[enc-path]/noun
   ?>  ?=(^ umeta)
@@ -43,29 +44,30 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<(=action:graph-view arg)
+=+  !<([~ =action:graph-view] arg)
 ?>  ?=(%groupify -.action)
 ;<  =group  bind:m  (scry-group rid.action)
 ?.  hidden.group
   (strand-fail:strandio %bad-request ~)
-;<  =metadata  bind:m  (scry-metadatum rid.action)
+;<  =metadatum:met  bind:m  (scry-metadatum rid.action)
 ?~  to.action
   ;<  ~  bind:m
     %+  poke-our  %contact-view
     :-  %contact-view-action
-    !>([%groupify rid.action title.metadata description.metadata])
+    !>([%groupify rid.action title.metadatum description.metadatum])
   (pure:m !>(~))
 ;<  new=^group  bind:m  (scry-group u.to.action)
 ?<  hidden.new
-=/  new-path  (en-path:resource u.to.action)
-=/  app-path  (en-path:resource rid.action)
-=/  add-md=metadata-action
-  [%add new-path graph+app-path metadata]
-;<  ~  bind:m
-  (poke-our %metadata-store metadata-action+!>(add-md))
 ;<  ~  bind:m
   %+  poke-our  %metadata-store
-  metadata-action+!>([%remove app-path graph+app-path])
+  :-  %metadata-action
+  !>  ^-  action:met
+  [%add u.to.action [%graph rid.action] metadatum]
 ;<  ~  bind:m
-  (poke-our %group-store %group-update !>([%remove-group rid.action]))
+  %+  poke-our  %metadata-store
+  :-  %metadata-action
+  !>  ^-  action:met
+  [%remove rid.action [%graph rid.action]]
+;<  ~  bind:m
+  (poke-our %group-store %group-update-0 !>([%remove-group rid.action ~]))
 (pure:m !>(~))

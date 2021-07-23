@@ -9,14 +9,14 @@
 ::
 ::    Note that *explicit* implies *constructed* (ie, bit 5 is set in DER).
 ::
-+=  bespoke
++$  bespoke
   ::  imp: & is implicit, | is explicit
   ::  tag: 5 bits for the custom tag number
   ::
   [imp=? tag=@ud]
 ::  +spec:asn1: minimal representations of basic ASN.1 types
 ::
-+=  spec
++$  spec
   $%  ::  %int: arbitrary-sized, unsigned integers
       ::
       ::    Unsigned integers, represented as having a positive sign.

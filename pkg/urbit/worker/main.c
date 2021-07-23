@@ -22,16 +22,28 @@
 #include <vere/vere.h>
 #include <vere/serf.h>
 
-static u3_serf   u3V;             //  one serf per process
-static u3_moat inn_u;             //  input stream
-static u3_mojo out_u;             //  output stream
+#include "ur/hashcons.h"
+
+static u3_serf        u3V;             //  one serf per process
+static u3_moat      inn_u;             //  input stream
+static u3_mojo      out_u;             //  output stream
+static u3_cue_xeno* sil_u;             //  cue handle
+
+#undef SERF_TRACE_JAM
+#undef SERF_TRACE_CUE
 
 /* _cw_serf_fail(): failure stub.
 */
 static void
-_cw_serf_fail(void* vod_p, const c3_c* wut_c)
+_cw_serf_fail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
-  fprintf(stderr, "serf: fail: %s\r\n", wut_c);
+  if ( UV_EOF == err_i ) {
+    fprintf(stderr, "serf: pier unexpectedly shut down\r\n");
+  }
+  else {
+    fprintf(stderr, "serf: pier error: %s\r\n", err_c);
+  }
+
   exit(1);
 }
 
@@ -40,7 +52,21 @@ _cw_serf_fail(void* vod_p, const c3_c* wut_c)
 static void
 _cw_serf_send(u3_noun pel)
 {
-  u3_newt_write(&out_u, u3ke_jam(pel));
+  c3_d  len_d;
+  c3_y* byt_y;
+
+#ifdef SERF_TRACE_JAM
+  u3t_event_trace("serf ipc jam", 'B');
+#endif
+
+  u3s_jam_xeno(pel, &len_d, &byt_y);
+
+#ifdef SERF_TRACE_JAM
+  u3t_event_trace("serf ipc jam", 'E');
+#endif
+
+  u3_newt_send(&out_u, len_d, byt_y);
+  u3z(pel);
 }
 
 /* _cw_serf_send_slog(): send hint output (hod is [priority tank]).
@@ -51,23 +77,55 @@ _cw_serf_send_slog(u3_noun hod)
   _cw_serf_send(u3nc(c3__slog, hod));
 }
 
-/* _cw_serf_send_stdr(): send stderr output
+/* _cw_serf_send_stdr(): send stderr output (%flog)
 */
 static void
 _cw_serf_send_stdr(c3_c* str_c)
 {
-  _cw_serf_send_slog(u3nc(0, u3i_string(str_c)));
+  _cw_serf_send(u3nc(c3__flog, u3i_string(str_c)));
 }
 
-/* _cw_serf_writ():
+
+/* _cw_serf_step_trace(): initialize or rotate trace file.
 */
 static void
-_cw_serf_writ(void* vod_p, u3_noun mat)
+_cw_serf_step_trace(void)
 {
+  if ( u3C.wag_w & u3o_trace ) {
+    if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
+      u3t_trace_open(u3V.dir_c);
+    }
+    else if ( u3_Host.tra_u.con_w >= 100000 ) {
+      u3t_trace_close();
+      u3t_trace_open(u3V.dir_c);
+    }
+  }
+}
+
+/* _cw_serf_writ(): process a command from the king.
+*/
+static void
+_cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
+{
+  u3_weak jar;
   u3_noun ret;
 
-  if ( c3n == u3_serf_writ(&u3V, u3ke_cue(mat), &ret) ) {
-    _cw_serf_fail(0, "bad jar");
+  _cw_serf_step_trace();
+
+#ifdef SERF_TRACE_CUE
+  u3t_event_trace("serf ipc cue", 'B');
+#endif
+
+  jar = u3s_cue_xeno_with(sil_u, len_d, byt_y);
+
+#ifdef SERF_TRACE_CUE
+  u3t_event_trace("serf ipc cue", 'E');
+#endif
+
+  if (  (u3_none == jar)
+     || (c3n == u3_serf_writ(&u3V, jar, &ret)) )
+  {
+    _cw_serf_fail(0, -1, "bad jar");
   }
   else {
     _cw_serf_send(ret);
@@ -97,6 +155,15 @@ _cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
   dup2(2, 1);
 
   close(nul_i);
+}
+
+/* _cw_serf_stdio(): cleanup on serf exit.
+*/
+static void
+_cw_serf_exit(void)
+{
+  u3s_cue_xeno_done(sil_u);
+  u3t_trace_close();
 }
 
 /* _cw_serf_commence(); initialize and run serf
@@ -169,6 +236,8 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
     uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
   }
 
+  sil_u = u3s_cue_xeno_init();
+
   //  set up writing
   //
   out_u.ptr_v = &u3V;
@@ -187,7 +256,15 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
     u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
 
     if ( eve_d ) {
-      u3_serf_uncram(&u3V, eve_d);
+      //  XX need not be fatal, need a u3m_reboot equivalent
+      //  XX can spuriously fail do to corrupt memory-image checkpoint,
+      //  need a u3m_half_boot equivalent
+      //  workaround is to delete/move the checkpoint in case of corruption
+      //
+      if ( c3n == u3u_uncram(u3V.dir_c, eve_d) ) {
+        fprintf(stderr, "serf (%" PRIu64 "): rock load failed\r\n", eve_d);
+        exit(1);
+      }
     }
   }
 
@@ -199,6 +276,12 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
     u3C.stderr_log_f = _cw_serf_send_stdr;
     u3C.slog_f = _cw_serf_send_slog;
   }
+
+  u3V.xit_f = _cw_serf_exit;
+
+#if defined(SERF_TRACE_JAM) || defined(SERF_TRACE_CUE)
+  u3t_trace_open(u3V.dir_c);
+#endif
 
   //  start serf
   //
@@ -252,16 +335,25 @@ _cw_cram(c3_i argc, c3_c* argv[])
 
   c3_c* dir_c = argv[2];
   c3_d  eve_d = u3m_boot(dir_c);
+  c3_o  ret_o;
 
   fprintf(stderr, "urbit-worker: cram: preparing\r\n");
 
-  if ( c3n == u3m_rock_stay(dir_c, eve_d) ) {
+  if ( c3n == (ret_o = u3u_cram(dir_c, eve_d)) ) {
     fprintf(stderr, "urbit-worker: cram: unable to jam state\r\n");
-    exit(1);
+  }
+  else {
+    fprintf(stderr, "urbit-worker: cram: rock saved at event %" PRIu64 "\r\n", eve_d);
   }
 
-  fprintf(stderr, "urbit-worker: cram: rock saved at event %" PRIu64 "\r\n", eve_d);
+  //  save even on failure, as we just did all the work of deduplication
+  //
+  u3e_save();
   u3m_stop();
+
+  if ( c3n == ret_o ) {
+    exit(1);
+  }
 }
 
 /* _cw_queu(); cue rock, save, and exit.
@@ -285,12 +377,41 @@ _cw_queu(c3_i argc, c3_c* argv[])
     memset(&u3V, 0, sizeof(u3V));
     u3V.dir_c = strdup(dir_c);
     u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
-    u3_serf_uncram(&u3V, eve_d);
+
+    //  XX can spuriously fail do to corrupt memory-image checkpoint,
+    //  need a u3m_half_boot equivalent
+    //  workaround is to delete/move the checkpoint in case of corruption
+    //
+    if ( c3n == u3u_uncram(dir_c, eve_d) ) {
+      fprintf(stderr, "urbit-worker: queu: failed\r\n");
+      exit(1);
+    }
+
     u3e_save();
 
     fprintf(stderr, "urbit-worker: queu: rock loaded at event %" PRIu64 "\r\n", eve_d);
     u3m_stop();
   }
+}
+
+/* _cw_uniq(); deduplicate persistent nouns
+*/
+static void
+_cw_meld(c3_i argc, c3_c* argv[])
+{
+  c3_assert( 3 <= argc );
+
+  c3_c* dir_c = argv[2];
+
+  u3m_boot(dir_c);
+
+  u3_serf_grab();
+
+  u3u_meld();
+
+  u3_serf_grab();
+
+  u3e_save();
 }
 
 /* _cw_pack(); compact memory, save, and exit.
@@ -322,13 +443,15 @@ _cw_usage(c3_i argc, c3_c* argv[])
           "    %s grab <pier>\n\n"
           "  compact persistent state:\n"
           "    %s pack <pier>\n\n"
+          "  deduplicate persistent state:\n"
+          "    %s meld <pier>\n\n"
           "  jam persistent state:\n"
           "    %s cram <pier>\n\n"
           "  cue persistent state:\n"
           "    %s queu <pier> <at-event>\n\n"
           "  run as a 'serf':\n"
           "    %s serf <pier> <key> <flags> <cache-size> <at-event>\n",
-          argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
+          argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
 }
 
 /* main(): main() when run as urbit-worker
@@ -367,6 +490,9 @@ main(c3_i argc, c3_c* argv[])
     }
     else if ( 0 == strcmp("queu", argv[1]) ) {
       _cw_queu(argc, argv);
+    }
+    else if ( 0 == strcmp("meld", argv[1]) ) {
+      _cw_meld(argc, argv);
     }
     else if ( 0 == strcmp("pack", argv[1]) ) {
       _cw_pack(argc, argv);

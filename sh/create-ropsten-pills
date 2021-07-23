@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
 
-set -e
+# Usage: create-ropsten-pills
 
-sha=$(git rev-parse HEAD)
+# Build the ivory and brass ropsten pills, copying them to the local directory,
+# named with the current give revision
 
-brass=$(nix-build nix/ops -A brass-ropsten --no-out-link)
-ivory=$(nix-build nix/ops -A ivory-ropsten --no-out-link)
+set -xeuo pipefail
 
-cp $brass ./brass-ropsten-${sha:0:5}.pill
-cp $ivory ./ivory-ropsten-${sha:0:5}.pill
+cd "${0%/*}/.."
+
+rev="$(git rev-parse HEAD)"
+sha="${rev:0:5}"
+
+brass="brass-ropsten-${sha}.pill"
+ivory="ivory-ropsten-${sha}.pill"
+
+cp -f "$(nix-build -A brass-ropsten.build --no-out-link)" "$brass"
+cp -f "$(nix-build -A ivory-ropsten.build --no-out-link)" "$ivory"
+
+chmod 0644 "$brass" "$ivory"

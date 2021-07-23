@@ -83,7 +83,7 @@
   ?.  ?=(%s -.jon)
     [~ state]
   =/  str=@t  +.jon
-  =/  req=request:http  (request-darksky str)
+  =/  req=request:http  (request-wttr str)
   =/  out  *outbound-config:iris
   =/  lismov=(list card)
     [%pass /[(scot %da now.bol)] %arvo %i %request req out]~
@@ -102,11 +102,11 @@
   ^-  (list card)
   [%give %fact ~[/all] %json !>((frond:enjs:format %location jon))]~
 ::
-++  request-darksky
+++  request-wttr
   |=  location=@t
   ^-  request:http
-  =/  base  'https://api.darksky.net/forecast/634639c10670c7376dc66b6692fe57ca/'
-  =/  url=@t  (cat 3 (cat 3 base location) '?units=auto')
+  =/  base  'https://wttr.in/'
+  =/  url=@t  (cat 3 (cat 3 base location) '?format=j1')
   =/  hed  [['Accept' 'application/json']]~
   [%'GET' url hed *(unit octs)]
 ::
@@ -133,8 +133,9 @@
   =/  jon=json
     %+  frond:enjs:format  %weather
     %-  pairs:enjs:format
-    :~  [%currently (~(got by p.u.ujon) 'currently')]
-        [%daily (~(got by p.u.ujon) 'daily')]
+    :~  [%current-condition (~(got by p.u.ujon) 'current_condition')]
+        [%weather (~(got by p.u.ujon) 'weather')]
+        [%nearest-area (~(got by p.u.ujon) 'nearest_area')]
     ==
   :-  [%give %fact ~[/all] %json !>(jon)]~
   %=  state
@@ -146,7 +147,7 @@
   |=  [wir=wire err=(unit tang)]
   ^-  (quip card _state)
   ?~  err
-    =/  req/request:http  (request-darksky location)
+    =/  req=request:http  (request-wttr location)
     =/  out  *outbound-config:iris
     :_  state(timer `(add now.bol ~h3))
     :~  [%pass /[(scot %da now.bol)] %arvo %i %request req out]
