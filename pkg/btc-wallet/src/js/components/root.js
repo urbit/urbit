@@ -8,14 +8,15 @@ import Body from './lib/body.js';
 import { useSettings } from '../hooks/useSettings.js';
 
 const Root = () => {
-  const { loaded, wallet, provider } = useSettings();
-  const blur = !loaded ? false : !(wallet && provider);
+  const { loaded, wallet, provider, scanProgress } = useSettings();
+  const scanning = scanProgress?.main !== null || scanProgress?.change !== null;
+  const blur = !loaded || scanning ? false : !(wallet && provider);
 
   return (
     <BrowserRouter>
       <ThemeProvider theme={light}>
         <Reset />
-        {loaded ? <StartupModal /> : null}
+        {loaded && !scanning ? <StartupModal /> : null}
         <Box
           display="flex"
           flexDirection="column"
@@ -23,8 +24,8 @@ const Root = () => {
           alignItems="center"
           backgroundColor="lightOrange"
           width="100%"
-          minHeight={loaded ? '100%' : 'none'}
-          height={loaded ? 'none' : '100%'}
+          minHeight={loaded && !scanning ? '100%' : 'none'}
+          height={loaded && !scanning ? 'none' : '100%'}
           style={{ filter: blur ? 'blur(8px)' : 'none' }}
           px={[0, 4]}
           pb={[0, 4]}
