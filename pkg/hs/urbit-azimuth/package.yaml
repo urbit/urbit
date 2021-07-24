@@ -8,7 +8,6 @@ library:
 
 dependencies:
   - base
-  - web3
 
 default-extensions:
   - ApplicativeDo

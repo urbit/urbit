@@ -24,7 +24,6 @@ import Data.Bits                     (xor)
 import Data.List                     (nub)
 import Data.Text                     (splitOn)
 import Data.Aeson
-import Data.HexString
 import Numeric                       (showHex)
 
 import qualified Crypto.Hash.SHA256    as SHA256
@@ -38,6 +37,7 @@ import qualified Data.Text.Encoding    as E
 import qualified Network.HTTP.Client   as C
 import qualified Urbit.Ob              as Ob
 
+import qualified Data.ByteString.Base16 as BS16
 import qualified Network.HTTP.Client.TLS as TLS
 import qualified Network.HTTP.Types      as HT
 
@@ -65,7 +65,7 @@ renderShip = Ob.renderPatp . Ob.patp . fromIntegral
 
 hexStrToAtom :: Text -> Atom
 hexStrToAtom =
-  bytesAtom . reverse . toBytes . hexString . removePrefix . E.encodeUtf8 . toT
+  bytesAtom . reverse . BS16.encode . removePrefix . E.encodeUtf8 . toT
 
 onLeft :: (a -> b) -> Either a c -> Either b c
 onLeft fun = bimap fun id
@@ -219,8 +219,7 @@ parseAndChunkResultToBS :: Text -> [ByteString]
 parseAndChunkResultToBS result =
   map reverse $
   chunkBytestring 32 $
-  toBytes $
-  hexString $
+  BS16.encode $
   removePrefix $
   E.encodeUtf8 $
   toT result
@@ -324,8 +323,8 @@ parseTurfResponse a raw = turf
     without0x = removePrefix $ E.encodeUtf8 $ toT raw
     (_, blRest) = splitAt 64 without0x
     (utfLenStr, utfStr) = splitAt 64 blRest
-    utfLen = fromIntegral $ bytesAtom $ reverse $ toBytes $ hexString utfLenStr
-    dnsStr = E.decodeUtf8 $ BS.take utfLen $ toBytes $ hexString utfStr
+    utfLen = fromIntegral $ bytesAtom $ reverse $ BS16.encode utfLenStr
+    dnsStr = E.decodeUtf8 $ BS.take utfLen $ BS16.encode utfStr
     turf = Turf $ fmap Cord $ reverse $ fmap fromT $ splitOn "." dnsStr
 
 -- Azimuth Functions -----------------------------------------------------------

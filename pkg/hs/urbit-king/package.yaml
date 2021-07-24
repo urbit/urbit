@@ -27,6 +27,7 @@ dependencies:
   - ansi-terminal
   - async
   - base
+  - base16-bytestring
   - base-unicode-symbols
   - binary
   - bytestring
@@ -52,7 +53,6 @@ dependencies:
   - hashable
   - hashtables
   - heap
-  - hexstring
   - http-client
   - http-client-tls
   - http-types

@@ -1,4 +1,4 @@
-resolver: lts-16.15
+resolver: lts-18.3
 
 packages:
   - lmdb-static
@@ -7,7 +7,6 @@ packages:
   - racquire
   - terminal-progress-bar
   - urbit-atom
-  - urbit-azimuth
   - urbit-eventlog-lmdb
   - urbit-king
   - urbit-termsize
