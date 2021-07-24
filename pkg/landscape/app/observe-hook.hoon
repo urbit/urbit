@@ -136,7 +136,6 @@
       ~|('we avoid infinite loops' !!)
     ?:  (~(has in vals) observer)
       ~|('duplicate observer' !!)
-    ~&  'OBSERVE_WATCH'^app.observer
     :_  this(observers (~(put by observers) (sham eny.bowl) observer))  
     :_  ~
     :*  %pass
@@ -187,7 +186,6 @@
   ::
   ++  on-observer
     ?>  ?=([%observer @ ~] wire)
-    ~&  'ON_OBSERVER'^i.t.wire^-.sign
     ?+    -.sign  (on-agent:def wire sign)
         %watch-ack
       ?~  p.sign  [~ this]

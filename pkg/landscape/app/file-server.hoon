@@ -3,7 +3,7 @@
 ::  mounts HTTP endpoints for Landscape (and third-party) user applications
 ::
 /-  srv=file-server, glob
-/+  *server, default-agent, verb, dbug, version
+/+  *server, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 +$  serving    (map url-base=path [=content public=? single-page=?])

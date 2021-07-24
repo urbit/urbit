@@ -28,7 +28,6 @@
         %hark-graph-hook
         %hark-group-hook
         %hark-store
-        %herm
         %invite-hook
         %invite-store
         %invite-view
