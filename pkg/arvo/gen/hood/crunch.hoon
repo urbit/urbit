@@ -3,6 +3,9 @@
 :-  %say
 |=  [[now=@da * bec=beak] [csv-path=path from=@da ~] [to=@da groups=(list path) content=(unit ?) ~]]
 =/  our=@p  p.bec
+:: check given path has `csv` mark
+::
+?>  =(%csv (snag (dec (lent csv-path)) csv-path))
 :: get all graph associations ship is a part of
 ::
 =/  associations=associations:ms
