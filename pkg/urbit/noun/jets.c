@@ -2371,6 +2371,7 @@ u3j_free(void)
 }
 
 /* u3j_reclaim(): clear ad-hoc persistent caches to reclaim memory.
+ * Called from u3n_reclaim()
 */
 void
 u3j_reclaim(void)

@@ -1770,6 +1770,7 @@ void
 u3m_reclaim(c3_o clr_o)
 {
   u3v_reclaim();
+  // u3j_reclaim() is called from u3n_reclaim()
   u3n_reclaim(clr_o);
   u3a_reclaim();
 }
