@@ -7,8 +7,9 @@ import {
     StatelessTextInput as Input
 } from '@tlon/indigo-react';
 import { useField } from 'formik';
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useState, useEffect } from 'react';
 import { hexToUx } from '~/logic/lib/util';
+import { uxToHex } from '@urbit/api/dist';
 
 export type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
@@ -17,24 +18,39 @@ export type ColorInputProps = Parameters<typeof Col>[0] & {
   disabled?: boolean;
 };
 
+const COLOR_REGEX = /^(\d|[a-f]|[A-F]){6}$/;
+
+function padHex(hex: string) {
+  if(hex.length === 0) {
+    return '000000';
+  }
+  const repeat = 6 / hex.length;
+  if(Math.floor(repeat) === repeat) {
+    return hex.repeat(repeat);
+  }
+  if(hex.length < 6) {
+    return hex.slice(0,3).repeat(2);
+  }
+  return hex.slice(0,6);
+}
+
 export function ColorInput(props: ColorInputProps) {
   const { id, placeholder, label, caption, disabled, ...rest } = props;
-  const [{ value, onBlur }, meta, { setValue }] = useField(id);
+  const [{ value, onBlur }, meta, { setValue, setTouched }] = useField(id);
+  const [field, setField] = useState(uxToHex(value));
 
-  const hex = value.replace('#', '').replace('0x', '').replace('.', '');
-  const padded = hex.padStart(6, '0');
+  useEffect(() => {
+    const newValue = hexToUx(padHex(field));
+    setValue(newValue);
+    setTouched(true);
+  }, [field]);
 
   const onChange = (e: FormEvent<HTMLInputElement>) => {
-    let { value: newValue } = e.target as HTMLInputElement;
-    newValue = newValue.replace('#', '');
-    const valid = newValue.match(/^(\d|[a-f]|[A-F]){0,6}$/);
-
-    if (!valid) {
-      return;
-    }
-    const result = hexToUx(newValue);
-    setValue(result);
+    const { value: newValue } = e.target as HTMLInputElement;
+    setField(newValue.slice(1));
   };
+  const hex = uxToHex(value);
+  const isValid = COLOR_REGEX.test(hex);
 
   return (
     <Box display='flex' flexDirection='column' {...rest}>
@@ -51,7 +67,7 @@ export function ColorInput(props: ColorInputProps) {
           borderBottomRightRadius={0}
           onBlur={onBlur}
           onChange={onChange}
-          value={hex}
+          value={field}
           disabled={disabled || false}
           borderRight={0}
           placeholder={placeholder}
@@ -64,18 +80,17 @@ export function ColorInput(props: ColorInputProps) {
           borderColor='lightGray'
           width='32px'
           alignSelf='stretch'
-          bg={`#${padded}`}
+          bg={isValid ? `#${hex}` : 'transparent'}
         >
           <Input
             width='100%'
             height='100%'
             alignSelf='stretch'
-            onChange={onChange}
-            value={padded}
             disabled={disabled || false}
             type='color'
             opacity={0}
             overflow='hidden'
+            onChange={onChange}
           />
         </Box>
       </Row>
