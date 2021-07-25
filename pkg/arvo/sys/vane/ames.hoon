@@ -582,6 +582,53 @@
       crypto-core=acru:ames
       =bug
   ==
++$  ames-state-4  ames-state-5
++$  ames-state-6  ames-state
++$  ames-state-5
+        $:  peers=(map ship ship-state-5)
+            =unix=duct
+            =life
+            crypto-core=acru:ames
+            =bug
+        ==
+      +$  ship-state-6
+        $%  [%alien alien-agenda]
+            [%known peer-state-6]
+        ==
+      +$  peer-state-6
+        $:  $:  =symmetric-key
+                =life
+                =public-key
+                sponsor=ship
+            ==
+            route=(unit [direct=? =lane])
+            =qos
+            =ossuary
+            snd=(map bone message-pump-state)
+            rcv=(map bone message-sink-state)
+            nax=(set [=bone =message-num])
+            heeds=(set duct)
+            closing=(set bone)
+        ==
+    +$  ship-state-5
+        $%  [%alien alien-agenda]
+            [%known peer-state-5]
+        ==
+      +$  peer-state-5
+        $:  $:  =symmetric-key
+               =life
+               =public-key
+               sponsor=ship
+            ==
+            route=(unit [direct=? =lane])
+            =qos
+            =ossuary
+            snd=(map bone message-pump-state)
+            rcv=(map bone message-sink-state)
+            nax=(set [=bone =message-num])
+            heeds=(set duct)
+        ==
+ 
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -836,16 +883,16 @@
           $%  $:  %4
               $%  $:  %larva
                       events=(qeu queued-event)
-                      state=_ames-state.adult-gate
+                      state=ames-state-4
                   ==
-                  [%adult state=_ames-state.adult-gate]
+                  [%adult state=ames-state-4]
               ==  ==
               $:  %5
               $%  $:  %larva
                       events=(qeu queued-event)
-                      state=_ames-state.adult-gate
+                      state=ames-state-5
                   ==
-                  [%adult state=_ames-state.adult-gate]
+                  [%adult state=ames-state-5]
               ==  ==
          ==
       ?-    old
