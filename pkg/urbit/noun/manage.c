@@ -1767,11 +1767,10 @@ u3m_boot_lite(void)
 /* u3m_reclaim: clear persistent caches to reclaim memory
 */
 void
-u3m_reclaim(void)
+u3m_reclaim(c3_o clr_o)
 {
   u3v_reclaim();
-  u3j_reclaim();
-  u3n_reclaim();
+  u3n_reclaim(clr_o);
   u3a_reclaim();
 }
 
@@ -1802,7 +1801,7 @@ u3m_pack(void)
 
   //  reclaim first, to free space, and discard anything we can't/don't rewrite
   //
-  u3m_reclaim();
+  u3m_reclaim(c3y);
 
   //  sweep the heap, finding and saving new locations
   //

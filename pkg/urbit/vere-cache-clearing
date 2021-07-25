@@ -51,3 +51,46 @@ maybe drop half the cache? divide by 2 and add 1 I guess?
 or just divide by 2, not freeing from a size 1 map doesn't really matter.
 
 but what is the "hank cache"? must also be freed?
+
+
+serf calls u3m_reclaim() when rec_o is true. few reasons for that
+|reset == new kernel, toss everything
+memory pressure, toss everything
+1000 events, maybe don't toss entire bytecode cache
+
+every time we add something to the hashtable resize?
+nvm doesn't work - whenever you do throw away anything you need to throw
+away all the callsite caches.
+"hank caches" == callsite caches
+
+each hank has a u3j_site, each site refers to a u3n_prog. don't want to keep
+these around if we've cleared the u3n_prog from the cache.
+
+
+foo-take: when leaving inner road, "take" whatever's returned and bring it
+up to the outer road.
+
+own_o: if false, could mean bytecode is owned in outer road. similar to fon_o
+for finks.
+
+byc_u doesn't have to be freed - allocated in same box as others
+see difference between _n_prog_old and _n_prog_new
+
+[ ] pick some constant to cut the cache size to.
+[ ] add comment to u3j_reclaim header indicating that it's called from
+    u3n_reclaim. Then just do that.
+[ ] think about maybe making freeing function a part of u3h_root
+
+testing:
+CI will be good
+run ship for a bit, run |mass from time to time (chokes on memory leak)
+put log in branch that doesn't toss everything, have it print the size
+after the reclamation (use_w from the root)
+
+change zuse.hoon (or hoon.hoon) and recompile, see what happens to the cache
+sizes and if they're being cleared properly
+
+running |mass can also give a pretty good idea of the real size of the cache
+u3h_count and u3h_discount (run discount after count to reset marks)
+can count noun (kernel state), then count hashtable, then discount to get counts
+for just the hashtable. more than just the u3h flavors (i.e. u3a, u3j, etc.)

@@ -284,9 +284,9 @@ u3_serf_grab(void)
 void
 u3_serf_post(u3_serf* sef_u)
 {
-  if ( c3y == sef_u->rec_o ) {
-    u3m_reclaim();
-    sef_u->rec_o = c3n;
+  if ( u3_no_reclaim != sef_u->rec_o ) {
+    u3m_reclaim((u3_reclaim_all == sef_u->rec_o) ? c3y : c3n);
+    sef_u->rec_o = u3_no_reclaim;
   }
 
   //  XX this runs on replay too, |mass s/b elsewhere
@@ -308,7 +308,7 @@ u3_serf_post(u3_serf* sef_u)
 static u3_noun
 _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
 {
-  c3_o rec_o = c3n;
+  c3_o rec_o = u3_no_reclaim;
   c3_o pac_o = c3n;
 
   //  intercept |mass, observe |reset
@@ -341,7 +341,7 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
       //  reclaim memory from persistent caches on |reset
       //
       if ( c3__vega == u3h(fec) ) {
-        rec_o = c3y;
+        rec_o = u3_reclaim_all;
       }
 
       riv = u3t(riv);
@@ -375,12 +375,12 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
       //  XX set flag(s) in u3V so we don't repeat endlessly?
       //
       pac_o = c3y;
-      rec_o = c3y;
+      rec_o = u3_reclaim_all;
       pri   = 1;
     }
     else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
       pac_o = c3y;
-      rec_o = c3y;
+      rec_o = u3_reclaim_all;
       pri   = 0;
     }
     //  reclaim memory from persistent caches periodically
@@ -390,7 +390,7 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
     //    - we don't make very effective use of our free lists
     //
     else if ( 0 == (sef_u->dun_d % 1000ULL) ) {
-      rec_o = c3y;
+      rec_o = u3_reclaim_partial;
     }
 
     //  notify daemon of memory pressure via "fake" effect
@@ -402,7 +402,7 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
     }
   }
 
-  sef_u->rec_o = c3o(sef_u->rec_o, rec_o);
+  sef_u->rec_o = (sef_u->rec_o < rec_o) ? rec_o : sef_u->rec_o;
   sef_u->pac_o = c3o(sef_u->pac_o, pac_o);
 
   return vir;
@@ -539,7 +539,7 @@ _serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
   //
   if ( u3_blip == u3h(gon) ) {
     u3_noun vir = _serf_sure(sef_u, pre_w, u3k(u3t(gon)));
-    
+
     u3z(gon); u3z(job);
     return u3nc(c3__done, u3nt(u3i_chubs(1, &sef_u->dun_d),
                                sef_u->mug_l,
@@ -1101,7 +1101,7 @@ u3_serf_init(u3_serf* sef_u)
   // }
 
   sef_u->pac_o = c3n;
-  sef_u->rec_o = c3n;
+  sef_u->rec_o = u3_no_reclaim;
   sef_u->mut_o = c3n;
   sef_u->sac   = u3_nul;
 

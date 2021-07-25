@@ -139,7 +139,7 @@
       /* u3m_reclaim: clear persistent caches to reclaim memory
       */
         void
-        u3m_reclaim(void);
+        u3m_reclaim(c3_o clr_o);
 
       /* u3m_pack: compact (defragment) memory.
       */

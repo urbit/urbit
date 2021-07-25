@@ -2824,18 +2824,37 @@ u3n_mark(FILE* fil_u)
   return  u3a_maid(fil_u, "total nock stuff", bam_w + har_w);
 }
 
+/* _n_feb(): helper to free contents of the bytecode cache
+ */
+static void
+_n_feb(u3_noun kev)
+{
+  // call _n_prog_free on the values in the map
+  _n_prog_free(u3to(u3n_prog, u3t(kev)));
+  // free the key-value pair itself
+  u3z(kev);
+}
+
 /* u3n_reclaim(): clear ad-hoc persistent caches to reclaim memory.
 */
 void
-u3n_reclaim(void)
+u3n_reclaim(c3_o clr_o)
 {
   //  clear the bytecode cache
   //
   //    We can't just u3h_free() -- the value is a post to a u3n_prog.
   //    Note that the hank cache *must* also be freed (in u3j_reclaim())
   //
-  u3n_free();
-  u3R->byc.har_p = u3h_new();
+  u3j_reclaim();
+  if(clr_o == c3y) {
+    u3n_free();
+    u3R->byc.har_p = u3h_new();
+  } else {
+    u3p(u3h_root) har_p = u3R->byc.har_p;
+    u3h_root* har_u = u3to(u3h_root, har_p);
+    c3_w n_siz = (har_u->use_w / 2);
+    u3h_trim_to(har_p, n_siz, &_n_feb);
+  }
 }
 
 /* u3n_rewrite_compact(): rewrite the bytecode cache for compaction.
@@ -2859,26 +2878,13 @@ u3n_rewrite_compact()
 }
 
 
-/* _n_feb(): helper to free contents of the bytecode cache
- */
-static void
-_n_feb(u3_noun kev)
-{
-  // call _n_prog_free on the values in the map
-  _n_prog_free(u3to(u3n_prog, u3t(kev)));
-  // free the key-value pair itself
-  u3z(kev);
-}
-
 /* u3n_free(): free bytecode cache
  */
 void
 u3n_free()
 {
   u3p(u3h_root) har_p = u3R->byc.har_p;
-  u3h_root* har_u = u3to(u3h_root, har_p);
-  c3_w n_siz = (har_u->use_w / 2);
-  u3h_trim_to(har_p, n_siz, &_n_feb);
+  u3h_libr(har_p, &_n_feb);
 }
 
 /* u3n_kick_on(): fire `gat` without changing the sample.

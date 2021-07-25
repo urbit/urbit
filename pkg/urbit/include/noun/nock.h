@@ -120,7 +120,7 @@
     /* u3n_reclaim(): clear ad-hoc persistent caches to reclaim memory.
     */
       void
-      u3n_reclaim(void);
+      u3n_reclaim(c3_o clr_o);
 
     /* u3n_rewrite_compact(): rewrite bytecode cache for compaction.
      */

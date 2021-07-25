@@ -3,6 +3,14 @@
 
   /** Data types.
   **/
+    /* u3_cal: reclaim cache status
+    */
+    typedef enum {
+      u3_no_reclaim = 0,
+      u3_reclaim_partial = 1,
+      u3_reclaim_all = 2
+    } u3_cal;
+
     /* u3_serf: worker-process state
     */
       typedef struct _u3_serf {
@@ -12,7 +20,7 @@
         c3_d    dun_d;             //  last event processed
         c3_l    mug_l;             //  hash of state
         c3_o    pac_o;             //  pack kernel
-        c3_o    rec_o;             //  reclaim cache
+        u3_cal  rec_o;             //  reclaim cache
         c3_o    mut_o;             //  mutated kerne
         u3_noun sac;               //  space measurementl
         void  (*xit_f)(void);      //  exit callback
