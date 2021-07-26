@@ -116,10 +116,10 @@ export const createState = <T extends {}>(
   properties: T | ((set: SetState<T & BaseState<T>>, get: GetState<T & BaseState<T>>) => T),
   blacklist: (keyof BaseState<T> | keyof T)[] = [],
   subscriptions: ((set: SetState<T & BaseState<T>>, get: GetState<T & BaseState<T>>) => SubscriptionRequestInterface)[] = [],
-  clear?: Partial<T>
+  clearedState?: Partial<T>
 ): UseStore<T & BaseState<T>> => create<T & BaseState<T>>(persist<T & BaseState<T>>((set, get) => ({
   clear: () => {
-    set(clear as T & BaseState<T>);
+    set(clearedState as T & BaseState<T>);
   },
   initialize: async (api: Urbit) => {
     await Promise.all(subscriptions.map(sub => api.subscribe(sub(set, get))));
