@@ -197,7 +197,8 @@ export class Urbit {
             resolve();
             return; // everything's good
           } else {
-            reject();
+            const err = new Error('failed to open eventsource');
+            reject(err);
           } 
         },
         onmessage: (event: EventSourceMessage) => {
@@ -259,7 +260,8 @@ export class Urbit {
           throw error;
         },
         onclose: () => {
-          throw Error('Ship unexpectedly closed the connection');
+          console.log('e');
+          throw new Error('Ship unexpectedly closed the connection');
         },
       });
     })
