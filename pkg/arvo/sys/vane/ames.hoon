@@ -582,8 +582,8 @@
       crypto-core=acru:ames
       =bug
   ==
-+$  ames-state-4  ames-state-5
 +$  ames-state-6  ames-state
++$  ames-state-4  ames-state-5
 +$  ames-state-5
         $:  peers=(map ship ship-state-5)
             =unix=duct
@@ -877,7 +877,7 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%5 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%6 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
@@ -893,6 +893,13 @@
                       state=ames-state-5
                   ==
                   [%adult state=ames-state-5]
+              ==  ==
+              $:  %6
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-6
+                  ==
+                  [%adult state=ames-state-6]
               ==  ==
          ==
       ?-    old
@@ -910,6 +917,14 @@
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %5 state.old)
+        larval-gate
+       ::
+          [%6 %adult *]  (load:adult-core %6 state.old)
+      ::
+          [%6 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %6 state.old)
         larval-gate
        ::
      ==
@@ -989,54 +1004,6 @@
 ::  +load: load in old state after reload
 ::
 ++  load
-  =>  |%
-      +$  ames-state-4  ames-state-5
-      +$  ames-state-6  ^ames-state
-      +$  ames-state-5
-        $:  peers=(map ship ship-state-5)
-            =unix=duct
-            =life
-            crypto-core=acru:ames
-            =bug
-        ==
-      +$  ship-state-6
-        $%  [%alien alien-agenda]
-            [%known peer-state-6]
-        ==
-      +$  peer-state-6
-        $:  $:  =symmetric-key
-                =life
-                =public-key
-                sponsor=ship
-            ==
-            route=(unit [direct=? =lane])
-            =qos
-            =ossuary
-            snd=(map bone message-pump-state)
-            rcv=(map bone message-sink-state)
-            nax=(set [=bone =message-num])
-            heeds=(set duct)
-            closing=(set bone)
-        ==
-    +$  ship-state-5
-        $%  [%alien alien-agenda]
-            [%known peer-state-5]
-        ==
-      +$  peer-state-5
-        $:  $:  =symmetric-key
-               =life
-               =public-key
-               sponsor=ship
-            ==
-            route=(unit [direct=? =lane])
-            =qos
-            =ossuary
-            snd=(map bone message-pump-state)
-            rcv=(map bone message-sink-state)
-            nax=(set [=bone =message-num])
-            heeds=(set duct)
-        ==
-      --  
   |=  $=  old-state
       $%  [%4 ames-state-4]
           [%5 ames-state-5]
@@ -1240,7 +1207,7 @@
     ::
     ?~  error
     ?:  (~(has in closing.peer-state) (mix 1 bone))
-      ~&("done with bone {(scow %ud bone)} at duct {(trip +<:(flop i.-.duct))}" abet:(run-message-sink:peer-core bone %done ok=%.y cork=%.y))
+      abet:(run-message-sink:peer-core bone %done ok=%.y cork=%.y)
     abet:(run-message-sink:peer-core bone %done ok=%.y cork=%.n)
     ::  failed; send message nack packet
     ::
@@ -1547,7 +1514,7 @@
     ?:  &(=(vane.plea %a) =(path.plea `path`/flow) ?=([%cork *] payload.plea))
       (emit duct %give %done ~)
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
-  ::  +on-cork
+  ::  +on-cork: handle request to kill a flow
   ::
   ++  on-cork
     |=  =ship
@@ -2298,7 +2265,7 @@
         ::  if bone marked as closing, do on-cork
         ::
         ?:  (~(has in closing.peer-state) bone)
-          ~&("doing on-cork with bone {(scow %ud bone)}" (on-cork bone))
+          (on-cork bone)
         ::  if odd bone, ack is on "subscription update" message; no-op
         ::
         ?:  =(1 (end 0 bone))
@@ -2362,7 +2329,7 @@
               %cork  on-sink-cork
             ==
           $(sink-gifts t.sink-gifts)
-      ::  +on-cork
+      ::  +on-sink-cork: handle flow kill after server ames has taken %done
       ::
       ++  on-sink-cork
       ::  delete (n)acks
