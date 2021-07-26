@@ -38,7 +38,7 @@
       ==
     ::  XX temporarily shadowed, fix and remove
     ::
-    +$  pill  boot-pill:pill-lib
+    +$  pill  pill:pill-lib
     ::
     +$  fleet  [ships=(map ship pier) azi=az-state]
     +$  pier
@@ -82,7 +82,7 @@
     =^  cards  state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
           %aqua-events     (poke-aqua-events:ac !<((list aqua-event) vase))
-          %boot-pill       (poke-pill:ac !<(pill vase))
+          %pill       (poke-pill:ac !<(pill vase))
           %noun            (poke-noun:ac !<(* vase))
           %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
       ==
@@ -370,6 +370,7 @@
 ++  poke-pill
   |=  p=pill
   ^-  (quip card:agent:gall _state)
+  ?<  ?=(%ivory -.p)
   =.  this  apex-aqua  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
@@ -514,7 +515,7 @@
       :~
         :~  [/ %wack 0]  ::  eny
             :: [/ %verb `|]  :: possible verb
-            :^  /  %wyrd  [%nonce /a-version] :: dummy runtime version + nonce
+            :^  /  %wyrd  [~.nonce /aqua] :: dummy runtime version + nonce
             ^-  (list (pair term @))
             :~  zuse+zuse
                 lull+lull

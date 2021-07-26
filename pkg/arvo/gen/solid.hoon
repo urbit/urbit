@@ -16,7 +16,7 @@
         dub=_|
     ==
 :-  %boot-pill
-^-  boot-pill:pill
+^-  pill:pill
 ::  sys: root path to boot system, `/~me/[desk]/now/sys`
 ::
 =/  sys=path
