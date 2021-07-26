@@ -67,14 +67,62 @@
 ::  more structures
 ::
 |%
-++  axle
++$  ver-axle
+  $%  axle
+      axle-2020-10-18
+  ==
+::
++$  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2020.10.18
+      date=%~2021.7.26
       ::  server-state: state of inbound requests
       ::
       =server-state
   ==
+::
+++  axle-2020-10-18
+  =<  axle
+  |%
+  +$  axle  [date=%~2020.10.18 =server-state]
+  +$  server-state
+    $:  bindings=(list [=binding =duct =action])
+        =cors-registry
+        connections=(map duct outstanding-connection)
+        =authentication-state
+        =channel-state
+        domains=(set turf)
+        =http-config
+        ports=[insecure=@ud secure=(unit @ud)]
+        outgoing-duct=duct
+    ==
+  ::
+  +$  channel-event
+    $%  $>(%poke-ack sign:agent:gall)
+        $>(%watch-ack sign:agent:gall)
+        $>(%kick sign:agent:gall)
+        [%fact =mark noun=*]
+    ==
+  ::
+  +$  channel
+    $:  state=(each timer duct)
+        next-id=@ud
+        last-ack=@da
+        events=(qeu [id=@ud request-id=@ud =channel-event])
+        unacked=(map @ud @ud)
+        subscriptions=(map @ud [ship=@p app=term =path duc=duct])
+        heartbeat=(unit timer)
+    ==
+  ::
+  +$  channel-state
+    $:  ::  session: mapping between an arbitrary key to a channel
+        ::
+        session=(map @t channel)
+        ::  by-duct: mapping from ducts to session key
+        ::
+        duct-to-key=(map duct @t)
+    ==
+  --
 ::  +server-state: state relating to open inbound HTTP connections
 ::
 +$  server-state
@@ -1247,9 +1295,8 @@
         ::NOTE  these will only fail if the mark and/or json types changed,
         ::      since conversion failure also gets caught during first receive.
         ::      we can't do anything about this, so consider it unsupported.
-        ?~  sign=(channel-event-to-sign channel-event)        $
-        ?~  jive=(sign-to-json request-id u.sign)  $
-        $(events [(event-json-to-wall id +.u.jive) events])
+        =/  jive  (channel-event-to-json request-id channel-event)
+        $(events [(event-json-to-wall id jive) events])
       ::  send the start event to the client
       ::
       =^  http-moves  state
@@ -1515,20 +1562,19 @@
       ::  if conversion succeeds, we *can* send it. if the client is actually
       ::  connected, we *will* send it immediately.
       ::
-      =/  jive=(unit (quip move json))
-        (sign-to-json request-id sign)
-      =/  json=(unit json)
-        ?~(jive ~ `+.u.jive)
-      =?  moves  ?=(^ jive)
-        (weld moves -.u.jive)
-      =*  sending  &(?=([%| *] state.u.channel) ?=(^ json))
-      ::
-      =/  next-id  next-id.u.channel
       ::  if we can send it, store the event as unacked
       ::
-      =?  events.u.channel  ?=(^ json)
+      =/  chan  (sign-to-channel-event sign)
+      =/  next-id  next-id.u.channel
+      =^  movs  events.u.channel  
+        ?~  chan  [~ events.u.channel]
+        :-  -.u.chan
         %-  ~(put to events.u.channel)
-        [next-id request-id (sign-to-channel-event sign)]
+        [next-id request-id +.u.chan]
+      =?  moves  ?=(^ chan)
+        (weld moves movs)
+      =*  sending  &(?=([%| *] state.u.channel) ?=(^ chan))
+      ::
       ::  if it makes sense to do so, send the event to the client
       ::
       =?  moves  sending
@@ -1542,7 +1588,7 @@
         ::
             ^=  data
             %-  wall-to-octs
-            (event-json-to-wall next-id (need json))
+            (event-json-to-wall next-id (channel-event-to-json request-id +:(need chan)))
         ::
             complete=%.n
         ==
@@ -1554,7 +1600,7 @@
         ::  and of course don't count events we can't send as unacked.
         ::
         ?:  ?|  !?=(%fact -.sign)
-                ?=(~ json)
+                ?=(~ chan)
             ==
           [| unacked.u.channel]
         =/  num=@ud
@@ -1567,7 +1613,7 @@
       ::  if we're clogged, or we ran into an event we can't serialize,
       ::  kill this gall subscription.
       ::
-      =*  kicking    |(clogged ?=(~ json))
+      =*  kicking    |(clogged ?=(~ chan))
       =?  moves      kicking
         :_  moves
         ::NOTE  this shouldn't crash because we
@@ -1585,7 +1631,7 @@
           subscriptions  (~(del by subscriptions.u.channel) request-id)
           unacked        (~(del by unacked.u.channel) request-id)
           events         %-  ~(put to events.u.channel)
-                         [next-id request-id (sign-to-channel-event %kick ~)]
+                         [next-id request-id kick+~]
         ==
       ::  if a client is connected, send the kick event to them
       ::
@@ -1598,7 +1644,7 @@
             ^=  data
             %-  wall-to-octs
             %+  event-json-to-wall  next-id
-            +:(need (sign-to-json request-id %kick ~))
+            (channel-event-to-json request-id %kick ~)
         ::
             complete=%.n
         ==
@@ -1614,39 +1660,10 @@
     ::
     ++  sign-to-channel-event
       |=  =sign:agent:gall
-      ^-  channel-event
-      ?.  ?=(%fact -.sign)  sign
-      [%fact [p q.q]:cage.sign]
-    ::  +channel-event-to-sign: attempt to recover a sign from a channel-event
-    ::
-    ++  channel-event-to-sign
-      ~%  %eyre-channel-event-to-sign  ..part  ~
-      |=  event=channel-event
-      ^-  (unit sign:agent:gall)
-      ?.  ?=(%fact -.event)  `event
-      ::  rebuild vase for fact data
-      ::
-      =*  have=mark  mark.event
-      =/  val=(unit (unit cage))
-        (rof ~ %cb [our %home da+now] /[have])
-      ?.  ?=([~ ~ *] val)
-        ((slog leaf+"eyre: no mark {(trip have)}" ~) ~)
-      =+  !<(=dais:clay q.u.u.val)
-      =/  res  (mule |.((vale:dais noun.event)))
-      ?:  ?=(%| -.res)
-        ((slog leaf+"eyre: stale fact of mark {(trip have)}" ~) ~)
-      `[%fact have p.res]
-    ::  +sign-to-json: render sign from request-id as json channel event
-    ::
-    ++  sign-to-json
-      ~%  %sign-to-json  ..part  ~
-      |=  [request-id=@ud =sign:agent:gall]
-      ^-  (unit (quip move json))
-      ::  for facts, we try to convert the result to json
-      ::
-      =/  [from=(unit mark) jsyn=(unit sign:agent:gall)]
-        ?.  ?=(%fact -.sign)       [~ `sign]
-        ?:  ?=(%json p.cage.sign)  [~ `sign]
+      ^-  (unit (quip move channel-event))
+      ?.  ?=(%fact -.sign)  ``sign
+      =/  [from=(unit mark) jsyn=(unit json)]
+        ?:  ?=(%json p.cage.sign)  [~ `!<(json q.cage.sign)]
         ::  find and use tube from fact mark to json
         ::
         =*  have=mark  p.cage.sign
@@ -1659,34 +1676,39 @@
         ?~  convert
           ((slog leaf+"eyre: no convert {desc}" ~) [~ ~])
         ~|  "conversion failed {desc}"
-        [`have `[%fact %json (slym u.convert q.q.cage.sign)]]
+        [`have `!<(json (slym u.convert q.q.cage.sign))]
       ?~  jsyn  ~
       %-  some
       :-  ?~  from  ~
           :_  ~
           :^  duct  %pass  /conversion-cache/[u.from]
           [%c %warp our %home `[%sing %f da+now /[u.from]/json]]
-      =*  sign  u.jsyn
+      [%fact u.jsyn]
+    ::  +channel-event-to-json: render chanel event from request-id as json
+    ::
+    ++  channel-event-to-json
+      ~%  %channel-event-to-json  ..part  ~
+      |=  [request-id=@ud =channel-event]
+      ^-  json
+      ::  for facts, we try to convert the result to json
+      ::
       =,  enjs:format
       %-  pairs
       ^-  (list [@t json])
       :-  ['id' (numb request-id)]
-      ?-    -.sign
+      ?-    -.channel-event
           %poke-ack
+        ^-  (list [@t json])
         :~  ['response' [%s 'poke']]
           ::
-            ?~  p.sign
+            ?~  p.channel-event
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.sign))]
+            ['err' (wall (render-tang-to-wall 100 u.p.channel-event))]
         ==
       ::
           %fact
         :~  ['response' [%s 'diff']]
-          ::
-            :-  'json'
-            ~|  [%unexpected-fact-mark p.cage.sign]
-            ?>  =(%json p.cage.sign)
-            !<(json q.cage.sign)
+            ['json' json.channel-event]
         ==
       ::
           %kick
@@ -1695,9 +1717,9 @@
           %watch-ack
         :~  ['response' [%s 'subscribe']]
           ::
-            ?~  p.sign
+            ?~  p.channel-event
               ['ok' [%s 'ok']]
-            ['err' (wall (render-tang-to-wall 100 u.p.sign))]
+            ['err' (wall (render-tang-to-wall 100 u.p.channel-event))]
         ==
       ==
     ::
@@ -2503,12 +2525,25 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  |=  old=axle
+  |=  old=ver-axle
   ^+  ..^$
+  =?  old  ?=(%~2020.10.18 -.old)
+    =*  sta  server-state.old
+    %*  .  *axle
+      bindings.server-state              bindings.sta
+      cors-registry.server-state         cors-registry.sta
+      connections.server-state           connections.sta 
+      authentication-state.server-state  authentication-state.sta
+      domains.server-state               domains.sta
+      http-config.server-state           http-config.sta
+      ports.server-state                 ports.sta
+      outgoing-duct.server-state         outgoing-duct.sta
+    ==
+  ?>  ?=(%~2021.7.26 -.old)
   ..^$(ax old)
 ::  +stay: produce current state
 ::
-++  stay  `axle`ax
+++  stay  `ver-axle`ax
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
