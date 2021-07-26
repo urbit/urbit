@@ -31,3 +31,8 @@ ol, ul {
 span {
   box-sizing: border-box;
 }
+
+* {
+  user-select: var(--user-select, unset);
+  -webkit-user-select: var(--user-select, unset);
+}

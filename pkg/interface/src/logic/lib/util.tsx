@@ -247,11 +247,13 @@ export function uxToHex(ux: string) {
 
 export const hexToUx = (hex) => {
   const ux = f.flow(
+    f.reverse,
     f.chunk(4),
     // eslint-disable-next-line prefer-arrow-callback
     f.map(x => _.dropWhile(x, function(y: unknown) {
-      return y === 0;
-    }).join('')),
+      return y === '0';
+    }).reverse().join('')),
+    f.reverse,
     f.join('.')
   )(hex.split(''));
   return `0x${ux}`;
@@ -544,4 +546,17 @@ export function binaryIndexOf(arr: BigInteger[], target: BigInteger): number | u
     }
   }
   return undefined;
+}
+
+export async function jsonFetch<T>(info: RequestInfo, init?: RequestInit): Promise<T> {
+  const res = await fetch(info, init);
+  if(!res.ok) {
+    throw new Error('Bad Fetch Response');
+  }
+  const data = await res.json();
+  return data as T;
+}
+
+export function clone<T>(a: T) {
+  return JSON.parse(JSON.stringify(a)) as T;
 }

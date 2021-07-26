@@ -20,18 +20,20 @@ export function LinkDetail(props: LinkDetailProps) {
   const [{ text: title }] = post.contents as [TextContent, UrlContent];
   return (
     /*  @ts-ignore indio props?? */
-    <Row flexDirection={['column', 'column', 'row']} {...rest}>
-      <LinkBlockItem flexGrow={1} border={0} node={node} />
+    <Row height="100%" width="100%" flexDirection={['column', 'column', 'row']} {...rest}>
+      <LinkBlockItem minWidth="0" minHeight="0" height={['50%', '50%', '100%']} width={['100%', '100%', 'calc(100% - 350px)']} flexGrow={0} border={0} node={node} />
       <Col
-        flexShrink={0}
+        minHeight="0"
+        flexShrink={1}
         width={['100%', '100%', '350px']}
         flexGrow={0}
-        gapY="4"
-        borderLeft="1"
-        borderColor="lightGray"
-        py="4"
+        gapY={[2,4]}
+        borderLeft={[0, 0, 1]}
+        borderTop={[1, 1, 0]}
+        borderColor={['lightGray', 'lightGray', 'lightGray']}
+        pt={[2,4]}
       >
-        <Col px="4" gapY="2">
+        <Col minHeight="0" px={[3,4]} gapY="2" flexShrink={0}>
           {title.length > 0 ? (
             <TruncatedText fontWeight="medium" lineHeight="tall">
               {title}
@@ -46,11 +48,11 @@ export function LinkDetail(props: LinkDetailProps) {
           />
         </Col>
         <Col
-          height="100%"
+          minHeight="0"
           overflowY="auto"
           borderTop="1"
           borderTopColor="lightGray"
-          p="4"
+          p={[3,4]}
         >
           <Comments
             association={association}

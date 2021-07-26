@@ -4,7 +4,7 @@ import React  from 'react';
 import { usePreview } from '~/logic/state/metadata';
 import { GroupInvite } from './Group';
 
-interface InviteItemProps {
+export interface InviteItemProps {
   invite?: Invite;
   resource: string;
   pendingJoin?: JoinRequest;

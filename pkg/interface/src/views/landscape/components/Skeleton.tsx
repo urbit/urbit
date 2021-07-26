@@ -20,22 +20,26 @@ export const Skeleton = React.memo((props: SkeletonProps): ReactElement => {
     setSidebar(s => !s);
   }, []));
 
-  return !sidebar ? (<Body> {props.children} </Body>) : (
+  return (
     <Body
       display="grid"
       gridTemplateColumns={
-        ['100%', 'minmax(150px, 1fr) 3fr', 'minmax(250px, 1fr) 4fr']
+        sidebar
+        ?  ['100%', 'minmax(150px, 1fr) 3fr', 'minmax(250px, 1fr) 4fr']
+        : '100%'
       }
       gridTemplateRows="100%"
     >
       <ErrorBoundary>
-        <Sidebar
-          recentGroups={props.recentGroups}
-          selected={props.selected}
-          baseUrl={props.baseUrl}
-          mobileHide={props.mobileHide}
-          workspace={props.workspace}
-        />
+        { sidebar && (
+          <Sidebar
+            recentGroups={props.recentGroups}
+            selected={props.selected}
+            baseUrl={props.baseUrl}
+            mobileHide={props.mobileHide}
+            workspace={props.workspace}
+          />
+        )}
       </ErrorBoundary>
       {props.children}
     </Body>

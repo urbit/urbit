@@ -8,7 +8,8 @@ import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import { GraphNode } from '@urbit/api';
 import useMetadataState from '~/logic/state/metadata';
 import { makeComment } from '~/logic/lib/fixtures';
-import moment from 'moment';
+
+const HOUR = 60*60 * 1000;
 
 export default {
   title: 'Collections/LinkDetail',
@@ -35,20 +36,57 @@ const node = {
   children: new BigIntOrderedMap<GraphNode>().gas([
     makeComment(
       'ridlur-figbud',
-      moment().hour(12).minute(34).valueOf(),
+      Date.now() - 4*HOUR,
       nodeIndex,
       [{ text: 'Beautiful' }]
     ),
     makeComment(
       'roslet-tanner',
-      moment().hour(12).minute(34).valueOf(),
+      Date.now() - 3*HOUR,
       nodeIndex,
       [{ text: 'where did you find this?' }]
     ),
 
     makeComment(
       'fabled-faster',
-      moment().hour(12).minute(34).valueOf(),
+      Date.now() - 2*HOUR,
+      nodeIndex,
+      [{ text: 'I dont\'t remember lol' }]
+    )
+  ])
+};
+
+const twitterNode = {
+  post: {
+    index: '/170141184504850861030994857749504231212',
+    author: 'fabled-faster',
+    'time-sent': 1609969377513,
+    signatures: [],
+    contents: [
+      { text: 'LindyMan' },
+      {
+        url: 'https://twitter.com/PaulSkallas/status/1388896550198317056'
+      }
+    ],
+    hash: null
+  },
+  children: new BigIntOrderedMap<GraphNode>().gas([
+    makeComment(
+      'ridlur-figbud',
+      Date.now() - 4*HOUR,
+      nodeIndex,
+      [{ text: 'Beautiful' }]
+    ),
+    makeComment(
+      'roslet-tanner',
+      Date.now() - 3*HOUR,
+      nodeIndex,
+      [{ text: 'where did you find this?' }]
+    ),
+
+    makeComment(
+      'fabled-faster',
+      Date.now() - 2*HOUR,
       nodeIndex,
       [{ text: 'I dont\'t remember lol' }]
     )
@@ -60,10 +98,25 @@ export const Image = () => {
     s => s.associations.graph['/ship/~bitbet-bolbel/links']
   );
   return (
-    <Box width="1166px" p="1" backgroundColor="white">
+    <Box width="100%" height="100%" p="1" backgroundColor="white">
       <LinkDetail
         baseUrl="/"
         node={node}
+        association={association}
+      />
+    </Box>
+  );
+};
+
+export const Twitter = () => {
+  const association = useMetadataState(
+    s => s.associations.graph['/ship/~bitbet-bolbel/links']
+  );
+  return (
+    <Box height="100%" width="100%" border="1" borderColor="lightGray" maxWidth="1166px" backgroundColor="white">
+      <LinkDetail
+        baseUrl="/"
+        node={twitterNode}
         association={association}
       />
     </Box>

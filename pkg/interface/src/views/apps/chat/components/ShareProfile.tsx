@@ -1,4 +1,4 @@
-import { BaseImage, Box, Row, Text } from '@tlon/indigo-react';
+import { BaseImage, Row, Text, Button } from '@tlon/indigo-react';
 import { allowGroup, allowShips, Contact, share } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import { Sigil } from '~/logic/lib/sigil';
@@ -61,14 +61,15 @@ const ShareProfile = (props: ShareProfileProps): ReactElement | null => {
       borderBottom={1}
       borderColor="lightGray"
       flexShrink={0}
+      px="3"
     >
-      <Row pl={3} alignItems="center">
+      <Row alignItems="center">
         {image}
         <Text verticalAlign="middle" pl={2}>Share private profile?</Text>
       </Row>
-      <Box pr={2} onClick={onClick}>
-        <Text color="blue" bold cursor="pointer">Share</Text>
-      </Box>
+      <Button primary onClick={onClick}>
+        Share
+      </Button>
     </Row>
   ) : null;
 };

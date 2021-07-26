@@ -1,56 +1,63 @@
 import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import React, { ReactElement, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useModal } from '~/logic/lib/useModal';
 import useMetadataState, { usePreview } from '~/logic/state/metadata';
 import { PropFunc } from '~/types';
 import { JoinGroup } from '../landscape/components/JoinGroup';
 import { MetadataIcon } from '../landscape/components/MetadataIcon';
 
-export function GroupLink(
-  props: {
-    resource: string;
-    detailed?: boolean;
-  } & PropFunc<typeof Row>
-): ReactElement {
-  const { resource, ...rest } = props;
+type GroupLinkProps = {
+  resource: string;
+  detailed?: boolean;
+} & PropFunc<typeof Row>
+
+export function GroupLink({
+  resource,
+  borderColor,
+  ...rest
+}: GroupLinkProps): ReactElement {
   const name = resource.slice(6);
   const joined = useMetadataState(
     useCallback(s => resource in s.associations.groups, [resource])
   );
-  const history = useHistory();
 
   const { modal, showModal } = useModal({
     modal: <JoinGroup autojoin={name} />
-    });
+  });
 
   const { preview } = usePreview(resource);
 
   return (
-    <Box
-      maxWidth="500px"
-      cursor='pointer'
-      {...rest}
-      onClick={(e) => {
-        e.stopPropagation();
-      }}
-      backgroundColor='white'
-      borderColor={props.borderColor}
-    >
+    <>
       {modal}
       <Row
-        width="100%"
+        {...rest}
+        as={Link}
+        to={joined ? `/~landscape/ship/${name}` : `/perma/group/${name}`}
+        onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+          e.stopPropagation();
+
+          if (e.metaKey || e.ctrlKey) {
+            return;
+          }
+
+          e.preventDefault();
+          showModal();
+        }}
         flexShrink={1}
         alignItems="center"
+        width="100%"
+        maxWidth="500px"
         py={2}
         pr={2}
-        onClick={
-          joined ? () => history.push(`/~landscape/ship/${name}`) : showModal
-        }
+        cursor='pointer'
+        backgroundColor='white'
+        borderColor={borderColor}
         opacity={preview ? '1' : '0.6'}
       >
         <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : { color: '0x0' , picture: '' }} />
-          <Col>
+        <Col>
           <Text ml={2} fontWeight="medium" mono={!preview}>
             {preview ? preview.metadata.title : name}
           </Text>
@@ -70,6 +77,6 @@ export function GroupLink(
           </Box>
         </Col>
       </Row>
-    </Box>
+    </>
   );
 }

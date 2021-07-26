@@ -119,7 +119,7 @@ export function LinkResource(props: LinkResourceProps) {
                     mb={3}
                   />
               ) : (
-                <LinkBlocks graph={graph} association={resource} />
+                <LinkBlocks key={rid} graph={graph} association={resource} />
                 )}
           </Col>
           );

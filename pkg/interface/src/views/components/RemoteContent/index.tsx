@@ -10,6 +10,7 @@ import {
 import { TruncatedText } from '~/views/components/TruncatedText';
 import { RemoteContentWrapper } from './wrapper';
 import { IMAGE_REGEX, AUDIO_REGEX, VIDEO_REGEX } from '~/logic/lib/util';
+import AsyncFallback from '../AsyncFallback';
 
 export interface RemoteContentProps {
   /**
@@ -64,6 +65,12 @@ export function RemoteContent(props: RemoteContentProps) {
     embedOnly: !renderUrl || tall
   };
 
+  const fallback = !renderUrl ? null : (
+    <RemoteContentWrapper {...wrapperProps}>
+      <TruncatedText>{url}</TruncatedText>
+    </RemoteContentWrapper>
+  );
+
   if (isImage && remoteContentPolicy.imageShown) {
     return (
       <RemoteContentWrapper {...wrapperProps} noOp={transcluded} replaced>
@@ -87,17 +94,12 @@ export function RemoteContent(props: RemoteContentProps) {
     );
   } else if (isOembed && remoteContentPolicy.oembedShown) {
     return (
-      <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} />
+      <AsyncFallback fallback={fallback}>
+        <RemoteContentOembed ref={embedRef} url={url} renderUrl={renderUrl} />
+      </AsyncFallback>
     );
-  } else if (renderUrl) {
-    return (
-      <RemoteContentWrapper {...wrapperProps}>
-        <TruncatedText>{url}</TruncatedText>
-      </RemoteContentWrapper>
-    );
-  } else {
-    return null;
   }
+  return fallback;
 }
 
 export default React.memo(RemoteContent);

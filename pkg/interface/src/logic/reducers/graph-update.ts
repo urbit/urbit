@@ -250,9 +250,6 @@ export const addNodes = (json, state) => {
     post,
     resource
   ) => {
-    if (!post.hash) {
-     return [graph, flatGraph, threadGraphs];
-    }
     const timestamp = post['time-sent'];
 
     if (state.graphTimesentMap[resource][timestamp]) {
@@ -408,26 +405,17 @@ export const addNodes = (json, state) => {
 const removePosts = (json, state: GraphState): GraphState => {
   const _remove = (graph, index) => {
     const child = graph.get(index[0]);
+    if(!child) {
+      return graph;
+    }
     if (index.length === 1) {
-        if (child) {
-          return graph.set(index[0], {
-            post: child.post.hash || '',
-            children: child.children
-          });
-        }
+      return graph.set(index[0], {
+        post: child.post.hash || '',
+        children: child.children
+      });
     } else {
-      if (child) {
-        _remove(child.children, index.slice(1));
-        return graph.set(index[0], child);
-      } else {
-        const child = graph.get(index[0]);
-        if (child) {
-          return graph.set(index[0], produce((draft: any) => {
-            draft.children = _remove(draft.children, index.slice(1));
-          }));
-        }
-        return graph;
-      }
+      const node = { ...child, children: _remove(child.children, index.slice(1)) };
+      return graph.set(index[0], node);
     }
   };
 

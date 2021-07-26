@@ -140,7 +140,8 @@ function last<T>(arr: T[]) {
   return arr[arr.length - 1];
 }
 
-function getChildren<T extends Record<string, unknown>>(node: T): AstContent[] {
+function getChildren<T extends unknown>(node: T): AstContent[] {
+  // @ts-ignore TODO @liam-fitzgerald
   if ('children' in node) {
     // @ts-ignore TODO @liam-fitzgerald
     return node.children;

@@ -28,6 +28,7 @@ import {
 } from '~/views/components/RemoteContent/embed';
 import { PermalinkEmbed } from '../../permalinks/embed';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
+import AsyncFallback from '~/views/components/AsyncFallback';
 
 export interface LinkBlockItemProps {
   node: GraphNode;
@@ -76,7 +77,8 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
       {...rest}
       {...bind}
     >
-      {isReference ? (
+      <AsyncFallback fallback={<RemoteContentEmbedFallback url={url} />}>
+        {isReference ? (
         summary ? (
           <RemoteContentPermalinkEmbed
             reference={content[0] as ReferenceContent}
@@ -96,6 +98,7 @@ export function LinkBlockItem(props: LinkBlockItemProps & CenterProps) {
       ) : (
         <RemoteContentEmbedFallback title={title} url={url} />
       )}
+    </AsyncFallback>
       <Box
         backgroundColor="white"
         display={summary && hovering ? 'block' : 'none'}

@@ -1,247 +1,166 @@
-import { BaseImage, Box, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
+import { Box, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
 import { Contact, Content, evalCord } from '@urbit/api';
-import React, { Component, ReactNode } from 'react';
-import { Sigil } from '~/logic/lib/sigil';
+import React, { FC, PropsWithChildren, useRef, useState } from 'react';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import { IuseStorage } from '~/logic/lib/useStorage';
-import { MOBILE_BROWSER_REGEX, uxToHex } from '~/logic/lib/util';
+import { MOBILE_BROWSER_REGEX } from '~/logic/lib/util';
 import { withLocalState } from '~/logic/state/local';
-import withStorage from '~/views/components/withStorage';
-import ChatEditor from './ChatEditor';
+import ChatEditor, { CodeMirrorShim } from './ChatEditor';
 import airlock from '~/logic/api';
+import { ChatAvatar } from './ChatAvatar';
+import { useChatStore } from './ChatPane';
+import { useImperativeHandle } from 'react';
+import { FileUploadSource, useFileUpload } from '~/logic/lib/useFileUpload';
 
-type ChatInputProps = IuseStorage & {
-  ourContact?: Contact;
-  onUnmount(msg: string): void;
-  placeholder: string;
-  message: string;
-  deleteMessage(): void;
+type ChatInputProps = PropsWithChildren<IuseStorage & {
   hideAvatars: boolean;
+  ourContact?: Contact;
+  placeholder: string;
   onSubmit: (contents: Content[]) => void;
-  children?: ReactNode;
-};
+}>;
 
-interface ChatInputState {
-  inCodeMode: boolean;
-  submitFocus: boolean;
-  uploadingPaste: boolean;
-  currentInput: string;
-}
+const InputBox: FC = ({ children }) => (
+  <Row
+    alignItems='center'
+    position='relative'
+    flexGrow={1}
+    flexShrink={0}
+    borderTop={1}
+    borderTopColor='lightGray'
+    backgroundColor='white'
+    className='cf'
+    zIndex={0}
+  >
+    { children }
+  </Row>
+);
 
-export class ChatInput extends Component<ChatInputProps, ChatInputState> {
-  private chatEditor: React.RefObject<ChatEditor>;
+const IconBox = ({ children, ...props }) => (
+  <Box
+    ml='12px'
+    mr={3}
+    flexShrink={0}
+    height='16px'
+    width='16px'
+    flexBasis='16px'
+    {...props}
+  >
+    { children }
+  </Box>
+);
 
-  constructor(props) {
-    super(props);
+const MobileSubmitButton = ({ enabled, onSubmit }) => (
+  <Box
+    ml={2}
+    mr="12px"
+    flexShrink={0}
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    width="24px"
+    height="24px"
+    borderRadius="50%"
+    backgroundColor={enabled ? 'blue' : 'gray'}
+    cursor={enabled !== '' ? 'pointer' : 'default'}
+    onClick={() => onSubmit()}
+  >
+    <Icon icon="ArrowEast" color="white" />
+  </Box>
+);
 
-    this.state = {
-      inCodeMode: false,
-      submitFocus: false,
-      uploadingPaste: false,
-      currentInput: props.message
-    };
+export const ChatInput = React.forwardRef(({ ourContact, hideAvatars, placeholder, onSubmit }: ChatInputProps, ref) => {
+  const chatEditor = useRef<CodeMirrorShim>(null);
+  useImperativeHandle(ref, () => chatEditor.current);
+  const [inCodeMode, setInCodeMode] = useState(false);
 
-    this.chatEditor = React.createRef();
+  const {
+    message,
+    setMessage
+  } = useChatStore();
+  const { canUpload, uploading, promptUpload, onPaste } = useFileUpload({
+    onSuccess: uploadSuccess
+  });
 
-    this.submit = this.submit.bind(this);
-    this.toggleCode = this.toggleCode.bind(this);
-    this.uploadSuccess = this.uploadSuccess.bind(this);
-    this.uploadError = this.uploadError.bind(this);
-    this.eventHandler = this.eventHandler.bind(this);
+  function uploadSuccess(url: string, source: FileUploadSource) {
+    if (source === 'paste') {
+      setMessage(url);
+    } else {
+      onSubmit([{ url }]);
+    }
   }
 
-  toggleCode() {
-    this.setState({
-      inCodeMode: !this.state.inCodeMode
-    });
+  function toggleCode() {
+    setInCodeMode(!inCodeMode);
   }
 
-  async submit(text) {
-    const { props, state } = this;
-    const { onSubmit } = this.props;
-    this.setState({
-      inCodeMode: false
-    });
-    props.deleteMessage();
-    if(state.inCodeMode) {
+  async function submit() {
+    const text = chatEditor.current?.getValue() || '';
+
+    if (text === '') {
+      return;
+    }
+
+    if (inCodeMode) {
       const output = await airlock.thread<string[]>(evalCord(text));
       onSubmit([{ code: { output, expression: text } }]);
     } else {
       onSubmit(tokenizeMessage(text));
     }
-    this.chatEditor.current.editor.focus();
-    this.setState({ currentInput: '' });
+
+    setInCodeMode(false);
+    setMessage('');
+    chatEditor.current.focus();
   }
 
-  uploadSuccess(url: string) {
-    const { props } = this;
-    if (this.state.uploadingPaste) {
-      this.chatEditor.current.editor.setValue(url);
-      this.setState({ uploadingPaste: false });
-    } else {
-      props.onSubmit([{ url }]);
-    }
-  }
-
-  uploadError(error) {
-    //  no-op for now
-  }
-
-  onPaste(codemirrorInstance, event: ClipboardEvent) {
-    if (!event.clipboardData || !event.clipboardData.files.length) {
-      return;
-    }
-    this.setState({ uploadingPaste: true });
-    event.preventDefault();
-    event.stopPropagation();
-    this.uploadFiles(event.clipboardData.files);
-  }
-
-  uploadFiles(files: FileList | File[]) {
-    if (!this.props.canUpload) {
-      return;
-    }
-    Array.from(files).forEach((file) => {
-      this.props
-        .uploadDefault(file)
-        .then(this.uploadSuccess)
-        .catch(this.uploadError);
-    });
-  }
-
-  eventHandler(value) {
-    this.setState({ currentInput: value });
-  }
-
-  render() {
-    const { props, state } = this;
-
-    const color = props.ourContact ? uxToHex(props.ourContact.color) : '000000';
-
-    const sigilClass = props.ourContact ? '' : 'mix-blend-diff';
-
-    const avatar =
-      props.ourContact && props.ourContact?.avatar && !props.hideAvatars ? (
-        <BaseImage
-          flexShrink={0}
-          src={props.ourContact.avatar}
-          height={24}
-          width={24}
-          style={{ objectFit: 'cover' }}
-          borderRadius={1}
-          display='inline-block'
-        />
-      ) : (
-        <Box
-          width={24}
-          height={24}
-          display='flex'
-          justifyContent='center'
-          alignItems='center'
-          backgroundColor={`#${color}`}
-          borderRadius={1}
-        >
-          <Sigil
-            ship={window.ship}
-            size={16}
-            color={`#${color}`}
-            classes={sigilClass}
-            icon
-            padding={2}
-          />
-        </Box>
-      );
-
-    return (
-      <Row
-        alignItems='center'
-        position='relative'
-        flexGrow={1}
-        flexShrink={0}
-        borderTop={1}
-        borderTopColor='lightGray'
-        backgroundColor='white'
-        className='cf'
-        zIndex={0}
-      >
-        <Row p='12px 4px 12px 12px' flexShrink={0} alignItems='center'>
-          {avatar}
-        </Row>
-        <ChatEditor
-          ref={this.chatEditor}
-          inCodeMode={state.inCodeMode}
-          submit={this.submit}
-          onUnmount={props.onUnmount}
-          message={props.message}
-          onPaste={this.onPaste.bind(this)}
-          changeEvent={this.eventHandler}
-          placeholder='Message...'
-        />
-        <Box
-          mx='12px'
-          mr={this.props.canUpload ? '12px' : 3}
-          flexShrink={0}
-          height='16px'
-          width='16px'
-          flexBasis='16px'
-        >
-          <Icon
-            icon='Dojo'
-            cursor='pointer'
-            onClick={this.toggleCode}
-            color={state.inCodeMode ? 'blue' : 'black'}
-          />
-        </Box>
-        {this.props.canUpload ? (
-          <Box
-            ml='12px'
-            mr={3}
-            flexShrink={0}
-            height='16px'
-            width='16px'
-            flexBasis='16px'
-          >
-            {this.props.uploading ? (
-              <LoadingSpinner />
-            ) : (
-              <Icon
-                icon='Attachment'
-                cursor='pointer'
-                width='16'
-                height='16'
-                onClick={() =>
-                  this.props.promptUpload().then(this.uploadSuccess)
-                }
-              />
-            )}
-          </Box>
-        ) : null}
-        {MOBILE_BROWSER_REGEX.test(navigator.userAgent) ?
-          <Box
-            ml={2}
-            mr="12px"
-            flexShrink={0}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            width="24px"
-            height="24px"
-            borderRadius="50%"
-            backgroundColor={state.currentInput !== '' ? 'blue' : 'gray'}
-            cursor={state.currentInput !== '' ? 'pointer' : 'default'}
-            onClick={() => this.chatEditor.current.submit()}
-          >
-            <Icon icon="ArrowEast" color="white" />
-          </Box>
-          : null}
+  return (
+    <InputBox>
+      <Row p='12px 4px 12px 12px' flexShrink={0} alignItems='center'>
+        <ChatAvatar contact={ourContact} hideAvatars={hideAvatars} />
       </Row>
-    );
-  }
-}
+      <ChatEditor
+        ref={chatEditor}
+        inCodeMode={inCodeMode}
+        submit={submit}
+        onPaste={(cm, e) => onPaste(e)}
+        placeholder={placeholder}
+      />
+      <IconBox mr={canUpload ? '12px' : 3}>
+        <Icon
+          icon='Dojo'
+          cursor='pointer'
+          onClick={toggleCode}
+          color={inCodeMode ? 'blue' : 'black'}
+        />
+      </IconBox>
+      {canUpload && (
+        <IconBox>
+          {uploading ? (
+            <LoadingSpinner />
+          ) : (
+            <Icon
+              icon='Attachment'
+              cursor='pointer'
+              width='16'
+              height='16'
+              onClick={() =>
+                promptUpload().then(url => uploadSuccess(url, 'direct'))
+              }
+            />
+          )}
+        </IconBox>
+      )}
+      {MOBILE_BROWSER_REGEX.test(navigator.userAgent) && (
+        <MobileSubmitButton
+          enabled={message !== ''}
+          onSubmit={submit}
+        />
+      )}
+    </InputBox>
+  );
+});
 
 // @ts-ignore withLocalState prop passing weirdness
 export default withLocalState<Omit<ChatInputProps, keyof IuseStorage>, 'hideAvatars', ChatInput>(
-  // @ts-ignore withLocalState prop passing weirdness
-  withStorage<ChatInputProps, ChatInput>(ChatInput, { accept: 'image/*' }),
+  ChatInput,
   ['hideAvatars']
 );
