@@ -12,7 +12,7 @@
     "@react-spring/web": "^9.1.1",
     "@tlon/indigo-dark": "^1.0.6",
     "@tlon/indigo-light": "^1.0.7",
-    "@tlon/indigo-react": "^1.2.23",
+    "@tlon/indigo-react": "^1.2.25",
     "@tlon/sigil-js": "^1.4.3",
     "@urbit/api": "^1.1.1",
     "@urbit/http-api": "^1.2.1",

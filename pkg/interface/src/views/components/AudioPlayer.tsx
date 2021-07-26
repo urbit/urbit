@@ -45,7 +45,7 @@ export function AudioPlayer(props: { url: string; title?: string }) {
           width="32px"
           color="black"
           icon={
-            isCurrTrack && transport.playing ? 'LargeBullet' : 'TriangleEast'
+            isCurrTrack && transport.playing ? 'Pause' : 'Play'
           }
         />
       </Action>

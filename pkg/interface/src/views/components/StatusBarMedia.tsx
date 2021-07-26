@@ -112,19 +112,19 @@ function StatusBarMediaTransport(
             size="24px"
             onClick={prev}
             display="inline-block"
-            icon="ArrowWest"
+            icon="Previous"
           />
           <Icon
             size="24px"
             display="inline-block"
             onClick={playing ? pause : play}
-            icon={playing ? 'LargeBullet' : 'TriangleEast'}
+            icon={playing ? 'Pause' : 'Play'}
           />
           <Icon
             size="24px"
             onClick={next}
             display="inline-block"
-            icon="ArrowEast"
+            icon="Next"
           />
         </Row>
         <Row justifyContent="center" width="280px" height="32px" flexGrow={1}>
@@ -195,7 +195,7 @@ export function StatusBarMedia(props: {}) {
           borderColor="lightGray"
           width="32px"
         >
-          <Icon display="inline-block" icon="Bitcoin" />
+          <Icon display="inline-block" icon={transport.playing ? 'Pause' : 'Play'} />
         </Row>
       </Dropdown>
       <StatusBarMediaTransport
