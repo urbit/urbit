@@ -2238,11 +2238,6 @@
       (unit (trel _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a)))
     |*  f=$-(typ (pair * typ))
     =/  vue  bot
-    =/  may
-      |=  l=(unit (lelem))
-      ^+  a
-      ?~  l  a
-      (put k.u.l p.u.l v.u.l)
     ?~  vue
       =/  bee  (f ~)
       :-  p.bee
