@@ -1289,7 +1289,7 @@
     $%  $>(%poke-ack sign:agent:gall)
         $>(%watch-ack sign:agent:gall)
         $>(%kick sign:agent:gall)
-        [%fact =mark =noun]
+        [%fact =json]
     ==
   ::  channel: connection to the browser
   ::
