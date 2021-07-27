@@ -30,7 +30,6 @@ newtype Parser a = Parser {
   runParser :: forall r. ParseStack -> Failure r -> Success a r -> r
 }
 
-{-# INLINE named #-}  -- keep out of the cost centers
 named :: Text -> Parser a -> Parser a
 named nm (Parser cb) =
     Parser $ \path kf ks -> cb (nm:path) kf ks

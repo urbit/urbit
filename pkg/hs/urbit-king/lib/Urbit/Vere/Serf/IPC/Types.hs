@@ -1,4 +1,6 @@
 {-# LANGUAGE StrictData #-}
+{-# OPTIONS_GHC -ddump-splices #-}
+
 
 module Urbit.Vere.Serf.IPC.Types where
 

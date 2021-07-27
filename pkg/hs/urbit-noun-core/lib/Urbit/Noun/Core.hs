@@ -159,16 +159,13 @@ nounSize = \case
   NCell _ s _ _ -> s
   NAtom _ _     -> 1
 
-{-# INLINE mug #-}
 mug :: Noun -> Mug
 mug = \case NCell h _ _ _ -> h
             NAtom h _     -> h
 
-{-# INLINE mkAtom #-}
 mkAtom :: Atom -> Noun
 mkAtom a = NAtom (mugAtom a) a
 
-{-# INLINE mkCell #-}
 mkCell :: Noun -> Noun -> Noun
 mkCell h t = NCell has siz h t
   where

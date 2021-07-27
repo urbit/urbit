@@ -768,12 +768,14 @@ shortRec 1 = fail ("record too short, only one cell")
 shortRec n = fail ("record too short, only " <> show n <> " cells")
 
 instance (FromNoun a, FromNoun b) => FromNoun (a, b) where
-  parseNoun n = named ("(,)") $ do
-    case n of
-      A _   -> shortRec 0
-      C x y -> do
-        (,) <$> named "1" (parseNoun x)
-            <*> named "2" (parseNoun y)
+  parseNoun n = pair
+   where
+    pair = named ("(,)") $ do
+      case n of
+        A _   -> shortRec 0
+        C x y -> do
+          (,) <$> named "1" (parseNoun x)
+              <*> named "2" (parseNoun y)
 
 instance (ToNoun a, ToNoun b, ToNoun c) => ToNoun (a, b, c) where
   toNoun (x, y, z) = toNoun (x, (y, z))

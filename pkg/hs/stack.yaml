@@ -3,7 +3,6 @@ resolver: lts-18.3
 packages:
   - lmdb-static
   - natpmp-static
-  - proto
   - racquire
   - terminal-progress-bar
   - urbit-atom
