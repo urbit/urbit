@@ -2229,12 +2229,13 @@
         ~
       (some p.u.ped)
     =/  bee  (f pav)
+    :-  p.bee
     ?~  q.bee
-      [p.bee a]
-    [p.bee (put k p.u.q.bee q.u.q.bee)]
+      a
+    (put k p.u.q.bee q.u.q.bee)
   ::
   ++  jib                                               ::  update at min-prio
-    =/  typ  (unit (pair _?>(?=(^ a) k.n.a) _?>(?=(^ a) v.n.a)))
+    =/  typ  (unit (trel _?>(?=(^ a) k.n.a) @ _?>(?=(^ a) v.n.a)))
     |*  f=$-(typ (pair * typ))
     =/  vue  bot
     ?~  vue
@@ -2242,12 +2243,13 @@
       :-  p.bee
       ?~  q.bee
         a
-      (put p.u.q.bee q.u.q.bee)
-    =/  bee  (f u.vue)
+      (put p.u.q.bee q.u.q.bee r.u.q.bee)
+    =.  a  q.u.vue
+    =/  bee  (f (some p.u.vue))
     :-  p.bee
     ?~  q.bee
       a
-    (put p.u.q.bee q.u.q.bee)
+    (put p.u.q.bee q.u.q.bee r.u.q.bee)
   ::
   ++  gas                                               ::  concatenate
     |*  b=(list [k=* p=@ v=*])
