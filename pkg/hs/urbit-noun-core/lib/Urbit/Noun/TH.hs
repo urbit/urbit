@@ -120,7 +120,7 @@ addCostCenter :: String -> Exp -> Exp
 addCostCenter tag exp =
   LetE [ValD (VarP nom) (NormalB exp) []] (VarE nom)
  where
-  nom = mkName $ "scc_" ++ tag
+  nom = mkName $ "scc_" ++ filter C.isAlphaNum tag
 
 deriveFromNoun :: Name -> Q [Dec]
 deriveFromNoun tyName = do
