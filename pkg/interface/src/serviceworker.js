@@ -111,21 +111,24 @@ const encoder = new TextEncoder();
 // Map with server connections, where key - url, value - EventSource
 const serverConnection = {};
 // For each request opens only one server connection and use it for next requests with the same url
-const getServerConnection = (url) => {
+function getServerConnection (url) {
   if (!serverConnection.url) {
     serverConnection.url = url;
   }
 
-  if (!serverConnection.source) {
-    const source = new EventSource(serverConnection.url);
+  if (!serverConnection.source || serverConnection.source.readyState === 2) {
+    const source = new EventSource(serverConnection.url || url);
     const listeners = [];
-    source.onmessage = ({ data, type, retry, lastEventId }) => {
-      const responseText = sseChunkData(data, type, retry, lastEventId);
-      const responseData = encoder.encode(responseText);
-      const parsedData = JSON.parse(data);
 
+    source.onmessage = (event) => {
+      const parsedData = JSON.parse(event.data);
       serverConnection.eventId = parseInt(parsedData.id, 10);
-      listeners.forEach(({ handle }) => handle(responseData));
+
+      const responseData = encodeEvent(event);
+      const handlers = serverConnection.listeners.slice();
+      handlers.forEach(({ handle }) => {
+        handle(responseData);
+      });
     };
 
     serverConnection.source = source;
@@ -138,38 +141,26 @@ const getServerConnection = (url) => {
 };
 
 registerRoute(
-  ({ url, request }) => {
-    return url.pathname.startsWith('/~channel') && request.method === 'PUT';
-  },
-  async ({ url, request }) => {
-    if (!serverConnection.url) {
-      serverConnection.url = url.href;
-    }
-
-    await fetch(serverConnection.url, request);
-
-    return new Response(undefined, {
-      status: 204
-    });
-  }
-);
-
-registerRoute(
   ({ request }) => {
     const { headers } = request;
     return headers.get('Accept') === 'text/event-stream';
   },
   ({ url }) => {
-    const id = url.pathname.substr(url.pathname.lastIndexOf('/'));
+    const id = url.searchParams.get('id');
+    url.searchParams.delete('id');
+
     const stream = new ReadableStream({
       start: (controller) => {
+        controller.enqueue(encodeEvent({ data: 'hello!' }));
+
         const connection = getServerConnection(url.href);
         connection.count += 1;
-        console.log('current', connection.count);
+        console.log('current', connection.count, id);
 
         connection.listeners.push({
           id,
-          handle: responseData => controller.enqueue(responseData)
+          handle: responseData => controller.enqueue(responseData),
+          close: () => controller.close()
         });
       }
     });
@@ -179,51 +170,77 @@ registerRoute(
   }
 );
 
+const handlerMap = {
+  GET_CHANNEL: getChannel,
+  CLOSE_STREAM: closeStream
+};
+
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'GET_CHANNEL') {
-    self.clients.matchAll({
-      includeUncontrolled: true,
-      type: 'window'
-    }).then((clients) => {
-      const message = {
-        type: 'CURRENT_CHANNEL',
-        eventId: serverConnection.eventId,
-        channel: serverConnection.url
-      };
-
-      console.log(message);
-      if (clients && clients.length) {
-        // Send a response - the clients
-        // array is ordered by last focused
-        clients.forEach(client => client.postMessage(message));
-      }
-    });
+  if (!event.data) {
+    return;
   }
 
-  if (event.data && event.data.type === 'CLOSE_STREAM') {
-    const url = event.data.url;
-    const id = event.data.id;
-    const connection = getServerConnection(url);
-
-    if (connection.count <= 1) {
-      connection.source.close();
-      delete serverConnection.url;
-      delete serverConnection.source;
-      delete serverConnection.listeners;
-      delete serverConnection.count;
-
-      navigator.sendBeacon(this.channelUrl, JSON.stringify([{
-        action: 'delete'
-      }]));
-      console.log('closing', url);
-    } else {
-      const index = connection.listeners.find(item => item.id === id);
-      connection.listeners.splice(index, 1);
-      connection.count -= 1;
-      console.log({ url, count: connection.count, listeners: connection.listeners });
-    }
-  }
+  handlerMap[event.data.type](event.data);
 });
+
+function getChannel() {
+  self.clients.matchAll({
+    includeUncontrolled: true,
+    type: 'window'
+  }).then((clients) => {
+    const message = {
+      type: 'CURRENT_CHANNEL',
+      eventId: serverConnection.eventId,
+      channel: serverConnection.url
+    };
+
+    console.log(message);
+    if (clients && clients.length) {
+      clients.forEach(client => client.postMessage(message));
+    }
+  });
+}
+
+function closeStream({ url, id }) {
+  const connection = getServerConnection(url);
+
+  if (connection.count <= 1) {
+    clearConnection();
+  } else {
+    const index = connection.listeners.findIndex(item => item.id === id);
+    let listener = connection.listeners[index];
+    if (!listener) {
+      return;
+    }
+
+    connection.listeners.splice(index, 1);
+    connection.count -= 1;
+    listener.close();
+    listener = null;
+
+    console.log({ url, count: connection.count, listeners: connection.listeners });
+  }
+}
+
+function clearConnection(url) {
+  serverConnection.source.close();
+
+  delete serverConnection.url;
+  delete serverConnection.source;
+  delete serverConnection.listeners;
+  delete serverConnection.count;
+
+  fetch(url, {
+    body: JSON.stringify([{ action: 'delete' }]),
+    method: 'PUT'
+  });
+  console.log('closing', url);
+}
+
+function encodeEvent({ data, type, retry, lastEventId }) {
+  const responseText = sseChunkData(data, type, retry, lastEventId);
+  return encoder.encode(responseText);
+}
 
 // Function for formatting message to SSE response
 function sseChunkData(data, event, retry, id) {

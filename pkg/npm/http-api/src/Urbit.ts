@@ -21,6 +21,10 @@ import {
 } from './types';
 import { uncamelize, hexString } from './utils';
 
+interface UrbitOptions {
+  managedChannel?: boolean;
+}
+
 /**
  * A class for interacting with an urbit ship, given its URL and code
  */
@@ -29,9 +33,6 @@ export class Urbit {
    * UID will be used for the channel: The current unix time plus a random hex string
    */
   private uid: string = `${Math.floor(Date.now() / 1000)}-${hexString(6)}`;
-  private instanceId: string = `${Math.floor(Date.now() / 1000)}-${hexString(
-    6
-  )}`;
 
   /**
    * Last Event ID is an auto-updated index of which events have been sent over this channel
@@ -46,10 +47,21 @@ export class Urbit {
   private sseClientInitialized: boolean = false;
 
   /**
-   *
+   * Used with a managed channel to hold outgoing actions until we receive the
+   * current event ID and new channel UID.
    */
   private channelSynced: boolean = false;
 
+  /**
+   * Instance ID identifies this channel's listener to the managed channel when closing.
+   */
+  private instanceId: string = `${Math.floor(Date.now() / 1000)}-${hexString(
+    6
+  )}`;
+
+  /**
+   * Holds the set of outgoing actions in queue to send once the channel is synced.
+   */
   private actionQueue: Array<{
     action: Function;
     params: any[];
@@ -137,7 +149,11 @@ export class Urbit {
    * be the empty string.
    * @param code The access code for the ship at that address
    */
-  constructor(public url: string, public code?: string) {
+  constructor(
+    public url: string,
+    public code?: string,
+    public options?: UrbitOptions
+  ) {
     if (isBrowser) {
       window.addEventListener('beforeunload', this.delete.bind(this));
     }
@@ -150,14 +166,17 @@ export class Urbit {
     //this.eventSource();
     console.log('setting up managed channel');
     navigator.serviceWorker.onmessage = async (event) => {
-      if (event.data && event.data.type === 'CURRENT_CHANNEL') {
+      if (
+        event.data &&
+        event.data.type === 'CURRENT_CHANNEL' &&
+        !this.channelSynced
+      ) {
         if (!event.data.eventId || !event.data.channel) {
           console.log('first to setup channel');
         } else {
           this.lastEventId = parseInt(event.data.eventId, 10);
           const channel: string = event.data.channel;
-          // this.uid = channel.substring(
-          //   channel.lastIndexOf('/'),
+          this.uid = channel.substr(channel.lastIndexOf('/') + 1);
           //   channel.lastIndexOf('?')
           // );
           console.log('received channel info', this.lastEventId, this.uid);
@@ -263,7 +282,7 @@ export class Urbit {
       } else if (isNode) {
         sseOptions.headers.Cookie = this.cookie;
       }
-      fetchEventSource(this.channelUrl, {
+      fetchEventSource(this.channelUrl + `?id=${this.instanceId}`, {
         ...this.fetchOptions,
         openWhenHidden: true,
         onopen: async (response) => {
@@ -427,10 +446,11 @@ export class Urbit {
     return false;
   }
 
-  private async flushActionQueue(): Promise<void> {
+  private flushActionQueue(): void {
     this.actionQueue.forEach(({ action, params }) => {
       action.apply(this, params);
     });
+    this.actionQueue = [];
   }
 
   /**
@@ -585,7 +605,7 @@ export class Urbit {
       navigator.serviceWorker.controller.postMessage({
         type: 'CLOSE_STREAM',
         url: this.channelUrl,
-        id: this.uid,
+        id: this.instanceId,
       });
     } else {
       // TODO
