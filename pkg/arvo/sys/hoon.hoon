@@ -2251,7 +2251,7 @@
     (put p.u.q.bee q.u.q.bee r.u.q.bee)
   ::
   ++  gas                                               ::  concatenate
-    |=  b=(list [k=* p=* v=*])
+    |*  b=(list [k=* p=* v=*])
     =>  .(b `(list _?>(?=(^ a) n.a))`b)
     |-  ^+  a
     ?~  b
