@@ -388,43 +388,43 @@
   _|?($:product)
 ::
 ++  pri
-  |$  [k p v]
+  |$  [k v]
   ::    priority search queue
   ::
   ::  a  `++pri` can be empty, or can contain a key/priority/value
   ::  element, so-called 'loser tree' with the same type parameters, and
   ::  maximum key.
   ::
-  $@(~ [n=(lelem k p v) t=(ltree k p v) m=k])
+  $@(~ [n=(lelem k v) t=(ltree k v) m=k])
 ::
 ++  lelem
-  |$  [k p v]
+  |$  [k v]
   ::    pri element
   ::
-  [k=k p=p v=v]
+  [k=k p=@ v=v]
 ::
 ++  lnode
-  |$  [k p v]
+  |$  [k v]
   ::    pri loser tree node
   ::
-  [n=(lelem k p v) l=(ltree k p v) m=k r=(ltree k p v)]
+  [n=(lelem k v) l=(ltree k v) m=k r=(ltree k v)]
 ::
 ++  ltree
-  |$  [k p v]
+  |$  [k v]
   ::    pri loser tree
   ::
   $@  ~
-  $%  [%llos s=@ p=(lnode k p v)]
-      [%rlos s=@ p=(lnode k p v)]
+  $%  [%llos s=@ p=(lnode k v)]
+      [%rlos s=@ p=(lnode k v)]
   ==
 ::
 ++  torn
-  |$  [k p v]
+  |$  [k v]
   ::    pri tournament view
   ::
   $@  ~
-  $%  [%sing n=(lelem k p v)]
-      [%play l=(pri k p v) r=(pri k p v)]
+  $%  [%sing n=(lelem k v)]
+      [%play l=(pri k v) r=(pri k v)]
   ==
 ::
 ++  tree
@@ -1955,23 +1955,23 @@
     ?~(t 0 s.t)
   ::
   ++  one                                               ::  singleton
-    |*  [k=* p=* v=*]
+    |*  [k=* p=@ v=*]
     ^-  (pri)
     [[k p v] ~ k]
   ::
   ++  llos                                              ::  left loser
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     [%llos +((add (size l.a) (size r.a))) a]
   ::
   ++  rlos                                              ::  right loser
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     [%rlos +((add (size l.a) (size r.a))) a]
   ::
   ++  lbal
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?:  (lth (add (size l.a) (size r.a)) 2)
       (llos a)
     ?:  (gth (size r.a) (mul mega (size l.a)))
@@ -1982,7 +1982,7 @@
   ::
   ++  rbal
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?:  (lth (add (size l.a) (size r.a)) 2)
       (rlos a)
     ?:  (gth (size r.a) (mul mega (size l.a)))
@@ -1993,7 +1993,7 @@
   ::
   ++  llbal
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?:  (lth (size l.p.r.a) (size r.p.r.a))
       (llsin a)
@@ -2001,7 +2001,7 @@
   ::
   ++  lrbal
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?:  (gth (size l.p.l.a) (size r.p.l.a))
       (lrsin a)
@@ -2009,7 +2009,7 @@
   ::
   ++  rlbal
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?:  (lth (size l.p.r.a) (size r.p.r.a))
       (rlsin a)
@@ -2017,7 +2017,7 @@
   ::
   ++  rrbal
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?:  (gth (size l.p.l.a) (size r.p.l.a))
       (rrsin a)
@@ -2025,7 +2025,7 @@
   ::
   ++  llsin
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?-  -.r.a
         %llos
@@ -2038,7 +2038,7 @@
   ::
   ++  rlsin
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?-  -.r.a
         %llos  (rlos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
@@ -2047,7 +2047,7 @@
   ::
   ++  lrsin
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?-  -.l.a
         %llos  (llos n.p.l.a l.p.l.a m.p.l.a (llos n.a r.p.l.a m.a r.a))
@@ -2056,7 +2056,7 @@
   ::
   ++  rrsin
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?-  -.l.a
         %llos
@@ -2069,7 +2069,7 @@
   ::
   ++  lldub
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?-  -.r.a
         %llos  (llsin n.a l.a m.a (lrsin p.r.a))
@@ -2078,7 +2078,7 @@
   ::
   ++  lrdub
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?-  -.l.a
         %llos  (lrsin n.a (llsin p.l.a) m.a r.a)
@@ -2087,7 +2087,7 @@
   ::
   ++  rldub
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?-  -.r.a
         %llos  (rlsin n.a l.a m.a (lrsin p.r.a))
@@ -2096,7 +2096,7 @@
   ::
   ++  rrdub
     |*  a=(lnode)
-    ^-  (ltree _k.n.a _p.n.a _v.n.a)
+    ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?-  -.l.a
         %llos  (rrsin n.a (llsin p.l.a) m.a r.a)
@@ -2117,7 +2117,7 @@
   ++  sec                                               ::  second best
     |*  [l=(ltree) m=*]
     |-
-    ^-  (pri _?>(?=(^ l) k.n.p.l) _?>(?=(^ l) p.n.p.l) _?>(?=(^ l) v.n.p.l))
+    ^-  (pri _?>(?=(^ l) k.n.p.l) _?>(?=(^ l) v.n.p.l))
     ?~  l
       ~
     ?-  -.l
@@ -2126,8 +2126,8 @@
     ==
   ::
   ++  win                                               ::  compare
-    |*  [[p=* q=*] [r=* s=*]]
-    ?|  (gor p r)
+    |*  [[p=@ q=*] [r=@ s=*]]
+    ?|  (lth p r)
         ?&(=(p r) (gor q s))
     ==
   --
@@ -2141,9 +2141,9 @@
   ++  get                                               ::  get binding by key
     |*  k=*
     =>  .(k `_?>(?=(^ a) k.n.a)`k)
-    |-  ^-  (unit (pair _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a)))
+    |-  ^-  (unit (pair @ _?>(?=(^ a) v.n.a)))
     ?~  a  ~
-    =/  tor=(torn _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
+    =/  tor=(torn _?>(?=(^ a) k.n.a) _?>(?=(^ a) v.n.a))
       see
     ?~  tor  ~
     ?-    -.tor
@@ -2169,7 +2169,7 @@
     (some n.a)
   ::
   ++  put                                               :: add [key prio val]
-    |*  [k=* p=* v=*]
+    |*  [k=* p=@ v=*]
     |-  ^+  a
     ?~  a
       (one k p v)
@@ -2218,7 +2218,7 @@
     q.u.b
   ::
   ++  jab                                               ::  update at key k
-    =/  typ  (unit (pair _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a)))
+    =/  typ  (unit (pair @ _?>(?=(^ a) v.n.a)))
     |*  [k=_?>(?=(^ a) k.n.a) f=$-(typ (pair * typ))]
     ^-  (pair * _a)
     =/  ped  (pet k)
@@ -2234,8 +2234,7 @@
     [p.bee (put k p.u.q.bee q.u.q.bee)]
   ::
   ++  jib                                               ::  update at min-prio
-    =/  typ
-      (unit (trel _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a)))
+    =/  typ  (unit (pair _?>(?=(^ a) k.n.a) _?>(?=(^ a) v.n.a)))
     |*  f=$-(typ (pair * typ))
     =/  vue  bot
     ?~  vue
@@ -2243,15 +2242,15 @@
       :-  p.bee
       ?~  q.bee
         a
-      (put p.u.q.bee q.u.q.bee r.u.q.bee)
+      (put p.u.q.bee q.u.q.bee)
     =/  bee  (f u.vue)
     :-  p.bee
     ?~  q.bee
       a
-    (put p.u.q.bee q.u.q.bee r.u.q.bee)
+    (put p.u.q.bee q.u.q.bee)
   ::
   ++  gas                                               ::  concatenate
-    |*  b=(list [k=* p=* v=*])
+    |*  b=(list [k=* p=@ v=*])
     =>  .(b `(list _?>(?=(^ a) n.a))`b)
     |-  ^+  a
     ?~  b
@@ -2275,7 +2274,7 @@
     (turn tap |*(^ +<-))
   ::
   ++  see                                               ::  tournament view
-    ^-  (torn _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
+    ^-  (torn _?>(?=(^ a) k.n.a) _?>(?=(^ a) v.n.a))
     ?~  a  ~
     ?~  t.a
       [%sing n.a]
@@ -2326,10 +2325,10 @@
     ==
   ::
   ++  pan                                               ::  insert view
-    |*  e=(lelem _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a))
+    |*  e=(lelem _?>(?=(^ a) k.n.a) _?>(?=(^ a) v.n.a))
     ^-
       %+  pair
-        (unit (lelem _?>(?=(^ a) k.n.a) _?>(?=(^ a) p.n.a) _?>(?=(^ a) v.n.a)))
+        (unit (lelem _?>(?=(^ a) k.n.a) _?>(?=(^ a) v.n.a)))
       _a
     =/  vue  (pet k.e)
     ?~  vue
@@ -2341,9 +2340,9 @@
     ::  lexicographic mug order
     ::
     ++  lex
-      |=  [[a=* b=*] [l=* r=*]]
+      |=  [[a=@ b=*] [l=@ r=*]]
       ^-  ?
-      |((gor a l) (gor b r))
+      |((lth a l) (gor b r))
     ::  has unique keys
     ::
     ++  uni
@@ -2438,9 +2437,9 @@
   |=(a=(tree) ?:(=(~ a) & ~(apt in a)))
 ::
 ++  pry                                                 ::  psq
-  |$  [key prio value]
-  $|  (pri key prio value)
-  |=(a=(pri key prio value) ?:(=(~ a) & ~(apt up a)))
+  |$  [key value]
+  $|  (pri key value)
+  |=(a=(pri key value) ?:(=(~ a) & ~(apt up a)))
 ::
 ::::  2l: container from container                      ::
   ::                                                    ::
