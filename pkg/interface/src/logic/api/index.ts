@@ -1,7 +1,9 @@
 import Urbit from '@urbit/http-api';
-const api = new Urbit('', '');
-api.ship = window.ship;
-// api.verbose = true;
+const api = new Urbit('', '', {
+  ship: window.ship,
+  managedChannel: true
+});
+
 // @ts-ignore TODO window typings
 window.api = api;
 

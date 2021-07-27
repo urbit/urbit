@@ -22,6 +22,19 @@ import {
 import { uncamelize, hexString } from './utils';
 
 interface UrbitOptions {
+  /**
+   * Ship can be set, in which case we can do some magic stuff like send chats
+   */
+  ship?: string | null;
+
+  /**
+   * If verbose, logs output eagerly.
+   */
+  verbose?: boolean;
+
+  /**
+   * Allows for the channel to be managed by external worker
+   */
   managedChannel?: boolean;
 }
 
@@ -29,6 +42,11 @@ interface UrbitOptions {
  * A class for interacting with an urbit ship, given its URL and code
  */
 export class Urbit {
+  /**
+   *
+   */
+  private options: UrbitOptions;
+
   /**
    * UID will be used for the channel: The current unix time plus a random hex string
    */
@@ -101,16 +119,6 @@ export class Urbit {
   private abort = new AbortController();
 
   /**
-   * Ship can be set, in which case we can do some magic stuff like send chats
-   */
-  ship?: string | null;
-
-  /**
-   * If verbose, logs output eagerly.
-   */
-  verbose?: boolean;
-
-  /**
    * number of consecutive errors in connecting to the eventsource
    */
   private errorCount = 0;
@@ -152,18 +160,25 @@ export class Urbit {
   constructor(
     public url: string,
     public code?: string,
-    public options?: UrbitOptions
+    options?: UrbitOptions
   ) {
+    this.options = {
+      managedChannel: false,
+      verbose: false,
+      ...options,
+    };
+
     if (isBrowser) {
       window.addEventListener('beforeunload', this.delete.bind(this));
     }
 
-    this.setupManagedChannel();
+    if (this.options.managedChannel) {
+      this.setupManagedChannel();
+    }
     return this;
   }
 
   setupManagedChannel() {
-    //this.eventSource();
     console.log('setting up managed channel');
     navigator.serviceWorker.onmessage = async (event) => {
       if (
@@ -172,18 +187,19 @@ export class Urbit {
         !this.channelSynced
       ) {
         if (!event.data.eventId || !event.data.channel) {
-          console.log('first to setup channel');
+          this.options.verbose && console.log('first to setup channel');
         } else {
           this.lastEventId = parseInt(event.data.eventId, 10);
           const channel: string = event.data.channel;
           this.uid = channel.substr(channel.lastIndexOf('/') + 1);
           //   channel.lastIndexOf('?')
           // );
-          console.log('received channel info', this.lastEventId, this.uid);
+          this.options.verbose &&
+            console.log('received channel info', this.lastEventId, this.uid);
         }
 
         this.channelSynced = true;
-        console.log('flushing queue', this.actionQueue);
+        this.options.verbose && console.log('flushing queue', this.actionQueue);
         if (!this.sseClientInitialized && this.lastEventId !== 0) {
           await this.eventSource();
         }
@@ -210,9 +226,10 @@ export class Urbit {
     code,
     verbose = false,
   }: AuthenticationInterface) {
-    const airlock = new Urbit(`http://${url}`, code);
-    airlock.verbose = verbose;
-    airlock.ship = ship;
+    const airlock = new Urbit(`http://${url}`, code, {
+      ship,
+      verbose,
+    });
     await airlock.connect();
     await airlock.poke({
       app: 'hood',
@@ -228,7 +245,7 @@ export class Urbit {
    * That's why we roll it into this.authenticate
    */
   async connect(): Promise<void> {
-    if (this.verbose) {
+    if (this.options.verbose) {
       console.log(
         `password=${this.code} `,
         isBrowser
@@ -241,12 +258,12 @@ export class Urbit {
       body: `password=${this.code}`,
       credentials: 'include',
     }).then((response) => {
-      if (this.verbose) {
+      if (this.options.verbose) {
         console.log('Received authentication response', response);
       }
       const cookie = response.headers.get('set-cookie');
-      if (!this.ship) {
-        this.ship = new RegExp(/urbauth-~([\w-]+)/).exec(cookie)[1];
+      if (!this.options.ship) {
+        this.options.ship = new RegExp(/urbauth-~([\w-]+)/).exec(cookie)[1];
       }
       if (!isBrowser) {
         this.cookie = cookie;
@@ -286,7 +303,7 @@ export class Urbit {
         ...this.fetchOptions,
         openWhenHidden: true,
         onopen: async (response) => {
-          if (this.verbose) {
+          if (this.options.verbose) {
             console.log('Opened eventsource', response);
           }
           if (response.ok) {
@@ -300,7 +317,7 @@ export class Urbit {
           }
         },
         onmessage: (event: EventSourceMessage) => {
-          if (this.verbose) {
+          if (this.options.verbose) {
             console.log('Received SSE: ', event);
           }
           if (!event.id) return;
@@ -336,9 +353,10 @@ export class Urbit {
                 funcs.err(data.err, data.id);
                 this.outstandingSubscriptions.delete(data.id);
               } else {
-                this.verbose &&
+                this.options.verbose &&
                   console.log([...this.outstandingSubscriptions.keys()]);
-                this.verbose && console.log('Unrecognized response', data);
+                this.options.verbose &&
+                  console.log('Unrecognized response', data);
               }
             } else if (
               data.response === 'diff' &&
@@ -358,9 +376,10 @@ export class Urbit {
               funcs.quit(data);
               this.outstandingSubscriptions.delete(data.id);
             } else {
-              this.verbose &&
+              this.options.verbose &&
                 console.log([...this.outstandingSubscriptions.keys()]);
-              this.verbose && console.log('Unrecognized response', data);
+              this.options.verbose &&
+                console.log('Unrecognized response', data);
             }
           }
         },
@@ -435,7 +454,7 @@ export class Urbit {
   }
 
   private waitForSync(action: Function, ...params: any[]): boolean {
-    if (!this.channelSynced) {
+    if (this.options.managedChannel && !this.channelSynced) {
       this.actionQueue.push({
         action,
         params,
@@ -508,7 +527,7 @@ export class Urbit {
     const { app, mark, json, ship, onSuccess, onError } = {
       onSuccess: () => {},
       onError: () => {},
-      ship: this.ship,
+      ship: this.options.ship,
       ...params,
     };
     const message: Message = {
@@ -554,7 +573,7 @@ export class Urbit {
       err: () => {},
       event: () => {},
       quit: () => {},
-      ship: this.ship,
+      ship: this.options.ship,
       ...params,
     };
 
@@ -598,18 +617,27 @@ export class Urbit {
    * Deletes the connection to a channel.
    */
   delete() {
-    if (isBrowser) {
-      // navigator.sendBeacon(this.channelUrl, JSON.stringify([{
-      //   action: 'delete'
-      // }]));
+    if (!isBrowser) {
+      // TODO
+      // this.sendMessage('delete');
+      // return;
+    }
+
+    if (this.options.managedChannel) {
       navigator.serviceWorker.controller.postMessage({
         type: 'CLOSE_STREAM',
         url: this.channelUrl,
         id: this.instanceId,
       });
     } else {
-      // TODO
-      // this.sendMessage('delete');
+      navigator.sendBeacon(
+        this.channelUrl,
+        JSON.stringify([
+          {
+            action: 'delete',
+          },
+        ])
+      );
     }
   }
 
