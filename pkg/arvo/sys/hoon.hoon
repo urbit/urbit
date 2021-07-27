@@ -2115,14 +2115,13 @@
     [n.b (lbal n.a t.a m.a t.b) m.b]
   ::
   ++  sec                                               ::  second best
-    |*  [l=(ltree) m=*]
+    |*  [t=(ltree) m=*]
     |-
-    ^-  (pri _?>(?=(^ l) k.n.p.l) _?>(?=(^ l) v.n.p.l))
-    ?~  l
-      ~
-    ?-  -.l
-      %llos  (toy [n.p.l l.p.l m.p.l] $(l r.p.l))
-      %rlos  (toy $(l l.p.l, m m.p.l) [n.p.l r.p.l m])
+    ^-  (pri _?>(?=(^ t) k.n.p.t) _?>(?=(^ t) v.n.p.t))
+    ?~  t  ~
+    ?-  -.t
+      %llos  (toy [n.p.t l.p.t m.p.t] $(t r.p.t))
+      %rlos  (toy $(t l.p.t, m m.p.t) [n.p.t r.p.t m])
     ==
   ::
   ++  win                                               ::  compare
