@@ -1,6 +1,6 @@
 ::
 /-  *notify, resource, hark-store, post
-/+  default-agent, verb, dbug, group
+/+  default-agent, verb, dbug, group, agentio
 ::
 |%
 +$  card  card:agent:gall
@@ -10,7 +10,7 @@
   $:  notify-endpoint=@t
       binding-endpoint=@t
       auth-token=@t
-      clients=(map ship (unit @t))
+      clients=(map ship binding=(unit @t))
       =whitelist
   ==
 ::
@@ -40,18 +40,19 @@
 =<
   |_  =bowl:gall
   +*  this  .
-      def  ~(. (default-agent this %|) bowl)
-      do   ~(. +> bowl)
+      def   ~(. (default-agent this %|) bowl)
+      do    ~(. +> bowl)
+      io    ~(. agentio bowl)
+      pass  pass:io
   ::
   ++  on-init
     :_  this
-    [%pass /hark %agent [our.bowl %hark-store] %watch /updates]~
+    [(~(watch-our pass:io /hark) %hark-store /updates)]~
   ::
   ++  on-save   !>(state)
   ++  on-load
     |=  =old=vase
     ^-  (quip card _this)
-::    `this(state *state-0)
     =/  old  !<(versioned-state old-vase)
     ?-  -.old
         %0
@@ -93,7 +94,7 @@
         %+  turn  ~(tap by clients.u.entry)
         |=  [who=@p *]
         ^-  card
-        (leave-client who service.act)
+        (leave-path:pass [who %notify] /notify/(scot %p who)/[service.act])
       ::
           %client-join
         =/  entry=(unit provider-entry)  (~(get by provider-state) service.act)
@@ -110,7 +111,9 @@
                 src.bowl
                 address.act
             ==
-            (watch-client src.bowl service.act)
+            %+  watch:pass
+              [src.bowl %notify]
+            /notify/(scot %p src.bowl)/[service.act]
         ==
       ::
           %client-leave
@@ -123,7 +126,10 @@
         =.  clients.u.entry        (~(del by clients.u.entry) src.bowl)
         :_  state(provider-state (~(put by provider-state) service.act u.entry))
         ?~  client-info
-          [(leave-client src.bowl service.act)]~
+          :_  ~
+          %+  leave-path:pass
+            [src.bowl %notify]
+          /notify/(scot %p src.bowl)/[service.act]
         :~  %:  remove-binding:do
                 service.act
                 u.entry
@@ -131,7 +137,9 @@
                 binding-endpoint.u.entry
                 u.client-info
             ==
-            (leave-client src.bowl service.act)
+            %+  leave-path:pass
+              [src.bowl %notify]
+            /notify/(scot %p src.bowl)/[service.act]
         ==
       ==
     ::
@@ -141,18 +149,18 @@
       ?>  (team:title our.bowl src.bowl)
       ?-  -.act
           %connect-provider
-        =/  =wire  /connect/(scot %p who.act)
         =.  providers.client-state
           (~(put ju providers.client-state) who.act service.act)
+        =/  pact=provider-action  [%client-join service.act address.act]
         :_  state
-        [(poke-provider wire who.act %client-join service.act address.act) ~]
+        [(poke:pass [who.act %notify] %notify-provider-action !>(pact))]~
       ::
           %remove-provider
-        =/  =wire  /remove/(scot %p who.act)
         =.  providers.client-state
           (~(del ju providers.client-state) who.act service.act)
+        =/  pact=provider-action  [%client-leave service.act]
         :_  state
-        [(poke-provider wire who.act %client-leave service.act) ~]
+        [(poke:pass [who.act %notify] %notify-provider-action !>(pact))]~
       ==
     --
   ::
@@ -160,8 +168,8 @@
     |=  =path
     ^-  (quip card _this)
     ?+  path  (on-watch:def path)
-        [%notify @ ~]
-      =*  service  i.t.path
+        [%notify @ @ ~]
+      =*  service  i.t.t.path
       ?.  (~(has ju providers.client-state) src.bowl service)
         ~|("permission denied" !!)
       `this
@@ -184,16 +192,16 @@
         [%hark ~]
       ?+  -.sign  (on-agent:def wire sign)
           %fact
+        :_  this
         ?.  ?=(%hark-update p.cage.sign)
-          [~ this]
+          ~
         =+  !<(hark-update=update:hark-store q.cage.sign)
         =/  notes=(list notification)  (filter-notifications:do hark-update)
         ?~  notes
-          `this
+          ~
         ::  only send the last one, since hark accumulates notifcations
         =/  =update  [%notification `notification`(snag 0 (flop notes))]
-        :_  this
-        [(give-update:do update)]~
+        [(fact-all:io %notify-update !>(update))]~
       ::
           %kick
         :_  this
@@ -202,31 +210,30 @@
     ::
     ::  subscription from provider to client
     ::
-        [%notify @ @ ~]
-      =/  who      (slav %p i.t.wire)
-      =*  service  i.t.t.wire
+        [%agentio-watch %notify @ @ ~]
+      =/  who      (slav %p i.t.t.wire)
+      =*  service  i.t.t.t.wire
       ?+  -.sign  (on-agent:def wire sign)
           %fact
         ?>  ?=(%notify-update p.cage.sign)
         =+  !<(=update q.cage.sign)
+        :_  this
         ?-  -.update
             %notification
           =/  entry=(unit provider-entry)  (~(get by provider-state) service)
           ?~  entry
-            `this
-          :_  this
-          [(send-notification u.entry who notification.update)]~
+            ~
+          [(send-notification:do u.entry who notification.update)]~
         ==
       ::
           %kick
         :_  this
-        [(watch-client who service)]~
+        [(watch:pass [who %notify] /notify/(scot %p who)/[service])]~
       ::
           %watch-ack
         ?~  p.sign
           `this
-        %-  (slog u.p.sign)
-        `this
+        ((slog u.p.sign) `this)
       ==
     ==
   ::
@@ -236,7 +243,7 @@
     ?+  wire  (on-arvo:def wire sign-arvo)
         [%register-binding @ @ @ ~]
       =/  who=@p   (slav %p i.t.wire)
-      =/  service  i.t.t.wire
+      =*  service  i.t.t.wire
       ::
       ?>  ?=(%iris -.sign-arvo)
       ?>  ?=(%http-response +<.sign-arvo)
@@ -254,10 +261,10 @@
         ==
       ::
       =/  entry=(unit provider-entry)  (~(get by provider-state) service)
-      ?~  entry
-        `this
-      =.  clients.u.entry  (~(put by clients.u.entry) who `sid)
       :-  ~
+      ?~  entry
+        this
+      =.  clients.u.entry  (~(put by clients.u.entry) who `sid)
       this(provider-state (~(put by provider-state) service u.entry))
     ::
         [%remove-binding *]
@@ -350,7 +357,7 @@
       |=  [[p=@t @t] [q=@t @t]]
       (aor p q)
     |=  [[p=@t q=@t] out=_url]
-    (cat 3 out (cat 3 p q))
+    (rap 3 out p q ~)
   =/  hmac-sig  (hmac-sha1t:hmac:crypto auth data)
   =/  b64-sig   (en:base64:mimes:html (met 3 hmac-sig) (swp 3 hmac-sig))
   =/  headers
@@ -368,8 +375,8 @@
   %+  roll  data
   |=  [[p=@t q=@t] out=@t]
   ?:  =(out '')
-    (cat 3 p (cat 3 '=' q))
-  (cat 3 out (cat 3 '&' (cat 3 p (cat 3 '=' q))))
+    (rap 3 p '=' q ~)
+  (rap 3 out '&' p '=' q ~)
 ::
 ++  send-notification
   |=  [entry=provider-entry who=@p =notification]
@@ -381,7 +388,7 @@
         :-  %node
         %+  roll  index.notification
         |=  [in=@ out=@t]
-        (cat 3 (cat 3 out '/') (scot %ud in))
+        (rap 3 out '/' (scot %ud in) ~)
     ==
   %:  post-form
       /send-notification/(scot %uv (sham eny.bowl))
@@ -419,31 +426,4 @@
       auth-token.entry
       params
   ==
-::
-++  watch-client
-  |=  [who=@p service=term]
-  ^-  card
-  =/  =wire  /notify/(scot %p who)/[service]
-  [%pass wire %agent [who %notify] %watch /notify/[service]]
-::
-++  leave-client
-  |=  [who=@p service=term]
-  ^-  card
-  =/  =wire  /notify/(scot %p who)/[service]
-  [%pass wire %agent [who %notify] %leave ~]
-::
-++  poke-provider
-  |=  [=wire who=@p act=provider-action]
-  ^-  card
-  [%pass wire %agent [who %notify] %poke %notify-provider-action !>(act)]
-::
-++  give-update
-  |=  =update
-  ^-  card
-  =/  paths=(list path)
-    %+  turn  ~(tap by sup.bowl)
-    |=  [duct =ship =path]
-    path
-  [%give %fact paths %notify-update !>(update)]
-::
 --
