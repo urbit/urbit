@@ -129,7 +129,7 @@
         %serve-glob
       =*  url-base  url-base.act
       =/  new-bind=?
-        (~(has by serving) url-base)
+        !(~(has by serving) url-base)
       =.  serving
         (~(put by serving) url-base glob+glob.act public.act %.y)
       :_  this
