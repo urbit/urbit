@@ -17,6 +17,7 @@
 ::
 ++  jael-delay  ~m10
 ++  poke-delay  ~h1
+++  save-delay  ~d1
 --
 ::
 =|  [%1 state-1]
@@ -42,6 +43,30 @@
       :-  [(request-kids-cz who wen) cad]
       %+  ~(put by dat)  who
       [[%await-resp wen] data:(~(gut by dat) who *info)]
+    ::
+    ++  flush-data
+      |=  si=^ship-info
+      ^-  ^ship-info
+      %-  ~(run by si)
+      |=  i=info
+      ^-  info
+      [status.i ~]
+    ::
+    ++  data-as-json
+      ^-  json
+      :-  %o
+      %-  ~(rep by ship-info)
+      |=  [[who=@p ship-status data=(list datum)] out=(map @t json)]
+      %+  ~(put by out)  (scot %p who)
+      :-  %a
+      %+  turn  (scag 100 data)
+      |=  datum
+      %-  pairs:enjs:format
+      :~  ping+(time:enjs:format sent)
+          response+(time:enjs:format wen.resp)
+          result+s+(scot %uv wat.resp)
+      ==
+    ::
     --
 |_  =bowl:gall
 +*  this  .
@@ -114,6 +139,14 @@
       [%bind ~]
     [~ this]
   ::
+      [%save-timer ~]
+    =/  =dill-blit:dill  [%sav /(scot %da now.bowl)/json q:(json-to-octs data-as-json)]
+    =.  ship-info  (flush-data ship-info)
+    :_  this
+    :~  [%pass /save %agent [our.bowl %hood] %poke %dill-blit !>(dill-blit)]
+        [%pass /save-timer %arvo %b %wait (add now.bowl save-delay)]
+    ==
+  ::
       [%jael-scry ~]
     ?>  ?=(%wake +<.sin)
     =/  new-ships  (deeded-ships bowl)
@@ -167,7 +200,29 @@
   ^-  (quip card _this)
   ?+  mar  (on-poke:def mar vas)
       %noun
-    ~&  state
+    ?:  =(q.vas %start-saving)
+      ~&  "saving on an interval of {<save-delay>}"
+      :_  this
+      [%pass /save-timer %arvo %b %wait (add now.bowl save-delay)]~
+    ::
+    ?:  =(q.vas %save-now)
+      =/  =dill-blit:dill
+        [%sav /(scot %da now.bowl)/json q:(json-to-octs data-as-json)]
+      :_  this
+      [%pass /save %agent [our.bowl %hood] %poke %dill-blit !>(dill-blit)]~
+    ::
+    ?:  =(-.q.vas %peers)
+      =/  peers=(map ship ?(%alien %known))
+        ;;((map ship ?(%alien %known)) +.q.vas)
+      =/  new-ships  ~(key by peers)
+      =/  old-ships  ~(key by ship-info)
+      =/  added      (~(dif in new-ships) old-ships)
+      ::  removed should always be empty? do nothing with it for now
+      ~?  (gth ~(wyt in added) 0)
+        [%added added]
+      =^  pokes  ship-info
+        (request-new added ship-info now.bowl)
+      [pokes this]
     [~ this]
   ::
       %handle-http-request
@@ -179,19 +234,7 @@
     ?+  url  not-found:gen
         [[[~ %json] [%'~radar' ~]] ~]
       ^-  simple-payload:http
-      %-  json-response:gen
-      :-  %o
-      %-  ~(rep by ship-info)
-      |=  [[who=@p ship-status data=(list datum)] out=(map @t json)]
-      %+  ~(put by out)  (scot %p who)
-      :-  %a
-      %+  turn  (scag 100 data)
-      |=  datum
-      %-  pairs:enjs:format
-      :~  ping+(time:enjs:format sent)
-          response+(time:enjs:format wen.resp)
-          result+s+(scot %uv wat.resp)
-      ==
+      (json-response:gen data-as-json)
     ::
         [[[~ %json] [%'~radar' %alive @ ~]] ~]
       ^-  simple-payload:http
