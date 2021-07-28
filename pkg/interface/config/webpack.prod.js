@@ -76,7 +76,7 @@ module.exports = {
     filename: (pathData) => {
       return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
     },
-    path: path.resolve(__dirname, '../../arvo/app/landscape/js/bundle'),
+    path: path.resolve(__dirname, '../../landscape/app/landscape/js/bundle'),
     publicPath: '/'
   },
   optimization: {
