@@ -1,4 +1,4 @@
-/-  glob
+/-  docket
 |%
 +$  action
   $%  ::  %serve-dir: from clay directory
@@ -15,7 +15,7 @@
       ::    glob       blobs
       ::    public     if false, require login
       ::
-      [%serve-glob url-base=path =glob:glob public=?]
+      [%serve-glob url-base=path =glob:docket public=?]
       ::  %unserve-dir: remove binding on url-base
       ::
       [%unserve-dir url-base=path]

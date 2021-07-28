@@ -3,10 +3,10 @@
 ::  mounts HTTP endpoints for Landscape (and third-party) user applications
 ::
 /-  srv=file-server, glob
-/+  *server, default-agent, verb, dbug, version
+/+  *server, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
-+$  serving    (map url-base=path [=content public=? single-page=?])
++$  serving    (map path [=content public=? single-page=?])
 +$  content
   $%  [%clay =path]
       [%glob =glob:glob]
@@ -19,7 +19,7 @@
   ==
 --
 ::
-%+  verb  |
+%+  verb  &
 %-  agent:dbug
 ::
 =|  state-3
@@ -32,17 +32,8 @@
 ++  on-init
   ^-  (quip card _this)
   |^
-  :_  %_  this
-          serving
-        %-  ~(gas by *^serving)
-        %+  turn
-          ^-  (list path)
-          [/ /'~landscape' ~]
-        |=(pax=path [pax [clay+/app/landscape %.n %.y]])
-      ==
-  :~  (connect /)
-      (connect /'~landscape')
-  ==
+  :_  this
+  (connect /)^~
   ::
   ++  connect
     |=  =path
@@ -80,6 +71,10 @@
       [content public %.y]
     ==
   ?>  ?=(%3 -.old-state)
+  =.  serving.old-state
+    (~(del by serving.old-state) /)
+  =.  serving.old-state
+    (~(del by serving.old-state) /[''])
   [~ this(state old-state)]
   ::
   +$  serving-0  (map url-base=path [=clay=path public=?])
@@ -133,10 +128,13 @@
     ::
         %serve-glob
       =*  url-base  url-base.act
-      ?:  (~(has by serving) url-base)
-        ~|("url already bound to {<(~(got by serving) url-base.act)>}" !!)
-      :-  [%pass url-base %arvo %e %connect [~ url-base] %file-server]~
-      this(serving (~(put by serving) url-base glob+glob.act public.act %.y))
+      =/  new-bind=?
+        (~(has by serving) url-base)
+      =.  serving
+        (~(put by serving) url-base glob+glob.act public.act %.y)
+      :_  this
+      ?.  new-bind  ~
+      [%pass url-base %arvo %e %connect [~ url-base] %file-server]~
     ::
         %unserve-dir
       :-  [%pass url-base.act %arvo %e %disconnect [~ url-base.act]]~
@@ -164,27 +162,10 @@
   ++  handle-http-request
     |=  =inbound-request:eyre
     ^-  simple-payload:http
-    |^
     =*  req       request.inbound-request
     =*  headers   header-list.req
     =/  req-line  (parse-request-line url.req)
     ?.  =(method.req %'GET')  not-found:gen
-    =.  site.req-line
-      %+  murn  site.req-line
-      |=  =cord
-      ^-  (unit ^cord)
-      ?:(=(cord '') ~ `cord)
-    =/  is-file   ?=(^ ext.req-line)
-    =?  req-line  ?=(~ ext.req-line)
-      [[[~ %html] (snoc site.req-line 'index')] args.req-line]
-    ?~  site.req-line
-      not-found:gen
-    =*  url-prefix  landscape-homepage-prefix.configuration
-    ?.  ?|  ?=(~ url-prefix)
-            =(u.url-prefix i.site.req-line)
-        ==
-      not-found:gen
-    ::
     ?:  ?=([%'~landscape' %js %session ~] site.req-line)
       %+  require-authorization-simple:app
         inbound-request
@@ -194,114 +175,27 @@
         cache  %.n
       ==
     ::
-    =/  [payload=simple-payload:http public=?]  (get-file req-line is-file)
-    ?:  public  payload
-    (require-authorization-simple:app inbound-request payload)
-    ::
-    ++  get-file
-      |=  [req-line=request-line is-file=?]
-      ^-  [simple-payload:http ?]
-      =/  pax=path
-        ?~  ext.req-line  site.req-line
-        (snoc site.req-line u.ext.req-line)
-      =/  content=(unit [=content suffix=path public=?])
-        (get-content pax is-file)
-      ?~  content  [not-found:gen %.n]
-      ?-  -.content.u.content
-          %clay
-        =/  scry-path=path
-          :*  (scot %p our.bowl)
-              q.byk.bowl
-              (scot %da now.bowl)
-              (lowercase (weld path.content.u.content suffix.u.content))
-          ==
-        ?.  .^(? %cu scry-path)  [not-found:gen %.n]
-        ?:  ?=([~ %woff2] ext.req-line)
-          :_  public.u.content
-          [[200 [['content-type' '/font/woff2'] ~]] `.^(octs %cx scry-path)]
-        =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
-        :_  public.u.content
-        ?+  ext.req-line  not-found:gen
-            [~ %js]    (js-response:gen file)
-            [~ %css]   (css-response:gen file)
-            [~ %png]   (png-response:gen file)
-            [~ %svg]   (svg-response:gen file)
-            [~ %ico]   (ico-response:gen file)
-          ::
-              [~ %html]
-            %.  file
-            %*    .   html-response:gen
-                cache
-              !=(/app/landscape/index/html (slag 3 scry-path))
-            ==
-        ==
-      ::
-          %glob
-        =/  data=(unit mime)
-          (~(get by glob.content.u.content) suffix.u.content)
-        ?~  data
-          [not-found:gen %.n]
-        :_  public.u.content
-        =/  mime-type=@t  (rsh 3 (crip <p.u.data>))
-        =/  headers
-          :~  content-type+mime-type 
-              max-1-wk:gen 
-              'service-worker-allowed'^'/'
-          ==
-        [[200 headers] `q.u.data]
+    =/  =path
+      ?~  site.req-line
+        /
+      /[i.site.req-line]
+    ?.  (~(has by serving) path)
+      (redirect:gen '/~grid')
+    =/  is-file   ?=(^ ext.req-line)
+    =/  =content  content:(~(got by serving) path)
+    ?>  ?=(%glob -.content)
+    =/  suffix=^path
+      (weld (slag (lent path) site.req-line) (drop ext.req-line))
+    =/  data=mime
+      (~(gut by glob.content) suffix (~(got by glob.content) /index/html))
+    =/  mime-type=@t  (rsh 3 (crip <p.data>))
+    =/  headers
+      :~  content-type+mime-type 
+          max-1-wk:gen 
+          'service-worker-allowed'^'/'
       ==
-    ::
-    ++  lowercase
-      |=  upper=(list @t)
-      %+  turn  upper
-      |=  word=@t
-      %-  crip
-      %+  turn  (rip 3 word)
-      |=  char=@t
-      ?.  &((gte char 'A') (lte char 'Z'))
-        char
-      (add char ^~((sub 'a' 'A')))
-    ::
-    ++  get-content
-      |=  [pax=path is-file=?]
-      ^-  (unit [content path ?])
-      =/  first-try  (match-content-path pax (~(del by serving) /) is-file)
-      ?^  first-try  first-try
-      =/  root  (~(get by serving) /)
-      ?~  root  ~
-      (match-content-path pax (~(gas by *^serving) [[/ u.root] ~]) is-file)
-    ::
-    ++  match-content-path
-      |=  [pax=path =^serving is-file=?]
-      ^-  (unit [content path ?])
-      %+  roll
-        %+  sort  ~(tap by serving)
-        |=  [[a=path *] [b=path *]]
-        (gth (lent a) (lent b))
-      |=  $:  [url-base=path =content public=? spa=?]
-              out=(unit [content path ?])
-          ==
-      ?^  out  out
-      =/  suf  (get-suffix url-base pax)
-      ?~  suf  ~
-      =-  `[content - public]
-      ?:  ?&(spa !is-file)
-        /index/html
-      u.suf
-    ::
-    ++  get-suffix
-      |=  [a=path b=path]
-      ^-  (unit path)
-      ?:  (gth (lent a) (lent b))  ~
-      |-
-      ?~  a  `b
-      ?~  b  ~
-      ?.  =(i.a i.b)  ~
-      %=  $
-        a  t.a
-        b  t.b
-      ==
-    --
+    %+  require-authorization-simple:app  inbound-request
+    [[200 headers] `q.data]
   --
 ::
 ++  on-watch
