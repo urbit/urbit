@@ -146,7 +146,7 @@
         %+  fall
           (~(get by transform-marks) u.mark)
         =/  =tube:clay
-          .^(tube:clay (scry:hc %cc %home /[u.mark]/transform-add-nodes))
+          .^(tube:clay (scry:hc %cc q.byk.bowl /[u.mark]/transform-add-nodes))
         !<(cached-transform (tube !>(*indexed-post:store)))
       =/  [* result=(list [index:store node:store])]
         %+  roll
@@ -324,7 +324,7 @@
   =/  convert
     %+  fall
       (~(get by perm-marks.cache) key)
-    .^(cached-permission (scry %cf %home /[u.mark]/(perm-mark-name perm)))
+    .^(cached-permission (scry %cf q.byk.bowl /[u.mark]/(perm-mark-name perm)))
   :-  ((convert indexed-post) vip)
   %-  zing
   :~  ?:  (~(has by graph-to-mark.cache) resource)

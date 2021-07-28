@@ -364,11 +364,11 @@
     ==
   =/  pax=path
     ~|  no-file-for-thread+file
-    (need (get-fit:clay beak %ted file))
+    (need (get-fit:clay beak(r da+now.bowl) %ted file))
   :_  state
   :_  ~
   :+  %pass  /build/[new-tid]
-  [%arvo %c %warp p.beak q.beak ~ %sing %a r.beak pax]
+  [%arvo %c %warp p.beak q.beak ~ %sing %a da+now.bowl pax]
 ::
 ++  handle-build
   ~/  %handle-build
@@ -524,7 +524,7 @@
   =+    .^
       =tube:clay
       %cc
-      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[output]/json
+      /(scot %p our.bowl)/landscape/(scot %da now.bowl)/[output]/json
     ==
   :_  state(serving (~(del by serving.state) tid))
   %+  give-simple-payload:app:server  eyre-id
