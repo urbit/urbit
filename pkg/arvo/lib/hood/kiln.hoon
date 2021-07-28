@@ -165,7 +165,7 @@
   ^-  (unit (unit cage))
   ?+    path  [~ ~]
       [%x %kiln %vats ~]
-    :^  ~  ~  %noun
+    :^  ~  ~  %vats
     !>  ^-  (list [=desk hash=@uv =cass =arak])
     =/  ego  (scot %p our)
     =/  wen  (scot %da now)
@@ -391,6 +391,8 @@
     =.  vats
       ~>  %slog.0^leaf/"kiln: merge into {here} succeeded"
       (update-running-apps (get-apps-diff our loc now rein.rak))
+    =.  vats
+      (emit %give %fact [/kiln/desks]~ %noun !>(loc))
     ?.  =(%base loc)
       vats
     =.  kiln  (bump (sy %base %kids ~))
@@ -646,6 +648,7 @@
   |=  =path
   ?>  (team:title our src)
   ?+    path  ~|(kiln-path/path !!)
+      [%desks ~]  abet
       [%ark ~]
     abet(moz :_(moz [%give %fact ~ kiln-ark/!>(ark)]))
   ==
