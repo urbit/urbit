@@ -56,7 +56,7 @@ instance ToNoun Noun where
   toNoun = id
 
 instance FromNoun Noun where
-  parseNoun = pure
+  parseNoun n = {-# SCC pot_Noun #-} pure n
 
 
 --- Atom -----------------------------------------------------------------------
@@ -66,7 +66,7 @@ instance ToNoun Atom where
 
 instance FromNoun Atom where
   parseNoun = named "Atom" . \case
-    Atom a   -> pure a
+    Atom a   -> {-# SCC pure_atm #-} pure ({-# SCC atm #-} a)
     Cell _ _ -> fail "Expecting an atom, but got a cell"
 
 
@@ -503,7 +503,7 @@ instance ToNoun Bytes where
     toNoun = Atom . bytesAtom . toBS . unBytes
 
 instance FromNoun Bytes where
-    parseNoun = named "Bytes" . fmap (MkBytes . fromBS . atomBytes) . parseNoun
+    parseNoun = named "Bytes" . fmap (MkBytes . {-# SCC "wows" #-} fromBS . atomBytes) . parseNoun
 
 
 -- Octs ------------------------------------------------------------------------
@@ -774,8 +774,8 @@ instance (FromNoun a, FromNoun b) => FromNoun (a, b) where
       case n of
         A _   -> shortRec 0
         C x y -> do
-          (,) <$> named "1" (parseNoun x)
-              <*> named "2" (parseNoun y)
+          (,) <$> named "1" ({-# SCC p1 #-} (parseNoun x))
+              <*> named "2" ({-# SCC p2 #-} (parseNoun y))
 
 instance (ToNoun a, ToNoun b, ToNoun c) => ToNoun (a, b, c) where
   toNoun (x, y, z) = toNoun (x, (y, z))

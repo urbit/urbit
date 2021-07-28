@@ -117,6 +117,7 @@ fromNounExn n = runParser (parseNoun n) [] onFail onSuccess
 
 -- Cord Conversions ------------------------------------------------------------
 
+{-# NOINLINE parseNounUtf8Atom #-}
 parseNounUtf8Atom :: Noun -> Parser Text
 parseNounUtf8Atom n =
     named "utf8-atom" $ do
