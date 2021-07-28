@@ -24,7 +24,7 @@
 ::  /group/%path                             associations for group
 ::
 /-  store=metadata-store, pull-hook
-/+  default-agent, verb, dbug, resource, *migrate
+/+  default-agent, verb, dbug, resource, *migrate, lib=metadata-store
 |%
 +$  card  card:agent:gall
 +$  base-state-0
@@ -347,6 +347,18 @@
       =/  =md-resource:store
         [i.t.t.path (de-path:resource t.t.t.path)]
       ``noun+!>(`(unit association:store)`(~(get by associations) md-resource))
+    ::
+        [%x %metadata-json @ @ @ @ ~]
+      =/  =md-resource:store
+        [i.t.t.path (de-path:resource t.t.t.path)]
+      =/  assoc=(unit association:store)  (~(get by associations) md-resource)
+      ?~  assoc  ~
+      =/  =json
+        %-  pairs:enjs:format
+        :~  group+s+(enjs-path:resource group.u.assoc)
+            metadatum+(metadatum:enjs:lib metadatum.u.assoc)
+        ==
+      ``json+!>(json)
     ::
         [%x %resource @ *]
       =/  app=term        i.t.t.path
