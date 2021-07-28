@@ -60,12 +60,7 @@
 +*  this  .
     def  ~(. (default-agent this %|) bowl)
     bec   byk.bowl(r da+now.bowl)
-++  on-init
-  ^-  (quip card _this)
-  ::  delay through timer to make sure %spider has started
-  :_  this
-  %+  turn  ~(tap by ~(key by globs.state))
-  |=(=path (wait-start now.bowl path))
+++  on-init  `this
 ::
 ++  on-save   !>(state)
 ++  on-load
@@ -131,26 +126,20 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
+  |^
   ?+    mark  (on-poke:def mark vase)
-      %glob-make
+      %path
     =+  !<(dir=path vase)
     :_  this
     =/  home=path  /(scot %p our.bowl)/home/(scot %da now.bowl)
     =+  .^(paths=(list path) %ct (weld home dir))
-    =+  .^(=js=tube:clay %cc (weld home /js/mime))
-    =+  .^(=map=tube:clay %cc (weld home /map/mime))
     =/  =glob:glob
       %-  ~(gas by *glob:glob)
       %+  turn  paths
       |=  pax=path
       ^-  [path mime]
-      =+  .^(file=@t %cx (weld home pax))
-      =/  mar  (snag 0 (flop pax))
-      :-  (slag (lent dir) pax)
-      ?+  mar  ~|(unsupported-glob-type+mar !!)
-        %js   !<(mime (js-tube !>(file)))
-        %map  !<(mime (map-tube !>(file)))
-      ==
+      =/  mar  (rear pax)
+      [(slag (lent dir) pax) (to-mime pax)]
     =/  =path  /(cat 3 'glob-' (scot %uv (sham glob)))/glob
     ~&  globbed+`(set ^path)`~(key by glob)
     [%pass /make %agent [our.bowl %hood] %poke %drum-put !>([path (jam glob)])]~
@@ -167,6 +156,16 @@
       (on-load !>(new-state))
     (on-poke:def mark vase)
   ==
+  ::
+  ++  to-mime
+    =/  home=path  /(scot %p our.bowl)/work/(scot %da now.bowl)
+    |=  =path
+    ^-  mime
+    =/  mar=^mark  (rear path)
+    =+  .^(vas=^vase %cr (weld home path))
+    =+  .^(=tube:clay %cc (weld home /[mar]/mime))
+    !<(mime (tube vas))
+  --
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
