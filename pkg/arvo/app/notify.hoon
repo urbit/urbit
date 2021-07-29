@@ -202,8 +202,7 @@
         ::  only send the last one, since hark accumulates notifcations
         =/  =update  [%notification `notification`(snag 0 (flop notes))]
         =/  card  (fact-all:io %notify-update !>(update))
-        ?~  card  ~
-        [u.card]~
+        (drop card)
       ::
           %kick
         :_  this
