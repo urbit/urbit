@@ -117,12 +117,13 @@
 ::
 ++  fact-all
   |=  =cage
-  ^-  card
+  ^-  (list card)
   =/  paths=(list path)
     %+  turn  ~(tap by sup.bowl)
     |=  [duct ship =path]
     path
-  [%give %fact paths cage]
+  ?~  paths  ~
+  [%give %fact paths cage]~
 ::
 ++  kick
   |=  paths=(list path)
