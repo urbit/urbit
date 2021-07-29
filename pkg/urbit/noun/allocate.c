@@ -162,6 +162,9 @@ _box_free(u3a_box* box_u)
 {
   c3_w* box_w = (c3_w *)(void *)box_u;
 
+  if ( box_u->use_w == 0 ) {
+    return;
+  }
   c3_assert(box_u->use_w != 0);
   box_u->use_w -= 1;
   if ( 0 != box_u->use_w ) {
@@ -2695,4 +2698,82 @@ u3a_string(u3_atom a)
   u3r_bytes(0, met_w, (c3_y*)str_c, a);
   str_c[met_w] = 0;
   return str_c;
+}
+
+typedef struct {
+  c3_w atoms_w;
+  c3_w cells_w;
+  c3_w atom_size_w;
+  c3_w refs_w[21];
+  c3_w sizes_w[21];
+  c3_w mugs_w;
+  c3_w simcel_w;
+} u3a_stats;
+
+/* u3a_stat(): print loom stats
+*/
+void
+u3a_stat(void)
+{
+  u3a_stats stat_u = {0};
+  c3_w tem_w = 0, sib_w;
+
+  /* Sweep through the arena, repairing and counting leaks.
+  */
+  {
+    u3_post box_p = _(u3a_is_north(u3R)) ? u3R->rut_p : u3R->hat_p;
+    u3_post end_p = _(u3a_is_north(u3R)) ? u3R->hat_p : u3R->rut_p;
+    c3_w*   box_w = u3a_into(box_p);
+    c3_w*   end_w = u3a_into(end_p);
+
+    while ( box_w < end_w ) {
+      u3a_box* box_u = (void *)box_w;
+
+      stat_u.refs_w[(box_u->use_w > 20) ? 20 : box_u->use_w]++;
+      if ( box_u->use_w > 0 ) {
+        // best-effort guess of atom vs cell: is it six words long?
+        //
+        if ( ((u3a_noun*)(u3a_boxto(box_u)))->mug_w != 0 ) {
+          stat_u.mugs_w++;
+        }
+
+        if ( u3a_minimum == box_u->siz_w ) {
+          stat_u.cells_w++;
+          u3a_cell* cel_u = ((u3a_cell*)(u3a_boxto(box_u)));
+          if (cel_u->hed < 0x100 && cel_u->tel < 0x100) {
+            stat_u.simcel_w++;
+          }
+        }
+        else {
+          stat_u.atoms_w++;
+          stat_u.atom_size_w += box_u->siz_w;
+
+          sib_w = 0;
+          tem_w = (box_u->siz_w < u3a_minimum) ? 0 : (box_u->siz_w - u3a_minimum);
+          while ( tem_w ) { ++sib_w; tem_w >>= 1; }
+          stat_u.sizes_w[(sib_w > 20) ? 20 : sib_w]++;
+        }
+      }
+      box_w += box_u->siz_w;
+    }
+  }
+
+  fprintf(stderr, "boxes: %d\r\n", stat_u.atoms_w + stat_u.cells_w);
+  fprintf(stderr, "mugs:  %d\r\n", stat_u.mugs_w);
+  fprintf(stderr, "simple cells: %d\r\n", stat_u.simcel_w);
+  fprintf(stderr, "atoms: %d\r\n", stat_u.atoms_w);
+  fprintf(stderr, "cells: %d\r\n", stat_u.cells_w);
+  u3a_print_memory(stderr, "atoms:", stat_u.atom_size_w);
+  u3a_print_memory(stderr, "cells:", stat_u.cells_w * u3a_minimum);
+
+  c3_w i_w;
+
+  for ( i_w = 0; i_w < 21; ++i_w ) {
+    fprintf(stderr, "  ref[%2d]: %d\r\n", i_w, stat_u.refs_w[i_w]);
+  }
+
+  fprintf(stderr, "  size[%7d]: %d\r\n", 4 * u3a_minimum, stat_u.sizes_w[0]);
+  for ( i_w = 1; i_w < 21; ++i_w ) {
+    fprintf(stderr, "  size[%7d]: %d\r\n", 4 * (u3a_minimum + (1 << (i_w - 1))), stat_u.sizes_w[i_w]);
+  }
 }

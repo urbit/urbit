@@ -674,3 +674,8 @@
         */
           c3_c*
           u3a_string(u3_atom a);
+
+        /* u3a_stat(): print loom stats
+        */
+          void
+          u3a_stat(void);

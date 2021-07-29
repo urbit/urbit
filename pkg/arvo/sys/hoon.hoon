@@ -9399,7 +9399,7 @@
       ^-  (pair type nock)
       =+  lug=(find %read hyp)
       ?:  ?=(%| -.lug)  ~>(%mean.'hoon' ?>(?=(~ rig) p.lug))
-      =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
+      :: =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
       (etco p.lug rig)
     ::
     ++  mull
@@ -9410,7 +9410,7 @@
         ?>   &(?=(%| -.q.lug) ?=(~ rig))
         [p.p.p.lug p.p.q.lug]
       ?>  ?=(%& -.q.lug)
-      =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
+      :: =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
       (endo [p.p.lug p.q.lug] dox rig)
     --
   ::
@@ -10210,7 +10210,7 @@
     ++  nice
       |=  typ=type
       ~_  leaf+"mint-nice"
-      ?>  ?|(!vet (nest(sut gol) & typ))
+      :: ?>  ?|(!vet (nest(sut gol) & typ))
       typ
     ::
     ++  grow
@@ -10386,7 +10386,7 @@
       ::  ~_  (dunk(sut gol) 'need')
       ::  ~_  (dunk(sut typ) 'have')
       ~_  leaf+"mull-nice"
-      ?>  ?|(!vet (nest(sut gol) & typ))
+      :: ?>  ?|(!vet (nest(sut gol) & typ))
       typ
     ::
     ++  grow

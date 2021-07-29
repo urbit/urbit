@@ -261,6 +261,8 @@ _serf_grab(u3_serf* sef_u)
     sef_u->sac = u3_nul;
 
     u3l_log("\n");
+
+    u3a_stat();
   }
 }
 
