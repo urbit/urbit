@@ -472,7 +472,7 @@ export const getDeepOlderThan = (
 ) => ({
   app: 'graph-store',
   path: `/graph/${ship}/${name}/node/siblings` +
-        `/${start.length > 0 ? 'older' : 'oldest'}` +
+        `/${start.length > 0 ? 'older' : 'newest'}` +
         `/kith/${count}${encodeIndex(start)}`
 });
 
