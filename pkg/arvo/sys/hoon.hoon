@@ -2293,34 +2293,29 @@
   ::
   ++  pet                                               ::  delete view
     |*  k=_?>(?=(^ a) k.n.a)
-    ^-  (unit (pair _?>(?=(^ a) n.a) _a))
-    |-
+    |-  ^-  (unit (pair _?>(?=(^ a) n.a) _a))
     ?~  a  ~
     ?~  t.a
       ?.  =(k k.n.a)  ~
       (some [n.a ~])
     ?-    -.t.a
         %llos
-      ?:  (gor k m.p.t.a)
-        %+  biff
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+        %+  biff  $(a [n.p.t.a l.p.t.a m.p.t.a])
         |=  z=(pair _?>(?=(^ a) n.a) _a)
-          [p.z (toy q.z [n.a r.p.t.a m.a])]
-        $(a [n.p.t.a l.p.t.a m.p.t.a])
-      %+  biff
+        `[p.z (toy q.z [n.a r.p.t.a m.a])]
+      %+  biff  $(a [n.a r.p.t.a m.a])
       |=  z=(pair _?>(?=(^ a) n.a) _a)
-        [p.z (toy [n.p.t.a l.p.t.a m.p.t.a] q.z)]
-      $(a [n.a r.p.t.a m.a])
+      `[p.z (toy [n.p.t.a l.p.t.a m.p.t.a] q.z)]
     ::
         %rlos
-      ?:  (gor k m.p.t.a)
-        %+  biff
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+        %+  biff  $(a [n.a l.p.t.a m.p.t.a])
         |=  z=(pair _?>(?=(^ a) n.a) _a)
-          [p.z (toy q.z [n.p.t.a r.p.t.a m.a])]
-        $(a [n.a l.p.t.a m.p.t.a])
-      %+  biff
+        `[p.z (toy q.z [n.p.t.a r.p.t.a m.a])]
+      %+  biff  $(a [n.p.t.a r.p.t.a m.a])
       |=  z=(pair _?>(?=(^ a) n.a) _a)
-        [p.z (toy [n.a l.p.t.a m.p.t.a] q.z)]
-      $(a [n.p.t.a r.p.t.a m.a])
+      `[p.z (toy [n.a l.p.t.a m.p.t.a] q.z)]
     ==
   ::
   ++  pan                                               ::  insert view
