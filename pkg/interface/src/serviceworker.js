@@ -7,6 +7,7 @@ import {
   CacheFirst, NetworkFirst,
   StaleWhileRevalidate
 } from 'workbox-strategies';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 //  generate a different sw for every build, to bust cache properly
 const hash = process.env.LANDSCAPE_SHORTHASH;
@@ -111,25 +112,33 @@ const encoder = new TextEncoder();
 // Map with server connections, where key - url, value - EventSource
 const serverConnection = {};
 // For each request opens only one server connection and use it for next requests with the same url
-function getServerConnection (url) {
+async function getServerConnection (url) {
   if (!serverConnection.url) {
     serverConnection.url = url;
   }
 
-  if (!serverConnection.source || serverConnection.source.readyState === 2) {
-    const source = new EventSource(serverConnection.url || url);
+  if (!serverConnection.source) {
     const listeners = [];
+    const source = new AbortController();
+    fetchEventSource(serverConnection.url || url, {
+      credentials: 'include',
+      accept: '*',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      signal: source.signal,
+      openWhenHidden: true,
+      onmessage: (event) => {
+        const parsedData = JSON.parse(event.data);
+        serverConnection.eventId = parseInt(parsedData.id, 10);
 
-    source.onmessage = (event) => {
-      const parsedData = JSON.parse(event.data);
-      serverConnection.eventId = parseInt(parsedData.id, 10);
-
-      const responseData = encodeEvent(event);
-      const handlers = serverConnection.listeners.slice();
-      handlers.forEach(({ handle }) => {
-        handle(responseData);
-      });
-    };
+        const responseData = encodeEvent(event);
+        const handlers = serverConnection.listeners.slice();
+        handlers.forEach(({ handle }) => {
+          handle(responseData);
+        });
+      }
+    });
 
     serverConnection.source = source;
     serverConnection.listeners = listeners;
@@ -145,15 +154,14 @@ registerRoute(
     const { headers } = request;
     return headers.get('Accept') === 'text/event-stream';
   },
-  ({ url }) => {
+  async ({ url }) => {
     const id = url.searchParams.get('id');
     url.searchParams.delete('id');
+    const connection = await getServerConnection(url.href);
 
     const stream = new ReadableStream({
       start: (controller) => {
         controller.enqueue(encodeEvent({ data: 'hello!' }));
-
-        const connection = getServerConnection(url.href);
         connection.count += 1;
         console.log('current', connection.count, id);
 
@@ -175,12 +183,12 @@ const handlerMap = {
   CLOSE_STREAM: closeStream
 };
 
-self.addEventListener('message', (event) => {
+self.addEventListener('message', async (event) => {
   if (!event.data) {
     return;
   }
 
-  handlerMap[event.data.type](event.data);
+  await handlerMap[event.data.type](event.data);
 });
 
 function getChannel() {
@@ -201,8 +209,8 @@ function getChannel() {
   });
 }
 
-function closeStream({ url, id }) {
-  const connection = getServerConnection(url);
+async function closeStream({ url, id }) {
+  const connection = await getServerConnection(url);
 
   if (connection.count <= 1) {
     clearConnection();
@@ -223,7 +231,7 @@ function closeStream({ url, id }) {
 }
 
 function clearConnection(url) {
-  serverConnection.source.close();
+  serverConnection.source.abort();
 
   delete serverConnection.url;
   delete serverConnection.source;
@@ -237,8 +245,8 @@ function clearConnection(url) {
   console.log('closing', url);
 }
 
-function encodeEvent({ data, type, retry, lastEventId }) {
-  const responseText = sseChunkData(data, type, retry, lastEventId);
+function encodeEvent({ data, event, retry, id }) {
+  const responseText = sseChunkData(data, event, retry, id);
   return encoder.encode(responseText);
 }
 

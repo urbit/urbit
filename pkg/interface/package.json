@@ -6,6 +6,7 @@
   "private": true,
   "dependencies": {
     "@babel/runtime": "^7.12.5",
+    "@microsoft/fetch-event-source": "github:arthyn/fetch-event-source",
     "@reach/disclosure": "^0.10.5",
     "@reach/menu-button": "^0.10.5",
     "@reach/tabs": "^0.10.5",
