@@ -56,7 +56,10 @@
     =/  old  !<(versioned-state old-vase)
     ?-  -.old
         %0
-      `this(state old)
+      :_  this(state old)
+      ?.  (~(has by wex.bowl) [/hark our.bowl %hark-store])
+        ~
+      [(~(watch-our pass:io /hark) %hark-store /updates)]~
     ==
   ::
   ++  on-poke
