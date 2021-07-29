@@ -170,7 +170,7 @@ u3qc_rep(u3_atom a,
   }
 
   u3l_log("rep: stub\r\n");
-  return u3m_bail(c3__fail);
+  return u3_none;
 }
 
 u3_noun
