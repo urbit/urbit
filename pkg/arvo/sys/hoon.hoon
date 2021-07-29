@@ -2137,6 +2137,22 @@
   ::
   ++  wyt  ?~(a 0 +((size t.a)))                        ::  queue size
   ::
+  ++  sam                                               ::  equality
+    |*  b=_a
+    ^-  ?
+    =/  loa  bot
+    =/  lob  bot(a b)
+    ?|  &(=(~ loa) =(~ lob))
+        !&(=(~ loa) !=(~ lob))
+        !&(!=(~ loa) =(~ lob))
+        ?>  &(?=(^ loa) ?=(^ lob))
+        ?&  =(k.p.u.loa k.p.u.lob)
+            =(p.p.u.loa p.p.u.lob)
+            =(v.p.u.loa v.p.u.lob)
+            $(a q.u.loa, b q.u.lob)
+        ==
+    ==
+  ::
   ++  get                                               ::  get binding by key
     |*  k=*
     =>  .(k `_?>(?=(^ a) k.n.a)`k)
