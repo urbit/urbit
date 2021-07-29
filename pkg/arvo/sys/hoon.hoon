@@ -2147,12 +2147,11 @@
     ?~  tor  ~
     ?-    -.tor
         %sing
-      ?.  =(k k.n.tor)
-        ~
+      ?.  =(k k.n.tor)  ~
       (some [p.n.tor v.n.tor])
     ::
         %play
-      ?:  (gor k top(a l.tor))
+      ?:  |(=(k top(a l.tor)) (gor k top(a l.tor)))
         $(a l.tor)
       $(a r.tor)
     ==
@@ -2180,12 +2179,12 @@
       (toy (one n.a) (one k p v))
     ?-    -.t.a
         %rlos
-      ?:  (gor k m.p.t.a)
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
         (toy $(a [n.a l.p.t.a m.p.t.a]) [n.p.t.a r.p.t.a m.a])
       (toy [n.a l.p.t.a m.p.t.a] $(a [n.p.t.a r.p.t.a m.a]))
     ::
         %llos
-      ?:  (gor k m.p.t.a)
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
         (toy $(a [n.p.t.a l.p.t.a m.p.t.a]) [n.a r.p.t.a m.a])
       (toy [n.p.t.a l.p.t.a m.p.t.a] $(a [n.a r.p.t.a m.a]))
     ==
@@ -2193,19 +2192,18 @@
   ++  del                                               ::  delete at key k
     |*  k=*
     |-  ^+  a
-    ?~  a
-      ~
+    ?~  a  ~
     ?:  ?=(~ t.a)
       ?:  =(k k.n.a)  ~
       (one n.a)
     ?-    -.t.a
         %rlos
-      ?:  (gor k m.p.t.a)
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
         (toy $(a [n.a l.p.t.a m.p.t.a]) [n.p.t.a r.p.t.a m.a])
       (toy [n.a l.p.t.a m.p.t.a] $(a [n.p.t.a r.p.t.a m.a]))
     ::
         %llos
-      ?:  (gor k m.p.t.a)
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
         (toy $(a [n.p.t.a l.p.t.a m.p.t.a]) [n.a r.p.t.a m.a])
       (toy [n.p.t.a l.p.t.a m.p.t.a] $(a [n.a r.p.t.a m.a]))
     ==
