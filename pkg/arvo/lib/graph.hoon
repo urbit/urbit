@@ -130,7 +130,7 @@
   |=  [res=resource start=@da]
   ^-  update-log:store
   %+  scry-for  update-log:store
-  /update-log/(scot %p entity.res)/[name.res]/subset/(scot %da start)/'~'
+  /update-log/(scot %p entity.res)/[name.res]/subset/'~'/(scot %da start)
 ::
 ++  get-keys
   ^-  resources
