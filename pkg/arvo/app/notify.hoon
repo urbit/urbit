@@ -56,7 +56,10 @@
     =/  old  !<(versioned-state old-vase)
     ?-  -.old
         %0
-      `this(state old)
+      :_  this(state old)
+      ?.  (~(has by wex.bowl) [/hark our.bowl %hark-store])
+        ~
+      [(~(watch-our pass:io /hark) %hark-store /updates)]~
     ==
   ::
   ++  on-poke
@@ -201,7 +204,8 @@
           ~
         ::  only send the last one, since hark accumulates notifcations
         =/  =update  [%notification `notification`(snag 0 (flop notes))]
-        [(fact-all:io %notify-update !>(update))]~
+        =/  card  (fact-all:io %notify-update !>(update))
+        (drop card)
       ::
           %kick
         :_  this
