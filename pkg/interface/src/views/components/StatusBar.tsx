@@ -7,7 +7,7 @@ import {
   Row,
   Text
 } from '@tlon/indigo-react';
-import React, { useRef, useCallback } from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
@@ -16,7 +16,7 @@ import useHarkState from '~/logic/state/hark';
 import useLaunchState from '~/logic/state/launch';
 import useInviteState from '~/logic/state/invite';
 import useLocalState, { selectLocalState } from '~/logic/state/local';
-import useSettingsState, { selectCalmState } from '~/logic/state/settings';
+import useSettingsState, { selectCalmState, SettingsState } from '~/logic/state/settings';
 import { Dropdown } from './Dropdown';
 import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
@@ -42,10 +42,9 @@ const StatusBar = (props) => {
   } else if (window.navigator.platform.includes('Win')) {
     metaKey = '⊞ Win+';
   }
+  const selKey = (s: SettingsState) => s.keyboard.leap.replace('meta+', metaKey);
 
-  const leapKey: string = useSettingsState(
-    useCallback(s => s.keyboard['leap'], ['leap'])
-    )?.replace('meta+', metaKey) || '';
+  const leapKey = useSettingsState(selKey);
   const { toggleOmnibox } = useLocalState(localSel);
   const { hideAvatars } = useSettingsState(selectCalmState);
 

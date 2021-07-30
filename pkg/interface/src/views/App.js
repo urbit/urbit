@@ -1,7 +1,6 @@
 import dark from '@tlon/indigo-dark';
 import light from '@tlon/indigo-light';
 import shallow from 'zustand/shallow';
-import 'mousetrap-global-bind';
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import 'react-hot-loader';

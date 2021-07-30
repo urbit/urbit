@@ -41,7 +41,7 @@ export const Content = (props) => {
     e.preventDefault();
     e.stopImmediatePropagation();
     props.toggleOmnibox();
-  }, []));
+  }, [props.toggleOmnibox]));
 
   const [hasProtocol, setHasProtocol] = useLocalStorageState(
     'registeredProtocol', false
