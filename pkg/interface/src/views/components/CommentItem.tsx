@@ -110,50 +110,52 @@ return false;
           group={group}
           isRelativeTime
         ></Author>
-        <Box opacity={hovering ? '100%' : '0%'}>
-          <Dropdown
-            alignX="right"
-            alignY="top"
-            options={
-              <Col
-                p="2"
-                border="1"
-                borderRadius="1"
-                borderColor="lightGray"
-                backgroundColor="white"
-                gapY="2"
-              >
-                <Action bg="white" onClick={doCopy}>
-                  {copyDisplay}
-                </Action>
-                {(window.ship == post?.author && !disabled) ? (
-                  <ActionLink
-                    color="blue"
-                    to={{
-                      pathname: props.baseUrl,
-                      search: `?edit=${commentIndex}`
-                    }}
-                  >
-                    Update
-                  </ActionLink>
-                ) : null}
-                {(window.ship == post?.author || ourRole == 'admin') &&
-                !disabled ? (
-                  <Action
-                    height="unset"
-                    bg="white"
-                    onClick={onDelete}
-                    destructive
-                  >
-                    Delete
+        {!post.pending &&
+          <Box opacity={hovering ? '100%' : '0%'}>
+            <Dropdown
+              alignX="right"
+              alignY="top"
+              options={
+                <Col
+                  p="2"
+                  border="1"
+                  borderRadius="1"
+                  borderColor="lightGray"
+                  backgroundColor="white"
+                  gapY="2"
+                >
+                  <Action bg="white" onClick={doCopy}>
+                    {copyDisplay}
                   </Action>
-                ) : null}
-              </Col>
-            }
-          >
-            <Icon icon="Ellipsis" />
-          </Dropdown>
-        </Box>
+                  {(window.ship == post?.author && !disabled) ? (
+                    <ActionLink
+                      color="blue"
+                      to={{
+                        pathname: props.baseUrl,
+                        search: `?edit=${commentIndex}`
+                      }}
+                    >
+                      Update
+                    </ActionLink>
+                  ) : null}
+                  {(window.ship == post?.author || ourRole == 'admin') &&
+                  !disabled ? (
+                    <Action
+                      height="unset"
+                      bg="white"
+                      onClick={onDelete}
+                      destructive
+                    >
+                      Delete
+                    </Action>
+                  ) : null}
+                </Col>
+              }
+            >
+              <Icon icon="Ellipsis" />
+            </Dropdown>
+          </Box>
+        }
       </Row>
       <GraphContent
         borderRadius={1}

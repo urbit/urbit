@@ -2,9 +2,9 @@ import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import { patp2dec } from 'urbit-ob';
 import shallow from 'zustand/shallow';
 
-import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs, getGraph, getShallowChildren } from '@urbit/api';
+import { Association, deSig, GraphNode, Graphs, FlatGraphs, resourceFromPath, ThreadGraphs, getGraph, getShallowChildren, setScreen } from '@urbit/api';
 import { useCallback } from 'react';
-import { createState, createSubscription, reduceStateN } from './base';
+import { createState, createSubscription, reduceStateN, pokeOptimisticallyN } from './base';
 import airlock from '~/logic/api';
 import { addDmMessage, addPost, Content, getDeepOlderThan, getFirstborn, getNewest, getNode, getOlderSiblings, getYoungerSiblings, markPending, Post, addNode, GraphNodePoke } from '@urbit/api/graph';
 import { GraphReducer, reduceDm } from '../reducers/graph-update';
@@ -34,8 +34,8 @@ export interface GraphState {
   getGraph: (ship: string, name: string) => Promise<void>;
   addDmMessage: (ship: string, contents: Content[]) => Promise<void>;
   addPost: (ship: string, name: string, post: Post) => Promise<void>;
-
   addNode: (ship: string, name: string, post: GraphNodePoke) => Promise<void>;
+  setScreen: (screen: boolean) => void;
 }
 // @ts-ignore investigate zustand types
 const useGraphState = createState<GraphState>('Graph', (set, get) => ({
@@ -144,6 +144,10 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     const data = await airlock.scry(getShallowChildren(ship, name, index));
     data['graph-update'].fetch = true;
     GraphReducer(data);
+  },
+  setScreen: (screen: boolean) => {
+    const poke = setScreen(screen);
+    pokeOptimisticallyN(useGraphState, poke, reduceDm);
   }
   // getKeys: async () => {
   //   const api = useApi();

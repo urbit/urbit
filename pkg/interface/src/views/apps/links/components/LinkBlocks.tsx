@@ -55,8 +55,10 @@ export function LinkBlocks(props: LinkBlocksProps) {
   }, [association.resource]);
 
   const orm = useMemo(() => {
-    const nodes = [null, ...Array.from(props.graph)];
-
+    const graph = Array.from(props.graph).filter(
+      ([idx, node]) => typeof node?.post !== 'string'
+    );
+    const nodes = [null, ...graph];
     const chunks = _.chunk(nodes, colCount);
     return new BigIntOrderedMap<[bigInt.BigInteger, GraphNode][]>().gas(
       chunks.reverse().map((chunk, i) => {

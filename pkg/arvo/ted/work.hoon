@@ -11,7 +11,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<(desks=(list desk) arg)
+=+  !<([~ desks=(list desk)] arg)
 =?  desks  =(~ desks)  [%work]~
 |-  ^-  form:m
 =*  loop  $
