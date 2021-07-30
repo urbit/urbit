@@ -12,8 +12,10 @@
     %-  ~(rep by associations)
     |=  [[=md-resource:ms =association:ms] out=wain]
     ^-  wain
-    ?>  ?=(%graph app-name.md-resource)
-    ?>  ?=(%graph -.config.metadatum.association)
+    ?.  ?=(%graph app-name.md-resource)
+      out
+    ?.  ?=(%graph -.config.metadatum.association)
+      out
     :: ensure graph, given by association, exists in `our`
     ::
     ?.  (~(has in accessible-graphs) resource.md-resource)
@@ -26,10 +28,9 @@
     :: prepare channel-info argument
     ::
     =/  channel-info=channel-info:c
-      :*
-        group.association
-        resource.md-resource
-        module.config.metadatum.association
+      :*  group.association
+          resource.md-resource
+          module.config.metadatum.association
       ==
     :: walk the graph
     ::
@@ -37,24 +38,22 @@
       :: non-chat (e.g. links & notes)
       ::
         %+  weld  out
-        %:
-          walk-nested-graph-for-most-recent-entries
-          u.graph
-          content
-          channel-info
-          from
-          to
+        %:  walk-nested-graph-for-most-recent-entries
+            u.graph
+            content
+            channel-info
+            from
+            to
         ==
       ::
       %chat
         %+  weld  out
-        %:
-          walk-chat-graph
-          u.graph
-          content
-          channel-info
-          from
-          to
+        %:  walk-chat-graph
+            u.graph
+            content
+            channel-info
+            from
+            to
         ==
     ==
   ::
@@ -111,12 +110,10 @@
 ::
 :: parsing and formatting
 ::
-++  concatenate-cords  (cury cat 3)
-::
 ++  resource-to-cord
   |=  =resource:r
   ^-  @t
-  :(concatenate-cords (scot %p entity.resource) '/' (scot %tas name.resource))
+  (rap 3 (scot %p entity.resource) '/' (scot %tas name.resource) ~)
 ::
 ++  paths-to-resources
   |=  paxs=(list path)
@@ -178,7 +175,7 @@
   ^-  @t
   ?-  -.reference
     %group  (resource-to-cord group.reference)
-    %graph  :(concatenate-cords (resource-to-cord group.reference) ': ' (resource-to-cord resource.uid.reference))
+    %graph  (rap 3 (resource-to-cord group.reference) ': ' (resource-to-cord resource.uid.reference) ~)
   ==
 ::
 ++  format-post-to-comma-separated-cord
@@ -186,14 +183,13 @@
   ^-  @t
   %+  join-cords
     ','
-  :~
-    (scot %da time-sent.post)
-    (scot %p author.post)
-    (resource-to-cord group.channel-info)
-    (resource-to-cord channel.channel-info)
-    (scot %tas channel-type.channel-info)
-    :: exclude content; optionally add later
-    ::
+  :~  (scot %da time-sent.post)
+      (scot %p author.post)
+      (resource-to-cord group.channel-info)
+      (resource-to-cord channel.channel-info)
+      (scot %tas channel-type.channel-info)
+      :: exclude content; optionally add later
+      ::
   ==
 ::
 ++  join-cords
@@ -206,7 +202,7 @@
     :: don't put delimiter before first element
     ::
     cord
-  :(concatenate-cords out delimiter cord)
+  (rap 3 out delimiter cord ~)
 ::
 :: walking graphs
 ::
@@ -267,13 +263,12 @@
   ::
   =?  out  ?=(%graph -.children.i.nodes)
     %+  weld  out
-    %:
-      walk-nested-graph-for-most-recent-entries
-      p.children.i.nodes
-      content
-      channel-info
-      from
-      to
+    %:  walk-nested-graph-for-most-recent-entries
+        p.children.i.nodes
+        content
+        channel-info
+        from
+        to
     ==
   ::
   ?-  -.post.i.nodes
