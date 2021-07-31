@@ -16,8 +16,6 @@ const FeePicker = ({ feeChoices, feeValue, setFeeValue, feeDismiss }) => {
 
   return (
     <Box
-      // ref={modalRef}
-      // onClick={() => feeDismiss()}
       position="absolute"
       p={4}
       border="1px solid green"
