@@ -23,9 +23,6 @@ const ExternalInvoice = ({ payee, stopSending, satsAmount }) => {
     useSettings();
   const [txHex, setTxHex] = useState('');
   const [ready, setReady] = useState(false);
-  const [copiedPsbt, setCopiedPsbt] = useState(false);
-  const [downloadedButton, setDownloadedButton] = useState(false);
-  const [copiedButton, setCopiedButton] = useState(false);
   const [localError, setLocalError] = useState('');
   const [broadcasting, setBroadcasting] = useState(false);
   const invoiceRef = useRef();
@@ -65,16 +62,9 @@ const ExternalInvoice = ({ payee, stopSending, satsAmount }) => {
 
   const copyPsbt = () => {
     copyToClipboard(psbt);
-    setCopiedPsbt(true);
-    setCopiedButton(true);
-    setTimeout(() => {
-      setCopiedPsbt(false);
-      setCopiedButton(false);
-    }, 2000);
   };
 
   const downloadPsbtFile = () => {
-    setDownloadedButton(true);
     const blob = new Blob([psbt]);
     const downloadURL = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -83,9 +73,6 @@ const ExternalInvoice = ({ payee, stopSending, satsAmount }) => {
     document.body.appendChild(link);
     link.click();
     link.parentNode.removeChild(link);
-    setTimeout(() => {
-      setDownloadedButton(false);
-    }, 1000);
   };
 
   let inputColor = 'black';
@@ -179,38 +166,59 @@ const ExternalInvoice = ({ payee, stopSending, satsAmount }) => {
             </Text>
           </Box>
           <Box mt={3}>
-            <Text
-              mono
-              color="lightGray"
-              fontSize="14px"
-              style={{ overflowWrap: 'anywhere', cursor: 'pointer' }}
-              onClick={() => copyPsbt()}
-            >
-              {copiedPsbt ? 'copied' : psbt}
-            </Text>
-          </Box>
-          <Box mt={3} mb={2}>
-            <Text gray fontSize="14px">
-              Paste the signed transaction from your external wallet:
-            </Text>
-          </Box>
-          <Input
-            value={txHex}
-            fontSize="14px"
-            placeholder="..."
-            autoCapitalize="none"
-            autoCorrect="off"
-            color={inputColor}
-            backgroundColor={inputBg}
-            borderColor={inputBorder}
-            style={{ lineHeight: '4' }}
-            onChange={(e) => checkTxHex(e)}
-          />
-          {localError !== '' && (
-            <Row>
-              <Error error={localError} fontSize="14px" mt={2} />
+            <Row flexDirection="row">
+              <Button
+                borderRadius="24px"
+                border="none"
+                width="24px"
+                height="24px"
+                padding="0px"
+                backgroundColor="veryLightGray"
+                onClick={() => downloadPsbtFile()}
+                mr={2}
+              >
+                <Icon icon="Download" width="12px" />
+              </Button>
+              <Button
+                borderRadius="24px"
+                border="none"
+                width="24px"
+                height="24px"
+                padding="0px"
+                backgroundColor="veryLightGray"
+                onClick={() => copyPsbt()}
+              >
+                <Icon icon="Copy" />
+              </Button>
             </Row>
-          )}
+          </Box>
+          <Row
+            justifyContent="flex-end"
+            alignItems="center"
+            flexDirection="row"
+          >
+            <Text gray bold fontSize="16px" mr={2}>
+              Signed Tx
+            </Text>
+            <Input
+              value={txHex}
+              fontSize="14px"
+              placeholder="7f3..."
+              autoCapitalize="none"
+              autoCorrect="off"
+              color={inputColor}
+              width="70%"
+              backgroundColor={inputBg}
+              borderColor={inputBorder}
+              style={{ lineHeight: '4' }}
+              onChange={(e) => checkTxHex(e)}
+            />
+            {localError !== '' && (
+              <Row>
+                <Error error={localError} fontSize="14px" mt={2} />
+              </Row>
+            )}
+          </Row>
           <Row
             flexDirection="row"
             mt={4}
@@ -218,48 +226,13 @@ const ExternalInvoice = ({ payee, stopSending, satsAmount }) => {
             justifyContent="center"
           >
             <Button
-              mr={3}
-              disabled={downloadedButton}
-              fontSize={1}
-              fontWeight="bold"
-              color={downloadedButton ? 'green' : 'orange'}
-              backgroundColor={
-                downloadedButton ? 'veryLightGreen' : 'midOrange'
-              }
-              style={{
-                cursor: downloadedButton ? 'default' : 'pointer',
-              }}
-              borderColor="none"
-              borderRadius="24px"
-              height="48px"
-              onClick={() => downloadPsbtFile()}
-            >
-              {downloadedButton ? 'PSBT Downloading' : 'Download PSBT'}
-            </Button>
-            <Button
-              mr={3}
-              disabled={copiedButton}
-              fontSize={1}
-              fontWeight="bold"
-              color={copiedButton ? 'green' : 'orange'}
-              backgroundColor={copiedButton ? 'veryLightGreen' : 'midOrange'}
-              style={{
-                cursor: copiedButton ? 'default' : 'pointer',
-              }}
-              borderColor="none"
-              borderRadius="24px"
-              height="48px"
-              onClick={() => copyPsbt()}
-            >
-              {copiedButton ? 'PSBT Copied!' : 'Copy PSBT'}
-            </Button>
-            <Button
               primary
               mr={3}
               fontSize={1}
               borderRadius="24px"
               border="none"
               height="48px"
+              width="100%"
               onClick={() => sendBitcoin(txHex)}
               disabled={!ready || localError || broadcasting}
               color={
