@@ -59,14 +59,14 @@
   ==
 +$  kiln-unmount  $@(term [knot path])                  ::
 +$  kiln-sync                                           ::
-  $:  syd=desk                                          ::
-      her=ship                                          ::
-      sud=desk                                          ::
+  $:  syd=desk                                          ::  local desk
+      her=ship                                          ::  foreign ship
+      sud=desk                                          ::  foreign desk
   ==
 +$  kiln-unsync                                         ::
-  $:  syd=desk                                          ::
-      her=ship                                          ::
-      sud=desk                                          ::
+  $:  syd=desk                                          ::  local desk
+      her=ship                                          ::  foreign ship
+      sud=desk                                          ::  foreign desk
   ==
 +$  kiln-merge                                          ::
   $@  ~
@@ -81,6 +81,15 @@
   $:  syd=desk
       bas=beak
       con=(list [beak germ])
+  ==
+::  $diff: subscription update
+::
++$  diff
+  $%  [%block =desk =arak =weft blockers=(set desk)]
+      [%reset =desk =arak]
+      [%merge =desk =arak]
+      [%merge-sunk =desk =arak =tang]
+      [%merge-fail =desk =arak =tang]
   ==
 --
 |=  [bowl:gall state]
@@ -108,7 +117,7 @@
 ++  on-init
   =<  abet
   ~>  %slog.0^leaf/"kiln: boot"
-  =/  =rein  [add=(sy %hood %dojo ~) sub=~]
+  =/  =rein  [add=(sy %hood %dojo ~) sub=~]  ::  TODO questionable
   =/  daz  (get-apps-want base-bill rein)
   %-  emil
   %-  zing  ^-  (list (list card:agent:gall))
@@ -201,6 +210,11 @@
   ::
   ++  emit  |=(card:agent:gall vats(kiln (^emit +<)))
   ++  emil  |=((list card:agent:gall) vats(kiln (^emil +<)))
+  ++  give
+    |%
+    ++  snap  [%give %fact ~[/vats] %kiln-vats-snap !>(ark)]
+    ++  diff  |=(d=^diff [%give %fact ~[/vats] %kiln-vats-diff !>(d)])
+    --
   ++  pass
     |%
     ++  find      (warp %find [%sing %y ud+1 /])
@@ -246,6 +260,9 @@
   ++  uninstall
     |=  lac=desk
     ^+  kiln
+    ?:  =(%base lac)
+      ~>  %slog.0^leaf/"kiln: |uninstall: %base cannot be uninstalled"
+      !!
     ?.  (~(has by ark) lac)
       ~>  %slog.0^leaf/"kiln: |uninstall: {<lac>} not installed, ignoring"
       kiln
@@ -254,7 +271,7 @@
     =/  ded  (get-apps-live our lac now)
     ::  hood and dojo must never die
     ::
-    =.  ded  (skip ded |=(d=dude ?=(?(%hood %base) d)))
+    =.  ded  (skip ded |=(d=dude ?=(?(%hood %dojo) d)))
     =.  vats  (stop-dudes ded)
     kiln(ark (~(del by ark) lac))
   ::  +install: set up desk sync to .lac to install all apps from [her rem]
@@ -277,6 +294,7 @@
   ++  reset
     ^+  vats
     ~>  %slog.0^leaf/"kiln: resetting tracking for {here}"
+    =.  vats  (emit (diff:give %reset loc rak))
     =.  ark  (~(del by ark) loc)
     (install loc [ship desk]:rak)
   ::  +bump: handle kernel kelvin upgrade
@@ -354,11 +372,13 @@
       ?:  (gth num.new-weft num.old-weft)
         ~>  %slog.0^leaf/"kiln: cannot install {here}, old kelvin {<new-weft>}"
         ~>  %slog.0^leaf/"kiln: will retry at foreign kelvin {<old-weft>}"
-        (emit sync-ud:pass)
+        =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
+        (emil sync-ud:pass (diff:give diff) ~)
       ?:  (lth num.new-weft num.old-weft)
         ~>  %slog.0^leaf/"kiln: future version {<new-weft>}, enqueueing"
         =.  next.rak  (snoc next.rak [(dec aeon.rak) new-weft])
-        (emit sync-ud:pass)
+        =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
+        (emil sync-ud:pass (diff:give diff) ~)
       ~>  %slog.0^leaf/"kiln: merging into {here}"
       (emil ~[merge-main sync-ud]:pass)
     ::
@@ -369,10 +389,8 @@
     ::
     ?.  =(~ blockers)
       ~>  %slog.0^leaf/"kiln: OTA blocked on {<blockers>}"
-      =-  (emil sync-ud:pass - ~)
-      :*  %give  %fact  [/vats]~  %kiln-vats-diff
-          !>([%blocked arak=rak weft=new-weft blockers=blockers])
-      ==
+      =/  =diff  [%block loc rak new-weft blockers]
+      (emil sync-ud:pass (diff:give diff) ~)
     ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
     (emil ~[merge-main sync-ud]:pass)
   ::
@@ -383,14 +401,16 @@
     ?:  ?=([%| %ali-unavailable *] p.syn)
       =+  "kiln: merge into {here} failed, maybe because sunk; restarting"
       %-  (slog leaf/- p.p.syn)
+      =.  vats  (emit (diff:give %merge-sunk loc rak p.p.syn))
       reset
     ?:  ?=(%| -.p.syn)
       =+  "kiln: merge into {here} failed, waiting for next revision"
       %-  (slog leaf/- p.p.syn)
+      =.  vats  (emit (diff:give %merge-fail loc rak p.p.syn))
       vats
-    =.  vats
-      ~>  %slog.0^leaf/"kiln: merge into {here} succeeded"
-      (update-running-apps (get-apps-diff our loc now rein.rak))
+    ~>  %slog.0^leaf/"kiln: merge into {here} succeeded"
+    =.  vats  (emit (diff:give %merge loc rak))
+    =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
     ?.  =(%base loc)
       vats
     =.  kiln  (bump (sy %base %kids ~))
@@ -402,18 +422,14 @@
     ?>  ?=(%mere +<.syn)
     ?:  ?=([%| %ali-unavailable *] p.syn)
       ~>  %slog.0^leaf/"kiln: OTA to %kids failed, maybe peer sunk; restarting"
-      =.  vats
-        =/  fact  merge-kids-sunk/[rak p.p.syn]
-        (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
+      =.  vats  (emit (diff:give %merge-sunk %kids rak p.p.syn))
       reset
-    =/  fact
-      ?-  -.p.syn
-        %&  ~>  %slog.0^leaf/"kiln: OTA to %kids succeeded"
-            merge-kids/rak
-        %|  ~>  %slog.0^leaf/"kiln: OTA to %kids failed {<p.p.syn>}"
-            merge-kids-fail/[rak p.p.syn]
-      ==
-    (emit %give %fact [/vats]~ %kiln-vats-diff !>(fact))
+    ?-  -.p.syn
+      %&  ~>  %slog.0^leaf/"kiln: OTA to %kids succeeded"
+          (emit (diff:give %merge %kids rak))
+      %|  ~>  %slog.0^leaf/"kiln: OTA to %kids failed {<p.p.syn>}"
+          (emit (diff:give %merge-fail %kids rak p.p.syn))
+    ==
   ::
   ++  take-onto
     |=  [=wire syn=sign-arvo]
@@ -432,6 +448,7 @@
   ::
   ++  start-dudes
     |=  daz=(list dude)
+    ~>  %slog.0^leaf/"kiln: starting {<daz>}"
     (emil `(list card:agent:gall)`(zing (turn daz start-dude:pass)))
   ::
   ++  stop-dudes
@@ -454,7 +471,11 @@
   %-  ~(gas in *(set desk))
   %+  murn  ~(tap by ark)
   |=  [=desk =arak]
-  ?:  =(kel (read-kelvin-local our desk now))
+  ::  TODO: make this work -- aeon.arak is wrong
+  ::        also, scrying at current doesn't work because middle of event
+  ::        maybe replace with %warp
+  ::?:  =(kel (read-kelvin-local our desk aeon.arak))
+  ?:  &
     ~
   ?:  (lien next.arak |=([* k=weft] =(k kel)))
     ~
@@ -479,6 +500,7 @@
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
     %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
+    %kiln-bump               =;(f (f !<(_+<.f vase)) poke-bump)
     %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
     %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
     %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
@@ -511,6 +533,10 @@
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
   (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
+::
+++  poke-bump
+  |=  except=(set desk)
+  abet:(bump:vats +<)
 ::
 ++  poke-cancel
   |=  a=@tas
@@ -647,7 +673,7 @@
   ?>  (team:title our src)
   ?+    path  ~|(kiln-path/path !!)
       [%ark ~]
-    abet(moz :_(moz [%give %fact ~ kiln-ark/!>(ark)]))
+    abet(moz :_(moz [%give %fact ~ %kiln-vats-snap !>(ark)]))
   ==
 ::
 ++  take-agent
