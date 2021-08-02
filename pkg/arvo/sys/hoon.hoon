@@ -387,6 +387,15 @@
   ::
   _|?($:product)
 ::
+++  pest
+  |$  [k v]
+  ::    lru cache
+  ::
+  ::  a `++pest` contains a capacity, current size, tick (next logical
+  ::  time), and `++pri` queue.
+  ::
+  [cap=@ siz=@ tic=@ pri=(pri k v)]
+::
 ++  tree
   |$  [node]
   ::    tree mold generator
@@ -1899,7 +1908,7 @@
     ?~(r.a [~ n.a] $(a r.a))
   --
 ::                                                      ::
-::::  2r: psq logic                                     ::
+::::  2r: psq, cache logic                              ::
   ::                                                    ::
   ::
 ++  up
@@ -2408,6 +2417,50 @@
           $(t.a r.p.t.a)
       ==
     --
+  --
+::
+++  lu                                                  ::  +pest logic
+  =|  a=(pest)
+  |@
+  ++  new                                               ::  new cache
+    |=  cap=@
+    ^+  a
+    [cap 0 0 ~]
+  ::
+  ++  ebb                                               ::  trim cache
+    ?:  (gth siz.a cap.a)
+      a(siz (dec siz.a), pri ~(cut up pri.a))
+    a
+  ::
+  ++  put                                               ::  insert
+    |*  [k=* v=*]
+    ^+  a
+    =/  vue  (~(pan up pri.a) [k tic.a v])
+    =:  a
+      siz  ?~  p.vue  +(siz.a)  siz.a
+      tic  +(tic.a)
+      pri  q.vue
+    ==
+    ebb
+  ::
+  ++  get                                               ::  lookup and pri bump
+    |*  k=*
+    ^-  (unit (pair _?>(?=(^ pri.a) v.n.pri.a) _a))
+    =/  bump
+      |*  c=(unit (pair @ _?>(?=(^ pri.a) v.n.pri.a)))
+      ^-  %+  pair
+            _?>(?=(^ pri.a) v.n.pri.a)
+          (unit (pair @ _?>(?=(^ pri.a) v.n.pri.a))))
+      ?~  c  [~ ~]
+      [(some q.c) (some [tic.a q.c])]
+    =/  val  (~(jab up pri.a) k bump)
+    ?~  p.val  ~
+    %_  a
+      tic  +(tic.a)
+      pri  q.val
+    ==
+    =.  a  ebb
+    (some [p.val a])
   --
 ::
 ::::  2o: containers                                    ::
