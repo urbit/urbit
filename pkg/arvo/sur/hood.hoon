@@ -49,6 +49,7 @@
   :~  leaf/"/sys/kelvin: {<[lal num]:weft>}"
       leaf/"base hash:   {?:((gth len 1) <meb> <(head meb)>)}"
       leaf/"%cz hash:    {<hash>}"
+      leaf/"remote aeon: {<aeon.arak>}"
       leaf/"force on:    {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
       leaf/"force off:   {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
   ==
@@ -60,8 +61,8 @@
   q:(need (~(get an:cloy ankh) /sys/kelvin))
 ::
 ++  read-kelvin-local
-  |=  [our=ship =desk now=@da]
-  .^(weft cx+/(scot %p our)/[desk]/(scot %da now)/sys/kelvin)
+  |=  [our=ship =desk =aeon]
+  .^(weft cx+/(scot %p our)/[desk]/(scot %ud aeon)/sys/kelvin)
 ::
 ++  read-kelvin-foreign
   |=  [=ship =desk =aeon]
