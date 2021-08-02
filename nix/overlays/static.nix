@@ -16,7 +16,7 @@ let
 in {
   gmp = enableStatic prev.gmp;
 
-  curlMinimalUr = enableStatic prev.curlMinimalUr;
+  curlMinimal = enableStatic prev.curlMinimal;
 
   libuv = enableStatic prev.libuv;
 
