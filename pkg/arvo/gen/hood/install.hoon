@@ -1,5 +1,14 @@
+::  |install: install the .rem desk from .her into local .lac desk
+::
+::      > |install ~zod %landscape
+::    installs ~zod's %landscape desk into our %landscape desk.
+::
+::      > |install ~zod %landscape, =local %portrait
+::    installs ~zod's %landscape desk into our %portrait desk.
+::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [arg=[her=@p sud=@tas ~] ~]
+        [[her=@p rem=desk ~] local=@tas]
     ==
-[%kiln-install [lac=sud her=her rem=sud]:arg]
+=/  loc=desk  ?:(=(%$ local) rem local)
+[%kiln-install loc her rem]
