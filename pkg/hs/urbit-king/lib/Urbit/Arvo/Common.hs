@@ -137,6 +137,7 @@ deriveNoun ''HttpServerConf
 data SocketEvent
     = SocketStart Noun
     | SocketContinue Noun
+    | SocketDone Noun
     | SocketCancel ()
   deriving (Eq, Ord, Show)
 

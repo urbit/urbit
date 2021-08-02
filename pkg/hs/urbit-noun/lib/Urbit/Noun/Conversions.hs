@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-deprecations -Wno-orphans #-}
 {-|
     Large Library of conversion between various types and Nouns.
 -}
@@ -372,7 +373,7 @@ instance FromNoun a => FromNoun (Lenient a) where
         fromNounErr n & \case
           Right x  -> pure (GoodParse x)
           Left err -> do
-            -- traceM ("LENIENT.FromNoun: " <> show err)
+            traceM ("LENIENT.FromNoun: " <> show err)
             -- traceM (ppShow n)
             pure (FailParse n)
 
