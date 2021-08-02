@@ -68,14 +68,15 @@ textToUtf8Atom :: Text -> Noun
 textToUtf8Atom = Atom . utf8Atom
 
 utf8AtomToText :: Noun -> Either Text Text
-utf8AtomToText = \case
+utf8AtomToText = {-# SCC "a4" #-} \case
     Cell _ _ -> Left "Expected @t, but got ^"
     Atom atm -> atomUtf8 atm & \case
         Left err -> Left (tshow err)
         Right tx -> pure tx
 
 instance Show Noun where
-  show = \case Atom a   -> showAtom a
+  show = {-# SCC "a5" #-}
+         \case Atom a   -> showAtom a
                Cell x y -> fmtCell (show <$> (x : toTuple y))
     where
       fmtCell :: [String] -> String
@@ -118,10 +119,10 @@ instance Ord Noun where
     case reallyUnsafePtrEquality# x y of
       1# -> EQ
       _  -> case (x, y) of
-              (Atom _,     Cell _ _)   -> LT
-              (Cell _ _,   Atom _)     -> GT
-              (Atom a1,    Atom a2)    -> compare a1 a2
-              (Cell h1 t1, Cell h2 t2) -> compare h1 h2 <> compare t1 t2
+              (NAtom _ _,     NCell _ _ _ _)   -> LT
+              (NCell _ _ _ _,   NAtom _ _)     -> GT
+              (NAtom _  a1,    NAtom _ a2)    -> compare a1 a2
+              (NCell _ _ h1 t1, NCell _ _ h2 t2) -> compare h1 h2 <> compare t1 t2
   {-# INLINE compare #-}
 
 

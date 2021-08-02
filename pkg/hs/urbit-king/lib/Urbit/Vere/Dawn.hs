@@ -499,8 +499,8 @@ tryMineComet ships seed =
   where
     -- Hash the incoming seed into a 64 bytes.
     baseHash = SHA512.hash $ toStrict $ B.encode seed
-    signSeed = fromBS (take 32 baseHash)
-    ringSeed = fromBS (drop 32 baseHash)
+    signSeed = {-# SCC "bs6" #-} fromBS (take 32 baseHash)
+    ringSeed = {-# SCC "bs7" #-} fromBS (drop 32 baseHash)
     ring = Ring signSeed ringSeed
     pass = ringToPass ring
     shipName = cometFingerprint pass

@@ -265,7 +265,8 @@ writeNoun :: Noun -> Put ()
 writeNoun !n =
   getRef >>= \case
     Just bk -> writeBackRef bk
-    Nothing -> case n of Atom a   -> writeAtom a
+    Nothing -> {-# SCC "a1" #-}
+               case n of Atom a   -> {-# SCC "a1_" #-} writeAtom a
                          Cell h t -> writeCell h t
 
 {-# INLINE writeMat #-}
@@ -342,8 +343,8 @@ compress !top = do
     backs :: H.CuckooHashTable Word Word <- H.newSized sz
 
     let proc :: Word -> Noun -> IO Word
-        proc !pos = \case
-            Atom a   -> pure (atomSz a)
+        proc !pos = {-# SCC "a2" #-} \case
+            Atom a   -> {-# SCC "a2_" #-} pure (atomSz a)
             Cell h t -> do !hSz <- go (pos+2) h
                            !tSz <- go (pos+2+hSz) t
                            pure (2+hSz+tSz)
@@ -358,9 +359,9 @@ compress !top = do
                     let rs    = refSz bak
                         doRef = H.insert backs p bak $> rs
                         noRef = proc p inp
-                    case inp of
+                    {-# SCC "a3" #-} case inp of
                         Cell _ _                              -> doRef
-                        Atom a | rs < atomSz (fromIntegral a) -> doRef
+                        Atom a | rs < atomSz (fromIntegral a) -> {-# SCC "a3_" #-} doRef
                         _                                     -> noRef
 
     res <- go 0 top

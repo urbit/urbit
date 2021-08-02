@@ -104,7 +104,7 @@ genBootSeq ship PillPill  {..} lite boot = do
 writeJobs :: EventLog -> Vector Job -> RIO e ()
 writeJobs log !jobs = do
   expect <- atomically (Log.nextEv log)
-  events <- fmap (fromList . fmap fromBS) $ traverse fromJob (zip [expect ..] $ toList jobs)
+  events <- fmap (fromList . fmap ({-# SCC "bs10" #-} fromBS)) $ traverse fromJob (zip [expect ..] $ toList jobs)
   Log.appendEvents log events
  where
   fromJob (expectedId, job) = do
@@ -679,7 +679,7 @@ runPersist log inpQ out = do
         unless (expectedId == eve) $ do
           throwIO (BadEventId expectedId eve)
         pure $ buildLogEvent mug $ toNoun (wen, non)
-    pure (fromBS <$> fromList lis)
+    pure ({-# SCC "bs11" #-} fromBS <$> fromList lis)
 
   getBatchFromQueue :: STM (NonNull [(Fact, FX)])
   getBatchFromQueue = readTQueue inpQ >>= go . singleton

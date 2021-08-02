@@ -75,7 +75,7 @@ readPortsFile :: HasPierPath e => RIO e (Maybe Word)
 readPortsFile = do
     (_, fil) <- portsFilePath
     bs <- readFile fil
-    evaluate (readMay $ decodeUtf8 $ fromBS bs)
+    evaluate (readMay $ decodeUtf8 $ {-# SCC "bs5" #-} fromBS bs)
 
 kingServer :: HasLogFunc e => (Int, Socket) -> RAcquire e King
 kingServer is =

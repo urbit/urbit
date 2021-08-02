@@ -278,7 +278,7 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
               |  dest:_ <- filter notSelf ls
               -> do
                 bump asFwd
-                forward dest $ fromBS $ encode pkt
+                forward dest $ {-# SCC "bs4" #-} fromBS $ encode pkt
                   { pktOrigin = pktOrigin
                             <|> Just (AAIpv4 (Ipv4 a) (fromIntegral p)) }
               where

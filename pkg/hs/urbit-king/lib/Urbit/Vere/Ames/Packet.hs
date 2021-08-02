@@ -121,7 +121,7 @@ instance Serialize Packet where
     pktRcvr <- getShip rcvrClass
 
     len <- remaining
-    pktContent <- fromBS <$> getBytes len
+    pktContent <- {-# SCC "bs9" #-} fromBS <$> getBytes len
 
     pure Packet{..}
     where

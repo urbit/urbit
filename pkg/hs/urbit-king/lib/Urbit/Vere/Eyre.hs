@@ -128,7 +128,7 @@ parseTlsConfig (PEM key, PEM certs) = do
   (cert, chain) <- case pems of
     []     -> Nothing
     p : ps -> pure (pemWriteBS p, pemWriteBS <$> ps)
-  pure $ TlsConfig (keyByt) (fromBS cert) (fromBS <$> chain)
+  pure $ TlsConfig (keyByt) ({-# SCC "bs14" #-} fromBS cert) ({-# SCC "bs15" #-} fromBS <$> chain)
  where
   wainBytes = encodeUtf8 . unWain
 

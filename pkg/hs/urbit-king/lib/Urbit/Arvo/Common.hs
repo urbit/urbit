@@ -98,13 +98,13 @@ type Method = H.StdMethod
 -- our types instead.
 
 instance ToNoun H.StdMethod where
-  toNoun = toNoun . MkBytes . fromBS . H.renderStdMethod
+  toNoun = toNoun . MkBytes . {-# SCC "bs18" #-} fromBS . H.renderStdMethod
 
 instance FromNoun H.StdMethod where
   parseNoun n = named "StdMethod" $ do
     MkBytes bs <- parseNoun n
     case H.parseMethod $ toBS bs of
-      Left md -> fail ("Unexpected method: " <> (decodeUtf8 $ fromBS md))
+      Left md -> fail ("Unexpected method: " <> (decodeUtf8 $ {-# SCC "bs19" #-} fromBS md))
       Right m -> pure m
 
 

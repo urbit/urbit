@@ -15,8 +15,8 @@ import qualified Network.HTTP.Types   as HT
 convertHeaders :: [HT.Header] -> [Header]
 convertHeaders = fmap f
   where
-    f (k, v) = Header (Cord $ decodeUtf8 $ fromBS $ CI.foldedCase k)
-                      (MkBytes $ fromBS v)
+    f (k, v) = Header (Cord $ decodeUtf8 $ {-# SCC "bs12" #-} fromBS $ CI.foldedCase k)
+                      (MkBytes $ {-# SCC "bs13" #-} fromBS v)
 
 unconvertHeaders :: [Header] -> [HT.Header]
 unconvertHeaders = fmap f

@@ -27,13 +27,14 @@ dumpJam fp = writeFile fp . view (re _Cue)
 
 tryCuePill :: PillFile -> IO ()
 tryCuePill pill =
-    loadNoun (show pill) >>= \case Nothing         -> print "nil"
+    loadNoun (show pill) >>= {-# SCC "a7" #-} 
+                             \case Nothing         -> print "nil"
                                    Just (Atom _)   -> print "atom"
                                    Just (Cell _ _) -> print "cell"
 
 tryCueJamPill :: PillFile -> IO ()
 tryCueJamPill pill = do
-  n <- loadNoun (show pill) >>= \case
+  n <- loadNoun (show pill) >>= {-# SCC "a8" #-} \case
          Nothing           -> print "failure" >> pure (Atom 0)
          Just n@(Atom _)   -> print "atom"    >> pure n
          Just n@(Cell _ _) -> print "cell"    >> pure n

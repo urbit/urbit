@@ -65,7 +65,7 @@ instance ToNoun Atom where
   toNoun = Atom
 
 instance FromNoun Atom where
-  parseNoun = named "Atom" . \case
+  parseNoun = named "Atom" . {-# SCC "a11" #-} \case
     Atom a   -> {-# SCC pure_atm #-} pure ({-# SCC atm #-} a)
     Cell _ _ -> fail "Expecting an atom, but got a cell"
 
@@ -355,8 +355,8 @@ instance (ToNoun a, ToNoun c) => ToNoun (AtomCell a c) where
   toNoun (ACCell c) = toNoun c
 
 instance (FromNoun a, FromNoun c) => FromNoun (AtomCell a c) where
-  parseNoun n = named "(,)" $ case n of
-                                Atom _   -> ACAtom <$> parseNoun n
+  parseNoun n = named "(,)" $ {-# SCC "a12" #-}  case n of
+                                Atom _   -> {-# SCC "a12_" #-} ACAtom <$> parseNoun n
                                 Cell _ _ -> ACCell <$> parseNoun n
 
 
@@ -432,9 +432,9 @@ instance ToNoun a => ToNoun [a] where
       nounFromList (x:xs) = Cell x (nounFromList xs)
 
 instance FromNoun a => FromNoun [a] where
-  parseNoun = named "[]" . \case
-      Atom 0   -> pure []
-      Atom _   -> fail "list terminated with non-null atom"
+  parseNoun = named "[]" . {-# SCC "a13" #-} \case
+      Atom 0   -> {-# SCC "a13_" #-} pure []
+      Atom _   -> {-# SCC "a13__" #-} fail "list terminated with non-null atom"
       Cell l r -> (:) <$> parseNoun l <*> parseNoun r
 
 
@@ -521,7 +521,7 @@ instance ToNoun Octs where
 instance FromNoun Octs where
     parseNoun x = named "Octs" $ do
         (word2Int -> len, atom) <- parseNoun x
-        let bs = fromBS $ atomBytes atom
+        let bs = {-# SCC "bs1" #-} fromBS $ atomBytes atom
         pure $ Octs $ case compare (length bs) len of
           EQ -> bs
           LT -> bs <> replicate (len - length bs) 0
@@ -715,10 +715,10 @@ instance ToNoun a => ToNoun (Maybe a) where
   toNoun (Just x) = Cell (Atom 0) (toNoun x)
 
 instance FromNoun a => FromNoun (Maybe a) where
-  parseNoun = named "Maybe" . \case
-      Atom          0   -> pure Nothing
-      Atom          n   -> unexpected ("atom " <> show n)
-      Cell (Atom 0) t   -> Just <$> parseNoun t
+  parseNoun = named "Maybe" . {-# SCC "a14" #-} \case
+      Atom          0   -> {-# SCC "a14_" #-} pure Nothing
+      Atom          n   -> {-# SCC "a14__" #-} unexpected ("atom " <> show n)
+      Cell (Atom 0) t   -> {-# SCC "a14___" #-} Just <$> parseNoun t
       Cell n        _   -> unexpected ("cell with head-atom " <> show n)
     where
       unexpected s = fail ("Expected unit value, but got " <> s)
@@ -735,7 +735,7 @@ instance (ToNoun a, ToNoun b) => ToNoun (Each a b) where
 
 instance (FromNoun a, FromNoun b) => FromNoun (Each a b) where
     parseNoun n = named "Each" $ do
-        (Atom tag, v) <- parseNoun n
+        (Atom tag, v) <- {-# SCC "a15" #-} parseNoun n
         case tag of
             0 -> named "&" (EachYes <$> parseNoun v)
             1 -> named "|" (EachNo <$> parseNoun v)
@@ -748,8 +748,8 @@ instance ToNoun () where
     toNoun () = Atom 0
 
 instance FromNoun () where
-    parseNoun = named "()" . \case
-        Atom 0 -> pure ()
+    parseNoun = named "()" . {-# SCC "a16" #-} \case
+        Atom 0 -> {-# SCC "a16_" #-} pure ()
         x      -> fail ("expecting `~`, but got " <> show x)
 
 instance ToNoun a => ToNoun (Unit a) where
@@ -770,12 +770,14 @@ shortRec n = fail ("record too short, only " <> show n <> " cells")
 instance (FromNoun a, FromNoun b) => FromNoun (a, b) where
   parseNoun n = pair
    where
+    p1' = parseNoun
+    p2' = parseNoun
     pair = named ("(,)") $ do
-      case n of
-        A _   -> shortRec 0
+      {-# SCC "a17" #-} case n of
+        A _   -> {-# SCC "a17_" #-} shortRec 0
         C x y -> do
-          (,) <$> named "1" ({-# SCC p1 #-} (parseNoun x))
-              <*> named "2" ({-# SCC p2 #-} (parseNoun y))
+          (,) <$> named "1" ({-# SCC p1 #-} (p1' x))
+              <*> named "2" ({-# SCC p2 #-} (p2' y))
 
 instance (ToNoun a, ToNoun b, ToNoun c) => ToNoun (a, b, c) where
   toNoun (x, y, z) = toNoun (x, (y, z))

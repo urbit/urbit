@@ -166,8 +166,8 @@ instance ToNoun Deco where
     DecoNull -> Atom 0
 
 instance FromNoun Deco where
-  parseNoun = named "Deco" . \case
-    Atom 0 -> pure DecoNull
+  parseNoun = named "Deco" . {-# SCC "a9" #-} \case
+    Atom 0 -> {-# SCC "a9_" #-} pure DecoNull
     n      -> parseNoun @Cord n <&> unCord >>= \case
                 "bl" -> pure DecoBl
                 "br" -> pure DecoBr
@@ -189,8 +189,8 @@ instance ToNoun Tint where
                       where atom a = Atom (fromIntegral a :: Natural)
 
 instance FromNoun Tint where
-  parseNoun = named "Tint" . \case
-    Atom 0 -> pure TintNull
+  parseNoun = named "Tint" . {-# SCC "a10" #-} \case
+    Atom 0 -> {-# SCC "a10_" #-} pure TintNull
     Cell (Atom r) (Cell (Atom g) (Atom b))
            -> pure (TintTrue (word r) (word g) (word b))
               where word w = fromIntegral w :: Word8

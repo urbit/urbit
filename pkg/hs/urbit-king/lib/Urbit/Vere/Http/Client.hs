@@ -160,7 +160,7 @@ client env plan = (initialEvents, runHttpClient)
 
         recv :: H.BodyReader -> RIO e (Maybe ByteString)
         recv read = io $ read <&> \case chunk | null chunk -> Nothing
-                                              | otherwise  -> Just (fromBS chunk)
+                                              | otherwise  -> Just ({-# SCC "bs2" #-} fromBS chunk)
 
         exec :: H.Response H.BodyReader -> RIO e ()
         exec resp = do

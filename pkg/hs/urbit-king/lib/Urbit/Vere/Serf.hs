@@ -157,4 +157,4 @@ collectFX serf log = do
 
 persistFX :: MonadIO m => Log.EventLog -> ConduitT (EventId, FX) Void m ()
 persistFX log = CC.mapM_ $ \(eId, fx) -> do
-  Log.writeEffectsRow log eId $ fromBS $ jamBS $ toNoun fx
+  Log.writeEffectsRow log eId $ {-# SCC "bs1" #-} fromBS $ jamBS $ toNoun fx

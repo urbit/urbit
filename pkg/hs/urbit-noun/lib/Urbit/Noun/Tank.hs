@@ -29,7 +29,7 @@ instance ToNoun Tank where
   toNoun (Tank t) = toNoun t
 
 instance FromNoun Tank where
-  parseNoun n@(Atom _) = do
+  parseNoun n@(Atom _) = {-# SCC "a18" #-} do
     Cord txt <- parseNoun n
     pure $ Tank $ Leaf $ Tape txt
   parseNoun n = Tank <$> parseNoun n

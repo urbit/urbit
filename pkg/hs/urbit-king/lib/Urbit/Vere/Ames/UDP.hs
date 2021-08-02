@@ -131,7 +131,7 @@ recvPacket
 recvPacket sok = do
   io (tryIOError $ recvFrom sok 4096) <&> \case
     Left  exn                   -> Left exn
-    Right (b, SockAddrInet p a) -> Right (Just (fromBS b, p, a))
+    Right (b, SockAddrInet p a) -> Right (Just ({-# SCC "bs8" #-} fromBS b, p, a))
     Right (_, _               ) -> Right Nothing
 
 
