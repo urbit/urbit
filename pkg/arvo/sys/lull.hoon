@@ -2093,10 +2093,15 @@
     $:
         file=path
     ==
+  +$  socket-event
+    $:
+        %socket-done  data=*                            :: done
+    ==
   +$  gift                                              ::  out result <-$
     $%  [%avow syn=sign-arvo]                           ::  response to %fyrd
         [%set-config =socket-config]
-==
+        [%response =socket-event]
+    ==
   +$  task                                              ::  in request ->$
     $~  [%vega ~]
     $%
@@ -2106,8 +2111,8 @@
         $>(%born vane-task)
     ==
   +$  fyrd                                              ::  input
-    $%  [%mas ~]                                        ::  |mass ocmmand
-        [%cod ~]                                        ::  code reset
+    $%  [%mas ~]                                        ::  |mass
+        [%cod ?]                                        ::  code reset
     ==                                                  ::
 
   --  ::khan
@@ -2122,7 +2127,7 @@
       gift:gall
       gift:iris
       gift:jael
-      gift:khan
+      gift:khan                                         ::khan gift
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -2167,7 +2172,7 @@
       [%gall gift:gall]
       [%iris gift:iris]
       [%jael gift:jael]
-      ::  [%khan gift:khan]
+      [%khan gift:khan]                                 ::khan gifts
   ==
 ::  $unix-task: input from unix
 ::

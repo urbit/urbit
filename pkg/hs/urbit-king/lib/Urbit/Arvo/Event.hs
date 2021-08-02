@@ -207,12 +207,12 @@ deriveNoun ''AmesEv
 -- Socket Events ---------------------------------------------------------------
 data SocketReq = SocketReq
   {
-    sFile :: FilePath
-  , sRequest :: Noun
+    sRequest :: Noun
+  -- , sId :: Noun
   } deriving (Eq , Ord, Show)
 
 data SocketEv
-    = SocketEvRequest       (SocketId, UD, UD, ()) SocketReq
+    = SocketEvFyrd       (SocketId, UD, UD, ()) SocketReq
     | SocketEvCancelRequest (SocketId, UD, UD, ()) ()
     | SocketEvRequestLocal  (SocketId, UD, UD, ()) SocketReq
     | SocketEvLive          (SocketId, ())         FilePath

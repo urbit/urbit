@@ -2,24 +2,37 @@
 module Urbit.Vere.Khan.Socket
   ( SockApi(..)
   , serv
+  , openSocket
+  , recvOnSocket
   , SockType(..)
   , SReqApi(..)
   , SockConf(..)
+  , SocketResponse(..)
   )
 where
 
 import Urbit.Prelude hiding (Builder)
 
 import Network.Socket as Net
-import qualified Control.Exception as E
-import qualified Network.Socket.ByteString as NBS
+-- import qualified Network.Socket.ByteString as NBS
+import qualified Network.Socket.ByteString.Lazy as LN
+import qualified Network.Socket.ByteString as BN
+import qualified Data.ByteString.Lazy as L
+-- import Urbit.Vere.Khan.Protocol
+-- import Data.Binary.Get (pushEndOfInput, pushChunk, runGetIncremental, Decoder(..))
 
 
 -- Internal Types --------------------------------------------------------------
+data SocketExn
+  = BadNoun ByteString
+  | MissingSocket
+ deriving Show
 
 data SockApi = SockApi
   { saKil :: IO ()
   , saFile :: STM FilePath
+  , saAddr :: STM SockAddr
+  , saSock :: STM Socket
   }
 
 data SockConf = SockConf { scFilePath :: FilePath, scType :: SockType }
@@ -27,16 +40,16 @@ data SockConf = SockConf { scFilePath :: FilePath, scType :: SockType }
 
 data SockType = STGeneric
     | STReq SReqApi
-
+data SocketResponse = SocketResponse {scResp :: ByteString}
 data SReqApi = SReqApi
-  { sReq :: Ship -> Word64 -> STM ()
+  { sReq :: Word64 -> ByteString -> STM ()
   -- , sKil :: Ship -> Word64 -> STM ()
   }
 instance Show SockType where
   show = \case
     STReq _      -> "STReq"
     STGeneric -> "STGeneric"
-
+instance Exception SocketExn where
 bindListen :: Net.Socket -> FilePath -> IO SockAddr
 bindListen sok file = do
   Net.bind sok . SockAddrUnix $ file
@@ -69,12 +82,12 @@ logDbg ctx msg = logInfo (prefix <> suffix)
  where
   prefix = display (concat $ fmap (<> ": ") ctx)
   suffix = displayShow msg
-forceOpenSocket
+openSocket
   :: forall e
    . HasLogFunc e
   => FilePath
   -> RAcquire e (SockAddr, Net.Socket)
-forceOpenSocket socketFile = mkRAcquire opn kil
+openSocket socketFile = mkRAcquire opn kil
  where
   kil = io . Net.close . snd
 
@@ -85,83 +98,103 @@ recvOnSocket
   :: forall e
    . HasLogFunc e
   => Socket
-  -> RAcquire e (ByteString, Net.Socket)
+  -> RAcquire e (L.ByteString, Net.Socket)
 recvOnSocket s = mkRAcquire rcv kil
  where
-  kil = io . Net.close . snd
+  kil (_bs, sok)= do
+    logDbg ctx ("in recv", "closing socket")
+    io $ Net.close sok
 
   rcv = do
-    res <- io $ NBS.recv s 400000
+    logDbg ctx ("in recv", "unix socket")
+    res <- io $ LN.recv s 400000
+    logDbg ctx ("received", res)
     pure (res, s)
+  ctx = ["KHAN", "SERV", "recvOnSocket"]
+serv :: HasLogFunc e
+         => IO () -> SockConf -> RIO e SockApi
+serv onFatal conf@SockConf {..} = do
+  logInfo (displayShow ("KHAN", "SERV", "Running Khan Server"))
+  fil <- newEmptyTMVarIO
+  adr <- newEmptyTMVarIO
+  sok <- newEmptyTMVarIO
+  tid <- async (runServ fil adr sok)
+  pure $ SockApi { saKil = cancel tid,
+                   saFile = readTMVar fil,
+                   saAddr = readTMVar adr,
+                   saSock = readTMVar sok
+                 }
+ where
+  runServ vFile vAddr vSock = do
+    logInfo (displayShow ("KHAN", "SERV", "runServ"))
+    rwith (openSocket scFilePath) $ \(sok) -> do
+      atomically (putTMVar vFile scFilePath)
+
+      startServer scType vAddr vSock (snd sok) onFatal
 
 startServer
   :: HasLogFunc e
-  => Net.Socket
+  => SockType
+  -> TMVar SockAddr
+  -> TMVar Socket
+  -> Net.Socket
   -> IO ()
   -> RIO e ()
-startServer sok onFatal = do
+startServer typ vAddr vSock sok onFatal = do
   envir <- ask
 
-  -- let handler r e = do
-  --       when (isFatal e) $ do
-  --         runRIO envir $ logError $ display $ msg r e
-  --         onFatal
-  --     isFatal e
-  --       | Just (IOError {ioe_type = ResourceExhausted}) <- fromException e
-  --       = True
-  --       | otherwise = False
+  let handler r e = do
+        when (isFatal e) $ do
+          runRIO envir $ logError $ display $ msg r e
+          onFatal
+      isFatal e
+        | (BadNoun byt) <- e
+        = False
+        | MissingSocket <- e
+        = True
+        | otherwise = False
 
-  --     msg r e = case r of
-  --       Just r  -> "khan: failed request from " <> (tshow $ W.remoteHost r)
-  --               <> " for " <> (tshow $ r) <> ": " <> tshow e
-  --       Nothing -> "khan: server exception: " <> tshow e
+      msg r e = case r of
+        Just r  -> "khan: failed request from " <> (tshow $ sok)
+                <> " for " <> (tshow $ r) <> ": " <> tshow e
+        Nothing -> "khan: server exception: " <> tshow e
 
-  runUnixSocket sok
+  case typ of
+    STReq SReqApi {..} -> do
+      runSocket sok sReq handler
+    STGeneric -> do
+      runGeneric sok
   pure ()
+  where
+    runSocket sok onReq handler = do
+      env <- ask
+      io $ forever $ do
+        (conn, addr) <- accept sok
+        runRIO env $ do
+          atomically (putTMVar vAddr addr)
+          atomically (putTMVar vSock conn)
+          logInfo (displayShow ("KHAN", "SOCKET", "message on socket"))
+          rwith (recvOnSocket conn) $ \(dat, s_) -> do
+            let byt = toStrict dat
+            let cued = (cueBS $ byt)
+            req <- do
+                  case cued of
+                    Left exn -> io $ handler (Just byt) (BadNoun byt) >> pure byt
+                    Right n -> pure $ jamBS n
+            runRIO env $ logDbg ctx ("runSocket", (show $ req))
+            atomically $ onReq 1 req
 
+    runGeneric sok = do
+      env <- ask
+      io $ forever $ do
+        (conn, SockAddrUnix fil) <- accept sok
+        runRIO env $ do
+          logInfo (displayShow ("KHAN", "SOCKET", "message on socket"))
 
---------------------------------------------------------------------------------
+          rwith (recvOnSocket conn) $ \(dat, s_) -> do
+            let n = (cueBS $ toStrict dat)
+            let res = either (\_ -> toStrict dat) jamBS n
 
-realServ :: HasLogFunc e
-         => IO () -> SockConf -> RIO e SockApi
-realServ onFatal conf@SockConf {..} = do
-  logInfo (displayShow ("KHAN", "SERV", "Running Real Server"))
-  fil <- newEmptyTMVarIO
-  tid <- async (runServ fil)
-  pure $ SockApi { saKil = cancel tid,
-                   saFile = readTMVar fil
-                 }
- where
-  runServ vFile = do
-    logInfo (displayShow ("KHAN", "SERV", "runServ"))
-    rwith (forceOpenSocket scFilePath) $ \(sok) -> do
-      atomically (putTMVar vFile scFilePath)
-      startServer (snd sok) onFatal
-
-serv :: HasLogFunc e =>  IO () -> SockConf -> RIO e SockApi
-serv onFatal conf = realServ onFatal conf
-
-runUnixSocket :: (HasLogFunc e) => Net.Socket -> RIO e ByteString
-runUnixSocket sok = do
-  env <- ask
-  io $ forever $ E.bracketOnError (accept sok) (close . fst) $
-    \(conn, SockAddrUnix fil) -> runRIO env $ do
-      logInfo (displayShow ("KHAN", "SOCKET", "message on socket"))
-      rwith (recvOnSocket sok) $ \(dat, s_) -> do
-        runRIO env $ logInfo (displayShow ("KHAN", "SOCKET", "msg: " <> tshow dat))
-        io $ (NBS.sendAll conn dat)
-      -- byt <- io $ toStrict <$> (NBS.recv sok 4000000)
-      -- dat <- cueBSExn byt >>= fromNounExn
-
-      -- forkFinally  (atomically $ socketFinally conn)
-      -- where
-      --   socketFinally conn = \case
-      --     Right rr -> pure rr
-      --     Left err -> withRIOThread $ do
-      --       logError (displayShow ("KHAN", "SOCKET", "error on socket: " <> tshow err))
-      --       gracefulClose conn 5000
-
--- withRIOThread :: (HasLogFunc e) => RIO e a -> RIO e (Async a)
--- withRIOThread act = do
---     env <- ask
---     io $ async $ runRIO env $ act
+            runRIO env $ logInfo (displayShow ("KHAN", "SOCKET", "msg: " <> (show $ n)))
+            io $ (BN.sendAll conn res)
+    ctx = ["KHAN", "SOCKET", "run"]

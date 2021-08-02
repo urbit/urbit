@@ -22,7 +22,7 @@
       ==  ==
       ::
     +$  sign
-      $%  [%khan $>(%avow gift)]                        :: avow
+      $%  [%khan $>(%response gift)]
       ==
     ::
     +$  khan-state
@@ -37,7 +37,7 @@
 |%
 ++  per-event
   =|  moves=(list move)
-  |=  [[now=@da =duct] state=khan-state]
+  |=  [[now=@da =duct rof=roof] state=khan-state]
   ::
   |%
   ::  %entry-points
@@ -54,7 +54,7 @@
     event-core(moves [duct %give %set-config "khan.soc"]~)
 
 
-  ::  +avow: give back
+  ::  +avow: give back gifts
   ::
   ++  avow
     |=  syn=sign-arvo
@@ -64,14 +64,24 @@
   ::
   ++  fyrd
     |=  com=^fyrd
-    ^+  [moves state]
     =<  [moves state]
+    ^+  event-core
     ~&  >  fyrd+com
-    ~!  -.com
     ?-  -.com
       %mas  ~&  todo+com  event-core                    :: |mass
       %cod
         =/  cov
+          ?.    +.com
+            =/  sey=(unit (unit cage))
+              ~&  sey+"here"
+              (rof ~ %j [our %code da+now] /(scot %p our))
+            =/  res=(unit @p)
+              ?~  sey  ~
+              ?~  u.sey  ~
+              `!<(@p q.u.u.sey)
+            ~&  res+res
+            [duct %give [%response %socket-done res]]~ :: give code
+
           [duct %pass / %j %step ~]~
         event-core(moves cov)
     ==
@@ -106,7 +116,8 @@
   ^-  [(list move) _khan-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
-  =/  event-core  (per-event [now hen] state)
+  ~&  task+task
+  =/  event-core  (per-event [now hen rof] state)
   ::
   =^  moves  state
     ::
@@ -144,7 +155,6 @@
       :~  state+&+state
       ==
     ``mass+!>(maz)
-  ::  only respond for the local identity, %$ desk, current timestamp
   ::
   ?.  ?&  =(&+our why)
           =([%$ %da now] lot)
@@ -161,6 +171,7 @@
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _khan-gate]
+  ~&  hin+hin
   ?^  dud
     ~|(%khan-take-dud (mean tang.u.dud))
   ::
