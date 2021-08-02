@@ -34,6 +34,7 @@ result-*
 
 # NodeJS
 node_modules
+.eslintcache
 
 # Haskell
 .stack-work

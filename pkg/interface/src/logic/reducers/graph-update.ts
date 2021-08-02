@@ -7,8 +7,13 @@ import BigIntArrayOrderedMap, {
 import bigInt, { BigInteger } from 'big-integer';
 import produce from 'immer';
 import _ from 'lodash';
-import { reduceState } from '../state/base';
-import useGraphState, { GraphState } from '../state/graph';
+import { BaseState, reduceState } from '../state/base';
+import useGraphState, { GraphState as State } from '../state/graph';
+/* eslint-disable camelcase */
+
+import { unstable_batchedUpdates } from 'react-dom';
+
+type GraphState = State & BaseState<State>;
 
 const mapifyChildren = (children) => {
   return new BigIntOrderedMap().gas(
@@ -245,9 +250,6 @@ export const addNodes = (json, state) => {
     post,
     resource
   ) => {
-    if (!post.hash) {
-     return [graph, flatGraph, threadGraphs];
-    }
     const timestamp = post['time-sent'];
 
     if (state.graphTimesentMap[resource][timestamp]) {
@@ -403,26 +405,17 @@ export const addNodes = (json, state) => {
 const removePosts = (json, state: GraphState): GraphState => {
   const _remove = (graph, index) => {
     const child = graph.get(index[0]);
+    if(!child) {
+      return graph;
+    }
     if (index.length === 1) {
-        if (child) {
-          return graph.set(index[0], {
-            post: child.post.hash || '',
-            children: child.children
-          });
-        }
+      return graph.set(index[0], {
+        post: child.post.hash || '',
+        children: child.children
+      });
     } else {
-      if (child) {
-        _remove(child.children, index.slice(1));
-        return graph.set(index[0], child);
-      } else {
-        const child = graph.get(index[0]);
-        if (child) {
-          return graph.set(index[0], produce((draft: any) => {
-            draft.children = _remove(draft.children, index.slice(1));
-          }));
-        }
-        return graph;
-      }
+      const node = { ...child, children: _remove(child.children, index.slice(1)) };
+      return graph.set(index[0], node);
     }
   };
 
@@ -445,39 +438,38 @@ const removePosts = (json, state: GraphState): GraphState => {
   return state;
 };
 
+export const reduceDm = [
+  acceptOrRejectDm,
+  pendings,
+  setScreen
+];
+
 export const GraphReducer = (json) => {
   const data = _.get(json, 'graph-update', false);
 
-  if (data) {
-    reduceState<GraphState, any>(useGraphState, data, [
-      keys,
-      addGraph,
-      removeGraph,
-      addNodes,
-      removePosts
-    ]);
-  }
-  const loose = _.get(json, 'graph-update-loose', false);
-  if(loose) {
-    reduceState<GraphState, any>(useGraphState, loose, [addNodesLoose]);
-  }
+  unstable_batchedUpdates(() => {
+    if (data) {
+      reduceState<GraphState, any>(useGraphState, data, [
+        keys,
+        addGraph,
+        removeGraph,
+        addNodes,
+        removePosts
+      ]);
+    }
+    const loose = _.get(json, 'graph-update-loose', false);
+    if(loose) {
+      reduceState<GraphState, any>(useGraphState, loose, [addNodesLoose]);
+    }
 
-  const flat = _.get(json, 'graph-update-flat', false);
-  if (flat) {
-    reduceState<GraphState, any>(useGraphState, flat, [addNodesFlat]);
-  }
+    const flat = _.get(json, 'graph-update-flat', false);
+    if (flat) {
+      reduceState<GraphState, any>(useGraphState, flat, [addNodesFlat]);
+    }
 
-  const thread = _.get(json, 'graph-update-thread', false);
-  if (thread) {
-    reduceState<GraphState, any>(useGraphState, thread, [addNodesThread]);
-  }
-  const dm = _.get(json, 'dm-hook-action', false);
-  if(dm) {
-    console.log(dm);
-    reduceState<GraphState, any>(useGraphState, dm, [
-      acceptOrRejectDm,
-      pendings,
-      setScreen
-    ]);
-  }
+    const thread = _.get(json, 'graph-update-thread', false);
+    if (thread) {
+      reduceState<GraphState, any>(useGraphState, thread, [addNodesThread]);
+    }
+  });
 };

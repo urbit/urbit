@@ -1,20 +1,12 @@
 import { Box, ColProps } from '@tlon/indigo-react';
-import { Contact, Group } from '@urbit/api';
-import { History } from 'history';
 import React, { useEffect, useRef, useState } from 'react';
-import GlobalApi from '~/logic/api/global';
 import ProfileOverlay, { OVERLAY_HEIGHT } from './ProfileOverlay';
 
 type OverlaySigilProps = ColProps & {
-  api: GlobalApi;
   className: string;
   color: string;
-  contact?: Contact;
-  group?: Group;
-  history: History;
   scrollWindow?: HTMLElement;
   ship: string;
-  onDismiss: () => void;
 };
 
 interface OverlaySigilState {
@@ -27,13 +19,8 @@ interface OverlaySigilState {
 
 export const OverlaySigil = (props: OverlaySigilProps) => {
   const {
-    api,
     className,
     color,
-    contact,
-    group,
-    history,
-    onDismiss,
     scrollWindow,
     ship,
     ...rest
@@ -88,7 +75,6 @@ export const OverlaySigil = (props: OverlaySigilProps) => {
       style={{ visibility: visible ? 'visible' : 'hidden' }}
     >
       <ProfileOverlay
-        api={api}
         bottom={space.bottom}
         color={color}
         ship={ship}

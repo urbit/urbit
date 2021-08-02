@@ -83,13 +83,13 @@
     ^-  (unit (unit cage))
     ?+  pax  (on-peek:def pax)
         [%x %all ~]
-      ``settings-data+!>(all+settings)
+      ``settings-data+!>(`data`all+settings)
     ::
         [%x %bucket @ ~]
       =*  buc  i.t.t.pax
       =/  bucket=(unit bucket)  (~(get by settings) buc)
       ?~  bucket  [~ ~]
-      ``settings-data+!>(bucket+u.bucket)
+      ``settings-data+!>(`data`bucket+u.bucket)
     ::
         [%x %entry @ @ ~]
       =*  buc  i.t.t.pax
@@ -97,19 +97,19 @@
       =/  =bucket  (fall (~(get by settings) buc) ~)
       =/  entry=(unit val)  (~(get by bucket) key)
       ?~  entry  [~ ~]
-      ``settings-data+!>(entry+u.entry)
+      ``settings-data+!>(`data`entry+u.entry)
     ::
         [%x %has-bucket @ ~]
       =*  buc  i.t.t.pax
       =/  has-bucket=?  (~(has by settings) buc)
-      ``noun+!>(has-bucket)
+      ``noun+!>(`?`has-bucket)
     ::
         [%x %has-entry @ @ ~]
       =*  buc  i.t.t.pax
       =*  key  i.t.t.t.pax
       =/  =bucket  (fall (~(get by settings) buc) ~)
       =/  has-entry=?  (~(has by bucket) key)
-      ``noun+!>(has-entry)
+      ``noun+!>(`?`has-entry)
     ==
   ::
   ++  on-agent  on-agent:def

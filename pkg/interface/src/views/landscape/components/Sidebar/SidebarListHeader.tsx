@@ -10,7 +10,6 @@ import {
 import { FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
@@ -21,10 +20,9 @@ import { Dropdown } from '~/views/components/Dropdown';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { NewChannel } from '~/views/landscape/components/NewChannel';
 import { SidebarListConfig } from './types';
-import {getFeedPath} from '~/logic/lib/util';
+import { getFeedPath } from '~/logic/lib/util';
 
 export function SidebarListHeader(props: {
-  api: GlobalApi;
   initialValues: SidebarListConfig;
   baseUrl: string;
   selected: string;
@@ -53,7 +51,7 @@ export function SidebarListHeader(props: {
 
   const noun = (props.workspace?.type === 'messages') ? 'Messages' : 'Channels';
 
-  let feedPath = groupPath ? getFeedPath(associations.groups[groupPath]) : undefined;
+  const feedPath = groupPath ? getFeedPath(associations.groups[groupPath]) : undefined;
 
   const unreadCount = useHarkState(
     s => s.unreads?.graph?.[feedPath ?? '']?.['/']?.unreads as number ?? 0
@@ -61,7 +59,7 @@ export function SidebarListHeader(props: {
 
   return (
     <Box>
-    {( !!feedPath) ? (
+    {( feedPath) ? (
        <Row
          flexShrink={0}
          alignItems="center"
@@ -127,10 +125,7 @@ export function SidebarListHeader(props: {
                 border={1}
                 borderColor="washedGray"
               >
-              <NewChannel
-                api={props.api}
-                workspace={props.workspace}
-              />
+              <NewChannel workspace={props.workspace} />
               </Col>
             }
           >
