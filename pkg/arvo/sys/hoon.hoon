@@ -2041,8 +2041,8 @@
     ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?-  -.r.a
-        %llos  (rlos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
-        %rlos  (rlos n.p.r.a (rlos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+      %llos  (rlos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+      %rlos  (rlos n.p.r.a (rlos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
     ==
   ::
   ++  lrsin
@@ -2050,8 +2050,8 @@
     ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?-  -.l.a
-        %llos  (llos n.p.l.a l.p.l.a m.p.l.a (llos n.a r.p.l.a m.a r.a))
-        %rlos  (llos n.a l.p.l.a m.p.l.a (llos n.p.l.a r.p.l.a m.a r.a))
+      %llos  (llos n.p.l.a l.p.l.a m.p.l.a (llos n.a r.p.l.a m.a r.a))
+      %rlos  (llos n.a l.p.l.a m.p.l.a (llos n.p.l.a r.p.l.a m.a r.a))
     ==
   ::
   ++  rrsin
@@ -2072,8 +2072,8 @@
     ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?-  -.r.a
-        %llos  (llsin n.a l.a m.a (lrsin p.r.a))
-        %rlos  (llsin n.a l.a m.a (rrsin p.r.a))
+      %llos  (llsin n.a l.a m.a (lrsin p.r.a))
+      %rlos  (llsin n.a l.a m.a (rrsin p.r.a))
     ==
   ::
   ++  lrdub
@@ -2081,8 +2081,8 @@
     ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?-  -.l.a
-        %llos  (lrsin n.a (llsin p.l.a) m.a r.a)
-        %rlos  (lrsin n.a (rlsin p.l.a) m.a r.a)
+      %llos  (lrsin n.a (llsin p.l.a) m.a r.a)
+      %rlos  (lrsin n.a (rlsin p.l.a) m.a r.a)
     ==
   ::
   ++  rldub
@@ -2090,8 +2090,8 @@
     ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ r.a)
     ?-  -.r.a
-        %llos  (rlsin n.a l.a m.a (lrsin p.r.a))
-        %rlos  (rlsin n.a l.a m.a (rrsin p.r.a))
+      %llos  (rlsin n.a l.a m.a (lrsin p.r.a))
+      %rlos  (rlsin n.a l.a m.a (rrsin p.r.a))
     ==
   ::
   ++  rrdub
@@ -2099,8 +2099,8 @@
     ^-  (ltree _k.n.a _v.n.a)
     ?>  ?=(^ l.a)
     ?-  -.l.a
-        %llos  (rrsin n.a (llsin p.l.a) m.a r.a)
-        %rlos  (rrsin n.a (rlsin p.l.a) m.a r.a)
+      %llos  (rrsin n.a (llsin p.l.a) m.a r.a)
+      %rlos  (rrsin n.a (rlsin p.l.a) m.a r.a)
     ==
   ::
   ++  toy                                               ::  play
@@ -2116,8 +2116,7 @@
   ::
   ++  sec                                               ::  second best
     |*  [t=(ltree) m=*]
-    |-
-    ^-  (pri _?>(?=(^ t) k.n.p.t) _?>(?=(^ t) v.n.p.t))
+    |-  ^-  (pri _?>(?=(^ t) k.n.p.t) _?>(?=(^ t) v.n.p.t))
     ?~  t  ~
     ?-  -.t
       %llos  (toy [n.p.t l.p.t m.p.t] $(t r.p.t))
@@ -2336,10 +2335,7 @@
   ::
   ++  pan                                               ::  insert view
     |*  e=(lelem _?>(?=(^ a) k.n.a) _?>(?=(^ a) v.n.a))
-    ^-
-      %+  pair
-        (unit (lelem _?>(?=(^ a) k.n.a) _?>(?=(^ a) v.n.a)))
-      _a
+    ^-  (pair (unit (lelem _?>(?=(^ a) k.n.a) _?>(?=(^ a) v.n.a))) _a)
     =/  vue  (pet k.e)
     ?~  vue
       [~ (put e)]
