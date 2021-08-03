@@ -11,5 +11,13 @@
 ::
 ::  TODO: more complex?
 +$  docket
-  [=url base=path]
+  $:  title=@t
+      color=@ux 
+      =url 
+      base=path
+  ==
+::
+::  $warrant: A reference to a $docket or $charge
++$  warrant
+  [=desk name=cord]
 --

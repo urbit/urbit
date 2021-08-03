@@ -152,7 +152,7 @@ class App extends React.Component {
             : null}
         </Helmet>
         <Root>
-          <Router basename="/~landscape">
+          <Router basename="/apps/landscape/landscape">
             <TutorialModal api={this.api} />
             <ErrorBoundary>
               <StatusBarWithRouter

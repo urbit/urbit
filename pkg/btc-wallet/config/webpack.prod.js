@@ -50,7 +50,7 @@ module.exports = {
     filename: (pathData) => {
       return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
     },
-    path: path.resolve(__dirname, `../../arvo/app/btc-wallet/js/bundle`),
+    path: path.resolve(__dirname, `../../landscape/app/btc-wallet/js/bundle`),
     publicPath: '/',
   },
   optimization: {

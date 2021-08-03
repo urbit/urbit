@@ -46,7 +46,7 @@ export class Root extends Component {
       !(this.state.wallet && this.state.provider);
 
     return (
-      <BrowserRouter>
+      <BrowserRouter basename="/~btc">
         <ThemeProvider theme={light}>
         <Reset/>
         { (loaded) ? <StartupModal api={api} state={this.state} network={network}/> : null }

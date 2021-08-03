@@ -18,6 +18,7 @@
       |=  ara=^arak
       %-  pairs
       :~  desk+s+desk.ara
+          ship+(ship ship.ara)
       ==
     --
   --

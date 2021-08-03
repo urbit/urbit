@@ -162,13 +162,12 @@
   ++  handle-http-request
     |=  =inbound-request:eyre
     ^-  simple-payload:http
+    %+  require-authorization-simple:app  inbound-request
     =*  req       request.inbound-request
     =*  headers   header-list.req
     =/  req-line  (parse-request-line url.req)
     ?.  =(method.req %'GET')  not-found:gen
     ?:  ?=([%'~landscape' %js %session ~] site.req-line)
-      %+  require-authorization-simple:app
-        inbound-request
       %.  %-  as-octs:mimes:html
           (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~)
       %*  .  js-response:gen

@@ -364,7 +364,7 @@
     ==
   =/  pax=path
     ~|  no-file-for-thread+file
-    (need (get-fit:clay beak(r da+now.bowl) %ted file))
+    (need (get-fit:clay beak %ted file))
   :_  state
   :_  ~
   :+  %pass  /build/[new-tid]
