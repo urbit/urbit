@@ -77,6 +77,30 @@
         "url": "https://github.com/input-output-hk/haskell.nix/archive/bbb34dcdf7b90d478002f91713531f418ddf1b53.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "libaes_siv": {
+        "branch": "master",
+        "description": null,
+        "homepage": null,
+        "pmnsh": {
+            "compat": {
+                "m1brew": {
+                    "prepare": "cmake .",
+                    "make": "install CFLAGS=$(pkg-config --cflags openssl)"
+                },
+                "mingw": {
+                     "prepare": "cmake -G\"MSYS Makefiles\" -DDISABLE_DOCS:BOOL=ON .",
+                     "make": "install"
+                }
+            }
+        },
+        "owner":"dfoxfranke",
+        "repo": "libaes_siv",
+        "rev": "9681279cfaa6e6399bb7ca3afbbc27fc2e19df4b",
+        "sha256": "1g4wy0m5wpqx7z6nillppkh5zki9fkx9rdw149qcxh7mc5vlszzi",
+        "type": "tarball",
+        "url": "https://github.com/dfoxfranke/libaes_siv/archive/9681279cfaa6e6399bb7ca3afbbc27fc2e19df4b.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "libscrypt": {
         "branch": "master",
         "description": null,

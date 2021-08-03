@@ -77,14 +77,5 @@
         "pmnsh": {
             "make": "CFLAGS=-I../ed25519"
         }
-    },
-    "libaes_siv": {
-        "pmnsh": {
-            "compat": {
-                "m1brew": {
-                    "make": "CFLAGS=$(pkg-config --cflags openssl)"
-                }
-            }
-        }
     }
 }

@@ -1,12 +1,17 @@
-{ lib, stdenv, openssl, enableParallelBuilding ? true }:
+{ stdenv, sources, cmake, openssl, enableParallelBuilding ? true }:
 
 stdenv.mkDerivation {
   name = "libaes_siv";
-  src = lib.cleanSource ../../../pkg/libaes_siv;
+  version = sources.libaes_siv.rev;
+  src = sources.libaes_siv;
+  patches = [ ./cmakefiles_static.patch ];
 
+  nativeBuildInputs = [ cmake ];
   buildInputs = [ openssl ];
 
-  installFlags = [ "PREFIX=$(out)" ];
+  cmakeFlags = [
+    "-DBUILD_SHARED_LIBS=OFF"
+  ];
 
   inherit enableParallelBuilding;
 }
