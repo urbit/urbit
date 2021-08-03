@@ -65,6 +65,11 @@
 ::  TODO: change sponsorship to reject adoptions from L1 if they don't
 ::  accord with our local escape state?
 ::
+::  TODO: if they deposit before the L1 upgrade, could still have active
+::  proxies.  need to add modifier to like 5 functions to check the ship
+::  is not owned by L2, especially spawn which needs to make sure the
+::  prefix isn't owned by L2
+::
 /+  std
 =>  =>  std
 ::  Laconic bit
