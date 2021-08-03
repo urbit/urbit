@@ -2690,6 +2690,58 @@
     =^  f  state  (n state %bat q:(gen-tx 1 [marbud-own [%detach ~linnup-torsyx]] %marbud-key-0))
     [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
 ::
+::  Fuzz tests. These just feed the L2 contract various forms of garbage. None of them
+::  should alter the state of the PKI.
+::
+++  test-fuzz-octs
+::  this test just throws completely random octs.
+::
+  =/  rng  ~(. og eny)
+  =^  proxy  rng  (raws:rng 8)
+  =^  ship  rng  (raws:rng 32)
+  =^  action  rng  (raws:rng 8)
+  ::=^  garbage-length  rng  (raws:rng 20)
+  =^  garbage  rng  (raws:rng 160) ::  160 is # bits in ETH address
+  =/  fuzz=octs
+    %:  cad:naive  3
+      1^proxy
+      4^ship
+      1^action
+      20^garbage
+      ~
+    ==
+  =/  random-tx
+    %^  sign-tx  %random-key  5  fuzz
+  ~&  q:random-tx
+  ::
+  ::~&  `@ub`q:fuzz
+  =|  =^state:naive
+  =^  f  state  (init-red-full state)
+  =/  init-state  state
+  %+  expect-eq
+    !>  init-state
+  ::  ::
+    !>
+::  %-  expect-fail
+  ::  |.
+    =^  f  state  (n state %bat q:random-tx)
+    state
+::
+::  ++  test-fuzz-random-octs  ~
+::  ::  this test sends random octs but with a valid signature
+::  ::
+::  ++  test-fuzz-spawn  ~
+::  ++  test-fuzz-transfer-point  ~
+::  ++  test-fuzz-configure-keys  ~
+::  ++  test-fuzz-escape  ~
+::  ++  test-fuzz-cancel-escape  ~
+::  ++  test-fuzz-adopt  ~
+::  ++  test-fuzz-reject  ~
+::  ++  test-fuzz-detach  ~
+::  ++  test-fuzz-set-management-proxy  ~
+::  ++  test-fuzz-set-spawn-proxy  ~
+::  ++  test-fuzz-set-transfer-proxy  ~
+::
 ::  TODO: signature format changed; regenerate
 ::
 ::  ++  test-metamask-signature  ^-  tang
