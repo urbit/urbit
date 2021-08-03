@@ -2696,51 +2696,224 @@
 ++  test-fuzz-octs
 ::  this test just throws completely random octs.
 ::
-  =/  rng  ~(. og eny)
+  =+  [seed=`@`%test-fuzz-octs i=0]
+  =|  =^state:naive
+  =^  f  state  (init-red-full state)
+  =/  init-state  state
+  |-  ^-  tang
+  ?:  =(i 100)  ~
+  %+  weld  $(seed (shas `@`%versace seed), i +(i))
+  =/  state  init-state
+  =/  rng  ~(. og seed)
   =^  proxy  rng  (raws:rng 8)
   =^  ship  rng  (raws:rng 32)
   =^  action  rng  (raws:rng 8)
-  ::=^  garbage-length  rng  (raws:rng 20)
-  =^  garbage  rng  (raws:rng 160) ::  160 is # bits in ETH address
+  =^  junk-length  rng  (rads:rng 200)
+  ::  increment junk-length to prevent 0 case
+  =^  junk  rng  (raws:rng +(junk-length))
+  =^  nonce  rng  (rads:rng 999)
+  =^  key  rng  (raws:rng 256)
   =/  fuzz=octs
     %:  cad:naive  3
       1^proxy
       4^ship
       1^action
-      20^garbage
+      (met 3 junk)^junk
       ~
     ==
   =/  random-tx
-    %^  sign-tx  %random-key  5  fuzz
-  ~&  q:random-tx
+    %^  sign-tx  key  nonce  fuzz
   ::
-  ::~&  `@ub`q:fuzz
-  =|  =^state:naive
-  =^  f  state  (init-red-full state)
-  =/  init-state  state
   %+  expect-eq
     !>  init-state
   ::  ::
     !>
-::  %-  expect-fail
-  ::  |.
     =^  f  state  (n state %bat q:random-tx)
     state
 ::
-::  ++  test-fuzz-random-octs  ~
-::  ::  this test sends random octs but with a valid signature
-::  ::
-::  ++  test-fuzz-spawn  ~
-::  ++  test-fuzz-transfer-point  ~
-::  ++  test-fuzz-configure-keys  ~
-::  ++  test-fuzz-escape  ~
-::  ++  test-fuzz-cancel-escape  ~
-::  ++  test-fuzz-adopt  ~
-::  ++  test-fuzz-reject  ~
-::  ++  test-fuzz-detach  ~
-::  ++  test-fuzz-set-management-proxy  ~
-::  ++  test-fuzz-set-spawn-proxy  ~
-::  ++  test-fuzz-set-transfer-proxy  ~
+++  test-fuzz-valid-ship-key
+::  this test uses a valid ship and key but otherwise
+::  hands the contract garbage
+::
+  =+  [seed=`@`%test-fuzz-valid-ship-key i=0]
+  =|  =^state:naive
+  =^  f  state  (init-red-full state)
+  =/  init-state  state
+  |-  ^-  tang
+  ?:  =(i 100)  ~
+  %+  weld  $(seed (shas `@`%iceberg-simpson seed), i +(i))
+  =/  state  init-state
+  =/  rng  ~(. og seed)
+  =/  ship  ~pinpun-pilsun
+  =^  proxy  rng  (raws:rng 8)
+  =^  action  rng  (raws:rng 8)
+  =^  junk-length  rng  (rads:rng 200)
+  ::  increment junk-length to prevent 0 case
+  =^  junk  rng  (raws:rng +(junk-length))
+  =^  nonce  rng  (rads:rng 999)
+  =/  fuzz=octs
+    %:  cad:naive  3
+      1^proxy
+      4^ship
+      1^action
+      (met 3 junk)^junk
+      ~
+    ==
+  =/  random-tx
+    %^  sign-tx  %losrut-pp-key-0  nonce  fuzz
+  ::
+  %+  expect-eq
+    !>  init-state
+  ::  ::
+    !>
+    =^  f  state  (n state %bat q:random-tx)
+    state
+::
+++  test-fuzz-valid-ship-key-proxy-nonce
+::  this test uses a valid ship, key, proxy, nonce but otherwise
+::  hands the contract garbage
+::
+  =+  [seed=`@`%test-fuzz-valid-ship-key-proxy-nonce i=0]
+  =|  =^state:naive
+  =^  f  state  (init-red-full state)
+  =/  init-state  state
+  |-  ^-  tang
+  ?:  =(i 100)  ~
+  %+  weld  $(seed (shas `@`%tiptoe seed), i +(i))
+  =/  state  init-state
+  =/  rng  ~(. og seed)
+  =/  ship=@p  ~pinpun-pilsun
+  =^  action  rng  (raws:rng 8)
+  =^  junk-length  rng  (rads:rng 200)
+  ::  increment junk-length to prevent case of 0
+  =^  junk  rng  (raws:rng +(junk-length))
+  =/  fuzz=octs
+    %:  cad:naive  3
+      1^(can 0 3^%0 5^0 ~)  :: %own proxy
+      4^ship
+      1^action
+      (met 3 junk)^junk
+      ~
+    ==
+  =/  random-tx
+    %^  sign-tx  %losrut-pp-key-0  1  fuzz
+  ::
+  %+  expect-eq
+    !>  init-state
+  ::
+    !>
+    =^  f  state  (n state %bat q:random-tx)
+    state
+::
+++  test-junk-after-tx
+::  this creates a valid transaction of each type but then adds
+::  random bits to the end of it
+::
+  =+  [seed=`@`%test-junk-after-tx i=0]
+  =|  =^state:naive
+  =^  f  state  (init-red-full state)
+  =/  init-state  state
+  |-  ^-  tang
+  ?:  =(i 11)  ~  :: 10 attempts for each transaction type
+  %+  weld  $(seed (shas `@`%howmuchisfour seed), i +(i))
+  =+  j=0
+  |^  ^-  tang
+  ?:  =(j 11)  ~  :: there are 10 transaction types
+  %+  weld  $(seed (shas `@`%eris seed), j +(j))
+  =/  rng  ~(. og seed)
+  =^  junk-length  rng  (rads:rng 200)
+  ::increment to prevent zero-length junk
+  =^  junk  rng  (raws:rng +(junk-length))
+  =/  tx-octs=octs
+    ?+  j  !!
+      %0  do-spawn
+      %1  do-transfer-point
+      %2  do-configure-keys
+      %3  do-escape
+      %4  do-cancel-escape
+      %5  do-adopt
+      %6  do-reject
+      %7  do-detach
+      %8  do-set-management-proxy
+      %9  do-set-spawn-proxy
+      %10  do-set-transfer-proxy
+    ==
+  =/  fuzz  (mix (lsh [3 (met 3 q:tx-octs)] junk) q:tx-octs)
+  =/  fuzz-octs=octs  [(met 3 fuzz) fuzz]
+  ::  the conditionals that follow are to ensure the correct key and
+  ::  nonce are used.
+  =/  random-tx
+    ?:  =(j 4)
+      %^  sign-tx  %holrut-rr-key-0  1  fuzz-octs
+    ?:  |(=(j 5) =(j 6))
+      %^  sign-tx  %rigred-key-0  0  fuzz-octs
+    %^  sign-tx  %losrut-key-0  2  fuzz-octs
+  ::
+  =/  state  init-state
+  %+  expect-eq
+    !>  init-state
+  ::
+    !>
+    =^  f  state  (n state %bat q:random-tx)
+    state
+  ::
+  ++  do-spawn  ^-  octs
+    =/  from  [ship=~losrut proxy=%own]
+    =/  sptx=skim-tx:naive  [%spawn ~mishus-loplus (addr %nowhere)]
+    =/  tx=tx:naive  [from sptx]
+    (gen-tx-octs tx)
+  ++  do-transfer-point  ^-  octs
+    =/  from  [ship=~losrut proxy=%own]
+    =/  xrtx=skim-tx:naive  [%transfer-point (addr %somewhere) &]
+    =/  tx=tx:naive  [from xrtx]
+    (gen-tx-octs tx)
+  ++  do-configure-keys  ^-  octs
+    =/  from  [ship=~losrut proxy=%own]
+    =/  cftx=skim-tx:naive  [%configure-keys (shax 'uno') (shax 'dos') (shax 'tres') |]
+    =/  tx=tx:naive  [from cftx]
+    (gen-tx-octs tx)
+  ++  do-escape  ^-  octs
+    =/  from  [ship=~losrut proxy=%own]
+    =/  estx=skim-tx:naive  [%escape ~red]
+    =/  tx=tx:naive  [from estx]
+    (gen-tx-octs tx)
+  ++  do-cancel-escape  ^-  octs
+    =/  from  [ship=~rabsum-ravtyd proxy=%own]
+    =/  cetx=skim-tx:naive  [%cancel-escape ~rigred]
+    =/  tx=tx:naive  [from cetx]
+    (gen-tx-octs tx)
+  ++  do-adopt  ^-  octs
+    =/  from  [ship=~rigred proxy=%own]
+    =/  adtx=skim-tx:naive  [%adopt ~rabsum-ravtyd]
+    =/  tx=tx:naive  [from adtx]
+    (gen-tx-octs tx)
+  ++  do-reject  ^-  octs
+    =/  from  [ship=~rigred proxy=%own]
+    =/  rjtx=skim-tx:naive  [%adopt ~rabsum-ravtyd]
+    =/  tx=tx:naive  [from rjtx]
+    (gen-tx-octs tx)
+  ++  do-detach
+    =/  from  [ship=~losrut proxy=%own]
+    =/  dttx=skim-tx:naive  [%detach ~rabsum-ravtyd]
+    =/  tx=tx:naive  [from dttx]
+    (gen-tx-octs tx)
+  ++  do-set-management-proxy
+    =/  from  [ship=~losrut proxy=%own]
+    =/  mgtx=skim-tx:naive  [%set-management-proxy (addr %new-mgmt)]
+    =/  tx=tx:naive  [from mgtx]
+    (gen-tx-octs tx)
+  ++  do-set-spawn-proxy
+    =/  from  [ship=~losrut proxy=%own]
+    =/  sptx=skim-tx:naive  [%set-spawn-proxy (addr %new-spawn)]
+    =/  tx=tx:naive  [from sptx]
+    (gen-tx-octs tx)
+  ++  do-set-transfer-proxy
+    =/  from  [ship=~losrut proxy=%own]
+    =/  tftx=skim-tx:naive  [%set-transfer-proxy (addr %new-xfer)]
+    =/  tx=tx:naive  [from tftx]
+    (gen-tx-octs tx)
+  ::
+  --
 ::
 ::  TODO: signature format changed; regenerate
 ::
