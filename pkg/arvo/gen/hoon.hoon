@@ -1567,7 +1567,10 @@
     ~/  %bent
     |=  [jut=noun gol=type gen=hoon]
     |^  ^-  vase
-    %-  (slog [%palm [" : " ~ ~ ~] (sell sut jut) ?@(-.gen -.gen %cons) ~] ~)
+    %-  %-  slog  :_  ~
+        :^  %palm  [" : " ~ ~ ~]
+          ?@(-.gen ?~(-.gen %buck -.gen) %cons)
+        [(sell sut jut) ~]
     ?:  ?&(=(%void sut) !?=([%dbug *] gen))
       ?.  |(!vet ?=([%lost *] gen) ?=([%zpzp *] gen))
         ~>(%mean.'mint-vain' !!)
@@ -1601,7 +1604,7 @@
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
     ::
         [%ktpm *]  =+(vat=$(gen p.gen) [(nice (wrap(sut p.vat) %zinc)) q.vat])
-        [%ktsg *]  $(gen p.gen)
+        [%ktsg *]  $(gen p.gen)  ::  XX blow
         [%tune *]  [(face p.gen sut) jut]
         [%ktwt *]  =+(vat=$(gen p.gen) [(nice (wrap(sut p.vat) %lead)) q.vat])
     ::
