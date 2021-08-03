@@ -44,6 +44,7 @@ on:
       - 'pkg/urbit/**'
       - 'bin/**'
       - 'nix/**'
+      - '.github/workflows/**'
   pull_request:
     paths:
       - 'pkg/arvo/**'
