@@ -189,16 +189,15 @@
         ^-  json
         %-  pairs
         :~  ['force' b+force]
-            ['address' s+(crip "0x{((x-co:co 20) address)}")]
+            (en-address address)
           ::
             :-  'rawTx'
             %-  pairs
             :~  ['tx' (tx:to-json tx.raw-tx)]
-              ::
-                :+  'sig'  %s
-                %-  crip
-                "0x{((x-co:co (met 3 sig.raw-tx)) sig.raw-tx)}"
+                ['sig' (hex (as-octs:mimes:html sig.raw-tx))]
         ==  ==
+      ::
+      ++  en-address   |=(a=@ux address+(hex 20 a))
       ::
       ++  tx
         |=  =tx:naive
@@ -235,7 +234,6 @@
           ==  ==
         ::
         ++  en-ship      |=(s=@p ship+(ship s))
-        ++  en-address   |=(a=@ux address+s+(crip "0x{((x-co:co 20) a)}"))
         ++  en-spawn     |=([s=@p a=@ux] ~[(en-ship s) (en-address a)])
         ++  en-transfer  |=([a=@ux r=?] ~[(en-address a) reset+b+r])
         ++  en-keys
@@ -261,8 +259,8 @@
         |=  roller-tx
         ^-  json
         %-  pairs
-        :~  ['status' s+status.status]
-            ['hash' s+(crip "0x{((x-co:co 20) hash)}")]
+        :~  ['status' s+status]
+            ['hash' (hex (as-octs:mimes:html hash))]
             ['type' s+type]
         ==
       ::
@@ -325,7 +323,7 @@
         |=  [=address:naive =nonce:naive]
         ^-  json
         %-  pairs
-        :~  ['address' s+(crip "0x{((x-co:co 20) address)}")]
+        :~  (en-address address)
             ['nonce' (numb nonce)]
         ==
       ::
@@ -334,10 +332,10 @@
         ^-  json
         :-  %a
         %+  turn  children
-        |=  [child=@p addr=@ux]
+        |=  [child=@p address=@ux]
         %-  pairs
         :~  ['ship' (ship child)]
-            ['address' s+(crip "0x{((x-co:co 20) addr)}")]
+            (en-address address)
         ==
       ::
       ++  tx-status  |=(=^tx-status ^-(json s+status.tx-status))
@@ -349,9 +347,14 @@
         :~  ['nextBatch' (time next-batch)]
             ['frequency' (numb (div frequency ~s1))]
             ['refreshTime' (numb (div refresh-time ~s1))]
-            ['contract' s+(crip "0x{((x-co:co 20) contract)}")]
+            ['contract' (hex 20 contract)]
             ['chainId' (numb chain-id)]
         ==
+      ::
+      ++  hex
+        |=  [p=@ q=@]
+        ^-  json
+        s+(crip "0x{((x-co:co p) q)}")
       --
     ::
     ++  to-hex
@@ -366,11 +369,6 @@
         ^-  ?
         =((lent ~(tap by params)) 4)
       --
-    ::
-    ++  l2-hash
-      |=  =keccak
-      ^-  json
-      s+(crip "0x{((x-co:co 20) keccak)}")
     ::
     ++  build-l2-tx
       |=  [=l2-tx from=[@p proxy:naive] params=(map @t json)]
@@ -479,8 +477,8 @@
     [~ ~(parse error:json-rpc id)]
   =/  tx=(unit tx:naive)  (build-l2-tx action u.from params)
   ?~  tx  [~ ~(parse error:json-rpc id)]
-  =/  =keccak  (hash-tx:lib (gen-tx-octs:lib u.tx))
-  :_  [%result id (l2-hash:to-json keccak)]
+  =+  (gen-tx-octs:lib u.tx)
+  :_  [%result id (hex:to-json p (hash-tx:lib p q))]
   %-  some
   aggregator-action+!>([%submit | u.addr u.sig %don tx])
 ::
@@ -573,7 +571,6 @@
   =/  tx=(unit tx:naive)  (build-l2-tx u.l2-tx u.from params)
   ?~  tx  ~(parse error:json-rpc id)
   :+  %result  id
-  %-  l2-hash:to-json
-  %-  hash-tx:lib
+  =-  (hex:to-json p (hash-tx:lib p q))
   (unsigned-tx:lib u.nonce chain-id (gen-tx-octs:lib u.tx))
 --

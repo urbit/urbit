@@ -73,7 +73,8 @@
       chain-id=@
   ==
 ::
-+$  init     [nas=^state:naive own=owners]
++$  init  [nas=^state:naive own=owners]
+::
 +$  config
   $%  [%frequency frequency=@dr]
       [%setkey pk=@]
@@ -82,14 +83,13 @@
   ==
 ::
 +$  action
-  $%  ::  we need to include the address here so pending txs show up
+  $%  ::  we need to include the address in submit so pending txs show up
       ::  in the tx history, but because users can send the wrong
-      ::  address, in +update-tx:predicted state, we just replace
+      ::  address, in +apply-tx:predicted state, we just replace
       ::  the provided address, with the one used when the message was signed;
       ::
       ::  we need to do it there to know the correct nonce that the signed
       ::  message should have included.
-      ::  note: currently turned off (extract-address is giving the wrong address)
       ::
       [%submit force=? =address:naive sig=@ tx=part-tx]
       [%cancel sig=@ keccak=@ =l2-tx =ship]
@@ -159,6 +159,7 @@
   ::    /x/point/[~ship]               ->  %noun  point:naive
   ::    /x/points/[0xadd.ress]         ->  %noun  (list [ship point:naive])
   ::    /x/config                      ->  %noun  config
+  ::    /x/chain-id                    ->  %atom  @
   ::
   ++  on-peek
     |=  =path
@@ -483,7 +484,7 @@
     %don  [(gen-tx-octs:lib +.part-tx) +.part-tx]
     %ful  +.part-tx
   ==
-::  +canonical-state: load current l2 state from /app/azimuth
+::  +canonical-state: current l2 state from /app/azimuth
 ::
 ++  canonical-state
   .^  ^state:naive
@@ -493,7 +494,7 @@
     (scot %da now.bowl)
     /nas/noun
   ==
-::  +canonical-owners: load current azimuth point ownership
+::  +canonical-owners: current azimuth point ownership
 ::
 ++  canonical-owners
   .^  owners
@@ -505,8 +506,8 @@
   ==
 ::  +predicted-state
 ::
-::    derives predicted state from pending/sending txs and
-::    canonical state, discarding invalid txs in the process.
+::    derives predicted state from applying pending/sending txs to
+::    the canonical state, discarding invalid txs in the process.
 ::
 ++  predicted-state
   |=  nas=^state:naive
@@ -514,11 +515,11 @@
   =.  pre.state  nas
   |^
   =^  nes  state  apply-sending
-  =^  nep  state  (update-txs pending %pending)
-  %_  state
-    sending  nes
-    pending  nep
-  ==
+  =^  nep  state  apply-pending
+  state(sending nes, pending nep)
+  ::
+  ++  apply-pending
+    (apply-txs pending %pending)
   ::
   ++  apply-sending
     =|  valid=_sending
@@ -529,7 +530,7 @@
     =*  key  p.i.sending
     =*  val  q.i.sending
     =^  new-valid  state
-      %+  update-txs
+      %+  apply-txs
         (turn txs.val |=(=raw-tx:naive [| 0x0 raw-tx]))
       %sending
     =.  valid
@@ -537,7 +538,7 @@
       val(txs (turn new-valid (cork tail tail)))
     $(sending t.sending)
   ::
-  ++  update-txs
+  ++  apply-txs
     |=  [txs=(list pend-tx) type=?(%pending %sending)]
     =/  valid=_txs  ~
     =|  local=(set keccak)
@@ -565,8 +566,8 @@
       (~(put by finding.state) [hash %failed])
     =?  history.state  !gud
       =/  =roller-tx
-        [ship [type ~] hash (l2-tx +<.tx.raw-tx)]
-      %.  [address.tx roller-tx(status [%failed ~])]
+        [ship type hash (l2-tx +<.tx.raw-tx)]
+      %.  [address.tx roller-tx(status %failed)]
       ~(put ju (~(del ju history.state) address.tx roller-tx))
     $(txs t.txs, local (~(put in local) hash))
   ::
@@ -658,7 +659,7 @@
   ::
   =.  history
     %+  ~(del ju history)  u.addr
-    [ship [%pending ~] keccak l2-tx]
+    [ship %pending keccak l2-tx]
   =.  pending
     %+  skip  pending
     |=  pend-tx
@@ -682,7 +683,7 @@
   :: =?  history  not-sent
   =.  history
     %+  ~(put ju history)  address
-    [ship.from.tx.raw-tx [%pending ~] hash (l2-tx +<.tx.raw-tx)]
+    [ship.from.tx.raw-tx %pending hash (l2-tx +<.tx.raw-tx)]
   =?  transfers  =(%transfer-point (l2-tx +<.tx.raw-tx))
     (~(put by transfers) ship.from.tx.raw-tx address)
   :: ?.  not-sent  ~&  "skip"  [~ state]
@@ -729,12 +730,12 @@
         |=  [pend-tx hist=_history]
         =/  tx=roller-tx
           :^      ship.from.tx.raw-tx
-              [%pending ~]
+              %pending
             (hash-raw-tx:lib raw-tx)
           (l2-tx +<.tx.raw-tx)
         %+  ~(put ju (~(del ju hist) address tx))
           address
-        tx(status [%sending ~])
+        tx(status %sending)
       ==
     [(send-roll get-address nonce) state]
   =^  card  next-batch  set-timer
@@ -842,7 +843,7 @@
   ::
   =.  history
     =/  l2-tx  (l2-tx +<.tx.raw-tx.diff)
-    =/  tx=roller-tx  [ship [%sending ~] keccak l2-tx]
+    =/  tx=roller-tx  [ship %sending keccak l2-tx]
     ?~  addr=(get-l1-address tx.raw-tx.diff pre)
       history
     =/  =address:ethereum
@@ -854,7 +855,7 @@
     %+  ~(put ju (~(del ju history) address tx))
       address
     %_  tx
-      status  ?~(err.diff [%confirmed ~] [%failed ~])
+      status  ?~(err.diff %confirmed %failed)
     ==
   :_  state(derive-p ?:(derive-p | derive-p))
   ?.  derive-p  ~
