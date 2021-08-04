@@ -3,7 +3,7 @@
 ::  Scrys
 ::  x/scanned: (list xpub) of all scanned wallets
 ::  x/balance/xpub: balance (in sats) of wallet
-/-  *btc-wallet, bp=btc-provider, file-server, launch-store
+/-  *btc-wallet, bp=btc-provider
 /+  dbug, default-agent, bl=btc, bc=bitcoin, bip32
 |%
 ++  defaults
@@ -68,19 +68,10 @@
 ++  on-init
 ^-  (quip card _this)
   ~&  >  '%btc-wallet initialized'
-  =/  file
-    [%file-server-action !>([%serve-dir /'~btc' /app/btc-wallet %.n %.y])]
-  =/  tile
-    :-  %launch-action
-    !>  :+  %add
-      %btc-wallet
-    [[%custom `'/~btc' `'/~btc/img/tile.svg'] %.y]
   =/  warning  [%settings-event !>([%put-entry %btc-wallet %warning %b %.y])]
   =/  currency
     [%settings-event !>([%put-entry %btc-wallet %currency %s 'USD'])]
-  :-  :~  [%pass /btc-wallet-server %agent [our.bowl %file-server] %poke file]
-          [%pass /btc-wallet-tile %agent [our.bowl %launch] %poke tile]
-          [%pass /warn %agent [our.bowl %settings-store] %poke warning]
+  :-  :~  [%pass /warn %agent [our.bowl %settings-store] %poke warning]
           [%pass /warn %agent [our.bowl %settings-store] %poke currency]
       ==
   %_  this
