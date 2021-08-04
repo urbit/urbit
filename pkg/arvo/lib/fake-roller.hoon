@@ -1,4 +1,4 @@
-/-  *aggregator
+/-  *dice
 /+  naive, lib=naive-transactions
 ::
 ::  Addresses derived from mnemonic:
