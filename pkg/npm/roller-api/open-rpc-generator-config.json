@@ -1,0 +1,11 @@
+{
+  "openrpcDocument": "./spec.json",
+  "outDir": "./",
+  "components": [
+    {
+      "type": "client",
+      "name": "@urbit/roller-api",
+      "language": "typescript"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "@urbit/roller-api",
+  "version": "0.1.0",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/urbit/urbit.git",
+    "directory": "pkg/npm/roller-api/client/typescript"
+  },
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc && typedoc src/index.ts --out docs --excludeExternals --excludePrivate --hideGenerator --readme none",
+    "lint": "tslint --fix -c tslint.json 'src/index.ts'"
+  },
+  "files": [
+    "build/*"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@open-rpc/client-js": "1.7.0",
+    "@open-rpc/meta-schema": "1.14.2",
+    "@open-rpc/schema-utils-js": "1.15.0",
+    "@types/json-schema": "7.0.3",
+    "@types/lodash": "^4.14.149",
+    "@types/ws": "^6.0.1",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "tslint": "^5.13.1",
+    "typedoc": "^0.20.35",
+    "typescript": "4.2.4"
+  }
+}
