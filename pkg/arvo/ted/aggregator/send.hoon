@@ -1,6 +1,6 @@
 ::  aggregator/send: send rollup tx
 ::
-/-  rpc=json-rpc, *aggregator
+/-  rpc=json-rpc, *dice
 /+  naive, ethereum, ethio, strandio
 ::
 ::

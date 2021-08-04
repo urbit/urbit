@@ -15,8 +15,11 @@
 ::
 +$  keccak  @ux
 ::
++$  status
+  ?(%unknown %pending %sending %confirmed %failed)
+::
 +$  tx-status
-  $:  status=?(%unknown %pending %sending %confirmed %failed)
+  $:  =status
       pointer=(unit l1-tx-pointer)
   ==
 ::
@@ -41,7 +44,7 @@
 ::
 ::  TODO:  add submission time?
 ::
-+$  roller-tx  [=ship status=tx-status hash=keccak type=l2-tx]
++$  roller-tx  [=ship =status hash=keccak type=l2-tx]
 ::
 +$  pend-tx    [force=? =address:naive =raw-tx:naive]
 ::

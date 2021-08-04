@@ -77,7 +77,7 @@
 ::
 ++  run-logs
   |=  [state=app-state logs=(list event-log:rpc:ethereum)]
-  ^-  [(list tagged-diff) _state]
+  ^-  (quip tagged-diff _state)
   =/  [contract=@ux * chain-id=@ *]  (get-network net)
   ?~  logs
     `state
@@ -342,14 +342,7 @@
       %logs     (welp logs.state loglist.diff)
     ==
   =?  nas.state  ?=(%history -.diff)  *^state:naive
-  =^  effects  state
-    =;  nas=^state:naive
-      (run-logs state(nas nas) loglist.diff)
-    ?-  -.diff
-      ::  %history  *^state:naive
-      %history  nas.state
-      %logs     nas.state
-    ==
+  =^  effects  state  (run-logs state loglist.diff)
   ::
   :_  this
   %+  weld
