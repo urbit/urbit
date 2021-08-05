@@ -1,5 +1,6 @@
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const urbitrc = require('./urbitrc');
 
 module.exports = {
@@ -29,8 +30,6 @@ module.exports = {
       {
          test: /\.css$/i,
         use: [
-          // Creates `style` nodes from JS strings
-          'style-loader',
           // Translates CSS into CommonJS
           'css-loader',
           // Compiles Sass to CSS
@@ -44,14 +43,19 @@ module.exports = {
   },
   devtool: 'source-map',
   plugins: [
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Landscape',
+      template: './public/index.html'
+    })
+
   ],
   output: {
     filename: (pathData) => {
       return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
     },
-    path: path.resolve(__dirname, `../../arvo/app/btc-wallet/js/bundle`),
-    publicPath: '/',
+    path: path.resolve(__dirname, '../dist'),
+    publicPath: '/apps/bitcoin',
   },
   optimization: {
     minimize: true,

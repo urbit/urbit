@@ -4,7 +4,7 @@
 ::  x/scanned: (list xpub) of all scanned wallets
 ::  x/balance/xpub: balance (in sats) of wallet
 /-  *btc-wallet, bp=btc-provider
-/+  dbug, default-agent, bl=btc, bc=bitcoin, bip32
+/+  dbug, default-agent, bl=btc, bc=bitcoin, bip32, bcu=bitcoin-utils
 ~%  %btc-wallet-top  ..part  ~
 |%
 +$  card  card:agent:gall

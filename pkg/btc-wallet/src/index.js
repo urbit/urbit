@@ -7,6 +7,7 @@ import { subscription } from "./js/subscription.js";
 import './css/indigo-static.css';
 import './css/fonts.css';
 import './css/custom.css';
+import './channel';
 
 // rebuild x3
 
