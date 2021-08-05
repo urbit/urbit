@@ -80,8 +80,8 @@
                 "keys": {
                   "life": 0,
                   "suite": 0,
-                  "auth": 0,
-                  "crypt": 0
+                  "auth": "0x1234",
+                  "crypt": "0x5678"
                 },
                 "sponsor": {
                   "has": true,
@@ -95,8 +95,8 @@
       ]
     },
     {
-      "name": "getPoints",
-      "summary": "Returns all the Azimuth points controlled by an ethereum address",
+      "name": "getShips",
+      "summary": "Returns all the ships controlled by an ethereum address",
       "paramStructure": "by-name",
       "params": [
         {
@@ -1876,8 +1876,8 @@
           }
         }
       },
-      "Networking": {
-        "title": "Networking",
+      "Ownership": {
+        "title": "Ownership",
         "type": "object",
         "properties": {
           "owner": {
@@ -1897,8 +1897,8 @@
           }
         }
       },
-      "Ownership": {
-        "title": "Ownership",
+      "Networking": {
+        "title": "Networking",
         "type": "object",
         "required": ["life", "pass", "rift", "sponsor"],
         "properties": {
@@ -1908,7 +1908,8 @@
           },
           "pass": {
             "type": "string",
-            "title": "Pass"
+            "title": "Pass",
+            "pattern": "^0x[0-9a-f]{40}$"
           },
           "rift": {
             "type": "number",
@@ -1918,7 +1919,7 @@
             "$ref": "#/components/schemas/Sponsor"
           },
           "escape": {
-            "type": "string"
+            "$ref": "#/components/schemas/Ship"
           }
         }
       },
@@ -2032,13 +2033,15 @@
         "required": ["encrypt", "auth", "cryptoSuite", "breach"],
         "properties": {
           "encrypt": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^0x[0-9a-f]{40}$"
           },
           "auth": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^0x[0-9a-f]{40}$"
           },
           "cryptoSuite": {
-            "type": "string"
+            "type": "number"
           },
           "breach": {
             "type": "boolean",

@@ -30,9 +30,9 @@ test("getPoint", async () => {
   expect(point).toHaveProperty("dominion", "l2");
 });
 
-test("getPoints", async () => {
+test("getShips", async () => {
   const address: EthAddress = "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d";
-  const ships: Ship[] = await api.getPoints(address);
+  const ships: Ship[] = await api.getShips(address);
   expect(ships.length).toBeGreaterThan(0);
 });
 
