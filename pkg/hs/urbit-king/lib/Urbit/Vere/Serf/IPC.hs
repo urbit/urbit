@@ -87,7 +87,7 @@ import Foreign.Ptr                  (castPtr)
 import Foreign.Storable             (peek, poke)
 import RIO.Prelude                  (decodeUtf8Lenient)
 import System.Posix.Signals         (sigINT, sigKILL, signalProcess)
-import Urbit.Arvo                   (FX)
+import Urbit.Arvo
 import Urbit.Arvo.Event
 import Urbit.Noun.Time              (Wen)
 
@@ -169,7 +169,26 @@ recvPlea w = do
   b <- recvResp w
   n <- fromRightExn (cueBS b) (const $ BadPleaAtom $ bytesAtom b)
   p <- fromRightExn (fromNounErr @Plea n) (\(p, m) -> BadPleaNoun n (fromT <$> p) (fromT m))
-  pure p
+  case p of
+    PWork (fx -> f) -> case (any isSend f, any isHReq f) of
+      (True,  True)  -> {-# SCC "FX_send_hreq" #-} fromNounExn n
+      (True,  False) -> {-# SCC "FX_send" #-}      fromNounExn n
+      (False, True)  -> {-# SCC "FX_hreq" #-}      fromNounExn n
+      (False, False) -> pure p
+    _ -> pure p
+ where
+  fx = \case
+    WDone _ _ f -> f
+    WSwap _ _ _ f -> f
+    WBail _ -> []
+
+  isSend = \case
+    GoodParse (EfVane (VENewt NewtEfSend{})) -> True
+    _ -> False
+
+  isHReq = \case
+    GoodParse (EfVane (VEHttpClient HCERequest{})) -> True
+    _ -> False
 
 recvPleaHandlingSlog :: Serf -> IO Plea
 recvPleaHandlingSlog serf = loop

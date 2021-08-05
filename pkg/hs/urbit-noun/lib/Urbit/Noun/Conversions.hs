@@ -369,7 +369,7 @@ data Lenient a
 
 instance FromNoun a => FromNoun (Lenient a) where
   parseNoun n =
-      (GoodParse <$> parseNoun n) <|> fallback
+      (GoodParse <$> {-# SCC "lenient" #-} parseNoun n) <|> fallback
     where
       fallback =
         fromNounErr n & \case
