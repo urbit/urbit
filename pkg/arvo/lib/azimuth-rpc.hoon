@@ -55,11 +55,15 @@
           |=  params=(map @t json)
           ^-  (unit [encrypt=@ auth=@ crypto-suite=@ breach=?])
           ?~  data=(~(get by params) 'data')  ~
+          =;  ans=(unit [cryp=(unit @ux) auth=(unit @ux) suit=@ brec=?])
+            ?~  ans  ~
+            ?:  |(?=(~ cryp.u.ans) ?=(~ auth.u.ans))  ~
+            (some [u.cryp.u.ans u.auth.u.ans suit.u.ans brec.u.ans])
           %.  u.data
           %-  ot
-          :~  ['encrypt' so]
-              ['auth' so]
-              ['cryptoSuite' so]
+          :~  ['encrypt' (cu to-hex so)]
+              ['auth' (cu to-hex so)]
+              ['cryptoSuite' no]
               ['breach' bo]
           ==
         ::
@@ -286,15 +290,15 @@
             =*  net  net.point
             :*  ['rift' (numb rift.net)]
               ::
+                =,  mimes:html
                 :-  'keys'
                 %-  pairs
                 :~  ['life' (numb life.keys.net)]
                     ['suite' (numb suite.keys.net)]
-                    ['auth' (numb auth.keys.net)]
-                    ['crypt' (numb crypt.keys.net)]
+                    ['auth' (hex (as-octs auth.keys.net))]
+                    ['crypt' (hex (as-octs crypt.keys.net))]
                 ==
               ::
-                ['rift' (numb rift.net)]
                 :-  'sponsor'
                 %-  pairs
                 ~[['has' b+has.sponsor.net] ['who' (ship who.sponsor.net)]]
@@ -360,15 +364,8 @@
     ++  to-hex
       |=  =cord
       ^-  (unit @ux)
+      ?.  =((end [3 2] cord) '0x')  ~
       (rush (rsh [3 2] cord) hex)
-    ::
-    ++  validate
-      |%
-      ++  params
-        |=  params=(map @t json)
-        ^-  ?
-        =((lent ~(tap by params)) 4)
-      --
     ::
     ++  build-l2-tx
       |=  [=l2-tx from=[@p proxy:naive] params=(map @t json)]
@@ -465,7 +462,7 @@
 ++  process-rpc
   |=  [id=@t params=(map @t json) action=l2-tx]
   ^-  [(unit cage) response:rpc]
-  ?.  (params:validate params)
+  ?.  =((lent ~(tap by params)) 4)
     [~ ~(params error:json-rpc id)]
   =+  ^-  $:  sig=(unit @)
               from=(unit [ship proxy:naive])
@@ -563,9 +560,8 @@
               nonce=(unit @ud)
               from=(unit [@p proxy:naive])
           ==
-    :+  (tx:from-json params)
-      (nonce:from-json params)
-    (from:from-json params)
+    =,  from-json
+    [(tx params) (nonce params) (from params)]
   ?:  |(?=(~ nonce) ?=(~ from) ?=(~ l2-tx))
     ~(parse error:json-rpc id)
   =/  tx=(unit tx:naive)  (build-l2-tx u.l2-tx u.from params)
