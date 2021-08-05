@@ -2238,6 +2238,7 @@
   ::
   ++  jib                                               ::  update at min-prio
     |=  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
+    ^-  (pair * pri)
     =/  vue  (bot a)
     ?~  vue
       =/  bee  (f ~)
