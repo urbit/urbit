@@ -26,7 +26,7 @@ TODO
 The tests expect an urbit listening on `localhost:8080` with `%aggregator` and `%aggregator-rpc` agents started.
 
 ```bash
-npm run test
+npm run client-test
 ```
 
 `./tests/roller.tests.ts` shows some examples of using the RPCs.

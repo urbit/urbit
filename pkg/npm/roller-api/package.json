@@ -6,7 +6,7 @@
     "generate-clients": "open-rpc-generator generate -c open-rpc-generator-config.json",
     "clean": "rm -rf build && mkdir -p build",
     "build": "npm run clean && npm run generate-clients",
-    "test": "jest"
+    "client-test": "jest"
   },
   "author": "~norsyr-torryn",
   "license": "MIT",
