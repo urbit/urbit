@@ -416,7 +416,7 @@
     ~(not-found error:json-rpc id)
   [%result id (point:to-json u.point)]
 ::
-++  get-points
+++  get-ships
   |=  [id=@t params=(map @t json) scry=$-(@ux (list @p))]
   ^-  response:rpc
   ?.  =(~(wyt by params) 1)
