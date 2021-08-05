@@ -9247,144 +9247,6 @@
       hag  [q.p.dix q.q.dix]
     ==
   ::
-  ++  ad
-    |%
-    ++  arc
-      |%
-      ++  deft                                          ::  generic
-        |%
-        ++  bath  *                                     ::  leg match type
-        ++  claw  *                                     ::  arm match type
-        ++  form  |*([* *] p=+<-)                       ::  attach build state
-        ++  skin  |*(p=* p)                             ::  reveal build state
-        ++  meat  |*(p=* p)                             ::  remove build state
-        --
-      ++  make                                          ::  for mint
-        |%
-        ++  bath  type                                  ::  leg match type
-        ++  claw  onyx                                  ::  arm
-        ++  form  |*([* *] [p=+<- q=+<+])               ::
-        ++  skin  |*([p=* q=*] q)                       ::  unwrap baggage
-        ++  meat  |*([p=* q=*] p)                       ::  unwrap filling
-        --
-      --
-    ++  def
-      =+  deft:arc
-      |@  ++  $
-      =>  +<
-      |%
-      ++  pord  |*(* (form +< *nock))                   ::  wrap mint formula
-      ++  rosh  |*(* (form +< *(list pock)))            ::  wrap mint changes
-      ++  fleg  _(pord $:bath)                          ::  legmatch + code
-      ++  fram  _(pord $:claw)                          ::  armmatch +
-      ++  foat  _(rosh $:bath)                          ::  leg with changes
-      ++  fult  _(rosh $:claw)                          ::  arm with changes
-      --  --
-    ::
-    ++  lib
-      |%
-      ++  deft
-        =>  (def deft:arc)
-        |%
-        ++  halp  ^|(|:($:hoon $:fleg))
-        ++  vant
-          |%  ++  trep  ^|(|:($:,[bath wing bath] $:,[axis bath]))
-              ++  tasp  ^|(|:($:,[[axis bath] fleg foat] $:foat))
-              ++  tyle  ^|(|:($:foat $:foat))
-          --
-        ++  vunt
-          |%  ++  trep  ^|(|:($:,[claw wing bath] $:,[axis claw]))
-              ++  tasp  ^|(|:($:,[[axis claw] fleg fult] $:fult))
-              ++  tyle  ^|(|:($:fult $:foat))
-        --  --
-      ::
-      ++  make
-        =>  (def make:arc)
-        |%
-        ++  halp  |~  a=hoon
-                  ^-  fleg
-                  (mint %noun a)
-        ++  vant
-          |%  ++  trep  |:  $:,[a=type b=wing c=type]
-                        ^-  [axis type]
-                        (tack(sut a) b c)
-              ++  tasp  |:  $:,[a=(pair axis type) b=fleg c=foat]
-                        ^-  foat
-                        [q.a [[p.a (skin b)] (skin c)]]
-              ++  tyle  |:($:foat +<)
-          --
-        ++  vunt
-          |%  ++  trep  |:  $:,[a=claw b=wing c=bath]
-                        ^-  (pair axis claw)
-                        (toss b c a)
-              ++  tasp  |:  $:,[a=(pair axis claw) b=fleg c=fult]
-                        ^-  fult
-                        [q.a [[p.a (skin b)] (skin c)]]
-              ++  tyle  |:  $:fult
-                        ^-  foat
-                        [(fire +<-) +<+]
-      --  --  --
-    ::
-    ++  bin
-      =+  deft:lib
-      |@  ++  $
-      =>  +<
-      |%
-      ++  rame
-        =>  vant  |%
-            ++  clom  bath
-            ++  chog  fleg
-            ++  ceut  foat
-        --
-      ++  gelp
-        =>  vunt  |%
-            ++  clom  claw
-            ++  chog  fram
-            ++  ceut  fult
-        --
-      ++  ecbo  (ecco rame)
-      ++  eclo  (ecco gelp)
-      ++  ecco
-        =+  rame
-        |@  ++  $
-        =>  +<
-        |:  $:,[rum=clom rig=(list (pair wing hoon))]
-        ^-  foat
-        %-  tyle
-        |-  ^-  ceut
-        ?~  rig  (rosh rum)
-        =+  mor=$(rig t.rig)
-        =+  zil=(halp q.i.rig)
-        =+  dar=(trep (meat mor) p.i.rig (meat zil))
-        (tasp dar zil mor)
-      --  --  --  --
-  ::
-  ++  oc
-    =+  inc=(bin:ad)
-    |@  ++  $
-    =>  inc
-    |%
-    ++  echo
-      |:  $:,[rum=bath rig=(list (pair wing hoon))]
-      (ecbo rum rig)
-    ::
-    ++  ecmo
-      |:  $:,[hag=claw rig=(list (pair wing hoon))]
-      (eclo hag rig)
-    --  --
-  ::
-  ++  etco
-    |=  [lop=palo rig=(list (pair wing hoon))]
-    ^-  (pair type nock)
-    =+  cin=(oc (bin:ad make:lib:ad))
-    =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
-    =+  axe=(tend p.lop)
-    ?:  ?=(%& -.q.lop)
-      =-  [p.- (hike axe q.-)]
-      (echo:cin p.q.lop rig)
-    =-  [p.- [%9 p.q.lop (hike axe q.-)]]
-    (ecmo:cin ~(tap in q.q.lop) rig)
-  ::
   ++  et
     |_  [hyp=wing rig=(list (pair wing hoon))]
     ::
@@ -9400,7 +9262,7 @@
       =+  lug=(find %read hyp)
       ?:  ?=(%| -.lug)  ~>(%mean.'hoon' ?>(?=(~ rig) p.lug))
       =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
-      (etco p.lug rig)
+      (ergo p.lug rig)
     ::
     ++  mull
       |=  [gol=type dox=type]
@@ -10088,7 +9950,6 @@
       [(nice %noun) [%2 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
         [%dtts *]
-      =+  [one two]=[$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)]
       [(nice bool) [%5 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
         [%dtwt *]  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
