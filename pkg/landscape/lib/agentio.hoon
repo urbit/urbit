@@ -84,6 +84,10 @@
     =/  =rave:clay
       ?:(?=(%sing genre) [genre mood] [genre mood])
     (warp-our q.byk.bowl `rave)
+  ::
+  ++  connect
+    |=  [=binding:eyre app=term]
+    (arvo %e %connect binding app)
   --
 ::
 ++  fact-curry
