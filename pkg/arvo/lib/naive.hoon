@@ -1,74 +1,37 @@
 ::  L1 contract changes:
-::  t Enforce that once spawn proxy is set to deposit address, it can't
-::    switched back
-::  t Enforce that once spawn proxy is set to deposit address, you can't
+::  + Enforce that once spawn proxy is set to deposit address, it can't
+::    switch back
+::  + Enforce that once spawn proxy is set to deposit address, you can't
 ::    spawn children
-::  + Possibly the same for approveForAll.  No, because we're not going
-::    to support approveForAll on L2
-::  + Enforce that only ownership key can set spawn proxy to rollup.
-::    maybe not though.  Yeah, a spawn proxy should be able to set spawn
-::    proxy to the rollup
-::  t Disallow depositing galaxy to L2
-::  + When depositing, clear proxies (maybe require reset).  On L1 only,
-::    not L2.  If we don't do this, we need to make sure they can't keep
-::    doing stuff using the proxies.  Probably better to clear the
-::    proxies explicitly instead of requiring _reset
-::  t Maybe require that we're not depositing from a contract?  But
-::    what if they're depositing from something that's a contract, but the
-::    owner is not a contract?  Probably best for the only condition to
-::    be that the owner is not a contract
-::  + disallow spawning to deposit address?  maybe, else we need to
+::  + Disallow depositing galaxy to L2
+::  + When depositing, clear proxies.
+::  + Require that we're not depositing from a contract.  But what if
+::    they're depositing from something that's a contract, but the owner
+::    is not a contract?  Probably best for the only condition to be that
+::    the owner is not a contract
+::  + Disallow spawning to deposit address?  maybe, else we need to
 ::    default the ownership somehow.  Or maybe this happens automatically
 ::    because it uses the safe transfer flow?  Yes, _direct will never
 ::    be true unless we're depositing to ourself, so it'll go to the
 ::    owner address, which will never be the deposit address.  So we're
 ::    safe.
-::  t If either side is on L2, then all sponsorship happens on L2.  If
+::  + If either side is on L2, then all sponsorship happens on L2.  If
 ::    both are on L1, sponsorship happens on L1
-::  - Maybe should special-case spawning directly to L2?  Acceptable
-::    right now but not ideal.
-::
-::  TODO: can an L1 star adopt an L2 planet?  It's not obvious how --
-::  maybe they need to adopt as an L2 transaction?  That sounds right I
-::  think.  Can an L2 star adopt an L1 planet?  I guess, but L1 wouldn't
-::  know about it.  Should L1 check whether the escape target is on L2
-::  for some reason?  IMO if either side is on L2, then both sides
-::  should operate on L2.
-::
-::  I think the answer is that if either side is on L2, it's on L2; if
-::  both are on L1, then it can be on either.  L1 reading sponsorship
-::  state cannot know the sponsorship info is correct; only L2 knows.
-::  However, you can still use an on-chain multi-sig to control your
-::  sponsorship as long as you don't create a proxy that could send
-::  stuff on L2.
-::
-::  TODO: is it possible to spawn directly to the deposit address?  if
-::  so, should we find its parent's owner to control it?
-::
-::  TODO: need to find out what happens when you transfer with reset.
-::  since the setOwner happens first, it might crash the rollup when the
-::  other changes come
+::  - Maybe should special-case spawning directly to L2?  For now, we'll
+::    not special-case to reduce complexity, but it might be reasonable
+::    in the future to avoid having to send two transactions
 ::
 ::  TODO: secp needs to not crash the process when you give it a bad
 ::  v/recid.  See #4797
 ::
-::  TODO: check if spawning is gated on "link"ing
-::
-::  TODO: make process-set-spawn-proxy work if you're on domain %spawn
+::  TODO: check if spawning is gated on "link"ing.  It is on L1, but we
+::  shouldn't do that here.
 ::
 ::  TODO: make sure you can spawn with the spawn proxy after on domain
 ::  %spawn
 ::
 ::  TODO: make sure that if we've already been deposited to L2, no
 ::  further L1 logs count except detach.
-::
-::  TODO: change sponsorship to reject adoptions from L1 if they don't
-::  accord with our local escape state?
-::
-::  TODO: if they deposit before the L1 upgrade, could still have active
-::  proxies.  need to add modifier to like 5 functions to check the ship
-::  is not owned by L2, especially spawn which needs to make sure the
-::  prefix isn't owned by L2
 ::
 /+  std
 =>  =>  std
