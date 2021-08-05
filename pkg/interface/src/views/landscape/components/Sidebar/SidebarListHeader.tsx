@@ -10,7 +10,6 @@ import {
 import { FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
 import useGroupState from '~/logic/state/group';
@@ -24,7 +23,6 @@ import { SidebarListConfig } from './types';
 import { getFeedPath } from '~/logic/lib/util';
 
 export function SidebarListHeader(props: {
-  api: GlobalApi;
   initialValues: SidebarListConfig;
   baseUrl: string;
   selected: string;
@@ -127,10 +125,7 @@ export function SidebarListHeader(props: {
                 border={1}
                 borderColor="washedGray"
               >
-              <NewChannel
-                api={props.api}
-                workspace={props.workspace}
-              />
+              <NewChannel workspace={props.workspace} />
               </Col>
             }
           >

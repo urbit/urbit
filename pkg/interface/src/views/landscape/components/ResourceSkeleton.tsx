@@ -1,12 +1,13 @@
 import _ from 'lodash';
 import { Box, Col, Icon, Text } from '@tlon/indigo-react';
 import { Association } from '@urbit/api/metadata';
+import { AppName } from '@urbit/api';
 import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import urbitOb from 'urbit-ob';
-import GlobalApi from '~/logic/api/global';
 import { isWriter } from '~/logic/lib/group';
+import { useResize } from '~/logic/lib/useResize';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
@@ -56,7 +57,6 @@ const participantNames = (str: string, contacts, hideNicknames) => {
 
 type ResourceSkeletonProps = {
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
   children: ReactNode;
   title?: string;
@@ -64,10 +64,10 @@ type ResourceSkeletonProps = {
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
-  const { association, baseUrl, children, api } = props;
+  const { association, baseUrl, children } = props;
   let app = association['app-name'];
   if (association?.metadata?.config && 'graph' in association.metadata.config) {
-    app = association.metadata.config.graph;
+    app = association.metadata.config.graph as AppName;
   }
   const rid = association.resource;
   const groups = useGroupState(state => state.groups);
@@ -108,7 +108,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     canWrite = isOwn;
   }
 
-  const BackLink = () => (
+  const backLink = (
     <Box
       borderRight={1}
       borderRightColor='gray'
@@ -125,7 +125,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Box>
   );
 
-  const Title = () => (
+  const titleText = (
     <Text
       mono={urbitOb.isValidPatp(title)}
       fontSize={2}
@@ -145,7 +145,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </Text>
   );
 
-  const Description = () => (
+  const description = (
     <TruncatedText
       display={['none','inline']}
       mono={workspace === '/messages' && !association?.metadata?.description}
@@ -162,9 +162,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
     </TruncatedText>
   );
 
-  const ExtraControls = () => {
-    if (workspace === '/messages' && isOwn && !resource.startsWith('dm-')) {
-      return (
+  const extraControls =
+    (workspace === '/messages' && isOwn && !resource.startsWith('dm-')) ?  (
         <Dropdown
           flexShrink={0}
           dropWidth='300px'
@@ -180,7 +179,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
               color='washedGray'
               boxShadow='0px 0px 0px 3px'
             >
-              <MessageInvite association={association} api={api} />
+              <MessageInvite association={association} />
             </Col>
           }
         >
@@ -188,29 +187,23 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
             + Add Ship
           </Text>
         </Dropdown>
-      );
-    }
-    if (canWrite) {
-      return (
+      ) : canWrite ? (
         <Link to={resourcePath('/new')}>
           <Text bold pr='3' color='blue'>
             + New Post
           </Text>
         </Link>
-      );
-    }
-    return null;
-  };
+      ) : null;
 
-  const MenuControl = () => (
+  const menuControl = (
     <Link to={`${baseUrl}/settings`}>
       <Icon icon='Menu' color='gray' pr={2} />
     </Link>
   );
 
-  const actionsRef = useCallback((actionsRef) => {
-    setActionsWidth(actionsRef?.getBoundingClientRect().width);
-  }, [rid]);
+  const bind = useResize<HTMLDivElement>(useCallback((entry) => {
+    setActionsWidth(entry.borderBoxSize[0].inlineSize);
+  }, []));
 
   return (
     <Col width='100%' height='100%' overflow='hidden'>
@@ -229,21 +222,22 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
           display='flex'
           alignItems='baseline'
           width={`calc(100% - ${actionsWidth}px - 16px)`}
-          flexShrink={0}
+          flexShrink={1}
+          minWidth={0}
         >
-          <BackLink />
-          <Title />
-          <Description />
+          {backLink}
+          {titleText}
+          {description}
         </Box>
         <Box
           ml={3}
           display='flex'
           alignItems='center'
           flexShrink={0}
-          ref={actionsRef}
+          {...bind}
         >
-          {ExtraControls()}
-          <MenuControl />
+          {extraControls}
+          {menuControl}
         </Box>
       </Box>
       {children}

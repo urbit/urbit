@@ -1,7 +1,6 @@
 {
-  "include": ["*.ts"],
-  "exclude": ["node_modules", "dist", "@types"],
   "compilerOptions": {
+    "baseUrl": ".",
 	  "outDir": "./dist",
     "module": "ES2020",
     "noImplicitAny": true,
@@ -13,7 +12,8 @@
     "declaration": true,
     "sourceMap": true,
     "strict": false,
-    "noErrorTruncation": true,
-    "allowJs": true
-  }
+    "noErrorTruncation": true
+  },
+  "exclude": ["node_modules", "./dist/**/*", "@types"],
+  "include": ["./*.ts"]
 }

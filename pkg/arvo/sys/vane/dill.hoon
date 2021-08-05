@@ -280,7 +280,12 @@
             %watch-ack  ?~  p.p.+>.sih
                           +>.$
                         (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            %fact       (from ;;(dill-blit q:`vase`+>+>.sih))
+            ::
+              %fact       
+            ?.  ?=(%dill-blit p.cage.p.+>.sih)
+              +>.$
+            (from ;;(dill-blit q.q.cage.p.+>.sih))
+
           ==
         ::
             [%clay %note *]

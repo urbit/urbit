@@ -37,6 +37,17 @@
         [%metadata (^metadatum metadatum)]
     ==
   ::
+  ++  edit-field
+    |=  edt=^edit-field
+    ^-  json
+    %+  frond  -.edt
+    ^-  json
+    ?-  -.edt
+      %color                                [%s `@t`(scot %ux color.edt)]
+      ?(%title %description %picture %vip)  [%s `@t`+.edt]
+      ?(%preview %hidden)                   [%b `?`+.edt]
+    ==
+  ::
   ++  metadatum
     |=  met=^metadatum
     ^-  json
@@ -85,6 +96,16 @@
           [%resource s+(enjs-path:resource resource.resource.upd)]
           [%metadata (metadatum metadatum.upd)]
       ==
+    ::
+        %edit
+      :-  %edit
+      %-  pairs
+      :~  [%group s+(enjs-path:resource group.upd)]
+          [%app-name s+app-name.resource.upd]
+          [%resource s+(enjs-path:resource resource.resource.upd)]
+          [%edit (edit-field edit-field.upd)]
+      ==
+    ::
         %updated-metadata
       :-  %add
       %-  pairs
@@ -136,6 +157,25 @@
     :~  [%add add]
         [%remove remove]
         [%initial-group initial-group]
+        [%edit edit]
+    ==
+  ::
+  ++  edit
+    %-  ot
+    :~  [%group dejs-path:resource]
+        [%resource md-resource]
+        [%edit edit-field]
+    ==
+  ::
+  ++  edit-field
+    %-  of
+    :~  [%title so]
+        [%description so]
+        [%color nu]
+        [%picture so]
+        [%preview bo]
+        [%hidden bo]
+        [%vip vip]
     ==
   ::
   ++  initial-group

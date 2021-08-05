@@ -9,8 +9,10 @@ import {
 import _ from 'lodash';
 import { Cage } from '~/types/cage';
 import { resourceAsPath } from '../lib/util';
-import { reduceState } from '../state/base';
-import useGroupState, { GroupState } from '../state/group';
+import { BaseState } from '../state/base';
+import { GroupState as State } from '../state/group';
+
+type GroupState = BaseState<State> & State;
 
 function decodeGroup(group: Enc<Group>): Group {
   const members = new Set(group.members);
@@ -54,21 +56,7 @@ function decodeTags(tags: Enc<Tags>): Tags {
 
 export default class GroupReducer {
   reduce(json: Cage) {
-    const data = json.groupUpdate;
-    if (data) {
-      reduceState<GroupState, GroupUpdate>(useGroupState, data, [
-        initial,
-        addMembers,
-        addTag,
-        removeMembers,
-        initialGroup,
-        removeTag,
-        addGroup,
-        removeGroup,
-        changePolicy,
-        expose
-      ]);
-    }
+    return;
   }
 }
 const initial = (json: GroupUpdate, state: GroupState): GroupState => {
@@ -115,6 +103,9 @@ const addMembers = (json: GroupUpdate, state: GroupState): GroupState => {
   if ('addMembers' in json) {
     const { resource, ships } = json.addMembers;
     const resourcePath = resourceAsPath(resource);
+    if(!(resourcePath in state.groups)) {
+      return;
+    }
     for (const member of ships) {
       state.groups[resourcePath].members.add(member);
       if (
@@ -175,24 +166,6 @@ const removeTag = (json: GroupUpdate, state: GroupState): GroupState => {
   return state;
 };
 
-const changePolicy = (json: GroupUpdate, state: GroupState): GroupState => {
-  if ('changePolicy' in json && state) {
-    const { resource, diff } = json.changePolicy;
-    const resourcePath = resourceAsPath(resource);
-    const policy = state.groups[resourcePath].policy;
-    if ('open' in policy && 'open' in diff) {
-      openChangePolicy(diff.open, policy);
-    } else if ('invite' in policy && 'invite' in diff) {
-      inviteChangePolicy(diff.invite, policy);
-    } else if ('replace' in diff) {
-      state.groups[resourcePath].policy = diff.replace;
-    } else {
-      console.log('bad policy diff');
-    }
-  }
-  return state;
-};
-
 const expose = (json: GroupUpdate, state: GroupState): GroupState => {
   if( 'expose' in json && state) {
     const { resource } = json.expose;
@@ -243,3 +216,33 @@ const openChangePolicy = (diff: OpenPolicyDiff, policy: OpenPolicy) => {
     console.log('bad policy change');
   }
 };
+
+const changePolicy = (json: GroupUpdate, state: GroupState): GroupState => {
+  if ('changePolicy' in json && state) {
+    const { resource, diff } = json.changePolicy;
+    const resourcePath = resourceAsPath(resource);
+    const policy = state.groups[resourcePath].policy;
+    if ('open' in policy && 'open' in diff) {
+      openChangePolicy(diff.open, policy);
+    } else if ('invite' in policy && 'invite' in diff) {
+      inviteChangePolicy(diff.invite, policy);
+    } else if ('replace' in diff) {
+      state.groups[resourcePath].policy = diff.replace;
+    } else {
+      console.log('bad policy diff');
+    }
+  }
+  return state;
+};
+export const reduce = [
+  initial,
+  addMembers,
+  addTag,
+  removeMembers,
+  initialGroup,
+  removeTag,
+  addGroup,
+  removeGroup,
+  changePolicy,
+  expose
+];

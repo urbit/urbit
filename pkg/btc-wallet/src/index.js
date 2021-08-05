@@ -10,8 +10,6 @@ import './css/custom.css';
 
 // rebuild x3
 
-window.NETWORK = 'testnet'; // 'bitcoin'
-
 const channel = new window.channel();
 api.setChannel(window.ship, channel);
 

@@ -39,7 +39,6 @@ export function PostForm(props: PostFormProps) {
         validationSchema={formSchema}
         initialValues={initial}
         onSubmit={onSubmit}
-        validateOnBlur
       >
         <Form style={{ display: 'contents' }}>
           <Row flexShrink={0} flexDirection={['column-reverse', 'row']} mb={4} gapX={4} justifyContent='space-between'>

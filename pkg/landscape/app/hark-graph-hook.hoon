@@ -74,21 +74,9 @@
     ==
   :_  this(state old)
   =.  cards  (flop cards)
-  %+  welp
-    ?:  (~(has by wex.bowl) [/graph our.bowl %graph-store])
-      cards
-    [watch-graph:ha cards]
-  %+  turn
-    ^-  (list mark)
-    :~  %graph-validator-chat
-        %graph-validator-link
-        %graph-validator-publish
-    ==
-  |=  =mark
-  ^-  card
-  =/  =wire  /validator/[mark]
-  =/  =rave:clay  [%sing %f [%da now.bowl] /[mark]/notification-kind]
-  [%pass wire %arvo %c %warp our.bowl [q.byk.bowl `rave]]
+  ?:  (~(has by wex.bowl) [/graph our.bowl %graph-store])
+    cards
+  [watch-graph:ha cards]
 ::
 ++  on-watch
   |=  =path
@@ -280,12 +268,8 @@
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
   ?+  wire  (on-arvo:def wire sign-arvo)
-    ::
-      [%validator @ ~]
-    :_  this
-    =*  validator  i.t.wire
-    =/  =rave:clay  [%next %f [%da now.bowl] /[validator]/notification-kind]
-    [%pass wire %arvo %c %warp our.bowl [q.byk.bowl `rave]]~
+    ::  no longer necessary
+    [%validator @ ~]  [~ this]
   ==
 ++  on-fail   on-fail:def
 --
@@ -300,7 +284,7 @@
   ^-  $-(indexed-post:graph-store (unit notif-kind:hook))
   =+  %^  scry  [our now]:bowl
          ,mark=(unit mark)
-      /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun
+      /gx/graph-store/graph/(scot %p entity.rid)/[name.rid]/mark/noun
   ?~  mark
     |=(=indexed-post:graph-store ~)
   (scry-notif-conversion [our now]:bowl q.byk.bowl u.mark)

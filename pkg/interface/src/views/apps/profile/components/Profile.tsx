@@ -1,4 +1,5 @@
 import { BaseImage, Box, Center, Row, Text } from '@tlon/indigo-react';
+import { retrieve } from '@urbit/api';
 import React, { ReactElement, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
@@ -10,6 +11,7 @@ import { SetStatusBarModal } from '~/views/components/SetStatusBarModal';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import { EditProfile } from './EditProfile';
 import { ViewProfile } from './ViewProfile';
+import airlock from '~/logic/api';
 
 export function ProfileHeader(props: any): ReactElement {
   return (
@@ -120,7 +122,7 @@ export function ProfileStatus(props: any): ReactElement {
 }
 
 export function ProfileActions(props: any): ReactElement {
-  const { ship, isPublic, contact, api } = props;
+  const { ship, isPublic, contact } = props;
   const history = useHistory();
   return (
     <Row>
@@ -147,7 +149,6 @@ export function ProfileActions(props: any): ReactElement {
             isControl
             py={2}
             ml={3}
-            api={api}
             ship={`~${window.ship}`}
             contact={contact}
           />
@@ -176,7 +177,7 @@ export function Profile(props: any): ReactElement | null {
 
   useEffect(() => {
     if (hasLoaded && !contact && !nacked) {
-      props.api.contacts.retrieve(ship);
+      airlock.poke(retrieve(ship));
     }
   }, [hasLoaded, contact]);
 
@@ -191,13 +192,11 @@ export function Profile(props: any): ReactElement | null {
           <EditProfile
             ship={ship}
             contact={contact}
-            api={props.api}
           />
         ) : (
           <ViewProfile
             nacked={nacked}
             ship={ship}
-            api={props.api}
             contact={contact}
           />
         )}

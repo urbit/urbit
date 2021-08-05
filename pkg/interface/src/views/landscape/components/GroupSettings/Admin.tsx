@@ -1,25 +1,23 @@
 import {
     Box,
-
     Col, ManagedTextInputField as Input,
     ManagedToggleSwitchField as Checkbox,
-
     Text
 } from '@tlon/indigo-react';
-import { Enc } from '@urbit/api';
+import _ from 'lodash';
+import { changePolicy, Enc } from '@urbit/api';
 import { Group, GroupPolicy } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
+import { Association, metadataEdit, MetadataEditField } from '@urbit/api/metadata';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { uxToHex } from '~/logic/lib/util';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { ColorInput } from '~/views/components/ColorInput';
 import { FormError } from '~/views/components/FormError';
 import { ImageInput } from '~/views/components/ImageInput';
+import airlock from '~/logic/api';
 
 interface FormSchema {
   title: string;
@@ -41,13 +39,11 @@ const formSchema = Yup.object({
 interface GroupAdminSettingsProps {
   group: Group;
   association: Association;
-  api: GlobalApi;
 }
 
 export function GroupAdminSettings(props: GroupAdminSettingsProps) {
   const { group, association } = props;
   const { metadata } = association;
-  const history = useHistory();
   const currentPrivate = 'invite' in props.group.policy;
   const initialValues: FormSchema = {
     title: metadata?.title,
@@ -63,23 +59,33 @@ export function GroupAdminSettings(props: GroupAdminSettingsProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      const { title, description, picture, color, isPrivate, adminMetadata } = values;
+      const { color, isPrivate, adminMetadata } = values;
+      const update = (upd: MetadataEditField) =>
+        airlock.poke(metadataEdit(association, upd));
+
       const uxColor = uxToHex(color);
       const vip = adminMetadata ? '' : 'member-metadata';
-      await props.api.metadata.update(props.association, {
-        title,
-        description,
-        picture,
-        color: uxColor,
-        vip
-      });
+      const promises = _.compact(_.map(['title', 'description', 'picture'] as const,
+        (k) => {
+          const edit: MetadataEditField = { [k]: values[k] };
+          return (values[k] !== initialValues[k])
+            ? update(edit)
+            : null;
+        }));
+      if(vip !== metadata.vip) {
+        promises.push(update({ vip }));
+      }
+      if(uxColor !== metadata.color) {
+        promises.push(update({ color: uxColor }));
+      }
+      await Promise.all(promises);
       if (isPrivate !== currentPrivate) {
         const resource = resourceFromPath(props.association.group);
         const newPolicy: Enc<GroupPolicy> = isPrivate
           ? { invite: { pending: [] } }
           : { open: { banRanks: [], banned: [] } };
         const diff = { replace: newPolicy };
-        await props.api.groups.changePolicy(resource, diff);
+        await airlock.poke(changePolicy(resource, diff));
       }
 
       actions.setStatus({ success: null });

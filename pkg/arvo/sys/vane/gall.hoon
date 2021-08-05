@@ -771,12 +771,10 @@
       mo-core
     =^  [=duct =routes blocker=(each deal unto)]  blocked
       ~(get to blocked)
+    ?:  ?=(%| -.blocker)  $
     =/  =move
       =/  =sock  [attributing.routes our]
-      =/  card
-        ?:  ?=(%& -.blocker)
-          [%slip %g %deal sock dap p.blocker]
-        [%pass /clear-huck %b %huck `sign-arvo`[%gall %unto p.blocker]]
+      =/  card   [%slip %g %deal sock dap p.blocker]
       [duct card]
     $(moves [move moves])
   ::  +mo-filter-queue: remove all blocked tasks from ship.

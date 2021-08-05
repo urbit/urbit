@@ -4,6 +4,8 @@ import {
 
     JoinRequests, Notifications,
 
+    seen,
+
     Timebox,
     unixToDa
 } from '@urbit/api';
@@ -11,8 +13,7 @@ import { BigInteger } from 'big-integer';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import moment from 'moment';
-import React, { useCallback, useEffect, useRef } from 'react';
-import GlobalApi from '~/logic/api/global';
+import React, { useEffect, useRef } from 'react';
 import { getNotificationKey } from '~/logic/lib/hark';
 import { useLazyScroll } from '~/logic/lib/useLazyScroll';
 import useLaunchState from '~/logic/state/launch';
@@ -20,6 +21,7 @@ import { daToUnix } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
 import { Invites } from './invites';
 import { Notification } from './notification';
+import airlock from '~/logic/api';
 
 type DatedTimebox = [BigInteger, Timebox];
 
@@ -42,19 +44,17 @@ function filterNotification(groups: string[]) {
 export default function Inbox(props: {
   archive: Notifications;
   showArchive?: boolean;
-  api: GlobalApi;
   filter: string[];
   pendingJoin: JoinRequests;
 }) {
-  const { api } = props;
   useEffect(() => {
-    let seen = false;
+    let hasSeen = false;
     setTimeout(() => {
-      seen = true;
+      hasSeen = true;
     }, 3000);
     return () => {
-      if (seen) {
-        api.hark.seen();
+      if (hasSeen) {
+        airlock.poke(seen());
       }
     };
   }, []);
@@ -64,6 +64,8 @@ export default function Inbox(props: {
   const ready = useHarkState(
     s => Object.keys(s.unreads.graph).length > 0
   );
+
+  const getMore = useHarkState(s => s.getMore);
 
   const notificationState = useHarkState(state => state.notifications);
   const unreadNotes = useHarkState(s => s.unreadNotes);
@@ -95,16 +97,12 @@ export default function Inbox(props: {
 
   const scrollRef = useRef(null);
 
-  const loadMore = useCallback(async () => {
-    return api.hark.getMore();
-  }, [api]);
-
   const { isDone, isLoading } = useLazyScroll(
     scrollRef,
     ready,
     0.2,
     _.flatten(notifications).length,
-    loadMore
+    getMore
   );
   const date = unixToDa(Date.now());
 
@@ -118,15 +116,14 @@ export default function Inbox(props: {
           </Text>
         </Box>
       )}
-      <Invites pendingJoin={props.pendingJoin} api={api} />
-      <DaySection unread key="unread" timeboxes={[[date,unreadNotes]]} api={api} />
+      <Invites pendingJoin={props.pendingJoin} />
+      <DaySection unread key="unread" timeboxes={[[date,unreadNotes]]} />
       {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
         const timeboxes = notificationsByDayMap.get(day)!;
         return timeboxes.length > 0 && (
           <DaySection
             key={day}
             timeboxes={timeboxes}
-            api={api}
           />
         );
       })}
@@ -159,8 +156,7 @@ function sortIndexedNotification(
 
 function DaySection({
   timeboxes,
-  unread = false,
-  api
+  unread = false
 }) {
   const lent = timeboxes.map(([,nots]) => nots.length).reduce(f.add, 0);
   if (lent === 0 || timeboxes.length === 0) {
@@ -173,7 +169,6 @@ function DaySection({
         _.map(nots.sort(sortIndexedNotification), (not, j: number) => (
           <Notification
             key={getNotificationKey(date, not)}
-            api={api}
             notification={not}
             unread={unread}
             time={!unread ? date : undefined}
