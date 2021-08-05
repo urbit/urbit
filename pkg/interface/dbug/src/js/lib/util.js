@@ -8,7 +8,7 @@ export function makeRoutePath(resource, includeQuery = false) {
   } else {
     query = '';
   }
-  return '/~debug/' + resource + query;
+  return '/' + resource + query;
 }
 
 export function msToDa(ms, mil) {

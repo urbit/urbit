@@ -26,15 +26,15 @@ export class Root extends Component {
 
   componentDidMount() {
     // preload spinner asset
-    new Image().src = "/~debug/img/Spinner.png";
+    //new Image().src = "/~debug/img/Spinner.png";
   }
 
   render() {
     const { state } = this;
 
     return (
-      <BrowserRouter><Switch>
-        <Route exact path="/~debug"
+      <BrowserRouter basename="/apps/debug"><Switch>
+        <Route exact path="/"
           render={(props) => {
             return (
               <Skeleton status={state.status} selected="">

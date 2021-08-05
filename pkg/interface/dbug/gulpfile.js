@@ -17,7 +17,7 @@ var globals = require('rollup-plugin-node-globals');
   Main config options
 ***/
 
-var urbitrc = require('../urbitrc');
+//var urbitrc = require('../urbitrc');
 
 /***
   End main config options
@@ -31,7 +31,7 @@ gulp.task('css-bundle', function() {
     .src('src/index.css')
     .pipe(cssimport())
     .pipe(postcss(plugins))
-    .pipe(gulp.dest('../../arvo/app/debug/css'));
+    .pipe(gulp.dest('dist'))
 });
 
 gulp.task('jsx-transform', function(cb) {
@@ -73,8 +73,8 @@ gulp.task('js-imports', function(cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('../../arvo/app/debug/js/'))
-    .on('end', cb);
+    .on('end', cb)
+    .pipe(gulp.dest('dist'))
 });
 
 gulp.task('tile-js-imports', function(cb) {
@@ -99,41 +99,45 @@ gulp.task('tile-js-imports', function(cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('../../arvo/app/debug/js/'))
-    .on('end', cb);
+    .on('end', cb)
+    .pipe(gulp.dest('dist/js'))
 });
 
 gulp.task('js-minify', function () {
-  return gulp.src('../../arvo/app/debug/js/index.js')
+  return gulp.src('dist/index.js')
     .pipe(minify())
-    .pipe(gulp.dest('../../arvo/app/debug/js/'));
+    .pipe(gulp.dest('dist'));
 });
 
 gulp.task('tile-js-minify', function () {
-  return gulp.src('../../arvo/app/debug/js/tile.js')
+  return gulp.src('dist/tile.js')
     .pipe(minify())
-    .pipe(gulp.dest('../../arvo/app/debug/js/'));
+    .pipe(gulp.dest('dist/js/'));
 });
 
 gulp.task('rename-index-min', function() {
-  return gulp.src('../../arvo/app/debug/js/index-min.js')
+  return gulp.src('dist/index-min.js')
     .pipe(rename('index.js'))
-    .pipe(gulp.dest('../../arvo/app/debug/js/'))
+    .pipe(gulp.dest('dist'))
 });
 
 gulp.task('rename-tile-min', function() {
-  return gulp.src('../../arvo/app/debug/js/tile-min.js')
+  return gulp.src('dist/tile-min.js')
     .pipe(rename('tile.js'))
-    .pipe(gulp.dest('../../arvo/app/debug/js/'))});
+    .pipe(gulp.dest('dist'))});
 
 gulp.task('clean-min', function() {
-  return del(['../../arvo/app/debug/js/index-min.js', '../../arvo/app/debug/js/tile-min.js'], {force: true})
+  return del(['dist/index-min.js', 'dist/tile-min.js', 'dist/js'], {force: true})
+});
+
+gulp.task('copy-static', function() {
+  return gulp.src('public/**/*').pipe(gulp.dest('dist'))
 });
 
 gulp.task('urbit-copy', function () {
   let ret = gulp.src('../../arvo/**/*');
 
-  urbitrc.URBIT_PIERS.forEach(function(pier) {
+  [].forEach(function(pier) {
     ret = ret.pipe(gulp.dest(pier));
   });
 
@@ -148,26 +152,24 @@ gulp.task('tile-js-bundle-prod',
 
 gulp.task('bundle-dev',
   gulp.series(
+    'copy-static',
     gulp.parallel(
       'css-bundle',
       'js-bundle-dev',
       'tile-js-bundle-dev'
     ),
-    'urbit-copy'
   )
 );
 
 gulp.task('bundle-prod',
   gulp.series(
+    'copy-static',
     gulp.parallel(
       'css-bundle',
       'js-bundle-prod',
-      'tile-js-bundle-prod',
     ),
     'rename-index-min',
-    'rename-tile-min',
-    'clean-min',
-    'urbit-copy'
+    'clean-min'
   )
 );
 
@@ -178,6 +180,6 @@ gulp.task('watch', gulp.series('default', function() {
 
   gulp.watch('src/**/*.js', gulp.parallel('js-bundle-dev'));
   gulp.watch('src/**/*.css', gulp.parallel('css-bundle'));
+  gulp.watch('public/**/*', gulp.parallel('copy-static'))
 
-  gulp.watch('../../arvo/**/*', gulp.parallel('urbit-copy'));
 }));
