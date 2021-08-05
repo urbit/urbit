@@ -149,7 +149,7 @@
       (process-rpc id +.params method)
     ?+  method  [~ ~(method error:json-rpc id)]
       %get-point               `(get-point id +.params point:scry)
-      %get-points              `(get-points id +.params points:scry)
+      %get-ships               `(get-ships id +.params points:scry)
       %cancel-transaction      (cancel-tx id +.params)
       %get-spawned             `(get-spawned id +.params spawned:scry)
       %get-all-pending         `(all:pending id +.params all:pending:scry)
