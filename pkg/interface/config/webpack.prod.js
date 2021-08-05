@@ -1,6 +1,5 @@
 const path = require('path');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const webpack = require('webpack');
 const { execSync } = require('child_process');
@@ -30,23 +29,29 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light|@tlon\/indigo-react)\/).*/
+        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light|@tlon\/indigo-react|@urbit\/api)\/).*/
       },
       {
          test: /\.css$/i,
         use: [
-          // Creates `style` nodes from JS strings
-          'style-loader',
           // Translates CSS into CommonJS
           'css-loader',
           // Compiles Sass to CSS
           'sass-loader'
         ]
+      },
+      {
+        test: /\.woff2$/i,
+        type: 'asset/resource'
       }
     ]
   },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx']
+    extensions: ['.js', '.ts', '.tsx'],
+    fallback: {
+      path: false,
+      http: false
+    }
   },
   devtool: 'source-map',
   // devServer: {
@@ -57,7 +62,6 @@ module.exports = {
   // },
   plugins: [
     new MomentLocalesPlugin(),
-    new CleanWebpackPlugin(),
     new webpack.DefinePlugin({
       'process.env.LANDSCAPE_STREAM': JSON.stringify(process.env.LANDSCAPE_STREAM),
       'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
@@ -65,22 +69,31 @@ module.exports = {
       'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
       'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),
       'process.env.TUTORIAL_BOOK': JSON.stringify('guides-9684'),
-      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143')
     }),
-    // new HtmlWebpackPlugin({
-    //   title: 'Hot Module Replacement',
-    //   template: './public/index.html',
-    // }),
+    new HtmlWebpackPlugin({
+      title: 'Landscape',
+      template: './public/index.html'
+    })
   ],
   output: {
-    filename: (pathData) => {
-      return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
-    },
-    path: path.resolve(__dirname, '../../arvo/app/landscape/js/bundle'),
-    publicPath: '/'
+    filename: '[name].[contenthash].js',
+    path: path.resolve(__dirname, '../dist'),
+    publicPath: '/apps/landscape',
+    clean: true
   },
   optimization: {
     minimize: true,
-    usedExports: true
+    usedExports: true,
+    runtimeChunk: 'single',
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
   }
 };

@@ -17,6 +17,15 @@ import useLocalState from '~/logic/state/local';
 import useSettingsState from '~/logic/state/settings';
 import useGraphState from '~/logic/state/graph';
 import { ShortcutContextProvider } from '~/logic/lib/shortcutContext';
+import '../../public/fonts/inter-bold.woff2';
+import '../../public/fonts/inter-italic.woff2';
+import '../../public/fonts/inter-regular.woff2';
+import '../../public/fonts/inter-bolditalic.woff2';
+import '../../public/fonts/sourcecodepro-bold.woff2';
+import '../../public/fonts/sourcecodepro-light.woff2';
+import '../../public/fonts/sourcecodepro-medium.woff2';
+import '../../public/fonts/sourcecodepro-semibold.woff2';
+import '../../public/fonts/sourcecodepro-extralight.woff2';
 
 import ErrorBoundary from '~/views/components/ErrorBoundary';
 import { TutorialModal } from '~/views/landscape/components/TutorialModal';
@@ -173,7 +182,7 @@ class App extends React.Component {
             : null}
         </Helmet>
         <Root>
-          <Router>
+          <Router basename="/apps/landscape">
             <TutorialModal />
             <ErrorBoundary>
               <StatusBarWithRouter

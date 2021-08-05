@@ -1,8 +1,11 @@
+
 {
-  "short_name": "indigo-react",
-  "name": "indigo-react",
-  "start_url": "./index.html",
+  "manifest_version": 2,
+  "version": "2.9.3",
+  "name": "Landscape",
+  "short_name": "Landscape",
+  "description": "An interface to your Urbit.",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#FFFFFF",
+  "theme_color": "#000000"
 }

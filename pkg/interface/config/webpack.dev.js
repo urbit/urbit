@@ -1,49 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const urbitrc = require('./urbitrc');
-const fs = require('fs');
-const util = require('util');
 const _ = require('lodash');
 const { execSync } = require('child_process');
 
 const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
-
-
-function copyFile(src,dest) {
-  return new Promise((res,rej) =>
-    fs.copyFile(src,dest, err => err ? rej(err) : res()));
-}
-
-class UrbitShipPlugin {
-  constructor(urbitrc) {
-    this.piers = urbitrc.URBIT_PIERS;
-    this.herb = urbitrc.herb || false;
-  }
-
-  apply(compiler) {
-    compiler.hooks.afterEmit.tapPromise(
-      'UrbitShipPlugin',
-      async (compilation) => {
-        const src = path.resolve(compiler.options.output.path, 'index.js');
-        // uncomment to copy into all piers
-        //
-        // return Promise.all(this.piers.map(pier => {
-        //   const dst = path.resolve(pier, 'app/landscape/js/index.js');
-        //   copyFile(src, dst).then(() => {
-        //     if(!this.herb) {
-        //       return;
-        //     }
-        //     pier = pier.split('/');
-        //     const desk = pier.pop();
-        //     return exec(`herb -p hood -d '+hood/commit %${desk}' ${pier.join('/')}`);
-        //   });
-        // }));
-      }
-    );
-  }
-}
 
 let devServer = {
   contentBase: path.join(__dirname, '../dist'),
@@ -61,25 +23,13 @@ if(urbitrc.URL) {
     ...devServer,
     index: '',
     proxy: {
-      '/~landscape/js/bundle/index.*.js': {
-        target: 'http://localhost:9000',
-        pathRewrite: (req, path) => {
-          return '/index.js'
-        }
-      },
-      // '/~landscape/js/serviceworker.js': {
-      //   target: 'http://localhost:9000',
-      //   pathRewrite: (req, path) => {
-      //     return '/serviceworker.js'
-      //   }
-      // },
-      '**': {
+      '^((?!\/apps\/landscape).)*$': {
         changeOrigin: true,
         target: urbitrc.URL,
         router,
         // ensure proxy doesn't timeout channels
-        proxyTimeout: 0,
-     }
+        proxyTimeout: 0
+      }
     }
   };
 }
@@ -87,7 +37,7 @@ if(urbitrc.URL) {
 module.exports = {
   mode: 'development',
   entry: {
-    app: './src/index.js',
+    app: './src/index.js'
     // serviceworker: './src/serviceworker.js'
   },
   module: {
@@ -100,7 +50,7 @@ module.exports = {
             presets: ['@babel/preset-env', '@babel/typescript', ['@babel/preset-react', {
               runtime: 'automatic',
               development: true,
-              importSource: '@welldone-software/why-did-you-render',
+              importSource: '@welldone-software/why-did-you-render'
             }]],
             plugins: [
               '@babel/transform-runtime',
@@ -116,8 +66,6 @@ module.exports = {
       {
         test: /\.css$/i,
         use: [
-          // Creates `style` nodes from JS strings
-          'style-loader',
           // Translates CSS into CommonJS
           'css-loader',
           // Compiles Sass to CSS
@@ -132,21 +80,18 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: devServer,
   plugins: [
-    new UrbitShipPlugin(urbitrc),
     new webpack.DefinePlugin({
       'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
       'process.env.TUTORIAL_HOST': JSON.stringify('~difmex-passed'),
       'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
       'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),
       'process.env.TUTORIAL_BOOK': JSON.stringify('guides-9684'),
-      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143')
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Landscape',
+      template: './public/index.html'
     })
-
-    // new CleanWebpackPlugin(),
-    // new HtmlWebpackPlugin({
-    //   title: 'Hot Module Replacement',
-    //   template: './public/index.html',
-    // }),
   ],
   watch: true,
   output: {
