@@ -180,6 +180,24 @@
         "url": "https://github.com/urbit/berkeley-softfloat-3/archive/ec4c7e31b32e07aad80e52f65ff46ac6d6aad986.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "secp256k1": {
+        "branch": "master",
+        "description": "Optimized C library for ECDSA signatures and secret/public key operations on curve secp256k1.",
+        "homepage": null,
+        "pmnsh": {
+            "include": "include",
+            "lib": ".libs",
+            "prepare": "./autogen.sh && ./configure --disable-shared --enable-module-recovery CFLAGS=-DSECP256K1_API=",
+            "make": "libsecp256k1.la"
+        },
+        "owner": "bitcoin-core",
+        "repo": "secp256k1",
+        "rev": "26de4dfeb1f1436dae1fcf17f57bdaa43540f940",
+        "sha256": "03i3nv8d3ci7q9y98q11rrp3rvwdqc0hc0ss0pr6xckybvizsmbb",
+        "type": "tarball",
+        "url": "https://github.com/bitcoin-core/secp256k1/archive/26de4dfeb1f1436dae1fcf17f57bdaa43540f940.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "stackage.nix": {
         "branch": "master",
         "description": "Automatically generated Nix expressions of Stackage snapshots",
