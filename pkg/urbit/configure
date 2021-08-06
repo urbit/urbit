@@ -4,9 +4,9 @@ set -euo pipefail
 
 URBIT_VERSION="$(cat ./version)"
 
-deps="                                           \
-  urcrypt curl gmp sigsegv ent h2o uv murmur3    \
-  softfloat3 crypto ssl z lmdb pthread           \
+deps="                                                                   \
+  curl gmp sigsegv argon2 ed25519 ent h2o scrypt uv murmur3              \
+  softfloat3 ssl liburcrypt-0 crypto aes_siv z lmdb pthread libsecp256k1 \
 "
 
 headers="             \
