@@ -16,6 +16,6 @@ stdenv.mkDerivation rec {
   nativeBuildInputs =
     [ autoreconfHook pkgconfig ];
 
-  buildInputs =
+  propagatedBuildInputs =
     [ openssl secp256k1 libaes_siv ];
 }
