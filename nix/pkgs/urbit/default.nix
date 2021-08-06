@@ -1,8 +1,12 @@
-{ lib, stdenv, coreutils, pkgconfig, argon2u, cacert, ca-bundle, curlMinimal
-, ed25519, ent, urcrypt, gmp, h2o, herb, ivory, libaes_siv, libscrypt
-, libsigsegv, libuv, lmdb, murmur3, openssl, secp256k1, softfloat3, zlib
-, enableStatic ? stdenv.hostPlatform.isStatic, enableDebug ? false
-, doCheck ? true, enableParallelBuilding ? true, dontStrip ? true }:
+{ lib, stdenv, coreutils, pkgconfig                      # build/env
+, cacert, ca-bundle, ivory                               # codegen
+, curlMinimal, ent, gmp, h2o, libsigsegv, libuv, lmdb    # libs
+, murmur3, openssl, softfloat3, urcrypt, zlib            #
+, enableStatic           ? stdenv.hostPlatform.isStatic  # opts
+, enableDebug            ? false
+, doCheck                ? true
+, enableParallelBuilding ? true
+, dontStrip              ? true }:
 
 let
 
@@ -19,29 +23,22 @@ in stdenv.mkDerivation {
   nativeBuildInputs = [ pkgconfig ];
 
   buildInputs = [
-    argon2u
     cacert
     ca-bundle
     curlMinimal
-    ed25519
     ent
-    urcrypt
     gmp
     h2o
     ivory.header
-    libaes_siv
-    libscrypt
     libsigsegv
     libuv
     lmdb
     murmur3
     openssl
-    secp256k1
     softfloat3
+    urcrypt
     zlib
   ];
-
-  checkInputs = [ herb ];
 
   # Ensure any `/usr/bin/env bash` shebang is patched.
   postPatch = ''
@@ -56,9 +53,14 @@ in stdenv.mkDerivation {
     cp ./build/urbit-worker $out/bin/urbit-worker
   '';
 
+  dontDisableStatic = enableStatic;
+
+  configureFlags = if enableStatic
+    then [ "--disable-shared" "--enable-static" ]
+    else [];
+
   CFLAGS = [ (if enableDebug then "-O0" else "-O3") "-g" ]
-    ++ lib.optionals (!enableDebug) [ "-Werror" ]
-    ++ lib.optionals enableStatic [ "-static" ];
+    ++ lib.optionals (!enableDebug) [ "-Werror" ];
 
   MEMORY_DEBUG = enableDebug;
   CPU_DEBUG = enableDebug;

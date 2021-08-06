@@ -4,9 +4,9 @@ set -euo pipefail
 
 URBIT_VERSION="$(cat ./version)"
 
-deps="                                                                   \
-  curl gmp sigsegv argon2 ed25519 ent h2o scrypt uv murmur3              \
-  softfloat3 ssl liburcrypt-0 crypto aes_siv z lmdb pthread libsecp256k1 \
+deps="                                           \
+  curl gmp sigsegv ent h2o uv murmur3 softfloat3 \
+  liburcrypt-0 ssl crypto z lmdb pthread         \
 "
 
 headers="             \
@@ -22,6 +22,7 @@ defmacro () {
 defmacro URBIT_VERSION "\"$URBIT_VERSION\""
 
 opt_debug=
+opt_static=
 
 while test $# != 0
 do
@@ -32,12 +33,30 @@ do
   --disable-debug)
     opt_debug=
     ;;
+  --enable-static)
+    opt_static=1
+    ;;
+  --enable-shared)
+    opt_static=
+    ;;
+  --disable-static)
+    opt_static=
+    ;;
+  --disable-shared)
+    opt_static=1
+    ;;
   *)
     echo "unrecognized option: $1"
     ;;
   esac
   shift
 done
+
+
+if [ -n "${opt_static-}" ]
+then
+  CFLAGS="${CFLAGS-} -static"
+fi
 
 [ -n "${MEMORY_DEBUG-}" ]     && defmacro U3_MEMORY_DEBUG 1
 [ -n "${MEMORY_LOG-}" ]       && defmacro U3_MEMORY_LOG 1
@@ -77,6 +96,12 @@ esac
 # TODO Determine if the target cpu is little or big endian.
 case $(tr A-Z a-z <<< $os) in
   *mingw*)
+     if [ -z "${opt_static-}" ]
+     then
+        echo mingw builds are static-only
+        exit 1
+     fi
+
      # ensure required mingw packages are installed
      mpkgs=(cmake curl gcc jq make)
      pacman -S --needed autoconf automake-wrapper libtool patch ${mpkgs[@]/#/mingw-w64-x86_64-}
@@ -137,10 +162,17 @@ case $(tr A-Z a-z <<< $os) in
      ;;
 esac
 
+PKG_CONFIG="${PKG_CONFIG-pkg-config}"
+
+if [ -n "${opt_static-}" ]
+then
+  PKG_CONFIG="$PKG_CONFIG --static"
+fi
+
 for dep in ${osdeps-} $deps
 do
-   LDFLAGS="${LDFLAGS-} $(${PKG_CONFIG-pkg-config} --libs $dep 2>/dev/null || echo -l$dep)"
-   CFLAGS="${CFLAGS-} $(${PKG_CONFIG-pkg-config} --cflags $dep 2>/dev/null || true)"
+   LDFLAGS="${LDFLAGS-} $($PKG_CONFIG --libs $dep 2>/dev/null || echo -l$dep)"
+   CFLAGS="${CFLAGS-} $($PKG_CONFIG --cflags $dep 2>/dev/null || true)"
 done
 
 for header in $headers; do
