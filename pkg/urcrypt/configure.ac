@@ -73,7 +73,7 @@ AS_IF([test "$enable_shared" == "yes"],
       AC_CHECK_TOOL([NM], [nm])
       AC_MSG_CHECKING([for shared libcrypto])
       AS_IF(
-        [$NM conftest$EXEEXT | $GREP 'U SHA256' 2>&1 >/dev/null],
+        [$NM conftest$EXEEXT | $GREP 'U .*SHA256' 2>&1 >/dev/null],
         [AC_MSG_RESULT([yes])],
         [AC_MSG_ERROR([cannot find shared object for libcrypto.])])],
      [AC_MSG_ERROR([unable to link libcrypto.])])
