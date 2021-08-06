@@ -1,5 +1,8 @@
 /+  *test, naive, ethereum, azimuth, *naive-transactions
 ::
+::  TODO: Write gate that takes several skim-tx:naive and turns
+::  them into a single batch
+::
 |%
 ++  n  |=([=^state:naive =^input:naive] (%*(. naive lac |) verifier 1.337 +<))
 ::
@@ -227,6 +230,8 @@
   +$  event-list  (list event)
   +$  success-map  (map event ?)
   +$  event-jar  (jar @p event)
+  +$  full-tx  [nonce=@ =tx:naive pk=@]
+  +$  tx-list  (list full-tx)
   ::
   ++  make-success-map
     :: +make-success-map maps each event to whether or not that combination of factors
@@ -692,7 +697,22 @@
     ::
     --
   ::
-  --
+  ::  takes in a list of full-tx and turns them into a batch
+  ::  to be submitted to +n
+  ++  tx-list-to-batch
+    |=  =tx-list  ^-  @
+    ::
+    =|  batch-raw=(list @)
+    =/  tx-list-octs=(list @)
+      |-  ^-  (list @)
+      ?~  tx-list
+        batch-raw
+      =/  cur-tx  i.tx-list
+      =/  cur-raw  q:(gen-tx cur-tx)
+      $(batch-raw (snoc batch-raw cur-raw), tx-list t.tx-list)
+    (roll tx-list-octs (cury cat 3))
+  ::
+  --  :: end +l2-event-gen
 ::
 ++  l1
   |%
@@ -2988,18 +3008,6 @@
     =^  f  state  (init-zod state)
     =^  f  state  (n state %bat q:signed-tx)
     transfer-proxy.own:(~(got by points.state) ~tasben-monbur)
-::  ++  test-patp-padding
-::    =+  [address=0x0]
-::    =/  bz-spawn        [[~zod %spawn] %spawn ~binzod address]
-::    ::
-::    %+  expect-eq
-::      !>  [`@ux`address 0]
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-zod state)
-::      =^  f  state  (n state %bat q:(gen-tx 0 bz-spawn %zod-skey-0))
-::      transfer-proxy.own:(~(got by points.state) ~binzod)
 ::
 ::  TODO: signature format changed; regenerate
 ::

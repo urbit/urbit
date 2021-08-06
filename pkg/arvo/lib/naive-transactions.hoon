@@ -96,7 +96,7 @@
   (verify-sig sig.raw-tx message)
 ::
 ++  gen-tx
-  |=  [=nonce tx=tx:naive pk=@]
+  |=  [=nonce tx=tx:naive pk=@]  ^-  octs
   :: takes in a nonce, tx:naive, and private key and returned a signed transactions as octs
   %^  sign-tx  pk  nonce  (gen-tx-octs tx)
 ::
