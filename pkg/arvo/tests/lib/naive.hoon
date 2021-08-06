@@ -10,6 +10,19 @@
   ^-  ^input:naive
   [%log *@ux data log-name topics]
 ::
+::  ~zod is for testing potential padding issues because of the presence
+::  of leading or trailing zeroes
+::
+++  init-zod
+  |=  =^state:naive
+  ^-  [effects:naive ^state:naive]
+  =^  f1  state  (n state (owner-changed:l1 ~zod (addr %zod-key-0)))
+  =^  f2  state  (n state (owner-changed:l1 ~dopzod (addr %dopzod-key-0)))
+  =^  f3  state  (n state (changed-spawn-proxy:l1 ~zod (addr %zod-skey-0)))
+  =^  f4  state  (n state (changed-spawn-proxy:l1 ~zod deposit-address:naive))
+  =^  f5  state  (n state (owner-changed:l1 ~dopzod deposit-address:naive))
+  [:(welp f1 f2 f3 f4 f5) state]
+::
 ::  ~bud is so that we aren't testing something impossible in Azimuth, like a star spawned before its sponsor galaxy
 ::
 ++  init-bud
@@ -2694,14 +2707,14 @@
 ::  should alter the state of the PKI.
 ::
 ++  test-fuzz-octs
-::  this test just throws completely random octs.
+::  this test just throws completely random octs at naive.hoon
 ::
   =+  [seed=`@`%test-fuzz-octs i=0]
   =|  =^state:naive
   =^  f  state  (init-red-full state)
   =/  init-state  state
   |-  ^-  tang
-  ?:  =(i 100)  ~
+  ?:  =(i 10.000)  ~
   %+  weld  $(seed (shas `@`%versace seed), i +(i))
   =/  state  init-state
   =/  rng  ~(. og seed)
@@ -2805,11 +2818,11 @@
     =^  f  state  (n state %bat q:random-tx)
     state
 ::
-++  test-junk-after-tx
+++  test-fuzz-after-tx
 ::  this creates a valid transaction of each type but then adds
 ::  random bits to the end of it
 ::
-  =+  [seed=`@`%test-junk-after-tx i=0]
+  =+  [seed=`@`%test-fuzz-after-tx i=0]
   =|  =^state:naive
   =^  f  state  (init-red-full state)
   =/  init-state  state
@@ -2912,8 +2925,81 @@
     =/  tftx=skim-tx:naive  [%set-transfer-proxy (addr %new-xfer)]
     =/  tx=tx:naive  [from tftx]
     (gen-tx-octs tx)
-  ::
   --
+::
+:: the following tests are to ensure that padding of zeroes creates
+:: no issues
+::
+++  test-zod-spawn-to-zero
+  =/  bz-spawn        [[~zod %spawn] %spawn ~binzod 0x0]
+  ::
+  %+  expect-eq
+    !>  [0x0 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-zod state)
+    =^  f  state  (n state %bat q:(gen-tx 0 bz-spawn %zod-skey-0))
+    transfer-proxy.own:(~(got by points.state) ~binzod)
+::
+++  test-zod-spawn-proxy
+  =/  bz-spawn        [[~zod %spawn] %spawn ~binzod (addr %binzod-key-0)]
+  ::
+  %+  expect-eq
+    !>  [`@ux`(addr %binzod-key-0) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-zod state)
+    =^  f  state  (n state %bat q:(gen-tx 0 bz-spawn %zod-skey-0))
+    transfer-proxy.own:(~(got by points.state) ~binzod)
+::
+++  test-dopzod-spawn
+  =/  tm-spawn        [[~dopzod %own] %spawn ~tasben-monbur (addr %tm)]
+  ::
+  %+  expect-eq
+    !>  [`@ux`(addr %tm) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-zod state)
+    =^  f  state  (n state %bat q:(gen-tx 0 tm-spawn %dopzod-key-0))
+    transfer-proxy.own:(~(got by points.state) ~tasben-monbur)
+::
+++  test-address-padding
+  ::  tells ~dopzod to spawn ~tasben-monbur at 0x00000000001111111111
+  =/  spawn-octs=octs
+  %:  cad:naive  3
+      1^(can 0 3^%0 5^0 ~)                       :: %own proxy
+      4^~dopzod
+      1^%1                                       :: %spawn
+      4^~tasben-monbur
+      20^(can 3 10^0 1^1 9^0 ~)
+      ~
+    ==
+  =/  signed-tx=octs
+  %^  sign-tx  %dopzod-key-0  0  spawn-octs
+  ::
+  %+  expect-eq
+    !>  [`@ux`(can 3 10^0 1^1 9^0 ~) 0]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-zod state)
+    =^  f  state  (n state %bat q:signed-tx)
+    transfer-proxy.own:(~(got by points.state) ~tasben-monbur)
+::  ++  test-patp-padding
+::    =+  [address=0x0]
+::    =/  bz-spawn        [[~zod %spawn] %spawn ~binzod address]
+::    ::
+::    %+  expect-eq
+::      !>  [`@ux`address 0]
+::    ::
+::      !>
+::      =|  =^state:naive
+::      =^  f  state  (init-zod state)
+::      =^  f  state  (n state %bat q:(gen-tx 0 bz-spawn %zod-skey-0))
+::      transfer-proxy.own:(~(got by points.state) ~binzod)
 ::
 ::  TODO: signature format changed; regenerate
 ::
