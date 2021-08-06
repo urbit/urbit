@@ -6,7 +6,7 @@ URBIT_VERSION="$(cat ./version)"
 
 deps="                                           \
   curl gmp sigsegv ent h2o uv murmur3 softfloat3 \
-  liburcrypt-0 ssl crypto z lmdb pthread         \
+  urcrypt ssl crypto z lmdb pthread              \
 "
 
 headers="             \
@@ -171,8 +171,8 @@ fi
 
 for dep in ${osdeps-} $deps
 do
-   LDFLAGS="${LDFLAGS-} $($PKG_CONFIG --libs $dep 2>/dev/null || echo -l$dep)"
-   CFLAGS="${CFLAGS-} $($PKG_CONFIG --cflags $dep 2>/dev/null || true)"
+   LDFLAGS="${LDFLAGS-} $($PKG_CONFIG --libs "lib$dep" 2>/dev/null || echo -l$dep)"
+   CFLAGS="${CFLAGS-} $($PKG_CONFIG --cflags "lib$dep" 2>/dev/null || true)"
 done
 
 for header in $headers; do
