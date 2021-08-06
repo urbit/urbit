@@ -55,5 +55,11 @@
         "pmnsh": {
             "prepare": "./configure"
         }
+    },
+    "urcrypt": {
+        "pmnsh": {
+            "prepare": "./autogen.sh && ./configure --disable-shared",
+            "make": "install"
+        }
     }
 }
