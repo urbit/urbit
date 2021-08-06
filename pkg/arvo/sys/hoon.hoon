@@ -387,15 +387,6 @@
   ::
   _|?($:product)
 ::
-++  pest
-  |$  [k v]
-  ::    lru cache
-  ::
-  ::  a `++pest` contains a capacity, current size, tick (next logical
-  ::  time), and `++pri` queue.
-  ::
-  [cap=@ siz=@ tic=@ pri=(pri k v)]
-::
 ++  tree
   |$  [node]
   ::    tree mold generator
@@ -2420,47 +2411,55 @@
   --
 ::
 ++  lu                                                  ::  +pest logic
-  =|  a=(pest)
-  |@
+  |*  [k=mold v=mold]
+  =>
+  |%
+  +$  pest  [cap=@ siz=@ tic=@ pri=(pry k v)]
+  ++  hoop  (up k v)
+  --
+  ::
+  |%
   ++  new                                               ::  new cache
     |=  cap=@
-    ^+  a
+    ^-  pest
     [cap 0 0 ~]
   ::
   ++  ebb                                               ::  trim cache
+    |=  a=pest
+    ?:  (gte tic.a 0xffff.ffff.ffff.ffff)
+      (new cap.a)
     ?:  (gth siz.a cap.a)
-      a(siz (dec siz.a), pri ~(cut up pri.a))
+      a(siz (dec siz.a), pri (cut:hoop pri.a))
     a
   ::
   ++  put                                               ::  insert
-    |*  [k=* v=*]
-    ^+  a
-    =/  vue  (~(pan up pri.a) [k tic.a v])
-    =:  a
-      siz  ?~  p.vue  +(siz.a)  siz.a
+    |=  [a=pest =k =v]
+    ^-  pest
+    =/  vue  (pan:hoop pri.a [k tic.a v])
+    %-  ebb
+    %_  a
+      siz  ?~(p.vue +(siz.a) siz.a)
       tic  +(tic.a)
       pri  q.vue
     ==
-    ebb
   ::
   ++  get                                               ::  lookup and pri bump
-    |*  k=*
-    ^-  (unit (pair _?>(?=(^ pri.a) v.n.pri.a) _a))
+    |=  [a=pest =k]
+    ^-  (unit (pair v pest))
     =/  bump
-      |*  c=(unit (pair @ _?>(?=(^ pri.a) v.n.pri.a)))
-      ^-  %+  pair
-            _?>(?=(^ pri.a) v.n.pri.a)
-          (unit (pair @ _?>(?=(^ pri.a) v.n.pri.a))))
+      |=  c=(unit (pair @ v))
+      ^-  (pair (unit v) (unit (pair @ v)))
       ?~  c  [~ ~]
-      [(some q.c) (some [tic.a q.c])]
-    =/  val  (~(jab up pri.a) k bump)
+      [(some q.u.c) (some [tic.a q.u.c])]
+    =/  val  (jab:hoop pri.a k bump)
     ?~  p.val  ~
+    %-  some
+    :-  u.p.val
+    %-  ebb
     %_  a
       tic  +(tic.a)
       pri  q.val
     ==
-    =.  a  ebb
-    (some [p.val a])
   --
 ::
 ::::  2o: containers                                    ::
@@ -2491,6 +2490,10 @@
   =/  b  ;;(pri:cor a)
   ?>  (apt:cor b)
   b
+::
+++  pest                                                ::  lru cache
+  |$  [k v]
+  (pest:(lu k v))
 ::
 ::::  2l: container from container                      ::
   ::                                                    ::
