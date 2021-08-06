@@ -89,7 +89,7 @@
                 },
                 "mingw": {
                      "prepare": "cmake -G\"MSYS Makefiles\" -DDISABLE_DOCS:BOOL=ON .",
-                     "make": "install"
+                     "make": "aes_siv_static"
                 }
             }
         },

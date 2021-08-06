@@ -58,7 +58,7 @@
     },
     "urcrypt": {
         "pmnsh": {
-            "prepare": "./autogen.sh && ./configure --disable-shared",
+            "prepare": "./autogen.sh && ./configure --disable-shared PKG_CONFIG_PATH=../secp256k1 CFLAGS=\"-I../secp256k1/include -I../libaes_siv\" LDFLAGS=-L../libaes_siv",
             "make": "install"
         }
     }
