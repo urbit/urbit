@@ -55,10 +55,5 @@
         "pmnsh": {
             "prepare": "./configure"
         }
-    },
-    "ge-additions": {
-        "pmnsh": {
-            "make": "CFLAGS=-I../ed25519"
-        }
     }
 }

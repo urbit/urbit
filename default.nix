@@ -93,8 +93,6 @@ let
 
     ent = callPackage ./nix/pkgs/ent { };
 
-    ge-additions = callPackage ./nix/pkgs/ge-additions { };
-
     libaes_siv = callPackage ./nix/pkgs/libaes_siv { inherit (pkgsNative) cmake; };
 
     libscrypt = callPackage ./nix/pkgs/libscrypt { };
