@@ -85,17 +85,11 @@ let
   # Local vendored packages defined in ./pkg.
   # For non-vendored nixpkgs specific package overrides, see ./nix/overlays.
   pkgsLocal = {
-    argon2u = callPackage ./nix/pkgs/argon2u { };
-
     ca-bundle = callPackage ./nix/pkgs/ca-bundle { };
-
-    ed25519 = callPackage ./nix/pkgs/ed25519 { };
 
     ent = callPackage ./nix/pkgs/ent { };
 
     libaes_siv = callPackage ./nix/pkgs/libaes_siv { inherit (pkgsNative) cmake; };
-
-    libscrypt = callPackage ./nix/pkgs/libscrypt { };
 
     murmur3 = callPackage ./nix/pkgs/murmur3 { };
 
