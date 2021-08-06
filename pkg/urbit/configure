@@ -4,9 +4,9 @@ set -euo pipefail
 
 URBIT_VERSION="$(cat ./version)"
 
-deps="                                                                \
-  curl gmp sigsegv argon2 ed25519 ent h2o scrypt uv murmur3 secp256k1 \
-  softfloat3 aes_siv ssl crypto z lmdb ge-additions pthread           \
+deps="                                           \
+  urcrypt curl gmp sigsegv ent h2o uv murmur3    \
+  softfloat3 crypto ssl z lmdb pthread           \
 "
 
 headers="             \
@@ -126,7 +126,7 @@ case $(tr A-Z a-z <<< $os) in
      ;;
   *freebsd*)
      defmacro U3_OS_bsd 1
-     osdeps="kvm"
+     extra_libs="${extra_libs} kvm"
      ;;
   *openbsd*)
      defmacro U3_OS_bsd 1
@@ -143,8 +143,8 @@ do
    CFLAGS="${CFLAGS-} $(${PKG_CONFIG-pkg-config} --cflags $dep 2>/dev/null || true)"
 done
 
-for header in $headers
-do LDFLAGS="${LDFLAGS-} -I$header"
+for header in $headers; do
+  CFLAGS="${CFLAGS-} -I$header"
 done
 
 compat="${compat-posix}"

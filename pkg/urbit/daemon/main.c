@@ -769,6 +769,11 @@ main(c3_i   argc,
     }
     #endif
 
+    //  starting u3m configures OpenSSL memory functions, so we must do it
+    //  before any OpenSSL allocations
+    // 
+    u3m_boot_lite();
+
     //  Initialize OpenSSL for client and server
     //
     {
