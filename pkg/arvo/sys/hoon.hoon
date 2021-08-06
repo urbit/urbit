@@ -2230,8 +2230,8 @@
     q.u.b
   ::
   ++  jab                                               ::  update at key k
-    |=  [a=pri =k f=$-((unit (pair @ v)) (pair * (unit (pair @ v))))]
-    ^-  (pair * pri)
+    |=  [a=pri =k f=$-((unit (pair @ v)) (pair (unit v) (unit (pair @ v))))]
+    ^-  (pair (unit v) pri)
     =/  ped  (pet a k)
     =?  a  ?=(^ ped)
       r.u.ped
