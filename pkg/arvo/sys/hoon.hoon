@@ -433,6 +433,7 @@
   ::    2o: normalizing containers                      ::
   ::    2p: serialization                               ::
   ::    2q: molds and mold builders                     ::
+  ::    2r: psq logic                                   ::
   ::
 ~%  %two  +  ~
 |%
@@ -1897,6 +1898,517 @@
     ?~  a  ~
     ?~(r.a [~ n.a] $(a r.a))
   --
+::                                                      ::
+::::  2r: psq logic                                     ::
+  ::                                                    ::
+  ::
+++  up
+  |*  [k=mold v=mold]
+  =>
+  ::  molds
+  ::
+  |%
+  +$  lelem  [=k p=@ =v]                                ::  loser tree element
+  ::
+  +$  lnode  [n=lelem l=ltree m=k r=ltree]              ::  loser tree node
+  ::
+  +$  ltree                                             ::  loser tree
+    $@  ~
+    $%  [%llos s=@ p=lnode]
+        [%rlos s=@ p=lnode]
+    ==
+  ::
+  +$  pri  $@(~ [n=lelem t=ltree m=k])                  ::  psq
+  ::
+  +$  torn                                              ::  tournament view
+    $@  ~
+    $%  [%sing n=lelem]
+        [%play l=pri r=pri]
+    ==
+  --
+  ::  balancing, tournament internals
+  ::
+  =>
+  |%
+  ++  mega  4                                           ::  balancing factor
+  ::
+  ++  size                                              ::  queue size
+    |=  t=ltree
+    ^-  @
+    ?~(t 0 s.t)
+  ::
+  ++  one                                               ::  construct
+    |=  =lelem
+    ^-  pri
+    [lelem ~ k.lelem]
+  ::
+  ++  llos                                              ::  left loser
+    |=  a=lnode
+    ^-  ltree
+    [%llos +((add (size l.a) (size r.a))) a]
+  ::
+  ++  rlos                                              ::  right loser
+    |=  a=lnode
+    ^-  ltree
+    [%rlos +((add (size l.a) (size r.a))) a]
+  ::
+  ++  lbal                                              ::  left balance
+    |=  a=lnode
+    ^-  ltree
+    ?:  (lth (add (size l.a) (size r.a)) 2)
+      (llos a)
+    ?:  (gth (size r.a) (mul mega (size l.a)))
+      (llbal a)
+    ?:  (gth (size l.a) (mul mega (size r.a)))
+      (lrbal a)
+    (llos a)
+  ::
+  ++  rbal                                              ::  right balance
+    |=  a=lnode
+    ^-  ltree
+    ?:  (lth (add (size l.a) (size r.a)) 2)
+      (rlos a)
+    ?:  (gth (size r.a) (mul mega (size l.a)))
+      (rlbal a)
+    ?:  (gth (size l.a) (mul mega (size r.a)))
+      (rrbal a)
+    (rlos a)
+  ::
+  ++  llbal                                             ::  left balance left
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ r.a)
+    ?:  (lth (size l.p.r.a) (size r.p.r.a))
+      (llsin a)
+    (lldub a)
+  ::
+  ++  lrbal                                             ::  left balance right
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ l.a)
+    ?:  (gth (size l.p.l.a) (size r.p.l.a))
+      (lrsin a)
+    (lrdub a)
+  ::
+  ++  rlbal
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ r.a)
+    ?:  (lth (size l.p.r.a) (size r.p.r.a))
+      (rlsin a)
+    (rldub a)
+  ::
+  ++  rrbal
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ l.a)
+    ?:  (gth (size l.p.l.a) (size r.p.l.a))
+      (rrsin a)
+    (rrdub a)
+  ::
+  ++  llsin                                             ::  left single left
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ r.a)
+    ?-  -.r.a
+        %llos
+      ?:  (win [p.n.a k.n.a] [p.n.p.r.a k.n.p.r.a])
+        (llos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+      (llos n.p.r.a (llos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+        %rlos
+      (rlos n.p.r.a (llos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+    ==
+  ::
+  ++  rlsin
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ r.a)
+    ?-  -.r.a
+        %llos
+      (rlos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+        %rlos
+      (rlos n.p.r.a (rlos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+    ==
+  ::
+  ++  lrsin
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ l.a)
+    ?-  -.l.a
+        %llos
+      (llos n.p.l.a l.p.l.a m.p.l.a (llos n.a r.p.l.a m.a r.a))
+        %rlos
+      (llos n.a l.p.l.a m.p.l.a (llos n.p.l.a r.p.l.a m.a r.a))
+    ==
+  ::
+  ++  rrsin
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ l.a)
+    ?-  -.l.a
+        %llos
+      (llos n.p.l.a l.p.l.a m.p.l.a (rlos n.a r.p.l.a m.a r.a))
+        %rlos
+      ?:  (win [p.n.a k.n.a] [p.n.p.l.a k.n.p.l.a])
+        (rlos n.a l.p.l.a m.p.l.a (llos n.p.l.a r.p.l.a m.a r.a))
+      (rlos n.p.l.a l.p.l.a m.p.l.a (rlos n.a r.p.l.a m.a r.a))
+    ==
+  ::
+  ++  lldub                                             ::  left double left
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ r.a)
+    ?-  -.r.a
+      %llos  (llsin n.a l.a m.a (lrsin p.r.a))
+      %rlos  (llsin n.a l.a m.a (rrsin p.r.a))
+    ==
+  ::
+  ++  lrdub
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ l.a)
+    ?-  -.l.a
+      %llos  (lrsin n.a (llsin p.l.a) m.a r.a)
+      %rlos  (lrsin n.a (rlsin p.l.a) m.a r.a)
+    ==
+  ::
+  ++  rldub
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ r.a)
+    ?-  -.r.a
+      %llos  (rlsin n.a l.a m.a (lrsin p.r.a))
+      %rlos  (rlsin n.a l.a m.a (rrsin p.r.a))
+    ==
+  ::
+  ++  rrdub
+    |=  a=lnode
+    ^-  ltree
+    ?>  ?=(^ l.a)
+    ?-  -.l.a
+      %llos  (rrsin n.a (llsin p.l.a) m.a r.a)
+      %rlos  (rrsin n.a (rlsin p.l.a) m.a r.a)
+    ==
+  ::
+  ++  toy                                               ::  play
+    |=  [a=pri b=pri]
+    ^-  pri
+    ?~  a
+      b
+    ?~  b
+      a
+    ?:  (win [p.n.a k.n.a] [p.n.b k.n.b])
+      [n.a (rbal n.b t.a m.a t.b) m.b]
+    [n.b (lbal n.a t.a m.a t.b) m.b]
+  ::
+  ++  sec                                               ::  second best
+    |=  [t=ltree m=k]
+    |-  ^-  pri
+    ?~  t  ~
+    ?-  -.t
+      %llos  (toy [n.p.t l.p.t m.p.t] $(t r.p.t))
+      %rlos  (toy $(t l.p.t, m m.p.t) [n.p.t r.p.t m])
+    ==
+  ::
+  ++  win                                               ::  compare
+    |=  [[p=@ q=*] [r=@ s=*]]
+    ?|  (lth p r)
+        ?&(=(p r) (gor q s))
+    ==
+  --
+  ::  psq logic
+  ::
+  |%
+  ++  deb  +>                                           ::  internals access
+  ::
+  ++  wyt                                               ::  queue size
+    |=  =pri
+    ^-  @
+    ?~  pri  0
+    +((size t.pri))
+  ::
+  ++  sam                                               ::  equality
+    |=  [a=pri b=pri]
+    ^-  ?
+    =/  loa  (bot a)
+    =/  lob  (bot b)
+    ?|  &(=(~ loa) =(~ lob))
+        !&(=(~ loa) !=(~ lob))
+        !&(!=(~ loa) =(~ lob))
+        ?>  &(?=(^ loa) ?=(^ lob))
+        ?&  =(k.p.u.loa k.p.u.lob)
+            =(p.p.u.loa p.p.u.lob)
+            =(v.p.u.loa v.p.u.lob)
+            $(a q.u.loa, b q.u.lob)
+        ==
+    ==
+  ::
+  ++  get                                               ::  lookup
+    |=  [a=pri =k]
+    |-  ^-  (unit (pair @ v))
+    ?~  a  ~
+    =/  tor=torn  (see a)
+    ?~  tor  ~
+    ?-    -.tor
+        %sing
+      ?.  =(k k.n.tor)  ~
+      (some [p.n.tor v.n.tor])
+    ::
+        %play
+      ?:  |(=(k (top l.tor)) (gor k (top l.tor)))
+        $(a l.tor)
+      $(a r.tor)
+    ==
+  ::
+  ++  has                                               ::  key existence check
+    |=  [a=pri =k]
+    !=(~ (get a k))
+  ::  lowest-prio element
+  ::
+  ++  min                                               ::  lowest-pri element
+    |=  a=pri
+    ^-  (unit lelem)
+    ?~  a  ~
+    (some n.a)
+  ::
+  ++  put                                               :: add [key prio val]
+    |=  [a=pri =k p=@ =v]
+    |-  ^-  pri
+    ?~  a
+      (one k p v)
+    ?:  ?=(~ t.a)
+      ?:  =(k m.a)
+        (one k p v)
+      ?:  (gor k m.a)
+        (toy (one k p v) (one n.a))
+      (toy (one n.a) (one k p v))
+    ?-    -.t.a
+        %rlos
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+        (toy $(a [n.a l.p.t.a m.p.t.a]) [n.p.t.a r.p.t.a m.a])
+      (toy [n.a l.p.t.a m.p.t.a] $(a [n.p.t.a r.p.t.a m.a]))
+    ::
+        %llos
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+        (toy $(a [n.p.t.a l.p.t.a m.p.t.a]) [n.a r.p.t.a m.a])
+      (toy [n.p.t.a l.p.t.a m.p.t.a] $(a [n.a r.p.t.a m.a]))
+    ==
+  ::
+  ++  del                                               ::  delete at key k
+    |=  [a=pri =k]
+    |-  ^-  pri
+    ?~  a  ~
+    ?:  ?=(~ t.a)
+      ?:  =(k k.n.a)  ~
+      (one n.a)
+    ?-    -.t.a
+        %rlos
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+        (toy $(a [n.a l.p.t.a m.p.t.a]) [n.p.t.a r.p.t.a m.a])
+      (toy [n.a l.p.t.a m.p.t.a] $(a [n.p.t.a r.p.t.a m.a]))
+    ::
+        %llos
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+        (toy $(a [n.p.t.a l.p.t.a m.p.t.a]) [n.a r.p.t.a m.a])
+      (toy [n.p.t.a l.p.t.a m.p.t.a] $(a [n.a r.p.t.a m.a]))
+    ==
+  ::
+  ++  cut                                               ::  delete min-prio val
+    |=  a=pri
+    ^-  pri
+    =/  b  (bot a)
+    ?~  b  a
+    q.u.b
+  ::
+  ++  jab                                               ::  update at key k
+    |=  [a=pri =k f=$-((unit (pair @ v)) (pair * (unit (pair @ v))))]
+    ^-  (pair * pri)
+    =/  ped  (pet a k)
+    =?  a  ?=(^ ped)
+      r.u.ped
+    =/  pav
+      ?~  ped
+        ~
+      (some [p.u.ped q.u.ped])
+    =/  bee  (f pav)
+    :-  p.bee
+    ?~  q.bee
+      a
+    (put a k p.u.q.bee q.u.q.bee)
+  ::
+  ++  jib                                               ::  update at min-prio
+    |=  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
+    ^-  (pair * pri)
+    =/  vue  (bot a)
+    ?~  vue
+      =/  bee  (f ~)
+      :-  p.bee
+      ?~  q.bee
+        a
+      (put a p.u.q.bee q.u.q.bee r.u.q.bee)
+    =.  a  q.u.vue
+    =/  bee  (f (some p.u.vue))
+    :-  p.bee
+    ?~  q.bee
+      a
+    (put a p.u.q.bee q.u.q.bee r.u.q.bee)
+  ::
+  ++  gas                                               ::  concatenate
+    |=  [a=pri b=(list lelem)]
+    |-  ^-  pri
+    ?~  b
+      a
+    $(b t.b, a (put a k.i.b p.i.b v.i.b))
+  ::
+  ++  tap                                               ::  convert to list
+    |=  a=pri
+    =|  b=(list lelem)
+    |-  ^+  b
+    =/  tor  (see a)
+    ?~  tor
+      b
+    ?-  -.tor
+      %sing  [n.tor b]
+      %play  (weld $(a l.tor) $(a r.tor))
+    ==
+  ::
+  ++  key                                               ::  list of keys
+    |=  a=pri
+    ^-  (list k)
+    (turn (tap a) |=(=lelem k.lelem))
+  ::
+  ++  see                                               ::  tournament view
+    |=  a=pri
+    ^-  torn
+    ?~  a  ~
+    ?~  t.a
+      [%sing n.a]
+    ?-  -.t.a
+      %llos  [%play [n.p.t.a l.p.t.a m.p.t.a] [n.a r.p.t.a m.a]]
+      %rlos  [%play [n.a l.p.t.a m.p.t.a] [n.p.t.a r.p.t.a m.a]]
+    ==
+  ::
+  ++  top                                               ::  maximum key
+    |=  a=pri
+    ?~  a  !!
+    m.a
+  ::
+  ++  bot                                               ::  lowest-prio view
+    |=  a=pri
+    ^-  (unit (pair lelem pri))
+    ?~  a  ~
+    (some [n.a (sec t.a m.a)])
+  ::
+  ++  pet                                               ::  delete view
+    |=  [a=pri =k]
+    |-  ^-  (unit (trel @ v pri))
+    ?~  a  ~
+    ?~  t.a
+      ?.  =(k k.n.a)  ~
+      (some [p.n.a v.n.a ~])
+    ?-    -.t.a
+        %llos
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+        =/  pat  $(a [n.p.t.a l.p.t.a m.p.t.a])
+        ?~  pat  ~
+        (some [p.u.pat q.u.pat (toy r.u.pat [n.a r.p.t.a m.a])])
+      =/  pat  $(a [n.a r.p.t.a m.a])
+      ?~  pat  ~
+      (some [p.u.pat q.u.pat (toy [n.p.t.a l.p.t.a m.p.t.a] r.u.pat)])
+    ::
+        %rlos
+      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+        =/  pat  $(a [n.a l.p.t.a m.p.t.a])
+        ?~  pat  ~
+        (some [p.u.pat q.u.pat (toy r.u.pat [n.p.t.a r.p.t.a m.a])])
+      =/  pat  $(a [n.p.t.a r.p.t.a m.a])
+      ?~  pat  ~
+      (some [p.u.pat q.u.pat (toy [n.a l.p.t.a m.p.t.a] r.u.pat)])
+    ==
+  ::
+  ++  pan                                               ::  insert view
+    |=  [a=pri e=lelem]
+    ^-  (pair (unit (pair @ v)) pri)
+    =/  vue  (pet a k.e)
+    ?~  vue
+      [~ (put a e)]
+    [(some [p.u.vue q.u.vue]) (put a e)]
+  ::
+  ++  apt                                               ::  check correctness
+    |=  a=pri
+    |^  &(uni hep bin ann)
+    ::
+    ++  uni                                             ::  has unique keys
+      =/  l  (sort (key a) gor)
+      =|  [a=(unit _?>(?=(^ l) i.l))]
+      |-  ^-  ?
+      ?~  l
+        %&
+      ?:  =(a (some i.l))
+        %|
+      $(l t.l, a (some i.l))
+    ::
+    ++  lex                                             ::  lexigraphical order
+      |=  [[a=@ b=*] [l=@ r=*]]
+      ^-  ?
+      |((lth a l) (gor b r))
+    ::
+    ++  hep                                             ::  min-heap prop
+      ?~  a
+        %&
+      |-  ^-  ?
+      ?~  t.a
+        %&
+      ?-  -.t.a
+          %llos
+        ?&  (lex [p.n.a k.n.a] [p.n.p.t.a k.n.p.t.a])
+            $(k.n.a k.n.p.t.a, p.n.a p.n.p.t.a, t.a l.p.t.a)
+            $(t.a r.p.t.a)
+        ==
+          %rlos
+        ?&  (lex [p.n.a k.n.a] [p.n.p.t.a k.n.p.t.a])
+            $(t.a l.p.t.a)
+            $(k.n.a k.n.p.t.a, p.n.a p.n.p.t.a, t.a r.p.t.a)
+        ==
+      ==
+    ::
+    ++  bin                                             ::  binary search tree
+      |-  ^-  ?
+      =/  tor  (see a)
+      ?~  tor
+        %&
+      ?-  -.tor
+          %sing
+        %&
+          %play
+        =/  k  (top l.tor)
+        ?&  (levy (key l.tor) |=(* (gor +< k)))
+            (levy (key r.tor) |=(* |(=(k +<) !(gor +< k))))
+            $(a l.tor)
+            $(a r.tor)
+        ==
+      ==
+    ::
+    ++  ann                                             ::  correct annotations
+      =/  calc
+        |=  t=ltree
+        ^-  @
+        ?~  t  0
+        ?-  -.t
+          %llos  +((add $(t l.p.t) $(t r.p.t)))
+          %rlos  +((add $(t l.p.t) $(t r.p.t)))
+        ==
+      ?~  a
+        %&
+      |-  ^-  ?
+      ?~  t.a
+        =(0 (calc t.a))
+      ?&  =(s.t.a (calc t.a))
+          $(t.a l.p.t.a)
+          $(t.a r.p.t.a)
+      ==
+    --
+  --
 ::
 ::::  2o: containers                                    ::
   ::                                                    ::
@@ -1918,6 +2430,14 @@
   |$  [item]                                            ::  set
   $|  (tree item)
   |=(a=(tree) ?:(=(~ a) & ~(apt in a)))
+::
+++  pry                                                 ::  psq
+  |*  [k=mold v=mold]
+  |=  a=*
+  =/  cor  (up k v)
+  =/  b  ;;(pri:cor a)
+  ?>  (apt:cor b)
+  b
 ::
 ::::  2l: container from container                      ::
   ::                                                    ::
