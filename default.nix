@@ -113,7 +113,7 @@ let
 
     urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic; };
 
-    urcrypt = callPackage ./nix/pkgs/urcrypt { };
+    urcrypt = callPackage ./nix/pkgs/urcrypt { inherit enableStatic; };
 
     docker-image = callPackage ./nix/pkgs/docker-image { };
 
