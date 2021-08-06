@@ -8,7 +8,7 @@ import {
     leaveGraph,
     metadataRemove
 } from '@urbit/api';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { isChannelAdmin, isHost } from '~/logic/lib/group';
 import { useHashLink } from '~/logic/lib/useHashLink';
@@ -31,7 +31,6 @@ interface ChannelPopoverRoutesProps {
 export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
   const { association, group } = props;
   useHashLink();
-  const overlayRef = useRef<HTMLElement>();
   const history = useHistory();
 
   const onDismiss = useCallback(() => {
@@ -63,7 +62,6 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
       height="100%"
       width="100%"
       spacing={[3, 5, 7]}
-      ref={overlayRef}
       dismiss={onDismiss}
     >
       <Row

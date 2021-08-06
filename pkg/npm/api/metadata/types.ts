@@ -4,7 +4,8 @@ export type MetadataUpdate =
   MetadataUpdateInitial
 | MetadataUpdateAdd
 | MetadataUpdateUpdate
-| MetadataUpdateRemove;
+| MetadataUpdateRemove
+| MetadataUpdateEdit;
 
 export interface MetadataUpdateInitial {
   associations: ResourceAssociations;
@@ -21,6 +22,15 @@ export type MetadataUpdateAdd = {
 export type MetadataUpdateUpdate = {
   update: AssociationPoke;
 }
+
+export interface MetadataUpdateEdit {
+  edit: {
+    resource: MdResource;
+    edit: MetadataEditField;
+  }
+}
+
+export type MetadataEditField = Partial<Omit<Metadata, 'config' | 'creator' | 'date-created'>>;
 
 export type MetadataUpdateRemove = {
   remove: {
