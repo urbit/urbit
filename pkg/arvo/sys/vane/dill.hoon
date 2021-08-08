@@ -207,9 +207,8 @@
         ?:  ?=(%qit -.bit)
           (dump %logo ~)
         (done %blit [bit ~])
-      ::  XX move
       ::
-      ++  sein
+      ++  sponsor
         ^-  ship
         =/  dat=(unit (unit cage))
           (rof `[our ~ ~] j/[[our sein/da/now] /(scot %p our)])
@@ -221,18 +220,19 @@
       ++  mere                                          ::  continue init
         ^+  .
         =/  myt  (flop (fall tem ~))
-        =/  can  (clan:title our)
         =.  tem  ~
-        =.  +>  (pass / %g %jolt %base ram)
-        =?  +>  ?=(?(%earl %duke %king) can)
-          (ota sein %kids)
-        ::  make kids desk publicly readable, so syncs work.
-        ::
-        =.  +>  (show %kids)
-        =.  +>  peer
-        |-  ^+  +>+
-        ?~  myt  +>+
-        $(myt t.myt, +>+ (send i.myt))
+        =.  ..mere  (pass / %g %jolt %base ram)
+        =.  ..mere
+          ?-  (clan:title our)
+            %pawn  ..mere
+            %czar  (kiln-sync %kids our %base)
+            *      (kiln-install %base sponsor %kids)
+          ==
+        =.  ..mere  (show-desk %kids)
+        =.  ..mere  drum-watch
+        |-  ^+  ..mere
+        ?~  myt  ..mere
+        $(myt t.myt, ..mere (send i.myt))
       ::
       ++  into                                          ::  preinitialize
         |=  gyl=(list gill)
@@ -246,16 +246,20 @@
           +>(tem `[bet u.tem])
         (deal / [%poke [%dill-belt -:!>(bet) bet]])
       ::
-      ++  peer
+      ++  drum-watch
         (deal / [%watch /drum])
       ::
-      ++  show                                          ::  permit reads on desk
+      ++  show-desk                                     ::  permit reads on desk
         |=  des=desk
         (pass /show [%c %perm des / r+`[%black ~]])
       ::
-      ++  ota
-        |=  syn=[ship desk]
-        (deal /sync %poke %kiln-install !>([%base syn]))
+      ++  kiln-install
+        |=  [loc=desk =ship rem=desk]
+        (deal /install %poke %kiln-install !>([loc ship rem]))
+      ::
+      ++  kiln-sync
+        |=  [loc=desk =ship rem=desk]
+        (deal /sync %poke %kiln-sync !>([loc ship rem]))
       ::
       ++  take                                          ::  receive
         |=  [tea=wire sih=sign]
@@ -276,7 +280,7 @@
           ?-  -.+>.sih
             %raw-fact   !!
             %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            %kick       peer
+            %kick       drum-watch
             %watch-ack  ?~  p.p.+>.sih
                           +>.$
                         (dump:(crud %reap u.p.p.+>.sih) %logo ~)
