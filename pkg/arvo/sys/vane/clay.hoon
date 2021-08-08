@@ -2174,8 +2174,11 @@
       =/  mr=(unit merge-result)  +.result
       ?~  mr
         (done %& ~)
-      =.  ..merge  (done %& conflicts.u.mr)
-      (park | new.u.mr ~ lat.u.mr)
+      ::  NOTE: this relies heavily on arvo move ordering to prevent
+      ::        the %mere from being sent before the merge completes
+      ::
+      =.  ..merge  (park | new.u.mr ~ lat.u.mr)
+      (done %& conflicts.u.mr)
     ==
   ::
   +$  merge-result  [conflicts=(set path) new=yoki lat=(map lobe blob)]
