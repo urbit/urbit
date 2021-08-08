@@ -152,58 +152,60 @@
         ++  take  ^take
         --
     |%
-    ++  molt
-      |=  [=duct fec=(unit move)]
-      ^-  [(list move) _adult-gate]
-      ~>  %slog.[0 leaf+"gall: molting"]
-      ~<  %slog.[0 leaf+"gall: molted"]
-      ::  +molt should never notify its client about agent changes
-      ::
-      =-  :_  ->
-          %+  welp
-            (skip -< |=(move ?=([* %give %onto *] +<)))
-          [^duct %pass /whiz/gall %$ %whiz ~]~
-      =/  adult  adult-core
-      =.  state.adult
-        [%7 system-duct outstanding contacts yokes=~ blocked]:spore
-      =/  mo-core  (mo-abed:mo:adult duct)
-      =.  mo-core
-        =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore)
-        ~?  wipe-eyre-subs.spore
-          [%g %wiping-eyre-subs]
+    ++  molt-take
+      |=  [=wire =duct dud=(unit goof) sign=sign-arvo]
+      ?^  dud
+        ~>  %slog.0^leaf/"gall: molt: take fail {<wire>}"
+        (mean >mote.u.dud< tang.u.dud)
+      ?>  ?=([%sys %cor @ *] wire)
+      =/  dap=dude  i.t.t.wire
+      ~>  %slog.[0 leaf+"gall: molt: reloading {<dap>}"]
+      =/  =egg  (~(got by eggs.spore) dap)
+      =/  mo-core  (mo-abed:mo:adult-core duct)
+      =.  mo-core  ap-abet:(ap-abut:ap:mo-core dap egg)
+      =.  mo-core  (mo-handle-sys-cor:mo-core t.wire sign)
+      =?  mo-core  wipe-eyre-subs.spore
+        =/  ap-core  (ap-abed:ap:mo-core dap `our)
+        =/  dux=(list ^duct)  ~(tap in ~(key by inbound.watches.egg))
         |-  ^+  mo-core
-        ?~  apps  mo-core
-        ?.  =(%base q.beak.egg.i.apps)
-          ~>  %slog.[0 leaf+"gall: suspending {<dap.i.apps>}"]
-          =.  old-state.egg.i.apps
-            =/  old  old-state.egg.i.apps
-            |/?-(-.old %| p.old, %& p.old)
-          =/  ap-core  (ap-abut:ap:mo-core i.apps)
-          $(apps t.apps, mo-core ap-abet:ap-core)
-        ~>  %slog.[0 leaf+"gall: upgrading {<dap.i.apps>}"]
-        =/  ap-core  (ap-abut:ap:mo-core i.apps)
-        =?  ap-core  ?=(%& -.old-state.egg.i.apps)
-          =^  tan  ap-core  (ap-install:ap-core `p.old-state.egg.i.apps)
-          ?^  tan
-            (mean u.tan)
-          ap-core
-        =?  ap-core  wipe-eyre-subs.spore
-          =/  ducts=(list ^duct)
-            %+  skim  ~(tap in ~(key by inbound.watches.egg.i.apps))
-            |=  =^duct
-            %+  lien  duct
-            |=  =path
-            ?=(^ (find /e/channel/subscription path))
-          |-
-          ?~  ducts  ap-core
-          =.  ap-core
-            ap-load-delete:ap-core(agent-duct i.ducts)
-          $(ducts t.ducts)
-        $(apps t.apps, mo-core ap-abet:ap-core)
+        ?~  dux  ap-abet:ap-core(agent-duct duct)
+        =?    ap-core
+            (lien i.dux |=(w=^wire .?((find /e/channel/subscription w))))
+          ap-load-delete:ap-core(agent-duct i.dux)
+        $(dux t.dux)
+      =.  eggs.spore  (~(del by eggs.spore) dap)
+      ?.  =(~ eggs.spore)
+        ::  some agents still need to upgrade; stay pupal
+        ::
+        =^  moves  adult-gate  mo-abet:mo-core
+        [(molt-skip-ontos moves) pupal-gate]
+      ::  all agents have reloaded; molt into adult
+      ::
+      ~<  %slog.[0 leaf+"gall: molted"]
       =.  mo-core  (mo-subscribe-to-agent-builds:mo-core now)
       =^  moves  adult-gate  mo-abet:mo-core
-      =?  moves  ?=(^ fec)  (weld moves [u.fec]~)
+      =.  moves  (molt-skip-ontos moves)
+      =.  moves  :_(moves [duct %pass /whiz/gall %$ %whiz ~])
       [moves adult-gate]
+    ::  +molt-skip-ontos: don't send agent change notifications on upgrade
+    ::
+    ++  molt-skip-ontos
+      |=(moz=(list move) (skip moz |=(move ?=([* %give %onto *] +<))))
+    ::
+    ++  molt
+      |=  [=duct fec=(unit move)]
+      ^-  [(list move) _pupal-gate]
+      ~>  %slog.[0 leaf+"gall: molting"]
+      =.  state.adult-gate
+        [%7 system-duct outstanding contacts yokes=~ blocked]:spore
+      =/  mo-core  (mo-abed:mo:adult-core duct)
+      =.  mo-core
+        %+  roll  ~(tap by eggs.spore)
+        |=  [[=dude =egg] cor=_mo-core]
+        (mo-boot:cor dude [p q]:beak.egg)
+      =^  moves  adult-gate  mo-abet:mo-core
+      =?  moves  ?=(^ fec)  (weld moves [u.fec]~)
+      [moves pupal-gate]
     ::
     ++  call
       |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
@@ -232,6 +234,8 @@
       ?^  dud
         ~>  %slog.[0 leaf+"gall: pupa take dud"]
         (mean >mote.u.dud< tang.u.dud)
+      ?:  ?=([%sys %cor *] wire)
+        (molt-take wire duct dud sign)
       ?:  =(/sys/lyv wire)
         (molt duct ~)
       (molt duct `[duct %pass wire %b %huck sign])
