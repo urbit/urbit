@@ -47,7 +47,7 @@
   =/  meb  (mergebase-hashes our desk now arak)
   =/  len  (lent meb)
   :~  leaf/"/sys/kelvin: {<[lal num]:weft>}"
-      leaf/"base hash:   {?:((gth len 1) <meb> <(head meb)>)}"
+      leaf/"base hash:   {?.(=(len 1) <meb> <(head meb)>)}"
       leaf/"%cz hash:    {<hash>}"
       leaf/"remote aeon: {<aeon.arak>}"
       leaf/"force on:    {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
