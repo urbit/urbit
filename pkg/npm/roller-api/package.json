@@ -1,6 +1,7 @@
 {
   "name": "roller-api",
   "version": "0.1.0",
+  "private": true,
   "description": "Azimuth L2 Rollup API client generator",
   "scripts": {
     "generate-clients": "open-rpc-generator generate -c open-rpc-generator-config.json",
