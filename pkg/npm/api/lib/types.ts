@@ -64,4 +64,5 @@ export interface Thread<Action> {
   outputMark: string;
   threadName: string;
   body: Action;
+  desk: string;
 }

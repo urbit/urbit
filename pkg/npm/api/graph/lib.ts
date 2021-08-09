@@ -97,7 +97,8 @@ const viewAction = <T>(threadName: string, action: T): Thread<T> => ({
   inputMark: 'graph-view-action',
   outputMark: 'json',
   threadName,
-  body: action
+  body: action,
+  desk: 'landscape'
 });
 
 export { viewAction as graphViewAction };
@@ -203,6 +204,7 @@ export const evalCord = (
     inputMark: 'graph-view-action',
     outputMark: 'tang',
     threadName: 'graph-eval',
+    desk: 'landscape',
     body: {
       eval: cord
     }
@@ -232,6 +234,7 @@ export const addNodes = (
   inputMark: `graph-update-${GRAPH_UPDATE_VERSION}`,
   outputMark: 'graph-view-action',
   threadName: 'graph-add-nodes',
+  desk: 'landscape',
   body: {
     'add-nodes': {
       resource: { ship, name },
@@ -271,6 +274,7 @@ export const createGroupFeed = (
   inputMark: 'graph-view-action',
   outputMark: 'resource',
   threadName: 'graph-create-group-feed',
+  desk: 'landscape',
   body: {
     'create-group-feed': {
       resource: group,
@@ -285,6 +289,7 @@ export const disableGroupFeed = (
   inputMark: 'graph-view-action',
   outputMark: 'json',
   threadName: 'graph-disable-group-feed',
+  desk: 'landscape',
   body: {
     'disable-group-feed': {
       resource: group

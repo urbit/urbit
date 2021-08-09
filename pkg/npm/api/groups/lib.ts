@@ -32,7 +32,8 @@ export const viewThread = <T>(thread: string, action: T): Thread<T> => ({
   inputMark: 'group-view-action',
   outputMark: 'json',
   threadName: thread,
-  body: action
+  body: action,
+  desk: 'landscape'
 });
 
 export const removeMembers = (
