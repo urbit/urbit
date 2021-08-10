@@ -288,8 +288,8 @@
                 %-  pairs
                 :~  ['life' (numb life.keys.net)]
                     ['suite' (numb suite.keys.net)]
-                    ['auth' (numb auth.keys.net)]
-                    ['crypt' (numb crypt.keys.net)]
+                    ['auth' s+(crip "0x{((x-co:co 20) auth.keys.net)}")]
+                    ['crypt' s+(crip "0x{((x-co:co 20) crypt.keys.net)}")]
                 ==
               ::
                 ['rift' (numb rift.net)]
