@@ -1004,8 +1004,8 @@ _n_emit(u3_noun *ops, u3_noun op)
 static c3_w _n_comp(u3_noun*, u3_noun, c3_o, c3_o);
 
 /* _n_bint(): hint-processing helper for _n_comp.
- *            hif: hint-formula (first part of 10). RETAIN.
- *            nef: next-formula (second part of 10). RETAIN.
+ *            hif: hint-formula (first part of 11). RETAIN.
+ *            nef: next-formula (second part of 11). RETAIN.
  */
 static c3_w
 _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
@@ -1677,17 +1677,17 @@ u3n_find(u3_noun key, u3_noun fol)
 }
 
 /* _n_hilt_fore(): literal (atomic) dynamic hint, before formula evaluation.
-**            lit: hint atom. TRANSFER
+**            hin: [hint-atom, formula]. TRANSFER
 **            bus: subject. RETAIN
-**            out: token for _n_hilt_hind();
-**                 conventionally, [lit] or [lit data]. ~ if unused.
+**            out: token for _n_hilt_hind(); convention:
+**                 [hint-atom] or [hint-atom data], ~ if unused.
 **
 **                 any hints herein must be whitelisted in _n_burn().
 */
 static c3_o
-_n_hilt_fore(u3_atom lit, u3_noun bus, u3_noun* out) // transfer, retain, n/a
+_n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
 {
-  u3z(lit);
+  u3z(hin);
   *out = u3_nul;
   return c3y;
 }
@@ -1697,7 +1697,7 @@ _n_hilt_fore(u3_atom lit, u3_noun bus, u3_noun* out) // transfer, retain, n/a
 **            pro: product of formula evaluation. RETAIN
 */
 static void
-_n_hilt_hind(u3_noun tok, u3_noun pro)  // transfer, retain
+_n_hilt_hind(u3_noun tok, u3_noun pro)
 {
   c3_assert( u3_nul == tok );
   u3z(tok);
@@ -1707,8 +1707,8 @@ _n_hilt_hind(u3_noun tok, u3_noun pro)  // transfer, retain
 **            hin: [hint-atom, formula]. TRANSFER
 **            bus: subject. RETAIN
 **            clu: product of the hint-formula. TRANSFER
-**                 also, token for _n_hint_hind();
-**                 conventionally, [hint-atom] or [hint-atom data]. ~ if unused.
+**                 also, token for _n_hilt_hind(); convention:
+**                 [hint-atom] or [hint-atom data], ~ if unused.
 **
 **                 any hints herein must be whitelisted in _n_burn().
 */
