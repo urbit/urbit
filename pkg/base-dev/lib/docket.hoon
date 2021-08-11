@@ -100,7 +100,6 @@
   ::
   ++  update
     |=  u=^update
-    ~&  u
     ^-  json
     %+  frond  -.u
     ^-  json
