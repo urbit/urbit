@@ -1725,6 +1725,8 @@ u3m_boot(c3_c* dir_c)
     u3j_ream();
     u3n_ream();
 
+    u3m_reclaim();
+
     return u3A->eve_d;
   }
   else {
