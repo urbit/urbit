@@ -1,7 +1,7 @@
 
 module Urbit.Vere.Khan.Socket
   ( SockApi(..)
-  , serv
+  , watch
   , openSocket
   , recvOnSocket
   , SockType(..)
@@ -14,15 +14,13 @@ where
 import Urbit.Prelude hiding (Builder)
 
 import Network.Socket as Net
--- import qualified Network.Socket.ByteString as NBS
+
 import qualified Network.Socket.ByteString.Lazy as LN
 import qualified Network.Socket.ByteString as BN
 import qualified Data.ByteString.Lazy as L
--- import Urbit.Vere.Khan.Protocol
--- import Data.Binary.Get (pushEndOfInput, pushChunk, runGetIncremental, Decoder(..))
-
 
 -- Internal Types --------------------------------------------------------------
+-- TODO Maybe refactor naming? Khan instead of Socket.
 data SocketExn
   = BadNoun ByteString
   | MissingSocket
@@ -30,12 +28,14 @@ data SocketExn
 
 data SockApi = SockApi
   { saKil :: IO ()
-  , saFile :: STM FilePath
   , saAddr :: STM SockAddr
   , saSock :: STM Socket
   }
 
-data SockConf = SockConf { scFilePath :: FilePath, scType :: SockType }
+data SockConf = SockConf {
+  scFile :: FilePath,
+  scType :: SockType
+  }
   deriving (Show)
 
 data SockType = STGeneric
@@ -102,37 +102,36 @@ recvOnSocket
 recvOnSocket s = mkRAcquire rcv kil
  where
   kil (_bs, sok)= do
-    logDbg ctx ("in recv", "closing socket")
-    io $ Net.close sok
+    -- TODO socket can only accept the first response. need to figure out
+    -- how to create a new socket that's saved immediately after closing this one.
+    logDbg ctx ("in recv", "kil called, not closing")
+    pure ()
 
   rcv = do
     logDbg ctx ("in recv", "unix socket")
+    -- TODO how should we handle size limits?
     res <- io $ LN.recv s 400000
     logDbg ctx ("received", res)
     pure (res, s)
-  ctx = ["KHAN", "SERV", "recvOnSocket"]
-serv :: HasLogFunc e
+  ctx = ["KHAN", "WATCH", "recvOnSocket"]
+watch :: HasLogFunc e
          => IO () -> SockConf -> RIO e SockApi
-serv onFatal conf@SockConf {..} = do
-  logInfo (displayShow ("KHAN", "SERV", "Running Khan Server"))
-  fil <- newEmptyTMVarIO
+watch onFatal SockConf {..} = do
+  logInfo (displayShow ("KHAN", "WATCH", "Running Khan"))
   adr <- newEmptyTMVarIO
   sok <- newEmptyTMVarIO
-  tid <- async (runServ fil adr sok)
+  tid <- async (runWatch adr sok)
   pure $ SockApi { saKil = cancel tid,
-                   saFile = readTMVar fil,
                    saAddr = readTMVar adr,
                    saSock = readTMVar sok
                  }
  where
-  runServ vFile vAddr vSock = do
-    logInfo (displayShow ("KHAN", "SERV", "runServ"))
-    rwith (openSocket scFilePath) $ \(sok) -> do
-      atomically (putTMVar vFile scFilePath)
+  runWatch vAddr vSock = do
+    logInfo (displayShow ("KHAN", "WATCH", "runWatch"))
+    rwith (openSocket scFile) $ \(sok) -> do
+      watchSocket scType vAddr vSock (snd sok) onFatal
 
-      startServer scType vAddr vSock (snd sok) onFatal
-
-startServer
+watchSocket
   :: HasLogFunc e
   => SockType
   -> TMVar SockAddr
@@ -140,7 +139,7 @@ startServer
   -> Net.Socket
   -> IO ()
   -> RIO e ()
-startServer typ vAddr vSock sok onFatal = do
+watchSocket typ vAddr vSock sok onFatal = do
   envir <- ask
 
   let handler r e = do
@@ -182,6 +181,7 @@ startServer typ vAddr vSock sok onFatal = do
                     Left exn -> io $ handler (Just byt) (BadNoun byt) >> pure byt
                     Right n -> pure $ jamBS n
             runRIO env $ logDbg ctx ("runSocket", (show $ req))
+              -- TODO Track live socket requests
             atomically $ onReq 1 req
 
     runGeneric sok = do
