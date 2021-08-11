@@ -23,8 +23,7 @@ import Urbit.Vere.Khan.Socket
 import System.Random (Random(randomIO))
 import Data.Either (fromRight)
 import qualified Network.Socket.ByteString as BN
--- Types -----------------------------------------------------------------------
--- type HasKhanEnv e = (HasLogFunc e, HasPierConfig e)
+
 socketEv :: SocketEv -> Ev
 socketEv = EvBlip . BlipEvSocket
 
@@ -42,9 +41,7 @@ data Sock = Sock
   {
     sSocketId :: SocketId,
     sApi :: SockApi,
-    sConfig :: SockConf,
-    sFile :: FilePath
-
+    sConfig :: SockConf
   }
 
 -- Khan Driver -----------------------------------------------------------------
@@ -94,7 +91,7 @@ khan env who plan stderr = (initialEvents, runSocket)
   kill :: HasLogFunc e => Sock -> RIO e ()
   kill Sock{..} = do
     io (saKil sApi)
-    io (removeSocketFile sFile)
+    io (removeSocketFile (scFile sConfig))
 
   restart :: Drv -> SocketConf -> RIO e Sock
   restart (Drv var) conf = do
@@ -102,7 +99,7 @@ khan env who plan stderr = (initialEvents, runSocket)
     let onFatal = runRIO env $ do
           stderr "A socket problem has occurred. Please restart your ship."
           view killKingActionL >>= atomically
-    let startAct = startServ plan onFatal
+    let startAct = start plan onFatal
     res <- fromEither =<< restartService var startAct kill
     logInfo "Done reconnecting socket"
     pure res
@@ -115,19 +112,16 @@ khan env who plan stderr = (initialEvents, runSocket)
       logInfo (displayShow ("KHAN", "%set-config"))
       Sock {..} <- restart drv conf
       logInfo (displayShow ("KHAN", "%set-config", "Sending %live"))
-      atomically $ plan (EvErr (liveEv sSocketId sFile) liveFailed)
-
+      atomically $ plan (EvErr (liveEv sSocketId (scFile sConfig)) liveFailed)
       logInfo (displayShow ("KHAN", "%open-socket", "opening khan socket"))
     SEResponse (i, req, _seq, _) ev -> do
       logDebug (displayShow ("KHAN", "%response"))
-      execRespActs drv who (fromIntegral req) ev
+      execute drv who (fromIntegral req) ev
     SEError(i, ()) () -> logDebug (displayShow ("KHAN", "%error"))
 
-
-
-startServ :: (HasLogFunc e) => (EvErr -> STM ()) -> IO () -> RIO e Sock
-startServ plan onFatal = do
-  logInfo (displayShow ("KHAN", "startServ"))
+start :: (HasLogFunc e) => (EvErr -> STM ()) -> IO () -> RIO e Sock
+start plan onFatal = do
+  logInfo (displayShow ("KHAN", "start"))
   sockId <- io $ SocketId . UV . fromIntegral <$> (randomIO :: IO Word32)
   let evRequest reqId byt = socketEv $
         SocketEvFyrd (sockId, 1, 1, ())
@@ -138,33 +132,27 @@ startServ plan onFatal = do
 
   let onReq :: Word64 -> ByteString -> STM ()
       onReq reqId byt =
-        plan $ (flip EvErr cancelFailed) $ evRequest reqId (cueBS $ byt)
+        plan $ flip EvErr cancelFailed $ evRequest reqId (cueBS byt)
 
   let conf@SockConf {..} =
         SockConf
-          { scFilePath = "khan.soc",
+          { scFile = "khan.soc",
             scType = STReq $ SReqApi {sReq = onReq}
           }
 
-  api <- serv onFatal conf
-  pure (Sock sockId api conf scFilePath)
+  api <- watch onFatal conf
+  pure (Sock sockId api conf)
 
-execRespActs :: forall e . HasLogFunc e => Drv -> Ship -> Word64 -> SocketEvent -> RIO e ()
-execRespActs (Drv v) who reqId ev = do
+execute :: forall e . HasLogFunc e => Drv -> Ship -> Word64 -> SocketEvent -> RIO e ()
+execute (Drv v) who reqId ev = do
   env <- ask
   so <- readMVar v
   case so of
     Nothing -> logDebug $ displayShow ev -- logError "Got a response to a request that does not exist."
     Just Sock {..} ->
       runRIO env $ do
-        conn <- atomically $ (saSock sApi)
-        io $ (BN.sendAll conn (jamBS (toNoun ev)))
-            -- for_ (parseSocketEvent ev) $ \act -> do
-            --   logDebug (displayShow ("KHAN", "%exec"))
-
--- parseSocketEvent :: SocketEvent -> [Noun]
--- parseSocketEvent = \case
---   SocketStart n  -> [n]
---   SocketContinue n -> [n]
---   SocketDone n -> [n]
---   SocketCancel ()       -> [toNoun 'o']
+        conn <- atomically (saSock sApi)
+        --  TODO The socket is opened on the original request (`onReq`), closed after the work is complete, and another is immediately opened.
+        -- (saSock sApi) should save *that* socket, but there are possibly some concurrency issues here.
+        -- logDebug $ displayShow (saSock sApi)
+        io (BN.sendAll conn (jamBS (toNoun ev)))
