@@ -132,13 +132,13 @@ return;
                 graphConfig={props.notificationsGraphConfig}
               />
             )}
-            {hash === 'display' && <DisplayForm api={props.api} />}
-            {hash === 'dm' && <DmSettings api={props.api} />}
-            {hash === 'shortcuts' && <ShortcutSettings api={props.api} />}
-            {hash === 's3' && <S3Form api={props.api} />}
-            {hash === 'leap' && <LeapSettings api={props.api} />}
-            {hash === 'calm' && <CalmPrefs api={props.api} />}
-            {hash === 'security' && <SecuritySettings api={props.api} />}
+            {hash === 'display' && <DisplayForm />}
+            {hash === 'dm' && <DmSettings />}
+            {hash === 'shortcuts' && <ShortcutSettings />}
+            {hash === 's3' && <S3Form  />}
+            {hash === 'leap' && <LeapSettings />}
+            {hash === 'calm' && <CalmPrefs />}
+            {hash === 'security' && <SecuritySettings />}
             {hash === 'debug' && <DebugPane />}
           </SettingsItem>
         </Col>

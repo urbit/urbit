@@ -241,11 +241,13 @@ export function uxToHex(ux: string) {
 
 export const hexToUx = (hex) => {
   const ux = f.flow(
+    f.reverse,
     f.chunk(4),
     // eslint-disable-next-line prefer-arrow-callback
     f.map(x => _.dropWhile(x, function(y: unknown) {
-      return y === 0;
-    }).join('')),
+      return y === '0';
+    }).reverse().join('')),
+    f.reverse,
     f.join('.')
   )(hex.split(''));
   return `0x${ux}`;
@@ -523,3 +525,32 @@ export const favicon = () => {
   });
   return svg;
 };
+
+export function binaryIndexOf(arr: BigInteger[], target: BigInteger): number | undefined {
+  let leftBound = 0;
+  let rightBound = arr.length - 1;
+  while(leftBound <= rightBound) {
+    const halfway = Math.floor((leftBound + rightBound) / 2);
+    if(arr[halfway].greater(target)) {
+      leftBound = halfway + 1;
+    } else if (arr[halfway].lesser(target)) {
+      rightBound = halfway - 1;
+    } else {
+      return halfway;
+    }
+  }
+  return undefined;
+}
+
+export async function jsonFetch<T>(info: RequestInfo, init?: RequestInit): Promise<T> {
+  const res = await fetch(info, init);
+  if(!res.ok) {
+    throw new Error('Bad Fetch Response');
+  }
+  const data = await res.json();
+  return data as T;
+}
+
+export function clone<T>(a: T) {
+  return JSON.parse(JSON.stringify(a)) as T;
+}

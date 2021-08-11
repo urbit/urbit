@@ -1,31 +1,16 @@
 import { MetadataUpdate } from '@urbit/api/metadata';
 import _ from 'lodash';
 import { Cage } from '~/types/cage';
-import { reduceState } from '../state/base';
-import useMetadataState, { MetadataState } from '../state/metadata';
+import { BaseState } from '../state/base';
+import { MetadataState as State } from '../state/metadata';
+
+type MetadataState = State & BaseState<State>;
 
 export default class MetadataReducer {
   reduce(json: Cage) {
-    const data = json['metadata-update'];
-    if (data) {
-      reduceState<MetadataState, MetadataUpdate>(useMetadataState, data, [
-        associations,
-        add,
-        update,
-        remove,
-        groupInitial
-      ]);
-    }
+    return;
   }
 }
-
-const groupInitial = (json: MetadataUpdate, state: MetadataState): MetadataState => {
-  const data = _.get(json, 'initial-group', false);
-  if(data) {
-    associations(data, state);
-  }
-  return state;
-};
 
 const associations = (json: MetadataUpdate, state: MetadataState): MetadataState => {
   const data = _.get(json, 'associations', false);
@@ -69,6 +54,14 @@ const add = (json: MetadataUpdate, state: MetadataState): MetadataState => {
   return state;
 };
 
+const groupInitial = (json: MetadataUpdate, state: MetadataState): MetadataState => {
+  const data = _.get(json, 'initial-group', false);
+  if(data) {
+    associations(data, state);
+  }
+  return state;
+};
+
 const update = (json: MetadataUpdate, state: MetadataState): MetadataState => {
   const data = _.get(json, 'update-metadata', false);
   if (data) {
@@ -103,3 +96,12 @@ const remove = (json: MetadataUpdate, state: MetadataState): MetadataState => {
   }
   return state;
 };
+
+export const reduce = [
+  associations,
+  add,
+  update,
+  remove,
+  groupInitial
+];
+

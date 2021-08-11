@@ -277,14 +277,19 @@
         ::
             [%gall %unto *]
           ::  ~&  [%take-gall-unto +>.sih]
-          ?-  -.+>.sih
-            %raw-fact   !!
-            %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            %kick       drum-watch
-            %watch-ack  ?~  p.p.+>.sih
-                          +>.$
-                        (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            %fact       (from ;;(dill-blit q:`vase`+>+>.sih))
+          ?-    -.+>.sih
+              %raw-fact   !!
+              %kick       drum-watch
+              %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
+              %watch-ack
+            ?~  p.p.+>.sih
+              +>.$
+            (dump:(crud %reap u.p.p.+>.sih) %logo ~)
+          ::
+              %fact
+            ?.  ?=(%dill-blit p.cage.p.+>.sih)
+              +>.$
+            (from ;;(dill-blit q.q.cage.p.+>.sih))
           ==
         ::
             [%clay %note *]

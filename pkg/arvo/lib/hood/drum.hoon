@@ -1,12 +1,13 @@
 /-  *sole
 /+  sole
 |%
++$  state  state-4
 +$  any-state
+  $~  *state
   $%  state-4
       state-3
       state-2
   ==
-+$  state    state-4
 +$  state-4  [%4 pith-4]
 +$  state-3  [%3 pith-3]
 +$  state-2  [%2 pith-2]
@@ -80,7 +81,8 @@
 --
 ::  TODO: remove .ost
 ::
-|=  [hid=bowl:gall state]
+|=  [hid=bowl:gall any-state]
+?>  ?=(%4 +<+<)
 =*  sat  +<+
 =/  ost  0
 =+  (~(gut by bin) ost *source)
@@ -153,7 +155,7 @@
   ?>  ?=(%4 -.old)
   =.  sat  old
   =.  dev  (~(gut by bin) ost *source)
-  ..on-load
+  this
 ::
 ++  reap-phat                                         ::  ack connect
   |=  [way=wire saw=(unit tang)]

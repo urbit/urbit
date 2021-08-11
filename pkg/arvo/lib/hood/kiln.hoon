@@ -11,23 +11,33 @@
 +$  state-1  [%1 pith-1]
 +$  state-0  [%0 pith-0]
 +$  any-state
+  $~  *state
   $%  state-3
       state-2
       state-1
       state-0
   ==
-+$  pith-3
++$  pith-3                                              ::
   $:  rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
       ark=(map desk arak)                               ::
       commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+      ::  map desk to the currently ongoing fuse request
+      ::  and the latest version numbers for beaks to
+      fus=(map desk per-fuse)
+      ::  used for fuses - every time we get a fuse we
+      ::  bump this. used when calculating hashes to
+      ::  ensure they're unique even when the same
+      ::  request is made multiple times.
+      hxs=(map desk @ud)
   ==                                                    ::
 +$  pith-2                                              ::
   $:  rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
       ota=(unit [=ship =desk =aeon])                    ::
-      ark=(map desk *)                               ::
       commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+      fus=(map desk per-fuse)
+      hxs=(map desk @ud)
   ==                                                    ::
 +$  pith-1                                              ::
   $:  rem=(map desk per-desk)                           ::
@@ -51,6 +61,15 @@
       her=@p                                            ::  from ship
       sud=@tas                                          ::  from desk
       cas=case                                          ::  at case
+  ==
++$  per-fuse                                            ::  per fuse state
+      ::  map [ship desk] to latest version number we
+      ::  have for them. used for things we're %trak-ing
+      ::  our invariant here is to store the latest version
+      ::  number we've heard of.
+  $:  mox=(map [ship desk] let=@ud)
+      ::  relevant parts of originating request
+      kf=kiln-fuse-data
   ==
 +$  kiln-commit  term                                   ::
 +$  kiln-mount                                          ::
@@ -76,23 +95,29 @@
       cas=case                                          ::
       gim=?(%auto germ)                                 ::
   ==
++$  fuse-source  [who=ship des=desk ver=$@(%trak case)]
+::  actual poke
 +$  kiln-fuse
   $@  ~
   $:  syd=desk
-      bas=beak
-      con=(list [beak germ])
+      $@  ~  :: signifies clearing the fuse
+      $:  overwrite=flag  :: force overwrite previous fuse
+          bas=fuse-source
+          con=(list [fuse-source germ])
+      ==
   ==
-::  $diff: subscription update
+::  state tracked by kiln
++$  kiln-fuse-data
+  $:  syd=desk
+      bas=fuse-source
+      con=(list [fuse-source germ])
+  ==
+::  Request to list current fuses. ~ means "list all"
 ::
-+$  diff
-  $%  [%block =desk =arak =weft blockers=(set desk)]
-      [%reset =desk =arak]
-      [%merge =desk =arak]
-      [%merge-sunk =desk =arak =tang]
-      [%merge-fail =desk =arak =tang]
-  ==
++$  kiln-fuse-list  (unit desk)
 --
-|=  [bowl:gall state]
+|=  [bowl:gall any-state]
+?>  ?=(%3 +<+<)
 ?>  =(src our)
 =|  moz=(list card:agent:gall)
 |%
@@ -124,50 +149,54 @@
   (turn daz start-dude:~(pass vats [%base *arak]))
 ::
 ++  on-load
+  =>  |%
+      +$  ota  [syd=desk her=ship sud=desk]
+      --
+  =|  old-ota=(unit ota)
   |=  [hood-version=@ud old=any-state]
-  =<  abet
-  =?  .  ?=(%0 -.old)
-    =/  recognized-ota=(unit [syd=desk her=ship sud=desk])
-      =/  syncs=(list [[syd=desk her=ship sud=desk] =aeon])
-        ~(tap by syn.old)
-      |-  ^-  (unit [syd=desk her=ship sud=desk])
-      ?~  syncs
-        ~
-      ?:  &(=(%base syd.i.syncs) !=(our her.i.syncs) =(%kids sud.i.syncs))
-        `[syd her sud]:i.syncs
-      $(syncs t.syncs)
-    ::
-    =/  sen=(map kiln-sync let=@ud)
-      ?~  recognized-ota
-        syn.old
-      (~(del by syn.old) [syd her sud]:u.recognized-ota)
-    ::  note that the new state has not yet been initialized
-    ::
-::  TODO reinstate with +vats
-::    =?  ..abet  ?=(^ recognized-ota)
-::      (poke:update `[her sud]:u.recognized-ota)
-    ::
-    +>(old [%1 rem.old syn=sen ota=~ commit-timer.old])
+  =?  old-ota  ?=(%0 -.old)
+    =/  syncs=(list [ota =aeon])  ~(tap by syn.old)
+    |-  ^-  (unit ota)
+    ?~  syncs
+      ~
+    ?:  &(=([%base %kids] [syd sud]:i.syncs) !=(our her.i.syncs))
+      `[syd her sud]:i.syncs
+    $(syncs t.syncs)
+  ::
+  =?  old  ?=(%0 -.old)
+    =?  syn.old  ?=(^ old-ota)  (~(del by syn.old) u.old-ota)
+    [%3 [rem syn ark=~ commit-timer fus=~ hxs=~]:old]
   ::
   =?  old  ?=(%1 -.old)
     :*  %2
         rem.old
         syn.old
         ota.old
-        ark=~  ::  TODO reinstate old ota here?
         commit-timer.old
+        fus=~
+        hxs=~
     ==
+  ::
+  =?  old-ota  ?=(%2 -.old)
+    ?~  ota.old  ~
+    `[%base ship desk]:u.ota.old
+  ::
   =?  old  ?=(%2 -.old)
     :*  %3
         rem.old
         syn.old
         ark=~
         commit-timer.old
+        fus.old
+        hxs.old
     ==
   ::
   ?>  ?=(%3 -.old)
   =.  +<+.$.abet  old
-  ..abet
+  =<  abet
+  ?~  old-ota
+    kiln
+  abet:(install:vats %base [her sud]:u.old-ota)
 ::
 ++  on-peek
   |=  =path
@@ -505,6 +534,7 @@
     %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
     %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
     %kiln-fuse               =;(f (f !<(_+<.f vase)) poke-fuse)
+    %kiln-fuse-list          =;(f (f !<(_+<.f vase)) poke-fuse-list)
     %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
     %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
     %kiln-install            =;(f (f !<(_+<.f vase)) poke-install)
@@ -557,10 +587,69 @@
     [/kiln/autocommit (add now recur) recur mon]
   (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
 ::
+++  poke-fuse-list
+  =>
+  |%
+  ++  format-fuse
+    |=  [into=desk pf=per-fuse]
+    ^-  tank
+    =/  sources=tape
+        %+  reel
+          con.kf.pf
+        |=  [[fs=fuse-source g=germ] acc=tape]
+        ^-  tape
+        :(weld " [" (format-fuse-source fs) " " <g> "]" acc)
+    :-  %leaf
+    ;:  weld
+      "|fuse {<into>} "
+      (format-fuse-source bas.kf.pf)
+      sources
+    ==
+  ::  +format-fuse-source: fuse source -> beak -> path
+  ::
+  ++  format-fuse-source
+    |=  fs=fuse-source
+    ^-  tape
+    =/  bec=beak  [who.fs des.fs ?:(?=([%trak] ver.fs) [%tas %track] ver.fs)]
+    <(en-beam [bec /])>
+  --
+  |=  k=kiln-fuse-list
+  ^+  abet
+  %.  abet
+  ?~  k
+    ?~  fus
+      (slog [leaf+"no ongoing fuses" ~])
+    %-  slog
+    %+  roll
+      ~(tap by `(map desk per-fuse)`fus)
+    |=  [[syd=desk pf=per-fuse] acc=tang]
+    ^-  tang
+    [(format-fuse syd pf) acc]
+  =/  pfu=(unit per-fuse)  (~(get by fus) u.k)
+  ?~  pfu
+    (slog [leaf+"no ongoing fuse for {<u.k>}" ~])
+  (slog [(format-fuse u.k u.pfu) ~])
+::
 ++  poke-fuse
   |=  k=kiln-fuse
   ?~  k  abet
-  abet:(emit [%pass /kiln/fuse/[syd.k] %arvo %c [%fuse syd.k bas.k con.k]])
+  =/  payload  +.k
+  ?~  payload
+    ::  cancelling an ongoing fuse
+    %-  (slog [leaf+"cancelling fuse into {<syd.k>}" ~])
+    =/  f  (fuzz syd.k now)
+    ?~  f
+      abet
+    abet:abet:delete:u.f
+  ?:  &(!overwrite.payload (~(has by fus) syd.k))
+    ((slog [leaf+"existing fuse into {<syd.k>} - need =overwrite &" ~]) abet)
+  =.  fus  (~(put by fus) syd.k [~ [syd.k bas.payload con.payload]])
+  =/  old-cnt=@ud  (~(gut by hxs) syd.k 0)
+  =.  hxs  (~(put by hxs) syd.k +(old-cnt))
+  =/  f  (fuzz syd.k now)
+  ?~  f
+    abet
+  abet:abet:fuse:u.f
 ::
 ++  poke-gall-sear
   |=  =ship
@@ -705,6 +794,21 @@
       [%autocommit *]   %+  take-wake-autocommit  t.wire
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
       [%vats *]         abet:(take:vats t.wire sign-arvo)
+      [%fuse-request @tas *]
+                      =/  f  (fuzz i.t.wire now)
+                      ?~  f
+                        abet
+                      abet:abet:(take:u.f t.t.wire sign-arvo)
+      [%fuse @tas *]  ?>  ?=(%mere +<.sign-arvo)
+                      =/  syd=desk  i.t.wire
+                      ?.  ?=([%| *] +>.sign-arvo)
+                        ?~  p.p.sign-arvo
+                          abet
+                        =/  msg=tape  "fuse merge conflict for {<syd>}"
+                        %-  (slog [leaf+msg >p.p.sign-arvo< ~])
+                        abet
+                      %-  (slog leaf+"failed fuse for {<syd>}" p.p.sign-arvo)
+                      abet
       *
     ?+    +<.sign-arvo
         ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
@@ -788,6 +892,122 @@
 ++  spam
   |=  mes=(list tank)
   ((slog mes) ..spam)
+::  state machine for fuses
+::
+++  fuzz
+  |=  [syd=desk now=@da]
+  =/  pfu=(unit per-fuse)  (~(get by fus) syd)
+  ?~  pfu
+    ~
+  =*  kf  kf.u.pfu
+  =*  mox  mox.u.pfu
+  =/  should-delete=flag  |
+  %-  some
+  |%
+  ::  finalize
+  ::
+  ++  abet
+   ?:  should-delete
+      ..fuzz(fus (~(del by fus) syd))
+    ..fuzz(fus (~(put by fus) syd [mox kf]))
+  ::
+  ++  delete
+    ^+  ..delete
+    =.  should-delete  &
+    ..delete
+  ::  queue moves
+  ::
+  ++  blab
+    |=  new=(list card:agent:gall)
+    ^+  +>
+    +>.$(moz (welp new moz))
+  ::  +make-requests: send requests for each %trak source.
+  ::
+  ++  make-requests
+    ^+  ..abet
+    =/  movs=(list card:agent:gall)
+      %+  murn
+        [[bas.kf *germ] con.kf]
+      |=  [fs=fuse-source germ]
+      ^-  (unit card:agent:gall)
+      ?^  ver.fs
+        ::  static source, don't need to track
+        ~
+      =/  bec=beak  (realize-fuse-source fs &)
+      ?>  =(who.fs p.bec)
+      ?>  =(des.fs q.bec)
+      =/  hax=@ud  (mug [kf (~(got by hxs) syd)])
+      =/  wir=wire
+          /kiln/fuse-request/[syd]/(scot %p p.bec)/[q.bec]/(scot %ud hax)
+      =/  rav=rave  [%sing %w r.bec /]
+      =/  rif=riff  [q.bec `rav]
+      `[%pass wir %arvo %c [%warp who.fs rif]]
+    ::  No need to keep state if all the sources are static
+    ?~  movs
+      delete
+    (blab movs)
+  ::
+  ++  send-fuse
+    ^+  ..abet
+    =/  bas=beak  (realize-fuse-source bas.kf |)
+    =/  con=(list [beak germ])
+      %+  turn
+        con.kf
+      |=  [fs=fuse-source g=germ]
+      [(realize-fuse-source fs |) g]
+    %-  blab
+    [%pass /kiln/fuse/[syd] %arvo %c [%fuse syd bas con]]~
+  ::
+  ++  fuse
+    ^+  ..abet
+    send-fuse:make-requests
+  ::
+  ++  take
+    |=  [wir=wire =sign-arvo]
+    ^+  ..fuse
+    ?>  =((lent wir) 3)
+    =/  who=ship  (slav %p (snag 0 wir))
+    =/  src=desk  (snag 1 wir)
+    =/  hax=@ud  (slav %ud (snag 2 wir))
+    ?.  =(hax (mug [kf (~(got by hxs) syd)]))
+      ::  If the hash in the wire doesn't match the current request
+      ::  this is a response for a previous fuse that we can ignore.
+      ..take
+    ?>  ?=([?(%clay %behn) %writ *] sign-arvo)
+    =/  gif  +.sign-arvo
+    ?~  p.gif
+      %-  (slog leaf+"|fuse request failed for {<src>} on <who> - cancelling")
+      delete
+    =/  cas=cass:clay  !<(cass:clay +.r.u.p.gif)
+    =.  mox  (~(put by mox) [who src] ud.cas)
+    fuse
+  ::
+  ::  utility functions below
+  ::
+  ::  +realize-fuse-source: convert a fuse-source to a
+  ::  fully realized beak.
+  ::
+  ++  realize-fuse-source
+    |=  [fs=fuse-source incr=flag]
+    ^-  beak
+    :+  who.fs
+      des.fs
+    ?@  ver.fs
+      (realize-case [who.fs des.fs incr])
+    `case`ver.fs
+  ::
+  ++  realize-case
+    |=  [who=ship des=desk incr=flag]
+    ^-  case
+    =/  let=(unit @ud)  (~(get by mox) [who des])
+    ^-  case
+    ?~  let
+      da+now
+    :-  %ud
+    ?:  incr
+      +(u.let)
+    u.let
+  --
 ::
 ++  auto
   |=  kiln-sync

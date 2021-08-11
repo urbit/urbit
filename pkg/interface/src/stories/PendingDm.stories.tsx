@@ -8,10 +8,9 @@ export default {
   title: 'Notifications/PendingDm',
   component: PendingDm
 } as Meta;
-const fakeApi = {} as any;
 
 export const Default = () => (
   <Box width="95%" p="1" backgroundColor="white">
-    <PendingDm api={fakeApi} ship="~hastuc-dibtux" />
+    <PendingDm  ship="~hastuc-dibtux" />
   </Box>
 );
