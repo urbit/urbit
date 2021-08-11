@@ -2454,6 +2454,7 @@
   --
 ::
 ++  lu                                                  ::  +pest logic
+  ~/  %lu
   |*  [k=mold v=mold]
   =>
   |%
@@ -2461,13 +2462,16 @@
   ++  hoop  (up k v)
   --
   ::
+  ~%  %core  +>+  ~
   |%
   ++  new                                               ::  new cache
+    ~/  %new
     |=  cap=@
     ^-  pest
     [cap 0 0 ~]
   ::
   ++  ebb                                               ::  trim cache
+    ~/  %ebb
     |=  a=pest
     ?:  (gte tic.a 0xffff.ffff.ffff.ffff)
       (new cap.a)
@@ -2476,6 +2480,7 @@
     a
   ::
   ++  put                                               ::  insert
+    ~/  %put
     |=  [a=pest =k =v]
     ^-  pest
     =/  vue  (pan:hoop pri.a [k tic.a v])
@@ -2487,6 +2492,7 @@
     ==
   ::
   ++  get                                               ::  lookup and pri bump
+    ~/  %get
     |=  [a=pest =k]
     ^-  (unit (pair v pest))
     =/  bump
