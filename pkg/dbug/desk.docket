@@ -1,0 +1,9 @@
+:~  title+'Debug'
+    info+'A ship debugger test'
+    color+0xc2.d6be
+    glob+'https://bootstrap.urbit.org/glob-0v3.9g3lg.hk1jk.bjiqq.d2dj7.h98vh.glob'
+    base+'debug'
+    version+[0 0 1]
+    website+'https://tlon.io'
+    license+'MIT'
+==
