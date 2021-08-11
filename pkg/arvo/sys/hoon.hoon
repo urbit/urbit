@@ -1903,6 +1903,7 @@
   ::                                                    ::
   ::
 ++  up
+  ~/  %up
   |*  [k=mold v=mold]
   =>
   ::  molds
@@ -1929,30 +1930,36 @@
   ::  balancing, tournament internals
   ::
   =>
+  ~%  %bal  +>+>  ~
   |%
   ++  mega  4                                           ::  balancing factor
   ::
   ++  size                                              ::  queue size
+    ~/  %size
     |=  t=ltree
     ^-  @
     ?~(t 0 s.t)
   ::
   ++  one                                               ::  construct
+    ~/  %one
     |=  =lelem
     ^-  pri
     [lelem ~ k.lelem]
   ::
   ++  llos                                              ::  left loser
+    ~/  %llos
     |=  a=lnode
     ^-  ltree
     [%llos +((add (size l.a) (size r.a))) a]
   ::
   ++  rlos                                              ::  right loser
+    ~/  %rlos
     |=  a=lnode
     ^-  ltree
     [%rlos +((add (size l.a) (size r.a))) a]
   ::
   ++  lbal                                              ::  left balance
+    ~/  %lbal
     |=  a=lnode
     ^-  ltree
     ?:  (lth (add (size l.a) (size r.a)) 2)
@@ -1964,6 +1971,7 @@
     (llos a)
   ::
   ++  rbal                                              ::  right balance
+    ~/  %rbal
     |=  a=lnode
     ^-  ltree
     ?:  (lth (add (size l.a) (size r.a)) 2)
@@ -1975,6 +1983,7 @@
     (rlos a)
   ::
   ++  llbal                                             ::  left balance left
+    ~/  %llbal
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ r.a)
@@ -1983,6 +1992,7 @@
     (lldub a)
   ::
   ++  lrbal                                             ::  left balance right
+    ~/  %lrbal
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ l.a)
@@ -1991,6 +2001,7 @@
     (lrdub a)
   ::
   ++  rlbal
+    ~/  %rlbal
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ r.a)
@@ -1999,6 +2010,7 @@
     (rldub a)
   ::
   ++  rrbal
+    ~/  %rrbal
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ l.a)
@@ -2007,6 +2019,7 @@
     (rrdub a)
   ::
   ++  llsin                                             ::  left single left
+    ~/  %llsin
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ r.a)
@@ -2020,6 +2033,7 @@
     ==
   ::
   ++  rlsin
+    ~/  %rlsin
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ r.a)
@@ -2031,6 +2045,7 @@
     ==
   ::
   ++  lrsin
+    ~/  %lrsin
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ l.a)
@@ -2042,6 +2057,7 @@
     ==
   ::
   ++  rrsin
+    ~/  %rrsin
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ l.a)
@@ -2055,6 +2071,7 @@
     ==
   ::
   ++  lldub                                             ::  left double left
+    ~/  %lldub
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ r.a)
@@ -2064,6 +2081,7 @@
     ==
   ::
   ++  lrdub
+    ~/  %lrdub
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ l.a)
@@ -2073,6 +2091,7 @@
     ==
   ::
   ++  rldub
+    ~/  %rldub
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ r.a)
@@ -2082,6 +2101,7 @@
     ==
   ::
   ++  rrdub
+    ~/  %rrdub
     |=  a=lnode
     ^-  ltree
     ?>  ?=(^ l.a)
@@ -2091,6 +2111,7 @@
     ==
   ::
   ++  toy                                               ::  play
+    ~/  %toy
     |=  [a=pri b=pri]
     ^-  pri
     ?~  a
@@ -2102,6 +2123,7 @@
     [n.b (lbal n.a t.a m.a t.b) m.b]
   ::
   ++  sec                                               ::  second best
+    ~/  %sec
     |=  [t=ltree m=k]
     |-  ^-  pri
     ?~  t  ~
@@ -2111,6 +2133,7 @@
     ==
   ::
   ++  win                                               ::  compare
+    ~/  %win
     |=  [[p=@ q=*] [r=@ s=*]]
     ?|  (lth p r)
         ?&(=(p r) (gor q s))
@@ -2118,16 +2141,19 @@
   --
   ::  psq logic
   ::
+  ~%  %core  +>+  ~
   |%
   ++  deb  +>                                           ::  internals access
   ::
   ++  wyt                                               ::  queue size
+    ~/  %wyt
     |=  =pri
     ^-  @
     ?~  pri  0
     +((size t.pri))
   ::
   ++  sam                                               ::  equality
+    ~/  %sam
     |=  [a=pri b=pri]
     ^-  ?
     =/  loa  (bot a)
@@ -2144,6 +2170,7 @@
     ==
   ::
   ++  get                                               ::  lookup
+    ~/  %get
     |=  [a=pri =k]
     |-  ^-  (unit (pair @ v))
     ?~  a  ~
@@ -2161,17 +2188,20 @@
     ==
   ::
   ++  has                                               ::  key existence check
+    ~/  %has
     |=  [a=pri =k]
     !=(~ (get a k))
   ::  lowest-prio element
   ::
   ++  min                                               ::  lowest-pri element
+    ~/  %min
     |=  a=pri
     ^-  (unit lelem)
     ?~  a  ~
     (some n.a)
   ::
   ++  put                                               :: add [key prio val]
+    ~/  %put
     |=  [a=pri =k p=@ =v]
     |-  ^-  pri
     ?~  a
@@ -2195,6 +2225,7 @@
     ==
   ::
   ++  del                                               ::  delete at key k
+    ~/  %del
     |=  [a=pri =k]
     |-  ^-  pri
     ?~  a  ~
@@ -2214,6 +2245,7 @@
     ==
   ::
   ++  cut                                               ::  delete min-prio val
+    ~/  %cut
     |=  a=pri
     ^-  pri
     =/  b  (bot a)
@@ -2221,6 +2253,7 @@
     q.u.b
   ::
   ++  jab                                               ::  update at key k
+    ~/  %jab
     |=  [a=pri =k f=$-((unit (pair @ v)) (pair (unit v) (unit (pair @ v))))]
     ^-  (pair (unit v) pri)
     =/  ped  (pet a k)
@@ -2237,6 +2270,7 @@
     (put a k p.u.q.bee q.u.q.bee)
   ::
   ++  jib                                               ::  update at min-prio
+    ~/  %jib
     |=  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
     ^-  (pair * pri)
     =/  vue  (bot a)
@@ -2254,6 +2288,7 @@
     (put a p.u.q.bee q.u.q.bee r.u.q.bee)
   ::
   ++  gas                                               ::  concatenate
+    ~/  %gas
     |=  [a=pri b=(list lelem)]
     |-  ^-  pri
     ?~  b
@@ -2261,6 +2296,7 @@
     $(b t.b, a (put a k.i.b p.i.b v.i.b))
   ::
   ++  tap                                               ::  convert to list
+    ~/  %tap
     |=  a=pri
     =|  b=(list lelem)
     |-  ^+  b
@@ -2273,11 +2309,13 @@
     ==
   ::
   ++  key                                               ::  list of keys
+    ~/  %key
     |=  a=pri
     ^-  (list k)
     (turn (tap a) |=(=lelem k.lelem))
   ::
   ++  see                                               ::  tournament view
+    ~/  %see
     |=  a=pri
     ^-  torn
     ?~  a  ~
@@ -2289,17 +2327,20 @@
     ==
   ::
   ++  top                                               ::  maximum key
+    ~/  %top
     |=  a=pri
     ?~  a  !!
     m.a
   ::
   ++  bot                                               ::  lowest-prio view
+    ~/  %bot
     |=  a=pri
     ^-  (unit (pair lelem pri))
     ?~  a  ~
     (some [n.a (sec t.a m.a)])
   ::
   ++  pet                                               ::  delete view
+    ~/  %pet
     |=  [a=pri =k]
     |-  ^-  (unit (trel @ v pri))
     ?~  a  ~
@@ -2327,6 +2368,7 @@
     ==
   ::
   ++  pan                                               ::  insert view
+    ~/  %pan
     |=  [a=pri e=lelem]
     ^-  (pair (unit (pair @ v)) pri)
     =/  vue  (pet a k.e)
@@ -2335,6 +2377,7 @@
     [(some [p.u.vue q.u.vue]) (put a e)]
   ::
   ++  apt                                               ::  check correctness
+    ~/  %apt
     |=  a=pri
     |^  &(uni hep bin ann)
     ::
