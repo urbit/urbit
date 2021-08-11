@@ -1356,32 +1356,57 @@
 ++  test-rut-l1-l1-adopt-l2-3  ^-  tang
   ::  L2-adopt  A1 | *   | ~   | *   | *   | -> | *   | ~   | *   | *
   ::
-  =/  rr-h-detach  [holrut-own %detach ~rabsum-ravtyd]
-  =/  rr-h-m-detach  [holrut-mgmt %detach ~rabsum-ravtyd]
-  =/  rr-adopt  [losred-own %adopt ~rabsum-ravtyd]
-  =/  rr-m-adopt  [losred-mgmt %adopt ~rabsum-ravtyd]
+  =/  rr-h-detach  [1 [holrut-own %detach ~rabsum-ravtyd] %holrut-key-0]
+  =/  rr-h-m-detach  [0 [holrut-mgmt %detach ~rabsum-ravtyd] %holrut-mkey-0]
+  =/  rr-adopt  [0 [losred-own %adopt ~rabsum-ravtyd] %losred-key-0]
+  =/  rr-m-adopt  [0 [losred-mgmt %adopt ~rabsum-ravtyd] %losred-mkey-0]
   ::
-  ;:  weld
+  =,  l2-event-gen
+  =/  rr-batch-1=tx-list  (limo ~[rr-h-detach rr-adopt])
+  =/  rr-batch-2=tx-list  (limo ~[rr-h-m-detach rr-m-adopt])
+  ~&  ['detach' `@ux`(tx-list-to-batch (limo ~[rr-h-detach]))]
+  ~&  ['adopt' `@ux`(tx-list-to-batch (limo ~[rr-adopt]))]
+  ~&  ['batch' `@ux`(tx-list-to-batch rr-batch-1)]
+  ::
+  ::  ;:  weld
+  ::    %+  expect-eq
+  ::      !>  [~ %.n ~holrut]
+  ::    ::
+  ::      !>
+  ::      =|  =^state:naive
+  ::      =^  f  state  (init-rut-full state)
+  ::      =^  f  state  (n state %bat q:(gen-tx rr-h-detach))
+  ::      =^  f  state  (n state %bat q:(gen-tx rr-adopt))
+  ::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    ::
     %+  expect-eq
       !>  [~ %.n ~holrut]
     ::
       !>
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
-      =^  f  state  (n state %bat q:(gen-tx 1 rr-h-detach %holrut-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %losred-key-0))
+      =^  f  state  (n state %bat (tx-list-to-batch rr-batch-1))
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
     ::
-    %+  expect-eq
-      !>  [~ %.n ~holrut]
-    ::
-      !>
-      =|  =^state:naive
-      =^  f  state  (init-rut-full state)
-      =^  f  state  (n state %bat q:(gen-tx 0 rr-h-m-detach %holrut-mkey-0))
-      =^  f  state  (n state %bat q:(gen-tx 0 rr-m-adopt %losred-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
-  ==
+  ::    %+  expect-eq
+  ::      !>  [~ %.n ~holrut]
+  ::    ::
+  ::      !>
+  ::      =|  =^state:naive
+  ::      =^  f  state  (init-rut-full state)
+  ::      =^  f  state  (n state %bat q:(gen-tx rr-h-m-detach))
+  ::      =^  f  state  (n state %bat q:(gen-tx rr-m-adopt))
+  ::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+  ::    ::
+  ::    %+  expect-eq
+  ::      !>  [~ %.n ~holrut]
+  ::    ::
+  ::      !>
+  ::      =|  =^state:naive
+  ::      =^  f  state  (init-rut-full state)
+  ::      =^  f  state  (n state %bat (tx-list-to-batch rr-batch-2))
+  ::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+  ::  ==
 ::
 ::  the following tests L2 %rejects
 ++  test-red-l2-l2-reject-l2-1  ^-  tang
@@ -3018,6 +3043,9 @@
   =/  tx-1=full-tx  [0 marbud-transfer %marbud-key-0]
   =/  tx-2=full-tx  [1 marbud-transfer-2 %marbud-key-0]
   =/  txs=tx-list  (limo ~[tx-1 tx-2])
+  ~&  ['tx-1' `@ux`(tx-list-to-batch (limo ~[tx-1]))]
+  ~&  ['tx-2' `@ux`(tx-list-to-batch (limo ~[tx-2]))]
+  ~&  ['txs' `@ux`(tx-list-to-batch txs)]
   %+  expect-eq
     !>  [(addr %marbud-key-1) 2]
   ::
