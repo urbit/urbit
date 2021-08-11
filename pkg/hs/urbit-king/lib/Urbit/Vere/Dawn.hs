@@ -160,10 +160,7 @@ dawnPostRequests endpoint responseBuilder requests = do
 
 data PointResponse = PointResponse
   --NOTE  also contains dominion and ownership, but not actually used here
-  --TODO  remove me!
-  { -- prDominion :: Text
-    -- prOwnership :: PointOwnership
-    prNetwork :: PointNetwork
+  { prNetwork :: PointNetwork
   } deriving (Show, Eq, Generic)
 
 instance FromJSON PointResponse where
@@ -171,36 +168,6 @@ instance FromJSON PointResponse where
     prNetwork <- o .: "network"
     pure PointResponse{..}
   parseJSON _ = do error "failed to parse PointResponse json"
-
-data PointOwnership = PointOwnership
-  { poTransferProxy :: PointAddress
-  , poVotingProxy :: PointAddress
-  , poSpawnProxy :: PointAddress
-  , poManagementProxy :: PointAddress
-  , poOwner :: PointAddress
-  } deriving (Show, Eq, Generic)
-
-instance FromJSON PointOwnership where
-  parseJSON (Object o) = do
-    poTransferProxy <- o .: "transferProxy"
-    poVotingProxy <- o .: "votingProxy"
-    poSpawnProxy <- o .: "spawnProxy"
-    poManagementProxy <- o .: "managementProxy"
-    poOwner <- o .: "owner"
-    pure PointOwnership{..}
-  parseJSON _ = do error "failed to parse PointOwnership json"
-
-data PointAddress = PointAddress
-  { paAddress :: EthAddr
-  , paNonce :: Int
-  } deriving (Show, Eq, Generic)
-
-instance FromJSON PointAddress where
-  parseJSON (Object o) = do
-    paAddress <- o .: "address"
-    paNonce <- o .: "nonce"
-    pure PointAddress{..}
-  parseJSON _ = do error "failed to parse PointAddress json"
 
 data PointNetwork = PointNetwork
   { pnKeys :: PointKeys
