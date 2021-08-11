@@ -698,7 +698,8 @@
     --
   ::
   ::  takes in a list of full-tx and turns them into a batch
-  ::  to be submitted to +n
+  ::  to be submitted to +n. The ordering on the list is the order in which
+  ::  the transactions are processed
   ++  tx-list-to-batch
     |=  =tx-list  ^-  @
     ::
@@ -710,7 +711,7 @@
       =/  cur-tx  i.tx-list
       =/  cur-raw  q:(gen-tx cur-tx)
       $(batch-raw (snoc batch-raw cur-raw), tx-list t.tx-list)
-    (roll tx-list-octs (cury cat 3))
+    (roll (flop tx-list-octs) (cury cat 3))
   ::
   --  :: end +l2-event-gen
 ::
@@ -3008,6 +3009,23 @@
     =^  f  state  (init-zod state)
     =^  f  state  (n state %bat q:signed-tx)
     transfer-proxy.own:(~(got by points.state) ~tasben-monbur)
+::
+++  test-batch-create
+  =,  l2-event-gen
+  =/  marbud-transfer    [marbud-own %transfer-point (addr %marbud-key-0) |]
+  =/  marbud-transfer-2  [marbud-own %transfer-point (addr %marbud-key-1) |]
+  ::
+  =/  tx-1=full-tx  [0 marbud-transfer %marbud-key-0]
+  =/  tx-2=full-tx  [1 marbud-transfer-2 %marbud-key-0]
+  =/  txs=tx-list  (limo ~[tx-1 tx-2])
+  %+  expect-eq
+    !>  [(addr %marbud-key-1) 2]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat (tx-list-to-batch txs))
+    owner.own:(~(got by points.state) ~marbud)
 ::
 ::  TODO: signature format changed; regenerate
 ::
