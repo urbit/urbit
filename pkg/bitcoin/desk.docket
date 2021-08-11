@@ -1,0 +1,9 @@
+:~  title+'Bitcoin Wallet'
+    info+'An app for sending and receiving bitcoin'
+    color+0xf0.ae70
+    glob+'https://bootstrap.urbit.org/glob-0v5.bfloh.iak3h.c8erp.5qa0d.tie3g.glob'
+    base+'bitcoin'
+    version+[0 0 1]
+    website+'https://tlon.io'
+    license+'MIT'
+==

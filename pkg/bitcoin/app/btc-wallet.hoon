@@ -3,7 +3,7 @@
 ::  Scrys
 ::  x/scanned: (list xpub) of all scanned wallets
 ::  x/balance/xpub: balance (in sats) of wallet
-/-  *btc-wallet, bp=btc-provider, file-server, launch-store, settings
+/-  *btc-wallet, bp=btc-provider, settings
 /+  dbug, default-agent, bl=btc, bc=bitcoin, bcu=bitcoin-utils, bip32
 ~%  %btc-wallet-top  ..part  ~
 |%
@@ -79,19 +79,6 @@
     :~  (poke-our:hc %settings-store %settings-event !>(warning))
         (poke-our:hc %settings-store %settings-event !>(currency))
     ==
-  ::
-  =/  has-file=?  (gall-scry:hc ? %file-server /url/'~btc'/noun)
-  =/  has-tile=?
-    (~(has in (gall-scry:hc (set @tas) %launch /keys/noun)) %btc-wallet)
-  =?  cards  !has-file
-    =/  file=action:file-server  [%serve-dir /'~btc' /app/btc-wallet %.n %.y]
-    :_  cards
-    (poke-our:hc %file-server %file-server-action !>(file))
-  =?  cards  !has-tile
-    =/  tile=action:launch-store
-      [%add %btc-wallet [%custom `'/~btc' `'/~btc/img/tile.svg'] %.y]
-    :_  cards
-    (poke-our:hc %launch %launch-action !>(tile))
   ::
   :-  cards
   %_  this
