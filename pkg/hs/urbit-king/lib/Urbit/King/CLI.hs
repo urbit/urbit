@@ -253,9 +253,9 @@ serfExe =  optional
 ethNode :: Parser String
 ethNode = strOption
      $ short 'e'
-    <> long "eth-node"
-    <> value "http://eth-mainnet.urbit.org:8545"
-    <> help "Ethereum gateway URL"
+    <> long "l2-endpoint"
+    <> value "https://l2.urbit.org/v1/azimuth"  --TODO
+    <> help "L2 RPC API endpoint URL"
     <> hidden
 
 new :: Parser New

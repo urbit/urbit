@@ -1,5 +1,5 @@
 {-|
-    Use etherium to access PKI information.
+    Use L2 to access PKI information.
 -}
 
 module Urbit.Vere.Dawn ( dawnVent
@@ -19,12 +19,13 @@ import Urbit.Arvo.Common
 import Urbit.Arvo.Event  hiding (Address)
 import Urbit.Prelude     hiding (rights, to, (.=))
 
+import Prelude (read)
+
 import Data.Bits                     (xor)
 import Data.List                     (nub)
 import Data.Text                     (splitOn)
 import Data.Aeson
 import Data.HexString
-import Numeric                       (showHex)
 
 import qualified Crypto.Hash.SHA256    as SHA256
 import qualified Crypto.Hash.SHA512    as SHA512
@@ -39,19 +40,14 @@ import qualified Urbit.Ob              as Ob
 import qualified Network.HTTP.Client.TLS as TLS
 import qualified Network.HTTP.Types      as HT
 
--- The address of the azimuth contract as a string.
-azimuthAddr :: Text
-azimuthAddr = "0x223c067f8cf28ae173ee5cafea60ca44c335fecb"
-
 -- Conversion Utilities --------------------------------------------------------
 
-passFromBS :: ByteString -> ByteString -> ByteString -> Pass
-passFromBS enc aut sut
-  | bytesAtom sut /= 1 = Pass (Ed.PublicKey mempty) (Ed.PublicKey mempty)
-  | otherwise          = Pass (Ed.PublicKey aut) (Ed.PublicKey enc)
-
-bsToBool :: ByteString -> Bool
-bsToBool bs = bytesAtom bs == 1
+passFromText :: Text -> Text -> Int -> Pass
+passFromText enc aut sut
+  | sut /= 1  = Pass (Ed.PublicKey mempty) (Ed.PublicKey mempty)
+  | otherwise = Pass (Ed.PublicKey $ grab aut) (Ed.PublicKey $ grab enc)
+  where
+    grab = reverse . toBytes . hexString . removePrefix . encodeUtf8
 
 clanFromShip :: Ship -> Ob.Class
 clanFromShip = Ob.clan . Ob.patp . fromIntegral
@@ -61,10 +57,6 @@ shipSein = Ship . fromIntegral . Ob.fromPatp . Ob.sein . Ob.patp . fromIntegral
 
 renderShip :: Ship -> Text
 renderShip = Ob.renderPatp . Ob.patp . fromIntegral
-
-hexStrToAtom :: Text -> Atom
-hexStrToAtom =
-  bytesAtom . reverse . toBytes . hexString . removePrefix . encodeUtf8
 
 onLeft :: (a -> b) -> Either a c -> Either b c
 onLeft fun = bimap fun id
@@ -84,18 +76,10 @@ ringToPass Ring{..} = Pass{..}
 
 -- JSONRPC Functions -----------------------------------------------------------
 
--- The big problem here is that we can't really use the generated web3 wrappers
--- around the azimuth contracts, especially for the galaxy table request. They
--- make multiple rpc invocations per galaxy request (which aren't even
--- batched!), while Vere built a single batched rpc call to fetch the entire
--- galaxy table.
+-- Network.JSONRPC appeared to not like something about the JSON that Infura
+-- returned; it just hung? Also no documentation.
 --
--- The included Network.JsonRpc.TinyClient that Network.Web3 embeds can't do
--- batches, so calling that directly is out.
---
--- Network.JSONRPC appears to not like something about the JSON that Infura
--- returns; it's just hanging? Also no documentation.
---
+-- Our use case here is simple enough.
 -- So, like with Vere, we roll our own.
 
 dawnSendHTTP :: String -> L.ByteString -> RIO e (Either Int L.ByteString)
@@ -122,24 +106,25 @@ dawnSendHTTP endpoint requestData = liftIO do
 class RequestMethod m where
   getRequestMethod :: m -> Text
 
-data RawResponse = RawResponse
+data RawResponse r = RawResponse
   { rrId :: Int
-  , rrResult :: Text
+  , rrResult :: r
   }
   deriving (Show)
 
-instance FromJSON RawResponse where
+instance FromJSON r => FromJSON (RawResponse r) where
   parseJSON = withObject "Response" $ \v -> do
-    rrId <- v .: "id"
+    rawId <- v .: "id"
     rrResult <- v .: "result"
+    let rrId = read rawId
     pure RawResponse{..}
 
 
 -- Given a list of methods and parameters, return a list of decoded responses.
-dawnPostRequests :: forall req e resp
-                  . (ToJSON req, RequestMethod req)
+dawnPostRequests :: forall req e resp res
+                  . (ToJSON req, RequestMethod req, FromJSON res)
                  => String
-                 -> (req -> Text -> resp)
+                 -> (req -> res -> resp)
                  -> [req]
                  -> RIO e [resp]
 dawnPostRequests endpoint responseBuilder requests = do
@@ -168,122 +153,147 @@ dawnPostRequests endpoint responseBuilder requests = do
   toFullRequest (rid, req) = object [ "jsonrpc" .= ("2.0" :: Text)
                                     , "method"  .= getRequestMethod req
                                     , "params"  .= req
-                                    , "id"      .= rid
+                                    , "id"      .= (show rid)
                                     ]
 
 -- Azimuth JSON Requests -------------------------------------------------------
 
--- Not a full implementation of the Ethereum ABI, but just the ability to call
--- a method by encoded id (like 0x63fa9a87 for `points(uint32)`), and a single
--- UIntN 32 parameter.
-encodeCall :: Text -> Int -> Text
-encodeCall method idx = method <> leadingZeroes <> renderedNumber
-  where
-    renderedNumber = pack $ showHex idx ""
-    leadingZeroes = replicate (64 - length renderedNumber) '0'
+data PointResponse = PointResponse
+  --NOTE  also contains dominion and ownership, but not actually used here
+  --TODO  remove me!
+  { -- prDominion :: Text
+    -- prOwnership :: PointOwnership
+    prNetwork :: PointNetwork
+  } deriving (Show, Eq, Generic)
 
-data BlockRequest = BlockRequest
-  deriving (Show, Eq)
+instance FromJSON PointResponse where
+  parseJSON (Object o) = do
+    prNetwork <- o .: "network"
+    pure PointResponse{..}
+  parseJSON _ = do error "failed to parse PointResponse json"
 
-instance RequestMethod BlockRequest where
-  getRequestMethod BlockRequest = "eth_blockNumber"
+data PointOwnership = PointOwnership
+  { poTransferProxy :: PointAddress
+  , poVotingProxy :: PointAddress
+  , poSpawnProxy :: PointAddress
+  , poManagementProxy :: PointAddress
+  , poOwner :: PointAddress
+  } deriving (Show, Eq, Generic)
 
-instance ToJSON BlockRequest where
-  toJSON BlockRequest = Array $ fromList []
+instance FromJSON PointOwnership where
+  parseJSON (Object o) = do
+    poTransferProxy <- o .: "transferProxy"
+    poVotingProxy <- o .: "votingProxy"
+    poSpawnProxy <- o .: "spawnProxy"
+    poManagementProxy <- o .: "managementProxy"
+    poOwner <- o .: "owner"
+    pure PointOwnership{..}
+  parseJSON _ = do error "failed to parse PointOwnership json"
 
--- No need to parse, it's already in the format we'll pass as an argument to
--- eth calls which take a block number.
-parseBlockRequest :: BlockRequest -> Text -> TextBlockNum
-parseBlockRequest _ txt = txt
+data PointAddress = PointAddress
+  { paAddress :: EthAddr
+  , paNonce :: Int
+  } deriving (Show, Eq, Generic)
 
-type TextBlockNum = Text
+instance FromJSON PointAddress where
+  parseJSON (Object o) = do
+    paAddress <- o .: "address"
+    paNonce <- o .: "nonce"
+    pure PointAddress{..}
+  parseJSON _ = do error "failed to parse PointAddress json"
 
-data PointRequest = PointRequest
-  { grqHexBlockNum :: TextBlockNum
-  , grqPointId :: Int
-  } deriving (Show, Eq)
+data PointNetwork = PointNetwork
+  { pnKeys :: PointKeys
+  , pnSponsor :: PointSponsor
+  , pnRift :: ContNum
+  } deriving (Show, Eq, Generic)
+
+instance FromJSON PointNetwork where
+  parseJSON (Object o) = do
+    pnKeys <- o .: "keys"
+    pnSponsor <- o .: "sponsor"
+    pnRift <- o .: "rift"
+    pure PointNetwork{..}
+  parseJSON _ = do error "failed to parse PointNetwork json"
+
+data PointKeys = PointKeys
+  { pkLife :: Life
+  , pkSuite :: Int
+  , pkAuth :: Text  --NOTE  0xhex string
+  , pkCrypt :: Text  --NOTE  0xhex string
+  } deriving (Show, Eq, Generic)
+
+instance FromJSON PointKeys where
+  parseJSON (Object o) = do
+    pkLife <- o .: "life"
+    pkSuite <- o .: "suite"
+    pkAuth <- o .: "auth"
+    pkCrypt <- o .: "crypt"
+    pure PointKeys{..}
+  parseJSON _ = do error "failed to parse PointKeys json"
+
+data PointSponsor = PointSponsor
+  { psHas :: Bool
+  , psWho :: Text
+  } deriving (Show, Eq, Generic)
+
+instance FromJSON PointSponsor where
+  parseJSON (Object o) = do
+    psHas <- o .: "has"
+    psWho <- o .: "who"
+    pure PointSponsor{..}
+  parseJSON _ = do error "failed to parse PointSponsor json"
+
+data PointRequest = PointRequest Ship
 
 instance RequestMethod PointRequest where
-  getRequestMethod PointRequest{..} = "eth_call"
+  getRequestMethod _ = "getPoint"
 
 instance ToJSON PointRequest where
-  -- 0x63fa9a87 is the points(uint32) call.
-  toJSON PointRequest{..} =
-    Array $ fromList [object [ "to" .= azimuthAddr
-                             , "data" .= encodeCall "0x63fa9a87" grqPointId],
-                      String grqHexBlockNum
-                     ]
+  toJSON (PointRequest point) = object [ "ship" .= renderShip point ]
 
-parseAndChunkResultToBS :: Text -> [ByteString]
-parseAndChunkResultToBS result =
-  map reverse $
-  chunkBytestring 32 $
-  toBytes $
-  hexString $
-  removePrefix $
-  encodeUtf8 result
-
--- The incoming result is a text bytestring. We need to take that text, and
--- spit out the parsed data.
---
--- We're sort of lucky here. After removing the front "0x", we can just chop
--- the incoming text string into 10 different 64 character chunks and then
--- parse them as numbers.
-parseEthPoint :: PointRequest -> Text -> EthPoint
-parseEthPoint PointRequest{..} result = EthPoint{..}
+parseAzimuthPoint :: PointRequest -> PointResponse -> EthPoint
+parseAzimuthPoint (PointRequest point) response = EthPoint{..}
  where
-  [rawEncryptionKey,
-   rawAuthenticationKey,
-   rawHasSponsor,
-   rawActive,
-   rawEscapeRequested,
-   rawSponsor,
-   rawEscapeTo,
-   rawCryptoSuite,
-   rawKeyRevision,
-   rawContinuityNum] = parseAndChunkResultToBS result
-
-  escapeState = if bsToBool rawEscapeRequested
-                then Just $ Ship $ fromIntegral $ bytesAtom rawEscapeTo
-                else Nothing
+  net = prNetwork response
+  key = pnKeys net
 
   -- Vere doesn't set ownership information, neither did the old Dawn.hs
   -- implementation.
   epOwn = (0, 0, 0, 0)
 
-  epNet = if not $ bsToBool rawActive
+  sponsorShip = Ob.parsePatp $ psWho $ pnSponsor net
+  epNet = if (pkLife key) == 0
     then Nothing
-    else Just
-      ( fromIntegral $ bytesAtom rawKeyRevision
-      , passFromBS rawEncryptionKey rawAuthenticationKey rawCryptoSuite
-      , fromIntegral $ bytesAtom rawContinuityNum
-      , (bsToBool rawHasSponsor,
-         Ship (fromIntegral $ bytesAtom rawSponsor))
-      , escapeState
-      )
+    else case sponsorShip of
+      Left _  -> Nothing
+      Right s -> Just
+        ( fromIntegral $ pkLife key
+        , passFromText (pkCrypt key) (pkAuth key) (pkSuite key)
+        , fromIntegral $ pnRift net
+        , (psHas $ pnSponsor net, Ship $ fromIntegral $ Ob.fromPatp s)
+        , Nothing  --NOTE  goes unused currently, so we simply put Nothing
+        )
 
   -- I don't know what this is supposed to be, other than the old Dawn.hs and
   -- dawn.c do the same thing.
-  epKid = case clanFromShip (Ship $ fromIntegral grqPointId) of
+  -- zero-fill spawn data
+  epKid = case clanFromShip (Ship $ fromIntegral point) of
     Ob.Galaxy -> Just (0, setToHoonSet mempty)
     Ob.Star   -> Just (0, setToHoonSet mempty)
     _         -> Nothing
 
 -- Preprocess data from a point request into the form used in the galaxy table.
-parseGalaxyTableEntry :: PointRequest -> Text -> (Ship, (Rift, Life, Pass))
-parseGalaxyTableEntry PointRequest{..} result = (ship, (rift, life, pass))
+parseGalaxyTableEntry :: PointRequest -> PointResponse -> (Ship, (Rift, Life, Pass))
+parseGalaxyTableEntry (PointRequest point) response = (ship, (rift, life, pass))
  where
-  [rawEncryptionKey,
-   rawAuthenticationKey,
-   _, _, _, _, _,
-   rawCryptoSuite,
-   rawKeyRevision,
-   rawContinuityNum] = parseAndChunkResultToBS result
+  net  = prNetwork response
+  keys = pnKeys net
 
-  ship = Ship $ fromIntegral grqPointId
-  rift = fromIntegral $ bytesAtom rawContinuityNum
-  life = fromIntegral $ bytesAtom rawKeyRevision
-  pass = passFromBS rawEncryptionKey rawAuthenticationKey rawCryptoSuite
+  ship = Ship $ fromIntegral point
+  rift = fromIntegral $ pnRift net
+  life = fromIntegral $ pkLife keys
+  pass = passFromText (pkCrypt keys) (pkAuth keys) (pkSuite keys)
 
 removePrefix :: ByteString -> ByteString
 removePrefix withOhEx
@@ -292,54 +302,32 @@ removePrefix withOhEx
  where
   (prefix, suffix) = splitAt 2 withOhEx
 
-chunkBytestring :: Int -> ByteString -> [ByteString]
-chunkBytestring size bs
-  | null rest = [cur]
-  | otherwise = (cur : chunkBytestring size rest)
- where
-  (cur, rest) = splitAt size bs
-
-data TurfRequest = TurfRequest
-  { trqHexBlockNum :: TextBlockNum
-  , trqTurfId :: Int
-  } deriving (Show, Eq)
+data TurfRequest = TurfRequest ()
 
 instance RequestMethod TurfRequest where
-  getRequestMethod TurfRequest{..} = "eth_call"
+  getRequestMethod _ = "getDns"
 
 instance ToJSON TurfRequest where
-  -- 0xeccc8ff1 is the dnsDomains(uint32) call.
-  toJSON TurfRequest{..} =
-    Array $ fromList [object [ "to" .= azimuthAddr
-                             , "data" .= encodeCall "0xeccc8ff1" trqTurfId],
-                      String trqHexBlockNum
-                     ]
+  toJSON _ = object []  --NOTE  getDns takes no parameters
 
--- This is another hack instead of a full Ethereum ABI response.
-parseTurfResponse :: TurfRequest -> Text -> Turf
-parseTurfResponse a raw = turf
-  where
-    without0x = removePrefix $ encodeUtf8 raw
-    (_, blRest) = splitAt 64 without0x
-    (utfLenStr, utfStr) = splitAt 64 blRest
-    utfLen = fromIntegral $ bytesAtom $ reverse $ toBytes $ hexString utfLenStr
-    dnsStr = decodeUtf8 $ BS.take utfLen $ toBytes $ hexString utfStr
-    turf = Turf $ fmap Cord $ reverse $ splitOn "." dnsStr
+parseTurfResponse :: TurfRequest -> [Text] -> [Turf]
+parseTurfResponse _ = map turf
+   where
+    turf t = Turf $ fmap Cord $ reverse $ splitOn "." t
 
 -- Azimuth Functions -----------------------------------------------------------
 
-retrievePoint :: String -> TextBlockNum -> Ship -> RIO e EthPoint
-retrievePoint endpoint block ship =
-  dawnPostRequests endpoint parseEthPoint
-    [PointRequest block (fromIntegral ship)] >>= \case
+retrievePoint :: String -> Ship -> RIO e EthPoint
+retrievePoint endpoint ship =
+  dawnPostRequests endpoint parseAzimuthPoint [PointRequest ship]
+    >>= \case
       [x] -> pure x
       _   -> error "JSON server returned multiple return values."
 
 validateFeedAndGetSponsor :: String
-                          -> TextBlockNum
                           -> Feed
                           -> RIO e (Seed, Ship)
-validateFeedAndGetSponsor endpoint block = \case
+validateFeedAndGetSponsor endpoint = \case
     Feed0 s -> do
       r <- validateSeed s
       case r of
@@ -387,7 +375,7 @@ validateFeedAndGetSponsor endpoint block = \case
           putStrLn ("boot: retrieving " <> renderShip ship <> "'s public keys")
 
           --TODO  could cache this lookup
-          whoP <- retrievePoint endpoint block ship
+          whoP <- retrievePoint endpoint ship
           case epNet whoP of
             Nothing -> pure $ Left "ship not keyed"
             Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
@@ -396,7 +384,7 @@ validateFeedAndGetSponsor endpoint block = \case
                              show life <> ", but Azimuth claims life " <>
                              show netLife)
               else if ((ringToPass ring) /= pass) then
-                pure $ Left "keyfile does not match blockchain"
+                pure $ Left "keyfile does not match Azimuth"
               -- TODO: The hoon code does a breach check, but the C code never
               -- supplies the data necessary for it to function.
               else
@@ -404,13 +392,13 @@ validateFeedAndGetSponsor endpoint block = \case
 
 
 -- Walk through the sponsorship chain retrieving the actual sponsorship chain
--- as it exists on Ethereum.
-getSponsorshipChain :: String -> TextBlockNum -> Ship -> RIO e [(Ship,EthPoint)]
-getSponsorshipChain endpoint block = loop
+-- as it exists on Azimuth.
+getSponsorshipChain :: String -> Ship -> RIO e [(Ship,EthPoint)]
+getSponsorshipChain endpoint = loop
   where
     loop ship = do
       putStrLn ("boot: retrieving keys for sponsor " <> renderShip ship)
-      ethPoint <- retrievePoint endpoint block ship
+      ethPoint <- retrievePoint endpoint ship
 
       case (clanFromShip ship, epNet ethPoint) of
         (Ob.Comet, _) -> error "Comets cannot be sponsors"
@@ -433,31 +421,28 @@ dawnVent :: HasLogFunc e => String -> Feed -> RIO e (Either Text Dawn)
 dawnVent provider feed =
   -- The type checker can't figure this out on its own.
   (onLeft tshow :: Either SomeException Dawn -> Either Text Dawn) <$> try do
-    putStrLn ("boot: requesting ethereum information from " <> pack provider)
-    blockResponses
-      <- dawnPostRequests provider parseBlockRequest [BlockRequest]
-
-    hexStrBlock <- case blockResponses of
-      [num] -> pure num
-      x     -> error "Unexpected multiple returns from block # request"
-
-    let dBloq = hexStrToAtom hexStrBlock
-    putStrLn ("boot: ethereum block #" <> tshow dBloq)
+    putStrLn ("boot: requesting L2 Azimuth information from " <> pack provider)
 
     (dSeed, immediateSponsor)
-      <- validateFeedAndGetSponsor provider hexStrBlock feed
-    dSponsor <- getSponsorshipChain provider hexStrBlock immediateSponsor
+      <- validateFeedAndGetSponsor provider feed
+    dSponsor <- getSponsorshipChain provider immediateSponsor
 
     putStrLn "boot: retrieving galaxy table"
     dCzar <- (mapToHoonMap . mapFromList) <$>
-      (dawnPostRequests provider parseGalaxyTableEntry $
-         map (PointRequest hexStrBlock) [0..255])
+      (dawnPostRequests provider parseGalaxyTableEntry (map (PointRequest . Ship . fromIntegral) [0..255]))
 
     putStrLn "boot: retrieving network domains"
-    dTurf <- nub <$> (dawnPostRequests provider parseTurfResponse $
-      map (TurfRequest hexStrBlock) [0..2])
+    dTurf <- (dawnPostRequests provider parseTurfResponse [TurfRequest ()])
+               >>= \case
+                 []  -> pure []
+                 [t] -> pure (nub t)
+                 _   -> error "too many turf responses"
 
     let dNode = Nothing
+
+    --NOTE  blocknum of 0 is fine because jael ignores it.
+    --      should probably be removed from dawn event.
+    let dBloq = 0
 
     pure MkDawn{..}
 
