@@ -1023,7 +1023,8 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
 
       //  no currently recognized static hints
       //
-      case u3_none: {
+      case c3__clep: {
+        fprintf(stderr, "compiling clep\r\n");
         u3_noun fen = u3_nul;
         c3_w  nef_w = _n_comp(&fen, nef, los_o, tel_o);
 
@@ -1687,6 +1688,12 @@ u3n_find(u3_noun key, u3_noun fol)
 static c3_o
 _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
 {
+  if ( c3__clep == u3h(hin) ) {
+    fprintf(stderr, "fore: got clep\r\n");
+    *out = c3__clep;
+    return c3y;
+  }
+
   u3z(hin);
   *out = u3_nul;
   return c3y;
@@ -1699,7 +1706,13 @@ _n_hilt_fore(u3_noun hin, u3_noun bus, u3_noun* out)
 static void
 _n_hilt_hind(u3_noun tok, u3_noun pro)
 {
-  c3_assert( u3_nul == tok );
+  if ( c3__clep == tok ) {
+    fprintf(stderr, "hind: got clep\r\n");
+  }
+  else {
+    c3_assert( u3_nul == tok );
+  }
+
   u3z(tok);
 }
 
