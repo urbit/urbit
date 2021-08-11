@@ -212,8 +212,8 @@
   ++  emil  |=((list card:agent:gall) vats(kiln (^emil +<)))
   ++  give
     |%
-    ++  snap  [%give %fact ~[/vats] %kiln-vats-snap !>(ark)]
-    ++  diff  |=(d=^diff [%give %fact ~[/vats] %kiln-vats-diff !>(d)])
+    ++  snap  [%give %fact ~[/kiln/vats] %kiln-vats-snap !>(ark)]
+    ++  diff  |=(d=^diff [%give %fact ~[/kiln/vats] %kiln-vats-diff !>(d)])
     --
   ++  pass
     |%
@@ -672,6 +672,8 @@
   |=  =path
   ?>  (team:title our src)
   ?+    path  ~|(kiln-path/path !!)
+    [%vats ~]    abet
+  ::
       [%ark ~]
     abet(moz :_(moz [%give %fact ~ %kiln-vats-snap !>(ark)]))
   ==
