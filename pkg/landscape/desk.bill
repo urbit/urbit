@@ -15,8 +15,6 @@
         %demo-push-hook
         %demo-store
         %dm-hook
-        %file-server
-        %glob
         %graph-pull-hook
         %graph-push-hook
         %graph-store
