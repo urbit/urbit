@@ -64,13 +64,7 @@
   =^  cards  state
     ?+  mark  (on-poke:def:cc mark vase)
       %docket-uninstall  dc-abet:dc-uninstall:(dc-abed !<(desk vase)) 
-    ::
-        %init   ::  must delay poke until after commit
-      =^  g-cards  state  :: TODO: break into own desk, remove special casing
-          dc-abet:dc-install:(dc-abed %grid)
-      =^  l-cards  state
-        dc-abet:dc-install:(dc-abed %landscape)
-      [(weld g-cards l-cards) state]
+      %init              dc-abet:dc-install:(dc-abed %grid)
     ::
         %noun
       =+  ;;([%kick =desk] q.vase)
@@ -253,8 +247,6 @@
   ++  dc-install
     =.  dc-core  (dc-log "installing {<desk>}")
     =/  =path
-      ?:  =(%grid desk) :: XX remove
-        /(scot %p our.bowl)/landscape/(scot %da now.bowl)/grid/docket
       /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket
     =+  .^(exists=? %cu path)
     ?.  exists  :: no docket
