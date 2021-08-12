@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Root } from './js/components/root.js';
 import { api } from './js/api.js';
+import Channel from './channel';
 import { subscription } from "./js/subscription.js";
 
 import './css/indigo-static.css';
@@ -10,7 +11,7 @@ import './css/custom.css';
 
 // rebuild x3
 
-const channel = new window.channel();
+const channel = new Channel();
 api.setChannel(window.ship, channel);
 
 

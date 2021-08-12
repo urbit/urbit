@@ -22,18 +22,18 @@ export class Root extends Component {
 
   componentDidMount() {
     this.props.channel.setOnChannelError(() => {
-      subscription.start();
+      //subscription.start();
     });
-    subscription.start();
+    //subscription.start();
   }
 
   render() {
-    const loaded = this.state.loaded;
+    const loaded = true //this.state.loaded;
     const warning = this.state.showWarning;
     const blur = !loaded ? false : !(this.state.wallet && this.state.provider);
 
     return (
-      <BrowserRouter>
+      <BrowserRouter basename="/apps/bitcoin">
         <ThemeProvider theme={light}>
           <Reset />
           {loaded ? (
