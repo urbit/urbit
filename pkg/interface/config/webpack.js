@@ -34,3 +34,4 @@ module.exports = {
     ...plugins
   ]
 };
+

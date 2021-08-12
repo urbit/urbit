@@ -1,5 +1,7 @@
 import Urbit from '@urbit/http-api';
-const api = new Urbit('', '');
+
+// @ts-ignore TODO window typings
+const api = new Urbit('', '', window.desk);
 api.ship = window.ship;
 // api.verbose = true;
 // @ts-ignore TODO window typings
