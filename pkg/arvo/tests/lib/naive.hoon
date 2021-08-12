@@ -701,18 +701,8 @@
   ::  to be submitted to +n. The ordering on the list is the order in which
   ::  the transactions are processed
   ++  tx-list-to-batch
-    |=  =tx-list  ^-  @
-    ::
-    =|  batch-raw=(list @)
-    =/  tx-list-octs=(list @)
-      |-  ^-  (list @)
-      ?~  tx-list
-        batch-raw
-      =/  cur-tx  i.tx-list
-      =/  cur-raw  q:(gen-tx cur-tx)
-      $(batch-raw (snoc batch-raw cur-raw), tx-list t.tx-list)
-    (roll (flop tx-list-octs) (cury cat 3))
-  ::
+  |=  =tx-list  ^-  @
+  (can 3 (flop (turn tx-list gen-tx)))
   --  :: end +l2-event-gen
 ::
 ++  l1
