@@ -541,7 +541,7 @@
   ++  apply-txs
     |=  [txs=(list pend-tx) type=?(%pending %sending)]
     =/  valid=_txs  ~
-    =|  local=(set keccak)
+    :: =|  local=(set keccak)
     |-  ^+  [valid state]
     ?~  txs  [valid state]
     ::
@@ -549,10 +549,12 @@
     =*  raw-tx  raw-tx.i.txs
     =*  ship    ship.from.tx.raw-tx.i.txs
     =/  hash=@ux  (hash-raw-tx:lib raw-tx)
-    ?:  (~(has in local) hash)
-      ::  if tx was already seen here, skip
-      ::
-      $(txs t.txs)
+    ::  TODO: add tests to validate if this is necessary
+    ::
+    :: ?:  (~(has in local) hash)
+    ::   ::  if tx was already seen here, skip
+    ::   ::
+    ::   $(txs t.txs)
     =/  sign-address=(unit @ux)
       (extract-address:lib raw-tx pre.state chain-id)
     =^  gud=?  state
@@ -569,7 +571,8 @@
         [ship type hash (l2-tx +<.tx.raw-tx)]
       %.  [address.tx roller-tx(status %failed)]
       ~(put ju (~(del ju history.state) address.tx roller-tx))
-    $(txs t.txs, local (~(put in local) hash))
+    :: $(txs t.txs, local (~(put in local) hash))
+    $(txs t.txs)
   ::
   ++  try-apply
     |=  [nas=^state:naive force=? =raw-tx:naive]

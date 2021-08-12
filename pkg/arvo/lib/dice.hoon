@@ -20,10 +20,12 @@
   =+  cache-nas=nas
   =/  chain-t=@t  (ud-to-ascii:naive chain-t)
   ?.  (verify-sig-and-nonce:naive verifier chain-t nas raw-tx)
+    ~&  [%verify-sig-and-nonce %failed tx.raw-tx]
     [force nas own]
   =^  *  points.nas
     (increment-nonce:naive nas from.tx.raw-tx)
   ?~  nex=(receive-tx:naive nas tx.raw-tx)
+    ~&  [%receive-tx %failed]
     [force ?:(force nas cache-nas) own]
   =*  new-nas   +.u.nex
   =*  effects   -.u.nex
