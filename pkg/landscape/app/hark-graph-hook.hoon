@@ -269,22 +269,8 @@
   ^-  (quip card _this)
   ?+  wire  (on-arvo:def wire sign-arvo)
     ::
-<<<<<<< HEAD:pkg/landscape/app/hark-graph-hook.hoon
-      [%validator @ ~]
-    :_  this
-    =*  validator  i.t.wire
-    =/  =rave:clay  [%next %f [%da now.bowl] /[validator]/notification-kind]
-    [%pass wire %arvo %c %warp our.bowl [q.byk.bowl `rave]]~
-||||||| 7ac718a2c7:pkg/arvo/app/hark-graph-hook.hoon
-      [%validator @ ~]
-    :_  this
-    =*  validator  i.t.wire
-    =/  =rave:clay  [%next %f [%da now.bowl] /[validator]/notification-kind]
-    [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
-=======
     ::  no longer necessary
     [%validator @ ~]  [~ this]
->>>>>>> master:pkg/arvo/app/hark-graph-hook.hoon
   ==
 ++  on-fail   on-fail:def
 --
