@@ -2541,8 +2541,10 @@
   b
 ::
 ++  pest                                                ::  lru cache
-  |$  [k v]
-  (pest:(lu k v))
+  |*  [k=mold v=mold]
+  |=  a=*
+  =/  cor  (lu k v)
+  ;;(pest:cor a)
 ::
 ::::  2l: container from container                      ::
   ::                                                    ::
