@@ -1,0 +1,14 @@
+{
+  "name": "@urbit/webpack-conf",
+  "version": "0.0.1",
+  "description": "Sane defaults for building a React SPA with urbit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tlon",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
