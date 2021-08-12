@@ -759,7 +759,7 @@
     =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
     ?~  res
       ~
-    `[effects.u.res state(points (~(put by points.state) ship new-point.u.res))]
+    `[effects.u.res state(points (put:orm points.state ship new-point.u.res))]
   ::
   ++  w-point-esc
     |*  [fun=$-([ship point *] (unit [effects point])) =ship rest=*]
@@ -780,7 +780,7 @@
     =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
     ?~  res
       ~
-    `[effects.u.res state(points (~(put by points.state) ship new-point.u.res))]
+    `[effects.u.res state(points (put:orm points.state ship new-point.u.res))]
   ::
   ++  process-transfer-point
     |=  [=point to=address reset=?]
