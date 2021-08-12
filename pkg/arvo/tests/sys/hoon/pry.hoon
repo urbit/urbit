@@ -115,22 +115,22 @@
 ++  test-jab  ^-  tang
   =/  eff
     |=  x=(unit (pair @ cord))
-    ^-  (pair tape (unit (pair @ cord)))
+    ^-  (pair (unit cord) (unit (pair @ cord)))
     ?~  x
-      ["hello" `[100 'a']]
+      [(some 'hello') `[100 'a']]
     ?:  =(`[100 'a'] x)
-      ["world" ~]
-    ["cats" `[101 'b']]
+      [(some 'world') ~]
+    [(some 'cats') `[101 'b']]
   ::
   ;:  weld
     %+  expect-eq
-      !>  ["hello" (one:cor [3 100 'a'])]
+      !>  [[~ 'hello'] (one:cor [3 100 'a'])]
       !>  (jab:cor ~ 3 eff)
     %+  expect-eq
-      !>  ["world" ~]
+      !>  [[~ 'world'] ~]
       !>  (jab:cor (one:cor [3 100 'a']) 3 eff)
     %+  expect-eq
-      !>  ["cats" (one:cor [3 101 'b'])]
+      !>  [[~ 'cats'] (one:cor [3 101 'b'])]
       !>  (jab:cor (one:cor [3 100 'b']) 3 eff)
   ==
 ::
