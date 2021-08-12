@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { useRef, ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
-import { Association, cite } from '@urbit/api';
+import { Association, cite, AppName } from '@urbit/api';
 import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
@@ -12,9 +12,30 @@ import useContactState, { useContact } from '~/logic/state/contact';
 import { getItemTitle, getModuleIcon, uxToHex } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
 import Dot from '~/views/components/Dot';
-import { SidebarAppConfigs } from './types';
-import { useHarkDm } from '~/logic/state/hark';
+import useHarkState, { useHarkDm } from '~/logic/state/hark';
 import useSettingsState from '~/logic/state/settings';
+import useGraphState from '~/logic/state/graph';
+
+function useAssociationStatus(resource: string) {
+  const [, , ship, name] = resource.split('/');
+  const graphKey = `${ship.slice(1)}/${name}`;
+  const isSubscribed = useGraphState(s => s.graphKeys.has(graphKey));
+  const { unreads, notifications } = useHarkState(
+    s => s.unreads.graph?.[resource]?.['/'] || { unreads: 0, notifications: 0, last: 0 }
+  );
+  const hasNotifications =
+    (typeof notifications === 'number' && notifications > 0) ||
+    (typeof notifications === 'object' && notifications.length);
+  const hasUnread =
+    typeof unreads === 'number' ? unreads > 0 : unreads?.size ?? 0 > 0;
+  return hasNotifications
+    ? 'notification'
+    : hasUnread
+    ? 'unread'
+    : isSubscribed
+    ? undefined
+    : 'unsubscribed';
+}
 
 function SidebarItemBase(props: {
   to: string;
@@ -36,7 +57,11 @@ function SidebarItemBase(props: {
     isSynced = false,
     mono = false
   } = props;
-  const color = isSynced ? (hasUnread || hasNotification) ? 'black' : 'gray' : 'lightGray';
+  const color = isSynced
+    ? hasUnread || hasNotification
+      ? 'black'
+      : 'gray'
+    : 'lightGray';
 
   const fontWeight = hasUnread || hasNotification ? '500' : 'normal';
 
@@ -95,15 +120,18 @@ function SidebarItemBase(props: {
   );
 }
 
-export function SidebarDmItem(props: {
+export const SidebarDmItem = React.memo((props: {
   ship: string;
   selected?: boolean;
   workspace: Workspace;
-}) {
+}) => {
   const { ship, selected = false } = props;
   const contact = useContact(ship);
-  const title = contact?.nickname || (cite(ship) ?? ship);
-  const hideAvatars = false;
+  const { hideAvatars, hideNicknames } = useSettingsState(s => s.calm);
+  const title =
+    !hideNicknames && contact?.nickname
+      ? contact?.nickname
+      : cite(ship) ?? ship;
   const { unreads } = useHarkDm(ship) || { unreads: 0 };
   const img =
     contact?.avatar && !hideAvatars ? (
@@ -131,32 +159,30 @@ export function SidebarDmItem(props: {
       hasUnread={(unreads as number) > 0}
       to={`/~landscape/messages/dm/${ship}`}
       title={title}
-      mono={!contact?.nickname}
+      mono={hideAvatars || !contact?.nickname}
       isSynced
     >
       {img}
     </SidebarItemBase>
   );
-}
+});
 // eslint-disable-next-line max-lines-per-function
-export function SidebarAssociationItem(props: {
+export const SidebarAssociationItem = React.memo((props: {
   hideUnjoined: boolean;
   association: Association;
-  path: string;
   selected: boolean;
-  apps: SidebarAppConfigs;
   workspace: Workspace;
-}) {
-  const { association, path, selected, apps } = props;
+}) => {
+  const { association, selected } = props;
   const title = getItemTitle(association) || '';
   const appName = association?.['app-name'];
   let mod = appName;
   if (association?.metadata?.config && 'graph' in association.metadata.config) {
-    mod = association.metadata.config.graph;
+    mod = association.metadata.config.graph as AppName;
   }
   const rid = association?.resource;
   const groupPath = association?.group;
-  const groups = useGroupState(state => state.groups);
+  const group = useGroupState(state => state.groups[groupPath]);
   const { hideNicknames } = useSettingsState(s => s.calm);
   const contacts = useContactState(s => s.contacts);
   const anchorRef = useRef<HTMLAnchorElement>(null);
@@ -165,13 +191,9 @@ export function SidebarAssociationItem(props: {
     groupPath === `/ship/${TUTORIAL_HOST}/${TUTORIAL_GROUP}`,
     anchorRef
   );
-  const app = apps[appName];
-  const isUnmanaged = groups?.[groupPath]?.hidden || false;
-  if (!app) {
-    return null;
-  }
+  const isUnmanaged = group?.hidden || false;
   const DM = isUnmanaged && props.workspace?.type === 'messages';
-  const itemStatus = app.getStatus(path);
+  const itemStatus = useAssociationStatus(rid);
   const hasNotification = itemStatus === 'notification';
   const hasUnread = itemStatus === 'unread';
   const isSynced = itemStatus !== 'unsubscribed';
@@ -192,7 +214,11 @@ export function SidebarAssociationItem(props: {
   }
 
   const participantNames = (str: string) => {
-    const color = isSynced ? (hasUnread || hasNotification) ? 'black' : 'gray' : 'lightGray';
+    const color = isSynced
+      ? hasUnread || hasNotification
+        ? 'black'
+        : 'gray'
+      : 'lightGray';
     if (_.includes(str, ',') && _.startsWith(str, '~')) {
       const names = _.split(str, ', ');
       return names.map((name, idx) => {
@@ -207,9 +233,7 @@ export function SidebarAssociationItem(props: {
           return (
             <Text key={name} mono bold={hasUnread} color={color}>
               {name}
-              <Text color={color}>
-                {idx + 1 != names.length ? ', ' : null}
-              </Text>
+              <Text color={color}>{idx + 1 != names.length ? ', ' : null}</Text>
             </Text>
           );
         } else {
@@ -228,9 +252,7 @@ export function SidebarAssociationItem(props: {
       hasUnread={hasUnread}
       isSynced={isSynced}
       title={
-        DM && !urbitOb.isValidPatp(title)
-          ? participantNames(title)
-          : title
+        DM && !urbitOb.isValidPatp(title) ? participantNames(title) : title
       }
       hasNotification={hasNotification}
     >
@@ -248,9 +270,9 @@ export function SidebarAssociationItem(props: {
         <Icon
           display="block"
           color={isSynced ? 'black' : 'lightGray'}
-          icon={getModuleIcon(mod)}
+          icon={getModuleIcon(mod as any)}
         />
       )}
     </SidebarItemBase>
   );
-}
+});

@@ -1,31 +1,30 @@
 import { Box, Text } from '@tlon/indigo-react';
-import { Association, Group } from '@urbit/api';
+import { addTag, Association, Group } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import React, { ReactElement } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { ShipSearch } from '~/views/components/ShipSearch';
+import airlock from '~/logic/api';
 
 interface WritersProps {
-  api: GlobalApi;
   association: Association;
   groups: Group[];
 }
 
 export const Writers = (props: WritersProps): ReactElement => {
-  const { association, groups, api } = props;
+  const { association, groups } = props;
 
     const resource = resourceFromPath(association?.group);
 
     const onSubmit = async (values, actions) => {
       try {
         const ships = values.ships.map(e => `~${e}`);
-        await api.groups.addTag(
+        await airlock.poke(addTag(
           resource,
           { app: 'graph', resource: association.resource, tag: 'writers' },
           ships
-        );
+        ));
         actions.resetForm();
         actions.setStatus({ success: null });
       } catch (e) {

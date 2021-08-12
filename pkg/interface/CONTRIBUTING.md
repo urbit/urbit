@@ -28,12 +28,13 @@ module.exports = {
 ```
 
 Change the URL to your livenet ship (if making front-end changes) or keep it the
-same (if [developing on a local development ship][local]). Then, from
-'pkg/interface':
+same (if [developing on a local development ship][local]). Then, from the root
+of the repository
 
-```
-npm ci
-npm run start
+```bash
+npm i
+npm run bootstrap
+cd pkg/interface && npm run start
 ```
 
 The dev server will start at `http://localhost:9000`. Sign in as you would

@@ -2,15 +2,15 @@ import { Box, Col } from '@tlon/indigo-react';
 import { Association, FlatGraph, FlatGraphNode, Group } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
-import GlobalApi from '~/logic/api/global';
+import { RouteComponentProps, useHistory } from 'react-router';
 import { resourceFromPath } from '~/logic/lib/group';
-import ArrayVirtualScroller, {
-  indexEqual,
+import {
   arrToString
-} from '~/views/components/ArrayVirtualScroller';
+} from '@urbit/api/lib/BigIntArrayOrderedMap';
+import { keyEq, ThreadScroller } from '~/views/components/ThreadScroller';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
+import useGraphState, { GraphState } from '~/logic/state/graph';
 
 const virtualScrollerStyle = {
   height: '100%'
@@ -19,7 +19,7 @@ const virtualScrollerStyle = {
 interface PostFeedProps {
   flatGraph: FlatGraph;
   graphPath: string;
-  api: GlobalApi;
+  getDeepOlderThan: GraphState['getDeepOlderThan'];
   history: RouteComponentProps['history'];
   baseUrl: string;
   parentNode?: FlatGraphNode;
@@ -46,7 +46,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
     const {
       flatGraph,
       graphPath,
-      api,
       history,
       baseUrl,
       association,
@@ -67,9 +66,9 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
 
     const first = flatGraph.peekLargest()?.[0];
     const last = flatGraph.peekSmallest()?.[0];
-    const isLast = last ? indexEqual(index, last) : false;
+    const isLast = last ? keyEq(index, last) : false;
 
-    if (indexEqual(index, (first ?? [bigInt.zero]))) {
+    if (keyEq(index, (first ?? [bigInt.zero]))) {
       if (isThread) {
         return (
           <Col
@@ -83,7 +82,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
               node={node}
               graphPath={graphPath}
               association={association}
-              api={api}
               index={index}
               baseUrl={baseUrl}
               history={history}
@@ -115,7 +113,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
             mb={3}
           >
             <PostInput
-              api={api}
               group={group}
               association={association}
               vip={vip}
@@ -126,7 +123,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
             node={node}
             graphPath={graphPath}
             association={association}
-            api={api}
             index={index}
             baseUrl={baseUrl}
             history={history}
@@ -146,7 +142,6 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
           node={node}
           graphPath={graphPath}
           association={association}
-          api={api}
           index={index}
           baseUrl={baseUrl}
           history={history}
@@ -163,7 +158,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
   });
 
   async fetchPosts(newer) {
-    const { flatGraph, graphPath, api } = this.props;
+    const { flatGraph, graphPath, getDeepOlderThan } = this.props;
     const graphResource = resourceFromPath(graphPath);
 
     if (this.isFetching) {
@@ -179,9 +174,7 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
     } else {
       const [index] = flatGraph.peekSmallest();
       if (index && index.length > 0) {
-        await api.graph.getDeepOlderThan(ship, name, index[0].toString(), 100);
-      } else {
-        await api.graph.getDeepOlderThan(ship, name, null, 100);
+        await getDeepOlderThan(ship, name, 100, index[0].toString());
       }
     }
 
@@ -202,12 +195,12 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
 
     return (
       <Col width="100%" height="100%" position="relative">
-        <ArrayVirtualScroller
+        <ThreadScroller
           key={history.location.pathname}
           origin="top"
           offset={0}
           data={flatGraph}
-          averageHeight={122}
+          averageHeight={80}
           size={flatGraph.size}
           style={virtualScrollerStyle}
           pendingSize={pendingSize}
@@ -219,4 +212,16 @@ class PostFlatFeed extends React.Component<PostFeedProps, {}> {
   }
 }
 
-export default withRouter(PostFlatFeed);
+export default React.forwardRef<PostFlatFeed, Omit<PostFeedProps, 'history' | 'getDeepOlderThan'>>(
+  (props, ref) => {
+    const history = useHistory();
+    const getDeepOlderThan = useGraphState(s => s.getDeepOlderThan);
+    return (
+      <PostFlatFeed
+        ref={ref}
+        {...props}
+        history={history}
+        getDeepOlderThan={getDeepOlderThan}
+      />
+    );
+  });

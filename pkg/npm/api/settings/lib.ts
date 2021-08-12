@@ -1,4 +1,4 @@
-import { Poke } from "../lib";
+import { Poke, Scry } from "../lib";
 import { PutBucket, Key, Bucket, DelBucket, Value, PutEntry, DelEntry, SettingsUpdate } from './types';
 
 export const action = <T extends SettingsUpdate>(data: T): Poke<T> => ({
@@ -46,5 +46,21 @@ export const delEntry = (
     'entry-key': key
   }
 });
+
+export const getAll: Scry = {
+  app: 'settings-store',
+  path: '/all'
+}
+
+export const getBucket = (bucket: string) => ({
+  app: 'settings-store',
+  path: `/bucket/${bucket}`
+});
+
+export const getEntry = (bucket: string, entry: string) => ({
+  app: 'settings-store',
+  path: `/entry/${bucket}/${entry}`
+});
+    
 
 export * from './types';

@@ -3,7 +3,6 @@ import { Group } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { GroupAdminSettings } from './Admin';
 import { GroupChannelSettings } from './Channels';
@@ -17,7 +16,6 @@ const Section = ({ children }) => (
 interface GroupSettingsProps {
   group: Group;
   association: Association;
-  api: GlobalApi;
   baseUrl: string;
 }
 export function GroupSettings(props: GroupSettingsProps) {

@@ -106,7 +106,6 @@
           %flow  +>
           %harm  +>
           %hail  (send %hey ~)
-          %belt  (send `dill-belt`p.kyz)
           %text  (from %out (tuba p.kyz))
           %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
                  (crud p.kyz q.kyz)
@@ -116,6 +115,18 @@
           %pack  (dump kyz)
           %crop  (dump trim+p.kyz)
           %verb  (pass /verb %$ kyz)
+        ::
+            %belt
+          %-  send
+          ::TMP  forwards compatibility with next-dill
+          ::
+          ?@  p.kyz  [%txt p.kyz ~]
+          ?:  ?=(%hit -.p.kyz)  [%txt ~]
+          ?.  ?=(%mod -.p.kyz)  p.kyz
+          =/  =@c
+            ?@  key.p.kyz  key.p.kyz
+            ?:(?=(?(%bac %del %ret) -.key.p.kyz) `@`-.key.p.kyz ~-)
+          ?:(?=(%met mod.p.kyz) [%met c] [%ctl c])
         ==
       ::
       ++  crud
@@ -264,13 +275,18 @@
         ::
             [%gall %unto *]
           ::  ~&  [%take-gall-unto +>.sih]
-          ?-  -.+>.sih
-            %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            %kick       peer
-            %watch-ack  ?~  p.p.+>.sih
-                          +>.$
-                        (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            %fact       (from ;;(dill-blit q:`vase`+>+>.sih))
+          ?-    -.+>.sih
+              %poke-ack   ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
+              %kick       peer
+              %watch-ack
+            ?~  p.p.+>.sih
+              +>.$
+            (dump:(crud %reap u.p.p.+>.sih) %logo ~)
+          ::
+              %fact
+            ?.  ?=(%dill-blit p.cage.p.+>.sih)
+              +>.$
+            (from ;;(dill-blit q.q.cage.p.+>.sih))
           ==
         ::
             [%clay %note *]

@@ -1,26 +1,9 @@
 import _ from 'lodash';
-import { Cage } from '~/types/cage';
 import { S3Update } from '~/types/s3-update';
-import { reduceState } from '../state/base';
-import useStorageState, { StorageState } from '../state/storage';
+import { BaseState } from '../state/base';
+import { StorageState as State } from '../state/storage';
 
-export default class S3Reducer {
-  reduce(json: Cage) {
-    const data = _.get(json, 's3-update', false);
-    if (data) {
-      reduceState<StorageState, S3Update>(useStorageState, data, [
-        credentials,
-        configuration,
-        currentBucket,
-        addBucket,
-        removeBucket,
-        endpoint,
-        accessKeyId,
-        secretAccessKey
-      ]);
-    }
-  }
-}
+type StorageState = State & BaseState<State>;
 
 const credentials = (json: S3Update, state: StorageState): StorageState => {
   const data = _.get(json, 'credentials', false);
@@ -89,3 +72,14 @@ const secretAccessKey = (json: S3Update, state: StorageState): StorageState => {
   }
   return state;
 };
+
+export const reduce = [
+  credentials,
+  configuration,
+  currentBucket,
+  addBucket,
+  removeBucket,
+  endpoint,
+  accessKeyId,
+  secretAccessKey
+];

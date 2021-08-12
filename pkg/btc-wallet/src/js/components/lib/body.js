@@ -23,6 +23,9 @@ export default class Body extends Component {
   }
 
   render() {
+
+    const cardWidth = window.innerWidth <= 475 ? '350px' : '400px'
+
     if (!this.props.loaded) {
       return (
         <Box display="flex" width="100%" height="100%" alignItems="center" justifyContent="center">
@@ -41,7 +44,7 @@ export default class Body extends Component {
             <Col
              display='flex'
              flexDirection='column'
-             width='400px'
+             width={cardWidth}
             >
               <Header settings={true} state={this.props.state}/>
               <Settings state={this.props.state}
@@ -54,7 +57,7 @@ export default class Body extends Component {
             <Col
              display='flex'
              flexDirection='column'
-             width='400px'
+             width={cardWidth}
             >
               <Header settings={false} state={this.props.state}/>
               { (!this.props.warning) ? null : <Warning api={this.props.api}/>}

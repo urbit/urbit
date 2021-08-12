@@ -918,7 +918,7 @@
       ^-  (quip card _state)
       :_  state
       =-  (turn - print:sh-out)
-      :~  ";view ~host/chat to print messages for a chat you've already jonied."
+      :~  ";view ~host/chat to print messages for a chat you've already joined."
           ";flee ~host/chat to stop printing messages for a chat."
           "For more details:"
           "https://urbit.org/using/operations/using-your-ship/#messaging"

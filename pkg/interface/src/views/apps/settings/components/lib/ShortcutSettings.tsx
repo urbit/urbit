@@ -3,19 +3,16 @@ import _ from 'lodash';
 
 import { Box, Col, Text } from '@tlon/indigo-react';
 import { Formik, Form, useField } from 'formik';
+import { putEntry } from '@urbit/api/settings';
 
-import GlobalApi from '~/logic/api/global';
 import { getChord } from '~/logic/lib/util';
 import useSettingsState, {
   selectSettingsState,
-  ShortcutMapping,
+  ShortcutMapping
 } from '~/logic/state/settings';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { BackButton } from './BackButton';
-
-interface ShortcutSettingsProps {
-  api: GlobalApi;
-}
+import airlock from '~/logic/api';
 
 const settingsSel = selectSettingsState(['keyboard']);
 
@@ -64,9 +61,7 @@ export function ChordInput(props: { id: string; label: string }) {
   );
 }
 
-export default function ShortcutSettings(props: ShortcutSettingsProps) {
-  const { api } = props;
-
+export default function ShortcutSettings() {
   const { keyboard } = useSettingsState(settingsSel);
 
   return (
@@ -75,8 +70,8 @@ export default function ShortcutSettings(props: ShortcutSettingsProps) {
       onSubmit={async (values: ShortcutMapping, actions) => {
         const promises = _.map(values, (value, key) => {
           return keyboard[key] !== value
-            ? api.settings.putEntry('keyboard', key, value)
-            : Promise.resolve();
+            ? airlock.poke(putEntry('keyboard', key, value))
+            : Promise.resolve(0);
         });
         await Promise.all(promises);
         actions.setStatus({ success: null });
@@ -108,6 +103,7 @@ export default function ShortcutSettings(props: ShortcutSettingsProps) {
               label="Cycle backward through channel list"
             />
             <ChordInput id="hideSidebar" label="Show/hide group sidebar" />
+            <ChordInput id="readGroup" label="Read all in a group" />
           </Box>
           <AsyncButton primary width="fit-content">Save Changes</AsyncButton>
         </Col>

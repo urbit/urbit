@@ -1,6 +1,8 @@
 import { Box, Row, Text } from '@tlon/indigo-react';
 import { omit } from 'lodash';
 import Mousetrap from 'mousetrap';
+import _ from 'lodash';
+import f from 'lodash/fp';
 import React, {
   ReactElement, useCallback,
   useEffect, useMemo,
@@ -11,7 +13,7 @@ import React, {
 import { useHistory, useLocation } from 'react-router-dom';
 import * as ob from 'urbit-ob';
 import defaultApps from '~/logic/lib/default-apps';
-import makeIndex from '~/logic/lib/omnibox';
+import makeIndex, { OmniboxItem } from '~/logic/lib/omnibox';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { deSig } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
@@ -41,6 +43,7 @@ const SEARCHED_CATEGORIES = [
   'apps'
 ];
 const settingsSel = (s: SettingsState) => s.leap;
+const CAT_LIMIT = 6;
 
 export function Omnibox(props: OmniboxProps): ReactElement {
   const location = useLocation();
@@ -111,7 +114,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   }, [props.show]);
 
   const initialResults = useMemo(() => {
-    return new Map(
+    return new Map<string, OmniboxItem[]>(
       SEARCHED_CATEGORIES.map((category) => {
         if (category === 'other') {
           return [
@@ -129,7 +132,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       return initialResults;
     }
     const q = query.toLowerCase();
-    const resultsMap = new Map();
+    const resultsMap = new Map<string, OmniboxItem[]>();
     SEARCHED_CATEGORIES.map((category) => {
       const categoryIndex = index.get(category);
       resultsMap.set(
@@ -175,7 +178,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   );
 
   const setPreviousSelected = useCallback(() => {
-    const flattenedResults = Array.from(results.values()).flat();
+    const flattenedResults = Array.from(results.values()).map(f.take(CAT_LIMIT)).flat();
     const totalLength = flattenedResults.length;
     if (selected.length) {
       const currentIndex = flattenedResults.indexOf(
@@ -198,7 +201,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   }, [results, selected]);
 
   const setNextSelected = useCallback(() => {
-    const flattenedResults = Array.from(results.values()).flat();
+    const flattenedResults = Array.from(results.values()).map(f.take(CAT_LIMIT)).flat();
     if (selected.length) {
       const currentIndex = flattenedResults.indexOf(
         // @ts-ignore unclear how to give this spread a return signature
@@ -309,13 +312,15 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     return (
       <Box
         maxHeight={['200px', '400px']}
-        overflowY='auto'
-        overflowX='hidden'
+        overflow='hidden'
         borderBottomLeftRadius={2}
         borderBottomRightRadius={2}
       >
         {SEARCHED_CATEGORIES.map(category =>
-          Object({ category, categoryResults: results.get(category) })
+          ({
+            category,
+            categoryResults: _.take(results.get(category).sort(sortResults), CAT_LIMIT)
+          })
         )
           .filter(category => category.categoryResults.length > 0)
           .map(({ category, categoryResults }, i) => {
@@ -331,7 +336,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
             return (
               <Box key={i} width='max(50vw, 300px)' maxWidth='700px'>
                 {categoryTitle}
-                {categoryResults.sort(sortResults).map((result, i2) => (
+                {categoryResults.map((result, i2) => (
                   <OmniboxResult
                     key={i2}
                     // @ts-ignore withHovering doesn't pass props
