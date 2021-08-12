@@ -1,12 +1,12 @@
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 
-import { BaseState, createState } from "./base";
+import { createState } from "./base";
 
 type Session  = { term: Terminal, fit: FitAddon };
 type Sessions = { [id: string]: Session; }
 
-export interface TermState extends BaseState<TermState> {
+export interface TermState {
   sessions: Sessions,
   selected: string,
   slogstream: null | EventSource,
