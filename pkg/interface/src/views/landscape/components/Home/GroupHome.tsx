@@ -13,7 +13,6 @@ import { resourceFromPath } from '@urbit/api';
 
 function GroupHome(props) {
   const {
-    api,
     groupPath,
     baseUrl
   } = props;
@@ -38,14 +37,12 @@ function GroupHome(props) {
             <EnableGroupFeed
               groupPath={groupPath}
               baseUrl={baseUrl}
-              api={api}
             />
           );
         }}
       />
       { askFeedBanner ? (
         <AddFeedBanner
-          api={api}
           groupPath={groupPath}
           baseUrl={baseUrl}
           group={groups[groupPath]}
@@ -57,7 +54,6 @@ function GroupHome(props) {
               graphPath={feedPath}
               groupPath={groupPath}
               vip={graphMetadata?.vip || ''}
-              api={api}
               baseUrl={baseUrl}
             />
           ) : (
@@ -65,7 +61,6 @@ function GroupHome(props) {
               graphPath={feedPath}
               groupPath={groupPath}
               vip={graphMetadata?.vip || ''}
-              api={api}
               baseUrl={baseUrl}
             />
           )

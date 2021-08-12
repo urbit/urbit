@@ -5,11 +5,11 @@ import 'codemirror/addon/edit/continuelist';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown';
 import { useFormikContext } from 'formik';
-import React, { useCallback, useRef, DragEvent } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { UnControlled as CodeEditor } from 'react-codemirror2';
 import { Prompt } from 'react-router-dom';
-import { useFileDrag } from '~/logic/lib/useDrag';
-import useStorage from '~/logic/lib/useStorage';
+import { useFileUpload } from '~/logic/lib/useFileUpload';
+import { IuseStorage } from '~/logic/lib/useStorage';
 import { usePreventWindowUnload } from '~/logic/lib/util';
 import { PropFunc } from '~/types/util';
 import SubmitDragger from '~/views/components/SubmitDragger';
@@ -61,10 +61,8 @@ export function MarkdownEditor(
     [onChange]
   );
 
-  const { uploadDefault, canUpload } = useStorage();
-
-  const onFileDrag = useCallback(
-    async (files: FileList | File[], e: DragEvent) => {
+  const onFileUpload = useCallback(
+    async (files: FileList | File[], { canUpload, uploadDefault }: IuseStorage) => {
       if (!canUpload || !editor.current) {
         return;
       }
@@ -79,10 +77,14 @@ export function MarkdownEditor(
         doc.setValue(doc.getValue().replace(placeholder, markdown));
       });
     },
-    [uploadDefault, canUpload, value, onChange]
+    [value, onChange]
   );
 
-  const { bind, dragging } = useFileDrag(onFileDrag);
+  const {
+    drag: { bind, dragging }
+  } = useFileUpload({
+    onFiles: onFileUpload
+  });
 
   return (
     <Box

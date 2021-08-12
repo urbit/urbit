@@ -2,6 +2,15 @@
 =,  clay
 =*  dude  dude:gall
 |%
+::  $diff: subscription update
+::
++$  diff
+  $%  [%block =desk =arak =weft blockers=(set desk)]
+      [%reset =desk =arak]
+      [%merge =desk =arak]
+      [%merge-sunk =desk =arak =tang]
+      [%merge-fail =desk =arak =tang]
+  ==
 ::  $arak: foreign vat tracker
 ::
 ::    .next is a list of pending commits with future kelvins

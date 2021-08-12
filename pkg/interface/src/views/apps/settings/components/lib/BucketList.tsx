@@ -1,26 +1,29 @@
 import {
     Box,
-    Button, ManagedForm as Form, ManagedTextInputField as Input,
-
+    Button,
+    ManagedForm as Form,
+    ManagedTextInputField as Input,
     Menu,
     MenuButton,
-
     MenuItem, MenuList,
-
     Row, Text
 } from '@tlon/indigo-react';
+import { addBucket, removeBucket, setCurrentBucket } from '@urbit/api';
 import { Formik, FormikHelpers } from 'formik';
 import React, { ReactElement, useCallback, useState } from 'react';
-import GlobalApi from '~/logic/api/global';
+import * as Yup from 'yup';
+import airlock from '~/logic/api';
+
+const validationSchema = Yup.object({
+  newBucket: Yup.string().required('Required')
+});
 
 export function BucketList({
   buckets,
-  selected,
-  api
+  selected
 }: {
   buckets: Set<string>;
   selected: string;
-  api: GlobalApi;
 }): ReactElement {
   const _buckets = Array.from(buckets);
 
@@ -28,32 +31,33 @@ export function BucketList({
 
   const onSubmit = useCallback(
     (values: { newBucket: string }, actions: FormikHelpers<any>) => {
-      api.s3.addBucket(values.newBucket);
+      airlock.poke(addBucket(values.newBucket));
       actions.resetForm({ values: { newBucket: '' } });
+      setAdding(false);
     },
-    [api]
+    [setAdding]
   );
 
   const onSelect = useCallback(
     (bucket: string) => {
       return function () {
-        api.s3.setCurrentBucket(bucket);
+        airlock.poke(setCurrentBucket(bucket));
       };
     },
-    [api]
+    []
   );
 
   const onDelete = useCallback(
     (bucket: string) => {
       return function () {
-        api.s3.removeBucket(bucket);
+        airlock.poke(removeBucket(bucket));
       };
     },
-    [api]
+    []
   );
 
   return (
-    <Formik initialValues={{ newBucket: '' }} onSubmit={onSubmit}>
+    <Formik validationSchema={validationSchema} initialValues={{ newBucket: '' }} onSubmit={onSubmit}>
       <Form
         display="grid"
         gridTemplateColumns="100%"
@@ -104,14 +108,25 @@ export function BucketList({
           <Button type="button" onClick={() => setAdding(false)}>
             Cancel
           </Button>
-          <Button
-            width="fit-content"
-            primary
-            type={adding ? 'submit' : 'button'}
-            onClick={() => setAdding(s => !s)}
-          >
-            {adding ? 'Submit' : 'Add new bucket'}
-          </Button>
+          {!adding &&
+            <Button
+              width="fit-content"
+              primary
+              type="button"
+              onClick={() => setAdding(true)}
+            >
+              Add new bucket
+            </Button>
+          }
+          {adding &&
+            <Button
+              width="fit-content"
+              primary
+              type="submit"
+            >
+              Submit
+            </Button>
+          }
         </Row>
       </Form>
     </Formik>

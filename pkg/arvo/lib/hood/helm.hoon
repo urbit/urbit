@@ -1,8 +1,13 @@
 /+  pill
 =*  card  card:agent:gall
 |%
-+$  any-state  $%(state state-0)
-+$  state
++$  state  state-1
++$  any-state
+ $~  *state
+ $%  state-1
+     state-0
+ ==
++$  state-1
   $:  %1
       mass-timer=[way=wire nex=@da tim=@dr]
   ==
@@ -18,7 +23,8 @@
   ^-  state
   [%1 mass-timer:(~(got by hoc.s) 0)]
 --
-|=  [=bowl:gall sat=state]
+|=  [=bowl:gall sat=any-state]
+?>  ?=(%1 -.sat)
 =|  moz=(list card)
 |%
 ++  this  .

@@ -4,22 +4,25 @@ import {
   Box,
   ManagedToggleSwitchField
 } from '@tlon/indigo-react';
-import { Form, Formik } from 'formik';
+import { Form } from 'formik';
 import React, { useCallback } from 'react';
-import GlobalApi from '~/logic/api/global';
-import useGraphState from '~/logic/state/graph';
-import { AsyncButton } from '~/views/components/AsyncButton';
+import useGraphState, { GraphState } from '~/logic/state/graph';
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
+import shallow from 'zustand/shallow';
 
-export function DmSettings(props: { api: GlobalApi }) {
-  const { api } = props;
-  const screening = useGraphState(s => s.screening);
-  const initialValues = { accept: !screening };
+const selInit = (s: GraphState) => ({
+  accept: !s.screening
+});
+
+export function DmSettings() {
+  const initialValues = useGraphState(selInit, shallow);
   const onSubmit = useCallback(
     async (values, actions) => {
-      await api.graph.setScreen(!values.accept);
+      const { setScreen } = useGraphState.getState();
+      setScreen(!values.accept);
       actions.setStatus({ success: null });
     },
-    [screening]
+    []
   );
 
   return (
@@ -38,7 +41,7 @@ export function DmSettings(props: { api: GlobalApi }) {
         <Box mb="4" fontWeight="medium" fontSize="1" color="gray">
           Direct Messages
         </Box>
-        <Formik initialValues={initialValues} onSubmit={onSubmit}>
+        <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
           <Form>
             <Col gapY="4">
               <ManagedToggleSwitchField
@@ -46,12 +49,9 @@ export function DmSettings(props: { api: GlobalApi }) {
                 label="Auto-accept DM invites"
                 caption="Direct messages will be automatically joined, and you wil see any messages sent in notifications"
               />
-              <AsyncButton width="fit-content" primary>
-                Save Changes
-              </AsyncButton>
             </Col>
           </Form>
-        </Formik>
+        </FormikOnBlur>
       </Col>
     </Col>
   );

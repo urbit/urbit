@@ -4,7 +4,6 @@ import React from 'react';
 import ReactMarkdown, { ReactMarkdownProps } from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import { isValidPatp } from 'urbit-ob';
-import GlobalApi from '~/logic/api/global';
 import { deSig } from '~/logic/lib/util';
 import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
 import { Mention } from '~/views/components/MentionText';
@@ -24,7 +23,6 @@ const DISABLED_BLOCK_TOKENS = [
 const DISABLED_INLINE_TOKENS = [];
 
 type RichTextProps = ReactMarkdownProps & {
-  api?: GlobalApi;
   disableRemoteContent?: boolean;
   contact?: Contact;
   group?: Group;
@@ -50,7 +48,7 @@ type RichTextProps = ReactMarkdownProps & {
   verticalAlign?: any;
 };
 
-const RichText = React.memo(({ disableRemoteContent = false, api, ...props }: RichTextProps) => (
+const RichText = React.memo(({ disableRemoteContent = false, ...props }: RichTextProps) => (
   <ReactMarkdown
     {...props}
     renderers={{
@@ -83,14 +81,13 @@ const RichText = React.memo(({ disableRemoteContent = false, api, ...props }: Ri
       linkReference: (linkProps): any => {
         const linkText = String(linkProps.children[0].props.children);
         if (isValidPatp(linkText)) {
-          return <Mention ship={deSig(linkText)} api={api} />;
+          return <Mention ship={deSig(linkText)} />;
         } else if(linkText.startsWith('web+urbitgraph://')) {
           return (
             <PermalinkEmbed
               pending={props.pending}
               link={linkText}
               transcluded={props.transcluded}
-              api={api}
             />
           );
         }

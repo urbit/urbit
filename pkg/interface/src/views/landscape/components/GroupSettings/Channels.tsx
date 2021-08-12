@@ -1,21 +1,20 @@
 import { Col, Icon, Row, Text } from '@tlon/indigo-react';
-import { Association, Group } from '@urbit/api';
+import { Association, Group, metadataRemove, metadataEdit } from '@urbit/api';
 import React, { useCallback } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { getModuleIcon, GraphModule } from '~/logic/lib/util';
 import useMetadataState from '~/logic/state/metadata';
 import { Dropdown } from '~/views/components/Dropdown';
 import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import airlock from '~/logic/api';
 
 interface GroupChannelSettingsProps {
   group: Group;
   association: Association;
-  api: GlobalApi;
 }
 
 export function GroupChannelSettings(props: GroupChannelSettingsProps) {
-  const { api, association, group } = props;
+  const { association, group } = props;
   const associations = useMetadataState(state => state.associations);
   const channels = Object.values(associations.graph).filter(
     ({ group }) => association.group === group
@@ -23,16 +22,17 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
 
   const onChange = useCallback(
     async (resource: string, preview: boolean) => {
-      return api.metadata.update(associations.graph[resource], { preview });
+      const association = associations.graph[resource];
+      await airlock.poke(metadataEdit(association, { preview }));
     },
-    [associations, api]
+    [associations.graph]
   );
 
   const onRemove = useCallback(
     async (resource: string) => {
-      return api.metadata.remove('graph', resource, association.group);
+      await airlock.poke(metadataRemove('graph', resource, association.group));
     },
-    [api, association]
+    [association]
   );
 
   const disabled =
@@ -53,7 +53,7 @@ export function GroupChannelSettings(props: GroupChannelSettingsProps) {
                   'graph' in metadata?.config
                     ? metadata?.config?.graph as GraphModule
                     : 'post')}
-               />
+              />
               <Text>{metadata.title}</Text>
               {metadata.preview && <Text gray>Pinned</Text>}
             </Row>
