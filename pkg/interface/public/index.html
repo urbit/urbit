@@ -1,24 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
   <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="theme-color" content="#000000" />
-
-    <!-- <link rel="manifest" href="%PUBLIC_URL%/manifest.json" /> -->
-
     <title>Landscape</title>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no,maximum-scale=1"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-icon" href="/~landscape/img/touch_icon.png">
+    <link rel="icon" type="image/png" href="/~landscape/img/Favicon.png">
+    <link rel="manifest"
+      href='data:application/manifest+json,{
+        "name": "Landscape",
+        "short_name": "Landscape",
+        "description": "An%20interface%20to%20your%20Urbit.",
+        "display": "standalone",
+        "background_color": "%23FFFFFF",
+        "theme_color": "%23000000"}' />
+    <script src="/session.js"></script>
+    <script src="/apps/landscape/desk.js"></script>
   </head>
-
   <body>
-    <noscript>
-      You need to enable JavaScript to run this app.
-    </noscript>
-
     <div id="root"></div>
-    <script src="../src/index.tsx"></script>
   </body>
 </html>
