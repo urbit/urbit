@@ -477,7 +477,7 @@
   =+  (gen-tx-octs:lib u.tx)
   :_  [%result id (hex:to-json p (hash-tx:lib p q))]
   %-  some
-  aggregator-action+!>([%submit | u.addr u.sig %don tx])
+  aggregator-action+!>([%submit | u.addr u.sig %don u.tx])
 ::
 ++  nonce
   |=  [id=@t params=(map @t json) scry=$-([ship proxy:naive] (unit @))]
