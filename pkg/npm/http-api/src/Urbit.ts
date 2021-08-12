@@ -105,10 +105,12 @@ export class Urbit {
    * the airlock is running in a webpage served by the ship, this should just 
    * be the empty string.
    * @param code The access code for the ship at that address
+   * @param desk The desk to run threads from
    */
   constructor(
     public url: string,
-    public code?: string
+    public code?: string,
+    public desk?: string
   ) {
     if (isBrowser) {
       window.addEventListener('beforeunload', this.delete);
@@ -510,9 +512,10 @@ export class Urbit {
    * @param body        The data to send to the thread
    * @returns  The return value of the thread
    */
-  async thread<R, T = any>(params: Thread<T>): Promise<R> {
+  async thread<R, T = any>(params: Thread<T>, fromDesk?: string): Promise<R> {
+    const desk = fromDesk || this.desk || 'base';
     const { inputMark, outputMark, threadName, body } = params;
-    const res = await fetch(`${this.url}/spider/${inputMark}/${threadName}/${outputMark}.json`, {
+    const res = await fetch(`${this.url}/spider/${desk}/${inputMark}/${threadName}/${outputMark}.json`, {
       ...this.fetchOptions,
       method: 'POST',
       body: JSON.stringify(body)
