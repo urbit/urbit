@@ -15,10 +15,13 @@
     "@open-rpc/generator": "^1.20.1",
     "@open-rpc/meta-schema": "^1.14.2",
     "@open-rpc/schema-utils-js": "^1.15.0",
-    "@types/jest": "26.0.24",
-    "jest": "27.0.6",
-    "ts-jest": "27.0.3",
-    "tslint": "6.1.3",
-    "typescript": "4.3.5"
+    "@types/jest": "^26.0.24",
+    "@types/secp256k1": "^4.0.3",
+    "jest": "^27.0.6",
+    "secp256k1": "^4.0.2",
+    "ts-jest": "^27.0.3",
+    "tslint": "^6.1.3",
+    "typescript": "^4.3.5",
+    "web3-utils": "^1.5.1"
   }
 }
