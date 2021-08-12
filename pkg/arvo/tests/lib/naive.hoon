@@ -2473,14 +2473,20 @@
   ==
 ::
 ++  test-marbud-l2-proxies-transfer  ^-  tang
-  =/  marbud-new-keys            [marbud-own %configure-keys encr auth suit |]
-  =/  marbud-sproxy              [marbud-own %set-spawn-proxy (addr %marbud-skey)]
-  =/  marbud-mproxy              [marbud-own %set-management-proxy (addr %marbud-mkey)]
-  =/  marbud-tproxy              [marbud-own %set-transfer-proxy (addr %marbud-key-1)]
-  =/  marbud-transfer-breach     [marbud-own %transfer-point (addr %marbud-key-1) &]
-  =/  marbud-transfer-no-breach  [marbud-own %transfer-point (addr %marbud-key-1) |]
-  =/  marbud-xfr-breach          [marbud-xfr %transfer-point (addr %marbud-key-1) &]
-  =/  marbud-xfr-no-breach       [marbud-xfr %transfer-point (addr %marbud-key-1) |]
+  =/  marbud-new-keys            [0 [marbud-own %configure-keys encr auth suit |] %marbud-key-0]
+  =/  marbud-sproxy              [0 [marbud-own %set-spawn-proxy (addr %marbud-skey)] %marbud-key-0]
+  =/  marbud-mproxy              [1 [marbud-own %set-management-proxy (addr %marbud-mkey)] %marbud-key-0]
+  =/  marbud-tproxy              [2 [marbud-own %set-transfer-proxy (addr %marbud-key-1)] %marbud-key-0]
+  =/  marbud-transfer-breach     [1 [marbud-own %transfer-point (addr %marbud-key-1) &] %marbud-key-0]
+  =/  marbud-transfer-no-breach  [1 [marbud-own %transfer-point (addr %marbud-key-1) |] %marbud-key-0]
+  =/  marbud-xfr-breach          [0 [marbud-xfr %transfer-point (addr %marbud-key-1) &] %marbud-key-1]
+  =/  marbud-xfr-no-breach       [0 [marbud-xfr %transfer-point (addr %marbud-key-1) |] %marbud-key-1]
+  ::
+  =,  l2-event-gen
+  =/  test1=tx-list  (limo marbud-sproxy marbud-mproxy marbud-tproxy marbud-xfr-breach ~)
+  =/  test2=tx-list  (limo marbud-new-keys marbud-transfer-breach ~)
+  =/  test3=tx-list  (limo marbud-sproxy marbud-mproxy marbud-tproxy marbud-xfr-no-breach ~)
+  =/  test4=tx-list  (limo marbud-new-keys marbud-transfer-no-breach ~)
   ::
   ;:  weld
     %+  expect-eq
@@ -2497,10 +2503,28 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 1 marbud-mproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 2 marbud-tproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-xfr-breach %marbud-key-1))
+      =^  f  state  (n state %bat q:(gen-tx marbud-sproxy))
+      =^  f  state  (n state %bat q:(gen-tx marbud-mproxy))
+      =^  f  state  (n state %bat q:(gen-tx marbud-tproxy))
+      =^  f  state  (n state %bat q:(gen-tx marbud-xfr-breach))
+      ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
+      own:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+    ::  batch version
+    ::
+      !>
+      :*  [(addr %marbud-key-1) 3]       :: ownership
+          [0 0]                          :: spawn-proxy
+          [0 0]                          :: management-proxy
+          [0 0]                          :: voting-proxy
+          [0 1]                          :: transfer-proxy
+      ==
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat (tx-list-to-batch test1))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
       own:(~(got by points.state) ~marbud)
     ::
@@ -2512,8 +2536,19 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-new-keys %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 1 marbud-transfer-breach %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx marbud-new-keys))
+      =^  f  state  (n state %bat q:(gen-tx marbud-transfer-breach))
+      |1:keys.net:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+    ::  batch version
+      !>
+      [0 0 0]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat (tx-list-to-batch test2))
       |1:keys.net:(~(got by points.state) ~marbud)
     ::
     %+  expect-eq
@@ -2529,10 +2564,27 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 1 marbud-mproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 2 marbud-tproxy %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-xfr-no-breach %marbud-key-1))
+      =^  f  state  (n state %bat q:(gen-tx marbud-sproxy))
+      =^  f  state  (n state %bat q:(gen-tx marbud-mproxy))
+      =^  f  state  (n state %bat q:(gen-tx marbud-tproxy))
+      =^  f  state  (n state %bat q:(gen-tx marbud-xfr-no-breach))
+      ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
+      own:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+    ::  batch version
+      !>
+      :*  [(addr %marbud-key-1) 3]       :: ownership
+          [(addr %marbud-skey) 0]        :: spawn-proxy
+          [(addr %marbud-mkey) 0]        :: management-proxy
+          [0 0]                          :: voting-proxy
+          [0 1]                          :: transfer-proxy
+      ==
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat (tx-list-to-batch test3))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
       own:(~(got by points.state) ~marbud)
     ::
@@ -2544,8 +2596,19 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-new-keys %marbud-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 1 marbud-transfer-no-breach %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx marbud-new-keys))
+      =^  f  state  (n state %bat q:(gen-tx marbud-transfer-no-breach))
+      |1:keys.net:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+    ::  batch version
+      !>
+      [suit auth encr]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat (tx-list-to-batch test4))
       |1:keys.net:(~(got by points.state) ~marbud)
   ==
 ::
