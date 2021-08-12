@@ -1,5 +1,5 @@
 import { BaseLabel, Col, Label, Text } from '@tlon/indigo-react';
-import { Association, createGroupFeed, disableGroupFeed, Group, metadataUpdate, PermVariation, resourceFromPath } from '@urbit/api';
+import { Association, createGroupFeed, disableGroupFeed, Group, metadataEdit, PermVariation, resourceFromPath } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import useMetadataState from '~/logic/state/metadata';
@@ -46,7 +46,11 @@ export function GroupFeedSettings(props: {
     values: FormSchema,
     actions: FormikHelpers<FormSchema>
   ) => {
-    await airlock.poke(metadataUpdate(feedAssoc, { vip: values.permissions.trim() as PermVariation }));
+    await airlock.poke(
+      metadataEdit(feedAssoc, {
+        vip: values.permissions.trim() as PermVariation
+      })
+    );
 
     actions.setStatus({ success: null });
   };

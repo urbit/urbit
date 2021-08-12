@@ -24,64 +24,68 @@ const style = {
   flexDirection: 'column',
   alignItems: 'center'
 };
+const PADDING = 24;
+const SMALL_PADDING = 16;
 
 export function LinkBlocks(props: LinkBlocksProps) {
   const { association } = props;
   const [linkSize, setLinkSize] = useState(250);
   const linkSizePx = `${linkSize}px`;
 
-  const isMobile = useLocalState(s => s.mobile);
-  const colCount = useMemo(() => (isMobile ? 2 : 5), [isMobile]);
+  const isSmall = useLocalState(s => !s.breaks.lg);
+  const colCount = useMemo(() => (isSmall ? 2 : 4), [isSmall]);
   const bind = useResize<HTMLDivElement>(
     useCallback(
       (entry) => {
         const { width } = entry.target.getBoundingClientRect();
-        setLinkSize((width - 8) / colCount - 8);
+        const pad = isSmall ? SMALL_PADDING : PADDING;
+        setLinkSize((width - pad) / colCount - pad);
       },
-      [colCount]
+      [colCount, isSmall]
     )
   );
 
   useEffect(() => {
-    const { unreads } = useHarkState
-      .getState().unreads.graph?.[association.resource]?.['/'];
-    Array.from((unreads as Set<string>)).forEach((u) => {
+    const unreads =
+      useHarkState.getState().unreads.graph?.[association.resource]?.['/']
+        ?.unreads || new Set<string>();
+    Array.from(unreads as Set<string>).forEach((u) => {
       airlock.poke(markEachAsRead(association.resource, '/', u));
     });
-}, [association.resource]);
+  }, [association.resource]);
 
   const orm = useMemo(() => {
-    const nodes = [null, ...Array.from(props.graph)];
-
+    const graph = Array.from(props.graph).filter(
+      ([idx, node]) => typeof node?.post !== 'string'
+    );
+    const nodes = [null, ...graph];
     const chunks = _.chunk(nodes, colCount);
     return new BigIntOrderedMap<[bigInt.BigInteger, GraphNode][]>().gas(
       chunks.reverse().map((chunk, i) => {
         return [bigInt(i), chunk];
       })
     );
-  }, [props.graph]);
+  }, [props.graph, colCount]);
 
   const renderItem = useCallback(
     React.forwardRef<any, any>(({ index }, ref) => {
-      const chunk = orm.get(index);
+      const chunk = orm.get(index) ?? [];
+      const space = [3, 3, 3, 4];
 
       return (
         <Row
           ref={ref}
           flexShrink={0}
-          my="2"
-          px="2"
-          gapX="2"
+          my={space}
+          px={space}
+          gapX={space}
           width="100%"
           height={linkSizePx}
         >
           {chunk.map((block) => {
             if (!block) {
               return (
-                <LinkBlockInput
-                  size={linkSizePx}
-                  association={association}
-                />
+                <LinkBlockInput size={linkSizePx} association={association} />
               );
             }
             const [i, node] = block;
@@ -111,7 +115,13 @@ export function LinkBlocks(props: LinkBlocksProps) {
   );
 
   return (
-    <Col overflowX="hidden" overflowY="auto" height="calc(100% - 48px)" {...bind}>
+    <Col
+      width="100%"
+      overflowX="hidden"
+      overflowY="auto"
+      height="calc(100% - 48px)"
+      {...bind}
+    >
       <BlockScroller
         origin="top"
         offset={0}

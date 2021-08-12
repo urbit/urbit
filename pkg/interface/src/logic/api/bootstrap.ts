@@ -8,16 +8,17 @@ import useInviteState from '../state/invite';
 import useLaunchState from '../state/launch';
 import useSettingsState from '../state/settings';
 import useLocalState from '../state/local';
+import useStorageState from '../state/storage';
 
 export async function bootstrapApi() {
   airlock.onError = (e) => {
     (async () => {
       const { reconnect } = useLocalState.getState();
       try {
-        useLocalState.setState({ subscription: 'reconnecting' });
         await reconnect();
       } catch (e) {
-        useLocalState.setState({ subscription: 'disconnected' });
+        console.log(e);
+        console.log('onError');
       }
     })();
   };
@@ -38,7 +39,8 @@ export async function bootstrapApi() {
     useSettingsState,
     useLaunchState,
     useInviteState,
-    useGraphState
+    useGraphState,
+    useStorageState
   ].map(state => state.getState().initialize(airlock));
   await Promise.all(promises);
 }

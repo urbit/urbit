@@ -3,7 +3,8 @@ import {
   Label, ManagedTextInputField as Input,
   Text
 } from '@tlon/indigo-react';
-import { Association, metadataUpdate } from '@urbit/api';
+import _ from 'lodash';
+import { Association, metadataEdit } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import React from 'react';
 import { uxToHex } from '~/logic/lib/util';
@@ -32,9 +33,13 @@ export function ChannelDetails(props: ChannelDetailsProps) {
   };
 
   const onSubmit = async (values: FormSchema, actions) => {
-    const { title, description } = values;
-    const color = uxToHex(values.color);
-    await airlock.poke(metadataUpdate(association, { title, color, description }));
+    values.color = uxToHex(values.color);
+    const promises = _.compact(_.map(values, (value,k) => {
+      return value !== initialValues[k]
+        ? airlock.poke(metadataEdit(association, { [k]: value }))
+        : null;
+    }));
+    await Promise.all(promises);
     actions.setStatus({ success: null });
   };
 

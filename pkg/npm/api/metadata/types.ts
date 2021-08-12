@@ -1,10 +1,11 @@
-import { AppName, Path, Patp } from "../lib";
+import { AppName, Path, Patp } from '../lib';
 
 export type MetadataUpdate =
   MetadataUpdateInitial
 | MetadataUpdateAdd
 | MetadataUpdateUpdate
-| MetadataUpdateRemove;
+| MetadataUpdateRemove
+| MetadataUpdateEdit;
 
 export interface MetadataUpdateInitial {
   associations: ResourceAssociations;
@@ -22,6 +23,15 @@ export type MetadataUpdateUpdate = {
   update: AssociationPoke;
 }
 
+export interface MetadataUpdateEdit {
+  edit: {
+    resource: MdResource;
+    edit: MetadataEditField;
+  }
+}
+
+export type MetadataEditField = Partial<Omit<Metadata, 'config' | 'creator' | 'date-created'>>;
+
 export type MetadataUpdateRemove = {
   remove: {
     resource: MdResource;
@@ -31,13 +41,13 @@ export type MetadataUpdateRemove = {
 
 export interface MdResource {
   resource: string;
-  app: AppName;
+  'app-name': AppName;
 }
 
 export interface MetadataUpdatePreview {
   group: string;
   channels: Associations;
-  "channel-count": number;
+  'channel-count': number;
   members: number;
   metadata: Metadata;
 }

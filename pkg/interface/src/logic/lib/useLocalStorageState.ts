@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useState } from 'react';
 
-function retrieve<T>(key: string, initial: T): T {
+export function retrieve<T>(key: string, initial: T): T {
   const s = localStorage.getItem(key);
   if (s) {
     try {

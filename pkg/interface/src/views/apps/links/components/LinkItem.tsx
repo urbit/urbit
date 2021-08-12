@@ -1,5 +1,5 @@
 import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, Group, markEachAsRead, removePosts, TextContent, UrlContent } from '@urbit/api';
+import { Association, GraphNode, Group, markEachAsRead, removePosts, TextContent, UrlContent, ReferenceContent } from '@urbit/api';
 import React, { ReactElement, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { roleForShip } from '~/logic/lib/group';
@@ -131,7 +131,7 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
         { 'reference' in contents[1] ? (
           <>
             <Rule />
-            <PermalinkEmbed full link={referenceToPermalink(contents[1]).link} transcluded={0} />
+            <PermalinkEmbed full link={referenceToPermalink(contents[1] as unknown as ReferenceContent).link} transcluded={0} />
           </>
         ) : (
         <>

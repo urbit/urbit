@@ -10,8 +10,18 @@ const makeIndexes = () => new Map([
     ['other', []]
   ]);
 
+export interface OmniboxItem {
+  title: string;
+  link: string;
+  app: string;
+  host: string;
+  description: string;
+  shiftLink: string;
+  shiftDescription: string;
+}
+
 // result schematic
-const result = function(title, link, app, host, description = 'Open', shiftLink = null, shiftDescription = null) {
+const result = function(title: string, link: string, app: string, host: string, description = 'Open', shiftLink = null as string | null, shiftDescription = null as string | null): OmniboxItem {
   return {
     'title': title,
     'link': link,
@@ -93,7 +103,7 @@ const otherIndex = function(config) {
   return other;
 };
 
-export default function index(contacts, associations, apps, currentGroup, groups, hide) {
+export default function index(contacts, associations, apps, currentGroup, groups, hide): Map<string, OmniboxItem[]> {
   const indexes = makeIndexes();
   indexes.set('ships', shipIndex(contacts));
   // all metadata from all apps is indexed
@@ -117,7 +127,7 @@ export default function index(contacts, associations, apps, currentGroup, groups
         let app = each['app-name'];
         if (each['app-name'] === 'contacts') {
           app = 'groups';
-        };
+        }
 
         if (each['app-name'] === 'graph') {
           app = each.metadata.config.graph;
@@ -159,4 +169,4 @@ export default function index(contacts, associations, apps, currentGroup, groups
   indexes.set('other', otherIndex(hide));
 
   return indexes;
-};
+}

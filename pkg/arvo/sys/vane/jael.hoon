@@ -431,7 +431,7 @@
       %-  curd  =<  abet
       (private-keys:~(feel su hen now pki etn) life.tac ring.tac)
     ::
-    ::  update private keys
+    ::  register moon keys
     ::
         %moon
       ?.  =(%earl (clan:title ship.tac))
@@ -710,6 +710,14 @@
     =/  a-point=point  (~(gut by pos.zim.pki) ship.i.udiffs *point)
     =/  a-diff=(unit diff:point)  (udiff-to-diff:point udiff.i.udiffs a-point)
     =?  this-su  ?=(^ a-diff)
+      ::  if this about our keys, and we already know these, start using them
+      ::
+      =?  lyf.own
+          ?&  =(our ship.i.udiffs)
+              ?=(%keys -.u.a-diff)
+              (~(has by jaw.own) life.to.u.a-diff)
+          ==
+        life.to.u.a-diff
       (public-keys:feel original-pos %diff ship.i.udiffs u.a-diff)
     $(udiffs t.udiffs)
   ::
@@ -919,7 +927,16 @@
       ^+  ..feel
       ?:  &(=(lyf.own life) =((~(get by jaw.own) life) `ring))
         ..feel
-      =.  lyf.own  life
+      ::  only eagerly update lyf if we were behind the chain life
+      ::
+      =?  lyf.own
+          ?&  (gth life lyf.own)
+            ::
+              =+  pon=(~(get by pos.zim) our)
+              ?~  pon  |
+              (lth lyf.own life.u.pon)
+          ==
+        life
       =.  jaw.own  (~(put by jaw.own) life ring)
       (exec yen.own [%give %private-keys lyf.own jaw.own])
     ::

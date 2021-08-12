@@ -1,16 +1,16 @@
 import { css } from '@styled-system/css';
-import {
-  Box,
-  Icon,
-  LoadingSpinner, Row, Text
-} from '@tlon/indigo-react';
+import { Box, Icon, LoadingSpinner, Row, Text } from '@tlon/indigo-react';
 import {
   accept,
   decline,
   hideGroup,
-  Invite, join, joinProgress,
+  Invite,
+  join,
+  joinProgress,
+  joinResult,
   JoinRequest,
-  Metadata, MetadataUpdatePreview,
+  Metadata,
+  MetadataUpdatePreview,
   resourceFromPath
 } from '@urbit/api';
 import { GraphConfig } from '@urbit/api';
@@ -81,9 +81,13 @@ function inviteUrl(hidden: boolean, resource: string, metadata?: Metadata) {
   }
 
   if ((metadata?.config as GraphConfig).graph === 'chat') {
-    return `/~landscape/messages/resource/${(metadata?.config as GraphConfig)?.graph}${resource}`;
+    return `/~landscape/messages/resource/${
+      (metadata?.config as GraphConfig)?.graph
+    }${resource}`;
   } else {
-    return `/~landscape/home/resource/${(metadata?.config as GraphConfig)?.graph}${resource}`;
+    return `/~landscape/home/resource/${
+      (metadata?.config as GraphConfig)?.graph
+    }${resource}`;
   }
 }
 function InviteMetadata(props: {
@@ -136,18 +140,20 @@ function InviteStatus(props: { status?: JoinRequest }) {
   const current = status && joinProgress.indexOf(status.progress);
   const desc = _.isNumber(current) && description[current];
   return (
-    <Row gapX={1} alignItems="center" height={4}>
-      { status.progress === 'done' ? <Icon icon="Checkmark" /> : <LoadingSpinner dark /> }
+    <Row gapX={2} alignItems="center" minHeight={4}>
+      <Row alignItems="center" flexShrink={0}>
+        {joinResult.includes(status?.progress as any) ? (
+          <Icon icon={status?.progress === 'done' ? 'Checkmark' : 'X'} />
+        ) : (
+          <LoadingSpinner dark />
+        )}
+      </Row>
       <Text gray>{desc}</Text>
     </Row>
   );
 }
 
-export function useInviteAccept(
-  resource: string,
-  app?: string,
-  uid?: string
-) {
+export function useInviteAccept(resource: string, app?: string, uid?: string) {
   const { ship, name } = resourceFromPath(resource);
   const history = useHistory();
   const associations = useMetadataState(s => s.associations);
@@ -205,7 +211,6 @@ function InviteActions(props: {
 }) {
   const { status, resource, app, uid } = props;
   const inviteAccept = useInviteAccept(resource, app, uid);
-  const set = useGroupState(s => s.set);
 
   const inviteDecline = useCallback(async () => {
     if (!(app && uid)) {
@@ -214,17 +219,9 @@ function InviteActions(props: {
     await airlock.poke(decline(app, uid));
   }, [app, uid]);
 
-  const hideJoin = useCallback(async (e) => {
-    if(status?.progress === 'done') {
-      set((s) => {
-        // @ts-ignore investigate zustand types
-        delete s.pendingJoin[resource];
-      });
-      e.stopPropagation();
-      return;
-    }
+  const hideJoin = useCallback(async () => {
     await airlock.poke(hideGroup(resource));
-  }, [resource, status]);
+  }, [resource]);
 
   if (status) {
     return (
@@ -234,7 +231,9 @@ function InviteActions(props: {
           backgroundColor="white"
           onClick={hideJoin}
         >
-          {status?.progress === 'done' ? 'Dismiss' : 'Cancel'}
+          {[...joinResult].includes(status?.progress as any)
+            ? 'Dismiss'
+            : 'Cancel'}
         </StatelessAsyncButton>
       </Row>
     );
@@ -288,9 +287,10 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
     : { description: `invited you to a ${invitedTo}`, authors: [invite!.ship] };
 
   const onClick = () => {
-    if(status?.progress === 'done') {
+    if (status?.progress === 'done') {
       const redir = inviteUrl(app !== 'groups', resource, graphAssoc?.metadata);
-      if(redir) {
+      if (redir) {
+        airlock.poke(hideGroup(resource));
         history.push(redir);
       }
     }
@@ -299,10 +299,15 @@ export function GroupInvite(props: GroupInviteProps): ReactElement {
   return (
     <NotificationWrapper>
       <Header content {...headerProps} />
-      <Row onClick={onClick} height={[null, 4]} alignItems="flex-start" gridArea="main">
-        <Elbow mx={2} />
+      <Row
+        onClick={onClick}
+        height={[null, 4]}
+        alignItems="flex-start"
+        gridArea="main"
+      >
+        <Elbow display={['none', 'block']} mx={2} />
         <ResponsiveRow
-          gapXY={[1, 2]}
+          gapXY={2}
           height={[null, 4]}
           alignItems={['flex-start', 'center']}
         >

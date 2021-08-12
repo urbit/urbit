@@ -22,6 +22,7 @@ export const Image = () => (
   <Row flexWrap="wrap" m="2" width="700px" backgroundColor="white">
     <LinkBlockItem
       summary
+      size="250px"
       m="2"
       node={createLink(
         'Gas',
@@ -30,6 +31,7 @@ export const Image = () => (
     />
     <LinkBlockItem
       summary
+      size="250px"
       m="2"
       node={createLink(
         'Ocean',
@@ -57,10 +59,8 @@ Image.parameters = {
 
 export const Fallback = () => (
   <Col gapY="2" p="2" width="500px" backgroundColor="white">
-    <LinkBlockItem
-      node={createLink('', 'https://www.are.na/edouard-urcades/edouard')}
-    />
-    <LinkBlockItem node={createLink('', 'https://thejaymo.net')} />
+    <LinkBlockItem size="250px" node={createLink('', 'https://www.are.na/edouard-urcades/edouard')} />
+    <LinkBlockItem size="250px" node={createLink('', 'https://thejaymo.net')} />
   </Col>
 );
 
@@ -75,6 +75,7 @@ Fallback.parameters = {
 export const Audio = () => (
   <Col gapY="2" p="2" width="500px" backgroundColor="white">
     <LinkBlockItem
+      size="250px"
       node={createLink(
         'Artist · Track',
         'https://rovnys-public.s3.amazonaws.com/urbit-from-the-outside-in-1.m4a'
@@ -94,12 +95,14 @@ Audio.parameters = {
 export const Youtube = () => (
   <Col gapY="2" p="2" width="500px" backgroundColor="white">
     <LinkBlockItem
+      size="400px"
       node={createLink(
         'Artist · Track',
         'https://www.youtube.com/watch?v=M04AKTCDavc&t=1s'
       )}
     />
     <LinkBlockItem
+      size="250px"
       summary
       node={createLink(
         'Artist · Track',

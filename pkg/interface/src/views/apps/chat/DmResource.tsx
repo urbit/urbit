@@ -1,4 +1,4 @@
-import { cite, Content, markCountAsRead, Post } from '@urbit/api';
+import { cite, Content, Post, removeDmMessage } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import bigInt from 'big-integer';
@@ -7,11 +7,11 @@ import { Link } from 'react-router-dom';
 import { patp2dec } from 'urbit-ob';
 import { useContact } from '~/logic/state/contact';
 import useGraphState, { useDM } from '~/logic/state/graph';
-import { useHarkDm } from '~/logic/state/hark';
+import useHarkState, { useHarkDm } from '~/logic/state/hark';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
-import airlock from '~/logic/api';
 import shallow from 'zustand/shallow';
+import airlock from '~/logic/api';
 
 interface DmResourceProps {
   ship: string;
@@ -84,7 +84,7 @@ export function DmResource(props: DmResourceProps) {
       if (newer) {
         const index = dm.peekLargest()?.[0];
         if (!index) {
-          return true;
+          return false;
         }
         await getYoungerSiblings(
           `~${window.ship}`,
@@ -96,7 +96,7 @@ export function DmResource(props: DmResourceProps) {
       } else {
         const index = dm.peekSmallest()?.[0];
         if (!index) {
-          return true;
+          return false;
         }
         await getOlderSiblings(
           `~${window.ship}`,
@@ -111,7 +111,8 @@ export function DmResource(props: DmResourceProps) {
   );
 
   const dismissUnread = useCallback(() => {
-    airlock.poke(markCountAsRead(`/ship/~${window.ship}/dm-inbox`, `/${patp2dec(ship)}`));
+    const resource = `/ship/~${window.ship}/dm-inbox`;
+    useHarkState.getState().readCount(resource, `/${patp2dec(ship)}`);
   }, [ship]);
 
   const onSubmit = useCallback(
@@ -121,6 +122,9 @@ export function DmResource(props: DmResourceProps) {
     [ship, addDmMessage]
   );
 
+  const onDelete = useCallback((msg: Post) => {
+    airlock.poke(removeDmMessage(`~${window.ship}`, msg.index));
+  }, []);
   return (
     <Col width="100%" height="100%" overflow="hidden">
       <Row
@@ -169,6 +173,7 @@ export function DmResource(props: DmResourceProps) {
         onReply={quoteReply}
         fetchMessages={fetchMessages}
         dismissUnread={dismissUnread}
+        onDelete={onDelete}
         getPermalink={() => undefined}
         isAdmin={false}
         onSubmit={onSubmit}
