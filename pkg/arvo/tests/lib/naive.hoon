@@ -8,8 +8,12 @@
 ::
 ++  addr  address-from-prv:key:ethereum
 ::
+::  the log-name here is the head of the topics list, so topics
+::  is actually a lest as found in naive.hoon. the changed-dns
+::  event has no additional topics, which requires the gate here
+::  to take an empty list.
 ++  log
-  |=  [log-name=@ux data=@ux topics=(lest @)]
+  |=  [log-name=@ux data=@ux topics=(list @)]
   ^-  ^input:naive
   [%log *@ux data log-name topics]
 ::
@@ -702,7 +706,7 @@
   ::  the transactions are processed
   ++  tx-list-to-batch
   |=  =tx-list  ^-  @
-  (can 3 (flop (turn tx-list gen-tx)))
+  (can 3 (turn tx-list gen-tx))
   --  :: end +l2-event-gen
 ::
 ++  l1
@@ -766,7 +770,9 @@
     |=  [=ship =address]
     (log changed-voting-proxy:log-names:naive *@ux ship address ~)
   ::
-  ::  TODO:  ChangedDns (lib/naive still has TODOs)
+  ++  changed-dns
+    |=  [data=@]
+    (log changed-dns:log-names:naive data ~)
   ::
   ::  Ecliptic.sol events
   ::
@@ -1354,49 +1360,43 @@
   =,  l2-event-gen
   =/  rr-batch-1=tx-list  (limo ~[rr-h-detach rr-adopt])
   =/  rr-batch-2=tx-list  (limo ~[rr-h-m-detach rr-m-adopt])
-  ~&  ['detach' `@ux`(tx-list-to-batch (limo ~[rr-h-detach]))]
-  ~&  ['adopt' `@ux`(tx-list-to-batch (limo ~[rr-adopt]))]
-  ~&  ['batch' `@ux`(tx-list-to-batch rr-batch-1)]
   ::
-  ::  ;:  weld
-  ::    %+  expect-eq
-  ::      !>  [~ %.n ~holrut]
-  ::    ::
-  ::      !>
-  ::      =|  =^state:naive
-  ::      =^  f  state  (init-rut-full state)
-  ::      =^  f  state  (n state %bat q:(gen-tx rr-h-detach))
-  ::      =^  f  state  (n state %bat q:(gen-tx rr-adopt))
-  ::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+  =/  init-state=^state:naive  +:(init-rut-full *^state:naive)
+  ;:  weld
+    %+  expect-eq
+      !>  [~ %.n ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (n init-state %bat q:(gen-tx rr-h-detach))
+      =^  f  state  (n state %bat q:(gen-tx rr-adopt))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    ::
+    %+  expect-eq
+      !>  [~ %.n ~holrut]
+
+      !>
+      =|  =^state:naive
+      =^  f  state  (n init-state %bat (tx-list-to-batch rr-batch-1))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+   ::
+    %+  expect-eq
+      !>  [~ %.n ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (n init-state %bat q:(gen-tx rr-h-m-detach))
+      =^  f  state  (n state %bat q:(gen-tx rr-m-adopt))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [~ %.n ~holrut]
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
-      =^  f  state  (n state %bat (tx-list-to-batch rr-batch-1))
+      =^  f  state  (n init-state %bat (tx-list-to-batch rr-batch-2))
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
-    ::
-  ::    %+  expect-eq
-  ::      !>  [~ %.n ~holrut]
-  ::    ::
-  ::      !>
-  ::      =|  =^state:naive
-  ::      =^  f  state  (init-rut-full state)
-  ::      =^  f  state  (n state %bat q:(gen-tx rr-h-m-detach))
-  ::      =^  f  state  (n state %bat q:(gen-tx rr-m-adopt))
-  ::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
-  ::    ::
-  ::    %+  expect-eq
-  ::      !>  [~ %.n ~holrut]
-  ::    ::
-  ::      !>
-  ::      =|  =^state:naive
-  ::      =^  f  state  (init-rut-full state)
-  ::      =^  f  state  (n state %bat (tx-list-to-batch rr-batch-2))
-  ::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
-  ::  ==
+  ==
 ::
 ::  the following tests L2 %rejects
 ++  test-red-l2-l2-reject-l2-1  ^-  tang
@@ -1859,20 +1859,24 @@
   ::  L2-detach A1 | *   | *   | *   | ~   | -> | *   | *   | *   | ~
   ::  makes sure detach on someone without a sponsor is a no-op
   ::
-  =/  rr-h-detach  [holrut-own %detach ~rabsum-ravtyd]
-  =/  rr-h-m-detach  [holrut-mgmt %detach ~rabsum-ravtyd]
-  =/  rr-detach  [rigrut-own %detach ~rabsum-ravtyd]
-  =/  rr-m-detach  [rigrut-mgmt %detach ~rabsum-ravtyd]
+  =/  rr-h-detach  [1 [holrut-own %detach ~rabsum-ravtyd] %holrut-key-0]
+  =/  rr-h-m-detach  [0 [holrut-mgmt %detach ~rabsum-ravtyd] %holrut-mkey-0]
+  =/  rr-detach  [0 [rigrut-own %detach ~rabsum-ravtyd] %rigrut-key-0]
+  =/  rr-m-detach  [0 [rigrut-mgmt %detach ~rabsum-ravtyd] %rigrut-mkey-0]
   ::
+  =,  l2-event-gen
+  =/  rr-detach-batch-1=tx-list  (limo rr-h-detach rr-detach ~)
+  =/  rr-detach-batch-2=tx-list  (limo rr-h-m-detach rr-m-detach ~)
+  ::
+  =/  init-state=^state:naive  +:(init-rut-full *^state:naive)
   ;:  weld
     %+  expect-eq
       !>  [~ %.n ~holrut]
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
-      =^  f  state  (n state %bat q:(gen-tx 1 rr-h-detach %holrut-key-0))
-      =^  f  state  (n state %bat q:(gen-tx 0 rr-detach %rigrut-key-0))
+      =^  f  state  (n init-state %bat q:(gen-tx rr-h-detach))
+      =^  f  state  (n state %bat q:(gen-tx rr-detach))
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
     ::
     %+  expect-eq
@@ -1880,10 +1884,26 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
-      =^  f  state  (n state %bat q:(gen-tx 0 rr-h-m-detach %holrut-mkey-0))
-      =^  f  state  (n state %bat q:(gen-tx 0 rr-m-detach %rigrut-mkey-0))
+      =^  f  state  (n init-state %bat (tx-list-to-batch rr-detach-batch-1))
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    ::
+    %+  expect-eq
+      !>  [~ %.n ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (n init-state %bat q:(gen-tx rr-h-m-detach))
+      =^  f  state  (n state %bat q:(gen-tx rr-m-detach))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    ::
+    %+  expect-eq
+      !>  [~ %.n ~holrut]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (n init-state %bat (tx-list-to-batch rr-detach-batch-2))
+      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+
   ==
 ::
 ::  the following tests are for sponsorship actions between two L1 points
@@ -1917,14 +1937,15 @@
   =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
   =/  rr-adopt   [rigred-own %adopt ~rabsum-ravtyd]
   ::
+  =/  init-state  +:(init-rut-full *^state:naive)
+  ::
   ;:  weld
     %+  expect-eq
       !>  [~ %.y ~holrut]
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
-      =^  f  state  (n state %bat q:(gen-tx 1 rr-escape %wrong-key))
+      =^  f  state  (n init-state %bat q:(gen-tx 1 rr-escape %wrong-key))
       =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
     ::
@@ -1933,8 +1954,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
-      =^  f  state  (n state %bat q:(gen-tx 999 rr-escape %holrut-rr-key-0))
+      =^  f  state  (n init-state %bat q:(gen-tx 999 rr-escape %holrut-rr-key-0))
       =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
       [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
   ==
@@ -2097,7 +2117,10 @@
     =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-0))
     state
   ::
-::  old tests
+::  old tests. Some of these test the same things as +test-rut but
+::  they've been left in since the circumstances are slightly different
+::  in a way that ought to be unimportant but you never know.
+::
 ++  test-log  ^-  tang
   %+  expect-eq
     !>
@@ -2121,19 +2144,33 @@
     =^  f  state  (init-marbud state)
     dominion:(~(got by points.state) ~marbud)
 ::
-++  test-batch  ^-  tang
-  =/  marbud-transfer    [marbud-own %transfer-point (addr %marbud-key-0) |]
-  =/  marbud-transfer-2  [marbud-own %transfer-point (addr %marbud-key-1) |]
+++  test-transfer-batch  ^-  tang
+  =/  marbud-transfer    [0 [marbud-own %transfer-point (addr %marbud-key-0) |] %marbud-key-0]
+  =/  marbud-transfer-2  [1 [marbud-own %transfer-point (addr %marbud-key-1) |] %marbud-key-0]
   ::
-  %+  expect-eq
-    !>  [(addr %marbud-key-1) 2]
+  =,  l2-event-gen
+  =/  marbud-batch=tx-list  (limo marbud-transfer marbud-transfer-2 ~)
   ::
-    !>
-    =|  =^state:naive
-    =^  f  state  (init-marbud state)
-    =^  f  state  (n state %bat q:(gen-tx 0 marbud-transfer %marbud-key-0))
-    =^  f  state  (n state %bat q:(gen-tx 1 marbud-transfer-2 %marbud-key-0))
-    owner.own:(~(got by points.state) ~marbud)
+  ;:  weld
+    %+  expect-eq
+      !>  [(addr %marbud-key-1) 2]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat q:(gen-tx marbud-transfer))
+      =^  f  state  (n state %bat q:(gen-tx marbud-transfer-2))
+      owner.own:(~(got by points.state) ~marbud)
+    ::
+    %+  expect-eq
+      !>  [(addr %marbud-key-1) 2]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat (tx-list-to-batch marbud-batch))
+      owner.own:(~(got by points.state) ~marbud)
+  ==
 ::
 ++  test-l1-changed-spawn-proxy  ^-  tang
   %+  expect-eq
@@ -2351,8 +2388,10 @@
     state
 ::
 ++  test-marbud-l2-spawn  ^-  tang
-  =/  marbud-sproxy  [marbud-own %set-spawn-proxy (addr %marbud-skey)]
+  =/  marbud-sproxy  [0 [marbud-own %set-spawn-proxy (addr %marbud-skey)] %marbud-key-0]
   =/  lt-spawn       [%spawn ~linnup-torsyx (addr %lt-key-0)]
+  =,  l2-event-gen
+  =/  spawn-batch=tx-list  (limo marbud-sproxy [0 [marbud-spn lt-spawn] %marbud-skey] ~)
   ::
   ;:  weld
     %+  expect-eq
@@ -2372,8 +2411,18 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-marbud state)
-      =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
+      =^  f  state  (n state %bat q:(gen-tx marbud-sproxy))
       =^  f  state  (n state %bat q:(gen-tx 0 [marbud-spn lt-spawn] %marbud-skey))
+      transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+    ::
+    %+  expect-eq
+    ::  Tests l2 spawning with spawn proxy as a batch
+      !>  [`@ux`(addr %lt-key-0) 0]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state %bat (tx-list-to-batch spawn-batch))
       transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
   ==
 ::
@@ -2423,7 +2472,6 @@
     ::
   ==
 ::
-:: TODO: transfer breach via transfer proxy
 ++  test-marbud-l2-proxies-transfer  ^-  tang
   =/  marbud-new-keys            [marbud-own %configure-keys encr auth suit |]
   =/  marbud-sproxy              [marbud-own %set-spawn-proxy (addr %marbud-skey)]
@@ -3025,7 +3073,11 @@
     =^  f  state  (n state %bat q:signed-tx)
     transfer-proxy.own:(~(got by points.state) ~tasben-monbur)
 ::
-++  test-batch-create
+::  TODO: L1 tests with leading zeroes. in particular, changing
+::  keys uses data.log, so keys with leading zeroes might run into
+::  issues
+::
+++  test-batch-generation
   =,  l2-event-gen
   =/  marbud-transfer    [marbud-own %transfer-point (addr %marbud-key-0) |]
   =/  marbud-transfer-2  [marbud-own %transfer-point (addr %marbud-key-1) |]
@@ -3044,6 +3096,43 @@
     =^  f  state  (init-marbud state)
     =^  f  state  (n state %bat (tx-list-to-batch txs))
     owner.own:(~(got by points.state) ~marbud)
+::
+++  test-changed-dns
+  ::  raw data from transaction
+  ::  https://etherscan.io/tx/0x51a26c3b100ad1c7aa8d593068df60465046d437edc3e939fadee4056791fd13#eventlog
+  ::
+  ::  TODO: this shouldn't start with a 1 but I'm not sure how else
+  ::  to pass leading zeroes in for data.log
+  =/  data1=@ux  0x1000.0000.0000.0000.0000.0000.0000.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0000.0060.0000.0000.0000.0000.0000.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0000.0000.0000.00a0.0000.0000.0000.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0000.0000.0000.0000.0000.00e0.0000.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0009.7572.6269.742e.6f72.6700.0000.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0000.0000.0000.0000.0009.7572.6269.
+                  742e.6f72.6700.0000.0000.0000.0000.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0000.0009.7572.6269.742e.6f72.6700.
+                  0000.0000.0000.0000.0000.0000.0000.
+                  0000.0000.0000.0000
+  ::
+  %+  expect-eq
+    !>  ~
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state (changed-dns:l1 data))
+    state
 ::
 ::  TODO: signature format changed; regenerate
 ::
