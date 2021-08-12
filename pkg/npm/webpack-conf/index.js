@@ -11,28 +11,28 @@ function devServer(base, urbitrc = {}) {
   const proxy = !urbitrc.URL
     ? {}
     : {
-        index: "",
-        proxy: {
-          [`/apps/${base}/desk.js`]: {
+        index: "index.html",
+        proxy: [
+          {
+            context: path => {
+              if(path === `/apps/${base}/desk.js`) {
+                return true;
+              }
+              return !path.startsWith(`/apps/${base}`);
+            },
             changeOrigin: true,
-            target: "http://localhost:80",
+            target: urbitrc.URL,
             router,
           },
-          [`!/apps/${base}`]: {
-            changeOrigin: true,
-            target: "http://localhost:80",
-            router,
-          },
-        },
+        ],
       };
   return {
-    contentBase: path.join(process.cwd(), "./dist"),
     hot: true,
     port: 9000,
     host: "0.0.0.0",
     disableHostCheck: true,
     historyApiFallback: true,
-    publicPath: `/apps/${base}`,
+    publicPath: `/apps/${base}/`,
     ...proxy,
   };
 }
@@ -145,6 +145,8 @@ const config = (base, urbitrc) => ({
     fallback: {
       path: false,
       http: false,
+      stream: false,
+      fs: false
     },
   },
   devtool: isDev ? "inline-source-map" : "source-map",
@@ -152,7 +154,7 @@ const config = (base, urbitrc) => ({
   output: {
     filename: "[name].[contenthash].js",
     path: path.resolve(process.cwd(), "./dist"),
-    publicPath: `/apps/${base}`,
+    publicPath: `/apps/${base}/`,
     clean: true,
   },
   optimization,
