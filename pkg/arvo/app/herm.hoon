@@ -70,6 +70,13 @@
     %+  turn  p.sign-arvo
     |=  =blit:dill
     [%give %fact [%session ses ~]~ %blit !>(blit)]
+  ::
+    ::  clean up old-style subscriptions
+    ::
+      [%view @ ~]
+    =*  ses  i.t.wire
+    :_  this
+    [%pass wire %arvo %d %shot ses %flee ~]~
   ==
 ::
 ++  on-poke

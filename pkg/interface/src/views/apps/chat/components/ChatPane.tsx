@@ -1,18 +1,49 @@
 import { Col } from '@tlon/indigo-react';
 import { Content, Graph, Post } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
-import _ from 'lodash';
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
-import GlobalApi from '~/logic/api/global';
-import { useFileDrag } from '~/logic/lib/useDrag';
-import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import create from 'zustand';
+import { persist } from 'zustand/middleware';
+import { useFileUpload } from '~/logic/lib/useFileUpload';
 import { useOurContact } from '~/logic/state/contact';
-import useGraphState from '~/logic/state/graph';
+import { useGraphTimesent } from '~/logic/state/graph';
 import ShareProfile from '~/views/apps/chat/components/ShareProfile';
 import { Loading } from '~/views/components/Loading';
 import SubmitDragger from '~/views/components/SubmitDragger';
-import ChatInput, { ChatInput as NakedChatInput } from './ChatInput';
+import ChatInput from './ChatInput';
 import ChatWindow from './ChatWindow';
+
+interface useChatStoreType {
+  id: string;
+  message: string;
+  messageStore: Record<string, string>;
+  restore: (id: string) => void;
+  setMessage: (message: string) => void;
+}
+
+const unsentKey = 'chat-unsent';
+export const useChatStore = create<useChatStoreType>(persist((set, get) => ({
+  id: '',
+  message: '',
+  messageStore: {},
+  restore: (id: string) => {
+    const store = get().messageStore;
+    set({
+      id,
+      messageStore: store,
+      message: store[id] || ''
+    });
+  },
+  setMessage: (message: string) => {
+    const store = get().messageStore;
+    store[get().id] = message;
+
+    set({ message, messageStore: store });
+  }
+}), {
+  name: unsentKey,
+  whitelist: ['messageStore']
+}));
 
 interface ChatPaneProps {
   /**
@@ -29,12 +60,11 @@ interface ChatPaneProps {
    * User able to write to chat
    */
   canWrite: boolean;
-  api: GlobalApi;
   /**
    * Get contents of reply message
    */
   onReply: (msg: Post) => string;
-  onDelete: (msg: Post) => void;
+  onDelete?: (msg: Post) => void;
   /**
    * Fetch more messages
    *
@@ -67,7 +97,6 @@ interface ChatPaneProps {
 
 export function ChatPane(props: ChatPaneProps): ReactElement {
   const {
-    api,
     graph,
     unreadCount,
     canWrite,
@@ -80,39 +109,15 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
     promptShare = [],
     fetchMessages
   } = props;
-  const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
+  const graphTimesentMap = useGraphTimesent(id);
   const ourContact = useOurContact();
-  const chatInput = useRef<NakedChatInput>();
+  const { restore, setMessage } = useChatStore(s => ({ setMessage: s.setMessage, restore: s.restore }));
+  const { canUpload, drag } = useFileUpload({
+    onSuccess: url => onSubmit([{ url }])
+  });
 
-  const onFileDrag = useCallback(
-    (files: FileList | File[]) => {
-      if (!chatInput.current) {
-        return;
-      }
-      (chatInput.current as NakedChatInput)?.uploadFiles(files);
-    },
-    [chatInput.current]
-  );
-
-  const { bind, dragging } = useFileDrag(onFileDrag);
-
-  const [unsent, setUnsent] = useLocalStorageState<Record<string, string>>(
-    'chat-unsent',
-    {}
-  );
-
-  const appendUnsent = useCallback(
-    (u: string) => setUnsent(s => ({ ...s, [id]: u })),
-    [id]
-  );
-
-  const clearUnsent = useCallback(() => {
-    setUnsent((s) => {
-      if (id in s) {
-        return _.omit(s, id);
-      }
-      return s;
-    });
+  useEffect(() => {
+    restore(id);
   }, [id]);
 
   const scrollTo = new URLSearchParams(location.search).get('msg');
@@ -126,7 +131,7 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   const onReply = useCallback(
     (msg: Post) => {
       const message = props.onReply(msg);
-      setUnsent(s => ({ ...s, [id]: message }));
+      setMessage(message);
     },
     [id, props.onReply]
   );
@@ -136,42 +141,38 @@ export function ChatPane(props: ChatPaneProps): ReactElement {
   }
 
   return (
-    <Col {...bind} height="100%" overflow="hidden" position="relative">
+    // @ts-ignore bind typings
+    <Col {...drag.bind} height="100%" overflow="hidden" position="relative">
       <ShareProfile
         our={ourContact}
-        api={api}
         recipients={showBanner ? promptShare : []}
         onShare={() => setShowBanner(false)}
       />
-      {dragging && <SubmitDragger />}
+      {canUpload && drag.dragging && <SubmitDragger />}
       <ChatWindow
         key={id}
         graph={graph}
         graphSize={graph.size}
         unreadCount={unreadCount}
         showOurContact={promptShare.length === 0 && !showBanner}
-        pendingSize={Object.keys(graphTimesentMap[id] || {}).length}
+        pendingSize={Object.keys(graphTimesentMap).length}
         onReply={onReply}
         onDelete={onDelete}
         dismissUnread={dismissUnread}
         fetchMessages={fetchMessages}
         isAdmin={isAdmin}
         getPermalink={getPermalink}
-        api={api}
         scrollTo={scrollTo ? bigInt(scrollTo) : undefined}
       />
       {canWrite && (
         <ChatInput
-          ref={chatInput}
-          api={props.api}
           onSubmit={onSubmit}
           ourContact={(promptShare.length === 0 && ourContact) || undefined}
-          onUnmount={appendUnsent}
           placeholder="Message..."
-          message={unsent[id] || ''}
-          deleteMessage={clearUnsent}
         />
       )}
     </Col>
   );
 }
+
+ChatPane.whyDidYouRender = true;

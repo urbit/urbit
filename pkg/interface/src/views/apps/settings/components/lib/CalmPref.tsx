@@ -3,12 +3,12 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { Form, Formik, FormikHelpers } from 'formik';
 import React, { useCallback } from 'react';
-import GlobalApi from '~/logic/api/global';
-import useSettingsState, { selectSettingsState } from '~/logic/state/settings';
-import { AsyncButton } from '~/views/components/AsyncButton';
+import { Form } from 'formik';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { BackButton } from './BackButton';
+import _ from 'lodash';
+import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 
 interface FormSchema {
   hideAvatars: boolean;
@@ -22,57 +22,33 @@ interface FormSchema {
   videoShown: boolean;
 }
 
-const settingsSel = selectSettingsState(['calm', 'remoteContentPolicy']);
+const settingsSel = (s: SettingsState): FormSchema => ({
+  hideAvatars: s.calm.hideAvatars,
+  hideNicknames: s.calm.hideNicknames,
+  hideUnreads: s.calm.hideUnreads,
+  hideGroups: s.calm.hideGroups,
+  hideUtilities: s.calm.hideUtilities,
+  imageShown: !s.remoteContentPolicy.imageShown,
+  videoShown: !s.remoteContentPolicy.videoShown,
+  oembedShown: !s.remoteContentPolicy.oembedShown,
+  audioShown: !s.remoteContentPolicy.audioShown
+});
 
-export function CalmPrefs(props: {
-  api: GlobalApi;
-}) {
-  const { api } = props;
-  const {
-    calm: {
-      hideAvatars,
-      hideNicknames,
-      hideUnreads,
-      hideGroups,
-      hideUtilities
-    },
-    remoteContentPolicy: {
-      imageShown,
-      videoShown,
-      oembedShown,
-      audioShown
-    }
-  } = useSettingsState(settingsSel);
+export function CalmPrefs() {
+  const initialValues = useSettingsState(settingsSel);
 
-  const initialValues: FormSchema = {
-    hideAvatars,
-    hideNicknames,
-    hideUnreads,
-    hideGroups,
-    hideUtilities,
-    imageShown: !imageShown,
-    videoShown: !videoShown,
-    oembedShown: !oembedShown,
-    audioShown: !audioShown
-  };
-
-  const onSubmit = useCallback(async (v: FormSchema, actions: FormikHelpers<FormSchema>) => {
-    await Promise.all([
-      api.settings.putEntry('calm', 'hideAvatars', v.hideAvatars),
-      api.settings.putEntry('calm', 'hideNicknames', v.hideNicknames),
-      api.settings.putEntry('calm', 'hideUnreads', v.hideUnreads),
-      api.settings.putEntry('calm', 'hideGroups', v.hideGroups),
-      api.settings.putEntry('calm', 'hideUtilities', v.hideUtilities),
-      api.settings.putEntry('remoteContentPolicy', 'imageShown', !v.imageShown),
-      api.settings.putEntry('remoteContentPolicy', 'videoShown', !v.videoShown),
-      api.settings.putEntry('remoteContentPolicy', 'audioShown', !v.audioShown),
-      api.settings.putEntry('remoteContentPolicy', 'oembedShown', !v.oembedShown)
-    ]);
-    actions.setStatus({ success: null });
-  }, [api]);
+  const onSubmit = useCallback(async (v: FormSchema) => {
+    const { putEntry } = useSettingsState.getState();
+    _.forEach(v, (bool, key) => {
+      const bucket = ['imageShown', 'videoShown', 'audioShown', 'oembedShown'].includes(key) ? 'remoteContentPolicy' : 'calm';
+      if(initialValues[key] !== bool) {
+        putEntry(bucket, key, bucket === 'calm' ? bool : !bool);
+      }
+    });
+  }, [initialValues]);
 
   return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit}>
+    <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
       <Form>
         <BackButton />
         <Col borderBottom={1} borderBottomColor="washedGray" p={5} pt={4} gapY={5}>
@@ -132,12 +108,8 @@ export function CalmPrefs(props: {
             id="oembedShown"
             caption="Embedded content may contain scripts that can track you"
           />
-
-          <AsyncButton primary width="fit-content" type="submit">
-            Save
-          </AsyncButton>
         </Col>
       </Form>
-    </Formik>
+    </FormikOnBlur>
   );
 }

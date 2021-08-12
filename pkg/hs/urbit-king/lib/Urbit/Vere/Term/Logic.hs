@@ -92,7 +92,7 @@ step st@St{..} = \case
                  st { sLine = "", sCurPos = (0, 0) }
                  & recordText (sLine <> "\n")
              | otherwise ->
-                 st { sCurPos = (((fst sCurPos) - 1), 0) }
+                 st { sCurPos = (fst sCurPos - 1, 0) }
   where
     recordText :: Text -> St -> St
     recordText !t st@St{..} = st {
@@ -113,8 +113,8 @@ drawState :: St -> [Ev]
 drawState St{..} = hist <> out <> cur <> spin
   where
     hist = drawHistory <$> toList sHistory
-    out  | null <- sLine = []
-         | otherwise     = [EvEdit sLine]
+    out  | null sLine = []
+         | otherwise  = [EvEdit sLine]
     cur  | (0, _) <- sCurPos = []
          | otherwise         = [EvMove sCurPos]
     spin = maybe [] (singleton . EvSpin . Just) sSpinner

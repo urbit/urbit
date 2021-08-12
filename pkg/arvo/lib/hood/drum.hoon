@@ -144,6 +144,8 @@
       %metadata-pull-hook
       %group-view
       %settings-store
+      %dm-hook
+      %notify
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -338,6 +340,10 @@
       =>  (se-born | %home %contact-pull-hook)
       =>  (se-born | %home %settings-store)
       (se-born | %home %group-view)
+    =?  ..on-load  (lte hood-version %13)
+      (se-born | %home %dm-hook)
+    =?  ..on-load  (lte hood-version %15)
+      (se-born | %home %notify)
     ..on-load
   --
 ::

@@ -23,7 +23,7 @@ export function StatelessAsyncAction({
 
   return (
     <Action
-      height="18px"
+      height="16px"
       hideDisabled={!disabled}
       disabled={disabled || state === 'loading'}
       onClick={handleClick} {...rest}

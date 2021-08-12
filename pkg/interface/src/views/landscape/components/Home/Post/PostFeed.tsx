@@ -1,21 +1,23 @@
 import { Box, Col } from '@tlon/indigo-react';
 import { Association, Graph, GraphNode, Group } from '@urbit/api';
+import { History } from 'history';
 import bigInt from 'big-integer';
 import React from 'react';
-import { withRouter } from 'react-router';
-import GlobalApi from '~/logic/api/global';
+import { useHistory } from 'react-router';
 import { resourceFromPath } from '~/logic/lib/group';
-import VirtualScroller from '~/views/components/VirtualScroller';
 import PostItem from './PostItem/PostItem';
+import PostInput from './PostInput';
+import { GraphScroller } from '~/views/components/GraphScroller';
+import useGraphState, { GraphState } from '~/logic/state/graph';
+import shallow from 'zustand/shallow';
 
 const virtualScrollerStyle = {
   height: '100%'
 };
 
-interface PostFeedProps {
+interface PostFeedProps extends Pick<GraphState, 'getYoungerSiblings' | 'getOlderSiblings'> {
   graph: Graph;
   graphPath: string;
-  api: GlobalApi;
   history: History;
   baseUrl: string;
   parentNode?: GraphNode;
@@ -26,7 +28,7 @@ interface PostFeedProps {
   pendingSize: number;
 }
 
-class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
+class PostFeed extends React.Component<PostFeedProps, any> {
   isFetching: boolean;
   constructor(props) {
     super(props);
@@ -36,12 +38,11 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
     this.fetchPosts = this.fetchPosts.bind(this);
     this.doNotFetch = this.doNotFetch.bind(this);
   }
-
-  renderItem = React.forwardRef(({ index, scrollWindow }, ref) => {
+  // @ts-ignore needs @liam-fitzgerald peek at props for virtualscroller
+  renderItem = React.forwardRef<HTMLDivElement, any>(({ index, scrollWindow }, ref) => {
     const {
       graph,
       graphPath,
-      api,
       history,
       baseUrl,
       parentNode,
@@ -56,13 +57,12 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
     }
 
     const first = graph.peekLargest()?.[0];
-    const post = node?.post;
-    const nodeIndex = 
+    const nodeIndex =
       ( parentNode &&
         typeof parentNode.post !== 'string'
       ) ? parentNode.post.index.split('/').slice(1).map((ind) => {
       return bigInt(ind);
-    }) : [];
+      }) : [];
 
     if (parentNode && index.eq(first ?? bigInt.zero)) {
       return (
@@ -78,10 +78,8 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
               key={parentNode.post.index}
               parentPost={grandparentNode?.post}
               node={parentNode}
-              parentNode={grandparentNode}
               graphPath={graphPath}
               association={association}
-              api={api}
               index={nodeIndex}
               baseUrl={baseUrl}
               history={history}
@@ -89,13 +87,13 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
               isRelativeTime={false}
               vip={vip}
               group={group}
+              isHierarchical={true}
             />
           </Col>
           <PostItem
             node={node}
             graphPath={graphPath}
             association={association}
-            api={api}
             index={[...nodeIndex, index]}
             baseUrl={baseUrl}
             history={history}
@@ -104,33 +102,73 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
             isRelativeTime={true}
             vip={vip}
             group={group}
+            isHierarchical={true}
           />
         </React.Fragment>
+      );
+    } else if (index.eq(first ?? bigInt.zero)) {
+      return (
+        <Col
+          width="100%"
+          alignItems="center"
+          key={index.toString()}
+          ref={ref}
+        >
+          <Col
+            width="100%"
+            maxWidth="608px"
+            pt={3}
+            pl={1}
+            pr={1}
+            mb={3}
+          >
+            <PostInput
+              group={group}
+              association={association}
+              vip={vip}
+              graphPath={graphPath}
+            />
+          </Col>
+          <PostItem
+            node={node}
+            graphPath={graphPath}
+            association={association}
+            index={[...nodeIndex, index]}
+            baseUrl={baseUrl}
+            history={history}
+            parentPost={parentNode?.post}
+            isReply={Boolean(parentNode)}
+            isRelativeTime={true}
+            vip={vip}
+            group={group}
+            isHierarchical={true}
+          />
+        </Col>
       );
     }
 
     return (
       <Box key={index.toString()} ref={ref}>
-      <PostItem
-        node={node}
-        graphPath={graphPath}
-        association={association}
-        api={api}
-        index={[...nodeIndex, index]}
-        baseUrl={baseUrl}
-        history={history}
-        parentPost={parentNode?.post}
-        isReply={Boolean(parentNode)}
-        isRelativeTime={true}
-        vip={vip}
-        group={group}
-      />
+        <PostItem
+          node={node}
+          graphPath={graphPath}
+          association={association}
+          index={[...nodeIndex, index]}
+          baseUrl={baseUrl}
+          history={history}
+          parentPost={parentNode?.post}
+          isReply={Boolean(parentNode)}
+          isRelativeTime={true}
+          vip={vip}
+          group={group}
+          isHierarchical={true}
+        />
       </Box>
     );
   });
 
   async fetchPosts(newer) {
-    const { graph, graphPath, api } = this.props;
+    const { graph, graphPath, getYoungerSiblings, getOlderSiblings } = this.props;
     const graphResource = resourceFromPath(graphPath);
 
     if (this.isFetching) {
@@ -143,7 +181,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
 
     if (newer) {
       const [index] = graph.peekLargest();
-      await api.graph.getYoungerSiblings(
+      await getYoungerSiblings(
         ship,
         name,
         100,
@@ -151,7 +189,7 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
       );
     } else {
       const [index] = graph.peekSmallest();
-      await api.graph.getOlderSiblings(ship, name, 100, `/${index.toString()}`);
+      await getOlderSiblings(ship, name, 100, `/${index.toString()}`);
     }
 
     this.isFetching = false;
@@ -172,12 +210,12 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
 
     return (
       <Col width="100%" height="100%" position="relative">
-        <VirtualScroller
+        <GraphScroller
           key={history.location.pathname}
           origin="top"
           offset={0}
           data={graph}
-          averageHeight={106}
+          averageHeight={80}
           size={graph.size}
           style={virtualScrollerStyle}
           pendingSize={pendingSize}
@@ -189,4 +227,18 @@ class PostFeed extends React.Component<PostFeedProps, PostFeedState> {
   }
 }
 
-export default withRouter(PostFeed);
+export default React.forwardRef<PostFeed, Omit<PostFeedProps, 'getYoungerSiblings' | 'getOlderSiblings' | 'history'>>((props, ref) => {
+  const [getOlderSiblings, getYoungerSiblings] = useGraphState(({ getOlderSiblings, getYoungerSiblings }) => [getOlderSiblings, getYoungerSiblings], shallow);
+  const history = useHistory();
+
+  return (
+    <PostFeed
+      ref={ref}
+      {...props}
+      history={history}
+      getYoungerSiblings={getYoungerSiblings}
+      getOlderSiblings={getOlderSiblings}
+    />
+    );
+});
+

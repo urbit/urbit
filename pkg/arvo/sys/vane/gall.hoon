@@ -159,7 +159,10 @@
       ~<  %slog.[0 leaf+"gall: molted"]
       ::  +molt should never notify its client about agent changes
       ::
-      =-  [(skip -< |=(move ?=([* %pass [%sys %say ~] *] +<))) ->]
+      =-  :_  ->
+          %+  welp
+            (skip -< |=(move ?=([* %give %onto *] +<)))
+          [^duct %pass /whiz/gall %$ %whiz ~]~
       =/  adult  adult-core
       =.  state.adult
         [%7 system-duct outstanding contacts yokes=~ blocked]:spore
@@ -767,12 +770,10 @@
       mo-core
     =^  [=duct =routes blocker=(each deal sign:agent)]  blocked
       ~(get to blocked)
+    ?:  ?=(%| -.blocker)  $
     =/  =move
       =/  =sock  [attributing.routes our]
-      =/  card
-        ?:  ?=(%& -.blocker)
-          [%slip %g %deal sock dap p.blocker]
-        [%pass /clear-huck %b %huck `sign-arvo`[%gall %unto p.blocker]]
+      =/  card   [%slip %g %deal sock dap p.blocker]
       [duct card]
     $(moves [move moves])
   ::  +mo-filter-queue: remove all blocked tasks from ship.

@@ -1,26 +1,25 @@
 import { Action, Col, Icon, Row } from '@tlon/indigo-react';
 import { Association, Post } from '@urbit/api';
 import React, { ReactElement } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { useCopy } from '~/logic/lib/useCopy';
 import useContactState from '~/logic/state/contact';
 import { resourceFromPath } from '~/logic/lib/group';
 import Author from '~/views/components/Author';
 import { Dropdown } from '~/views/components/Dropdown';
-
+import airlock from '~/logic/api';
+import { removePosts } from '@urbit/api/graph';
 interface PostHeaderProps {
   post: Post;
-  api: GlobalApi;
   association: Association;
   isReply: boolean;
   showTimestamp: boolean;
+  graphPath: any;
 }
 
 const PostHeader = (props: PostHeaderProps): ReactElement => {
   const {
     post,
-    api,
     association,
     isReply,
     showTimestamp,
@@ -38,7 +37,8 @@ const PostHeader = (props: PostHeaderProps): ReactElement => {
   const resource = resourceFromPath(graphPath);
 
   const doDelete = () => {
-    api.graph.removePosts(resource.ship, resource.name, [post.index]);
+    const { ship, name } = resource;
+    airlock.poke(removePosts(ship, name, [post.index]));
   };
 
   return (
@@ -58,7 +58,6 @@ const PostHeader = (props: PostHeaderProps): ReactElement => {
         ship={post.author}
         date={post['time-sent']}
         unread={false}
-        api={api}
         size={24}
         sigilPadding={6}
         dontShowTime={!showTimestamp}
@@ -77,7 +76,8 @@ const PostHeader = (props: PostHeaderProps): ReactElement => {
             border={1}
             borderRadius={1}
             borderColor="lightGray"
-            p={1}>
+            p={1}
+          >
             <Action bg="white" m={1} color="black" onClick={doCopy}>
               {copyDisplay}
             </Action>

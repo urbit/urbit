@@ -1,20 +1,18 @@
-import { Action, Anchor, Box, Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph, GraphNode, Group } from '@urbit/api';
+import { Action, Box, Col, Row, Text } from '@tlon/indigo-react';
+import { Association, Graph, GraphNode, Group, markEachAsRead, removePosts } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getComments, getLatestRevision } from '~/logic/lib/publish';
 import { useCopy } from '~/logic/lib/useCopy';
-import { useQuery } from '~/logic/lib/useQuery';
 import Author from '~/views/components/Author';
 import { Comments } from '~/views/components/Comments';
 import { Spinner } from '~/views/components/Spinner';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { NoteNavigation } from './NoteNavigation';
-import { Redirect } from 'react-router-dom';
+import airlock from '~/logic/api';
 
 interface NoteProps {
   ship: string;
@@ -22,16 +20,15 @@ interface NoteProps {
   note: GraphNode;
   association: Association;
   notebook: Graph;
-  api: GlobalApi;
   rootUrl: string;
   baseUrl: string;
   group: Group;
 }
 
-export function NoteContent({ post, api }) {
+export function NoteContent({ post }) {
   return (
       <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
-        <GraphContent tall={true} contents={post.contents.slice(1)} showOurContact api={api} />
+        <GraphContent tall={true} contents={post.contents.slice(1)} showOurContact />
       </Box>
   );
 }
@@ -39,12 +36,12 @@ export function NoteContent({ post, api }) {
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
 
-  const { association, notebook, note, ship, book, api, rootUrl, baseUrl, group } = props;
+  const { association, notebook, note, ship, book, rootUrl, baseUrl, group } = props;
 
   const deletePost = async () => {
     setDeleting(true);
     const indices = [note.post.index];
-    await api.graph.removePosts(ship, book, indices);
+    await airlock.poke(removePosts(ship, book, indices));
     props.history.push(rootUrl);
   };
 
@@ -56,14 +53,13 @@ export function Note(props: NoteProps & RouteComponentProps) {
     );
   }
 
-  const { query } = useQuery();
   const comments = getComments(note);
-  const [revNum, title, body, post] = getLatestRevision(note);
+  const [, title, , post] = getLatestRevision(note);
   const index = note.post.index.split('/');
 
   const noteId = bigInt(index[1]);
   useEffect(() => {
-    api.hark.markEachAsRead(props.association, '/',`/${index[1]}/1/1`, 'note', 'publish');
+    airlock.poke(markEachAsRead(props.association.resource, '/',`/${index[1]}/1/1`));
   }, [props.association, props.note]);
 
   const adminLinks: JSX.Element[] = [];
@@ -124,7 +120,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           </Author>
         </Row>
       </Col>
-      <NoteContent api={props.api} post={post} />
+      <NoteContent post={post} />
       <NoteNavigation
         notebook={notebook}
         noteId={noteId}
@@ -135,7 +131,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
         name={props.book}
         comments={comments}
         association={props.association}
-        api={props.api}
         baseUrl={baseUrl}
         history={props.history}
         group={group}

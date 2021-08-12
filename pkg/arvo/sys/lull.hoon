@@ -1865,7 +1865,12 @@
         [%public-keys =public-keys-result]            ::  ethereum changes
         [%turf turf=(list turf)]                      ::  domains
     ==                                                ::
-  ::  +seed: private boot parameters
+  ::  +feed: potential boot parameters
+  ::
+  +$  feed
+    $^  [[%1 ~] who=ship kyz=(list [lyf=life key=ring])]
+    seed
+  ::  +seed: individual boot parameters
   ::
   +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
   ::
@@ -2097,6 +2102,7 @@
       [%g task:gall]
       [%i task:iris]
       [%j task:jael]
+      [%$ %whiz ~]
       [@tas %meta vase]
   ==
 ::  full vane names are required in vanes

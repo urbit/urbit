@@ -305,11 +305,14 @@ $(pure [])
 
 instance FromNoun Bolt where
   parseNoun = \case
-    A c -> pure $ Key $ C.chr $ fromIntegral c
-    n   -> $(deriveFromNounFunc ''Bolt) n
+    A c             -> pure $ Key $ C.chr $ fromIntegral c
+    C (A 7955819) _ -> fail "%key not valid bolt tag"
+    n               -> $(deriveFromNounFunc ''Bolt) n
 
 instance FromNoun Belt where
-  parseNoun n = Bol <$> parseNoun n <|> $(deriveFromNounFunc ''Belt) n
+  parseNoun = \case
+    C (A 7106402) _ -> fail "%bol not valid belt tag"
+    n               -> Bol <$> parseNoun n <|> $(deriveFromNounFunc ''Belt) n
 
 instance ToNoun Bolt where
   toNoun = \case
@@ -386,19 +389,16 @@ instance FromNoun Ev where
 getSpinnerNameForEvent :: Ev -> Maybe Text
 getSpinnerNameForEvent = \case
     EvBlip b -> case b of
-        BlipEvAmes _            -> Just "ames"
-        BlipEvArvo _            -> Just "arvo"
-        BlipEvBehn _            -> Just "behn"
-        BlipEvBoat _            -> Just "boat"
-        BlipEvHttpClient _      -> Just "iris"
-        BlipEvHttpServer _      -> Just "eyre"
-        BlipEvNewt _            -> Just "newt"
-        BlipEvSync _            -> Just "clay"
-        BlipEvTerm t | isUser t -> Nothing
-        BlipEvTerm t            -> Just "term"
-  where
-    isUser (TermEvBelt _ _) = True
-    isUser _                = False
+        BlipEvAmes _                -> Just "ames"
+        BlipEvArvo _                -> Just "arvo"
+        BlipEvBehn _                -> Just "behn"
+        BlipEvBoat _                -> Just "boat"
+        BlipEvHttpClient _          -> Just "iris"
+        BlipEvHttpServer _          -> Just "eyre"
+        BlipEvNewt _                -> Just "newt"
+        BlipEvSync _                -> Just "clay"
+        BlipEvTerm (TermEvBelt _ _) -> Nothing
+        BlipEvTerm t                -> Just "term"
 
 summarizeEvent :: Ev -> Text
 summarizeEvent ev =

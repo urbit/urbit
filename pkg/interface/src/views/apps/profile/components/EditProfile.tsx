@@ -22,6 +22,8 @@ import {
 
     ProfileImages, ProfileStatus
 } from './Profile';
+import airlock from '~/logic/api';
+import { editContact, setPublic } from '@urbit/api';
 
 const formSchema = Yup.object({
   nickname: Yup.string(),
@@ -78,7 +80,7 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
 }
 
 export function EditProfile(props: any): ReactElement {
-  const { contact, ship, api } = props;
+  const { contact, ship } = props;
   const isPublic = useContactState(state => state.isContactPublic);
   const [hideCover, setHideCover] = useState(false);
 
@@ -90,11 +92,12 @@ export function EditProfile(props: any): ReactElement {
 
   const onSubmit = async (values: any, actions: any) => {
     try {
-      await Object.keys(values).reduce((acc, key) => {
+      Object.keys(values).forEach((key) => {
         const newValue = key !== 'color' ? values[key] : uxToHex(values[key]);
         if (newValue !== contact[key]) {
           if (key === 'isPublic') {
-            return acc.then(() => api.contacts.setPublic(newValue));
+            airlock.poke(setPublic(true));
+            return;
           } else if (key === 'groups') {
             const toRemove: string[] = _.difference(
               contact?.groups || [],
@@ -104,25 +107,18 @@ export function EditProfile(props: any): ReactElement {
               newValue,
               contact?.groups || []
             );
-            const promises: Promise<any>[] = [];
-            promises.concat(
-              toRemove.map(e =>
-                api.contacts.edit(ship, { 'remove-group': resourceFromPath(e) })
-              )
+            toRemove.forEach(e =>
+                airlock.poke(editContact(ship, { 'remove-group': resourceFromPath(e) }))
             );
-            promises.concat(
-              toAdd.map(e =>
-                api.contacts.edit(ship, { 'add-group': resourceFromPath(e) })
-              )
+              toAdd.forEach(e =>
+                airlock.poke(editContact(ship, { 'add-group': resourceFromPath(e) }))
             );
-            return acc.then(() => Promise.all(promises));
           } else if (key !== 'last-updated' && key !== 'isPublic') {
-            return acc.then(() => api.contacts.edit(ship, { [key]: newValue }));
+            airlock.poke(editContact(ship, { [key]: newValue }));
+            return;
           }
         }
-        return acc;
-      }, Promise.resolve());
-      // actions.setStatus({ success: null });
+      });
       history.push(`/~profile/${ship}`);
     } catch (e) {
       console.error(e);

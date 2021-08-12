@@ -4,21 +4,12 @@ import {
   ManagedRadioButtonField as Radio, Row, Text
 } from '@tlon/indigo-react';
 import React, { ReactElement } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { ColorInput } from '~/views/components/ColorInput';
 import { ImageInput } from '~/views/components/ImageInput';
 
 export type BgType = 'none' | 'url' | 'color';
 
-export function BackgroundPicker({
-  bgType,
-  bgUrl,
-  api
-}: {
-  bgType: BgType;
-  bgUrl?: string;
-  api: GlobalApi;
-}): ReactElement {
+export function BackgroundPicker(): ReactElement {
   const rowSpace = { my: 0, alignItems: 'center' };
   const colProps = {
     my: 3,
@@ -36,11 +27,9 @@ export function BackgroundPicker({
           <Text ml={5} gray>Set an image background</Text>
           <ImageInput
             ml={5}
-            api={api}
             id="bgUrl"
             placeholder="Drop or upload a file, or paste a link here"
             name="bgUrl"
-            url={bgUrl || ''}
           />
         </Col>
       </Row>

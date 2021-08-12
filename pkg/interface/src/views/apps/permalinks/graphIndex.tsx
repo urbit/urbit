@@ -33,7 +33,7 @@ function getPostPermalink(
   assoc: Association,
   index: string
 ) {
-  const base = `${groupPath}/feed`;
+  const base = `${groupPath}/feed/thread`;
   return base + index;
 }
 
@@ -73,7 +73,6 @@ function getLinkPermalink(
   const res = _.reduce(
     idx,
     (acc, val, i) => {
-      console.log(acc);
       if (i === 0) {
         return { ...acc, pathname: `${acc.pathname}/index/${val}` };
       } else if (i === 1) {

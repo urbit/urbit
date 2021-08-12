@@ -1,4 +1,4 @@
-import { Serial, PatpNoSig, Path } from '..';
+import { Serial, PatpNoSig, Path } from '../lib';
 import { Resource } from "../groups";
 
 export type InviteUpdate =

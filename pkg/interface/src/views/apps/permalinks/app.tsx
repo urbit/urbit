@@ -14,7 +14,7 @@ interface ResourceRouteProps {
   name: string;
 }
 
-export function PermalinkRoutes(props: {}) {
+export function PermalinkRoutes(props: unknown) {
   const groups = useGroupState(s => s.groups);
   const { query, toQuery } = useQuery();
 
@@ -50,7 +50,6 @@ function FallbackRoutes(props: { query: URLSearchParams }) {
   if (query.has('ext')) {
     const ext = query.get('ext')!;
     const url = `/perma${ext.slice(16)}`;
-    console.log(url);
     return <Redirect to={{ pathname: url }} />;
   }
 
@@ -70,7 +69,7 @@ function GroupRoutes(props: { group: string; url: string }) {
       <Route
         path={makePath('/graph/:ship/:name')}
         render={({ match, location }) => {
-          const { ship, name } = match.params as ResourceRouteProps;
+          const { ship, name } = match.params as unknown as ResourceRouteProps;
           const path = `/ship/${ship}/${name}`;
           const association = associations.graph[path];
           const { url: routeUrl } = match;
@@ -78,7 +77,7 @@ function GroupRoutes(props: { group: string; url: string }) {
             return null;
           }
           if(!graphKeys.has(`${ship.slice(1)}/${name}`)) {
-            if(graphKeys.size > 0) {
+            if(graphKeys.size > 1) { // TODO: Better loading logic see https://github.com/urbit/landscape/issues/1063
               return <Redirect
                 to={toQuery(
                   { auto: 'y', redir: location.pathname },

@@ -294,30 +294,37 @@ localClient doneSignal = fst <$> mkRAcquire start stop
         writeBlank ls = do
           TermSize _ height <- readTVarIO termSizeVar
           --NOTE  hijack creates a blank line
-          T.hijack $ fromIntegral height
-          T.lojack
+          T.hijack (fromIntegral height) $ pure ()
           pure ls
 
         writeTrace :: LineState -> Text -> RIO e LineState
         writeTrace ls p = do
             TermSize _ height <- readTVarIO termSizeVar
-            T.hijack $ fromIntegral height
-            putStr p
-            T.lojack
+            T.hijack (fromIntegral height) $ putStr p
             pure ls
 
         writeSlog :: LineState -> (Atom, Tank) -> RIO e LineState
         writeSlog ls slog = do
             TermSize width height <- readTVarIO termSizeVar
-            T.hijack $ fromIntegral height
-            -- TODO: Ignoring priority for now. Priority changes the color of,
-            -- and adds a prefix of '>' to, the output.
-            let lines = fmap unTape $ wash (WashCfg 0 width) $ tankTree $ snd slog
-            T.putCSI 'm' [90]  --NOTE  print slogs in grey
-            forM (intersperse "\n" lines) $ \line -> putStr line
-            T.putCSI 'm' [0]
-            T.lojack
+            T.hijack (fromIntegral height) do
+              let lines = fmap (pref . unTape) $
+                            wash (WashCfg 0 width) $ tankTree $ snd slog
+              T.putCsi 'm' styl
+              forM (intersperse "\n" lines) $ \line -> putStr line
+              T.putCsi 'm' [0]
             pure ls
+            where
+              prio = fromIntegral $ fst slog
+              maxp = 3
+              styl
+                | prio == 3 = [31]
+                | prio == 2 = [33]
+                | prio == 1 = [32]
+                | otherwise = [90]
+              pref
+                | prio > 0 && prio <= maxp =
+                    ((replicate prio '>' ++ replicate (1 + maxp - prio) ' ') ++)
+                | otherwise = id
 
         {-
             Figure out how long to wait to show the spinner. When we

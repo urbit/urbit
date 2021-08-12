@@ -1,27 +1,80 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
-import bigInt from 'big-integer';
-import React from 'react';
+import { Association, PermVariation } from '@urbit/api';
+import React, { useEffect } from 'react';
 import { resourceFromPath } from '~/logic/lib/group';
+import useGraphState, { GraphState, useGraph } from '~/logic/state/graph';
 import { Loading } from '~/views/components/Loading';
 import PostFeed from './PostFeed';
 import PostItem from './PostItem/PostItem';
 
-export default function PostReplies(props) {
+const graphSel = (s: GraphState) => s.getNode;
+import { useGroupForAssoc } from '~/logic/state/group';
+import { Switch, useParams, Route, useHistory } from 'react-router';
+import bigInt, { BigInteger } from 'big-integer';
+import { getNodeFromGraph } from '~/logic/lib/graph';
+
+interface PostRepliesProps {
+  baseUrl: string;
+  association: Association;
+  pendingSize: number;
+  vip: PermVariation;
+  index?: BigInteger[];
+}
+
+export function PostRepliesRoutes(props: PostRepliesProps) {
+  const { atom } = useParams<{ atom?: string }>();
+  const index = atom
+    ? [...(props.index || []), bigInt(atom)]
+    : (props.index || []);
+
+  const { baseUrl } = props;
+  const makePath = (s: string) => baseUrl + s;
+
+  return (
+    <Switch>
+      <Route path={makePath('/:atom')} render={(routeProps) => {
+        const { url } = routeProps.match;
+        return (
+          <PostRepliesRoutes {...props} baseUrl={url} index={index} />
+          );
+      }}
+      />
+      <Route path={baseUrl}>
+        <PostReplies {...props} index={index} />
+      </Route>
+    </Switch>
+  );
+}
+
+export default function PostReplies(props: PostRepliesProps) {
   const {
     baseUrl,
-    api,
-    history,
     association,
-    graphPath,
-    group,
     vip,
-    pendingSize
+    pendingSize,
+    index
   } = props;
+  const history = useHistory();
+  const getNode = useGraphState(graphSel);
+  const group = useGroupForAssoc(association);
+  const graphPath = association.resource;
 
-  const graphResource = resourceFromPath(graphPath);
+  const graphRid = resourceFromPath(graphPath);
+  const graph = useGraph(graphRid.ship, graphRid.name);
 
-  let graph = props.graph;
   const shouldRenderFeed = Boolean(graph);
+
+  useEffect(() => {
+    if (graphRid.ship === '~zod' && graphRid.name === 'null') {
+      return;
+    }
+
+    if (index.length < 1) {
+      return;
+    }
+
+    getNode(graphRid.ship, graphRid.name, `/${index[0]}`);
+  }, [association.resource, index]);
 
   if (!shouldRenderFeed) {
     return (
@@ -31,37 +84,17 @@ export default function PostReplies(props) {
     );
   }
 
-  const locationUrl =
-    props.locationUrl.replace(`${baseUrl}/feed`, '');
-  const nodeIndex = locationUrl.split('/').slice(1).map((ind) => {
-    return bigInt(ind);
-  });
-
-  let node;
-  let parentNode;
-  nodeIndex.forEach((i, idx) => {
-    if (!graph) {
-      return null;
-    }
-    node = graph.get(i);
-    if(idx < nodeIndex.length - 1) {
-      parentNode = node;
-    }
-    if (!node) {
-      return null;
-    }
-    graph = node.children;
-  });
+  const node = getNodeFromGraph(graph, index);
+  const parentNode = index.length > 1 && getNodeFromGraph(graph, index.slice(0, -1));
 
   if (!node || !graph) {
     return null;
   }
 
-  const first = graph.peekLargest()?.[0];
+  const first = node?.children?.peekLargest()?.[0];
   if (!first) {
     return (
       <Col
-        key={locationUrl}
         width="100%"
         height="100%"
         alignItems="center" overflowY="scroll"
@@ -72,13 +105,12 @@ export default function PostReplies(props) {
             node={node}
             graphPath={graphPath}
             association={association}
-            api={api}
-            index={nodeIndex}
+            index={index}
             baseUrl={baseUrl}
-            history={history}
             isParent={true}
             parentPost={parentNode?.post}
             vip={vip}
+            history={history}
             group={group}
           />
         </Box>
@@ -102,17 +134,15 @@ export default function PostReplies(props) {
   return (
     <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl={1} pt={3}>
       <PostFeed
-        key={locationUrl}
+        key={location.pathname}
         graphPath={graphPath}
-        graph={graph}
+        graph={node.children}
         grandparentNode={parentNode}
         parentNode={node}
         pendingSize={pendingSize}
         association={association}
         group={group}
         vip={vip}
-        api={api}
-        history={history}
         baseUrl={baseUrl}
       />
     </Box>

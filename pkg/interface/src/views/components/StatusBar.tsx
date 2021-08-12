@@ -1,14 +1,14 @@
 import {
-  BaseImage, Box,
-
-  Button, Col,
-
-  Icon, Row,
-
+  BaseImage,
+  Box,
+  Button,
+  Col,
+  Icon,
+  Row,
   Text
 } from '@tlon/indigo-react';
 import React, { useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
@@ -26,7 +26,7 @@ import { useTutorialModal } from './useTutorialModal';
 const localSel = selectLocalState(['toggleOmnibox']);
 
 const StatusBar = (props) => {
-  const { api, ship } = props;
+  const { ship } = props;
   const history = useHistory();
   const runtimeLag = useLaunchState(state => state.runtimeLag);
   const ourContact = useContactState(state => state.contacts[`~${ship}`]);
@@ -73,13 +73,14 @@ const StatusBar = (props) => {
       px={3}
       pb={3}
     >
-      <Row collapse>
+      <Row>
         <Button
+          as={Link}
+          to="/"
           width='32px'
           borderColor='lightGray'
           mr={2}
           px={2}
-          onClick={() => history.push('/')}
           {...props}
         >
           <Icon icon='Dashboard' color='black' />
@@ -103,19 +104,17 @@ const StatusBar = (props) => {
             {metaKey}/
           </Text>
         </StatusBarItem>
-        <ReconnectButton
-          connection={props.connection}
-          subscription={props.subscription}
-        />
+        <ReconnectButton />
       </Row>
-      <Row justifyContent='flex-end' collapse>
+      <Row justifyContent='flex-end'>
         <StatusBarItem
+          width='32px'
           mr={2}
           backgroundColor='yellow'
           display={
             process.env.LANDSCAPE_STREAM === 'development' ? 'flex' : 'none'
           }
-          justifyContent='flex-end'
+          justifyContent='center'
           flexShrink={0}
           onClick={() =>
             window.open(
@@ -125,12 +124,13 @@ const StatusBar = (props) => {
             )
           }
         >
-        <Icon icon="Bug" color="#000000" />
+          <Icon icon="Bug" color="#000000" />
         </StatusBarItem>
         <StatusBarItem
+          as={Link}
+          to="/~landscape/messages"
           width='32px'
           mr={2}
-          onClick={() => props.history.push('/~landscape/messages')}
         >
           <Icon icon='Messages' />
         </StatusBarItem>
@@ -152,24 +152,26 @@ const StatusBar = (props) => {
               boxShadow='0px 0px 0px 3px'
             >
               <Row
+                as={Link}
+                to={`/~profile/~${ship}`}
                 color='black'
                 cursor='pointer'
                 fontSize={1}
                 fontWeight='500'
                 px={3}
                 py={2}
-                onClick={() => history.push(`/~profile/~${ship}`)}
               >
                 View Profile
               </Row>
               <Row
+                as={Link}
+                to="/~settings"
                 color='black'
                 cursor='pointer'
                 fontSize={1}
                 fontWeight='500'
                 px={3}
                 py={2}
-                onClick={() => history.push('/~settings')}
               >
                 System Preferences
               </Row>
@@ -180,7 +182,6 @@ const StatusBar = (props) => {
                 <ProfileStatus
                   contact={ourContact}
                   ship={`~${ship}`}
-                  api={api}
                 />
               </Row>
             </Col>
@@ -190,6 +191,7 @@ const StatusBar = (props) => {
             px={xPadding}
             width='32px'
             flexShrink={0}
+            border={0}
             backgroundColor={bgColor}
           >
             {profileImage}
