@@ -3103,7 +3103,7 @@
   ::
   ::  TODO: this shouldn't start with a 1 but I'm not sure how else
   ::  to pass leading zeroes in for data.log
-  =/  data1=@ux  0x1000.0000.0000.0000.0000.0000.0000.
+  =/  data=@ux  0x1000.0000.0000.0000.0000.0000.0000.
                   0000.0000.0000.0000.0000.0000.0000.
                   0000.0060.0000.0000.0000.0000.0000.
                   0000.0000.0000.0000.0000.0000.0000.
@@ -3133,6 +3133,32 @@
     =^  f  state  (init-marbud state)
     =^  f  state  (n state (changed-dns:l1 data))
     state
+::
+++  test-approval-for-all
+  =|  operators=(jug address address)
+  =/  op1  (~(put ju operators) (addr %test1) (addr %test2))
+  =/  op2  (~(put ju op1) (addr %test1) (addr %test3))
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  op1
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state (approval-for-all:l1 (addr %test1) (addr %test2) 1))
+      operators.state
+    ::
+    %+  expect-eq
+      !>  op2
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state (approval-for-all:l1 (addr %test1) (addr %test2) 1))
+      =^  f  state  (n state (approval-for-all:l1 (addr %test1) (addr %test3) 1))
+      operators.state
+  ==
 ::
 ::  TODO: signature format changed; regenerate
 ::
