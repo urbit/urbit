@@ -336,6 +336,33 @@
                   c3_y*   c_y,
                   u3_atom d);
 
+      /* u3r_bytes_fit():
+      **
+      **   Copy (len_w) bytes of (a) into (buf_y) if it fits, returning overage.
+      */
+        c3_w
+        u3r_bytes_fit(c3_w    len_w,
+                      c3_y*   buf_y,
+                      u3_atom a);
+
+      /* u3r_bytes_alloc():
+      **
+      **  Copy (len_w) bytes starting at (a_w) from (b) into a fresh allocation.
+      */
+        c3_y*
+        u3r_bytes_alloc(c3_w    a_w,
+                        c3_w    len_w,
+                        u3_atom b);
+
+      /* u3r_bytes_all():
+      **
+      **  Allocate and return a new byte array with all the bytes of (a),
+      **  storing the length in (len_w).
+      */
+        c3_y*
+        u3r_bytes_all(c3_w*   len_w,
+                      u3_atom a);
+
       /* u3r_chop():
       **
       **   Into the bloq space of `met`, from position `fum` for a
@@ -373,6 +400,15 @@
         c3_w
         u3r_word(c3_w    a_w,
                  u3_atom b);
+
+
+      /* u3r_word_fit():
+      **
+      **   Fill (out_w) with (a) if it fits, returning success.
+      */
+        c3_t
+        u3r_word_fit(c3_w*   out_w,
+                     u3_atom a);
 
       /* u3r_chub():
       **

@@ -757,8 +757,6 @@ u3_king_commence()
   u3C.wag_w |= u3o_hashless;
   u3C.wag_w &= ~u3o_debug_cpu;
 
-  u3m_boot_lite();
-
   //  wire up signal controls
   //
   u3C.sign_hold_f = _king_sign_hold;
@@ -799,6 +797,7 @@ u3_king_commence()
   _king_loop_init();
   uv_run(u3L, UV_RUN_DEFAULT);
   _king_loop_exit();
+  u3m_stop();
 }
 
 /* u3_king_stub(): get the One Pier for unreconstructed code.

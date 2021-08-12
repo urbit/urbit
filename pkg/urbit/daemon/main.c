@@ -14,7 +14,6 @@
 #include <openssl/ssl.h>
 #include <h2o.h>
 #include <curl/curl.h>
-#include <argon2.h>
 #include <vere/db/lmdb.h>
 
 #include "ca-bundle.h"
@@ -533,7 +532,6 @@ report(void)
          LIBCURL_VERSION_MAJOR,
          LIBCURL_VERSION_MINOR,
          LIBCURL_VERSION_PATCH);
-  printf("argon2: 0x%x\n", ARGON2_VERSION_NUMBER);
 }
 
 /* _stop_exit(): exit immediately.
@@ -768,6 +766,11 @@ main(c3_i   argc,
       }
     }
     #endif
+
+    //  starting u3m configures OpenSSL memory functions, so we must do it
+    //  before any OpenSSL allocations
+    // 
+    u3m_boot_lite();
 
     //  Initialize OpenSSL for client and server
     //
