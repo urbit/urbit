@@ -525,6 +525,7 @@
         nax=(set [=bone =message-num])
         heeds=(set duct)
         closing=(set bone)
+        corked=(set bone)
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::
