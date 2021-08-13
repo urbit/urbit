@@ -1,8 +1,5 @@
 /+  *test, naive, ethereum, azimuth, *naive-transactions
 ::
-::  TODO: Write gate that takes several skim-tx:naive and turns
-::  them into a single batch
-::
 |%
 ++  n  |=([=^state:naive =^input:naive] (%*(. naive lac |) verifier 1.337 +<))
 ::
@@ -11,7 +8,8 @@
 ::  the log-name here is the head of the topics list, so topics
 ::  is actually a lest as found in naive.hoon. the changed-dns
 ::  event has no additional topics, which requires the gate here
-::  to take an empty list.
+::  to take an empty list. TODO: does this create an issue with
+::  the rollup RPC or lib/ethereum?
 ++  log
   |=  [log-name=@ux data=@ux topics=(list @)]
   ^-  ^input:naive
@@ -3164,38 +3162,37 @@
   ::  raw data from transaction
   ::  https://etherscan.io/tx/0x51a26c3b100ad1c7aa8d593068df60465046d437edc3e939fadee4056791fd13#eventlog
   ::
-  ::  TODO: this shouldn't start with a 1 but I'm not sure how else
-  ::  to pass leading zeroes in for data.log
-  =/  data=@ux  0x1000.0000.0000.0000.0000.0000.0000.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0000.0060.0000.0000.0000.0000.0000.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0000.0000.0000.00a0.0000.0000.0000.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0000.0000.0000.0000.0000.00e0.0000.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0009.7572.6269.742e.6f72.6700.0000.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0000.0000.0000.0000.0009.7572.6269.
-                  742e.6f72.6700.0000.0000.0000.0000.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0000.0009.7572.6269.742e.6f72.6700.
-                  0000.0000.0000.0000.0000.0000.0000.
-                  0000.0000.0000.0000
+  =/  data  %-  crip
+            ;:  weld
+            "0x000000000000000000000000000000"
+            "00000000000000000000000000000000"
+            "60000000000000000000000000000000"
+            "00000000000000000000000000000000"
+            "a0000000000000000000000000000000"
+            "00000000000000000000000000000000"
+            "e0000000000000000000000000000000"
+            "00000000000000000000000000000000"
+            "0975726269742e6f7267000000000000"
+            "00000000000000000000000000000000"
+            "00000000000000000000000000000000"
+            "00000000000000000000000000000000"
+            "0975726269742e6f7267000000000000"
+            "00000000000000000000000000000000"
+            "00000000000000000000000000000000"
+            "00000000000000000000000000000000"
+            "0975726269742e6f7267000000000000"
+            "00000000000000000000000000000000"
+            "00"
+            ==
   ::
   %+  expect-eq
-    !>  ~
+    !>  `(list @t)`['urbit.org' 'urbit.org' 'urbit.org' ~]
   ::
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    =^  f  state  (n state (changed-dns:l1 data))
-    state
+    =^  f  state  (n state (changed-dns:l1 (hex-to-num:ethereum data)))
+    dns.state
 ::
 ++  test-approval-for-all
   =|  operators=(jug address address)
