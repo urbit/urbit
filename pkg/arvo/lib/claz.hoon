@@ -44,6 +44,9 @@
     %cast-document-vote    (cast-document-vote:dat +.call)
   ::
     %send-point  (send-point:dat +.call)
+  ::
+    %approve-batch-transfer  (approve-batch-transfer:dat +.call)
+    %transfer-batch          (transfer-batch:dat +.call)
   ==
 ::
 +$  call-data  call-data:rpc
@@ -73,6 +76,9 @@
   ++  deposit                 (enc deposit:cal)
   ::
   ++  send-point              (enc send-point:cal)
+  ::
+  ++  approve-batch-transfer  (enc approve-batch-transfer:cal)
+  ++  transfer-batch          (enc transfer-batch:cal)
   --
 ::
 ::TODO  lib
@@ -250,6 +256,20 @@
     :~  [%uint `@`as]
         [%uint `@`point]
         [%address to]
+    ==
+  ::
+  ++  approve-batch-transfer
+    |=  from=address
+    ^-  call-data
+    :-  'approveBatchTransfer(address)'
+    :~  [%address from]
+    ==
+  ::
+  ++  transfer-batch
+    |=  to=address
+    ^-  call-data
+    :-  'transferBatch(address)'
+    :~  [%address to]
     ==
   ::
   ::  read calls
