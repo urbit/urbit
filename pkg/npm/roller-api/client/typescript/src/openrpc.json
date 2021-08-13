@@ -2022,7 +2022,8 @@
         "title": "TransferPointParams",
         "type": "object",
         "required": [
-          "address"
+          "address",
+          "reset"
         ],
         "properties": {
           "address": {

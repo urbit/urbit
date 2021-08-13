@@ -192,7 +192,7 @@ test("transfer", async () => {
   //
   //    ("sig" is signed using nonce 0)
   //
-  const transferData = { address: planetAddress };
+  const transferData = { address: planetAddress, reset: true };
   //const modlep: L2Point = await api.getPoint("~modlep-fosreg");
   const transferHash: Hash = await api.hashTransaction(
     0,

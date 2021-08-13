@@ -2003,7 +2003,7 @@
       "TransferPointParams": {
         "title": "TransferPointParams",
         "type": "object",
-        "required": ["address"],
+        "required": ["address", "reset"],
         "properties": {
           "address": {
             "$ref": "#/components/schemas/eth-address"
