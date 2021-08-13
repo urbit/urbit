@@ -358,7 +358,7 @@
       ++  hex
         |=  [p=@ q=@]
         ^-  json
-        s+(crip "0x{((x-co:co p) q)}")
+        s+(crip ['0' 'x' ((x-co:co (mul 2 p)) q)])
       --
     ::
     ++  to-hex
@@ -451,10 +451,6 @@
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 1)
     ~(params error:json-rpc id)
-  :: ?~  ship=(~(get by params) 'ship')
-  ::   ~(params error:json-rpc id)
-  :: ?~  ship=(parse-ship u.ship)
-  ::   ~(params error:json-rpc id)
   ?~  ship=(ship:from-json params)
     ~(params error:json-rpc id)
   [%result id (spawned:to-json (scry u.ship))]
@@ -475,7 +471,7 @@
   =/  tx=(unit tx:naive)  (build-l2-tx action u.from params)
   ?~  tx  [~ ~(parse error:json-rpc id)]
   =+  (gen-tx-octs:lib u.tx)
-  :_  [%result id (hex:to-json p (hash-tx:lib p q))]
+  :_  [%result id (hex:to-json 32 (hash-tx:lib p q))]
   %-  some
   aggregator-action+!>([%submit | u.addr u.sig %don u.tx])
 ::
@@ -567,6 +563,6 @@
   =/  tx=(unit tx:naive)  (build-l2-tx u.l2-tx u.from params)
   ?~  tx  ~(parse error:json-rpc id)
   :+  %result  id
-  =-  (hex:to-json p (hash-tx:lib p q))
-  (unsigned-tx:lib u.nonce chain-id (gen-tx-octs:lib u.tx))
+  =-  (hex:to-json 32 (hash-tx:lib p q))
+  (unsigned-tx:lib chain-id u.nonce (gen-tx-octs:lib u.tx))
 --
