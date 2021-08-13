@@ -5,7 +5,8 @@
     "eslint": "^7.29.0",
     "husky": "^6.0.0",
     "lerna": "^4.0.0",
-    "lint-staged": "^11.0.0"
+    "lint-staged": "^11.1.2",
+    "prettier": "^2.3.2"
   },
   "scripts": {
     "watch-libs": "lerna run watch --no-private --parallel",
