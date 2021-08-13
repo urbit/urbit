@@ -1,6 +1,7 @@
 ::  azio: asynchronous azimuth reads and related operations
 ::
-/+  az=azio-azimuth, ec=azio-ecliptic, ds=azio-delegated-sending,
+/+  az=azio-azimuth, ec=azio-ecliptic,
+    li=azio-linear, ds=azio-delegated-sending,
     strandio, *ethereum
 ::
 ^|
@@ -8,6 +9,7 @@
     $=  contracts
     $:  azimuth=address
         ecliptic=address
+        linear=address
         delegated-sending=address
     ==  ==
 ++  azimuth
@@ -49,6 +51,9 @@
 ::
 ++  ecliptic
   ~(. ec url ecliptic.contracts)
+::
+++  linear
+  ~(. li url linear.contracts)
 ::
 ++  delegated-sending
   =+  ~(. ds url delegated-sending.contracts)
