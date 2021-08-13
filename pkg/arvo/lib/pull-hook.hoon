@@ -306,6 +306,17 @@
           poke-sane:hc
         [cards this]
       ::
+          %hook-desync
+        =^  cards  state
+          (poke-desync:hc !<(resource vase))
+        [cards this]
+        ::
+          %hook-resync
+        =^  cards  state
+          (poke-resync:hc !<(resource vase))
+        [cards this]
+
+      ::
           %pull-hook-action
         ?>  (team:title [our src]:bowl)
         =^  [cards=(list card) hook=_pull-hook]  state
@@ -662,7 +673,20 @@
     ~?  >  ?=(^ cards)
       "Fixed subscriptions in {<dap.bowl>}"
     [cards state]
-
+  ::
+  ++  poke-desync
+    |=  rid=resource
+    =^  [cards=(list card) hook=_pull-hook]  state
+      tr-abet:tr-leave:(tr-abed:track-engine rid)
+    =.  pull-hook  hook
+    [cards state]
+  ::
+  ++  poke-resync
+    |=  rid=resource
+    =^  [cards=(list card) hook=_pull-hook]  state
+      tr-abet:tr-kick:(tr-abed:track-engine rid)
+    =.  pull-hook  hook
+    [cards state]
   ::
   ++  check-subscription
     |=  [rid=resource =ship]

@@ -271,6 +271,10 @@
       ~/  %on-poke
       |=  [=mark =vase]
       ^-  (quip card:agent:gall agent:gall)
+      ?:  =(mark %hook-desync)
+        =^  cards  state
+          (desync:hc !<(resource vase))
+        [cards this]
       ?:  =(mark %kick)
         ?>  (team:title [our src]:bowl)
         :_  this
@@ -389,6 +393,14 @@
       ver  ~(. versioning [bowl [update-mark version min-version]:config])
       io   ~(. agentio bowl)
       pass  pass:io
+  ::
+  ++  desync
+    |=  rid=resource
+    ^-  (quip card:agent:gall _state)
+    =/  subs   (incoming-subscriptions resource+(en-path:resource rid))
+    =/  paths  (murn subs |=([=ship =path] ?:(=(ship src.bowl) `path ~)))
+    :_  state
+    (kick-only:io src.bowl paths)^~
   ::
   ++  poke-hook-action
     ~/  %poke-hook-action
