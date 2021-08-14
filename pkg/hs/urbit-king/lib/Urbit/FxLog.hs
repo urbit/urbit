@@ -1,15 +1,21 @@
 module Urbit.FxLog where
 
-import Urbit.Prelude
+import Urbit.Prelude hiding (readFile, tail, init)
+import Prelude (read, tail, init)
 
-import Data.Text.IO
+import Data.List.Split (splitOn)
+import Data.Text.IO hiding (readFile)
+import Data.Maybe (fromJust)
 import System.IO hiding (hFlush, hPutStrLn)
 import System.IO.Unsafe
 import System.Random
 
+import Urbit.Arvo.Common
 import Urbit.Arvo.Effect
 import Urbit.Noun.ByteString
 import Urbit.Vere.Serf.IPC.Types
+
+import qualified Urbit.Ob as Ob
 
 file :: Handle
 file = unsafePerformIO $ do
@@ -32,3 +38,39 @@ recordPlea = \case
       WSwap _ _ _ f -> f
       WBail _ -> []
   _ -> pure ()
+
+parse :: String -> Lenient Ef
+parse str = convert (atm, dest, byt)
+ where
+  (begin, res1) = span (/= ',') $ tail str
+  (middle, res2) = span (/= ',') $ tail res1
+  end = tail res2
+  atm = read begin
+  dest = case middle of
+    (stripPrefix "EachYes \"" -> Just x) ->
+      EachYes $ Patp $ fromIntegral
+              $ Ob.fromPatp $ either undefined id $ Ob.parsePatp $ pack x
+    (stripPrefix "EachNo (AAIpv4 " -> Just x) ->
+      let [hos, por] = splitOn " " $ init x
+      in EachNo $ AAIpv4 (read hos) (read por)
+  byt = read $ init end
+
+convert (a, d, b) =
+  GoodParse $ EfVane $ VENewt $ NewtEfSend (a, ()) d (MkBytes $ fromBS b)
+
+loadFx :: IO [Lenient Ef]
+loadFx = fmap parse <$> filter (/= "") <$> lines <$> readFile "sends.in"
+
+nextFx :: IO [Lenient Ef]
+nextFx = atomically do
+  (next, fx) <- splitAt 90001 <$> readTVar var
+  writeTVar var fx
+  pure next
+ where
+  var = unsafePerformIO $ newTVarIO =<< loadFx
+
+addFx :: [Lenient Ef] -> Plea -> Plea
+addFx fx = \case
+  PWork (WDone a b f) -> PWork $ WDone a b (f ++ fx)
+  PWork (WSwap a b c f) -> PWork $ WSwap a b c (f ++ fx)
+  PWork (WBail a) -> PWork $ WBail a

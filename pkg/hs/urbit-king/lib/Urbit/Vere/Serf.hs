@@ -22,7 +22,6 @@ import Urbit.King.App.Class         (HasStderrLogFunc(..))
 import Urbit.EventLog.Event         (parseLogEvent)
 
 import qualified Data.Conduit.Combinators as CC
-import qualified System.ProgressBar       as PB
 import qualified Urbit.EventLog.LMDB      as Log
 
 import qualified Urbit.Vere.Serf.IPC as X (Config (..), EvErr (..), Flag (..),
@@ -131,16 +130,7 @@ trackProgress
   :: HasLogFunc e
   => Word64
   -> RIO e (Int -> IO ())
-trackProgress = \case
-  0   -> pure $ const $ pure ()
-  num -> do
-    let style = PB.defStyle { PB.stylePostfix = PB.exact }
-    let refresh = 10
-    let init = PB.Progress 0 (fromIntegral num) ()
-    bar <- PB.newProgressBar style refresh init
-    env <- ask
-    let incr = PB.incProgress bar
-    pure (runRIO env . incr)
+trackProgress = const (pure (const (pure ())))
 
 
 -- Collect FX ------------------------------------------------------------------

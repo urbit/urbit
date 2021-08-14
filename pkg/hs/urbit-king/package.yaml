@@ -85,6 +85,7 @@ dependencies:
   - rio-orphans
   - semigroups
   - smallcheck
+  - split
   - stm
   - stm-chans
   - tasty

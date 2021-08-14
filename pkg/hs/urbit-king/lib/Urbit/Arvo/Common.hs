@@ -23,9 +23,14 @@ module Urbit.Arvo.Common
   ) where
 
 import Urbit.Prelude
+import Prelude (Read(..), read)
 
 import Control.Monad.Fail (fail)
+import Data.Char (isDigit)
+import Data.List.Split (splitOn)
 import Data.Serialize
+import Text.Read hiding (get)
+import qualified Text.Read as R
 
 import qualified Network.HTTP.Types.Method as H
 import qualified Network.Socket            as N
@@ -177,7 +182,7 @@ newtype Patp a = Patp { unPatp :: a }
 
 -- Network Port
 newtype Port = Port { unPort :: Word16 }
-  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Show, Read, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
 -- @if
 newtype Ipv4 = Ipv4 { unIpv4 :: N.HostAddress }
@@ -201,6 +206,24 @@ instance Show Ipv4 where
     show c ++ "." ++
     show d
 
+instance Read Ipv4 where
+  readsPrec _ str =
+    let (pre, suf) = span (\x -> isDigit x || x == '.') str
+    in case splitOn "." pre of
+      (fmap read -> [a, b, c, d]) ->
+        [(Ipv4 (N.tupleToHostAddress (a, b, c, d)), suf)]
+      _ -> []
+
+  {-readPrec = do
+    a <- readPrec
+    '.' <- R.get
+    b <- readPrec
+    '.' <- R.get
+    c <- readPrec
+    '.' <- R.get
+    d <- readPrec
+    pure $ Ipv4 $ N.tupleToHostAddress (a, b, c, d)-}
+
 -- @is
 -- should probably use hostAddress6ToTuple here, but no one uses it right now
 newtype Ipv6 = Ipv6 { unIpv6 :: Word128 }
@@ -211,8 +234,11 @@ type Galaxy = Patp Word8
 instance Integral a => Show (Patp a) where
   show = show . Ob.renderPatp . Ob.patp . fromIntegral . unPatp
 
+instance Integral a => Read (Patp a) where
+  readsPrec = undefined
+
 data AmesAddress = AAIpv4 Ipv4 Port
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Read)
 
 instance Serialize AmesAddress where
   get = AAIpv4 <$> get <*> (Port <$> getWord16le)

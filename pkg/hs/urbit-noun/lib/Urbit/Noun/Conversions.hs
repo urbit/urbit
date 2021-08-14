@@ -727,7 +727,7 @@ instance FromNoun a => FromNoun (Maybe a) where
 data Each a b
     = EachYes a
     | EachNo b
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Read)
 
 instance (ToNoun a, ToNoun b) => ToNoun (Each a b) where
     toNoun (EachYes x) = C (A 0) (toNoun x)
