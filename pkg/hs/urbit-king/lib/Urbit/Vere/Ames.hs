@@ -337,7 +337,7 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
 
     NewtEfSend (_id, ()) dest (MkBytes bs) -> do
       atomically (readTVar aTurfs) >>= \case
-        Nothing    -> stderr "ames: send before turfs" >> pure ()
+        Nothing    -> {- stderr "ames: send before turfs" >> -} pure ()
         Just turfs -> send aUdpServ aResolvr mode dest bs
 
   send :: UdpServ

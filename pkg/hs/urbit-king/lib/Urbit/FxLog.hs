@@ -6,7 +6,7 @@ import Prelude (read, tail, init)
 import Data.List.Split (splitOn)
 import Data.Text.IO hiding (readFile)
 import Data.Maybe (fromJust)
-import System.IO hiding (hFlush, hPutStrLn)
+import System.IO hiding (hFlush, hPutStrLn, hGetLine, hIsEOF)
 import System.IO.Unsafe
 import System.Random
 
@@ -39,6 +39,18 @@ recordPlea = \case
       WBail _ -> []
   _ -> pure ()
 
+
+--------------------------------------------------------------------------------
+
+line :: Handle -> IO (Maybe (Lenient Ef))
+line h = hIsEOF h >>= \case
+  True  -> pure Nothing
+  False -> do
+    l <- hGetLine h
+    case l of
+      "" -> pure Nothing
+      l  -> pure $ Just $ parse $ unpack l
+
 parse :: String -> Lenient Ef
 parse str = convert (atm, dest, byt)
  where
@@ -58,19 +70,17 @@ parse str = convert (atm, dest, byt)
 convert (a, d, b) =
   GoodParse $ EfVane $ VENewt $ NewtEfSend (a, ()) d (MkBytes $ fromBS b)
 
-loadFx :: IO [Lenient Ef]
-loadFx = fmap parse <$> filter (/= "") <$> lines <$> readFile "sends.in"
+{-loadFx :: IO [Lenient Ef]
+loadFx = fmap parse <$> filter (/= "") <$> take 1000 <$> lines <$> readFile "sends.in"-}
 
 nextFx :: IO [Lenient Ef]
-nextFx = atomically do
-  (next, fx) <- splitAt 90001 <$> readTVar var
-  writeTVar var fx
-  pure next
+nextFx = catMaybes <$> replicateM 100 (line han)
  where
-  var = unsafePerformIO $ newTVarIO =<< loadFx
+  han = unsafePerformIO $ openFile "sends.in" ReadMode
 
-addFx :: [Lenient Ef] -> Plea -> Plea
+addFx :: IO [Lenient Ef] -> Plea -> IO Plea
 addFx fx = \case
-  PWork (WDone a b f) -> PWork $ WDone a b (f ++ fx)
-  PWork (WSwap a b c f) -> PWork $ WSwap a b c (f ++ fx)
-  PWork (WBail a) -> PWork $ WBail a
+  PWork (WDone a b f) -> PWork . WDone a b . (f ++) <$> fx
+  PWork (WSwap a b c f) -> PWork . WSwap a b c . (f ++) <$> fx
+  PWork (WBail a) -> pure $ PWork $ WBail a
+  p -> pure $ p
