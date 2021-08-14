@@ -2152,6 +2152,10 @@
     ++  on-wake
       |=  [=bone error=(unit tang)]
       ^+  peer-core
+      ?:  ?|  (~(has in corked.peer-state) bone)
+              (~(has in corked.peer-state) (mix 1 bone))
+          ==
+        peer-core
       ::  if we previously errored out, print and reset timer for later
       ::
       ::    This really shouldn't happen, but if it does, make sure we
@@ -2275,8 +2279,6 @@
       ++  on-pump-done
         |=  [=message-num error=(unit error)]
         ^+  peer-core
-        ::  if bone marked as closing, do on-cork
-        ::
         ::  if odd bone, ack is on "subscription update" message; no-op
         ::
         ?:  =(1 (end 0 bone))
@@ -2294,7 +2296,8 @@
         (emit (got-duct bone) %give %done error)
       ::  +on-pump-cork: kill flow on cork sender side
       ::
-      ++  on-pump-cork  ~&('on-cork at on-pump' (on-cork bone))
+      ++  on-pump-cork
+        ~&('on-cork at on-pump' (on-cork bone))
       ::  +on-pump-send: emit message fragment requested by |message-pump
       ::
       ++  on-pump-send
