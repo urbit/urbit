@@ -27,9 +27,14 @@ export const Providers = ({ match, history }: ProvidersProps) => {
   }, []);
 
   const handleSearch = useCallback(
-    debounce((input: string) => {
-      push(match?.path.replace(':ship', input.trim()));
-    }, 300),
+    debounce(
+      (input: string) => {
+        const normalizedValue = input.trim().replace(/(~?[\w^_-]{3,13})\//, '$1/apps');
+        push(match?.path.replace(':ship', normalizedValue));
+      },
+      300,
+      { leading: true }
+    ),
     [path]
   );
 

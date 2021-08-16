@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { Link, RouteComponentProps } from 'react-router-dom';
+import fuzzy from 'fuzzy';
 import slugify from 'slugify';
 import { ShipName } from '../../components/ShipName';
 import { fetchProviderTreaties, treatyKey } from '../../state/docket';
@@ -11,12 +12,23 @@ type AppsProps = RouteComponentProps<{ ship: string }>;
 
 export const Apps = ({ match }: AppsProps) => {
   const queryClient = useQueryClient();
-  const { select } = useNavStore();
+  const { searchInput, select } = useNavStore((state) => ({
+    searchInput: state.searchInput,
+    select: state.select
+  }));
   const provider = match?.params.ship;
   const { data } = useQuery(treatyKey([provider]), () => fetchProviderTreaties(provider), {
     enabled: !!provider
   });
-  const count = data?.length;
+  const results = data
+    ? fuzzy
+        .filter(
+          searchInput,
+          data.map((t) => t.title)
+        )
+        .map((result) => data[result.index])
+    : undefined;
+  const count = results?.length;
 
   useEffect(() => {
     select(
@@ -43,9 +55,9 @@ export const Apps = ({ match }: AppsProps) => {
           {count} result{count === 1 ? '' : 's'}
         </p>
       </div>
-      {data && (
+      {results && (
         <ul className="space-y-8" aria-labelledby="developed-by">
-          {data.map((app) => (
+          {results.map((app) => (
             <li key={app.desk}>
               <Link
                 to={`${match?.path.replace(':ship', provider)}/${slugify(app.desk)}`}

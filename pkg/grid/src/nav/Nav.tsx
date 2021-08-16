@@ -46,9 +46,14 @@ export const useNavStore = create<NavStore>((set) => ({
     set({ searchInput: input || '', selection })
 }));
 
+function normalizePathEnding(path: string) {
+  const end = path.length - 1;
+  return path[end] === '/' ? path.substring(0, end - 1) : path;
+}
+
 export function createNextPath(current: string, nextPart?: string): string {
   let end = nextPart;
-  const parts = current.split('/').reverse();
+  const parts = normalizePathEnding(current).split('/').reverse();
   if (parts[1] === 'search') {
     end = 'apps';
   }
@@ -61,7 +66,7 @@ export function createNextPath(current: string, nextPart?: string): string {
 }
 
 export function createPreviousPath(current: string): string {
-  const parts = current.split('/');
+  const parts = normalizePathEnding(current).split('/');
   parts.pop();
 
   if (parts[parts.length - 1] === 'leap') {
