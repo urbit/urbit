@@ -1,8 +1,8 @@
-::  Aggregator JSON-RPC API
+::  Roller JSON-RPC API
 ::
 /-  rpc=json-rpc, *dice
 /+  naive,
-    azimuth-rpc,
+    azimuth-roll-rpc,
     json-rpc,
     *server,
     default-agent,
@@ -141,7 +141,7 @@
   ::
   ++  process
     |=  request:rpc
-    =,  azimuth-rpc
+    =,  azimuth-roll-rpc
     ?.  ?=([%map *] params)
       [~ ~(parse error:json-rpc id)]
     =/  method=@tas  (enkebab method)

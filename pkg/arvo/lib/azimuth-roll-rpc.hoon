@@ -1,4 +1,4 @@
-::  azimuth-rpc: command parsing and utilities
+::  azimuth/roll rpc: command parsing and utilities
 ::
 /-  rpc=json-rpc, *dice
 /+  naive, json-rpc, lib=naive-transactions

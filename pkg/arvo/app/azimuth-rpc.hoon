@@ -2,7 +2,7 @@
 ::
 /-  rpc=json-rpc
 /+  naive,
-    azimuth-rpc,
+    azimuth-roll-rpc,
     json-rpc,
     *server,
     default-agent,
@@ -141,7 +141,7 @@
   ::
   ++  process
     |=  request:rpc
-    =,  azimuth-rpc
+    =,  azimuth-roll-rpc
     ?.  ?=([%map *] params)
       [~ ~(parse error:json-rpc id)]
     =/  method=@tas  (enkebab method)
@@ -163,9 +163,7 @@
   ++  dns
     .^  (list @t)
         %gx
-        %+  ~(scry agentio bowl)
-          %azimuth
-        /dns/noun
+        (~(scry agentio bowl) %azimuth /dns/noun)
     ==
   --
 --

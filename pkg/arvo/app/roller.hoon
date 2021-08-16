@@ -1,4 +1,4 @@
-::  aggregator: Azimuth L2 roll aggregator
+::  roller: Azimuth L2 roll aggregator
 ::
 ::    general flow is as described below, to ensure transactions actually go
 ::    through once we start sending it out, in the dumbest reasonable way.
@@ -141,7 +141,7 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
-          %aggregator-action
+          %roller-action
         =+  !<(poke=action vase)
         (on-action:do poke)
       ==
@@ -749,7 +749,7 @@
   |=  pk=@
   ^-  (list card)
   ?~  endpoint  ~&([dap.bowl %no-endpoint] ~)
-  (start-thread:spider /nonce [%aggregator-nonce !>([u.endpoint pk])])
+  (start-thread:spider /nonce [%roller-nonce !>([u.endpoint pk])])
 ::
 ::  +send-roll: start thread to submit roll from :sending to l1
 ::
@@ -767,7 +767,7 @@
   ::TODO  should go ahead and set resend timer in case thread hangs, or nah?
   %+  start-thread:spider
     /send/(scot %ux address)/(scot %ud nonce)
-  :-  %aggregator-send
+  :-  %roller-send
   !>  ^-  rpc-send-roll
   :*  u.endpoint
       contract
