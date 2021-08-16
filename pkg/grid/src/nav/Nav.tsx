@@ -1,4 +1,5 @@
 import { DialogContent } from '@radix-ui/react-dialog';
+import * as Portal from '@radix-ui/react-portal';
 import classNames from 'classnames';
 import React, {
   ChangeEvent,
@@ -80,8 +81,11 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
   const { push } = useHistory();
   const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+  const dialogNavRef = useRef<HTMLDivElement>(null);
   const { searchInput, setSearchInput, selection, select } = useNavStore();
   const [systemMenuOpen, setSystemMenuOpen] = useState(false);
+  const [delayedOpen, setDelayedOpen] = useState(false);
 
   const isOpen = menu !== 'closed';
   const eitherOpen = isOpen || systemMenuOpen;
@@ -90,8 +94,11 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
     (event: Event) => {
       event.preventDefault();
 
+      setDelayedOpen(true);
       if (menu === 'search' && inputRef.current) {
-        inputRef.current.focus();
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 0);
       }
     },
     [menu]
@@ -119,6 +126,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
   const onDialogClose = useCallback((open: boolean) => {
     if (!open) {
       select(null);
+      setDelayedOpen(false);
       push('/');
     }
   }, []);
@@ -156,91 +164,75 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
   }, []);
 
   return (
-    <menu className="w-full max-w-3xl my-6 px-4 text-gray-400 font-semibold">
-      <div className={classNames('flex space-x-2', isOpen && 'invisible')}>
-        {!isOpen && (
-          <SystemMenu
-            showOverlay
-            open={systemMenuOpen}
-            setOpen={setSystemMenuOpen}
-            className={classNames(
-              'relative z-50 flex-none',
-              eitherOpen ? 'bg-white' : 'bg-gray-100'
-            )}
-          />
-        )}
+    <>
+      <Portal.Root containerRef={delayedOpen ? dialogNavRef : navRef} className="flex space-x-2">
+        <SystemMenu
+          open={systemMenuOpen}
+          setOpen={setSystemMenuOpen}
+          className={classNames('relative z-50 flex-none', eitherOpen ? 'bg-white' : 'bg-gray-100')}
+        />
         <Link
           to="/leap/notifications"
-          className="relative z-50 flex-none circle-button bg-blue-400 text-white default-ring"
+          className="relative z-50 flex-none circle-button bg-blue-400 text-white"
         >
           3
         </Link>
-        <input
-          onClick={toggleSearch}
-          onFocus={onFocus}
-          type="text"
-          className="relative z-50 rounded-full w-full pl-4 h4 bg-gray-100 default-ring"
-          placeholder="Search Landscape"
-        />
-      </div>
-
+        <form
+          className={classNames(
+            'relative z-50 flex items-center w-full px-2 rounded-full bg-white default-ring focus-within:ring-4',
+            !isOpen && 'bg-gray-100'
+          )}
+          onSubmit={() => {}}
+        >
+          <label
+            htmlFor="leap"
+            className={classNames(
+              'inline-block flex-none p-2 h4 text-blue-400',
+              !selection && 'sr-only'
+            )}
+          >
+            {selection || 'Search Landscape'}
+          </label>
+          <input
+            id="leap"
+            type="text"
+            ref={inputRef}
+            placeholder={selection ? '' : 'Search Landscape'}
+            className="flex-1 w-full h-full px-2 h4 rounded-full bg-transparent outline-none"
+            value={searchInput}
+            onClick={toggleSearch}
+            onFocus={onFocus}
+            onChange={onChange}
+            role="combobox"
+            aria-controls="leap-items"
+            aria-expanded
+          />
+          {(selection || searchInput) && (
+            <Link
+              to="/"
+              className="circle-button w-8 h-8 text-gray-400 bg-gray-100 default-ring"
+              onClick={() => select(null)}
+            >
+              <Cross className="w-3 h-3 fill-current" />
+              <span className="sr-only">Close</span>
+            </Link>
+          )}
+        </form>
+      </Portal.Root>
+      <menu
+        ref={navRef}
+        className={classNames(
+          'w-full max-w-3xl my-6 px-4 text-gray-400 font-semibold',
+          delayedOpen && 'h-12'
+        )}
+      />
       <Dialog open={isOpen} onOpenChange={onDialogClose}>
         <DialogContent
           onOpenAutoFocus={onOpen}
           className="fixed top-0 left-[calc(50%-7.5px)] w-[calc(100%-15px)] max-w-3xl px-4 text-gray-400 -translate-x-1/2 outline-none"
         >
           <div tabIndex={-1} onKeyDown={onDialogKey} role="presentation">
-            <header className="flex my-6 space-x-2">
-              <SystemMenu
-                open={systemMenuOpen}
-                setOpen={setSystemMenuOpen}
-                className={classNames(
-                  'relative z-50 flex-none',
-                  eitherOpen ? 'bg-white' : 'bg-gray-100'
-                )}
-              />
-              <Link
-                to="/leap/notifications"
-                className="relative z-50 flex-none circle-button bg-blue-400 text-white"
-              >
-                3
-              </Link>
-              <div className="relative z-50 flex items-center w-full px-2 rounded-full bg-white default-ring focus-within:ring-4">
-                <label
-                  htmlFor="leap"
-                  className={classNames(
-                    'inline-block flex-none p-2 h4 text-blue-400',
-                    !selection && 'sr-only'
-                  )}
-                >
-                  {selection || 'Search Landscape'}
-                </label>
-                <input
-                  id="leap"
-                  type="text"
-                  ref={inputRef}
-                  placeholder={selection ? '' : 'Search Landscape'}
-                  className="flex-1 w-full h-full px-2 h4 rounded-full bg-transparent outline-none"
-                  value={searchInput}
-                  onClick={toggleSearch}
-                  onFocus={onFocus}
-                  onChange={onChange}
-                  role="combobox"
-                  aria-controls="leap-items"
-                  aria-expanded
-                />
-                {(selection || searchInput) && (
-                  <Link
-                    to="/"
-                    className="circle-button w-8 h-8 text-gray-400 bg-gray-100 default-ring"
-                    onClick={() => select(null)}
-                  >
-                    <Cross className="w-3 h-3 fill-current" />
-                    <span className="sr-only">Close</span>
-                  </Link>
-                )}
-              </div>
-            </header>
+            <header ref={dialogNavRef} className="my-6" />
             <div
               id="leap-items"
               className="grid grid-rows-[fit-content(calc(100vh-7.5rem))] bg-white rounded-3xl overflow-hidden"
@@ -256,6 +248,6 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
           </div>
         </DialogContent>
       </Dialog>
-    </menu>
+    </>
   );
 };
