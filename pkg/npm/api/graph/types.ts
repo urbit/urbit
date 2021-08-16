@@ -1,5 +1,7 @@
 import { Patp } from "..";
 import BigIntOrderedMap from "../lib/BigIntOrderedMap";
+import BigIntArrayOrderedMap from "../lib/BigIntArrayOrderedMap";
+
 
 export interface TextContent {
   text: string;
@@ -64,6 +66,21 @@ export interface GraphNode {
   post: Post;
 }
 
+export interface FlatGraphNode {
+  children: null;
+  post: Post;
+}
+
 export type Graph = BigIntOrderedMap<GraphNode>;
 
 export type Graphs = { [rid: string]: Graph };
+
+export type FlatGraph = BigIntArrayOrderedMap<FlatGraphNode>;
+
+export type FlatGraphs = { [rid: string]: FlatGraph };
+
+export type ThreadGraphs = {
+  [rid: string]: {
+    [index: string]: FlatGraph;
+  }
+};

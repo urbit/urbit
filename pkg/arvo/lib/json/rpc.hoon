@@ -17,7 +17,7 @@
   |=  request
   ^-  json
   %-  pairs:enjs:format
-  :~  jsonrpc+s+'0.2'
+  :~  jsonrpc+s+'2.0'
       id+s+id
       method+s+method
     ::
@@ -25,7 +25,9 @@
       ^-  json
       ?-  -.params
         %list    [%a +.params]
-        %map     [%o +.params] 
+        ::  FIXME: support either %map or %object (also in /sur/json/rpc)
+        ::
+        %map     [%o +.params]
         %object  [%o (~(gas by *(map @t json)) +.params)]
   ==  ==
 ::
@@ -35,14 +37,16 @@
   ::  TODO: consider all cases
   ::
   ?+  -.response  ~|([%unsupported-rpc-response response] !!)
+    %batch  a+(turn bas.response response-to-json)
+    ::
       %result
     :-  %o
     %-  molt
     ^-  (list [@t json])
     ::  FIXME: return 'id' as string, number or NULL
-    ::  
-    :~  ['jsonrpc' s+'2.0'] 
-        ['id' s+id.response] 
+    ::
+    :~  ['jsonrpc' s+'2.0']
+        ['id' s+id.response]
         ['result' res.response]
     ==
   ::
@@ -50,39 +54,48 @@
     :-  %o
     %-  molt
     ^-  (list [@t json])
-    :~  ['jsonrpc' s+'2.0'] 
-        ['id' ?~(id.response ~ s+id.response)] 
+    :~  ['jsonrpc' s+'2.0']
+        ['id' ?~(id.response ~ s+id.response)]
         ['code' n+code.response]
         ['message' s+message.response]
     ==
   ==
 ::
 ++  validate-request
-  |=  [body=(unit octs) parse-method=$-(@t term)]
-  ^-  (unit request)
+  |=  body=(unit octs)
+  ^-  (unit batch-request)
   ?~  body  ~
   ?~  jon=(de-json:html q.u.body)  ~
-  ::  ignores non-object responses
-  ::
-  :: ?.  ?=([%o *] json)  ~|([%format-not-valid json] !!)
-  ?.  ?=([%o *] u.jon)  ~
-  %-  some
-  %.  u.jon
-  =,  dejs:format
-  ::  TODO: If parsing fails, return a proper error (not 500)
-  ::
+  =,  dejs-soft:format
+  =;  reparser
+    ?:  ?=([%a *] u.jon)
+      (bind ((ar reparser) u.jon) (lead %a))
+    (bind (reparser u.jon) (lead %o))
   %-  ot
   :~  ::  FIXME: parse 'id' as string, number or NULL
       ::
       ['id' so]
       ['jsonrpc' (su (jest '2.0'))]
-      ['method' (cu parse-method so)]
+      ['method' so]
     ::
       :-  'params'
       |=  =json
-      ^-  request-params
-      ?+  -.json  !!
-        %a  [%list ((ar same) json)]
-        %o  [%map ((om same) json)] 
+      ^-  (unit request-params)
+      ?+  -.json  ~
+        %a  `[%list ((ar:dejs:format same) json)]
+        %o  `[%map ((om:dejs:format same) json)]
   ==  ==
+::
+++  error
+  |_  id=@t
+  ::  https://www.jsonrpc.org/specification#error_object
+  ::
+  ++  parse      [%error id '-32700' 'Failed to parsed']
+  ++  request    [%error id '-32600' 'Invalid Request']
+  ++  method     [%error id '-32601' 'Method not found']
+  ++  params     [%error id '-32602' 'Invalid params']
+  ++  internal   [%error id '-32603' 'Internal error']
+  ++  not-found  [%error id '-32000' 'Resource not found']
+  ++  todo       [%error id '-32001' 'Method not implemented']
+  --
 --

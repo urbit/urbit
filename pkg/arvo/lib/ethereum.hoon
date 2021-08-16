@@ -483,6 +483,7 @@
             [%eth-get-filter-changes fid=@ud]
             [%eth-get-transaction-by-hash txh=@ux]
             [%eth-get-transaction-count adr=address =block]
+            [%eth-get-balance adr=address]
             [%eth-get-transaction-receipt txh=@ux]
             [%eth-send-raw-transaction dat=@ux]
         ==
@@ -718,6 +719,9 @@
           (block-to-json block.req)
       ==
     ::
+        %eth-get-balance
+      ['eth_getBalance' (tape (address-to-hex adr.req)) ~]
+    ::
         %eth-get-transaction-by-hash
       ['eth_getTransactionByHash' (tape (transaction-to-hex txh.req)) ~]
     ::
@@ -795,6 +799,8 @@
   ++  parse-transaction-hash  parse-hex-result
   ::
   ++  parse-eth-get-transaction-count  parse-hex-result
+  ::
+  ++  parse-eth-get-balance  parse-hex-result
   ::
   ++  parse-event-logs
     (ar:dejs:format parse-event-log)

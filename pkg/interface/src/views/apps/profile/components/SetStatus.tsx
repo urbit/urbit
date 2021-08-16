@@ -1,16 +1,14 @@
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  ChangeEvent,
-  useRef
-} from 'react';
 import {
-  Row,
-  Text,
-  Button,
+  Button, Row,
+
   StatelessTextInput as Input
 } from '@tlon/indigo-react';
+import React, {
+  ChangeEvent, useCallback,
+  useEffect,
+
+  useRef, useState
+} from 'react';
 
 export function SetStatus(props: any) {
   const { contact, ship, api, callback } = props;
@@ -41,7 +39,7 @@ export function SetStatus(props: any) {
         ref={inputRef}
         onChange={onStatusChange}
         value={_status}
-        autocomplete='off'
+        autoComplete='off'
         width='75%'
         mr={2}
         onKeyPress={(evt) => {

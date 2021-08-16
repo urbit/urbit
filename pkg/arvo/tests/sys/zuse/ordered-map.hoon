@@ -9,6 +9,7 @@
   (items-from-keys (gulf 0 6))
 ::
 =/  atom-map  ((ordered-map @ud @tas) lte)
+=/  gte-atom-map  ((ordered-map @ud @tas) gte)
 ::
 |%
 ++  test-ordered-map-gas  ^-  tang
@@ -17,7 +18,7 @@
   ::
   %+  expect-eq
     !>  %.y
-    !>  (check-balance:atom-map a)
+    !>  (apt:atom-map a)
 ::
 ++  test-ordered-map-tap  ^-  tang
   ::
@@ -27,6 +28,72 @@
     !>  test-items
     !>  (tap:atom-map a)
 ::
+++  test-ordered-map-tab-gte  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:gte-atom-map ~ test-items)
+  ::
+  %+  expect-eq
+    !>  (flop test-items)
+    !>  (tab:gte-atom-map a ~ 7)
+::
+++  test-ordered-map-tab-gte-starting-from  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:gte-atom-map ~ test-items)
+  =/  small-test-items=(list [@ud @tas])
+    (items-from-keys (gulf 2 5))
+  ::
+  %+  expect-eq
+    !>  (flop small-test-items)
+    !>  (tab:gte-atom-map a [~ 6] 4)
+::
+++  test-ordered-map-tab-gte-count  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:gte-atom-map ~ test-items)
+  =/  small-test-items=(list [@ud @tas])
+    (items-from-keys (gulf 4 6))
+  ::
+  %+  expect-eq
+    !>  (flop small-test-items)
+    !>  (tab:gte-atom-map a ~ 3)
+::
+++  test-ordered-map-tab  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  %+  expect-eq
+    !>  test-items
+    !>  (tab:atom-map a ~ 7)
+::
+++  test-ordered-map-tab-starting-from  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  =/  small-test-items=(list [@ud @tas])
+    (items-from-keys (gulf 1 4))
+  ::
+  %+  expect-eq
+    !>  small-test-items
+    !>  (tab:atom-map a [~ 0] 4)
+::
+++  test-ordered-map-tab-count  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  =/  small-test-items=(list [@ud @tas])
+    (items-from-keys (gulf 0 2))
+  ::
+  %+  expect-eq
+    !>  small-test-items
+    !>  (tab:atom-map a ~ 3)
+::
+++  test-ordered-map-tab-more-than-exist  ^-  tang
+  ::
+  =/  specific-test-items=(list [@ud @tas])
+    (items-from-keys (gulf 1 6))
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ specific-test-items)
+  ::
+  %+  expect-eq
+    !>  specific-test-items
+    !>  (tab:atom-map a [~ 0] 8)
+::
 ++  test-ordered-map-pop  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
@@ -35,13 +102,13 @@
     !>  [[0 %a] (gas:atom-map ~ (items-from-keys (gulf 1 6)))]
     !>  (pop:atom-map a)
 ::
-++  test-ordered-map-peek  ^-  tang
+++  test-ordered-map-pry  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
   %+  expect-eq
     !>  `[0 %a]
-    !>  (peek:atom-map a)
+    !>  (pry:atom-map a)
 ::
 ++  test-ordered-map-nip  ^-  tang
   ::
@@ -53,61 +120,61 @@
     !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [3^%d] [4^%e] [5^%f]])
     !>  b
 ::
-++  test-ordered-map-subset  ^-  tang
+++  test-ordered-map-lot  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  b  (subset:atom-map a `0 `4)
+  =/  b  (lot:atom-map a `0 `4)
   ::
   %+  expect-eq
     !>  (gas:atom-map ~ ~[[1^%b] [2^%c] [3^%d]])
     !>  b
 ::
-++  test-ordered-map-null-start-subset  ^-  tang
+++  test-ordered-map-null-start-lot  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  b  (subset:atom-map a ~ `5)
+  =/  b  (lot:atom-map a ~ `5)
   ::
   %+  expect-eq
     !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [3^%d] [4^%e]])
     !>  b
 ::
-++  test-ordered-map-null-end-subset  ^-  tang
+++  test-ordered-map-null-end-lot  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  b  (subset:atom-map a `1 ~)
+  =/  b  (lot:atom-map a `1 ~)
   ::
   %+  expect-eq
     !>  (gas:atom-map ~ ~[[2^%c] [3^%d] [4^%e] [5^%f] [6^%g]])
     !>  b
 ::
-++  test-ordered-map-double-null-subset  ^-  tang
+++  test-ordered-map-double-null-lot  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  b  (subset:atom-map a ~ ~)
+  =/  b  (lot:atom-map a ~ ~)
   ::
   %+  expect-eq
     !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [3^%d] [4^%e] [5^%f] [6^%g]])
     !>  b
 ::
-++  test-ordered-map-not-found-start-subset  ^-  tang
+++  test-ordered-map-not-found-start-lot  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ ~[[1^%b]])
   ::
-  =/  b  (subset:atom-map a `0 ~)
+  =/  b  (lot:atom-map a `0 ~)
   ::
   %+  expect-eq
     !>  (gas:atom-map ~ ~[[1^%b]])
     !>  b
 ::
-++  test-ordered-map-traverse  ^-  tang
+++  test-ordered-map-dip  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  b  %-  (traverse:atom-map ,(list [@ud @tas]))
+  =/  b  %-  (dip:atom-map ,(list [@ud @tas]))
          :*  a
              state=~
              ::
@@ -129,11 +196,11 @@
       !>  -.b
   ==
 ::
-++  test-ordered-map-traverse-delete-all  ^-  tang
+++  test-ordered-map-dip-delete-all  ^-  tang
   ;:  weld
     =/  q  ((ordered-map ,@ ,~) lte)
     =/  o  (gas:q ~ ~[1/~ 2/~ 3/~])
-    =/  b  ((traverse:q ,~) o ~ |=([~ key=@ ~] [~ %| ~]))
+    =/  b  ((dip:q ,~) o ~ |=([~ key=@ ~] [~ %| ~]))
     %+  expect-eq
       !>  [~ ~]
       !>  b
@@ -147,7 +214,7 @@
       ?:((lth aa ba) %.y ?:((gth aa ba) %.n (lte ab bb)))
     =/  q  ((ordered-map ,[@ @] ,~) compare)
     =/  o  (gas:q ~ c)
-    =/  b  ((traverse:q ,~) o ~ |=([~ key=[@ @] ~] [~ %| ~]))
+    =/  b  ((dip:q ,~) o ~ |=([~ key=[@ @] ~] [~ %| ~]))
     %+  expect-eq
       !>  [~ ~]
       !>  b

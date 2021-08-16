@@ -1,8 +1,6 @@
-import BaseSubscription from './base';
-import { StoreState } from '../store/type';
 import { Path } from '@urbit/api';
-import _ from 'lodash';
-
+import { StoreState } from '../store/type';
+import BaseSubscription from './base';
 
 export default class GlobalSubscription extends BaseSubscription<StoreState> {
   openSubscriptions: any = {};
@@ -15,6 +13,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     this.subscribe('/groups', 'group-store');
     this.clearQueue();
 
+    this.subscribe('/updates', 'dm-hook');
     this.subscribe('/all', 'contact-store');
     this.subscribe('/all', 's3-store');
     this.subscribe('/keys', 'graph-store');
@@ -25,7 +24,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     this.subscribe('/all', 'group-view');
     this.subscribe('/nacks', 'contact-pull-hook');
     this.clearQueue();
-    
+
     this.subscribe('/updates', 'graph-store');
   }
 
@@ -39,8 +38,8 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
   }
 
   unsubscribe(id) {
-    for (let key in Object.keys(this.openSubscriptions)) {
-      let val = this.openSubscriptions[key];
+    for (const key in Object.keys(this.openSubscriptions)) {
+      const val = this.openSubscriptions[key];
       if (id === val.id) {
         delete this.openSubscriptions[`${val.app}${val.path}`];
         super.unsubscribe(id);
