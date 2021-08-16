@@ -2306,9 +2306,7 @@
         |=  date=@da
         ^+  peer-core
         ::
-        ?:  ?|  (~(has in closing.peer-state) bone)
-                (~(has in closing.peer-state) (mix 1 bone))
-            ==
+        ?:  (~(has in corked.peer-state) bone)
           ~&('sending rest instead of wait' (on-pump-rest date))
         =/  =wire  (make-pump-timer-wire her.channel bone)
         =/  duct   ~[/ames]
