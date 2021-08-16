@@ -144,7 +144,8 @@ data SocketEvent
 deriveNoun ''SocketEvent
 
 data SocketConf = SocketConf
-    { scFilePath :: FilePath
+    { scActive :: Bool
+    , scClients :: [Term]
     }
   deriving (Eq, Ord, Show)
 
