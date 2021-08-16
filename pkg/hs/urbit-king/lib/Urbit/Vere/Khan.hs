@@ -22,15 +22,15 @@ import Urbit.Vere.Khan.SocketFile
 import Urbit.Vere.Khan.Socket
 import System.Random (Random(randomIO))
 import Data.Either (fromRight)
-import qualified Network.Socket.ByteString as BN
+import qualified Network.Socket as Net
 
 socketEv :: SocketEv -> Ev
 socketEv = EvBlip . BlipEvSocket
 
 bornEv :: KingId -> Ev
 bornEv king = socketEv $ SocketEvBorn (king, ()) ()
-liveEv :: SocketId ->  FilePath -> Ev
-liveEv sId file = socketEv $ SocketEvLive (sId, ()) file
+liveEv :: SocketId -> Ev
+liveEv sId = socketEv $ SocketEvLive (sId, ()) True ["khan"]
 
 cancelFailed :: WorkError -> IO ()
 cancelFailed _ = pure ()
@@ -112,11 +112,11 @@ khan env who plan stderr = (initialEvents, runSocket)
       logInfo (displayShow ("KHAN", "%set-config"))
       Sock {..} <- restart drv conf
       logInfo (displayShow ("KHAN", "%set-config", "Sending %live"))
-      atomically $ plan (EvErr (liveEv sSocketId (scFile sConfig)) liveFailed)
+      atomically $ plan (EvErr (liveEv sSocketId) liveFailed)
       logInfo (displayShow ("KHAN", "%open-socket", "opening khan socket"))
     SEResponse (i, req, _seq, _) ev -> do
       logDebug (displayShow ("KHAN", "%response"))
-      execute drv who (fromIntegral req) ev
+      void $ async $ execute drv who (fromIntegral req) ev
     SEError(i, ()) () -> logDebug (displayShow ("KHAN", "%error"))
 
 start :: (HasLogFunc e) => (EvErr -> STM ()) -> IO () -> RIO e Sock
@@ -151,8 +151,17 @@ execute (Drv v) who reqId ev = do
     Nothing -> logDebug $ displayShow ev -- logError "Got a response to a request that does not exist."
     Just Sock {..} ->
       runRIO env $ do
-        conn <- atomically (saSock sApi)
-        --  TODO The socket is opened on the original request (`onReq`), closed after the work is complete, and another is immediately opened.
-        -- (saSock sApi) should save *that* socket, but there are possibly some concurrency issues here.
-        -- logDebug $ displayShow (saSock sApi)
-        io (BN.sendAll conn (jamBS (toNoun ev)))
+        --  TODO Possible to respond on the same socket?
+        -- sok <- atomically (saSock sApi)
+        sok <- io $ (Net.socket Net.AF_UNIX Net.Stream Net.defaultProtocol)
+        -- adr <- atomically (saAddr sApi)
+        -- TODO put socket paths in Env
+        let adr = Net.SockAddrUnix $ "/tmp/khan.soc"
+        -- TODO is this necessary?
+        io $ Net.setSocketOption sok Net.ReuseAddr 1
+
+        logDebug $ displayShow adr
+        -- TODO bind first?
+        _ <- retry $ tryConnect sok adr
+
+        retry $ trySend sok adr (jamBS (toNoun ev))

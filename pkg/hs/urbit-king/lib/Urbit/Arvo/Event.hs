@@ -215,7 +215,7 @@ data SocketEv
     = SocketEvFyrd       (SocketId, UD, UD, ()) SocketReq
     | SocketEvCancelRequest (SocketId, UD, UD, ()) ()
     | SocketEvRequestLocal  (SocketId, UD, UD, ()) SocketReq
-    | SocketEvLive          (SocketId, ())         FilePath
+    | SocketEvLive          (SocketId, ())         Bool [Term]
     | SocketEvBorn          (KingId, ())         ()
     | SocketEvCrud          Path                 Noun
   deriving (Eq, Ord, Show)

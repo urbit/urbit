@@ -2089,9 +2089,10 @@
   ::                                                    ::::
 ++  khan  ^?
   |%
-  +$  socket-config
+  +$  socket-config                                     :: activates and sets up vane
     $:
-        file=path
+        active=?
+        clients=(list term)
     ==
   +$  socket-event
     $:
@@ -2127,7 +2128,7 @@
       gift:gall
       gift:iris
       gift:jael
-      gift:khan                                         ::khan gift
+      gift:khan
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames

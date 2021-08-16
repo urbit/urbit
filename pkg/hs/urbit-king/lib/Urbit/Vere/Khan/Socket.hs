@@ -3,7 +3,10 @@ module Urbit.Vere.Khan.Socket
   ( SockApi(..)
   , watch
   , openSocket
+  , tryConnect
   , recvOnSocket
+  , trySend
+  , retry
   , SockType(..)
   , SReqApi(..)
   , SockConf(..)
@@ -52,14 +55,25 @@ instance Show SockType where
 instance Exception SocketExn where
 bindListen :: Net.Socket -> FilePath -> IO SockAddr
 bindListen sok file = do
-  Net.bind sok . SockAddrUnix $ file
-  Net.listen sok 1
-  pure $ SockAddrUnix $ file
+  let adr = SockAddrUnix $ file
+  Net.bind sok $ adr
+  Net.listen sok 5
+  pure $ adr
 
 unixSocket :: IO (Either IOError Net.Socket)
 unixSocket =
   tryIOError (Net.socket Net.AF_UNIX Net.Stream Net.defaultProtocol)
 
+
+trySend :: Net.Socket -> SockAddr ->  ByteString -> RIO e (Either IOError ())
+trySend sok adr bs = ssend
+  where
+    ssend = io (tryIOError $ BN.sendAll sok bs) <&> \case
+      Left exn -> Left exn
+      Right _ -> Right ()
+
+tryConnect :: Net.Socket -> SockAddr -> RIO e (Either IOError ())
+tryConnect sok adr = io (tryIOError $ Net.connect sok adr)
 tryOpen :: FilePath -> IO (Either IOError (SockAddr, Net.Socket))
 tryOpen socketFile =
   unixSocket >>= \case
@@ -89,11 +103,14 @@ openSocket
   -> RAcquire e (SockAddr, Net.Socket)
 openSocket socketFile = mkRAcquire opn kil
  where
-  kil = io . Net.close . snd
+  kil (_bs, sok) = do
+    logDbg ctx ("in openSocket", "closing socket")
+    io $ Net.close sok
 
   opn = do
     (a, s) <- retry $ io $ tryOpen socketFile
     pure (a, s)
+  ctx = ["KHAN", "WATCH", "openSocket"]
 recvOnSocket
   :: forall e
    . HasLogFunc e
@@ -102,10 +119,8 @@ recvOnSocket
 recvOnSocket s = mkRAcquire rcv kil
  where
   kil (_bs, sok)= do
-    -- TODO socket can only accept the first response. need to figure out
-    -- how to create a new socket that's saved immediately after closing this one.
-    logDbg ctx ("in recv", "kil called, not closing")
-    pure ()
+    logDbg ctx ("in recv", "closing socket")
+    io $ Net.close sok
 
   rcv = do
     logDbg ctx ("in recv", "unix socket")
@@ -128,18 +143,20 @@ watch onFatal SockConf {..} = do
  where
   runWatch vAddr vSock = do
     logInfo (displayShow ("KHAN", "WATCH", "runWatch"))
-    rwith (openSocket scFile) $ \(sok) -> do
-      watchSocket scType vAddr vSock (snd sok) onFatal
+
+    rwith (openSocket scFile) $ \((adr, sok)) -> do
+      atomically (putTMVar vSock sok)
+      atomically (putTMVar vAddr adr)
+      io $ setSocketOption sok ReuseAddr 1
+      watchSocket scType sok onFatal
 
 watchSocket
   :: HasLogFunc e
   => SockType
-  -> TMVar SockAddr
-  -> TMVar Socket
   -> Net.Socket
   -> IO ()
   -> RIO e ()
-watchSocket typ vAddr vSock sok onFatal = do
+watchSocket typ sok onFatal = do
   envir <- ask
 
   let handler r e = do
@@ -168,12 +185,11 @@ watchSocket typ vAddr vSock sok onFatal = do
     runSocket sok onReq handler = do
       env <- ask
       io $ forever $ do
-        (conn, addr) <- accept sok
+        runRIO env $ logDebug (displayShow ("KHAN", "SOCKET", "accepting connections on socket" <> (show sok)))
+        (conn, adr) <- accept sok
         runRIO env $ do
-          atomically (putTMVar vAddr addr)
-          atomically (putTMVar vSock conn)
-          logInfo (displayShow ("KHAN", "SOCKET", "message on socket"))
           rwith (recvOnSocket conn) $ \(dat, s_) -> do
+            logInfo (displayShow ("KHAN", "SOCKET", "message on socket"))
             let byt = toStrict dat
             let cued = (cueBS $ byt)
             req <- do

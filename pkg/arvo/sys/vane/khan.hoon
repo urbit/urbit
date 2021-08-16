@@ -48,12 +48,12 @@
     |=  [tag=@tas error=tang]
     ^+  [moves state]
     [[duct %slip %d %flog %crud tag error]~ state]
+  ::
+  ::  +born: alive, set up config
   ++  born
     ^+  [moves state]
     =<  [moves state]
-    event-core(moves [duct %give %set-config "khan.soc"]~)
-
-
+    event-core(moves [duct %give %set-config & ~]~)   :: live event?
   ::  +avow: give back gifts
   ::
   ++  avow
