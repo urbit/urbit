@@ -1,15 +1,8 @@
 import { DialogContent } from '@radix-ui/react-dialog';
 import * as Portal from '@radix-ui/react-portal';
 import classNames from 'classnames';
-import React, {
-  FunctionComponent,
-  KeyboardEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
-import { Link, Route, Switch, useHistory, useLocation } from 'react-router-dom';
+import React, { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
+import { Link, Route, Switch, useHistory } from 'react-router-dom';
 import create from 'zustand';
 import { Dialog } from '../components/Dialog';
 import { Help } from './Help';
@@ -18,6 +11,32 @@ import { Notifications } from './Notifications';
 import { Search } from './Search';
 import { SystemMenu } from './SystemMenu';
 import { SystemPreferences } from './SystemPreferences';
+
+export interface MatchItem {
+  value: string;
+  display?: string;
+}
+
+interface LeapStore {
+  rawInput: string;
+  searchInput: string;
+  matches: MatchItem[];
+  selection: React.ReactNode;
+  select: (selection: React.ReactNode, input?: string) => void;
+}
+
+export const useLeapStore = create<LeapStore>((set) => ({
+  rawInput: '',
+  searchInput: '',
+  matches: [],
+  selection: null,
+  select: (selection: React.ReactNode, input?: string) =>
+    set({
+      rawInput: input || '',
+      searchInput: input || '',
+      selection
+    })
+}));
 
 export type MenuState =
   | 'closed'
@@ -30,60 +49,17 @@ interface NavProps {
   menu?: MenuState;
 }
 
-interface NavStore {
-  searchInput: string;
-  setSearchInput: (input: string) => void;
-  selection: React.ReactNode;
-  select: (selection: React.ReactNode, input?: string) => void;
-}
-
-export const useNavStore = create<NavStore>((set) => ({
-  searchInput: '',
-  setSearchInput: (input: string) => set({ searchInput: input }),
-  selection: null,
-  select: (selection: React.ReactNode, input?: string) =>
-    set({ searchInput: input || '', selection })
-}));
-
-function normalizePathEnding(path: string) {
-  const end = path.length - 1;
-  return path[end] === '/' ? path.substring(0, end - 1) : path;
-}
-
-export function createNextPath(current: string, nextPart?: string): string {
-  let end = nextPart;
-  const parts = normalizePathEnding(current).split('/').reverse();
-  if (parts[1] === 'search') {
-    end = 'apps';
-  }
-
-  if (parts[0] === 'leap') {
-    end = `search/${nextPart}`;
-  }
-
-  return `${current}/${end}`;
-}
-
-export function createPreviousPath(current: string): string {
-  const parts = normalizePathEnding(current).split('/');
-  parts.pop();
-
-  if (parts[parts.length - 1] === 'leap') {
-    parts.push('search');
-  }
-
-  return parts.join('/');
-}
-
 export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
   const { push } = useHistory();
-  const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const dialogNavRef = useRef<HTMLDivElement>(null);
-  const { searchInput, selection, select } = useNavStore();
+  const { selection, select } = useLeapStore((state) => ({
+    selection: state.selection,
+    select: state.select
+  }));
   const [systemMenuOpen, setSystemMenuOpen] = useState(false);
-  const [delayedOpen, setDelayedOpen] = useState(false);
+  const [dialogContentOpen, setDialogContentOpen] = useState(false);
 
   const isOpen = menu !== 'closed';
   const eitherOpen = isOpen || systemMenuOpen;
@@ -92,7 +68,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
     (event: Event) => {
       event.preventDefault();
 
-      setDelayedOpen(true);
+      setDialogContentOpen(true);
       if (menu === 'search' && inputRef.current) {
         setTimeout(() => {
           inputRef.current?.focus();
@@ -109,30 +85,17 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
   const onDialogClose = useCallback((open: boolean) => {
     if (!open) {
       select(null);
-      setDelayedOpen(false);
+      setDialogContentOpen(false);
       push('/');
     }
   }, []);
 
-  const onDialogKey = useCallback(
-    (e: KeyboardEvent<HTMLDivElement>) => {
-      if ((!selection && searchInput) || searchInput) {
-        return;
-      }
-
-      if (e.key === 'Backspace' || e.key === 'Delete') {
-        e.preventDefault();
-        select(null);
-        const pathBack = createPreviousPath(location.pathname);
-        push(pathBack);
-      }
-    },
-    [selection, searchInput, location.pathname]
-  );
-
   return (
     <>
-      <Portal.Root containerRef={delayedOpen ? dialogNavRef : navRef} className="flex space-x-2">
+      <Portal.Root
+        containerRef={dialogContentOpen ? dialogNavRef : navRef}
+        className="flex space-x-2"
+      >
         <SystemMenu
           open={systemMenuOpen}
           setOpen={setSystemMenuOpen}
@@ -150,7 +113,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
         ref={navRef}
         className={classNames(
           'w-full max-w-3xl my-6 px-4 text-gray-400 font-semibold',
-          delayedOpen && 'h-12'
+          dialogContentOpen && 'h-12'
         )}
       />
       <Dialog open={isOpen} onOpenChange={onDialogClose}>
@@ -158,20 +121,18 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
           onOpenAutoFocus={onOpen}
           className="fixed top-0 left-[calc(50%-7.5px)] w-[calc(100%-15px)] max-w-3xl px-4 text-gray-400 -translate-x-1/2 outline-none"
         >
-          <div tabIndex={-1} onKeyDown={onDialogKey} role="presentation">
-            <header ref={dialogNavRef} className="my-6" />
-            <div
-              id="leap-items"
-              className="grid grid-rows-[fit-content(calc(100vh-7.5rem))] bg-white rounded-3xl overflow-hidden"
-              role="listbox"
-            >
-              <Switch>
-                <Route path="/leap/notifications" component={Notifications} />
-                <Route path="/leap/system-preferences" component={SystemPreferences} />
-                <Route path="/leap/help-and-support" component={Help} />
-                <Route path={['/leap/search', '/leap']} component={Search} />
-              </Switch>
-            </div>
+          <header ref={dialogNavRef} className="my-6" />
+          <div
+            id="leap-items"
+            className="grid grid-rows-[fit-content(calc(100vh-7.5rem))] bg-white rounded-3xl overflow-hidden"
+            role="listbox"
+          >
+            <Switch>
+              <Route path="/leap/notifications" component={Notifications} />
+              <Route path="/leap/system-preferences" component={SystemPreferences} />
+              <Route path="/leap/help-and-support" component={Help} />
+              <Route path={['/leap/search', '/leap']} component={Search} />
+            </Switch>
           </div>
         </DialogContent>
       </Dialog>

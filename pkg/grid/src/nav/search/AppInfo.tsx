@@ -7,10 +7,10 @@ import { Spinner } from '../../components/Spinner';
 import { TreatyMeta } from '../../components/TreatyMeta';
 import { useTreaty } from '../../logic/useTreaty';
 import { chargesKey, fetchCharges } from '../../state/docket';
-import { useNavStore } from '../Nav';
+import { useLeapStore } from '../Nav';
 
 export const AppInfo = () => {
-  const select = useNavStore((state) => state.select);
+  const select = useLeapStore((state) => state.select);
   const { ship, desk, treaty, installStatus, copyApp, installApp } = useTreaty();
   const { data: charges } = useQuery(chargesKey(), fetchCharges);
   const installed = (charges || {})[desk] || installStatus.isSuccess;

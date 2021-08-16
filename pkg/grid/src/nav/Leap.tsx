@@ -4,15 +4,32 @@ import React, {
   ChangeEvent,
   FocusEvent,
   FormEvent,
+  KeyboardEvent,
   HTMLAttributes,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useRef
 } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import slugify from 'slugify';
 import { Cross } from '../components/icons/Cross';
-import { MenuState, useNavStore } from './Nav';
+import { MenuState, useLeapStore } from './Nav';
+
+function normalizePathEnding(path: string) {
+  const end = path.length - 1;
+  return path[end] === '/' ? path.substring(0, end - 1) : path;
+}
+
+export function createPreviousPath(current: string): string {
+  const parts = normalizePathEnding(current).split('/');
+  parts.pop();
+
+  if (parts[parts.length - 1] === 'leap') {
+    parts.push('search');
+  }
+
+  return parts.join('/');
+}
 
 type LeapProps = {
   menu: MenuState;
@@ -26,36 +43,7 @@ export const Leap = React.forwardRef(({ menu, className }: LeapProps, ref) => {
   const appsMatch = useRouteMatch(`/leap/${menu}/${match?.params.query}/apps`);
   const inputRef = useRef<HTMLInputElement>(null);
   useImperativeHandle(ref, () => inputRef.current);
-  const { searchInput, setSearchInput, selection, select } = useNavStore();
-
-  const navigateByInput = useCallback(
-    (input: string) => {
-      const normalizedValue = input.trim().replace(/(~?[\w^_-]{3,13})\//, '$1/apps/');
-      push(`/leap/${menu}/${normalizedValue}`);
-    },
-    [menu]
-  );
-
-  const handleSearch = useCallback(
-    debounce(
-      (input: string) => {
-        if (!match || appsMatch) {
-          return;
-        }
-
-        navigateByInput(input);
-      },
-      300,
-      { leading: true }
-    ),
-    [menu, match]
-  );
-
-  useEffect(() => {
-    if (searchInput) {
-      handleSearch(searchInput);
-    }
-  }, [searchInput]);
+  const { rawInput, searchInput, matches, selection, select } = useLeapStore();
 
   const toggleSearch = useCallback(() => {
     if (selection || menu === 'search') {
@@ -75,17 +63,69 @@ export const Leap = React.forwardRef(({ menu, className }: LeapProps, ref) => {
     toggleSearch();
   }, []);
 
-  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const input = e.target as HTMLInputElement;
-    const value = input.value.trim();
-    setSearchInput(value);
-  }, []);
+  const getMatch = useCallback(
+    (value: string) => {
+      return matches.find((m) => m.display?.startsWith(value) || m.value.startsWith(value));
+    },
+    [matches]
+  );
+
+  const navigateByInput = useCallback(
+    (input: string) => {
+      const normalizedValue = input.trim().replace(/(~?[\w^_-]{3,13})\//, '$1/apps/');
+      push(`/leap/${menu}/${normalizedValue}`);
+    },
+    [menu]
+  );
+
+  const handleSearch = useCallback(
+    debounce(
+      (input: string) => {
+        if (!match || appsMatch) {
+          return;
+        }
+
+        useLeapStore.setState({ searchInput: input });
+        navigateByInput(input);
+      },
+      300,
+      { leading: true }
+    ),
+    [menu, match]
+  );
+
+  const onChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const input = e.target as HTMLInputElement;
+      const value = input.value.trim();
+      const isDeletion = (e.nativeEvent as InputEvent).inputType === 'deleteContentBackward';
+      const inputMatch = getMatch(value);
+      const matchValue = inputMatch?.display || inputMatch?.value;
+
+      if (matchValue && inputRef.current && !isDeletion) {
+        inputRef.current.value = matchValue;
+        inputRef.current.setSelectionRange(value.length, matchValue.length);
+        useLeapStore.setState({ rawInput: matchValue });
+      } else {
+        useLeapStore.setState({ rawInput: value });
+      }
+
+      handleSearch(value);
+    },
+    [matches]
+  );
 
   const onSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      const input = [searchInput];
+      const value = inputRef.current?.value.trim();
+
+      if (!value) {
+        return;
+      }
+
+      const input = [slugify(getMatch(value)?.value || value)];
       if (appsMatch) {
         input.unshift(match?.params.query || '');
       } else {
@@ -93,8 +133,25 @@ export const Leap = React.forwardRef(({ menu, className }: LeapProps, ref) => {
       }
 
       navigateByInput(input.join('/'));
+      useLeapStore.setState({ rawInput: '' });
     },
-    [searchInput, match]
+    [match]
+  );
+
+  const onKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLDivElement>) => {
+      if ((!selection && rawInput) || rawInput) {
+        return;
+      }
+
+      if (e.key === 'Backspace' || e.key === 'Delete') {
+        e.preventDefault();
+        select(null, appsMatch ? undefined : match?.params.query);
+        const pathBack = createPreviousPath(match?.url || '');
+        push(pathBack);
+      }
+    },
+    [selection, rawInput, match]
   );
 
   return (
@@ -120,10 +177,11 @@ export const Leap = React.forwardRef(({ menu, className }: LeapProps, ref) => {
         ref={inputRef}
         placeholder={selection ? '' : 'Search Landscape'}
         className="flex-1 w-full h-full px-2 h4 rounded-full bg-transparent outline-none"
-        value={searchInput}
+        value={rawInput}
         onClick={toggleSearch}
         onFocus={onFocus}
         onChange={onChange}
+        onKeyDown={onKeyDown}
         role="combobox"
         aria-controls="leap-items"
         aria-expanded

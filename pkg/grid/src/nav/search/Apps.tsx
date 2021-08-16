@@ -6,13 +6,13 @@ import slugify from 'slugify';
 import { ShipName } from '../../components/ShipName';
 import { fetchProviderTreaties, treatyKey } from '../../state/docket';
 import { Treaty } from '../../state/docket-types';
-import { useNavStore } from '../Nav';
+import { useLeapStore } from '../Nav';
 
 type AppsProps = RouteComponentProps<{ ship: string }>;
 
 export const Apps = ({ match }: AppsProps) => {
   const queryClient = useQueryClient();
-  const { searchInput, select } = useNavStore((state) => ({
+  const { searchInput, select } = useLeapStore((state) => ({
     searchInput: state.searchInput,
     select: state.select
   }));
@@ -38,6 +38,14 @@ export const Apps = ({ match }: AppsProps) => {
     );
   }, []);
 
+  useEffect(() => {
+    if (data) {
+      useLeapStore.setState({
+        matches: data.map((treaty) => ({ value: treaty.desk, display: treaty.title }))
+      });
+    }
+  }, [data]);
+
   const preloadApp = useCallback(
     (app: Treaty) => {
       queryClient.setQueryData(treatyKey([provider, app.desk]), app);
@@ -58,7 +66,7 @@ export const Apps = ({ match }: AppsProps) => {
       {results && (
         <ul className="space-y-8" aria-labelledby="developed-by">
           {results.map((app) => (
-            <li key={app.desk}>
+            <li key={app.desk} role="option" aria-selected={false}>
               <Link
                 to={`${match?.path.replace(':ship', provider)}/${slugify(app.desk)}`}
                 className="flex items-center space-x-3 default-ring ring-offset-2 rounded-lg"

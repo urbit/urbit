@@ -3,12 +3,12 @@ import { useQuery } from 'react-query';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { ShipName } from '../../components/ShipName';
 import { fetchProviders, providersKey } from '../../state/docket';
-import { useNavStore } from '../Nav';
+import { useLeapStore } from '../Nav';
 
 type ProvidersProps = RouteComponentProps<{ ship: string }>;
 
 export const Providers = ({ match }: ProvidersProps) => {
-  const select = useNavStore((state) => state.select);
+  const select = useLeapStore((state) => state.select);
   const provider = match?.params.ship;
   const { data } = useQuery(providersKey([provider]), () => fetchProviders(provider), {
     enabled: !!provider,
@@ -19,6 +19,14 @@ export const Providers = ({ match }: ProvidersProps) => {
   useEffect(() => {
     select(null, provider);
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      useLeapStore.setState({
+        matches: data.map((p) => ({ value: p.shipName, display: p.nickname }))
+      });
+    }
+  }, [data]);
 
   return (
     <div className="dialog-inner-container md:px-6 md:py-8 h4 text-gray-400" aria-live="polite">
@@ -31,7 +39,7 @@ export const Providers = ({ match }: ProvidersProps) => {
       {data && (
         <ul className="space-y-8" aria-labelledby="providers">
           {data.map((p) => (
-            <li key={p.shipName}>
+            <li key={p.shipName} role="option" aria-selected={false}>
               <Link
                 to={`${match?.path.replace(':ship', p.shipName)}/apps`}
                 className="flex items-center space-x-3 default-ring ring-offset-2 rounded-lg"

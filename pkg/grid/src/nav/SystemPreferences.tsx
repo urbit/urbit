@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { useNavStore } from './Nav';
+import { useLeapStore } from './Nav';
 
 export const SystemPreferences = () => {
-  const select = useNavStore((state) => state.select);
+  const select = useLeapStore((state) => state.select);
 
   useEffect(() => {
     select('System Preferences');

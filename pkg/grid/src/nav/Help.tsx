@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { useNavStore } from './Nav';
+import { useLeapStore } from './Nav';
 
 export const Help = () => {
-  const select = useNavStore((state) => state.select);
+  const select = useLeapStore((state) => state.select);
 
   useEffect(() => {
     select('Help and Support');

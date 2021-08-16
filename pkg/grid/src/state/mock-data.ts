@@ -98,7 +98,7 @@ export const treaties: Treaties = {
   'my-apps': {
     title: 'My Apps',
     ship: '~zod',
-    desk: 'groups',
+    desk: 'my-apps',
     status: 'active',
     base: 'my-apps',
     info: 'A lengthier description of the app down here',
