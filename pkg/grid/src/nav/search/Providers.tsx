@@ -1,5 +1,4 @@
-import { debounce } from 'lodash-es';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { ShipName } from '../../components/ShipName';
@@ -8,13 +7,8 @@ import { useNavStore } from '../Nav';
 
 type ProvidersProps = RouteComponentProps<{ ship: string }>;
 
-export const Providers = ({ match, history }: ProvidersProps) => {
-  const { searchInput, select } = useNavStore((state) => ({
-    searchInput: state.searchInput,
-    select: state.select
-  }));
-  const { push } = history;
-  const { path } = match;
+export const Providers = ({ match }: ProvidersProps) => {
+  const select = useNavStore((state) => state.select);
   const provider = match?.params.ship;
   const { data } = useQuery(providersKey([provider]), () => fetchProviders(provider), {
     enabled: !!provider,
@@ -25,24 +19,6 @@ export const Providers = ({ match, history }: ProvidersProps) => {
   useEffect(() => {
     select(null, provider);
   }, []);
-
-  const handleSearch = useCallback(
-    debounce(
-      (input: string) => {
-        const normalizedValue = input.trim().replace(/(~?[\w^_-]{3,13})\//, '$1/apps');
-        push(match?.path.replace(':ship', normalizedValue));
-      },
-      300,
-      { leading: true }
-    ),
-    [path]
-  );
-
-  useEffect(() => {
-    if (searchInput) {
-      handleSearch(searchInput);
-    }
-  }, [searchInput]);
 
   return (
     <div className="dialog-inner-container md:px-6 md:py-8 h4 text-gray-400" aria-live="polite">

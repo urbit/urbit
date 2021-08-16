@@ -2,8 +2,6 @@ import { DialogContent } from '@radix-ui/react-dialog';
 import * as Portal from '@radix-ui/react-portal';
 import classNames from 'classnames';
 import React, {
-  ChangeEvent,
-  FocusEvent,
   FunctionComponent,
   KeyboardEvent,
   useCallback,
@@ -14,8 +12,8 @@ import React, {
 import { Link, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import create from 'zustand';
 import { Dialog } from '../components/Dialog';
-import { Cross } from '../components/icons/Cross';
 import { Help } from './Help';
+import { Leap } from './Leap';
 import { Notifications } from './Notifications';
 import { Search } from './Search';
 import { SystemMenu } from './SystemMenu';
@@ -83,7 +81,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const dialogNavRef = useRef<HTMLDivElement>(null);
-  const { searchInput, setSearchInput, selection, select } = useNavStore();
+  const { searchInput, selection, select } = useNavStore();
   const [systemMenuOpen, setSystemMenuOpen] = useState(false);
   const [delayedOpen, setDelayedOpen] = useState(false);
 
@@ -104,24 +102,9 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
     [menu]
   );
 
-  // useEffect(() => {
-  //   if (!menu || menu === 'search') {
-  //     select(null);
-  //     inputRef.current?.focus();
-  //   }
-  // }, [menu]);
-
   useEffect(() => {
     inputRef.current?.focus();
   }, [selection]);
-
-  const toggleSearch = useCallback(() => {
-    if (selection || menu === 'search') {
-      return;
-    }
-
-    push('/leap/search');
-  }, [selection, menu]);
 
   const onDialogClose = useCallback((open: boolean) => {
     if (!open) {
@@ -133,7 +116,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
 
   const onDialogKey = useCallback(
     (e: KeyboardEvent<HTMLDivElement>) => {
-      if (!selection || searchInput) {
+      if ((!selection && searchInput) || searchInput) {
         return;
       }
 
@@ -146,22 +129,6 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
     },
     [selection, searchInput, location.pathname]
   );
-
-  const onFocus = useCallback((e: FocusEvent<HTMLInputElement>) => {
-    // refocusing tab with input focused is false trigger
-    const windowFocus = e.nativeEvent.currentTarget === document.body;
-    if (windowFocus) {
-      return;
-    }
-
-    toggleSearch();
-  }, []);
-
-  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const input = e.target as HTMLInputElement;
-    const value = input.value.trim();
-    setSearchInput(value);
-  }, []);
 
   return (
     <>
@@ -177,47 +144,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
         >
           3
         </Link>
-        <form
-          className={classNames(
-            'relative z-50 flex items-center w-full px-2 rounded-full bg-white default-ring focus-within:ring-4',
-            !isOpen && 'bg-gray-100'
-          )}
-          onSubmit={() => {}}
-        >
-          <label
-            htmlFor="leap"
-            className={classNames(
-              'inline-block flex-none p-2 h4 text-blue-400',
-              !selection && 'sr-only'
-            )}
-          >
-            {selection || 'Search Landscape'}
-          </label>
-          <input
-            id="leap"
-            type="text"
-            ref={inputRef}
-            placeholder={selection ? '' : 'Search Landscape'}
-            className="flex-1 w-full h-full px-2 h4 rounded-full bg-transparent outline-none"
-            value={searchInput}
-            onClick={toggleSearch}
-            onFocus={onFocus}
-            onChange={onChange}
-            role="combobox"
-            aria-controls="leap-items"
-            aria-expanded
-          />
-          {(selection || searchInput) && (
-            <Link
-              to="/"
-              className="circle-button w-8 h-8 text-gray-400 bg-gray-100 default-ring"
-              onClick={() => select(null)}
-            >
-              <Cross className="w-3 h-3 fill-current" />
-              <span className="sr-only">Close</span>
-            </Link>
-          )}
-        </form>
+        <Leap ref={inputRef} menu={menu} className={!isOpen ? 'bg-gray-100' : ''} />
       </Portal.Root>
       <menu
         ref={navRef}
