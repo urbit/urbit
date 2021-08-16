@@ -2152,10 +2152,6 @@
     ++  on-wake
       |=  [=bone error=(unit tang)]
       ^+  peer-core
-      ?:  ?|  (~(has in corked.peer-state) bone)
-              (~(has in corked.peer-state) (mix 1 bone))
-          ==
-        peer-core
       ::  if we previously errored out, print and reset timer for later
       ::
       ::    This really shouldn't happen, but if it does, make sure we
@@ -2310,6 +2306,10 @@
         |=  date=@da
         ^+  peer-core
         ::
+        ?:  ?|  (~(has in closing.peer-state) bone)
+                (~(has in closing.peer-state) (mix 1 bone))
+            ==
+          ~&('sending rest instead of wait' (on-pump-rest date))
         =/  =wire  (make-pump-timer-wire her.channel bone)
         =/  duct   ~[/ames]
         (emit duct %pass wire %b %wait date)
@@ -2351,6 +2351,14 @@
       ::  +on-sink-cork: handle flow kill after server ames has taken %done
       ::
       ++  on-sink-cork
+      :: resetting timer for boons
+      =.  peer-core
+      =/  =message-pump-state
+        (~(gut by snd.peer-state) bone *message-pump-state)
+      ?~  next-wake=next-wake.packet-pump-state.message-pump-state  peer-core
+        =/  wire  (make-pump-timer-wire her.channel bone)
+        =/  duct  ~[/ames]
+        ~&('giving rest at sink' (emit duct %pass wire %b %rest u.next-wake))
       ::  delete (n)acks
       ::
         =.  rcv.peer-state  ~&("deleting rcv at sink on bone {(trip (scot %ud bone))}" (~(del by rcv.peer-state) bone))
