@@ -3159,8 +3159,8 @@
     owner.own:(~(got by points.state) ~marbud)
 ::
 ++  test-changed-dns
-  ::  raw data from transaction
-  ::  https://etherscan.io/tx/0x51a26c3b100ad1c7aa8d593068df60465046d437edc3e939fadee4056791fd13#eventlog
+  ::  uses actual data from ETH transaction
+  ::  0x51a26c3b100ad1c7aa8d593068df60465046d437edc3e939fadee4056791fd13
   ::
   =/  data  %-  crip
             ;:  weld
@@ -3196,8 +3196,10 @@
 ::
 ++  test-approval-for-all
   =|  operators=(jug address address)
-  =/  op1  (~(put ju operators) (addr %test1) (addr %test2))
-  =/  op2  (~(put ju op1) (addr %test1) (addr %test3))
+  =/  op1   (~(put ju operators) (addr %test1) (addr %test2))
+  =/  del1  (~(del ju op1) (addr %test1) (addr %test2))
+  =/  op2   (~(put ju op1) (addr %test1) (addr %test3))
+  =/  del2  (~(del ju op2) (addr %test1) (addr %test2))
   ::
   ;:  weld
     %+  expect-eq
@@ -3210,6 +3212,16 @@
       operators.state
     ::
     %+  expect-eq
+      !>  del1
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state (approval-for-all:l1 (addr %test1) (addr %test2) 1))
+      =^  f  state  (n state (approval-for-all:l1 (addr %test1) (addr %test2) 0))
+      operators.state
+    ::
+    %+  expect-eq
       !>  op2
     ::
       !>
@@ -3217,6 +3229,17 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state (approval-for-all:l1 (addr %test1) (addr %test2) 1))
       =^  f  state  (n state (approval-for-all:l1 (addr %test1) (addr %test3) 1))
+      operators.state
+    ::
+    %+  expect-eq
+      !>  del2
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-marbud state)
+      =^  f  state  (n state (approval-for-all:l1 (addr %test1) (addr %test2) 1))
+      =^  f  state  (n state (approval-for-all:l1 (addr %test1) (addr %test3) 1))
+      =^  f  state  (n state (approval-for-all:l1 (addr %test1) (addr %test2) 0))
       operators.state
   ==
 ::
