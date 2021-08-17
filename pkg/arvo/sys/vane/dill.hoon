@@ -222,12 +222,8 @@
         =/  myt  (flop (fall tem ~))
         =.  tem  ~
         =.  ..mere  (pass / %g %jolt %base ram)
-        =.  ..mere
-          ?-  (clan:title our)
-            %pawn  ..mere
-            %czar  (kiln-sync %kids our %base)
-            *      (kiln-install %base sponsor %kids)
-          ==
+        =?  ..mere  ?=(?(%earl %duke %king) (clan:title our))
+          (kiln-install %base sponsor %kids)
         =.  ..mere  (show-desk %kids)
         =.  ..mere  drum-watch
         |-  ^+  ..mere
