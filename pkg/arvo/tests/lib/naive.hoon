@@ -2352,17 +2352,32 @@
     spawn-proxy.own:(~(got by points.state) ~sambud)
 ::
 ++  test-l2-sambud-spawn-proxy-predeposit-spawn  ^-  tang
+  =/  l2-sproxy  [[~sambud %spawn] %set-spawn-proxy (addr %sambud-skey-1)]
   =/  lf-spawn  [[~sambud %spawn] %spawn ~lisdur-fodrys (addr %lf-key-0)]
-  %+  expect-eq
-    !>  [`@ux`(addr %lf-key-0) 0]
-  ::
-    !>
-    =|  =^state:naive
-    =^  f  state  (init-sambud state)
-    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey)))
-    =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
-    =^  f  state  (n state %bat q:(gen-tx 0 lf-spawn %sambud-skey))
-    transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
+  ;:  weld
+    %+  expect-eq
+      !>  [`@ux`(addr %lf-key-0) 0]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-sambud state)
+      =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey-0)))
+      =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+      =^  f  state  (n state %bat q:(gen-tx 0 lf-spawn %sambud-skey-0))
+      transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
+    ::
+    %+  expect-eq
+      !>  [`@ux`(addr %lf-key-0) 0]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state  (init-sambud state)
+      =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey-0)))
+      =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
+      =^  f  state  (n state %bat q:(gen-tx 0 l2-sproxy %sambud-skey-0))
+      =^  f  state  (n state %bat q:(gen-tx 1 lf-spawn %sambud-skey-1))
+      transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
+  ==
 ::
 ++  test-linnup-torsyx-spawn  ^-  tang
   :: try to spawn a L2 planet with a L2 planet
