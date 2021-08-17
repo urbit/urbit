@@ -2977,114 +2977,119 @@
     =^  f  state  (n state %bat q:random-tx)
     state
 ::
-++  test-fuzz-after-tx
-::  this creates a valid transaction of each type but then adds
-::  random bits to the end of it
-::
-  =+  [seed=`@`%test-fuzz-after-tx i=0]
-  =|  =^state:naive
-  =^  f  state  (init-red-full state)
-  =/  init-state  state
-  |-  ^-  tang
-  ?:  =(i 11)  ~  :: 10 attempts for each transaction type
-  %+  weld  $(seed (shas `@`%howmuchisfour seed), i +(i))
-  =+  j=0
-  |^  ^-  tang
-  ?:  =(j 11)  ~  :: there are 10 transaction types
-  %+  weld  $(seed (shas `@`%eris seed), j +(j))
-  =/  rng  ~(. og seed)
-  =^  junk-length  rng  (rads:rng 200)
-  ::increment to prevent zero-length junk
-  =^  junk  rng  (raws:rng +(junk-length))
-  =/  tx-octs=octs
-    ?+  j  !!
-      %0  do-spawn
-      %1  do-transfer-point
-      %2  do-configure-keys
-      %3  do-escape
-      %4  do-cancel-escape
-      %5  do-adopt
-      %6  do-reject
-      %7  do-detach
-      %8  do-set-management-proxy
-      %9  do-set-spawn-proxy
-      %10  do-set-transfer-proxy
-    ==
-  =/  fuzz  (mix (lsh [3 (met 3 q:tx-octs)] junk) q:tx-octs)
-  =/  fuzz-octs=octs  [(met 3 fuzz) fuzz]
-  ::  the conditionals that follow are to ensure the correct key and
-  ::  nonce are used.
-  =/  random-tx
-    ?:  =(j 4)
-      %^  sign-tx  %holrut-rr-key-0  1  fuzz-octs
-    ?:  |(=(j 5) =(j 6))
-      %^  sign-tx  %rigred-key-0  0  fuzz-octs
-    %^  sign-tx  %losrut-key-0  2  fuzz-octs
-  ::
-  =/  state  init-state
-  %+  expect-eq
-    !>  init-state
-  ::
-    !>
-    =^  f  state  (n state %bat q:random-tx)
-    state
-  ::
-  ++  do-spawn  ^-  octs
-    =/  from  [ship=~losrut proxy=%own]
-    =/  sptx=skim-tx:naive  [%spawn ~mishus-loplus (addr %nowhere)]
-    =/  tx=tx:naive  [from sptx]
-    (gen-tx-octs tx)
-  ++  do-transfer-point  ^-  octs
-    =/  from  [ship=~losrut proxy=%own]
-    =/  xrtx=skim-tx:naive  [%transfer-point (addr %somewhere) &]
-    =/  tx=tx:naive  [from xrtx]
-    (gen-tx-octs tx)
-  ++  do-configure-keys  ^-  octs
-    =/  from  [ship=~losrut proxy=%own]
-    =/  cftx=skim-tx:naive  [%configure-keys (shax 'uno') (shax 'dos') (shax 'tres') |]
-    =/  tx=tx:naive  [from cftx]
-    (gen-tx-octs tx)
-  ++  do-escape  ^-  octs
-    =/  from  [ship=~losrut proxy=%own]
-    =/  estx=skim-tx:naive  [%escape ~red]
-    =/  tx=tx:naive  [from estx]
-    (gen-tx-octs tx)
-  ++  do-cancel-escape  ^-  octs
-    =/  from  [ship=~rabsum-ravtyd proxy=%own]
-    =/  cetx=skim-tx:naive  [%cancel-escape ~rigred]
-    =/  tx=tx:naive  [from cetx]
-    (gen-tx-octs tx)
-  ++  do-adopt  ^-  octs
-    =/  from  [ship=~rigred proxy=%own]
-    =/  adtx=skim-tx:naive  [%adopt ~rabsum-ravtyd]
-    =/  tx=tx:naive  [from adtx]
-    (gen-tx-octs tx)
-  ++  do-reject  ^-  octs
-    =/  from  [ship=~rigred proxy=%own]
-    =/  rjtx=skim-tx:naive  [%adopt ~rabsum-ravtyd]
-    =/  tx=tx:naive  [from rjtx]
-    (gen-tx-octs tx)
-  ++  do-detach
-    =/  from  [ship=~losrut proxy=%own]
-    =/  dttx=skim-tx:naive  [%detach ~rabsum-ravtyd]
-    =/  tx=tx:naive  [from dttx]
-    (gen-tx-octs tx)
-  ++  do-set-management-proxy
-    =/  from  [ship=~losrut proxy=%own]
-    =/  mgtx=skim-tx:naive  [%set-management-proxy (addr %new-mgmt)]
-    =/  tx=tx:naive  [from mgtx]
-    (gen-tx-octs tx)
-  ++  do-set-spawn-proxy
-    =/  from  [ship=~losrut proxy=%own]
-    =/  sptx=skim-tx:naive  [%set-spawn-proxy (addr %new-spawn)]
-    =/  tx=tx:naive  [from sptx]
-    (gen-tx-octs tx)
-  ++  do-set-transfer-proxy
-    =/  from  [ship=~losrut proxy=%own]
-    =/  tftx=skim-tx:naive  [%set-transfer-proxy (addr %new-xfer)]
-    =/  tx=tx:naive  [from tftx]
-    (gen-tx-octs tx)
-  --
+::  I think the following test ought to be trying something else:
+::  checking to see if valid transactions followed by garbage still
+::  process the valid tx
+::  ++  test-fuzz-after-tx
+::  ::  this creates a valid transaction of each type but then adds
+::  ::  random bits to the end of it
+::  ::
+::    =+  [seed=`@`%test-fuzz-after-tx1 i=0]
+::    =|  =^state:naive
+::    =^  f  state  (init-red-full state)
+::    =/  init-state  state
+::    |-  ^-  tang
+::    ?:  =(i 11)  ~  :: 10 attempts for each transaction type
+::    %+  weld  $(seed (shas `@`%howmuchisfour seed), i +(i))
+::    =+  j=0
+::    |^  ^-  tang
+::    ?:  =(j 11)  ~  :: there are 10 transaction types
+::    %+  weld  $(seed (shas `@`%eris seed), j +(j))
+::    =/  rng  ~(. og seed)
+::    =^  junk-length  rng  (rads:rng 200)
+::    ::increment to prevent zero-length junk
+::    =^  junk  rng  (raws:rng +(junk-length))
+::    =/  tx-octs=octs
+::      ?+  j  !!
+::        %0  do-spawn
+::        %1  do-transfer-point
+::        %2  do-configure-keys
+::        %3  do-escape
+::        %4  do-cancel-escape
+::        %5  do-adopt
+::        %6  do-reject
+::        %7  do-detach
+::        %8  do-set-management-proxy
+::        %9  do-set-spawn-proxy
+::        %10  do-set-transfer-proxy
+::      ==
+::    =/  fuzz  (mix (lsh [3 (met 3 q:tx-octs)] junk) q:tx-octs)
+::    =/  fuzz-octs=octs  [(met 3 fuzz) fuzz]
+::    ::  the conditionals that follow are to ensure the correct key and
+::    ::  nonce are used.
+::    =/  random-tx
+::      ?:  =(j 4)
+::        %^  sign-tx  %holrut-rr-key-0  1  fuzz-octs
+::      ?:  |(=(j 5) =(j 6))
+::        %^  sign-tx  %rigred-key-0  0  fuzz-octs
+::      %^  sign-tx  %losrut-key-0  2  fuzz-octs
+::    ::
+::    =/  state  init-state
+::    %+  category  (weld "fuzz tx type " (scow %ud j))
+::    %+  expect-eq
+::      !>  init-state
+::    ::
+::      !>
+::      =^  f  state  (n state %bat q:random-tx)
+::      ~&  ['tx-type' j]
+::      state
+::    ::
+::    ++  do-spawn  ^-  octs
+::      =/  from  [ship=~losrut proxy=%own]
+::      =/  sptx=skim-tx:naive  [%spawn ~mishus-loplus (addr %nowhere)]
+::      =/  tx=tx:naive  [from sptx]
+::      (gen-tx-octs tx)
+::    ++  do-transfer-point  ^-  octs
+::      =/  from  [ship=~losrut proxy=%own]
+::      =/  xrtx=skim-tx:naive  [%transfer-point (addr %somewhere) &]
+::      =/  tx=tx:naive  [from xrtx]
+::      (gen-tx-octs tx)
+::    ++  do-configure-keys  ^-  octs
+::      =/  from  [ship=~losrut proxy=%own]
+::      =/  cftx=skim-tx:naive  [%configure-keys (shax 'uno') (shax 'dos') (shax 'tres') |]
+::      =/  tx=tx:naive  [from cftx]
+::      (gen-tx-octs tx)
+::    ++  do-escape  ^-  octs
+::      =/  from  [ship=~losrut proxy=%own]
+::      =/  estx=skim-tx:naive  [%escape ~red]
+::      =/  tx=tx:naive  [from estx]
+::      (gen-tx-octs tx)
+::    ++  do-cancel-escape  ^-  octs
+::      =/  from  [ship=~rabsum-ravtyd proxy=%own]
+::      =/  cetx=skim-tx:naive  [%cancel-escape ~rigred]
+::      =/  tx=tx:naive  [from cetx]
+::      (gen-tx-octs tx)
+::    ++  do-adopt  ^-  octs
+::      =/  from  [ship=~rigred proxy=%own]
+::      =/  adtx=skim-tx:naive  [%adopt ~rabsum-ravtyd]
+::      =/  tx=tx:naive  [from adtx]
+::      (gen-tx-octs tx)
+::    ++  do-reject  ^-  octs
+::      =/  from  [ship=~rigred proxy=%own]
+::      =/  rjtx=skim-tx:naive  [%adopt ~rabsum-ravtyd]
+::      =/  tx=tx:naive  [from rjtx]
+::      (gen-tx-octs tx)
+::    ++  do-detach
+::      =/  from  [ship=~losrut proxy=%own]
+::      =/  dttx=skim-tx:naive  [%detach ~rabsum-ravtyd]
+::      =/  tx=tx:naive  [from dttx]
+::      (gen-tx-octs tx)
+::    ++  do-set-management-proxy
+::      =/  from  [ship=~losrut proxy=%own]
+::      =/  mgtx=skim-tx:naive  [%set-management-proxy (addr %new-mgmt)]
+::      =/  tx=tx:naive  [from mgtx]
+::      (gen-tx-octs tx)
+::    ++  do-set-spawn-proxy
+::      =/  from  [ship=~losrut proxy=%own]
+::      =/  sptx=skim-tx:naive  [%set-spawn-proxy (addr %new-spawn)]
+::      =/  tx=tx:naive  [from sptx]
+::      (gen-tx-octs tx)
+::    ++  do-set-transfer-proxy
+::      =/  from  [ship=~losrut proxy=%own]
+::      =/  tftx=skim-tx:naive  [%set-transfer-proxy (addr %new-xfer)]
+::      =/  tx=tx:naive  [from tftx]
+::      (gen-tx-octs tx)
+::    --
 ::
 :: the following tests are to ensure that padding of zeroes creates
 :: no issues
@@ -3160,9 +3165,6 @@
   =/  tx-1=full-tx  [0 marbud-transfer %marbud-key-0]
   =/  tx-2=full-tx  [1 marbud-transfer-2 %marbud-key-0]
   =/  txs=tx-list  (limo ~[tx-1 tx-2])
-  ~&  ['tx-1' `@ux`(tx-list-to-batch (limo ~[tx-1]))]
-  ~&  ['tx-2' `@ux`(tx-list-to-batch (limo ~[tx-2]))]
-  ~&  ['txs' `@ux`(tx-list-to-batch txs)]
   %+  expect-eq
     !>  [(addr %marbud-key-1) 2]
   ::
