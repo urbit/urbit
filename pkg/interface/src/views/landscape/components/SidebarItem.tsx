@@ -1,5 +1,6 @@
-import { Icon, Row, Text } from '@tlon/indigo-react';
-import React, { ReactElement } from 'react';
+import React from 'react';
+import { Row, Icon, Text } from '@tlon/indigo-react';
+
 import { IconRef, PropFunc } from '~/types/util';
 import { HoverBoxLink } from '~/views/components/HoverBox';
 
@@ -28,13 +29,13 @@ export const SidebarItem = ({
       bg="white"
       bgActive="washedGray"
       display="flex"
-      px={3}
-      py={2}
+      px="3"
+      py="2"
       justifyContent="space-between"
       {...rest}
     >
       <Row alignItems="center">
-        <Icon color={color} icon={icon as any} mr={2} />
+        <Icon color={color} icon={icon as any} mr="2" />
         <Text color={color}>{text}</Text>
       </Row>
       {children}

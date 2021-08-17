@@ -1,6 +1,7 @@
-import { Box, BoxProps, Text } from '@tlon/indigo-react';
 import moment, { Moment as MomentType } from 'moment';
 import React, { ReactElement } from 'react';
+
+import { Box, BoxProps, Text } from '@tlon/indigo-react';
 import { useHovering } from '~/logic/lib/util';
 
 export const DateFormat = 'YYYY.M.D';
@@ -11,9 +12,6 @@ export type TimestampProps = BoxProps & {
   date?: boolean;
   time?: boolean;
   relative?: boolean;
-  dateNotRelative?: boolean;
-  height?: string;
-  color?: string;
 };
 
 const Timestamp = (props: TimestampProps): ReactElement | null => {
@@ -23,7 +21,7 @@ const Timestamp = (props: TimestampProps): ReactElement | null => {
     time,
     color,
     relative,
-    dateNotRelative = false,
+    dateNotRelative,
     fontSize,
     lineHeight,
     ...rest
@@ -33,8 +31,7 @@ const Timestamp = (props: TimestampProps): ReactElement | null => {
     fontSize: 0,
     ...props
   };
-  if (!stamp)
-return null;
+  if (!stamp) return null;
   const { hovering, bind } =
     date === true ? { hovering: true, bind: {} } : useHovering();
   let datestamp = stamp.format(DateFormat);

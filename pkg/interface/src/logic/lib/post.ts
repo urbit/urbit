@@ -1,4 +1,4 @@
-import { GraphNode, Post } from '@urbit/api';
+import { Post, GraphNode } from '@urbit/api';
 
 export const buntPost = (): Post => ({
   author: '',

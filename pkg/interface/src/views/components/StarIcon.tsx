@@ -1,8 +1,8 @@
-import css, { SystemStyleObject } from '@styled-system/css';
-import { BaseSVG } from '@tlon/indigo-react';
-import React from 'react';
-import styled from 'styled-components';
-import { PropFunc } from '~/types';
+import React from "react";
+import css, { SystemStyleObject } from "@styled-system/css";
+import styled from "styled-components";
+import { BaseSVG } from "@tlon/indigo-react";
+import { PropFunc } from "~/types";
 
 type StarIconProps = PropFunc<typeof BaseSVG> & SvgProps;
 
@@ -11,10 +11,10 @@ interface SvgProps {
 }
 const Svg = styled(BaseSVG)(({ color }: SvgProps) =>
   css({
-    '& > *': {
-      fill: typeof color === 'undefined' ? 'inherit' : color || 'black'
+    "& > *": {
+      fill: typeof color === "undefined" ? "inherit" : color || "black",
     },
-    flexShrink: 0
+    flexShrink: 0,
   } as SystemStyleObject)
 );
 

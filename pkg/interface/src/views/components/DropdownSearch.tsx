@@ -1,15 +1,20 @@
-import {
-    Box,
-    StatelessTextInput as Input
-} from '@tlon/indigo-react';
+import React, {
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  ChangeEvent,
+  ReactElement
+} from 'react';
 import _ from 'lodash';
 import Mousetrap from 'mousetrap';
-import React, {
-    ChangeEvent,
-    ReactElement, useCallback,
-    useEffect, useMemo, useRef,
-    useState
-} from 'react';
+
+import {
+  Box,
+  StatelessTextInput as Input
+} from '@tlon/indigo-react';
+
 import { useDropdown } from '~/logic/lib/useDropdown';
 import { PropFunc } from '~/types/util';
 
@@ -40,7 +45,7 @@ type DropdownSearchProps<C> = PropFunc<typeof Box> &
   DropdownSearchExtraProps<C>;
 
 export function DropdownSearch<C>(props: DropdownSearchProps<C>): ReactElement {
-  const textarea = useRef<HTMLTextAreaElement>(null);
+  const textarea = useRef<HTMLTextAreaElement>();
   const {
     candidates,
     getKey,
@@ -129,7 +134,6 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>): ReactElement {
 
   return (
     <Box {...rest} position="relative" zIndex={9}>
-      { /* @ts-ignore investigate onblur on styled-system component later */}
       <Input
         ref={textarea}
         onChange={changeCallback}
@@ -141,9 +145,9 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>): ReactElement {
       />
       {dropdown.length !== 0 && query.length !== 0 && (
         <Box
-          mt={1}
-          border={1}
-          borderRadius={1}
+          mt="1"
+          border="1"
+          borderRadius="1"
           borderColor="washedGray"
           bg="white"
           width="100%"

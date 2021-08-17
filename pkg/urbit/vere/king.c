@@ -159,7 +159,7 @@ _king_fake(u3_noun ship, u3_noun pill, u3_noun path)
   //  XX link properly
   //
   u3_noun vent = u3nc(c3__fake, u3k(ship));
-  u3K.pir_u    = u3_pier_boot(sag_w, ship, vent, pill, path, u3_none);
+  u3K.pir_u    = u3_pier_boot(sag_w, ship, vent, pill, path);
 }
 
 /* _king_come(): mine a comet under star (unit)
@@ -182,7 +182,7 @@ _king_slog(u3_noun hod)
 /* _king_dawn(): boot from keys, validating
 */
 void
-_king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
+_king_dawn(u3_noun seed, u3_noun pill, u3_noun path)
 {
   // enable ivory slog printfs
   //
@@ -190,10 +190,8 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
 
   //  XX link properly
   //
-  //NOTE  +slav is safe because _boothack_key already verified it
-  u3_noun ship = u3dc("slav", 'p', u3i_string(u3_Host.ops_u.who_c));
-  u3_noun vent = u3_dawn_vent(u3k(ship), u3k(feed));
-  u3K.pir_u    = u3_pier_boot(sag_w, ship, vent, pill, path, feed);
+  u3_noun vent = u3_dawn_vent(seed);
+  u3K.pir_u = u3_pier_boot(sag_w, u3k(u3h(seed)), vent, pill, path);
 
   // disable ivory slog printfs
   //
@@ -380,8 +378,7 @@ _boothack_pill(void)
 static u3_noun
 _boothack_key(u3_noun kef)
 {
-  u3_noun seed;
-  u3_weak ship = u3_none;
+  u3_noun seed, ship;
 
   {
     u3_noun des = u3dc("slaw", c3__uw, u3k(kef));
@@ -393,24 +390,19 @@ _boothack_key(u3_noun kef)
       exit(1);
     }
 
-    //  +feed:able:jael: keyfile
+    //  +seed:able:jael: private key file
     //
     u3_noun pro = u3m_soft(0, u3ke_cue, u3k(u3t(des)));
     if ( u3_blip != u3h(pro) ) {
-      u3l_log("dawn: unable to cue keyfile\r\n");
+      u3l_log("dawn: unable to cue private key\r\n");
       exit(1);
     }
     seed = u3k(u3t(pro));
     u3z(pro);
 
-    //  if it's a single seed, we can trivially sanity-check early
+    //  local reference, not counted
     //
-    if ( c3y == u3ud(u3h(seed)) ) {
-      //  local reference, not counted
-      //
-      ship = u3h(seed);
-    }
-
+    ship = u3h(seed);
     u3z(des);
     u3z(kef);
   }
@@ -425,9 +417,7 @@ _boothack_key(u3_noun kef)
       exit(1);
     }
 
-    if ( (u3_none != ship) &&
-         (c3n == u3r_sing(ship, u3t(whu))) )
-    {
+    if ( c3n == u3r_sing(ship, u3t(whu)) ) {
       u3_noun how = u3dc("scot", 'p', u3k(ship));
       c3_c* how_c = u3r_string(u3k(how));
       u3l_log("dawn: mismatch between -w %s and -K %s\r\n",

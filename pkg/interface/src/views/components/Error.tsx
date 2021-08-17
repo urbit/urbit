@@ -1,5 +1,5 @@
-import { BaseAnchor, Box, Button, Col, Text } from '@tlon/indigo-react';
 import React, { Component } from 'react';
+import { Text, Box, Col, Button, BaseAnchor } from '@tlon/indigo-react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -29,7 +29,7 @@ class ErrorComponent extends Component<ErrorProps> {
       body =`\`\`\`%0A${error.stack?.replaceAll('\n', '%0A')}%0A\`\`\``;
     }
     return (
-      <Col alignItems="center" justifyContent="center" height="100%" p={4} backgroundColor="white" maxHeight="100%">
+      <Col alignItems="center" justifyContent="center" height="100%" p="4" backgroundColor="white" maxHeight="100%">
         <Box mb={4}>
           <Text fontSize={3}>
            {code ? code : 'Error'}

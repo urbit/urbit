@@ -1,9 +1,9 @@
+import React, { useCallback, UIEvent, MouseEvent, useRef } from 'react';
 import { Box } from '@tlon/indigo-react';
-import React, { useCallback, useRef } from 'react';
 import { PropFunc } from '~/types/util';
 
 interface ModalOverlayProps {
-  spacing?: PropFunc<typeof Box>['m'];
+  spacing: PropFunc<typeof Box>['m'];
   dismiss: () => void;
 }
 type Props = ModalOverlayProps & PropFunc<typeof Box>;

@@ -9,7 +9,7 @@
       update:store
       %graph-update
       %graph-push-hook
-      2  2
+      1  1
       %.n
   ==
 --
@@ -41,7 +41,7 @@
   %-  (slog leaf+"nacked {<resource>}" tang)
   :_  this
   ?.  (~(has in get-keys:gra) resource)  ~
-  =-  [%pass /pull-nack %agent [our.bowl %graph-store] %poke %graph-update-2 -]~
+  =-  [%pass /pull-nack %agent [our.bowl %graph-store] %poke %graph-update-1 -]~
   !>  ^-  update:store
   [now.bowl [%archive-graph resource]]
 ::

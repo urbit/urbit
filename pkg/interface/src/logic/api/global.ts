@@ -1,17 +1,17 @@
 import { Patp } from '@urbit/api';
-import GlobalStore from '../store/store';
-import { StoreState } from '../store/type';
 import BaseApi from './base';
-import ContactsApi from './contacts';
-import GcpApi from './gcp';
-import GraphApi from './graph';
-import GroupsApi from './groups';
-import { HarkApi } from './hark';
-import InviteApi from './invite';
-import LaunchApi from './launch';
+import { StoreState } from '../store/type';
+import GlobalStore from '../store/store';
 import LocalApi from './local';
+import InviteApi from './invite';
 import MetadataApi from './metadata';
+import ContactsApi from './contacts';
+import GroupsApi from './groups';
+import LaunchApi from './launch';
+import GraphApi from './graph';
 import S3Api from './s3';
+import GcpApi from './gcp';
+import { HarkApi } from './hark';
 import SettingsApi from './settings';
 
 export default class GlobalApi extends BaseApi<StoreState> {

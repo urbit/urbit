@@ -17,7 +17,7 @@
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ::  unarchive graph and share it
 ;<  ~  bind:m
-  (poke-our %graph-store %graph-update-2 !>([now.bowl %unarchive-graph rid]))
+  (poke-our %graph-store %graph-update-1 !>([now.bowl %unarchive-graph rid]))
 ;<  ~  bind:m
   (poke-our %graph-push-hook %push-hook-action !>([%add rid]))
 ::

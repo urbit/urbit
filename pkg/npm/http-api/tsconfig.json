@@ -1,5 +1,5 @@
 {
-  "include": ["*.ts"],
+  "include": ["src/*.ts"],
   "exclude": ["node_modules", "dist", "@types"],
   "compilerOptions": {
 	  "outDir": "./dist",
@@ -15,9 +15,5 @@
     "strict": false,
     "noErrorTruncation": true,
     "allowJs": true,
-    "baseUrl": ".",
-    "paths": {
-      "*" : ["./node_modules/@types/*", "*"]
-    }
   }
 }

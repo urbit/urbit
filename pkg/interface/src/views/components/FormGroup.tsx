@@ -1,16 +1,18 @@
-import { Box, Button, Row } from '@tlon/indigo-react';
-import { useFormikContext } from 'formik';
-import _ from 'lodash';
 import React, {
-    useCallback, useEffect,
-
-    useMemo, useState
-} from 'react';
-import { Prompt } from 'react-router-dom';
-import { FormGroupContext, SubmitHandler } from '~/logic/lib/formGroup';
-import { usePreventWindowUnload } from '~/logic/lib/util';
-import { PropFunc } from '~/types';
-import { StatelessAsyncButton } from './StatelessAsyncButton';
+  ReactNode,
+  useEffect,
+  useCallback,
+  useState,
+  useMemo,
+} from "react";
+import { Button, Box, Row, Col } from "@tlon/indigo-react";
+import _ from "lodash";
+import { useFormikContext } from "formik";
+import { PropFunc } from "~/types";
+import { FormGroupContext, SubmitHandler } from "~/logic/lib/formGroup";
+import { StatelessAsyncButton } from "./StatelessAsyncButton";
+import { Prompt } from "react-router-dom";
+import { usePreventWindowUnload } from "~/logic/lib/util";
 
 export function useFormGroupContext(id: string) {
   const ctx = React.useContext(FormGroupContext);
@@ -45,7 +47,7 @@ export function useFormGroupContext(id: string) {
     onDirty,
     addSubmit,
     onErrors,
-    addReset
+    addReset,
   };
 }
 
@@ -67,6 +69,7 @@ export function FormGroupChild(props: { id: string }) {
       resetForm({ touched: {}, values });
     }
     addSubmit(submit);
+    
   }, [submitForm, values]);
 
   useEffect(() => {
@@ -74,7 +77,7 @@ export function FormGroupChild(props: { id: string }) {
   }, [dirty, onDirty]);
 
   useEffect(() => {
-    onErrors(_.keys(_.pickBy(errors, s => Boolean(s))).length > 0);
+    onErrors(_.keys(_.pickBy(errors, (s) => !!s)).length > 0);
   }, [errors, onErrors]);
 
   useEffect(() => {
@@ -94,11 +97,11 @@ export function FormGroup(props: { onReset?: () => void; } & PropFunc<typeof Box
   const [dirty, setDirty] = useState({} as Record<string, boolean>);
   const [errors, setErrors] = useState({} as Record<string, boolean>);
   const addSubmit = useCallback((id: string, s: SubmitHandler) => {
-    setSubmits(ss => ({ ...ss, [id]: s }));
+    setSubmits((ss) => ({ ...ss, [id]: s }));
   }, []);
 
   const resetAll = useCallback(() => {
-    _.map(resets, r => r());
+    _.map(resets, (r) => r());
     onReset && onReset();
   }, [resets, onReset]);
 
@@ -106,29 +109,29 @@ export function FormGroup(props: { onReset?: () => void; } & PropFunc<typeof Box
     await Promise.all(
       _.map(
         _.pickBy(submits, (_v, k) => dirty[k]),
-        f => f()
+        (f) => f()
       )
     );
   }, [submits, dirty]);
 
   const onDirty = useCallback(
     (id: string, t: boolean) => {
-      setDirty(ts => ({ ...ts, [id]: t }));
+      setDirty((ts) => ({ ...ts, [id]: t }));
     },
     [setDirty]
   );
 
   const onErrors = useCallback((id: string, e: boolean) => {
-    setErrors(es => ({ ...es, [id]: e }));
+    setErrors((es) => ({ ...es, [id]: e }));
   }, []);
   const addReset = useCallback((id: string, reset: () => void) => {
-    setResets(rs => ({ ...rs, [id]: reset }));
+    setResets((rs) => ({ ...rs, [id]: reset }));
   }, []);
 
   const context = { addSubmit, submitAll, onErrors, onDirty, addReset };
 
   const hasErrors = useMemo(
-    () => _.keys(_.pickBy(errors, s => Boolean(s))).length > 0,
+    () => _.keys(_.pickBy(errors, (s) => !!s)).length > 0,
     [errors]
   );
   const isDirty = useMemo(
@@ -152,10 +155,10 @@ export function FormGroup(props: { onReset?: () => void; } & PropFunc<typeof Box
         width="100%"
         position="sticky"
         bottom="0px"
-        p={3}
-        gapX={2}
+        p="3"
+        gapX="2"
         backgroundColor="white"
-        borderTop={1}
+        borderTop="1"
         borderTopColor="washedGray"
       >
         <Button onClick={resetAll}>Cancel</Button>

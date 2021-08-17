@@ -2,7 +2,7 @@
 ::
 /-  *group, *invite-store, store=metadata-store
 /+  default-agent, verb, dbug, grpl=group, push-hook,
-    resource, mdl=metadata, gral=graph, agentio
+    resource, mdl=metadata, gral=graph
 ~%  %group-hook-top  ..part  ~
 |%
 +$  card  card:agent:gall
@@ -18,19 +18,9 @@
   ==
 ::
 +$  agent  (push-hook:push-hook config)
-::
-+$  state-null  ~
-+$  state-zero  [%0 ~]
-::
-+$  versioned-state
-  $%  state-null
-      state-zero
-  ==
 --
 ::
 ::
-=|  state-zero
-=*  state  -
 %-  agent:dbug
 %+  verb  |
 ^-  agent:gall
@@ -42,45 +32,23 @@
     grp       ~(. grpl bowl)
     met       ~(. mdl bowl)
     gra       ~(. gral bowl)
-    io        ~(. agentio bowl)
-    pass      pass:io
 ::
 ++  on-init  on-init:def
 ++  on-save  !>(~)
-++  on-load  on-load:def
-::
+++  on-load    on-load:def
 ++  on-poke
   |=  [=mark =vase]
-  |^  ^-  (quip card _this)
-  ?+  mark  (on-poke:def mark vase)
-    %metadata-hook-update  metadata-hook-update
-    %noun                  noun
-  ==
-  ::
-  ++  metadata-hook-update
-    =+  !<(=hook-update:store vase)
-    ?.  ?=(%req-preview -.hook-update)
-      (on-poke:def mark vase)
-    ?>  =(entity.group.hook-update our.bowl)
-    =/  =group-preview:store
-      (get-preview:met group.hook-update)
-    :_  this
-    =-  [%pass / %agent [src.bowl %metadata-pull-hook] %poke -]~
-    metadata-hook-update+!>(`hook-update:store`[%preview group-preview])
-  ::
-  ++  noun
-    ?+  q.vase  ~|("unknown noun poke" !!)
-    ::
-        %clean-dm
-      =+  .^(sharing=(set resource) (scry:io %gx dap.bowl /sharing/noun))
-      :_  this
-      %+  murn  ~(tap in sharing)
-      |=  rid=resource
-      ^-  (unit card)
-      ?@  (rush name.rid ;~(pfix (jest 'dm--') fed:ag))  ~
-      `(poke-self:pass push-hook-action+!>([%remove rid]))
-    ==
-  --
+  ?.  ?=(%metadata-hook-update mark)
+    (on-poke:def mark vase)
+  =+  !<(=hook-update:store vase)
+  ?.  ?=(%req-preview -.hook-update)
+    (on-poke:def mark vase)
+  ?>  =(entity.group.hook-update our.bowl)
+  =/  =group-preview:store
+    (get-preview:met group.hook-update)
+  :_  this
+  =-  [%pass / %agent [src.bowl %metadata-pull-hook] %poke -]~
+  metadata-hook-update+!>(`hook-update:store`[%preview group-preview])
 ::
 ++  on-agent  on-agent:def
 ++  on-watch  on-watch:def
@@ -91,9 +59,8 @@
 ::
 ++  transform-proxy-update
   |=  vas=vase
-  ^-  (quip card (unit vase))
+  ^-  (unit vase)
   =/  =update:store  !<(update:store vas)
-  :-  ~
   ?.  ?=(?(%add %remove) -.update)
     ~
   =/  role=(unit (unit role-tag))

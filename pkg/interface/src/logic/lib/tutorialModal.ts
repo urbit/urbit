@@ -1,6 +1,5 @@
-import { Associations } from '@urbit/api';
+import { TutorialProgress, Associations } from '@urbit/api';
 import { AlignX, AlignY } from '~/logic/lib/relativePosition';
-import { TutorialProgress } from '~/types';
 import { Direction } from '~/views/components/Triangle';
 
 export const MODAL_WIDTH = 256;
@@ -23,7 +22,7 @@ interface StepDetail {
   alignY: AlignY | AlignY[];
   offsetX: number;
   offsetY: number;
-  arrow?: Direction;
+  arrow: Direction;
 }
 
 export function hasTutorialGroup(props: { associations: Associations }) {
@@ -92,7 +91,7 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     alignY: 'top',
     arrow: 'East',
     offsetX: MODAL_WIDTH + 24,
-    offsetY: 80
+    offsetY: 80,
   },
   channels: {
     title: 'Channels',
@@ -157,17 +156,17 @@ export const progressDetails: Record<TutorialProgress, StepDetail> = {
     alignX: 'right',
     arrow: 'South',
     offsetX: -300 + MODAL_WIDTH / 2,
-    offsetY: -4
+    offsetY: -4,
   },
   leap: {
     title: 'Leap',
     description:
       'Leap allows you to go to a specific channel, message, collection, profile or group simply by typing in a command or selecting a shortcut from the dropdown menu.',
     url: `/~profile/~${window.ship}`,
-    alignY: 'top',
-    alignX: 'left',
-    arrow: 'North',
+    alignY: "top",
+    alignX: "left",
+    arrow: "North",
     offsetX: 76,
-    offsetY: -48
-  }
+    offsetY: -48,
+  },
 };

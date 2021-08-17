@@ -1,25 +1,27 @@
+import React from 'react';
+import { Formik, Form, FormikHelpers } from 'formik';
+import * as Yup from 'yup';
+
 import {
-    Box,
-
-    Col, ManagedTextInputField as Input,
-    ManagedToggleSwitchField as Checkbox,
-
-    Text
+  Box,
+  ManagedTextInputField as Input,
+  ManagedToggleSwitchField as Checkbox,
+  Col,
+  Text
 } from '@tlon/indigo-react';
 import { Enc } from '@urbit/api';
 import { Group, GroupPolicy } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
-import { Form, Formik, FormikHelpers } from 'formik';
-import React from 'react';
-import { useHistory } from 'react-router-dom';
-import * as Yup from 'yup';
+
+import { AsyncButton } from '~/views/components/AsyncButton';
+import { FormError } from '~/views/components/FormError';
 import GlobalApi from '~/logic/api/global';
 import { resourceFromPath, roleForShip } from '~/logic/lib/group';
-import { uxToHex } from '~/logic/lib/util';
-import { AsyncButton } from '~/views/components/AsyncButton';
 import { ColorInput } from '~/views/components/ColorInput';
-import { FormError } from '~/views/components/FormError';
+import { useHistory } from 'react-router-dom';
+import { uxToHex } from '~/logic/lib/util';
 import { ImageInput } from '~/views/components/ImageInput';
+import { StorageState } from '~/types';
 
 interface FormSchema {
   title: string;
@@ -102,8 +104,8 @@ return null;
       onSubmit={onSubmit}
     >
       <Form>
-        <Box p={4} id="group-details"><Text fontWeight="600" fontSize={2}>Group Details</Text></Box>
-        <Col pb={4} px={4} maxWidth="384px" gapY={4}>
+        <Box p="4" id="group-details"><Text fontWeight="600" fontSize="2">Group Details</Text></Box>
+        <Col pb="4" px="4" maxWidth="384px" gapY={4}>
           <Input
             id="title"
             label="Group Name"

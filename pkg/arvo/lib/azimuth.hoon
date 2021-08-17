@@ -132,7 +132,7 @@
         0x3e8c.a510.354b.c2fd.bbd6.1502.52d9.3105.c9c2.7bbe
       ::
       ++  naive
-        0xe7cf.4b83.06d3.11ba.ca15.585f.e3f0.7cd0.441c.21d1
+        0xb581.01cd.3bbb.cc6f.a40b.cdb0.4bb7.1623.b5c7.d39b
       ::
       ++  launch  4.601.630
       ++  public  launch

@@ -107,6 +107,7 @@ export const markCountAsRead = (
     graph: {
       graph: association.resource,
       group: association.group,
+      module: association.metadata.module,
       description: description,
       index: parent
     }
@@ -244,6 +245,6 @@ export const getNotificationCount = (
 ): number => {
   const unread = unreads.graph?.[path] || {};
   return Object.keys(unread)
-    .map(index => unread[index]?.notifications as number || 0)
+    .map(index => unread[index]?.notifications || 0)
     .reduce(f.add, 0);
 }

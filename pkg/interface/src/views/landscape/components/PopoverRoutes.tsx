@@ -1,16 +1,21 @@
-import { Box, Col, Text } from '@tlon/indigo-react';
+import React, { useRef, useCallback, ReactElement } from 'react';
+import { Route, Switch, RouteComponentProps, Link } from 'react-router-dom';
+import { Box,  Col, Text } from '@tlon/indigo-react';
+
+import { GroupNotificationsConfig, Associations } from '@urbit/api';
+import { Contacts, Contact } from '@urbit/api/contacts';
 import { Group } from '@urbit/api/groups';
 import { Association } from '@urbit/api/metadata';
-import React, { ReactElement, useCallback, useRef } from 'react';
-import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom';
+
 import GlobalApi from '~/logic/api/global';
-import { resourceFromPath } from '~/logic/lib/group';
-import { useHashLink } from '~/logic/lib/useHashLink';
-import { ModalOverlay } from '~/views/components/ModalOverlay';
-import { SidebarItem } from '~/views/landscape/components/SidebarItem';
-import { DeleteGroup } from './DeleteGroup';
 import { GroupSettings } from './GroupSettings/GroupSettings';
 import { Participants } from './Participants';
+import { useHashLink } from '~/logic/lib/useHashLink';
+import { DeleteGroup } from './DeleteGroup';
+import { resourceFromPath } from '~/logic/lib/group';
+import { ModalOverlay } from '~/views/components/ModalOverlay';
+import { SidebarItem } from '~/views/landscape/components/SidebarItem';
+import { StorageState } from '~/types';
 
 export function PopoverRoutes(
   props: {
@@ -18,6 +23,8 @@ export function PopoverRoutes(
     group: Group;
     association: Association;
     api: GlobalApi;
+    notificationsGroupConfig: GroupNotificationsConfig;
+    rootIdentity: Contact;
   } & RouteComponentProps
 ): ReactElement {
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
@@ -65,11 +72,11 @@ export function PopoverRoutes(
                   borderRight={1}
                   borderRightColor="washedGray"
                 >
-                  <Text my={4} mx={3} fontWeight="600" fontSize={2}>Group Settings</Text>
-                  <Col gapY={2}>
-                    <Text my={1} mx={3} gray>Group</Text>
+                  <Text my="4" mx="3" fontWeight="600" fontSize="2">Group Settings</Text>
+                  <Col gapY="2">
+                    <Text my="1" mx="3" gray>Group</Text>
                     <SidebarItem
-                      icon='Notifications'
+                      icon="Inbox"
                       to={relativeUrl('/settings#notifications')}
                       text="Notifications"
                     />
@@ -82,7 +89,7 @@ export function PopoverRoutes(
                     </SidebarItem>
                     { admin && (
                       <>
-                        <Box pt={3} mb={1} mx={3}>
+                        <Box pt="3" mb="1" mx="3">
                           <Text gray>Administration</Text>
                         </Box>
                         <SidebarItem
@@ -91,7 +98,7 @@ export function PopoverRoutes(
                           text="Group Details"
                         />
                         <SidebarItem
-                          icon="Dashboard"
+                          icon="Spaces"
                           to={relativeUrl('/settings#channels')}
                           text="Channel Management"
                         />

@@ -1,12 +1,13 @@
-import { Box, Row, SegmentedProgressBar, Text } from '@tlon/indigo-react';
+import React, {useCallback} from 'react';
+import { Action, Row, Text, SegmentedProgressBar, Box } from '@tlon/indigo-react';
 import {
-    joinError, joinProgress,
-
-    JoinRequest
+  JoinProgress,
+  joinProgress,
+  joinError,
+  JoinRequest
 } from '@urbit/api';
-import React, { useCallback } from 'react';
 import GlobalApi from '~/logic/api/global';
-import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
+import {StatelessAsyncAction} from '~/views/components/StatelessAsyncAction';
 
 interface JoiningStatusProps {
   status: JoinRequest;
@@ -29,13 +30,13 @@ export function JoiningStatus(props: JoiningStatusProps) {
   const desc = description?.[current] || '';
   const isError = joinError.indexOf(status.progress as any) !== -1;
   const onHide = useCallback(() => api.groups.hide(resource)
-    , [resource, api]);
+    , [resource, api])
   return (
     <Row
       display={['flex-column', 'flex']}
       alignItems="center"
-      px={4}
-      gapX={4}
+      px="4"
+      gapX="4"
     >
       <Box flexGrow={1} maxWidth="400px">
         <SegmentedProgressBar current={current + 1} segments={3} />

@@ -47,7 +47,7 @@ export interface TileTypeBasic {
 }
 
 interface TileTypeCustom {
-  custom: any;
+  custom: null;
 }
 
 interface WeatherDay {

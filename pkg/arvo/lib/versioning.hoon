@@ -29,12 +29,11 @@
   &((gte ver min) (lte ver version))
 ::
 ++  convert-to
-  |=  [=mark =vase]
-  ^-  cage
-  :-  current-version
-  ?:  =(mark current-version)
-    vase
-  ((tube-to mark) vase)
+  |=  =cage
+  ^-  vase
+  ?:  =(p.cage current-version)
+    q.cage
+  ((tube-to p.cage) q.cage)
 ::
 ++  tube-to
   |=  =mark
@@ -45,11 +44,10 @@
   .^(tube:clay %cc (scry:io %home /[current-version]/[mark]))
 ::
 ++  convert-from
-  |=  [=mark =vase]
-  ^-  cage
-  :-  mark
-  ?:  =(mark current-version)
-    vase
-  ((tube-from mark) vase)
+  |=  =cage
+  ^-  vase
+  ?:  =(p.cage current-version)
+    q.cage
+  ((tube-from p.cage) q.cage)
 --
 

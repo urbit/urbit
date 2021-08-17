@@ -1,20 +1,21 @@
-import { Col } from '@tlon/indigo-react';
-import { Association, GraphNode, Group } from '@urbit/api';
-import bigInt from 'big-integer';
-import { FormikHelpers } from 'formik';
 import React, { useEffect, useMemo } from 'react';
+import bigInt from 'big-integer';
+import { Col } from '@tlon/indigo-react';
+import { CommentItem } from './CommentItem';
+import CommentInput from './CommentInput';
+import { Contacts } from '@urbit/api/contacts';
 import GlobalApi from '~/logic/api/global';
-import { createBlankNodeWithChildPost, createPost } from '~/logic/api/graph';
-import { isWriter } from '~/logic/lib/group';
-import { getUnreadCount } from '~/logic/lib/hark';
-import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { FormikHelpers } from 'formik';
+import { Group, GraphNode, Association } from '@urbit/api';
+import { createPost, createBlankNodeWithChildPost } from '~/logic/api/graph';
 import { getLatestCommentRevision } from '~/logic/lib/publish';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
-import { useQuery } from '~/logic/lib/useQuery';
-import useHarkState from '~/logic/state/hark';
+import { getUnreadCount } from '~/logic/lib/hark';
 import { PropFunc } from '~/types/util';
-import CommentInput from './CommentInput';
-import { CommentItem } from './CommentItem';
+import { isWriter } from '~/logic/lib/group';
+import useHarkState from '~/logic/state/hark';
+import {useQuery} from '~/logic/lib/useQuery';
+import {referenceToPermalink} from '~/logic/lib/permalinks';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -41,14 +42,15 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
 
   const { query } = useQuery();
   const selectedComment = useMemo(() => {
-    const id = query.get('selected');
+    const id = query.get('selected')
     return id ? bigInt(id) : null;
   }, [query]);
 
   const editCommentId = useMemo(() => {
-    const id = query.get('edit');
+    const id = query.get('edit')
     return id || '';
   }, [query]);
+
 
   const onSubmit = async (
     { comment },
@@ -82,7 +84,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
       const post = createPost(
         content,
         commentNode.post.index,
-        parseInt((idx + 1).toString(), 10).toString()
+        parseInt(idx + 1, 10)
       );
       await api.graph.addPost(ship, name, post);
       history.push(baseUrl);
@@ -128,7 +130,7 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   const canComment = isWriter(group, association.resource) || association.metadata.vip === 'reader-comments';
 
   return (
-    <Col {...rest} minWidth={0}>
+    <Col {...rest}>
       {( !editCommentId && canComment ? <CommentInput onSubmit={onSubmit} /> : null )}
       {( editCommentId ? (
         <CommentInput

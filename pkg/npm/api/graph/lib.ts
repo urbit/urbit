@@ -1,11 +1,9 @@
 import _ from 'lodash';
-import { GroupPolicy, makeResource, Resource, resourceFromPath } from '../groups';
+import { GroupPolicy, makeResource, resourceFromPath } from '../groups';
 
 import { deSig, unixToDa } from '../lib';
 import { Enc, Path, Patp, PatpNoSig, Poke, Thread } from '../lib/types';
-import { Content, Graph, GraphChildrenPoke, GraphNode, GraphNodePoke, Post } from './types';
-
-export const GRAPH_UPDATE_VERSION: number = 1;
+import { Content, GraphChildrenPoke, GraphNode, GraphNodePoke, Post } from './types';
 
 export const createBlankNodeWithChildPost = (
   ship: PatpNoSig,
@@ -42,15 +40,12 @@ export const createBlankNodeWithChildPost = (
   };  
 };
 
-export const markPending = (nodes: any): any => {
-  Object.keys(nodes).forEach((key) => {
-    nodes[key].post.author = deSig(nodes[key].post.author);
-    nodes[key].post.pending = true;
-    if (nodes[key].children) {
-      nodes[key].children = markPending(nodes[key].children);
-    }
+export const markPending = (nodes: any): void => {
+  _.forEach(nodes, node => {
+    node.post.author = deSig(node.post.author);
+    node.post.pending = true;
+    markPending(node.children || {});
   });
-  return nodes;
 };
 
 export const createPost = (
@@ -85,9 +80,9 @@ function moduleToMark(mod: string): string | undefined {
   return undefined;
 }
 
-const storeAction = <T>(data: T, version: number = GRAPH_UPDATE_VERSION): Poke<T> => ({
+const storeAction = <T>(data: T): Poke<T> => ({
   app: 'graph-store',
-  mark: `graph-update-${version}`,
+  mark: 'graph-update',
   json: data
 });
 
@@ -102,9 +97,9 @@ const viewAction = <T>(threadName: string, action: T): Thread<T> => ({
 
 export { viewAction as graphViewAction };
 
-const hookAction = <T>(data: T, version: number = GRAPH_UPDATE_VERSION): Poke<T> => ({
+const hookAction = <T>(data: T): Poke<T> => ({
   app: 'graph-push-hook',
-  mark: `graph-update-${version}`,
+  mark: 'graph-update',
   json: data
 });
 
@@ -228,23 +223,22 @@ export const addNodes = (
   ship: Patp,
   name: string,
   nodes: Object
-): Thread<any> => ({
-  inputMark: `graph-update-${GRAPH_UPDATE_VERSION}`,
-  outputMark: 'graph-view-action',
-  threadName: 'graph-add-nodes',
-  body: {
+): Poke<any> => {
+  const action = {
     'add-nodes': {
       resource: { ship, name },
       nodes
     }
-  }
-});
+  };
+
+  return hookAction(action);
+};
 
 export const addPost = (
   ship: Patp,
   name: string,
   post: Post
-): Thread<any> => {
+) => {
   let nodes: Record<string, GraphNode> = {};
   nodes[post.index] = {
     post,
@@ -257,40 +251,13 @@ export const addNode = (
   ship: Patp,
   name: string,
   node: GraphNode
-): Thread<any> => {
+): Poke<any> => {
   let nodes: Record<string, GraphNode> = {};
   nodes[node.post.index] = node;
 
   return addNodes(ship, name, nodes);
 }
 
-export const createGroupFeed = (
-  group: Resource,
-  vip: any = ''
-): Thread<any> => ({
-  inputMark: 'graph-view-action',
-  outputMark: 'resource',
-  threadName: 'graph-create-group-feed',
-  body: {
-    'create-group-feed': {
-      resource: group,
-      vip
-    }
-  }
-});
-
-export const disableGroupFeed = (
-  group: Resource
-): Thread<any> => ({
-  inputMark: 'graph-view-action',
-  outputMark: 'json',
-  threadName: 'graph-disable-group-feed',
-  body: {
-    'disable-group-feed': {
-      resource: group
-    }
-  }
-});
 
 export const removeNodes = (
   ship: Patp,

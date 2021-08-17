@@ -21,9 +21,3 @@ a * {
   text-decoration-color: none;
   text-decoration-line: none;
 }
-
-ol, ul {
-  margin-block-start: 0;
-  margin-block-end: 0;
-
-}

@@ -1,12 +1,14 @@
-import { Association } from '@urbit/api';
-import { Graph } from '@urbit/api/graph';
-import { FormikHelpers } from 'formik';
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { FormikHelpers } from 'formik';
 import GlobalApi from '~/logic/api/global';
-import { newPost } from '~/logic/lib/publish';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import { RouteComponentProps } from 'react-router-dom';
 import { PostForm, PostFormSchema } from './NoteForm';
+import { createPost } from '~/logic/api/graph';
+import { Graph } from '@urbit/api/graph';
+import { Association } from '@urbit/api';
+import { StorageState } from '~/types';
+import { newPost } from '~/logic/lib/publish';
 
 interface NewPostProps {
   api: GlobalApi;

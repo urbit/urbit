@@ -18,5 +18,5 @@ export interface SidebarAppConfig {
 }
 
 export type SidebarAppConfigs = {
-  graph: SidebarAppConfig;
+  [a in 'chat' | 'link' | 'publish']: SidebarAppConfig;
 };

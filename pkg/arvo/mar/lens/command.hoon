@@ -46,7 +46,6 @@
         import-all+(ot base64-jam+so ~)
         as+(ot mark+(su sym) next+source ~)
         hoon+(ot code+so next+source ~)
-        cancel+none
       ==
     ++  none  |=(^^json (some ~))
     ++  sink

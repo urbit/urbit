@@ -1,18 +1,23 @@
-import { Box } from '@tlon/indigo-react';
+import React, { createRef, useCallback, useRef } from 'react';
+import { IUnControlledCodeMirror, UnControlled as CodeEditor } from 'react-codemirror2';
+import { useFormikContext } from 'formik';
+import { Prompt } from 'react-router-dom';
 import { Editor } from 'codemirror';
+
+import { MOBILE_BROWSER_REGEX, usePreventWindowUnload } from '~/logic/lib/util';
+import { PropFunc } from '~/types/util';
+import CodeMirror from 'codemirror';
+
+import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/addon/edit/continuelist';
+
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/markdown/markdown';
-import { useFormikContext } from 'formik';
-import React, { useCallback, useRef } from 'react';
-import { UnControlled as CodeEditor } from 'react-codemirror2';
-import { Prompt } from 'react-router-dom';
+import { Box } from '@tlon/indigo-react';
 import { useFileDrag } from '~/logic/lib/useDrag';
-import useStorage from '~/logic/lib/useStorage';
-import { usePreventWindowUnload } from '~/logic/lib/util';
-import { PropFunc } from '~/types/util';
 import SubmitDragger from '~/views/components/SubmitDragger';
+import useStorage from '~/logic/lib/useStorage';
+import { StorageState } from '~/types';
 
 const MARKDOWN_CONFIG = {
   name: 'markdown'
@@ -93,6 +98,7 @@ export function MarkdownEditor(
 
   return (
     <Box
+      height="100%"
       position="relative"
       className="publish"
       p={1}
@@ -110,10 +116,10 @@ export function MarkdownEditor(
         value={value}
         options={options}
         onChange={handleChange}
-        onDragLeave={(editor, e: DragEvent) => bind.onDragLeave(e)}
-        onDragOver={(editor, e: DragEvent) => bind.onDragOver(e)}
-        onDrop={(editor, e: DragEvent) => bind.onDrop(e)}
-        onDragEnter={(editor, e: DragEvent) => bind.onDragEnter(e)}
+        onDragLeave={(editor, e) => bind.onDragLeave(e)}
+        onDragOver={(editor, e) => bind.onDragOver(e)}
+        onDrop={(editor, e) => bind.onDrop(e)}
+        onDragEnter={(editor, e) => bind.onDragEnter(e)}
       />
       {dragging && <SubmitDragger />}
     </Box>

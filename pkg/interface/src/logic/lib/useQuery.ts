@@ -1,6 +1,6 @@
-import _ from 'lodash';
-import { useCallback, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useMemo, useCallback } from "react";
+import { useLocation } from "react-router-dom";
+import _ from "lodash";
 
 function mergeQuery(search: URLSearchParams, added: Record<string, string>) {
   _.forIn(added, (v, k) => {
@@ -32,7 +32,7 @@ export function useQuery() {
       mergeQuery(q, params);
       return {
         pathname: path,
-        search: q.toString()
+        search: q.toString(),
       };
     },
     [search, pathname]
@@ -41,6 +41,6 @@ export function useQuery() {
   return {
     query,
     appendQuery,
-    toQuery
+    toQuery,
   };
 }

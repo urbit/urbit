@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { unstable_batchedUpdates } from 'react-dom';
+import { useState, useEffect } from "react";
+import { useWaitForProps } from "./useWaitForProps";
+import {unstable_batchedUpdates} from "react-dom";
 
 export type IOInstance<I, P, O> = (
   input: I
@@ -9,7 +10,7 @@ export function useRunIO<I, O>(
   io: (i: I) => Promise<O>,
   after: (o: O) => void,
   key: string
-): (i: I) => Promise<unknown> {
+): () => Promise<void> {
   const [resolve, setResolve] = useState<() => void>(() => () => {});
   const [reject, setReject] = useState<(e: any) => void>(() => () => {});
   const [output, setOutput] = useState<O | null>(null);
@@ -29,7 +30,7 @@ export function useRunIO<I, O>(
     });
 
   useEffect(() => {
-    reject(new Error('useRunIO: key changed'));
+    reject(new Error("useRunIO: key changed"));
     setDone(false);
     setOutput(null);
   }, [key]);

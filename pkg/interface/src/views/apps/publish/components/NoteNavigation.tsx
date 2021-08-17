@@ -1,9 +1,11 @@
+import React, { ReactElement } from 'react';
+import moment from 'moment';
+import { Link } from 'react-router-dom';
+import { BigInteger } from 'big-integer';
+
 import { Box, Text } from '@tlon/indigo-react';
 import { Graph } from '@urbit/api';
-import { BigInteger } from 'big-integer';
-import moment from 'moment';
-import React, { ReactElement } from 'react';
-import { Link } from 'react-router-dom';
+
 import { getLatestRevision } from '~/logic/lib/publish';
 import Timestamp from '~/views/components/Timestamp';
 
@@ -29,7 +31,7 @@ function NavigationItem(props: {
         <Timestamp
           stamp={moment(props.date)}
           time={false}
-          fontSize={1}
+          fontSize="1"
           justifyContent={props.prev ? 'flex-start' : 'flex-end'}
         />
       </Link>
@@ -48,12 +50,12 @@ function getAdjacentId(
   return target?.[0] || null;
 }
 
-function makeNoteUrl(noteId: BigInteger) {
+function makeNoteUrl(noteId: number) {
   return noteId.toString();
 }
 
 interface NoteNavigationProps {
-  noteId: BigInteger;
+  noteId: number;
   notebook: Graph;
   baseUrl: string;
 }

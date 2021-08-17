@@ -1,5 +1,7 @@
-import { Button, LoadingSpinner } from '@tlon/indigo-react';
 import React, { ReactElement, ReactNode } from 'react';
+
+import { Button, LoadingSpinner } from '@tlon/indigo-react';
+
 import { useStatelessAsyncClickable } from '~/logic/lib/useStatelessAsyncClickable';
 
 interface AsyncButtonProps {

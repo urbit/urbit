@@ -48,6 +48,8 @@ export type AppAssociations = {
   [p in Path]: Association;
 }
 
+
+
 export type Association = MdResource & {
   group: Path;
   metadata: Metadata;
@@ -65,21 +67,10 @@ export interface Metadata {
   'date-created': string;
   description: string;
   title: string;
-  config: MetadataConfig;
-  hidden: boolean;
+  module: string;
   picture: string;
   preview: boolean;
   vip: PermVariation;
 }
 
-export type MetadataConfig = GroupConfig | GraphConfig;
-
-export interface GraphConfig {
-  graph: string;
-}
-
-export interface GroupConfig {
-  group: undefined | {} | MdResource;
-}
-
-export type PermVariation = '' | ' ' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';
+export type PermVariation = '' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';

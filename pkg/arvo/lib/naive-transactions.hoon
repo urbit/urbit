@@ -19,54 +19,24 @@
     =,  secp256k1:secp:crypto
     %-  address-from-pub:key:ethereum
     %-  serialize-point
-    (ecdsa-raw-recover (hash-tx dat) v r s)
+    (ecdsa-raw-recover (keccak-256:keccak:crypto dat) v r s)
   ?-  -.result
     %|  ~
     %&  `p.result
   ==
-::  Verify signature and produce signer address
-::
-++  verify-sig
-  |=  [sig=@ txdata=octs]
-  ^-  (unit address)
-  |^
-  ::  Reversed of the usual r-s-v order because Ethereum integers are
-  ::  big-endian
-  ::
-  =^  v  sig  (take 3)
-  =^  s  sig  (take 3 32)
-  =^  r  sig  (take 3 32)
-  ::  In Ethereum, v is generally 27 + recid, and verifier expects a
-  ::  recid.  Old versions of geth used 0 + recid, so most software
-  ::  now supports either format.  See:
-  ::
-  ::  https://github.com/ethereum/go-ethereum/issues/2053
-  ::
-  =?  v  (gte v 27)  (sub v 27)
-  (verifier txdata v r s)
-  ::
-  ++  take
-    |=  =bite
-    [(end bite sig) (rsh bite sig)]
-  --
-::
-++  unsigned-tx
-  |=  [chain-id=@ud =nonce tx=octs]
-  ^-  octs
-  =/  prepared-data  (prepare-for-sig chain-id nonce tx)
-  =/  len  (rsh [3 2] (scot %ui p.prepared-data))
-  %:  cad:naive  3
-    26^'\19Ethereum Signed Message:\0a'
-    (met 3 len)^len
-    prepared-data
-    ~
-  ==
 ::
 ++  sign-tx
   |=  [pk=@ =nonce tx=octs]  ^-  octs
+  =/  prepared-data  (prepare-for-sig 1.337 nonce tx)
   =/  sign-data
-    %-  hash-tx
-    (unsigned-tx 1.337 nonce tx)
+    =/  len  (rsh [3 2] (scot %ui p.prepared-data))
+    %-  keccak-256:keccak:crypto
+    %:  cad:naive  3
+      26^'\19Ethereum Signed Message:\0a'
+      (met 3 len)^len
+      prepared-data
+      ~
+    ==
   =+  (ecdsa-raw-sign:secp256k1:secp:crypto sign-data pk)
   (cad:naive 3 1^v 32^s 32^r tx ~)
 ::
@@ -82,18 +52,6 @@
     tx
     ~
   ==
-::
-++  extract-address
-  |=  [=raw-tx:naive nas=^state:naive chain-id=@]
-  ^-  (unit @ux)
-  ?~  point=(get:orm:naive points.nas ship.from.tx.raw-tx)
-    ~
-  =/  =nonce:naive
-    =<  nonce
-    (proxy-from-point:naive proxy.from.tx.raw-tx u.point)
-  =/  message=octs
-    (unsigned-tx chain-id nonce raw.raw-tx)
-  (verify-sig sig.raw-tx message)
 ::
 ++  gen-tx
   |=  [=nonce tx=tx:naive pk=@]  ^-  octs
@@ -202,12 +160,5 @@
     1^(can 0 3^proxy 5^0 ~)
   ::
   --
-::
-++  hash-tx  keccak-256:keccak:crypto
-::
-++  hash-raw-tx
-  |=  =raw-tx:naive
-  ^-  @ux
-  (hash-tx raw.raw-tx)
 ::
 --

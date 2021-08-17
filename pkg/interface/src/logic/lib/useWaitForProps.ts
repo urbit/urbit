@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export function useWaitForProps<P>(props: P, timeout = 0) {
   const [resolve, setResolve] = useState<() => void>(() => () => {});

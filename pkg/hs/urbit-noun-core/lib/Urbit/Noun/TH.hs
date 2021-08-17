@@ -1,7 +1,7 @@
 {-|
     Template Haskell Code to Generate FromNoun and ToNoun Instances
 -}
-module Urbit.Noun.TH (deriveNoun, deriveToNoun, deriveFromNoun, deriveToNounFunc, deriveFromNounFunc) where
+module Urbit.Noun.TH (deriveNoun, deriveToNoun, deriveFromNoun) where
 
 import ClassyPrelude              hiding (fromList)
 import Control.Monad.Fail         (fail)
@@ -83,9 +83,13 @@ deriveNoun n = (<>) <$> deriveToNoun n <*> deriveFromNoun n
 
 deriveToNoun :: Name -> Q [Dec]
 deriveToNoun tyName = do
-    (params, _) <- typeShape tyName
+    (params, shape) <- typeShape tyName
 
-    exp    <- deriveToNounFunc tyName
+    let exp = case shape of Vod             -> vodToNoun
+                            Tup con         -> tupToNoun con
+                         -- Enu cons        -> enumToAtom cons
+                            Sum atoms cells -> sumToNoun atoms cells
+
     params <- pure $ zip ['a' ..] params <&> \(n,_) -> mkName (singleton n)
 
     let ty = foldl' (\acc v -> AppT acc (VarT v)) (ConT tyName) params
@@ -97,15 +101,6 @@ deriveToNoun tyName = do
 
     pure [InstanceD overlap ctx inst [ValD (VarP 'toNoun) body []]]
 
-deriveToNounFunc :: Name -> Q Exp
-deriveToNounFunc tyName = do
-    (_, shape) <- typeShape tyName
-    pure case shape of
-      Vod             -> vodToNoun
-      Tup con         -> tupToNoun con
-   -- Enu cons        -> enumToAtom cons
-      Sum atoms cells -> sumToNoun atoms cells
-
 --------------------------------------------------------------------------------
 
 addErrTag :: String -> Exp -> Exp
@@ -116,9 +111,13 @@ addErrTag tag exp =
 
 deriveFromNoun :: Name -> Q [Dec]
 deriveFromNoun tyName = do
-    (params, _) <- typeShape tyName
+    (params, shape) <- typeShape tyName
 
-    exp    <- deriveFromNounFunc tyName
+    let exp = case shape of Vod             -> vodFromNoun
+                            Tup con         -> tupFromNoun con
+                         -- Enu cons        -> enumFromAtom cons
+                            Sum atoms cells -> sumFromNoun atoms cells
+
     params <- pure $ zip ['a' ..] params <&> \(n,_) -> mkName (singleton n)
 
     let ty = foldl' (\acc v -> AppT acc (VarT v)) (ConT tyName) params
@@ -129,15 +128,6 @@ deriveFromNoun tyName = do
         inst    = AppT (ConT ''FromNoun) ty
 
     pure [InstanceD overlap ctx inst [ValD (VarP 'parseNoun) body []]]
-
-deriveFromNounFunc :: Name -> Q Exp
-deriveFromNounFunc tyName = do
-    (_, shape) <- typeShape tyName
-    pure case shape of
-      Vod             -> vodFromNoun
-      Tup con         -> tupFromNoun con
-   -- Enu cons        -> enumFromAtom cons
-      Sum atoms cells -> sumFromNoun atoms cells
 
 sumFromNoun :: [(String, Name)] -> [(String, ConInfo)] -> Exp
 sumFromNoun [] cl = taggedFromNoun cl

@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function useIdlingState() {
   const [idling, setIdling] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => { 
     function blur() {
       setIdling(true);
     }
@@ -16,7 +16,7 @@ export function useIdlingState() {
     return () => {
       window.removeEventListener('blur', blur);
       window.removeEventListener('focus', focus);
-    };
+    }
   }, []);
 
   return idling;

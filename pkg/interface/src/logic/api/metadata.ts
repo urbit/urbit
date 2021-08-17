@@ -1,8 +1,8 @@
 
-import { Association, Metadata, MetadataUpdatePreview, Path } from '@urbit/api';
-import { uxToHex } from '../lib/util';
-import { StoreState } from '../store/type';
 import BaseApi from './base';
+import { StoreState } from '../store/type';
+import { Path, Patp, Association, Metadata, MetadataUpdatePreview } from '@urbit/api';
+import { uxToHex } from '../lib/util';
 
 export default class MetadataApi extends BaseApi<StoreState> {
   metadataAdd(appName: string, resource: Path, group: Path, title: string, description: string, dateCreated: string, color: string, moduleName: string) {

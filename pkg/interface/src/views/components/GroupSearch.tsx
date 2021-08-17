@@ -1,21 +1,25 @@
-import {
-    Box,
-
-    Col,
-
-    ErrorLabel, Icon, Label,
-    Row, Text
-} from '@tlon/indigo-react';
-import { OpenPolicy } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
-import { FieldArray, useFormikContext } from 'formik';
-import _ from 'lodash';
 import React, { ReactElement, useMemo, useState } from 'react';
+import { useFormikContext, FieldArray } from 'formik';
+import _ from 'lodash';
 import styled from 'styled-components';
+
+import {
+  Box,
+  Text,
+  Label,
+  Row,
+  Col,
+  Icon,
+  ErrorLabel
+} from '@tlon/indigo-react';
+import { Groups } from '@urbit/api';
+import { Associations, Association } from '@urbit/api/metadata';
+
+
 import { roleForShip } from '~/logic/lib/group';
+import { DropdownSearch } from './DropdownSearch';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
-import { DropdownSearch } from './DropdownSearch';
 
 interface GroupSearchProps<I extends string> {
   disabled?: boolean;
@@ -101,7 +105,7 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
        return Object.values(
          Object.keys(associations.groups)
            .filter(
-             e => (groupState?.[e]?.policy as OpenPolicy)?.open
+             e => groupState?.[e]?.policy?.open
            )
            .reduce((obj, key) => {
              obj[key] = associations.groups[key];
@@ -133,12 +137,12 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
           <Col>
             <Label htmlFor={id}>{label}</Label>
             {caption && (
-              <Label gray mt={2}>
+              <Label gray mt="2">
                 {caption}
               </Label>
             )}
               <DropdownSearch<Association>
-                mt={2}
+                mt="2"
                 candidates={groups}
                 placeholder="Search for groups..."
                 disabled={props.maxLength ? value.length >= props.maxLength : false}
@@ -157,16 +161,16 @@ export function GroupSearch<I extends string, V extends FormValues<I>>(props: Gr
                   return (
                     <Row
                       key={e}
-                      borderRadius={1}
-                      mt={2}
+                      borderRadius="1"
+                      mt="2"
                       width="fit-content"
-                      border={1}
+                      border="1"
                       borderColor="gray"
                       height="32px"
-                      px={2}
+                      px="2"
                       alignItems="center"
                     >
-                      <Text mr={2}>{title || e}</Text>
+                      <Text mr="2">{title || e}</Text>
                       <Icon onClick={() => onRemove(idx)} icon="X" />
                     </Row>
                   );

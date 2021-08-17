@@ -403,9 +403,6 @@ parser.add_argument('--close',
                     nargs=0,
                     help='stop tuple',
                     action=closeAction)
-parser.add_argument('--cancel', const={'cancel': None},
-                    help='cancels active lens command',
-                    action='store_const', dest='source')
 
 sinks = parser.add_mutually_exclusive_group()
 sinks.add_argument('-s', '--stdout', const={'stdout': None},

@@ -1,31 +1,37 @@
-import { AppName } from '@urbit/api';
-import _ from 'lodash';
-import React, { useEffect } from 'react';
-import Helmet from 'react-helmet';
+import React, { useEffect, ReactNode } from 'react';
 import {
+  Switch,
   Route,
-  RouteComponentProps, Switch
+  RouteComponentProps
 } from 'react-router-dom';
+import { Col, Box, Text } from '@tlon/indigo-react';
+import _ from 'lodash';
+import Helmet from 'react-helmet';
+
+import { AppName } from '@urbit/api';
+
+import { Resource } from './Resource';
+import { PopoverRoutes } from './PopoverRoutes';
+import { Skeleton } from './Skeleton';
+import { InvitePopover } from './InvitePopover';
+import { NewChannel } from './NewChannel';
+
 import GlobalApi from '~/logic/api/global';
+import { StoreState } from '~/logic/store/type';
+import { UnjoinedResource } from '~/views/components/UnjoinedResource';
 import { useLocalStorageState } from '~/logic/lib/useLocalStorageState';
+import { Loading } from '~/views/components/Loading';
+
+import '~/views/apps/links/css/custom.css';
+import '~/views/apps/publish/css/custom.css';
 import { getGroupFromWorkspace } from '~/logic/lib/workspace';
+import { GroupHome } from './Home/GroupHome';
+import { EmptyGroupHome } from './Home/EmptyGroupHome';
+import { Workspace } from '~/types/workspace';
+import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useMetadataState from '~/logic/state/metadata';
-import {DmResource} from '~/views/apps/chat/DmResource';
-import { StoreState } from '~/logic/store/type';
-import { Workspace } from '~/types/workspace';
-import '~/views/apps/links/css/custom.css';
-import '~/views/apps/publish/css/custom.css';
-import { Loading } from '~/views/components/Loading';
-import { UnjoinedResource } from '~/views/components/UnjoinedResource';
-import { EmptyGroupHome } from './Home/EmptyGroupHome';
-import { GroupHome } from './Home/GroupHome';
-import { InvitePopover } from './InvitePopover';
-import { NewChannel } from './NewChannel';
-import { PopoverRoutes } from './PopoverRoutes';
-import { Resource } from './Resource';
-import { Skeleton } from './Skeleton';
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
@@ -36,12 +42,17 @@ type GroupsPaneProps = StoreState & {
 export function GroupsPane(props: GroupsPaneProps) {
   const { baseUrl, api, workspace } = props;
   const associations = useMetadataState(state => state.associations);
+  const contacts = useContactState(state => state.contacts);
   const notificationsCount = useHarkState(state => state.notificationsCount);
-
+  
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
   const groups = useGroupState(state => state.groups);
 
+  const groupContacts = Object.assign({}, ...Array.from(groups?.[groupPath]?.members ?? []).filter(e => contacts[`~${e}`]).map(e => {
+      return {[e]: contacts[`~${e}`]};
+  })) || {};
+  const rootIdentity = contacts?.["/~/default"]?.[window.ship];
   const groupAssociation =
     (groupPath && associations.groups[groupPath]) || undefined;
   const group = (groupPath && groups[groupPath]) || undefined;
@@ -54,9 +65,7 @@ export function GroupsPane(props: GroupsPaneProps) {
     if (workspace.type !== 'group') {
       return;
     }
-    return () => {
-      setRecentGroups(gs => _.uniq([workspace.group, ...gs]));
-    }
+    setRecentGroups(gs => _.uniq([workspace.group, ...gs]));
   }, [workspace]);
 
   if (!(associations && (groupPath ? groupPath in groups : true))) {
@@ -66,6 +75,8 @@ export function GroupsPane(props: GroupsPaneProps) {
   const popovers = (routeProps: RouteComponentProps, baseUrl: string) =>
      ( <>
         {groupPath && ( <PopoverRoutes
+          contacts={groupContacts || {}}
+          rootIdentity={rootIdentity}
           association={groupAssociation!}
           group={group!}
           api={api}
@@ -84,25 +95,6 @@ export function GroupsPane(props: GroupsPaneProps) {
 
   return (
     <Switch>
-      <Route
-        path={relativePath('/dm/:ship')}
-        render={({ match }) => {
-          const { ship } = match.params as Record<string, string>;
-
-          return (
-            <Skeleton
-              mobileHide
-              recentGroups={recentGroups}
-              selected={ship}
-              {...props}
-              baseUrl={match.path}
-            > <DmResource ship={ship} api={api} />
-
-            </Skeleton>
-
-          );
-        }}
-      />
       <Route
         path={[relativePath('/resource/:app/(ship)?/:host/:name')]}
         render={(routeProps) => {
@@ -132,6 +124,7 @@ export function GroupsPane(props: GroupsPaneProps) {
             >
               <Resource
                 {...props}
+                {...routeProps}
                 association={association}
                 baseUrl={baseUrl}
               />
@@ -210,13 +203,12 @@ export function GroupsPane(props: GroupsPaneProps) {
                 </title>
               </Helmet>
               <Skeleton
-                {...props}
                 mobileHide={shouldHideSidebar}
                 recentGroups={recentGroups}
                 baseUrl={baseUrl}
-              >
+                {...props}>
                 { workspace.type === 'group' ? (
-                  <GroupHome
+                  <GroupHome 
                     api={api}
                     baseUrl={baseUrl}
                     groupPath={groupPath}

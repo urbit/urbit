@@ -1,5 +1,5 @@
-import { StoreState } from '../store/type';
 import BaseApi from './base';
+import { StoreState } from '../store/type';
 
 export default class LocalApi extends BaseApi<StoreState> {
   getBaseHash() {
@@ -8,9 +8,7 @@ export default class LocalApi extends BaseApi<StoreState> {
     });
   }
 
-  getRuntimeLag() {
-    return this.scry<boolean>('launch', '/runtime-lag').then((runtimeLag) => {
-      this.store.handleEvent({ data: { runtimeLag } });
-    });
+  dehydrate() {
+    this.store.dehydrate();
   }
 }

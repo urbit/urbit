@@ -1,5 +1,5 @@
-import { Path, Patp } from '@urbit/api';
 import _ from 'lodash';
+import { Patp, Path } from '@urbit/api';
 import BaseStore from '../store/base';
 
 export default class BaseApi<S extends object = {}> {

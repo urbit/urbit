@@ -1,4 +1,4 @@
-FROM jaredtobin/janeway:v0.15.2
+FROM jaredtobin/janeway:v0.13.4
 COPY entrypoint.sh /entrypoint.sh
 EXPOSE 22/tcp
 ENTRYPOINT ["/entrypoint.sh"]

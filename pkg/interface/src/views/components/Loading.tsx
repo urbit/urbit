@@ -1,5 +1,6 @@
-import { Center, LoadingSpinner, Text } from '@tlon/indigo-react';
 import React from 'react';
+import { Text, Center, LoadingSpinner } from '@tlon/indigo-react';
+
 import { Body } from './Body';
 
 interface LoadingProps {

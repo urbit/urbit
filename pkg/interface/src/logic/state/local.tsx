@@ -1,12 +1,13 @@
-import produce from 'immer';
+import React, { ReactNode } from 'react';
 import f from 'lodash/fp';
-import React from 'react';
-import create, { State } from 'zustand';
+import create, { State }  from 'zustand';
 import { persist } from 'zustand/middleware';
-import { BackgroundConfig, LeapCategories, RemoteContentPolicy, TutorialProgress, tutorialProgress } from '~/types/local-update';
+import produce from 'immer';
+import { BackgroundConfig, RemoteContentPolicy, TutorialProgress, tutorialProgress, LeapCategories } from "~/types/local-update";
+
 
 export interface LocalState {
-  theme: 'light' | 'dark' | 'auto';
+  theme: "light" | "dark" | "auto";
   hideAvatars: boolean;
   hideNicknames: boolean;
   remoteContentPolicy: RemoteContentPolicy;
@@ -20,13 +21,12 @@ export interface LocalState {
   hideLeapCats: LeapCategories[];
   setTutorialRef: (el: HTMLElement | null) => void;
   dark: boolean;
-  mobile: boolean;
   background: BackgroundConfig;
   omniboxShown: boolean;
   suspendedFocus?: HTMLElement;
   toggleOmnibox: () => void;
   set: (fn: (state: LocalState) => void) => void
-}
+};
 
 type LocalStateZus = LocalState & State;
 
@@ -35,9 +35,8 @@ export const selectLocalState =
 
 const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   dark: false,
-  mobile: false,
   background: undefined,
-  theme: 'auto',
+  theme: "auto",
   hideAvatars: false,
   hideNicknames: false,
   hideLeapCats: [],
@@ -82,7 +81,6 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
       state.suspendedFocus.blur();
     }
   })),
-  // @ts-ignore investigate zustand types
   set: fn => set(produce(fn))
   }), {
     blacklist: [
@@ -92,14 +90,13 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   name: 'localReducer'
 }));
 
-function withLocalState<P, S extends keyof LocalState, C extends React.ComponentType<P>>(Component: C, stateMemberKeys?: S[]) {
-  return React.forwardRef<C, Omit<P, S>>((props, ref) => {
+function withLocalState<P, S extends keyof LocalState>(Component: any, stateMemberKeys?: S[]) {
+  return React.forwardRef((props: Omit<P, S>, ref) => {
     const localState = stateMemberKeys ? useLocalState(
       state => stateMemberKeys.reduce(
         (object, key) => ({ ...object, [key]: state[key] }), {}
       )
     ): useLocalState();
-    // @ts-ignore call signature forwarding unclear
     return <Component ref={ref} {...localState} {...props} />;
   });
 }

@@ -1,21 +1,17 @@
+import React, { useCallback } from "react";
 import {
-  Button,
   Col,
-
-
-
-
-  ManagedToggleSwitchField as Toggle, Text
-} from '@tlon/indigo-react';
-import { Form, FormikHelpers } from 'formik';
-import _ from 'lodash';
-import React, { useCallback, useState } from 'react';
-import GlobalApi from '~/logic/api/global';
-import { isWatching } from '~/logic/lib/hark';
-import useHarkState from '~/logic/state/hark';
-import { FormikOnBlur } from '~/views/components/FormikOnBlur';
-import { BackButton } from './BackButton';
-import { GroupChannelPicker } from './GroupChannelPicker';
+  Text,
+  ManagedToggleSwitchField as Toggle,
+} from "@tlon/indigo-react";
+import { Formik, Form, FormikHelpers } from "formik";
+import { BackButton } from "./BackButton";
+import GlobalApi from "~/logic/api/global";
+import useHarkState from "~/logic/state/hark";
+import _ from "lodash";
+import {AsyncButton} from "~/views/components/AsyncButton";
+import {GroupChannelPicker} from "./GroupChannelPicker";
+import {isWatching} from "~/logic/lib/hark";
 
 interface FormSchema {
   mentions: boolean;
@@ -39,12 +35,12 @@ export function NotificationPreferences(props: {
   const initialValues = {
     mentions: graphConfig.mentions,
     dnd: dnd,
-    watchOnSelf: graphConfig.watchOnSelf
+    watchOnSelf: graphConfig.watchOnSelf,
   };
 
   const onSubmit = useCallback(async (values: FormSchema, actions: FormikHelpers<FormSchema>) => {
     try {
-      const promises: Promise<any>[] = [];
+      let promises: Promise<any>[] = [];
       if (values.mentions !== graphConfig.mentions) {
         promises.push(api.hark.setMentions(values.mentions));
       }
@@ -52,16 +48,16 @@ export function NotificationPreferences(props: {
         promises.push(api.hark.setWatchOnSelf(values.watchOnSelf));
       }
       if (values.dnd !== dnd && !_.isUndefined(values.dnd)) {
-        promises.push(api.hark.setDoNotDisturb(values.dnd));
+        promises.push(api.hark.setDoNotDisturb(values.dnd))
       }
       _.forEach(values.graph, (listen: boolean, graph: string) => {
         if(listen !== isWatching(graphConfig, graph)) {
-          promises.push(api.hark[listen ? 'listenGraph' : 'ignoreGraph'](graph, '/'));
+          promises.push(api.hark[listen ? "listenGraph" : "ignoreGraph"](graph, "/"))
         }
       });
       _.forEach(values.groups, (listen: boolean, group: string) => {
         if(listen !== groupConfig.includes(group)) {
-          promises.push(api.hark[listen ? 'listenGroup' : 'ignoreGroup'](group));
+          promises.push(api.hark[listen ? "listenGroup" : "ignoreGroup"](group));
         }
       });
 
@@ -73,14 +69,12 @@ export function NotificationPreferences(props: {
     }
   }, [api, graphConfig, dnd]);
 
-  const [notificationsAllowed, setNotificationsAllowed] = useState('Notification' in window && Notification.permission !== 'default');
-
   return (
     <>
-    <BackButton />
-    <Col p={5} pt={4} gapY={5}>
-      <Col gapY={1} mt={0}>
-        <Text fontSize={2} fontWeight="medium">
+    <BackButton/>
+    <Col p="5" pt="4" gapY="5">
+      <Col gapY="1" mt="0">
+        <Text fontSize="2" fontWeight="medium">
           Notification Preferences
         </Text>
         <Text gray>
@@ -88,17 +82,9 @@ export function NotificationPreferences(props: {
           messaging
         </Text>
       </Col>
-      <FormikOnBlur initialValues={initialValues} onSubmit={onSubmit}>
+      <Formik initialValues={initialValues} onSubmit={onSubmit}>
         <Form>
           <Col gapY="4">
-            {notificationsAllowed || !('Notification' in window)
-              ? null
-              : <Button alignSelf='flex-start' onClick={() => {
-                Notification.requestPermission().then(() => {
-                  setNotificationsAllowed(Notification.permission !== 'default');
-                });
-              }}>Allow Browser Notifications</Button>
-            }
             <Toggle
               label="Do not disturb"
               id="dnd"
@@ -114,7 +100,7 @@ export function NotificationPreferences(props: {
               id="mentions"
               caption="Notify me if someone mentions my @p in a channel I've joined"
             />
-            <Col gapY={3}>
+            <Col gapY="3">
               <Text lineHeight="tall">
                 Activity
               </Text>
@@ -123,9 +109,12 @@ export function NotificationPreferences(props: {
               </Text>
               <GroupChannelPicker />
             </Col>
+            <AsyncButton primary width="fit-content">
+              Save
+            </AsyncButton>
           </Col>
         </Form>
-      </FormikOnBlur>
+      </Formik>
     </Col>
     </>
   );

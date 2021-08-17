@@ -1,13 +1,15 @@
-import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association } from '@urbit/api';
-import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Box, Col, Text } from '@tlon/indigo-react';
 import * as Yup from 'yup';
+import { Formik, FormikHelpers, Form } from 'formik';
+import { useHistory } from 'react-router-dom';
+
+import { Groups, Associations, Association } from '@urbit/api';
+
 import GlobalApi from '~/logic/api/global';
-import useGroupState from '~/logic/state/group';
-import { AsyncButton } from '~/views/components/AsyncButton';
 import GroupSearch from '~/views/components/GroupSearch';
+import { AsyncButton } from '~/views/components/AsyncButton';
+import useGroupState from '~/logic/state/group';
 
 const formSchema = Yup.object({
   group: Yup.string().nullable()
@@ -37,10 +39,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
         name,
         values.group?.toString() || undefined
       );
-      let mod = association['app-name'];
-      if (association?.metadata?.config && 'graph' in association.metadata.config) {
-        mod = association.metadata.config.graph;
-      }
+      const mod = association.metadata?.config?.graph || association['app-name'];
       const newGroup = values.group || association.group;
       history.push(`/~landscape${newGroup}/resource/${mod}${rid}`);
       actions.setStatus({ success: null });
@@ -70,7 +69,7 @@ export function GroupifyForm(props: GroupifyFormProps) {
       onSubmit={onGroupify}
     >
       <Form>
-        <Col flexShrink={0} gapY={4} maxWidth="512px">
+        <Col flexShrink="0" gapY="4" maxWidth="512px">
           <Box>
             <Text fontWeight="500">Groupify this channel</Text>
           </Box>

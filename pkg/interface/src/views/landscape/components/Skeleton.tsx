@@ -1,14 +1,16 @@
-import React, { Children, ReactElement, ReactNode, useCallback, useMemo, useState } from 'react';
+import React, { ReactElement, ReactNode, useMemo } from 'react';
+
+import { Groups, Graphs, Invites, Rolodex, Path, AppName } from '@urbit/api';
+import { Associations } from '@urbit/api/metadata';
+
 import { Sidebar } from './Sidebar/Sidebar';
-import { AppName } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
+import { useGraphModule } from './Sidebar/Apps';
+import { Body } from '~/views/components/Body';
+import { Workspace } from '~/types/workspace';
 import useGraphState from '~/logic/state/graph';
 import useHarkState from '~/logic/state/hark';
-import { Workspace } from '~/types/workspace';
-import { Body } from '~/views/components/Body';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
-import { useShortcut } from '~/logic/state/settings';
-import { useGraphModule } from './Sidebar/Apps';
 
 interface SkeletonProps {
   children: ReactNode;
@@ -22,10 +24,6 @@ interface SkeletonProps {
 }
 
 export function Skeleton(props: SkeletonProps): ReactElement {
-  const [sidebar, setSidebar] = useState(true)
-  useShortcut('hideSidebar', useCallback(() => {
-    setSidebar(s => !s);
-  }, []));
   const graphs = useGraphState(state => state.graphs);
   const graphKeys = useGraphState(state => state.graphKeys);
   const unreads = useHarkState(state => state.unreads);
@@ -37,7 +35,7 @@ export function Skeleton(props: SkeletonProps): ReactElement {
     [graphConfig]
   );
 
-  return !sidebar ? (<Body> {props.children} </Body>) : (
+  return (
     <Body
       display="grid"
       gridTemplateColumns={
@@ -54,7 +52,8 @@ export function Skeleton(props: SkeletonProps): ReactElement {
           baseUrl={props.baseUrl}
           mobileHide={props.mobileHide}
           workspace={props.workspace}
-        />
+          history={props.history}
+          />
       </ErrorBoundary>
       {props.children}
     </Body>

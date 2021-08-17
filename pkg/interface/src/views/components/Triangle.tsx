@@ -1,7 +1,7 @@
-import { Box } from '@tlon/indigo-react';
-import _ from 'lodash';
 import React from 'react';
-import { PropFunc } from '~/types';
+import _ from 'lodash';
+import { Box } from '@tlon/indigo-react';
+import { PropFunc } from '@urbit/api';
 
 export type Direction = 'East' | 'South' | 'West' | 'North';
 type TriangleProps = PropFunc<typeof Box> & {

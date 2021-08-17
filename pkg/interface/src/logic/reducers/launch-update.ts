@@ -1,8 +1,9 @@
 import _ from 'lodash';
-import { Cage } from '~/types/cage';
 import { LaunchUpdate, WeatherState } from '~/types/launch-update';
-import { reduceState } from '../state/base';
+import { Cage } from '~/types/cage';
 import useLaunchState, { LaunchState } from '../state/launch';
+import { compose } from 'lodash/fp';
+import { reduceState } from '../state/base';
 
 export default class LaunchReducer {
   reduce(json: Cage) {
@@ -13,40 +14,29 @@ export default class LaunchReducer {
         changeFirstTime,
         changeOrder,
         changeFirstTime,
-        changeIsShown
+        changeIsShown,
       ]);
     }
 
-    const weatherData: WeatherState | boolean | Record<string, never> = _.get(json, 'weather', false);
+    const weatherData: WeatherState = _.get(json, 'weather', false);
     if (weatherData) {
-      useLaunchState.getState().set((state) => {
-        // @ts-ignore investigate zustand types
+      useLaunchState.getState().set(state => {
         state.weather = weatherData;
       });
     }
 
     const locationData = _.get(json, 'location', false);
     if (locationData) {
-      useLaunchState.getState().set((state) => {
-        // @ts-ignore investigate zustand types
+      useLaunchState.getState().set(state => {
         state.userLocation = locationData;
       });
     }
 
     const baseHash = _.get(json, 'baseHash', false);
     if (baseHash) {
-      useLaunchState.getState().set((state) => {
-        // @ts-ignore investigate zustand types
-        state.baseHash = baseHash;
-      });
-    }
-
-    const runtimeLag = _.get(json, 'runtimeLag', null);
-    if (runtimeLag !== null) {
       useLaunchState.getState().set(state => {
-        // @ts-ignore investigate zustand types
-        state.runtimeLag = runtimeLag;
-      });
+        state.baseHash = baseHash;
+      })
     }
   }
 }
@@ -54,12 +44,12 @@ export default class LaunchReducer {
 export const initial = (json: LaunchUpdate, state: LaunchState): LaunchState => {
   const data = _.get(json, 'initial', false);
   if (data) {
-    Object.keys(data).forEach((key) => {
+    Object.keys(data).forEach(key => {
       state[key] = data[key];
     });
   }
   return state;
-};
+}
 
 export const changeFirstTime = (json: LaunchUpdate, state: LaunchState): LaunchState => {
   const data = _.get(json, 'changeFirstTime', false);
@@ -67,7 +57,7 @@ export const changeFirstTime = (json: LaunchUpdate, state: LaunchState): LaunchS
     state.firstTime = data;
   }
   return state;
-};
+}
 
 export const changeOrder = (json: LaunchUpdate, state: LaunchState): LaunchState => {
   const data = _.get(json, 'changeOrder', false);
@@ -75,7 +65,7 @@ export const changeOrder = (json: LaunchUpdate, state: LaunchState): LaunchState
     state.tileOrdering = data;
   }
   return state;
-};
+}
 
 export const changeIsShown = (json: LaunchUpdate, state: LaunchState): LaunchState => {
   const data = _.get(json, 'changeIsShown', false);
@@ -86,4 +76,4 @@ export const changeIsShown = (json: LaunchUpdate, state: LaunchState): LaunchSta
     }
   }
   return state;
-};
+}

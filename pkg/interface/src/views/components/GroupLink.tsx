@@ -1,14 +1,15 @@
-import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
-import { MetadataUpdatePreview } from '@urbit/api';
-import React, { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect, ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
+import { Box, Text, Row, Col } from '@tlon/indigo-react';
+import { Associations, Groups } from '@urbit/api';
 import GlobalApi from '~/logic/api/global';
-import { useModal } from '~/logic/lib/useModal';
-import { useVirtual } from '~/logic/lib/virtualContext';
-import useMetadataState from '~/logic/state/metadata';
-import { PropFunc } from '~/types';
-import { JoinGroup } from '../landscape/components/JoinGroup';
 import { MetadataIcon } from '../landscape/components/MetadataIcon';
+import { JoinGroup } from '../landscape/components/JoinGroup';
+import { useModal } from '~/logic/lib/useModal';
+import { GroupSummary } from '../landscape/components/GroupSummary';
+import { PropFunc } from '~/types';
+import useMetadataState from '~/logic/state/metadata';
+import {useVirtual} from '~/logic/lib/virtualContext';
 
 export function GroupLink(
   props: {
@@ -47,47 +48,26 @@ export function GroupLink(
   }, [preview]);
 
   return (
-    <Box
-      maxWidth="500px"
-      cursor='pointer'
-      {...rest}
-      onClick={(e) => {
-        e.stopPropagation();
-      }}
-      backgroundColor='white'
-      borderColor={props.borderColor}
-    >
+    <Box maxWidth="500px" {...rest} onClick={(e) => { e.stopPropagation(); }}>
       {modal}
       <Row
         width="fit-content"
         flexShrink={1}
         alignItems="center"
-        py={2}
-        pr={2}
+        py="2"
+        pr="2"
         onClick={
           joined ? () => history.push(`/~landscape/ship/${name}`) : showModal
         }
+        cursor='pointer'
         opacity={preview ? '1' : '0.6'}
       >
-        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : { color: '0x0' , picture: ''}} />
+        <MetadataIcon height={6} width={6} metadata={preview ? preview.metadata : {"color": "0x0"}} />
           <Col>
-          <Text ml={2} fontWeight="medium" mono={!preview}>
+          <Text ml="2" fontWeight="medium" mono={!preview}>
             {preview ? preview.metadata.title : name}
           </Text>
-          <Box pt='1' ml='2' display='flex' alignItems='center'>
-            {preview ?
-              <>
-                <Box display='flex' alignItems='center'>
-                  <Icon icon='Users' color='gray' mr='1' />
-                  <Text fontSize='0'color='gray' >
-                    {preview.members}
-                    {' '}
-                    {preview.members > 1 ? 'peers' : 'peer'}
-                  </Text>
-                </Box>
-              </>
-              : <Text fontSize='0'>Fetching member count</Text>}
-          </Box>
+          <Text pt='1' ml='2'>{preview ? `${preview.members} members` : "Fetching member count"}</Text>
         </Col>
       </Row>
     </Box>

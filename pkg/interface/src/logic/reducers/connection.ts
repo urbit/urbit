@@ -1,5 +1,6 @@
+import _ from 'lodash';
+import { StoreState } from '../../store/type';
 import { Cage } from '~/types/cage';
-import { StoreState } from '../store/type';
 
 type LocalState = Pick<StoreState, 'connection'>;
 

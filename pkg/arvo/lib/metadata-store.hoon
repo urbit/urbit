@@ -23,13 +23,13 @@
     %+  turn  ~(tap by associations)
     |=  [=md-resource [group=resource =^metadatum]]
     ^-  [cord json]
-    :-  %:  rap  3
-            (spat (en-path:resource group))
-            '/'
-            app-name.md-resource
-            (spat (en-path:resource resource.md-resource))
-            ~
-        ==
+    :-
+    %-  crip
+    ;:  weld
+        (trip (spat (en-path:resource group)))
+        (weld "/" (trip app-name.md-resource))
+        (trip (spat (en-path:resource resource.md-resource)))
+    ==
     %-  pairs
     :~  [%group s+(enjs-path:resource group)]
         [%app-name s+app-name.md-resource]

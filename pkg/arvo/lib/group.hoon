@@ -34,12 +34,10 @@
 ::
 ++  scry-group
   |=  rid=resource
-  ^-  (unit group)
   %+  scry-for  ,(unit group)
   `path`groups+(en-path:resource rid)
 ::
 ++  scry-groups
-  ^-  (set resource)
   .^  ,(set resource)
     %gy
     (scot %p our.bowl)
@@ -50,7 +48,6 @@
 ::
 ++  members
   |=  rid=resource
-  ^-  (set ship)
   =;  =group
     members.group
   (fall (scry-group rid) *group)
@@ -78,12 +75,7 @@
   =/  grp=(unit group)
     (scry-group rid)
   ?~  grp  ~
-  (role-for-ship-with-group u.grp rid ship)
-::
-++  role-for-ship-with-group
-  |=  [grp=group rid=resource =ship]
-  ^-  (unit (unit role-tag))
-  =*  group   grp
+  =*  group   u.grp
   =*  policy  policy.group
   =*  tags    tags.group
   =/  admins=(set ^ship)
@@ -104,7 +96,6 @@
 ::
 ++  can-join
   |=  [rid=resource =ship]
-  ^-  ?
   %+  scry-for  ,?
   ^-  path
   :-  %groups
@@ -115,17 +106,11 @@
   ^-  (set ship)
   =/  grp=(unit group)
    (scry-group rid)
-  ?~  grp    ~
-  (get-tagged-ships-with-group u.grp rid tag)
-::
-++  get-tagged-ships-with-group
-  |=  [grp=group rid=resource =tag]
-  ^-  (set ship)
-  (~(get ju tags.grp) tag)
+  ?~  grp   ~
+  (~(get ju tags.u.grp) tag)
 ::
 ++  is-managed
   |=  rid=resource
-  ^-  ?
   =/  group=(unit group)
     (scry-group rid)
   ?~  group  %.n

@@ -137,6 +137,46 @@
   display: none;
 }
 
+.md h1, .md h2, .md h3, .md h4, .md h5, .md p, .md a, .md ul, .md ol, .md blockquote,.md code,.md pre {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.md ul ul {
+  margin-bottom: 0px;
+}
+
+.md h2, .md h3, .md h4, .md h5, .md p, .md a, .md ul {
+  font-weight: 400;
+}
+
+.md h1 {
+  font-weight: 600;
+}
+
+.md h2, .md h3, .md h4, .md h5 {
+  color:var(--gray);
+}
+
+.md {
+  line-height: 1.5;
+}
+.md code, .md pre {
+  font-family: "Source Code Pro", mono;
+  white-space: pre-wrap;
+}
+.md ul>li, .md ol>li {
+  line-height: 1.5;
+}
+.md a {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.md img {
+  margin-bottom: 8px;
+}
+
 @media all and (prefers-color-scheme: dark) {
   .options.open {
     background-color: #4d4d4d;

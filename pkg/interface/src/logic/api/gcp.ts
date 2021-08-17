@@ -1,5 +1,7 @@
-import type { StoreState } from '../store/type';
 import BaseApi from './base';
+import type {StoreState} from '../store/type';
+import type {GcpToken} from '../../types/gcp-state';
+
 
 export default class GcpApi extends BaseApi<StoreState> {
   // Does not touch the store; use the value manually.
@@ -16,4 +18,4 @@ export default class GcpApi extends BaseApi<StoreState> {
         });
       });
   }
-}
+};

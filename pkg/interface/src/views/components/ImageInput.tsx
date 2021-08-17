@@ -1,63 +1,47 @@
-import {
-  BaseInput, Box,
-  Button,
-  Icon, Label, Row, StatelessTextInput as Input,
-  Text
-} from '@tlon/indigo-react';
+import React, { useRef, useCallback, ReactElement } from 'react';
 import { useField } from 'formik';
-import React, { ReactElement, useCallback, useRef, useState } from 'react';
+
+import {
+  Box,
+  StatelessTextInput as Input,
+  Row,
+  Button,
+  Label,
+  BaseInput,
+  Text,
+  Icon
+} from '@tlon/indigo-react';
+
 import useStorage from '~/logic/lib/useStorage';
 
-export type ImageInputProps = Parameters<typeof Box>[0] & {
+type ImageInputProps = Parameters<typeof Box>[0] & {
   id: string;
-  label?: string;
+  label: string;
   placeholder?: string;
 };
 
-const prompt = (
-  field,
-  focus,
-  uploading,
-  meta,
-  clickUploadButton,
-  canUpload
-) => {
-  if (
-    !focus &&
-    !field.value &&
-    !uploading &&
-    meta.error === undefined
-  ) {
+const prompt = (field, uploading, meta, clickUploadButton) => {
+  if (!field.value && !uploading && meta.error === undefined) {
     return (
       <Text
-        color='black'
+        black
         fontWeight='500'
         position='absolute'
         left={2}
-        display='flex'
-        height='100%'
-        alignItems='center'
-        lineHeight={1}
+        top={2}
         style={{ pointerEvents: 'none' }}
-        onSelect={e => e.preventDefault}
       >
-        Paste a link here
-        {canUpload ? (
-          <>
-            , or
-            <Text
-              fontWeight="500"
-              cursor="pointer"
-              color="blue"
-              style={{ pointerEvents: 'all' }}
-              mx='0.5ch'
-              onClick={clickUploadButton}
-            >
-              upload
-            </Text>
-            a file
-          </>
-        ) : null}
+        Paste a link here, or{' '}
+        <Text
+          fontWeight='500'
+          cursor='pointer'
+          color='blue'
+          style={{ pointerEvents: 'all' }}
+          onClick={clickUploadButton}
+        >
+          upload
+        </Text>{' '}
+        a file
       </Text>
     );
   }
@@ -65,18 +49,9 @@ const prompt = (
 };
 
 const uploadingStatus = (uploading, meta) => {
-  if (meta.error === undefined && uploading) {
+  if (uploading && meta.error === undefined) {
     return (
-      <Text
-        position="absolute"
-        left={2}
-        display='flex'
-        height='100%'
-        alignItems='center'
-        lineHeight={1}
-        gray
-        onSelect={e => e.preventDefault}
-      >
+      <Text position='absolute' left={2} top={2} gray>
         Uploading...
       </Text>
     );
@@ -84,26 +59,21 @@ const uploadingStatus = (uploading, meta) => {
   return null;
 };
 
-const errorRetry = (meta, focus, uploading, clickUploadButton) => {
-  if (!focus && meta.error !== undefined) {
+const errorRetry = (meta, uploading, clickUploadButton) => {
+  if (meta.error !== undefined) {
     return (
       <Text
         position='absolute'
         left={2}
-        display='flex'
-        height='100%'
-        alignItems='center'
-        lineHeight={1}
+        top={2}
         color='red'
         style={{ pointerEvents: 'none' }}
-        onSelect={e => e.preventDefault}
       >
         {meta.error}{', '}please{' '}
         <Text
           fontWeight='500'
           cursor='pointer'
           color='blue'
-          mx='0.5ch'
           style={{ pointerEvents: 'all' }}
           onClick={clickUploadButton}
         >
@@ -144,21 +114,7 @@ export function ImageInput(props: ImageInputProps): ReactElement {
   const { id, label, caption } = props;
   const { uploadDefault, canUpload, uploading } = useStorage();
   const [field, meta, { setValue, setError }] = useField(id);
-  const [focus, setFocus] = useState(false);
   const ref = useRef<HTMLInputElement | null>(null);
-
-  const clickUploadButton = useCallback(() => {
-    ref.current?.click();
-  }, [ref]);
-
-  const clearEvt = useCallback(() => {
-    setValue('');
-  }, []);
-
-  const handleBlur = (e) => {
-    field.onBlur(e);
-    setFocus(false);
-  };
 
   const onImageUpload = useCallback(async () => {
     const file = ref.current?.files?.item(0);
@@ -168,35 +124,39 @@ export function ImageInput(props: ImageInputProps): ReactElement {
     }
     try {
       const url = await uploadDefault(file);
-      setFocus(false);
       setValue(url);
     } catch (e) {
-      setFocus(false);
       setError(e.message);
     }
   }, [ref.current, uploadDefault, canUpload, setValue]);
+
+  const clickUploadButton = useCallback(() => {
+    ref.current?.click();
+  }, [ref]);
+
+  const clearEvt = useCallback(() => {
+    setValue('');
+  }, []);
 
   return (
     <Box display="flex" flexDirection="column" {...props}>
       <Label htmlFor={id}>{label}</Label>
       {caption ? (
-        <Label mt={2} gray>
+        <Label mt="2" gray>
           {caption}
         </Label>
       ) : null}
-      <Row mt={2} alignItems="flex-end" position='relative' width='100%'>
-        {prompt(field, focus, uploading, meta, clickUploadButton, canUpload)}
+      <Row mt="2" alignItems="flex-end" position='relative' width='100%'>
+        {prompt(field, uploading, meta, clickUploadButton)}
         {clearButton(field, uploading, clearEvt)}
         {uploadingStatus(uploading, meta)}
-        {errorRetry(meta, focus, uploading, clickUploadButton)}
+        {errorRetry(meta, uploading, clickUploadButton)}
         <Box background='white' borderRadius={2} width='100%'>
           <Input
-            {...field}
             width='100%'
             type={'text'}
-            onFocus={() => setFocus(true)}
-            onBlur={e => handleBlur(e)}
             hasError={meta.touched && meta.error !== undefined}
+            {...field}
           />
         </Box>
         {canUpload && (

@@ -1,13 +1,10 @@
-import { Association, GraphNotifDescription, IndexedNotification, NotifIndex } from '@urbit/api';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import BaseApi from './base';
+import { StoreState } from '../store/type';
+import { dateToDa, decToUd } from '../lib/util';
+import { NotifIndex, IndexedNotification, Association, GraphNotifDescription } from '@urbit/api';
 import { BigInteger } from 'big-integer';
 import { getParentIndex } from '../lib/notification';
-import { dateToDa, decToUd } from '../lib/util';
-import {reduce} from '../reducers/hark-update';
-import {doOptimistically, optReduceState} from '../state/base';
 import useHarkState from '../state/hark';
-import { StoreState } from '../store/type';
-import BaseApi from './base';
 
 function getHarkSize() {
   return useHarkState.getState().notifications.size ?? 0;
@@ -26,8 +23,8 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.action('hark-group-hook', 'hark-group-hook-action', action);
   }
 
-  private actOnNotification(frond: string, intTime: BigInteger | undefined, index: NotifIndex) {
-    const time = intTime ? decToUd(intTime.toString()) : null;
+  private actOnNotification(frond: string, intTime: BigInteger, index: NotifIndex) {
+    const time = decToUd(intTime.toString());
     return this.harkAction({
       [frond]: {
         time,
@@ -54,21 +51,12 @@ export class HarkApi extends BaseApi<StoreState> {
     });
   }
 
-  async archive(intTime: BigInteger, index: NotifIndex) {
-    const time = intTime ? decToUd(intTime.toString()) : null;
-    const action = {
-      archive: {
-        time,
-        index
-      }
-    };
-    await doOptimistically(useHarkState, action, this.harkAction.bind(this), [reduce])
+  archive(time: BigInteger, index: NotifIndex) {
+    return this.actOnNotification('archive', time, index);
   }
 
   read(time: BigInteger, index: NotifIndex) {
-    return this.harkAction({
-      'read-note': index
-    });
+    return this.actOnNotification('read-note', time, index);
   }
 
   readIndex(index: NotifIndex) {
@@ -81,27 +69,17 @@ export class HarkApi extends BaseApi<StoreState> {
     return this.actOnNotification('unread-note', time, index);
   }
 
-  dismissReadCount(graph: string, index: string) {
-    return this.harkAction({
-      'read-count': {
-        graph: {
-          graph,
-          index
-        }
-      }
-    });
-  }
-
   markCountAsRead(association: Association, parent: string, description: GraphNotifDescription) {
-    const action = {  'read-count': {
+    return this.harkAction(
+      {  'read-count': {
          graph: {
         graph: association.resource,
         group: association.group,
+        module: association.metadata.module,
         description,
         index: parent
       } }
-    };
-    doOptimistically(useHarkState, action, this.harkAction.bind(this), [reduce]);
+    });
   }
 
   markEachAsRead(association: Association, parent: string, child: string, description: GraphNotifDescription, mod: string) {

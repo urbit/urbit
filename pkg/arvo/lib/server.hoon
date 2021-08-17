@@ -39,10 +39,10 @@
       ~!  +:*handler
       (handler inbound-request)
     ::
-    =-  [[307 ['location' -]~] ~]
-    %^  cat  3
-      '/~/login?redirect='
-    url.request.inbound-request
+    =/  redirect=cord
+      %-  crip
+      "/~/login?redirect={(trip url.request.inbound-request)}"
+    [[307 ['location' redirect]~] ~]
   ::
   ::  +require-authorization-simple:
   ::      redirect to the login page when unauthenticated
@@ -56,10 +56,10 @@
       ~!  this
       simple-payload
     ::
-    =-  [[307 ['location' -]~] ~]
-    %^  cat  3
-      '/~/login?redirect='
-    url.request.inbound-request
+    =/  redirect=cord
+      %-  crip
+      "/~/login?redirect={(trip url.request.inbound-request)}"
+    [[307 ['location' redirect]~] ~]
   ::
   ++  give-simple-payload
     |=  [eyre-id=@ta =simple-payload:http]
@@ -86,58 +86,35 @@
     :_  `octs
     [200 [['content-type' 'text/html'] ?:(cache [max-1-wk ~] ~)]]
   ::
-  ++  css-response
-    =|  cache=?
-    |=  =octs
-    ^-  simple-payload:http
-    :_  `octs
-    [200 [['content-type' 'text/css'] ?:(cache [max-1-wk ~] ~)]]
-  ::
   ++  js-response
-    =|  cache=?
     |=  =octs
     ^-  simple-payload:http
-    :_  `octs
-    [200 [['content-type' 'text/javascript'] ?:(cache [max-1-wk ~] ~)]]
+    [[200 [['content-type' 'text/javascript'] max-1-da ~]] `octs]
+  ::
+  ++  json-response
+    |=  =json
+    ^-  simple-payload:http
+    [[200 ['content-type' 'application/json']~] `(json-to-octs json)]
+  ::
+  ++  css-response
+    |=  =octs
+    ^-  simple-payload:http
+    [[200 [['content-type' 'text/css'] max-1-da ~]] `octs]
+  ::
+  ++  manx-response
+    |=  man=manx
+    ^-  simple-payload:http
+    [[200 ['content-type' 'text/html']~] `(manx-to-octs man)]
   ::
   ++  png-response
-    =|  cache=?
     |=  =octs
     ^-  simple-payload:http
-    :_  `octs
-    [200 [['content-type' 'image/png'] ?:(cache [max-1-wk ~] ~)]]
-  ::
-  ++  svg-response
-    =|  cache=?
-    |=  =octs
-    ^-  simple-payload:http
-    :_  `octs
-    [200 [['content-type' 'image/svg+xml'] ?:(cache [max-1-wk ~] ~)]]
-  ::
-    ++  ico-response
-    |=  =octs
-    ^-  simple-payload:http
-    [[200 [['content-type' 'image/x-icon'] max-1-wk ~]] `octs]
+    [[200 [['content-type' 'image/png'] max-1-wk ~]] `octs]
   ::
   ++  woff2-response
-    =|  cache=?
     |=  =octs
     ^-  simple-payload:http
     [[200 [['content-type' 'font/woff2'] max-1-wk ~]] `octs]
-  ::
-  ++  json-response
-    =|  cache=_|
-    |=  =json
-    ^-  simple-payload:http
-    :_  `(json-to-octs json)
-    [200 [['content-type' 'application/json'] ?:(cache [max-1-da ~] ~)]]
-  ::
-  ++  manx-response
-    =|  cache=_|
-    |=  man=manx
-    ^-  simple-payload:http
-    :_  `(manx-to-octs man)
-    [200 [['content-type' 'text/html'] ?:(cache [max-1-da ~] ~)]]
   ::
   ++  not-found
     ^-  simple-payload:http
@@ -146,10 +123,10 @@
   ++  login-redirect
     |=  =request:http
     ^-  simple-payload:http
-    =-  [[307 ['location' -]~] ~]
-    %^  cat  3
-      '/~/login?redirect='
-    url.request
+    =/  redirect=cord
+      %-  crip
+      "/~/login?redirect={(trip url.request)}"
+    [[307 ['location' redirect]~] ~]
   ::
   ++  redirect
     |=  redirect=cord

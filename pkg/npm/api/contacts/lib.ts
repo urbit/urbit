@@ -13,11 +13,9 @@ import {
   ContactUpdateSetPublic,
 } from "./types";
 
-export const CONTACT_UPDATE_VERSION: number = 0;
-
-const storeAction = <T extends ContactUpdate>(data: T, version: number = CONTACT_UPDATE_VERSION): Poke<T> => ({
+const storeAction = <T extends ContactUpdate>(data: T): Poke<T> => ({
   app: "contact-store",
-  mark: `contact-update-${version}`,
+  mark: "contact-action",
   json: data,
 });
 
@@ -36,9 +34,9 @@ export const removeContact = (ship: Patp): Poke<ContactUpdateRemove> =>
     remove: { ship },
   });
 
-export const share = (recipient: Patp, version: number = CONTACT_UPDATE_VERSION): Poke<ContactShare> => ({
+export const share = (recipient: Patp): Poke<ContactShare> => ({
   app: "contact-push-hook",
-  mark: `contact-update-${version}`,
+  mark: "contact-action",
   json: { share: recipient },
 });
 

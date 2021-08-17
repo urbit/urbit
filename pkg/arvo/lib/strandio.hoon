@@ -490,7 +490,7 @@
   =/  m  (strand ,vase)
   ^-  form:m
   ;<  =riot:clay  bind:m
-    (warp ship desk ~ %sing %e case /[mak])
+    (warp ship desk ~ %sing %b case /[mak])
   ?~  riot
     (strand-fail %build-nave >arg< ~)
   ?>  =(%nave p.r.u.riot)

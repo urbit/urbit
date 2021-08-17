@@ -1,26 +1,32 @@
-import {
-    Button, Col, ManagedCheckboxField as Checkbox, ManagedForm as Form,
-    ManagedTextInputField as Input,
-
-    Row, Text
-} from '@tlon/indigo-react';
-import { Formik } from 'formik';
-import _ from 'lodash';
-import React, { ReactElement, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { ReactElement, useRef, useState } from 'react';
 import * as Yup from 'yup';
-import { resourceFromPath } from '~/logic/lib/group';
+import _ from 'lodash';
+import { Formik } from 'formik';
+import { useHistory } from 'react-router-dom';
+
+import {
+  ManagedForm as Form,
+  ManagedTextInputField as Input,
+  ManagedCheckboxField as Checkbox,
+  Col,
+  Text,
+  Row,
+  Button
+} from '@tlon/indigo-react';
+
 import { uxToHex } from '~/logic/lib/util';
-import useContactState from '~/logic/state/contact';
-import { MarkdownField } from '~/views/apps/publish/components/MarkdownField';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { ColorInput } from '~/views/components/ColorInput';
-import GroupSearch from '~/views/components/GroupSearch';
 import { ImageInput } from '~/views/components/ImageInput';
+import { MarkdownField } from '~/views/apps/publish/components/MarkdownField';
+import { resourceFromPath } from '~/logic/lib/group';
+import GroupSearch from '~/views/components/GroupSearch';
+import useContactState from '~/logic/state/contact';
 import {
-    ProfileControls, ProfileHeader,
-
-    ProfileImages, ProfileStatus
+  ProfileHeader,
+  ProfileControls,
+  ProfileStatus,
+  ProfileImages
 } from './Profile';
 
 const formSchema = Yup.object({
@@ -61,7 +67,7 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
             <ImageInput id='cover' marginTop='-8px' width='288px' />
           ) : (
             <Row>
-              <Button mr={2} onClick={() => setEditCover(true)}>
+              <Button mr='2' onClick={() => setEditCover(true)}>
                 Replace Header
               </Button>
               <Button onClick={e => handleClear(e)}>
@@ -79,7 +85,7 @@ export function ProfileHeaderImageEdit(props: any): ReactElement {
 
 export function EditProfile(props: any): ReactElement {
   const { contact, ship, api } = props;
-  const isPublic = useContactState(state => state.isContactPublic);
+  const isPublic = useContactState((state) => state.isContactPublic);
   const [hideCover, setHideCover] = useState(false);
 
   const handleHideCover = (value) => {
@@ -90,12 +96,11 @@ export function EditProfile(props: any): ReactElement {
 
   const onSubmit = async (values: any, actions: any) => {
     try {
-      Object.keys(values).forEach((key) => {
+      await Object.keys(values).reduce((acc, key) => {
         const newValue = key !== 'color' ? values[key] : uxToHex(values[key]);
         if (newValue !== contact[key]) {
           if (key === 'isPublic') {
-            api.contacts.setPublic(newValue)
-            return;
+            return acc.then(() => api.contacts.setPublic(newValue));
           } else if (key === 'groups') {
             const toRemove: string[] = _.difference(
               contact?.groups || [],
@@ -105,18 +110,24 @@ export function EditProfile(props: any): ReactElement {
               newValue,
               contact?.groups || []
             );
-            toRemove.forEach(e => 
+            const promises: Promise<any>[] = [];
+            promises.concat(
+              toRemove.map((e) =>
                 api.contacts.edit(ship, { 'remove-group': resourceFromPath(e) })
-            )
-              toAdd.forEach(e =>
+              )
+            );
+            promises.concat(
+              toAdd.map((e) =>
                 api.contacts.edit(ship, { 'add-group': resourceFromPath(e) })
-            )
+              )
+            );
+            return acc.then(() => Promise.all(promises));
           } else if (key !== 'last-updated' && key !== 'isPublic') {
-            api.contacts.edit(ship, { [key]: newValue });
-            return;
+            return acc.then(() => api.contacts.edit(ship, { [key]: newValue }));
           }
         }
-      });
+        return acc;
+      }, Promise.resolve());
       // actions.setStatus({ success: null });
       history.push(`/~profile/${ship}`);
     } catch (e) {
@@ -129,7 +140,7 @@ export function EditProfile(props: any): ReactElement {
     <>
       <Formik
         validationSchema={formSchema}
-        initialValues={{ ...contact, isPublic } || emptyContact}
+        initialValues={{...contact, isPublic } || emptyContact}
         onSubmit={onSubmit}
       >
         {({ setFieldValue }) => (
@@ -143,16 +154,16 @@ export function EditProfile(props: any): ReactElement {
                     cursor='pointer'
                     fontWeight='500'
                     color='blue'
-                    pl={0}
-                    pr={0}
-                    border={0}
+                    pl='0'
+                    pr='0'
+                    border='0'
                     style={{ appearance: 'none', background: 'transparent' }}
                   >
                     Save Edits
                   </Button>
                   <Text
-                    py={2}
-                    ml={3}
+                    py='2'
+                    ml='3'
                     fontWeight='500'
                     cursor='pointer'
                     onClick={() => {

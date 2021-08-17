@@ -1,6 +1,3 @@
 module.exports = {
-  extends: '@urbit',
-  env: {
-    'jest': true
-  }
+  extends: "@urbit"
 };

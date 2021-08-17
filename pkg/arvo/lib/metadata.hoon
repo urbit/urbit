@@ -53,7 +53,6 @@
 ::
 ++  app-metadata-for-group
   |=  [group=resource =app-name:store]
-  ^-  associations:store
   =/  =associations:store
     (metadata-for-group group)
   %-  ~(gas by *associations:store)
@@ -63,7 +62,6 @@
 ::
 ++  metadata-for-group
   |=  group=resource
-  ^-  associations:store
   .^  associations:store
     %gx  (scot %p our.bowl)  %metadata-store  (scot %da now.bowl)
     %group  (snoc (en-path:resource group) %noun)
@@ -71,7 +69,6 @@
 ::
 ++  md-resources-from-group
   |=  group=resource
-  ^-  (set md-resource:store)
   =-  (~(get ju -) group)
   .^  (jug resource md-resource:store)
     %gy
@@ -83,7 +80,6 @@
 ::
 ++  peek-association
   |=  [app-name=term rid=resource]
-  ^-  (unit association:store)
   .^  (unit association:store)
     %gx  (scot %p our.bowl)  %metadata-store  (scot %da now.bowl)
     %metadata  app-name  (snoc (en-path:resource rid) %noun)
@@ -91,7 +87,6 @@
 ::
 ++  peek-metadatum
   |=  =md-resource:store
-  ^-  (unit metadatum:store)
   %+  bind  (peek-association md-resource)
   |=(association:store metadatum)
 ::

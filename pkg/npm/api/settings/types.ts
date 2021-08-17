@@ -20,7 +20,7 @@ export interface PutEntry {
   "put-entry": {
     "bucket-key": Key;
     "entry-key": Key;
-    "value"?: Value;
+    "value": Value;
   };
 }
 

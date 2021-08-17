@@ -1,23 +1,14 @@
 import f from 'lodash/fp';
-import { RemoteContentPolicy, LeapCategories, leapCategories } from '~/types/local-update';
-import { useShortcut as usePlainShortcut } from '~/logic/lib/shortcutContext';
+import { RemoteContentPolicy, LeapCategories, leapCategories } from "~/types/local-update";
 import { BaseState, createState } from '~/logic/state/base';
-import { useCallback } from 'react';
 
-export interface ShortcutMapping {
-  cycleForward: string;
-  cycleBack: string;
-  navForward: string;
-  navBack: string;
-  hideSidebar: string;
-}
 
 export interface SettingsState extends BaseState<SettingsState> {
   display: {
     backgroundType: 'none' | 'url' | 'color';
     background?: string;
     dark: boolean;
-    theme: 'light' | 'dark' | 'auto';
+    theme: "light" | "dark" | "auto";
   };
   calm: {
     hideNicknames: boolean;
@@ -26,7 +17,6 @@ export interface SettingsState extends BaseState<SettingsState> {
     hideGroups: boolean;
     hideUtilities: boolean;
   };
-  keyboard: ShortcutMapping;
   remoteContentPolicy: RemoteContentPolicy;
   leap: {
     categories: LeapCategories[];
@@ -35,7 +25,7 @@ export interface SettingsState extends BaseState<SettingsState> {
     seen: boolean;
     joined?: number;
   };
-}
+};
 
 export const selectSettingsState =
 <K extends keyof SettingsState>(keys: K[]) => f.pick<SettingsState, K>(keys);
@@ -44,13 +34,12 @@ export const selectCalmState = (s: SettingsState) => s.calm;
 
 export const selectDisplayState = (s: SettingsState) => s.display;
 
-// @ts-ignore investigate zustand types
 const useSettingsState = createState<SettingsState>('Settings', {
   display: {
     backgroundType: 'none',
     background: undefined,
     dark: false,
-    theme: 'auto'
+    theme: "auto"
   },
   calm: {
     hideNicknames: false,
@@ -66,24 +55,12 @@ const useSettingsState = createState<SettingsState>('Settings', {
     videoShown: true
   },
   leap: {
-    categories: leapCategories
+    categories: leapCategories,
   },
   tutorial: {
     seen: true,
     joined: undefined
-  },
-  keyboard: {
-    cycleForward: 'ctrl+\'',
-    cycleBack: 'ctrl+;',
-    navForward: 'ctrl+]',
-    navBack: 'ctrl+[',
-    hideSidebar: 'ctrl+\\'
   }
 });
-
-export function useShortcut<T extends keyof ShortcutMapping>(name: T, cb: (e: KeyboardEvent) => void) {
-  const key = useSettingsState(useCallback(s => s.keyboard[name], [name]));
-  return usePlainShortcut(key, cb);
-}
 
 export default useSettingsState;

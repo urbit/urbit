@@ -186,7 +186,7 @@
     =*  timers     timers.state
     ::  if no timers, cancel existing wakeup timer or no-op
     ::
-    =/  first=(unit [date=@da *])  (pry:timer-map timers.state)
+    =/  first=(unit [date=@da *])  (peek:timer-map timers.state)
     ?~  first
       ?~  next-wake
         event-core
@@ -351,7 +351,7 @@
       [%timers %next ~]
     :^  ~  ~  %noun
     !>  ^-  (unit @da)
-    (bind (pry:timer-map timers) head)
+    (bind (peek:timer-map timers) head)
   ::
       [%timers @ ~]
     ?~  til=(slaw %da i.t.tyl)

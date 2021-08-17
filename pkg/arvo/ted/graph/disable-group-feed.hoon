@@ -40,7 +40,7 @@
 ?:  ?=([~ ^] feed.config.metadatum)
   ;<  ~  bind:m
     %+  poke-our  %graph-store
-    :-  %graph-update-2
+    :-  %graph-update-1
     !>  ^-  update:graph
     [now.bowl [%archive-graph resource.u.u.feed.config.metadatum]]
   (pure:m !>(~))

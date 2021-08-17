@@ -15,6 +15,7 @@
 import GlobalApi from '../api/global';
 import useStorageState from '../state/storage';
 
+
 class GcpManager {
   #api: GlobalApi | null = null;
 
@@ -58,15 +59,15 @@ class GcpManager {
     this.start();
   }
 
-  #consecutiveFailures = 0;
-  #configured = false;
+  #consecutiveFailures: number = 0;
+  #configured: boolean = false;
 
   private refreshLoop() {
     if (!this.#configured) {
       this.#api!.gcp.isConfigured()
         .then((configured) => {
           if (configured === undefined) {
-            throw new Error('can\'t check whether GCP is configured?');
+            throw new Error("can't check whether GCP is configured?");
           }
           this.#configured = configured;
           if (this.#configured) {

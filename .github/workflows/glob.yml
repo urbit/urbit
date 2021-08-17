@@ -2,7 +2,7 @@ name: glob
 on:
   push:
     branches:
-      - 'release/next-userspace'
+      - 'release/next-js'
 jobs:
   glob:
     runs-on: ubuntu-latest

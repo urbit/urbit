@@ -1,28 +1,31 @@
-import {
-    Col,
-
-    ErrorLabel, Label,
-    Row,
-
-    StatelessTextInput as Input
-} from '@tlon/indigo-react';
+import React, {
+  useCallback,
+  useState,
+  ReactNode,
+  useEffect,
+  useRef,
+  ReactElement
+} from 'react';
 import { useField } from 'formik';
 import Mousetrap from 'mousetrap';
-import React, {
-    ReactElement, ReactNode, useCallback,
 
-    useEffect,
-    useRef, useState
-} from 'react';
+import {
+  Label,
+  Row,
+  Col,
+  StatelessTextInput as Input,
+  ErrorLabel
+} from '@tlon/indigo-react';
+
 
 function Chip(props: { children: ReactNode }): ReactElement {
   return (
     <Row
       alignItems="center"
       height="24px"
-      borderRadius={1}
-      my={1}
-      p={1}
+      borderRadius="1"
+      my="1"
+      p="1"
       bg="blue"
       color="white"
     >
@@ -93,15 +96,15 @@ export function ChipInput(props: ChipInputProps): ReactElement {
   }, [inputRef.current, addNewChip, newChip]);
 
   return (
-    <Col gapY={2}>
+    <Col gapY="2">
       <Label htmlFor={id}>{label}</Label>
       {caption && <Label gray>{caption}</Label>}
       <Row
-        border={1}
+        border="1"
         borderColor="washedGray"
-        borderRadius={1}
-        pl={2}
-        gapX={2}
+        borderRadius="1"
+        pl="2"
+        gapX="2"
         width="100%"
         flexWrap="wrap"
         minHeight="32px"
@@ -112,20 +115,20 @@ export function ChipInput(props: ChipInputProps): ReactElement {
         <Input
           width="auto"
           height="24px"
-          flexShrink={1}
-          flexGrow={1}
-          pl={0}
+          flexShrink="1"
+          flexGrow="1"
+          pl="0"
           ref={inputRef}
           onChange={onChange}
           value={newChip}
           onBlur={onBlur}
           placeholder={placeholder}
-          border={0}
-          my={1}
-          py={1}
+          border="0"
+          my="1"
+          py="1"
         />
       </Row>
-      <ErrorLabel mt={2} hasError={Boolean(meta.touched && meta.error)}>
+      <ErrorLabel mt="2" hasError={Boolean(meta.touched && meta.error)}>
         {meta.error}
       </ErrorLabel>
 

@@ -1,11 +1,11 @@
-import { MouseEvent, useCallback, useEffect, useState } from 'react';
+import { MouseEvent, useCallback, useState, useEffect } from 'react';
 export type AsyncClickableState = 'waiting' | 'error' | 'loading' | 'success';
 
 export function useStatelessAsyncClickable(
   onClick: (e: MouseEvent) => Promise<void>,
   name: string
 ) {
-  const [state, setState] = useState<AsyncClickableState>('waiting');
+  const [state, setState] = useState<ButtonState>('waiting');
   const handleClick = useCallback(
     async (e: MouseEvent) => {
       try {

@@ -7,11 +7,13 @@
 //
 import querystring from 'querystring';
 import {
+  StorageAcl,
   StorageClient,
   StorageUpload,
   UploadParams,
   UploadResult
 } from './StorageClient';
+
 
 const ENDPOINT = 'storage.googleapis.com';
 
@@ -25,7 +27,7 @@ class GcpUpload implements StorageUpload {
   }
 
   async promise(): Promise<UploadResult> {
-    const { Bucket, Key, ContentType, Body } = this.#params;
+    const {Bucket, Key, ContentType, Body} = this.#params;
     const urlParams = {
       uploadType: 'media',
       name: Key,
@@ -48,7 +50,7 @@ class GcpUpload implements StorageUpload {
       console.error('GcpClient server error', await response.json());
       throw new Error(`GcpClient: response ${response.status}`);
     }
-    return { Location: `https://${ENDPOINT}/${Bucket}/${Key}` };
+    return {Location: `https://${ENDPOINT}/${Bucket}/${Key}`};
   }
 }
 

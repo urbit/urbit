@@ -1,15 +1,17 @@
-import { Box, Center, Col, Text } from '@tlon/indigo-react';
-import { Association, GraphConfig } from '@urbit/api/metadata';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
-import { useQuery } from '~/logic/lib/useQuery';
-import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import useGraphState from '~/logic/state/graph';
+import { Association } from '@urbit/api/metadata';
+import { Box, Text, Button, Col, Center } from '@tlon/indigo-react';
 import RichText from '~/views/components/RichText';
+import { Link, useHistory } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import {
+  StatelessAsyncButton as AsyncButton,
   StatelessAsyncButton
 } from './StatelessAsyncButton';
+import { Graphs } from '@urbit/api';
+import useGraphState from '~/logic/state/graph';
+import {useQuery} from '~/logic/lib/useQuery';
 
 interface UnjoinedResourceProps {
   association: Association;
@@ -19,8 +21,9 @@ interface UnjoinedResourceProps {
 
 function isJoined(path: string) {
   return function (
-    props: { graphKeys: Set<string> }
+    props: Pick<UnjoinedResourceProps, 'graphKeys'>
   ) {
+
     const graphKey = path.substr(7);
     return props.graphKeys.has(graphKey);
   };
@@ -32,13 +35,13 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
   const { query } = useQuery();
   const rid = props.association.resource;
   const appName = props.association['app-name'];
-
+  
   const { title, description, config } = props.association.metadata;
   const graphKeys = useGraphState(state => state.graphKeys);
 
   const [loading, setLoading] = useState(false);
   const waiter = useWaitForProps({ ...props, graphKeys });
-  const app = useMemo(() => (config as GraphConfig).graph || appName, [props.association]);
+  const app = useMemo(() => config.graph || appName, [props.association]);
 
   const onJoin = async () => {
     const [, , ship, name] = rid.split('/');
@@ -61,6 +64,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
         await onJoin();
         setLoading(false);
       }
+
     })();
   }, [query]);
 
@@ -71,14 +75,14 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
         p={4}
         border={1}
         borderColor="lightGray"
-        borderRadius={1}
-        gapY={3}
+        borderRadius="1"
+        gapY="3"
       >
         <Box>
           <Text>{title}</Text>
         </Box>
         <Box>
-          <RichText color="gray" api={api}>{description}</RichText>
+          <RichText color="gray">{description}</RichText>
         </Box>
         <StatelessAsyncButton
           name={rid}

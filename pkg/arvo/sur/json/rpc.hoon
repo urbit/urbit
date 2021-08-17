@@ -1,11 +1,6 @@
 ::  json-rpc: protocol types
 ::
 |%
-+$  batch-request
-  $%  [%a p=(list request)]
-      [%o p=request]
-  ==
-::
 +$  request
   $:  id=@t
       jsonrpc=@t

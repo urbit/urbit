@@ -1,18 +1,18 @@
-import { Association, Group, JoinRequests } from '@urbit/api';
-import { useCallback } from 'react';
-import { BaseState, createState } from './base';
+import { Path, JoinRequests, Association, Group } from "@urbit/api";
+
+import { BaseState, createState } from "./base";
+import {useCallback} from "react";
 
 export interface GroupState extends BaseState<GroupState> {
   groups: {
     [group: string]: Group;
   }
   pendingJoin: JoinRequests;
-}
+};
 
-// @ts-ignore investigate zustand types
 const useGroupState = createState<GroupState>('Group', {
   groups: {},
-  pendingJoin: {}
+  pendingJoin: {},
 }, ['groups']);
 
 export function useGroup(group: string) {

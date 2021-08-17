@@ -1,16 +1,19 @@
-import {
-    Box,
-    Button, ManagedForm as Form, ManagedTextInputField as Input,
-
-    Menu,
-    MenuButton,
-
-    MenuItem, MenuList,
-
-    Row, Text
-} from '@tlon/indigo-react';
+import React, { ReactElement, useCallback, useState } from "react";
 import { Formik, FormikHelpers } from 'formik';
-import React, { ReactElement, useCallback, useState } from 'react';
+
+import {
+  ManagedTextInputField as Input,
+  ManagedForm as Form,
+  Box,
+  Button,
+  Text,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Row,
+} from "@tlon/indigo-react";
+
 import GlobalApi from '~/logic/api/global';
 
 export function BucketList({
@@ -29,7 +32,7 @@ export function BucketList({
   const onSubmit = useCallback(
     (values: { newBucket: string }, actions: FormikHelpers<any>) => {
       api.s3.addBucket(values.newBucket);
-      actions.resetForm({ values: { newBucket: '' } });
+      actions.resetForm({ values: { newBucket: "" } });
     },
     [api]
   );
@@ -95,22 +98,22 @@ export function BucketList({
         {adding && (
           <Input
             placeholder="Enter your new bucket"
-            mt={2}
+            mt="2"
             label="New Bucket"
             id="newBucket"
           />
         )}
-        <Row gapX={3} mt={3}>
+        <Row gapX="3" mt="3">
           <Button type="button" onClick={() => setAdding(false)}>
             Cancel
           </Button>
           <Button
             width="fit-content"
             primary
-            type={adding ? 'submit' : 'button'}
-            onClick={() => setAdding(s => !s)}
+            type={adding ? "submit" : "button"}
+            onClick={() => setAdding((s) => !s)}
           >
-            {adding ? 'Submit' : 'Add new bucket'}
+            {adding ? "Submit" : "Add new bucket"}
           </Button>
         </Row>
       </Form>

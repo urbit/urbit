@@ -3,11 +3,10 @@ import { BaseState, createState } from './base';
 
 export interface InviteState extends BaseState<InviteState> {
   invites: Invites;
-}
+};
 
-// @ts-ignore investigate zustand types
 const useInviteState = createState<InviteState>('Invite', {
-  invites: {}
+  invites: {},
 });
 
 export default useInviteState;

@@ -12,7 +12,6 @@
 +$  step  _`@u`1
 +$  bite  $@(bloq [=bloq =step])
 +$  octs  [p=@ud q=@]
-+$  mold  $~(* $-(* *))
 ++  unit  |$  [item]  $@(~ [~ u=item])
 ++  list  |$  [item]  $@(~ [i=item t=(list item)])
 ++  lest  |$  [item]  [i=item t=(list item)]
@@ -456,22 +455,6 @@
   ?.  ?=(@ b)  &
   (lth a b)
 ::
-++  por                                                 ::  parent order
-  ~/  %por
-  |=  [a=@p b=@p]
-  ^-  ?
-  ?:  =(a b)  &
-  =|  i=@
-  |-
-  ?:  =(i 2)
-    ::  second two bytes
-    (lte a b)
-  ::  first two bytes
-  =+  [c=(end 3 a) d=(end 3 b)]
-  ?:  =(c d)
-    $(a (rsh 3 a), b (rsh 3 b), i +(i))
-  (lth c d)
-::
 ::  Maps
 ::
 ++  by
@@ -549,134 +532,6 @@
         ?~  r.a   &
         &((mor p.n.a p.n.r.a) !=(p.n.a p.n.r.a) $(a r.a, r `p.n.a))
     ==
-  --
-::
-++  on                                                  ::  ordered map
-  ~/  %on
-  |*  [key=mold val=mold]
-  =>  |%
-      +$  item  [key=key val=val]
-      --
-  ::
-  ~%  %comp  +>+  ~
-  |=  compare=$-([key key] ?)
-  ~%  %core    +  ~
-  |%
-  ::
-  ++  apt
-    ~/  %apt
-    |=  a=(tree item)
-    =|  [l=(unit key) r=(unit key)]
-    |-  ^-  ?
-    ?~  a  %.y
-    ?&  ?~(l %.y (compare key.n.a u.l))
-        ?~(r %.y (compare u.r key.n.a))
-        ?~(l.a %.y &((mor key.n.a key.n.l.a) $(a l.a, l `key.n.a)))
-        ?~(r.a %.y &((mor key.n.a key.n.r.a) $(a r.a, r `key.n.a)))
-    ==
-  ::
-  ++  gas
-    ~/  %gas
-    |=  [a=(tree item) b=(list item)]
-    ^-  (tree item)
-    ?~  b  a
-    $(b t.b, a (put a i.b))
-  ::
-  ++  get
-    ~/  %get
-    |=  [a=(tree item) b=key]
-    ^-  (unit val)
-    ?~  a  ~
-    ?:  =(b key.n.a)
-      `val.n.a
-    ?:  (compare b key.n.a)
-      $(a l.a)
-    $(a r.a)
-  ::
-  ++  has
-    ~/  %has
-    |=  [a=(tree item) b=key]
-    ^-  ?
-    !=(~ (get a b))
-  ::
-  ++  lot
-    ~/  %lot
-    |=  $:  tre=(tree item)
-            start=(unit key)
-            end=(unit key)
-        ==
-    ^-  (tree item)
-    |^
-    ?:  ?&(?=(~ start) ?=(~ end))
-      tre
-    ?~  start
-      (del-span tre %end end)
-    ?~  end
-      (del-span tre %start start)
-    ?>  (compare u.start u.end)
-    =.  tre  (del-span tre %start start)
-    (del-span tre %end end)
-    ::
-    ++  del-span
-      |=  [a=(tree item) b=?(%start %end) c=(unit key)]
-      ^-  (tree item)
-      ?~  a  a
-      ?~  c  a
-      ?-  b
-          %start
-        ?:  =(key.n.a u.c)
-          (nip a(l ~))
-        ?:  (compare key.n.a u.c)
-          $(a (nip a(l ~)))
-        a(l $(a l.a))
-      ::
-          %end
-        ?:  =(u.c key.n.a)
-          (nip a(r ~))
-        ?:  (compare key.n.a u.c)
-          a(r $(a r.a))
-        $(a (nip a(r ~)))
-      ==
-    --
-  ::
-  ++  nip
-    ~/  %nip
-    |=  a=(tree item)
-    ^-  (tree item)
-    ?>  ?=(^ a)
-    |-  ^-  (tree item)
-    ?~  l.a  r.a
-    ?~  r.a  l.a
-    ?:  (mor key.n.l.a key.n.r.a)
-      l.a(r $(l.a r.l.a))
-    r.a(l $(r.a l.r.a))
-  ::
-  ++  put
-    ~/  %put
-    |=  [a=(tree item) =key =val]
-    ^-  (tree item)
-    ?~  a  [n=[key val] l=~ r=~]
-    ?:  =(key.n.a key)  a(val.n val)
-    ?:  (compare key key.n.a)
-      =/  l  $(a l.a)
-      ?>  ?=(^ l)
-      ?:  (mor key.n.a key.n.l)
-        a(l l)
-      l(r a(l r.l))
-    =/  r  $(a r.a)
-    ?>  ?=(^ r)
-    ?:  (mor key.n.a key.n.r)
-      a(r r)
-    r(l a(r l.r))
-  ::
-  ++  tap
-    ~/  %tap
-    |=  a=(tree item)
-    ^-  (list item)
-    =|  b=(list item)
-    |-  ^+  b
-    ?~  a  b
-    $(a l.a, b [n.a $(a r.a)])
   --
 ::
 ::  Sets

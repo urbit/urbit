@@ -1,6 +1,6 @@
-import { Path } from '@urbit/api';
-import BaseApi from '../api/base';
 import BaseStore from '../store/base';
+import BaseApi from '../api/base';
+import { Path } from '@urbit/api';
 
 export default class BaseSubscription<S extends object> {
   private errorCount = 0;

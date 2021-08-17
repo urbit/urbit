@@ -19,7 +19,6 @@
       [%import app=@t base64-jam=@t]
       [%export-all ~]
       [%import-all base64-jam=@t]
-      [%cancel ~]
   ==
 ++  sink
   $%  [%stdout ~]

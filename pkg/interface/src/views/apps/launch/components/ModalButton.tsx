@@ -1,5 +1,5 @@
-import { Button, Icon, Row, Text } from '@tlon/indigo-react';
 import React from 'react';
+import { Row, Button, Icon, Text } from '@tlon/indigo-react';
 import { useModal } from '~/logic/lib/useModal';
 
 const ModalButton = (props) => {

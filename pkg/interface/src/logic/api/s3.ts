@@ -1,5 +1,6 @@
-import { StoreState } from '../store/type';
 import BaseApi from './base';
+import { StoreState } from '../store/type';
+import { S3Update } from '../../types/s3-update';
 
 export default class S3Api extends BaseApi<StoreState> {
   setCurrentBucket(bucket: string) {

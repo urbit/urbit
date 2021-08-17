@@ -13,23 +13,16 @@
       [%4 state-zero]
       [%5 state-zero]
       [%6 state-zero]
-      [%7 state-7]
   ==
 ::
 +$  state-zero
-  $:  tiles=tiles-0:store
-      =tile-ordering:store
-      first-time=?
-  ==
-::
-+$  state-7
   $:  =tiles:store
       =tile-ordering:store
       first-time=?
   ==
 --
 ::
-=|  [%7 state-7]
+=|  [%6 state-zero]
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -39,7 +32,7 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  =/  new-state  *state-7
+  =/  new-state  *state-zero
   =.  new-state
     %_  new-state
         tiles
@@ -48,12 +41,12 @@
       |=  =term
       :-  term
       ^-  tile:store
-      ?+  term  [[%custom ~ ~] %.y]
+      ?+  term  [[%custom ~] %.y]
         %term   [[%basic 'Terminal' '/~landscape/img/term.png' '/~term'] %.y]
       ==
         tile-ordering  [%weather %clock %term ~]
     ==
-  [~ this(state [%7 new-state])]
+  [~ this(state [%6 new-state])]
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -62,22 +55,8 @@
   =/  old-state  !<(versioned-state old)
   =|  cards=(list card)
   |-  ^-  (quip card _this)
-  ?:  ?=(%7 -.old-state)
-    [cards this(state old-state)]
-  ::
   ?:  ?=(%6 -.old-state)
-    =/  new-tiles=tiles:store
-      %-  ~(gas by *tiles:store)
-      %+  turn  ~(tap by tiles.old-state)
-      |=  [=term =tile-0:store]
-      :-  term
-      :_  is-shown.tile-0
-      ?-  -.type.tile-0
-        %basic   type.tile-0
-        %custom  [%custom ~ ~]
-      ==
-    $(old-state [%7 new-tiles tile-ordering.old-state first-time.old-state])
-  ::
+    [cards this(state old-state)]
   ?:  ?=(%5 -.old-state)
     ::  replace %dojo with %term
     ::
@@ -107,11 +86,11 @@
   =.  new-state
     %_  new-state
         tiles
-      %-  ~(gas by *tiles-0:store)
+      %-  ~(gas by *tiles:store)
       %+  turn  `(list term)`[%weather %clock %dojo ~]
       |=  =term
       :-  term
-      ^-  tile-0:store
+      ^-  tile:store
       ?+  term      [[%custom ~] %.y]
           %dojo     [[%basic 'Dojo' '/~landscape/img/Dojo.png' '/~dojo'] %.y]
       ==
@@ -212,14 +191,9 @@
   ^-  (unit (unit cage))
   ?.  (team:title our.bowl src.bowl)  ~
   ?+  path  [~ ~]
-    [%x %tiles ~]       ``noun+!>([tiles tile-ordering])
-    [%x %first-time ~]  ``noun+!>(first-time)
-    [%x %keys ~]        ``noun+!>(~(key by tiles))
-  ::
-      [%x %runtime-lag ~]
-    :^  ~  ~  %json
-    !>  ^-  json
-    b+.^(? //(scot %p our.bowl)//(scot %da now.bowl)/zen/lag)
+      [%x %tiles ~]       ``noun+!>([tiles tile-ordering])
+      [%x %first-time ~]  ``noun+!>(first-time)
+      [%x %keys ~]        ``noun+!>(~(key by tiles))
   ==
 ::
 ++  on-arvo

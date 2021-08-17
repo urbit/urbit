@@ -1,5 +1,5 @@
-import { StoreState } from '../store/type';
 import BaseApi from './base';
+import { StoreState } from '../store/type';
 
 export default class LaunchApi extends BaseApi<StoreState> {
   add(name: string, tile = { basic : { title: '', linkedUrl: '', iconUrl: '' } }) {

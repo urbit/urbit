@@ -1,8 +1,8 @@
+import { LocalUpdate } from './local-update';
+import { LaunchUpdate, WeatherState } from './launch-update';
+import { ConnectionStatus } from './connection';
 import { ContactUpdate, GroupUpdate, InviteUpdate, MetadataUpdate } from '@urbit/api';
 import { SettingsUpdate } from '@urbit/api/settings';
-import { ConnectionStatus } from './connection';
-import { LaunchUpdate, WeatherState } from './launch-update';
-import { LocalUpdate } from './local-update';
 
 interface MarksToTypes {
   readonly json: any;

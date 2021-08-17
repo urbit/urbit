@@ -24,6 +24,7 @@
       watch-on-self=_&
   ==
 ::
+::
 ++  scry
   |*  [[our=@p now=@da] =mold p=path]
   ?>  ?=(^ p)
@@ -36,6 +37,7 @@
   %^  scry  [our now]
     tube:clay
   /cc/[desk]/[mark]/notification-kind
+::
 --
 ::
 =|  state-1
@@ -124,15 +126,15 @@
   ::
   ++  poke-noun
     |=  non=*
-    [~ state]
-::    ?>  ?=(%rewatch-dms non)
-::    =/  graphs=(list resource)
-::      ~(tap in get-keys:gra)
-::    %_   state
-::        watching  
-::      %-  ~(gas in watching)
-::      (murn graphs |=(rid=resource ?:((should-watch:ha rid) `[rid ~] ~)))
-::    ==
+    ?>  ?=(%rewatch-dms non)
+    =/  graphs=(list resource)
+      ~(tap in get-keys:gra)
+    :-  ~
+    %_   state
+        watching  
+      %-  ~(gas in watching)
+      (murn graphs |=(rid=resource ?:((should-watch:ha rid) `[rid ~] ~)))
+    ==
   ::
   ++  hark-graph-hook-action
     |=  =action:hook
@@ -180,7 +182,7 @@
     ~[watch-graph:ha]
   ::
       %fact
-    ?.  ?=(%graph-update-2 p.cage.sign)
+    ?.  ?=(%graph-update-1 p.cage.sign)
       (on-agent:def wire sign)
     =^  cards  state
       (graph-update !<(update:graph-store q.cage.sign))
@@ -195,20 +197,18 @@
       ::
         ?(%remove-graph %archive-graph)  
       (remove-graph resource.q.update)
-    ::
-        %remove-posts
-      (remove-posts resource.q.update indices.q.update)
-    ::
+      ::
+        %remove-nodes
+      (remove-nodes resource.q.update indices.q.update)
+      ::
         %add-nodes
       =*  rid  resource.q.update
-      =/  assoc=(unit association:metadata)
-        (peek-association:met %graph rid)
-      (check-nodes ~(val by nodes.q.update) rid assoc)
+      (check-nodes ~(val by nodes.q.update) rid)
     ==
   ::  this is awful, but notification kind should always switch
   ::  on the index, so hopefully doesn't matter
   ::  TODO: rethink this
-  ++  remove-posts
+  ++  remove-nodes
     |=  [rid=resource indices=(set index:graph-store)]
     =/  to-remove
       %-  ~(gas by *(set [resource index:graph-store]))
@@ -256,22 +256,32 @@
     =/  graph=graph:graph-store  :: graph in subscription is bunted 
       (get-graph-mop:gra rid)
     =/  node=(unit node:graph-store)
-      (bind (pry:orm:graph-store graph) |=([@ =node:graph-store] node))
-    =/  assoc=(unit association:metadata)
-      (peek-association:met %graph rid)
+      (bind (peek:orm:graph-store graph) |=([@ =node:graph-store] node))
     =^  cards  state
-      (check-nodes (drop node) rid assoc)
-    ?.  (should-watch:ha rid assoc)
+      (check-nodes (drop node) rid)
+    ?.  (should-watch:ha rid)
       [cards state]
     :_   state(watching (~(put in watching) [rid ~]))
     (weld cards (give:ha ~[/updates] %listen [rid ~]))
   ::
+  ::
   ++  check-nodes
     |=  $:  nodes=(list node:graph-store)
             rid=resource
-            assoc=(unit association:metadata)
         ==
-    abet:check:(abed:handle-update:ha rid nodes)
+    =/  group=(unit resource)
+      (peek-group:met %graph rid)
+    ?~  group  
+      ~&  no-group+rid
+      `state
+    =/  metadatum=(unit metadatum:metadata)
+      (peek-metadatum:met %graph rid)
+    ?~  metadatum  `state
+    =/  module=term
+      ?:  ?=(%empty -.config.u.metadatum)  %$
+      ?:  ?=(%group -.config.u.metadatum)  %$
+      module.config.u.metadatum
+    abet:check:(abed:handle-update:ha rid nodes u.group module)
   --
 ::
 ++  on-peek  on-peek:def
@@ -333,31 +343,31 @@
   $(contents t.contents)
 ::
 ++  should-watch
-  |=  [rid=resource assoc=(unit association:metadata)]
+  |=  rid=resource
   ^-  ?
-  ?~  assoc
-    %.y
-  &(watch-on-self =(our.bowl entity.rid))
+  =/  group-rid=(unit resource)
+    (peek-group:met %graph rid) 
+  ?~  group-rid  %.n
+  ?|  !(is-managed:grp u.group-rid)
+      &(watch-on-self =(our.bowl entity.rid))
+  ==
 ::
 ++  handle-update
   |_  $:  rid=resource  ::  input
           updates=(list node:graph-store)
-          mark=(unit mark)
+          group=resource
+          module=term
           hark-pokes=(list action:store)  :: output
           new-watches=(list index:graph-store)
       ==
   ++  update-core  .
   ::
   ++  abed
-    |=  [r=resource upds=(list node:graph-store)]
-    =/  m=(unit ^mark)
-      (get-mark:gra r)
-    update-core(rid r, updates upds, mark m)
+    |=  [r=resource upds=(list node:graph-store) grp=resource mod=term]
+    update-core(rid r, updates upds, group grp, module mod)
   ::
   ++  get-conversion
-    ::  LA:  this tube should be cached in %hark-graph-hook state
-    ::  instead of just trying to keep it warm, as the scry overhead is large
-    ~+  (^get-conversion rid)
+    (^get-conversion rid)
   ::
   ++  abet
     ^-  (quip card _state)
@@ -407,35 +417,30 @@
     |=  =node:graph-store
     ^+  update-core
     =.  update-core  (check-node-children node)
-    ?:  ?=(%| -.post.node)
-      update-core
-    =*  pos  p.post.node
     =+  !<  notif-kind=(unit notif-kind:hook)
-        %-  get-conversion
-        !>(`indexed-post:graph-store`[0 pos])
+        (get-conversion !>([0 post.node]))
     ?~  notif-kind
       update-core
     =/  desc=@t
-      ?:  (is-mention contents.pos)
+      ?:  (is-mention contents.post.node)
         %mention
       name.u.notif-kind
     =*  not-kind  u.notif-kind
     =/  parent=index:post
-      (scag parent.index-len.not-kind index.pos)
+      (scag parent.index-len.not-kind index.post.node)
     =/  notif-index=index:store
-      [%graph rid mark desc parent]
-    ?:  =(our.bowl author.pos)
+      [%graph group rid module desc parent]
+    ?:  =(our.bowl author.post.node)
       (self-post node notif-index not-kind)
     =.  update-core
-      (update-unread-count not-kind notif-index [time-sent index]:pos)
+      (update-unread-count not-kind notif-index [time-sent index]:post.node)
     =?    update-core
         ?|  =(desc %mention)
             (~(has in watching) [rid parent])
-            =(mark `%graph-validator-dm)
         ==
       =/  =contents:store
-        [%graph (limo pos ~)]
-      (add-unread notif-index [time-sent.pos %.n contents])
+        [%graph (limo post.node ~)]
+      (add-unread notif-index [time-sent.post.node %.n contents])
     update-core
   ::
   ++  update-unread-count
@@ -454,19 +459,19 @@
             =notif-kind:hook
         ==
     ^+  update-core 
-    ?>  ?=(%& -.post.node)
     =/  =stats-index:store
       (to-stats-index:store index)
     =.  update-core
-      (hark %seen-index time-sent.p.post.node stats-index)
+      (hark %seen-index time-sent.post.node stats-index)
     =?  update-core  ?=(%count mode.notif-kind)
       (hark %read-count stats-index)
     =?  update-core  watch-on-self
-      (new-watch index.p.post.node [watch-for index-len]:notif-kind)
+      (new-watch index.post.node [watch-for index-len]:notif-kind)
     update-core
   ::
   ++  add-unread
     |=  [=index:store =notification:store]
     (hark %add-note index notification)
+  ::
   --
 --
