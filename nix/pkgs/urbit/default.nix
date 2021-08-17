@@ -1,4 +1,4 @@
-{ lib, stdenv, coreutils, pkgconfig, argon2u, cacert, ca-bundle, curlMinimal
+{ lib, stdenv, coreutils, pkgconfig, argon2u, cacert, ca-bundle, curl
 , ed25519, ent, ge-additions, gmp, h2o, herb, ivory, libaes_siv, libscrypt
 , libsigsegv, libuv, lmdb, murmur3, openssl, secp256k1, softfloat3, zlib
 , enableStatic ? stdenv.hostPlatform.isStatic, enableDebug ? false
@@ -22,7 +22,7 @@ in stdenv.mkDerivation {
     argon2u
     cacert
     ca-bundle
-    curlMinimal
+    curl
     ed25519
     ent
     ge-additions

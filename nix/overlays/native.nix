@@ -18,14 +18,6 @@ in {
     ];
   });
 
-  curlMinimal = prev.curl.override {
-    http2Support = false;
-    scpSupport = false;
-    gssSupport = false;
-    ldapSupport = false;
-    brotliSupport = false;
-  };
-
   lmdb = prev.lmdb.overrideAttrs (attrs: {
     patches =
       optionalList attrs.patches ++ prev.lib.optional prev.stdenv.isDarwin [
