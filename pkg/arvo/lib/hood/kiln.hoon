@@ -116,8 +116,7 @@
 ::
 +$  kiln-fuse-list  (unit desk)
 --
-|=  [bowl:gall any-state]
-?>  ?=(%3 +<+<)
+|=  [bowl:gall state]
 ?>  =(src our)
 =|  moz=(list card:agent:gall)
 |%

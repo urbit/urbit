@@ -1,10 +1,22 @@
 /+  default-agent
 /+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
 |%
-+$  state  [%16 any-state-tuple]
++$  state
+  $~  [%16 *state:drum *state:helm *state:kiln]
+  $>(%16 any-state)
+::
 +$  any-state
   $%  [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
-      [ver=?(%7 %8 %9 %10 %11 %12 %13 %14 %15 %16) any-state-tuple]
+      [%7 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%8 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%9 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%10 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%11 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%12 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
+      [%13 drum=state-2:drum helm=state:helm kiln=state-1:kiln]
+      [%14 drum=state-3:drum helm=state:helm kiln=state-1:kiln]
+      [%15 drum=state-3:drum helm=state:helm kiln=state-2:kiln]
+      [%16 drum=state-4:drum helm=state:helm kiln=state-3:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum
@@ -55,9 +67,9 @@
           =-(?>(?=(%kiln -<) ->) (~(got by lac.old) %kiln))
       ==
     ==
-  =^  d  drum.state  (on-load:drum-core -.old drum.tup)
-  =^  h  helm.state  (on-load:helm-core -.old helm.tup)
-  =^  k  kiln.state  (on-load:kiln-core -.old kiln.tup)
+  =^  d  drum.state  (on-load:(drum bowl *state:drum) -.old drum.tup)
+  =^  h  helm.state  (on-load:(helm bowl *state:helm) -.old helm.tup)
+  =^  k  kiln.state  (on-load:(kiln bowl *state:kiln) -.old kiln.tup)
   [:(welp d h k) this]
 ::
 ++  on-poke

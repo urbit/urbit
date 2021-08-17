@@ -81,8 +81,7 @@
 --
 ::  TODO: remove .ost
 ::
-|=  [hid=bowl:gall any-state]
-?>  ?=(%4 +<+<)
+|=  [hid=bowl:gall state]
 =*  sat  +<+
 =/  ost  0
 =+  (~(gut by bin) ost *source)

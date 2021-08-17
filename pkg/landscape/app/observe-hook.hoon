@@ -276,7 +276,7 @@
     :_  this(static-conversions (~(put in static-conversions) [from to]))
     =/  =wire  /static-convert/[from]/[to]
     =/  =rave:clay  [%sing %f [%da now.bowl] /[from]/[to]]
-    [%pass wire %arvo %c %warp our.bowl %home `rave]~
+    [%pass wire %arvo %c %warp our.bowl desk `rave]~
   ::
   ++  cool-static-conversion
     |=  [from=term to=term]
