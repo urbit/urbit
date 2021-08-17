@@ -34,17 +34,18 @@ export function createPreviousPath(current: string): string {
 type LeapProps = {
   menu: MenuState;
   dropdown: string;
+  showClose: boolean;
 } & HTMLAttributes<HTMLDivElement>;
 
-export const Leap = React.forwardRef(({ menu, dropdown, className }: LeapProps, ref) => {
+export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: LeapProps, ref) => {
   const { push } = useHistory();
-  const match = useRouteMatch<{ query?: string; desk?: string }>(
+  const match = useRouteMatch<{ menu?: MenuState; query?: string; desk?: string }>(
     `/leap/${menu}/:query?/(apps)?/:desk?`
   );
   const appsMatch = useRouteMatch(`/leap/${menu}/${match?.params.query}/apps`);
   const inputRef = useRef<HTMLInputElement>(null);
   useImperativeHandle(ref, () => inputRef.current);
-  const { rawInput, searchInput, selectedMatch, matches, selection, select } = useLeapStore();
+  const { rawInput, selectedMatch, matches, selection, select } = useLeapStore();
 
   const toggleSearch = useCallback(() => {
     if (selection || menu === 'search') {
@@ -54,15 +55,18 @@ export const Leap = React.forwardRef(({ menu, dropdown, className }: LeapProps, 
     push('/leap/search');
   }, [selection, menu]);
 
-  const onFocus = useCallback((e: FocusEvent<HTMLInputElement>) => {
-    // refocusing tab with input focused is false trigger
-    const windowFocus = e.nativeEvent.currentTarget === document.body;
-    if (windowFocus) {
-      return;
-    }
+  const onFocus = useCallback(
+    (e: FocusEvent<HTMLInputElement>) => {
+      // refocusing tab with input focused is false trigger
+      const windowFocus = e.nativeEvent.currentTarget === document.body;
+      if (windowFocus) {
+        return;
+      }
 
-    toggleSearch();
-  }, []);
+      toggleSearch();
+    },
+    [toggleSearch]
+  );
 
   const getMatch = useCallback(
     (value: string) => {
@@ -212,7 +216,7 @@ export const Leap = React.forwardRef(({ menu, dropdown, className }: LeapProps, 
         aria-controls={dropdown}
         aria-activedescendant={selectedMatch?.display || selectedMatch?.value}
       />
-      {(selection || searchInput) && (
+      {showClose && (
         <Link
           to="/"
           className="circle-button w-8 h-8 text-gray-400 bg-gray-100 default-ring"

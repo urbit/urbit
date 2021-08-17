@@ -51,21 +51,31 @@ interface NavProps {
   menu?: MenuState;
 }
 
-export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
+export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
   const { push } = useHistory();
   const inputRef = useRef<HTMLInputElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const dialogNavRef = useRef<HTMLDivElement>(null);
+  const [systemMenuOpen, setSystemMenuOpen] = useState(false);
+  const [dialogContentOpen, setDialogContentOpen] = useState(false);
   const { selection, select } = useLeapStore((state) => ({
     selectedMatch: state.selectedMatch,
     selection: state.selection,
     select: state.select
   }));
-  const [systemMenuOpen, setSystemMenuOpen] = useState(false);
-  const [dialogContentOpen, setDialogContentOpen] = useState(false);
 
-  const isOpen = menu !== 'closed';
+  const menuState = menu || 'closed';
+  const isOpen = menuState !== 'closed';
   const eitherOpen = isOpen || systemMenuOpen;
+
+  useEffect(() => {
+    if (!isOpen) {
+      select(null);
+      setDialogContentOpen(false);
+    } else {
+      inputRef.current?.focus();
+    }
+  }, [selection, isOpen]);
 
   const onOpen = useCallback(
     (event: Event) => {
@@ -81,14 +91,8 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
     [menu]
   );
 
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, [selection]);
-
   const onDialogClose = useCallback((open: boolean) => {
     if (!open) {
-      select(null);
-      setDialogContentOpen(false);
       push('/');
     }
   }, []);
@@ -112,8 +116,9 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
         </Link>
         <Leap
           ref={inputRef}
-          menu={menu}
+          menu={menuState}
           dropdown="leap-items"
+          showClose={isOpen}
           className={!isOpen ? 'bg-gray-100' : ''}
         />
       </Portal.Root>

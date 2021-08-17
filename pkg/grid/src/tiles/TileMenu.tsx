@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import type * as Polymorphic from '@radix-ui/react-polymorphic';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import classNames from 'classnames';
@@ -31,7 +31,7 @@ const Item = React.forwardRef(({ children, ...props }, ref) => (
   <DropdownMenu.Item
     ref={ref}
     {...props}
-    className="block w-full px-4 py-1 leading-none rounded mix-blend-hard-light select-none default-ring ring-gray-600"
+    className="block w-full px-4 py-3 leading-none rounded mix-blend-hard-light select-none default-ring ring-gray-600"
   >
     {children}
   </DropdownMenu.Item>
@@ -47,6 +47,10 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
   });
 
   const menuBg = { backgroundColor: menuColor };
+  const linkOnSelect = useCallback((e: Event) => {
+    e.preventDefault();
+    setTimeout(() => setOpen(false), 15);
+  }, []);
 
   return (
     <DropdownMenu.Root open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
@@ -71,50 +75,29 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
         sideOffset={4}
         onCloseAutoFocus={(e) => e.preventDefault()}
         className={classNames(
-          'dropdown font-semibold',
+          'dropdown py-2 font-semibold',
           lightText ? 'text-gray-100' : 'text-gray-800'
         )}
         style={menuBg}
       >
-        <DropdownMenu.Group className="space-y-4">
+        <DropdownMenu.Group>
           {/* 
             TODO: revisit with Liam
             <Item as={Link} to={`/leap/search/${provider}/apps/${name.toLowerCase()}`} onSelect={(e) => { e.preventDefault(); setTimeout(() => setOpen(false), 0) }}>App Info</Item> 
           */}
-          <Item
-            as={Link}
-            to={`/app/${desk}`}
-            onSelect={(e) => {
-              e.preventDefault();
-              setTimeout(() => setOpen(false), 0);
-            }}
-          >
+          <Item as={Link} to={`/app/${desk}`} onSelect={linkOnSelect}>
             App Info
           </Item>
         </DropdownMenu.Group>
         <DropdownMenu.Separator className="-mx-4 my-2 border-t-2 border-solid border-gray-500 mix-blend-soft-light" />
-        <DropdownMenu.Group className="space-y-4">
+        <DropdownMenu.Group>
           {active && (
-            <Item
-              as={Link}
-              to={`/app/${desk}/suspend`}
-              onSelect={(e) => {
-                e.preventDefault();
-                setTimeout(() => setOpen(false), 0);
-              }}
-            >
+            <Item as={Link} to={`/app/${desk}/suspend`} onSelect={linkOnSelect}>
               Suspend App
             </Item>
           )}
           {!active && <Item onSelect={() => mutate()}>Resume App</Item>}
-          <Item
-            as={Link}
-            to={`/app/${desk}/remove`}
-            onSelect={(e) => {
-              e.preventDefault();
-              setTimeout(() => setOpen(false), 0);
-            }}
-          >
+          <Item as={Link} to={`/app/${desk}/remove`} onSelect={linkOnSelect}>
             Remove App
           </Item>
         </DropdownMenu.Group>
