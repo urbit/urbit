@@ -1930,7 +1930,7 @@
   ::  balancing, tournament internals
   ::
   =>
-  ~%  %bal  +>+>  ~
+  ~%  %up-bal  ..up  ~
   |%
   ++  mega  4                                           ::  balancing factor
   ::
@@ -2141,7 +2141,7 @@
   --
   ::  psq logic
   ::
-  ~%  %core  +>+  ~
+  ~%  %up-core  ..up  ~
   |%
   ++  deb  +>                                           ::  internals access
   ::
