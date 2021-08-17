@@ -539,7 +539,7 @@
       ^$(nonce-i +(nonce-i))
     =/  proxy-i     1
     |-
-    ?.  (lte proxy-i 5)
+    ?.  (lte proxy-i 4)  ::no transfer proxy
       ^$(dominion-i +(dominion-i))
     =/  tx-type-i   1
     |-
@@ -633,19 +633,19 @@
   ++  gen-rut-jar
     ^-  (jar @p event)
     =/  filter  ;:  cork
-                    (cury filter-owner %.y)
-                    (cury filter-proxy %own)
-                    (cury filter-nonce %.y)
-                    (cury filter-rank %planet)
+                    ::(cury filter-owner %.y)
+                    ::(cury filter-proxy %manage)
+                    ::(cury filter-nonce %.y)
+                    ::(cury filter-rank %planet)
                     ::(cury filter-dominion %spawn)
                     %-  cury
                     :-  filter-tx-type
-                    :*  ::%spawn
-                        ::%transfer-point
+                    :*  %spawn
+                        %transfer-point
                         %configure-keys
-                        ::%set-management-proxy
-                        ::%set-spawn-proxy  :: planets can set spawn proxy atm
-                        ::%set-transfer-proxy
+                        %set-management-proxy
+                        %set-spawn-proxy
+                        %set-transfer-proxy
                         ::%escape
                         ~
                     ==
@@ -861,7 +861,8 @@
                          ==
 ++  default-spawn-keys  %-  my:nl
                         :*  [~holrut %holrut-skey-0]
-                            [~losrut %losrut-skey-0]
+                            [~losrut %losrut-skey-1]
+                            [~rigrut %rigrut-skey-0]
                             ~
                         ==
 ::
@@ -907,7 +908,6 @@
   =/  initial-state  state
   =/  ship-list  rut-ship-list
   =/  suc-map  (make-success-map make-event-list)
-  ~&  event-jar
   ::
   |-  ^-  tang
   ?~  ship-list  ~
@@ -925,6 +925,8 @@
   %+  category  (weld "tx-type " (scow %tas tx-type.cur-event))
   %+  category  (weld "owner? " (scow %f owner.cur-event))
   %+  category  (weld "correct nonce? " (scow %f nonce.cur-event))
+  %+  category  (weld "success map " (scow %f (~(got by suc-map) cur-event)))
+  ::
   ::
   =/  cur-point  (~(got by points.initial-state) cur-ship)
   =*  own  own.cur-point
@@ -936,20 +938,22 @@
       %vote      nonce.voting-proxy.own
       %transfer  nonce.transfer-proxy.own
     ==
-  :: wrong nonce and/or wrong owner do not increment nonce
-  :: TODO: fix nonce calculation for e.g. %spawn proxy for planets
-  =/  new-nonce  ?:  &(nonce.cur-event owner.cur-event)
-                   ?-  rank.cur-event
-                     %galaxy  +(cur-nonce)
-                     %star    +(cur-nonce)
-                     %planet  ?-  proxy.cur-event
-                                %own         +(cur-nonce)
-                                %manage      +(cur-nonce)
-                                %spawn       cur-nonce  ::planets do not have a spawn proxy
-                                %transfer    +(cur-nonce)
-                                %vote        cur-nonce  ::no vote proxy
-                              ==
-                    ==
+    =/  new-nonce  ?:  &(nonce.cur-event owner.cur-event)
+                   ?-  proxy.cur-event
+                     ?(%own %manage)  +(cur-nonce)
+                     %spawn           ?-  rank.cur-event
+                                        %galaxy  cur-nonce ::TODO: galaxies can actually do L2 spawn proxies so this needs to change
+                                        %star    ?-  dominion.cur-event
+                                                   %l1            cur-nonce
+                                                   ?(%spawn %l2)  +(cur-nonce)
+                                                 ==
+                                        %planet  cur-nonce
+                                      ==
+                     %transfer        ?~  address.transfer-proxy.own
+                                        cur-nonce
+                                      +(cur-nonce)
+                     %vote            cur-nonce
+                   ==
                  cur-nonce
   ::
   =/  state  initial-state
