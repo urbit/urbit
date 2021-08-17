@@ -33,9 +33,10 @@ export function createPreviousPath(current: string): string {
 
 type LeapProps = {
   menu: MenuState;
+  dropdown: string;
 } & HTMLAttributes<HTMLDivElement>;
 
-export const Leap = React.forwardRef(({ menu, className }: LeapProps, ref) => {
+export const Leap = React.forwardRef(({ menu, dropdown, className }: LeapProps, ref) => {
   const { push } = useHistory();
   const match = useRouteMatch<{ query?: string; desk?: string }>(
     `/leap/${menu}/:query?/(apps)?/:desk?`
@@ -43,7 +44,7 @@ export const Leap = React.forwardRef(({ menu, className }: LeapProps, ref) => {
   const appsMatch = useRouteMatch(`/leap/${menu}/${match?.params.query}/apps`);
   const inputRef = useRef<HTMLInputElement>(null);
   useImperativeHandle(ref, () => inputRef.current);
-  const { rawInput, searchInput, matches, selection, select } = useLeapStore();
+  const { rawInput, searchInput, selectedMatch, matches, selection, select } = useLeapStore();
 
   const toggleSearch = useCallback(() => {
     if (selection || menu === 'search') {
@@ -105,9 +106,15 @@ export const Leap = React.forwardRef(({ menu, className }: LeapProps, ref) => {
       if (matchValue && inputRef.current && !isDeletion) {
         inputRef.current.value = matchValue;
         inputRef.current.setSelectionRange(value.length, matchValue.length);
-        useLeapStore.setState({ rawInput: matchValue });
+        useLeapStore.setState({
+          rawInput: matchValue,
+          selectedMatch: inputMatch
+        });
       } else {
-        useLeapStore.setState({ rawInput: value });
+        useLeapStore.setState({
+          rawInput: value,
+          selectedMatch: matches[0]
+        });
       }
 
       handleSearch(value);
@@ -140,18 +147,37 @@ export const Leap = React.forwardRef(({ menu, className }: LeapProps, ref) => {
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent<HTMLDivElement>) => {
-      if ((!selection && rawInput) || rawInput) {
-        return;
-      }
+      const deletion = e.key === 'Backspace' || e.key === 'Delete';
+      const arrow = e.key === 'ArrowDown' || e.key === 'ArrowUp';
 
-      if (e.key === 'Backspace' || e.key === 'Delete') {
+      if (deletion && !rawInput && selection) {
         e.preventDefault();
         select(null, appsMatch ? undefined : match?.params.query);
         const pathBack = createPreviousPath(match?.url || '');
         push(pathBack);
       }
+
+      if (arrow && selectedMatch) {
+        e.preventDefault();
+
+        const currentIndex = matches.findIndex((m) => {
+          const matchValue = m.display || m.value;
+          const searchValue = selectedMatch.display || selectedMatch.value;
+          return matchValue === searchValue;
+        });
+        const unsafeIndex = e.key === 'ArrowUp' ? currentIndex - 1 : currentIndex + 1;
+        const index = (unsafeIndex + matches.length) % matches.length;
+
+        const newMatch = matches[index];
+        const matchValue = newMatch.display || newMatch.value;
+        useLeapStore.setState({
+          rawInput: matchValue,
+          // searchInput: matchValue,
+          selectedMatch: newMatch
+        });
+      }
     },
-    [selection, rawInput, match]
+    [selection, rawInput, match, matches, selectedMatch]
   );
 
   return (
@@ -182,9 +208,9 @@ export const Leap = React.forwardRef(({ menu, className }: LeapProps, ref) => {
         onFocus={onFocus}
         onChange={onChange}
         onKeyDown={onKeyDown}
-        role="combobox"
-        aria-controls="leap-items"
-        aria-expanded
+        aria-autocomplete="both"
+        aria-controls={dropdown}
+        aria-activedescendant={selectedMatch?.display || selectedMatch?.value}
       />
       {(selection || searchInput) && (
         <Link

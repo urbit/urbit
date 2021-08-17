@@ -21,6 +21,7 @@ interface LeapStore {
   rawInput: string;
   searchInput: string;
   matches: MatchItem[];
+  selectedMatch?: MatchItem;
   selection: React.ReactNode;
   select: (selection: React.ReactNode, input?: string) => void;
 }
@@ -29,6 +30,7 @@ export const useLeapStore = create<LeapStore>((set) => ({
   rawInput: '',
   searchInput: '',
   matches: [],
+  selectedMatch: undefined,
   selection: null,
   select: (selection: React.ReactNode, input?: string) =>
     set({
@@ -55,6 +57,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
   const navRef = useRef<HTMLDivElement>(null);
   const dialogNavRef = useRef<HTMLDivElement>(null);
   const { selection, select } = useLeapStore((state) => ({
+    selectedMatch: state.selectedMatch,
     selection: state.selection,
     select: state.select
   }));
@@ -107,24 +110,38 @@ export const Nav: FunctionComponent<NavProps> = ({ menu = 'closed' }) => {
         >
           3
         </Link>
-        <Leap ref={inputRef} menu={menu} className={!isOpen ? 'bg-gray-100' : ''} />
+        <Leap
+          ref={inputRef}
+          menu={menu}
+          dropdown="leap-items"
+          className={!isOpen ? 'bg-gray-100' : ''}
+        />
       </Portal.Root>
-      <menu
+      <div
         ref={navRef}
         className={classNames(
           'w-full max-w-3xl my-6 px-4 text-gray-400 font-semibold',
           dialogContentOpen && 'h-12'
         )}
+        role="combobox"
+        aria-controls="leap-items"
+        aria-owns="leap-items"
+        aria-expanded={isOpen}
       />
       <Dialog open={isOpen} onOpenChange={onDialogClose}>
         <DialogContent
           onOpenAutoFocus={onOpen}
           className="fixed top-0 left-[calc(50%-7.5px)] w-[calc(100%-15px)] max-w-3xl px-4 text-gray-400 -translate-x-1/2 outline-none"
+          role="combobox"
+          aria-controls="leap-items"
+          aria-owns="leap-items"
+          aria-expanded={isOpen}
         >
           <header ref={dialogNavRef} className="my-6" />
           <div
             id="leap-items"
-            className="grid grid-rows-[fit-content(calc(100vh-7.5rem))] bg-white rounded-3xl overflow-hidden"
+            className="grid grid-rows-[fit-content(calc(100vh-7.5rem))] bg-white rounded-3xl overflow-hidden default-ring"
+            tabIndex={0}
             role="listbox"
           >
             <Switch>

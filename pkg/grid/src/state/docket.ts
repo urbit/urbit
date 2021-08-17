@@ -1,4 +1,3 @@
-import fuzzy from 'fuzzy';
 import { omit } from 'lodash-es';
 import { queryClient } from '../app';
 import api from './api';
@@ -50,9 +49,8 @@ export async function fetchCharges(): Promise<Dockets> {
   }, {});
 }
 
-export async function fetchProviders(query?: string): Promise<Provider[]> {
-  const searchTexts = providers.map((p) => p.shipName + (p.nickname || ''));
-  return fakeRequest(fuzzy.filter(query || '', searchTexts).map((el) => providers[el.index]));
+export async function fetchProviders(): Promise<Provider[]> {
+  return fakeRequest(providers);
 }
 
 export async function fetchProviderTreaties(provider: string): Promise<Treaty[]> {
