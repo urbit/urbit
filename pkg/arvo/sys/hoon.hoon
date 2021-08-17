@@ -2462,7 +2462,7 @@
   ++  hoop  (up k v)
   --
   ::
-  ~%  %core  +>+  ~
+  ~%  %lu-core  ..lu  ~
   |%
   ++  new                                               ::  new cache
     ~/  %new
