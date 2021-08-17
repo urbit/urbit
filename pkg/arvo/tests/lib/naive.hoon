@@ -939,7 +939,17 @@
   :: wrong nonce and/or wrong owner do not increment nonce
   :: TODO: fix nonce calculation for e.g. %spawn proxy for planets
   =/  new-nonce  ?:  &(nonce.cur-event owner.cur-event)
-                   +(cur-nonce)
+                   ?-  rank.cur-event
+                     %galaxy  +(cur-nonce)
+                     %star    +(cur-nonce)
+                     %planet  ?-  proxy.cur-event
+                                %own         +(cur-nonce)
+                                %manage      +(cur-nonce)
+                                %spawn       cur-nonce  ::planets do not have a spawn proxy
+                                %transfer    +(cur-nonce)
+                                %vote        cur-nonce  ::no vote proxy
+                              ==
+                    ==
                  cur-nonce
   ::
   =/  state  initial-state
