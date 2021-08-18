@@ -17,7 +17,7 @@
         ~
     ==
 =/  bem=beam
-  ?@  bath  [bec(q bath) /]
+  ?@  bath  [bec(q bath, r da+now) /]
   (need (de-beam `path`bath))
 ::
 =/  =desk
