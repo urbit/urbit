@@ -2485,7 +2485,7 @@
     ++  mask                                            ::  maskw
       |=  a=@
       ^-  @
-      (mix (swp 3 a) a)
+      (mix (not 5 1 (dec a)) a)
     ::
     ++  part                                            ::  branch mask
       |=  [k=@ l=@]
