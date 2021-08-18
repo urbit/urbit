@@ -25,6 +25,7 @@ import Urbit.Vere.Ames.DNS (NetworkMode(..), ResolvServ(..))
 import Urbit.Vere.Ames.DNS (galaxyPort, resolvServ)
 import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
 import Urbit.Vere.Stat     (AmesStat(..), bump, bump')
+import qualified Urbit.FxLog as FxLog
 
 
 -- Constants -------------------------------------------------------------------
@@ -338,7 +339,13 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
     NewtEfSend (_id, ()) dest (MkBytes bs) -> do
       atomically (readTVar aTurfs) >>= \case
         Nothing    -> {- stderr "ames: send before turfs" >> -} pure ()
-        Just turfs -> send aUdpServ aResolvr mode dest bs
+        Just turfs -> do
+          send aUdpServ aResolvr mode dest bs
+          fx <- io FxLog.nextFx
+          traverse_ send' fx
+         where
+          send' (GoodParse (EfVane (VENewt (NewtEfSend (a, ()) d (MkBytes b)))))
+            = send aUdpServ aResolvr mode dest bs
 
   send :: UdpServ
        -> ResolvServ
