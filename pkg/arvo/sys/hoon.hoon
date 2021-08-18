@@ -2585,6 +2585,23 @@
           %bin  +((add $(a l.a) $(a r.a)))
         ==
       ::
+      ++  sam                                           ::  equality
+        ~/  %sam
+        |=  [a=pri b=pri]
+        ^-  ?
+        =/  loa  (bot a)
+        =/  lob  (bot b)
+        ?|  &(=(~ loa) =(~ lob))
+            !&(=(~ loa) !=(~ lob))
+            !&(!=(~ loa) =(~ lob))
+            ?>  &(?=(^ loa) ?=(^ lob))
+            ?&  =(p.u.loa p.u.lob)
+                =(q.u.loa q.u.lob)
+                =(r.u.loa r.u.lob)
+                $(a s.u.loa, b s.u.lob)
+            ==
+        ==
+      ::
       ++  get                                           ::  lookup
         ~/  %get
         |=  [a=pri k=@]
