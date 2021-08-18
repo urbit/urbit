@@ -3,6 +3,7 @@ import React, { FunctionComponent } from 'react';
 import { darken, hsla, lighten, parseToHsla, readableColorIsBlack } from 'color2k';
 import { TileMenu } from './TileMenu';
 import { Docket } from '../state/docket-types';
+import { useRecentsStore } from '../nav/search/Home';
 
 type TileProps = {
   docket: Docket;
@@ -22,6 +23,7 @@ function getMenuColor(color: string, lightText: boolean, active: boolean): strin
 }
 
 export const Tile: FunctionComponent<TileProps> = ({ docket, desk }) => {
+  const addRecentApp = useRecentsStore((state) => state.addRecentApp);
   const { title, base, color, img, status } = docket;
   const active = status === 'active';
   const lightText = !readableColorIsBlack(color);
@@ -37,6 +39,8 @@ export const Tile: FunctionComponent<TileProps> = ({ docket, desk }) => {
         !active && 'cursor-default'
       )}
       style={{ backgroundColor: active ? color || 'purple' : suspendColor }}
+      onClick={() => addRecentApp(docket)}
+      onAuxClick={() => addRecentApp(docket)}
     >
       <div>
         <TileMenu

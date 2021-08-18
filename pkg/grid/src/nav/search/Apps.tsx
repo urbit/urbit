@@ -1,15 +1,19 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import fuzzy from 'fuzzy';
 import slugify from 'slugify';
-import classNames from 'classnames';
 import { ShipName } from '../../components/ShipName';
 import { fetchProviderTreaties, treatyKey } from '../../state/docket';
-import { Treaty } from '../../state/docket-types';
-import { useLeapStore } from '../Nav';
+import { Docket } from '../../state/docket-types';
+import { MatchItem, useLeapStore } from '../Nav';
+import { AppList } from '../../components/AppList';
 
 type AppsProps = RouteComponentProps<{ ship: string }>;
+
+export function appMatch(app: Docket): MatchItem {
+  return { value: app.base, display: app.title };
+}
 
 export const Apps = ({ match }: AppsProps) => {
   const queryClient = useQueryClient();
@@ -53,28 +57,16 @@ export const Apps = ({ match }: AppsProps) => {
   useEffect(() => {
     if (results) {
       useLeapStore.setState({
-        matches: results.map((treaty) => ({ value: treaty.desk, display: treaty.title }))
+        matches: results.map(appMatch)
       });
     }
   }, [results]);
 
   const preloadApp = useCallback(
-    (app: Treaty) => {
-      queryClient.setQueryData(treatyKey([provider, app.desk]), app);
+    (app: Docket) => {
+      queryClient.setQueryData(treatyKey([provider, app.base]), app);
     },
     [queryClient]
-  );
-
-  const isSelected = useCallback(
-    (target: Treaty) => {
-      if (!selectedMatch) {
-        return false;
-      }
-
-      const matchValue = selectedMatch.display || selectedMatch.value;
-      return target.title === matchValue || target.desk === matchValue;
-    },
-    [selectedMatch]
   );
 
   return (
@@ -88,42 +80,13 @@ export const Apps = ({ match }: AppsProps) => {
         </p>
       </div>
       {results && (
-        <ul className="space-y-8" aria-labelledby="developed-by">
-          {results.map((app) => (
-            <li
-              key={app.desk}
-              id={app.title || app.desk}
-              role="option"
-              aria-selected={isSelected(app)}
-            >
-              <Link
-                to={`${match?.path.replace(':ship', provider)}/${slugify(app.desk)}`}
-                className={classNames(
-                  'flex items-center space-x-3 default-ring ring-offset-2 rounded-lg',
-                  isSelected(app) && 'ring-4'
-                )}
-                onClick={() => preloadApp(app)}
-              >
-                <div
-                  className="flex-none relative w-12 h-12 bg-gray-200 rounded-lg"
-                  style={{ backgroundColor: app.color }}
-                >
-                  {app.img && (
-                    <img
-                      className="absolute top-1/2 left-1/2 h-[40%] w-[40%] object-contain transform -translate-x-1/2 -translate-y-1/2"
-                      src={app.img}
-                      alt=""
-                    />
-                  )}
-                </div>
-                <div className="flex-1 text-black">
-                  <p>{app.title}</p>
-                  {app.info && <p className="font-normal">{app.info}</p>}
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <AppList
+          apps={results}
+          labelledBy="developed-by"
+          matchAgainst={selectedMatch}
+          to={(app) => `${match?.path.replace(':ship', provider)}/${slugify(app.base)}`}
+          onClick={(e, app) => preloadApp(app)}
+        />
       )}
       <p>That&apos;s it!</p>
     </div>
