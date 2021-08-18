@@ -624,11 +624,20 @@
             route=(unit [direct=? =lane])
             =qos
             =ossuary
-            snd=(map bone message-pump-state)
+            snd=(map bone message-pump-state-5)
             rcv=(map bone message-sink-state)
             nax=(set [=bone =message-num])
             heeds=(set duct)
         ==
+  +$  message-pump-state-5
+    $:  current=_`message-num`1
+        next=_`message-num`1
+        unsent-messages=(qeu message-blob)
+        unsent-fragments=(list static-fragment)
+        queued-message-acks=(map message-num ack)
+        =packet-pump-state
+    ==
+  +$  message-pump-state-6  message-pump-state
  
 ::  $bug: debug printing configuration
 ::
@@ -1030,7 +1039,7 @@
         ship-state
       =.  snd.ship-state
         %-  ~(run by snd.ship-state)
-        |=  =message-pump-state
+        |=  message-pump-state=message-pump-state-5
         =.  num-live.metrics.packet-pump-state.message-pump-state
           ~(wyt in live.packet-pump-state.message-pump-state)
         message-pump-state
@@ -1054,7 +1063,19 @@
           route.ship-state
           qos.ship-state
           ossuary.ship-state
-          snd.ship-state
+          %=  snd.ship-state  .
+            %-  ~(run by snd.ship-state)
+            |=  message-pump-state=message-pump-state-5
+            ^-  message-pump-state-6
+            :*  current.message-pump-state
+                next.message-pump-state
+                unsent-messages.message-pump-state
+                unsent-fragments.message-pump-state
+                queued-message-acks.message-pump-state
+                cork-acked=%.n
+                packet-pump-state.message-pump-state
+            ==
+          ==
           rcv.ship-state
           nax.ship-state
           heeds.ship-state
@@ -1446,10 +1467,10 @@
     ::  non-galaxy: update route with heard lane or forwarded lane
     ::
     ::
-    ?:  ?|  (~(has in corked.peer-state) bone.shut-packet)
-            (~(has in corked.peer-state) (mix 1 bone.shut-packet))
-        ==
-      ~&('has corked, doing nothing' event-core)
+::    ?:  ?|  (~(has in corked.peer-state) bone.shut-packet)
+::            (~(has in corked.peer-state) (mix 1 bone.shut-packet))
+::        ==
+::      ~&('has corked, doing nothing' event-core)
     =?  route.peer-state  !=(%czar (clan:title her.channel))
       ::  if new packet is direct, use that.  otherwise, if the new new
       ::  and old lanes are indirect, use the new one.  if the new lane
@@ -1491,7 +1512,6 @@
     ::
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now channel-state -.peer-state]
-    =?  event-core  (~(has in closing.peer-state) bone)  event-core
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone payload %boon)
   ::  +on-plea: handle request to send message
@@ -1517,7 +1537,7 @@
         =/  sndr  [our our-life.channel]
         =/  rcvr  [ship her-life.channel]
         "plea {<sndr^rcvr^bone=bone^vane.plea^path.plea>}"
-    =?  event-core  (~(has in closing.peer-state) bone)  ~&('has in closing, doing nothing' event-core)
+::    =?  event-core  (~(has in closing.peer-state) bone)  ~&('has in closing, doing nothing' event-core)
     ::  since flow kill goes like:
     ::  client vane cork task -> client ames pass cork as plea -> server ames sinks plea -> server ames +on-plea (we are here)
     ::  if it's %cork plea passed to ames from its sink, give %done and process flow closing after +on-take-done call
@@ -2072,6 +2092,7 @@
       =/  =bone  bone.shut-packet
       ::
       ?:  ?=(%& -.meat.shut-packet)
+      ?:  |((~(has in closing.peer-state) bone) (~(has in closing.peer-state) (mix 1 bone)))  ~&('has bone in closing, doing nothing' peer-core)
         =+  ?.  &(?=(^ dud) msg.veb)  ~
             %.  ~
             %-  slog
@@ -2108,6 +2129,8 @@
     ++  on-cork
       |=  =bone
       ^+  peer-core
+      =/  message-pump-state  (~(got by snd.peer-state) bone)
+      ?.  =(~ live.packet-pump-state.message-pump-state)  ~&('live isnt null yet' peer-core)
       =.  by-duct.ossuary.peer-state  (~(del by by-duct.ossuary.peer-state) (got-duct bone))
       =.  by-bone.ossuary.peer-state  (~(del by by-bone.ossuary.peer-state) bone)
       =.  snd.peer-state  (~(del by snd.peer-state) bone)
@@ -2565,6 +2588,7 @@
     ?>  (lth message-num next.state)
     ::  ignore duplicate message acks
     ::
+    =?  cork-acked.state  cork  %&
     ?:  (lth message-num current.state)
       %-  %+  trace  snd.veb
           |.("duplicate done {<current=current.state message-num=message-num>}")
@@ -2620,7 +2644,7 @@
     ?-    -.u.cur
         %ok
       =.  message-pump  (give %done current.state ~)
-      =?  message-pump  cork  (give %cork ~)
+      =?  message-pump  |(cork cork-acked.state)  ~&('giving cork at pump' (give %cork ~))
       $(current.state +(current.state))
     ::
         %nack
