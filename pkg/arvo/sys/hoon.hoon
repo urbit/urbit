@@ -2578,11 +2578,11 @@
       ++  wyt                                           ::  queue size
         ~/  %wyt
         |=  a=pri
-        ?~  a
-          0
+        |-  ^-  @
+        ?~  a  0
         ?-  -.a
           %tip  1
-          %bin  +((add l.a r.a))
+          %bin  +((add $(a l.a) $(a r.a)))
         ==
       ::
       ++  get                                           ::  lookup
@@ -2626,7 +2626,7 @@
         ~/  %one
         |=  [k=@ p=@ =v]
         ^-  pri
-        [k p v]
+        [%tip k p v]
       ::
       ++  put                                           ::  insert
         ~/  %put
@@ -2647,9 +2647,8 @@
       ++  del                                           ::  delete
         ~/  %del
         |=  [a=pri k=@]
-        ^-  pri
-        ?~  a
-          ~
+        |-  ^-  pri
+        ?~  a  ~
         ?-    -.a
             %tip
           ?:  =(k k.a)  ~
@@ -2661,8 +2660,8 @@
           ?:  =(k k.a)
             (fuse m.a l.a r.a)
           ?:  (zero k m.a)
-            (funk k.a p.a v.a m.a (del a l.a) r.a)
-          (wane k.a p.a v.a m.a l.a (del a r.a))
+            (funk k.a p.a v.a m.a $(a l.a) r.a)
+          (wane k.a p.a v.a m.a l.a $(a r.a))
         ==
       ::
       ++  cut                                           ::  delete lowest-pri
@@ -2712,11 +2711,11 @@
           =/  bee  (f `[k.a p.a v.a])
           :-  p.bee
           ?~  q.bee  (fuse m.a l.a r.a)
-          ?:  !=(k p.u.q.bee)
+          ?:  !=(k.a p.u.q.bee)
             (put (fuse m.a l.a r.a) p.u.q.bee q.u.q.bee r.u.q.bee)
           ?:  (lte q.u.q.bee p.a)
-            [%bin k q.u.q.bee r.u.q.bee m.a l.a r.a]
-          (raw (fuse m.a l.a r.a) k q.u.q.bee r.u.q.bee)
+            [%bin k.a q.u.q.bee r.u.q.bee m.a l.a r.a]
+          (raw (fuse m.a l.a r.a) k.a q.u.q.bee r.u.q.bee)
         ==
       ::
       ++  gas                                           ::  from list
@@ -2776,7 +2775,7 @@
       ++  pan                                           ::  insert view
         ~/  %pan
         |=  [a=pri k=@ p=@ =v]
-        ^-  (pair (pair @ _v) pri)
+        ^-  (pair (unit (pair @ _v)) pri)
         =/  ped  (pet a k)
         ?~  ped
           [~ (raw a k p v)]
@@ -2812,20 +2811,20 @@
           :-  %bin
           ?:  (lex [p k] [p.a k.a])
             ?:  (zero k.a m.a)
-              [k p v m.a (raw k.a p.a v.a l.a) r.a]
-            [k p v m.a l.a (raw k.a p.a v.a r.a)]
+              [k p v m.a (raw l.a k.a p.a v.a) r.a]
+            [k p v m.a l.a (raw r.a k.a p.a v.a)]
           ?:  (zero k m.a)
-            [k.a p.a v.a m.a (raw k p v l.a) r.a]
-          [k.a p.a v.a m.a l.a (raw k p v r.a)]
+            [k.a p.a v.a m.a (raw l.a k p v) r.a]
+          [k.a p.a v.a m.a l.a (raw r.a k p v)]
         ==
       ::
       ++  vip                                           ::  put hi-pri (unsafe)
         ~/  %vip
         |=  [a=pri k=@ p=@ =v]
         ^-  pri
-        (star k p v |=((qual @ _v @ _v) [+<- +<+<]))
+        (star a k p v |=((qual @ _v @ _v) [+<- +<+<]))
       ::
-      ++  star                                          ::  very unsafe put
+      ++  star                                          ::  internal (unsafe)
         ~/  %star
         |=  [a=pri k=@ p=@ =v f=$-((qual @ v @ v) (pair @ v))]
         |-  ^-  pri
@@ -2852,14 +2851,14 @@
           [k.a p.a v.a m.a l.a $(a r.a)]
         ==
       ::
-      ++  look                                          ::  very unsafe get
+      ++  look                                          ::  internal (unsafe)
         ~/  %look
         |=  [a=pri k=@ f=$-((pair @ v) (trel (unit (pair @ v)) @ v))]
         |^  ^-  (pair (unit (pair @ v)) pri)
         =/  val  loop
         [q.val p.val]
         ++  loop
-          ^-  (pair (unit (pair @ v)) pri)
+          ^-  (pair pri (unit (pair @ v)))
           ?~  a  [~ ~]
           ?-    -.a
               %tip
@@ -2906,11 +2905,11 @@
       ::
       ++  col                                           ::  collect keys
         |=  [a=pri l=(list @)]
-        ^-  (list @)
+        |-  ^-  (list @)
         ?~  a  l
-        ?-  a
+        ?-  -.a
           %tip  [k.a l]
-          %bin  col(l col(l [k l], a l.a), a r.a)
+          %bin  $(l $(l [k.a l], a l.a), a r.a)
         ==
       ::
       ++  uni                                           ::  has unique keys
@@ -2928,7 +2927,7 @@
         |^  ^-  ?
         ?-  -.a
           %tip  %&
-          %bin  &((loop p.a l.a) (loop p.a r.a))
+          %bin  &((loop l.a p.a) (loop r.a p.a))
         ==
         ++  loop
           |=  [b=pri q=@]
