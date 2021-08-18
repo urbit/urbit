@@ -499,12 +499,6 @@
   %-  ~(gas in *(set desk))
   %+  murn  ~(tap by ark)
   |=  [=desk =arak]
-  ::  TODO: make this work -- aeon.arak is wrong
-  ::        also, scrying at current doesn't work because middle of event
-  ::        maybe replace with %warp
-  ::?:  =(kel (read-kelvin-local our desk aeon.arak))
-  ?:  &
-    ~
   ?:  (lien next.arak |=([* k=weft] =(k kel)))
     ~
   `desk

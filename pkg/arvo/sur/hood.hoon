@@ -61,16 +61,6 @@
       leaf/"force on:    {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
       leaf/"force off:   {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
   ==
-::  +ankh-to-kelvin: read /sys.kelvin from an $ankh
-::
-++  ankh-to-kelvin
-  |=  =ankh
-  !<  weft
-  q:(need (~(get an:cloy ankh) /sys/kelvin))
-::
-++  read-kelvin-local
-  |=  [our=ship =desk =aeon]
-  .^(weft cx+/(scot %p our)/[desk]/(scot %ud aeon)/sys/kelvin)
 ::
 ++  read-kelvin-foreign
   |=  [=ship =desk =aeon]
