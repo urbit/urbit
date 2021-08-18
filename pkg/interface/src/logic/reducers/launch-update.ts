@@ -1,55 +1,9 @@
 import _ from 'lodash';
-import { Cage } from '~/types/cage';
-import { LaunchUpdate, WeatherState } from '~/types/launch-update';
-import { reduceState } from '../state/base';
-import useLaunchState, { LaunchState } from '../state/launch';
+import { LaunchUpdate } from '~/types/launch-update';
+import { LaunchState as State } from '../state/launch';
+import { BaseState } from '../state/base';
 
-export default class LaunchReducer {
-  reduce(json: Cage) {
-    const data = _.get(json, 'launch-update', false);
-    if (data) {
-      reduceState<LaunchState, LaunchUpdate>(useLaunchState, data, [
-        initial,
-        changeFirstTime,
-        changeOrder,
-        changeFirstTime,
-        changeIsShown
-      ]);
-    }
-
-    const weatherData: WeatherState | boolean | Record<string, never> = _.get(json, 'weather', false);
-    if (weatherData) {
-      useLaunchState.getState().set((state) => {
-        // @ts-ignore investigate zustand types
-        state.weather = weatherData;
-      });
-    }
-
-    const locationData = _.get(json, 'location', false);
-    if (locationData) {
-      useLaunchState.getState().set((state) => {
-        // @ts-ignore investigate zustand types
-        state.userLocation = locationData;
-      });
-    }
-
-    const baseHash = _.get(json, 'baseHash', false);
-    if (baseHash) {
-      useLaunchState.getState().set((state) => {
-        // @ts-ignore investigate zustand types
-        state.baseHash = baseHash;
-      });
-    }
-
-    const runtimeLag = _.get(json, 'runtimeLag', null);
-    if (runtimeLag !== null) {
-      useLaunchState.getState().set(state => {
-        // @ts-ignore investigate zustand types
-        state.runtimeLag = runtimeLag;
-      });
-    }
-  }
-}
+type LaunchState = State & BaseState<State>;
 
 export const initial = (json: LaunchUpdate, state: LaunchState): LaunchState => {
   const data = _.get(json, 'initial', false);
@@ -87,3 +41,11 @@ export const changeIsShown = (json: LaunchUpdate, state: LaunchState): LaunchSta
   }
   return state;
 };
+
+export const reduce = [
+  initial,
+  changeFirstTime,
+  changeOrder,
+  changeFirstTime,
+  changeIsShown
+];

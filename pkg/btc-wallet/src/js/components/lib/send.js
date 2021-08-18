@@ -19,6 +19,7 @@ import * as ob from 'urbit-ob';
 import { useSettings } from '../../hooks/useSettings.js';
 import { api } from '../../api';
 import { deSig } from '../../lib/util.js';
+import ExternalInvoice from './externalInvoice.js';
 
 const focusFields = {
   empty: '',
@@ -32,6 +33,12 @@ export const feeLevels = {
   low: 'low',
   mid: 'mid',
   high: 'high',
+};
+
+export const signMethods = {
+  bridge: 'bridge',
+  masterTicket: 'masterTicket',
+  external: 'external',
 };
 
 const Send = ({ stopSending, value, conversion }) => {
@@ -52,13 +59,13 @@ const Send = ({ stopSending, value, conversion }) => {
     high: [10, 1],
   });
   const [feeValue, setFeeValue] = useState(feeLevels.mid);
-  const [showModal, setShowModal] = useState(false);
+  const [showFeePicker, setShowFeePicker] = useState(false);
   const [note, setNote] = useState('');
   const [choosingSignMethod, setChoosingSignMethod] = useState(false);
-  const [signMethod, setSignMethod] = useState('bridge');
+  const [signMethod, setSignMethod] = useState(signMethods.bridge);
 
   const feeDismiss = () => {
-    setShowModal(false);
+    setShowFeePicker(false);
   };
 
   const handleSetSignMethod = (signMethod) => {
@@ -190,22 +197,40 @@ const Send = ({ stopSending, value, conversion }) => {
   const signReady = ready && parseInt(satsAmount) > 0 && !signing;
 
   let invoice = null;
-  if (signMethod === 'masterTicket') {
-    invoice = (
-      <Invoice
-        stopSending={stopSending}
-        payee={payee}
-        satsAmount={satsAmount}
-      />
-    );
-  } else if (signMethod === 'bridge') {
-    invoice = (
-      <BridgeInvoice
-        stopSending={stopSending}
-        payee={payee}
-        satsAmount={satsAmount}
-      />
-    );
+
+  switch (signMethod) {
+    case signMethods.masterTicket: {
+      invoice = (
+        <Invoice
+          stopSending={stopSending}
+          payee={payee}
+          satsAmount={satsAmount}
+        />
+      );
+      break;
+    }
+    case signMethods.bridge: {
+      invoice = (
+        <BridgeInvoice
+          stopSending={stopSending}
+          payee={payee}
+          satsAmount={satsAmount}
+        />
+      );
+      break;
+    }
+    case signMethods.external: {
+      invoice = (
+        <ExternalInvoice
+          stopSending={stopSending}
+          payee={payee}
+          satsAmount={satsAmount}
+        />
+      );
+      break;
+    }
+    default:
+      break;
   }
 
   return (
@@ -342,23 +367,37 @@ const Send = ({ stopSending, value, conversion }) => {
               <Text gray fontSize={1} fontWeight="600" width="40%">
                 Fee
               </Text>
-              <Row alignItems="center">
-                <Text mr={2} color="lightGray" fontSize="14px">
+              <Row
+                alignItems="center"
+                backgroundColor="blue"
+                borderRadius="24px"
+                paddingX="12px"
+                paddingY="8px"
+              >
+                <Text mr={2} color="white" fontSize="14px">
                   {feeChoices[feeValue][1]} sats/vbyte
                 </Text>
-                <Icon
-                  icon="ChevronSouth"
-                  fontSize="14px"
-                  color="lightGray"
-                  onClick={() => {
-                    if (!showModal) setShowModal(true);
-                  }}
-                  cursor="pointer"
-                />
+                <Button
+                  borderRadius="24px"
+                  height="24px"
+                  width="24px"
+                  border="none"
+                  backgroundColor="rgba(33, 157, 255)"
+                >
+                  <Icon
+                    icon="ChevronSouth"
+                    width="12px"
+                    color="white"
+                    onClick={() => {
+                      if (!showFeePicker) setShowFeePicker(true);
+                    }}
+                    cursor="pointer"
+                  />
+                </Button>
               </Row>
             </Row>
             <Col alignItems="center">
-              {!showModal ? null : (
+              {!showFeePicker ? null : (
                 <FeePicker
                   feeChoices={feeChoices}
                   feeValue={feeValue}
@@ -398,14 +437,12 @@ const Send = ({ stopSending, value, conversion }) => {
               />
             </Row>
           </Col>
-          <Row flexDirection="row-reverse" alignItems="center" mt={4}>
-            <Signer
-              signReady={signReady}
-              choosingSignMethod={choosingSignMethod}
-              signMethod={signMethod}
-              setSignMethod={handleSetSignMethod}
-              initPayment={initPayment}
-            />
+          <Row
+            flexDirection="row"
+            alignItems="center"
+            mt={4}
+            justifyContent="flex-end"
+          >
             {!(signing && !error) ? null : (
               <LoadingSpinner
                 mr={2}
@@ -413,12 +450,19 @@ const Send = ({ stopSending, value, conversion }) => {
                 foreground="orange"
               />
             )}
+            <Signer
+              signReady={signReady}
+              choosingSignMethod={choosingSignMethod}
+              signMethod={signMethod}
+              setSignMethod={handleSetSignMethod}
+              initPayment={initPayment}
+            />
             <Button
+              ml={2}
               width="48px"
               fontSize={1}
               fontWeight="bold"
               borderRadius="24px"
-              mr={2}
               height="48px"
               onClick={() => toggleSignMethod(choosingSignMethod)}
               color={signReady ? 'white' : 'lighterGray'}
@@ -430,12 +474,12 @@ const Send = ({ stopSending, value, conversion }) => {
               style={{ cursor: signReady ? 'pointer' : 'default' }}
             >
               <Icon
-                icon={choosingSignMethod ? 'X' : 'Ellipsis'}
+                icon="ChevronSouth"
                 color={signReady ? 'blue' : 'lighterGray'}
               />
             </Button>
           </Row>
-          {signMethod === 'masterTicket' && (
+          {signMethod === signMethod.masterTicket && (
             <Row mt={4} alignItems="center">
               <Icon icon="Info" color="yellow" height={4} width={4} />
               <Text fontSize="14px" fontWeight="regular" color="gray" ml={2}>

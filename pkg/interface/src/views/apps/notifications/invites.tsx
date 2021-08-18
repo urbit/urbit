@@ -6,7 +6,6 @@ import {
   AppInvites,
   JoinRequest
 } from '@urbit/api';
-import GlobalApi from '~/logic/api/global';
 import { alphabeticalOrder, resourceAsPath } from '~/logic/lib/util';
 import useInviteState from '~/logic/state/invite';
 import useGraphState from '~/logic/state/graph';
@@ -14,7 +13,6 @@ import { PendingDm } from './PendingDm';
 import InviteItem from '~/views/components/Invite';
 
 interface InvitesProps {
-  api: GlobalApi;
   pendingJoin?: any;
 }
 
@@ -25,7 +23,6 @@ interface InviteRef {
 }
 
 export function Invites(props: InvitesProps): ReactElement {
-  const { api } = props;
   const invites = useInviteState(state => state.invites);
 
   const pendingDms = useGraphState(s => s.pendingDms) ?? [];
@@ -55,7 +52,7 @@ export function Invites(props: InvitesProps): ReactElement {
   return (
     <>
       {[...pendingDms].map(ship => (
-        <PendingDm key={ship} api={api} ship={`~${ship}`} />
+        <PendingDm key={ship} ship={`~${ship}`} />
       ))}
       {Object.keys(invitesAndStatus)
         .sort(alphabeticalOrder)
@@ -67,7 +64,6 @@ export function Invites(props: InvitesProps): ReactElement {
               <InviteItem
                 key={resource}
                 resource={resource}
-                api={api}
                 pendingJoin={join}
               />
             );
@@ -76,7 +72,6 @@ export function Invites(props: InvitesProps): ReactElement {
             return (
               <InviteItem
                 key={resource}
-                api={api}
                 invite={invite}
                 app={app}
                 uid={uid}
