@@ -170,8 +170,9 @@ recvPlea w = do
   b <- recvResp w
   n <- fromRightExn (cueBS b) (const $ BadPleaAtom $ bytesAtom b)
   p <- fromRightExn (fromNounErr @Plea n) (\(p, m) -> BadPleaNoun n (fromT <$> p) (fromT m))
-  -- FxLog.recordPlea p
-  FxLog.addFx FxLog.nextFx p
+  p <- FxLog.addFx FxLog.nextFx p
+  let n = toNoun p
+  fromRightExn (fromNounErr @Plea n) (\(p, m) -> BadPleaNoun n (fromT <$> p) (fromT m))
 
 recvPleaHandlingSlog :: Serf -> IO Plea
 recvPleaHandlingSlog serf = loop

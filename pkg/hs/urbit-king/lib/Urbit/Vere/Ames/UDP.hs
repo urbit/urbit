@@ -198,14 +198,15 @@ realUdpServ startPort hos sat = do
         did <- atomically (tryWriteTBQueue qRecv (p, a, b))
         when (did == False) $ do
           bump (asUqf sat)
-          logWarn $ displayShow $ ("AMES", "UDP",)
-            "Dropping inbound packet because queue is full."
+          {-logWarn $ displayShow $ ("AMES", "UDP",)
+            "Dropping inbound packet because queue is full."-}
 
       enqueueSendPacket :: SockAddr -> ByteString -> RIO e ()
       enqueueSendPacket a b = do
         did <- atomically (tryWriteTBQueue qSend (a, b))
         when (did == False) $ do
           logWarn "AMES: UDP: Dropping outbound packet because queue is full."
+
   let opener por = do
         logInfo $ displayShow $ ("AMES", "UDP", "Trying to open socket, port",)
           por

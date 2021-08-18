@@ -341,8 +341,8 @@ ames env who isFake stat scry enqueueEv stderr = (initialEvents, runAmes)
         Nothing    -> {- stderr "ames: send before turfs" >> -} pure ()
         Just turfs -> do
           send aUdpServ aResolvr mode dest bs
-          fx <- io FxLog.nextFx
-          traverse_ send' fx
+          --fx <- io FxLog.nextFx
+          --traverse_ send' fx
          where
           send' (GoodParse (EfVane (VENewt (NewtEfSend (a, ()) d (MkBytes b)))))
             = send aUdpServ aResolvr mode dest bs
