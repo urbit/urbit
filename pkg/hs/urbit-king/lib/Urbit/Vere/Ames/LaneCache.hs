@@ -9,6 +9,9 @@ import Urbit.Noun.Time
 expiry :: Gap
 expiry = (2 * 60) ^. from secs
 
+bound :: Int
+bound = 1_000
+
 -- | An "upside down" time for use as a priority.
 newtype New = New Wen
   deriving newtype (Eq, Ord)
@@ -19,6 +22,9 @@ wen (New w) = negate w
 -- | Given a new, find an older new corresponding to `expiry` ago.
 lag :: New -> New
 lag n = new (addGap (wen n) expiry)
+
+trim :: (Hashable a, Ord a, Ord b) => P.HashPSQ a b c -> P.HashPSQ a b c
+trim p = if P.size p > bound then P.deleteMin p else p
 
 cache :: forall a b m n
        . (Ord a, Hashable a, MonadIO m, MonadIO n)
@@ -42,7 +48,8 @@ cache act = do
           -- would be to have a thread doing a purge every 10s or something, and
           -- then we'd have to be in RAcquire.
           up :: a -> New -> b -> P.HashPSQ a New b -> P.HashPSQ a New b
-          up k n v ps = P.insert k n v
+          up k n v ps = trim
+                      $ P.insert k n v
                       $ snd $ P.atMostView (lag n) ps
           thru :: m b
           thru = do
