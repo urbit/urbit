@@ -1,115 +1,115 @@
 /+  *test
 ::
-=/  cor  ord:(up @ @t)
-=/  pr  (gas:cor ~ ~[[1 0 'A'] [2 0 'B'] [3 0 'C'] [4 0 'D']])
+=/  ord  ord:(up @ @t)
+=/  pr  (gas:ord ~ ~[[1 0 'A'] [2 0 'B'] [3 0 'C'] [4 0 'D']])
 =/  qr
-  %+  gas:cor  ~
+  %+  gas:ord  ~
   ~[[1 3 'A'] [2 2 'B'] [3 1 'C'] [4 1 'D'] [5 10 'E'] [6 0 'F']]
-=+  deb:cor
+=+  deb:ord
 |%
 ++  test-balance-errors  ^-  tang
   =/  node  [[0 0 'a'] ~ 0 ~]
   ;:  weld
     %-  expect-fail
-      |.  (llsin:cor node)
+      |.  (llsin:ord node)
     %-  expect-fail
-      |.  (rlsin:cor node)
+      |.  (rlsin:ord node)
     %-  expect-fail
-      |.  (lrsin:cor node)
+      |.  (lrsin:ord node)
     %-  expect-fail
-      |.  (rrsin:cor node)
+      |.  (rrsin:ord node)
     %-  expect-fail
-      |.  (lldub:cor node)
+      |.  (lldub:ord node)
     %-  expect-fail
-      |.  (rldub:cor node)
+      |.  (rldub:ord node)
     %-  expect-fail
-      |.  (lrdub:cor node)
+      |.  (lrdub:ord node)
     %-  expect-fail
-      |.  (rrdub:cor node)
+      |.  (rrdub:ord node)
   ==
 ::
 ++  test-wyt  ^-  tang
   ;:  weld
     %+  expect-eq
       !>  0
-      !>  (wyt:cor ~)
+      !>  (wyt:ord ~)
     %+  expect-eq
       !>  1
-      !>  (wyt:cor (one:cor [1 1 'a']))
+      !>  (wyt:ord (one:ord [1 1 'a']))
     %+  expect-eq
       !>  4
-      !>  (wyt:cor (gas:cor ~ ~[[1 1 'a'] [2 2 'b'] [3 3 'c'] [4 4 'd']]))
+      !>  (wyt:ord (gas:ord ~ ~[[1 1 'a'] [2 2 'b'] [3 3 'c'] [4 4 'd']]))
   ==
 ::
 ++  test-min  ^-  tang
   ;:  weld
     %+  expect-eq
       !>  ~
-      !>  (min:cor ~)
+      !>  (min:ord ~)
     %+  expect-eq
       !>  `[3 100 'b']
-      !>  (min:cor (gas:cor ~ ~[[5 101 'a'] [3 100 'b']]))
+      !>  (min:ord (gas:ord ~ ~[[5 101 'a'] [3 100 'b']]))
   ==
 ::
 ++  test-gas  ^-  tang
   =/  ls  ~[[1 0 'A'] [2 0 'B'] [3 0 'C'] [4 0 'D']]
   %+  expect-eq
-    !>  (gas:cor ~ ls)
-    !>  (gas:cor ~ (flop ls))
+    !>  (gas:ord ~ ls)
+    !>  (gas:ord ~ (flop ls))
 ::
 ++  test-has-get  ^-  tang
   ;:  weld
     %+  expect-eq
-      !>  (has:cor pr 1)
-      !>  !=(~ (get:cor pr 1))
+      !>  (has:ord pr 1)
+      !>  !=(~ (get:ord pr 1))
     %+  expect-eq
-      !>  (has:cor pr 5)
-      !>  !=(~ (get:cor pr 5))
+      !>  (has:ord pr 5)
+      !>  !=(~ (get:ord pr 5))
   ==
 ::
 ++  test-put-get  ^-  tang
   ;:  weld
     %+  expect-eq
       !>  (some [0 'A'])
-      !>  (get:cor (put:cor ~ 1 0 'A') 1)
+      !>  (get:ord (put:ord ~ 1 0 'A') 1)
     %+  expect-eq
       !>  (some [5 'E'])
-      !>  (get:cor (put:cor ~ 5 5 'E') 5)
+      !>  (get:ord (put:ord ~ 5 5 'E') 5)
   ==
 ::
 ++  test-put-del  ^-  tang
   ;:  weld
     %+  expect-eq
       !>  ~
-      !>  (get:cor (del:cor (put:cor ~ 1 0 'A') 1) 1)
+      !>  (get:ord (del:ord (put:ord ~ 1 0 'A') 1) 1)
     %+  expect-eq
       !>  ~
-      !>  (get:cor (del:cor (put:cor ~ 5 5 'E') 5) 5)
+      !>  (get:ord (del:ord (put:ord ~ 5 5 'E') 5) 5)
   ==
 ::
 ++  test-pet  ^-  tang
-  =/  pat  (pet:cor (put:cor ~ 1 0 'A') 1)
+  =/  pat  (pet:ord (put:ord ~ 1 0 'A') 1)
   (expect !>(?>(?=(^ pat) &(=(0 p.u.pat) =('A' q.u.pat) =(~ r.u.pat)))))
 ::
 ++  test-del-get  ^-  tang
   ;:  weld
     %+  expect-eq
       !>  ~
-      !>  (get:cor (del:cor ~ 1) 1)
+      !>  (get:ord (del:ord ~ 1) 1)
     %+  expect-eq
       !>  ~
-      !>  (get:cor (del:cor pr 1) 1)
+      !>  (get:ord (del:ord pr 1) 1)
   ==
 ::
 ++  test-cut  ^-  tang
-  =/  zr  (gas:cor ~ ~[[5 101 'a'] [3 100 'b']])
+  =/  zr  (gas:ord ~ ~[[5 101 'a'] [3 100 'b']])
   ;:  weld
     %+  expect-eq
       !>  ~
-      !>  (cut:cor ~)
+      !>  (cut:ord ~)
     %+  expect-eq
       !>  (some [3 1 'C'])
-      !>  (min:cor (cut:cor qr))
+      !>  (min:ord (cut:ord qr))
   ==
 ::
 ++  test-jab  ^-  tang
@@ -124,42 +124,42 @@
   ::
   ;:  weld
     %+  expect-eq
-      !>  [[~ 'hello'] (one:cor [3 100 'a'])]
-      !>  (jab:cor ~ 3 eff)
+      !>  [[~ 'hello'] (one:ord [3 100 'a'])]
+      !>  (jab:ord ~ 3 eff)
     %+  expect-eq
       !>  [[~ 'world'] ~]
-      !>  (jab:cor (one:cor [3 100 'a']) 3 eff)
+      !>  (jab:ord (one:ord [3 100 'a']) 3 eff)
     %+  expect-eq
-      !>  [[~ 'cats'] (one:cor [3 101 'b'])]
-      !>  (jab:cor (one:cor [3 100 'b']) 3 eff)
+      !>  [[~ 'cats'] (one:ord [3 101 'b'])]
+      !>  (jab:ord (one:ord [3 100 'b']) 3 eff)
   ==
 ::
 ++  test-jib  ^-  tang
   ;:  weld
     %+  expect-eq
       !>  [~ ~]
-      !>  (jib:cor ~ |=(* [~ ~]))
+      !>  (jib:ord ~ |=(* [~ ~]))
     %+  expect-eq
       !>  [~ ~]
-      !>  (jib:cor (one:cor [3 100 'a']) |=(* [~ ~]))
+      !>  (jib:ord (one:ord [3 100 'a']) |=(* [~ ~]))
   ==
 ::
 ++  test-tap
   ;:  weld
     %-  expect
-      !>  (sam:cor qr (gas:cor ~ (tap:cor qr)))
+      !>  (sam:ord qr (gas:ord ~ (tap:ord qr)))
     %-  expect
-      !>  (sam:cor pr (gas:cor ~ (tap:cor pr)))
+      !>  (sam:ord pr (gas:ord ~ (tap:ord pr)))
   ==
 ::
 ++  test-pan
-  =/  pun  (pan:cor qr 5 10 'Q')
+  =/  pun  (pan:ord qr 5 10 'Q')
   ;:  weld
     %+  expect-eq
       !>  p.pun
-      !>  (get:cor qr 5)
+      !>  (get:ord qr 5)
     %+  expect-eq
       !>  (some [10 'Q'])
-      !>  (get:cor q.pun 5)
+      !>  (get:ord q.pun 5)
   ==
 --
