@@ -81,6 +81,12 @@
   =/  dn-xfer  [[~disryt-nolpet %transfer] %transfer-point (addr %losrut-dn-key-0) &]
   =/  losrut-sproxy  [[~losrut %spawn] %set-spawn-proxy (addr %losrut-skey-1)]
   =/  losrut-mproxy  [[~losrut %own] %set-management-proxy (addr %losrut-mkey-0)]
+  =/  losrut-tproxy  [[~losrut %own] %set-transfer-proxy (addr %losrut-tkey-0)]
+  =/  dm-tproxy  [[~dovmul-mogryt %own] %set-transfer-proxy (addr %dm-tkey-0)]
+  =/  pd-tproxy  [[~pidted-dacnum %own] %set-transfer-proxy (addr %pd-tkey-0)]
+  =/  pp-tproxy  [[~pinpun-pilsun %own] %set-transfer-proxy (addr %pp-tkey-0)]
+  =/  hn-tproxy  [[~habtyc-nibpyx %own] %set-transfer-proxy (addr %hn-tkey-0)]
+  =/  dn-tproxy  [[~disryt-nolpet %own] %set-transfer-proxy (addr %dn-tkey-0)]
   =/  dm-mkey  [[~dovmul-mogryt %own] %set-management-proxy (addr %holrut-dm-mkey-0)]
   =/  pd-mkey  [[~pidted-dacnum %own] %set-management-proxy (addr %holrut-pd-mkey-0)]
   =/  pp-mkey  [[~pinpun-pilsun %own] %set-management-proxy (addr %losrut-pp-mkey-0)]
@@ -121,6 +127,18 @@
   =^  p10  state  (n state %bat q:(gen-tx 0 hn-mkey %losrut-hn-key-0))
   =^  p11  state  (n state %bat q:(gen-tx 0 dn-mkey %losrut-dn-key-0))
   =^  p12  state  (n state %bat q:(gen-tx 1 losrut-mproxy %losrut-key-0))
+  =^  p13  state  (n state (changed-transfer-proxy:l1 ~rut (addr %rut-tkey-0)))
+  =^  p14  state  (n state (changed-transfer-proxy:l1 ~rigrut (addr %rigrut-tkey-0)))
+  =^  p15  state  (n state (changed-transfer-proxy:l1 ~larsyx-mapmeg (addr %lm-tkey-0)))
+  =^  p16  state  (n state (changed-transfer-proxy:l1 ~holrut (addr %holrut-tkey-0)))
+  =^  p17  state  (n state (changed-transfer-proxy:l1 ~rabsum-ravtyd (addr %rr-tkey-0)))
+  =^  p18  state  (n state (changed-transfer-proxy:l1 ~radres-tinnyl (addr %rt-tkey-0)))
+  =^  p19  state  (n state %bat q:(gen-tx 2 losrut-tproxy %losrut-key-0))
+  =^  p20  state  (n state %bat q:(gen-tx 1 dm-tproxy %holrut-dm-key-0))
+  =^  p21  state  (n state %bat q:(gen-tx 1 pd-tproxy %holrut-pd-key-0))
+  =^  p22  state  (n state %bat q:(gen-tx 1 pp-tproxy %losrut-pp-key-0))
+  =^  p23  state  (n state %bat q:(gen-tx 1 hn-tproxy %losrut-hn-key-0))
+  =^  p24  state  (n state %bat q:(gen-tx 1 dn-tproxy %losrut-dn-key-0))
   :: end of ~rut points, beginning of ~red. TODO this should be removed
   :: once i move %escape to +test-red. or maybe %escape should stay here
   :: because its the simplest?
@@ -135,7 +153,8 @@
       f11  f12  f13  f14  f15  f16  f17  f18
       f19  f20
       p1  p2  p3  p4  p5  p6  p7  p8  p9  p10
-      p11  p12
+      p11  p12  p13  p14  p15  p16  p17  p18
+      p19  p20  p21  p22  p23  p24
       g1  g2  g3  g4  g5  g6
       ==
   state
@@ -408,7 +427,7 @@
           |=  cur-event=event  ^-  ?
           ?+  tx-type.cur-event  %.n
             %transfer-point      %.y
-            %set-transfer-proxy  %.n
+            %set-transfer-proxy  %.y
           ==
         --  :: +star-check
       ++  planet-check
@@ -446,7 +465,7 @@
           ==
         ++  transferp-check
           |=  cur-event=event  ^-  ?
-          ?+  tx-type.cur-event  %.y
+          ?+  tx-type.cur-event  %.n
             %transfer-point      %.y
             %set-transfer-proxy  %.y
           ==
@@ -539,7 +558,7 @@
       ^$(nonce-i +(nonce-i))
     =/  proxy-i     1
     |-
-    ?.  (lte proxy-i 4)  ::no transfer proxy
+    ?.  (lte proxy-i 5)
       ^$(dominion-i +(dominion-i))
     =/  tx-type-i   1
     |-
@@ -634,10 +653,10 @@
     ^-  (jar @p event)
     =/  filter  ;:  cork
                     ::(cury filter-owner %.y)
-                    ::(cury filter-proxy %manage)
+                    ::(cury filter-proxy %transfer)
                     ::(cury filter-nonce %.y)
                     ::(cury filter-rank %planet)
-                    ::(cury filter-dominion %spawn)
+                    ::(cury filter-dominion %l2)
                     %-  cury
                     :-  filter-tx-type
                     :*  %spawn
@@ -866,6 +885,22 @@
                             ~
                         ==
 ::
+++  default-xfer-keys  %-  my:nl
+                       :*  [~rut %rut-tkey-0]
+                           [~rigrut %rigrut-tkey-0]
+                           [~larsyx-mapmeg %lm-tkey-0]
+                           [~holrut %holrut-tkey-0]
+                           [~rabsum-ravtyd %rr-tkey-0]
+                           [~radres-tinnyl %rt-tkey-0]
+                           [~losrut %losrut-tkey-0]
+                           [~dovmul-mogryt %dm-tkey-0]
+                           [~pinpun-pilsun %pp-tkey-0]
+                           [~pidted-dacnum %pd-tkey-0]
+                           [~habtyc-nibpyx %hn-tkey-0]
+                           [~disryt-nolpet %dn-tkey-0]
+                           ~
+                        ==
+::
 ::  sponsorship tests
 ++  losrut-own   [~losrut %own]
 ++  losrut-mgmt  [~losrut %manage]
@@ -926,7 +961,6 @@
   %+  category  (weld "owner? " (scow %f owner.cur-event))
   %+  category  (weld "correct nonce? " (scow %f nonce.cur-event))
   %+  category  (weld "success map " (scow %f (~(got by suc-map) cur-event)))
-  ::
   ::
   =/  cur-point  (~(got by points.initial-state) cur-ship)
   =*  own  own.cur-point
@@ -995,6 +1029,7 @@
       =/  new-xfer
       %=  cur-point
         address.owner.own  (addr %transfer-test)
+        address.transfer-proxy.own  0x0
       ==
       (alter-state new-xfer)
     ::
@@ -1078,11 +1113,12 @@
         def-args
       ?:  owner.cur-event
         ?+  proxy.cur-event  %wrong-key
-          %own     (~(got by default-own-keys) cur-ship)
-          %manage  (~(got by default-manage-keys) cur-ship)
-          %spawn   ?:  =(rank.cur-event %star)
-                     (~(got by default-spawn-keys) cur-ship)
-                   %wrong-key
+          %own       (~(got by default-own-keys) cur-ship)
+          %manage    (~(got by default-manage-keys) cur-ship)
+          %spawn     ?:  =(rank.cur-event %star)
+                       (~(got by default-spawn-keys) cur-ship)
+                     %wrong-key
+          %transfer  (~(got by default-xfer-keys) cur-ship)
         ==
       %wrong-key :: if not owner then use wrong key
     state
