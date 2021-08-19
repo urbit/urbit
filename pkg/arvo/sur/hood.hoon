@@ -10,6 +10,8 @@
       [%merge =desk =arak]
       [%merge-sunk =desk =arak =tang]
       [%merge-fail =desk =arak =tang]
+      [%suspend =desk =arak]
+      [%revive =desk =arak]
   ==
 ::  $arak: foreign vat tracker
 ::
@@ -24,11 +26,13 @@
   ==
 ::  $rein: diff from desk manifest
 ::
+::    .liv: suspended?
 ::    .add: agents not in manifest that should be running
 ::    .sub: agents in manifest that should not be running
 ::
 +$  rein
-  $:  add=(set dude)
+  $:  liv=_&
+      add=(set dude)
       sub=(set dude)
   ==
 ::
@@ -54,10 +58,12 @@
       (snoc - leaf/"pending: {<next.arak>}")
   ^-  tang
   =/  meb  (mergebase-hashes our desk now arak)
+  =/  sat  ?:(liv.rein.arak "running" "suspended")
   :~  leaf/"/sys/kelvin: {<[lal num]:weft>}"
       leaf/"base hash:   {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:    {<hash>}"
       leaf/"remote aeon: {<aeon.arak>}"
+      leaf/"status:      {sat}"
       leaf/"force on:    {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
       leaf/"force off:   {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
   ==

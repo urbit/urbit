@@ -5,19 +5,21 @@
 =,  format
 =*  dude  dude:gall
 |%
-+$  state    state-3
++$  state    state-4
++$  state-4  [%4 pith-4]
 +$  state-3  [%3 pith-3]
 +$  state-2  [%2 pith-2]
 +$  state-1  [%1 pith-1]
 +$  state-0  [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-3
+  $%  state-4
+      state-3
       state-2
       state-1
       state-0
   ==
-+$  pith-3                                              ::
++$  pith-4                                              ::
   $:  rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
       ark=(map desk arak)                               ::
@@ -31,6 +33,32 @@
       ::  request is made multiple times.
       hxs=(map desk @ud)
   ==                                                    ::
++$  pith-3                                              ::
+  $:  rem=(map desk per-desk)                           ::
+      syn=(map kiln-sync let=@ud)                       ::
+      ark=(map desk arak-3)                             ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+      ::  map desk to the currently ongoing fuse request
+      ::  and the latest version numbers for beaks to
+      fus=(map desk per-fuse)
+      ::  used for fuses - every time we get a fuse we
+      ::  bump this. used when calculating hashes to
+      ::  ensure they're unique even when the same
+      ::  request is made multiple times.
+      hxs=(map desk @ud)
+  ==
++$  arak-3
+  $:  =ship
+      =desk
+      =aeon
+      next=(list [=aeon =weft])
+      rein=rein-3
+  ==
++$  rein-3
+  $:  add=(set dude)
+      sub=(set dude)
+  ==
+::
 +$  pith-2                                              ::
   $:  rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
@@ -141,7 +169,7 @@
 ++  on-init
   =<  abet
   ~>  %slog.0^leaf/"kiln: boot"
-  =/  =rein  [add=(sy %hood %dojo ~) sub=~]  ::  TODO questionable
+  =/  =rein  [liv=& add=(sy %hood %dojo ~) sub=~]  ::  TODO questionable
   =/  daz  (get-apps-want base-bill rein)
   %-  emil
   %-  zing  ^-  (list (list card:agent:gall))
@@ -189,8 +217,17 @@
         fus.old
         hxs.old
     ==
+  =?  old  ?=(%3 -.old)
+    :*  %4
+        rem.old
+        syn.old
+        ark=(~(run by ark.old) |=(a=arak-3 a(rein [liv=& rein.a])))
+        commit-timer.old
+        fus.old
+        hxs.old
+    ==
   ::
-  ?>  ?=(%3 -.old)
+  ?>  ?=(%4 -.old)
   =.  +<+.$.abet  old
   =<  abet
   ?~  old-ota
@@ -296,11 +333,7 @@
       kiln
     =.  vats  (abed lac)
     ~>  %slog.0^leaf/"kiln: uninstalling {here}"
-    =/  ded  (get-apps-live our lac now)
-    ::  hood and dojo must never die
-    ::
-    =.  ded  (skip ded |=(d=dude ?=(?(%hood %dojo) d)))
-    =.  vats  (stop-dudes ded)
+    =.  vats  stop-agents
     kiln(ark (~(del by ark) lac))
   ::  +install: set up desk sync to .lac to install all apps from [her rem]
   ::
@@ -325,6 +358,31 @@
     =.  vats  (emit (diff:give %reset loc rak))
     =.  ark  (~(del by ark) loc)
     (install loc [ship desk]:rak)
+  ::  +suspend: shut down all agents, keep syncing
+  ::
+  ++  suspend
+    |=  lac=desk
+    ^+  vats
+    =/  got  (~(get by ark) lac)
+    ?:  =(%base lac)
+      ~>  %slog.0^leaf/"kiln: suspend: %base cannot be suspended"
+      !!
+    ?.  (~(has by ark) lac)
+      ~>  %slog.0^leaf/"kiln: suspend: {<lac>} not installed, ignoring"
+      vats
+    =.  vats  (abed lac)
+    =.  liv.rein.rak  |
+    =.  vats  stop-agents
+    (emit (diff:give %suspend loc rak))
+  ::  +revive: restart agents on a suspended desk
+  ::
+  ++  revive
+    |=  lac=desk
+    ^+  vats
+    =.  vats  (abed lac)
+    =.  liv.rein.rak  &
+    =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
+    (emit (diff:give %revive loc rak))
   ::  +bump: handle kernel kelvin upgrade
   ::
   ::    Apply merges to revive faded agents on all paused desks.
@@ -343,6 +401,15 @@
     |-  ^+  vats
     ?~  liv  vats
     $(liv t.liv, vats (emit merge-main:pass(loc p.i.liv, rak q.i.liv)))
+  ::  +stop-agents: internal helper to suspend agents on .loc
+  ::
+  ::    Will not shut down %hood or %dojo.
+  ::
+  ++  stop-agents
+    ^+  vats
+    =/  ded  (get-apps-live our loc now)
+    =.  ded  (skip ded |=(d=dude ?=(?(%hood %dojo) d)))
+    (stop-dudes ded)
   ::
   ++  take
     |=  [=wire syn=sign-arvo]
@@ -484,13 +551,6 @@
     ~>  %slog.0^leaf/"kiln: stopping {<daz>}"
     (emil `(list card:agent:gall)`(zing (turn daz stop-dude:pass)))
   --
-::  +get-ankh: extract $ankh from clay %v response $rant
-::
-++  get-ankh
-  |=  =rant
-  ^-  ankh
-  ?>  ?=(%dome p.r.rant)
-  !<(ankh q.r.rant)
 ::  +get-blockers: find desks that would block a kernel update
 ::
 ++  get-blockers
@@ -499,6 +559,8 @@
   %-  ~(gas in *(set desk))
   %+  murn  ~(tap by ark)
   |=  [=desk =arak]
+  ?.  liv.rein.arak
+    ~
   ?:  (lien next.arak |=([* k=weft] =(k kel)))
     ~
   `desk
@@ -535,7 +597,9 @@
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
     %kiln-nuke               =;(f (f !<(_+<.f vase)) poke-nuke)
+    %kiln-suspend            =;(f (f !<(_+<.f vase)) poke-suspend)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
+    %kiln-revive             =;(f (f !<(_+<.f vase)) poke-revive)
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
     %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
@@ -692,6 +756,10 @@
   =/  =rite  [%r ~ ?:(pub %black %white) ~]
   [%pass /kiln/permission %arvo %c [%perm syd pax rite]]
 ::
+++  poke-revive
+  |=  =desk
+  abet:abet:(revive:vats desk)
+::
 ++  poke-rm
   |=  a=path
   =+  b=.^(arch %cy a)
@@ -706,6 +774,10 @@
   %+  poke-info  "scheduled"
   =+  old=;;((map @da cord) (fall (file where) ~))
   `(foal where %sched !>((~(put by old) tym eve)))
+::
+++  poke-suspend
+  |=  =desk
+  abet:abet:(suspend:vats desk)
 ::
 ++  poke-sync
   |=  hos=kiln-sync
