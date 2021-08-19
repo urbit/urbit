@@ -12,10 +12,10 @@ import {
 import Sigil from '../Sigil';
 import * as bitcoin from 'bitcoinjs-lib';
 import { isValidPatp } from 'urbit-ob';
-import Sent from './Sent.tsx';
+import Sent from './Sent';
 import Error from '../Error';
-import { copyToClipboard, satsToCurrency } from '../../lib/util.ts';
-import { useSettings } from '../../hooks/useSettings.tsx';
+import { copyToClipboard, satsToCurrency } from '../../lib/util';
+import { useSettings } from '../../hooks/useSettings';
 import { api } from '../../lib/api';
 
 type Props = {
@@ -126,6 +126,9 @@ const ExternalInvoice: React.FC<Props> = ({
           mb={5}
           p={5}
         >
+          <Row flexDirection="row-reverse">
+            <Icon icon="X" cursor="pointer" onClick={() => stopSending()} />
+          </Row>
           <Col
             p={5}
             mt={4}
