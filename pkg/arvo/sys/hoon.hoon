@@ -3033,24 +3033,111 @@
     |%
     ++  qor  (ord k v)
     ::
-    ++  buc  [=k =v pri=pri:qor]
+    +$  buc  [=k =v t=pri:qor]                          ::  bucket
     ::
     ++  qat  (nat buc)
     ::
-    ++  pri  pri:qat
+    +$  pri  pri:qat                                    ::  psq
     --
     =>
     ::  internals
     ::
     ~%  %has-in  ..has  ~
     |%
-    ++  make
-      |=  [=k p=@ =v
+    ++  pour                                            ::  to bucket
+      ~/  %pour
+      |=  a=pri:qor
+      ^-  (unit (pair @ buc))
+      =/  val  (bot:qor a)
+      ?~  val  ~
+      `[p.p.u.val [k.p.u.val v.p.u.val q.u.val]]
+    ::
+    ++  make                                            ::  make bucket
+      ~/  %make
+      |=  [=k p=@ =v a=pri:qor]
+      ^-  (pair @ buc)
+      =.  a  (put:qor a k p v)
+      =/  val  (pour a)
+      ?>  ?=(^ val)
+      u.val
     --
     ::
     ~%  %has-core  ..has  ~
     |%
-    ++  baz  !!
+    ++  wyt
+      ~/  %wyt
+      |=  a=pri
+      ^-  @
+      (rep:qat a |=([[@ @ buc] @] +((add +<+ (wyt:qor t.+<->+)))))
+    ::
+    ++  has
+      ~/  %has
+      |=  [a=pri =k]
+      ^-  ?
+      !=(~ (get a k))
+    ::
+    ++  get
+      ~/  %get
+      |=  [a=pri =k]
+      ^-  (unit (pair @ v))
+      !!
+    ::
+    ++  min
+      ~/  %min
+      |=  a=pri
+      ^-  (unit (trel k @ v))
+      !!
+    ::
+    ++  one
+      |=  [=k p=@ =v]
+      ^-  pri
+      (put ~ k p v)
+    ::
+    ++  put
+      ~/  %put
+      |=  [a=pri =k p=@ =v]
+      |^  ^-  pri
+      =/  hal
+        |=  (unit (pair @ buc))
+        ^-  (pair (unit buc) (unit (pair @ buc)))
+        `(ins +<)
+      =/  val  (jab:qat a k hal)
+      q.val
+      ::
+      ++  ins
+        |=  b=(unit (pair @ buc))
+        ^-  (unit (pair @ buc))
+        ?~  b
+          `[p [k v ~]]
+        ?:  =(k k.q.u.b)
+          `(make k p v t.q.u.b)
+        ?:  |((lth p.u.b p) &(=(p p.u.b) (lth k.q.u.b k)))
+          =/  val  (put:qor t.q.u.b k p v)
+          `[p.u.b [k.q.u.b v.q.u.b val]]
+        ?:  (has:qor t.q.u.b k)
+          =/  val  (put:qor (del:qor t.q.u.b k) k.q.u.b p.u.b v.q.u.b)
+          `[p [k v val]]
+        =/  val  (put:qor t.q.u.b k.q.u.b p.u.b v.q.u.b)
+        `[p [k v val]]
+      --
+    ::
+    ++  gas
+      ~/  %gas
+      |=  [a=pri b=(list (trel k @ v))]
+      |-  ^-  pri
+      ?~  b
+        a
+      $(b t.b, a (put a p.i.b q.i.b r.i.b))
+    ::
+    ++  tap  !!
+    ::
+    ++  key  !!
+    ::
+    ++  pan  !!
+    ::
+    ++  pet  !!
+    ::
+    ++  bot  !!
     --
   --
 ::
