@@ -1,19 +1,18 @@
 import React, { useEffect } from 'react';
-import { useQuery } from 'react-query';
 import { PillButton } from '../../components/Button';
 import { DocketHeader } from '../../components/DocketHeader';
 import { ShipName } from '../../components/ShipName';
 import { Spinner } from '../../components/Spinner';
 import { TreatyMeta } from '../../components/TreatyMeta';
 import { useTreaty } from '../../logic/useTreaty';
-import { chargesKey, fetchCharges } from '../../state/docket';
 import { useLeapStore } from '../Nav';
+import { useCharges } from '../../state/docket';
 
 export const AppInfo = () => {
   const select = useLeapStore((state) => state.select);
   const { ship, desk, treaty, installStatus, copyApp, installApp } = useTreaty();
-  const { data: charges } = useQuery(chargesKey(), fetchCharges);
-  const installed = (charges || {})[desk] || installStatus.isSuccess;
+  const charges = useCharges();
+  const installed = (charges || {})[desk] || installStatus === 'success';
 
   useEffect(() => {
     select(
@@ -43,8 +42,8 @@ export const AppInfo = () => {
           )}
           {!installed && (
             <PillButton onClick={installApp}>
-              {installStatus.isIdle && 'Get App'}
-              {installStatus.isLoading && (
+              {installStatus === 'initial' && 'Get App'}
+              {installStatus === 'loading' && (
                 <>
                   <Spinner />
                   <span className="sr-only">Installing...</span>

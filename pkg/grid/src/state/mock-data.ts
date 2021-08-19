@@ -1,39 +1,39 @@
 import systemUrl from '../assets/system.png';
 import goUrl from '../assets/go.png';
-import { Provider, Treaties, Treaty } from './docket-types';
+import { Providers, Treaties, Treaty } from './docket-types';
 
-export const providers: Provider[] = [
-  {
+export const mockProviders: Providers = {
+  '~zod': {
     shipName: '~zod',
     nickname: 'Tlon Corporation'
   },
-  {
+  '~nocsyx-lassul': {
     shipName: '~nocsyx-lassul',
     status: 'technomancing an electron wrapper for urbit'
   },
-  {
+  '~nachus-hollyn': {
     shipName: '~nachus-hollyn'
   },
-  {
+  '~nalbel_litzod': {
     shipName: '~nalbel_litzod',
     status: 'congratulations'
   },
-  {
+  '~litmus^ritten': {
     shipName: '~litmus^ritten'
   },
-  {
+  '~nalput_litzod': {
     shipName: '~nalput_litzod',
     status: 'Queen'
   },
-  {
+  '~nalrex_bannus': {
     shipName: '~nalrex_bannus',
     status: 'Script, command and inspect your Urbit. Use TUI applications'
   },
-  {
+  '~nalrys': {
     shipName: '~nalrys',
     status: 'hosting coming soon'
   }
-];
+};
 
 export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' | 'version'> = {
   cass: '~2021.8.11..05.11.10..b721',
@@ -43,7 +43,7 @@ export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' |
   version: '2.0.1'
 };
 
-export const treaties: Treaties = {
+export const mockTreaties: Treaties = {
   groups: {
     ship: '~zod',
     desk: 'groups',

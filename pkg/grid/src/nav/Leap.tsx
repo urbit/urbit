@@ -161,14 +161,16 @@ export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: 
         push(pathBack);
       }
 
-      if (arrow && selectedMatch) {
+      if (arrow) {
         e.preventDefault();
 
-        const currentIndex = matches.findIndex((m) => {
-          const matchValue = m.display || m.value;
-          const searchValue = selectedMatch.display || selectedMatch.value;
-          return matchValue === searchValue;
-        });
+        const currentIndex = selectedMatch
+          ? matches.findIndex((m) => {
+              const matchValue = m.display || m.value;
+              const searchValue = selectedMatch.display || selectedMatch.value;
+              return matchValue === searchValue;
+            })
+          : 0;
         const unsafeIndex = e.key === 'ArrowUp' ? currentIndex - 1 : currentIndex + 1;
         const index = (unsafeIndex + matches.length) % matches.length;
 

@@ -1,34 +1,31 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import fuzzy from 'fuzzy';
 import slugify from 'slugify';
 import classNames from 'classnames';
 import { ShipName } from '../../components/ShipName';
-import { fetchProviderTreaties, treatyKey } from '../../state/docket';
+import useDocketState from '../../state/docket';
 import { Treaty } from '../../state/docket-types';
 import { useLeapStore } from '../Nav';
 
 type AppsProps = RouteComponentProps<{ ship: string }>;
 
 export const Apps = ({ match }: AppsProps) => {
-  const queryClient = useQueryClient();
   const { searchInput, selectedMatch, select } = useLeapStore((state) => ({
     searchInput: state.searchInput,
     select: state.select,
     selectedMatch: state.selectedMatch
   }));
   const provider = match?.params.ship;
-  const { data: apps } = useQuery(treatyKey([provider]), () => fetchProviderTreaties(provider), {
-    enabled: !!provider
-  });
+  const fetchProviderTreaties = useDocketState((s) => s.fetchProviderTreaties);
+  const [treaties, setTreaties] = useState<Treaty[]>();
   const results = useMemo(
     () =>
-      apps
+      treaties
         ? fuzzy
             .filter(
               searchInput,
-              apps.map((t) => t.title)
+              treaties.map((t) => t.title)
             )
             .sort((a, b) => {
               const left = a.string.startsWith(searchInput) ? a.score + 1 : a.score;
@@ -36,9 +33,9 @@ export const Apps = ({ match }: AppsProps) => {
 
               return right - left;
             })
-            .map((result) => apps[result.index])
+            .map((result) => treaties[result.index])
         : undefined,
-    [apps, searchInput]
+    [treaties, searchInput]
   );
   const count = results?.length;
 
@@ -58,12 +55,15 @@ export const Apps = ({ match }: AppsProps) => {
     }
   }, [results]);
 
-  const preloadApp = useCallback(
-    (app: Treaty) => {
-      queryClient.setQueryData(treatyKey([provider, app.desk]), app);
-    },
-    [queryClient]
-  );
+  useEffect(() => {
+    async function getTreaties() {
+      setTreaties(await fetchProviderTreaties(provider));
+    }
+
+    if (provider) {
+      getTreaties();
+    }
+  }, [provider]);
 
   const isSelected = useCallback(
     (target: Treaty) => {
@@ -102,7 +102,6 @@ export const Apps = ({ match }: AppsProps) => {
                   'flex items-center space-x-3 default-ring ring-offset-2 rounded-lg',
                   isSelected(app) && 'ring-4'
                 )}
-                onClick={() => preloadApp(app)}
               >
                 <div
                   className="flex-none relative w-12 h-12 bg-gray-200 rounded-lg"

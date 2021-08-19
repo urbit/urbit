@@ -21,16 +21,15 @@ export interface Treaty extends Docket {
   hash: string;
 }
 
-export interface Dockets {
-  [ref: string]: Docket;
-}
-
-export interface Treaties {
-  [ref: string]: Treaty;
-}
-
 export interface Provider {
   shipName: string;
   nickname?: string;
   status?: string;
+  treaties?: string[];
 }
+
+export type Dockets = Record<string, Docket>;
+
+export type Treaties = Record<string, Treaty>;
+
+export type Providers = Record<string, Provider>;
