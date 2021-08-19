@@ -84,7 +84,10 @@
 ::
 ++  read-bill
   |=  [our=ship =desk now=@da] 
-  .^(bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
+  =/  pax  (en-beam [our desk da+now] /desk/bill)
+  ?~  =<(fil .^(arch cy/pax))
+    *bill
+  .^(bill cx/pax)
 ::  +is-fish: should dill link .dude?
 ::
 ++  is-fish  |=([=dude =bill] .?((find ~[dude] (read-fish bill))))
