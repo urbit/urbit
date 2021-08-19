@@ -3013,6 +3013,30 @@
         --
       --
     --
+  ::
+  ++  has
+    ~/  %has
+    |*  [k=mold v=mold]
+    =>
+    ::  molds and mold builders
+    ::
+    |%
+    ++  buc  [=k =v pri=pri:(ord k v)]
+    ::
+    ++  pri  pri:(nat buc)
+    --
+    =>
+    ::  internals
+    ::
+    ~%  %has-in  ..has  ~
+    |%
+    ++  pour  !!
+    --
+    ::
+    ~%  %has-core  ..has  ~
+    |%
+    ++  baz  !!
+    --
   --
 ::
 ::::  2o: containers                                    ::
