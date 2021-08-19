@@ -12,10 +12,10 @@ import {
 import Sigil from '../Sigil';
 import * as bitcoin from 'bitcoinjs-lib';
 import { isValidPatp } from 'urbit-ob';
-import Sent from './sent.js';
+import Sent from './Sent.tsx';
 import Error from '../Error';
-import { copyToClipboard, satsToCurrency } from '../../lib/util.js';
-import { useSettings } from '../../hooks/useSettings.js';
+import { copyToClipboard, satsToCurrency } from '../../lib/util.ts';
+import { useSettings } from '../../hooks/useSettings.tsx';
 import { api } from '../../lib/api';
 
 type Props = {
