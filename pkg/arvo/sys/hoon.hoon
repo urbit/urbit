@@ -2735,6 +2735,16 @@
           (raw (fuse m.a l.a r.a) k.a q.u.q.bee r.u.q.bee)
         ==
       ::
+      ++  rep                                           ::  fold
+        ~/  %rep
+        |*  [a=pri f=_=>(~ |=([[@ @ *] *] +<+))]
+        |-
+        ?~  a  +<+.f
+        ?-    -.a
+          %tip  (f [k.a p.a v.a] +<+.f)
+          %bin  $(a r.a, +<+.f $(a l.a, +<+.f (f [k.a p.a v.a] +<+.f)))
+        ==
+      ::
       ++  gas                                           ::  from list
         ~/  %gas
         |=  [a=pri b=(list (trel @ @ v))]
@@ -3021,16 +3031,21 @@
     ::  molds and mold builders
     ::
     |%
-    ++  buc  [=k =v pri=pri:(ord k v)]
+    ++  qor  (ord k v)
     ::
-    ++  pri  pri:(nat buc)
+    ++  buc  [=k =v pri=pri:qor]
+    ::
+    ++  qat  (nat buc)
+    ::
+    ++  pri  pri:qat
     --
     =>
     ::  internals
     ::
     ~%  %has-in  ..has  ~
     |%
-    ++  pour  !!
+    ++  make
+      |=  [=k p=@ =v
     --
     ::
     ~%  %has-core  ..has  ~
