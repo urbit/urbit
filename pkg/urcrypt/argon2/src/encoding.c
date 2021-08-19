@@ -370,7 +370,7 @@ int decode_string(argon2_context *ctx, const char *str, argon2_type type) {
 #undef BIN
 }
 
-void itoa(int i, char b[]){
+static void encode_decimal(int i, char b[]){
     #ifdef ARGON2_JS
 
     // because this generates WASM error:
@@ -416,7 +416,7 @@ int encode_string(char *dst, size_t dst_len, argon2_context *ctx,
 #define SX(x)                                                                  \
     do {                                                                       \
         char tmp[30];                                                          \
-        itoa(x, tmp);                                                          \
+        encode_decimal(x, tmp);                                                \
         SS(tmp);                                                               \
     } while ((void)0, 0)
 
