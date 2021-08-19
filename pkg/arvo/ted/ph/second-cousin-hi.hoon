@@ -5,12 +5,12 @@
 |=  vase
 =/  m  (strand ,vase)
 ;<  ~  bind:m  start-simple
-;<  ~  bind:m  (raw-ship ~bud ~)
-;<  ~  bind:m  (raw-ship ~marbud ~)
-;<  ~  bind:m  (raw-ship ~linnup-torsyx ~)
-;<  ~  bind:m  (raw-ship ~dev ~)
-;<  ~  bind:m  (raw-ship ~mardev ~)
-;<  ~  bind:m  (raw-ship ~mitnep-todsut ~)
+;<  ~  bind:m  (init-ship ~bud &)
+;<  ~  bind:m  (init-ship ~marbud &)
+;<  ~  bind:m  (init-ship ~linnup-torsyx &)
+;<  ~  bind:m  (init-ship ~dev &)
+;<  ~  bind:m  (init-ship ~mardev &)
+;<  ~  bind:m  (init-ship ~mitnep-todsut &)
 ;<  ~  bind:m  (send-hi ~linnup-torsyx ~mitnep-todsut)
-;<  ~  bind:m  end-simple
+;<  ~  bind:m  end
 (pure:m *vase)

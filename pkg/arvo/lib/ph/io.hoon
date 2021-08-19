@@ -23,17 +23,14 @@
 ::
 ++  start-simple
   (start-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre ~)
-++  end-simple
-  (end-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre ~)
 ::
 ++  start-azimuth
-  =/  m  (strand ,tid:spider)
+  =/  m  (strand ,~)
   ^-  form:m
-  ;<  ~  bind:m  (start-test %aqua-ames %aqua-behn %aqua-dill ~)
-  (start-thread %aqua-eyre-azimuth)
+  ;<(~ bind:m start-simple init)
 ::
-++  end-azimuth
-  (end-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre-azimuth ~)
+++  end
+  (end-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre ~)
 ::
 ++  start-test
   |=  vane-threads=(list term)
@@ -91,77 +88,32 @@
   ^-  form:m
   (pure:m ~)
 ::
-::  XX  +spawn-aqua and +breach-aqua mean do these actions using aqua's internal
-::      azimuth management system, eventually these should just replace +spawn
-::      +breach
 ::
-++  init-azimuth
+++  init
   =/  m  (strand ,~)
   ^-  form:m
   (send-azimuth-action %init-azimuth ~)
 ::
-++  spawn-aqua
+++  spawn
   |=  =ship
   ~&  >  "spawning {<ship>}"
   =/  m  (strand ,~)
   ^-  form:m
   (send-azimuth-action %spawn ship)
 ::
-++  breach-aqua
+++  breach
   |=  =ship
   ~&  >  "breaching {<ship>}"
   =/  m  (strand ,~)
   ^-  form:m
   (send-azimuth-action %breach ship)
 ::
-++  spawn
-  |=  [=tid:spider =ship]
-  ~&  >  "spawning {<ship>}"
-  =/  m  (strand ,~)
-  =/  =vase  !>(`input:spider`[tid %azimuth-command !>([%spawn ship])])
-  (poke-our %spider %spider-input vase)
-::
-++  breach
-  |=  [=tid:spider who=ship]
-  =/  m  (strand ,~)
-  ~&  >  "breaching {<who>}"
-  =/  =vase
-    !>([tid %azimuth-command !>([%breach who])])
-  (poke-our %spider %spider-input vase)
-::
 ::  who: breachee
 ::  her: wait until hears about breach
 ::
 ++  breach-and-hear
-  |=  [=tid:spider who=ship her=ship]
-  =/  m  (strand ,~)
-  ~&  >  "breaching {<who>} for {<her>}"
-  ;<  =bowl:spider             bind:m  get-bowl
-  =/  aqua-pax
-    :-  %i
-    /(scot %p her)/j/(scot %p her)/rift/(scot %da now.bowl)/(scot %p who)/noun
-  =/  old-rut  ;;((unit @) (scry-aqua:util noun our.bowl now.bowl aqua-pax))
-  =/  new-rut
-    ?~  old-rut
-      1
-    +(+.old-rut)
-  =/  =vase
-    !>([tid %azimuth-command !>([%breach who])])
-  ;<  ~  bind:m                (poke-our %spider %spider-input vase)
-  |-  ^-  form:m
-  =*  loop  $
-  ;<  [him=ship =unix-effect]  bind:m  take-unix-effect
-  ;<  =bowl:spider             bind:m  get-bowl
-  =/  aqua-pax
-    :-  %i
-    /(scot %p her)/j/(scot %p her)/rift/(scot %da now.bowl)/(scot %p who)/noun
-  =/  rut  (scry-aqua:util noun our.bowl now.bowl aqua-pax)
-  ?:  =([~ new-rut] rut)
-    (pure:m ~)
-  loop
-::
-++  breach-and-hear-aqua
   |=  [who=ship her=ship]
+  ~&  >  "breaching {<who>} for {<her>}"
   =/  m  (strand ,~)
   ;<  =bowl:spider  bind:m  get-bowl
   =/  aqua-pax
@@ -186,27 +138,11 @@
   loop
 ::
 ++  init-ship
-  |=  =ship
+  |=  [=ship fake=?]
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting {<ship>}"
-  ;<  ~  bind:m  (send-events (init:util ship `*dawn-event:jael))
-  (check-ship-booted ship)
-::
-++  real-ship
-  |=  [=tid:spider =ship]
-  ~&  >  "booting real {<ship>}"
-  =/  m  (strand ,~)
-  =/  =vase  !>([tid %azimuth-command !>([%create-ship ship])])
-  ;<  ~  bind:m  (poke-our %spider %spider-input vase)
-  (check-ship-booted ship)
-::
-++  raw-ship
-  |=  [=ship keys=(unit dawn-event:jael)]
-  =/  m  (strand ,~)
-  ^-  form:m
-  ~&  >  "starting {<ship>}"
-  ;<  ~  bind:m  (send-events (init:util ship keys))
+  ;<  ~  bind:m  (send-events (init:util ship fake))
   (check-ship-booted ship)
 ::
 ++  check-ship-booted
@@ -258,6 +194,7 @@
 ::
 ++  send-hi-not-responding
   |=  [from=@p to=@p]
+  ~&  >  'sending hi not responding'
   =/  m  (strand ,~)
   ;<  ~  bind:m  (dojo from "|hi {(scow %p to)}")
   (wait-for-output from "{(scow %p to)} not responding still trying")
