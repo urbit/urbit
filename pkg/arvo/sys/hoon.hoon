@@ -2868,6 +2868,12 @@
           [k.a p.a v.a m.a l.a $(a r.a)]
         ==
       ::
+      ++  see                                           ::  get hi-pri (unsafe)
+        ~/  %see
+        |=  [a=pri k=@]
+        ^-  (pair (unit (pair @ v)) pri)
+        (look a k |=((pair @ v) [`+< +<]))
+      ::
       ++  look                                          ::  internal (unsafe)
         ~/  %look
         |=  [a=pri k=@ f=$-((pair @ v) (trel (unit (pair @ v)) @ v))]
