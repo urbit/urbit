@@ -397,14 +397,19 @@ const Send: React.FC<Props> = ({ stopSending, value, conversion }) => {
                   width="24px"
                   border="none"
                   backgroundColor="rgba(33, 157, 255)"
+                  onClick={() => {
+                    setShowFeePicker((prev) => {
+                      if (prev) {
+                        return false;
+                      }
+                      return true;
+                    });
+                  }}
                 >
                   <Icon
                     icon="ChevronSouth"
                     width="12px"
                     color="white"
-                    onClick={() => {
-                      if (!showFeePicker) setShowFeePicker(true);
-                    }}
                     cursor="pointer"
                   />
                 </Button>
