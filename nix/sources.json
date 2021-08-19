@@ -9,7 +9,7 @@
              "make": "libh2o",
              "compat": {
                  "mingw": {
-                      "prepare": "cmake -G\"MSYS Makefiles\" ."
+                      "prepare": "cmake -G\"MSYS Makefiles\" -DCMAKE_INSTALL_PREFIX=. ."
                  }
              }
         },
