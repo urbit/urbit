@@ -1,5 +1,6 @@
 declare -a cdirs
 declare -a ldirs
+declare -a pdirs
 declare -A hdeps
 sources=(../../nix/sources.json ../../nix/sources-pmnsh.json)
 patches=compat/$1
@@ -141,8 +142,11 @@ strip=\($o.strip+1) \\
 cmdprep=\($o.prepare//""'"$depdirs"'|@sh) \\
 cmdmake=\($o.make//""'"$depdirs"'|@sh) \\
 buildnixdep # sets dir
+pdirs+=($dir) # XX support json override a la cdirs/pdirs
 \($o.include//"."|if type == "array" then . else [.] end|map("cdirs+=(-I$dir/\(.))")|join("\n"))
 \($o.lib//"."|if type == "array" then . else [.] end|map("ldirs+=(-L$dir/\(.))")|join("\n"))"' ${sources[@]})
 
 CFLAGS="${CFLAGS-} ${cdirs[@]}"
 LDFLAGS="${LDFLAGS-} ${ldirs[@]}"
+
+PKG_CONFIG_PATH="${PKG_CONFIG_PATH-}:$(IFS=:;echo "${pdirs[*]}")"
