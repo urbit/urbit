@@ -30,7 +30,7 @@
       ==
     +$  state-0
       $:  %0
-          pil=pill
+          pil=$>(%pill pill)
           assembled=*
           tym=@da
           fleet-snaps=(map term fleet)
@@ -38,11 +38,7 @@
       ==
     ::  XX temporarily shadowed, fix and remove
     ::
-    +$  pill
-      $:  boot-ova=*
-          kernel-ova=(list unix-event)
-          userspace-ova=(list unix-event)
-      ==
+    +$  pill  pill:pill-lib
     ::
     +$  fleet  [ships=(map ship pier) azi=az-state]
     +$  pier
@@ -86,7 +82,7 @@
     =^  cards  state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
           %aqua-events     (poke-aqua-events:ac !<((list aqua-event) vase))
-          %pill            (poke-pill:ac !<(pill vase))
+          %pill       (poke-pill:ac !<(pill vase))
           %noun            (poke-noun:ac !<(* vase))
           %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
       ==
@@ -183,7 +179,7 @@
     ?.  processing-events
       ..abet-pe
     =^  ue  next-events  ~(get to next-events)
-    =/  poke-arm  (mox +47.snap)
+    =/  poke-arm  (mox +23.snap)
     ?>  ?=(%0 -.poke-arm)
     =/  poke  p.poke-arm
     =.  tym  (max +(tym) now.hid)
@@ -202,20 +198,21 @@
   ::
   ++  peek
     |=  p=*
-    =/  res  (mox +46.snap)
+    =/  res  (mox +22.snap)
     ?>  ?=(%0 -.res)
     =/  peek  p.res
     =/  pax  (path p)
     ?>  ?=([@ @ @ @ *] pax)
     =.  i.t.t.t.pax  (scot %da tym)
-    =/  pek  (slum peek [tym pax])
-    pek
-  ::
+    =/  pek  (slum peek [[~ ~] & pax])
+    =+  ;;(res=(unit (cask)) pek)
+    (bind res tail)
+      ::
   ::  Wish
   ::
   ++  wish
     |=  txt=@t
-    =/  res  (mox +22.snap)
+    =/  res  (mox +10.snap)
     ?>  ?=(%0 -.res)
     =/  wish  p.res
     ~&  [who=who %wished (slum wish txt)]
@@ -373,6 +370,7 @@
 ++  poke-pill
   |=  p=pill
   ^-  (quip card:agent:gall _state)
+  ?<  ?=(%ivory -.p)
   =.  this  apex-aqua  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
@@ -411,10 +409,11 @@
   ::
   ?+  val  ~|(%bad-noun-arg !!)
       [%swap-vanes vs=*]
-    ?>  ?=([[%7 * %1 installed=*] ~] boot-ova.pil)
-    =.  installed.boot-ova.pil
+    ?>  ?=(^ boot-ova.pil)
+    ?>  ?=([%7 * %1 installed=*] i.boot-ova.pil)
+    =.  installed.i.boot-ova.pil
       %+  roll  (,(list term) vs.val)
-      |=  [v=term =_installed.boot-ova.pil]
+      |=  [v=term =_installed.i.boot-ova.pil]
       %^  slum  installed  now.hid
       =/  vane
         ?+  v  ~|([%unknown-vane v] !!)
@@ -507,28 +506,42 @@
   ?-  -.ae
   ::
       %init-ship
-    ::  XX  Note that the keys that get passed in are unused. The keys field
-    ::      should be deleted now that aqua is capable of managing azimuth state
-    ::      internally. Its been left this way for now until all the ph tests
-    ::      can be rewritten
-    =/  keys=dawn-event:jael  (dawn who.ae)
     =.  this  abet-pe:(publish-effect:(pe who.ae) [/ %sleep ~])
     =/  initted
       =<  plow
       %-  push-events:apex:(pe who.ae)
       ^-  (list unix-event)
-      :~  [/ %wack 0]  ::  eny
-          [/ %whom who.ae]  ::  eny
-          [//newt/0v1n.2m9vh %born ~]
-          [//behn/0v1n.2m9vh %born ~]
-          :^  //term/1  %boot  &
-          ?~  keys.ae
-            [%fake who.ae]
-          [%dawn keys]
-          -.userspace-ova.pil
-          [//http-client/0v1n.2m9vh %born ~]
-          [//http-server/0v1n.2m9vh %born ~]
-          [//http-server/0v1n.2m9vh %live 8.080 `8.445]
+      %-  zing
+      :~
+        :~  [/ %wack 0]  ::  eny
+            :: [/ %verb `|]  :: possible verb
+            :^  /  %wyrd  [~.nonce /aqua] :: dummy runtime version + nonce
+            ^-  (list (pair term @))
+            :~  zuse+zuse
+                lull+lull
+                arvo+arvo
+                hoon+hoon-version
+                nock+4
+            ==
+            [/ %whom who.ae]  ::  who
+        ==
+        ::
+        kernel-ova.pil  :: load compiler
+        ::
+        :_  ~
+        :^  /d/term/1  %boot  &
+        ?:  fake.ae
+          [%fake who.ae]
+        [%dawn (dawn who.ae)]
+        ::
+        userspace-ova.pil  :: load os
+        ::
+        :~  [/b/behn/0v1n.2m9vh %born ~]
+            [/i/http-client/0v1n.2m9vh %born ~]
+            [/e/http-server/0v1n.2m9vh %born ~]
+            [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
+            [/a/newt/0v1n.2m9vh %born ~]
+        ==
       ==
     =.  this  abet-pe:initted
     (pe who.ae)

@@ -12,7 +12,7 @@
         arg=$@(~ [top=path ~])
         ~
     ==
-:-  %noun
+:-  %boot-pill
 ^-  pill:pill
 ::
 ::  sys: root path to boot system, `/~me/[desk]/now/sys`
