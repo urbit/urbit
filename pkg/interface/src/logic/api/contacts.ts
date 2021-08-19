@@ -1,7 +1,11 @@
-import BaseApi from './base';
-import { StoreState } from '../store/type';
 import { Patp } from '@urbit/api';
-import { ContactEdit } from '@urbit/api/contacts';
+import { ContactEditField } from '@urbit/api/contacts';
+import _ from 'lodash';
+import {edit} from '../reducers/contact-update';
+import {doOptimistically} from '../state/base';
+import useContactState from '../state/contact';
+import { StoreState } from '../store/type';
+import BaseApi from './base';
 
 export default class ContactsApi extends BaseApi<StoreState> {
   add(ship: Patp, contact: any) {
@@ -13,7 +17,7 @@ export default class ContactsApi extends BaseApi<StoreState> {
     return this.storeAction({ remove: { ship } });
   }
 
-  edit(ship: Patp, editField: ContactEdit) {
+  edit(ship: Patp, editField: ContactEditField) {
     /* editField can be...
     {nickname: ''}
     {email: ''}
@@ -25,13 +29,14 @@ export default class ContactsApi extends BaseApi<StoreState> {
     {add-group: {ship, name}}
     {remove-group: {ship, name}}
     */
-    return this.storeAction({
+    const action = {
       edit: {
         ship,
         'edit-field': editField,
         timestamp: Date.now()
       }
-    });
+    }
+    doOptimistically(useContactState, action, this.storeAction.bind(this), [edit])
   }
 
   allowShips(ships: Patp[]) {
@@ -70,6 +75,28 @@ export default class ContactsApi extends BaseApi<StoreState> {
     return this.scry<any>(
       'contact-store',
       `/is-allowed/${entity}/${name}/${ship}/${isPersonal}`
+    );
+  }
+
+  async disallowedShipsForOurContact(ships: string[]): Promise<string[]> {
+    return _.compact(
+      await Promise.all(
+        ships.map(
+          async (s) => {
+            const ship = `~${s}`;
+            if(s === window.ship) {
+              return null;
+            }
+            const allowed = await this.fetchIsAllowed(
+              `~${window.ship}`,
+              'personal',
+              ship,
+              true
+            );
+            return allowed ? null : ship;
+          }
+        )
+      )
     );
   }
 

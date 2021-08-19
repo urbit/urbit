@@ -646,6 +646,7 @@
           ::  cleared queue in +load 3-to-4 or +load-4-to-5
           ::
           =?  stand  ?=(~ stand)
+            ~&  [%gall-missing wire hen]
             (~(put to *(qeu remote-request)) %missing)
           ~|  [full-wire=full-wire hen=hen stand=stand]
           =^  rr  stand  ~(get to stand)

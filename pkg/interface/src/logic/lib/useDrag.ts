@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function validateDragEvent(e: DragEvent): FileList | File[] | true | null {
   const files: File[] = [];

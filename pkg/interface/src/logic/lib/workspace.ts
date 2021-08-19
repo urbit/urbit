@@ -1,4 +1,5 @@
-import { Associations, Workspace } from '@urbit/api';
+import { Associations } from '@urbit/api';
+import { Workspace } from '~/types';
 
 export function getTitleFromWorkspace(
   associations: Associations,
@@ -17,10 +18,10 @@ export function getTitleFromWorkspace(
 
 export function getGroupFromWorkspace(
   workspace: Workspace
-): string | undefined {
+): string {
   if (workspace.type === 'group') {
     return workspace.group;
   }
 
-  return undefined;
+  return '';
 }

@@ -184,8 +184,9 @@ tryBootFromPill
   -> Bool
   -> Ship
   -> LegacyBootEvent
+  -> Feed
   -> RIO PierEnv ()
-tryBootFromPill oExit pill lite ship boot = do
+tryBootFromPill oExit pill lite ship boot feed = do
   mStart <- newEmptyMVar
   vSlog  <- logSlogs
   runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart []
@@ -193,7 +194,7 @@ tryBootFromPill oExit pill lite ship boot = do
   bootedPier vSlog = do
     view pierPathL >>= lockFile
     rio $ logInfo "Starting boot"
-    sls <- Pier.booted vSlog pill lite ship boot
+    sls <- Pier.booted vSlog pill lite ship boot feed
     rio $ logInfo "Completed boot"
     pure sls
 
@@ -395,7 +396,12 @@ testPill pax showPil showSeq = do
   pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
   logInfo "Using pill to generate boot sequence."
-  bootSeq <- genBootSeq (Ship 0) pill False (Fake (Ship 0))
+  bootSeq <- genBootSeq
+               (Ship 0)
+               pill
+               False
+               (Fake (Ship 0))
+               (Feed1 $ Germs (Ship 0) [])
 
   logInfo "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
@@ -500,12 +506,12 @@ newShip CLI.New{..} opts = do
       let seed = mineComet (Set.fromList starList) eny
       putStrLn ("boot: found comet " ++ renderShip (sShip seed))
       putStrLn ("code: " ++ (tshow $ deriveCode $ sRing seed))
-      bootFromSeed pill seed
+      bootFromSeed pill $ Feed0 seed
 
     CLI.BootFake name -> do
       pill <- pillFrom nPillSource
       ship <- shipFrom name
-      runTryBootFromPill pill name ship (Fake ship)
+      runTryBootFromPill pill name ship (Fake ship) (Feed1 $ Germs ship [])
 
     CLI.BootFromKeyfile keyFile -> do
       text <- readFileUtf8 keyFile
@@ -514,13 +520,13 @@ newShip CLI.New{..} opts = do
         Just (UW a) -> pure a
 
       asNoun <- cueExn asAtom
-      seed :: Seed <- case fromNoun asNoun of
+      feed :: Feed <- case fromNoun asNoun of
         Nothing -> error "Keyfile does not seem to contain a seed."
         Just s  -> pure s
 
       pill <- pillFrom nPillSource
 
-      bootFromSeed pill seed
+      bootFromSeed pill feed
 
   where
     shipFrom :: Text -> RIO HostEnv Ship
@@ -541,16 +547,16 @@ newShip CLI.New{..} opts = do
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> pure x
 
-    bootFromSeed :: Pill -> Seed -> RIO HostEnv ()
-    bootFromSeed pill seed = do
-      ethReturn <- dawnVent nEthNode seed
+    bootFromSeed :: Pill -> Feed -> RIO HostEnv ()
+    bootFromSeed pill feed = do
+      ethReturn <- dawnVent nEthNode feed
 
       case ethReturn of
         Left x -> error $ unpack x
         Right dawn -> do
           let ship = sShip $ dSeed dawn
           name <- nameFromShip ship
-          runTryBootFromPill pill name ship (Dawn dawn)
+          runTryBootFromPill pill name ship (Dawn dawn) feed
 
     -- Now that we have all the information for running an application with a
     -- PierConfig, do so.
@@ -558,13 +564,14 @@ newShip CLI.New{..} opts = do
                        -> Text
                        -> Ship
                        -> LegacyBootEvent
+                       -> Feed
                        -> RIO HostEnv ()
-    runTryBootFromPill pill name ship bootEvent = do
+    runTryBootFromPill pill name ship bootEvent feed = do
       vKill <- view (kingEnvL . kingEnvKillSignal)
       let pierConfig = toPierConfig (pierPath name) nSerfExe opts
       let networkConfig = toNetworkConfig opts
       runPierEnv pierConfig networkConfig vKill $
-        tryBootFromPill True pill nLite ship bootEvent
+        tryBootFromPill True pill nLite ship bootEvent feed
 
 runShipEnv :: Maybe Text -> CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a
            -> RIO HostEnv a
@@ -642,13 +649,13 @@ checkDawn provider keyfilePath = do
     Just (UW a) -> pure a
 
   asNoun <- cueExn asAtom
-  seed :: Seed <- case fromNoun asNoun of
+  feed :: Feed <- case fromNoun asNoun of
     Nothing -> error "Keyfile does not seem to contain a seed."
     Just s  -> pure s
 
-  print $ show seed
+  print $ show feed
 
-  e <- dawnVent provider seed
+  e <- dawnVent provider feed
   print $ show e
 
 

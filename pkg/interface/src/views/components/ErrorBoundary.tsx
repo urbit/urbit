@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import StackTrace from 'stacktrace-js';
-import ErrorComponent from './Error';
 import { Spinner } from '~/views/components/Spinner';
+import ErrorComponent from './Error';
 
 class ErrorBoundary extends Component<
   RouteComponentProps,
@@ -23,12 +23,12 @@ class ErrorBoundary extends Component<
 
   componentDidCatch(error: Error) {
     this.setState({ error: true });
-    StackTrace.fromError(error).then(stackframes => {
-      const stack = stackframes.map(frame => {
+    StackTrace.fromError(error).then((stackframes) => {
+      const stack = stackframes.map((frame) => {
         return `${frame.functionName} (${frame.fileName} ${frame.lineNumber}:${frame.columnNumber})`;
       }).join('\n');
       error = { name: error.name, message: error.message, stack };
-      this.setState({ error })
+      this.setState({ error });
     });
     return false;
   }

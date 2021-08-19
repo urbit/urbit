@@ -11,14 +11,6 @@
     version,
     agentio
 |%
-::  FIXME: import tx-status, pend-tx from aggregator
-::
-+$  tx-status
-  $:  status=?(%unknown %pending %sent %confirmed %failed)
-      tx=(unit @ux)
-  ==
-::
-+$  pend-tx  [force=? =raw-tx:naive]
 ::
 +$  card  card:agent:gall
 ::
@@ -42,7 +34,7 @@
     ^-  (quip card _this)
     ~&  >  'init'
     :_  this
-    [%pass /bind %arvo %e %connect [~ [%v1 %azimuth ~]] dap.bowl]~
+    [%pass /bind %arvo %e %connect [~ /v1/azimuth] dap.bowl]~
   ::
   ++  on-save  !>(state)
   ++  on-load
@@ -65,7 +57,7 @@
       =+  !<([%disconnect bind=binding:eyre] vase)
       ~&  >>>  "disconnecting at {<bind>}"
       :_  this
-      [[%pass /bind %arvo %e %disconnect bind]]~
+      [%pass /bind %arvo %e %disconnect bind]~
     ==
     ::
     ++  handle-http-request
@@ -79,22 +71,19 @@
         ::  TODO: method not supported
         ::
         (give-simple-payload:app id not-found:gen)
-      ?~  rpc-request=(validate-request:json-rpc body.req parse-method)
+      ?~  rpc-request=(validate-request:json-rpc body.req)
         ::  TODO: malformed request
         ::
         (give-simple-payload:app id not-found:gen)
-      =/  [data=(unit cage) response=simple-payload:http]
+      =/  [data=(list cage) response=simple-payload:http]
         (process-rpc-request:do u.rpc-request)
       %+  weld
         (give-simple-payload:app id response)
+      |-
       ?~  data  ~
-      :_  ~
+      :_  $(data t.data)
       ^-  card
-      [%pass / %agent [our.bowl %aggregator] %poke u.data]
-      ::  TODO: validate that format is e.g. 'getPoint'
-      ::  TODO: maybe use getPoint and translate to %get-point
-      ::
-      ++  parse-method  |=(t=@t `term`t)
+      [%pass / %agent [our.bowl %azimuth] %poke i.data]
       --
     --
   ::
@@ -124,34 +113,43 @@
 ::
 |_  =bowl:gall
 ++  process-rpc-request
-  |=  request:rpc
-  ^-  [(unit cage) simple-payload:http]
-  =;  [data=(unit cage) =response:rpc]
-    :-  data
+  |=  req=batch-request:rpc
+  ^-  [(list cage) simple-payload:http]
+  |^
+    ?-  -.req
+        %o
+      =/  [data=(unit cage) =response:rpc]
+        (process p.req)
+      [(drop data) (render response)]
+    ::
+        %a
+      =|  data=(list cage)
+      =|  resp=(list response:rpc)
+      |-
+      ?~  p.req
+        [(flop data) (render %batch (flop resp))]
+      =/  [dat=(unit cage) res=response:rpc]
+        (process i.p.req)
+      =?  data  ?=(^ dat)  [u.dat data]
+      $(p.req t.p.req, resp [res resp])
+    ==
+  ::
+  ++  render
+    |=  res=response:rpc
     %-  json-response:gen
-    (response-to-json:json-rpc response)
-  =,  azimuth-rpc
-  ?.  ?=([%map *] params)
-    [~ ~(parse error id)]
-  ?+    method  [~ ~(method error id)]
-    %get-point             [~ (get-point id +.params point:scry)]
-    %transfer-point        (transfer-point id +.params)
-    %configure-keys        (configure-keys id +.params)
-    %spawn                 (spawn id +.params)
-    %escape                (escape id +.params method)
-    %cancel-escape         (cancel-escape id +.params method)
-    %adopt                 (adopt id +.params method)
-    %detach                (detach id +.params method)
-    %reject                (reject id +.params method)
-    %set-management-proxy  (management-proxy id +.params method)
-    %set-spawn-proxy       (spawn-proxy id +.params method)
-    %set-transfer-proxy    (transfer-proxy id +.params method)
-    %pending               [~ (all:pending id +.params all:pending:scry)]
-    %pending-by-ship       [~ (ship:pending id +.params ship:pending:scry)]
-    %pending-by-address    [~ (addr:pending id +.params addr:pending:scry)]
-    %status                [~ (status id +.params tx-status:scry)]
-    :: %history               [~ (history id +.params all:history:scry)]
-  ==
+    (response-to-json:json-rpc res)
+  ::
+  ++  process
+    |=  request:rpc
+    =,  azimuth-rpc
+    ?.  ?=([%map *] params)
+      [~ ~(parse error:json-rpc id)]
+    =/  method=@tas  (enkebab method)
+    ?+  method  [~ ~(method error:json-rpc id)]
+      %get-point  `(get-point id +.params point:scry)
+      %get-dns    `(get-dns id +.params dns:scry)
+    ==
+  --
 ::
 ++  scry
   |%
@@ -159,77 +157,15 @@
     |=  =ship
     .^  (unit point:naive)
         %gx
-        (~(scry agentio bowl) %azimuth /nas/[(scot %p ship)]/noun)
+        (~(scry agentio bowl) %azimuth /point/(scot %p ship)/noun)
     ==
   ::
-  ++  pending
-    |%
-    ++  all
-      .^  (list pend-tx)
-          %gx
-          (~(scry agentio bowl) %aggregator /pending/noun)
-      ==
-    ::
-    ++  ship
-      |=  =^ship
-      .^  (list pend-tx)
-          %gx
-          (~(scry agentio bowl) %aggregator /pending/[(scot %p ship)]/noun)
-      ==
-    ::
-    ++  addr
-      |=  =address:naive
-      .^  (list pend-tx)
-          %gx
-          %+  ~(scry agentio bowl)  %aggregator
-          /pending/[(scot %ux address)]/noun
-      ==
-    --
-  ::
-  ++  history
-    |%
-    ++  all
-      ::  FIXME: use proper type from aggregator/index
-      ::
-      .^  (list tx:naive)
-          %gx
-          (~(scry agentio bowl) %aggregator /history/noun)
-      ==
-    ::
-    ++  ship
-      |=  =^ship
-      ::  FIXME: use proper type from aggregator/index
-      ::
-      .^  (list tx:naive)
-          %gx
-          (~(scry agentio bowl) %aggregator /history/[(scot %p ship)]/noun)
-      ==
-    ::
-    ++  addr
-      |=  =address:naive
-      ::  FIXME: use proper type from aggregator/index
-      ::
-      .^  (list tx:naive)
-          %gx
-          (~(scry agentio bowl) %aggregator /history/[(scot %ux address)]/noun)
-      ==
-    --
-  ::
-  ++  tx-status
-    |=  keccak=@ux
-    .^  ^tx-status
-        %gx
-        (~(scry agentio bowl) %aggregator /tx/[(scot %ux keccak)]/status/noun)
-    ==
-  ::
-  ++  nonce
-    |=  [=ship =address:naive]
-    ::  FIXME: use proper type from aggregator/index
-    .^  @
+  ++  dns
+    .^  (list @t)
         %gx
         %+  ~(scry agentio bowl)
-          %aggregator
-        /nonce/[(scot %p ship)]/[(scot %ux address)]/atom
+          %azimuth
+        /dns/noun
     ==
   --
 --

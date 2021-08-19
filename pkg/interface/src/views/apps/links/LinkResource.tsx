@@ -1,21 +1,18 @@
-import React, { useEffect } from 'react';
-import { Box, Col, Center, LoadingSpinner, Text } from '@tlon/indigo-react';
-import { Switch, Route, Link } from 'react-router-dom';
-import bigInt from 'big-integer';
-
-import GlobalApi from '~/logic/api/global';
-import { StoreState } from '~/logic/store/type';
-import { RouteComponentProps } from 'react-router-dom';
-
-import { LinkItem } from './components/LinkItem';
-import LinkWindow from './LinkWindow';
-import { Comments } from '~/views/components/Comments';
-
-import './css/custom.css';
+import { Box, Center, Col, LoadingSpinner, Text } from '@tlon/indigo-react';
+import { Group } from '@urbit/api';
 import { Association } from '@urbit/api/metadata';
+import bigInt from 'big-integer';
+import React, { useEffect } from 'react';
+import { Link, Route, Switch } from 'react-router-dom';
+import GlobalApi from '~/logic/api/global';
 import useGraphState from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
+import { StoreState } from '~/logic/store/type';
+import { Comments } from '~/views/components/Comments';
 import useGroupState from '../../../logic/state/group';
+import { LinkItem } from './components/LinkItem';
+import './css/custom.css';
+import LinkWindow from './LinkWindow';
 
 const emptyMeasure = () => {};
 
@@ -23,13 +20,13 @@ type LinkResourceProps = StoreState & {
   association: Association;
   api: GlobalApi;
   baseUrl: string;
-} & RouteComponentProps;
+};
 
 export function LinkResource(props: LinkResourceProps) {
   const {
     association,
     api,
-    baseUrl,
+    baseUrl
   } = props;
 
   const rid = association.resource;
@@ -39,7 +36,7 @@ export function LinkResource(props: LinkResourceProps) {
 
   const [, , ship, name] = rid.split('/');
   const resourcePath = `${ship.slice(1)}/${name}`;
-  const resource = associations.graph[rid]
+  const resource: any = associations.graph[rid]
     ? associations.graph[rid]
     : { metadata: {} };
   const groups = useGroupState(state => state.groups);
@@ -66,13 +63,14 @@ export function LinkResource(props: LinkResourceProps) {
           path={relativePath('')}
           render={(props) => {
             return (
+              // @ts-ignore
               <LinkWindow
                 key={rid}
                 association={resource}
                 resource={resourcePath}
                 graph={graph}
                 baseUrl={resourceUrl}
-                group={group}
+                group={group as Group}
                 path={resource.group}
                 pendingSize={Object.keys(graphTimesentMap[resourcePath] || {}).length}
                 api={api}
@@ -96,6 +94,14 @@ export function LinkResource(props: LinkResourceProps) {
             if (!node) {
               return <Box>Not found</Box>;
             }
+
+            if (typeof node.post === 'string') {
+              return (
+                <Col width="100%" textAlign="center" pt="2">
+                  <Text gray>This link has been deleted.</Text>
+                </Col>
+              );
+            }
             return (
               <Col alignItems="center" overflowY="auto" width="100%">
               <Col width="100%" p={3} maxWidth="768px">
@@ -106,7 +112,7 @@ export function LinkResource(props: LinkResourceProps) {
                   node={node}
                   baseUrl={resourceUrl}
                   association={association}
-                  group={group}
+                  group={group as Group}
                   path={resource?.group}
                   api={api}
                   mt={3}
@@ -121,8 +127,8 @@ export function LinkResource(props: LinkResourceProps) {
                   api={api}
                   editCommentId={editCommentId}
                   history={props.history}
-                  baseUrl={`${resourceUrl}/${props.match.params.index}`}
-                  group={group}
+                  baseUrl={`${resourceUrl}/index/${props.match.params.index}`}
+                  group={group as Group}
                   px={3}
                 />
               </Col>
