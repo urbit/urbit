@@ -110,7 +110,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
         />
         <Link
           to="/leap/notifications"
-          className="relative z-50 flex-none circle-button bg-blue-400 text-white"
+          className="relative z-50 flex-none circle-button bg-blue-400 text-white h4"
         >
           3
         </Link>
@@ -136,7 +136,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
       <Dialog open={isOpen} onOpenChange={onDialogClose}>
         <DialogContent
           onOpenAutoFocus={onOpen}
-          className="fixed top-0 left-[calc(50%-7.5px)] w-[calc(100%-15px)] max-w-3xl px-4 text-gray-400 -translate-x-1/2 outline-none"
+          className="fixed top-0 left-[calc(50%)] w-[calc(100%-15px)] max-w-3xl px-4 text-gray-400 -translate-x-1/2 outline-none"
           role="combobox"
           aria-controls="leap-items"
           aria-owns="leap-items"

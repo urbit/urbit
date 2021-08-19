@@ -10,7 +10,6 @@
     "serve": "vite preview",
     "lint": "eslint --cache \"**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "npm run lint -- --fix",
-    "prepare": "husky install",
     "test": "echo \"No test yet\""
   },
   "dependencies": {
