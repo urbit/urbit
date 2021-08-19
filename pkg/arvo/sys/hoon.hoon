@@ -2146,8 +2146,6 @@
     ::
     ~%  %ord-core  ..ord  ~
     |%
-    ++  deb  +>                                         ::  internals access
-    ::
     ++  wyt                                             ::  queue size
       ~/  %wyt
       |=  =pri
