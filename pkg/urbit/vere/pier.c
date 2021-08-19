@@ -251,7 +251,7 @@ _pier_work(u3_work* wok_u)
       //  XX this is when "boot" is actually complete
       //  XX even better would be after neighboring with our sponsor
       //
-      u3l_log("pier (%" PRIu64 "): live\r\n", pir_u->god_u->eve_d);
+      u3l_log("pier (%" PRIu64 "): live", pir_u->god_u->eve_d);
 
       //  XX move callbacking to king
       //
@@ -286,7 +286,7 @@ _pier_on_lord_work_spin(void* ptr_v, u3_atom pin, c3_o del_o)
   u3_term_start_spinner(pin, del_o);
 }
 
-/* _pier_on_lord_work_spin(): stop spinner
+/* _pier_on_lord_work_spun(): stop spinner
 */
 static void
 _pier_on_lord_work_spun(void* ptr_v)
@@ -472,13 +472,13 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
   u3_weak res = u3r_at(7, nun);
 
   if (u3_none == res) {
-    u3l_log("pier: scry failed\n");
+    u3l_log("pier: scry failed");
   }
   else {
     u3_weak out,    pad;
     c3_c   *ext_c, *pac_c;
 
-    u3l_log("pier: scry succeeded\n");
+    u3l_log("pier: scry succeeded");
 
     if ( u3_Host.ops_u.puk_c ) {
       pac_c = u3_Host.ops_u.puk_c;
@@ -531,11 +531,11 @@ _pier_on_scry_done(void* ptr_v, u3_noun nun)
                pir_u->pax_c, pac_c+1, ext_c);
 
       u3_walk_save(fil_c, 0, out, pir_u->pax_c, pad);
-      u3l_log("pier: scry result in %s\n", fil_c);
+      u3l_log("pier: scry result in %s", fil_c);
     }
   }
 
-  u3l_log("pier: exit\n");
+  u3l_log("pier: exit");
   u3_pier_exit(pir_u);
 
   u3z(nun);
@@ -614,7 +614,7 @@ _pier_work_init(u3_pier* pir_u)
     } else {
       //  run the requested scry, jam to disk, then exit
       //
-      u3l_log("pier: scry\n");
+      u3l_log("pier: scry");
       u3_pier_peek_last(pir_u, u3_nul, u3k(car), u3k(dek), u3k(pax),
                         pir_u, _pier_on_scry_done);
     }
@@ -663,7 +663,7 @@ _pier_wyrd_fail(u3_pier* pir_u, u3_ovum* egg_u, u3_noun lud)
 {
   //  XX version negotiation failed, print upgrade message
   //
-  u3l_log("pier: version negotation failed\n\n");
+  u3l_log("pier: version negotation failed");
 
   //  XX only print trace with -v ?
   //
@@ -749,7 +749,7 @@ _pier_on_lord_wyrd_done(void*    ptr_v,
 
     //  XX messaging, cli argument to bypass
     //
-    u3l_log("pier: version negotiation failed; downgrade\n");
+    u3l_log("pier: version negotiation failed; downgrade");
     _pier_wyrd_fail(pir_u, egg_u, u3_nul);
   }
   else {
@@ -842,7 +842,7 @@ _pier_wyrd_init(u3_pier* pir_u)
 
   pir_u->sat_e = u3_psat_wyrd;
 
-  u3l_log("vere: checking version compatibility\n");
+  u3l_log("vere: checking version compatibility");
 
   {
     u3_lord* god_u = pir_u->god_u;
@@ -1031,11 +1031,11 @@ _pier_play(u3_play* pay_u)
   if ( god_u->eve_d == pay_u->eve_d ) {
     //  XX should be play_cb
     //
-    u3l_log("---------------- playback complete ----------------\r\n");
+    u3l_log("---------------- playback complete ----------------");
     u3_term_stop_spinner();
 
     if ( pay_u->eve_d < log_u->dun_d ) {
-      // u3l_log("pier: replay barrier reached, shutting down\r\n");
+      // u3l_log("pier: replay barrier reached, shutting down");
       // //  XX graceful shutdown
       // //
       // u3_lord_save(pir_u->god_u);
@@ -1044,7 +1044,7 @@ _pier_play(u3_play* pay_u)
 
       //  XX temporary hack
       //
-      u3l_log("pier: replay barrier reached, cramming\r\n");
+      u3l_log("pier: replay barrier reached, cramming");
       u3_pier_cram(pir_u);
     }
     else if ( pay_u->eve_d == log_u->dun_d ) {
@@ -1070,12 +1070,12 @@ _pier_on_lord_play_done(void* ptr_v, u3_info fon_u, c3_l mug_l)
 
   c3_assert( u3_psat_play == pir_u->sat_e );
 
-  u3l_log("pier: (%" PRIu64 "): play: done\r\n", tac_u->eve_d);
+  u3l_log("pier: (%" PRIu64 "): play: done", tac_u->eve_d);
 
   //  XX optional
   //
   if ( tac_u->mug_l && (tac_u->mug_l != mug_l) ) {
-    u3l_log("pier: (%" PRIu64 "): play: mug mismatch %x %x\r\n",
+    u3l_log("pier: (%" PRIu64 "): play: mug mismatch %x %x",
             tac_u->eve_d,
             tac_u->mug_l,
             mug_l);
@@ -1124,7 +1124,7 @@ _pier_on_lord_play_bail(void* ptr_v, u3_info fon_u,
     //  XX optional
     //
     if ( las_l && (las_l != mug_l) ) {
-      u3l_log("pier: (%" PRIu64 "): play bail: mug mismatch %x %x\r\n",
+      u3l_log("pier: (%" PRIu64 "): play bail: mug mismatch %x %x",
              (c3_d)(eve_d - 1ULL),
              las_l,
              mug_l);
@@ -1135,7 +1135,7 @@ _pier_on_lord_play_bail(void* ptr_v, u3_info fon_u,
     //
 #if 0
     {
-      u3l_log("pier: (%" PRIu64 "): play: retry\r\n", eve_d);
+      u3l_log("pier: (%" PRIu64 "): play: retry", eve_d);
 
       fon_u.ext_u = tac_u;
 
@@ -1156,7 +1156,7 @@ _pier_on_lord_play_bail(void* ptr_v, u3_info fon_u,
     }
 #else
     {
-      u3l_log("pier: (%" PRIu64 "): play: bail\r\n", eve_d);
+      u3l_log("pier: (%" PRIu64 "): play: bail", eve_d);
       u3_pier_punt_goof("play", dud);
       {
         u3_noun wir, tag;
@@ -1192,12 +1192,12 @@ _pier_play_init(u3_pier* pir_u, c3_d eve_d)
   pay_u->eve_d = eve_d;
   pay_u->sen_d = god_u->eve_d;
 
-  u3l_log("---------------- playback starting ----------------\r\n");
+  u3l_log("---------------- playback starting ----------------");
   if ( (1ULL + god_u->eve_d) == eve_d ) {
-    u3l_log("pier: replaying event %" PRIu64 "\r\n", eve_d);
+    u3l_log("pier: replaying event %" PRIu64, eve_d);
   }
   else {
-    u3l_log("pier: replaying events %" PRIu64 "-%" PRIu64 "\r\n",
+    u3l_log("pier: replaying events %" PRIu64 "-%" PRIu64,
             (c3_d)(1ULL + god_u->eve_d),
             eve_d);
   }
@@ -1326,7 +1326,7 @@ _pier_on_lord_cram(void* ptr_v)
   //  XX temporary hack
   //
   if ( u3_psat_play == pir_u->sat_e ) {
-    u3l_log("pier: cram complete, shutting down\r\n");
+    u3l_log("pier: cram complete, shutting down");
     u3_pier_bail(pir_u);
     exit(0);
   }
@@ -1355,7 +1355,7 @@ _pier_on_lord_exit(void* ptr_v)
   pir_u->god_u = 0;
 
   if ( u3_psat_done != pir_u->sat_e ) {
-    u3l_log("pier: serf shutdown unexpected\r\n");
+    u3l_log("pier: serf shutdown unexpected");
     u3_pier_bail(pir_u);
   }
   //  if we made it all the way here, it's our jab to wrap up
@@ -1416,10 +1416,10 @@ _pier_on_lord_live(void* ptr_v)
       //
       if (  u3_Host.ops_u.til_c ) {
         if ( 1 == sscanf(u3_Host.ops_u.til_c, "%" PRIu64 "", &eve_d) ) {
-          u3l_log("pier: replay till %" PRIu64 "\r\n", eve_d);
+          u3l_log("pier: replay till %" PRIu64, eve_d);
         }
         else {
-          u3l_log("pier: ignoring invalid replay barrier '%s'\r\n",
+          u3l_log("pier: ignoring invalid replay barrier '%s'",
                   u3_Host.ops_u.til_c);
           eve_d = log_u->dun_d;
         }
@@ -1443,51 +1443,51 @@ u3_pier_info(u3_pier* pir_u)
 {
   switch ( pir_u->sat_e ) {
     default: {
-      u3l_log("pier: unknown state: %u\r\n", pir_u->sat_e);
+      u3l_log("pier: unknown state: %u", pir_u->sat_e);
     } break;
 
     case u3_psat_init: {
-      u3l_log("pier: init\n");
+      u3l_log("pier: init");
     } break;
 
     case u3_psat_boot: {
-      u3l_log("pier: boot\n");
+      u3l_log("pier: boot");
     } break;
 
     case u3_psat_play: {
-      u3l_log("pier: play\n");
+      u3l_log("pier: play");
 
       {
         u3_play* pay_u = pir_u->pay_u;
 
-        u3l_log("  target: %" PRIu64 "\n", pay_u->eve_d);
-        u3l_log("  sent: %" PRIu64 "\n", pay_u->sen_d);
-        u3l_log("  read: %" PRIu64 "\n", pay_u->req_d);
+        u3l_log("  target: %" PRIu64, pay_u->eve_d);
+        u3l_log("  sent: %" PRIu64, pay_u->sen_d);
+        u3l_log("  read: %" PRIu64, pay_u->req_d);
       }
     } break;
 
     case u3_psat_work: {
-      u3l_log("pier: work\n");
+      u3l_log("pier: work");
 
       {
         u3_work* wok_u = pir_u->wok_u;
 
-        u3l_log("  effects: released=%" PRIu64 "\n", wok_u->fec_u.rel_d);
+        u3l_log("  effects: released=%" PRIu64, wok_u->fec_u.rel_d);
 
         if ( wok_u->fec_u.ext_u ) {
           if ( wok_u->fec_u.ext_u != wok_u->fec_u.ent_u ) {
-            u3l_log("    pending %" PRIu64 "-%" PRIu64 "\n",
+            u3l_log("    pending %" PRIu64 "-%" PRIu64,
                     wok_u->fec_u.ext_u->eve_d,
                     wok_u->fec_u.ent_u->eve_d);
 
           }
           else {
-            u3l_log("    pending %" PRIu64 "\n", wok_u->fec_u.ext_u->eve_d);
+            u3l_log("    pending %" PRIu64, wok_u->fec_u.ext_u->eve_d);
           }
         }
 
         if ( wok_u->wal_u ) {
-          u3l_log("  wall: %" PRIu64 "\n", wok_u->wal_u->eve_d);
+          u3l_log("  wall: %" PRIu64, wok_u->wal_u->eve_d);
         }
 
         if ( wok_u->car_u ) {
@@ -1497,7 +1497,7 @@ u3_pier_info(u3_pier* pir_u)
     } break;
 
     case u3_psat_done: {
-      u3l_log("pier: done\n");
+      u3l_log("pier: done");
     } break;
   }
 
@@ -1611,7 +1611,7 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
   if ( c3y == u3_Host.ops_u.veb ) {
     FILE* fil_u = u3_term_io_hija();
     u3_lmdb_stat(pir_u->log_u->mdb_u, fil_u);
-    u3_term_io_loja(1);
+    u3_term_io_loja(1, fil_u);
   }
 
   u3z(pax);
@@ -2221,10 +2221,12 @@ _pier_dump_wall(FILE* fil_u, u3_noun wol)
   while ( u3_nul != wal ) {
     _pier_dump_tape(fil_u, u3k(u3h(wal)));
 
-    putc(13, fil_u);
-    putc(10, fil_u);
-
     wal = u3t(wal);
+
+    if ( u3_nul != wal ) {
+      putc(13, fil_u);
+      putc(10, fil_u);
+    }
   }
 
   u3z(wol);
@@ -2250,6 +2252,7 @@ u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
         case 3: fprintf(fil_u, "\033[31m>>> "); break;
         case 2: fprintf(fil_u, "\033[33m>>  "); break;
         case 1: fprintf(fil_u, "\033[32m>   "); break;
+        case 0: fprintf(fil_u, "\033[90m"    ); break;
     }
   }
   else {
@@ -2266,8 +2269,6 @@ u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
   if ( 0 == u3A->roc ) {
     if ( c3__leaf == u3h(tac) ) {
       _pier_dump_tape(fil_u, u3k(u3t(tac)));
-      putc(13, fil_u);
-      putc(10, fil_u);
     }
   }
   //  We are calling nock here, but hopefully need no protection.
@@ -2284,7 +2285,7 @@ u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
 
   fflush(fil_u);
 
-  u3_term_io_loja(0);
+  u3_term_io_loja(0, fil_u);
   u3z(blu);
   u3z(tac);
 }
@@ -2314,12 +2315,12 @@ u3_pier_punt_goof(const c3_c* cap_c, u3_noun dud)
 
   u3x_cell(dud, &mot, &tan);
 
-  u3l_log("\n");
+  u3l_log("");
   u3_pier_punt(0, u3qb_flop(tan));
 
   {
     c3_c* mot_c = u3r_string(mot);
-    u3l_log("%s: bail: %%%s\r\n", cap_c, mot_c);
+    u3l_log("%s: bail: %%%s", cap_c, mot_c);
     c3_free(mot_c);
   }
 
@@ -2335,7 +2336,7 @@ u3_pier_punt_ovum(const c3_c* cap_c, u3_noun wir, u3_noun tag)
   u3_noun riw = u3do("spat", wir);
   c3_c* wir_c = u3r_string(riw);
 
-  u3l_log("%s: %%%s event on %s failed\r\n\n", cap_c, tag_c, wir_c);
+  u3l_log("%s: %%%s event on %s failed", cap_c, tag_c, wir_c);
 
   c3_free(tag_c);
   c3_free(wir_c);

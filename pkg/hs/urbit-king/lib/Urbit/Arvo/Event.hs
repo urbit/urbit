@@ -20,6 +20,7 @@ import Urbit.Arvo.Common (ReOrg(..), reorgThroughNoun)
 
 import qualified Crypto.Sign.Ed25519       as Ed
 import qualified Data.ByteString           as BS
+import qualified Data.Char                 as C
 import qualified Data.ByteString.Char8     as C
 import qualified Network.HTTP.Types.Method as H
 
@@ -318,18 +319,51 @@ data LegacyBootEvent
     | Dawn Dawn
   deriving (Eq, Show)
 
-data ArrowKey = D | L | R | U
+data Bolt
+    = Key Char
+    | Aro ArrowKey
+    | Bac ()
+    | Del ()
+    | Hit Word64 Word64
+    | Ret ()
   deriving (Eq, Ord, Show)
 
 data Belt
-    = Aro ArrowKey
-    | Bac ()
-    | Ctl Cord
-    | Del ()
-    | Met Cord
-    | Ret ()
+    = Bol Bolt
+    | Mod Modifier Bolt
     | Txt Tour
   deriving (Eq, Ord, Show)
+
+data ArrowKey = D | L | R | U
+  deriving (Eq, Ord, Show)
+
+data Modifier = Ctl | Met | Hyp
+  deriving (Eq, Ord, Show)
+
+--NOTE  required to get the above declarations into reify's type environment
+--      see also ghc/ghc#9813
+$(pure [])
+
+instance FromNoun Bolt where
+  parseNoun = \case
+    A c             -> pure $ Key $ C.chr $ fromIntegral c
+    C (A 7955819) _ -> fail "%key not valid bolt tag"
+    n               -> $(deriveFromNounFunc ''Bolt) n
+
+instance FromNoun Belt where
+  parseNoun = \case
+    C (A 7106402) _ -> fail "%bol not valid belt tag"
+    n               -> Bol <$> parseNoun n <|> $(deriveFromNounFunc ''Belt) n
+
+instance ToNoun Bolt where
+  toNoun = \case
+    Key c -> A $ fromIntegral $ C.ord c
+    n     -> $(deriveToNounFunc ''Bolt) n
+
+instance ToNoun Belt where
+  toNoun = \case
+    Bol b -> toNoun b
+    n     -> $(deriveToNounFunc ''Belt) n
 
 data TermEv
     = TermEvBelt (UD, ()) Belt
@@ -341,7 +375,7 @@ data TermEv
 
 deriveNoun ''LegacyBootEvent
 deriveNoun ''ArrowKey
-deriveNoun ''Belt
+deriveNoun ''Modifier
 deriveNoun ''TermEv
 
 
@@ -392,27 +426,23 @@ instance FromNoun Ev where
 -- Short Event Names -----------------------------------------------------------
 
 {-
-    In the case of the user hitting enter, the cause is technically a
-    terminal event, but we don't display any name because the cause is
-    really the user.
+    In the case of user input, the cause is technically a terminal event,
+    but we don't display any name because the cause is really the user.
 -}
 getSpinnerNameForEvent :: Ev -> Maybe Text
 getSpinnerNameForEvent = \case
     EvBlip b -> case b of
-        BlipEvAmes _           -> Just "ames"
-        BlipEvArvo _           -> Just "arvo"
-        BlipEvBehn _           -> Just "behn"
-        BlipEvBoat _           -> Just "boat"
-        BlipEvHttpClient _     -> Just "iris"
-        BlipEvHttpServer _     -> Just "eyre"
-        BlipEvJael _           -> Just "jael"
-        BlipEvNewt _           -> Just "newt"
-        BlipEvSync _           -> Just "clay"
-        BlipEvTerm t | isRet t -> Nothing
-        BlipEvTerm t           -> Just "term"
-  where
-    isRet (TermEvBelt _ (Ret ())) = True
-    isRet _                       = False
+        BlipEvAmes _                -> Just "ames"
+        BlipEvArvo _                -> Just "arvo"
+        BlipEvBehn _                -> Just "behn"
+        BlipEvBoat _                -> Just "boat"
+        BlipEvHttpClient _          -> Just "iris"
+        BlipEvHttpServer _          -> Just "eyre"
+        BlipEvJael _                -> Just "jael"
+        BlipEvNewt _                -> Just "newt"
+        BlipEvSync _                -> Just "clay"
+        BlipEvTerm (TermEvBelt _ _) -> Nothing
+        BlipEvTerm t                -> Just "term"
 
 summarizeEvent :: Ev -> Text
 summarizeEvent ev =

@@ -16,6 +16,7 @@ static u3_utty* _term_main();
 static void     _term_read_cb(uv_stream_t*    tcp_u,
                               ssize_t         siz_i,
                               const uv_buf_t* buf_u);
+static void     _term_it_send_stub(u3_utty* uty_u, u3_noun tub);
 
 /* u3_write_fd(): retry interrupts, continue partial writes, assert errors.
 */
@@ -85,39 +86,6 @@ _term_alloc(uv_handle_t* had_u,
   *buf = uv_buf_init(ptr_v, 123);
 }
 
-//  XX unused, but %hook is in %zuse.
-//  implement or remove
-//
-#if 0
-/* _term_close_cb(): free terminal.
-*/
-static void
-_term_close_cb(uv_handle_t* han_t)
-{
-  u3_utty* tty_u = (void*) han_t;
-  if ( u3_Host.uty_u == tty_u ) {
-    u3_Host.uty_u = tty_u->nex_u;
-  }
-  else {
-    u3_utty* uty_u;
-    for (uty_u = u3_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
-      if ( uty_u->nex_u == tty_u ) {
-        uty_u->nex_u = tty_u->nex_u;
-        break;
-      }
-    }
-  }
-
-  {
-    u3_noun tid = u3dc("scot", c3__ud, tty_u->tid_l);
-    u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
-    u3_pier_plan(u3k(pax), u3nc(c3__hook, u3_nul));
-    u3z(pax);
-  }
-  c3_free(tty_u);
-}
-#endif
-
 /* u3_term_log_init(): initialize terminal for logging
 */
 void
@@ -149,41 +117,33 @@ u3_term_log_init(void)
     //    and simply use constant sequences.
     //
     {
-      uty_u->ufo_u.out.clear_u = TERM_LIT_BUF("\033[H\033[2J");
-      uty_u->ufo_u.out.el_u    = TERM_LIT_BUF("\033[K");
-      // uty_u->ufo_u.out.el1_u   = TERM_LIT_BUF("\033[1K");
-      uty_u->ufo_u.out.ed_u    = TERM_LIT_BUF("\033[J");
-      uty_u->ufo_u.out.bel_u   = TERM_LIT_BUF("\x7");
-      uty_u->ufo_u.out.cub1_u  = TERM_LIT_BUF("\x8");
-      uty_u->ufo_u.out.cuf1_u  = TERM_LIT_BUF("\033[C");
-      uty_u->ufo_u.out.cuu1_u  = TERM_LIT_BUF("\033[A");
-      uty_u->ufo_u.out.cud1_u  = TERM_LIT_BUF("\xa");
-      // uty_u->ufo_u.out.cub_u  = TERM_LIT_BUF("\033[%p1%dD");
-      // uty_u->ufo_u.out.cuf_u  = TERM_LIT_BUF("\033[%p1%dC");
-    }
+      uty_u->ufo_u.mon_u = TERM_LIT_BUF("\033[?9h");
+      uty_u->ufo_u.mof_u = TERM_LIT_BUF("\033[?9l");
 
-    //  configure input escape sequences
-    //
-    //    NB: terminfo reports the wrong sequence for arrow keys on xterms.
-    //    disabled, currently unused
-    // {
-    //   uty_u->ufo_u.inn.kcuu1_u = TERM_LIT_BUF("\033[A");  //  terminfo reports "\033OA"
-    //   uty_u->ufo_u.inn.kcud1_u = TERM_LIT_BUF("\033[B");  //  terminfo reports "\033OB"
-    //   uty_u->ufo_u.inn.kcuf1_u = TERM_LIT_BUF("\033[C");  //  terminfo reports "\033OC"
-    //   uty_u->ufo_u.inn.kcub1_u = TERM_LIT_BUF("\033[D");  //  terminfo reports "\033OD"
-    // }
+      uty_u->ufo_u.reg_u = TERM_LIT_BUF("\033[r");
+
+      uty_u->ufo_u.suc_u = TERM_LIT_BUF("\033[s");
+      uty_u->ufo_u.ruc_u = TERM_LIT_BUF("\033[u");
+      uty_u->ufo_u.cub_u = TERM_LIT_BUF("\x8");
+
+      uty_u->ufo_u.clr_u = TERM_LIT_BUF("\033[H\033[2J");
+      uty_u->ufo_u.cel_u = TERM_LIT_BUF("\033[K");
+
+      uty_u->ufo_u.bel_u = TERM_LIT_BUF("\x7");
+    }
 
     //  Initialize mirror and accumulator state.
     //
     {
-      uty_u->tat_u.mir.lin_y = 0;
-      uty_u->tat_u.mir.byt_w = 0;
-      uty_u->tat_u.mir.wor_w = 0;
-      uty_u->tat_u.mir.sap_w = 0;
+      uty_u->tat_u.mir.lin   = u3_nul;
+      uty_u->tat_u.mir.rus_w = 0;
       uty_u->tat_u.mir.cus_w = 0;
 
       uty_u->tat_u.esc.ape = c3n;
       uty_u->tat_u.esc.bra = c3n;
+      uty_u->tat_u.esc.mou = c3n;
+      uty_u->tat_u.esc.ton_y = 0;
+      uty_u->tat_u.esc.col_y = 0;
 
       uty_u->tat_u.fut.len_w = 0;
       uty_u->tat_u.fut.wid_w = 0;
@@ -193,7 +153,7 @@ u3_term_log_init(void)
     //
     {
       uty_u->tat_u.siz.col_l = 80;
-      uty_u->tat_u.siz.row_l = 24;
+      uty_u->tat_u.siz.row_l = 0;
     }
 
     //  initialize spinner state
@@ -273,7 +233,7 @@ _term_it_write_cb(uv_write_t* wri_u, c3_i sas_i)
   //  write failure is logged, but otherwise ignored.
   //
   if ( 0 != sas_i ) {
-    u3l_log("term: write: %s\n", uv_strerror(sas_i));
+    u3l_log("term: write: %s", uv_strerror(sas_i));
   }
 
   c3_free(wri_u->data);
@@ -325,7 +285,7 @@ _term_it_write(u3_utty*  uty_u,
     //  synchronous write failure is logged, but otherwise ignored
     //
     if ( ret_i < 0 ) {
-      u3l_log("term: write: %s\n", uv_strerror(ret_i));
+      u3l_log("term: write: %s", uv_strerror(ret_i));
     }
 
     c3_free(ptr_v);
@@ -363,32 +323,63 @@ _term_it_send(u3_utty*    uty_u,
   _term_it_write(uty_u, &buf_u, (void*)hun_y);
 }
 
-/* _term_it_send_cord(): write a cord.
+/* _term_it_send_csi(): send csi escape sequence
 */
 static void
-_term_it_send_cord(u3_utty*    uty_u,
-                   u3_atom       txt)
+_term_it_send_csi(u3_utty *uty_u, c3_c cmd_c, c3_w num_w, ...)
 {
-  c3_w  len_w = u3r_met(3, txt);
-  c3_y* hun_y = c3_malloc(len_w);
-  u3r_bytes(0, len_w, hun_y, txt);
+  va_list ap;
+  va_start(ap, num_w);
 
-  _term_it_send(uty_u, len_w, hun_y);
+  //  allocate for escape sequence (2), command char (1),
+  //  argument digits (5 per arg) and separators (1 per arg, minus 1).
+  //  freed via _term_it_write.
+  //
+  c3_c* pas_c = malloc( sizeof(*pas_c) * (2 + num_w * 6) );
+  c3_c  was_c = 0;
 
-  u3z(txt);
+  pas_c[was_c++] = '\033';
+  pas_c[was_c++] = '[';
+
+  while ( num_w > 0 ) {
+    c3_w par_w = va_arg(ap, c3_w);
+    was_c += sprintf(pas_c+was_c, "%d", par_w);
+
+    if ( --num_w > 0 ) {
+      pas_c[was_c++] = ';';
+    }
+  }
+
+  pas_c[was_c++] = cmd_c;
+
+  uv_buf_t pas_u = uv_buf_init(pas_c, was_c);
+  _term_it_write(uty_u, &pas_u, pas_c);
+
+  va_end(ap);
 }
 
-/* _term_it_show_clear(): clear to the beginning of the current line.
+/* _term_it_free_line(): wipe line stored by _term_it_save_stub
 */
 static void
-_term_it_show_clear(u3_utty* uty_u)
+_term_it_free_line(u3_utty* uty_u)
 {
-  if ( uty_u->tat_u.siz.col_l ) {
-    _term_it_dump(uty_u, TERM_LIT("\r"));
-    _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.el_u);
+  u3z(uty_u->tat_u.mir.lin);
+  uty_u->tat_u.mir.lin = u3_nul;
+}
 
-    uty_u->tat_u.mir.wor_w = 0;
-    uty_u->tat_u.mir.cus_w = 0;
+/* _term_it_clear_line(): clear line of cursor
+*/
+static void
+_term_it_clear_line(u3_utty* uty_u)
+{
+  _term_it_dump(uty_u, TERM_LIT("\r"));
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.cel_u);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.ruc_u);
+
+  //  if we're clearing the bottom line, clear our mirror of it too
+  //
+  if ( 0 == uty_u->tat_u.mir.rus_w ) {
+    _term_it_free_line(uty_u);
   }
 }
 
@@ -397,87 +388,35 @@ _term_it_show_clear(u3_utty* uty_u)
 static void
 _term_it_show_blank(u3_utty* uty_u)
 {
-  _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.clear_u);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.clr_u);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.ruc_u);
 }
 
-/* _term_it_show_cursor(): set current line, transferring pointer.
-*/
+/*  _term_it_move_cursor(): move cursor to row & column
+ *
+ *    row 0 is at the bottom, col 0 is to the left.
+ *    if the given position exceeds the known window size,
+ *    it is clipped to stay within the window.
+ */
 static void
-_term_it_show_cursor(u3_utty* uty_u, c3_w cur_w)
+_term_it_move_cursor(u3_utty* uty_u, c3_w row_w, c3_w col_w)
 {
-  c3_w cus_w = uty_u->tat_u.mir.cus_w;
-  c3_w dif_w;
+  c3_l row_l = uty_u->tat_u.siz.row_l;
+  c3_l col_l = uty_u->tat_u.siz.col_l;
+  if ( row_w >= row_l ) { row_w = row_l - 1; }
+  if ( col_w >= col_l ) { col_w = col_l - 1; }
 
-  //NOTE  assumes all styled text precedes the cursor. drum enforces this.
-  //
-  cur_w += uty_u->tat_u.mir.sap_w;
+  _term_it_send_csi(uty_u, 'H', 2, row_l - row_w, col_w + 1);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.suc_u);
 
-  if ( cur_w < cus_w ) {
-    dif_w = cus_w - cur_w;
-
-    while ( dif_w-- ) {
-      _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.cub1_u);
-    }
-  }
-  else if ( cur_w > cus_w ) {
-    dif_w = cur_w - cus_w;
-
-    while ( dif_w-- ) {
-      _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.cuf1_u);
-    }
-  }
-
-  uty_u->tat_u.mir.cus_w = cur_w;
+  uty_u->tat_u.mir.rus_w = row_w;
+  uty_u->tat_u.mir.cus_w = col_w;
 }
 
-/* _term_it_show_line(): render current line.
+/* _term_it_show_line(): print at cursor
 */
 static void
-_term_it_show_line(u3_utty* uty_u, c3_w wor_w, c3_w sap_w)
-{
-  u3_utat* tat_u = &uty_u->tat_u;
-
-  //  we have to reallocate the current line on write,
-  //  or we have a data race if a) the write is async,
-  //  and b) a new output line arrives before the write completes.
-  //
-  {
-    c3_w  len_w = tat_u->mir.byt_w;
-    c3_y* hun_y = c3_malloc(len_w);
-    memcpy(hun_y, tat_u->mir.lin_y, len_w);
-
-    _term_it_send(uty_u, len_w, hun_y);
-  }
-
-  //  XX refactor to avoid updating state
-  //
-  tat_u->mir.cus_w += wor_w;
-  tat_u->mir.wor_w = wor_w;
-  tat_u->mir.sap_w = sap_w;
-}
-
-/* _term_it_refresh_line(): refresh current line.
-*/
-static void
-_term_it_refresh_line(u3_utty* uty_u)
-{
-  u3_utat* tat_u = &uty_u->tat_u;
-  c3_w     wor_w = tat_u->mir.wor_w;
-  c3_w     sap_w = tat_u->mir.sap_w;
-  c3_w     cus_w = tat_u->mir.cus_w;
-
-  _term_it_show_clear(uty_u);
-  _term_it_show_line(uty_u, wor_w, sap_w);
-  _term_it_show_cursor(uty_u, cus_w);
-}
-
-/* _term_it_set_line(): set current line.
-*/
-static void
-_term_it_set_line(u3_utty* uty_u,
-                  c3_w*    lin_w,
-                  c3_w     wor_w,
-                  c3_w     sap_w)
+_term_it_show_line(u3_utty* uty_u, c3_w* lin_w, c3_w wor_w)
 {
   u3_utat* tat_u = &uty_u->tat_u;
   c3_y*    hun_y = (c3_y*)lin_w;
@@ -515,28 +454,66 @@ _term_it_set_line(u3_utty* uty_u,
     }
   }
 
-  c3_free(tat_u->mir.lin_y);
-  tat_u->mir.lin_y = hun_y;
-  tat_u->mir.byt_w = byt_w;
-  tat_u->mir.wor_w = wor_w;
-  tat_u->mir.sap_w = sap_w;
-
-  _term_it_show_line(uty_u, wor_w, sap_w);
+  //NOTE  lin_w freed through hun_y by _send
+  _term_it_send(uty_u, byt_w, hun_y);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.ruc_u);
 }
 
-/* _term_it_show_more(): new current line.
+/* _term_it_restore_line(): re-render original line at bottom of screen
 */
 static void
-_term_it_show_more(u3_utty* uty_u)
+_term_it_restore_line(u3_utty* uty_u)
+{
+  u3_utat* tat_u = &uty_u->tat_u;
+
+  _term_it_send_csi(uty_u, 'H', 2, tat_u->siz.row_l, 0);
+  _term_it_dump_buf(uty_u, &uty_u->ufo_u.cel_u);
+  _term_it_send_stub(uty_u, u3k(tat_u->mir.lin));
+  //NOTE  send_stub restores cursor position
+}
+
+/* _term_it_save_stub(): store line if relevant to internal logic
+ */
+static void
+_term_it_save_stub(u3_utty* uty_u, u3_noun tub)
+{
+  u3_utat* tat_u = &uty_u->tat_u;
+  u3_noun  lin   = tat_u->mir.lin;
+
+  //  keep track of changes to bottom-most line, to aid spinner drawing logic.
+  //  -t mode doesn't need this logic, because it doesn't render the spinner.
+  //
+  if ( (0 == tat_u->mir.rus_w) && (c3n == u3_Host.ops_u.tem)) {
+    lin = u3dq("wail:klr:format", lin, tat_u->mir.cus_w, u3k(tub), ' ');
+    lin = u3do("pact:klr:format", lin);
+  }
+
+  tat_u->mir.lin = lin;
+  u3z(tub);
+}
+
+/* _term_it_show_nel(): render newline, moving cursor down
+*/
+static void
+_term_it_show_nel(u3_utty* uty_u)
 {
   if ( c3y == u3_Host.ops_u.tem ) {
     _term_it_dump(uty_u, TERM_LIT("\n"));
   }
   else {
     _term_it_dump(uty_u, TERM_LIT("\r\n"));
+    _term_it_dump_buf(uty_u, &uty_u->ufo_u.suc_u);
   }
 
   uty_u->tat_u.mir.cus_w = 0;
+  if ( uty_u->tat_u.mir.rus_w > 0 ) {
+    uty_u->tat_u.mir.rus_w--;
+  }
+  else {
+    //  newline at bottom of screen, so bottom line is now empty
+    //
+    _term_it_free_line(uty_u);
+  }
 }
 
 /* _term_it_path(): path for console file.
@@ -660,32 +637,32 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
 {
   u3_utat* tat_u = &uty_u->tat_u;
 
+  //  escape sequences
+  //
   if ( c3y == tat_u->esc.ape ) {
     if ( c3y == tat_u->esc.bra ) {
       switch ( cay_y ) {
         default: {
-          _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.bel_u);
+          _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
           break;
         }
         case 'A': _term_io_belt(uty_u, u3nc(c3__aro, 'u')); break;
         case 'B': _term_io_belt(uty_u, u3nc(c3__aro, 'd')); break;
         case 'C': _term_io_belt(uty_u, u3nc(c3__aro, 'r')); break;
         case 'D': _term_io_belt(uty_u, u3nc(c3__aro, 'l')); break;
+      //
+        case 'M': tat_u->esc.mou = c3y; break;
       }
       tat_u->esc.ape = tat_u->esc.bra = c3n;
     }
     else {
       if ( (cay_y >= 'a') && (cay_y <= 'z') ) {
         tat_u->esc.ape = c3n;
-        _term_io_belt(uty_u, u3nc(c3__met, cay_y));
-      }
-      else if ( '.' == cay_y ) {
-        tat_u->esc.ape = c3n;
-        _term_io_belt(uty_u, u3nc(c3__met, c3__dot));
+        _term_io_belt(uty_u, u3nt(c3__mod, c3__met, cay_y));
       }
       else if ( 8 == cay_y || 127 == cay_y ) {
         tat_u->esc.ape = c3n;
-        _term_io_belt(uty_u, u3nc(c3__met, c3__bac));
+        _term_io_belt(uty_u, u3nq(c3__mod, c3__met, c3__bac, u3_nul));
       }
       else if ( ('[' == cay_y) || ('O' == cay_y) ) {
         tat_u->esc.bra = c3y;
@@ -693,10 +670,31 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       else {
         tat_u->esc.ape = c3n;
 
-        _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.bel_u);
+        _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
       }
     }
   }
+  //  mouse input
+  //
+  else if ( c3y == tat_u->esc.mou ) {
+    if ( 0 == tat_u->esc.ton_y ) {
+      tat_u->esc.ton_y = cay_y - 31;
+    }
+    else if ( 0 == tat_u->esc.col_y ) {
+      tat_u->esc.col_y = cay_y - 32;
+    }
+    else {
+      c3_y row_y = cay_y - 32;
+      //  only acknowledge button 1 presses within our window
+      if ( 1 != tat_u->esc.ton_y && row_y <= tat_u->siz.row_l ) {
+        _term_io_belt(uty_u, u3nt(c3__hit, tat_u->siz.row_l - row_y, tat_u->esc.col_y - 1));
+      }
+      tat_u->esc.mou = c3n;
+      tat_u->esc.ton_y = tat_u->esc.col_y = 0;
+    }
+  }
+  //  unicode inputs
+  //
   else if ( 0 != tat_u->fut.wid_w ) {
     tat_u->fut.syb_y[tat_u->fut.len_w++] = cay_y;
 
@@ -712,26 +710,23 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       _term_io_belt(uty_u, u3nt(c3__txt, wug, u3_nul));
     }
   }
+  //  individual characters
+  //
   else {
-    if ( (cay_y >= 32) && (cay_y < 127) ) {
+    if ( (cay_y >= 32) && (cay_y < 127) ) {  //  visual ascii
       _term_io_belt(uty_u, u3nt(c3__txt, cay_y, u3_nul));
     }
-    else if ( 0 == cay_y ) {
-      _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.bel_u);
+    else if ( 0 == cay_y ) {  //  null
+      _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
     }
-    else if ( 8 == cay_y || 127 == cay_y ) {
+    else if ( 8 == cay_y || 127 == cay_y ) {  //  backspace & delete
       _term_io_belt(uty_u, u3nc(c3__bac, u3_nul));
     }
-    else if ( 13 == cay_y || 10 == cay_y ) {
+    else if ( 10 == cay_y || 13 == cay_y ) {  //  newline & carriage return
       _term_io_belt(uty_u, u3nc(c3__ret, u3_nul));
     }
-#if 0
-    else if ( 6 == cay_y ) {
-      _term_io_flow(uty_u);   // XX hack
-    }
-#endif
     else if ( cay_y <= 26 ) {
-      _term_io_belt(uty_u, u3nc(c3__ctl, ('a' + (cay_y - 1))));
+      _term_io_belt(uty_u, u3nt(c3__mod, c3__ctl, ('a' + (cay_y - 1))));
     }
     else if ( 27 == cay_y ) {
       tat_u->esc.ape = c3y;
@@ -774,14 +769,14 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
       //  The process hangs if we do nothing (and ctrl-z
       //  then corrupts the event log), so we force shutdown.
       //
-      u3l_log("term: hangup (EOF)\r\n");
+      u3l_log("term: hangup (EOF)");
 
       //  XX revise
       //
       u3_pier_bail(u3_king_stub());
     }
     else if ( siz_i < 0 ) {
-      u3l_log("term %d: read: %s\n", uty_u->tid_l, uv_strerror(siz_i));
+      u3l_log("term %d: read: %s", uty_u->tid_l, uv_strerror(siz_i));
     }
     else {
       c3_i i;
@@ -867,14 +862,20 @@ _term_spin_step(u3_utty* uty_u)
   //    NB: we simply bail out if anything goes wrong
   //
   {
-    uv_buf_t lef_u = uty_u->ufo_u.out.cub1_u;
+    uv_buf_t lef_u = uty_u->ufo_u.cub_u;
     c3_i fid_i = uty_u->fid_i;
 
     //  One-time cursor backoff.
     //
     if ( c3n == tat_u->sun_u.diz_o ) {
-      c3_w i_w;
+      //  if we know where the bottom line is, and the cursor is not on it,
+      //  move it to the bottom left
+      //
+      if ( tat_u->siz.row_l && tat_u->mir.rus_w > 0 ) {
+        _term_it_send_csi(uty_u, 'H', 2, tat_u->siz.row_l, 0);
+      }
 
+      c3_w i_w;
       for ( i_w = bac_w; i_w < sol_w; i_w++ ) {
         if ( lef_u.len != write(fid_i, lef_u.base, lef_u.len) ) {
           return;
@@ -910,6 +911,7 @@ _term_spin_timer_cb(uv_timer_t* tim_u)
   _term_spin_step(uty_u);
 }
 
+#define _SPIN_FAST_US 100UL  //  spinner activation delay when expected
 #define _SPIN_COOL_US 500UL  //  spinner activation delay when cool
 #define _SPIN_WARM_US 50UL   //  spinner activation delay when warm
 #define _SPIN_RATE_US 250UL  //  spinner rate (ms/frame)
@@ -934,7 +936,7 @@ u3_term_start_spinner(u3_atom say, c3_o del_o)
     {
       c3_d now_d = _term_msc_out_host();
       c3_d end_d = tat_u->sun_u.end_d;
-      c3_d wen_d = (c3n == del_o) ? 0UL :
+      c3_d wen_d = (c3n == del_o) ? _SPIN_FAST_US :
                      (now_d - end_d < _SPIN_IDLE_US) ?
                      _SPIN_WARM_US : _SPIN_COOL_US;
 
@@ -959,7 +961,7 @@ u3_term_stop_spinner(void)
     uv_timer_stop(&tat_u->sun_u.tim_u);
 
     if ( c3y == tat_u->sun_u.diz_o ) {
-      _term_it_refresh_line(uty_u);
+      _term_it_restore_line(uty_u);
       tat_u->sun_u.end_d = _term_msc_out_host();
       tat_u->sun_u.diz_o = c3n;
     }
@@ -1050,15 +1052,13 @@ u3_term_ef_ctlc(void)
 
   {
     u3_noun wir = u3nt(c3__term, '1', u3_nul);
-    u3_noun cad = u3nt(c3__belt, c3__ctl, 'c');
+    u3_noun cad = u3nq(c3__belt, c3__mod, c3__ctl, 'c');
 
     c3_assert( 1 == uty_u->tid_l );
     c3_assert( uty_u->car_u );
 
     _term_ovum_plan(uty_u->car_u, wir, cad);
   }
-
-  _term_it_refresh_line(uty_u);
 }
 
 /*  _term_it_put_value(): put numeric color value on lin_w.
@@ -1145,10 +1145,10 @@ _term_it_put_deco(c3_w* lin_w,
   }
 }
 
-/* _term_it_show_stub(): send styled text to terminal as ansi escape sequences
+/* _term_it_send_stub(): send styled text, without saving
 */
 static void
-_term_it_show_stub(u3_utty* uty_u,
+_term_it_send_stub(u3_utty* uty_u,
                    u3_noun    tub)
 {
   c3_w tuc_w = u3qb_lent(tub);
@@ -1167,17 +1167,16 @@ _term_it_show_stub(u3_utty* uty_u,
 
   //  allocate enough memory for every display character, plus styles
   //
-  //NOTE  we use max 31 characters per styl for escape codes:
-  //      3 for opening, 4 for decorations, 15 for colors, 4 for closing,
-  //      and 5 as separators between decorations and colors.
+  //NOTE  we use max 48 characters per styl for escape codes:
+  //      2 for opening, 7 for decorations, 2x16 for colors, 4 for closing,
+  //      and 3 as separators between decorations and colors.
   //
-  c3_w* lin_w = c3_malloc(  sizeof(c3_w) * (lec_w + (31 * tuc_w))  );
+  c3_w* lin_w = c3_malloc(  sizeof(c3_w) * (lec_w + (48 * tuc_w))  );
 
   //  write the contents to the buffer,
   //  tracking total and escape characters written
   //
   c3_w   i_w = 0;
-  c3_w sap_w = 0;
   {
     u3_noun nub = tub;
     while ( u3_nul != nub ) {
@@ -1197,7 +1196,6 @@ _term_it_show_stub(u3_utty* uty_u,
         c3_o mor_o = c3n;
         lin_w[i_w++] = 27;
         lin_w[i_w++] = '[';
-        sap_w += 2;
 
         //  text decorations
         //
@@ -1207,10 +1205,8 @@ _term_it_show_stub(u3_utty* uty_u,
           while ( u3_nul != des ) {
             if ( c3y == mor_o ) {
               lin_w[i_w++] = ';';
-              sap_w++;
             }
             _term_it_put_deco(&lin_w[i_w++], u3h(des));
-            sap_w++;
             mor_o = c3y;
             des = u3t(des);
           }
@@ -1222,12 +1218,10 @@ _term_it_show_stub(u3_utty* uty_u,
         if ( u3_nul != bag ) {
           if ( c3y == mor_o ) {
             lin_w[i_w++] = ';';
-            sap_w++;
           }
           lin_w[i_w++] = '4';
           c3_w put_w = _term_it_put_tint(&lin_w[i_w], bag);
           i_w += put_w;
-          sap_w += ++put_w;
           mor_o = c3y;
         }
 
@@ -1236,17 +1230,14 @@ _term_it_show_stub(u3_utty* uty_u,
         if ( u3_nul != fog ) {
           if ( c3y == mor_o ) {
             lin_w[i_w++] = ';';
-            sap_w++;
           }
           lin_w[i_w++] = '3';
           c3_w put_w = _term_it_put_tint(&lin_w[i_w], fog);
           i_w += put_w;
-          sap_w += ++put_w;
           mor_o = c3y;
         }
 
         lin_w[i_w++] = 'm';
-        sap_w++;
       }
 
       //  write the text itself
@@ -1262,16 +1253,25 @@ _term_it_show_stub(u3_utty* uty_u,
         lin_w[i_w++] = '[';
         lin_w[i_w++] = '0';
         lin_w[i_w++] = 'm';
-        sap_w += 4;
       }
 
       nub = u3t(nub);
     }
   }
 
-  _term_it_set_line(uty_u, lin_w, i_w, sap_w);
+  _term_it_show_line(uty_u, lin_w, i_w);
 
   u3z(tub);
+}
+
+/* _term_it_send_stub(): send styled text to terminal as ansi escape sequences
+*/
+static void
+_term_it_show_stub(u3_utty* uty_u,
+                   u3_noun    tub)
+{
+  _term_it_send_stub(uty_u, u3k(tub));
+  _term_it_save_stub(uty_u, tub);
 }
 
 /* _term_it_show_tour(): send utf32 to terminal.
@@ -1291,9 +1291,14 @@ _term_it_show_tour(u3_utty* uty_u,
     }
   }
 
-  _term_it_set_line(uty_u, lin_w, len_w, 0);
+  _term_it_show_line(uty_u, lin_w, len_w);
 
-  u3z(lin);
+  {
+    u3_noun tub = u3i_list(u3nc(u3nt(u3_nul, u3_nul, u3_nul), lin), u3_none);
+    _term_it_save_stub(uty_u, tub);
+  }
+
+  //NOTE  lin transferred to tub above
 }
 
 /* _term_ef_blit(): send blit to terminal.
@@ -1306,40 +1311,38 @@ _term_ef_blit(u3_utty* uty_u,
     default: break;
 
     case c3__bel: {
-      if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.bel_u);
-      }
+      _term_it_dump_buf(uty_u, &uty_u->ufo_u.bel_u);
     } break;
 
     case c3__clr: {
-      if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_show_blank(uty_u);
-        _term_it_refresh_line(uty_u);
-      }
+      _term_it_show_blank(uty_u);
     } break;
 
     case c3__hop: {
-      if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_show_cursor(uty_u, u3t(blt));
+      u3_noun pos = u3t(blt);
+      if ( c3y == u3r_ud(pos) ) {
+        _term_it_move_cursor(uty_u, 0, pos);
+      }
+      else {
+        _term_it_move_cursor(uty_u, u3h(pos), u3t(pos));
       }
     } break;
 
     case c3__klr: {
-      if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_show_clear(uty_u);
-      }
       _term_it_show_stub(uty_u, u3k(u3t(blt)));
     } break;
 
-    case c3__lin: {
-      if ( c3n == u3_Host.ops_u.tem ) {
-        _term_it_show_clear(uty_u);
-      }
+    case c3__lin: {  //TMP  backwards compatibility
+      _term_it_move_cursor(uty_u, 0, 0);
+      _term_it_clear_line(uty_u);
+    }  //
+    case c3__put: {
       _term_it_show_tour(uty_u, u3k(u3t(blt)));
     } break;
 
-    case c3__mor: {
-      _term_it_show_more(uty_u);
+    case c3__mor:  //TMP  backwards compatibility
+    case c3__nel: {
+      _term_it_show_nel(uty_u);
     } break;
 
     case c3__sav: {
@@ -1357,20 +1360,49 @@ _term_ef_blit(u3_utty* uty_u,
     } break;
 
     case c3__url: {
-      u3_noun txt = u3t(blt);
+      //  platform-agnostically opening the default web browser from within a
+      //  c program is an unsolved problem.
+    } break;
 
-      //  XX check u3_Host.ops_u.tem ?
-      //  XX this looks to be broken,
-      //      multiple calls to _show_clear will discard the mirror state
-      //
-      if ( c3y == u3a_is_atom(txt) ) {
-        _term_it_show_clear(uty_u);
+    case c3__wyp: {
+      _term_it_clear_line(uty_u);
+    } break;
+  }
 
-        _term_it_send_cord(uty_u, u3k(txt));
+  u3z(blt);
+}
 
-        _term_it_show_more(uty_u);
-        _term_it_refresh_line(uty_u);
-      }
+/* _term_ef_blit_lame(): simplified output handling for -t
+*/
+static void
+_term_ef_blit_lame(u3_utty* uty_u,
+                   u3_noun  blt)
+{
+  switch ( u3h(blt) ) {
+    default: break;
+
+    case c3__klr: {
+      _term_it_show_stub(uty_u, u3k(u3t(blt)));
+      _term_it_show_nel(uty_u);
+    } break;
+
+    case c3__put: {
+      _term_it_show_tour(uty_u, u3k(u3t(blt)));
+      _term_it_show_nel(uty_u);
+    } break;
+
+    case c3__sav: {
+      u3_noun pax, dat;
+      u3x_cell(u3t(blt), &pax, &dat);
+
+      _term_it_save(u3k(pax), u3k(dat));
+    } break;
+
+    case c3__sag: {
+      u3_noun pax, dat;
+      u3x_cell(u3t(blt), &pax, &dat);
+
+      _term_it_save(u3k(pax), u3qe_jam(dat));
     } break;
   }
 
@@ -1384,7 +1416,7 @@ u3_term_io_hija(void)
 {
   u3_utty* uty_u = _term_main();
 
-  if ( uty_u ) {
+  if ( uty_u && uty_u->tat_u.siz.row_l ) {
     if ( uty_u->fid_i > 2 ) {
       //  We *should* in fact, produce some kind of fake FILE* for
       //  non-console terminals.  If we use this interface enough...
@@ -1396,11 +1428,14 @@ u3_term_io_hija(void)
         if ( c3y != uty_u->hij_f(uty_u) ) {
           c3_assert(!"hija-tcsetattr");
         }
-        u3_write_fd(uty_u->fid_i, "\r", 1);
-        {
-          uv_buf_t* buf_u = &uty_u->ufo_u.out.el_u;
-          u3_write_fd(uty_u->fid_i, buf_u->base, buf_u->len);
-        }
+
+        //  set scroll region to exclude the prompt,
+        //  scroll up one line to make space,
+        //  and move the cursor onto that space.
+        //
+        _term_it_send_csi(uty_u, 'r', 2, 1, uty_u->tat_u.siz.row_l - 1);
+        _term_it_send_csi(uty_u, 'S', 1, 1);
+        _term_it_send_csi(uty_u, 'H', 2, uty_u->tat_u.siz.row_l - 1, 1);
       }
     }
   }
@@ -1410,11 +1445,11 @@ u3_term_io_hija(void)
 /* u3_term_io_loja(): release console from fprintf.
 */
 void
-u3_term_io_loja(int x)
+u3_term_io_loja(int x, FILE* f)
 {
   u3_utty* uty_u = _term_main();
 
-  if ( uty_u ) {
+  if ( uty_u && uty_u->tat_u.siz.row_l ) {
     if ( uty_u->fid_i > 2 ) {
       //  We *should* in fact, produce some kind of fake FILE* for
       //  non-console terminals.  If we use this interface enough...
@@ -1423,14 +1458,24 @@ u3_term_io_loja(int x)
     }
     else {
       if ( c3y == u3_Host.ops_u.tem ) {
-        fflush(stdout);
-      } else {
+        fprintf(f, "\n");
+        fflush(f);
+      }
+      else {
         if ( c3y != uty_u->loj_f(uty_u) ) {
           c3_assert(!"loja-tcsetattr");
         }
-        _term_it_refresh_line(uty_u);
+
+        //  clear the scrolling region we set previously,
+        //  and restore cursor to its original position.
+        //
+        _term_it_dump_buf(uty_u, &uty_u->ufo_u.reg_u);
+        _term_it_dump_buf(uty_u, &uty_u->ufo_u.ruc_u);
       }
     }
+  }
+  else {
+    fprintf(f, "\r\n");
   }
 }
 
@@ -1440,7 +1485,9 @@ void
 u3_term_io_log(c3_c* line)
 {
   FILE* stream = u3_term_io_hija();
-  u3_term_io_loja(fprintf(stream, "%s", line));
+  int x = fprintf(stream, "%s", line);
+  fflush(stream);
+  u3_term_io_loja(x, stream);  //TODO  remove arg? unused...
 }
 
 /* u3_term_tape_to(): dump a tape to a file.
@@ -1472,7 +1519,7 @@ u3_term_tape(u3_noun tep)
 
   u3_term_tape_to(fil_f, tep);
 
-  u3_term_io_loja(0);
+  u3_term_io_loja(0, fil_f);
 }
 
 /* u3_term_wall(): dump a wall to stdout.
@@ -1491,7 +1538,7 @@ u3_term_wall(u3_noun wol)
 
     wal = u3t(wal);
   }
-  u3_term_io_loja(0);
+  u3_term_io_loja(0, fil_f);
 
   u3z(wol);
 }
@@ -1504,12 +1551,16 @@ _term_io_talk(u3_auto* car_u)
   if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u = _term_main();
 
+    //  start mouse handling
+    //
+    _term_it_dump_buf(uty_u, &uty_u->ufo_u.mon_u);
+
     uv_read_start((uv_stream_t*)&(uty_u->pin_u),
                   _term_alloc,
                   _term_read_cb);
   }
 
-  //  XX groace hardcoded terminal number
+  //TODO  reevaluate wrt dill sessions
   //
   u3_noun wir = u3nt(c3__term, '1', u3_nul);
   u3_noun cad;
@@ -1520,10 +1571,6 @@ _term_io_talk(u3_auto* car_u)
     cad = u3nc(c3__blew, u3_term_get_blew(1));
     _term_ovum_plan(car_u, u3k(wir), cad);
   }
-
-  //  NB, term.c used to also start :dojo
-  //
-  // u3nq(c3__flow, c3__seat, c3__dojo, u3_nul)
 
   //  refresh terminal state
   //
@@ -1577,7 +1624,7 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
        || (u3_nul != q_pud)
        || (c3n == _reck_orchid(c3__ud, u3k(p_pud), &tid_l)) )
     {
-      u3l_log("term: bad tire\n");
+      u3l_log("term: bad tire");
       ret_o = c3n;
     }
     else {
@@ -1586,26 +1633,25 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
           ret_o = c3n;
         } break;
 
-        //  XX review, accepted and ignored
-        //
-        case c3__bbye: {
-          ret_o = c3y;
-        } break;
-
         case c3__blit: {
           ret_o = c3y;
 
           {
             u3_utty* uty_u = _term_ef_get(tid_l);
             if ( 0 == uty_u ) {
-              // u3l_log("no terminal %d\n", tid_l);
-              // u3l_log("uty_u %p\n", u3_Host.uty_u);
+              // u3l_log("no terminal %d", tid_l);
+              // u3l_log("uty_u %p", u3_Host.uty_u);
             }
             else {
               u3_noun bis = dat;
 
               while ( c3y == u3du(bis) ) {
-                _term_ef_blit(uty_u, u3k(u3h(bis)));
+                if (c3n == u3_Host.ops_u.tem) {
+                  _term_ef_blit(uty_u, u3k(u3h(bis)));
+                }
+                else {
+                  _term_ef_blit_lame(uty_u, u3k(u3h(bis)));
+                }
                 bis = u3t(bis);
               }
             }
@@ -1666,6 +1712,10 @@ _term_io_exit(u3_auto* car_u)
   u3_utty* uty_u = _term_main();
 
   if ( c3n == u3_Host.ops_u.tem ) {
+    //  stop mouse handling
+    //
+    _term_it_dump_buf(uty_u, &uty_u->ufo_u.mof_u);
+
     //  NB, closed in u3_term_log_exit()
     //
     uv_read_stop((uv_stream_t*)&(uty_u->pin_u));

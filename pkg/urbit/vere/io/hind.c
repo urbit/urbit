@@ -30,7 +30,7 @@ _hind_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 
       case c3__exit: {
         ret_o = c3y;
-        u3l_log("<<<goodbye>>>\n");
+        u3l_log("<<<goodbye>>>");
         u3_pier_exit(car_u->pir_u);
       } break;
 
@@ -44,7 +44,7 @@ _hind_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 
       case c3__vega: {
         ret_o = c3y;
-        u3l_log("<<<reset>>>\n");
+        u3l_log("<<<reset>>>");
       } break;
 
       //  NB: startup explicitly handled in pier.c
