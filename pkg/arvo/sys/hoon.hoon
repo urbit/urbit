@@ -1903,11 +1903,11 @@
   ::                                                    ::
   ::
 ++  up
-  ~/  %up
-  |*  [k=mold v=mold]
-  ~%  %up-core  ..up  ~
+  ~%  %up  ..up  ~
   |%
   ++  ord
+    ~/  %ord
+    |*  [k=mold v=mold]
     =>
     ::  molds
     ::
@@ -2456,6 +2456,8 @@
     --
   ::
   ++  nat
+    ~/  %nat
+    |*  [k=mold v=mold]
     =>
     ::  molds
     ::
@@ -3039,10 +3041,9 @@
 ++  pry                                                 ::  psq
   |*  [k=mold v=mold]
   |=  a=*
-  =/  cor  (up k v)
-  =/  ord  ord:cor
-  =/  b  ;;(pri:ord a)
-  ?>  (apt:ord b)
+  =/  cor  (nat:up k v)
+  =/  b  ;;(pri:cor a)
+  ?>  (apt:cor b)
   b
 ::
 ::::  2l: container from container                      ::
