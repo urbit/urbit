@@ -6,6 +6,7 @@
 ::
 ++  n  |=([=^state:naive =^input:naive] (%*(. naive lac |) verifier 1.337 +<))
 ::
+++  orm   ((on ship point:naive) por:naive)
 ++  addr  address-from-prv:key:ethereum
 ::
 ::  The next section of this core generates "universes" of Azimuth points, each
@@ -1028,7 +1029,7 @@
   %+  category  (weld "correct nonce? " (scow %f nonce.cur-event))
   %+  category  (weld "success map " (scow %f (~(got by suc-map) cur-event)))
   ::
-  =/  cur-point  (~(got by points.initial-state) cur-ship)
+  =/  cur-point  (got:orm points.initial-state cur-ship)
   =*  own  own.cur-point
   =/  cur-nonce
     ?-  proxy.cur-event
@@ -1083,7 +1084,7 @@
     ++  set-keys  ^-  ^state:naive
       =/  new-keys
       %=  cur-point
-        life.keys.net    +(life.keys.net:(~(got by points.initial-state) cur-ship))
+        life.keys.net    +(life.keys.net:(got:orm points.initial-state cur-ship))
         suite.keys.net   suit
         auth.keys.net    auth
         crypt.keys.net   encr
@@ -1132,7 +1133,7 @@
       ==
       =/  expect-state  (alter-state cur-point)  :: this updates the nonce of the spawner
       %=  expect-state
-        points  (~(put by points.expect-state) ship spawned)
+        points  (put:orm points.expect-state ship spawned)
       ==
     ::
     ++  alter-state
@@ -1148,7 +1149,7 @@
         %transfer  alt-point(nonce.transfer-proxy.own new-nonce)
       ==
       %=  expect-state
-        points  (~(put by points.expect-state) cur-ship updated-point)
+        points  (put:orm points.expect-state cur-ship updated-point)
       ==
     ::
     --  :: end of expected state
@@ -1268,7 +1269,7 @@
     =|  =^state:naive
     =^  f  state  (init-rut-full state)
     =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
-    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::
 ++  test-rut-l1-l2-escape-l1  ^-  tang
   ::  L1-escape A1 | *   | *   | *   | *   | -> | A1  | A1  | *   | *
@@ -1281,7 +1282,7 @@
     =|  =^state:naive
     =^  f  state  (init-rut-full state)
     =^  f  state  (n state (escape-requested:l1 ~larsyx-mapmeg ~losred))
-    [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+    [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
 ::
 ++  test-rut-l2-lx-escape-l1  ^-  tang
   ::  L2 ships can't escape on L1
@@ -1294,7 +1295,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state (escape-requested:l1 ~dovmul-mogryt ~rigred))
-      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+      [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
     ::  escaping to L2 ship
     %+  expect-eq
@@ -1304,7 +1305,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state (escape-requested:l1 ~pinpun-pilsun ~losred))
-      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+      [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
 ::
 ++  test-red-l2-l2-adopt-l2-1  ^-  tang
@@ -1320,7 +1321,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 pp-adopt %losred-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+      [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
     %+  expect-eq
       !>  [~ %.y ~losred]
@@ -1329,7 +1330,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 pp-m-adopt %losred-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+      [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
 ::
 ++  test-red-l1-l2-adopt-l2-1
@@ -1345,7 +1346,7 @@
     =|  =^state:naive
     =^  f  state  (init-red-full state)
     =^  f  state  (n state %bat q:(gen-tx 0 lm-adopt %losred-key-0))
-    [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+    [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ::
   %+  expect-eq
     !>  [~ %.y ~losred]
@@ -1354,7 +1355,7 @@
     =|  =^state:naive
     =^  f  state  (init-red-full state)
     =^  f  state  (n state %bat q:(gen-tx 0 lm-m-adopt %losred-mkey-0))
-    [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+    [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ==
 ::
 ++  test-red-l2-l1-adopt-l2-1
@@ -1370,7 +1371,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 dm-adopt %rigred-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+      [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
     %+  expect-eq
       !>  [~ %.y ~rigred]
@@ -1379,7 +1380,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 dm-m-adopt %rigred-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+      [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
   ==
 ::
 ++  test-red-l1-l1-adopt-l2-1
@@ -1395,7 +1396,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [~ %.y ~rigred]
@@ -1404,7 +1405,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-adopt %rigred-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
 ::
 ++  test-red-l1-l1-adopt-l2-2
@@ -1420,7 +1421,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %losred-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [[~ ~rigred] %.y ~holrut]
@@ -1429,7 +1430,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-adopt %losred-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
 ::
 ++  test-rut-l1-l1-adopt-l2-3  ^-  tang
@@ -1453,7 +1454,7 @@
       =|  =^state:naive
       =^  f  state  (n init-state %bat q:(gen-tx rr-h-detach))
       =^  f  state  (n state %bat q:(gen-tx rr-adopt))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [~ %.n ~holrut]
@@ -1461,7 +1462,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (n init-state %bat (tx-list-to-batch rr-batch-1))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
    ::
     %+  expect-eq
       !>  [~ %.n ~holrut]
@@ -1470,7 +1471,7 @@
       =|  =^state:naive
       =^  f  state  (n init-state %bat q:(gen-tx rr-h-m-detach))
       =^  f  state  (n state %bat q:(gen-tx rr-m-adopt))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [~ %.n ~holrut]
@@ -1478,7 +1479,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (n init-state %bat (tx-list-to-batch rr-batch-2))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
 ::
 ::  the following tests L2 %rejects
@@ -1495,7 +1496,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 pp-reject %losred-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+      [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
     %+  expect-eq
       !>  [~ %.y ~losrut]
@@ -1504,7 +1505,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 pp-m-reject %losred-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+      [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
 ::
 ++  test-red-l2-l1-reject-l2-1  ^-  tang
@@ -1520,7 +1521,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 dm-reject %rigred-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+      [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
     %+  expect-eq
       !>  [~ %.y ~holrut]
@@ -1529,7 +1530,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 dm-m-reject %rigred-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+      [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
   ==
 ::
 ++  test-red-l1-l2-reject-l2-1  ^-  tang
@@ -1545,7 +1546,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 lm-reject %losred-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+      [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
     ::
     %+  expect-eq
       !>  [~ %.y ~rigrut]
@@ -1554,7 +1555,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 lm-m-reject %losred-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+      [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ==
 ::
 ++  test-red-l1-l1-reject-l2-1  ^-  tang
@@ -1570,7 +1571,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rr-reject %rigred-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [~ %.y ~holrut]
@@ -1579,7 +1580,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-reject %rigred-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
 ++  test-red-l2-l2-reject-l2-2  ^-  tang
   ::  L2-reject A1 | *   | A2  | *   | *   | -> | *   | A2  | *   | *
@@ -1594,7 +1595,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 2 pp-reject %losrut-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+      [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
     %+  expect-eq
       !>  [[~ ~losred] %.y ~losrut]
@@ -1603,7 +1604,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 pp-m-reject %losrut-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+      [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
 ::
 ++  test-red-l2-l1-reject-l2-2  ^-  tang
@@ -1619,7 +1620,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 1 dm-reject %holrut-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+      [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
     %+  expect-eq
       !>  [[~ ~rigred] %.y ~holrut]
@@ -1628,7 +1629,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 dm-m-reject %holrut-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+      [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
   ==
 ::
 ++  test-red-l1-l2-reject-l2-2  ^-  tang
@@ -1644,7 +1645,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 lm-reject %rigrut-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+      [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
     ::
     %+  expect-eq
       !>  [[~ ~losred] %.y ~rigrut]
@@ -1653,7 +1654,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 lm-m-reject %rigrut-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+      [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ==
 ::
 ++  test-red-l1-l1-reject-l2-2  ^-  tang
@@ -1669,7 +1670,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 1 rr-reject %holrut-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [[~ ~rigred] %.y ~holrut]
@@ -1678,7 +1679,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-reject %holrut-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
 ::
 ++  test-red-l1-l1-reject-l2-3  ^-  tang
@@ -1694,7 +1695,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 1 rt-reject %holrut-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~radres-tinnyl)
+      [escape.net sponsor.net]:(got:orm points.state ~radres-tinnyl)
     ::
     %+  expect-eq
       !>  [~ %.y ~losrut]
@@ -1703,7 +1704,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rt-m-reject %holrut-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~radres-tinnyl)
+      [escape.net sponsor.net]:(got:orm points.state ~radres-tinnyl)
   ==
 ::
 ::  the following tests L2 %cancel-escape
@@ -1721,7 +1722,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 2 pp-cancel-escape %losrut-pp-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+      [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
     %+  expect-eq
       !>  [~ %.y ~losrut]
@@ -1730,7 +1731,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 pp-m-cancel-escape %losrut-pp-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+      [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
 ::
 ++  test-red-l2-l1-cancel-escape-l2  ^-  tang
@@ -1746,7 +1747,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 2 dm-cancel-escape %holrut-dm-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+      [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
     %+  expect-eq
       !>  [~ %.y ~holrut]
@@ -1755,7 +1756,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 dm-m-cancel-escape %holrut-dm-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+      [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
   ==
 ::
 ++  test-red-l1-l2-cancel-escape-l2  ^-  tang
@@ -1771,7 +1772,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 1 lm-cancel-escape %rigrut-lm-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+      [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
     ::
     %+  expect-eq
       !>  [~ %.y ~rigrut]
@@ -1780,7 +1781,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 lm-m-cancel-escape %rigrut-lm-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+      [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ==
 ::
 ++  test-red-l1-l1-cancel-escape-l2  ^-  tang
@@ -1796,7 +1797,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 1 rr-cancel-escape %holrut-rr-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [~ %.y ~holrut]
@@ -1805,7 +1806,7 @@
       =|  =^state:naive
       =^  f  state  (init-red-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-cancel-escape %holrut-rr-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
 ::
 ::  the following tests L2 %detach. the format test-rut-X-Y-detach means
@@ -1824,7 +1825,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 2 pp-detach %losrut-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+      [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
     %+  expect-eq
       !>  [~ %.n ~losrut]
@@ -1833,7 +1834,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 pp-m-detach %losrut-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
+      [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
 ::
 ++  test-rut-l2-l1-detach-l2-1  ^-  tang
@@ -1849,7 +1850,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 2 rt-detach %losrut-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~radres-tinnyl)
+      [escape.net sponsor.net]:(got:orm points.state ~radres-tinnyl)
     ::
     %+  expect-eq
       !>  [~ %.n ~losrut]
@@ -1858,7 +1859,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rt-m-detach %losrut-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~radres-tinnyl)
+      [escape.net sponsor.net]:(got:orm points.state ~radres-tinnyl)
   ==
 ::
 ++  test-rut-l1-l2-detach-l2-1  ^-  tang
@@ -1874,7 +1875,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 1 dm-detach %holrut-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+      [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
     %+  expect-eq
       !>  [~ %.n ~holrut]
@@ -1883,7 +1884,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 dm-m-detach %holrut-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
+      [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
   ==
 ::
 ++  test-rut-l1-l1-detach-l2-1  ^-  tang
@@ -1899,7 +1900,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 lm-detach %rigrut-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+      [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
     ::
     %+  expect-eq
       !>  [~ %.n ~rigrut]
@@ -1908,7 +1909,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 lm-m-detach %rigrut-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+      [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ==
 ::
 ++  test-rut-l1-l1-detach-l2-2  ^-  tang
@@ -1926,7 +1927,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rr-detach %rigrut-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [~ %.y ~holrut]
@@ -1935,7 +1936,7 @@
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-detach %rigrut-mkey-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
 ::
 ++  test-rut-l1-l1-detach-l2-3  ^-  tang
@@ -1960,7 +1961,7 @@
       =|  =^state:naive
       =^  f  state  (n init-state %bat q:(gen-tx rr-h-detach))
       =^  f  state  (n state %bat q:(gen-tx rr-detach))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [~ %.n ~holrut]
@@ -1968,7 +1969,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (n init-state %bat (tx-list-to-batch rr-detach-batch-1))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [~ %.n ~holrut]
@@ -1977,7 +1978,7 @@
       =|  =^state:naive
       =^  f  state  (n init-state %bat q:(gen-tx rr-h-m-detach))
       =^  f  state  (n state %bat q:(gen-tx rr-m-detach))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [~ %.n ~holrut]
@@ -1985,7 +1986,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (n init-state %bat (tx-list-to-batch rr-detach-batch-2))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 
   ==
 ::
@@ -2000,7 +2001,7 @@
     =^  f  state  (init-red-full state)
     =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
     =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
-    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::
 ::  The following test fails but only because ecliptic.sol only allows
 ::  an adopt when its valid to do so.
@@ -2014,7 +2015,7 @@
 ::      =|  =^state:naive
 ::      =^  f  state  (init-red-full state)
 ::      =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
-::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::
 ++  test-rut-l1-adoption-on-l2-wrong-key-or-nonce
   =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
@@ -2030,7 +2031,7 @@
       =|  =^state:naive
       =^  f  state  (n init-state %bat q:(gen-tx 1 rr-escape %wrong-key))
       =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
     %+  expect-eq
       !>  [~ %.y ~holrut]
@@ -2039,7 +2040,7 @@
       =|  =^state:naive
       =^  f  state  (n init-state %bat q:(gen-tx 999 rr-escape %holrut-rr-key-0))
       =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
-      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
 ::
 ++  test-own-sponsor-l2-escape
@@ -2055,7 +2056,7 @@
     =|  =^state:naive
     =^  f  state  (init-rut-full state)
     =^  f  state  (n state %bat q:(gen-tx 0 rr-escape %holrut-rr-key-0))
-    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::
 ++  test-rut-l1-detach-1
   ::  L1-detach A1 | *   | *   | A1  | A1  | -> | *   | *   | ~   | ~
@@ -2082,7 +2083,7 @@
     =^  f  state  (n state %bat q:(gen-tx 0 rr-escape %holrut-rr-key-0))
     =^  f  state  (n state %bat q:(gen-tx 1 rr-adopt %holrut-key-0))
     =^  f  state  (n state (lost-sponsor:l1 ~rabsum-ravtyd ~holrut))
-    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::
 ++  test-red-l1-detach-2
   ::  this takes a L1 planet with L1 sponsor that acquires a L2 sponsor
@@ -2100,7 +2101,7 @@
     =^  f  state  (init-red-full state)
     =^  f  state  (n state %bat q:(gen-tx 0 lm-adopt %losred-key-0))
     =^  f  state  (n state (lost-sponsor:l1 ~larsyx-mapmeg ~rigrut))
-   [escape.net sponsor.net]:(~(got by points.state) ~larsyx-mapmeg)
+   [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
 ::
 ++  test-rut-l1-detach-3
   ::  L1-detach A1 | *   | *   | A1  | ~   | -> | *   | *   | ~   | ~
@@ -2118,7 +2119,7 @@
     =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~holrut))
     =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~holrut))
     =^  f  state  (n state (lost-sponsor:l1 ~rabsum-ravtyd ~holrut))
-    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::
 ::  This test is commented since ecliptic.sol will not allow a cancel
 ::  if not escaping, so this row of the table cannot be tested here.
@@ -2133,7 +2134,7 @@
 ::      =|  =^state:naive
 ::      =^  f  state  (init-rut-full state)
 ::      =^  f  state  (n state (escape-canceled:l1 ~rabsum-ravtyd ~rigred))
-::      escape.net:(~(got by points.state) ~rabsum-ravtyd)
+::      escape.net:(got:orm points.state ~rabsum-ravtyd)
 ::
 ++  test-rut-l1-cancel-2
   ::  L1-cancel A1 | A1  | *   | *   | *   | -> | ~   | ~   | *   | *
@@ -2145,7 +2146,7 @@
     =^  f  state  (init-rut-full state)
     =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
     =^  f  state  (n state (escape-canceled:l1 ~rabsum-ravtyd ~rigred))
-    escape.net:(~(got by points.state) ~rabsum-ravtyd)
+    escape.net:(got:orm points.state ~rabsum-ravtyd)
 ::
 ++  test-rut-l1-adopt-1
   ::  L1-adopt  A1 | A1  | *   | *   | *   | -> | ~   | ~   | A1  | A2
@@ -2157,7 +2158,7 @@
     =^  f  state  (init-rut-full state)
     =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
     =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
-    [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+    [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::
 ::  These commented out tests fail, but it is because L1 adopt is only
 ::  accepted if the ecliptic.sol allows it. So these rows of the table
@@ -2172,7 +2173,7 @@
 ::      =|  =^state:naive
 ::      =^  f  state  (init-rut-full state)
 ::      =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
-::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::  ::
 ::  ++  test-rut-l1-adopt-3
 ::    :: L1-adopt  A1 | A2  | *   | *   | *   | -> !! :: no adopt if not escaping
@@ -2184,17 +2185,17 @@
 ::      =^  f  state  (init-rut-full state)
 ::      =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigrut))
 ::      =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
-::      [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
+::      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::
 ++  test-marbud-l2-change-keys-whole-state  ^-  tang
   =/  new-keys       [%configure-keys encr auth suit |]
   =|  =^state:naive
   =^  f  state  (init-marbud state)
-  =/  marbud-point  (~(got by points.state) ~marbud)
+  =/  marbud-point  (got:orm points.state ~marbud)
   =/  new-marbud  marbud-point(keys.net [1 suit auth encr], nonce.owner.own 1)
   ::
   %+  expect-eq
-    !>  state(points (~(put by points.state) ~marbud new-marbud))
+    !>  state(points (put:orm points.state ~marbud new-marbud))
   ::
     !>
     =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-0))
@@ -2225,7 +2226,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-marbud state)
-    dominion:(~(got by points.state) ~marbud)
+    dominion:(got:orm points.state ~marbud)
 ::
 ++  test-transfer-batch  ^-  tang
   =/  marbud-transfer    [0 [marbud-own %transfer-point (addr %marbud-key-0) |] %marbud-key-0]
@@ -2243,7 +2244,7 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx marbud-transfer))
       =^  f  state  (n state %bat q:(gen-tx marbud-transfer-2))
-      owner.own:(~(got by points.state) ~marbud)
+      owner.own:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
       !>  [(addr %marbud-key-1) 2]
@@ -2252,7 +2253,7 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat (tx-list-to-batch marbud-batch))
-      owner.own:(~(got by points.state) ~marbud)
+      owner.own:(got:orm points.state ~marbud)
   ==
 ::
 ++  test-l1-changed-spawn-proxy  ^-  tang
@@ -2263,7 +2264,7 @@
     =|  =^state:naive
     =^  f  state  (init-bud state)
     =^  f  state  (n state (changed-spawn-proxy:l1 ~bud (addr %bud-skey)))
-    spawn-proxy.own:(~(got by points.state) ~bud)
+    spawn-proxy.own:(got:orm points.state ~bud)
 ::
 ++  test-l1-changed-transfer-proxy  ^-  tang
   %+  expect-eq
@@ -2273,7 +2274,7 @@
     =|  =^state:naive
     =^  f  state  (init-bud state)
     =^  f  state  (n state (changed-transfer-proxy:l1 ~bud (addr %bud-key-1)))
-    transfer-proxy.own:(~(got by points.state) ~bud)
+    transfer-proxy.own:(got:orm points.state ~bud)
 ::
 ++  test-l1-changed-management-proxy  ^-  tang
   %+  expect-eq
@@ -2283,7 +2284,7 @@
     =|  =^state:naive
     =^  f  state  (init-bud state)
     =^  f  state  (n state (changed-management-proxy:l1 ~bud (addr %bud-mkey)))
-    management-proxy.own:(~(got by points.state) ~bud)
+    management-proxy.own:(got:orm points.state ~bud)
 ::
 ++  test-l1-changed-voting-proxy  ^-  tang
   %+  expect-eq
@@ -2293,7 +2294,7 @@
     =|  =^state:naive
     =^  f  state  (init-bud state)
     =^  f  state  (n state (changed-voting-proxy:l1 ~bud (addr %bud-vkey)))
-    voting-proxy.own:(~(got by points.state) ~bud)
+    voting-proxy.own:(got:orm points.state ~bud)
 ::
 ++  test-l1-changed-keys  ^-  tang
   =/  life          1
@@ -2306,7 +2307,7 @@
     =|  =^state:naive
     =^  f  state  (init-bud state)
     =^  f  state  (n state (changed-keys:l1 new-keys))
-    |1:keys.net:(~(got by points.state) ~bud)
+    |1:keys.net:(got:orm points.state ~bud)
 ::
 ++  test-l1-star-escape-requested  ^-  tang
   %+  expect-eq
@@ -2317,7 +2318,7 @@
     =^  f  state  (init-wes state)
     =^  f  state  (init-sambud state)
     =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
-    escape.net:(~(got by points.state) ~sambud)
+    escape.net:(got:orm points.state ~sambud)
 ::
 ++  test-l1-star-escape-canceled  ^-  tang
   %+  expect-eq
@@ -2329,7 +2330,7 @@
     =^  f  state  (init-sambud state)
     =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
     =^  f  state  (n state (escape-canceled:l1 ~sambud ~wes))
-    escape.net:(~(got by points.state) ~sambud)
+    escape.net:(got:orm points.state ~sambud)
 ::
 ++  test-l1-star-adopt-accept  ^-  tang
   %+  expect-eq
@@ -2341,7 +2342,7 @@
     =^  f  state  (init-sambud state)
     =^  f  state  (n state (escape-requested:l1 ~sambud ~wes))
     =^  f  state  (n state (escape-accepted:l1 ~sambud ~wes))
-    [escape.net sponsor.net]:(~(got by points.state) ~sambud)
+    [escape.net sponsor.net]:(got:orm points.state ~sambud)
 ::
 ++  test-l1-star-lost-sponsor  ^-  tang
   %+  expect-eq
@@ -2351,7 +2352,7 @@
     =|  =^state:naive
     =^  f  state  (init-sambud state)
     =^  f  state  (n state (lost-sponsor:l1 ~sambud ~bud))
-    [escape.net sponsor.net]:(~(got by points.state) ~sambud)
+    [escape.net sponsor.net]:(got:orm points.state ~sambud)
 ::
 ++  test-l2-set-spawn-proxy  ^-  tang
   =/  marbud-sproxy  [marbud-own %set-spawn-proxy (addr %marbud-skey)]
@@ -2363,7 +2364,7 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
-    spawn-proxy.own:(~(got by points.state) ~marbud)
+    spawn-proxy.own:(got:orm points.state ~marbud)
 ::
 ++  test-l2-set-transfer-proxy  ^-  tang
   =/  marbud-tproxy  [marbud-own %set-transfer-proxy (addr %marbud-tkey)]
@@ -2375,7 +2376,7 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (n state %bat q:(gen-tx 0 marbud-tproxy %marbud-key-0))
-    transfer-proxy.own:(~(got by points.state) ~marbud)
+    transfer-proxy.own:(got:orm points.state ~marbud)
 ::
 ++  test-l2-set-management-proxy  ^-  tang
   =/  marbud-mproxy  [marbud-own %set-management-proxy (addr %marbud-mkey)]
@@ -2387,7 +2388,7 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (n state %bat q:(gen-tx 0 marbud-mproxy %marbud-key-0))
-    management-proxy.own:(~(got by points.state) ~marbud)
+    management-proxy.own:(got:orm points.state ~marbud)
 ::
 ++  test-l2-dopbud-spawn-proxy-deposit  ^-  tang
   %+  expect-eq
@@ -2396,7 +2397,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
-    dominion:(~(got by points.state) ~dopbud)
+    dominion:(got:orm points.state ~dopbud)
 ::
 ++  test-l2-sambud-spawn-proxy-predeposit  ^-  tang
   %+  expect-eq
@@ -2407,7 +2408,7 @@
     =^  f  state  (init-sambud state)
     =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey)))
     =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
-    spawn-proxy.own:(~(got by points.state) ~sambud)
+    spawn-proxy.own:(got:orm points.state ~sambud)
 ::
 ++  test-l2-sambud-own-spawn-proxy-postdeposit  ^-  tang
   =/  sambud-sproxy  [[~sambud %own] %set-spawn-proxy (addr %sambud-skey-0)]
@@ -2419,7 +2420,7 @@
     =^  f  state  (init-sambud state)
     =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
     =^  f  state  (n state %bat q:(gen-tx 0 sambud-sproxy %sambud-key-0))
-    spawn-proxy.own:(~(got by points.state) ~sambud)
+    spawn-proxy.own:(got:orm points.state ~sambud)
 ::
 ++  test-l2-sambud-spawn-spawn-proxy-postdeposit  ^-  tang
   =/  sambud-sproxy  [[~sambud %spawn] %set-spawn-proxy (addr %sambud-skey-1)]
@@ -2432,7 +2433,7 @@
     =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey-0)))
     =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
     =^  f  state  (n state %bat q:(gen-tx 0 sambud-sproxy %sambud-skey-0))
-    spawn-proxy.own:(~(got by points.state) ~sambud)
+    spawn-proxy.own:(got:orm points.state ~sambud)
 ::
 ++  test-l2-sambud-spawn-proxy-predeposit-spawn  ^-  tang
   =/  l2-sproxy  [[~sambud %spawn] %set-spawn-proxy (addr %sambud-skey-1)]
@@ -2447,7 +2448,7 @@
       =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud (addr %sambud-skey-0)))
       =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
       =^  f  state  (n state %bat q:(gen-tx 0 lf-spawn %sambud-skey-0))
-      transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
+      transfer-proxy.own:(got:orm points.state ~lisdur-fodrys)
     ::
     %+  expect-eq
       !>  [`@ux`(addr %lf-key-0) 0]
@@ -2459,7 +2460,7 @@
       =^  f  state  (n state (changed-spawn-proxy:l1 ~sambud deposit-address:naive))
       =^  f  state  (n state %bat q:(gen-tx 0 l2-sproxy %sambud-skey-0))
       =^  f  state  (n state %bat q:(gen-tx 1 lf-spawn %sambud-skey-1))
-      transfer-proxy.own:(~(got by points.state) ~lisdur-fodrys)
+      transfer-proxy.own:(got:orm points.state ~lisdur-fodrys)
   ==
 ++  test-linnup-torsyx-spawn  ^-  tang
   :: try to spawn a L2 planet with a L2 planet
@@ -2473,9 +2474,9 @@
   =^  f  state  (init-litbud state)
   =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
   =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
-  =/  lt-point  (~(got by points.state) ~linnup-torsyx)
+  =/  lt-point  (got:orm points.state ~linnup-torsyx)
   =/  new-lt  lt-point(nonce.owner.own 1)
-  =/  no-op-state  state(points (~(put by points.state) ~linnup-torsyx new-lt))
+  =/  no-op-state  state(points (put:orm points.state ~linnup-torsyx new-lt))
   ::
   %+  expect-eq
     !>  no-op-state
@@ -2499,7 +2500,7 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own lt-spawn] %marbud-key-0))
-      transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+      transfer-proxy.own:(got:orm points.state ~linnup-torsyx)
     ::
     %+  expect-eq
     ::  Tests l2 spawning with spawn proxy
@@ -2510,7 +2511,7 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx marbud-sproxy))
       =^  f  state  (n state %bat q:(gen-tx 0 [marbud-spn lt-spawn] %marbud-skey))
-      transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+      transfer-proxy.own:(got:orm points.state ~linnup-torsyx)
     ::
     %+  expect-eq
     ::  Tests l2 spawning with spawn proxy as a batch
@@ -2520,7 +2521,7 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat (tx-list-to-batch spawn-batch))
-      transfer-proxy.own:(~(got by points.state) ~linnup-torsyx)
+      transfer-proxy.own:(got:orm points.state ~linnup-torsyx)
   ==
 ::
 ++  test-marbud-l2-double-spawn  ^-  tang
@@ -2532,9 +2533,9 @@
   =^  f  state  (init-marbud state)
   =^  f  state  (n state %bat q:(gen-tx 0 marbud-sproxy %marbud-key-0))
   =^  f  state  (n state %bat q:(gen-tx 1 lt-spawn-0 %marbud-key-0))
-  =/  marbud-point  (~(got by points.state) ~marbud)
+  =/  marbud-point  (got:orm points.state ~marbud)
   =/  new-marbud  marbud-point(nonce.spawn-proxy.own 1)
-  =/  no-op-state  state(points (~(put by points.state) ~marbud new-marbud))
+  =/  no-op-state  state(points (put:orm points.state ~marbud new-marbud))
   ::
   %+  expect-eq
     !>  no-op-state
@@ -2555,7 +2556,7 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx 0 [marbud-own new-keys] %marbud-key-0))
-      |1:keys.net:(~(got by points.state) ~marbud)
+      |1:keys.net:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
       !>  [suit auth encr]
@@ -2565,7 +2566,7 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx 0 marbud-mproxy %marbud-key-0))
       =^  f  state  (n state %bat q:(gen-tx 0 [marbud-mgt new-keys] %marbud-mkey))
-      |1:keys.net:(~(got by points.state) ~marbud)
+      |1:keys.net:(got:orm points.state ~marbud)
     ::
   ==
 ::
@@ -2605,7 +2606,7 @@
       =^  f  state  (n state %bat q:(gen-tx marbud-tproxy))
       =^  f  state  (n state %bat q:(gen-tx marbud-xfr-breach))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
-      own:(~(got by points.state) ~marbud)
+      own:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  batch version
@@ -2623,7 +2624,7 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat (tx-list-to-batch test1))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
-      own:(~(got by points.state) ~marbud)
+      own:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  Tests that networking keys are reset on transfer with breach
@@ -2635,7 +2636,7 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx marbud-new-keys))
       =^  f  state  (n state %bat q:(gen-tx marbud-transfer-breach))
-      |1:keys.net:(~(got by points.state) ~marbud)
+      |1:keys.net:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  batch version
@@ -2646,7 +2647,7 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat (tx-list-to-batch test2))
-      |1:keys.net:(~(got by points.state) ~marbud)
+      |1:keys.net:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  Tests that proxies are not reset when transfering without breach
@@ -2666,7 +2667,7 @@
       =^  f  state  (n state %bat q:(gen-tx marbud-tproxy))
       =^  f  state  (n state %bat q:(gen-tx marbud-xfr-no-breach))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
-      own:(~(got by points.state) ~marbud)
+      own:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  batch version
@@ -2683,7 +2684,7 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat (tx-list-to-batch test3))
       ^-  [[@ @] [@ @] [@ @] [@ @] [@ @]]
-      own:(~(got by points.state) ~marbud)
+      own:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  Tests that networking keys are not reset when transfering without breach
@@ -2695,7 +2696,7 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx marbud-new-keys))
       =^  f  state  (n state %bat q:(gen-tx marbud-transfer-no-breach))
-      |1:keys.net:(~(got by points.state) ~marbud)
+      |1:keys.net:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  batch version
@@ -2706,7 +2707,7 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat (tx-list-to-batch test4))
-      |1:keys.net:(~(got by points.state) ~marbud)
+      |1:keys.net:(got:orm points.state ~marbud)
   ==
 ::
 :: TODO: life+rift changes via transfer proxy
@@ -2730,7 +2731,7 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx 0 new-keys-no-reset %marbud-key-0))
       =^  f  state  (n state %bat q:(gen-tx 1 new-keys-no-reset %marbud-key-0))
-      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+      [rift.net life.keys.net]:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  breach=%.y
@@ -2740,7 +2741,7 @@
       =|  =^state:naive
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx 0 new-keys-yes-reset %marbud-key-0))
-      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+      [rift.net life.keys.net]:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  networking keys set incremenets life, reset=%.y
@@ -2754,7 +2755,7 @@
       =^  f  state  (n state %bat q:(gen-tx 0 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
       =^  f  state  (n state %bat q:(gen-tx 1 zero-keys-no-reset %marbud-key-0)) :: inc life
       =^  f  state  (n state %bat q:(gen-tx 2 zero-keys-yes-reset %marbud-key-0)) :: inc rift
-      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+      [rift.net life.keys.net]:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  Keep the same keys while breaching via %configure-keys
@@ -2766,7 +2767,7 @@
       =^  f  state  (init-marbud state)
       =^  f  state  (n state %bat q:(gen-tx 0 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
       =^  f  state  (n state %bat q:(gen-tx 1 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
-      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+      [rift.net life.keys.net]:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::
@@ -2778,7 +2779,7 @@
       =^  f  state  (n state %bat q:(gen-tx 0 new-keys-no-reset %marbud-key-0))
       =^  f  state  (n state %bat q:(gen-tx 1 marbud-transfer-no-breach %marbud-key-0))
       =^  f  state  (n state %bat q:(gen-tx 2 zero-keys-yes-reset %marbud-key-1))
-      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+      [rift.net life.keys.net]:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  set networking keys, then transfer and set networking keys with breach
@@ -2791,7 +2792,7 @@
       =^  f  state  (n state %bat q:(gen-tx 0 new-keys-no-reset %marbud-key-0)) :: inc life
       =^  f  state  (n state %bat q:(gen-tx 1 marbud-transfer-yes-breach %marbud-key-0)) :: inc life and rift
       =^  f  state  (n state %bat q:(gen-tx 2 new-keys-no-reset %marbud-key-1)) ::inc life
-      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+      [rift.net life.keys.net]:(got:orm points.state ~marbud)
     ::
     %+  expect-eq
     ::  networking keys set incremenets life, reset=%.y
@@ -2805,7 +2806,7 @@
       =^  f  state  (n state %bat q:(gen-tx 0 new-keys-yes-reset %marbud-key-0)) :: inc life and rift
       =^  f  state  (n state %bat q:(gen-tx 1 zero-keys-no-reset %marbud-key-0)) :: inc life
       =^  f  state  (n state %bat q:(gen-tx 2 marbud-transfer-yes-breach %marbud-key-0)) :: inc rift
-      [rift.net life.keys.net]:(~(got by points.state) ~marbud)
+      [rift.net life.keys.net]:(got:orm points.state ~marbud)
     ::
  ==
 ::
@@ -2819,7 +2820,7 @@
     =|  =^state:naive
     =^  f  state  (init-dopbud state)
     =^  f  state  (n state %bat q:(gen-tx 0 pp-spawn %dopbud-key-0))
-    transfer-proxy.own:(~(got by points.state) ~palsep-picdun)
+    transfer-proxy.own:(got:orm points.state ~palsep-picdun)
 ::
 ++  test-dopbud-l2-spawn-after-transfer  ^-  tang
   =/  pp-spawn        [dopbud-own %spawn ~palsep-picdun (addr %pp-key-0)]
@@ -2834,7 +2835,7 @@
     =^  f  state  (n state %bat q:(gen-tx 0 pp-spawn %dopbud-key-0))
     =^  f  state  (n state (owner-changed:l1 ~dopbud (addr %dopbud-key-1)))
     =^  f  state  (n state %bat q:(gen-tx 1 lr-spawn %dopbud-key-1))
-    transfer-proxy.own:(~(got by points.state) ~laclur-rachul)
+    transfer-proxy.own:(got:orm points.state ~laclur-rachul)
 ::
 ++  test-linnup-torsyx-l2-transfer-ownership  ^-  tang
   =/  lt-spawn                [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
@@ -2848,7 +2849,7 @@
     =^  f  state  (init-marbud state)
     =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
     =^  f  state  (n state %bat q:(gen-tx 0 [lt-xfr lt-transfer-yes-breach] %lt-key-0))
-    owner.own:(~(got by points.state) ~linnup-torsyx)
+    owner.own:(got:orm points.state ~linnup-torsyx)
 ::
 ++  test-palsep-picdun-l2-transfer-ownership  ^-  tang
   =/  pp-xfr                  [~palsep-picdun %transfer]
@@ -2862,7 +2863,7 @@
     =^  f  state  (init-dopbud state)
     =^  f  state  (n state %bat q:(gen-tx 0 pp-spawn %dopbud-key-0))
     =^  f  state  (n state %bat q:(gen-tx 0 pp-transfer-yes-breach %pp-key-0))
-    owner.own:(~(got by points.state) ~palsep-picdun)
+    owner.own:(got:orm points.state ~palsep-picdun)
 ::
 ++  test-linnup-torsyx-l2-escape-request  ^-  tang
   =/  lt-spawn                   [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
@@ -2878,7 +2879,7 @@
     =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
     =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
     =^  f  state  (n state %bat q:(gen-tx 0 [lt-own [%escape ~litbud]] %lt-key-0))
-    escape.net:(~(got by points.state) ~linnup-torsyx)
+    escape.net:(got:orm points.state ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-cancel-escape-request  ^-  tang
   =/  lt-spawn                   [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
@@ -2895,7 +2896,7 @@
     =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
     =^  f  state  (n state %bat q:(gen-tx 0 [lt-own [%escape ~litbud]] %lt-key-0))
     =^  f  state  (n state %bat q:(gen-tx 1 [lt-own [%cancel-escape ~litbud]] %lt-key-0))
-    escape.net:(~(got by points.state) ~linnup-torsyx)
+    escape.net:(got:orm points.state ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-adopt-accept  ^-  tang
   =/  lt-spawn                  [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
@@ -2912,7 +2913,7 @@
     =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
     =^  f  state  (n state %bat q:(gen-tx 0 [lt-own [%escape ~litbud]] %lt-key-0))
     =^  f  state  (n state %bat q:(gen-tx 0 [litbud-own [%adopt ~linnup-torsyx]] %litbud-key-0))
-    [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
+    [escape.net sponsor.net]:(got:orm points.state ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-adopt-reject  ^-  tang
   =/  lt-spawn                  [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
@@ -2929,7 +2930,7 @@
     =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
     =^  f  state  (n state %bat q:(gen-tx 0 [lt-own [%escape ~litbud]] %lt-key-0))
     =^  f  state  (n state %bat q:(gen-tx 0 [litbud-own [%reject ~linnup-torsyx]] %litbud-key-0))
-    escape.net:(~(got by points.state) ~linnup-torsyx)
+    escape.net:(got:orm points.state ~linnup-torsyx)
 ::
 ++  test-linnup-torsyx-l2-detach  ^-  tang
   =/  lt-spawn                  [marbud-own %spawn ~linnup-torsyx (addr %lt-key-0)]
@@ -2945,7 +2946,7 @@
     =^  f  state  (n state %bat q:(gen-tx 0 lt-spawn %marbud-key-0))
     =^  f  state  (n state %bat q:(gen-tx 0 lt-transfer-yes-breach %lt-key-0))
     =^  f  state  (n state %bat q:(gen-tx 1 [marbud-own [%detach ~linnup-torsyx]] %marbud-key-0))
-    [escape.net sponsor.net]:(~(got by points.state) ~linnup-torsyx)
+    [escape.net sponsor.net]:(got:orm points.state ~linnup-torsyx)
 ::
 ::  Fuzz tests. These just feed the L2 contract various forms of garbage. None of them
 ::  should alter the state of the PKI.
@@ -3189,7 +3190,7 @@
     =|  =^state:naive
     =^  f  state  (init-zod state)
     =^  f  state  (n state %bat q:(gen-tx 0 bz-spawn %zod-skey-0))
-    transfer-proxy.own:(~(got by points.state) ~binzod)
+    transfer-proxy.own:(got:orm points.state ~binzod)
 ::
 ++  test-zod-spawn-proxy
   =/  bz-spawn        [[~zod %spawn] %spawn ~binzod (addr %binzod-key-0)]
@@ -3201,7 +3202,7 @@
     =|  =^state:naive
     =^  f  state  (init-zod state)
     =^  f  state  (n state %bat q:(gen-tx 0 bz-spawn %zod-skey-0))
-    transfer-proxy.own:(~(got by points.state) ~binzod)
+    transfer-proxy.own:(got:orm points.state ~binzod)
 ::
 ++  test-dopzod-spawn
   =/  tm-spawn        [[~dopzod %own] %spawn ~tasben-monbur (addr %tm)]
@@ -3213,7 +3214,7 @@
     =|  =^state:naive
     =^  f  state  (init-zod state)
     =^  f  state  (n state %bat q:(gen-tx 0 tm-spawn %dopzod-key-0))
-    transfer-proxy.own:(~(got by points.state) ~tasben-monbur)
+    transfer-proxy.own:(got:orm points.state ~tasben-monbur)
 ::
 ++  test-address-padding
   ::  tells ~dopzod to spawn ~tasben-monbur at 0x00000000001111111111
@@ -3236,7 +3237,7 @@
     =|  =^state:naive
     =^  f  state  (init-zod state)
     =^  f  state  (n state %bat q:signed-tx)
-    transfer-proxy.own:(~(got by points.state) ~tasben-monbur)
+    transfer-proxy.own:(got:orm points.state ~tasben-monbur)
 ::
 ::  TODO: L1 tests with leading zeroes. in particular, changing
 ::  keys uses data.log, so keys with leading zeroes might run into
@@ -3257,7 +3258,7 @@
     =|  =^state:naive
     =^  f  state  (init-marbud state)
     =^  f  state  (n state %bat (tx-list-to-batch txs))
-    owner.own:(~(got by points.state) ~marbud)
+    owner.own:(got:orm points.state ~marbud)
 ::
 ++  test-changed-dns
   ::  uses actual data from ETH transaction
@@ -3370,5 +3371,5 @@
 ::        %^  n  state  %bat
 ::        q:(transfer-point:l2 0 ~marbud %marbud-key-0 meta-owner %own &)
 ::      =^  f  state  (n state %bat (cat 3 sig tx))
-::      transfer-proxy.own:(~(got by points.state) ~marbud)
+::      transfer-proxy.own:(got:orm points.state ~marbud)
 --
