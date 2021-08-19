@@ -8,6 +8,7 @@ const Settings = () => {
 
   const changeProvider = () => {
     api.btcWalletCommand({ 'set-provider': null });
+    window.location.reload();
   };
 
   const replaceWallet = () => {
