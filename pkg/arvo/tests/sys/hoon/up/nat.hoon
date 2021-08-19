@@ -1,6 +1,6 @@
 /+  *test
 ::
-=/  nat  nat:(up @ @t)
+=/  nat  (nat:up @t)
 =/  pr  (gas:nat ~ ~[[1 0 'A'] [2 0 'B'] [3 0 'C'] [4 0 'D']])
 =/  qr
   %+  gas:nat  ~

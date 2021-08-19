@@ -1,11 +1,10 @@
 /+  *test
 ::
-=/  ord  ord:(up @ @t)
+=/  ord  (ord:up @ @t)
 =/  pr  (gas:ord ~ ~[[1 0 'A'] [2 0 'B'] [3 0 'C'] [4 0 'D']])
 =/  qr
   %+  gas:ord  ~
   ~[[1 3 'A'] [2 2 'B'] [3 1 'C'] [4 1 'D'] [5 10 'E'] [6 0 'F']]
-=+  deb:ord
 |%
 ++  test-balance-errors  ^-  tang
   =/  node  [[0 0 'a'] ~ 0 ~]
