@@ -2457,7 +2457,7 @@
   ::
   ++  nat
     ~/  %nat
-    |*  [k=mold v=mold]
+    |*  v=mold
     =>
     ::  molds
     ::
@@ -2633,7 +2633,7 @@
       ++  min                                           ::  lowest-pri element
         ~/  %min
         |=  a=pri
-        ^-  (unit (trel k @ v))
+        ^-  (unit (trel @ @ v))
         ?~  a  ~
         %-  some
         ?-  -.a
@@ -3041,7 +3041,7 @@
 ++  pry                                                 ::  psq
   |*  [k=mold v=mold]
   |=  a=*
-  =/  cor  (nat:up k v)
+  =/  cor  (ord:up k v)
   =/  b  ;;(pri:cor a)
   ?>  (apt:cor b)
   b
