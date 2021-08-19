@@ -36,9 +36,9 @@ export enum feeLevels {
 }
 
 export enum signMethods {
-  bridge,
-  masterTicket,
-  external,
+  bridge = 'bridge',
+  masterTicket = 'masterTicket',
+  external = 'external',
 }
 
 enum payeeTypes {
