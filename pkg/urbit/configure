@@ -113,10 +113,6 @@ case $(tr A-Z a-z <<< $os) in
 
      deps="${deps/sigsegv}"
      compat="${compat-} mingw"
-
-     # XX integrate into pmnsh
-     PKG_CONFIG_PATH="${PKG_CONFIG_PATH-}:../urcrypt:$nixpath/${hdeps[secp256k1]}-secp256k1"
-     echo "setting PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
      ;;
   m1brew)
      # ensure required packages are installed
