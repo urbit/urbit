@@ -1,23 +1,30 @@
 import fuzzy from 'fuzzy';
+import create from 'zustand';
+import produce from 'immer';
+import { useCallback } from 'react';
 import { omit } from 'lodash-es';
-import { queryClient } from '../app';
 import api from './api';
-import { Treaty, Dockets, Docket, Provider } from './docket-types';
-import { providers, treaties } from './mock-data';
+import { Treaty, Dockets, Docket, Provider, Treaties, Providers } from './docket-types';
+import { mockProviders, mockTreaties } from './mock-data';
 
 const useMockData = import.meta.env.MODE === 'mock';
 
-function makeKeyFn(key: string) {
-  return (childKeys: string[] = []) => {
-    return [key].concat(childKeys);
-  };
+interface ChargesResponse {
+  initial: Dockets;
 }
 
-export const chargesKey = makeKeyFn('charges');
-
-export const providersKey = makeKeyFn('providers');
-
-export const treatyKey = makeKeyFn('treaty');
+interface DocketState {
+  charges: Dockets;
+  treaties: Treaties;
+  providers: Providers;
+  fetchCharges: () => Promise<void>;
+  requestTreaty: (ship: string, desk: string) => Promise<Treaty>;
+  fetchProviders: (query?: string) => Promise<Provider[]>;
+  fetchProviderTreaties: (provider: string) => Promise<Treaty[]>;
+  toggleDocket: (desk: string) => Promise<void>;
+  installDocket: (ship: string, desk: string) => Promise<number | void>;
+  uninstallDocket: (desk: string) => Promise<number | void>;
+}
 
 async function fakeRequest<T>(data: T, time = 300): Promise<T> {
   return new Promise((resolve) => {
@@ -29,91 +36,118 @@ async function fakeRequest<T>(data: T, time = 300): Promise<T> {
 
 const stableTreatyMap = new Map<string, Treaty[]>();
 
-interface ChargesResponse {
-  initial: Dockets;
-}
+const useDocketState = create<DocketState>((set, get) => ({
+  fetchCharges: async () => {
+    const dockets = useMockData
+      ? await fakeRequest(mockTreaties)
+      : ((await (await fetch('/~/scry/docket/charges.json')).json()) as ChargesResponse).initial;
 
-export async function fetchCharges(): Promise<Dockets> {
-  const charges = queryClient.getQueryData<Dockets>(chargesKey());
-  if (useMockData && charges) {
-    return charges;
-  }
+    const charges = Object.entries(dockets).reduce((obj: Dockets, [key, value]) => {
+      // eslint-disable-next-line no-param-reassign
+      obj[key] = normalizeDocket(value);
+      return obj;
+    }, {});
 
-  const dockets = useMockData
-    ? await fakeRequest(treaties)
-    : ((await (await fetch('/~/scry/docket/charges.json')).json()) as ChargesResponse).initial;
+    set({ charges });
+  },
+  fetchProviders: async (query?: string) => {
+    const providers = Object.values(mockProviders);
+    const searchTexts = providers.map((p) => p.shipName + (p.nickname || ''));
+    return fakeRequest(fuzzy.filter(query || '', searchTexts).map((el) => providers[el.index]));
+  },
+  fetchProviderTreaties: async (provider: string) => {
+    const { treaties, providers } = get();
+    const dev = providers[provider];
+    const treatyList = Object.values(treaties).map((treaty) => normalizeDocket(treaty));
 
-  return Object.entries(dockets).reduce((obj: Dockets, [key, value]) => {
-    // eslint-disable-next-line no-param-reassign
-    obj[key] = normalizeDocket(value);
-    return obj;
-  }, {});
-}
-
-export async function fetchProviders(query?: string): Promise<Provider[]> {
-  const searchTexts = providers.map((p) => p.shipName + (p.nickname || ''));
-  return fakeRequest(fuzzy.filter(query || '', searchTexts).map((el) => providers[el.index]));
-}
-
-export async function fetchProviderTreaties(provider: string): Promise<Treaty[]> {
-  const treatyList = Object.values(treaties).map(normalizeDocket);
-
-  if (!stableTreatyMap.has(provider)) {
-    stableTreatyMap.set(
-      provider,
-      treatyList.filter(() => !!Math.round(Math.random()))
-    );
-  }
-
-  return fakeRequest(stableTreatyMap.get(provider) || []);
-}
-
-export async function requestTreaty(ship: string, desk: string): Promise<Treaty> {
-  if (useMockData) {
-    return fakeRequest(treaties[desk]);
-  }
-
-  const key = `${ship}/${desk}`;
-  const result = await api.subscribeOnce('docket', `/treaty/${key}`, 20000);
-  return { ...normalizeDocket(result), ship, desk };
-}
-
-export async function installDocket(ship: string, desk: string): Promise<number | void> {
-  if (useMockData) {
-    const docket = normalizeDocket(await requestTreaty(ship, desk));
-    const charges = await queryClient.fetchQuery(chargesKey(), fetchCharges);
-    addCharge(charges, { desk, docket });
-  }
-
-  return api.poke({
-    app: 'hood',
-    mark: 'kiln-install',
-    json: {
-      ship,
-      desk,
-      local: desk
+    if (dev.treaties) {
+      return dev.treaties.map((key) => treaties[key]);
     }
-  });
-}
 
-export async function uninstallDocket(desk: string): Promise<number | void> {
-  if (useMockData) {
-    const charges = await queryClient.fetchQuery(chargesKey(), fetchCharges);
-    delCharge(charges, desk);
-  }
+    if (!stableTreatyMap.has(provider)) {
+      stableTreatyMap.set(
+        provider,
+        treatyList.filter(() => !!Math.round(Math.random()))
+      );
+    }
 
-  return api.poke({
-    app: 'docket',
-    mark: 'docket-uninstall',
-    json: desk
-  });
-}
+    const providerTreaties = stableTreatyMap.get(provider) || [];
 
-export async function toggleDocket(desk: string): Promise<void> {
-  const charges = await queryClient.fetchQuery(chargesKey(), fetchCharges);
-  const docket = (charges || {})[desk];
-  docket.status = docket.status === 'active' ? 'suspended' : 'active';
-}
+    set(
+      produce((draft: DocketState) => {
+        if (!draft.providers[provider].treaties) {
+          draft.providers[provider].treaties = [];
+        }
+
+        providerTreaties.forEach((treaty) => {
+          const key = `${provider}/${treaty.desk}`;
+          draft.treaties[key] = treaty;
+          draft.providers[provider].treaties?.push(treaty.desk);
+        });
+      })
+    );
+
+    return fakeRequest(providerTreaties);
+  },
+  requestTreaty: async (ship: string, desk: string) => {
+    const { treaties } = get();
+    if (useMockData) {
+      set({ treaties: await fakeRequest(treaties) });
+      return treaties[desk];
+    }
+
+    const key = `${ship}/${desk}`;
+    if (key in treaties) {
+      return treaties[key];
+    }
+
+    const result = await api.subscribeOnce('docket', `/treaty/${key}`, 20000);
+    const treaty = { ...normalizeDocket(result), ship, desk };
+    set((state) => ({
+      treaties: { ...state.treaties, [key]: treaty }
+    }));
+    return treaty;
+  },
+  installDocket: async (ship: string, desk: string) => {
+    if (useMockData) {
+      const docket = normalizeDocket(await get().requestTreaty(ship, desk));
+      set((state) => addCharge(state, { desk, docket }));
+    }
+
+    return api.poke({
+      app: 'hood',
+      mark: 'kiln-install',
+      json: {
+        ship,
+        desk,
+        local: desk
+      }
+    });
+  },
+  uninstallDocket: async (desk: string) => {
+    if (useMockData) {
+      set((state) => delCharge(state, desk));
+    }
+
+    return api.poke({
+      app: 'docket',
+      mark: 'docket-uninstall',
+      json: desk
+    });
+  },
+  toggleDocket: async (desk: string) => {
+    set(
+      produce((draft) => {
+        const docket = draft.charges[desk];
+        docket.status = docket.status === 'active' ? 'suspended' : 'active';
+      })
+    );
+  },
+  treaties: useMockData ? mockTreaties : {},
+  charges: {},
+  providers: useMockData ? mockProviders : {},
+  set
+}));
 
 function normalizeDocket<T extends Docket>(docket: T): T {
   return {
@@ -136,46 +170,49 @@ interface DelDockEvent {
 
 type DocketEvent = AddDockEvent | DelDockEvent;
 
-function addCharge(charges: Dockets | undefined, { desk, docket }: AddDockEvent['add-dock']) {
-  queryClient.setQueryData(chargesKey(), { ...charges, [desk]: docket });
+function addCharge(state: DocketState, { desk, docket }: AddDockEvent['add-dock']) {
+  return { charges: { ...state.charges, [desk]: docket } };
 }
 
-function delCharge(charges: Dockets | undefined, desk: DelDockEvent['del-dock']) {
-  queryClient.setQueryData(chargesKey(), omit(charges, desk));
+function delCharge(state: DocketState, desk: DelDockEvent['del-dock']) {
+  return { charges: omit(state.charges, desk) };
 }
 
 api.subscribe({
   app: 'docket',
   path: '/charges',
-  event: (data: DocketEvent): void => {
-    const charges = queryClient.getQueryData<Dockets>(chargesKey());
-    console.log(data);
+  event: (data: DocketEvent) => {
+    useDocketState.setState((state) => {
+      console.log(data);
 
-    if ('add-dock' in data) {
-      addCharge(charges, data['add-dock']);
-    }
+      if ('add-dock' in data) {
+        return addCharge(state, data['add-dock']);
+      }
 
-    if ('del-dock' in data) {
-      delCharge(charges, data['del-dock']);
-    }
+      if ('del-dock' in data) {
+        return delCharge(state, data['del-dock']);
+      }
+
+      return { charges: state.charges };
+    });
   }
 });
 
-// const selCharges = (s: DocketState) => {
-//   return omit(s.charges, "grid");
-// };
+const selCharges = (s: DocketState) => {
+  return omit(s.charges, 'grid');
+};
 
-// export function useCharges() {
-//   return useDocketState(selCharges);
-// }
+export function useCharges() {
+  return useDocketState(selCharges);
+}
 
-// export function useCharge(desk: string) {
-//   return useDocketState(useCallback(state => state.charges[desk], [desk]));
-// }
+export function useCharge(desk: string) {
+  return useDocketState(useCallback((state) => state.charges[desk], [desk]));
+}
 
-// const selRequest = (s: DocketState) => s.request;
-// export function useRequestDocket() {
-//   return useDocketState(selRequest);
-// }
+const selRequest = (s: DocketState) => s.requestTreaty;
+export function useRequestDocket() {
+  return useDocketState(selRequest);
+}
 
-// export default useDocketState;
+export default useDocketState;

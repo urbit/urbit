@@ -1,9 +1,9 @@
 import { debounce } from 'lodash-es';
-import React, { useCallback, useEffect } from 'react';
-import { useQuery } from 'react-query';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { ShipName } from '../../components/ShipName';
-import { fetchProviders, providersKey } from '../../state/docket';
+import useDocketState from '../../state/docket';
+import { Provider } from '../../state/docket-types';
 import { useNavStore } from '../Nav';
 
 type ProvidersProps = RouteComponentProps<{ ship: string }>;
@@ -16,15 +16,18 @@ export const Providers = ({ match, history }: ProvidersProps) => {
   const { push } = history;
   const { path } = match;
   const provider = match?.params.ship;
-  const { data } = useQuery(providersKey([provider]), () => fetchProviders(provider), {
-    enabled: !!provider,
-    keepPreviousData: true
-  });
-  const count = data?.length;
+  const fetchProviders = useDocketState((s) => s.fetchProviders);
+  const [providers, setProviders] = useState<Provider[]>();
+  const count = providers?.length;
 
   useEffect(() => {
+    async function getProviders() {
+      setProviders(await fetchProviders(provider));
+    }
+
     select(null, provider);
-  }, []);
+    getProviders();
+  }, [provider]);
 
   const handleSearch = useCallback(
     debounce((input: string) => {
@@ -47,9 +50,9 @@ export const Providers = ({ match, history }: ProvidersProps) => {
           {count} result{count === 1 ? '' : 's'}
         </p>
       </div>
-      {data && (
+      {providers && (
         <ul className="space-y-8" aria-labelledby="providers">
-          {data.map((p) => (
+          {providers.map((p) => (
             <li key={p.shipName}>
               <Link
                 to={`${match?.path.replace(':ship', p.shipName)}/apps`}
