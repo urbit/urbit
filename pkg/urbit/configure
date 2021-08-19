@@ -4,13 +4,29 @@ set -euo pipefail
 
 URBIT_VERSION="$(cat ./version)"
 
-deps="                                           \
-  curl gmp sigsegv ent h2o uv murmur3 softfloat3 \
-  urcrypt ssl crypto z lmdb pthread              \
+# we require pkg-config metadata to statically link these
+#
+pkgc_deps="     \
+  libcurl       \
+  libh2o        \
+  liburcrypt    \
+  libuv         \
+  openssl       \
 "
 
-headers="             \
-  ivory.h ca-bundle.h \
+deps="          \
+  ent           \
+  gmp           \
+  lmdb          \
+  murmur3       \
+  pthread       \
+  sigsegv       \
+  softfloat3    \
+"
+
+headers="       \
+  ca-bundle.h   \
+  ivory.h       \
 "
 
 echo '#pragma once' >include/config.h
@@ -132,8 +148,6 @@ case $(tr A-Z a-z <<< $os) in
 
      defmacro U3_OS_osx 1
 
-     deps="${deps/ssl/openssl}"
-     deps="${deps/uv/libuv}"
      compat="${compat-} posix m1brew"
      ;;
   *linux*)
@@ -150,7 +164,7 @@ case $(tr A-Z a-z <<< $os) in
      ;;
   *freebsd*)
      defmacro U3_OS_bsd 1
-     extra_libs="${extra_libs} kvm"
+     deps="$deps kvm" # XX use new compat.mk pattern
      ;;
   *openbsd*)
      defmacro U3_OS_bsd 1
@@ -168,10 +182,11 @@ then
   PKG_CONFIG="$PKG_CONFIG --static"
 fi
 
-for dep in ${osdeps-} $deps
-do
-   LDFLAGS="${LDFLAGS-} $($PKG_CONFIG --libs "lib$dep" 2>/dev/null || echo -l$dep)"
-   CFLAGS="${CFLAGS-} $($PKG_CONFIG --cflags "lib$dep" 2>/dev/null || true)"
+CFLAGS="${CFLAGS-} $($PKG_CONFIG --cflags $pkgc_deps)"
+LDFLAGS="${LDFLAGS-} $($PKG_CONFIG --libs $pkgc_deps)"
+
+for dep in $deps; do
+  LDFLAGS="${LDFLAGS-} -l$dep"
 done
 
 for header in $headers; do
@@ -179,8 +194,7 @@ for header in $headers; do
 done
 
 compat="${compat-posix}"
-for citem in $compat
-do
+for citem in $compat; do
    CFLAGS="${CFLAGS-} -Icompat/$citem"
 done
 
