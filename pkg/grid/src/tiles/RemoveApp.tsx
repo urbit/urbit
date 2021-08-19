@@ -1,26 +1,20 @@
 import React, { useCallback } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useHistory, useParams } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Dialog, DialogContent } from '../components/Dialog';
-import { chargesKey, uninstallDocket } from '../state/docket';
-import { Docket } from '../state/docket-types';
+import useDocketState, { useCharges } from '../state/docket';
 
 export const RemoveApp = () => {
-  const queryClient = useQueryClient();
   const history = useHistory();
   const { desk } = useParams<{ desk: string }>();
-  const { data: docket } = useQuery<Docket>(chargesKey([desk]));
-  const { mutate } = useMutation(() => uninstallDocket(desk), {
-    onSuccess: () => {
-      history.push('/');
-      queryClient.invalidateQueries(chargesKey());
-    }
-  });
+  const charges = useCharges();
+  const docket = charges[desk];
+  const uninstallDocket = useDocketState((s) => s.uninstallDocket);
 
   // TODO: add optimistic updates
   const handleRemoveApp = useCallback(() => {
-    mutate();
+    uninstallDocket(desk);
+    history.push('/');
   }, []);
 
   return (

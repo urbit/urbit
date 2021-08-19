@@ -1,11 +1,10 @@
 import fuzzy from 'fuzzy';
-import React, { useEffect, useMemo } from 'react';
-import { useQuery } from 'react-query';
+import React, { useEffect, useMemo, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { fetchProviders, providersKey } from '../../state/docket';
 import { Provider } from '../../state/docket-types';
 import { MatchItem, useLeapStore } from '../Nav';
 import { ProviderList } from '../../components/ProviderList';
+import useDocketState from '../../state/docket';
 
 type ProvidersProps = RouteComponentProps<{ ship: string }>;
 
@@ -19,10 +18,8 @@ export const Providers = ({ match }: ProvidersProps) => {
     selectedMatch: state.selectedMatch
   }));
   const provider = match?.params.ship;
-  const { data: providers } = useQuery(providersKey(), () => fetchProviders(), {
-    enabled: !!provider,
-    keepPreviousData: true
-  });
+  const fetchProviders = useDocketState((s) => s.fetchProviders);
+  const [providers, setProviders] = useState<Provider[]>();
   const search = provider || '';
   const results = useMemo(
     () =>
@@ -45,8 +42,13 @@ export const Providers = ({ match }: ProvidersProps) => {
   const count = results?.length;
 
   useEffect(() => {
+    async function getProviders() {
+      setProviders(await fetchProviders(provider));
+    }
+
     select(null, provider);
-  }, []);
+    getProviders();
+  }, [provider]);
 
   useEffect(() => {
     if (results) {

@@ -2,7 +2,6 @@ import produce from 'immer';
 import create from 'zustand';
 import React, { useEffect } from 'react';
 import { persist } from 'zustand/middleware';
-import { useQuery } from 'react-query';
 import { take } from 'lodash-es';
 import { Docket, Provider } from '../../state/docket-types';
 import { MatchItem, useLeapStore } from '../Nav';
@@ -13,7 +12,7 @@ import { ProviderList } from '../../components/ProviderList';
 import { AppLink } from '../../components/AppLink';
 import { ShipName } from '../../components/ShipName';
 import { ProviderLink } from '../../components/ProviderLink';
-import { chargesKey, fetchCharges } from '../../state/docket';
+import { useCharges } from '../../state/docket';
 
 interface RecentsStore {
   recentApps: Docket[];
@@ -62,7 +61,7 @@ export const useRecentsStore = create<RecentsStore>(
 export const Home = () => {
   const selectedMatch = useLeapStore((state) => state.selectedMatch);
   const { recentApps, recentDevs, addRecentApp, addRecentDev } = useRecentsStore();
-  const { data: charges } = useQuery(chargesKey(), () => fetchCharges());
+  const charges = useCharges();
   const groups = charges?.groups;
   const zod = { shipName: '~zod' };
 

@@ -1,20 +1,38 @@
 import clipboardCopy from 'clipboard-copy';
-import { useCallback } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { pick } from 'lodash-es';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { installDocket, requestTreaty, treatyKey } from '../state/docket';
+import useDocketState from '../state/docket';
+import { Treaty } from '../state/docket-types';
+
+type Status = 'initial' | 'loading' | 'success' | 'error';
 
 export function useTreaty() {
   const { ship, desk } = useParams<{ ship: string; desk: string }>();
-  const { data: treaty } = useQuery(treatyKey([ship, desk]), () => requestTreaty(ship, desk));
-  const { mutate, ...installStatus } = useMutation(() => installDocket(ship, desk));
+  const { requestTreaty, installDocket } = useDocketState((s) =>
+    pick(s, ['requestTreaty', 'installDocket'])
+  );
+  const [treaty, setTreaty] = useState<Treaty>();
+  const [installStatus, setInstallStatus] = useState<Status>('initial');
+
+  useEffect(() => {
+    async function getTreaty() {
+      setTreaty(await requestTreaty(ship, desk));
+    }
+
+    getTreaty();
+  }, [ship, desk]);
 
   const copyApp = useCallback(async () => {
     clipboardCopy(`${ship}/${desk}`);
   }, [ship, desk]);
 
-  const installApp = useCallback(() => {
-    mutate();
+  const installApp = useCallback(async () => {
+    setInstallStatus('loading');
+
+    installDocket(ship, desk)
+      .then(() => setInstallStatus('success'))
+      .catch(() => setInstallStatus('error'));
   }, []);
 
   return {

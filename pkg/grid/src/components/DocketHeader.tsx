@@ -8,8 +8,7 @@ interface DocketHeaderProps {
 
 export function DocketHeader(props: DocketHeaderProps) {
   const { docket, children } = props;
-  const color = `#${docket.color.slice(2).replace('.', '')}`.toUpperCase();
-  const { info, title, img } = docket;
+  const { info, title, img, color } = docket;
 
   return (
     <header className="grid grid-cols-[5rem,1fr] md:grid-cols-[8rem,1fr] auto-rows-min grid-flow-row-dense mb-5 sm:mb-8 gap-x-6 gap-y-4">

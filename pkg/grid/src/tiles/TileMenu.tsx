@@ -3,8 +3,7 @@ import type * as Polymorphic from '@radix-ui/react-polymorphic';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
-import { useMutation, useQueryClient } from 'react-query';
-import { chargesKey, toggleDocket } from '../state/docket';
+import useDocketState from '../state/docket';
 
 export interface TileMenuProps {
   desk: string;
@@ -38,14 +37,8 @@ const Item = React.forwardRef(({ children, ...props }, ref) => (
 )) as ItemComponent;
 
 export const TileMenu = ({ desk, active, menuColor, lightText, className }: TileMenuProps) => {
-  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const { mutate } = useMutation(() => toggleDocket(desk), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(chargesKey());
-    }
-  });
-
+  const toggleDocket = useDocketState((s) => s.toggleDocket);
   const menuBg = { backgroundColor: menuColor };
   const linkOnSelect = useCallback((e: Event) => {
     e.preventDefault();
@@ -96,7 +89,7 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
               Suspend App
             </Item>
           )}
-          {!active && <Item onSelect={() => mutate()}>Resume App</Item>}
+          {!active && <Item onSelect={() => toggleDocket(desk)}>Resume App</Item>}
           <Item as={Link} to={`/app/${desk}/remove`} onSelect={linkOnSelect}>
             Remove App
           </Item>

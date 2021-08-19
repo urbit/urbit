@@ -1,25 +1,21 @@
 import React, { useCallback } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Dialog, DialogContent } from '../components/Dialog';
-import { chargesKey, toggleDocket } from '../state/docket';
-import { Docket } from '../state/docket-types';
+import useDocketState, { useCharges } from '../state/docket';
 
 export const SuspendApp = () => {
-  const queryClient = useQueryClient();
   const history = useHistory();
   const { desk } = useParams<{ desk: string }>();
-  const { data: docket } = useQuery<Docket>(chargesKey([desk]));
-  const { mutate } = useMutation(() => toggleDocket(desk), {
-    onSuccess: () => {
-      history.push('/');
-      queryClient.invalidateQueries(chargesKey());
-    }
-  });
+  const charges = useCharges();
+  const docket = charges[desk];
+  const toggleDocket = useDocketState((s) => s.toggleDocket);
 
   // TODO: add optimistic updates
-  const handleSuspendApp = useCallback(() => mutate(), []);
+  const handleSuspendApp = useCallback(() => {
+    toggleDocket(desk);
+    history.push('/');
+  }, []);
 
   if (docket?.status === 'suspended') {
     <Redirect to="/" />;
