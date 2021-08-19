@@ -172,6 +172,9 @@ const Invoice: React.FC<Props> = ({ stopSending, payee, satsAmount }) => {
           mb={5}
           p={5}
         >
+          <Row flexDirection="row-reverse">
+            <Icon icon="X" cursor="pointer" onClick={() => stopSending()} />
+          </Row>
           <Col
             p={5}
             mt={4}
