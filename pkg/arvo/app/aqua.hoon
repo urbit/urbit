@@ -30,7 +30,7 @@
       ==
     +$  state-0
       $:  %0
-          pil=pill
+          pil=$>(%pill pill)
           assembled=*
           tym=@da
           fleet-snaps=(map term fleet)
