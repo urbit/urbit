@@ -4,7 +4,7 @@
 :: This gate passes a state and input to naive.hoon for both L1 and L2
 :: transactions. Every transaction implemented in this test suited utilizes it.
 ::
-++  n  |=([=^state:naive =^input:naive] (%*(. naive lac |) verifier 1.337 +<))
+++  n  |=([=^state:naive =^input:naive] (%*(. naive lac &) verifier 1.337 +<))
 ::
 ++  addr  address-from-prv:key:ethereum
 ::
@@ -251,10 +251,10 @@
   =^  f8   state  (n state %bat q:(gen-tx 0 rr-escape %holrut-rr-key-0))
   ::  L2->L2
   ::
-  =^  f9   state  (n state %bat q:(gen-tx 1 pp-escape %losrut-pp-key-0))
+  =^  f9   state  (n state %bat q:(gen-tx 2 pp-escape %losrut-pp-key-0))
   ::  L2->L1
   ::
-  =^  f10  state  (n state %bat q:(gen-tx 1 dm-escape %holrut-dm-key-0))
+  =^  f10  state  (n state %bat q:(gen-tx 2 dm-escape %holrut-dm-key-0))
   ::  L1->L2
   ::
   =^  f11  state  (n state %bat q:(gen-tx 0 lm-escape %rigrut-lm-key-0))
@@ -1593,7 +1593,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-red-full state)
-      =^  f  state  (n state %bat q:(gen-tx 2 pp-reject %losrut-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 3 pp-reject %losrut-key-0))
       [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
     ::
     %+  expect-eq
@@ -1720,7 +1720,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-red-full state)
-      =^  f  state  (n state %bat q:(gen-tx 2 pp-cancel-escape %losrut-pp-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 3 pp-cancel-escape %losrut-pp-key-0))
       [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
     ::
     %+  expect-eq
@@ -1745,7 +1745,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-red-full state)
-      =^  f  state  (n state %bat q:(gen-tx 2 dm-cancel-escape %holrut-dm-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 3 dm-cancel-escape %holrut-dm-key-0))
       [escape.net sponsor.net]:(~(got by points.state) ~dovmul-mogryt)
     ::
     %+  expect-eq
@@ -1823,7 +1823,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
-      =^  f  state  (n state %bat q:(gen-tx 2 pp-detach %losrut-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 3 pp-detach %losrut-key-0))
       [escape.net sponsor.net]:(~(got by points.state) ~pinpun-pilsun)
     ::
     %+  expect-eq
@@ -1848,7 +1848,7 @@
       !>
       =|  =^state:naive
       =^  f  state  (init-rut-full state)
-      =^  f  state  (n state %bat q:(gen-tx 2 rt-detach %losrut-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 3 rt-detach %losrut-key-0))
       [escape.net sponsor.net]:(~(got by points.state) ~radres-tinnyl)
     ::
     %+  expect-eq
@@ -2054,7 +2054,7 @@
     !>
     =|  =^state:naive
     =^  f  state  (init-rut-full state)
-    =^  f  state  (n state %bat q:(gen-tx 0 rr-escape %holrut-rr-key-0))
+    =^  f  state  (n state %bat q:(gen-tx 1 rr-escape %holrut-rr-key-0))
     [escape.net sponsor.net]:(~(got by points.state) ~rabsum-ravtyd)
 ::
 ++  test-rut-l1-detach-1
@@ -2958,7 +2958,7 @@
   =^  f  state  (init-red-full state)
   =/  init-state  state
   |-  ^-  tang
-  ?:  =(i 10.000)  ~
+  ?:  =(i 10)  ~
   %+  weld  $(seed (shas `@`%versace seed), i +(i))
   =/  state  init-state
   =/  rng  ~(. og seed)
