@@ -1,5 +1,11 @@
-/-  eth-watcher
-/+  ethereum, azimuth, naive, default-agent, verb, dbug
+/-  eth-watcher, *dice
+/+  ethereum,
+    azimuth,
+    naive,
+    dice,
+    default-agent,
+    verb,
+    dbug
 /*  snap  %eth-logs  /app/azimuth/logs/eth-logs
 ::
 =/  last-snap  ::  maybe just use the last one?
@@ -12,10 +18,11 @@
 =,  jael
 |%
 ++  app-state
-  $:  %2
+  $:  %3
       url=@ta
       whos=(set ship)
       nas=^state:naive
+      own=owners
       logs=(list =event-log:rpc:ethereum)
   ==
 +$  poke-data
@@ -27,9 +34,17 @@
       [%watch url=@ta]
   ==
 +$  tagged-diff  [=id:block diff:naive]
+::
++$  network  ?(%mainnet %ropsten %local)
 --
 ::
 |%
+++  net
+  ^-  network
+  ::  TODO: add poke action to allow switching?
+  ::        eth snapshot could also be considered
+  ::
+  %local
 ::  TODO: maybe flop the endianness here so metamask signs it in normal
 ::  order?
 ::
@@ -61,39 +76,42 @@
   (hex-to-num:ethereum data)
 ::
 ++  run-logs
-  |=  [nas=^state:naive logs=(list event-log:rpc:ethereum)]
-  ^-  [(list tagged-diff) ^state:naive]
+  |=  [state=app-state logs=(list event-log:rpc:ethereum)]
+  ^-  (quip tagged-diff _state)
+  =/  [contract=@ux * chain-id=@ *]  (get-network net)
   ?~  logs
-    `nas
+    `state
   ?~  mined.i.logs
     $(logs t.logs)
-  =^  raw-effects  nas
+  =/  [raw-effects=effects:naive new-nas=_nas.state]
     =/  =^input:naive
-      ?:  =(azimuth:contracts:azimuth address.i.logs)
+      ?:  =(contract address.i.logs)
         =/  data  (data-to-hex data.i.logs)
         =/  =event-log:naive
           [address.i.logs data topics.i.logs]
         [%log event-log]
       ?~  input.u.mined.i.logs
         [%bat *@]
-      =/  len  (met 3 u.input.u.mined.i.logs)
-      =/  fun
-        (rsh [3 (sub len 4)] u.input.u.mined.i.logs)
-      ?.  =(0x2688.7f26 fun)
-        [%bat *@]
-      [%bat (end [3 (sub len 4)] u.input.u.mined.i.logs)]
+      [%bat u.input.u.mined.i.logs]
     =/  res
       %-  mule
-      |.((%*(. naive lac |) verifier chain-id:contracts:azimuth nas input))
+      |.((%*(. naive lac |) verifier chain-id nas.state input))
     ?-  -.res
       %&  p.res
-      %|  ((slog 'naive-fail' p.res) `nas)
+      %|  ((slog 'naive-fail' p.res) `nas.state)
     ==
+  =.  own.state
+    =,  dice
+    ?.  =(contract address.i.logs)
+      =<  own
+      (apply-effects raw-effects nas.state own.state chain-id)
+    (update-ownership raw-effects nas.state new-nas own.state)
+  =.  nas.state  new-nas
   =/  effects-1
     =/  =id:block  [block-hash block-number]:u.mined.i.logs
     (turn raw-effects |=(=diff:naive [id diff]))
-  =^  effects-2  nas  $(logs t.logs)
-  [(welp effects-1 effects-2) nas]
+  =^  effects-2  state  $(logs t.logs)
+  [(welp effects-1 effects-2) state]
 ::
 ++  to-udiffs
   |=  effects=(list tagged-diff)
@@ -125,16 +143,39 @@
   :-  [%give %fact ~[path] %azimuth-udiffs !>(~[i.udiffs])]
   $(udiffs t.udiffs)
 ::
-++  start
-  |=  [state=app-state our=ship dap=term]
+++  event-update
+  |=  effects=(list tagged-diff)
+  ^-  (list card:agent:gall)
+  %+  murn  effects
+  |=  tag=tagged-diff
+  ^-  (unit card:agent:gall)
+  ?.  |(?=(%tx +<.tag) ?=(%point +<.tag))  ~
+  %-  some
   ^-  card:agent:gall
+  [%give %fact ~[/event] %naive-diffs !>(+.tag)]
+::
+++  get-network
+  |=  =network
+  ^-  [@ux @ux @ @]
+  =<  [azimuth naive chain-id launch]
+  =,  azimuth
+  ?-  network
+    %mainnet  mainnet-contracts
+    %ropsten  ropsten-contracts
+    %local    local-contracts
+  ==
+::
+++  start
+  |=  [state=app-state =network our=ship dap=term]
+  ^-  card:agent:gall
+  =/  [azimuth=@ux naive=@ux * launch=@ud]  (get-network network)
   =/  args=vase  !>
     :+  %watch  /[dap]
     ^-  config:eth-watcher
     :*  url.state  =(%czar (clan:title our))  ~m5  ~h30
-        (max launch:contracts:azimuth last-snap)
-        ~[azimuth:contracts:azimuth]
-        ~[naive:contracts:azimuth]
+        (max launch last-snap)
+        ~[azimuth]
+        ~[naive]
         (topics whos.state)
     ==
   [%pass /wa %agent [our %eth-watcher] %poke %eth-watcher-poke args]
@@ -172,14 +213,28 @@
         -    %2
         nas  *^state:naive
     ==
-  `this(state ?>(?=(%2 -.old-state) old-state))
+  =?  old-state  ?=(%2 -.old-state)
+    %=    old-state
+        -    %3
+        own  *owners
+    ==
+  `this(state ?>(?=(%3 -.old-state) old-state))
   ::
-  ++  app-states  $%(app-state-0 app-state-1 app-state)
+  ++  app-states  $%(app-state-0 app-state-1 app-state-2 app-state)
+  ++  app-state-2
+    $:  %2
+        url=@ta
+        whos=(set ship)
+        nas=^state:naive
+        own=*
+        logs=(list =event-log:rpc:ethereum)
+    ==
   ++  app-state-1
     $:  %1
         url=@ta
         whos=(set ship)
         nas=*
+        own=*
         logs=(list =event-log:rpc:ethereum)
     ==
   ++  app-state-0
@@ -187,6 +242,7 @@
         url=@ta
         whos=(set ship)
         nas=*
+        own=*
         logs=(list =event-log-0)
     ==
   ::
@@ -212,7 +268,7 @@
     ?+    q.vase  !!
         %rerun
       ~&  [%rerunning (lent logs.state)]
-      =^  effects  nas.state  (run-logs *^state:naive logs.state)
+      =^  effects  state  (run-logs state logs.state)
       `this
     ::
         %resub
@@ -235,39 +291,36 @@
       %listen  [[%pass /lo %arvo %j %listen (silt whos.poke) source.poke]~ this]
       %watch
     =.  url.state  url.poke
-    [[(start state [our dap]:bowl) ~] this]
+    [[(start state net [our dap]:bowl) ~] this]
   ==
 ::
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:gall _this)
   ?<  =(/sole/drum path)
-  ?>  ?=(?(~ [@ ~]) path)
+  ?:  =(/event path)
+    :_  this
+    [%give %fact ~ %naive-state !>([nas.state own.state])]~
   =/  who=(unit ship)
     ?~  path  ~
+    ?:  ?=([@ ~] path)  ~
     `(slav %p i.path)
   =.  whos.state
     ?~  who
       ~
     (~(put in whos.state) u.who)
   :_  this  :_  ~
-  (start state [our dap]:bowl)
+  (start state net [our dap]:bowl)
 ::
 ++  on-leave  on-leave:def
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
-      [%x %logs ~]
-    ``logs+!>(logs.state)
-  ::
-      [%x %nas ~]
-    ``nas+!>(nas.state)
-  ::
-      [%x %nas @t ~]
-    ?~  ship=(rush i.t.t.path ;~(pfix sig fed:ag))
-      ``noun+!>(*(unit point:naive))
-    ``noun+!>((~(get by points.nas.state) u.ship))
+      [%x %logs ~]  ``noun+!>(logs.state)
+      [%x %nas ~]   ``noun+!>(nas.state)
+      [%x %dns ~]   ``noun+!>(dns.nas.state)
+      [%x %own ~]   ``noun+!>(own.state)
   ==
 ::
 ++  on-agent
@@ -289,16 +342,12 @@
       %logs     (welp logs.state loglist.diff)
     ==
   =?  nas.state  ?=(%history -.diff)  *^state:naive
-  =^  effects  nas.state
-    %+  run-logs
-      ?-  -.diff
-        ::  %history  *^state:naive
-        %history  nas.state
-        %logs     nas.state
-      ==
-    loglist.diff
+  =^  effects  state  (run-logs state loglist.diff)
   ::
-  [(jael-update (to-udiffs effects)) this]
+  :_  this
+  %+  weld
+    (event-update effects)
+  (jael-update (to-udiffs effects))
 ::
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def

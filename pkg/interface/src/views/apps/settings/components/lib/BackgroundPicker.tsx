@@ -1,24 +1,17 @@
-import React, { ReactElement } from 'react';
-
 import {
-  Text,
-  Row,
-  Label,
-  Col,
-  ManagedRadioButtonField as Radio
-} from '@tlon/indigo-react';
+  Col, Label,
 
+  ManagedRadioButtonField as Radio, Row, Text
+} from '@tlon/indigo-react';
+import {useField} from 'formik';
+import React, { ReactElement } from 'react';
 import GlobalApi from '~/logic/api/global';
-import { ImageInput } from '~/views/components/ImageInput';
 import { ColorInput } from '~/views/components/ColorInput';
+import { ImageInput } from '~/views/components/ImageInput';
 
 export type BgType = 'none' | 'url' | 'color';
 
-export function BackgroundPicker({
-  bgType,
-  bgUrl,
-  api
-}: {
+export function BackgroundPicker({ api }: {
   bgType: BgType;
   bgUrl?: string;
   api: GlobalApi;
@@ -36,31 +29,31 @@ export function BackgroundPicker({
       <Label>Landscape Background</Label>
       <Row flexWrap="wrap" {...rowSpace}>
         <Col {...colProps}>
-          <Radio mb="1" name="bgType" label="Image" id="url" />
-          <Text ml="5" gray>Set an image background</Text>
+          <Radio mb={1} name="bgType" label="Image" id="url" />
+          <Text ml={5} gray>Set an image background</Text>
           <ImageInput
-            ml="5"
+            ml={5}
             api={api}
             id="bgUrl"
             placeholder="Drop or upload a file, or paste a link here"
             name="bgUrl"
-            url={bgUrl || ''}
           />
         </Col>
       </Row>
       <Row {...rowSpace}>
         <Col {...colProps}>
-          <Radio mb="1" label="Color" id="color" name="bgType" />
-          <Text ml="5" gray>Set a hex-based background</Text>
-          <ColorInput placeholder="FFFFFF" ml="5" id="bgColor" />
+          <Radio mb={1} label="Color" id="color" name="bgType" />
+          <Text ml={5} gray>Set a hex-based background</Text>
+          <ColorInput placeholder="FFFFFF" ml={5} id="bgColor" />
         </Col>
       </Row>
       <Radio
-        my="3"
+        my={3}
         caption="Your home screen will simply render as its respective day/night mode color"
         name="bgType"
         label="None"
-        id="none" />
+        id="none"
+      />
     </Col>
   );
 }
