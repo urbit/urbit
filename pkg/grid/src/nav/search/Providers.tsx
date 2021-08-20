@@ -53,7 +53,7 @@ export const Providers = ({ match }: ProvidersProps) => {
         matches: results.map((p) => ({ value: p.shipName, display: p.nickname }))
       });
     }
-  }, [JSON.stringify(results)]);
+  }, [results]);
 
   const isSelected = useCallback(
     (target: Provider) => {
