@@ -2,119 +2,69 @@
 **
 */
 #include "all.h"
-
-
-#if defined(U3_OS_osx)
-#include <CommonCrypto/CommonDigest.h>
-#else
-#include <openssl/sha.h>
-#endif
+#include <urcrypt.h>
 
 /* functions
 */
 
-  u3_noun
-  u3qe_shay(u3_atom a,
-            u3_atom b)
+  static u3_atom
+  _cqe_shay(u3_atom wid,
+            u3_atom dat)
   {
-    c3_assert(_(u3a_is_cat(a)));
-    c3_y* fat_y = u3a_malloc(a + 1);
-
-    u3r_bytes(0, a, fat_y, b);
-    {
-      c3_y dig_y[32];
-#if defined(U3_OS_osx)
-      CC_SHA256_CTX ctx_h;
-
-      CC_SHA256_Init(&ctx_h);
-      CC_SHA256_Update(&ctx_h, fat_y, a);
-      CC_SHA256_Final(dig_y, &ctx_h);
-#else
-      SHA256_CTX ctx_h;
-
-      SHA256_Init(&ctx_h);
-      SHA256_Update(&ctx_h, fat_y, a);
-      SHA256_Final(dig_y, &ctx_h);
-#endif
-      u3a_free(fat_y);
-      return u3i_bytes(32, dig_y);
+    c3_w len_w;
+    if ( !u3r_word_fit(&len_w, wid) ) {
+      return u3m_bail(c3__fail);
+    }
+    else {
+      c3_y  out_y[32];
+      c3_y* dat_y = u3r_bytes_alloc(0, len_w, dat);
+      urcrypt_shay(dat_y, len_w, out_y);
+      u3a_free(dat_y);
+      return u3i_bytes(32, out_y);
     }
   }
 
-//   u3_noun
-//   u3qe_shax(
-//                     u3_atom a)
-//   {
-//     c3_w  met_w = u3r_met(3, a);
-//     return u3qe_shay(met_w, a);
-//   }
-//  XX  preformance
-u3_noun
-  u3qe_shax(u3_atom a)
+  static u3_atom
+  _cqe_shax(u3_atom a)
   {
-    c3_w  met_w = u3r_met(3, a);
-    c3_y* fat_y = u3a_malloc(met_w + 1);
+    c3_w  len_w;
+    c3_y  out_y[32];
+    c3_y* dat_y = u3r_bytes_all(&len_w, a);
+    urcrypt_shay(dat_y, len_w, out_y);
+    u3a_free(dat_y);
+    return u3i_bytes(32, out_y);
+  }
 
-    u3r_bytes(0, met_w, fat_y, a);
-    {
-      c3_y dig_y[32];
-#if defined(U3_OS_osx)
-      CC_SHA256_CTX ctx_h;
-
-      CC_SHA256_Init(&ctx_h);
-      CC_SHA256_Update(&ctx_h, fat_y, met_w);
-      CC_SHA256_Final(dig_y, &ctx_h);
-#else
-      SHA256_CTX ctx_h;
-
-      SHA256_Init(&ctx_h);
-      SHA256_Update(&ctx_h, fat_y, met_w);
-      SHA256_Final(dig_y, &ctx_h);
-#endif
-      u3a_free(fat_y);
-      return u3i_bytes(32, dig_y);
+  static u3_atom
+  _cqe_shal(u3_atom wid,
+            u3_atom dat)
+  {
+    c3_w len_w;
+    if ( !u3r_word_fit(&len_w, wid) ) {
+      return u3m_bail(c3__fail);
+    }
+    else {
+      c3_y  out_y[64];
+      c3_y* dat_y = u3r_bytes_alloc(0, len_w, dat);
+      urcrypt_shal(dat_y, len_w, out_y);
+      u3a_free(dat_y);
+      return u3i_bytes(64, out_y);
     }
   }
 
-//  XX end preformance
-
-  u3_noun
-  u3qe_shal(u3_atom a,
-            u3_atom b)
-  {
-    c3_assert(_(u3a_is_cat(a)));
-    c3_y* fat_y = u3a_malloc(a + 1);
-
-    u3r_bytes(0, a, fat_y, b);
-    {
-      c3_y dig_y[64];
-#if defined(U3_OS_osx)
-      CC_SHA512_CTX ctx_h;
-
-      CC_SHA512_Init(&ctx_h);
-      CC_SHA512_Update(&ctx_h, fat_y, a);
-      CC_SHA512_Final(dig_y, &ctx_h);
-#else
-      SHA512_CTX ctx_h;
-
-      SHA512_Init(&ctx_h);
-      SHA512_Update(&ctx_h, fat_y, a);
-      SHA512_Final(dig_y, &ctx_h);
-#endif
-      u3a_free(fat_y);
-      return u3i_bytes(64, dig_y);
-    }
-  }
-
-  u3_noun
-  u3qe_shas(u3_atom sal,
+  static u3_atom
+  _cqe_shas(u3_atom sal,
             u3_atom ruz)
   {
-    u3_noun one = u3qe_shax(ruz);
-    u3_noun two = u3qc_mix(sal, one);
-    u3_noun tri = u3qe_shax(two);
+    c3_w sal_w, ruz_w;
+    c3_y *sal_y, *ruz_y, out_y[32];
 
-    u3z(one); u3z(two); return tri;
+    sal_y = u3r_bytes_all(&sal_w, sal);
+    ruz_y = u3r_bytes_all(&ruz_w, ruz);
+    urcrypt_shas(sal_y, sal_w, ruz_y, ruz_w, out_y);
+    u3a_free(sal_y);
+    u3a_free(ruz_y);
+    return u3i_bytes(32, out_y);
   }
 
   u3_noun
@@ -127,7 +77,7 @@ u3_noun
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qe_shax(a);
+      return _cqe_shax(a);
     }
   }
 
@@ -136,20 +86,14 @@ u3_noun
   {
     u3_noun a, b;
 
-//     static int few = 0;
-//     if(few == 0) printf("foo\r\n");
-//     few++; few %= 1000;
-
-
     if ( (u3_none == (a = u3r_at(u3x_sam_2, cor))) ||
          (u3_none == (b = u3r_at(u3x_sam_3, cor))) ||
          (c3n == u3ud(a)) ||
-         (c3n == u3a_is_cat(a)) ||
          (c3n == u3ud(b)) )
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qe_shay(a, b);
+      return _cqe_shay(a, b);
     }
   }
 
@@ -161,12 +105,11 @@ u3_noun
     if ( (u3_none == (a = u3r_at(u3x_sam_2, cor))) ||
          (u3_none == (b = u3r_at(u3x_sam_3, cor))) ||
          (c3n == u3ud(a)) ||
-         (c3n == u3a_is_cat(a)) ||
          (c3n == u3ud(b)) )
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qe_shal(a, b);
+      return _cqe_shal(a, b);
     }
   }
 
@@ -182,7 +125,7 @@ u3_noun
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qe_shas(sal, ruz);
+      return _cqe_shas(sal, ruz);
     }
   }
 
@@ -199,7 +142,7 @@ u3_noun
     while ( 0 != b ) {
       u3_noun x = u3qc_mix(a, c);
       u3_noun y = u3qc_mix(b, x);
-      u3_noun d = u3qe_shas(c3_s4('o','g','-','b'), y);
+      u3_noun d = _cqe_shas(c3_s4('o','g','-','b'), y);
       u3_noun m;
 
       u3z(x); u3z(y);
@@ -226,7 +169,7 @@ u3_noun
             u3_atom b)
   {
     u3_noun x = u3qc_mix(b, a);
-    u3_noun c = u3qe_shas(c3_s4('o','g','-','a'), x);
+    u3_noun c = _cqe_shas(c3_s4('o','g','-','a'), x);
     u3_noun l = _og_list(a, b, c);
     u3_noun r = u3qc_can(0, l);
 
