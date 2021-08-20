@@ -8,20 +8,22 @@
 static urcrypt_secp_context* sec_u;
 
 /* call at process start */
-void u3e_secp_init()
+void
+u3je_secp_init()
 {
   c3_y ent_y[32];
   ent_getentropy(ent_y, 32);
   sec_u = malloc(urcrypt_secp_prealloc_size());
 
   if ( 0 != urcrypt_secp_init(sec_u, ent_y) ) {
-    u3l_log("%s\r\n", "u3e_secp_init failed");
+    u3l_log("u3e_secp_init failed\r\n");
     abort();
   }
 }
 
 /* call at process end */
-void u3e_secp_stop()
+void
+u3je_secp_stop()
 {
   urcrypt_secp_destroy(sec_u);
   free(sec_u);
@@ -58,7 +60,7 @@ _cqes_in_order(u3_atom a)
     else {
       c3_y i_y;
       c3_w *buf_w = a_u->buf_w;
-      // loop from most to least significant bytes
+      // loop from most to least significant words
       for ( i_y = 8; i_y > 0; ) {
         c3_w b_w = buf_w[i_y],
              o_w = now_w[--i_y];
