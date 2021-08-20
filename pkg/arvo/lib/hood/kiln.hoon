@@ -405,8 +405,7 @@
     |=  except=(set desk)
     ^+  kiln
     =/  kel=weft  [%zuse zuse]
-    =.  except  (~(put in except) %base)
-    =/  ded  (~(dif in (get-blockers kel)) except)
+    =/  ded  (~(dif in (get-blockers kel)) (~(put in except) %base))
     ?.  =(~ ded)
       =/  mes  "kiln: desks blocked upgrade to {<[- +]:kel>}: {<ded>}"
       (^emit (pyre:pass leaf/mes ~))
