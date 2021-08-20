@@ -85,19 +85,11 @@ let
   # Local vendored packages defined in ./pkg.
   # For non-vendored nixpkgs specific package overrides, see ./nix/overlays.
   pkgsLocal = {
-    argon2u = callPackage ./nix/pkgs/argon2u { };
-
     ca-bundle = callPackage ./nix/pkgs/ca-bundle { };
-
-    ed25519 = callPackage ./nix/pkgs/ed25519 { };
 
     ent = callPackage ./nix/pkgs/ent { };
 
-    ge-additions = callPackage ./nix/pkgs/ge-additions { };
-
-    libaes_siv = callPackage ./nix/pkgs/libaes_siv { };
-
-    libscrypt = callPackage ./nix/pkgs/libscrypt { };
+    libaes_siv = callPackage ./nix/pkgs/libaes_siv { inherit (pkgsNative) cmake; };
 
     murmur3 = callPackage ./nix/pkgs/murmur3 { };
 
@@ -114,6 +106,8 @@ let
     solid = callPackage ./nix/pkgs/pill/solid.nix { };
 
     urbit = callPackage ./nix/pkgs/urbit { inherit enableStatic; };
+
+    urcrypt = callPackage ./nix/pkgs/urcrypt { inherit enableStatic; };
 
     docker-image = callPackage ./nix/pkgs/docker-image { };
 

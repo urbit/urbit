@@ -376,17 +376,29 @@ static c3_c* _140_hex_argon_ha[] = {
   0
 };
 
+static c3_c* _140_hex_scr_pbk_ha[] = { 0 };
+static u3j_harm _140_hex_scr_pbk_a[] = {{".2", u3wes_pbk, c3y}, {}};
+static c3_c* _140_hex_scr_pbl_ha[] = { 0 };
+static u3j_harm _140_hex_scr_pbl_a[] = {{".2", u3wes_pbl, c3y}, {}};
+static c3_c* _140_hex_scr_hsh_ha[] = { 0 };
+static u3j_harm _140_hex_scr_hsh_a[] = {{".2", u3wes_hsh, c3y}, {}};
+static c3_c* _140_hex_scr_hsl_ha[] = { 0 };
+static u3j_harm _140_hex_scr_hsl_a[] = {{".2", u3wes_hsl, c3y}, {}};
+
+static c3_c* _140_hex_scr_ha[] = { 0 };
+static u3j_core _140_hex_scr_d[] =
+  { { "pbk", 7, _140_hex_scr_pbk_a, 0, _140_hex_scr_pbk_ha },
+    { "pbl", 7, _140_hex_scr_pbl_a, 0, _140_hex_scr_pbl_ha },
+    { "hsh", 7, _140_hex_scr_hsh_a, 0, _140_hex_scr_hsh_ha },
+    { "hsl", 7, _140_hex_scr_hsl_a, 0, _140_hex_scr_hsl_ha },
+    {}
+  };
+
 static c3_c* _140_hex_secp_secp256k1_make_ha[] = { 0 };
 static u3j_harm _140_hex_secp_secp256k1_make_a[] = {{".2", u3we_make, c3y}, {}};
-static c3_c* _140_hex_secp_secp256k1_sign_ha[] = {
-  "3e75b3452b74776488d5eec75a91211700d9f360a4e06dd779600d5128d9c600",
-  0
-};
+static c3_c* _140_hex_secp_secp256k1_sign_ha[] = { 0 };
 static u3j_harm _140_hex_secp_secp256k1_sign_a[] = {{".2", u3we_sign, c3y}, {}};
-static c3_c* _140_hex_secp_secp256k1_reco_ha[] = {
-  "449f3aa878b61962c3048e167c23ba54a0736d3aa1ab7762bd54016fbba136ee",
-  0
-};
+static c3_c* _140_hex_secp_secp256k1_reco_ha[] = { 0 };
 static u3j_harm _140_hex_secp_secp256k1_reco_a[] = {{".2", u3we_reco, c3y}, {}};
 
 static c3_c* _140_hex_secp_secp256k1_ha[] = {
@@ -451,7 +463,8 @@ static u3j_core _140_hex_d[] =
   { "argon",  31, 0, _140_hex_argon_d, _140_hex_argon_ha },
   { "blake",  31, 0, _140_hex_blake_d, _140_hex_blake_ha },
   { "ripemd", 31, 0, _140_hex_ripe_d,  _140_hex_ripe_ha  },
-  { "secp",    6, 0, _140_hex_secp_d, _140_hex_secp_ha },
+  { "scr",    31, 0, _140_hex_scr_d,   _140_hex_scr_ha   },
+  { "secp",    6, 0, _140_hex_secp_d,  _140_hex_secp_ha },
   { "mimes",  31, 0, _140_hex_mimes_d, _140_hex_mimes_ha  },
   {}
 };

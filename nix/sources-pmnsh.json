@@ -1,0 +1,65 @@
+{
+    "curl": {
+        "branch": "master",
+        "description": "A command line tool and library for transferring data with URL syntax",
+        "homepage": "http://curl.se/",
+        "pmnsh": {
+            "include": "include",
+            "lib": "lib/.libs",
+            "prepare": "autoreconf -vfi && ./configure --disable-shared --disable-ldap --disable-rtsp --without-brotli --without-libidn2 --without-libpsl --without-nghttp2 --with-openssl",
+            "make": "-C lib libcurl.la"
+        },
+        "owner": "curl",
+        "repo": "curl",
+        "rev": "curl-7_77_0",
+        "type": "tarball",
+        "url": "https://github.com/curl/curl/archive/curl-7_77_0.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "lmdb": {
+        "branch": "mdb.master",
+        "description": "LMDB library",
+        "homepage": "http://www.lmdb.tech/",
+        "pmnsh": {
+            "strip": 2,
+            "make": "liblmdb.a"
+        },
+        "owner": "LMDB",
+        "repo": "lmdb",
+        "rev": "48a7fed59a8aae623deff415dda27097198ca0c1",
+        "type": "tarball",
+        "url": "https://github.com/LMDB/lmdb/archive/48a7fed59a8aae623deff415dda27097198ca0c1.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "uv": {
+        "branch": "v1.x",
+        "description": "Cross-platform asynchronous I/O",
+        "homepage": "http://libuv.org/",
+        "pmnsh": {
+            "include": "include",
+            "lib": ".libs",
+            "prepare": "./autogen.sh && ./configure --disable-shared",
+            "make": "libuv.la",
+            "compat": {
+                "m1brew": false
+            }
+        },
+        "owner": "libuv",
+        "repo": "libuv",
+        "rev": "v1.40.0",
+        "type": "tarball",
+        "url": "https://github.com/libuv/libuv/archive/v1.40.0.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "ent": {
+        "pmnsh": {
+            "prepare": "./configure"
+        }
+    },
+    "urcrypt": {
+        "pmnsh": {
+            "prepare": "./autogen.sh && ./configure --disable-shared PKG_CONFIG_PATH=../secp256k1 CFLAGS=\"-I../secp256k1/include -I../libaes_siv\" LDFLAGS=-L../libaes_siv",
+            "make": "install"
+        }
+    }
+}

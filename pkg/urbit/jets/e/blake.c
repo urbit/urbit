@@ -2,52 +2,41 @@
 **
 */
 #include "all.h"
-
-#include <argon2.h>
-#include <blake2.h>
+#include <urcrypt.h>
 
 /* functions
 */
 
-  u3_noun
-  u3qe_blake(u3_atom wid, u3_atom dat,
+  static u3_atom
+  _cqe_blake(u3_atom wid, u3_atom dat,
              u3_atom wik, u3_atom dak,
              u3_atom out)
   {
-    c3_assert(_(u3a_is_cat(wid)) && _(u3a_is_cat(wik)) && _(u3a_is_cat(out)));
-
-    // flip endianness for the internal blake2b function
-    dat = u3qc_rev(3, wid, dat);
-    dak = u3qc_rev(3, wik, dak);
-
-    c3_y* dat_y = (c3_y*)u3a_malloc(wid);
-    u3r_bytes(0, wid, (void*)dat_y, dat);
-
-    c3_y* dak_y = (c3_y*)u3a_malloc(wik);
-    u3r_bytes(0, wik, (void*)dak_y, dak);
-
-    int ret;
-    c3_y out_y[64];
-    ret = blake2b(out_y,  // OUT: output
-                  out,    // IN: max output size
-                  dat_y,  // IN: msg body
-                  wid,    // IN: msg len
-                  dak_y,  // IN: key body
-                  wik);   // IN: key len
-
-    /* free() BEFORE checking error code;
-       we don't want to leak memory if we return early
-    */
-    u3a_free(dat_y);
-    u3a_free(dak_y);
-
-    if ( 0 != ret )
-    {
-      u3l_log("\rblake jet: cryto lib error");
-      return u3m_bail(c3__exit);
+    c3_w wid_w;
+    if ( !u3r_word_fit(&wid_w, wid) ) {
+      // impossible to represent an atom this large
+      return u3m_bail(c3__fail);
     }
+    else {
+      // the hoon adjusts these widths to its liking
+      int err;
+      u3_atom ret;
+      c3_y  out_y[64], dak_y[64];
+      c3_w  wik_w = c3_min(wik, 64),
+            out_w = c3_max(1, c3_min(out, 64));
+      c3_y *dat_y = u3r_bytes_alloc(0, wid_w, dat);
 
-    return u3kc_rev(3, out, u3i_bytes(out, out_y));
+      u3r_bytes(0, wik_w, dak_y, dak);
+      err = urcrypt_blake2(wid_w, dat_y, wik_w, dak_y, out_w, out_y);
+      u3a_free(dat_y);
+
+      if ( 0 == err ) {
+        return u3i_bytes(out_w, out_y);
+      }
+      else {
+        return u3_none;
+      }
+    }
   }
 
   u3_noun
@@ -64,9 +53,8 @@
                 u3r_cell(key, &wik, &dak) || u3ud(wik) || u3ud(dak) ||
                 u3ud(out) )
     {
-      u3l_log("\rblake jet: arguments error");
       return u3m_bail(c3__exit);
     } else {
-      return u3qe_blake(wid, dat, wik, dak, out);
+      return u3l_punt("blake", _cqe_blake(wid, dat, wik, dak, out));
     }
   }

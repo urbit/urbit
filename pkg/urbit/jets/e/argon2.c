@@ -2,104 +2,108 @@
 **
 */
 #include "all.h"
-
-#include <argon2.h>
+#include <urcrypt.h>
 
 /* helpers
 */
 
-  int argon2_alloc(uint8_t** output, size_t bytes)
+  static int
+  argon2_alloc(uint8_t** output, size_t bytes)
   {
     *output = u3a_malloc(bytes);
-    return (NULL != output);
+    return 1;
   }
 
-  void argon2_free(uint8_t* memory, size_t bytes)
+  static void
+  argon2_free(uint8_t* memory, size_t bytes)
   {
     u3a_free(memory);
+  }
+
+  static c3_t
+  _cqear_unpack_type(c3_y* out, u3_atom in)
+  {
+    switch ( in ) {
+      default:
+        return 0;
+      case c3__d:
+        *out = urcrypt_argon2_d;
+        return 1;
+      case c3__i:
+        *out = urcrypt_argon2_i;
+        return 1;
+      case c3__id:
+        *out = urcrypt_argon2_id;
+        return 1;
+      case c3__u:
+        *out = urcrypt_argon2_u;
+        return 1;
+    }
   }
 
 /* functions
 */
 
-  u3_noun
-  u3qe_argon2( // configuration params,
+  static u3_atom
+  _cqe_argon2( // configuration params,
                u3_atom out, u3_atom type, u3_atom version,
                u3_atom threads, u3_atom mem_cost, u3_atom time_cost,
                u3_atom wik, u3_atom key, u3_atom wix, u3_atom extra,
                // input params
                u3_atom wid, u3_atom dat, u3_atom wis, u3_atom sat )
   {
-    c3_assert( _(u3a_is_cat(out)) && _(u3a_is_cat(type)) &&
-               _(u3a_is_cat(version)) && _(u3a_is_cat(threads)) &&
-               _(u3a_is_cat(mem_cost)) && _(u3a_is_cat(time_cost)) &&
-               _(u3a_is_cat(wik)) && _(u3a_is_cat(wix)) &&
-               _(u3a_is_cat(wid)) && _(u3a_is_cat(wis)) );
+    c3_y typ_u;
+    c3_w out_w, wik_w, wix_w, wid_w, wis_w, ver_w, ted_w, mem_w, tim_w;
 
-    // flip endianness for argon2
-    key = u3qc_rev(3, wik, key);
-    extra = u3qc_rev(3, wix, extra);
-    dat = u3qc_rev(3, wid, dat);
-    sat = u3qc_rev(3, wis, sat);
-
-    // atoms to byte arrays
-    c3_y bytes_key[wik];
-    u3r_bytes(0, wik, bytes_key, key);
-    c3_y bytes_extra[wix];
-    u3r_bytes(0, wix, bytes_extra, extra);
-    c3_y bytes_dat[wid];
-    u3r_bytes(0, wid, bytes_dat, dat);
-    c3_y bytes_sat[wis];
-    u3r_bytes(0, wis, bytes_sat, sat);
-
-    c3_y outhash[out];
-    argon2_context context = {
-      outhash,             // output array, at least [digest length] in size
-      out,                 // digest length
-      bytes_dat,           // password array
-      wid,                 // password length
-      bytes_sat,           // salt array
-      wis,                 // salt length
-      bytes_key, wik,      // optional secret data
-      bytes_extra, wix,    // optional associated data
-      time_cost, mem_cost, threads, threads, // performance cost configuration
-      version,             // algorithm version
-      argon2_alloc,        // custom memory allocation function
-      argon2_free,         // custom memory deallocation function
-      ARGON2_DEFAULT_FLAGS // by default only internal memory is cleared
-    };
-
-    int argon_res;
-    switch ( type ) {
-      default:
-        u3l_log("\nunjetted argon2 variant %i", type);
-        u3m_bail(c3__exit);
-        break;
-      //
-      case c3__d:
-        argon_res = argon2d_ctx(&context);
-        break;
-      //
-      case c3__i:
-        argon_res = argon2i_ctx(&context);
-        break;
-      //
-      case c3__id:
-        argon_res = argon2id_ctx(&context);
-        break;
-      //
-      case c3__u:
-        argon_res = argon2u_ctx(&context);
-        break;
+    if ( !(u3r_word_fit(&out_w, out) &&
+           u3r_word_fit(&wik_w, wik) &&
+           u3r_word_fit(&wix_w, wix) &&
+           u3r_word_fit(&wid_w, wid) &&
+           u3r_word_fit(&wis_w, wis)) ) {
+      // too big to allocate
+      return u3m_bail(c3__fail);
     }
-
-    if ( ARGON2_OK != argon_res ) {
-      u3l_log("\nargon2 error: %s", argon2_error_message(argon_res));
-      u3m_bail(c3__exit);
+    else if ( !(_cqear_unpack_type(&typ_u, type) &&
+                u3r_word_fit(&ver_w, version) &&
+                u3r_word_fit(&ted_w, threads) &&
+                u3r_word_fit(&mem_w, mem_cost) &&
+                u3r_word_fit(&tim_w, time_cost)) ) {
+      return u3_none;
     }
+    else {
+      u3_atom ret;
+      c3_y *key_y = u3r_bytes_alloc(0, wik_w, key),
+           *ex_y  = u3r_bytes_alloc(0, wix_w, extra),
+           *dat_y = u3r_bytes_alloc(0, wid_w, dat),
+           *sat_y = u3r_bytes_alloc(0, wis_w, sat),
+           *out_y = u3a_malloc(out_w);
 
-    u3z(key); u3z(extra); u3z(dat); u3z(sat);
-    return u3kc_rev(3, out, u3i_bytes(out, outhash));
+      const c3_c* err_c = urcrypt_argon2(
+          typ_u, ver_w, ted_w, mem_w, tim_w,
+          wik_w, key_y,
+          wix_w,  ex_y,
+          wid_w, dat_y,
+          wis_w, sat_y,
+          out_w, out_y,
+          &argon2_alloc,
+          &argon2_free);
+
+      u3a_free(key_y);
+      u3a_free(ex_y);
+      u3a_free(dat_y);
+      u3a_free(sat_y);
+
+      if ( NULL == err_c ) {
+        ret = u3i_bytes(out_w, out_y);
+      }
+      else {
+        ret = u3_none;
+        u3l_log("argon2-error: %s", err_c);
+      }
+
+      u3a_free(out_y);
+      return ret;
+    }
   }
 
   u3_noun
@@ -138,9 +142,10 @@
       return u3m_bail(c3__exit);
     }
     else {
-      return u3qe_argon2(out, type, version,
-                         threads, mem_cost, time_cost,
-                         wik, key, wix, extra,
-                         wid, dat, wis, sat);
+      return u3l_punt("argon2",
+          _cqe_argon2(out, type, version,
+                      threads, mem_cost, time_cost,
+                      wik, key, wix, extra,
+                      wid, dat, wis, sat));
     }
   }

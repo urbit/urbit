@@ -14,6 +14,10 @@
         c3_d
         u3m_boot_lite(void);
 
+      /* u3m_stop(): graceful shutdown cleanup. */
+        void
+        u3m_stop(void);
+
       /* u3m_bail(): bail out.  Does not return.
       **
       **  Bail motes:

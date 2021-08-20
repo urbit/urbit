@@ -2,11 +2,10 @@
 **
 */
 
-#include <errno.h>
-#include <fcntl.h>
-
 #include "all.h"
 #include "ur/ur.h"
+#include <errno.h>
+#include <fcntl.h>
 
 /* _cs_jam_buf: struct for tracking the fibonacci-allocated jam of a noun
 */

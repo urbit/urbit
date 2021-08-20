@@ -1,30 +1,19 @@
 /* vere/main.c
 **
 */
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <limits.h>
-#include <uv.h>
+#define U3_GLOBAL
+#define C3_GLOBAL
+#include "all.h"
+#include "vere/vere.h"
+#if !defined(U3_OS_mingw)
 #include <sigsegv.h>
-#include <stdlib.h>
-#include <termios.h>
-#include <dirent.h>
+#endif
 #include <openssl/conf.h>
 #include <openssl/engine.h>
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 #include <h2o.h>
 #include <curl/curl.h>
-#include <argon2.h>
-#include <lmdb.h>
-
-#define U3_GLOBAL
-#define C3_GLOBAL
-#include "all.h"
-#include "vere/vere.h"
-
 #include <vere/db/lmdb.h>
 
 #include "ca-bundle.h"
@@ -222,9 +211,9 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-#if defined(U3_OS_bsd)
+#if !defined(U3_OS_PROF)
   if (u3_Host.ops_u.pro == c3y) {
-    fprintf(stderr, "profiling isn't yet supported on BSD\r\n");
+    fprintf(stderr, "profiling isn't yet supported on your OS\r\n");
     return c3n;
   }
 #endif
@@ -307,7 +296,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   }
 
   struct sockaddr_in t;
-  if ( u3_Host.ops_u.bin_c != 0 && inet_aton(u3_Host.ops_u.bin_c, &t.sin_addr) == 0 ) {
+  if ( u3_Host.ops_u.bin_c != 0 && inet_pton(AF_INET, u3_Host.ops_u.bin_c, &t.sin_addr) == 0 ) {
     fprintf(stderr, "-b invalid IP address\n");
     return c3n;
   }
@@ -373,26 +362,64 @@ _main_getopt(c3_i argc, c3_c** argv)
   return c3y;
 }
 
-/* _setup_cert_store: writes our embedded certificate database to a temp file
+/* _cert_store: decoded CA certificates
+ */
+static STACK_OF(X509_INFO)* _cert_store;
+
+/* _setup_cert_store(): decodes embedded CA certificates
  */
 static void
-_setup_cert_store(char* tmp_cert_file_name)
+_setup_cert_store()
 {
-  errno = 0;
-  int fd = mkstemp(tmp_cert_file_name);
-  if (fd < 1) {
-    printf("boot: failed to write local ssl temporary certificate store: %s\n",
-           strerror(errno));
+  BIO* cbio = BIO_new_mem_buf(include_ca_bundle_crt, include_ca_bundle_crt_len);
+  if ( !cbio || !(_cert_store = PEM_X509_INFO_read_bio(cbio, NULL, NULL, NULL)) ) {
+    u3l_log("boot: failed to decode embedded CA certificates\r\n");
     exit(1);
   }
 
-  if (-1 == write(fd, include_ca_bundle_crt, include_ca_bundle_crt_len)) {
-    printf("boot: failed to write local ssl temporary certificate store: %s\n",
-           strerror(errno));
-    exit(1);
-  }
+  BIO_free(cbio);
+}
 
-  setenv("SSL_CERT_FILE", tmp_cert_file_name, 1);
+/* _setup_ssl_x509(): adds embedded CA certificates to a X509_STORE
+ */
+static void
+_setup_ssl_x509(void* arg)
+{
+  X509_STORE* cts = arg;
+  int i;
+  for ( i = 0; i < sk_X509_INFO_num(_cert_store); i++ ) {
+    X509_INFO *itmp = sk_X509_INFO_value(_cert_store, i);
+    if(itmp->x509) {
+      X509_STORE_add_cert(cts, itmp->x509);
+    }
+    if(itmp->crl) {
+      X509_STORE_add_crl(cts, itmp->crl);
+    }
+  }
+}
+
+/* _curl_ssl_ctx_cb(): curl SSL context callback
+ */
+static CURLcode
+_curl_ssl_ctx_cb(CURL* curl, SSL_CTX* sslctx, void* param)
+{
+  X509_STORE* cts = SSL_CTX_get_cert_store(sslctx);
+  if (!cts || !_cert_store)
+    return CURLE_ABORTED_BY_CALLBACK;
+
+  _setup_ssl_x509(cts);
+  return CURLE_OK;
+}
+
+/* _setup_ssl_curl(): adds embedded CA certificates to a curl context
+ */
+static void
+_setup_ssl_curl(void* arg)
+{
+  CURL* curl = arg;
+  curl_easy_setopt(curl, CURLOPT_CAINFO, NULL);
+  curl_easy_setopt(curl, CURLOPT_CAPATH, NULL);
+  curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, _curl_ssl_ctx_cb);
 }
 
 
@@ -486,9 +513,11 @@ report(void)
 {
   printf("urbit %s\n", URBIT_VERSION);
   printf("gmp: %s\n", gmp_version);
+#if !defined(U3_OS_mingw)
   printf("sigsegv: %d.%d\n",
          (libsigsegv_version >> 8) & 0xff,
          libsigsegv_version & 0xff);
+#endif
   printf("openssl: %s\n", SSLeay_version(SSLEAY_VERSION));
   printf("libuv: %s\n", uv_version_string());
   printf("libh2o: %d.%d.%d\n",
@@ -503,7 +532,6 @@ report(void)
          LIBCURL_VERSION_MAJOR,
          LIBCURL_VERSION_MINOR,
          LIBCURL_VERSION_PATCH);
-  printf("argon2: 0x%x\n", ARGON2_VERSION_NUMBER);
 }
 
 /* _stop_exit(): exit immediately.
@@ -515,96 +543,6 @@ _stop_exit(c3_i int_i)
   //
   fprintf(stderr, "\r\n[received keyboard stop signal, exiting]\r\n");
   u3_king_bail();
-}
-
-/*
-  This is set to the the write-end of a pipe when Urbit is started in
-  daemon mode. It's meant to be used as a signal to the parent process
-  that the child process has finished booting.
-*/
-static c3_i _child_process_booted_signal_fd = -1;
-
-/*
-  This should be called whenever the ship has been booted enough to
-  handle commands from automation code. Specifically, once the Eyre's
-  `chis` interface is up and running.
-
-  In daemon mode, this signals to the parent process that it can
-  exit. Otherwise, it does nothing.
-
-  Once we've sent a signal with `write`, we close the file descriptor
-  and overwrite the global to make it impossible to accidentally do
-  this twice.
-*/
-static void _on_boot_completed_cb() {
-  c3_c buf[2] = {0,0};
-
-  if ( -1 == _child_process_booted_signal_fd ) {
-    return;
-  }
-
-  if ( 0 == write(_child_process_booted_signal_fd, buf, 1) ) {
-    c3_assert(!"_on_boot_completed_cb: Can't write to parent FD");
-  }
-
-  close(_child_process_booted_signal_fd);
-  _child_process_booted_signal_fd = -1;
-}
-
-/*
-  In daemon mode, run the urbit as a background process, but don't
-  exit from the parent process until the ship is finished booting.
-
-  We use a pipe to communicate between the child and the parent. The
-  parent waits for the child to write something to the pipe and
-  then exits. If the pipe is closed with nothing written to it, get
-  the exit status from the child process and also exit with that status.
-
-  We want the child to write to the pipe once it's booted, so we put
-  `_on_boot_completed_cb` into `u3_Host.bot_f`, which is NULL in
-  non-daemon mode. That gets called once the `chis` service is
-  available.
-
-  In both processes, we are good fork() citizens, and close all unused
-  file descriptors. Closing `pipefd[1]` in the parent process is
-  especially important, since the pipe needs to be closed if the child
-  process dies. When the pipe is closed, the read fails, and that's
-  how we know that something went wrong.
-
-  There are some edge cases around `WEXITSTATUS` that are not handled
-  here, but I don't think it matters.
-*/
-static void
-_fork_into_background_process()
-{
-  c3_i pipefd[2];
-
-  if ( 0 != pipe(pipefd) ) {
-    c3_assert(!"Failed to create pipe");
-  }
-
-  pid_t childpid = fork();
-
-  if ( 0 == childpid ) {
-    close(pipefd[0]);
-    _child_process_booted_signal_fd = pipefd[1];
-    u3_Host.bot_f = _on_boot_completed_cb;
-    return;
-  }
-
-  close(pipefd[1]);
-  close(0);
-  close(1);
-  close(2);
-
-  c3_c buf[2] = {0,0};
-  if ( 1 == read(pipefd[0], buf, 1) ) {
-    exit(0);
-  }
-
-  c3_i status;
-  wait(&status);
-  exit(WEXITSTATUS(status));
 }
 
 /* _stop_on_boot_completed_cb(): exit gracefully after boot is complete
@@ -659,12 +597,24 @@ main(c3_i   argc,
   }
 
   //  Set `u3_Host.wrk_c` to the worker executable path.
-  c3_i worker_exe_len = 1 + strlen(argv[0]) + strlen("-worker");
+  c3_i urbit_exe_len = strlen(argv[0]);
+  c3_i worker_exe_len = 1 + urbit_exe_len + strlen("-worker");
   u3_Host.wrk_c = c3_malloc(worker_exe_len);
+  #if defined(U3_OS_mingw)
+  if ( urbit_exe_len >= 4 && !strcmp(argv[0] + urbit_exe_len - 4, ".exe")) {
+    snprintf(u3_Host.wrk_c, worker_exe_len, "%.*s-worker.exe", urbit_exe_len - 4, argv[0]);
+  } else {
+    snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
+  }
+  #else
   snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
+  #endif
 
   if ( c3y == u3_Host.ops_u.dem ) {
-    _fork_into_background_process();
+    //  In daemon mode, run the urbit as a background process, but don't
+    //  exit from the parent process until the ship is finished booting.
+    //
+    u3_daemon_init();
   }
 
   if ( c3y == u3_Host.ops_u.rep ) {
@@ -688,6 +638,7 @@ main(c3_i   argc,
   //
   //    XX review, may be unnecessary due to similar in u3m_init()
   //
+#if defined(U3_OS_PROF)
   if ( _(u3_Host.ops_u.pro) ) {
     sigset_t set;
 
@@ -698,12 +649,15 @@ main(c3_i   argc,
       exit(1);
     }
   }
+#endif
 
+  #if !defined(U3_OS_mingw)
   //  Handle SIGTSTP as if it was SIGTERM.
   //
   //    Configured here using signal() so as to be immediately available.
   //
   signal(SIGTSTP, _stop_exit);
+  #endif
 
   printf("~\n");
   //  printf("welcome.\n");
@@ -734,9 +688,6 @@ main(c3_i   argc,
     c3_free(abs_c);
   }
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
-
-  u3K.certs_c = strdup("/tmp/urbit-ca-cert-XXXXXX");
-  _setup_cert_store(u3K.certs_c);
 
   if ( c3y == u3_Host.ops_u.dem ) {
     printf("boot: running as daemon\n");
@@ -804,6 +755,23 @@ main(c3_i   argc,
       }
     }
 
+    #if defined(U3_OS_mingw)
+    //  Initialize event used to transmit Ctrl-C to worker process
+    //
+    {
+      SECURITY_ATTRIBUTES sa = {sizeof(sa), NULL, TRUE};
+      if ( NULL == (u3_Host.cev_u = CreateEvent(&sa, FALSE, FALSE, NULL)) ) {
+        u3l_log("boot: failed to create Ctrl-C event: %d\r\n", GetLastError());
+        exit(1);
+      }
+    }
+    #endif
+
+    //  starting u3m configures OpenSSL memory functions, so we must do it
+    //  before any OpenSSL allocations
+    // 
+    u3m_boot_lite();
+
     //  Initialize OpenSSL for client and server
     //
     {
@@ -817,6 +785,10 @@ main(c3_i   argc,
       u3l_log("boot: curl initialization failed");
       exit(1);
     }
+
+    _setup_cert_store();
+    u3K.ssl_curl_f = _setup_ssl_curl;
+    u3K.ssl_x509_f = _setup_ssl_x509;
 
     u3_king_commence();
 

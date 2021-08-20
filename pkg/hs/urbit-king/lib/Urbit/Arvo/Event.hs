@@ -86,7 +86,7 @@ instance FromNoun Pass where
 -- seed. These aren't actually private keys, but public/private keypairs which
 -- can be derived from these seeds.
 data Ring = Ring { ringSign :: BS.ByteString, ringCrypt :: BS.ByteString }
-  deriving (Eq)
+  deriving (Eq, Ord)
 
 instance ToNoun Ring where
   toNoun Ring{..} =
@@ -118,6 +118,36 @@ data Seed = Seed
     }
   deriving (Eq, Show)
 
+data Germs = Germs
+    { gShip :: Ship
+    , gFeed :: [Germ]
+    }
+  deriving (Eq, Show)
+
+data Germ = Germ
+    { gLife :: Life
+    , gRing :: Ring
+    }
+  deriving (Eq, Ord, Show)
+
+data Feed
+  = Feed0 Seed
+  | Feed1 Germs
+  deriving (Eq, Show)
+
+--NOTE  reify type environment
+$(pure [])
+
+instance ToNoun Feed where
+  toNoun = \case
+    Feed0 s -> $(deriveToNounFunc ''Seed) s
+    Feed1 s -> C (C (A 1) (A 0)) $ $(deriveToNounFunc ''Germs) s
+
+instance FromNoun Feed where
+  parseNoun = \case
+    (C (C (A 1) (A 0)) s) -> Feed1 <$> $(deriveFromNounFunc ''Germs) s
+    n                     -> Feed0 <$> $(deriveFromNounFunc ''Seed) n
+
 type Public = (Life, HoonMap Life Pass)
 
 data Dnses = Dnses { dPri::Cord, dSec::Cord, dTer::Cord }
@@ -146,6 +176,7 @@ data Dawn = MkDawn
 deriveNoun ''Dnses
 deriveNoun ''EthPoint
 deriveNoun ''Seed
+deriveNoun ''Germ
 deriveNoun ''Dawn
 
 
@@ -238,6 +269,16 @@ data BoatEv
   deriving (Eq, Ord, Show)
 
 deriveNoun ''BoatEv
+
+
+-- Boat Events -----------------------------------------------------------------
+
+data JaelEv
+    = JaelEvRekey () (Life, Ring)
+    | JaelEvCrud Path Noun
+  deriving (Eq, Show)
+
+deriveNoun ''JaelEv
 
 
 -- Timer Events ----------------------------------------------------------------
@@ -347,6 +388,7 @@ data BlipEv
     | BlipEvBoat       BoatEv
     | BlipEvHttpClient HttpClientEv
     | BlipEvHttpServer HttpServerEv
+    | BlipEvJael       JaelEv
     | BlipEvNewt       NewtEv
     | BlipEvSync       SyncEv
     | BlipEvTerm       TermEv
@@ -369,6 +411,7 @@ instance ToNoun Ev where
     EvBlip v@BlipEvBoat{}       -> reorgThroughNoun ("clay", v)
     EvBlip v@BlipEvHttpClient{} -> reorgThroughNoun ("iris", v)
     EvBlip v@BlipEvHttpServer{} -> reorgThroughNoun ("eyre", v)
+    EvBlip v@BlipEvJael{}       -> reorgThroughNoun ("jael", v)
     EvBlip v@BlipEvNewt{}       -> reorgThroughNoun ("ames", v)
     EvBlip v@BlipEvSync{}       -> reorgThroughNoun ("clay", v)
     EvBlip v@BlipEvTerm{}       -> reorgThroughNoun ("dill", v)
@@ -395,6 +438,7 @@ getSpinnerNameForEvent = \case
         BlipEvBoat _                -> Just "boat"
         BlipEvHttpClient _          -> Just "iris"
         BlipEvHttpServer _          -> Just "eyre"
+        BlipEvJael _                -> Just "jael"
         BlipEvNewt _                -> Just "newt"
         BlipEvSync _                -> Just "clay"
         BlipEvTerm (TermEvBelt _ _) -> Nothing
