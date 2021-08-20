@@ -1,0 +1,56 @@
+*.pc
+config.h
+config.status
+libtool
+
+# the following was adapted from
+# https://github.com/github/gitignore/blob/991e760c1c6d50fdda246e0178b9c58b06770b90/Autotools.gitignore
+
+# http://www.gnu.org/software/automake
+
+Makefile.in
+build-aux/ar-lib
+/mdate-sh
+/py-compile
+/test-driver
+/ylwrap
+.deps/
+.dirstamp
+
+# http://www.gnu.org/software/autoconf
+
+autom4te.cache
+/autoscan.log
+/autoscan-*.log
+/aclocal.m4
+build-aux/compile
+/config.cache
+build-aux/config.guess
+/config.h.in
+build-aux/config.log
+build-aux/config.status
+build-aux/config.sub
+/configure
+/configure.scan
+build-aux/depcomp
+build-aux/install-sh
+build-aux/missing
+/stamp-h1
+
+# https://www.gnu.org/software/libtool/
+
+build-aux/ltmain.sh
+
+# http://www.gnu.org/software/m4/
+
+build-aux/m4/libtool.m4
+build-aux/m4/ltoptions.m4
+build-aux/m4/ltsugar.m4
+build-aux/m4/ltversion.m4
+build-aux/m4/lt~obsolete.m4
+
+# Generated Makefile
+# (meta build system like autotools,
+# can automatically generate from config.status script
+# (which is called by configure script))
+Makefile
