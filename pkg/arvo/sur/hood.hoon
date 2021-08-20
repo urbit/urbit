@@ -55,7 +55,8 @@
   :+  %rose  ["" "{<desk>}" "::"]
   ^-  tang
   =-  ?:  =(~ next.arak)  -
-      (snoc - leaf/"pending: {<next.arak>}")
+      %+  snoc  -
+      leaf/"pending: {<(turn next.arak |=([@ lal=@tas num=@] [lal num]))>}"
   ^-  tang
   =/  meb  (mergebase-hashes our desk now arak)
   =/  sat  ?:(liv.rein.arak "running" "suspended")
@@ -128,7 +129,7 @@
   ^-  (list dude)
   =/  duz  (read-apes bill)
   =.  duz  (skip duz ~(has in sub.rein))
-  =.  duz  (weld duz ~(tap in add.rein))
+  =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
   duz
 ::
 ++  mergebase-hashes

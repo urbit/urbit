@@ -2,4 +2,4 @@
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [[=desk ~] ~]
     ==
-[%kiln-revive desk]
+[%kiln-uninstall desk]

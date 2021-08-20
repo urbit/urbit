@@ -282,6 +282,7 @@
     --
   ++  pass
     |%
+    ++  pyre  |=(=tang [%pass /kiln/vats %arvo %d %pyre tang])
     ++  find      (warp %find [%sing %y ud+1 /])
     ++  sync-da   (warp %sync [%sing %w da+now /])
     ++  sync-ud   (warp %sync [%sing %w ud+aeon.rak /])
@@ -326,8 +327,8 @@
     |=  lac=desk
     ^+  kiln
     ?:  =(%base lac)
-      ~>  %slog.0^leaf/"kiln: |uninstall: %base cannot be uninstalled"
-      !!
+      =/  mes  "kiln: |uninstall: %base cannot be uninstalled"
+      (^emit (pyre:pass leaf/mes ~))
     ?.  (~(has by ark) lac)
       ~>  %slog.0^leaf/"kiln: |uninstall: {<lac>} not installed, ignoring"
       kiln
@@ -365,8 +366,8 @@
     ^+  vats
     =/  got  (~(get by ark) lac)
     ?:  =(%base lac)
-      ~>  %slog.0^leaf/"kiln: suspend: %base cannot be suspended"
-      !!
+      =/  mes  "kiln: suspend: %base cannot be suspended"
+      (emit (pyre:pass leaf/mes ~))
     ?.  (~(has by ark) lac)
       ~>  %slog.0^leaf/"kiln: suspend: {<lac>} not installed, ignoring"
       vats
@@ -383,6 +384,19 @@
     =.  liv.rein.rak  &
     =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
     (emit (diff:give %revive loc rak))
+  ::  +set-rein: adjust which agents are forced on or off
+  ::
+  ++  set-rein
+    |=  [lac=desk new=rein]
+    ^+  vats
+    =.  vats  (abed lac)
+    =^  old  rein.rak  [rein.rak new]
+    ?+  [liv.old liv.new]  !!
+      [%| %|]  vats
+      [%| %&]  (revive lac)
+      [%& %|]  (suspend lac)
+      [%& %&]  (update-running-apps (get-apps-diff our loc now rein.rak))
+    ==
   ::  +bump: handle kernel kelvin upgrade
   ::
   ::    Apply merges to revive faded agents on all paused desks.
@@ -391,16 +405,32 @@
     |=  except=(set desk)
     ^+  kiln
     =/  kel=weft  [%zuse zuse]
+    =.  except  (~(put in except) %base)
     =/  ded  (~(dif in (get-blockers kel)) except)
     ?.  =(~ ded)
-      ~>  %slog.0^leaf/"kiln: desks blocked upgrade {<ded>}"
-      !!
-    =/  liv  (skip ~(tap by ark) |=([d=desk *] (~(has in except) d)))
+      =/  mes  "kiln: desks blocked upgrade to {<[- +]:kel>}: {<ded>}"
+      (^emit (pyre:pass leaf/mes ~))
+    =/  liv  (skip ~(tap in ~(key by ark)) ~(has in except))
     ~>  %slog.0^leaf/"kiln: bump {<liv>}"
     =<  kiln
     |-  ^+  vats
     ?~  liv  vats
-    $(liv t.liv, vats (emit merge-main:pass(loc p.i.liv, rak q.i.liv)))
+    =.  vats  (abed i.liv)
+    ::  skip to first commit at new kelvin
+    ::
+    =/  yon
+      =*  nex  next.rak
+      |-  ^-  (unit aeon)
+      ?~  nex  ~
+      ?:  =(kel weft.i.nex)
+        `aeon.i.nex
+      $(nex t.nex)
+    ?~  yon
+      =/  mes  "kiln: {here} killed upgrade to {<[- +]:kel>}"
+      (emit (pyre:pass leaf/mes ~))
+    =.  next.rak  (crank-next u.yon)
+    =.  vats  (emit merge-main:pass)
+    $(liv t.liv)
   ::  +stop-agents: internal helper to suspend agents on .loc
   ::
   ::    Will not shut down %hood or %dojo.
@@ -475,6 +505,7 @@
         =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
         (emil sync-ud:pass (diff:give diff) ~)
       ~>  %slog.0^leaf/"kiln: merging into {here}"
+      =.  next.rak  (crank-next (dec aeon.rak))
       (emil ~[merge-main sync-ud]:pass)
     ::
     =/  blockers
@@ -484,9 +515,11 @@
     ::
     ?.  =(~ blockers)
       ~>  %slog.0^leaf/"kiln: OTA blocked on {<blockers>}"
+      =.  next.rak  (snoc next.rak [(dec aeon.rak) new-weft])
       =/  =diff  [%block loc rak new-weft blockers]
       (emil sync-ud:pass (diff:give diff) ~)
     ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
+    =.  next.rak  (crank-next (dec aeon.rak))
     (emil ~[merge-main sync-ud]:pass)
   ::
   ++  take-merge-main
@@ -505,7 +538,8 @@
       vats
     ~>  %slog.0^leaf/"kiln: merge into {here} succeeded"
     =.  vats  (emit (diff:give %merge loc rak))
-    =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
+    =?  vats  liv.rein.rak
+      (update-running-apps (get-apps-diff our loc now rein.rak))
     ?.  =(%base loc)
       vats
     =.  kiln  (bump (sy %base %kids ~))
@@ -550,6 +584,17 @@
     |=  daz=(list dude)
     ~>  %slog.0^leaf/"kiln: stopping {<daz>}"
     (emil `(list card:agent:gall)`(zing (turn daz stop-dude:pass)))
+  ::  +crank-next: pop stale aeons from .next.rak
+  ::
+  ++  crank-next
+    |=  new=aeon
+    ^+  next.rak
+    =/  rog  next.rak
+    |-  ^+  next.rak
+    ?~  rog  next.rak
+    ?:  =(new aeon.i.rog)
+      t.rog
+    $(rog t.rog)
   --
 ::  +get-blockers: find desks that would block a kernel update
 ::
@@ -559,6 +604,8 @@
   %-  ~(gas in *(set desk))
   %+  murn  ~(tap by ark)
   |=  [=desk =arak]
+  ?:  =(%base desk)
+    ~
   ?.  liv.rein.arak
     ~
   ?:  (lien next.arak |=([* k=weft] =(k kel)))
@@ -600,6 +647,7 @@
     %kiln-suspend            =;(f (f !<(_+<.f vase)) poke-suspend)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
     %kiln-revive             =;(f (f !<(_+<.f vase)) poke-revive)
+    %kiln-rein               =;(f (f !<(_+<.f vase)) poke-rein)
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
     %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
@@ -755,6 +803,10 @@
   %-  emit
   =/  =rite  [%r ~ ?:(pub %black %white) ~]
   [%pass /kiln/permission %arvo %c [%perm syd pax rite]]
+::
+++  poke-rein
+  |=  [=desk =rein]
+  abet:abet:(set-rein:vats +<)
 ::
 ++  poke-revive
   |=  =desk

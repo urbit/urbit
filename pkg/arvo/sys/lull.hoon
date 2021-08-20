@@ -1057,6 +1057,7 @@
         [%meld ~]                                       ::  unify memory
         [%noop ~]                                       ::  no operation
         [%pack ~]                                       ::  compact memory
+        [%pyre =tang]                                   ::  kill this event
         [%talk p=tank]                                  ::
         [%text p=tape]                                  ::
         [%view session=~]                               ::  watch session blits
