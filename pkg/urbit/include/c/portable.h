@@ -104,6 +104,8 @@
 #   endif
 
   /** Address space layout.
+  ***
+  ***   NB: 2^29 words == 2GB
   **/
 #   if defined(U3_OS_linux)
 #     ifdef __LP64__
@@ -115,17 +117,24 @@
 #     else
 #       define U3_OS_LoomBase 0x36000000
 #     endif
-#       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
-#   elif defined(U3_OS_osx) && defined(U3_CPU_aarch64) || defined(U3_OS_mingw)
+#       define U3_OS_LoomBits 29
+#   elif defined(U3_OS_mingw)
 #       define U3_OS_LoomBase 0x28000000000
-#       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
-#   elif defined(U3_OS_osx) || defined(U3_OS_bsd)
+#       define U3_OS_LoomBits 29
+#   elif defined(U3_OS_osx)
+#     ifdef __LP64__
+#       define U3_OS_LoomBase 0x28000000000
+#     else
+#       define U3_OS_LoomBase 0x4000000
+#     endif
+#       define U3_OS_LoomBits 29
+#   elif defined(U3_OS_bsd)
 #     ifdef __LP64__
 #       define U3_OS_LoomBase 0x200000000
 #     else
 #       define U3_OS_LoomBase 0x4000000
 #     endif
-#       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
+#       define U3_OS_LoomBits 29
 #   else
 #     error "port: LoomBase"
 #   endif
