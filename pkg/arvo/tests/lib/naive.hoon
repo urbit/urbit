@@ -981,6 +981,8 @@
 ++  rigred-mgmt  [~rigred %manage]
 ::
 --
+=/  init-rut-simple  (init-rut-full *^state:naive)
+=/  init-red-simple  (init-red-full *^state:naive)
 ::
 :: Tests
 ::
@@ -1006,7 +1008,7 @@
   ::
   =/  event-jar  gen-rut-jar
   =|  =^state:naive
-  =^  f  state  (init-rut-full state)
+  =^  f  state  init-rut-simple
   =/  initial-state  state
   =/  ship-list  rut-ship-list
   =/  suc-map  (make-success-map make-event-list)
@@ -1267,7 +1269,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-rut-full state)
+    =^  f  state  init-rut-simple
     =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
     [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::
@@ -1280,7 +1282,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-rut-full state)
+    =^  f  state  init-rut-simple
     =^  f  state  (n state (escape-requested:l1 ~larsyx-mapmeg ~losred))
     [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
 ::
@@ -1293,7 +1295,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state (escape-requested:l1 ~dovmul-mogryt ~rigred))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
@@ -1303,7 +1305,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state (escape-requested:l1 ~pinpun-pilsun ~losred))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
@@ -1319,7 +1321,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 pp-adopt %losred-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
@@ -1328,7 +1330,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 pp-m-adopt %losred-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
@@ -1344,7 +1346,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-red-full state)
+    =^  f  state  init-red-simple
     =^  f  state  (n state %bat q:(gen-tx 0 lm-adopt %losred-key-0))
     [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ::
@@ -1353,7 +1355,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-red-full state)
+    =^  f  state  init-red-simple
     =^  f  state  (n state %bat q:(gen-tx 0 lm-m-adopt %losred-mkey-0))
     [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ==
@@ -1369,7 +1371,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 dm-adopt %rigred-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
@@ -1378,7 +1380,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 dm-m-adopt %rigred-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
   ==
@@ -1394,7 +1396,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
@@ -1403,7 +1405,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-adopt %rigred-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
@@ -1419,7 +1421,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %losred-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
@@ -1428,7 +1430,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-adopt %losred-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
@@ -1445,7 +1447,7 @@
   =/  rr-batch-1=tx-list  (limo ~[rr-h-detach rr-adopt])
   =/  rr-batch-2=tx-list  (limo ~[rr-h-m-detach rr-m-adopt])
   ::
-  =/  init-state=^state:naive  +:(init-rut-full *^state:naive)
+  =/  init-state=^state:naive  +:init-rut-simple
   ;:  weld
     %+  expect-eq
       !>  [~ %.n ~holrut]
@@ -1494,7 +1496,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 pp-reject %losred-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
@@ -1503,7 +1505,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 pp-m-reject %losred-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
@@ -1519,7 +1521,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 dm-reject %rigred-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
@@ -1528,7 +1530,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 dm-m-reject %rigred-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
   ==
@@ -1544,7 +1546,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 lm-reject %losred-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
     ::
@@ -1553,7 +1555,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 lm-m-reject %losred-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ==
@@ -1569,7 +1571,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rr-reject %rigred-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
@@ -1578,7 +1580,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-reject %rigred-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
@@ -1593,7 +1595,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 2 pp-reject %losrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
@@ -1602,7 +1604,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 pp-m-reject %losrut-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
@@ -1618,7 +1620,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 1 dm-reject %holrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
@@ -1627,7 +1629,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 dm-m-reject %holrut-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
   ==
@@ -1643,7 +1645,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 lm-reject %rigrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
     ::
@@ -1652,7 +1654,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 lm-m-reject %rigrut-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ==
@@ -1668,7 +1670,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 1 rr-reject %holrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
@@ -1677,7 +1679,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-reject %holrut-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
@@ -1693,7 +1695,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 1 rt-reject %holrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~radres-tinnyl)
     ::
@@ -1702,7 +1704,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rt-m-reject %holrut-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~radres-tinnyl)
   ==
@@ -1720,7 +1722,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 2 pp-cancel-escape %losrut-pp-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
@@ -1729,7 +1731,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 pp-m-cancel-escape %losrut-pp-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
@@ -1745,7 +1747,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 2 dm-cancel-escape %holrut-dm-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
@@ -1754,7 +1756,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 dm-m-cancel-escape %holrut-dm-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
   ==
@@ -1770,7 +1772,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 1 lm-cancel-escape %rigrut-lm-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
     ::
@@ -1779,7 +1781,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 lm-m-cancel-escape %rigrut-lm-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ==
@@ -1795,7 +1797,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 1 rr-cancel-escape %holrut-rr-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
@@ -1804,7 +1806,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-red-full state)
+      =^  f  state  init-red-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-cancel-escape %holrut-rr-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
@@ -1823,7 +1825,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state %bat q:(gen-tx 2 pp-detach %losrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
@@ -1832,7 +1834,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state %bat q:(gen-tx 0 pp-m-detach %losrut-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
   ==
@@ -1848,7 +1850,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state %bat q:(gen-tx 2 rt-detach %losrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~radres-tinnyl)
     ::
@@ -1857,7 +1859,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rt-m-detach %losrut-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~radres-tinnyl)
   ==
@@ -1873,7 +1875,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state %bat q:(gen-tx 1 dm-detach %holrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
@@ -1882,7 +1884,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state %bat q:(gen-tx 0 dm-m-detach %holrut-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
   ==
@@ -1898,7 +1900,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state %bat q:(gen-tx 0 lm-detach %rigrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
     ::
@@ -1907,7 +1909,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state %bat q:(gen-tx 0 lm-m-detach %rigrut-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
   ==
@@ -1925,7 +1927,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rr-detach %rigrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
     ::
@@ -1934,7 +1936,7 @@
     ::
       !>
       =|  =^state:naive
-      =^  f  state  (init-rut-full state)
+      =^  f  state  init-rut-simple
       =^  f  state  (n state %bat q:(gen-tx 0 rr-m-detach %rigrut-mkey-0))
       [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
   ==
@@ -1952,7 +1954,7 @@
   =/  rr-detach-batch-1=tx-list  (limo rr-h-detach rr-detach ~)
   =/  rr-detach-batch-2=tx-list  (limo rr-h-m-detach rr-m-detach ~)
   ::
-  =/  init-state=^state:naive  +:(init-rut-full *^state:naive)
+  =/  init-state=^state:naive  +:init-rut-simple
   ;:  weld
     %+  expect-eq
       !>  [~ %.n ~holrut]
@@ -1998,7 +2000,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-red-full state)
+    =^  f  state  init-red-simple
     =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
     =^  f  state  (n state %bat q:(gen-tx 0 rr-adopt %rigred-key-0))
     [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
@@ -2013,7 +2015,7 @@
 ::    ::
 ::      !>
 ::      =|  =^state:naive
-::      =^  f  state  (init-red-full state)
+::      =^  f  state  init-red-simple
 ::      =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
 ::      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::
@@ -2021,7 +2023,7 @@
   =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~rigred]
   =/  rr-adopt   [rigred-own %adopt ~rabsum-ravtyd]
   ::
-  =/  init-state  +:(init-rut-full *^state:naive)
+  =/  init-state  +:init-rut-simple
   ::
   ;:  weld
     %+  expect-eq
@@ -2054,7 +2056,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-rut-full state)
+    =^  f  state  init-rut-simple
     =^  f  state  (n state %bat q:(gen-tx 0 rr-escape %holrut-rr-key-0))
     [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::
@@ -2079,7 +2081,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-rut-full state)
+    =^  f  state  init-rut-simple
     =^  f  state  (n state %bat q:(gen-tx 0 rr-escape %holrut-rr-key-0))
     =^  f  state  (n state %bat q:(gen-tx 1 rr-adopt %holrut-key-0))
     =^  f  state  (n state (lost-sponsor:l1 ~rabsum-ravtyd ~holrut))
@@ -2098,7 +2100,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-red-full state)
+    =^  f  state  init-red-simple
     =^  f  state  (n state %bat q:(gen-tx 0 lm-adopt %losred-key-0))
     =^  f  state  (n state (lost-sponsor:l1 ~larsyx-mapmeg ~rigrut))
    [escape.net sponsor.net]:(got:orm points.state ~larsyx-mapmeg)
@@ -2114,7 +2116,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-rut-full state)
+    =^  f  state  init-rut-simple
     =^  f  state  (n state %bat q:(gen-tx 1 rr-detach %holrut-key-0))
     =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~holrut))
     =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~holrut))
@@ -2132,7 +2134,7 @@
 ::    ::
 ::      !>
 ::      =|  =^state:naive
-::      =^  f  state  (init-rut-full state)
+::      =^  f  state  init-rut-simple
 ::      =^  f  state  (n state (escape-canceled:l1 ~rabsum-ravtyd ~rigred))
 ::      escape.net:(got:orm points.state ~rabsum-ravtyd)
 ::
@@ -2143,7 +2145,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-rut-full state)
+    =^  f  state  init-rut-simple
     =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
     =^  f  state  (n state (escape-canceled:l1 ~rabsum-ravtyd ~rigred))
     escape.net:(got:orm points.state ~rabsum-ravtyd)
@@ -2155,7 +2157,7 @@
   ::
     !>
     =|  =^state:naive
-    =^  f  state  (init-rut-full state)
+    =^  f  state  init-rut-simple
     =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigred))
     =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
     [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
@@ -2171,7 +2173,7 @@
 ::    ::
 ::      !>
 ::      =|  =^state:naive
-::      =^  f  state  (init-rut-full state)
+::      =^  f  state  init-rut-simple
 ::      =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
 ::      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
 ::  ::
@@ -2182,7 +2184,7 @@
 ::    ::
 ::      !>
 ::      =|  =^state:naive
-::      =^  f  state  (init-rut-full state)
+::      =^  f  state  init-rut-simple
 ::      =^  f  state  (n state (escape-requested:l1 ~rabsum-ravtyd ~rigrut))
 ::      =^  f  state  (n state (escape-accepted:l1 ~rabsum-ravtyd ~rigred))
 ::      [escape.net sponsor.net]:(got:orm points.state ~rabsum-ravtyd)
@@ -2956,7 +2958,7 @@
 ::
   =+  [seed=`@`%test-fuzz-octs i=0]
   =|  =^state:naive
-  =^  f  state  (init-red-full state)
+  =^  f  state  init-red-simple
   =/  init-state  state
   |-  ^-  tang
   ?:  =(i 10.000)  ~
@@ -2995,7 +2997,7 @@
 ::
   =+  [seed=`@`%test-fuzz-valid-ship-key i=0]
   =|  =^state:naive
-  =^  f  state  (init-red-full state)
+  =^  f  state  init-red-simple
   =/  init-state  state
   |-  ^-  tang
   ?:  =(i 100)  ~
@@ -3033,7 +3035,7 @@
 ::
   =+  [seed=`@`%test-fuzz-valid-ship-key-proxy-nonce i=0]
   =|  =^state:naive
-  =^  f  state  (init-red-full state)
+  =^  f  state  init-red-simple
   =/  init-state  state
   |-  ^-  tang
   ?:  =(i 100)  ~
@@ -3072,7 +3074,7 @@
 ::  ::
 ::    =+  [seed=`@`%test-fuzz-after-tx1 i=0]
 ::    =|  =^state:naive
-::    =^  f  state  (init-red-full state)
+::    =^  f  state  init-red-simple
 ::    =/  init-state  state
 ::    |-  ^-  tang
 ::    ?:  =(i 11)  ~  :: 10 attempts for each transaction type
