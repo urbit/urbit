@@ -102,5 +102,5 @@ AC_TYPE_UINT8_T
 AC_CHECK_FUNCS([memset])
 
 # Finish and output
-AC_CONFIG_FILES([Makefile liburcrypt.pc:liburcrypt.pc.in])
+AC_CONFIG_FILES([Makefile liburcrypt-$URCRYPT_API_VERSION.pc:liburcrypt.pc.in])
 AC_OUTPUT

@@ -19,7 +19,7 @@ noinst_HEADERS = urcrypt/util.h \
 		 scrypt/libscrypt.h
 
 # main library
-pkgconfig_DATA = liburcrypt.pc
+pkgconfig_DATA = liburcrypt-$(URCRYPT_API_VERSION).pc
 DISTCLEANFILES = $(pkgconfig_DATA)
 
 liburcrypt_la_CPPFLAGS = -I$(srcdir)/ed25519/src \

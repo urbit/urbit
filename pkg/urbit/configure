@@ -9,7 +9,7 @@ URBIT_VERSION="$(cat ./version)"
 pkgc_deps="     \
   libcurl       \
   libh2o        \
-  liburcrypt    \
+  liburcrypt-0  \
   libuv         \
   openssl       \
 "
