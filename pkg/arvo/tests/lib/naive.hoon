@@ -1723,7 +1723,7 @@
       !>
       =|  =^state:naive
       =^  f  state  init-red-simple
-      =^  f  state  (n state %bat q:(gen-tx 2 pp-cancel-escape %losrut-pp-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 3 pp-cancel-escape %losrut-pp-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
     %+  expect-eq
@@ -1748,7 +1748,7 @@
       !>
       =|  =^state:naive
       =^  f  state  init-red-simple
-      =^  f  state  (n state %bat q:(gen-tx 2 dm-cancel-escape %holrut-dm-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 3 dm-cancel-escape %holrut-dm-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~dovmul-mogryt)
     ::
     %+  expect-eq
@@ -1826,7 +1826,7 @@
       !>
       =|  =^state:naive
       =^  f  state  init-rut-simple
-      =^  f  state  (n state %bat q:(gen-tx 2 pp-detach %losrut-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 3 pp-detach %losrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~pinpun-pilsun)
     ::
     %+  expect-eq
@@ -1851,7 +1851,7 @@
       !>
       =|  =^state:naive
       =^  f  state  init-rut-simple
-      =^  f  state  (n state %bat q:(gen-tx 2 rt-detach %losrut-key-0))
+      =^  f  state  (n state %bat q:(gen-tx 3 rt-detach %losrut-key-0))
       [escape.net sponsor.net]:(got:orm points.state ~radres-tinnyl)
     ::
     %+  expect-eq
@@ -2052,7 +2052,7 @@
   =/  rr-escape  [[~rabsum-ravtyd %own] %escape ~holrut]
   ::
   %+  expect-eq
-    !>  [~ %.y ~holrut]
+    !>  [[~ ~holrut] %.y ~holrut]
   ::
     !>
     =|  =^state:naive
