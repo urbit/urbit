@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { omit } from 'lodash-es';
 import api from './api';
 import { Treaty, Dockets, Docket, Provider, Treaties, Providers } from './docket-types';
-import { mockProviders, mockTreaties } from './mock-data';
+import { fakeRequest, mockProviders, mockTreaties } from './mock-data';
 
 const useMockData = import.meta.env.MODE === 'mock';
 
@@ -24,14 +24,6 @@ interface DocketState {
   toggleDocket: (desk: string) => Promise<void>;
   installDocket: (ship: string, desk: string) => Promise<number | void>;
   uninstallDocket: (desk: string) => Promise<number | void>;
-}
-
-async function fakeRequest<T>(data: T, time = 300): Promise<T> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(data);
-    }, time);
-  });
 }
 
 const stableTreatyMap = new Map<string, Treaty[]>();
@@ -107,7 +99,8 @@ const useDocketState = create<DocketState>((set, get) => ({
   },
   installDocket: async (ship: string, desk: string) => {
     if (useMockData) {
-      const docket = normalizeDocket(await get().requestTreaty(ship, desk));
+      const treaties = await fakeRequest(mockTreaties);
+      const docket = treaties[desk];
       set((state) => addCharge(state, { desk, docket }));
     }
 
@@ -176,7 +169,7 @@ interface DelDockEvent {
 type DocketEvent = AddDockEvent | DelDockEvent;
 
 function addCharge(state: DocketState, { desk, docket }: AddDockEvent['add-dock']) {
-  return { charges: { ...state.charges, [desk]: docket } };
+  return { charges: { ...state.charges, [desk]: normalizeDocket(docket) } };
 }
 
 function delCharge(state: DocketState, desk: DelDockEvent['del-dock']) {

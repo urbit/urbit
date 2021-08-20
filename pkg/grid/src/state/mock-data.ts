@@ -2,6 +2,14 @@ import systemUrl from '../assets/system.png';
 import goUrl from '../assets/go.png';
 import { Providers, Treaties, Treaty } from './docket-types';
 
+export async function fakeRequest(data?: any, time = 300): Promise<any> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(data);
+    }, time);
+  });
+}
+
 export const mockProviders: Providers = {
   '~zod': {
     shipName: '~zod',

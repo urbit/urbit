@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { debounce } from 'lodash-es';
 import React, {
   ChangeEvent,
   FocusEvent,
@@ -13,6 +12,7 @@ import React, {
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import slugify from 'slugify';
 import { Cross } from '../components/icons/Cross';
+import { useDebounce } from '../logic/useDebounce';
 import { MenuState, useLeapStore } from './Nav';
 
 function normalizePathEnding(path: string) {
@@ -83,21 +83,20 @@ export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: 
     [menu]
   );
 
-  const handleSearch = useCallback(
-    debounce(
-      (input: string) => {
-        if (!match || appsMatch) {
-          return;
-        }
+  const debouncedSearch = useDebounce(
+    (input: string) => {
+      if (!match || appsMatch) {
+        return;
+      }
 
-        useLeapStore.setState({ searchInput: input });
-        navigateByInput(input);
-      },
-      300,
-      { leading: true }
-    ),
-    [menu, match]
+      useLeapStore.setState({ searchInput: input });
+      navigateByInput(input);
+    },
+    300,
+    { leading: true }
   );
+
+  const handleSearch = useCallback(debouncedSearch, [match]);
 
   const onChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {

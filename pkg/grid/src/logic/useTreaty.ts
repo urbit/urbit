@@ -4,8 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useDocketState from '../state/docket';
 import { Treaty } from '../state/docket-types';
-
-type Status = 'initial' | 'loading' | 'success' | 'error';
+import { useAsyncCall } from './useAsyncCall';
 
 export function useTreaty() {
   const { ship, desk } = useParams<{ ship: string; desk: string }>();
@@ -13,7 +12,6 @@ export function useTreaty() {
     pick(s, ['requestTreaty', 'installDocket'])
   );
   const [treaty, setTreaty] = useState<Treaty>();
-  const [installStatus, setInstallStatus] = useState<Status>('initial');
 
   useEffect(() => {
     async function getTreaty() {
@@ -27,13 +25,8 @@ export function useTreaty() {
     clipboardCopy(`${ship}/${desk}`);
   }, [ship, desk]);
 
-  const installApp = useCallback(async () => {
-    setInstallStatus('loading');
-
-    installDocket(ship, desk)
-      .then(() => setInstallStatus('success'))
-      .catch(() => setInstallStatus('error'));
-  }, []);
+  const install = useCallback(() => installDocket(ship, desk), [ship, desk]);
+  const { status: installStatus, call: installApp } = useAsyncCall(install);
 
   return {
     ship,

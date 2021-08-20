@@ -99,9 +99,10 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
 
   return (
     <>
+      {/* Using portal so that we can retain the same nav items both in the dialog and in the base header */}
       <Portal.Root
         containerRef={dialogContentOpen ? dialogNavRef : navRef}
-        className="flex space-x-2"
+        className="flex justify-center w-full space-x-2"
       >
         <SystemMenu
           open={systemMenuOpen}
@@ -119,7 +120,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
           menu={menuState}
           dropdown="leap-items"
           showClose={isOpen}
-          className={!isOpen ? 'bg-gray-100' : ''}
+          className={classNames('flex-1 max-w-[600px]', !isOpen ? 'bg-gray-100' : '')}
         />
       </Portal.Root>
       <div
@@ -136,13 +137,13 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
       <Dialog open={isOpen} onOpenChange={onDialogClose}>
         <DialogContent
           onOpenAutoFocus={onOpen}
-          className="fixed top-0 left-[calc(50%)] w-[calc(100%-15px)] max-w-3xl px-4 text-gray-400 -translate-x-1/2 outline-none"
+          className="fixed top-0 left-1/2 md:left-[calc(50%-7.5px)] w-[calc(100%-15px)] max-w-4xl px-[calc(1rem-7.5px)] text-gray-400 -translate-x-1/2 outline-none"
           role="combobox"
           aria-controls="leap-items"
           aria-owns="leap-items"
           aria-expanded={isOpen}
         >
-          <header ref={dialogNavRef} className="my-6" />
+          <header ref={dialogNavRef} className="w-full my-6" />
           <div
             id="leap-items"
             className="grid grid-rows-[fit-content(calc(100vh-7.5rem))] bg-white rounded-3xl overflow-hidden default-ring"
