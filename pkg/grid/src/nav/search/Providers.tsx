@@ -1,24 +1,42 @@
-import { debounce } from 'lodash-es';
-import React, { useCallback, useEffect, useState } from 'react';
+import fuzzy from 'fuzzy';
+import classNames from 'classnames';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { ShipName } from '../../components/ShipName';
-import useDocketState from '../../state/docket';
 import { Provider } from '../../state/docket-types';
-import { useNavStore } from '../Nav';
+import useDocketState from '../../state/docket';
+import { useLeapStore } from '../Nav';
 
 type ProvidersProps = RouteComponentProps<{ ship: string }>;
 
-export const Providers = ({ match, history }: ProvidersProps) => {
-  const { searchInput, select } = useNavStore((state) => ({
-    searchInput: state.searchInput,
-    select: state.select
+export const Providers = ({ match }: ProvidersProps) => {
+  const { selectedMatch, select } = useLeapStore((state) => ({
+    select: state.select,
+    selectedMatch: state.selectedMatch
   }));
-  const { push } = history;
-  const { path } = match;
   const provider = match?.params.ship;
   const fetchProviders = useDocketState((s) => s.fetchProviders);
   const [providers, setProviders] = useState<Provider[]>();
-  const count = providers?.length;
+  const search = provider || '';
+  const results = useMemo(
+    () =>
+      providers
+        ? fuzzy
+            .filter(
+              search,
+              providers.map((p) => p.shipName + (p.nickname || ''))
+            )
+            .sort((a, b) => {
+              const left = a.string.startsWith(search) ? a.score + 1 : a.score;
+              const right = b.string.startsWith(search) ? b.score + 1 : b.score;
+
+              return right - left;
+            })
+            .map((el) => providers[el.index])
+        : [],
+    [providers, search]
+  );
+  const count = results?.length;
 
   useEffect(() => {
     async function getProviders() {
@@ -29,18 +47,25 @@ export const Providers = ({ match, history }: ProvidersProps) => {
     getProviders();
   }, [provider]);
 
-  const handleSearch = useCallback(
-    debounce((input: string) => {
-      push(match?.path.replace(':ship', input.trim()));
-    }, 300),
-    [path]
-  );
-
   useEffect(() => {
-    if (searchInput) {
-      handleSearch(searchInput);
+    if (results) {
+      useLeapStore.setState({
+        matches: results.map((p) => ({ value: p.shipName, display: p.nickname }))
+      });
     }
-  }, [searchInput]);
+  }, [results]);
+
+  const isSelected = useCallback(
+    (target: Provider) => {
+      if (!selectedMatch) {
+        return false;
+      }
+
+      const matchValue = selectedMatch.display || selectedMatch.value;
+      return target.nickname === matchValue || target.shipName === matchValue;
+    },
+    [selectedMatch]
+  );
 
   return (
     <div className="dialog-inner-container md:px-6 md:py-8 h4 text-gray-400" aria-live="polite">
@@ -50,13 +75,21 @@ export const Providers = ({ match, history }: ProvidersProps) => {
           {count} result{count === 1 ? '' : 's'}
         </p>
       </div>
-      {providers && (
+      {results && (
         <ul className="space-y-8" aria-labelledby="providers">
-          {providers.map((p) => (
-            <li key={p.shipName}>
+          {results.map((p) => (
+            <li
+              key={p.shipName}
+              id={p.nickname || p.shipName}
+              role="option"
+              aria-selected={isSelected(p)}
+            >
               <Link
                 to={`${match?.path.replace(':ship', p.shipName)}/apps`}
-                className="flex items-center space-x-3 default-ring ring-offset-2 rounded-lg"
+                className={classNames(
+                  'flex items-center space-x-3 default-ring ring-offset-2 rounded-lg',
+                  isSelected(p) && 'ring-4'
+                )}
               >
                 <div className="flex-none relative w-12 h-12 bg-black rounded-lg">
                   {/* TODO: Handle sigils */}

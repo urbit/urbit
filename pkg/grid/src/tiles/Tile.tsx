@@ -44,7 +44,7 @@ export const Tile: FunctionComponent<TileProps> = ({ docket, desk }) => {
           active={active}
           menuColor={menuColor}
           lightText={lightText}
-          className="absolute z-10 top-2.5 right-2.5 sm:top-4 sm:right-4 opacity-0 hover-none:opacity-100 focus:opacity-100 group-hover:opacity-100"
+          className="absolute z-10 top-2.5 right-2.5 sm:top-4 sm:right-4 opacity-0 hover-none:opacity-100 pointer-coarse:opacity-100 focus:opacity-100 group-hover:opacity-100"
         />
         <div className="h4 absolute bottom-4 left-4 lg:bottom-8 lg:left-8">
           <h3

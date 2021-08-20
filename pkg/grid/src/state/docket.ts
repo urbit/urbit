@@ -42,11 +42,7 @@ const useDocketState = create<DocketState>((set, get) => ({
       ? await fakeRequest(mockTreaties)
       : ((await (await fetch('/~/scry/docket/charges.json')).json()) as ChargesResponse).initial;
 
-    const charges = Object.entries(dockets).reduce((obj: Dockets, [key, value]) => {
-      // eslint-disable-next-line no-param-reassign
-      obj[key] = normalizeDocket(value);
-      return obj;
-    }, {});
+    const charges = normalizeDockets(dockets);
 
     set({ charges });
   },
@@ -58,7 +54,7 @@ const useDocketState = create<DocketState>((set, get) => ({
   fetchProviderTreaties: async (provider: string) => {
     const { treaties, providers } = get();
     const dev = providers[provider];
-    const treatyList = Object.values(treaties).map((treaty) => normalizeDocket(treaty));
+    const treatyList = Object.values(treaties);
 
     if (dev.treaties) {
       return dev.treaties.map((key) => treaties[key]);
@@ -80,8 +76,9 @@ const useDocketState = create<DocketState>((set, get) => ({
         }
 
         providerTreaties.forEach((treaty) => {
-          const key = `${provider}/${treaty.desk}`;
-          draft.treaties[key] = treaty;
+          // may need to do this when not mock data
+          // const key = `${provider}/${treaty.desk}`;
+          // draft.treaties[key] = treaty;
           draft.providers[provider].treaties?.push(treaty.desk);
         });
       })
@@ -143,7 +140,7 @@ const useDocketState = create<DocketState>((set, get) => ({
       })
     );
   },
-  treaties: useMockData ? mockTreaties : {},
+  treaties: useMockData ? normalizeDockets(mockTreaties) : {},
   charges: {},
   providers: useMockData ? mockProviders : {},
   set
@@ -155,6 +152,14 @@ function normalizeDocket<T extends Docket>(docket: T): T {
     status: docket.status || 'active',
     color: `#${docket.color.slice(2).replace('.', '')}`.toUpperCase()
   };
+}
+
+function normalizeDockets<T extends Docket>(dockets: Record<string, T>): Record<string, T> {
+  return Object.entries(dockets).reduce((obj: Record<string, T>, [key, value]) => {
+    // eslint-disable-next-line no-param-reassign
+    obj[key] = normalizeDocket(value);
+    return obj;
+  }, {});
 }
 
 interface AddDockEvent {

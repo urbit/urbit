@@ -3,25 +3,25 @@
 }
 
 .button {
-	@apply inline-flex items-center justify-center px-4 py-2 font-semibold text-base tracking-tight rounded-lg cursor-pointer;
+  @apply inline-flex items-center justify-center px-4 py-2 font-semibold text-base tracking-tight rounded-lg cursor-pointer;
 }
 
 .dialog-container {
-	@apply fixed z-40 top-1/2 left-1/2 min-w-80 transform -translate-x-1/2 -translate-y-1/2;
+  @apply fixed z-40 top-1/2 left-1/2 min-w-80 transform -translate-x-1/2 -translate-y-1/2;
 }
 
 .dialog {
-	@apply relative p-5 sm:p-8 bg-white rounded-3xl;
+  @apply relative p-5 sm:p-8 bg-white rounded-3xl;
 }
 
 .dialog-inner-container {
-	@apply h-full p-4 md:p-8 space-y-8 overflow-y-auto;
+  @apply h-full p-4 md:p-8 space-y-8 overflow-y-auto;
 }
 
 .dropdown {
-	@apply min-w-52 p-4 space-y-4 rounded-xl;
+  @apply min-w-52 p-4 rounded-xl;
 }
 
 .spinner {
-	@apply inline-flex items-center w-6 h-6 animate-spin;
+  @apply inline-flex items-center w-6 h-6 animate-spin;
 }

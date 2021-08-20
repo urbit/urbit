@@ -5,11 +5,11 @@ import { ShipName } from '../../components/ShipName';
 import { Spinner } from '../../components/Spinner';
 import { TreatyMeta } from '../../components/TreatyMeta';
 import { useTreaty } from '../../logic/useTreaty';
+import { useLeapStore } from '../Nav';
 import { useCharges } from '../../state/docket';
-import { useNavStore } from '../Nav';
 
 export const AppInfo = () => {
-  const select = useNavStore((state) => state.select);
+  const select = useLeapStore((state) => state.select);
   const { ship, desk, treaty, installStatus, copyApp, installApp } = useTreaty();
   const charges = useCharges();
   const installed = (charges || {})[desk] || installStatus === 'success';
