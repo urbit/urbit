@@ -1,14 +1,8 @@
 ::  TODO: secp needs to not crash the process when you give it a bad
 ::  v/recid.  See #4797
 ::
-::  TODO: check if spawning is gated on "link"ing.  It is on L1, but we
-::  shouldn't do that here.
-::
-::  TODO: make sure you can spawn with the spawn proxy after on domain
-::  %spawn
-::
-::  TODO: make sure that if we've already been deposited to L2, no
-::  further L1 logs count except detach.
+::  TODO: check if spawning/escaping is gated on "link"ing.  It is on
+::  L1, but we shouldn't do that here.
 ::
 /+  std
 =>  =>  std
@@ -469,7 +463,7 @@
     =/  words  (rip 8 data.log)
     ::  This is only true if each domain is <= 32 bytes
     ::
-    ?>  ?=([c=@ @ b=@ @ a=@ @ @ @ @ ~] words)
+    ?.  ?=([c=@ @ b=@ @ a=@ @ @ @ @ ~] words)  `state
     =*  one  &5.words
     =*  two  &3.words
     =*  tri  &1.words
@@ -816,8 +810,6 @@
                   =(to address.spawn-proxy.own.u.parent-point)
               ==
           ==
-        ::  TODO: use get-point or duplicate sponsor logic
-        ::
         :-  ~[[%point ship %dominion %l2] [%point ship %owner to]]
         u.point(address.owner.own to)
       ::  Else spawn to parent and set transfer proxy
@@ -863,7 +855,7 @@
       (debug %bad-rank ~)
     ::
     :+  ~  [%point ship %escape `parent]~
-    point(escape.net `parent)  ::  TODO: omitting a lot of source material?
+    point(escape.net `parent)
   ::
   ++  process-cancel-escape
     |=  [=point parent=ship]
@@ -877,8 +869,6 @@
   ++  process-adopt
     |=  [=point =ship]
     =*  parent  ship.from.tx
-    :: TODO: assert child/parent on L2?
-    ::
     ?.  |(=(%own proxy.from.tx) =(%manage proxy.from.tx))
       (debug %bad-permission ~)
     ::
