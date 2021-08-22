@@ -42,6 +42,11 @@
       %set-transfer-proxy
   ==
 ::
++$  update
+  $%  [%point =address:ethereum =ship =point:naive]
+      [%tx =address:ethereum =roller-tx]
+  ==
+::
 ::  TODO:  add submission time?
 ::
 +$  roller-tx  [=ship =status hash=keccak type=l2-tx]

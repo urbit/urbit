@@ -444,7 +444,7 @@
     [~ ~(parse error:json-rpc id)]
   :_  [%result id s+'ok']
   %-  some
-  aggregator-action+!>([%cancel u.sig u.keccak u.data])
+  roller-action+!>([%cancel u.sig u.keccak u.data])
 ::
 ++  get-spawned
   |=  [id=@t params=(map @t json) scry=$-(ship (list [ship @ux]))]
@@ -473,7 +473,7 @@
   =+  (gen-tx-octs:lib u.tx)
   :_  [%result id (hex:to-json 32 (hash-tx:lib p q))]
   %-  some
-  aggregator-action+!>([%submit | u.addr u.sig %don u.tx])
+  roller-action+!>([%submit | u.addr u.sig %don u.tx])
 ::
 ++  nonce
   |=  [id=@t params=(map @t json) scry=$-([ship proxy:naive] (unit @))]

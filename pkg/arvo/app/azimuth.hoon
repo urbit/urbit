@@ -105,7 +105,7 @@
     ?.  =(contract address.i.logs)
       =<  own
       (apply-effects raw-effects nas.state own.state chain-id)
-    (update-ownership raw-effects nas.state new-nas own.state)
+    +:(update-ownership raw-effects nas.state new-nas own.state)
   =.  nas.state  new-nas
   =/  effects-1
     =/  =id:block  [block-hash block-number]:u.mined.i.logs

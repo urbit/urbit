@@ -83,7 +83,7 @@
       ?~  data  ~
       :_  $(data t.data)
       ^-  card
-      [%pass / %agent [our.bowl %aggregator] %poke i.data]
+      [%pass / %agent [our.bowl %roller] %poke i.data]
       --
     --
   ::
@@ -170,21 +170,21 @@
     |=  =ship
     .^  (unit point:naive)
         %gx
-        (~(scry agentio bowl) %aggregator /point/(scot %p ship)/noun)
+        (~(scry agentio bowl) %roller /point/(scot %p ship)/noun)
     ==
   ::
   ++  points
     |=  =address:naive
     .^  (list ship)
         %gx
-        (~(scry agentio bowl) %aggregator /points/(scot %ux address)/noun)
+        (~(scry agentio bowl) %roller /points/(scot %ux address)/noun)
     ==
   ::
   ++  spawned
     |=  =ship
     .^  (list [@p @ux])
         %gx
-        (~(scry agentio bowl) %aggregator /spawned/(scot %p ship)/noun)
+        (~(scry agentio bowl) %roller /spawned/(scot %p ship)/noun)
     ==
   ::
   ++  pending
@@ -192,21 +192,21 @@
     ++  all
       .^  (list pend-tx)
           %gx
-          (~(scry agentio bowl) %aggregator /pending/noun)
+          (~(scry agentio bowl) %roller /pending/noun)
       ==
     ::
     ++  ship
       |=  =^ship
       .^  (list pend-tx)
           %gx
-          (~(scry agentio bowl) %aggregator /pending/(scot %p ship)/noun)
+          (~(scry agentio bowl) %roller /pending/(scot %p ship)/noun)
       ==
     ::
     ++  addr
       |=  =address:naive
       .^  (list pend-tx)
           %gx
-          %+  ~(scry agentio bowl)  %aggregator
+          %+  ~(scry agentio bowl)  %roller
           /pending/[(scot %ux address)]/noun
       ==
     --
@@ -217,7 +217,7 @@
       |=  =address:naive
       .^  (list roller-tx)
           %gx
-          (~(scry agentio bowl) %aggregator /history/(scot %ux address)/noun)
+          (~(scry agentio bowl) %roller /history/(scot %ux address)/noun)
       ==
     --
   ::
@@ -225,13 +225,13 @@
     |=  keccak=@ux
     .^  ^tx-status
         %gx
-        (~(scry agentio bowl) %aggregator /tx/(scot %ux keccak)/status/noun)
+        (~(scry agentio bowl) %roller /tx/(scot %ux keccak)/status/noun)
     ==
   ::
   ++  next-batch
     .^  time
         %gx
-        (~(scry agentio bowl) %aggregator /next-batch/noun)
+        (~(scry agentio bowl) %roller /next-batch/noun)
     ==
   ::
   ++  nonce
@@ -239,7 +239,7 @@
     .^  (unit @)
         %gx
         %+  ~(scry agentio bowl)
-          %aggregator
+          %roller
         /nonce/(scot %p ship)/[proxy]/noun
     ==
   ::
@@ -247,7 +247,7 @@
     .^  roller-config
         %gx
         %+  ~(scry agentio bowl)
-          %aggregator
+          %roller
         /config/noun
     ==
   ::
@@ -255,7 +255,7 @@
     .^  @
         %gx
         %+  ~(scry agentio bowl)
-          %aggregator
+          %roller
         /chain-id/noun
     ==
   --

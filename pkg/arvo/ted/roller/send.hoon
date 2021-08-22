@@ -1,4 +1,4 @@
-::  aggregator/send: send rollup tx
+::  roller/send: send rollup tx
 ::
 /-  rpc=json-rpc, *dice
 /+  naive, ethereum, ethio, strandio
@@ -17,6 +17,7 @@
 ::  if chain expects a different nonce, don't send this transaction
 ::
 ?.  =(nonce expected-nonce)
+  ~&  [%unexpected-nonce nonce expected+expected-nonce]
   not-sent
 ::  if a gas-price of 0 was specified, fetch the recommended one
 ::
@@ -49,7 +50,7 @@
 ;<  balance=@ud  bind:m
   (get-balance:ethio endpoint address)
 ?:  (gth max-cost balance)
-  ~&  [%insufficient-aggregator-balance address]
+  ~&  [%insufficient-roller-balance address]
   not-sent
 ::
 ::NOTE  this fails the thread if sending fails, which in the app gives us

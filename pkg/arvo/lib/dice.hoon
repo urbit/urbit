@@ -16,17 +16,17 @@
 ::
 ++  apply-raw-tx
   |=  [force=? =raw-tx:naive nas=^state:naive own=owners chain-t=@]
-  ^-  [? nas=_nas own=_own]
+  ^-  [? nas=_nas ups=(list update) own=_own]
   =+  cache-nas=nas
   =/  chain-t=@t  (ud-to-ascii:naive chain-t)
   ?.  (verify-sig-and-nonce:naive verifier chain-t nas raw-tx)
     ~&  [%verify-sig-and-nonce %failed tx.raw-tx]
-    [force nas own]
+    [force nas ~ own]
   =^  *  points.nas
     (increment-nonce:naive nas from.tx.raw-tx)
   ?~  nex=(receive-tx:naive nas tx.raw-tx)
     ~&  [%receive-tx %failed]
-    [force ?:(force nas cache-nas) own]
+    [force ?:(force nas cache-nas) ~ own]
   =*  new-nas   +.u.nex
   =*  effects   -.u.nex
   :+  &
@@ -39,35 +39,64 @@
           nas=^state:naive
           =owners
       ==
-  ^+  owners
+  ^-  (quip update _owners)
   %+  roll  effects
-  |=  [=diff:naive owners=_owners]
+  |=  [=diff:naive ups=(list update) owners=_owners]
   =,  orm:naive
-  ?.  ?=([%point *] diff)  owners
+  ?.  ?=([%point *] diff)  [ups owners]
+  =*  ship  ship.diff
   =/  old=(unit point:naive)
-    (get points.cache-nas ship.diff)
+    (get points.cache-nas ship)
   =/  new=point:naive
-    (need (get points.nas ship.diff))
+    (need (get points.nas ship))
   =*  event  +>.diff
-  =;  [to=@ux from=@ux]
-    =?  owners  !=(from 0x0)
-      (~(del ju owners) from ship.diff)
-    ?:  =(to 0x0)  owners
-    (~(put ju owners) to ship.diff)
-  ?+    -.event  [0x0 0x0]
+  =;  [to=(unit @ux) from=(unit @ux)]
+    =?  owners  ?=(^ from)
+      (~(del ju owners) u.from ship)
+    ?~  to  [ups owners]
+    :-  (snoc ups [%point u.to ship new])
+    (~(put ju owners) u.to ship)
+  ?+    -.event  [~ ~]
       %owner
-    [+.event ?~(old 0x0 address.owner.own.u.old)]
+    [`+.event ?~(old ~ `address.owner.own.u.old)]
   ::
       %spawn-proxy
-    [+.event ?~(old 0x0 address.spawn-proxy.own.u.old)]
+    [`+.event ?~(old ~ `address.spawn-proxy.own.u.old)]
   ::
       %management-proxy
-    [+.event ?~(old 0x0 address.management-proxy.own.u.old)]
+    [`+.event ?~(old ~ `address.management-proxy.own.u.old)]
   ::
       %voting-proxy
-    [+.event ?~(old 0x0 address.voting-proxy.own.u.old)]
+    [`+.event ?~(old ~ `address.voting-proxy.own.u.old)]
   ::
       %transfer-proxy
-    [+.event ?~(old 0x0 address.transfer-proxy.own.u.old)]
+    [`+.event ?~(old ~ `address.transfer-proxy.own.u.old)]
   ==
+::
+++  get-owner
+  |=  [=point:naive =proxy:naive]
+  ^-  [nonce=@ _point]
+  =*  own  own.point
+  ?-    proxy
+      %own
+    :-  nonce.owner.own
+    point(nonce.owner.own +(nonce.owner.own))
+  ::
+      %spawn
+    :-  nonce.spawn-proxy.own
+    point(nonce.spawn-proxy.own +(nonce.spawn-proxy.own))
+  ::
+      %manage
+    :-  nonce.management-proxy.own
+    point(nonce.management-proxy.own +(nonce.management-proxy.own))
+  ::
+      %vote
+    :-  nonce.voting-proxy.own
+    point(nonce.voting-proxy.own +(nonce.voting-proxy.own))
+  ::
+      %transfer
+    :-  nonce.transfer-proxy.own
+    point(nonce.transfer-proxy.own +(nonce.transfer-proxy.own))
+  ==
+::
 --

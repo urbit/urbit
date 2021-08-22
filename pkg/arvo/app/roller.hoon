@@ -36,7 +36,6 @@
       ::  sending: the l2 txs currently sending/awaiting l2 confirmation
       ::  finding: raw-tx-hash reverse lookup for sending map
       ::  history: status of l2 txs by ethereum address
-      ::  transfers: index that keeps track of transfer-proxy changes
       ::  next-nonce: next l1 nonce to use
       ::  next-batch: when then next l2 batch will be sent
       ::  pre: predicted l2 state
@@ -52,7 +51,6 @@
     ::
       finding=(map keccak ?(%confirmed %failed l1-tx-pointer))
       history=(jug address:ethereum roller-tx)
-      transfers=(map ship address:ethereum)
       next-nonce=(unit @ud)
       next-batch=time
       pre=^state:naive
@@ -297,8 +295,9 @@
         [%predict ~]
       ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
           %wake
-        =.  state  (predicted-state canonical-state):do
-        `this(derive-p &)
+        =^  effects  state
+          (predicted-state canonical-state):do
+        [(emit effects) this(derive-p &)]
       ==
     ::
         [%owners ~]
@@ -321,7 +320,38 @@
     ::TODO  if crashed during timer, set new timer? how to detect?
     (on-fail:def term tang)
   ::
-  ++  on-watch  on-watch:def
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    :_  this
+    |^
+    ?+  path  (on-watch:def path)
+        [%txs @ ~]     [%give %fact ~ (give-txs i.t.path)]~
+        [%points @ ~]  [%give %fact ~ (give-points i.t.path)]~
+    ==
+    ::
+    ++  give-points
+      |=  wat=@t
+      ^-  cage
+      :-  %points
+      !>  ^-  (list [ship point:naive])
+      ?~  addr=(slaw %ux wat)  ~
+      %+  roll
+        ~(tap in (~(get ju own) u.addr))
+      |=  [=ship points=(list [ship point:naive])]
+      %+  snoc  points
+      [ship (need (get:orm:naive points.pre ship))]
+    ::
+    ++  give-txs
+      |=  wat=@t
+      ^-  cage
+      :-  %txs
+      !>  ^-  (list roller-tx)
+      ?~  addr=(slaw %ux wat)  ~
+      %~  tap  in
+      (~(get ju history) u.addr)
+    --
+  ::
   ++  on-leave  on-leave:def
   ++  on-agent
     |=  [=wire =sign:agent:gall]
@@ -397,8 +427,9 @@
           ::  cache naive and ownership state
           ::
           =^  nas  own.state  !<(init q.cage.sign)
-          =.  state  (predicted-state:do nas)
-          `this
+          =^  effects  state
+            (predicted-state:do nas)
+          [(emit effects) this]
         ==
       ==
     ::
@@ -469,6 +500,21 @@
     [%pass path %agent [our.bowl %spider] %leave ~]
   --
 ::
+::
+++  emit
+  |=  updates=(list update)
+  |-  ^-  (list card)
+  ?~  updates  ~
+  =*  up          i.updates
+  =/  address=@t  (scot %ux address.up)
+  :_  $(updates t.updates)
+  ^-  card
+  :+  %give  %fact
+  ?-  -.i.updates
+    %tx     [~[/txs/[address]] tx+!>(roller-tx.up)]
+    %point  [~[/points/[address]] point+!>([ship point]:up)]
+  ==
+::
 ++  part-tx-to-full
   |=  =part-tx
   ^-  [octs tx:naive]
@@ -511,11 +557,16 @@
 ::
 ++  predicted-state
   |=  nas=^state:naive
-  ^+  state
-  =.  pre.state  nas
+  ^-  (quip update _state)
+  =.  pre.state        nas
+  ::  recreate ownership based on succesful txs
+  ::
   |^
-  =^  nes  state  apply-sending
-  =^  nep  state  apply-pending
+  =^  [nes=_sending ups-1=(list update)]
+    state  apply-sending
+  =^  [nep=_pending ups-2=(list update)]
+    state  apply-pending
+  :-  (welp ups-1 ups-2)
   state(sending nes, pending nep)
   ::
   ++  apply-pending
@@ -523,31 +574,32 @@
   ::
   ++  apply-sending
     =|  valid=_sending
+    =|  ups=(list update)
     =+  sending=~(tap by sending)
-    |-  ^+  [valid state]
-    ?~  sending  [valid state]
+    |-  ^+  [[valid ups] state]
+    ?~  sending  [[valid ups] state]
     ::
     =*  key  p.i.sending
     =*  val  q.i.sending
-    =^  new-valid  state
-      %+  apply-txs
-        (turn txs.val |=(=raw-tx:naive [| 0x0 raw-tx]))
-      %sending
+    =+  txs=(turn txs.val |=(=raw-tx:naive [| 0x0 raw-tx]))
+    =^  [new-valid=_txs nups=_ups]  state
+      (apply-txs txs %sending)
     =.  valid
       %+  ~(put by valid)  key
       val(txs (turn new-valid (cork tail tail)))
-    $(sending t.sending)
+    $(sending t.sending, ups (welp ups nups))
   ::
   ++  apply-txs
     |=  [txs=(list pend-tx) type=?(%pending %sending)]
     =/  valid=_txs  ~
+    =|  ups=(list update)
     :: =|  local=(set keccak)
-    |-  ^+  [valid state]
-    ?~  txs  [valid state]
+    |-  ^+  [[valid ups] state]
+    ?~  txs  [[valid ups] state]
     ::
-    =*  tx      i.txs
-    =*  raw-tx  raw-tx.i.txs
-    =*  ship    ship.from.tx.raw-tx.i.txs
+    =*  tx        i.txs
+    =*  raw-tx    raw-tx.i.txs
+    =*  ship      ship.from.tx.raw-tx.i.txs
     =/  hash=@ux  (hash-raw-tx:lib raw-tx)
     ::  TODO: add tests to validate if this is necessary
     ::
@@ -557,29 +609,33 @@
     ::   $(txs t.txs)
     =/  sign-address=(unit @ux)
       (extract-address:lib raw-tx pre.state chain-id)
-    =^  gud=?  state
+    =^  [gud=? nups=_ups]  state
       (try-apply pre.state force.tx raw-tx)
     ::  TODO: only replace address if !=(address.tx sign-address)?
     ::
     =?  tx  &(gud ?=(^ sign-address))
       tx(address u.sign-address)
+    ::
+    =/  =roller-tx
+      [ship type hash (l2-tx +<.tx.raw-tx)]
+    =?  nups  !gud
+      %+  snoc  nups
+      [%tx address.tx roller-tx(status %failed)]
     =?  valid  gud  (snoc valid tx)
     =?  finding.state  !gud
       (~(put by finding.state) [hash %failed])
     =?  history.state  !gud
-      =/  =roller-tx
-        [ship type hash (l2-tx +<.tx.raw-tx)]
       %.  [address.tx roller-tx(status %failed)]
       ~(put ju (~(del ju history.state) address.tx roller-tx))
     :: $(txs t.txs, local (~(put in local) hash))
-    $(txs t.txs)
+    $(txs t.txs, ups (weld ups nups))
   ::
   ++  try-apply
     |=  [nas=^state:naive force=? =raw-tx:naive]
-    ^-  [? _state]
-    =/  [success=? predicted=_nas owners=_own]
+    ^-  [[? ups=(list update)] _state]
+    =/  [success=? predicted=_nas ups=(list update) owners=_own]
       (apply-raw-tx:dice force raw-tx nas own chain-id)
-    :-  success
+    :-  [success ups]
     state(pre predicted, own owners)
   --
 ::
@@ -684,15 +740,20 @@
   :: =?  pending  not-sent
   =.  pending  (snoc pending [force address raw-tx])
   :: =?  history  not-sent
-  =.  history
-    %+  ~(put ju history)  address
-    [ship.from.tx.raw-tx %pending hash (l2-tx +<.tx.raw-tx)]
-  =?  transfers  =(%transfer-point (l2-tx +<.tx.raw-tx))
-    (~(put by transfers) ship.from.tx.raw-tx address)
+  =^  update-cards  history
+    =/  =roller-tx
+      :*  ship.from.tx.raw-tx
+          %pending
+          hash
+          (l2-tx +<.tx.raw-tx)
+      ==
+    :-  [%tx address roller-tx]~
+    (~(put ju history) [address roller-tx])
   :: ?.  not-sent  ~&  "skip"  [~ state]
   ::  toggle flush flag
   ::
   :_  state(derive-p ?:(derive-p | derive-p))
+  %+  weld  (emit update-cards)
   ?.  derive-p  ~
   ::  derive predicted state in 5m.
   ::
@@ -707,12 +768,15 @@
 ::
 ++  on-timer
   ^-  (quip card _state)
-  =.  state  (predicted-state canonical-state)
+  =^  updates-1  state
+    (predicted-state canonical-state)
   =^  cards  state
-    ?:  =(~ pending)  [~ state]
+    ?:  =(~ pending)
+      [(emit updates-1) state]
     ?~  next-nonce
       ~&([dap.bowl %no-nonce] [~ state])
     =/  nonce=@ud   u.next-nonce
+    =^  updates-2  history  update-history
     =:  pending     ~
         derive-p    &
         next-nonce  `+(u.next-nonce)
@@ -727,22 +791,29 @@
         %+  turn  pending
         |=  pend-tx
         (hash-raw-tx:lib raw-tx)^[address nonce]
-      ::
-          history
-        %+  roll  pending
-        |=  [pend-tx hist=_history]
-        =/  tx=roller-tx
-          :^      ship.from.tx.raw-tx
-              %pending
-            (hash-raw-tx:lib raw-tx)
-          (l2-tx +<.tx.raw-tx)
-        %+  ~(put ju (~(del ju hist) address tx))
-          address
-        tx(status %sending)
       ==
-    [(send-roll get-address nonce) state]
+    :_  state
+    ;:  welp
+      (emit updates-1)
+      (emit updates-2)
+      (send-roll get-address nonce)
+    ==
   =^  card  next-batch  set-timer
   [[card cards] state]
+::
+++  update-history
+  %+  roll  pending
+  |=  [pend-tx ups=(list update) his=_history]
+  =/  =roller-tx
+    :*  ship.from.tx.raw-tx
+        %pending
+        (hash-raw-tx:lib raw-tx)
+        (l2-tx +<.tx.raw-tx)
+    ==
+  =+  tx=[address roller-tx(status %sending)]
+  :-  (snoc ups tx+tx)
+  %.  tx
+  ~(put ju (~(del ju his) address roller-tx))
 ::  +get-nonce: retrieves the latest nonce
 ::
 ++  get-nonce
@@ -811,6 +882,7 @@
     [~ state]
   =/  =keccak  (hash-raw-tx:lib raw-tx.diff)
   ?~  wer=(~(get by finding) keccak)
+    ~&  "keccak not in finding"
     [~ state]
   ::  if we had already seen the tx, no-op
   ::
@@ -818,8 +890,11 @@
     ~?  &(?=(%confirmed u.wer) ?=(~ err.diff))
       [dap.bowl %weird-double-confirm from.tx.raw-tx.diff]
     [~ state]
-  =*  nonce  nonce.u.wer
-  =*  ship   ship.from.tx.raw-tx.diff
+  =*  nonce    nonce.u.wer
+  =*  address  address.u.wer
+  =*  ship     ship.from.tx.raw-tx.diff
+  =*  tx       tx.raw-tx.diff
+  =/  l2-tx    (l2-tx +<.tx)
   ::  remove the tx from the sending map
   ::
   =.  sending
@@ -844,23 +919,17 @@
     ::  ~?  !forced  [dap.bowl %aggregated-tx-failed-anyway err.diff]
     %failed
   ::
-  =.  history
-    =/  l2-tx  (l2-tx +<.tx.raw-tx.diff)
-    =/  tx=roller-tx  [ship %sending keccak l2-tx]
-    ?~  addr=(get-l1-address tx.raw-tx.diff pre)
-      history
-    =/  =address:ethereum
-      ?.  =(%transfer-point l2-tx)
-        u.addr
-      ::  TODO: delete this ship from the transfer?
-      ::
-      (~(got by transfers) ship)
-    %+  ~(put ju (~(del ju history) address tx))
-      address
-    %_  tx
-      status  ?~(err.diff %confirmed %failed)
-    ==
+  =^  updates  history
+    =/  =roller-tx  [ship %sending keccak l2-tx]
+    =.  history
+      (~(del ju history) address roller-tx)
+    =.  status.roller-tx
+      ?~(err.diff %confirmed %failed)
+    :-  [%tx address roller-tx]~
+    (~(put ju history) [address roller-tx])
+  ::
   :_  state(derive-p ?:(derive-p | derive-p))
+  %+  weld  (emit updates)
   ?.  derive-p  ~
   ::  derive predicted state in 5m.
   ::
