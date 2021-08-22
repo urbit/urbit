@@ -1,26 +1,3 @@
-::  L1 contract changes:
-::  + Enforce that once spawn proxy is set to deposit address, it can't
-::    switch back
-::  + Enforce that once spawn proxy is set to deposit address, you can't
-::    spawn children
-::  + Disallow depositing galaxy to L2
-::  + When depositing, clear proxies.
-::  + Require that we're not depositing from a contract.  But what if
-::    they're depositing from something that's a contract, but the owner
-::    is not a contract?  Probably best for the only condition to be that
-::    the owner is not a contract
-::  + Disallow spawning to deposit address?  maybe, else we need to
-::    default the ownership somehow.  Or maybe this happens automatically
-::    because it uses the safe transfer flow?  Yes, _direct will never
-::    be true unless we're depositing to ourself, so it'll go to the
-::    owner address, which will never be the deposit address.  So we're
-::    safe.
-::  + If either side is on L2, then all sponsorship happens on L2.  If
-::    both are on L1, sponsorship happens on L1
-::  - Maybe should special-case spawning directly to L2?  For now, we'll
-::    not special-case to reduce complexity, but it might be reasonable
-::    in the future to avoid having to send two transactions
-::
 ::  TODO: secp needs to not crash the process when you give it a bad
 ::  v/recid.  See #4797
 ::
@@ -490,7 +467,9 @@
   ?:  =(log-name changed-dns:log-names)
     ?>  ?=(~ t.topics.log)
     =/  words  (rip 8 data.log)
-    ?>  ?=([c=@ @ b=@ @ a=@ @ @ @ @ ~] words)  ::  TODO: not always true
+    ::  This is only true if each domain is <= 32 bytes
+    ::
+    ?>  ?=([c=@ @ b=@ @ a=@ @ @ @ @ ~] words)
     =*  one  &5.words
     =*  two  &3.words
     =*  tri  &1.words
@@ -518,20 +497,26 @@
   =/  the-point  (get-point state ship)
   ?>  ?=(^ the-point)
   =*  point  u.the-point
-  =-  [effects state(points (put:orm points.state ship new-point))]
-  ^-  [=effects new-point=^point]
+  ::
+  ::  Important to fully no-op on failure so we don't insert an entry
+  ::  into points.state
+  ::
+  =-  ?~  res
+        `state
+      [effects.u.res state(points (put:orm points.state ship new-point.u.res))]
+  ^-  res=(unit [=effects new-point=^point])
   ::
   ?:  =(log-name changed-spawn-proxy:log-names)
-    ?.  ?=(%l1 -.point)  `point
+    ?.  ?=(%l1 -.point)  ~
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
     ::  Depositing to L2 is represented by a spawn proxy change on L1,
     ::  but it doesn't change the actual spawn proxy.
     ::
     ?:  =(deposit-address to)
-      :-  [%point ship %dominion %spawn]~
+      :+  ~  [%point ship %dominion %spawn]~
       point(dominion %spawn)
-    :-  [%point ship %spawn-proxy to]~
+    :+  ~  [%point ship %spawn-proxy to]~
     point(address.spawn-proxy.own to)
   ::
   ?:  =(log-name escape-accepted:log-names)
@@ -539,8 +524,8 @@
     =*  parent=@  i.t.t.topics.log
     =/  parent-point  (get-point state parent)
     ?>  ?=(^ parent-point)
-    ?:  ?=(%l2 -.u.parent-point)  `point
-    :-  [%point ship %sponsor `parent]~
+    ?:  ?=(%l2 -.u.parent-point)  ~
+    :+  ~  [%point ship %sponsor `parent]~
     point(escape.net ~, sponsor.net [%& parent])
   ::
   ?:  =(log-name lost-sponsor:log-names)
@@ -549,7 +534,7 @@
     ::  If the sponsor we lost was not our actual sponsor, we didn't
     ::  actually lose anything.
     ::
-    ?.  =(parent who.sponsor.net.point)  `point
+    ?.  =(parent who.sponsor.net.point)  ~
     ::
     =/  parent-point  (get-point state parent)
     ?>  ?=(^ parent-point)
@@ -557,21 +542,21 @@
     ::  We can detach even if the child is on L2, as long as the parent
     ::  is on L1.
     ::
-    ?:  ?=(%l2 -.u.parent-point)  `point
-    :-  [%point ship %sponsor ~]~
+    ?:  ?=(%l2 -.u.parent-point)  ~
+    :+  ~  [%point ship %sponsor ~]~
     point(has.sponsor.net %|)
   ::
   ::  The rest can be done by any ship on L1, even if their spawn proxy
   ::  is set to L2
   ::
-  ?:  ?=(%l2 -.point)  `point
+  ?:  ?=(%l2 -.point)  ~
   ::
   ?:  =(log-name escape-requested:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  parent=@  i.t.t.topics.log
     =/  parent-point  (get-point state parent)
     ?>  ?=(^ parent-point)
-    :-  [%point ship %escape `parent]~
+    :+  ~  [%point ship %escape `parent]~
     point(escape.net `parent)
   ::
   ?:  =(log-name escape-canceled:log-names)
@@ -579,13 +564,13 @@
     =*  parent=@  i.t.t.topics.log
     =/  parent-point  (get-point state parent)
     ?>  ?=(^ parent-point)
-    :-  [%point ship %escape ~]~
+    :+  ~  [%point ship %escape ~]~
     point(escape.net ~)
   ::
   ?:  =(log-name broke-continuity:log-names)
     ?>  ?=(~ t.t.topics.log)
     =*  rift=@  data.log
-    :-  [%point ship %rift rift]~
+    :+  ~  [%point ship %rift rift]~
     point(rift.net rift)
   ::
   ?:  =(log-name changed-keys:log-names)
@@ -596,7 +581,7 @@
           auth=(cut 8 [2 1] data.log)
           crypt=(cut 8 [3 1] data.log)
       ==
-    :-  [%point ship %keys keys]~
+    :+  ~  [%point ship %keys keys]~
     point(keys.net keys)
   ::
   ?:  =(log-name owner-changed:log-names)
@@ -606,31 +591,31 @@
     ::  but it doesn't change who actually owns the ship.
     ::
     ?:  =(deposit-address to)
-      :-  [%point ship %dominion %l2]~
+      :+  ~  [%point ship %dominion %l2]~
       point(dominion %l2)
-    :-  [%point ship %owner to]~
+    :+  ~  [%point ship %owner to]~
     point(address.owner.own to)
   ::
   ?:  =(log-name changed-transfer-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
-    :-  [%point ship %transfer-proxy to]~
+    :+  ~  [%point ship %transfer-proxy to]~
     point(address.transfer-proxy.own to)
   ::
   ?:  =(log-name changed-management-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
-    :-  [%point ship %management-proxy to]~
+    :+  ~  [%point ship %management-proxy to]~
     point(address.management-proxy.own to)
   ::
   ?:  =(log-name changed-voting-proxy:log-names)
     ?>  ?=([@ ~] t.t.topics.log)
     =*  to  i.t.t.topics.log
-    :-  [%point ship %voting-proxy to]~
+    :+  ~  [%point ship %voting-proxy to]~
     point(address.voting-proxy.own to)
   ::
   ~>  %slog.[0 %unknown-log]
-  `point
+  ~
 ::
 ::  Receive batch of L2 transactions
 ::
@@ -724,6 +709,9 @@
     =/  point  (get-point state ship)
     ?~  point  (debug %strange-ship ~)
     ?.  ?=(%l2 -.u.point)  (debug %ship-not-on-l2 ~)
+    ::  Important to fully no-op on failure so we don't insert an entry
+    ::  into points.state
+    ::
     =/  res=(unit [=effects new-point=^point])  (fun u.point rest)
     ?~  res
       ~
@@ -809,8 +797,6 @@
         ==
       (debug %bad-permission ~)
     ::  Assert child not already spawned
-    ::
-    ::  TODO: verify this means the ship exists on neither L1 nor L2
     ::
     ?^  (get:orm points.state ship)  (debug %spawn-exists ~)
     ::  Assert one-level-down
