@@ -3160,7 +3160,25 @@
         `[p.u.b [k.q.u.b v.q.u.b q.u.val]]
       --
     ::
-    ++  bot  !!
+    ++  bot                                             ::  lowest-pri view
+      ~/  %bot
+      |=  a=pri
+      |^  ^-  (unit (qual k @ v pri))
+      =/  val=(pair (unit (trel k @ v)) pri)
+        (jib:qat a halp)
+      ?~  p.val  ~
+      `[p.u.p.val q.u.p.val r.u.p.val q.val]
+      ::
+      ++  halp
+        |=  b=(unit (trel @ @ buc))
+        ^-  (pair (unit (trel k @ v)) (unit (trel @ @ buc)))
+        ?~  b  [~ ~]
+        =/  val=(unit (pair lelem:qor pri:qor))
+          (bot:qor t.r.u.b)
+        ?~  val  [`[k.r.u.b q.u.b v.r.u.b] ~]
+        :-  `[k.r.u.b q.u.b v.r.u.b]
+        `[p.u.b p.p.u.val [k.p.u.val v.p.u.val q.u.val]]
+      --
     --
   --
 ::
