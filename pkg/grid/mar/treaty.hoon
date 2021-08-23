@@ -1,13 +1,14 @@
-/+  dock=docket
-|_  =treaty:dock
+/-  *treaty
+/+  treat=treaty
+|_  tret=treaty
 ++  grow
   |%
-  ++  noun  treaty
-  ++  json  (treaty:enjs:dock treaty)
+  ++  noun  tret
+  ++  json  (treaty:enjs:treat tret)
   --
 ++  grab
   |%
-  ++  noun  treaty:dock
+  ++  noun  treaty
   --
 ++  grad  %noun
 --
