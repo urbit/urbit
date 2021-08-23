@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import fuzzy from 'fuzzy';
 import slugify from 'slugify';
 import classNames from 'classnames';
+import { Treaty } from '@urbit/api/docket';
 import { ShipName } from '../../components/ShipName';
-import useDocketState from '../../state/docket';
-import { Treaty } from '../../state/docket-types';
+import useDocketState, { useAllyTreaties } from '../../state/docket';
 import { useLeapStore } from '../Nav';
 
 type AppsProps = RouteComponentProps<{ ship: string }>;
@@ -17,26 +17,25 @@ export const Apps = ({ match }: AppsProps) => {
     selectedMatch: state.selectedMatch
   }));
   const provider = match?.params.ship;
-  const fetchProviderTreaties = useDocketState((s) => s.fetchProviderTreaties);
-  const [treaties, setTreaties] = useState<Treaty[]>();
-  const results = useMemo(
-    () =>
-      treaties
-        ? fuzzy
-            .filter(
-              searchInput,
-              treaties.map((t) => t.title)
-            )
-            .sort((a, b) => {
-              const left = a.string.startsWith(searchInput) ? a.score + 1 : a.score;
-              const right = b.string.startsWith(searchInput) ? b.score + 1 : b.score;
+  const treaties = useAllyTreaties(provider);
+  const results = useMemo(() => {
+    if (!treaties) {
+      return undefined;
+    }
+    const values = Object.values(treaties);
+    return fuzzy
+      .filter(
+        searchInput,
+        values.map((t) => t.title)
+      )
+      .sort((a, b) => {
+        const left = a.string.startsWith(searchInput) ? a.score + 1 : a.score;
+        const right = b.string.startsWith(searchInput) ? b.score + 1 : b.score;
 
-              return right - left;
-            })
-            .map((result) => treaties[result.index])
-        : undefined,
-    [treaties, searchInput]
-  );
+        return right - left;
+      })
+      .map((result) => values[result.index]);
+  }, [treaties, searchInput]);
   const count = results?.length;
 
   useEffect(() => {
@@ -56,12 +55,8 @@ export const Apps = ({ match }: AppsProps) => {
   }, [results]);
 
   useEffect(() => {
-    async function getTreaties() {
-      setTreaties(await fetchProviderTreaties(provider));
-    }
-
     if (provider) {
-      getTreaties();
+      useDocketState.getState().fetchAllyTreaties(provider);
     }
   }, [provider]);
 
@@ -89,35 +84,37 @@ export const Apps = ({ match }: AppsProps) => {
       </div>
       {results && (
         <ul className="space-y-8" aria-labelledby="developed-by">
-          {results.map((app) => (
+          {results.map((treaty) => (
             <li
-              key={app.desk}
-              id={app.title || app.desk}
+              key={treaty.desk}
+              id={treaty.title || treaty.desk}
               role="option"
-              aria-selected={isSelected(app)}
+              aria-selected={isSelected(treaty)}
             >
               <Link
-                to={`${match?.path.replace(':ship', provider)}/${slugify(app.desk)}`}
+                to={`${match?.path.replace(':ship', provider)}/${treaty.ship}/${slugify(
+                  treaty.desk
+                )}`}
                 className={classNames(
                   'flex items-center space-x-3 default-ring ring-offset-2 rounded-lg',
-                  isSelected(app) && 'ring-4'
+                  isSelected(treaty) && 'ring-4'
                 )}
               >
                 <div
                   className="flex-none relative w-12 h-12 bg-gray-200 rounded-lg"
-                  style={{ backgroundColor: app.color }}
+                  style={{ backgroundColor: treaty.color }}
                 >
-                  {app.img && (
+                  {treaty.image && (
                     <img
                       className="absolute top-1/2 left-1/2 h-[40%] w-[40%] object-contain transform -translate-x-1/2 -translate-y-1/2"
-                      src={app.img}
+                      src={treaty.image}
                       alt=""
                     />
                   )}
                 </div>
                 <div className="flex-1 text-black">
-                  <p>{app.title}</p>
-                  {app.info && <p className="font-normal">{app.info}</p>}
+                  <p>{treaty.title}</p>
+                  {treaty.info && <p className="font-normal">{treaty.info}</p>}
                 </div>
               </Link>
             </li>

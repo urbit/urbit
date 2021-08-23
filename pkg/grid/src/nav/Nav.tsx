@@ -47,6 +47,33 @@ export type MenuState =
   | 'help-and-support'
   | 'system-preferences';
 
+export function createNextPath(current: string, nextPart?: string): string {
+  let end = nextPart;
+  const parts = current.split('/').reverse();
+  if (parts[1] === 'search') {
+    end = 'apps';
+  }
+
+  if (parts[0] === 'leap') {
+    end = `search/${nextPart}`;
+  }
+
+  return `${current}/${end}`;
+}
+
+export function createPreviousPath(current: string): string {
+  const parts = current.split('/');
+  parts.pop();
+
+  if (parts[parts.length - 1] === 'leap') {
+    parts.push('search');
+  }
+  if (parts[parts.length - 2] === 'apps') {
+    parts.pop();
+  }
+  return parts.join('/');
+}
+
 interface NavProps {
   menu?: MenuState;
 }

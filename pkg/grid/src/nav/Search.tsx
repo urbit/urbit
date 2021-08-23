@@ -12,7 +12,7 @@ type SearchProps = RouteComponentProps<{
 export const Search = ({ match }: SearchProps) => {
   return (
     <Switch>
-      <Route path={`${match.path}/:ship/apps/:desk`} component={AppInfo} />
+      <Route path={`${match.path}/:ship/apps/:host/:desk`} component={AppInfo} />
       <Route path={`${match.path}/:ship/apps`} component={Apps} />
       <Route path={`${match.path}/:ship`} component={Providers} />
       <Route path={`${match.path}`} component={Home} />
