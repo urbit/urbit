@@ -3,7 +3,8 @@
 /+  naive, ethereum
 ::
 |%
-+$  owners  (jug address:naive ship)
++$  owner   [=proxy:naive =address:naive]
++$  owners  (jug owner ship)
 ::
 +$  roller-config
   $:  next-batch=time
@@ -43,7 +44,7 @@
   ==
 ::
 +$  update
-  $%  [%point =address:ethereum =ship =point:naive]
+  $%  [%point =owner =ship =point:naive]
       [%tx =address:ethereum =roller-tx]
   ==
 ::

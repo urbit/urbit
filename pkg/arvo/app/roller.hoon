@@ -268,8 +268,12 @@
       !>  ^-  (list ship)
       ?~  addr=(slaw %ux wat)
         ~
-      %~  tap  in
-      (~(get ju own) u.addr)
+      =/  proxies=(list proxy:naive)
+        ~[%own %spawn %manage %vote %transfer]
+      %+  roll  proxies
+      |=  [=proxy:naive ships=(list ship)]
+      %+  weld  ships
+      ~(tap in (~(get ju own) [proxy u.addr]))
     ::
     ++  config
       :+  ~  ~
@@ -336,9 +340,16 @@
       :-  %points
       !>  ^-  (list [ship point:naive])
       ?~  addr=(slaw %ux wat)  ~
-      %+  roll
-        ~(tap in (~(get ju own) u.addr))
-      |=  [=ship points=(list [ship point:naive])]
+      :: %+  roll
+      ::   ~(tap in (~(get ju own) u.addr))
+      =/  proxies=(list proxy:naive)
+        ~[%own %spawn %manage %vote %transfer]
+      %+  roll  proxies
+      |=  [=proxy:naive points=(list [ship point:naive])]
+      %+  weld  points
+      ::
+      %+  roll  ~(tap in (~(get ju own) [proxy u.addr]))
+      |=  [=ship points=_points]
       %+  snoc  points
       [ship (need (get:orm:naive points.pre ship))]
     ::
@@ -506,7 +517,12 @@
   |-  ^-  (list card)
   ?~  updates  ~
   =*  up          i.updates
-  =/  address=@t  (scot %ux address.up)
+  =/  address=@t
+    %+  scot  %ux
+    ?-  -.up
+      %tx     address.up
+      %point  address.owner.up
+    ==
   :_  $(updates t.updates)
   ^-  card
   :+  %give  %fact

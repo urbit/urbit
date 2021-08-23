@@ -50,27 +50,45 @@
   =/  new=point:naive
     (need (get points.nas ship))
   =*  event  +>.diff
-  =;  [to=(unit @ux) from=(unit @ux)]
-    =?  owners  ?=(^ from)
+  =;  [to=(unit owner) from=(unit owner)]
+    ~?  =(ship ~marzod)
+      [-.event to+to from+from]
+    =?  owners  &(?=(^ from) !=(address.u.from 0x0))
+      ~?  =(ship ~marzod)  ['del' u.from ship new old]
       (~(del ju owners) u.from ship)
+    ?:  ?|  =(~ to)
+            &(?=(^ to) =(address.u.to 0x0))
+        ==
+      [ups owners]
     ?~  to  [ups owners]
+    ~?  =(ship ~marzod)  ['add' u.to ship]
     :-  (snoc ups [%point u.to ship new])
     (~(put ju owners) u.to ship)
   ?+    -.event  [~ ~]
       %owner
-    [`+.event ?~(old ~ `address.owner.own.u.old)]
-  ::
-      %spawn-proxy
-    [`+.event ?~(old ~ `address.spawn-proxy.own.u.old)]
+    :-  `[%own +.event]
+    ?~  old  ~
+    `[%own address.owner.own.u.old]
   ::
       %management-proxy
-    [`+.event ?~(old ~ `address.management-proxy.own.u.old)]
+    :-  `[%manage +.event]
+    ?~  old  ~
+    `[%manage address.management-proxy.own.u.old]
+  ::
+      %spawn-proxy
+    :-  `[%spawn +.event]
+    ?~  old  ~
+    `[%spawn address.spawn-proxy.own.u.old]
   ::
       %voting-proxy
-    [`+.event ?~(old ~ `address.voting-proxy.own.u.old)]
+    :-  `[%vote +.event]
+    ?~  old  ~
+    `[%vote address.voting-proxy.own.u.old]
   ::
       %transfer-proxy
-    [`+.event ?~(old ~ `address.transfer-proxy.own.u.old)]
+    :-  `[%transfer +.event]
+    ?~  old  ~
+    `[%transfer address.transfer-proxy.own.u.old]
   ==
 ::
 ++  get-owner
