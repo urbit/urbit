@@ -1,11 +1,10 @@
-/-  *docket
+/-  *docket, hood, treaty
 /+  *server, agentio, default-agent, dbug, verb, hood-kiln=kiln
 |%
 +$  card  card:agent:gall
 +$  state-0
-  $:  dockets=(map desk docket)
+  $:  ::  local
       charges=(map desk charge)
-      treaties=(map [=ship =desk] treaty)
   ==
 ::  $cache: impermanent state
 +$  cache
@@ -15,6 +14,12 @@
   [state-0 cache]
 ::  +lac: toggle verbosity
 ++  lac  &
+++  ver
+  |%
+  ++  poke  1
+  ++  scry  1
+  ++  peer  1
+  --
 ::
 --
 ^-  agent:gall
@@ -29,21 +34,22 @@
     pass  pass:io
     def   ~(. (default-agent this %|) bowl)
     cc    ~(. +> bowl)
-    dc-abed  dc-abed:dock-core:cc
+    ch    ch:cc
 ::
 ++  on-init
   ^-  (quip card _this)
   :_  this
   :~  (~(watch-our pass /kiln) %hood /kiln/vats)
       (~(connect pass /eyre) [~ /] %docket)
+      (~(wait pass /init) (add 1 now.bowl))
       (~(connect pass /eyre) [~ /apps] %docket)
-      (poke-self:pass init+!>(~))
   ==
 ::
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
   =+  !<(old=state-0 vase)
+  =*  cha  ~(. ch q.byk.bowl)
   |^  
   =.  -.state  old
   =.  +.state  inflate-cache
@@ -52,23 +58,25 @@
   ++  inflate-cache
     ^-  cache
     %-  ~(gas by *(map term desk))
-    %+  turn  ~(tap by charges)
+    %+  murn  ~(tap by charges)
     |=  [=desk =charge]
-    :_(desk base.docket.charge)
+    ?.  ?=(%glob -.href.docket.charge)  ~
+    `:_(desk base.href.docket.charge)
   --
 ::
 ++  on-save  !>(-.state)
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
+  |^  
   =^  cards  state
     ?+  mark  (on-poke:def:cc mark vase)
-      %docket-uninstall  dc-abet:dc-uninstall:(dc-abed !<(desk vase)) 
-      %init              dc-abet:dc-install:(dc-abed %grid)
+      %docket-install    (install !<([ship desk] vase))
+      %docket-uninstall  (uninstall !<(desk vase))
     ::
         %noun
       =+  ;;([%kick =desk] q.vase)
-      dc-abet:dc-install:(dc-abed desk)
+      :_(state ~(fetch-glob ch desk))
     ::
         %handle-http-request
       =+  !<([id=@ta req=inbound-request:eyre] vase)
@@ -77,6 +85,30 @@
       (handle-http-request:cc req)
     ==
   [cards this]
+  ::
+  ++  install
+    |=  [=ship =desk]
+    ^-  (quip card _state)
+    =+  .^(=treaty:treaty %gx (scry:io %treaty /treaty/(scot %p ship)/[desk]/noun))
+    ?<  ~|(%bad-install-desk (~(has by charges) desk)) 
+    =.  charges
+      (~(put by charges) desk docket.treaty %install ~)
+    =*  cha   ~(. ch desk)
+    :_  state
+    ~[add-fact:cha (install:cha ship desk)]
+  ::
+  ++  uninstall
+    |=  =desk
+    ^-  (quip card _state)
+    ~|  %no-charge-install
+    =/  =charge  (~(got by charges) desk)
+    =.  charges  (~(del by charges) desk)
+    =?  by-base  ?=(%glob -.href.docket.charge)
+      (~(del by by-base) base.href.docket)
+    =*  cha  ~(. ch desk)
+    :_  state
+    ~[del-fact:cha uninstall:cha]
+  --
 ::
 ++  on-watch
   |=  =path
@@ -87,12 +119,6 @@
       ?>  (team:title [our src]:bowl)
       `state
     ::
-        [%treaty @ @ ~]
-      =*  desk  i.t.t.path
-      =/  =ship  (slav %p i.t.path)
-      ?>  |(&(!=(our.bowl ship) (team:title [src our]:bowl)) =(our.bowl ship))
-      sy-abet:sy-peer:(sy-abed:sync-core:cc ship desk)
-      ::
         [%charges ~]
       ?>  (team:title [our src]:bowl)
       `state
@@ -103,23 +129,20 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  [~ ~]
+    [%x %ver %poke ~]  ``noun+!>(poke:ver)
+    [%x %ver %peer ~]  ``noun+!>(peer:ver)
+    [%x %ver %scry ~]  ``noun+!>(scry:ver)
     [%x %our ~]  ``json+!>(s+(scot %p our.bowl))
-    ::
-      [%x %dockets ~]
-    :-  ~  :-  ~
-    :-  %docket-update
-    !>  ^-  update
-    [%initial dockets]
     ::
       [%x %charges ~]
     :-  ~  :-  ~
-    :-  %docket-update
-    !>  ^-  update
+    :-  %charge-update
+    !>  ^-  charge-update
     :-  %initial
-    %-  ~(gas by *(map desk docket))
+    %-  ~(gas by *(map desk charge))
     %+  turn  ~(tap by charges)
     |=  [=desk =charge]
-    [desk docket.charge]
+    [desk (get-light-charge charge)]
   ==
 ::
 ++  on-agent
@@ -127,15 +150,10 @@
   ^-  (quip card _this)
   |^
   =^  cards  state
-    ?+  wire  ~|(bad-docket-take+wire !!)
+    ?+  wire  ~&(bad-docket-take+wire `state)
       ~  `state
       [%kiln ~]  take-kiln
-      [%docket @ *]  dc-abet:(dc-take-agent:(dc-abed i.t.wire) t.t.wire sign)
-    ::
-        [%treaty @ @ ~]
-      =*  desk  i.t.t.wire
-      =/  =ship  (slav %p i.t.wire)
-      sy-abet:(sy-take:(sy-abed:sync-core:cc ship desk) sign)
+      [%charge @ *]  (take-charge i.t.wire t.t.wire)
     ==
   [cards this]
   ::
@@ -147,34 +165,109 @@
         %fact
       ?.  ?=(%kiln-vats-diff p.cage.sign)  `state
       =+  !<(=diff:hood-kiln q.cage.sign)
-      ?.  &(?=(%merge -.diff) !(~(has by dockets) desk.diff))  `state
-      dc-abet:dc-install:(dc-abed desk.diff)
+      ?.  &(?=(%merge -.diff) !(~(has by charges) desk.diff))  `state
+      ::  TODO: kiln states
+      `state
+    ==
+  ++  take-charge
+    |=  [=desk =^wire]
+    ^-  (quip card _state)
+    ~|  %took-for-nonexistent-charge
+    ?>  (~(has by charges) desk)
+    =*  cha  ~(. ch desk)
+    ?+  wire  ~|(%bad-charge-wire !!)
+    ::
+        [%install ~]
+      ?>  ?=(%poke-ack -.sign)
+      ?~  p.sign  
+        :_(state ~[warp-next:cha]) :: request warp
+      =.  charges   (new-chad:cha hung+'Failed install')
+      ((slog leaf+"Failed installing %{(trip desk)}" u.p.sign) `state)
+    ::
+        [%uninstall ~] 
+      ?>  ?=(%poke-ack -.sign)
+      ?~  p.sign  `state
+      ((slog leaf+"Failed to uninstall %{(trip desk)}" u.p.sign) `state)
+    ::
+        [%glob ~]
+      ?-  -.sign
+        %kick   `state
+      ::
+          ?(%poke-ack %watch-ack)
+        ?~  p.sign  `state
+        =/  act=tape  ?:(?=(%poke-ack -.sign) "start" "listen")
+        =.  charges  (new-chad:cha hung+'glob-failed')
+        :-  ~[add-fact:cha]
+        ((slog leaf+"docket: couldn't {act} thread; will retry" u.p.sign) state)
+      ::
+          %fact
+        ?+    p.cage.sign  `state
+            %thread-fail
+          =+  !<([=term =tang] q.cage.sign)
+          =.  charges  (new-chad:cha hung+'glob-failed')
+          :-  ~[add-fact:cha]
+          ((slog leaf+"docket: thread failed; will retry" leaf+<term> tang) state)
+        ::
+            %thread-done
+          =+  !<(=glob q.cage.sign)
+          =/  =charge  (~(got by charges) desk)
+          ?>  ?=(%glob -.href.docket.charge)
+          =.  charges  (new-chad:cha glob+glob)
+          =.  by-base  (~(put by by-base) base.href.docket.charge desk)
+          :_(state ~[add-fact:cha])
+        ==
+      ==
     ==
   --
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
-  ^-  (quip card _this)
+  |=  [=wire sign=sign-arvo]
+  |^  ^-  (quip card _this)
   =^  cards  state
-    ?+  wire  (on-arvo:def wire sign-arvo)
+    ?+  wire  (on-arvo:def wire sign)
+        [%init ~]  
+      =*  cha  ~(. ch q.byk.bowl)
+      =.  charges  (~(put by charges) q.byk.bowl [docket:cha %install ~])
+      [fetch-glob:cha state]
     ::
-        [%docket @ *]  
-      dc-abet:(dc-take-arvo:(dc-abed i.t.wire) t.t.wire sign-arvo)
+      [%charge @ *]  (take-charge t.wire)
     ::
         [%eyre ~]
-      ?>  ?=([%eyre %bound *] sign-arvo)
-      ?:  accepted.sign-arvo   `state 
-      ~&  [dap.bowl %failed-to-bind path.binding.sign-arvo]
+      ?>  ?=([%eyre %bound *] sign)
+      ?:  accepted.sign   `state 
+      ~&  [dap.bowl %failed-to-bind path.binding.sign]
       `state
     ==
   [cards this]
+  ::
+  ++  take-charge
+    |=  [=desk =^wire]
+    =*  cha  ~(. ch desk)
+    ?+  wire  ~|(%lc-arvo-bad-wire !!)
+    ::
+        [%warp ~]  
+      ?>  ?=([?(%clay %behn) %writ *] sign)
+      ?.  (~(has by charges) desk)  `state
+      ?~  p.sign  ::
+        `state
+      =*  cage  r.u.p.sign
+      ?>  =(%docket p.cage)
+      =+  !<(=docket q.cage)
+      ?:  ?=(%site -.href.docket)
+        :_  state(charges (~(put by charges) desk [docket [%site ~]]))
+        ~[add-fact:cha]
+      =.  charges  (new-chad:cha %install ~)
+      :_  state
+      [add-fact:cha fetch-glob:cha]
+    ==
+  --
 ::
 ++  on-fail  on-fail:def
 ++  on-leave  on-leave:def
 --
 |_  =bowl:gall
-+*  io    ~(. agentio bowl)
-    pass  pass:io
+++  io    ~(. agentio bowl)
+++  pass  pass:io
 ++  def  ~(. (default-agent state %|) bowl)
 ::
 ++  inline-js-response
@@ -204,13 +297,16 @@
   =/  cha=(unit charge) 
     (~(get by charges) u.des)
   ?~  cha  not-found:gen
+  ?.  ?=(%glob -.chad.u.cha)  not-found:gen
+  =*  glob  glob.chad.u.cha
   =/  suffix=^path
     (weld (slag 2 `^path`site.req-line) (drop ext.req-line))
   ?:  =(suffix /desk/js) 
     %-  inline-js-response
     (rap 3 'window.desk = "' u.des '";' ~)
+
   =/  data=mime
-    (~(gut by glob.u.cha) suffix (~(got by glob.u.cha) /index/html))
+    (~(gut by glob) suffix (~(got by glob) /index/html))
   =/  mime-type=@t  (rsh 3 (crip <p.data>))
   =/  headers
     :~  content-type+mime-type 
@@ -218,183 +314,38 @@
         'service-worker-allowed'^'/'
     ==
   [[200 headers] `q.data]
-::  +dock-core: Local docket engine
-++  dock-core
-  |_  $:  cards=(list card)
-          =desk  
-          docket=(unit docket)
-          charge=(unit charge)
-      ==
-  ++  dc-core  .
-  ++  dc-abed  
-    |=  d=^desk
-    dc-core(desk d, docket (~(get by dockets) d), charge (~(get by charges) d))
-  ++  dc-abet  
-    =/  old-charge  (~(get by charges) desk)
-    =?  by-base  &(=(old-charge charge) ?=(^ old-charge))
-      ?~  charge  (~(del by by-base) base.docket.u.old-charge)
-      (~(put by by-base) base.docket.u.charge desk)
-    =:  charges  ?~(charge (~(del by charges) desk) (~(put by charges) desk u.charge))
-        dockets  ?~(docket (~(del by dockets) desk) (~(put by dockets) desk u.docket))
-      ==
-    [(flop cards) state]
-  ::
-  ++  dc-emit  |=(=card dc-core(cards [card cards]))
-  ++  dc-emil  |=(crds=(list card) dc-core(cards (welp (flop crds) cards)))
-  ++  dc-pass  |=(=path ~(. pass (welp /docket/[desk] path)))
-  ::
-  ::  +|  %entrypoints
-  ++  dc-install
-    =.  dc-core  (dc-log "installing {<desk>}")
-    =/  =path
-      /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket
-    =+  .^(exists=? %cu path)
-    ?.  exists  :: no docket
-      ~&  no-docket-for-desk+desk
-      dc-core
-    (dc-new .^(dock=^docket %cx path))
-  ::
-  ++  dc-uninstall
-    =>  dc-gone
-    uninstall:dc-kiln
-  ::
-  ++  dc-take-agent
-    |=  [=wire =sign:agent:gall]
-    |^
-    ?+  wire   ~|(%bad-docket-take !!)
-      [%spider *]  (take-spider t.wire)
-      [%kiln *]    dc-core
-    ==
-    ++  take-spider
-      |=  wire=^wire
-      ?-  -.sign
-        %kick   dc-core
-          ?(%poke-ack %watch-ack)
-        ?~  p.sign  dc-core
-        =/  act=tape  ?:(?=(%poke-ack -.sign) "start" "listen")
-        (dc-slog leaf+"docket: couldn't {act} thread; will retry" u.p.sign)
-      ::
-          %fact
-        ?+    p.cage.sign  dc-core
-            %thread-fail
-          =+  !<([=term =tang] q.cage.sign)
-          (dc-slog leaf+"docket: thread failed; will retry" leaf+<term> tang)
-        ::
-            %thread-done
-          =+  !<(=glob q.cage.sign)
-          =.  charge  `[glob dc-docket]
-          dc-give-charge
-        ==
-      ==
-    --
-  ++  dc-take-arvo
-    |=  [=wire =sign-arvo]
-    ?>  ?=([?(%clay %behn) %writ *] sign-arvo)
-    ?:  =(~ docket)  dc-core  :: uninstalled
-    =.  dc-core  dc-warp-docket
-    ?~(p.sign-arvo dc-gone (dc-update u.p.sign-arvo))
-  ::
-  ::  +|  %transitions
-  ::
-  ::  +dc-gone: Uninstall
-  ++  dc-gone  
-    =:  docket  ~
-        charge  ~
-      ==
-    dc-give-charge
-  ::  
-  ::  +dc-update: Handle new docket from clay
-  ++  dc-update
-    |=  =rant:clay
-    =*  cage  r.rant
-    ?.  ?=(%docket p.cage)  ~|(%bad-rant-mark !!)
-    (dc-new !<(dock=^docket q.cage))
-  ::
-  ::
-  ::  +dc-new: Handle new docket
-  ++  dc-new
-    |=  dock=^docket
-    =.  dc-core  (dc-log "new docket for {<desk>}")
-    =.  docket  `dock
-    =?  dc-core  |(?=(~ charge) !=(glob.docket.u.charge glob.dock))
-      dc-start-thread  :: only refetch if changed
-    dc-warp-docket
-  ::  +|  %card
-  ++  dc-warp-docket
-    (dc-emit (warp-our:(dc-pass /warp) desk `[%next %x da+now.bowl /desk/docket]))
-  ++  dc-start-thread
+::
+++  get-light-charge
+  |=  =charge
+  ?.  ?=(%glob -.chad.charge)  charge
+  charge(glob.chad *glob)
+::  +ch: Charge engine
+++  ch
+  |_  =desk
+  ++  pass  |=(slug=term ~(. ^pass /charge/[desk]/[slug]))
+  ++  add-fact
+    =/  =charge  (~(got by charges) desk)
+    (fact:io charge-update+!>([%add-charge desk (get-light-charge charge)]) /charges ~)
+  ++  del-fact  (fact:io charge-update+!>([%del-charge desk]) /charges ~)
+  ++  install
+    |=  [=ship remote=^desk]
+    (poke-our:(pass %install) %hood kiln-install+!>([desk ship remote]))
+  ++  uninstall
+    (poke-our:(pass %uninstall) %hood kiln-uninstall+!>(desk))
+  ++  warp-next  (warp-our:(pass %warp) desk `[%next %x da+now.bowl /desk/docket])
+  ++  warp-sing  (warp-our:(pass %warp) desk `[%sing %x da+now.bowl /desk/docket])
+  ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
+  ++  fetch-glob
+    =/  =charge  (~(got by charges) desk)
     =/  tid=@t  (cat 3 'docket-' (scot %uv (sham (mix eny.bowl desk))))
-    =*  glob-url   glob:dc-docket
-    =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`glob-url)])
-    =*  pass  (dc-pass /spider)
-    =.  dc-core  (dc-emit (watch-our:pass %spider /thread-result/[tid]))
-    (dc-emit (poke-our:pass %spider cage))
-  ::
-  ++  dc-give-charge
-    =;  =update
-      (dc-emit (fact:io docket-update+!>(update) /charges ~))
-    ?~(charge [%del-dock desk] [%add-dock desk docket.u.charge])
-  ::
-  ++  dc-kiln
-    |%
-    ++  pass  (dc-pass /kiln)
-    ++  uninstall  (dc-emit (poke-our:pass %hood kiln-uninstall+!>(desk)))
-    ++  install  |=(=ship (dc-emit (poke-our:pass %hood kiln-install+!>([ship desk]))))
-    --
-  ::
-  ::  +|  %constants/utils
-  ++  dc-log   |=(=tape ?:(lac dc-core ((slog leaf+"docket: {tape}" ~) dc-core)))
-  ++  dc-slog  |=(=tang ((slog tang) dc-core))
-  ++  dc-docket  (need docket)
-  ++  dc-charge  (need charge)
-  --
-::  +sync-core: Treaty engine
-++  sync-core
-  |_  $:  =ship  =desk
-          cards=(list card)
-      ==
-  ++  sy-core  .
-  ++  sy-abed  |=([s=^ship d=^desk] sy-core(ship s, desk d))
-  ++  sy-abet  [(flop cards) state]
-  ++  sy-emit  |=(=card sy-core(cards [card cards]))
-  ++  sy-emil  |=(crds=(list card) sy-core(cards (welp (flop crds) cards)))
-  ++  sy-path  /treaty/(scot %p ship)/[desk]
-  ++  sy-pass  ~(. pass sy-path)
-  ::
-  ::  %|  entrypoints
-  ++  sy-peer
-    ^+  sy-core
-    ?:  =(our.bowl ship)  sy-local-treaty
-    ?>  (team:title [our src]:bowl)
-    ?.  (~(has by treaties) [ship desk])
-      sy-watch-foreign
-    (sy-emit (fact:io treaty+!>((~(got by treaties) [ship desk])) sy-path ~))
-  ::
-  ++  sy-take
-    |=  =sign:agent:gall
-    ^+  sy-core
-    ?+  -.sign  sy-core
-      %kick   sy-watch-foreign
-    ::
-        %watch-ack   
-      ?~  p.sign  sy-core
-      %-  (slog leaf+"docket-sync: couldn't subscribe to foreign" u.p.sign)
-      sy-core
-    ::
-        %fact
-      ?.  ?=(%treaty p.cage.sign)  sy-core
-      =+  !<(=treaty q.cage.sign)
-      =.  treaties  (~(put by treaties) [ship desk] treaty)
-      (sy-give treaty)
+    ?>  ?=(%glob -.href.docket.charge)
+    ?>  ?=(%http -.glob-location.href.docket.charge)
+    =*  url  url.glob-location.href.docket.charge
+    =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`url)])
+    :~  (watch-our:(pass %glob) %spider /thread-result/[tid])
+        (poke-our:(pass %glob) %spider cage)
     ==
-  ::  +|  %cards
-  ++  sy-watch-foreign  (sy-emit (watch:sy-pass [ship %docket] sy-path))
-  ++  sy-give-gone  (sy-emit (kick:io sy-path ~))
-  ++  sy-give  |=(=treaty (sy-emit (fact:io treaty+!>(treaty) sy-path ~)))
-  ++  sy-local-treaty
-    =/  =docket  (~(got by dockets) desk)
-    =+  .^(=cass:clay %cw (scry:io desk /desk/docket))
-    =+  .^(hash=@uv %cz (scry:io desk ~))
-    (sy-give our.bowl desk da+da.cass hash docket)
+  ++  docket  .^(^docket %cx (scry:io q.byk.bowl /desk/docket))
   --
 --
+
