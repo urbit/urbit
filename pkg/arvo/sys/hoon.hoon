@@ -3247,6 +3247,18 @@
       =/  val  (bot a)
       ?~  val  a
       r.u.val
+    ::
+    ++  vip                                           ::  put hi-pri (unsafe)
+      ~/  %vip
+      |=  [a=pri k=@ p=@ =v]
+      ^-  pri
+      =/  hal
+        |=  [@ buc bp=@ bb=buc]
+        ^-  (pair @ buc)
+        ?:  =(k k.bb)
+          (make k p v t.bb)
+        [bp [k.bb v.bb (put:qor t.bb k p v)]]
+      (vip:qat a (mug k) p [k v ~])
     --
   --
 ::
