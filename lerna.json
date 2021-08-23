@@ -2,7 +2,8 @@
   "packages": [
     "pkg/npm/*",
     "pkg/btc-wallet",
-    "pkg/interface"
+    "pkg/interface",
+    "pkg/grid"
   ],
   "version": "independent"
 }

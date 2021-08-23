@@ -112,6 +112,7 @@
           %heft  (pass /whey %$ whey/~)
           %meld  (dump kyz)
           %pack  (dump kyz)
+          %pyre  (mean 'dill: %pyre' tang.kyz)
           %crop  (dump trim+p.kyz)
           %verb  (pass /verb %$ kyz)
         ::
@@ -222,12 +223,8 @@
         =/  myt  (flop (fall tem ~))
         =.  tem  ~
         =.  ..mere  (pass / %g %jolt %base ram)
-        =.  ..mere
-          ?-  (clan:title our)
-            %pawn  ..mere
-            %czar  (kiln-sync %kids our %base)
-            *      (kiln-install %base sponsor %kids)
-          ==
+        =?  ..mere  ?=(?(%earl %duke %king) (clan:title our))
+          (kiln-install %base sponsor %kids)
         =.  ..mere  (show-desk %kids)
         =.  ..mere  drum-watch
         |-  ^+  ..mere

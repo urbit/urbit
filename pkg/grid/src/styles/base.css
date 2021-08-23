@@ -1,0 +1,19 @@
+.h1 {
+  @apply text-2xl sm:text-3xl font-bold leading-relaxed tracking-tighter;
+}
+
+.h2 {
+  @apply text-xl sm:text-2xl font-semibold leading-snug tracking-tight;
+}
+
+.h3 {
+  @apply text-lg sm:text-xl font-semibold leading-relaxed tracking-tight;
+}
+
+.h4 {
+  @apply text-sm sm:text-base font-semibold leading-normal tracking-tight;
+}
+
+.default-ring {
+  @apply focus:ring-4 ring-blue-400 ring-opacity-80 focus:outline-none;
+}

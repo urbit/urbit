@@ -1,0 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+cd pkg/grid
+npm test
+npx lint-staged
