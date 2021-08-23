@@ -36,28 +36,6 @@ export const Help = () => {
           </a>
         </div>
         <div>
-          <h2>For general help, ask the community</h2>
-          <p>
-            <a
-              className="text-blue-400"
-              href="web+urbitgraph://group/~bitpyx-dildus/tlon-support"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Join Tlon Support
-            </a>
-            <span className="mx-2 text-black">or email</span>
-            <a
-              className="text-blue-400"
-              href="mailto:support@tlon.io"
-              target="_blank"
-              rel="noreferrer"
-            >
-              support@tlon.io
-            </a>
-          </p>
-        </div>
-        <div>
           <h2>For all other issues:</h2>
           <a
             className="text-blue-400"
