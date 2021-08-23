@@ -6,11 +6,36 @@
 +$  glob  (map path mime)
 ::
 +$  url   cord
+::  $glob-location: How to retrieve a glob
+::
++$  glob-location
+  $%  [%http =url]
+  ==
+::  $href: Where a tile links to
+::
++$  href
+  $%  [%glob base=term =glob-location]
+      [%site =path]
+  ==
+::  $chad: State of a docket
+::
++$  chad
+  $%  :: Done
+      [%glob =glob]
+      [%site ~]
+      :: Waiting 
+      [%install ~]
+      [%suspend ~]
+      :: Error
+      [%hung err=cord]
+  ==
 ::
 ::  $charge: A realized $docket
 ::
 +$  charge
-  [=glob =docket]
+  $:  =docket
+      =chad
+  ==
 ::
 ::  $clause: A key and value, as part of a docket
 ::
@@ -21,34 +46,31 @@
       [%info info=@t]
       [%color color=@ux]
       [%glob url=cord]
+      [%image =url]
+      [%site =path]
       [%base base=term]
       [%version =version]
       [%website website=url]
       [%license license=cord]
   ==
 ::
-::  $docket: A infoion of JS bundles for a desk
+::  $docket: A description of JS bundles for a desk
 ::
 +$  docket
   $:  %1
       title=@t
       info=@t
       color=@ux 
-      glob=url 
-      base=term
+      =href
+      image=(unit url)
       =version
       website=url
       license=cord
   ==
 ::
-::  $treaty: A foreign docket
-+$  treaty
-  [=ship =desk =case hash=@uv =docket]
-::
-::
-+$  update
-  $%  [%initial initial=(map desk docket)]
-      [%add-dock =desk =docket]
-      [%del-dock =desk]
++$  charge-update
+  $%  [%initial initial=(map desk charge)]
+      [%add-charge =desk =charge]
+      [%del-charge =desk]
   ==
 --

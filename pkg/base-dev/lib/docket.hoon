@@ -9,6 +9,8 @@
         color=(unit @ux)
         glob=(unit url)
         base=(unit term)
+        site=(unit path)
+        image=(unit url)
         version=(unit version)
         website=(unit url)
         license=(unit cord)
@@ -20,19 +22,23 @@
     ?~  title.draft  ~
     ?~  info.draft  ~
     ?~  color.draft  ~
-    ?~  glob.draft  ~
-    ?~  base.draft  ~
     ?~  version.draft  ~
     ?~  website.draft  ~
     ?~  license.draft  ~
+    =/  href=(unit href)
+      ?^  site.draft  `[%site u.site.draft]
+      ?~  base.draft  ~
+      ?~  glob.draft  ~
+      `[%glob [u.base.draft [%http u.glob]:draft]]
+    ?~  href  ~
     =,  draft
     :-  ~
     :*  %1
         u.title
         u.info
         u.color
-        u.glob
-        u.base
+        u.href
+        image
         u.version
         u.website
         u.license
@@ -52,6 +58,8 @@
         %color  draft(color `color.clause)
         %glob   draft(glob `url.clause)
         %base   draft(base `base.clause)
+        %site   draft(site `path.clause)
+        %image  draft(image `url.clause)
         %version  draft(version `version.clause)
         %website  draft(website `website.clause)
         %license  draft(license `license.clause)
@@ -61,23 +69,28 @@
   ++  to-clauses
     |=  d=docket
     ^-  (list clause)
-    :~  title+title.d
-        info+info.d
-        color+color.d
-        glob+glob.d
-        base+base.d
-        version+version.d
-        website+website.d
-        license+license.d
+    %-  zing
+    :~  :~  title+title.d
+            info+info.d
+            color+color.d
+            version+version.d
+            website+website.d
+            license+license.d
+        ==
+        ?~  image.d  ~  ~[image+u.image.d]
+        ?:  ?=(%site -.href.d)  ~[site+path.href.d]
+        :~  base+base.href.d
+            glob+url.glob-location.href.d
+        ==
     ==
   ::
   ++  spit-clause
     |=  =clause
     ^-  tape
     %+  weld  "  {(trip -.clause)}+"
-    ?-    -.clause
-      ?(%title %info %glob %website %license %base)  "'{(trip +.clause)}'"
-      %color                                   (scow %ux color.clause)
+    ?+  -.clause  "'{(trip +.clause)}'"
+      %color  (scow %ux color.clause)
+      %site   (spud path.clause)
       ::
         %version
       =,  version.clause
@@ -98,23 +111,23 @@
   =,  enjs:format
   |%
   ::
-  ++  update
-    |=  u=^update
+  ++  charge-update
+    |=  u=^charge-update
     ^-  json
     %+  frond  -.u
     ^-  json
     ?-  -.u
-      %del-dock  s+desk.u
+      %del-charge  s+desk.u
     ::
         %initial  
       %-  pairs
       %+  turn  ~(tap by initial.u)
-      |=([=desk d=^docket] [desk (docket d)]) 
+      |=([=desk c=^charge] [desk (charge c)]) 
     ::
-        %add-dock
+        %add-charge
       %-  pairs
       :~  desk+s+desk.u
-          docket+(docket docket.u)
+          charge+(charge charge.u)
       ==
     ==
   ::
@@ -125,19 +138,33 @@
     ?>  ?=(%n -.p)
     (trip p.p)
   ::
-
   ++  version
     |=  v=^version
     ^-  json
     :-  %s
     %-  crip
     "{(num major.v)}.{(num minor.v)}.{(num patch.v)}"
-
+  ::
   ++  merge
     |=  [a=json b=json]
     ^-  json
     ?>  &(?=(%o -.a) ?=(%o -.b))
     [%o (~(uni by p.a) p.b)]
+  ::
+  ++  href
+    |=  h=^href
+    %+  frond  -.h
+    ?-  -.h
+      %glob  (pairs base+s+base.h ~)
+      %site  s+(spat path.h)
+    ==
+  ::
+  ++  charge
+    |=  c=^charge
+    %+  merge  (docket docket.c)
+    %-  pairs
+    :~  chad+(chad chad.c)
+    ==
   ::
   ++  docket
     |=  d=^docket
@@ -146,30 +173,17 @@
     :~  title+s+title.d
         info+s+info.d
         color+s+(scot %ux color.d)
-        glob+s+glob.d
-        base+s+base.d
+        href+(href href.d)
         version+(version version.d)
         license+s+license.d
         website+s+website.d
     ==
   ::
-  ++  case
-    |=  c=^case
+  ++  chad
+    |=  c=^chad
     %+  frond  -.c
-    ?-  -.c
-      %da   s+(scot %da p.c)
-      %tas  s+(scot %tas p.c)  
-      %ud   (numb p.c)
-    ==
-  ::
-  ++  treaty
-    |=  t=^treaty
-    %+  merge  (docket docket.t)
-    %-  pairs
-    :~  ship+s+(scot %p ship.t)
-        desk+s+desk.t
-        cass+(case case.t)
-        hash+s+(scot %uv hash.t)
+    ?+  -.c  ~
+      %hung  s+err.c
     ==
   --
 --
