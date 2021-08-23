@@ -3206,6 +3206,35 @@
       :-  p.val
       =/  vul  (make k.buc p.u.ped v.buc t.buc)
       (raw:qat r.u.ped h p.vul q.vul)
+    ::
+    ++  jib                                             ::  update at min-prio
+      ~/  %jib
+      |=  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
+      ^-  (pair * pri)
+      =/  vue  (bot a)
+      =?  a  ?=(^ vue)
+        s.u.vue
+      =/  bee  %-  f
+        ?~(vue ~ `[p.u.vue q.u.vue r.u.vue])
+      :-  p.bee
+      ?~  q.bee  a
+      (put a p.u.q.bee q.u.q.bee r.u.q.bee)
+    ::
+    ++  del                                             ::  delete
+      ~/  %del
+      |=  [a=pri =k]
+      ^-  pri
+      =/  val  (pet a k)
+      ?~  val  a
+      r.u.val
+    ::
+    ++  cut                                             ::  delete lowest-pri
+      ~/  %cut
+      |=  a=pri
+      ^-  pri
+      =/  val  (bot a)
+      ?~  val  a
+      r.u.val
     --
   --
 ::
