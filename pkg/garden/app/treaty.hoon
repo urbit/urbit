@@ -22,7 +22,9 @@
     pass  pass:io
     cc    ~(. +> bowl)
 ++  on-init  
-  (on-poke %treaty-ally-diff !>([%add (sein:title [our now our]:bowl)]))
+  =/  sponsor=ship  (sein:title [our now our]:bowl)
+  ?:  =(our.bowl sponsor)  `this
+  (on-poke %ally-update-0 !>([%add sponsor]))
 ++  on-save  !>(state)
 ++  on-load
   |=  =vase
@@ -51,6 +53,7 @@
     ^-  (quip card _this)
     =/  upd=card  (ally-update:ca:cc diff)
     =*  ship  ship.diff
+    ?<  =(ship our.bowl)
     =*  al   ~(. al:cc ship.diff)
     ?-  -.diff
       %add  [~[watch:al upd] this(allies (~(put by allies) ship *alliance))]
@@ -60,11 +63,25 @@
   ++  alliance-diff
     |=  =diff:alliance
     ^-  (quip card _this)
-    :-  (alliance-update:ca:cc diff)^~
+    =-  [[(alliance-update:ca:cc diff) -.-] +.-]
+    ^-  (quip card _this)
+    =,  diff
     ?-  -.diff
-      %add  this(entente (~(put in entente) [ship desk]:diff))
-      %del  this(entente (~(del in entente) [ship desk]:diff))
-    ==
+    ::
+        %add  
+      =.  entente  (~(put in entente) [ship desk])
+      ?.  =(our.bowl ship)  `this
+      =/  =docket:docket  ~(get-docket so:cc desk)
+      =/  =treaty  (treaty-from-docket:cc desk docket)
+      =.  sovereign  (~(put by sovereign) desk treaty)
+      `this
+    ::
+        %del
+      =.  entente  (~(del in entente) [ship desk])
+     ?.  =(our.bowl ship)  `this
+     =.  sovereign  (~(del by sovereign) desk)
+     :_(this ~(kick so:cc desk)^~)
+   ==
   --
 ::
 ++  on-watch

@@ -1,5 +1,5 @@
 /-  *docket, hood, treaty
-/+  *server, agentio, default-agent, dbug, verb, hood-kiln=kiln
+/+  *server, agentio, default-agent, dbug, verb
 |%
 +$  card  card:agent:gall
 +$  state-0
@@ -164,10 +164,23 @@
     ::
         %fact
       ?.  ?=(%kiln-vats-diff p.cage.sign)  `state
-      =+  !<(=diff:hood-kiln q.cage.sign)
-      ?.  &(?=(%merge -.diff) !(~(has by charges) desk.diff))  `state
-      ::  TODO: kiln states
-      `state
+      =+  !<(=diff:hood q.cage.sign)
+      ?.  (~(has by charges) desk.diff)  `state
+      =*  cha  ~(. ch desk.diff)
+      ?+  -.diff  `state
+      ::
+          %suspend
+        =.  charges  (new-chad:cha %suspend ~)
+        :_(state ~[add-fact:cha])
+      ::
+          %revive
+        =/  =charge  (~(got by charges) desk.diff)
+        ?.  ?=(%glob -.href.docket.charge)
+          =.  charges  (new-chad:cha %site ~)
+          :_(state ~[add-fact:cha])
+        =.  charges  (new-chad:cha %install ~)
+        :_(state [add-fact fetch-glob]:cha)
+      ==
     ==
   ++  take-charge
     |=  [=desk =^wire]
