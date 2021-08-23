@@ -36,3 +36,23 @@ export function kilnUninstall(
     json: desk
   };
 }
+
+export function kilnSuspend(
+  desk: string
+): Poke<any> {
+  return {
+    app: 'hood',
+    mark: 'kiln-suspend',
+    json: desk
+  };
+}
+
+export function kilnRevive(
+  desk: string
+): Poke<any> {
+  return {
+    app: 'hood',
+    mark: 'kiln-revive',
+    json: desk
+  };
+}
