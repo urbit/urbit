@@ -2254,8 +2254,8 @@
     ::
     ++  jab                                             ::  update at key k
       ~/  %jab
-      |=  [a=pri =k f=$-((unit (pair @ v)) (pair (unit v) (unit (pair @ v))))]
-      ^-  (pair (unit v) pri)
+      |=  [a=pri =k f=$-((unit (pair @ v)) (pair * (unit (pair @ v))))]
+      ^-  (pair * pri)
       =/  ped  (pet a k)
       =?  a  ?=(^ ped)
         r.u.ped
@@ -2271,8 +2271,8 @@
     ::
     ++  jib                                             ::  update at min-prio
       ~/  %jib
-      |=  [a=pri f=$-((unit (trel k @ v)) (pair (unit v) (unit (trel k @ v))))]
-      ^-  (pair (unit v) pri)
+      |=  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
+      ^-  (pair * pri)
       =/  vue  (bot a)
       ?~  vue
         =/  bee  (f ~)
@@ -2691,9 +2691,9 @@
       ::
       ++  jab                                           ::  alter
         ~/  %jab
-        =/  tyf  $-((unit (pair @ v)) (pair (unit v) (unit (pair @ v))))
+        =/  tyf  $-((unit (pair @ v)) (pair * (unit (pair @ v))))
         |=  [a=pri k=@ f=tyf]
-        ^-  (pair (unit v) pri)
+        ^-  (pair * pri)
         =/  ped  (pet a k)
         =?  a  ?=(^ ped)
           r.u.ped
@@ -2709,9 +2709,9 @@
       ::
       ++  jib                                           ::  alter lowest-pri
         ~/  %jib
-        =/  tyf  $-((unit (trel @ @ v)) (pair (unit v) (unit (trel @ @ v))))
+        =/  tyf  $-((unit (trel @ @ v)) (pair * (unit (trel @ @ v))))
         |=  [a=pri f=tyf]
-        ^-  (pair (unit v) pri)
+        ^-  (pair * pri)
         ?~  a
           =/  bee  (f ~)
           :-  p.bee
