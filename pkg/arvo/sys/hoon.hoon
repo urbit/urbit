@@ -3135,7 +3135,30 @@
     ::
     ++  pan  !!
     ::
-    ++  pet  !!
+    ++  pet                                             ::  delete view
+      ~/  %pet
+      |=  [a=pri =k]
+      |^  ^-  (unit (trel @ v pri))
+      =/  val=(pair (unit (pair @ v)) pri)
+        (jab:qat halp (mug k) a)
+      ?~  p.val  ~
+      `[p.u.p.val q.u.p.val q.val]
+      ::
+      ++  halp
+        |=  b=(unit (pair @ buc))
+        ^-  (pair (unit (pair @ v)) (unit (pair @ buc)))
+        ?~  b  [~ ~]
+        ?:  =(k k.q.u.b)
+          =/  val=(unit (pair lelem:qor pri:qor))
+            (bot:qor t.q.u.b)
+          ?~  val  [`[p.u.b v.q.u.b] ~]
+          :-  `[p.u.b v.q.u.b]
+          `[q.u.val [k.p.u.val v.p.u.val q.u.val]]
+        =/  val  (pet:qor t.q.u.b)
+        ?~  val  [~ ~]
+        :-  `[p.u.val q.u.val]
+        `[p.u.b [k.q.u.b v.q.u.b q.u.val]]
+      --
     ::
     ++  bot  !!
     --
