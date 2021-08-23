@@ -1,5 +1,5 @@
 import React from 'react';
-import { Treaty } from '../state/docket-types';
+import { Treaty } from '@urbit/api';
 
 import { Attribute } from './Attribute';
 
