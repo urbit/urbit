@@ -1,26 +1,39 @@
-import fuzzy from 'fuzzy';
 import create from 'zustand';
 import produce from 'immer';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { omit } from 'lodash-es';
 import api from './api';
-import { Treaty, Dockets, Docket, Provider, Treaties, Providers } from './docket-types';
-import { mockProviders, mockTreaties } from './mock-data';
+import { mockAllies, mockCharges, mockTreaties } from './mock-data';
+import {
+  Allies,
+  Charge,
+  Charges,
+  ChargeUpdateInitial,
+  scryAllies,
+  scryAllyTreaties,
+  scryCharges,
+  Treaty,
+  Docket,
+  Treaties,
+  chadIsRunning,
+  AllyUpdateIni,
+  TreatyUpdateIni,
+  docketInstall,
+  ChargeUpdate
+} from '@urbit/api/docket';
+import _ from 'lodash';
+import {kilnRevive, kilnSuspend} from '@urbit/api/hood';
 
 const useMockData = import.meta.env.MODE === 'mock';
 
-interface ChargesResponse {
-  initial: Dockets;
-}
-
 interface DocketState {
-  charges: Dockets;
+  charges: Charges;
   treaties: Treaties;
-  providers: Providers;
+  allies: Allies;
   fetchCharges: () => Promise<void>;
   requestTreaty: (ship: string, desk: string) => Promise<Treaty>;
-  fetchProviders: (query?: string) => Promise<Provider[]>;
-  fetchProviderTreaties: (provider: string) => Promise<Treaty[]>;
+  fetchAllies: () => Promise<Allies>;
+  fetchAllyTreaties: (ally: string) => Promise<Treaties>;
   toggleDocket: (desk: string) => Promise<void>;
   installDocket: (ship: string, desk: string) => Promise<number | void>;
   uninstallDocket: (desk: string) => Promise<number | void>;
@@ -34,57 +47,30 @@ async function fakeRequest<T>(data: T, time = 300): Promise<T> {
   });
 }
 
-const stableTreatyMap = new Map<string, Treaty[]>();
-
 const useDocketState = create<DocketState>((set, get) => ({
   fetchCharges: async () => {
-    const dockets = useMockData
-      ? await fakeRequest(mockTreaties)
-      : ((await (await fetch('/~/scry/docket/charges.json')).json()) as ChargesResponse).initial;
+    const charg = useMockData
+      ? await fakeRequest(mockCharges)
+      : (await api.scry<ChargeUpdateInitial>(scryCharges)).initial;
 
-    const charges = normalizeDockets(dockets);
+    const charges = Object.entries(charg).reduce((obj: Charges, [key, value]) => {
+      // eslint-disable-next-line no-param-reassign
+      obj[key] = normalizeDocket<Charge>(value);
+      return obj;
+    }, {});
 
     set({ charges });
   },
-  fetchProviders: async (query?: string) => {
-    const providers = Object.values(mockProviders);
-    const searchTexts = providers.map((p) => p.shipName + (p.nickname || ''));
-    return fakeRequest(fuzzy.filter(query || '', searchTexts).map((el) => providers[el.index]));
+  fetchAllies: async () => {
+    const allies = useMockData ? mockAllies : (await api.scry<AllyUpdateIni>(scryAllies)).ini;
+    set({ allies });
+    return allies;
   },
-  fetchProviderTreaties: async (provider: string) => {
-    const { treaties, providers } = get();
-    const dev = providers[provider];
-    const treatyList = Object.values(treaties);
-
-    if (dev.treaties) {
-      return dev.treaties.map((key) => treaties[key]);
-    }
-
-    if (!stableTreatyMap.has(provider)) {
-      stableTreatyMap.set(
-        provider,
-        treatyList.filter(() => !!Math.round(Math.random()))
-      );
-    }
-
-    const providerTreaties = stableTreatyMap.get(provider) || [];
-
-    set(
-      produce((draft: DocketState) => {
-        if (!draft.providers[provider].treaties) {
-          draft.providers[provider].treaties = [];
-        }
-
-        providerTreaties.forEach((treaty) => {
-          // may need to do this when not mock data
-          // const key = `${provider}/${treaty.desk}`;
-          // draft.treaties[key] = treaty;
-          draft.providers[provider].treaties?.push(treaty.desk);
-        });
-      })
-    );
-
-    return fakeRequest(providerTreaties);
+  fetchAllyTreaties: async (ally: string) => {
+    let treaties = useMockData ? mockTreaties : (await api.scry<TreatyUpdateIni>(scryAllyTreaties(ally))).ini;
+    treaties = _.mapValues(treaties, normalizeDocket);
+    set((s) => ({ treaties: { ...s.treaties, ...treaties } }));
+    return treaties;
   },
   requestTreaty: async (ship: string, desk: string) => {
     const { treaties } = get();
@@ -106,51 +92,65 @@ const useDocketState = create<DocketState>((set, get) => ({
     return treaty;
   },
   installDocket: async (ship: string, desk: string) => {
+    const treaty = get().treaties[`${ship}/${desk}`];
+    if (!treaty) {
+      throw new Error('Bad install');
+    }
     if (useMockData) {
-      const docket = normalizeDocket(await get().requestTreaty(ship, desk));
-      set((state) => addCharge(state, { desk, docket }));
+
+      set((state) => addCharge(state, desk, {...treaty, chad: { install: null }}));
+      await new Promise<void>((res) => setTimeout(() => res(), 5000));
+      set((state) => addCharge(state, desk, {...treaty, chad: { glob: null }}));
     }
 
-    return api.poke({
-      app: 'hood',
-      mark: 'kiln-install',
-      json: {
-        ship,
-        desk,
-        local: desk
-      }
-    });
+    return api.poke(docketInstall(ship, desk));
   },
   uninstallDocket: async (desk: string) => {
+    set((state) => delCharge(state, desk));
     if (useMockData) {
-      set((state) => delCharge(state, desk));
+      return;
     }
-
-    return api.poke({
+    await api.poke({
       app: 'docket',
       mark: 'docket-uninstall',
       json: desk
     });
   },
   toggleDocket: async (desk: string) => {
-    set(
-      produce((draft) => {
-        const docket = draft.charges[desk];
-        docket.status = docket.status === 'active' ? 'suspended' : 'active';
-      })
-    );
+    if(useMockData) {
+      set(
+        produce((draft) => {
+          const charge = draft.charges[desk];
+          charge.chad = chadIsRunning(charge.chad) ? { suspend: null } : { glob: null };
+        })
+      );
+    }
+    const { charges } = get();
+    const charge = charges[desk];
+    if(!charge) {
+      return;
+    }
+    const suspended = 'suspend' in charge.chad;
+    if(suspended) {
+      await api.poke(kilnRevive(desk));
+    } else {
+      await api.poke(kilnSuspend(desk));
+    }
   },
   treaties: useMockData ? normalizeDockets(mockTreaties) : {},
   charges: {},
-  providers: useMockData ? mockProviders : {},
+  allies: useMockData ? mockAllies : {},
   set
 }));
 
 function normalizeDocket<T extends Docket>(docket: T): T {
+  const color = docket?.color?.startsWith('#')
+    ? docket.color
+    : `#${docket.color.slice(2).replace('.', '')}`.toUpperCase();
+
   return {
     ...docket,
-    status: docket.status || 'active',
-    color: `#${docket.color.slice(2).replace('.', '')}`.toUpperCase()
+    color
   };
 }
 
@@ -162,40 +162,28 @@ function normalizeDockets<T extends Docket>(dockets: Record<string, T>): Record<
   }, {});
 }
 
-interface AddDockEvent {
-  'add-dock': {
-    desk: string;
-    docket: Docket;
-  };
+function addCharge(state: DocketState, desk: string, charge: Charge) {
+  return { charges: { ...state.charges, [desk]: normalizeDocket(charge) } };
 }
 
-interface DelDockEvent {
-  'del-dock': string;
-}
-
-type DocketEvent = AddDockEvent | DelDockEvent;
-
-function addCharge(state: DocketState, { desk, docket }: AddDockEvent['add-dock']) {
-  return { charges: { ...state.charges, [desk]: docket } };
-}
-
-function delCharge(state: DocketState, desk: DelDockEvent['del-dock']) {
+function delCharge(state: DocketState, desk: string) {
   return { charges: omit(state.charges, desk) };
 }
 
 api.subscribe({
   app: 'docket',
   path: '/charges',
-  event: (data: DocketEvent) => {
+  event: (data: ChargeUpdate) => {
     useDocketState.setState((state) => {
-      console.log(data);
 
-      if ('add-dock' in data) {
-        return addCharge(state, data['add-dock']);
+      if ('add-charge' in data) {
+        const { desk, charge } = data['add-charge']
+        return addCharge(state, desk, charge)
       }
 
-      if ('del-dock' in data) {
-        return delCharge(state, data['del-dock']);
+      if ('del-charge' in data) {
+        const desk = data['del-charge'];
+        return delCharge(state, desk)
       }
 
       return { charges: state.charges };
@@ -204,7 +192,7 @@ api.subscribe({
 });
 
 const selCharges = (s: DocketState) => {
-  return omit(s.charges, 'grid');
+  return s.charges;
 };
 
 export function useCharges() {
@@ -219,5 +207,41 @@ const selRequest = (s: DocketState) => s.requestTreaty;
 export function useRequestDocket() {
   return useDocketState(selRequest);
 }
+
+const selAllies = (s: DocketState) => s.allies;
+export function useAllies() {
+  return useDocketState(selAllies);
+}
+
+export function useAllyTreaties(ship: string) {
+  useEffect(() => {
+    useDocketState.getState().fetchAllyTreaties(ship);
+  }, [ship]);
+
+  return useDocketState(
+    useCallback(
+      (s) => {
+        const charter = s.allies[ship];
+        return _.pick(s.treaties, ...(charter || []));
+      },
+      [ship]
+    )
+  );
+}
+
+export function useTreaty(host: string, desk: string) {
+  return useDocketState(
+    useCallback(
+      (s) => {
+        const ref = `${host}/${desk}`;
+        return s.treaties[ref];
+      },
+      [host, desk]
+    )
+  );
+}
+
+// xx useful for debugging
+//window.docket = useDocketState.getState;
 
 export default useDocketState;
