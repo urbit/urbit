@@ -3179,6 +3179,33 @@
         :-  `[k.r.u.b q.u.b v.r.u.b]
         `[p.u.b p.p.u.val [k.p.u.val v.p.u.val q.u.val]]
       --
+    ::
+    ++  jab                                             ::  alter
+      ~/  %jab
+      =/  tyf  $-((unit (pair @ v)) (pair * (unit (pair @ v))))
+      |=  [a=pri =k f=tyf]
+      ^-  (pair * pri)
+      =/  h  (mug k)
+      =/  ped  (pet:qat a h)
+      ?~  ped
+        =/  bee  (f ~)
+        :-  p.bee
+        ?~  q.bee  a
+        (raw:qat a h p.u.q.bee [k q.u.q.bee ~])
+      =/  =buc  q.u.ped
+      ?:  =(k k.buc)
+        =/  bee  (f `[p.u.ped v.buc])
+        :-  p.bee
+        ?~  q.bee
+          =/  vul  (pour t.buc)
+          ?~  vul  r.u.ped
+          (raw:qat r.u.ped h p.u.vul q.u.vul)
+        =/  vul  (make k p.u.q.bee q.u.q.bee t.buc)
+        (raw:qat r.u.ped h p.vul q.vul)
+      =/  val  (jab:qor t.buc k f)
+      :-  p.val
+      =/  vul  (make k.buc p.u.ped v.buc t.buc)
+      (raw:qat r.u.ped h p.vul q.vul)
     --
   --
 ::
