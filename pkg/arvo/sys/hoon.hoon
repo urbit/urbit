@@ -3076,17 +3076,23 @@
       ^-  ?
       !=(~ (get a k))
     ::
-    ++  get
+    ++  get                                             ::  lookup
       ~/  %get
       |=  [a=pri =k]
       ^-  (unit (pair @ v))
-      !!
+      =/  val  (get:qat a (mug k))
+      ?~  val  ~
+      ?:  =(k k.q.u.val)
+        `[p.u.val v.q.u.val]
+      (get:qor t.q.u.val k)
     ::
-    ++  min
+    ++  min                                             ::  get lowest-pri
       ~/  %min
       |=  a=pri
       ^-  (unit (trel k @ v))
-      !!
+      =/  val  (min:qat a)
+      ?~  val  ~
+      `[k.r.u.val q.u.val v.r.u.val]
     ::
     ++  one
       |=  [=k p=@ =v]
@@ -3133,7 +3139,13 @@
     ::
     ++  key  !!
     ::
-    ++  pan  !!
+    ++  pan                                             ::  insert view
+      |=  [a=pri =k p=@ =v]
+      ^-  (pair (unit (pair @ v)) pri)
+      =/  val  (pet a k)
+      :_  (put a k p v)
+      ?~  val  ~
+      `[p.u.val q.u.val]
     ::
     ++  pet                                             ::  delete view
       ~/  %pet
