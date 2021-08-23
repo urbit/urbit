@@ -1,9 +1,7 @@
 import create from 'zustand';
 import produce from 'immer';
 import { useCallback, useEffect } from 'react';
-import { omit } from 'lodash-es';
-import api from './api';
-import { mockAllies, mockCharges, mockTreaties } from './mock-data';
+import { mapValues, omit, pick } from 'lodash-es';
 import {
   Allies,
   Charge,
@@ -21,8 +19,9 @@ import {
   docketInstall,
   ChargeUpdate
 } from '@urbit/api/docket';
-import _ from 'lodash';
-import {kilnRevive, kilnSuspend} from '@urbit/api/hood';
+import { kilnRevive, kilnSuspend } from '@urbit/api/hood';
+import api from './api';
+import { mockAllies, mockCharges, mockTreaties } from './mock-data';
 
 const useMockData = import.meta.env.MODE === 'mock';
 
@@ -67,8 +66,10 @@ const useDocketState = create<DocketState>((set, get) => ({
     return allies;
   },
   fetchAllyTreaties: async (ally: string) => {
-    let treaties = useMockData ? mockTreaties : (await api.scry<TreatyUpdateIni>(scryAllyTreaties(ally))).ini;
-    treaties = _.mapValues(treaties, normalizeDocket);
+    let treaties = useMockData
+      ? mockTreaties
+      : (await api.scry<TreatyUpdateIni>(scryAllyTreaties(ally))).ini;
+    treaties = mapValues(treaties, normalizeDocket);
     set((s) => ({ treaties: { ...s.treaties, ...treaties } }));
     return treaties;
   },
@@ -97,10 +98,9 @@ const useDocketState = create<DocketState>((set, get) => ({
       throw new Error('Bad install');
     }
     if (useMockData) {
-
-      set((state) => addCharge(state, desk, {...treaty, chad: { install: null }}));
+      set((state) => addCharge(state, desk, { ...treaty, chad: { install: null } }));
       await new Promise<void>((res) => setTimeout(() => res(), 5000));
-      set((state) => addCharge(state, desk, {...treaty, chad: { glob: null }}));
+      set((state) => addCharge(state, desk, { ...treaty, chad: { glob: null } }));
     }
 
     return api.poke(docketInstall(ship, desk));
@@ -117,7 +117,7 @@ const useDocketState = create<DocketState>((set, get) => ({
     });
   },
   toggleDocket: async (desk: string) => {
-    if(useMockData) {
+    if (useMockData) {
       set(
         produce((draft) => {
           const charge = draft.charges[desk];
@@ -127,11 +127,11 @@ const useDocketState = create<DocketState>((set, get) => ({
     }
     const { charges } = get();
     const charge = charges[desk];
-    if(!charge) {
+    if (!charge) {
       return;
     }
     const suspended = 'suspend' in charge.chad;
-    if(suspended) {
+    if (suspended) {
       await api.poke(kilnRevive(desk));
     } else {
       await api.poke(kilnSuspend(desk));
@@ -175,15 +175,14 @@ api.subscribe({
   path: '/charges',
   event: (data: ChargeUpdate) => {
     useDocketState.setState((state) => {
-
       if ('add-charge' in data) {
-        const { desk, charge } = data['add-charge']
-        return addCharge(state, desk, charge)
+        const { desk, charge } = data['add-charge'];
+        return addCharge(state, desk, charge);
       }
 
       if ('del-charge' in data) {
         const desk = data['del-charge'];
-        return delCharge(state, desk)
+        return delCharge(state, desk);
       }
 
       return { charges: state.charges };
@@ -222,7 +221,7 @@ export function useAllyTreaties(ship: string) {
     useCallback(
       (s) => {
         const charter = s.allies[ship];
-        return _.pick(s.treaties, ...(charter || []));
+        return pick(s.treaties, ...(charter || []));
       },
       [ship]
     )
@@ -242,6 +241,6 @@ export function useTreaty(host: string, desk: string) {
 }
 
 // xx useful for debugging
-//window.docket = useDocketState.getState;
+// window.docket = useDocketState.getState;
 
 export default useDocketState;

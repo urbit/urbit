@@ -163,13 +163,13 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
       <Dialog open={isOpen} onOpenChange={onDialogClose}>
         <DialogContent
           onOpenAutoFocus={onOpen}
-          className="fixed top-0 left-[calc(50%)] w-[calc(100%-15px)] max-w-3xl px-4 text-gray-400 -translate-x-1/2 outline-none"
+          className="fixed bottom-0 sm:top-0 left-[calc(50%-7.5px)] flex flex-col w-[calc(100%-15px)] max-w-3xl px-4 text-gray-400 -translate-x-1/2 outline-none"
           role="combobox"
           aria-controls="leap-items"
           aria-owns="leap-items"
           aria-expanded={isOpen}
         >
-          <header ref={dialogNavRef} className="my-6" />
+          <header ref={dialogNavRef} className="my-6 order-last sm:order-none" />
           <div
             id="leap-items"
             className="grid grid-rows-[fit-content(calc(100vh-7.5rem))] bg-white rounded-3xl overflow-hidden default-ring"

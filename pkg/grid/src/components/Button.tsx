@@ -2,7 +2,7 @@ import React from 'react';
 import type * as Polymorphic from '@radix-ui/react-polymorphic';
 import classNames from 'classnames';
 
-type ButtonVariant = 'primary' | 'secondary' | 'destructive';
+type ButtonVariant = 'primary' | 'secondary' | 'destructive' | 'alt-primary' | 'alt-secondary';
 
 type PolymorphicButton = Polymorphic.ForwardRefComponent<
   'button',
@@ -12,9 +12,11 @@ type PolymorphicButton = Polymorphic.ForwardRefComponent<
 >;
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'text-white bg-blue-400',
-  secondary: 'text-blue-400 bg-blue-100',
-  destructive: 'text-white bg-red-400'
+  primary: 'text-white bg-black',
+  secondary: 'text-black bg-gray-100',
+  destructive: 'text-white bg-red-400',
+  'alt-primary': 'text-white bg-blue-400',
+  'alt-secondary': 'text-blue-400 bg-blue-100'
 };
 
 export const Button = React.forwardRef(

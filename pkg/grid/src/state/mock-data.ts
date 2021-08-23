@@ -1,6 +1,6 @@
-import systemUrl from '../assets/system.png';
-import _ from 'lodash';
+import _ from 'lodash-es';
 import { Allies, Charges, DocketHrefGlob, Treaties, Treaty } from '@urbit/api/docket';
+import systemUrl from '../assets/system.png';
 
 export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' | 'version'> = {
   cass: '~2021.8.11..05.11.10..b721',
@@ -127,9 +127,8 @@ export const mockCharges: Charges = _.reduce(
   mockTreaties,
   (acc, val, key) => {
     const [, desk] = key.split('/');
-    const chad = desk === 'uniswap' 
-      ?  { install:  null } : { glob : null };
-    if(desk === 'inbox') {
+    const chad = { glob: null };
+    if (desk === 'inbox') {
       return acc;
     }
 
