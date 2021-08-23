@@ -3064,13 +3064,30 @@
     ::
     ~%  %has-core  ..has  ~
     |%
-    ++  wyt
+    ++  wyt                                             ::  queue size
       ~/  %wyt
       |=  a=pri
       ^-  @
       (rep:qat a |=([[@ @ buc] @] +((add +<+ (wyt:qor t.+<->+)))))
     ::
-    ++  has
+    ++  sam                                             ::  equality
+      ~/  %sam
+      |=  [a=pri b=pri]
+      ^-  ?
+      =/  loa  (bot a)
+      =/  lob  (bot b)
+      ?|  &(=(~ loa) =(~ lob))
+          !&(=(~ loa) !=(~ lob))
+          !&(!=(~ loa) =(~ lob))
+          ?>  &(?=(^ loa) ?=(^ lob))
+          ?&  =(k.p.u.loa k.p.u.lob)
+              =(p.p.u.loa p.p.u.lob)
+              =(v.p.u.loa v.p.u.lob)
+              $(a q.u.loa, b q.u.lob)
+          ==
+      ==
+    ::
+    ++  has                                             ::  key existence check
       ~/  %has
       |=  [a=pri =k]
       ^-  ?
@@ -3094,12 +3111,12 @@
       ?~  val  ~
       `[k.r.u.val q.u.val v.r.u.val]
     ::
-    ++  one
+    ++  one                                             ::  construct
       |=  [=k p=@ =v]
       ^-  pri
       (put ~ k p v)
     ::
-    ++  put
+    ++  put                                             ::  insert
       ~/  %put
       |=  [a=pri =k p=@ =v]
       |^  ^-  pri
@@ -3127,7 +3144,7 @@
         `[p [k v val]]
       --
     ::
-    ++  gas
+    ++  gas                                             ::  from list
       ~/  %gas
       |=  [a=pri b=(list (trel k @ v))]
       |-  ^-  pri
