@@ -139,5 +139,68 @@
   =/  wen  (scot %da now)
   %+  turn  .^((list tako) %cs ~[ego desk wen %base her desk.arak])
   |=(=tako .^(@uv %cs ~[ego desk wen %hash (scot %uv tako)]))
+::
+++  enjs
+  =,  enjs:format
+  |%
+  ++  vats
+    |=  v=(list ^vat)
+    ^-  json
+    %-  pairs
+    %+  turn  v
+    |=  va=^vat
+    [desk.va (vat va)]
+  ::
+  ++  tim
+    |=  t=@
+    ^-  json
+    (numb (fall (mole |.((unm:chrono:userlib t))) 0))
+  ::
+  ++  cass
+    |=  c=^cass
+    %-  pairs
+    :~  ud+(numb ud.c)
+        da+(tim da.c)
+    ==
+  ::
+  ++  vat
+    |=  v=^vat
+    %-  pairs
+    :~  desk+s+desk.v
+        hash+s+(scot %uv hash.v)
+        cass+(cass cass.v)
+        arak+(arak arak.v)
+    ==
+  ::
+  ++  weft
+    |=  w=^weft
+    %-  pairs
+    :~  name+s+lal.w
+        kelvin+(numb num.w)
+    ==
+  ::
+  ++  woof
+    |=  w=[=aeon =^weft]
+    %-  pairs
+    :~  aeon+(numb aeon.w)
+        weft+(weft weft.w)
+    ==
+  ::
+  ++  rein
+    |=  r=^rein
+    %-  pairs
+    :~  add+a+(turn ~(tap in add.r) (lead %s))
+        sub+a+(turn ~(tap in sub.r) (lead %s))
+    ==
+  ::
+  ++  arak
+    |=  a=^arak
+    %-  pairs
+    :~  ship+s+(scot %p ship.a)
+        desk+s+desk.a
+        aeon+(numb aeon.a)
+        next+a+(turn next.a woof)
+        rein+(rein rein.a)
+    ==
+  --
 --
-

@@ -202,9 +202,20 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  [~ ~]
-      [%x %kiln %vats ~]
+      [%x %kiln %vat @ ~]
+    =*  loc  i.t.t.t.path
+    =/  ego  (scot %p our)
+    =/  wen  (scot %da now)
+    =/  rak=(unit arak)  (~(get by ark) loc)
+    ?~  rak  [~ ~]
+    =/  hog  .^(@uv cz+~[ego loc wen])
+    =/  cas  .^(cass cw+~[ego loc wen])
     :^  ~  ~  %noun
-    !>  ^-  (list [=desk hash=@uv =cass =arak])
+    !>  ^-  vat
+    [loc hog cas u.rak]
+      [%x %kiln %vats ~]
+    :^  ~  ~  %kiln-vats
+    !>  ^-  (list vat)
     =/  ego  (scot %p our)
     =/  wen  (scot %da now)
     %+  turn  ~(tap by ark)
