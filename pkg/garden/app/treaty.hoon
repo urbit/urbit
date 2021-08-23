@@ -71,10 +71,12 @@
         %add  
       =.  entente  (~(put in entente) [ship desk])
       ?.  =(our.bowl ship)  `this
-      =/  =docket:docket  ~(get-docket so:cc desk)
+      =*  so  ~(. so:cc desk)
+      =/  =docket:docket  get-docket:so
       =/  =treaty  (treaty-from-docket:cc desk docket)
       =.  sovereign  (~(put by sovereign) desk treaty)
-      `this
+      :_  this
+      ~[publish:so]
     ::
         %del
       =.  entente  (~(del in entente) [ship desk])
@@ -299,6 +301,8 @@
   ++  give
     =/  t=treaty  (~(got by sovereign) desk)
     (fact:io (treaty:cg t) /sovereign path ~)
+  ++  publish
+    (poke-our:pass %hood kiln-permission+!>([desk / &]))
   --
 --
 

@@ -134,6 +134,17 @@
     [%x %ver %scry ~]  ``noun+!>(scry:ver)
     [%x %our ~]  ``json+!>(s+(scot %p our.bowl))
     ::
+      [%x %dbug %state ~]
+    =-  ``noun+!>(-)
+    %_  state
+        charges
+      %-  ~(run by charges)
+      |=  =charge
+      =?  chad.charge  ?=(%glob -.chad.charge)
+        [%glob *glob]
+      charge
+    ==
+    ::
       [%x %charges ~]
     :-  ~  :-  ~
     :-  %charge-update
@@ -268,10 +279,11 @@
       =+  !<(=docket q.cage)
       ?:  ?=(%site -.href.docket)
         :_  state(charges (~(put by charges) desk [docket [%site ~]]))
-        ~[add-fact:cha]
-      =.  charges  (new-chad:cha %install ~)
+        ~[add-fact:cha warp-next:cha]
+      =.  charges  (~(put by charges) desk [docket %install ~])
+      =.  by-base  (~(put by by-base) base.href.docket desk)
       :_  state
-      [add-fact:cha fetch-glob:cha]
+      [warp-next:cha add-fact:cha fetch-glob:cha]
     ==
   --
 ::
