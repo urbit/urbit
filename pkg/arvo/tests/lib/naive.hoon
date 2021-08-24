@@ -735,21 +735,21 @@
   ::  crash.
   ::
   ++  gen-rut-jar
-    ^-  (jar @p event)
+    ^~  ^-  (jar @p event)
     =/  filter  ;:  cork
-                    ::(cury filter-owner %.y)
+                    (cury filter-owner %.y)
                     ::(cury filter-proxy %spawn)
-                    ::(cury filter-nonce %.y)
+                    (cury filter-nonce %.y)
                     ::(cury filter-rank %galaxy)
                     ::(cury filter-dominion %l1)
                     %-  cury
                     :-  filter-tx-type
-                    :*  %spawn
-                        %transfer-point
+                    :*  ::%spawn
+                        ::%transfer-point
                         %configure-keys
-                        %set-management-proxy
-                        %set-spawn-proxy
-                        %set-transfer-proxy
+                        ::%set-management-proxy
+                        ::%set-spawn-proxy
+                        ::%set-transfer-proxy
                         ~
                     ==
                 ==
@@ -941,9 +941,7 @@
 ++  lt-own      [~linnup-torsyx %own] :: key %lt-key-0
 ++  lt-xfr      [~linnup-torsyx %transfer] :: key %lt-key-0
 ::
-::
 ::  rut tests
-::
 ::
 ++  common-mgmt  %mgmt-key-0
 ++  common-spwn  %spwn-key-0
@@ -968,6 +966,7 @@
                    ==
 ::
 :: initial keys for each point under ~rut
+::
 ++  default-own-keys  %-  my:nl
                       :*  [~rut %rut-key-0]
                           [~tyl %tyl-key-0]
@@ -1046,43 +1045,45 @@
 :: Tests
 ::
 |%
-::  new tests
+::  This test spawns a "full galaxy" containing all varieties of points. It then
+::  saves this initial state, and runs single transaction batches for all
+::  possible L2 "event types". It compares the entire new state to the entire
+::  initial state and checks for the expected state change. It then resets the
+::  state to the initial state and tries the next event on the list.
 ::
-::  this test spawns a "full galaxy" containing all varieties of points. it then
-::  saves this initial state, and runs single transaction batches for all possible
-::  L2 "event types". it compares the entire new state to the entire initial state and checks for
-::  the expected state change. it then resets the state to the initial state and
-::  tries the next event in on the list.
+::  More specifically, there is a $jar called event-jar that maps ships to
+::  lists of events it should try. It then picks off a ship, tries all the events
+::  in the list associated to it as described above, and then moves on to the
+::  next ship, until it has exhausted all values in the lists in the jar.
 ::
-::  more specifically, there is a $jar called event-jar that maps ships to lists of
-::  events it should try. it then picks off a ship, tries all the events in the list
-::  associated to it as described above, and then moves on to the next ship, until
-::  the jar is empty.
-::
-::  this arm does not test any L1 transactions beyond the ones needed to spawn the
-::  galaxy (+init-rut).
+::  This arm does not test any L1 transactions beyond the ones needed to spawn
+::  the galaxy (+init-rut).
 ::
 ++  test-rut  ^-  tang
   =,  l2-event-gen
+  ::  Initialize the PKI state, the list of ships to iterate through, and the
+  ::  map from $event to ?
   ::
-  =/  event-jar  gen-rut-jar
-  =|  =^state:naive
-  =^  f  state  init-rut-simple
-  =/  initial-state  state
+  =|  initial-state=^state:naive
+  =^  f  initial-state  init-rut-simple
   =/  ship-list  rut-ship-list
   =/  suc-map  (make-success-map make-event-list)
+  ::  Iterate through ships and get the list of events to try with that ship.
   ::
   |-  ^-  tang
   ?~  ship-list  ~
   %+  weld  $(ship-list t.ship-list)
-  =/  cur-ship  i.ship-list
+  =*  cur-ship  i.ship-list
   %+  category  (scow %p cur-ship)
-  =/  current-events  (~(get ja event-jar) cur-ship)
+  =/  cur-events  (~(get ja gen-rut-jar) cur-ship)
+  ::  Iterate through events and try to perform each one with cur-ship using
+  ::  supplied default arguments.
   ::
-  |-  ^-  tang
-  ?~  current-events  ~
-  %+  weld  $(current-events t.current-events)
-  =/  cur-event  i.current-events
+  |^  ^-  tang
+  ?~  cur-events  ~
+  %+  weld  $(cur-events t.cur-events)
+  ::
+  =*  cur-event  i.cur-events
   %+  category  (weld "dominion " (scow %tas dominion.cur-event))
   %+  category  (weld "proxy " (scow %tas proxy.cur-event))
   %+  category  (weld "tx-type " (scow %tas tx-type.cur-event))
@@ -1100,31 +1101,16 @@
       %vote      nonce.voting-proxy.own
       %transfer  nonce.transfer-proxy.own
     ==
-    =/  new-nonce  ?:  &(nonce.cur-event owner.cur-event)
-                   ?-  proxy.cur-event
-                     ?(%own %manage)  +(cur-nonce)
-                     %spawn           ?-  rank.cur-event
-                                        %galaxy  ?-  dominion.cur-event
-                                                   ?(%l1 %spawn)  +(cur-nonce)
-                                                   %l2            cur-nonce
-                                                 ==
-                                        %star    ?-  dominion.cur-event
-                                                   %l1            cur-nonce
-                                                   ?(%spawn %l2)  +(cur-nonce)
-                                                 ==
-                                        %planet  cur-nonce
-                                      ==
-                     %transfer        ?~  address.transfer-proxy.own
-                                        cur-nonce
-                                      +(cur-nonce)
-                     %vote            cur-nonce
-                   ==
-                 cur-nonce
-  ::
-  =/  state  initial-state
+  =/  new-nonce  %^    calculate-nonce
+                     cur-event
+                   cur-nonce
+                 address.transfer-proxy.own
   =/  expect-state  initial-state
-  |^
+  ::
+  |^  :: begin expected state trap
   %+  expect-eq
+  ::  expected state
+  ::
     !>
     |^  ^-  ^state:naive
     ?.  (~(got by suc-map) cur-event)
@@ -1147,11 +1133,18 @@
     ::
     ++  set-keys  ^-  ^state:naive
       =/  new-keys
-      %=  cur-point
-        life.keys.net    +(life.keys.net:(got:orm points.initial-state cur-ship))
-        suite.keys.net   suit
-        auth.keys.net    auth
-        crypt.keys.net   encr
+      %=    cur-point
+          suite.keys.net
+        suit
+        ::
+          auth.keys.net
+        auth
+        ::
+          crypt.keys.net
+        encr
+        ::
+          life.keys.net
+        +(life.keys.net:(got:orm points.initial-state cur-ship))
       ==
       (alter-state new-keys)
     ::
@@ -1185,17 +1178,25 @@
       (alter-state new-xfer)
     ::
     ++  new-point
-      :: TODO clean up this horrifying gate
       |=  =ship  ^-  ^state:naive
       =|  new-point=point:naive
       =/  spawned
-      %=  new-point
-        dominion  %l2
-        address.owner.own  (addr (~(got by default-own-keys) cur-ship))
-        address.transfer-proxy.own  (addr %spawn-test)
-        sponsor.net  [has=%.y who=cur-ship]
+      %=    new-point
+          dominion
+        %l2
+        ::
+          sponsor.net
+        [has=%.y who=cur-ship]
+        ::
+          address.transfer-proxy.own
+        (addr %spawn-test)
+        ::
+          address.owner.own
+        (addr (~(got by default-own-keys) cur-ship))
       ==
-      =/  expect-state  (alter-state cur-point)  :: this updates the nonce of the spawner
+      ::  The following updates the nonce of the spawner
+      ::
+      =/  expect-state  (alter-state cur-point)
       %=  expect-state
         points  (put:orm points.expect-state ship spawned)
       ==
@@ -1203,6 +1204,7 @@
     ++  alter-state
       :: this updates the expect-state with the new point, and takes
       :: care of incrementing the nonce as well.
+      ::
       |=  alt-point=point:naive  ^-  ^state:naive
       =/  updated-point=point:naive
       ?-  proxy.cur-event
@@ -1216,14 +1218,21 @@
         points  (put:orm points.expect-state cur-ship updated-point)
       ==
     ::
-    --  :: end of expected state
+    --  :: end of expected state trap
+  ::
   ::  actual state
+  ::
     !>
-    |^  ^-  ^state:naive
+    |^  ^-  ^state:naive  :: begin actual state trap
+    =|  state=^state:naive
+    ::  The following is basically just tall form exploded view of a
+    ::  parameterization of the same =^ call used to modify the PKI state
+    ::  used everywhere else in the test suite.
+    ::
     =^    f
         state
       %-  n
-      :+  state
+      :+  initial-state
         %bat
       =<  q
       %-  gen-tx
@@ -1234,13 +1243,24 @@
             proxy.cur-event
         def-args
       ?:  owner.cur-event
-        ?+  proxy.cur-event  %wrong-key
-          %own       (~(got by default-own-keys) cur-ship)
-          %manage    (~(got by default-manage-keys) cur-ship)
-          %spawn     ?:  |(=(rank.cur-event %galaxy) =(rank.cur-event %star))
-                       (~(got by default-spawn-keys) cur-ship)
-                     %wrong-key
-          %transfer  (~(got by default-xfer-keys) cur-ship)
+        ?+    proxy.cur-event
+            %wrong-key
+          ::
+              %own
+            (~(got by default-own-keys) cur-ship)
+          ::
+              %manage
+            (~(got by default-manage-keys) cur-ship)
+          ::
+              %transfer
+            (~(got by default-xfer-keys) cur-ship)
+          ::
+              %spawn
+            ?:  ?|  =(rank.cur-event %galaxy)
+                    =(rank.cur-event %star)
+                ==
+              (~(got by default-spawn-keys) cur-ship)
+            %wrong-key
         ==
       %wrong-key :: if not owner then use wrong key
     state
@@ -1259,11 +1279,7 @@
       ::
       --  :: +def-args
     ::
-    --  :: end of actual state
-    ::
-  ++  encr    (shax 'You will forget that you ever read this sentence.')
-  ++  auth    (shax 'You cant know that this sentence is true.')
-  ++  suit    1
+    --  :: end of actual state trap
   ::
   ++  which-spawn  ^-  ship
     ?+  cur-ship  !!
@@ -1282,7 +1298,38 @@
       %~disryt-nolpet  ~tapfur-fitsep
     ==
   ::
-  --  :: end of +expect-eq
+  -- :: end of +expect-eq trap
+  ::
+  ++  calculate-nonce
+    |=  [cur-event=event cur-nonce=@ xfer-address=@ux]
+    ?:  &(nonce.cur-event owner.cur-event)
+      ?-    proxy.cur-event
+          ?(%own %manage)
+        +(cur-nonce)
+        ::
+          %spawn
+        ?-  rank.cur-event
+          %galaxy  ?-  dominion.cur-event
+                     ?(%l1 %spawn)  +(cur-nonce)
+                     %l2            cur-nonce
+                   ==
+          %star    ?-  dominion.cur-event
+                     %l1            cur-nonce
+                     ?(%spawn %l2)  +(cur-nonce)
+                   ==
+          %planet  cur-nonce
+        ==
+        ::  end %spawn case
+          %transfer
+        ?~  xfer-address
+          cur-nonce
+        +(cur-nonce)
+        ::
+          %vote
+        cur-nonce
+      ==
+    cur-nonce
+  -- :: end of test trap
 ::
 ::  the following are sponsorship tests. they ought to eventually be consolidated
 ::  into one large test, but for now it will be easier to tell which one is failing
