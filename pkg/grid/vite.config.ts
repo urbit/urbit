@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => ({
       : {
           proxy: {
             '^((?!/apps/grid).)*$': {
-              target: 'http://localhost:8080'
+              target: 'http://localhost:8083'
             }
           }
         },

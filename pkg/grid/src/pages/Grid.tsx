@@ -1,12 +1,14 @@
 import { map, omit } from 'lodash-es';
 import React, { FunctionComponent, useEffect } from 'react';
 import { Route, RouteComponentProps } from 'react-router-dom';
+import { KilnDiff } from '@urbit/api/hood';
 import { MenuState, Nav } from '../nav/Nav';
 import useDocketState, { useCharges } from '../state/docket';
 import { useKilnState } from '../state/kiln';
 import { RemoveApp } from '../tiles/RemoveApp';
 import { SuspendApp } from '../tiles/SuspendApp';
 import { Tile } from '../tiles/Tile';
+import api from '../state/api';
 
 type GridProps = RouteComponentProps<{
   menu?: MenuState;
@@ -18,10 +20,18 @@ export const Grid: FunctionComponent<GridProps> = ({ match }) => {
 
   useEffect(() => {
     const { fetchCharges, fetchAllies } = useDocketState.getState();
-    const { fetchVats } = useKilnState.getState();
+    const { fetchVats, fetchLag } = useKilnState.getState();
     fetchCharges();
     fetchAllies();
     fetchVats();
+    fetchLag();
+    api.subscribe({ app: 'hood', path: '/kiln/vats', event: (data: KilnDiff) => {
+      console.log(data);
+    }, err: () => { }, quit: () => {} }).catch(e => {
+      console.log(e);
+
+    }).then(r => { console.log(r); });
+
   }, []);
 
   return (

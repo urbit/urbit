@@ -1,4 +1,6 @@
 import { Poke, Scry } from '../lib';
+import {Vats} from './types';
+import _ from 'lodash';
 
 export const getVats: Scry = {
   app: 'hood',
@@ -55,4 +57,27 @@ export function kilnRevive(
     mark: 'kiln-revive',
     json: desk
   };
+}
+
+export const scryLag: Scry = ({ app: 'hood', path: '/kiln/lag' });
+
+export function getBlockers(vats: Vats): string[] {
+  let blockers: string[] = [];
+  const base = vats.base;
+  if(!base) {
+    return blockers;
+  }
+  const blockedOn = base.arak.next?.[0]?.weft?.kelvin;
+  if(!blockedOn) {
+    return blockers;
+  }
+  _.forEach(_.omit(vats, 'base'), (vat, desk) => {
+    // assuming only %zuse
+    const kelvins = _.map(vat.arak.next, n => n.weft.kelvin);
+    if(!(kelvins.includes(blockedOn))) {
+      blockers.push(desk);
+    }
+  });
+
+  return blockers;
 }

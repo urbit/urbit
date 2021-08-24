@@ -17,5 +17,5 @@ const api =
       } as unknown as Urbit
     : new Urbit('', '');
 
-api.ship = 'marzod';
+api.ship = 'dopmet';
 export default api;

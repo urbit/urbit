@@ -40,6 +40,9 @@ module.exports = {
           300: "#FFDD66",
           400: "#FFC700",
         },
+        orange: {
+          100: '#FFF2EB'
+        }
       },
       fontFamily: {
         sans: [
