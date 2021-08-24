@@ -2254,8 +2254,8 @@
     ::
     ++  jab                                             ::  update at key k
       ~/  %jab
-      |=  [a=pri =k f=$-((unit (pair @ v)) (pair * (unit (pair @ v))))]
-      ^-  (pair * pri)
+      |*  [a=pri =k f=$-((unit (pair @ v)) (pair * (unit (pair @ v))))]
+      ^-  (pair _=>((f ~) p) pri)
       =/  ped  (pet a k)
       =?  a  ?=(^ ped)
         r.u.ped
@@ -2271,8 +2271,8 @@
     ::
     ++  jib                                             ::  update at min-prio
       ~/  %jib
-      |=  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
-      ^-  (pair * pri)
+      |*  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
+      ^-  (pair _=>((f ~) p) pri)
       =/  vue  (bot a)
       ?~  vue
         =/  bee  (f ~)
@@ -2692,8 +2692,8 @@
       ++  jab                                           ::  alter
         ~/  %jab
         =/  tyf  $-((unit (pair @ v)) (pair * (unit (pair @ v))))
-        |=  [a=pri k=@ f=tyf]
-        ^-  (pair * pri)
+        |*  [a=pri k=@ f=tyf]
+        ^-  (pair _=>((f ~) p) pri)
         =/  ped  (pet a k)
         =?  a  ?=(^ ped)
           r.u.ped
@@ -2710,8 +2710,8 @@
       ++  jib                                           ::  alter lowest-pri
         ~/  %jib
         =/  tyf  $-((unit (trel @ @ v)) (pair * (unit (trel @ @ v))))
-        |=  [a=pri f=tyf]
-        ^-  (pair * pri)
+        |*  [a=pri f=tyf]
+        ^-  (pair _=>((f ~) p) pri)
         ?~  a
           =/  bee  (f ~)
           :-  p.bee
@@ -3124,7 +3124,8 @@
         |=  (unit (pair @ buc))
         ^-  (pair (unit buc) (unit (pair @ buc)))
         `(ins +<)
-      =/  val  (jab:qat a k hal)
+      =/  val=(pair (unit buc) pri)
+        (jab:qat a (mug k) hal)
       q.val
       ::
       ++  ins
@@ -3212,8 +3213,8 @@
     ++  jab                                             ::  alter
       ~/  %jab
       =/  tyf  $-((unit (pair @ v)) (pair * (unit (pair @ v))))
-      |=  [a=pri =k f=tyf]
-      ^-  (pair * pri)
+      |*  [a=pri =k f=tyf]
+      ^-  (pair _=>((f ~) p) pri)
       =/  h  (mug k)
       =/  ped  (pet:qat a h)
       ?~  ped
@@ -3238,8 +3239,8 @@
     ::
     ++  jib                                             ::  update at min-prio
       ~/  %jib
-      |=  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
-      ^-  (pair * pri)
+      |*  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
+      ^-  (pair _=>((f ~) p) pri)
       =/  vue  (bot a)
       =?  a  ?=(^ vue)
         s.u.vue
