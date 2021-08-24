@@ -2275,13 +2275,15 @@
       ^-  (pair _=>((f ~) p) pri)
       =/  vue  (bot a)
       ?~  vue
-        =/  bee  (f ~)
+        =/  bee=(pair _=>((f ~) -) (unit (trel k @ v)))
+          (f ~)
         :-  p.bee
         ?~  q.bee
           a
         (put a p.u.q.bee q.u.q.bee r.u.q.bee)
       =.  a  q.u.vue
-      =/  bee  (f (some p.u.vue))
+      =/  bee=(pair _=>((f ~) -) (unit (trel k @ v)))
+        (f (some p.u.vue))
       :-  p.bee
       ?~  q.bee
         a
@@ -2713,19 +2715,22 @@
         |*  [a=pri f=tyf]
         ^-  (pair _=>((f ~) p) pri)
         ?~  a
-          =/  bee  (f ~)
+          =/  bee=(pair _=>((f ~) -) (unit (trel @ @ v)))
+            (f ~)
           :-  p.bee
           ?~  q.bee  ~
           [%tip p.u.q.bee q.u.q.bee r.u.q.bee]
         ?-    -.a
             %tip
-          =/  bee  (f `[k.a p.a v.a])
+          =/  bee=(pair _=>((f ~) -) (unit (trel @ @ v)))
+            (f `[k.a p.a v.a])
           :-  p.bee
           ?~  q.bee  ~
           [%tip p.u.q.bee q.u.q.bee r.u.q.bee]
         ::
             %bin
-          =/  bee  (f `[k.a p.a v.a])
+          =/  bee=(pair _=>((f ~) -) (unit (trel @ @ v)))
+            (f `[k.a p.a v.a])
           :-  p.bee
           ?~  q.bee  (fuse m.a l.a r.a)
           ?:  !=(k.a p.u.q.bee)
@@ -3068,9 +3073,10 @@
       ~/  %wyt
       |=  a=pri
       ^-  @
-      (rep:qat a |=([[@ @ buc] @] +((add +<+ (wyt:qor t.+<->+)))))
+      %+  rep:qat  a
+      |=([[@ @ buc] @] +((add +<+ (wyt:qor t.+<->+))))
     ::
-    ++  sam                                             ::  equality
+    ++  sam                                           ::  equality
       ~/  %sam
       |=  [a=pri b=pri]
       ^-  ?
@@ -3080,14 +3086,14 @@
           !&(=(~ loa) !=(~ lob))
           !&(!=(~ loa) =(~ lob))
           ?>  &(?=(^ loa) ?=(^ lob))
-          ?&  =(k.p.u.loa k.p.u.lob)
-              =(p.p.u.loa p.p.u.lob)
-              =(v.p.u.loa v.p.u.lob)
-              $(a q.u.loa, b q.u.lob)
+          ?&  =(p.u.loa p.u.lob)
+              =(q.u.loa q.u.lob)
+              =(r.u.loa r.u.lob)
+              $(a s.u.loa, b s.u.lob)
           ==
       ==
     ::
-    ++  has                                             ::  key existence check
+    ++  has                                             ::  contains
       ~/  %has
       |=  [a=pri =k]
       ^-  ?
@@ -3145,7 +3151,7 @@
         `[p [k v val]]
       --
     ::
-    ++  gas                                             ::  from list
+    ++  gas                                             ::  concatenate
       ~/  %gas
       |=  [a=pri b=(list (trel k @ v))]
       |-  ^-  pri
@@ -3158,8 +3164,9 @@
     ++  key  !!
     ::
     ++  pan                                             ::  insert view
+      ~/  %pan
       |=  [a=pri =k p=@ =v]
-      ^-  (pair (unit (pair @ v)) pri)
+      ^-  (pair (unit (pair @ _v)) pri)
       =/  val  (pet a k)
       :_  (put a k p v)
       ?~  val  ~
@@ -3170,7 +3177,7 @@
       |=  [a=pri =k]
       |^  ^-  (unit (trel @ v pri))
       =/  val=(pair (unit (pair @ v)) pri)
-        (jab:qat halp (mug k) a)
+        (jab:qat a (mug k) halp)
       ?~  p.val  ~
       `[p.u.p.val q.u.p.val q.val]
       ::
@@ -3181,13 +3188,13 @@
         ?:  =(k k.q.u.b)
           =/  val=(unit (pair lelem:qor pri:qor))
             (bot:qor t.q.u.b)
-          ?~  val  [`[p.u.b v.q.u.b] ~]
           :-  `[p.u.b v.q.u.b]
-          `[q.u.val [k.p.u.val v.p.u.val q.u.val]]
-        =/  val  (pet:qor t.q.u.b)
+          ?~  val  ~
+          `[p.p.u.val [k.p.u.val v.p.u.val q.u.val]]
+        =/  val  (pet:qor t.q.u.b k)
         ?~  val  [~ ~]
         :-  `[p.u.val q.u.val]
-        `[p.u.b [k.q.u.b v.q.u.b q.u.val]]
+        `[p.u.b [k.q.u.b v.q.u.b r.u.val]]
       --
     ::
     ++  bot                                             ::  lowest-pri view
@@ -3203,10 +3210,11 @@
         |=  b=(unit (trel @ @ buc))
         ^-  (pair (unit (trel k @ v)) (unit (trel @ @ buc)))
         ?~  b  [~ ~]
+        =/  =buc  r.u.b
+        :-  `[k.buc q.u.b v.buc]
         =/  val=(unit (pair lelem:qor pri:qor))
-          (bot:qor t.r.u.b)
-        ?~  val  [`[k.r.u.b q.u.b v.r.u.b] ~]
-        :-  `[k.r.u.b q.u.b v.r.u.b]
+          (bot:qor t.buc)
+        ?~  val  ~
         `[p.u.b p.p.u.val [k.p.u.val v.p.u.val q.u.val]]
       --
     ::
@@ -3240,12 +3248,12 @@
     ++  jib                                             ::  update at min-prio
       ~/  %jib
       |*  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
-      ^-  (pair _=>((f ~) p) pri)
+      ^-  (pair _=>((f ~) -) pri)
       =/  vue  (bot a)
       =?  a  ?=(^ vue)
         s.u.vue
-      =/  bee  %-  f
-        ?~(vue ~ `[p.u.vue q.u.vue r.u.vue])
+      =/  bee=(pair _=>((f ~) -) (unit (trel k @ v)))
+        (f ?~(vue ~ `[p.u.vue q.u.vue r.u.vue]))
       :-  p.bee
       ?~  q.bee  a
       (put a p.u.q.bee q.u.q.bee r.u.q.bee)
@@ -3264,7 +3272,7 @@
       ^-  pri
       =/  val  (bot a)
       ?~  val  a
-      r.u.val
+      s.u.val
     ::
     ++  vip                                           ::  put hi-pri (unsafe)
       ~/  %vip
@@ -3277,6 +3285,8 @@
           (make k p v t.bb)
         [bp [k.bb v.bb (put:qor t.bb k p v)]]
       (vip:qat a (mug k) p [k v ~])
+    ::
+    ++  apt  !!
     --
   --
 ::
