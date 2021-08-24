@@ -14,8 +14,8 @@
       [%11 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
       [%12 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
       [%13 drum=state-2:drum helm=state:helm kiln=state-1:kiln]
-      [%14 drum=state-3:drum helm=state:helm kiln=state-1:kiln]
-      [%15 drum=state-3:drum helm=state:helm kiln=state-2:kiln]
+      [%14 drum=state-2:drum helm=state:helm kiln=state-1:kiln]
+      [%15 drum=state-2:drum helm=state:helm kiln=state-2:kiln]
       [%16 drum=state-4:drum helm=state:helm kiln=state-3:kiln]
       [%17 drum=state-4:drum helm=state:helm kiln=state-4:kiln]
   ==
