@@ -1,4 +1,4 @@
-import { DocketHref } from "@urbit/api/docket";
+import { DocketHref } from '@urbit/api/docket';
 
 export function makeKeyFn(key: string) {
   return (childKeys: string[] = []) => {
@@ -15,7 +15,6 @@ export async function fakeRequest<T>(data: T, time = 300): Promise<T> {
     }, time);
   });
 }
-
 
 export function getAppHref(href: DocketHref) {
   return 'site' in href ? href.site : `/apps/${href.glob.base}`;

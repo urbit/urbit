@@ -22,6 +22,7 @@ import {
 import { kilnRevive, kilnSuspend } from '@urbit/api/hood';
 import api from './api';
 import { mockAllies, mockCharges, mockTreaties } from './mock-data';
+import { fakeRequest } from './util';
 
 const useMockData = import.meta.env.MODE === 'mock';
 
@@ -36,14 +37,6 @@ interface DocketState {
   toggleDocket: (desk: string) => Promise<void>;
   installDocket: (ship: string, desk: string) => Promise<number | void>;
   uninstallDocket: (desk: string) => Promise<number | void>;
-}
-
-async function fakeRequest<T>(data: T, time = 300): Promise<T> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(data);
-    }, time);
-  });
 }
 
 const useDocketState = create<DocketState>((set, get) => ({
