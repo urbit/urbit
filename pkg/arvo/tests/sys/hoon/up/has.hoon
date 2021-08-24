@@ -1,6 +1,6 @@
 /+  *test
 ::
-=/  cor  (nat:up @t)
+=/  cor  (has:up @ @t)
 =/  pr  (gas:cor ~ ~[[1 0 'A'] [2 0 'B'] [3 0 'C'] [4 0 'D']])
 =/  qr
   %+  gas:cor  ~
@@ -102,7 +102,7 @@
   ;:  weld
     %+  expect-eq
       !>  [[~ 'hello'] (one:cor [3 100 'a'])]
-      !>  (jab:cor `pri:cor`~ 3 eff)
+      !>  (jab:cor ~ 3 eff)
     %+  expect-eq
       !>  [[~ 'world'] ~]
       !>  (jab:cor (one:cor [3 100 'a']) 3 eff)
@@ -119,14 +119,6 @@
     %+  expect-eq
       !>  [~ ~]
       !>  (jib:cor (one:cor [3 100 'a']) |=(* [~ ~]))
-  ==
-::
-++  test-tap
-  ;:  weld
-    %-  expect
-      !>  (sam:cor qr (gas:cor ~ (tap:cor qr)))
-    %-  expect
-      !>  (sam:cor pr (gas:cor ~ (tap:cor pr)))
   ==
 ::
 ++  test-pan
