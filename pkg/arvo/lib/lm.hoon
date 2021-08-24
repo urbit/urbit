@@ -464,7 +464,7 @@
     |-  ^-  ?
       ?:  (gth off 0)  %.n
       ?:  (gth count mn)  %.y
-      ?:  (gth i nu)  $(count +(count), i +(i), j 1, off off)
+      ?:  (gth j nu)  $(count +(count), i +(i), j 1, off off)
     $(count +(count), i i, j +(j), off (add off ?:((isclose (get u i j) (get v i j) tol) 0 1)))
   ++  gauss-find-next-row
     |=  [u=@lms i=@ud]  ^-  @ud
