@@ -2255,7 +2255,7 @@
     ++  jab                                             ::  update at key k
       ~/  %jab
       |*  [a=pri =k f=$-((unit (pair @ v)) (pair * (unit (pair @ v))))]
-      ^-  (pair _=>((f ~) p) pri)
+      ^-  (pair _=>((f ~) -) pri)
       =/  ped  (pet a k)
       =?  a  ?=(^ ped)
         r.u.ped
@@ -2263,7 +2263,8 @@
         ?~  ped
           ~
         (some [p.u.ped q.u.ped])
-      =/  bee  (f pav)
+      =/  bee=(pair _=>((f ~) -) (unit (pair @ v)))
+        (f pav)
       :-  p.bee
       ?~  q.bee
         a
@@ -2272,7 +2273,7 @@
     ++  jib                                             ::  update at min-prio
       ~/  %jib
       |*  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
-      ^-  (pair _=>((f ~) p) pri)
+      ^-  (pair _=>((f ~) -) pri)
       =/  vue  (bot a)
       ?~  vue
         =/  bee=(pair _=>((f ~) -) (unit (trel k @ v)))
@@ -2695,7 +2696,7 @@
         ~/  %jab
         =/  tyf  $-((unit (pair @ v)) (pair * (unit (pair @ v))))
         |*  [a=pri k=@ f=tyf]
-        ^-  (pair _=>((f ~) p) pri)
+        ^-  (pair _=>((f ~) -) pri)
         =/  ped  (pet a k)
         =?  a  ?=(^ ped)
           r.u.ped
@@ -2703,7 +2704,8 @@
           ?~  ped
             ~
           `[p.u.ped q.u.ped]
-        =/  bee  (f pav)
+        =/  bee=(pair _=>((f ~) -) (unit (pair @ v)))
+          (f pav)
         :-  p.bee
         ?~  q.bee
           a
@@ -2713,7 +2715,7 @@
         ~/  %jib
         =/  tyf  $-((unit (trel @ @ v)) (pair * (unit (trel @ @ v))))
         |*  [a=pri f=tyf]
-        ^-  (pair _=>((f ~) p) pri)
+        ^-  (pair _=>((f ~) -) pri)
         ?~  a
           =/  bee=(pair _=>((f ~) -) (unit (trel @ @ v)))
             (f ~)
@@ -3222,17 +3224,19 @@
       ~/  %jab
       =/  tyf  $-((unit (pair @ v)) (pair * (unit (pair @ v))))
       |*  [a=pri =k f=tyf]
-      ^-  (pair _=>((f ~) p) pri)
+      ^-  (pair _=>((f ~) -) pri)
       =/  h  (mug k)
       =/  ped  (pet:qat a h)
       ?~  ped
-        =/  bee  (f ~)
+        =/  bee=(pair _=>((f ~) -) (unit (pair @ v)))
+          (f ~)
         :-  p.bee
         ?~  q.bee  a
         (raw:qat a h p.u.q.bee [k q.u.q.bee ~])
       =/  =buc  q.u.ped
       ?:  =(k k.buc)
-        =/  bee  (f `[p.u.ped v.buc])
+        =/  bee=(pair _=>((f ~) -) (unit (pair @ v)))
+          (f `[p.u.ped v.buc])
         :-  p.bee
         ?~  q.bee
           =/  vul  (pour t.buc)
