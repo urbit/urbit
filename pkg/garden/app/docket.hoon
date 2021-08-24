@@ -48,13 +48,14 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
+  ~&  %ayy
   =+  !<(old=state-0 vase)
   =*  cha  ~(. ch q.byk.bowl)
-  |^  
+  |^
   =.  -.state  old
   =.  +.state  inflate-cache
   `this
-  ::  
+  ::
   ++  inflate-cache
     ^-  cache
     %-  ~(gas by *(map term desk))
@@ -68,7 +69,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  |^  
+  |^
   =^  cards  state
     ?+  mark  (on-poke:def:cc mark vase)
       %docket-install    (install !<([ship desk] vase))
@@ -80,9 +81,7 @@
     ::
         %handle-http-request
       =+  !<([id=@ta req=inbound-request:eyre] vase)
-      :_  state
-      %+  give-simple-payload:app  id
-      (handle-http-request:cc req)
+      (handle-http-request:cc id req)
     ==
   [cards this]
   ::
@@ -90,7 +89,7 @@
     |=  [=ship =desk]
     ^-  (quip card _state)
     =+  .^(=treaty:treaty %gx (scry:io %treaty /treaty/(scot %p ship)/[desk]/noun))
-    ?<  ~|(%bad-install-desk (~(has by charges) desk)) 
+    ?<  ~|(%bad-install-desk (~(has by charges) desk))
     =.  charges
       (~(put by charges) desk docket.treaty %install ~)
     =*  cha   ~(. ch desk)
@@ -115,7 +114,7 @@
   ^-  (quip card _this)
   =^  cards  state
     ?+  path  (on-watch:def path)
-        [%http-response *]  
+        [%http-response *]
       ?>  (team:title [our src]:bowl)
       `state
     ::
@@ -203,12 +202,12 @@
     ::
         [%install ~]
       ?>  ?=(%poke-ack -.sign)
-      ?~  p.sign  
+      ?~  p.sign
         :_(state ~[warp-next:cha]) :: request warp
       =.  charges   (new-chad:cha hung+'Failed install')
       ((slog leaf+"Failed installing %{(trip desk)}" u.p.sign) `state)
     ::
-        [%uninstall ~] 
+        [%uninstall ~]
       ?>  ?=(%poke-ack -.sign)
       ?~  p.sign  `state
       ((slog leaf+"Failed to uninstall %{(trip desk)}" u.p.sign) `state)
@@ -249,7 +248,7 @@
   |^  ^-  (quip card _this)
   =^  cards  state
     ?+  wire  (on-arvo:def wire sign)
-        [%init ~]  
+        [%init ~]
       =*  cha  ~(. ch q.byk.bowl)
       =.  charges  (~(put by charges) q.byk.bowl [docket:cha %install ~])
       [fetch-glob:cha state]
@@ -258,7 +257,7 @@
     ::
         [%eyre ~]
       ?>  ?=([%eyre %bound *] sign)
-      ?:  accepted.sign   `state 
+      ?:  accepted.sign   `state
       ~&  [dap.bowl %failed-to-bind path.binding.sign]
       `state
     ==
@@ -269,7 +268,7 @@
     =*  cha  ~(. ch desk)
     ?+  wire  ~|(%lc-arvo-bad-wire !!)
     ::
-        [%warp ~]  
+        [%warp ~]
       ?>  ?=([?(%clay %behn) %writ *] sign)
       ?.  (~(has by charges) desk)  `state
       ?~  p.sign  ::
@@ -295,50 +294,84 @@
 ++  pass  pass:io
 ++  def  ~(. (default-agent state %|) bowl)
 ::
-++  inline-js-response
-  |=  js=cord
-  ^-  simple-payload:http
-  %.  (as-octs:mimes:html js)
-  %*  .  js-response:gen
-    cache  %.n
-  ==
-::
 ++  handle-http-request
-  |=  =inbound-request:eyre
-  ^-  simple-payload:http
-  %+  require-authorization-simple:app  inbound-request
-  =*  req       request.inbound-request
-  =*  headers   header-list.req
-  =/  req-line  (parse-request-line url.req)
-  ?.  =(method.req %'GET')  not-found:gen
-  ?:  &(=(ext.req-line `%js) ?=([%session ~] site.req-line))
-    %-  inline-js-response 
-    (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~)
-  ?.  ?=([%apps @ *] site.req-line)
-    (redirect:gen '/apps/grid/')
-  =/  des=(unit desk)
-    (~(get by by-base) i.t.site.req-line)
-  ?~  des  not-found:gen
-  =/  cha=(unit charge) 
-    (~(get by charges) u.des)
-  ?~  cha  not-found:gen
-  ?.  ?=(%glob -.chad.u.cha)  not-found:gen
-  =*  glob  glob.chad.u.cha
-  =/  suffix=^path
-    (weld (slag 2 `^path`site.req-line) (drop ext.req-line))
-  ?:  =(suffix /desk/js) 
-    %-  inline-js-response
-    (rap 3 'window.desk = "' u.des '";' ~)
-
-  =/  data=mime
-    (~(gut by glob) suffix (~(got by glob) /index/html))
-  =/  mime-type=@t  (rsh 3 (crip <p.data>))
-  =/  headers
-    :~  content-type+mime-type 
-        max-1-wk:gen 
+  |=  [eyre-id=@ta inbound-request:eyre]
+  ^-  (quip card _state)
+  ::
+  ::TODO  caz needed? facts, maybe?
+  =;  [payload=simple-payload:http caz=(list card) =_state]
+    :_  state
+    %+  weld  caz
+    (give-simple-payload:app eyre-id payload)
+  ::
+  ::NOTE  we don't use +require-authorization-simple here because we want
+  ::      to short-circuit all the below logic for the unauthenticated case.
+  ?.  authenticated
+    :_  [~ state]
+    =-  [[307 ['location' -]~] ~]
+    (cat 3 '/~/login?redirect=' url.request)
+  ::
+  |^  ?+  method.request  [[405^~ ~] ~ state]
+        %'GET'   [handle-get-request ~ state]
+        %'POST'  handle-post-request
+      ==
+  ::
+  ++  handle-get-request
+    ^-  simple-payload:http
+    =*  headers   header-list.request
+    =/  req-line  (parse-request-line url.request)
+    ?+  [site ext]:req-line  (redirect:gen '/apps/grid/')
+        [[%session ~] [~ %js]]
+      %-  inline-js-response
+      (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~)
+    ::
+        [[%upload ~] ?(~ [~ %html])]
+      !!  ::TODO
+    ::
+        [[%apps @ *] *]
+      %+  payload-from-glob
+        (snag 1 site.req-line)
+      req-line(site (slag 2 site.req-line))
+    ==
+  ::
+  ++  handle-post-request
+    ^-  [simple-payload:http (list card) _state]
+    !!  ::TODO
+  ::
+  ++  inline-js-response
+    |=  js=cord
+    ^-  simple-payload:http
+    %.  (as-octs:mimes:html js)
+    %*  .  js-response:gen
+      cache  %.n
+    ==
+  ::
+  ++  payload-from-glob
+    |=  [from=@ta what=request-line]
+    ^-  simple-payload:http
+    =/  des=(unit desk)
+      (~(get by by-base) from)
+    ?~  des  not-found:gen
+    =/  cha=(unit charge)
+      (~(get by charges) u.des)
+    ?~  cha  not-found:gen
+    ?.  ?=(%glob -.chad.u.cha)  not-found:gen
+    =*  glob  glob.chad.u.cha
+    =/  suffix=^path
+      (weld site.what (drop ext.what))
+    ?:  =(suffix /desk/js)
+      %-  inline-js-response
+      (rap 3 'window.desk = "' u.des '";' ~)
+    =/  data=mime
+      (~(gut by glob) suffix (~(got by glob) /index/html))
+    =/  mime-type=@t  (rsh 3 (crip <p.data>))
+    =;  headers
+      [[200 headers] `q.data]
+    :~  content-type+mime-type
+        max-1-wk:gen
         'service-worker-allowed'^'/'
     ==
-  [[200 headers] `q.data]
+  --
 ::
 ++  get-light-charge
   |=  =charge
