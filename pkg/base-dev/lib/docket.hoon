@@ -174,6 +174,7 @@
         info+s+info.d
         color+s+(scot %ux color.d)
         href+(href href.d)
+        image+?~(image.d ~ s+u.image.d)
         version+(version version.d)
         license+s+license.d
         website+s+website.d

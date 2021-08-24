@@ -76,7 +76,7 @@
       =/  =treaty  (treaty-from-docket:cc desk docket)
       =.  sovereign  (~(put by sovereign) desk treaty)
       :_  this
-      ~[publish:so]
+      ~[publish warp give]:so
     ::
         %del
       =.  entente  (~(del in entente) [ship desk])
@@ -234,8 +234,8 @@
     =+  !<(=docket:docket q.cage)
     =/  =treaty  (treaty-from-docket:cc desk docket)
     =.  sovereign  (~(put by sovereign) desk treaty)
-    =/  so  ~(. so:cc desk)
-    :_(this ~[give:so warp:so])
+    =*  so  ~(. so:cc desk)
+    :_(this [give warp ~]:so)
   --
 
 ::
@@ -263,7 +263,7 @@
   |%
   ++  ally-update      |=(=update:ally ally-update-0+!>(update))
   ++  alliance-update  |=(=update:alliance alliance-update-0+!>(update))
-  ++  treaty  |=(t=^treaty treaty+!>(treaty))
+  ++  treaty  |=(t=^treaty treaty+!>(t))
   ++  treaty-update  |=(u=update:^treaty treaty-update-0+!>(u))
   --
 ::  +ca: Card construction
@@ -291,8 +291,9 @@
 ::  +so: engine for sovereign treaties
 ++  so
   |_  =desk
-  ++  path  /sovereign/[desk]
-  ++  pass  ~(. ^pass path)
+  ++  wire  /sovereign/[desk]
+  ++  pass  ~(. ^pass wire)
+  ++  path  /treaty/(scot %p our.bowl)/[desk]
   ++  get-docket  .^(docket:docket %cx (scry:io desk /desk/docket))
   ++  warp
     (warp-our:pass desk `[%next %x da+now.bowl /desk/docket])
