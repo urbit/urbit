@@ -238,6 +238,8 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  [~ ~]
+    [%x %kiln %lag ~]  ``loob+!>(.^(? //(scot %p our)//(scot %da now)/zen/lag))
+  ::
       [%x %kiln %vat @ ~]
     =*  loc  i.t.t.t.path
     =/  ego  (scot %p our)
@@ -249,6 +251,7 @@
     :^  ~  ~  %noun
     !>  ^-  vat
     [loc hog cas u.rak]
+  ::
       [%x %kiln %vats ~]
     :^  ~  ~  %kiln-vats
     !>  ^-  (list vat)
