@@ -3130,7 +3130,7 @@
       |^  ^-  pri
       =/  hal
         |=  (unit (pair @ buc))
-        ^-  (pair (unit buc) (unit (pair @ buc)))
+        ^-  (pair _~ (unit (pair @ buc)))
         `(ins +<)
       =/  val=(pair (unit buc) pri)
         (jab:qat a (mug k) hal)
@@ -3141,15 +3141,16 @@
         ^-  (unit (pair @ buc))
         ?~  b
           `[p [k v ~]]
-        ?:  =(k k.q.u.b)
-          `(make k p v t.q.u.b)
-        ?:  |((lth p.u.b p) &(=(p p.u.b) (lth k.q.u.b k)))
-          =/  val  (put:qor t.q.u.b k p v)
-          `[p.u.b [k.q.u.b v.q.u.b val]]
-        ?:  (has:qor t.q.u.b k)
-          =/  val  (put:qor (del:qor t.q.u.b k) k.q.u.b p.u.b v.q.u.b)
-          `[p [k v val]]
-        =/  val  (put:qor t.q.u.b k.q.u.b p.u.b v.q.u.b)
+        =/  =buc  q.u.b
+        ?:  =(k k.buc)
+          `(make k p v t.buc)
+        ?:  |((lth p.u.b p) &(=(p p.u.b) (lth k.buc k)))
+          =/  val  (put:qor t.buc k p v)
+          `[p.u.b [k.buc v.buc val]]
+        =/  val
+          ?:  (has:qor t.buc k)
+            (put:qor (del:qor t.buc k) k.buc p.u.b v.buc)
+          (put:qor t.buc k.buc p.u.b v.buc)
         `[p [k v val]]
       --
     ::
