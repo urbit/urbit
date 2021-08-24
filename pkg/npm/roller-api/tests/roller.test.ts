@@ -78,31 +78,33 @@ const signMessage = (msg: Hash, address: EthAddress) => {
   return toHex(Buffer.from(ethSignature));
 };
 
-const starAddress: EthAddress = "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-  spawnAddress: EthAddress = "0xf48062ae8bafd6ef19cd6cb89db93a0d0ca6ce26",
-  planetAddress: EthAddress = "0x6d654ef2489674d21aed428e8a4ad8ca4820f125",
-  planetMgmtAddress: EthAddress = "0x218f6f87683db546ad47a5dc8b480e5a9b694866",
-  sig: Signature = "0x1234", // We fake the signing in the backend
-  fromStar: From = {
-    ship: "~wanzod",
-    proxy: "own",
-  },
-  fromBalhulTransfer: From = {
-    ship: "~balhul-polsub",
-    proxy: "transfer",
-  },
-  fromBalhulOwn: From = {
-    ship: "~balhul-polsub",
-    proxy: "own",
-  },
-  fromModlepTransfer: From = {
-    ship: "~modlep-fosreg",
-    proxy: "transfer",
-  },
-  fromModlepOwn: From = {
-    ship: "~modlep-fosreg",
-    proxy: "own",
-  };
+const starAddress: EthAddress = "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d";
+const planetReceivingAddress: EthAddress =
+  "0xf48062ae8bafd6ef19cd6cb89db93a0d0ca6ce26";
+const planetOwnershipAddress: EthAddress =
+  "0x6d654ef2489674d21aed428e8a4ad8ca4820f125";
+const planetMgmtAddress: EthAddress =
+  "0x218f6f87683db546ad47a5dc8b480e5a9b694866";
+const fromStar: From = {
+  ship: "~wanzod",
+  proxy: "own",
+};
+const fromBalhulTransfer: From = {
+  ship: "~balhul-polsub",
+  proxy: "transfer",
+};
+const fromBalhulOwn: From = {
+  ship: "~balhul-polsub",
+  proxy: "own",
+};
+const fromModlepTransfer: From = {
+  ship: "~modlep-fosreg",
+  proxy: "transfer",
+};
+const fromModlepOwn: From = {
+  ship: "~modlep-fosreg",
+  proxy: "own",
+};
 
 test("getRollerConfig", async () => {
   const config = await api.getRollerConfig();
@@ -128,16 +130,18 @@ test("getShips", async () => {
 //   Example Postman collection:
 //   https://documenter.getpostman.com/view/16338962/Tzm3nx7x#f01fbd47-3f2c-413c-a922-3c964c5bb65c
 //
-test("setSpawnProxy for ~wanzod", async () => {
+test("~wanzod sets its spawn proxy", async () => {
   //
   //    (assuming a clean L2 state, "sig" is signed using nonce 0)
   //
   const spawnProxyData = {
     address: starAddress,
   };
-  //const wanzod: L2Point = await api.getPoint("~wanzod");
+  const wanzod: L2Point = await api.getPoint("~wanzod");
+  const nonce = wanzod.ownership?.owner?.nonce;
+
   const spanwProxyHash: Hash = await api.hashTransaction(
-    0, //wanzod.ownership?.owner?.nonce!, // nonce = 0
+    nonce ? nonce : 0, // nonce = 0
     fromStar,
     "setSpawnProxy",
     spawnProxyData
@@ -153,16 +157,19 @@ test("setSpawnProxy for ~wanzod", async () => {
   expect(txStatus).toEqual("pending");
 });
 
-test("spawn ~modlep-fosreg", async () => {
+test("and spawns ~modlep-fosreg", async () => {
   //
   //    ("sig" is signed using nonce 1)
   //
   const spawnData = {
-    address: spawnAddress,
+    address: planetReceivingAddress,
     ship: "~modlep-fosreg",
   };
+  const wanzod: L2Point = await api.getPoint("~wanzod");
+  const nonce = wanzod.ownership?.owner?.nonce;
+
   const spawnHash: Hash = await api.hashTransaction(
-    1, //wanzod.ownership?.owner?.nonce! + 1, // nonce = 1
+    nonce ? nonce + 1 : 1, // nonce = 1
     fromStar,
     "spawn",
     spawnData
@@ -183,21 +190,21 @@ test("~modlep-fosreg accepts the transfer", async () => {
   //
   //    ("sig" is signed using nonce 0)
   //
-  const transferData = { address: planetAddress, reset: true };
-  //const modlep: L2Point = await api.getPoint("~modlep-fosreg");
+  const transferData = { address: planetOwnershipAddress, reset: true };
+  // const modlep: L2Point = await api.getPoint("~modlep-fosreg");
   const transferHash: Hash = await api.hashTransaction(
     0,
     // ~modlep-fosreg is not spawned yet, since the txs are all pending
-    //modlep.ownership?.transferProxy?.nonce!, // nonce = 0
+    // modlep.ownership?.transferProxy?.nonce!, // nonce = 0
     fromModlepTransfer,
     "transferPoint",
     transferData
   );
 
   const transferTxHash = await api.transferPoint(
-    signMessage(transferHash, spawnAddress),
+    signMessage(transferHash, planetReceivingAddress),
     fromModlepTransfer,
-    spawnAddress,
+    planetReceivingAddress,
     transferData
   );
   expect(transferTxHash).toBeTruthy();
@@ -205,7 +212,7 @@ test("~modlep-fosreg accepts the transfer", async () => {
   expect(txStatus).toEqual("pending");
 });
 
-test("configureKeys", async () => {
+test("...configures keys", async () => {
   //
   //    ("sig" is signed using nonce 0)
   //
@@ -217,16 +224,16 @@ test("configureKeys", async () => {
   };
   const configureKeysHash: Hash = await api.hashTransaction(
     0,
-    //modlep.ownership?.owner?.nonce!, // nonce = 0
+    // modlep.ownership?.owner?.nonce!, // nonce = 0
     fromModlepOwn,
     "configureKeys",
     configureKeysData
   );
 
   const configureTxHash = await api.configureKeys(
-    signMessage(configureKeysHash, planetAddress),
+    signMessage(configureKeysHash, planetOwnershipAddress),
     fromModlepOwn,
-    planetAddress,
+    planetOwnershipAddress,
     configureKeysData
   );
   expect(configureTxHash).toBeTruthy();
@@ -234,7 +241,7 @@ test("configureKeys", async () => {
   expect(txStatus).toEqual("pending");
 });
 
-test("setMgmtProxy", async () => {
+test("and sets management proxy", async () => {
   // ...and sets the management proxy so it's ready to boot
   //
   //    ("sig" is signed using nonce 1)
@@ -242,16 +249,16 @@ test("setMgmtProxy", async () => {
   const mgmtData = { address: planetMgmtAddress };
   const mgmtHash: Hash = await api.hashTransaction(
     1,
-    //modlep.ownership?.owner?.nonce! + 1, // nonce = 1
+    // modlep.ownership?.owner?.nonce! + 1, // nonce = 1
     fromModlepOwn,
     "setManagementProxy",
     mgmtData
   );
 
   const mgmtTxHash = await api.setManagementProxy(
-    signMessage(mgmtHash, planetAddress),
+    signMessage(mgmtHash, planetOwnershipAddress),
     fromModlepOwn,
-    planetAddress,
+    planetOwnershipAddress,
     mgmtData
   );
   expect(mgmtTxHash).toBeTruthy();
@@ -266,15 +273,16 @@ test("setMgmtProxy", async () => {
 //   Example Postman collection:
 //   https://documenter.getpostman.com/view/16338962/Tzm3nx7x#7b060cd8-e161-4a09-86f0-b1ffcb111d08
 //
-test("~wanzod spawn ~balhul-polsub", async () => {
+test("~wanzod spawns ~balhul-polsub", async () => {
   //
   //    (assuming no transactions have been submitted to the Roller
   //     following the ones in inviteFlowA, "sig" is signed using nonce 2)
   //
   const spawnData = {
-    address: spawnAddress,
+    address: planetReceivingAddress,
     ship: "~balhul-polsub",
   };
+
   const spawnHash: Hash = await api.hashTransaction(
     2,
     fromStar,
@@ -292,7 +300,7 @@ test("~wanzod spawn ~balhul-polsub", async () => {
   expect(txStatus).toEqual("pending");
 });
 
-test("~wanzod sets the management proxy", async () => {
+test("...sets its management proxy", async () => {
   //
   //    ("sig" is signed using nonce 0)
   //
@@ -316,7 +324,7 @@ test("~wanzod sets the management proxy", async () => {
   expect(txStatus).toEqual("pending");
 });
 
-test("~wanzod configures keys", async () => {
+test("and configures its keys", async () => {
   //
   //    ("sig" is signed using nonce 1)
   //
@@ -357,7 +365,7 @@ test("~balhul-polsub accepts the transfer", async () => {
   //    ("sig" is signed using nonce 0)
   //
 
-  const transferData = { address: planetAddress, reset: true };
+  const transferData = { address: planetOwnershipAddress, reset: true };
   const transferHash: Hash = await api.hashTransaction(
     0,
     fromBalhulTransfer,
@@ -366,9 +374,9 @@ test("~balhul-polsub accepts the transfer", async () => {
   );
 
   const transferTxHash = await api.transferPoint(
-    signMessage(transferHash, spawnAddress),
+    signMessage(transferHash, planetReceivingAddress),
     fromBalhulTransfer,
-    spawnAddress,
+    planetReceivingAddress,
     transferData
   );
 
@@ -377,7 +385,7 @@ test("~balhul-polsub accepts the transfer", async () => {
   expect(txStatus).toEqual("pending");
 });
 
-test("~balhul-polsub sets a new management proxy", async () => {
+test("... sets a new management proxy", async () => {
   //
   //    ("sig" is signed using nonce 2)
   //
@@ -391,9 +399,9 @@ test("~balhul-polsub sets a new management proxy", async () => {
   );
 
   const mgmtTxHash = await api.setManagementProxy(
-    signMessage(mgmtHash, planetAddress),
+    signMessage(mgmtHash, planetOwnershipAddress),
     fromBalhulOwn,
-    planetAddress,
+    planetOwnershipAddress,
     mgmtData
   );
 
@@ -402,7 +410,7 @@ test("~balhul-polsub sets a new management proxy", async () => {
   expect(txStatus).toEqual("pending");
 });
 
-test("~balhul-polsub configures keys", async () => {
+test("and configures new keys", async () => {
   // ...and configures keys so it's ready to boot
   //
   //    ("sig" is signed using nonce 3)
@@ -422,9 +430,9 @@ test("~balhul-polsub configures keys", async () => {
   );
 
   const configureTxHash = await api.configureKeys(
-    signMessage(configureKeysHash, planetAddress),
+    signMessage(configureKeysHash, planetOwnershipAddress),
     fromBalhulOwn,
-    planetAddress,
+    planetOwnershipAddress,
     configureKeysData
   );
 

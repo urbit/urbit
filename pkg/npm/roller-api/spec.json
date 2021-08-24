@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.0.1",
+    "version": "0.1.3",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -11,7 +11,7 @@
     {
       "url": "http://localhost:8080/v1/roller",
       "name": "Local",
-      "description": "This assumes `%aggregator-rpc.hoon` running on a test ship"
+      "description": "This assumes `%roller-rpc.hoon` running on a test ship"
     }
   ],
   "methods": [
@@ -1881,35 +1881,65 @@
         "type": "object",
         "properties": {
           "owner": {
-            "$ref": "#/components/schemas/Address"
+            "$ref": "#/components/schemas/ProxyObject"
           },
           "spawnProxy": {
-            "$ref": "#/components/schemas/Address"
+            "$ref": "#/components/schemas/ProxyObject"
           },
           "managementProxy": {
-            "$ref": "#/components/schemas/Address"
+            "$ref": "#/components/schemas/ProxyObject"
           },
           "votingProxy": {
-            "$ref": "#/components/schemas/Address"
+            "$ref": "#/components/schemas/ProxyObject"
           },
           "transferProxy": {
-            "$ref": "#/components/schemas/Address"
+            "$ref": "#/components/schemas/ProxyObject"
           }
         }
       },
-      "Networking": {
-        "title": "Networking",
+      "Keys": {
+        "title": "Keys",
         "type": "object",
-        "required": ["life", "pass", "rift", "sponsor"],
+        "required": ["life", "suite", "auth", "crypto"],
         "properties": {
           "life": {
             "type": "number",
             "title": "Life"
           },
-          "pass": {
-            "type": "string",
-            "title": "Pass",
-            "pattern": "^0x[0-9a-f]{40}$"
+          "suite": {
+            "$ref": "#/components/schemas/CryptoSuite"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/Auth"
+          },
+          "crypto": {
+            "$ref": "#/components/schemas/Crypto"
+          }
+        }
+      },
+      "CryptoSuite": {
+        "type": "number",
+        "title": "CryptoSuite"
+      },
+      "Auth": {
+        "type": "string",
+        "title": "Auth",
+        "pattern": "^0x[0-9a-f]{64}$",
+        "description": "^0x[0-9a-f]{64}$"
+      },
+      "Crypto": {
+        "type": "string",
+        "title": "Crypto",
+        "pattern": "^0x[0-9a-f]{64}$",
+        "description": "^0x[0-9a-f]{64}$"
+      },
+      "Networking": {
+        "title": "Networking",
+        "type": "object",
+        "required": ["keys", "rift", "sponsor"],
+        "properties": {
+          "keys": {
+            "$ref": "#/components/schemas/Keys"
           },
           "rift": {
             "type": "number",
@@ -1929,17 +1959,17 @@
         "properties": {
           "has": {
             "type": "boolean",
-            "title": "Forced"
+            "title": "has"
           },
           "who": {
-            "type": "string"
+            "$ref": "#/components/schemas/Ship"
           }
         }
       },
       "Nonce": { "type": "number", "title": "Nonce" },
-      "Address": {
+      "ProxyObject": {
         "type": "object",
-        "title": "Address",
+        "title": "ProxyObject",
         "properties": {
           "address": {
             "$ref": "#/components/schemas/eth-address"
@@ -1970,7 +2000,7 @@
           },
           "proxy": {
             "title": "Proxy",
-            "anyOf": [
+            "oneOf": [
               {
                 "pattern": "/^own$/",
                 "type": "string",
@@ -2003,7 +2033,7 @@
       "TransferPointParams": {
         "title": "TransferPointParams",
         "type": "object",
-        "required": ["address", "reset"],
+        "required": ["address"],
         "properties": {
           "address": {
             "$ref": "#/components/schemas/eth-address"
@@ -2033,15 +2063,13 @@
         "required": ["encrypt", "auth", "cryptoSuite", "breach"],
         "properties": {
           "encrypt": {
-            "type": "string",
-            "pattern": "^0x[0-9a-f]{40}$"
+            "$ref": "#/components/schemas/Crypto"
           },
           "auth": {
-            "type": "string",
-            "pattern": "^0x[0-9a-f]{40}$"
+            "$ref": "#/components/schemas/Auth"
           },
           "cryptoSuite": {
-            "type": "number"
+            "$ref": "#/components/schemas/CryptoSuite"
           },
           "breach": {
             "type": "boolean",
@@ -2182,7 +2210,6 @@
           "chainId",
           "contract"
         ],
-
         "properties": {
           "nextBatch": {
             "$ref": "#/components/schemas/NextBatch"
