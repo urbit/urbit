@@ -762,7 +762,7 @@
   ::
   ++  filter-rank
     |=  [=rank =event-list]
-    (skim event-list |=(=event =(rank.event event)))
+    (skim event-list |=(=event =(rank.event rank)))
   ::
   ++  filter-owner
     |=  [owner=? =event-list]
