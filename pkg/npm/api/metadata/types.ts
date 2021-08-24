@@ -1,4 +1,4 @@
-import { AppName, Path, Patp } from '../lib';
+import { Path, Patp } from '../lib';
 
 export type MetadataUpdate =
   MetadataUpdateInitial
@@ -41,7 +41,7 @@ export type MetadataUpdateRemove = {
 
 export interface MdResource {
   resource: string;
-  'app-name': AppName;
+  'app-name': 'groups' | 'graph';
 }
 
 export interface MetadataUpdatePreview {

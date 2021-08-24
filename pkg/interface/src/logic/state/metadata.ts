@@ -1,4 +1,4 @@
-import { Association, Associations, MetadataUpdatePreview } from '@urbit/api';
+import { Association, Associations, MetadataUpdatePreview } from '@urbit/api/metadata';
 import _ from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import {

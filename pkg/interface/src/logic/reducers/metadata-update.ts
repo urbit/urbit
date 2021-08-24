@@ -1,4 +1,4 @@
-import { MetadataUpdate } from '@urbit/api/metadata';
+import { MetadataUpdate, Associations, ResourceAssociations } from '@urbit/api/metadata';
 import _ from 'lodash';
 import { Cage } from '~/types/cage';
 import { BaseState } from '../state/base';
@@ -12,24 +12,32 @@ export default class MetadataReducer {
   }
 }
 
+function normalizeAssociations(assocs: ResourceAssociations): Associations {
+  return _.reduce(assocs, (acc, val) => {
+    const appName = val['app-name'];
+    const rid = val.resource;
+    const old = acc[appName];
+    return {
+      ...acc,
+      [appName]: {
+        ...old,
+        [rid]: val
+      }
+    };
+  }, {
+    groups: {},
+    graph: {}
+  } as Associations);
+}
+
+function removeGroup(group: string, assocs: Associations): Associations {
+  return _.mapValues(assocs, (val): any => _.omitBy(val, assoc => assoc.group === group));
+}
+
 const associations = (json: MetadataUpdate, state: MetadataState): MetadataState => {
   const data = _.get(json, 'associations', false);
   if (data) {
-    const metadata = state.associations;
-    Object.keys(data).forEach((key) => {
-      const val = data[key];
-      const appName = val['app-name'];
-      const rid = val.resource;
-      if (!(appName in metadata)) {
-        metadata[appName] = {};
-      }
-      if (!(rid in metadata[appName])) {
-        metadata[appName][rid] = {};
-      }
-      metadata[appName][rid] = val;
-    });
-
-    state.associations = metadata;
+    state.associations = normalizeAssociations(data);
   }
   return state;
 };
@@ -57,7 +65,10 @@ const add = (json: MetadataUpdate, state: MetadataState): MetadataState => {
 const groupInitial = (json: MetadataUpdate, state: MetadataState): MetadataState => {
   const data = _.get(json, 'initial-group', false);
   if(data) {
-    associations(data, state);
+    state.associations = removeGroup(data.group, state.associations);
+    const { groups, graph } = normalizeAssociations(data.associations);
+    state.associations.graph = { ...state.associations.graph, ...graph };
+    state.associations.groups = { ...state.associations.groups, ...groups };
   }
   return state;
 };
