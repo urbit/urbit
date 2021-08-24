@@ -5,6 +5,7 @@ import { chadIsRunning, Charge } from '@urbit/api/docket';
 import { TileMenu } from './TileMenu';
 import { Spinner } from '../components/Spinner';
 import { getAppHref } from '../state/util';
+import { useRecentsStore } from '../nav/search/Home';
 
 type TileProps = {
   charge: Charge;
@@ -24,6 +25,7 @@ function getMenuColor(color: string, lightText: boolean, active: boolean): strin
 }
 
 export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
+  const addRecentApp = useRecentsStore((state) => state.addRecentApp);
   const { title, color, image, chad, href } = charge;
   const loading = 'install' in chad;
   const active = chadIsRunning(chad);
@@ -42,6 +44,8 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
         !active && 'cursor-default'
       )}
       style={{ backgroundColor: active ? color || 'purple' : suspendColor }}
+      onClick={() => addRecentApp(charge)}
+      onAuxClick={() => addRecentApp(charge)}
     >
       <div>
         {loading ? (

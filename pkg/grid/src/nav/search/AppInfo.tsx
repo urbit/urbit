@@ -11,8 +11,10 @@ import { TreatyMeta } from '../../components/TreatyMeta';
 import useDocketState, { useCharges, useTreaty } from '../../state/docket';
 import { getAppHref } from '../../state/util';
 import { useLeapStore } from '../Nav';
+import { useRecentsStore } from './Home';
 
 export const AppInfo = () => {
+  const addRecentApp = useRecentsStore((state) => state.addRecentApp);
   const select = useLeapStore((state) => state.select);
   const { ship, host, desk } = useParams<{ ship: string; host: string; desk: string }>();
   const treaty = useTreaty(host, desk);
@@ -55,6 +57,7 @@ export const AppInfo = () => {
               as="a"
               href={getAppHref(treaty.href)}
               target={treaty.title || '_blank'}
+              onClick={() => addRecentApp(treaty)}
             >
               Open App
             </PillButton>
