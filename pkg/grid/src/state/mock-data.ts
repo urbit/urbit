@@ -153,5 +153,5 @@ export const mockAllies: Allies = [
 
 export const mockBlockedChargeNotification: SystemNotification = {
   type: 'system-updates-blocked',
-  charges: ['~zod/groups', '~zod/pomodoro']
+  charges: ['groups', 'pomodoro']
 };

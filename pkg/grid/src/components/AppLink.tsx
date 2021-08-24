@@ -4,17 +4,25 @@ import { Link, LinkProps } from 'react-router-dom';
 import { Docket } from '@urbit/api';
 import { getAppHref } from '../state/util';
 
+type Sizes = 'xs' | 'small' | 'default';
+
 export type AppLinkProps = Omit<LinkProps, 'to'> & {
   app: Docket;
-  small?: boolean;
+  size?: Sizes;
   selected?: boolean;
   to?: (app: Docket) => LinkProps['to'];
+};
+
+const sizeMap: Record<Sizes, string> = {
+  xs: 'w-6 h-6 mr-2 rounded',
+  small: 'w-8 h-8 mr-3 rounded-lg',
+  default: 'w-12 h-12 mr-3 rounded-lg'
 };
 
 export const AppLink = ({
   app,
   to,
-  small = false,
+  size = 'default',
   selected = false,
   className,
   ...props
@@ -23,17 +31,14 @@ export const AppLink = ({
     <Link
       to={(to && to(app)) || getAppHref(app.href)}
       className={classNames(
-        'flex items-center space-x-3 default-ring ring-offset-2 rounded-lg',
+        'flex items-center default-ring ring-offset-2 rounded-lg',
         selected && 'ring-4',
         className
       )}
       {...props}
     >
       <div
-        className={classNames(
-          'flex-none relative bg-gray-200 rounded-lg',
-          small ? 'w-8 h-8' : 'w-12 h-12'
-        )}
+        className={classNames('flex-none relative bg-gray-200 rounded-lg', sizeMap[size])}
         style={{ backgroundColor: app.color }}
       >
         {app.image && (
@@ -46,7 +51,7 @@ export const AppLink = ({
       </div>
       <div className="flex-1 text-black">
         <p>{app.title}</p>
-        {app.info && !small && <p className="font-normal">{app.info}</p>}
+        {app.info && size === 'default' && <p className="font-normal">{app.info}</p>}
       </div>
     </Link>
   );

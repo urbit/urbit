@@ -9,6 +9,7 @@ type AppListProps = {
   labelledBy: string;
   matchAgainst?: MatchItem;
   onClick?: (e: MouseEvent<HTMLAnchorElement>, app: Docket) => void;
+  listClass?: string;
 } & Omit<AppLinkProps, 'app' | 'onClick'>;
 
 export function appMatches(target: Docket, match?: MatchItem): boolean {
@@ -20,12 +21,19 @@ export function appMatches(target: Docket, match?: MatchItem): boolean {
   return target.title === matchValue; // TODO: need desk name or something || target.href === matchValue;
 }
 
-export const AppList = ({ apps, labelledBy, matchAgainst, onClick, ...props }: AppListProps) => {
+export const AppList = ({
+  apps,
+  labelledBy,
+  matchAgainst,
+  onClick,
+  listClass = 'space-y-8',
+  ...props
+}: AppListProps) => {
   const addRecentApp = useRecentsStore((state) => state.addRecentApp);
   const selected = useCallback((app: Docket) => appMatches(app, matchAgainst), [matchAgainst]);
 
   return (
-    <ul className="space-y-8" aria-labelledby={labelledBy}>
+    <ul className={listClass} aria-labelledby={labelledBy}>
       {apps.map((app) => (
         <li key={app.title} id={app.title} role="option" aria-selected={selected(app)}>
           <AppLink

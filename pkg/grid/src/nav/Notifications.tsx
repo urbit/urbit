@@ -7,12 +7,12 @@ import { useLeapStore } from './Nav';
 import { BasicNotification } from './notifications/BasicNotification';
 import { SystemNotification } from './notifications/SystemNotification';
 
-function renderNotification(notification: Notification) {
+function renderNotification(notification: Notification, key: string) {
   if (notification.type === 'system-updates-blocked') {
-    return <SystemNotification notification={notification} />;
+    return <SystemNotification key={key} notification={notification} />;
   }
 
-  return <BasicNotification notification={notification} />;
+  return <BasicNotification key={key} notification={notification} />;
 }
 
 const Empty = () => (
@@ -49,7 +49,7 @@ export const Notifications = () => {
       {!hasNotifications && <Empty />}
       {hasNotifications && (
         <section className="min-h-[480px] text-gray-400 space-y-2">
-          {notifications.map((n) => renderNotification(n))}
+          {notifications.map((n, index) => renderNotification(n, index.toString()))}
         </section>
       )}
     </div>
