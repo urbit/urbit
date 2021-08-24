@@ -11,7 +11,7 @@
 +$  rpc-result  [id=@t res=@t]
 +$  card  card:agent:gall
 ::
-++  node-url           'http://eth-mainnet.urbit.org:8545'
+++  node-url  'https://mainnet.infura.io/v3/2599df54929b47099bda360958d75aaf'
 --
 ::
 =|  state-0
@@ -31,6 +31,7 @@
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?.  ?=(%noun mark)  [~ this]
+    ?:  =(%kill q.vase)  [~ this(in-progress ~)]
     ?^  in-progress
       ~&  %still-running-please-try-again-later
       [~ this]

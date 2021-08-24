@@ -1,5 +1,7 @@
 /-  spider, claz
-/+  *strand, azio, *ethereum, *azimuth
+/+  *strand, strandio, azio, *ethereum, *azimuth
+::
+::NOTE  be sure to empty out the /migrations dir prior to re-running export
 ::
 =/  az
   %~  .  azio
@@ -162,12 +164,15 @@
 ::
 ^-  thread:spider
 |=  args=vase
+=+  !<([~ export=?] args)
+~&  ?:(export %will-write-txs-to-disk %just-checking)
 =/  m  (strand ,vase)
 ^-  form:m
 =|  owned=(map address (list @p))  ::  cache
 =|  out=(jar address batch:claz)
 ::  handle galaxies and lockups
 ::
+~&  %galaxies
 |-
 =*  loop-gax  $
 ?^  gax
@@ -236,6 +241,7 @@
 ::
 ::  handle stars
 ::
+~&  %stars
 |-
 =*  loop-saz  $
 ?^  saz
@@ -285,6 +291,34 @@
       [%custom conditional-star-release 0 'transferOwnership' [%address shallow-safe]~]
   ==
 ::
-::NOTE  flop because +ja adds to list head
-::TODO  poke claz instead
-(pure:m !>((~(run by out) flop)))
+?.  export  (pure:m !>(~))
+~&  [%generating address-count=~(wyt by out)]
+::
+=/  outs=(list [=address batches=(list batch:claz)])
+  ~(tap by out)
+|-
+=*  loop-export  $
+?~  outs
+  ~&  %done
+  (pure:m !>(~))
+=,  i.outs
+::
+=/  file=path  /migration/(crip '0x' ((x-co:co 40) address))/eth-txs
+::
+;<  =bowl:spider  bind:m  get-bowl:strandio
+;<  ~  bind:m
+  %+  poke-our:strandio  %claz
+  :-  %noun
+  !>  ^-  command:claz
+  ::NOTE  flop because +ja adds to list head
+  =-  [%generate - %mainnet address %more (flop batches)]
+  [(scot %p our.bowl) %home (scot %da now.bowl) file]
+::  we must wait for claz to be done before proceeding to the next one
+::
+|-
+=*  loop-check  $
+;<  done=?  bind:m  (scry:strandio ? %cu %home file)
+?.  done
+  ;<  ~  bind:m  (sleep:strandio ~s1)
+  loop-check
+loop-export(outs t.outs)
