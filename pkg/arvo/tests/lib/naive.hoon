@@ -2,7 +2,7 @@
 ::
 |%
 :: This gate passes a state and input to naive.hoon for both L1 and L2
-:: transactions. Every transaction implemented in this test suited utilizes it.
+:: transactions. Every transaction implemented in this test suite utilizes it.
 ::
 ++  n  |=([=^state:naive =^input:naive] (%*(. naive lac &) verifier 1.337 +<))
 ::
@@ -50,18 +50,21 @@
 ::  %set-spawn-proxy, and %set-transfer-proxy. See +test-rut for more
 ::  information.
 ::
-::  ~rigrut is L1 star
-::  ~larsyx-mapmeg is L1 planet under ~rigrut
-::  ~holrut is L1 star w/ L2 spawn proxy
-::  ~rabsum-ravtyd is L1 planet under ~holrut
-::  ~dovmul-mogryt is L2 planet under ~holrut made w/ %own proxy
-::  ~pidted-dacnum is L2 planet under ~holrut made w/ %spawn proxy predeposited
+::  ~rut is %l1 galaxy
+::  ~tyl is %spawn galxy
 ::
-::  ~losrut is L2 star
-::  ~radres-tinnyl is L1 planet under ~losrut
-::  ~pinpun-pilsun is L2 planet under ~losrut made w/ %own proxy
-::  ~habtyc-nibpyx is L2 planet under ~losrut made w/ %spawn proxy predeposited
-::  ~disryt-nolpet is L2 planet under ~losrut made w/ %spawn proxy postdeposited
+::  ~rigrut is %l1 star
+::  ~larsyx-mapmeg is %l1 planet under ~rigrut
+::  ~holrut is %spawn star
+::  ~rabsum-ravtyd is %l1 planet under ~holrut
+::  ~dovmul-mogryt is %l2 planet under ~holrut made w/ %own proxy
+::  ~pidted-dacnum is %l2 planet under ~holrut made w/ %spawn proxy predeposited
+::
+::  ~losrut is %l2 star
+::  ~radres-tinnyl is %l1 planet under ~losrut
+::  ~pinpun-pilsun is %l2 planet under ~losrut made w/ %own proxy
+::  ~habtyc-nibpyx is %l2 planet under ~losrut made w/ %spawn proxy predeposited
+::  ~disryt-nolpet is %l2 planet under ~losrut made w/ %spawn proxy postdeposited
 ::
 ++  init-rut-full
   |=  =^state:naive
@@ -121,50 +124,52 @@
   =/  dn-mproxy
     [[~disryt-nolpet %own] %set-management-proxy (addr %losrut-dn-mkey-0)]
   ::
-  =^  f1  state
+  =^  f1   state
     (n state (owner-changed:l1 ~rut (addr %rut-key-0)))
-  =^  f2  state
+  =^  f2   state
     (n state (owner-changed:l1 ~rigrut (addr %rigrut-key-0)))
-  =^  f3  state
+  =^  f3   state
     (n state (owner-changed:l1 ~holrut (addr %holrut-key-0)))
-  =^  f4  state
+  =^  f4   state
     (n state (owner-changed:l1 ~losrut (addr %losrut-key-0)))
-  =^  f5  state
+  =^  f5   state
     (n state (owner-changed:l1 ~larsyx-mapmeg (addr %rigrut-lm-key-0)))
-  =^  f6  state
+  =^  f6   state
     (n state (owner-changed:l1 ~rabsum-ravtyd (addr %holrut-rr-key-0)))
-  =^  f7  state
+  =^  f7   state
     (n state (owner-changed:l1 ~radres-tinnyl (addr %losrut-rt-key-0)))
-  =^  f8  state
+  =^  f8   state
+    (n state (changed-spawn-proxy:l1 ~rut (addr %rut-skey-0)))
+  =^  f9   state
     (n state (changed-spawn-proxy:l1 ~holrut (addr %holrut-skey-0)))
-  =^  f8  state
+  =^  f10  state
     (n state (changed-spawn-proxy:l1 ~losrut (addr %losrut-skey-0)))
-  =^  f8  state
+  =^  f11  state
     (n state (changed-spawn-proxy:l1 ~holrut deposit-address:naive))
   ::
-  =^  f9  state
-    (n state %bat q:(gen-tx 0 dm-spawn %holrut-key-0))
-  =^  f10  state
-    (n state %bat q:(gen-tx 0 pd-spawn %holrut-skey-0))
-  =^  f11  state
-    (n state (owner-changed:l1 ~losrut deposit-address:naive))
   =^  f12  state
-    (n state %bat q:(gen-tx 0 pp-spawn %losrut-key-0))
+    (n state %bat q:(gen-tx 0 dm-spawn %holrut-key-0))
   =^  f13  state
-    (n state %bat q:(gen-tx 0 hn-spawn %losrut-skey-0))
+    (n state %bat q:(gen-tx 0 pd-spawn %holrut-skey-0))
   =^  f14  state
-    (n state %bat q:(gen-tx 1 losrut-sproxy %losrut-skey-0))
+    (n state (owner-changed:l1 ~losrut deposit-address:naive))
   =^  f15  state
-    (n state %bat q:(gen-tx 2 dn-spawn %losrut-skey-1))
+    (n state %bat q:(gen-tx 0 pp-spawn %losrut-key-0))
   =^  f16  state
-    (n state %bat q:(gen-tx 0 dm-xfer %holrut-dm-key-0))
+    (n state %bat q:(gen-tx 0 hn-spawn %losrut-skey-0))
   =^  f17  state
-    (n state %bat q:(gen-tx 0 pd-xfer %holrut-pd-key-0))
+    (n state %bat q:(gen-tx 1 losrut-sproxy %losrut-skey-0))
   =^  f18  state
-    (n state %bat q:(gen-tx 0 pp-xfer %losrut-pp-key-0))
+    (n state %bat q:(gen-tx 2 dn-spawn %losrut-skey-1))
   =^  f19  state
-    (n state %bat q:(gen-tx 0 hn-xfer %losrut-hn-key-0))
+    (n state %bat q:(gen-tx 0 dm-xfer %holrut-dm-key-0))
   =^  f20  state
+    (n state %bat q:(gen-tx 0 pd-xfer %holrut-pd-key-0))
+  =^  f21  state
+    (n state %bat q:(gen-tx 0 pp-xfer %losrut-pp-key-0))
+  =^  f22  state
+    (n state %bat q:(gen-tx 0 hn-xfer %losrut-hn-key-0))
+  =^  f23  state
     (n state %bat q:(gen-tx 0 dn-xfer %losrut-dn-key-0))
   ::
   =^  p1   state
@@ -215,14 +220,25 @@
     (n state %bat q:(gen-tx 1 hn-tproxy %losrut-hn-key-0))
   =^  p24  state
     (n state %bat q:(gen-tx 1 dn-tproxy %losrut-dn-key-0))
+  =^  t1   state
+    (n state (owner-changed:l1 ~tyl (addr %tyl-key-0)))
+  =^  t2   state
+    (n state (changed-spawn-proxy:l1 ~tyl (addr %tyl-skey-0)))
+  =^  t3   state
+    (n state (changed-spawn-proxy:l1 ~tyl deposit-address:naive))
+  =^  t4   state
+    (n state (changed-management-proxy:l1 ~tyl (addr %tyl-mkey-0)))
+  =^  t5   state
+    (n state (changed-transfer-proxy:l1 ~tyl (addr %tyl-tkey-0)))
   ::
   :-  ;:  welp
       f1  f2  f3  f4  f5  f6  f7  f8  f9  f10
       f11  f12  f13  f14  f15  f16  f17  f18
-      f19  f20
+      f19  f20  f21  f22  f23
       p1  p2  p3  p4  p5  p6  p7  p8  p9  p10
       p11  p12  p13  p14  p15  p16  p17  p18
       p19  p20  p21  p22  p23  p24
+      t1  t2  t3  t4  t5
       ==
   state
 ::
@@ -424,9 +440,10 @@
       |^
       |=  cur-event=event  ^-  ?
       ?-  rank.cur-event                        :: switch on rank
-        %star           (star-check cur-event)  :: only stars can be on %spawn
-        ?(%galaxy %planet)  %.n                 :: galaxies and planets cannot be on %spawn
-      ==                                        :: TODO: galaxies on spawn dominion
+        %galaxy  (galaxy-check cur-event)       :: galaxies can be on %spawn
+        %star    (star-check cur-event)         :: stars can be on %spawn
+        %planet  %.n                            :: planets cannot be on %spawn
+      ==
       ++  star-check                            :: %spawn dominion star check
         |^
         |=  cur-event=event  ^-  ?
@@ -464,6 +481,40 @@
             %set-spawn-proxy     %.y            :: can %set-spawn-proxy on L2
           ==
         --                                      :: end +star-check in %spawn
+      ::
+      ++  galaxy-check                          :: %spawn dominion galaxy check
+        |^
+        |=  cur-event=event  ^-  ?
+        ?-  proxy.cur-event                     :: switch on proxy
+          %own       (ownp-check cur-event)     :: can do sponsorship and spawn
+          %manage    (managep-check cur-event)  :: can do sponsorship tx
+          %spawn     (spawnp-check cur-event)   :: can do spawn tx
+          %vote      %.n                        :: no L2 %vote proxy allowed
+          %transfer  %.n                        :: cannot sponsor/spawn
+        ==
+        ++  ownp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n            :: only sponsorship/spawn tx
+            %spawn               %.y            :: can %spawn on L2
+            %adopt               %.y            :: can %adopt on L2
+            %reject              %.y            :: can %reject on L2
+            %detach              %.y            :: can %detach on L2
+            %set-spawn-proxy     %.y            :: can %set-spawn-proxy on L2
+          ==
+        ++  managep-check                       :: %configure-keys disallowed
+          |=  cur-event=event  ^-  ?            :: for %spawn dominion
+          ?+  tx-type.cur-event  %.n            :: only sponsorship actions
+            %adopt               %.y            :: can %adopt on L2
+            %reject              %.y            :: can %reject on L2
+            %detach              %.y            :: can %detach on L2
+          ==
+        ++  spawnp-check
+          |=  cur-event=event  ^-  ?
+          ?+  tx-type.cur-event  %.n            :: only spawn tx allowed
+            %spawn               %.y            :: can %spawn on L2
+            %set-spawn-proxy     %.y            :: can %set-spawn-proxy on L2
+          ==
+        --                                      :: end +galaxy-check in %spawn
       ::
       --                                        :: end +spawnd-check
     ::
@@ -651,8 +702,8 @@
     --  :: end +make-event-list
   ::
   :: used to remove values of +make-event-list that have planets in the %spawn
-  :: dominion or galaxies in %spawn or %l2 dominion TODO: allow galaxies in
-  :: %spawn
+  :: dominion or galaxies in the %l2 dominion
+  ::
   :: TODO: Why does this not work when I put it inside the above trap?
   ::
   ++  remove-wrong-dominion
@@ -661,7 +712,7 @@
     |-
     ?~  in  out
     ?:  ?&  =(rank.i.in %galaxy)
-            !=(dominion.i.in %l1)
+            =(dominion.i.in %l2)
         ==
         $(in t.in)
     ?:  ?&  =(rank.i.in %planet)
@@ -686,19 +737,19 @@
   ++  gen-rut-jar
     ^-  (jar @p event)
     =/  filter  ;:  cork
-                    (cury filter-owner %.y)
-                    ::(cury filter-proxy %transfer)
-                    (cury filter-nonce %.y)
-                    ::(cury filter-rank %planet)
-                    ::(cury filter-dominion %l2)
+                    ::(cury filter-owner %.y)
+                    ::(cury filter-proxy %spawn)
+                    ::(cury filter-nonce %.y)
+                    ::(cury filter-rank %galaxy)
+                    ::(cury filter-dominion %l1)
                     %-  cury
                     :-  filter-tx-type
-                    :*  ::%spawn
-                        ::%transfer-point
+                    :*  %spawn
+                        %transfer-point
                         %configure-keys
-                        ::%set-management-proxy
-                        ::%set-spawn-proxy
-                        ::%set-transfer-proxy
+                        %set-management-proxy
+                        %set-spawn-proxy
+                        %set-transfer-proxy
                         ~
                     ==
                 ==
@@ -707,9 +758,11 @@
     |^
     ?~  filtered-events  rut-jar
     =/  current-event  i.filtered-events
-    ::  TODO: add %spawn dominion to galaxy
     ?:  =(rank.current-event %galaxy)
-      (list-in-jar (ly ~[~rut]) current-event)
+      ?+  dominion.current-event  !!
+        %l1     (list-in-jar (ly ~[~rut]) current-event)
+        %spawn  (list-in-jar (ly ~[~tyl]) current-event)
+      ==
     ?:  =(rank.current-event %star)
       ?-  dominion.current-event
         %l1     (list-in-jar (ly ~[~rigrut]) current-event)
@@ -899,6 +952,7 @@
 ++  common-tran  %tran-key-0
 ++  rut-ship-list  %-  ly
                    :*  ~rut
+                       ~tyl
                        ~holrut
                        ~rigrut
                        ~losrut
@@ -916,6 +970,7 @@
 :: initial keys for each point under ~rut
 ++  default-own-keys  %-  my:nl
                       :*  [~rut %rut-key-0]
+                          [~tyl %tyl-key-0]
                           [~holrut %holrut-key-0]
                           [~rigrut %rigrut-key-0]
                           [~losrut %losrut-key-0]
@@ -932,6 +987,7 @@
 ::
 ++  default-manage-keys  %-  my:nl
                          :*  [~rut %rut-mkey-0]
+                             [~tyl %tyl-mkey-0]
                              [~holrut %holrut-mkey-0]
                              [~rigrut %rigrut-mkey-0]
                              [~losrut %losrut-mkey-0]
@@ -946,7 +1002,9 @@
                              ~
                          ==
 ++  default-spawn-keys  %-  my:nl
-                        :*  [~holrut %holrut-skey-0]
+                        :*  [~rut %rut-skey-0]
+                            [~tyl %tyl-skey-0]
+                            [~holrut %holrut-skey-0]
                             [~losrut %losrut-skey-1]
                             [~rigrut %rigrut-skey-0]
                             ~
@@ -954,6 +1012,7 @@
 ::
 ++  default-xfer-keys  %-  my:nl
                        :*  [~rut %rut-tkey-0]
+                           [~tyl %tyl-tkey-0]
                            [~rigrut %rigrut-tkey-0]
                            [~larsyx-mapmeg %lm-tkey-0]
                            [~holrut %holrut-tkey-0]
@@ -1045,7 +1104,10 @@
                    ?-  proxy.cur-event
                      ?(%own %manage)  +(cur-nonce)
                      %spawn           ?-  rank.cur-event
-                                        %galaxy  cur-nonce ::TODO: galaxies can actually do L2 spawn proxies so this needs to change
+                                        %galaxy  ?-  dominion.cur-event
+                                                   ?(%l1 %spawn)  +(cur-nonce)
+                                                   %l2            cur-nonce
+                                                 ==
                                         %star    ?-  dominion.cur-event
                                                    %l1            cur-nonce
                                                    ?(%spawn %l2)  +(cur-nonce)
@@ -1175,7 +1237,7 @@
         ?+  proxy.cur-event  %wrong-key
           %own       (~(got by default-own-keys) cur-ship)
           %manage    (~(got by default-manage-keys) cur-ship)
-          %spawn     ?:  =(rank.cur-event %star)
+          %spawn     ?:  |(=(rank.cur-event %galaxy) =(rank.cur-event %star))
                        (~(got by default-spawn-keys) cur-ship)
                      %wrong-key
           %transfer  (~(got by default-xfer-keys) cur-ship)
@@ -1206,6 +1268,7 @@
   ++  which-spawn  ^-  ship
     ?+  cur-ship  !!
       %~rut            ~hasrut
+      %~tyl            ~hastyl
       %~rigrut         ~batbec-tapmep
       %~larsyx-mapmeg  ~nocryl-tobned
       %~holrut         ~namtuc-ritnux
