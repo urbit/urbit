@@ -316,12 +316,22 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
+  |^
   ?+  path  (on-peek:def path)
-      [%x %logs ~]  ``noun+!>(logs.state)
-      [%x %nas ~]   ``noun+!>(nas.state)
-      [%x %dns ~]   ``noun+!>(dns.nas.state)
-      [%x %own ~]   ``noun+!>(own.state)
+      [%x %logs ~]     ``noun+!>(logs.state)
+      [%x %nas ~]      ``noun+!>(nas.state)
+      [%x %dns ~]      ``noun+!>(dns.nas.state)
+      [%x %own ~]      ``noun+!>(own.state)
+      [%x %point @ ~]  ``noun+(point i.t.t.path)
   ==
+  ++  point
+    |=  wat=@t
+    ^-  vase
+    !>  ^-  (unit point:naive)
+    ?~  ship=(rush wat ;~(pfix sig fed:ag))
+      ~
+    (get:orm:naive points.nas.state u.ship)
+  --
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
