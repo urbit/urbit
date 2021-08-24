@@ -38,10 +38,10 @@ export interface RemoteContentProps {
 }
 
 export const IMAGE_REGEX = new RegExp(
-  /(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i
+  /(\.jpg|\.img|\.png|\.gif|\.tiff|\.jpeg|\.webp|\.webm|\.svg)$/i
 );
-export const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg|m4a)$/i);
-export const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
+export const AUDIO_REGEX = new RegExp(/(\.mp3|\.wav|\.ogg|\.m4a)$/i);
+export const VIDEO_REGEX = new RegExp(/(\.mov|\.mp4|\.ogv)$/i);
 
 const emptyRef = () => {};
 export function RemoteContent(props: RemoteContentProps) {
