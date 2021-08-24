@@ -2,7 +2,8 @@
 ::
 ::TODO  contract structures might go into stdlib
 ::
-=,  ethereum-types
+/+  ethereum
+=,  ethereum
 ::
 |%
 ++  command
@@ -35,6 +36,9 @@
       ::  %lock: put ships into lockup for the target address
       ::
       [%lock how=?(%spawn %transfer) what=(list ship) to=address =lockup]
+      ::  %custom: arbitrary ethereum transaction
+      ::
+      [%custom to=address value=@ud call=call-data:rpc]
       ::  %more: multiple batches sequentially
       ::
       [%more batches=(list batch)]

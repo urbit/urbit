@@ -11,6 +11,9 @@
       delegated-sending
   ==
 ::
+=/  ceremony=address
+  0x740d.6d74.1711.163d.3fca.cecf.1f11.b867.9a7c.7964
+::
 =/  deep-safe=address
   0x1111.1111.1111.1111.1111.1111.1111.1111.1111.1111
 =/  lockup-safe=$-(@p address)
@@ -148,28 +151,20 @@
       ~samzod
       ~wanzod
       ~litzod
-      ::TODO
+    ::
+      ::NOTE  ~tonwet owned but is outgoing transfer
   ==
 ::
-::TODO  for each asset in gax:
-::      - if we expect to own it:
-::        - find ownership address,
-::        - add configuration & transfer txs,
-::        - check for lockup:
-::          - print if unexpected,
-::          - if we have it, transfer
-::        - find other owned assets
-::      - if we expect lockup, but don't expect to own it:
-::        - ??? manually look up address maybe?
+=/  known=(list @p)
+  (weld saz (turn gax head))
 ::
-::TODO  for each asset in saz:
-::      - find ownership address,
-::      - configure, transfer txs
+~&  [%ecliptic ecliptic:mainnet-contracts]
 ::
 ^-  thread:spider
 |=  args=vase
 =/  m  (strand ,vase)
 ^-  form:m
+=|  owned=(map address (list @p))  ::  cache
 =|  out=(jar address batch:claz)
 ::  handle galaxies and lockups
 ::
@@ -194,30 +189,102 @@
   ::
   ;<  =deed:eth-noun  bind:m
     (rights:azimuth:az gal)
+  ~?  !=(0x0 transfer-proxy.deed)
+    [%unexpected-transfer-proxy gal transfer-proxy.deed]
   =.  out
     %+  ~(add ja out)  owner.deed
     ^-  batch:claz
     :-  %more
     :~  [%single %set-management-proxy gal shallow-safe]
         [%single %set-voting-proxy gal proxy-safe]
+        ::TODO  spawn proxy if stars remaining
+        ::      to shallow if < 50, otherwise deep
+        ::TODO  printf about that briefly
         [%single %transfer-ship gal deep-safe]
     ==
   ::  if it controls a lockup, transfer that too
   ::
   ;<  =batch:linear:az  bind:m
     (batches:linear:az owner.deed)
+  =/  transferring=?
+    &(!=(0x0 approved.batch) !=(owner.deed approved.batch))
   ?:  =(0 amount.batch)
     ~?  loc  [%missing-lockup gal owner.deed]
     loop-gax(gax t.gax)
-  ~?  !loc  [%unexpected-lockup gal owner.deed amount.batch]
-  =.  out
+  ~?  &(!loc !transferring)  [%unexpected-lockup gal owner.deed amount.batch]
+  ~?  &(loc transferring)    [%unexpected-lockup-transfer gal owner.deed amount.batch approved.batch]
+  ::  only transfer the lockup if we expected it
+  ::
+  =?  out  loc
     %+  ~(add ja out)  owner.deed
     [%single %approve-batch-transfer (lockup-safe gal)]
-  =.  out
+  =?  out  loc
     %+  ~(add ja out)  (lockup-safe gal)
     [%single %transfer-batch owner.deed]
+  ::  find other assets controlled by this address
+  ::
+  ;<  others=(list @p)  bind:m
+    =/  m  (strand ,(list @p))
+    ?^  h=(~(get by owned) owner.deed)  (pure:m u.h)
+    (get-owned-points:azimuth:az owner.deed)
+  =.  owned  (~(put by owned) owner.deed others)
+  =.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
+  ~?  !=(~ others)
+    [%has-others gal owner.deed others]
   ::
   loop-gax(gax t.gax)
 ::
+::  handle stars
+::
+|-
+=*  loop-saz  $
+?^  saz
+  =*  star  i.saz
+  ::  get the owner address, use it to config & transfer the star
+  ::
+  ;<  =deed:eth-noun  bind:m
+    (rights:azimuth:az star)
+    ~?  !=(0x0 transfer-proxy.deed)
+    [%unexpected-transfer-proxy star transfer-proxy.deed]
+  =.  out
+    %+  ~(add ja out)  owner.deed
+    ^-  batch:claz
+    :-  %more
+    :~  [%single %set-management-proxy star shallow-safe]
+        [%single %set-spawn-proxy star proxy-safe]
+        [%single %transfer-ship star deep-safe]
+    ==
+  ::  find other assets controlled by this address
+  ::
+  ;<  others=(list @p)  bind:m
+    =/  m  (strand ,(list @p))
+    ?^  h=(~(get by owned) owner.deed)  (pure:m u.h)
+    (get-owned-points:azimuth:az owner.deed)
+  =.  owned  (~(put by owned) owner.deed others)
+  =.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
+  ::NOTE  we exclude ~litzod because it has many spawned-but-pending planets
+  ~?  &(!=(~ others) !=(~litzod star))
+    [%has-others star owner.deed others]
+  loop-saz(saz t.saz)
+::
+::  ceremony address
+::
+;<  others=(list @p)  bind:m
+  =/  m  (strand ,(list @p))
+  ?^  h=(~(get by owned) ceremony)  (pure:m u.h)
+  (get-owned-points:azimuth:az ceremony)
+=.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
+::
+=.  out
+  %+  ~(add ja out)  ceremony
+  ^-  batch:claz
+  :-  %more
+  =,  mainnet-contracts
+  :~  [%custom ecliptic 0 'transferOwnership' [%address deep-safe]~]
+      [%custom linear-star-release 0 'transferOwnership' [%address deep-safe]~]
+      [%custom conditional-star-release 0 'transferOwnership' [%address shallow-safe]~]
+  ==
+::
 ::NOTE  flop because +ja adds to list head
+::TODO  poke claz instead
 (pure:m !>((~(run by out) flop)))

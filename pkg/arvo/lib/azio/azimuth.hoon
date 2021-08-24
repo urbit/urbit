@@ -11,6 +11,18 @@
   ^-  @t
   :((cury cat 3) func '(' (reel (join ', ' args) (cury cat 3)) ')')
 ::
+++  get-owned-points
+  |=  =address
+  =/  m  (strand:strandio ,(list @p))
+  ^-  form:m
+  ;<  res=@t  bind:m
+    %^  read-contract:ethio  url
+      `(call-id 'getOwnedPoints' (scot %ux address) ~)
+    [contract 'getOwnedPoints(address)' [%address address]~]
+  %-  pure:m
+  ;;  (list @p)
+  (decode-results:rpc res [%array %uint]~)
+::
 ++  rights
   |=  who=ship
   =/  m  (strand:strandio ,deed:eth-noun)

@@ -131,6 +131,7 @@
   ^-  (list transaction:rpc)
   ?-  -.batch
     %single     [(single nonce network as +.batch) ~]
+    %custom     [(custom nonce network +.batch) ~]
     %deed       (deed nonce network as +.batch)
     %invites    (invites nonce network as +.batch)
     %lock-prep  (lock-prep nonce network as +.batch)
@@ -427,4 +428,13 @@
       (div (mul unlock-years-per-batch yer:yo) :(add b1 b2 b3))
   ==
 ::
+++  custom
+  |=  $:  nonce=@ud
+          =network
+          to=address
+          value=@ud
+          call=call-data
+      ==
+  ^-  transaction:rpc
+  (do network nonce to (encode-call:rpc call))
 --
