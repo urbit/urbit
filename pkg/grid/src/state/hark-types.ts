@@ -4,9 +4,13 @@
  * this flow for updates.
  */
 
-export interface SystemNotification {
+export interface RuntimeLagNotification {
+  type: 'runtime-lag';
+}
+
+export interface BaseBlockedNotification {
   type: 'system-updates-blocked';
-  charges: string[];
+  desks: string[];
 }
 
 export interface BasicNotification {
@@ -15,4 +19,4 @@ export interface BasicNotification {
   message: string;
 }
 
-export type Notification = BasicNotification | SystemNotification;
+export type Notification = BasicNotification | BaseBlockedNotification | RuntimeLagNotification;

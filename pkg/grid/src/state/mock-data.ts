@@ -1,7 +1,8 @@
 import _ from 'lodash-es';
 import { Allies, Charges, DocketHrefGlob, Treaties, Treaty } from '@urbit/api/docket';
+import { Vat, Vats } from '@urbit/api/hood';
 import systemUrl from '../assets/system.png';
-import { SystemNotification } from './hark-types';
+// import { SystemNotification } from './hark-types';
 
 export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' | 'version'> = {
   cass: '~2021.8.11..05.11.10..b721',
@@ -151,7 +152,37 @@ export const mockAllies: Allies = [
   '~nalrys'
 ].reduce((acc, val) => ({ ...acc, [val]: charter }), {});
 
-export const mockBlockedChargeNotification: SystemNotification = {
+export const mockBlockedChargeNotification: any = {
   type: 'system-updates-blocked',
   charges: ['groups', 'pomodoro']
 };
+
+export const mockVat = (desk: string, blockers?: boolean): Vat => ({
+  cass: {
+    da: 1629849472746,
+    ud: 1
+  },
+  desk,
+  arak: {
+    rein: {
+      sub: [],
+      add: []
+    },
+    aeon: 3,
+    desk,
+    next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
+    ship: '~dopzod'
+  },
+  hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
+});
+
+const badVats = ['inbox', 'system', 'terminal', 'base'];
+export const mockVats = _.reduce(
+  mockCharges,
+  (vats, charge, desk) => {
+    return { ...vats, [desk]: mockVat(desk, !badVats.includes(desk)) };
+  },
+  { base: mockVat('base', true) } as Vats
+);
+
+console.log(mockVats);

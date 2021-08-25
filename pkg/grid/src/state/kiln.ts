@@ -1,8 +1,10 @@
-import { getVats, Vats, scryLag, KilnDiff } from '@urbit/api';
+import { getVats, Vats, scryLag, getBlockers } from '@urbit/api';
 import create from 'zustand';
 import produce from 'immer';
+import { useCallback } from 'react';
 import api from './api';
-import {getBlockers} from '../../../npm/api/hood';
+import { fakeRequest, useMockData } from './util';
+import { mockVats } from './mock-data';
 
 interface KilnState {
   vats: Vats;
@@ -12,12 +14,15 @@ interface KilnState {
   set: (s: KilnState) => void;
 }
 export const useKilnState = create<KilnState>((set) => ({
-  vats: {},
-  lag: true,
+  vats: useMockData ? mockVats : {},
+  lag: !!useMockData,
   fetchVats: async () => {
+    if (useMockData) {
+      await fakeRequest({}, 500);
+      return;
+    }
     const vats = await api.scry<Vats>(getVats);
-    console.log(vats);
-    set ({ vats });
+    set({ vats });
   },
   fetchLag: async () => {
     const lag = await api.scry<boolean>(scryLag);
@@ -25,18 +30,20 @@ export const useKilnState = create<KilnState>((set) => ({
   },
   set: produce(set)
 }));
+console.log(useKilnState.getState());
 
-const selBlockers = (s: KilnState) => getBlockers(s.vats)
+const selBlockers = (s: KilnState) => getBlockers(s.vats);
 export function useBlockers() {
   return useKilnState(selBlockers);
+}
+
+export function useVat(desk: string) {
+  return useKilnState(useCallback((s) => s.vats[desk], [desk]));
 }
 
 const selLag = (s: KilnState) => s.lag;
 export function useLag() {
   return useKilnState(selLag);
 }
-
-
-window.kiln = useKilnState;
 
 export default useKilnState;

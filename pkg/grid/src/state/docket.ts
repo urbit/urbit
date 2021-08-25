@@ -22,9 +22,7 @@ import {
 import { kilnRevive, kilnSuspend } from '@urbit/api/hood';
 import api from './api';
 import { mockAllies, mockCharges, mockTreaties } from './mock-data';
-import { fakeRequest } from './util';
-
-const useMockData = import.meta.env.MODE === 'mock';
+import { fakeRequest, useMockData } from './util';
 
 interface DocketState {
   charges: Charges;
@@ -233,7 +231,14 @@ export function useTreaty(host: string, desk: string) {
   );
 }
 
+export function allyForTreaty(ship: string, desk: string) {
+  const ref = `${ship}/${desk}`;
+  const { allies } = useDocketState.getState();
+  const ally = Object.entries(allies).find(([, allied]) => allied.includes(ref))?.[0];
+  return ally;
+}
+
 // xx useful for debugging
-// window.docket = useDocketState.getState;
+window.docket = useDocketState.getState;
 
 export default useDocketState;
