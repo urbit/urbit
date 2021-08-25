@@ -23,3 +23,7 @@ export function getAppHref(href: DocketHref) {
 export function disableDefault<T extends Event>(e: T): void {
   e.preventDefault();
 }
+
+export function disableDefault<T extends Event>(e: T): void {
+  e.preventDefault();
+}
