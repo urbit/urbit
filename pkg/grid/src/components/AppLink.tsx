@@ -1,16 +1,22 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { HTMLProps, ReactNode } from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 import { Docket } from '@urbit/api';
 import { getAppHref } from '../state/util';
 
 type Sizes = 'xs' | 'small' | 'default';
+type LinkOrAnchorProps = {
+  [P in keyof LinkProps &
+    keyof HTMLProps<HTMLAnchorElement>]?: LinkProps[P] extends HTMLProps<HTMLAnchorElement>[P]
+    ? LinkProps[P]
+    : never;
+};
 
-export type AppLinkProps = Omit<LinkProps, 'to'> & {
-  app: Docket;
+export type AppLinkProps<T extends Docket> = Omit<LinkOrAnchorProps, 'to'> & {
+  app: T;
   size?: Sizes;
   selected?: boolean;
-  to?: (app: Docket) => LinkProps['to'];
+  to?: (app: T) => LinkProps['to'] | undefined;
 };
 
 const sizeMap: Record<Sizes, string> = {
@@ -19,24 +25,32 @@ const sizeMap: Record<Sizes, string> = {
   default: 'w-12 h-12 mr-3 rounded-lg'
 };
 
-export const AppLink = ({
+export const AppLink = <T extends Docket>({
   app,
   to,
   size = 'default',
   selected = false,
   className,
   ...props
-}: AppLinkProps) => {
-  return (
-    <Link
-      to={(to && to(app)) || getAppHref(app.href)}
-      className={classNames(
-        'flex items-center default-ring ring-offset-2 rounded-lg',
-        selected && 'ring-4',
-        className
-      )}
-      {...props}
-    >
+}: AppLinkProps<T>) => {
+  const linkTo = to?.(app);
+  const linkClassnames = classNames(
+    'flex items-center default-ring ring-offset-2 rounded-lg',
+    selected && 'ring-4',
+    className
+  );
+  const link = (children: ReactNode) =>
+    linkTo ? (
+      <Link to={linkTo} className={linkClassnames} {...props}>
+        {children}
+      </Link>
+    ) : (
+      <a href={getAppHref(app.href)} className={linkClassnames} {...props}>
+        {children}
+      </a>
+    );
+  return link(
+    <>
       <div
         className={classNames('flex-none relative bg-gray-200 rounded-lg', sizeMap[size])}
         style={{ backgroundColor: app.color }}
@@ -53,6 +67,6 @@ export const AppLink = ({
         <p>{app.title}</p>
         {app.info && size === 'default' && <p className="font-normal">{app.info}</p>}
       </div>
-    </Link>
+    </>
   );
 };

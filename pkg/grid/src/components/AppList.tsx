@@ -4,13 +4,13 @@ import { MatchItem } from '../nav/Nav';
 import { useRecentsStore } from '../nav/search/Home';
 import { AppLink, AppLinkProps } from './AppLink';
 
-type AppListProps = {
-  apps: Docket[];
+type AppListProps<T extends Docket> = {
+  apps: T[];
   labelledBy: string;
   matchAgainst?: MatchItem;
   onClick?: (e: MouseEvent<HTMLAnchorElement>, app: Docket) => void;
   listClass?: string;
-} & Omit<AppLinkProps, 'app' | 'onClick'>;
+} & Omit<AppLinkProps<T>, 'app' | 'onClick'>;
 
 export function appMatches(target: Docket, match?: MatchItem): boolean {
   if (!match) {
@@ -21,14 +21,14 @@ export function appMatches(target: Docket, match?: MatchItem): boolean {
   return target.title === matchValue; // TODO: need desk name or something || target.href === matchValue;
 }
 
-export const AppList = ({
+export const AppList = <T extends Docket>({
   apps,
   labelledBy,
   matchAgainst,
   onClick,
   listClass = 'space-y-8',
   ...props
-}: AppListProps) => {
+}: AppListProps<T>) => {
   const addRecentApp = useRecentsStore((state) => state.addRecentApp);
   const selected = useCallback((app: Docket) => appMatches(app, matchAgainst), [matchAgainst]);
 

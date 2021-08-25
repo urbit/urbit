@@ -3,18 +3,19 @@ import { Docket } from '@urbit/api/docket';
 import cn from 'classnames';
 
 interface DocketImageProps extends Pick<Docket, 'color' | 'image'> {
-  small?: boolean;
   className?: string;
+  sizing: 'small' | 'full';
 }
 
-export function DocketImage({ color, image, className = '', small = false }: DocketImageProps) {
-  const sizing = small
-    ? 'w-4 h-4 md:w-6 md:h-6 rounded-md'
-    : 'w-12 h-12 md:w-20 md:h-20 rounded-xl';
+export function DocketImage({ color, image, className = '', sizing = 'full' }: DocketImageProps) {
+  const sizingClass =
+    sizing === 'full'
+      ? 'w-full h-full md:w-full md:h-full rounded-md'
+      : 'w-12 h-12 md:w-20 md:h-20 rounded-xl';
 
   return (
     <div
-      className={cn(sizing, `flex-none relative bg-gray-200`, className)}
+      className={cn(sizingClass, `flex-none relative bg-gray-200`, className)}
       style={{ backgroundColor: color }}
     >
       {image && (
