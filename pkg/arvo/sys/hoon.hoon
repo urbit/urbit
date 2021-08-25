@@ -3071,6 +3071,13 @@
       =/  val  (pour a)
       ?>  ?=(^ val)
       u.val
+    ::
+    ++  lex                                             ::  lexicographic order
+      |=  [l=[p=@ k=@] r=[p=@ k=@]]
+      ^-  ?
+      ?:  =(p.l p.r)
+        (lth k.l k.r)
+      (lth p.l p.r)
     --
     ::
     ~%  %has-core  ..has  ~
@@ -3312,7 +3319,35 @@
         [bp [k.bb v.bb (put:qor t.bb k p v)]]
       (vip:qat a (mug k) p [k v ~])
     ::
-    ++  apt  !!
+    ++  apt                                             ::  check correctness
+      ~/  %apt
+      |=  a=pri
+      |^  ^-  ?
+      ?:  uni  &
+      =/  tup=(list (trel @ @ buc))
+        (tap:qat a)
+      (levy tup val)
+      ::
+      ++  uni                                           ::  unique keys
+        =/  l  (sort (key a) gor)
+        =|  [a=(unit _?>(?=(^ l) i.l))]
+        |-  ^-  ?
+        ?~  l
+          %&
+        ?:  =(a (some i.l))
+          %|
+        $(l t.l, a (some i.l))
+      ::
+      ++  val                                           ::  valid bucket
+        |=  [h=@ p=@ =buc]
+        ^-  ?
+        ?&  (apt:qor t.buc)
+            =/  tup=(list lelem:qor)
+              (tap:qor t.buc)
+            %+  levy  tup
+            |=([k @ v] &(=(h (mug +<-)) (lex [p k.buc] [+<+< +<-])))
+        ==
+      --
     --
   --
 ::
@@ -3340,7 +3375,7 @@
 ++  pry                                                 ::  psq
   |*  [k=mold v=mold]
   |=  a=*
-  =/  cor  (ord:up k v)
+  =/  cor  (has:up k v)
   =/  b  ;;(pri:cor a)
   ?>  (apt:cor b)
   b
