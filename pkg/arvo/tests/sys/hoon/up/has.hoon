@@ -79,7 +79,6 @@
   ==
 ::
 ++  test-cut  ^-  tang
-  =/  zr  (gas:cor ~ ~[[5 101 'a'] [3 100 'b']])
   ;:  weld
     %+  expect-eq
       !>  ~

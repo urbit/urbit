@@ -4,7 +4,7 @@
 =/  pr  (gas:cor ~ ~[[1 0 'A'] [2 0 'B'] [3 0 'C'] [4 0 'D']])
 =/  qr
   %+  gas:cor  ~
-  ~[[1 3 'A'] [2 2 'B'] [3 1 'C'] [4 1 'D'] [5 10 'E'] [6 0 'F']]
+  ~[[1 3 'A'] [2 2 'B'] [3 1 'C'] [4 1 'D'] [5 10 'E'] [6 0 'F'] [7 0 'G']]
 |%
 ++  test-balance-errors  ^-  tang
   =/  node  [[0 0 'a'] ~ 0 ~]
@@ -101,13 +101,12 @@
   ==
 ::
 ++  test-cut  ^-  tang
-  =/  zr  (gas:cor ~ ~[[5 101 'a'] [3 100 'b']])
   ;:  weld
     %+  expect-eq
       !>  ~
       !>  (cut:cor ~)
     %+  expect-eq
-      !>  (some [3 1 'C'])
+      !>  (some [6 0 'F'])
       !>  (min:cor (cut:cor qr))
   ==
 ::
