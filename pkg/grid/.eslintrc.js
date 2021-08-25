@@ -29,6 +29,7 @@ module.exports = {
     'no-undef': 'off',
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['error'],
+    'no-unused-expressions': ['error', { allowShortCircuit: true }],
     'no-use-before-define': 'off',
     'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['draft'] }],
     '@typescript-eslint/no-use-before-define': 'off',

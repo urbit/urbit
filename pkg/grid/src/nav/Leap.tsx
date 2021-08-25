@@ -136,7 +136,7 @@ export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: 
         return;
       }
 
-      const input = [slugify(getMatch(value)?.value || value)];
+      const input = [getMatch(value)?.value || slugify(value)];
       if (appsMatch) {
         input.unshift(match?.params.query || '');
       } else {
