@@ -34,9 +34,7 @@ export const AppList = ({ apps, labelledBy, matchAgainst, onClick, ...props }: A
             selected={selected(app)}
             onClick={(e) => {
               addRecentApp(app);
-              if (onClick) {
-                onClick(e, app);
-              }
+              onClick && onClick(e, app);
             }}
           />
         </li>
