@@ -2,7 +2,8 @@ import { chadIsRunning } from '@urbit/api/docket';
 import clipboardCopy from 'clipboard-copy';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { PillButton } from '../../components/Button';
+import { Button, PillButton } from '../../components/Button';
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../components/Dialog';
 import { DocketHeader } from '../../components/DocketHeader';
 import { ShipName } from '../../components/ShipName';
 import { Spinner } from '../../components/Spinner';
@@ -10,8 +11,10 @@ import { TreatyMeta } from '../../components/TreatyMeta';
 import useDocketState, { useCharges, useTreaty } from '../../state/docket';
 import { getAppHref } from '../../state/util';
 import { useLeapStore } from '../Nav';
+import { useRecentsStore } from './Home';
 
 export const AppInfo = () => {
+  const addRecentApp = useRecentsStore((state) => state.addRecentApp);
   const select = useLeapStore((state) => state.select);
   const { ship, host, desk } = useParams<{ ship: string; host: string; desk: string }>();
   const treaty = useTreaty(host, desk);
@@ -49,23 +52,46 @@ export const AppInfo = () => {
       <DocketHeader docket={treaty}>
         <div className="col-span-2 md:col-span-1 flex items-center space-x-4">
           {installed && (
-            <PillButton as="a" href={getAppHref(treaty.href)} target={treaty.title || '_blank'}>
+            <PillButton
+              variant="alt-primary"
+              as="a"
+              href={getAppHref(treaty.href)}
+              target={treaty.title || '_blank'}
+              onClick={() => addRecentApp(treaty)}
+            >
               Open App
             </PillButton>
           )}
           {!installed && (
-            <PillButton onClick={installApp}>
-              {installing ? (
-                <>
-                  <Spinner />
-                  <span className="sr-only">Installing...</span>
-                </>
-              ) : (
-                'Get App'
-              )}
-            </PillButton>
+            <Dialog>
+              <DialogTrigger as={PillButton} variant="alt-primary">
+                {installing ? (
+                  <>
+                    <Spinner />
+                    <span className="sr-only">Installing...</span>
+                  </>
+                ) : (
+                  'Get App'
+                )}
+              </DialogTrigger>
+              <DialogContent showClose={false} className="max-w-[400px] space-y-6">
+                <h2 className="h4">Install &ldquo;{treaty.title}&rdquo;</h2>
+                <p className="text-base tracking-tight pr-6">
+                  This application will be able to view and interact with the contents of your
+                  Urbit. Only install if you trust the developer.
+                </p>
+                <div className="flex space-x-6">
+                  <DialogClose as={Button} variant="secondary">
+                    Cancel
+                  </DialogClose>
+                  <DialogClose as={Button} onClick={installApp}>
+                    Get &ldquo;{treaty.title}&rdquo;
+                  </DialogClose>
+                </div>
+              </DialogContent>
+            </Dialog>
           )}
-          <PillButton variant="secondary" onClick={copyApp}>
+          <PillButton variant="alt-secondary" onClick={copyApp}>
             Copy App Link
           </PillButton>
         </div>

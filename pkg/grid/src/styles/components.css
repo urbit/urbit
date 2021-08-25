@@ -22,6 +22,10 @@
   @apply min-w-52 p-4 rounded-xl;
 }
 
+.notification {
+  @apply p-4 bg-gray-100 rounded-xl;
+}
+
 .spinner {
   @apply inline-flex items-center w-6 h-6 animate-spin;
 }

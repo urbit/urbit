@@ -25,25 +25,34 @@ export const Grid: FunctionComponent<GridProps> = ({ match }) => {
     fetchAllies();
     fetchVats();
     fetchLag();
-    api.subscribe({ app: 'hood', path: '/kiln/vats', event: (data: KilnDiff) => {
-      console.log(data);
-    }, err: () => { }, quit: () => {} }).catch(e => {
-      console.log(e);
-
-    }).then(r => { console.log(r); });
-
+    api
+      .subscribe({
+        app: 'hood',
+        path: '/kiln/vats',
+        event: (data: KilnDiff) => {
+          console.log(data);
+        },
+        err: () => {},
+        quit: () => {}
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+      .then((r) => {
+        console.log(r);
+      });
   }, []);
 
   return (
     <div className="flex flex-col">
-      <header className="sticky top-0 left-0 z-30 flex justify-center w-full bg-white">
+      <header className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 z-30 flex justify-center w-full bg-white">
         <Nav menu={match.params.menu} />
       </header>
 
-      <main className="h-full w-full flex justify-center pt-24 pb-32 relative z-0">
+      <main className="h-full w-full flex justify-center pt-4 md:pt-16 pb-32 relative z-0">
         {!chargesLoaded && <span>Loading...</span>}
         {chargesLoaded && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 px-4 md:px-8 w-full max-w-6xl">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 px-4 md:px-8 w-full max-w-6xl">
             {charges &&
               map(omit(charges, 'grid'), (charge, desk) => (
                 <Tile key={desk} charge={charge} desk={desk} />

@@ -1,12 +1,20 @@
-import classNames from 'classnames';
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import React, { useEffect, useMemo } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import fuzzy from 'fuzzy';
-import { ShipName } from '../../components/ShipName';
-import { useLeapStore } from '../Nav';
+import { Provider } from '@urbit/api';
+import { MatchItem, useLeapStore } from '../Nav';
 import { useAllies } from '../../state/docket';
+import { ProviderList } from '../../components/ProviderList';
 
 type ProvidersProps = RouteComponentProps<{ ship: string }>;
+
+export function providerMatch(provider: Provider | string): MatchItem {
+  if (typeof provider === 'string') {
+    return { value: provider, display: provider };
+  }
+
+  return { value: provider.shipName, display: provider.nickname };
+}
 
 export const Providers = ({ match }: ProvidersProps) => {
   const { selectedMatch, select } = useLeapStore((state) => ({
@@ -30,10 +38,7 @@ export const Providers = ({ match }: ProvidersProps) => {
 
               return right - left;
             })
-            .map((el) => {
-              console.log(el);
-              return el.original;
-            })
+            .map((el) => ({ shipName: el.original }))
         : [],
     [allies, search]
   );
@@ -47,22 +52,10 @@ export const Providers = ({ match }: ProvidersProps) => {
   useEffect(() => {
     if (results) {
       useLeapStore.setState({
-        matches: results.map((p) => ({ value: p, display: p }))
+        matches: results.map(providerMatch)
       });
     }
   }, [results]);
-
-  const isSelected = useCallback(
-    (target: string) => {
-      if (!selectedMatch) {
-        return false;
-      }
-
-      const matchValue = selectedMatch.display || selectedMatch.value;
-      return target === matchValue;
-    },
-    [selectedMatch]
-  );
 
   return (
     <div className="dialog-inner-container md:px-6 md:py-8 h4 text-gray-400" aria-live="polite">
@@ -73,28 +66,7 @@ export const Providers = ({ match }: ProvidersProps) => {
         </p>
       </div>
       {results && (
-        <ul className="space-y-8" aria-labelledby="providers">
-          {results.map((p) => (
-            <li key={p} id={p} role="option" aria-selected={isSelected(p)}>
-              <Link
-                to={`${match?.path.replace(':ship', p)}/apps`}
-                className={classNames(
-                  'flex items-center space-x-3 default-ring ring-offset-2 rounded-lg',
-                  isSelected(p) && 'ring-4'
-                )}
-              >
-                <div className="flex-none relative w-12 h-12 bg-black rounded-lg">
-                  {/* TODO: Handle sigils */}
-                </div>
-                <div className="flex-1 text-black">
-                  <p className="font-mono">
-                    <ShipName name={p} />
-                  </p>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <ProviderList providers={results} labelledBy="providers" matchAgainst={selectedMatch} />
       )}
       <p>That&apos;s it!</p>
     </div>
