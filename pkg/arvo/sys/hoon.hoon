@@ -2394,10 +2394,12 @@
           %|
         $(l t.l, a (some i.l))
       ::
-      ++  lex                                           ::  lexigraphical order
+      ++  lex                                           ::  lexicographic order
         |=  [[a=@ b=*] [l=@ r=*]]
         ^-  ?
-        |((lth a l) (gor b r))
+        ?:  =(a l)
+          (gor b r)
+        (lth a l)
       ::
       ++  hep                                           ::  min-heap prop
         ?~  a
@@ -2542,10 +2544,12 @@
         ==
       ==
     ::
-    ++  lex                                             ::  lexigraphical order
+    ++  lex                                             ::  lexicographic order
       |=  [l=[p=@ k=@] r=[p=@ k=@]]
       ^-  ?
-      |((lth p.l p.r) (lth k.l k.r))
+      ?:  =(p.l p.r)
+        (lth k.l k.r)
+      (lth p.l p.r)
     ::
     ++  funk                                            ::  bin shrink-left
       ~/  %funk
