@@ -1,5 +1,5 @@
 import { Poke, Scry } from '../lib';
-import {Vats} from './types';
+import { Vats } from './types';
 import _ from 'lodash';
 
 export const getVats: Scry = {
@@ -59,11 +59,17 @@ export function kilnRevive(
   };
 }
 
+export const kilnBump: Poke<any> = {
+  app: 'hood',
+  mark: 'kiln-bump',
+  json: null
+};
+
 export const scryLag: Scry = ({ app: 'hood', path: '/kiln/lag' });
 
 export function getBlockers(vats: Vats): string[] {
-  let blockers: string[] = [];
-  const base = vats.base;
+  const blockers: string[] = [];
+  const base = vats?.base;
   if(!base) {
     return blockers;
   }

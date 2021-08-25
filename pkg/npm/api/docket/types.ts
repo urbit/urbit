@@ -1,3 +1,4 @@
+import { Cass } from '../hood';
 export type DeskStatus = 'active' | 'suspended';
 
 export type DocketHref = DocketHrefSite | DocketHrefGlob;
@@ -51,7 +52,7 @@ export interface SuspendChad {
 export interface Treaty extends Docket {
   ship: string;
   desk: string;
-  cass: string;
+  cass: Cass;
   hash: string;
 }
 

@@ -107,7 +107,7 @@ export type KilnDiff =
  * Cases for revision
  *
  */
-interface Cass {
+export interface Cass {
   /**
    * Revision number
    */
@@ -118,7 +118,7 @@ interface Cass {
    * @remarks
    * If \@da is outside valid positive unix timestamp, value will be zero
    */
-  da: string;
+  da: number;
 }
 
 /**
