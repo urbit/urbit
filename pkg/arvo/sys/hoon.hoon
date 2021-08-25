@@ -3165,9 +3165,25 @@
       ?~  b  a
       $(b t.b, a (put a p.i.b q.i.b r.i.b))
     ::
-    ++  tap  !!
+    ++  tap                                             ::  to list
+      |=  a=pri
+      ^-  (list (trel k @ v))
+      =/  lis=(list (trel @ @ buc))
+        (tap:qat a)
+      =|  acc=(list (trel k @ v))
+      |-  ^+  acc
+      ?~  lis  acc
+      =/  hed  i.lis
+      =/  res=(list lelem:qor)
+        (tap:qor t.r.hed)
+      =.  acc  (weld res acc)
+      $(lis t.lis, acc [[k.r.hed q.hed v.r.hed] acc])
     ::
-    ++  key  !!
+    ++  key                                             ::  list of keys
+      |=  a=pri
+      ^-  (list k)
+      %+  turn  `(list (trel k @ v))`(tap a)
+      |=([k @ v] +<-)
     ::
     ++  pan                                             ::  insert view
       ~/  %pan
