@@ -1733,7 +1733,11 @@ _pier_pill_parse(u3_noun pil)
 /* _pier_boot_make(): construct boot sequence
 */
 static u3_boot
-_pier_boot_make(u3_noun who, u3_noun wyr, u3_noun ven, u3_noun pil)
+_pier_boot_make(u3_noun who,
+                u3_noun wyr,
+                u3_noun ven,
+                u3_noun pil,
+                u3_weak fed)
 {
   u3_boot bot_u = _pier_pill_parse(pil); // transfer
 
@@ -1757,6 +1761,20 @@ _pier_boot_make(u3_noun who, u3_noun wyr, u3_noun ven, u3_noun pil)
     bot_u.mod = u3nc(u3nc(wir, wyr), bot_u.mod);  // transfer [wir] and [wyr]
   }
 
+  //  include additional key configuration events if we have multiple keys
+  //
+  if ( (u3_none != fed) && (c3y == u3du(u3h(fed))) ) {
+    u3_noun wir = u3nt(c3__j, c3__seed, u3_nul);
+    u3_noun tag = u3i_string("rekey");
+    u3_noun kyz = u3t(u3t(fed));
+    while ( u3_nul != kyz ) {
+      u3_noun cad = u3nc(u3k(tag), u3k(u3h(kyz)));
+      bot_u.use = u3nc(u3nc(u3k(wir), cad), bot_u.use);
+      kyz = u3t(kyz);
+    }
+    u3z(tag); u3z(wir);
+  }
+
   //  prepend legacy boot event to the userspace sequence
   //
   {
@@ -1771,13 +1789,18 @@ _pier_boot_make(u3_noun who, u3_noun wyr, u3_noun ven, u3_noun pil)
     bot_u.use = u3nc(u3nc(wir, cad), bot_u.use);
   }
 
+  u3z(fed);
   return bot_u;
 }
 
 /* _pier_boot_plan(): construct and commit boot sequence
 */
 static c3_o
-_pier_boot_plan(u3_pier* pir_u, u3_noun who, u3_noun ven, u3_noun pil)
+_pier_boot_plan(u3_pier* pir_u,
+                u3_noun who,
+                u3_noun ven,
+                u3_noun pil,
+                u3_weak fed)
 {
   u3_boot bot_u;
   {
@@ -1785,7 +1808,7 @@ _pier_boot_plan(u3_pier* pir_u, u3_noun who, u3_noun ven, u3_noun pil)
     pir_u->fak_o = ( c3__fake == u3h(ven) ) ? c3y : c3n;
     u3r_chubs(0, 2, pir_u->who_d, who);
 
-    bot_u = _pier_boot_make(who, _pier_wyrd_card(pir_u), ven, pil);
+    bot_u = _pier_boot_make(who, _pier_wyrd_card(pir_u), ven, pil, fed);
     pir_u->lif_w = u3qb_lent(bot_u.bot);
   }
 
@@ -1860,7 +1883,8 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
              u3_noun who,                   //  identity
              u3_noun ven,                   //  boot event
              u3_noun pil,                   //  type-of/path-to pill
-             u3_noun pax)                   //  path to pier
+             u3_noun pax,                   //  path to pier
+             u3_weak fed)                   //  extra private keys
 {
   u3_pier* pir_u;
 
@@ -1872,7 +1896,7 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
 
   //  XX must be called from on_lord_live
   //
-  if ( c3n == _pier_boot_plan(pir_u, who, ven, pil) ) {
+  if ( c3n == _pier_boot_plan(pir_u, who, ven, pil, fed) ) {
     fprintf(stderr, "pier: boot plan fail\r\n");
     //  XX dispose
     //
