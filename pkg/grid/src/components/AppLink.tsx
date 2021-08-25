@@ -52,7 +52,7 @@ export const AppLink = <T extends Docket>({
   return link(
     <>
       <div
-        className={classNames('flex-none relative bg-gray-200 rounded-lg', sizeMap[size])}
+        className={classNames('flex-none relative bg-gray-200', sizeMap[size])}
         style={{ backgroundColor: app.color }}
       >
         {app.image && (

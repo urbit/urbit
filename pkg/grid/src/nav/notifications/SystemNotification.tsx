@@ -7,11 +7,10 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../compone
 import { Elbow } from '../../components/icons/Elbow';
 import api from '../../state/api';
 import { useCharges } from '../../state/docket';
-import {
-  BaseBlockedNotification as BaseBlockedNotificationType,
-} from '../../state/hark-types';
+import { BaseBlockedNotification as BaseBlockedNotificationType } from '../../state/hark-types';
 
 import { NotificationButton } from './NotificationButton';
+import { disableDefault } from '../../state/util';
 
 interface BaseBlockedNotificationProps {
   notification: BaseBlockedNotificationType;
@@ -50,7 +49,7 @@ export const BaseBlockedNotification = ({ notification }: BaseBlockedNotificatio
   const handlePauseOTAs = useCallback(() => {}, []);
 
   const handleArchiveApps = useCallback(async () => {
-    await Promise.all(desks.map(d => api.poke(kilnSuspend(d))));
+    await Promise.all(desks.map((d) => api.poke(kilnSuspend(d))));
     // TODO: retrigger OTA?
   }, [desks]);
 
@@ -69,13 +68,7 @@ export const BaseBlockedNotification = ({ notification }: BaseBlockedNotificatio
           <h2 id="blocked-apps">The following ({count}) apps blocked a System Update:</h2>
         </div>
       </header>
-      <AppList
-        apps={blockedCharges}
-        labelledBy="blocked-apps"
-        size="xs"
-        className="font-medium"
-        listClass="space-y-2"
-      />
+      <AppList apps={blockedCharges} labelledBy="blocked-apps" size="xs" className="font-medium" />
       <div className="space-y-6">
         <p>
           In order to proceed with the System Update, you’ll need to temporarily archive these apps,
@@ -120,6 +113,7 @@ export const BaseBlockedNotification = ({ notification }: BaseBlockedNotificatio
           </DialogTrigger>
           <DialogContent
             showClose={false}
+            onOpenAutoFocus={disableDefault}
             className="max-w-[400px] space-y-6 text-base tracking-tight"
           >
             <h2 className="h4">Archive ({count}) Apps and Apply System Update</h2>
@@ -131,7 +125,7 @@ export const BaseBlockedNotification = ({ notification }: BaseBlockedNotificatio
               apps={blockedCharges}
               labelledBy="blocked-apps"
               size="xs"
-              listClass="space-y-2"
+              className="text-sm"
             />
             <div className="flex space-x-6">
               <DialogClose as={Button} variant="secondary">

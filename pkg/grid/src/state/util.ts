@@ -19,3 +19,7 @@ export async function fakeRequest<T>(data: T, time = 300): Promise<T> {
 export function getAppHref(href: DocketHref) {
   return 'site' in href ? href.site : `/apps/${href.glob.base}`;
 }
+
+export function disableDefault<T extends Event>(e: T): void {
+  e.preventDefault();
+}
