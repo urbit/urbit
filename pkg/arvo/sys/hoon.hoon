@@ -2180,7 +2180,7 @@
       ?-    -.tor
           %sing
         ?.  =(k k.n.tor)  ~
-        (some [p.n.tor v.n.tor])
+        `[p.n.tor v.n.tor]
       ::
           %play
         ?:  |(=(k (top l.tor)) (gor k (top l.tor)))
@@ -2244,7 +2244,7 @@
         (toy [n.p.t.a l.p.t.a m.p.t.a] $(a [n.a r.p.t.a m.a]))
       ==
     ::
-    ++  cut                                             ::  delete min-prio val
+    ++  cut                                             ::  delete lowest-pri
       ~/  %cut
       |=  a=pri
       ^-  pri
@@ -2255,15 +2255,16 @@
     ++  jab                                             ::  update at key k
       ~/  %jab
       |*  [a=pri =k f=$-((unit (pair @ v)) (pair * (unit (pair @ v))))]
-      ^-  (pair _=>((f ~) -) pri)
+      =/  bon  _=>((f ~) -)
+      ^-  (pair bon pri)
       =/  ped  (pet a k)
       =?  a  ?=(^ ped)
         r.u.ped
       =/  pav
         ?~  ped
           ~
-        (some [p.u.ped q.u.ped])
-      =/  bee=(pair _=>((f ~) -) (unit (pair @ v)))
+        `[p.u.ped q.u.ped]
+      =/  bee=(pair bon (unit (pair @ v)))
         (f pav)
       :-  p.bee
       ?~  q.bee
@@ -2273,17 +2274,18 @@
     ++  jib                                             ::  update at min-prio
       ~/  %jib
       |*  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
-      ^-  (pair _=>((f ~) -) pri)
+      =/  bon  _=>((f ~) -)
+      ^-  (pair bon pri)
       =/  vue  (bot a)
       ?~  vue
-        =/  bee=(pair _=>((f ~) -) (unit (trel k @ v)))
+        =/  bee=(pair bon (unit (trel k @ v)))
           (f ~)
         :-  p.bee
         ?~  q.bee
           a
         (put a p.u.q.bee q.u.q.bee r.u.q.bee)
       =.  a  q.u.vue
-      =/  bee=(pair _=>((f ~) -) (unit (trel k @ v)))
+      =/  bee=(pair bon (unit (trel k @ v)))
         (f (some p.u.vue))
       :-  p.bee
       ?~  q.bee
@@ -2340,7 +2342,7 @@
       |=  a=pri
       ^-  (unit (pair lelem pri))
       ?~  a  ~
-      (some [n.a (sec t.a m.a)])
+      `[n.a (sec t.a m.a)]
     ::
     ++  pet                                             ::  delete view
       ~/  %pet
@@ -2349,25 +2351,25 @@
       ?~  a  ~
       ?~  t.a
         ?.  =(k k.n.a)  ~
-        (some [p.n.a v.n.a ~])
+        `[p.n.a v.n.a ~]
       ?-    -.t.a
           %llos
         ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
           =/  pat  $(a [n.p.t.a l.p.t.a m.p.t.a])
           ?~  pat  ~
-          (some [p.u.pat q.u.pat (toy r.u.pat [n.a r.p.t.a m.a])])
+          `[p.u.pat q.u.pat (toy r.u.pat [n.a r.p.t.a m.a])]
         =/  pat  $(a [n.a r.p.t.a m.a])
         ?~  pat  ~
-        (some [p.u.pat q.u.pat (toy [n.p.t.a l.p.t.a m.p.t.a] r.u.pat)])
+        `[p.u.pat q.u.pat (toy [n.p.t.a l.p.t.a m.p.t.a] r.u.pat)]
       ::
           %rlos
         ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
           =/  pat  $(a [n.a l.p.t.a m.p.t.a])
           ?~  pat  ~
-          (some [p.u.pat q.u.pat (toy r.u.pat [n.p.t.a r.p.t.a m.a])])
+          `[p.u.pat q.u.pat (toy r.u.pat [n.p.t.a r.p.t.a m.a])]
         =/  pat  $(a [n.p.t.a r.p.t.a m.a])
         ?~  pat  ~
-        (some [p.u.pat q.u.pat (toy [n.a l.p.t.a m.p.t.a] r.u.pat)])
+        `[p.u.pat q.u.pat (toy [n.a l.p.t.a m.p.t.a] r.u.pat)]
       ==
     ::
     ++  pan                                             ::  insert view
@@ -2375,9 +2377,9 @@
       |=  [a=pri e=lelem]
       ^-  (pair (unit (pair @ v)) pri)
       =/  vue  (pet a k.e)
-      ?~  vue
-        [~ (put a e)]
-      [(some [p.u.vue q.u.vue]) (put a e)]
+      :_  (put a e)
+      ?~  vue  ~
+      `[p.u.vue q.u.vue]
     ::
     ++  apt                                             ::  check correctness
       ~/  %apt
@@ -2506,12 +2508,10 @@
       ~/  %fuse
       |=  [m=@ l=pri r=pri]
       ^-  pri
-      ?~  l
-        r
+      ?~  l  r
       ?-    -.l
           %tip
-        ?~  r
-          l
+        ?~  r  l
         ?-    -.r
             %tip
           :-  %bin
@@ -2523,24 +2523,23 @@
           :-  %bin
           ?:  (lex [p.l k.l] [p.r k.r])
             [k.l p.l v.l m ~ r]
-          [k.r p.r v.r m l (fuse m.r l.r r.r)]
+          [k.r p.r v.r m l $(m m.r, l l.r, r r.r)]
         ==
       ::
           %bin
-        ?~  r
-          l
+        ?~  r  l
         ?-    -.r
             %tip
           :-  %bin
           ?:  (lex [p.l k.l] [p.r k.r])
-            [k.l p.l v.l m (fuse m.l l.l r.l) r]
+            [k.l p.l v.l m $(m m.l, l l.l, r r.l) r]
           [k.r p.r v.r m l ~]
         ::
             %bin
           :-  %bin
           ?:  (lex [p.l k.l] [p.r k.r])
-            [k.l p.l v.l m (fuse m.l l.l r.l) r]
-          [k.r p.r v.r m l (fuse m.r l.r r.r)]
+            [k.l p.l v.l m $(m m.l, l l.l, r r.l) r]
+          [k.r p.r v.r m l $(m m.r, l l.r, r r.r)]
         ==
       ==
     ::
@@ -2692,9 +2691,9 @@
         ~/  %cut
         |=  a=pri
         ^-  pri
-        =/  val  (bot a)
-        ?~  val  a
-        s.u.val
+        =/  b  (bot a)
+        ?~  b  a
+        s.u.b
       ::
       ++  jab                                           ::  alter
         ~/  %jab
@@ -2719,23 +2718,24 @@
         ~/  %jib
         =/  tyf  $-((unit (trel @ @ v)) (pair * (unit (trel @ @ v))))
         |*  [a=pri f=tyf]
-        ^-  (pair _=>((f ~) -) pri)
+        =/  bon  _=>((f ~) -)
+        ^-  (pair bon pri)
         ?~  a
-          =/  bee=(pair _=>((f ~) -) (unit (trel @ @ v)))
+          =/  bee=(pair bon (unit (trel @ @ v)))
             (f ~)
           :-  p.bee
           ?~  q.bee  ~
           [%tip p.u.q.bee q.u.q.bee r.u.q.bee]
         ?-    -.a
             %tip
-          =/  bee=(pair _=>((f ~) -) (unit (trel @ @ v)))
+          =/  bee=(pair bon (unit (trel @ @ v)))
             (f `[k.a p.a v.a])
           :-  p.bee
           ?~  q.bee  ~
           [%tip p.u.q.bee q.u.q.bee r.u.q.bee]
         ::
             %bin
-          =/  bee=(pair _=>((f ~) -) (unit (trel @ @ v)))
+          =/  bee=(pair bon (unit (trel @ @ v)))
             (f `[k.a p.a v.a])
           :-  p.bee
           ?~  q.bee  (fuse m.a l.a r.a)
@@ -3162,8 +3162,7 @@
       ~/  %gas
       |=  [a=pri b=(list (trel k @ v))]
       |-  ^-  pri
-      ?~  b
-        a
+      ?~  b  a
       $(b t.b, a (put a p.i.b q.i.b r.i.b))
     ::
     ++  tap  !!
@@ -3229,18 +3228,19 @@
       ~/  %jab
       =/  tyf  $-((unit (pair @ v)) (pair * (unit (pair @ v))))
       |*  [a=pri =k f=tyf]
-      ^-  (pair _=>((f ~) -) pri)
+      =/  bon  _=>((f ~) -)
+      ^-  (pair bon pri)
       =/  h  (mug k)
       =/  ped  (pet:qat a h)
       ?~  ped
-        =/  bee=(pair _=>((f ~) -) (unit (pair @ v)))
+        =/  bee=(pair bon (unit (pair @ v)))
           (f ~)
         :-  p.bee
         ?~  q.bee  a
         (raw:qat a h p.u.q.bee [k q.u.q.bee ~])
       =/  =buc  q.u.ped
       ?:  =(k k.buc)
-        =/  bee=(pair _=>((f ~) -) (unit (pair @ v)))
+        =/  bee=(pair bon (unit (pair @ v)))
           (f `[p.u.ped v.buc])
         :-  p.bee
         ?~  q.bee
@@ -3257,11 +3257,12 @@
     ++  jib                                             ::  update at min-prio
       ~/  %jib
       |*  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
-      ^-  (pair _=>((f ~) -) pri)
+      =/  bon  _=>((f ~) -)
+      ^-  (pair bon pri)
       =/  vue  (bot a)
       =?  a  ?=(^ vue)
         s.u.vue
-      =/  bee=(pair _=>((f ~) -) (unit (trel k @ v)))
+      =/  bee=(pair bon (unit (trel k @ v)))
         (f ?~(vue ~ `[p.u.vue q.u.vue r.u.vue]))
       :-  p.bee
       ?~  q.bee  a
