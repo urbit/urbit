@@ -3073,10 +3073,10 @@
       u.val
     ::
     ++  lex                                             ::  lexicographic order
-      |=  [l=[p=@ k=@] r=[p=@ k=@]]
+      |=  [l=[p=@ k=k] r=[p=@ k=k]]
       ^-  ?
       ?:  =(p.l p.r)
-        (lth k.l k.r)
+        (gor k.l k.r)
       (lth p.l p.r)
     --
     ::
