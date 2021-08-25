@@ -1,5 +1,5 @@
 /-  *docket, hood, treaty
-/+  *server, agentio, default-agent, dbug, verb
+/+  *server, multipart, agentio, default-agent, dbug, verb
 |%
 +$  card  card:agent:gall
 +$  state-0
@@ -298,7 +298,6 @@
   |=  [eyre-id=@ta inbound-request:eyre]
   ^-  (quip card _state)
   ::
-  ::TODO  caz needed? facts, maybe?
   =;  [payload=simple-payload:http caz=(list card) =_state]
     :_  state
     %+  weld  caz
@@ -311,22 +310,23 @@
     =-  [[307 ['location' -]~] ~]
     (cat 3 '/~/login?redirect=' url.request)
   ::
+  =*  headers   header-list.request
+  =/  req-line  (parse-request-line url.request)
+  ::
   |^  ?+  method.request  [[405^~ ~] ~ state]
         %'GET'   [handle-get-request ~ state]
-        %'POST'  handle-post-request
+        %'POST'  handle-upload
       ==
   ::
   ++  handle-get-request
     ^-  simple-payload:http
-    =*  headers   header-list.request
-    =/  req-line  (parse-request-line url.request)
     ?+  [site ext]:req-line  (redirect:gen '/apps/grid/')
         [[%session ~] [~ %js]]
       %-  inline-js-response
       (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~)
     ::
-        [[%upload ~] ?(~ [~ %html])]
-      !!  ::TODO
+        [[%docket %upload ~] ?(~ [~ %html])]
+      [[200 ~] `(upload-page ~)]
     ::
         [[%apps @ *] *]
       %+  payload-from-glob
@@ -334,9 +334,102 @@
       req-line(site (slag 2 site.req-line))
     ==
   ::
-  ++  handle-post-request
+  ++  upload-page
+    |=  msg=(list @t)
+    ^-  octs
+    %-  as-octt:mimes:html
+    %-  en-xml:html
+    ^-  manx
+    ;html
+      ;head
+        ;title:"%docket globulator"
+        ;meta(charset "utf-8");
+        ;style:'* { font-family: monospace; margin-top: 1em; }'
+      ==
+      ;body
+        ;h2:"%docket globulator"
+        ;+  ?.  =(~ msg)
+              :-  [%p ~]
+              (join `manx`;br; (turn msg |=(m=@t `manx`:/"{(trip m)}")))
+            ;p:"ur on ur own kid, glhf"  ::TODO  instructions
+        ;form(method "post", enctype "multipart/form-data")
+          ::TODO  could be dropdown
+          ;input(type "text", name "desk", placeholder "desk");
+          ;br;
+          ;input
+            =type             "file"
+            =name             "glob"
+            =directory        ""
+            =webkitdirectory  ""
+            =mozdirectory     "";
+          ;br;
+          ;button(type "submit"):"Glob!"
+        ==
+      ==
+    ==
+  ::
+  ++  handle-upload
     ^-  [simple-payload:http (list card) _state]
-    !!  ::TODO
+    ?.  ?=([[%docket %upload ~] ?(~ [~ %html])] [site ext]:req-line)
+      [[404^~ ~] [~ state]]
+    ::
+    =;  [desk=@ta =glob err=(list @t)]
+      =*  cha      ~(. ch desk)
+      =/  =charge  (~(got by charges) desk)
+      ::
+      ::REVIEW  these are important, right?
+      =?  err  =(~ glob)
+        ['no files for glob' err]
+      =?  err  ?=(%glob -.href.docket.charge)
+        ['desk does not use glob' err]
+      ::
+      ?.  =(~ err)
+        :_  [~ state]
+        [[400 ~] `(upload-page err)]
+      :-  [[200 ~] `(upload-page 'successfully globbed' ~)]
+      ::
+      =.  charges  (new-chad:cha glob+glob)
+      =.  by-base
+        =-  (~(put by by-base) - desk)
+        ?>  ?=(%glob -.href.docket.charge)
+        base.href.docket.charge
+      [~[add-fact:cha] state]
+    ::
+    ?~  parts=(de-request:multipart [header-list body]:request)
+      ~&  headers=header-list.request
+      [*@ta *glob 'failed to parse submitted data' ~]
+    ::
+    %+  roll  u.parts
+    |=  [[name=@t part:multipart] desk=@ta =glob err=(list @t)]
+    ^+  [desk glob err]
+    ?:  =('desk' name)
+      ::  must be a desk with existing charge
+      ::
+      ?.  ((sane %ta) body)
+        [desk glob (cat 3 'invalid desk: ' body) err]
+      ?.  (~(has by charges) body)
+        [desk glob (cat 3 'unknown desk: ' body) err]
+      [body glob err]
+    :-  desk
+    ::  all submitted files must be complete
+    ::
+    ::TODO  do we want to ignore .DS_Store and other such files?
+    ?.  =('glob' name)  [glob (cat 3 'weird part: ' name) err]
+    ?~  file            [glob 'file without filename' err]
+    ?~  type            [glob (cat 3 'file without type: ' u.file) err]
+    ?^  code            [glob (cat 3 'strange encoding: ' u.code) err]
+    =/  filp            (rush u.file fip)
+    ?~  filp            [glob (cat 3 'strange filename: ' u.file) err]
+    :_  err
+    ::  make sure to exclude the top-level dir from the path
+    %+  ~(put by glob)  (slag 1 `path`u.filp)
+    [u.type (as-octs:mimes:html body)]
+  ::
+  ++  fip
+    =,  de-purl:html
+    %+  cook
+      |=(pork (weld q (drop p)))
+    (cook deft (more fas smeg))
   ::
   ++  inline-js-response
     |=  js=cord
