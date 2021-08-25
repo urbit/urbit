@@ -40,6 +40,8 @@ export const useLeapStore = create<LeapStore>((set) => ({
     })
 }));
 
+window.leap = useLeapStore.getState;
+
 export type MenuState =
   | 'closed'
   | 'search'

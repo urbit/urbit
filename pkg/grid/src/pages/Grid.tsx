@@ -1,14 +1,13 @@
 import { map, omit } from 'lodash-es';
 import React, { FunctionComponent, useEffect } from 'react';
 import { Route, RouteComponentProps } from 'react-router-dom';
-import { KilnDiff } from '@urbit/api/hood';
 import { MenuState, Nav } from '../nav/Nav';
 import useDocketState, { useCharges } from '../state/docket';
 import { useKilnState } from '../state/kiln';
 import { RemoveApp } from '../tiles/RemoveApp';
 import { SuspendApp } from '../tiles/SuspendApp';
 import { Tile } from '../tiles/Tile';
-import api from '../state/api';
+import { TileInfo } from '../tiles/TileInfo';
 
 type GridProps = RouteComponentProps<{
   menu?: MenuState;
@@ -25,22 +24,6 @@ export const Grid: FunctionComponent<GridProps> = ({ match }) => {
     fetchAllies();
     fetchVats();
     fetchLag();
-    api
-      .subscribe({
-        app: 'hood',
-        path: '/kiln/vats',
-        event: (data: KilnDiff) => {
-          console.log(data);
-        },
-        err: () => {},
-        quit: () => {}
-      })
-      .catch((e) => {
-        console.log(e);
-      })
-      .then((r) => {
-        console.log(r);
-      });
   }, []);
 
   return (
@@ -59,6 +42,9 @@ export const Grid: FunctionComponent<GridProps> = ({ match }) => {
               ))}
           </div>
         )}
+        <Route exact path="/app/:desk">
+          <TileInfo />
+        </Route>
         <Route exact path="/app/:desk/suspend">
           <SuspendApp />
         </Route>

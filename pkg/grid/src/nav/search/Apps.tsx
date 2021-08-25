@@ -25,6 +25,7 @@ export const Apps = ({ match }: AppsProps) => {
   }));
   const provider = match?.params.ship;
   const treaties = useAllyTreaties(provider);
+  console.log(treaties);
   const results = useMemo(() => {
     if (!treaties) {
       return undefined;
@@ -46,12 +47,14 @@ export const Apps = ({ match }: AppsProps) => {
   const count = results?.length;
 
   useEffect(() => {
+    const { fetchAllyTreaties } = useDocketState.getState();
+    fetchAllyTreaties(provider);
     select(
       <>
         Apps by <ShipName name={provider} className="font-mono" />
       </>
     );
-  }, []);
+  }, [provider]);
 
   useEffect(() => {
     if (results) {
@@ -82,7 +85,7 @@ export const Apps = ({ match }: AppsProps) => {
           apps={results}
           labelledBy="developed-by"
           matchAgainst={selectedMatch}
-          to={(app) => `${match?.path.replace(':ship', provider)}/${slugify(app.base)}`}
+          to={(app) => `${match?.path.replace(':ship', provider)}/${app.ship}/${slugify(app.desk)}`}
         />
       )}
       <p>That&apos;s it!</p>

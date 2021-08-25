@@ -1,27 +1,17 @@
-import { chadIsRunning } from '@urbit/api/docket';
-import clipboardCopy from 'clipboard-copy';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, PillButton } from '../../components/Button';
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../components/Dialog';
-import { DocketHeader } from '../../components/DocketHeader';
+import { AppInfo } from '../../components/AppInfo';
 import { ShipName } from '../../components/ShipName';
-import { Spinner } from '../../components/Spinner';
-import { TreatyMeta } from '../../components/TreatyMeta';
-import useDocketState, { useCharges, useTreaty } from '../../state/docket';
-import { getAppHref } from '../../state/util';
+import { useCharge, useTreaty } from '../../state/docket';
+import { useVat } from '../../state/kiln';
 import { useLeapStore } from '../Nav';
-import { useRecentsStore } from './Home';
 
-export const AppInfo = () => {
-  const addRecentApp = useRecentsStore((state) => state.addRecentApp);
+export const TreatyInfo = () => {
   const select = useLeapStore((state) => state.select);
   const { ship, host, desk } = useParams<{ ship: string; host: string; desk: string }>();
   const treaty = useTreaty(host, desk);
-  const charges = useCharges();
-  const charge = (charges || {})[desk];
-  const installed = charge && chadIsRunning(charge.chad);
-  const installing = charge && 'install' in charge.chad;
+  const vat = useVat(desk);
+  const charge = useCharge(desk);
 
   useEffect(() => {
     select(
@@ -31,13 +21,6 @@ export const AppInfo = () => {
     );
   }, [treaty?.title]);
 
-  const installApp = async () => {
-    await useDocketState.getState().installDocket(ship, desk);
-  };
-  const copyApp = () => {
-    clipboardCopy(`web+urbitgraph://app/${ship}/${desk}`);
-  };
-
   if (!treaty) {
     // TODO: maybe replace spinner with skeletons
     return (
@@ -46,8 +29,11 @@ export const AppInfo = () => {
       </div>
     );
   }
+  return <AppInfo className="dialog-inner-container" docket={vat ? charge : treaty} vat={vat} />;
 
+  /*
   return (
+
     <div className="dialog-inner-container text-black">
       <DocketHeader docket={treaty}>
         <div className="col-span-2 md:col-span-1 flex items-center space-x-4">
@@ -100,4 +86,5 @@ export const AppInfo = () => {
       <TreatyMeta treaty={treaty} />
     </div>
   );
+   */
 };

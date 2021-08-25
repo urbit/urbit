@@ -58,9 +58,19 @@ export const useRecentsStore = create<RecentsStore>(
   )
 );
 
+window.recents = useRecentsStore.getState;
+
+export function addRecentDev(dev: Provider) {
+  return useRecentsStore.getState().addRecentDev(dev);
+}
+
+export function addRecentApp(docket: Docket) {
+  return useRecentsStore.getState().addRecentApp(docket);
+}
+
 export const Home = () => {
   const selectedMatch = useLeapStore((state) => state.selectedMatch);
-  const { recentApps, recentDevs, addRecentApp, addRecentDev } = useRecentsStore();
+  const { recentApps, recentDevs } = useRecentsStore();
   const charges = useCharges();
   const groups = charges?.groups;
   const zod = { shipName: '~zod' };

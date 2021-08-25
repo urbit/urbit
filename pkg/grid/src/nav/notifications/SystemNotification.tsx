@@ -1,30 +1,58 @@
 import { pick } from 'lodash-es';
 import React, { useCallback } from 'react';
+import { kilnSuspend } from '@urbit/api/hood';
 import { AppList } from '../../components/AppList';
 import { Button } from '../../components/Button';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../components/Dialog';
 import { Elbow } from '../../components/icons/Elbow';
+import api from '../../state/api';
 import { useCharges } from '../../state/docket';
-import { SystemNotification as SystemNotificationType } from '../../state/hark-types';
+import {
+  BaseBlockedNotification as BaseBlockedNotificationType,
+} from '../../state/hark-types';
+
 import { NotificationButton } from './NotificationButton';
 
-interface SystemNotificationProps {
-  notification: SystemNotificationType;
+interface BaseBlockedNotificationProps {
+  notification: BaseBlockedNotificationType;
 }
 
-export const SystemNotification = ({ notification }: SystemNotificationProps) => {
-  const keys = notification.charges;
+export const RuntimeLagNotification = () => (
+  <section
+    className="notification pl-12 space-y-2 text-black bg-orange-50"
+    aria-labelledby="runtime-lag"
+  >
+    <header id="system-updates-blocked" className="relative -left-8 space-y-2">
+      <div className="flex space-x-2">
+        <span className="inline-block w-6 h-6 bg-orange-500 rounded-full" />
+        <span className="font-medium">Landscape</span>
+      </div>
+      <div className="flex space-x-2">
+        <Elbow className="w-6 h-6 text-gray-300" />
+        <h2 id="runtime-lag">The runtime blocked a System Update</h2>
+      </div>
+    </header>
+    <div className="space-y-6">
+      <p>
+        In order to proceed with the System Update, you’ll need to upgrade the runtime. If you are
+        using a hosted ship, you should contact your hosting provider.
+      </p>
+    </div>
+  </section>
+);
+
+export const BaseBlockedNotification = ({ notification }: BaseBlockedNotificationProps) => {
+  const { desks } = notification;
   const charges = useCharges();
-  const blockedCharges = Object.values(pick(charges, keys));
+  const blockedCharges = Object.values(pick(charges, desks));
   const count = blockedCharges.length;
 
-  const handlePauseOTAs = useCallback(() => {
-    console.log('pause updates');
-  }, []);
+  const handlePauseOTAs = useCallback(() => {}, []);
 
-  const handleArchiveApps = useCallback(() => {
-    console.log('archive apps');
-  }, []);
+  const handleArchiveApps = useCallback(async () => {
+    await Promise.all(desks.map(d => api.poke(kilnSuspend(d))));
+    // TODO: retrigger OTA?
+  }, [desks]);
 
   return (
     <section
