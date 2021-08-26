@@ -3208,7 +3208,7 @@
   ::
   ++  jab                                               ::  alter
     =/  tyf  $-((unit (pair @ v)) (pair * (unit (pair @ v))))
-    ~/  %jab
+    ~%  %jab  ..jab  ~
     |*  [a=pri =k f=tyf]
     =/  bon  _=>((f ~) -)
     ^-  (pair bon pri)
