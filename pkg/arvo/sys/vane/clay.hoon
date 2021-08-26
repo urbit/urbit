@@ -1575,7 +1575,26 @@
     =.  fod.dom  ford-cache.args
     =.  ..park  (emil (print q.old-yaki data))
     ::
+    =?  ..park  &(updated =(%420 zuse))  migrate-dist
+    ::
     wake:(ergo mim)
+    ::
+    ::
+    ++  migrate-dist
+      ^+  ..park
+      =/  base=ankh  (~(dug an ank.dom) /tmp/base)
+      =/  garden=ankh  (~(dug an ank.dom) /tmp/garden)
+      %-  emil
+      :~  [hen %pass /dist/base %c %dart %base base]
+          :*  hen  %pass  /dist/base  %g  %deal  [our %hood]
+              %kiln-install  %base  our  %base
+          ==
+      ::
+          [hen %pass /dist/garden %c %dart %garden garden]
+          :*  hen  %pass  /dist/garden  %g  %deal  [our %hood]
+              %kiln-install  %garden  our  %garden
+          ==
+      ==
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
     ++  is-kernel-path  |=(pax=path ?=([%sys *] pax))
