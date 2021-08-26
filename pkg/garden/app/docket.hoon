@@ -14,6 +14,7 @@
   [state-0 cache]
 ::  +lac: toggle verbosity
 ++  lac  &
+::
 ++  ver
   |%
   ++  poke  1
@@ -176,15 +177,28 @@
         %fact
       ?.  ?=(%kiln-vats-diff p.cage.sign)  `state
       =+  !<(=diff:hood q.cage.sign)
-      ?.  (~(has by charges) desk.diff)  `state
       =*  cha  ~(. ch desk.diff)
       ?+  -.diff  `state
       ::
+          %merge
+        =*  cha  ~(. ch desk.diff)
+        ?.  docket-exists:cha  `state
+        =/  =docket  docket:cha
+        ?:  ?=(%site -.href.docket)
+          :_  state(charges (~(put by charges) desk.diff [docket [%site ~]]))
+          ~[add-fact:cha]
+        =.  charges  (~(put by charges) desk.diff [docket %install ~])
+        =.  by-base  (~(put by by-base) base.href.docket desk.diff)
+        :_  state
+        [add-fact:cha fetch-glob:cha]
+      ::
           %suspend
+        ?.  (~(has by charges) desk.diff)  `state
         =.  charges  (new-chad:cha %suspend ~)
         :_(state ~[add-fact:cha])
       ::
           %revive
+        ?.  (~(has by charges) desk.diff)  `state
         =/  =charge  (~(got by charges) desk.diff)
         ?.  ?=(%glob -.href.docket.charge)
           =.  charges  (new-chad:cha %site ~)
@@ -204,7 +218,7 @@
         [%install ~]
       ?>  ?=(%poke-ack -.sign)
       ?~  p.sign  
-        :_(state ~[warp-next:cha]) :: request warp
+        `state
       =.  charges   (new-chad:cha hung+'Failed install')
       ((slog leaf+"Failed installing %{(trip desk)}" u.p.sign) `state)
     ::
@@ -246,15 +260,12 @@
 ::
 ++  on-arvo
   |=  [=wire sign=sign-arvo]
-  |^  ^-  (quip card _this)
   =^  cards  state
     ?+  wire  (on-arvo:def wire sign)
         [%init ~]  
       =*  cha  ~(. ch q.byk.bowl)
       =.  charges  (~(put by charges) q.byk.bowl [docket:cha %install ~])
       [fetch-glob:cha state]
-    ::
-      [%charge @ *]  (take-charge t.wire)
     ::
         [%eyre ~]
       ?>  ?=([%eyre %bound *] sign)
@@ -263,29 +274,6 @@
       `state
     ==
   [cards this]
-  ::
-  ++  take-charge
-    |=  [=desk =^wire]
-    =*  cha  ~(. ch desk)
-    ?+  wire  ~|(%lc-arvo-bad-wire !!)
-    ::
-        [%warp ~]  
-      ?>  ?=([?(%clay %behn) %writ *] sign)
-      ?.  (~(has by charges) desk)  `state
-      ?~  p.sign  ::
-        `state
-      =*  cage  r.u.p.sign
-      ?>  =(%docket p.cage)
-      =+  !<(=docket q.cage)
-      ?:  ?=(%site -.href.docket)
-        :_  state(charges (~(put by charges) desk [docket [%site ~]]))
-        ~[add-fact:cha warp-next:cha]
-      =.  charges  (~(put by charges) desk [docket %install ~])
-      =.  by-base  (~(put by by-base) base.href.docket desk)
-      :_  state
-      [warp-next:cha add-fact:cha fetch-glob:cha]
-    ==
-  --
 ::
 ++  on-fail  on-fail:def
 ++  on-leave  on-leave:def
@@ -357,8 +345,6 @@
     (poke-our:(pass %install) %hood kiln-install+!>([desk ship remote]))
   ++  uninstall
     (poke-our:(pass %uninstall) %hood kiln-uninstall+!>(desk))
-  ++  warp-next  (warp-our:(pass %warp) desk `[%next %x da+now.bowl /desk/docket])
-  ++  warp-sing  (warp-our:(pass %warp) desk `[%sing %x da+now.bowl /desk/docket])
   ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
   ++  fetch-glob
     =/  =charge  (~(got by charges) desk)
@@ -370,7 +356,8 @@
     :~  (watch-our:(pass %glob) %spider /thread-result/[tid])
         (poke-our:(pass %glob) %spider cage)
     ==
-  ++  docket  .^(^docket %cx (scry:io q.byk.bowl /desk/docket))
+  ++  docket-exists  .^(? %cu (scry:io desk /desk/docket))
+  ++  docket  .^(^docket %cx (scry:io desk /desk/docket))
   --
 --
 

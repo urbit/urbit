@@ -1,5 +1,5 @@
 :~  title+'Grid'
-    info+'Test desc'
+    info+'An app launcher for urbit.'
     color+0xee.5432
     glob+'https://bootstrap.urbit.org/glob-0v3.fpsbi.pfo1b.ttlta.u629v.cr9m0.glob'
     base+'grid'
