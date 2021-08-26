@@ -1,7 +1,5 @@
 :~  :-  %apes
-    :~  %btc-provider
-        %btc-wallet
-        %chat-cli
+    :~  %chat-cli
         %chat-hook
         %chat-store
         %chat-view
