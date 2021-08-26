@@ -285,17 +285,17 @@
   ~/  %handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
   ^-  (quip card _state)
-  ?>  authenticated.inbound-request
+  ::?>  authenticated.inbound-request
   =/  url 
     (parse-request-line:server url.request.inbound-request)
-  ?>  ?=([%spider @t @t @t ~] site.url)
-  =*  input-mark   i.t.site.url
-  =*  thread       i.t.t.site.url
-  =*  output-mark  i.t.t.t.site.url
+  ?>  ?=([%spider @t @t @t @t ~] site.url)
+  =*  desk         i.t.site.url
+  =*  input-mark   i.t.t.site.url
+  =*  thread       i.t.t.t.site.url
+  =*  output-mark  i.t.t.t.t.site.url
   =/  =tid         (new-thread-id thread)
   =.  serving.state
     (~(put by serving.state) tid [eyre-id output-mark])
-  =/  =desk  %landscape  ::  TODO: make this generic
   ::  TODO: speed this up somehow. we spend about 15ms in this arm alone
   ::
   =+  .^
