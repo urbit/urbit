@@ -48,7 +48,7 @@ via:
 curl -L https://nixos.org/nix/install | sh
 ```
 
-You can optionally setup Nix to pull build artefacts from the binary cache 
+You can optionally setup Nix to pull build artifacts from the binary cache 
 that continuous integration uses. This will improve build times and avoid 
 unnecessary recompilations of common dependencies.  Once Nix has been installed 
 you can setup Cachix via:
