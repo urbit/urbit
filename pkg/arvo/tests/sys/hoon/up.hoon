@@ -1,10 +1,10 @@
 /+  *test
 ::
-=/  cor  (has:up @ @t)
+=/  cor  (up @ @t)
 =/  pr  (gas:cor ~ ~[[1 0 'A'] [2 0 'B'] [3 0 'C'] [4 0 'D']])
 =/  qr
   %+  gas:cor  ~
-  ~[[1 3 'A'] [2 2 'B'] [3 1 'C'] [4 1 'D'] [5 10 'E'] [6 0 'F']]
+  ~[[1 3 'A'] [2 2 'B'] [3 1 'C'] [4 1 'D'] [5 10 'E'] [6 0 'F'] [7 0 'G']]
 |%
 ++  test-wyt  ^-  tang
   ;:  weld
@@ -84,7 +84,7 @@
       !>  ~
       !>  (cut:cor ~)
     %+  expect-eq
-      !>  (some [3 1 'C'])
+      !>  (some [6 0 'F'])
       !>  (min:cor (cut:cor qr))
   ==
 ::
