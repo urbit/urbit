@@ -1938,7 +1938,7 @@
   =>
   ::  internals
   ::
-  ~%  %in  +>  ~
+  ~%  %in  ..$  ~
   |%
   ::  balancing, tournament internals
   ::
@@ -2250,9 +2250,10 @@
   =>
   ::  pro logic
   ::
-  ~%  %qor  +>  ~
+  ~%  %up-qor  ..$  ~
   |%
   ++  qor
+    ~%  %cor  ..qor  ~
     |%
     ++  wyt                                             ::  queue size
       ~/  %wyt
@@ -2439,7 +2440,7 @@
       ?~  a  !!
       m.a
     ::
-    ++  bot                                             ::  lowest-proo view
+    ++  bot                                             ::  lowest-pro view
       ~/  %bot
       |=  a=pro
       ^-  (unit (pair elem pro))
@@ -2558,9 +2559,10 @@
   =>
   ::  radix tree logic
   ::
-  ~%  %qat  +>  ~
+  ~%  %up-qat  ..$  ~
   |%
   ++  qat
+    ~%  %qat  ..qat  ~
     |%
     ++  wyt                                             ::  queue size
       ~/  %wyt
@@ -2841,7 +2843,6 @@
       (star a k p v |=((qual @ _v @ _v) [+<- +<+<]))
       ::
       ++  star
-        ~/  %star
         |=  [a=pri k=@ p=@ v=buc f=$-((qual @ buc @ buc) (pair @ buc))]
         |-  ^-  pri
         ?~  a
@@ -3017,7 +3018,7 @@
   ::  bucket helpers
   ::
   =>
-  ~%  %buc  +>  ~
+  ~%  %buc  ..$  ~
   |%
   ++  pour                                              ::  to bucket
     ~/  %pour
@@ -3037,7 +3038,8 @@
     u.val
   --
   ::  pri logic
-  ~%  %pri  +>  ~
+  ::
+  ~%  %pri  ..$  ~
   |%
   ++  wyt                                               ::  queue size
     ~/  %wyt
