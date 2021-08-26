@@ -57,7 +57,7 @@
     ?-  -.old
         %0
       :_  this(state old)
-      ?.  (~(has by wex.bowl) [/hark our.bowl %hark-store])
+      ?:  (~(has by wex.bowl) [/hark our.bowl %hark-store])
         ~
       [(~(watch-our pass:io /hark) %hark-store /updates)]~
     ==
@@ -106,18 +106,23 @@
         ?.  (is-whitelisted:do src.bowl u.entry)
           ~|("permission denied" !!)
         =.  clients.u.entry  (~(put by clients.u.entry) src.bowl ~)
-        :_  state(provider-state (~(put by provider-state) service.act u.entry))
-        :~  %:  register-binding:do
-                service.act
-                u.entry
-                binding-endpoint.u.entry
-                src.bowl
-                address.act
-            ==
-            %+  watch:pass
-              [src.bowl %notify]
-            /notify/(scot %p src.bowl)/[service.act]
-        ==
+        =/  cards=(list card)
+          :_  ~
+          %:  register-binding:do
+              service.act
+              u.entry
+              binding-endpoint.u.entry
+              src.bowl
+              address.act
+          ==
+        =/  =wire  /agentio-watch/notify/(scot %p src.bowl)/[service.act]
+        =?  cards  !(~(has by wex.bowl) wire src.bowl %notify)
+          :_  cards
+          %+  watch:pass
+            [src.bowl %notify]
+          /notify/(scot %p src.bowl)/[service.act]
+        :-  cards
+        state(provider-state (~(put by provider-state) service.act u.entry))
       ::
           %client-leave
         =/  entry=(unit provider-entry)  (~(get by provider-state) service.act)
