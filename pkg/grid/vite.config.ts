@@ -2,6 +2,12 @@ import { defineConfig } from 'vite';
 import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import reactRefresh from '@vitejs/plugin-react-refresh';
+import htmlPlugin from 'vite-plugin-html-config';
+
+const htmlPluginOpt = {
+  headScripts: [{ src: '/apps/grid/desk.js' }, { src: '/session.js' }]
+};
+const SHIP_URL = process.env.SHIP_URL || 'http://localhost:8080';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -11,8 +17,11 @@ export default defineConfig(({ mode }) => ({
       ? undefined
       : {
           proxy: {
+            '^/apps/grid/desk.js': {
+              target: SHIP_URL
+            },
             '^((?!/apps/grid).)*$': {
-              target: 'http://localhost:8083'
+              target: SHIP_URL
             }
           }
         },
@@ -29,5 +38,5 @@ export default defineConfig(({ mode }) => ({
             ]
           }
         },
-  plugins: [reactRefresh()]
+  plugins: [htmlPlugin(htmlPluginOpt), reactRefresh()]
 }));

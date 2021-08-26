@@ -37,7 +37,7 @@ export const Grid: FunctionComponent<GridProps> = ({ match }) => {
         {chargesLoaded && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 px-4 md:px-8 w-full max-w-6xl">
             {charges &&
-              map(omit(charges, 'grid'), (charge, desk) => (
+              map(omit(charges, window.desk), (charge, desk) => (
                 <Tile key={desk} charge={charge} desk={desk} />
               ))}
           </div>
