@@ -123,6 +123,17 @@
         [%charges ~]
       ?>  (team:title [our src]:bowl)
       `state
+    ::
+        [%glob @ ~]
+      ~&  path+path
+      =/  desk  (~(got by by-base) i.t.path)
+      =/  =charge  (~(got by charges) desk)
+      ~&  charge+charge
+      ?>  ?=(%glob -.chad.charge)
+      :_  state
+      :~  [%give %fact ~[path] %glob !>(`glob`glob.chad.charge)] ::
+          [%give %kick ~[path] ~]
+      ==
     ==
   [cards this]
 ::
@@ -348,11 +359,12 @@
   ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
   ++  fetch-glob
     =/  =charge  (~(got by charges) desk)
+    ~&  charge+charge
     =/  tid=@t  (cat 3 'docket-' (scot %uv (sham (mix eny.bowl desk))))
     ?>  ?=(%glob -.href.docket.charge)
-    ?>  ?=(%http -.glob-location.href.docket.charge)
-    =*  url  url.glob-location.href.docket.charge
-    =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`url)])
+    =*  loc  glob-location.href.docket.charge
+    ~&  loc+loc
+    =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[loc desk])])
     :~  (watch-our:(pass %glob) %spider /thread-result/[tid])
         (poke-our:(pass %glob) %spider cage)
     ==
