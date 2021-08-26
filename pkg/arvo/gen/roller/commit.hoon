@@ -1,0 +1,4 @@
+::
+:-  %say
+|=  *
+[%roller-action %commit ~]
