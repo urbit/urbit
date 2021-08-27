@@ -255,10 +255,11 @@
       ?~  star=(slaw %p wat)  ~
       =/  range
         %+  lot:orm:naive  points.pre
-        ::  range exclusive [star next-star-first-planet-]
+        ::  TODO: check this by spawning e.g. ~solled-hocweb
+        ::  range exclusive [star first-moon-last-planet]
         ::  TODO: make range inclusive ([first-planet last-planet])?
         ::
-        [`u.star `(cat 3 +(u.star) 0x1)]
+        [`u.star `(cat 3 u.star 0x1.ffff)]
       %+  turn  (tap:orm:naive range)
       |=  [=ship =point:naive]
       ^-  [=^ship =address:ethereum]
