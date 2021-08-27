@@ -3005,6 +3005,12 @@
         [*update-state &]
       [u.ruv |]
     =/  done=?  |
+    =/  src=ship
+      !<  @p
+      =<  q
+      %-  need
+      %-  need
+      (rof ~ %j [our %sein da+now] /(scot %p our))
     =.  hen  duct.sat
     |%
     ++  abet
@@ -3072,6 +3078,12 @@
         ..abet(lat.ran (~(uni by (malt [p.blob blob] ~)) lat.ran))
       work(busy.sat |)
     ::
+    ++  take-backfill-prox-err
+      =:  busy.sat  %.n
+          src   her
+        ==
+      work
+    ::
     ::  Fetch next blob
     ::
     ++  work
@@ -3110,11 +3122,11 @@
       ::  Otherwise, fetch the next blob
       ::
       =/  =fill  [%0 syd i.need.sat]
-      =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)
+      =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)/(scot %p src)
       =/  =path  [%backfill syd (scot %ud inx) ~]
       =.  ..foreign-update
         =<  ?>(?=(^ ref) .)
-        (emit hen %pass wire %a %plea her %c path fill)
+        (emit hen %pass wire %a %plea src %c path fill)
       ..abet(busy.sat &)
     ::
     ::  When we get a %w foreign update, store this in our state.
@@ -4740,16 +4752,26 @@
       [mos ..^$]
     ==
   ::
-  ?:  ?=([%back-index @ @ @ ~] tea)
+  ?:  ?=([%back-index @ @ @ $@(~ [@ ~])] tea)
+    =/  her=ship   (slav %p i.t.tea)
+    =/  =desk      (slav %tas i.t.t.tea)
+    =/  index=@ud  (slav %ud i.t.t.t.tea)
+    =/  src=ship   ?@  t.t.t.t.tea  her
+                   (slav %p i.t.t.t.t.tea)
     ?+    +<.hin  ~|  %clay-backfill-index-strange  !!
         %done
       ?~  error.hin
         [~ ..^$]
       ::  TODO better error handling
       ::
-      ~&  %clay-take-backfill-index-error^our^tea^tag.u.error.hin
-      %-  (slog tang.u.error.hin)
-      [~ ..^$]
+      ?:  =(src her)
+        ~&  %clay-take-backfill-index-error^our^tea^tag.u.error.hin
+        %-  (slog tang.u.error.hin)
+        [~ ..^$]
+      =^  mos  ruf
+        =/  den  ((de now rof hen ruf) her desk)
+        abet:abet:take-backfill-prox-err:(foreign-update:den index)
+      [mos ..^$]
     ::
         %lost
       ~|  %clay-take-backfill-lost^our
@@ -4758,10 +4780,6 @@
     ::
         %boon
       =+  ;;  =blob  payload.hin
-      ::
-      =/  her=ship   (slav %p i.t.tea)
-      =/  =desk      (slav %tas i.t.t.tea)
-      =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
