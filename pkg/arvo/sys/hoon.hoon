@@ -3356,7 +3356,8 @@
       ^-  (pair (unit v) (unit (pair @ v)))
       ?~  c  [~ ~]
       [(some q.u.c) (some [tic.a q.u.c])]
-    =/  val  (jab:hoop pri.a k bump)
+    =/  val=(pair (unit v) _pri.a)
+      (jab:hoop pri.a k bump)
     ?~  p.val  ~
     %-  some
     :-  u.p.val
