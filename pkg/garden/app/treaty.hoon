@@ -37,8 +37,8 @@
   ?>  (team:title [our src]:bowl)
   |^  
   ?+  mark  (on-poke:def mark vase)
-    %ally-update-0      (ally-diff !<(diff:ally vase))
-    %alliance-update-0  (alliance-diff !<(diff:alliance vase)) 
+    %ally-update-0      (ally-update !<(update:ally vase))
+    %alliance-update-0  (alliance-update !<(update:alliance vase)) 
   ::
       %noun 
     =+  ;;([%add =desk] q.vase)
@@ -48,27 +48,27 @@
     `this
   ==
   ::
-  ++  ally-diff
-    |=  =diff:ally
+  ++  ally-update
+    |=  =update:ally
     ^-  (quip card _this)
-    =/  upd=card  (ally-update:ca:cc diff)
-    =*  ship  ship.diff
+    =-  [[(ally-update:ca:cc update) -.-] +.-]
+    ?<  ?=(?(%ini %new) -.update)
+    =*  ship  ship.update
     ?<  =(ship our.bowl)
-    =*  al   ~(. al:cc ship.diff)
-    ?-  -.diff
-      %add  [~[watch:al upd] this(allies (~(put by allies) ship *alliance))]
-      %del  [~[leave:al upd] this(allies (~(del by allies) ship))]
+    =*  al   ~(. al:cc ship.update)
+    ?-  -.update
+      %add  [~[watch:al] this(allies (~(put by allies) ship *alliance))]
+      %del  [~[leave:al] this(allies (~(del by allies) ship))]
     ==
   ::
-  ++  alliance-diff
-    |=  =diff:alliance
+  ++  alliance-update
+    |=  =update:alliance
     ^-  (quip card _this)
-    =-  [[(alliance-update:ca:cc diff) -.-] +.-]
-    ^-  (quip card _this)
-    =,  diff
-    ?-  -.diff
+    =-  [[(alliance-update:ca:cc update) -.-] +.-]
+    ?+  -.update  !!
     ::
         %add  
+      =,  update
       =.  entente  (~(put in entente) [ship desk])
       ?.  =(our.bowl ship)  `this
       =*  so  ~(. so:cc desk)
@@ -79,10 +79,11 @@
       ~[publish warp give]:so
     ::
         %del
+      =,  update
       =.  entente  (~(del in entente) [ship desk])
-     ?.  =(our.bowl ship)  `this
-     =.  sovereign  (~(del by sovereign) desk)
-     :_(this ~(kick so:cc desk)^~)
+      ?.  =(our.bowl ship)  `this
+      =.  sovereign  (~(del by sovereign) desk)
+      :_(this ~(kick so:cc desk)^~)
    ==
   --
 ::
@@ -121,12 +122,12 @@
   ::
      [%x %treaties @ ~]
     =/  =ship  (slav %p i.t.t.path)
-    =/  allied  
+    =/  alliance  (~(get ju allies) ship)
+    =/  allied
       %-  ~(gas by *(map [^ship desk] treaty))
-      %+  murn  ~(tap by treaties)
-      |=  [[s=^ship =desk] =treaty]
-      ?.  =(s ship)  ~ 
-      `[[s desk] treaty]
+      %+  skim  ~(tap by treaties)
+      |=  [ref=[^ship desk] =treaty]
+      (~(has in alliance) ref)
     ``(treaty-update:cg:ca %ini allied)
   ::
       [%x %treaty @ @ ~]
