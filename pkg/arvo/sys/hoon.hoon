@@ -2840,7 +2840,7 @@
       ~/  %vip
       |=  [a=pri k=@ p=@ v=buc]
       |^  ^-  pri
-      (star a k p v |=((qual @ _v @ _v) [+<- +<+<]))
+      (star a k p v |=((qual @ buc @ buc) [+<- +<+<]))
       ::
       ++  star
         |=  [a=pri k=@ p=@ v=buc f=$-((qual @ buc @ buc) (pair @ buc))]
