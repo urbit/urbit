@@ -3364,16 +3364,10 @@
     ~/  %get
     |=  [a=pest =k]
     ^-  (unit (pair v pest))
-    =/  bump
-      |=  c=(unit (pair @ v))
-      ^-  (pair (unit v) (unit (pair @ v)))
-      ?~  c  [~ ~]
-      [(some q.u.c) (some [tic.a q.u.c])]
-    =/  val=(pair (unit v) _pri.a)
-      (jab:hoop pri.a k bump)
+    =/  val  (see:hoop pri.a k tic.a)
     ?~  p.val  ~
     %-  some
-    :-  u.p.val
+    :-  q.u.p.val
     %-  ebb
     %_  a
       tic  +(tic.a)
