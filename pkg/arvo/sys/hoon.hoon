@@ -1903,15 +1903,15 @@
   ::                                                    ::
   ::
 ++  up
-  ~/  %up
+  ~%  %up  ..up  ~
   |*  [k=mold v=mold]
   =>
-  ::  molds
+  ::  molds and mold builders
   ::
   |%
-  +$  lelem  [=k p=@ =v]                                ::  loser tree element
+  +$  elem  [=k p=@ =v]                                 ::  pri element
   ::
-  +$  lnode  [n=lelem l=ltree m=k r=ltree]              ::  loser tree node
+  +$  lnode  [n=elem l=ltree m=k r=ltree]               ::  loser tree node
   ::
   +$  ltree                                             ::  loser tree
     $@  ~
@@ -1919,19 +1919,29 @@
         [%rlos s=@ p=lnode]
     ==
   ::
-  +$  pri  $@(~ [n=lelem t=ltree m=k])                  ::  psq
-  ::
   +$  torn                                              ::  tournament view
     $@  ~
-    $%  [%sing n=lelem]
-        [%play l=pri r=pri]
+    $%  [%sing n=elem]
+        [%play l=pro r=pro]
+    ==
+  ::
+  +$  pro  $@(~ [n=elem t=ltree m=k])                   ::  internal psq
+  ::
+  +$  buc  [=k =v t=pro]                                ::  bucket
+  ::
+  +$  pri                                               ::  psq
+    $@  ~
+    $%  [%bin k=@ p=@ v=buc m=@ l=pri r=pri]
+        [%tip k=@ p=@ v=buc]
     ==
   --
+  =>
+  ::  internals
+  ::
+  ~%  %in  ..$  ~
+  |%
   ::  balancing, tournament internals
   ::
-  =>
-  ~%  %up-bal  ..up  ~
-  |%
   ++  mega  4                                           ::  balancing factor
   ::
   ++  size                                              ::  queue size
@@ -1942,9 +1952,9 @@
   ::
   ++  one                                               ::  construct
     ~/  %one
-    |=  =lelem
-    ^-  pri
-    [lelem ~ k.lelem]
+    |=  =elem
+    ^-  pro
+    [elem ~ k.elem]
   ::
   ++  llos                                              ::  left loser
     ~/  %llos
@@ -2038,10 +2048,8 @@
     ^-  ltree
     ?>  ?=(^ r.a)
     ?-  -.r.a
-        %llos
-      (rlos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
-        %rlos
-      (rlos n.p.r.a (rlos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+      %llos  (rlos n.a (rlos n.p.r.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
+      %rlos  (rlos n.p.r.a (rlos n.a l.a m.a l.p.r.a) m.p.r.a r.p.r.a)
     ==
   ::
   ++  lrsin
@@ -2050,10 +2058,8 @@
     ^-  ltree
     ?>  ?=(^ l.a)
     ?-  -.l.a
-        %llos
-      (llos n.p.l.a l.p.l.a m.p.l.a (llos n.a r.p.l.a m.a r.a))
-        %rlos
-      (llos n.a l.p.l.a m.p.l.a (llos n.p.l.a r.p.l.a m.a r.a))
+      %llos  (llos n.p.l.a l.p.l.a m.p.l.a (llos n.a r.p.l.a m.a r.a))
+      %rlos  (llos n.a l.p.l.a m.p.l.a (llos n.p.l.a r.p.l.a m.a r.a))
     ==
   ::
   ++  rrsin
@@ -2112,12 +2118,10 @@
   ::
   ++  toy                                               ::  play
     ~/  %toy
-    |=  [a=pri b=pri]
-    ^-  pri
-    ?~  a
-      b
-    ?~  b
-      a
+    |=  [a=pro b=pro]
+    ^-  pro
+    ?~  a  b
+    ?~  b  a
     ?:  (win [p.n.a k.n.a] [p.n.b k.n.b])
       [n.a (rbal n.b t.a m.a t.b) m.b]
     [n.b (lbal n.a t.a m.a t.b) m.b]
@@ -2125,7 +2129,7 @@
   ++  sec                                               ::  second best
     ~/  %sec
     |=  [t=ltree m=k]
-    |-  ^-  pri
+    |-  ^-  pro
     ?~  t  ~
     ?-  -.t
       %llos  (toy [n.p.t l.p.t m.p.t] $(t r.p.t))
@@ -2138,19 +2142,911 @@
     ?|  (lth p r)
         ?&(=(p r) (gor q s))
     ==
+  ::  radix tree utilities
+  ::
+  ++  zero                                              ::  zero
+    |=  [k=@ m=@]
+    ^-  ?
+    =(0 (dis k m))
+  ::
+  ++  gone                                              ::  nomatch
+    |=  [k=@ l=@ m=@]
+    ^-  ?
+    =/  n  (mask m)
+    !=((dis k n) (dis l n))
+  ::
+  ++  mask                                              ::  maskw
+    |=  a=@
+    ^-  @
+    (mix (not 5 1 (dec a)) a)
+  ::
+  ++  part                                              ::  branch mask
+    |=  [k=@ l=@]
+    ^-  @
+    (high (mix k l))
+  ::
+  ++  high                                              ::  highest bitmask
+    |=  a=@
+    ^-  @
+    (rsh 0 (bex (xeb a)))
+  ::
+  ++  lex                                               ::  lexicographic order
+    |=  [[p=@ k=@] [q=@ l=@]]                           ::  [atom atom]
+    ^-  ?
+    ?:  =(p q)
+      (lth k l)
+    (lth p q)
+  ::
+  ++  lux                                               ::  lexicographic order
+    |=  [[p=@ k=k] [q=@ l=k]]                           ::  [atom noun]
+    ^-  ?
+    ?:  =(p q)
+      (gor k l)
+    (lth p q)
+  ::
+  ++  fuse                                              ::  disjoint tree merge
+    ~/  %fuse
+    |=  [m=@ l=pri r=pri]
+    ^-  pri
+    ?~  l  r
+    ?-    -.l
+        %tip
+      ?~  r  l
+      :-  %bin
+      ?-    -.r
+          %tip
+        ?:  (lex [p.l k.l] [p.r k.r])
+          [k.l p.l v.l m ~ r]
+        [k.r p.r v.r m l ~]
+      ::
+          %bin
+        ?:  (lex [p.l k.l] [p.r k.r])
+          [k.l p.l v.l m ~ r]
+        [k.r p.r v.r m l $(m m.r, l l.r, r r.r)]
+      ==
+    ::
+        %bin
+      ?~  r  l
+      :-  %bin
+      ?-    -.r
+          %tip
+        ?:  (lex [p.l k.l] [p.r k.r])
+          [k.l p.l v.l m $(m m.l, l l.l, r r.l) r]
+        [k.r p.r v.r m l ~]
+      ::
+          %bin
+        ?:  (lex [p.l k.l] [p.r k.r])
+          [k.l p.l v.l m $(m m.l, l l.l, r r.l) r]
+        [k.r p.r v.r m l $(m m.r, l l.r, r r.r)]
+      ==
+    ==
+  ::
+  ++  funk                                              ::  bin shrink-left
+    ~/  %funk
+    |=  [k=@ p=@ v=buc m=@ l=pri r=pri]
+    ^-  pri
+    ?~  l
+      ?~  r  [%tip k p v]
+      :-  %bin
+      ?-  -.r
+        %tip  [k p v m ~ r]
+        %bin  [k p v m ~ r]
+      ==
+    [%bin k p v m l r]
+  ::
+  ++  wane                                              ::  bin shrink-right
+    ~/  %wane
+    |=  [k=@ p=@ v=buc m=@ l=pri r=pri]
+    ^-  pri
+    ?~  r
+      ?~  l  [%tip k p v]
+      :-  %bin
+      ?-  -.l
+        %tip  [k p v m l ~]
+        %bin  [k p v m l ~]
+      ==
+    [%bin k p v m l r]
   --
-  ::  psq logic
+  =>
+  ::  pro logic
   ::
-  ~%  %up-core  ..up  ~
+  ~%  %up-qor  ..$  ~
   |%
-  ++  deb  +>                                           ::  internals access
+  ++  qor
+    ~%  %cor  ..qor  ~
+    |%
+    ++  wyt                                             ::  queue size
+      ~/  %wyt
+      |=  =pro
+      ^-  @
+      ?~  pro  0
+      +((size t.pro))
+    ::
+    ++  sam                                             ::  equality
+      ~/  %sam
+      |=  [a=pro b=pro]
+      ^-  ?
+      =/  loa  (bot a)
+      =/  lob  (bot b)
+      ?|  &(=(~ loa) =(~ lob))
+          !&(=(~ loa) !=(~ lob))
+          !&(!=(~ loa) =(~ lob))
+          ?>  &(?=(^ loa) ?=(^ lob))
+          ?&  =(k.p.u.loa k.p.u.lob)
+              =(p.p.u.loa p.p.u.lob)
+              =(v.p.u.loa v.p.u.lob)
+              $(a q.u.loa, b q.u.lob)
+          ==
+      ==
+    ::
+    ++  get                                             ::  lookup
+      ~/  %get
+      |=  [a=pro =k]
+      |-  ^-  (unit (pair @ v))
+      ?~  a  ~
+      =/  tor=torn  (see a)
+      ?~  tor  ~
+      ?-    -.tor
+          %sing
+        ?.  =(k k.n.tor)  ~
+        `[p.n.tor v.n.tor]
+      ::
+          %play
+        ?:  |(=(k (top l.tor)) (gor k (top l.tor)))
+          $(a l.tor)
+        $(a r.tor)
+      ==
+    ::
+    ++  has                                             ::  key existence check
+      ~/  %has
+      |=  [a=pro =k]
+      !=(~ (get a k))
+    ::
+    ++  min                                             ::  lowest-pri element
+      ~/  %min
+      |=  a=pro
+      ^-  (unit elem)
+      ?~  a  ~
+      (some n.a)
+    ::
+    ++  put                                             :: add [key pri val]
+      ~/  %put
+      |=  [a=pro =k p=@ =v]
+      |-  ^-  pro
+      ?~  a
+        (one k p v)
+      ?:  ?=(~ t.a)
+        ?:  =(k m.a)
+          (one k p v)
+        ?:  (gor k m.a)
+          (toy (one k p v) (one n.a))
+        (toy (one n.a) (one k p v))
+      ?-    -.t.a
+          %rlos
+        ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+          (toy $(a [n.a l.p.t.a m.p.t.a]) [n.p.t.a r.p.t.a m.a])
+        (toy [n.a l.p.t.a m.p.t.a] $(a [n.p.t.a r.p.t.a m.a]))
+      ::
+          %llos
+        ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+          (toy $(a [n.p.t.a l.p.t.a m.p.t.a]) [n.a r.p.t.a m.a])
+        (toy [n.p.t.a l.p.t.a m.p.t.a] $(a [n.a r.p.t.a m.a]))
+      ==
+    ::
+    ++  del                                             ::  delete at key k
+      ~/  %del
+      |=  [a=pro =k]
+      |-  ^-  pro
+      ?~  a  ~
+      ?:  ?=(~ t.a)
+        ?:  =(k k.n.a)  ~
+        (one n.a)
+      ?-    -.t.a
+          %rlos
+        ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+          (toy $(a [n.a l.p.t.a m.p.t.a]) [n.p.t.a r.p.t.a m.a])
+        (toy [n.a l.p.t.a m.p.t.a] $(a [n.p.t.a r.p.t.a m.a]))
+      ::
+          %llos
+        ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+          (toy $(a [n.p.t.a l.p.t.a m.p.t.a]) [n.a r.p.t.a m.a])
+        (toy [n.p.t.a l.p.t.a m.p.t.a] $(a [n.a r.p.t.a m.a]))
+      ==
+    ::
+    ++  cut                                             ::  delete lowest-pri
+      ~/  %cut
+      |=  a=pro
+      ^-  pro
+      =/  b  (bot a)
+      ?~  b  a
+      q.u.b
+    ::
+    ++  jab                                             ::  update at key k
+      ~/  %jab
+      |*  [a=pro =k f=$-((unit (pair @ v)) (pair * (unit (pair @ v))))]
+      =/  bon  _=>((f ~) -)
+      ^-  (pair bon pro)
+      =/  ped  (pet a k)
+      =?  a  ?=(^ ped)
+        r.u.ped
+      =/  pav
+        ?~  ped  ~
+        `[p.u.ped q.u.ped]
+      =/  bee=(pair bon (unit (pair @ v)))
+        (f pav)
+      :-  p.bee
+      ?~  q.bee  a
+      (put a k p.u.q.bee q.u.q.bee)
+    ::
+    ++  jib                                             ::  update at min-pri
+      ~/  %jib
+      |*  [a=pro f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
+      =/  bon  _=>((f ~) -)
+      ^-  (pair bon pro)
+      =/  vue  (bot a)
+      ?~  vue
+        =/  bee=(pair bon (unit (trel k @ v)))
+          (f ~)
+        :-  p.bee
+        ?~  q.bee  a
+        (put a p.u.q.bee q.u.q.bee r.u.q.bee)
+      =.  a  q.u.vue
+      =/  bee=(pair bon (unit (trel k @ v)))
+        (f (some p.u.vue))
+      :-  p.bee
+      ?~  q.bee  a
+      (put a p.u.q.bee q.u.q.bee r.u.q.bee)
+    ::
+    ++  gas                                             ::  concatenate
+      ~/  %gas
+      |=  [a=pro b=(list elem)]
+      |-  ^-  pro
+      ?~  b  a
+      $(b t.b, a (put a k.i.b p.i.b v.i.b))
+    ::
+    ++  tap                                             ::  convert to list
+      ~/  %tap
+      |=  a=pro
+      =|  b=(list elem)
+      |-  ^+  b
+      =/  tor  (see a)
+      ?~  tor  b
+      ?-  -.tor
+        %sing  [n.tor b]
+        %play  (weld $(a l.tor) $(a r.tor))
+      ==
+    ::
+    ++  key                                             ::  list of keys
+      ~/  %key
+      |=  a=pro
+      ^-  (list k)
+      (turn (tap a) |=(=elem k.elem))
+    ::
+    ++  see                                             ::  tournament view
+      ~/  %see
+      |=  a=pro
+      ^-  torn
+      ?~  a  ~
+      ?~  t.a
+        [%sing n.a]
+      ?-  -.t.a
+        %llos  [%play [n.p.t.a l.p.t.a m.p.t.a] [n.a r.p.t.a m.a]]
+        %rlos  [%play [n.a l.p.t.a m.p.t.a] [n.p.t.a r.p.t.a m.a]]
+      ==
+    ::
+    ++  top                                             ::  maximum key
+      ~/  %top
+      |=  a=pro
+      ?~  a  !!
+      m.a
+    ::
+    ++  bot                                             ::  lowest-pro view
+      ~/  %bot
+      |=  a=pro
+      ^-  (unit (pair elem pro))
+      ?~  a  ~
+      `[n.a (sec t.a m.a)]
+    ::  XX simplify?
+    ::
+    ++  pet                                             ::  delete view
+      ~/  %pet
+      |=  [a=pro =k]
+      |-  ^-  (unit (trel @ v pro))
+      ?~  a  ~
+      ?~  t.a
+        ?.  =(k k.n.a)  ~
+        `[p.n.a v.n.a ~]
+      ?-    -.t.a
+          %llos
+        ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+          =/  pat  $(a [n.p.t.a l.p.t.a m.p.t.a])
+          ?~  pat  ~
+          `[p.u.pat q.u.pat (toy r.u.pat [n.a r.p.t.a m.a])]
+        =/  pat  $(a [n.a r.p.t.a m.a])
+        ?~  pat  ~
+        `[p.u.pat q.u.pat (toy [n.p.t.a l.p.t.a m.p.t.a] r.u.pat)]
+      ::
+          %rlos
+        ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
+          =/  pat  $(a [n.a l.p.t.a m.p.t.a])
+          ?~  pat  ~
+          `[p.u.pat q.u.pat (toy r.u.pat [n.p.t.a r.p.t.a m.a])]
+        =/  pat  $(a [n.p.t.a r.p.t.a m.a])
+        ?~  pat  ~
+        `[p.u.pat q.u.pat (toy [n.a l.p.t.a m.p.t.a] r.u.pat)]
+      ==
+    ::
+    ++  pan                                             ::  insert view
+      ~/  %pan
+      |=  [a=pro e=elem]
+      ^-  (pair (unit (pair @ v)) pro)
+      =/  vue  (pet a k.e)
+      :_  (put a e)
+      ?~  vue  ~
+      `[p.u.vue q.u.vue]
+    ::
+    ++  apt                                             ::  check correctness
+      ~/  %apt
+      |=  a=pro
+      |^  &(uni hep bin ann)
+      ::
+      ++  uni                                           ::  has unique keys
+        =/  l  (sort (key a) gor)
+        =|  [a=(unit _?>(?=(^ l) i.l))]
+        |-  ^-  ?
+        ?~  l  &
+        ?:  =(a (some i.l))  |
+        $(l t.l, a (some i.l))
+      ::
+      ++  lex                                           ::  lexicographic order
+        |=  [[a=@ b=*] [l=@ r=*]]
+        ^-  ?
+        ?:  =(a l)
+          (gor b r)
+        (lth a l)
+      ::
+      ++  hep                                           ::  min-heap prop
+        ?~  a  &
+        |-  ^-  ?
+        ?~  t.a  &
+        ?-  -.t.a
+            %llos
+          ?&  (lex [p.n.a k.n.a] [p.n.p.t.a k.n.p.t.a])
+              $(k.n.a k.n.p.t.a, p.n.a p.n.p.t.a, t.a l.p.t.a)
+              $(t.a r.p.t.a)
+          ==
+            %rlos
+          ?&  (lex [p.n.a k.n.a] [p.n.p.t.a k.n.p.t.a])
+              $(t.a l.p.t.a)
+              $(k.n.a k.n.p.t.a, p.n.a p.n.p.t.a, t.a r.p.t.a)
+          ==
+        ==
+      ::
+      ++  bin                                           ::  binary search tree
+        |-  ^-  ?
+        =/  tor  (see a)
+        ?~  tor  &
+        ?-  -.tor
+            %sing  &
+            %play
+          =/  k  (top l.tor)
+          ?&  (levy (key l.tor) |=(* (gor +< k)))
+              (levy (key r.tor) |=(* |(=(k +<) !(gor +< k))))
+              $(a l.tor)
+              $(a r.tor)
+          ==
+        ==
+      ::
+      ++  ann                                           ::  correct annotations
+        =/  calc
+          |=  t=ltree
+          ^-  @
+          ?~  t  0
+          ?-  -.t
+            %llos  +((add $(t l.p.t) $(t r.p.t)))
+            %rlos  +((add $(t l.p.t) $(t r.p.t)))
+          ==
+        ?~  a  &
+        |-  ^-  ?
+        ?~  t.a  =(0 (calc t.a))
+        ?&  =(s.t.a (calc t.a))
+            $(t.a l.p.t.a)
+            $(t.a r.p.t.a)
+        ==
+      --
+    --
+  --
+  =>
+  ::  radix tree logic
   ::
+  ~%  %up-qat  ..$  ~
+  |%
+  ++  qat
+    ~%  %qat  ..qat  ~
+    |%
+    ++  wyt                                             ::  queue size
+      ~/  %wyt
+      |=  a=pri
+      |-  ^-  @
+      ?~  a  0
+      ?-  -.a
+        %tip  1
+        %bin  +((add $(a l.a) $(a r.a)))
+      ==
+    ::
+    ++  sam                                             ::  equality
+      ~/  %sam
+      |=  [a=pri b=pri]
+      ^-  ?
+      =/  loa  (bot a)
+      =/  lob  (bot b)
+      ?|  &(=(~ loa) =(~ lob))
+          !&(=(~ loa) !=(~ lob))
+          !&(!=(~ loa) =(~ lob))
+          ?>  &(?=(^ loa) ?=(^ lob))
+          ?&  =(p.u.loa p.u.lob)
+              =(q.u.loa q.u.lob)
+              =(r.u.loa r.u.lob)
+              $(a s.u.loa, b s.u.lob)
+          ==
+      ==
+    ::
+    ++  get                                             ::  lookup
+      ~/  %get
+      |=  [a=pri k=@]
+      |-  ^-  (unit (pair @ buc))
+      ?~  a  ~
+      ?-    -.a
+          %tip
+        ?.  =(k k.a)  ~
+        `[p.a v.a]
+      ::
+          %bin
+        ?:  (gone k k.a m.a)  ~
+        ?:  =(k k.a)
+          `[p.a v.a]
+        ?:  (zero k m.a)
+          $(a l.a)
+        $(a r.a)
+      ==
+    ::
+    ++  has                                             ::  key existence check
+      ~/  %has
+      |=  [a=pri k=@]
+      ^-  ?
+      !=(~ (get a k))
+    ::
+    ++  min                                             ::  lowest-pri element
+      ~/  %min
+      |=  a=pri
+      ^-  (unit (trel @ @ buc))
+      ?~  a  ~
+      %-  some
+      ?-  -.a
+        %tip  [k.a p.a v.a]
+        %bin  [k.a p.a v.a]
+      ==
+    ::
+    ++  one                                             ::  construction
+      ~/  %one
+      |=  [k=@ p=@ v=buc]
+      ^-  pri
+      [%tip k p v]
+    ::
+    ++  put                                             ::  insert
+      ~/  %put
+      |=  [a=pri k=@ p=@ v=buc]
+      ^-  pri
+      (raw (del a k) k p v)
+    ::
+    ++  tie                                             ::  link
+      ~/  %tie
+      |=  [k=@ p=@ v=buc l=@ a=pri b=pri]
+      ^-  pri
+      =/  m  (part k l)
+      :-  %bin
+      ?:  (zero m l)
+        [k p v m a b]
+      [k p v m b a]
+    ::
+    ++  del                                             ::  delete
+      ~/  %del
+      |=  [a=pri k=@]
+      |-  ^-  pri
+      ?~  a  ~
+      ?-    -.a
+          %tip
+        ?:  =(k k.a)  ~
+        a
+      ::
+          %bin
+        ?:  (gone k k.a m.a)
+          a
+        ?:  =(k k.a)
+          (fuse m.a l.a r.a)
+        ?:  (zero k m.a)
+          (funk k.a p.a v.a m.a $(a l.a) r.a)
+        (wane k.a p.a v.a m.a l.a $(a r.a))
+      ==
+    ::
+    ++  cut                                             ::  delete lowest-pri
+      ~/  %cut
+      |=  a=pri
+      ^-  pri
+      =/  b  (bot a)
+      ?~  b  a
+      s.u.b
+    ::
+    ++  jab                                             ::  alter
+      ~/  %jab
+      |*  [a=pri k=@ f=$-((unit (pair @ buc)) (pair * (unit (pair @ buc))))]
+      =/  bon  _=>((f ~) -)
+      ^-  (pair bon pri)
+      =/  ped  (pet a k)
+      =?  a  ?=(^ ped)
+        r.u.ped
+      =/  pav
+        ?~  ped
+          ~
+        `[p.u.ped q.u.ped]
+      =/  bee=(pair bon (unit (pair @ buc)))
+        (f pav)
+      :-  p.bee
+      ?~  q.bee  a
+      (raw a k p.u.q.bee q.u.q.bee)
+    ::
+    ++  jib                                             ::  alter lowest-pri
+      ~/  %jib
+      |*  [a=pri f=$-((unit (trel @ @ buc)) (pair * (unit (trel @ @ buc))))]
+      =/  bon  _=>((f ~) -)
+      ^-  (pair bon pri)
+      ?~  a
+        =/  bee=(pair bon (unit (trel @ @ buc)))
+          (f ~)
+        :-  p.bee
+        ?~  q.bee  ~
+        [%tip p.u.q.bee q.u.q.bee r.u.q.bee]
+      ?-    -.a
+          %tip
+        =/  bee=(pair bon (unit (trel @ @ buc)))
+          (f `[k.a p.a v.a])
+        :-  p.bee
+        ?~  q.bee  ~
+        [%tip p.u.q.bee q.u.q.bee r.u.q.bee]
+      ::
+          %bin
+        =/  bee=(pair bon (unit (trel @ @ buc)))
+          (f `[k.a p.a v.a])
+        :-  p.bee
+        ?~  q.bee  (fuse m.a l.a r.a)
+        ?:  !=(k.a p.u.q.bee)
+          (put (fuse m.a l.a r.a) p.u.q.bee q.u.q.bee r.u.q.bee)
+        ?:  (lte q.u.q.bee p.a)
+          [%bin k.a q.u.q.bee r.u.q.bee m.a l.a r.a]
+        (raw (fuse m.a l.a r.a) k.a q.u.q.bee r.u.q.bee)
+      ==
+    ::
+    ++  rep                                             ::  fold
+      ~/  %rep
+      |*  [a=pri f=_=>(~ |=([[@ @ *] *] +<+))]
+      |-
+      ?~  a  +<+.f
+      ?-    -.a
+        %tip  (f [k.a p.a v.a] +<+.f)
+        %bin  $(a r.a, +<+.f $(a l.a, +<+.f (f [k.a p.a v.a] +<+.f)))
+      ==
+    ::
+    ++  gas                                             ::  from list
+      ~/  %gas
+      |=  [a=pri b=(list (trel @ @ buc))]
+      |-  ^-  pri
+      ?~  b
+        a
+      $(b t.b, a (put a p.i.b q.i.b r.i.b))
+    ::
+    ++  tap                                             ::  to list
+      ~/  %tap
+      |=  a=pri
+      =|  acc=(list (trel @ @ buc))
+      |-  ^-  (list (trel @ @ buc))
+      ?~  a
+        acc
+      ?-  -.a
+          %tip  [[k.a p.a v.a] acc]
+      ::
+          %bin
+        :-  [k.a p.a v.a]
+        $(acc $(a r.a), a l.a)
+      ==
+    ::
+    ++  pet                                             ::  delete view
+      ~/  %pet
+      |=  [a=pri k=@]
+      |^  ^-  (unit (trel @ buc pri))
+      =/  med  (omit a)
+      ?~  q.med  ~
+      `[p.u.q.med q.u.q.med p.med]
+      ::
+      ++  omit
+        |=  b=pri
+        ^-  (pair pri (unit (pair @ buc)))
+        ?~  b  [~ ~]
+        ?-    -.b
+            %tip
+          ?:  =(k k.b)
+            [~ `[p.b v.b]]
+          [b ~]
+        ::
+            %bin
+          ?:  (gone k k.b m.b)
+            [b ~]
+          ?:  =(k k.b)
+            [(fuse m.b l.b r.b) `[p.b v.b]]
+          ?:  (zero k m.b)
+            =/  med  (omit l.b)
+            [(funk k.b p.b v.b m.b p.med r.b) q.med]
+          =/  med  (omit r.b)
+          [(wane k.b p.b v.b m.b l.b p.med) q.med]
+        ==
+      --
+    ::
+    ++  pan                                             ::  insert view
+      ~/  %pan
+      |=  [a=pri k=@ p=@ v=buc]
+      ^-  (pair (unit (pair @ buc)) pri)
+      =/  ped  (pet a k)
+      ?~  ped
+        [~ (raw a k p v)]
+      [`[p.u.ped q.u.ped] (raw r.u.ped k p v)]
+    ::
+    ++  bot                                             ::  lowest-pri view
+      ~/  %bot
+      |=  a=pri
+      ^-  (unit (qual @ @ buc pri))
+      ?~  a  ~
+      ?-  -.a
+        %tip  `[k.a p.a v.a ~]
+        %bin  `[k.a p.a v.a (fuse m.a l.a r.a)]
+      ==
+    ::
+    ++  raw                                             ::  put fresh (unsafe)
+      ~/  %raw
+      |=  [a=pri k=@ p=@ v=buc]
+      ^-  pri
+      ?~  a
+        [%tip k p v]
+      ?-    -.a
+          %tip
+        ?:  (lex [p k] [p.a k.a])
+          (tie k p v k.a a ~)
+        (tie k.a p.a v.a k [%tip k p v] ~)
+      ::
+          %bin
+        ?:  (gone k k.a m.a)
+          ?:  (lex [p k] [p.a k.a])
+            (tie k p v k.a a ~)
+          (tie k.a p.a v.a k [%tip k p v] (fuse m.a l.a r.a))
+        :-  %bin
+        ?:  (lex [p k] [p.a k.a])
+          ?:  (zero k.a m.a)
+            [k p v m.a (raw l.a k.a p.a v.a) r.a]
+          [k p v m.a l.a (raw r.a k.a p.a v.a)]
+        ?:  (zero k m.a)
+          [k.a p.a v.a m.a (raw l.a k p v) r.a]
+        [k.a p.a v.a m.a l.a (raw r.a k p v)]
+      ==
+    ::
+    ++  vip                                             ::  put hi-pri (unsafe)
+      ~/  %vip
+      |=  [a=pri k=@ p=@ v=buc]
+      |^  ^-  pri
+      (star a k p v |=((qual @ buc @ buc) [+<- +<+<]))
+      ::
+      ++  star
+        |=  [a=pri k=@ p=@ v=buc f=$-((qual @ buc @ buc) (pair @ buc))]
+        |-  ^-  pri
+        ?~  a
+          [%tip k p v]
+        ?-    -.a
+            %tip
+          ?:  =(k k.a)
+            =/  fed  (f p v p.a v.a)
+            [%tip k p.fed q.fed]
+          (tie k.a p.a v.a k [%tip k p v] ~)
+        ::
+            %bin
+          ?:  (gone k k.a m.a)
+            (tie k.a p.a v.a k [%tip k p v] (fuse m.a l.a r.a))
+          ?:  =(k k.a)
+            =/  fed  (f p v p.a v.a)
+            ?:  (zero k m.a)
+              (fuse m.a (raw l.a k p.fed q.fed) r.a)
+            (fuse m.a l.a (raw r.a k p.fed q.fed))
+          :-  %bin
+          ?:  (zero k m.a)
+            [k.a p.a v.a m.a $(a l.a) r.a]
+          [k.a p.a v.a m.a l.a $(a r.a)]
+        ==
+      --
+    ::
+    ++  see                                             ::  get hi-pri (unsafe)
+      ~/  %see
+      |=  [a=pri k=@]
+      |^  ^-  (pair (unit (pair @ buc)) pri)
+      (look a k |=((pair @ buc) [`+< +<]))
+      ::
+      ++  look
+        |=  [a=pri k=@ f=$-((pair @ buc) (trel (unit (pair @ buc)) @ buc))]
+        |^  ^-  (pair (unit (pair @ buc)) pri)
+        =/  val  loop
+        [q.val p.val]
+        ::  XX move into +look
+        ::
+        ++  loop
+          ^-  (pair pri (unit (pair @ buc)))
+          ?~  a  [~ ~]
+          ?-    -.a
+              %tip
+            ?:  =(k k.a)
+              =/  val  (f p.a v.a)
+              :_  p.val
+              [%tip k q.val r.val]
+            [a ~]
+          ::
+              %bin
+            ?:  (gone k k.a m.a)
+              [a ~]
+            ?:  =(k k.a)
+              =/  val  (f p.a v.a)
+              :_  p.val
+              ?:  (zero k m.a)
+                (fuse m.a (raw l.a k q.val r.val) r.a)
+              (fuse m.a l.a (raw r.a k q.val r.val))
+            ?:  (zero k m.a)
+              =/  val  loop(a l.a)
+              :_  q.val
+              [%bin k.a p.a v.a m.a p.val r.a]
+            =/  val  loop(a r.a)
+            :_  q.val
+            [%bin k.a p.a v.a m.a l.a p.val]
+          ==
+        --
+      --
+  ::
+  ++  apt                                               ::  check correctness
+    ~/  %apt
+    |=  a=pri
+    |^  &(gud uni hep val)
+    ::
+    ++  gud                                             ::  has good nils
+      ^-  ?
+      ?~  a  |
+      ?-  -.a
+          %tip  |
+      ::
+          %bin
+        ?:  &(?=(~ l.a) ?=(~ r.a))  &
+        |(gud(a l.a) gud(a r.a))
+      ==
+    ::
+    ++  col                                             ::  collect keys
+      |=  [a=pri l=(list @)]
+      |-  ^-  (list @)
+      ?~  a  l
+      ?-  -.a
+        %tip  [k.a l]
+        %bin  $(l $(l [k.a l], a l.a), a r.a)
+      ==
+    ::
+    ++  uni                                             ::  has unique keys
+      =/  l  (sort (col a `(list @)`~) gor)
+      =|  k=(unit @)
+      |-  ^-  ?
+      ?~  l  &
+      ?:  =(k (some i.l))  |
+      $(l t.l, k (some i.l))
+    ::
+    ++  hep                                             ::  min-heap
+      ?~  a  &
+      |^  ^-  ?
+      ?-  -.a
+        %tip  &
+        %bin  &((loop l.a p.a) (loop r.a p.a))
+      ==
+      ::
+      ++  loop
+        |=  [b=pri q=@]
+        ^-  ?
+        ?~  b  &
+        ?-  -.b
+          %tip  (lte q p.b)
+          %bin  &((lte q p.b) (loop l.b p.b) (loop r.b p.b))
+        ==
+      --
+    ::
+    ++  val                                             ::  valid mask
+      ?~  a  &
+      |^  ^-  ?
+      ?-  -.a
+        %tip  &
+        %bin  &((mok m.a l.a r.a) (lop l.a m.a %lef) (lop r.a m.a %rig))
+      ==
+      ::
+      ++  mok
+        |=  [n=@ l=pri r=pri]
+        ^-  ?
+        =/  s  (chi l)
+        =/  t  (chi r)
+        ?:  |(?=(~ s) ?=(~ t))  &
+        =(n (high (mix u.s u.t)))
+      ::
+      ++  lop
+        |=  [b=pri n=@ s=?(%lef %rig)]
+        ^-  ?
+        ?~  b  &
+        ?-    -.b
+            %tip
+          (kek n s k.b)
+        ::
+            %bin
+          ?&  (kek n s k.b)
+              (mok m.b l.b r.b)
+              (lop l.b m.b %lef)
+              (lop r.b m.b %rig)
+          ==
+       ==
+      ::
+      ++  kek
+        |=  [n=@ s=?(%lef %rig) k=@]
+        ^-  ?
+        ?-  s
+          %lef  =(0 (dis n k))
+          %rig  =(n (dis n k))
+        ==
+      ::
+      ++  chi
+        |=  b=pri
+        ^-  (unit @)
+        ?~  b  ~
+        ?-  -.b
+          %tip  `k.b
+          %bin  `k.b
+        ==
+      --
+    --  --
+  --
+  ::  bucket helpers
+  ::
+  =>
+  ~%  %buc  ..$  ~
+  |%
+  ++  pour                                              ::  to bucket
+    ~/  %pour
+    |=  a=pro
+    ^-  (unit (pair @ buc))
+    =/  val  (bot:qor a)
+    ?~  val  ~
+    `[p.p.u.val k.p.u.val v.p.u.val q.u.val]
+  ::
+  ++  make                                              ::  make bucket
+    ~/  %make
+    |=  [=k p=@ =v a=pro]
+    ^-  (pair @ buc)
+    =.  a  (put:qor a k p v)
+    =/  val  (pour a)
+    ?>  ?=(^ val)
+    u.val
+  --
+  ::  pri logic
+  ::
+  ~%  %pri  ..$  ~
+  |%
   ++  wyt                                               ::  queue size
     ~/  %wyt
-    |=  =pri
+    |=  a=pri
     ^-  @
-    ?~  pri  0
-    +((size t.pri))
+    %+  rep:qat  a
+    |=([[@ @ buc] @] +((add +<+ (wyt:qor t.+<->+))))
   ::
   ++  sam                                               ::  equality
     ~/  %sam
@@ -2162,226 +3058,236 @@
         !&(=(~ loa) !=(~ lob))
         !&(!=(~ loa) =(~ lob))
         ?>  &(?=(^ loa) ?=(^ lob))
-        ?&  =(k.p.u.loa k.p.u.lob)
-            =(p.p.u.loa p.p.u.lob)
-            =(v.p.u.loa v.p.u.lob)
-            $(a q.u.loa, b q.u.lob)
+        ?&  =(p.u.loa p.u.lob)
+            =(q.u.loa q.u.lob)
+            =(r.u.loa r.u.lob)
+            $(a s.u.loa, b s.u.lob)
         ==
     ==
+  ::
+  ++  has                                               ::  contains
+    ~/  %has
+    |=  [a=pri =k]
+    ^-  ?
+    !=(~ (get a k))
   ::
   ++  get                                               ::  lookup
     ~/  %get
     |=  [a=pri =k]
-    |-  ^-  (unit (pair @ v))
-    ?~  a  ~
-    =/  tor=torn  (see a)
-    ?~  tor  ~
-    ?-    -.tor
-        %sing
-      ?.  =(k k.n.tor)  ~
-      (some [p.n.tor v.n.tor])
-    ::
-        %play
-      ?:  |(=(k (top l.tor)) (gor k (top l.tor)))
-        $(a l.tor)
-      $(a r.tor)
-    ==
+    ^-  (unit (pair @ v))
+    =/  val  (get:qat a (mug k))
+    ?~  val  ~
+    ?:  =(k k.q.u.val)
+      `[p.u.val v.q.u.val]
+    (get:qor t.q.u.val k)
   ::
-  ++  has                                               ::  key existence check
-    ~/  %has
-    |=  [a=pri =k]
-    !=(~ (get a k))
-  ::  lowest-prio element
-  ::
-  ++  min                                               ::  lowest-pri element
+  ++  min                                               ::  get lowest-pri
     ~/  %min
     |=  a=pri
-    ^-  (unit lelem)
-    ?~  a  ~
-    (some n.a)
+    ^-  (unit (trel k @ v))
+    =/  val  (min:qat a)
+    ?~  val  ~
+    `[k.r.u.val q.u.val v.r.u.val]
   ::
-  ++  put                                               :: add [key prio val]
+  ++  one                                               ::  construct
+    |=  [=k p=@ =v]
+    ^-  pri
+    (put ~ k p v)
+  ::
+  ++  put                                               ::  insert
     ~/  %put
     |=  [a=pri =k p=@ =v]
-    |-  ^-  pri
-    ?~  a
-      (one k p v)
-    ?:  ?=(~ t.a)
-      ?:  =(k m.a)
-        (one k p v)
-      ?:  (gor k m.a)
-        (toy (one k p v) (one n.a))
-      (toy (one n.a) (one k p v))
-    ?-    -.t.a
-        %rlos
-      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
-        (toy $(a [n.a l.p.t.a m.p.t.a]) [n.p.t.a r.p.t.a m.a])
-      (toy [n.a l.p.t.a m.p.t.a] $(a [n.p.t.a r.p.t.a m.a]))
+    |^  ^-  pri
+    =/  hal
+      |=  (unit (pair @ buc))
+      ^-  (pair _~ (unit (pair @ buc)))
+      `(ins +<)
+    =/  val=(pair (unit buc) pri)
+      (jab:qat a (mug k) hal)
+    q.val
     ::
-        %llos
-      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
-        (toy $(a [n.p.t.a l.p.t.a m.p.t.a]) [n.a r.p.t.a m.a])
-      (toy [n.p.t.a l.p.t.a m.p.t.a] $(a [n.a r.p.t.a m.a]))
-    ==
-  ::
-  ++  del                                               ::  delete at key k
-    ~/  %del
-    |=  [a=pri =k]
-    |-  ^-  pri
-    ?~  a  ~
-    ?:  ?=(~ t.a)
-      ?:  =(k k.n.a)  ~
-      (one n.a)
-    ?-    -.t.a
-        %rlos
-      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
-        (toy $(a [n.a l.p.t.a m.p.t.a]) [n.p.t.a r.p.t.a m.a])
-      (toy [n.a l.p.t.a m.p.t.a] $(a [n.p.t.a r.p.t.a m.a]))
-    ::
-        %llos
-      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
-        (toy $(a [n.p.t.a l.p.t.a m.p.t.a]) [n.a r.p.t.a m.a])
-      (toy [n.p.t.a l.p.t.a m.p.t.a] $(a [n.a r.p.t.a m.a]))
-    ==
-  ::
-  ++  cut                                               ::  delete min-prio val
-    ~/  %cut
-    |=  a=pri
-    ^-  pri
-    =/  b  (bot a)
-    ?~  b  a
-    q.u.b
-  ::
-  ++  jab                                               ::  update at key k
-    ~/  %jab
-    |=  [a=pri =k f=$-((unit (pair @ v)) (pair (unit v) (unit (pair @ v))))]
-    ^-  (pair (unit v) pri)
-    =/  ped  (pet a k)
-    =?  a  ?=(^ ped)
-      r.u.ped
-    =/  pav
-      ?~  ped
-        ~
-      (some [p.u.ped q.u.ped])
-    =/  bee  (f pav)
-    :-  p.bee
-    ?~  q.bee
-      a
-    (put a k p.u.q.bee q.u.q.bee)
-  ::
-  ++  jib                                               ::  update at min-prio
-    ~/  %jib
-    |=  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
-    ^-  (pair * pri)
-    =/  vue  (bot a)
-    ?~  vue
-      =/  bee  (f ~)
-      :-  p.bee
-      ?~  q.bee
-        a
-      (put a p.u.q.bee q.u.q.bee r.u.q.bee)
-    =.  a  q.u.vue
-    =/  bee  (f (some p.u.vue))
-    :-  p.bee
-    ?~  q.bee
-      a
-    (put a p.u.q.bee q.u.q.bee r.u.q.bee)
+    ++  ins
+      |=  b=(unit (pair @ buc))
+      ^-  (unit (pair @ buc))
+      ?~  b
+        `[p [k v ~]]
+      =/  =buc  q.u.b
+      ?:  =(k k.buc)
+        `(make k p v t.buc)
+      ?:  |((lth p.u.b p) &(=(p p.u.b) (gor k.buc k)))
+        =/  val  (put:qor t.buc k p v)
+        `[p.u.b [k.buc v.buc val]]
+      =/  val
+        ?:  (has:qor t.buc k)
+          (put:qor (del:qor t.buc k) k.buc p.u.b v.buc)
+        (put:qor t.buc k.buc p.u.b v.buc)
+      `[p [k v val]]
+    --
   ::
   ++  gas                                               ::  concatenate
     ~/  %gas
-    |=  [a=pri b=(list lelem)]
+    |=  [a=pri b=(list (trel k @ v))]
     |-  ^-  pri
-    ?~  b
-      a
-    $(b t.b, a (put a k.i.b p.i.b v.i.b))
+    ?~  b  a
+    $(b t.b, a (put a p.i.b q.i.b r.i.b))
   ::
-  ++  tap                                               ::  convert to list
-    ~/  %tap
+  ++  tap                                               ::  to list
     |=  a=pri
-    =|  b=(list lelem)
-    |-  ^+  b
-    =/  tor  (see a)
-    ?~  tor
-      b
-    ?-  -.tor
-      %sing  [n.tor b]
-      %play  (weld $(a l.tor) $(a r.tor))
-    ==
+    ^-  (list (trel k @ v))
+    =/  lis=(list (trel @ @ buc))
+      (tap:qat a)
+    =|  acc=(list (trel k @ v))
+    |-  ^+  acc
+    ?~  lis  acc
+    =/  hed  i.lis
+    =/  res=(list elem:qor)
+      (tap:qor t.r.hed)
+    =.  acc  (weld res acc)
+    $(lis t.lis, acc [[k.r.hed q.hed v.r.hed] acc])
   ::
   ++  key                                               ::  list of keys
-    ~/  %key
     |=  a=pri
     ^-  (list k)
-    (turn (tap a) |=(=lelem k.lelem))
+    %+  turn  `(list (trel k @ v))`(tap a)
+    |=([k @ v] +<-)
   ::
-  ++  see                                               ::  tournament view
-    ~/  %see
-    |=  a=pri
-    ^-  torn
-    ?~  a  ~
-    ?~  t.a
-      [%sing n.a]
-    ?-  -.t.a
-      %llos  [%play [n.p.t.a l.p.t.a m.p.t.a] [n.a r.p.t.a m.a]]
-      %rlos  [%play [n.a l.p.t.a m.p.t.a] [n.p.t.a r.p.t.a m.a]]
-    ==
-  ::
-  ++  top                                               ::  maximum key
-    ~/  %top
-    |=  a=pri
-    ?~  a  !!
-    m.a
-  ::
-  ++  bot                                               ::  lowest-prio view
-    ~/  %bot
-    |=  a=pri
-    ^-  (unit (pair lelem pri))
-    ?~  a  ~
-    (some [n.a (sec t.a m.a)])
+  ++  pan                                               ::  insert view
+    ~/  %pan
+    |=  [a=pri =k p=@ =v]
+    ^-  (pair (unit (pair @ _v)) pri)
+    =/  val  (pet a k)
+    :_  (put a k p v)
+    ?~  val  ~
+    `[p.u.val q.u.val]
   ::
   ++  pet                                               ::  delete view
     ~/  %pet
     |=  [a=pri =k]
-    |-  ^-  (unit (trel @ v pri))
-    ?~  a  ~
-    ?~  t.a
-      ?.  =(k k.n.a)  ~
-      (some [p.n.a v.n.a ~])
-    ?-    -.t.a
-        %llos
-      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
-        =/  pat  $(a [n.p.t.a l.p.t.a m.p.t.a])
-        ?~  pat  ~
-        (some [p.u.pat q.u.pat (toy r.u.pat [n.a r.p.t.a m.a])])
-      =/  pat  $(a [n.a r.p.t.a m.a])
-      ?~  pat  ~
-      (some [p.u.pat q.u.pat (toy [n.p.t.a l.p.t.a m.p.t.a] r.u.pat)])
+    |^  ^-  (unit (trel @ v pri))
+    =/  val=(pair (unit (pair @ v)) pri)
+      (jab:qat a (mug k) halp)
+    ?~  p.val  ~
+    `[p.u.p.val q.u.p.val q.val]
     ::
-        %rlos
-      ?:  |(=(k m.p.t.a) (gor k m.p.t.a))
-        =/  pat  $(a [n.a l.p.t.a m.p.t.a])
-        ?~  pat  ~
-        (some [p.u.pat q.u.pat (toy r.u.pat [n.p.t.a r.p.t.a m.a])])
-      =/  pat  $(a [n.p.t.a r.p.t.a m.a])
-      ?~  pat  ~
-      (some [p.u.pat q.u.pat (toy [n.a l.p.t.a m.p.t.a] r.u.pat)])
-    ==
+    ++  halp
+      |=  b=(unit (pair @ buc))
+      ^-  (pair (unit (pair @ v)) (unit (pair @ buc)))
+      ?~  b  [~ ~]
+      ?:  =(k k.q.u.b)
+        =/  val=(unit (pair elem:qor pro))
+          (bot:qor t.q.u.b)
+        :-  `[p.u.b v.q.u.b]
+        ?~  val  ~
+        `[p.p.u.val [k.p.u.val v.p.u.val q.u.val]]
+      =/  val  (pet:qor t.q.u.b k)
+      ?~  val  [~ ~]
+      :-  `[p.u.val q.u.val]
+      `[p.u.b [k.q.u.b v.q.u.b r.u.val]]
+    --
   ::
-  ++  pan                                               ::  insert view
-    ~/  %pan
-    |=  [a=pri e=lelem]
-    ^-  (pair (unit (pair @ v)) pri)
-    =/  vue  (pet a k.e)
-    ?~  vue
-      [~ (put a e)]
-    [(some [p.u.vue q.u.vue]) (put a e)]
+  ++  bot                                               ::  lowest-pri view
+    ~/  %bot
+    |=  a=pri
+    |^  ^-  (unit (qual k @ v pri))
+    =/  val=(pair (unit (trel k @ v)) pri)
+      (jib:qat a halp)
+    ?~  p.val  ~
+    `[p.u.p.val q.u.p.val r.u.p.val q.val]
+    ::
+    ++  halp
+      |=  b=(unit (trel @ @ buc))
+      ^-  (pair (unit (trel k @ v)) (unit (trel @ @ buc)))
+      ?~  b  [~ ~]
+      =/  =buc  r.u.b
+      :-  `[k.buc q.u.b v.buc]
+      =/  val=(unit (pair elem:qor pro))
+        (bot:qor t.buc)
+      ?~  val  ~
+      `[p.u.b p.p.u.val [k.p.u.val v.p.u.val q.u.val]]
+    --
+  ::
+  ++  jab                                               ::  alter
+    =/  tyf  $-((unit (pair @ v)) (pair * (unit (pair @ v))))
+    ~%  %jab  ..jab  ~
+    |*  [a=pri =k f=tyf]
+    =/  bon  _=>((f ~) -)
+    ^-  (pair bon pri)
+    =/  h  (mug k)
+    =/  ped  (pet:qat a h)
+    ?~  ped
+      =/  bee=(pair bon (unit (pair @ v)))
+        (f ~)
+      :-  p.bee
+      ?~  q.bee  a
+      (raw:qat a h p.u.q.bee [k q.u.q.bee ~])
+    =/  =buc  q.u.ped
+    ?:  =(k k.buc)
+      =/  bee=(pair bon (unit (pair @ v)))
+        (f `[p.u.ped v.buc])
+      :-  p.bee
+      ?~  q.bee
+        =/  vul  (pour t.buc)
+        ?~  vul  r.u.ped
+        (raw:qat r.u.ped h p.u.vul q.u.vul)
+      =/  vul  (make k p.u.q.bee q.u.q.bee t.buc)
+      (raw:qat r.u.ped h p.vul q.vul)
+    =/  val=(pair bon pro)  (jab:qor t.buc k f)
+    :-  p.val
+    =/  vul  (make k.buc p.u.ped v.buc t.buc)
+    (raw:qat r.u.ped h p.vul q.vul)
+  ::
+  ++  jib                                               ::  update at min-prio
+    ~/  %jib
+    |*  [a=pri f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
+    =/  bon  _=>((f ~) -)
+    ^-  (pair bon pri)
+    =/  vue  (bot a)
+    =?  a  ?=(^ vue)
+      s.u.vue
+    =/  bee=(pair bon (unit (trel k @ v)))
+      (f ?~(vue ~ `[p.u.vue q.u.vue r.u.vue]))
+    :-  p.bee
+    ?~  q.bee  a
+    (put a p.u.q.bee q.u.q.bee r.u.q.bee)
+  ::
+  ++  del                                               ::  delete
+    ~/  %del
+    |=  [a=pri =k]
+    ^-  pri
+    =/  val  (pet a k)
+    ?~  val  a
+    r.u.val
+  ::
+  ++  cut                                               ::  delete lowest-pri
+    ~/  %cut
+    |=  a=pri
+    ^-  pri
+    =/  val  (bot a)
+    ?~  val  a
+    s.u.val
+  ::
+  ++  vip                                               ::  put hi-pri (unsafe)
+    ~/  %vip
+    |=  [a=pri =k p=@ =v]
+    ^-  pri
+    =/  hal
+      |=  [@ buc bp=@ bb=buc]
+      ^-  (pair @ buc)
+      ?:  =(k k.bb)
+        (make k p v t.bb)
+      [bp [k.bb v.bb (put:qor t.bb k p v)]]
+    (vip:qat a (mug k) p [k v ~])
   ::
   ++  apt                                               ::  check correctness
     ~/  %apt
     |=  a=pri
-    |^  &(uni hep bin ann)
+    |^  ^-  ?
+    ?:  uni  &
+    =/  tup=(list (trel @ @ buc))
+      (tap:qat a)
+    (levy tup val)
     ::
-    ++  uni                                             ::  has unique keys
+    ++  uni                                             ::  unique keys
       =/  l  (sort (key a) gor)
       =|  [a=(unit _?>(?=(^ l) i.l))]
       |-  ^-  ?
@@ -2391,64 +3297,14 @@
         %|
       $(l t.l, a (some i.l))
     ::
-    ++  lex                                             ::  lexigraphical order
-      |=  [[a=@ b=*] [l=@ r=*]]
+    ++  val                                             ::  valid bucket
+      |=  [h=@ p=@ =buc]
       ^-  ?
-      |((lth a l) (gor b r))
-    ::
-    ++  hep                                             ::  min-heap prop
-      ?~  a
-        %&
-      |-  ^-  ?
-      ?~  t.a
-        %&
-      ?-  -.t.a
-          %llos
-        ?&  (lex [p.n.a k.n.a] [p.n.p.t.a k.n.p.t.a])
-            $(k.n.a k.n.p.t.a, p.n.a p.n.p.t.a, t.a l.p.t.a)
-            $(t.a r.p.t.a)
-        ==
-          %rlos
-        ?&  (lex [p.n.a k.n.a] [p.n.p.t.a k.n.p.t.a])
-            $(t.a l.p.t.a)
-            $(k.n.a k.n.p.t.a, p.n.a p.n.p.t.a, t.a r.p.t.a)
-        ==
-      ==
-    ::
-    ++  bin                                             ::  binary search tree
-      |-  ^-  ?
-      =/  tor  (see a)
-      ?~  tor
-        %&
-      ?-  -.tor
-          %sing
-        %&
-          %play
-        =/  k  (top l.tor)
-        ?&  (levy (key l.tor) |=(* (gor +< k)))
-            (levy (key r.tor) |=(* |(=(k +<) !(gor +< k))))
-            $(a l.tor)
-            $(a r.tor)
-        ==
-      ==
-    ::
-    ++  ann                                             ::  correct annotations
-      =/  calc
-        |=  t=ltree
-        ^-  @
-        ?~  t  0
-        ?-  -.t
-          %llos  +((add $(t l.p.t) $(t r.p.t)))
-          %rlos  +((add $(t l.p.t) $(t r.p.t)))
-        ==
-      ?~  a
-        %&
-      |-  ^-  ?
-      ?~  t.a
-        =(0 (calc t.a))
-      ?&  =(s.t.a (calc t.a))
-          $(t.a l.p.t.a)
-          $(t.a r.p.t.a)
+      ?&  (apt:qor t.buc)
+          =/  tup=(list elem:qor)
+            (tap:qor t.buc)
+          %+  levy  tup
+          |=([=k r=@ =v] &(=(h (mug k)) (lux [p k.buc] [r k])))
       ==
     --
   --

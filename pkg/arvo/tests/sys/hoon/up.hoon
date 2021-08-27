@@ -4,30 +4,8 @@
 =/  pr  (gas:cor ~ ~[[1 0 'A'] [2 0 'B'] [3 0 'C'] [4 0 'D']])
 =/  qr
   %+  gas:cor  ~
-  ~[[1 3 'A'] [2 2 'B'] [3 1 'C'] [4 1 'D'] [5 10 'E'] [6 0 'F']]
-=+  deb:cor
+  ~[[1 3 'A'] [2 2 'B'] [3 1 'C'] [4 1 'D'] [5 10 'E'] [6 0 'F'] [7 0 'G']]
 |%
-++  test-balance-errors  ^-  tang
-  =/  node  [[0 0 'a'] ~ 0 ~]
-  ;:  weld
-    %-  expect-fail
-      |.  (llsin:cor node)
-    %-  expect-fail
-      |.  (rlsin:cor node)
-    %-  expect-fail
-      |.  (lrsin:cor node)
-    %-  expect-fail
-      |.  (rrsin:cor node)
-    %-  expect-fail
-      |.  (lldub:cor node)
-    %-  expect-fail
-      |.  (rldub:cor node)
-    %-  expect-fail
-      |.  (lrdub:cor node)
-    %-  expect-fail
-      |.  (rrdub:cor node)
-  ==
-::
 ++  test-wyt  ^-  tang
   ;:  weld
     %+  expect-eq
@@ -53,9 +31,8 @@
 ::
 ++  test-gas  ^-  tang
   =/  ls  ~[[1 0 'A'] [2 0 'B'] [3 0 'C'] [4 0 'D']]
-  %+  expect-eq
-    !>  (gas:cor ~ ls)
-    !>  (gas:cor ~ (flop ls))
+  %-  expect
+    !>  (sam:cor (gas:cor ~ ls) (gas:cor ~ (flop ls)))
 ::
 ++  test-has-get  ^-  tang
   ;:  weld
@@ -102,13 +79,12 @@
   ==
 ::
 ++  test-cut  ^-  tang
-  =/  zr  (gas:cor ~ ~[[5 101 'a'] [3 100 'b']])
   ;:  weld
     %+  expect-eq
       !>  ~
       !>  (cut:cor ~)
     %+  expect-eq
-      !>  (some [3 1 'C'])
+      !>  (some [6 0 'F'])
       !>  (min:cor (cut:cor qr))
   ==
 ::
@@ -138,18 +114,10 @@
   ;:  weld
     %+  expect-eq
       !>  [~ ~]
-      !>  (jib:cor ~ |=(* [~ ~]))
+      !>  (jib:cor `pri:cor`~ |=(* [~ ~]))
     %+  expect-eq
       !>  [~ ~]
       !>  (jib:cor (one:cor [3 100 'a']) |=(* [~ ~]))
-  ==
-::
-++  test-tap
-  ;:  weld
-    %-  expect
-      !>  (sam:cor qr (gas:cor ~ (tap:cor qr)))
-    %-  expect
-      !>  (sam:cor pr (gas:cor ~ (tap:cor pr)))
   ==
 ::
 ++  test-pan
