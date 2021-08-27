@@ -149,9 +149,14 @@
       (process-rpc id +.params method)
     ?+  method  [~ ~(method error:json-rpc id)]
       %get-point               `(get-point id +.params point:scry)
-      %get-ships               `(get-ships id +.params points:scry)
+      %get-ships               `(get-ships id +.params ships:scry)
       %cancel-transaction      (cancel-tx id +.params)
       %get-spawned             `(get-spawned id +.params spawned:scry)
+      %get-owned-points        `(get-ships id +.params owned:scry)
+      %get-transferring-for    `(get-ships id +.params transfers:scry)
+      %get-manager-for         `(get-ships id +.params manager:scry)
+      %get-voting-for          `(get-ships id +.params voting:scry)
+      %get-spawning-for        `(get-ships id +.params spawning:scry)
       %get-all-pending         `(all:pending id +.params all:pending:scry)
       %get-pending-by-ship     `(ship:pending id +.params ship:pending:scry)
       %get-pending-by-address  `(addr:pending id +.params addr:pending:scry)
@@ -173,11 +178,11 @@
         (~(scry agentio bowl) %roller /point/(scot %p ship)/noun)
     ==
   ::
-  ++  points
+  ++  ships
     |=  =address:naive
     .^  (list ship)
         %gx
-        (~(scry agentio bowl) %roller /points/(scot %ux address)/noun)
+        (~(scry agentio bowl) %roller /ships/(scot %ux address)/noun)
     ==
   ::
   ++  spawned
@@ -185,6 +190,41 @@
     .^  (list [@p @ux])
         %gx
         (~(scry agentio bowl) %roller /spawned/(scot %p ship)/noun)
+    ==
+  ::
+  ++  owned
+    |=  =address:naive
+    .^  (list ship)
+        %gx
+        (~(scry agentio bowl) %roller /owned/(scot %ux address)/noun)
+    ==
+  ::
+  ++  transfers
+    |=  =address:naive
+    .^  (list ship)
+        %gx
+        (~(scry agentio bowl) %roller /transfers/(scot %ux address)/noun)
+    ==
+  ::
+  ++  manager
+    |=  =address:naive
+    .^  (list ship)
+        %gx
+        (~(scry agentio bowl) %roller /manager/(scot %ux address)/noun)
+    ==
+  ::
+  ++  voting
+    |=  =address:naive
+    .^  (list ship)
+        %gx
+        (~(scry agentio bowl) %roller /voting/(scot %ux address)/noun)
+    ==
+  ::
+  ++  spawning
+    |=  =address:naive
+    .^  (list ship)
+        %gx
+        (~(scry agentio bowl) %roller /spawning/(scot %ux address)/noun)
     ==
   ::
   ++  pending

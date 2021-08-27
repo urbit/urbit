@@ -155,9 +155,14 @@
   ::    /x/spawned/[~ship]             ->  %noun  (list [ship address])
   ::    /x/next-batch                  ->  %atom  time
   ::    /x/point/[~ship]               ->  %noun  point:naive
-  ::    /x/points/[0xadd.ress]         ->  %noun  (list [ship point:naive])
+  ::    /x/ships/[0xadd.ress]         ->  %noun  (list ship)
   ::    /x/config                      ->  %noun  config
   ::    /x/chain-id                    ->  %atom  @
+  ::    /x/owned                       ->  %noun  (list ship)
+  ::    /x/transfers                   ->  %noun  (list ship)
+  ::    /x/manager                     ->  %noun  (list ship)
+  ::    /x/voting                      ->  %noun  (list ship)
+  ::    /x/spawning                    ->  %noun  (list ship)
   ::
   ++  on-peek
     |=  =path
@@ -172,9 +177,14 @@
       [%x %spawned @ ~]     (spawned i.t.t.path)
       [%x %next-batch ~]    ``atom+!>(next-batch)
       [%x %point @ ~]       (point i.t.t.path)
-      [%x %points @ ~]      (points i.t.t.path)
+      [%x %points @ ~]      (ships i.t.t.path)
       [%x %config ~]        config
       [%x %chain-id ~]      ``atom+!>(chain-id)
+      [%x %owned @ ~]       (points-proxy %own i.t.t.path)
+      [%x %transfers @ ~]   (points-proxy %transfer i.t.t.path)
+      [%x %manager @ ~]     (points-proxy %manage i.t.t.path)
+      [%x %voting @ ~]      (points-proxy %vote i.t.t.path)
+      [%x %spawning @ ~]    (points-proxy %spawn i.t.t.path)
     ==
     ::
     ++  pending-by
@@ -261,7 +271,7 @@
         ``noun+!>(*(unit point:naive))
       ``noun+!>((get:orm:naive points.pre u.ship))
     ::
-    ++  points
+    ++  ships
       |=  wat=@t
       :+  ~  ~
       :-  %noun
@@ -285,6 +295,15 @@
           contract
           chain-id
       ==
+    ::
+    ++  points-proxy
+      |=  [=proxy:naive wat=@t]
+      :+  ~  ~
+      :-  %noun
+      !>  ^-  (list ship)
+      ?~  addr=(slaw %ux wat)
+        ~
+      ~(tap in (~(get ju own) [proxy u.addr]))
     --
   ::
   ++  on-arvo
