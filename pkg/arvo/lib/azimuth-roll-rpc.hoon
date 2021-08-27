@@ -321,7 +321,7 @@
       ++  ships
         |=  ships=(list @p)
         ^-  json
-        a+(turn ships ship)
+        a+(turn ships (cork @ud numb))
       ::
       ++  ownership
         |=  [=address:naive =nonce:naive]
