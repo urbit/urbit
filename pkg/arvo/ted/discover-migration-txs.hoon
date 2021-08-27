@@ -196,16 +196,30 @@
     (rights:azimuth:az gal)
   ~?  !=(0x0 transfer-proxy.deed)
     [%unexpected-transfer-proxy gal transfer-proxy.deed]
+  ::  set spawn proxy only if needed, pick safe depending on spawn count
+  ::
+  ;<  count=@ud  bind:m
+    (get-spawn-count:azimuth:az gal)
+  =/  spawn-proxy=(unit address)
+    =/  remaining  (sub 0xff count)
+    ?:  =(0 remaining)  ~
+    ?:  (lth remaining 50)
+      `shallow-safe
+    `deep-safe
+  ::
   =.  out
     %+  ~(add ja out)  owner.deed
     ^-  batch:claz
     :-  %more
-    :~  [%single %set-management-proxy gal shallow-safe]
-        [%single %set-voting-proxy gal proxy-safe]
-        ::TODO  spawn proxy if stars remaining
-        ::      to shallow if < 50, otherwise deep
-        ::TODO  printf about that briefly
-        [%single %transfer-ship gal deep-safe]
+    =;  txs=(list (unit batch:claz))
+      (murn txs same)
+    :~  `[%single %set-management-proxy gal shallow-safe]
+        `[%single %set-voting-proxy gal proxy-safe]
+      ::
+        ?~  spawn-proxy  ~
+        `[%single %set-spawn-proxy gal u.spawn-proxy]
+      ::
+        `[%single %transfer-ship gal deep-safe]
     ==
   ::  if it controls a lockup, transfer that too
   ::
