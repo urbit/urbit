@@ -174,7 +174,7 @@
           :_   (~(put by allies) src.bowl init.update)
           %+  murn  ~(tap in init.update)
           |=  [s=^ship =desk]
-          ~(safe-watch tr:cc ship desk)
+          ~(safe-watch tr:cc s desk)
         ::
             %add  
           :_  (~(put ju allies) src.bowl [ship desk]:update)
