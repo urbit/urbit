@@ -177,7 +177,7 @@
       [%x %spawned @ ~]     (spawned i.t.t.path)
       [%x %next-batch ~]    ``atom+!>(next-batch)
       [%x %point @ ~]       (point i.t.t.path)
-      [%x %points @ ~]      (ships i.t.t.path)
+      [%x %ships @ ~]       (ships i.t.t.path)
       [%x %config ~]        config
       [%x %chain-id ~]      ``atom+!>(chain-id)
       [%x %owned @ ~]       (points-proxy %own i.t.t.path)
