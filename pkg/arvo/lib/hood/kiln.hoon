@@ -341,8 +341,8 @@
     |=  lac=desk
     ^+  kiln
     ?:  =(%base lac)
-      =/  mes  "kiln: |uninstall: %base cannot be uninstalled"
-      (^emit (pyre:pass leaf/mes ~))
+      =-  (^emit (pyre:pass leaf/- ~))
+      "kiln: |uninstall: %base cannot be uninstalled"
     ?.  (~(has by ark) lac)
       ~>  %slog.0^leaf/"kiln: |uninstall: {<lac>} not installed, ignoring"
       kiln
@@ -380,8 +380,8 @@
     ^+  vats
     =/  got  (~(get by ark) lac)
     ?:  =(%base lac)
-      =/  mes  "kiln: suspend: %base cannot be suspended"
-      (emit (pyre:pass leaf/mes ~))
+      =-  (emit (pyre:pass leaf/- ~))
+      "kiln: suspend: %base cannot be suspended"
     ?.  (~(has by ark) lac)
       ~>  %slog.0^leaf/"kiln: suspend: {<lac>} not installed, ignoring"
       vats
@@ -416,34 +416,51 @@
   ::    Apply merges to revive faded agents on all paused desks.
   ::
   ++  bump
-    |=  except=(set desk)
+    |=  [except=(set desk) check=?]
     ^+  kiln
-    =/  kel=weft  [%zuse zuse]
-    =/  ded  (~(dif in (get-blockers kel)) (~(put in except) %base))
-    ?.  =(~ ded)
-      =/  mes  "kiln: desks blocked upgrade to {<[- +]:kel>}: {<ded>}"
-      (^emit (pyre:pass leaf/mes ~))
-    =/  liv  (skip ~(tap in ~(key by ark)) ~(has in except))
-    ~>  %slog.0^leaf/"kiln: bump {<liv>}"
-    =<  kiln
-    |-  ^+  vats
-    ?~  liv  vats
-    =.  vats  (abed i.liv)
-    ::  skip to first commit at new kelvin
+    |^  ^+  kiln
+    ?.  check
+      bump-all
+    =/  ded  find-blocked
+    ?:  =(~ ded)
+      bump-all
+    =-  (^emit (pyre:pass leaf/- ~))
+    "kiln: desks blocked upgrade to {<zuse/zuse>}: {<ded>}"
     ::
-    =/  yon
-      =*  nex  next.rak
-      |-  ^-  (unit aeon)
-      ?~  nex  ~
-      ?:  =(kel weft.i.nex)
-        `aeon.i.nex
-      $(nex t.nex)
-    ?~  yon
-      =/  mes  "kiln: {here} killed upgrade to {<[- +]:kel>}"
-      (emit (pyre:pass leaf/mes ~))
-    =.  next.rak  (crank-next u.yon)
-    =.  vats  (emit merge-main:pass)
-    $(liv t.liv)
+    ++  find-blocked
+      ^-  (set desk)
+      (~(dif in (get-blockers zuse/zuse)) (~(put in except) %base))
+    ::
+    ++  bump-all
+      =/  liv=(list desk)  (skip ~(tap in ~(key by ark)) ~(has in except))
+      ~>  %slog.0^leaf/"kiln: bump {<liv>}"
+      |-  ^+  kiln
+      ?~  liv  kiln
+      $(liv t.liv, kiln (bump-one i.liv))
+    ::
+    ++  bump-one
+      |=  =desk
+      ^+  kiln
+      =<  abet  ^+  vats
+      =.  vats  (abed desk)
+      ::  skip to first commit at new kelvin
+      ::
+      =/  yon
+        =*  nex  next.rak
+        |-  ^-  (unit aeon)
+        ?~  nex  ~
+        ?:  =(kel weft.i.nex)
+          `aeon.i.nex
+        $(nex t.nex)
+      ?~  yon
+        ?.  check
+          ~>  %slog.0^leaf/"kiln: bump: ignoring {<desk>}"
+          vats
+        =-  (emit (pyre:pass leaf/- ~))
+        "kiln: {here} killed upgrade to {<zuse/zuse>}"
+      =.  next.rak  (crank-next u.yon)
+      (emit merge-main:pass)
+    --
   ::  +stop-agents: internal helper to suspend agents on .loc
   ::
   ::    Will not shut down %hood or %dojo.
@@ -555,7 +572,7 @@
       (update-running-apps (get-apps-diff our loc now rein.rak))
     ?.  =(%base loc)
       vats
-    =.  kiln  (bump (sy %base %kids ~))
+    =.  kiln  (bump (sy %base %kids ~) check=|)
     (emit merge-kids:pass)
   ::
   ++  take-merge-kids
@@ -683,7 +700,7 @@
   (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
 ::
 ++  poke-bump
-  |=  except=(set desk)
+  |=  [except=(set desk) check=?]
   abet:(bump:vats +<)
 ::
 ++  poke-cancel
