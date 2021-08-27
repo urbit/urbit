@@ -16,6 +16,7 @@ import { SystemPreferences } from './SystemPreferences';
 export interface MatchItem {
   value: string;
   display?: string;
+  href?: string;
 }
 
 interface LeapStore {

@@ -2,19 +2,22 @@ import React, { useEffect, useMemo } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import fuzzy from 'fuzzy';
 import slugify from 'slugify';
-import { Docket } from '@urbit/api/docket';
 import { ShipName } from '../../components/ShipName';
-import useDocketState, { useAllyTreaties } from '../../state/docket';
+import useDocketState, { App, useAllyTreaties } from '../../state/docket';
 import { MatchItem, useLeapStore } from '../Nav';
 import { AppList } from '../../components/AppList';
+import { getAppHref } from '../../state/util';
 
 type AppsProps = RouteComponentProps<{ ship: string }>;
 
-export function appMatch(app: Docket): MatchItem {
-  // TODO: do we need display vs value here,
-  // will all apps have unique titles? If not,
-  // what would we use?
-  return { value: app.title, display: app.title };
+export function appMatch(app: App, includeHref = false): MatchItem {
+  const match: MatchItem = { value: app.desk, display: app.title };
+
+  if (includeHref) {
+    match.href = getAppHref(app.href);
+  }
+
+  return match;
 }
 
 export const Apps = ({ match }: AppsProps) => {
@@ -25,7 +28,6 @@ export const Apps = ({ match }: AppsProps) => {
   }));
   const provider = match?.params.ship;
   const treaties = useAllyTreaties(provider);
-  console.log(treaties);
   const results = useMemo(() => {
     if (!treaties) {
       return undefined;
@@ -34,7 +36,7 @@ export const Apps = ({ match }: AppsProps) => {
     return fuzzy
       .filter(
         searchInput,
-        values.map((t) => t.title)
+        values.map((v) => v.title)
       )
       .sort((a, b) => {
         const left = a.string.startsWith(searchInput) ? a.score + 1 : a.score;
@@ -59,7 +61,7 @@ export const Apps = ({ match }: AppsProps) => {
   useEffect(() => {
     if (results) {
       useLeapStore.setState({
-        matches: results.map(appMatch)
+        matches: results.map((r) => appMatch(r))
       });
     }
   }, [results]);

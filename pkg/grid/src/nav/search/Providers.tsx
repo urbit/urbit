@@ -17,10 +17,7 @@ export function providerMatch(provider: Provider | string): MatchItem {
 }
 
 export const Providers = ({ match }: ProvidersProps) => {
-  const { selectedMatch, select } = useLeapStore((state) => ({
-    select: state.select,
-    selectedMatch: state.selectedMatch
-  }));
+  const selectedMatch = useLeapStore((state) => state.selectedMatch);
   const provider = match?.params.ship;
   const allies = useAllies();
   const search = provider || '';
@@ -43,11 +40,6 @@ export const Providers = ({ match }: ProvidersProps) => {
     [allies, search]
   );
   const count = results?.length;
-  const ally = match?.params.ship;
-
-  useEffect(() => {
-    select(null, ally);
-  }, [ally]);
 
   useEffect(() => {
     if (results) {

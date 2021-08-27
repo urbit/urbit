@@ -1,14 +1,15 @@
 import classNames from 'classnames';
 import React, { FunctionComponent } from 'react';
 import { darken, hsla, lighten, parseToHsla, readableColorIsBlack } from 'color2k';
-import { chadIsRunning, Charge } from '@urbit/api/docket';
+import { chadIsRunning } from '@urbit/api/docket';
 import { TileMenu } from './TileMenu';
 import { Spinner } from '../components/Spinner';
 import { getAppHref } from '../state/util';
 import { useRecentsStore } from '../nav/search/Home';
+import { ChargeWithDesk } from '../state/docket';
 
 type TileProps = {
-  charge: Charge;
+  charge: ChargeWithDesk;
   desk: string;
 };
 
@@ -40,7 +41,7 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
       href={active ? link : undefined}
       target={desk}
       className={classNames(
-        'group relative font-semibold aspect-w-1 aspect-h-1 rounded-3xl default-ring',
+        'group relative font-semibold aspect-w-1 aspect-h-1 rounded-3xl default-ring overflow-hidden',
         !active && 'cursor-default'
       )}
       style={{ backgroundColor: active ? color || 'purple' : suspendColor }}
@@ -61,7 +62,7 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
             className="absolute z-10 top-2.5 right-2.5 sm:top-4 sm:right-4 opacity-0 hover-none:opacity-100 focus:opacity-100 group-hover:opacity-100"
           />
         )}
-        <div className="h4 absolute bottom-4 left-4 lg:bottom-8 lg:left-8">
+        <div className="h4 absolute z-10 bottom-4 left-4 lg:bottom-8 lg:left-8">
           <h3
             className={`${
               lightText && active && !loading ? 'text-gray-200' : 'text-gray-800'
@@ -75,7 +76,7 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
         </div>
         {image && !loading && (
           <img
-            className="absolute top-1/2 left-1/2 h-[40%] w-[40%] object-contain transform -translate-x-1/2 -translate-y-1/2"
+            className="absolute top-1/2 left-1/2 h-full w-full object-contain transform -translate-x-1/2 -translate-y-1/2"
             src={image}
             alt=""
           />

@@ -3,7 +3,7 @@ import create from 'zustand';
 import React, { useEffect } from 'react';
 import { persist } from 'zustand/middleware';
 import { take } from 'lodash-es';
-import { Docket, Provider } from '@urbit/api';
+import { Provider } from '@urbit/api';
 import { MatchItem, useLeapStore } from '../Nav';
 import { appMatch } from './Apps';
 import { providerMatch } from './Providers';
@@ -12,12 +12,12 @@ import { ProviderList } from '../../components/ProviderList';
 import { AppLink } from '../../components/AppLink';
 import { ShipName } from '../../components/ShipName';
 import { ProviderLink } from '../../components/ProviderLink';
-import { useCharges } from '../../state/docket';
+import { App, useCharges } from '../../state/docket';
 
 interface RecentsStore {
-  recentApps: Docket[];
+  recentApps: App[];
   recentDevs: Provider[];
-  addRecentApp: (docket: Docket) => void;
+  addRecentApp: (app: App) => void;
   addRecentDev: (dev: Provider) => void;
 }
 
@@ -26,12 +26,12 @@ export const useRecentsStore = create<RecentsStore>(
     (set) => ({
       recentApps: [],
       recentDevs: [],
-      addRecentApp: (docket) => {
+      addRecentApp: (app) => {
         set(
           produce((draft: RecentsStore) => {
-            const hasApp = draft.recentApps.find((app) => app.title === docket.title);
+            const hasApp = draft.recentApps.find((a) => a.desk === app.desk);
             if (!hasApp) {
-              draft.recentApps.unshift(docket);
+              draft.recentApps.unshift(app);
             }
 
             draft.recentApps = take(draft.recentApps, 3);
@@ -64,8 +64,8 @@ export function addRecentDev(dev: Provider) {
   return useRecentsStore.getState().addRecentDev(dev);
 }
 
-export function addRecentApp(docket: Docket) {
-  return useRecentsStore.getState().addRecentApp(docket);
+export function addRecentApp(app: App) {
+  return useRecentsStore.getState().addRecentApp(app);
 }
 
 export const Home = () => {
@@ -76,7 +76,7 @@ export const Home = () => {
   const zod = { shipName: '~zod' };
 
   useEffect(() => {
-    const apps = recentApps.map(appMatch);
+    const apps = recentApps.map((app) => appMatch(app, true));
     const devs = recentDevs.map(providerMatch);
 
     useLeapStore.setState({
@@ -93,7 +93,13 @@ export const Home = () => {
         <div className="min-h-[150px] p-6 rounded-xl bg-gray-100">
           <p className="mb-4">Apps you use will be listed here, in the order you used them.</p>
           <p className="mb-6">You can click/tap/keyboard on a listed app to open it.</p>
-          {groups && <AppLink app={groups} size="small" onClick={() => addRecentApp(groups)} />}
+          {groups && (
+            <AppLink
+              app={groups}
+              size="small"
+              onClick={() => addRecentApp({ ...groups, desk: 'groups' })}
+            />
+          )}
         </div>
       )}
       {recentApps.length > 0 && (

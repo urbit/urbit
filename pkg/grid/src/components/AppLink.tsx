@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { HTMLProps, ReactNode } from 'react';
 import { Link, LinkProps } from 'react-router-dom';
-import { Docket } from '@urbit/api';
+import { App } from '../state/docket';
 import { getAppHref } from '../state/util';
 
 type Sizes = 'xs' | 'small' | 'default';
@@ -12,11 +12,11 @@ type LinkOrAnchorProps = {
     : never;
 };
 
-export type AppLinkProps<T extends Docket> = Omit<LinkOrAnchorProps, 'to'> & {
-  app: T;
+export type AppLinkProps = Omit<LinkOrAnchorProps, 'to'> & {
+  app: App;
   size?: Sizes;
   selected?: boolean;
-  to?: (app: T) => LinkProps['to'] | undefined;
+  to?: (app: App) => LinkProps['to'] | undefined;
 };
 
 const sizeMap: Record<Sizes, string> = {
@@ -25,14 +25,14 @@ const sizeMap: Record<Sizes, string> = {
   default: 'w-12 h-12 mr-3 rounded-lg'
 };
 
-export const AppLink = <T extends Docket>({
+export const AppLink = ({
   app,
   to,
   size = 'default',
   selected = false,
   className,
   ...props
-}: AppLinkProps<T>) => {
+}: AppLinkProps) => {
   const linkTo = to?.(app);
   const linkClassnames = classNames(
     'flex items-center default-ring ring-offset-2 rounded-lg',
@@ -45,7 +45,7 @@ export const AppLink = <T extends Docket>({
         {children}
       </Link>
     ) : (
-      <a href={getAppHref(app.href)} className={linkClassnames} {...props}>
+      <a href={getAppHref(app.href)} target={app.desk} className={linkClassnames} {...props}>
         {children}
       </a>
     );

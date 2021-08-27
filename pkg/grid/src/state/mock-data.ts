@@ -180,7 +180,7 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
   hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
 });
 
-const badVats = []; // ['inbox', 'system', 'terminal', 'base'];
+const badVats = ['inbox', 'system', 'terminal', 'base'];
 export const mockVats = _.reduce(
   mockCharges,
   (vats, charge, desk) => {
@@ -188,5 +188,3 @@ export const mockVats = _.reduce(
   },
   { base: mockVat('base', true) } as Vats
 );
-
-console.log(mockVats);

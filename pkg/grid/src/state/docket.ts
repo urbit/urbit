@@ -1,11 +1,10 @@
 import create from 'zustand';
 import produce from 'immer';
 import { useCallback, useEffect } from 'react';
-import { mapValues, omit, pick } from 'lodash-es';
+import { omit, pick } from 'lodash-es';
 import {
   Allies,
   Charge,
-  Charges,
   ChargeUpdateInitial,
   scryAllies,
   scryAllyTreaties,
@@ -24,8 +23,18 @@ import api from './api';
 import { mockAllies, mockCharges, mockTreaties } from './mock-data';
 import { fakeRequest, useMockData } from './util';
 
+export interface ChargeWithDesk extends Charge {
+  desk: string;
+}
+
+export interface ChargesWithDesks {
+  [ref: string]: ChargeWithDesk;
+}
+
+export type App = Treaty | ChargeWithDesk;
+
 interface DocketState {
-  charges: Charges;
+  charges: ChargesWithDesks;
   treaties: Treaties;
   allies: Allies;
   fetchCharges: () => Promise<void>;
@@ -43,9 +52,9 @@ const useDocketState = create<DocketState>((set, get) => ({
       ? await fakeRequest(mockCharges)
       : (await api.scry<ChargeUpdateInitial>(scryCharges)).initial;
 
-    const charges = Object.entries(charg).reduce((obj: Charges, [key, value]) => {
+    const charges = Object.entries(charg).reduce((obj: ChargesWithDesks, [key, value]) => {
       // eslint-disable-next-line no-param-reassign
-      obj[key] = normalizeDocket<Charge>(value);
+      obj[key] = normalizeDocket(value as ChargeWithDesk, key);
       return obj;
     }, {});
 
@@ -60,7 +69,7 @@ const useDocketState = create<DocketState>((set, get) => ({
     let treaties = useMockData
       ? mockTreaties
       : (await api.scry<TreatyUpdateIni>(scryAllyTreaties(ally))).ini;
-    treaties = mapValues(treaties, normalizeDocket);
+    treaties = normalizeDockets(treaties);
     set((s) => ({ treaties: { ...s.treaties, ...treaties } }));
     return treaties;
   },
@@ -77,7 +86,7 @@ const useDocketState = create<DocketState>((set, get) => ({
     }
 
     const result = await api.subscribeOnce('docket', `/treaty/${key}`, 20000);
-    const treaty = { ...normalizeDocket(result), ship, desk };
+    const treaty = { ...normalizeDocket(result, desk), ship };
     set((state) => ({
       treaties: { ...state.treaties, [key]: treaty }
     }));
@@ -134,13 +143,14 @@ const useDocketState = create<DocketState>((set, get) => ({
   set
 }));
 
-function normalizeDocket<T extends Docket>(docket: T): T {
+function normalizeDocket<T extends Docket>(docket: T, desk: string): T {
   const color = docket?.color?.startsWith('#')
     ? docket.color
     : `#${docket.color.slice(2).replace('.', '')}`.toUpperCase();
 
   return {
     ...docket,
+    desk,
     color
   };
 }
@@ -148,13 +158,13 @@ function normalizeDocket<T extends Docket>(docket: T): T {
 function normalizeDockets<T extends Docket>(dockets: Record<string, T>): Record<string, T> {
   return Object.entries(dockets).reduce((obj: Record<string, T>, [key, value]) => {
     // eslint-disable-next-line no-param-reassign
-    obj[key] = normalizeDocket(value);
+    obj[key] = normalizeDocket(value, key);
     return obj;
   }, {});
 }
 
 function addCharge(state: DocketState, desk: string, charge: Charge) {
-  return { charges: { ...state.charges, [desk]: normalizeDocket(charge) } };
+  return { charges: { ...state.charges, [desk]: normalizeDocket(charge as ChargeWithDesk, desk) } };
 }
 
 function delCharge(state: DocketState, desk: string) {
