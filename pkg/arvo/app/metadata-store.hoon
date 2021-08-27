@@ -247,8 +247,8 @@
         =/  assocs=(list [=md-resource:store grp=resource =metadatum:store])
           ~(tap by associations)
         =/  old-resources=(set md-resource:store)  (~(get ju group-indices) group)
-        =/  cur-resources=(set md-resource:store)  ~(key by assocs)
-        =.  state   (remove-gone group (~(dif in old-resource) cur-resource))
+        =/  cur-resources=(set md-resource:store)  ~(key by associations)
+        =.  state   (remove-gone group (~(dif in old-resources) cur-resources))
         |-
         ?~  assocs
           :_  state
@@ -260,17 +260,17 @@
         $(assocs t)
       ::
       ++  remove-gone
-        |=  [group=resource gone=(set md-resource:store)
+        |=  [group=resource gone=(set md-resource:store)]
         ^+  state
         %+  roll  ~(tap in gone)
         |=  [=md-resource:store out=_state]
         %_  out
           associations      (~(del by associations.out) md-resource)
           group-indices     (~(del ju group-indices.out) group md-resource)
-          resource-indices  (~(del ju resource-indices.out) md-resource group)
+          resource-indices  (~(del by resource-indices.out) md-resource)
           ::
             app-indices
-          (~(del ju app-indices.out) app.md-resource group resource.md-resource)
+          (~(del ju app-indices.out) app-name.md-resource group resource.md-resource)
         ==
       --
     ::
