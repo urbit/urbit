@@ -112,7 +112,6 @@
           %heft  (pass /whey %$ whey/~)
           %meld  (dump kyz)
           %pack  (dump kyz)
-          %pyre  (mean 'dill: %pyre' tang.kyz)
           %crop  (dump trim+p.kyz)
           %verb  (pass /verb %$ kyz)
         ::

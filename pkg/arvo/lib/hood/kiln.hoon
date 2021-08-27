@@ -296,7 +296,7 @@
     --
   ++  pass
     |%
-    ++  pyre  |=(=tang [%pass /kiln/vats %arvo %d %pyre tang])
+    ++  pyre  |=(=tang [%pass /kiln/vats %pyre tang])
     ++  find      (warp %find [%sing %y ud+1 /])
     ++  sync-da   (warp %sync [%sing %w da+now /])
     ++  sync-ud   (warp %sync [%sing %w ud+aeon.rak /])

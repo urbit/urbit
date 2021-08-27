@@ -64,6 +64,7 @@
       leaf/"base hash:   {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:    {<hash>}"
       leaf/"source ship: {<ship.arak>}"
+      leaf/"source desk: {<desk.arak>}"
       leaf/"source aeon: {<aeon.arak>}"
       leaf/"status:      {sat}"
       leaf/"force on:    {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"

@@ -1057,7 +1057,6 @@
         [%meld ~]                                       ::  unify memory
         [%noop ~]                                       ::  no operation
         [%pack ~]                                       ::  compact memory
-        [%pyre =tang]                                   ::  kill this event
         [%talk p=tank]                                  ::
         [%text p=tape]                                  ::
         [%view session=~]                               ::  watch session blits
@@ -1679,6 +1678,7 @@
   +$  neat
     $%  [%arvo =note-arvo]
         [%agent [=ship name=term] =deal]
+        [%pyre =tang]
     ==
   +$  deal
     $%  [%raw-poke =mark =noun]
@@ -1697,8 +1697,9 @@
     +$  step  (quip card form)
     +$  card  (wind note gift)
     +$  note
-      $%  [%arvo =note-arvo]
-          [%agent [=ship name=term] =task]
+      $%  [%agent [=ship name=term] =task]
+          [%arvo note-arvo]
+          [%pyre =tang]
       ==
     +$  task
       $%  [%watch =path]
