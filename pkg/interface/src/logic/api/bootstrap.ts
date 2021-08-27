@@ -31,6 +31,9 @@ export async function bootstrapApi() {
     useLocalState.setState({ subscription: 'connected' });
   };
 
+  [useGraphState].map(s => s.getState()?.clear?.());
+  useGraphState.getState().getShallowChildren(`~${window.ship}`, 'dm-inbox');
+
   const promises = [
     useHarkState,
     useMetadataState,

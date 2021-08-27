@@ -25,6 +25,7 @@ export interface GraphState {
   pendingDms: Set<string>;
   screening: boolean;
   graphTimesentMap: Record<number, string>;
+  getShallowChildren: (ship: string, name: string, index?: string) => Promise<void>;
   getDeepOlderThan: (ship: string, name: string, count: number, start?: string) => Promise<void>;
   getNewest: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
   getOlderSiblings: (ship: string, resource: string, count: number, index?: string) => Promise<void>;
@@ -256,9 +257,17 @@ const useGraphState = createState<GraphState>('Graph', (set, get) => ({
     if(j) {
       reduceStateN(get(), j, reduceDm);
     }
-  })
+  })],
+  {
+    graphs: {},
+    looseNodes: {},
+    graphTimesentMap: {},
+    flatGraphs: {},
+    threadGraphs: {},
+    pendingDms: new Set<string>()
+  }
 
-]);
+);
 
 export function useGraph(ship: string, name: string) {
   return useGraphState(
