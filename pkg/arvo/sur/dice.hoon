@@ -44,7 +44,7 @@
   ==
 ::
 +$  update
-  $%  [%point =owner =ship =point:naive]
+  $%  [%point =ship =point:naive new=owner old=(unit owner)]
       [%tx =address:ethereum =roller-tx]
   ==
 ::

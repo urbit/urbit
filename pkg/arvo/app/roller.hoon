@@ -517,18 +517,28 @@
   |-  ^-  (list card)
   ?~  updates  ~
   =*  up          i.updates
-  =/  address=@t
-    %+  scot  %ux
-    ?-  -.up
-      %tx     address.up
-      %point  address.owner.up
+  =/  [address=@t last-owner=(unit @t)]
+    ?-    -.up
+        %tx
+      :_  ~
+      (scot %ux address.up)
+    ::
+        %point
+    :-  (scot %ux address.new.up)
+    ?~(old.up ~ `(scot %ux address.u.old.up))
     ==
-  :_  $(updates t.updates)
-  ^-  card
-  :+  %give  %fact
+  %+  weld
+    $(updates t.updates)
+  ^-  (list card)
   ?-  -.i.updates
-    %tx     [~[/txs/[address]] tx+!>(roller-tx.up)]
-    %point  [~[/points/[address]] point+!>([ship point]:up)]
+      %tx
+    [%give %fact ~[/txs/[address]] tx+!>(roller-tx.up)]~
+  ::
+      %point
+    %+  weld
+      [%give %fact ~[/points/[address]] point+!>([ship point]:up)]~
+    ?~  last-owner  ~
+    [%give %fact ~[/points/[u.last-owner]] point+!>([ship point]:up)]~
   ==
 ::
 ++  part-tx-to-full

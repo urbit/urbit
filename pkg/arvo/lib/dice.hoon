@@ -39,7 +39,7 @@
           nas=^state:naive
           =owners
       ==
-  ^-  (quip update _owners)
+  ^-  (quip update own=_owners)
   %+  roll  effects
   |=  [=diff:naive ups=(list update) owners=_owners]
   =,  orm:naive
@@ -62,8 +62,8 @@
       [ups owners]
     ?~  to  [ups owners]
     ~?  =(ship ~marzod)  ['add' u.to ship]
-    :-  (snoc ups [%point u.to ship new])
-    (~(put ju owners) u.to ship)
+    :_  (~(put ju owners) u.to ship)
+    (snoc ups [%point ship new u.to from])
   ?+    -.event  [~ ~]
       %owner
     :-  `[%own +.event]

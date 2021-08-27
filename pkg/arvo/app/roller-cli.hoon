@@ -80,6 +80,9 @@
       ::  Ships owned by an address
       ::
       [%ships address:ethereum]
+      ::  Point data for a given ship
+      ::
+      [%point address:ethereum ship]
       ::  Example flow
       ::
       [%example-flow ~]
@@ -126,7 +129,16 @@
   :: ++  app-states   $%([%0 ~] [%1 *] app-state)
   :: --
 ::
-++  on-poke   on-poke:def
+++  on-poke
+  |=  [=mark =vase]
+  ^-  (quip card _this)
+  ~&
+    =/  addr=@ux
+      0x6def.fb0c.afdb.11d1.75f1.23f6.891a.a64f.01c2.4f7d
+    :: %+  turn
+      ~(tap in (~(get ju points) addr))
+    :: head
+  [~ this]
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ::  +on-peek: scry paths
@@ -171,24 +183,57 @@
         ?~  addr=(slaw %ux wat)  (on-agent:def wire sign)
         =+  !<(points=(list [ship point:naive]) q.cage.sign)
         =.  points.state
-          (~(gas ju points.state) (turn points (cork same (lead u.addr))))
+          %-  ~(gas ju points.state)
+          (turn points (cork same (lead u.addr)))
         [~ this]
       ::
           %point
         ?~  addr=(slaw %ux wat)  (on-agent:def wire sign)
-        =+  !<(point=[ship point:naive] q.cage.sign)
+        =+  !<(new-point=[=ship =point:naive] q.cage.sign)
         ::  TODO: handle multiple sole sessions?
         ::
         :: =/  sez=(list [=sole-id =session])
         ::   ~(tap by sessions)
         =/  console=tape
-          "Point update ({(scow %p -.point)})"
+          "Point update ({(scow %p ship.new-point)})"
         =.  points.state
           ::  FIXME: doesn't properly update point
           ::  handle proper insert/deletion of points
           ::  to account for ownership changes/nonce updates
           ::
-          (~(put ju points.state) [u.addr point])
+          =;  [is-owner=? old=(unit [=ship =point:naive])]
+            ?~  old  points.state
+            =.  points.state
+              (~(del ju points.state) u.addr u.old)
+            ?.  is-owner  points.state
+            (~(put ju points.state) [u.addr new-point])
+          =/  points=(list [=ship =point:naive])
+            ~(tap in (~(get ju points.state) u.addr))
+          |-  ^-  [? (unit [ship point:naive])]
+          |^
+          ?~  points  [| ~]
+          ?.  =(ship.i.points ship.new-point)
+            $(points t.points)
+          :-  is-owner
+          `[ship.new-point point.i.points]
+          ::
+          ++  is-owner
+            =*  own  own.point.new-point
+            ?|  =(u.addr address.owner.own)
+                =(u.addr address.spawn-proxy.own)
+                =(u.addr address.management-proxy.own)
+                =(u.addr address.voting-proxy.own)
+                =(u.addr address.transfer-proxy.own)
+            ==
+          --
+          :: %-  ~(run in points)
+          :: |=  old=[=ship =point:naive]
+          :: ?.  =(ship.old ship.new)
+          ::    old
+          :: point.new
+          :: (~(put ju points.state) [u.addr point])
+        ~&  :-  %ships
+            (turn ~(tap in (~(get ju points.state) u.addr)) head)
         :_  this
         :_  ~
         :-  %shoe
@@ -210,7 +255,8 @@
           %txs
         =+  !<(txs=(list roller-tx) q.cage.sign)
         =.  history.state
-          (~(gas ju history.state) (turn txs (cork same (lead u.addr))))
+          %-  ~(gas ju history.state)
+          (turn txs (cork same (lead u.addr)))
         [~ this]
       ::
           %tx
@@ -284,6 +330,7 @@
     ;~(plug (tag %history) ;~(pfix (jest ' 0x') hex))
     ;~((glue ace) (tag %submit) submit)
     ;~((glue ace) (tag %ships) address)
+    ;~((glue ace) (tag %point) address ;~(pfix sig fed:ag))
   ==
   ::
   ++  tag      |*(a=@tas (cold a (jest a)))  :: TODO (from /app/chat-cli) into stdlib
@@ -373,6 +420,7 @@
       %submit   (submit +.command)
       %history  (history +.command)
       %ships    (ships +.command)
+      %point    (point +.command)
       %example-flow  example-flow
   ==
   ::
@@ -487,11 +535,13 @@
     :-  [sole-id]~
     :^  %table
         :: ~[t+'address' t+'signing ship' t+'type' t+'status' t+'hash']
-        ~[t+'signing ship' t+'type' t+'status' t+'hash']
-      ~[14 20 9 13]
-    %+  turn  ~(tap in (~(get ju history.state) address))
+        ~[t+'signing ship' t+'type' t+'status' t+'hash' t+'time']
+      ~[14 20 9 13 26]
+    %+  turn
+      %+  sort  ~(tap in (~(get ju history.state) address))
+      |=([a=roller-tx b=roller-tx] (lth time.a time.b))
     |=  roller-tx
-    |^  ~[p+ship t+type t+status pack-hash]
+    |^  ~[p+ship t+type t+status pack-hash t+(scot %da time)]
     ::
     ++  pack-address
       =+  addr=(scow %ux address)
@@ -520,6 +570,15 @@
     |=  =address:ethereum
     ^-  (quip card _this)
     ~&  ships+(turn ~(tap in (~(get ju points) address)) head)
+    [~ this]
+  ::
+  ++  point
+    |=  [=address:ethereum =ship]
+    ^-  (quip card _this)
+    =/  points=(set [@p point:naive])
+      (~(get ju points.state) address)
+    ~&  %+  skim  ~(tap in points)
+        |=([s=@p =point:naive] =(s ship))
     [~ this]
   --
 ::
