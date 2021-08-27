@@ -2871,46 +2871,41 @@
     ::
     ++  see                                             ::  get hi-pri (unsafe)
       ~/  %see
-      |=  [a=pri k=@]
-      |^  ^-  (pair (unit (pair @ buc)) pri)
-      (look a k |=((pair @ buc) [`+< +<]))
+      |*  [a=pri k=@ f=$-((pair @ buc) (trel (unit *) @ buc))]
+      =/  bon  _=>((f *@ *buc) ?>(?=(^ -) +.-))
+      |^  ^-  (pair (unit bon) pri)
+      =/  val  loop
+      [q.val p.val]
       ::
-      ++  look
-        |=  [a=pri k=@ f=$-((pair @ buc) (trel (unit (pair @ buc)) @ buc))]
-        |^  ^-  (pair (unit (pair @ buc)) pri)
-        =/  val  loop
-        [q.val p.val]
-        ::  XX move into +look
+      ++  loop
+        ^-  (pair pri (unit bon))
+        ?~  a  [~ ~]
+        ?-    -.a
+            %tip
+          ?:  =(k k.a)
+            =/  val=(trel (unit bon) @ buc)
+              (f p.a v.a)
+            :_  p.val
+            [%tip k q.val r.val]
+          [a ~]
         ::
-        ++  loop
-          ^-  (pair pri (unit (pair @ buc)))
-          ?~  a  [~ ~]
-          ?-    -.a
-              %tip
-            ?:  =(k k.a)
-              =/  val  (f p.a v.a)
-              :_  p.val
-              [%tip k q.val r.val]
+            %bin
+          ?:  (gone k k.a m.a)
             [a ~]
-          ::
-              %bin
-            ?:  (gone k k.a m.a)
-              [a ~]
-            ?:  =(k k.a)
-              =/  val  (f p.a v.a)
-              :_  p.val
-              ?:  (zero k m.a)
-                (fuse m.a (raw l.a k q.val r.val) r.a)
-              (fuse m.a l.a (raw r.a k q.val r.val))
+          ?:  =(k k.a)
+            =/  val=(trel (unit bon) @ buc)  (f p.a v.a)
+            :_  p.val
             ?:  (zero k m.a)
-              =/  val  loop(a l.a)
-              :_  q.val
-              [%bin k.a p.a v.a m.a p.val r.a]
-            =/  val  loop(a r.a)
+              (fuse m.a (raw l.a k q.val r.val) r.a)
+            (fuse m.a l.a (raw r.a k q.val r.val))
+          ?:  (zero k m.a)
+            =/  val  loop(a l.a)
             :_  q.val
-            [%bin k.a p.a v.a m.a l.a p.val]
-          ==
-        --
+            [%bin k.a p.a v.a m.a p.val r.a]
+          =/  val  loop(a r.a)
+          :_  q.val
+          [%bin k.a p.a v.a m.a l.a p.val]
+        ==
       --
   ::
   ++  apt                                               ::  check correctness
@@ -3277,6 +3272,24 @@
         (make k p v t.bb)
       [bp [k.bb v.bb (put:qor t.bb k p v)]]
     (vip:qat a (mug k) p [k v ~])
+  ::
+  ++  see                                               ::  get hi-pri (unsafe)
+    ~/  %see
+    |=  [a=pri =k p=@]
+    |^  ^-  (pair (unit (pair @ v)) pri)
+    (see:qat a (mug k) hal)
+    ::
+    ++  hal
+      |=  [bp=@ bb=buc]
+      ^-  (trel (unit (pair @ v)) @ buc)
+      ?:  =(k k.bb)
+        [`[bp v.bb] (make k p v.bb t.bb)]
+      =/  val=(unit (pair @ v))
+        (get:qor t.bb k)
+      ?~  val
+        [~ bp bb]
+      [val bp [k.bb v.bb (put:qor t.bb k p q.u.val)]]
+    --
   ::
   ++  apt                                               ::  check correctness
     ~/  %apt
