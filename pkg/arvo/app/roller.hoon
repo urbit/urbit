@@ -49,7 +49,7 @@
       %+  map  l1-tx-pointer
       [next-gas-price=@ud txs=(list raw-tx:naive)]
     ::
-      finding=(map keccak ?(%confirmed %failed l1-tx-pointer))
+      finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
       history=(jug address:ethereum roller-tx)
       next-nonce=(unit @ud)
       next-batch=time
@@ -216,7 +216,7 @@
       !>  ^-  tx-status
       ?^  status=(~(get by finding) u.keccak)
         ?@  u.status  [u.status ~]
-        [%sending status]
+        [%sending `+.u.status]
       ::TODO  potentially slow!
       =;  known=?
         [?:(known %pending %unknown) ~]
@@ -626,12 +626,13 @@
     ::
     =*  key  p.i.sending
     =*  val  q.i.sending
-    =+  txs=(turn txs.val |=(=raw-tx:naive [| 0x0 raw-tx]))
+    =+  txs=(turn txs.val |=(=raw-tx:naive [| 0x0 *time raw-tx]))
     =^  [new-valid=_txs nups=_ups]  state
       (apply-txs txs %sending)
     =.  valid
       %+  ~(put by valid)  key
-      val(txs (turn new-valid (cork tail tail)))
+      ::  TODO: too much functional hackery?
+      val(txs (turn new-valid (cork tail (cork tail tail))))
     $(sending t.sending, ups (welp ups nups))
   ::
   ++  apply-txs
@@ -645,6 +646,7 @@
     =*  tx        i.txs
     =*  raw-tx    raw-tx.i.txs
     =*  ship      ship.from.tx.raw-tx.i.txs
+    =*  time      time.i.txs
     =/  hash=@ux  (hash-raw-tx:lib raw-tx)
     ::  TODO: add tests to validate if this is necessary
     ::
@@ -662,7 +664,7 @@
       tx(address u.sign-address)
     ::
     =/  =roller-tx
-      [ship type hash (l2-tx +<.tx.raw-tx)]
+      [ship type hash time (l2-tx +<.tx.raw-tx)]
     =?  nups  !gud
       %+  snoc  nups
       [%tx address.tx roller-tx(status %failed)]
@@ -701,10 +703,12 @@
   ::
       %submit
     %-  take-tx
-    :^    force.action
+    :*  force.action
         address.action
-      sig.action
-    (part-tx-to-full tx.action)
+        now.bowl
+        sig.action
+        (part-tx-to-full tx.action)
+    ==
   ==
 ::
 ++  on-config
@@ -759,15 +763,22 @@
   ?~  addr=(verify-sig:lib sig message)
     ~?  lverb  [dap.bowl %cancel-sig-fail]
     [~ state]
+  =^  time  pending
+    =|  nep=(list pend-tx)
+    =|  tx-time=time
+    |-  ^-  [time _pending]
+    ?~  pending  [tx-time nep]
+    =+  i.pending
+    =?  tx-time  =(keccak (hash-raw-tx:lib raw-tx))
+      time
+    =?  nep  !=(keccak (hash-raw-tx:lib raw-tx))
+      (snoc nep i.pending)
+    $(pending t.pending)
   ::  TODO: mark as failed instead? add a %cancelled to tx-status?
   ::
   =.  history
     %+  ~(del ju history)  u.addr
-    [ship %pending keccak l2-tx]
-  =.  pending
-    %+  skip  pending
-    |=  pend-tx
-    =(keccak (hash-raw-tx:lib raw-tx))
+    [ship %pending keccak time l2-tx]
   [~ state]
 ::  +take-tx: accept submitted l2 tx into the :pending list
 ::
@@ -783,13 +794,14 @@
   ::
   :: =/  not-sent=?  !(~(has by finding) hash)
   :: =?  pending  not-sent
-  =.  pending  (snoc pending [force address raw-tx])
+  =.  pending  (snoc pending [force address time raw-tx])
   :: =?  history  not-sent
   =^  update-cards  history
     =/  =roller-tx
       :*  ship.from.tx.raw-tx
           %pending
           hash
+          time
           (l2-tx +<.tx.raw-tx)
       ==
     :-  [%tx address roller-tx]~
@@ -829,13 +841,13 @@
           sending
         %+  ~(put by sending)
           [get-address nonce]
-        [0 (turn pending (cork tail tail))]
+        [0 (turn pending (cork tail (cork tail tail)))]
       ::
           finding
         %-  ~(gas by finding)
         %+  turn  pending
         |=  pend-tx
-        (hash-raw-tx:lib raw-tx)^[address nonce]
+        (hash-raw-tx:lib raw-tx)^[time address nonce]
       ==
     :_  state
     ;:  welp
@@ -853,6 +865,7 @@
     :*  ship.from.tx.raw-tx
         %pending
         (hash-raw-tx:lib raw-tx)
+        time
         (l2-tx +<.tx.raw-tx)
     ==
   =+  tx=[address roller-tx(status %sending)]
@@ -938,6 +951,7 @@
   =*  nonce    nonce.u.wer
   =*  address  address.u.wer
   =*  ship     ship.from.tx.raw-tx.diff
+  =*  time     time.u.wer
   =*  tx       tx.raw-tx.diff
   =/  l2-tx    (l2-tx +<.tx)
   ::  remove the tx from the sending map
@@ -965,7 +979,7 @@
     %failed
   ::
   =^  updates  history
-    =/  =roller-tx  [ship %sending keccak l2-tx]
+    =/  =roller-tx  [ship %sending keccak time l2-tx]
     =.  history
       (~(del ju history) address roller-tx)
     =.  status.roller-tx

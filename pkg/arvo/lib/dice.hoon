@@ -51,17 +51,13 @@
     (need (get points.nas ship))
   =*  event  +>.diff
   =;  [to=(unit owner) from=(unit owner)]
-    ~?  =(ship ~marzod)
-      [-.event to+to from+from]
     =?  owners  &(?=(^ from) !=(address.u.from 0x0))
-      ~?  =(ship ~marzod)  ['del' u.from ship new old]
       (~(del ju owners) u.from ship)
     ?:  ?|  =(~ to)
             &(?=(^ to) =(address.u.to 0x0))
         ==
       [ups owners]
     ?~  to  [ups owners]
-    ~?  =(ship ~marzod)  ['add' u.to ship]
     :_  (~(put ju owners) u.to ship)
     (snoc ups [%point ship new u.to from])
   ?+    -.event  [~ ~]

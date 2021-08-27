@@ -50,9 +50,9 @@
 ::
 ::  TODO:  add submission time?
 ::
-+$  roller-tx  [=ship =status hash=keccak type=l2-tx]
++$  roller-tx  [=ship =status hash=keccak =time type=l2-tx]
 ::
-+$  pend-tx    [force=? =address:naive =raw-tx:naive]
++$  pend-tx    [force=? =address:naive =time =raw-tx:naive]
 ::
 +$  part-tx
   $%  [%raw raw=octs]

@@ -17,34 +17,171 @@
 ::
 =,  jael
 |%
-++  app-state
-  $:  %3
++$  versioned-state
+  $%  app-state
+  ==
+::::
++$  app-state
+  $:  %0
       url=@ta
+      net=network
       whos=(set ship)
       nas=^state:naive
       own=owners
       logs=(list =event-log:rpc:ethereum)
   ==
+::
 +$  poke-data
   $%  ::  %listen
       ::
       [%listen whos=(list ship) =source:jael]
-      ::  %watch: configure node url
+      ::  %watch: configure node url and network
       ::
-      [%watch url=@ta]
+      [%watch url=@ta net=network]
   ==
-+$  tagged-diff  [=id:block diff:naive]
 ::
-+$  network  ?(%mainnet %ropsten %local)
++$  tagged-diff  [=id:block diff:naive]
++$  network      ?(%mainnet %ropsten %local)
++$  card         card:agent:gall
 --
 ::
-|%
-++  net
-  ^-  network
-  ::  TODO: add poke action to allow switching?
-  ::        eth snapshot could also be considered
+=|  state=app-state
+%-  agent:dbug
+%+  verb  |
+^-  agent:gall
+=<
+  |_  =bowl:gall
+  +*  this  .
+      do    ~(. +> bowl)
+      def   ~(. (default-agent this %|) bowl)
   ::
-  %local
+  ++  on-init
+    ^-  (quip card _this)
+    =.  net.state  %local
+    :_  this
+    [%pass /eth-watcher %agent [our.bowl %eth-watcher] %watch /logs/[dap.bowl]]~
+  ::
+  ++  on-save   !>(state)
+  ++  on-load
+    |=  old=vase
+    ^-  (quip card _this)
+    `this(state !<(versioned-state old))
+  ::
+  ++  on-poke
+    |=  [=mark =vase]
+    ^-  (quip card _this)
+    ?:  =(%noun mark)
+      ?+    q.vase  !!
+          %rerun
+        ~&  [%rerunning (lent logs.state)]
+        =.  points.nas.state  ~
+        =.  own.state  ~
+        =^  *  state  (run-logs:do logs.state)
+        `this
+      ::
+          %resub
+        :_  this  :_  ~
+        [%pass /eth-watcher %agent [our.bowl %eth-watcher] %watch /logs/[dap.bowl]]
+      ::
+          %resnap
+        =.  logs.state  snap
+        $(mark %noun, vase !>(%rerun))
+      ==
+    ?:  =(%eth-logs mark)
+      =+  !<(logs=(list event-log:rpc:ethereum) vase)
+      =.  logs.state  logs
+      $(mark %noun, vase !>(%rerun))
+    ::
+    ?.  ?=(%azimuth-poke mark)
+      (on-poke:def mark vase)
+    =+  !<(poke=poke-data vase)
+    ?-    -.poke
+        %listen
+      [[%pass /lo %arvo %j %listen (silt whos.poke) source.poke]~ this]
+    ::
+        %watch
+      :: TODO: only wipe out state when switching networks?
+      :: ?:  =(net.state net.poke)
+      ::   [~ this]
+      =:  nas.state   *^state:naive
+          net.state   net.poke
+          url.state   url.poke
+          own.state   ~
+          logs.state  ~
+        ==
+      [start:do this]
+    ==
+  ::
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    ?<  =(/sole/drum path)
+    ?:  =(/event path)
+      :_  this
+      [%give %fact ~ %naive-state !>([nas.state own.state])]~
+    =/  who=(unit ship)
+      ?~  path  ~
+      ?:  ?=([@ ~] path)  ~
+      `(slav %p i.path)
+    =.  whos.state
+      ?~  who
+        ~
+      (~(put in whos.state) u.who)
+    ^-  (quip card _this)
+    [start:do this]
+  ::
+  ++  on-leave  on-leave:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    |^
+    ?+  path  (on-peek:def path)
+        [%x %logs ~]     ``noun+!>(logs.state)
+        [%x %nas ~]      ``noun+!>(nas.state)
+        [%x %dns ~]      ``noun+!>(dns.nas.state)
+        [%x %own ~]      ``noun+!>(own.state)
+        [%x %point @ ~]  ``noun+(point i.t.t.path)
+    ==
+    ++  point
+      |=  wat=@t
+      ^-  vase
+      !>  ^-  (unit point:naive)
+      ?~  ship=(rush wat ;~(pfix sig fed:ag))
+        ~
+      (get:orm:naive points.nas.state u.ship)
+    --
+  ::
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    ?.  ?=([%eth-watcher ~] wire)
+      (on-agent:def wire sign)
+    ?.  ?=(%fact -.sign)
+      (on-agent:def wire sign)
+    ?.  ?=(%eth-watcher-diff p.cage.sign)
+      (on-agent:def wire sign)
+    =+  !<(diff=diff:eth-watcher q.cage.sign)
+    ?:  ?=(%disavow -.diff)
+      [(jael-update:do [*ship id.diff %disavow ~]~) this]
+    ::
+    =.  logs.state
+      ?-  -.diff
+        :: %history  loglist.diff
+        %history  (welp logs.state loglist.diff)
+        %logs     (welp logs.state loglist.diff)
+      ==
+    =?  nas.state  ?=(%history -.diff)  *^state:naive
+    =^  effects  state  (run-logs:do loglist.diff)
+    ::
+    :_  this
+    %+  weld
+      (event-update:do effects)
+    (jael-update:do (to-udiffs:do effects))
+  ::
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
+  --
+|_  =bowl:gall
 ::  TODO: maybe flop the endianness here so metamask signs it in normal
 ::  order?
 ::
@@ -76,16 +213,16 @@
   (hex-to-num:ethereum data)
 ::
 ++  run-logs
-  |=  [state=app-state logs=(list event-log:rpc:ethereum)]
+  |=  [logs=(list event-log:rpc:ethereum)]
   ^-  (quip tagged-diff _state)
-  =/  [contract=@ux * chain-id=@ *]  (get-network net)
+  =+  net=(get-network net.state)
   ?~  logs
     `state
   ?~  mined.i.logs
     $(logs t.logs)
   =/  [raw-effects=effects:naive new-nas=_nas.state]
     =/  =^input:naive
-      ?:  =(contract address.i.logs)
+      ?:  =(azimuth.net address.i.logs)
         =/  data  (data-to-hex data.i.logs)
         =/  =event-log:naive
           [address.i.logs data topics.i.logs]
@@ -95,17 +232,26 @@
       [%bat u.input.u.mined.i.logs]
     =/  res
       %-  mule
-      |.((%*(. naive lac |) verifier chain-id nas.state input))
+      |.((%*(. naive lac |) verifier chain-id.net nas.state input))
     ?-  -.res
       %&  p.res
       %|  ((slog 'naive-fail' p.res) `nas.state)
     ==
   =.  own.state
-    =,  dice
-    ?.  =(contract address.i.logs)
-      =<  own
-      (apply-effects raw-effects nas.state own.state chain-id)
-    +:(update-ownership raw-effects nas.state new-nas own.state)
+    =<  own
+    ?.  =(azimuth.net address.i.logs)
+      %:  apply-effects:dice
+        raw-effects
+        nas.state
+        own.state
+        chain-id.net
+      ==
+    %:  update-ownership:dice
+      raw-effects
+      nas.state
+      new-nas
+      own.state
+    ==
   =.  nas.state  new-nas
   =/  effects-1
     =/  =id:block  [block-hash block-number]:u.mined.i.logs
@@ -131,10 +277,10 @@
 ::
 ++  jael-update
   |=  =udiffs:point
-  ^-  (list card:agent:gall)
+  ^-  (list card)
   ?:  &  ~  ::  XX
   :-  [%give %fact ~[/] %azimuth-udiffs !>(udiffs)]
-  |-  ^-  (list card:agent:gall)
+  |-  ^-  (list card)
   ?~  udiffs
     ~
   =/  =path  /(scot %p ship.i.udiffs)
@@ -145,18 +291,18 @@
 ::
 ++  event-update
   |=  effects=(list tagged-diff)
-  ^-  (list card:agent:gall)
+  ^-  (list card)
   %+  murn  effects
   |=  tag=tagged-diff
-  ^-  (unit card:agent:gall)
+  ^-  (unit card)
   ?.  |(?=(%tx +<.tag) ?=(%point +<.tag))  ~
   %-  some
-  ^-  card:agent:gall
+  ^-  card
   [%give %fact ~[/event] %naive-diffs !>(+.tag)]
 ::
 ++  get-network
   |=  =network
-  ^-  [@ux @ux @ @]
+  ^-  [azimuth=@ux naive=@ux chain-id=@ launch=@]
   =<  [azimuth naive chain-id launch]
   =,  azimuth
   ?-  network
@@ -166,199 +312,16 @@
   ==
 ::
 ++  start
-  |=  [state=app-state =network our=ship dap=term]
-  ^-  card:agent:gall
-  =/  [azimuth=@ux naive=@ux * launch=@ud]  (get-network network)
+  ^-  (list card)
+  =+  net=(get-network net.state)
   =/  args=vase  !>
-    :+  %watch  /[dap]
+    :+  %watch  /[dap.bowl]
     ^-  config:eth-watcher
-    :*  url.state  =(%czar (clan:title our))  ~m5  ~h30
-        (max launch last-snap)
-        ~[azimuth]
-        ~[naive]
+    :*  url.state  =(%czar (clan:title our.bowl))  ~m5  ~h30
+        (max launch.net last-snap)
+        ~[azimuth.net]
+        ~[naive.net]
         (topics whos.state)
     ==
-  [%pass /wa %agent [our %eth-watcher] %poke %eth-watcher-poke args]
---
-::
-=|  state=app-state
-%-  agent:dbug
-%+  verb  |
-^-  agent:gall
-|_  =bowl:gall
-+*  this  .
-    def   ~(. (default-agent this %|) bowl)
-::
-++  on-init
-  ^-  (quip card:agent:gall agent:gall)
-  :_  this  :_  ~
-  ^-  card:agent:gall
-  [%pass /eth-watcher %agent [our.bowl %eth-watcher] %watch /logs/[dap.bowl]]
-::
-++  on-save   !>(state)
-++  on-load
-  |=  old=vase
-  |^
-  =+  !<(old-state=app-states old)
-  =?  old-state  ?=(%0 -.old-state)
-    %=    old-state
-        -  %1
-        logs
-      %+  turn  logs.old-state
-      |=  =event-log-0
-      event-log-0(mined ?~(mined.event-log-0 ~ `mined.event-log-0))
-    ==
-  =?  old-state  ?=(%1 -.old-state)
-    %=    old-state
-        -    %2
-        nas  *^state:naive
-    ==
-  =?  old-state  ?=(%2 -.old-state)
-    %=    old-state
-        -    %3
-        own  *owners
-    ==
-  `this(state ?>(?=(%3 -.old-state) old-state))
-  ::
-  ++  app-states  $%(app-state-0 app-state-1 app-state-2 app-state)
-  ++  app-state-2
-    $:  %2
-        url=@ta
-        whos=(set ship)
-        nas=^state:naive
-        own=*
-        logs=(list =event-log:rpc:ethereum)
-    ==
-  ++  app-state-1
-    $:  %1
-        url=@ta
-        whos=(set ship)
-        nas=*
-        own=*
-        logs=(list =event-log:rpc:ethereum)
-    ==
-  ++  app-state-0
-    $:  %0
-        url=@ta
-        whos=(set ship)
-        nas=*
-        own=*
-        logs=(list =event-log-0)
-    ==
-  ::
-  +$  event-log-0
-    $:  $=  mined  %-  unit
-        $:  log-index=@ud
-            transaction-index=@ud
-            transaction-hash=@ux
-            block-number=@ud
-            block-hash=@ux
-            removed=?
-        ==
-      ::
-        address=@ux
-        data=@t
-        topics=(lest @ux)
-    ==
-  --
-::
-++  on-poke
-  |=  [=mark =vase]
-  ?:  =(%noun mark)
-    ?+    q.vase  !!
-        %rerun
-      ~&  [%rerunning (lent logs.state)]
-      =^  effects  state  (run-logs state logs.state)
-      `this
-    ::
-        %resub
-      :_  this  :_  ~
-      [%pass /eth-watcher %agent [our.bowl %eth-watcher] %watch /logs/[dap.bowl]]
-    ::
-        %resnap
-      =.  logs.state  snap
-      $(mark %noun, vase !>(%rerun))
-    ==
-  ?:  =(%eth-logs mark)
-    =+  !<(logs=(list event-log:rpc:ethereum) vase)
-    =.  logs.state  logs
-    $(mark %noun, vase !>(%rerun))
-  ::
-  ?.  ?=(%azimuth-poke mark)
-    (on-poke:def mark vase)
-  =+  !<(poke=poke-data vase)
-  ?-    -.poke
-      %listen  [[%pass /lo %arvo %j %listen (silt whos.poke) source.poke]~ this]
-      %watch
-    =.  url.state  url.poke
-    [[(start state net [our dap]:bowl) ~] this]
-  ==
-::
-++  on-watch
-  |=  =path
-  ^-  (quip card:agent:gall _this)
-  ?<  =(/sole/drum path)
-  ?:  =(/event path)
-    :_  this
-    [%give %fact ~ %naive-state !>([nas.state own.state])]~
-  =/  who=(unit ship)
-    ?~  path  ~
-    ?:  ?=([@ ~] path)  ~
-    `(slav %p i.path)
-  =.  whos.state
-    ?~  who
-      ~
-    (~(put in whos.state) u.who)
-  :_  this  :_  ~
-  (start state net [our dap]:bowl)
-::
-++  on-leave  on-leave:def
-++  on-peek
-  |=  =path
-  ^-  (unit (unit cage))
-  |^
-  ?+  path  (on-peek:def path)
-      [%x %logs ~]     ``noun+!>(logs.state)
-      [%x %nas ~]      ``noun+!>(nas.state)
-      [%x %dns ~]      ``noun+!>(dns.nas.state)
-      [%x %own ~]      ``noun+!>(own.state)
-      [%x %point @ ~]  ``noun+(point i.t.t.path)
-  ==
-  ++  point
-    |=  wat=@t
-    ^-  vase
-    !>  ^-  (unit point:naive)
-    ?~  ship=(rush wat ;~(pfix sig fed:ag))
-      ~
-    (get:orm:naive points.nas.state u.ship)
-  --
-::
-++  on-agent
-  |=  [=wire =sign:agent:gall]
-  ?.  ?=([%eth-watcher ~] wire)
-    (on-agent:def wire sign)
-  ?.  ?=(%fact -.sign)
-    (on-agent:def wire sign)
-  ?.  ?=(%eth-watcher-diff p.cage.sign)
-    (on-agent:def wire sign)
-  =+  !<(diff=diff:eth-watcher q.cage.sign)
-  ?:  ?=(%disavow -.diff)
-    [(jael-update [*ship id.diff %disavow ~]~) this]
-  ::
-  =.  logs.state
-    ?-  -.diff
-      :: %history  loglist.diff
-      %history  (welp logs.state loglist.diff)
-      %logs     (welp logs.state loglist.diff)
-    ==
-  =?  nas.state  ?=(%history -.diff)  *^state:naive
-  =^  effects  state  (run-logs state loglist.diff)
-  ::
-  :_  this
-  %+  weld
-    (event-update effects)
-  (jael-update (to-udiffs effects))
-::
-++  on-arvo   on-arvo:def
-++  on-fail   on-fail:def
+  [%pass /wa %agent [our.bowl %eth-watcher] %poke %eth-watcher-poke args]~
 --
