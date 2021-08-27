@@ -3318,7 +3318,7 @@
   ++  hoop  (up k v)
   --
   ::
-  ~%  %lu-core  ..lu  ~
+  ~%  %core  ..$  ~
   |%
   ++  new                                               ::  new cache
     ~/  %new
