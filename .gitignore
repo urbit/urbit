@@ -31,6 +31,25 @@ result-*
 /nec
 /sev
 /fakezod
+/bel
+/bet
+/det
+/dyl
+/fus
+/lex
+/mes
+/mev
+/myn
+/myr
+/pem
+/put
+/rud
+/rup
+/sut
+/syr
+/tug
+/wet
+/wyd
 
 # NodeJS
 node_modules
