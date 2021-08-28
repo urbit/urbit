@@ -142,6 +142,10 @@
     !!
   abet:(flog %text "< {<src.bowl>}: {(trip mes)}")
 ::
+++  poke-ames-prod
+  |=  ships=(list ship)
+  abet:(emit %pass /helm/prod %arvo %a %prod ships)
+::
 ++  poke-atom
   |=  ato=@
   =+  len=(scow %ud (met 3 ato))
@@ -195,6 +199,7 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
+    %helm-ames-prod        =;(f (f !<(_+<.f vase)) poke-ames-prod)
     %helm-ames-sift        =;(f (f !<(_+<.f vase)) poke-ames-sift)
     %helm-ames-verb        =;(f (f !<(_+<.f vase)) poke-ames-verb)
     %helm-ames-wake        =;(f (f !<(_+<.f vase)) poke-ames-wake)
