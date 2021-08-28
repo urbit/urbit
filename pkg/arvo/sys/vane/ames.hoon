@@ -2615,7 +2615,7 @@
     |-  ^+  packet-pump
     ?:  =(0 sot)  packet-pump
     ?:  =(~ liv)  packet-pump
-    =^  hed  liv  (pop:packet-queue live.state)
+    =^  hed  liv  (pop:packet-queue liv)
     =.  packet-pump  (give %send (to-static-fragment hed))
     $(sot (dec sot))
   ::  +on-wake: handle packet timeout
