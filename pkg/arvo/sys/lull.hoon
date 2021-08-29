@@ -608,7 +608,6 @@
         unsent-messages=(qeu message-blob)
         unsent-fragments=(list static-fragment)
         queued-message-acks=(map message-num ack)
-        cork-acked=?
         =packet-pump-state
     ==
   +$  static-fragment

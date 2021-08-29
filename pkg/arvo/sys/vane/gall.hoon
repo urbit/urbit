@@ -412,7 +412,7 @@
       :-  %0
       ?-  -.deal
         %poke      [%m p.cage.deal q.q.cage.deal]
-        %leave     ~&('%leave gets called' [%u ~])
+        %leave     [%u ~]
         %watch-as  [%l [mark path]:deal]
         %watch     [%s path.deal]
       ==
@@ -429,8 +429,8 @@
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
       (~(put by outstanding.state) [wire hen] (~(put to stand) -.deal))
     ?:  ?=(%leave -.deal)
-    =.  mo-core  ~&('deal plea gets sent' (mo-pass wire note-arvo))
-      ~&('flow gets killed' (mo-pass wire [%a [%cork ship]]))
+    =.  mo-core  (mo-pass wire note-arvo)
+      (mo-pass wire [%a [%cork ship]])
     (mo-pass wire note-arvo)
   ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::
