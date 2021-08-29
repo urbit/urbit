@@ -233,6 +233,7 @@
 +$  update-state
   $:  =duct
       =rave
+      src=ship
       have=(map lobe blob)
       need=(list lobe)
       nako=(qeu (unit nako))
@@ -1346,9 +1347,15 @@
     =.  +>+.$
       =<  ?>(?=(^ ref) .)
       (send-over-ames hen her inx syd `rave)
+    =/  src=ship
+      !<  @p
+      =<  q
+      %-  need
+      %-  need
+      (rof ~ %j [our %sein da+now] /(scot %p our))
     %=  +>+.$
       nix.u.ref  +(nix.u.ref)
-      bom.u.ref  (~(put by bom.u.ref) inx [hen rave ~ ~ ~ |])
+      bom.u.ref  (~(put by bom.u.ref) inx [hen rave src ~ ~ ~ |])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
     ==
   ::
@@ -3005,12 +3012,6 @@
         [*update-state &]
       [u.ruv |]
     =/  done=?  |
-    =/  src=ship
-      !<  @p
-      =<  q
-      %-  need
-      %-  need
-      (rof ~ %j [our %sein da+now] /(scot %p our))
     =.  hen  duct.sat
     |%
     ++  abet
@@ -3077,11 +3078,18 @@
           ..abet(have.sat (~(uni by (malt [p.blob `^blob`blob] ~)) have.sat))
         ..abet(lat.ran (~(uni by (malt [p.blob blob] ~)) lat.ran))
       work(busy.sat |)
+    ::  If we errored fetching a blob from its canonical source (i.e.
+    ::  the host ship), then the error is unexpected. Else, the error
+    ::  just means that our sponsor does not have the blob, and we
+    ::  should retreive future blobs from the host ship
     ::
-    ++  take-backfill-prox-err
-      =:  busy.sat  %.n
-          src   her
-        ==
+    ++  take-backfill-error
+      |=  =error:ames
+      ?:  =(her src.sat)
+        ~&  %clay-take-backfill-index-error^our^tag.error
+        %-  (slog tang.error)
+        ..abet
+      =.  sat  sat(busy %.n, src her)
       work
     ::
     ::  Fetch next blob
@@ -3122,11 +3130,11 @@
       ::  Otherwise, fetch the next blob
       ::
       =/  =fill  [%0 syd i.need.sat]
-      =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)/(scot %p src)
+      =/  =wire  /back-index/(scot %p her)/[syd]/(scot %ud inx)/(scot %p src.sat)
       =/  =path  [%backfill syd (scot %ud inx) ~]
       =.  ..foreign-update
         =<  ?>(?=(^ ref) .)
-        (emit hen %pass wire %a %plea src %c path fill)
+        (emit hen %pass wire %a %plea src.sat %c path fill)
       ..abet(busy.sat &)
     ::
     ::  When we get a %w foreign update, store this in our state.
@@ -4186,7 +4194,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%9                                        ::  vane version
+    $:  ver=%10                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4440,12 +4448,36 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%9 raft-9]
+        $%  [%10 raft-10]
+            [%9 raft-9]
             [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-9  raft
+      +$  raft-10  raft
+      +$  raft-9
+        $:  rom=room
+            hoy=(map ship rung-9)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            pud=(unit [=desk =yoki])
+        ==
+      ::
+      +$  rung-9
+        $:  rus=(map desk rede-9)
+        ==
+      ::
+      +$  rede-9
+        $:  lim=@da
+            ref=(unit rind-6)
+            qyx=cult
+            dom=dome
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
       +$  raft-8
         $:  rom=room-8
             hoy=(map ship rung-8)
@@ -4480,7 +4512,7 @@
         ==
       +$  rede-8
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-6)
             qyx=cult
             dom=dome-8
             per=regs
@@ -4511,7 +4543,7 @@
         ==
       +$  rede-7
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-6)
             qyx=cult
             dom=dome-8
             per=regs
@@ -4548,11 +4580,25 @@
         ==
       +$  rede-6
         $:  lim=@da
-            ref=(unit rind)
+            ref=(unit rind-6)
             qyx=cult
             dom=dome-6
             per=regs
             pew=regs
+        ==
+      +$  rind-6
+        $:  nix=@ud
+            bom=(map @ud update-state-6)
+            fod=(map duct @ud)
+            haw=(map mood (unit cage))
+        ==
+      +$  update-state-6
+        $:  =duct
+            =rave
+            have=(map lobe blob)
+            need=(list lobe)
+            nako=(qeu (unit nako))
+            busy=_|
         ==
       +$  ford-cache-6  *                               ::  discard old cache
       --
@@ -4561,7 +4607,8 @@
   =?  old  ?=(%6 -.old)  7+(raft-6-to-7 +.old)
   =?  old  ?=(%7 -.old)  8+(raft-7-to-8 +.old)
   =?  old  ?=(%8 -.old)  9+(raft-8-to-9 +.old)
-  ?>  ?=(%9 -.old)
+  =?  old  ?=(%9 -.old)  10+(raft-9-to-10 +.old)
+  ?>  ?=(%10 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -4620,9 +4667,32 @@
       |=  =rung-8
       %-  ~(run by rus.rung-8)
       |=  =rede-8
-      ^-  rede
+      ^-  rede-9
       =/  dom  dom.rede-8
       rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *ford-cache])
+    ==
+  ::
+  ++  raft-9-to-10
+    |=  raf=raft-9
+    ^-  raft-10
+    %=    raf
+    ::
+        hoy
+      %-  ~(gas by *(map ship rung))
+      %+  turn  ~(tap by hoy.raf)
+      |=  [=ship =rung-9]
+      :-  ship
+      %-  ~(run by rus.rung-9)
+      |=  =rede-9
+      ^-  rede
+      ?~  ref.rede-9  rede-9
+      =*  ref  u.ref.rede-9
+      %=    rede-9
+          bom.u.ref
+        %-  ~(run by bom.ref)
+        |=  u=update-state-6
+        [duct.u rave.u ship have.u need.u nako.u busy.u]
+      ==
     ==
   --
 ::
@@ -4762,15 +4832,9 @@
         %done
       ?~  error.hin
         [~ ..^$]
-      ::  TODO better error handling
-      ::
-      ?:  =(src her)
-        ~&  %clay-take-backfill-index-error^our^tea^tag.u.error.hin
-        %-  (slog tang.u.error.hin)
-        [~ ..^$]
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
-        abet:abet:take-backfill-prox-err:(foreign-update:den index)
+        abet:abet:(take-backfill-error:(foreign-update:den index) u.error.hin)
       [mos ..^$]
     ::
         %lost
