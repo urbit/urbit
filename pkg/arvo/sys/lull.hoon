@@ -366,6 +366,7 @@
     $%  [%hear =lane =blob]
         [%heed =ship]
         [%jilt =ship]
+        [%cork =ship]
         $>(%plea vane-task)
     ::
         $>(%born vane-task)
@@ -523,6 +524,8 @@
         rcv=(map bone message-sink-state)
         nax=(set [=bone =message-num])
         heeds=(set duct)
+        closing=(set bone)
+        corked=(set bone)
     ==
   ::  $qos: quality of service; how is our connection to a peer doing?
   ::

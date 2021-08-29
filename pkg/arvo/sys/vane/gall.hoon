@@ -509,6 +509,9 @@
       =/  stand
         (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
       (~(put by outstanding.state) [wire hen] (~(put to stand) -.deal))
+    ?:  ?=(%leave -.deal)
+    =.  mo-core  (mo-pass wire note-arvo)
+      (mo-pass wire [%a [%cork ship]])
     (mo-pass wire note-arvo)
   ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::

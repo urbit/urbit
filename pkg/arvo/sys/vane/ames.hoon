@@ -560,7 +560,7 @@
 ::    was processed during a single Arvo event. At the moment, .lag is
 ::    always zero.
 ::
-+$  ack-meat  (each fragment-num [ok=? lag=@dr])
++$  ack-meat  (each fragment-num [ok=? cork=? lag=@dr])
 ::  $naxplanation: nack trace; explains which message failed and why
 ::
 +$  naxplanation  [=message-num =error]
@@ -582,6 +582,53 @@
       crypto-core=acru:ames
       =bug
   ==
++$  ames-state-6  ames-state
++$  ames-state-4  ames-state-5
++$  ames-state-5
+        $:  peers=(map ship ship-state-5)
+            =unix=duct
+            =life
+            crypto-core=acru:ames
+            =bug
+        ==
+      +$  ship-state-6
+        $%  [%alien alien-agenda]
+            [%known peer-state-6]
+        ==
+      +$  peer-state-6
+        $:  $:  =symmetric-key
+                =life
+                =public-key
+                sponsor=ship
+            ==
+            route=(unit [direct=? =lane])
+            =qos
+            =ossuary
+            snd=(map bone message-pump-state)
+            rcv=(map bone message-sink-state)
+            nax=(set [=bone =message-num])
+            heeds=(set duct)
+            closing=(set bone)
+            corked=(set bone)
+        ==
+    +$  ship-state-5
+        $%  [%alien alien-agenda]
+            [%known peer-state-5]
+        ==
+      +$  peer-state-5
+        $:  $:  =symmetric-key
+               =life
+               =public-key
+               sponsor=ship
+            ==
+            route=(unit [direct=? =lane])
+            =qos
+            =ossuary
+            snd=(map bone message-pump-state)
+            rcv=(map bone message-sink-state)
+            nax=(set [=bone =message-num])
+            heeds=(set duct)
+        ==
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -665,12 +712,14 @@
 ::  $message-pump-gift: effect from |message-pump
 ::
 ::    %done: report message acknowledgment
+::    %cork: kill flow
 ::    %send: emit message fragment
 ::    %wait: set a new timer at .date
 ::    %rest: cancel timer at .date
 ::
 +$  message-pump-gift
   $%  [%done =message-num error=(unit error)]
+      [%cork ~]
       [%send =static-fragment]
       [%wait date=@da]
       [%rest date=@da]
@@ -707,7 +756,7 @@
 ::      .ok: %.y unless previous failed attempt
 ::
 +$  message-sink-task
-  $%  [%done ok=?]
+  $%  [%done ok=? cork=?]
       [%drop =message-num]
       [%hear =lane =shut-packet ok=?]
   ==
@@ -719,6 +768,7 @@
 +$  message-sink-gift
   $%  [%memo =message-num message=*]
       [%send =message-num =ack-meat]
+      [%cork ~]
   ==
 --
 ::  external vane interface
@@ -829,24 +879,31 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%5 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%6 %larva queued-events ames-state.adult-gate]
     ++  load
       |=  $=  old
           $%  $:  %4
               $%  $:  %larva
                       events=(qeu queued-event)
-                      state=_ames-state.adult-gate
+                      state=ames-state-4
                   ==
-                  [%adult state=_ames-state.adult-gate]
+                  [%adult state=ames-state-4]
               ==  ==
               $:  %5
               $%  $:  %larva
                       events=(qeu queued-event)
-                      state=_ames-state.adult-gate
+                      state=ames-state-5
                   ==
-                  [%adult state=_ames-state.adult-gate]
+                  [%adult state=ames-state-5]
               ==  ==
-          ==
+              $:  %6
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=ames-state-6
+                  ==
+                  [%adult state=ames-state-6]
+              ==  ==
+         ==
       ?-    old
           [%4 %adult *]  (load:adult-core %4 state.old)
       ::
@@ -863,7 +920,16 @@
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core %5 state.old)
         larval-gate
-      ==
+       ::
+          [%6 %adult *]  (load:adult-core %6 state.old)
+      ::
+          [%6 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %6 state.old)
+        larval-gate
+       ::
+     ==
     --
 ::  adult ames, after metamorphosis from larva
 ::
@@ -904,6 +970,7 @@
       %trim  on-trim:event-core
       %vega  on-vega:event-core
       %plea  (on-plea:event-core [ship plea]:task)
+      %cork  (on-cork:event-core ship.task)
     ==
   ::
   [moves ames-gate]
@@ -929,32 +996,35 @@
       [%jael %turf *]          (on-take-turf:event-core turfs.sign)
       [%jael %private-keys *]  (on-priv:event-core [life vein]:sign)
       [%jael %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
+    ::
     ==
   ::
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%5 %adult ames-state]
+++  stay  [%6 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   |=  $=  old-state
-      $%  [%4 ^ames-state]
-          [%5 ^ames-state]
+      $%  [%4 ames-state-4]
+          [%5 ames-state-5]
+          [%6 ames-state-6]
       ==
   |^
   ^+  ames-gate
   =?  old-state  ?=(%4 -.old-state)  %5^(state-4-to-5 +.old-state)
+  =?  old-state  ?=(%5 -.old-state)  %6^(state-5-to-6 +.old-state)
   ::
-  ?>  ?=(%5 -.old-state)
+  ?>  ?=(%6 -.old-state)
   ames-gate(ames-state +.old-state)
   ::
   ++  state-4-to-5
-    |=  =^ames-state
-    ^-  ^^ames-state
+    |=  ames-state=ames-state-4
+    ^-  ames-state-5
     =.  peers.ames-state
       %-  ~(run by peers.ames-state)
-      |=  =ship-state
+      |=  ship-state=ship-state-5
       ?.  ?=(%known -.ship-state)
         ship-state
       =.  snd.ship-state
@@ -965,6 +1035,32 @@
         message-pump-state
       ship-state
     ames-state
+  ::
+  ++  state-5-to-6
+    |=  ames-state=ames-state-5
+    ^-  ames-state-6
+    %=  ames-state
+      peers
+      ^-  (map ship ship-state)
+      %-  ~(run by peers.ames-state)
+      |=  ship-state=ship-state-5
+      ^-  ship-state-6
+      ?.  ?=(%known -.ship-state)
+        ship-state
+      :-  %known
+      ^-  peer-state-6
+      :*  [symmetric-key.ship-state life.ship-state public-key.ship-state sponsor.ship-state]
+          route.ship-state
+          qos.ship-state
+          ossuary.ship-state
+          snd.ship-state
+          rcv.ship-state
+          nax.ship-state
+          heeds.ship-state
+          closing=*(set bone)
+          corked=*(set bone)
+      ==
+    ==
   --
 ::  +scry: dereference namespace
 ::
@@ -1113,10 +1209,12 @@
     ::  if processing succeded, send positive ack packet and exit
     ::
     ?~  error
-      abet:(run-message-sink:peer-core bone %done ok=%.y)
+    ?:  (~(has in closing.peer-state) bone)
+      abet:(run-message-sink:peer-core bone %done ok=%.y cork=%.y)
+    abet:(run-message-sink:peer-core bone %done ok=%.y cork=%.n)
     ::  failed; send message nack packet
     ::
-    =.  event-core  abet:(run-message-sink:peer-core bone %done ok=%.n)
+    =.  event-core  abet:(run-message-sink:peer-core bone %done ok=%.n cork=%.n)
     =/  =^peer-state  (got-peer-state her)
     =/  =^channel     [[our her] now channel-state -.peer-state]
     ::  construct nack-trace message, referencing .failed $message-num
@@ -1346,6 +1444,7 @@
       (decode-shut-packet packet [symmetric-key her-life our-life]:channel)
     ::  non-galaxy: update route with heard lane or forwarded lane
     ::
+    ::
     =?  route.peer-state  !=(%czar (clan:title her.channel))
       ::  if new packet is direct, use that.  otherwise, if the new new
       ::  and old lanes are indirect, use the new one.  if the new lane
@@ -1412,8 +1511,30 @@
         =/  sndr  [our our-life.channel]
         =/  rcvr  [ship her-life.channel]
         "plea {<sndr^rcvr^bone=bone^vane.plea^path.plea>}"
+    ::  since flow kill goes like:
+    ::  client vane cork task -> client ames pass cork as plea -> server ames sinks plea -> server ames +on-plea (we are here)
+    ::  if it's %cork plea passed to ames from its sink, give %done and process flow closing after +on-take-done call
     ::
+    ?:  &(=(vane.plea %a) =(path.plea `path`/flow) ?=([%cork *] payload.plea))
+      (emit duct %give %done ~)
     abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
+  ::  +on-cork: handle request to kill a flow
+  ::
+  ++  on-cork
+    |=  =ship
+    ^+  event-core
+    =/  ship-state  (~(get by peers.ames-state) ship)
+    ::
+    ?>  ?=([~ %known *] ship-state)
+    =/  =peer-state  +.u.ship-state
+    =/  =channel     [[our ship] now channel-state -.peer-state]
+    ::
+    =/  =plea  [%a /flow [%cork ~]]
+    ::
+    =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
+    ::
+    =.  closing.peer-state  (~(put in closing.peer-state) bone)
+      abet:(on-memo:(make-peer-core peer-state channel) bone plea %plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake
@@ -1936,6 +2057,7 @@
       =.  peer-core  (update-qos %live last-contact=now)
       ::
       =/  =bone  bone.shut-packet
+      =/  message-pump-state  (~(get by snd.peer-state) bone)
       ::
       ?:  ?=(%& -.meat.shut-packet)
         =+  ?.  &(?=(^ dud) msg.veb)  ~
@@ -2119,6 +2241,7 @@
           =.  peer-core
             ?-  -.gift
               %done  (on-pump-done [message-num error]:gift)
+              %cork  on-pump-cork
               %send  (on-pump-send static-fragment.gift)
               %wait  (on-pump-wait date.gift)
               %rest  (on-pump-rest date.gift)
@@ -2144,10 +2267,22 @@
         ::  not a nack-trace bone; relay ack to client vane
         ::
         (emit (got-duct bone) %give %done error)
+      ::  +on-pump-cork: kill flow on cork sender side
+      ::
+      ++  on-pump-cork
+        ^+  peer-core
+        =.  by-duct.ossuary.peer-state  (~(del by by-duct.ossuary.peer-state) (got-duct bone))
+        =.  by-bone.ossuary.peer-state  (~(del by by-bone.ossuary.peer-state) bone)
+        =.  snd.peer-state  (~(del by snd.peer-state) bone)
+        =.  rcv.peer-state  (~(del by rcv.peer-state) bone)
+        =.  corked.peer-state  (~(put in corked.peer-state) bone)
+        =.  closing.peer-state  (~(del in closing.peer-state) bone)
+          peer-core
       ::  +on-pump-send: emit message fragment requested by |message-pump
       ::
       ++  on-pump-send
-        |=(f=static-fragment (send-shut-packet bone [message-num %& +]:f))
+        |=  f=static-fragment
+          (send-shut-packet bone [message-num %& +]:f)
       ::  +on-pump-wait: relay |message-pump's set-timer request
       ::
       ++  on-pump-wait
@@ -2172,6 +2307,7 @@
     ++  run-message-sink
       |=  [=bone task=message-sink-task]
       ^+  peer-core
+      ?:  (~(has in corked.peer-state) bone)  peer-core
       ::  pass .task to the |message-sink and apply state mutations
       ::
       =/  =message-sink-state
@@ -2189,8 +2325,25 @@
             ?-  -.gift
               %memo  (on-sink-memo [message-num message]:gift)
               %send  (on-sink-send [message-num ack-meat]:gift)
+              %cork  on-sink-cork
             ==
           $(sink-gifts t.sink-gifts)
+      ::  +on-sink-cork: handle flow kill after server ames has taken %done
+      ::
+      ++  on-sink-cork
+      :: resetting timer for boons
+      =.  peer-core
+      =/  =message-pump-state
+        (~(gut by snd.peer-state) bone *message-pump-state)
+      ?~  next-wake=next-wake.packet-pump-state.message-pump-state  peer-core
+        =/  wire  (make-pump-timer-wire her.channel bone)
+        =/  duct  ~[/ames]
+        (emit duct %pass wire %b %rest u.next-wake)
+        =.  rcv.peer-state  (~(del by rcv.peer-state) bone)
+        =.  snd.peer-state  (~(del by snd.peer-state) bone)
+        =.  corked.peer-state  (~(put in corked.peer-state) bone)
+        =.  closing.peer-state  (~(del in closing.peer-state) bone)
+          peer-core
       ::  +on-sink-send: emit ack packet as requested by |message-sink
       ::
       ++  on-sink-send
@@ -2224,10 +2377,11 @@
       ++  on-sink-boon
         |=  [=message-num message=*]
         ^+  peer-core
+        ?:  |((~(has in closing.peer-state) bone) (~(has in corked.peer-state) bone))  peer-core
         ::  send ack unconditionally
         ::
         =.  peer-core  (emit (got-duct bone) %give %boon message)
-        =.  peer-core  (run-message-sink bone %done ok=%.y)
+        =.  peer-core  (run-message-sink bone %done ok=%.y cork=%.n)
         ::
         ?.  ?=([%hear * * ok=%.n] task)
           ::  fresh boon; give message to client vane
@@ -2265,7 +2419,7 @@
         =+  ;;  =naxplanation  message
         ::  ack nack-trace message (only applied if we don't later crash)
         ::
-        =.  peer-core  (run-message-sink bone %done ok=%.y)
+        =.  peer-core  (run-message-sink bone %done ok=%.y cork=%.n)
         ::  flip .bone's second bit to find referenced flow
         ::
         =/  target-bone=^bone  (mix 0b10 bone)
@@ -2277,6 +2431,7 @@
       ++  on-sink-plea
         |=  [=message-num message=*]
         ^+  peer-core
+        ?:  |((~(has in closing.peer-state) bone) (~(has in corked.peer-state) bone))  peer-core
         %-  %+  trace  msg.veb
             =/  dat  [her.channel bone=bone message-num=message-num]
             |.("sink plea {<dat>}")
@@ -2286,6 +2441,9 @@
           ::  fresh plea; pass to client vane
           ::
           =+  ;;  =plea  message
+          ::  if this plea is %cork, put to closing
+          ::
+          =?  closing.peer-state  ?=([%cork *] payload.plea)  (~(put in closing.peer-state) bone)
           ::
           =/  =wire  (make-bone-wire her.channel bone)
           ::
@@ -2297,7 +2455,7 @@
           ==
         ::  we previously crashed on this message; send nack
         ::
-        =.  peer-core  (run-message-sink bone %done ok=%.n)
+        =.  peer-core  (run-message-sink bone %done ok=%.n cork=%.n)
         ::  also send nack-trace with blank .error for security
         ::
         =/  nack-trace-bone=^bone  (mix 0b10 bone)
@@ -2306,7 +2464,7 @@
         ::
         (run-message-pump nack-trace-bone %memo message-blob)
       --
-    --
+  --
   --
 ::  +make-message-pump: constructor for |message-pump
 ::
@@ -2347,9 +2505,9 @@
       %hear
         ?-  -.ack-meat.task
           %&  (on-hear [message-num fragment-num=p.ack-meat]:task)
-          %|  (on-done [message-num ?:(ok.p.ack-meat [%ok ~] [%nack ~])]:task)
+          %|  (on-done [[message-num ?:(ok.p.ack-meat [%ok ~] [%nack ~])] cork.p.ack-meat]:task)
         ==
-      %near  (on-done [message-num %naxplanation error]:naxplanation.task)
+      %near  (on-done [[message-num %naxplanation error]:naxplanation.task %&])
     ==
   ::  +on-memo: handle request to send a message
   ::
@@ -2381,7 +2539,7 @@
   ::    flows.
   ::
   ++  on-done
-    |=  [=message-num =ack]
+    |=  [[=message-num =ack] cork=?]
     ^+  message-pump
     ::  unsent messages from the future should never get acked
     ::
@@ -2443,6 +2601,7 @@
     ?-    -.u.cur
         %ok
       =.  message-pump  (give %done current.state ~)
+      =?  message-pump  cork  (give %cork ~)
       $(current.state +(current.state))
     ::
         %nack
@@ -2974,7 +3133,7 @@
     =-  [(flop gifts) state]
     ::
     ?-  -.task
-      %done  (on-done ok.task)
+      %done  (on-done ok.task cork.task)
       %drop  (on-drop message-num.task)
       %hear  (on-hear [lane shut-packet ok]:task)
     ==
@@ -3011,7 +3170,7 @@
       ::
       =/  ok=?  !(~(has in nax.state) seq)
       %-  (trace rcv.veb |.("send dupe message ack {<seq=seq>} ok={<ok>}"))
-      (give %send seq %| ok lag=`@dr`0)
+      (give %send seq %| ok %| lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
     ::    Only true if we've heard some packets we haven't acked, which
@@ -3123,7 +3282,7 @@
   ::  +on-done: handle confirmation of message processing from vane
   ::
   ++  on-done
-    |=  ok=?
+    |=  [ok=? cork=?]
     ^+  message-sink
     ::
     =^  pending  pending-vane-ack.state  ~(get to pending-vane-ack.state)
@@ -3132,7 +3291,9 @@
     =.  last-acked.state  +(last-acked.state)
     =?  nax.state  !ok  (~(put in nax.state) message-num)
     ::
-    =.  message-sink  (give %send message-num %| ok lag=`@dr`0)
+    =?  message-sink  cork  (give %send message-num %| ok %& lag=`@dr`0)
+    =?  message-sink  cork  (give %cork ~)
+    =?  message-sink  !cork  (give %send message-num %| ok %| lag=`@dr`0)
     =/  next  ~(top to pending-vane-ack.state)
     ?~  next
       message-sink
