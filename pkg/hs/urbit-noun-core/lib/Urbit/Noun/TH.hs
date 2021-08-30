@@ -116,6 +116,12 @@ addErrTag tag exp =
     nam = LamE [VarP $ mkName "x"] $ AppE (AppE (VarE 'named) str)
                                    $ VarE (mkName "x")
 
+addCostCenter :: String -> Exp -> Exp
+addCostCenter tag exp =
+  LetE [ValD (VarP nom) (NormalB exp) []] (VarE nom)
+ where
+  nom = mkName $ "scc_" ++ tag
+
 deriveFromNoun :: Name -> Q [Dec]
 deriveFromNoun tyName = do
     (params, shape) <- typeShape tyName
@@ -130,7 +136,8 @@ deriveFromNoun tyName = do
     let ty = foldl' (\acc v -> AppT acc (VarT v)) (ConT tyName) params
 
     let overlap = Nothing
-        body    = NormalB (addErrTag (nameStr tyName) exp)
+        body    = NormalB (addCostCenter nom $ addErrTag nom exp)
+        nom     = nameStr tyName
         ctx     = params <&> \t -> AppT (ConT ''FromNoun) (VarT t)
         inst    = AppT (ConT ''FromNoun) ty
 
@@ -211,12 +218,13 @@ taggedFromNoun cons = LamE [VarP n] (DoE [getHead, getTag, examine])
 
     matches = mkMatch <$> cons
     mkMatch = \(tag, (n, tys)) ->
-                let body = AppE (addErrTag ('%':tag) (tupFromNoun (n, tys)))
+                let body = addCostCenter tag
+                         $ AppE (addErrTag ('%':tag) (tupFromNoun (n, tys)))
                                 (VarE t)
                 in Match (LitP $ StringL tag) (NormalB body) []
 
     fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []
-    matchFail = unexpectedTag (fst <$> cons) (VarE c)
+    matchFail = addCostCenter "matchFail" $ unexpectedTag (fst <$> cons) (VarE c)
 
     tagFail = LitE $ StringL (intercalate " " (('%':) <$> (fst <$> cons)))
 
