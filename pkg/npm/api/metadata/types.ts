@@ -1,5 +1,7 @@
 import { Path, Patp } from '../lib';
 
+export type MdAppName = 'groups' | 'graph';
+
 export type MetadataUpdate =
   MetadataUpdateInitial
 | MetadataUpdateAdd
@@ -26,6 +28,7 @@ export type MetadataUpdateUpdate = {
 export interface MetadataUpdateEdit {
   edit: {
     resource: MdResource;
+    group: string;
     edit: MetadataEditField;
   }
 }
@@ -41,7 +44,7 @@ export type MetadataUpdateRemove = {
 
 export interface MdResource {
   resource: string;
-  'app-name': 'groups' | 'graph';
+  'app-name': MdAppName;
 }
 
 export interface MetadataUpdatePreview {
