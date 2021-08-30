@@ -68,12 +68,6 @@ do
   shift
 done
 
-
-if [ -n "${opt_static-}" ]
-then
-  CFLAGS="${CFLAGS-} -static"
-fi
-
 [ -n "${MEMORY_DEBUG-}" ]     && defmacro U3_MEMORY_DEBUG 1
 [ -n "${MEMORY_LOG-}" ]       && defmacro U3_MEMORY_LOG 1
 [ -n "${CPU_DEBUG-}" ]        && defmacro U3_CPU_DEBUG 1
@@ -112,11 +106,9 @@ esac
 # TODO Determine if the target cpu is little or big endian.
 case $(tr A-Z a-z <<< $os) in
   *mingw*)
-     if [ -z "${opt_static-}" ]
-     then
-        echo mingw builds are static-only
-        exit 1
-     fi
+     # mingw builds are static-only
+     #
+     opt_static=1
 
      # ensure required mingw packages are installed
      mpkgs=(cmake curl gcc jq make)
@@ -179,6 +171,10 @@ PKG_CONFIG="${PKG_CONFIG-pkg-config}"
 
 if [ -n "${opt_static-}" ]
 then
+  CFLAGS="${CFLAGS-} -static"
+  # XX can't set -static here due libuv's -ldl on MacOS
+  #
+  # LDFLAGS="${LDFLAGS-} -static"
   PKG_CONFIG="$PKG_CONFIG --static"
 fi
 
