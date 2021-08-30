@@ -67,10 +67,6 @@
 ::  more structures
 ::
 |%
-+$  ver-axle
-  $%  axle
-      axle-2020-10-18
-  ==
 ::
 +$  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
@@ -81,48 +77,6 @@
       =server-state
   ==
 ::
-++  axle-2020-10-18
-  =<  axle
-  |%
-  +$  axle  [date=%~2020.10.18 =server-state]
-  +$  server-state
-    $:  bindings=(list [=binding =duct =action])
-        =cors-registry
-        connections=(map duct outstanding-connection)
-        =authentication-state
-        =channel-state
-        domains=(set turf)
-        =http-config
-        ports=[insecure=@ud secure=(unit @ud)]
-        outgoing-duct=duct
-    ==
-  ::
-  +$  channel-event
-    $%  $>(%poke-ack sign:agent:gall)
-        $>(%watch-ack sign:agent:gall)
-        $>(%kick sign:agent:gall)
-        [%fact =mark noun=*]
-    ==
-  ::
-  +$  channel
-    $:  state=(each timer duct)
-        next-id=@ud
-        last-ack=@da
-        events=(qeu [id=@ud request-id=@ud =channel-event])
-        unacked=(map @ud @ud)
-        subscriptions=(map @ud [ship=@p app=term =path duc=duct])
-        heartbeat=(unit timer)
-    ==
-  ::
-  +$  channel-state
-    $:  ::  session: mapping between an arbitrary key to a channel
-        ::
-        session=(map @t channel)
-        ::  by-duct: mapping from ducts to session key
-        ::
-        duct-to-key=(map duct @t)
-    ==
-  --
 ::  +server-state: state relating to open inbound HTTP connections
 ::
 +$  server-state
@@ -1444,7 +1398,7 @@
           :^  duct  %pass
             (subscription-wire channel-id request-id ship app)
           :*  %g  %deal  [our ship]  app
-              `task:agent:gall`[%watch path]
+              `task:agent:gall`[%watch-as %json path]
           ==
         ::
         =.  session.channel-state.state
@@ -1662,29 +1616,9 @@
       |=  =sign:agent:gall
       ^-  (unit (quip move channel-event))
       ?.  ?=(%fact -.sign)  ``sign
-      =/  [from=(unit mark) jsyn=(unit json)]
-        ?:  ?=(%json p.cage.sign)  [~ `!<(json q.cage.sign)]
-        ::  find and use tube from fact mark to json
-        ::
-        =*  have=mark  p.cage.sign
-        =*  desc=tape  "from {(trip have)} to json"
-        =/  convert=(unit vase)
-          =/  cag=(unit (unit cage))
-            (rof ~ %cf [our %home da+now] /[have]/json)
-          ?.  ?=([~ ~ *] cag)  ~
-          `q.u.u.cag
-        ?~  convert
-          ((slog leaf+"eyre: no convert {desc}" ~) [~ ~])
-        ~|  "conversion failed {desc}"
-        [`have `!<(json (slym u.convert q.q.cage.sign))]
-      ?~  jsyn  ~
-      %-  some
-      :-  ?~  from  ~
-          :_  ~
-          :^  duct  %pass  /conversion-cache/[u.from]
-          [%c %warp our %home `[%sing %f da+now /[u.from]/json]]
-      [%fact u.jsyn]
-    ::  +channel-event-to-json: render chanel event from request-id as json
+      ?.  ?=(%json p.cage.sign)  ~
+      ``[%fact !<(json q.cage.sign)]
+    ::  +channel-event-to-json: render channel event from request-id as json
     ::
     ++  channel-event-to-json
       ~%  %channel-event-to-json  ..part  ~
@@ -2525,7 +2459,53 @@
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  |=  old=ver-axle
+  =>  |%
+      +$  axle-any
+        $%  axle
+            axle-2020-10-18
+        ==
+      ::
+      ++  axle-2020-10-18
+        =<  axle
+        |%
+        +$  axle  [date=%~2020.10.18 =server-state]
+        +$  server-state
+          $:  bindings=(list [=binding =duct =action])
+              =cors-registry
+              connections=(map duct outstanding-connection)
+              =authentication-state
+              =channel-state
+              domains=(set turf)
+              =http-config
+              ports=[insecure=@ud secure=(unit @ud)]
+              outgoing-duct=duct
+          ==
+        ::
+        +$  channel-event
+          $%  $>(%poke-ack sign:agent:gall)
+              $>(%watch-ack sign:agent:gall)
+              $>(%kick sign:agent:gall)
+              [%fact =mark *]
+          ==
+        ::
+        +$  channel
+          $:  state=(each timer duct)
+              next-id=@ud
+              last-ack=@da
+              events=(qeu [id=@ud request-id=@ud =channel-event])
+              unacked=(map @ud @ud)
+              subscriptions=(map @ud [ship=@p app=term =path duc=duct])
+              heartbeat=(unit timer)
+          ==
+        ::
+        +$  channel-state
+          $:  session=(map @t channel)
+              duct-to-key=(map duct @t)
+          ==
+        --
+
+      --
+  |=  old=axle-any
   ^+  ..^$
   =?  old  ?=(%~2020.10.18 -.old)
     =*  sta  server-state.old
@@ -2543,7 +2523,7 @@
   ..^$(ax old)
 ::  +stay: produce current state
 ::
-++  stay  `ver-axle`ax
+++  stay  ax
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
