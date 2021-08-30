@@ -2869,6 +2869,47 @@
         ==
       --
     ::
+    ++  gun                                             ::  vip view (unsafe)
+      ~/  %gun
+      |=  [a=pri k=@ p=@ v=buc f=$-((qual @ buc @ buc) (pair @ buc))]
+      |^  ^-  (pair (unit (pair @ buc)) pri)
+      =/  val  (star a)
+      [q.val p.val]
+      ::
+      ++  star
+        |=  b=pri
+        |-  ^-  (pair pri (unit (pair @ buc)))
+        ?~  b  :_(~ [%tip k p v])
+        ?-    -.b
+            %tip
+          ?:  =(k k.b)
+            =/  val=(pair @ buc)  (f p v p.b v.b)
+            :_  `[p.b v.b]
+            [%tip k p.val q.val]
+          :_  ~
+          (tie k.b p.b v.b k [%tip k p v] ~)
+        ::
+            %bin
+          ?:  (gone k k.b m.b)
+            =/  tee  (fuse m.b l.b r.b)
+            :_  ~
+            (tie k.b p.b v.b k [%tip k p v] tee)
+          ?:  =(k k.b)
+            =/  val=(pair @ buc)  (f p v p.b v.b)
+            :_  `[p.b v.b]
+            ?:  (zero k m.b)
+              (fuse m.b (raw l.b k p.val q.val) r.b)
+            (fuse m.b l.b (raw r.b k p.val q.val))
+          ?:  (zero k m.b)
+            =/  val  $(b l.b)
+            :_  q.val
+            [%bin k.b p.b v.b m.b p.val r.b]
+          =/  val  $(b r.b)
+          :_  q.val
+          [%bin k.b p.b v.b m.b l.b p.val]
+        ==
+      --
+    ::
     ++  see                                             ::  get hi-pri (unsafe)
       ~/  %see
       |*  [a=pri k=@ f=$-((pair @ buc) (trel (unit *) @ buc))]
@@ -3272,6 +3313,27 @@
         (make k p v t.bb)
       [bp [k.bb v.bb (put:qor t.bb k p v)]]
     (vip:qat a (mug k) p [k v ~])
+  ::
+  ++  gun                                               ::  vip view (unsafe)
+    ~/  %gun
+    |=  [a=pri =k p=@ =v]
+    |^  ^-  (pair (unit (pair @ _v)) pri)
+    =/  big  (gun:qat a (mug k) p [k v ~] hal)
+    :_  q.big
+    ?~  p.big  ~
+    =/  bb  q.u.p.big
+    ?:  =(k k.bb)
+      `[p.u.p.big v.bb]
+    (get:qor t.bb k)
+    ::
+    ++  hal
+      |=  [@ buc bp=@ bb=buc]
+      ^-  (pair @ buc)
+      ?:  =(k k.bb)
+        (make k p v t.bb)
+      :-  bp
+      [k.bb v.bb (put:qor t.bb k p v)]
+    --
   ::
   ++  see                                               ::  get hi-pri (unsafe)
     ~/  %see
