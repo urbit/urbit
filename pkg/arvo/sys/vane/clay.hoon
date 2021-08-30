@@ -1579,13 +1579,13 @@
     ::
     wake:(ergo mim)
     ::
-    ::
     ++  migrate-dist
       ^+  ..park
+      ::  TODO: filter +park's yaki by path prefix, call +make-yaki?
       =/  base=ankh  (~(dug an ank.dom) /tmp/base)
       =/  garden=ankh  (~(dug an ank.dom) /tmp/garden)
       %-  emil
-      :~  [hen %pass /dist/base %c %dart %base base]
+      :~  [hen %pass /dist/base %c %park %base base]
           :*  hen  %pass  /dist/base  %g  %deal  [our %hood]
               %kiln-install  %base  our  %base
           ==

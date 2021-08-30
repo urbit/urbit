@@ -771,7 +771,6 @@
         [%dirk des=desk]                                ::  mark mount dirty
         [%ogre pot=$@(desk beam)]                       ::  delete mount point
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
-        [%dart des=desk nak=ankh]                       ::  create desk
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
         $>(%trim vane-task)                             ::  trim state
