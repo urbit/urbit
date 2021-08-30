@@ -3327,7 +3327,9 @@
   |*  [k=mold v=mold]
   =>
   |%
-  +$  pest  [cap=@ siz=@ tic=@ pri=(pry k v)]
+  +$  pest                                              ::  lru cache
+    $~  [cap=10.000 siz=0 tic=0 pri=~]                  ::  default cap is 10k
+    [cap=@ siz=@ tic=@ pri=(pry k v)]
   ++  hoop  (up k v)
   --
   ::
