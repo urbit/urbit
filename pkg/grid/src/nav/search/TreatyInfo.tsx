@@ -29,7 +29,5 @@ export const TreatyInfo = () => {
       </div>
     );
   }
-  return (
-    <AppInfo className="dialog-inner-container" docket={!!charge ? charge : treaty} vat={vat} />
-  );
+  return <AppInfo className="dialog-inner-container" docket={charge || treaty} vat={vat} />;
 };

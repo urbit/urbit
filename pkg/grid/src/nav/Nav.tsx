@@ -133,9 +133,10 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
 
   return (
     <>
+      {/* Using portal so that we can retain the same nav items both in the dialog and in the base header */}
       <Portal.Root
         containerRef={dialogContentOpen ? dialogNavRef : navRef}
-        className="flex space-x-2"
+        className="flex justify-center w-full space-x-2"
       >
         <SystemMenu
           open={systemMenuOpen}
@@ -149,7 +150,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
           menu={menuState}
           dropdown="leap-items"
           showClose={isOpen}
-          className={!isOpen ? 'bg-gray-100' : ''}
+          className={classNames('flex-1 max-w-[600px]', !isOpen ? 'bg-gray-100' : '')}
         />
       </Portal.Root>
       <div

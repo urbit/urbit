@@ -22,6 +22,14 @@
   @apply min-w-52 p-4 rounded-xl;
 }
 
+.inner-section {
+  @apply p-3 bg-gray-100 rounded-xl;
+}
+
+.input {
+  @apply px-4 py-2 w-full bg-white rounded-xl;
+}
+
 .notification {
   @apply p-4 bg-gray-100 rounded-xl;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Docket } from '@urbit/api/docket';
-import {DocketImage} from './DocketImage';
+import { DocketImage } from './DocketImage';
 
 interface DocketHeaderProps {
   docket: Docket;
