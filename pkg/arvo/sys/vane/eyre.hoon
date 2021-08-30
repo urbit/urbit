@@ -1512,11 +1512,6 @@
               !(~(has by subscriptions.u.channel) request-id)
           ==
         [~ state]
-      ::  attempt to convert the sign to json.
-      ::  if conversion succeeds, we *can* send it. if the client is actually
-      ::  connected, we *will* send it immediately.
-      ::
-      ::  if we can send it, store the event as unacked
       ::
       =/  chan  (sign-to-channel-event sign)
       =/  next-id  next-id.u.channel
@@ -1624,8 +1619,6 @@
       ~%  %channel-event-to-json  ..part  ~
       |=  [request-id=@ud =channel-event]
       ^-  json
-      ::  for facts, we try to convert the result to json
-      ::
       =,  enjs:format
       %-  pairs
       ^-  (list [@t json])
