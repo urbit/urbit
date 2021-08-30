@@ -3416,7 +3416,7 @@
     ~/  %put
     |=  [a=pest =k =v]
     ^-  pest
-    =/  vue  (pan:hoop pri.a [k tic.a v])
+    =/  vue  (gun:hoop pri.a k tic.a v)
     %-  ebb
     %_  a
       siz  ?~(p.vue +(siz.a) siz.a)
