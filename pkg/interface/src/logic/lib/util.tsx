@@ -241,11 +241,13 @@ export function uxToHex(ux: string) {
 
 export const hexToUx = (hex) => {
   const ux = f.flow(
+    f.reverse,
     f.chunk(4),
     // eslint-disable-next-line prefer-arrow-callback
     f.map(x => _.dropWhile(x, function(y: unknown) {
-      return y === 0;
-    }).join('')),
+      return y === '0';
+    }).reverse().join('')),
+    f.reverse,
     f.join('.')
   )(hex.split(''));
   return `0x${ux}`;

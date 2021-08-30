@@ -1,4 +1,4 @@
-/-  sur=graph-store, pos=post
+/-  sur=graph-store, pos=post, pull-hook
 /+  res=resource, migrate
 =<  [sur .]
 =<  [pos .]
@@ -872,6 +872,10 @@
     ^-  card:agent:gall
     =/  res-path  (en-path:res rid)
     =/  wire  [%try-rejoin (scot %ud nack-count) res-path]
-    [%pass wire %agent [entity.rid %graph-push-hook] %watch resource+res-path]
+    =/  =cage  
+      :-  %pull-hook-action 
+      !>  ^-  action:pull-hook
+      [%add [entity .]:rid]
+    [%pass wire %agent [our %graph-pull-hook] %poke cage]
   --
 --
