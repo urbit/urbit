@@ -1,30 +1,33 @@
+import React, { useEffect, useMemo } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import fuzzy from 'fuzzy';
-import classNames from 'classnames';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { ShipName } from '../../components/ShipName';
-import { Provider } from '../../state/docket-types';
-import useDocketState from '../../state/docket';
-import { useLeapStore } from '../Nav';
+import { Provider } from '@urbit/api';
+import { MatchItem, useLeapStore } from '../Nav';
+import { useAllies } from '../../state/docket';
+import { ProviderList } from '../../components/ProviderList';
 
 type ProvidersProps = RouteComponentProps<{ ship: string }>;
 
+export function providerMatch(provider: Provider | string): MatchItem {
+  if (typeof provider === 'string') {
+    return { value: provider, display: provider };
+  }
+
+  return { value: provider.shipName, display: provider.nickname };
+}
+
 export const Providers = ({ match }: ProvidersProps) => {
-  const { selectedMatch, select } = useLeapStore((state) => ({
-    select: state.select,
-    selectedMatch: state.selectedMatch
-  }));
+  const selectedMatch = useLeapStore((state) => state.selectedMatch);
   const provider = match?.params.ship;
-  const fetchProviders = useDocketState((s) => s.fetchProviders);
-  const [providers, setProviders] = useState<Provider[]>();
+  const allies = useAllies();
   const search = provider || '';
   const results = useMemo(
     () =>
-      providers
+      allies
         ? fuzzy
             .filter(
               search,
-              providers.map((p) => p.shipName + (p.nickname || ''))
+              Object.entries(allies).map(([ship]) => ship)
             )
             .sort((a, b) => {
               const left = a.string.startsWith(search) ? a.score + 1 : a.score;
@@ -32,40 +35,19 @@ export const Providers = ({ match }: ProvidersProps) => {
 
               return right - left;
             })
-            .map((el) => providers[el.index])
+            .map((el) => ({ shipName: el.original }))
         : [],
-    [providers, search]
+    [allies, search]
   );
   const count = results?.length;
 
   useEffect(() => {
-    async function getProviders() {
-      setProviders(await fetchProviders(provider));
-    }
-
-    select(null, provider);
-    getProviders();
-  }, [provider]);
-
-  useEffect(() => {
     if (results) {
       useLeapStore.setState({
-        matches: results.map((p) => ({ value: p.shipName, display: p.nickname }))
+        matches: results.map(providerMatch)
       });
     }
   }, [results]);
-
-  const isSelected = useCallback(
-    (target: Provider) => {
-      if (!selectedMatch) {
-        return false;
-      }
-
-      const matchValue = selectedMatch.display || selectedMatch.value;
-      return target.nickname === matchValue || target.shipName === matchValue;
-    },
-    [selectedMatch]
-  );
 
   return (
     <div className="dialog-inner-container md:px-6 md:py-8 h4 text-gray-400" aria-live="polite">
@@ -76,32 +58,7 @@ export const Providers = ({ match }: ProvidersProps) => {
         </p>
       </div>
       {results && (
-        <ul className="space-y-8" aria-labelledby="providers">
-          {results.map((p) => (
-            <li
-              key={p.shipName}
-              id={p.nickname || p.shipName}
-              role="option"
-              aria-selected={isSelected(p)}
-            >
-              <Link
-                to={`${match?.path.replace(':ship', p.shipName)}/apps`}
-                className={classNames(
-                  'flex items-center space-x-3 default-ring ring-offset-2 rounded-lg',
-                  isSelected(p) && 'ring-4'
-                )}
-              >
-                <div className="flex-none relative w-12 h-12 bg-black rounded-lg">
-                  {/* TODO: Handle sigils */}
-                </div>
-                <div className="flex-1 text-black">
-                  <p className="font-mono">{p.nickname || <ShipName name={p.shipName} />}</p>
-                  {p.status && <p className="font-normal">{p.status}</p>}
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <ProviderList providers={results} labelledBy="providers" matchAgainst={selectedMatch} />
       )}
       <p>That&apos;s it!</p>
     </div>

@@ -2,12 +2,13 @@ import { DialogContent } from '@radix-ui/react-dialog';
 import * as Portal from '@radix-ui/react-portal';
 import classNames from 'classnames';
 import React, { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
-import { Link, Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import create from 'zustand';
 import { Dialog } from '../components/Dialog';
 import { Help } from './Help';
 import { Leap } from './Leap';
 import { Notifications } from './Notifications';
+import { NotificationsLink } from './NotificationsLink';
 import { Search } from './Search';
 import { SystemMenu } from './SystemMenu';
 import { SystemPreferences } from './SystemPreferences';
@@ -15,6 +16,7 @@ import { SystemPreferences } from './SystemPreferences';
 export interface MatchItem {
   value: string;
   display?: string;
+  href?: string;
 }
 
 interface LeapStore {
@@ -40,12 +42,41 @@ export const useLeapStore = create<LeapStore>((set) => ({
     })
 }));
 
+window.leap = useLeapStore.getState;
+
 export type MenuState =
   | 'closed'
   | 'search'
   | 'notifications'
   | 'help-and-support'
   | 'system-preferences';
+
+export function createNextPath(current: string, nextPart?: string): string {
+  let end = nextPart;
+  const parts = current.split('/').reverse();
+  if (parts[1] === 'search') {
+    end = 'apps';
+  }
+
+  if (parts[0] === 'leap') {
+    end = `search/${nextPart}`;
+  }
+
+  return `${current}/${end}`;
+}
+
+export function createPreviousPath(current: string): string {
+  const parts = current.split('/');
+  parts.pop();
+
+  if (parts[parts.length - 1] === 'leap') {
+    parts.push('search');
+  }
+  if (parts[parts.length - 2] === 'apps') {
+    parts.pop();
+  }
+  return parts.join('/');
+}
 
 interface NavProps {
   menu?: MenuState;
@@ -58,11 +89,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
   const dialogNavRef = useRef<HTMLDivElement>(null);
   const [systemMenuOpen, setSystemMenuOpen] = useState(false);
   const [dialogContentOpen, setDialogContentOpen] = useState(false);
-  const { selection, select } = useLeapStore((state) => ({
-    selectedMatch: state.selectedMatch,
-    selection: state.selection,
-    select: state.select
-  }));
+  const select = useLeapStore((state) => state.select);
 
   const menuState = menu || 'closed';
   const isOpen = menuState !== 'closed';
@@ -72,10 +99,8 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
     if (!isOpen) {
       select(null);
       setDialogContentOpen(false);
-    } else {
-      inputRef.current?.focus();
     }
-  }, [selection, isOpen]);
+  }, [isOpen]);
 
   const onOpen = useCallback(
     (event: Event) => {
@@ -97,6 +122,15 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
     }
   }, []);
 
+  const disableCloseWhenDropdownOpen = useCallback(
+    (e: Event) => {
+      if (systemMenuOpen) {
+        e.preventDefault();
+      }
+    },
+    [systemMenuOpen]
+  );
+
   return (
     <>
       <Portal.Root
@@ -106,14 +140,10 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
         <SystemMenu
           open={systemMenuOpen}
           setOpen={setSystemMenuOpen}
+          showOverlay={!isOpen}
           className={classNames('relative z-50 flex-none', eitherOpen ? 'bg-white' : 'bg-gray-100')}
         />
-        <Link
-          to="/leap/notifications"
-          className="relative z-50 flex-none circle-button bg-blue-400 text-white h4"
-        >
-          3
-        </Link>
+        <NotificationsLink isOpen={isOpen} />
         <Leap
           ref={inputRef}
           menu={menuState}
@@ -136,16 +166,17 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
       <Dialog open={isOpen} onOpenChange={onDialogClose}>
         <DialogContent
           onOpenAutoFocus={onOpen}
-          className="fixed top-0 left-[calc(50%)] w-[calc(100%-15px)] max-w-3xl px-4 text-gray-400 -translate-x-1/2 outline-none"
+          onInteractOutside={disableCloseWhenDropdownOpen}
+          className="fixed bottom-0 sm:top-0 scroll-left-50 flex flex-col scroll-full-width max-w-3xl px-4 pb-4 text-gray-400 -translate-x-1/2 outline-none"
           role="combobox"
           aria-controls="leap-items"
           aria-owns="leap-items"
           aria-expanded={isOpen}
         >
-          <header ref={dialogNavRef} className="my-6" />
+          <header ref={dialogNavRef} className="my-6 order-last sm:order-none" />
           <div
             id="leap-items"
-            className="grid grid-rows-[fit-content(calc(100vh-7.5rem))] bg-white rounded-3xl overflow-hidden default-ring"
+            className="grid grid-rows-[fit-content(100vh)] bg-white rounded-3xl overflow-hidden default-ring"
             tabIndex={0}
             role="listbox"
           >

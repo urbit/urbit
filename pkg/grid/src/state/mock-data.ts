@@ -1,168 +1,190 @@
+import _ from 'lodash-es';
+import { Allies, Charges, DocketHrefGlob, Treaties, Treaty } from '@urbit/api/docket';
+import { Vat, Vats } from '@urbit/api/hood';
 import systemUrl from '../assets/system.png';
-import goUrl from '../assets/go.png';
-import { Providers, Treaties, Treaty } from './docket-types';
-
-export const mockProviders: Providers = {
-  '~zod': {
-    shipName: '~zod',
-    nickname: 'Tlon Corporation'
-  },
-  '~nocsyx-lassul': {
-    shipName: '~nocsyx-lassul',
-    status: 'technomancing an electron wrapper for urbit'
-  },
-  '~nachus-hollyn': {
-    shipName: '~nachus-hollyn'
-  },
-  '~nalbel_litzod': {
-    shipName: '~nalbel_litzod',
-    status: 'congratulations'
-  },
-  '~litmus^ritten': {
-    shipName: '~litmus^ritten'
-  },
-  '~nalput_litzod': {
-    shipName: '~nalput_litzod',
-    status: 'Queen'
-  },
-  '~nalrex_bannus': {
-    shipName: '~nalrex_bannus',
-    status: 'Script, command and inspect your Urbit. Use TUI applications'
-  },
-  '~nalrys': {
-    shipName: '~nalrys',
-    status: 'hosting coming soon'
-  }
-};
+import { BasicNotification } from './hark-types';
 
 export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' | 'version'> = {
-  cass: '~2021.8.11..05.11.10..b721',
+  cass: {
+    da: 1629849472746,
+    ud: 1
+  },
   hash: '0v6.nj6ls.l7unh.l9bhk.d839n.n8nlq.m2dmc.fj80i.pvqun.uhg6g.1kk0h',
   website: 'https://tlon.io',
   license: 'MIT',
   version: '2.0.1'
 };
 
+const makeHref = (base: string): DocketHrefGlob => ({ glob: { base } });
+
 export const mockTreaties: Treaties = {
-  groups: {
+  '~zod/groups': {
     ship: '~zod',
     desk: 'groups',
     title: 'Groups',
     info: 'Simple Software for Community Assembly',
-    status: 'active',
-    base: 'groups',
-    color: '##CDE7EF',
+    href: makeHref('groups'),
+    color: '#CDE7EF',
     ...appMetaData
   },
-  messages: {
+  '~zod/messages': {
     title: 'Messages',
     ship: '~zod',
     desk: 'messages',
-    status: 'active',
-    base: 'messages',
+    href: makeHref('messages'),
     info: 'A lengthier description of the app down here',
-    color: '##8BE789',
+    color: '#8BE789',
     ...appMetaData
   },
-  calls: {
+  '~zod/calls': {
     title: 'Calls',
     ship: '~zod',
     desk: 'calls',
-    status: 'active',
-    base: 'calls',
+    href: makeHref('calls'),
     info: 'A lengthier description of the app down here',
-    color: '##C2D6BE',
+    color: '#C2D6BE',
     ...appMetaData
   },
-  'bitcoin-wallet': {
+  '~zod/bitcoin-wallet': {
     title: 'Bitcoin Wallet',
     ship: '~zod',
     desk: 'bitcoin-wallet',
-    status: 'active',
-    base: 'bitcoin-wallet',
+    href: makeHref('bitcoin-wallet'),
     info: 'A lengthier description of the app down here',
-    color: '##F0AE70',
+    color: '#F0AE70',
     ...appMetaData
   },
-  system: {
+  '~zod/system': {
     title: 'System',
     ship: '~zod',
     desk: 'system',
-    status: 'active',
-    base: 'system',
+    href: makeHref('system'),
     info: 'A lengthier description of the app down here',
-    color: '##2D0118',
-    img: systemUrl,
+    color: '#2D0118',
+    image: systemUrl,
     ...appMetaData
   },
-  'my-apps': {
+  '~zod/my-apps': {
     title: 'My Apps',
     ship: '~zod',
     desk: 'my-apps',
-    status: 'active',
-    base: 'my-apps',
+    href: makeHref('my-apps'),
     info: 'A lengthier description of the app down here',
-    color: '##D8B14E',
+    color: '#D8B14E',
     ...appMetaData
   },
-  go: {
+  '~zod/go': {
     title: 'Go',
     ship: '~zod',
     desk: 'go',
-    status: 'active',
-    base: 'go',
+    href: makeHref('go'),
     info: 'A lengthier description of the app down here',
-    color: '##A58E52',
-    img: goUrl,
+    color: '#A58E52',
     ...appMetaData
   },
-  terminal: {
+  '~zod/terminal': {
     title: 'Terminal',
     ship: '~zod',
     desk: 'terminal',
-    status: 'active',
-    base: 'terminal',
+    href: makeHref('terminal'),
     info: 'A lengthier description of the app down here',
-    color: '##2D382B',
+    color: '#2D382B',
     ...appMetaData
   },
-  pomodoro: {
+  '~zod/pomodoro': {
     title: 'Pomodoro',
     ship: '~zod',
     desk: 'pomodoro',
-    status: 'active',
-    base: 'pomodoro',
+    href: makeHref('pomodoro'),
     info: 'A lengthier description of the app down here',
-    color: '##EE5432',
+    color: '#EE5432',
     ...appMetaData
   },
-  clocks: {
+  '~zod/clocks': {
     title: 'Clocks',
     ship: '~zod',
     desk: 'clocks',
-    status: 'active',
-    base: 'clocks',
+    href: makeHref('clocks'),
     info: 'A lengthier description of the app down here',
-    color: '##DCDCDC',
+    color: '#DCDCDC',
     ...appMetaData
   },
-  uniswap: {
+  '~zod/uniswap': {
     title: 'Uniswap',
     ship: '~zod',
     desk: 'uniswap',
-    status: 'active',
-    base: 'uniswap',
+    href: makeHref('uniswap'),
     info: 'A lengthier description of the app down here',
-    color: '##FDA1FF',
+    color: '#FDA1FF',
     ...appMetaData
   },
-  inbox: {
+  '~zod/inbox': {
     title: 'Inbox',
     ship: '~zod',
     desk: 'inbox',
-    status: 'active',
-    base: 'inbox',
-    color: '##FEFFBA',
+    href: makeHref('inbox'),
+    color: '#FEFFBA',
     ...appMetaData
   }
 };
+
+export const mockCharges: Charges = _.reduce(
+  mockTreaties,
+  (acc, val, key) => {
+    const [, desk] = key.split('/');
+    const chad = { glob: null };
+    if (desk === 'inbox') {
+      return acc;
+    }
+
+    return { ...acc, [desk]: { ...val, chad } };
+  },
+  {} as Charges
+);
+
+const charter = Object.keys(mockTreaties);
+
+export const mockAllies: Allies = [
+  '~zod',
+  '~nocsyx-lassul',
+  '~nachus-hollyn',
+  '~nalbel_litzod',
+  '~litmus^ritten',
+  '~nalput_litzod',
+  '~nalrex_bannus',
+  '~nalrys'
+].reduce((acc, val) => ({ ...acc, [val]: charter }), {});
+
+export const mockNotification: BasicNotification = {
+  type: 'basic',
+  time: '',
+  message: 'test'
+};
+
+export const mockVat = (desk: string, blockers?: boolean): Vat => ({
+  cass: {
+    da: 1629849472746,
+    ud: 1
+  },
+  desk,
+  arak: {
+    rein: {
+      sub: [],
+      add: []
+    },
+    aeon: 3,
+    desk,
+    next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
+    ship: '~dopzod'
+  },
+  hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
+});
+
+const badVats = ['inbox', 'system', 'terminal', 'base'];
+export const mockVats = _.reduce(
+  mockCharges,
+  (vats, charge, desk) => {
+    return { ...vats, [desk]: mockVat(desk, !badVats.includes(desk)) };
+  },
+  { base: mockVat('base', true) } as Vats
+);

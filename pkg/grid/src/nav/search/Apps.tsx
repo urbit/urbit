@@ -1,14 +1,24 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import React, { useEffect, useMemo } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import fuzzy from 'fuzzy';
 import slugify from 'slugify';
-import classNames from 'classnames';
 import { ShipName } from '../../components/ShipName';
-import useDocketState from '../../state/docket';
-import { Treaty } from '../../state/docket-types';
-import { useLeapStore } from '../Nav';
+import useDocketState, { App, useAllyTreaties } from '../../state/docket';
+import { MatchItem, useLeapStore } from '../Nav';
+import { AppList } from '../../components/AppList';
+import { getAppHref } from '../../state/util';
 
 type AppsProps = RouteComponentProps<{ ship: string }>;
+
+export function appMatch(app: App, includeHref = false): MatchItem {
+  const match: MatchItem = { value: app.desk, display: app.title };
+
+  if (includeHref) {
+    match.href = getAppHref(app.href);
+  }
+
+  return match;
+}
 
 export const Apps = ({ match }: AppsProps) => {
   const { searchInput, selectedMatch, select } = useLeapStore((state) => ({
@@ -17,65 +27,50 @@ export const Apps = ({ match }: AppsProps) => {
     selectedMatch: state.selectedMatch
   }));
   const provider = match?.params.ship;
-  const fetchProviderTreaties = useDocketState((s) => s.fetchProviderTreaties);
-  const [treaties, setTreaties] = useState<Treaty[]>();
-  const results = useMemo(
-    () =>
-      treaties
-        ? fuzzy
-            .filter(
-              searchInput,
-              treaties.map((t) => t.title)
-            )
-            .sort((a, b) => {
-              const left = a.string.startsWith(searchInput) ? a.score + 1 : a.score;
-              const right = b.string.startsWith(searchInput) ? b.score + 1 : b.score;
+  const treaties = useAllyTreaties(provider);
+  const results = useMemo(() => {
+    if (!treaties) {
+      return undefined;
+    }
+    const values = Object.values(treaties);
+    return fuzzy
+      .filter(
+        searchInput,
+        values.map((v) => v.title)
+      )
+      .sort((a, b) => {
+        const left = a.string.startsWith(searchInput) ? a.score + 1 : a.score;
+        const right = b.string.startsWith(searchInput) ? b.score + 1 : b.score;
 
-              return right - left;
-            })
-            .map((result) => treaties[result.index])
-        : undefined,
-    [treaties, searchInput]
-  );
+        return right - left;
+      })
+      .map((result) => values[result.index]);
+  }, [treaties, searchInput]);
   const count = results?.length;
 
   useEffect(() => {
+    const { fetchAllyTreaties } = useDocketState.getState();
+    fetchAllyTreaties(provider);
     select(
       <>
         Apps by <ShipName name={provider} className="font-mono" />
       </>
     );
-  }, []);
+  }, [provider]);
 
   useEffect(() => {
     if (results) {
       useLeapStore.setState({
-        matches: results.map((treaty) => ({ value: treaty.desk, display: treaty.title }))
+        matches: results.map((r) => appMatch(r))
       });
     }
   }, [results]);
 
   useEffect(() => {
-    async function getTreaties() {
-      setTreaties(await fetchProviderTreaties(provider));
-    }
-
     if (provider) {
-      getTreaties();
+      useDocketState.getState().fetchAllyTreaties(provider);
     }
   }, [provider]);
-
-  const isSelected = useCallback(
-    (target: Treaty) => {
-      if (!selectedMatch) {
-        return false;
-      }
-
-      const matchValue = selectedMatch.display || selectedMatch.value;
-      return target.title === matchValue || target.desk === matchValue;
-    },
-    [selectedMatch]
-  );
 
   return (
     <div className="dialog-inner-container md:px-6 md:py-8 h4 text-gray-400">
@@ -88,41 +83,12 @@ export const Apps = ({ match }: AppsProps) => {
         </p>
       </div>
       {results && (
-        <ul className="space-y-8" aria-labelledby="developed-by">
-          {results.map((app) => (
-            <li
-              key={app.desk}
-              id={app.title || app.desk}
-              role="option"
-              aria-selected={isSelected(app)}
-            >
-              <Link
-                to={`${match?.path.replace(':ship', provider)}/${slugify(app.desk)}`}
-                className={classNames(
-                  'flex items-center space-x-3 default-ring ring-offset-2 rounded-lg',
-                  isSelected(app) && 'ring-4'
-                )}
-              >
-                <div
-                  className="flex-none relative w-12 h-12 bg-gray-200 rounded-lg"
-                  style={{ backgroundColor: app.color }}
-                >
-                  {app.img && (
-                    <img
-                      className="absolute top-1/2 left-1/2 h-[40%] w-[40%] object-contain transform -translate-x-1/2 -translate-y-1/2"
-                      src={app.img}
-                      alt=""
-                    />
-                  )}
-                </div>
-                <div className="flex-1 text-black">
-                  <p>{app.title}</p>
-                  {app.info && <p className="font-normal">{app.info}</p>}
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <AppList
+          apps={results}
+          labelledBy="developed-by"
+          matchAgainst={selectedMatch}
+          to={(app) => `${match?.path.replace(':ship', provider)}/${app.ship}/${slugify(app.desk)}`}
+        />
       )}
       <p>That&apos;s it!</p>
     </div>

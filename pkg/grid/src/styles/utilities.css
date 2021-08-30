@@ -1,0 +1,7 @@
+.scroll-full-width {
+  width: calc(100% - var(--removed-body-scroll-bar-size));
+}
+
+.scroll-left-50 {
+  left: calc(50% - (var(--removed-body-scroll-bar-size) / 2));
+}
