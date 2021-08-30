@@ -105,9 +105,14 @@ deriveToNoun tyName = do
 
 addErrTag :: String -> Exp -> Exp
 addErrTag tag exp =
-    InfixE (Just $ AppE (VarE 'named) str) (VarE (mkName ".")) (Just exp)
+    -- This spurious let is inserted so we can get better cost center data
+    -- during heap profiling.
+    LetE [ValD (VarP nom) (NormalB bod) []] (VarE nom)
   where
+    -- XX arguably we should use newName rather than mkName here
+    nom = mkName $ "named_" ++ filter C.isAlphaNum tag
     str = LitE $ StringL tag
+    bod = InfixE (Just $ AppE (VarE 'named) str) (VarE (mkName ".")) (Just exp)
 
 deriveFromNoun :: Name -> Q [Dec]
 deriveFromNoun tyName = do
