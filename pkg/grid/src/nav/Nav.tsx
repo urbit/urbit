@@ -142,17 +142,12 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
         <SystemMenu
           open={systemMenuOpen}
           setOpen={setSystemMenuOpen}
-          showOverlay={!isOpen}
+          menu={menuState}
+          navOpen={isOpen}
           className={classNames('relative z-50 flex-none', eitherOpen ? 'bg-white' : 'bg-gray-100')}
         />
-        <NotificationsLink isOpen={isOpen} />
-        <Leap
-          ref={inputRef}
-          menu={menuState}
-          dropdown="leap-items"
-          showClose={isOpen}
-          className={classNames('flex-1 max-w-[600px]', !isOpen ? 'bg-gray-100' : '')}
-        />
+        <NotificationsLink menu={menuState} navOpen={isOpen} />
+        <Leap ref={inputRef} menu={menuState} dropdown="leap-items" navOpen={isOpen} />
       </Portal.Root>
       <div
         ref={navRef}
@@ -169,7 +164,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
         <DialogContent
           onOpenAutoFocus={onOpen}
           onInteractOutside={disableCloseWhenDropdownOpen}
-          className="fixed bottom-0 sm:top-0 scroll-left-50 flex flex-col scroll-full-width max-w-3xl px-4 pb-4 text-gray-400 -translate-x-1/2 outline-none"
+          className="fixed bottom-0 sm:top-0 scroll-left-50 flex flex-col scroll-full-width max-w-3xl px-4 sm:pb-4 text-gray-400 -translate-x-1/2 outline-none"
           role="combobox"
           aria-controls="leap-items"
           aria-owns="leap-items"
@@ -178,7 +173,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
           <header ref={dialogNavRef} className="my-6 order-last sm:order-none" />
           <div
             id="leap-items"
-            className="grid grid-rows-[fit-content(100vh)] bg-white rounded-3xl overflow-hidden default-ring"
+            className="grid grid-rows-[fit-content(100vh)] bg-white rounded-3xl overflow-hidden default-ring focus-visible:ring-2"
             tabIndex={0}
             role="listbox"
           >

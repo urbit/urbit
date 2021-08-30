@@ -41,7 +41,7 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
       href={active ? link : undefined}
       target={desk}
       className={classNames(
-        'group relative font-semibold aspect-w-1 aspect-h-1 rounded-3xl default-ring overflow-hidden',
+        'group relative font-semibold aspect-w-1 aspect-h-1 rounded-3xl default-ring focus-visible:ring-4 overflow-hidden',
         !active && 'cursor-default'
       )}
       style={{ backgroundColor: active ? color || 'purple' : suspendColor }}

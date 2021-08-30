@@ -78,3 +78,5 @@ pkg/interface/link-webext/web-ext-artifacts
 
 # Logs
 *.log
+
+.vercel

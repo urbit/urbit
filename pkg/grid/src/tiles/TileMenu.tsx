@@ -4,7 +4,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import useDocketState from '../state/docket';
-import { disableDefault } from '../state/util';
+import { disableDefault, handleDropdownLink } from '../state/util';
 
 export interface TileMenuProps {
   desk: string;
@@ -41,10 +41,7 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
   const [open, setOpen] = useState(false);
   const toggleDocket = useDocketState((s) => s.toggleDocket);
   const menuBg = { backgroundColor: menuColor };
-  const linkOnSelect = useCallback((e: Event) => {
-    e.preventDefault();
-    setTimeout(() => setOpen(false), 15);
-  }, []);
+  const linkOnSelect = useCallback(handleDropdownLink(setOpen), []);
 
   return (
     <DropdownMenu.Root open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>

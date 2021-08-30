@@ -35,8 +35,11 @@ export const AppLink = <T extends DocketWithDesk>({
 }: AppLinkProps<T>) => {
   const linkTo = to?.(app);
   const linkClassnames = classNames(
-    'flex items-center default-ring ring-offset-2 rounded-lg',
-    selected && 'ring-4',
+    'flex items-center default-ring rounded-lg',
+    size === 'default' && 'ring-offset-2',
+    size !== 'xs' && 'p-2',
+    size === 'xs' && 'p-1',
+    selected && 'bg-blue-200',
     className
   );
   const link = (children: ReactNode) =>

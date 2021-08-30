@@ -1,19 +1,13 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { Link, Route, RouteComponentProps, Switch, useRouteMatch } from 'react-router-dom';
 import classNames from 'classnames';
-import { useLeapStore } from './Nav';
 import { NotificationPrefs } from './preferences/NotificationPrefs';
 import { SystemUpdatePrefs } from './preferences/SystemUpdatePrefs';
 import notificationsSVG from '../assets/notifications.svg';
 import systemUpdatesSVG from '../assets/system-updates.svg';
 
 export const SystemPreferences = ({ match }: RouteComponentProps<{ submenu: string }>) => {
-  const select = useLeapStore((state) => state.select);
   const subMatch = useRouteMatch<{ submenu: string }>(`${match.url}/:submenu`);
-
-  useEffect(() => {
-    select('System Preferences');
-  }, []);
 
   const matchSub = useCallback(
     (target: string) => {

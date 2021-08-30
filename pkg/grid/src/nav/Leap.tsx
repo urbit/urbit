@@ -34,10 +34,10 @@ export function createPreviousPath(current: string): string {
 type LeapProps = {
   menu: MenuState;
   dropdown: string;
-  showClose: boolean;
+  navOpen: boolean;
 } & HTMLAttributes<HTMLDivElement>;
 
-export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: LeapProps, ref) => {
+export const Leap = React.forwardRef(({ menu, dropdown, navOpen, className }: LeapProps, ref) => {
   const { push } = useHistory();
   const match = useRouteMatch<{ menu?: MenuState; query?: string; desk?: string }>(
     `/leap/${menu}/:query?/(apps)?/:desk?`
@@ -196,47 +196,51 @@ export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: 
   );
 
   return (
-    <form
-      className={classNames(
-        'relative z-50 flex items-center w-full px-2 rounded-full bg-white default-ring focus-within:ring-4',
-        className
-      )}
-      onSubmit={onSubmit}
-    >
-      <label
-        htmlFor="leap"
+    <div className="relative z-50 w-full">
+      <form
         className={classNames(
-          'inline-block flex-none p-2 h4 text-blue-400',
-          !selection && 'sr-only'
+          'flex items-center h-full w-full px-2 rounded-full bg-white default-ring focus-within:ring-2',
+          navOpen && menu !== 'search' && 'opacity-80',
+          !navOpen ? 'bg-gray-100' : '',
+          className
         )}
+        onSubmit={onSubmit}
       >
-        {selection || 'Search Landscape'}
-      </label>
-      <input
-        id="leap"
-        type="text"
-        ref={inputRef}
-        placeholder={selection ? '' : 'Search Landscape'}
-        className="flex-1 w-full h-full px-2 h4 rounded-full bg-transparent outline-none"
-        value={rawInput}
-        onClick={toggleSearch}
-        onFocus={onFocus}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
-        aria-autocomplete="both"
-        aria-controls={dropdown}
-        aria-activedescendant={selectedMatch?.display || selectedMatch?.value}
-      />
-      {showClose && (
+        <label
+          htmlFor="leap"
+          className={classNames(
+            'inline-block flex-none p-2 h4 text-blue-400',
+            !selection && 'sr-only'
+          )}
+        >
+          {selection || 'Search Landscape'}
+        </label>
+        <input
+          id="leap"
+          type="text"
+          ref={inputRef}
+          placeholder={selection ? '' : 'Search Landscape'}
+          className="flex-1 w-full px-2 h4 rounded-full bg-transparent outline-none"
+          value={rawInput}
+          onClick={toggleSearch}
+          onFocus={onFocus}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          aria-autocomplete="both"
+          aria-controls={dropdown}
+          aria-activedescendant={selectedMatch?.display || selectedMatch?.value}
+        />
+      </form>
+      {navOpen && (
         <Link
           to="/"
-          className="circle-button w-8 h-8 text-gray-400 bg-gray-100 default-ring"
+          className="absolute top-1/2 right-2 flex-none circle-button w-8 h-8 text-gray-400 bg-gray-100 default-ring -translate-y-1/2"
           onClick={() => select(null)}
         >
           <Cross className="w-3 h-3 fill-current" />
           <span className="sr-only">Close</span>
         </Link>
       )}
-    </form>
+    </div>
   );
 });
