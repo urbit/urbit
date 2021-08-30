@@ -124,9 +124,10 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
   }, []);
 
   const disableCloseWhenDropdownOpen = useCallback(
-    (e: Event) => {
+    (e: Event, cb?: () => void) => {
       if (systemMenuOpen) {
         e.preventDefault();
+        cb && cb();
       }
     },
     [systemMenuOpen]
@@ -163,6 +164,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
       <Dialog open={isOpen} onOpenChange={onDialogClose}>
         <DialogContent
           onOpenAutoFocus={onOpen}
+          onEscapeKeyDown={(e) => disableCloseWhenDropdownOpen(e, () => setSystemMenuOpen(false))}
           onInteractOutside={disableCloseWhenDropdownOpen}
           className="fixed bottom-0 sm:top-0 scroll-left-50 flex flex-col scroll-full-width max-w-3xl px-4 sm:pb-4 text-gray-400 -translate-x-1/2 outline-none"
           role="combobox"
