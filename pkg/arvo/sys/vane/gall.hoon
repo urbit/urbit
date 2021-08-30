@@ -1110,6 +1110,12 @@
         =/  =duct  system-duct.state
         =/  =wire  p.card
         =/  =neet  q.card
+        ?:  ?=(%pyre -.neet)
+          %:  mean
+            leaf/"gall: %pyre from {<agent-name>}, killing event"
+            leaf/"wire: {<wire>}"
+            tang.neet
+          ==
         =.  wire
           ?-  -.neet
             %agent  [%out (scot %p ship.neet) name.neet wire]

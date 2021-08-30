@@ -4,6 +4,7 @@ import clipboardCopy from 'clipboard-copy';
 import React, { HTMLAttributes, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Adjust } from '../components/icons/Adjust';
+import { disableDefault } from '../state/util';
 
 type SystemMenuProps = HTMLAttributes<HTMLButtonElement> & {
   open: boolean;
@@ -36,7 +37,7 @@ export const SystemMenu = ({ open, setOpen, className, showOverlay = false }: Sy
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content
-          onCloseAutoFocus={(e) => e.preventDefault()}
+          onCloseAutoFocus={disableDefault}
           sideOffset={12}
           className="dropdown min-w-64 p-6 font-semibold text-gray-500 bg-white"
         >

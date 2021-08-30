@@ -1,0 +1,9 @@
+:~  title+'Grid'
+    info+'An app launcher for urbit.'
+    color+0xee.5432
+    glob+'https://bootstrap.urbit.org/glob-0v2.j0idj.t8248.c4bfl.hvf09.ud4ns.glob'
+    base+'grid'
+    version+[0 0 1]
+    website+'https://tlon.io'
+    license+'MIT'
+==

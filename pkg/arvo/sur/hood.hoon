@@ -10,6 +10,8 @@
       [%merge =desk =arak]
       [%merge-sunk =desk =arak =tang]
       [%merge-fail =desk =arak =tang]
+      [%suspend =desk =arak]
+      [%revive =desk =arak]
   ==
 ::  $arak: foreign vat tracker
 ::
@@ -24,11 +26,13 @@
   ==
 ::  $rein: diff from desk manifest
 ::
+::    .liv: suspended?
 ::    .add: agents not in manifest that should be running
 ::    .sub: agents in manifest that should not be running
 ::
 +$  rein
-  $:  add=(set dude)
+  $:  liv=_&
+      add=(set dude)
       sub=(set dude)
   ==
 ::
@@ -51,26 +55,21 @@
   :+  %rose  ["" "{<desk>}" "::"]
   ^-  tang
   =-  ?:  =(~ next.arak)  -
-      (snoc - leaf/"pending: {<next.arak>}")
+      %+  snoc  -
+      leaf/"pending: {<(turn next.arak |=([@ lal=@tas num=@] [lal num]))>}"
   ^-  tang
   =/  meb  (mergebase-hashes our desk now arak)
+  =/  sat  ?:(liv.rein.arak "running" "suspended")
   :~  leaf/"/sys/kelvin: {<[lal num]:weft>}"
       leaf/"base hash:   {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:    {<hash>}"
-      leaf/"remote aeon: {<aeon.arak>}"
+      leaf/"source ship: {<ship.arak>}"
+      leaf/"source desk: {<desk.arak>}"
+      leaf/"source aeon: {<aeon.arak>}"
+      leaf/"status:      {sat}"
       leaf/"force on:    {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
       leaf/"force off:   {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
   ==
-::  +ankh-to-kelvin: read /sys.kelvin from an $ankh
-::
-++  ankh-to-kelvin
-  |=  =ankh
-  !<  weft
-  q:(need (~(get an:cloy ankh) /sys/kelvin))
-::
-++  read-kelvin-local
-  |=  [our=ship =desk =aeon]
-  .^(weft cx+/(scot %p our)/[desk]/(scot %ud aeon)/sys/kelvin)
 ::
 ++  read-kelvin-foreign
   |=  [=ship =desk =aeon]
@@ -94,7 +93,10 @@
 ::
 ++  read-bill
   |=  [our=ship =desk now=@da] 
-  .^(bill cx+/(scot %p our)/[desk]/(scot %da now)/desk/bill)
+  =/  pax  (en-beam [our desk da+now] /desk/bill)
+  ?~  =<(fil .^(arch cy/pax))
+    *bill
+  .^(bill cx/pax)
 ::  +is-fish: should dill link .dude?
 ::
 ++  is-fish  |=([=dude =bill] .?((find ~[dude] (read-fish bill))))
@@ -129,7 +131,7 @@
   ^-  (list dude)
   =/  duz  (read-apes bill)
   =.  duz  (skip duz ~(has in sub.rein))
-  =.  duz  (weld duz ~(tap in add.rein))
+  =.  duz  (weld duz (skip ~(tap in add.rein) ~(has in (sy duz))))
   duz
 ::
 ++  mergebase-hashes
@@ -139,5 +141,68 @@
   =/  wen  (scot %da now)
   %+  turn  .^((list tako) %cs ~[ego desk wen %base her desk.arak])
   |=(=tako .^(@uv %cs ~[ego desk wen %hash (scot %uv tako)]))
+::
+++  enjs
+  =,  enjs:format
+  |%
+  ++  vats
+    |=  v=(list ^vat)
+    ^-  json
+    %-  pairs
+    %+  turn  v
+    |=  va=^vat
+    [desk.va (vat va)]
+  ::
+  ++  tim
+    |=  t=@
+    ^-  json
+    (numb (fall (mole |.((unm:chrono:userlib t))) 0))
+  ::
+  ++  cass
+    |=  c=^cass
+    %-  pairs
+    :~  ud+(numb ud.c)
+        da+(tim da.c)
+    ==
+  ::
+  ++  vat
+    |=  v=^vat
+    %-  pairs
+    :~  desk+s+desk.v
+        hash+s+(scot %uv hash.v)
+        cass+(cass cass.v)
+        arak+(arak arak.v)
+    ==
+  ::
+  ++  weft
+    |=  w=^weft
+    %-  pairs
+    :~  name+s+lal.w
+        kelvin+(numb num.w)
+    ==
+  ::
+  ++  woof
+    |=  w=[=aeon =^weft]
+    %-  pairs
+    :~  aeon+(numb aeon.w)
+        weft+(weft weft.w)
+    ==
+  ::
+  ++  rein
+    |=  r=^rein
+    %-  pairs
+    :~  add+a+(turn ~(tap in add.r) (lead %s))
+        sub+a+(turn ~(tap in sub.r) (lead %s))
+    ==
+  ::
+  ++  arak
+    |=  a=^arak
+    %-  pairs
+    :~  ship+s+(scot %p ship.a)
+        desk+s+desk.a
+        aeon+(numb aeon.a)
+        next+a+(turn next.a woof)
+        rein+(rein rein.a)
+    ==
+  --
 --
-

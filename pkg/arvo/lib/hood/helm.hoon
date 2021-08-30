@@ -23,8 +23,7 @@
   ^-  state
   [%1 mass-timer:(~(got by hoc.s) 0)]
 --
-|=  [=bowl:gall sat=any-state]
-?>  ?=(%1 -.sat)
+|=  [=bowl:gall sat=state]
 =|  moz=(list card)
 |%
 ++  this  .

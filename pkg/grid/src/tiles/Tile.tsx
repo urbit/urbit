@@ -1,11 +1,15 @@
 import classNames from 'classnames';
 import React, { FunctionComponent } from 'react';
 import { darken, hsla, lighten, parseToHsla, readableColorIsBlack } from 'color2k';
+import { chadIsRunning } from '@urbit/api/docket';
 import { TileMenu } from './TileMenu';
-import { Docket } from '../state/docket-types';
+import { Spinner } from '../components/Spinner';
+import { getAppHref } from '../state/util';
+import { useRecentsStore } from '../nav/search/Home';
+import { ChargeWithDesk } from '../state/docket';
 
 type TileProps = {
-  docket: Docket;
+  charge: ChargeWithDesk;
   desk: string;
 };
 
@@ -21,45 +25,59 @@ function getMenuColor(color: string, lightText: boolean, active: boolean): strin
   return lightText ? lighten(satAdjustedColor, 0.1) : darken(satAdjustedColor, 0.1);
 }
 
-export const Tile: FunctionComponent<TileProps> = ({ docket, desk }) => {
-  const { title, base, color, img, status } = docket;
-  const active = status === 'active';
+export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
+  const addRecentApp = useRecentsStore((state) => state.addRecentApp);
+  const { title, color, image, chad, href } = charge;
+  const loading = 'install' in chad;
+  const active = chadIsRunning(chad);
   const lightText = !readableColorIsBlack(color);
   const menuColor = getMenuColor(color, lightText, active);
   const suspendColor = 'rgb(220,220,220)';
+  const suspended = 'suspend' in chad;
+  const link = getAppHref(href);
 
   return (
     <a
-      href={active ? `/apps/${base}/` : undefined}
-      target={base}
+      href={active ? link : undefined}
+      target={desk}
       className={classNames(
-        'group relative font-semibold aspect-w-1 aspect-h-1 rounded-xl default-ring',
+        'group relative font-semibold aspect-w-1 aspect-h-1 rounded-3xl default-ring overflow-hidden',
         !active && 'cursor-default'
       )}
       style={{ backgroundColor: active ? color || 'purple' : suspendColor }}
+      onClick={() => addRecentApp(charge)}
+      onAuxClick={() => addRecentApp(charge)}
     >
       <div>
-        <TileMenu
-          desk={desk}
-          active={active}
-          menuColor={menuColor}
-          lightText={lightText}
-          className="absolute z-10 top-2.5 right-2.5 sm:top-4 sm:right-4 opacity-0 hover-none:opacity-100 pointer-coarse:opacity-100 focus:opacity-100 group-hover:opacity-100"
-        />
-        <div className="h4 absolute bottom-4 left-4 lg:bottom-8 lg:left-8">
+        {loading ? (
+          <div className="flex items-center justify-center absolute top-1/2 left-1/2 h-[40%] w-[40%] object-contain transform -translate-x-1/2 -translate-y-1/2">
+            <Spinner className="h-16 w-16" />
+          </div>
+        ) : (
+          <TileMenu
+            desk={desk}
+            active={active}
+            menuColor={menuColor}
+            lightText={lightText}
+            className="absolute z-10 top-2.5 right-2.5 sm:top-4 sm:right-4 opacity-0 hover-none:opacity-100 focus:opacity-100 group-hover:opacity-100"
+          />
+        )}
+        <div className="h4 absolute z-10 bottom-4 left-4 lg:bottom-8 lg:left-8">
           <h3
             className={`${
-              lightText && active ? 'text-gray-200' : 'text-gray-800'
+              lightText && active && !loading ? 'text-gray-200' : 'text-gray-800'
             }  mix-blend-hard-light`}
           >
             {title}
           </h3>
-          {!active && <span className="text-gray-400">Suspended</span>}
+          {!active && (
+            <span className="text-gray-400">{suspended ? 'Suspended' : 'Installing'}</span>
+          )}
         </div>
-        {img && (
+        {image && !loading && (
           <img
-            className="absolute top-1/2 left-1/2 h-[40%] w-[40%] object-contain transform -translate-x-1/2 -translate-y-1/2"
-            src={img}
+            className="absolute top-1/2 left-1/2 h-full w-full object-contain transform -translate-x-1/2 -translate-y-1/2"
+            src={image}
             alt=""
           />
         )}

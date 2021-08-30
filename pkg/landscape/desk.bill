@@ -1,7 +1,5 @@
 :~  :-  %apes
-    :~  %btc-provider
-        %btc-wallet
-        %chat-cli
+    :~  %chat-cli
         %chat-hook
         %chat-store
         %chat-view
@@ -15,8 +13,6 @@
         %demo-push-hook
         %demo-store
         %dm-hook
-        %file-server
-        %glob
         %graph-pull-hook
         %graph-push-hook
         %graph-store

@@ -1708,7 +1708,8 @@ _pier_pill_parse(u3_noun pil)
     while ( u3_nul != ova ) {
       ovo = u3h(ova);
 
-      if ( c3__into == u3h(u3t(ovo)) ) {
+      u3_noun tag = u3h(u3t(ovo));
+      if ( ( c3__into == tag ) || ( c3__park == tag ) ) {
         c3_assert( 0 == len_w );
         len_w++;
         ovo = u3t(pil_q);

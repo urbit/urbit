@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { fakeRequest } from '../../state/mock-data';
+import { fakeRequest } from '../../state/util';
 
 const useMockData = import.meta.env.MODE === 'mock';
 

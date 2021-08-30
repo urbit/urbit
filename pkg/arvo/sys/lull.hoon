@@ -1678,6 +1678,7 @@
   +$  neat
     $%  [%arvo =note-arvo]
         [%agent [=ship name=term] =deal]
+        [%pyre =tang]
     ==
   +$  deal
     $%  [%raw-poke =mark =noun]
@@ -1696,8 +1697,9 @@
     +$  step  (quip card form)
     +$  card  (wind note gift)
     +$  note
-      $%  [%arvo =note-arvo]
-          [%agent [=ship name=term] =task]
+      $%  [%agent [=ship name=term] =task]
+          [%arvo note-arvo]
+          [%pyre =tang]
       ==
     +$  task
       $%  [%watch =path]

@@ -4,6 +4,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import useDocketState from '../state/docket';
+import { disableDefault } from '../state/util';
 
 export interface TileMenuProps {
   desk: string;
@@ -66,7 +67,7 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
         align="start"
         alignOffset={-32}
         sideOffset={4}
-        onCloseAutoFocus={(e) => e.preventDefault()}
+        onCloseAutoFocus={disableDefault}
         className={classNames(
           'dropdown py-2 font-semibold',
           lightText ? 'text-gray-100' : 'text-gray-800'

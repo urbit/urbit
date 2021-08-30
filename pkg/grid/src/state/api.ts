@@ -8,13 +8,15 @@ declare global {
 
 const api =
   import.meta.env.MODE === 'mock'
-    ? {
-        poke: () => {},
-        subscribe: () => {},
-        subscribeOnce: () => {},
-        ship: ''
-      }
+    ? ({
+        poke: async () => {},
+        subscribe: async () => {},
+        subscribeOnce: async () => {},
+        ship: '',
+        scry: async () => {}
+      } as unknown as Urbit)
     : new Urbit('', '');
 
-api.ship = window.ship;
+api.ship = import.meta.env.MODE === 'mock' ? 'dopzod' : window.ship;
+
 export default api;
