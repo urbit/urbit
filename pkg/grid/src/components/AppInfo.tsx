@@ -1,4 +1,4 @@
-import { chadIsRunning, Charge, Treaty } from '@urbit/api/docket';
+import { chadIsRunning } from '@urbit/api/docket';
 import clipboardCopy from 'clipboard-copy';
 import React, { FC } from 'react';
 import cn from 'classnames';
@@ -8,19 +8,19 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from './Dialog';
 import { DocketHeader } from './DocketHeader';
 import { Spinner } from './Spinner';
 import { VatMeta } from './VatMeta';
-import useDocketState from '../state/docket';
+import useDocketState, { App } from '../state/docket';
 import { getAppHref } from '../state/util';
 import { addRecentApp } from '../nav/search/Home';
 import { TreatyMeta } from './TreatyMeta';
 
 type InstallStatus = 'uninstalled' | 'installing' | 'installed';
 interface AppInfoProps {
-  docket: Charge | Treaty;
+  docket: App;
   vat?: Vat;
   className?: string;
 }
 
-function getInstallStatus(docket: Treaty | Charge): InstallStatus {
+function getInstallStatus(docket: App): InstallStatus {
   if (!('chad' in docket)) {
     return 'uninstalled';
   }
@@ -33,7 +33,7 @@ function getInstallStatus(docket: Treaty | Charge): InstallStatus {
   return 'uninstalled';
 }
 
-function getRemoteDesk(docket: Treaty | Charge, vat?: Vat) {
+function getRemoteDesk(docket: App, vat?: Vat) {
   if ('chad' in docket) {
     const { ship, desk } = vat!.arak;
     return [ship, desk];
@@ -74,7 +74,7 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
               variant="alt-primary"
               as="a"
               href={getAppHref(docket.href)}
-              target={docket.title || '_blank'}
+              target={docket.desk || '_blank'}
               onClick={() => addRecentApp(docket)}
             >
               Open App

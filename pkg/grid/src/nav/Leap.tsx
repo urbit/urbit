@@ -11,7 +11,6 @@ import React, {
   useRef
 } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
-import slugify from 'slugify';
 import { Cross } from '../components/icons/Cross';
 import { MenuState, useLeapStore } from './Nav';
 
@@ -70,7 +69,12 @@ export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: 
 
   const getMatch = useCallback(
     (value: string) => {
-      return matches.find((m) => m.display?.startsWith(value) || m.value.startsWith(value));
+      const normValue = value.toLocaleLowerCase();
+      return matches.find(
+        (m) =>
+          m.display?.toLocaleLowerCase().startsWith(normValue) ||
+          m.value.toLocaleLowerCase().startsWith(normValue)
+      );
     },
     [matches]
   );
@@ -130,13 +134,25 @@ export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: 
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      const value = inputRef.current?.value.trim();
-
-      if (!value) {
+      if (selectedMatch?.href) {
+        window.open(selectedMatch.href, selectedMatch.value);
         return;
       }
 
-      const input = [getMatch(value)?.value || slugify(value)];
+      if (!selectedMatch?.value) {
+        return;
+      }
+
+      // TODO: evaluate if we still need this for manual entry
+      // const value = inputRef.current?.value.trim();
+
+      // if (!value) {
+      //   return;
+      // }
+
+      // const input = [getMatch(value)?.value || slugify(value)];
+
+      const input = [selectedMatch.value];
       if (appsMatch) {
         input.unshift(match?.params.query || '');
       } else {
@@ -146,7 +162,7 @@ export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: 
       navigateByInput(input.join('/'));
       useLeapStore.setState({ rawInput: '' });
     },
-    [match]
+    [match, selectedMatch]
   );
 
   const onKeyDown = useCallback(
@@ -156,7 +172,7 @@ export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: 
 
       if (deletion && !rawInput && selection) {
         e.preventDefault();
-        select(null, appsMatch ? undefined : match?.params.query);
+        select(null, appsMatch && !appsMatch.isExact ? undefined : match?.params.query);
         const pathBack = createPreviousPath(match?.url || '');
         push(pathBack);
       }

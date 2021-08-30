@@ -30,7 +30,6 @@ export const useKilnState = create<KilnState>((set) => ({
   },
   set: produce(set)
 }));
-console.log(useKilnState.getState());
 
 const selBlockers = (s: KilnState) => getBlockers(s.vats);
 export function useBlockers() {

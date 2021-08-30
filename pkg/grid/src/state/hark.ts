@@ -1,6 +1,6 @@
 import create from 'zustand';
 import { Notification } from './hark-types';
-import { mockBlockedChargeNotification } from './mock-data';
+import { mockNotification } from './mock-data';
 import { useMockData } from './util';
 
 interface HarkStore {
@@ -8,5 +8,5 @@ interface HarkStore {
 }
 
 export const useHarkStore = create<HarkStore>(() => ({
-  notifications: useMockData ? [mockBlockedChargeNotification] : []
+  notifications: useMockData ? [mockNotification] : []
 }));
