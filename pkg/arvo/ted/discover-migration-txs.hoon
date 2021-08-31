@@ -156,14 +156,14 @@
       ~marnus
     ::
       ::  ceremony address
-      :: ~hocdyt  ::  outgoing transfer
-      :: ~fitdyt  ::  outgoing transfer
+      ~hocdyt  ::  outgoing transfer to lsr
+      ~fitdyt  ::  outgoing transfer to lsr
       ~fipbyt
-      :: ~nimdyt  ::  outgoing transfer
-      :: ~lardyt  ::  outgoing transfer
-      :: ~waldyt  ::  outgoing transfer
+      ~nimdyt  ::  outgoing transfer to lsr
+      ~lardyt  ::  outgoing transfer to lsr
+      ~waldyt  ::  outgoing transfer to lsr
       ~mipbyt
-      :: ~rapdyt  ::  outgoing transfer
+      ~rapdyt  ::  outgoing transfer to lsr
     ::
       ::NOTE  ~tonwet owned but is outgoing transfer
   ==
@@ -284,11 +284,15 @@
   ::
   ;<  =deed:eth-noun  bind:m
     (rights:azimuth:az star)
-  ~?  !=(0x0 transfer-proxy.deed)
+  =/  for-lsr-deposit=?
+    =(linear-star-release:mainnet-contracts transfer-proxy.deed)
+  ~?  &(!=(0x0 transfer-proxy.deed) !for-lsr-deposit)
     [%unexpected-transfer-proxy star transfer-proxy.deed]
   =.  out
     %+  ~(add ja out)  owner.deed
     ^-  batch:claz
+    ?:  for-lsr-deposit
+      [%single %transfer-ship star shallow-safe]
     :-  %more
     :~  [%single %set-management-proxy star shallow-safe]
         [%single %set-spawn-proxy star proxy-safe]
