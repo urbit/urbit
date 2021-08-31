@@ -23,6 +23,18 @@
   ;;  (list @p)
   (decode-results:rpc res [%array %uint]~)
 ::
+++  get-transferring-for
+  |=  =address
+  =/  m  (strand:strandio ,(list @p))
+  ^-  form:m
+  ;<  res=@t  bind:m
+    %^  read-contract:ethio  url
+      `(call-id 'getTransferringFor' (scot %ux address) ~)
+    [contract 'getTransferringFor(address)' [%address address]~]
+  %-  pure:m
+  ;;  (list @p)
+  (decode-results:rpc res [%array %uint]~)
+::
 ++  rights
   |=  who=ship
   =/  m  (strand:strandio ,deed:eth-noun)

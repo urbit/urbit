@@ -155,6 +155,16 @@
       ~litzod
       ~marnus
     ::
+      ::  ceremony address
+      :: ~hocdyt  ::  outgoing transfer
+      :: ~fitdyt  ::  outgoing transfer
+      ~fipbyt
+      :: ~nimdyt  ::  outgoing transfer
+      :: ~lardyt  ::  outgoing transfer
+      :: ~waldyt  ::  outgoing transfer
+      ~mipbyt
+      :: ~rapdyt  ::  outgoing transfer
+    ::
       ::NOTE  ~tonwet owned but is outgoing transfer
   ==
 ::
@@ -169,7 +179,8 @@
 ~&  ?:(export %will-write-txs-to-disk %just-checking)
 =/  m  (strand ,vase)
 ^-  form:m
-=|  owned=(map address (list @p))  ::  cache
+=|  owned=(map address (list @p))  ::  owned points cache
+=|  trapd=(map address (list @p))  ::  transferring for cache
 =|  out=(jar address batch:claz)
 ::  handle galaxies and lockups
 ::
@@ -232,7 +243,7 @@
     ~?  loc  [%missing-lockup gal owner.deed]
     loop-gax(gax t.gax)
   ~?  &(!loc !transferring)  [%unexpected-lockup gal owner.deed amount.batch]
-  ~?  &(!loc transferring)   [%unexpected-lockup-still-transfer gal owner.deed amount.batch]
+  ~?  &(!loc transferring)   [%unexpected-lockup-still-transfer gal owner.deed amount.batch approved.batch]
   ~?  &(loc transferring)    [%unexpected-lockup-transfer gal owner.deed amount.batch approved.batch]
   ::  only transfer the lockup if we expected it
   ::
@@ -242,17 +253,26 @@
   =?  out  loc
     %+  ~(add ja out)  (lockup-safe gal)
     [%single %transfer-batch owner.deed]
-  ::  find other assets controlled by this address
+  ::  find other assets owned by this address
   ::
   ;<  others=(list @p)  bind:m
     =/  m  (strand ,(list @p))
     ?^  h=(~(get by owned) owner.deed)  (pure:m u.h)
     (get-owned-points:azimuth:az owner.deed)
-  ::  XX check if tansferrer
   =.  owned  (~(put by owned) owner.deed others)
   =.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
   ~?  !=(~ others)
     [%has-others gal owner.deed others]
+  ::  find other assets this address may transfer
+  ::
+  ;<  transferrable=(list @p)  bind:m
+    =/  m  (strand ,(list @p))
+    ?^  h=(~(get by trapd) owner.deed)  (pure:m u.h)
+    (get-transferring-for:azimuth:az owner.deed)
+  =.  trapd  (~(put by trapd) owner.deed transferrable)
+  =.  transferrable  (skip transferrable |=(=@p ?=(^ (find [p]~ known))))
+  ~?  !=(~ transferrable)
+    [%has-transferrable gal owner.deed transferrable]
   ::
   loop-gax(gax t.gax)
 ::
@@ -277,7 +297,7 @@
         [%single %set-spawn-proxy star proxy-safe]
         [%single %transfer-ship star deep-safe]
     ==
-  ::  find other assets controlled by this address
+  ::  find other assets owned by this address
   ::
   ;<  others=(list @p)  bind:m
     =/  m  (strand ,(list @p))
@@ -285,10 +305,32 @@
     (get-owned-points:azimuth:az owner.deed)
   =.  owned  (~(put by owned) owner.deed others)
   =.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
-  ::NOTE  we exclude ~litzod because it has many spawned-but-pending planets
-  :: XX approve-for-all for ~litzod
-  ~?  &(!=(~ others) !=(~litzod star))
+  =/  [planets=(list @p) others=(list @p)]
+    (skid others (cury lth 0xffff))
+  ~?  !=(~ others)
     [%has-others star owner.deed others]
+  ::  if controlling any planets, make sure shallow safe can get them out
+  ::
+  =?  out  !=(~ planets)
+    ~&  [%has-planets star owner.deed (lent planets)]
+    ~&  %approving-all-for-shallow-safe
+    ::TODO  this might be done multiple times if this address owns multiple
+    ::      stars. the solution is that the cache is dumb and we should just
+    ::      skip processing any address in it.
+    %+  ~(add ja out)  owner.deed
+    :+  %custom  ecliptic:mainnet-contracts
+    [0 'setApprovalForAll' ~[address+shallow-safe bool+&]]
+  ::  find other assets this address may transfer
+  ::
+  ;<  transferrable=(list @p)  bind:m
+    =/  m  (strand ,(list @p))
+    ?^  h=(~(get by trapd) owner.deed)  (pure:m u.h)
+    (get-transferring-for:azimuth:az owner.deed)
+  =.  trapd  (~(put by trapd) owner.deed transferrable)
+  =.  transferrable  (skip transferrable |=(=@p ?=(^ (find [p]~ known))))
+  ~?  !=(~ transferrable)
+    [%has-transferrable star owner.deed transferrable]
+  ::
   loop-saz(saz t.saz)
 ::
 ::  ceremony address
@@ -299,8 +341,15 @@
   (get-owned-points:azimuth:az ceremony)
 =.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
 ~?  !=(~ others)
-  [%has-others %ceremony others]
-:: XX transfer ceremony stars to shallow safe
+  [%ceremony-controls-others others]
+::
+;<  transferrable=(list @p)  bind:m
+  =/  m  (strand ,(list @p))
+  ?^  h=(~(get by trapd) ceremony)  (pure:m u.h)
+  (get-transferring-for:azimuth:az ceremony)
+=.  transferrable  (skip transferrable |=(=@p ?=(^ (find [p]~ known))))
+~?  !=(~ transferrable)
+  [%ceremony-has-transferrable transferrable]
 ::
 =.  out
   %+  ~(add ja out)  ceremony
@@ -311,6 +360,8 @@
       [%custom linear-star-release 0 'transferOwnership' [%address shallow-safe]~]
       [%custom conditional-star-release 0 'transferOwnership' [%address deep-safe]~]
   ==
+::
+::  exporting
 ::
 ?.  export  (pure:m !>(~))
 ~&  [%generating address-count=~(wyt by out)]
