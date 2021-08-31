@@ -1,7 +1,7 @@
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
         ~
-        check=_&
+        force=_|
         except=(set desk)
     ==
-[%kiln-bump except check]
+[%kiln-bump except force]

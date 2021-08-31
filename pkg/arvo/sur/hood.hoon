@@ -70,6 +70,7 @@
       leaf/"force on:    {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
       leaf/"force off:   {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
   ==
+::  +read-kelvin-foreign: read /sys/kelvin from a foreign desk
 ::
 ++  read-kelvin-foreign
   |=  [=ship =desk =aeon]
@@ -89,6 +90,15 @@
     %direct  q.q.bob
     %delta   q.r.bob
   ==
+::  +read-kelvin-local: read /sys/kelvin from a local desk
+::
+++  read-kelvin-local
+  |=  [our=ship =desk now=@da]
+  ^-  (unit weft)
+  =/  pax  (en-beam [our desk da+now] /sys/kelvin)
+  ?~  =<(fil .^(arch cy/pax))
+    ~
+  [~ .^(weft cx/pax)]
 ::  +read-bill: read contents of /desk/bill manifest
 ::
 ++  read-bill

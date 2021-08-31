@@ -413,54 +413,59 @@
     ==
   ::  +bump: handle kernel kelvin upgrade
   ::
-  ::    Apply merges to revive faded agents on all paused desks.
+  ::    Apply merges to revive faded agents on all desks.
+  ::    If .force, suspends stale agents.  Else, any stale desk
+  ::    will cause a crash.
   ::
   ++  bump
-    |=  [except=(set desk) check=?]
+    |=  [except=(set desk) force=?]
     ^+  kiln
-    |^  ^+  kiln
-    ?.  check
-      bump-all
-    =/  ded  find-blocked
+    =/  ded  (find-blocked except)
+    ?:  force
+      =.  kiln  (suspend-many ded)
+      (bump-many zuse/zuse (all-desks-but except))
     ?:  =(~ ded)
-      bump-all
+      (bump-many zuse/zuse (all-desks-but except))
     =-  (^emit (pyre:pass leaf/- ~))
     "kiln: desks blocked upgrade to {<zuse/zuse>}: {<ded>}"
-    ::
-    ++  find-blocked
-      ^-  (set desk)
-      (~(dif in (get-blockers zuse/zuse)) (~(put in except) %base))
-    ::
-    ++  bump-all
-      =/  liv=(list desk)  (skip ~(tap in ~(key by ark)) ~(has in except))
-      ~>  %slog.0^leaf/"kiln: bump {<liv>}"
-      |-  ^+  kiln
-      ?~  liv  kiln
-      $(liv t.liv, kiln (bump-one i.liv))
-    ::
-    ++  bump-one
-      |=  =desk
-      ^+  kiln
-      =<  abet  ^+  vats
-      =.  vats  (abed desk)
-      ::  skip to first commit at new kelvin
-      ::
-      =/  yon
-        =*  nex  next.rak
-        |-  ^-  (unit aeon)
-        ?~  nex  ~
-        ?:  =(kel weft.i.nex)
-          `aeon.i.nex
-        $(nex t.nex)
-      ?~  yon
-        ?.  check
-          ~>  %slog.0^leaf/"kiln: bump: ignoring {<desk>}"
-          vats
-        =-  (emit (pyre:pass leaf/- ~))
-        "kiln: {here} killed upgrade to {<zuse/zuse>}"
-      =.  next.rak  (crank-next u.yon)
+  ::
+  ++  all-desks-but  |=(not=(set desk) (~(dif in ~(key by ark)) not))
+  ::
+  ++  find-blocked
+    |=  except=(set desk)
+    ^-  (set desk)
+    (~(dif in (get-blockers zuse/zuse)) (~(put in except) %base))
+  ::
+  ++  suspend-many
+    |=  dead=(set desk)
+    ^+  kiln
+    =/  ded  ~(tap in dead)
+    |-  ^+  kiln
+    ?~  ded  kiln
+    $(ded t.ded, kiln abet:(suspend i.ded))
+  ::
+  ++  bump-many
+    |=  [kel=weft live=(set desk)]
+    ^+  kiln
+    =/  liv  ~(tap in live)
+    |-  ^+  kiln
+    ?~  liv  kiln
+    $(liv t.liv, kiln (bump-one kel i.liv))
+  ::
+  ++  bump-one
+    |=  [kel=weft =desk]
+    ^+  kiln
+    ~>  %slog.0^leaf/"kiln: bump {<desk>} to {<[- +]:kel>}"
+    =<  abet  ^+  vats
+    =.  vats  (abed desk)
+    ?:  =([~ kel] (read-kelvin-local our desk now))
+      ~>  %slog.0^leaf/"kiln: {here} already at {<[- +]:kel>}, ignoring"
+      vats
+    =^  tem  next.rak  (crank-next %| kel)
+    ?^  tem
       (emit merge-main:pass)
-    --
+    =-  (emit (pyre:pass leaf/- ~))
+    "kiln: {here} killed upgrade to {<[- +]:kel>}"
   ::  +stop-agents: internal helper to suspend agents on .loc
   ::
   ::    Will not shut down %hood or %dojo.
@@ -535,7 +540,7 @@
         =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
         (emil sync-ud:pass (diff:give diff) ~)
       ~>  %slog.0^leaf/"kiln: merging into {here}"
-      =.  next.rak  (crank-next (dec aeon.rak))
+      =.  next.rak  +:(crank-next %& (dec aeon.rak))
       (emil ~[merge-main sync-ud]:pass)
     ::
     =/  blockers
@@ -549,7 +554,7 @@
       =/  =diff  [%block loc rak new-weft blockers]
       (emil sync-ud:pass (diff:give diff) ~)
     ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
-    =.  next.rak  (crank-next (dec aeon.rak))
+    =.  next.rak  +:(crank-next %& (dec aeon.rak))
     (emil ~[merge-main sync-ud]:pass)
   ::
   ++  take-merge-main
@@ -572,7 +577,8 @@
       (update-running-apps (get-apps-diff our loc now rein.rak))
     ?.  =(%base loc)
       vats
-    =.  kiln  (bump (sy %base %kids ~) check=|)
+    =/  except=(set desk)  (sy %base %kids ~)
+    =.  kiln  (bump-many zuse/zuse (all-desks-but except))
     (emit merge-kids:pass)
   ::
   ++  take-merge-kids
@@ -614,16 +620,19 @@
     |=  daz=(list dude)
     ~>  %slog.0^leaf/"kiln: stopping {<daz>}"
     (emil `(list card:agent:gall)`(zing (turn daz stop-dude:pass)))
-  ::  +crank-next: pop stale aeons from .next.rak
+  ::  +crank-next: pop stale items from .next.rak until one matches
   ::
   ++  crank-next
-    |=  new=aeon
-    ^+  next.rak
+    |=  new=(each aeon weft)
+    ^+  [match=*(unit [=aeon =weft]) next.rak]
     =/  rog  next.rak
-    |-  ^+  next.rak
-    ?~  rog  next.rak
-    ?:  =(new aeon.i.rog)
-      t.rog
+    |-  ^+  [match=*(unit [=aeon =weft]) next.rak]
+    ?~  rog  [~ next.rak]
+    ?:  ?-  -.new
+          %&  =(p.new aeon.i.rog)
+          %|  =(p.new weft.i.rog)
+        ==
+      [`i.rog t.rog]
     $(rog t.rog)
   --
 ::  +get-blockers: find desks that would block a kernel update
@@ -700,7 +709,7 @@
   (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
 ::
 ++  poke-bump
-  |=  [except=(set desk) check=?]
+  |=  [except=(set desk) force=?]
   abet:(bump:vats +<)
 ::
 ++  poke-cancel
