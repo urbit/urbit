@@ -266,6 +266,8 @@
         :~  ['status' s+status]
             ['hash' (hex (as-octs:mimes:html hash))]
             ['type' s+type]
+            ['ship' (^ship ship)]
+            ['time' (^time time)]
         ==
       ::
       ++  point
