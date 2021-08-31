@@ -153,6 +153,7 @@
       ~samzod
       ~wanzod
       ~litzod
+      ~marnus
     ::
       ::NOTE  ~tonwet owned but is outgoing transfer
   ==
@@ -231,6 +232,7 @@
     ~?  loc  [%missing-lockup gal owner.deed]
     loop-gax(gax t.gax)
   ~?  &(!loc !transferring)  [%unexpected-lockup gal owner.deed amount.batch]
+  ~?  &(!loc transferring)   [%unexpected-lockup-still-transfer gal owner.deed amount.batch]
   ~?  &(loc transferring)    [%unexpected-lockup-transfer gal owner.deed amount.batch approved.batch]
   ::  only transfer the lockup if we expected it
   ::
@@ -246,6 +248,7 @@
     =/  m  (strand ,(list @p))
     ?^  h=(~(get by owned) owner.deed)  (pure:m u.h)
     (get-owned-points:azimuth:az owner.deed)
+  ::  XX check if tansferrer
   =.  owned  (~(put by owned) owner.deed others)
   =.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
   ~?  !=(~ others)
@@ -264,7 +267,7 @@
   ::
   ;<  =deed:eth-noun  bind:m
     (rights:azimuth:az star)
-    ~?  !=(0x0 transfer-proxy.deed)
+  ~?  !=(0x0 transfer-proxy.deed)
     [%unexpected-transfer-proxy star transfer-proxy.deed]
   =.  out
     %+  ~(add ja out)  owner.deed
@@ -283,6 +286,7 @@
   =.  owned  (~(put by owned) owner.deed others)
   =.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
   ::NOTE  we exclude ~litzod because it has many spawned-but-pending planets
+  :: XX approve-for-all for ~litzod
   ~?  &(!=(~ others) !=(~litzod star))
     [%has-others star owner.deed others]
   loop-saz(saz t.saz)
@@ -294,6 +298,9 @@
   ?^  h=(~(get by owned) ceremony)  (pure:m u.h)
   (get-owned-points:azimuth:az ceremony)
 =.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
+~?  !=(~ others)
+  [%has-others %ceremony others]
+:: XX transfer ceremony stars to shallow safe
 ::
 =.  out
   %+  ~(add ja out)  ceremony
@@ -301,8 +308,8 @@
   :-  %more
   =,  mainnet-contracts
   :~  [%custom ecliptic 0 'transferOwnership' [%address deep-safe]~]
-      [%custom linear-star-release 0 'transferOwnership' [%address deep-safe]~]
-      [%custom conditional-star-release 0 'transferOwnership' [%address shallow-safe]~]
+      [%custom linear-star-release 0 'transferOwnership' [%address shallow-safe]~]
+      [%custom conditional-star-release 0 'transferOwnership' [%address deep-safe]~]
   ==
 ::
 ?.  export  (pure:m !>(~))
