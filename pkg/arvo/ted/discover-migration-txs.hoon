@@ -179,8 +179,7 @@
 ~&  ?:(export %will-write-txs-to-disk %just-checking)
 =/  m  (strand ,vase)
 ^-  form:m
-=|  owned=(map address (list @p))  ::  owned points cache
-=|  trapd=(map address (list @p))  ::  transferring for cache
+=|  trawled=(set address)
 =|  out=(jar address batch:claz)
 ::  handle galaxies and lockups
 ::
@@ -253,27 +252,25 @@
   =?  out  loc
     %+  ~(add ja out)  (lockup-safe gal)
     [%single %transfer-batch owner.deed]
+  ::
+  ?:  (~(has in trawled) owner.deed)
+    loop-gax(gax t.gax)
   ::  find other assets owned by this address
   ::
   ;<  others=(list @p)  bind:m
-    =/  m  (strand ,(list @p))
-    ?^  h=(~(get by owned) owner.deed)  (pure:m u.h)
     (get-owned-points:azimuth:az owner.deed)
-  =.  owned  (~(put by owned) owner.deed others)
   =.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
   ~?  !=(~ others)
     [%has-others gal owner.deed others]
   ::  find other assets this address may transfer
   ::
   ;<  transferrable=(list @p)  bind:m
-    =/  m  (strand ,(list @p))
-    ?^  h=(~(get by trapd) owner.deed)  (pure:m u.h)
     (get-transferring-for:azimuth:az owner.deed)
-  =.  trapd  (~(put by trapd) owner.deed transferrable)
   =.  transferrable  (skip transferrable |=(=@p ?=(^ (find [p]~ known))))
   ~?  !=(~ transferrable)
     [%has-transferrable gal owner.deed transferrable]
   ::
+  =.  trawled  (~(put in trawled) owner.deed)
   loop-gax(gax t.gax)
 ::
 ::  handle stars
@@ -297,13 +294,13 @@
         [%single %set-spawn-proxy star proxy-safe]
         [%single %transfer-ship star deep-safe]
     ==
+  ::
+  ?:  (~(has in trawled) owner.deed)
+    loop-saz(saz t.saz)
   ::  find other assets owned by this address
   ::
   ;<  others=(list @p)  bind:m
-    =/  m  (strand ,(list @p))
-    ?^  h=(~(get by owned) owner.deed)  (pure:m u.h)
     (get-owned-points:azimuth:az owner.deed)
-  =.  owned  (~(put by owned) owner.deed others)
   =.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
   =/  [planets=(list @p) others=(list @p)]
     (skid others (cury lth 0xffff))
@@ -323,33 +320,17 @@
   ::  find other assets this address may transfer
   ::
   ;<  transferrable=(list @p)  bind:m
-    =/  m  (strand ,(list @p))
-    ?^  h=(~(get by trapd) owner.deed)  (pure:m u.h)
     (get-transferring-for:azimuth:az owner.deed)
-  =.  trapd  (~(put by trapd) owner.deed transferrable)
   =.  transferrable  (skip transferrable |=(=@p ?=(^ (find [p]~ known))))
   ~?  !=(~ transferrable)
     [%has-transferrable star owner.deed transferrable]
   ::
+  =.  trawled  (~(put in trawled) owner.deed)
   loop-saz(saz t.saz)
 ::
 ::  ceremony address
 ::
-;<  others=(list @p)  bind:m
-  =/  m  (strand ,(list @p))
-  ?^  h=(~(get by owned) ceremony)  (pure:m u.h)
-  (get-owned-points:azimuth:az ceremony)
-=.  others  (skip others |=(=@p ?=(^ (find [p]~ known))))
-~?  !=(~ others)
-  [%ceremony-controls-others others]
-::
-;<  transferrable=(list @p)  bind:m
-  =/  m  (strand ,(list @p))
-  ?^  h=(~(get by trapd) ceremony)  (pure:m u.h)
-  (get-transferring-for:azimuth:az ceremony)
-=.  transferrable  (skip transferrable |=(=@p ?=(^ (find [p]~ known))))
-~?  !=(~ transferrable)
-  [%ceremony-has-transferrable transferrable]
+?>  (~(has in trawled) ceremony)
 ::
 =.  out
   %+  ~(add ja out)  ceremony
