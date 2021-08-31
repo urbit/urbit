@@ -157,8 +157,9 @@ function normalizeDocket<T extends Docket>(docket: T, desk: string): T {
 
 function normalizeDockets<T extends Docket>(dockets: Record<string, T>): Record<string, T> {
   return Object.entries(dockets).reduce((obj: Record<string, T>, [key, value]) => {
+    const [, desk] = key.split('/');
     // eslint-disable-next-line no-param-reassign
-    obj[key] = normalizeDocket(value, key);
+    obj[key] = normalizeDocket(value, desk);
     return obj;
   }, {});
 }

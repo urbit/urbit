@@ -31,6 +31,14 @@ export const useKilnState = create<KilnState>((set) => ({
   set: produce(set)
 }));
 
+api.subscribe({
+  app: 'hood',
+  path: '/kiln/vats',
+  event: () => {
+    useKilnState.getState().fetchVats();
+  }
+});
+
 const selBlockers = (s: KilnState) => getBlockers(s.vats);
 export function useBlockers() {
   return useKilnState(selBlockers);
