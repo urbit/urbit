@@ -9,11 +9,15 @@ import { ProviderList } from '../../components/ProviderList';
 type ProvidersProps = RouteComponentProps<{ ship: string }>;
 
 export function providerMatch(provider: Provider | string): MatchItem {
-  if (typeof provider === 'string') {
-    return { value: provider, display: provider };
-  }
+  const value = typeof provider === 'string' ? provider : provider.shipName;
+  const display = typeof provider === 'string' ? undefined : provider.nickname;
 
-  return { value: provider.shipName, display: provider.nickname };
+  return {
+    value,
+    display,
+    url: `/leap/search/${value}/apps`,
+    openInNewTab: false
+  };
 }
 
 export const Providers = ({ match }: ProvidersProps) => {

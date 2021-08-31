@@ -8,7 +8,7 @@ export function makeKeyFn(key: string) {
 
 export const useMockData = import.meta.env.MODE === 'mock';
 
-export async function fakeRequest<T>(data?: any, time = 300): Promise<T> {
+export async function fakeRequest<T>(data: T, time = 300): Promise<T> {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(data);

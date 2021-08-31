@@ -41,6 +41,7 @@
     "@tailwindcss/aspect-ratio": "^0.2.1",
     "@types/lodash-es": "^4.17.4",
     "@types/mousetrap": "^1.6.8",
+    "@types/node": "^16.7.9",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.8",

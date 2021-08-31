@@ -1,24 +1,13 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import fuzzy from 'fuzzy';
-import slugify from 'slugify';
+import { Treaty } from '@urbit/api';
 import { ShipName } from '../../components/ShipName';
-import useDocketState, { App, useAllyTreaties } from '../../state/docket';
-import { MatchItem, useLeapStore } from '../Nav';
+import useDocketState, { useAllyTreaties } from '../../state/docket';
+import { useLeapStore } from '../Nav';
 import { AppList } from '../../components/AppList';
-import { getAppHref } from '../../state/util';
 
 type AppsProps = RouteComponentProps<{ ship: string }>;
-
-export function appMatch(app: App, includeHref = false): MatchItem {
-  const match: MatchItem = { value: app.desk, display: app.title };
-
-  if (includeHref) {
-    match.href = getAppHref(app.href);
-  }
-
-  return match;
-}
 
 export const Apps = ({ match }: AppsProps) => {
   const { searchInput, selectedMatch, select } = useLeapStore((state) => ({
@@ -48,6 +37,11 @@ export const Apps = ({ match }: AppsProps) => {
   }, [treaties, searchInput]);
   const count = results?.length;
 
+  const getAppPath = useCallback(
+    (app: Treaty) => `${match?.path.replace(':ship', provider)}/${app.ship}/${app.desk}`,
+    [match]
+  );
+
   useEffect(() => {
     const { fetchAllyTreaties } = useDocketState.getState();
     fetchAllyTreaties(provider);
@@ -61,7 +55,12 @@ export const Apps = ({ match }: AppsProps) => {
   useEffect(() => {
     if (results) {
       useLeapStore.setState({
-        matches: results.map((r) => appMatch(r))
+        matches: results.map((r) => ({
+          url: getAppPath(r),
+          openInNewTab: false,
+          value: r.desk,
+          display: r.title
+        }))
       });
     }
   }, [results]);
@@ -87,7 +86,7 @@ export const Apps = ({ match }: AppsProps) => {
           apps={results}
           labelledBy="developed-by"
           matchAgainst={selectedMatch}
-          to={(app) => `${match?.path.replace(':ship', provider)}/${app.ship}/${slugify(app.desk)}`}
+          to={getAppPath}
         />
       )}
       <p>That&apos;s it!</p>

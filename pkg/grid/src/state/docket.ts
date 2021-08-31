@@ -31,7 +31,9 @@ export interface ChargesWithDesks {
   [ref: string]: ChargeWithDesk;
 }
 
-export type App = Treaty | ChargeWithDesk;
+export interface DocketWithDesk extends Docket {
+  desk: string;
+}
 
 interface DocketState {
   charges: ChargesWithDesks;

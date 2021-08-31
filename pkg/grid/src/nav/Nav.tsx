@@ -14,9 +14,10 @@ import { SystemMenu } from './SystemMenu';
 import { SystemPreferences } from './SystemPreferences';
 
 export interface MatchItem {
+  url: string;
+  openInNewTab: boolean;
   value: string;
   display?: string;
-  href?: string;
 }
 
 interface LeapStore {

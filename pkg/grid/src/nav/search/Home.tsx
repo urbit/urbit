@@ -5,19 +5,19 @@ import { persist } from 'zustand/middleware';
 import { take } from 'lodash-es';
 import { Provider } from '@urbit/api';
 import { MatchItem, useLeapStore } from '../Nav';
-import { appMatch } from './Apps';
 import { providerMatch } from './Providers';
 import { AppList } from '../../components/AppList';
 import { ProviderList } from '../../components/ProviderList';
 import { AppLink } from '../../components/AppLink';
 import { ShipName } from '../../components/ShipName';
 import { ProviderLink } from '../../components/ProviderLink';
-import { App, useCharges } from '../../state/docket';
+import { DocketWithDesk, useCharges } from '../../state/docket';
+import { getAppHref } from '../../state/util';
 
 interface RecentsStore {
-  recentApps: App[];
+  recentApps: DocketWithDesk[];
   recentDevs: Provider[];
-  addRecentApp: (app: App) => void;
+  addRecentApp: (app: DocketWithDesk) => void;
   addRecentDev: (dev: Provider) => void;
 }
 
@@ -64,7 +64,7 @@ export function addRecentDev(dev: Provider) {
   return useRecentsStore.getState().addRecentDev(dev);
 }
 
-export function addRecentApp(app: App) {
+export function addRecentApp(app: DocketWithDesk) {
   return useRecentsStore.getState().addRecentApp(app);
 }
 
@@ -76,7 +76,12 @@ export const Home = () => {
   const zod = { shipName: '~zod' };
 
   useEffect(() => {
-    const apps = recentApps.map((app) => appMatch(app, true));
+    const apps = recentApps.map((app) => ({
+      url: getAppHref(app.href),
+      openInNewTab: true,
+      value: app.desk,
+      display: app.title
+    }));
     const devs = recentDevs.map(providerMatch);
 
     useLeapStore.setState({

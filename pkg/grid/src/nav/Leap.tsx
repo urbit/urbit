@@ -7,7 +7,8 @@ import React, {
   HTMLAttributes,
   useCallback,
   useImperativeHandle,
-  useRef
+  useRef,
+  useEffect
 } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import { Cross } from '../components/icons/Cross';
@@ -45,6 +46,12 @@ export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: 
   const inputRef = useRef<HTMLInputElement>(null);
   useImperativeHandle(ref, () => inputRef.current);
   const { rawInput, selectedMatch, matches, selection, select } = useLeapStore();
+
+  useEffect(() => {
+    if (selection && rawInput === '') {
+      inputRef.current?.focus();
+    }
+  }, [selection, rawInput]);
 
   const toggleSearch = useCallback(() => {
     if (selection || menu === 'search') {
@@ -133,32 +140,19 @@ export const Leap = React.forwardRef(({ menu, dropdown, showClose, className }: 
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      if (selectedMatch?.href) {
-        window.open(selectedMatch.href, selectedMatch.value);
+      const value = inputRef.current?.value.trim();
+      const currentMatch = selectedMatch || (value && getMatch(value));
+
+      if (!currentMatch) {
         return;
       }
 
-      if (!selectedMatch?.value) {
+      if (currentMatch?.openInNewTab) {
+        window.open(currentMatch.url, currentMatch.value);
         return;
       }
 
-      // TODO: evaluate if we still need this for manual entry
-      // const value = inputRef.current?.value.trim();
-
-      // if (!value) {
-      //   return;
-      // }
-
-      // const input = [getMatch(value)?.value || slugify(value)];
-
-      const input = [selectedMatch.value];
-      if (appsMatch) {
-        input.unshift(match?.params.query || '');
-      } else {
-        input.push('');
-      }
-
-      navigateByInput(input.join('/'));
+      push(currentMatch.url);
       useLeapStore.setState({ rawInput: '' });
     },
     [match, selectedMatch]

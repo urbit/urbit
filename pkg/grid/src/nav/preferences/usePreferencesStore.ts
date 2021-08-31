@@ -26,25 +26,25 @@ export const usePreferencesStore = create<PreferencesStore>((set) => ({
    */
   toggleOTAs: async () => {
     if (useMockData) {
-      await fakeRequest();
+      await fakeRequest({});
       set((state) => ({ otasEnabled: !state.otasEnabled }));
     }
   },
   setOTASource: async (source: string) => {
     if (useMockData) {
-      await fakeRequest();
+      await fakeRequest({});
       set({ otaSource: source });
     }
   },
   toggleDoNotDisturb: async () => {
     if (useMockData) {
-      await fakeRequest();
+      await fakeRequest({});
       set((state) => ({ doNotDisturb: !state.doNotDisturb }));
     }
   },
   toggleMentions: async () => {
     if (useMockData) {
-      await fakeRequest();
+      await fakeRequest({});
       set((state) => ({ mentions: !state.mentions }));
     }
   }
