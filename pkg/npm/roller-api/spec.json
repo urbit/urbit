@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.4",
+    "version": "0.1.5",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -1652,10 +1652,10 @@
         "name": "L2 Transactions",
         "schema": {
           "type": "array",
-          "title": "AddressHistory",
+          "title": "TransactionHistory",
           "items": {
             "type": "object",
-            "title": "TransactionHistoryData",
+            "title": "RollerTransaction",
             "properties": {
               "ship": {
                 "$ref": "#/components/schemas/Ship"
@@ -1666,6 +1666,9 @@
               "type": { "$ref": "#/components/schemas/TransactionType" },
               "hash": {
                 "$ref": "#/components/schemas/hash32"
+              },
+              "time": {
+                "$ref": "#/components/schemas/Timestamp"
               }
             }
           }
@@ -2319,6 +2322,7 @@
         "type": "number",
         "description": "Timestamp of when the next roll of L2 txs will be sent out"
       },
+      "Timestamp": { "title": "Timestamp", "type": "number" },
       "Config": {
         "title": "Config",
         "description": "A Roller Config",
