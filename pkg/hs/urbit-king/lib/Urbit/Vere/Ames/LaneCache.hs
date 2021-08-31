@@ -16,7 +16,10 @@ bound = 1_000
 newtype New = New Wen
   deriving newtype (Eq, Ord)
 
+new :: Wen -> New
 new = New . negate
+
+wen :: New -> Wen
 wen (New w) = negate w
 
 -- | Given a new, find an older new corresponding to `expiry` ago.
