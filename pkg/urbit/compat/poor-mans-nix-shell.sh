@@ -149,4 +149,4 @@ pdirs+=($dir) # XX support json override a la cdirs/pdirs
 CFLAGS="${CFLAGS-} ${cdirs[@]}"
 LDFLAGS="${LDFLAGS-} ${ldirs[@]}"
 
-PKG_CONFIG_PATH="${PKG_CONFIG_PATH-}:$(IFS=:;echo "${pdirs[*]}")"
+PKG_CONFIG_PATH="$(IFS=:;echo "${pdirs[*]}"):${PKG_CONFIG_PATH-}"

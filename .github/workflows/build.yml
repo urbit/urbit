@@ -130,7 +130,7 @@ jobs:
           lfs: true
 
       # echo suppresses pacman prompt
-      - run: echo|./configure --enable-static
+      - run: echo|./configure
         env:
           CACHIX_CACHE: ares
           CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
