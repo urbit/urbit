@@ -4,7 +4,7 @@ import cn from 'classnames';
 
 interface DocketImageProps extends Pick<Docket, 'color' | 'image'> {
   className?: string;
-  sizing: 'small' | 'full';
+  sizing?: 'small' | 'full';
 }
 
 export function DocketImage({ color, image, className = '', sizing = 'full' }: DocketImageProps) {

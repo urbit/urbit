@@ -14,7 +14,7 @@ import { ProviderLink } from '../../components/ProviderLink';
 import { DocketWithDesk, useCharges } from '../../state/docket';
 import { getAppHref } from '../../state/util';
 
-interface RecentsStore {
+export interface RecentsStore {
   recentApps: DocketWithDesk[];
   recentDevs: Provider[];
   addRecentApp: (app: DocketWithDesk) => void;

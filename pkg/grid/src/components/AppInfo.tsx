@@ -1,4 +1,4 @@
-import { chadIsRunning } from '@urbit/api/docket';
+import { chadIsRunning, Treaty } from '@urbit/api/docket';
 import clipboardCopy from 'clipboard-copy';
 import React, { FC } from 'react';
 import cn from 'classnames';
@@ -8,12 +8,14 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from './Dialog';
 import { DocketHeader } from './DocketHeader';
 import { Spinner } from './Spinner';
 import { VatMeta } from './VatMeta';
-import useDocketState, { App } from '../state/docket';
+import useDocketState, { ChargeWithDesk } from '../state/docket';
 import { getAppHref } from '../state/util';
 import { addRecentApp } from '../nav/search/Home';
 import { TreatyMeta } from './TreatyMeta';
 
 type InstallStatus = 'uninstalled' | 'installing' | 'installed';
+
+type App = ChargeWithDesk | Treaty;
 interface AppInfoProps {
   docket: App;
   vat?: Vat;
