@@ -3084,11 +3084,19 @@
     ::  should retreive future blobs from the host ship
     ::
     ++  take-backfill-error
-      |=  =error:ames
-      ?:  =(her src.sat)
-        ~&  %clay-take-backfill-index-error^our^tag.error
-        %-  (slog tang.error)
+      |=  [=error:ames src=ship]
+      ?.  =(src src.sat)
+        ~&  clay-stale-error-expected+src.sat^got+src
         ..abet
+      ?.  =(her src.sat)
+        reset-src
+      ~&  %clay-take-backfill-index-error^our^tag.error
+      %-  (slog tang.error)
+      ..abet
+    ::
+    ::  Reset blob source to host ship
+    ::
+    ++  reset-src
       =.  sat  sat(busy %.n, src her)
       work
     ::
@@ -4220,6 +4228,24 @@
     :_  ..^$
     [hen %give %hill (turn ~(tap by mon.ruf) head)]~
   ::
+      %coax
+    =|  mos=(list move)
+    =/  them=(list [=ship =rung])  ~(tap by hoy.ruf)
+    |-  =*  loop-ship  $
+    ?~  them  [mos ..^^$]
+    =/  des=(list [=desk =rede])
+      ~(tap by rus.rung.i.them)
+    |-  =*  loop-desk  $
+    ?~  des  loop-ship(them t.them)
+    ?~  ref.rede.i.des  loop-desk(des t.des)
+    =/  reqs  ~(tap in ~(key by bom.u.ref.rede.i.des))
+    |-  =*  loop-req  $
+    ?~  reqs  loop-desk(des t.des)
+    =/  den  ((de now rof hen ruf) ship.i.them desk.i.des)
+    =^  mor  ruf
+      abet:abet:reset-src:(foreign-update:den i.reqs)
+    loop-req(reqs t.reqs, mos (weld mos mor))
+  ::
       %cred
     =.  cez.ruf
       ?~  cew.req  (~(del by cez.ruf) nom.req)
@@ -4834,7 +4860,7 @@
         [~ ..^$]
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
-        abet:abet:(take-backfill-error:(foreign-update:den index) u.error.hin)
+        abet:abet:(take-backfill-error:(foreign-update:den index) u.error.hin src)
       [mos ..^$]
     ::
         %lost

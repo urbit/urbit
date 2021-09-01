@@ -750,6 +750,7 @@
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
     $%  [%boat ~]                                       ::  pier rebooted
+        [%coax ~]                                       ::  reset all blob sources
         [%cred nom=@ta cew=crew]                        ::  set permission group
         [%crew ~]                                       ::  permission groups
         [%crow nom=@ta]                                 ::  group usage
