@@ -48,7 +48,6 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
-  ~&  %ayy
   =+  !<(old=state-0 vase)
   =*  cha  ~(. ch q.byk.bowl)
   |^
@@ -89,7 +88,9 @@
     |=  [=ship =desk]
     ^-  (quip card _state)
     =+  .^(=treaty:treaty %gx (scry:io %treaty /treaty/(scot %p ship)/[desk]/noun))
-    ?<  ~|(%bad-install-desk (~(has by charges) desk))
+    ?:  (~(has by charges) desk)
+      ~|  %bad-install-desk
+      !!
     =.  charges
       (~(put by charges) desk docket.treaty %install ~)
     =*  cha   ~(. ch desk)
@@ -377,7 +378,6 @@
       =*  cha      ~(. ch desk)
       =/  =charge  (~(got by charges) desk)
       ::
-      ::REVIEW  these are important, right?
       =?  err  =(~ glob)
         ['no files for glob' err]
       =?  err  ?=(%glob -.href.docket.charge)
