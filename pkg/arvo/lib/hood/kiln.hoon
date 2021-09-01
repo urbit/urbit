@@ -411,30 +411,30 @@
       [%& %|]  (suspend lac)
       [%& %&]  (update-running-apps (get-apps-diff our loc now rein.rak))
     ==
-  ::  +bump: handle kernel kelvin upgrade
+  ::  +bump: try to apply kernel kelvin upgrade
   ::
   ::    Apply merges to revive faded agents on all desks.
   ::    If .force, suspends stale agents.  Else, any stale desk
   ::    will cause a crash.
   ::
   ++  bump
-    |=  [except=(set desk) force=?]
+    |=  [kel=weft except=(set desk) force=?]
     ^+  kiln
-    =/  ded  (find-blocked except)
+    =/  ded  (find-blocked kel except)
     ?:  force
       =.  kiln  (suspend-many ded)
-      (bump-many zuse/zuse (all-desks-but except))
+      (bump-many kel (all-desks-but except))
     ?:  =(~ ded)
-      (bump-many zuse/zuse (all-desks-but except))
+      (bump-many kel (all-desks-but except))
     =-  (^emit (pyre:pass leaf/- ~))
     "kiln: desks blocked upgrade to {<zuse/zuse>}: {<ded>}"
   ::
   ++  all-desks-but  |=(not=(set desk) (~(dif in ~(key by ark)) not))
   ::
   ++  find-blocked
-    |=  except=(set desk)
+    |=  [kel=weft except=(set desk)]
     ^-  (set desk)
-    (~(dif in (get-blockers zuse/zuse)) (~(put in except) %base))
+    (~(dif in (get-blockers kel)) (~(put in except) %base))
   ::
   ++  suspend-many
     |=  dead=(set desk)
@@ -710,7 +710,8 @@
 ::
 ++  poke-bump
   |=  [except=(set desk) force=?]
-  abet:(bump:vats +<)
+  =/  kel=weft  zuse/+(zuse)
+  abet:(bump:vats kel except force)
 ::
 ++  poke-cancel
   |=  a=@tas
