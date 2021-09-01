@@ -69,6 +69,8 @@
   ==
 %-  pure:m
 !>  ^-  (each @ud @t)
+::  TODO: capture if the tx fails (e.g. Runtime Error: revert)
+::
 ?+  -.response  %.n^'unexpected rpc response'
   %error   %.n^message.response
   :: TODO:

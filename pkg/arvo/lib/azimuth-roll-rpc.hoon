@@ -449,13 +449,13 @@
   roller-action+!>([%cancel u.sig u.keccak u.data])
 ::
 ++  get-spawned
-  |=  [id=@t params=(map @t json) scry=$-(ship (list [ship @ux]))]
+  |=  [id=@t params=(map @t json) scry=$-(@p (list @p))]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 1)
     ~(params error:json-rpc id)
   ?~  ship=(ship:from-json params)
     ~(params error:json-rpc id)
-  [%result id (spawned:to-json (scry u.ship))]
+  [%result id (ships:to-json (scry u.ship))]
 ::
 ++  process-rpc
   |=  [id=@t params=(map @t json) action=l2-tx]

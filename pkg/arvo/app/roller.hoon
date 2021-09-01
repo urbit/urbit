@@ -152,7 +152,8 @@
   ::    /x/tx/[0xke.ccak]/status       ->  %noun  tx-status
   ::    /x/history/[0xadd.ress]        ->  %noun  (list roller-tx)
   ::    /x/nonce/[~ship]/[proxy]       ->  %noun  (unit @)
-  ::    /x/spawned/[~ship]             ->  %noun  (list [ship address])
+  ::    /x/spawned/[~star]             ->  %noun  (list ship)
+  ::    /x/unspawned/[~star]           ->  %noun  (list ship)
   ::    /x/next-batch                  ->  %atom  time
   ::    /x/point/[~ship]               ->  %noun  point:naive
   ::    /x/ships/[0xadd.ress]         ->  %noun  (list ship)
@@ -175,6 +176,7 @@
       [%x %history @ ~]     (history i.t.t.path)
       [%x %nonce @ @ ~]     (nonce i.t.t.path i.t.t.t.path)
       [%x %spawned @ ~]     (spawned i.t.t.path)
+      [%x %unspawned @ ~]   (unspawned i.t.t.path)
       [%x %next-batch ~]    ``atom+!>(next-batch)
       [%x %point @ ~]       (point i.t.t.path)
       [%x %ships @ ~]       (ships i.t.t.path)
@@ -251,20 +253,34 @@
       |=  wat=@t
       :+  ~  ~
       :-  %noun
-      !>  ^-  (list [=^ship =address:ethereum])
+      !>  ^-  (list @p)
       ?~  star=(slaw %p wat)  ~
-      =/  range
-        %+  lot:orm:naive  points.pre
-        ::  TODO: check this by spawning e.g. ~solled-hocweb
-        ::  range exclusive [star first-moon-last-planet]
-        ::  TODO: make range inclusive ([first-planet last-planet])?
-        ::
-        [`u.star `(cat 3 u.star 0x1.ffff)]
-      %+  turn  (tap:orm:naive range)
-      |=  [=ship =point:naive]
-      ^-  [=^ship =address:ethereum]
-      :-  ship
-      address:(proxy-from-point:naive %own point)
+      =;  range
+        (turn range head)
+      =,  orm:naive
+      ::  range exclusive [star first-moon-last-planet]
+      ::
+      %-  tap
+      (lot points.pre [`u.star `(cat 3 u.star 0x1.ffff)])
+    ::
+    ++  unspawned
+      |=  wat=@t
+      :+  ~  ~
+      :-  %noun
+      !>  ^-  (list @p)
+      ?~  star=(slaw %p wat)  ~
+      =/  spawned=(set @p)
+        =;  points
+          (~(gas in *(set @p)) (turn points head))
+        =,  orm:naive
+        %-  tap
+        (lot points.pre [`u.star `(cat 3 u.star 0x1.ffff)])
+      =/  children=(list @p)
+        (turn (gulf 0x1 0xffff) |=(a=@ (cat 3 u.star a)))
+      %+  murn  children
+      |=  =ship
+      ?:  (~(has in spawned) ship)  ~
+      `ship
     ::
     ++  point
       |=  wat=@t
@@ -835,6 +851,9 @@
       ~&([dap.bowl %no-nonce] [~ state])
     =/  nonce=@ud   u.next-nonce
     =^  updates-2  history  update-history
+    ::  TODO: move to +on-batch-result to prevent the case the
+    ::  tx succeds but we get a "Runtime Error: revert"?
+    ::
     =:  pending     ~
         derive-p    &
         next-nonce  `+(u.next-nonce)

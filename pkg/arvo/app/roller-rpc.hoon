@@ -152,6 +152,7 @@
       %get-ships               `(get-ships id +.params ships:scry)
       %cancel-transaction      (cancel-tx id +.params)
       %get-spawned             `(get-spawned id +.params spawned:scry)
+      %get-unspawned           `(get-spawned id +.params unspawned:scry)
       %get-owned-points        `(get-ships id +.params owned:scry)
       %get-transferring-for    `(get-ships id +.params transfers:scry)
       %get-manager-for         `(get-ships id +.params manager:scry)
@@ -187,9 +188,16 @@
   ::
   ++  spawned
     |=  =ship
-    .^  (list [@p @ux])
+    .^  (list @p)
         %gx
         (~(scry agentio bowl) %roller /spawned/(scot %p ship)/noun)
+    ==
+  ::
+  ++  unspawned
+    |=  =ship
+    .^  (list @p)
+        %gx
+        (~(scry agentio bowl) %roller /unspawned/(scot %p ship)/noun)
     ==
   ::
   ++  owned
