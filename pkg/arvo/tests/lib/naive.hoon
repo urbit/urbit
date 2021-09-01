@@ -3607,4 +3607,29 @@
         q:(gen-tx 0 [marbud-own %transfer-point meta-owner &] %marbud-key-0)
     =^  f  state  (n state %bat (cat 3 sig q:tx-octs))
     owner.own:(got:orm points.state ~marbud)
+::
+++  test-trezor-signature  ^-  tang
+  =/  trezor-owner=address
+    (hex-to-num:ethereum '0x9e00bb696bb406e14706ad47535bd1a449f3611e')
+  =/  tx-octs  (gen-tx-octs [from=[~marbud %own] [%transfer-point 0x1234 &]])
+  =/  signabletx  (prepare-for-sig 1.337 1 tx-octs)
+  ::  Must reverse endianness as below for Trezor signature
+  ::  =/  signabletx-rev  (rev 3 p.signabletx q.signabletx)
+  ::  Generated with myetherwallet w/ trezor, which understands hex.
+  =/  sig
+    %-  hex-to-num:ethereum
+    %^  cat  3  '0xb064428c293494dbee2967c1068807a8e241185c471cd547256708fe8d'
+    '2860ad7e8668aac3b61115c13aad325da87ed6c9526b495b2d996d6d43c060d00b12c21b'
+  ::
+  %+  expect-eq
+    !>  [0x1234 2]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state
+        %^  n  state  %bat
+        q:(gen-tx 0 [marbud-own %transfer-point trezor-owner &] %marbud-key-0)
+    =^  f  state  (n state %bat (cat 3 sig q:tx-octs))
+    owner.own:(got:orm points.state ~marbud)
 --
