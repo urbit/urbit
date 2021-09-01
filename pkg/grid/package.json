@@ -66,6 +66,7 @@
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-visualizer": "^5.5.2",
     "tailwindcss": "^2.2.7",
+    "tailwindcss-theming": "^3.0.0-beta.3",
     "tailwindcss-touch": "^1.0.1",
     "typescript": "^4.3.2",
     "vite": "^2.4.4",

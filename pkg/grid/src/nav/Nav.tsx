@@ -145,7 +145,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
           setOpen={setSystemMenuOpen}
           menu={menuState}
           navOpen={isOpen}
-          className={classNames('relative z-50 flex-none', eitherOpen ? 'bg-white' : 'bg-gray-100')}
+          className={classNames('relative z-50 flex-none', eitherOpen ? 'bg-white' : 'bg-gray-50')}
         />
         <NotificationsLink menu={menuState} navOpen={isOpen} />
         <Leap ref={inputRef} menu={menuState} dropdown="leap-items" navOpen={isOpen} />
@@ -166,7 +166,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
           onOpenAutoFocus={onOpen}
           onEscapeKeyDown={(e) => disableCloseWhenDropdownOpen(e, () => setSystemMenuOpen(false))}
           onInteractOutside={disableCloseWhenDropdownOpen}
-          className="fixed bottom-0 sm:top-0 scroll-left-50 flex flex-col scroll-full-width max-w-3xl px-4 sm:pb-4 text-gray-400 -translate-x-1/2 outline-none"
+          className="fixed bottom-0 sm:top-0 sm:bottom-auto scroll-left-50 flex flex-col scroll-full-width max-w-3xl px-4 sm:pb-4 text-gray-400 -translate-x-1/2 outline-none"
           role="combobox"
           aria-controls="leap-items"
           aria-owns="leap-items"

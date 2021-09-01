@@ -32,8 +32,8 @@ export const ProviderLink = ({
     >
       <div
         className={classNames(
-          'flex-none relative bg-black rounded-lg',
-          small ? 'w-8 h-8' : 'w-12 h-12'
+          'flex-none relative bg-black',
+          small ? 'w-8 h-8 rounded-md' : 'w-12 h-12 rounded-lg'
         )}
       >
         {/* TODO: Handle sigils */}

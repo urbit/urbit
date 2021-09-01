@@ -201,7 +201,7 @@ export const Leap = React.forwardRef(({ menu, dropdown, navOpen, className }: Le
         className={classNames(
           'flex items-center h-full w-full px-2 rounded-full bg-white default-ring focus-within:ring-2',
           navOpen && menu !== 'search' && 'opacity-80',
-          !navOpen ? 'bg-gray-100' : '',
+          !navOpen ? 'bg-gray-50' : '',
           className
         )}
         onSubmit={onSubmit}

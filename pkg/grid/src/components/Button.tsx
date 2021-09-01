@@ -20,10 +20,10 @@ type PolymorphicButton = Polymorphic.ForwardRefComponent<
 const variants: Record<ButtonVariant, string> = {
   primary: 'text-white bg-black',
   secondary: 'text-black bg-gray-100',
-  caution: 'text-white bg-orange-500',
-  destructive: 'text-white bg-red-400',
+  caution: 'text-white bg-orange-400',
+  destructive: 'text-white bg-red-500',
   'alt-primary': 'text-white bg-blue-400',
-  'alt-secondary': 'text-blue-400 bg-blue-100'
+  'alt-secondary': 'text-blue-400 bg-blue-50'
 };
 
 export const Button = React.forwardRef(

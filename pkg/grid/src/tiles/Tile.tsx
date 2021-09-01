@@ -7,6 +7,7 @@ import { Spinner } from '../components/Spinner';
 import { getAppHref } from '../state/util';
 import { useRecentsStore } from '../nav/search/Home';
 import { ChargeWithDesk } from '../state/docket';
+import { useTileColor } from './useTileColor';
 
 type TileProps = {
   charge: ChargeWithDesk;
@@ -27,14 +28,16 @@ function getMenuColor(color: string, lightText: boolean, active: boolean): strin
 
 export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
   const addRecentApp = useRecentsStore((state) => state.addRecentApp);
-  const { title, color, image, chad, href } = charge;
+  const { title, image, color, chad, href } = charge;
+  const { theme, tileColor } = useTileColor(color);
   const loading = 'install' in chad;
   const active = chadIsRunning(chad);
   const lightText = !readableColorIsBlack(color);
-  const menuColor = getMenuColor(color, lightText, active);
+  const menuColor = getMenuColor(tileColor, theme === 'dark' ? !lightText : lightText, active);
   const suspendColor = 'rgb(220,220,220)';
   const suspended = 'suspend' in chad;
   const link = getAppHref(href);
+  const backgroundColor = active ? tileColor || 'purple' : suspendColor;
 
   return (
     <a
@@ -42,16 +45,17 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
       target={desk}
       className={classNames(
         'group relative font-semibold aspect-w-1 aspect-h-1 rounded-3xl default-ring focus-visible:ring-4 overflow-hidden',
+        lightText && active && !loading ? 'text-gray-200' : 'text-gray-800',
         !active && 'cursor-default'
       )}
-      style={{ backgroundColor: active ? color || 'purple' : suspendColor }}
+      style={{ backgroundColor }}
       onClick={() => addRecentApp(charge)}
       onAuxClick={() => addRecentApp(charge)}
     >
       <div>
         {loading ? (
-          <div className="flex items-center justify-center absolute top-1/2 left-1/2 h-[40%] w-[40%] object-contain transform -translate-x-1/2 -translate-y-1/2">
-            <Spinner className="h-16 w-16" />
+          <div className="absolute z-10 top-4 left-4 lg:top-8 lg:left-8 flex items-center justify-center">
+            <Spinner className="h-6 w-6" />
           </div>
         ) : (
           <TileMenu
@@ -62,24 +66,17 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
             className="absolute z-10 top-2.5 right-2.5 sm:top-4 sm:right-4 opacity-0 hover-none:opacity-100 focus:opacity-100 group-hover:opacity-100"
           />
         )}
-        <div className="h4 absolute z-10 bottom-4 left-4 lg:bottom-8 lg:left-8">
-          <h3
-            className={`${
-              lightText && active && !loading ? 'text-gray-200' : 'text-gray-800'
-            }  mix-blend-hard-light`}
-          >
-            {title}
-          </h3>
+        <div
+          className="h4 absolute z-10 bottom-3 left-1 lg:bottom-7 lg:left-5 py-1 px-3 rounded-lg"
+          style={{ backgroundColor }}
+        >
+          <h3 className="mix-blend-hard-light">{title}</h3>
           {!active && (
             <span className="text-gray-400">{suspended ? 'Suspended' : 'Installing'}</span>
           )}
         </div>
         {image && !loading && (
-          <img
-            className="absolute top-1/2 left-1/2 h-full w-full object-contain transform -translate-x-1/2 -translate-y-1/2"
-            src={image}
-            alt=""
-          />
+          <img className="absolute top-0 left-0 h-full w-full object-contain" src={image} alt="" />
         )}
       </div>
     </a>

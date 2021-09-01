@@ -72,15 +72,11 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
         style={menuBg}
       >
         <DropdownMenu.Group>
-          {/* 
-            TODO: revisit with Liam
-            <Item as={Link} to={`/leap/search/${provider}/apps/${name.toLowerCase()}`} onSelect={(e) => { e.preventDefault(); setTimeout(() => setOpen(false), 0) }}>App Info</Item> 
-          */}
           <Item as={Link} to={`/app/${desk}`} onSelect={linkOnSelect}>
             App Info
           </Item>
         </DropdownMenu.Group>
-        <DropdownMenu.Separator className="-mx-4 my-2 border-t-2 border-solid border-gray-500 mix-blend-soft-light" />
+        <DropdownMenu.Separator className="-mx-4 my-2 border-t-2 border-solid border-gray-600 mix-blend-soft-light" />
         <DropdownMenu.Group>
           {active && (
             <Item as={Link} to={`/app/${desk}/suspend`} onSelect={linkOnSelect}>

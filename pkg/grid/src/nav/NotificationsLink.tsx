@@ -40,10 +40,10 @@ export const NotificationsLink = ({ navOpen, menu }: NotificationsLinkProps) => 
         'relative z-50 flex-none circle-button h4 default-ring',
         navOpen && 'text-opacity-60',
         navOpen && menu !== 'notifications' && 'opacity-80',
-        state === 'empty' && !navOpen && 'text-gray-400 bg-gray-100',
+        state === 'empty' && !navOpen && 'text-gray-400 bg-gray-50',
         state === 'empty' && navOpen && 'text-gray-400 bg-white',
         state === 'unread' && 'bg-blue-400 text-white',
-        state === 'attention-needed' && 'text-white bg-orange-500'
+        state === 'attention-needed' && 'text-white bg-orange-400'
       )}
     >
       {state === 'empty' && <Bullet className="w-6 h-6" />}
