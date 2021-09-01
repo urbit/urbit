@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.5",
+    "version": "0.1.6",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -1283,129 +1283,42 @@
           }
         }
       ],
-      "examples": [
-        {
-          "name": "getSpawned-example",
-          "params": [
-            {
-              "name": "ship",
-              "value": "~wanzod"
-            }
-          ],
-          "result": {
-            "name": "spawned",
-            "value": [
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "balhul-polsub"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "modlep-fosreg"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "rossec-nordys"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "holnyd-docfex"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "rostex-fossyl"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "maldeb-hapben"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "dirwex-dosrev"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "hapryx-hopner"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "sibper-mosbyl"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "fodhes-fosmet"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "namhet-lasdus"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "navtyl-hanset"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "labred-dibput"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "sornyx-fonnyr"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "havped-padhus"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "tactux-fabweb"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "lassut-tachep"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "lavlyn-nomsup"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "satbes-dostun"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "pilwyn-nortux"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "fothul-bitsur"
-              },
-              {
-                "address": "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d",
-                "ship": "fildef-noswer"
-              }
-            ]
-          }
-        }
-      ],
       "result": {
         "name": "spawned points",
-        "description": "List of spawned points and the ownership ethereum address",
+        "description": "List of points as numbers",
         "schema": {
           "type": "array",
           "title": "SpawnedPoints",
           "items": {
-            "type": "object",
-            "title": "SpawnedPoint",
-            "properties": {
-              "address": {
-                "$ref": "#/components/schemas/eth-address"
-              },
-              "ship": {
-                "type": "string",
-                "title": "ShipName",
-                "description": "Ship encoded as a patp without leading sig"
-              }
-            }
+            "type": "number",
+            "title": "Number",
+            "description": "Number representing a ship"
+          }
+        }
+      }
+    },
+    {
+      "name": "getUnspawned",
+      "summary": "Gets all points that haven't been spawned by a star or galaxy",
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "ship",
+          "schema": {
+            "$ref": "#/components/schemas/Ship"
+          }
+        }
+      ],
+      "result": {
+        "name": "unspawned points",
+        "description": "List of points as numbers",
+        "schema": {
+          "type": "array",
+          "title": "UnspawnedPoints",
+          "items": {
+            "type": "number",
+            "title": "Number",
+            "description": "Number representing a ship"
           }
         }
       }
@@ -2367,7 +2280,7 @@
           {
             "type": "number",
             "title": "Number",
-            "description": "number representing a patp"
+            "description": "Number representing a ship"
           }
         ]
       },
