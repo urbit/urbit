@@ -162,10 +162,9 @@ data PointResponse = PointResponse
   } deriving (Show, Eq, Generic)
 
 instance FromJSON PointResponse where
-  parseJSON (Object o) = do
+  parseJSON = withObject "PointResponse" $ \o -> do
     prNetwork <- o .: "network"
     pure PointResponse{..}
-  parseJSON _ = do error "failed to parse PointResponse json"
 
 data PointNetwork = PointNetwork
   { pnKeys :: PointKeys
@@ -174,12 +173,11 @@ data PointNetwork = PointNetwork
   } deriving (Show, Eq, Generic)
 
 instance FromJSON PointNetwork where
-  parseJSON (Object o) = do
+  parseJSON = withObject "PointNetwork" $ \o -> do
     pnKeys <- o .: "keys"
     pnSponsor <- o .: "sponsor"
     pnRift <- o .: "rift"
     pure PointNetwork{..}
-  parseJSON _ = do error "failed to parse PointNetwork json"
 
 data PointKeys = PointKeys
   { pkLife :: Life
@@ -189,7 +187,7 @@ data PointKeys = PointKeys
   } deriving (Show, Eq, Generic)
 
 instance FromJSON PointKeys where
-  parseJSON (Object o) = do
+  parseJSON = withObject "PointKeys" $ \o -> do
     pkLife <- o .: "life"
     pkSuite <- o .: "suite"
     rawAuth <- o .: "auth"
@@ -199,7 +197,6 @@ instance FromJSON PointKeys where
     pure PointKeys{..}
     where
       parseKey = reverse . toBytes . hexString . removePrefix . encodeUtf8
-  parseJSON _ = do error "failed to parse PointKeys json"
 
 data PointSponsor = PointSponsor
   { psHas :: Bool
@@ -207,11 +204,10 @@ data PointSponsor = PointSponsor
   } deriving (Show, Eq, Generic)
 
 instance FromJSON PointSponsor where
-  parseJSON (Object o) = do
+  parseJSON = withObject "PointSponsor" $ \o -> do
     psHas <- o .: "has"
     psWho <- o .: "who"
     pure PointSponsor{..}
-  parseJSON _ = do error "failed to parse PointSponsor json"
 
 data PointRequest = PointRequest Ship
 
