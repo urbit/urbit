@@ -3582,31 +3582,29 @@
       operators.state
   ==
 ::
-::  TODO: signature format changed; regenerate
-::
-::  ++  test-metamask-signature  ^-  tang
-::    =/  meta-owner=address
-::      (hex-to-num:ethereum '0xb026b0AA6e686F2386051b31A03E5fB95513e1c0')
-::    =/  tx  0x123.0000.0102.0a00.0001.0200
-::    =/  sig
-::      %-  hex-to-num:ethereum
-::      ::  Must reverse endianness of tx to sign in metamask
-::      ::
-::      %^  cat  3
-::        '0x5b85936ab7b9db8d72416648e6eb1b844a4545ddb7c7c646a74bc3a4fb001a2'
-::      '8583bf12ca837b289036a6cc9e6359ed07dda2b87929b5dd7189a3057a395341f1c'
-::    ::
-::    %+  expect-eq
-::      !>  [0x123 0]
-::    ::
-::      !>
-::      =|  =^state:naive
-::      =^  f  state  (init-marbud state)
-::      ::  =^  f  state  (n state %bat q:(transfer-point:l2 0 ~marbud (key ~marbud) %own &))
-::      ::  =^  f  state  (n state %bat q:(set-transfer-proxy:l2 1 ~marbud %own 0x123))
-::      =^  f  state
-::        %^  n  state  %bat
-::        q:(transfer-point:l2 0 ~marbud %marbud-key-0 meta-owner %own &)
-::      =^  f  state  (n state %bat (cat 3 sig tx))
-::      transfer-proxy.own:(got:orm points.state ~marbud)
+++  test-metamask-signature  ^-  tang
+  =/  meta-owner=address
+    (hex-to-num:ethereum '0x57694bb21054b54d55e6c03387D082B3AFf902f6')
+  =/  tx-octs  (gen-tx-octs [from=[~marbud %own] [%transfer-point 0x1234 &]])
+  =/  signabletx  (prepare-for-sig 1.337 1 tx-octs)
+  ::  Must reverse endianness as below for Metamask signature
+  ::  =/  signabletx-rev  (rev 3 p.signabletx q.signabletx)
+  ::  Generated with myetherwallet w/ metamask, which understands hex.
+  ::  mycrypto does not by default
+  =/  sig
+    %-  hex-to-num:ethereum
+    %^  cat  3  '0x2c331a47caeb758c617624882d99737eea96a492bf0af7a44c42fc5fd2'
+    'c535c15c36704ab91688f4ef3735ab3fbd17a15f012dfd22ce5c5de62e03657113619a1c'
+  ::
+  %+  expect-eq
+    !>  [0x1234 2]
+  ::
+    !>
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state
+        %^  n  state  %bat
+        q:(gen-tx 0 [marbud-own %transfer-point meta-owner &] %marbud-key-0)
+    =^  f  state  (n state %bat (cat 3 sig q:tx-octs))
+    owner.own:(got:orm points.state ~marbud)
 --
