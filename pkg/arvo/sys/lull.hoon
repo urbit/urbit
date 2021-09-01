@@ -351,6 +351,7 @@
   ::    %hear: packet from unix
   ::    %heed: track peer's responsiveness; gives %clog if slow
   ::    %jilt: stop tracking peer's responsiveness
+  ::    %cork: request to delete message flow
   ::    %plea: request to send message
   ::
   ::    System and Lifecycle Tasks
