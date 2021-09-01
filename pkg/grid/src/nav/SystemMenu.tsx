@@ -3,7 +3,9 @@ import classNames from 'classnames';
 import clipboardCopy from 'clipboard-copy';
 import React, { HTMLAttributes, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Vat } from '@urbit/api/hood';
 import { Adjust } from '../components/icons/Adjust';
+import { useVat } from '../state/kiln';
 import { disableDefault, handleDropdownLink } from '../state/util';
 import { MenuState } from './Nav';
 
@@ -14,8 +16,15 @@ type SystemMenuProps = HTMLAttributes<HTMLButtonElement> & {
   navOpen: boolean;
 };
 
+function getHash(vat: Vat): string {
+  const parts = vat.hash.split('.');
+  return parts[parts.length - 1];
+}
+
 export const SystemMenu = ({ open, setOpen, className, menu, navOpen }: SystemMenuProps) => {
   const [copied, setCopied] = useState(false);
+  const garden = useVat('garden');
+  const hash = getHash(garden);
 
   const copyHash = useCallback((event: Event) => {
     event.preventDefault();
@@ -74,7 +83,7 @@ export const SystemMenu = ({ open, setOpen, className, menu, navOpen }: SystemMe
             >
               <span className="sr-only">Base Hash</span>
               <code>
-                {!copied && <span aria-label="f-j-u-h-l">fjuhl</span>}
+                {!copied && <span aria-label={hash.split('').join('-')}>{hash}</span>}
                 {copied && 'copied!'}
               </code>
             </DropdownMenu.Item>

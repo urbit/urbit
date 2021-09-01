@@ -254,4 +254,8 @@ export function allyForTreaty(ship: string, desk: string) {
 // xx useful for debugging
 window.docket = useDocketState.getState;
 
+if (useMockData) {
+  window.desk = 'garden';
+}
+
 export default useDocketState;

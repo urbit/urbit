@@ -14,7 +14,7 @@ const sizeMap: Record<DocketImageSizes, string> = {
   xs: 'w-6 h-6 mr-2 rounded',
   small: 'w-8 h-8 mr-3 rounded-md',
   default: 'w-12 h-12 mr-3 rounded-lg',
-  full: 'w-full h-full rounded-2xl'
+  full: 'w-20 h-20 md:w-32 md:h-32 rounded-2xl'
 };
 
 export function DocketImage({ color, image, className = '', size = 'full' }: DocketImageProps) {

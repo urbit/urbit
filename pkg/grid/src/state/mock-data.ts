@@ -18,6 +18,15 @@ export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' |
 const makeHref = (base: string): DocketHrefGlob => ({ glob: { base } });
 
 export const mockTreaties: Treaties = {
+  '~zod/garden': {
+    ship: '~zod',
+    desk: 'garden',
+    title: 'Garden',
+    info: 'Your Urbit Home',
+    href: makeHref('garden'),
+    color: '#E2C050',
+    ...appMetaData
+  },
   '~zod/groups': {
     ship: '~zod',
     desk: 'groups',
@@ -180,7 +189,7 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
   hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
 });
 
-const badVats = []; // ['inbox', 'system', 'terminal', 'base'];
+const badVats = ['inbox', 'system', 'terminal', 'base'];
 export const mockVats = _.reduce(
   mockCharges,
   (vats, charge, desk) => {
