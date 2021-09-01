@@ -42,12 +42,10 @@ import qualified Network.HTTP.Types      as HT
 
 -- Conversion Utilities --------------------------------------------------------
 
-passFromText :: Text -> Text -> Int -> Pass
-passFromText enc aut sut
+passFromBytes :: ByteString -> ByteString -> Int -> Pass
+passFromBytes enc aut sut
   | sut /= 1  = Pass (Ed.PublicKey mempty) (Ed.PublicKey mempty)
-  | otherwise = Pass (Ed.PublicKey $ grab aut) (Ed.PublicKey $ grab enc)
-  where
-    grab = reverse . toBytes . hexString . removePrefix . encodeUtf8
+  | otherwise = Pass (Ed.PublicKey aut) (Ed.PublicKey enc)
 
 clanFromShip :: Ship -> Ob.Class
 clanFromShip = Ob.clan . Ob.patp . fromIntegral
@@ -186,17 +184,21 @@ instance FromJSON PointNetwork where
 data PointKeys = PointKeys
   { pkLife :: Life
   , pkSuite :: Int
-  , pkAuth :: Text  --NOTE  0xhex string
-  , pkCrypt :: Text  --NOTE  0xhex string
+  , pkAuth :: ByteString
+  , pkCrypt :: ByteString
   } deriving (Show, Eq, Generic)
 
 instance FromJSON PointKeys where
   parseJSON (Object o) = do
     pkLife <- o .: "life"
     pkSuite <- o .: "suite"
-    pkAuth <- o .: "auth"
-    pkCrypt <- o .: "crypt"
+    rawAuth <- o .: "auth"
+    rawCrypt <- o .: "crypt"
+    let pkAuth = parseKey rawAuth
+    let pkCrypt = parseKey rawCrypt
     pure PointKeys{..}
+    where
+      parseKey = reverse . toBytes . hexString . removePrefix . encodeUtf8
   parseJSON _ = do error "failed to parse PointKeys json"
 
 data PointSponsor = PointSponsor
@@ -236,7 +238,7 @@ parseAzimuthPoint (PointRequest point) response = EthPoint{..}
       Left _  -> Nothing
       Right s -> Just
         ( fromIntegral $ pkLife key
-        , passFromText (pkCrypt key) (pkAuth key) (pkSuite key)
+        , passFromBytes (pkCrypt key) (pkAuth key) (pkSuite key)
         , fromIntegral $ pnRift net
         , (psHas $ pnSponsor net, Ship $ fromIntegral $ Ob.fromPatp s)
         , Nothing  --NOTE  goes unused currently, so we simply put Nothing
@@ -260,7 +262,7 @@ parseGalaxyTableEntry (PointRequest point) response = (ship, (rift, life, pass))
   ship = Ship $ fromIntegral point
   rift = fromIntegral $ pnRift net
   life = fromIntegral $ pkLife keys
-  pass = passFromText (pkCrypt keys) (pkAuth keys) (pkSuite keys)
+  pass = passFromBytes (pkCrypt keys) (pkAuth keys) (pkSuite keys)
 
 removePrefix :: ByteString -> ByteString
 removePrefix withOhEx
