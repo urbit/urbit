@@ -74,10 +74,8 @@ ringToPass Ring{..} = Pass{..}
 
 -- JSONRPC Functions -----------------------------------------------------------
 
--- Network.JSONRPC appeared to not like something about the JSON that Infura
--- returned; it just hung? Also no documentation.
---
 -- Our use case here is simple enough.
+-- Network.JSONRPC appeared fragile and has no documentation.
 -- So, like with Vere, we roll our own.
 
 dawnSendHTTP :: String -> L.ByteString -> RIO e (Either Int L.ByteString)
@@ -157,7 +155,7 @@ dawnPostRequests endpoint responseBuilder requests = do
 -- Azimuth JSON Requests -------------------------------------------------------
 
 data PointResponse = PointResponse
-  --NOTE  also contains dominion and ownership, but not actually used here
+  -- NOTE also contains dominion and ownership, but not actually used here
   { prNetwork :: PointNetwork
   } deriving (Show, Eq, Generic)
 
@@ -212,7 +210,7 @@ instance FromJSON PointSponsor where
 data PointRequest = PointRequest Ship
 
 instance RequestMethod PointRequest where
-  getRequestMethod _ = "getPoint"
+  getRequestMethod PointRequest{} = "getPoint"
 
 instance ToJSON PointRequest where
   toJSON (PointRequest point) = object [ "ship" .= renderShip point ]
@@ -228,7 +226,7 @@ parseAzimuthPoint (PointRequest point) response = EthPoint{..}
   epOwn = (0, 0, 0, 0)
 
   sponsorShip = Ob.parsePatp $ psWho $ pnSponsor net
-  epNet = if (pkLife key) == 0
+  epNet = if pkLife key == 0
     then Nothing
     else case sponsorShip of
       Left _  -> Nothing
@@ -237,7 +235,7 @@ parseAzimuthPoint (PointRequest point) response = EthPoint{..}
         , passFromBytes (pkCrypt key) (pkAuth key) (pkSuite key)
         , fromIntegral $ pnRift net
         , (psHas $ pnSponsor net, Ship $ fromIntegral $ Ob.fromPatp s)
-        , Nothing  --NOTE  goes unused currently, so we simply put Nothing
+        , Nothing  -- NOTE goes unused currently, so we simply put Nothing
         )
 
   -- I don't know what this is supposed to be, other than the old Dawn.hs and
@@ -267,16 +265,16 @@ removePrefix withOhEx
  where
   (prefix, suffix) = splitAt 2 withOhEx
 
-data TurfRequest = TurfRequest ()
+data TurfRequest = TurfRequest
 
 instance RequestMethod TurfRequest where
-  getRequestMethod _ = "getDns"
+  getRequestMethod TurfRequest = "getDns"
 
 instance ToJSON TurfRequest where
-  toJSON _ = object []  --NOTE  getDns takes no parameters
+  toJSON TurfRequest = object []  -- NOTE getDns takes no parameters
 
 parseTurfResponse :: TurfRequest -> [Text] -> [Turf]
-parseTurfResponse _ = map turf
+parseTurfResponse TurfRequest = map turf
    where
     turf t = Turf $ fmap Cord $ reverse $ splitOn "." t
 
@@ -397,7 +395,7 @@ dawnVent provider feed =
       (dawnPostRequests provider parseGalaxyTableEntry (map (PointRequest . Ship . fromIntegral) [0..255]))
 
     putStrLn "boot: retrieving network domains"
-    dTurf <- (dawnPostRequests provider parseTurfResponse [TurfRequest ()])
+    dTurf <- (dawnPostRequests provider parseTurfResponse [TurfRequest])
                >>= \case
                  []  -> pure []
                  [t] -> pure (nub t)
@@ -405,7 +403,7 @@ dawnVent provider feed =
 
     let dNode = Nothing
 
-    --NOTE  blocknum of 0 is fine because jael ignores it.
+    -- NOTE blocknum of 0 is fine because jael ignores it.
     --      should probably be removed from dawn event.
     let dBloq = 0
 

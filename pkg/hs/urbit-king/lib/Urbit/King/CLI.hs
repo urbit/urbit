@@ -255,7 +255,7 @@ ethNode = strOption
      $ short 'e'
     <> long "l2-endpoint"
     <> value "https://l2.urbit.org/v1/azimuth"  --TODO
-    <> help "L2 RPC API endpoint URL"
+    <> help "Azimuth Layer 2 RPC API endpoint URL"
     <> hidden
 
 new :: Parser New
