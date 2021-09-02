@@ -203,37 +203,39 @@
   =|  =roll
   ~>  %slog.[2 %parsing]
   ~<  %slog.[2 %parsed]
+  =|  pos=@ud
+  =/  las  (met 0 batch)
   |-  ^+  roll
-  ?~  batch
+  ?:  (gte pos las)
     (flop roll)
-  =/  parse-result  (parse-raw-tx batch)
+  =/  parse-result  (parse-raw-tx pos batch)
   ::  Parsing failed, abort batch
   ::
   ?~  parse-result
     (debug %parse-failed ~)
-  =^  =raw-tx  batch  u.parse-result
+  =^  =raw-tx  pos  u.parse-result
   $(roll [raw-tx roll])
 ::
 ++  parse-raw-tx
-  |=  batch=@
-  ^-  (unit [raw-tx rest=@])
-  =/  batch  [len=0 rest=batch]
+  |=  [pos=@ud batch=@]
+  ^-  (unit [raw-tx pos=@ud])
   |^
-  =^  sig  batch  (take 3 65)
-  =.  len.batch  0
-  =/  orig-batch  rest.batch
-  =/  res=(unit [=tx batch=_batch])  parse-tx
-  ?~  res
-    ~
-  :-  ~  :_  rest.batch.u.res
-  =/  len-bytes
-    ?>  =(0 (mod len.batch.u.res 8))
-    (div len.batch.u.res 8)
-  [sig [len-bytes (end [0 len.batch.u.res] orig-batch)] tx.u.res]
+  =^  sig  pos  (take 3 65)
+  =/  res=(unit [=tx pos=@ud])  parse-tx
+  ?~  res  ~
+  =/  [len=@ rem=@]
+    :: XX (dvr (sub pos.u.res pos) 8)
+    =/  dif  (sub pos.u.res pos)
+    [(div dif 8) (mod dif 8)]
+  ?.  =(0 rem)
+    ::  XX parse fail, produce ~ ?
+    !!
+  :-  ~  :_  pos.u.res
+  [sig [len (cut 0 [pos pos.u.res] batch)] tx.u.res]
   ::
   ++  parse-tx
-    ^-  (unit [tx _batch])
-    =^  from-proxy=@      batch  (take 0 3)
+    ^-  (unit [tx pos=@ud])
+    =^  from-proxy=@      pos  (take 0 3)
     ?.  ?=(?(%0 %1 %2 %3 %4) from-proxy)  (debug %bad-proxy ~)
     =/  =proxy
       ?-  from-proxy
@@ -243,66 +245,65 @@
         %3  %vote
         %4  %transfer
       ==
-    =^  pad               batch  (take 0 5)
-    =^  from-ship=ship    batch  (take 3 4)
+    =^  pad               pos  (take 0 5)
+    =^  from-ship=ship    pos  (take 3 4)
     =-  ?~  res
           ~
-        `[[[from-ship proxy] skim-tx.u.res] batch.u.res]
-    ^-  res=(unit [=skim-tx =_batch])
-    =^  op   batch  (take 0 7)
+        `[[[from-ship proxy] skim-tx.u.res] pos.u.res]
+    ^-  res=(unit [=skim-tx pos=@ud])
+    =^  op   pos  (take 0 7)
     ?+    op  ~>(%slog.[0 %strange-opcode] ~)
         %0
-      =^  reset=@         batch  (take 0)
-      =^  =address        batch  (take 3 20)
-      `[[%transfer-point address =(0 reset)] batch]
+      =^  reset=@         pos  (take 0)
+      =^  =address        pos  (take 3 20)
+      `[[%transfer-point address =(0 reset)] pos]
     ::
         %1
-      =^  pad=@     batch  (take 0)
-      =^  =ship     batch  (take 3 4)
-      =^  =address  batch  (take 3 20)
-      `[[%spawn ship address] batch]
+      =^  pad=@     pos  (take 0)
+      =^  =ship     pos  (take 3 4)
+      =^  =address  pos  (take 3 20)
+      `[[%spawn ship address] pos]
     ::
         %2
-      =^  breach=@        batch  (take 0)
-      =^  encrypt=@       batch  (take 3 32)
-      =^  auth=@          batch  (take 3 32)
-      =^  crypto-suite=@  batch  (take 3 4)
-      `[[%configure-keys encrypt auth crypto-suite =(0 breach)] batch]
+      =^  breach=@        pos  (take 0)
+      =^  encrypt=@       pos  (take 3 32)
+      =^  auth=@          pos  (take 3 32)
+      =^  crypto-suite=@  pos  (take 3 4)
+      `[[%configure-keys encrypt auth crypto-suite =(0 breach)] pos]
     ::
-        %3   =^(res batch take-ship `[[%escape res] batch])
-        %4   =^(res batch take-ship `[[%cancel-escape res] batch])
-        %5   =^(res batch take-ship `[[%adopt res] batch])
-        %6   =^(res batch take-ship `[[%reject res] batch])
-        %7   =^(res batch take-ship `[[%detach res] batch])
-        %8   =^(res batch take-address `[[%set-management-proxy res] batch])
-        %9   =^(res batch take-address `[[%set-spawn-proxy res] batch])
-        %10  =^(res batch take-address `[[%set-transfer-proxy res] batch])
+        %3   =^(res pos take-ship `[[%escape res] pos])
+        %4   =^(res pos take-ship `[[%cancel-escape res] pos])
+        %5   =^(res pos take-ship `[[%adopt res] pos])
+        %6   =^(res pos take-ship `[[%reject res] pos])
+        %7   =^(res pos take-ship `[[%detach res] pos])
+        %8   =^(res pos take-address `[[%set-management-proxy res] pos])
+        %9   =^(res pos take-address `[[%set-spawn-proxy res] pos])
+        %10  =^(res pos take-address `[[%set-transfer-proxy res] pos])
     ==
   ::
   ::  Take a bite
   ::
   ++  take
     |=  =bite
-    ^-  [@ _batch]
-    :-  (end bite +.batch)
-    :-  %+  add  -.batch
-        ?@  bite  (bex bite)
-        (mul step.bite (bex bloq.bite))
-    (rsh bite +.batch)
+    ^-  [@ @ud]
+    =/  =step
+      ?@  bite  (bex bite)
+      (mul step.bite (bex bloq.bite))
+    [(cut 0 [pos step] batch) (add pos step)]
   ::  Encode ship and address
   ::
   ++  take-address
-    ^-  [address _batch]
-    =^  pad=@     batch  (take 0)
-    =^  =address  batch  (take 3 20)
-    [address batch]
+    ^-  [address @ud]
+    =^  pad=@     pos  (take 0)
+    =^  =address  pos  (take 3 20)
+    [address pos]
   ::  Encode escape-related txs
   ::
   ++  take-ship
-    ^-  [ship _batch]
-    =^  pad=@        batch  (take 0)
-    =^  other=ship   batch  (take 3 4)
-    [other batch]
+    ^-  [ship @ud]
+    =^  pad=@       pos  (take 0)
+    =^  other=ship  pos  (take 3 4)
+    [other pos]
   --
 ::
 ++  proxy-from-point
