@@ -4,12 +4,12 @@ import {
   ManagedTextInputField as Input,
   Text
 } from '@tlon/indigo-react';
+import { addTag, createManagedGraph, createUnmanagedGraph } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
-import GlobalApi from '~/logic/api/global';
 import { resourceFromPath } from '~/logic/lib/group';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
 import { deSig, parentPath, stringToSymbol } from '~/logic/lib/util';
@@ -21,6 +21,7 @@ import { FormError } from '~/views/components/FormError';
 import { IconRadio } from '~/views/components/IconRadio';
 import { ShipSearch, shipSearchSchema, shipSearchSchemaInGroup } from '~/views/components/ShipSearch';
 import { ChannelWriteFieldSchema, ChannelWritePerms } from './ChannelWritePerms';
+import airlock from '~/logic/api';
 
 type FormSchema = {
   name: string;
@@ -40,7 +41,6 @@ const formSchema = (members?: string[]) =>
   });
 
 type NewChannelProps = {
-  api: GlobalApi;
   group?: string;
   workspace: Workspace;
   baseUrl?: string;
@@ -49,12 +49,26 @@ type NewChannelProps = {
 
 export function NewChannel(props: NewChannelProps): ReactElement {
   const history = useHistory();
-  const { api, group, workspace, existingMembers, ...rest } = props;
+  const { group, workspace, existingMembers, ...rest } = props;
   const groups = useGroupState(state => state.groups);
   const waiter = useWaitForProps({ groups }, 5000);
 
+  const channelName = (values) => {
+    if (values.name)
+      return values.name;
+    if (!values.name && workspace?.type === 'messages') {
+      const joinedShips = values.ships
+        .filter(Boolean)
+        .map(ship => `~${deSig(ship)}`)
+        .join(', ')
+        .concat(`, ~${deSig(window.ship)}`);
+      return joinedShips;
+    }
+    return values.moduleType;
+  };
+
   const onSubmit = async (values: FormSchema, actions) => {
-    const name = values.name ? values.name : values.moduleType;
+    const name = channelName(values);
     const resId: string =
       stringToSymbol(values.name) +
       (workspace?.type !== 'messages'
@@ -64,16 +78,17 @@ export function NewChannel(props: NewChannelProps): ReactElement {
       let { description, moduleType, ships, writers } = values;
       ships = ships.filter(e => e !== '');
       if (workspace?.type === 'messages' && ships.length === 1) {
-        return history.push(`/~landscape/dm/${deSig(ships[0])}`);
+        return history.push(`/~landscape/messages/dm/~${deSig(ships[0])}`);
       }
       if (group) {
-        await api.graph.createManagedGraph(
+        await airlock.thread(createManagedGraph(
+          window.ship,
           resId,
           name,
           description,
           group,
           moduleType
-        );
+        ));
         const tag = {
           app: 'graph',
           resource: `/ship/~${window.ship}/${resId}`,
@@ -84,19 +99,20 @@ export function NewChannel(props: NewChannelProps): ReactElement {
         writers = _.compact(writers).map(s => `~${s}`);
         const us = `~${window.ship}`;
         if (values.writePerms === 'self') {
-          await api.groups.addTag(resource, tag, [us]);
+          await airlock.poke(addTag(resource, tag, [us]));
         } else if (values.writePerms === 'subset') {
           writers.push(us);
-          await api.groups.addTag(resource, tag, writers);
+          await airlock.poke(addTag(resource, tag, writers));
         }
       } else {
-        await api.graph.createUnmanagedGraph(
+        await airlock.thread(createUnmanagedGraph(
+          window.ship,
           resId,
           name,
           description,
           { invite: { pending: ships.map(s => `~${deSig(s)}`) } },
           moduleType
-        );
+        ));
       }
 
       if (!group) {

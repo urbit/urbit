@@ -1,6 +1,14 @@
 /-  *resource
 /+  store=graph-store
 |_  =bowl:gall
+++  cg
+  |%
+  ++  update
+    |=  =update:store
+    ^-  cage
+    [%graph-update-2 !>(update)]
+  --
+::
 ++  scry-for
   |*  [=mold =path]
   .^  mold
@@ -88,22 +96,12 @@
   ?>  ?=(%add-graph -.q.update)
   graph.q.update
 ::
-++  gut-younger-node-siblings
-  |=  [res=resource =index:store]
-  ^-  (map index:store node:store)
-  =+  %+  scry-for  ,=update:store
-      %+  weld
-        /node-siblings/younger/(scot %p entity.res)/[name.res]/all
-      (turn index (cury scot %ud))
-  ?>  ?=(%add-nodes -.q.update)
-  nodes.q.update
-::
 ++  got-node
   |=  [res=resource =index:store]
   ^-  node:store
   =+  %+  scry-for  ,=update:store
       %+  weld
-        /node/(scot %p entity.res)/[name.res]
+        /graph/(scot %p entity.res)/[name.res]/node/index/kith
       (turn index (cury scot %ud))
   ?>  ?=(%add-nodes -.q.update)
   ?>  ?=(^ nodes.q.update)
@@ -114,7 +112,7 @@
   ^-  ?
   %+  scry-for  ,?
   %+  weld
-    /node-exists/(scot %p entity.res)/[name.res]
+    /graph/(scot %p entity.res)/[name.res]/node/exists
   (turn index (cury scot %ud))
 ::
 ++  get-update-log
@@ -126,13 +124,13 @@
 ++  peek-update-log
   |=  res=resource
   ^-  (unit time)
-  (scry-for (unit time) /peek-update-log/(scot %p entity.res)/[name.res])
+  (scry-for (unit time) /update-log/(scot %p entity.res)/[name.res]/latest)
 ::
 ++  get-update-log-subset
   |=  [res=resource start=@da]
   ^-  update-log:store
   %+  scry-for  update-log:store
-  /update-log-subset/(scot %p entity.res)/[name.res]/(scot %da start)/'~'
+  /update-log/(scot %p entity.res)/[name.res]/subset/'~'/(scot %da start)
 ::
 ++  get-keys
   ^-  resources
@@ -175,5 +173,5 @@
 ::
 ++  get-mark
   |=  res=resource
-  (scry-for ,(unit mark) /graph-mark/(scot %p entity.res)/[name.res])
+  (scry-for ,(unit mark) /graph/(scot %p entity.res)/[name.res]/mark)
 --

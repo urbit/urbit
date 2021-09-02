@@ -1,4 +1,5 @@
 import { Col } from '@tlon/indigo-react';
+import { markCountAsRead } from '@urbit/api';
 import React, {
   useEffect
 } from 'react';
@@ -9,13 +10,14 @@ import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 import { Loading } from '~/views/components/Loading';
 import { GroupFeedHeader } from './GroupFeedHeader';
-import PostReplies from './Post/PostReplies';
+import { PostRepliesRoutes } from './Post/PostReplies';
 import PostTimeline from './Post/PostTimeline';
+import airlock from '~/logic/api';
+import { PostThreadRoutes } from './Post/PostThread';
 
 function GroupFeed(props) {
   const {
     baseUrl,
-    api,
     graphPath,
     groupPath,
     vip
@@ -26,6 +28,7 @@ function GroupFeed(props) {
 
   const associations = useMetadataState(state => state.associations);
   const graphs = useGraphState(state => state.graphs);
+  const getNewest = useGraphState(s => s.getNewest);
   const graphResource =
     graphPath ? resourceFromPath(graphPath) : resourceFromPath('/ship/~zod/null');
   const graphTimesentMap = useGraphState(state => state.graphTimesentMap);
@@ -39,7 +42,6 @@ function GroupFeed(props) {
   const association = associations.graph[graphPath];
 
   const history = useHistory();
-  const locationUrl = history.location.pathname;
 
   const graphId = `${graphResource.ship.slice(1)}/${graphResource.name}`;
   const graph = graphs[graphId];
@@ -49,8 +51,8 @@ function GroupFeed(props) {
     if (graphResource.ship === '~zod' && graphResource.name === 'null') {
       return;
     }
-    api.graph.getNewest(graphResource.ship, graphResource.name, 100);
-    api.hark.markCountAsRead(association, '/', 'post');
+    getNewest(graphResource.ship, graphResource.name, 100);
+    airlock.poke(markCountAsRead(graphPath));
   }, [graphPath]);
 
   if (!graphPath) {
@@ -62,6 +64,7 @@ function GroupFeed(props) {
       width="100%"
       height="100%"
       display="flex"
+      overflow="hidden"
       position="relative"
       alignItems="center"
     >
@@ -73,44 +76,34 @@ function GroupFeed(props) {
         graphResource={graphResource}
       />
       <Switch>
-        <Route
-          exact
-          path={[relativePath('/'), relativePath('/feed')]}
-          render={(routeProps) => {
-            return (
-              <PostTimeline
-                baseUrl={baseUrl}
-                api={api}
-                history={history}
-                graphPath={graphPath}
-                group={group}
-                association={association}
-                vip={vip}
-                graph={graph}
-                pendingSize={pendingSize}
-              />
-            );
-          }}
-        />
-        <Route
-          path={relativePath('/feed/:index+')}
-          render={(routeProps) => {
-            return (
-              <PostReplies
-                locationUrl={locationUrl}
-                baseUrl={baseUrl}
-                api={api}
-                history={history}
-                graphPath={graphPath}
-                group={group}
-                association={association}
-                vip={vip}
-                graph={graph}
-                pendingSize={pendingSize}
-              />
-            );
-          }}
-        />
+        <Route exact path={relativePath('/feed')}>
+          <PostTimeline
+            baseUrl={relativePath('/feed')}
+            history={history}
+            graphPath={graphPath}
+            group={group}
+            association={association}
+            vip={vip}
+            graph={graph}
+            pendingSize={pendingSize}
+          />
+        </Route>
+        <Route path={relativePath('/feed/thread')}>
+          <PostThreadRoutes
+            baseUrl={relativePath('/feed/thread')}
+            association={association}
+            vip={vip}
+            pendingSize={pendingSize}
+          />
+        </Route>
+        <Route path={relativePath('/feed/replies')}>
+          <PostRepliesRoutes
+            baseUrl={relativePath('/feed/replies')}
+            association={association}
+            vip={vip}
+            pendingSize={pendingSize}
+          />
+        </Route>
       </Switch>
     </Col>
   );

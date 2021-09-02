@@ -11,12 +11,10 @@ import './css/custom.css';
 import Store from './store';
 import Subscription from './subscription';
 
-class TermApp extends Component {
+class TermApp extends Component<any, any> {
   store: Store;
   api: any;
   subscription: any;
-  props: any;
-  state: any;
   constructor(props) {
     super(props);
     this.store = new Store();
@@ -32,6 +30,7 @@ class TermApp extends Component {
 
   componentDidMount() {
     this.resetControllers();
+    // eslint-disable-next-line new-cap
     const channel = new (window as any).channel();
     this.api = new Api(this.props.ship, channel);
     this.store.api = this.api;
@@ -78,6 +77,7 @@ class TermApp extends Component {
                     border={['0','1']}
                     cursor='text'
                   >
+                    {/* @ts-ignore declare props in later pass */}
                     <History log={this.state.lines.slice(0, -1)} />
                     <Input
                       ship={this.props.ship}

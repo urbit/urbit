@@ -4,6 +4,11 @@ import React from 'react';
 import create, { State } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { BackgroundConfig, LeapCategories, RemoteContentPolicy, TutorialProgress, tutorialProgress } from '~/types/local-update';
+import airlock from '~/logic/api';
+import { bootstrapApi } from '../api/bootstrap';
+import { wait } from '~/logic/lib/util';
+
+export type SubscriptionStatus = 'connected' | 'disconnected' | 'reconnecting';
 
 export interface LocalState {
   theme: 'light' | 'dark' | 'auto';
@@ -21,11 +26,20 @@ export interface LocalState {
   setTutorialRef: (el: HTMLElement | null) => void;
   dark: boolean;
   mobile: boolean;
+  breaks: {
+    sm: boolean;
+    md: boolean;
+    lg: boolean;
+  }
   background: BackgroundConfig;
   omniboxShown: boolean;
   suspendedFocus?: HTMLElement;
   toggleOmnibox: () => void;
-  set: (fn: (state: LocalState) => void) => void
+  set: (fn: (state: LocalState) => void) => void;
+  subscription: SubscriptionStatus;
+  reconnect: () => Promise<void>;
+  bootstrap: () => Promise<void>;
+  errorCount: number;
 }
 
 type LocalStateZus = LocalState & State;
@@ -36,6 +50,11 @@ export const selectLocalState =
 const useLocalState = create<LocalStateZus>(persist((set, get) => ({
   dark: false,
   mobile: false,
+  breaks: {
+    sm: false,
+    md: false,
+    lg: false
+  },
   background: undefined,
   theme: 'auto',
   hideAvatars: false,
@@ -82,11 +101,40 @@ const useLocalState = create<LocalStateZus>(persist((set, get) => ({
       state.suspendedFocus.blur();
     }
   })),
+  subscription: 'connected',
+  errorCount: 0,
+  // XX this logic should be handled by eventsource lib, but channel$a
+  // resume doesn't work properly
+  reconnect: async () => {
+    const { errorCount } = get();
+    set(s => ({ errorCount: s.errorCount+1, subscription: 'reconnecting' }));
+
+    if(errorCount > 5) {
+      set({ subscription: 'disconnected' });
+      return;
+    }
+    await wait(Math.pow(2, errorCount) * 750);
+
+    try {
+      airlock.reset();
+      await bootstrapApi();
+    } catch (e) {
+      console.error(`Retrying connection, attempt #${errorCount}`);
+    }
+  },
+  bootstrap: async () => {
+    set({ subscription: 'reconnecting', errorCount: 0 });
+    airlock.reset();
+    await bootstrapApi();
+    set({ subscription: 'connected' });
+  },
+  // @ts-ignore investigate zustand types
   set: fn => set(produce(fn))
   }), {
     blacklist: [
       'suspendedFocus', 'toggleOmnibox', 'omniboxShown', 'tutorialProgress',
-      'prevTutStep', 'nextTutStep', 'tutorialRef', 'setTutorialRef'
+      'prevTutStep', 'nextTutStep', 'tutorialRef', 'setTutorialRef', 'subscription',
+      'errorCount', 'breaks'
     ],
   name: 'localReducer'
 }));
@@ -98,8 +146,14 @@ function withLocalState<P, S extends keyof LocalState, C extends React.Component
         (object, key) => ({ ...object, [key]: state[key] }), {}
       )
     ): useLocalState();
+    // @ts-ignore call signature forwarding unclear
     return <Component ref={ref} {...localState} {...props} />;
   });
+}
+
+const selOsDark = (s: LocalState) => s.dark;
+export function useOsDark() {
+  return useLocalState(selOsDark);
 }
 
 export { useLocalState as default, withLocalState };

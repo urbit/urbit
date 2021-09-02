@@ -1,11 +1,11 @@
-import { Resource } from "..";
-import { AppName, Path, Patp } from "../lib";
+import { AppName, Path, Patp } from '../lib';
 
 export type MetadataUpdate =
   MetadataUpdateInitial
 | MetadataUpdateAdd
 | MetadataUpdateUpdate
-| MetadataUpdateRemove;
+| MetadataUpdateRemove
+| MetadataUpdateEdit;
 
 export interface MetadataUpdateInitial {
   associations: ResourceAssociations;
@@ -23,6 +23,15 @@ export type MetadataUpdateUpdate = {
   update: AssociationPoke;
 }
 
+export interface MetadataUpdateEdit {
+  edit: {
+    resource: MdResource;
+    edit: MetadataEditField;
+  }
+}
+
+export type MetadataEditField = Partial<Omit<Metadata, 'config' | 'creator' | 'date-created'>>;
+
 export type MetadataUpdateRemove = {
   remove: {
     resource: MdResource;
@@ -32,26 +41,29 @@ export type MetadataUpdateRemove = {
 
 export interface MdResource {
   resource: string;
-  app: AppName;
+  'app-name': AppName;
 }
 
 export interface MetadataUpdatePreview {
   group: string;
   channels: Associations;
-  "channel-count": number;
+  'channel-count': number;
   members: number;
   metadata: Metadata;
 }
 
-export type Associations = Record<AppName, AppAssociations>;
-
-export type AppAssociations = {
-  [p in Path]: Association;
+export type Associations = {
+  groups: AppAssociations<GroupConfig>
+  graph: AppAssociations<GraphConfig>;
 }
 
-export type Association = MdResource & {
+export type AppAssociations<C = MetadataConfig> = {
+  [p in Path]: Association<C>;
+}
+
+export type Association<C = MetadataConfig> = MdResource & {
   group: Path;
-  metadata: Metadata;
+  metadata: Metadata<C>;
 };
 
 export interface AssociationPoke {
@@ -60,26 +72,27 @@ export interface AssociationPoke {
   metadata: Metadata;
 }
 
-export interface Metadata {
+export interface Metadata<C = MetadataConfig> {
   color: string;
   creator: Patp;
   'date-created': string;
   description: string;
   title: string;
-  config: MetadataConfig;
-  picture: string;
+  config: C;
   hidden: boolean;
+  picture: string;
   preview: boolean;
   vip: PermVariation;
 }
 
 export type MetadataConfig = GroupConfig | GraphConfig;
 
-export interface GroupConfig {
-  group: null | Record<string, string> | Resource;
-}
 export interface GraphConfig {
   graph: string;
+}
+
+export interface GroupConfig {
+  group: undefined | {} | MdResource;
 }
 
 export type PermVariation = '' | ' ' | 'reader-comments' | 'member-metadata' | 'host-feed' | 'admin-feed';

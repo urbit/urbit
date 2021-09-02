@@ -12,6 +12,8 @@ import { LeapSettings } from './components/lib/LeapSettings';
 import { NotificationPreferences } from './components/lib/NotificationPref';
 import S3Form from './components/lib/S3Form';
 import SecuritySettings from './components/lib/Security';
+import { DmSettings } from './components/lib/DmSettings';
+import ShortcutSettings from './components/lib/ShortcutSettings';
 
 export const Skeleton = (props: { children: ReactNode }) => (
   <Box height='100%' width='100%' px={[0, 3]} pb={[0, 3]} borderRadius={1}>
@@ -112,7 +114,9 @@ return;
             <SidebarItem icon='Image' text='Display' hash='display' />
             <SidebarItem icon='Upload' text='Remote Storage' hash='s3' />
             <SidebarItem icon='LeapArrow' text='Leap' hash='leap' />
+            <SidebarItem icon='Messages' text='Direct Messages' hash='dm' />
             <SidebarItem icon='Node' text='CalmEngine' hash='calm' />
+            <SidebarItem icon='EastCarat' text='Shortcuts' hash='shortcuts' />
             <SidebarItem
               icon='Locked'
               text='Devices + Security'
@@ -128,11 +132,13 @@ return;
                 graphConfig={props.notificationsGraphConfig}
               />
             )}
-            {hash === 'display' && <DisplayForm api={props.api} />}
-            {hash === 's3' && <S3Form api={props.api} />}
-            {hash === 'leap' && <LeapSettings api={props.api} />}
-            {hash === 'calm' && <CalmPrefs api={props.api} />}
-            {hash === 'security' && <SecuritySettings api={props.api} />}
+            {hash === 'display' && <DisplayForm />}
+            {hash === 'dm' && <DmSettings />}
+            {hash === 'shortcuts' && <ShortcutSettings />}
+            {hash === 's3' && <S3Form  />}
+            {hash === 'leap' && <LeapSettings />}
+            {hash === 'calm' && <CalmPrefs />}
+            {hash === 'security' && <SecuritySettings />}
             {hash === 'debug' && <DebugPane />}
           </SettingsItem>
         </Col>

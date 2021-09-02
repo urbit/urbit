@@ -1,36 +1,49 @@
-import { Contact, Patp, Rolodex } from '@urbit/api';
+import { Contact, deSig, Patp, Rolodex } from '@urbit/api';
 import { useCallback } from 'react';
-import { BaseState, createState } from './base';
+import _ from 'lodash';
+import { reduce, reduceNacks } from '../reducers/contact-update';
+import {
+  createState,
+  createSubscription,
+  reduceStateN
+} from './base';
 
-export interface ContactState extends BaseState<ContactState> {
+export interface ContactState {
   contacts: Rolodex;
   isContactPublic: boolean;
   nackedContacts: Set<Patp>;
-  // fetchIsAllowed: (entity, name, ship, personal) => Promise<boolean>;
 }
 
-const useContactState = createState<ContactState>('Contact', {
-  contacts: {},
-  nackedContacts: new Set(),
-  isContactPublic: false
-  // fetchIsAllowed: async (
-  //   entity,
-  //   name,
-  //   ship,
-  //   personal
-  // ): Promise<boolean> => {
-  //   const isPersonal = personal ? 'true' : 'false';
-  //   const api = useApi();
-  //   return api.scry({
-  //     app: 'contact-store',
-  //     path: `/is-allowed/${entity}/${name}/${ship}/${isPersonal}`
-  //   });
-  // },
-}, ['nackedContacts']);
+// @ts-ignore investigate zustand types
+const useContactState = createState<ContactState>(
+  'Contact',
+  {
+    contacts: {},
+    nackedContacts: new Set(),
+    isContactPublic: false
+  },
+  ['nackedContacts'],
+  [
+    (set, get) =>
+      createSubscription('contact-pull-hook', '/nacks', (e) => {
+        const data = e?.resource;
+        if (data) {
+          reduceStateN(get(), data, [reduceNacks]);
+        }
+      }),
+    (set, get) =>
+      createSubscription('contact-store', '/all', (e) => {
+        const data = _.get(e, 'contact-update', false);
+        if (data) {
+          reduceStateN(get(), data, reduce);
+        }
+      })
+  ]
+);
 
 export function useContact(ship: string) {
   return useContactState(
-    useCallback(s => s.contacts[ship] as Contact | null, [ship])
+    useCallback(s => s.contacts[`~${deSig(ship)}`] as Contact | null, [ship])
   );
 }
 

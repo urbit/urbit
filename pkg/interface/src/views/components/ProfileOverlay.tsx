@@ -1,19 +1,15 @@
 import {
   BaseImage, Box,
 
-
-
-
-
   BoxProps,
   Center, Col,
-
 
   Icon, Row,
 
   Text
 } from '@tlon/indigo-react';
 import { cite, uxToHex } from '@urbit/api';
+import shallow from 'zustand/shallow';
 import _ from 'lodash';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -25,7 +21,7 @@ import { useCopy } from '~/logic/lib/useCopy';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { useShowNickname } from '~/logic/lib/util';
 import { useContact } from '~/logic/state/contact';
-import useSettingsState from '~/logic/state/settings';
+import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { Portal } from './Portal';
 import { ProfileStatus } from './ProfileStatus';
 import RichText from './RichText';
@@ -41,10 +37,11 @@ const FixedOverlay = styled(Col)`
 
 type ProfileOverlayProps = BoxProps & {
   ship: string;
-  api: any;
   children?: ReactNode;
   color?: string;
 };
+
+const selSettings = (s: SettingsState) => [s.calm.hideAvatars, s.calm.hideNicknames];
 
 const ProfileOverlay = (props: ProfileOverlayProps) => {
   const {
@@ -52,14 +49,14 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
     children,
     ...rest
   } = props;
+
   const [open, _setOpen] = useState(false);
   const [coords, setCoords] = useState({});
   const [visible, setVisible] = useState(false);
   const history = useHistory();
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
-  const hideAvatars = useSettingsState(state => state.calm.hideAvatars);
-  const hideNicknames = useSettingsState(state => state.calm.hideNicknames);
+  const [hideAvatars, hideNicknames] = useSettingsState(selSettings, shallow);
   const isOwn = useMemo(() => window.ship === ship, [ship]);
   const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`);
 
@@ -133,7 +130,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
 
   return (
     <Box ref={outerRef} {...rest} onClick={setOpen} cursor="pointer">
-      <VisibilitySensor onChange={setVisible}>
+      <VisibilitySensor active={open} onChange={setVisible}>
         {children}
       </VisibilitySensor>
   { open && (
@@ -160,7 +157,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
                icon='Chat'
                size={16}
                cursor='pointer'
-               onClick={() => history.push(`/~landscape/dm/${ship}`)}
+               onClick={() => history.push(`/~landscape/messages/dm/~${ship}`)}
              />
            )}
          </Row>
@@ -206,7 +203,6 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
           </Row>
           {isOwn ? (
             <ProfileStatus
-              api={props.api}
               ship={`~${ship}`}
               contact={contact}
             />
@@ -218,7 +214,7 @@ const ProfileOverlay = (props: ProfileOverlayProps) => {
               textOverflow='ellipsis'
               overflow='hidden'
               whiteSpace='pre'
-              marginBottom={0}
+              mb={0}
               disableRemoteContent
               gray
               title={contact?.status ? contact.status : ''}

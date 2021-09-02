@@ -30,12 +30,12 @@
   ?>  ?=(^ t.p)
   .^(mold i.p (scot %p our) i.t.p (scot %da now) t.t.p)
 ::
-++  scry-conversion
+++  scry-notif-conversion
   |=  [[our=@p now=@da] desk=term =mark]
-  ~+
+  ^-  $-(indexed-post:graph-store (unit notif-kind:hook))
   %^  scry  [our now]
-    tube:clay
-  /cc/[desk]/[mark]/notification-kind
+    $-(indexed-post:graph-store (unit notif-kind:hook))
+  /cf/[desk]/[mark]/notification-kind
 --
 ::
 =|  state-1
@@ -74,21 +74,9 @@
     ==
   :_  this(state old)
   =.  cards  (flop cards)
-  %+  welp
-    ?:  (~(has by wex.bowl) [/graph our.bowl %graph-store])
-      cards
-    [watch-graph:ha cards]
-  %+  turn
-    ^-  (list mark)
-    :~  %graph-validator-chat
-        %graph-validator-link
-        %graph-validator-publish
-    ==
-  |=  =mark
-  ^-  card
-  =/  =wire  /validator/[mark]
-  =/  =rave:clay  [%sing %c [%da now.bowl] /[mark]/notification-kind]
-  [%pass wire %arvo %c %warp our.bowl [%home `rave]]
+  ?:  (~(has by wex.bowl) [/graph our.bowl %graph-store])
+    cards
+  [watch-graph:ha cards]
 ::
 ++  on-watch
   |=  =path
@@ -214,19 +202,18 @@
       %-  ~(gas by *(set [resource index:graph-store]))
       (turn ~(tap in indices) (lead rid))
     :_  state(watching (~(dif in watching) to-remove))
-    =/  =tube:clay
-      (get-conversion:ha rid)
+    =/  convert  (get-conversion:ha rid)
     %+  roll
       ~(tap in indices)
     |=  [=index:graph-store out=(list card)]
     =|  =indexed-post:graph-store
     =.  index.p.indexed-post  index
-    =+  !<(u-notif-kind=(unit notif-kind:hook) (tube !>(indexed-post)))
-    ?~  u-notif-kind  out
-    =*  notif-kind  u.u-notif-kind
+    =/  notif-kind=(unit notif-kind:hook)
+      (convert indexed-post)
+    ?~  notif-kind  out
     =/  =stats-index:store
-      [%graph rid (scag parent.index-len.notif-kind index)]
-    ?.  ?=(%each mode.notif-kind)  out
+      [%graph rid (scag parent.index-len.u.notif-kind index)]
+    ?.  ?=(%each mode.u.notif-kind)  out
     :_  out 
     (poke-hark %read-each stats-index index)
   ::
@@ -256,7 +243,7 @@
     =/  graph=graph:graph-store  :: graph in subscription is bunted 
       (get-graph-mop:gra rid)
     =/  node=(unit node:graph-store)
-      (bind (peek:orm:graph-store graph) |=([@ =node:graph-store] node))
+      (bind (pry:orm:graph-store graph) |=([@ =node:graph-store] node))
     =/  assoc=(unit association:metadata)
       (peek-association:met %graph rid)
     =^  cards  state
@@ -271,16 +258,7 @@
             rid=resource
             assoc=(unit association:metadata)
         ==
-    ?~  assoc
-      ~&  no-assoc+rid
-      `state
-    =*  group      group.u.assoc
-    =*  metadatum  metadatum.u.assoc
-    =/  module=term
-      ?:  ?=(%empty -.config.metadatum)  %$
-      ?:  ?=(%group -.config.metadatum)  %$
-      module.config.metadatum
-    abet:check:(abed:handle-update:ha rid nodes group module)
+    abet:check:(abed:handle-update:ha rid nodes)
   --
 ::
 ++  on-peek  on-peek:def
@@ -291,11 +269,8 @@
   ^-  (quip card _this)
   ?+  wire  (on-arvo:def wire sign-arvo)
     ::
-      [%validator @ ~]
-    :_  this
-    =*  validator  i.t.wire
-    =/  =rave:clay  [%next %c [%da now.bowl] /[validator]/notification-kind]
-    [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
+    ::  no longer necessary
+    [%validator @ ~]  [~ this]
   ==
 ++  on-fail   on-fail:def
 --
@@ -307,13 +282,13 @@
 ::
 ++  get-conversion
   |=  rid=resource
-  ^-  tube:clay
+  ^-  $-(indexed-post:graph-store (unit notif-kind:hook))
   =+  %^  scry  [our now]:bowl
          ,mark=(unit mark)
-      /gx/graph-store/graph-mark/(scot %p entity.rid)/[name.rid]/noun
+      /gx/graph-store/graph/(scot %p entity.rid)/[name.rid]/mark/noun
   ?~  mark
-    |=(v=vase !>(~))
-  (scry-conversion [our now]:bowl q.byk.bowl u.mark)
+    |=(=indexed-post:graph-store ~)
+  (scry-notif-conversion [our now]:bowl q.byk.bowl u.mark)
 ::
 ++  give
   |=  [paths=(list path) =update:hook]
@@ -345,28 +320,25 @@
   |=  [rid=resource assoc=(unit association:metadata)]
   ^-  ?
   ?~  assoc
-    %.n
-  ?|  !(is-managed:grp group.u.assoc)
-      &(watch-on-self =(our.bowl entity.rid))
-  ==
+    %.y
+  &(watch-on-self =(our.bowl entity.rid))
 ::
 ++  handle-update
   |_  $:  rid=resource  ::  input
           updates=(list node:graph-store)
-          group=resource
-          module=term
+          mark=(unit mark)
           hark-pokes=(list action:store)  :: output
           new-watches=(list index:graph-store)
       ==
   ++  update-core  .
   ::
   ++  abed
-    |=  [r=resource upds=(list node:graph-store) grp=resource mod=term]
-    update-core(rid r, updates upds, group grp, module mod)
+    |=  [r=resource upds=(list node:graph-store)]
+    =/  m=(unit ^mark)
+      (get-mark:gra r)
+    update-core(rid r, updates upds, mark m)
   ::
   ++  get-conversion
-    ::  LA:  this tube should be cached in %hark-graph-hook state
-    ::  instead of just trying to keep it warm, as the scry overhead is large
     ~+  (^get-conversion rid)
   ::
   ++  abet
@@ -420,9 +392,8 @@
     ?:  ?=(%| -.post.node)
       update-core
     =*  pos  p.post.node
-    =+  !<  notif-kind=(unit notif-kind:hook)
-        %-  get-conversion
-        !>(`indexed-post:graph-store`[0 pos])
+    =/  notif-kind=(unit notif-kind:hook)
+      (get-conversion [0 pos])
     ?~  notif-kind
       update-core
     =/  desc=@t
@@ -433,7 +404,7 @@
     =/  parent=index:post
       (scag parent.index-len.not-kind index.pos)
     =/  notif-index=index:store
-      [%graph group rid module desc parent]
+      [%graph rid mark desc parent]
     ?:  =(our.bowl author.pos)
       (self-post node notif-index not-kind)
     =.  update-core
@@ -441,6 +412,7 @@
     =?    update-core
         ?|  =(desc %mention)
             (~(has in watching) [rid parent])
+            =(mark `%graph-validator-dm)
         ==
       =/  =contents:store
         [%graph (limo pos ~)]

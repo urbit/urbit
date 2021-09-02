@@ -233,7 +233,7 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  (on-peek:def path)
-    [%x %all ~]     ``noun+!>(rolodex)
+    [%x %all ~]     ``noun+!>(`rolodex:store`rolodex)
   ::
       [%x %contact @ ~]
     =/  =ship  (slav %p i.t.t.path)
@@ -245,14 +245,13 @@
   ::
       [%x %allowed-ship @ ~]
     =/  =ship  (slav %p i.t.t.path)
-    ``noun+!>((~(has in allowed-ships) ship))
+    ``noun+!>(`?`(~(has in allowed-ships) ship))
   ::
       [%x %is-public ~]
-    ``noun+!>(is-public)
+    ``noun+!>(`?`is-public)
   ::
       [%x %allowed-groups ~]
-    ``noun+!>(allowed-groups)
-
+    ``noun+!>(`(set resource)`allowed-groups)
   ::
       [%x %is-allowed @ @ @ @ ~]
     =/  is-personal  =(i.t.t.t.t.t.path 'true')

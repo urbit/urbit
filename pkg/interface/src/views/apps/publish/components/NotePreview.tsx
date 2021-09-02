@@ -66,14 +66,15 @@ export function NotePreview(props: NotePreviewProps) {
   const noteId = post.index.split('/')[1];
   const url = `${props.baseUrl}/note/${noteId}`;
 
-  const [rev, title, body, content] = getLatestRevision(node);
+  const [, title, body] = getLatestRevision(node);
   const appPath = `/ship/${props.host}/${props.book}`;
-  const unreads = useHarkState(state => state.unreads);
-  const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(`/${noteId}/1/1`);
+  const unreads = useHarkState(state => state.unreads.graph?.[appPath]);
+  // @ts-ignore hark will have to choose between sets and numbers
+  const isUnread = (unreads?.['/'].unreads ?? new Set()).has(`/${noteId}/1/1`);
 
   const snippet = getSnippet(body);
 
-  const commColor = (unreads.graph?.[appPath]?.[`/${noteId}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+  const commColor = (unreads?.[`/${noteId}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
 
   const cursorStyle = post.pending ? 'default' : 'pointer';
 

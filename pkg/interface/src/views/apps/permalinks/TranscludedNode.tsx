@@ -1,8 +1,9 @@
+/* eslint-disable no-case-declarations */
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { Anchor, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { Association, GraphConfig, GraphNode, Group, Post, ReferenceContent, TextContent, UrlContent } from '@urbit/api';
 import bigInt from 'big-integer';
 import React from 'react';
-import GlobalApi from '~/logic/api/global';
 import { referenceToPermalink } from '~/logic/lib/permalinks';
 import { getSnippet } from '~/logic/lib/publish';
 import { useGroupForAssoc } from '~/logic/state/group';
@@ -17,9 +18,8 @@ function TranscludedLinkNode(props: {
   node: GraphNode;
   assoc: Association;
   transcluded: number;
-  api: GlobalApi;
 }) {
-  const { node, api, assoc, transcluded } = props;
+  const { node, assoc, transcluded } = props;
   const idx = node?.post?.index?.slice(1)?.split('/') ?? [];
 
   if (typeof node?.post === 'string') {
@@ -33,7 +33,7 @@ function TranscludedLinkNode(props: {
       >
         <Text gray>This link has been deleted.</Text>
       </Box>
-    )
+    );
   }
 
   switch (idx.length) {
@@ -41,7 +41,7 @@ function TranscludedLinkNode(props: {
       const [{ text }, link] = node.post.contents as [TextContent, UrlContent | ReferenceContent];
       if('reference' in link) {
         const permalink = referenceToPermalink(link).link;
-        return <PermalinkEmbed transcluded={transcluded + 1} api={api} link={permalink} association={assoc} />;
+        return <PermalinkEmbed transcluded={transcluded + 1} link={permalink} association={assoc} />;
       }
 
       return (
@@ -49,7 +49,8 @@ function TranscludedLinkNode(props: {
           <Author
             pt='12px'
             pl='12px'
-            size='24'
+            mt='6px'
+            size={24}
             sigilPadding='6'
             showImage
             ship={node.post.author}
@@ -57,7 +58,7 @@ function TranscludedLinkNode(props: {
           />
           <Box
             borderRadius='2'
-            mt='1'
+            mt='3'
             ml='44px'
             mr='3'
             p='2'
@@ -80,7 +81,6 @@ function TranscludedLinkNode(props: {
     case 2:
       return (
         <TranscludedComment
-          api={api}
           transcluded={transcluded}
           node={node}
           assoc={assoc}
@@ -94,10 +94,9 @@ function TranscludedLinkNode(props: {
 function TranscludedComment(props: {
   node: GraphNode;
   assoc: Association;
-  api: GlobalApi;
   transcluded: number;
 }) {
-  const { assoc, node, api, transcluded } = props;
+  const { assoc, node, transcluded } = props;
 
   if (typeof node?.post === 'string') {
     return (
@@ -110,7 +109,7 @@ function TranscludedComment(props: {
       >
         <Text gray>This comment has been deleted.</Text>
       </Box>
-    )
+    );
   }
 
   const group = useGroupForAssoc(assoc)!;
@@ -121,16 +120,16 @@ function TranscludedComment(props: {
       <Author
         pt='12px'
         pl='12px'
-        size='24'
+        mt='6px'
+        size={24}
         sigilPadding='6'
         showImage
         ship={comment.post.author}
         date={comment.post?.['time-sent']}
         group={group}
       />
-      <Box pl="44px" pt='1'>
+      <Box pl="44px" pt='2'>
         <GraphContent
-          api={api}
           transcluded={transcluded}
           contents={comment.post.contents}
           showOurContact={false}
@@ -143,14 +142,12 @@ function TranscludedComment(props: {
 function TranscludedPublishNode(props: {
   node: GraphNode;
   assoc: Association;
-  api: GlobalApi;
   transcluded: number;
 }) {
-  const { node, assoc, transcluded, api } = props;
+  const { node, assoc, transcluded } = props;
   const group = useGroupForAssoc(assoc)!;
 
   if (typeof node?.post === 'string') {
-    console.log(node)
     return (
       <Box
         mx="12px"
@@ -171,18 +168,19 @@ function TranscludedPublishNode(props: {
         ?.get(bigInt.one)
         ?.children?.peekLargest()?.[1]!;
       return (
-        <Col color="black" gapY={2}>
+        <Col color="black">
           <Author
             pl='12px'
             pt='12px'
-            size='24'
+            mt='6px'
+            size={24}
             sigilPadding='6'
             showImage
             ship={post.post.author}
             date={post.post?.['time-sent']}
             group={group}
           />
-          <Text pl='44px' fontSize="2" fontWeight="medium">
+          <Text mt='3' pl='44px' fontSize="2" fontWeight="medium">
             {(post.post.contents[0] as TextContent)?.text}
           </Text>
           <Box pl="44px" pr='3'>
@@ -197,7 +195,6 @@ function TranscludedPublishNode(props: {
       return (
         <TranscludedComment
           transcluded={transcluded}
-          api={api}
           node={node}
           assoc={assoc}
         />
@@ -209,12 +206,11 @@ function TranscludedPublishNode(props: {
 
 export function TranscludedPost(props: {
   post: Post;
-  api: GlobalApi;
   transcluded: number;
   commentsCount?: number;
   group: Group;
 }) {
-  const { transcluded, post, group, commentsCount, api } = props;
+  const { transcluded, post, group, commentsCount } = props;
 
   if (typeof post === 'string') {
     return (
@@ -227,7 +223,7 @@ export function TranscludedPost(props: {
       >
         <Text gray>This post has been deleted.</Text>
       </Box>
-    )
+    );
   }
 
   return (
@@ -235,16 +231,16 @@ export function TranscludedPost(props: {
       <Author
         pt='12px'
         pl='12px'
-        size='24'
+        mt='6px'
+        size={24}
         sigilPadding='6'
         showImage
         ship={post.author}
         date={post?.['time-sent']}
         group={group}
       />
-      <Box pl='44px' pt='2' pr='3'>
+      <Box pl='44px' pt='3' pr='3'>
         <MentionText
-          api={api}
           transcluded={transcluded}
           content={post.contents}
           group={group}
@@ -265,15 +261,14 @@ export function TranscludedNode(props: {
   assoc: Association;
   node: GraphNode;
   transcluded: number;
-  api: GlobalApi;
   showOurContact?: boolean;
 }) {
-  const { node, showOurContact, assoc, transcluded, api } = props;
+  const { node, showOurContact, assoc, transcluded } = props;
   const group = useGroupForAssoc(assoc)!;
 
   if (
-    typeof node?.post === "string" &&
-    assoc.metadata.config.graph === "chat"
+    typeof node?.post === 'string' &&
+    (assoc.metadata.config as GraphConfig).graph === 'chat'
   ) {
     return (
       <Box
@@ -296,11 +291,11 @@ export function TranscludedNode(props: {
             renderSigil
             transcluded={transcluded + 1}
             className="items-top cf hide-child"
+            // @ts-ignore isn't forwarding props to memo
             association={assoc}
             msg={node.post}
             fontSize={0}
             showOurContact={showOurContact}
-            api={api}
             mt='0'
           />
         </Row>
@@ -312,7 +307,6 @@ export function TranscludedNode(props: {
     case 'post':
     return (
       <TranscludedPost
-        api={props.api}
         post={node.post}
         commentsCount={Object.keys(node.children.root).length}
         group={group}

@@ -1,6 +1,6 @@
 {
   "name": "@urbit/eslint-config",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "",
   "repository": {
     "type": "git",
@@ -8,18 +8,14 @@
     "directory": "pkg/npm/eslint-config"
   },
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "author": "",
   "license": "MIT",
-  "peerDependencies": {
-    "eslint": ">= 3"
-  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.15.0",
     "@typescript-eslint/parser": "^4.15.0",
     "babel-eslint": "^10.1.0",
+    "eslint": "^7.26.0",
     "eslint-plugin-react": "^7.22.0",
     "typescript": "^4.1.5"
   }

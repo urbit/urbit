@@ -14,7 +14,15 @@ const rules = {
     }
   ],
   "arrow-spacing": "error",
-  "ban-ts-comment": "allow-with-description",
+  "@typescript-eslint/ban-ts-comment": [2,
+    {
+    'ts-expect-error': 'allow-with-description',
+    'ts-ignore': 'allow-with-description',
+    'ts-nocheck': 'allow-with-description',
+    'ts-check': 'allow-with-description',
+     minimumDescriptionLength: 3,
+  }],
+  "@typescript-eslint/ban-types": "off",
   "block-spacing": ["error", "always"],
   "brace-style": ["error", "1tbs"],
   "camelcase": [
@@ -25,6 +33,7 @@ const rules = {
   ],
   "comma-dangle": ["error", "never"],
   "eol-last": ["error", "always"],
+  "@typescript-eslint/explicit-module-boundary-types": "off",
   "func-name-matching": "error",
   "indent": [
     "off",
@@ -49,7 +58,7 @@ const rules = {
   "handle-callback-err": "off",
   "linebreak-style": ["error", "unix"],
   "max-lines": [
-    "error",
+    "warn",
     {
       "max": 300,
       "skipBlankLines": true,
@@ -79,6 +88,8 @@ const rules = {
   "new-parens": "error",
   "no-buffer-constructor": "error",
   "no-console": "off",
+  "@typescript-eslint/no-explicit-any": "off",
+  "@typescript-eslint/no-empty-function": "off",
   "no-extra-semi": "off",
   "no-fallthrough": "off",
   "no-func-assign": "off",
@@ -90,7 +101,7 @@ const rules = {
       "max": 1
     }
   ],
-  "no-nested-ternary": "error",
+  "no-nested-ternary": "warn",
   "no-param-reassign": "off",
   "no-return-assign": "error",
   "no-return-await": "off",
@@ -129,6 +140,7 @@ const rules = {
   ],
   "prefer-template": "off",
   "quotes": ["error", "single"],
+  "react/display-name": "off",
   "semi": ["error", "always"],
   "spaced-comment": [
     "error",
@@ -183,7 +195,10 @@ module.exports = {
         "sourceType": "module"
       },
       "plugins": ["@typescript-eslint"],
-      "rules": rules
+      "rules": {
+        ...rules,
+        "valid-jsdoc": "off"
+      }
     }
   ]
 };

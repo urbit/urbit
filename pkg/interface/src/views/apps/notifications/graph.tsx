@@ -1,15 +1,12 @@
-import { Anchor, Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { Box, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import { Association, GraphNotificationContents, GraphNotifIndex, Post } from '@urbit/api';
 import { BigInteger } from 'big-integer';
+import { patp } from 'urbit-ob';
 import _ from 'lodash';
 import React, { useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import GlobalApi from '~/logic/api/global';
-import { referenceToPermalink } from '~/logic/lib/permalinks';
-import {
-  isDm, pluralize
-} from '~/logic/lib/util';
+import { pluralize } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
 import {
   useAssocForGraph,
@@ -17,7 +14,6 @@ import {
 } from '~/logic/state/metadata';
 import Author from '~/views/components/Author';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
-import { PermalinkEmbed } from '../permalinks/embed';
 import { Header } from './header';
 
 const TruncBox = styled(Box)<{ truncate?: number }>`
@@ -27,16 +23,6 @@ const TruncBox = styled(Box)<{ truncate?: number }>`
   -webkit-box-orient: vertical;
   color: ${p => p.theme.colors.black};
 `;
-
-function getGraphModuleIcon(module: string) {
-  if (module === 'link') {
-    return 'Collection';
-  }
-  if (module === 'post') {
-    return 'Groups';
-  }
-  return _.capitalize(module);
-}
 
 function describeNotification(
   description: string,
@@ -66,29 +52,6 @@ function describeNotification(
       return description;
   }
 }
-
-const GraphUrl = ({ contents, api }) => {
-  const [{ text }, link] = contents;
-
-  if ('reference' in link) {
-    return (
-      <PermalinkEmbed
-        transcluded={1}
-        link={referenceToPermalink(link).link}
-        api={api}
-        showOurContact
-      />
-    );
-  }
-  return (
-    <Box borderRadius={2} p={2} bg="scales.black05">
-      <Anchor underline={false} target="_blank" color="black" href={link.url}>
-        <Icon verticalAlign="bottom" mr={2} icon="ArrowExternal" />
-        {text}
-      </Anchor>
-    </Box>
-  );
-};
 
 function ContentSummary({ icon, name, author, to }) {
   return (
@@ -133,13 +96,13 @@ export const GraphNodeContent = ({ post, mod, index, hidden, association }) => {
   const { contents } = post;
   const idx = index.slice(1).split('/');
   const url = getNodeUrl(mod, hidden, association?.group, association?.resource, index);
-  if (mod === 'link' && idx.length === 1) {
+  if (mod === 'graph-validator-link' && idx.length === 1) {
     const [{ text: title }] = contents;
     return (
       <ContentSummary to={url} icon="Links" name={title} author={post.author} />
     );
   }
-  if (mod === 'publish' && idx[1] === '1') {
+  if (mod === 'graph-validator-publish' && idx[1] === '1') {
     const [{ text: title }] = contents;
     return (
       <ContentSummary to={url} icon="Note" name={title} author={post.author} />
@@ -147,7 +110,7 @@ export const GraphNodeContent = ({ post, mod, index, hidden, association }) => {
   }
   return (
     <TruncBox truncate={8}>
-      <GraphContent api={{} as any} contents={post.contents} showOurContact />
+      <GraphContent contents={post.contents} showOurContact />
     </TruncBox>
   );
 };
@@ -159,27 +122,31 @@ function getNodeUrl(
   graph: string,
   index: string
 ) {
-  if (hidden && mod === 'chat') {
+  const graphValidator = 'graph-validator-';
+  const rmValidator = mod.slice(graphValidator.length);
+  if (hidden && mod === 'graph-validator-chat') {
     groupPath = '/messages';
   } else if (hidden) {
     groupPath = '/home';
   }
-  const graphUrl = `/~landscape${groupPath}/resource/${mod}${graph}`;
+  const graphUrl = `/~landscape${groupPath}/resource/${rmValidator}${graph}`;
   const idx = index.slice(1).split('/');
-  if (mod === 'publish') {
+  if (mod === 'graph-validator-publish') {
     const [noteId, kind, commId] = idx;
     const selected = kind === '2' ? `?selected=${commId}` : '';
     return `${graphUrl}/note/${noteId}${selected}`;
-  } else if (mod === 'link') {
+  } else if (mod === 'graph-validator-link') {
     const [linkId, commId] = idx;
     return `${graphUrl}/index/${linkId}${commId ? `?selected=${commId}` : ''}`;
-  } else if (mod === 'chat') {
+  } else if (mod === 'graph-validator-chat') {
     if (idx.length > 0) {
       return `${graphUrl}?msg=${idx[0]}`;
     }
     return graphUrl;
-  } else if (mod === 'post') {
-    return `/~landscape${groupPath}/feed${index}`;
+  } else if (mod === 'graph-validator-post') {
+    return `/~landscape${groupPath}/feed/thread${index}`;
+  } else if (mod === 'graph-validator-dm') {
+    return `/~landscape${groupPath}/dm/${patp(idx[0])}`;
   }
   return '';
 }
@@ -256,48 +223,43 @@ const GraphNodes = (props: {
 export function GraphNotification(props: {
   index: GraphNotifIndex;
   contents: GraphNotificationContents;
-  archived: boolean;
   read: boolean;
   time: number;
   timebox: BigInteger;
-  api: GlobalApi;
 }) {
-  const { contents, index, read, time, api, timebox } = props;
+  const { contents, index, read, time, timebox } = props;
   const history = useHistory();
 
   const authors = _.uniq(_.map(contents, 'author'));
   const singleAuthor = authors.length === 1;
-  const { graph, group } = index;
-  const association = useAssocForGraph(graph)!;
-  const dm = isDm(graph);
+  const { graph, mark } = index;
+  const association = useAssocForGraph(graph);
+  const dm = mark === 'graph-validator-dm';
   const desc = describeNotification(
     index.description,
     contents.length !== 1,
     dm,
     singleAuthor
   );
-  const groupAssociation = useAssocForGroup(association?.group);
+  const groupAssociation = useAssocForGroup(association?.group ?? '');
   const groups = useGroupState(state => state.groups);
 
   const onClick = useCallback(() => {
-    if (
-      !(
-        (index.description === 'note' || index.description === 'link') &&
-        index.index === '/'
-      )
-    ) {
-      const first = contents[0];
-      history.push(
-        getNodeUrl(
-          index.module,
-          groups[association?.group]?.hidden,
-          group,
-          association?.resource,
-          first.index
-        )
-      );
+    if(dm) {
+      history.push(`/~landscape/messages/dm/~${authors[0]}`);
+      return;
     }
-  }, [api, timebox, index, read]);
+    const first = contents[0];
+    history.push(
+      getNodeUrl(
+        index.mark,
+        groups[association?.group]?.hidden,
+        association?.group,
+        association?.resource,
+        first.index
+      )
+    );
+  }, [timebox, index, read, history.push, authors, dm]);
 
   const authorsInHeader =
     dm ||
@@ -324,7 +286,7 @@ export function GraphNotification(props: {
         <GraphNodes
           hideAuthors={hideAuthors}
           posts={contents.slice(0, 4)}
-          mod={index.module}
+          mod={index.mark}
           index={contents?.[0].index}
           association={association}
           hidden={groups[association?.group]?.hidden}

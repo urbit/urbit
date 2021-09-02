@@ -1,8 +1,7 @@
 import { Action, Anchor, Box, Col, Icon, Row, Rule, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, Group, TextContent, UrlContent } from '@urbit/api';
+import { Association, GraphNode, Group, markEachAsRead, removePosts, TextContent, UrlContent, ReferenceContent } from '@urbit/api';
 import React, { ReactElement, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph, referenceToPermalink } from '~/logic/lib/permalinks';
 import { useCopy } from '~/logic/lib/useCopy';
@@ -11,24 +10,23 @@ import Author from '~/views/components/Author';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
 import { PermalinkEmbed } from '../../permalinks/embed';
+import airlock from '~/logic/api';
 
 interface LinkItemProps {
   node: GraphNode;
   association: Association;
   resource: string;
-  api: GlobalApi;
   group: Group;
-  path: string;
   baseUrl: string;
+  mt?: number;
+  measure?: any;
 }
 export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<HTMLDivElement>): ReactElement => {
   const {
     association,
     node,
     resource,
-    api,
     group,
-    path,
     ...rest
   } = props;
 
@@ -36,19 +34,22 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
     return <Redirect to="/~404" />;
   }
 
-  const remoteRef = useRef<typeof RemoteContent | null>(null);
+  const remoteRef = useRef<HTMLDivElement>(null);
+  const setRef = useCallback((el: HTMLDivElement | null ) => {
+    remoteRef.current = el;
+  }, []);
   const index = node.post.index.split('/')[1];
 
   const markRead = useCallback(() => {
-    api.hark.markEachAsRead(props.association, '/', `/${index}`, 'link', 'link');
-  }, [association, index]);
+    airlock.poke(markEachAsRead(resource, '/', `/${index}`));
+  }, [resource, index]);
 
   useEffect(() => {
     function onBlur() {
       // FF will only update on next tick
       setTimeout(() => {
-        console.log(remoteRef.current);
         if(document.activeElement instanceof HTMLIFrameElement
+          // @ts-ignore forwardref prop passing
           && remoteRef?.current?.containerRef?.contains(document.activeElement)) {
           markRead();
         }
@@ -93,14 +94,15 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
 
   const deleteLink = () => {
     if (confirm('Are you sure you want to delete this link?')) {
-      api.graph.removePosts(`~${ship}`, name, [node.post.index]);
+      airlock.poke(removePosts(`~${ship}`, name, [node.post.index]));
     }
   };
 
   const appPath = `/ship/~${resource}`;
-  const unreads = useHarkState(state => state.unreads);
-  const commColor = (unreads.graph?.[appPath]?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
-  const isUnread = unreads.graph?.[appPath]?.['/']?.unreads?.has(node.post.index);
+  const unreads = useHarkState(state => state.unreads?.[appPath]);
+  const commColor = (unreads?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
+  // @ts-ignore hark will have to choose between sets and numbers
+  const isUnread = unreads?.['/']?.unreads?.has?.(node.post.index);
 
   return (
     <Box
@@ -125,41 +127,20 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
         overflow="hidden"
         onClick={markRead}
       >
-        <Text p={2}>{contents[0].text}</Text>
+        {contents[0].text ? <Text p={2}>{contents[0].text}</Text> : null}
         { 'reference' in contents[1] ? (
           <>
             <Rule />
-            <PermalinkEmbed full link={referenceToPermalink(contents[1]).link} api={api} transcluded={0} />
+            <PermalinkEmbed full link={referenceToPermalink(contents[1] as unknown as ReferenceContent).link} transcluded={0} />
           </>
         ) : (
         <>
         <RemoteContent
-          ref={(r) => {
-            remoteRef.current = r;
-          }}
+          embedRef={setRef}
+          // @ts-ignore RemoteContent weirdness
           renderUrl={false}
           url={href}
-          text={contents[0].text}
-          unfold={true}
-          style={{ alignSelf: 'center' }}
-          oembedProps={{
-            p: 2,
-            className: 'links embed-container',
-            onClick: markRead
-          }}
-          imageProps={{
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            display: 'block'
-          }}
-          textProps={{
-            overflow: 'hidden',
-            color: 'black',
-            display: 'block',
-            alignSelf: 'center',
-            style: { textOverflow: 'ellipsis', whiteSpace: 'pre', width: '100%' },
-            p: 2
-          }}
+          tall
         />
         <Text color="gray" p={2} flexShrink={0}>
             <Anchor  target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }} href={href}>

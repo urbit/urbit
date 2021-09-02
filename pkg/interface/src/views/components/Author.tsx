@@ -1,32 +1,29 @@
-import { BaseImage, Box, Row } from '@tlon/indigo-react';
+import { BaseImage, Box, Row, Text } from '@tlon/indigo-react';
 import moment from 'moment';
-import React, { ReactElement, ReactNode, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import GlobalApi from '~/logic/api/global';
+import React, { ReactElement, ReactNode } from 'react';
 import { Sigil } from '~/logic/lib/sigil';
 import { useCopy } from '~/logic/lib/useCopy';
-import { cite, deSig, useShowNickname, uxToHex } from '~/logic/lib/util';
-import useContactState from '~/logic/state/contact';
-import useLocalState from '~/logic/state/local';
+import { cite, useShowNickname, uxToHex } from '~/logic/lib/util';
+import { useContact } from '~/logic/state/contact';
+import { useDark } from '~/logic/state/join';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { PropFunc } from '~/types';
 import ProfileOverlay from './ProfileOverlay';
 import Timestamp from './Timestamp';
 
-interface AuthorProps {
+export interface AuthorProps {
   ship: string;
   date?: number;
   showImage?: boolean;
   children?: ReactNode;
   unread?: boolean;
-  api?: GlobalApi;
   size?: number;
   lineHeight?: string | number;
   isRelativeTime?: boolean;
 }
 
 // eslint-disable-next-line max-lines-per-function
-export default function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
+function Author(props: AuthorProps & PropFunc<typeof Box>): ReactElement {
   const {
     ship = '',
     date,
@@ -34,7 +31,6 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
     fullNotIcon,
     children,
     unread,
-    group,
     isRelativeTime,
     dontShowTime,
     lineHeight = 'tall',
@@ -45,29 +41,15 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
   const size = props.size || 16;
   const sigilPadding = props.sigilPadding || 2;
 
-  const history = useHistory();
-  const osDark = useLocalState(state => state.dark);
+  const dark = useDark();
 
-  const theme = useSettingsState(s => s.display.theme);
-  const dark = theme === 'dark' || (theme === 'auto' && osDark);
-
-  let contact;
-  const contacts = useContactState(state => state.contacts);
-  if (contacts) {
-    contact = `~${deSig(ship)}` in contacts ? contacts[`~${deSig(ship)}`] : null;
-  }
+  const contact = useContact(ship);
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : dark ? '#000000' : '#FFFFFF';
   const showNickname = useShowNickname(contact);
   const { hideAvatars } = useSettingsState(selectCalmState);
   const name = showNickname && contact ? contact.nickname : cite(ship);
   const stamp = moment(date);
-  const { copyDisplay, doCopy, didCopy } = useCopy(`~${ship}`, name);
-
-  const [showOverlay, setShowOverlay] = useState(false);
-
-  const toggleOverlay = () => {
-    setShowOverlay(value => !value);
-  };
+  const { copyDisplay, doCopy } = useCopy(`~${ship}`, name);
 
   const sigil = fullNotIcon ? (
     <Sigil ship={ship} size={size} color={color} padding={sigilPadding} />
@@ -91,23 +73,19 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
   return (
     <Row {...rest} alignItems='center' width='auto'>
       <Box
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleOverlay();
-        }}
         height={`${size}px`}
         overflow='hidden'
         position='relative'
         cursor='pointer'
       >
         {showImage && (
-          <ProfileOverlay ship={ship} api={props.api} >
+          <ProfileOverlay ship={ship}>
             {img}
           </ProfileOverlay>
         )}
       </Box>
       <Box display='flex' alignItems='baseline'>
-        <Box
+        <Text
           ml={showImage ? 2 : 0}
           color='black'
           fontSize='1'
@@ -117,10 +95,14 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
           fontWeight={showNickname ? '500' : '400'}
           mr={showNickname ? 0 : '2px'}
           mt={showNickname ? 0 : '0px'}
+          overflow="hidden"
+          textOverflow="ellipsis"
+          whiteSpace="nowrap"
+          title={showNickname ? cite(ship) : contact?.nickname}
           onClick={doCopy}
         >
           {copyDisplay}
-        </Box>
+        </Text>
         { !dontShowTime && time && (
           <Timestamp
             height="fit-content"
@@ -128,11 +110,15 @@ export default function Author(props: AuthorProps & PropFunc<typeof Box>): React
             stamp={stamp}
             fontSize={0}
             time={time}
+            whiteSpace='nowrap'
             ml={2}
-            color={unread ? 'blue' : 'gray'} />
+            color={unread ? 'blue' : 'gray'}
+          />
         )}
         {children}
       </Box>
     </Row>
   );
 }
+
+export default React.memo(Author);

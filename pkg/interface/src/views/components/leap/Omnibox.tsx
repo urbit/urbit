@@ -1,6 +1,8 @@
 import { Box, Row, Text } from '@tlon/indigo-react';
 import { omit } from 'lodash';
 import Mousetrap from 'mousetrap';
+import _ from 'lodash';
+import f from 'lodash/fp';
 import React, {
   ReactElement, useCallback,
   useEffect, useMemo,
@@ -11,7 +13,7 @@ import React, {
 import { useHistory, useLocation } from 'react-router-dom';
 import * as ob from 'urbit-ob';
 import defaultApps from '~/logic/lib/default-apps';
-import makeIndex from '~/logic/lib/omnibox';
+import makeIndex, { OmniboxItem } from '~/logic/lib/omnibox';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { deSig } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
@@ -41,6 +43,7 @@ const SEARCHED_CATEGORIES = [
   'apps'
 ];
 const settingsSel = (s: SettingsState) => s.leap;
+const CAT_LIMIT = 6;
 
 export function Omnibox(props: OmniboxProps): ReactElement {
   const location = useLocation();
@@ -100,7 +103,9 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     }
     Mousetrap.bind('escape', props.toggle);
     const touchstart = new Event('touchstart');
+    // @ts-ignore ref typings
     inputRef?.current?.input?.dispatchEvent(touchstart);
+    // @ts-ignore ref typings
     inputRef?.current?.input?.focus();
     return () => {
       Mousetrap.unbind('escape');
@@ -109,7 +114,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   }, [props.show]);
 
   const initialResults = useMemo(() => {
-    return new Map(
+    return new Map<string, OmniboxItem[]>(
       SEARCHED_CATEGORIES.map((category) => {
         if (category === 'other') {
           return [
@@ -127,7 +132,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       return initialResults;
     }
     const q = query.toLowerCase();
-    const resultsMap = new Map();
+    const resultsMap = new Map<string, OmniboxItem[]>();
     SEARCHED_CATEGORIES.map((category) => {
       const categoryIndex = index.get(category);
       resultsMap.set(
@@ -148,7 +153,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   }, [query, index]);
 
   const navigate = useCallback(
-    (app: string, link: string) => {
+    (app: string, link: string, shift: boolean) => {
       props.toggle();
       if (
         defaultApps.includes(app.toLowerCase()) ||
@@ -160,6 +165,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         app === 'home' ||
         app === 'inbox'
       ) {
+        if(shift && app === 'profile') {
+          // TODO: hacky, fix
+          link = link.replace('~profile', '~landscape/messages/dm');
+        }
         history.push(link);
       } else {
         window.location.href = link;
@@ -169,10 +178,11 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   );
 
   const setPreviousSelected = useCallback(() => {
-    const flattenedResults = Array.from(results.values()).flat();
+    const flattenedResults = Array.from(results.values()).map(f.take(CAT_LIMIT)).flat();
     const totalLength = flattenedResults.length;
     if (selected.length) {
       const currentIndex = flattenedResults.indexOf(
+          // @ts-ignore unclear how to give this spread a return signature
         ...flattenedResults.filter((e) => {
           return e.link === selected[1];
         })
@@ -191,9 +201,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
   }, [results, selected]);
 
   const setNextSelected = useCallback(() => {
-    const flattenedResults = Array.from(results.values()).flat();
+    const flattenedResults = Array.from(results.values()).map(f.take(CAT_LIMIT)).flat();
     if (selected.length) {
       const currentIndex = flattenedResults.indexOf(
+        // @ts-ignore unclear how to give this spread a return signature
         ...flattenedResults.filter((e) => {
           return e.link === selected[1];
         })
@@ -242,13 +253,14 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       if (evt.key === 'Enter') {
         evt.preventDefault();
         if (selected.length) {
-          navigate(selected[0], selected[1]);
+          navigate(selected[0], selected[1], evt.shiftKey);
         } else if (Array.from(results.values()).flat().length === 0) {
           return;
         } else {
           navigate(
             Array.from(results.values()).flat()[0].app,
-            Array.from(results.values()).flat()[0].link
+            Array.from(results.values()).flat()[0].link,
+            evt.shiftKey
           );
         }
       }
@@ -300,13 +312,15 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     return (
       <Box
         maxHeight={['200px', '400px']}
-        overflowY='auto'
-        overflowX='hidden'
+        overflow='hidden'
         borderBottomLeftRadius={2}
         borderBottomRightRadius={2}
       >
         {SEARCHED_CATEGORIES.map(category =>
-          Object({ category, categoryResults: results.get(category) })
+          ({
+            category,
+            categoryResults: _.take(results.get(category).sort(sortResults), CAT_LIMIT)
+          })
         )
           .filter(category => category.categoryResults.length > 0)
           .map(({ category, categoryResults }, i) => {
@@ -320,17 +334,21 @@ export function Omnibox(props: OmniboxProps): ReactElement {
               );
             const sel = selected?.length ? selected[1] : '';
             return (
-              <Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
+              <Box key={i} width='max(50vw, 300px)' maxWidth='700px'>
                 {categoryTitle}
-                {categoryResults.sort(sortResults).map((result, i2) => (
+                {categoryResults.map((result, i2) => (
                   <OmniboxResult
                     key={i2}
+                    // @ts-ignore withHovering doesn't pass props
                     icon={result.app}
                     text={result.title}
                     subtext={result.host}
+                    shiftLink={result.shiftLink}
+                    shiftDescription={result.shiftDescription}
+                    description={result.description}
                     link={result.link}
                     cursor={leapCursor}
-                    navigate={() => navigate(result.app, result.link)}
+                    navigate={() => navigate(result.app, result.link, false)}
                     setSelection={() => setSelection(result.app, result.link)}
                     selected={sel}
                   />
@@ -356,17 +374,19 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       >
         <Row justifyContent='center'>
           <Box
-            mt={['10vh', '20vh']}
+            mt={['10vh', '15vh']}
             width='max(50vw, 300px)'
-            maxWidth='600px'
+            maxWidth='700px'
             borderRadius={2}
             backgroundColor='white'
             ref={(el) => {
               omniboxRef.current = el;
             }}
           >
+            { /* @ts-ignore investigate zustand types */ }
             <OmniboxInput
               ref={(el) => {
+                // @ts-ignore investigate refs
                 inputRef.current = el;
               }}
               control={e => control(e)}
@@ -380,5 +400,5 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     </Portal>
   );
 }
-
+// @ts-ignore investigate zustand types
 export default withLocalState(Omnibox, ['toggleOmnibox', 'omniboxShown']);

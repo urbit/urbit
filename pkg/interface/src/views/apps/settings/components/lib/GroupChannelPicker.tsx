@@ -1,9 +1,8 @@
 import {
   Box,
-
   Center, Col, Icon,
-
-  StatelessToggleSwitchField, Text
+  Text,
+  StatelessToggleSwitchField
 } from '@tlon/indigo-react';
 import { Association, GraphConfig, resourceFromPath } from '@urbit/api';
 import { useField } from 'formik';
@@ -36,17 +35,19 @@ function GroupWithChannels(props: { association: Association }) {
     s.notificationsGroupConfig.includes(association.group)
   );
 
-  const [{ value }, meta, { setValue }] = useField(
+  const [, , { setValue }] = useField(
     `groups["${association.group}"]`
   );
 
+  const [optValue, setOptValue] = useState(groupWatched);
+
   const onChange = () => {
-    setValue(!value);
+    setOptValue(v => !v);
   };
 
   useEffect(() => {
-    setValue(groupWatched);
-  }, []);
+    setValue(optValue);
+  }, [optValue]);
 
   const graphs = useGraphsForGroup(association.group);
   const joinedGraphs = useGraphState(s => s.graphKeys);
@@ -83,7 +84,7 @@ function GroupWithChannels(props: { association: Association }) {
         <Text>{metadata.title}</Text>
       </Box>
       <Box gridArea="groupToggle">
-        <StatelessToggleSwitchField selected={value} onChange={onChange} />
+        <StatelessToggleSwitchField selected={optValue} onChange={onChange} />
       </Box>
       {open &&
         _.map(joinedGroupGraphs, (a: Association, graph: string) => (
@@ -100,17 +101,18 @@ function Channel(props: { association: Association }) {
     return isWatching(config, association.resource);
   });
 
-  const [{ value }, meta, { setValue }] = useField(
+  const [{ value }, , { setValue, setTouched }] = useField(
     `graph["${association.resource}"]`
   );
+
+  const onClick = () => {
+    setValue(!value);
+    setTouched(true);
+  };
 
   useEffect(() => {
     setValue(watching);
   }, [watching]);
-
-  const onChange = () => {
-    setValue(!value);
-  };
 
   const icon = getModuleIcon((metadata.config as GraphConfig)?.graph as GraphModule);
 
@@ -123,7 +125,7 @@ function Channel(props: { association: Association }) {
         <Text> {metadata.title}</Text>
       </Box>
       <Box gridColumn={4}>
-        <StatelessToggleSwitchField selected={value} onChange={onChange} />
+        <StatelessToggleSwitchField selected={value} onClick={onClick} />
       </Box>
     </>
   );

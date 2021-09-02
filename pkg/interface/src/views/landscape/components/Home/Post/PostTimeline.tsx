@@ -1,13 +1,12 @@
 import { Box, Col, Text } from '@tlon/indigo-react';
 import { Association, Graph, Group } from '@urbit/api';
+import { History } from 'history';
 import React, { ReactElement } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { Loading } from '~/views/components/Loading';
 import PostFeed from './PostFeed';
 import PostInput from './PostInput';
 
 interface PostTimelineProps {
-  api: GlobalApi;
   association: Association;
   baseUrl: string;
   graph: Graph;
@@ -15,12 +14,12 @@ interface PostTimelineProps {
   group: Group;
   pendingSize: number;
   vip: string;
+  history?: History;
 }
 
 const PostTimeline = (props: PostTimelineProps): ReactElement => {
   const {
     baseUrl,
-    api,
     association,
     graphPath,
     group,
@@ -57,7 +56,6 @@ const PostTimeline = (props: PostTimelineProps): ReactElement => {
           alignItems="center"
         >
           <PostInput
-            api={api}
             graphPath={graphPath}
             group={group}
             association={association}
@@ -82,40 +80,19 @@ const PostTimeline = (props: PostTimelineProps): ReactElement => {
   }
 
   return (
-    <>
-      <Box
-        width="100%"
-        maxWidth="616px"
-        pt={3}
-        pl={2}
-        pr={2}
-        mb={3}
-        flexDirection="column"
-        alignItems="center"
-      >
-        <PostInput
-          api={api}
-          group={group}
-          association={association}
-          vip={vip}
-          graphPath={graphPath}
-        />
-      </Box>
-      <Box height="calc(100% - 176px)" width="100%" alignItems="center" pl={1}>
-        <PostFeed
-          key={graphPath}
-          graphPath={graphPath}
-          graph={graph}
-          pendingSize={pendingSize}
-          association={association}
-          group={group}
-          vip={vip}
-          api={api}
-          baseUrl={baseUrl}
-        />
-      </Box>
-    </>
+    <Box height="calc(100% - 48px)" width="100%" alignItems="center" pl={1}>
+      <PostFeed
+        key={graphPath}
+        graphPath={graphPath}
+        graph={graph}
+        pendingSize={pendingSize}
+        association={association}
+        group={group}
+        vip={vip}
+        baseUrl={baseUrl}
+      />
+    </Box>
   );
-}
+};
 
 export default PostTimeline;

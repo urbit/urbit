@@ -21,3 +21,18 @@ a * {
   text-decoration-color: none;
   text-decoration-line: none;
 }
+
+ol, ul {
+  margin-block-start: 0;
+  margin-block-end: 0;
+
+}
+
+span {
+  box-sizing: border-box;
+}
+
+* {
+  user-select: var(--user-select, unset);
+  -webkit-user-select: var(--user-select, unset);
+}

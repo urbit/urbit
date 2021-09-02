@@ -1,17 +1,18 @@
-import {
-  AppInvites, Invite,
+import React, { ReactElement } from 'react';
+import _ from 'lodash';
 
+import {
+  Invite,
+  AppInvites,
   JoinRequest
 } from '@urbit/api';
-import _ from 'lodash';
-import React, { ReactElement } from 'react';
-import GlobalApi from '~/logic/api/global';
 import { alphabeticalOrder, resourceAsPath } from '~/logic/lib/util';
 import useInviteState from '~/logic/state/invite';
+import useGraphState from '~/logic/state/graph';
+import { PendingDm } from './PendingDm';
 import InviteItem from '~/views/components/Invite';
 
 interface InvitesProps {
-  api: GlobalApi;
   pendingJoin?: any;
 }
 
@@ -22,8 +23,9 @@ interface InviteRef {
 }
 
 export function Invites(props: InvitesProps): ReactElement {
-  const { api } = props;
   const invites = useInviteState(state => state.invites);
+
+  const pendingDms = useGraphState(s => s.pendingDms) ?? [];
 
   const inviteArr: InviteRef[] = _.reduce(
     invites,
@@ -49,26 +51,27 @@ export function Invites(props: InvitesProps): ReactElement {
 
   return (
     <>
+      {[...pendingDms].map(ship => (
+        <PendingDm key={ship} ship={`~${ship}`} />
+      ))}
       {Object.keys(invitesAndStatus)
         .sort(alphabeticalOrder)
         .map((resource) => {
           const inviteOrStatus = invitesAndStatus[resource];
           const join = pendingJoin[resource];
           if ('progress' in inviteOrStatus) {
-           return (
-             <InviteItem
-               key={resource}
-               resource={resource}
-               api={api}
-               pendingJoin={join}
-             />
+            return (
+              <InviteItem
+                key={resource}
+                resource={resource}
+                pendingJoin={join}
+              />
             );
           } else {
             const { app, uid, invite } = inviteOrStatus;
             return (
               <InviteItem
                 key={resource}
-                api={api}
                 invite={invite}
                 app={app}
                 uid={uid}
@@ -76,8 +79,7 @@ export function Invites(props: InvitesProps): ReactElement {
               />
             );
           }
-        })
-      }
+        })}
     </>
   );
 }
