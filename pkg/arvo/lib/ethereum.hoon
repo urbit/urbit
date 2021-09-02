@@ -460,6 +460,7 @@
       ::  supported requests.
       ++  request
         $%  [%eth-block-number ~]
+            [%eth-get-balance adr=address deb=block]
             [%eth-call cal=call deb=block]
             $:  %eth-new-filter
                 fro=(unit block)
@@ -623,6 +624,12 @@
           (block-to-json deb.req)
       ==
     ::
+        %eth-get-balance
+      :-  'eth_getBalance'
+      :~  (tape (address-to-hex adr.req))
+          (block-to-json deb.req)
+      ==
+    ::
         %eth-new-filter
       :-  'eth_newFilter'
       :_  ~
@@ -775,6 +782,8 @@
     (hex-to-num p.j)
   ::
   ++  parse-eth-new-filter-res  parse-hex-result
+  ::
+  ++  parse-eth-balance  parse-hex-result
   ::
   ++  parse-eth-block-number  parse-hex-result
   ::

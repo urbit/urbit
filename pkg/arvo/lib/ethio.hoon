@@ -170,6 +170,13 @@
   --
 ::
 ::
+++  get-balance
+  |=  [url=@ta adr=address]
+  =/  m  (strand:strandio ,@ud)
+  ;<  =json  bind:m
+    (request-rpc url `'balance' %eth-get-balance adr [%label %latest])
+  (pure:m (parse-eth-balance:rpc:ethereum json))
+::
 ++  get-latest-block
   |=  url=@ta
   =/  m  (strand:strandio ,block)
