@@ -435,8 +435,13 @@
           =network
           to=address
           value=@ud
-          call=call-data
+          call=(unit call-data)
       ==
   ^-  transaction:rpc
-  (do network nonce to (encode-call:rpc call))
+  %:  do
+      network
+      nonce
+      to
+      ?~(call 0x0 (encode-call:rpc u.call))
+  ==
 --

@@ -442,9 +442,9 @@
   ^-  batch:claz
   :-  %more
   =,  mainnet-contracts
-  :~  [%custom ecliptic 0 'transferOwnership' [%address deep-safe]~]
-      [%custom linear-star-release 0 'transferOwnership' [%address shallow-safe]~]
-      [%custom conditional-star-release 0 'transferOwnership' [%address deep-safe]~]
+  :~  [%custom ecliptic 0 ~ 'transferOwnership' [%address deep-safe]~]
+      [%custom linear-star-release 0 ~ 'transferOwnership' [%address shallow-safe]~]
+      [%custom conditional-star-release 0 ~ 'transferOwnership' [%address deep-safe]~]
   ==
 ::
 ::  exporting

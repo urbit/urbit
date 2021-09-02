@@ -38,7 +38,7 @@
       [%lock how=?(%spawn %transfer) what=(list ship) to=address =lockup]
       ::  %custom: arbitrary ethereum transaction
       ::
-      [%custom to=address value=@ud call=call-data:rpc]
+      [%custom to=address value=@ud call=(unit call-data:rpc)]
       ::  %more: multiple batches sequentially
       ::
       [%more batches=(list batch)]
