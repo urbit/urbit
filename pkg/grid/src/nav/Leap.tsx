@@ -200,7 +200,7 @@ export const Leap = React.forwardRef(({ menu, dropdown, navOpen, className }: Le
       <form
         className={classNames(
           'flex items-center h-full w-full px-2 rounded-full bg-white default-ring focus-within:ring-2',
-          navOpen && menu !== 'search' && 'opacity-80',
+          navOpen && menu !== 'search' && 'opacity-60',
           !navOpen ? 'bg-gray-50' : '',
           className
         )}
@@ -220,7 +220,7 @@ export const Leap = React.forwardRef(({ menu, dropdown, navOpen, className }: Le
           type="text"
           ref={inputRef}
           placeholder={selection ? '' : 'Search Landscape'}
-          className="flex-1 w-full px-2 h4 rounded-full bg-transparent outline-none"
+          className="flex-1 w-full h-full px-2 h4 rounded-full bg-transparent outline-none"
           value={rawInput}
           onClick={toggleSearch}
           onFocus={onFocus}
@@ -234,7 +234,7 @@ export const Leap = React.forwardRef(({ menu, dropdown, navOpen, className }: Le
       {navOpen && (
         <Link
           to="/"
-          className="absolute top-1/2 right-2 flex-none circle-button w-8 h-8 text-gray-400 bg-gray-100 default-ring -translate-y-1/2"
+          className="absolute top-1/2 right-2 flex-none circle-button w-8 h-8 text-gray-400 bg-gray-50 default-ring -translate-y-1/2"
           onClick={() => select(null)}
         >
           <Cross className="w-3 h-3 fill-current" />

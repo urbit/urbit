@@ -19,10 +19,10 @@ export function disableDefault<T extends Event>(e: T): void {
 }
 
 // hack until radix-ui fixes this behavior
-export function handleDropdownLink(setOpen: (open: boolean) => void): (e: Event) => void {
+export function handleDropdownLink(setOpen?: (open: boolean) => void): (e: Event) => void {
   return (e: Event) => {
     e.stopPropagation();
     e.preventDefault();
-    setTimeout(() => setOpen(false), 15);
+    setTimeout(() => setOpen?.(false), 15);
   };
 }

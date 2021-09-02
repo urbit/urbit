@@ -101,7 +101,7 @@ const useDocketState = create<DocketState>((set, get) => ({
     }
     if (useMockData) {
       set((state) => addCharge(state, desk, { ...treaty, chad: { install: null } }));
-      await new Promise<void>((res) => setTimeout(() => res(), 5000));
+      await new Promise<void>((res) => setTimeout(() => res(), 10000));
       set((state) => addCharge(state, desk, { ...treaty, chad: { glob: null } }));
     }
 

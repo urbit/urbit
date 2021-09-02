@@ -121,13 +121,13 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
       </DocketHeader>
       {vat ? (
         <>
-          <hr className="-mx-5 sm:-mx-8" />
+          <hr className="-mx-5 sm:-mx-8 border-gray-50" />
           <VatMeta vat={vat} />
         </>
       ) : null}
       {'chad' in docket ? null : (
         <>
-          <hr className="-mx-5 sm:-mx-8" />
+          <hr className="-mx-5 sm:-mx-8 border-gray-50" />
           <TreatyMeta treaty={docket} />
         </>
       )}

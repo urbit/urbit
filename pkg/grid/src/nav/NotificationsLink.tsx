@@ -39,7 +39,7 @@ export const NotificationsLink = ({ navOpen, menu }: NotificationsLinkProps) => 
       className={classNames(
         'relative z-50 flex-none circle-button h4 default-ring',
         navOpen && 'text-opacity-60',
-        navOpen && menu !== 'notifications' && 'opacity-80',
+        navOpen && menu !== 'notifications' && 'opacity-60',
         state === 'empty' && !navOpen && 'text-gray-400 bg-gray-50',
         state === 'empty' && navOpen && 'text-gray-400 bg-white',
         state === 'unread' && 'bg-blue-400 text-white',

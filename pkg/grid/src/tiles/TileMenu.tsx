@@ -61,9 +61,6 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content
-        align="start"
-        alignOffset={-32}
-        sideOffset={4}
         onCloseAutoFocus={disableDefault}
         className={classNames(
           'dropdown py-2 font-semibold',
@@ -88,10 +85,7 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
             Remove App
           </Item>
         </DropdownMenu.Group>
-        <DropdownMenu.Arrow
-          className="w-4 h-[10px] fill-current -translate-x-10"
-          style={{ color: menuColor }}
-        />
+        <DropdownMenu.Arrow className="w-4 h-[10px] fill-current" style={{ color: menuColor }} />
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   );
