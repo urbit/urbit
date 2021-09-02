@@ -210,7 +210,7 @@
   (add (lsh [a (met a b)] c) b)
 ::
 ++  cut                                                 ::  slice
-  ~/  %cut  ::  TODO: jet
+  ~/  %cut
   |=  [a=bloq [b=step c=step] d=@]
   (end [a c] (rsh [a b] d))
 ::

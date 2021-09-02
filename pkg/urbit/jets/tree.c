@@ -2113,6 +2113,7 @@ u3j_core _a50_d[] =
   { "cat", 7, _140_two_cat_a, 0, _140_two_cat_ha },
   { "can", 7, _140_two_can_a, 0, _140_two_can_ha },
   { "con", 7, _140_two_con_a, 0, _140_two_con_ha },
+  { "cut", 7, _140_two_cut_a, 0, _140_two_cut_ha },
   { "dis", 7, _140_two_dis_a, 0, _140_two_dis_ha },
   { "dor", 7, _140_two_dor_a, 0, _140_two_dor_ha },
   { "end", 7, _140_two_end_a, 0, _140_two_end_ha },
