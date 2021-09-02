@@ -134,7 +134,7 @@ data Feed
   | Feed1 Germs
   deriving (Eq, Show)
 
---NOTE  reify type environment
+-- NOTE reify type environment
 $(pure [])
 
 instance ToNoun Feed where
@@ -270,7 +270,7 @@ data BoatEv
 deriveNoun ''BoatEv
 
 
--- Boat Events -----------------------------------------------------------------
+-- Jael Events -----------------------------------------------------------------
 
 data JaelEv
     = JaelEvRekey () (Life, Ring)
