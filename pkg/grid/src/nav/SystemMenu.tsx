@@ -77,6 +77,15 @@ export const SystemMenu = ({ open, setOpen, className, menu, navOpen }: SystemMe
               <span className="h4">Help and Support</span>
             </DropdownMenu.Item>
             <DropdownMenu.Item
+              as={Link}
+              to="/app/garden"
+              className="flex items-center p-2 mb-2 space-x-2 focus:bg-blue-200 focus:outline-none rounded"
+              onSelect={handleDropdownLink(setOpen)}
+            >
+              <span className="w-5 h-5 bg-gray-100 rounded-full" />
+              <span className="h4">About Landscape</span>
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
               as="button"
               className="inline-flex items-center py-2 px-3 m-2 h4 text-black bg-gray-100 rounded focus:bg-blue-200 focus:outline-none"
               onSelect={copyHash}
