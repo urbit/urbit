@@ -2,23 +2,8 @@
 **
 **  the main loop of a serf process.
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
-#include <sigsegv.h>
-#include <stdint.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <uv.h>
-#include <errno.h>
-
 #include "all.h"
+#include "rsignal.h"
 #include <vere/vere.h>
 #include <vere/serf.h>
 
@@ -146,7 +131,7 @@ _cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
   //  we replace [FD 0] (stdin) with a fd pointing to /dev/null
   //  we replace [FD 1] (stdout) with a dup of [FD 2] (stderr)
   //
-  c3_i nul_i = open("/dev/null", O_RDWR, 0);
+  c3_i nul_i = open(c3_dev_null, O_RDWR, 0);
 
   *inn_i = dup(0);
   *out_i = dup(1);
@@ -155,6 +140,11 @@ _cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
   dup2(2, 1);
 
   close(nul_i);
+
+  //  set stream I/O to unbuffered because it's now a pipe not a console
+  //
+  setvbuf(stdout, NULL, _IONBF, 0);
+  setvbuf(stderr, NULL, _IONBF, 0);
 }
 
 /* _cw_serf_stdio(): cleanup on serf exit.
@@ -166,6 +156,16 @@ _cw_serf_exit(void)
   u3t_trace_close();
 }
 
+#if defined(U3_OS_mingw)
+/* _mingw_ctrlc_cb(): invoked when the lord signals the Ctrl-C event
+*/
+static void
+_mingw_ctrlc_cb(PVOID param, BOOLEAN timedOut)
+{
+  rsignal_raise(SIGINT);
+}
+#endif
+
 /* _cw_serf_commence(); initialize and run serf
 */
 static void
@@ -174,7 +174,23 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   c3_i inn_i, out_i;
   _cw_serf_stdio(&inn_i, &out_i);
 
+  #if defined(U3_OS_mingw)
+  c3_assert( 8 == argc );
+
+  //  Initialize serf's end of Ctrl-C handling
+  //
+  {
+    HANDLE h;
+    if ( 1 != sscanf(argv[7], "%u", &h) ) {
+      fprintf(stderr, "serf: Ctrl-C event: bad handle %s: %s\r\n", argv[7], strerror(errno));
+    } else
+    if ( !RegisterWaitForSingleObject(&h, h, _mingw_ctrlc_cb, NULL, INFINITE, 0) ) {
+      fprintf(stderr, "serf: Ctrl-C event: RegisterWaitForSingleObject(%u) failed (%d)\r\n", h, GetLastError());
+    }
+  }
+  #else
   c3_assert( 7 == argc );
+  #endif
 
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[2];
@@ -211,12 +227,14 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
 
   //  Ignore SIGPIPE signals.
   //
+  #ifndef U3_OS_mingw
   {
     struct sigaction sig_s = {{0}};
     sigemptyset(&(sig_s.sa_mask));
     sig_s.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sig_s, 0);
   }
+  #endif
 
   //  configure pipe to daemon process
   //
@@ -444,7 +462,11 @@ _cw_usage(c3_i argc, c3_c* argv[])
           "  cue persistent state:\n"
           "    %s queu <pier> <at-event>\n\n"
           "  run as a 'serf':\n"
-          "    %s serf <pier> <key> <flags> <cache-size> <at-event>\n",
+          "    %s serf <pier> <key> <flags> <cache-size> <at-event>"
+          #if defined(U3_OS_mingw)
+          " <ctrlc-handle>"
+          #endif
+          "\n",
           argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
 }
 

@@ -1,0 +1,36 @@
+diff --git a/build/Win64-MinGW-w64/Makefile b/build/Win64-MinGW-w64/Makefile
+--- a/build/Win64-MinGW-w64/Makefile
++++ b/build/Win64-MinGW-w64/Makefile
+@@ -46,7 +46,8 @@ C_INCLUDES = -I. -I$(SOURCE_DIR)/$(SPECIALIZE_TYPE) -I$(SOURCE_DIR)/include
+ COMPILE_C = \
+   x86_64-w64-mingw32-gcc -c -Werror-implicit-function-declaration \
+     -DSOFTFLOAT_FAST_INT64 $(SOFTFLOAT_OPTS) $(C_INCLUDES) -O2 -o $@
+-MAKELIB = x86_64-w64-mingw32-ar crs $@
++MAKELIB = x86_64-w64-mingw32-gcc-ar crs $@
++LIBNAME = libsoftfloat3
+ 
+ OBJ = .o
+ LIB = .a
+@@ -54,7 +55,7 @@ LIB = .a
+ OTHER_HEADERS = $(SOURCE_DIR)/include/opts-GCC.h
+ 
+ .PHONY: all
+-all: softfloat$(LIB)
++all: $(LIBNAME)$(LIB)
+ 
+ OBJS_PRIMITIVES = \
+   s_eq128$(OBJ) \
+@@ -380,11 +381,11 @@ $(OBJS_PRIMITIVES) $(OBJS_OTHERS): %$(OBJ): $(SOURCE_DIR)/%.c
+ $(OBJS_SPECIALIZE): %$(OBJ): $(SOURCE_DIR)/$(SPECIALIZE_TYPE)/%.c
+ 	$(COMPILE_C) $(SOURCE_DIR)/$(SPECIALIZE_TYPE)/$*.c
+ 
+-softfloat$(LIB): $(OBJS_ALL)
++$(LIBNAME)$(LIB): $(OBJS_ALL)
+ 	$(DELETE) $@
+ 	$(MAKELIB) $^
+ 
+ .PHONY: clean
+ clean:
+-	$(DELETE) $(OBJS_ALL) softfloat$(LIB)
++	$(DELETE) $(OBJS_ALL) $(LIBNAME)$(LIB)
+ 

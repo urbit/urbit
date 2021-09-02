@@ -224,20 +224,38 @@
 
     /* u3_utty: unix tty.
     */
+      struct _u3_utty;
+
+    /* u3_ustm: uv stream.
+    */
+      typedef union _u3_ustm {
+        uv_pipe_t  pop_u;
+        uv_tcp_t   wax_u;
+        uv_tty_t   tty_u;
+      } u3_ustm;
+
+    /* u3_ttyf: simple unix tty function.
+    */
+      typedef c3_o (*u3_ttyf)(struct _u3_utty* uty_u);
+
+    /* u3_utty: unix tty.
+    */
       typedef struct _u3_utty {
-        union {
-          uv_pipe_t      pop_u;
-          uv_tcp_t       wax_u;
-        };
+        u3_ustm          pin_u;             //  input stream
+        u3_ustm          pop_u;             //  output stream
         struct _u3_utty* nex_u;             //  next in host list
+        u3_ttyf          sta_f;             //  start tty
+        u3_ttyf          sto_f;             //  clean up tty
+        u3_ttyf          hij_f;             //  hijack tty for cooked print
+        u3_ttyf          loj_f;             //  release tty from cooked print
+        c3_o           (*wsz_f)
+                       (struct _u3_utty* uty_u,
+                        c3_l* col_l,
+                        c3_l* row_l);       //  return tty window size
         c3_i             fid_i;             //  file descriptor
         c3_w             tid_l;             //  terminal identity number
         u3_utfo          ufo_u;             //  terminfo strings
-        c3_i             cug_i;             //  blocking fcntl flags
-        c3_i             nob_i;             //  nonblocking fcntl flags
         u3_utat          tat_u;             //  control state
-        struct termios   bak_u;             //  cooked terminal state
-        struct termios   raw_u;             //  raw terminal state
         struct _u3_auto* car_u;             //  driver hack
       } u3_utty;
 
@@ -301,6 +319,9 @@
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
         u3_usig*   sig_u;                   //  signal list
+        #if defined(U3_OS_mingw)
+        HANDLE     cev_u;                   //  Ctrl-C event handle
+        #endif
         u3_utty*   uty_u;                   //  linked terminal list
         u3_opts    ops_u;                   //  commandline options
         c3_i       xit_i;                   //  exit code for shutdown
@@ -469,6 +490,7 @@
           time_t               wen_t;           //  process creation time
           u3_mojo              inn_u;           //  client's stdin
           u3_moat              out_u;           //  client's stdout
+          uv_pipe_t            err_u;           //  client's stderr
           c3_w                 wag_w;           //  config flags
           c3_c*                bin_c;           //  binary path
           c3_c*                pax_c;           //  directory
@@ -641,7 +663,8 @@
       /* u3_king: all executing piers.
       */
         typedef struct _u3_king {
-          c3_c*          certs_c;               //  ssl certificate dump
+          void           (*ssl_curl_f)(void*);  //  setup ssl CAs in CURL*
+          void           (*ssl_x509_f)(void*);  //  setup ssl CAs in X509_STORE*
           u3_pier*         pir_u;               //  pier list
           uv_timer_t       tim_u;               //  gc timer
         } u3_king;
@@ -716,7 +739,7 @@
       */
         u3_atom
         u3_time_in_ts(struct timespec* tim_ts);
-#if defined(U3_OS_linux)
+#if defined(U3_OS_linux) || defined(U3_OS_mingw)
       /* u3_time_t_in_ts(): urbit time from time_t.
        */
          u3_atom
@@ -1103,6 +1126,11 @@
         void
         u3_term_log_exit(void);
 
+      /* u3_ptty_init(): initialize platform-specific tty.
+      */
+        u3_utty*
+        u3_ptty_init(uv_loop_t* lup_u, const c3_c** err_c);
+
 
     /**  Ames, packet networking.
     **/
@@ -1289,7 +1317,8 @@
                      u3_noun who,                   //  identity
                      u3_noun ven,                   //  boot event
                      u3_noun pil,                   //  type-of/path-to pill
-                     u3_noun pax);                  //  path to pier
+                     u3_noun pax,                   //  path to pier
+                     u3_weak fed);                  //  extra private keys
 
       /* u3_pier_stay(): restart the new pier system.
       */
@@ -1334,7 +1363,7 @@
       /* u3_dawn_vent(): validated boot event
       */
         u3_noun
-        u3_dawn_vent(u3_noun seed);
+        u3_dawn_vent(u3_noun ship, u3_noun seed);
 
       /* u3_king_commence(): start the daemon
       */
@@ -1371,6 +1400,15 @@
         void
         u3_king_grab(void* ptr_v);
 
+      /* u3_daemon_init(): platform-specific daemon mode initialization.
+      */
+        void
+        u3_daemon_init();
+
+      /* u3_write_fd(): retry interrupts, continue partial writes, assert errors.
+      */
+        void
+        u3_write_fd(c3_i fid_i, const void* buf_v, size_t len_i);
 
         c3_w
         u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
