@@ -1,6 +1,16 @@
 /-  spider, claz
 /+  *strand, strandio, azio, ethio, *ethereum, *azimuth
 ::
+=/  az
+  %~  .  azio
+  :-  'https://mainnet.infura.io/v3/2599df54929b47099bda360958d75aaf'
+  =>  mainnet-contracts
+  :*  azimuth
+      ecliptic
+      linear-star-release
+      delegated-sending
+  ==
+::
 =/  gas-price-gwei=@ud  70
 =/  gas-usage=@ud       21.000
 =/  tx-cost-wei=@ud  :(mul gas-price-gwei gas-usage 1.000.000.000)
@@ -356,6 +366,21 @@
   =*  addr  i.involved
   ?:  (~(has in safes) addr)
     loop-involved(involved t.involved)
+  ::  if it still owns important assets, leave its eth alone
+  ::
+  ;<  owned=(list @p)  bind:m
+    (get-owned-points:azimuth:az addr)
+  =/  non-planets  (skip owned |=(=@p =(%duke (clan:title p))))
+  ?:  !=(~ non-planets)
+    ~&  :+  %still-owns-assets
+          addr
+        :-  planets=(sub (lent owned) (lent non-planets))
+        rest=non-planets
+    loop-involved(involved t.involved)
+  ::
+  ~?  !=(~ owned)
+    :-  %still-owns-unimportant-assets
+    planets=(sub (lent owned) (lent non-planets))
   ::
   ;<  balance=@ud  bind:m
     (get-balance:ethio url addr)
