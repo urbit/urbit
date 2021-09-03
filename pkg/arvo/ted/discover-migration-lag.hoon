@@ -1,8 +1,6 @@
 /-  spider, claz
 /+  *strand, strandio, azio, *ethereum, *azimuth
 ::
-::NOTE  be sure to empty out the /migrations dir prior to re-running export
-::
 =/  az
   %~  .  azio
   :-  'https://mainnet.infura.io/v3/2599df54929b47099bda360958d75aaf'

@@ -416,12 +416,9 @@
   =?  out  !=(~ planets)
     ~&  [%has-planets star owner.deed (lent planets)]
     ~&  %approving-all-for-shallow-safe
-    ::TODO  this might be done multiple times if this address owns multiple
-    ::      stars. the solution is that the cache is dumb and we should just
-    ::      skip processing any address in it.
     %+  ~(add ja out)  owner.deed
     :+  %custom  ecliptic:mainnet-contracts
-    [0 'setApprovalForAll' ~[address+shallow-safe bool+&]]
+    [0 'setApprovalForAll(address,bool)' ~[address+shallow-safe bool+&]]
   ::  find other assets this address may transfer
   ::
   ;<  transferrable=(list @p)  bind:m
@@ -442,9 +439,9 @@
   ^-  batch:claz
   :-  %more
   =,  mainnet-contracts
-  :~  [%custom ecliptic 0 ~ 'transferOwnership' [%address deep-safe]~]
-      [%custom linear-star-release 0 ~ 'transferOwnership' [%address shallow-safe]~]
-      [%custom conditional-star-release 0 ~ 'transferOwnership' [%address deep-safe]~]
+  :~  [%custom ecliptic 0 ~ 'transferOwnership(address)' [%address deep-safe]~]
+      [%custom linear-star-release 0 ~ 'transferOwnership(address)' [%address shallow-safe]~]
+      [%custom conditional-star-release 0 ~ 'transferOwnership(address)' [%address deep-safe]~]
   ==
 ::
 ::  exporting
