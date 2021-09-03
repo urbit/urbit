@@ -24,7 +24,7 @@ export const SystemMenu = ({ className, menu, open, navOpen }: SystemMenuProps) 
   const { push } = useHistory();
   const [copied, setCopied] = useState(false);
   const garden = useVat('garden');
-  const hash = getHash(garden);
+  const hash = garden ? getHash(garden) : null;
 
   const copyHash = useCallback((event: Event) => {
     event.preventDefault();
@@ -107,17 +107,19 @@ export const SystemMenu = ({ className, menu, open, navOpen }: SystemMenuProps) 
                   <span className="w-5 h-5 bg-gray-100 rounded-full" />
                   <span className="h4">About Landscape</span>
                 </DropdownMenu.Item>
-                <DropdownMenu.Item
-                  as="button"
-                  className="inline-flex items-center py-2 px-3 m-2 h4 text-black bg-gray-100 rounded focus:bg-blue-200 focus:outline-none"
-                  onSelect={copyHash}
-                >
-                  <span className="sr-only">Base Hash</span>
-                  <code>
-                    {!copied && <span aria-label={hash.split('').join('-')}>{hash}</span>}
-                    {copied && 'copied!'}
-                  </code>
-                </DropdownMenu.Item>
+                {hash && (
+                  <DropdownMenu.Item
+                    as="button"
+                    className="inline-flex items-center py-2 px-3 m-2 h4 text-black bg-gray-100 rounded focus:bg-blue-200 focus:outline-none"
+                    onSelect={copyHash}
+                  >
+                    <span className="sr-only">Base Hash</span>
+                    <code>
+                      {!copied && <span aria-label={hash.split('').join('-')}>{hash}</span>}
+                      {copied && 'copied!'}
+                    </code>
+                  </DropdownMenu.Item>
+                )}
               </DropdownMenu.Group>
             </DropdownMenu.Content>
           </Route>

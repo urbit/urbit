@@ -1,4 +1,4 @@
-import { getVats, Vats, scryLag, getBlockers } from '@urbit/api';
+import { getVats, Vats, scryLag, getBlockers, Vat } from '@urbit/api';
 import create from 'zustand';
 import produce from 'immer';
 import { useCallback } from 'react';
@@ -44,7 +44,7 @@ export function useBlockers() {
   return useKilnState(selBlockers);
 }
 
-export function useVat(desk: string) {
+export function useVat(desk: string): Vat | undefined {
   return useKilnState(useCallback((s) => s.vats[desk], [desk]));
 }
 
