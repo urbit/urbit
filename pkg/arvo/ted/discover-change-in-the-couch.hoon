@@ -11,7 +11,7 @@
       delegated-sending
   ==
 ::
-=/  gas-price-gwei=@ud  70
+=/  gas-price-gwei=@ud  80
 =/  gas-usage=@ud       21.000
 =/  tx-cost-wei=@ud  :(mul gas-price-gwei gas-usage 1.000.000.000)
 ::
@@ -22,6 +22,71 @@
 ::
 =/  involved=(list address)  ::  addresses to pick-pocket
   :~
+      0x328b.8a3b.5a68.e5bd.3c1f.2833.5e01.c225.f0fb.69d5  ::  voting proxy
+      ::  missing galaxy addresses
+      0xe7b.ec63.6e53.5ab5.3032.3bfe.4306.b4ca.4127.2b50
+      0x71c8.1aef.da50.edd4.6a81.e2a2.c516.4f27.499a.a7b8
+      0x2482.26b1.972c.1357.9693.ad03.b043.03e6.8e7b.d489
+      0xecd3.f1c5.1de6.97a0.3163.c0e8.1bfd.b59d.35f2.6a38
+    ::
+      0x343.e971.1af9.5373.8775.7a9b.f5ec.8726.83ee.29ea
+      0x4936.3cc2.ee75.b944.6538.eb26.3d00.4379.51a7.0617
+    ::
+    0x740d.6d74.1711.163d.3fca.cecf.1f11.b867.9a7c.7964  ::  ceremony
+    0x899.b867.3389.b8c5.d2f0.a6c3.6c57.ccc5.f1ea.f726   ::  rosbus
+    0xe86f.3b9d.53c4.d660.459c.b4de.f9d2.4151.17b7.67f9  ::  old spawn proxy
+    0x7457.8790.5bf2.843d.fcf0.2d1d.3e55.75a7.ba83.15fc  ::  binzod spawn proxy
+    0xa1f.91dc.96b5.a280.f296.dce0.4a30.5153.9ca2.6705  ::  dopzod
+  ::
+    ::  straggler addresses:
+    0x2cd.dbec.53fd.3288.716d.2c68.59b0.d538.3c28.21d2
+    0x6ac0.19b2.59b3.2533.2aa0.cbce.6ff5.7768.2ba9.2860
+    0x5ee0.2804.75ba.73f8.cc64.3901.c1ad.9daa.c847.f92d
+    0xd69c.8768.2bd4.d26e.c669.f54c.f1e7.24b5.0b8d.0ed0
+    0xc3f7.9856.8bd2.8cab.98d1.09ba.f3af.f138.6f55.6093  ::  ~nut
+    0x5a9c.06f0.e5d0.52b4.efbe.a29c.f5b4.5ec2.5c7c.c5a6
+    0xcf88.1825.3699.43ef.75a2.6e70.b705.5a82.fa7a.d624
+  ::
+    ::  stray planet owners:
+    0xbe7f.582b.71b6.05ec.bfc2.208f.0bc8.1668.8992.8038
+    0x622a.929b.edcb.2523.1165.ca2c.b185.a49a.501e.7183
+    0x1964.4386.cecd.abdc.00fa.bd66.43bc.f68e.50a3.6001
+    0xee33.7b26.a069.8280.9d0e.eb62.e150.e59f.608e.24a6
+    0x8ced.c0b3.4fdf.cbda.dad2.dc70.c684.a87b.7d21.0a9b
+    0x3733.bed6.0936.faf0.0c98.f16d.b511.3ef2.bd0e.c050
+    0xc5c3.67f6.528e.85b8.944d.93d2.e454.ea45.d229.640b
+    0x3e14.e810.9956.c01f.a55b.348b.b497.152c.6ddb.8f42
+    0xcad9.781c.2e5f.723e.d63a.efe9.3607.c796.3d9a.919a
+    0x420.69ed.1a95.ad78.73de.c293.7636.b918.99f0.7a0b
+    0x7882.7328.0307.42cc.c41a.8ff9.e51e.78a9.41c9.8648
+    0x12da.5700.0867.4522.52ed.2897.91ea.66c8.ac02.854c
+    0xb1ac.7574.7bc5.0cbd.2327.3c1f.b36e.5e20.4b7e.76c2
+    0xf982.e2a8.812a.9b4a.cf45.e013.e2ef.7588.17fc.70ac
+    0x64fe.7e40.8f1f.71f7.d459.a11f.bfcc.9bf7.5da5.5311
+    0xb9e6.08cd.c645.9031.93eb.7dbe.4dda.be7c.6e09.5384
+    0x55e8.7bd1.b5b8.1f46.8a92.6ea5.ac5e.3f7d.86aa.2426
+    0x849a.653a.0334.30cb.b20f.54d6.4c6a.6dcb.d66c.56a2
+    0xa78a.10e3.63fe.c828.1ad4.2f64.09ef.b42a.919e.a51a
+    0xacaf.0c8b.9d55.4a60.540a.0333.693c.2422.2dda.f2ff
+    0x7456.defc.eedb.548f.c156.af82.2cd7.99db.35b7.6d32
+    0x38b.f426.914a.32d0.0de8.e48c.7bed.6cd1.89a6.2da0
+    0xe01f.a3df.2c29.74d7.bdd8.e6c9.73cd.cab8.c5af.ba38
+    0x49.707c.d528.4c69.ffdd.ee4b.b0a1.7295.e68f.e35d
+    0xa8e6.c08a.198e.bb41.f16c.3872.faa0.b207.bb35.30dd
+    0x9c62.6f80.d986.7690.45d0.9995.30e9.fccd.e93d.9f12
+    0xfa51.ac81.e897.db5d.280d.1790.ec3a.3aa6.1089.6f29
+    0xff90.6273.7ef3.d595.24d0.45b7.5453.ca1b.a539.2daf
+    0xc25d.e6a5.8864.3f64.ca96.c9f6.e954.6c1a.d707.737a
+    0x41e3.8c74.ca12.5e33.8f4a.74b2.571d.9bd3.850f.ba2e
+    0x4cce.5d02.678c.2501.740a.0c5c.e003.ee0f.de13.3621
+    0x3306.03c2.e7ae.184a.c360.b9c2.7b62.dbea.2688.9822
+    0x5cfd.baf1.f338.a1a6.208d.b2c2.ac35.9ee4.3469.3f39
+    0x1ef.cbdb.b7a1.5299.d45e.3b90.ec7e.6fc8.927e.b66e
+    0x4abb.4fee.71cb.b610.f406.bd88.9d8c.44ea.8eee.eb20
+    0x6c28.bb33.d6be.eef2.61c9.82f5.8cdf.0768.06c0.8eed
+    0xc15.f93f.2794.f745.ed14.b2f4.95f3.44b2.30f7.e117
+  ::
+    ::  migration txs:
     0xb2.e3c4.347e.314a.931b.fff8.99d2.3922.2ec8.cc9f
     0x14e.e048.3b4a.51c4.ea74.56b0.af83.36af.2836.3978
     0x182.e15c.6556.3ee6.7f61.2179.8728.ebaa.e896.6778
@@ -244,7 +309,6 @@
   :~
     hot-wallet
   ::
-    0x740d.6d74.1711.163d.3fca.cecf.1f11.b867.9a7c.7964
     0x9f57.c77b.1095.bd5d.b055.8b9c.b9b8.e6fc.6737.5e3c
     0x5eb0.3d35.9e68.15d6.4077.71ab.69e8.0af5.6441.04b9
     0xb735.32b0.4fb5.98f5.d719.ec40.be68.db02.f798.bcf3
@@ -379,7 +443,8 @@
     loop-involved(involved t.involved)
   ::
   ~?  !=(~ owned)
-    :-  %still-owns-unimportant-assets
+    :+  %still-owns-unimportant-assets
+      addr
     planets=(sub (lent owned) (lent non-planets))
   ::
   ;<  balance=@ud  bind:m

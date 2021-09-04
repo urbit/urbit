@@ -171,6 +171,26 @@
     ins+eth-txs+!>(tox)
   mut+eth-txs+!>(tox)
 ::
+++  do-val
+  ::TODO  maybe reconsider encode-call interface, if we end up wanting @ux
+  ::      as or more often than we want tapes
+  |=  [=network nonce=@ud to=address dat=$@(@ux tape) value=@ud]
+  ^-  transaction:rpc
+  :*  nonce
+      80.000.000.000  :: 80 gwei ::TODO  global config
+      21.000  ::TODO  global config
+      to
+      value
+      `@`?@(dat dat (tape-to-ux dat))
+    ::
+      ?-  network
+        %mainnet    0x1
+        %ropsten    0x3
+        %fakenet    `@ux``@`1.337
+        [%other *]  id.network
+      ==
+  ==
+::
 ++  do
   ::TODO  maybe reconsider encode-call interface, if we end up wanting @ux
   ::      as or more often than we want tapes
@@ -178,7 +198,7 @@
   ^-  transaction:rpc
   :*  nonce
       8.000.000.000  ::TODO  global config
-      600.000  ::TODO  global config
+      500.000  ::TODO  global config
       to
       0
       `@`?@(dat dat (tape-to-ux dat))
@@ -438,10 +458,11 @@
           call=(unit call-data)
       ==
   ^-  transaction:rpc
-  %:  do
+  %:  do-val
       network
       nonce
       to
       ?~(call 0x0 (encode-call:rpc u.call))
+      value
   ==
 --
