@@ -1,12 +1,13 @@
 import classNames from 'classnames';
 import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
-import { Provider } from '@urbit/api';
+import { Contact, Provider } from '@urbit/api';
 import { ShipName } from './ShipName';
+import { Avatar, AvatarSizes } from './Avatar';
 
 export type ProviderLinkProps = Omit<LinkProps, 'to'> & {
-  provider: Provider;
-  small?: boolean;
+  provider: { shipName: string } & Contact;
+  size?: AvatarSizes;
   selected?: boolean;
   to?: (p: Provider) => LinkProps['to'];
 };
@@ -15,7 +16,7 @@ export const ProviderLink = ({
   provider,
   to,
   selected = false,
-  small = false,
+  size = 'default',
   className,
   ...props
 }: ProviderLinkProps) => {
@@ -29,17 +30,10 @@ export const ProviderLink = ({
       )}
       {...props}
     >
-      <div
-        className={classNames(
-          'flex-none relative bg-black rounded-lg',
-          small ? 'w-8 h-8' : 'w-12 h-12'
-        )}
-      >
-        {/* TODO: Handle sigils */}
-      </div>
+      <Avatar size={size} {...provider} />
       <div className="flex-1 text-black">
         <p className="font-mono">{provider.nickname || <ShipName name={provider.shipName} />}</p>
-        {provider.status && !small && <p className="font-normal">{provider.status}</p>}
+        {provider.status && size === 'default' && <p className="font-normal">{provider.status}</p>}
       </div>
     </Link>
   );

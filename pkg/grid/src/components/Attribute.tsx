@@ -1,6 +1,6 @@
 import React from 'react';
 import cn from 'classnames';
-import { capitalize } from 'lodash-es';
+import { capitalize } from 'lodash';
 
 interface AttributeProps {
   attr: string;

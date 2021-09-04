@@ -1,4 +1,5 @@
-import _ from 'lodash-es';
+import _ from 'lodash';
+import { Contact, Contacts } from '@urbit/api';
 import { Allies, Charges, DocketHrefGlob, Treaties, Treaty } from '@urbit/api/docket';
 import { Vat, Vats } from '@urbit/api/hood';
 import systemUrl from '../assets/system.png';
@@ -154,6 +155,51 @@ export const mockAllies: Allies = [
   '~nalrex_bannus',
   '~nalrys'
 ].reduce((acc, val) => ({ ...acc, [val]: charter }), {});
+
+const contact: Contact = {
+  nickname: '',
+  bio: '',
+  status: '',
+  color: '#000000',
+  avatar: null,
+  cover: null,
+  groups: [],
+  'last-updated': 0
+};
+
+export const mockContacts: Contacts = {
+  '~zod': {
+    ...contact,
+    nickname: 'Tlon Corporation'
+  },
+  '~nocsyx-lassul': {
+    ...contact,
+    status: 'technomancing an electron wrapper for urbit',
+    color: '#4c00ff'
+  },
+  '~nachus-hollyn': {
+    ...contact,
+    avatar: 'https://i.pinimg.com/originals/20/62/59/2062590a440f717a2ae1065ad8e8a4c7.gif'
+  },
+  '~nalbel_litzod': {
+    ...contact,
+    nickname: 'Queen'
+  },
+  '~litmus^ritten': {
+    ...contact
+  },
+  '~nalput_litzod': {
+    ...contact
+  },
+  '~nalrex_bannus': {
+    ...contact,
+    status: 'Script, command and inspect your Urbit. Use TUI applications'
+  },
+  '~nalrys': {
+    ...contact,
+    status: 'hosting coming soon'
+  }
+};
 
 export const mockNotification: BasicNotification = {
   type: 'basic',

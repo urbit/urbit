@@ -1,7 +1,7 @@
 import create from 'zustand';
 import produce from 'immer';
 import { useCallback, useEffect } from 'react';
-import { omit, pick } from 'lodash-es';
+import { omit, pick } from 'lodash';
 import {
   Allies,
   Charge,

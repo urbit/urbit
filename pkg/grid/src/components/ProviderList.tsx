@@ -1,12 +1,12 @@
 import React, { MouseEvent, useCallback } from 'react';
-import { Provider } from '@urbit/api';
+import { Contact, Provider } from '@urbit/api';
 import classNames from 'classnames';
 import { MatchItem } from '../nav/Nav';
 import { useRecentsStore } from '../nav/search/Home';
 import { ProviderLink, ProviderLinkProps } from './ProviderLink';
 
 export type ProviderListProps = {
-  providers: Provider[];
+  providers: ({ shipName: string } & Contact)[];
   labelledBy: string;
   matchAgainst?: MatchItem;
   onClick?: (e: MouseEvent<HTMLAnchorElement>, p: Provider) => void;
@@ -28,7 +28,7 @@ export const ProviderList = ({
   matchAgainst,
   onClick,
   listClass,
-  small = false,
+  size = 'default',
   ...props
 }: ProviderListProps) => {
   const addRecentDev = useRecentsStore((state) => state.addRecentDev);
@@ -39,14 +39,14 @@ export const ProviderList = ({
 
   return (
     <ul
-      className={classNames(small ? 'space-y-4' : 'space-y-8', listClass)}
+      className={classNames(size !== 'default' ? 'space-y-4' : 'space-y-8', listClass)}
       aria-labelledby={labelledBy}
     >
       {providers.map((p) => (
         <li key={p.shipName} id={p.shipName} role="option" aria-selected={selected(p)}>
           <ProviderLink
             {...props}
-            small={small}
+            size={size}
             provider={p}
             selected={selected(p)}
             onClick={(e) => {

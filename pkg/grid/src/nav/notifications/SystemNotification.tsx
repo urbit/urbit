@@ -1,4 +1,4 @@
-import { pick } from 'lodash-es';
+import { pick } from 'lodash';
 import React, { useCallback } from 'react';
 import { kilnSuspend } from '@urbit/api/hood';
 import { AppList } from '../../components/AppList';
