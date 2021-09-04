@@ -1,7 +1,7 @@
 import { isBrowser, isNode } from 'browser-or-node';
 import { fetchEventSource, EventSourceMessage, EventStreamContentType } from '@microsoft/fetch-event-source';
 
-import { Action, Scry, Thread, AuthenticationInterface, SubscriptionInterface, CustomEventHandler, PokeInterface, SubscriptionRequestInterface, headers, SSEOptions, PokeHandlers, Message } from './types';
+import { Action, Scry, Thread, AuthenticationInterface, ExistingSessionInterface, SubscriptionInterface, CustomEventHandler, PokeInterface, SubscriptionRequestInterface, headers, SSEOptions, PokeHandlers, Message } from './types';
 import { uncamelize, hexString } from './utils';
 
 /**
@@ -78,7 +78,7 @@ export class Urbit {
 
   onOpen?: () => void = null;
 
-  /** This is basic interpolation to get the channel URL of an instantiated Urbit connection. */
+  /** This is basic interpolation to get the cpokehannel URL of an instantiated Urbit connection. */
   private get channelUrl(): string {
     return `${this.url}/~/channel/${this.uid}`;
   }
@@ -131,6 +131,36 @@ export class Urbit {
     await airlock.connect();
     await airlock.poke({ app: 'hood', mark: 'helm-hi', json: 'opening airlock' });
     await airlock.eventSource();
+    return airlock;
+  }
+
+  /**
+   * Try to use an existing session, for browser use only.
+   *
+   * This method will check that `window.ship` is set, and try to connect to the airlock
+   * at window.location.origin as window.ship.
+   * (Generally one should include `<script src="/~landscape/js/session.js"></script>`
+   * in e.g. the index.html file of a React app, in order to set window.ship).
+   * If so, it will attempt to poke and initialize the event source in the same manner as 'authenticate'.
+   * If not, it will throw an exception.
+   */
+  static async tryExistingSession({ verbose = false, setGlobal = false }: ExistingSessionInterface) {
+    if(!isBrowser) {
+      throw('tryExistingSession is for browser use only');
+    }
+    if(typeof window.location.origin === 'undefined') {
+      throw 'Cannot try existing session, window.location.origin is undefined';
+    }
+    if(typeof (window as any).ship === 'undefined') {
+      throw 'Cannot try existing session, window.ship is undefined';
+    }
+    const airlock = new Urbit(window.location.origin);
+    airlock.verbose = verbose;
+    airlock.ship = (window as any).ship;
+    await airlock.eventSource();
+    if( setGlobal ) {
+      (window as any).urbit = airlock;
+    }
     return airlock;
   }
 

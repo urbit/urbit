@@ -137,6 +137,11 @@ export interface AuthenticationInterface {
   verbose?: boolean;
 }
 
+export interface ExistingSessionInterface {
+  verbose: boolean;
+  setGlobal: boolean;
+}
+
 /**
  * Subscription event handlers
  * 
