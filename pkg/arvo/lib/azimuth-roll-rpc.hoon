@@ -369,7 +369,7 @@
         %-  pairs
         :~  ['points' (points (tap:orm:naive points.state))]
             ['operators' (operators operators.state)]
-            ['dns' a+(turn dns.state (cork same (lead %s)))]
+            ['dns' a+(turn dns.state (lead %s))]
         ==
         ::
         ++  operators
