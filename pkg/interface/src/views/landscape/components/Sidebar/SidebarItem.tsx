@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { useRef, ReactNode } from 'react';
 import urbitOb from 'urbit-ob';
 import { Icon, Row, Box, Text, BaseImage } from '@tlon/indigo-react';
-import { Association, cite, AppName } from '@urbit/api';
+import { Association, cite } from '@urbit/api';
 import { HoverBoxLink } from '~/views/components/HoverBox';
 import { Sigil } from '~/logic/lib/sigil';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
@@ -176,9 +176,9 @@ export const SidebarAssociationItem = React.memo((props: {
   const { association, selected } = props;
   const title = getItemTitle(association) || '';
   const appName = association?.['app-name'];
-  let mod = appName;
+  let mod: string = appName;
   if (association?.metadata?.config && 'graph' in association.metadata.config) {
-    mod = association.metadata.config.graph as AppName;
+    mod = association.metadata.config.graph ;
   }
   const rid = association?.resource;
   const groupPath = association?.group;
