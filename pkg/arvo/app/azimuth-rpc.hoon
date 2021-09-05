@@ -146,8 +146,9 @@
       [~ ~(parse error:json-rpc id)]
     =/  method=@tas  (enkebab method)
     ?+  method  [~ ~(method error:json-rpc id)]
-      %get-point  `(get-point id +.params point:scry)
-      %get-dns    `(get-dns id +.params dns:scry)
+      %get-point        `(get-point id +.params point:scry)
+      %get-dns          `(get-dns id +.params dns:scry)
+      %get-naive-state  `(get-naive id +.params naive-state:scry)
     ==
   --
 ::
@@ -164,6 +165,12 @@
     .^  (list @t)
         %gx
         (~(scry agentio bowl) %azimuth /dns/noun)
+    ==
+  ::
+  ++  naive-state
+    .^  ^state:naive
+        %gx
+        (~(scry agentio bowl) %azimuth /nas/noun)
     ==
   --
 --

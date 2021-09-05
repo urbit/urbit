@@ -142,6 +142,7 @@
         [%x %own ~]      ``noun+!>(own.state)
         [%x %point @ ~]  ``noun+(point i.t.t.path)
     ==
+    ::
     ++  point
       |=  wat=@t
       ^-  vase

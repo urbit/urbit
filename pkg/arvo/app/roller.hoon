@@ -164,6 +164,7 @@
   ::    /x/manager                     ->  %noun  (list ship)
   ::    /x/voting                      ->  %noun  (list ship)
   ::    /x/spawning                    ->  %noun  (list ship)
+  ::    /x/predicted                   ->  %noun  state:naive
   ::
   ++  on-peek
     |=  =path
@@ -187,6 +188,7 @@
       [%x %manager @ ~]     (points-proxy %manage i.t.t.path)
       [%x %voting @ ~]      (points-proxy %vote i.t.t.path)
       [%x %spawning @ ~]    (points-proxy %spawn i.t.t.path)
+      [%x %predicted ~]     ``noun+!>(pre)
     ==
     ::
     ++  pending-by

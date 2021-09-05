@@ -361,6 +361,29 @@
         |=  [p=@ q=@]
         ^-  json
         s+(crip ['0' 'x' ((x-co:co (mul 2 p)) q)])
+      ::
+      ++  naive-state
+        |=  =^state:naive
+        ^-  json
+        |^
+        %-  pairs
+        :~  ['points' (points (tap:orm:naive points.state))]
+            ['operators' (operators operators.state)]
+            ['dns' a+(turn dns.state (cork same (lead %s)))]
+        ==
+        ::
+        ++  operators
+          |=  =operators:naive
+          ^-  json
+          :-  %a
+          %+  turn  ~(tap by operators)
+          |=  [op=@ux addrs=(set @ux)]
+          ^-  json
+          %-  pairs
+          :~  ['operator' (hex 20 op)]
+              ['addresses' a+(turn ~(tap in addrs) (cury hex 20))]
+          ==
+        --
       --
     ::
     ++  to-hex
@@ -567,4 +590,11 @@
   :+  %result  id
   =-  (hex:to-json 32 (hash-tx:lib p q))
   (unsigned-tx:lib chain-id u.nonce (gen-tx-octs:lib u.tx))
+::
+++  get-naive
+  |=  [id=@t params=(map @t json) =^state:naive]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 0)
+    ~(params error:json-rpc id)
+  [%result id (naive-state:to-json state)]
 --

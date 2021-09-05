@@ -167,6 +167,7 @@
       %get-history             `(history id +.params addr:history:scry)
       %get-roller-config       `(get-config id +.params config:scry)
       %hash-transaction        `(hash-transaction id +.params chain-id:scry)
+      %get-predicted-state     `(get-naive id +.params predicted:scry)
     ==
   --
 ::
@@ -305,6 +306,12 @@
         %+  ~(scry agentio bowl)
           %roller
         /chain-id/noun
+    ==
+  ::
+  ++  predicted
+    .^  ^state:naive
+        %gx
+        (~(scry agentio bowl) %roller /predicted/noun)
     ==
   --
 --
