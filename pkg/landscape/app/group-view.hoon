@@ -193,7 +193,8 @@
   ++  jn-start
     |=  [rid=resource =^ship]
     ^+  jn-core
-    ?<  (~(has by joining) rid)
+    ?>  ?=  $@(~ [~ %done])
+            (bind (~(get by joining) rid) |=(request:view progress))
     =.  joining
       (~(put by joining) rid [%.n now.bowl ship %start])
     =.  jn-core
