@@ -10,7 +10,7 @@
 ::
 +$  glob-location
   $%  [%http =url]
-      [%ship =ship]
+      [%ames =ship]
   ==
 ::  $href: Where a tile links to
 ::

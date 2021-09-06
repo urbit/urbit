@@ -33,7 +33,7 @@
         `[%glob [u.base %http u.glob-http]:draft]
       ?~  glob-ames.draft
         ~
-      `[%glob [u.base %ship u.glob-ames]:draft]
+      `[%glob [u.base %ames u.glob-ames]:draft]
     ?~  href  ~
     =,  draft
     :-  ~
@@ -88,7 +88,7 @@
         :~  base+base.href.d
             ?-  -.loc
               %http  [%glob-http url.loc]
-              %ship  [%glob-ames ship.loc]
+              %ames  [%glob-ames ship.loc]
     ==  ==  ==
   ::
   ++  spit-clause
@@ -177,7 +177,7 @@
     %+  frond  -.loc
     ?-  -.loc
       %http  (pairs url+s+url.loc ~)
-      %ship  (ship ship.loc)
+      %ames  (ship ship.loc)
     ==
   ::
   ++  charge
