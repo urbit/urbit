@@ -1,6 +1,8 @@
 :~  :-  %apes
     :~  %docket
         %treaty
+        %hark-store
+        %hark-system-hook
     ==    
     :-  %fish  ~
 ==

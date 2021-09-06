@@ -1,321 +1,154 @@
-/-  chat-store, graph-store, post, *resource, group-store, metadata-store
 ^? 
+::
+::  %hark-store: Notification, unreads store
+::
+::    Timeboxing & binning: 
+::
+::    Unread notifications accumulate in $unreads. They are grouped by
+::    their $bin. A notification may become read by either:
+::    a) being read by a %read-count or %read-each or %read-note
+::    b) being read by a %seen
+::
+::    If a) then we insert the corresponding bin into $reads at the
+::    current timestamp
+::    If b) then we empty $unreads and move all bins to $reads at the
+::    current timestamp
+::
+::    Unread tracking:
+::    Unread tracking has two 'modes' which may be used concurrently,
+::    if necessary.
+::    
+::    count:
+::      This stores the unreads as a simple atom, describing the number
+::      of unread items. May be increased with %unread-count and
+::      set to zero with %read-count. Ideal for high-frequency linear
+::      datastructures, e.g. chat
+::    each:
+::      This stores the unreads as a set of paths, describing the set of
+::      unread items. Unreads may be added to the set with %unread-each
+::      and removed with %read-each. Ideal for non-linear, low-frequency
+::      datastructures, e.g. blogs
+::
 |%
-+$  index
-  $%  $:  %graph
-          graph=resource
-          mark=(unit mark)
-          description=@t
-          =index:graph-store
-      ==
-      [%group group=resource description=@t]
+::  $place: A location, under which landscape stores stats
+::    
+::  .desk must match q.byk.bowl
+::  Examples:
+::    A chat:
+::  [%landscape /~dopzod/urbit-help]
+::    A note in a notebook:
+::  [%landscape /~darrux-landes/feature-requests/12374893234232]
+::    A group:
+::  [%hark-group-hook /~bitbet-bolbel/urbit-community]
+::    Comments on a link
+::  [%landscape /~dabben-larbet/urbit-in-the-news/17014118450499614194868/2]
+::
++$  place  [=desk =path]
+::
+::  $bin: Identifier for grouping notifications
+::
+::  Examples 
+::   A mention in a chat:
+::  [/mention %landscape /~dopzod/urbit-help]
+::   New messages in a chat
+::  [/message %landscape /~dopzod/urbit-help]
+::    A new comment in a notebook:
+::  [/comment %landscape /~darrux-landes/feature-requests/12374893234232/2]
+::
++$  bin  [=path =place]
+::  $content: Notification content
++$  content
+  $%  [%ship =ship]
+      [%text =cord]
   ==
 ::
-+$  group-contents
-  $~  [%add-members *resource ~]
-  $>(?(%add-members %remove-members) update:group-store)
+::  $body: A notification body
+::
++$  body
+  $:  title=(list content)
+      content=(list content)
+      =time
+      binned=path
+      link=path
+  ==
 ::
 +$  notification
-  [date=@da read=? =contents]
-::
-+$  contents
-  $%  [%graph =(list post:post)]
-      [%group =(list group-contents)]
-  ==
-::
+  [date=@da =bin body=(list body)]
+::  $timebox: Read notifications from a particular time
 +$  timebox
-  (map index notification)
-::
-+$  notifications
+  (map bin notification)
+::  $reads: Read notifications, ordered by time
++$  reads
   ((mop @da timebox) gth)
+::  +unreads: Unread notifications
++$  unreads
+  (map bin notification)
 ::
 +$  action
-  $%  [%add-note =index =notification]
-    ::  if .time is ~, then archiving unread notification
-    ::  else, archiving read notification
-      [%archive time=(unit @da) =index]
-    ::
-      [%unread-count =stats-index =time]
-      [%read-count =stats-index]
-    ::
-      [%unread-each =stats-index ref=index:graph-store time=@da]
-      [%read-each =stats-index ref=index:graph-store]
-    ::
-      [%read-note =index]
-    ::
-      [%seen-index time=@da =stats-index]
-    ::
-      [%read-graph =resource]
-      [%read-group =resource]
-      [%remove-graph =resource]
-    ::
+  $%  ::  hook actions
+      ::
+      ::  %add-note: add a notification
+      [%add-note =bin =body]
+      ::  %del-place: Underlying resource disappeared, remove all
+      ::  associated notifications
+      [%del-place =place]
+      ::  %unread-count: Change unread count by .count
+      [%unread-count =place inc=? count=@ud]
+      ::  %unread-each: Add .path to list of unreads for .place
+      [%unread-each =place =path]
+      ::  %seen-index: Update last-updated for .place to now.bowl
+      [%seen-index =place] 
+      ::  store actions
+      ::
+      ::  %archive: archive single notification
+      ::  if .time is ~, then archiving unread notification
+      ::  else, archiving read notification
+      [%archive time=(unit @da) =bin]
+      ::  %read-count: set unread count to zero
+      [%read-count =place]
+      ::  %read-each: remove path from unreads for .place
+      [%read-each =place =path]
+      ::  %read-note: Read note at .bin
+      [%read-note =bin]
+      ::  %archive-all: Archive all notifications
+      [%archive-all ~]
+      ::  %read-all: Read all all notifications
       [%read-all ~]
-      [%set-dnd dnd=?]
+      ::  %seen: User opened notifications, reset timeboxing logic.
       [%seen ~]
+    :: 
+    ::  XX: previously in hark-store, now deprecated
+    ::  the hooks responsible for creating notifications may offer pokes
+    ::  similar to this
+    ::  [%read-graph =resource]
+    ::  [%read-group =resource]
+    ::  [%remove-graph =resource]
+    ::
   ==
-::
-++  stats-index
-  $%  [%graph graph=resource =index:graph-store]
-      [%group group=resource]
-  ==
-::
-+$  indexed-notification
-  [index notification]
+::  .stats: Statistics for a .place
 ::
 +$  stats
-  [=unreads last-seen=@da]
-::
-+$  unreads
-  $%  [%count num=@ud]
-      [%each indices=(set index:graph-store)]
+  $:  count=@ud
+      each=(set path)
+      last=@da
+      timebox=(unit @da)
   ==
 ::  
 +$  update
   $%  action
+      :: %more: more updates
       [%more more=(list update)]
-      [%added =index =notification]
-      [%note-read =time =index]
-      [%timebox time=(unit @da) =(list [index notification])]
-      [%count count=@ud]
-      [%clear =stats-index]
-      [%unreads unreads=(list [stats-index stats])]
+      :: %note-read: note has been read with timestamp
+      [%note-read =time =bin]
+      [%added =notification]
+      :: %timebox: description of timebox. 
+      ::
+      :: If time is ~, this is the unread timebox
+      [%timebox time=(unit @da) =(list [bin notification])]
+      :: %place-stats: description of .stats for a .place
+      [%place-stats =place =stats]
+      :: %place-stats: stats for all .places
+      [%all-stats places=(map place stats)]
   ==
-::  historical
-++  state-zero
-  |% 
-  +$  state
-    $:  %0
-        notifications=notifications
-        archive=notifications
-        current-timebox=@da
-        dnd=_|
-    ==
-  ++  orm
-    ((ordered-map @da timebox) gth)
-  ::
-  +$  notifications
-    ((mop @da timebox) gth)
-  ::
-  +$  timebox
-    (map index notification)
-  ::
-  +$  index
-    $%  [%graph graph=resource module=@t description=@t]
-        [%group group=resource description=@t]
-        [%chat chat=path mention=?]
-    ==
-  ::
-  +$  group-contents
-    $~  [%add-members *resource ~]
-    $%  [%add *]
-        [%remove *]  :: old metadata actions
-        $>(?(%add-members %remove-members) update:group-store)
-    ==
-  ::
-  +$  contents
-    $%  [%graph =(list post:post-zero:post)]
-        [%group =(list group-contents)]
-        [%chat =(list envelope:chat-store)]
-    ==
-  ::
-  +$  notification
-    [date=@da read=? =contents]
-  --
-::
-++  state-one
-  |%
-  +$  state
-    $:  %1
-        unreads-each=(jug index index:graph-store)
-        unreads-count=(map index @ud)
-        last-seen=(map index @da)
-        =notifications:state-two
-        archive=notifications:state-two
-        current-timebox=@da
-        dnd=_|
-    ==
-  --
-++  state-two
-  =<  state
-  |% 
-  +$  state
-    $:  unreads-each=(jug stats-index index:graph-store)
-        unreads-count=(map stats-index @ud)
-        last-seen=(map stats-index @da)
-        =notifications
-        archive=notifications
-        current-timebox=@da
-        dnd=_|
-    ==
-  ::
-  +$  index
-    $%  $:  %graph
-            group=resource
-            graph=resource
-            module=@t
-            description=@t
-            =index:graph-store
-        ==
-        [%group group=resource description=@t]
-    ==
-  ::
-  ++  orm
-    ((ordered-map @da timebox) gth)
-  ::
-  +$  notification
-    [date=@da read=? =contents]
-  ::
-  +$  contents
-    $%  [%graph =(list post:post-zero:post)]
-        [%group =(list group-contents)]
-    ==
-  ::
-  +$  group-contents
-    group-contents:state-zero
-  ::
-  +$  timebox
-    (map index notification)
-  ::
-  +$  notifications
-    ((mop @da timebox) gth)
-  ::
-  --
-::
-++  state-three
-  =<  state
-  |% 
-  +$  state
-    $:  unreads-each=(jug stats-index index:graph-store)
-        unreads-count=(map stats-index @ud)
-        last-seen=(map stats-index @da)
-        =notifications
-        archive=notifications
-        current-timebox=@da
-        dnd=_|
-    ==
-  ::
-  ++  orm
-    ((ordered-map @da timebox) gth)
-  ::
-  +$  index
-    $%  $:  %graph
-            group=resource
-            graph=resource
-            module=@t
-            description=@t
-            =index:graph-store
-        ==
-        [%group group=resource description=@t]
-    ==
-  ::
-  +$  notification
-    [date=@da read=? =contents]
-  ::
-  +$  contents
-    $%  [%graph =(list post:post-zero:post)]
-        [%group =(list group-contents)]
-    ==
-  ::
-  +$  timebox
-    (map index notification)
-  ::
-  +$  notifications
-    ((mop @da timebox) gth)
-  ::
-  --
-::
-++  state-four
-  =<  base-state
-  |%
-  ++  orm
-    ((ordered-map @da timebox) gth)
-  ::
-  +$  base-state
-    $:  unreads-each=(jug stats-index index:graph-store)
-        unreads-count=(map stats-index @ud)
-        last-seen=(map stats-index @da)
-        =notifications 
-        archive=notifications
-        current-timebox=@da
-        dnd=_|
-    ==
-  ::
-  +$  index
-    $%  $:  %graph
-            group=resource
-            graph=resource
-            module=@t
-            description=@t
-            =index:graph-store
-        ==
-        [%group group=resource description=@t]
-    ==
-  ::
-  +$  group-contents
-    $~  [%add-members *resource ~]
-    $>(?(%add-members %remove-members) update:group-store)
-  ::
-  +$  notification
-    [date=@da read=? =contents]
-  ::
-  +$  contents
-    $%  [%graph =(list post:post)]
-        [%group =(list group-contents)]
-    ==
-  ::
-  +$  timebox
-    (map index notification)
-  ::
-  +$  notifications
-    ((mop @da timebox) gth)
-  ::
-  +$  action
-    $%  [%add-note =index =notification]
-        [%archive time=@da index]
-      ::
-        [%unread-count =stats-index =time]
-        [%read-count =stats-index]
-      ::
-      ::
-        [%unread-each =stats-index ref=index:graph-store time=@da]
-        [%read-each =stats-index ref=index:graph-store]
-      ::
-        [%read-note time=@da index]
-        [%unread-note time=@da index]
-      ::
-        [%seen-index time=@da =stats-index]
-      ::
-        [%remove-graph =resource]
-      ::
-        [%read-all ~]
-        [%set-dnd dnd=?]
-        [%seen ~]
-    ==
-  ::
-  ++  stats-index
-    $%  [%graph graph=resource =index:graph-store]
-        [%group group=resource]
-    ==
-  ::
-  +$  indexed-notification
-    [index notification]
-  ::
-  +$  stats
-    [notifications=(set [time index]) =unreads last-seen=@da]
-  ::
-  +$  unreads
-    $%  [%count num=@ud]
-        [%each indices=(set index:graph-store)]
-    ==
-  ::  
-  +$  update
-    $%  action
-        [%more more=(list update)]
-        [%added time=@da =index =notification]
-        [%timebox time=@da archived=? =(list [index notification])]
-        [%count count=@ud]
-        [%clear =stats-index]
-        [%unreads unreads=(list [stats-index stats])]
-    ==
-  --
 --
+
