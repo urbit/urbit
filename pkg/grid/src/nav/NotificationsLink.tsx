@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
+import { Notification } from '@urbit/api';
 import { Link, LinkProps } from 'react-router-dom';
 import { Bullet } from '../components/icons/Bullet';
-import { Notification } from '../state/hark-types';
 import { useNotifications } from '../state/notifications';
 
 type NotificationsState = 'empty' | 'unread' | 'attention-needed';
@@ -28,8 +28,8 @@ type NotificationsLinkProps = Omit<LinkProps<HTMLAnchorElement>, 'to'> & {
 };
 
 export const NotificationsLink = ({ isOpen }: NotificationsLinkProps) => {
-  const { notifications, systemNotifications } = useNotifications();
-  const state = getNotificationsState(notifications, systemNotifications);
+  const { unreads, systemNotifications } = useNotifications();
+  const state = getNotificationsState(unreads, systemNotifications);
 
   return (
     <Link
@@ -44,7 +44,7 @@ export const NotificationsLink = ({ isOpen }: NotificationsLinkProps) => {
       )}
     >
       {state === 'empty' && <Bullet className="w-6 h-6" />}
-      {state === 'unread' && notifications.length}
+      {state === 'unread' && unreads.length}
       {state === 'attention-needed' && (
         <span className="h2">
           ! <span className="sr-only">Attention needed</span>

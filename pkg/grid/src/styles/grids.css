@@ -1,0 +1,44 @@
+.note-grid-content {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  grid-template-rows: 1.5rem 1.5rem;
+  grid-gap: 0.5rem;
+  padding: 1rem;
+  grid-template-areas:
+    'icon title'
+    'arrow head'
+    '. body';
+}
+
+.note-grid-no-content {
+  display: grid;
+  width: 100%;
+  grid-template-rows: 1.75rem 1.75rem;
+  grid-template-columns: 3.5rem 1fr;
+  grid-column-gap: 0.75rem;
+  align-items: center;
+  grid-template-areas:
+    'icon  title'
+    'icon  head';
+}
+.note-grid-title {
+  grid-area: title;
+}
+
+.note-grid-icon {
+  grid-area: icon;
+}
+
+.note-grid-body {
+  grid-area: body;
+}
+
+.note-grid-arrow {
+  grid-area: arrow;
+}
+
+.note-grid-head {
+  grid-area: head;
+}
+
+

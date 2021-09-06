@@ -6,3 +6,5 @@
 
 @import "tailwindcss/utilities";
 @import "./utilities.css";
+
+@import "./grids.css";

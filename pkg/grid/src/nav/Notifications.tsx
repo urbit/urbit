@@ -1,23 +1,31 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Notification } from '@urbit/api';
 import { useLeapStore } from './Nav';
 import { Button } from '../components/Button';
-import { Notification } from '../state/hark-types';
 import { BasicNotification } from './notifications/BasicNotification';
 import {
   BaseBlockedNotification,
   RuntimeLagNotification
 } from './notifications/SystemNotification';
 import { useNotifications } from '../state/notifications';
+import { useHarkStore } from '../state/hark';
+import { OnboardingNotification } from './notifications/OnboardingNotification';
 
-function renderNotification(notification: Notification, key: string) {
-  if (notification.type === 'system-updates-blocked') {
-    return <BaseBlockedNotification key={key} notification={notification} />;
+function renderNotification(notification: Notification, key: string, unread = false) {
+  // Special casing
+  if (notification.bin.place.desk === window.desk) {
+    if (notification.bin.place.path === '/lag') {
+      return <RuntimeLagNotification key={key} />;
+    }
+    if (notification.bin.place.path === '/blocked') {
+      return <BaseBlockedNotification key={key} />;
+    }
+    if (notification.bin.place.path === '/onboard') {
+      return <OnboardingNotification key={key} unread={unread} />;
+    }
   }
-  if (notification.type === 'runtime-lag') {
-    return <RuntimeLagNotification key={key} />;
-  }
-  return <BasicNotification key={key} notification={notification} />;
+  return <BasicNotification key={key} notification={notification} unread={unread} />;
 }
 
 const Empty = () => (
@@ -28,16 +36,22 @@ const Empty = () => (
 
 export const Notifications = () => {
   const select = useLeapStore((s) => s.select);
-  const { notifications, systemNotifications, hasAnyNotifications } = useNotifications();
+  const { unreads, reads, systemNotifications, hasAnyNotifications } = useNotifications();
+  const markAllAsRead = () => {
+    const { readAll } = useHarkStore.getState();
+    readAll();
+  };
 
   useEffect(() => {
     select('Notifications');
+    const { getMore } = useHarkStore.getState();
+    getMore();
   }, []);
 
   return (
     <div className="grid grid-rows-[auto,1fr] h-full p-4 md:p-8 overflow-hidden">
       <header className="space-x-2 mb-8">
-        <Button variant="secondary" className="py-1.5 px-6 rounded-full">
+        <Button onClick={markAllAsRead} variant="secondary" className="py-1.5 px-6 rounded-full">
           Mark All as Read
         </Button>
         <Button
@@ -53,10 +67,16 @@ export const Notifications = () => {
       {!hasAnyNotifications && <Empty />}
       {hasAnyNotifications && (
         <section className="text-gray-400 space-y-2 overflow-y-auto">
-          {notifications.map((n, index) => renderNotification(n, index.toString()))}
           {systemNotifications.map((n, index) =>
-            renderNotification(n, (notifications.length + index).toString())
+            renderNotification(n, (unreads.length + index).toString())
           )}
+          {unreads.map((n, index) =>
+            renderNotification(n, (systemNotifications.length + index).toString(), true)
+          )}
+          {Array.from(reads)
+            .map(([, nots]) => nots)
+            .flat()
+            .map((n, index) => renderNotification(n, `reads-${index}`))}
         </section>
       )}
     </div>

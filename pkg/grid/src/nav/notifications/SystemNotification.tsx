@@ -1,20 +1,15 @@
 import { pick } from 'lodash-es';
 import React, { useCallback } from 'react';
-import { kilnSuspend } from '@urbit/api/hood';
+import { kilnSuspend } from '@urbit/api';
 import { AppList } from '../../components/AppList';
 import { Button } from '../../components/Button';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../components/Dialog';
 import { Elbow } from '../../components/icons/Elbow';
 import api from '../../state/api';
 import { useCharges } from '../../state/docket';
-import { BaseBlockedNotification as BaseBlockedNotificationType } from '../../state/hark-types';
 
 import { NotificationButton } from './NotificationButton';
 import { disableDefault } from '../../state/util';
-
-interface BaseBlockedNotificationProps {
-  notification: BaseBlockedNotificationType;
-}
 
 export const RuntimeLagNotification = () => (
   <section
@@ -40,8 +35,8 @@ export const RuntimeLagNotification = () => (
   </section>
 );
 
-export const BaseBlockedNotification = ({ notification }: BaseBlockedNotificationProps) => {
-  const { desks } = notification;
+export const BaseBlockedNotification = () => {
+  const desks: string[] = [];
   const charges = useCharges();
   const blockedCharges = Object.values(pick(charges, desks));
   const count = blockedCharges.length;

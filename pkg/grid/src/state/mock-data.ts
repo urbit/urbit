@@ -1,8 +1,16 @@
 import _ from 'lodash-es';
-import { Allies, Charges, DocketHrefGlob, Treaties, Treaty } from '@urbit/api/docket';
-import { Vat, Vats } from '@urbit/api/hood';
+import {
+  Vat,
+  Vats,
+  Allies,
+  Charges,
+  DocketHrefGlob,
+  Treaties,
+  Treaty,
+  Notification,
+  HarkContent
+} from '@urbit/api';
 import systemUrl from '../assets/system.png';
-import { BasicNotification } from './hark-types';
 
 export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' | 'version'> = {
   cass: {
@@ -155,11 +163,58 @@ export const mockAllies: Allies = [
   '~nalrys'
 ].reduce((acc, val) => ({ ...acc, [val]: charter }), {});
 
-export const mockNotification: BasicNotification = {
-  type: 'basic',
-  time: '',
-  message: 'test'
-};
+function createDmNotification(content: string): HarkContent {
+  return {
+    title: ' messaged you',
+    author: '~hastuc-dibtux',
+    time: Date.now() - 3_600,
+    content,
+    links: []
+  };
+}
+
+function createBitcoinNotif(amount: string) {
+  return {
+    title: ` sent you ${amount}`,
+    author: '~silnem',
+    time: Date.now() - 3_600,
+    content: '',
+    links: []
+  };
+}
+
+function createGroupNotif(to: string): HarkContent {
+  return {
+    title: ` invited you to ${to}`,
+    author: '~ridlur-figbud',
+    content: '',
+    time: Date.now() - 3_600,
+    links: []
+  };
+}
+
+export function createMockNotification(desk: string, contents: HarkContent[]) {
+  return {
+    bin: {
+      place: {
+        desk,
+        path: '/'
+      },
+      path: '/'
+    },
+    time: Date.now() - 3_600,
+    contents
+  };
+}
+
+export const mockNotifications: Notification[] = [
+  createMockNotification('groups', [
+    createDmNotification('ie the hook agent responsible for marking the notifications'),
+    createDmNotification('~hastuc-dibtux sent a link')
+  ]),
+  createMockNotification('bitcoin-wallet', [createBitcoinNotif('0.025 BTC')]),
+  createMockNotification('groups', [createGroupNotif('a Group: Tlon Corporation')])
+];
 
 export const mockVat = (desk: string, blockers?: boolean): Vat => ({
   cass: {

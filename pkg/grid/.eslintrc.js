@@ -46,6 +46,7 @@ module.exports = {
     '@typescript-eslint/no-shadow': ['error'],
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'off',
+    'react/no-array-index-key': 'off',
     'import/prefer-default-export': 'off',
     'react/prop-types': 'off',
     'react/jsx-props-no-spreading': 'off',
