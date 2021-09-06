@@ -91,7 +91,8 @@
     |=  [=ship =desk]
     ^-  (quip card _state)
     =+  .^(=treaty:treaty %gx (scry:io %treaty /treaty/(scot %p ship)/[desk]/noun))
-    ?<  ~|(%bad-install-desk (~(has by charges) desk)) 
+    ?.  (~(has by charges) desk)
+      ~|(bad-install-desk+desk !!)
     =.  charges
       (~(put by charges) desk docket.treaty %install ~)
     =*  cha   ~(. ch desk)
@@ -101,8 +102,7 @@
   ++  uninstall
     |=  =desk
     ^-  (quip card _state)
-    ~|  %no-charge-install
-    =/  =charge  (~(got by charges) desk)
+    =/  =charge  ~|(no-charge-installed+desk (~(got by charges) desk))
     =.  charges  (~(del by charges) desk)
     =?  by-base  ?=(%glob -.href.docket.charge)
       (~(del by by-base) base.href.docket)
@@ -125,13 +125,11 @@
       `state
     ::
         [%glob @ ~]
-      ~&  path+path
-      =/  desk  (~(got by by-base) i.t.path)
-      =/  =charge  (~(got by charges) desk)
-      ~&  charge+charge
+      =/  desk     ~|(path/path (~(got by by-base) i.t.path))
+      =/  =charge  ~|(desk/desk (~(got by charges) desk))
       ?>  ?=(%glob -.chad.charge)
       :_  state
-      :~  [%give %fact ~[path] %glob !>(`glob`glob.chad.charge)] ::
+      :~  [%give %fact ~[path] %glob !>(`glob`glob.chad.charge)]
           [%give %kick ~[path] ~]
       ==
     ==
@@ -358,12 +356,13 @@
     (poke-our:(pass %uninstall) %hood kiln-uninstall+!>(desk))
   ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
   ++  fetch-glob
-    =/  =charge  (~(got by charges) desk)
-    ~&  charge+charge
+    =/  =charge
+      ~|  desk/desk
+      (~(got by charges) desk)
     =/  tid=@t  (cat 3 'docket-' (scot %uv (sham (mix eny.bowl desk))))
     ?>  ?=(%glob -.href.docket.charge)
     =*  loc  glob-location.href.docket.charge
-    ~&  loc+loc
+    ~>  %slog.0^leaf/"docket: fetching glob for {<desk>} desk"
     =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[loc desk])])
     :~  (watch-our:(pass %glob) %spider /thread-result/[tid])
         (poke-our:(pass %glob) %spider cage)

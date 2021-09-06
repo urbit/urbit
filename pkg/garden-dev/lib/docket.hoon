@@ -98,7 +98,7 @@
     ?+  -.clause  "'{(trip +.clause)}'"
       %color  (scow %ux color.clause)
       %site   (spud path.clause)
-      %glob-ames  ~&  ship+ship.clause  "{(scow %p ship.clause)}"
+      %glob-ames  (scow %p ship.clause)
       ::
         %version
       =,  version.clause
@@ -182,7 +182,6 @@
   ::
   ++  charge
     |=  c=^charge
-    ~!  charge+charge
     %+  merge  (docket docket.c)
     %-  pairs
     :~  chad+(chad chad.c)
