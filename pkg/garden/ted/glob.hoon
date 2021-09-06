@@ -9,7 +9,7 @@
 |^
 ?-  -.loc
   %http  (fetch-http url.loc)
-  %ship  (fetch-ames ship.loc base)
+  %ames  (fetch-ames ship.loc base)
 ==
 ::
 ++  fetch-http
@@ -31,7 +31,7 @@
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   ;<  =cage  bind:m
-    (watch-one:strandio /glob/(scot %da now:bowl) [ship %docket] /glob/[base])
+    (watch-one:strandio /glob/(scot %da now.bowl) [ship %docket] /glob/[base])
   ?>  ?=(%glob p.cage)
   (pure:m q.cage)
 --
