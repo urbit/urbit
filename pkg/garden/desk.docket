@@ -1,7 +1,8 @@
-:~  title+'Grid'
-    info+'An app launcher for urbit.'
+:~  title+'Garden'
+    info+'An app launcher for Urbit.'
     color+0xee.5432
-    glob+'https://bootstrap.urbit.org/glob-0v6.t43bu.cpl0b.bsisc.sqr4d.dckpn.glob'
+    ::glob+'https://bootstrap.urbit.org/glob-0v6.t43bu.cpl0b.bsisc.sqr4d.dckpn.glob'
+    glob-ames+~zod
     base+'grid'
     version+[0 0 1]
     website+'https://tlon.io'

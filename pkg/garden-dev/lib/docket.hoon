@@ -7,7 +7,8 @@
     $:  title=(unit @t)
         info=(unit @t)
         color=(unit @ux)
-        glob=(unit url)
+        glob-http=(unit url)
+        glob-ames=(unit =ship)
         base=(unit term)
         site=(unit path)
         image=(unit url)
@@ -28,8 +29,11 @@
     =/  href=(unit href)
       ?^  site.draft  `[%site u.site.draft]
       ?~  base.draft  ~
-      ?~  glob.draft  ~
-      `[%glob [u.base.draft [%http u.glob]:draft]]
+      ?^  glob-http.draft
+        `[%glob [u.base %http u.glob-http]:draft]
+      ?~  glob-ames.draft
+        ~
+      `[%glob [u.base %ship u.glob-ames]:draft]
     ?~  href  ~
     =,  draft
     :-  ~
@@ -56,7 +60,8 @@
         %title  draft(title `title.clause)
         %info   draft(info `info.clause)
         %color  draft(color `color.clause)
-        %glob   draft(glob `url.clause)
+        %glob-http   draft(glob-http `url.clause)
+        %glob-ames   draft(glob-ames `ship:clause)
         %base   draft(base `base.clause)
         %site   draft(site `path.clause)
         %image  draft(image `url.clause)
@@ -79,10 +84,12 @@
         ==
         ?~  image.d  ~  ~[image+u.image.d]
         ?:  ?=(%site -.href.d)  ~[site+path.href.d]
+        =/  loc=glob-location  glob-location.href.d
         :~  base+base.href.d
-            glob+url.glob-location.href.d
-        ==
-    ==
+            ?-  -.loc
+              %http  [%glob-http url.loc]
+              %ship  [%glob-ames ship.loc]
+    ==  ==  ==
   ::
   ++  spit-clause
     |=  =clause
@@ -91,6 +98,7 @@
     ?+  -.clause  "'{(trip +.clause)}'"
       %color  (scow %ux color.clause)
       %site   (spud path.clause)
+      %glob-ames  ~&  ship+ship.clause  "{(scow %p ship.clause)}"
       ::
         %version
       =,  version.clause
@@ -154,13 +162,27 @@
   ++  href
     |=  h=^href
     %+  frond  -.h
-    ?-  -.h
-      %glob  (pairs base+s+base.h ~)
-      %site  s+(spat path.h)
+    ?-    -.h
+        %site  s+(spat path.h)
+        %glob
+      %-  pairs
+      :~  base+s+base.h
+          glob-location+(glob-location glob-location.h)
+      ==
+    ==
+  ::
+  ++  glob-location
+    |=  loc=^glob-location
+    ^-  json
+    %+  frond  -.loc
+    ?-  -.loc
+      %http  (pairs url+s+url.loc ~)
+      %ship  (ship ship.loc)
     ==
   ::
   ++  charge
     |=  c=^charge
+    ~!  charge+charge
     %+  merge  (docket docket.c)
     %-  pairs
     :~  chad+(chad chad.c)
