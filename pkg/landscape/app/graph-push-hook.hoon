@@ -135,7 +135,7 @@
       ^-  (quip card (unit vase))
       =/  transform
         %.  *indexed-post:store
-        .^(post-transform (scry:hc %cf %home /[u.mark]/transform-add-nodes))
+        .^(post-transform (scry:hc %cf q.byk.bowl /[u.mark]/transform-add-nodes))
       =/  [* result=(list [index:store node:store])]
         %+  roll
           (flatten-node-map ~(tap by nodes.q.update))
@@ -303,7 +303,7 @@
     [[%no %no %no] ~]
   =/  key  [u.mark (perm-mark-name perm)]
   =/  convert
-    .^(post-to-permission (scry %cf %home /[u.mark]/(perm-mark-name perm)))
+    .^(post-to-permission (scry %cf q.byk.bowl /[u.mark]/(perm-mark-name perm)))
   :-  ((convert indexed-post) vip)
   %-  zing
   :~  ?:  (~(has by graph-to-mark.cache) resource)
