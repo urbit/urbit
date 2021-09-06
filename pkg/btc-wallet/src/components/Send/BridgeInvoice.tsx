@@ -25,10 +25,18 @@ type Props = {
 };
 
 const BridgeInvoice: React.FC<Props> = ({ payee, stopSending, satsAmount }) => {
-  const { error, currencyRates, fee, broadcastSuccess, denomination, psbt } =
-    useSettings();
+  const {
+    error,
+    currencyRates,
+    fee,
+    broadcastSuccess,
+    denomination,
+    psbt,
+    history,
+  } = useSettings();
   const [txHex, setTxHex] = useState('');
   const [ready, setReady] = useState(false);
+  const [historyLength, setHistoryLength] = useState(0);
   const [localError, setLocalError] = useState('');
   const [broadcasting, setBroadcasting] = useState(false);
   const invoiceRef = useRef();
@@ -44,7 +52,17 @@ const BridgeInvoice: React.FC<Props> = ({ payee, stopSending, satsAmount }) => {
 
   useEffect(() => {
     window.open('https://bridge.urbit.org/?kind=btc&utx=' + psbt);
-  });
+  }, []);
+
+  useEffect(() => {
+    if (historyLength === 0) {
+      setHistoryLength(history.length);
+    }
+    if (broadcasting && history.length > historyLength) {
+      setBroadcasting(false);
+      stopSending();
+    }
+  }, [history]);
 
   const broadCastTx = (hex: string) => {
     let command = {
@@ -65,9 +83,14 @@ const BridgeInvoice: React.FC<Props> = ({ payee, stopSending, satsAmount }) => {
   };
 
   const checkTxHex = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTxHex(e.target.value);
-    setReady(txHex.length > 0);
-    setLocalError('');
+    // TODO: validate this hex with something other than length check.
+    if (e.target.value.length > 0) {
+      setTxHex(e.target.value);
+      setReady(true);
+      setLocalError('');
+    } else {
+      setLocalError('Invalid transaction hex');
+    }
   };
 
   let inputColor = 'black';
