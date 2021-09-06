@@ -13,6 +13,7 @@
 .note-grid-no-content {
   display: grid;
   width: 100%;
+  padding: 1rem;
   grid-template-rows: 1.75rem 1.75rem;
   grid-template-columns: 3.5rem 1fr;
   grid-column-gap: 0.75rem;

@@ -4,8 +4,7 @@ import { Poke } from '../lib/types';
 import {
   HarkBin,
   HarkBinId,
-  HarkPlace,
-  NotifIndex
+  HarkPlace
 } from './types';
 import { decToUd } from '../lib';
 
@@ -34,12 +33,12 @@ export { groupHookAction as harkGroupHookAction };
 export const actOnNotification = (
   frond: string,
   intTime: BigInteger,
-  index: NotifIndex
+  bin: HarkBin
 ): Poke<unknown> =>
   harkAction({
     [frond]: {
       time: decToUd(intTime.toString()),
-      index
+      bin
     }
   });
 
@@ -69,13 +68,8 @@ export const archive = (bin: HarkBin, time?: BigInteger): Poke<unknown> =>
 export const readNote = (bin: HarkBin): Poke<unknown> =>
   harkAction({ 'read-note': bin });
 
-export const readIndex = (index: NotifIndex): Poke<unknown> =>
-  harkAction({
-    'read-index': index
-  });
-
-export const unread = (time: BigInteger, index: NotifIndex): Poke<unknown> =>
-  actOnNotification('unread-note', time, index);
+export const unread = (time: BigInteger, bin: HarkBin): Poke<unknown> =>
+  actOnNotification('unread-note', time, bin);
 
 export const markCountAsRead = (place: HarkPlace): Poke<unknown> =>
   harkAction({
@@ -90,14 +84,6 @@ export const markEachAsRead = (
     'read-each': {
       place,
       path
-    }
-  });
-
-export const dec = (index: NotifIndex, ref: string): Poke<unknown> =>
-  harkAction({
-    dec: {
-      index,
-      ref
     }
   });
 

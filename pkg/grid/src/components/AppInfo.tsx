@@ -1,4 +1,4 @@
-import { chadIsRunning, Treaty } from '@urbit/api/docket';
+import { chadIsRunning, Treaty } from '@urbit/api';
 import clipboardCopy from 'clipboard-copy';
 import React, { FC } from 'react';
 import cn from 'classnames';

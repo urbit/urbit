@@ -8,7 +8,9 @@ import {
   Treaties,
   Treaty,
   Notification,
-  HarkContent
+  HarkContent,
+  HarkBody,
+  unixToDa
 } from '@urbit/api';
 import systemUrl from '../assets/system.png';
 
@@ -163,37 +165,63 @@ export const mockAllies: Allies = [
   '~nalrys'
 ].reduce((acc, val) => ({ ...acc, [val]: charter }), {});
 
-function createDmNotification(content: string): HarkContent {
+function ship(s: string) {
+  return { ship: s };
+}
+
+function text(t: string) {
+  return { text: t };
+}
+
+function createDmNotification(...content: HarkContent[]): HarkBody {
   return {
-    title: ' messaged you',
-    author: '~hastuc-dibtux',
-    time: Date.now() - 3_600,
+    title: [ship('~hastuc-dibtux'), text(' messaged you')],
+    time: unixToDa(Date.now() - 3_600).toString(),
     content,
-    links: []
+    link: '/'
   };
 }
 
 function createBitcoinNotif(amount: string) {
   return {
-    title: ` sent you ${amount}`,
-    author: '~silnem',
-    time: Date.now() - 3_600,
-    content: '',
-    links: []
+    title: [ship('~silnem'), text(` sent you ${amount}`)],
+    time: unixToDa(Date.now() - 3_600).toString(),
+    content: [],
+    binned: '/',
+    link: '/'
   };
 }
 
-function createGroupNotif(to: string): HarkContent {
+function createGroupNotif(to: string): HarkBody {
   return {
-    title: ` invited you to ${to}`,
-    author: '~ridlur-figbud',
-    content: '',
-    time: Date.now() - 3_600,
-    links: []
+    title: [ship('~ridlur-figbud'), text(` invited you to ${to}`)],
+    content: [],
+    time: unixToDa(Date.now() - 3_600).toString(),
+    link: '/'
   };
 }
 
-export function createMockNotification(desk: string, contents: HarkContent[]) {
+window.desk = window.desk || 'garden';
+
+function createMockSysNotification(path: string) {
+  return {
+    bin: {
+      place: {
+        desk: window.desk,
+        path
+      },
+      path: '/'
+    },
+    time: Date.now() - 3_600,
+    body: []
+  };
+}
+
+const lag = createMockSysNotification('/lag');
+const blocked = createMockSysNotification('/blocked');
+const onboard = createMockSysNotification('/onboard');
+
+export function createMockNotification(desk: string, body: HarkBody[]): Notification {
   return {
     bin: {
       place: {
@@ -203,14 +231,17 @@ export function createMockNotification(desk: string, contents: HarkContent[]) {
       path: '/'
     },
     time: Date.now() - 3_600,
-    contents
+    body
   };
 }
 
 export const mockNotifications: Notification[] = [
+  lag,
+  blocked,
+  onboard,
   createMockNotification('groups', [
-    createDmNotification('ie the hook agent responsible for marking the notifications'),
-    createDmNotification('~hastuc-dibtux sent a link')
+    createDmNotification(text('ie the hook agent responsible for marking the notifications')),
+    createDmNotification(ship('~hastuc-dibtux'), text(' sent a link'))
   ]),
   createMockNotification('bitcoin-wallet', [createBitcoinNotif('0.025 BTC')]),
   createMockNotification('groups', [createGroupNotif('a Group: Tlon Corporation')])

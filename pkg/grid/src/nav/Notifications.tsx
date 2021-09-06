@@ -36,7 +36,7 @@ const Empty = () => (
 
 export const Notifications = () => {
   const select = useLeapStore((s) => s.select);
-  const { unreads, reads, systemNotifications, hasAnyNotifications } = useNotifications();
+  const { unreads, reads, hasAnyNotifications } = useNotifications();
   const markAllAsRead = () => {
     const { readAll } = useHarkStore.getState();
     readAll();
@@ -47,6 +47,8 @@ export const Notifications = () => {
     const { getMore } = useHarkStore.getState();
     getMore();
   }, []);
+
+  console.log(unreads);
 
   return (
     <div className="grid grid-rows-[auto,1fr] h-full p-4 md:p-8 overflow-hidden">
@@ -67,12 +69,7 @@ export const Notifications = () => {
       {!hasAnyNotifications && <Empty />}
       {hasAnyNotifications && (
         <section className="text-gray-400 space-y-2 overflow-y-auto">
-          {systemNotifications.map((n, index) =>
-            renderNotification(n, (unreads.length + index).toString())
-          )}
-          {unreads.map((n, index) =>
-            renderNotification(n, (systemNotifications.length + index).toString(), true)
-          )}
+          {unreads.map((n, index) => renderNotification(n, index.toString(), true))}
           {Array.from(reads)
             .map(([, nots]) => nots)
             .flat()

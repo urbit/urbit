@@ -7,11 +7,8 @@ import { useNotifications } from '../state/notifications';
 
 type NotificationsState = 'empty' | 'unread' | 'attention-needed';
 
-function getNotificationsState(
-  notifications: Notification[],
-  systemNotifications: Notification[]
-): NotificationsState {
-  if (systemNotifications.length > 0) {
+function getNotificationsState(notifications: Notification[]): NotificationsState {
+  if (notifications.filter(({ bin }) => bin.place.desk === window.desk).length > 0) {
     return 'attention-needed';
   }
 

@@ -6,7 +6,6 @@ import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import { unstable_batchedUpdates } from 'react-dom';
 import produce from 'immer';
 import { map } from 'lodash';
-import bigInt from 'big-integer';
 import api from './api';
 import { useMockData } from './util';
 import { mockNotifications } from './mock-data';
@@ -21,9 +20,7 @@ interface HarkStore {
 
 export const useHarkStore = create<HarkStore>((set, get) => ({
   unreads: useMockData ? mockNotifications : [],
-  reads: useMockData
-    ? new BigIntOrderedMap<Notification[]>().gas([[bigInt.zero, mockNotifications]])
-    : new BigIntOrderedMap<Notification[]>(),
+  reads: new BigIntOrderedMap<Notification[]>(),
   set: (f) => {
     const newState = produce(get(), f);
     set(newState);
@@ -53,6 +50,9 @@ export const useHarkStore = create<HarkStore>((set, get) => ({
 
 function reduceHark(u: any) {
   const { set } = useHarkStore.getState();
+  if (!u) {
+    return;
+  }
   if ('more' in u) {
     u.more.forEach((upd) => {
       reduceHark(upd);
