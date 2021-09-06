@@ -138,7 +138,7 @@ export class Urbit {
    * Try to use an existing session, for browser use only.
    *
    * This method will check that `window.ship` is set, and try to connect to the airlock
-   * at window.location.origin as window.ship.
+   * as window.ship.
    * (Generally one should include `<script src="/~landscape/js/session.js"></script>`
    * in e.g. the index.html file of a React app, in order to set window.ship).
    * If so, it will attempt to poke and initialize the event source in the same manner as 'authenticate'.
@@ -148,13 +148,10 @@ export class Urbit {
     if(!isBrowser) {
       throw('tryExistingSession is for browser use only');
     }
-    if(typeof window.location.origin === 'undefined') {
-      throw 'Cannot try existing session, window.location.origin is undefined';
-    }
     if(typeof (window as any).ship === 'undefined') {
       throw 'Cannot try existing session, window.ship is undefined';
     }
-    const airlock = new Urbit(window.location.origin);
+    const airlock = new Urbit(''); // Use a top-level relative URL for the channel
     airlock.verbose = verbose;
     airlock.ship = (window as any).ship;
     await airlock.eventSource();
