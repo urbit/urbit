@@ -119,6 +119,16 @@
   ^-  card
   [%give %fact paths cage]
 ::
+++  fact-all
+  |=  =cage
+  ^-  (unit card)
+  =/  paths=(set path)
+    %-  ~(gas in *(set path))
+    %+  turn  ~(tap by sup.bowl)
+    |=([duct ship =path] path)
+  ?:  =(~ paths)  ~
+  `(fact cage ~(tap in paths))
+::
 ++  kick
   |=  paths=(list path)
   [%give %kick paths ~]
