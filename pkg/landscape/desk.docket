@@ -3,7 +3,7 @@
     color+0xee.5432
     glob+'https://bootstrap.urbit.org/glob-0v4.0k6hb.4s38v.su79d.10vd5.7c8lu.glob'
     base+'landscape'
-    version+[0 0 1]
+    version+[1 3 5]
     website+'https://tlon.io'
     license+'MIT'
 ==

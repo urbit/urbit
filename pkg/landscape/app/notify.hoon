@@ -1,6 +1,6 @@
 ::
 /-  *notify, resource, hark-store, post
-/+  default-agent, verb, dbug, group, agentio
+/+  default-agent, verb, dbug, group, agentio, graphlib=graph
 ::
 |%
 +$  card  card:agent:gall
@@ -18,19 +18,25 @@
   $:  providers=(jug @p term)
   ==
 ::
-+$  state-0
-  $:  %0
-      =provider-state
++$  base-state-0
+  $:  =provider-state
       =client-state
   ==
 ::
++$  state-0
+  [%0 base-state-0]
+::
++$  state-1
+  [%1 base-state-0]
+::
 +$  versioned-state
   $%  state-0
+      state-1
   ==
 ::
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 %-  agent:dbug
@@ -47,19 +53,27 @@
   ::
   ++  on-init
     :_  this
-    [(~(watch-our pass:io /hark) %hark-store /updates)]~
+    [(~(watch-our pass:io /hark) %hark-store /notes)]~
   ::
   ++  on-save   !>(state)
   ++  on-load
     |=  =old=vase
     ^-  (quip card _this)
     =/  old  !<(versioned-state old-vase)
+    =|  cards=(list card)
+    |-
     ?-  -.old
+      %1  [(flop cards) this]
+    ::
         %0
-      :_  this(state old)
-      ?.  (~(has by wex.bowl) [/hark our.bowl %hark-store])
-        ~
-      [(~(watch-our pass:io /hark) %hark-store /updates)]~
+      %_    $
+      ::
+          cards 
+        %+  welp  cards
+        :~  (~(leave-our pass:io /hark) %hark-store)
+            (~(watch-our pass:io /hark) %hark-store /notes)
+        ==
+      ==
     ==
   ::
   ++  on-poke
@@ -199,12 +213,10 @@
         ?.  ?=(%hark-update p.cage.sign)
           ~
         =+  !<(hark-update=update:hark-store q.cage.sign)
-        =/  notes=(list notification)  (filter-notifications:do hark-update)
-        ?~  notes
-          ~
+        ?~  not=(filter-notifications:do hark-update)  ~
         ::  only send the last one, since hark accumulates notifcations
-        =/  =update  [%notification `notification`(snag 0 (flop notes))]
-        =/  card  (fact-all:io %notify-update !>(update))
+        =/  =update  [%notification u.not]
+        =/  card=(unit card)   ~  ::(fact-all:io %notify-update !>(update))
         (drop card)
       ::
           %kick
@@ -281,39 +293,23 @@
   ++  on-fail   on-fail:def
   --
 |_  bowl=bowl:gall
++*  gra  ~(. graphlib bowl)
 ::
 ++  filter-notifications
   |=  =update:hark-store
-  ^-  (list notification)
-  ?+  -.update  ~
-      %more
-    (zing (turn more.update filter-notifications))
-  ::
-      %added
-    ?-  -.index.update
-        %graph
-      ?:  =(`%graph-validator-dm mark.index.update)
-        ?.  ?=(%graph -.contents.notification.update)
-          ~
-        %+  turn  list.contents.notification.update
-        |=  =post:post
-        ^-  notification
-        [graph.index.update index.post]
-      ?:  =(`%graph-validator-chat mark.index.update)
-        =/  hid  (group-is-hidden graph.index.update)
-        ?~  hid  ~
-        ?.  u.hid  ~
-        ?.  ?=(%graph -.contents.notification.update)
-          ~
-        %+  turn  list.contents.notification.update
-        |=  =post:post
-        ^-  notification
-        [graph.index.update index.post]
-      ~
-    ::
-        %group  ~
-    ==
-  ==
+  ^-  (unit notification)
+  ?.  ?=(%add-note -.update)  ~
+  =*  place  place.bin.update
+  ?.  ?=(%landscape desk.place)  ~
+  ?.  ?=([%graph *] path.place)  ~
+  =/  link=path  link.body.update
+  ?.  ?=([@ @ @ *] link)  ~
+  ?~  ship=(slaw %p i.t.link)  ~
+  =*  name  i.t.t.link
+  =/  =resource:resource  [u.ship name]
+  =/  =index:graph-store
+    (turn t.t.t.link (curr rash dim:ag))
+  `[resource index]
 ::
 ++  group-is-hidden
   |=  =resource:resource

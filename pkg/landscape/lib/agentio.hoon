@@ -84,6 +84,10 @@
     =/  =rave:clay
       ?:(?=(%sing genre) [genre mood] [genre mood])
     (warp-our q.byk.bowl `rave)
+  ::
+  ++  connect
+    |=  [=binding:eyre app=term]
+    (arvo %e %connect binding app)
   --
 ::
 ++  fact-curry
@@ -114,6 +118,16 @@
   |=  [=cage paths=(list path)]
   ^-  card
   [%give %fact paths cage]
+::
+++  fact-all
+  |=  =cage
+  ^-  (unit card)
+  =/  paths=(set path)
+    %-  ~(gas in *(set path))
+    %+  turn  ~(tap by sup.bowl)
+    |=([duct ship =path] path)
+  ?:  =(~ paths)  ~
+  `(fact cage ~(tap in paths))
 ::
 ++  kick
   |=  paths=(list path)

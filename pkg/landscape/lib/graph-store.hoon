@@ -1,10 +1,24 @@
-/-  sur=graph-store, pos=post, pull-hook
+/-  sur=graph-store, pos=post, pull-hook, hark=hark-store
 /+  res=resource, migrate
 =<  [sur .]
 =<  [pos .]
 =,  sur
 =,  pos
 |%
+++  hark-content
+  |=  =content
+  ^-  content:hark
+  ?-  -.content
+    %text       content
+    %mention    ship+ship.content
+    %url        text+url.content
+    %code       text+'A code excerpt'
+    %reference  text+'A reference'       
+  ==
+::
+++  hark-contents
+  |=  cs=(list content) 
+  (turn cs hark-content)
 ::  NOTE: move these functions to zuse
 ++  nu                                              ::  parse number as hex
   |=  jon=json

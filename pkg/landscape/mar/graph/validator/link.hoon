@@ -1,4 +1,5 @@
-/-  *post, met=metadata-store, graph=graph-store, hark=hark-graph-hook
+/-  *post, met=metadata-store, hark=hark-graph-hook
+/+  graph=graph-store
 |_  i=indexed-post
 ++  grow
   |%
@@ -49,10 +50,24 @@
     ==
   ::
   ++  notification-kind
+    |=  title=cord
     ^-  (unit notif-kind:hark)
     ?+  index.p.i  ~
-      [@ ~]       `[%link [0 1] %each %children]
-      [@ @ %1 ~]  `[%comment [1 2] %count %siblings]
+        [@ ~]       
+      :-  ~
+      :*  [text+(rap 3 'New links in ' title ~)]~
+          [ship+author.p.i text+': ' (hark-contents:graph contents.p.i)]
+          [0 1]  %each  %children
+      ==
+
+
+        [@ @ %1 ~]
+      :-  ~
+      :*  [text+(rap 3 'New comments on a post in ' title ~)]~
+          [ship+author.p.i text+': ' (hark-contents:graph contents.p.i)]
+          [1 2]  %count  %siblings
+      ==
+
     ==
   ::
   ++  transform-add-nodes

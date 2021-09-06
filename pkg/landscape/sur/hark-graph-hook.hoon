@@ -1,4 +1,4 @@
-/-  *resource, graph-store, post
+/-  *resource, graph-store, post, store=hark-store
 ^?
 |%
 ::
@@ -10,7 +10,12 @@
   [parent=@ud self=@ud] 
 ::
 +$  notif-kind
-  [name=@t =index-len =mode =watch-for]
+  $:  title=(list content:store)
+      body=(list content:store)
+      =index-len 
+      =mode
+      =watch-for
+  ==
 ::
 +$  action
   $%

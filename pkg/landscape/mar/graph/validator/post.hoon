@@ -1,4 +1,5 @@
-/-  *post, met=metadata-store, graph=graph-store, hark=hark-graph-hook
+/-  *post, met=metadata-store, hark=hark-graph-hook
+/+  graph=graph-store
 |_  i=indexed-post
 ++  grow
   |%
@@ -26,11 +27,16 @@
   ::  +notification-kind: don't track unreads, notify on replies
   ::
   ++  notification-kind  
+    |=  title=cord
     ^-  (unit notif-kind:hark)
     =/  len  (lent index.p.i)
     =/  =mode:hark
       ?:(=(1 len) %count %none)
-    `[%post [(dec len) len] mode %children]
+    :-  ~
+    :*  ~[text+(rap 3 'Your post in ' title ' received replies ' ~)]
+        [ship+author.p.i text+': ' (hark-contents:graph contents.p.i)]
+        [(dec len) len]  mode  %children
+    ==
   ::
   ++  transform-add-nodes
     |=  [=index =post =atom was-parent-modified=?]

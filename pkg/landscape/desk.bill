@@ -1,41 +1,40 @@
 :~  :-  %apes
-    :~  %chat-cli
-        %chat-hook
+    :~  %metadata-store  :: start stores first
+        %contact-store
         %chat-store
+        %graph-store
+        %group-store
+        %hark-store
+        %invite-store
+        %s3-store
+        %settings-store
+        %chat-cli
+        %chat-hook
         %chat-view
         %clock
         %contact-hook
         %contact-pull-hook
         %contact-push-hook
-        %contact-store
         %contact-view
-        %demo-pull-hook
-        %demo-push-hook
-        %demo-store
         %dm-hook
         %graph-pull-hook
         %graph-push-hook
-        %graph-store
         %group-pull-hook
         %group-push-hook
-        %group-store
         %group-view
         %hark-chat-hook
         %hark-graph-hook
         %hark-group-hook
-        %hark-store
+        %hark-invite-hook
         %invite-hook
-        %invite-store
         %invite-view
         %launch
         %metadata-hook
         %metadata-pull-hook
         %metadata-push-hook
-        %metadata-store
+        %notify
         %observe-hook
-        %s3-store
         %sane
-        %settings-store
         %weather
     ==    
     :-  %fish
