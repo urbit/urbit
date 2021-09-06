@@ -173,7 +173,7 @@ class App extends React.Component {
             : null}
         </Helmet>
         <Root>
-          <Router>
+          <Router basename="/apps/landscape/">
             <TutorialModal />
             <ErrorBoundary>
               <StatusBarWithRouter

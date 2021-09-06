@@ -5,7 +5,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph, referenceToPermalink } from '~/logic/lib/permalinks';
 import { useCopy } from '~/logic/lib/useCopy';
-import useHarkState from '~/logic/state/hark';
+import { useHarkStat } from '~/logic/state/hark';
 import Author from '~/views/components/Author';
 import { Dropdown } from '~/views/components/Dropdown';
 import RemoteContent from '~/views/components/RemoteContent';
@@ -40,8 +40,12 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
   }, []);
   const index = node.post.index.split('/')[1];
 
+  const [ship, name] = resource.split('/');
+  const harkPath = `/graph/~${ship}/${name}`;
   const markRead = useCallback(() => {
-    airlock.poke(markEachAsRead(resource, '/', `/${index}`));
+    airlock.poke(
+      markEachAsRead({ desk: (window as any).desk, path: harkPath }, `/${index}`)
+    );
   }, [resource, index]);
 
   useEffect(() => {
@@ -74,7 +78,6 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
   const baseUrl = props.baseUrl || `/~404/${resource}`;
 
   const ourRole = group ? roleForShip(group, window.ship) : undefined;
-  const [ship, name] = resource.split('/');
 
   const permalink = getPermalinkForGraph(
     association.group,
@@ -98,11 +101,10 @@ export const LinkItem = React.forwardRef((props: LinkItemProps, ref: RefObject<H
     }
   };
 
-  const appPath = `/ship/~${resource}`;
-  const unreads = useHarkState(state => state.unreads?.[appPath]);
-  const commColor = (unreads?.[`/${index}`]?.unreads ?? 0) > 0 ? 'blue' : 'gray';
-  // @ts-ignore hark will have to choose between sets and numbers
-  const isUnread = unreads?.['/']?.unreads?.has?.(node.post.index);
+  const linkStats = useHarkStat(harkPath);
+  const commStats = useHarkStat(`${harkPath}/${index}`);
+  const commColor = commStats.count > 0 ? 'blue' : 'gray';
+  const isUnread = linkStats.each.includes(`/${index}`);
 
   return (
     <Box

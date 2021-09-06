@@ -12,7 +12,7 @@ import useContactState, { useContact } from '~/logic/state/contact';
 import { getItemTitle, getModuleIcon, uxToHex } from '~/logic/lib/util';
 import useGroupState from '~/logic/state/group';
 import Dot from '~/views/components/Dot';
-import useHarkState, { useHarkDm } from '~/logic/state/hark';
+import { useHarkDm, useHarkStat } from '~/logic/state/hark';
 import useSettingsState from '~/logic/state/settings';
 import useGraphState from '~/logic/state/graph';
 
@@ -20,14 +20,10 @@ function useAssociationStatus(resource: string) {
   const [, , ship, name] = resource.split('/');
   const graphKey = `${ship.slice(1)}/${name}`;
   const isSubscribed = useGraphState(s => s.graphKeys.has(graphKey));
-  const { unreads, notifications } = useHarkState(
-    s => s.unreads.graph?.[resource]?.['/'] || { unreads: 0, notifications: 0, last: 0 }
-  );
-  const hasNotifications =
-    (typeof notifications === 'number' && notifications > 0) ||
-    (typeof notifications === 'object' && notifications.length);
-  const hasUnread =
-    typeof unreads === 'number' ? unreads > 0 : unreads?.size ?? 0 > 0;
+  const stats = useHarkStat(`/graph/~${graphKey}`);
+  const { count, each } = stats;
+  const hasNotifications = false;
+  const hasUnread = count > 0 || each.length > 0;
   return hasNotifications
     ? 'notification'
     : hasUnread

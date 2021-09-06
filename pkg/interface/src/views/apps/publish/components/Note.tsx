@@ -13,6 +13,7 @@ import { Spinner } from '~/views/components/Spinner';
 import { GraphContent } from '~/views/landscape/components/Graph/GraphContent';
 import { NoteNavigation } from './NoteNavigation';
 import airlock from '~/logic/api';
+import { toHarkPlace } from '~/logic/lib/util';
 
 interface NoteProps {
   ship: string;
@@ -59,8 +60,8 @@ export function Note(props: NoteProps & RouteComponentProps) {
 
   const noteId = bigInt(index[1]);
   useEffect(() => {
-    airlock.poke(markEachAsRead(props.association.resource, '/',`/${index[1]}/1/1`));
-  }, [props.association, props.note]);
+    airlock.poke(markEachAsRead(toHarkPlace(association.resource), `/${index[1]}`));
+  }, [association, props.note]);
 
   const adminLinks: JSX.Element[] = [];
   const ourRole = roleForShip(group, window.ship);

@@ -554,3 +554,14 @@ export async function jsonFetch<T>(info: RequestInfo, init?: RequestInit): Promi
 export function clone<T>(a: T) {
   return JSON.parse(JSON.stringify(a)) as T;
 }
+
+export function toHarkPath(path: string, index = '') {
+  return `/graph/${path.slice(6)}${index}`;
+}
+
+export function toHarkPlace(graph: string, index = '') {
+  return {
+    desk: (window as any).desk,
+    path: toHarkPath(graph, index)
+  };
+}

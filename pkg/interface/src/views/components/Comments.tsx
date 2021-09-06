@@ -25,6 +25,7 @@ import { CommentItem } from './CommentItem';
 import airlock from '~/logic/api';
 import useGraphState from '~/logic/state/graph';
 import { useHistory } from 'react-router';
+import { toHarkPlace } from '~/logic/lib/util';
 
 interface CommentsProps {
   comments: GraphNode;
@@ -126,10 +127,11 @@ export function Comments(props: CommentsProps & PropFunc<typeof Col>) {
   const children = Array.from(comments.children);
 
   useEffect(() => {
+    console.log(parentIndex);
     return () => {
-      airlock.poke(markCountAsRead(association.resource));
+      airlock.poke(markCountAsRead(toHarkPlace(association.resource, parentIndex)));
     };
-  }, [comments.post?.index]);
+  }, [comments.post?.index, association.resource]);
 
   const unreads = useHarkState(state => state.unreads);
   const readCount = children.length - getUnreadCount(unreads, association.resource, parentIndex);
