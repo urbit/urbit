@@ -512,7 +512,7 @@ export class Urbit {
    */
   async thread<R, T = any>(params: Thread<T>): Promise<R> {
     const { inputMark, outputMark, threadName, body } = params;
-    const res = await fetch(`${this.url}/spider/${inputMark}/${threadName}/${outputMark}.json`, {
+    const res = await fetch(`${this.url}/spider/landscape/${inputMark}/${threadName}/${outputMark}.json`, {
       ...this.fetchOptions,
       method: 'POST',
       body: JSON.stringify(body)
