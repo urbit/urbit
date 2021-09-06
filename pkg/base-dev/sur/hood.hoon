@@ -15,15 +15,26 @@
   ==
 ::  $arak: foreign vat tracker
 ::
-::    .next is a list of pending commits with future kelvins
+::    .rail: upstream tracking state, if any
+::    .next: list of pending commits with future kelvins
+::    .rein: configuration for agents
 ::
 +$  arak
-  $:  =ship
-      =desk
-      =aeon
-      next=(list [=aeon =weft])
+  $:  =rail
+      next=(list rung)
       =rein
   ==
+::  $rail: upstream tracking state
+::
++$  rail
+  $:  paused=?
+      =ship
+      =desk
+      =aeon
+  ==
+::  $rung: reference to upstream commit
+::
++$  rung  [=aeon =weft]
 ::  $rein: diff from desk manifest
 ::
 ::    .liv: suspended?
@@ -63,9 +74,9 @@
   :~  leaf/"/sys/kelvin: {<[lal num]:weft>}"
       leaf/"base hash:   {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:    {<hash>}"
-      leaf/"source ship: {<ship.arak>}"
-      leaf/"source desk: {<desk.arak>}"
-      leaf/"source aeon: {<aeon.arak>}"
+      leaf/"source ship: {<ship.rail.arak>}"
+      leaf/"source desk: {<desk.rail.arak>}"
+      leaf/"source aeon: {<aeon.rail.arak>}"
       leaf/"status:      {sat}"
       leaf/"force on:    {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
       leaf/"force off:   {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
@@ -146,10 +157,10 @@
 ::
 ++  mergebase-hashes
   |=  [our=@p =desk now=@da =arak]
-  =/  her  (scot %p ship.arak)
+  =/  her  (scot %p ship.rail.arak)
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
-  %+  turn  .^((list tako) %cs ~[ego desk wen %base her desk.arak])
+  %+  turn  .^((list tako) %cs ~[ego desk wen %base her desk.rail.arak])
   |=(=tako .^(@uv %cs ~[ego desk wen %hash (scot %uv tako)]))
 ::
 ++  enjs
@@ -192,10 +203,10 @@
     ==
   ::
   ++  woof
-    |=  w=[=aeon =^weft]
+    |=  =rung
     %-  pairs
-    :~  aeon+(numb aeon.w)
-        weft+(weft weft.w)
+    :~  aeon+(numb aeon.rung)
+        weft+(weft weft.rung)
     ==
   ::
   ++  rein
@@ -208,9 +219,9 @@
   ++  arak
     |=  a=^arak
     %-  pairs
-    :~  ship+s+(scot %p ship.a)
-        desk+s+desk.a
-        aeon+(numb aeon.a)
+    :~  ship+s+(scot %p ship.rail.a)
+        desk+s+desk.rail.a
+        aeon+(numb aeon.rail.a)
         next+a+(turn next.a woof)
         rein+(rein rein.a)
     ==

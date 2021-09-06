@@ -5,7 +5,8 @@
 =,  format
 =*  dude  dude:gall
 |%
-+$  state    state-4
++$  state    state-5
++$  state-5  [%5 pith-5]
 +$  state-4  [%4 pith-4]
 +$  state-3  [%3 pith-3]
 +$  state-2  [%2 pith-2]
@@ -13,13 +14,14 @@
 +$  state-0  [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-4
+  $%  state-5
+      state-4
       state-3
       state-2
       state-1
       state-0
   ==
-+$  pith-4                                              ::
++$  pith-5
   $:  rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
       ark=(map desk arak)                               ::
@@ -33,6 +35,28 @@
       ::  request is made multiple times.
       hxs=(map desk @ud)
   ==                                                    ::
+::
++$  pith-4                                              ::
+  $:  rem=(map desk per-desk)                           ::
+      syn=(map kiln-sync let=@ud)                       ::
+      ark=(map desk arak-4)                             ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+      ::  map desk to the currently ongoing fuse request
+      ::  and the latest version numbers for beaks to
+      fus=(map desk per-fuse)
+      ::  used for fuses - every time we get a fuse we
+      ::  bump this. used when calculating hashes to
+      ::  ensure they're unique even when the same
+      ::  request is made multiple times.
+      hxs=(map desk @ud)
+  ==                                                    ::
++$  arak-4
+  $:  =ship
+      =desk
+      =aeon
+      next=(list rung)
+      =rein
+  ==
 +$  pith-3                                              ::
   $:  rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
@@ -51,7 +75,7 @@
   $:  =ship
       =desk
       =aeon
-      next=(list [=aeon =weft])
+      next=(list rung)
       rein=rein-3
   ==
 +$  rein-3
@@ -217,17 +241,20 @@
         fus.old
         hxs.old
     ==
-  =?  old  ?=(%3 -.old)
-    :*  %4
-        rem.old
-        syn.old
-        ark=(~(run by ark.old) |=(a=arak-3 a(rein [liv=& rein.a])))
-        commit-timer.old
-        fus.old
-        hxs.old
-    ==
   ::
-  ?>  ?=(%4 -.old)
+  =?  old  ?=(%3 -.old)
+    :-  %4
+    +.old(ark (~(run by ark.old) |=(a=arak-3 a(rein [liv=& rein.a]))))
+  ::
+  =?  old  ?=(%4 -.old)
+    :-  %5
+    =-  +.old(ark -)
+    %-   ~(run by ark.old)
+    |=  a=arak-4
+    ^-  arak
+    [[paused=| ship desk aeon] next rein]:a
+  ::
+  ?>  ?=(%5 -.old)
   =.  +<+.$.abet  old
   =<  abet
   ?~  old-ota
@@ -279,7 +306,7 @@
     ~_  leaf/"kiln: {<lac>} not installed"
     vats(loc lac, rak (~(got by ark) lac))
   ::
-  ++  here  "{<loc>} from {<[ship desk]:rak>}"
+  ++  here  "{<loc>} from {<[ship desk]:rail.rak>}"
   ++  make-wire  |=(step=@tas /kiln/vats/[loc]/[step])
   ++  from-wire
     |=  =wire
@@ -299,17 +326,21 @@
     ++  pyre  |=(=tang [%pass /kiln/vats %pyre tang])
     ++  find      (warp %find [%sing %y ud+1 /])
     ++  sync-da   (warp %sync [%sing %w da+now /])
-    ++  sync-ud   (warp %sync [%sing %w ud+aeon.rak /])
-    ++  download  (warp %download [%sing %v ud+aeon.rak /])
-    ++  warp  |=([s=term r=rave] (clay-card s %warp ship.rak desk.rak `r))
+    ++  sync-ud   (warp %sync [%sing %w ud+aeon.rail.rak /])
+    ++  download  (warp %download [%sing %v ud+aeon.rail.rak /])
+    ++  warp
+      |=  [s=term r=rave]
+      (clay-card s %warp ship.rail.rak desk.rail.rak `r)
     ++  merge-main
       =/  germ  (get-germ loc)
-      =/  =aeon  (dec aeon.rak)
-      (clay-card %merge-main [%merg loc ship.rak desk.rak ud+aeon germ])
+      =/  =aeon  (dec aeon.rail.rak)
+      %+  clay-card  %merge-main
+      [%merg loc ship.rail.rak desk.rail.rak ud+aeon germ]
     ++  merge-kids
       =/  germ  (get-germ %kids)
-      =/  =aeon  (dec aeon.rak)
-      (clay-card %merge-kids [%merg %kids ship.rak desk.rak ud+aeon germ])
+      =/  =aeon  (dec aeon.rail.rak)
+      %+  clay-card  %merge-kids
+      [%merg %kids ship.rail.rak desk.rail.rak ud+aeon germ]
     ++  clay-card
       |=  [step=@tas =task:clay]
       ^-  card:agent:gall
@@ -361,7 +392,7 @@
       vats
     =?  kiln  ?=(^ got)  (uninstall lac)
     =:  loc  lac
-        rak  [her rem *aeon next=~ *rein]
+        rak  [[paused=| her rem *aeon] next=~ *rein]
       ==
     ~>  %slog.0^leaf/"kiln: beginning install into {here}"
     (emit find:pass)
@@ -372,7 +403,32 @@
     ~>  %slog.0^leaf/"kiln: resetting tracking for {here}"
     =.  vats  (emit (diff:give %reset loc rak))
     =.  ark  (~(del by ark) loc)
-    (install loc [ship desk]:rak)
+    (install loc [ship desk]:rail.rak)
+  ::  +pause: stop syncing from upstream
+  ::
+  ++  pause
+    |=  lac=desk
+    ^+  vats
+    =.  vats  (abed lac)
+    ~>  %slog.  :+  %0  %leaf
+                ?:  paused.rail.rak
+                  "kiln: {<lac>} already paused, ignoring"
+                "kiln: {<lac>} pausing updates"
+    =:  paused.rail.rak  &
+        aeon.rail.rak    0
+      ==
+    vats
+  ::  +resume: restart tracking from upstream
+  ::
+  ++  resume
+    |=  lac=desk
+    ^+  vats
+    =.  vats  (abed lac)
+    ~>  %slog.  :+  %0  %leaf
+                ?.  paused.rail.rak
+                  "kiln: {<lac>} already tracking, ignoring"
+                "kiln: {<lac>} resuming updates"
+    reset
   ::  +suspend: shut down all agents, keep syncing
   ::
   ++  suspend
@@ -498,6 +554,8 @@
     |=  syn=sign-arvo
     ^+  vats
     ?>  ?=(%writ +<.syn)
+    ?:  paused.rail.rak
+      vats
     ?~  p.syn
       ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, aborting"
       vats(ark (~(del by ark) loc))
@@ -508,24 +566,28 @@
     |=  syn=sign-arvo
     ^+  vats
     ?>  ?=(%writ +<.syn)
+    ?:  paused.rail.rak
+      vats
     ?~  p.syn
       ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, retrying"
       reset
     ~>  %slog.0^leaf/"kiln: downloading update for {here}"
-    =?  aeon.rak  ?=(%w p.p.u.p.syn)  ud:;;(cass:clay q.q.r.u.p.syn)
+    =?  aeon.rail.rak  ?=(%w p.p.u.p.syn)  ud:;;(cass:clay q.q.r.u.p.syn)
     (emit download:pass)
   ::
   ++  take-download
     |=  syn=sign-arvo
     ^+  vats
     ?>  ?=(%writ +<.syn)
+    ?:  paused.rail.rak
+      vats
     ?~  p.syn
       ~>  %slog.0^leaf/"kiln: cancelled (2) install into {here}, retrying"
       reset
     ~>  %slog.0^leaf/"kiln: finished downloading update for {here}"
     =/  old-weft  `weft`[%zuse zuse]
-    =/  new-weft  (read-kelvin-foreign [ship desk aeon]:rak)
-    =.  aeon.rak  +(aeon.rak)
+    =/  new-weft  (read-kelvin-foreign [ship desk aeon]:rail.rak)
+    =.  aeon.rail.rak  +(aeon.rail.rak)
     ::
     ?.  =(%base loc)
       ::  TODO: ?>  =(%zuse lal.new-weft) but more flexible for future renames
@@ -536,11 +598,11 @@
         (emil sync-ud:pass (diff:give diff) ~)
       ?:  (lth num.new-weft num.old-weft)
         ~>  %slog.0^leaf/"kiln: future version {<new-weft>}, enqueueing"
-        =.  next.rak  (snoc next.rak [(dec aeon.rak) new-weft])
+        =.  next.rak  (snoc next.rak [(dec aeon.rail.rak) new-weft])
         =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
         (emil sync-ud:pass (diff:give diff) ~)
       ~>  %slog.0^leaf/"kiln: merging into {here}"
-      =.  next.rak  +:(crank-next %& (dec aeon.rak))
+      =.  next.rak  +:(crank-next %& (dec aeon.rail.rak))
       (emil ~[merge-main sync-ud]:pass)
     ::
     =/  blockers
@@ -550,11 +612,11 @@
     ::
     ?.  =(~ blockers)
       ~>  %slog.0^leaf/"kiln: OTA blocked on {<blockers>}"
-      =.  next.rak  (snoc next.rak [(dec aeon.rak) new-weft])
+      =.  next.rak  (snoc next.rak [(dec aeon.rail.rak) new-weft])
       =/  =diff  [%block loc rak new-weft blockers]
       (emil sync-ud:pass (diff:give diff) ~)
     ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
-    =.  next.rak  +:(crank-next %& (dec aeon.rak))
+    =.  next.rak  +:(crank-next %& (dec aeon.rail.rak))
     (emil ~[merge-main sync-ud]:pass)
   ::
   ++  take-merge-main
@@ -624,9 +686,9 @@
   ::
   ++  crank-next
     |=  new=(each aeon weft)
-    ^+  [match=*(unit [=aeon =weft]) next.rak]
+    ^+  [match=*(unit rung) next.rak]
     =/  rog  next.rak
-    |-  ^+  [match=*(unit [=aeon =weft]) next.rak]
+    |-  ^+  [match=*(unit rung) next.rak]
     ?~  rog  [~ next.rak]
     ?:  ?-  -.new
           %&  =(p.new aeon.i.rog)
@@ -683,12 +745,14 @@
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
     %kiln-nuke               =;(f (f !<(_+<.f vase)) poke-nuke)
-    %kiln-suspend            =;(f (f !<(_+<.f vase)) poke-suspend)
+    %kiln-pause              =;(f (f !<(_+<.f vase)) poke-pause)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
+    %kiln-resume             =;(f (f !<(_+<.f vase)) poke-resume)
     %kiln-revive             =;(f (f !<(_+<.f vase)) poke-revive)
     %kiln-rein               =;(f (f !<(_+<.f vase)) poke-rein)
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
+    %kiln-suspend            =;(f (f !<(_+<.f vase)) poke-suspend)
     %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
     %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
     %kiln-track              =;(f (f !<(_+<.f vase)) poke-track)
@@ -837,6 +901,10 @@
   %+  turn  (get-apps-have our term now)
   |=([=dude ?] [%pass /nuke %arvo %g [%nuke dude]])
 ::
+++  poke-pause
+  |=  =desk
+  abet:abet:(pause:vats desk)
+::
 ++  poke-permission
   |=  [syd=desk pax=path pub=?]
   =<  abet
@@ -847,6 +915,10 @@
 ++  poke-rein
   |=  [=desk =rein]
   abet:abet:(set-rein:vats +<)
+::
+++  poke-resume
+  |=  =desk
+  abet:abet:(resume:vats desk)
 ::
 ++  poke-revive
   |=  =desk

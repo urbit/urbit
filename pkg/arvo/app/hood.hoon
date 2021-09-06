@@ -2,8 +2,8 @@
 /+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
 |%
 +$  state
-  $~  [%17 *state:drum *state:helm *state:kiln]
-  $>(%17 any-state)
+  $~  [%18 *state:drum *state:helm *state:kiln]
+  $>(%18 any-state)
 ::
 +$  any-state
   $%  [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
@@ -18,6 +18,7 @@
       [%15 drum=state-2:drum helm=state:helm kiln=state-2:kiln]
       [%16 drum=state-4:drum helm=state:helm kiln=state-3:kiln]
       [%17 drum=state-4:drum helm=state:helm kiln=state-4:kiln]
+      [%18 drum=state-4:drum helm=state:helm kiln=state-5:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum
