@@ -18,17 +18,26 @@
   $:  starting=(map yarn [=trying =vase])
       running=trie
       tid=(map tid yarn)
-      serving=(map tid [@ta =mark])
+      serving=(map tid [@ta =mark =desk])
   ==
 ::
 +$  clean-slate-any
   $^  clean-slate-ket
   $%  clean-slate-sig
       clean-slate-1
+      clean-slate-2
       clean-slate
   ==
 ::
 +$  clean-slate
+  $:  %3
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [@ta =mark =desk])
+  ==
+::
++$  clean-slate-2
   $:  %2
       starting=(map yarn [=trying =vase])
       running=(list yarn)
@@ -158,9 +167,11 @@
     =+  !<(any=clean-slate-any old-state)
     =?  any  ?=(^ -.any)  (old-to-1 any)
     =?  any  ?=(~ -.any)  (old-to-1 any)
-    =^  upgrade-cards  any  
+    =^  cards-to-2  any
       (old-to-2 any)
-    ?>  ?=(%2 -.any)
+    =^  cards-to-3  any
+      (old-to-3 any)
+    ?>  ?=(%3 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
@@ -173,7 +184,7 @@
       (handle-stop-thread:sc (yarn-to-tid i.yarns) |)
     =^  cards-2  this
       $(yarns t.yarns)
-    [:(weld upgrade-cards cards-1 cards-2) this]
+    [:(weld cards-to-2 cards-to-3 cards-1 cards-2) this]
     ::
     ++  old-to-1
       |=  old=clean-slate-ket
@@ -182,9 +193,9 @@
     ::
     ++  old-to-2
       |=  old=clean-slate-any
-      ^-  (quip card clean-slate)
-      ?>  ?=(?(%1 %2) -.old)
-      ?:  ?=(%2 -.old)
+      ^-  (quip card clean-slate-any)
+      ?>  ?=(?(%1 %2 %3) -.old)
+      ?:  ?=(?(%2 %3) -.old)
         `old
       :-  ~[bind-eyre:sc]
       :*  %2
@@ -193,6 +204,23 @@
         tid.old
         ~
       ==
+    ::
+    ++  old-to-3
+      |=  old=clean-slate-any
+      ^-  (quip card clean-slate)
+      ?>  ?=(?(%2 %3) -.old)
+      ?:  ?=(%3 -.old)
+        `old
+      :-  ~
+      :*  %3
+        starting.old
+        running.old
+        tid.old
+        %-  ~(gas by *(map tid [@ta =mark =desk]))
+        %+  turn  ~(tap by serving.old)
+        |=([=tid id=@ta =mark] [tid id mark q.byk.bowl])
+      ==
+
     --
   ::
   ++  on-poke
@@ -295,7 +323,7 @@
   =*  output-mark  i.t.t.t.t.site.url
   =/  =tid         (new-thread-id thread)
   =.  serving.state
-    (~(put by serving.state) tid [eyre-id output-mark])
+    (~(put by serving.state) tid [eyre-id output-mark desk])
   ::  TODO: speed this up somehow. we spend about 15ms in this arm alone
   ::
   =+  .^
@@ -490,7 +518,7 @@
   =-  (fall - `state)
   %+  bind  
     (~(get by serving.state) tid)
-  |=  [eyre-id=@ta output=mark]
+  |=  [eyre-id=@ta output=mark =desk]
   :_  state(serving (~(del by serving.state) tid))
   %+  give-simple-payload:app:server  eyre-id
   ^-  simple-payload:http
@@ -520,11 +548,11 @@
   =-  (fall - `state)
   %+  bind  
     (~(get by serving.state) tid)
-  |=  [eyre-id=@ta output=mark]
+  |=  [eyre-id=@ta output=mark =desk]
   =+    .^
       =tube:clay
       %cc
-      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[output]/json
+      /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[output]/json
     ==
   :_  state(serving (~(del by serving.state) tid))
   %+  give-simple-payload:app:server  eyre-id
@@ -602,5 +630,5 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  2+state(running (turn (tap-yarn running.state) head))
+  3+state(running (turn (tap-yarn running.state) head))
 --
