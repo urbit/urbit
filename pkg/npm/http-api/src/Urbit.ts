@@ -78,7 +78,7 @@ export class Urbit {
 
   onOpen?: () => void = null;
 
-  /** This is basic interpolation to get the cpokehannel URL of an instantiated Urbit connection. */
+  /** This is basic interpolation to get the channel URL of an instantiated Urbit connection. */
   private get channelUrl(): string {
     return `${this.url}/~/channel/${this.uid}`;
   }
