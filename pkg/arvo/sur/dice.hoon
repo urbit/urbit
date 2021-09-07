@@ -48,8 +48,6 @@
       [%tx =address:ethereum =roller-tx]
   ==
 ::
-::  TODO:  add submission time?
-::
 +$  roller-tx  [=ship =status hash=keccak =time type=l2-tx]
 ::
 +$  pend-tx    [force=? =address:naive =time =raw-tx:naive]

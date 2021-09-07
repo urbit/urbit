@@ -290,24 +290,29 @@
             :-  'network'
             %-  pairs
             =*  net  net.point
-            :*  ['rift' (numb rift.net)]
+            :*  ['rift' s+(json-number rift.net)]
               ::
-                =,  mimes:html
                 :-  'keys'
                 %-  pairs
-                :~  ['life' (numb life.keys.net)]
-                    ['suite' (numb suite.keys.net)]
-                    ['auth' (hex (as-octs auth.keys.net))]
-                    ['crypt' (hex (as-octs crypt.keys.net))]
+                :~  ['life' s+(json-number life.keys.net)]
+                    ['suite' s+(json-number suite.keys.net)]
+                    ['auth' (hex 32 auth.keys.net)]
+                    ['crypt' (hex 32 crypt.keys.net)]
                 ==
               ::
                 :-  'sponsor'
                 %-  pairs
-                ~[['has' b+has.sponsor.net] ['who' (ship who.sponsor.net)]]
+                ~[['has' b+has.sponsor.net] ['who' (numb `@ud`who.sponsor.net)]]
               ::
                 ?~  escape.net  ~
-                ['escape' (ship u.escape.net)]~
+                ['escape' (numb `@ud`u.escape.net)]~
         ==  ==
+      ::
+      ++  json-number
+        |=  num=@
+        ^-  @t
+        =/  jon=json  (numb num)
+        ?>(?=([%n *] jon) p.jon)
       ::
       ++  points
         |=  points=(list [@p point:naive])
