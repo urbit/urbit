@@ -202,11 +202,11 @@
         kelvin+(numb num.w)
     ==
   ::
-  ++  woof
-    |=  =rung
+  ++  rung
+    |=  r=^rung
     %-  pairs
-    :~  aeon+(numb aeon.rung)
-        weft+(weft weft.rung)
+    :~  aeon+(numb aeon.r)
+        weft+(weft weft.r)
     ==
   ::
   ++  rein
@@ -222,7 +222,7 @@
     :~  ship+s+(scot %p ship.rail.a)
         desk+s+desk.rail.a
         aeon+(numb aeon.rail.a)
-        next+a+(turn next.a woof)
+        next+a+(turn next.a rung)
         rein+(rein rein.a)
     ==
   --
