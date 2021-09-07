@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>SpawnParams | @urbit/roller-api</title>
+	<title>NaiveState | @urbit/roller-api</title>
 	<meta name="description" content="Documentation for @urbit/roller-api">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -53,27 +53,39 @@
 					<a href="../index.html">@urbit/roller-api</a>
 				</li>
 				<li>
-					<a href="spawnparams.html">SpawnParams</a>
+					<a href="naivestate.html">NaiveState</a>
 				</li>
 			</ul>
-			<h1>Interface SpawnParams</h1>
+			<h1>Interface NaiveState</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>L2 Naive State</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">SpawnParams</span>
+						<span class="target">NaiveState</span>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-kind-interface">
 				<h3 class="tsd-before-signature">Indexable</h3>
 				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>k: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>L2 Naive State</p>
+					</div>
+				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
@@ -82,8 +94,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="spawnparams.html#address" class="tsd-kind-icon">address</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="spawnparams.html#ship" class="tsd-kind-icon">ship</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="naivestate.html#dns" class="tsd-kind-icon">dns</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="naivestate.html#operators" class="tsd-kind-icon">operators</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="naivestate.html#points" class="tsd-kind-icon">points</a></li>
 							</ul>
 						</section>
 					</div>
@@ -92,22 +105,32 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="address" class="tsd-anchor"></a>
-					<h3>address</h3>
-					<div class="tsd-signature tsd-kind-icon">address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="dns" class="tsd-anchor"></a>
+					<h3>dns</h3>
+					<div class="tsd-signature tsd-kind-icon">dns<span class="tsd-signature-symbol">:</span> <a href="../index.html#listofdns" class="tsd-signature-type" data-tsd-kind="Type alias">ListOfDNS</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/urbit/urbit//blob/ec376fbd3/pkg/npm/roller-api/client/typescript/src/index.ts#L61">index.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/urbit/urbit//blob/ec376fbd3/pkg/npm/roller-api/client/typescript/src/index.ts#L279">index.ts:279</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="ship" class="tsd-anchor"></a>
-					<h3>ship</h3>
-					<div class="tsd-signature tsd-kind-icon">ship<span class="tsd-signature-symbol">:</span> <a href="../index.html#ship" class="tsd-signature-type" data-tsd-kind="Type alias">Ship</a></div>
+					<a name="operators" class="tsd-anchor"></a>
+					<h3>operators</h3>
+					<div class="tsd-signature tsd-kind-icon">operators<span class="tsd-signature-symbol">:</span> <a href="../index.html#operators" class="tsd-signature-type" data-tsd-kind="Type alias">Operators</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/urbit/urbit//blob/ec376fbd3/pkg/npm/roller-api/client/typescript/src/index.ts#L62">index.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/urbit/urbit//blob/ec376fbd3/pkg/npm/roller-api/client/typescript/src/index.ts#L278">index.ts:278</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="points" class="tsd-anchor"></a>
+					<h3>points</h3>
+					<div class="tsd-signature tsd-kind-icon">points<span class="tsd-signature-symbol">:</span> <a href="../index.html#naivepoints" class="tsd-signature-type" data-tsd-kind="Type alias">NaivePoints</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/urbit/urbit//blob/ec376fbd3/pkg/npm/roller-api/client/typescript/src/index.ts#L277">index.ts:277</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -126,13 +149,16 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="spawnparams.html" class="tsd-kind-icon">Spawn<wbr>Params</a>
+						<a href="naivestate.html" class="tsd-kind-icon">Naive<wbr>State</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="spawnparams.html#address" class="tsd-kind-icon">address</a>
+								<a href="naivestate.html#dns" class="tsd-kind-icon">dns</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="spawnparams.html#ship" class="tsd-kind-icon">ship</a>
+								<a href="naivestate.html#operators" class="tsd-kind-icon">operators</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="naivestate.html#points" class="tsd-kind-icon">points</a>
 							</li>
 						</ul>
 					</li>

@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.6",
+    "version": "0.1.7",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -12,6 +12,21 @@
       "url": "http://localhost:8080/v1/roller",
       "name": "Local",
       "description": "This assumes `%roller-rpc.hoon` running on a test ship"
+    },
+    {
+      "url": "http://roller-tmp.urbit.org/v1/roller",
+      "name": "Ropsten",
+      "description": "Roller Agent on Ropsten"
+    },
+    {
+      "url": "http://localhost:8080/v1/azimuth",
+      "name": "Local",
+      "description": "This assumes `%azimuth-rpc.hoon` running on a test ship"
+    },
+    {
+      "url": "http://roller-tmp.urbit.org/v1/azimuth",
+      "name": "Ropsten",
+      "description": "Azimuth agent on Ropsten"
     }
   ],
   "methods": [
@@ -1272,6 +1287,31 @@
       ]
     },
     {
+      "name": "getPendingTx",
+      "summary": "Gets the pending transaction in the roller that corresponds to the given hash ",
+      "tags": [
+        {
+          "name": "pending"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "hash",
+          "schema": {
+            "$ref": "#/components/schemas/Hash"
+          }
+        }
+      ],
+      "result": {
+        "name": "pending-transaction",
+        "description": "Pending transaction",
+        "schema": {
+          "$ref": "#/components/schemas/PendingTransaction"
+        }
+      }
+    },
+    {
       "name": "getSpawned",
       "summary": "Gets all spawned points by a star or galaxy",
       "paramStructure": "by-name",
@@ -1889,6 +1929,30 @@
           }
         }
       }
+    },
+    {
+      "name": "getNaiveState",
+      "summary": "Naive State",
+      "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "Naive State",
+        "schema": {
+          "$ref": "#/components/schemas/NaiveState"
+        }
+      }
+    },
+    {
+      "name": "getPredictedState",
+      "summary": "Predicted Naive State",
+      "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "Predicted Naive State",
+        "schema": {
+          "$ref": "#/components/schemas/NaiveState"
+        }
+      }
     }
   ],
   "components": {
@@ -1951,7 +2015,7 @@
         ],
         "properties": {
           "life": {
-            "type": "number",
+            "type": "string",
             "title": "Life"
           },
           "suite": {
@@ -1966,7 +2030,7 @@
         }
       },
       "CryptoSuite": {
-        "type": "number",
+        "type": "string",
         "title": "CryptoSuite"
       },
       "Auth": {
@@ -1994,7 +2058,7 @@
             "$ref": "#/components/schemas/Keys"
           },
           "rift": {
-            "type": "number",
+            "type": "string",
             "title": "Rift"
           },
           "sponsor": {
@@ -2346,6 +2410,57 @@
         "title": "Hash",
         "type": "string",
         "description": "Keccak-256 (not the standardized SHA3-256) of the given data."
+      },
+      "NaiveState": {
+        "title": "NaiveState",
+        "description": "L2 Naive State",
+        "type": "object",
+        "required": [
+          "points",
+          "operators",
+          "dns"
+        ],
+        "properties": {
+          "points": {
+            "type": "array",
+            "title": "NaivePoints",
+            "items": {
+              "type": "object",
+              "title": "NaivePoint",
+              "properties": {
+                "ship": {
+                  "$ref": "#/components/schemas/Ship"
+                },
+                "point": {
+                  "$ref": "#/components/schemas/Point"
+                }
+              }
+            }
+          },
+          "operators": {
+            "type": "array",
+            "title": "Operators",
+            "items": {
+              "type": "object",
+              "title": "Operator",
+              "properties": {
+                "operator": {
+                  "type": "string"
+                },
+                "addresses": {
+                  "type": "array",
+                  "title": "OperatorAddresses",
+                  "items": {
+                    "$ref": "#/components/schemas/eth-address"
+                  }
+                }
+              }
+            }
+          },
+          "dns": {
+            "$ref": "#/components/schemas/DNS"
+          }
+        }
       }
     }
   }
