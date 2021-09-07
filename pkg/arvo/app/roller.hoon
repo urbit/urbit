@@ -174,6 +174,7 @@
       [%x %pending ~]       ``noun+!>(pending)
       [%x %pending @ ~]     (pending-by i.t.t.path)
       [%x %tx @ %status ~]  (status i.t.t.path)
+      [%x %pending-tx @ ~]  (transaction i.t.t.path)
       [%x %history @ ~]     (history i.t.t.path)
       [%x %nonce @ @ ~]     (nonce i.t.t.path i.t.t.t.path)
       [%x %spawned @ ~]     (spawned i.t.t.path)
@@ -221,12 +222,28 @@
       ?^  status=(~(get by finding) u.keccak)
         ?@  u.status  [u.status ~]
         [%sending `+.u.status]
-      ::TODO  potentially slow!
+      :: TODO: potentially slow!
+      :: TODO: use ~(get by history) instead
       =;  known=?
         [?:(known %pending %unknown) ~]
       %+  lien  pending
       |=  pend-tx
       =(u.keccak (hash-tx:lib raw.raw-tx))
+    ::
+    ++  transaction
+      |=  wat=@t
+      ?~  keccak=(slaw %ux wat)
+        [~ ~]
+      :+  ~  ~
+      :-  %noun
+      !>  ^-  (unit pend-tx)
+      :: TODO: potentially slow!
+      |-
+      ?~  pending  ~
+      =*  tx  i.pending
+      ?:  =(u.keccak (hash-tx:lib raw.raw-tx.tx))
+        `tx
+      $(pending t.pending)
     ::
     ++  history
       |=  wat=@t

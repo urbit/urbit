@@ -161,6 +161,7 @@
       %get-all-pending         `(all:pending id +.params all:pending:scry)
       %get-pending-by-ship     `(ship:pending id +.params ship:pending:scry)
       %get-pending-by-address  `(addr:pending id +.params addr:pending:scry)
+      %get-pending-tx          `(hash:pending id +.params hash:pending:scry)
       %get-transaction-status  `(status id +.params tx-status:scry)
       %when-next-batch         `(next-batch id +.params next-batch:scry)
       %get-nonce               `(nonce id +.params nonce:scry)
@@ -257,6 +258,14 @@
           %gx
           %+  ~(scry agentio bowl)  %roller
           /pending/[(scot %ux address)]/noun
+      ==
+    ::
+    ++  hash
+      |=  keccak=@ux
+      .^  (unit pend-tx)
+          %gx
+          %+  ~(scry agentio bowl)  %roller
+          /pending-tx/[(scot %ux keccak)]/noun
       ==
     --
   ::

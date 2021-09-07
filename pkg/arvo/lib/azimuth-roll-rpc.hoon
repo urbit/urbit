@@ -184,11 +184,7 @@
     ++  to-json
       =,  enjs:format
       |%
-      ++  pending
-        |=  pending=(list pend-tx)
-        ^-  json
-        :-  %a
-        %+  turn  pending
+      ++  pending-tx
         |=  pend-tx
         ^-  json
         %-  pairs
@@ -200,6 +196,11 @@
             :~  ['tx' (tx:to-json tx.raw-tx)]
                 ['sig' (hex (as-octs:mimes:html sig.raw-tx))]
         ==  ==
+      ::
+      ++  pending-txs
+        |=  pending=(list pend-tx)
+        ^-  json
+        a+(turn pending pending-tx)
       ::
       ++  en-address   |=(a=@ux address+(hex 20 a))
       ::
@@ -524,7 +525,7 @@
     ^-  response:rpc
     ?.  =((lent ~(tap by params)) 0)
       ~(params error:json-rpc id)
-    [%result id (pending:to-json pending)]
+    [%result id (pending-txs:to-json pending)]
   ::
   ++  ship
     |=  [id=@t params=(map @t json) scry=$-(@p (list pend-tx))]
@@ -533,7 +534,7 @@
       ~(params error:json-rpc id)
     ?~  ship=(ship:from-json params)
       ~(parse error:json-rpc id)
-    [%result id (pending:to-json (scry u.ship))]
+    [%result id (pending-txs:to-json (scry u.ship))]
   ::
   ++  addr
     |=  [id=@t params=(map @t json) scry=$-(@ux (list pend-tx))]
@@ -542,7 +543,18 @@
       ~(params error:json-rpc id)
     ?~  address=(address:from-json params)
       ~(parse error:json-rpc id)
-    [%result id (pending:to-json (scry u.address))]
+    [%result id (pending-txs:to-json (scry u.address))]
+  ::
+  ++  hash
+    |=  [id=@t params=(map @t json) scry=$-(@ux (unit pend-tx))]
+    ^-  response:rpc
+    ?.  =((lent ~(tap by params)) 1)
+      ~(params error:json-rpc id)
+    ?~  hash=(hash:from-json params)
+      ~(parse error:json-rpc id)
+    ?~  tx=(scry u.hash)
+      ~(not-found error:json-rpc id)
+    [%result id (pending-tx:to-json u.tx)]
   --
 ::
 ++  status
