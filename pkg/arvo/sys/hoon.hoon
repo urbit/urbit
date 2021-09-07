@@ -2266,23 +2266,6 @@
       ?~  pro  0
       +((size t.pro))
     ::
-    ++  sam                                             ::  equality
-      ~/  %sam
-      |=  [a=pro b=pro]
-      ^-  ?
-      =/  loa  (bot a)
-      =/  lob  (bot b)
-      ?|  &(=(~ loa) =(~ lob))
-          !&(=(~ loa) !=(~ lob))
-          !&(!=(~ loa) =(~ lob))
-          ?>  &(?=(^ loa) ?=(^ lob))
-          ?&  =(k.p.u.loa k.p.u.lob)
-              =(p.p.u.loa p.p.u.lob)
-              =(v.p.u.loa v.p.u.lob)
-              $(a q.u.loa, b q.u.lob)
-          ==
-      ==
-    ::
     ++  get                                             ::  lookup
       ~/  %get
       |=  [a=pro =k]
@@ -2305,13 +2288,6 @@
       ~/  %has
       |=  [a=pro =k]
       !=(~ (get a k))
-    ::
-    ++  min                                             ::  lowest-pri element
-      ~/  %min
-      |=  a=pro
-      ^-  (unit elem)
-      ?~  a  ~
-      (some n.a)
     ::
     ++  put                                             :: add [key pri val]
       ~/  %put
@@ -2361,14 +2337,6 @@
         (toy [n.b l.b m.b] $(a [n.a r.b m.a]))
       ==
     ::
-    ++  cut                                             ::  delete lowest-pri
-      ~/  %cut
-      |=  a=pro
-      ^-  pro
-      =/  b  (bot a)
-      ?~  b  a
-      q.u.b
-    ::
     ++  jab                                             ::  update at key k
       ~/  %jab
       |*  [a=pro =k f=$-((unit (pair @ v)) (pair * (unit (pair @ v))))]
@@ -2385,32 +2353,6 @@
       :-  p.bee
       ?~  q.bee  a
       (put a k p.u.q.bee q.u.q.bee)
-    ::
-    ++  jib                                             ::  update at min-pri
-      ~/  %jib
-      |*  [a=pro f=$-((unit (trel k @ v)) (pair * (unit (trel k @ v))))]
-      =/  bon  _=>((f ~) -)
-      ^-  (pair bon pro)
-      =/  vue  (bot a)
-      ?~  vue
-        =/  bee=(pair bon (unit (trel k @ v)))
-          (f ~)
-        :-  p.bee
-        ?~  q.bee  a
-        (put a p.u.q.bee q.u.q.bee r.u.q.bee)
-      =.  a  q.u.vue
-      =/  bee=(pair bon (unit (trel k @ v)))
-        (f (some p.u.vue))
-      :-  p.bee
-      ?~  q.bee  a
-      (put a p.u.q.bee q.u.q.bee r.u.q.bee)
-    ::
-    ++  gas                                             ::  concatenate
-      ~/  %gas
-      |=  [a=pro b=(list elem)]
-      |-  ^-  pro
-      ?~  b  a
-      $(b t.b, a (put a k.i.b p.i.b v.i.b))
     ::
     ++  tap                                             ::  convert to list
       ~/  %tap
@@ -2496,15 +2438,6 @@
           q.u.pat
         (toy [n.a l.b m.b] r.u.pat)
       ==
-    ::
-    ++  pan                                             ::  insert view
-      ~/  %pan
-      |=  [a=pro e=elem]
-      ^-  (pair (unit (pair @ v)) pro)
-      =/  vue  (pet a k.e)
-      :_  (put a e)
-      ?~  vue  ~
-      `[p.u.vue q.u.vue]
     ::
     ++  apt                                             ::  check correctness
       ~/  %apt
@@ -2602,33 +2535,6 @@
   ++  qat
     ~%  %qat  ..qat  ~
     |%
-    ++  wyt                                             ::  queue size
-      ~/  %wyt
-      |=  a=pri
-      |-  ^-  @
-      ?~  a  0
-      ?-  -.a
-        %tip  1
-        %bin  +((add $(a l.a) $(a r.a)))
-      ==
-    ::
-    ++  sam                                             ::  equality
-      ~/  %sam
-      |=  [a=pri b=pri]
-      ^-  ?
-      =/  loa  (bot a)
-      =/  lob  (bot b)
-      ?|  &(=(~ loa) =(~ lob))
-          !&(=(~ loa) !=(~ lob))
-          !&(!=(~ loa) =(~ lob))
-          ?>  &(?=(^ loa) ?=(^ lob))
-          ?&  =(p.u.loa p.u.lob)
-              =(q.u.loa q.u.lob)
-              =(r.u.loa r.u.lob)
-              $(a s.u.loa, b s.u.lob)
-          ==
-      ==
-    ::
     ++  get                                             ::  lookup
       ~/  %get
       |=  [a=pri k=@]
@@ -2647,12 +2553,6 @@
           $(a l.a)
         $(a r.a)
       ==
-    ::
-    ++  has                                             ::  contains
-      ~/  %has
-      |=  [a=pri k=@]
-      ^-  ?
-      !=(~ (get a k))
     ::
     ++  min                                             ::  lowest-pri element
       ~/  %min
@@ -2706,14 +2606,6 @@
           (funk k.a p.a v.a m.a $(a l.a) r.a)
         (wane k.a p.a v.a m.a l.a $(a r.a))
       ==
-    ::
-    ++  cut                                             ::  delete lowest-pri
-      ~/  %cut
-      |=  a=pri
-      ^-  pri
-      =/  b  (bot a)
-      ?~  b  a
-      s.u.b
     ::
     ++  jab                                             ::  update at key k
       ~/  %jab
@@ -2775,14 +2667,6 @@
         %bin  $(a r.a, +<+.f $(a l.a, +<+.f (f [k.a p.a v.a] +<+.f)))
       ==
     ::
-    ++  gas                                             ::  concatenate
-      ~/  %gas
-      |=  [a=pri b=(list (trel @ @ buc))]
-      |-  ^-  pri
-      ?~  b
-        a
-      $(b t.b, a (put a p.i.b q.i.b r.i.b))
-    ::
     ++  tap                                             ::  convert to list
       ~/  %tap
       |=  a=pri
@@ -2831,26 +2715,6 @@
           q.med
         ==
       --
-    ::
-    ++  pan                                             ::  insert view
-      ~/  %pan
-      |=  [a=pri k=@ p=@ v=buc]
-      ^-  (pair (unit (pair @ buc)) pri)
-      =/  ped  (pet a k)
-      ?~  ped
-        [~ (raw a k p v)]
-      :_  (raw r.u.ped k p v)
-      `[p.u.ped q.u.ped]
-    ::
-    ++  bot                                             ::  lowest-pri view
-      ~/  %bot
-      |=  a=pri
-      ^-  (unit (qual @ @ buc pri))
-      ?~  a  ~
-      ?-  -.a
-        %tip  `[k.a p.a v.a ~]
-        %bin  `[k.a p.a v.a (fuse m.a l.a r.a)]
-      ==
     ::
     ++  raw                                             ::  put fresh (unsafe)
       ~/  %raw
@@ -3009,108 +2873,7 @@
           [%bin k.a p.a v.a m.a l.a p.val]
         ==
       --
-  ::
-  ++  apt                                               ::  check correctness
-    ~/  %apt
-    |=  a=pri
-    |^  &(gud uni hep val)
-    ::
-    ++  gud                                             ::  has good nils
-      ^-  ?
-      ?~  a  |
-      ?-  -.a
-          %tip  |
-      ::
-          %bin
-        ?:  &(?=(~ l.a) ?=(~ r.a))  &
-        |(gud(a l.a) gud(a r.a))
-      ==
-    ::
-    ++  col                                             ::  collect keys
-      |=  [a=pri l=(list @)]
-      |-  ^-  (list @)
-      ?~  a  l
-      ?-  -.a
-        %tip  [k.a l]
-        %bin  $(l $(l [k.a l], a l.a), a r.a)
-      ==
-    ::
-    ++  uni                                             ::  has unique keys
-      =/  l  (sort (col a `(list @)`~) gor)
-      =|  k=(unit @)
-      |-  ^-  ?
-      ?~  l  &
-      ?:  =(k (some i.l))  |
-      $(l t.l, k (some i.l))
-    ::
-    ++  hep                                             ::  min-heap
-      ?~  a  &
-      |^  ^-  ?
-      ?-  -.a
-        %tip  &
-        %bin  &((loop l.a p.a) (loop r.a p.a))
-      ==
-      ::
-      ++  loop
-        |=  [b=pri q=@]
-        ^-  ?
-        ?~  b  &
-        ?-  -.b
-          %tip  (lte q p.b)
-          %bin  &((lte q p.b) (loop l.b p.b) (loop r.b p.b))
-        ==
-      --
-    ::
-    ++  val                                             ::  valid mask
-      ?~  a  &
-      |^  ^-  ?
-      ?-  -.a
-        %tip  &
-        %bin  &((mok m.a l.a r.a) (lop l.a m.a %lef) (lop r.a m.a %rig))
-      ==
-      ::
-      ++  mok
-        |=  [n=@ l=pri r=pri]
-        ^-  ?
-        =/  s  (chi l)
-        =/  t  (chi r)
-        ?:  |(?=(~ s) ?=(~ t))  &
-        =(n (high (mix u.s u.t)))
-      ::
-      ++  lop
-        |=  [b=pri n=@ s=?(%lef %rig)]
-        ^-  ?
-        ?~  b  &
-        ?-    -.b
-            %tip
-          (kek n s k.b)
-        ::
-            %bin
-          ?&  (kek n s k.b)
-              (mok m.b l.b r.b)
-              (lop l.b m.b %lef)
-              (lop r.b m.b %rig)
-          ==
-       ==
-      ::
-      ++  kek
-        |=  [n=@ s=?(%lef %rig) k=@]
-        ^-  ?
-        ?-  s
-          %lef  =(0 (dis n k))
-          %rig  =(n (dis n k))
-        ==
-      ::
-      ++  chi
-        |=  b=pri
-        ^-  (unit @)
-        ?~  b  ~
-        ?-  -.b
-          %tip  `k.b
-          %bin  `k.b
-        ==
-      --
-    --  --
+    --
   --
   ::  pri logic
   ::
