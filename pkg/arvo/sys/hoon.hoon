@@ -2556,6 +2556,28 @@
       --
     --
   --
+  ::  bucket helpers
+  ::
+  =>
+  ~%  %buc  ..$  ~
+  |%
+  ++  pour                                              ::  to bucket
+    ~/  %pour
+    |=  a=pro
+    ^-  (unit (pair @ buc))
+    =/  val  (bot:qor a)
+    ?~  val  ~
+    `[p.p.u.val k.p.u.val v.p.u.val q.u.val]
+  ::
+  ++  make                                              ::  make bucket
+    ~/  %make
+    |=  [=k p=@ =v a=pro]
+    ^-  (pair @ buc)
+    =.  a  (put:qor a k p v)
+    =/  val  (pour a)
+    ?>  ?=(^ val)
+    u.val
+  --
   =>
   ::  radix tree logic
   ::
@@ -2871,10 +2893,18 @@
     ::
     ++  gun                                             ::  vip view (unsafe)
       ~/  %gun
-      |=  [a=pri k=@ p=@ v=buc f=$-((qual @ buc @ buc) (pair @ buc))]
+      |=  [a=pri k=@ l=k p=@ v=buc]
       |^  ^-  (pair (unit (pair @ buc)) pri)
       =/  val  (star a)
       [q.val p.val]
+      ::
+      ++  help
+        |=  [@ buc bp=@ bb=buc]
+        ^-  (pair @ buc)
+        ?:  =(l k.bb)
+          (make l p v t.bb)
+        :-  bp
+        [k.bb v.bb (put:qor t.bb l p v)]
       ::
       ++  star
         |=  b=pri
@@ -2883,7 +2913,7 @@
         ?-    -.b
             %tip
           ?:  =(k k.b)
-            =/  val=(pair @ buc)  (f p v p.b v.b)
+            =/  val  (help p v p.b v.b)
             :_  `[p.b v.b]
             [%tip k p.val q.val]
           :_  ~
@@ -2895,7 +2925,7 @@
             :_  ~
             (tie k.b p.b v.b k [%tip k p v] tee)
           ?:  =(k k.b)
-            =/  val=(pair @ buc)  (f p v p.b v.b)
+            =/  val  (help p v p.b v.b)
             :_  `[p.b v.b]
             ?:  (zero k m.b)
               (fuse m.b (raw l.b k p.val q.val) r.b)
@@ -2912,20 +2942,28 @@
     ::
     ++  see                                             ::  get hi-pri (unsafe)
       ~/  %see
-      |*  [a=pri k=@ f=$-((pair @ buc) (trel (unit *) @ buc))]
-      =/  bon  _=>((f *@ *buc) ?>(?=(^ -) +.-))
-      |^  ^-  (pair (unit bon) pri)
+      |=  [a=pri k=@ l=k p=@]
+      |^  ^-  (pair (unit (pair @ v)) pri)
       =/  val  loop
       [q.val p.val]
       ::
+      ++  help
+        |=  [bp=@ bb=buc]
+        ^-  (trel (unit (pair @ v)) @ buc)
+        ?:  =(l k.bb)
+          :-  `[bp v.bb]
+          (make l p v.bb t.bb)
+        =/  val  (get:qor t.bb l)
+        ?~  val  [~ bp bb]
+        [val bp [k.bb v.bb (put:qor t.bb l p q.u.val)]]
+      ::
       ++  loop
-        ^-  (pair pri (unit bon))
+        ^-  (pair pri (unit (pair @ v)))
         ?~  a  [~ ~]
         ?-    -.a
             %tip
           ?:  =(k k.a)
-            =/  val=(trel (unit bon) @ buc)
-              (f p.a v.a)
+            =/  val  (help p.a v.a)
             :_  p.val
             [%tip k q.val r.val]
           [a ~]
@@ -2934,7 +2972,7 @@
           ?:  (gone k k.a m.a)
             [a ~]
           ?:  =(k k.a)
-            =/  val=(trel (unit bon) @ buc)  (f p.a v.a)
+            =/  val  (help p.a v.a)
             :_  p.val
             ?:  (zero k m.a)
               (fuse m.a (raw l.a k q.val r.val) r.a)
@@ -3050,28 +3088,6 @@
         ==
       --
     --  --
-  --
-  ::  bucket helpers
-  ::
-  =>
-  ~%  %buc  ..$  ~
-  |%
-  ++  pour                                              ::  to bucket
-    ~/  %pour
-    |=  a=pro
-    ^-  (unit (pair @ buc))
-    =/  val  (bot:qor a)
-    ?~  val  ~
-    `[p.p.u.val k.p.u.val v.p.u.val q.u.val]
-  ::
-  ++  make                                              ::  make bucket
-    ~/  %make
-    |=  [=k p=@ =v a=pro]
-    ^-  (pair @ buc)
-    =.  a  (put:qor a k p v)
-    =/  val  (pour a)
-    ?>  ?=(^ val)
-    u.val
   --
   ::  pri logic
   ::
@@ -3201,11 +3217,11 @@
     |=  [a=pri =k]
     |^  ^-  (unit (trel @ v pri))
     =/  val=(pair (unit (pair @ v)) pri)
-      (jab:qat a (mug k) halp)
+      (jab:qat a (mug k) help)
     ?~  p.val  ~
     `[p.u.p.val q.u.p.val q.val]
     ::
-    ++  halp
+    ++  help
       |=  b=(unit (pair @ buc))
       ^-  (pair (unit (pair @ v)) (unit (pair @ buc)))
       ?~  b  [~ ~]
@@ -3226,11 +3242,11 @@
     |=  a=pri
     |^  ^-  (unit (qual k @ v pri))
     =/  val=(pair (unit (trel k @ v)) pri)
-      (jib:qat a halp)
+      (jib:qat a help)
     ?~  p.val  ~
     `[p.u.p.val q.u.p.val r.u.p.val q.val]
     ::
-    ++  halp
+    ++  help
       |=  b=(unit (trel @ @ buc))
       ^-  (pair (unit (trel k @ v)) (unit (trel @ @ buc)))
       ?~  b  [~ ~]
@@ -3317,41 +3333,20 @@
   ++  gun                                               ::  vip view (unsafe)
     ~/  %gun
     |=  [a=pri =k p=@ =v]
-    |^  ^-  (pair (unit (pair @ _v)) pri)
-    =/  big  (gun:qat a (mug k) p [k v ~] hal)
+    ^-  (pair (unit (pair @ _v)) pri)
+    =/  big  (gun:qat a (mug k) k p [k v ~])
     :_  q.big
     ?~  p.big  ~
     =/  bb  q.u.p.big
     ?:  =(k k.bb)
       `[p.u.p.big v.bb]
     (get:qor t.bb k)
-    ::
-    ++  hal
-      |=  [@ buc bp=@ bb=buc]
-      ^-  (pair @ buc)
-      ?:  =(k k.bb)
-        (make k p v t.bb)
-      :-  bp
-      [k.bb v.bb (put:qor t.bb k p v)]
-    --
   ::
   ++  see                                               ::  get hi-pri (unsafe)
     ~/  %see
     |=  [a=pri =k p=@]
-    |^  ^-  (pair (unit (pair @ v)) pri)
-    (see:qat a (mug k) hal)
-    ::
-    ++  hal
-      |=  [bp=@ bb=buc]
-      ^-  (trel (unit (pair @ v)) @ buc)
-      ?:  =(k k.bb)
-        [`[bp v.bb] (make k p v.bb t.bb)]
-      =/  val=(unit (pair @ v))
-        (get:qor t.bb k)
-      ?~  val
-        [~ bp bb]
-      [val bp [k.bb v.bb (put:qor t.bb k p q.u.val)]]
-    --
+    ^-  (pair (unit (pair @ v)) pri)
+    (see:qat a (mug k) k p)
   ::
   ++  apt                                               ::  check correctness
     ~/  %apt
