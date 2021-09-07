@@ -5,7 +5,8 @@
 =,  format
 =*  dude  dude:gall
 |%
-+$  state    state-5
++$  state    state-6
++$  state-6  [%6 pith-6]
 +$  state-5  [%5 pith-5]
 +$  state-4  [%4 pith-4]
 +$  state-3  [%3 pith-3]
@@ -14,13 +15,32 @@
 +$  state-0  [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-5
+  $%  state-6
+      state-5
       state-4
       state-3
       state-2
       state-1
       state-0
   ==
+::
++$  pith-6
+  $:  wef=(unit weft)
+      rem=(map desk per-desk)                           ::
+      syn=(map kiln-sync let=@ud)                       ::
+      ark=(map desk arak)                               ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+      ::  map desk to the currently ongoing fuse request
+      ::  and the latest version numbers for beaks to
+      fus=(map desk per-fuse)
+      ::  used for fuses - every time we get a fuse we
+      ::  bump this. used when calculating hashes to
+      ::  ensure they're unique even when the same
+      ::  request is made multiple times.
+      hxs=(map desk @ud)
+  ==                                                    ::
+::
+
 +$  pith-5
   $:  rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
@@ -253,13 +273,19 @@
     |=  a=arak-4
     ^-  arak
     [[paused=| ship desk aeon] next rein]:a
+  =?  old  ?=(%5 -.old)
+    [%6 ~ +.old]
   ::
-  ?>  ?=(%5 -.old)
+  ?>  ?=(%6 -.old)
   =.  +<+.$.abet  old
   =<  abet
-  ?~  old-ota
-    kiln
-  abet:(install:vats %base [her sud]:u.old-ota)
+  =?  kiln  ?=(^ old-ota)
+    abet:(install:vats %base [her sud]:u.old-ota)
+  =?  kiln  ?=(^ wef)
+    =/  except=(set desk)  (sy %base %kids ~)
+    (bump:vats u.wef (all-desks-but:vats except) %.n)
+  =.  wef  ~
+  kiln
 ::
 ++  on-peek
   |=  =path
@@ -479,7 +505,7 @@
     =/  ded  (find-blocked kel except)
     ?:  force
       =.  kiln  (suspend-many ded)
-      (bump-many kel (all-desks-but except))
+      (bump-many kel (all-desks-but (~(uni in except) ded)))
     ?:  =(~ ded)
       (bump-many kel (all-desks-but except))
     =-  (^emit (pyre:pass leaf/- ~))
@@ -496,6 +522,7 @@
     |=  dead=(set desk)
     ^+  kiln
     =/  ded  ~(tap in dead)
+
     |-  ^+  kiln
     ?~  ded  kiln
     $(ded t.ded, kiln abet:(suspend i.ded))
@@ -598,9 +625,19 @@
         (emil sync-ud:pass (diff:give diff) ~)
       ?:  (lth num.new-weft num.old-weft)
         ~>  %slog.0^leaf/"kiln: future version {<new-weft>}, enqueueing"
+        ::  retry upgrade if not blocked anymore
+        =/  base=arak  (~(got by ark) %base)
         =.  next.rak  (snoc next.rak [(dec aeon.rail.rak) new-weft])
+        =.  ark  (~(put by ark) loc rak)
         =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
-        (emil sync-ud:pass (diff:give diff) ~)
+        =.  vats  (emil sync-ud:pass (diff:give diff) ~)
+        ?.  &(?=(^ next.base) =(~ (get-blockers weft.i.next.base)))
+          vats
+        ~>  %slog.0^leaf/"kiln: unblocked system update, updating"
+        =.  kiln
+          (bump-one weft.i.next.base %base)
+        vats
+      ::
       ~>  %slog.0^leaf/"kiln: merging into {here}"
       =.  next.rak  +:(crank-next %& (dec aeon.rail.rak))
       (emil ~[merge-main sync-ud]:pass)
@@ -617,6 +654,9 @@
       (emil sync-ud:pass (diff:give diff) ~)
     ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
     =.  next.rak  +:(crank-next %& (dec aeon.rail.rak))
+    =.  wef
+      ?:  =(old-weft new-weft)  ~
+      `new-weft
     (emil ~[merge-main sync-ud]:pass)
   ::
   ++  take-merge-main
@@ -639,8 +679,7 @@
       (update-running-apps (get-apps-diff our loc now rein.rak))
     ?.  =(%base loc)
       vats
-    =/  except=(set desk)  (sy %base %kids ~)
-    =.  kiln  (bump-many zuse/zuse (all-desks-but except))
+    ~>  %slog.0^leaf/"kiln: bumping {<zuse>}"
     (emit merge-kids:pass)
   ::
   ++  take-merge-kids
@@ -774,7 +813,10 @@
 ::
 ++  poke-bump
   |=  [except=(set desk) force=?]
-  =/  kel=weft  zuse/+(zuse)
+  =/  =arak
+    (~(got by ark) %base)
+  =/  kel=weft
+    ?~(next.arak zuse+zuse weft.i.next.arak)
   abet:(bump:vats kel except force)
 ::
 ++  poke-cancel

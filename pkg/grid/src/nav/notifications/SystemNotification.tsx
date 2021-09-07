@@ -1,6 +1,6 @@
 import { pick } from 'lodash-es';
 import React, { useCallback } from 'react';
-import { kilnSuspend } from '@urbit/api/hood';
+import { kilnBump } from '@urbit/api/hood';
 import { AppList } from '../../components/AppList';
 import { Button } from '../../components/Button';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../components/Dialog';
@@ -49,9 +49,8 @@ export const BaseBlockedNotification = ({ notification }: BaseBlockedNotificatio
   const handlePauseOTAs = useCallback(() => {}, []);
 
   const handleArchiveApps = useCallback(async () => {
-    await Promise.all(desks.map((d) => api.poke(kilnSuspend(d))));
-    // TODO: retrigger OTA?
-  }, [desks]);
+    api.poke(kilnBump(true));
+  }, []);
 
   return (
     <section
