@@ -40,7 +40,6 @@
       hxs=(map desk @ud)
   ==                                                    ::
 ::
-
 +$  pith-5
   $:  rem=(map desk per-desk)                           ::
       syn=(map kiln-sync let=@ud)                       ::
@@ -522,7 +521,6 @@
     |=  dead=(set desk)
     ^+  kiln
     =/  ded  ~(tap in dead)
-
     |-  ^+  kiln
     ?~  ded  kiln
     $(ded t.ded, kiln abet:(suspend i.ded))
@@ -615,49 +613,63 @@
     =/  old-weft  `weft`[%zuse zuse]
     =/  new-weft  (read-kelvin-foreign [ship desk aeon]:rail.rak)
     =.  aeon.rail.rak  +(aeon.rail.rak)
+    |^  ^+  vats
+    ?:  =(%base loc)
+      do-base
+    ?:  (gth num.new-weft num.old-weft)
+      kelvin-retreat
+    ?:  =(num.new-weft num.old-weft)
+      kelvin-same
+    kelvin-advance
     ::
-    ?.  =(%base loc)
-      ::  TODO: ?>  =(%zuse lal.new-weft) but more flexible for future renames
-      ?:  (gth num.new-weft num.old-weft)
-        ~>  %slog.0^leaf/"kiln: cannot install {here}, old kelvin {<new-weft>}"
-        ~>  %slog.0^leaf/"kiln: will retry at foreign kelvin {<old-weft>}"
-        =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
-        (emil sync-ud:pass (diff:give diff) ~)
-      ?:  (lth num.new-weft num.old-weft)
-        ~>  %slog.0^leaf/"kiln: future version {<new-weft>}, enqueueing"
-        ::  retry upgrade if not blocked anymore
-        =/  base=arak  (~(got by ark) %base)
-        =.  next.rak  (snoc next.rak [(dec aeon.rail.rak) new-weft])
-        =.  ark  (~(put by ark) loc rak)
-        =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
-        =.  vats  (emil sync-ud:pass (diff:give diff) ~)
-        ?.  &(?=(^ next.base) =(~ (get-blockers weft.i.next.base)))
-          vats
-        ~>  %slog.0^leaf/"kiln: unblocked system update, updating"
-        =.  kiln
-          (bump-one weft.i.next.base %base)
+    ++  kelvin-retreat
+      ^+  vats
+      ~>  %slog.0^leaf/"kiln: cannot install {here}, old kelvin {<new-weft>}"
+      ~>  %slog.0^leaf/"kiln: will retry at foreign kelvin {<old-weft>}"
+      =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
+      (emil sync-ud:pass (diff:give diff) ~)
+    ::
+    ++  kelvin-advance
+      ^+  vats
+      ~>  %slog.0^leaf/"kiln: future version {<new-weft>}, enqueueing"
+      ::  retry upgrade if not blocked anymore
+      =/  base=arak  (~(got by ark) %base)
+      =.  next.rak  (snoc next.rak [(dec aeon.rail.rak) new-weft])
+      =.  ark  (~(put by ark) loc rak)
+      =/  =diff  [%block loc rak new-weft blockers=(sy %base ~)]
+      =.  vats  (emil sync-ud:pass (diff:give diff) ~)
+      ?.  &(?=(^ next.base) =(~ (get-blockers weft.i.next.base)))
         vats
-      ::
+      ~>  %slog.0^leaf/"kiln: unblocked system update, updating"
+      =.  kiln
+        (bump-one weft.i.next.base %base)
+      vats
+    ::
+    ++  kelvin-same
+      ^+  vats
       ~>  %slog.0^leaf/"kiln: merging into {here}"
       =.  next.rak  +:(crank-next %& (dec aeon.rail.rak))
       (emil ~[merge-main sync-ud]:pass)
     ::
-    =/  blockers
-      ?:  =(new-weft old-weft)
-        ~
-      (get-blockers new-weft)
-    ::
-    ?.  =(~ blockers)
-      ~>  %slog.0^leaf/"kiln: OTA blocked on {<blockers>}"
-      =.  next.rak  (snoc next.rak [(dec aeon.rail.rak) new-weft])
-      =/  =diff  [%block loc rak new-weft blockers]
-      (emil sync-ud:pass (diff:give diff) ~)
-    ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
-    =.  next.rak  +:(crank-next %& (dec aeon.rail.rak))
-    =.  wef
-      ?:  =(old-weft new-weft)  ~
-      `new-weft
-    (emil ~[merge-main sync-ud]:pass)
+    ++  do-base
+      ^+  vats
+      =/  blockers
+        ?:  =(new-weft old-weft)
+          ~
+        (get-blockers new-weft)
+      ::
+      ?.  =(~ blockers)
+        ~>  %slog.0^leaf/"kiln: OTA blocked on {<blockers>}"
+        =.  next.rak  (snoc next.rak [(dec aeon.rail.rak) new-weft])
+        =/  =diff  [%block loc rak new-weft blockers]
+        (emil sync-ud:pass (diff:give diff) ~)
+      ~>  %slog.0^leaf/"kiln: applying OTA to {here}, kelvin: {<new-weft>}"
+      =.  next.rak  +:(crank-next %& (dec aeon.rail.rak))
+      =.  wef
+        ?:  =(old-weft new-weft)  ~
+        `new-weft
+      (emil ~[merge-main sync-ud]:pass)
+    --
   ::
   ++  take-merge-main
     |=  syn=sign-arvo
