@@ -1,19 +1,19 @@
-import { Box, Col, Text } from '@tlon/indigo-react';
-import { Association, Associations, Unreads } from '@urbit/api';
+import { Col, Text, Row, Action, LoadingSpinner } from '@tlon/indigo-react';
+import { Association, Associations, Invite, JoinRequest, Unreads } from '@urbit/api';
 import f from 'lodash/fp';
+import _ from 'lodash';
 import moment from 'moment';
 import React, { useRef } from 'react';
 import { getNotificationCount, getUnreadCount } from '~/logic/lib/hark';
 import { TUTORIAL_GROUP, TUTORIAL_GROUP_RESOURCE, TUTORIAL_HOST } from '~/logic/lib/tutorialModal';
 import { alphabeticalOrder } from '~/logic/lib/util';
-import useGroupState from '~/logic/state/group';
+import useGroupState, { useJoiningGroup } from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
-import useMetadataState from '~/logic/state/metadata';
+import useInviteState, { useGroupInvite } from '~/logic/state/invite';
+import useMetadataState, { usePreview } from '~/logic/state/metadata';
 import useSettingsState, { selectCalmState, SettingsState } from '~/logic/state/settings';
 import { useTutorialModal } from '~/views/components/useTutorialModal';
 import Tile from '../components/tiles/tile';
-
-interface GroupsProps {}
 
 const sortGroupsAlph = (a: Association, b: Association) =>
   a.group === TUTORIAL_GROUP_RESOURCE
@@ -38,8 +38,7 @@ const getGraphNotifications = (associations: Associations, unreads: Unreads) => 
     f.reduce(f.add, 0)
   )(associations.graph);
 
-export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
-  const { inbox, ...boxProps } = props;
+export default function Groups() {
   const unreads = useHarkState(state => state.unreads);
   const groupState = useGroupState(state => state.groups);
   const associations = useMetadataState(state => state.associations);
@@ -49,6 +48,17 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
     .sort(sortGroupsAlph);
   const graphUnreads = getGraphUnreads(associations || {} as Associations, unreads);
   const graphNotifications = getGraphNotifications(associations || {} as Associations, unreads);
+
+  const invites = useInviteState(s =>
+    Object.values(s.invites.groups || {})
+      .map(({ resource }) => `/ship/~${resource.ship}/${resource.name}`)
+  );
+  const joining =  useGroupState(s => Object.keys(s.pendingJoin || {}));
+
+  const pending = _.difference(
+    _.uniq([...invites, ...joining].sort(alphabeticalOrder)),
+    _.map(groups, 'group')
+  );
 
   return (
     <>
@@ -67,6 +77,9 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
           />
         );
       })}
+      {pending.map((group, i) => (
+        <PendingGroup first={i === 0} key={group} group={group} />
+      ))}
     </>
   );
 }
@@ -112,5 +125,66 @@ function Group(props: GroupProps) {
         )}
       </Col>
     </Tile>
+  );
+}
+
+function PendingGroup({ group, first = false }: { group: string; first?: boolean }) {
+  const invite = useGroupInvite(group);
+  const pending = useJoiningGroup(group);
+
+  if(pending) {
+    return <PendingJoin group={group} request={pending} first={first} />;
+  } else if (invite) {
+    return <PendingInvite invite={invite} uid={invite.uid} first={first} />;
+  } else {
+    return null;
+  }
+}
+
+function PendingJoin(props: { group: string; request: JoinRequest; first: boolean; }) {
+  const { request, first, group } = props;
+  const { preview } = usePreview(group);
+  if(request.progress === 'done') {
+    return null;
+  }
+  return (
+    <Tile bg="#555" gridColumnStart={first ? 1 : null}>
+      <Col height="100%" justifyContent="space-between">
+        {preview?.metadata?.title || group}
+        <LoadingSpinner />
+      </Col>
+    </Tile>
+  );
+}
+
+function PendingInvite(props: { invite: Invite; uid: string; first: boolean; }) {
+  const { invite, uid, first } = props;
+  const { resource: { ship, name } } = invite;
+  const path = `/ship/~${ship}/${name}`;
+  const { preview } = usePreview(path);
+
+  const onAccept = () => {
+    useGroupState.getState().joinGroup(path, uid);
+  };
+
+  const onDecline = () => {
+    useInviteState.getState().declineInvite('groups', uid);
+  };
+
+  return (
+    <Tile bg="#555" gridColumnStart={first ? 1 : null}>
+      <Col height="100%" justifyContent="space-between">
+        <Text>{preview?.metadata?.title ?? (invite.resource.ship + '/' +invite.resource.name)}</Text>
+      <Row justifyContent="space-between">
+        <Action destructive backgroundColor="transparent" onClick={onDecline}>
+          Decline
+        </Action>
+        <Action primary backgroundColor="transparent" onClick={onAccept}>
+          Accept
+        </Action>
+      </Row>
+      </Col>
+    </Tile>
+
   );
 }

@@ -1,4 +1,4 @@
-import { Association, Group, JoinRequests } from '@urbit/api';
+import { accept, Association, Group, JoinRequests } from '@urbit/api';
 import { useCallback } from 'react';
 import { reduce } from '../reducers/group-update';
 import _ from 'lodash';
@@ -8,21 +8,40 @@ import {
   createSubscription,
   reduceStateN
 } from './base';
+import airlock from '~/logic/api';
+import { join } from '../../../../npm/api/groups';
 
 export interface GroupState {
   groups: {
     [group: string]: Group;
   };
   pendingJoin: JoinRequests;
+  joinGroup: (grp: string, uid?: string) => Promise<void>;
 }
 
 // @ts-ignore investigate zustand types
 const useGroupState = createState<GroupState>(
   'Group',
-  {
+  ((set, get) => ({
     groups: {},
-    pendingJoin: {}
-  },
+    pendingJoin: {},
+    joinGroup: async (group, uid) => {
+      set((s) => {
+        s.pendingJoin[group] = {
+          hidden: false,
+          started: Date.now(),
+          ship: '~zod',
+          progress: 'start'
+        };
+      });
+      const [,,ship,name] = group.split('/');
+      await airlock.poke(join(ship,name));
+      if(uid) {
+        await airlock.poke(accept('groups', uid));
+      }
+    }
+
+  })),
   ['groups'],
   [
     (set, get) =>
@@ -51,6 +70,12 @@ export function useGroupForAssoc(association: Association) {
     useCallback(s => s.groups[association.group] as Group | undefined, [
       association
     ])
+  );
+}
+
+export function useJoiningGroup(group: string) {
+  return useGroupState(
+    useCallback(s => s.pendingJoin[group], [group])
   );
 }
 
