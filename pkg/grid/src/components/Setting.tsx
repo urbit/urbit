@@ -20,15 +20,13 @@ export const Setting: FC<SettingsProps> = ({ name, on, toggle, className, childr
       <h3 id={id} className="flex items-center h4 mb-2">
         {name} {status === 'loading' && <Spinner className="ml-2" />}
       </h3>
-      <div className="flex">
-        <div className="flex-none mr-2">
-          <Toggle
-            aria-labelledby={id}
-            pressed={on}
-            onPressedChange={call}
-            className="text-blue-400"
-          />
-        </div>
+      <div className="flex items-center space-x-2">
+        <Toggle
+          aria-labelledby={id}
+          pressed={on}
+          onPressedChange={call}
+          className="text-blue-400"
+        />
         <div className="flex-1 space-y-6">{children}</div>
       </div>
     </section>
