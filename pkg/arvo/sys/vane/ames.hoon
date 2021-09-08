@@ -1855,6 +1855,7 @@
   ::  +make-peer-core: create nested |peer-core for per-peer processing
   ::
   ++  make-peer-core
+    ~/  %make-peer-core
     |=  [=peer-state =channel]
     =*  veb  veb.bug.channel
     |%
@@ -1935,6 +1936,7 @@
     ::  +on-hear-shut-packet: handle receipt of ack or message fragment
     ::
     ++  on-hear-shut-packet
+      ~/  %on-hear-shut-packet
       |=  [=lane =shut-packet dud=(unit goof)]
       ^+  peer-core
       ::  update and print connection status
@@ -2475,6 +2477,9 @@
     ::  if nothing to send, no-op
     ::
     ?:  &(=(~ unsent-messages) =(~ unsent-fragments)):state
+      :: TODO create tru.veb face and use here before merging
+      %-  %+  trace  odd.veb
+        |.  "Done sending messages to {<her.channel>} at {<now.channel>}"
       message-pump
     ::  we have unsent fragments of the current message; feed them
     ::
@@ -2493,6 +2498,9 @@
       message-pump
     ::  .unsent-messages is nonempty; pop a message off and feed it
     ::
+    ::  TODO: create true.veb face and use here before merging
+    %-  %+  trace  odd.veb
+      |.  "Sending next message to {<her.channel>} at {<now.channel>}"
     =^  =message-blob  unsent-messages.state  ~(get to unsent-messages.state)
     ::  break .message into .chunks and set as .unsent-fragments
     ::
