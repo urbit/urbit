@@ -3586,11 +3586,10 @@
   =/  meta-owner=address
     (hex-to-num:ethereum '0x57694bb21054b54d55e6c03387D082B3AFf902f6')
   =/  tx-octs  (gen-tx-octs [from=[~marbud %own] [%transfer-point 0x1234 &]])
-  =/  signabletx  (prepare-for-sig 1.337 1 tx-octs)
   ::  Must reverse endianness as below for Metamask signature
+  ::  =/  signabletx  (prepare-for-sig 1.337 1 tx-octs)
   ::  =/  signabletx-rev  (rev 3 p.signabletx q.signabletx)
-  ::  Generated with myetherwallet w/ metamask, which understands hex.
-  ::  mycrypto does not by default
+  ::  Generated with myetherwallet w/ metamask.
   =/  sig
     %-  hex-to-num:ethereum
     %^  cat  3  '0x2c331a47caeb758c617624882d99737eea96a492bf0af7a44c42fc5fd2'
@@ -3612,10 +3611,10 @@
   =/  trezor-owner=address
     (hex-to-num:ethereum '0x9e00bb696bb406e14706ad47535bd1a449f3611e')
   =/  tx-octs  (gen-tx-octs [from=[~marbud %own] [%transfer-point 0x1234 &]])
-  =/  signabletx  (prepare-for-sig 1.337 1 tx-octs)
   ::  Must reverse endianness as below for Trezor signature
+  ::  =/  signabletx  (prepare-for-sig 1.337 1 tx-octs)
   ::  =/  signabletx-rev  (rev 3 p.signabletx q.signabletx)
-  ::  Generated with myetherwallet w/ trezor, which understands hex.
+  ::  Generated with myetherwallet w/ Trezor Model T.
   =/  sig
     %-  hex-to-num:ethereum
     %^  cat  3  '0xb064428c293494dbee2967c1068807a8e241185c471cd547256708fe8d'
@@ -3632,4 +3631,53 @@
         q:(gen-tx 0 [marbud-own %transfer-point trezor-owner &] %marbud-key-0)
     =^  f  state  (n state %bat (cat 3 sig q:tx-octs))
     owner.own:(got:orm points.state ~marbud)
+::
+++  test-ledger-signatures  ^-  tang
+  :: We have two tests here to account for the different format of the v byte
+  :: in the signature as compared to MM and Trezor - it is 00 or 01 as opposed
+  :: to 1b or 1c.
+  =/  ledger-owner-1=address
+    (hex-to-num:ethereum '0xd6442b0668b478f407e08ff7215262e4118ccc12')
+  =/  ledger-owner-2=address
+    (hex-to-num:ethereum '0x8c611e9061a1e7bd77acb4c9869cdbca1346f70d')
+  =/  tx-octs  (gen-tx-octs [from=[~marbud %own] [%transfer-point 0x1234 &]])
+  ::  Must reverse endianness as below for Trezor signature
+  ::  =/  signabletx  (prepare-for-sig 1.337 1 tx-octs)
+  ::  =/  signabletx-rev  (rev 3 p.signabletx q.signabletx)
+  ::  Generated with myetherwallet w/ Ledger Nano S.
+  =/  sig-1
+    %-  hex-to-num:ethereum
+    %^  cat  3  '0x0f95347681767f9381dc82b1f26f2dbd4ccb56a98102f548b48d919b69'
+    '76749b70c71e3134d309b5974532af87ceaed7161cb1cdf3147f91a86d77371547a21101'
+  =/  sig-2
+    %-  hex-to-num:ethereum
+    %^  cat  3  '0xecb2ccff0167b5103484cea072e398426a7bce9fffa1b98ddfecd58a2f'
+    '80d99804737eeda2dc67147366f510af8e8cde4a97a007cc216439002498b368e2613e00'
+  ::
+  =|  init-state=^state:naive
+  =^  f  init-state  (init-marbud init-state)
+  ;:  weld
+    %+  expect-eq
+      !>  [0x1234 2]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state
+          %^  n  init-state  %bat
+          q:(gen-tx 0 [marbud-own %transfer-point ledger-owner-1 &] %marbud-key-0)
+      =^  f  state  (n state %bat (cat 3 sig-1 q:tx-octs))
+      owner.own:(got:orm points.state ~marbud)
+    ::
+     %+  expect-eq
+      !>  [0x1234 2]
+    ::
+      !>
+      =|  =^state:naive
+      =^  f  state
+          %^  n  init-state  %bat
+          q:(gen-tx 0 [marbud-own %transfer-point ledger-owner-2 &] %marbud-key-0)
+      =^  f  state  (n state %bat (cat 3 sig-2 q:tx-octs))
+      owner.own:(got:orm points.state ~marbud)
+  ==
+::
 --
