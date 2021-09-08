@@ -4,6 +4,8 @@ import { BrowserRouter, Switch, Route, useHistory } from 'react-router-dom';
 import { Grid } from './pages/Grid';
 import useDocketState from './state/docket';
 import { usePreferencesStore } from './nav/preferences/usePreferencesStore';
+import useContactState from './state/contact';
+import api from './state/api';
 
 const AppRoutes = () => {
   const { push } = useHistory();
@@ -38,6 +40,7 @@ const AppRoutes = () => {
     const { fetchAllies, fetchCharges } = useDocketState.getState();
     fetchCharges();
     fetchAllies();
+    useContactState.getState().initialize(api);
 
     Mousetrap.bind(['command+/', 'ctrl+/'], () => {
       push('/leap/search');

@@ -26,3 +26,10 @@ export function handleDropdownLink(setOpen?: (open: boolean) => void): (e: Event
     setTimeout(() => setOpen?.(false), 15);
   };
 }
+
+export function deSig(ship: string): string {
+  if (!ship) {
+    return '';
+  }
+  return ship.replace('~', '');
+}

@@ -38,11 +38,11 @@
 ::
 ++  tube-to
   |=  =mark
-  .^(tube:clay %cc (scry:io %home /[mark]/[current-version]))
+  .^(tube:clay %cc (scry:io q.byk.bowl /[mark]/[current-version]))
 ::
 ++  tube-from
   |=  =mark
-  .^(tube:clay %cc (scry:io %home /[current-version]/[mark]))
+  .^(tube:clay %cc (scry:io q.byk.bowl /[current-version]/[mark]))
 ::
 ++  convert-from
   |=  [=mark =vase]

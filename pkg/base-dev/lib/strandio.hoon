@@ -260,6 +260,15 @@
   ;<  ~  bind:m  (send-raw-card card)
   (take-watch-ack wire)
 ::
+++  watch-one
+  |=  [=wire =dock =path]
+  =/  m  (strand ,cage)
+  ^-  form:m
+  ;<  ~  bind:m  (watch wire dock path)
+  ;<  =cage  bind:m  (take-fact wire)
+  ;<  ~  bind:m  (take-kick wire)
+  (pure:m cage)
+::
 ++  watch-our
   |=  [=wire =term =path]
   =/  m  (strand ,~)

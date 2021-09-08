@@ -1,4 +1,4 @@
-import { map, omit } from 'lodash-es';
+import { map, omit } from 'lodash';
 import React, { FunctionComponent, useEffect } from 'react';
 import { Route, RouteComponentProps } from 'react-router-dom';
 import { MenuState, Nav } from '../nav/Nav';
