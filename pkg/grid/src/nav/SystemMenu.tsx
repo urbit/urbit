@@ -57,7 +57,7 @@ export const SystemMenu = ({ className, menu, open, navOpen }: SystemMenuProps) 
             as={Link}
             to="/system-menu"
             className={classNames(
-              'circle-button default-ring',
+              'appearance-none circle-button default-ring',
               open && 'text-gray-300',
               navOpen &&
                 menu !== 'system-preferences' &&
@@ -66,7 +66,7 @@ export const SystemMenu = ({ className, menu, open, navOpen }: SystemMenuProps) 
               className
             )}
           >
-            <Adjust className="w-6 h-6 fill-current" />
+            <Adjust className="w-6 h-6 fill-current text-gray" />
             <span className="sr-only">System Menu</span>
           </DropdownMenu.Trigger>
           <Route path="/system-menu">
