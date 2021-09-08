@@ -3,6 +3,8 @@ import Mousetrap from 'mousetrap';
 import { BrowserRouter, Switch, Route, useHistory } from 'react-router-dom';
 import { Grid } from './pages/Grid';
 import useDocketState from './state/docket';
+import {PermalinkRoutes} from './pages/PermalinkRoutes';
+import useKilnState from './state/kiln';
 
 const AppRoutes = () => {
   const { push } = useHistory();
@@ -13,7 +15,9 @@ const AppRoutes = () => {
     const { fetchAllies, fetchCharges } = useDocketState.getState();
     fetchCharges();
     fetchAllies();
-
+    const { fetchVats, fetchLag } = useKilnState.getState();
+    fetchVats();
+    fetchLag();
     Mousetrap.bind(['command+/', 'ctrl+/'], () => {
       push('/leap/search');
     });
@@ -21,6 +25,7 @@ const AppRoutes = () => {
 
   return (
     <Switch>
+      <Route path="/perma" component={PermalinkRoutes} />
       <Route path={['/leap/:menu', '/']} component={Grid} />
     </Switch>
   );

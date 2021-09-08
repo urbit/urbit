@@ -17,15 +17,6 @@ export const Grid: FunctionComponent<GridProps> = ({ match }) => {
   const charges = useCharges();
   const chargesLoaded = Object.keys(charges).length > 0;
 
-  useEffect(() => {
-    const { fetchCharges, fetchAllies } = useDocketState.getState();
-    const { fetchVats, fetchLag } = useKilnState.getState();
-    fetchCharges();
-    fetchAllies();
-    fetchVats();
-    fetchLag();
-  }, []);
-
   return (
     <div className="flex flex-col">
       <header className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 z-30 flex justify-center w-full bg-white">
