@@ -19,6 +19,15 @@ export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' |
 const makeHref = (base: string): DocketHrefGlob => ({ glob: { base } });
 
 export const mockTreaties: Treaties = {
+  '~zod/garden': {
+    ship: '~zod',
+    desk: 'garden',
+    title: 'Landscape',
+    info: 'Your Urbit Home',
+    href: makeHref('garden'),
+    color: '#E2C050',
+    ...appMetaData
+  },
   '~zod/groups': {
     ship: '~zod',
     desk: 'groups',

@@ -1,15 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Setting } from '../../components/Setting';
-import { useLeapStore } from '../Nav';
 import { usePreferencesStore } from './usePreferencesStore';
 
 export const NotificationPrefs = () => {
-  const select = useLeapStore((s) => s.select);
   const { doNotDisturb, mentions, toggleDoNotDisturb, toggleMentions } = usePreferencesStore();
-
-  useEffect(() => {
-    select('System Preferences: Notifications');
-  }, []);
 
   return (
     <>

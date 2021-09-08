@@ -20,12 +20,14 @@ export const ProviderLink = ({
   className,
   ...props
 }: ProviderLinkProps) => {
+  const small = size === 'small' || size === 'xs';
   return (
     <Link
       to={(to && to(provider)) || `/leap/search/${provider.shipName}/apps`}
       className={classNames(
-        'flex items-center space-x-3 default-ring ring-offset-2 rounded-lg',
-        selected && 'ring-4',
+        'flex items-center p-2 space-x-3 default-ring rounded-lg',
+        !small && 'ring-offset-2',
+        selected && 'bg-blue-200',
         className
       )}
       {...props}

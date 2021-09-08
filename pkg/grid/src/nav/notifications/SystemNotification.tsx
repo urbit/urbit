@@ -23,7 +23,7 @@ export const RuntimeLagNotification = () => (
   >
     <header id="system-updates-blocked" className="relative -left-8 space-y-2">
       <div className="flex space-x-2">
-        <span className="inline-block w-6 h-6 bg-orange-500 rounded-full" />
+        <span className="inline-block w-6 h-6 bg-orange-400 rounded-full" />
         <span className="font-medium">Landscape</span>
       </div>
       <div className="flex space-x-2">
@@ -59,7 +59,7 @@ export const BaseBlockedNotification = ({ notification }: BaseBlockedNotificatio
     >
       <header id="system-updates-blocked" className="relative -left-8 space-y-2">
         <div className="flex space-x-2">
-          <span className="inline-block w-6 h-6 bg-orange-500 rounded-full" />
+          <span className="inline-block w-6 h-6 bg-orange-400 rounded-full" />
           <span className="font-medium">Landscape</span>
         </div>
         <div className="flex space-x-2">

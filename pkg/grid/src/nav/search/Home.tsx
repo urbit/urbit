@@ -93,7 +93,7 @@ export const Home = () => {
 
   return (
     <div className="h-full p-4 md:p-8 font-semibold leading-tight text-black overflow-y-auto">
-      <h2 id="recent-apps" className="mb-6 h4 text-gray-500">
+      <h2 id="recent-apps" className="mb-4 h4 text-gray-500">
         Recent Apps
       </h2>
       {recentApps.length === 0 && (
@@ -117,8 +117,8 @@ export const Home = () => {
           size="small"
         />
       )}
-      <hr className="-mx-4 my-6 md:-mx-8 md:my-9" />
-      <h2 id="recent-devs" className="mb-6 h4 text-gray-500">
+      <hr className="-mx-4 my-6 md:-mx-8 md:my-9 border-t-2 border-gray-50" />
+      <h2 id="recent-devs" className="mb-4 h4 text-gray-500">
         Recent Developers
       </h2>
       {recentDevs.length === 0 && (
