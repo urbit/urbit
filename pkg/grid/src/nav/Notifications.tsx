@@ -48,8 +48,6 @@ export const Notifications = () => {
     getMore();
   }, []);
 
-  console.log(unreads);
-
   return (
     <div className="grid grid-rows-[auto,1fr] h-full p-4 md:p-8 overflow-hidden">
       <header className="space-x-2 mb-8">

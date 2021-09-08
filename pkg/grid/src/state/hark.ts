@@ -54,7 +54,7 @@ function reduceHark(u: any) {
     return;
   }
   if ('more' in u) {
-    u.more.forEach((upd) => {
+    u.more.forEach((upd: any) => {
       reduceHark(upd);
     });
   } else if ('all-stats' in u) {
@@ -91,5 +91,3 @@ api.subscribe({
     });
   }
 });
-
-window.hark = useHarkStore.getState;

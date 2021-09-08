@@ -25,8 +25,8 @@ type NotificationsLinkProps = Omit<LinkProps<HTMLAnchorElement>, 'to'> & {
 };
 
 export const NotificationsLink = ({ isOpen }: NotificationsLinkProps) => {
-  const { unreads, systemNotifications } = useNotifications();
-  const state = getNotificationsState(unreads, systemNotifications);
+  const { unreads } = useNotifications();
+  const state = getNotificationsState(unreads);
 
   return (
     <Link
