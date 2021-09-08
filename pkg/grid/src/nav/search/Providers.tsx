@@ -5,6 +5,7 @@ import { Provider } from '@urbit/api';
 import { MatchItem, useLeapStore } from '../Nav';
 import { useAllies } from '../../state/docket';
 import { ProviderList } from '../../components/ProviderList';
+import useContactState from '../../state/contact';
 
 type ProvidersProps = RouteComponentProps<{ ship: string }>;
 
@@ -23,6 +24,7 @@ export function providerMatch(provider: Provider | string): MatchItem {
 export const Providers = ({ match }: ProvidersProps) => {
   const selectedMatch = useLeapStore((state) => state.selectedMatch);
   const provider = match?.params.ship;
+  const contacts = useContactState((s) => s.contacts);
   const allies = useAllies();
   const search = provider || '';
   const results = useMemo(
@@ -39,10 +41,11 @@ export const Providers = ({ match }: ProvidersProps) => {
 
               return right - left;
             })
-            .map((el) => ({ shipName: el.original }))
+            .map((el) => ({ shipName: el.original, ...contacts[el.original] }))
         : [],
-    [allies, search]
+    [allies, search, contacts]
   );
+
   const count = results?.length;
 
   useEffect(() => {

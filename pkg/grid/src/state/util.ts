@@ -23,3 +23,10 @@ export function getAppHref(href: DocketHref) {
 export function disableDefault<T extends Event>(e: T): void {
   e.preventDefault();
 }
+
+export function deSig(ship: string): string {
+  if (!ship) {
+    return '';
+  }
+  return ship.replace('~', '');
+}
