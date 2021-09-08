@@ -8,7 +8,7 @@ import { addTag, createManagedGraph, createUnmanagedGraph } from '@urbit/api';
 import { Form, Formik } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import * as Yup from 'yup';
 import { resourceFromPath } from '~/logic/lib/group';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
@@ -49,6 +49,7 @@ type NewChannelProps = {
 
 export function NewChannel(props: NewChannelProps): ReactElement {
   const history = useHistory();
+  const match = useRouteMatch();
   const { group, workspace, existingMembers, ...rest } = props;
   const groups = useGroupState(state => state.groups);
   const waiter = useWaitForProps({ groups }, 5000);
@@ -121,9 +122,9 @@ export function NewChannel(props: NewChannelProps): ReactElement {
         );
       }
       actions.setStatus({ success: null });
-      const resourceUrl = location.pathname.includes('/messages')
+      const resourceUrl = match.url.includes('/messages')
         ? '/~landscape/messages'
-        : parentPath(location.pathname);
+        : parentPath(match.path);
       history.push(
         `${resourceUrl}/resource/${moduleType}/ship/~${window.ship}/${resId}`
       );
