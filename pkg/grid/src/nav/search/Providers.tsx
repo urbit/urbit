@@ -43,8 +43,9 @@ export const Providers = ({ match }: ProvidersProps) => {
             })
             .map((el) => ({ shipName: el.original, ...contacts[el.original] }))
         : [],
-    [allies, search]
+    [allies, search, contacts]
   );
+
   const count = results?.length;
 
   useEffect(() => {

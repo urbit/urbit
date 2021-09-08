@@ -1,4 +1,5 @@
-import { Contact, ContactUpdate, deSig, Patp, Rolodex } from '@urbit/api';
+/* eslint-disable no-param-reassign */
+import { Contact, ContactEditFieldPrim, ContactUpdate, deSig, Patp, Rolodex } from '@urbit/api';
 import { useCallback } from 'react';
 import _ from 'lodash';
 import { BaseState, createState, createSubscription, reduceStateN } from './base';
@@ -64,7 +65,8 @@ export const edit = (json: ContactUpdate, state: ContactState): ContactState => 
         state.contacts[ship].groups = state.contacts[ship].groups.filter((g) => g !== value);
       }
     } else {
-      state.contacts[ship][field] = value;
+      const k = field as ContactEditFieldPrim;
+      state.contacts[ship][k] = value;
     }
   }
   return state;

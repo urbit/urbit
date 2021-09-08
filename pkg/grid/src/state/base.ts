@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { applyPatches, Patch, produceWithPatches, setAutoFreeze, enablePatches } from 'immer';
 import { compose } from 'lodash/fp';
 import _ from 'lodash';
@@ -43,8 +44,8 @@ export const reduceState = <S extends Record<string, unknown>, U>(
   reducers: ((data: U, state: S & BaseState<S>) => S & BaseState<S>)[]
 ): void => {
   const reducer = compose(reducers.map((r) => (sta) => r(data, sta)));
-  state.getState().set((state) => {
-    reducer(state);
+  state.getState().set((s) => {
+    reducer(s);
   });
 };
 
@@ -57,17 +58,18 @@ export const reduceStateN = <S extends Record<string, unknown>, U>(
   state.set(reducer);
 };
 
-export const optReduceState = <S, U>(
+export const optReduceState = <S extends Record<string, unknown>, U>(
   state: UseStore<S & BaseState<S>>,
   data: U,
   reducers: ((data: U, state: S & BaseState<S>) => BaseState<S> & S)[]
 ): string => {
   const reducer = compose(reducers.map((r) => (sta) => r(data, sta)));
-  return state.getState().optSet((state) => {
-    reducer(state);
+  return state.getState().optSet((s) => {
+    reducer(s);
   });
 };
 
+/* eslint-disable-next-line import/no-mutable-exports */
 export let stateStorageKeys: string[] = [];
 
 export const stateStorageKey = (stateName: string) => {
@@ -110,7 +112,7 @@ export function createSubscription(
   return request;
 }
 
-export const createState = <T extends {}>(
+export const createState = <T extends Record<string, unknown>>(
   name: string,
   properties: T | ((set: SetState<T & BaseState<T>>, get: GetState<T & BaseState<T>>) => T),
   blacklist: (keyof BaseState<T> | keyof T)[] = [],
@@ -122,21 +124,19 @@ export const createState = <T extends {}>(
   create<T & BaseState<T>>(
     persist<T & BaseState<T>>(
       (set, get) => ({
-        initialize: async (api: Urbit) => {
-          await Promise.all(subscriptions.map((sub) => api.subscribe(sub(set, get))));
+        initialize: async (airlock: Urbit) => {
+          await Promise.all(subscriptions.map((sub) => airlock.subscribe(sub(set, get))));
         },
         set: (fn) => stateSetter(fn, set, get),
         optSet: (fn) => {
           return optStateSetter(fn, set, get);
         },
         patches: {},
-        addPatch: (id: string, ...patch: Patch[]) => {
-          // @ts-ignore investigate immer types
-          set(({ patches }) => ({ patches: { ...patches, [id]: patch } }));
+        addPatch: (id: string, patch: Patch[]) => {
+          set((s) => ({ ...s, patches: { ...s.patches, [id]: patch } }));
         },
         removePatch: (id: string) => {
-          // @ts-ignore investigate immer types
-          set(({ patches }) => ({ patches: _.omit(patches, id) }));
+          set((s) => ({ ...s, patches: _.omit(s.patches, id) }));
         },
         rollback: (id: string) => {
           set((state) => {

@@ -50,7 +50,7 @@ export const ProviderList = ({
             provider={p}
             selected={selected(p)}
             onClick={(e) => {
-              addRecentDev(p);
+              addRecentDev(p.shipName);
               if (onClick) {
                 onClick(e, p);
               }
