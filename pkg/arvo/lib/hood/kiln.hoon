@@ -446,6 +446,8 @@
     vats
   ::  +resume: restart tracking from upstream
   ::
+  ::  TODO: check whether kelvin is legit
+  ::
   ++  resume
     |=  lac=desk
     ^+  vats
@@ -529,7 +531,16 @@
   ++  bump-many
     |=  [kel=weft live=(set desk)]
     ^+  kiln
-    =/  liv  ~(tap in live)
+    ::  ensure %base is always reloaded first
+/   ::
+    =/  liv
+      %+  sort  ~(tap in live)
+      |=  [a=desk b=desk]
+      ^-  ?
+      ?:  =(%base a)  &
+      ?:  =(%base b)  |
+      (lte `@`a `@`b)
+    ::
     |-  ^+  kiln
     ?~  liv  kiln
     $(liv t.liv, kiln (bump-one kel i.liv))
