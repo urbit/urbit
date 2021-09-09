@@ -24,8 +24,15 @@
         %all-stats     (all-stats +.upd)
         ::%read-note   (index +.upd)
         ::%note-read   (note-read +.upd)
-        :: %archive (notif-ref +.upd)
+        %archive       (archive +.upd)
     ==
+    ::
+    ++  archive
+      |=  [t=(unit @da) b=^bin]
+      %-  pairs
+      :~  time+?~(t ~ s+(scot %ud u.t))
+          bin+(bin b)
+      ==
     ::
     ++  note-read
       |=  *
