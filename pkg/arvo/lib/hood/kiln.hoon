@@ -532,7 +532,7 @@
     |=  [kel=weft live=(set desk)]
     ^+  kiln
     ::  ensure %base is always reloaded first
-/   ::
+    ::
     =/  liv
       %+  sort  ~(tap in live)
       |=  [a=desk b=desk]
