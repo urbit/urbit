@@ -70,4 +70,9 @@ export const getEntry = (desk: string, bucket: string, entry: string) => ({
   path: `/entry/${desk}/${bucket}/${entry}`
 });
 
+export const getDeskSettings = (desk: string) => ({
+  app: 'settings-store',
+  path: `/desk/${desk}`
+});
+
 export * from './types';

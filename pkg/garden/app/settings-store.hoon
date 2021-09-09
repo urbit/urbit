@@ -67,6 +67,11 @@
         [%all ~]
       [~ this]
     ::
+        [%desk @ ~]
+      =*  desk  i.t.pax
+      ?>  (~(has by settings) desk)
+      [~ this]
+    ::
         [%bucket @ @ ~]
       =*  desk        i.t.pax
       =*  bucket-key  i.t.t.pax
@@ -88,6 +93,11 @@
     ?+  pax  (on-peek:def pax)
         [%x %all ~]
       ``settings-data+!>(`data`all+settings)
+    ::
+        [%x %desk @ ~]
+      =*  desk  i.t.t.pax
+      ?~  desk-settings=(~(get by settings) desk)  [~ ~]
+      ``settings-data+!>(desk+u.desk-settings)
     ::
         [%x %bucket @ @ ~]
       =*  desk  i.t.t.pax
@@ -136,6 +146,7 @@
   ^-  (quip card _state)
   =/  pas=(list path)
     :~  /all
+        /desk/[desk]
         /bucket/[desk]/[key]
     ==
   :-  [(give-event pas %put-bucket desk key bucket)]~
@@ -148,6 +159,7 @@
   ^-  (quip card _state)
   =/  pas=(list path)
     :~  /all
+        /desk/[desk]
         /bucket/[key]
     ==
   :-  [(give-event pas %del-bucket desk key)]~
@@ -161,6 +173,7 @@
   ^-  (quip card _state)
   =/  pas=(list path)
     :~  /all
+        /desk/[desk]
         /bucket/[desk]/[buc]
         /entry/[desk]/[buc]/[key]
     ==
@@ -176,6 +189,7 @@
   ^-  (quip card _state)
   =/  pas=(list path)
     :~  /all
+        /desk/[desk]
         /bucket/[desk]/[buc]
         /entry/[desk]/[buc]/[key]
     ==

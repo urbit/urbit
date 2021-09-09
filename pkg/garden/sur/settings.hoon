@@ -38,6 +38,7 @@
 +$  data
   $%  [%all =settings]
       [%bucket =bucket]
+      [%desk desk=(map key bucket)]
       [%entry =val]
   ==
 --

@@ -1,7 +1,8 @@
 export type Key = string;
 export type Value = string | string[] | boolean | number;
-export type Bucket = Map<string, Value>;
-export type Settings = Map<string, Bucket>;
+export type Bucket = { [key: string]: Value; };
+export type DeskSettings = { [bucket: string]: Bucket; };
+export type Settings = { [desk: string]: Settings; }
 
 export interface PutBucket {
   'put-bucket': {
@@ -38,6 +39,10 @@ export interface AllData {
   'all': Settings;
 }
 
+export interface DeskData {
+  desk: DeskSettings;
+}
+
 export interface BucketData {
   'bucket': Bucket;
 }
@@ -55,4 +60,5 @@ export type SettingsUpdate =
 export type SettingsData =
   | AllData
   | BucketData
-  | EntryData;
+  | EntryData
+  | DeskData;

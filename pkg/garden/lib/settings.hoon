@@ -11,6 +11,7 @@
       %all     (settings +.dat)
       %bucket  (bucket +.dat)
       %entry   (value +.dat)
+      %desk    (desk-settings +.dat)
     ==
   ::
   ++  settings
