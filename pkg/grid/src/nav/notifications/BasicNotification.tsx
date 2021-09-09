@@ -34,7 +34,7 @@ export const BasicNotification = ({ notification, unread = false }: BasicNotific
 
   const charge = useCharge(desk);
   const first = notification.body?.[0];
-  if (!first) {
+  if (!first || !charge) {
     return null;
   }
   const contents = map(notification.body, 'content').filter((c) => c.length > 0);

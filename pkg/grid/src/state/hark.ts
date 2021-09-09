@@ -63,7 +63,7 @@ function reduceHark(u: any) {
     set((state) => {
       state.unreads = state.unreads.filter((unread) => !harkBinEq(unread.bin, u.added.bin));
 
-      state.unreads.push(u.added);
+      state.unreads.unshift(u.added);
     });
   } else if ('timebox' in u) {
     const { timebox } = u;
@@ -78,6 +78,18 @@ function reduceHark(u: any) {
         state.unreads = [...state.unreads, ...notifications];
       });
     }
+  } else if ('archive' in u) {
+    console.log(u.archive);
+    set((state) => {
+      const time = u.archive?.time;
+      if (time) {
+        let box = state.reads.get(makePatDa(time)) || [];
+        box = box.filter((n) => !harkBinEq(u.archive.bin, n.bin));
+        state.reads = state.reads.set(makePatDa(time), box);
+      } else {
+        state.unreads = state.unreads.filter((n) => !harkBinEq(u.archive.bin, n.bin));
+      }
+    });
   }
 }
 
