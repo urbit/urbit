@@ -4,15 +4,14 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
-;<  ~  bind:m  start-simple
-;<  ~  bind:m  init-azimuth
-;<  ~  bind:m  (spawn-aqua ~zod)
-;<  ~  bind:m  (spawn-aqua ~bus)
-;<  ~  bind:m  (spawn-aqua ~web)
+;<  ~  bind:m  start-azimuth
+;<  ~  bind:m  (spawn ~zod)
+;<  ~  bind:m  (spawn ~bus)
+;<  ~  bind:m  (spawn ~web)
 ::
-;<  ~  bind:m  (init-ship ~zod)
-;<  ~  bind:m  (init-ship ~bus)
-;<  ~  bind:m  (init-ship ~web)
+;<  ~  bind:m  (init-ship ~zod |)
+;<  ~  bind:m  (init-ship ~bus |)
+;<  ~  bind:m  (init-ship ~web |)
 ::
 ;<  ~  bind:m  (send-hi ~zod ~web)
 ;<  ~  bind:m  (send-hi ~zod ~bus)

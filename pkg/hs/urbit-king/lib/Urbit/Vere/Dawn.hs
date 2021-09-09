@@ -359,29 +359,29 @@ validateFeedAndGetSponsor endpoint block = \case
                     Left _  -> validateGerms $ Germs gShip f
                     Right r -> pure (seed, r)
 
-    validateSeed (Seed ship life ring oaf) =
+    validateSeed (Seed ship life ring oaf) = do
       case clanFromShip ship of
-        Ob.Comet -> validateComet
-        Ob.Moon  -> validateMoon
+        Ob.Comet -> pure validateComet
+        Ob.Moon  -> pure validateMoon
         _        -> validateRest
       where
-        validateComet = do
+        cometFromPass = cometFingerprint $ ringToPass ring
+        validateComet
           -- A comet address is the fingerprint of the keypair
-          let shipFromPass = cometFingerprint $ ringToPass ring
-          if (ship /= shipFromPass) then
-            pure $ Left ("comet name doesn't match fingerprint " <>
+          | (ship /= cometFromPass) =
+            Left ("comet name doesn't match fingerprint " <>
                          show ship <> " vs " <>
-                         show shipFromPass)
-          else if (life /= 1) then
-            pure $ Left "comet can never be re-keyed"
-          else
-            pure $ Right (shipSein ship)
+                         show cometFromPass)
+          | (life /= 1) =
+            Left "comet can never be re-keyed"
+          | otherwise =
+            Right (shipSein ship)
 
-        validateMoon = do
+        validateMoon =
           -- TODO: The current code in zuse does nothing, but we should be able
           -- to try to validate the oath against the current as exists planet
           -- on chain.
-          pure $ Right $ shipSein ship
+          Right $ shipSein ship
 
         validateRest = do
           putStrLn ("boot: retrieving " <> renderShip ship <> "'s public keys")

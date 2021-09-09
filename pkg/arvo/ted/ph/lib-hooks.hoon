@@ -1,6 +1,7 @@
 /-  spider
-/+  *ph-io, *strandio
+/+  io=ph-io, *strandio
 =>
+=,  io
 |% 
 ++  strand  strand:spider
 ++  start-agents
@@ -27,12 +28,11 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
-;<  az=tid:spider
-  bind:m  start-azimuth
-;<  ~  bind:m  (spawn az ~bud)
-;<  ~  bind:m  (spawn az ~dev)
-;<  ~  bind:m  (real-ship az ~bud)
-;<  ~  bind:m  (real-ship az ~dev)
+;<  ~  bind:m  start-azimuth
+;<  ~  bind:m  (spawn ~bud)
+;<  ~  bind:m  (spawn ~dev)
+;<  ~  bind:m  (init-ship ~bud |)
+;<  ~  bind:m  (init-ship ~dev |)
 ;<  ~  bind:m  (start-agents ~bud)
 ;<  ~  bind:m  (start-agents ~dev)
 ;<  ~  bind:m  (send-hi ~bud ~dev)
@@ -61,5 +61,6 @@
 ;<  ~  bind:m  (dojo ~dev ":graph-store +dbug")
 ;<  ~  bind:m  (dojo ~bud ":graph-push-hook +dbug %bowl")
 ;<  ~  bind:m  (dojo ~bud ":graph-store +dbug")
-;<  ~  bind:m  end-azimuth
+;<  ~  bind:m  end
 (pure:m *vase)
+::(pure:m *vase)

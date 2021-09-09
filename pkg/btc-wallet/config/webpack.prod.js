@@ -6,55 +6,46 @@ module.exports = {
   node: { fs: 'empty' },
   mode: 'production',
   entry: {
-     app: './src/index.js'
+    app: './src/index.tsx',
   },
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.(j|t)sx?$/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-            plugins: [
-              '@babel/transform-runtime',
-              '@babel/plugin-proposal-object-rest-spread',
-              '@babel/plugin-proposal-optional-chaining',
-              '@babel/plugin-proposal-class-properties'
-            ]
-          }
+          loader: 'ts-loader',
         },
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
-         test: /\.css$/i,
+        test: /\.css$/i,
         use: [
           // Creates `style` nodes from JS strings
           'style-loader',
           // Translates CSS into CommonJS
           'css-loader',
           // Compiles Sass to CSS
-          'sass-loader'
-        ]
-      }
-    ]
+          'sass-loader',
+        ],
+      },
+    ],
   },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx']
+    extensions: ['.js', '.ts', '.tsx'],
   },
   devtool: 'source-map',
-  plugins: [
-    new CleanWebpackPlugin()
-  ],
+  plugins: [new CleanWebpackPlugin()],
   output: {
     filename: (pathData) => {
-      return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
+      return pathData.chunk.name === 'app'
+        ? 'index.[contenthash].js'
+        : '[name].js';
     },
     path: path.resolve(__dirname, `../../arvo/app/btc-wallet/js/bundle`),
     publicPath: '/',
   },
   optimization: {
     minimize: true,
-    usedExports: true
-  }
+    usedExports: true,
+  },
 };
