@@ -415,13 +415,14 @@
     ?:  =(`[her rem] got)
       ~>  %slog.0^leaf/"kiln: already tracking {here:(abed lac)}, ignoring"
       vats
-    =?  kiln  ?=(^ got)  (uninstall lac)
     =:  loc  lac
-        rak  [[paused=| her rem *aeon] next=~ *rein]
+        rak  [[paused=| her rem *aeon] next=~ rein:(fall got *arak)]
       ==
     ~>  %slog.0^leaf/"kiln: beginning install into {here}"
     (emit find:pass)
   ::  +reset: resync after failure
+  ::
+  ::    TODO: don't blow away so much state
   ::
   ++  reset
     ^+  vats
@@ -691,7 +692,7 @@
       (update-running-apps (get-apps-diff our loc now rein.rak))
     ?.  =(%base loc)
       vats
-    ~>  %slog.0^leaf/"kiln: bumping {<zuse>}"
+    ~>  %slog.0^leaf/"kiln: bumping {<zuse>}"  ::  TODO print next
     (emit merge-kids:pass)
   ::
   ++  take-merge-kids

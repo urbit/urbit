@@ -70,16 +70,18 @@
       leaf/"pending: {<(turn next.arak |=([@ lal=@tas num=@] [lal num]))>}"
   ^-  tang
   =/  meb  (mergebase-hashes our desk now arak)
+  =/  poz  ?:(paused.rail.arak "paused" "tracking")
   =/  sat  ?:(liv.rein.arak "running" "suspended")
-  :~  leaf/"/sys/kelvin: {<[lal num]:weft>}"
-      leaf/"base hash:   {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
-      leaf/"%cz hash:    {<hash>}"
-      leaf/"source ship: {<ship.rail.arak>}"
-      leaf/"source desk: {<desk.rail.arak>}"
-      leaf/"source aeon: {<aeon.rail.arak>}"
-      leaf/"status:      {sat}"
-      leaf/"force on:    {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
-      leaf/"force off:   {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
+  :~  leaf/"/sys/kelvin:  {<[lal num]:weft>}"
+      leaf/"base hash:    {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
+      leaf/"%cz hash:     {<hash>}"
+      leaf/"updates:      {sat}"
+      leaf/"source ship:  {<ship.rail.arak>}"
+      leaf/"source desk:  {<desk.rail.arak>}"
+      leaf/"source aeon:  {<aeon.rail.arak>}"
+      leaf/"agent status: {sat}"
+      leaf/"force on:     {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
+      leaf/"force off:    {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
   ==
 ::  +read-kelvin-foreign: read /sys/kelvin from a foreign desk
 ::
