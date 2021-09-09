@@ -1,5 +1,6 @@
 /-  *hood
 |_  vats=(list vat)  
+++  grad  %noun
 ++  grow
   |%
   ++  noun  vats

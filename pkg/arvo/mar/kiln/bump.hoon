@@ -2,6 +2,7 @@
 +$  bump  [%kiln-bump except=(set desk) force=_|]
 --
 |_  b=bump
+++  grad  %noun
 ++  grab
   |%
   ++  noun  bump
