@@ -7,6 +7,8 @@ LDFLAGS := $(LDFLAGS) -lzstd -lcrypt32
 CFLAGS  := $(CFLAGS)  -DH2O_NO_UNIX_SOCKETS
 # libuv
 LDFLAGS := $(LDFLAGS) -luserenv -liphlpapi -lpsapi
+# secp256k1, due to _FORTIFY_SOURCE
+LDFLAGS := $(LDFLAGS) -lssp
 
 ifdef debug
 CFLAGS  := $(CFLAGS)  -O0 -g

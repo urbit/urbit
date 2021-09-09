@@ -1,36 +1,4 @@
 {
-    "argon2u": {
-        "branch": "master",
-        "description": "With argon2u. Based off https://github.com/P-H-C/phc-winner-argon2",
-        "homepage": "",
-        "pmnsh": {
-            "include": ["include", "src/blake2"],
-            "make": "libargon2.a"
-        },
-        "owner": "urbit",
-        "repo": "argon2",
-        "rev": "a4c1e3f7138c2e577376beb99f964cf71e1c8b1b",
-        "sha256": "1j8a15fx2kn5aa3scmb5qnsfk627kfvsq5ppz9j0pv2d1xck527x",
-        "type": "tarball",
-        "url": "https://github.com/urbit/argon2/archive/a4c1e3f7138c2e577376beb99f964cf71e1c8b1b.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "ed25519": {
-        "branch": "master",
-        "description": "Submodule included by Urbit",
-        "homepage": null,
-        "pmnsh": {
-            "strip": 1,
-            "make": "all"
-        },
-        "owner": "urbit",
-        "repo": "ed25519",
-        "rev": "76385f2ebbbc9580a9c236952d68d11d73a6135c",
-        "sha256": "0s1spif4s9lgcwcny3fl2fvpbw6acqn3s8r6qxnrmkd9icgyw4cp",
-        "type": "tarball",
-        "url": "https://github.com/urbit/ed25519/archive/76385f2ebbbc9580a9c236952d68d11d73a6135c.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "h2o": {
         "branch": "master",
         "description": "H2O - the optimized HTTP/1, HTTP/2, HTTP/3 server",
@@ -41,7 +9,7 @@
              "make": "libh2o",
              "compat": {
                  "mingw": {
-                      "prepare": "cmake -G\"MSYS Makefiles\" ."
+                      "prepare": "cmake -G\"MSYS Makefiles\" -DCMAKE_INSTALL_PREFIX=. ."
                  }
              }
         },
@@ -89,7 +57,7 @@
                 },
                 "mingw": {
                      "prepare": "cmake -G\"MSYS Makefiles\" -DDISABLE_DOCS:BOOL=ON .",
-                     "make": "install"
+                     "make": "aes_siv_static"
                 }
             }
         },
@@ -99,21 +67,6 @@
         "sha256": "1g4wy0m5wpqx7z6nillppkh5zki9fkx9rdw149qcxh7mc5vlszzi",
         "type": "tarball",
         "url": "https://github.com/dfoxfranke/libaes_siv/archive/9681279cfaa6e6399bb7ca3afbbc27fc2e19df4b.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "libscrypt": {
-        "branch": "master",
-        "description": null,
-        "homepage": null,
-        "pmnsh": {
-            "make": "libscrypt.a CFLAGS_EXTRA=-ffast-math"
-        },
-        "owner": "urbit",
-        "repo": "libscrypt",
-        "rev": "029693ff1cbe4f69d3a2da87d0f4f034f92cc0c2",
-        "sha256": "17pcxypzjmmrvacw45cacvibm6mlr9ip30hy30l1appsnywx679n",
-        "type": "tarball",
-        "url": "https://github.com/urbit/libscrypt/archive/029693ff1cbe4f69d3a2da87d0f4f034f92cc0c2.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "murmur3": {

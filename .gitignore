@@ -56,6 +56,9 @@ out/
 work/
 pkg/*/*.a
 *.o
+*.so
+*.dll
+*.dylib
 
 # Landscape Dev
 urbitrc

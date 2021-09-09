@@ -73,7 +73,7 @@ AS_IF([test "$enable_shared" == "yes"],
       AC_CHECK_TOOL([NM], [nm])
       AC_MSG_CHECKING([for shared libcrypto])
       AS_IF(
-        [$NM conftest$EXEEXT | $GREP 'U SHA256' 2>&1 >/dev/null],
+        [$NM conftest$EXEEXT | $GREP 'U .*SHA256' 2>&1 >/dev/null],
         [AC_MSG_RESULT([yes])],
         [AC_MSG_ERROR([cannot find shared object for libcrypto.])])],
      [AC_MSG_ERROR([unable to link libcrypto.])])
@@ -83,7 +83,8 @@ AS_IF([test "$enable_shared" == "yes"],
 # Checks for non pkg-config libraries
 AC_CHECK_LIB([aes_siv], [AES_SIV_CTX_new],
              [AC_SUBST([LIBAES_SIV_LIBS], "-laes_siv")],
-             [AC_MSG_ERROR([libaes_siv is required.])])
+             [AC_MSG_ERROR([libaes_siv is required.])],
+             [-lcrypto])
 
 # Checks for header files.
 AC_CHECK_HEADERS([limits.h stddef.h stdint.h stdlib.h string.h])

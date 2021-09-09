@@ -92,7 +92,7 @@
     u3_noun p, pl, s, sl, n, r, z, d;
     u3_noun q;
 
-    u3x_quil(u3r_at(u3x_sam, cor), &p, &pl, &s, &sl, &q);
+    u3x_quil(u3x_at(u3x_sam, cor), &p, &pl, &s, &sl, &q);
     u3x_qual(q, &n, &r, &z, &d);
 
     if ( !(_(u3a_is_atom(p)) && _(u3a_is_atom(pl)) &&
@@ -125,7 +125,7 @@
     u3_noun p, s, n, r, z, d;
     u3_noun q;
 
-    u3x_quil(u3r_at(u3x_sam, cor), &p, &s, &n, &r, &q);
+    u3x_quil(u3x_at(u3x_sam, cor), &p, &s, &n, &r, &q);
     u3x_cell(q, &z, &d);
 
     if ( !(_(u3a_is_atom(p)) && _(u3a_is_atom(s))  &&
@@ -189,7 +189,7 @@
     u3_noun p, pl, s, sl, c, d;
     u3_noun q;
 
-    u3x_quil(u3r_at(u3x_sam, cor), &p, &pl, &s, &sl, &q);
+    u3x_quil(u3x_at(u3x_sam, cor), &p, &pl, &s, &sl, &q);
     u3x_cell(q, &c, &d);
 
     if ( !(_(u3a_is_atom(p))  && _(u3a_is_atom(s))  &&
@@ -215,7 +215,7 @@
   {
     u3_noun p, s, c, d;
 
-    u3x_qual(u3r_at(u3x_sam, cor), &p, &s, &c, &d);
+    u3x_qual(u3x_at(u3x_sam, cor), &p, &s, &c, &d);
 
     if ( !(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
            _(u3a_is_atom(c)) && _(u3a_is_atom(d))) ) {

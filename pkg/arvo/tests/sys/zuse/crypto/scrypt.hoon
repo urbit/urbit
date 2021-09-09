@@ -21,9 +21,7 @@
       !>  `@ux`(hsh pw salt n r p 64)
   ::
   ++  vectors
-    ::  TODO: until scrypt has been jetted, we can only test the
-    ::  first vector; the others do not finish in a reasonable
-    ::  amount of time.
+    ^-  (list vector)
     :~
       :*
         0x0
