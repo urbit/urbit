@@ -2,36 +2,30 @@
 **
 */
 #include "all.h"
-
-
-#include <ed25519.h>
+#include <urcrypt.h>
 
 /* functions
 */
-  static u3_noun
+  static u3_atom
   _cqee_veri(u3_noun s,
              u3_noun m,
              u3_noun pk)
   {
-    c3_y  sig_y[64];
-    c3_y  pub_y[32];
-    c3_w  ret;
-    c3_y* mes_y;
+    c3_y  sig_y[64], pub_y[32];
 
-    c3_w mesm_w = u3r_met(3, m);
+    if ( (0 != u3r_bytes_fit(64, sig_y, s)) ||
+         (0 != u3r_bytes_fit(32, pub_y, pk)) ) {
+      // hoon checks sizes, but weirdly and without crashes
+      return u3_none;
+    }
+    else {
+      c3_w  met_w;
+      c3_y* mes_y = u3r_bytes_all(&met_w, m);
+      c3_t  val_t = urcrypt_ed_veri(mes_y, met_w, pub_y, sig_y);
+      u3a_free(mes_y);
 
-    memset(sig_y, 0, 64);
-    memset(pub_y, 0, 32);
-
-    mes_y = u3a_malloc(mesm_w);
-
-    u3r_bytes(0, 64, sig_y, s);
-    u3r_bytes(0, 32, pub_y, pk);
-    u3r_bytes(0, mesm_w, mes_y, m);
-
-    ret = ed25519_verify(sig_y, mes_y, mesm_w, pub_y) == 1 ? c3y : c3n;
-    u3a_free(mes_y);
-    return ret;
+      return val_t ? c3y : c3n;
+    }
   }
 
   u3_noun
@@ -43,6 +37,6 @@
                          u3x_sam_7, &c, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return _cqee_veri(a, b, c);
+      return u3l_punt("veri", _cqee_veri(a, b, c));
     }
   }

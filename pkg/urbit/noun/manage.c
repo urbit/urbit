@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <openssl/crypto.h>
+#include <urcrypt.h>
 
 //  XX stack-overflow recovery should be gated by -a
 //
@@ -1677,6 +1678,23 @@ _cm_signals(void)
 # endif
 }
 
+extern void u3je_secp_init(void);
+extern void u3je_secp_stop(void);
+
+static void
+_cm_crypto()
+{
+  /* Initialize OpenSSL with loom allocation functions. */
+  if ( 0 == CRYPTO_set_mem_functions(&u3a_malloc_ssl,
+                                     &u3a_realloc_ssl,
+                                     &u3a_free_ssl) ) {
+    u3l_log("%s\r\n", "openssl initialization failed");
+    abort();
+  }
+
+  u3je_secp_init();
+}
+
 /* u3m_init(): start the environment.
 */
 void
@@ -1684,6 +1702,7 @@ u3m_init(void)
 {
   _cm_limits();
   _cm_signals();
+  _cm_crypto();
 
   /* Make sure GMP uses our malloc.
   */
@@ -1722,6 +1741,13 @@ u3m_init(void)
   }
 }
 
+/* u3m_stop(): graceful shutdown cleanup. */
+void
+u3m_stop()
+{
+  u3je_secp_stop();
+}
+
 /* u3m_boot(): start the u3 system. return next event, starting from 1.
 */
 c3_d
@@ -1732,11 +1758,6 @@ u3m_boot(c3_c* dir_c)
   /* Activate the loom.
   */
   u3m_init();
-
-  /* In the worker, set the openssl memory allocation functions to always
-  ** work on the loom.
-  */
-  CRYPTO_set_mem_functions(u3a_malloc_ssl, u3a_realloc_ssl, u3a_free_ssl);
 
   /* Activate the storage system.
   */
