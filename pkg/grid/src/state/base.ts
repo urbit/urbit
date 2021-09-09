@@ -7,6 +7,7 @@ import { persist } from 'zustand/middleware';
 import Urbit, { SubscriptionRequestInterface } from '@urbit/http-api';
 import { Poke } from '@urbit/api';
 import api from './api';
+import { useMockData } from './util';
 
 setAutoFreeze(false);
 enablePatches();
@@ -181,7 +182,7 @@ export async function pokeOptimisticallyN<A, S extends Record<string, unknown>>(
   let num: string | undefined;
   try {
     num = optReduceState(state, poke.json, reduce);
-    await api.poke(poke);
+    await (useMockData ? new Promise((res) => setTimeout(res, 500)) : api.poke(poke));
     state.getState().removePatch(num);
   } catch (e) {
     console.error(e);
