@@ -78,6 +78,8 @@
 +*  this  .
     ha    ~(. +> bowl)
     def   ~(. (default-agent this %|) bowl)
+    io    ~(. agentio bowl)
+    pass  pass:io
 ::
 ++  on-init
   =.  current-timebox  now.bowl
@@ -90,12 +92,13 @@
    !<(versioned-state old-vase)
   =|  cards=(list card)
   |^  ^-  (quip card _this)
-  ?+  -.old  !!
-      %8
+  ?:  ?=(%8 -.old)
     =.  -.state  old
     =.  +.state  inflate
     :_(this (flop cards))
-  ==
+  ::
+  :_  this
+  (poke-our:pass %hark-graph-hook hark-graph-migrate+old-vase)^~
   ++  index-timebox
     |=  [time=(unit @da) =timebox:store out=_by-place]
     ^+  by-place
@@ -312,7 +315,7 @@
   ::
   ++  unread-each
     |=  [=place:store =path]
-    =.  poke-core  (seen-index place)
+    =.  poke-core  (seen-index place ~)
     =.  poke-core  (give %unread-each place path)
     %+  jub-place  place
     |=(=stats:store stats(each (~(put in each.stats) path)))
@@ -358,8 +361,7 @@
     |=  [=place:store inc=? count=@ud]
     =.  poke-core
       (give %unread-count place inc count)
-    =.  poke-core
-      (seen-index place)
+    =.  poke-core  (seen-index place ~)
     =/  f
       ?:  inc  (cury add count)
       (curr sub count)
@@ -383,10 +385,10 @@
     $(poke-core core, bins t.bins)
   ::
   ++  seen-index
-    |=  =place:store
-    =.  poke-core  (give %seen-index place)
+    |=  [=place:store time=(unit time)]
+    =.  poke-core  (give %seen-index place time)
     %+  jub-place  place
-    |=(=stats:store stats(last now.bowl))
+    |=(=stats:store stats(last (fall time now.bowl)))
   ::
   ++  seen
     =.  poke-core

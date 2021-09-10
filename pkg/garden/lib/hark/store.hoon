@@ -20,12 +20,19 @@
         %read-count  (place +.upd)
         %unread-each  (read-each +.upd)
         %unread-count  (unread-count +.upd)
-        %seen-index    (place +.upd)
+        %seen-index    (seen-index +.upd)
         %all-stats     (all-stats +.upd)
         ::%read-note   (index +.upd)
         ::%note-read   (note-read +.upd)
         %archive       (archive +.upd)
     ==
+    ::
+    ++  seen-index
+      |=  [p=^place t=(unit ^time)]
+      %-  pairs
+      :~  place+(place p)
+          time+?~(t ~ (time u.t))
+      ==
     ::
     ++  archive
       |=  [t=(unit @da) b=^bin]
