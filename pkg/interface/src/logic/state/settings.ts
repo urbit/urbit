@@ -45,7 +45,7 @@ export interface SettingsState {
   keyboard: ShortcutMapping;
   remoteContentPolicy: RemoteContentPolicy;
   getAll: () => Promise<void>;
-  putEntry: (bucket: string, key: string, value: Value) => void;
+  putEntry: (bucket: string, key: string, value: Value) => Promise<void>;
   leap: {
     categories: LeapCategories[];
   };
@@ -108,7 +108,7 @@ const useSettingsState = createState<SettingsState>(
         }
       });
     },
-    putEntry: (bucket: string, entry: string, value: Value) => {
+    putEntry: async (bucket: string, entry: string, value: Value) => {
       const poke = putEntry((window as any).desk, bucket, entry, value);
       pokeOptimisticallyN(useSettingsState, poke, reduceUpdate);
     }
