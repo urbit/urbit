@@ -624,8 +624,15 @@
     ~>  %slog.0^leaf/"kiln: finished downloading update for {here}"
     =/  old-weft  `weft`[%zuse zuse]
     =/  new-weft  (read-kelvin-foreign [ship desk aeon]:rail.rak)
+    =/  =bill  (read-bill-foreign [ship desk aeon]:rail.rak)
     =.  aeon.rail.rak  +(aeon.rail.rak)
     |^  ^+  vats
+    =?  vats  liv.rein.rak
+      :: stop dead apps before merge, else failed compilation
+      :: will crash the event
+      =/  wan  (sy (get-apps-want bill rein.rak))
+      =/  hav  (sy (get-apps-live our loc now))
+      (update-running-apps ~ ~(tap in (~(dif in hav) wan)))
     ?:  =(%base loc)
       do-base
     ?:  (gth num.new-weft num.old-weft)
