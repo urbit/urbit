@@ -2,7 +2,9 @@ import { ecdsaSign } from "secp256k1";
 import keccak, { Keccak } from "keccak";
 import { hexToBytes, toHex } from "web3-utils";
 
-import RollerRPCAPI, { L2Data } from "../client/typescript/src/index";
+import RollerRPCAPI, {
+  ConfigureKeysParams,
+} from "../client/typescript/src/index";
 
 import type {
   L2Point,
@@ -12,6 +14,7 @@ import type {
   Signature,
   From,
 } from "../client/typescript/src/index";
+import { ConfigureKeys } from "../client/typescript/build";
 
 const privateKeys = new Map([
   [
@@ -117,6 +120,18 @@ test("getPoint", async () => {
   expect(point).toHaveProperty("dominion", "l2");
 });
 
+test("getMissingPoint", async () => {
+  const ship = "~mirnem-picmeb";
+  try {
+    const point: L2Point = await api.getPoint(ship);
+  } catch (point) {
+    if (point instanceof Error) {
+      expect(point).toHaveProperty("message", "Resource not found");
+      expect(point).toHaveProperty("code", -32000);
+    }
+  }
+});
+
 test("getShips", async () => {
   const address: EthAddress = "0x6deffb0cafdb11d175f123f6891aa64f01c24f7d";
   const ships: Ship[] = await api.getShips(address);
@@ -216,10 +231,10 @@ test("...configures keys", async () => {
   //
   //    ("sig" is signed using nonce 0)
   //
-  const configureKeysData = {
+  const configureKeysData: ConfigureKeysParams = {
     encrypt: "0x1234",
     auth: "0xabcd",
-    cryptoSuite: 0,
+    cryptoSuite: "0",
     breach: false,
   };
   const configureKeysHash: Hash = await api.hashTransaction(
@@ -329,10 +344,10 @@ test("and configures its keys", async () => {
   //    ("sig" is signed using nonce 1)
   //
 
-  const configureKeysData = {
+  const configureKeysData: ConfigureKeysParams = {
     encrypt: "0x1234",
     auth: "0xabcd",
-    cryptoSuite: 0,
+    cryptoSuite: "0",
     breach: false,
   };
   const configureKeysHash: Hash = await api.hashTransaction(
@@ -419,7 +434,7 @@ test("and configures new keys", async () => {
   const configureKeysData = {
     encrypt: "0x5678",
     auth: "0xefab",
-    cryptoSuite: 0,
+    cryptoSuite: "0",
     breach: false,
   };
   const configureKeysHash: Hash = await api.hashTransaction(

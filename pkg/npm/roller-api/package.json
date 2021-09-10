@@ -1,6 +1,6 @@
 {
   "name": "roller-api",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Azimuth L2 Rollup API client generator",
   "scripts": {
