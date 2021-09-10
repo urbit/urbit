@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { AppInfo } from '../../components/AppInfo';
 import { ShipName } from '../../components/ShipName';
-import { useCharge, useTreaty } from '../../state/docket';
+import useDocketState, { useCharge, useTreaty } from '../../state/docket';
 import { useVat } from '../../state/kiln';
 import { useLeapStore } from '../Nav';
 
@@ -14,9 +14,15 @@ export const TreatyInfo = () => {
   const charge = useCharge(desk);
 
   useEffect(() => {
+    if(!charge) {
+      useDocketState.getState().requestTreaty(host, desk);
+    }
+  }, [host, desk]);
+
+  useEffect(() => {
     select(
       <>
-        Apps by <ShipName name={ship} className="font-mono" />: {treaty?.title}
+        {treaty?.title}
       </>
     );
   }, [treaty?.title]);

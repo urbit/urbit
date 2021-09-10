@@ -1,9 +1,8 @@
 import { map, omit } from 'lodash';
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Route, RouteComponentProps } from 'react-router-dom';
 import { MenuState, Nav } from '../nav/Nav';
-import useDocketState, { useCharges } from '../state/docket';
-import { useKilnState } from '../state/kiln';
+import { useCharges } from '../state/docket';
 import { RemoveApp } from '../tiles/RemoveApp';
 import { SuspendApp } from '../tiles/SuspendApp';
 import { Tile } from '../tiles/Tile';
@@ -16,15 +15,6 @@ type GridProps = RouteComponentProps<{
 export const Grid: FunctionComponent<GridProps> = ({ match }) => {
   const charges = useCharges();
   const chargesLoaded = Object.keys(charges).length > 0;
-
-  useEffect(() => {
-    const { fetchCharges, fetchAllies } = useDocketState.getState();
-    const { fetchVats, fetchLag } = useKilnState.getState();
-    fetchCharges();
-    fetchAllies();
-    fetchVats();
-    fetchLag();
-  }, []);
 
   return (
     <div className="flex flex-col">

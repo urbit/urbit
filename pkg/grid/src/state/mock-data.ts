@@ -230,7 +230,7 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
     aeon: 3,
     desk,
     next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
-    ship: '~dopzod'
+    ship: '~zod'
   },
   hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
 });

@@ -8,21 +8,24 @@ import { mockVats } from './mock-data';
 
 interface KilnState {
   vats: Vats;
+  loaded: boolean;
   fetchVats: () => Promise<void>;
   lag: boolean;
   fetchLag: () => Promise<void>;
   set: (s: KilnState) => void;
 }
-export const useKilnState = create<KilnState>((set) => ({
+const useKilnState = create<KilnState>((set) => ({
   vats: useMockData ? mockVats : {},
   lag: !!useMockData,
+  loaded: false,
   fetchVats: async () => {
     if (useMockData) {
       await fakeRequest({}, 500);
+      set({ loaded: true });
       return;
     }
     const vats = await api.scry<Vats>(getVats);
-    set({ vats });
+    set({ vats, loaded: true });
   },
   fetchLag: async () => {
     const lag = await api.scry<boolean>(scryLag);
@@ -51,6 +54,11 @@ export function useVat(desk: string): Vat | undefined {
 const selLag = (s: KilnState) => s.lag;
 export function useLag() {
   return useKilnState(selLag);
+}
+
+const selLoaded = (s: KilnState) => s.loaded;
+export function useKilnLoaded() {
+  return useKilnState(selLoaded);
 }
 
 export default useKilnState;
