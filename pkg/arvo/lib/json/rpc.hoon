@@ -40,9 +40,7 @@
     %batch  a+(turn bas.response response-to-json)
     ::
       %result
-    :-  %o
-    %-  molt
-    ^-  (list [@t json])
+    %-  pairs:enjs:format
     ::  FIXME: return 'id' as string, number or NULL
     ::
     :~  ['jsonrpc' s+'2.0']
@@ -51,14 +49,16 @@
     ==
   ::
       %error
-    :-  %o
-    %-  molt
-    ^-  (list [@t json])
+    =,  enjs:format
+    %-  pairs
     :~  ['jsonrpc' s+'2.0']
         ['id' ?~(id.response ~ s+id.response)]
-        ['code' n+code.response]
-        ['message' s+message.response]
-    ==
+      ::
+        :-  'error'
+        %-  pairs
+        :~  ['code' n+code.response]
+            ['message' s+message.response]
+    ==  ==
   ==
 ::
 ++  validate-request
