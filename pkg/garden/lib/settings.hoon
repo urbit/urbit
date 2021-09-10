@@ -11,11 +11,16 @@
       %all     (settings +.dat)
       %bucket  (bucket +.dat)
       %entry   (value +.dat)
+      %desk    (desk-settings +.dat)
     ==
   ::
   ++  settings
     |=  s=^settings
     ^-  json
+    [%o (~(run by s) desk-settings)]
+  ::
+  ++  desk-settings
+    |=  s=(map key ^bucket)
     [%o (~(run by s) bucket)]
   ::
   ++  event
@@ -30,35 +35,39 @@
     ==
   ::
   ++  put-bucket
-    |=  [k=key b=^bucket]
+    |=  [d=desk k=key b=^bucket]
     ^-  json
     %-  pairs
     :~  bucket-key+s+k
         bucket+(bucket b)
+        desk+s+d
     ==
   ::
   ++  del-bucket
-    |=  k=key
+    |=  [d=desk k=key]
     ^-  json
     %-  pairs
     :~  bucket-key+s+k
+        desk+s+d
     ==
   ::
   ++  put-entry
-    |=  [b=key k=key v=val]
+    |=  [d=desk b=key k=key v=val]
     ^-  json
     %-  pairs
     :~  bucket-key+s+b
         entry-key+s+k
         value+(value v)
+        desk+s+d
     ==
   ::
   ++  del-entry
-    |=  [buc=key =key]
+    |=  [d=desk buc=key =key]
     ^-  json
     %-  pairs
     :~  bucket-key+s+buc
         entry-key+s+key
+        desk+s+d
     ==
   ::
   ++  value
@@ -93,25 +102,29 @@
   ::
   ++  put-bucket
     %-  ot
-    :~  bucket-key+so
+    :~  desk+so
+        bucket-key+so
         bucket+bucket
     ==
   ::
   ++  del-bucket
     %-  ot
-    :~  bucket-key+so
+    :~  desk+so
+        bucket-key+so
     ==
   ::
   ++  put-entry
     %-  ot
-    :~  bucket-key+so
+    :~  desk+so
+        bucket-key+so
         entry-key+so
         value+value
     ==
   ::
   ++  del-entry
     %-  ot
-    :~  bucket-key+so
+    :~  desk+so
+        bucket-key+so
         entry-key+so
     ==
   ::

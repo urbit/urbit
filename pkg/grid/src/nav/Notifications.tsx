@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { useLeapStore } from './Nav';
 import { Button } from '../components/Button';
 import { Notification } from '../state/hark-types';
 import { BasicNotification } from './notifications/BasicNotification';
@@ -27,12 +26,12 @@ const Empty = () => (
 );
 
 export const Notifications = () => {
-  const select = useLeapStore((s) => s.select);
+  // const select = useLeapStore((s) => s.select);
   const { notifications, systemNotifications, hasAnyNotifications } = useNotifications();
 
-  useEffect(() => {
-    select('Notifications');
-  }, []);
+  // useEffect(() => {
+  //   select('Notifications');
+  // }, []);
 
   return (
     <div className="grid grid-rows-[auto,1fr] h-full p-4 md:p-8 overflow-hidden">

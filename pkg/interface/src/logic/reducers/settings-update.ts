@@ -40,8 +40,8 @@ function delEntry(json: SettingsUpdate, state: any): SettingsState {
   return state;
 }
 
-function getAll(json: any, state: SettingsState): SettingsState {
-  const data = _.get(json, 'all');
+function getDesk(json: any, state: SettingsState): SettingsState {
+  const data = _.get(json, 'desk');
   if(data) {
     _.mergeWith(state, data, (obj, src) => _.isArray(src) ? src : undefined);
   }
@@ -75,7 +75,7 @@ export const reduceUpdate = [
 ];
 
 export const reduceScry = [
-  getAll,
+  getDesk,
   getBucket,
   getEntry
 ];

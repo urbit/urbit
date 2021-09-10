@@ -4,7 +4,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import useDocketState from '../state/docket';
-import { disableDefault } from '../state/util';
+import { disableDefault, handleDropdownLink } from '../state/util';
 
 export interface TileMenuProps {
   desk: string;
@@ -41,10 +41,7 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
   const [open, setOpen] = useState(false);
   const toggleDocket = useDocketState((s) => s.toggleDocket);
   const menuBg = { backgroundColor: menuColor };
-  const linkOnSelect = useCallback((e: Event) => {
-    e.preventDefault();
-    setTimeout(() => setOpen(false), 15);
-  }, []);
+  const linkOnSelect = useCallback(handleDropdownLink(setOpen), []);
 
   return (
     <DropdownMenu.Root open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
@@ -64,9 +61,6 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content
-        align="start"
-        alignOffset={-32}
-        sideOffset={4}
         onCloseAutoFocus={disableDefault}
         className={classNames(
           'dropdown py-2 font-semibold',
@@ -75,15 +69,11 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
         style={menuBg}
       >
         <DropdownMenu.Group>
-          {/* 
-            TODO: revisit with Liam
-            <Item as={Link} to={`/leap/search/${provider}/apps/${name.toLowerCase()}`} onSelect={(e) => { e.preventDefault(); setTimeout(() => setOpen(false), 0) }}>App Info</Item> 
-          */}
           <Item as={Link} to={`/app/${desk}`} onSelect={linkOnSelect}>
             App Info
           </Item>
         </DropdownMenu.Group>
-        <DropdownMenu.Separator className="-mx-4 my-2 border-t-2 border-solid border-gray-500 mix-blend-soft-light" />
+        <DropdownMenu.Separator className="-mx-4 my-2 border-t-2 border-solid border-gray-600 mix-blend-soft-light" />
         <DropdownMenu.Group>
           {active && (
             <Item as={Link} to={`/app/${desk}/suspend`} onSelect={linkOnSelect}>
@@ -95,10 +85,7 @@ export const TileMenu = ({ desk, active, menuColor, lightText, className }: Tile
             Remove App
           </Item>
         </DropdownMenu.Group>
-        <DropdownMenu.Arrow
-          className="w-4 h-[10px] fill-current -translate-x-10"
-          style={{ color: menuColor }}
-        />
+        <DropdownMenu.Arrow className="w-4 h-[10px] fill-current" style={{ color: menuColor }} />
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   );

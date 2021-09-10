@@ -14,7 +14,7 @@ type PolymorphicButton = Polymorphic.ForwardRefComponent<
 const variants: Record<NotificationButtonVariant, string> = {
   primary: 'text-blue bg-white',
   secondary: 'text-black bg-white',
-  destructive: 'text-red-400 bg-white'
+  destructive: 'text-red-500 bg-white'
 };
 
 export const NotificationButton = React.forwardRef(

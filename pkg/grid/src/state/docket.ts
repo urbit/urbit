@@ -1,7 +1,7 @@
 import create from 'zustand';
 import produce from 'immer';
 import { useCallback, useEffect } from 'react';
-import { omit, pick } from 'lodash-es';
+import { omit, pick } from 'lodash';
 import {
   Allies,
   Charge,
@@ -101,7 +101,7 @@ const useDocketState = create<DocketState>((set, get) => ({
     }
     if (useMockData) {
       set((state) => addCharge(state, desk, { ...treaty, chad: { install: null } }));
-      await new Promise<void>((res) => setTimeout(() => res(), 5000));
+      await new Promise<void>((res) => setTimeout(() => res(), 10000));
       set((state) => addCharge(state, desk, { ...treaty, chad: { glob: null } }));
     }
 
@@ -253,5 +253,9 @@ export function allyForTreaty(ship: string, desk: string) {
 
 // xx useful for debugging
 window.docket = useDocketState.getState;
+
+if (useMockData) {
+  window.desk = 'garden';
+}
 
 export default useDocketState;

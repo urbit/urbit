@@ -1,4 +1,4 @@
-import { getVats, Vats, scryLag, getBlockers } from '@urbit/api';
+import { getVats, Vats, scryLag, getBlockers, Vat } from '@urbit/api';
 import create from 'zustand';
 import produce from 'immer';
 import { useCallback } from 'react';
@@ -14,7 +14,7 @@ interface KilnState {
   fetchLag: () => Promise<void>;
   set: (s: KilnState) => void;
 }
-export const useKilnState = create<KilnState>((set) => ({
+const useKilnState = create<KilnState>((set) => ({
   vats: useMockData ? mockVats : {},
   lag: !!useMockData,
   loaded: false,
@@ -47,7 +47,7 @@ export function useBlockers() {
   return useKilnState(selBlockers);
 }
 
-export function useVat(desk: string) {
+export function useVat(desk: string): Vat | undefined {
   return useKilnState(useCallback((s) => s.vats[desk], [desk]));
 }
 

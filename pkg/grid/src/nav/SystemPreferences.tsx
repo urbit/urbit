@@ -1,12 +1,11 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { Link, Route, RouteComponentProps, Switch, useRouteMatch } from 'react-router-dom';
 import classNames from 'classnames';
-import { useLeapStore } from './Nav';
 import { NotificationPrefs } from './preferences/NotificationPrefs';
 import { SystemUpdatePrefs } from './preferences/SystemUpdatePrefs';
 import notificationsSVG from '../assets/notifications.svg';
 import systemUpdatesSVG from '../assets/system-updates.svg';
-import {InterfacePrefs} from './preferences/InterfacePrefs';
+import { InterfacePrefs } from './preferences/InterfacePrefs';
 
 interface SystemPreferencesSectionProps extends RouteComponentProps<{ submenu: string }> {
   submenu: string;
@@ -22,8 +21,6 @@ function SystemPreferencesSection({
   icon,
   text
 }: SystemPreferencesSectionProps) {
-  const subMatch = useRouteMatch<{ submenu: string }>(`${match.url}/:submenu`);
-
   return (
     <li>
       <Link
@@ -42,12 +39,7 @@ function SystemPreferencesSection({
 
 export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }>) => {
   const { match } = props;
-  const select = useLeapStore((state) => state.select);
   const subMatch = useRouteMatch<{ submenu: string }>(`${match.url}/:submenu`);
-
-  useEffect(() => {
-    select('System Preferences');
-  }, []);
 
   const matchSub = useCallback(
     (target: string) => {
@@ -62,11 +54,11 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
 
   return (
     <div className="flex h-[600px] max-h-full">
-      <aside className="flex-none min-w-60 border-r-2 border-gray-100">
-        <div className="p-5">
-          <input className="input h4 default-ring bg-gray-100" placeholder="Search Preferences" />
+      <aside className="flex-none min-w-60 border-r-2 border-gray-50">
+        <div className="p-8">
+          <input className="input h4 default-ring bg-gray-50" placeholder="Search Preferences" />
         </div>
-        <nav className="border-b-2 border-gray-100">
+        <nav className="border-b-2 border-gray-50">
           <ul className="font-semibold">
             <SystemPreferencesSection
               {...props}
@@ -92,7 +84,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
           </ul>
         </nav>
       </aside>
-      <section className="flex-1 px-5 py-7 text-black">
+      <section className="flex-1 p-8 text-black">
         <Switch>
           <Route path={`${match.url}/system-updates`} component={SystemUpdatePrefs} />
           <Route path={`${match.url}/interface`} component={InterfacePrefs} />

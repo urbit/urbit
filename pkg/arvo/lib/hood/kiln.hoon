@@ -415,13 +415,14 @@
     ?:  =(`[her rem] got)
       ~>  %slog.0^leaf/"kiln: already tracking {here:(abed lac)}, ignoring"
       vats
-    =?  kiln  ?=(^ got)  (uninstall lac)
     =:  loc  lac
-        rak  [[paused=| her rem *aeon] next=~ *rein]
+        rak  [[paused=| her rem *aeon] next=~ rein:(fall got *arak)]
       ==
     ~>  %slog.0^leaf/"kiln: beginning install into {here}"
     (emit find:pass)
   ::  +reset: resync after failure
+  ::
+  ::    TODO: don't blow away so much state
   ::
   ++  reset
     ^+  vats
@@ -444,6 +445,8 @@
       ==
     vats
   ::  +resume: restart tracking from upstream
+  ::
+  ::  TODO: check whether kelvin is legit
   ::
   ++  resume
     |=  lac=desk
@@ -528,7 +531,16 @@
   ++  bump-many
     |=  [kel=weft live=(set desk)]
     ^+  kiln
-    =/  liv  ~(tap in live)
+    ::  ensure %base is always reloaded first
+    ::
+    =/  liv
+      %+  sort  ~(tap in live)
+      |=  [a=desk b=desk]
+      ^-  ?
+      ?:  =(%base a)  &
+      ?:  =(%base b)  |
+      (lte `@`a `@`b)
+    ::
     |-  ^+  kiln
     ?~  liv  kiln
     $(liv t.liv, kiln (bump-one kel i.liv))
@@ -691,7 +703,7 @@
       (update-running-apps (get-apps-diff our loc now rein.rak))
     ?.  =(%base loc)
       vats
-    ~>  %slog.0^leaf/"kiln: bumping {<zuse>}"
+    ~>  %slog.0^leaf/"kiln: bumping {<zuse>}"  ::  TODO print next
     (emit merge-kids:pass)
   ::
   ++  take-merge-kids

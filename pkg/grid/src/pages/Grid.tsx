@@ -1,9 +1,8 @@
-import { map, omit } from 'lodash-es';
-import React, { FunctionComponent, useEffect } from 'react';
+import { map, omit } from 'lodash';
+import React, { FunctionComponent } from 'react';
 import { Route, RouteComponentProps } from 'react-router-dom';
 import { MenuState, Nav } from '../nav/Nav';
-import useDocketState, { useCharges } from '../state/docket';
-import { useKilnState } from '../state/kiln';
+import { useCharges } from '../state/docket';
 import { RemoveApp } from '../tiles/RemoveApp';
 import { SuspendApp } from '../tiles/SuspendApp';
 import { Tile } from '../tiles/Tile';
@@ -19,7 +18,7 @@ export const Grid: FunctionComponent<GridProps> = ({ match }) => {
 
   return (
     <div className="flex flex-col">
-      <header className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 z-30 flex justify-center w-full bg-white">
+      <header className="fixed sm:sticky bottom-0 sm:bottom-auto sm:top-0 left-0 z-30 flex justify-center w-full px-4 bg-white">
         <Nav menu={match.params.menu} />
       </header>
 
