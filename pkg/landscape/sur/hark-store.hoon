@@ -97,7 +97,7 @@
       ::  %unread-each: Add .path to list of unreads for .place
       [%unread-each =place =path]
       ::  %seen-index: Update last-updated for .place to now.bowl
-      [%seen-index =place] 
+      [%seen-index =place time=(unit time)] 
       ::  store actions
       ::
       ::  %archive: archive single notification

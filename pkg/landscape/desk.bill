@@ -4,7 +4,6 @@
         %chat-store
         %graph-store
         %group-store
-        %hark-store
         %invite-store
         %s3-store
         %settings-store

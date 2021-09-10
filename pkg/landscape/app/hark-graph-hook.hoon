@@ -1,7 +1,9 @@
 ::  hark-graph-hook: notifications for graph-store [landscape]
 ::
 /-  post, group-store, metadata=metadata-store, hook=hark-graph-hook, store=hark-store
+/-  hist=hark-store-historical
 /+  resource, mdl=metadata, default-agent, dbug, graph-store, graph, grouplib=group
+/+  agentio
 ::
 ::
 ~%  %hark-graph-hook-top  ..part  ~
@@ -63,6 +65,8 @@
     met   ~(. mdl bowl)
     grp   ~(. grouplib bowl)
     gra   ~(. graph bowl)
+    io    ~(. agentio bowl)
+    pass  pass:io
 ::
 ++  on-init
   :_  this
@@ -115,12 +119,56 @@
   ?>  (team:title our.bowl src.bowl)
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
+        %hark-graph-migrate
+      =+  !<(old=versioned-state:hist vase)
+      ?.  ?=(%7 -.old)  ~|(%old-hark-dropping !!)
+      (hark-graph-migrate old)
+    ::
         %hark-graph-hook-action
       (hark-graph-hook-action !<(action:hook vase))
+    ::
         %noun
       (poke-noun !<(* vase))
     ==
   [cards this]
+  ::
+  ++  hark-graph-migrate
+    |=  old=state-7:hist
+    =|  cards=(list card)
+    |^ 
+    [(flop get-places) state]
+    ::
+    ++  hark
+      |=  =action:store
+      [(poke-our:pass %hark-store hark-action+!>(action)) cards]
+    ::
+    ++  get-places
+      ^-  (list card)
+      =/  stats-indices=(set stats-index:hist)
+        (~(uni in ~(key by last-seen.old)) ~(key by unreads-count.old))
+      %-  zing
+      (turn ~(tap in stats-indices) get-stats)
+    ::
+    ++  get-stats
+      |=  =stats-index:hist
+      ^-  (list card)
+      =/  place=(unit place:store)
+        (stats-index-to-place stats-index)
+      ?~  place  ~
+      =/  count  (~(get by unreads-count.old) stats-index)
+      =?  cards  ?=(^ count)
+        (hark %unread-count u.place & u.count)
+      =/  last   (~(get by last-seen.old) stats-index)
+      =?  cards  ?=(^ last)
+        (hark %seen-index u.place `u.last)
+      cards
+    ::
+    ++  stats-index-to-place
+      |=  =stats-index:hist
+      ^-  (unit place:store)
+      ?.  ?=(%graph -.stats-index)  ~
+      `(get-place [graph index]:stats-index)
+    --
   ::
   ++  poke-noun
     |=  non=*
@@ -480,7 +528,7 @@
     ^+  update-core 
     ?>  ?=(%& -.post.node)
     =.  update-core
-      (hark %seen-index place.bin)
+      (hark %seen-index place.bin `now.bowl)
     =?  update-core  ?=(%count mode.notif-kind)
       (hark %read-count place.bin)
     =?  update-core  watch-on-self
