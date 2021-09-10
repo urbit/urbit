@@ -11,7 +11,7 @@ type AppListProps<T extends DocketWithDesk> = {
   matchAgainst?: MatchItem;
   onClick?: (e: MouseEvent<HTMLAnchorElement>, app: T) => void;
   listClass?: string;
-} & Omit<AppLinkProps, 'app' | 'onClick'>;
+} & Omit<AppLinkProps<T>, 'app' | 'onClick'>;
 
 export function appMatches(target: DocketWithDesk, match?: MatchItem): boolean {
   if (!match) {
