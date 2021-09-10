@@ -32,7 +32,6 @@ import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
 import './css/custom.css';
 import { join } from '@urbit/api/groups';
-import { putEntry } from '@urbit/api/settings';
 import { joinGraph } from '@urbit/api/graph';
 import airlock from '~/logic/api';
 
@@ -103,15 +102,17 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
     maxWidth: '350px',
     modal: function modal(dismiss) {
       const onDismiss = (e) => {
+        const { putEntry } = useSettingsState.getState();
         e.stopPropagation();
-        airlock.poke(putEntry('tutorial', 'seen', true));
+        putEntry('tutorial', 'seen', true);
         dismiss();
       };
       const onContinue = async (e) => {
+        const { putEntry } = useSettingsState.getState();
         e.stopPropagation();
         if (!hasTutorialGroup({ associations })) {
           await airlock.poke(join(TUTORIAL_HOST, TUTORIAL_GROUP));
-          await airlock.poke(putEntry('tutorial', 'joined', Date.now()));
+          await putEntry('tutorial', 'joined', Date.now());
           await waiter(hasTutorialGroup);
           await Promise.all(
             [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph => airlock.thread(joinGraph(TUTORIAL_HOST, graph))));

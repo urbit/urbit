@@ -35,7 +35,6 @@
         %observe-hook
         %s3-store
         %sane
-        %settings-store
         %weather
     ==    
     :-  %fish

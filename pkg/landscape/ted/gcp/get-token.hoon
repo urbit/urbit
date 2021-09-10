@@ -44,15 +44,16 @@
 ++  read-setting
   |=  key=term
   =/  m  (strand @t)  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl:strandio
   ;<  has=?  bind:m
     %+  scry:strandio  ?
-    /gx/settings-store/has-entry/gcp-store/[key]/noun
+    /gx/settings-store/has-entry/[q.byk.bowl]/gcp-store/[key]/noun
   ?.  has
     (strand-fail:strandio (rap 3 %gcp-missing- key ~) ~)
   ;<  =data:settings  bind:m
     %+  scry:strandio
       data:settings
-    /gx/settings-store/entry/gcp-store/[key]/settings-data
+    /gx/settings-store/entry/[q.byk.bowl]/gcp-store/[key]/settings-data
   ?>  ?=([%entry %s @] data)
   (pure:m p.val.data)
 ::
