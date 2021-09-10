@@ -15,6 +15,14 @@ index 0f2bb869b..f81245ec6 100644
      if (err == ERROR_ACCESS_DENIED) {
        /*
         * SetNamedPipeHandleState can fail if the handle doesn't have either
+@@ -1054,7 +1054,6 @@ static DWORD WINAPI uv_pipe_writefile_thread_proc(void* parameter) {
+   assert(req != NULL);
+   assert(req->type == UV_WRITE);
+   assert(handle->type == UV_NAMED_PIPE);
+-  assert(req->write_buffer.base);
+
+   result = WriteFile(handle->handle,
+                      req->write_buffer.base,
 diff --git a/src/win/tty.c b/src/win/tty.c
 index c359d5601..1b9d4f853 100644
 --- a/src/win/tty.c
