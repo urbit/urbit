@@ -22,7 +22,7 @@ const Header = () => {
       justifyContent="space-between"
       alignItems="center"
       mb={5}
-      px={[0, 4]}
+      px={[2, 4]}
       style={{
         boxShadow: '0px 1px 0px rgba(0, 0, 0, 0.1)',
       }}
