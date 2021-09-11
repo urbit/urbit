@@ -3,44 +3,29 @@ import { Box, Icon, Row, Text } from '@tlon/indigo-react';
 import { Link } from 'react-router-dom';
 import { useSettings } from '../hooks/useSettings';
 
-const Header = ({ settings }: { settings: boolean }) => {
+const Header = () => {
   const { provider } = useSettings();
-  let icon = settings ? 'X' : 'Adjust';
-  let iconColor = settings ? 'black' : 'orange';
-  let iconLink = settings ? '/~btc' : '/~btc/settings';
 
   let connection = null;
-  let badge = null;
   if (!(provider && provider.connected)) {
     connection = (
       <Text fontSize={1} color="red" fontWeight="bold" mr={3}>
         Provider Offline
       </Text>
     );
-
-    if (!settings) {
-      badge = (
-        <Box
-          borderRadius="50%"
-          width="8px"
-          height="8px"
-          backgroundColor="red"
-          position="absolute"
-          top="0px"
-          right="0px"
-        ></Box>
-      );
-    }
   }
 
   return (
     <Row
-      height={8}
+      height={7}
       width="100%"
       justifyContent="space-between"
       alignItems="center"
-      pt={5}
-      pb={5}
+      mb={5}
+      px={[0, 4]}
+      style={{
+        boxShadow: '0px 1px 0px rgba(0, 0, 0, 0.1)',
+      }}
     >
       <Row alignItems="center" justifyContent="center">
         <Box
@@ -60,19 +45,32 @@ const Header = ({ settings }: { settings: boolean }) => {
       </Row>
       <Row alignItems="center">
         {connection}
-        <Link to={iconLink}>
+        <Link to="/~btc/settings">
           <Box
             backgroundColor="white"
             borderRadius={4}
             width={5}
             height={5}
             p={2}
+            m={2}
             position="relative"
           >
-            {badge}
-            <Icon icon={icon} color={iconColor} />
+            <Icon icon="Adjust" color="orange" />
           </Box>
         </Link>
+        <a href="/">
+          <Box
+            backgroundColor="white"
+            borderRadius={4}
+            width={5}
+            height={5}
+            p={2}
+            m={2}
+            position="relative"
+          >
+            <Icon icon="Home" color="orange" />
+          </Box>
+        </a>
       </Row>
     </Row>
   );

@@ -4,7 +4,6 @@ import { Switch, Route } from 'react-router-dom';
 import Balance from './Balance';
 import Transactions from './Transactions/Transactions';
 import Warning from './Warning';
-import Header from './Header';
 import Settings from './Settings';
 import { useSettings } from '../hooks/useSettings';
 
@@ -25,13 +24,11 @@ const Body: React.FC = () => {
     <Switch>
       <Route path="/~btc/settings">
         <Col display="flex" flexDirection="column" width={cardWidth}>
-          <Header settings={true} />
           <Settings />
         </Col>
       </Route>
       <Route path="/~btc">
         <Col display="flex" flexDirection="column" width={cardWidth}>
-          <Header settings={false} />
           {!warning ? null : <Warning />}
           <Balance />
           <Transactions />
