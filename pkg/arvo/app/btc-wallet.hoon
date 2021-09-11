@@ -601,7 +601,7 @@
           %=  state
               pend.piym     (~(del by pend.piym) txid)
               ps.piym       (~(del by ps.piym) payer)
-              num-fam.piym  (~(put by num-fam.piym) payer (dec nf))
+              num-fam.piym  (~(put by num-fam.piym) payer (?:((gth nf 0) (dec nf) 0)))
           ==
         --
       ::
