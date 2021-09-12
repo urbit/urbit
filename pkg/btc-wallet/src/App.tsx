@@ -6,6 +6,7 @@ import { Box, Reset } from '@tlon/indigo-react';
 import StartupModal from './components/StartupModal';
 import { useSettings } from './hooks/useSettings';
 import Body from './components/Body';
+import Header from './components/Header';
 
 const App: React.FC = () => {
   const { loaded, wallet, provider, scanProgress } = useSettings();
@@ -27,9 +28,8 @@ const App: React.FC = () => {
           minHeight={loaded && !scanning ? '100%' : 'none'}
           height={loaded && !scanning ? 'none' : '100%'}
           style={{ filter: blur ? 'blur(8px)' : 'none' }}
-          px={[0, 4]}
-          pb={[0, 4]}
         >
+          <Header />
           <Body />
         </Box>
       </ThemeProvider>
