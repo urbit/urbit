@@ -112,6 +112,26 @@
   ?~  =<(fil .^(arch cy/pax))
     ~
   [~ .^(weft cx/pax)]
+::  +read-bill-foreign: read /desk/bill from a foreign desk
+::
+++  read-bill-foreign
+  |=  [=ship =desk =aeon]
+  ^-  bill
+  =/  her  (scot %p ship)
+  =/  syd  (scot %tas desk)
+  =/  yon  (scot %ud aeon)
+  ::
+  =/  dom  .^(dome cv/~[her syd yon])
+  =/  tak  (scot %uv (~(got by hit.dom) let.dom))
+  =/  yak  .^(yaki cs/~[her syd yon %yaki tak])
+  =/  lob  (scot %uv (~(got by q.yak) /desk/bill))
+  =/  bob  .^(blob cs/~[her syd yon %blob lob])
+  ::
+  ;;  bill
+  ?-  -.bob
+    %direct  q.q.bob
+    %delta   q.r.bob
+  ==
 ::  +read-bill: read contents of /desk/bill manifest
 ::
 ++  read-bill
