@@ -580,7 +580,10 @@
     =/  yok=(unit yoke)  (~(get by yokes.state) dap)
     ?~  yok
       ~>  %slog.[0 leaf+"gall: no agent to reload: {<dap>}"]
-      mo-core
+      cor
+    ?:  ?=(%| -.agent)
+      ~>  %slog.[0 leaf+"gall: dead agent reload: {<dap>}"]
+      cor
     =/  bek=beak  [our q.beak.u.yok p.sign-arvo]
     =/  rag  (mo-scry-agent-cage dap q.bek p.sign-arvo)
     ?:  ?=(%| -.rag)

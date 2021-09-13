@@ -623,6 +623,12 @@
     ~>  %slog.0^leaf/"kiln: finished downloading update for {here}"
     =/  old-weft  `weft`[%zuse zuse]
     =/  new-weft  (read-kelvin-foreign [ship desk aeon]:rail.rak)
+    =?  vats  liv.rein.rak
+      =/  bill      (read-bill-foreign [ship desk aeon]:rail.rak)
+      =/  wan       (sy (get-apps-want bill rein.rak))
+      =/  hav       (sy (get-apps-live our loc now))
+      =/  ded       ~(tap in (~(dif in hav) wan))
+      (stop-dudes ded)
     =.  aeon.rail.rak  +(aeon.rail.rak)
     |^  ^+  vats
     ?:  =(%base loc)
