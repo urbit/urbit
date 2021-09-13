@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import React, { FunctionComponent } from 'react';
-import { darken, hsla, lighten, parseToHsla, readableColorIsBlack } from 'color2k';
 import { chadIsRunning } from '@urbit/api/docket';
 import { TileMenu } from './TileMenu';
 import { Spinner } from '../components/Spinner';
@@ -14,28 +13,13 @@ type TileProps = {
   desk: string;
 };
 
-function getMenuColor(color: string, lightText: boolean, active: boolean): string {
-  const hslaColor = parseToHsla(color);
-  const satAdjustedColor = hsla(
-    hslaColor[0],
-    active ? Math.max(0.2, hslaColor[1]) : 0,
-    hslaColor[2],
-    1
-  );
-
-  return lightText ? lighten(satAdjustedColor, 0.1) : darken(satAdjustedColor, 0.1);
-}
-
 export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
   const addRecentApp = useRecentsStore((state) => state.addRecentApp);
   const { title, image, color, chad, href } = charge;
-  const { theme, tileColor } = useTileColor(color);
+  const { lightText, tileColor, menuColor, suspendColor, suspendMenuColor } = useTileColor(color);
   const loading = 'install' in chad;
-  const active = chadIsRunning(chad);
-  const lightText = !readableColorIsBlack(color);
-  const menuColor = getMenuColor(tileColor, theme === 'dark' ? !lightText : lightText, active);
-  const suspendColor = 'rgb(220,220,220)';
   const suspended = 'suspend' in chad;
+  const active = chadIsRunning(chad);
   const link = getAppHref(href);
   const backgroundColor = active ? tileColor || 'purple' : suspendColor;
 
@@ -61,7 +45,7 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
           <TileMenu
             desk={desk}
             active={active}
-            menuColor={menuColor}
+            menuColor={active ? menuColor : suspendMenuColor}
             lightText={lightText}
             className="absolute z-10 top-2.5 right-2.5 sm:top-4 sm:right-4 opacity-0 hover-none:opacity-100 focus:opacity-100 group-hover:opacity-100"
           />

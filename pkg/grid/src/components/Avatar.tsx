@@ -2,6 +2,8 @@ import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import { sigil, reactRenderer } from '@tlon/sigil-js';
 import { deSig, Contact } from '@urbit/api';
+import { darken, lighten, parseToHsla } from 'color2k';
+import { usePreferencesStore } from '../nav/preferences/usePreferencesStore';
 
 export type AvatarSizes = 'xs' | 'small' | 'default';
 
@@ -45,10 +47,27 @@ const emptyContact: Contact = {
   'last-updated': 0
 };
 
+function themeAdjustColor(color: string, theme: 'light' | 'dark'): string {
+  const hsla = parseToHsla(color);
+  const lightness = hsla[2];
+
+  if (lightness <= 0.1 && theme === 'dark') {
+    return lighten(color, 0.1 - lightness);
+  }
+
+  if (lightness >= 0.9 && theme === 'light') {
+    return darken(color, lightness - 0.9);
+  }
+
+  return color;
+}
+
 export const Avatar = ({ size, className, ...ship }: AvatarProps) => {
+  const currentTheme = usePreferencesStore((s) => s.currentTheme);
   const { shipName, color, avatar } = { ...emptyContact, ...ship };
   const { classes, size: sigilSize } = sizeMap[size];
-  const foregroundColor = foregroundFromBackground(color);
+  const adjustedColor = themeAdjustColor(color, currentTheme);
+  const foregroundColor = foregroundFromBackground(adjustedColor);
   const sigilElement = useMemo(() => {
     if (shipName.match(/[_^]/)) {
       return null;
@@ -59,9 +78,9 @@ export const Avatar = ({ size, className, ...ship }: AvatarProps) => {
       renderer: reactRenderer,
       size: sigilSize,
       icon: true,
-      colors: [color, foregroundColor]
+      colors: [adjustedColor, foregroundColor]
     });
-  }, [shipName, color, foregroundColor]);
+  }, [shipName, adjustedColor, foregroundColor]);
 
   if (avatar) {
     return <img className={classNames('', classes)} src={avatar} alt="" />;
@@ -77,7 +96,7 @@ export const Avatar = ({ size, className, ...ship }: AvatarProps) => {
         size === 'default' && 'p-3',
         className
       )}
-      style={{ backgroundColor: color }}
+      style={{ backgroundColor: adjustedColor }}
     >
       {sigilElement}
     </div>
