@@ -3680,4 +3680,26 @@
       owner.own:(got:orm points.state ~marbud)
   ==
 ::
+++  test-large-batch  ^-  tang
+  =+  batch-size=20  :: should be an even number
+  =/  tx-1    [[marbud-own %transfer-point (addr %marbud-key-1) |] %marbud-key-0]
+  =/  tx-2    [[marbud-own %transfer-point (addr %marbud-key-0) |] %marbud-key-1]
+  =+  nonce=0
+  ::
+  =|  =^state:naive
+  =^  f  state  (init-marbud state)
+  %+  expect-eq
+    !>  [`@ux`(addr %marbud-key-1) +(batch-size)]
+  ::
+    !>
+    |^
+    ?:  =((mod nonce 2) 0)
+      =^  f  state  (n state %bat q:(gen-tx nonce tx-1))  loop
+    =^  f  state  (n state %bat q:(gen-tx nonce tx-2))  loop
+    ++  loop
+      ?:  =(batch-size nonce)
+        owner.own:(got:orm points.state ~marbud)
+      $(nonce +(nonce))
+    --
+::
 --
