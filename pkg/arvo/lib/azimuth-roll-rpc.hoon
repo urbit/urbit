@@ -63,7 +63,7 @@
           %-  ot
           :~  ['encrypt' (cu to-hex so)]
               ['auth' (cu to-hex so)]
-              ['cryptoSuite' no]
+              ['cryptoSuite' so]
               ['breach' bo]
           ==
         ::
