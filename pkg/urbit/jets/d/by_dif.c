@@ -5,6 +5,9 @@
 
 /* internal functions
 */
+
+/* RETAIN
+*/
 static u3_noun
 _b_dif_join(u3_noun d,
             u3_noun e)
@@ -27,14 +30,14 @@ _b_dif_join(u3_noun d,
 
       return u3nt(u3k(n_d),
                   u3k(l_d),
-                  _b_dif_join(u3k(r_d), u3k(e)));
+                  _b_dif_join(r_d, e));
     }
     else {
       u3_noun l_e, r_e;
       u3x_cell(lr_e, &l_e, &r_e);
 
       return u3nt(u3k(n_e),
-                  _b_dif_join(u3k(d), u3k(l_e)),
+                  _b_dif_join(d, l_e),
                   u3k(r_e));
     }
   }
@@ -69,6 +72,11 @@ u3qdb_dif(u3_noun a,
     u3_noun e = u3qdb_dif(r_c, r_b);
 
     u3z(c);
-    return _b_dif_join(d, e);
+
+    u3_noun pro = _b_dif_join(d, e);
+    u3z(d);
+    u3z(e);
+
+    return pro;
   }
 }
