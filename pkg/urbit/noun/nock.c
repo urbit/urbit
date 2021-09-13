@@ -1233,7 +1233,7 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
           op_y = (c3y == los_o)
                ? (arg <= 0xFF ? FABL : arg <= 0xFFFF ? FASL : FIBL)  // overflows to FISL
                : (arg <= 0xFF ? FABK : arg <= 0xFFFF ? FASK : FIBK); // overflows to FISK
-          ++tot_w; _n_emit(ops, u3nc(op_y, arg));
+          ++tot_w; _n_emit(ops, u3nc(op_y, u3k(arg)));
           break;
       }
       break;
