@@ -400,7 +400,7 @@ _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
   }
 }
 
-/* _ch_trim_slot(): trim one entry from a hashtable
+/* _ch_trim_root(): trim one entry from a hashtable
 */
 static c3_o
 _ch_trim_root(u3h_root* har_u)
