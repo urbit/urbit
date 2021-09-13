@@ -65,18 +65,18 @@ module.exports = {
       'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
       'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),
       'process.env.TUTORIAL_BOOK': JSON.stringify('guides-9684'),
-      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143')
     }),
     new HtmlWebpackPlugin({
       title: 'Landscape',
-      template: './public/index.html',
-    }),
+      template: './public/index.html'
+    })
   ],
   output: {
     filename: (pathData) => {
       return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
     },
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, '../dist'),
     publicPath: '/apps/landscape/'
   },
   optimization: {

@@ -108,7 +108,8 @@ export class Urbit {
    */
   constructor(
     public url: string,
-    public code?: string
+    public code?: string,
+    public desk?: string
   ) {
     if (isBrowser) {
       window.addEventListener('beforeunload', this.delete);
@@ -511,8 +512,11 @@ export class Urbit {
    * @returns  The return value of the thread
    */
   async thread<R, T = any>(params: Thread<T>): Promise<R> {
-    const { inputMark, outputMark, threadName, body } = params;
-    const res = await fetch(`${this.url}/spider/${inputMark}/${threadName}/${outputMark}.json`, {
+    const { inputMark, outputMark, threadName, body, desk = this.desk } = params;
+    if(!desk) {
+      throw new Error("Must supply desk to run thread from");
+    }
+    const res = await fetch(`${this.url}/spider/${desk}/${inputMark}/${threadName}/${outputMark}.json`, {
       ...this.fetchOptions,
       method: 'POST',
       body: JSON.stringify(body)
