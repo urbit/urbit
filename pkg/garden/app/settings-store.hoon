@@ -179,7 +179,7 @@
     ==
   =/  =bucket  (~(put by (~(gut bi settings) desk buc *bucket)) key val)
   :-  [(give-event pas %put-entry desk buc key val)]~
-  state(settings (~(put bi settings) desk key bucket))
+  state(settings (~(put bi settings) desk buc bucket))
 ::
 ::  +del-entry: delete an entry from a bucket, fail quietly if bucket does not
 ::              exist
