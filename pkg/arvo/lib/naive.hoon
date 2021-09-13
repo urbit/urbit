@@ -201,6 +201,8 @@
 ++  parse-roll
   |=  batch=@
   =|  =roll
+  ~>  %slog.[2 %parsing]
+  ~<  %slog.[2 %parsed]
   |-  ^+  roll
   ?~  batch
     (flop roll)
@@ -211,8 +213,6 @@
     (debug %parse-failed ~)
   =^  =raw-tx  batch  u.parse-result
   $(roll [raw-tx roll])
-::
-::  TODO: change batch to be a cursor to avoid allocating atoms
 ::
 ++  parse-raw-tx
   |=  batch=@

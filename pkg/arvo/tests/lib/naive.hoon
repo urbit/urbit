@@ -3681,7 +3681,8 @@
   ==
 ::
 ++  test-large-batch  ^-  tang
-  =+  batch-size=20  :: should be an even number
+  ~&  >  %starting-large
+  =+  batch-size=5.000  :: should be an even number
   =/  tx-1=tx:naive    [marbud-own %transfer-point (addr %marbud-key-1) |]
   =/  tx-2=tx:naive    [marbud-own %transfer-point (addr %marbud-key-0) |]
   ::
@@ -3692,13 +3693,19 @@
         [[c b %marbud-key-0] +(c)]
       [[c b %marbud-key-1] +(c)]
   ::
+  =/  txs
+    (cad:naive 3 (gen-tx 0 tx-1 %marbud-key-0) (gen-tx 1 tx-2 %marbud-key-1) ~)
+  =/  bat=octs  (cad:naive 3 (reap (add 1 (div batch-size 2)) txs))
   =|  =^state:naive
   =^  f  state  (init-marbud state)
   %+  expect-eq
     !>  [`@ux`(addr %marbud-key-1) +(batch-size)]
   ::
     !>
-    =^  f  state  (n state %bat (tx-list-to-batch:l2-event-gen batch))
+    ~&  >  %starting
+    ::  =^  f  state  (n state %bat (tx-list-to-batch:l2-event-gen batch))
+    =^  f  state  (n state %bat q.bat)
+    ~&  >  %ending
     owner.own:(got:orm points.state ~marbud)
 ::
 --
