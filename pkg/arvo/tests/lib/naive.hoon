@@ -3682,9 +3682,16 @@
 ::
 ++  test-large-batch  ^-  tang
   =+  batch-size=20  :: should be an even number
-  =/  tx-1    [[marbud-own %transfer-point (addr %marbud-key-1) |] %marbud-key-0]
-  =/  tx-2    [[marbud-own %transfer-point (addr %marbud-key-0) |] %marbud-key-1]
+  =/  tx-1=tx:naive    [marbud-own %transfer-point (addr %marbud-key-1) |]
+  =/  tx-2=tx:naive    [marbud-own %transfer-point (addr %marbud-key-0) |]
   =+  nonce=0
+  ::
+  =/  batch=tx-list:l2-event-gen
+    %+  spun  (join tx-2 (reap (add 1 (div batch-size 2)) tx-1))
+      |=  [b=tx:naive c=@]
+      ?:  =((mod c 2) 0)
+        [[c b %marbud-key-0] +(c)]
+      [[c b %marbud-key-1] +(c)]
   ::
   =|  =^state:naive
   =^  f  state  (init-marbud state)
@@ -3692,14 +3699,7 @@
     !>  [`@ux`(addr %marbud-key-1) +(batch-size)]
   ::
     !>
-    |^
-    ?:  =((mod nonce 2) 0)
-      =^  f  state  (n state %bat q:(gen-tx nonce tx-1))  loop
-    =^  f  state  (n state %bat q:(gen-tx nonce tx-2))  loop
-    ++  loop
-      ?:  =(batch-size nonce)
-        owner.own:(got:orm points.state ~marbud)
-      $(nonce +(nonce))
-    --
+    =^  f  state  (n state %bat (tx-list-to-batch:l2-event-gen batch))
+    owner.own:(got:orm points.state ~marbud)
 ::
 --
