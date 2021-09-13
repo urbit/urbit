@@ -19,6 +19,7 @@ export class Subscription {
   }
 
   initializeSettings() {
+    return;
     let app = 'settings-store';
     let path = '/bucket/btc-wallet';
 
