@@ -40,7 +40,6 @@ typedef uint32_t ur_mug;
 #define ur_pail_max            10
 
 typedef struct ur_pail32_s {
-  uint8_t  fill;
   ur_nref  refs[ur_pail_max];
   uint32_t vals[ur_pail_max];
 } ur_pail32_t;
@@ -48,11 +47,11 @@ typedef struct ur_pail32_s {
 typedef struct ur_dict32_s {
   uint64_t        prev;
   uint64_t        size;
+  uint8_t       *fills;
   ur_pail32_t *buckets;
 } ur_dict32_t;
 
 typedef struct ur_pail64_s {
-  uint8_t  fill;
   ur_nref  refs[ur_pail_max];
   uint64_t vals[ur_pail_max];
 } ur_pail64_t;
@@ -60,17 +59,18 @@ typedef struct ur_pail64_s {
 typedef struct ur_dict64_s {
   uint64_t        prev;
   uint64_t        size;
+  uint8_t       *fills;
   ur_pail64_t *buckets;
 } ur_dict64_t;
 
 typedef struct ur_pail_s {
-  uint8_t  fill;
   ur_nref  refs[ur_pail_max];
 } ur_pail_t;
 
 typedef struct ur_dict_s {
   uint64_t      prev;
   uint64_t      size;
+  uint8_t     *fills;
   ur_pail_t *buckets;
 } ur_dict_t;
 
