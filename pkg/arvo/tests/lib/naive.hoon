@@ -834,8 +834,8 @@
   :: processed.
   ::
   ++  tx-list-to-batch
-  |=  =tx-list  ^-  @
-  (can 3 (turn tx-list gen-tx))
+    |=  =tx-list  ^-  @
+    (can 3 (turn tx-list gen-tx))
   ::
   --  :: end +l2-event-gen
 ::

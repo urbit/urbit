@@ -1,11 +1,5 @@
-::  TODO: secp needs to not crash the process when you give it a bad
-::  v/recid.  See #4797
-::
-::  TODO: check if spawning/escaping is gated on "link"ing.  It is on
-::  L1, but we shouldn't do that here.
-::
-/+  std
-=>  =>  std
+/+  tiny
+=>  =>  tiny
 ::  Laconic bit
 ::
 =|  lac=?
@@ -13,8 +7,6 @@
 ::
 |%
 ::  Transfers on L1 to this address count as depositing to L2
-::
-::    0x1234567890123456789012345678901234567890
 ::
 ++  deposit-address  0x1111.1111.1111.1111.1111.1111.1111.1111.1111.1111
 ++  log-names
@@ -277,16 +269,14 @@
       =^  crypto-suite=@  batch  (take 3 4)
       `[[%configure-keys encrypt auth crypto-suite =(0 breach)] batch]
     ::
-        %3   =^(res batch take-escape `[[%escape res] batch])
-        %4   =^(res batch take-escape `[[%cancel-escape res] batch])
-        %5   =^(res batch take-escape `[[%adopt res] batch])
-        %6   =^(res batch take-escape `[[%reject res] batch])
-        %7   =^(res batch take-escape `[[%detach res] batch])
-        %8
-      =^(res batch take-ship-address `[[%set-management-proxy res] batch])
-    ::
-        %9   =^(res batch take-ship-address `[[%set-spawn-proxy res] batch])
-        %10  =^(res batch take-ship-address `[[%set-transfer-proxy res] batch])
+        %3   =^(res batch take-ship `[[%escape res] batch])
+        %4   =^(res batch take-ship `[[%cancel-escape res] batch])
+        %5   =^(res batch take-ship `[[%adopt res] batch])
+        %6   =^(res batch take-ship `[[%reject res] batch])
+        %7   =^(res batch take-ship `[[%detach res] batch])
+        %8   =^(res batch take-address `[[%set-management-proxy res] batch])
+        %9   =^(res batch take-address `[[%set-spawn-proxy res] batch])
+        %10  =^(res batch take-address `[[%set-transfer-proxy res] batch])
     ==
   ::
   ::  Take a bite
@@ -301,14 +291,14 @@
     (rsh bite +.batch)
   ::  Encode ship and address
   ::
-  ++  take-ship-address
+  ++  take-address
     ^-  [address _batch]
     =^  pad=@     batch  (take 0)
     =^  =address  batch  (take 3 20)
     [address batch]
   ::  Encode escape-related txs
   ::
-  ++  take-escape
+  ++  take-ship
     ^-  [ship _batch]
     =^  pad=@        batch  (take 0)
     =^  other=ship   batch  (take 3 4)
@@ -796,7 +786,6 @@
     ::  Assert one-level-down
     ::
     ?.  =(+((ship-rank parent)) (ship-rank ship))  (debug %bad-rank ~)
-    ::  TODO check spawnlimit
     ::
     =/  [=effects new-point=point]
       =/  point=(unit point)  (get-point state ship)
