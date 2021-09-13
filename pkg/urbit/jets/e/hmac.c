@@ -46,7 +46,7 @@
     u3_atom outkey = u3kc_mix(    key , u3i_words(padwords, outpad));
 
     // append inner padding to message, then hash
-    u3_atom innmsg = u3ka_add(u3kc_lsh(3, wid, innkey), u3k(dat));
+    u3_atom innmsg = u3ka_add(u3kc_lsh(3, wid, innkey), dat);
     u3_atom innhaj = u3n_slam_on(u3k(haj), u3nc((wid + boq), innmsg));
 
     // prepend outer padding to result, hash again
