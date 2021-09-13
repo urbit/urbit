@@ -38,7 +38,7 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
     >
       <div>
         {loading ? (
-          <div className="absolute z-10 top-4 left-4 lg:top-8 lg:left-8 flex items-center justify-center">
+          <div className="absolute z-10 top-4 left-4 sm:top-8 sm:left-8 flex items-center justify-center">
             <Spinner className="h-6 w-6" />
           </div>
         ) : (
@@ -47,11 +47,11 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
             active={active}
             menuColor={active ? menuColor : suspendMenuColor}
             lightText={lightText}
-            className="absolute z-10 top-2.5 right-2.5 sm:top-4 sm:right-4 opacity-0 hover-none:opacity-100 focus:opacity-100 group-hover:opacity-100"
+            className="absolute z-10 top-2.5 right-2.5 sm:top-4 sm:right-4 opacity-0 pointer-coarse:opacity-100 hover-none:opacity-100 focus:opacity-100 group-hover:opacity-100"
           />
         )}
         <div
-          className="h4 absolute z-10 bottom-3 left-1 lg:bottom-7 lg:left-5 py-1 px-3 rounded-lg"
+          className="h4 absolute z-10 bottom-[8%] left-[5%] sm:bottom-7 sm:left-5 py-1 px-3 rounded-lg"
           style={{ backgroundColor }}
         >
           <h3 className="mix-blend-hard-light">{title}</h3>
