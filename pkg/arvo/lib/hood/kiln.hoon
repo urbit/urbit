@@ -422,14 +422,13 @@
     (emit find:pass)
   ::  +reset: resync after failure
   ::
-  ::    TODO: don't blow away so much state
-  ::
   ++  reset
     ^+  vats
     ~>  %slog.0^leaf/"kiln: resetting tracking for {here}"
-    =.  vats  (emit (diff:give %reset loc rak))
-    =.  ark  (~(del by ark) loc)
-    (install loc [ship desk]:rail.rak)
+    =/  cad  (diff:give %reset loc rak)
+    =.  aeon.rail.rak  0
+    =.  next.rak       ~
+    (emil find:pass cad ~)
   ::  +pause: stop syncing from upstream
   ::
   ++  pause
