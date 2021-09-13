@@ -298,7 +298,9 @@ static void
 _term_it_dump_buf(u3_utty*  uty_u,
                   uv_buf_t* buf_u)
 {
-  _term_it_write(uty_u, buf_u, 0);
+  if ( buf_u->len ) {
+    _term_it_write(uty_u, buf_u, 0);
+  }
 }
 
 /* _term_it_dump(): write static vector.
@@ -315,12 +317,17 @@ _term_it_dump(u3_utty*    uty_u,
 /* _term_it_send(): write dynamic vector, freeing pointer.
 */
 static void
-_term_it_send(u3_utty*    uty_u,
-              c3_w        len_w,
-              const c3_y* hun_y)
+_term_it_send(u3_utty* uty_u,
+              c3_w     len_w,
+              c3_y*    hun_y)
 {
-  uv_buf_t buf_u = uv_buf_init((c3_c*)hun_y, len_w);
-  _term_it_write(uty_u, &buf_u, (void*)hun_y);
+  if ( len_w ) {
+    uv_buf_t buf_u = uv_buf_init((c3_c*)hun_y, len_w);
+    _term_it_write(uty_u, &buf_u, (void*)hun_y);
+  }
+  else {
+    c3_free(hun_y);
+  }
 }
 
 /* _term_it_send_csi(): send csi escape sequence
