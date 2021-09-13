@@ -33,7 +33,7 @@ export class Root extends Component {
     const blur = !loaded ? false : !(this.state.wallet && this.state.provider);
 
     return (
-      <BrowserRouter>
+      <BrowserRouter basename="/apps/bitcoin">
         <ThemeProvider theme={light}>
           <Reset />
           {loaded ? (

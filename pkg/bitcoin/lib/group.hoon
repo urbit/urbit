@@ -4,6 +4,9 @@
 |_  =bowl:gall
 +$  card  card:agent:gall
 ::
+++  is-running
+  .^(? %gu /(scot %p our.bowl)/group-store/(scot %da now.bowl))
+::
 ++  resource-for-update
   |=  =vase
   ^-  (list resource)
