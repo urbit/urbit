@@ -7,7 +7,7 @@ import { BasicNotification } from './hark-types';
 
 export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' | 'version'> = {
   cass: {
-    da: 1629849472746,
+    da: '~2021.9.13..05.41.04..ae65',
     ud: 1
   },
   hash: '0v6.nj6ls.l7unh.l9bhk.d839n.n8nlq.m2dmc.fj80i.pvqun.uhg6g.1kk0h',
@@ -218,7 +218,7 @@ export const mockNotification: BasicNotification = {
 
 export const mockVat = (desk: string, blockers?: boolean): Vat => ({
   cass: {
-    da: 1629849472746,
+    da: '~2021.9.13..05.41.04..ae65',
     ud: 1
   },
   desk,
