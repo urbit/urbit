@@ -3684,7 +3684,6 @@
   =+  batch-size=20  :: should be an even number
   =/  tx-1=tx:naive    [marbud-own %transfer-point (addr %marbud-key-1) |]
   =/  tx-2=tx:naive    [marbud-own %transfer-point (addr %marbud-key-0) |]
-  =+  nonce=0
   ::
   =/  batch=tx-list:l2-event-gen
     %+  spun  (join tx-2 (reap (add 1 (div batch-size 2)) tx-1))
