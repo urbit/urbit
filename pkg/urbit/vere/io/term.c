@@ -342,25 +342,24 @@ _term_it_send_csi(u3_utty *uty_u, c3_c cmd_c, c3_w num_w, ...)
   //  argument digits (5 per arg) and separators (1 per arg, minus 1).
   //  freed via _term_it_write.
   //
-  c3_c* pas_c = malloc( sizeof(*pas_c) * (2 + num_w * 6) );
-  c3_c  was_c = 0;
+  c3_c* pas_c = c3_malloc( 2 + num_w * 6 );
+  c3_y  len_y = 0;
 
-  pas_c[was_c++] = '\033';
-  pas_c[was_c++] = '[';
+  pas_c[len_y++] = '\033';
+  pas_c[len_y++] = '[';
 
-  while ( num_w > 0 ) {
+  while ( num_w-- ) {
     c3_w par_w = va_arg(ap, c3_w);
-    was_c += sprintf(pas_c+was_c, "%d", par_w);
+    len_y += sprintf(pas_c+len_y, "%d", par_w);
 
-    if ( --num_w > 0 ) {
-      pas_c[was_c++] = ';';
+    if ( num_w ) {
+      pas_c[len_y++] = ';';
     }
   }
 
-  pas_c[was_c++] = cmd_c;
+  pas_c[len_y++] = cmd_c;
 
-  uv_buf_t pas_u = uv_buf_init(pas_c, was_c);
-  _term_it_write(uty_u, &pas_u, pas_c);
+  _term_it_send(uty_u, len_y, (c3_y*)pas_c);
 
   va_end(ap);
 }
