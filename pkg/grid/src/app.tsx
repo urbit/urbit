@@ -17,7 +17,7 @@ const AppRoutes = () => {
 
   const updateThemeClass = useCallback(
     (e: MediaQueryListEvent) => {
-      if ((e.matches && theme === 'automatic') || theme === 'dark') {
+      if ((e.matches && theme === 'auto') || theme === 'dark') {
         document.body.classList.add('dark');
         useLocalState.setState({ currentTheme: 'dark' });
       } else {

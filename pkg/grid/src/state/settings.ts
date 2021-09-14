@@ -18,7 +18,7 @@ import api from './api';
 
 interface BaseSettingsState {
   display: {
-    theme: 'light' | 'dark' | 'automatic';
+    theme: 'light' | 'dark' | 'auto';
     doNotDisturb: boolean;
   };
   putEntry: (bucket: string, key: string, value: Value) => Promise<void>;
@@ -68,7 +68,7 @@ export const useSettingsState = createState<BaseSettingsState>(
   'Settings',
   (set, get) => ({
     display: {
-      theme: 'automatic',
+      theme: 'auto',
       doNotDisturb: true
     },
     loaded: false,
