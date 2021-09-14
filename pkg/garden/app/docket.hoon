@@ -343,10 +343,7 @@
       %+  murn  ~(tap by charges)
       |=  [d=desk [docket *]]
       ^-  (unit desk)
-      =-  ?:(- `d ~)
-      ?&  ?=(%glob -.href)
-          =([%ames our.bowl] glob-location.href)
-      ==
+      ?:(?=(%glob -.href) `d ~)
     ::
     ;html
       ;head
@@ -364,8 +361,8 @@
               (join `manx`;br; (turn msg |=(m=@t `manx`:/"{(trip m)}")))
             ;ol(start "0")
               ;li:"""
-                  if necessary, create a desk whose desk.docket specifies
-                  a glob hosted on the local ship.
+                  make sure the desk you want to upload a glob for has a
+                  desk.docket with %base and %glob- entries.
                   """
               ;li:"select the desk you want to upload the glob for."
               ;li:"""
@@ -413,10 +410,6 @@
         ['no files in glob' err]
       =?  err  !?=(%glob -.href.docket.charge)
         ['desk does not use glob' err]
-      =?  err  ?&  ?=(%glob -.href.docket.charge)
-                   !=([%ames our.bowl] glob-location.href.docket.charge)
-               ==
-        ['desk\'s glob not hosted here' err]
       ::
       ?.  =(~ err)
         :_  [~ state]
