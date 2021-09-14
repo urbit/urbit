@@ -724,6 +724,7 @@
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%wait p=@da]                                   ::  set alarm
+        [%rate p=@da q=@da]                             ::  re-set (cancel then set) alarm
         [%wake ~]                                       ::  timer activate
     ==
   --  ::behn

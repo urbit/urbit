@@ -67,9 +67,16 @@
     (wake `error)
   ::  +rest: cancel the timer at :date, then adjust unix wakeup
   ::  +wait: set a new timer at :date, then adjust unix wakeup
+  ::  +rate: cancel a timer at :from, set a new timer at :to, then
+  ::    adjust unix wakeup
   ::
   ++  rest  |=(date=@da set-unix-wake(timers.state (unset-timer [date duct])))
   ++  wait  |=(date=@da set-unix-wake(timers.state (set-timer [date duct])))
+  ++  rate
+    |=  [from=@da to=@da] 
+    =.  timers.state  (unset-timer [from duct])
+    =.  timers.state  (set-timer [to duct])
+    set-unix-wake
   ::  +huck: give back immediately
   ::
   ::    Useful if you want to continue working after other moves finish.
@@ -286,6 +293,7 @@
       %trim  trim:event-core
       %vega  vega:event-core
       %wait  (wait:event-core date=p.task)
+      %rate  (rate:event-core from=p.task to=q.task)
       %wake  (wake:event-core error=~)
     ==
   [moves behn-gate]
