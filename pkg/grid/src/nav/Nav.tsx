@@ -52,33 +52,6 @@ export type MenuState =
   | 'help-and-support'
   | 'system-preferences';
 
-export function createNextPath(current: string, nextPart?: string): string {
-  let end = nextPart;
-  const parts = current.split('/').reverse();
-  if (parts[1] === 'search') {
-    end = 'apps';
-  }
-
-  if (parts[0] === 'leap') {
-    end = `search/${nextPart}`;
-  }
-
-  return `${current}/${end}`;
-}
-
-export function createPreviousPath(current: string): string {
-  const parts = current.split('/');
-  parts.pop();
-
-  if (parts[parts.length - 1] === 'leap') {
-    parts.push('search');
-  }
-  if (parts[parts.length - 2] === 'apps') {
-    parts.pop();
-  }
-  return parts.join('/');
-}
-
 interface NavProps {
   menu?: MenuState;
 }
@@ -123,6 +96,15 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
     }
   }, []);
 
+  const preventClose = useCallback((e) => {
+    const target = e.target as HTMLElement;
+    const hasNavAncestor = target.closest('#dialog-nav');
+
+    if (hasNavAncestor) {
+      e.preventDefault();
+    }
+  }, []);
+
   return (
     <>
       {/* Using portal so that we can retain the same nav items both in the dialog and in the base header */}
@@ -132,12 +114,20 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
       >
         <SystemMenu
           open={!!systemMenuOpen}
-          menu={menuState}
-          navOpen={isOpen}
+          shouldDim={isOpen && menu !== 'system-preferences' && menu !== 'help-and-support'}
           className={classNames('relative z-50 flex-none', eitherOpen ? 'bg-white' : 'bg-gray-50')}
         />
-        <NotificationsLink menu={menuState} navOpen={isOpen} />
-        <Leap ref={inputRef} menu={menuState} dropdown="leap-items" navOpen={isOpen} />
+        <NotificationsLink
+          navOpen={isOpen}
+          shouldDim={(isOpen && menu !== 'notifications') || !!systemMenuOpen}
+        />
+        <Leap
+          ref={inputRef}
+          menu={menuState}
+          dropdown="leap-items"
+          navOpen={isOpen}
+          shouldDim={(isOpen && menu !== 'search') || !!systemMenuOpen}
+        />
       </Portal.Root>
       <div
         ref={navRef}
@@ -152,6 +142,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
       />
       <Dialog open={isOpen} onOpenChange={onDialogClose}>
         <DialogContent
+          onInteractOutside={preventClose}
           onOpenAutoFocus={onOpen}
           className="fixed bottom-0 sm:top-0 sm:bottom-auto scroll-left-50 flex flex-col scroll-full-width max-w-[882px] px-4 sm:pb-4 text-gray-400 -translate-x-1/2 outline-none"
           role="combobox"
@@ -160,6 +151,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
           aria-expanded={isOpen}
         >
           <header
+            id="dialog-nav"
             ref={dialogNavRef}
             className="max-w-[712px] w-full mx-auto my-6 sm:mb-3 order-last sm:order-none"
           />

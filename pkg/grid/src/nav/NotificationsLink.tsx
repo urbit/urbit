@@ -4,7 +4,6 @@ import { Link, LinkProps } from 'react-router-dom';
 import { Bullet } from '../components/icons/Bullet';
 import { Notification } from '../state/hark-types';
 import { useNotifications } from '../state/notifications';
-import { MenuState } from './Nav';
 
 type NotificationsState = 'empty' | 'unread' | 'attention-needed';
 
@@ -25,11 +24,11 @@ function getNotificationsState(
 }
 
 type NotificationsLinkProps = Omit<LinkProps<HTMLAnchorElement>, 'to'> & {
-  menu: MenuState;
   navOpen: boolean;
+  shouldDim: boolean;
 };
 
-export const NotificationsLink = ({ navOpen, menu }: NotificationsLinkProps) => {
+export const NotificationsLink = ({ navOpen, shouldDim }: NotificationsLinkProps) => {
   const { notifications, systemNotifications } = useNotifications();
   const state = getNotificationsState(notifications, systemNotifications);
 
@@ -39,7 +38,7 @@ export const NotificationsLink = ({ navOpen, menu }: NotificationsLinkProps) => 
       className={classNames(
         'relative z-50 flex-none circle-button h4 default-ring',
         navOpen && 'text-opacity-60',
-        navOpen && menu !== 'notifications' && 'opacity-60',
+        shouldDim && 'opacity-60',
         state === 'empty' && !navOpen && 'text-gray-400 bg-gray-50',
         state === 'empty' && navOpen && 'text-gray-400 bg-white',
         state === 'unread' && 'bg-blue-400 text-white',

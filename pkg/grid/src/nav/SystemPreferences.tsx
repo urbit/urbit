@@ -53,8 +53,8 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
   );
 
   return (
-    <div className="flex h-[600px] max-h-full">
-      <aside className="flex-none min-w-60 border-r-2 border-gray-50">
+    <div className="flex h-full overflow-y-auto">
+      <aside className="flex-none min-w-60">
         <div className="p-8">
           <input className="input h4 default-ring bg-gray-50" placeholder="Search Preferences" />
         </div>
@@ -84,7 +84,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
           </ul>
         </nav>
       </aside>
-      <section className="flex-1 p-8 text-black">
+      <section className="flex-1 min-h-[600px] p-8 text-black border-l-2 border-gray-50">
         <Switch>
           <Route path={`${match.url}/system-updates`} component={SystemUpdatePrefs} />
           <Route path={`${match.url}/interface`} component={InterfacePrefs} />

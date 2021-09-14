@@ -7,13 +7,11 @@ import { Vat } from '@urbit/api/hood';
 import { Adjust } from '../components/icons/Adjust';
 import { useVat } from '../state/kiln';
 import { disableDefault, handleDropdownLink } from '../state/util';
-import { MenuState } from './Nav';
 import { useMedia } from '../logic/useMedia';
 
 type SystemMenuProps = HTMLAttributes<HTMLButtonElement> & {
-  menu: MenuState;
   open: boolean;
-  navOpen: boolean;
+  shouldDim: boolean;
 };
 
 function getHash(vat: Vat): string {
@@ -21,7 +19,7 @@ function getHash(vat: Vat): string {
   return parts[parts.length - 1];
 }
 
-export const SystemMenu = ({ className, menu, open, navOpen }: SystemMenuProps) => {
+export const SystemMenu = ({ className, open, shouldDim }: SystemMenuProps) => {
   const { push } = useHistory();
   const [copied, setCopied] = useState(false);
   const garden = useVat('garden');
@@ -61,10 +59,7 @@ export const SystemMenu = ({ className, menu, open, navOpen }: SystemMenuProps) 
             className={classNames(
               'appearance-none circle-button default-ring',
               open && 'text-gray-300',
-              navOpen &&
-                menu !== 'system-preferences' &&
-                menu !== 'help-and-support' &&
-                'opacity-60',
+              shouldDim && 'opacity-60',
               className
             )}
           >
