@@ -11010,6 +11010,7 @@
     [%face [[[cog ~ gen] ~ ~] ~] sut]
   ::
   ++  caching-crop
+    ~/  %caching-crop
     |=  ref=type
     =|  bix=(set [type type])
     =<  dext
@@ -11538,6 +11539,7 @@
     ==    ==
   ::
   ++  caching-fond
+    ~/  %caching-fond
     |=  [way=vial hyp=wing]
     |-  ^-  [pony _grub]
     ?~  hyp
@@ -12173,6 +12175,7 @@
     ==
   ::
   ++  caching-fish
+    ~/  %caching-fish
     |=  axe=axis
     =|  vot=(set type)
     |-  ^-  [nock _grub]
@@ -12272,6 +12275,7 @@
     ==
   ::
   ++  caching-fuse
+    ~/  %caching-fuse
     |=  ref=type
     =|  bix=(set [type type])
     |-  ^-  [type _grub]
@@ -13064,6 +13068,7 @@
     --
   ::
   ++  caching-mint
+    ~/  %caching-mint
     |=  [gol=type gen=hoon]
     ^-  [(pair type nock) _grub]
     =/  cached  (get:mit:lru mit.grub [sut gen])
@@ -13577,6 +13582,7 @@
     ==
   ::
   ++  caching-mull
+    ~/  %caching-mull
     |=  [gol=type dox=type gen=hoon]
     ^-  [[p=type q=type] _grub]
     =/  cached  (get:mul:lru mul.grub [sut gol dox gen])
@@ -14141,6 +14147,7 @@
     (caching-nest(sut ref) & sut)
   ::
   ++  caching-nest
+    ~/  %caching-nest
     |=  [tel=? ref=type]
     =|  $:  seg=(set type)                              ::  degenerate sut
             reg=(set type)                              ::  degenerate ref
@@ -15329,6 +15336,7 @@
     (play(sut p.leg) q.leg)
   ::
   ++  caching-rest
+    ~/  %caching-rest
     |=  leg=(pair type hoon)
     ^-  [type _grub]
     =/  cached  (get:res:lru res.grub leg)
