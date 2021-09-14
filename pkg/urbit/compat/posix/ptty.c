@@ -147,10 +147,10 @@ u3_ptty_init(uv_loop_t* lup_u, const c3_c** err_c)
     return NULL;
   }
 
-  uv_pipe_init(lup_u, &uty_u->pin_u.pop_u, 0);
-  uv_pipe_init(lup_u, &uty_u->pop_u.pop_u, 0);
-  uv_pipe_open(&uty_u->pin_u.pop_u, 0);
-  uv_pipe_open(&uty_u->pop_u.pop_u, 1);
+  uv_pipe_init(lup_u, &uty_u->pin_u.pip_u, 0);
+  uv_pipe_init(lup_u, &uty_u->pop_u.pip_u, 0);
+  uv_pipe_open(&uty_u->pin_u.pip_u, 0);
+  uv_pipe_open(&uty_u->pop_u.pip_u, 1);
 
   //  Load old terminal state to restore.
   //

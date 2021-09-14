@@ -126,10 +126,10 @@ u3_ptty_init(uv_loop_t* lup_u, const c3_c** err_c)
       uty_u->wsz_f = _ttyf_get_winsize;
     }
   } else {
-    if ( 0 == (e = uv_pipe_init(lup_u, &uty_u->pin_u.pop_u, 0)) &&
-         0 == (e = uv_pipe_init(lup_u, &uty_u->pop_u.pop_u, 0)) &&
-         0 == (e = uv_pipe_open(&uty_u->pin_u.pop_u, 0)) &&
-         0 == (e = uv_pipe_open(&uty_u->pop_u.pop_u, 1)) )
+    if ( 0 == (e = uv_pipe_init(lup_u, &uty_u->pin_u.pip_u, 0)) &&
+         0 == (e = uv_pipe_init(lup_u, &uty_u->pop_u.pip_u, 0)) &&
+         0 == (e = uv_pipe_open(&uty_u->pin_u.pip_u, 0)) &&
+         0 == (e = uv_pipe_open(&uty_u->pop_u.pip_u, 1)) )
     {
       fprintf(stderr, "vere: running interactive in a terminal emulator is experimental\r\n"
                       "      use -t to disable interactivity or use native Windows console\r\n") ;
