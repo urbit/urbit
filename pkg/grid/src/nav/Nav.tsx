@@ -161,7 +161,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
         >
           <header
             ref={dialogNavRef}
-            className="max-w-[712px] w-full mx-auto mt-6 mb-3 order-last sm:order-none"
+            className="max-w-[712px] w-full mx-auto my-6 sm:mb-3 order-last sm:order-none"
           />
           <div
             id="leap-items"

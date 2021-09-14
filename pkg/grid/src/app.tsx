@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Mousetrap from 'mousetrap';
 import { BrowserRouter, Switch, Route, useHistory } from 'react-router-dom';
 import { Grid } from './pages/Grid';
@@ -8,33 +8,22 @@ import useKilnState from './state/kiln';
 import { usePreferencesStore } from './nav/preferences/usePreferencesStore';
 import useContactState from './state/contact';
 import api from './state/api';
+import { useMedia } from './logic/useMedia';
 
 const AppRoutes = () => {
   const { push } = useHistory();
   const theme = usePreferencesStore((s) => s.theme);
-
-  const updateThemeClass = useCallback(
-    (e: MediaQueryListEvent) => {
-      if ((e.matches && theme === 'automatic') || theme === 'dark') {
-        document.body.classList.add('dark');
-        usePreferencesStore.setState({ currentTheme: 'dark' });
-      } else {
-        document.body.classList.remove('dark');
-        usePreferencesStore.setState({ currentTheme: 'light' });
-      }
-    },
-    [theme]
-  );
+  const isDarkMode = useMedia('(prefers-color-scheme: dark)');
 
   useEffect(() => {
-    const query = window.matchMedia('(prefers-color-scheme: dark)');
-
-    query.addEventListener('change', updateThemeClass);
-    updateThemeClass({ matches: query.matches } as MediaQueryListEvent);
-    return () => {
-      query.removeEventListener('change', updateThemeClass);
-    };
-  }, []);
+    if ((isDarkMode && theme === 'automatic') || theme === 'dark') {
+      document.body.classList.add('dark');
+      usePreferencesStore.setState({ currentTheme: 'dark' });
+    } else {
+      document.body.classList.remove('dark');
+      usePreferencesStore.setState({ currentTheme: 'light' });
+    }
+  }, [isDarkMode, theme]);
 
   useEffect(() => {
     window.name = 'grid';

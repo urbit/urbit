@@ -8,6 +8,7 @@ import { Adjust } from '../components/icons/Adjust';
 import { useVat } from '../state/kiln';
 import { disableDefault, handleDropdownLink } from '../state/util';
 import { MenuState } from './Nav';
+import { useMedia } from '../logic/useMedia';
 
 type SystemMenuProps = HTMLAttributes<HTMLButtonElement> & {
   menu: MenuState;
@@ -25,6 +26,7 @@ export const SystemMenu = ({ className, menu, open, navOpen }: SystemMenuProps) 
   const [copied, setCopied] = useState(false);
   const garden = useVat('garden');
   const hash = garden ? getHash(garden) : null;
+  const isMobile = useMedia('(max-width: 639px)');
 
   const copyHash = useCallback((event: Event) => {
     event.preventDefault();
@@ -71,11 +73,11 @@ export const SystemMenu = ({ className, menu, open, navOpen }: SystemMenuProps) 
           </DropdownMenu.Trigger>
           <Route path="/system-menu">
             <DropdownMenu.Content
-              portalled={false}
               onCloseAutoFocus={disableDefault}
               onInteractOutside={preventFlash}
               onFocusOutside={preventFlash}
               onPointerDownOutside={preventFlash}
+              side={isMobile ? 'top' : 'bottom'}
               sideOffset={12}
               className="dropdown relative z-40 min-w-64 p-4 font-semibold text-gray-500 bg-white"
             >
