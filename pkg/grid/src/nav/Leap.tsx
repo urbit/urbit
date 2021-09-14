@@ -38,6 +38,16 @@ type LeapProps = {
   shouldDim: boolean;
 } & HTMLAttributes<HTMLDivElement>;
 
+function normalizeMatchString(match: string, keepAltChars: boolean): string {
+  let normalizedString = match.toLocaleLowerCase().trim();
+
+  if (!keepAltChars) {
+    normalizedString = normalizedString.replace(/[^\w]/, '');
+  }
+
+  return normalizedString;
+}
+
 export const Leap = React.forwardRef(
   ({ menu, dropdown, navOpen, shouldDim, className }: LeapProps, ref) => {
     const { push } = useHistory();
@@ -78,11 +88,12 @@ export const Leap = React.forwardRef(
 
     const getMatch = useCallback(
       (value: string) => {
-        const normValue = value.toLocaleLowerCase();
+        const onlySymbols = !value.match(/[\w]/g);
+        const normValue = normalizeMatchString(value, onlySymbols);
         return matches.find(
           (m) =>
-            m.display?.toLocaleLowerCase().startsWith(normValue) ||
-            m.value.toLocaleLowerCase().startsWith(normValue)
+            (m.display && normalizeMatchString(m.display, onlySymbols).startsWith(normValue)) ||
+            normalizeMatchString(m.value, onlySymbols).startsWith(normValue)
         );
       },
       [matches]
@@ -121,7 +132,10 @@ export const Leap = React.forwardRef(
 
         if (matchValue && inputRef.current && !isDeletion) {
           inputRef.current.value = matchValue;
-          inputRef.current.setSelectionRange(value.length, matchValue.length);
+          const start = matchValue.startsWith(value)
+            ? value.length
+            : matchValue.substring(0, matchValue.indexOf(value)).length + value.length;
+          inputRef.current.setSelectionRange(start, matchValue.length);
           useLeapStore.setState({
             rawInput: matchValue,
             selectedMatch: inputMatch
