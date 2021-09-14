@@ -96,3 +96,8 @@ export const useSettingsState = createState<BaseSettingsState>(
       })
   ]
 );
+
+const selTheme = (s: SettingsState) => s.display.theme;
+export function useTheme() {
+  return useSettingsState(selTheme);
+}

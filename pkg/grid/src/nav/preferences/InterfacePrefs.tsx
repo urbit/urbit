@@ -34,9 +34,7 @@ export function InterfacePrefs() {
     <>
       <h2 className="h3 mb-7">Interface Settings</h2>
       <Setting on={protocolHandling} toggle={toggleProtoHandling} name="Handle Urbit links">
-        <p className="flex flex-col justify-center h-full">
-          Automatically open urbit links with this urbit
-        </p>
+        <p>Automatically open urbit links with this urbit</p>
       </Setting>
     </>
   );

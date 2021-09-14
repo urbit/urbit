@@ -5,23 +5,24 @@ import { Grid } from './pages/Grid';
 import useDocketState from './state/docket';
 import { PermalinkRoutes } from './pages/PermalinkRoutes';
 import useKilnState from './state/kiln';
-import { usePreferencesStore } from './nav/preferences/usePreferencesStore';
 import useContactState from './state/contact';
 import api from './state/api';
 import { useHarkStore } from './state/hark';
+import { useTheme } from './state/settings';
+import { useLocalState } from './state/local';
 
 const AppRoutes = () => {
   const { push } = useHistory();
-  const theme = usePreferencesStore((s) => s.theme);
+  const theme = useTheme();
 
   const updateThemeClass = useCallback(
     (e: MediaQueryListEvent) => {
       if ((e.matches && theme === 'automatic') || theme === 'dark') {
         document.body.classList.add('dark');
-        usePreferencesStore.setState({ currentTheme: 'dark' });
+        useLocalState.setState({ currentTheme: 'dark' });
       } else {
         document.body.classList.remove('dark');
-        usePreferencesStore.setState({ currentTheme: 'light' });
+        useLocalState.setState({ currentTheme: 'light' });
       }
     },
     [theme]

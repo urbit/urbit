@@ -27,7 +27,7 @@ export const Setting: FC<SettingsProps> = ({ name, on, toggle, className, childr
           onPressedChange={call}
           className="flex-none self-start text-blue-400"
         />
-        <div className="flex-1 space-y-6">{children}</div>
+        <div className="flex-1 flex flex-col justify-center space-y-6">{children}</div>
       </div>
     </section>
   );

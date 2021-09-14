@@ -1,19 +1,30 @@
+import _ from 'lodash';
 import React, { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
 import { Button } from '../../components/Button';
 import { Setting } from '../../components/Setting';
 import { ShipName } from '../../components/ShipName';
 import { Spinner } from '../../components/Spinner';
 import { useAsyncCall } from '../../logic/useAsyncCall';
-import { usePreferencesStore } from './usePreferencesStore';
+import useKilnState, { useVat } from '../../state/kiln';
 
 export const SystemUpdatePrefs = () => {
-  const { otasEnabled, otaSource, toggleOTAs, setOTASource } = usePreferencesStore();
-  const [source, setSource] = useState(otaSource);
+  const { changeOTASource, toggleOTAs } = useKilnState((s) =>
+    _.pick(s, ['toggleOTAs', 'changeOTASource'])
+  );
+  const base = useVat('base');
+  const otasEnabled = base && !base.arak.paused;
+  const otaSource = base?.arak.ship;
+
+  const toggleBase = useCallback((on: boolean) => toggleOTAs('base', on), [toggleOTAs]);
+
+  const [source, setSource] = useState('');
   const sourceDirty = source !== otaSource;
-  const { status: sourceStatus, call: setOTA } = useAsyncCall(setOTASource);
+  const { status: sourceStatus, call: setOTA } = useAsyncCall(changeOTASource);
 
   useEffect(() => {
-    setSource(otaSource);
+    if (otaSource) {
+      setSource(otaSource);
+    }
   }, [otaSource]);
 
   const handleSourceChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -34,11 +45,13 @@ export const SystemUpdatePrefs = () => {
     <>
       <h2 className="h3 mb-7">System Updates</h2>
       <div className="space-y-3">
-        <Setting on={otasEnabled} toggle={toggleOTAs} name="Enable Automatic Urbit OTAs">
+        <Setting on={!!otasEnabled} toggle={toggleBase} name="Enable Automatic Urbit OTAs">
           <p>Automatically download and apply system updates to keep your Urbit up to date.</p>
-          <p>
-            OTA Source: <ShipName name={otaSource} className="font-semibold font-mono" />
-          </p>
+          {otaSource && (
+            <p>
+              OTA Source: <ShipName name={otaSource} className="font-semibold font-mono" />
+            </p>
+          )}
         </Setting>
         <form className="inner-section relative" onSubmit={onSubmit}>
           <label htmlFor="ota-source" className="h4 mb-3">

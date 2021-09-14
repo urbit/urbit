@@ -36,14 +36,7 @@ export const NotificationPrefs = () => {
           </p>
         </Setting>
         <Setting on={mentions} toggle={toggleMentions} name="Mentions">
-          <p>
-            [PLACEHOLDER] Block visual desktop notifications whenever Urbit software produces an
-            in-Landscape notification badge.
-          </p>
-          <p>
-            Turning this &quot;off&quot; will prompt your browser to ask if you&apos;d like to
-            enable notifications
-          </p>
+          <p>Notify me if someone mentions my @p in a channel I&apos;ve joined</p>
         </Setting>
       </div>
     </>
