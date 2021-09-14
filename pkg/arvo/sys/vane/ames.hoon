@@ -621,6 +621,7 @@
   $%  $:  %b
       $%  [%wait date=@da]
           [%rest date=@da]
+          [%rate from=@da to=@da]
       ==  ==
       $:  %d
       $%  [%flog flog:dill]
@@ -668,12 +669,14 @@
 ::    %send: emit message fragment
 ::    %wait: set a new timer at .date
 ::    %rest: cancel timer at .date
+::    %rate: re-set a timer from .from to .to
 ::
 +$  message-pump-gift
   $%  [%done =message-num error=(unit error)]
       [%send =static-fragment]
       [%wait date=@da]
       [%rest date=@da]
+      [%rate from=@da to=@da]
   ==
 ::  $packet-pump-task: job for |packet-pump
 ::
@@ -693,11 +696,13 @@
 ::    %send: emit message fragment
 ::    %wait: set a new timer at .date
 ::    %rest: cancel timer at .date
+::    %rate: reset timer from .from to .to
 ::
 +$  packet-pump-gift
   $%  [%send =static-fragment]
       [%wait date=@da]
       [%rest date=@da]
+      [%rate from=@da to=@da]
   ==
 ::  $message-sink-task: job for |message-sink
 ::
@@ -1855,8 +1860,10 @@
   ::  +make-peer-core: create nested |peer-core for per-peer processing
   ::
   ++  make-peer-core
+    ~/  %make-peer-core
     |=  [=peer-state =channel]
     =*  veb  veb.bug.channel
+    ~%  %peer-core  ..$  ~
     |%
     ++  peer-core  .
     ++  emit  |=(move peer-core(event-core (^emit +<)))
@@ -1935,6 +1942,7 @@
     ::  +on-hear-shut-packet: handle receipt of ack or message fragment
     ::
     ++  on-hear-shut-packet
+      ~/  %on-hear-shut-packet
       |=  [=lane =shut-packet dud=(unit goof)]
       ^+  peer-core
       ::  update and print connection status
@@ -2107,6 +2115,7 @@
     ::  +run-message-pump: process $message-pump-task and its effects
     ::
     ++  run-message-pump
+      ~/  %run-message-pump
       |=  [=bone task=message-pump-task]
       ^+  peer-core
       ::  pass .task to the |message-pump and apply state mutations
@@ -2119,20 +2128,26 @@
       =.  snd.peer-state  (~(put by snd.peer-state) bone message-pump-state)
       ::  process effects from |message-pump
       ::
-      |^  ^+  peer-core
-          ?~  pump-gifts  peer-core
-          =*  gift  i.pump-gifts
-          =.  peer-core
-            ?-  -.gift
-              %done  (on-pump-done [message-num error]:gift)
-              %send  (on-pump-send static-fragment.gift)
-              %wait  (on-pump-wait date.gift)
-              %rest  (on-pump-rest date.gift)
-            ==
+      =>
+      ~%  %message-pump-gift-core  ..run-message-pump  ~
+      |%
+      ++  $
+        ^+  peer-core
+        ?~  pump-gifts  peer-core
+        =*  gift  i.pump-gifts
+        =.  peer-core
+          ?-  -.gift
+            %done  (on-pump-done [message-num error]:gift)
+            %send  (on-pump-send static-fragment.gift)
+            %wait  (on-pump-wait date.gift)
+            %rest  (on-pump-rest date.gift)
+            %rate  (on-pump-rate from.gift to.gift)
+          ==
           $(pump-gifts t.pump-gifts)
       ::  +on-pump-done: handle |message-pump's report of message (n)ack
       ::
       ++  on-pump-done
+        ~/  %on-pump-done
         |=  [=message-num error=(unit error)]
         ^+  peer-core
         ::  if odd bone, ack is on "subscription update" message; no-op
@@ -2153,10 +2168,12 @@
       ::  +on-pump-send: emit message fragment requested by |message-pump
       ::
       ++  on-pump-send
+        ~/  %on-pump-send
         |=(f=static-fragment (send-shut-packet bone [message-num %& +]:f))
       ::  +on-pump-wait: relay |message-pump's set-timer request
       ::
       ++  on-pump-wait
+        ~/  %on-pump-wait
         |=  date=@da
         ^+  peer-core
         ::
@@ -2166,16 +2183,26 @@
       ::  +on-pump-rest: relay |message-pump's unset-timer request
       ::
       ++  on-pump-rest
+        ~/  %on-pump-rest
         |=  date=@da
         ^+  peer-core
         ::
         =/  =wire  (make-pump-timer-wire her.channel bone)
         =/  duct   ~[/ames]
         (emit duct %pass wire %b %rest date)
+      ++  on-pump-rate
+        ~/  %on-pump-rate
+        |=  [from=@da to=@da]
+        ^+  peer-core
+        =/  =wire  (make-pump-timer-wire her.channel bone)
+        =/  duct  ~[/ames]
+        (emit duct %pass wire %b %rate from to)
       --
+      $
     ::  +run-message-sink: process $message-sink-task and its effects
     ::
     ++  run-message-sink
+      ~/  %run-message-sink
       |=  [=bone task=message-sink-task]
       ^+  peer-core
       ::  pass .task to the |message-sink and apply state mutations
@@ -2317,10 +2344,12 @@
 ::  +make-message-pump: constructor for |message-pump
 ::
 ++  make-message-pump
+  ~/  %make-message-pump
   |=  [state=message-pump-state =channel]
   =*  veb  veb.bug.channel
   =|  gifts=(list message-pump-gift)
   ::
+  ~%  %message-pump  ..$  ~
   |%
   ++  message-pump  .
   ++  give  |=(gift=message-pump-gift message-pump(gifts [gift gifts]))
@@ -2332,6 +2361,7 @@
   ::  +work: handle a $message-pump-task
   ::
   ++  work
+    ~/  %work
     |=  task=message-pump-task
     ^+  [gifts state]
     ::
@@ -2504,6 +2534,7 @@
   ::  +run-packet-pump: call +work:packet-pump and process results
   ::
   ++  run-packet-pump
+    ~/  %run-packet-pump
     |=  =packet-pump-task
     ^+  message-pump
     ::
@@ -2514,6 +2545,7 @@
   ::  +process-packet-pump-gifts: pass |packet-pump effects up the chain
   ::
   ++  process-packet-pump-gifts
+    ~/  %process-packet-pump-gifts
     |=  packet-pump-gifts=(list packet-pump-gift)
     ^+  message-pump
     ::
@@ -2536,9 +2568,11 @@
 ::  +make-packet-pump: construct |packet-pump core
 ::
 ++  make-packet-pump
+  ~/  %make-packet-pump
   |=  [state=packet-pump-state =channel]
   =*  veb  veb.bug.channel
   =|  gifts=(list packet-pump-gift)
+  ~%  %packet-pump  ..$  ~
   |%
   ++  packet-pump  .
   ++  give  |=(packet-pump-gift packet-pump(gifts [+< gifts]))
@@ -2557,6 +2591,7 @@
   ::  +work: handle $packet-pump-task request
   ::
   ++  work
+    ~/  %work
     |=  task=packet-pump-task
     ^+  [gifts state]
     ::
@@ -2571,6 +2606,7 @@
   ::  +on-wake: handle packet timeout
   ::
   ++  on-wake
+    ~/  %on-wake
     |=  current=message-num
     ^+  packet-pump
     ::  assert temporal coherence
@@ -2616,6 +2652,7 @@
   ::  +feed: try to send a list of packets, returning unsent and effects
   ::
   ++  feed
+    ~/  %feed
     |=  fragments=(list static-fragment)
     ^+  [fragments gifts state]
     ::  return unsent back to caller and reverse effects to finalize
@@ -2694,6 +2731,7 @@
   ::    metrics, possibly re-sending skipped packets.  Otherwise, no-op.
   ::
   ++  on-hear
+    ~/  %on-hear
     |=  [=message-num =fragment-num]
     ^+  packet-pump
     ::
@@ -2762,6 +2800,7 @@
   ::  +on-done: apply ack to all packets from .message-num
   ::
   ++  on-done
+    ~/  %on-done
     |=  =message-num
     ^+  packet-pump
     ::
@@ -2805,6 +2844,12 @@
     ::  no-op if no change
     ::
     ?:  =(new-wake next-wake.state)  packet-pump
+    :: If old and new timers are non-null, then do a %rate
+    :: to reset them in one arvo move
+    ?:  &(!=(~ next-wake.state) ?=(^ new-wake))
+      =/  old  (need next-wake.state)
+      =.  next-wake.state  new-wake
+      (give %rate old u.new-wake)
     ::  unset old timer if non-null
     ::
     =?  packet-pump  !=(~ next-wake.state)
@@ -2828,9 +2873,11 @@
 ::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
 ++  make-pump-gauge
+  ~/  %make-pump-gauge
   |=  [now=@da pump-metrics =ship =bug]
   =*  veb  veb.bug
   =*  metrics  +<+<
+  ~%  %pump-gauge  ..$  ~
   |%
   ++  trace
     |=  [verb=? print=(trap tape)]
@@ -2854,6 +2901,7 @@
   ::  +on-sent: adjust metrics based on sending .num-sent fresh packets
   ::
   ++  on-sent
+    ~/  %on-sent
     |=  num-sent=@ud
     ^-  pump-metrics
     ::
@@ -2862,6 +2910,7 @@
   ::  +on-ack: adjust metrics based on a packet getting acknowledged
   ::
   ++  on-ack
+    ~/  %on-ack
     |=  =packet-state
     ^-  pump-metrics
     ::
@@ -2898,6 +2947,7 @@
   ::  +on-skipped-packet: handle misordered ack
   ::
   ++  on-skipped-packet
+    ~/  %on-skipped-packet
     |=  packet-state
     ^-  [resend=? pump-metrics]
     ::
