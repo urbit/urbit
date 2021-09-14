@@ -47,6 +47,7 @@ export const Notifications = () => {
     const { getMore } = useHarkStore.getState();
     getMore();
   }, []);
+  // const select = useLeapStore((s) => s.select);
 
   return (
     <div className="grid grid-rows-[auto,1fr] h-full p-4 md:p-8 overflow-hidden">

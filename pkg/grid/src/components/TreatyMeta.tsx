@@ -1,5 +1,5 @@
 import React from 'react';
-import { Treaty } from '@urbit/api';
+import { daToDate, Treaty } from '@urbit/api';
 
 import moment from 'moment';
 import { Attribute } from './Attribute';
@@ -15,7 +15,7 @@ export function TreatyMeta(props: { treaty: Treaty }) {
         {ship}/{desk}
       </Attribute>
       <Attribute title="Last Software Update" attr="case">
-        {moment(cass.da).format('YYYY.MM.DD')}
+        {moment(daToDate(cass.da)).format('YYYY.MM.DD')}
       </Attribute>
       {meta.map((d) => (
         <Attribute key={d} attr={d}>

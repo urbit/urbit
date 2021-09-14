@@ -167,10 +167,9 @@
     =+  !<(any=clean-slate-any old-state)
     =?  any  ?=(^ -.any)  (old-to-1 any)
     =?  any  ?=(~ -.any)  (old-to-1 any)
-    =^  cards-to-2  any
+    =^  upgrade-cards  any  
       (old-to-2 any)
-    =^  cards-to-3  any
-      (old-to-3 any)
+    =.  any  (old-to-3 any)
     ?>  ?=(%3 -.any)
     ::
     =.  tid.state  tid.any
@@ -184,7 +183,7 @@
       (handle-stop-thread:sc (yarn-to-tid i.yarns) |)
     =^  cards-2  this
       $(yarns t.yarns)
-    [:(weld cards-to-2 cards-to-3 cards-1 cards-2) this]
+    [:(weld upgrade-cards cards-1 cards-2) this]
     ::
     ++  old-to-1
       |=  old=clean-slate-ket
@@ -207,20 +206,16 @@
     ::
     ++  old-to-3
       |=  old=clean-slate-any
-      ^-  (quip card clean-slate)
+      ^-  clean-slate
       ?>  ?=(?(%2 %3) -.old)
       ?:  ?=(%3 -.old)
-        `old
-      :-  ~
+        old
       :*  %3
         starting.old
         running.old
         tid.old
-        %-  ~(gas by *(map tid [@ta =mark =desk]))
-        %+  turn  ~(tap by serving.old)
-        |=([=tid id=@ta =mark] [tid id mark q.byk.bowl])
+        (~(run by serving.old) |=([id=@ta =mark] [id mark q.byk.bowl]))
       ==
-
     --
   ::
   ++  on-poke
@@ -552,7 +547,7 @@
   =+    .^
       =tube:clay
       %cc
-      /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[output]/json
+      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[output]/json
     ==
   :_  state(serving (~(del by serving.state) tid))
   %+  give-simple-payload:app:server  eyre-id

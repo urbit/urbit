@@ -15,15 +15,26 @@
   ==
 ::  $arak: foreign vat tracker
 ::
-::    .next is a list of pending commits with future kelvins
+::    .rail: upstream tracking state, if any
+::    .next: list of pending commits with future kelvins
+::    .rein: configuration for agents
 ::
 +$  arak
-  $:  =ship
-      =desk
-      =aeon
-      next=(list [=aeon =weft])
+  $:  =rail
+      next=(list rung)
       =rein
   ==
+::  $rail: upstream tracking state
+::
++$  rail
+  $:  paused=?
+      =ship
+      =desk
+      =aeon
+  ==
+::  $rung: reference to upstream commit
+::
++$  rung  [=aeon =weft]
 ::  $rein: diff from desk manifest
 ::
 ::    .liv: suspended?
@@ -59,16 +70,18 @@
       leaf/"pending: {<(turn next.arak |=([@ lal=@tas num=@] [lal num]))>}"
   ^-  tang
   =/  meb  (mergebase-hashes our desk now arak)
+  =/  poz  ?:(paused.rail.arak "paused" "tracking")
   =/  sat  ?:(liv.rein.arak "running" "suspended")
-  :~  leaf/"/sys/kelvin: {<[lal num]:weft>}"
-      leaf/"base hash:   {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
-      leaf/"%cz hash:    {<hash>}"
-      leaf/"source ship: {<ship.arak>}"
-      leaf/"source desk: {<desk.arak>}"
-      leaf/"source aeon: {<aeon.arak>}"
-      leaf/"status:      {sat}"
-      leaf/"force on:    {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
-      leaf/"force off:   {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
+  :~  leaf/"/sys/kelvin:  {<[lal num]:weft>}"
+      leaf/"base hash:    {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
+      leaf/"%cz hash:     {<hash>}"
+      leaf/"updates:      {sat}"
+      leaf/"source ship:  {<ship.rail.arak>}"
+      leaf/"source desk:  {<desk.rail.arak>}"
+      leaf/"source aeon:  {<aeon.rail.arak>}"
+      leaf/"agent status: {sat}"
+      leaf/"force on:     {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
+      leaf/"force off:    {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
   ==
 ::  +read-kelvin-foreign: read /sys/kelvin from a foreign desk
 ::
@@ -99,6 +112,26 @@
   ?~  =<(fil .^(arch cy/pax))
     ~
   [~ .^(weft cx/pax)]
+::  +read-bill-foreign: read /desk/bill from a foreign desk
+::
+++  read-bill-foreign
+  |=  [=ship =desk =aeon]
+  ^-  bill
+  =/  her  (scot %p ship)
+  =/  syd  (scot %tas desk)
+  =/  yon  (scot %ud aeon)
+  ::
+  =/  dom  .^(dome cv/~[her syd yon])
+  =/  tak  (scot %uv (~(got by hit.dom) let.dom))
+  =/  yak  .^(yaki cs/~[her syd yon %yaki tak])
+  =/  lob  (scot %uv (~(got by q.yak) /desk/bill))
+  =/  bob  .^(blob cs/~[her syd yon %blob lob])
+  ::
+  ;;  bill
+  ?-  -.bob
+    %direct  q.q.bob
+    %delta   q.r.bob
+  ==
 ::  +read-bill: read contents of /desk/bill manifest
 ::
 ++  read-bill
@@ -146,10 +179,10 @@
 ::
 ++  mergebase-hashes
   |=  [our=@p =desk now=@da =arak]
-  =/  her  (scot %p ship.arak)
+  =/  her  (scot %p ship.rail.arak)
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
-  %+  turn  .^((list tako) %cs ~[ego desk wen %base her desk.arak])
+  %+  turn  .^((list tako) %cs ~[ego desk wen %base her desk.rail.arak])
   |=(=tako .^(@uv %cs ~[ego desk wen %hash (scot %uv tako)]))
 ::
 ++  enjs
@@ -191,11 +224,11 @@
         kelvin+(numb num.w)
     ==
   ::
-  ++  woof
-    |=  w=[=aeon =^weft]
+  ++  rung
+    |=  r=^rung
     %-  pairs
-    :~  aeon+(numb aeon.w)
-        weft+(weft weft.w)
+    :~  aeon+(numb aeon.r)
+        weft+(weft weft.r)
     ==
   ::
   ++  rein
@@ -208,10 +241,11 @@
   ++  arak
     |=  a=^arak
     %-  pairs
-    :~  ship+s+(scot %p ship.a)
-        desk+s+desk.a
-        aeon+(numb aeon.a)
-        next+a+(turn next.a woof)
+    :~  ship+s+(scot %p ship.rail.a)
+        desk+s+desk.rail.a
+        paused+b+paused.rail.a
+        aeon+(numb aeon.rail.a)
+        next+a+(turn next.a rung)
         rein+(rein rein.a)
     ==
   --

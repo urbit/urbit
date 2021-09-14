@@ -23,7 +23,7 @@
 }
 
 .inner-section {
-  @apply p-3 bg-gray-100 rounded-xl;
+  @apply p-3 bg-gray-50 rounded-xl;
 }
 
 .input {
@@ -31,7 +31,7 @@
 }
 
 .notification {
-  @apply p-4 bg-gray-100 rounded-xl;
+  @apply p-4 bg-gray-50 rounded-xl;
 }
 
 .spinner {

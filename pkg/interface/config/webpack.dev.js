@@ -8,34 +8,6 @@ const { execSync } = require('child_process');
 
 const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
 
-class UrbitShipPlugin {
-  constructor(urbitrc) {
-    this.piers = urbitrc.URBIT_PIERS;
-    this.herb = urbitrc.herb || false;
-  }
-
-  apply(compiler) {
-    compiler.hooks.afterEmit.tapPromise(
-      'UrbitShipPlugin',
-      async (compilation) => {
-        // uncomment to copy into all piers
-        //
-        // return Promise.all(this.piers.map(pier => {
-        //   const dst = path.resolve(pier, 'app/landscape/js/index.js');
-        //   copyFile(src, dst).then(() => {
-        //     if(!this.herb) {
-        //       return;
-        //     }
-        //     pier = pier.split('/');
-        //     const desk = pier.pop();
-        //     return exec(`herb -p hood -d '+hood/commit %${desk}' ${pier.join('/')}`);
-        //   });
-        // }));
-      }
-    );
-  }
-}
-
 let devServer = {
   contentBase: path.join(__dirname, '../dist'),
   hot: true,
@@ -53,12 +25,6 @@ if(urbitrc.URL) {
     ...devServer,
     index: 'index.html',
     proxy: [
-      // '/~landscape/js/serviceworker.js': {
-      //   target: 'http://localhost:9000',
-      //   pathRewrite: (req, path) => {
-      //     return '/serviceworker.js'
-      //   }
-      // },
       {
         context: (path) => {
           console.log(path);
@@ -123,7 +89,6 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: devServer,
   plugins: [
-    new UrbitShipPlugin(urbitrc),
     new webpack.DefinePlugin({
       'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
       'process.env.TUTORIAL_HOST': JSON.stringify('~difmex-passed'),
@@ -135,7 +100,7 @@ module.exports = {
 
     // new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      title: 'Hot Module Replacement',
+      title: 'Landscape',
       template: './public/index.html'
     })
   ],
@@ -146,7 +111,7 @@ module.exports = {
     },
     chunkFilename: '[name].js',
     path: path.resolve(__dirname, '../dist'),
-    publicPath: '/apps/landscape',
+    publicPath: '/apps/landscape/',
     globalObject: 'this'
   },
   optimization: {

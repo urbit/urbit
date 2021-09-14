@@ -113,6 +113,10 @@ export interface Thread<Action> {
    */
   threadName: string;
   /**
+   * Desk of thread
+   */
+  desk: string;
+  /**
    * Data of the input vase
    */
   body: Action;

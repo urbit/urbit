@@ -4,4 +4,4 @@
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [[=ship ~] ~]
     ==
-[%ally-update-0 %add desk]
+[%ally-update-0 %add ship]

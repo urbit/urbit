@@ -59,11 +59,32 @@ export function kilnRevive(
   };
 }
 
-export const kilnBump: Poke<any> = {
-  app: 'hood',
-  mark: 'kiln-bump',
-  json: null
-};
+export function kilnBump(force = false, except = [] as string[]) {
+  return {
+    app: 'hood',
+    mark: 'kiln-bump',
+    json: {
+      force,
+      except
+    }
+  };
+}
+
+export function kilnPause(desk: string) {
+  return {
+    app: 'hood',
+    mark: 'kiln-pause',
+    json: desk
+  };
+}
+
+export function kilnResume(desk: string) {
+  return {
+    app: 'hood',
+    mark: 'kiln-resume',
+    json: desk
+  };
+}
 
 export const scryLag: Scry = ({ app: 'hood', path: '/kiln/lag' });
 

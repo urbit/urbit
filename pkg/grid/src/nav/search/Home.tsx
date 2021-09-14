@@ -2,8 +2,7 @@ import produce from 'immer';
 import create from 'zustand';
 import React, { useEffect } from 'react';
 import { persist } from 'zustand/middleware';
-import { take } from 'lodash-es';
-import { Provider } from '@urbit/api';
+import { take } from 'lodash';
 import { MatchItem, useLeapStore } from '../Nav';
 import { providerMatch } from './Providers';
 import { AppList } from '../../components/AppList';
@@ -13,12 +12,13 @@ import { ShipName } from '../../components/ShipName';
 import { ProviderLink } from '../../components/ProviderLink';
 import { DocketWithDesk, useCharges } from '../../state/docket';
 import { getAppHref } from '../../state/util';
+import useContactState from '../../state/contact';
 
 export interface RecentsStore {
   recentApps: DocketWithDesk[];
-  recentDevs: Provider[];
+  recentDevs: string[];
   addRecentApp: (app: DocketWithDesk) => void;
-  addRecentDev: (dev: Provider) => void;
+  addRecentDev: (ship: string) => void;
 }
 
 export const useRecentsStore = create<RecentsStore>(
@@ -41,7 +41,7 @@ export const useRecentsStore = create<RecentsStore>(
       addRecentDev: (dev) => {
         set(
           produce((draft: RecentsStore) => {
-            const hasDev = draft.recentDevs.find((p) => p.shipName === dev.shipName);
+            const hasDev = draft.recentDevs.includes(dev);
             if (!hasDev) {
               draft.recentDevs.unshift(dev);
             }
@@ -60,7 +60,7 @@ export const useRecentsStore = create<RecentsStore>(
 
 window.recents = useRecentsStore.getState;
 
-export function addRecentDev(dev: Provider) {
+export function addRecentDev(dev: string) {
   return useRecentsStore.getState().addRecentDev(dev);
 }
 
@@ -73,7 +73,9 @@ export const Home = () => {
   const { recentApps, recentDevs } = useRecentsStore();
   const charges = useCharges();
   const groups = charges?.groups;
-  const zod = { shipName: '~zod' };
+  const contacts = useContactState((s) => s.contacts);
+  const zod = { shipName: '~zod', ...contacts['~zod'] };
+  const providerList = recentDevs.map((d) => ({ shipName: d, ...contacts[d] }));
 
   useEffect(() => {
     const apps = recentApps.map((app) => ({
@@ -91,7 +93,7 @@ export const Home = () => {
 
   return (
     <div className="h-full p-4 md:p-8 font-semibold leading-tight text-black overflow-y-auto">
-      <h2 id="recent-apps" className="mb-6 h4 text-gray-500">
+      <h2 id="recent-apps" className="mb-4 h4 text-gray-500">
         Recent Apps
       </h2>
       {recentApps.length === 0 && (
@@ -115,25 +117,33 @@ export const Home = () => {
           size="small"
         />
       )}
-      <hr className="-mx-4 my-6 md:-mx-8 md:my-9" />
-      <h2 id="recent-devs" className="mb-6 h4 text-gray-500">
+      <hr className="-mx-4 my-6 md:-mx-8 md:my-9 border-t-2 border-gray-50" />
+      <h2 id="recent-devs" className="mb-4 h4 text-gray-500">
         Recent Developers
       </h2>
       {recentDevs.length === 0 && (
         <div className="min-h-[150px] p-6 rounded-xl bg-gray-100">
           <p className="mb-4">Urbit app developers you search for will be listed here.</p>
-          <p className="mb-6">
-            Try out app discovery by visiting <ShipName name="~zod" /> below.
-          </p>
-          <ProviderLink provider={zod} small onClick={() => addRecentDev(zod)} />
+          {zod && (
+            <>
+              <p className="mb-6">
+                Try out app discovery by visiting <ShipName name="~zod" /> below.
+              </p>
+              <ProviderLink
+                provider={zod}
+                size="small"
+                onClick={() => addRecentDev(zod.shipName)}
+              />
+            </>
+          )}
         </div>
       )}
       {recentDevs.length > 0 && (
         <ProviderList
-          providers={recentDevs}
+          providers={providerList}
           labelledBy="recent-devs"
           matchAgainst={selectedMatch}
-          small
+          size="small"
         />
       )}
     </div>

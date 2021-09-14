@@ -7,6 +7,7 @@
       sovereign=(map desk treaty)
       entente=alliance
       =allies:ally
+      direct=(set [=ship =desk])
   ==
 --
 ^-  agent:gall
@@ -95,16 +96,18 @@
       [%treaty @ @ ~]  
     =/  =ship  (slav %p i.t.path)
     =*  desk   i.t.t.path
-    =/  =treaty  
-      ?:  =(our.bowl ship)  (~(got by sovereign) desk)
-      (~(got by treaties) [ship desk])
-    :_  this
-    (fact-init:io treaty+!>(treaty))^~
+    ?:  =(our.bowl ship)
+      :_(this (fact-init:io treaty+!>((~(got by sovereign) desk)))^~)
+    ?^  treat=(~(get by treaties) [ship desk])
+      :_  this
+      (fact-init:io treaty+!>(u.treat))^~
+    ?>  =(our.bowl src.bowl)
+    =.  direct  (~(put in direct) [ship desk])
+    :_(this (drop ~(safe-watch tr:cc [ship desk])))
     ::
       [%alliance ~]
     :_  this
     (fact-init:io (alliance-update:cg:cc %ini entente))^~
-
     ::  local
     ::
       [%allies ~]
@@ -196,7 +199,9 @@
     ::
         %watch-ack
       ?~  p.sign  `this
-      =.  treaties  (~(del by treaties) ship desk)
+      =:  treaties  (~(del by treaties) ship desk)
+          direct    (~(del in direct) ship desk)
+        ==
       %-  (slog leaf+"Withdrew from treaty {<ship>}/{<desk>}" u.p.sign)
       `this
     ::

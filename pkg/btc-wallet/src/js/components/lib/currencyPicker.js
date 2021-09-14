@@ -30,6 +30,7 @@ export default class CurrencyPicker extends Component {
     }
     let setCurrency = {
       "put-entry": {
+        desk: window.desk,
         value: newCurrency,
         "entry-key": "currency",
         "bucket-key": "btc-wallet",
