@@ -243,6 +243,7 @@
     %-  pairs
     :~  ship+s+(scot %p ship.rail.a)
         desk+s+desk.rail.a
+        paused+b+paused.rail.a
         aeon+(numb aeon.rail.a)
         next+a+(turn next.a rung)
         rein+(rein rein.a)

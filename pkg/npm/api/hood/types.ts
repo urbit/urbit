@@ -138,6 +138,10 @@ export interface Vat {
    * .^(@uv %cz /=desk=)
    * ```
    */
+  /**
+   * True if desk is no longer syncing from upstream
+   */
+  paused: boolean;
   hash: string;
   /**
    * Current revision
