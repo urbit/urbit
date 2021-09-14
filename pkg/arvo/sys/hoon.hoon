@@ -2936,30 +2936,27 @@
     ~/  %put
     |=  [a=pri =k p=@ =v]
     |^  ^-  pri
-    =/  hal
-      |=  (unit (pair @ buc))
-      ^-  (pair _~ (unit (pair @ buc)))
-      `(ins +<)
     =/  val=(pair (unit buc) pri)
-      (jab:qat a (mug k) hal)
+      (jab:qat a (mug k) ins)
     q.val
     ::
     ++  ins
       |=  b=(unit (pair @ buc))
-      ^-  (unit (pair @ buc))
-      ?~  b
-        `[p [k v ~]]
+      ^-  (pair _~ (unit (pair @ buc)))
+      :-  ~
+      %-  some
+      ?~  b  [p k v ~]
       =/  =buc  q.u.b
       ?:  =(k k.buc)
-        `(make k p v t.buc)
+        (make k p v t.buc)
       ?:  |((lth p.u.b p) &(=(p p.u.b) (gor k.buc k)))
         =/  val  (put:qor t.buc k p v)
-        `[p.u.b [k.buc v.buc val]]
+        [p.u.b k.buc v.buc val]
       =/  val
         ?:  (has:qor t.buc k)
           (put:qor (del:qor t.buc k) k.buc p.u.b v.buc)
         (put:qor t.buc k.buc p.u.b v.buc)
-      `[p [k v val]]
+      [p k v val]
     --
   ::
   ++  gas                                               ::  concatenate
