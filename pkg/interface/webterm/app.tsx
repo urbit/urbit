@@ -2,7 +2,7 @@ import { Box, Col } from '@tlon/indigo-react';
 import React, { Component } from 'react';
 import dark from '@tlon/indigo-dark';
 import light from '@tlon/indigo-light';
-import styled, { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components';
 import Api from './api';
 import { History } from './components/history';
 import { Input } from './components/input';
@@ -11,7 +11,6 @@ import Store from './store';
 import Subscription from './subscription';
 import Channel from './lib/channel';
 
-//TODO  wrap in themeprovider, as in landscape root app.js
 class TermApp extends Component<any, any> {
   store: Store;
   api: any;
@@ -33,7 +32,6 @@ class TermApp extends Component<any, any> {
     this.resetControllers();
     // eslint-disable-next-line new-cap
     const channel = new Channel();
-    console.log('xx--------', this.props);
     this.api = new Api(window.ship, channel);
     this.store.api = this.api;
 
