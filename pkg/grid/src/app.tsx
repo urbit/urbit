@@ -8,6 +8,7 @@ import useKilnState from './state/kiln';
 import { usePreferencesStore } from './nav/preferences/usePreferencesStore';
 import useContactState from './state/contact';
 import api from './state/api';
+import { useHarkStore } from './state/hark';
 
 const AppRoutes = () => {
   const { push } = useHistory();
@@ -46,6 +47,7 @@ const AppRoutes = () => {
     fetchVats();
     fetchLag();
     useContactState.getState().initialize(api);
+    useHarkStore.getState().initialize(api);
 
     Mousetrap.bind(['command+/', 'ctrl+/'], () => {
       push('/leap/search');

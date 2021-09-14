@@ -1,7 +1,9 @@
+import { setMentions } from '@urbit/api/dist';
 import React from 'react';
 import { Setting } from '../../components/Setting';
+import { pokeOptimisticallyN } from '../../state/base';
+import { HarkState, reduceGraph, useHarkStore } from '../../state/hark';
 import { useSettingsState, SettingsState } from '../../state/settings';
-import { usePreferencesStore } from './usePreferencesStore';
 
 const selDnd = (s: SettingsState) => s.display.doNotDisturb;
 async function toggleDnd() {
@@ -9,9 +11,15 @@ async function toggleDnd() {
   await state.putEntry('display', 'doNotDisturb', !selDnd(state));
 }
 
+const selMentions = (s: HarkState) => s.notificationsGraphConfig.mentions;
+async function toggleMentions() {
+  const state = useHarkStore.getState();
+  await pokeOptimisticallyN(useHarkStore, setMentions(!selMentions(state)), reduceGraph);
+}
+
 export const NotificationPrefs = () => {
-  const { mentions, toggleMentions } = usePreferencesStore();
   const doNotDisturb = useSettingsState(selDnd);
+  const mentions = useHarkStore(selMentions);
 
   return (
     <>
