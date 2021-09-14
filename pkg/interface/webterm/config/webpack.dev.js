@@ -15,7 +15,7 @@ let devServer = {
   host: '0.0.0.0',
   disableHostCheck: true,
   historyApiFallback: true,
-  publicPath: '/apps/herm/'
+  publicPath: '/apps/webterm/'
 };
 
 const router =  _.mapKeys(urbitrc.FLEET || {}, (value, key) => `${key}.localhost:9000`);
@@ -29,7 +29,7 @@ if(urbitrc.URL) {
       target: urbitrc.URL,
       router,
       context: (path) => {
-        return !path.startsWith('/apps/herm');  //TODO or term?
+        return !path.startsWith('/apps/webterm');
       }
     }]
   };
@@ -96,7 +96,7 @@ module.exports = {
     },
     chunkFilename: '[name].js',
     path: path.resolve(__dirname, '../dist'),
-    publicPath: '/apps/herm/',  //TODO  or term?
+    publicPath: '/apps/webterm/',
     globalObject: 'this'
   },
   optimization: {

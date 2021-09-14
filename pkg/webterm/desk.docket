@@ -1,0 +1,9 @@
+:~  title+'Web Terminal'
+    info+'A web interface for dill, through herm.'
+    color+0xff.ffff
+    glob-http+'https://bootstrap.urbit.org/glob-XX.glob'
+    base+'webterm'
+    version+[0 0 1]
+    website+'https://tlon.io'
+    license+'MIT'
+==

@@ -68,7 +68,7 @@ module.exports = {
       return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
     },
     path: path.resolve(__dirname, '../dist'),
-    publicPath: '/apps/herm/'  //TODO  or term?
+    publicPath: '/apps/webterm/'
   },
   optimization: {
     minimize: true,
