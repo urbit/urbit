@@ -61,7 +61,7 @@ buildnixdep () {
         narinfo="$cache/${hash}.narinfo"
         if curl -fLI "$narinfo"
         then
-          url="$cache/$(curl -fL -H "Accept: application/json" "$narinfo"|jq -r '.url')"
+          url="$cache/$(curl -fL "$narinfo"|while IFS=: read k v; do if [ "$k" == "URL" ]; then echo $v; fi; done)"
           echo Found $url
           strip=0
           hash=
