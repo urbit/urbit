@@ -97,9 +97,9 @@ u3_term_log_init(void)
     uty_u = c3_calloc(sizeof(u3_utty));
     uty_u->fid_i = 1;
 
-    uv_pipe_init(u3L, &(uty_u->pin_u.pop_u), 0);
-    uv_pipe_init(u3L, &(uty_u->pop_u.pop_u), 0);
-    uv_pipe_open(&(uty_u->pop_u.pop_u), uty_u->fid_i);
+    uv_pipe_init(u3L, &(uty_u->pin_u.pip_u), 0);
+    uv_pipe_init(u3L, &(uty_u->pop_u.pip_u), 0);
+    uv_pipe_open(&(uty_u->pop_u.pip_u), uty_u->fid_i);
   }
   else {
     //  Initialize event processing.  Rawdog it.
@@ -298,7 +298,9 @@ static void
 _term_it_dump_buf(u3_utty*  uty_u,
                   uv_buf_t* buf_u)
 {
-  _term_it_write(uty_u, buf_u, 0);
+  if ( buf_u->len ) {
+    _term_it_write(uty_u, buf_u, 0);
+  }
 }
 
 /* _term_it_dump(): write static vector.
@@ -315,12 +317,17 @@ _term_it_dump(u3_utty*    uty_u,
 /* _term_it_send(): write dynamic vector, freeing pointer.
 */
 static void
-_term_it_send(u3_utty*    uty_u,
-              c3_w        len_w,
-              const c3_y* hun_y)
+_term_it_send(u3_utty* uty_u,
+              c3_w     len_w,
+              c3_y*    hun_y)
 {
-  uv_buf_t buf_u = uv_buf_init((c3_c*)hun_y, len_w);
-  _term_it_write(uty_u, &buf_u, (void*)hun_y);
+  if ( len_w ) {
+    uv_buf_t buf_u = uv_buf_init((c3_c*)hun_y, len_w);
+    _term_it_write(uty_u, &buf_u, (void*)hun_y);
+  }
+  else {
+    c3_free(hun_y);
+  }
 }
 
 /* _term_it_send_csi(): send csi escape sequence
@@ -335,25 +342,24 @@ _term_it_send_csi(u3_utty *uty_u, c3_c cmd_c, c3_w num_w, ...)
   //  argument digits (5 per arg) and separators (1 per arg, minus 1).
   //  freed via _term_it_write.
   //
-  c3_c* pas_c = malloc( sizeof(*pas_c) * (2 + num_w * 6) );
-  c3_c  was_c = 0;
+  c3_c* pas_c = c3_malloc( 2 + num_w * 6 );
+  c3_y  len_y = 0;
 
-  pas_c[was_c++] = '\033';
-  pas_c[was_c++] = '[';
+  pas_c[len_y++] = '\033';
+  pas_c[len_y++] = '[';
 
-  while ( num_w > 0 ) {
+  while ( num_w-- ) {
     c3_w par_w = va_arg(ap, c3_w);
-    was_c += sprintf(pas_c+was_c, "%d", par_w);
+    len_y += sprintf(pas_c+len_y, "%d", par_w);
 
-    if ( --num_w > 0 ) {
-      pas_c[was_c++] = ';';
+    if ( num_w ) {
+      pas_c[len_y++] = ';';
     }
   }
 
-  pas_c[was_c++] = cmd_c;
+  pas_c[len_y++] = cmd_c;
 
-  uv_buf_t pas_u = uv_buf_init(pas_c, was_c);
-  _term_it_write(uty_u, &pas_u, pas_c);
+  _term_it_send(uty_u, len_y, (c3_y*)pas_c);
 
   va_end(ap);
 }

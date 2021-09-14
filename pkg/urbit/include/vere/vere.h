@@ -222,9 +222,8 @@
     /* u3_ustm: uv stream.
     */
       typedef union _u3_ustm {
-        uv_pipe_t  pop_u;
-        uv_tcp_t   wax_u;
-        uv_tty_t   tty_u;
+        uv_pipe_t pip_u;
+        uv_tty_t  tty_u;
       } u3_ustm;
 
     /* u3_ttyf: simple unix tty function.
