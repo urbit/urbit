@@ -337,31 +337,66 @@
     %-  as-octt:mimes:html
     %-  en-xml:html
     ^-  manx
+    ::  desks: with local globs, eligible for upload
+    ::
+    =/  desks=(list desk)
+      %+  murn  ~(tap by charges)
+      |=  [d=desk [docket *]]
+      ^-  (unit desk)
+      =-  ?:(- `d ~)
+      ?&  ?=(%glob -.href)
+          =([%ames our.bowl] glob-location.href)
+      ==
+    ::
     ;html
       ;head
         ;title:"%docket globulator"
         ;meta(charset "utf-8");
-        ;style:'* { font-family: monospace; margin-top: 1em; }'
+        ;style:'''
+               * { font-family: monospace; margin-top: 1em; }
+               li { margin-top: 0.5em; }
+               '''
       ==
       ;body
         ;h2:"%docket globulator"
         ;+  ?.  =(~ msg)
               :-  [%p ~]
               (join `manx`;br; (turn msg |=(m=@t `manx`:/"{(trip m)}")))
-            ;p:"ur on ur own kid, glhf"  ::TODO  instructions
-        ;form(method "post", enctype "multipart/form-data")
-          ::TODO  could be dropdown
-          ;input(type "text", name "desk", placeholder "desk");
-          ;br;
-          ;input
-            =type             "file"
-            =name             "glob"
-            =directory        ""
-            =webkitdirectory  ""
-            =mozdirectory     "";
-          ;br;
-          ;button(type "submit"):"Glob!"
-        ==
+            ;ol(start "0")
+              ;li:"""
+                  if necessary, create a desk whose desk.docket specifies
+                  a glob hosted on the local ship.
+                  """
+              ;li:"select the desk you want to upload the glob for."
+              ;li:"""
+                  select a directory containing the glob contents.
+                  usually contains at least an /index.html.
+                  """
+              ;li:"glob!"
+            ==
+        ;+  ?:  =(~ desks)
+              ;p:"no desks eligible for glob upload"
+            ;form(method "post", enctype "multipart/form-data")
+              ;label
+                ;+  :/"desk: "
+                ;select(name "desk")
+                  ;*  %+  turn  desks
+                      |=(d=desk =+((trip d) ;option(value -):"{-}"))
+                ==
+              ==
+              ;br;
+              ;label
+                ;+  :/"data: "
+                ;input
+                  =type             "file"
+                  =name             "glob"
+                  =directory        ""
+                  =webkitdirectory  ""
+                  =mozdirectory     "";
+              ==
+              ;br;
+              ;button(type "submit"):"glob!"
+            ==
       ==
     ==
   ::
@@ -375,9 +410,13 @@
       =/  =charge  (~(got by charges) desk)
       ::
       =?  err  =(~ glob)
-        ['no files for glob' err]
-      =?  err  ?=(%glob -.href.docket.charge)
+        ['no files in glob' err]
+      =?  err  !?=(%glob -.href.docket.charge)
         ['desk does not use glob' err]
+      =?  err  ?&  ?=(%glob -.href.docket.charge)
+                   !=([%ames our.bowl] glob-location.href.docket.charge)
+               ==
+        ['desk\'s glob not hosted here' err]
       ::
       ?.  =(~ err)
         :_  [~ state]
