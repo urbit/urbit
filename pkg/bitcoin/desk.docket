@@ -2,7 +2,7 @@
   title+'Bitcoin'
   info+'BTC wallet for Urbit. Testing'
   color+0xf9.8e40
-  glob-http+'https://bootstrap.urbit.org/glob-0v2.sl9s6.ud2bs.l9ft0.mstja.5f8kt.glob'
+  glob-http+'https://bootstrap.urbit.org/glob-0v4.ghaim.of1as.9ucee.uj93f.a9nbs.glob'
   image+'https://urbit.ewr1.vultrobjects.com/hastuc-dibtux/2021.8.24..02.57.38-bitcoin.svg'
   base+'bitcoin'
   version+[0 0 1]
