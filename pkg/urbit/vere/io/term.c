@@ -97,9 +97,9 @@ u3_term_log_init(void)
     uty_u = c3_calloc(sizeof(u3_utty));
     uty_u->fid_i = 1;
 
-    uv_pipe_init(u3L, &(uty_u->pin_u.pop_u), 0);
-    uv_pipe_init(u3L, &(uty_u->pop_u.pop_u), 0);
-    uv_pipe_open(&(uty_u->pop_u.pop_u), uty_u->fid_i);
+    uv_pipe_init(u3L, &(uty_u->pin_u.pip_u), 0);
+    uv_pipe_init(u3L, &(uty_u->pop_u.pip_u), 0);
+    uv_pipe_open(&(uty_u->pop_u.pip_u), uty_u->fid_i);
   }
   else {
     //  Initialize event processing.  Rawdog it.
