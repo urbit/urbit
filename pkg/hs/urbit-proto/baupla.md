@@ -12,12 +12,11 @@ in one big blob, I've found it useful to factor it out into a bunch of separate
 "proposals":
 
 0. Aura nesting reform.
+0b. Other nesting reform.
 1. Mold and bunt reform.
 2. Variance reform.
 3. Pattern matching reform; removal of crop/fuse.
-4. Fork reform; narrowing of use of `?^`.
-5. Dependent types.
-6. Collection runes.
+4. Dependent types.
 
 Although these proposals are presented as though they are orthogonal changes,
 this is merely a rhetorical device. The *ideas* are 80% orthogonal from each
@@ -26,13 +25,12 @@ of these changes to Hoon 140 would force a bunch of other, lower-level changes
 that would be shared between other work items, or would need to be done in a
 forward-thinking way which anticipates these items.
 
-So while it may be useful to prototype 1-4 separately in the context of a more
+So while it may be useful to prototype 1-3 separately in the context of a more
 simply typed hoon prototype (i.e. no wetness, no dependent types) as practice
 and to confirm my ideas, my current thinking is that after the prototypes have
-been succesful, 1-5 should be implemented in one batch in a putative hoon 139.
-Collection runes can go in separately. Aura nesting reform can also probably go
-in separately, but given how small a change it is, I would prefer not to burn a
-Kelven number on it.
+been succesful, 1-4 should be implemented in one batch in a putative hoon 139.
+Aura nesting reform can also probably go in separately, but given how small a
+change it is, I would prefer not to burn a Kelven number on it.
 
 ## Aura nesting reform.
 
@@ -82,6 +80,7 @@ by the *Liskov substitution principle*:
 1. Every expression of type A is also an expression of type B, and
 2. Every "hole" into which we can put an expression of type B is also a hole
    into which we can put an expression of type A.
+
 By "hole" I mean a part of the syntax tree for expressions which "has not been
 filled in yet." For example, on the right of `-:` is a hole of type `^`.
 
@@ -93,6 +92,7 @@ an A as "an elimination form for A." E.g.
 - For cells, `:-` is an introductor and `+:` is an eliminator.
 - For atoms, `5` is an introductor and `.+` is both an introductor and an
   eliminator
+
 Using this terminology, the definition of A <= B is:
 - Every introductor of A is also an introductor of B, and
 - Every eliminator of B is also an eliminator of A.
@@ -134,12 +134,11 @@ a.f
 because `[1 2]` is of a type which is a subtype of `[a=1 b=2]`'s type. Needless
 to say, I cannot do this.
 
-
 This improper rule appears to be there so we can pass `1` to `|=(a=@ ...)`. On
-the other hand it means we can pass `[1 2 3]` to `|=(=my-struct-with-faces)`
+the other hand it means we can pass `[1 2 3]` to `|=(=my-struct-with-faces ...)`
 which may be less than desirable. The basic issue is that `a=@` in the "function
-pattern" really means "take a `@`" and *then* apply the face a to it, while the
-faces in the definition of the `my-struct-with-faces` type presumably mean that
+pattern" really means "take a `@` and *then* apply the face `a` to it," while
+the faces in the definition of the `my-struct-with-faces` type presumably mean
 that the value is *expected to already have* those faces. This is a genuine
 distinction, and it should be captured in the syntax, rather than handwaved away
 in nest.
@@ -156,9 +155,11 @@ yields practical gains.
 In the subsequent section on pattern matching reform, I give a proposal that
 happens to fix this problem. Part of the proposal is that "patterns" become
 expressionlike rather than typelike in syntax. The foregoing discussion actually
-explains why this shift is mandatory:
+gives one reason why this shift is mandatory:
 - We want to be able to "apply a face" during a pattern match, as distinct from
 requiring it.
+- It is unclear what this would mean *in a type* other than that (some) faces
+are optional.
 - But any notion of "optional face" in the type system (where not having the
 face nests under having it) will give rise to a Liskov violation.
 - Therefore such optionality must not be in the syntax of types.
@@ -190,10 +191,10 @@ notion of a gate. This change introdces "types proper."
 
 In dependent types, a type is a first class value in a way that is incompatible
 with it being usable directly as as mold function. Thus under mold reform,
-instead of being able to say (my-type the-value-i-want-to-mold), you must
-instead say, e.g. (!my-type the-value-i-want to mold), where ! "converts" a type
-into its mold function. Now only types proper can be used in type position, not
-arbitrary functions.
+instead of being able to say `(my-type the-value-i-want-to-mold)`, you must
+instead say, e.g. `(!my-type the-value-i-want-to-mold)`, where `!` "converts" a
+type into its mold function. Now only types proper can be used in type position,
+not arbitrary functions.
 
 Bunt reform has two parts. In the first part, we permit you to take the bunt
 only of a proper type, rather than an arbitrary function.
@@ -258,17 +259,22 @@ bundling this proposal with dependent types, which will change that grain.
 The system of core types in hoon suffers from the following flaws:
 
 A. It is extremely complex, immemorable, and difficult to reason about.
+
 B. Hoon doesn't have a function type, despite being a functional programming
 language.
   - By function type, I mean something isomorphic to the Haskell type `a -> b`
   - Hoon has `((a, b), b -> c)` [gold cores with single $ arm] and
     `(a -> b, (a -> a) -> b)` [lead cores with single $ arm].
   - A simplification: in today's Hoon, gates always have default arguments.
+
 C. There is no way to write a "general core type" in the type syntax. Instead
 you must take the type of an expression which produces a specific core.
+
 D. Something is wrong with wetness.
+
 E. Cores don't do structural subtyping. If I ask for a core with arms foo and
 bar, and yours has foo, bar, baz, then you can't use it.
+
 F. Everyone hates the `~(arm core sample)` "door" syntax.
 
 Under the heading of "variance reform," we propose a new model which fixes A-C
@@ -285,7 +291,7 @@ not me is the author:
   - a context type
   - optionally, a payload type
   - a moisture, which is wet or dry
-  - a variance, which is gold, lead, covariant or contravariant
+  - a variance, which is gold, lead, covariant, or contravariant
 - If it has a sample type, it's called a "door" and you use the `~()` notation
 - If it has an arm `$`, it's called a "gate" and you use the `()` notation.
   Presumably, it is also a door.
@@ -344,22 +350,26 @@ For a core A to nest under a core B, we must have:
 3. A's actual payload type must nest under A's formal payload type
 4. A's variance metal must be equal to or "baser" than B's along the diamond
 5. based on A's metal, the following must be true:
-  - if lead, true
-  - if gold, A's actual payload is equivalent to B's actual payload
-  - if iron, the +2 of B's actual payload nests under the +2 of A's actual
-  - if zinc, the +2 of A's actual payload nests under the +2 of B's actual
+    - if lead, true
+    - if gold, A's actual payload is equivalent to B's actual payload
+    - if iron, the +2 of B's actual payload nests under the +2 of A's actual
+    - if zinc, the +2 of A's actual payload nests under the +2 of B's actual
 6. based on the moisture, the following must be true:
-  - if wet, they must have equal hoon batteries
-  - if dry, they must have the same "battery shape," and for each pair of
-    matching arms, the inferred type of the arm in A must nest under the
-    inferred type of the arm in B. This inference is done against a modified
-    version of the original containing core type where the metal is taken to be
-    %gold and (for some reason) the actual type is replaced by the formal type.
+    - if wet, they must have equal hoon batteries
+    - if dry, they must have the same "battery shape," and for each pair of
+      matching arms, the inferred type of the arm in A must nest under the
+      inferred type of the arm in B. This inference is done against a modified
+      version of the original containing core type where the metal is taken to
+      be %gold and (for some reason) the actual type is replaced by the formal
+      type.
 
-$$ To find in a core
-- if reaching into a core via a wing in the edit list of a %=, write-mode
-- if reaching into a core via a wing elsewhere, read mode
-then the peek rules
+With respect to finding through cores:
+- A named limb mentioned in the edit list of a `%=` can successfully find
+  through the whole of a gold core's payload, the +2 of a contravariant core's
+  payload, and nowhere else.
+- A named limb mentioned other than in an edit list can successfully find an arm
+  or through the whole of a gold core's payload, the +2 of a covariant core's
+  payload, and nowhere else.
 
 I dare any hoon programmer anywhere in the world to reproduce correctly from
 memory on the first try either the type of %core or the nesting rules. In fact,
@@ -367,12 +377,6 @@ I am not confident I have reproduced them correctly here, despite careful study
 of hoon.hoon while writing this document. The folkish model is sort of
 approximately correct, but understanding how it arises from the formal model is
 a serious exercise in logic and close reading. Not good.
-
-$$ Our proposal
-- type
-- nest
-- find
-- type check body of gate as though a single arm gold core
 
 In contrast, in our proposal, we offer the following new structure of types:
 
@@ -402,6 +406,7 @@ using the usual `$(foo 1, bar 2)` notation, retaining all the existing features,
 including:
 - leaving parts of the argument unchanged
 - editing the deep context
+
 The only change is that users *outside* the function are denied access to these
 capabilities.
 
@@ -441,39 +446,166 @@ looks like smalltalk. But this is by no means necessary.
 
 ## Pattern matching
 
-$$ Problems:
-- A pattern should be like an expression, not like a type.
-- Crop and fuse don't work
-  - don't liskov; e.g. gaining faces of ref in fuse
-  - want to "add together" patterns rather than incrementally subtracting them
-    from the subject, which is intractable
-- r.p.q.u.i etc
-- with patterns that extract, we don't need to refine the subject, and if we
-  don't need to refine, we don't need to crop. This is a good reason to require
-  all data access on the discovered subtype be through extraction.
-- cannot do nested patterns
-- cannot do simultaneous tests on pairs; gives rise e.g. to dext/sint pattern
-- confusion between applying a face and expecting type to have a face; no
-  "real structs"
+The problem with pattern matching in Hoon is that Hoon doesn't have it. Consider
+the following implementation fragment of (new) `nest` in a hypothetical Hoon:
 
-## Fork reform
+```
+::  Whether ref is a subtype of sut
+::
+++  nest
+  |=  [sut/type ref/type]
+  ^-  ?
+  ?-  [sut ref]
+    [%void _]                              &
+    [_ %noun]                              &
+    [[%atom au] [%atom ag]]                =(au ag)
+    [[%cell p1 q1] [%cell p2 q2]]          ?&  $(sut p1, ref p2)
+                                               $(sut q1, ref q2)
+    [[%cell p q] [%core _ ~]]              ?&  $(sut p, ref %noun)
+                                               $(sut q, ref %noun)
+    [[%cell p q] [%core _ `r]]             ?&  $(sut p, ref %noun)
+                                               $(sut q, ref r)
+    [[%core bat ~] [%core cat _]]          (deep bat cat)
+    [[%core bat `s] [%core cat `t]]        ?&  (deep bat cat)
+                                               $(sut s, ref t)
+    [[%face f p] [%face g q]]  ??  =(f g)  $(sut p, ref q)  :: if guard on pat
+    [[%face _ p] _]                        $(sut p)
+    [[%gate p1 q1] [%gate p2 q2]]          ?&  $(sut p2, ref p1)
+                                               $(sut q1, ref q2)
+    ...
+    _                                      |
+```
 
-$$ Problems
-- Feels wrong to have free construction
-- Existence of indescriminable types that in practice you can't do anything with
-- Incompatible types are formed in a test, learn about the problem way later
-  when we try to find across them; nonlocality of errors.
-- any-all rule in nest is incorrect
-- but the rule I'm most familiar with in dependent land has similar problems, so
-maybe I should remove this section for now
+and compare that to a modified version of the copy in hoon.hoon, which is
+representative of what we'd have to write today:
+
+```
+++  nest
+  |=  [sut=type ref=type]
+  ^-  ?
+  =<  dext
+  |%
+  ++  dext
+    ^-  ?
+    ?-  sut
+    %void  sint
+    %noun  &
+    [%atom *]  ?.  ?=([%atom *] ref)  sint
+               =(p.sut p.ref)
+    [%cell *]  ?.  ?=([%cell *] ref)  sint
+               ?&  dext(sut p.sut, ref p.ref)
+                   dext(sut q.sut, ref q.ref)
+    [%core *]  ?.  ?=([%core *] ref)  sint
+               ?&  (deep p.sut p.ref)
+               ?|  ?=(~ q.sut)
+               ?&  ?=([~ *] q.ref)
+                   dext(sut u.q.sut, ref u.q.ref)
+    [%face *]  ?.  ?(?=([%face *] ref) =(p.sut p.ref))  sint
+               dext(sut q.sut, ref q.ref)
+    [%gate *]  ?.  ?=([%gate *] ref)  sint
+               ?&  dext(sut p.ref, ref p.sut)
+                   dext(sut q.sut, ref q.ref)
+    ...
+  ++  sint
+    ^-  ?
+    ?-  ref
+      %void      &
+      %noun      |
+      [%atom *]  |
+      [%cell *]  |
+      [%core *]  dext(ref [%cell %noun ?~(q.ref %noun u.q.ref)])
+      [%face *]  |
+      [%gate *]  |
+      ...
+```
+
+Which of these is easier to read and understand? Is there even any question?
+
+The "pattern matching" in today's Hoon suffers from the following practical
+deficiencies:
+- No simultaneous pattern matching of two values. If you put them in a pair,
+  you'll find that the type system prevents you from learning information about
+  the second.
+- No nesting of patterns. Instead you have to write further conditionals inside
+  your RHSes. Amusingly, somewhere in the docs this is presented as an aesthetic
+  decision rather than an implementation failure.
+- No ability to name things inside the pattern, and consequently, lack of
+  ability to visualize "positional" cases, replaced with a requirement to
+  interpret obscurantisms like `u.q.sut`
+
+To expand on the last point:
+- Some people say the autonamer is a solution to this, but the above case is a
+  great example of why not: everything would be named `type`.
+- The body of `%cell` really is something we'd rather model with a "tuple type"
+  rather than a "record type". Hoon lets us do that, but then makes us suffer
+  when we want to inspect it.
+- When I see `[[%cell p1 q1] [%cell p2 q2]]`, I can use my visual pattern
+  matching facility to cue me as to what is going on (as with runes themselves),
+  whereas with the `p`s and `q`s (which are also positional, in some sense), I
+  have to use my working memory.
+- Using longer, more semantic names than `p` and `q`, such as `fst` and `snd` or
+  `hd` and `tl` will not make things better. (In fact, things will be worse
+  because the working memory now has to contend with larger chunks.)
+- Semantic names may make sense for `%core` but they don't for `%cell`.
+
+Perhaps surprisingly, the genesis of all of these problems is that Hoon reuses
+the type language for patterns, rather than a modified form of the expression
+language, as is more typical. Here are the reasons why this is a bad idea:
+- Types draw finer distinctions than can be made at runtime, so the abstraction
+  is a lie.
+- Every time we fail a pattern match, we have to subtract that type from the
+  subject.
+    - But the correct implementation of subtraction would require us to produce
+      a large fork type for the difference of two cell types, which gets longer
+      the more nested the cells are.
+    - So we don't do this in Hoon 140.
+    - But not doing this is precisely why "simultaneous matching" doesn't work;
+      the "solution" is a hack that unblocks only `$%`.
+    - So yet again, a theory issue has given rise to multiple practical flaws.
+- Because optionality of faces cannot correctly be captured by types (see
+  "facial subtyping" above), we have no way to name things inside patterns:
+    - If I put a face inside a type-pattern, is that expecting the face to be
+      present or applying the face?
+    - If the latter, it would happen when we intersect the pattern type with the
+      subject type, but allowing intersections to *gain* faces (rather than lose
+      them) is a Liskov-violation, because the intersection should be a subtype
+      of both types.
+    - Indeed it is a Liskov violation for the intersection of the scrutinee type
+      `type` and the pattern type `[%core *]` to retain the faces of the `%core`
+      case of `type`, because those faces are not in the pattern type. Isn't
+      that just wild?
+
+So as a solution, we propose using something similar to the expression language
+for patterns. This would prohibit things like cores, while adding in a few
+things like as-patterns. Then to type check a pattern match, we would verify
+that each pattern "expression" checks against the (already known) scrutinee
+type. We would give up on the discipline of "refining" the subject, so existing
+parts of the subject would not gain new faces depending on what case you're in.
+Instead, you'd have to drop variables in your pattern to do extraction. Finally,
+`?:` would desugar to `?-`, rather than the reverse as today.
+
+In a previous section, I mentioned the need to distinguish between adding a face
+and expecting a face in the pattern syntax. In another section, I mentioned
+changing the semantics of backtick-casts from type ascription to coercion. These
+two threads now meet. I propose adding a new rune `^/` to recover the old type
+ascryption behavior. This has the irregular form of infix `/`. You can put it
+on a wide expression to annotate it with a type, but you can also drop it in a
+pattern, viz. `a/@` or `[%core bat pay]/type`. This construct plays the role of
+"adding a face" while `foo=` now means "expect a face."
+
+The theory of this section is mostly worked out. There are some implementation
+questions. For example, when I extract something in a pattern, wrapping it in
+a face, do I push that (possibly again) to the subject, or do I do something
+like `=*` if the scrutinee is a wing? If the latter, questions about the correct
+design of `=*` enter into scope. (Otherwise, we'd just remove `=*`.)
 
 ## Dependent types
 
 Something is wrong with the way that Hoon implements parametric polymorphism.
 Wet gates, for reasons that nobody really understands, do not in practice work.
 The result is that any substantially involved higher-order programming is
-impossible or fiendishly difficult in Hoon; we have reproduced the C++ template
-system rather than the Haskell or Java "generics" idea. Heck, even brain-dead
+impossible or fiendishly difficult in Hoon; we have not successfully reproduced
+an approximation to the Haskell or Java "generics" idea. Heck, even brain-dead
 uninvolved generic programming, like doing stuff with lists, ranges from crufty
 to non functional. This is really not okay. So in practice, all Hoon code that
 people write today is monomorphic.
@@ -485,10 +617,16 @@ lets *beginners* write correct super-generic code that even experts would
 struggle to write with C++ templates. The reason for this is that Haskell (and
 Java) are based on a simple mathematical model, while C++ is based on hundreds
 of pages of complex English legaleese, with exceptions stacked upon exceptions
-four layers deep. The reason for autistic simplicity in system design isn't that
-we're smart, it's that we're dumb, and can't hold the consequences of non-autism
-in our heads. (Thanks for bearing with me. I promise you this is the only whole-
-paragraph evangelism in this doucument.)
+four layers deep. But perhaps it is too generous to compare Hoon to C++. After
+all, smart people have been able, after extensive lawyerly study, to produce
+"template libraries" on par with the contents of Haskell's `base`. There are
+multiple very smart people at this company with years of Hoon experience, and
+I do not think that any one of them could do it in Hoon. Maybe rereading and
+mentally simulating the compiler every time you write something nontrivially wet
+could allow you to make painstaking progress. The reason for autistic simplicity
+in system design isn't that we're smart, it's that we're dumb, and can't hold
+the consequences of non-autism in our heads. (Thanks for bearing with me. I
+promise you this is the only whole-paragraph evangelism in this doucument.)
 
 Our goal here, then, is to find some simple, battle-tested formalism that we can
 build parametric polymorphism in Hoon on top of, and then... build it on top of
@@ -500,9 +638,10 @@ make use of this capability daily. In Haskell-98-style rank-1 F-polymorphism,
 there are *two* separate environments: one for tracking type variable bindings,
 and the other for tracking ordinary variable bindings (which are assigned "type
 schemes," rather than types). It is not immediately clear how to port this to
-the subject-oriented context, which expects one. Where do type variable bindings
-go in the subject? And if they are not to be found in the subject, then, well,
-we have contextual info relevant to type checking not found inside the subject.
+the subject-oriented context, which expects one environment. Where do type
+variable bindings go in the subject? And if they are not to be found in the
+subject, then, well, we have contextual info relevant to type checking not
+found inside the subject.
 
 However, there *does* exist a 50-year-old idea which *is* compatible with having
 a unified subject: dependent type theory. This venerable idea invites us to
@@ -609,8 +748,8 @@ Also, I give the example of vectors because it is immediately understandable,
 not because I think it will be valuable to prove things about the lengths of our
 lists all over the place in today's system.
 
-Finally, note that `reap` is a dependent *gate*; its return type depends on the
-value of two of its arguments.)
+Finally, note that `reap` is a dependent *gate* ("Pi type"); its return type
+depends on the value of two of its arguments.)
 
 Then in the following program:
 
@@ -676,23 +815,3 @@ Furthermore, I expect that this work will unblock those aspects of system design
 that are currently blocked on type system issues. For example, first class types
 will be a substantial boon for certain very-typed versions of subscription
 reform.
-
-
-----
-
-Goals:
-
-1. Fix wet gates, on a rational, systematic foundation
-2. Rule out evil vases, on a rational, systematic foundation
-3. Enable new patterns, e.g. for subscription reform, that would rely on first
-class types
-
-Thinking through mull on the tl of sigmas: what operations can allow faces to
-vary (is this also the only thing that mull checks in 140?)? Is it just pattern
-matching? Think through the cases one by one. What about calling a function that
-returns a type, e.g. `list`? (If it's fully saturated, we should evaluate it,
-right?)
-
-Can tail-with-pattern match give rise to ?^ in a naturalistic way?
-
-
