@@ -418,8 +418,20 @@
     =:  loc  lac
         rak  [[paused=| her rem *aeon] next=~ rein:(fall got *arak)]
       ==
-    ~>  %slog.0^leaf/"kiln: beginning install into {here}"
-    (emit find:pass)
+    ?.  ?&  =(our her)
+          ::
+            =-  (~(has in -) rem)
+            .^((set desk) %cd /(scot %p our)//(scot %da now))
+        ==
+      ~>  %slog.0^leaf/"kiln: beginning install into {here}"
+      (emit find:pass)
+    ~>  %slog.0^leaf/"kiln: beginning local install into {here}"
+    %-  take-find
+    :+  %clay  %writ
+    :-  ~
+    :+  [%y ud+1 rem]  /
+    :-  %arch
+    !>  .^(arch %cy /(scot %p our)/[rem]/1)
   ::  +reset: resync after failure
   ::
   ++  reset
@@ -595,8 +607,16 @@
     ?~  p.syn
       ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, aborting"
       vats(ark (~(del by ark) loc))
-    ~>  %slog.0^leaf/"kiln: activated install into {here}"
-    (emit sync-da:pass)
+    ?.  =(our ship.rail.rak)
+      ~>  %slog.0^leaf/"kiln: activated install into {here}"
+      (emit sync-da:pass)
+    ~>  %slog.0^leaf/"kiln: activated local install into {here}"
+    %-  take-sync
+    :+  %clay  %writ
+    :-  ~
+    :+  [%w da+now desk.rail.rak]  /
+    :-  %cass
+    !>  .^(cass %cw /(scot %p our)/[desk.rail.rak]/(scot %da now))
   ::
   ++  take-sync
     |=  syn=sign-arvo
@@ -607,9 +627,17 @@
     ?~  p.syn
       ~>  %slog.0^leaf/"kiln: cancelled (1) install into {here}, retrying"
       reset
-    ~>  %slog.0^leaf/"kiln: downloading update for {here}"
     =?  aeon.rail.rak  ?=(%w p.p.u.p.syn)  ud:;;(cass:clay q.q.r.u.p.syn)
-    (emit download:pass)
+    ?.  =(our ship.rail.rak)
+      ~>  %slog.0^leaf/"kiln: downloading update for {here}"
+      (emit download:pass)
+    ~>  %slog.0^leaf/"kiln: loading update for {here}"
+    %-  take-download
+    :+  %clay  %writ
+    :-  ~
+    :+  [%v ud+aeon.rail.rak desk.rail.rak]  /
+    :-  %dome
+    !>  .^(dome:clay %cv /(scot %p our)/[desk.rail.rak]/(scot %ud aeon.rail.rak))
   ::
   ++  take-download
     |=  syn=sign-arvo
