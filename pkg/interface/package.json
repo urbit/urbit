@@ -53,6 +53,8 @@
     "suncalc": "^1.8.0",
     "unist-util-visit": "^3.0.0",
     "urbit-ob": "^5.0.1",
+    "xterm": "^4.10.0",
+    "xterm-addon-fit": "^0.5.0",
     "workbox-core": "^6.0.2",
     "workbox-precaching": "^6.0.2",
     "workbox-recipes": "^6.0.2",

@@ -63,7 +63,7 @@ u3e_check(c3_c* cap_c)
       }
       sum_w += mug_w;
     }
-    u3l_log("%s: sum %x (%x, %x)\r\n", cap_c, sum_w, nor_w, sou_w);
+    u3l_log("%s: sum %x (%x, %x)", cap_c, sum_w, nor_w, sou_w);
   }
 }
 
@@ -136,7 +136,7 @@ u3e_fault(void* adr_v, c3_i ser_i)
 
 #if 0
     if ( pag_w == 131041 ) {
-      u3l_log("dirty page %d (at %p); unprotecting %p to %p\r\n",
+      u3l_log("dirty page %d (at %p); unprotecting %p to %p",
               pag_w,
               adr_v,
               (u3_Loom + (pag_w << u3a_page)),
@@ -341,7 +341,7 @@ _ce_patch_verify(u3_ce_patch* pat_u)
       }
 #if 0
       else {
-        u3l_log("verify: patch %d/%d, %x\r\n", pag_w, i_w, mug_w);
+        u3l_log("verify: patch %d/%d, %x", pag_w, i_w, mug_w);
       }
 #endif
     }
@@ -458,7 +458,7 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
                                                        (1 << u3a_page));
 
 #if 0
-    u3l_log("protect a: page %d\r\n", pag_w);
+    u3l_log("protect a: page %d", pag_w);
 #endif
     _ce_patch_write_page(pat_u, pgc_w, mem_w);
 
@@ -484,7 +484,7 @@ _ce_patch_junk_page(u3_ce_patch* pat_u,
   c3_w blk_w = (pag_w >> 5);
   c3_w bit_w = (pag_w & 31);
 
-  // u3l_log("protect b: page %d\r\n", pag_w);
+  // u3l_log("protect b: page %d", pag_w);
   if ( -1 == mprotect(u3_Loom + (pag_w << u3a_page),
                       (1 << (u3a_page + 2)),
                       PROT_READ) )
@@ -688,7 +688,7 @@ _ce_patch_apply(u3_ce_patch* pat_u)
       }
     }
 #if 0
-    u3l_log("apply: %d, %x\n", pag_w, u3r_mug_words(mem_w, (1 << u3a_page)));
+    u3l_log("apply: %d, %x", pag_w, u3r_mug_words(mem_w, (1 << u3a_page)));
 #endif
   }
 }
@@ -713,7 +713,7 @@ _ce_image_blit(u3e_image* img_u,
       c3_w off_w = (ptr_w - u3_Loom);
       c3_w pag_w = (off_w >> u3a_page);
 
-      u3l_log("blit: page %d, mug %x\r\n", pag_w,
+      u3l_log("blit: page %d, mug %x", pag_w,
               u3r_mug_words(ptr_w, (1 << u3a_page)));
     }
 #endif
@@ -868,17 +868,17 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
                        -(1 << u3a_page));
 
         if ( 0 != mprotect((void *)u3_Loom, u3a_bytes, PROT_READ) ) {
-          u3l_log("loom: live mprotect: %s\r\n", strerror(errno));
+          u3l_log("loom: live mprotect: %s", strerror(errno));
           c3_assert(0);
         }
 
-        u3l_log("boot: protected loom\r\n");
+        u3l_log("boot: protected loom");
       }
 
       /* If the images were empty, we are logically booting.
       */
       if ( (0 == u3P.nor_u.pgs_w) && (0 == u3P.sou_u.pgs_w) ) {
-        u3l_log("live: logical boot\r\n");
+        u3l_log("live: logical boot");
         nuu_o = c3y;
       }
       else {

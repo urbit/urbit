@@ -16,7 +16,7 @@ u3je_secp_init()
   sec_u = malloc(urcrypt_secp_prealloc_size());
 
   if ( 0 != urcrypt_secp_init(sec_u, ent_y) ) {
-    u3l_log("u3e_secp_init failed\r\n");
+    u3l_log("u3e_secp_init failed");
     abort();
   }
 }

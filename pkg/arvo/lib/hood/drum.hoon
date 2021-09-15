@@ -1,14 +1,14 @@
 /-  *sole
 /+  sole
 |%
-+$  any-state  $%(state)
-+$  state  [%2 pith-2]
++$  any-state  $%(state state-2)
++$  state  [%3 pith]
 ::
-++  pith-2                                              ::
+++  pith                                                ::
   $:  eel=(set gill:gall)                               ::  connect to
       ray=(set well:gall)                               ::
       fur=(map dude:gall (unit server))                 ::  servers
-      bin=(map bone source)                             ::  terminals
+      bin=(map @ source)                                ::  terminals
   ==                                                    ::
 ::                                                      ::
 ++  server                                              ::  running server
@@ -49,6 +49,42 @@
       pom=sole-prompt                                   ::  static prompt
       inp=sole-command                                  ::  input state
   ==                                                    ::
+::
+::
++$  state-2    [%2 pith-2]
+::
++$  pith-2
+  $:  eel=(set gill:gall)
+      ray=(set well:gall)
+      fur=(map dude:gall (unit server))
+      bin=(map bone source-2)
+  ==
+::
++$  source-2
+  $:  edg=_80
+      off=@ud
+      kil=kill
+      inx=@ud
+      fug=(map gill:gall (unit target-2))
+      mir=(pair @ud stub)
+  ==
+::
++$  target-2
+  $:  $=  blt
+        %+  pair
+          (unit dill-belt-2)
+        (unit dill-belt-2)
+      ris=(unit search)
+      hit=history
+      pom=sole-prompt
+      inp=sole-command
+  ==
+::
++$  dill-belt-2
+  $%  [%ctl p=@c]
+      [%met p=@c]
+      dill-belt:dill
+  ==
 --
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -121,26 +157,34 @@
 ++  en-gill                                           ::  gill to wire
   |=  gyl=gill:gall
   ^-  wire
+  ::TODO  include session?
   [%drum %phat (scot %p p.gyl) q.gyl ~]
 ::
 ++  de-gill                                           ::  gill from wire
   |=  way=wire  ^-  gill:gall
   ?>(?=([@ @ ~] way) [(slav %p i.way) i.t.way])
 --
-::  TODO: remove .ost
 ::
 |=  [hid=bowl:gall state]
 =*  sat  +<+
-=/  ost  0
-=+  (~(gut by bin) ost *source)
+=/  ses=@tas  %$
+=+  (~(gut by bin) ses *source)
 =*  dev  -
 =|  moz=(list card:agent:gall)
 =|  biz=(list dill-blit:dill)
 |%
 ++  this  .
+++  klr   klr:format
 +$  state      ^state      ::  proxy
 +$  any-state  ^any-state  ::  proxy
 ++  on-init  se-abet:this(eel (deft-fish our.hid))
+::
+++  prep
+  |=  s=@tas
+  =.  ses  ses
+  =.  dev  (~(gut by bin) ses *source)
+  this
+::
 ++  diff-sole-effect-phat                             ::  app event
   |=  [way=wire fec=sole-effect]
   =<  se-abet  =<  se-view
@@ -150,6 +194,8 @@
 ::
 ++  peer                                              ::
   |=  pax=path
+  =?  this  ?=([%dill @ ~] pax)
+    (prep i.t.pax)
   ~|  [%drum-unauthorized our+our.hid src+src.hid]    ::  ourself
   ?>  (team:title our.hid src.hid)               ::  or our own moon
   =<  se-abet  =<  se-view
@@ -166,14 +212,14 @@
   =.  ray  (deft-apes our.hid lit)
   [~ sat]
 ::
+++  poke-dill
+  |=  [ses=@tas bet=dill-belt:dill]
+  (poke-dill-belt:(prep ses) bet)
+::
 ++  poke-dill-belt                                    ::  terminal event
   |=  bet=dill-belt:dill
   =<  se-abet  =<  se-view
   (se-belt bet)
-::
-++  poke-dill-blit                                    ::  terminal output
-  |=  bit=dill-blit:dill
-  se-abet:(se-blit-sys bit)
 ::
 ++  poke-start                                        ::  start app
   |=  wel=well:gall
@@ -206,8 +252,7 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
-    %drum-dill-belt      =;(f (f !<(_+<.f vase)) poke-dill-belt)
-    %drum-dill-blit      =;(f (f !<(_+<.f vase)) poke-dill-blit)
+    %dill-poke           =;(f (f !<(_+<.f vase)) poke-dill)
     %drum-exit           =;(f (f !<(_+<.f vase)) poke-exit)
     %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
     %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
@@ -218,53 +263,89 @@
   ==
 ::
 ++  on-load
-  |=  [hood-version=@ud old=any-state]
-  =<  se-abet  =<  se-view
-  =.  sat  old
-  =.  dev  (~(gut by bin) ost *source)
-  =?  ..on-load  (lte hood-version %4)
-    ~>  %slog.0^leaf+"drum: starting os1 agents"
-    =>  (se-born | %home %s3-store)
-    =>  (se-born | %home %contact-view)
-    =>  (se-born | %home %contact-hook)
-    =>  (se-born | %home %contact-store)
-    =>  (se-born | %home %metadata-hook)
-    =>  (se-born | %home %metadata-store)
-    =>  (se-born | %home %goad)
-    ~>  %slog.0^leaf+"drum: resubscribing to %dojo and %chat-cli"
-    =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
-    (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
-  =?  ..on-load  (lte hood-version %5)
-    (se-born | %home %file-server)
-  =?  ..on-load  (lte hood-version %7)
-    (se-born | %home %glob)
-  =?  ..on-load  (lte hood-version %8)
-    =>  (se-born | %home %group-push-hook)
-    (se-born | %home %group-pull-hook)
-  =?  ..on-load  (lte hood-version %9)
-    (se-born | %home %graph-store)
-  =?  ..on-load  (lte hood-version %10)
-    =>  (se-born | %home %graph-push-hook)
-    (se-born | %home %graph-pull-hook)
-  =?  ..on-load  (lte hood-version %11)
-    =>  (se-born | %home %hark-graph-hook)
-    =>  (se-born | %home %hark-group-hook)
-    =>  (se-born | %home %hark-chat-hook)
-    =>  (se-born | %home %hark-store)
-    =>  (se-born | %home %observe-hook)
-    =>  (se-born | %home %metadata-pull-hook)
-    =>  (se-born | %home %metadata-push-hook)
-    (se-born | %home %herm)
-  =?  ..on-load  (lte hood-version %12)
-    =>  (se-born | %home %contact-push-hook)
-    =>  (se-born | %home %contact-pull-hook)
-    =>  (se-born | %home %settings-store)
-    (se-born | %home %group-view)
-  =?  ..on-load  (lte hood-version %13)
-    (se-born | %home %dm-hook)
-  =?  ..on-load  (lte hood-version %15)
-    (se-born | %home %notify)
-  ..on-load
+  |^  |=  [hood-version=@ud old=any-state]
+      =<  se-abet  =<  se-view
+      =.  sat  (load-state old)
+      =.  dev  (~(gut by bin) ses *source)
+      (load-apps hood-version)
+  ::
+  ++  load-state
+    |=  old=any-state
+    ^-  state
+    ?-  -.old
+      %3  old
+      %2  [%3 (pith-2-to-3 +.old)]
+    ==
+  ::
+  ++  pith-2-to-3
+    |=  p=pith-2
+    ^-  pith
+    p(bin (~(run by bin.p) source-2-to-3))
+  ::
+  ++  source-2-to-3
+    |=  s=source-2
+    ^-  source
+    s(fug (~(run by fug.s) |=(t=(unit target-2) (bind t target-2-to-3))))
+  ::
+  ++  target-2-to-3
+    |=  t=target-2
+    ^-  target
+    :_  +.t
+    :-  (bind p.blt.t belt-2-to-3)
+    (bind q.blt.t belt-2-to-3)
+  ::
+  ++  belt-2-to-3
+    |=  b=dill-belt-2
+    ^-  dill-belt:dill
+    ?.  ?=(?(%ctl %met) -.b)  b
+    [%mod -.b p.b]
+  ::
+  ++  load-apps
+    |=  hood-version=@ud
+    =?  ..on-load  (lte hood-version %4)
+      ~>  %slog.0^leaf+"drum: starting os1 agents"
+      =>  (se-born | %home %s3-store)
+      =>  (se-born | %home %contact-view)
+      =>  (se-born | %home %contact-hook)
+      =>  (se-born | %home %contact-store)
+      =>  (se-born | %home %metadata-hook)
+      =>  (se-born | %home %metadata-store)
+      =>  (se-born | %home %goad)
+      ~>  %slog.0^leaf+"drum: resubscribing to %dojo and %chat-cli"
+      =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
+      (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
+    =?  ..on-load  (lte hood-version %5)
+      (se-born | %home %file-server)
+    =?  ..on-load  (lte hood-version %7)
+      (se-born | %home %glob)
+    =?  ..on-load  (lte hood-version %8)
+      =>  (se-born | %home %group-push-hook)
+      (se-born | %home %group-pull-hook)
+    =?  ..on-load  (lte hood-version %9)
+      (se-born | %home %graph-store)
+    =?  ..on-load  (lte hood-version %10)
+      =>  (se-born | %home %graph-push-hook)
+      (se-born | %home %graph-pull-hook)
+    =?  ..on-load  (lte hood-version %11)
+      =>  (se-born | %home %hark-graph-hook)
+      =>  (se-born | %home %hark-group-hook)
+      =>  (se-born | %home %hark-chat-hook)
+      =>  (se-born | %home %hark-store)
+      =>  (se-born | %home %observe-hook)
+      =>  (se-born | %home %metadata-pull-hook)
+      =>  (se-born | %home %metadata-push-hook)
+      (se-born | %home %herm)
+    =?  ..on-load  (lte hood-version %12)
+      =>  (se-born | %home %contact-push-hook)
+      =>  (se-born | %home %contact-pull-hook)
+      =>  (se-born | %home %settings-store)
+      (se-born | %home %group-view)
+    =?  ..on-load  (lte hood-version %13)
+      (se-born | %home %dm-hook)
+    =?  ..on-load  (lte hood-version %15)
+      (se-born | %home %notify)
+    ..on-load
+  --
 ::
 ++  reap-phat                                         ::  ack connect
   |=  [way=wire saw=(unit tang)]
@@ -277,12 +358,6 @@
   ::
   (se-drop & gyl)
 ::
-++  take-arvo
-  |=  [=wire =sign-arvo]
-  %+  take-onto  wire
-  ?>  ?=(%onto +<.sign-arvo)
-  +>.sign-arvo
-::
 ++  take-coup-phat                                    ::  ack poke
   |=  [way=wire saw=(unit tang)]
   =<  se-abet  =<  se-view
@@ -292,19 +367,6 @@
   %-  se-dump:(se-drop:(se-pull gyl) & gyl)
   :_  u.saw
   >[%drum-coup-fail src.hid gyl]<
-::
-++  take-onto                                         ::  ack start
-  |=  [way=wire saw=(each suss:gall tang)]
-  =<  se-abet  =<  se-view
-  ?>  ?=([@ @ ~] way)
-  ?>  (~(has by fur) i.t.way)
-  =/  wel=well:gall  [i.way i.t.way]
-  ?-  saw
-    [%| *]  (se-dump p.saw)
-    [%& *]  ?>  =(q.wel p.p.saw)
-            ::  =.  +>.$  (se-text "live {<p.saw>}")
-            +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))
-  ==
 ::
 ++  take-agent
   |=  [=wire =sign:agent:gall]
@@ -333,12 +395,13 @@
 ++  se-abet                                           ::  resolve
   ^-  (quip card:agent:gall state)
   =.  .  se-subze:se-adze:se-subit:se-adit
-  :_  sat(bin (~(put by bin) ost dev))
+  :_  sat(bin (~(put by bin) ses dev))
   ^-  (list card:agent:gall)
   ?~  biz  (flop moz)
   :_  (flop moz)
   =/  =dill-blit:dill  ?~(t.biz i.biz [%mor (flop biz)])
-  [%give %fact ~[/drum] %dill-blit !>(dill-blit)]
+  ::TODO  remove /drum after dill cleans up
+  [%give %fact ~[/drum /dill/[ses]] %dill-blit !>(dill-blit)]
 ::
 ++  se-adit                                           ::  update servers
   ^+  this
@@ -423,14 +486,14 @@
   (se-peer gil)
 ::
 ++  se-subze                                          ::  downdate connections
-  =<  .(dev (~(got by bin) ost))
-  =.  bin  (~(put by bin) ost dev)
+  =<  .(dev (~(got by bin) ses))
+  =.  bin  (~(put by bin) ses dev)
   ^+  .
   %-  ~(rep by bin)
   =<  .(con +>)
-  |:  $:,[[ost=bone dev=source] con=_.]  ^+  con
-  =+  xeno=se-subze-local:%_(con ost ost, dev dev)
-  xeno(ost ost.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
+  |:  $:,[[ses=@tas dev=source] con=_.]  ^+  con
+  =+  xeno=se-subze-local:%_(con ses ses, dev dev)
+  xeno(ses ses.con, dev dev.con, bin (~(put by bin) ses dev.xeno))
 ::
 ++  se-subze-local
   ^+  .
@@ -445,7 +508,7 @@
 ++  se-aint                                           ::  ignore result
   |=  gyl=gill:gall
   ^-  ?
-  ?.  (~(has by bin) ost)  &
+  ?.  (~(has by bin) ses)  &
   =+  gyr=(~(get by fug) gyl)
   |(?=(~ gyr) ?=(~ u.gyr))
 ::
@@ -554,6 +617,21 @@
     leaf+(weld (scag (sub edg 3) tape) "...")
   leaf+tape
 ::
+++  se-blin                                           ::  print and newline
+  |=  $=  lin
+      $~  [%put ~]
+      $>(?(%put %klr) dill-blit:dill)
+  ^+  +>
+  ::  newline means we need to redraw the prompt,
+  ::  so update the prompt mirror accordingly.
+  ::
+  =.  mir  [0 ~]
+  ::TODO  doing hops and wyps conditionally based on the mirror state seems
+  ::      better, but doesn't cover edge cases. results in dojo's ">=" being
+  ::      rendered alongside the prompt in scrollback, for example.
+  ::      figure out a way to make that work!
+  (se-blit %mor [%hop 0] [%wyp ~] lin [%nel ~] ~)
+::
 ++  se-dump                                           ::  print tanks
   |=  tac=(list tank)
   ^+  +>
@@ -564,7 +642,7 @@
   ?.  ((sane %t) (crip i.wol))  :: XX upstream validation
     ~&  bad-text+<`*`i.wol>
     $(wol t.wol)
-  $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
+  $(wol t.wol, +>.^$ (se-blin %put (tuba i.wol)))
 ::
 ++  se-join                                           ::  confirm connection
   |=  gyl=gill:gall
@@ -597,15 +675,16 @@
 ::
 ++  se-blit-sys                                       ::  output to system
   |=  bil=dill-blit:dill  ^+  +>
-  (se-emit %give %fact ~[/drum] %dill-blit !>(bil))
+  ::TODO  remove /drum after dill cleans up
+  (se-emit %give %fact ~[/drum /dill/[ses]] %dill-blit !>(bil))
 ::
 ++  se-show                                           ::  show buffer, raw
   |=  lin=(pair @ud stub)
   ^+  +>
   ?:  =(mir lin)  +>
-  =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop p.lin))
-  =.  +>  ?:(=(q.mir q.lin) +> (se-blit %pom q.lin))
-  +>(mir lin)
+  %-  se-blit(mir lin)
+  ?:  =(q.mir q.lin)  [%hop p.lin]
+  mor+[[%hop 0] [%wyp ~] [%klr q.lin] [%hop p.lin] ~]
 ::
 ++  se-just                                           ::  adjusted buffer
   |=  [pom=stub lin=(pair @ud (list @c))]
@@ -643,7 +722,7 @@
   ?.  ((sane %t) (crip txt))  :: XX upstream validation
     ~&  bad-text+<`*`txt>
     +>
-  (se-blit %out (tuba txt))
+  (se-blin %put (tuba txt))
 ::
 ++  se-poke                                           ::  send a poke
   |=  [gyl=gill:gall par=cage]
@@ -651,6 +730,7 @@
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl=gill:gall
+  ::TODO  include session
   =/  =path  /sole/(cat 3 'drum_' (scot %p our.hid))
   %-  se-emit(fug (~(put by fug) gyl ~))
   [%pass (en-gill gyl) %agent gyl %watch path]
@@ -711,13 +791,19 @@
     ?<  ?=([?(%cru %hey %rez %yow) *] bet)            ::  target-specific
     =.  blt  [q.blt `bet]                             ::  remember belt
     ?-  bet
+      @         (ta-txt bet ~)
       [%aro *]  (ta-aro p.bet)
       [%bac *]  ta-bac
-      [%ctl *]  (ta-ctl p.bet)
       [%del *]  ta-del
-      [%met *]  (ta-met p.bet)
+      [%hit *]  (ta-hit +.bet)
       [%ret *]  ta-ret
       [%txt *]  (ta-txt p.bet)
+    ::
+        [%mod *]
+      ?+  mod.bet  $(bet key.bet)
+        %ctl  (ta-ctl key.bet)
+        %met  (ta-met key.bet)
+      ==
     ==
   ::
   ++  ta-det                                          ::  send edit
@@ -741,7 +827,7 @@
     (ta-hom %del (dec pos.inp))
   ::
   ++  ta-ctl                                          ::  hear control
-    |=  key=@ud
+    |=  key=bolt:dill
     ^+  +>
     =.  ris  ?.(?=(?(%g %r) key) ~ ris)
     ?+    key    ta-bel
@@ -762,7 +848,7 @@
             ?:  =(pos.inp len)
               ta-bel
             (ta-kil %r [pos.inp (sub len pos.inp)])
-        %l  +>(..ta (se-blit %clr ~))
+        %l  +>(..ta (se-blit(q.mir ~) %clr ~))
         %n  (ta-aro %d)
         %p  (ta-aro %u)
         %r  ?~  ris
@@ -795,6 +881,15 @@
       ta-bel
     (ta-hom %del pos.inp)
   ::
+  ++  ta-hit                                          ::  hear click
+    |=  [r=@ud c=@ud]
+    ^+  +>
+    ?.  =(0 r)  +>
+    =/  pol=@ud
+      (lent-char:klr (make:klr cad.pom))
+    ?:  (lth c pol)  +>.$
+    +>.$(pos.inp (min (sub c pol) (lent buf.say.inp)))
+  ::
   ++  ta-erl                                          ::  hear local error
     |=  pos=@ud
     ta-bel(pos.inp (min pos (lent buf.say.inp)))
@@ -806,14 +901,13 @@
   ++  ta-fec                                          ::  apply effect
     |=  fec=sole-effect
     ^+  +>
-    ?-  fec
+    ?+  fec  +>(..ta (se-blit fec))
       [%bel *]  ta-bel
       [%blk *]  +>
       [%bye *]  +>(..ta (se-klin gyl))
-      [%clr *]  +>(..ta (se-blit fec))
       [%det *]  (ta-got +.fec)
       [%err *]  (ta-err p.fec)
-      [%klr *]  +>(..ta (se-blit %klr (make:klr p.fec)))
+      [%klr *]  +>(..ta (se-blin %klr (make:klr p.fec)))
       [%mor *]  |-  ^+  +>.^$
                 ?~  p.fec  +>.^$
                 $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
@@ -821,10 +915,8 @@
       [%pro *]  (ta-pro +.fec)
       [%tab *]  +>(..ta (se-tab p.fec))
       [%tan *]  +>(..ta (se-dump p.fec))
-      [%sag *]  +>(..ta (se-blit fec))
-      [%sav *]  +>(..ta (se-blit fec))
       [%txt *]  +>(..ta (se-text p.fec))
-      [%url *]  +>(..ta (se-blit fec))
+      [%url *]  +>(..ta (se-text:(se-blit fec) (trip p.fec)))
     ==
   ::
   ++  ta-dog                                          ::  change cursor
@@ -876,8 +968,8 @@
         kil
       ?.  ?&  ?=(^ old.kil)
               ?=(^ p.blt)
-              ?|  ?=([%ctl ?(%k %u %w)] u.p.blt)
-                  ?=([%met ?(%d %bac)] u.p.blt)
+              ?|  ?=([%mod %ctl ?(%k %u %w)] u.p.blt)
+                  ?=([%mod %met ?(%d [%bac ~])] u.p.blt)
           ==  ==
         %=  kil                                       ::  prepend
           num  +(num.kil)
@@ -894,17 +986,18 @@
     ==
   ::
   ++  ta-met                                          ::  meta key
-    |=  key=@ud
+    |=  key=bolt:dill
     ^+  +>
     =.  ris  ~
     ?+    key    ta-bel
-      %dot  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))      ::  last "arg" from hist
+      %'.'  ?.  &(?=(^ old.hit) ?=(^ i.old.hit))      ::  last "arg" from hist
               ta-bel
             =+  old=`(list @c)`i.old.hit
             =+  sop=(ta-jump(buf.say.inp old) %l %ace (lent old))
             (ta-hom (cat:edit pos.inp (slag sop old)))
             ::
-      %bac  ?:  =(0 pos.inp)                          ::  kill left-word
+      [%bac ~]
+            ?:  =(0 pos.inp)                          ::  kill left-word
               ta-bel
             =+  sop=(ta-pos %l %edg pos.inp)
             (ta-kil %l [(sub pos.inp sop) sop])
@@ -960,8 +1053,8 @@
             ::
       %y    ?.  ?&  ?=(^ old.kil)                     ::  rotate & yank
                     ?=(^ p.blt)
-                    ?|  ?=([%ctl %y] u.p.blt)
-                        ?=([%met %y] u.p.blt)
+                    ?|  ?=([%mod %ctl %y] u.p.blt)
+                        ?=([%mod %met %y] u.p.blt)
                 ==  ==
               ta-bel
             =+  las=(lent ta-yan)
@@ -1138,83 +1231,5 @@
     |-  ^-  @ud
     ?:  |(?=(~ a) (alnm i.a))  i
     $(i +(i), a t.a)
-  --
-::
-++  klr                                               ::  styx/stub engine
-  =,  dill
-  |%
-  ++  make                                            ::  stub from styx
-    |=  a=styx  ^-  stub
-    =|  b=stye
-    %+  reel
-    |-  ^-  stub
-    %-  zing  %+  turn  a
-    |=  a=$@(@t (pair styl styx))
-    ?@  a  [b (tuba (trip a))]~
-    ^$(a q.a, b (styd p.a b))
-    ::
-    |=  [a=(pair stye (list @c)) b=stub]
-    ?~  b  [a ~]
-    ?.  =(p.a p.i.b)  [a b]
-    [[p.a (weld q.a q.i.b)] t.b]
-  ::
-  ++  styd                                            ::  stye from styl
-    |=  [a=styl b=stye]  ^+  b                        ::  with inheritance
-    :+  ?~  p.a  p.b
-        ?~  u.p.a  ~
-        (~(put in p.b) u.p.a)
-     (fall p.q.a p.q.b)
-     (fall q.q.a q.q.b)
-  ::
-  ++  lent-char
-    |=  a=stub  ^-  @
-    (roll (lnts-char a) add)
-  ::
-  ++  lnts-char                                       ::  stub pair tail lengths
-    |=  a=stub  ^-  (list @)
-    %+  turn  a
-    |=  a=(pair stye (list @c))
-    (lent q.a)
-  ::
-  ++  brek                                            ::  index + incl-len of
-    |=  [a=@ b=(list @)]                              ::  stub pair w= idx a
-    =|  [c=@ i=@]
-    |-  ^-  (unit (pair @ @))
-    ?~  b  ~
-    =.  c  (add c i.b)
-    ?:  (gte c a)
-      `[i c]
-    $(i +(i), b t.b)
-  ::
-  ++  slag                                            ::  slag stub, keep stye
-    |=  [a=@ b=stub]
-    ^-  stub
-    =+  c=(lnts-char b)
-    =+  i=(brek a c)
-    ?~  i  b
-    =+  r=(^slag +(p.u.i) b)
-    ?:  =(a q.u.i)
-      r
-    =+  n=(snag p.u.i b)
-    :_  r  :-  p.n
-    (^slag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
-  ::
-  ++  scag                                            ::  scag stub, keep stye
-    |=  [a=@ b=stub]
-    ^-  stub
-    =+  c=(lnts-char b)
-    =+  i=(brek a c)
-    ?~  i  b
-    ?:  =(a q.u.i)
-      (^scag +(p.u.i) b)
-    %+  welp
-      (^scag p.u.i b)
-    =+  n=(snag p.u.i b)
-    :_  ~  :-  p.n
-    (^scag (sub (snag p.u.i c) (sub q.u.i a)) q.n)
-  ::
-  ++  swag                                            ::  swag stub, keep stye
-    |=  [[a=@ b=@] c=stub]
-    (scag b (slag a c))
   --
 --

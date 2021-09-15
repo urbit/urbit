@@ -31,7 +31,7 @@
 
         //  Sanity check: crash if decoding more bits than available
         if ( c3y == u3qa_gth(x, m)) {
-          //  u3l_log("[%%rub-hard %d %d %d]\r\n", a, x, m);
+          //  u3l_log("[%%rub-hard %d %d %d]", a, x, m);
           return u3m_bail(c3__exit);
         }
 

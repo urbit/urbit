@@ -318,7 +318,7 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
 
       while ( rod_u->kid_p ) {
 #if 0
-        u3l_log("collecting %d frames\r\n",
+        u3l_log("collecting %d frames",
               u3kb_lent((u3to(u3_road, rod_u->kid_p)->bug.tax));
 #endif
         tax = u3kb_weld(_cm_stack_recover(u3to(u3_road, rod_u->kid_p)), tax);
@@ -372,7 +372,7 @@ _cm_signal_deep(c3_w mil_w)
     itm_u.it_value.tv_usec = 1000 * (mil_w % 1000);
 
     if ( rsignal_setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
-      u3l_log("loom: set timer failed %s\r\n", strerror(errno));
+      u3l_log("loom: set timer failed %s", strerror(errno));
     }
     else {
       rsignal_install_handler(SIGVTALRM, _cm_signal_handle_alrm);
@@ -405,7 +405,7 @@ _cm_signal_done()
     timerclear(&itm_u.it_value);
 
     if ( rsignal_setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
-      u3l_log("loom: clear timer failed %s\r\n", strerror(errno));
+      u3l_log("loom: clear timer failed %s", strerror(errno));
     }
   }
 
@@ -437,7 +437,7 @@ u3m_file(c3_c* pas_c)
   c3_y*       pad_y;
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
-    u3l_log("%s: %s\r\n", pas_c, strerror(errno));
+    u3l_log("%s: %s", pas_c, strerror(errno));
     return u3m_bail(c3__fail);
   }
   fln_w = buf_b.st_size;
@@ -632,7 +632,7 @@ u3m_dump(void)
       fre_u = fre_u->nex_u;
     }
   }
-  u3l_log("dump: hat_w %x, fre_w %x, allocated %x\n",
+  u3l_log("dump: hat_w %x, fre_w %x, allocated %x",
           hat_w, fre_w, (hat_w - fre_w));
 
   if ( 0 != (hat_w - fre_w) ) {
@@ -644,14 +644,14 @@ u3m_dump(void)
 
       if ( 0 != box_u->use_w ) {
 #ifdef U3_MEMORY_DEBUG
-        // u3l_log("live %d words, code %x\n", box_u->siz_w, box_u->cod_w);
+        // u3l_log("live %d words, code %x", box_u->siz_w, box_u->cod_w);
 #endif
         mem_w += box_u->siz_w;
       }
       box_w += box_u->siz_w;
     }
 
-    u3l_log("second count: %x\n", mem_w);
+    u3l_log("second count: %x", mem_w);
   }
 }
 #endif
@@ -1538,7 +1538,7 @@ u3m_p(const c3_c* cap_c, u3_noun som)
 {
   c3_c* pre_c = u3m_pretty(som);
 
-  u3l_log("%s: %s\r\n", cap_c, pre_c);
+  u3l_log("%s: %s", cap_c, pre_c);
   c3_free(pre_c);
 }
 
@@ -1599,7 +1599,7 @@ _cm_limits(void)
     rlm.rlim_cur = c3_min(rlm.rlim_max, (65536 << 10));
 
     if ( 0 != setrlimit(RLIMIT_STACK, &rlm) ) {
-      u3l_log("boot: stack size: %s\r\n", strerror(errno));
+      u3l_log("boot: stack size: %s", strerror(errno));
       exit(1);
     }
   }
@@ -1618,7 +1618,7 @@ _cm_limits(void)
     //  no exit, not a critical limit
     //
     if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
-      u3l_log("boot: open file limit: %s\r\n", strerror(errno));
+      u3l_log("boot: open file limit: %s", strerror(errno));
     }
   }
 
@@ -1632,7 +1632,7 @@ _cm_limits(void)
     //  no exit, not a critical limit
     //
     if ( 0 != setrlimit(RLIMIT_CORE, &rlm) ) {
-      u3l_log("boot: core limit: %s\r\n", strerror(errno));
+      u3l_log("boot: core limit: %s", strerror(errno));
     }
   }
 # endif
@@ -1655,7 +1655,7 @@ _cm_signals(void)
   //  access and stack overflow exceptions. It calls u3e_fault directly.
 # else
   if ( 0 != sigsegv_install_handler(u3e_fault) ) {
-    u3l_log("boot: sigsegv install failed\n");
+    u3l_log("boot: sigsegv install failed");
     exit(1);
   }
 # endif
@@ -1671,7 +1671,7 @@ _cm_signals(void)
     sigaddset(&set, SIGPROF);
 
     if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
-      u3l_log("boot: thread mask SIGPROF: %s\r\n", strerror(errno));
+      u3l_log("boot: thread mask SIGPROF: %s", strerror(errno));
       exit(1);
     }
   }
@@ -1727,17 +1727,17 @@ u3m_init(void)
                          MAP_ANON | MAP_PRIVATE,
                          -1, 0);
 
-      u3l_log("boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
+      u3l_log("boot: mapping %dMB failed", (len_w / (1024 * 1024)));
       u3l_log("see urbit.org/using/install/#about-swap-space"
               " for adding swap space\r\n");
-      if ( -1 != (c3_ps)dyn_v ) {
-        u3l_log("if porting to a new platform, try U3_OS_LoomBase %p\r\n",
+      if ( -1 != (c3_ps)map_v ) {
+        u3l_log("if porting to a new platform, try U3_OS_LoomBase %p",
                 dyn_v);
       }
       exit(1);
     }
 
-    u3l_log("loom: mapped %dMB\r\n", len_w >> 20);
+    u3l_log("loom: mapped %dMB", len_w >> 20);
   }
 }
 
@@ -1778,7 +1778,7 @@ u3m_boot(c3_c* dir_c)
   */
   {
     c3_w len_w = u3j_boot(nuu_o);
-    u3l_log("boot: installed %d jets\r\n", len_w);
+    u3l_log("boot: installed %d jets", len_w);
   }
 
   /* Reactivate jets on old kernel.

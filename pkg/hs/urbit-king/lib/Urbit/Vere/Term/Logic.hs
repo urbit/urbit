@@ -39,11 +39,11 @@ data Ev
     = EvLine Text
     | EvSlog (Atom, Tank)
     | EvSpin SpinnerState
-    | EvMove Word
+    | EvMove (Word, Word)
     | EvBell
     | EvDraw
     | EvEdit Text
-    | EvMore
+    | EvNewl
   deriving (Show)
 
 data Ef
@@ -62,7 +62,7 @@ data History
 data St = St
     { sHistory :: !(Seq History)
     , sLine    :: !Text
-    , sCurPos  :: !Word
+    , sCurPos  :: !(Word, Word)
     , sSpinner :: !SpinnerState
     }
   deriving (Show)
@@ -70,10 +70,10 @@ data St = St
 --------------------------------------------------------------------------------
 
 init :: St
-init = St mempty "" 0 Nothing
+init = St mempty "" (0, 0) Nothing
 
 {-|
-    When we process `EvMore`, we need to append a newline to the end of
+    When we process `EvNewl`, we need to append a newline to the end of
     the current line. During normal play, the ENTER key inserts the
     newline for us, so we need to recreate that newline when we rebuild
     the state for a new terminal connection.
@@ -83,15 +83,17 @@ step st@St{..} = \case
     EvLine t -> st & recordText t
     EvSlog s -> st & recordSlog s
     EvSpin s -> st { sSpinner = s }
-    EvMove w -> st { sCurPos = min w (word $ length sLine) }
-    EvEdit t -> st { sLine = t, sCurPos = word (length t) }
-    EvMore   -> st { sLine = "", sCurPos = 0 } & recordText (sLine <> "\n")
+    EvMove p -> st { sCurPos = p }
     EvBell   -> st
     EvDraw   -> st
+    EvEdit t | (0, _) <- sCurPos -> st { sLine = t }
+             | otherwise         -> st
+    EvNewl   | (0, _) <- sCurPos ->
+                 st { sLine = "", sCurPos = (0, 0) }
+                 & recordText (sLine <> "\n")
+             | otherwise ->
+                 st { sCurPos = (fst sCurPos - 1, 0) }
   where
-    word :: Integral i => i -> Word
-    word = fromIntegral
-
     recordText :: Text -> St -> St
     recordText !t st@St{..} = st {
       sHistory = trim (sHistory |> (HistoryText t))
@@ -111,8 +113,10 @@ drawState :: St -> [Ev]
 drawState St{..} = hist <> out <> cur <> spin
   where
     hist = drawHistory <$> toList sHistory
-    out  = if null sLine   then [] else [EvEdit sLine]
-    cur  = if 0 == sCurPos then [] else [EvMove $ fromIntegral $ sCurPos]
+    out  | null sLine = []
+         | otherwise  = [EvEdit sLine]
+    cur  | (0, _) <- sCurPos = []
+         | otherwise         = [EvMove sCurPos]
     spin = maybe [] (singleton . EvSpin . Just) sSpinner
 
     drawHistory (HistoryText t) = EvLine t
@@ -123,12 +127,13 @@ drawState St{..} = hist <> out <> cur <> spin
 
 fromBlit :: Arvo.Blit -> Maybe Ev
 fromBlit = \case
-    Arvo.Hop w  -> Just $ EvMove $ fromIntegral w
-    Arvo.Bel () -> Just EvBell
-    Arvo.Clr () -> Just EvDraw
-    Arvo.Lin s  -> Just $ EvEdit (pack s)
-    Arvo.Mor () -> Just EvMore
-    _           -> Nothing
+    Arvo.Hop (Arvo.Col c)   -> Just $ EvMove (0, fromIntegral c)
+    Arvo.Hop (Arvo.Roc r c) -> Just $ EvMove (fromIntegral r, fromIntegral c)
+    Arvo.Bel ()             -> Just EvBell
+    Arvo.Clr ()             -> Just EvDraw
+    Arvo.Put s              -> Just $ EvEdit (pack s)
+    Arvo.Nel ()             -> Just EvNewl
+    _                       -> Nothing
 
 toCause :: Maybe Cord -> SpinnerCause
 toCause Nothing         = User
@@ -148,12 +153,12 @@ fromTermEv = \case
 
 toTermEv :: Ev -> Term.Ev
 toTermEv = \case
-    EvLine "" -> Term.Blank
-    EvLine t  -> Term.Trace (Cord t)
-    EvSlog s  -> Term.Slog s
-    EvSpin s  -> Term.Spinr (fromCause <$> s)
-    EvMove w  -> Term.Blits [Arvo.Hop $ fromIntegral w]
-    EvBell    -> Term.Blits [Arvo.Bel ()]
-    EvDraw    -> Term.Blits [Arvo.Clr ()]
-    EvEdit t  -> Term.Blits [Arvo.Lin $ unpack t]
-    EvMore    -> Term.Blits [Arvo.Mor ()]
+    EvLine ""     -> Term.Blank
+    EvLine t      -> Term.Trace (Cord t)
+    EvSlog s      -> Term.Slog s
+    EvSpin s      -> Term.Spinr (fromCause <$> s)
+    EvMove (r, c) -> Term.Blits [Arvo.Hop $ Arvo.Roc (fromIntegral r) (fromIntegral c)]
+    EvBell        -> Term.Blits [Arvo.Bel ()]
+    EvDraw        -> Term.Blits [Arvo.Clr ()]
+    EvEdit t      -> Term.Blits [Arvo.Put $ unpack t]
+    EvNewl        -> Term.Blits [Arvo.Nel ()]

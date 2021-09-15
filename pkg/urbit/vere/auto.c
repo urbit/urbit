@@ -91,7 +91,7 @@ u3_auto_bail_slog(u3_ovum* egg_u, u3_noun lud)
   c3_w  len_w = 1;
 
   while ( u3_nul != dul ) {
-    u3l_log("%s: bail %u\r\n", car_c, len_w++);
+    u3l_log("%s: bail %u", car_c, len_w++);
     u3_pier_punt_goof(car_c, u3k(u3h(dul)));
 
     dul = u3t(dul);
@@ -240,7 +240,7 @@ _auto_kick_lost(u3_noun pax, u3_noun fav)
   c3_c* tag_c = u3r_string(u3h(fav));
   c3_c* pax_c = u3r_string(tox);
 
-  u3l_log("kick: lost %%%s on %s\n", tag_c, pax_c);
+  u3l_log("kick: lost %%%s on %s", tag_c, pax_c);
 
   c3_free(pax_c);
   c3_free(tag_c);
@@ -360,12 +360,12 @@ u3_auto_info(u3_auto* car_u)
 {
   u3_auto* nex_u;
 
-  u3l_log("  drivers:\n");
+  u3l_log("  drivers:");
 
   while ( car_u ) {
     nex_u = car_u->nex_u;
 
-    u3l_log("    %.*s: live=%s, queue=%u\n",
+    u3l_log("    %.*s: live=%s, queue=%u",
             u3r_met(3, car_u->nam_m),
             (c3_c*)&car_u->nam_m,
             ( c3y == car_u->liv_o ) ? "&" : "|",

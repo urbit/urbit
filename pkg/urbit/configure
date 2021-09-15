@@ -195,7 +195,7 @@ for citem in $compat; do
 done
 
 cat >config.mk <<EOF
-CFLAGS  := $CFLAGS -funsigned-char -ffast-math -fcommon -std=gnu99
+CFLAGS  := $CFLAGS -funsigned-char -ffast-math -fcommon -std=gnu99 -Wno-format-zero-length
 LDFLAGS := $LDFLAGS
 CC      := ${CC-cc}
 compat  := $compat

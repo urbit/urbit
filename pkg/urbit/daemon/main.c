@@ -645,7 +645,7 @@ main(c3_i   argc,
     sigemptyset(&set);
     sigaddset(&set, SIGPROF);
     if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
-      u3l_log("boot: thread mask SIGPROF: %s\r\n", strerror(errno));
+      u3l_log("boot: thread mask SIGPROF: %s", strerror(errno));
       exit(1);
     }
   }
@@ -782,7 +782,7 @@ main(c3_i   argc,
     //  initialize curl
     //
     if ( 0 != curl_global_init(CURL_GLOBAL_DEFAULT) ) {
-      u3l_log("boot: curl initialization failed\r\n");
+      u3l_log("boot: curl initialization failed");
       exit(1);
     }
 

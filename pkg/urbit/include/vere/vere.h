@@ -145,16 +145,17 @@
         } siz;
 
         struct {
-          c3_y* lin_y;                      //  current line (utf8)
-          c3_w  byt_w;                      //  utf8 line-length
-          c3_w  wor_w;                      //  utf32 line-length
-          c3_w  sap_w;                      //  escape chars in line
-          c3_w  cus_w;                      //  cursor position
+          u3_noun lin;                      //  bottom line (stub)
+          c3_w    rus_w;                    //  cursor position (row)
+          c3_w    cus_w;                    //  cursor position (column)
         } mir;
 
         struct {                            //  escape code control
           c3_o    ape;                      //  escape received
           c3_o    bra;                      //  bracket or O received
+          c3_o    mou;                      //  M (for mouse event) received
+          c3_y    ton_y;                    //  mouse button
+          c3_y    col_y;                    //  column coordinate
         } esc;
 
         struct {
@@ -180,30 +181,22 @@
         struct _u3_usig* nex_u;
       } u3_usig;
 
-    /* u2_utfo: unix terminfo strings.
+    /* u2_utfo: terminal escape sequences
     */
       typedef struct {
-        //    disabled, currently unused
+        uv_buf_t mon_u;                //  mouse reporting on
+        uv_buf_t mof_u;                //  mouse reporting off
         //
-        // struct {
-        //   uv_buf_t kcuu1_u;              //  key_up
-        //   uv_buf_t kcud1_u;              //  key_down
-        //   uv_buf_t kcub1_u;              //  key_back
-        //   uv_buf_t kcuf1_u;              //  key_forward
-        // } inn;
-        struct {
-          uv_buf_t clear_u;              //  clear_screen
-          uv_buf_t el_u;                 //  clr_bol clear to beginning
-          // uv_buf_t el1_u;             //  clr_eol clear to end
-          uv_buf_t ed_u;                 //  clear to end of screen
-          uv_buf_t bel_u;                //  bel sound bell
-          uv_buf_t cub1_u;               //  parm_left
-          uv_buf_t cuf1_u;               //  parm_right
-          uv_buf_t cuu1_u;               //  parm_up
-          uv_buf_t cud1_u;               //  parm_down
-          // uv_buf_t cub_u;             //  parm_left_cursor #num
-          // uv_buf_t cuf_u;             //  parm_right_cursor #num
-        } out;
+        uv_buf_t reg_u;                //  restore scroll region
+        //
+        uv_buf_t suc_u;                //  save cursor position
+        uv_buf_t ruc_u;                //  restore cursor position
+        uv_buf_t cub_u;                //  move cursor left one column
+        //
+        uv_buf_t clr_u;                //  clear screen
+        uv_buf_t cel_u;                //  clear to end of line
+        //
+        uv_buf_t bel_u;                //  bel sound bell
       } u3_utfo;
 
 #if 0
@@ -229,9 +222,8 @@
     /* u3_ustm: uv stream.
     */
       typedef union _u3_ustm {
-        uv_pipe_t  pop_u;
-        uv_tcp_t   wax_u;
-        uv_tty_t   tty_u;
+        uv_pipe_t pip_u;
+        uv_tty_t  tty_u;
       } u3_ustm;
 
     /* u3_ttyf: simple unix tty function.
@@ -254,7 +246,7 @@
                         c3_l* row_l);       //  return tty window size
         c3_i             fid_i;             //  file descriptor
         c3_w             tid_l;             //  terminal identity number
-        u3_utfo          ufo_u;             //  terminfo strings
+        u3_utfo          ufo_u;             //  escape sequences
         u3_utat          tat_u;             //  control state
         struct _u3_auto* car_u;             //  driver hack
       } u3_utty;
@@ -1114,7 +1106,7 @@
       /* u3_term_io_loja(): release console from cooked print.
       */
         void
-        u3_term_io_loja(int x);
+        u3_term_io_loja(int x, FILE* f);
 
       /* u3_term_log_init(): initialize terminal for logging
       */

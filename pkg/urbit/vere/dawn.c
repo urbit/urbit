@@ -71,7 +71,7 @@ _dawn_post_json(c3_c* url_c, uv_buf_t lod_u)
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
   if ( !(curl = curl_easy_init()) ) {
-    u3l_log("failed to initialize libcurl\n");
+    u3l_log("failed to initialize libcurl");
     exit(1);
   }
 
@@ -95,12 +95,12 @@ _dawn_post_json(c3_c* url_c, uv_buf_t lod_u)
 
   // XX retry?
   if ( CURLE_OK != result ) {
-    u3l_log("failed to fetch %s: %s\n",
+    u3l_log("failed to fetch %s: %s",
             url_c, curl_easy_strerror(result));
     exit(1);
   }
   if ( 300 <= cod_l ) {
-    u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
+    u3l_log("error fetching %s: HTTP %ld", url_c, cod_l);
     exit(1);
   }
 
@@ -122,7 +122,7 @@ _dawn_get_jam(c3_c* url_c)
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
   if ( !(curl = curl_easy_init()) ) {
-    u3l_log("failed to initialize libcurl\n");
+    u3l_log("failed to initialize libcurl");
     exit(1);
   }
 
@@ -138,12 +138,12 @@ _dawn_get_jam(c3_c* url_c)
 
   // XX retry?
   if ( CURLE_OK != result ) {
-    u3l_log("failed to fetch %s: %s\n",
+    u3l_log("failed to fetch %s: %s",
             url_c, curl_easy_strerror(result));
     exit(1);
   }
   if ( 300 <= cod_l ) {
-    u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
+    u3l_log("error fetching %s: HTTP %ld", url_c, cod_l);
     exit(1);
   }
 
@@ -207,7 +207,7 @@ _dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
     }
   }
 
-  u3l_log("boot: invalid keys for %s '%s'\r\n", rac_c, how_c);
+  u3l_log("boot: invalid keys for %s '%s'", rac_c, how_c);
 
   // XX deconstruct sas, print helpful error messages
   while ( u3_nul != sas ) {
@@ -226,7 +226,7 @@ static u3_noun
 _dawn_need_unit(u3_noun nit, c3_c* msg_c)
 {
   if ( u3_nul == nit ) {
-    u3l_log("%s\r\n", msg_c);
+    u3l_log("%s", msg_c);
     exit(1);
   }
   else {
@@ -245,7 +245,7 @@ _dawn_purl(u3_noun rac)
 
   if ( 0 == u3_Host.ops_u.eth_c ) {
     if ( c3__czar == rac ) {
-      u3l_log("boot: galaxy requires ethereum gateway via -e\r\n");
+      u3l_log("boot: galaxy requires ethereum gateway via -e");
       exit(1);
     }
 
@@ -260,7 +260,7 @@ _dawn_purl(u3_noun rac)
 
     if ( u3_nul == rul ) {
       if ( c3__czar == rac ) {
-        u3l_log("boot: galaxy requires ethereum gateway via -e\r\n");
+        u3l_log("boot: galaxy requires ethereum gateway via -e");
         exit(1);
       }
 
@@ -292,11 +292,11 @@ _dawn_turf(c3_c* dns_c)
   u3_noun rul = u3dc("rush", u3k(dns), u3k(par));
 
   if ( (u3_nul == rul) || (c3n == u3h(u3t(rul))) ) {
-    u3l_log("boot: invalid domain specified with -H %s\r\n", dns_c);
+    u3l_log("boot: invalid domain specified with -H %s", dns_c);
     exit(1);
   }
   else {
-    u3l_log("boot: overriding network domains with %s\r\n", dns_c);
+    u3l_log("boot: overriding network domains with %s", dns_c);
     u3_noun dom = u3t(u3t(rul));
     tuf = u3nc(u3k(dom), u3_nul);
   }
@@ -345,7 +345,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
   //  pin block number
   //
   {
-    u3l_log("boot: retrieving latest block\r\n");
+    u3l_log("boot: retrieving latest block");
 
     u3_noun oct = u3v_wish("bloq:give:dawn");
     u3_noun kob = _dawn_eth_rpc(url_c, u3k(oct));
@@ -369,7 +369,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
       pot = u3v_wish("*point:azimuth");
     }
     else {
-      u3l_log("boot: retrieving %s's public keys\r\n",
+      u3l_log("boot: retrieving %s's public keys",
               u3_Host.ops_u.who_c);
 
       {
@@ -388,7 +388,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     u3_noun liv = u3_nul;
     // u3_noun liv = _dawn_get_json(parent, /some/url)
 
-    u3l_log("boot: verifying keys\r\n");
+    u3l_log("boot: verifying keys");
 
     //  (each seed (lest error=@tas))
     //
@@ -400,7 +400,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
       return u3_none;
     }
 
-    u3l_log("boot: getting sponsor\r\n");
+    u3l_log("boot: getting sponsor");
     pos = _dawn_sponsor(u3k(ship), u3k(rank), u3k(pot));
     u3z(pot); u3z(liv);
   }
@@ -409,7 +409,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
   //  (map ship [=life =pass]): galaxy table
   //
   {
-    u3l_log("boot: retrieving galaxy table\r\n");
+    u3l_log("boot: retrieving galaxy table");
 
     u3_noun oct = u3do("czar:give:dawn", u3k(bok));
     u3_noun raz = _dawn_eth_rpc(url_c, u3k(oct));
@@ -425,7 +425,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     tuf = _dawn_turf(u3_Host.ops_u.dns_c);
   }
   else {
-    u3l_log("boot: retrieving network domains\r\n");
+    u3l_log("boot: retrieving network domains");
 
     u3_noun oct = u3do("turf:give:dawn", u3k(bok));
     u3_noun fut = _dawn_eth_rpc(url_c, u3k(oct));
@@ -443,7 +443,7 @@ u3_dawn_vent(u3_noun ship, u3_noun feed)
     {
       u3_noun who = u3dc("scot", 'p', u3k(pos));
       c3_c* who_c = u3r_string(who);
-      u3l_log("boot: retrieving keys for sponsor %s\r\n", who_c);
+      u3l_log("boot: retrieving keys for sponsor %s", who_c);
       u3z(who);
       c3_free(who_c);
     }
@@ -495,8 +495,8 @@ _dawn_come(u3_noun stars)
     c3_rand(eny_w);
     eny = u3i_words(16, eny_w);
 
-    u3l_log("boot: mining a comet. May take up to an hour.\r\n");
-    u3l_log("If you want to boot faster, get an Urbit identity.\r\n");
+    u3l_log("boot: mining a comet. May take up to an hour.");
+    u3l_log("If you want to boot faster, get an Urbit identity.");
 
     seed = u3dc("come:dawn", u3k(stars), u3k(eny));
     u3z(eny);
@@ -506,7 +506,7 @@ _dawn_come(u3_noun stars)
     u3_noun who = u3dc("scot", 'p', u3k(u3h(seed)));
     c3_c* who_c = u3r_string(who);
 
-    u3l_log("boot: found comet %s\r\n", who_c);
+    u3l_log("boot: found comet %s", who_c);
 
   //  enable to print and save comet private key for future reuse
   //
@@ -515,7 +515,7 @@ _dawn_come(u3_noun stars)
       u3_noun key = u3dc("scot", c3__uw, u3qe_jam(seed));
       c3_c* key_c = u3r_string(key);
 
-      u3l_log("boot: comet private key\n  %s\n", key_c);
+      u3l_log("boot: comet private key\n  %s", key_c);
 
       {
         c3_c  pat_c[64];
