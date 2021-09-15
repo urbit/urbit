@@ -664,10 +664,15 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
     else {
       if ( (cay_y >= 'a') && (cay_y <= 'z') ) {
         tat_u->esc.ape = c3n;
+        //  XX for backwards compatibility, check kelvin version
+        //  and fallback to [%met @c]
+        //
         _term_io_belt(uty_u, u3nt(c3__mod, c3__met, cay_y));
       }
       else if ( 8 == cay_y || 127 == cay_y ) {
         tat_u->esc.ape = c3n;
+        //  XX backwards compatibility [%met @c]
+        //
         _term_io_belt(uty_u, u3nq(c3__mod, c3__met, c3__bac, u3_nul));
       }
       else if ( ('[' == cay_y) || ('O' == cay_y) ) {
@@ -732,6 +737,8 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       _term_io_belt(uty_u, u3nc(c3__ret, u3_nul));
     }
     else if ( cay_y <= 26 ) {
+      //  XX backwards compatibility [%ctl @c]
+      //
       _term_io_belt(uty_u, u3nt(c3__mod, c3__ctl, ('a' + (cay_y - 1))));
     }
     else if ( 27 == cay_y ) {
