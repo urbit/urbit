@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Notification } from '@urbit/api';
-import { useLeapStore } from './Nav';
 import { Button } from '../components/Button';
 import { BasicNotification } from './notifications/BasicNotification';
 import {
@@ -35,7 +34,6 @@ const Empty = () => (
 );
 
 export const Notifications = () => {
-  const select = useLeapStore((s) => s.select);
   const { unreads, reads, hasAnyNotifications } = useNotifications();
   const markAllAsRead = () => {
     const { readAll } = useHarkStore.getState();
@@ -43,7 +41,6 @@ export const Notifications = () => {
   };
 
   useEffect(() => {
-    select('Notifications');
     const { getMore } = useHarkStore.getState();
     getMore();
   }, []);

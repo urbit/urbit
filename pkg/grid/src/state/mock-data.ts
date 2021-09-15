@@ -1,4 +1,4 @@
-import _ from 'lodash-es';
+import _ from 'lodash';
 import {
   Vat,
   Vats,
@@ -10,13 +10,16 @@ import {
   Notification,
   HarkContent,
   HarkBody,
-  unixToDa
+  unixToDa,
+  Contact,
+  Contacts
 } from '@urbit/api';
 import systemUrl from '../assets/system.png';
+import { BasicNotification } from './hark-types';
 
 export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' | 'version'> = {
   cass: {
-    da: 1629849472746,
+    da: '~2021.9.13..05.41.04..ae65',
     ud: 1
   },
   hash: '0v6.nj6ls.l7unh.l9bhk.d839n.n8nlq.m2dmc.fj80i.pvqun.uhg6g.1kk0h',
@@ -28,6 +31,15 @@ export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' |
 const makeHref = (base: string): DocketHrefGlob => ({ glob: { base } });
 
 export const mockTreaties: Treaties = {
+  '~zod/garden': {
+    ship: '~zod',
+    desk: 'garden',
+    title: 'Landscape',
+    info: 'Your Urbit Home',
+    href: makeHref('garden'),
+    color: '#E2C050',
+    ...appMetaData
+  },
   '~zod/groups': {
     ship: '~zod',
     desk: 'groups',
@@ -247,9 +259,60 @@ export const mockNotifications: Notification[] = [
   createMockNotification('groups', [createGroupNotif('a Group: Tlon Corporation')])
 ];
 
+const contact: Contact = {
+  nickname: '',
+  bio: '',
+  status: '',
+  color: '#000000',
+  avatar: null,
+  cover: null,
+  groups: [],
+  'last-updated': 0
+};
+
+export const mockContacts: Contacts = {
+  '~zod': {
+    ...contact,
+    nickname: 'Tlon Corporation'
+  },
+  '~nocsyx-lassul': {
+    ...contact,
+    status: 'technomancing an electron wrapper for urbit',
+    color: '#4c00ff'
+  },
+  '~nachus-hollyn': {
+    ...contact,
+    avatar: 'https://i.pinimg.com/originals/20/62/59/2062590a440f717a2ae1065ad8e8a4c7.gif'
+  },
+  '~nalbel_litzod': {
+    ...contact,
+    nickname: 'Queen'
+  },
+  '~litmus^ritten': {
+    ...contact
+  },
+  '~nalput_litzod': {
+    ...contact
+  },
+  '~nalrex_bannus': {
+    ...contact,
+    status: 'Script, command and inspect your Urbit. Use TUI applications'
+  },
+  '~nalrys': {
+    ...contact,
+    status: 'hosting coming soon'
+  }
+};
+
+export const mockNotification: BasicNotification = {
+  type: 'basic',
+  time: '',
+  message: 'test'
+};
+
 export const mockVat = (desk: string, blockers?: boolean): Vat => ({
   cass: {
-    da: 1629849472746,
+    da: '~2021.9.13..05.41.04..ae65',
     ud: 1
   },
   desk,
@@ -261,7 +324,7 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
     aeon: 3,
     desk,
     next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
-    ship: '~dopzod'
+    ship: '~zod'
   },
   hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
 });

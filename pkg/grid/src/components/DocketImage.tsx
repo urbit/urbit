@@ -1,29 +1,31 @@
 import React from 'react';
 import { Docket } from '@urbit/api/docket';
 import cn from 'classnames';
+import { useTileColor } from '../tiles/useTileColor';
+
+type DocketImageSizes = 'xs' | 'small' | 'default' | 'full';
 
 interface DocketImageProps extends Pick<Docket, 'color' | 'image'> {
   className?: string;
-  sizing?: 'small' | 'full';
+  size?: DocketImageSizes;
 }
 
-export function DocketImage({ color, image, className = '', sizing = 'full' }: DocketImageProps) {
-  const sizingClass =
-    sizing === 'full'
-      ? 'w-full h-full md:w-full md:h-full rounded-md'
-      : 'w-12 h-12 md:w-20 md:h-20 rounded-xl';
+const sizeMap: Record<DocketImageSizes, string> = {
+  xs: 'w-6 h-6 mr-2 rounded',
+  small: 'w-8 h-8 mr-3 rounded-md',
+  default: 'w-12 h-12 mr-3 rounded-lg',
+  full: 'w-20 h-20 md:w-32 md:h-32 rounded-2xl'
+};
 
+export function DocketImage({ color, image, className = '', size = 'full' }: DocketImageProps) {
+  const { tileColor } = useTileColor(color);
   return (
     <div
-      className={cn(sizingClass, `flex-none relative bg-gray-200`, className)}
-      style={{ backgroundColor: color }}
+      className={cn('flex-none relative bg-gray-200 overflow-hidden', sizeMap[size], className)}
+      style={{ backgroundColor: tileColor }}
     >
       {image && (
-        <img
-          className="absolute top-1/2 left-1/2 h-[40%] w-[40%] object-contain transform -translate-x-1/2 -translate-y-1/2"
-          src={image}
-          alt=""
-        />
+        <img className="absolute top-0 left-0 h-full w-full object-contain" src={image} alt="" />
       )}
     </div>
   );

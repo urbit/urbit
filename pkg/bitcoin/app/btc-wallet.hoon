@@ -73,8 +73,8 @@
 ^-  (quip card _this)
   ~&  >  '%btc-wallet initialized'
   ::
-  =/  warning=event:settings   [%put-entry %btc-wallet %warning %b %.y]
-  =/  currency=event:settings  [%put-entry %btc-wallet %currency %s 'USD']
+  =/  warning=event:settings   [%put-entry q.byk.bowl %btc-wallet %warning %b %.y]
+  =/  currency=event:settings  [%put-entry q.byk.bowl %btc-wallet %currency %s 'USD']
   =/  cards=(list card)
     :~  (poke-our:hc %settings-store %settings-event !>(warning))
         (poke-our:hc %settings-store %settings-event !>(currency))

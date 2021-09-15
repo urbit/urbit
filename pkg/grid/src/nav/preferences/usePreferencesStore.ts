@@ -4,6 +4,8 @@ import { fakeRequest } from '../../state/util';
 const useMockData = import.meta.env.MODE === 'mock';
 
 interface PreferencesStore {
+  theme: 'light' | 'dark' | 'automatic';
+  currentTheme: 'light' | 'dark';
   otasEnabled: boolean;
   otaSource: string;
   doNotDisturb: boolean;
@@ -15,6 +17,8 @@ interface PreferencesStore {
 }
 
 export const usePreferencesStore = create<PreferencesStore>((set) => ({
+  theme: 'automatic',
+  currentTheme: 'light',
   otasEnabled: true,
   otaSource: useMockData ? '~sabbus' : '',
   doNotDisturb: false,

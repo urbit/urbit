@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 import { Notification, harkBinToId, HarkContent } from '@urbit/api';
-import { map, take } from 'lodash-es';
+import { map, take } from 'lodash';
 import { useCharge } from '../../state/docket';
 import { Elbow } from '../../components/icons/Elbow';
 import { ShipName } from '../../components/ShipName';

@@ -1,21 +1,23 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Setting } from '../../components/Setting';
-import { useLeapStore } from '../Nav';
+import { useSettingsState, SettingsState } from '../../state/settings';
 import { usePreferencesStore } from './usePreferencesStore';
 
-export const NotificationPrefs = () => {
-  const select = useLeapStore((s) => s.select);
-  const { doNotDisturb, mentions, toggleDoNotDisturb, toggleMentions } = usePreferencesStore();
+const selDnd = (s: SettingsState) => s.display.doNotDisturb;
+async function toggleDnd() {
+  const state = useSettingsState.getState();
+  await state.putEntry('display', 'doNotDisturb', !selDnd(state));
+}
 
-  useEffect(() => {
-    select('System Preferences: Notifications');
-  }, []);
+export const NotificationPrefs = () => {
+  const { mentions, toggleMentions } = usePreferencesStore();
+  const doNotDisturb = useSettingsState(selDnd);
 
   return (
     <>
       <h2 className="h3 mb-7">Notifications</h2>
       <div className="space-y-3">
-        <Setting on={doNotDisturb} toggle={toggleDoNotDisturb} name="Do Not Disturb">
+        <Setting on={doNotDisturb} toggle={toggleDnd} name="Do Not Disturb">
           <p>
             Block visual desktop notifications whenever Urbit software produces an in-Landscape
             notification badge.

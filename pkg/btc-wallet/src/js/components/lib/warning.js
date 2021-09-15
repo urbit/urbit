@@ -24,6 +24,7 @@ export default class Warning extends Component {
     store.handleEvent({ data: { bucket: { warning: false}}});
     let removeWarning = {
       "put-entry": {
+        desk: window.desk,
         value: false,
         "entry-key": "warning",
         "bucket-key": "btc-wallet",

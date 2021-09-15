@@ -1,6 +1,6 @@
-import { pick } from 'lodash-es';
+import { pick } from 'lodash';
 import React, { useCallback } from 'react';
-import { kilnSuspend } from '@urbit/api';
+import { kilnBump } from '@urbit/api/hood';
 import { AppList } from '../../components/AppList';
 import { Button } from '../../components/Button';
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../components/Dialog';
@@ -44,9 +44,8 @@ export const BaseBlockedNotification = () => {
   const handlePauseOTAs = useCallback(() => {}, []);
 
   const handleArchiveApps = useCallback(async () => {
-    await Promise.all(desks.map((d) => api.poke(kilnSuspend(d))));
-    // TODO: retrigger OTA?
-  }, [desks]);
+    api.poke(kilnBump(true));
+  }, []);
 
   return (
     <section
@@ -55,7 +54,7 @@ export const BaseBlockedNotification = () => {
     >
       <header id="system-updates-blocked" className="relative -left-8 space-y-2">
         <div className="flex space-x-2">
-          <span className="inline-block w-6 h-6 bg-orange-500 rounded-full" />
+          <span className="inline-block w-6 h-6 bg-orange-400 rounded-full" />
           <span className="font-medium">Landscape</span>
         </div>
         <div className="flex space-x-2">

@@ -113,12 +113,12 @@ export interface Cass {
    */
   ud: number;
   /**
-   * Timestamp of revision, as unix timestamp
+   * Timestamp of revision, as stringifed `@da`
    *
    * @remarks
    * If \@da is outside valid positive unix timestamp, value will be zero
    */
-  da: number;
+  da: string;
 }
 
 /**
@@ -138,6 +138,10 @@ export interface Vat {
    * .^(@uv %cz /=desk=)
    * ```
    */
+  /**
+   * True if desk is no longer syncing from upstream
+   */
+  paused: boolean;
   hash: string;
   /**
    * Current revision

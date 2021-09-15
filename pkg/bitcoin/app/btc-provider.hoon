@@ -342,6 +342,7 @@
 ::  helper core
 ~%  %btc-provider-helper  ..card  ~
 |_  =bowl:gall
++*  grp  ~(. groupl bowl)
 ++  send-status
   |=  [=status ship=(unit ship)]
   ^-  card
@@ -379,9 +380,10 @@
   ::
   ++  in-group
     =/  gs  ~(tap in groups.whitelist)
+    ?.  is-running:grp  %.n
     |-
     ?~  gs  %.n
-    ?:  (~(is-member groupl bowl) user i.gs)
+    ?:  (is-member:grp user i.gs)
       %.y
     $(gs t.gs)
   --

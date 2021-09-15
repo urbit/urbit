@@ -27,7 +27,7 @@ export const AppList = <T extends DocketWithDesk>({
   labelledBy,
   matchAgainst,
   onClick,
-  listClass = 'space-y-8',
+  listClass,
   size = 'default',
   ...props
 }: AppListProps<T>) => {
@@ -37,9 +37,9 @@ export const AppList = <T extends DocketWithDesk>({
   return (
     <ul
       className={classNames(
-        size === 'default' && 'space-y-8',
-        size === 'small' && 'space-y-4',
-        size === 'xs' && 'space-y-2',
+        size === 'default' && 'space-y-4',
+        size !== 'xs' && '-mx-2',
+        size === 'xs' && '-mx-1',
         listClass
       )}
       aria-labelledby={labelledBy}

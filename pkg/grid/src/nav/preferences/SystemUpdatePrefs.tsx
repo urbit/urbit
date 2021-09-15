@@ -4,19 +4,13 @@ import { Setting } from '../../components/Setting';
 import { ShipName } from '../../components/ShipName';
 import { Spinner } from '../../components/Spinner';
 import { useAsyncCall } from '../../logic/useAsyncCall';
-import { useLeapStore } from '../Nav';
 import { usePreferencesStore } from './usePreferencesStore';
 
 export const SystemUpdatePrefs = () => {
-  const select = useLeapStore((s) => s.select);
   const { otasEnabled, otaSource, toggleOTAs, setOTASource } = usePreferencesStore();
   const [source, setSource] = useState(otaSource);
   const sourceDirty = source !== otaSource;
   const { status: sourceStatus, call: setOTA } = useAsyncCall(setOTASource);
-
-  useEffect(() => {
-    select('System Preferences: Updates');
-  }, []);
 
   useEffect(() => {
     setSource(otaSource);

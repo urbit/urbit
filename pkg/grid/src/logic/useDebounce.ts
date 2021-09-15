@@ -1,4 +1,4 @@
-import { debounce, DebounceSettings } from 'lodash-es';
+import { debounce, DebounceSettings } from 'lodash';
 import { useRef, useEffect, useCallback } from 'react';
 import { useIsMounted } from './useIsMounted';
 

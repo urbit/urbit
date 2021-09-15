@@ -1,5 +1,5 @@
 /-  *docket, hood, treaty
-/+  *server, agentio, default-agent, dbug, verb
+/+  *server, agentio, default-agent, multipart, dbug, verb
 |%
 +$  card  card:agent:gall
 +$  state-0
@@ -51,11 +51,11 @@
   ^-  (quip card _this)
   =+  !<(old=state-0 vase)
   =*  cha  ~(. ch q.byk.bowl)
-  |^  
+  |^
   =.  -.state  old
   =.  +.state  inflate-cache
   `this
-  ::  
+  ::
   ++  inflate-cache
     ^-  cache
     %-  ~(gas by *(map term desk))
@@ -69,7 +69,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  |^  
+  |^
   =^  cards  state
     ?+  mark  (on-poke:def:cc mark vase)
       %docket-install    (install !<([ship desk] vase))
@@ -81,9 +81,7 @@
     ::
         %handle-http-request
       =+  !<([id=@ta req=inbound-request:eyre] vase)
-      :_  state
-      %+  give-simple-payload:app  id
-      (handle-http-request:cc req)
+      (handle-http-request:cc id req)
     ==
   [cards this]
   ::
@@ -91,7 +89,9 @@
     |=  [=ship =desk]
     ^-  (quip card _state)
     =+  .^(=treaty:treaty %gx (scry:io %treaty /treaty/(scot %p ship)/[desk]/noun))
-    ?<  ~|(%bad-install-desk (~(has by charges) desk)) 
+    ?:  (~(has by charges) desk)
+      ~|  bad-install-desk/desk
+      !!
     =.  charges
       (~(put by charges) desk docket.treaty %install ~)
     =*  cha   ~(. ch desk)
@@ -101,8 +101,7 @@
   ++  uninstall
     |=  =desk
     ^-  (quip card _state)
-    ~|  %no-charge-install
-    =/  =charge  (~(got by charges) desk)
+    =/  =charge  ~|(no-charge-installed+desk (~(got by charges) desk))
     =.  charges  (~(del by charges) desk)
     =?  by-base  ?=(%glob -.href.docket.charge)
       (~(del by by-base) base.href.docket)
@@ -116,13 +115,22 @@
   ^-  (quip card _this)
   =^  cards  state
     ?+  path  (on-watch:def path)
-        [%http-response *]  
+        [%http-response *]
       ?>  (team:title [our src]:bowl)
       `state
     ::
         [%charges ~]
       ?>  (team:title [our src]:bowl)
       `state
+    ::
+        [%glob @ ~]
+      =/  desk     ~|(path/path (~(got by by-base) i.t.path))
+      =/  =charge  ~|(desk/desk (~(got by charges) desk))
+      ?>  ?=(%glob -.chad.charge)
+      :_  state
+      :~  [%give %fact ~[path] %glob !>(`glob`glob.chad.charge)]
+          [%give %kick ~[path] ~]
+      ==
     ==
   [cards this]
 ::
@@ -217,12 +225,12 @@
     ::
         [%install ~]
       ?>  ?=(%poke-ack -.sign)
-      ?~  p.sign  
+      ?~  p.sign
         `state
       =.  charges   (new-chad:cha hung+'Failed install')
       ((slog leaf+"Failed installing %{(trip desk)}" u.p.sign) `state)
     ::
-        [%uninstall ~] 
+        [%uninstall ~]
       ?>  ?=(%poke-ack -.sign)
       ?~  p.sign  `state
       ((slog leaf+"Failed to uninstall %{(trip desk)}" u.p.sign) `state)
@@ -262,14 +270,14 @@
   |=  [=wire sign=sign-arvo]
   =^  cards  state
     ?+  wire  (on-arvo:def wire sign)
-        [%init ~]  
+        [%init ~]
       =*  cha  ~(. ch q.byk.bowl)
       =.  charges  (~(put by charges) q.byk.bowl [docket:cha %install ~])
       [fetch-glob:cha state]
     ::
         [%eyre ~]
       ?>  ?=([%eyre %bound *] sign)
-      ?:  accepted.sign   `state 
+      ?:  accepted.sign   `state
       ~&  [dap.bowl %failed-to-bind path.binding.sign]
       `state
     ==
@@ -283,50 +291,181 @@
 ++  pass  pass:io
 ++  def  ~(. (default-agent state %|) bowl)
 ::
-++  inline-js-response
-  |=  js=cord
-  ^-  simple-payload:http
-  %.  (as-octs:mimes:html js)
-  %*  .  js-response:gen
-    cache  %.n
-  ==
-::
 ++  handle-http-request
-  |=  =inbound-request:eyre
-  ^-  simple-payload:http
-  %+  require-authorization-simple:app  inbound-request
-  =*  req       request.inbound-request
-  =*  headers   header-list.req
-  =/  req-line  (parse-request-line url.req)
-  ?.  =(method.req %'GET')  not-found:gen
-  ?:  &(=(ext.req-line `%js) ?=([%session ~] site.req-line))
-    %-  inline-js-response 
-    (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~)
-  ?.  ?=([%apps @ *] site.req-line)
-    (redirect:gen '/apps/grid/')
-  =/  des=(unit desk)
-    (~(get by by-base) i.t.site.req-line)
-  ?~  des  not-found:gen
-  =/  cha=(unit charge) 
-    (~(get by charges) u.des)
-  ?~  cha  not-found:gen
-  ?.  ?=(%glob -.chad.u.cha)  not-found:gen
-  =*  glob  glob.chad.u.cha
-  =/  suffix=^path
-    (weld (slag 2 `^path`site.req-line) (drop ext.req-line))
-  ?:  =(suffix /desk/js) 
-    %-  inline-js-response
-    (rap 3 'window.desk = "' u.des '";' ~)
-
-  =/  data=mime
-    (~(gut by glob) suffix (~(got by glob) /index/html))
-  =/  mime-type=@t  (rsh 3 (crip <p.data>))
-  =/  headers
-    :~  content-type+mime-type 
-        max-1-wk:gen 
+  |=  [eyre-id=@ta inbound-request:eyre]
+  ^-  (quip card _state)
+  ::
+  =;  [payload=simple-payload:http caz=(list card) =_state]
+    :_  state
+    %+  weld  caz
+    (give-simple-payload:app eyre-id payload)
+  ::
+  ::NOTE  we don't use +require-authorization-simple here because we want
+  ::      to short-circuit all the below logic for the unauthenticated case.
+  ?.  authenticated
+    :_  [~ state]
+    =-  [[307 ['location' -]~] ~]
+    (cat 3 '/~/login?redirect=' url.request)
+  ::
+  =*  headers   header-list.request
+  =/  req-line  (parse-request-line url.request)
+  ::
+  |^  ?+  method.request  [[405^~ ~] ~ state]
+        %'GET'   [handle-get-request ~ state]
+        %'POST'  handle-upload
+      ==
+  ::
+  ++  handle-get-request
+    ^-  simple-payload:http
+    ?+  [site ext]:req-line  (redirect:gen '/apps/grid/')
+        [[%session ~] [~ %js]]
+      %-  inline-js-response
+      (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~)
+    ::
+        [[%docket %upload ~] ?(~ [~ %html])]
+      [[200 ~] `(upload-page ~)]
+    ::
+        [[%apps @ *] *]
+      %+  payload-from-glob
+        (snag 1 site.req-line)
+      req-line(site (slag 2 site.req-line))
+    ==
+  ::
+  ++  upload-page
+    |=  msg=(list @t)
+    ^-  octs
+    %-  as-octt:mimes:html
+    %-  en-xml:html
+    ^-  manx
+    ;html
+      ;head
+        ;title:"%docket globulator"
+        ;meta(charset "utf-8");
+        ;style:'* { font-family: monospace; margin-top: 1em; }'
+      ==
+      ;body
+        ;h2:"%docket globulator"
+        ;+  ?.  =(~ msg)
+              :-  [%p ~]
+              (join `manx`;br; (turn msg |=(m=@t `manx`:/"{(trip m)}")))
+            ;p:"ur on ur own kid, glhf"  ::TODO  instructions
+        ;form(method "post", enctype "multipart/form-data")
+          ::TODO  could be dropdown
+          ;input(type "text", name "desk", placeholder "desk");
+          ;br;
+          ;input
+            =type             "file"
+            =name             "glob"
+            =directory        ""
+            =webkitdirectory  ""
+            =mozdirectory     "";
+          ;br;
+          ;button(type "submit"):"Glob!"
+        ==
+      ==
+    ==
+  ::
+  ++  handle-upload
+    ^-  [simple-payload:http (list card) _state]
+    ?.  ?=([[%docket %upload ~] ?(~ [~ %html])] [site ext]:req-line)
+      [[404^~ ~] [~ state]]
+    ::
+    =;  [desk=@ta =glob err=(list @t)]
+      =*  cha      ~(. ch desk)
+      =/  =charge  (~(got by charges) desk)
+      ::
+      =?  err  =(~ glob)
+        ['no files for glob' err]
+      =?  err  ?=(%glob -.href.docket.charge)
+        ['desk does not use glob' err]
+      ::
+      ?.  =(~ err)
+        :_  [~ state]
+        [[400 ~] `(upload-page err)]
+      :-  [[200 ~] `(upload-page 'successfully globbed' ~)]
+      ::
+      =.  charges  (new-chad:cha glob+glob)
+      =.  by-base
+        =-  (~(put by by-base) - desk)
+        ?>  ?=(%glob -.href.docket.charge)
+        base.href.docket.charge
+      [~[add-fact:cha] state]
+    ::
+    ?~  parts=(de-request:multipart [header-list body]:request)
+      ~&  headers=header-list.request
+      [*@ta *glob 'failed to parse submitted data' ~]
+    ::
+    %+  roll  u.parts
+    |=  [[name=@t part:multipart] desk=@ta =glob err=(list @t)]
+    ^+  [desk glob err]
+    ?:  =('desk' name)
+      ::  must be a desk with existing charge
+      ::
+      ?.  ((sane %ta) body)
+        [desk glob (cat 3 'invalid desk: ' body) err]
+      ?.  (~(has by charges) body)
+        [desk glob (cat 3 'unknown desk: ' body) err]
+      [body glob err]
+    :-  desk
+    ::  all submitted files must be complete
+    ::
+    ?.  =('glob' name)  [glob (cat 3 'weird part: ' name) err]
+    ?~  file            [glob 'file without filename' err]
+    ?~  type            [glob (cat 3 'file without type: ' u.file) err]
+    ?^  code            [glob (cat 3 'strange encoding: ' u.code) err]
+    =/  filp            (rush u.file fip)
+    ?~  filp            [glob (cat 3 'strange filename: ' u.file) err]
+    ::  ignore metadata files and other "junk"
+    ::TODO  consider expanding coverage
+    ::
+    ?:  =('.DS_Store' (rear `path`u.filp))
+      [glob err]
+    ::  make sure to exclude the top-level dir from the path
+    ::
+    :_  err
+    %+  ~(put by glob)  (slag 1 `path`u.filp)
+    [u.type (as-octs:mimes:html body)]
+  ::
+  ++  fip
+    =,  de-purl:html
+    %+  cook
+      |=(pork (weld q (drop p)))
+    (cook deft (more fas smeg))
+  ::
+  ++  inline-js-response
+    |=  js=cord
+    ^-  simple-payload:http
+    %.  (as-octs:mimes:html js)
+    %*  .  js-response:gen
+      cache  %.n
+    ==
+  ::
+  ++  payload-from-glob
+    |=  [from=@ta what=request-line]
+    ^-  simple-payload:http
+    =/  des=(unit desk)
+      (~(get by by-base) from)
+    ?~  des  not-found:gen
+    =/  cha=(unit charge)
+      (~(get by charges) u.des)
+    ?~  cha  not-found:gen
+    ?.  ?=(%glob -.chad.u.cha)  not-found:gen
+    =*  glob  glob.chad.u.cha
+    =/  suffix=^path
+      (weld site.what (drop ext.what))
+    ?:  =(suffix /desk/js)
+      %-  inline-js-response
+      (rap 3 'window.desk = "' u.des '";' ~)
+    =/  data=mime
+      (~(gut by glob) suffix (~(got by glob) /index/html))
+    =/  mime-type=@t  (rsh 3 (crip <p.data>))
+    =;  headers
+      [[200 headers] `q.data]
+    :~  content-type+mime-type
+        max-1-wk:gen
         'service-worker-allowed'^'/'
     ==
-  [[200 headers] `q.data]
+  --
 ::
 ++  get-light-charge
   |=  =charge
@@ -347,12 +486,14 @@
     (poke-our:(pass %uninstall) %hood kiln-uninstall+!>(desk))
   ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
   ++  fetch-glob
-    =/  =charge  (~(got by charges) desk)
+    =/  =charge
+      ~|  desk/desk
+      (~(got by charges) desk)
     =/  tid=@t  (cat 3 'docket-' (scot %uv (sham (mix eny.bowl desk))))
     ?>  ?=(%glob -.href.docket.charge)
-    ?>  ?=(%http -.glob-location.href.docket.charge)
-    =*  url  url.glob-location.href.docket.charge
-    =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`url)])
+    =*  loc  glob-location.href.docket.charge
+    ~>  %slog.0^leaf/"docket: fetching glob for {<desk>} desk"
+    =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[loc desk])])
     :~  (watch-our:(pass %glob) %spider /thread-result/[tid])
         (poke-our:(pass %glob) %spider cage)
     ==

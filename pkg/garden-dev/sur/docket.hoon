@@ -10,6 +10,7 @@
 ::
 +$  glob-location
   $%  [%http =url]
+      [%ames =ship]
   ==
 ::  $href: Where a tile links to
 ::
@@ -45,7 +46,8 @@
   $%  [%title title=@t]
       [%info info=@t]
       [%color color=@ux]
-      [%glob url=cord]
+      [%glob-http url=cord]
+      [%glob-ames =ship]
       [%image =url]
       [%site =path]
       [%base base=term]

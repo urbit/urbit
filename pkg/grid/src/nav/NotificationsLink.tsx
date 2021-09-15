@@ -4,6 +4,7 @@ import { Notification } from '@urbit/api';
 import { Link, LinkProps } from 'react-router-dom';
 import { Bullet } from '../components/icons/Bullet';
 import { useNotifications } from '../state/notifications';
+import { MenuState } from './Nav';
 
 type NotificationsState = 'empty' | 'unread' | 'attention-needed';
 
@@ -12,7 +13,6 @@ function getNotificationsState(notifications: Notification[]): NotificationsStat
     return 'attention-needed';
   }
 
-  // TODO: when real structure, this should be actually be unread not just existence
   if (notifications.length > 0) {
     return 'unread';
   }
@@ -21,10 +21,11 @@ function getNotificationsState(notifications: Notification[]): NotificationsStat
 }
 
 type NotificationsLinkProps = Omit<LinkProps<HTMLAnchorElement>, 'to'> & {
-  isOpen: boolean;
+  menu: MenuState;
+  navOpen: boolean;
 };
 
-export const NotificationsLink = ({ isOpen }: NotificationsLinkProps) => {
+export const NotificationsLink = ({ navOpen, menu }: NotificationsLinkProps) => {
   const { unreads } = useNotifications();
   const state = getNotificationsState(unreads);
 
@@ -32,12 +33,13 @@ export const NotificationsLink = ({ isOpen }: NotificationsLinkProps) => {
     <Link
       to="/leap/notifications"
       className={classNames(
-        'relative z-50 flex-none circle-button h4',
-        isOpen && 'text-opacity-60',
-        state === 'empty' && !isOpen && 'text-gray-400 bg-gray-100',
-        state === 'empty' && isOpen && 'text-gray-400 bg-white',
+        'relative z-50 flex-none circle-button h4 default-ring',
+        navOpen && 'text-opacity-60',
+        navOpen && menu !== 'notifications' && 'opacity-60',
+        state === 'empty' && !navOpen && 'text-gray-400 bg-gray-50',
+        state === 'empty' && navOpen && 'text-gray-400 bg-white',
         state === 'unread' && 'bg-blue-400 text-white',
-        state === 'attention-needed' && 'text-white bg-orange-500'
+        state === 'attention-needed' && 'text-white bg-orange-400'
       )}
     >
       {state === 'empty' && <Bullet className="w-6 h-6" />}
