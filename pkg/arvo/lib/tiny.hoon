@@ -220,11 +220,6 @@
   |=  [a=bloq [b=step c=step] d=@]
   (end [a c] (rsh [a b] d))
 ::
-++  dad                                                 ::  concatenate fixed
-  ~/  %dad
-  |=  [=bite a=@ b=@]
-  (add a (lsh bite b))
-::
 ++  can                                                 ::  assemble
   ~/  %can
   |=  [a=bloq b=(list [p=step q=@])]
