@@ -223,13 +223,8 @@
   =^  sig  pos  (take 3 65)
   =/  res=(unit [=tx pos=@ud])  parse-tx
   ?~  res  ~
-  =/  [len=@ rem=@]
-    :: XX (dvr (sub pos.u.res pos) 8)
-    =/  dif  (sub pos.u.res pos)
-    [(div dif 8) (mod dif 8)]
-  ?.  =(0 rem)
-    ::  XX parse fail, produce ~ ?
-    !!
+  =/  [len=@ rem=@]  (dvr (sub pos.u.res pos) 8)
+  ?>  =(0 rem)
   :-  ~  :_  pos.u.res
   [sig [len (cut 0 [pos pos.u.res] batch)] tx.u.res]
   ::
@@ -387,10 +382,12 @@
 ::
 ++  ud-to-ascii
   |=  n=@ud
-  ^-  @t
-  ?~  n
-    *@t
-  (cat 3 $(n (div n 10)) (add '0' (mod n 10)))
+  ?~  n  '0'
+  =|  l=(list @)
+  |-  ^-  @t
+  ?~  n  (rep 3 l)
+  =+  (dvr n 10)
+  $(n p, l [(add '0' q) l])
 ::
 ++  ship-rank
   |=  =ship
