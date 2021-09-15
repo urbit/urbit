@@ -221,10 +221,10 @@
   =^  sig  pos  (take 3 65)
   =/  res=(unit [=tx pos=@ud])  parse-tx
   ?~  res  ~
-  =/  [len=@ rem=@]  (dvr (sub pos.u.res pos) 8)
-  ?>  =(0 rem)
+  =/  dif  (sub pos.u.res pos)
+  =/  len  =>((dvr dif 8) ?>(=(0 q) p))
   :-  ~  :_  pos.u.res
-  [sig [len (cut 0 [pos pos.u.res] batch)] tx.u.res]
+  [sig [len (cut 0 [pos dif] batch)] tx.u.res]
   ::
   ++  parse-tx
     ^-  (unit [tx pos=@ud])
