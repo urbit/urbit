@@ -26,6 +26,7 @@ static const c3_c URB_SOCK_PATH[] = ".urb/khan.sock";
 static void
 _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
 {
+  u3l_log("khan: recv sess\n");
   // TODO interact
   //
   // There are four cases to think about here:
@@ -67,6 +68,15 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   // socket, keeping one in text mode, and sending a 0x80 over the other.
 }
 
+/* _khan_close_cb(): socket close callback.
+*/
+static void
+_khan_close_cb(uv_handle_t* had_u)
+{
+  // TODO remove
+  u3l_log("khan: socket closed\n");
+}
+
 /* _khan_born_news(): initialization complete, open socket.
 */
 static void
@@ -84,27 +94,54 @@ _khan_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
     // Hopefully there aren't any threads.
     {
       c3_c pax_c[2048];
+      c3_i err_i;
 
-      // XX needs better error handling
       if ( NULL == getcwd(pax_c, sizeof(pax_c)) ) {
-        c3_assert(!"khan-getcwd");
+        u3l_log("khan: getcwd: %s\n", uv_strerror(errno));
+        u3_king_bail();
       }
       else {
         if ( 0 != chdir(u3_Host.dir_c) ) {
-          c3_assert(!"khan-chdir");
+          u3l_log("khan: chdir: %s\n", uv_strerror(errno));
+          u3_king_bail();
         }
         else {
-          // TODO handle errors
-          unlink(URB_SOCK_PATH);
-          uv_pipe_init(u3L, &cop_u->pyp_u, 0);
-          uv_pipe_bind(&cop_u->pyp_u, URB_SOCK_PATH);
-          uv_listen((uv_stream_t*)&cop_u->pyp_u, 0, _khan_conn_cb);
-
+          if ( 0 != unlink(URB_SOCK_PATH) && errno != ENOENT ) {
+            u3l_log("khan: unlink: %s\n", uv_strerror(errno));
+            goto _khan_err_chdir;
+          }
+          if ( 0 != (err_i = uv_pipe_init(u3L, &cop_u->pyp_u, 0)) ) {
+            u3l_log("khan: uv_pipe_init: %s\n", uv_strerror(err_i));
+            goto _khan_err_chdir;
+          }
+          if ( 0 != (err_i = uv_pipe_bind(&cop_u->pyp_u, URB_SOCK_PATH)) ) {
+            u3l_log("khan: uv_pipe_bind: %s\n", uv_strerror(err_i));
+            goto _khan_err_chdir;
+          }
+          if ( 0 != (err_i = uv_listen((uv_stream_t*)&cop_u->pyp_u, 0,
+                                       _khan_conn_cb)) ) {
+            u3l_log("khan: uv_listen: %s\n", uv_strerror(err_i));
+            goto _khan_err_unlink;
+          }
           if ( 0 != chdir(pax_c) ) {
-            c3_assert(!"khan-back");
+            u3l_log("khan: chdir: %s\n", uv_strerror(errno));
+            goto _khan_err_close;
           }
         }
       }
+      return;
+_khan_err_close:
+      uv_close((uv_handle_t*)&cop_u->pyp_u, _khan_close_cb);
+_khan_err_unlink:
+      if ( 0 != unlink(URB_SOCK_PATH) ) {
+        u3l_log("khan: unlink: %s\n", uv_strerror(errno));
+      }
+_khan_err_chdir:
+      if ( 0 != chdir(pax_c) ) {
+        u3l_log("khan: chdir: %s\n", uv_strerror(errno));
+      }
+
+      u3_king_bail();
     }
   }
 }
