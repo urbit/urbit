@@ -366,6 +366,8 @@
       =/  =aeon  (dec aeon.rail.rak)
       %+  clay-card  %merge-kids
       [%merg %kids ship.rail.rak desk.rail.rak ud+aeon germ]
+    ++  listen
+      (clay-card %listen %warp our loc `[%next %z da+now /])
     ++  clay-card
       |=  [step=@tas =task:clay]
       ^-  card:agent:gall
@@ -419,7 +421,7 @@
         rak  [[paused=| her rem *aeon] next=~ rein:(fall got *arak)]
       ==
     ~>  %slog.0^leaf/"kiln: beginning install into {here}"
-    (emit find:pass)
+    (emit listen:pass find:pass)
   ::  +reset: resync after failure
   ::
   ++  reset
@@ -582,6 +584,7 @@
       %find        (take-find syn)
       %sync        (take-sync syn)
       %download    (take-download syn)
+      %listen      (take-listen syn)
       %merge-main  (take-merge-main syn)
       %merge-kids  (take-merge-kids syn)
     ==
@@ -688,6 +691,24 @@
       (emil ~[merge-main sync-ud]:pass)
     --
   ::
+  ++  take-listen
+    |=  syn=sign-arvo
+    ^+  vats
+    ?>  ?=([@ %writ ~ *] syn)
+    =.  vats  (emit listen:pass)
+    take-commit
+  ::
+  ++  take-commit
+    ^+  vats
+    ~>  %slog.0^leaf/"kiln: commit detected at {here}"
+    =.  vats  (emit (diff:give %commit loc rak))
+    =?  vats  liv.rein.rak
+      (update-running-apps (get-apps-diff our loc now rein.rak))
+    ?.  =(%base loc)
+      vats
+    ~>  %slog.0^leaf/"kiln: merging %base into %kids at {<[- +]:weft:(head next.rak)>}"
+    (emit merge-kids:pass)
+  ::
   ++  take-merge-main
     |=  syn=sign-arvo
     ^+  vats
@@ -702,14 +723,7 @@
       %-  (slog leaf/- p.p.syn)
       =.  vats  (emit (diff:give %merge-fail loc rak p.p.syn))
       vats
-    ~>  %slog.0^leaf/"kiln: merge into {here} succeeded"
-    =.  vats  (emit (diff:give %merge loc rak))
-    =?  vats  liv.rein.rak
-      (update-running-apps (get-apps-diff our loc now rein.rak))
-    ?.  =(%base loc)
-      vats
-    ~>  %slog.0^leaf/"kiln: bumping {<zuse>}"  ::  TODO print next
-    (emit merge-kids:pass)
+    take-commit
   ::
   ++  take-merge-kids
     |=  syn=sign-arvo

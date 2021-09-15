@@ -7,7 +7,7 @@
 +$  diff
   $%  [%block =desk =arak =weft blockers=(set desk)]
       [%reset =desk =arak]
-      [%merge =desk =arak]
+      [%commit =desk =arak]
       [%merge-sunk =desk =arak =tang]
       [%merge-fail =desk =arak =tang]
       [%suspend =desk =arak]
