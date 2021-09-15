@@ -82,6 +82,12 @@
   ?:  (lth a b)  c
   $(a (sub a b), c +(c))
 ::
+++  dvr                                                 ::  divide w/remainder
+  ~/  %dvr
+  |:  [a=`@`1 b=`@`1]
+  ^-  [p=@ q=@]
+  [(div a b) (mod a b)]
+::
 ++  mod                                                 ::  modulus
   ~/  %mod
   |:  [a=`@`1 b=`@`1]
