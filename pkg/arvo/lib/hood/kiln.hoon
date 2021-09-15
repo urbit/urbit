@@ -212,11 +212,30 @@
 ++  on-init
   =<  abet
   ~>  %slog.0^leaf/"kiln: boot"
-  =/  =rein  [liv=& add=(sy %hood %dojo ~) sub=~]  ::  TODO questionable
-  =/  daz  (get-apps-want base-bill rein)
-  %-  emil
-  %-  zing  ^-  (list (list card:agent:gall))
-  (turn daz start-dude:~(pass vats [%base *arak]))
+  =/  desks=(set desk)
+    .^((set desk) %cd /(scot %p our)//(scot %da now))
+  =.  desks  (~(del in desks) %base)
+  =.  desks  (~(del in desks) %kids)
+  ::  set up base desk
+  ::
+  =.  ..on-init
+    =/  =rein  [liv=& add=(sy %hood %dojo ~) sub=~]  ::  TODO questionable
+    =/  daz  (get-apps-want base-bill rein)
+    %-  emil
+    %-  zing  ^-  (list (list card:agent:gall))
+    (turn daz start-dude:~(pass vats [%base *arak]))
+  ::  install other desks
+  ::
+  =/  dez=(list desk)  ~(tap in desks)
+  =/  sop=ship
+    (sein:title our now our)
+  |-
+  ?~  dez  ..on-init
+  =.  ..on-init
+    abet:(install:vats i.dez our i.dez)
+  =?  ..on-init  !=(sop our)
+    abet:(install:vats i.dez sop i.dez)
+  $(dez t.dez)
 ::
 ++  on-load
   =>  |%
