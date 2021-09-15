@@ -98,7 +98,7 @@ _block_rep(u3_atom a,
            u3_noun b)
 {
   if ( !_(u3a_is_cat(a)) || (a >= 32) ) {
-    return u3m_bail(c3__exit);
+    return u3m_bail(c3__fail);
   }
   else {
     c3_g       a_g = a;
