@@ -1,0 +1,16 @@
+bin
+doc
+extras
+nix
+pkg/arvo
+pkg/base-dev
+pkg/docker-image
+pkg/ent
+pkg/garden
+pkg/garden-dev
+pkg/ge-additions
+pkg/herb
+pkg/hs
+pkg/libaes_siv
+pkg/urbit
+sh
