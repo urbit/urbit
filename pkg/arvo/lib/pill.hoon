@@ -49,7 +49,7 @@
         /web    ::  %eyre web content
         /desk   ::  desk manifest
     ==
-  |=  bas=path
+  |=  [des=desk bas=path]
   ^-  unix-event
   %.  directories
   |=  ::  sal: all spurs to load from
@@ -64,7 +64,7 @@
              :-  *(list tako:clay)
              %-  ~(gas by *(map path (each page:clay lobe:clay)))
              (turn hav |=([=path =page:clay] [path &+page]))
-           [/c/sync [%park %base &+yuki *rang:clay]]
+           [/c/sync [%park des &+yuki *rang:clay]]
   =|  hav=(list [path page:clay])
   |-  ^+  hav
   ?~  sal  ~
