@@ -1,18 +1,2013 @@
-::   tests for html
+::  Tests for html
 ::
 /+  *test
 =,  html
-=,  de-xml:html
-=,  en-xml:html
+=,  enjs:format
 |%
-::  de-xml takes a cord but en-xml returns a tape?
+::  JSON encoding/decoding
+::
+::  Functions for checking large lists of examples against expected values which
+::  also nicely format any failures.
+::
+::  Custom types need to skip one 'tape' face due to 'tape' arm in 'enjs:format'
+::
++$  json-decode-spec  [name=^tape input=cord expected=json]
++$  json-decode-rejection-spec  [input=cord name=^tape]
++$  json-encode-spec  [name=^tape input=json expected=^tape]
+::
+++  run-decode-specs
+  ::  legend tells of a man who made the Kessel run in less than 12
+  ::  parse-specs...
+  |=  specs=(list json-decode-spec)
+  %-  zing
+  %-  turn
+  :-  specs
+  |=  spec=json-decode-spec
+  ^-  tang
+  =+  result=(expect-eq !>(`expected.spec) !>((de-json input.spec)))
+  ?~  result  ~
+  `tang`[[%leaf "in {name.spec}:"] result]
+::
+++  run-decode-rejection-specs
+  |=  specs=(list json-decode-rejection-spec)
+  %-  zing
+  %-  turn
+  :-  specs
+  |=  spec=json-decode-rejection-spec
+  ^-  tang
+  =+  result=(expect-eq !>(~) !>((de-json input.spec)))
+  ?~  result  ~
+  `tang`[[%leaf "in {name.spec}:"] result]
+++  run-encode-specs
+  |=  specs=(list json-encode-spec)
+  %-  zing
+  %-  turn
+  :-  specs
+  |=  spec=json-encode-spec
+  ^-  tang
+  =+  result=(expect-eq !>(expected.spec) !>((en-json input.spec)))
+  ?~  result  ~
+  `tang`[[%leaf "in {name.spec}:"] result]
+::  JSON decoding test suite
+::
+::  The following test suite is adapted from
+::  https://github.com/nst/JSONTestSuite/ (Copyright (c) 2016 Nicolas Seriot)
+::  under the terms of the MIT license. It influenced the following tests:
+::    - test-de-json-invalid-input
+::    - test-de-json-valid-input
+::    - test-de-json-invalid-ambiguous-input
+::    - test-de-json-valid-ambiguous-input
+::  Note: The tests below are not 1:1 with the "JSONTestSuite"; tests have been
+::        added, dropped, edited, and renamed.
+::
+::  These are all inputs that should be rejected by a valid JSON parser.
+::
+++  test-de-json-invalid-input
+  %-  run-decode-rejection-specs
+  :~
+    ['["x", truth]' "n_array_bad_value"]
+    ['["": 1]' "n_array_colon_instead_of_comma"]
+    ['[""],' "n_array_comma_after_close"]
+    ['[1 true]' "n_array_comma_missing"]
+    ['[,]' "n_array_comma_only"]
+    ['[1,,2]' "n_array_double_comma"]
+    ['[,"x"]' "n_array_early_comma"]
+    ['[\\f]' "n_array__escape_outside_string"]
+    ['["x"]]' "n_array_extra_close"]
+    ['["x",]' "n_array_extra_comma"]
+    ['["x"' "n_array_incomplete"]
+    ['[\FF]' "n_array_invalid_UTF8"]
+    ['[\0B]' "n_array_invalid_whitespace"]
+    ['+1' "n_number_+1"]
+    ['+Inf' "n_number_+Inf"]
+    ['00' "n_number_double_zero"]
+    ['00e1' "n_number_double_zero_exponent"]
+    ['-00e1' "n_number_double_zero_exponent_neg"]
+    ['00.0' "n_number_double_zero_fraction"]
+    ['-00.0' "n_number_double_zero_fraction_neg"]
+    ['-00' "n_number_double_zero_neg"]
+    ['1+2' "n_number_expression"]
+    ['1e+-2' "n_number_exponent_+-"]
+    ['1e-+2' "n_number_exponent_+-_reverse"]
+    ['1ee2' "n_number_exponent_extra_e"]
+    ['1eE2' "n_number_exponent_extra_E"]
+    ['1EE2' "n_number_exponent_extra_E_double"]
+    ['1Ee2' "n_number_exponent_extra_E_reverse"]
+    ['1.2.' "n_number_extra_decimal_with_digit"]
+    ['-1.2.' "n_number_extra_decimal_with_digit_neg"]
+    ['1.2.3' "n_number_extra_decimal_without_digit"]
+    ['-1.2.3' "n_number_extra_decimal_without_digit_neg"]
+    ['0x1' "n_number_hex_1_digit"]
+    ['0x42' "n_number_hex_2_digits"]
+    ['01' "n_number_leading_zero"]
+    ['-01' "n_number_leading_zero_neg"]
+    ['.-1' "n_number_minus_after_decimal"]
+    ['1e' "n_number_missing_exponent_digits"]
+    ['-1e' "n_number_missing_exponent_digits_neg"]
+    ['1E' "n_number_missing_exponent_digits_E"]
+    ['-1E' "n_number_missing_exponent_digits_E_neg"]
+    ['1.' "n_number_missing_real_fractional_digits"]
+    ['-1.' "n_number_missing_real_fractional_digits_neg"]
+    ['.1' "n_number_missing_real_integer_digits"]
+    ['-.1' "n_number_missing_real_integer_digits_neg"]
+    ['\EF\BC\91' "n_number_unicode_digit"]
+    ['12 34' "n_number_space_between_digits"]
+    ['- 1' "n_number_space_between_minus"]
+    ['Inf' "n_number_text_based_value_Inf"]
+    ['-Inf' "n_number_text_based_value_Inf_neg"]
+    ['Infinity' "n_number_text_based_value_Infinity"]
+    ['-Infinity' "n_number_text_based_value_Infinity_neg"]
+    ['NaN' "n_number_text_based_value_NaN"]
+    ['-NaN' "n_number_text_based_value_NaN_neg"]
+    ['[1e1\E5]' "n_number_UTF8_in_exponent"]
+    ['[1.1\E5]' "n_number_UTF8_in_fraction"]
+    ['[1\E5]' "n_number_UTF8_in_int"]
+    ['[1.2a-3]' "n_number_with_alpha_lower"]
+    ['[1.8011670033376514H-308]' "n_number_with_alpha_upper"]
+    ['{"a","b"}' "n_object_comma_instead_of_colon"]
+    ['{"x":/*comment*/"b"}' "n_object_comment"]
+    ['{"x"::"b"}' "n_object_extra_colon"]
+    ['{"x":"b",,"y":"z"}' "n_object_extra_comma"]
+    ['{[: "x"}' "n_object_key_bracket"]
+    ['{🇨🇭: 0}' "n_object_key_emoji"]
+    ['{key: "value"}' "n_object_key_no_quotes"]
+    ['{1: "value"}' "n_object_key_not_string"]
+    ['{null: "value"}' "n_object_key_null"]
+    ['{\'key\': "value"}' "n_object_key_single_quotes"]
+    ['{"a" "b"}' "n_object_missing_colon"]
+    ['{:"b"}' "n_object_missing_key"]
+    ['{"a":}' "n_object_missing_value"]
+    ['{"a"}' "n_object_missing_value_and_colon"]
+    ['{"foo":"bar", "a" "b"}' "n_object_second_item_missing_colon"]
+    ['{"foo":"bar", : "b"}' "n_object_second_item_missing_key"]
+    ['{"foo":"bar", "a" :}' "n_object_second_item_missing_value"]
+    ['{"foo":"bar", "a"}' "n_object_second_item_missing_value_and_colon"]
+    ['{"id":0,}' "n_object_trailing_comma"]
+    ['{"a": "b"' "n_object_unclosed"]
+    ['{"a":"a' "n_object_unterminated_value"]
+    ['"\FF"' "n_string_EOF"]
+    ['"\\\\\\"' "n_string_escaped_backslash_bad"]
+    ['"\\🌀"' "n_string_escaped_emoji"]
+    ['"\\00"' "n_string_escaped_UTF8"]
+    ['"' "n_string_incomplete"]
+    ['"\\"' "n_string_incomplete_escape"]
+    ['"\\u00A"' "n_string_incomplete_first_surrogate"]
+    ['"\\a"' "n_string_invalid_escape"]
+    ['"\\uqqqq"' "n_string_invalid_escaped_unicode"]
+    ['"\\\E5"' "n_string_invalid_UTF8_after_escape"]
+    ['"\\u000\E5"' "n_string_invalid_UTF8_in_escape"]
+    ['"\\uD834\\uDd"' "n_string_incomplete_second_surrogate"]
+    ['"\\uD800\\"' "n_string_one_surrogate_then_escape"]
+    ['"\\uD800\\u"' "n_string_one_surrogate_then_escape_u"]
+    ['"\\uD800\\u1"' "n_string_one_surrogate_then_escape_u1"]
+    ['"\\uD800\\u1x"' "n_string_one_surrogate_then_escape_u1x"]
+    ['abc' "n_string_no_quotes"]
+    ['\'single quote\'' "n_string_single_quotes"]
+    ['"a\00a"' "n_string_unescaped_ctrl_char"]
+    ['"new\0aline"' "n_string_unescaped_newline"]
+    ['"\09"' "n_string_unescaped_tab"]
+    ['"abc' "n_string_unclosed"]
+    ['"\\UA66D"' "n_string_UTF16_capital_u"]
+    ['<>' "n_value_angle_brackets"]
+    ['False' "n_value_capitalized_false"]
+    ['Null' "n_value_capitalized_null"]
+    ['True' "n_value_capitalized_true"]
+    ['[][]' "n_value_double_array"]
+    ['{}{}' "n_value_double_object"]
+    ['1]' "n_value_close_unopened_array"]
+    ['1}' "n_value_close_unopened_object"]
+    ['\\n"asd"' "n_value_escape_outside_string"]
+    ['fals' "n_value_incomplete_false"]
+    ['nul' "n_value_incomplete_null"]
+    ['tru' "n_value_incomplete_true"]
+    ['\EF\BB{}' "n_value_incomplete_UTF8_BOM"]
+    ['\0C[]' "n_value_invalid_whitespace"]
+    ['a' "n_value_lone_character"]
+    ['\E5' "n_value_lone_invalid_UTF8"]
+    ['-' "n_value_lone_minus"]
+    ['*' "n_value_lone_star"]
+    [' ' "n_value_lone_whitespace"]
+    ['1 "a" true' "n_value_multiple_values"]
+    ['' "n_value_no_data"]
+    ['\00[]' "n_value_null_byte_outside_string"]
+    ['{"a":"b"}/**/' "n_value_trailing_comment"]
+    ['{"a":"b"}//' "n_value_trailing_comment_slash_open"]
+    ['[1]#' "n_value_trailing_garbage_array"]
+    ['false#' "n_value_trailing_garbage_boolean_false"]
+    ['true#' "n_value_trailing_garbage_boolean_true"]
+    ['-#' "n_value_trailing_garbage_minus"]
+    ['1#' "n_value_trailing_garbage_number"]
+    ['-1#' "n_value_trailing_garbage_number_neg"]
+    ['1.0#' "n_value_trailing_garbage_number_real"]
+    ['1.0e2#' "n_value_trailing_garbage_number_real_exp"]
+    ['-1.0e2#' "n_value_trailing_garbage_number_real_exp_neg"]
+    ['-1.0#' "n_value_trailing_garbage_number_real_neg"]
+    ['null#' "n_value_trailing_garbage_null"]
+    ['{"a":"b"}#' "n_value_trailing_garbage_object"]
+    ['{"a":#"a"}' "n_value_trailing_garbage_object_colon"]
+    ['{"a"#:"a"}' "n_value_trailing_garbage_object_key"]
+    ['{"a":"a"#}' "n_value_trailing_garbage_object_value"]
+    ['"a"x' "n_value_trailing_garbage_string"]
+    ['[\E2\81\A0]' "n_value_U+2060_word_joined_array"]
+    ['{\E2\81\A0}' "n_value_U+2060_word_joined_object"]
+    ['\\u0020"asd"' "n_value_UTF16_outside_string"]
+    ['\EF\BB\BF' "n_value_UTF8_BOM_no_data"]
+  ==
+::  These are all inputs that should be accepted by a valid JSON parser.
+::
+++  test-de-json-valid-input
+  %-  run-decode-specs
+  :~
+    :*  "y_array_empty"
+        '[]'
+        [%a ~]
+    ==
+    :*  "y_array_empty_whitespace"
+        '[ \09\0A\0D]'
+        [%a ~]
+    ==
+    :*  "y_array_val_array"
+        '[[]]'
+        [%a ~[[%a ~]]]
+    ==
+    :*  "y_array_val_boolean_false"
+        '[false]'
+        [%a ~[[%b |]]]
+    ==
+    :*  "y_array_val_boolean_true"
+        '[true]'
+        [%a ~[[%b &]]]
+    ==
+    :*  "y_array_val_null"
+        '[null]'
+        [%a ~[~]]
+    ==
+    :*  "y_array_val_num"
+        '[123]'
+        [%a ~[[%n '123']]]
+    ==
+    :*  "y_array_val_object"
+        '[{}]'
+        [%a ~[[%o ~]]]
+    ==
+    :*  "y_array_val_string"
+        '["abc"]'
+        [%a ~[[%s 'abc']]]
+    ==
+    :*  "y_array_vals_heterogeneous"
+        '[null,1,"1",{},[]]'
+        [%a ~[~ [%n '1'] [%s '1'] [%o ~] [%a ~]]]
+    ==
+    :*  "y_array_vals_homogeneous"
+        '[null,null,null,null]'
+        [%a ~[~ ~ ~ ~]]
+    ==
+    :*  "y_array_vals_homogeneous_whitespace"
+        '[ null , null , null , null ]'
+        [%a ~[~ ~ ~ ~]]
+    ==
+    :*  "y_number_0"
+        '0'
+        [%n '0']
+    ==
+    :*  "y_number_0_neg"
+        '-0'
+        [%n '-0']
+    ==
+    :*  "y_number_0e0"
+        '0e0'
+        [%n '0e0']
+    ==
+    :*  "y_number_0e0_neg"
+        '-0e0'
+        [%n '-0e0']
+    ==
+    :*  "y_number_0e000"
+        '0e000'
+        [%n '0e000']
+    ==
+    :*  "y_number_0e000_neg"
+        '-0e000'
+        [%n '-0e000']
+    ==
+    :*  "y_number_0e1"
+        '0e1'
+        [%n '0e1']
+    ==
+    :*  "y_number_0e1_neg"
+        '-0e1'
+        [%n '-0e1']
+    ==
+    :*  "y_number_0e+0"
+        '0e+0'
+        [%n '0e+0']
+    ==
+    :*  "y_number_0e+0_neg"
+        '-0e+0'
+        [%n '-0e+0']
+    ==
+    :*  "y_number_0e+000"
+        '0e+000'
+        [%n '0e+000']
+    ==
+    :*  "y_number_0e+000_neg"
+        '-0e+000'
+        [%n '-0e+000']
+    ==
+    :*  "y_number_0e+1"
+        '0e+1'
+        [%n '0e+1']
+    ==
+    :*  "y_number_0e+1_neg"
+        '-0e+1'
+        [%n '-0e+1']
+    ==
+    :*  "y_number_0e-0"
+        '0e-0'
+        [%n '0e-0']
+    ==
+    :*  "y_number_0e-0_neg"
+        '-0e-0'
+        [%n '-0e-0']
+    ==
+    :*  "y_number_0e-000"
+        '0e-000'
+        [%n '0e-000']
+    ==
+    :*  "y_number_0e-000_neg"
+        '-0e-000'
+        [%n '-0e-000']
+    ==
+    :*  "y_number_0e-1"
+        '0e-1'
+        [%n '0e-1']
+    ==
+    :*  "y_number_0e-1_neg"
+        '-0e-1'
+        [%n '-0e-1']
+    ==
+    :*  "y_number_0E0"
+        '0E0'
+        [%n '0E0']
+    ==
+    :*  "y_number_0E0_neg"
+        '-0E0'
+        [%n '-0E0']
+    ==
+    :*  "y_number_0E000"
+        '0E000'
+        [%n '0E000']
+    ==
+    :*  "y_number_0E000_neg"
+        '-0E000'
+        [%n '-0E000']
+    ==
+    :*  "y_number_0E1"
+        '0E1'
+        [%n '0E1']
+    ==
+    :*  "y_number_0E1_neg"
+        '-0E1'
+        [%n '-0E1']
+    ==
+    :*  "y_number_0E+0"
+        '0E+0'
+        [%n '0E+0']
+    ==
+    :*  "y_number_0E+0_neg"
+        '-0E+0'
+        [%n '-0E+0']
+    ==
+    :*  "y_number_0E+000"
+        '0E+000'
+        [%n '0E+000']
+    ==
+    :*  "y_number_0E+000_neg"
+        '-0E+000'
+        [%n '-0E+000']
+    ==
+    :*  "y_number_0E+1"
+        '0E+1'
+        [%n '0E+1']
+    ==
+    :*  "y_number_0E+1_neg"
+        '-0E+1'
+        [%n '-0E+1']
+    ==
+    :*  "y_number_0E-0"
+        '0E-0'
+        [%n '0E-0']
+    ==
+    :*  "y_number_0E-0_neg"
+        '-0E-0'
+        [%n '-0E-0']
+    ==
+    :*  "y_number_0E-000"
+        '0E-000'
+        [%n '0E-000']
+    ==
+    :*  "y_number_0E-000_neg"
+        '-0E-000'
+        [%n '-0E-000']
+    ==
+    :*  "y_number_0E-1"
+        '0E-1'
+        [%n '0E-1']
+    ==
+    :*  "y_number_0E-1_neg"
+        '-0E-1'
+        [%n '-0E-1']
+    ==
+    :*  "y_number_0.0"
+        '0.0'
+        [%n '0.0']
+    ==
+    :*  "y_number_0.0_neg"
+        '-0.0'
+        [%n '-0.0']
+    ==
+    :*  "y_number_0.0e0"
+        '0.0e0'
+        [%n '0.0e0']
+    ==
+    :*  "y_number_0.0e0_neg"
+        '-0.0e0'
+        [%n '-0.0e0']
+    ==
+    :*  "y_number_0.0e000"
+        '0.0e000'
+        [%n '0.0e000']
+    ==
+    :*  "y_number_0.0e000_neg"
+        '-0.0e000'
+        [%n '-0.0e000']
+    ==
+    :*  "y_number_0.0e1"
+        '0.0e1'
+        [%n '0.0e1']
+    ==
+    :*  "y_number_0.0e1_neg"
+        '-0.0e1'
+        [%n '-0.0e1']
+    ==
+    :*  "y_number_0.0e+0"
+        '0.0e+0'
+        [%n '0.0e+0']
+    ==
+    :*  "y_number_0.0e+0_neg"
+        '-0.0e+0'
+        [%n '-0.0e+0']
+    ==
+    :*  "y_number_0.0e+000"
+        '0.0e+000'
+        [%n '0.0e+000']
+    ==
+    :*  "y_number_0.0e+000_neg"
+        '-0.0e+000'
+        [%n '-0.0e+000']
+    ==
+    :*  "y_number_0.0e+1"
+        '0.0e+1'
+        [%n '0.0e+1']
+    ==
+    :*  "y_number_0.0e+1_neg"
+        '-0.0e+1'
+        [%n '-0.0e+1']
+    ==
+    :*  "y_number_0.0e-0"
+        '0.0e-0'
+        [%n '0.0e-0']
+    ==
+    :*  "y_number_0.0e-0_neg"
+        '-0.0e-0'
+        [%n '-0.0e-0']
+    ==
+    :*  "y_number_0.0e-000"
+        '0.0e-000'
+        [%n '0.0e-000']
+    ==
+    :*  "y_number_0e-000_neg"
+        '-0.0e-000'
+        [%n '-0.0e-000']
+    ==
+    :*  "y_number_0.0e-1"
+        '0.0e-1'
+        [%n '0.0e-1']
+    ==
+    :*  "y_number_0.0e-1_neg"
+        '-0.0e-1'
+        [%n '-0.0e-1']
+    ==
+    :*  "y_number_0.0E0"
+        '0.0E0'
+        [%n '0.0E0']
+    ==
+    :*  "y_number_0.0E0_neg"
+        '-0.0E0'
+        [%n '-0.0E0']
+    ==
+    :*  "y_number_0.0E000"
+        '0.0E000'
+        [%n '0.0E000']
+    ==
+    :*  "y_number_0E000_neg"
+        '-0.0E000'
+        [%n '-0.0E000']
+    ==
+    :*  "y_number_0.0E1"
+        '0.0E1'
+        [%n '0.0E1']
+    ==
+    :*  "y_number_0.0E1_neg"
+        '-0.0E1'
+        [%n '-0.0E1']
+    ==
+    :*  "y_number_0.0E+0"
+        '0.0E+0'
+        [%n '0.0E+0']
+    ==
+    :*  "y_number_0.0E+0_neg"
+        '-0.0E+0'
+        [%n '-0.0E+0']
+    ==
+    :*  "y_number_0.0E+000"
+        '0.0E+000'
+        [%n '0.0E+000']
+    ==
+    :*  "y_number_0E+000_neg"
+        '-0.0E+000'
+        [%n '-0.0E+000']
+    ==
+    :*  "y_number_0.0E+1"
+        '0.0E+1'
+        [%n '0.0E+1']
+    ==
+    :*  "y_number_0.0E+1_neg"
+        '-0.0E+1'
+        [%n '-0.0E+1']
+    ==
+    :*  "y_number_0.0E-0"
+        '0.0E-0'
+        [%n '0.0E-0']
+    ==
+    :*  "y_number_0.0E-0_neg"
+        '-0.0E-0'
+        [%n '-0.0E-0']
+    ==
+    :*  "y_number_0.0E-000"
+        '0.0E-000'
+        [%n '0.0E-000']
+    ==
+    :*  "y_number_0E-000_neg"
+        '-0.0E-000'
+        [%n '-0.0E-000']
+    ==
+    :*  "y_number_0.0E-1"
+        '0.0E-1'
+        [%n '0.0E-1']
+    ==
+    :*  "y_number_0.0E-1_neg"
+        '-0.0E-1'
+        [%n '-0.0E-1']
+    ==
+    :*  "y_number_1"
+        '1'
+        [%n '1']
+    ==
+    :*  "y_number_1_neg"
+        '-1'
+        [%n '-1']
+    ==
+    :*  "y_number_1e1"
+        '1e1'
+        [%n '1e1']
+    ==
+    :*  "y_number_1e1_neg"
+        '-1e1'
+        [%n '-1e1']
+    ==
+    :*  "y_number_1e+1"
+        '1e+1'
+        [%n '1e+1']
+    ==
+    :*  "y_number_1e+1_neg"
+        '-1e+1'
+        [%n '-1e+1']
+    ==
+    :*  "y_number_1e-1"
+        '1e-1'
+        [%n '1e-1']
+    ==
+    :*  "y_number_1e-1_neg"
+        '-1e-1'
+        [%n '-1e-1']
+    ==
+    :*  "y_number_1E1"
+        '1E1'
+        [%n '1E1']
+    ==
+    :*  "y_number_1E1_neg"
+        '-1E1'
+        [%n '-1E1']
+    ==
+    :*  "y_number_1E+1"
+        '1E+1'
+        [%n '1E+1']
+    ==
+    :*  "y_number_1E+1_neg"
+        '-1E+1'
+        [%n '-1E+1']
+    ==
+    :*  "y_number_1E-1"
+        '1E-1'
+        [%n '1E-1']
+    ==
+    :*  "y_number_1E-1_neg"
+        '-1E-1'
+        [%n '-1E-1']
+    ==
+    :*  "y_number_1.0"
+        '1.0'
+        [%n '1.0']
+    ==
+    :*  "y_number_1.1"
+        '1.1'
+        [%n '1.1']
+    ==
+    :*  "y_number_1.1_neg"
+        '-1.1'
+        [%n '-1.1']
+    ==
+    :*  "y_number_1.1e1"
+        '1.1e1'
+        [%n '1.1e1']
+    ==
+    :*  "y_number_1.1e1_neg"
+        '-1.1e1'
+        [%n '-1.1e1']
+    ==
+    :*  "y_number_1.1e+1"
+        '1.1e+1'
+        [%n '1.1e+1']
+    ==
+    :*  "y_number_1.1e+1_neg"
+        '-1.1e+1'
+        [%n '-1.1e+1']
+    ==
+    :*  "y_number_1.1e-1"
+        '1.1e-1'
+        [%n '1.1e-1']
+    ==
+    :*  "y_number_1.1e-1_neg"
+        '-1.1e-1'
+        [%n '-1.1e-1']
+    ==
+    :*  "y_number_1.1E1"
+        '1.1E1'
+        [%n '1.1E1']
+    ==
+    :*  "y_number_1.1E1_neg"
+        '-1.1E1'
+        [%n '-1.1E1']
+    ==
+    :*  "y_number_1.1E+1"
+        '1.1E+1'
+        [%n '1.1E+1']
+    ==
+    :*  "y_number_1.1E+1_neg"
+        '-1.1E+1'
+        [%n '-1.1E+1']
+    ==
+    :*  "y_number_1.1E-1"
+        '1.1E-1'
+        [%n '1.1E-1']
+    ==
+    :*  "y_number_1.1E-1_neg"
+        '-1.1E-1'
+        [%n '-1.1E-1']
+    ==
+    :*  "y_number_int_exp_e"
+        '123e7'
+        [%n '123e7']
+    ==
+    :*  "y_number_int_exp_e_neg"
+        '-123e7'
+        [%n '-123e7']
+    ==
+    :*  "y_number_int_exp_e+"
+        '123e+7'
+        [%n '123e+7']
+    ==
+    :*  "y_number_int_exp_e+_neg"
+        '-123e+7'
+        [%n '-123e+7']
+    ==
+    :*  "y_number_int_exp_e-"
+        '123e-7'
+        [%n '123e-7']
+    ==
+    :*  "y_number_int_exp_e-_neg"
+        '-123e-7'
+        [%n '-123e-7']
+    ==
+    :*  "y_number_int_exp_E"
+        '123E7'
+        [%n '123E7']
+    ==
+    :*  "y_number_int_exp_E_neg"
+        '-123E7'
+        [%n '-123E7']
+    ==
+    :*  "y_number_int_exp_E+"
+        '123E+7'
+        [%n '123E+7']
+    ==
+    :*  "y_number_int_exp_E+_neg"
+        '-123E+7'
+        [%n '-123E+7']
+    ==
+    :*  "y_number_int_exp_E-"
+        '123E-7'
+        [%n '123E-7']
+    ==
+    :*  "y_number_int_exp_E-_neg"
+        '-123E-7'
+        [%n '-123E-7']
+    ==
+    :*  "y_number_int_simple"
+        '123'
+        [%n '123']
+    ==
+    :*  "y_number_int_simple_neg"
+        '-123'
+        [%n '-123']
+    ==
+    :*  "y_number_real_exp_e"
+        '123.456e7'
+        [%n '123.456e7']
+    ==
+    :*  "y_number_real_exp_e_neg"
+        '-123.456e7'
+        [%n '-123.456e7']
+    ==
+    :*  "y_number_real_exp_e+"
+        '123.456e+7'
+        [%n '123.456e+7']
+    ==
+    :*  "y_number_real_exp_e+_neg"
+        '-123.456e+7'
+        [%n '-123.456e+7']
+    ==
+    :*  "y_number_real_exp_e-"
+        '123.456e-7'
+        [%n '123.456e-7']
+    ==
+    :*  "y_number_real_exp_e-_neg"
+        '-123.456e-7'
+        [%n '-123.456e-7']
+    ==
+    :*  "y_number_real_exp_E"
+        '123.456E7'
+        [%n '123.456E7']
+    ==
+    :*  "y_number_real_exp_E_neg"
+        '-123.456E7'
+        [%n '-123.456E7']
+    ==
+    :*  "y_number_real_exp_E+"
+        '123.456E+7'
+        [%n '123.456E+7']
+    ==
+    :*  "y_number_real_exp_E+_neg"
+        '-123.456E+7'
+        [%n '-123.456E+7']
+    ==
+    :*  "y_number_real_exp_E-"
+        '123.456E-7'
+        [%n '123.456E-7']
+    ==
+    :*  "y_number_real_exp_E-_neg"
+        '-123.456E-7'
+        [%n '-123.456E-7']
+    ==
+    :*  "y_number_real_simple"
+        '123.456'
+        [%n '123.456']
+    ==
+    :*  "y_number_real_simple_neg"
+        '-123.456'
+        [%n '-123.456']
+    ==
+    :*  "y_number_very_close_to_zero"
+        '-0.0000000000000000000000000000000000000000000000000000000\
+        /00000000000000000000001'
+        [%n '-0.0000000000000000000000000000000000000000000000\
+        /00000000000000000000000000000001']
+    ==
+    :*  "y_object_duplicated_key"
+        '{"a":"b","a":"c"}'
+        (frond ['a' [%s 'c']])
+    ==
+    :*  "y_object_duplicated_key_and_value"
+        '{"a":"b","a":"b"}'
+        (frond ['a' [%s 'b']])
+    ==
+    :*  "y_object_duplicated_key_reverse"
+        '{"a":"c","a":"b"}'
+        (frond ['a' [%s 'b']])
+    ==
+    :*  "y_object_empty"
+        '{}'
+        [%o ~]
+    ==
+    :*  "y_object_key_empty"
+        '{"":0}'
+        (frond ['' [%n '0']])
+    ==
+    :*  "y_object_empty_whitespace"
+        '{ \09\0A\0D}'
+        [%o ~]
+    ==
+    :*  "y_object_val_array"
+        '{"x": []}'
+        (frond ['x' [%a ~]])
+    ==
+    :*  "y_object_val_boolean_false"
+        '{"x": false}'
+        (frond ['x' [%b |]])
+    ==
+    :*  "y_object_val_boolean_true"
+        '{"x": true}'
+        (frond ['x' [%b &]])
+    ==
+    :*  "y_object_val_null"
+        '{"x": null}'
+        (frond ['x' ~])
+    ==
+    :*  "y_object_val_num"
+        '{"x": 123}'
+        (frond ['x' [%n '123']])
+    ==
+    :*  "y_object_val_object"
+        '{"x": {}}'
+        (frond ['x' [%o ~]])
+    ==
+    :*  "y_object_val_string"
+        '{"x": "y"}'
+        (frond ['x' [%s 'y']])
+    ==
+    =/  long=@t  'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+    :*  "y_object_val_string_long"
+        '{"id1": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", \
+        /"id2": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}'
+        (pairs ~[['id1' [%s long]] ['id2' [%s long]]])
+    ==
+    :*  "y_object_val_string_unicode"
+        '{"title":"\\u041f\\u043e\\u043b\\u0442\\u043e\\u0440\\u0430 \
+        /\\u0417\\u0435\\u043c\\u043b\\u0435\\u043a\\u043e\\u043f\\u0430" }'
+        (frond 'title' [%s 'Полтора Землекопа'])
+    ==
+    :*  "y_object_vals_heterogeneous"
+        '{"a":null,"b":1,"c":"1","d":[],"e":{}}'
+        (pairs ~[['a' ~] ['b' [%n '1']] ['c' [%s '1']] ['d' [%a ~]] ['e' [%o ~]]])
+    ==
+    :*  "y_object_vals_homogeneous"
+        '{"a":null,"b":null,"c":null,"d":null,"e":null}'
+        (pairs ~[['a' ~] ['b' ~] ['c' ~] ['d' ~] ['e' ~]])
+    ==
+    :*  "y_object_vals_homogeneous_whitespace"
+        '{ "a"  : null , "b" : null , "c" : null , "d" : null , "e" :  null }'
+        (pairs ~[['a' ~] ['b' ~] ['c' ~] ['d' ~] ['e' ~]])
+    ==
+    :*  "y_object_whitespace_newlines"
+        '{\0A"a"\0A:\0A"b"\0A}'
+        (frond 'a' [%s 'b'])
+    ==
+    :*  "y_string_basic_ASCII_multi"
+        '"1234567890 abcdefghijklmnopqrstuvwxyz"'
+        [%s '1234567890 abcdefghijklmnopqrstuvwxyz']
+    ==
+    :*  "y_string_basic_ASCII_single"
+        '"a"'
+        [%s 'a']
+    ==
+    :*  "y_string_basic_escape_multi"
+        '"\\"\\\\\\/\\b\\f\\n\\r\\t"'
+        [%s '"\\/\08\0C\0A\0D\09']
+    ==
+    :*  "y_string_basic_escape_single"
+        '"\\\\"'
+        [%s '\\']
+    ==
+    :*  "y_string_basic_UTF16_multi"
+        '"\\u00fe\\u0123"'
+        [%s 'þģ']
+    ==
+    :*  "y_string_basic_UTF16_single"
+        '"\\u00fe"'
+        [%s 'þ']
+    ==
+    :*  "y_string_basic_UTF16_surrogate_pair_multi"
+        '"\\uD83d\\uDe39\\uD83d\\uDc8d"'
+        [%s '😹💍']
+    ==
+    :*  "y_string_basic_UTF16_surrogate_pair_single"
+        '"\\uD801\\uDc37"'
+        [%s '𐐷']
+    ==
+    :*  "y_string_basic_UTF8_multi"
+        '"€𝄞"'
+        [%s '€𝄞']
+    ==
+    :*  "y_string_basic_UTF8_single"
+        '"𝄞"'
+        [%s '𝄞']
+    ==
+    :*  "y_string_combination_all"
+        '"a\\"\\u00fe𝄞"'
+        [%s 'a"þ𝄞']
+    ==
+    :*  "y_string_combination_ASCII_escape"
+        '"a\\""'
+        [%s 'a"']
+    ==
+    :*  "y_string_combination_ASCII_escape_reverse"
+        '"\\"a"'
+        [%s '"a']
+    ==
+    :*  "y_string_combination_ASCII_UTF16"
+        '"a\\u00fe"'
+        [%s 'aþ']
+    ==
+    :*  "y_string_combination_ASCII_UTF16_reverse"
+        '"\\u00fea"'
+        [%s 'þa']
+    ==
+    :*  "y_string_combination_ASCII_UTF16_surrogate_pair"
+        '"a\\uD801\\uDc37"'
+        [%s 'a𐐷']
+    ==
+    :*  "y_string_combination_ASCII_UTF16_surrogate_pair_reverse"
+        '"\\uD801\\uDc37a"'
+        [%s '𐐷a']
+    ==
+    :*  "y_string_combination_ASCII_UTF8"
+        '"a𝄞"'
+        [%s 'a𝄞']
+    ==
+    :*  "y_string_combination_ASCII_UTF8_reverse"
+        '"𝄞a"'
+        [%s '𝄞a']
+    ==
+    :*  "y_string_combination_escape_UTF16"
+        '"\\"\\u00fe"'
+        [%s '"þ']
+    ==
+    :*  "y_string_combination_escape_UTF16_reverse"
+        '"\\u00fe\\""'
+        [%s 'þ"']
+    ==
+    :*  "y_string_combination_escape_UTF16_surrogate_pair"
+        '"\\"\\uD801\\uDc37"'
+        [%s '"𐐷']
+    ==
+    :*  "y_string_combination_escape_UTF16_surrogate_pair_reverse"
+        '"\\uD801\\uDc37\\""'
+        [%s '𐐷"']
+    ==
+    :*  "y_string_combination_escape_UTF8"
+        '"\\"𝄞"'
+        [%s '"𝄞']
+    ==
+    :*  "y_string_combination_escape_UTF8_reverse"
+        '"𝄞\\""'
+        [%s '𝄞"']
+    ==
+    :*  "y_string_combination_UTF8_UTF16"
+        '"𝄞\\u00fe"'
+        [%s '𝄞þ']
+    ==
+    :*  "y_string_combination_UTF8_UTF16_reverse"
+        '"\\u00fe𝄞"'
+        [%s 'þ𝄞']
+    ==
+    :*  "y_string_combination_UTF8_UTF16_surrogate_pair"
+        '"𝄞\\uD801\\uDc37"'
+        [%s '𝄞𐐷']
+    ==
+    :*  "y_string_combination_UTF8_UTF16_surrogate_pair_reverse"
+        '"\\uD801\\uDc37𝄞"'
+        [%s '𐐷𝄞']
+    ==
+    :*  "y_string_comments"
+        '"a/*b*/c/*d//e"'
+        [%s 'a/*b*/c/*d//e']
+    ==
+    :*  "y_string_double_escape"
+        '"\\\\n"'
+        [%s '\\n']
+    ==
+    :*  "y_string_empty"
+        '""'
+        [%s '']
+    ==
+    :*  "y_string_UTF16_ASCII_character"
+        '"\\u0061"'
+        [%s 'a']
+    ==
+    :*  "y_string_UTF16_control_character"
+        '"\\u0012"'
+        [%s '\12']
+    ==
+    :*  "y_string_UTF16_escape_character"
+        '"\\u005C"'
+        [%s '\\']
+    ==
+    :*  "y_string_UTF16_invalid_unicode_U+10FFFE"
+        '"\\uDBFF\\uDFFE"'
+        [%s (tuft `@c`0xd10.fffe)]
+    ==
+    :*  "y_string_UTF16_invisible_character_U+2064"
+        '"\\u2064"'
+        [%s '\E2\81\A4']
+    ==
+    :*  "y_string_UTF16_noncharacter"
+        '"\\uFFFF"'
+        [%s (tuft `@c`0xffff)]
+    ==
+    :*  "y_string_UTF16_null"
+        '"\\u0000"'
+        [%s '\00']
+    ==
+    :*  "y_string_UTF16_zero_width_character_U+200B"
+        '"\\u200B"'
+        [%s '\E2\80\8B']
+    ==
+    :*  "y_string_UTF8_1_2_3_4_bytes_as_UTF16"
+        '"\\u0060\\u012a\\u12ab\\uD83e\\uDd80"'
+        [%s '`Īካ🦀']
+    ==
+    :*  "y_string_UTF8_invalid_character_U+1BFFF"
+        '"\F0\9B\BF\BF"'
+        [%s (tuft `@c`0x1.bfff)]
+    ==
+    :*  "y_string_UTF8_non_displayable_character_U+2028"
+        '" "'
+        [%s '\E2\80\A8']
+    ==
+    :*  "y_string_UTF8_reserved_unicode_U+10FFFF"
+        '"\F4\8F\BF\BF"'
+        [%s (tuft `@c`0x10.ffff)]
+    ==
+    :*  "y_string_with_del_character"
+        '"a\7Fa"'
+        [%s 'a\7Fa']
+    ==
+    :*  "y_value_lonely_boolean_false"
+        'false'
+        [%b |]
+    ==
+    :*  "y_value_lonely_boolean_true"
+        'true'
+        [%b &]
+    ==
+    :*  "y_value_lonely_null"
+        'null'
+        ~
+    ==
+    :*  "y_value_whitespace_array"
+        '\09\0A\0D [1] \09\0A\0D'
+        [%a ~[[%n '1']]]
+    ==
+    :*  "y_value_whitespace_boolean_false"
+        '\09\0A\0D false \09\0A\0D'
+        [%b |]
+    ==
+    :*  "y_value_whitespace_boolean_true"
+        '\09\0A\0D true \09\0A\0D'
+        [%b &]
+    ==
+    :*  "y_value_whitespace_null"
+        '\09\0A\0D null \09\0A\0D'
+        ~
+    ==
+    :*  "y_value_whitespace_number"
+        '\09\0A\0D 123 \09\0A\0D'
+        [%n '123']
+    ==
+    :*  "y_value_whitespace_object"
+        '\09\0A\0D {"a": "b"} \09\0A\0D'
+        (frond ['a' [%s 'b']])
+    ==
+    :*  "y_value_whitespace_string"
+        '\09\0A\0D "a" \09\0A\0D'
+        [%s 'a']
+    ==
+  ==
+::  Certain input is ambiguous under the JSON standard and a parser is free to
+::  either accept or reject it. For jetting purposes, we need to know what the
+::  behaviour of the Hoon parser is for each of these inputs so that the jet
+::  semantics can match exactly.
+::
+::  These inputs are ambiguous under the JSON standard, but are rejected by
+::  Urbit.
+::
+++  test-de-json-invalid-ambiguous-input
+  %-  run-decode-rejection-specs
+  :~
+    ['"\FA"' "i_string_extended_ascii"]
+    ['"\\uD888\\u1234"' "i_string_UTF16_invalid_2nd_surrogate"]
+    ['"\\uDd1e\\uD834"' "i_string_UTF16_inverted_surrogates"]
+    ['"\\uDADA"' "i_string_UTF16_lone_1st_surrogate"]
+    ['"\\uDFAA"' "i_string_UTF16_lone_2nd_surrogate"]
+    ['"\\uD800\\uD800\\n"' "i_string_UTF16_two_1st_surrogates"]
+    ['"\\uDc00\\uDc00\\n"' "i_string_UTF16_two_2nd_surrogates"]
+    ['"日ш\FA"' "i_string_UTF8_invalid_sequence"]
+    ['"\E0"' "i_string_UTF8_lone_starting_byte"]
+    ['"\81"' "i_string_UTF8_lone_continuation_byte"]
+    ['"\F4\BF\BF\BF"' "i_string_UTF8_not_in_unicode_range"]
+    ['"\C0\AF"' "i_string_UTF8_overlong_sequence_2_bytes"]
+    ['"\FC\83\BF\BF\BF\BF"' "i_string_UTF8_overlong_sequence_6_bytes"]
+    ['"\FC\80\80\80\80\80"' "i_string_UTF8_overlong_sequence_6_bytes_null"]
+    ['"\ED\A0\80"' "i_string_UTF8_surrogate_U+D800"]
+    ['"\E2\80"' "i_string_UTF8_truncated"]
+  ==
+::  These inputs are ambiguous under the JSON standard, but are accepted by
+::  Urbit.
+::
+++  test-de-json-valid-ambiguous-input
+  %-  run-decode-specs
+  :~
+    :*  "i_number_big_int"
+        '123123123123123123123123123123'
+        [%n '123123123123123123123123123123']
+    ==
+    :*  "i_number_big_int_neg"
+        '-123123123123123123123123123123'
+        [%n '-123123123123123123123123123123']
+    ==
+    :*  "i_number_huge_exp_int"
+        '1e987654321987654321'
+        [%n '1e987654321987654321']
+    ==
+    :*  "i_number_huge_exp_int_neg"
+        '-1e987654321987654321'
+        [%n '-1e987654321987654321']
+    ==
+    :*  "i_number_huge_exp_lead_0s_int"
+        '1e00000000987654321987654321'
+        [%n '1e00000000987654321987654321']
+    ==
+    :*  "i_number_huge_exp_lead_0s_real"
+        '1.5e00000000987654321987654321'
+        [%n '1.5e00000000987654321987654321']
+    ==
+    :*  "i_number_huge_exp_real"
+        '1.5e987654321987654321'
+        [%n '1.5e987654321987654321']
+    ==
+    :*  "i_number_huge_exp_real_neg"
+        '-1.5e987654321987654321'
+        [%n '-1.5e987654321987654321']
+    ==
+    :*  "i_number_huge_neg_exp_int"
+        '1e-987654321987654321'
+        [%n '1e-987654321987654321']
+    ==
+    :*  "i_number_huge_neg_exp_int_neg"
+        '-1e-987654321987654321'
+        [%n '-1e-987654321987654321']
+    ==
+    :*  "i_number_huge_neg_exp_real"
+        '1.5e-987654321987654321'
+        [%n '1.5e-987654321987654321']
+    ==
+    :*  "i_number_huge_neg_exp_real_neg"
+        '-1.5e-987654321987654321'
+        [%n '-1.5e-987654321987654321']
+    ==
+    :*  "i_number_real_neg_overflow"
+        '-123123e100000'
+        [%n '-123123e100000']
+    ==
+    :*  "i_number_real_pos_overflow"
+        '123123e100000'
+        [%n '123123e100000']
+    ==
+    :*  "i_number_real_underflow"
+        '123e-1000000'
+        [%n '123e-1000000']
+    ==
+  ==
+::  Decoding stress-test
+::
+::    Random twitter user profile data used as practical example; no idea who
+::    he is (I disavow!)
+::
+++  test-de-json-complex-structure
+  %+  expect-eq
+    !>  %-  some
+        :-  %o
+        %-  malt
+        ^-  (list [@t json])
+        :~
+          :-  'data'
+          :-  %o
+          %-  malt
+          ^-  (list [@t json])
+          :~
+            :-  'user'
+            :-  %o
+            %-  malt
+            ^-  (list [@t json])
+            :~
+              :-  'result'
+              :-  %o
+              %-  malt
+              ^-  (list [@t json])
+              :~
+                ['__typename' [%s 'User']]
+                ['id' [%s 'VXNlcjo4MjYyNjE5MTQ=']]
+                ['rest_id' [%s '826261914']]
+                ['affiliates_highlighted_label' [%o ~]]
+                ['has_nft_avatar' [%b |]]
+                ::
+                :-  'legacy'
+                :-  %o
+                %-  malt
+                ^-  (list [@t json])
+                :~
+                  ['created_at' [%s 'Sun Sep 16 01:32:21 +0000 2012']]
+                  ['default_profile' [%b &]]
+                  ['default_profile_image' [%b |]]
+                  ['description' [%s 'Not-NYT Bestselling author. Math PhD. Founder of New Discourses. Apolitical. Against totalitarianism and supremacy of all kinds. For freedom. 🇺🇲🇺🇲🇺🇲']]
+                  ::
+                  :-  'entities'
+                  :-  %o
+                  %-  malt
+                  ^-  (list [@t json])
+                  :~
+                    :-  'description'
+                    :-  %o
+                    %-  malt
+                    ^-  (list [@t json])
+                    :~
+                      [p='urls' q=[%a p=~]]
+                    ==
+                    ::
+                    :-  'url'
+                    :-  %o
+                    %-  malt
+                    ^-  (list [@t json])
+                    :~
+                      :-  'urls'
+                      :-  %a
+                      %-  limo
+                      :~
+                        :-  %o
+                        %-  malt
+                        ^-  (list [@t json])
+                        :~
+                          ['display_url' [%s 'NewDiscourses.com']]
+                          ['expanded_url' [%s 'http://NewDiscourses.com']]
+                          ['url' [%s 'https://t.co/RDZVUxIOWN']]
+                          ['indices' [%a ~[[%n '0'] [%n '23']]]]
+                        ==
+                      ==
+                    ==
+                  ==
+                  ::
+                  ['fast_followers_count' [%n '0']]
+                  ['favourites_count' [%n '193322']]
+                  ['followers_count' [%n '284274']]
+                  ['friends_count' [%n '338']]
+                  ['has_custom_timelines' [%b &]]
+                  ['is_translator' [%b |]]
+                  ['listed_count' [%n '1867']]
+                  ['location' [%s 'Knoxville, TN']]
+                  ['media_count' [%n '11074']]
+                  ['name' [%s 'James Lindsay, pro-freedom']]
+                  ['normal_followers_count' [%n '284274']]
+                  ['pinned_tweet_ids_str' [%a ~[[%s '1238111933905190913']]]]
+                  ::
+                  :-  'profile_banner_extensions'
+                  :-  %o
+                  %-  malt
+                  ^-  (list [@t json])
+                  :~
+                    :-  'mediaColor'
+                    :-  %o
+                    %-  malt
+                    ^-  (list [@t json])
+                    :~
+                      :-  'r'
+                      :-  %o
+                      %-  malt
+                      ^-  (list [@t json])
+                      :~
+                        :-  'ok'
+                        :-  %o
+                        %-  malt
+                        ^-  (list [@t json])
+                        :~
+                          :-  'palette'
+                          :-  %a
+                          %-  limo
+                          :~
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '95.91']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '33']]
+                                ['blue' [%n '41']]
+                                ['green' [%n '36']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '3.65']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '113']]
+                                ['blue' [%n '118']]
+                                ['green' [%n '115']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '0.44']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '200']]
+                                ['blue' [%n '202']]
+                                ['green' [%n '201']]
+                              ==
+                            ==
+                          ==
+                        ==
+                      ==
+                    ==
+                  ==
+                  ::
+                  ['profile_banner_url' [%s 'https://pbs.twimg.com/profile_banners/826261914/1582653360']]
+                  ::
+                  :-  'profile_image_extensions'
+                  :-  %o
+                  %-  malt
+                  ^-  (list [@t json])
+                  :~
+                    :-  'mediaColor'
+                    :-  %o
+                    %-  malt
+                    ^-  (list [@t json])
+                    :~
+                      :-  'r'
+                      :-  %o
+                      %-  malt
+                      ^-  (list [@t json])
+                      :~
+                        :-  'ok'
+                        :-  %o
+                        %-  malt
+                        ^-  (list [@t json])
+                        :~
+                          :-  'palette'
+                          :-  %a
+                          %-  limo
+                          :~
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '72.12']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '35']]
+                                ['blue' [%n '16']]
+                                ['green' [%n '22']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '17.13']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '146']]
+                                ['blue' [%n '100']]
+                                ['green' [%n '123']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '10.57']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '193']]
+                                ['blue' [%n '129']]
+                                ['green' [%n '153']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '2.03']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '222']]
+                                ['blue' [%n '125']]
+                                ['green' [%n '149']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '1.58']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '131']]
+                                ['blue' [%n '55']]
+                                ['green' [%n '53']]
+                              ==
+                            ==
+                          ==
+                        ==
+                      ==
+                    ==
+                  ==
+                  ::
+                  ['profile_image_url_https' [%s 'https://pbs.twimg.com/profile_images/1459175734602350593/cW3fs5lR_normal.jpg']]
+                  ['profile_interstitial_type' [%s '']]
+                  ['protected' [%b |]]
+                  ['screen_name' [%s 'ConceptualJames']]
+                  ['statuses_count' [%n '137296']]
+                  ['translator_type' [%s 'none']]
+                  ['verified' [%b |]]
+                  ['url' [%s 'https://t.co/RDZVUxIOWN']]
+                  ['withheld_in_countries' [%a ~]]
+                ==
+                ::
+                ['legacy_extended_profile' [%o ~]]
+                ['is_profile_translatable' [%b |]]
+              ==
+            ==
+          ==
+        ==
+    !>  %-  de-json:html  '{"data":{"user":{"result":{"has_nft_avatar":false,"rest_id":"826261914","affiliates_highlighted_label":{},"__typename":"User","id":"VXNlcjo4MjYyNjE5MTQ=","is_profile_translatable":false,"legacy_extended_profile":{},"legacy":{"protected":false,"pinned_tweet_ids_str":["1238111933905190913"],"entities":{"url":{"urls":[{"indices":[0,23],"display_url":"NewDiscourses.com","url":"https://t.co/RDZVUxIOWN","expanded_url":"http://NewDiscourses.com"}]},"description":{"urls":[]}},"name":"James Lindsay, pro-freedom","default_profile":true,"location":"Knoxville, TN","url":"https://t.co/RDZVUxIOWN","verified":false,"profile_interstitial_type":"","fast_followers_count":0,"description":"Not-NYT Bestselling author. Math PhD. Founder of New Discourses. Apolitical. Against totalitarianism and supremacy of all kinds. For freedom. 🇺🇲🇺🇲🇺🇲","created_at":"Sun Sep 16 01:32:21 +0000 2012","followers_count":284274,"withheld_in_countries":[],"listed_count":1867,"profile_image_url_https":"https://pbs.twimg.com/profile_images/1459175734602350593/cW3fs5lR_normal.jpg","has_custom_timelines":true,"normal_followers_count":284274,"favourites_count":193322,"default_profile_image":false,"media_count":11074,"statuses_count":137296,"profile_banner_extensions":{"mediaColor":{"r":{"ok":{"palette":[{"rgb":{"green":36,"blue":41,"red":33},"percentage":95.91},{"rgb":{"green":115,"blue":118,"red":113},"percentage":3.65},{"rgb":{"green":201,"blue":202,"red":200},"percentage":0.44}]}}}},"profile_banner_url":"https://pbs.twimg.com/profile_banners/826261914/1582653360","screen_name":"ConceptualJames","translator_type":"none","friends_count":338,"profile_image_extensions":{"mediaColor":{"r":{"ok":{"palette":[{"rgb":{"green":22,"blue":16,"red":35},"percentage":72.12},{"rgb":{"green":123,"blue":100,"red":146},"percentage":17.13},{"rgb":{"green":153,"blue":129,"red":193},"percentage":10.57},{"rgb":{"green":149,"blue":125,"red":222},"percentage":2.03},{"rgb":{"green":53,"blue":55,"red":131},"percentage":1.58}]}}}},"is_translator":false}}}}}'
+::  JSON encoding test suite
+::
+::  Encode arrays
+::
+++  test-en-json-arrays
+  %-  run-encode-specs
+  :~
+    :*  "e_array_empty"
+        [%a ~]
+        "[]"
+    ==
+    :*  "e_array_single_boolean_false"
+        [%a ~[[%b |]]]
+        "[false]"
+    ==
+    :*  "e_array_single_boolean_true"
+        [%a ~[[%b &]]]
+        "[true]"
+    ==
+    :*  "e_array_single_null"
+        [%a ~[~]]
+        "[null]"
+    ==
+    :*  "e_array_single_number"
+        [%a ~[[%n '123.456']]]
+        "[123.456]"
+    ==
+    :*  "e_array_single_object"
+        [%a ~[[%o ~]]]
+        "[\{}]"
+    ==
+    :*  "e_array_single_string"
+        [%a ~[[%s 'abc']]]
+        "[\"abc\"]"
+    ==
+    :*  "e_array_nested_array"
+        [%a ~[[%a ~]]]
+        "[[]]"
+    ==
+    :*  "e_array_multiple_homogenous"
+        [%a ~[[%n '1'] [%n '2'] [%n '3'] [%n '4'] [%n '5']]]
+        "[1,2,3,4,5]"
+    ==
+    :*  "e_array_multiple_heterogenous"
+        [%a ~[[%b |] ~ [%n '1'] [%s 'a'] [%o ~] [%a ~]]]
+        "[false,null,1,\"a\",\{},[]]"
+    ==
+  ==
+::  Encode numbers
+::
+::  .en-json:html just converts the number as a cord to tape - the real work is
+::  done by .enjs:format
+::
+++  test-en-json-numbers
+  %-  run-encode-specs
+  :~
+    :*  "e_number_sanity_check"
+        [%n '-123.456e789']
+        "-123.456e789"
+    ==
+  ==
+::  Encode objects
+::
+++  test-en-json-objects
+  %-  run-encode-specs
+  :~
+    :*  "e_object_empty"
+        [%o ~]
+        "\{}"
+    ==
+    :*  "e_object_single_boolean_false"
+        (frond 'x' [%b |])
+        "\{\"x\":false}"
+    ==
+    :*  "e_object_single_boolean_true"
+        (frond 'x' [%b &])
+        "\{\"x\":true}"
+    ==
+    :*  "e_object_single_null"
+        (frond 'x' ~)
+        "\{\"x\":null}"
+    ==
+    :*  "e_object_single_number"
+        (frond 'x' [%n '123.456'])
+        "\{\"x\":123.456}"
+    ==
+    :*  "e_object_single_string"
+        (frond 'x' [%s 'abc'])
+        "\{\"x\":\"abc\"}"
+    ==
+    :*  "e_object_single_array"
+        (frond 'x' [%a ~])
+        "\{\"x\":[]}"
+    ==
+    :*  "e_object_nested_object"
+        (frond 'x' [%o ~])
+        "\{\"x\":\{}}"
+    ==
+    ::  the order of elements for the below two tests is determined by hash, and
+    ::  therefore "random" but consistent 
+    :*  "e_object_multiple_homogenous"
+        (pairs ~[['a' [%n '97']] ['b' [%n '98']] ['c' [%n '99']] ['d' [%n '100']] ['e' [%n '101']] ['f' [%n '102']]])
+        "\{\"c\":99,\"a\":97,\"f\":102,\"d\":100,\"b\":98,\"e\":101}"
+    ==
+    :*  "e_object_multiple_heterogenous"
+        (pairs ~[['a' [%b |]] ['b' ~] ['c' [%n '1']] ['d' [%s 'a']] ['e' [%a ~]] ['f' [%o ~]]])
+        "\{\"c\":1,\"a\":false,\"f\":\{},\"d\":\"a\",\"b\":null,\"e\":[]}"
+    ==
+  ==
+::  Encode strings
+::
+::  Summary of .en-json:html string encoding rules:
+::    - '"', '\', and newlines are escaped
+::    - bytes \00 to \1F are UTF16 escaped
+::    - everything else (ASCII & unicode) is written directly as UTF8
+::
+++  test-en-json-strings
+  %-  run-encode-specs
+  :~
+    :*  "e_string_empty"
+        [%s '']
+        "\"\""
+    ==
+    ::  TODO: .en-json:html will ignore the trailing null bytes of strings due
+    ::        to the behaviour of .trip
+    ::
+    :*  "e_string_null_wrapped"
+        [%s 'a\00a']
+        "\"a\\u0000a\""
+    ==
+    :*  "e_string_ascii"
+        [%s 'a']
+        "\"a\""
+    ==
+    :*  "e_string_escape_backslash"
+        [%s 'Delete C:\\Windows\\System32']
+        "\"Delete C:\\\\Windows\\\\System32\""
+    ==
+    :*  "e_string_escape_delete"
+        [%s 'delete\7Fme']
+        "\"delete\\u007fme\""
+    ==
+    :*  "e_string_escape_newline"
+        [%s 'new\0Aline']
+        "\"new\\nline\""
+    ==
+    :*  "e_string_escape_quotes"
+        [%s 'he said "wow"']
+        "\"he said \\\"wow\\\"\""
+    ==
+    :*  "e_string_escape_whitespace"
+        [%s 'add\01some\09space\1Fbetween here']
+        "\"add\\u0001some\\u0009space\\u001fbetween here\""
+    ==
+    :*  "e_string_unicode_bytes"
+        [%s '\F0\9D\84\9E']
+        "\"𝄞\""
+    ==
+    :*  "e_string_unicode_bytes_invalid"
+        [%s '\F0\9B\BF\BF']
+        "\"𛿿\""
+    ==
+    :*  "e_string_unicode_bytes_invisible"
+        [%s '\E2\81\A4']
+        "\"⁤\""
+    ==
+    :*  "e_string_unicode_inline"
+        [%s '𝄞']
+        "\"𝄞\""
+    ==
+    :*  "e_string_utf16_inline"
+        [%s '\\uD83C\\uDDFA\\uD83C\\uDDF2']
+        "\"\\\\uD83C\\\\uDDFA\\\\uD83C\\\\uDDF2\""
+    ==
+    :*  "e_string_multiple_ascii"
+        [%s '123456789 abcdefghijklmnop']
+        "\"123456789 abcdefghijklmnop\""
+    ==
+    :*  "e_string_multiple_escapes"
+        [%s '\09"wow!"\0Ahe said\\']
+        "\"\\u0009\\\"wow!\\\"\\nhe said\\\\\""
+    ==
+    :*  "e_string_multiple_unicode"
+        [%s '𝄞\F0\9D\84\9E']
+        "\"𝄞𝄞\""
+    ==
+  ==
+::  Encode naked values
+::
+++  test-en-json-values
+  %-  run-encode-specs
+  :~
+    :*  "e_value_bool_false"
+        [%b |]
+        "false"
+    ==
+    :*  "e_value_bool_true"
+        [%b &]
+        "true"
+    ==
+    :*  "e_value_null"
+        ~
+        "null"
+    ==
+  ==
+::  Encoding stress-test
+::
+::    Random twitter user profile data used as practical example; no idea who
+::    he is (I disavow!)
+::
+++  test-en-json-complex-structure
+  %+  expect-eq
+    !>  "\{\"data\":\{\"user\":\{\"result\":\{\"has_nft_avatar\":false,\"rest_id\":\"826261914\",\"affiliates_highlighted_label\":\{},\"__typename\":\"User\",\"id\":\"VXNlcjo4MjYyNjE5MTQ=\",\"is_profile_translatable\":false,\"legacy_extended_profile\":\{},\"legacy\":\{\"protected\":false,\"pinned_tweet_ids_str\":[\"1238111933905190913\"],\"entities\":\{\"url\":\{\"urls\":[\{\"indices\":[0,23],\"display_url\":\"NewDiscourses.com\",\"url\":\"https://t.co/RDZVUxIOWN\",\"expanded_url\":\"http://NewDiscourses.com\"}]},\"description\":\{\"urls\":[]}},\"name\":\"James Lindsay, pro-freedom\",\"default_profile\":true,\"location\":\"Knoxville, TN\",\"url\":\"https://t.co/RDZVUxIOWN\",\"verified\":false,\"profile_interstitial_type\":\"\",\"fast_followers_count\":0,\"description\":\"Not-NYT Bestselling author. Math PhD. Founder of New Discourses. Apolitical. Against totalitarianism and supremacy of all kinds. For freedom. 🇺🇲🇺🇲🇺🇲\",\"created_at\":\"Sun Sep 16 01:32:21 +0000 2012\",\"followers_count\":284274,\"withheld_in_countries\":[],\"listed_count\":1867,\"profile_image_url_https\":\"https://pbs.twimg.com/profile_images/1459175734602350593/cW3fs5lR_normal.jpg\",\"has_custom_timelines\":true,\"normal_followers_count\":284274,\"favourites_count\":193322,\"default_profile_image\":false,\"media_count\":11074,\"statuses_count\":137296,\"profile_banner_extensions\":\{\"mediaColor\":\{\"r\":\{\"ok\":\{\"palette\":[\{\"rgb\":\{\"green\":36,\"blue\":41,\"red\":33},\"percentage\":95.91},\{\"rgb\":\{\"green\":115,\"blue\":118,\"red\":113},\"percentage\":3.65},\{\"rgb\":\{\"green\":201,\"blue\":202,\"red\":200},\"percentage\":0.44}]}}}},\"profile_banner_url\":\"https://pbs.twimg.com/profile_banners/826261914/1582653360\",\"screen_name\":\"ConceptualJames\",\"translator_type\":\"none\",\"friends_count\":338,\"profile_image_extensions\":\{\"mediaColor\":\{\"r\":\{\"ok\":\{\"palette\":[\{\"rgb\":\{\"green\":22,\"blue\":16,\"red\":35},\"percentage\":72.12},\{\"rgb\":\{\"green\":123,\"blue\":100,\"red\":146},\"percentage\":17.13},\{\"rgb\":\{\"green\":153,\"blue\":129,\"red\":193},\"percentage\":10.57},\{\"rgb\":\{\"green\":149,\"blue\":125,\"red\":222},\"percentage\":2.03},\{\"rgb\":\{\"green\":53,\"blue\":55,\"red\":131},\"percentage\":1.58}]}}}},\"is_translator\":false}}}}}"
+    !>  %-  en-json:html
+        :-  %o
+        %-  malt
+        ^-  (list [@t json])
+        :~
+          :-  'data'
+          :-  %o
+          %-  malt
+          ^-  (list [@t json])
+          :~
+            :-  'user'
+            :-  %o
+            %-  malt
+            ^-  (list [@t json])
+            :~
+              :-  'result'
+              :-  %o
+              %-  malt
+              ^-  (list [@t json])
+              :~
+                ['__typename' [%s 'User']]
+                ['id' [%s 'VXNlcjo4MjYyNjE5MTQ=']]
+                ['rest_id' [%s '826261914']]
+                ['affiliates_highlighted_label' [%o ~]]
+                ['has_nft_avatar' [%b |]]
+                ::
+                :-  'legacy'
+                :-  %o
+                %-  malt
+                ^-  (list [@t json])
+                :~
+                  ['created_at' [%s 'Sun Sep 16 01:32:21 +0000 2012']]
+                  ['default_profile' [%b &]]
+                  ['default_profile_image' [%b |]]
+                  ['description' [%s 'Not-NYT Bestselling author. Math PhD. Founder of New Discourses. Apolitical. Against totalitarianism and supremacy of all kinds. For freedom. 🇺🇲🇺🇲🇺🇲']]
+                  ::
+                  :-  'entities'
+                  :-  %o
+                  %-  malt
+                  ^-  (list [@t json])
+                  :~
+                    :-  'description'
+                    :-  %o
+                    %-  malt
+                    ^-  (list [@t json])
+                    :~
+                      [p='urls' q=[%a p=~]]
+                    ==
+                    ::
+                    :-  'url'
+                    :-  %o
+                    %-  malt
+                    ^-  (list [@t json])
+                    :~
+                      :-  'urls'
+                      :-  %a
+                      %-  limo
+                      :~
+                        :-  %o
+                        %-  malt
+                        ^-  (list [@t json])
+                        :~
+                          ['display_url' [%s 'NewDiscourses.com']]
+                          ['expanded_url' [%s 'http://NewDiscourses.com']]
+                          ['url' [%s 'https://t.co/RDZVUxIOWN']]
+                          ['indices' [%a ~[[%n '0'] [%n '23']]]]
+                        ==
+                      ==
+                    ==
+                  ==
+                  ::
+                  ['fast_followers_count' [%n '0']]
+                  ['favourites_count' [%n '193322']]
+                  ['followers_count' [%n '284274']]
+                  ['friends_count' [%n '338']]
+                  ['has_custom_timelines' [%b &]]
+                  ['is_translator' [%b |]]
+                  ['listed_count' [%n '1867']]
+                  ['location' [%s 'Knoxville, TN']]
+                  ['media_count' [%n '11074']]
+                  ['name' [%s 'James Lindsay, pro-freedom']]
+                  ['normal_followers_count' [%n '284274']]
+                  ['pinned_tweet_ids_str' [%a ~[[%s '1238111933905190913']]]]
+                  ::
+                  :-  'profile_banner_extensions'
+                  :-  %o
+                  %-  malt
+                  ^-  (list [@t json])
+                  :~
+                    :-  'mediaColor'
+                    :-  %o
+                    %-  malt
+                    ^-  (list [@t json])
+                    :~
+                      :-  'r'
+                      :-  %o
+                      %-  malt
+                      ^-  (list [@t json])
+                      :~
+                        :-  'ok'
+                        :-  %o
+                        %-  malt
+                        ^-  (list [@t json])
+                        :~
+                          :-  'palette'
+                          :-  %a
+                          %-  limo
+                          :~
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '95.91']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '33']]
+                                ['blue' [%n '41']]
+                                ['green' [%n '36']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '3.65']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '113']]
+                                ['blue' [%n '118']]
+                                ['green' [%n '115']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '0.44']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '200']]
+                                ['blue' [%n '202']]
+                                ['green' [%n '201']]
+                              ==
+                            ==
+                          ==
+                        ==
+                      ==
+                    ==
+                  ==
+                  ::
+                  ['profile_banner_url' [%s 'https://pbs.twimg.com/profile_banners/826261914/1582653360']]
+                  ::
+                  :-  'profile_image_extensions'
+                  :-  %o
+                  %-  malt
+                  ^-  (list [@t json])
+                  :~
+                    :-  'mediaColor'
+                    :-  %o
+                    %-  malt
+                    ^-  (list [@t json])
+                    :~
+                      :-  'r'
+                      :-  %o
+                      %-  malt
+                      ^-  (list [@t json])
+                      :~
+                        :-  'ok'
+                        :-  %o
+                        %-  malt
+                        ^-  (list [@t json])
+                        :~
+                          :-  'palette'
+                          :-  %a
+                          %-  limo
+                          :~
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '72.12']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '35']]
+                                ['blue' [%n '16']]
+                                ['green' [%n '22']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '17.13']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '146']]
+                                ['blue' [%n '100']]
+                                ['green' [%n '123']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '10.57']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '193']]
+                                ['blue' [%n '129']]
+                                ['green' [%n '153']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '2.03']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '222']]
+                                ['blue' [%n '125']]
+                                ['green' [%n '149']]
+                              ==
+                            ==
+                            ::
+                            :-  %o
+                            %-  malt
+                            ^-  (list [@t json])
+                            :~
+                              ['percentage' [%n '1.58']]
+                              ::
+                              :-  'rgb'
+                              :-  %o
+                              %-  malt
+                              :~
+                                ['red' [%n '131']]
+                                ['blue' [%n '55']]
+                                ['green' [%n '53']]
+                              ==
+                            ==
+                          ==
+                        ==
+                      ==
+                    ==
+                  ==
+                  ::
+                  ['profile_image_url_https' [%s 'https://pbs.twimg.com/profile_images/1459175734602350593/cW3fs5lR_normal.jpg']]
+                  ['profile_interstitial_type' [%s '']]
+                  ['protected' [%b |]]
+                  ['screen_name' [%s 'ConceptualJames']]
+                  ['statuses_count' [%n '137296']]
+                  ['translator_type' [%s 'none']]
+                  ['verified' [%b |]]
+                  ['url' [%s 'https://t.co/RDZVUxIOWN']]
+                  ['withheld_in_countries' [%a ~]]
+                ==
+                ::
+                ['legacy_extended_profile' [%o ~]]
+                ['is_profile_translatable' [%b |]]
+              ==
+            ==
+          ==
+        ==
+::  XML encoding/decoding
+::
+::  XML decoding
 ::
 ++  test-de-xml
   ;:  weld
     ::  Basic use
     ::
     %+  expect-eq
-      !>  ^-  manx  +:(de-xml:html (crip "<html><head><title>My first webpage</title></head><body><h1>Welcome!</h1>Hello, world! We are on the web.\0a<div></div><script src=\"http://unsafely.tracking.you/cookiemonster.js\"></script></body></html>"))
+      !>  ^-  manx  +:(de-xml (crip "<html><head><title>My first webpage</title></head><body><h1>Welcome!</h1>Hello, world! We are on the web.\0a<div></div><script src=\"http://unsafely.tracking.you/cookiemonster.js\"></script></body></html>"))
     !>  ^-  manx
     ;html
         ;head
@@ -29,7 +2024,7 @@
     ::
     %+  expect-eq
       !>  ^-  manx
-      +:(de-xml:html (crip "<elem><![CDATA[text]]></elem>"))
+      +:(de-xml (crip "<elem><![CDATA[text]]></elem>"))
     !>  ^-  manx
     ;elem: text
     ::  comments
@@ -37,28 +2032,28 @@
     %+  expect-eq
       !>  ^-  manx
       ;elem: text
-    !>  +:(de-xml:html (crip "<elem>text<!-- comment --></elem>"))
+    !>  +:(de-xml (crip "<elem>text<!-- comment --></elem>"))
     %+  expect-eq
       !>  ^-  manx
       ;elem;
-    !>  +:(de-xml:html (crip "<elem><!-- comment --></elem>"))
+    !>  +:(de-xml (crip "<elem><!-- comment --></elem>"))
     ::  entities
     ::
     %+  expect-eq
       !>  ^-  manx
-      +:(de-xml:html (crip "<elem>&#62;</elem>"))
+      +:(de-xml (crip "<elem>&#62;</elem>"))
       !>  ^-  manx
       ;elem: >
     :: self-closing tag
     ::
     %+  expect-eq
       !>  ^-  manx
-      +:(de-xml:html (crip "<img />"))
+      +:(de-xml (crip "<img />"))
       !>  ^-  manx
       ;img;
 
   ==
-
+:: XML encoding
 ::
 ++  test-en-xml
   ;:  weld
@@ -66,12 +2061,12 @@
     ::
     %+  expect-eq
       !>  "<elem>&gt;</elem>"
-    !>  %-  en-xml:html
+    !>  %-  en-xml
     ;elem: >
     ::  Basic use
     ::
     %+  expect-eq
-      !>   %-  en-xml:html
+      !>   %-  en-xml
       ;html
         ;head
           ;title: My first webpage
@@ -89,784 +2084,7 @@
     ::
     %+  expect-eq
       !>  "<input type=\"submit\">Submit</input>"
-      !>  %-  en-xml:html
+      !>  %-  en-xml
       ;input(type "submit"): Submit
-  ==
-::  JSON encoding/decoding
-::
-++  from-code-points
-  |=  points=(list @)
-  (tufa `(list @c)`points)
-++  from-code-point
-  |=  point=@
-  (tuft point)
-+$  json-parse-spec  [name=tape input=cord expected=json]
-+$  json-parse-rejection-spec  [input=cord name=tape]
-::  For checking a large list of examples against expected values.
-::  It also nicely formats any failures.
-::
-++  run-parse-specs
-  ::  legend tells of a man who made the Kessel run in less than 12
-  ::  parse-specs...
-  |=  specs=(list json-parse-spec)
-  %-  zing
-  %-  turn
-  :-  specs
-  |=  spec=json-parse-spec
-  ^-  tang
-  =+  result=(expect-eq !>(`expected.spec) !>((de-json:html input.spec)))
-  ?~  result  ~
-  `tang`[[%leaf "in {name.spec}:"] result]
-::  Checks that a list of examples all fail to parse
-::
-++  run-parse-rejection-specs
-  |=  specs=(list json-parse-rejection-spec)
-  %-  zing
-  %-  turn
-  :-  specs
-  |=  spec=json-parse-rejection-spec
-  ^-  tang
-  =+  result=(expect-eq !>(~) !>((de-json:html input.spec)))
-  ?~  result  ~
-  `tang`[[%leaf "in {name.spec}:"] result]
-::  example values used in tests
-::
-++  ex
-  |%
-  ++  two  `json`[%n '2']
-  ++  tru  `json`[%b &]
-  --
-::  encoding naked values
-::
-++  test-en-json-basics
-  ;:  weld
-    %+  expect-eq
-      !>  "true"
-      !>  (en-json [%b &])
-    %+  expect-eq
-      !>  "false"
-      !>  (en-json [%b |])
-    %+  expect-eq
-      !>  "null"
-      !>  (en-json ~)
-    %+  expect-eq
-      !>  "123.45"
-      !>  (en-json [%n '123.45'])
-  ==
-::  encoding strings, with proper escaping rules
-::
-++  test-en-json-strings
-  ::  A less-confusing representation of theses strings are included in comments
-  ::
-  ::    Things get confusing with hoon string literal escapes. The
-  ::    version included as a comment is if you opened the json output
-  ::    in a simple text editor.
-  ::
-  ;:  weld
-    ::  "hello"
-    ::
-    %+  expect-eq
-      !>  "\"hello\""
-      !>  (en-json [%s 'hello'])
-    ::  it escapes quotes
-    ::  "he said \"wow\""
-    ::
-    %+  expect-eq
-      !>  "\"he said \\\"wow\\\"\""
-      !>  (en-json [%s 'he said "wow"'])
-    ::  it escapes backslashes
-    ::  "Delete C:\\Windows\\System32"
-    ::
-    %+  expect-eq
-      !>  "\"Delete C:\\\\Windows\\\\System32\""
-      !>  (en-json [%s 'Delete C:\\Windows\\System32'])
-    ::  it uses \n for newlines
-    ::  "hello\nworld"
-    ::
-    %+  expect-eq
-      !>  "\"hello\\nworld\""
-      !>  (en-json [%s 'hello\0aworld'])
-    ::  it uses \u encoding for control characters (0x1f and below)
-    ::  "ding!\u0007"
-    ::
-    %+  expect-eq
-      !>  "\"ding!\\u0007\""
-      !>  (en-json [%s 'ding!\07'])
-    ::  it supports null bytes
-    ::
-    %+  expect-eq
-      !>  "\"null\\u0000byte\\u0000separator\""
-      !>  (en-json [%s 'null\00byte\00separator'])
-    ::  inline unicode characters
-    ::
-    %+  expect-eq
-      !>  "\"lmao 🤣\""
-      !>  (en-json [%s 'lmao 🤣'])
-  ==
-::  encoding arrays
-::
-++  test-en-json-arrays
-  ;:  weld
-    ::  empty array
-    ::
-    %+  expect-eq
-      !>  "[]"
-      !>  (en-json [%a ~])
-    ::  1 element
-    ::
-    %+  expect-eq
-      !>  "[2]"
-      !>  (en-json [%a ~[two:ex]])
-    ::  multiple elements are comma-separated
-    ::
-    %+  expect-eq
-      !>  "[2,2,2]"
-      !>  (en-json [%a ~[two:ex two:ex two:ex]])
-  ==
-::  encoding basic objects
-::
-++  test-en-json-objects
-  ::  opening curly braces are escaped to avoid urbit string literal
-  ::  interpolation
-  ::
-  ;:  weld
-    ::  empty object
-    ::
-    %+  expect-eq
-      !>  "\{}"
-      !>  (en-json [%o ~])
-    ::  one property
-    ::
-    %+  expect-eq
-      !>  "\{\"foo\":2}"
-      !>  (en-json [%o (molt ~[['foo' two:ex]])])
-    ::  multiple properties are comma-separated
-    ::
-    %+  expect-eq
-      !>  "\{\"foo\":2,\"bar\":true}"
-      !>  (en-json [%o (molt ~[['foo' two:ex] ['bar' tru:ex]])])
-    ::  object keys use same encoding logic as strings
-    ::
-    %+  expect-eq
-      ::  {"\u0007\"\n\\":true}
-      ::
-      !>  "\{\"\\u0007\\\"\\n\\\\\":true}"
-      !>  (en-json [%o (molt ~[['\07"\0a\\' tru:ex]])])
-  ==
-::  object encoding stress-test
-::
-++  test-en-json-complex-structure
-  %+  expect-eq
-    ::  [{}, 4, [[], [{foo: {"4": 4, "true": true}}]]]
-    ::
-    !>  "[\{},4,[[],[\{\"foo\":\{\"4\":4,\"true\":true}}]]]"
-    !>  %-  en-json:html
-        :-  %a
-        :~  [%o ~]
-            [%n '4']
-            :-  %a
-            :~  [%a ~]
-                :-  %a
-                :~  %+  frond:enjs:format
-                      'foo'
-                    (pairs:enjs:format ~[['4' [%n '4']] ['true' [%b &]]])
-                ==
-            ==
-        ==
-::  decoding naked values
-::
-++  test-de-json-simple-values
-  =,  html
-  ;:  weld
-    %+  expect-eq
-      !>  `~
-      !>  (de-json 'null')
-    %+  expect-eq
-      !>  `[%b &]
-      !>  (de-json 'true')
-    %+  expect-eq
-      !>  `[%b |]
-      !>  (de-json 'false')
-  ==
-::  The following parser test suite (test-de-json-bad-examples and
-::  test-en-json-suite) is adapted from https://github.com/nst/JSONTestSuite/
-::  (Copyright (c) 2016 Nicolas Seriot) under the terms of the MIT license.
-::
-::  These are all inputs that should be rejected by a valid json parser
-::
-++  test-de-json-bad-examples
-  %-  run-parse-rejection-specs
-  :~
-    ['[1 true]' "n_array_1_true_without_comma"]
-    ['[aÂ]' "n_array_a_invalid_utf8"]
-    ['["": 1]' "n_array_colon_instead_of_comma"]
-    ['[""],' "n_array_comma_after_close"]
-    ['[,1]' "n_array_comma_and_number"]
-    ['[1,,2]' "n_array_double_comma"]
-    ['["x",,]' "n_array_double_extra_comma"]
-    ['["x"]]' "n_array_extra_close"]
-    ['["",]' "n_array_extra_comma"]
-    ['["x"' "n_array_incomplete"]
-    ['[x' "n_array_incomplete_invalid_value"]
-    ['[3[4]]' "n_array_inner_array_no_comma"]
-    ['[ˇ]' "n_array_invalid_utf8"]
-    ['[1:2]' "n_array_items_separated_by_semicolon"]
-    ['[,]' "n_array_just_comma"]
-    ['[-]' "n_array_just_minus"]
-    ['[   , ""]' "n_array_missing_value"]
-    ['["a",\0a4\0a,1,' "n_array_newlines_unclosed"]
-    ['[1,]' "n_array_number_and_comma"]
-    ['[1,,]' "n_array_number_and_several_commas"]
-    ['["\0b"\\f]' "n_array_spaces_vertical_tab_formfeed"]
-    ['[*]' "n_array_star_inside"]
-    ['[""' "n_array_unclosed"]
-    ['[1,' "n_array_unclosed_trailing_comma"]
-    ['[1,\0a1\0a,1' "n_array_unclosed_with_new_lines"]
-    ['[{}' "n_array_unclosed_with_object_inside"]
-    ['[fals]' "n_incomplete_false"]
-    ['[nul]' "n_incomplete_null"]
-    ['[tru]' "n_incomplete_true"]
-    ['[++1234]' "n_number_++"]
-    ['[+1]' "n_number_+1"]
-    ['[+Inf]' "n_number_+Inf"]
-    ['[-01]' "n_number_-01"]
-    ['[-1.0.]' "n_number_-1.0."]
-    ['[-NaN]' "n_number_-NaN"]
-    ['[.-1]' "n_number_.-1"]
-    ['[.2e-3]' "n_number_.2e-3"]
-    ['[0.1.2]' "n_number_0.1.2"]
-    ['[1 000.0]' "n_number_1_000"]
-    ['[1eE2]' "n_number_1eE2"]
-    ['[Inf]' "n_number_Inf"]
-    ['[NaN]' "n_number_NaN"]
-    ['[Ôºë]' "n_number_U+FF11_fullwidth_digit_one"]
-    ['[1+2]' "n_number_expression"]
-    ['[0x1]' "n_number_hex_1_digit"]
-    ['[0x42]' "n_number_hex_2_digits"]
-    ['[Infinity]' "n_number_infinity"]
-    ['[0e+-1]' "n_number_invalid+-"]
-    ['[-123.123foo]' "n_number_invalid-negative-real"]
-    ['[123Â]' "n_number_invalid-utf-8-in-bigger-int"]
-    ['[1e1Â]' "n_number_invalid-utf-8-in-exponent"]
-    ['[0Â]' "n_number_invalid-utf-8-in-int"]
-    ['[-Infinity]' "n_number_minus_infinity"]
-    ['[-foo]' "n_number_minus_sign_with_trailing_garbage"]
-    ['[- 1]' "n_number_minus_space_1"]
-    ['[-012]' "n_number_neg_int_starting_with_zero"]
-    ['[-.123]' "n_number_neg_real_without_int_part"]
-    ['[-1x]' "n_number_neg_with_garbage_at_end"]
-    ['[1ea]' "n_number_real_garbage_after_e"]
-    ['[1eÂ]' "n_number_real_with_invalid_utf8_after_e"]
-    ['[.123]' "n_number_starting_with_dot"]
-    ['[1.2a-3]' "n_number_with_alpha"]
-    ['[1.8011670033376514H-308]' "n_number_with_alpha_char"]
-    ['[012]' "n_number_with_leading_zero"]
-    ['["x", truth]' "n_object_bad_value"]
-    ['{[: "x"}' "n_object_bracket_key"]
-    ['{"x", null}' "n_object_comma_instead_of_colon"]
-    ['{"x"::"b"}' "n_object_double_colon"]
-    ['{üá®üá≠}' "n_object_emoji"]
-    ['{"a":"a" 123}' "n_object_garbage_at_end"]
-    ['{key: \'value\'}' "n_object_key_with_single_quotes"]
-    ['{"π":"0",}' "n_object_lone_continuation_byte_in_key_and_trailing_comma"]
-    ['{"a" b}' "n_object_missing_colon"]
-    ['{:"b"}' "n_object_missing_key"]
-    ['{"a" "b"}' "n_object_missing_semicolon"]
-    ['{"a":' "n_object_missing_value"]
-    ['{"a"' "n_object_no-colon"]
-    ['{1:1}' "n_object_non_string_key"]
-    ['{9999E9999:1}' "n_object_non_string_key_but_huge_number_instead"]
-    ['{null:null,null:null}' "n_object_repeated_null_null"]
-    ['{"id":0,,,,,}' "n_object_several_trailing_commas"]
-    ['{\'a\':0}' "n_object_single_quote"]
-    ['{"id":0,}' "n_object_trailing_comma"]
-    ['{"a":"b"}/**/' "n_object_trailing_comment"]
-    ['{"a":"b"}/**//' "n_object_trailing_comment_open"]
-    ['{"a":"b"}//' "n_object_trailing_comment_slash_open"]
-    ['{"a":"b"}/' "n_object_trailing_comment_slash_open_incomplete"]
-    ['{"a":"b",,"c":"d"}' "n_object_two_commas_in_a_row"]
-    ['{a: "b"}' "n_object_unquoted_key"]
-    ['{"a":"a' "n_object_unterminated-value"]
-    ['{ "foo" : "bar", "a" }' "n_object_with_single_string"]
-    ['{"a":"b"}#' "n_object_with_trailing_garbage"]
-    [' ' "n_single_space"]
-    ['["\\uD800\\"]' "n_string_1_surrogate_then_escape"]
-    ['["\\uD800\\u"]' "n_string_1_surrogate_then_escape_u"]
-    ['["\\uD800\\u1"]' "n_string_1_surrogate_then_escape_u1"]
-    ['["\\uD800\\u1x"]' "n_string_1_surrogate_then_escape_u1x"]
-    ['[√©]' "n_string_accentuated_char_no_quotes"]
-    ['["\\x00"]' "n_string_escape_x"]
-    ['["\\\\\\"]' "n_string_escaped_backslash_bad"]
-    ['["\\\09"]' "n_string_escaped_ctrl_char_tab"]
-    ['["\\üåÄ"]' "n_string_escaped_emoji"]
-    ['["\\"]' "n_string_incomplete_escape"]
-    ['["\\u00A"]' "n_string_incomplete_escaped_character"]
-    ['["\\uD834\\uDd"]' "n_string_incomplete_surrogate"]
-    ['["\\uD800\\uD800\\x"]' "n_string_incomplete_surrogate_escape_invalid"]
-    ['["\\uÂ"]' "n_string_invalid-utf-8-in-escape"]
-    ['["\\a"]' "n_string_invalid_backslash_esc"]
-    ['["\\uqqqq"]' "n_string_invalid_unicode_escape"]
-    ['["\\Â"]' "n_string_invalid_utf8_after_escape"]
-    ['[\\u0020"asd"]' "n_string_leading_uescaped_thinspace"]
-    ['[\\n]' "n_string_no_quotes_with_bad_escape"]
-    ['"' "n_string_single_doublequote"]
-    ['[\'single quote\']' "n_string_single_quote"]
-    ['abc' "n_string_single_string_no_double_quotes"]
-    ['["\\' "n_string_start_escape_unclosed"]
-    ['["new' "n_string_unescaped_newline"]
-    ['line"]' "n_string_unescaped_newline"]
-    ['["\09"]' "n_string_unescaped_tab"]
-    ['"\\UA66D"' "n_string_unicode_CapitalU"]
-    ['""x' "n_string_with_trailing_garbage"]
-    ['[‚Å†]' "n_structure_U+2060_word_joined"]
-    ['Ôªø' "n_structure_UTF8_BOM_no_data"]
-    ['<.>' "n_structure_angle_bracket_."]
-    ['[<null>]' "n_structure_angle_bracket_null"]
-    ['[1]x' "n_structure_array_trailing_garbage"]
-    ['[1]]' "n_structure_array_with_extra_array_close"]
-    ['["asd]' "n_structure_array_with_unclosed_string"]
-    ['a√•' "n_structure_ascii-unicode-identifier"]
-    ['[True]' "n_structure_capitalized_True"]
-    ['1]' "n_structure_close_unopened_array"]
-    ['{"x": true,' "n_structure_comma_instead_of_closing_brace"]
-    ['[][]' "n_structure_double_array"]
-    [']' "n_structure_end_array"]
-    ['Ôª{}' "n_structure_incomplete_UTF8_BOM"]
-    ['Â' "n_structure_lone-invalid-utf-8"]
-    ['[' "n_structure_lone-open-bracket"]
-    ['["a\00a"]' "n_string_unescaped_crtl_char"]
-    ['["\\00"]' "n_string_backslash_00"]
-  ==
-::  TODO: de-json is accepting a slew of number formats it shouldn't.
-::
-::    Tracking issue here: https://github.com/urbit/urbit/issues/1775
-::    Re-enable this test by removing the disable- prefix
-::
-++  disable-test-reject-invalid-numbers
-    %-  run-parse-rejection-specs
-    :~
-      ['123\00' "n_multidigit_number_then_00"]
-      ['[1.]' "n_number_real_without_fractional_part"]
-      ['[2.e+3]' "n_number_2.e+3"]
-      ['[2.e-3]' "n_number_2.e-3"]
-      ['[2.e3]' "n_number_2.e3"]
-      ['[9.e+]' "n_number_9.e+"]
-      ['[0.3e+]' "n_number_0.3e+"]
-      ['[0.3e]' "n_number_0.3e"]
-      ['[0.e1]' "n_number_0.e1"]
-      ['[0E+]' "n_number_0_capital_E+"]
-      ['[0E]' "n_number_0_capital_E"]
-      ['[0e+]' "n_number_0e+"]
-      ['[0e]' "n_number_0e"]
-      ['[1.0e+]' "n_number_1.0e+"]
-      ['[1.0e-]' "n_number_1.0e-"]
-      ['[1.0e]' "n_number_1.0e"]
-      ['[-2.]' "n_number_-2."]
-    ==
-::   these are all inputs that should be accepted by a valid parser
-::
-++  test-en-json-suite
-  =+  frond=frond:enjs:format
-  =+  pairs=pairs:enjs:format
-  %-  run-parse-specs
-  :~
-    :*  "y_array_arraysWithSpaces"
-        '[[]   ]'
-        [%a ~[[%a ~]]]
-    ==
-    :*  "y_array_empty-string"
-        '[""]'
-        [%a ~[[%s '']]]
-    ==
-    :*  "y_array_empty"
-        '[]'
-        [%a ~]
-    ==
-    :*  "y_array_ending_with_newline"
-        '["a"]\0a'
-        [%a ~[[%s 'a']]]
-    ==
-    :*  "y_array_false"
-        '[false]'
-        [%a ~[[%b |]]]
-    ==
-    :*  "y_array_heterogeneous"
-        '[null, 1, "1", {}]'
-        [%a ~[~ [%n '1'] [%s '1'] [%o ~]]]
-    ==
-    :*  "y_array_null"
-        '[null]'
-        [%a ~[~]]
-    ==
-    :*  "y_array_with_1_and_newline"
-        '[1\0a]'
-        [%a ~[[%n '1']]]
-    ==
-    :*  "y_array_with_leading_space"
-        ' [1]'
-        [%a ~[[%n '1']]]
-    ==
-    :*  "y_array_with_several_null"
-        '[1,null,null,null,2]'
-        [%a ~[[%n '1'] ~ ~ ~ [%n '2']]]
-    ==
-    :*  "y_array_with_trailing_space"
-        '[2] '
-        [%a ~[[%n '2']]]
-    ==
-    :*  "y_number"
-        '[123e65]'
-        [%a ~[[%n '123e65']]]
-    ==
-    :*  "y_number_0e+1"
-        '[0e+1]'
-        [%a ~[[%n '0e+1']]]
-    ==
-    :*  "y_number_0e1"
-        '[0e1]'
-        [%a ~[[%n '0e1']]]
-    ==
-    :*  "y_number_after_space"
-        '[ 4]'
-        [%a ~[[%n '4']]]
-    ==
-    :*  "y_number_double_close_to_zero"
-        '[-0.0000000000000000000000000000000000000000000000000000000\
-        /00000000000000000000001]'
-        [%a ~[[%n '-0.0000000000000000000000000000000000000000000000\
-        /00000000000000000000000000000001']]]
-    ==
-    :*  "y_number_int_with_exp"
-        '[20e1]'
-        [%a ~[[%n '20e1']]]
-    ==
-    :*  "y_number_minus_zero"
-        '[-0]'
-        [%a ~[[%n '-0']]]
-    ==
-    :*  "y_number_negative_int"
-        '[-123]'
-        [%a ~[[%n '-123']]]
-    ==
-    :*  "y_number_negative_one"
-        '[-1]'
-        [%a ~[[%n '-1']]]
-    ==
-    :*  "y_number_negative_zero"
-        '[-0]'
-        [%a ~[[%n '-0']]]
-    ==
-    :*  "y_number_real_capital_e"
-        '[1E22]'
-        [%a ~[[%n '1E22']]]
-    ==
-    :*  "y_number_real_capital_e_neg_exp"
-        '[1E-2]'
-        [%a ~[[%n '1E-2']]]
-    ==
-    :*  "y_number_real_capital_e_pos_exp"
-        '[1E+2]'
-        [%a ~[[%n '1E+2']]]
-    ==
-    :*  "y_number_real_exponent"
-        '[123e45]'
-        [%a ~[[%n '123e45']]]
-    ==
-    :*  "y_number_real_fraction_exponent"
-        '[123.456e78]'
-        [%a ~[[%n '123.456e78']]]
-    ==
-    :*  "y_number_real_neg_exp"
-        '[1e-2]'
-        [%a ~[[%n '1e-2']]]
-    ==
-    :*  "y_number_real_pos_exponent"
-        '[1e+2]'
-        [%a ~[[%n '1e+2']]]
-    ==
-    :*  "y_number_simple_int"
-        '[123]'
-        [%a ~[[%n '123']]]
-    ==
-    :*  "y_number_simple_real"
-        '[123.456789]'
-        [%a ~[[%n '123.456789']]]
-    ==
-    :*  "y_object"
-        '{"asd":"sdf", "dfg":"fgh"}'
-        (pairs ~[['asd' [%s 'sdf']] ['dfg' [%s ['fgh']]]])
-    ==
-    :*  "y_object_basic"
-        '{"asd":"sdf"}'
-        (frond ['asd' [%s 'sdf']])
-    ==
-    ::   duplicated keys, it takes the latest one.
-    ::
-    :*  "y_object_duplicated_key"
-        '{"a":"b","a":"c"}'
-        (frond ['a' [%s 'c']])
-    ==
-    :*  "y_object_duplicated_key_and_value"
-        '{"a":"b","a":"b"}'
-        (frond ['a' [%s 'b']])
-    ==
-    :*  "y_object_empty"
-        '{}'
-        [%o ~]
-    ==
-    :*  "y_object_empty_key"
-        '{"":0}'
-        (frond ['' [%n '0']])
-    ==
-    :*  "y_object_extreme_numbers"
-        '{ "min": -1.0e+28, "max": 1.0e+28 }'
-        (pairs ~[['min' [%n '-1.0e+28']] ['max' [%n '1.0e+28']]])
-    ==
-    =/  long=@t  'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-    :*  "y_object_long_strings"
-        '{"x":[{"id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}], \
-        /"id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}'
-        (pairs ~[['id' [%s long]] ['x' [%a ~[(frond ['id' [%s long]])]]]])
-    ==
-    :*  "y_object_simple"
-        '{"a":[]}'
-        (frond 'a' [%a ~])
-    ==
-    :*  "y_object_string_unicode"
-        '{"title":"\\u041f\\u043e\\u043b\\u0442\\u043e\\u0440\\u0430 \
-        /\\u0417\\u0435\\u043c\\u043b\\u0435\\u043a\\u043e\\u043f\\u0430" }'
-        (frond 'title' [%s 'Полтора Землекопа'])
-    ==
-    :*  "y_object_with_newlines"
-        '{\0a"a": "b"\0a}'
-        (frond 'a' [%s 'b'])
-    ==
-    :*  "y_string_allowed_escapes"
-        '["\\"\\\\\\/\\b\\f\\n\\r\\t"]'
-        [%a ~[[%s '"\\/\08\0c\0a\0d\09']]]
-    ==
-    :*  "y_string_backslash_and_u_escaped_zero"
-        '["\\\\u0000"]'
-        [%a ~[[%s '\\u0000']]]
-    ==
-    :*  "y_string_backslash_doublequotes"
-        '["\\""]'
-        [%a ~[[%s '"']]]
-    ==
-    :*  "y_string_comments"
-        '["a/*b*/c/*d//e"]'
-        [%a ~[[%s 'a/*b*/c/*d//e']]]
-    ==
-    :*  "y_string_double_escape_a"
-        '["\\\\a"]'
-        [%a ~[[%s '\\a']]]
-    ==
-    :*  "y_string_double_escape_n"
-        '["\\\\n"]'
-        [%a ~[[%s '\\n']]]
-    ==
-    :*  "y_string_escaped_control_character"
-        '["\\u0012"]'
-        [%a ~[[%s '\12']]]
-    ==
-    :*  "y_string_in_array_with_leading_space"
-        '[ "asd"]'
-        [%a ~[[%s 'asd']]]
-    ==
-    :*  "y_string_nonCharacterInUTF-8_U+10FFFF"
-        '["􏿿"]'
-        [%a ~[[%s (from-code-point 0x10.ffff)]]]
-    ==
-    :*  "y_string_nonCharacterInUTF-8_U+FFFF"
-        '["￿"]'
-        [%a ~[[%s (from-code-point 0xffff)]]]
-    ==
-    :*  "y_string_null_escape"
-        '["\\u0000"]'
-        [%a ~[[%s '\00']]]
-    ==
-    :*  "y_string_one-byte-utf-8"
-        '["\\u002c"]'
-        [%a ~[[%s '\2c']]]
-    ==
-    :*  "y_string_pi"
-        '["π"]'
-        [%a ~[[%s 'π']]]
-    ==
-    :*  "y_string_reservedCharacterInUTF-8_U+1BFFF"
-        '["𛿿"]'
-        [%a ~[[%s (from-code-point 0x1.bfff)]]]
-    ==
-    :*  "y_string_simple_ascii"
-        '["asd "]'
-        [%a ~[[%s 'asd ']]]
-    ==
-    :*  "y_string_space"
-        '" "'
-        [%s ' ']
-    ==
-    :*  "y_string_three-byte-utf-8"
-        '["\\u0821"]'
-        [%a ~[[%s (from-code-point 0x821)]]]
-    ==
-    :*  "y_string_two-byte-utf-8"
-        '["\\u0123"]'
-        [%a ~[[%s (from-code-point 0x123)]]]
-    ==
-    :*  "y_string_u+2028_line_sep"
-        '[" "]'
-        [%a ~[[%s (from-code-point 0x2028)]]]
-    ==
-    :*  "y_string_u+2029_par_sep"
-        '[" "]'
-        [%a ~[[%s (from-code-point 0x2029)]]]
-    ==
-    :*  "y_string_unicode_2"
-        '["⍂㈴⍂"]'
-        [%a ~[[%s '⍂㈴⍂']]]
-    ==
-    :*  "y_string_unicode_U+2064_invisible_plus"
-        '["\\u2064"]'
-        [%a ~[[%s (from-code-point 0x2064)]]]
-    ==
-    :*  "y_string_unicode_escaped_double_quote"
-        '["\\u0022"]'
-        [%a ~[[%s (from-code-point 0x22)]]]
-    ==
-    :*  "y_string_utf8"
-        '["€𝄞"]'
-        [%a ~[[%s '€𝄞']]]
-    ==
-    :*  "y_structure_lonely_false"
-        'false'
-        [%b |]
-    ==
-    :*  "y_structure_lonely_int"
-        '42'
-        [%n '42']
-    ==
-    :*  "y_structure_lonely_negative_real"
-        '-0.1'
-        [%n '-0.1']
-    ==
-    :*  "y_structure_lonely_null"
-        'null'
-        ~
-    ==
-    :*  "y_structure_lonely_string"
-        '"asd"'
-        [%s 'asd']
-    ==
-    :*  "y_structure_lonely_true"
-        'true'
-        [%b &]
-    ==
-    :*  "y_structure_string_empty"
-        '""'
-        [%s '']
-    ==
-    :*  "y_structure_trailing_newline"
-        '["a"]\0a'
-        [%a ~[[%s 'a']]]
-    ==
-    :*  "y_structure_true_in_array"
-        '[true]'
-        [%a ~[[%b &]]]
-    ==
-    :*  "y_structure_whitespace_array"
-        ' [] '
-        [%a ~]
-    ==
-  ==
-::  TODO: de-json is rejecting or dropping unicode escape sequences
-::
-::    Tracking issue here: https://github.com/urbit/urbit/issues/1776
-::    Re-enable this test by removing the disable- prefix
-::
-++  disable-test-parse-unicode-escape-sequences
-  =+  frond=frond:enjs:format
-  =+  pairs=pairs:enjs:format
-  %-  run-parse-specs
-  :~
-    :*  "y_string_with_del_character"
-        '["a\7fa"]'
-        [%a ~[[%s 'a\7fa']]]
-    ==
-    :*  "y_string_unicode_U+FDD0_nonchar"
-        '["\\uFDD0"]'
-        [%a ~[[%s (from-code-point 0xfdd0)]]]
-    ==
-    :*  "y_string_unicode_U+FFFE_nonchar"
-        '["\\uFFFE"]'
-        [%a ~[[%s (from-code-point 0xfffe)]]]
-    ==
-    :*  "y_string_unicode_U+10FFFE_nonchar"
-        '["\\uDBFF\\uDFFE"]'
-        [%a ~[[%s (crip (from-code-points ~[0xdbff 0xdffe]))]]]
-    ==
-    :*  "y_string_unicode_U+1FFFE_nonchar"
-        '["\\uD83F\\uDFFE"]'
-        [%a ~[[%s (crip (from-code-points ~[0xd83f 0xdffe]))]]]
-    ==
-    :*  "y_string_unicode_U+200B_ZERO_WIDTH_SPACE"
-        '["\\u200B"]'
-        [%a ~[[%s (from-code-point 0x200b)]]]
-    ==
-    :*  "y_string_uEscape"
-        '["\\u0061\\u30af\\u30EA\\u30b9"]'
-        [%a ~[[%s (crip (from-code-points ~[0x61 0x30af 0x30ea 0x30b9]))]]]
-    ==
-    :*  "y_string_uescaped_newline"
-        '["new\\u000Aline"]'
-        [%a ~[[%s 'new\0aline']]]
-    ==
-    :*  "y_string_unescaped_char_delete"
-        '["\7f"]'
-        [%a ~[[%s '\7f']]]
-    ==
-    :*  "y_string_unicode"
-        '["\\uA66D"]'
-        [%a ~[[%s (from-code-point 0xa66d)]]]
-    ==
-    :*  "y_string_unicodeEscapedBackslash"
-        '["\\u005C"]'
-        [%a ~[[%s (from-code-point 0x5c)]]]
-    ==
-    :*  "y_string_surrogates_U+1D11E_MUSICAL_SYMBOL_G_CLEF"
-        '["\\uD834\\uDd1e"]'
-        [%a ~[[%s (crip (from-code-points ~[0xd834 0xdd1e]))]]]
-    ==
-    :*  "y_string_last_surrogates_1_and_2"
-        '["\\uDBFF\\uDFFF"]'
-        [%a ~[[%s (crip (from-code-points ~[0xdbff 0xdfff]))]]]
-    ==
-    :*  "y_string_nbsp_uescaped"
-        '["new\\u00A0line"]'
-        [%a ~[[%s (crip "new{(from-code-points ~[0xa0])}line")]]]
-    ==
-    :*  "y_string_escaped_noncharacter"
-        '["\\uFFFF"]'
-        [%a ~[[%s (from-code-point 0xffff)]]]
-    ==
-    :*  "y_string_escaped_null"
-        '"foo\\u0000bar"'
-        [%s 'foo\00bar']
-    ==
-    :*  "y_object_escaped_null_in_key"
-        '{"foo\\u0000bar": 42}'
-        (frond ['foo\00bar' [%n '42']])
-    ==
-    :*  "y_string_1_2_3_bytes_UTF-8_sequences"
-        '["\\u0060\\u012a\\u12AB"]'
-        [%a ~[[%s '`Īካ']]]
-    ==
-    :*  "y_string_accepted_surrogate_pair"
-        '["\\uD801\\udc37"]'
-        [%a ~[[%s '𐐷']]]
-    ==
-    :*  "y_string_accepted_surrogate_pairs"
-        '["\\ud83d\\ude39\\ud83d\\udc8d"]'
-        [%a ~[[%s '😹💍']]]
-    ==
   ==
 --
