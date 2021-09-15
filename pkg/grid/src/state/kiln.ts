@@ -52,12 +52,12 @@ const useKilnState = create<KilnState>((set) => ({
       await fakeRequest('');
       set(
         produce((draft: KilnState) => {
-          const baseArak = draft.vats.base.arak;
+          const { arak } = draft.vats[desk];
 
           if (on) {
-            baseArak.paused = false;
+            arak.paused = false;
           } else {
-            baseArak.paused = true;
+            arak.paused = true;
           }
         })
       );
