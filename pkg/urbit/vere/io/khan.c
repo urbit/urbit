@@ -11,22 +11,44 @@
 #include "all.h"
 #include "vere/vere.h"
 
+/* u3_chan: incoming control plane connection.
+*/
+  typedef struct _u3_chan {
+    uv_pipe_t         pyp_u;            //  client stream handler
+    c3_w              coq_l;            //  connection number
+    struct _u3_khan*  cop_u;            //  control plane backlink
+    struct _u3_chan*  nex_u;            //  next in list
+  } u3_chan;
+
 /* u3_khan: control plane socket
 */
   typedef struct _u3_khan {
     u3_auto           car_u;            //  driver
     uv_pipe_t         pyp_u;            //  socket
-    c3_l              sev_l;            //  number (of instance)
+    c3_l              sev_l;            //  instance number
+    struct _u3_chan*  can_u;            //  client list
   } u3_khan;
 
 static const c3_c URB_SOCK_PATH[] = ".urb/khan.sock";
 
-/* _khan_conn_cb(): socket connection callback.
+/* _khan_alloc(): libuv-style allocator.
 */
 static void
-_khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
+_khan_alloc(uv_handle_t* had_u,
+            size_t len_i,
+            uv_buf_t* buf_u)
 {
-  u3l_log("khan: recv sess\n");
+  void* ptr_v = c3_malloc(len_i);
+
+  *buf_u = uv_buf_init(ptr_v, len_i);
+}
+
+/* _khan_read_cb(): socket read callback.
+*/
+static void
+_khan_read_cb(uv_stream_t* cli_u, ssize_t red_i, const uv_buf_t* buf_u)
+{
+  u3l_log("khan: read %zd\n", red_i);
   // TODO interact
   //
   // There are four cases to think about here:
@@ -66,6 +88,41 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   // finished sending without base64-encoding it or something. (c) is tedious;
   // the same effect can be achieved by just opening two connections to the
   // socket, keeping one in text mode, and sending a 0x80 over the other.
+}
+
+/* _khan_conn_cb(): socket connection callback.
+*/
+static void
+_khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
+{
+  u3_khan*  cop_u = (u3_khan*)sem_u;
+  u3_chan*  can_u;
+  c3_i      err_i;
+
+  can_u = c3_malloc(sizeof(u3_chan));
+  can_u->coq_l = ( cop_u->can_u ) ? 1 + cop_u->can_u->coq_l : 0;
+  can_u->cop_u = cop_u;
+  can_u->nex_u = cop_u->can_u;
+  if ( 0 != (err_i = uv_pipe_init(u3L, &can_u->pyp_u, 0)) ) {
+    u3l_log("khan: client init failed: %s\n", uv_strerror(err_i));
+    c3_free(can_u);
+    u3_king_bail();
+  }
+  if ( 0 != (err_i = uv_accept(sem_u, (uv_stream_t*)&can_u->pyp_u)) ) {
+    u3l_log("khan: accept failed: %s\n", uv_strerror(err_i));
+    c3_free(can_u);
+    u3_king_bail();
+  }
+
+  if ( 0 != (err_i = uv_read_start((uv_stream_t*)&can_u->pyp_u, _khan_alloc,
+                                   _khan_read_cb)) ) {
+    u3l_log("khan: read_start failed: %s\n", uv_strerror(err_i));
+    // TODO close handle
+    c3_free(can_u);
+    u3_king_bail();
+  }
+
+  cop_u->can_u = can_u;
 }
 
 /* _khan_close_cb(): socket close callback.
