@@ -1,5 +1,5 @@
 import { hsla, parseToHsla } from 'color2k';
-import { usePreferencesStore } from '../nav/preferences/usePreferencesStore';
+import { useCurrentTheme } from '../state/local';
 
 function getDarkColor(color: string): string {
   const hslaColor = parseToHsla(color);
@@ -7,7 +7,7 @@ function getDarkColor(color: string): string {
 }
 
 export const useTileColor = (color: string) => {
-  const theme = usePreferencesStore((s) => s.currentTheme);
+  const theme = useCurrentTheme();
 
   return {
     theme,
