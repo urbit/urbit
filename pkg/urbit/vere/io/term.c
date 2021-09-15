@@ -1392,6 +1392,7 @@ _term_ef_blit_lame(u3_utty* uty_u,
       _term_it_show_nel(uty_u);
     } break;
 
+    case c3__lin:  //TMP  backwards compatibility
     case c3__put: {
       _term_it_show_tour(uty_u, u3k(u3t(blt)));
       _term_it_show_nel(uty_u);
