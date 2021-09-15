@@ -3680,32 +3680,49 @@
       owner.own:(got:orm points.state ~marbud)
   ==
 ::
-++  test-large-batch  ^-  tang
-  ~&  >  %starting-large
-  =+  batch-size=5.000  :: should be an even number
+++  test-large-batch-parse  ^-  tang
+  =/  batch-size  5.000  :: should be an even number
+  =/  tx-1=tx:naive      [marbud-own %transfer-point (addr %marbud-key-1) |]
+  =/  tx-2=tx:naive      [marbud-own %transfer-point (addr %marbud-key-0) |]
+  ::
+  =/  bat=octs
+    %+  cad:naive  3
+    %+  join
+      (gen-tx 1 tx-2 %marbud-key-1)
+    (reap +((div batch-size 2)) (gen-tx 0 tx-1 %marbud-key-0))
+  ::
+  =|  =^state:naive
+  =^  f  state  (init-marbud state)
+  %+  expect-eq
+    !>  +(batch-size)
+  ::
+    !>
+    ~&  >  %starting-large-parse
+    =/  r  (parse-roll:naive q.bat)
+    ~&  >  %ending-large-parse
+    (lent r)
+::
+++  test-large-batch-full  ^-  tang
+  ::  XX bump up to 5k
+  ::
+  =/  batch-size  50   :: should be an even number
+  ::
   =/  tx-1=tx:naive    [marbud-own %transfer-point (addr %marbud-key-1) |]
   =/  tx-2=tx:naive    [marbud-own %transfer-point (addr %marbud-key-0) |]
-  ::
   =/  batch=tx-list:l2-event-gen
-    %+  spun  (join tx-2 (reap (add 1 (div batch-size 2)) tx-1))
+    %+  spun  (join tx-2 (reap +((div batch-size 2)) tx-1))
       |=  [b=tx:naive c=@]
       ?:  =((mod c 2) 0)
         [[c b %marbud-key-0] +(c)]
       [[c b %marbud-key-1] +(c)]
   ::
-  =/  txs
-    (cad:naive 3 (gen-tx 0 tx-1 %marbud-key-0) (gen-tx 1 tx-2 %marbud-key-1) ~)
-  =/  bat=octs  (cad:naive 3 (reap (add 1 (div batch-size 2)) txs))
-  =|  =^state:naive
-  =^  f  state  (init-marbud state)
   %+  expect-eq
     !>  [`@ux`(addr %marbud-key-1) +(batch-size)]
   ::
     !>
-    ~&  >  %starting
-    ::  =^  f  state  (n state %bat (tx-list-to-batch:l2-event-gen batch))
-    =^  f  state  (n state %bat q.bat)
-    ~&  >  %ending
+    =|  =^state:naive
+    =^  f  state  (init-marbud state)
+    =^  f  state  (n state %bat (tx-list-to-batch:l2-event-gen batch))
     owner.own:(got:orm points.state ~marbud)
 ::
 --

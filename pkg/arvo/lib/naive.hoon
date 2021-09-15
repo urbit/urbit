@@ -201,8 +201,6 @@
 ++  parse-roll
   |=  batch=@
   =|  =roll
-  ~>  %slog.[2 %parsing]
-  ~<  %slog.[2 %parsed]
   =|  pos=@ud
   =/  las  (met 0 batch)
   |-  ^+  roll
