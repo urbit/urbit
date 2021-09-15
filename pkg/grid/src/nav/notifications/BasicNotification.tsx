@@ -6,6 +6,7 @@ import { useCharge } from '../../state/docket';
 import { Elbow } from '../../components/icons/Elbow';
 import { ShipName } from '../../components/ShipName';
 import { getAppHref } from '../../state/util';
+import { DocketImage } from '../../components/DocketImage';
 
 interface BasicNotificationProps {
   notification: Notification;
@@ -46,17 +47,14 @@ export const BasicNotification = ({ notification, unread = false }: BasicNotific
       href={link}
       target={desk}
       className={cn(
-        'text-black rounded',
+        'text-black rounded-xl',
         unread ? 'bg-blue-100' : 'bg-gray-100',
         large ? 'note-grid-no-content' : 'note-grid-content'
       )}
       aria-labelledby={id}
     >
       <header id={id} className="contents">
-        <div
-          className="note-grid-icon rounded w-full h-full"
-          style={{ backgroundColor: charge?.color ?? '#ee5432' }}
-        />
+        <DocketImage {...charge} size={!large ? 'xs' : 'default'} className="note-grid-icon" />
         <div className="note-grid-title font-semibold">{charge?.title || desk}</div>
         {!large ? <Elbow className="note-grid-arrow w-6 h-6 text-gray-300" /> : null}
         <h2 id={`${id}-title`} className="note-grid-head font-semibold text-gray-600">
