@@ -148,14 +148,12 @@ let
     # Create a .tgz of the primary binaries.
     tarball = let
       name = "urbit-v${urbit.version}-${urbit.system}";
-      urbit-king = hs.urbit-king.components.exes.urbit-king;
     in libLocal.makeReleaseTarball {
       inherit name;
 
       contents = {
         "${name}/urbit" = "${urbit}/bin/urbit";
         "${name}/urbit-worker" = "${urbit}/bin/urbit-worker";
-        "${name}/urbit-king" = "${urbit-king}/bin/urbit-king";
       };
     };
 

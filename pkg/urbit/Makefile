@@ -67,12 +67,12 @@ build/%_tests: $(common_objs) tests/%_tests.o
 build/urbit: $(common_objs) $(daemon_objs)
 	@echo CC -o $@
 	@mkdir -p ./build
-	@$(CC) $^ $(LDFLAGS) -o $@
+	$(CC) $^ $(LDFLAGS) -o $@
 
 build/urbit-worker: $(common_objs) $(worker_objs)
 	@echo CC -o $@
 	@mkdir -p ./build
-	@$(CC) $^ $(LDFLAGS) -o $@
+	$(CC) $^ $(LDFLAGS) -o $@
 
 %.o: %.c $(headers)
 	@echo CC $<

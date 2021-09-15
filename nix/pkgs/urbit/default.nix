@@ -1,5 +1,5 @@
 { lib, stdenv, coreutils, pkgconfig, argon2u, cacert, ca-bundle, curl
-, ed25519, ent, ge-additions, gmp, h2o, herb, ivory, libaes_siv, libscrypt
+, ed25519, ent, ge-additions, gmp, h2o, ivory, libaes_siv, libscrypt
 , libsigsegv, libuv, lmdb, murmur3, openssl, secp256k1, softfloat3, zlib
 , enableStatic ? stdenv.hostPlatform.isStatic, enableDebug ? false
 , doCheck ? true, enableParallelBuilding ? true, dontStrip ? true }:
@@ -15,6 +15,7 @@ in stdenv.mkDerivation {
 
   pname = "urbit" + lib.optionalString enableDebug "-debug"
     + lib.optionalString enableStatic "-static";
+
 
   nativeBuildInputs = [ pkgconfig ];
 
@@ -41,14 +42,15 @@ in stdenv.mkDerivation {
     zlib
   ];
 
-  checkInputs = [ herb ];
+  checkInputs = [ ];
+
 
   # Ensure any `/usr/bin/env bash` shebang is patched.
   postPatch = ''
     patchShebangs ./configure
   '';
 
-  checkTarget = "test";
+  #checkTarget = "test";
 
   installPhase = ''
     mkdir -p $out/bin

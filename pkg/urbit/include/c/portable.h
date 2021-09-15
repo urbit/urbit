@@ -99,7 +99,7 @@
 #       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
 #   elif defined(U3_OS_osx)
 #     ifdef __LP64__
-#       define U3_OS_LoomBase 0x200000000
+#       define U3_OS_LoomBase 0x280000000
 #     else
 #       define U3_OS_LoomBase 0x4000000
 #     endif

@@ -1,10 +1,10 @@
 .PHONY: build build-all install cross release test pills ropsten-pills clean
 
 build:
-	nix-build -A urbit -A herb --no-out-link
+	nix-build -A urbit --no-out-link
 
 install:
-	nix-env -f . -iA urbit -iA herb
+	nix-env -f . -iA urbit
 
 release:
 	sh/release

@@ -16,13 +16,18 @@ let
 in {
   gmp = enableStatic prev.gmp;
 
-  curlMinimal = enableStatic prev.curlMinimal;
+  # curl = enableStatic prev.curl;
 
   libuv = enableStatic prev.libuv;
 
   libffi = enableStatic prev.libffi;
 
   secp256k1 = enableStatic prev.secp256k1;
+
+  libiconv = prev.libiconv.overrideAttrs (o: {
+          postInstall = "rm $out/include/libcharset.h $out/include/localcharset.h";
+          configureFlags = ["--disable-shared" "--enable-static"];
+  });
 
   lmdb = prev.lmdb.overrideAttrs (old:
     configureFlags old // {
