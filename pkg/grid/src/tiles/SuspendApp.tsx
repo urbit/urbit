@@ -24,7 +24,7 @@ export const SuspendApp = () => {
       <DialogContent showClose={false} className="max-w-[400px] space-y-6">
         <h1 className="h4">Suspend &ldquo;{charge?.title || ''}&rdquo;</h1>
         <p className="text-base tracking-tight pr-6">
-          Suspending an app will freeze its current state, and render it unable
+          Suspending an app will freeze its current state and render it unable
         </p>
         <div className="flex space-x-6">
           <DialogClose as={Button} variant="secondary">
