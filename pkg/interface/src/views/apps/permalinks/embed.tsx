@@ -1,4 +1,4 @@
-import { BaseAnchor, Box, Button, Center, Col, H3, Icon, Row, Text } from '@tlon/indigo-react';
+import { BaseAnchor, Box, Button, Center, Col, H3, Icon, Image, Row, Text } from '@tlon/indigo-react';
 import { Association, GraphNode, resourceFromPath, GraphConfig } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
@@ -212,18 +212,27 @@ function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
       padding={3}
       bg="washedGray"
       borderRadius={3}
-      onClick={(e) => {
-        e.stopPropagation();
-      }}
     >
       <Box
+        position="relative"
         flex="none"
         height="132px"
         width="132px"
         marginRight={3}
         borderRadius={3}
-        bg={treaty?.color || '#333333'}
-      />
+        bg={treaty?.color || 'gray'}
+      >
+        {treaty?.image && (
+          <Image
+            src={treaty.image}
+            position="absolute"
+            top="0"
+            left="0"
+            width="100%"
+            height="100%"
+          />
+        )}
+      </Box>
       <Col>
         <H3 color="black">{treaty?.title}</H3>
         {treaty?.ship && <Author ship={treaty?.ship} showImage dontShowTime={true} marginBottom={2} />}
