@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { PropsWithChildren, useCallback } from 'react';
 import { Link, Route, RouteComponentProps, Switch, useRouteMatch } from 'react-router-dom';
 import classNames from 'classnames';
 import { NotificationPrefs } from './preferences/NotificationPrefs';
@@ -6,32 +6,30 @@ import { SystemUpdatePrefs } from './preferences/SystemUpdatePrefs';
 import notificationsSVG from '../assets/notifications.svg';
 import systemUpdatesSVG from '../assets/system-updates.svg';
 import { InterfacePrefs } from './preferences/InterfacePrefs';
+import { useCharges } from '../state/docket';
+import { AppPrefs } from './preferences/AppPrefs';
+import { DocketImage } from '../components/DocketImage';
 
-interface SystemPreferencesSectionProps extends RouteComponentProps<{ submenu: string }> {
-  submenu: string;
+interface SystemPreferencesSectionProps {
+  url: string;
   active: boolean;
-  text: string;
-  icon?: string;
 }
 
 function SystemPreferencesSection({
-  match,
-  submenu,
+  url,
   active,
-  icon,
-  text
-}: SystemPreferencesSectionProps) {
+  children
+}: PropsWithChildren<SystemPreferencesSectionProps>) {
   return (
     <li>
       <Link
-        to={`${match.url}/${submenu}`}
+        to={url}
         className={classNames(
-          'flex items-center px-5 py-3 hover:text-black hover:bg-gray-100',
+          'flex items-center px-2 py-2 hover:text-black hover:bg-gray-100 rounded-xl',
           active && 'text-black bg-gray-100'
         )}
       >
-        {icon ? <img className="w-8 h-8 mr-3" src={icon} alt="" /> : null}
-        {text}
+        {children}
       </Link>
     </li>
   );
@@ -39,12 +37,19 @@ function SystemPreferencesSection({
 
 export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }>) => {
   const { match } = props;
-  const subMatch = useRouteMatch<{ submenu: string }>(`${match.url}/:submenu`);
+  const subMatch = useRouteMatch<{ submenu: string; desk?: string }>(
+    `${match.url}/:submenu/:desk?`
+  );
+  const charges = useCharges();
 
   const matchSub = useCallback(
-    (target: string) => {
+    (target: string, desk?: string) => {
       if (!subMatch && target === 'notifications') {
         return true;
+      }
+
+      if (desk && subMatch?.params.desk !== desk) {
+        return false;
       }
 
       return subMatch?.params.submenu === target;
@@ -52,40 +57,52 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
     [match, subMatch]
   );
 
+  const subUrl = useCallback((submenu: string) => `${match.url}/${submenu}`, [match]);
+
   return (
     <div className="flex h-full overflow-y-auto">
-      <aside className="flex-none min-w-60">
-        <div className="p-8">
-          <input className="input h4 default-ring bg-gray-50" placeholder="Search Preferences" />
-        </div>
-        <nav className="border-b-2 border-gray-50">
-          <ul className="font-semibold">
+      <aside className="flex-none self-start min-w-60 py-8 font-semibold border-r-2 border-gray-50">
+        <nav className="px-6">
+          <ul>
             <SystemPreferencesSection
-              {...props}
-              text="Notifications"
-              icon={notificationsSVG}
-              submenu="notifications"
+              url={subUrl('notifications')}
               active={matchSub('notifications')}
-            />
+            >
+              <img className="w-8 h-8 mr-3" src={notificationsSVG} alt="" />
+              Notifications
+            </SystemPreferencesSection>
             <SystemPreferencesSection
-              {...props}
-              text="System Updates"
-              icon={systemUpdatesSVG}
-              submenu="system-updates"
+              url={subUrl('system-updates')}
               active={matchSub('system-updates')}
-            />
-            <SystemPreferencesSection
-              {...props}
-              text="Interface Settings"
-              icon={systemUpdatesSVG}
-              submenu="interface"
-              active={matchSub('interface')}
-            />
+            >
+              <img className="w-8 h-8 mr-3" src={systemUpdatesSVG} alt="" />
+              System Updates
+            </SystemPreferencesSection>
+            <SystemPreferencesSection url={subUrl('interface')} active={matchSub('interface')}>
+              <img className="w-8 h-8 mr-3" src={systemUpdatesSVG} alt="" />
+              Interface Settings
+            </SystemPreferencesSection>
+          </ul>
+        </nav>
+        <hr className="my-4 border-t-2 border-gray-50" />
+        <nav className="px-6">
+          <ul>
+            {Object.values(charges).map((charge) => (
+              <SystemPreferencesSection
+                key={charge.desk}
+                url={subUrl(`apps/${charge.desk}`)}
+                active={matchSub('apps', charge.desk)}
+              >
+                <DocketImage size="small" className="mr-3" {...charge} />
+                {charge.title}
+              </SystemPreferencesSection>
+            ))}
           </ul>
         </nav>
       </aside>
-      <section className="flex-1 min-h-[600px] p-8 text-black border-l-2 border-gray-50">
+      <section className="flex-1 min-h-[600px] p-8 text-black">
         <Switch>
+          <Route path={`${match.url}/apps/:desk`} component={AppPrefs} />
           <Route path={`${match.url}/system-updates`} component={SystemUpdatePrefs} />
           <Route path={`${match.url}/interface`} component={InterfacePrefs} />
           <Route path={[`${match.url}/notifications`, match.url]} component={NotificationPrefs} />

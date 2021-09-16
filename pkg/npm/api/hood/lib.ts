@@ -70,6 +70,22 @@ export function kilnBump(force = false, except = [] as string[]) {
   };
 }
 
+export function kilnPause(desk: string) {
+  return {
+    app: 'hood',
+    mark: 'kiln-pause',
+    json: desk
+  };
+}
+
+export function kilnResume(desk: string) {
+  return {
+    app: 'hood',
+    mark: 'kiln-resume',
+    json: desk
+  };
+}
+
 export const scryLag: Scry = ({ app: 'hood', path: '/kiln/lag' });
 
 export function getBlockers(vats: Vats): string[] {

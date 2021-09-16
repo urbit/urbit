@@ -55,7 +55,7 @@ module.exports = {
     filename: (pathData) => {
       return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
     },
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, '../dist'),
     publicPath: '/apps/bitcoin/',
   },
   optimization: {

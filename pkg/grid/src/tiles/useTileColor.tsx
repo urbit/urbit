@@ -1,5 +1,5 @@
 import { darken, hsla, lighten, parseToHsla, readableColorIsBlack } from 'color2k';
-import { usePreferencesStore } from '../nav/preferences/usePreferencesStore';
+import { useCurrentTheme } from '../state/local';
 
 function getDarkColor(color: string): string {
   const hslaColor = parseToHsla(color);
@@ -18,7 +18,7 @@ function getMenuColor(color: string, darkBg: boolean): string {
 }
 
 export const useTileColor = (color: string) => {
-  const theme = usePreferencesStore((s) => s.currentTheme);
+  const theme = useCurrentTheme();
   const darkTheme = theme === 'dark';
   const tileColor = darkTheme ? getDarkColor(color) : color;
   const darkBg = !readableColorIsBlack(tileColor);

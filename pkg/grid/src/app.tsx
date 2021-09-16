@@ -5,23 +5,25 @@ import { Grid } from './pages/Grid';
 import useDocketState from './state/docket';
 import { PermalinkRoutes } from './pages/PermalinkRoutes';
 import useKilnState from './state/kiln';
-import { usePreferencesStore } from './nav/preferences/usePreferencesStore';
 import useContactState from './state/contact';
 import api from './state/api';
 import { useMedia } from './logic/useMedia';
+import { useHarkStore } from './state/hark';
+import { useTheme } from './state/settings';
+import { useLocalState } from './state/local';
 
 const AppRoutes = () => {
   const { push } = useHistory();
-  const theme = usePreferencesStore((s) => s.theme);
+  const theme = useTheme();
   const isDarkMode = useMedia('(prefers-color-scheme: dark)');
 
   useEffect(() => {
-    if ((isDarkMode && theme === 'automatic') || theme === 'dark') {
+    if ((isDarkMode && theme === 'auto') || theme === 'dark') {
       document.body.classList.add('dark');
-      usePreferencesStore.setState({ currentTheme: 'dark' });
+      useLocalState.setState({ currentTheme: 'dark' });
     } else {
       document.body.classList.remove('dark');
-      usePreferencesStore.setState({ currentTheme: 'light' });
+      useLocalState.setState({ currentTheme: 'light' });
     }
   }, [isDarkMode, theme]);
 
@@ -35,6 +37,7 @@ const AppRoutes = () => {
     fetchVats();
     fetchLag();
     useContactState.getState().initialize(api);
+    useHarkStore.getState().initialize(api);
 
     Mousetrap.bind(['command+/', 'ctrl+/'], () => {
       push('/leap/search');

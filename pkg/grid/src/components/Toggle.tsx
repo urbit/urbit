@@ -6,12 +6,13 @@ import type * as Polymorphic from '@radix-ui/react-polymorphic';
 type ToggleComponent = Polymorphic.ForwardRefComponent<
   Polymorphic.IntrinsicElement<typeof RadixToggle.Root>,
   Polymorphic.OwnProps<typeof RadixToggle.Root> & {
+    toggleClass?: string;
     knobClass?: string;
   }
 >;
 
 export const Toggle = React.forwardRef(
-  ({ defaultPressed, pressed, onPressedChange, disabled, className }, ref) => {
+  ({ defaultPressed, pressed, onPressedChange, disabled, className, toggleClass }, ref) => {
     const [on, setOn] = useState(defaultPressed);
     const isControlled = !!onPressedChange;
     const proxyPressed = isControlled ? pressed : on;
@@ -20,14 +21,14 @@ export const Toggle = React.forwardRef(
 
     return (
       <RadixToggle.Root
-        className="default-ring rounded-full"
+        className={classNames('default-ring rounded-full', className)}
         pressed={proxyPressed}
         onPressedChange={proxyOnPressedChange}
         disabled={disabled}
         ref={ref}
       >
         <svg
-          className={classNames('w-12 h-8', className)}
+          className={classNames('w-12 h-8', toggleClass)}
           viewBox="0 0 48 32"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

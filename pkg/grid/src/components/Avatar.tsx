@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { sigil, reactRenderer } from '@tlon/sigil-js';
 import { deSig, Contact } from '@urbit/api';
 import { darken, lighten, parseToHsla } from 'color2k';
-import { usePreferencesStore } from '../nav/preferences/usePreferencesStore';
+import { useCurrentTheme } from '../state/local';
 
 export type AvatarSizes = 'xs' | 'small' | 'default';
 
@@ -63,7 +63,7 @@ function themeAdjustColor(color: string, theme: 'light' | 'dark'): string {
 }
 
 export const Avatar = ({ size, className, ...ship }: AvatarProps) => {
-  const currentTheme = usePreferencesStore((s) => s.currentTheme);
+  const currentTheme = useCurrentTheme();
   const { shipName, color, avatar } = { ...emptyContact, ...ship };
   const { classes, size: sigilSize } = sizeMap[size];
   const adjustedColor = themeAdjustColor(color, currentTheme);
