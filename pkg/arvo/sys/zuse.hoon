@@ -4338,9 +4338,6 @@
         (cold & (jest 'true'))
         (cold | (jest 'false'))
       ==
-    ::                                                  ::  ++digs:de-json:html
-    ++  digs                                            ::  digits
-      (star (shim '0' '9'))
     ::                                                  ::  ++esca:de-json:html
     ++  esca                                            ::  escaped character
       ;~  pfix  bas
@@ -4351,18 +4348,18 @@
           =*  wow  `(map @t @)`(malt lip)
           (sear ~(get by wow) low)
         =*  tuf  ;~(pfix (just 'u') (cook tuft qix:ab))
-        ;~(pose doq fas soq bas loo tuf)
+        ;~(pose doq fas bas loo tuf)
       ==
     ::                                                  ::  ++expo:de-json:html
     ++  expo                                            ::  exponent
-      ;~  (comp twel)
+      ;~  (comp weld)
         (piec (mask "eE"))
         (mayb (piec (mask "+-")))
-        digs
+        (plus nud)
       ==
     ::                                                  ::  ++frac:de-json:html
     ++  frac                                            ::  fraction
-      ;~(plug dot digs)
+      ;~(plug dot (plus nud))
     ::                                                  ::  ++jcha:de-json:html
     ++  jcha                                            ::  string character
       ;~(pose ;~(less doq bas prn) esca)
@@ -4371,11 +4368,11 @@
       |*(bus=rule ;~(pose bus (easy ~)))
     ::                                                  ::  ++numb:de-json:html
     ++  numb                                            ::  number
-      ;~  (comp twel)
+      ;~  (comp weld)
         (mayb (piec hep))
         ;~  pose
           (piec (just '0'))
-          ;~(plug (shim '1' '9') digs)
+          ;~(plug (shim '1' '9') (star nud))
         ==
         (mayb frac)
         (mayb expo)
@@ -4403,9 +4400,6 @@
     ::                                                  ::  ++spac:de-json:html
     ++  spac                                            ::  whitespace
       (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
-    ::                                                  ::  ++twel:de-json:html
-    ++  twel                                            ::  tape weld
-      |=([a=tape b=tape] (weld a b))
     ::                                                  ::  ++wish:de-json:html
     ++  wish                                            ::  with whitespace
       |*(sef=rule ;~(pfix spac sef))
