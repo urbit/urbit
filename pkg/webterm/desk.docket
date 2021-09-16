@@ -1,7 +1,7 @@
 :~  title+'Web Terminal'
     info+'A web interface for dill, through herm.'
     color+0xff.ffff
-    glob-http+'https://bootstrap.urbit.org/glob-XX.glob'
+    glob-http+'https://bootstrap.urbit.org/glob-0v4.8ui32.ui10d.t0v4d.n9g1s.1ftua.glob'
     base+'webterm'
     version+[0 0 1]
     website+'https://tlon.io'
