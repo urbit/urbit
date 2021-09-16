@@ -869,6 +869,7 @@
     ::  +refine-moves: move list from vase
     ::
     ++  refine-moves
+      ~/  %refine-moves
       |=  vax=vase
       ^-  (pair (list move) worm)
       ?:  =(~ q.vax)  [~ sac]
@@ -880,6 +881,7 @@
     ::  +refine-move: move from vase
     ::
     ++  refine-move
+      ~/  %refine-move
       |=  vax=vase
       ^-  (pair move worm)
       ~>  %mean.'bad-move'
@@ -898,6 +900,7 @@
     ::  +refine-ball: ball from vase
     ::
     ++  refine-ball
+      ~/  %refine-ball
       |=  vax=vase
       ^-  (pair ball worm)
       ?+    q.vax
@@ -962,6 +965,7 @@
     ::  +refine-card: card from vase
     ::
     ++  refine-card
+      ~/  %refine-card
       |=  vax=vase
       ^-  (pair maze worm)
       ~>  %mean.'bad-card'
@@ -1034,12 +1038,15 @@
     ::  |plow:va: operate in time and space
     ::
     ++  plow
+      ~/  %plow
       |=  [now=@da rok=rook]
+      ~%  %plow-core  ..$  ~
       |%
       ::  +peek:plow:va: read from a local namespace
       ::
       ++  peek
         ^-  rook
+        ~/  %peel
         |=  [lyc=gang vis=view bem=beam]
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
@@ -1065,6 +1072,7 @@
       ::  |spin:plow:va: move statefully
       ::
       ++  spin
+        ~/  %spin
         |=  [hen=duct eny=@uvJ dud=(unit goof)]
         =*  duc  [duc.vil hen]
         =*  err  [dud.vil dud]
@@ -1170,6 +1178,7 @@
     ::  +poke: prepare a worklist-of-one from outside
     ::
     ++  poke
+      ~/  %poke
       |=  =ovum
       ^+  this
       ~>  %mean.'arvo: poke crashed'
@@ -1177,6 +1186,7 @@
       (poke:pith ovum)
     ::
     ++  jump
+      ~/  %jump
       |=  =debt
       ^+  this
       =:  run  run.debt
@@ -1193,6 +1203,7 @@
     ::  +emit: enqueue a worklist with source
     ::
     ++  emit
+      ~/  %emit
       |=  pan=plan
       this(run [pan run])
     ::  +loop: until done
@@ -1212,6 +1223,7 @@
     ::  +step: advance the loop one step by routing a move
     ::
     ++  step
+      ~/  %step
       |=  =move
       ^+  this
       ::
@@ -1320,6 +1332,7 @@
     ::  +peek: read from the entire namespace
     ::
     ++  peek
+      ~/  %peek
       ^-  rook
       |=  [lyc=gang vis=view bem=beam]
       ^-  (unit (unit (cask meta)))
@@ -1342,6 +1355,7 @@
     ::  +call: advance to target
     ::
     ++  call
+      ~/  %call
       |=  [=duct way=term task=maze]
       ^+  this
       ?:  ?=(%$ way)
@@ -1358,6 +1372,7 @@
     ::  +take: retreat along call-stack
     ::
     ++  take
+      ~/  %take
       |=  [=duct =wire way=term gift=maze]
       ^+  this
       ?:  ?=(%$ way)
@@ -1380,6 +1395,7 @@
     ::  +push: finalize an individual step
     ::
     ++  push
+      ~/  %push
       |=  [gum=germ [zom=vase vax=vase] sac=worm]
       ^+  this
       =^  moz  sac
@@ -1389,6 +1405,7 @@
     ::  +plow: operate on a vane, in time and space
     ::
     ++  plow
+      ~/  %plow
       |=  way=term
       ~|  [%plow-failed way]
       =/  =vane
@@ -1689,10 +1706,12 @@
 ::
 =|  [_arvo soul]
 =*  sol  ->
+~%  %sep  ..ut  ~
 |%
 ::  +load: upgrade from previous state
 ::
 ++  load                                                ::   +4
+  ~/  %load
   |=  hir=$<(%grub heir)
   ^-  ^
   ~|  %load
@@ -1725,6 +1744,7 @@
 ::  +peek: external inspect
 ::
 ++  peek                                                ::  +22
+  ~/  %peek
   |=  $:  lyc=gang
           $=  nom
           %+  each  path
@@ -1750,6 +1770,7 @@
 ::  +poke: external apply
 ::
 ++  poke                                                ::  +23
+  ~/  %poke
   |=  [now=@da ovo=ovum]
   ^-  ^
   ::  this assertion is not yet viable, as vere's timestamps
@@ -1774,6 +1795,7 @@
 ::  +wish: external compute
 ::
 ++  wish                                                ::  +10
+  ~/  %wish
   |=  txt=@
   q:(slap zus.mod (ream txt))
 --  =>
