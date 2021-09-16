@@ -7,7 +7,7 @@
 +$  diff
   $%  [%block =desk =arak =weft blockers=(set desk)]
       [%reset =desk =arak]
-      [%merge =desk =arak]
+      [%commit =desk =arak]
       [%merge-sunk =desk =arak =tang]
       [%merge-fail =desk =arak =tang]
       [%suspend =desk =arak]
@@ -16,28 +16,33 @@
 ::  $arak: foreign vat tracker
 ::
 ::    .rail: upstream tracking state, if any
-::    .next: list of pending commits with future kelvins
 ::    .rein: configuration for agents
 ::
 +$  arak
-  $:  =rail
-      next=(list rung)
+  $:  rail=(unit rail)
       =rein
   ==
 ::  $rail: upstream tracking state
+::
+::    .paused: is tracking paused? or live
+::    .ship: upstream ship (could be .our)
+::    .desk: name of upstream desk
+::    .aeon: next aeon to pull from upstream
+::    .next: list of pending commits with future kelvins
 ::
 +$  rail
   $:  paused=?
       =ship
       =desk
       =aeon
+      next=(list rung)
   ==
 ::  $rung: reference to upstream commit
 ::
 +$  rung  [=aeon =weft]
 ::  $rein: diff from desk manifest
 ::
-::    .liv: suspended?
+::    .liv: suspended? if suspended, no agents should run
 ::    .add: agents not in manifest that should be running
 ::    .sub: agents in manifest that should not be running
 ::
@@ -65,23 +70,25 @@
   =+  .^(=weft %cx /(scot %p our)/[desk]/(scot %da now)/sys/kelvin)
   :+  %rose  ["" "{<desk>}" "::"]
   ^-  tang
-  =-  ?:  =(~ next.arak)  -
-      %+  snoc  -
-      leaf/"pending: {<(turn next.arak |=([@ lal=@tas num=@] [lal num]))>}"
-  ^-  tang
   =/  meb  (mergebase-hashes our desk now arak)
-  =/  poz  ?:(paused.rail.arak "paused" "tracking")
+  =/  poz
+    ?~  rail.arak  "local"
+    ?:(paused.u.rail.arak "paused" "tracking")
   =/  sat  ?:(liv.rein.arak "running" "suspended")
+  =/  pen
+    ?~  rail.arak  "~"
+    <(turn next.u.rail.arak |=([@ lal=@tas num=@] [lal num]))>
   :~  leaf/"/sys/kelvin:  {<[lal num]:weft>}"
       leaf/"base hash:    {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:     {<hash>}"
       leaf/"updates:      {sat}"
-      leaf/"source ship:  {<ship.rail.arak>}"
-      leaf/"source desk:  {<desk.rail.arak>}"
-      leaf/"source aeon:  {<aeon.rail.arak>}"
+      leaf/"source ship:  {?~(rail.arak <~> <ship.u.rail.arak>)}"
+      leaf/"source desk:  {?~(rail.arak <~> <desk.u.rail.arak>)}"
+      leaf/"source aeon:  {?~(rail.arak <~> <aeon.u.rail.arak>)}"
       leaf/"agent status: {sat}"
       leaf/"force on:     {?:(=(~ add.rein.arak) "~" <add.rein.arak>)}"
       leaf/"force off:    {?:(=(~ sub.rein.arak) "~" <sub.rein.arak>)}"
+      leaf/"pending:      {pen}"
   ==
 ::  +read-kelvin-foreign: read /sys/kelvin from a foreign desk
 ::
@@ -109,7 +116,7 @@
   |=  [our=ship =desk now=@da]
   ^-  (unit weft)
   =/  pax  (en-beam [our desk da+now] /sys/kelvin)
-  ?~  =<(fil .^(arch cy/pax))
+  ?.  .^(? cu/pax)
     ~
   [~ .^(weft cx/pax)]
 ::  +read-bill-foreign: read /desk/bill from a foreign desk
@@ -137,7 +144,7 @@
 ++  read-bill
   |=  [our=ship =desk now=@da] 
   =/  pax  (en-beam [our desk da+now] /desk/bill)
-  ?~  =<(fil .^(arch cy/pax))
+  ?.  .^(? cu/pax)
     *bill
   .^(bill cx/pax)
 ::  +is-fish: should dill link .dude?
@@ -179,10 +186,11 @@
 ::
 ++  mergebase-hashes
   |=  [our=@p =desk now=@da =arak]
-  =/  her  (scot %p ship.rail.arak)
+  ?>  ?=(^ rail.arak)
+  =/  her  (scot %p ship.u.rail.arak)
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
-  %+  turn  .^((list tako) %cs ~[ego desk wen %base her desk.rail.arak])
+  %+  turn  .^((list tako) %cs ~[ego desk wen %base her desk.u.rail.arak])
   |=(=tako .^(@uv %cs ~[ego desk wen %hash (scot %uv tako)]))
 ::
 ++  enjs
@@ -241,12 +249,18 @@
   ++  arak
     |=  a=^arak
     %-  pairs
-    :~  ship+s+(scot %p ship.rail.a)
-        desk+s+desk.rail.a
-        paused+b+paused.rail.a
-        aeon+(numb aeon.rail.a)
-        next+a+(turn next.a rung)
+    :~  rail+?~(rail.a ~ (rail u.rail.a))
         rein+(rein rein.a)
+    ==
+  ::
+  ++  rail
+    |=  r=^rail
+    %-  pairs
+    :~  ship+s+(scot %p ship.r)
+        desk+s+desk.r
+        paused+b+paused.r
+        aeon+(numb aeon.r)
+        next+a+(turn next.r rung)
     ==
   --
 --
