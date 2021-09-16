@@ -101,6 +101,7 @@
     ?-  -.ref
       %graph  (graph +.ref)
       %group  (group +.ref)
+      %app    (app +.ref)
     ==
     ::
     ++  graph
@@ -114,6 +115,13 @@
     ++  group
       |=  grp=res
       s+(enjs-path:res grp)
+    ::
+    ++  app
+      |=  [shp=res dsk=res]
+      %-  pairs
+      :~  ship+s+(enjs-path:res shp)
+          desk+s+(enjs-path:res dsk)
+      ==
     --
   ::
   ++  maybe-post

@@ -1,10 +1,11 @@
-import { BaseAnchor, Box, Center, Col, Icon, Row, Text } from '@tlon/indigo-react';
+import { BaseAnchor, Box, Button, Center, Col, H3, Icon, Row, Text } from '@tlon/indigo-react';
 import { Association, GraphNode, resourceFromPath, GraphConfig } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink
+  getPermalinkForGraph, GraphPermalink as IGraphPermalink, parsePermalink,
+  AppPermalink as IAppPermalink
 } from '~/logic/lib/permalinks';
 import { getModuleIcon, GraphModule } from '~/logic/lib/util';
 import { useVirtualResizeProp } from '~/logic/lib/virtualContext';
@@ -12,6 +13,9 @@ import useGraphState  from '~/logic/state/graph';
 import useMetadataState from '~/logic/state/metadata';
 import { GroupLink } from '~/views/components/GroupLink';
 import { TranscludedNode } from './TranscludedNode';
+import styled from 'styled-components';
+import Author from '~/views/components/Author';
+import useDocketState, { useTreaty } from '~/logic/state/docket';
 
 function Placeholder(type) {
   const lines = (type) => {
@@ -184,6 +188,52 @@ function GraphPermalink(
   );
 }
 
+const ClampedText = styled(Text)`
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`;
+
+function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
+  const treaty = useTreaty(ship, desk);
+
+  useEffect(() => {
+    if (!treaty) {
+      useDocketState.getState().requestTreaty(ship, desk);
+    }
+  }, [treaty, ship, desk]);
+
+  return (
+    <Row
+      display="inline-flex"
+      width="500px"
+      padding={3}
+      bg="washedGray"
+      borderRadius={3}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
+      <Box
+        flex="none"
+        height="132px"
+        width="132px"
+        marginRight={3}
+        borderRadius={3}
+        bg={treaty?.color || '#333333'}
+      />
+      <Col>
+        <H3 color="black">{treaty?.title}</H3>
+        {treaty?.ship && <Author ship={treaty?.ship} showImage dontShowTime={true} marginBottom={2} />}
+        <ClampedText marginBottom={2} color="gray">{treaty?.info}</ClampedText>
+        <Button as="a" href={link} primary alignSelf="start" display="inline-flex" marginTop="auto">Open App</Button>
+      </Col>
+    </Row>
+  );
+}
+
 function PermalinkDetails(props: {
   title: string;
   icon: any;
@@ -242,6 +292,10 @@ export function PermalinkEmbed(props: {
           full={props.full}
           showOurContact={props.showOurContact}
         />
+      );
+    case 'app':
+      return (
+        <AppPermalink {...permalink} />
       );
   }
 }
