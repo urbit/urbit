@@ -2,15 +2,21 @@ import classNames from 'classnames';
 import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 import { Bullet } from '../components/icons/Bullet';
+import { Cross } from '../components/icons/Cross';
 import { Notification } from '../state/hark-types';
 import { useNotifications } from '../state/notifications';
 
-type NotificationsState = 'empty' | 'unread' | 'attention-needed';
+type NotificationsState = 'empty' | 'unread' | 'attention-needed' | 'open';
 
 function getNotificationsState(
+  notificationsOpen: boolean,
   notifications: Notification[],
   systemNotifications: Notification[]
 ): NotificationsState {
+  if (notificationsOpen) {
+    return 'open';
+  }
+
   if (systemNotifications.length > 0) {
     return 'attention-needed';
   }
@@ -25,20 +31,26 @@ function getNotificationsState(
 
 type NotificationsLinkProps = Omit<LinkProps<HTMLAnchorElement>, 'to'> & {
   navOpen: boolean;
+  notificationsOpen: boolean;
   shouldDim: boolean;
 };
 
-export const NotificationsLink = ({ navOpen, shouldDim }: NotificationsLinkProps) => {
+export const NotificationsLink = ({
+  navOpen,
+  notificationsOpen,
+  shouldDim
+}: NotificationsLinkProps) => {
   const { notifications, systemNotifications } = useNotifications();
-  const state = getNotificationsState(notifications, systemNotifications);
+  const state = getNotificationsState(notificationsOpen, notifications, systemNotifications);
 
   return (
     <Link
-      to="/leap/notifications"
+      to={state === 'open' ? '/' : '/leap/notifications'}
       className={classNames(
         'relative z-50 flex-none circle-button h4 default-ring',
         navOpen && 'text-opacity-60',
         shouldDim && 'opacity-60',
+        state === 'open' && 'text-gray-400 bg-white',
         state === 'empty' && !navOpen && 'text-gray-400 bg-gray-50',
         state === 'empty' && navOpen && 'text-gray-400 bg-white',
         state === 'unread' && 'bg-blue-400 text-white',
@@ -51,6 +63,12 @@ export const NotificationsLink = ({ navOpen, shouldDim }: NotificationsLinkProps
         <span className="h2">
           ! <span className="sr-only">Attention needed</span>
         </span>
+      )}
+      {state === 'open' && (
+        <>
+          <Cross className="w-3 h-3 fill-current" />
+          <span className="sr-only">Close</span>
+        </>
       )}
     </Link>
   );

@@ -97,7 +97,7 @@ export const Home = () => {
         Recent Apps
       </h2>
       {recentApps.length === 0 && (
-        <div className="min-h-[150px] p-6 rounded-xl bg-gray-100">
+        <div className="min-h-[150px] p-6 rounded-xl bg-gray-50">
           <p className="mb-4">Apps you use will be listed here, in the order you used them.</p>
           <p className="mb-6">You can click/tap/keyboard on a listed app to open it.</p>
           {groups && (
@@ -122,7 +122,7 @@ export const Home = () => {
         Recent Developers
       </h2>
       {recentDevs.length === 0 && (
-        <div className="min-h-[150px] p-6 rounded-xl bg-gray-100">
+        <div className="min-h-[150px] p-6 rounded-xl bg-gray-50">
           <p className="mb-4">Urbit app developers you search for will be listed here.</p>
           {zod && (
             <>

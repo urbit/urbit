@@ -236,7 +236,7 @@ export const Leap = React.forwardRef(
             type="text"
             ref={inputRef}
             placeholder={selection ? '' : 'Search Landscape'}
-            className="flex-1 w-full h-full px-2 h4 rounded-full bg-transparent outline-none"
+            className="flex-1 w-full h-full px-2 h4 text-base rounded-full bg-transparent outline-none"
             value={rawInput}
             onClick={toggleSearch}
             onFocus={onFocus}
@@ -247,7 +247,7 @@ export const Leap = React.forwardRef(
             aria-activedescendant={selectedMatch?.display || selectedMatch?.value}
           />
         </form>
-        {navOpen && (
+        {menu === 'search' && (
           <Link
             to="/"
             className="absolute top-1/2 right-2 flex-none circle-button w-8 h-8 text-gray-400 bg-gray-50 default-ring -translate-y-1/2"

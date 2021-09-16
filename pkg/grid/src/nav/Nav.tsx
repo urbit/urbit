@@ -114,11 +114,13 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
       >
         <SystemMenu
           open={!!systemMenuOpen}
+          subMenuOpen={menu === 'system-preferences' || menu === 'help-and-support'}
           shouldDim={isOpen && menu !== 'system-preferences' && menu !== 'help-and-support'}
           className={classNames('relative z-50 flex-none', eitherOpen ? 'bg-white' : 'bg-gray-50')}
         />
         <NotificationsLink
           navOpen={isOpen}
+          notificationsOpen={menu === 'notifications'}
           shouldDim={(isOpen && menu !== 'notifications') || !!systemMenuOpen}
         />
         <Leap

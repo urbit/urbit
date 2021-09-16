@@ -27,7 +27,7 @@
 }
 
 .input {
-  @apply px-4 py-2 w-full bg-white rounded-xl;
+  @apply px-4 py-2 w-full text-base sm:text-sm bg-white rounded-xl;
 }
 
 .notification {

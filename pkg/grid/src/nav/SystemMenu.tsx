@@ -8,9 +8,11 @@ import { Adjust } from '../components/icons/Adjust';
 import { useVat } from '../state/kiln';
 import { disableDefault, handleDropdownLink } from '../state/util';
 import { useMedia } from '../logic/useMedia';
+import { Cross } from '../components/icons/Cross';
 
 type SystemMenuProps = HTMLAttributes<HTMLButtonElement> & {
   open: boolean;
+  subMenuOpen: boolean;
   shouldDim: boolean;
 };
 
@@ -19,7 +21,7 @@ function getHash(vat: Vat): string {
   return parts[parts.length - 1];
 }
 
-export const SystemMenu = ({ className, open, shouldDim }: SystemMenuProps) => {
+export const SystemMenu = ({ className, open, subMenuOpen, shouldDim }: SystemMenuProps) => {
   const { push } = useHistory();
   const [copied, setCopied] = useState(false);
   const garden = useVat('garden');
@@ -53,19 +55,30 @@ export const SystemMenu = ({ className, open, shouldDim }: SystemMenuProps) => {
           open={open}
           onOpenChange={(isOpen) => setTimeout(() => !isOpen && push('/'), 15)}
         >
-          <DropdownMenu.Trigger
-            as={Link}
-            to="/system-menu"
+          <Link
+            to={open || subMenuOpen ? '/' : '/system-menu'}
             className={classNames(
-              'appearance-none circle-button default-ring',
+              'relative appearance-none circle-button default-ring',
               open && 'text-gray-300',
               shouldDim && 'opacity-60',
               className
             )}
           >
-            <Adjust className="w-6 h-6 fill-current text-gray" />
-            <span className="sr-only">System Menu</span>
-          </DropdownMenu.Trigger>
+            {!open && !subMenuOpen && (
+              <>
+                <Adjust className="w-6 h-6 fill-current text-gray" />
+                <span className="sr-only">System Menu</span>
+              </>
+            )}
+            {(open || subMenuOpen) && (
+              <>
+                <Cross className="w-3 h-3 fill-current" />
+                <span className="sr-only">Close</span>
+              </>
+            )}
+            {/* trigger here just for anchoring the dropdown */}
+            <DropdownMenu.Trigger className="sr-only top-0 left-0 sm:top-auto sm:left-auto sm:bottom-0" />
+          </Link>
           <Route path="/system-menu">
             <DropdownMenu.Content
               onCloseAutoFocus={disableDefault}
