@@ -95,11 +95,11 @@ _khan_read_cb(uv_stream_t* cli_u, ssize_t red_i, const uv_buf_t* buf_u)
 static void
 _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
 {
-  u3_khan*  cop_u = (u3_khan*)sem_u;
+  u3_khan*  cop_u = (u3_khan*)(sem_u - offsetof(u3_khan, pyp_u));
   u3_chan*  can_u;
   c3_i      err_i;
 
-  can_u = c3_malloc(sizeof(u3_chan));
+  can_u = c3_calloc(sizeof(u3_chan));
   can_u->coq_l = ( cop_u->can_u ) ? 1 + cop_u->can_u->coq_l : 0;
   can_u->cop_u = cop_u;
   can_u->nex_u = cop_u->can_u;
@@ -197,7 +197,6 @@ _khan_err_chdir:
       if ( 0 != chdir(pax_c) ) {
         u3l_log("khan: chdir: %s\n", uv_strerror(errno));
       }
-
       u3_king_bail();
     }
   }
@@ -283,6 +282,7 @@ u3_khan_io_init(u3_pier* pir_u)
 
   u3_auto* car_u = &cop_u->car_u;
   car_u->nam_m = c3__khan;
+  car_u->liv_o = c3n;
   car_u->io.talk_f = _khan_io_talk;
   car_u->io.kick_f = _khan_io_kick;
   car_u->io.exit_f = _khan_io_exit;
@@ -296,6 +296,7 @@ u3_khan_io_init(u3_pier* pir_u)
     cop_u->sev_l = u3r_mug(now);
     u3z(now);
   }
+
 
   return car_u;
 }
