@@ -56,6 +56,14 @@
 ::  [/comment %landscape /~darrux-landes/feature-requests/12374893234232/2]
 ::
 +$  bin  [=path =place]
+::
+::  $lid: Reference to a timebox
+::
++$  lid
+  $%  [%archive =time]
+      [%seen ~]
+      [%unseen ~]
+  ==
 ::  $content: Notification content
 +$  content
   $%  [%ship =ship]
@@ -74,21 +82,19 @@
 ::
 +$  notification
   [date=@da =bin body=(list body)]
-::  $timebox: Read notifications from a particular time
+::  $timebox: Group of notificatons
 +$  timebox
   (map bin notification)
-::  $reads: Read notifications, ordered by time
-+$  reads
+::  $archive: Archived notifications, ordered by time
++$  archive
   ((mop @da timebox) gth)
-::  +unreads: Unread notifications
-+$  unreads
-  (map bin notification)
 ::
 +$  action
   $%  ::  hook actions
       ::
       ::  %add-note: add a notification
       [%add-note =bin =body]
+      ::
       ::  %del-place: Underlying resource disappeared, remove all
       ::  associated notifications
       [%del-place =place]
@@ -96,14 +102,14 @@
       [%unread-count =place inc=? count=@ud]
       ::  %unread-each: Add .path to list of unreads for .place
       [%unread-each =place =path]
-      ::  %seen-index: Update last-updated for .place to now.bowl
-      [%seen-index =place time=(unit time)] 
+      ::  %saw-place: Update last-updated for .place to now.bowl
+      [%saw-place =place time=(unit time)] 
       ::  store actions
       ::
       ::  %archive: archive single notification
       ::  if .time is ~, then archiving unread notification
       ::  else, archiving read notification
-      [%archive time=(unit @da) =bin]
+      [%archive =lid =bin]
       ::  %read-count: set unread count to zero
       [%read-count =place]
       ::  %read-each: remove path from unreads for .place
@@ -112,18 +118,17 @@
       [%read-note =bin]
       ::  %archive-all: Archive all notifications
       [%archive-all ~]
-      ::  %read-all: Read all all notifications
-      [%read-all ~]
-      ::  %seen: User opened notifications, reset timeboxing logic.
-      [%seen ~]
-    :: 
-    ::  XX: previously in hark-store, now deprecated
-    ::  the hooks responsible for creating notifications may offer pokes
-    ::  similar to this
-    ::  [%read-graph =resource]
-    ::  [%read-group =resource]
-    ::  [%remove-graph =resource]
-    ::
+      ::  %opened: User opened notifications, reset timeboxing logic.
+      ::
+      [%opened ~]
+      ::
+      ::  XX: previously in hark-store, now deprecated
+      ::  the hooks responsible for creating notifications may offer pokes
+      ::  similar to this
+      ::  [%read-graph =resource]
+      ::  [%read-group =resource]
+      ::  [%remove-graph =resource]
+      ::
   ==
 ::  .stats: Statistics for a .place
 ::
@@ -137,14 +142,14 @@
 +$  update
   $%  action
       :: %more: more updates
+      [%archived =time =lid =notification]
       [%more more=(list update)]
       :: %note-read: note has been read with timestamp
       [%note-read =time =bin]
       [%added =notification]
       :: %timebox: description of timebox. 
       ::
-      :: If time is ~, this is the unread timebox
-      [%timebox time=(unit @da) =(list [bin notification])]
+      [%timebox =lid =(list notification)]
       :: %place-stats: description of .stats for a .place
       [%place-stats =place =stats]
       :: %place-stats: stats for all .places

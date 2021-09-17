@@ -1,20 +1,20 @@
 /+  store=hark-store
-|_  =reads:store
+|_  =archive:store
 ++  orm  ((on @da timebox:store) gth)
 ++  del
   |=  [=time =bin:store]
-  ?~  box=(get:orm reads time)  reads
-  (put:orm reads time (~(del by u.box) bin))
+  ?~  box=(get:orm archive time)  archive
+  (put:orm archive time (~(del by u.box) bin))
 ++  put
   |=  [=time =bin:store =notification:store]
-  =/  box=timebox:store  (fall (get:orm reads time) ~)
+  =/  box=timebox:store  (fall (get:orm archive time) ~)
   =.  box  (~(put by box) bin notification)
-  (put:orm reads time box)
+  (put:orm archive time box)
 ::
 ++  get
   |=  [=time =bin:store]
   ^-  (unit notification:store)
-  ?~  box=(get:orm reads time)  ~
+  ?~  box=(get:orm archive time)  ~
   (~(get by u.box) bin)
 ::
 ++  got

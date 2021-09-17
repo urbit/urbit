@@ -120,7 +120,7 @@
   ++  body
     |=  [=path title=cord content=cord]
     ^-  body:hark
-    [~[text+title] ~[text+content] now.bowl path ~]
+    [~[text+title] ~[text+content] now.bowl ~ path]
   ::
   ::
   ++  title-prefix
@@ -134,7 +134,7 @@
   ++  updated
     ^-  action:hark
     :+  %add-note  [/update place]
-    %^  body  /updated  (title-prefix ' has been updated')
+    %^  body  /desk/[desk]  (title-prefix ' has been updated')
     ?:  has-docket
       (rap 3 'Version: ' (ver version:docket) ~)
     (rap 3 'Hash: ' (scot %uv hash) ~)
@@ -150,6 +150,7 @@
     |=  =version:^docket
     =,  version
     `@t`(rap 3 (num major) '.' (num minor) '.' (num patch) ~)
+  ::
   ++  num
     |=  a=@ud
     `@t`(rsh 4 (scot %ui a))

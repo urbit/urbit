@@ -14,31 +14,40 @@
     %+  frond  -.upd
     ?+  -.upd  a+~
         %added      (notification +.upd)
+        %add-note   (add-note +.upd)
         %timebox  (timebox +.upd)
         %more     (more +.upd)
         %read-each     (read-each +.upd)
         %read-count  (place +.upd)
         %unread-each  (read-each +.upd)
         %unread-count  (unread-count +.upd)
-        %seen-index    (seen-index +.upd)
+        %saw-place    (saw-place +.upd)
         %all-stats     (all-stats +.upd)
         ::%read-note   (index +.upd)
         ::%note-read   (note-read +.upd)
-        %archive       (archive +.upd)
+        %archived       (archived +.upd)
     ==
     ::
-    ++  seen-index
+    ++  add-note
+      |=  [bi=^bin bo=^body]
+      %-  pairs
+      :~  bin+(bin bi)
+          body+(body bo)
+      ==
+    ::
+    ++  saw-place
       |=  [p=^place t=(unit ^time)]
       %-  pairs
       :~  place+(place p)
           time+?~(t ~ (time u.t))
       ==
     ::
-    ++  archive
-      |=  [t=(unit @da) b=^bin]
+    ++  archived
+      |=  [t=^time l=^lid n=^notification]
       %-  pairs
-      :~  time+?~(t ~ s+(scot %ud u.t))
-          bin+(bin b)
+      :~  lid+(lid l)
+          time+s+(scot %ud t)
+          notification+(notification n)
       ==
     ::
     ++  note-read
@@ -88,7 +97,7 @@
       |=  ^notification
       ^-  json
       %-  pairs
-      :~  time+s+(scot %ud date)
+      :~  time+(time date)
           bin+(^bin bin)
           body+(bodies body)
       ==
@@ -117,7 +126,7 @@
       %-  pairs
       :~  title+(contents title)
           content+(contents content)
-          time+s+(scot %ud time)
+          time+(^time time)
           link+s+(spat link)
       ==
     :: 
@@ -127,19 +136,21 @@
       :~  bin+(^bin bin)
           notification+(^notification notification)
       ==
+    ++  lid
+      |=  l=^lid
+      ^-  json
+      %+  frond  -.l
+      ?-  -.l
+        ?(%seen %unseen)  ~
+        %archive             s+(scot %ud time.l)
+      ==
     ::
     ++  timebox
-      |=  [tim=(unit @da) l=(list [^bin ^notification])]
+      |=  [li=^lid l=(list ^notification)]
       ^-  json
       %-  pairs
-      :~  time+`json`?~(tim ~ s+(scot %ud u.tim))
-          :-  %notifications  
-          ^-  json
-          :-  %a
-          %+  turn  l
-          |=  [=^bin =^notification]
-          ^-  json
-          (binned-notification bin notification)
+      :~  lid+(lid li)
+          notifications+a+(turn l notification)
       ==
     ::
     ++  read-each
@@ -161,6 +172,14 @@
 ++  dejs
   =,  dejs:format
   |%
+  :: TODO: fix +stab 
+  ::
+  ++  pa
+    |=  j=json
+    ^-  path
+    ?>  ?=(%s -.j)
+    ?:  =('/' p.j)  /
+    (stab p.j)
   ::
   ++  place
     %-  ot
@@ -187,19 +206,26 @@
     ^-  @da
     ?>  ?=(%s -.jon)
     `@da`(rash p.jon dem:ag)
-
+  ::
+  ++  lid
+    %-  of
+    :~  archive+sd
+        unseen+ul
+        seen+ul
+    ==
+  ::
   ++  archive
     %-  ot
-    :~  time+(mu sd)
+    :~  lid+lid
         bin+bin
     ==
   ::
   ++  action
     ^-  $-(json ^action)
     %-  of
-    :~  read-all+ul
-        archive-all+ul
-        seen+ul
+    :~  archive-all+ul
+        archive+archive
+        opened+ul
         read-count+place
         read-each+read-each
         read-note+bin

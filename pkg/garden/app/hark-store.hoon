@@ -29,9 +29,10 @@
 ::
 +$  base-state
   $:  places=(map place:store stats:store)
-      =unreads:store
-      =reads:store
-      current-timebox=@da
+      seen=timebox:store
+      unseen=timebox:store
+      =archive:store
+      half-open=(map bin:store @da)
   ==
 ::
 +$  state-2
@@ -57,7 +58,7 @@
 ::
 ::
 +$  cached-state
-  $:  by-place=(jug place:store [time=(unit @da) =path])
+  $:  by-place=(jug place:store [=lid:store =path])
       ~
   ==
 +$  inflated-state
@@ -70,7 +71,7 @@
 =*  state  -
 ::
 =<
-%+  verb  |
+%+  verb  &
 %-  agent:dbug
 ^-  agent:gall
 ~%  %hark-store-agent  ..card  ~
@@ -99,22 +100,21 @@
   ::
   :_  this
   (poke-our:pass %hark-graph-hook hark-graph-migrate+old-vase)^~
+  ::
   ++  index-timebox
-    |=  [time=(unit @da) =timebox:store out=_by-place]
+    |=  [=lid:store =timebox:store out=_by-place]
     ^+  by-place
     %+  roll  ~(tap by timebox)
     |=  [[=bin:store =notification:store] out=_out]
-    (~(put ju out) place.bin [time path.bin])
-  ::
-  ++  index-reads
-    ^+  by-place
-    %+  roll  (tap:orm reads)
-    |=  [[=time =timebox:store] out=_by-place]
-    (index-timebox `time timebox out)
+    (~(put ju out) place.bin [lid path.bin])
   ::
   ++  inflate
-    =.  by-place  index-reads
-    =.  by-place   (index-timebox ~ unreads by-place)
+    =.  by-place   (index-timebox seen+~ seen by-place)
+    =.  by-place   (index-timebox unseen+~ unseen by-place)
+    =.  by-place
+      %+  roll  (tap:orm archive)
+      |=  [[=time =timebox:store] out=_by-place]
+      (index-timebox archive/time timebox out)
     +.state
   --
 ::
@@ -136,7 +136,8 @@
     ^-  update:store
     :-  %more
     ^-  (list update:store)
-    :~  [%timebox ~ ~(tap by unreads)]
+    :~  [%timebox unseen+~ ~(val by unseen)]
+        [%timebox seen+~ ~(val by seen)]
         [%all-stats places]
     ==
   --
@@ -154,10 +155,10 @@
     :^  ~  ~  %hark-update
     !>  ^-  update:store
     :-  %more
-    %+  turn  (tab:orm reads `date length)
+    %+  turn  (tab:orm archive `date length)
     |=  [time=@da =timebox:store]
     ^-  update:store
-    [%timebox `time ~(tap by timebox)]
+    [%timebox archive+time ~(val by timebox)]
   ==
 ::
 ++  on-poke
@@ -177,7 +178,7 @@
     |=  val=*
     ?+  val  ~|(%bad-noun-poke !!)
       %print  ~&(+.state [~ state])
-      %clear  `state(unreads ~, reads ~)
+      %clear  [~ state(. *inflated-state)]
     ==
   ::
   ++  poke-us
@@ -213,6 +214,7 @@
   ::
   ++  abed 
     |=  in=action:store
+    ^+   poke-core
     ?-  -.in
     ::
       %add-note      (add-note +.in)
@@ -227,11 +229,10 @@
     ::
       %read-note    (read-note +.in)
     ::
-      %seen-index   (seen-index +.in)
+      %saw-place   (saw-place +.in)
     ::
-      %seen         seen
+      %opened       opened
       %archive-all  archive-all
-      %read-all     read-all
     ::
     ==
   ::
@@ -250,7 +251,31 @@
   ::  notification tracking
   ++  put-notifs
     |=  [time=@da =timebox:store]
-    poke-core(reads (put:orm reads time timebox))
+    poke-core(archive (put:orm archive time timebox))
+  ::
+  ++  put-lid
+    |=  [=lid:store =bin:store =notification:store]
+    ^+  poke-core
+    =.  by-place  (~(put ju by-place) place.bin [lid path.bin]) 
+    ?-  -.lid
+        %seen
+      poke-core(seen (~(put by seen) bin notification))
+    ::
+        %unseen
+      poke-core(unseen (~(put by unseen) bin notification))
+    ::
+        %archive
+      poke-core(archive (~(put re archive) time.lid bin notification))
+    ==
+  ::
+  ++  del-lid
+    |=  [=lid:store =bin:store]
+    =.  by-place  (~(del ju by-place) place.bin [lid path.bin])
+    ?-  -.lid
+      %seen     poke-core(seen (~(del by seen) bin))
+      %unseen   poke-core(unseen (~(del by unseen) bin))
+      %archive  poke-core(archive (~(del re archive) time.lid bin))
+    ==
   ::
   ++  add-note
     |=  [=bin:store =body:store]
@@ -258,54 +283,55 @@
     =.  poke-core
       (emit (fact:io hark-update+!>([%add-note bin body]) /notes ~))
     =.  by-place
-      (~(put ju by-place) place.bin ~ path.bin)
+      (~(put ju by-place) place.bin unseen+~ path.bin)
     =/  existing-notif
-      (~(gut by unreads) bin *notification:store)
+      (~(gut by unseen) bin *notification:store)
     =/  new=notification:store
-      [now.bowl bin (snoc body.existing-notif body)]
-    =.  unreads
-      (~(put by unreads) bin new)
+      [now.bowl bin [body body.existing-notif]]
+    =.  unseen
+      (~(put by unseen) bin new)
     (give %added new)
   ::
   ++  del-place
     |=  =place:store
-    =/  notes=(list [time=(unit @da) =path])
+    =.  poke-core  (give %del-place place)
+    =/  notes=(list [=lid:store =path])
       ~(tap in (~(get ju by-place) place))
     |-  ^+  poke-core
     ?~  notes  poke-core
-    =/  core=_poke-core
-      (do-archive time.i.notes [path.i.notes place])
-    $(poke-core core, notes t.notes)
+    =,  i.notes
+    =.  poke-core
+      (del-lid lid path place)
+    $(notes t.notes)
   ::
   ++  do-archive
-    |=  [time=(unit @da) =bin:store]
+    |=  [=lid:store =bin:store]
     ^+  poke-core  
-    =.  poke-core  (give %archive time bin)
-    |^
-    ?~(time archive-unread (archive-read u.time))
-    ::
-    ++  archive-unread
-      =.  by-place  (~(del ju by-place) place.bin ~ path.bin)
-      poke-core(unreads (~(del by unreads) bin))
-    ::
-    ++  archive-read
-      |=  time=@da
-      %_  poke-core
-        by-place  (~(del ju by-place) place.bin `time path.bin)
-        reads     (~(del re reads) time bin)
-      ==
-    --
+    ~|  %already-archived
+    ?<  ?=(%time -.lid)
+    ~|  %non-existent
+    =/  =notification:store  (need (get-lid lid bin))
+    =.  poke-core  (del-lid lid bin)
+    =.  poke-core  (put-lid archive+now.bowl bin notification)
+    =?  poke-core  ?=(%unseen -.lid)
+      ?~  n=(get-lid seen+~ bin)  poke-core
+      =.  archive  
+        %^  ~(job re archive)  now.bowl  bin 
+        |=  og=(unit notification:store)
+        (merge-notification og u.n)
+      poke-core
+    (give %archived now.bowl lid notification)
   ::
   ++  read-note
     |=  =bin:store
     =/  =notification:store
-      (~(got by unreads) bin)
-    =.  unreads
-      (~(del by unreads) bin)
+      (~(got by unseen) bin)
+    =.  unseen
+      (~(del by unseen) bin)
     =/  =time
       (fall timebox:(gut-place place.bin) now.bowl)
     =.  date.notification  time
-    =.  reads  (~(put re reads) time bin notification)
+    =.  archive  (~(put re archive) time bin notification)
     (give %note-read time bin)
   ::
   ::
@@ -315,7 +341,7 @@
   ::
   ++  unread-each
     |=  [=place:store =path]
-    =.  poke-core  (seen-index place ~)
+    =.  poke-core  (saw-place place ~)
     =.  poke-core  (give %unread-each place path)
     %+  jub-place  place
     |=(=stats:store stats(each (~(put in each.stats) path)))
@@ -324,11 +350,11 @@
     |=  [=place:store =path]
     %-  read-bins
     %+  skim
-      ~(tap in ~(key by unreads))
+      ~(tap in ~(key by unseen))
     |=  =bin:store
     ?.  =(place place.bin)  %.n
     =/  not=notification:store
-      (~(got by unreads) bin)
+      (~(got by unseen) bin)
     (lien body.not |=(=body:store =(binned.body path)))
   ::
   ++  read-each
@@ -361,7 +387,7 @@
     |=  [=place:store inc=? count=@ud]
     =.  poke-core
       (give %unread-count place inc count)
-    =.  poke-core  (seen-index place ~)
+    =.  poke-core  (saw-place place ~)
     =/  f
       ?:  inc  (cury add count)
       (curr sub count)
@@ -369,9 +395,36 @@
     |=  =stats:store
     stats(count (f count.stats))
   ::
+  ++  half-archive
+    |=  =place:store
+    =/  bins=(list [=lid:store =path])
+      ~(tap in (~(get ju by-place) place))
+    |-  
+    ?~  bins  poke-core
+    =/  =bin:store
+      [path.i.bins place]
+    =*  lid  lid.i.bins
+    ?:  ?=(%archive -.lid)
+      $(bins t.bins)
+    =/  seen-place    (~(get by seen) bin)
+    =/  n=(unit notification:store)  (get-lid lid bin)
+    ?~  n  $(bins t.bins)
+    =*  note  u.n
+    =/  =time  (~(gut by half-open) bin now.bowl)
+    =?  half-open  !(~(has by half-open) bin)
+      (~(put by half-open) bin now.bowl)
+    =.  archive
+      %^  ~(job re archive)  time  bin
+      |=(n=(unit notification:store) (merge-notification n note))
+    =.  by-place  (~(put ju by-place) place [archive/now.bowl path.bin])
+    =.  poke-core  (give %archived now.bowl unseen+~ (~(got re archive) time bin))
+    =.  poke-core  (give %archived now.bowl seen+~ (~(got re archive) time bin))
+    $(bins t.bins)
+  ::
   ++  read-count
     |=  =place:store
     =.  poke-core  (give %read-count place)
+    =.  poke-core  (half-archive place)
     %+  jub-place  place
     |=  =stats:store
     stats(count 0, timebox `now.bowl)
@@ -384,29 +437,33 @@
       (read-note i.bins)
     $(poke-core core, bins t.bins)
   ::
-  ++  seen-index
+  ++  saw-place
     |=  [=place:store time=(unit time)]
-    =.  poke-core  (give %seen-index place time)
+    =.  poke-core  (give %saw-place place time)
     %+  jub-place  place
     |=(=stats:store stats(last (fall time now.bowl)))
   ::
-  ++  seen
-    =.  poke-core
-      (read-bins ~(tap in ~(key by unreads)))
+  ++  archive-seen
+    =/  seen=(list [=bin:store =notification:store])  ~(tap by seen)
+    poke-core
+  ::
+  ++  opened
+    =.  seen
+      %-  ~(gas by *timebox:store)
+      %+  murn  ~(tap in (~(uni in ~(key by seen)) ~(key by unseen)))
+      |=  =bin:store
+      =/  se  (~(get by seen) bin)
+      =/  un  (~(get by unseen) bin)  
+      ?~  un  
+        ?~(se ~ `[bin u.se])
+      `[bin (merge-notification se u.un)]
+    =.  unseen  ~
     =.  poke-core  (turn-places |=(=stats:store stats(timebox ~)))
-    poke-core(current-timebox now.bowl)
+    (give %opened ~)
+    
   ::
   ++  archive-all
-    =.  poke-core  (give:seen %archive-all ~)
-    poke-core(unreads ~, reads ~)
-  ::
-  ++  read-all
-    =.  poke-core  (give:seen %read-all ~)
-    =/  to-read=(list bin:store)  ~(tap in ~(key by unreads))
-    |-  
-    ?~  to-read  poke-core
-    =/  core=_poke-core  (read-note i.to-read)
-    $(to-read t.to-read, poke-core core)
+    (give:opened %archive-all ~)
   ::
   ++  turn-places
     |=  f=$-(stats:store stats:store)
@@ -417,24 +474,29 @@
     $(poke-core core, places t.places)
   --
 ::
+++  get-lid
+  |=  [=lid:store =bin:store]
+  =/  =timebox:store  ?:(?=(%unseen -.lid) unseen seen)
+  (~(get by timebox) bin)
+::
 ++  merge-notification
   |=  [existing=(unit notification:store) new=notification:store]
   ^-  notification:store
   ?~  existing  new
-  [(max date.u.existing date.new) bin.new (welp body.u.existing body.new)]
+  [(max date.u.existing date.new) bin.new (welp body.new body.u.existing)]
 ::
 ::  +key-orm: +key:by for ordered maps
 ++   key-orm
-  |=  =reads:store
+  |=  =archive:store
   ^-  (list @da)
-  (turn (tap:orm reads) |=([@da *] +<-))
+  (turn (tap:orm archive) |=([@da *] +<-))
 ::
 ::  +gut-orm: +gut:by for ordered maps
 ::    TODO: move to zuse.hoon
 ++  gut-orm
-  |=  [=reads:store time=@da]
+  |=  [=archive:store time=@da]
   ^-  timebox:store
-  (fall (get:orm reads time) ~)
+  (fall (get:orm archive time) ~)
 ::
 ::
 ++  scry
@@ -449,8 +511,8 @@
   [%give %fact paths [%hark-update !>(update)]]~
 ::
 ++  tap-nonempty
-  |=  =reads:store
+  |=  =archive:store
   ^-  (list [@da timebox:store])
-  %+  skim  (tap:orm reads)
+  %+  skim  (tap:orm archive)
   |=([@da =timebox:store] !=(~(wyt by timebox) 0))
 --
