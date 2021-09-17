@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, NavLink, Route, Switch } from 'react-router-dom';
-import { Notification } from '@urbit/api';
+import { Notification, HarkLid } from '@urbit/api';
 import { useLeapStore } from './Nav';
 import { Button } from '../components/Button';
 import { BasicNotification } from './notifications/BasicNotification';
@@ -13,7 +13,7 @@ import { useHarkStore } from '../state/hark';
 import { OnboardingNotification } from './notifications/OnboardingNotification';
 import { Inbox } from './notifications/Inbox';
 
-function renderNotification(notification: Notification, key: string, unread = false) {
+function renderNotification(notification: Notification, key: string, lid: HarkLid) {
   // Special casing
   if (notification.bin.place.desk === window.desk) {
     if (notification.bin.place.path === '/lag') {
@@ -23,10 +23,10 @@ function renderNotification(notification: Notification, key: string, unread = fa
       return <BaseBlockedNotification key={key} />;
     }
     if (notification.bin.place.path === '/onboard') {
-      return <OnboardingNotification key={key} unread={unread} />;
+      return <OnboardingNotification key={key} unread />
     }
   }
-  return <BasicNotification key={key} notification={notification} unread={unread} />;
+  return <BasicNotification key={key} notification={notification} lid={lid} />;
 }
 
 const Empty = () => (
@@ -39,8 +39,8 @@ export const Notifications = () => {
   const select = useLeapStore((s) => s.select);
   const { unseen, seen, hasAnyNotifications } = useNotifications();
   const markAllAsRead = () => {
-    const { readAll } = useHarkStore.getState();
-    readAll();
+    const { archiveAll } = useHarkStore.getState();
+    archiveAll();
   };
 
   useEffect(() => {

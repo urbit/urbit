@@ -13,38 +13,74 @@ import {
   HarkBin,
   HarkLid,
   archive,
-  HarkContent
+  HarkContent,
+  NotificationGraphConfig
 } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 /* eslint-disable-next-line camelcase */
 import { unstable_batchedUpdates } from 'react-dom';
 import produce from 'immer';
-import { map } from 'lodash';
+import _, { map } from 'lodash';
 import api from './api';
 import { useMockData } from './util';
 import { mockNotifications } from './mock-data';
 import useDocketState from './docket';
 import { useSettingsState } from './settings';
+import { BaseState, createState, createSubscription, reduceStateN} from './base';
 
-interface HarkStore {
+export interface HarkState {
   seen: Timebox;
   unseen: Timebox;
   archive: BigIntOrderedMap<Timebox>;
-  set: (f: (s: HarkStore) => void) => void;
+  set: (f: (s: HarkState) => void) => void;
   opened: () => Promise<void>;
+  notificationsGraphConfig: NotificationGraphConfig;
   archiveAll: () => Promise<void>;
   archiveNote: (bin: HarkBin, lid: HarkLid) => Promise<void>;
   getMore: () => Promise<void>;
   webNotes: {
     [binId: string]: Notification[];
   };
+  [ref: string]: unknown;
 }
 
-export const useHarkStore = create<HarkStore>((set, get) => ({
+type BaseHarkState = BaseState<HarkState> & HarkState;
+
+function updateState(
+  key: string,
+  transform: (state: BaseHarkState, data: any) => void
+): (json: any, state: BaseHarkState) => BaseHarkState {
+  return (json: any, state: BaseHarkState) => {
+    if (_.has(json, key)) {
+      transform(state, _.get(json, key, undefined));
+    }
+    return state;
+  };
+}
+
+export const reduceGraph = [
+  updateState('initial', (draft, data) => {
+    draft.notificationsGraphConfig = data;
+  }),
+  updateState('set-mentions', (draft, data) => {
+    draft.notificationsGraphConfig.mentions = data;
+  })
+];
+
+
+export const useHarkStore = createState<HarkState>(
+  'Hark',
+  (set, get) => ({
   seen: {},
   unseen: {},
   archive: new BigIntOrderedMap<Timebox>(),
   webNotes: {},
+  notificationsGraphConfig: {
+    watchOnSelf: false,
+    mentions: false,
+    watching: []
+  },
+
   set: (f) => {
     const newState = produce(get(), f);
     set(newState);
@@ -65,7 +101,25 @@ export const useHarkStore = create<HarkStore>((set, get) => ({
     });
     reduceHark(update);
   }
-}));
+}),
+  [],
+  [
+    (set, get) =>
+      createSubscription('hark-graph-hook', '/updates', (j) => {
+        const graphHookData = _.get(j, 'hark-graph-hook-update', false);
+        if (graphHookData) {
+          reduceStateN(get(), graphHookData, reduceGraph);
+        }
+      }),
+    (set, get) =>
+      createSubscription('hark-store', '/updates', u => {
+        /* eslint-ignore-next-line camelcase */
+        unstable_batchedUpdates(() => {
+          reduceHark(u);
+        });
+      })
+  ]
+);
 
 function reduceHark(u: any) {
   const { set } = useHarkStore.getState();
@@ -179,4 +233,5 @@ api.subscribe({
     }
   }
 });
-window.hark = useHarkStore.getState;
+
+

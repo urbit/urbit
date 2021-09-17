@@ -36,8 +36,6 @@ export function InterfacePrefs() {
       <Setting on={protocolHandling} toggle={toggleProtoHandling} name="Handle Urbit links">
         <p>Automatically open urbit links with this urbit</p>
       </Setting>
-
-      <div className="space-y-3"> </div>
     </>
   );
 }

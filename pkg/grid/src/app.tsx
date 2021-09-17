@@ -5,9 +5,11 @@ import { Grid } from './pages/Grid';
 import useDocketState from './state/docket';
 import { PermalinkRoutes } from './pages/PermalinkRoutes';
 import useKilnState from './state/kiln';
-import { usePreferencesStore } from './nav/preferences/usePreferencesStore';
 import useContactState from './state/contact';
 import api from './state/api';
+import { useHarkStore } from './state/hark';
+import { useTheme } from './state/settings';
+import { useLocalState } from './state/local';
 
 const getNoteRedirect = (path: string) => {
   if (path.startsWith('/desk/')) {
@@ -19,7 +21,6 @@ const getNoteRedirect = (path: string) => {
 
 const AppRoutes = () => {
   const { push } = useHistory();
-  const theme = usePreferencesStore((s) => s.theme);
   const { search } = useLocation();
 
   useEffect(() => {
@@ -29,15 +30,16 @@ const AppRoutes = () => {
       push(redir);
     }
   }, [location.search]);
+  const theme = useTheme();
 
   const updateThemeClass = useCallback(
     (e: MediaQueryListEvent) => {
-      if ((e.matches && theme === 'automatic') || theme === 'dark') {
+      if ((e.matches && theme === 'auto') || theme === 'dark') {
         document.body.classList.add('dark');
-        usePreferencesStore.setState({ currentTheme: 'dark' });
+        useLocalState.setState({ currentTheme: 'dark' });
       } else {
         document.body.classList.remove('dark');
-        usePreferencesStore.setState({ currentTheme: 'light' });
+        useLocalState.setState({ currentTheme: 'light' });
       }
     },
     [theme]
@@ -65,6 +67,7 @@ const AppRoutes = () => {
     fetchVats();
     fetchLag();
     useContactState.getState().initialize(api);
+    useHarkStore.getState().initialize(api);
 
     Mousetrap.bind(['command+/', 'ctrl+/'], () => {
       push('/leap/search');

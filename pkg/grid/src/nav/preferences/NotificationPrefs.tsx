@@ -1,7 +1,9 @@
+import { setMentions } from '@urbit/api/dist';
 import React from 'react';
 import { Setting } from '../../components/Setting';
+import { pokeOptimisticallyN } from '../../state/base';
+import { HarkState, reduceGraph, useHarkStore } from '../../state/hark';
 import { useSettingsState, SettingsState } from '../../state/settings';
-import { usePreferencesStore } from './usePreferencesStore';
 
 const selDnd = (s: SettingsState) => s.display.doNotDisturb;
 async function toggleDnd() {
@@ -13,9 +15,15 @@ async function toggleDnd() {
   await state.putEntry('display', 'doNotDisturb', !curr);
 }
 
+const selMentions = (s: HarkState) => s.notificationsGraphConfig.mentions;
+async function toggleMentions() {
+  const state = useHarkStore.getState();
+  await pokeOptimisticallyN(useHarkStore, setMentions(!selMentions(state)), reduceGraph);
+}
+
 export const NotificationPrefs = () => {
-  const { mentions, toggleMentions } = usePreferencesStore();
   const doNotDisturb = useSettingsState(selDnd);
+  const mentions = useHarkStore(selMentions);
 
   return (
     <>
@@ -32,14 +40,7 @@ export const NotificationPrefs = () => {
           </p>
         </Setting>
         <Setting on={mentions} toggle={toggleMentions} name="Mentions">
-          <p>
-            [PLACEHOLDER] Block visual desktop notifications whenever Urbit software produces an
-            in-Landscape notification badge.
-          </p>
-          <p>
-            Turning this &quot;off&quot; will prompt your browser to ask if you&apos;d like to
-            enable notifications
-          </p>
+          <p>Notify me if someone mentions my @p in a channel I&apos;ve joined</p>
         </Setting>
       </div>
     </>

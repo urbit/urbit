@@ -189,6 +189,7 @@ function createDmNotification(...content: HarkContent[]): HarkBody {
     title: [ship('~hastuc-dibtux'), text(' messaged you')],
     time: unixToDa(Date.now() - 3_600).toString(),
     content,
+    binned: '/',
     link: '/'
   };
 }
@@ -208,6 +209,7 @@ function createGroupNotif(to: string): HarkBody {
     title: [ship('~ridlur-figbud'), text(` invited you to ${to}`)],
     content: [],
     time: unixToDa(Date.now() - 3_600).toString(),
+    binned: '/',
     link: '/'
   };
 }
@@ -318,7 +320,8 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
     aeon: 3,
     desk,
     next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
-    ship: '~zod'
+    ship: '~zod',
+    paused: false
   },
   hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
 });
