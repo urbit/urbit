@@ -27,10 +27,10 @@ result-*
 
 # Common Piers
 /zod
+/fakezod
 /bus
 /nec
 /sev
-/fakezod
 /bel
 /bet
 /det
@@ -50,6 +50,7 @@ result-*
 /tug
 /wet
 /wyd
+/sen
 
 # NodeJS
 node_modules
