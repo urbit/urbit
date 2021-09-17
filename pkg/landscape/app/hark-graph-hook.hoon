@@ -160,7 +160,7 @@
         (hark %unread-count u.place & u.count)
       =/  last   (~(get by last-seen.old) stats-index)
       =?  cards  ?=(^ last)
-        (hark %seen-index u.place `u.last)
+        (hark %saw-place u.place `u.last)
       cards
     ::
     ++  stats-index-to-place
@@ -363,6 +363,7 @@
 ::
 ++  get-bin
   |=  [rid=resource parent=index:graph-store is-mention=?]
+  ^-  bin:store
   [?:(is-mention /mention /) (get-place rid parent)]
 ::
 ++  get-conversion
@@ -506,8 +507,11 @@
         ==
       =/  link=path
         (welp /(fall mark '')/(scot %p entity.rid)/[name.rid] (graph-index-to-path index.pos))
+      =/  title=(list content:store)
+        ?.  is-mention   title.not-kind
+        ~[text/(rap 3 'You were mentioned in ' title ~)]
       =/  =body:store
-        [title.not-kind body.not-kind now.bowl path.bin link]
+        [title body.not-kind now.bowl path.bin link]
       (add-unread bin body)
     update-core
   ::
@@ -520,6 +524,7 @@
       %none   update-core
     ==
   ::
+  ::
   ++  self-post
     |=  $:  =node:graph-store
             =bin:store
@@ -528,7 +533,7 @@
     ^+  update-core 
     ?>  ?=(%& -.post.node)
     =.  update-core
-      (hark %seen-index place.bin `now.bowl)
+      (hark %saw-place place.bin `now.bowl)
     =?  update-core  ?=(%count mode.notif-kind)
       (hark %read-count place.bin)
     =?  update-core  watch-on-self
