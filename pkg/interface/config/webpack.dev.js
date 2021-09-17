@@ -9,12 +9,14 @@ const { execSync } = require('child_process');
 const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
 
 let devServer = {
-  contentBase: path.join(__dirname, '../dist'),
+  contentBase: path.join(__dirname, '../public'),
   hot: true,
   port: 9000,
   host: '0.0.0.0',
   disableHostCheck: true,
-  historyApiFallback: true,
+  historyApiFallback: {
+    disableDotRule: true
+  },
   publicPath: '/apps/landscape/'
 };
 

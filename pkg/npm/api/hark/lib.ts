@@ -4,6 +4,7 @@ import { Poke } from '../lib/types';
 import {
   HarkBin,
   HarkBinId,
+  HarkLid,
   HarkPlace
 } from './types';
 import { decToUd } from '../lib';
@@ -57,19 +58,19 @@ export const setDoNotDisturb = (dnd: boolean): Poke<unknown> =>
     'set-dnd': dnd
   });
 
-export const archive = (bin: HarkBin, time?: BigInteger): Poke<unknown> =>
+export const archive = (bin: HarkBin, lid: HarkLid): Poke<unknown> =>
   harkAction({
     archive: {
-      time: time ? decToUd(time.toString()) : null,
+      lid,
       bin
     }
   });
 
-export const readNote = (bin: HarkBin): Poke<unknown> =>
-  harkAction({ 'read-note': bin });
+export const opened = harkAction({
+  opened: null
+});
 
-export const unread = (time: BigInteger, bin: HarkBin): Poke<unknown> =>
-  actOnNotification('unread-note', time, bin);
+
 
 export const markCountAsRead = (place: HarkPlace): Poke<unknown> =>
   harkAction({

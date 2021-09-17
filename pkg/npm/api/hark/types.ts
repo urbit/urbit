@@ -6,7 +6,7 @@ export interface HarkStats {
 }
 
 export interface Timebox {
-  [binId: string]: Notification[];
+  [binId: string]: Notification;
 }
 
 export type HarkContent = { ship: string; } | { text: string; };
@@ -15,8 +15,8 @@ export interface HarkBody {
   title: HarkContent[];
   time: string;
   content: HarkContent[];
-  author?: string;
   link: string;
+  binned: string;
 }
 
 export interface HarkPlace {
@@ -28,6 +28,11 @@ export interface HarkBin {
   path: string;
   place: HarkPlace;
 }
+
+export type HarkLid = 
+  { unseen: null; }
+| { seen: null; }
+| { time: string; };
 
 export type HarkBinId = string;
 export interface Notification {

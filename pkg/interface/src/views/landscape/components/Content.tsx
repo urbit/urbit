@@ -67,7 +67,7 @@ function getLinkRedirect(graphKey: string, segs: string[]) {
   return base;
 }
 
-function getNotificationRedirect(link: string) {
+function getGraphRedirect(link: string) {
   const [,mark, ship, name, ...rest] = link.split('/');
   const graphKey = `${ship}/${name}`;
   switch(mark) {
@@ -86,6 +86,20 @@ function getNotificationRedirect(link: string) {
   }
 }
 
+function getInviteRedirect(link: string) {
+  const [,,app,uid] = link.split('/');
+  return `/invites/${app}/${uid}`;
+}
+
+function getNotificationRedirect(link: string) {
+  if(link.startsWith('/graph-validator')) {
+    return getGraphRedirect(link);
+  } else if (link.startsWith('/invite')) {
+    return getInviteRedirect(link);
+  }
+
+}
+
 export const Content = (props) => {
   const history = useHistory();
   const location = useLocation();
@@ -95,7 +109,6 @@ export const Content = (props) => {
     const query = new URLSearchParams(location.search);
     if(Object.keys(associations).length > 0 && query.has('grid-note')) {
       history.push(getNotificationRedirect(query.get('grid-note')));
-      console.log(query.get('grid-note'));
     }
   }, [location.search]);
 
@@ -132,7 +145,7 @@ export const Content = (props) => {
       <Switch>
         <Route
           exact
-          path='/'
+          path={['/', '/invites/:app/:uid']}
           render={p => (
             <LaunchApp
               location={p.location}
@@ -176,6 +189,7 @@ export const Content = (props) => {
         />
         <GraphApp path="/~graph" {...props} />
         <PermalinkRoutes {...props} />
+
         <Route
           render={p => (
             <ErrorComponent

@@ -3,6 +3,7 @@ import { Box, Button, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import f from 'lodash/fp';
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { Route, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import {
     hasTutorialGroup,
@@ -30,6 +31,7 @@ import Groups from './components/Groups';
 import ModalButton from './components/ModalButton';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
+import { Invite } from './components/Invite';
 import './css/custom.css';
 import { join } from '@urbit/api/groups';
 import { joinGraph } from '@urbit/api/graph';
@@ -185,6 +187,9 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
       <Helmet defer={false}>
         <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape</title>
       </Helmet>
+      <Route path="/invites/:app/:uid">
+        <Invite />
+      </Route>
       <ScrollbarLessBox height='100%' overflowY='scroll' display="flex" flexDirection="column">
         {modal}
         <Box
