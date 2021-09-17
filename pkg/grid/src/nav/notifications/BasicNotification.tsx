@@ -1,25 +1,28 @@
 import React from 'react';
 import cn from 'classnames';
-import { Notification, harkBinToId, HarkContent } from '@urbit/api';
+import { Notification, harkBinToId, HarkContent, HarkLid } from '@urbit/api';
 import { map, take } from 'lodash';
 import { useCharge } from '../../state/docket';
 import { Elbow } from '../../components/icons/Elbow';
 import { ShipName } from '../../components/ShipName';
 import { getAppHref } from '../../state/util';
+import { Link } from 'react-router-dom';
+import { DeskLink } from '../../components/DeskLink';
+import {useHarkStore} from '../../state/hark';
 
 interface BasicNotificationProps {
   notification: Notification;
-  unread?: boolean;
+  lid: HarkLid;
 }
 
-const MAX_CONTENTS = 20;
+const MAX_CONTENTS = 5;
 
 const NotificationText = ({ contents }: { contents: HarkContent[] }) => {
   return (
     <>
       {contents.map((content, idx) => {
         if ('ship' in content) {
-          return <ShipName key={idx} name={content.ship} />;
+          return <ShipName className="color-blue" key={idx} name={content.ship} />;
         }
         return content.text;
       })}
@@ -27,7 +30,7 @@ const NotificationText = ({ contents }: { contents: HarkContent[] }) => {
   );
 };
 
-export const BasicNotification = ({ notification, unread = false }: BasicNotificationProps) => {
+export const BasicNotification = ({ notification, lid }: BasicNotificationProps) => {
   const { desk } = notification.bin.place;
   const binId = harkBinToId(notification.bin);
   const id = `notif-${notification.time}-${binId}`;
@@ -39,15 +42,19 @@ export const BasicNotification = ({ notification, unread = false }: BasicNotific
   }
   const contents = map(notification.body, 'content').filter((c) => c.length > 0);
   const large = contents.length === 0;
-  const link = `${getAppHref(charge.href)}?grid-note=${encodeURIComponent(first.link)}`;
+  const archive = () => {
+    const { bin } = notification;
+    useHarkStore.getState().archiveNote(notification.bin, lid);
+  };
 
   return (
-    <a
-      href={link}
-      target={desk}
+    <DeskLink
+      onClick={archive}
+      to={`?grid-note=${encodeURIComponent(first.link)}`}
+      desk={desk}
       className={cn(
         'text-black rounded',
-        unread ? 'bg-blue-100' : 'bg-gray-100',
+        'unseen' in lid ? 'bg-blue-100' : 'bg-gray-100',
         large ? 'note-grid-no-content' : 'note-grid-content'
       )}
       aria-labelledby={id}
@@ -75,6 +82,6 @@ export const BasicNotification = ({ notification, unread = false }: BasicNotific
           ) : null}
         </div>
       ) : null}
-    </a>
+    </DeskLink>
   );
 };

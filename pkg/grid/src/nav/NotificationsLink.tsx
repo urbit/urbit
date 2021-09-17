@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import { Notification } from '@urbit/api';
+import { Notification, Timebox } from '@urbit/api';
 import { Link, LinkProps } from 'react-router-dom';
 import { Bullet } from '../components/icons/Bullet';
 import { useNotifications } from '../state/notifications';
@@ -8,7 +8,8 @@ import { MenuState } from './Nav';
 
 type NotificationsState = 'empty' | 'unread' | 'attention-needed';
 
-function getNotificationsState(notifications: Notification[]): NotificationsState {
+function getNotificationsState(box: Timebox): NotificationsState {
+  const notifications = Object.values(box);
   if (notifications.filter(({ bin }) => bin.place.desk === window.desk).length > 0) {
     return 'attention-needed';
   }
@@ -27,8 +28,8 @@ type NotificationsLinkProps = Omit<LinkProps<HTMLAnchorElement>, 'to'> & {
 };
 
 export const NotificationsLink = ({ navOpen, menu }: NotificationsLinkProps) => {
-  const { unreads } = useNotifications();
-  const state = getNotificationsState(unreads);
+  const { unseen } = useNotifications();
+  const state = getNotificationsState(unseen);
 
   return (
     <Link
@@ -44,7 +45,7 @@ export const NotificationsLink = ({ navOpen, menu }: NotificationsLinkProps) => 
       )}
     >
       {state === 'empty' && <Bullet className="w-6 h-6" />}
-      {state === 'unread' && unreads.length}
+      {state === 'unread' && Object.keys(unseen).length}
       {state === 'attention-needed' && (
         <span className="h2">
           ! <span className="sr-only">Attention needed</span>

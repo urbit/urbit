@@ -47,7 +47,7 @@ const OnboardingCard = ({ title, button, body, color }: OnboardingCardProps) => 
     style={color ? { backgroundColor: color } : {}}
   >
     <div className="space-y-1">
-      <h4 className="font-semibold">{title}</h4>
+      <h4 className="font-semibold text-black">{title}</h4>
       <p>{body}</p>
     </div>
     <Button variant="primary" className="bg-gray-500">

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink, Route, Switch } from 'react-router-dom';
 import { Notification } from '@urbit/api';
 import { useLeapStore } from './Nav';
 import { Button } from '../components/Button';
@@ -11,6 +11,7 @@ import {
 import { useNotifications } from '../state/notifications';
 import { useHarkStore } from '../state/hark';
 import { OnboardingNotification } from './notifications/OnboardingNotification';
+import { Inbox } from './notifications/Inbox';
 
 function renderNotification(notification: Notification, key: string, unread = false) {
   // Special casing
@@ -36,7 +37,7 @@ const Empty = () => (
 
 export const Notifications = () => {
   const select = useLeapStore((s) => s.select);
-  const { unreads, reads, hasAnyNotifications } = useNotifications();
+  const { unseen, seen, hasAnyNotifications } = useNotifications();
   const markAllAsRead = () => {
     const { readAll } = useHarkStore.getState();
     readAll();
@@ -46,12 +47,37 @@ export const Notifications = () => {
     select('Notifications');
     const { getMore } = useHarkStore.getState();
     getMore();
+
+    function visibilitychange() {
+      useHarkStore.getState().opened();
+    }
+    document.addEventListener('visibilitychange', visibilitychange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', visibilitychange);
+      useHarkStore.getState().opened();
+    };
   }, []);
   // const select = useLeapStore((s) => s.select);
 
   return (
     <div className="grid grid-rows-[auto,1fr] h-full p-4 md:p-8 overflow-hidden">
       <header className="space-x-2 mb-8">
+        <NavLink
+          exact
+          activeClassName="text-black"
+          className="text-base font-semibold px-4"
+          to="/leap/notifications"
+        >
+          New
+        </NavLink>
+        <NavLink
+          activeClassName="text-black"
+          className="text-base font-semibold px-4"
+          to="/leap/notifications/archive"
+        >
+          Archive
+        </NavLink>
         <Button onClick={markAllAsRead} variant="secondary" className="py-1.5 px-6 rounded-full">
           Mark All as Read
         </Button>
@@ -64,17 +90,14 @@ export const Notifications = () => {
           Notification Settings
         </Button>
       </header>
-
-      {!hasAnyNotifications && <Empty />}
-      {hasAnyNotifications && (
-        <section className="text-gray-400 space-y-2 overflow-y-auto">
-          {unreads.map((n, index) => renderNotification(n, index.toString(), true))}
-          {Array.from(reads)
-            .map(([, nots]) => nots)
-            .flat()
-            .map((n, index) => renderNotification(n, `reads-${index}`))}
-        </section>
-      )}
+      <Switch>
+        <Route path="/leap/notifications" exact>
+          <Inbox  />
+        </Route>
+        <Route path="/leap/notifications/archive" exact>
+          <Inbox archived />
+        </Route>
+      </Switch>
     </div>
   );
 };

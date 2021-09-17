@@ -6,7 +6,11 @@ import { usePreferencesStore } from './usePreferencesStore';
 const selDnd = (s: SettingsState) => s.display.doNotDisturb;
 async function toggleDnd() {
   const state = useSettingsState.getState();
-  await state.putEntry('display', 'doNotDisturb', !selDnd(state));
+  const curr = selDnd(state);
+  if(curr) {
+    Notification.requestPermission();
+  }
+  await state.putEntry('display', 'doNotDisturb', !curr);
 }
 
 export const NotificationPrefs = () => {

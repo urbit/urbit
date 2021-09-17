@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import Mousetrap from 'mousetrap';
-import { BrowserRouter, Switch, Route, useHistory } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, useHistory, useLocation } from 'react-router-dom';
 import { Grid } from './pages/Grid';
 import useDocketState from './state/docket';
 import { PermalinkRoutes } from './pages/PermalinkRoutes';
@@ -9,9 +9,26 @@ import { usePreferencesStore } from './nav/preferences/usePreferencesStore';
 import useContactState from './state/contact';
 import api from './state/api';
 
+const getNoteRedirect = (path: string) => {
+  if (path.startsWith('/desk/')) {
+    const [, , desk] = path.split('/');
+    return `/app/${desk}`;
+  }
+  return '';
+};
+
 const AppRoutes = () => {
   const { push } = useHistory();
   const theme = usePreferencesStore((s) => s.theme);
+  const { search } = useLocation();
+
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    if (query.has('grid-note')) {
+      const redir = getNoteRedirect(query.get('grid-note')!);
+      push(redir);
+    }
+  }, [location.search]);
 
   const updateThemeClass = useCallback(
     (e: MediaQueryListEvent) => {
@@ -35,6 +52,8 @@ const AppRoutes = () => {
       query.removeEventListener('change', updateThemeClass);
     };
   }, []);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     window.name = 'grid';
