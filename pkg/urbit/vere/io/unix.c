@@ -162,35 +162,35 @@ _unix_rm_r_cb(const c3_c* pax_c,
 {
   switch ( typeflag ) {
     default:
-      u3l_log("bad file type in rm_r: %s\r\n", pax_c);
+      u3l_log("bad file type in rm_r: %s", pax_c);
       break;
     case FTW_F:
       if ( 0 != unlink(pax_c) && ENOENT != errno ) {
-        u3l_log("error unlinking (in rm_r) %s: %s\n",
+        u3l_log("error unlinking (in rm_r) %s: %s",
                 pax_c, strerror(errno));
         c3_assert(0);
       }
       break;
     case FTW_D:
-      u3l_log("shouldn't have gotten pure directory: %s\r\n", pax_c);
+      u3l_log("shouldn't have gotten pure directory: %s", pax_c);
       break;
     case FTW_DNR:
-      u3l_log("couldn't read directory: %s\r\n", pax_c);
+      u3l_log("couldn't read directory: %s", pax_c);
       break;
     case FTW_NS:
-      u3l_log("couldn't stat path: %s\r\n", pax_c);
+      u3l_log("couldn't stat path: %s", pax_c);
       break;
     case FTW_DP:
       if ( 0 != rmdir(pax_c) && ENOENT != errno ) {
-        u3l_log("error rmdiring %s: %s\n", pax_c, strerror(errno));
+        u3l_log("error rmdiring %s: %s", pax_c, strerror(errno));
         c3_assert(0);
       }
       break;
     case FTW_SL:
-      u3l_log("got symbolic link: %s\r\n", pax_c);
+      u3l_log("got symbolic link: %s", pax_c);
       break;
     case FTW_SLN:
-      u3l_log("got nonexistent symbolic link: %s\r\n", pax_c);
+      u3l_log("got nonexistent symbolic link: %s", pax_c);
       break;
   }
 
@@ -204,7 +204,7 @@ _unix_rm_r(c3_c* pax_c)
 {
   if ( 0 > nftw(pax_c, _unix_rm_r_cb, 100, FTW_DEPTH | FTW_PHYS )
        && ENOENT != errno) {
-    u3l_log("rm_r error on %s: %s\r\n", pax_c, strerror(errno));
+    u3l_log("rm_r error on %s: %s", pax_c, strerror(errno));
   }
 }
 
@@ -214,7 +214,7 @@ static void
 _unix_mkdir(c3_c* pax_c)
 {
   if ( 0 != mkdir(pax_c, 0755) && EEXIST != errno) {
-    u3l_log("error mkdiring %s: %s\n", pax_c, strerror(errno));
+    u3l_log("error mkdiring %s: %s", pax_c, strerror(errno));
     c3_assert(0);
   }
 }
@@ -231,7 +231,7 @@ _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
   u3_noun dat = u3t(u3t(mim));
 
   if ( fid_i < 0 ) {
-    u3l_log("error opening %s for writing: %s\r\n",
+    u3l_log("error opening %s for writing: %s",
             pax_c, strerror(errno));
     u3z(mim);
     return 0;
@@ -247,7 +247,7 @@ _unix_write_file_hard(c3_c* pax_c, u3_noun mim)
   rit_w = write(fid_i, dat_y, siz_w);
 
   if ( rit_w != siz_w ) {
-    u3l_log("error writing %s: %s\r\n",
+    u3l_log("error writing %s: %s",
             pax_c, strerror(errno));
     mug_w = 0;
   }
@@ -277,7 +277,7 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
       goto _unix_write_file_soft_go;
     }
     else {
-      u3l_log("error opening file (soft) %s: %s\r\n",
+      u3l_log("error opening file (soft) %s: %s",
               fil_u->pax_c, strerror(errno));
       u3z(mim);
       return;
@@ -290,17 +290,17 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
   red_ws = read(fid_i, old_y, len_ws);
 
   if ( close(fid_i) < 0 ) {
-    u3l_log("error closing file (soft) %s: %s\r\n",
+    u3l_log("error closing file (soft) %s: %s",
             fil_u->pax_c, strerror(errno));
   }
 
   if ( len_ws != red_ws ) {
     if ( red_ws < 0 ) {
-      u3l_log("error reading file (soft) %s: %s\r\n",
+      u3l_log("error reading file (soft) %s: %s",
               fil_u->pax_c, strerror(errno));
     }
     else {
-      u3l_log("wrong # of bytes read in file %s: %d %d\r\n",
+      u3l_log("wrong # of bytes read in file %s: %d %d",
               fil_u->pax_c, len_ws, red_ws);
     }
     c3_free(old_y);
@@ -376,7 +376,7 @@ _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
 {
   DIR* rid_u = opendir(mon_u->dir_u.pax_c);
   if ( !rid_u ) {
-    u3l_log("error opening pier directory: %s: %s\r\n",
+    u3l_log("error opening pier directory: %s: %s",
             mon_u->dir_u.pax_c, strerror(errno));
     return;
   }
@@ -389,7 +389,7 @@ _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
     c3_w err_w;
 
     if ( 0 != (err_w = u3_readdir_r(rid_u, &ent_u, &out_u)) ) {
-      u3l_log("erroring loading pier directory %s: %s\r\n",
+      u3l_log("erroring loading pier directory %s: %s",
               mon_u->dir_u.pax_c, strerror(errno));
 
       c3_assert(0);
@@ -409,7 +409,7 @@ _unix_scan_mount_point(u3_unix* unx_u, u3_umon* mon_u)
       struct stat buf_u;
 
       if ( 0 != stat(pax_c, &buf_u) ) {
-        u3l_log("can't stat pier directory %s: %s\r\n",
+        u3l_log("can't stat pier directory %s: %s",
                 mon_u->dir_u.pax_c, strerror(errno));
         c3_free(pax_c);
         continue;
@@ -453,7 +453,7 @@ static void
 _unix_free_file(u3_ufil *fil_u)
 {
   if ( 0 != unlink(fil_u->pax_c) && ENOENT != errno ) {
-    u3l_log("error unlinking %s: %s\n", fil_u->pax_c, strerror(errno));
+    u3l_log("error unlinking %s: %s", fil_u->pax_c, strerror(errno));
     c3_assert(0);
   }
 
@@ -565,7 +565,7 @@ _unix_delete_mount_point(u3_unix* unx_u, u3_noun mon)
 
   mon_u = unx_u->mon_u;
   if ( !mon_u ) {
-    u3l_log("mount point already gone: %s\r\n", nam_c);
+    u3l_log("mount point already gone: %s", nam_c);
     goto _delete_mount_point_out;
   }
   if ( 0 == strcmp(nam_c, mon_u->nam_c) ) {
@@ -581,7 +581,7 @@ _unix_delete_mount_point(u3_unix* unx_u, u3_noun mon)
   }
 
   if ( !mon_u->nex_u ) {
-    u3l_log("mount point already gone: %s\r\n", nam_c);
+    u3l_log("mount point already gone: %s", nam_c);
     goto _delete_mount_point_out;
   }
 
@@ -699,7 +699,7 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
       return u3nc(u3nc(_unix_string_to_path(unx_u, fil_u->pax_c), u3_nul), u3_nul);
     }
     else {
-      u3l_log("error opening file %s: %s\r\n",
+      u3l_log("error opening file %s: %s",
               fil_u->pax_c, strerror(errno));
       return u3_nul;
     }
@@ -711,17 +711,17 @@ _unix_update_file(u3_unix* unx_u, u3_ufil* fil_u)
   red_ws = read(fid_i, dat_y, len_ws);
 
   if ( close(fid_i) < 0 ) {
-    u3l_log("error closing file %s: %s\r\n",
+    u3l_log("error closing file %s: %s",
             fil_u->pax_c, strerror(errno));
   }
 
   if ( len_ws != red_ws ) {
     if ( red_ws < 0 ) {
-      u3l_log("error reading file %s: %s\r\n",
+      u3l_log("error reading file %s: %s",
               fil_u->pax_c, strerror(errno));
     }
     else {
-      u3l_log("wrong # of bytes read in file %s: %d %d\r\n",
+      u3l_log("wrong # of bytes read in file %s: %d %d",
               fil_u->pax_c, len_ws, red_ws);
     }
     c3_free(dat_y);
@@ -790,7 +790,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
 
           if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
             if ( ENOENT != errno ) {
-              u3l_log("_unix_update_dir: error opening file %s: %s\r\n",
+              u3l_log("_unix_update_dir: error opening file %s: %s",
                       nod_u->pax_c, strerror(errno));
             }
 
@@ -800,7 +800,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
           }
           else {
             if ( close(fid_i) < 0 ) {
-              u3l_log("_unix_update_dir: error closing file %s: %s\r\n",
+              u3l_log("_unix_update_dir: error closing file %s: %s",
                       nod_u->pax_c, strerror(errno));
             }
 
@@ -815,7 +815,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
 
   DIR* rid_u = opendir(dir_u->pax_c);
   if ( !rid_u ) {
-    u3l_log("error opening directory %s: %s\r\n",
+    u3l_log("error opening directory %s: %s",
             dir_u->pax_c, strerror(errno));
     c3_assert(0);
   }
@@ -827,7 +827,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
 
 
     if ( (err_w = u3_readdir_r(rid_u, &ent_u, &out_u)) != 0 ) {
-      u3l_log("error loading directory %s: %s\r\n",
+      u3l_log("error loading directory %s: %s",
               dir_u->pax_c, strerror(err_w));
       c3_assert(0);
     }
@@ -843,7 +843,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
       struct stat buf_u;
 
       if ( 0 != stat(pax_c, &buf_u) ) {
-        u3l_log("can't stat %s: %s\r\n", pax_c, strerror(errno));
+        u3l_log("can't stat %s: %s", pax_c, strerror(errno));
         c3_free(pax_c);
         continue;
       }
@@ -853,13 +853,13 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
           if ( 0 == strcmp(pax_c, nod_u->pax_c) ) {
             if ( S_ISDIR(buf_u.st_mode) ) {
               if ( c3n == nod_u->dir ) {
-                u3l_log("not a directory: %s\r\n", nod_u->pax_c);
+                u3l_log("not a directory: %s", nod_u->pax_c);
                 c3_assert(0);
               }
             }
             else {
               if ( c3y == nod_u->dir ) {
-                u3l_log("not a file: %s\r\n", nod_u->pax_c);
+                u3l_log("not a file: %s", nod_u->pax_c);
                 c3_assert(0);
               }
             }
@@ -894,7 +894,7 @@ _unix_update_dir(u3_unix* unx_u, u3_udir* dir_u)
   }
 
   if ( closedir(rid_u) < 0 ) {
-    u3l_log("error closing directory %s: %s\r\n",
+    u3l_log("error closing directory %s: %s",
             dir_u->pax_c, strerror(errno));
   }
 
@@ -965,7 +965,7 @@ _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
       return u3_nul;
     }
     else {
-      u3l_log("error opening initial file %s: %s\r\n",
+      u3l_log("error opening initial file %s: %s",
               pax_c, strerror(errno));
       return u3_nul;
     }
@@ -977,17 +977,17 @@ _unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
   red_ws = read(fid_i, dat_y, len_ws);
 
   if ( close(fid_i) < 0 ) {
-    u3l_log("error closing initial file %s: %s\r\n",
+    u3l_log("error closing initial file %s: %s",
             pax_c, strerror(errno));
   }
 
   if ( len_ws != red_ws ) {
     if ( red_ws < 0 ) {
-      u3l_log("error reading initial file %s: %s\r\n",
+      u3l_log("error reading initial file %s: %s",
               pax_c, strerror(errno));
     }
     else {
-      u3l_log("wrong # of bytes read in initial file %s: %d %d\r\n",
+      u3l_log("wrong # of bytes read in initial file %s: %d %d",
               pax_c, len_ws, red_ws);
     }
     c3_free(dat_y);
@@ -1015,7 +1015,7 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
 
   DIR* rid_u = opendir(pax_c);
   if ( !rid_u ) {
-    u3l_log("error opening initial directory: %s: %s\r\n",
+    u3l_log("error opening initial directory: %s: %s",
             pax_c, strerror(errno));
     return u3_nul;
   }
@@ -1026,7 +1026,7 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
     c3_w err_w;
 
     if ( 0 != (err_w = u3_readdir_r(rid_u, &ent_u, &out_u)) ) {
-      u3l_log("error loading initial directory %s: %s\r\n",
+      u3l_log("error loading initial directory %s: %s",
               pax_c, strerror(errno));
 
       c3_assert(0);
@@ -1043,7 +1043,7 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
       struct stat buf_u;
 
       if ( 0 != stat(pox_c, &buf_u) ) {
-        u3l_log("initial can't stat %s: %s\r\n",
+        u3l_log("initial can't stat %s: %s",
                 pox_c, strerror(errno));
         c3_free(pox_c);
         continue;
@@ -1061,7 +1061,7 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
   }
 
   if ( closedir(rid_u) < 0 ) {
-    u3l_log("error closing initial directory %s: %s\r\n",
+    u3l_log("error closing initial directory %s: %s",
             pax_c, strerror(errno));
   }
 
@@ -1152,16 +1152,16 @@ _unix_sync_change(u3_unix* unx_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
 
   if ( c3n == u3du(pax) ) {
     if ( u3_nul == pax ) {
-      u3l_log("can't sync out file as top-level, strange\r\n");
+      u3l_log("can't sync out file as top-level, strange");
     }
     else {
-      u3l_log("sync out: bad path\r\n");
+      u3l_log("sync out: bad path");
     }
     u3z(pax); u3z(mim);
     return;
   }
   else if ( c3n == u3du(u3t(pax)) ) {
-    u3l_log("can't sync out file as top-level, strangely\r\n");
+    u3l_log("can't sync out file as top-level, strangely");
     u3z(pax); u3z(mim);
   }
   else {
@@ -1191,7 +1191,7 @@ _unix_sync_change(u3_unix* unx_u, u3_udir* dir_u, u3_noun pax, u3_noun mim)
       }
 
       if ( c3n == nod_u->dir ) {
-        u3l_log("weird, we got a file when we weren't expecting to\r\n");
+        u3l_log("weird, we got a file when we weren't expecting to");
         c3_assert(0);
       }
 
@@ -1274,7 +1274,7 @@ u3_unix_acquire(c3_c* pax_c)
 
   if ( NULL != (loq_u = fopen(paf_c, "r")) ) {
     if ( 1 != fscanf(loq_u, "%" SCNu32, &pid_w) ) {
-      u3l_log("lockfile %s is corrupt!\n", paf_c);
+      u3l_log("lockfile %s is corrupt!", paf_c);
       kill(getpid(), SIGTERM);
       sleep(1); c3_assert(0);
     }
@@ -1282,7 +1282,7 @@ u3_unix_acquire(c3_c* pax_c)
       c3_w i_w;
 
       if ( -1 != kill(pid_w, SIGTERM) ) {
-        u3l_log("unix: stopping process %d, live in %s...\n",
+        u3l_log("unix: stopping process %d, live in %s...",
                 pid_w, pax_c);
 
         for ( i_w = 0; i_w < 16; i_w++ ) {
@@ -1300,10 +1300,10 @@ u3_unix_acquire(c3_c* pax_c)
           }
         }
         if ( 16 == i_w ) {
-          u3l_log("unix: process %d seems unkillable!\n", pid_w);
+          u3l_log("unix: process %d seems unkillable!", pid_w);
           c3_assert(0);
         }
-        u3l_log("unix: stopped old process %u\n", pid_w);
+        u3l_log("unix: stopped old process %u", pid_w);
       }
     }
     fclose(loq_u);
@@ -1311,7 +1311,7 @@ u3_unix_acquire(c3_c* pax_c)
   }
 
   if ( NULL == (loq_u = fopen(paf_c, "w")) ) {
-    u3l_log("unix: unable to open %s\n", paf_c);
+    u3l_log("unix: unable to open %s", paf_c);
     c3_assert(0);
   }
 

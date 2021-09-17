@@ -741,7 +741,6 @@
         [%hill p=(list @tas)]                           ::  mount points
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%mere p=(each (set path) (pair term tang))]    ::  merge result
-        [%note p=@tD q=tank]                            ::  debug message
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%writ p=riot]                                  ::  response
@@ -1031,9 +1030,7 @@
 ++  dill  ^?
   |%
   +$  gift                                              ::  out result <-$
-    $%  [%bbye ~]                                       ::  reset prompt
-        [%blit p=(list blit)]                           ::  terminal output
-        [%burl p=@t]                                    ::  activate url
+    $%  [%blit p=(list blit)]                           ::  terminal output
         [%logo ~]                                       ::  logout
         [%meld ~]                                       ::  unify memory
         [%pack ~]                                       ::  compact memory
@@ -1041,29 +1038,32 @@
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
-    $%  [%belt p=belt]                                  ::  terminal input
-        [%blew p=blew]                                  ::  terminal config
-        [%boot lit=? p=*]                               ::  weird %dill boot
+    $%  [%boot lit=? p=*]                               ::  weird %dill boot
         [%crop p=@ud]                                   ::  trim kernel state
         [%crud p=@tas q=(list tank)]                    ::  print error
-        [%flee session=~]                               ::  unwatch session
         [%flog p=flog]                                  ::  wrapped error
-        [%flow p=@tas q=(list gill:gall)]               ::  terminal config
-        [%hail ~]                                       ::  terminal refresh
         [%heft ~]                                       ::  memory report
-        [%hook ~]                                       ::  this term hung up
-        [%harm ~]                                       ::  all terms hung up
         $>(%init vane-task)                             ::  after gall ready
         [%meld ~]                                       ::  unify memory
-        [%noop ~]                                       ::  no operation
         [%pack ~]                                       ::  compact memory
-        [%talk p=tank]                                  ::
-        [%text p=tape]                                  ::
-        [%view session=~]                               ::  watch session blits
+        [%shot ses=@tas task=session-task]              ::  task for session
+        [%talk p=(list tank)]                           ::  print tanks
+        [%text p=tape]                                  ::  print tape
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%verb ~]                                       ::  verbose mode
         [%knob tag=term level=?(%hush %soft %loud)]     ::  error verbosity
+        session-task                                    ::  for default session
+    ==                                                  ::
+  ::                                                    ::
+  +$  session-task                                      ::  session request
+    $%  [%belt p=belt]                                  ::  terminal input
+        [%blew p=blew]                                  ::  terminal config
+        [%flee ~]                                       ::  unwatch session
+        [%hail ~]                                       ::  terminal refresh
+        [%open p=dude:gall q=(list gill:gall)]          ::  setup session
+        [%shut ~]                                       ::  close session
+        [%view ~]                                       ::  watch session blits
     ==                                                  ::
   ::
   ::::                                                  ::  (1d2)
@@ -1071,14 +1071,10 @@
   +$  blew  [p=@ud q=@ud]                               ::  columns rows
   +$  belt                                              ::  client input
     $?  bolt                                            ::  simple input
-    $%  [%mod mod=?(%ctl %met %hyp) key=bolt]           ::  w/ modifier
+        [%mod mod=?(%ctl %met %hyp) key=bolt]           ::  w/ modifier
         [%txt p=(list @c)]                              ::  utf32 text
         ::TODO  consider moving %hey, %rez, %yow here   ::
-        ::TMP  forward backwards-compatibility          ::
-        ::                                              ::
-        [%ctl p=@c]                                     ::
-        [%met p=@c]                                     ::
-    ==  ==                                              ::
+    ==                                                  ::
   +$  bolt                                              ::  simple input
     $@  @c                                              ::  simple keystroke
     $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
@@ -1087,43 +1083,29 @@
         [%hit r=@ud c=@ud]                              ::  mouse click
         [%ret ~]                                        ::  return
     ==                                                  ::
-  +$  blit                                              ::  old blit
+  +$  blit                                              ::  client output
     $%  [%bel ~]                                        ::  make a noise
         [%clr ~]                                        ::  clear the screen
-        [%hop p=@ud]                                    ::  set cursor position
-        [%klr p=stub]                                   ::  set styled line
-        [%lin p=(list @c)]                              ::  set current line
-        [%mor ~]                                        ::  newline
+        [%hop p=$@(@ud [r=@ud c=@ud])]                  ::  set cursor col/pos
+        [%klr p=stub]                                   ::  put styled
+        [%put p=(list @c)]                              ::  put text at cursor
+        [%nel ~]                                        ::  newline
         [%sag p=path q=*]                               ::  save to jamfile
         [%sav p=path q=@]                               ::  save to file
         [%url p=@t]                                     ::  activate url
+        [%wyp ~]                                        ::  wipe cursor line
     ==                                                  ::
-  +$  dill-belt                                         ::  new belt
-    $%  [%aro p=?(%d %l %r %u)]                         ::  arrow key
-        [%bac ~]                                        ::  true backspace
+  +$  dill-belt                                         ::  arvo input
+    $%  belt                                            ::  client input
         [%cru p=@tas q=(list tank)]                     ::  echo error
-        [%ctl p=@]                                      ::  control-key
-        [%del ~]                                        ::  true delete
         [%hey ~]                                        ::  refresh
-        [%met p=@]                                      ::  meta-key
-        [%ret ~]                                        ::  return
         [%rez p=@ud q=@ud]                              ::  resize, cols, rows
-        [%txt p=(list @c)]                              ::  utf32 text
         [%yow p=gill:gall]                              ::  connect to app
     ==                                                  ::
-  +$  dill-blit                                         ::  new blit
-    $%  [%bel ~]                                        ::  make a noise
-        [%clr ~]                                        ::  clear the screen
-        [%hop p=@ud]                                    ::  set cursor position
-        [%klr p=stub]                                   ::  styled text
+  +$  dill-blit                                         ::  arvo output
+    $%  blit                                            ::  client output
         [%mor p=(list dill-blit)]                       ::  multiple blits
-        [%pom p=stub]                                   ::  styled prompt
-        [%pro p=(list @c)]                              ::  show as cursor+line
         [%qit ~]                                        ::  close console
-        [%out p=(list @c)]                              ::  send output line
-        [%sag p=path q=*]                               ::  save to jamfile
-        [%sav p=path q=@]                               ::  save to file
-        [%url p=@t]                                     ::  activate url
     ==                                                  ::
   +$  flog                                              ::  sent to %dill
     $%  [%crop p=@ud]                                   ::  trim kernel state
@@ -1133,6 +1115,11 @@
         [%pack ~]                                       ::  compact memory
         [%text p=tape]                                  ::
         [%verb ~]                                       ::  verbose mode
+    ==                                                  ::
+  ::                                                    ::
+  +$  poke                                              ::  dill to userspace
+    $:  ses=@tas                                        ::  target session
+        dill-belt                                       ::  input
     ==                                                  ::
   --  ::dill
 ::                                                      ::::
@@ -1634,7 +1621,6 @@
   +$  gift                                              ::  outgoing result
     $%  [%boon payload=*]                               ::  ames response
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%onto p=(each suss tang)]                      ::  about agent
         [%unto p=sign:agent]                            ::
     ==                                                  ::
   +$  task                                              ::  incoming request
@@ -2163,9 +2149,6 @@
       ::  %ames: hear packet
       ::
       $>(%hear task:ames)
-      ::  %dill: hangup
-      ::
-      $>(%hook task:dill)
       ::  %clay: external edit
       ::
       $>(%into task:clay)
@@ -2181,6 +2164,9 @@
       ::  %eyre: starts handling an backdoor http request
       ::
       $>(%request-local task:eyre)
+      ::  %dill: close session
+      ::
+      $>(%shut task:dill)
       ::  %behn: wakeup
       ::
       $>(%wake task:behn)
