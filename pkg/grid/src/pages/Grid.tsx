@@ -25,7 +25,7 @@ export const Grid: FunctionComponent<GridProps> = ({ match }) => {
       <main className="h-full w-full flex justify-center pt-4 md:pt-16 pb-32 relative z-0">
         {!chargesLoaded && <span>Loading...</span>}
         {chargesLoaded && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 px-4 md:px-8 w-full max-w-6xl">
+          <div className="grid justify-center grid-cols-2 sm:grid-cols-[repeat(auto-fit,minmax(auto,250px))] gap-4 px-4 md:px-8 w-full max-w-6xl">
             {charges &&
               map(omit(charges, window.desk), (charge, desk) => (
                 <Tile key={desk} charge={charge} desk={desk} />

@@ -287,7 +287,8 @@ export const mockContacts: Contacts = {
   },
   '~nalbel_litzod': {
     ...contact,
-    nickname: 'Queen'
+    nickname: 'Queen',
+    color: '#0a1b0a'
   },
   '~litmus^ritten': {
     ...contact
@@ -301,7 +302,8 @@ export const mockContacts: Contacts = {
   },
   '~nalrys': {
     ...contact,
-    status: 'hosting coming soon'
+    status: 'hosting coming soon',
+    color: '#130c06'
   }
 };
 

@@ -60,8 +60,8 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
   const subUrl = useCallback((submenu: string) => `${match.url}/${submenu}`, [match]);
 
   return (
-    <div className="flex h-[600px] max-h-full">
-      <aside className="flex-none min-w-60 py-8 font-semibold border-r-2 border-gray-50">
+    <div className="flex h-full overflow-y-auto">
+      <aside className="flex-none self-start min-w-60 py-8 font-semibold border-r-2 border-gray-50">
         <nav className="px-6">
           <ul>
             <SystemPreferencesSection
@@ -100,7 +100,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
           </ul>
         </nav>
       </aside>
-      <section className="flex-1 p-8 text-black">
+      <section className="flex-1 min-h-[600px] p-8 text-black">
         <Switch>
           <Route path={`${match.url}/apps/:desk`} component={AppPrefs} />
           <Route path={`${match.url}/system-updates`} component={SystemUpdatePrefs} />

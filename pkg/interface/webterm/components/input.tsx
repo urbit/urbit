@@ -101,14 +101,14 @@ belt = { met: 'bac' };
             autoFocus
             autoCorrect="off"
             autoCapitalize="off"
-            color='black'
+            color='lightGray'
             minHeight={0}
             display='inline-block'
             width='100%'
             spellCheck="false"
             tabindex={0}
             wrap="off"
-            className="mono"
+            fontFamily="mono"
             id="term"
             cursor={this.props.cursor}
             onKeyDown={this.keyPress}
