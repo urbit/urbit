@@ -2746,132 +2746,117 @@
     ++  vip                                             ::  put hi-pri (unsafe)
       ~/  %vip
       |=  [a=pri k=@ p=@ v=buc]                         ::  p must be higher
-      |^  ^-  pri                                       ::  than resident max
-      (star a k p v |=((qual @ buc @ buc) [+<- +<+<]))
-      ::
-      ++  star
-        |=  [a=pri k=@ p=@ v=buc f=$-((qual @ buc @ buc) (pair @ buc))]
-        |-  ^-  pri
-        ?~  a
+      |-  ^-  pri                                       ::  than resident max
+      ?~  a  [%tip k p v]
+      ?-    -.a
+          %tip
+        ?:  =(k k.a)
           [%tip k p v]
-        ?-    -.a
-            %tip
-          ?:  =(k k.a)
-            =/  fed  (f p v p.a v.a)
-            [%tip k p.fed q.fed]
-          (tie k.a p.a v.a k [%tip k p v] ~)
-        ::
-            %bin
-          ?:  (gone k k.a m.a)
-            (tie k.a p.a v.a k [%tip k p v] (fuse m.a l.a r.a))
-          ?:  =(k k.a)
-            =/  fed  (f p v p.a v.a)
-            ?:  (zero k m.a)
-              (fuse m.a (raw l.a k p.fed q.fed) r.a)
-            (fuse m.a l.a (raw r.a k p.fed q.fed))
-          :-  %bin
+        (tie k.a p.a v.a k [%tip k p v] ~)
+      ::
+          %bin
+        ?:  (gone k k.a m.a)
+          (tie k.a p.a v.a k [%tip k p v] (fuse m.a l.a r.a))
+        ?:  =(k k.a)
           ?:  (zero k m.a)
-            [k.a p.a v.a m.a $(a l.a) r.a]
-          [k.a p.a v.a m.a l.a $(a r.a)]
-        ==
-      --
+            (fuse m.a (raw l.a k p v) r.a)
+          (fuse m.a l.a (raw r.a k p v))
+        :-  %bin
+        ?:  (zero k m.a)
+          [k.a p.a v.a m.a $(a l.a) r.a]
+        [k.a p.a v.a m.a l.a $(a r.a)]
+      ==
     ::
     ++  gun                                             ::  vip view (unsafe)
       ~/  %gun
-      |=  [a=pri k=@ l=k p=@ v=buc]                     ::  p must be higher
-      |^  ^-  (pair (unit (pair @ buc)) pri)            ::  than resident max
-      =/  val  (star a)
-      [q.val p.val]
+      |=  [a=pri =k p=@ =v]                             ::  p must be higher
+      |^                                                ::  than resident max
+      |-  ^-  (pair (unit (pair @ buc)) pri)
+      =/  h  (mug k)
+      =/  b  [k v ~]
+      ?~  a  [~ [%tip h p b]]
+      ?-    -.a
+          %tip
+        ?:  =(h k.a)
+          =/  val  (help p.a v.a)
+          :-  `[p.a v.a]
+          [%tip h p.val q.val]
+        :-  ~
+        (tie k.a p.a v.a h [%tip h p b] ~)
+      ::
+          %bin
+        ?:  (gone h k.a m.a)
+          =/  tee  (fuse m.a l.a r.a)
+          :-  ~
+          (tie k.a p.a v.a h [%tip h p b] tee)
+        ?:  =(h k.a)
+          =/  val  (help p.a v.a)
+          :-  `[p.a v.a]
+          ?:  (zero h m.a)
+            (fuse m.a (raw l.a h p.val q.val) r.a)
+          (fuse m.a l.a (raw r.a h p.val q.val))
+        ?:  (zero h m.a)
+          =/  val  $(a l.a)
+          :-  p.val
+          [%bin k.a p.a v.a m.a q.val r.a]
+        =/  val  $(a r.a)
+        :-  p.val
+        [%bin k.a p.a v.a m.a l.a q.val]
+      ==
       ::
       ++  help
-        |=  [@ buc bp=@ bb=buc]
+        |=  [bp=@ bb=buc]
         ^-  (pair @ buc)
-        ?:  =(l k.bb)
-          (make l p v t.bb)
+        ?:  =(k k.bb)
+          (make k p v t.bb)
         :-  bp
-        [k.bb v.bb (put:qor t.bb l p v)]
-      ::
-      ++  star
-        |=  b=pri
-        |-  ^-  (pair pri (unit (pair @ buc)))
-        ?~  b  :_(~ [%tip k p v])
-        ?-    -.b
-            %tip
-          ?:  =(k k.b)
-            =/  val  (help p v p.b v.b)
-            :_  `[p.b v.b]
-            [%tip k p.val q.val]
-          :_  ~
-          (tie k.b p.b v.b k [%tip k p v] ~)
-        ::
-            %bin
-          ?:  (gone k k.b m.b)
-            =/  tee  (fuse m.b l.b r.b)
-            :_  ~
-            (tie k.b p.b v.b k [%tip k p v] tee)
-          ?:  =(k k.b)
-            =/  val  (help p v p.b v.b)
-            :_  `[p.b v.b]
-            ?:  (zero k m.b)
-              (fuse m.b (raw l.b k p.val q.val) r.b)
-            (fuse m.b l.b (raw r.b k p.val q.val))
-          ?:  (zero k m.b)
-            =/  val  $(b l.b)
-            :_  q.val
-            [%bin k.b p.b v.b m.b p.val r.b]
-          =/  val  $(b r.b)
-          :_  q.val
-          [%bin k.b p.b v.b m.b l.b p.val]
-        ==
+        [k.bb v.bb (put:qor t.bb k p v)]
       --
     ::
     ++  see                                             ::  get hi-pri (unsafe)
       ~/  %see
-      |=  [a=pri k=@ l=k p=@]                           ::  lookup, then pri
-      |^  ^-  (pair (unit (pair @ v)) pri)              ::  bump, with p higher
-      =/  val  loop                                     ::  than resident max
-      [q.val p.val]
+      |=  [a=pri =k p=@]                                ::  lookup, then pri
+      =/  h  (mug k)                                    ::  bump, with p higher
+      |^                                                ::  than resident max
+      |-  ^-  (pair (unit (pair @ v)) pri)
+      ?~  a  [~ ~]
+      ?-    -.a
+          %tip
+        ?:  =(h k.a)
+          =/  val  (help p.a v.a)
+          :-  p.val
+          [%tip h q.val r.val]
+        [~ a]
+      ::
+          %bin
+        ?:  (gone h k.a m.a)
+          [~ a]
+        ?:  =(h k.a)
+          =/  val  (help p.a v.a)
+          :-  p.val
+          ?:  (zero h m.a)
+            (fuse m.a (raw l.a h q.val r.val) r.a)
+          (fuse m.a l.a (raw r.a h q.val r.val))
+        ?:  (zero h m.a)
+          =/  val  $(a l.a)
+          :-  p.val
+          [%bin k.a p.a v.a m.a q.val r.a]
+        =/  val  $(a r.a)
+        :-  p.val
+        [%bin k.a p.a v.a m.a l.a q.val]
+      ==
       ::
       ++  help
         |=  [bp=@ bb=buc]
         ^-  (trel (unit (pair @ v)) @ buc)
-        ?:  =(l k.bb)
+        ?:  =(k k.bb)
           :-  `[bp v.bb]
-          (make l p v.bb t.bb)
-        =/  val  (get:qor t.bb l)
+          (make k p v.bb t.bb)
+        =/  val  (get:qor t.bb k)
         ?~  val  [~ bp bb]
         :+  val
           bp
-        [k.bb v.bb (put:qor t.bb l p q.u.val)]
-      ::
-      ++  loop
-        ^-  (pair pri (unit (pair @ v)))
-        ?~  a  [~ ~]
-        ?-    -.a
-            %tip
-          ?:  =(k k.a)
-            =/  val  (help p.a v.a)
-            :_  p.val
-            [%tip k q.val r.val]
-          [a ~]
-        ::
-            %bin
-          ?:  (gone k k.a m.a)
-            [a ~]
-          ?:  =(k k.a)
-            =/  val  (help p.a v.a)
-            :_  p.val
-            ?:  (zero k m.a)
-              (fuse m.a (raw l.a k q.val r.val) r.a)
-            (fuse m.a l.a (raw r.a k q.val r.val))
-          ?:  (zero k m.a)
-            =/  val  loop(a l.a)
-            :_  q.val
-            [%bin k.a p.a v.a m.a p.val r.a]
-          =/  val  loop(a r.a)
-          :_  q.val
-          [%bin k.a p.a v.a m.a l.a p.val]
-        ==
+        [k.bb v.bb (put:qor t.bb k p q.u.val)]
       --
     --
   --
@@ -3118,7 +3103,7 @@
     ~/  %gun
     |=  [a=pri =k p=@ =v]                               ::  p must be higher
     ^-  (pair (unit (pair @ _v)) pri)                   ::  than resident max
-    =/  big  (gun:qat a (mug k) k p [k v ~])
+    =/  big  (gun:qat a k p v)
     :_  q.big
     ?~  p.big  ~
     =/  bb  q.u.p.big
@@ -3130,7 +3115,7 @@
     ~/  %see
     |=  [a=pri =k p=@]                                  ::  lookup, then pri
     ^-  (pair (unit (pair @ v)) pri)                    ::  bump, with p higher
-    (see:qat a (mug k) k p)                             ::  than resident max
+    (see:qat a k p)                                     ::  than resident max
   ::
   ++  apt                                               ::  check correctness
     ~/  %apt
