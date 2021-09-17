@@ -1,5 +1,5 @@
 import React, { ReactElement, useCallback } from 'react';
-import { AppAssociations, Associations, Graph, UnreadStats } from '@urbit/api';
+import { Associations, Graph } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
 
 import { SidebarAssociationItem, SidebarDmItem } from './SidebarItem';
@@ -12,10 +12,9 @@ import useMetadataState from '~/logic/state/metadata';
 import { useHistory } from 'react-router';
 import { useShortcut } from '~/logic/state/settings';
 
-function sidebarSort(
-  associations: AppAssociations,
-  unreads: Record<string, Record<string, UnreadStats>>
-): Record<SidebarSort, (a: string, b: string) => number> {
+function sidebarSort(): Record<SidebarSort, (a: string, b: string) => number> {
+  const { associations } = useMetadataState.getState();
+  const { unreads } = useHarkState.getState();
   const alphabetical = (a: string, b: string) => {
     const aAssoc = associations[a];
     const bAssoc = associations[b];
@@ -26,18 +25,13 @@ function sidebarSort(
   };
 
   const lastUpdated = (a: string, b: string) => {
-    const aAssoc = associations[a];
-    const bAssoc = associations[b];
-    const aResource = aAssoc?.resource;
-    const bResource = bAssoc?.resource;
-
     const aUpdated = a.startsWith('~')
-      ?  (unreads?.[`/ship/~${window.ship}/dm-inbox`]?.[`/${patp2dec(a)}`]?.last || 0)
-      :  ((unreads?.[aResource]?.['/']?.last) || 0);
+      ?  (unreads?.[`/graph/~${window.ship}/dm-inbox/${patp2dec(a)}`]?.last || 0)
+      :  (unreads?.[`/graph/${a.slice(6)}`]?.last || 0);
 
     const bUpdated = b.startsWith('~')
-      ?  (unreads?.[`/ship/~${window.ship}/dm-inbox`]?.[`/${patp2dec(b)}`]?.last || 0)
-      :  ((unreads?.[bResource]?.['/']?.last) || 0);
+      ?  (unreads?.[`/graph/~${window.ship}/dm-inbox/${patp2dec(b)}`]?.last || 0)
+      :  (unreads?.[`/graph/${b.slice(6)}`]?.last || 0);
 
     return bUpdated - aUpdated || alphabetical(a, b);
   };
@@ -94,11 +88,10 @@ export function SidebarList(props: {
   const { selected, config, workspace } = props;
   const associations = useMetadataState(state => state.associations);
   const inbox = useInbox();
-  const unreads = useHarkState(s => s.unreads.graph);
   const graphKeys = useGraphState(s => s.graphKeys);
 
   const ordered = getItems(associations, workspace, inbox)
-    .sort(sidebarSort(associations.graph, unreads)[config.sortBy]);
+    .sort(sidebarSort()[config.sortBy]);
 
   const history = useHistory();
 

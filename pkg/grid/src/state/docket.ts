@@ -16,9 +16,10 @@ import {
   AllyUpdateIni,
   TreatyUpdateIni,
   docketInstall,
-  ChargeUpdate
-} from '@urbit/api/docket';
-import { kilnRevive, kilnSuspend } from '@urbit/api/hood';
+  ChargeUpdate,
+  kilnRevive,
+  kilnSuspend
+} from '@urbit/api';
 import api from './api';
 import { mockAllies, mockCharges, mockTreaties } from './mock-data';
 import { fakeRequest, useMockData } from './util';

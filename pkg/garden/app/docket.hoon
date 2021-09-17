@@ -25,7 +25,7 @@
 --
 ^-  agent:gall
 %-  agent:dbug
-%+  verb  &
+%+  verb  |
 =|  inflated-state
 =*  state  -
 =<

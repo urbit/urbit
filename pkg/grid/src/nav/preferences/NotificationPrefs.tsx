@@ -8,7 +8,11 @@ import { useSettingsState, SettingsState } from '../../state/settings';
 const selDnd = (s: SettingsState) => s.display.doNotDisturb;
 async function toggleDnd() {
   const state = useSettingsState.getState();
-  await state.putEntry('display', 'doNotDisturb', !selDnd(state));
+  const curr = selDnd(state);
+  if(curr) {
+    Notification.requestPermission();
+  }
+  await state.putEntry('display', 'doNotDisturb', !curr);
 }
 
 const selMentions = (s: HarkState) => s.notificationsGraphConfig.mentions;

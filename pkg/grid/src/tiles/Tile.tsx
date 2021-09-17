@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React, { FunctionComponent } from 'react';
-import { chadIsRunning } from '@urbit/api/docket';
+import { chadIsRunning } from '@urbit/api';
 import { TileMenu } from './TileMenu';
 import { Spinner } from '../components/Spinner';
 import { getAppHref } from '../state/util';

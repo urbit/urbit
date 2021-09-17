@@ -1,24 +1,24 @@
 import classNames from 'classnames';
 import React from 'react';
+import { Timebox } from '@urbit/api';
 import { Link, LinkProps } from 'react-router-dom';
 import { Bullet } from '../components/icons/Bullet';
 import { Cross } from '../components/icons/Cross';
-import { Notification } from '../state/hark-types';
-import { useNotifications } from '../state/notifications';
+import { useHarkStore } from '../state/hark';
 
 type NotificationsState = 'empty' | 'unread' | 'attention-needed' | 'open';
 
-function getNotificationsState(
-  notificationsOpen: boolean,
-  notifications: Notification[],
-  systemNotifications: Notification[]
-): NotificationsState {
-  if (notificationsOpen) {
-    return 'open';
-  }
-
-  if (systemNotifications.length > 0) {
+function getNotificationsState(isOpen: boolean, box: Timebox): NotificationsState {
+  const notifications = Object.values(box);
+  if (
+    notifications.filter(
+      ({ bin }) => bin.place.desk === window.desk && ['/lag', 'blocked'].includes(bin.place.path)
+    ).length > 0
+  ) {
     return 'attention-needed';
+  }
+  if (isOpen) {
+    return 'open';
   }
 
   // TODO: when real structure, this should be actually be unread not just existence
@@ -40,8 +40,8 @@ export const NotificationsLink = ({
   notificationsOpen,
   shouldDim
 }: NotificationsLinkProps) => {
-  const { notifications, systemNotifications } = useNotifications();
-  const state = getNotificationsState(notificationsOpen, notifications, systemNotifications);
+  const unseen = useHarkStore((s) => s.unseen);
+  const state = getNotificationsState(notificationsOpen, unseen);
 
   return (
     <Link
@@ -58,7 +58,7 @@ export const NotificationsLink = ({
       )}
     >
       {state === 'empty' && <Bullet className="w-6 h-6" />}
-      {state === 'unread' && notifications.length}
+      {state === 'unread' && Object.keys(unseen).length}
       {state === 'attention-needed' && (
         <span className="h2">
           ! <span className="sr-only">Attention needed</span>

@@ -22,6 +22,7 @@ import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 import { useTutorialModal } from './useTutorialModal';
+import {StatusBarJoins} from './StatusBarJoins';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
@@ -104,6 +105,7 @@ const StatusBar = (props) => {
             {metaKey}/
           </Text>
         </StatusBarItem>
+        <StatusBarJoins />
         <ReconnectButton />
       </Row>
       <Row justifyContent='flex-end'>
