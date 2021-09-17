@@ -1,5 +1,5 @@
 import { saveAs } from 'file-saver';
-import bel from '../../../logic/lib/bel';
+import bel from './lib/bel';
 
 export default class Store {
   state: any;
