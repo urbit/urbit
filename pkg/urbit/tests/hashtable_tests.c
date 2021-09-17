@@ -9,8 +9,6 @@ c3_w _ch_skip_slot(c3_w mug_w, c3_w lef_w);
 static void
 _setup(void)
 {
-  u3C.wag_w = u3C.wag_w | u3o_debug_ram;
-
   u3m_init();
   u3m_pave(c3y);
 }
