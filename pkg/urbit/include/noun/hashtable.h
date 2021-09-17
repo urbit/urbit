@@ -46,6 +46,7 @@
           struct {
             c3_w  mug_w;      // current hash
             c3_w  inx_w;      // index into current hash bucket
+            c3_o  buc_o;      // XX remove
           } arm_u;            // clock arm
           u3h_slot sot_w[64]; // slots
         } u3h_root;
