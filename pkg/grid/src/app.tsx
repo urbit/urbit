@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Mousetrap from 'mousetrap';
 import { BrowserRouter, Switch, Route, useHistory } from 'react-router-dom';
 import { Grid } from './pages/Grid';
@@ -7,6 +7,7 @@ import { PermalinkRoutes } from './pages/PermalinkRoutes';
 import useKilnState from './state/kiln';
 import useContactState from './state/contact';
 import api from './state/api';
+import { useMedia } from './logic/useMedia';
 import { useHarkStore } from './state/hark';
 import { useTheme } from './state/settings';
 import { useLocalState } from './state/local';
@@ -14,29 +15,17 @@ import { useLocalState } from './state/local';
 const AppRoutes = () => {
   const { push } = useHistory();
   const theme = useTheme();
-
-  const updateThemeClass = useCallback(
-    (e: MediaQueryListEvent) => {
-      if ((e.matches && theme === 'auto') || theme === 'dark') {
-        document.body.classList.add('dark');
-        useLocalState.setState({ currentTheme: 'dark' });
-      } else {
-        document.body.classList.remove('dark');
-        useLocalState.setState({ currentTheme: 'light' });
-      }
-    },
-    [theme]
-  );
+  const isDarkMode = useMedia('(prefers-color-scheme: dark)');
 
   useEffect(() => {
-    const query = window.matchMedia('(prefers-color-scheme: dark)');
-
-    query.addEventListener('change', updateThemeClass);
-    updateThemeClass({ matches: query.matches } as MediaQueryListEvent);
-    return () => {
-      query.removeEventListener('change', updateThemeClass);
-    };
-  }, []);
+    if ((isDarkMode && theme === 'auto') || theme === 'dark') {
+      document.body.classList.add('dark');
+      useLocalState.setState({ currentTheme: 'dark' });
+    } else {
+      document.body.classList.remove('dark');
+      useLocalState.setState({ currentTheme: 'light' });
+    }
+  }, [isDarkMode, theme]);
 
   useEffect(() => {
     window.name = 'grid';
