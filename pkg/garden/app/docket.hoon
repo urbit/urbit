@@ -150,7 +150,9 @@
       %-  ~(run by charges)
       |=  =charge
       =?  chad.charge  ?=(%glob -.chad.charge)
-        [%glob *glob]
+        :-  %glob
+        %-  ~(run by glob.chad.charge)
+        |=(=mime mime(q.q 1.337))
       charge
     ==
     ::
