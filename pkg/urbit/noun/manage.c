@@ -1113,6 +1113,16 @@ u3m_soft_run(u3_noun gul,
       u3a_print_memory(stderr, "execute: run", u3R->all.max_w);
     }
 #endif
+
+    /* Today you can't run -g without memory debug, but you should be
+     * able to.
+    */
+#ifdef U3_MEMORY_DEBUG
+    if ( u3C.wag_w & u3o_debug_ram ) {
+      u3m_grab(pro, u3_none);
+    }
+#endif
+
     /* Produce success, on the old road.
     */
     pro = u3nc(0, u3m_love(pro));
