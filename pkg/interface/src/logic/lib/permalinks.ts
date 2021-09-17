@@ -2,6 +2,7 @@
 import {
   ReferenceContent, resourceFromPath
 } from '@urbit/api';
+import { isValidPatp } from 'urbit-ob';
 import _ from 'lodash';
 
 export function getPermalinkForGraph(
@@ -26,6 +27,7 @@ export interface AppPermalink {
   link: string;
   ship: string;
   desk: string;
+  path: string;
 }
 
 export interface GroupPermalink {
@@ -64,11 +66,11 @@ function parseGraphPermalink(
 export function permalinkToReference(link: Permalink): ReferenceContent {
   switch (link.type) {
     case 'graph':
-      return { reference: { graph: _.omit(link, 'type') } };
+      return { reference: { graph: _.omit(link, ['type', 'link']) } };
     case 'group':
       return { reference: { group: link.group } };
     case 'app':
-      return { reference: { app: _.omit(link, 'type') } };
+      return { reference: { app: _.omit(link, ['type', 'link']) } };
   }
 }
 
@@ -82,12 +84,13 @@ export function referenceToPermalink({ reference }: ReferenceContent): Permalink
       ...reference.graph
     };
   } else if ('app' in reference) {
-    const { ship, desk } = reference.app;
+    const { ship, desk, path } = reference.app;
     return {
       type: 'app',
-      link: `web+urbitgraph://app/${ship}/${desk}`,
+      link: `web+urbitgraph://${ship}/${desk}/${path}`,
       ship,
-      desk
+      desk,
+      path
     };
   } else {
     const link = `web+urbitgraph://group${reference.group.slice(5)}`;
@@ -115,13 +118,15 @@ export function parsePermalink(url: string): Permalink | null {
     };
   }
 
-  if (kind === 'app') {
-    const [ship, desk] = rest;
+  if (isValidPatp(kind)) {
+    const [desk, ...parts] = rest;
+    const path = parts.join('/');
     return {
-      type: kind,
+      type: 'app',
       link: url,
-      ship,
-      desk
+      ship: kind,
+      desk,
+      path
     };
   }
 

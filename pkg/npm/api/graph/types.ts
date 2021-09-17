@@ -35,6 +35,7 @@ export interface AppReference {
   app: {
     ship: string;
     desk: string;
+    path: string;
   }
 }
 

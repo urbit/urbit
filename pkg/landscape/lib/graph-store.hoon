@@ -117,10 +117,11 @@
       s+(enjs-path:res grp)
     ::
     ++  app
-      |=  [shp=res dsk=res]
+      |=  [=^ship =desk path=@ta]
       %-  pairs
-      :~  ship+s+(enjs-path:res shp)
-          desk+s+(enjs-path:res dsk)
+      :~  ship+s+(scot %p ship)
+          desk+s+desk
+          path+s+path
       ==
     --
   ::
@@ -385,6 +386,7 @@
       %-  of
       :~  graph+graph
           group+dejs-path:res
+          app+app
       ==
       ::
       ++  graph
@@ -392,6 +394,13 @@
         :~  group+dejs-path:res
             graph+dejs-path:res
             index+index
+        ==
+      ::
+      ++  app
+        %-  ot
+        :~  ship+(su ;~(pfix sig fed:ag))
+            desk+so
+            path+so
         ==
       --
     ::

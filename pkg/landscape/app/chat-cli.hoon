@@ -1197,9 +1197,13 @@
       ?-  -.reference.content
           %graph
         txt+"[reference to msg in {~(phat tr resource.uid.reference.content)}]"
-        ::
+      ::
           %group
         txt+"[reference to msg in {~(phat tr group.reference.content)}]"
+      ::
+          %app
+        =,  reference.content
+        txt+"[reference to app: {(scow %p ship)}/{(trip desk)}{(trip path)}]"
       ==
     ::
         %mention
