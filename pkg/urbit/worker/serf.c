@@ -572,7 +572,7 @@ _serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 u3_noun
 u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 {
-  c3_t  tac_t = ( u3C.wag_w & u3o_trace );
+  c3_t  tac_t = !!( u3C.wag_w & u3o_trace );
   c3_c  lab_c[2056];
   u3_noun pro;
 
