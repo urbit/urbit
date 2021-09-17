@@ -10,7 +10,6 @@ import Notifications from '~/views/apps/notifications/notifications';
 import { PermalinkRoutes } from '~/views/apps/permalinks/app';
 import Profile from '~/views/apps/profile/profile';
 import Settings from '~/views/apps/settings/settings';
-import TermApp from '~/views/apps/term/app';
 import ErrorComponent from '~/views/components/Error';
 import { useShortcut } from '~/logic/state/settings';
 
@@ -97,7 +96,6 @@ function getNotificationRedirect(link: string) {
   } else if (link.startsWith('/invite')) {
     return getInviteRedirect(link);
   }
-
 }
 
 export const Content = (props) => {
@@ -148,16 +146,6 @@ export const Content = (props) => {
           path={['/', '/invites/:app/:uid']}
           render={p => (
             <LaunchApp
-              location={p.location}
-              match={p.match}
-              {...props}
-            />
-          )}
-        />
-        <Route
-          path='/~term'
-          render={p => (
-            <TermApp
               location={p.location}
               match={p.match}
               {...props}

@@ -6,7 +6,6 @@
         %group-store
         %invite-store
         %s3-store
-        %settings-store
         %chat-cli
         %chat-hook
         %chat-view

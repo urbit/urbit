@@ -83,7 +83,6 @@
     pass  pass:io
 ::
 ++  on-init
-  =.  current-timebox  now.bowl
   `this
 ::
 ++  on-save  !>(-.state)

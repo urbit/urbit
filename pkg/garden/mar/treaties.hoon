@@ -1,5 +1,5 @@
-/+  dock=docket
-|_  treaties=(list treaty:dock)
+/+  treaty
+|_  treaties=(list treaty:treaty)
 ++  grow
   |%
   ++  noun  treaties
@@ -7,14 +7,14 @@
     ^-  ^json
     %-  pairs:enjs:format
     %+  turn  treaties
-    |=  =treaty:dock
-    :-  (crip "{(scow %p ship.treaty)}/{(trip desk.treaty)}")
-    (treaty:enjs:dock treaty)
+    |=  t=treaty:treaty
+    :-  (crip "{(scow %p ship.t)}/{(trip desk.t)}")
+    (treaty:enjs:treaty t)
 
   --
 ++  grab
   |%
-  ++  noun  (list treaty:dock)
+  ++  noun  (list treaty:treaty)
   --
 ++  grad  %noun
 --
