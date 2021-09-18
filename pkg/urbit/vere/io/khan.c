@@ -16,17 +16,24 @@
   typedef struct _u3_chan {
     uv_pipe_t         pyp_u;            //  client stream handler
     c3_w              coq_l;            //  connection number
-    struct _u3_khan*  cop_u;            //  control plane backlink
+    struct _u3_shan*  san_u;            //  server backpointer
     struct _u3_chan*  nex_u;            //  next in list
   } u3_chan;
 
-/* u3_khan: control plane socket
+/* u3_shan: control plane server.
+*/
+  typedef struct _u3_shan {
+    uv_pipe_t         pyp_u;            //  server stream handler
+    struct _u3_chan*  can_u;            //  connection list
+    struct _u3_khan*  kan_u;            //  device backpointer
+  } u3_shan;
+
+/* u3_khan: control plane device.
 */
   typedef struct _u3_khan {
     u3_auto           car_u;            //  driver
-    uv_pipe_t         pyp_u;            //  socket
     c3_l              sev_l;            //  instance number
-    struct _u3_chan*  can_u;            //  client list
+    struct _u3_shan*  san_u;            //  server reference
   } u3_khan;
 
 static const c3_c URB_SOCK_PATH[] = ".urb/khan.sock";
@@ -95,14 +102,15 @@ _khan_read_cb(uv_stream_t* cli_u, ssize_t red_i, const uv_buf_t* buf_u)
 static void
 _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
 {
-  u3_khan*  cop_u = (u3_khan*)(sem_u - offsetof(u3_khan, pyp_u));
+  u3_shan*  san_u = (u3_shan*)sem_u;
+  u3_khan*  kan_u = san_u->kan_u;
   u3_chan*  can_u;
   c3_i      err_i;
 
   can_u = c3_calloc(sizeof(u3_chan));
-  can_u->coq_l = ( cop_u->can_u ) ? 1 + cop_u->can_u->coq_l : 0;
-  can_u->cop_u = cop_u;
-  can_u->nex_u = cop_u->can_u;
+  can_u->coq_l = ( san_u->can_u ) ? 1 + san_u->can_u->coq_l : 0;
+  can_u->san_u = san_u;
+  can_u->nex_u = san_u->can_u;
   if ( 0 != (err_i = uv_pipe_init(u3L, &can_u->pyp_u, 0)) ) {
     u3l_log("khan: client init failed: %s\n", uv_strerror(err_i));
     c3_free(can_u);
@@ -121,8 +129,7 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
     c3_free(can_u);
     u3_king_bail();
   }
-
-  cop_u->can_u = can_u;
+  san_u->can_u = can_u;
 }
 
 /* _khan_close_cb(): socket close callback.
@@ -130,8 +137,63 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
 static void
 _khan_close_cb(uv_handle_t* had_u)
 {
-  // TODO remove
-  u3l_log("khan: socket closed\n");
+  c3_free(had_u);
+}
+
+/* _khan_sock_init(): initialize socket device.
+*/
+static void
+_khan_sock_init(u3_shan* san_u)
+{
+  // The full socket path is limited to about 108 characters, and we want it to
+  // be relative to the pier. So we save our current path, chdir to the pier,
+  // open the socket at the desired path, then chdir back. Hopefully there
+  // aren't any threads.
+  c3_c pax_c[2048];
+  c3_i err_i;
+
+  if ( NULL == getcwd(pax_c, sizeof(pax_c)) ) {
+    u3l_log("khan: getcwd: %s\n", uv_strerror(errno));
+    u3_king_bail();
+  }
+  if ( 0 != chdir(u3_Host.dir_c) ) {
+    u3l_log("khan: chdir: %s\n", uv_strerror(errno));
+    u3_king_bail();
+  }
+  if ( 0 != unlink(URB_SOCK_PATH) && errno != ENOENT ) {
+    u3l_log("khan: unlink: %s\n", uv_strerror(errno));
+    goto _khan_err_chdir;
+  }
+  if ( 0 != (err_i = uv_pipe_init(u3L, &san_u->pyp_u, 0)) ) {
+    u3l_log("khan: uv_pipe_init: %s\n", uv_strerror(err_i));
+    goto _khan_err_chdir;
+  }
+  if ( 0 != (err_i = uv_pipe_bind(&san_u->pyp_u, URB_SOCK_PATH)) ) {
+    u3l_log("khan: uv_pipe_bind: %s\n", uv_strerror(err_i));
+    goto _khan_err_chdir;
+  }
+  if ( 0 != (err_i = uv_listen((uv_stream_t*)&san_u->pyp_u, 0,
+                               _khan_conn_cb)) ) {
+    u3l_log("khan: uv_listen: %s\n", uv_strerror(err_i));
+    goto _khan_err_unlink;
+  }
+  if ( 0 != chdir(pax_c) ) {
+    u3l_log("khan: chdir: %s\n", uv_strerror(errno));
+    goto _khan_err_close;
+  }
+  return;
+
+_khan_err_close:
+  uv_close((uv_handle_t*)&san_u->pyp_u, _khan_close_cb);
+_khan_err_unlink:
+  if ( 0 != unlink(URB_SOCK_PATH) ) {
+    u3l_log("khan: unlink: %s\n", uv_strerror(errno));
+  }
+_khan_err_chdir:
+  if ( 0 != chdir(pax_c) ) {
+    u3l_log("khan: chdir: %s\n", uv_strerror(errno));
+  }
+  u3_king_bail();
 }
 
 /* _khan_born_news(): initialization complete, open socket.
@@ -140,67 +202,21 @@ static void
 _khan_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
 {
   u3_auto* car_u = egg_u->car_u;
-  u3_khan* cop_u = (u3_khan*)car_u;
+  u3_khan* kan_u = (u3_khan*)car_u;
 
   if ( u3_ovum_done == new_e ) {
+    u3_shan* san_u;
+
+    c3_assert(!kan_u->san_u);
+    san_u = c3_calloc(sizeof(*san_u));
+    _khan_sock_init(san_u);
+    san_u->kan_u = kan_u;
+    kan_u->san_u = san_u;
     car_u->liv_o = c3y;
-
-    // Open socket. The full socket path is limited to about 108 characters, and
-    // we want it to be relative to the pier. So we save our current path, chdir
-    // to the pier, open the socket at the desired path, then chdir back.
-    // Hopefully there aren't any threads.
-    {
-      c3_c pax_c[2048];
-      c3_i err_i;
-
-      if ( NULL == getcwd(pax_c, sizeof(pax_c)) ) {
-        u3l_log("khan: getcwd: %s\n", uv_strerror(errno));
-        u3_king_bail();
-      }
-      else {
-        if ( 0 != chdir(u3_Host.dir_c) ) {
-          u3l_log("khan: chdir: %s\n", uv_strerror(errno));
-          u3_king_bail();
-        }
-        else {
-          if ( 0 != unlink(URB_SOCK_PATH) && errno != ENOENT ) {
-            u3l_log("khan: unlink: %s\n", uv_strerror(errno));
-            goto _khan_err_chdir;
-          }
-          if ( 0 != (err_i = uv_pipe_init(u3L, &cop_u->pyp_u, 0)) ) {
-            u3l_log("khan: uv_pipe_init: %s\n", uv_strerror(err_i));
-            goto _khan_err_chdir;
-          }
-          if ( 0 != (err_i = uv_pipe_bind(&cop_u->pyp_u, URB_SOCK_PATH)) ) {
-            u3l_log("khan: uv_pipe_bind: %s\n", uv_strerror(err_i));
-            goto _khan_err_chdir;
-          }
-          if ( 0 != (err_i = uv_listen((uv_stream_t*)&cop_u->pyp_u, 0,
-                                       _khan_conn_cb)) ) {
-            u3l_log("khan: uv_listen: %s\n", uv_strerror(err_i));
-            goto _khan_err_unlink;
-          }
-          if ( 0 != chdir(pax_c) ) {
-            u3l_log("khan: chdir: %s\n", uv_strerror(errno));
-            goto _khan_err_close;
-          }
-        }
-      }
-      return;
-_khan_err_close:
-      uv_close((uv_handle_t*)&cop_u->pyp_u, _khan_close_cb);
-_khan_err_unlink:
-      if ( 0 != unlink(URB_SOCK_PATH) ) {
-        u3l_log("khan: unlink: %s\n", uv_strerror(errno));
-      }
-_khan_err_chdir:
-      if ( 0 != chdir(pax_c) ) {
-        u3l_log("khan: chdir: %s\n", uv_strerror(errno));
-      }
-      u3_king_bail();
-    }
+    u3l_log("khan: live on %s/%s\n", u3_Host.dir_c, URB_SOCK_PATH);
   }
 }
+
 
 /* _khan_born_bail(): nonessential failure; log it and keep going.
 */
@@ -215,10 +231,10 @@ _khan_born_bail(u3_ovum* egg_u, u3_noun lud)
 static void
 _khan_io_talk(u3_auto* car_u)
 {
-  u3_khan* cop_u = (u3_khan*)car_u;
+  u3_khan* kan_u = (u3_khan*)car_u;
 
   u3_noun wir = u3nt(c3__khan,
-                     u3dc("scot", c3__uv, cop_u->sev_l),
+                     u3dc("scot", c3__uv, kan_u->sev_l),
                      u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
@@ -234,7 +250,7 @@ _khan_io_talk(u3_auto* car_u)
 static c3_o
 _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
-  u3_khan* cop_u = (u3_khan*)car_u;
+  u3_khan* kan_u = (u3_khan*)car_u;
 
   u3_noun tag, dat, i_wir;
   c3_o ret_o;
@@ -254,23 +270,60 @@ _khan_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
   return ret_o;
 }
 
-/* _khan_io_exit(): unlink socket.
+/* _khan_shutdown_cb(): close handle.
+*/
+static void
+_khan_shutdown_cb(uv_shutdown_t* req_u, c3_i sas_i)
+{
+  if ( sas_i < 0 ) {
+    u3l_log("khan: shutdown: %s\n", uv_strerror(sas_i));
+  }
+  uv_close((uv_handle_t*)req_u->handle, _khan_close_cb);
+  c3_free(req_u);
+}
+
+/* _khan_io_exit(): unlink socket, shut down connections.
 */
 static void
 _khan_io_exit(u3_auto* car_u)
 {
-  u3_khan* cop_u = (u3_khan*)car_u;
-  c3_c*    pax_c = u3_Host.dir_c;
-  c3_w     len_w = strlen(pax_c) + 1 + sizeof(URB_SOCK_PATH);
-  c3_c*    paf_c = c3_malloc(len_w);
-  c3_i     wit_i;
+  u3_khan* kan_u = (u3_khan*)car_u;
 
-  wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, URB_SOCK_PATH);
-  c3_assert(wit_i > 0);
-  c3_assert(len_w == (c3_w)wit_i + 1);
+  {
+    c3_c*    pax_c = u3_Host.dir_c;
+    c3_w     len_w = strlen(pax_c) + 1 + sizeof(URB_SOCK_PATH);
+    c3_c*    paf_c = c3_malloc(len_w);
+    c3_i     wit_i;
 
-  unlink(paf_c);
-  c3_free(paf_c);
+    wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, URB_SOCK_PATH);
+    c3_assert(wit_i > 0);
+    c3_assert(len_w == (c3_w)wit_i + 1);
+
+    if ( 0 != unlink(paf_c) ) {
+      u3l_log("khan: failed to unlink socket: %s\n", uv_strerror(errno));
+    }
+    c3_free(paf_c);
+  }
+
+  {
+    u3_shan*        san_u = kan_u->san_u;
+    u3_chan*        can_u = san_u->can_u;
+    uv_shutdown_t*  req_u;
+    c3_i            err_i;
+
+    while ( can_u ) {
+      req_u = c3_malloc(sizeof(*req_u));
+      if ( 0 != (err_i = uv_shutdown(req_u, (uv_stream_t*)&can_u->pyp_u,
+                                     _khan_shutdown_cb)) ) {
+        u3l_log("khan: shutdown chan %p: %s\n", can_u, uv_strerror(err_i));
+        // XX what to do?
+      }
+      can_u = can_u->nex_u;
+    }
+    uv_close((uv_handle_t*)&san_u->pyp_u, _khan_close_cb);
+  }
+
+  c3_free(kan_u);
 }
 
 /* u3_khan(): initialize control plane socket.
@@ -278,9 +331,9 @@ _khan_io_exit(u3_auto* car_u)
 u3_auto*
 u3_khan_io_init(u3_pier* pir_u)
 {
-  u3_khan* cop_u = c3_calloc(sizeof(*cop_u));
+  u3_khan* kan_u = c3_calloc(sizeof(*kan_u));
 
-  u3_auto* car_u = &cop_u->car_u;
+  u3_auto* car_u = &kan_u->car_u;
   car_u->nam_m = c3__khan;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _khan_io_talk;
@@ -293,7 +346,7 @@ u3_khan_io_init(u3_pier* pir_u)
     gettimeofday(&tim_u, 0);
 
     now = u3_time_in_tv(&tim_u);
-    cop_u->sev_l = u3r_mug(now);
+    kan_u->sev_l = u3r_mug(now);
     u3z(now);
   }
 
