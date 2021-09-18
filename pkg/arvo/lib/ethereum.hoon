@@ -76,12 +76,17 @@
           (encode-length wid.b.in 0x80)
         ::
             %l
-          =/  out=@
-            %+  roll  l.in
-            |=  [ni=item en=@]
-            (cat 3 (encode ni) en)
-          %^  cat  3  out
-          (encode-length (met 3 out) 0xc0)
+          ::  we +can because b+1^0x0 encodes to 0x00
+          ::
+          =/  l=(list byts)
+            %+  turn  l.in
+            |=  ni=item
+            =+  (encode ni)
+            [(max 1 (met 3 -)) -]
+          %+  can  3
+          %+  snoc  (flop l)
+          =-  (met 3 -)^-
+          (encode-length (roll (turn l head) add) 0xc0)
         ==
     ::
     ++  encode-length
