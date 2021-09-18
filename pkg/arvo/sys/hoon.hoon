@@ -3027,9 +3027,8 @@
     --
   ::
   ++  jab                                               ::  update at key k
-    =/  tyf  $-((unit (pair @ v)) (pair * (unit (pair @ v))))
-    ~%  %jab  ..jab  ~
-    |*  [a=pri =k f=tyf]
+    ~/  %jab
+    |*  [a=pri =k f=$-((unit (pair @ v)) (pair * (unit (pair @ v))))]
     =/  bon  _=>((f ~) -)
     ^-  (pair bon pri)
     =/  h  (mug k)
