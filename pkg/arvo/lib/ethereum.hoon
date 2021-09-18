@@ -22,6 +22,15 @@
     %-  serialize-point
     (priv-to-pub prv)
   ::
+  ++  sign-typed-transaction
+    |=  [tx=typed-transaction:rpc pk=@]
+    ^-  @ux
+    =-  (cat 3 - -.tx)
+    ?-  -.tx
+      %0x0  (sign-transaction +.tx pk)
+      %0x2  (sign-transaction-1559 +.tx pk)
+    ==
+  ::
   ++  sign-transaction
     =,  crypto
     |=  [tx=transaction:rpc pk=@]
@@ -42,6 +51,43 @@
       |=  [v=@ r=@ s=@]
       %+  encode:rlp  %l
       tx(to b+20^to.tx, chain-id [v r s ~])
+    --
+  ::
+  ++  sign-transaction-1559
+    =,  crypto
+    |=  [tx=transaction-1559:rpc pk=@]
+    |^  ^-  @ux
+        =;  hash=@
+          =+  (ecdsa-raw-sign:secp256k1:secp hash pk)
+          ::NOTE  we retrieve y's parity from the v value
+          (encode-1559 ~ (end 0 v) r s)
+        ::  hash the raw transaction data including leading 0x2
+        %-  keccak-256:keccak
+        =+  dat=(cat 3 (encode-1559 ~) 0x2)
+        =+  wid=(met 3 dat)
+        [wid (rev 3 wid dat)]
+    ::
+    ++  encode-1559
+      |=  sig=(unit [y=@ r=@ s=@])
+      %+  encode:rlp  %l
+      =,  tx
+      :*  chain-id
+          nonce
+          max-priority-gas-fee
+          max-gas-fee
+          gas
+          b+20^to
+          value
+          data
+        ::
+          :-  %l
+          %+  turn  ~(tap by access-list)
+          |=  [a=address b=(list @ux)]
+          l+~[b+20^a l+(turn b |=(c=@ux b+32^c))]
+        ::
+          ?~  sig  ~
+          ~[y r s]:u.sig
+      ==
     --
   --
 ::
@@ -454,6 +500,11 @@
         ==
       ::
       ::  raw transaction data
+      +$  typed-transaction
+        $%  [%0x0 transaction]
+            [%0x2 transaction-1559]
+        ==
+      ::
       +$  transaction
         $:  nonce=@ud
             gas-price=@ud
@@ -462,6 +513,18 @@
             value=@ud
             data=@ux
             chain-id=@ux
+        ==
+      ::
+      +$  transaction-1559
+        $:  chain-id=@ux
+            nonce=@ud
+            max-priority-gas-fee=@ud
+            max-gas-fee=@ud
+            gas=@ud
+            to=address
+            value=@ud
+            data=@ux
+            access-list=(jar address @ux)
         ==
       ::
       ::  ethereum json rpc api
