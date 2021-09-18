@@ -50,6 +50,14 @@ _khan_alloc(uv_handle_t* had_u,
   *buf_u = uv_buf_init(ptr_v, len_i);
 }
 
+/* _khan_close_cb(): socket close callback.
+*/
+static void
+_khan_close_cb(uv_handle_t* had_u)
+{
+  c3_free(had_u);
+}
+
 /* _khan_read_cb(): socket read callback.
 */
 static void
@@ -110,34 +118,24 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   can_u = c3_calloc(sizeof(u3_chan));
   can_u->coq_l = ( san_u->can_u ) ? 1 + san_u->can_u->coq_l : 0;
   can_u->san_u = san_u;
-  can_u->nex_u = san_u->can_u;
   if ( 0 != (err_i = uv_pipe_init(u3L, &can_u->pyp_u, 0)) ) {
     u3l_log("khan: client init failed: %s\n", uv_strerror(err_i));
     c3_free(can_u);
     u3_king_bail();
   }
   if ( 0 != (err_i = uv_accept(sem_u, (uv_stream_t*)&can_u->pyp_u)) ) {
-    u3l_log("khan: accept failed: %s\n", uv_strerror(err_i));
+    u3l_log("khan: accept: %s\n", uv_strerror(err_i));
     c3_free(can_u);
     u3_king_bail();
   }
-
   if ( 0 != (err_i = uv_read_start((uv_stream_t*)&can_u->pyp_u, _khan_alloc,
                                    _khan_read_cb)) ) {
-    u3l_log("khan: read_start failed: %s\n", uv_strerror(err_i));
-    // TODO close handle
-    c3_free(can_u);
+    u3l_log("khan: uv_read_start: %s\n", uv_strerror(err_i));
+    uv_close((uv_handle_t*)&can_u->pyp_u, _khan_close_cb);
     u3_king_bail();
   }
+  can_u->nex_u = san_u->can_u;
   san_u->can_u = can_u;
-}
-
-/* _khan_close_cb(): socket close callback.
-*/
-static void
-_khan_close_cb(uv_handle_t* had_u)
-{
-  c3_free(had_u);
 }
 
 /* _khan_sock_init(): initialize socket device.
@@ -162,34 +160,34 @@ _khan_sock_init(u3_shan* san_u)
   }
   if ( 0 != unlink(URB_SOCK_PATH) && errno != ENOENT ) {
     u3l_log("khan: unlink: %s\n", uv_strerror(errno));
-    goto _khan_err_chdir;
+    goto _khan_sock_err_chdir;
   }
   if ( 0 != (err_i = uv_pipe_init(u3L, &san_u->pyp_u, 0)) ) {
     u3l_log("khan: uv_pipe_init: %s\n", uv_strerror(err_i));
-    goto _khan_err_chdir;
+    goto _khan_sock_err_chdir;
   }
   if ( 0 != (err_i = uv_pipe_bind(&san_u->pyp_u, URB_SOCK_PATH)) ) {
     u3l_log("khan: uv_pipe_bind: %s\n", uv_strerror(err_i));
-    goto _khan_err_chdir;
+    goto _khan_sock_err_chdir;
   }
   if ( 0 != (err_i = uv_listen((uv_stream_t*)&san_u->pyp_u, 0,
                                _khan_conn_cb)) ) {
     u3l_log("khan: uv_listen: %s\n", uv_strerror(err_i));
-    goto _khan_err_unlink;
+    goto _khan_sock_err_unlink;
   }
   if ( 0 != chdir(pax_c) ) {
     u3l_log("khan: chdir: %s\n", uv_strerror(errno));
-    goto _khan_err_close;
+    goto _khan_sock_err_close;
   }
   return;
 
-_khan_err_close:
+_khan_sock_err_close:
   uv_close((uv_handle_t*)&san_u->pyp_u, _khan_close_cb);
-_khan_err_unlink:
+_khan_sock_err_unlink:
   if ( 0 != unlink(URB_SOCK_PATH) ) {
     u3l_log("khan: unlink: %s\n", uv_strerror(errno));
   }
-_khan_err_chdir:
+_khan_sock_err_chdir:
   if ( 0 != chdir(pax_c) ) {
     u3l_log("khan: chdir: %s\n", uv_strerror(errno));
   }
@@ -203,10 +201,9 @@ _khan_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
 {
   u3_auto* car_u = egg_u->car_u;
   u3_khan* kan_u = (u3_khan*)car_u;
+  u3_shan* san_u;
 
   if ( u3_ovum_done == new_e ) {
-    u3_shan* san_u;
-
     c3_assert(!kan_u->san_u);
     san_u = c3_calloc(sizeof(*san_u));
     _khan_sock_init(san_u);
@@ -349,7 +346,6 @@ u3_khan_io_init(u3_pier* pir_u)
     kan_u->sev_l = u3r_mug(now);
     u3z(now);
   }
-
 
   return car_u;
 }
