@@ -44,7 +44,7 @@
   --
 ::
 ::  rlp en/decoding
-::NOTE  https://github.com/ethereum/wiki/wiki/RLP
+::NOTE  https://eth.wiki/en/fundamentals/rlp
 ::
 ++  rlp
   |%
@@ -53,29 +53,31 @@
   ::      and one-byte zero (and also empty list) we end up with
   ::      this awful type...
   +$  item
+    $@  @
     $%  [%l l=(list item)]
         [%b b=byts]
     ==
   ::  +encode-atoms: encode list of atoms as a %l of %b items
   ::
-  ++  encode-atoms
+  ++  encode-atoms  ::NOTE  deprecated
     |=  l=(list @)
     ^-  @
-    %+  encode  %l
-    %+  turn  l
-    |=(a=@ b+[(met 3 a) a])
+    (encode l+l)
   ::
   ++  encode
     |=  in=item
     |^  ^-  @
-        ?-  -.in
-            %b
+        ?-  in
+            @
+          $(in [%b (met 3 in) in])
+        ::
+            [%b *]
           ?:  &(=(1 wid.b.in) (lte dat.b.in 0x7f))
             dat.b.in
           =-  (can 3 ~[b.in [(met 3 -) -]])
           (encode-length wid.b.in 0x80)
         ::
-            %l
+            [%l *]
           ::  we +can because b+1^0x0 encodes to 0x00
           ::
           =/  l=(list byts)
@@ -640,7 +642,7 @@
           ?~  tob.req  ~
           `['toBlock' (block-to-json u.tob.req)]
         ::
-          ::TODO  fucking tmi
+          ::NOTE  tmi
           ?:  =(0 (lent adr.req))  ~
           :+  ~  'address'
           ?:  =(1 (lent adr.req))  (tape (address-to-hex (snag 0 adr.req)))
