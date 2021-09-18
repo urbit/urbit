@@ -25,22 +25,24 @@
   ++  sign-transaction
     =,  crypto
     |=  [tx=transaction:rpc pk=@]
-    ^-  @ux
-    ::  hash the raw transaction data
-    =/  hash=@
-      =/  dat=@
-        %-  encode-atoms:rlp
-        ::  with v=chain-id, r=0, s=0
-        tx(chain-id [chain-id.tx 0 0 ~])
-      =+  wid=(met 3 dat)
-      %-  keccak-256:keccak
-      [wid (rev 3 wid dat)]
-    ::  sign transaction hash with private key
-    =+  (ecdsa-raw-sign:secp256k1:secp hash pk)
-    ::  complete transaction is raw data, with r and s
-    ::  taken from the signature, and v as per eip-155
-    %-  encode-atoms:rlp
-    tx(chain-id [:(add (mul chain-id.tx 2) 35 v) r s ~])
+    |^  ^-  @ux
+        ::  hash the raw transaction data
+        =/  hash=@
+          %-  keccak-256:keccak
+          =+  dat=(encode chain-id.tx 0 0)
+          =+  wid=(met 3 dat)
+          [wid (rev 3 wid dat)]
+        ::  sign transaction hash with private key
+        =+  (ecdsa-raw-sign:secp256k1:secp hash pk)
+        ::  complete transaction is raw data, with r and s
+        ::  taken from the signature, and v as per eip-155
+        (encode :(add (mul chain-id.tx 2) 35 v) r s)
+    ::
+    ++  encode
+      |=  [v=@ r=@ s=@]
+      %+  encode:rlp  %l
+      tx(to b+20^to.tx, chain-id [v r s ~])
+    --
   --
 ::
 ::  rlp en/decoding
