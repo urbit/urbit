@@ -14,7 +14,7 @@
 /* u3_chan: incoming control plane connection.
 */
   typedef struct _u3_chan {
-    uv_pipe_t         pyp_u;            //  client stream handler
+    struct _u3_moat   mot_u;            //  inbound message stream
     c3_w              coq_l;            //  connection number
     struct _u3_shan*  san_u;            //  server backpointer
     struct _u3_chan*  nex_u;            //  next in list
@@ -118,20 +118,20 @@ _khan_conn_cb(uv_stream_t* sem_u, c3_i tas_i)
   can_u = c3_calloc(sizeof(u3_chan));
   can_u->coq_l = ( san_u->can_u ) ? 1 + san_u->can_u->coq_l : 0;
   can_u->san_u = san_u;
-  if ( 0 != (err_i = uv_pipe_init(u3L, &can_u->pyp_u, 0)) ) {
+  if ( 0 != (err_i = uv_pipe_init(u3L, &can_u->mot_u.pyp_u, 0)) ) {
     u3l_log("khan: client init failed: %s\n", uv_strerror(err_i));
     c3_free(can_u);
     u3_king_bail();
   }
-  if ( 0 != (err_i = uv_accept(sem_u, (uv_stream_t*)&can_u->pyp_u)) ) {
+  if ( 0 != (err_i = uv_accept(sem_u, (uv_stream_t*)&can_u->mot_u.pyp_u)) ) {
     u3l_log("khan: accept: %s\n", uv_strerror(err_i));
     c3_free(can_u);
     u3_king_bail();
   }
-  if ( 0 != (err_i = uv_read_start((uv_stream_t*)&can_u->pyp_u, _khan_alloc,
-                                   _khan_read_cb)) ) {
+  if ( 0 != (err_i = uv_read_start((uv_stream_t*)&can_u->mot_u.pyp_u,
+                                   _khan_alloc, _khan_read_cb)) ) {
     u3l_log("khan: uv_read_start: %s\n", uv_strerror(err_i));
-    uv_close((uv_handle_t*)&can_u->pyp_u, _khan_close_cb);
+    uv_close((uv_handle_t*)&can_u->mot_u.pyp_u, _khan_close_cb);
     u3_king_bail();
   }
   can_u->nex_u = san_u->can_u;
@@ -310,7 +310,7 @@ _khan_io_exit(u3_auto* car_u)
 
     while ( can_u ) {
       req_u = c3_malloc(sizeof(*req_u));
-      if ( 0 != (err_i = uv_shutdown(req_u, (uv_stream_t*)&can_u->pyp_u,
+      if ( 0 != (err_i = uv_shutdown(req_u, (uv_stream_t*)&can_u->mot_u.pyp_u,
                                      _khan_shutdown_cb)) ) {
         u3l_log("khan: shutdown chan %p: %s\n", can_u, uv_strerror(err_i));
         // XX what to do?
