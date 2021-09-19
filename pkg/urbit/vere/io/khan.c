@@ -214,7 +214,6 @@ _khan_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
   }
 }
 
-
 /* _khan_born_bail(): nonessential failure; log it and keep going.
 */
 static void
@@ -284,13 +283,13 @@ _khan_shutdown_cb(uv_shutdown_t* req_u, c3_i sas_i)
 static void
 _khan_io_exit(u3_auto* car_u)
 {
-  u3_khan* kan_u = (u3_khan*)car_u;
+  u3_khan*          kan_u = (u3_khan*)car_u;
 
   {
-    c3_c*    pax_c = u3_Host.dir_c;
-    c3_w     len_w = strlen(pax_c) + 1 + sizeof(URB_SOCK_PATH);
-    c3_c*    paf_c = c3_malloc(len_w);
-    c3_i     wit_i;
+    c3_c*           pax_c = u3_Host.dir_c;
+    c3_w            len_w = strlen(pax_c) + 1 + sizeof(URB_SOCK_PATH);
+    c3_c*           paf_c = c3_malloc(len_w);
+    c3_i            wit_i;
 
     wit_i = snprintf(paf_c, len_w, "%s/%s", pax_c, URB_SOCK_PATH);
     c3_assert(wit_i > 0);
@@ -329,8 +328,8 @@ u3_auto*
 u3_khan_io_init(u3_pier* pir_u)
 {
   u3_khan* kan_u = c3_calloc(sizeof(*kan_u));
-
   u3_auto* car_u = &kan_u->car_u;
+
   car_u->nam_m = c3__khan;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _khan_io_talk;
@@ -338,10 +337,10 @@ u3_khan_io_init(u3_pier* pir_u)
   car_u->io.exit_f = _khan_io_exit;
 
   {
-    u3_noun now;
-    struct timeval tim_u;
-    gettimeofday(&tim_u, 0);
+    u3_noun         now;
+    struct timeval  tim_u;
 
+    gettimeofday(&tim_u, 0);
     now = u3_time_in_tv(&tim_u);
     kan_u->sev_l = u3r_mug(now);
     u3z(now);
