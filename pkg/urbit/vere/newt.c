@@ -3,8 +3,8 @@
 **  implements noun blob messages with trivial framing.
 **
 **  a message is a 64-bit little-endian byte count, followed
-**  by the indicated number of bytes.  the bytes are the
-**  the +jam of of a noun.
+**  by the indicated number of bytes. the bytes are the +jam
+**  of a noun.
 **
 **  the implementation is relatively inefficient and could
 **  lose a few copies, mallocs, etc.
