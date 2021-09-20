@@ -204,7 +204,10 @@
           ``noun+!>(pending)
         %+  skim  pending
         |=  pend-tx
-        =(u.wer (need (get-l1-address tx.raw-tx pre)))
+        ::  TODO: use this instead? =(u.wer address)
+        ::
+        ?~  addr=(get-l1-address tx.raw-tx pre)  |
+        =(u.wer u.addr)
       ::  by-ship
       ::
       =;  pending=(list pend-tx)
