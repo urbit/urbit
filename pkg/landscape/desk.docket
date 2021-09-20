@@ -1,7 +1,7 @@
 :~  title+'Landscape'
     info+'A suite of applications to communicate on Urbit'
     color+0xee.5432
-    glob-http+'https://bootstrap.urbit.org/glob-0v4.oicrf.rs88p.9jra8.e186l.losvv.glob'
+    glob-http+'https://bootstrap.urbit.org/glob-0v7.tovnh.9krti.usls4.hvh97.ie081.glob'
     base+'landscape'
     version+[1 3 5]
     website+'https://tlon.io'
