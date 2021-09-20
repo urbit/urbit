@@ -3734,6 +3734,10 @@
 ++  cloy
   =,  clay
   |%
+  ++  new-desk
+    |=  [=desk files=(map path page)]
+    ^-  note-arvo
+    [%c %park desk &/[~ (~(run by files) |=(p=page &/p))] *rang]
   ::  +an: $ankh interface door
   ::
   ++  an
@@ -3755,6 +3759,17 @@
       ?~  nik=(dug path)  ~
       ?~  fil.u.nik       ~
       `q.u.fil.u.nik
+    ::  +mup: convert sub-tree at .pax to (map path [lobe cage])
+    ::
+    ++  mup
+      |=  pax=path
+      =.  nak  (dug pax)
+      =|  res=(map path [=lobe =cage])
+      |-  ^+  res
+      =?  res  ?=(^ fil.nak)  (~(put by res) pax u.fil.nak)
+      %+  roll  ~(tap by dir.nak)
+      |=  [[seg=@ta =ankh] res=_res]
+      ^$(pax [seg pax], nak ankh, res res)
     --
   --
 ::                                                      ::

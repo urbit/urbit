@@ -1574,27 +1574,31 @@
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
     =.  ..park  (emil (print q.old-yaki data))
+    ::  TODO: replace with .dist-upgraded=? state
     ::
     =?  ..park  &(updated =(%420 zuse))  migrate-dist
     ::
     wake:(ergo mim)
     ::
     ++  migrate-dist
-      ^+  ..park
-      ::  TODO: filter +park's yaki by path prefix, call +make-yaki?
-      =/  base=ankh  (~(dug an ank.dom) /tmp/base)
-      =/  garden=ankh  (~(dug an ank.dom) /tmp/garden)
-      %-  emil
-      :~  [hen %pass /dist/base %c %park %base base]
-          :*  hen  %pass  /dist/base  %g  %deal  [our %hood]
-              %kiln-install  %base  our  %base
-          ==
+      |^  ^+  ..park
+      =.  ..park  (install-from-tmp %base)
+      =.  ..park  (install-from-tmp %garden)
+      =.  ..park  (install-from-tmp %landscape)
+      ..park
       ::
-          [hen %pass /dist/garden %c %dart %garden garden]
-          :*  hen  %pass  /dist/garden  %g  %deal  [our %hood]
-              %kiln-install  %garden  our  %garden
-          ==
-      ==
+      ++  install-from-tmp
+        |=  =desk
+        %-  emil
+        :~  :^  hen  %pass  /dist/[desk]/create
+            %-  new-desk:cloy
+            %-  ~(run by (~(mup an:cloy ank.dom) /tmp/[desk]))
+            |=([* =mark * =noun] [mark noun]))
+        ::
+            :^  hen  %pass  /dist/[desk]/install
+            [%g %deal [our %hood] %kiln-install desk our desk]
+        ==
+      --
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
     ++  is-kernel-path  |=(pax=path ?=([%sys *] pax))
