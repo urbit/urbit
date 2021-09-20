@@ -134,8 +134,8 @@
             =+  (encode ni)
             [(max 1 (met 3 -)) -]
           %+  can  3
-          %+  snoc  (flop l)
-          =-  (met 3 -)^-
+          %-  flop
+          =-  [(met 3 -)^- l]
           (encode-length (roll (turn l head) add) 0xc0)
         ==
     ::
