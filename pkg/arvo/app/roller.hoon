@@ -72,12 +72,13 @@
   ==
 ::
 +$  init  [nas=^state:naive own=owners]
++$  net   ?(%mainnet %ropsten %local)
 ::
 +$  config
   $%  [%frequency frequency=@dr]
       [%setkey pk=@]
-      [%endpoint endpoint=@t]
-      [%network net=?(%mainnet %ropsten %local)]
+      [%endpoint endpoint=@t =net]
+      [%network =net]
   ==
 ::
 +$  action
