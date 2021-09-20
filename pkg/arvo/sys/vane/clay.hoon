@@ -303,6 +303,7 @@
           $>  $?  %info                                 ::  internal edit
                   %merg                                 ::  merge desks
                   %fuse                                 ::  merge many
+                  %park                                 ::
                   %pork                                 ::
                   %warp                                 ::
                   %werp                                 ::
@@ -524,7 +525,7 @@
         =^  top  stack.nub  pop-stack
         =.  naves.cache.nub  (~(put by naves.cache.nub) mak [vase.res top])
         [vase.res nub]
-      ~>  %slog.0^leaf/"ford: make mark {<mak>}"
+      :: ~>  %slog.0^leaf/"ford: make mark {<mak>}"
       =^  cor=vase  nub  (build-fit %mar mak)
       =/  gad=vase  (slap cor limb/%grad)
       ?@  q.gad
@@ -599,7 +600,7 @@
         =.  marks.cache.nub  (~(put by marks.cache.nub) mak [dais.res top])
         [dais.res nub]
       =^  nav=vase  nub  (build-nave mak)
-      ~>  %slog.0^leaf/"ford: make dais {<mak>}"
+      :: ~>  %slog.0^leaf/"ford: make dais {<mak>}"
       :_  nub
       ^-  dais
       |_  sam=vase
@@ -654,7 +655,7 @@
         [vase.res nub]
       ::  try +grow; is there a +grow core with a .b arm?
       ::
-      ~>  %slog.0^leaf/"ford: make cast {<a>} -> {<b>}"
+      :: ~>  %slog.0^leaf/"ford: make cast {<a>} -> {<b>}"
       =^  old=vase  nub  (build-fit %mar a)
       ?:  =/  ram  (mule |.((slap old !,(*hoon grow))))
           ?:  ?=(%| -.ram)  %.n
@@ -714,7 +715,7 @@
         =.  tubes.cache.nub  (~(put by tubes.cache.nub) [a b] [tube.res top])
         [tube.res nub]
       =^  gat=vase  nub  (build-cast a b)
-      ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
+      :: ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
       :_(nub |=(v=vase (slam gat v)))
     ::
     ++  lobe-to-page
@@ -803,7 +804,7 @@
       =.  stack.nub
         =-  [(sy - ~) stack.nub]
         ?:(?=(%| -.dep) dep [& dir.p.dep])
-      ~>  %slog.0^leaf/"ford: make file {(spud path)}"
+      :: ~>  %slog.0^leaf/"ford: make file {(spud path)}"
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
@@ -1518,9 +1519,10 @@
     ?:  &(=(%base syd) !updated (~(any in invalid) is-kernel-path))
       (sys-update yoki new-data)
     ::
+    ~?  (did-kernel-update invalid)  %clay-kernel-updated
     =?  updated  updated  (did-kernel-update invalid)
     =>  ?.  updated  .
-        ~>(%slog.0^leaf/"clay: rebuilding {<syd>} after after kernel update" .)
+        ~>(%slog.0^leaf/"clay: rebuilding {<syd>} after kernel update" .)
     ::  clear caches if zuse reloaded
     ::
     =.  fod.dom
@@ -1581,6 +1583,7 @@
     wake:(ergo mim)
     ::
     ++  migrate-dist
+      ~&  %clay-migrating
       |^  ^+  ..park
       =.  ..park  (install-from-tmp %base)
       =.  ..park  (install-from-tmp %garden)
@@ -1589,15 +1592,25 @@
       ::
       ++  install-from-tmp
         |=  =desk
+        ~?  =([~ ~] ank.dom)  [%oh-no-double-empty syd]
+        ~?  !(~(has by dir.ank.dom) ~.tmp)  [%oh-no-no-tmp syd]
         %-  emil
         :~  :^  hen  %pass  /dist/[desk]/create
-            %-  new-desk:cloy
+            %^  new-desk:cloy  desk
+              (latest-tako desk)
             %-  ~(run by (~(mup an:cloy ank.dom) /tmp/[desk]))
-            |=([* =mark * =noun] [mark noun]))
+            |=([* =mark * =noun] [mark noun])
         ::
             :^  hen  %pass  /dist/[desk]/install
-            [%g %deal [our %hood] %kiln-install desk our desk]
+            [%g %deal [our our] %hood %poke %kiln-install !>([desk our desk])]
         ==
+      ::
+      ++  latest-tako
+        |=  =desk
+        ^-  (unit tako)
+        ?~  doj=(~(get by dos.rom) desk)  ~
+        =,  dom.u.doj
+        (~(get by hit) let)
       --
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
@@ -1615,12 +1628,14 @@
       |^  ?-    -.yoki
               %|
             %-  lobe-to-weft
-            ~>  %mean.'clay: missing /sys/kelvin'
+            ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
+            ~|  ~(key by q.p.yoki)
             (~(got by q.p.yoki) /sys/kelvin)
           ::
               %&
             =/  fil=(each page lobe)
-              ~>  %mean.'clay: missing /sys/kelvin'
+              ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
+              ~|  ~(key by q.p.yoki)
               (~(got by q.p.yoki) /sys/kelvin)
             ?-    -.fil
                 %&  (page-to-weft p.fil)
@@ -4132,9 +4147,10 @@
         [~ fod]
       ::  virtualize to catch and produce deterministic failures
       ::
-      !.
+      !:
       =-  ?:  ?=(%& -<)  p.-
-          ((slog leaf+"clay: read-at-aeon fail {<mun>}" p.-) [[~ ~] fod])
+          %.  [[~ ~] fod]
+          (slog leaf+"clay: read-at-aeon fail {<[desk=syd mun]>}" ~)
       %-  mule  |.
       ?-  care.mun
           %d
@@ -4292,6 +4308,7 @@
     [~ ..^$(hun.rom.ruf hen)]
   ::
       %into
+    ~&  [%into (turn fis.req head)]
     =.  hez.ruf  `hen
     =+  bem=(~(get by mon.ruf) des.req)
     ?:  &(?=(~ bem) !=(%$ des.req))

@@ -3735,9 +3735,8 @@
   =,  clay
   |%
   ++  new-desk
-    |=  [=desk files=(map path page)]
-    ^-  note-arvo
-    [%c %park desk &/[~ (~(run by files) |=(p=page &/p))] *rang]
+    |=  [=desk tako=(unit tako) files=(map path page)]
+    [%c %park desk &/[(drop tako) (~(run by files) (leap %& p))] *rang]
   ::  +an: $ankh interface door
   ::
   ++  an
@@ -3759,17 +3758,33 @@
       ?~  nik=(dug path)  ~
       ?~  fil.u.nik       ~
       `q.u.fil.u.nik
-    ::  +mup: convert sub-tree at .pax to (map path [lobe cage])
+    ::  +mup: convert sub-tree at .pre to (map path [lobe cage])
     ::
     ++  mup
-      |=  pax=path
-      =.  nak  (dug pax)
+      |=  pre=path
+      =-  ~?  =(~ -)  [%oh-no-empty pre]
+          -
+      ^-  (map path [lobe cage])
+      =/  nek=(unit ankh)  (dug pre)
+      ?~  nek
+        ~&  [%oh-no-empty-pre pre ~(key by dir.nak)]
+        ~
+      =.  nak  u.nek
+      ~?  =(~ nak)  [%oh-no-empty-nak pre]
+      =|  pax=path
       =|  res=(map path [=lobe =cage])
       |-  ^+  res
       =?  res  ?=(^ fil.nak)  (~(put by res) pax u.fil.nak)
+      :: =/  anz=(list [seg=@ta =ankh])  ~(tap by dir.nak)
+      :: |-  ^+  res
+      :: ?~  anz  res
+      :: %_  $
+      ::   anz  t.anz
+      ::   res  ^$(pax (snoc pax seg.i.anz), nak ankh.i.anz)
+      :: ==
       %+  roll  ~(tap by dir.nak)
       |=  [[seg=@ta =ankh] res=_res]
-      ^$(pax [seg pax], nak ankh, res res)
+      ^$(pax (snoc pax seg), nak ankh, res res)
     --
   --
 ::                                                      ::
