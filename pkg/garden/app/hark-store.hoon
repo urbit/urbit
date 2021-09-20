@@ -462,7 +462,15 @@
     
   ::
   ++  archive-all
-    (give:opened %archive-all ~)
+    |^
+    =.  poke-core  (archive-lid unseen/~ unseen)
+    (archive-lid seen/~ seen)
+    ++  archive-lid
+      |=  [=lid:store =timebox:store]
+      %+  roll  ~(tap ~(key by timebox))
+      |=  [=bin:store out=_poke-core]
+      (do-archive:out lid bin)
+    --
   ::
   ++  turn-places
     |=  f=$-(stats:store stats:store)
