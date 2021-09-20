@@ -283,7 +283,7 @@
   ^-  form:m
   ;<  =json  bind:m
     %^  request-rpc  url  `'balance'
-    [%eth-get-balance address]
+    [%eth-get-balance address [%label %latest]]
   %-  pure:m
   (parse-eth-get-balance:rpc:ethereum json)
 --

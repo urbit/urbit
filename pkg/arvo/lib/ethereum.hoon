@@ -483,7 +483,7 @@
             [%eth-get-filter-changes fid=@ud]
             [%eth-get-transaction-by-hash txh=@ux]
             [%eth-get-transaction-count adr=address =block]
-            [%eth-get-balance adr=address]
+            [%eth-get-balance adr=address =block]
             [%eth-get-transaction-receipt txh=@ux]
             [%eth-send-raw-transaction dat=@ux]
         ==
@@ -720,7 +720,10 @@
       ==
     ::
         %eth-get-balance
-      ['eth_getBalance' (tape (address-to-hex adr.req)) ~]
+      :-  'eth_getBalance'
+      :~  (tape (address-to-hex adr.req))
+          (block-to-json block.req)
+      ==
     ::
         %eth-get-transaction-by-hash
       ['eth_getTransactionByHash' (tape (transaction-to-hex txh.req)) ~]
