@@ -189,14 +189,10 @@
         ^-  json
         %-  pairs
         :~  ['force' b+force]
-            (en-address address)
             ['time' (^time time)]
-          ::
-            :-  'rawTx'
-            %-  pairs
-            :~  ['tx' (tx:to-json tx.raw-tx)]
-                ['sig' (hex (as-octs:mimes:html sig.raw-tx))]
-        ==  ==
+            ['rawTx' (^raw-tx raw-tx)]
+            (en-address address)
+        ==
       ::
       ++  pending-txs
         |=  pending=(list pend-tx)
@@ -205,12 +201,13 @@
       ::
       ++  en-address   |=(a=@ux address+(hex 20 a))
       ::
-      ++  tx
-        |=  =tx:naive
+      ++  raw-tx
+        |=  raw-tx:naive
         ^-  json
         |^
         %-  pairs
         :~  ['tx' (parse-tx +.tx)]
+            ['sig' (hex (as-octs:mimes:html sig))]
           ::
             :-  'from'
             %-  pairs
@@ -251,11 +248,6 @@
               ['breach' b+breach]
           ==
         --
-      ::
-      ++  txs
-        |=  txs=(list tx:naive)
-        ^-  json
-        a+(turn txs |=(=tx:naive (tx:to-json tx)))
       ::
       ++  roller-txs
         |=  txs=(list roller-tx)
