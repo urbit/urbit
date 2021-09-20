@@ -3736,7 +3736,7 @@
   |%
   ++  new-desk
     |=  [=desk tako=(unit tako) files=(map path page)]
-    [%c %park desk &/[(drop tako) (~(run by files) (leap %& p))] *rang]
+    [%c %park desk &/[(drop tako) (~(run by files) (lead %&))] *rang]
   ::  +an: $ankh interface door
   ::
   ++  an
