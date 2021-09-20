@@ -190,6 +190,7 @@
         %-  pairs
         :~  ['force' b+force]
             (en-address address)
+            ['time' (^time time)]
           ::
             :-  'rawTx'
             %-  pairs
