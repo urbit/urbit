@@ -52,7 +52,7 @@ export function DmResource(props: DmResourceProps) {
   const { ship } = props;
   const dm = useDM(ship);
   const hark = useHarkDm(ship);
-  const unreadCount = (hark?.unreads as number) ?? 0;
+  const unreadCount = hark.count;
   const contact = useContact(ship);
   const { hideNicknames } = useSettingsState(selectCalmState);
   const showNickname = !hideNicknames && Boolean(contact);
@@ -111,8 +111,8 @@ export function DmResource(props: DmResourceProps) {
   );
 
   const dismissUnread = useCallback(() => {
-    const resource = `/ship/~${window.ship}/dm-inbox`;
-    useHarkState.getState().readCount(resource, `/${patp2dec(ship)}`);
+    const harkPath = `/graph/~${window.ship}/dm-inbox/${patp2dec(ship)}`;
+    useHarkState.getState().readCount(harkPath);
   }, [ship]);
 
   const onSubmit = useCallback(

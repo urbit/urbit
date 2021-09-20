@@ -3,41 +3,39 @@ import { Switch, Route, Redirect, RouteComponentProps } from 'react-router-dom';
 import { Spinner } from '../components/Spinner';
 import { useQuery } from '../logic/useQuery';
 import { useCharge } from '../state/docket';
-import useKilnState, { useKilnLoaded, useVat } from '../state/kiln';
+import useKilnState, { useKilnLoaded } from '../state/kiln';
 import { getAppHref } from '../state/util';
 
 function getDeskByForeignRef(ship: string, desk: string): string | undefined {
   const { vats } = useKilnState.getState();
-  console.log(ship, desk);
   const found = Object.entries(vats).find(
-    ([d, vat]) => vat.arak.ship === ship && vat.arak.desk === desk
+    ([, vat]) => vat.arak.ship === ship && vat.arak.desk === desk
   );
-  return !!found ? found[0] : undefined;
+  return found ? found[0] : undefined;
 }
 
-interface AppLinkProps
-  extends RouteComponentProps<{
-    ship: string;
-    desk: string;
-    link: string;
-  }> {}
+type AppLinkProps = RouteComponentProps<{
+  ship: string;
+  desk: string;
+  link: string;
+}>;
 
-function AppLink(props: AppLinkProps) {
-  const { ship, desk, link = '' } = props.match.params;
+function AppLink({ match, history, location }: AppLinkProps) {
+  const { ship, desk, link = '' } = match.params;
   const ourDesk = getDeskByForeignRef(ship, desk);
 
   if (ourDesk) {
     return <AppLinkRedirect desk={ourDesk} link={link} />;
   }
-  return <AppLinkNotFound {...props} />;
+  return <AppLinkNotFound match={match} history={history} location={location} />;
 }
 
-function AppLinkNotFound(props: AppLinkProps) {
-  const { ship, desk } = props.match.params;
-  return (<Redirect to={`/leap/search/direct/apps/${ship}/${desk}`} />);
+function AppLinkNotFound({ match }: AppLinkProps) {
+  const { ship, desk } = match.params;
+  return <Redirect to={`/leap/search/direct/apps/${ship}/${desk}`} />;
 }
 
-function AppLinkInvalid(props: AppLinkProps) {
+function AppLinkInvalid() {
   return (
     <div>
       <h4>Link was malformed</h4>
@@ -46,7 +44,6 @@ function AppLinkInvalid(props: AppLinkProps) {
   );
 }
 function AppLinkRedirect({ desk, link }: { desk: string; link: string }) {
-  const vat = useVat(desk);
   const charge = useCharge(desk);
   useEffect(() => {
     const query = new URLSearchParams({
@@ -61,8 +58,8 @@ function AppLinkRedirect({ desk, link }: { desk: string; link: string }) {
 const LANDSCAPE_SHIP = '~zod';
 const LANDSCAPE_DESK = 'groups';
 
-function LandscapeLink(props: RouteComponentProps<{ link: string }>) {
-  const { link } = props.match.params;
+function LandscapeLink({ match }: RouteComponentProps<{ link: string }>) {
+  const { link } = match.params;
 
   return <Redirect to={`/perma/${LANDSCAPE_SHIP}/${LANDSCAPE_DESK}/${link}`} />;
 }

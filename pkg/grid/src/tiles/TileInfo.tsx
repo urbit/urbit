@@ -11,6 +11,10 @@ export const TileInfo = () => {
   const charge = useCharge(desk);
   const vat = useVat(desk);
 
+  if (!charge) {
+    return null;
+  }
+
   return (
     <Dialog open onOpenChange={(open) => !open && push('/')}>
       <DialogContent>

@@ -6,6 +6,7 @@ import { ShipName } from '../../components/ShipName';
 import useDocketState, { useAllyTreaties } from '../../state/docket';
 import { useLeapStore } from '../Nav';
 import { AppList } from '../../components/AppList';
+import { addRecentDev } from './Home';
 
 type AppsProps = RouteComponentProps<{ ship: string }>;
 
@@ -68,6 +69,7 @@ export const Apps = ({ match }: AppsProps) => {
   useEffect(() => {
     if (provider) {
       useDocketState.getState().fetchAllyTreaties(provider);
+      addRecentDev(provider);
     }
   }, [provider]);
 

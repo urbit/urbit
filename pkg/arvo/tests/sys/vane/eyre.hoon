@@ -2346,6 +2346,7 @@
 ++  scry-provides-code  ^-  roof
   |=  [gang =view =beam]
   ^-  (unit (unit cage))
+  ?:  =(%gd view)  ``noun+!>(%base)
   ?:  &(=(%ca view) =(/gen/handler/hoon s.beam))
     :+  ~  ~
     vase+!>(!>(|=(* |=(* [[%404 ~] ~]))))

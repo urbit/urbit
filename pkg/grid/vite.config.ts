@@ -20,6 +20,7 @@ export default ({ mode }) => {
       mode === 'mock'
         ? undefined
         : {
+            https: true,
             proxy: {
               '^/apps/grid/desk.js': {
                 target: SHIP_URL

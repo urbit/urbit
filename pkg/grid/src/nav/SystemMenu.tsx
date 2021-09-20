@@ -7,12 +7,13 @@ import { Vat } from '@urbit/api/hood';
 import { Adjust } from '../components/icons/Adjust';
 import { useVat } from '../state/kiln';
 import { disableDefault, handleDropdownLink } from '../state/util';
-import { MenuState } from './Nav';
+import { useMedia } from '../logic/useMedia';
+import { Cross } from '../components/icons/Cross';
 
 type SystemMenuProps = HTMLAttributes<HTMLButtonElement> & {
-  menu: MenuState;
   open: boolean;
-  navOpen: boolean;
+  subMenuOpen: boolean;
+  shouldDim: boolean;
 };
 
 function getHash(vat: Vat): string {
@@ -20,11 +21,12 @@ function getHash(vat: Vat): string {
   return parts[parts.length - 1];
 }
 
-export const SystemMenu = ({ className, menu, open, navOpen }: SystemMenuProps) => {
+export const SystemMenu = ({ className, open, subMenuOpen, shouldDim }: SystemMenuProps) => {
   const { push } = useHistory();
   const [copied, setCopied] = useState(false);
   const garden = useVat('garden');
   const hash = garden ? getHash(garden) : null;
+  const isMobile = useMedia('(max-width: 639px)');
 
   const copyHash = useCallback((event: Event) => {
     event.preventDefault();
@@ -53,29 +55,37 @@ export const SystemMenu = ({ className, menu, open, navOpen }: SystemMenuProps) 
           open={open}
           onOpenChange={(isOpen) => setTimeout(() => !isOpen && push('/'), 15)}
         >
-          <DropdownMenu.Trigger
-            as={Link}
-            to="/system-menu"
+          <Link
+            to={open || subMenuOpen ? '/' : '/system-menu'}
             className={classNames(
-              'appearance-none circle-button default-ring',
+              'relative appearance-none circle-button default-ring',
               open && 'text-gray-300',
-              navOpen &&
-                menu !== 'system-preferences' &&
-                menu !== 'help-and-support' &&
-                'opacity-60',
+              shouldDim && 'opacity-60',
               className
             )}
           >
-            <Adjust className="w-6 h-6 fill-current text-gray" />
-            <span className="sr-only">System Menu</span>
-          </DropdownMenu.Trigger>
+            {!open && !subMenuOpen && (
+              <>
+                <Adjust className="w-6 h-6 fill-current text-gray" />
+                <span className="sr-only">System Menu</span>
+              </>
+            )}
+            {(open || subMenuOpen) && (
+              <>
+                <Cross className="w-3 h-3 fill-current" />
+                <span className="sr-only">Close</span>
+              </>
+            )}
+            {/* trigger here just for anchoring the dropdown */}
+            <DropdownMenu.Trigger className="sr-only top-0 left-0 sm:top-auto sm:left-auto sm:bottom-0" />
+          </Link>
           <Route path="/system-menu">
             <DropdownMenu.Content
-              portalled={false}
               onCloseAutoFocus={disableDefault}
               onInteractOutside={preventFlash}
               onFocusOutside={preventFlash}
               onPointerDownOutside={preventFlash}
+              side={isMobile ? 'top' : 'bottom'}
               sideOffset={12}
               className="dropdown relative z-40 min-w-64 p-4 font-semibold text-gray-500 bg-white"
             >

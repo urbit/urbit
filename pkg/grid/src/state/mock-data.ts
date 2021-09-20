@@ -1,9 +1,20 @@
+import {
+  Vat,
+  Vats,
+  Allies,
+  Charges,
+  DocketHrefGlob,
+  Treaties,
+  Treaty,
+  Notification,
+  HarkContent,
+  HarkBody,
+  unixToDa,
+  Contact,
+  Contacts
+} from '@urbit/api';
 import _ from 'lodash';
-import { Contact, Contacts } from '@urbit/api';
-import { Allies, Charges, DocketHrefGlob, Treaties, Treaty } from '@urbit/api/docket';
-import { Vat, Vats } from '@urbit/api/hood';
 import systemUrl from '../assets/system.png';
-import { BasicNotification } from './hark-types';
 
 export const appMetaData: Pick<Treaty, 'cass' | 'hash' | 'website' | 'license' | 'version'> = {
   cass: {
@@ -165,6 +176,90 @@ export const mockAllies: Allies = [
   '~nalrys'
 ].reduce((acc, val) => ({ ...acc, [val]: charter }), {});
 
+function ship(s: string) {
+  return { ship: s };
+}
+
+function text(t: string) {
+  return { text: t };
+}
+
+function createDmNotification(...content: HarkContent[]): HarkBody {
+  return {
+    title: [ship('~hastuc-dibtux'), text(' messaged you')],
+    time: unixToDa(Date.now() - 3_600).toString(),
+    content,
+    binned: '/',
+    link: '/'
+  };
+}
+
+function createBitcoinNotif(amount: string) {
+  return {
+    title: [ship('~silnem'), text(` sent you ${amount}`)],
+    time: unixToDa(Date.now() - 3_600).toString(),
+    content: [],
+    binned: '/',
+    link: '/'
+  };
+}
+
+function createGroupNotif(to: string): HarkBody {
+  return {
+    title: [ship('~ridlur-figbud'), text(` invited you to ${to}`)],
+    content: [],
+    time: unixToDa(Date.now() - 3_600).toString(),
+    binned: '/',
+    link: '/'
+  };
+}
+
+window.desk = window.desk || 'garden';
+
+function createMockSysNotification(path: string) {
+  return {
+    bin: {
+      place: {
+        desk: window.desk,
+        path
+      },
+      path: '/'
+    },
+    time: Date.now() - 3_600,
+    body: []
+  };
+}
+
+const lag = createMockSysNotification('/lag');
+const blocked = createMockSysNotification('/blocked');
+const onboard = createMockSysNotification('/onboard');
+
+export function createMockNotification(desk: string, body: HarkBody[]): Notification {
+  return {
+    bin: {
+      place: {
+        desk,
+        path: '/'
+      },
+      path: '/'
+    },
+    time: Date.now() - 3_600,
+    body
+  };
+}
+
+export const mockNotifications: Notification[] = [
+  lag,
+  blocked,
+  onboard,
+  createMockNotification('groups', [
+    createDmNotification(text('ie the hook agent responsible for marking the notifications')),
+    createDmNotification(ship('~hastuc-dibtux'), text(' sent a link'))
+  ]),
+  createMockNotification('bitcoin-wallet', [createBitcoinNotif('0.025 BTC')]),
+  createMockNotification('groups', [createGroupNotif('a Group: Tlon Corporation')])
+];
+
 const contact: Contact = {
   nickname: '',
   bio: '',
@@ -192,7 +287,8 @@ export const mockContacts: Contacts = {
   },
   '~nalbel_litzod': {
     ...contact,
-    nickname: 'Queen'
+    nickname: 'Queen',
+    color: '#0a1b0a'
   },
   '~litmus^ritten': {
     ...contact
@@ -206,14 +302,9 @@ export const mockContacts: Contacts = {
   },
   '~nalrys': {
     ...contact,
-    status: 'hosting coming soon'
+    status: 'hosting coming soon',
+    color: '#130c06'
   }
-};
-
-export const mockNotification: BasicNotification = {
-  type: 'basic',
-  time: '',
-  message: 'test'
 };
 
 export const mockVat = (desk: string, blockers?: boolean): Vat => ({
@@ -222,6 +313,7 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
     ud: 1
   },
   desk,
+  paused: false,
   arak: {
     rein: {
       sub: [],
@@ -230,7 +322,8 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
     aeon: 3,
     desk,
     next: blockers ? [{ aeon: 3, weft: { name: 'zuse', kelvin: 419 } }] : [],
-    ship: '~zod'
+    ship: '~zod',
+    paused: false
   },
   hash: '0vh.lhfn6.julg1.fs52d.g2lqj.q5kp0.2o7j3.2bljl.jdm34.hd46v.9uv5v'
 });

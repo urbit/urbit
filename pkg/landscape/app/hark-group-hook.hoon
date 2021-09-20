@@ -14,6 +14,8 @@
   $:  %0
       watching=(set resource)
   ==
++$  update
+  $>(?(%add-members %remove-members) update:group-store)
 ::
 --
 ::
@@ -127,13 +129,13 @@
       [~ state]
     ?.  (~(has in watching) resource.update)
       [~ state]
-    =/  =contents:store
-      [%group ~[update]]
-    =/  =notification:store  [now.bowl %.n contents]
-    =/  =index:store
-      [%group resource.update -.update]
+    =/  body=(unit body:store)
+      (get-content:ha update)
+    ?~  body  `state
+    =/  =bin:store
+      (get-bin:ha resource.update -.update)
     :_  state
-    ~[(add-unread index notification)]
+    ~[(add-unread bin u.body)]
   ::  +metadata-update is stubbed for now, for the following reasons
   ::    - There's no semantic difference in metadata-store between
   ::    adding and editing a channel
@@ -145,12 +147,12 @@
     [~ state]
   ::
   ++  add-unread
-    |=  [=index:store =notification:store]
+    |=  [=bin:store =body:store]
     ^-  card 
     =-  [%pass / %agent [our.bowl %hark-store] %poke -]
     :-  %hark-action
     !>  ^-  action:store
-    [%add-note index notification]
+    [%add-note bin body]
   --
 ::
 ++  on-peek  on-peek:def
@@ -159,7 +161,48 @@
 ++  on-fail   on-fail:def
 --
 |_  =bowl:gall
-+*  met  ~(. metadata bowl)
++*  met  ~(. mdl bowl)
+++  get-content
+  |=  =update:group-store
+  ^-  (unit body:store)
+  ?.  ?=(?(%add-members %remove-members) -.update)  ~
+  ?~  meta=(peek-metadatum:met %groups resource.update)
+    ~
+  =/  ships=(list content:store)
+    %+  turn  ~(tap in ships.update)
+    |=  =ship
+    ^-  content:store
+    ship+ship
+  =/  sep=content:store  text+', '
+  =.  ships
+    (join sep ships)
+  ?-  -.update
+      %add-members
+    :-  ~
+    :*  (snoc ships text+(rap 3 ' joined ' title.u.meta ~))
+        ~
+        now.bowl
+        /
+        /
+    ==
+  ::
+      %remove-members
+    :-  ~
+    :*  (snoc ships text+(rap 3 ' joined ' title.u.meta ~))
+        ~
+        now.bowl
+        /
+        /
+    ==
+  ==
+++  get-bin
+  |=  [rid=resource reason=@t]
+  ^-  bin:store
+  [/[reason] (get-place rid)]
+++  get-place
+  |=  rid=resource
+  ^-  place:store
+  [q.byk.bowl /(scot %p entity.rid)/[name.rid]]
 ::
 ++  watch-groups
   ^-  card

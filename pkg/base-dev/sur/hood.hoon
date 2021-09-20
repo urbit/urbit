@@ -150,6 +150,20 @@
 ::  +is-fish: should dill link .dude?
 ::
 ++  is-fish  |=([=dude =bill] .?((find ~[dude] (read-fish bill))))
+::  +tap-in-bill: +tap:in, respecting the order of agents in the bill
+::
+++  tap-in-bill
+  |=  [=bill dudes=(set dude)]
+  =/  apes  (read-apes bill)
+  |^
+  %+  sort  ~(tap in dudes)
+  |=  [a=dude b=dude]
+  (lte (idx a) (idx b))
+  ::
+  ++  idx
+    |=  =dude 
+    (fall (bind (find ~[dude] apes) succ) 0)
+  --
 ::  +get-apps-diff: which agents should be started and stopped
 ::
 ++  get-apps-diff
@@ -158,8 +172,8 @@
   =/  =bill  (read-bill our desk now)
   =/  wan  (sy (get-apps-want bill rein))
   =/  hav  (sy (get-apps-live our desk now))
-  =/  liv  ~(tap in (~(dif in wan) hav))
-  =/  ded  ~(tap in (~(dif in hav) wan))
+  =/  liv  (tap-in-bill bill (~(dif in wan) hav))
+  =/  ded  (flop (tap-in-bill bill (~(dif in hav) wan)))
   [liv ded]
 ::
 ++  get-apps-live
