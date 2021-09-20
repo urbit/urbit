@@ -1,7 +1,7 @@
 {
   "openrpc": "1.2.6",
   "info": {
-    "version": "0.1.7",
+    "version": "0.1.8",
     "title": "Roller RPC API",
     "license": {
       "name": "MIT"
@@ -2260,31 +2260,14 @@
             "$ref": "#/components/schemas/From"
           },
           "tx": {
-            "title": "L2-Transaction-Common-Params",
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ConfigureKeysParams"
-              },
-              {
-                "$ref": "#/components/schemas/SpawnParams"
-              },
-              {
-                "$ref": "#/components/schemas/ConfigureKeysParams"
-              },
-              {
-                "$ref": "#/components/schemas/SponsorshipParams"
-              },
-              {
-                "$ref": "#/components/schemas/AddressParams"
-              }
-            ]
+            "$ref": "#/components/schemas/L2Data"
           }
         }
       },
       "PendingTransaction": {
         "title": "PendingTransaction",
         "type": "object",
-        "description": "Pending transaction in the Roller, waiting to be submitted to Ethereum",
+        "description": "Pending transaction in the Roller, waiting to be submitted to the Blockchain",
         "required": [
           "forced",
           "tx",
@@ -2295,11 +2278,14 @@
             "type": "boolean",
             "title": "Forced"
           },
-          "tx": {
+          "rawTx": {
             "$ref": "#/components/schemas/L2Transaction"
           },
           "address": {
             "$ref": "#/components/schemas/eth-address"
+          },
+          "time": {
+            "$ref": "#/components/schemas/Timestamp"
           }
         }
       },
@@ -2313,7 +2299,7 @@
       "L2Data": {
         "title": "L2Data",
         "description": "Data requiered for a L2 Transaction",
-        "anyOf": [
+        "oneOf": [
           {
             "$ref": "#/components/schemas/TransferPointParams"
           },
