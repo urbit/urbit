@@ -220,4 +220,17 @@ int urcrypt_scrypt(const uint8_t *passwd,
                    uint32_t p,
                    size_t outlen,
                    uint8_t *out);
+
+int urcrypt_keccak_224(const uint8_t *message,
+                       size_t length,
+                       uint8_t out[224]);
+int urcrypt_keccak_256(const uint8_t *message,
+                       size_t length,
+                       uint8_t out[256]);
+int urcrypt_keccak_384(const uint8_t *message,
+                       size_t length,
+                       uint8_t out[384]);
+int urcrypt_keccak_512(const uint8_t *message,
+                       size_t length,
+                       uint8_t out[512]);
 #endif

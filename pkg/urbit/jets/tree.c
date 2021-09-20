@@ -15,6 +15,8 @@
 
 #include "all.h"
 
+static c3_c* no_hashes[] = { 0 };
+
 static u3j_harm _140_hex_mimes_base16_en_a[] = {{".2", u3we_en_base16}, {}};
 static c3_c* _140_hex_mimes_base16_en_ha[] = {
   "669807766b6802719769fcbfe149d77fb352fcf0922afaf35dc4ab8c201d84e5",
@@ -435,6 +437,26 @@ static c3_c* _140_hex_blake_ha[] = {
   0
 };
 
+  static u3j_harm _140_hex_kecc_k224_a[] =
+    {{".2", u3we_kecc224, c3n, c3y, c3y}, {}};
+
+  static u3j_harm _140_hex_kecc_k256_a[] =
+    {{".2", u3we_kecc256, c3n, c3y, c3y}, {}};
+
+  static u3j_harm _140_hex_kecc_k384_a[] =
+    {{".2", u3we_kecc384, c3n, c3y, c3y}, {}};
+
+  static u3j_harm _140_hex_kecc_k512_a[] =
+    {{".2", u3we_kecc512, c3n, c3y, c3y}, {}};
+
+static u3j_core _140_hex_kecc_d[] =
+  { { "k224", 7, _140_hex_kecc_k224_a, 0, no_hashes },
+    { "k256", 7, _140_hex_kecc_k256_a, 0, no_hashes },
+    { "k384", 7, _140_hex_kecc_k384_a, 0, no_hashes },
+    { "k512", 7, _140_hex_kecc_k512_a, 0, no_hashes },
+    {}
+  };
+
   static u3j_harm _140_hex_ripemd_160_a[] = {{".2", u3we_ripe, c3y}, {}};
   static c3_c* _140_hex_ripemd_160_ha[] = {
     "176684b29926a01f5c60fa584e4691b0cbdc9b93608dcbe7d0cf3585683fa42f",
@@ -462,6 +484,7 @@ static u3j_core _140_hex_d[] =
   { "hmac",   63, 0, _140_hex_hmac_d,  _140_hex_hmac_ha  },
   { "argon",  31, 0, _140_hex_argon_d, _140_hex_argon_ha },
   { "blake",  31, 0, _140_hex_blake_d, _140_hex_blake_ha },
+  { "kecc",   31, 0, _140_hex_kecc_d,  no_hashes },
   { "ripemd", 31, 0, _140_hex_ripe_d,  _140_hex_ripe_ha  },
   { "scr",    31, 0, _140_hex_scr_d,   _140_hex_scr_ha   },
   { "secp",    6, 0, _140_hex_secp_d,  _140_hex_secp_ha },
