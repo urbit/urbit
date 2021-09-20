@@ -698,6 +698,7 @@ _pier_wyrd_aver(u3_noun act)
 
   //    XX review, %wend re: %wyrd optional?
   //
+#if 0
   while ( u3_nul != act ) {
     u3x_cell(act, &fec, &act);
 
@@ -724,6 +725,7 @@ _pier_wyrd_aver(u3_noun act)
       }
     }
   }
+#endif
 
   return c3y;
 }
