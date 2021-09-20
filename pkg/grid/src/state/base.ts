@@ -149,8 +149,8 @@ export const createState = <T extends Record<string, unknown>>(
       }),
       {
         blacklist,
-        name: stateStorageKey(name)
-        // version: process.env.LANDSCAPE_SHORTHASH as any
+        name: stateStorageKey(name),
+        version: import.meta.env.VITE_SHORTHASH as any
       }
     )
   );
