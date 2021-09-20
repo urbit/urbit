@@ -6,7 +6,7 @@ lib_LTLIBRARIES = liburcrypt.la
 noinst_LTLIBRARIES = libed25519.la \
 		     libge_additions.la \
 		     libargon2.la \
-				 libkeccak_tiny.la \
+		     libkeccak_tiny.la \
 		     libscrypt.la
 
 include_HEADERS = urcrypt/urcrypt.h
@@ -17,7 +17,6 @@ noinst_HEADERS = urcrypt/util.h \
 		 argon2/include/argon2.h \
 		 argon2/src/blake2/blake2.h \
 		 scrypt/sha256.h \
-		 keccac-tiny/keccak-tiny.h \
 		 scrypt/libscrypt.h
 
 # main library
@@ -36,6 +35,7 @@ liburcrypt_la_LIBADD = $(LIBCRYPTO_LIBS) \
 		       libed25519.la \
 		       libge_additions.la \
 		       libargon2.la \
+		       libkeccak_tiny.la \
 		       libscrypt.la
 liburcrypt_la_CFLAGS = $(LIBCRYPTO_CFLAGS) \
 		       $(LIBSECP256K1_CFLAGS) \
@@ -49,9 +49,9 @@ liburcrypt_la_SOURCES = urcrypt/aes_cbc.c \
 			urcrypt/argon.c \
 			urcrypt/ed25519.c \
 			urcrypt/ge_additions.c \
-			urcrypt/keccac.c \
 			urcrypt/ripemd.c \
 			urcrypt/scrypt.c \
+			urcrypt/keccak.c \
 			urcrypt/secp256k1.c \
 			urcrypt/sha.c \
 			urcrypt/util.c \
@@ -115,4 +115,6 @@ libscrypt_la_SOURCES = scrypt/b64.c \
 
 # keccak-tiny
 libkeccak_tiny_la_CFLAGS = -march=native -std=c11 -Wextra -Wpedantic -Wall
-libkeccak_tiny_la_SOURCES = keccak-tiny/keccak-tiny.c
+libkeccak_tiny_la_SOURCES = keccak-tiny/keccak-tiny.c \
+		       keccak-tiny/define-macros.h \
+		       keccak-tiny/keccak-tiny.h
