@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { HarkLid, Notification } from '@urbit/api';
-import { useLeapStore } from '../Nav';
-import { Button } from '../../components/Button';
 import { BasicNotification } from './BasicNotification';
 import { BaseBlockedNotification, RuntimeLagNotification } from './SystemNotification';
 import { useNotifications } from '../../state/notifications';
@@ -32,34 +29,14 @@ const Empty = () => (
 );
 
 export const Inbox = ({ archived = false }) => {
-  const select = useLeapStore((s) => s.select);
-  const { unseen, seen, hasAnyNotifications } = useNotifications();
+  const { unseen, seen } = useNotifications();
   const archive = useHarkStore((s) => s.archive);
-  const markAllAsRead = () => {};
 
   useEffect(() => {
     useHarkStore.getState().getMore();
-
   }, [archived]);
 
-  useEffect(() => {
-    select('Notifications');
-    const { getMore } = useHarkStore.getState();
-    getMore();
-
-    function visibilitychange() {
-      setTimeout(() => useHarkStore.getState().opened(), 100);
-    }
-    document.addEventListener('visibilitychange', visibilitychange);
-
-    return () => {
-      document.removeEventListener('visibilitychange', visibilitychange);
-      visibilitychange();
-    };
-  }, []);
-  // const select = useLeapStore((s) => s.select);
-
-  if (false) {
+  if (archived ? archive.size === 0 : Object.keys({ ...seen, ...unseen }).length === 0) {
     return <Empty />;
   }
 
@@ -69,7 +46,9 @@ export const Inbox = ({ archived = false }) => {
         Array.from(archive).map(([key, box]) => {
           return Object.entries(box)
             .sort(([, a], [, b]) => b.time - a.time)
-            .map(([binId, n], index) => renderNotification(n, `${key.toString}-${binId}`, { time: key.toString() }));
+            .map(([binId, n]) =>
+              renderNotification(n, `${key.toString}-${binId}`, { time: key.toString() })
+            );
         })
       ) : (
         <>
@@ -77,13 +56,13 @@ export const Inbox = ({ archived = false }) => {
           <section className="space-y-2">
             {Object.entries(unseen)
               .sort(([, a], [, b]) => b.time - a.time)
-              .map(([binId, n], index) => renderNotification(n, `unseen-${binId}`, { unseen: null }))}
+              .map(([binId, n]) => renderNotification(n, `unseen-${binId}`, { unseen: null }))}
           </section>
           <header>Seen</header>
           <section className="space-y-2">
             {Object.entries(seen)
               .sort(([, a], [, b]) => b.time - a.time)
-              .map(([binId, n], index) => renderNotification(n, `seen-${binId}`, { seen: null }))}
+              .map(([binId, n]) => renderNotification(n, `seen-${binId}`, { seen: null }))}
           </section>
         </>
       )}

@@ -1,10 +1,6 @@
 /* eslint-disable no-param-reassign */
-import create from 'zustand';
 import {
-  Notification as HarkNotification,
-  harkBinEq,
   makePatDa,
-  readAll,
   decToUd,
   unixToDa,
   Timebox,
@@ -14,19 +10,17 @@ import {
   HarkLid,
   archive,
   HarkContent,
-  NotificationGraphConfig
+  NotificationGraphConfig,
+  archiveAll
 } from '@urbit/api';
 import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 /* eslint-disable-next-line camelcase */
 import { unstable_batchedUpdates } from 'react-dom';
 import produce from 'immer';
-import _, { map } from 'lodash';
+import _ from 'lodash';
 import api from './api';
-import { useMockData } from './util';
-import { mockNotifications } from './mock-data';
-import useDocketState from './docket';
 import { useSettingsState } from './settings';
-import { BaseState, createState, createSubscription, reduceStateN} from './base';
+import { BaseState, createState, createSubscription, reduceStateN } from './base';
 
 export interface HarkState {
   seen: Timebox;
@@ -67,42 +61,43 @@ export const reduceGraph = [
   })
 ];
 
-
 export const useHarkStore = createState<HarkState>(
   'Hark',
   (set, get) => ({
-  seen: {},
-  unseen: {},
-  archive: new BigIntOrderedMap<Timebox>(),
-  webNotes: {},
-  notificationsGraphConfig: {
-    watchOnSelf: false,
-    mentions: false,
-    watching: []
-  },
+    seen: {},
+    unseen: {},
+    archive: new BigIntOrderedMap<Timebox>(),
+    webNotes: {},
+    notificationsGraphConfig: {
+      watchOnSelf: false,
+      mentions: false,
+      watching: []
+    },
 
-  set: (f) => {
-    const newState = produce(get(), f);
-    set(newState);
-  },
-  archiveAll: async () => {},
-  archiveNote: async (bin, lid) => {
-    await api.poke(archive(bin, lid));
-  },
-  opened: async () => {
-    await api.poke(opened);
-  },
-  getMore: async () => {
-    const { archive } = get();
-    const idx = decToUd((archive.peekSmallest()?.[0] || unixToDa(Date.now() * 1000)).toString());
-    const update = await api.scry({
-      app: 'hark-store',
-      path: `/recent/inbox/${idx}/5`
-    });
-    reduceHark(update);
-  }
-}),
-  [],
+    set: (f) => {
+      const newState = produce(get(), f);
+      set(newState);
+    },
+    archiveAll: async () => {
+      await api.poke(archiveAll);
+    },
+    archiveNote: async (bin, lid) => {
+      await api.poke(archive(bin, lid));
+    },
+    opened: async () => {
+      await api.poke(opened);
+    },
+    getMore: async () => {
+      const { archive: arch } = get();
+      const idx = decToUd((arch?.peekSmallest()?.[0] || unixToDa(Date.now() * 1000)).toString());
+      const update = await api.scry({
+        app: 'hark-store',
+        path: `/recent/inbox/${idx}/5`
+      });
+      reduceHark(update);
+    }
+  }),
+  ['archive'],
   [
     (set, get) =>
       createSubscription('hark-graph-hook', '/updates', (j) => {
@@ -111,8 +106,8 @@ export const useHarkStore = createState<HarkState>(
           reduceStateN(get(), graphHookData, reduceGraph);
         }
       }),
-    (set, get) =>
-      createSubscription('hark-store', '/updates', u => {
+    () =>
+      createSubscription('hark-store', '/updates', (u) => {
         /* eslint-ignore-next-line camelcase */
         unstable_batchedUpdates(() => {
           reduceHark(u);
@@ -140,20 +135,16 @@ function reduceHark(u: any) {
     });
   } else if ('timebox' in u) {
     const { timebox } = u;
-    console.log(timebox);
     const { lid, notifications } = timebox;
     if ('archive' in lid) {
       set((draft) => {
         const time = makePatDa(lid.archive);
-        const timebox = draft.archive.get(time) || {};
-        console.log(timebox);
+        const old = draft.archive.get(time) || {};
         notifications.forEach((note: any) => {
-          console.log(note);
           const binId = harkBinToId(note.bin);
-          timebox[binId] = note;
+          old[binId] = note;
         });
-        console.log(notifications);
-        draft.archive = draft.archive.set(time, timebox);
+        draft.archive = draft.archive.set(time, old);
       });
     } else {
       set((draft) => {
@@ -166,13 +157,12 @@ function reduceHark(u: any) {
     }
   } else if ('archived' in u) {
     const { lid, notification } = u.archived;
-    console.log(u.archived);
     set((draft) => {
       const seen = 'seen' in lid ? 'seen' : 'unseen';
       const binId = harkBinToId(notification.bin);
       delete draft[seen][binId];
       const time = makePatDa(u.archived.time);
-      const timebox = draft.archive.get(time) || {};
+      const timebox = draft.archive?.get(time) || {};
       timebox[binId] = notification;
       draft.archive = draft.archive.set(time, timebox);
     });
@@ -218,20 +208,18 @@ api.subscribe({
   event: (u: any) => {
     if ('add-note' in u) {
       if (useSettingsState.getState().display.doNotDisturb) {
-        //return;
+        return;
       }
       const { bin, body } = u['add-note'];
       const binId = harkBinToId(bin);
       const { title, content } = body;
-      const image = useDocketState.getState().charges[bin.desk]?.image;
 
-      const notification = new Notification(harkContentsToPlainText(title), {
+      const note = new Notification(harkContentsToPlainText(title), {
         body: harkContentsToPlainText(content),
         tag: binId,
         renotify: true
       });
+      note.onclick = () => {};
     }
   }
 });
-
-

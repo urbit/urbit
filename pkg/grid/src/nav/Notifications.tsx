@@ -1,43 +1,12 @@
 import React, { useEffect } from 'react';
 import { Link, NavLink, Route, Switch } from 'react-router-dom';
-import { Notification, HarkLid } from '@urbit/api';
 import { useLeapStore } from './Nav';
 import { Button } from '../components/Button';
-import { BasicNotification } from './notifications/BasicNotification';
-import {
-  BaseBlockedNotification,
-  RuntimeLagNotification
-} from './notifications/SystemNotification';
-import { useNotifications } from '../state/notifications';
 import { useHarkStore } from '../state/hark';
-import { OnboardingNotification } from './notifications/OnboardingNotification';
 import { Inbox } from './notifications/Inbox';
-
-function renderNotification(notification: Notification, key: string, lid: HarkLid) {
-  // Special casing
-  if (notification.bin.place.desk === window.desk) {
-    if (notification.bin.place.path === '/lag') {
-      return <RuntimeLagNotification key={key} />;
-    }
-    if (notification.bin.place.path === '/blocked') {
-      return <BaseBlockedNotification key={key} />;
-    }
-    if (notification.bin.place.path === '/onboard') {
-      return <OnboardingNotification key={key} unread />
-    }
-  }
-  return <BasicNotification key={key} notification={notification} lid={lid} />;
-}
-
-const Empty = () => (
-  <section className="flex justify-center items-center min-h-[480px] text-gray-400 space-y-2">
-    <span className="h4">All clear!</span>
-  </section>
-);
 
 export const Notifications = () => {
   const select = useLeapStore((s) => s.select);
-  const { unseen, seen, hasAnyNotifications } = useNotifications();
   const markAllAsRead = () => {
     const { archiveAll } = useHarkStore.getState();
     archiveAll();
@@ -45,11 +14,11 @@ export const Notifications = () => {
 
   useEffect(() => {
     select('Notifications');
-    const { getMore } = useHarkStore.getState();
-    getMore();
 
     function visibilitychange() {
-      useHarkStore.getState().opened();
+      if (document.visibilityState === 'hidden') {
+        useHarkStore.getState().opened();
+      }
     }
     document.addEventListener('visibilitychange', visibilitychange);
 
@@ -92,7 +61,7 @@ export const Notifications = () => {
       </header>
       <Switch>
         <Route path="/leap/notifications" exact>
-          <Inbox  />
+          <Inbox />
         </Route>
         <Route path="/leap/notifications/archive" exact>
           <Inbox archived />
