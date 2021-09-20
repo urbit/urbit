@@ -175,6 +175,7 @@
   --
 ::
 |_  =bowl:gall
+++  bec  byk.bowl(r da+now.bowl)
 ++  setup-cards
   ^-  (list card)
   :~  wait-export

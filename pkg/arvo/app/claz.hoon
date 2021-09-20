@@ -87,6 +87,7 @@
   --
 ::
 |_  =bowl:gall
+++  bec  byk.bowl(r da+now.bowl)
 ::
 ++  poke-spider
   |=  [=path our=@p =cage]

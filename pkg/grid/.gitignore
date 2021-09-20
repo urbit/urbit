@@ -6,3 +6,4 @@ dist-ssr
 stats.html
 .eslintcache
 .vercel
+.env

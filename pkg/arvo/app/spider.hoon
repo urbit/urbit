@@ -18,17 +18,26 @@
   $:  starting=(map yarn [=trying =vase])
       running=trie
       tid=(map tid yarn)
-      serving=(map tid [@ta =mark])
+      serving=(map tid [@ta =mark =desk])
   ==
 ::
 +$  clean-slate-any
   $^  clean-slate-ket
   $%  clean-slate-sig
       clean-slate-1
+      clean-slate-2
       clean-slate
   ==
 ::
 +$  clean-slate
+  $:  %3
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [@ta =mark =desk])
+  ==
+::
++$  clean-slate-2
   $:  %2
       starting=(map yarn [=trying =vase])
       running=(list yarn)
@@ -160,7 +169,8 @@
     =?  any  ?=(~ -.any)  (old-to-1 any)
     =^  upgrade-cards  any  
       (old-to-2 any)
-    ?>  ?=(%2 -.any)
+    =.  any  (old-to-3 any)
+    ?>  ?=(%3 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
@@ -182,9 +192,9 @@
     ::
     ++  old-to-2
       |=  old=clean-slate-any
-      ^-  (quip card clean-slate)
-      ?>  ?=(?(%1 %2) -.old)
-      ?:  ?=(%2 -.old)
+      ^-  (quip card clean-slate-any)
+      ?>  ?=(?(%1 %2 %3) -.old)
+      ?:  ?=(?(%2 %3) -.old)
         `old
       :-  ~[bind-eyre:sc]
       :*  %2
@@ -192,6 +202,19 @@
         running.old
         tid.old
         ~
+      ==
+    ::
+    ++  old-to-3
+      |=  old=clean-slate-any
+      ^-  clean-slate
+      ?>  ?=(?(%2 %3) -.old)
+      ?:  ?=(%3 -.old)
+        old
+      :*  %3
+        starting.old
+        running.old
+        tid.old
+        (~(run by serving.old) |=([id=@ta =mark] [id mark q.byk.bowl]))
       ==
     --
   ::
@@ -285,17 +308,17 @@
   ~/  %handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
   ^-  (quip card _state)
-  ?>  authenticated.inbound-request
+  ::?>  authenticated.inbound-request
   =/  url 
     (parse-request-line:server url.request.inbound-request)
-  ?>  ?=([%spider @t @t @t ~] site.url)
-  =*  input-mark   i.t.site.url
-  =*  thread       i.t.t.site.url
-  =*  output-mark  i.t.t.t.site.url
+  ?>  ?=([%spider @t @t @t @t ~] site.url)
+  =*  desk         i.t.site.url
+  =*  input-mark   i.t.t.site.url
+  =*  thread       i.t.t.t.site.url
+  =*  output-mark  i.t.t.t.t.site.url
   =/  =tid         (new-thread-id thread)
   =.  serving.state
-    (~(put by serving.state) tid [eyre-id output-mark])
-  =/  =desk  %landscape  ::  TODO: make this generic
+    (~(put by serving.state) tid [eyre-id output-mark desk])
   ::  TODO: speed this up somehow. we spend about 15ms in this arm alone
   ::
   =+  .^
@@ -490,7 +513,7 @@
   =-  (fall - `state)
   %+  bind  
     (~(get by serving.state) tid)
-  |=  [eyre-id=@ta output=mark]
+  |=  [eyre-id=@ta output=mark =desk]
   :_  state(serving (~(del by serving.state) tid))
   %+  give-simple-payload:app:server  eyre-id
   ^-  simple-payload:http
@@ -520,11 +543,11 @@
   =-  (fall - `state)
   %+  bind  
     (~(get by serving.state) tid)
-  |=  [eyre-id=@ta output=mark]
+  |=  [eyre-id=@ta output=mark =desk]
   =+    .^
       =tube:clay
       %cc
-      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[output]/json
+      /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[output]/json
     ==
   :_  state(serving (~(del by serving.state) tid))
   %+  give-simple-payload:app:server  eyre-id
@@ -602,5 +625,5 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  2+state(running (turn (tap-yarn running.state) head))
+  3+state(running (turn (tap-yarn running.state) head))
 --

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { Button } from '../components/Button';
-import { Dialog, DialogContent } from '../components/Dialog';
+import { Dialog, DialogClose, DialogContent } from '../components/Dialog';
 import useDocketState, { useCharges } from '../state/docket';
 
 export const RemoveApp = () => {
@@ -14,19 +14,23 @@ export const RemoveApp = () => {
   // TODO: add optimistic updates
   const handleRemoveApp = useCallback(() => {
     uninstallDocket(desk);
-    history.push('/');
-  }, []);
+  }, [desk]);
 
   return (
     <Dialog open onOpenChange={(open) => !open && history.push('/')}>
-      <DialogContent>
-        <h1 className="h4 mb-9">Remove &ldquo;{docket?.title || ''}&rdquo;</h1>
-        <p className="text-base tracking-tight mb-4 pr-6">
-          Explanatory writing about what data will be kept.
+      <DialogContent showClose={false} className="max-w-[400px] space-y-6">
+        <h1 className="h4">Remove &ldquo;{docket?.title || ''}&rdquo;?</h1>
+        <p className="text-base tracking-tight pr-6">
+          This will remove the software&apos;s tile from your home screen.
         </p>
-        <Button variant="destructive" onClick={handleRemoveApp}>
-          Remove
-        </Button>
+        <div className="flex space-x-6">
+          <DialogClose as={Button} variant="secondary">
+            Cancel
+          </DialogClose>
+          <DialogClose as={Button} onClick={handleRemoveApp}>
+            Remove &ldquo;{docket?.title}&rdquo;
+          </DialogClose>
+        </div>
       </DialogContent>
     </Dialog>
   );

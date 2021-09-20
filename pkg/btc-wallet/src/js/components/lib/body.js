@@ -40,7 +40,7 @@ export default class Body extends Component {
     } else {
       return (
         <Switch>
-          <Route path="/~btc/settings">
+          <Route path="/settings">
             <Col
              display='flex'
              flexDirection='column'
@@ -53,7 +53,7 @@ export default class Body extends Component {
               />
             </Col>
           </Route>
-          <Route path="/~btc">
+          <Route path="/">
             <Col
              display='flex'
              flexDirection='column'

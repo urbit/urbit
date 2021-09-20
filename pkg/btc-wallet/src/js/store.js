@@ -7,7 +7,7 @@ class Store {
   constructor() {
     this.state = {
       loadedBtc: false,
-      loadedSettings: false,
+      loadedSettings: true,
       loaded: false,
       providerPerms: {},
       shipWallets: {},
@@ -23,7 +23,7 @@ class Store {
         BTC: { last: 1, symbol: 'BTC' }
       },
       denomination: 'BTC',
-      showWarning: true,
+      showWarning: false,
       error: '',
       broadcastSuccess: false,
     };

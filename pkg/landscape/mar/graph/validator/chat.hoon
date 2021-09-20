@@ -1,4 +1,5 @@
-/-  *post, met=metadata-store, graph=graph-store, hark=hark-graph-hook
+/-  *post, met=metadata-store, hark=hark-graph-hook
+/+  graph=graph-store
 |_  i=indexed-post
 ++  grow
   |%
@@ -24,9 +25,15 @@
     ==
   ::
   ++  notification-kind
+    |=  title=cord
     ^-  (unit notif-kind:hark)
     ?+  index.p.i  ~
-      [@ ~]  `[%message [0 1] %count %none]
+        [@ ~]  
+      :-  ~
+      :*  ~[text+(rap 3 'New messages in ' title ~)]
+          [ship+author.p.i text+': ' (hark-contents:graph contents.p.i)]
+          [0 1]  %count  %none
+      ==
     ==
   ::
   ++  transform-add-nodes

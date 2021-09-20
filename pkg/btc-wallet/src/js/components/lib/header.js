@@ -16,7 +16,7 @@ export default class Header extends Component {
   render() {
     let icon      = this.props.settings ? "X" : "Adjust";
     let iconColor = this.props.settings ? "black" : "orange";
-    let iconLink  = this.props.settings ? "/~btc" : "/~btc/settings";
+    let iconLink  = this.props.settings ? "/" : "/settings";
 
     let connection = null;
     let badge = null;

@@ -580,7 +580,10 @@
     =/  yok=(unit yoke)  (~(get by yokes.state) dap)
     ?~  yok
       ~>  %slog.[0 leaf+"gall: no agent to reload: {<dap>}"]
-      mo-core
+      cor
+    ?:  ?=(%| -.agent)
+      ~>  %slog.[0 leaf+"gall: dead agent reload: {<dap>}"]
+      cor
     =/  bek=beak  [our q.beak.u.yok p.sign-arvo]
     =/  rag  (mo-scry-agent-cage dap q.bek p.sign-arvo)
     ?:  ?=(%| -.rag)
@@ -1110,6 +1113,12 @@
         =/  =duct  system-duct.state
         =/  =wire  p.card
         =/  =neet  q.card
+        ?:  ?=(%pyre -.neet)
+          %:  mean
+            leaf/"gall: %pyre from {<agent-name>}, killing event"
+            leaf/"wire: {<wire>}"
+            tang.neet
+          ==
         =.  wire
           ?-  -.neet
             %agent  [%out (scot %p ship.neet) name.neet wire]

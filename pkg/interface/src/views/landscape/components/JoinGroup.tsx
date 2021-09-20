@@ -4,7 +4,7 @@ import {
     ManagedTextInputField as Input, Row,
     Text
 } from '@tlon/indigo-react';
-import { join, MetadataUpdatePreview, putEntry } from '@urbit/api';
+import { join, MetadataUpdatePreview } from '@urbit/api';
 import { Form, Formik, FormikHelpers, useFormikContext } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
@@ -22,6 +22,7 @@ import { FormError } from '~/views/components/FormError';
 import { StatelessAsyncButton } from '~/views/components/StatelessAsyncButton';
 import { GroupSummary } from './GroupSummary';
 import airlock from '~/logic/api';
+import useSettingsState from '~/logic/state/settings';
 
 const formSchema = Yup.object({
   group: Yup.string()
@@ -73,8 +74,9 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
 
   const onConfirm = useCallback(async (group: string) => {
     const [,,ship,name] = group.split('/');
+    const { putEntry } = useSettingsState.getState();
     if(group === TUTORIAL_GROUP_RESOURCE) {
-      await airlock.poke(putEntry('tutorial', 'joined', Date.now()));
+      await putEntry('tutorial', 'joined', Date.now());
     }
     if (group in groups) {
       return history.push(`/~landscape${group}`);

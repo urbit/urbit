@@ -15,5 +15,5 @@
 }
 
 .default-ring {
-  @apply focus:ring-4 ring-blue-400 ring-opacity-80 focus:outline-none;
+  @apply focus-visible:ring-2 ring-blue-400 ring-opacity-80 focus-visible:outline-none;
 }

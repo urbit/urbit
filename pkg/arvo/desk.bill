@@ -5,6 +5,7 @@
         %dojo
         %eth-watcher
         %hood
+        %herm
         %lens
         %ping
         %spider

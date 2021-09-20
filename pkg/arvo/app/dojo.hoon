@@ -1356,7 +1356,7 @@
     ++  complete-naked-poke
       |=  app=term
       =/  pax=path
-        /(scot %p our.hid)/[q.byk.hid]/(scot %da now.hid)/app
+        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/app
       %+  complete  (cat 3 ':' app)
       %+  murn  ~(tap by dir:.^(arch %cy pax))
       |=  [=term ~]
@@ -1386,7 +1386,7 @@
           (cat 3 '|' gen)
         :((cury cat 3) ':' app '|' gen)
       =/  pfix=path
-        /(scot %p our.hid)/[q.byk.hid]/(scot %da now.hid)/gen/[app]
+        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/gen/[app]
       ::
       %^  tab-generators:auto  pfix  `app
       %+  murn
@@ -1402,7 +1402,7 @@
       |=  gen=term
       %+  complete  (cat 3 '+' gen)
       =/  pax=path
-        /(scot %p our.hid)/[q.byk.hid]/(scot %da now.hid)/gen
+        /(scot %p our.hid)/[q:he-beam]/(scot %da now.hid)/gen
       %^  tab-generators:auto  pax  ~
       %+  murn
         ~(tap by dir:.^(arch %cy pax))

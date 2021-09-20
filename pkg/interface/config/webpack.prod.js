@@ -1,5 +1,5 @@
 const path = require('path');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const webpack = require('webpack');
@@ -65,19 +65,19 @@ module.exports = {
       'process.env.TUTORIAL_GROUP': JSON.stringify('beginner-island'),
       'process.env.TUTORIAL_CHAT': JSON.stringify('introduce-yourself-7010'),
       'process.env.TUTORIAL_BOOK': JSON.stringify('guides-9684'),
-      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143'),
+      'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143')
     }),
-    // new HtmlWebpackPlugin({
-    //   title: 'Hot Module Replacement',
-    //   template: './public/index.html',
-    // }),
+    new HtmlWebpackPlugin({
+      title: 'Landscape',
+      template: './public/index.html'
+    })
   ],
   output: {
     filename: (pathData) => {
       return pathData.chunk.name === 'app' ? 'index.[contenthash].js' : '[name].js';
     },
-    path: path.resolve(__dirname, '../../arvo/app/landscape/js/bundle'),
-    publicPath: '/'
+    path: path.resolve(__dirname, '../dist'),
+    publicPath: '/apps/landscape/'
   },
   optimization: {
     minimize: true,

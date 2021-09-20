@@ -3,6 +3,7 @@ import { Box, Button, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import f from 'lodash/fp';
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { Route, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import {
     hasTutorialGroup,
@@ -30,9 +31,9 @@ import Groups from './components/Groups';
 import ModalButton from './components/ModalButton';
 import Tiles from './components/tiles';
 import Tile from './components/tiles/tile';
+import { Invite } from './components/Invite';
 import './css/custom.css';
 import { join } from '@urbit/api/groups';
-import { putEntry } from '@urbit/api/settings';
 import { joinGraph } from '@urbit/api/graph';
 import airlock from '~/logic/api';
 
@@ -103,15 +104,17 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
     maxWidth: '350px',
     modal: function modal(dismiss) {
       const onDismiss = (e) => {
+        const { putEntry } = useSettingsState.getState();
         e.stopPropagation();
-        airlock.poke(putEntry('tutorial', 'seen', true));
+        putEntry('tutorial', 'seen', true);
         dismiss();
       };
       const onContinue = async (e) => {
+        const { putEntry } = useSettingsState.getState();
         e.stopPropagation();
         if (!hasTutorialGroup({ associations })) {
           await airlock.poke(join(TUTORIAL_HOST, TUTORIAL_GROUP));
-          await airlock.poke(putEntry('tutorial', 'joined', Date.now()));
+          await putEntry('tutorial', 'joined', Date.now());
           await waiter(hasTutorialGroup);
           await Promise.all(
             [TUTORIAL_BOOK, TUTORIAL_CHAT, TUTORIAL_LINKS].map(graph => airlock.thread(joinGraph(TUTORIAL_HOST, graph))));
@@ -184,6 +187,9 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
       <Helmet defer={false}>
         <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape</title>
       </Helmet>
+      <Route path="/invites/:app/:uid">
+        <Invite />
+      </Route>
       <ScrollbarLessBox height='100%' overflowY='scroll' display="flex" flexDirection="column">
         {modal}
         <Box

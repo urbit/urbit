@@ -1,4 +1,5 @@
 /-  *post, met=metadata-store, graph=graph-store, hark=hark-graph-hook
+/+  graph=graph-store
 |_  i=indexed-post
 ++  grow
   |%
@@ -64,10 +65,22 @@
   ::    ignore all containers, only notify on content
   ::
   ++  notification-kind
+    |=  title=cord
     ^-  (unit notif-kind:hark)
     ?+  index.p.i   ~
-      [@ %1 %1 ~]    `[%note [0 1] %each %children]
-      [@ %2 @ %1 ~]  `[%comment [1 3] %count %siblings]
+        [@ %1 %1 ~]
+      :-  ~
+      :*  [%text (rap 3 'New notes in ' title ~)]~
+          ~[(hark-content:graph (snag 0 contents.p.i)) text+' by ' ship+author.p.i]
+          [0 1]  %each  %children
+      ==
+    ::
+        [@ %2 @ %1 ~]
+      :-  ~
+      :*  [%text (rap 3 'New comments in ' title ~)]~
+          [ship+author.p.i text+': ' (hark-contents:graph contents.p.i)]
+          [1 3]  %count  %siblings
+      ==
     ==
   ::
   ++  transform-add-nodes

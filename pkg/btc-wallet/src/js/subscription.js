@@ -20,7 +20,7 @@ export class Subscription {
 
   initializeSettings() {
     let app = 'settings-store';
-    let path = '/bucket/btc-wallet';
+    let path = `/bucket/${window.desk}/btc-wallet`;
 
     fetch(`/~/scry/${app}${path}.json`).then(res => res.json())
       .then(n => {

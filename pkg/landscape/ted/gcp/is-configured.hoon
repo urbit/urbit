@@ -40,9 +40,10 @@ b+has
   |=  key=@tas
   =/  m  (strand ?)
   ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl:strandio
   ;<  has=?  bind:m
     %+  scry:strandio  ?
-    /gx/settings-store/has-entry/gcp-store/[key]/noun
+    /gx/settings-store/has-entry/[q.byk.bowl]/gcp-store/[key]/noun
   (pure:m has)
 ::
 --
