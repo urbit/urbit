@@ -7,11 +7,11 @@
 }
 
 .dialog-container {
-  @apply fixed z-40 top-1/2 left-1/2 min-w-80 transform -translate-x-1/2 -translate-y-1/2;
+  @apply fixed z-40 top-1/2 left-1/2 p-4 transform -translate-x-1/2 -translate-y-1/2;
 }
 
 .dialog {
-  @apply relative p-5 sm:p-8 bg-white rounded-3xl;
+  @apply relative max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] p-5 sm:p-8 bg-white rounded-3xl overflow-auto;
 }
 
 .dialog-inner-container {

@@ -17,7 +17,7 @@ interface KilnState {
   toggleOTAs: (desk: string, on: boolean) => Promise<void>;
   set: (s: KilnState) => void;
 }
-const useKilnState = create<KilnState>((set) => ({
+const useKilnState = create<KilnState>((set, get) => ({
   vats: useMockData ? mockVats : {},
   lag: !!useMockData,
   loaded: false,
@@ -66,6 +66,10 @@ const useKilnState = create<KilnState>((set) => ({
     }
 
     await api.poke(on ? kilnResume(desk) : kilnPause(desk));
+
+    if (!on) {
+      get().fetchVats(); // refresh vat state
+    }
   },
   set: produce(set)
 }));

@@ -1,10 +1,6 @@
 import { darken, hsla, lighten, parseToHsla, readableColorIsBlack } from 'color2k';
 import { useCurrentTheme } from '../state/local';
-
-function getDarkColor(color: string): string {
-  const hslaColor = parseToHsla(color);
-  return hsla(hslaColor[0], hslaColor[1], 1 - hslaColor[2], 1);
-}
+import { getDarkColor } from '../state/util';
 
 function bgAdjustedColor(color: string, darkBg: boolean): string {
   return darkBg ? lighten(color, 0.1) : darken(color, 0.1);

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { AppInfo } from '../../components/AppInfo';
+import { Spinner } from '../../components/Spinner';
 import useDocketState, { useCharge, useTreaty } from '../../state/docket';
 import { useVat } from '../../state/kiln';
 import { useLeapStore } from '../Nav';
@@ -25,8 +26,8 @@ export const TreatyInfo = () => {
   if (!treaty) {
     // TODO: maybe replace spinner with skeletons
     return (
-      <div className="dialog-inner-container text-black">
-        <span>Loading...</span>
+      <div className="dialog-inner-container flex justify-center text-black">
+        <Spinner className="w-10 h-10" />
       </div>
     );
   }
