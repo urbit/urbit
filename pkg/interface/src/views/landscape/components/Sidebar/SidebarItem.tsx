@@ -128,7 +128,8 @@ export const SidebarDmItem = React.memo((props: {
     !hideNicknames && contact?.nickname
       ? contact?.nickname
       : cite(ship) ?? ship;
-  const { unreads } = useHarkDm(ship) || { unreads: 0 };
+  const { count, each } = useHarkDm(ship);
+  const unreads = count + each.length;
   const img =
     contact?.avatar && !hideAvatars ? (
       <BaseImage

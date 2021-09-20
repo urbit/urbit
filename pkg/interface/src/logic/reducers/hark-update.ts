@@ -107,7 +107,7 @@ function updateNotificationStats(state: HarkState, place: HarkPlace, f: (s: Hark
 }
 
 function seenIndex(json: any, state: HarkState): HarkState {
-  const data = _.get(json, 'seen-index');
+  const data = _.get(json, 'saw-place');
   if(data) {
     updateNotificationStats(state, data, s => ({ last: Date.now() }));
   }
@@ -154,6 +154,7 @@ function unreadEach(json: any, state: HarkState): HarkState {
 function allStats(json: any, state: HarkState): HarkState {
   if('all-stats' in json) {
     const data = json['all-stats'];
+    console.log(data);
     data.forEach(({ place, stats }) => {
       state.unreads[place.path] = stats;
     });

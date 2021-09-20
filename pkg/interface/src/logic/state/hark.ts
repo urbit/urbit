@@ -4,7 +4,6 @@ import {
   markCountAsRead,
   Notification,
   NotificationGraphConfig,
-  readNote,
   Unreads
 } from '@urbit/api';
 import { Poke } from '@urbit/http-api';
@@ -132,9 +131,8 @@ export function useHarkDm(ship: string) {
   return useHarkState(
     useCallback(
       (s) => {
-        return s.unreads[`/graph/~${window.ship}/dm-inbox`]?.[
-          `/${patp2dec(ship)}`
-        ] || emptyStats();
+        const key = `/graph/~${window.ship}/dm-inbox/${patp2dec(ship)}`;
+        return s.unreads[key] || emptyStats();
       },
       [ship]
     )

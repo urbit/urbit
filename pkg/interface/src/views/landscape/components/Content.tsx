@@ -108,7 +108,7 @@ export const Content = (props) => {
     if(Object.keys(associations).length > 0 && query.has('grid-note')) {
       history.push(getNotificationRedirect(query.get('grid-note')));
     }
-  }, [location.search]);
+  }, [location.search, associations]);
 
   useShortcut('navForward', useCallback((e) => {
     e.preventDefault();

@@ -1,19 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import {
   Box,
   Col,
   Row,
   Text,
-  Button,
   Action,
-  LoadingSpinner,
-} from "@tlon/indigo-react";
-import * as Dialog from "@radix-ui/react-dialog";
-import { PropFunc } from "~/types";
-import { useRunIO } from "~/logic/lib/useRunIO";
-import useMetadataState from "~/logic/state/metadata";
-import { GroupSummary } from "~/views/landscape/components/GroupSummary";
+  LoadingSpinner
+} from '@tlon/indigo-react';
+import * as Dialog from '@radix-ui/react-dialog';
+import { PropFunc } from '~/types';
+import { useRunIO } from '~/logic/lib/useRunIO';
+import useMetadataState from '~/logic/state/metadata';
+import { GroupSummary } from '~/views/landscape/components/GroupSummary';
 import {
   accept,
   decline,
@@ -22,13 +21,13 @@ import {
   join,
   Metadata,
   MetadataUpdatePreview,
-  resourceFromPath,
-} from "@urbit/api";
-import useInviteState from "~/logic/state/invite";
-import useGroupState from "~/logic/state/group";
-import useGraphState from "~/logic/state/graph";
-import { useWaitForProps } from "~/logic/lib/useWaitForProps";
-import airlock from "~/logic/api";
+  resourceFromPath
+} from '@urbit/api';
+import useInviteState from '~/logic/state/invite';
+import useGroupState from '~/logic/state/group';
+import useGraphState from '~/logic/state/graph';
+import { useWaitForProps } from '~/logic/lib/useWaitForProps';
+import airlock from '~/logic/api';
 
 function InviteDialog({ children, ...rest }: PropFunc<typeof Col>) {
   return (
@@ -84,7 +83,7 @@ function inviteUrl(
     return `/~landscape${resource}`;
   }
 
-  if (metadata.config?.graph === "chat") {
+  if (metadata.config?.graph === 'chat') {
     return `/~landscape/messages/resource/${metadata.config.graph}${resource}`;
   } else {
     return `/~landscape/home/resource/${metadata.config?.graph}${resource}`;
@@ -94,9 +93,9 @@ function inviteUrl(
 function useInviteAccept(resource: string, app?: string, uid?: string) {
   const { ship, name } = resourceFromPath(resource);
   const history = useHistory();
-  const associations = useMetadataState((s) => s.associations);
-  const groups = useGroupState((s) => s.groups);
-  const graphKeys = useGraphState((s) => s.graphKeys);
+  const associations = useMetadataState(s => s.associations);
+  const groups = useGroupState(s => s.groups);
+  const graphKeys = useGraphState(s => s.graphKeys);
 
   const waiter = useWaitForProps({ associations, graphKeys, groups });
   return useRunIO<void, boolean>(
@@ -110,7 +109,6 @@ function useInviteAccept(resource: string, app?: string, uid?: string) {
       }
 
       await airlock.poke(join(ship, name));
-      await airlock.poke(accept(app, uid));
       await waiter((p) => {
         return (
           (resource in p.groups &&
@@ -119,10 +117,12 @@ function useInviteAccept(resource: string, app?: string, uid?: string) {
           resource in (p.associations?.groups ?? {})
         );
       });
+      airlock.poke(accept(app, uid));
       return true;
     },
     (success: boolean) => {
       if (!success) {
+        history.push('/');
         return;
       }
       const redir = inviteUrl(
@@ -147,11 +147,11 @@ export function Invite() {
     uid: string;
   }>();
 
-  const invite = useInviteState((s) => s.invites?.[app]?.[uid]);
+  const invite = useInviteState(s => s.invites?.[app]?.[uid]);
 
   return (
     <InviteDialog>
-      {!!invite ? (
+      {invite ? (
         <>
           {renderInviteContent(app, uid, invite)}
           <InviteActions app={app} uid={uid} invite={invite} />
@@ -166,7 +166,7 @@ export function Invite() {
 function InviteActions({
   app,
   uid,
-  invite,
+  invite
 }: {
   app: string;
   uid: string;
@@ -201,9 +201,9 @@ function InviteActions({
 
 function GroupInvite({ uid, invite }: { uid: string; invite: IInvite }) {
   const {
-    resource: { ship, name },
+    resource: { ship, name }
   } = invite;
-  const { associations, getPreview } = useMetadataState();
+  const { getPreview } = useMetadataState();
   const [preview, setPreview] = useState<MetadataUpdatePreview | null>(null);
   useEffect(() => {
     (async () => {
@@ -218,8 +218,8 @@ function GroupInvite({ uid, invite }: { uid: string; invite: IInvite }) {
   return preview ? (
     <GroupSummary
       metadata={preview.metadata}
-      channelCount={preview["channel-count"]}
-      memberCount={preview["members"]}
+      channelCount={preview['channel-count']}
+      memberCount={preview['members']}
     />
   ) : (
     <LoadingSpinner />
@@ -232,9 +232,9 @@ function GraphInvite({ uid, invite }: { uid: string; invite: IInvite }) {
 
 function renderInviteContent(app: string, uid: string, invite: IInvite) {
   switch (app) {
-    case "groups":
+    case 'groups':
       return <GroupInvite uid={uid} invite={invite} />;
-    case "graph":
+    case 'graph':
       return <GraphInvite uid={uid} invite={invite} />;
     default:
       return null;
