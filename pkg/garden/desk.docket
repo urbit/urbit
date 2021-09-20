@@ -1,7 +1,7 @@
 :~  title+'Garden'
     info+'An app launcher for Urbit.'
     color+0xee.5432
-    glob-http+'https://bootstrap.urbit.org/glob-0vk49j3.ne5gf.5viv2.ghlb4.r6b8n.glob'
+    glob-http+'https://bootstrap.urbit.org/glob-0v7.6df03.jjvhc.pac3p.mkoap.jfnoo.glob'
     ::glob-ames+~zod
     base+'grid'
     version+[0 0 1]
