@@ -1598,8 +1598,7 @@
         :~  :^  hen  %pass  /dist/[desk]/create
             %^  new-desk:cloy  desk
               (latest-tako desk)
-            %-  ~(run by (~(mup an:cloy ank.dom) /tmp/[desk]))
-            |=([* =mark * =noun] [mark noun])
+            ;;((map path page) (cue (get-tmp-jam desk)))
         ::
             :^  hen  %pass  /dist/[desk]/install
             [%g %deal [our our] %hood %poke %kiln-install !>([desk our desk])]
@@ -1611,6 +1610,17 @@
         ?~  doj=(~(get by dos.rom) desk)  ~
         =,  dom.u.doj
         (~(get by hit) let)
+      ::
+      ++  get-tmp-jam
+        |=  =desk
+        ^-  @
+        ~|  [%tmp desk]
+        ?~  tmp=(~(get by dir.ank.dom) ~.tmp)  !!
+        ?~  new=(~(get by dir.u.tmp) desk)     !!
+        ?~  fil.u.new                          !!
+        =*  fil  u.fil.u.new
+        ?>  =(%jam p.q.fil)
+        ;;(@ q.q.fil)
       --
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
