@@ -188,7 +188,7 @@
       =*  cha  ~(. ch desk.diff)
       ?+  -.diff  `state
       ::
-          %merge
+          %commit
         =*  cha  ~(. ch desk.diff)
         ?.  docket-exists:cha  `state
         =/  =docket  docket:cha

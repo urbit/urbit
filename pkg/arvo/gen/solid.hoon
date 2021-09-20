@@ -12,16 +12,43 @@
   !:
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        arg=$@(~ [top=path ~])
+      ::
+        ::  arg: desks to build pill from
+        ::
+        ::    list of desks. defaults to [%base]~.
+        ::    the first desk in this list will become the pill's base desk.
+        ::    optionally, the first desk may be replaced with a fully
+        ::    qualified path to the new boot system (typically in sys).
+        ::    the rest of the desks will be installed through kiln.
+        ::
+        $=  arg
+        $@  ~
+        $:  base=$@(desk [@ta @ta @ta path])
+            rest=(list desk)
+        ==
+      ::
         dub=_|
     ==
 :-  %pill
 ^-  pill:pill
 ::  sys: root path to boot system, `/~me/[desk]/now/sys`
+::  bas: root path to boot system' desk
+::  dez: secondary desks and their root paths
 ::
 =/  sys=path
-  ?^  arg  top.arg
-  /(scot %p p.bec)/[q.bec]/(scot %da now)/sys
+  ?:  ?=([^ *] arg)
+    `path`base.arg
+  =/  =desk
+    ?~  arg  %base
+    ?>(?=(@ base.arg) base.arg)
+  /(scot %p p.bec)/[desk]/(scot %da now)/sys
+=/  bas=path
+  (scag 3 sys)
+=/  dez=(list [desk path])
+  ?~  arg  ~
+  %+  turn  rest.arg
+  |=  =desk
+  [desk /(scot %p p.bec)/[desk]/(scot %da now)]
 ::
 =/  compiler-path  (weld sys /hoon)
 =/  arvo-path      (weld sys /arvo)
@@ -65,9 +92,10 @@
   =<  q
   %^    spin
       ^-  (list ovum)
-      :~  (boot-ovum:pill compiler-src arvo-src)
-          (file-ovum2:pill (flop (tail (flop sys))))
-      ==
+      :-  (boot-ovum:pill compiler-src arvo-src)
+      %+  turn
+        (snoc (turn dez tail) bas)
+      file-ovum2:pill
     .*(0 arvo-formula)
   |=  [ovo=ovum ken=*]
   [~ (slum ken [now ovo])]
@@ -99,5 +127,6 @@
 ::
 :+  %pill  %solid
 :+  boot-ova  ~
-=/  bas  (flop (tail (flop sys)))
-[(file-ovum:pill bas) ~]
+%+  turn
+  (snoc dez [%base bas])
+file-ovum:pill
