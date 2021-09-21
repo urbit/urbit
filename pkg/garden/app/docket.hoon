@@ -195,9 +195,6 @@
       ::
           %commit
         =*  cha  ~(. ch desk.diff)
-        =/  pre=(unit href)
-          ?~  cho=(~(get by charges) desk.diff)  ~
-          `href.docket.u.cho
         ?.  docket-exists:cha  `state
         =/  =docket  docket:cha
         ::  if the new chad is a site, we're instantly done
@@ -207,6 +204,9 @@
           state(charges (~(put by charges) desk.diff [docket [%site ~]]))
         ::  if the glob is unchanged, keep it
         ::
+        =/  pre=(unit href)
+          ?~  cho=(~(get by charges) desk.diff)  ~
+          `href.docket.u.cho
         ?:  =(pre `href.docket)
           [~[add-fact:cha] state]
         ::  if the glob changed, forget the old and fetch the new
@@ -469,14 +469,32 @@
         :_  [~ state]
         [[400 ~] `(upload-page err)]
       :-  [[200 ~] `(upload-page 'successfully globbed' ~)]
+      ?>  ?=(%glob -.href.docket.charge)
       ::
-      ::TODO  update docket file with new hash if it was [%ames our x]
       =.  charges  (new-chad:cha glob+glob)
       =.  by-base
         =-  (~(put by by-base) - desk)
-        ?>  ?=(%glob -.href.docket.charge)
         base.href.docket.charge
-      [~[add-fact:cha] state]
+      ::
+      :_  state
+      ::
+      =/  ours=?
+        =/  loc  glob-location.href.docket.charge
+        ?&  ?=(%ames -.loc)
+            =(our.bowl ship.loc)
+        ==
+      ::
+      :*  add-fact:cha
+        ::
+          ?.  ours  ~
+          ^-  (list card)
+          ::TODO  for some reason this doesn't give us a %commit fact?
+          =-  [%pass /write/[desk] %arvo %c %info -]~
+          %+  foal:space:userlib
+            /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket
+          =-  [%docket !>(`docket`-)]
+          docket.charge(glob-location.href [%ames our.bowl (hash-glob glob)])
+      ==
     ::
     ?~  parts=(de-request:multipart [header-list body]:request)
       ~&  headers=header-list.request
