@@ -168,6 +168,8 @@
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
       pud=(unit [=desk =yoki])                          ::  pending update
+      ::  REMOVE on next upgrade
+      dist-upgraded=_|                                  ::  are we in dist yet?
   ==                                                    ::
 ::
 ::  Object store.
@@ -1576,19 +1578,18 @@
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
     =.  ..park  (emil (print q.old-yaki data))
-    ::  TODO: replace with .dist-upgraded=? state
     ::
-    =?  ..park  &(updated =(%420 zuse))  migrate-dist
+    =?  ..park  &(updated !dist-upgraded.ruf)  migrate-dist
     ::
     wake:(ergo mim)
     ::
     ++  migrate-dist
-      ~&  %clay-migrating
+      ~>  %slog.0^'clay: migrating for third-party software distribution'
       |^  ^+  ..park
       =.  ..park  (install-from-tmp %base)
       =.  ..park  (install-from-tmp %garden)
       =.  ..park  (install-from-tmp %landscape)
-      ..park
+      ..park(dist-upgraded.ruf &)
       ::
       ++  install-from-tmp
         |=  =desk
@@ -4478,12 +4479,22 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%9 raft-9]
+        $%  [%10 raft-10]
+            [%9 raft-9]
             [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-9  raft
+      +$  raft-10  raft
+      +$  raft-9
+        $:  rom=room                                    ::  domestic
+            hoy=(map ship rung)                         ::  foreign
+            ran=rang                                    ::  hashes
+            mon=(map term beam)                         ::  mount points
+            hez=(unit duct)                             ::  sync duct
+            cez=(map @ta crew)                          ::  permission groups
+            pud=(unit [=desk =yoki])                    ::  pending update
+        ==                                              ::
       +$  raft-8
         $:  rom=room-8
             hoy=(map ship rung-8)
@@ -4599,7 +4610,8 @@
   =?  old  ?=(%6 -.old)  7+(raft-6-to-7 +.old)
   =?  old  ?=(%7 -.old)  8+(raft-7-to-8 +.old)
   =?  old  ?=(%8 -.old)  9+(raft-8-to-9 +.old)
-  ?>  ?=(%9 -.old)
+  =?  old  ?=(%9 -.old)  10+(raft-9-to-10 +.old)
+  ?>  ?=(%10 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -4662,6 +4674,11 @@
       =/  dom  dom.rede-8
       rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *ford-cache])
     ==
+  ::  +raft-9-to-10: add .dist-upgraded
+  ++  raft-9-to-10
+    |=  raf=raft-9
+    ^-  raft-10
+    raf(pud [pud.raf dist-upgraded=|])
   --
 ::
 ++  scry                                              ::  inspect
