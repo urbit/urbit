@@ -28,16 +28,22 @@ export const SystemMenu = ({ className, open, subMenuOpen, shouldDim }: SystemMe
   const hash = garden ? getHash(garden) : null;
   const isMobile = useMedia('(max-width: 639px)');
 
-  const copyHash = useCallback((event: Event) => {
-    event.preventDefault();
+  const copyHash = useCallback(
+    (event: Event) => {
+      event.preventDefault();
+      if (!hash) {
+        return;
+      }
 
-    setCopied(true);
-    clipboardCopy('fjuhl');
+      setCopied(true);
+      clipboardCopy(hash);
 
-    setTimeout(() => {
-      setCopied(false);
-    }, 1250);
-  }, []);
+      setTimeout(() => {
+        setCopied(false);
+      }, 1250);
+    },
+    [hash]
+  );
 
   const preventFlash = useCallback((e) => {
     const target = e.target as HTMLElement;

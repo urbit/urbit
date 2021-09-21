@@ -1,4 +1,5 @@
 import { DocketHref } from '@urbit/api/docket';
+import { hsla, parseToHsla } from 'color2k';
 
 export const useMockData = import.meta.env.MODE === 'mock';
 
@@ -32,4 +33,9 @@ export function deSig(ship: string): string {
     return '';
   }
   return ship.replace('~', '');
+}
+
+export function getDarkColor(color: string): string {
+  const hslaColor = parseToHsla(color);
+  return hsla(hslaColor[0], hslaColor[1], 1 - hslaColor[2], 1);
 }

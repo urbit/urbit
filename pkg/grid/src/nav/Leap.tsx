@@ -242,6 +242,7 @@ export const Leap = React.forwardRef(
             onFocus={onFocus}
             onChange={onChange}
             onKeyDown={onKeyDown}
+            autoComplete="off"
             aria-autocomplete="both"
             aria-controls={dropdown}
             aria-activedescendant={selectedMatch?.display || selectedMatch?.value}

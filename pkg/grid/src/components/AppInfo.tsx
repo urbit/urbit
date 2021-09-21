@@ -1,6 +1,6 @@
 import { chadIsRunning, Treaty } from '@urbit/api';
 import clipboardCopy from 'clipboard-copy';
-import React, { FC } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import cn from 'classnames';
 import { Vat } from '@urbit/api/hood';
 import { Button, PillButton } from './Button';
@@ -50,6 +50,7 @@ function getRemoteDesk(docket: App, vat?: Vat) {
 export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
   const installStatus = getInstallStatus(docket);
   const [ship, desk] = getRemoteDesk(docket, vat);
+  const [copied, setCopied] = useState(false);
 
   const installApp = async () => {
     if (installStatus === 'installed') {
@@ -57,15 +58,21 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
     }
     await useDocketState.getState().installDocket(ship, desk);
   };
-  const copyApp = () => {
-    clipboardCopy(`web+urbitgraph://app/${ship}/${desk}`);
-  };
+
+  const copyApp = useCallback(() => {
+    setCopied(true);
+    clipboardCopy(`web+urbitgraph://${ship}/${desk}`);
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 1250);
+  }, []);
 
   if (!docket) {
     // TODO: maybe replace spinner with skeletons
     return (
-      <div className="dialog-inner-container text-black">
-        <span>Loading...</span>
+      <div className="dialog-inner-container flex justify-center text-black">
+        <Spinner className="w-10 h-10" />
       </div>
     );
   }
@@ -115,7 +122,8 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
             </Dialog>
           )}
           <PillButton variant="alt-secondary" onClick={copyApp}>
-            Copy App Link
+            {!copied && 'Copy App Link'}
+            {copied && 'copied!'}
           </PillButton>
         </div>
       </DocketHeader>

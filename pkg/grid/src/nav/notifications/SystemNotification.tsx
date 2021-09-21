@@ -78,7 +78,8 @@ export const BaseBlockedNotification = () => {
           <DialogTrigger as={NotificationButton}>Dismiss</DialogTrigger>
           <DialogContent
             showClose={false}
-            className="max-w-[400px] space-y-6 text-base tracking-tight"
+            className="space-y-6 text-base tracking-tight"
+            containerClass="w-full max-w-md"
           >
             <h2 className="h4">Skip System Update</h2>
             <p>
@@ -108,7 +109,8 @@ export const BaseBlockedNotification = () => {
           <DialogContent
             showClose={false}
             onOpenAutoFocus={disableDefault}
-            className="max-w-[400px] space-y-6 text-base tracking-tight"
+            className="space-y-6 text-base tracking-tight"
+            containerClass="w-full max-w-md"
           >
             <h2 className="h4">Archive ({count}) Apps and Apply System Update</h2>
             <p>
