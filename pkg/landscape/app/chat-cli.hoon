@@ -1203,7 +1203,7 @@
       ::
           %app
         =,  reference.content
-        txt+"[reference to app: {(scow %p ship)}/{(trip desk)}{(trip path)}]"
+        txt+"[reference to app: {(scow %p ship)}/{(trip desk)}{(spud path)}]"
       ==
     ::
         %mention

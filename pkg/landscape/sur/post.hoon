@@ -29,7 +29,7 @@
 +$  reference
   $%  [%graph group=resource =uid]
       [%group group=resource]
-      [%app =ship =desk path=@ta]
+      [%app =ship =desk =path]
   ==
 ::
 +$  content

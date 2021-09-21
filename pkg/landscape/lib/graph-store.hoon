@@ -131,11 +131,11 @@
       s+(enjs-path:res grp)
     ::
     ++  app
-      |=  [=^ship =desk path=@ta]
+      |=  [=^ship =desk p=^path]
       %-  pairs
       :~  ship+s+(scot %p ship)
           desk+s+desk
-          path+s+path
+          path+(path p)
       ==
     --
   ::
@@ -414,7 +414,7 @@
         %-  ot
         :~  ship+(su ;~(pfix sig fed:ag))
             desk+so
-            path+so
+            path+pa
         ==
       --
     ::
@@ -503,6 +503,13 @@
       ^-  [resource update-log]
       [*resource *update-log]
     --
+  ++  pa
+    |=  j=json
+    ^-  path
+    ?>  ?=(%s -.j)
+    ?:  =('/' p.j)  /
+    (stab p.j)
+  ::
   --
 ::
 ++  create
