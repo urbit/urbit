@@ -1618,8 +1618,9 @@
         ~|  [%tmp desk]
         ?~  tmp=(~(get by dir.ank.dom) ~.tmp)  !!
         ?~  new=(~(get by dir.u.tmp) desk)     !!
-        ?~  fil.u.new                          !!
-        =*  fil  u.fil.u.new
+        ?~  jam=(~(get by dir.u.new) ~.jam)    !!
+        ?~  fil.u.jam                          !!
+        =*  fil  u.fil.u.jam
         ?>  =(%jam p.q.fil)
         ;;(@ q.q.fil)
       --
