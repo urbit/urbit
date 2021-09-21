@@ -280,8 +280,8 @@
         ?~  p.sign  `state
         %-  %-  slog
             leaf+"docket: failed to fetch glob over ames for {(trip desk)}"
-        ::TODO  maybe we want to retry, but with delay?
-        `state
+        =.  charges  (new-chad:cha hung+'failed to fetch glob via ames')
+        [~[add-fact:cha] state]
       ::
           %fact
         ?.  =(%glob p.cage.sign)
