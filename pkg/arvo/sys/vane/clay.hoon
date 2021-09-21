@@ -1622,7 +1622,7 @@
         ?~  fil.u.jam                          !!
         =*  fil  u.fil.u.jam
         ?>  =(%jam p.q.fil)
-        ;;(@ q.q.fil)
+        ;;(@ q.q.q.fil)
       --
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
