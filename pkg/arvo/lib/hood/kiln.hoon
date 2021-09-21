@@ -538,6 +538,8 @@
                 ?.  paused:ral
                   "kiln: {<lac>} already tracking, ignoring"
                 "kiln: {<lac>} resuming updates"
+    =/  rel  ral
+    =.  rail.rak  `rel(paused |)
     reset
   ::  +suspend: shut down all agents, keep syncing
   ::
