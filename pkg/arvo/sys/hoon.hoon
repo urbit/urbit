@@ -497,7 +497,7 @@
   =+  [n=nedl h=hstk]
   |-
   ?:  |(?=(~ n) ?=(~ h))
-     ~
+    ~
   ?:  =(i.n i.h)
     ?~  t.n
       `i
@@ -5186,7 +5186,7 @@
          ;~(plug hit hit)
 ++  nix  (boss 256 (star ;~(pose aln cab)))             ::
 ++  nud  (shim '0' '9')                                 ::  numeric
-++  prn  ;~(less (just `@`127) (shim 32 256))           ::  non-control
+++  prn  ;~(less (just `@`127) (shim 32 255))           ::  non-control
 ++  qat  ;~  pose                                       ::  chars in blockcord
              prn
              ;~(less ;~(plug (just `@`10) soz) (just `@`10))
@@ -5461,7 +5461,7 @@
           |=  [q=@ s=? r=tape]
           :-  !s
           %+  weld
-           (trip (?:(s tod:po tos:po) q))
+            (trip (?:(s tod:po tos:po) q))
           ?.(&(s !=(r "")) r ['-' r])
         ::
             %r
@@ -13231,9 +13231,9 @@
           ;~(pfix jump loan)
         ==
       ==
-   ::
-   ::  parses a or [a b c] or a  b  c  ==
-   ++  lynx
+    ::
+    ::  parses a or [a b c] or a  b  c  ==
+    ++  lynx
       =/  wid  (ifix [sel ser] (most ace sym))
       =/  tal
         ;~  sfix
