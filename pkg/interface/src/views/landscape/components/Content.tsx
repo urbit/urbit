@@ -114,6 +114,9 @@ export const Content = (props) => {
     const query = new URLSearchParams(location.search);
     if(mdLoaded && query.has('grid-note')) {
       history.push(getNotificationRedirect(query.get('grid-note')));
+    } else if(mdLoaded && query.has('grid-link')) {
+      const link = decodeURIComponent(query.get('grid-link')!);
+      history.push(`/perma${link}`);
     }
   }, [location.search, mdLoaded]);
 
