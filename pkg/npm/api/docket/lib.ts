@@ -20,6 +20,11 @@ export const scryTreaties: Scry = {
   path: '/treaties'
 };
 
+export const scryDefaultAlly: Scry = {
+  app: 'treaty',
+  path: '/default-ally'
+};
+
 export const scryAllies: Scry = {
   app: 'treaty',
   path: '/allies'

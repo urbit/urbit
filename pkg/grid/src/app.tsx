@@ -49,7 +49,8 @@ const AppRoutes = () => {
   useEffect(() => {
     window.name = 'grid';
 
-    const { fetchAllies, fetchCharges } = useDocketState.getState();
+    const { fetchDefaultAlly, fetchAllies, fetchCharges } = useDocketState.getState();
+    fetchDefaultAlly();
     fetchCharges();
     fetchAllies();
     const { fetchVats, fetchLag } = useKilnState.getState();
