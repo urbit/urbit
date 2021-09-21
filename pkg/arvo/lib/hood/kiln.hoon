@@ -383,7 +383,9 @@
     ~_  leaf/"kiln: {<lac>} not installed"
     vats(loc lac, rak (~(got by ark) lac))
   ::
-  ++  here  "{<loc>} from {<[ship desk]:ral>}"
+  ++  here  ?~  rail.rak  "{<loc>} from local"
+            "{<loc>} from {<[ship desk]:ral>}"
+  ::
   ++  make-wire  |=(step=@tas /kiln/vats/[loc]/[step])
   ++  from-wire
     |=  =wire
@@ -485,7 +487,7 @@
       ~>  %slog.0^leaf/"kiln: already tracking {here:(abed lac)}, ignoring"
       vats
     =:  loc  lac
-        rak  [`[| our lac *aeon ~] *rein]
+        rak  [~ *rein]
       ==
     ~>  %slog.0^leaf/"kiln: beginning install into {here}"
     =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
