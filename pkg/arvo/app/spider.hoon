@@ -547,7 +547,7 @@
   =+    .^
       =tube:clay
       %cc
-      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[output]/json
+      /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[output]/json
     ==
   :_  state(serving (~(del by serving.state) tid))
   %+  give-simple-payload:app:server  eyre-id

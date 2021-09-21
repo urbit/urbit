@@ -9,12 +9,14 @@ const { execSync } = require('child_process');
 const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
 
 let devServer = {
-  contentBase: path.join(__dirname, '../dist'),
+  contentBase: path.join(__dirname, '../public'),
   hot: true,
   port: 9000,
   host: '0.0.0.0',
   disableHostCheck: true,
-  historyApiFallback: true,
+  historyApiFallback: {
+    disableDotRule: true
+  },
   publicPath: '/apps/landscape/'
 };
 
@@ -24,17 +26,20 @@ if(urbitrc.URL) {
   devServer = {
     ...devServer,
     index: 'index.html',
-    proxy: [{
-      changeOrigin: true,
-      target: urbitrc.URL,
-      router,
-      context: (path) => {
-        if(path === '/apps/landscape/desk.js') {
-          return true;
-        }
-        return !path.startsWith('/apps/landscape');
-      }
-    }]
+    proxy: [
+      {
+        context: (path) => {
+          console.log(path);
+          if(path === '/apps/landscape/desk.js') {
+            return true;
+          }
+          return !path.startsWith('/apps/landscape');
+        },
+        changeOrigin: true,
+        target: urbitrc.URL,
+        router
+     }
+    ]
   };
 }
 

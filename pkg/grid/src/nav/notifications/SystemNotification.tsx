@@ -7,14 +7,9 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../../compone
 import { Elbow } from '../../components/icons/Elbow';
 import api from '../../state/api';
 import { useCharges } from '../../state/docket';
-import { BaseBlockedNotification as BaseBlockedNotificationType } from '../../state/hark-types';
 
 import { NotificationButton } from './NotificationButton';
 import { disableDefault } from '../../state/util';
-
-interface BaseBlockedNotificationProps {
-  notification: BaseBlockedNotificationType;
-}
 
 export const RuntimeLagNotification = () => (
   <section
@@ -40,8 +35,8 @@ export const RuntimeLagNotification = () => (
   </section>
 );
 
-export const BaseBlockedNotification = ({ notification }: BaseBlockedNotificationProps) => {
-  const { desks } = notification;
+export const BaseBlockedNotification = () => {
+  const desks: string[] = [];
   const charges = useCharges();
   const blockedCharges = Object.values(pick(charges, desks));
   const count = blockedCharges.length;

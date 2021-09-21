@@ -95,19 +95,10 @@ export default function Inbox(props: {
     })
   );
 
-  const scrollRef = useRef(null);
-
-  const { isDone, isLoading } = useLazyScroll(
-    scrollRef,
-    ready,
-    0.2,
-    _.flatten(notifications).length,
-    getMore
-  );
   const date = unixToDa(Date.now());
 
   return (
-    <Col p={1} ref={scrollRef} position="relative" height="100%" overflowY="auto" overflowX="hidden">
+    <Col p={1} position="relative" height="100%" overflowY="auto" overflowX="hidden">
       {runtimeLag && (
         <Box bg="yellow" borderRadius={2} p={2} m={2}>
           <Icon verticalAlign="middle" mr={2} icon="Tutorial" />
@@ -117,28 +108,6 @@ export default function Inbox(props: {
         </Box>
       )}
       <Invites pendingJoin={props.pendingJoin} />
-      <DaySection unread key="unread" timeboxes={[[date,unreadNotes]]} />
-      {[...notificationsByDayMap.keys()].sort().reverse().map((day, index) => {
-        const timeboxes = notificationsByDayMap.get(day)!;
-        return timeboxes.length > 0 && (
-          <DaySection
-            key={day}
-            timeboxes={timeboxes}
-          />
-        );
-      })}
-      {isDone ? (
-        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
-          <Text gray fontSize={1}>No more notifications</Text>
-        </Center>
-    )  : isLoading ? (
-        <Center mt={2} borderTop={notifications.length !== 0 ? 1 : 0} borderTopColor="lightGray" width="100%" height="96px">
-          <LoadingSpinner />
-        </Center>
-    ) : (
-      <Box mt={2} height="96px" />
-    )}
-
     </Col>
   );
 }

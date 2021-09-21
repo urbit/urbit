@@ -1,7 +1,9 @@
 ::  hark-graph-hook: notifications for graph-store [landscape]
 ::
 /-  post, group-store, metadata=metadata-store, hook=hark-graph-hook, store=hark-store
-/+  resource, mdl=metadata, default-agent, dbug, graph-store, graph, grouplib=group, store=hark-store
+/-  hist=hark-store-historical
+/+  resource, mdl=metadata, default-agent, dbug, graph-store, graph, grouplib=group
+/+  agentio
 ::
 ::
 ~%  %hark-graph-hook-top  ..part  ~
@@ -18,23 +20,34 @@
 +$  state-1
   [%1 base-state-0]
 ::
++$  state-2
+  [%2 base-state-1]
+::
 +$  base-state-0
   $:  watching=(set [resource index:post])
       mentions=_&
       watch-on-self=_&
   ==
 ::
++$  base-state-1
+  $:  watching=(set [resource index:post])
+      mentions=_&
+      watch-on-self=_&
+      places=(map resource place:store)
+  ==
+::
 ++  scry
   |*  [[our=@p now=@da] =mold p=path]
   ?>  ?=(^ p)
+  ~!  p
   ?>  ?=(^ t.p)
   .^(mold i.p (scot %p our) i.t.p (scot %da now) t.t.p)
 ::
 ++  scry-notif-conversion
   |=  [[our=@p now=@da] desk=term =mark]
-  ^-  $-(indexed-post:graph-store (unit notif-kind:hook))
+  ^-  $-(indexed-post:graph-store $-(cord (unit notif-kind:hook)))
   %^  scry  [our now]
-    $-(indexed-post:graph-store (unit notif-kind:hook))
+    $-(indexed-post:graph-store $-(cord (unit notif-kind:hook)))
   /cf/[desk]/[mark]/notification-kind
 --
 ::
@@ -52,6 +65,8 @@
     met   ~(. mdl bowl)
     grp   ~(. grouplib bowl)
     gra   ~(. graph bowl)
+    io    ~(. agentio bowl)
+    pass  pass:io
 ::
 ++  on-init
   :_  this
@@ -63,6 +78,7 @@
   ^-  (quip card _this)
   =+  !<(old=versioned-state vase)
   =|  cards=(list card)
+  =.  cards  [watch-graph:ha cards]
   |-
   ?:  ?=(%0 -.old)
     %_    $
@@ -103,12 +119,56 @@
   ?>  (team:title our.bowl src.bowl)
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
+        %hark-graph-migrate
+      =+  !<(old=versioned-state:hist vase)
+      ?.  ?=(%7 -.old)  ~|(%old-hark-dropping !!)
+      (hark-graph-migrate old)
+    ::
         %hark-graph-hook-action
       (hark-graph-hook-action !<(action:hook vase))
+    ::
         %noun
       (poke-noun !<(* vase))
     ==
   [cards this]
+  ::
+  ++  hark-graph-migrate
+    |=  old=state-7:hist
+    =|  cards=(list card)
+    |^ 
+    [(flop get-places) state]
+    ::
+    ++  hark
+      |=  =action:store
+      [(poke-our:pass %hark-store hark-action+!>(action)) cards]
+    ::
+    ++  get-places
+      ^-  (list card)
+      =/  stats-indices=(set stats-index:hist)
+        (~(uni in ~(key by last-seen.old)) ~(key by unreads-count.old))
+      %-  zing
+      (turn ~(tap in stats-indices) get-stats)
+    ::
+    ++  get-stats
+      |=  =stats-index:hist
+      ^-  (list card)
+      =/  place=(unit place:store)
+        (stats-index-to-place stats-index)
+      ?~  place  ~
+      =/  count  (~(get by unreads-count.old) stats-index)
+      =?  cards  ?=(^ count)
+        (hark %unread-count u.place & u.count)
+      =/  last   (~(get by last-seen.old) stats-index)
+      =?  cards  ?=(^ last)
+        (hark %saw-place u.place `u.last)
+      cards
+    ::
+    ++  stats-index-to-place
+      |=  =stats-index:hist
+      ^-  (unit place:store)
+      ?.  ?=(%graph -.stats-index)  ~
+      `(get-place [graph index]:stats-index)
+    --
   ::
   ++  poke-noun
     |=  non=*
@@ -202,7 +262,7 @@
       %-  ~(gas by *(set [resource index:graph-store]))
       (turn ~(tap in indices) (lead rid))
     :_  state(watching (~(dif in watching) to-remove))
-    =/  convert  (get-conversion:ha rid)
+    =/  convert  (get-conversion:ha rid '')
     %+  roll
       ~(tap in indices)
     |=  [=index:graph-store out=(list card)]
@@ -211,11 +271,11 @@
     =/  notif-kind=(unit notif-kind:hook)
       (convert indexed-post)
     ?~  notif-kind  out
-    =/  =stats-index:store
-      [%graph rid (scag parent.index-len.u.notif-kind index)]
+    =/  =place:store
+      (get-place rid index)
     ?.  ?=(%each mode.u.notif-kind)  out
     :_  out 
-    (poke-hark %read-each stats-index index)
+    (poke-hark %read-each place index)
   ::
   ++  poke-hark
     |=  =action:store
@@ -231,11 +291,8 @@
       =(r rid)
     :_  state(watching (~(dif in watching) unwatched))
     ^-  (list card)
-    :-  (poke-hark:ha %remove-graph rid)
-    %-  zing
-    %+  turn  ~(tap in unwatched)
-    |=  [r=resource =index:graph-store]
-    (give:ha ~[/updates] %ignore r index)
+    ~
+    ::  XX: fix
   ::
   ++  add-graph
     |=  rid=resource
@@ -280,15 +337,47 @@
     grp   ~(. grouplib bowl)
     gra   ~(. graph bowl)
 ::
+++  graph-index-to-path
+  |=  =index:graph-store
+  ^-  path
+  (turn index (cork (cury scot %ui) (cury rsh 4)))
+::
+++  summarize
+  |=  contents=(list content:post)
+  %+  rap  3
+  %+  join  ' '
+  %+  turn  contents
+  |=  =content:post
+  ?-  -.content
+    %text  text.content
+    %url   url.content
+    %code  '<Code fragment>'
+    %reference  '<A reference>'
+    %mention    (scot %p ship.content)
+  ==
+::
+++  get-place
+  |=  [rid=resource =index:graph-store]
+  :-  q.byk.bowl
+  (welp /graph/(scot %p entity.rid)/[name.rid] (graph-index-to-path index))
+::
+++  get-bin
+  |=  [rid=resource parent=index:graph-store is-mention=?]
+  ^-  bin:store
+  [?:(is-mention /mention /) (get-place rid parent)]
+::
 ++  get-conversion
-  |=  rid=resource
+  |=  [rid=resource title=cord]
   ^-  $-(indexed-post:graph-store (unit notif-kind:hook))
   =+  %^  scry  [our now]:bowl
          ,mark=(unit mark)
       /gx/graph-store/graph/(scot %p entity.rid)/[name.rid]/mark/noun
   ?~  mark
     |=(=indexed-post:graph-store ~)
-  (scry-notif-conversion [our now]:bowl q.byk.bowl u.mark)
+  =/  f=$-(indexed-post:graph-store $-(cord (unit notif-kind:hook)))
+    (scry-notif-conversion [our now]:bowl q.byk.bowl u.mark)
+  |=  =indexed-post:graph-store
+  ((f indexed-post) title)
 ::
 ++  give
   |=  [paths=(list path) =update:hook]
@@ -338,8 +427,11 @@
       (get-mark:gra r)
     update-core(rid r, updates upds, mark m)
   ::
+  ++  title
+    ~+  title:(fall (peek-metadatum:met %graph rid) *metadatum:metadata)
+  ::
   ++  get-conversion
-    ~+  (^get-conversion rid)
+    ~+  (^get-conversion rid title)
   ::
   ++  abet
     ^-  (quip card _state)
@@ -391,63 +483,65 @@
     =.  update-core  (check-node-children node)
     ?:  ?=(%| -.post.node)
       update-core
+    ::?~  mark  update-core
     =*  pos  p.post.node
     =/  notif-kind=(unit notif-kind:hook)
-      (get-conversion [0 pos])
+      (get-conversion [0 pos]) 
     ?~  notif-kind
       update-core
-    =/  desc=@t
-      ?:  (is-mention contents.pos)
-        %mention
-      name.u.notif-kind
     =*  not-kind  u.notif-kind
     =/  parent=index:post
       (scag parent.index-len.not-kind index.pos)
-    =/  notif-index=index:store
-      [%graph rid mark desc parent]
+    =/  is-mention  (is-mention contents.pos)
+    =/  =bin:store
+      (get-bin rid parent is-mention)
     ?:  =(our.bowl author.pos)
-      (self-post node notif-index not-kind)
+      (self-post node bin u.notif-kind)
     =.  update-core
-      (update-unread-count not-kind notif-index [time-sent index]:pos)
+      %^  update-unread-count  u.notif-kind  bin
+      (scag self.index-len.not-kind index.pos)
     =?    update-core
-        ?|  =(desc %mention)
+        ?|  is-mention
             (~(has in watching) [rid parent])
             =(mark `%graph-validator-dm)
         ==
-      =/  =contents:store
-        [%graph (limo pos ~)]
-      (add-unread notif-index [time-sent.pos %.n contents])
+      =/  link=path
+        (welp /(fall mark '')/(scot %p entity.rid)/[name.rid] (graph-index-to-path index.pos))
+      =/  title=(list content:store)
+        ?.  is-mention   title.not-kind
+        ~[text/(rap 3 'You were mentioned in ' title ~)]
+      =/  =body:store
+        [title body.not-kind now.bowl path.bin link]
+      (add-unread bin body)
     update-core
   ::
+  ::
   ++  update-unread-count
-    |=  [=notif-kind:hook =index:store time=@da ref=index:graph-store]
-    =/  =stats-index:store
-      (to-stats-index:store index)
+    |=  [=notif-kind:hook =bin:store =index:graph-store]
     ?-  mode.notif-kind 
-      %count  (hark %unread-count stats-index time)
-      %each   (hark %unread-each stats-index ref time)
+      %count  (hark %unread-count place.bin %.y 1)
+      %each   (hark %unread-each place.bin /(rsh 4 (scot %ui (rear index))))
       %none   update-core
     ==
   ::
+  ::
   ++  self-post
     |=  $:  =node:graph-store
-            =index:store
+            =bin:store
             =notif-kind:hook
         ==
     ^+  update-core 
     ?>  ?=(%& -.post.node)
-    =/  =stats-index:store
-      (to-stats-index:store index)
     =.  update-core
-      (hark %seen-index time-sent.p.post.node stats-index)
+      (hark %saw-place place.bin `now.bowl)
     =?  update-core  ?=(%count mode.notif-kind)
-      (hark %read-count stats-index)
+      (hark %read-count place.bin)
     =?  update-core  watch-on-self
       (new-watch index.p.post.node [watch-for index-len]:notif-kind)
     update-core
   ::
   ++  add-unread
-    |=  [=index:store =notification:store]
-    (hark %add-note index notification)
+    |=  [=bin:store =body:store]
+    (hark %add-note bin body)
   --
 --

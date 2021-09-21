@@ -58,4 +58,4 @@
   :~  (boot-ovum:pill compiler-source arvo-source)
       (file-ovum2:pill bas)
   ==
-[(file-ovum:pill bas) ~]
+[(file-ovum:pill %base bas) ~]

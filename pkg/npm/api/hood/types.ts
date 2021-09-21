@@ -37,6 +37,7 @@ export interface Arak {
   aeon: number;
   next: Woof[];
   rein: Rein;
+  paused: boolean;
 }
 
 /**

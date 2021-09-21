@@ -69,7 +69,6 @@
     ::
         [%desk @ ~]
       =*  desk  i.t.pax
-      ?>  (~(has by settings) desk)
       [~ this]
     ::
         [%bucket @ @ ~]
@@ -96,8 +95,8 @@
     ::
         [%x %desk @ ~]
       =*  desk  i.t.t.pax
-      ?~  desk-settings=(~(get by settings) desk)  [~ ~]
-      ``settings-data+!>(desk+u.desk-settings)
+      =/  desk-settings  (~(gut by settings) desk ~)
+      ``settings-data+!>(desk+desk-settings)
     ::
         [%x %bucket @ @ ~]
       =*  desk  i.t.t.pax

@@ -118,6 +118,7 @@
   --
 ::
 |_  =bowl:gall
+++  bec  byk.bowl(r da+now.bowl)
 ++  poke-spider
   |=  [=path our=@p =cage]
   ^-  card
@@ -138,7 +139,7 @@
   ^-  (list card)
   =/  tid=@ta
     :((cury cat 3) dap.bowl '--' node-id '--' (scot %uv eny.bowl))
-  =/  args  [~ `tid bec %eth-send-txs !>([node step txs]]
+  =/  args  [~ `tid bec %eth-send-txs !>([node step txs])]
   :~  (watch-spider /send/[tid] our.bowl /thread-result/[tid])
       (poke-spider /send/[tid] our.bowl %spider-start !>(args))
   ==
