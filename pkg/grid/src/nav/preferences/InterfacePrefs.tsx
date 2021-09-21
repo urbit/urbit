@@ -33,7 +33,12 @@ export function InterfacePrefs() {
   return (
     <>
       <h2 className="h3 mb-7">Interface Settings</h2>
-      <Setting on={protocolHandling} toggle={toggleProtoHandling} name="Handle Urbit links">
+      <Setting
+        on={protocolHandling}
+        toggle={toggleProtoHandling}
+        name="Handle Urbit links"
+        disabled={!window?.navigator?.registerProtocolHandler}
+      >
         <p>Automatically open urbit links with this urbit</p>
       </Setting>
     </>
