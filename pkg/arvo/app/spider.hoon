@@ -330,7 +330,7 @@
   =/  body=json  (need (de-json:html q.u.body.request.inbound-request))
   =/  input=vase  (slop !>(~) (tube !>(body)))
   =/  boc  bec
-  =/  =start-args  [~ `tid boc(q desk) thread input]
+  =/  =start-args  [~ `tid boc(q desk, r da+now.bowl) thread input]
   (handle-start-thread start-args)
 ::
 ++  on-poke-input
