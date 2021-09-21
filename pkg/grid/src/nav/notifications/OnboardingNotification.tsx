@@ -43,6 +43,16 @@ const cards: OnboardingCardProps[] = [
   // }
 ];
 
+if (window?.navigator?.registerProtocolHandler) {
+  cards.push({
+    title: 'Open Urbit-Native Links',
+    body: 'Enable your Urbit to open links you find in the wild',
+    button: 'Enable Link Handler',
+    color: '#82A6CA',
+    href: '/apps/grid/leap/system-preferences/interface'
+  });
+}
+
 interface OnboardingCardProps {
   title: string;
   button: string;
