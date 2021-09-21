@@ -4362,7 +4362,7 @@
       ;~(plug dot (plus nud))
     ::                                                  ::  ++jcha:de-json:html
     ++  jcha                                            ::  string character
-      ;~(pose ;~(less doq bas prn) esca)
+      ;~(pose ;~(less doq bas (shim 32 255)) esca)
     ::                                                  ::  ++mayb:de-json:html
     ++  mayb                                            ::  optional
       |*(bus=rule ;~(pose bus (easy ~)))
