@@ -18,11 +18,7 @@ interface Rein {
   sub: string[];
 }
 
-/**
- * A tracker of a foreign {@link Vat}
- *
- */
-export interface Arak {
+export interface Rail {
   /**
    * Ship of foreign vat
    */
@@ -36,8 +32,16 @@ export interface Arak {
    */
   aeon: number;
   next: Woof[];
-  rein: Rein;
   paused: boolean;
+}
+
+/**
+ * A tracker of a foreign {@link Vat}
+ *
+ */
+export interface Arak {
+  rein: Rein;
+  rail: Rail | null;
 }
 
 /**
