@@ -8,12 +8,12 @@
 =+  !<([~ loc=glob-location:docket base=term] arg)
 |^
 ?-  -.loc
-  %http  (fetch-http url.loc)
+  %http  (fetch-http +.loc)
   %ames  !!  ::NOTE  done within docket itself
 ==
 ::
 ++  fetch-http
-  |=  url=cord
+  |=  [url=cord hash=@uvH]
   ^-  form:m
   ;<  =glob:docket  bind:m
     %+  (retry:strandio ,glob:docket)  `5
@@ -22,6 +22,7 @@
     %-  pure:n
     %-  mole
     |.
+    =-  ?>(=(hash (sham -)) -)
     ;;(=glob:docket (cue cord))
   (pure:m !>(glob))
 --

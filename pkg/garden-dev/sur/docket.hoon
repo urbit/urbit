@@ -9,7 +9,7 @@
 ::  $glob-location: How to retrieve a glob
 ::
 +$  glob-location
-  $%  [%http =url]
+  $%  [%http =url hash=@uvH]
       [%ames =ship hash=@uvH]
   ==
 ::  $href: Where a tile links to
@@ -46,8 +46,8 @@
   $%  [%title title=@t]
       [%info info=@t]
       [%color color=@ux]
-      [%glob-http url=cord]
-      [%glob-ames =ship hash=@uv]
+      [%glob-http url=cord hash=@uvH]
+      [%glob-ames =ship hash=@uvH]
       [%image =url]
       [%site =path]
       [%base base=term]

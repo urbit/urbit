@@ -602,11 +602,12 @@
       ?:  =(our.bowl ship.loc)
         ~>  %slog.0^leaf/"docket: awaiting manual glob for {<desk>} desk"
         ~
+      ~>  %slog.0^leaf/"docket: fetching ames glob for {<desk>} desk"
       :_  ~
       %+  watch:(pass %glob-ames)
         [ship.loc %docket]
       /glob/[base.href.docket.charge]/(scot %uv hash.loc)
-    ~>  %slog.0^leaf/"docket: fetching glob for {<desk>} desk"
+    ~>  %slog.0^leaf/"docket: fetching http glob for {<desk>} desk"
     =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[loc desk])])
     :~  (watch-our:(pass %glob-http) %spider /thread-result/[tid])
         (poke-our:(pass %glob-http) %spider cage)

@@ -7,8 +7,8 @@
     $:  title=(unit @t)
         info=(unit @t)
         color=(unit @ux)
-        glob-http=(unit url)
-        glob-ames=(unit [=ship hash=@uv])
+        glob-http=(unit [=url hash=@uvH])
+        glob-ames=(unit [=ship hash=@uvH])
         base=(unit term)
         site=(unit path)
         image=(unit url)
@@ -60,7 +60,7 @@
         %title  draft(title `title.clause)
         %info   draft(info `info.clause)
         %color  draft(color `color.clause)
-        %glob-http   draft(glob-http `url.clause)
+        %glob-http   draft(glob-http `[url hash]:clause)
         %glob-ames   draft(glob-ames `[ship hash]:clause)
         %base   draft(base `base.clause)
         %site   draft(site `path.clause)
@@ -87,8 +87,8 @@
         =/  loc=glob-location  glob-location.href.d
         :~  base+base.href.d
             ?-  -.loc
-              %http  [%glob-http url.loc]
-              %ames  [%glob-ames ship.loc hash.loc]
+              %http  [%glob-http url hash]:loc
+              %ames  [%glob-ames ship hash]:loc
     ==  ==  ==
   ::
   ++  spit-clause
@@ -99,9 +99,12 @@
       %color  (scow %ux color.clause)
       %site   (spud path.clause)
     ::
+        %glob-http
+      "[{(trip url.clause)} {(scow %uv hash.clause)}]"
+    ::
         %glob-ames
       "[{(scow %p ship.clause)} {(scow %uv hash.clause)}]"
-      ::
+    ::
         %version
       =,  version.clause
       "[{(scow %ud major)} {(scow %ud minor)} {(scow %ud patch)}]"
@@ -178,7 +181,7 @@
     ^-  json
     %+  frond  -.loc
     ?-  -.loc
-      %http  (pairs url+s+url.loc ~)
+      %http  (pairs url+s+url.loc hash+s+(scot %uv hash.loc) ~)
       %ames  (pairs ship+(ship ship.loc) hash+s+(scot %uv hash.loc) ~)
     ==
   ::
