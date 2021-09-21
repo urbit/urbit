@@ -30,6 +30,7 @@ const associations = (json: MetadataUpdate, state: MetadataState): MetadataState
     });
 
     state.associations = metadata;
+    state.loaded = true;
   }
   return state;
 };
