@@ -224,8 +224,12 @@ function AppTile({ color, image, ...props }: AppTileProps) {
   );
 }
 
+window.navigator.registerProtocolHandler = undefined;
+
 function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
   const treaty = useTreaty(ship, desk);
+  const hasProtocolHandling = Boolean(window?.navigator?.registerProtocolHandler);
+  const href = hasProtocolHandling ? link : `/apps/grid/perma?ext=${link}`;
 
   useEffect(() => {
     if (!treaty) {
@@ -252,7 +256,7 @@ function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
           </Col>
         </Row>
         <ClampedText marginBottom={2} color="gray">{treaty?.info}</ClampedText>
-        <Button as="a" href={link} primary alignSelf="start" display="inline-flex" marginTop="auto">Open App</Button>
+        <Button as="a" href={href} primary alignSelf="start" display="inline-flex" marginTop="auto">Open App</Button>
       </Col>
     </Row>
   );
