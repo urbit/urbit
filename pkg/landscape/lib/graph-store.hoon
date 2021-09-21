@@ -115,6 +115,7 @@
     ?-  -.ref
       %graph  (graph +.ref)
       %group  (group +.ref)
+      %app    (app +.ref)
     ==
     ::
     ++  graph
@@ -128,6 +129,14 @@
     ++  group
       |=  grp=res
       s+(enjs-path:res grp)
+    ::
+    ++  app
+      |=  [=^ship =desk p=^path]
+      %-  pairs
+      :~  ship+s+(scot %p ship)
+          desk+s+desk
+          path+(path p)
+      ==
     --
   ::
   ++  maybe-post
@@ -391,6 +400,7 @@
       %-  of
       :~  graph+graph
           group+dejs-path:res
+          app+app
       ==
       ::
       ++  graph
@@ -398,6 +408,13 @@
         :~  group+dejs-path:res
             graph+dejs-path:res
             index+index
+        ==
+      ::
+      ++  app
+        %-  ot
+        :~  ship+(su ;~(pfix sig fed:ag))
+            desk+so
+            path+pa
         ==
       --
     ::
@@ -486,6 +503,13 @@
       ^-  [resource update-log]
       [*resource *update-log]
     --
+  ++  pa
+    |=  j=json
+    ^-  path
+    ?>  ?=(%s -.j)
+    ?:  =('/' p.j)  /
+    (stab p.j)
+  ::
   --
 ::
 ++  create

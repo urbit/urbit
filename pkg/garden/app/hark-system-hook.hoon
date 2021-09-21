@@ -48,7 +48,7 @@
       =+  !<(=diff:hood q.cage.sign)
       ?+  -.diff  `this
       ::
-          %merge
+          %commit
         =/  =action:hark  ~(updated de:cc desk.diff)
         :_  this
         ~[(poke:ha:cc action)]
