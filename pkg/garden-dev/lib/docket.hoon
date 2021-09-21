@@ -8,7 +8,7 @@
         info=(unit @t)
         color=(unit @ux)
         glob-http=(unit url)
-        glob-ames=(unit =ship)
+        glob-ames=(unit [=ship hash=@uv])
         base=(unit term)
         site=(unit path)
         image=(unit url)
@@ -61,7 +61,7 @@
         %info   draft(info `info.clause)
         %color  draft(color `color.clause)
         %glob-http   draft(glob-http `url.clause)
-        %glob-ames   draft(glob-ames `ship:clause)
+        %glob-ames   draft(glob-ames `[ship hash]:clause)
         %base   draft(base `base.clause)
         %site   draft(site `path.clause)
         %image  draft(image `url.clause)
@@ -88,7 +88,7 @@
         :~  base+base.href.d
             ?-  -.loc
               %http  [%glob-http url.loc]
-              %ames  [%glob-ames ship.loc]
+              %ames  [%glob-ames ship.loc hash.loc]
     ==  ==  ==
   ::
   ++  spit-clause
@@ -98,7 +98,9 @@
     ?+  -.clause  "'{(trip +.clause)}'"
       %color  (scow %ux color.clause)
       %site   (spud path.clause)
-      %glob-ames  (scow %p ship.clause)
+    ::
+        %glob-ames
+      "[{(scow %p ship.clause)} {(scow %uv hash.clause)}]"
       ::
         %version
       =,  version.clause
@@ -127,10 +129,10 @@
     ?-  -.u
       %del-charge  s+desk.u
     ::
-        %initial  
+        %initial
       %-  pairs
       %+  turn  ~(tap by initial.u)
-      |=([=desk c=^charge] [desk (charge c)]) 
+      |=([=desk c=^charge] [desk (charge c)])
     ::
         %add-charge
       %-  pairs
@@ -177,7 +179,7 @@
     %+  frond  -.loc
     ?-  -.loc
       %http  (pairs url+s+url.loc ~)
-      %ames  (ship ship.loc)
+      %ames  (pairs ship+(ship ship.loc) hash+s+(scot %uv hash.loc) ~)
     ==
   ::
   ++  charge

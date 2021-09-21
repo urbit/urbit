@@ -10,7 +10,7 @@
 ::
 +$  glob-location
   $%  [%http =url]
-      [%ames =ship]
+      [%ames =ship hash=@uvH]
   ==
 ::  $href: Where a tile links to
 ::
@@ -24,9 +24,9 @@
   $%  :: Done
       [%glob =glob]
       [%site ~]
-      :: Waiting 
+      :: Waiting
       [%install ~]
-      [%suspend ~]
+      [%suspend glob=(unit glob)]
       :: Error
       [%hung err=cord]
   ==
@@ -47,7 +47,7 @@
       [%info info=@t]
       [%color color=@ux]
       [%glob-http url=cord]
-      [%glob-ames =ship]
+      [%glob-ames =ship hash=@uv]
       [%image =url]
       [%site =path]
       [%base base=term]
@@ -62,7 +62,7 @@
   $:  %1
       title=@t
       info=@t
-      color=@ux 
+      color=@ux
       =href
       image=(unit url)
       =version

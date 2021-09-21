@@ -9,7 +9,7 @@
 |^
 ?-  -.loc
   %http  (fetch-http url.loc)
-  %ames  (fetch-ames ship.loc base)
+  %ames  !!  ::NOTE  done within docket itself
 ==
 ::
 ++  fetch-http
@@ -24,14 +24,4 @@
     |.
     ;;(=glob:docket (cue cord))
   (pure:m !>(glob))
-::
-::  download from ship's docket state
-++  fetch-ames
-  |=  [=ship base=term]
-  ^-  form:m
-  ;<  =bowl:spider  bind:m  get-bowl:strandio
-  ;<  =cage  bind:m
-    (watch-one:strandio /glob/(scot %da now.bowl) [ship %docket] /glob/[base])
-  ?>  ?=(%glob p.cage)
-  (pure:m q.cage)
 --
