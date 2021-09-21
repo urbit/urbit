@@ -87,7 +87,7 @@ export function referenceToPermalink({ reference }: ReferenceContent): Permalink
     const { ship, desk, path } = reference.app;
     return {
       type: 'app',
-      link: `web+urbitgraph://${ship}/${desk}/${path}`,
+      link: `web+urbitgraph://${ship}/${desk}${path}`,
       ship,
       desk,
       path
@@ -120,7 +120,7 @@ export function parsePermalink(url: string): Permalink | null {
 
   if (isValidPatp(kind)) {
     const [desk, ...parts] = rest;
-    const path = parts.join('/');
+    const path = '/' + parts.join('/');
     return {
       type: 'app',
       link: url,
