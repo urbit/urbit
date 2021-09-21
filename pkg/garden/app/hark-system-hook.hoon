@@ -48,7 +48,8 @@
       =+  !<(=diff:hood q.cage.sign)
       ?+  -.diff  `this
       ::
-          %merge
+          %commit
+        ?.  |(=(desk.diff %base) ~(has-docket de:cc desk.diff))  `this
         =/  =action:hark  ~(updated de:cc desk.diff)
         :_  this
         ~[(poke:ha:cc action)]
@@ -118,9 +119,9 @@
   ++  hash    .^(@uv %cz (scry:io desk ~))
   ++  place    `place:hark`[q.byk.bowl /desk/[desk]]
   ++  body
-    |=  [=path title=cord content=cord]
+    |=  [=path title=cord content=(unit cord)]
     ^-  body:hark
-    [~[text+title] ~[text+content] now.bowl ~ path]
+    [~[text+title] ?~(content ~ ~[text/u.content]) now.bowl ~ path]
   ::
   ::
   ++  title-prefix
@@ -128,23 +129,25 @@
     ?:  =(desk %base)
       'System software'
     ?:  has-docket  
-      (rap 3 'App: ' title:docket cord ~)
+      (rap 3 'App: "' title:docket '"' cord ~)
     (rap 3 'Desk: ' desk cord ~)
+  ::
+  ++  get-version
+    ?:  has-docket
+      (rap 3 'version: ' (ver version:docket) ~)
+    (rap 3 'hash: ' (scot %uv hash) ~)
   ::
   ++  updated
     ^-  action:hark
     :+  %add-note  [/update place]
-    %^  body  /desk/[desk]  (title-prefix ' has been updated')
-    ?:  has-docket
-      (rap 3 'Version: ' (ver version:docket) ~)
-    (rap 3 'Hash: ' (scot %uv hash) ~)
+    (body /desk/[desk] (title-prefix (rap 3 ' has been updated to ' get-version ~)) ~)
   ::
   ++  blocked
     |=  blockers=(set ^desk)
     ^-  action:hark
     :+  %add-note  [/blocked place]
     %^  body  /blocked  (title-prefix ' is blocked from upgrading')
-    (rap 3 'Blocking desks: ' (join ', ' ~(tap in blockers)))
+    `(rap 3 'Blocking desks: ' (join ', ' ~(tap in blockers)))
   ::
   ++  ver
     |=  =version:^docket
