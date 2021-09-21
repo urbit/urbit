@@ -21,6 +21,8 @@ import _ from 'lodash';
 import api from './api';
 import { useSettingsState } from './settings';
 import { BaseState, createState, createSubscription, reduceStateN } from './base';
+import { mockNotifications } from './mock-data';
+import { useMockData } from './util';
 
 export interface HarkState {
   seen: Timebox;
@@ -65,7 +67,7 @@ export const useHarkStore = createState<HarkState>(
   'Hark',
   (set, get) => ({
     seen: {},
-    unseen: {},
+    unseen: useMockData ? mockNotifications : {},
     archive: new BigIntOrderedMap<Timebox>(),
     webNotes: {},
     notificationsGraphConfig: {
@@ -97,7 +99,7 @@ export const useHarkStore = createState<HarkState>(
       reduceHark(update);
     }
   }),
-  ['archive'],
+  ['archive', 'unseen', 'seen'],
   [
     (set, get) =>
       createSubscription('hark-graph-hook', '/updates', (j) => {

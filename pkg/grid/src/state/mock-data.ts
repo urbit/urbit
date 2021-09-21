@@ -11,7 +11,9 @@ import {
   HarkBody,
   unixToDa,
   Contact,
-  Contacts
+  Contacts,
+  Timebox,
+  harkBinToId
 } from '@urbit/api';
 import _ from 'lodash';
 import systemUrl from '../assets/system.png';
@@ -216,7 +218,7 @@ function createGroupNotif(to: string): HarkBody {
 
 window.desk = window.desk || 'garden';
 
-function createMockSysNotification(path: string) {
+function createMockSysNotification(path: string, body: HarkBody[] = []) {
   return {
     bin: {
       place: {
@@ -226,13 +228,23 @@ function createMockSysNotification(path: string) {
       path: '/'
     },
     time: Date.now() - 3_600,
-    body: []
+    body
   };
 }
 
 const lag = createMockSysNotification('/lag');
 const blocked = createMockSysNotification('/blocked');
 const onboard = createMockSysNotification('/onboard');
+
+const updateNotification = createMockSysNotification('/desk/bitcoin', [
+  {
+    title: [{ text: 'App "Bitcoin" updated to version 1.0.1' }],
+    time: '',
+    content: [],
+    link: '/desk/bitcoin',
+    binned: '/'
+  }
+]);
 
 export function createMockNotification(desk: string, body: HarkBody[]): Notification {
   return {
@@ -248,17 +260,21 @@ export function createMockNotification(desk: string, body: HarkBody[]): Notifica
   };
 }
 
-export const mockNotifications: Notification[] = [
-  lag,
-  blocked,
-  onboard,
-  createMockNotification('groups', [
-    createDmNotification(text('ie the hook agent responsible for marking the notifications')),
-    createDmNotification(ship('~hastuc-dibtux'), text(' sent a link'))
-  ]),
-  createMockNotification('bitcoin-wallet', [createBitcoinNotif('0.025 BTC')]),
-  createMockNotification('groups', [createGroupNotif('a Group: Tlon Corporation')])
-];
+export const mockNotifications: Timebox = _.keyBy(
+  [
+    lag,
+    blocked,
+    onboard,
+    updateNotification,
+    createMockNotification('groups', [
+      createDmNotification(text('ie the hook agent responsible for marking the notifications')),
+      createDmNotification(ship('~hastuc-dibtux'), text(' sent a link'))
+    ]),
+    createMockNotification('bitcoin-wallet', [createBitcoinNotif('0.025 BTC')]),
+    createMockNotification('groups', [createGroupNotif('a Group: Tlon Corporation')])
+  ],
+  (not) => harkBinToId(not.bin)
+);
 
 const contact: Contact = {
   nickname: '',
