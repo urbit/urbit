@@ -9,7 +9,7 @@ import { getAppHref } from '../state/util';
 function getDeskByForeignRef(ship: string, desk: string): string | undefined {
   const { vats } = useKilnState.getState();
   const found = Object.entries(vats).find(
-    ([, vat]) => vat.arak.ship === ship && vat.arak.desk === desk
+    ([, vat]) => vat.arak.rail?.ship === ship && vat.arak.rail?.desk === desk
   );
   return found ? found[0] : undefined;
 }
@@ -23,6 +23,7 @@ type AppLinkProps = RouteComponentProps<{
 function AppLink({ match, history, location }: AppLinkProps) {
   const { ship, desk, link = '' } = match.params;
   const ourDesk = getDeskByForeignRef(ship, desk);
+  console.log(ourDesk);
 
   if (ourDesk) {
     return <AppLinkRedirect desk={ourDesk} link={link} />;
@@ -55,13 +56,13 @@ function AppLinkRedirect({ desk, link }: { desk: string; link: string }) {
   return <Redirect to="/" />;
 }
 
-const LANDSCAPE_SHIP = '~zod';
-const LANDSCAPE_DESK = 'groups';
+const LANDSCAPE_DESK = 'landscape';
+const LANDSCAPE_HOST = '~zod';
 
 function LandscapeLink({ match }: RouteComponentProps<{ link: string }>) {
   const { link } = match.params;
 
-  return <Redirect to={`/perma/${LANDSCAPE_SHIP}/${LANDSCAPE_DESK}/${link}`} />;
+  return <Redirect to={`/perma/${LANDSCAPE_HOST}/${LANDSCAPE_DESK}/group/${link}`} />;
 }
 
 export function PermalinkRoutes() {

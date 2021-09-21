@@ -9,8 +9,8 @@ export const AppPrefs = ({ match }: RouteComponentProps<{ desk: string }>) => {
   const { desk } = match.params;
   const charge = useCharge(desk);
   const vat = useVat(desk);
-  const otasEnabled = !vat?.arak.paused;
-  const otaSource = vat?.arak.ship;
+  const otasEnabled = !vat?.arak.rail?.paused;
+  const otaSource = vat?.arak.rail!.ship;
   const toggleOTAs = useKilnState((s) => s.toggleOTAs);
 
   const toggleUpdates = useCallback((on: boolean) => toggleOTAs(desk, on), [desk, toggleOTAs]);

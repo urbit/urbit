@@ -39,7 +39,10 @@ const useKilnState = create<KilnState>((set, get) => ({
       await fakeRequest('');
       set(
         produce((draft: KilnState) => {
-          draft.vats.base.arak.ship = ship;
+          if (!draft.vats.base.arak.rail) {
+            return;
+          }
+          draft.vats.base.arak.rail.ship = ship;
         })
       );
       return;
@@ -53,11 +56,14 @@ const useKilnState = create<KilnState>((set, get) => ({
       set(
         produce((draft: KilnState) => {
           const { arak } = draft.vats[desk];
+          if (!arak.rail) {
+            return;
+          }
 
           if (on) {
-            arak.paused = false;
+            arak.rail.paused = false;
           } else {
-            arak.paused = true;
+            arak.rail.paused = true;
           }
         })
       );

@@ -36,8 +36,8 @@ function getInstallStatus(docket: App): InstallStatus {
 }
 
 function getRemoteDesk(docket: App, vat?: Vat) {
-  if (vat) {
-    const { ship, desk } = vat!.arak;
+  if (vat && vat.arak.rail) {
+    const { ship, desk } = vat.arak.rail;
     return [ship, desk];
   }
   if ('chad' in docket) {

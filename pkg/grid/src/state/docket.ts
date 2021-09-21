@@ -252,6 +252,8 @@ export function allyForTreaty(ship: string, desk: string) {
   return ally;
 }
 
+export const landscapeTreatyHost = import.meta.env.LANDSCAPE_HOST as string;
+
 // xx useful for debugging
 window.docket = useDocketState.getState;
 
