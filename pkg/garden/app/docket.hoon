@@ -196,25 +196,37 @@
           %commit
         =*  cha  ~(. ch desk.diff)
         ?.  docket-exists:cha  `state
-        =/  =docket  docket:cha
+        ::  always update the docket in state to match clay's
+        ::
+        =/  =docket            docket:cha
+        =/  pre=(unit charge)  (~(get by charges) desk.diff)
+        =.  charges            (new-docket:cha docket)
         ::  if the new chad is a site, we're instantly done
         ::
         ?:  ?=(%site -.href.docket)
           :-  ~[add-fact:cha]
-          state(charges (~(put by charges) desk.diff [docket [%site ~]]))
-        ::  if the glob is unchanged, keep it
+          =.  charges  (new-chad:cha %site ~)
+          state
         ::
-        =/  pre=(unit href)
-          ?~  cho=(~(get by charges) desk.diff)  ~
-          `href.docket.u.cho
-        ?:  =(pre `href.docket)
+        =.  by-base  (~(put by by-base) base.href.docket desk.diff)
+        ::  if the glob specification is unchanged, keep it
+        ::
+        ?:  &(?=(^ pre) =(href.docket.u.pre `href.docket))
+          [~[add-fact:cha] state]
+        ::  if the glob spec changed, but we already host it, keep it
+        ::  (this is the "just locally uploaded" case)
+        ::
+        ?:  ?&  ?=(^ pre)
+                ?=(%glob -.chad.u.pre)
+              ::
+                .=  [%ames our.bowl (sham glob.chad.u.pre)]
+                glob-location.href.docket
+            ==
           [~[add-fact:cha] state]
         ::  if the glob changed, forget the old and fetch the new
         ::
-        =.  charges  (~(put by charges) desk.diff [docket %install ~])
-        =.  by-base  (~(put by by-base) base.href.docket desk.diff)
-        :_  state
-        [add-fact:cha fetch-glob:cha]
+        =.  charges  (new-chad:cha %install ~)
+        [[add-fact:cha fetch-glob:cha] state]
       ::
           %suspend
         ?.  (~(has by charges) desk.diff)  `state
@@ -488,7 +500,6 @@
         ::
           ?.  ours  ~
           ^-  (list card)
-          ::TODO  for some reason this doesn't give us a %commit fact?
           =-  [%pass /write/[desk] %arvo %c %info -]~
           %+  foal:space:userlib
             /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket
@@ -589,6 +600,7 @@
     (poke-our:(pass %install) %hood kiln-install+!>([desk ship remote]))
   ++  uninstall
     (poke-our:(pass %uninstall) %hood kiln-uninstall+!>(desk))
+  ++  new-docket  |=(d=^docket (~(jab by charges) desk |=(charge +<(docket d))))
   ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
   ++  fetch-glob
     ^-  (list card)
