@@ -3,18 +3,18 @@
 #include "all.h"
 #include <urcrypt.h>
 
-#define defw(bits) \
+#define defw(bits,byts) \
   u3_atom \
   _kecc_##bits(c3_w len_w, u3_atom a) \
   { \
-    c3_y    out[bits]; \
-    c3_y*   buf_y = u3r_bytes_alloc(0, len_w, a); \
+    c3_y  out[byts]; \
+    c3_y* buf_y = u3r_bytes_alloc(0, len_w, a); \
     if ( 0 != urcrypt_keccak_##bits(buf_y, len_w, out) ) { \
       /* urcrypt_keccac_##bits always succeeds when called correctly */ \
       return u3m_bail(c3__oops); \
     } \
     else { \
-      u3_atom pro = u3i_bytes(bits, buf_y); \
+      u3_atom pro = u3i_bytes(byts, out); \
       u3a_free(buf_y); \
       return pro; \
     } \
@@ -33,7 +33,7 @@
       : _kecc_##bits(len_w, tom); \
   }
 
-defw(224)
-defw(256)
-defw(384)
-defw(512)
+defw(224, 28)
+defw(256, 32)
+defw(384, 48)
+defw(512, 64)
