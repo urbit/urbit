@@ -1,6 +1,9 @@
 /-  docket, *treaty
 /+  default-agent, agentio, verb, dbug
 |%
+::  TODO: update before livenet deploy
+++  default-ally  ~zod
+::
 +$  card  card:agent:gall
 +$  state-0
   $:  treaties=(map [=ship =desk] treaty)
@@ -23,9 +26,8 @@
     pass  pass:io
     cc    ~(. +> bowl)
 ++  on-init  
-  =/  sponsor=ship  (sein:title [our now our]:bowl)
-  ?:  =(our.bowl sponsor)  `this
-  (on-poke %ally-update-0 !>([%add sponsor]))
+  ?:  =(our.bowl default-ally)  `this
+  (on-poke %ally-update-0 !>([%add default-ally]))
 ++  on-save  !>(state)
 ++  on-load
   |=  =vase
@@ -120,8 +122,9 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
-    [%x %alliance ~]  ``(alliance-update:cg:ca %ini entente)
-    [%x %allies ~]    ``(ally-update:cg:ca %ini allies)
+    [%x %alliance ~]      ``(alliance-update:cg:ca %ini entente)
+    [%x %default-ally ~]  ``ship+!>(default-ally)
+    [%x %allies ~]        ``(ally-update:cg:ca %ini allies)
   ::
      [%x %treaties @ ~]
     =/  =ship  (slav %p i.t.t.path)

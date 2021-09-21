@@ -9,6 +9,7 @@ import {
   scryAllies,
   scryAllyTreaties,
   scryCharges,
+  scryDefaultAlly,
   Treaty,
   Docket,
   Treaties,
@@ -40,7 +41,9 @@ interface DocketState {
   charges: ChargesWithDesks;
   treaties: Treaties;
   allies: Allies;
+  defaultAlly: string | null;
   fetchCharges: () => Promise<void>;
+  fetchDefaultAlly: () => Promise<void>;
   requestTreaty: (ship: string, desk: string) => Promise<Treaty>;
   fetchAllies: () => Promise<Allies>;
   fetchAllyTreaties: (ally: string) => Promise<Treaties>;
@@ -50,6 +53,11 @@ interface DocketState {
 }
 
 const useDocketState = create<DocketState>((set, get) => ({
+  defaultAlly: useMockData ? '~zod' : null,
+  fetchDefaultAlly: async () => {
+    const defaultAlly = await api.scry<string>(scryDefaultAlly);
+    set({ defaultAlly });
+  },
   fetchCharges: async () => {
     const charg = useMockData
       ? await fakeRequest(mockCharges)

@@ -10,7 +10,7 @@ import { ProviderList } from '../../components/ProviderList';
 import { AppLink } from '../../components/AppLink';
 import { ShipName } from '../../components/ShipName';
 import { ProviderLink } from '../../components/ProviderLink';
-import { DocketWithDesk, useCharges } from '../../state/docket';
+import useDocketState, { DocketWithDesk, useCharges } from '../../state/docket';
 import { getAppHref } from '../../state/util';
 import useContactState from '../../state/contact';
 
@@ -75,7 +75,9 @@ export const Home = () => {
   const charges = useCharges();
   const groups = charges?.groups;
   const contacts = useContactState((s) => s.contacts);
-  const zod = { shipName: '~zod', ...contacts['~zod'] };
+  const defaultAlly = useDocketState((s) =>
+    s.defaultAlly ? { shipName: s.defaultAlly, ...contacts[s.defaultAlly] } : null
+  );
   const providerList = recentDevs.map((d) => ({ shipName: d, ...contacts[d] }));
 
   useEffect(() => {
@@ -125,15 +127,15 @@ export const Home = () => {
       {recentDevs.length === 0 && (
         <div className="min-h-[150px] p-6 rounded-xl bg-gray-50">
           <p className="mb-4">Urbit app developers you search for will be listed here.</p>
-          {zod && (
+          {defaultAlly && (
             <>
               <p className="mb-6">
-                Try out app discovery by visiting <ShipName name="~zod" /> below.
+                Try out app discovery by visiting <ShipName name={defaultAlly.shipName} /> below.
               </p>
               <ProviderLink
-                provider={zod}
+                provider={defaultAlly}
                 size="small"
-                onClick={() => addRecentDev(zod.shipName)}
+                onClick={() => addRecentDev(defaultAlly.shipName)}
               />
             </>
           )}
