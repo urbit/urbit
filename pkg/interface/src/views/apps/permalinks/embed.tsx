@@ -1,5 +1,5 @@
-import { BaseAnchor, Box, Button, Center, Col, H3, Icon, Image, Row, Text } from '@tlon/indigo-react';
-import { Association, GraphNode, resourceFromPath, GraphConfig } from '@urbit/api';
+import { BaseAnchor, Box, BoxProps, Button, Center, Col, H3, Icon, Image, Row, Text } from '@tlon/indigo-react';
+import { Association, GraphNode, resourceFromPath, GraphConfig, Treaty } from '@urbit/api';
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { Link, useLocation } from 'react-router-dom';
@@ -196,6 +196,34 @@ const ClampedText = styled(Text)`
   overflow: hidden;
 `;
 
+type AppTileProps = Treaty & BoxProps;
+
+function AppTile({ color, image, ...props }: AppTileProps) {
+  return (
+    <Box
+      position="relative"
+      flex="none"
+      height={['48px', '132px']}
+      width={['48px', '132px']}
+      marginRight={3}
+      borderRadius={3}
+      bg={color || 'gray'}
+      {...props}
+    >
+      {image && (
+        <Image
+          src={image}
+          position="absolute"
+          top="0"
+          left="0"
+          width="100%"
+          height="100%"
+        />
+      )}
+    </Box>
+  );
+}
+
 function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
   const treaty = useTreaty(ship, desk);
 
@@ -208,34 +236,21 @@ function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
   return (
     <Row
       display="inline-flex"
-      width="500px"
+      width="100%"
+      maxWidth="500px"
       padding={3}
       bg="washedGray"
       borderRadius={3}
     >
-      <Box
-        position="relative"
-        flex="none"
-        height="132px"
-        width="132px"
-        marginRight={3}
-        borderRadius={3}
-        bg={treaty?.color || 'gray'}
-      >
-        {treaty?.image && (
-          <Image
-            src={treaty.image}
-            position="absolute"
-            top="0"
-            left="0"
-            width="100%"
-            height="100%"
-          />
-        )}
-      </Box>
+      {treaty && <AppTile display={['none', 'block']} {...treaty} />}
       <Col>
-        <H3 color="black">{treaty?.title}</H3>
-        {treaty?.ship && <Author ship={treaty?.ship} showImage dontShowTime={true} marginBottom={2} />}
+        <Row flexDirection={['row', 'column']} alignItems={['center', 'start']} marginBottom={2}>
+          {treaty && <AppTile display={['block', 'none']} {...treaty} />}
+          <Col>
+            <H3 color="black">{treaty?.title}</H3>
+            {treaty?.ship && <Author ship={treaty?.ship} showImage dontShowTime={true} />}
+          </Col>
+        </Row>
         <ClampedText marginBottom={2} color="gray">{treaty?.info}</ClampedText>
         <Button as="a" href={link} primary alignSelf="start" display="inline-flex" marginTop="auto">Open App</Button>
       </Col>
