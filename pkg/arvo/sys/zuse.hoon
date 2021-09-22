@@ -4345,10 +4345,12 @@
           =*  lip
             ^-  (list (pair @t @))
             [b+8 t+9 n+10 f+12 r+13 ~]
-          =*  wow  `(map @t @)`(malt lip)
+          =*  wow
+            ^~
+            ^-  (map @t @)
+            (malt lip)
           (sear ~(get by wow) low)
-        =*  tuf  ;~(pfix (just 'u') (cook tuft qix:ab))
-        ;~(pose doq fas bas loo tuf)
+        ;~(pose doq fas bas loo unic)
       ==
     ::                                                  ::  ++expo:de-json:html
     ++  expo                                            ::  exponent
@@ -4400,6 +4402,49 @@
     ::                                                  ::  ++spac:de-json:html
     ++  spac                                            ::  whitespace
       (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
+    ::                                                  ::  ++unic:de-json:html
+    ++  unic                                            ::  escaped UTF16
+      =*  lob  0x0
+      =*  hsb  0xd800
+      =*  lsb  0xdc00
+      =*  hib  0xe000
+      =*  hil  0x1.0000
+      |^
+        %+  cook
+          |=  a=@
+          ^-  @t
+          (tuft a)
+        ;~  pfix  (just 'u')
+          ;~(pose solo pair)
+        ==
+      ++  quad                                        ::  parse num from 4 hex
+        (bass 16 (stun [4 4] hit))
+      ++  meat                                        ::  gen gate for sear:
+        |=  [bot=@ux top=@ux flp=?]                   ::  accept num in range,
+        |=  sur=@ux                                   ::  optionally reduce
+        ^-  (unit @)
+        ?.  &((gte sur bot) (lth sur top))
+          ~
+        %-  some
+        ?.  flp  sur
+        (sub sur bot)
+      ++  solo                                        ::  single valid UTF16
+        ;~  pose
+          (sear (meat lob hsb |) quad)
+          (sear (meat hib hil |) quad)
+        ==
+      ++  pair                                        ::  UTF16 surrogate pair
+        %+  cook
+          |=  [hig=@ low=@]
+            ^-  @t
+            :(add hil low (lsh [1 5] hig))
+        ;~  plug
+          (sear (meat hsb lsb &) quad)
+          ;~  pfix  (jest '\\u')
+            (sear (meat lsb hib &) quad)
+          ==
+        ==
+      --
     ::                                                  ::  ++wish:de-json:html
     ++  wish                                            ::  with whitespace
       |*(sef=rule ;~(pfix spac sef))
