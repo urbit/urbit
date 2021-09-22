@@ -198,7 +198,7 @@ const ClampedText = styled(Text)`
 
 type AppTileProps = Treaty & BoxProps;
 
-function AppTile({ color, image, ...props }: AppTileProps) {
+export function AppTile({ color, image, ...props }: AppTileProps) {
   return (
     <Box
       position="relative"
