@@ -43,7 +43,7 @@ const cards: OnboardingCardProps[] = [
   // }
 ];
 
-if (window?.navigator?.registerProtocolHandler) {
+if ('registerProtocolHandler' in window.navigator) {
   cards.push({
     title: 'Open Urbit-Native Links',
     body: 'Enable your Urbit to open links you find in the wild',
