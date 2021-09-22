@@ -264,6 +264,9 @@
       --
   =|  old-ota=(unit ota)
   |=  [hood-version=@ud old=any-state]
+  =/  old-version  -.old
+  =*  state        +<+.$.abet
+  ::
   =?  old-ota  ?=(%0 -.old)
     =/  syncs=(list [ota =aeon])  ~(tap by syn.old)
     |-  ^-  (unit ota)
@@ -327,15 +330,20 @@
     `[paused.rail ship.rail desk.rail aeon.rail next]:a
   ::
   ?>  ?=(%7 -.old)
-  =.  +<+.$.abet  old
-  =<  abet
+  =.  state  old
+  ::
+  =^  caz  state
+    ?:  (gte old-version %7)  [~ state]
+    ::NOTE  does migration to softdist logic, synchronous install
+    on-init
+  ::
   =?  kiln  ?=(^ old-ota)
     abet:(install:vats %base [her sud]:u.old-ota)
   =?  kiln  ?=(^ wef)
     =/  except=(set desk)  (sy %base %kids ~)
     (bump:vats u.wef (all-desks-but:vats except) %.n)
   =.  wef  ~
-  kiln
+  abet:kiln
 ::
 ++  on-peek
   |=  =path
