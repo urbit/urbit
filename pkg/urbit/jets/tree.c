@@ -438,16 +438,16 @@ static c3_c* _140_hex_blake_ha[] = {
 };
 
   static u3j_harm _140_hex_kecc_k224_a[] =
-    {{".2", u3we_kecc224, c3n, c3y, c3y}, {}};
+    {{".2", u3we_kecc224, c3y, c3y, c3y}, {}};
 
   static u3j_harm _140_hex_kecc_k256_a[] =
-    {{".2", u3we_kecc256, c3n, c3y, c3y}, {}};
+    {{".2", u3we_kecc256, c3y, c3y, c3y}, {}};
 
   static u3j_harm _140_hex_kecc_k384_a[] =
-    {{".2", u3we_kecc384, c3n, c3y, c3y}, {}};
+    {{".2", u3we_kecc384, c3y, c3y, c3y}, {}};
 
   static u3j_harm _140_hex_kecc_k512_a[] =
-    {{".2", u3we_kecc512, c3n, c3y, c3y}, {}};
+    {{".2", u3we_kecc512, c3y, c3y, c3y}, {}};
 
 static u3j_core _140_hex_kecc_d[] =
   { { "k224", 7, _140_hex_kecc_k224_a, 0, no_hashes },
