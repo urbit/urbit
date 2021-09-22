@@ -52,7 +52,7 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
       desk={desk}
       className={cn(
         'text-black rounded-xl',
-        'unseen' in lid ? 'bg-blue-100' : 'bg-gray-100',
+        'unseen' in lid ? 'bg-blue-100' : 'bg-gray-50',
         large ? 'note-grid-no-content' : 'note-grid-content'
       )}
       aria-labelledby={id}

@@ -25,8 +25,8 @@ function SystemPreferencesSection({
       <Link
         to={url}
         className={classNames(
-          'flex items-center px-2 py-2 hover:text-black hover:bg-gray-100 rounded-xl',
-          active && 'text-black bg-gray-100'
+          'flex items-center px-2 py-2 hover:text-black hover:bg-gray-50 rounded-xl',
+          active && 'text-black bg-gray-50'
         )}
       >
         {children}
