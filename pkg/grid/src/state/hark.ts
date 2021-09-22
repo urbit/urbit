@@ -87,6 +87,8 @@ export const useHarkStore = createState<HarkState>(
       await api.poke(archive(bin, lid));
     },
     opened: async () => {
+      reduceHark({ opened: null });
+
       await api.poke(opened);
     },
     getMore: async () => {
