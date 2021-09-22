@@ -23,7 +23,7 @@ import {
 } from '@urbit/api';
 import api from './api';
 import { mockAllies, mockCharges, mockTreaties } from './mock-data';
-import { fakeRequest, useMockData } from './util';
+import { fakeRequest, normalizeUrbitColor, useMockData } from './util';
 
 export interface ChargeWithDesk extends Charge {
   desk: string;
@@ -155,14 +155,10 @@ const useDocketState = create<DocketState>((set, get) => ({
 }));
 
 function normalizeDocket<T extends Docket>(docket: T, desk: string): T {
-  const color = docket?.color?.startsWith('#')
-    ? docket.color
-    : `#${docket.color.slice(2).replace('.', '')}`.toUpperCase();
-
   return {
     ...docket,
     desk,
-    color
+    color: normalizeUrbitColor(docket.color)
   };
 }
 
