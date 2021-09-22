@@ -63,7 +63,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
     <div className="flex h-full overflow-y-auto">
       <aside className="flex-none self-start min-w-60 py-8 font-semibold border-r-2 border-gray-50">
         <nav className="px-6">
-          <ul>
+          <ul className="space-y-1">
             <SystemPreferencesSection
               url={subUrl('notifications')}
               active={matchSub('notifications')}
@@ -86,7 +86,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
         </nav>
         <hr className="my-4 border-t-2 border-gray-50" />
         <nav className="px-6">
-          <ul>
+          <ul className="space-y-1">
             {Object.values(charges).map((charge) => (
               <SystemPreferencesSection
                 key={charge.desk}
