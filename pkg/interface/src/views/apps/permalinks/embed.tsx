@@ -224,8 +224,6 @@ function AppTile({ color, image, ...props }: AppTileProps) {
   );
 }
 
-window.navigator.registerProtocolHandler = undefined;
-
 function AppPermalink({ link, ship, desk }: Omit<IAppPermalink, 'type'>) {
   const treaty = useTreaty(ship, desk);
   const hasProtocolHandling = Boolean(window?.navigator?.registerProtocolHandler);
