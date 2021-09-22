@@ -35,6 +35,7 @@ export const Setting: FC<SettingsProps> = ({
           onPressedChange={call}
           className="flex-none self-start text-blue-400"
           disabled={disabled}
+          loading={status === 'loading'}
         />
         <div className="flex-1 flex flex-col justify-center space-y-6">{children}</div>
       </div>
