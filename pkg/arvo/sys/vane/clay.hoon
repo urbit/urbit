@@ -1593,8 +1593,6 @@
       ::
       ++  install-from-tmp
         |=  =desk
-        ~?  =([~ ~] ank.dom)  [%oh-no-double-empty syd]
-        ~?  !(~(has by dir.ank.dom) ~.tmp)  [%oh-no-no-tmp syd]
         %-  emil
         :~  :^  hen  %pass  /dist/[desk]/create
             %^  new-desk:cloy  desk
@@ -1615,7 +1613,7 @@
       ++  get-tmp-jam
         |=  =desk
         ^-  @
-        ~|  [%tmp desk]
+        ~|  [%missing-tmp-desk-jam desk]
         ?~  tmp=(~(get by dir.ank.dom) ~.tmp)  !!
         ?~  new=(~(get by dir.u.tmp) desk)     !!
         ?~  jam=(~(get by dir.u.new) ~.jam)    !!
