@@ -87,7 +87,7 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
               as="a"
               href={getAppHref(docket.href)}
               target={docket.desk || '_blank'}
-              onClick={() => addRecentApp(docket)}
+              onClick={() => addRecentApp(docket.desk)}
             >
               Open App
             </PillButton>

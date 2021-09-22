@@ -52,7 +52,7 @@ export const AppList = <T extends DocketWithDesk>({
             size={size}
             selected={selected(app)}
             onClick={(e) => {
-              addRecentApp(app);
+              addRecentApp(app.desk);
               onClick?.(e, app);
             }}
           />

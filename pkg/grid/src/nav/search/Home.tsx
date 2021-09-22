@@ -10,14 +10,14 @@ import { ProviderList } from '../../components/ProviderList';
 import { AppLink } from '../../components/AppLink';
 import { ShipName } from '../../components/ShipName';
 import { ProviderLink } from '../../components/ProviderLink';
-import useDocketState, { DocketWithDesk, useCharges } from '../../state/docket';
+import useDocketState, { ChargesWithDesks, useCharges } from '../../state/docket';
 import { getAppHref } from '../../state/util';
 import useContactState from '../../state/contact';
 
 export interface RecentsStore {
-  recentApps: DocketWithDesk[];
+  recentApps: string[];
   recentDevs: string[];
-  addRecentApp: (app: DocketWithDesk) => void;
+  addRecentApp: (desk: string) => void;
   addRecentDev: (ship: string) => void;
 }
 
@@ -26,12 +26,12 @@ export const useRecentsStore = create<RecentsStore>(
     (set) => ({
       recentApps: [],
       recentDevs: [],
-      addRecentApp: (app) => {
+      addRecentApp: (desk: string) => {
         set(
           produce((draft: RecentsStore) => {
-            const hasApp = draft.recentApps.find((a) => a.desk === app.desk);
+            const hasApp = draft.recentApps.find((testDesk) => testDesk === desk);
             if (!hasApp) {
-              draft.recentApps.unshift(app);
+              draft.recentApps.unshift(desk);
             }
 
             draft.recentApps = take(draft.recentApps, 3);
@@ -65,8 +65,12 @@ export function addRecentDev(dev: string) {
   return useRecentsStore.getState().addRecentDev(dev);
 }
 
-export function addRecentApp(app: DocketWithDesk) {
+export function addRecentApp(app: string) {
   return useRecentsStore.getState().addRecentApp(app);
+}
+
+function getApps(desks: string[], charges: ChargesWithDesks) {
+  return desks.filter((desk) => desk in charges).map((desk) => charges[desk]);
 }
 
 export const Home = () => {
@@ -79,9 +83,10 @@ export const Home = () => {
     s.defaultAlly ? { shipName: s.defaultAlly, ...contacts[s.defaultAlly] } : null
   );
   const providerList = recentDevs.map((d) => ({ shipName: d, ...contacts[d] }));
+  const apps = getApps(recentApps, charges);
 
   useEffect(() => {
-    const apps = recentApps.map((app) => ({
+    const appMatches = apps.map((app) => ({
       url: getAppHref(app.href),
       openInNewTab: true,
       value: app.desk,
@@ -90,7 +95,7 @@ export const Home = () => {
     const devs = recentDevs.map(providerMatch);
 
     useLeapStore.setState({
-      matches: ([] as MatchItem[]).concat(apps, devs)
+      matches: ([] as MatchItem[]).concat(appMatches, devs)
     });
   }, [recentApps, recentDevs]);
 
@@ -99,26 +104,15 @@ export const Home = () => {
       <h2 id="recent-apps" className="mb-4 h4 text-gray-500">
         Recent Apps
       </h2>
-      {recentApps.length === 0 && (
+      {apps.length === 0 && (
         <div className="min-h-[150px] p-6 rounded-xl bg-gray-50">
           <p className="mb-4">Apps you use will be listed here, in the order you used them.</p>
           <p className="mb-6">You can click/tap/keyboard on a listed app to open it.</p>
-          {groups && (
-            <AppLink
-              app={groups}
-              size="small"
-              onClick={() => addRecentApp({ ...groups, desk: 'groups' })}
-            />
-          )}
+          {groups && <AppLink app={groups} size="small" onClick={() => addRecentApp('groups')} />}
         </div>
       )}
-      {recentApps.length > 0 && (
-        <AppList
-          apps={recentApps}
-          labelledBy="recent-apps"
-          matchAgainst={selectedMatch}
-          size="small"
-        />
+      {apps.length > 0 && (
+        <AppList apps={apps} labelledBy="recent-apps" matchAgainst={selectedMatch} size="small" />
       )}
       <hr className="-mx-4 my-6 md:-mx-8 md:my-9 border-t-2 border-gray-50" />
       <h2 id="recent-devs" className="mb-4 h4 text-gray-500">
