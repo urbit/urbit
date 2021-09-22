@@ -1,8 +1,8 @@
 import produce from 'immer';
 import create from 'zustand';
+import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { persist } from 'zustand/middleware';
-import { take } from 'lodash';
 import { MatchItem, useLeapStore } from '../Nav';
 import { providerMatch } from './Providers';
 import { AppList } from '../../components/AppList';
@@ -19,6 +19,7 @@ export interface RecentsStore {
   recentDevs: string[];
   addRecentApp: (desk: string) => void;
   addRecentDev: (ship: string) => void;
+  removeRecentApp: (desk: string) => void;
 }
 
 export const useRecentsStore = create<RecentsStore>(
@@ -34,7 +35,7 @@ export const useRecentsStore = create<RecentsStore>(
               draft.recentApps.unshift(desk);
             }
 
-            draft.recentApps = take(draft.recentApps, 3);
+            draft.recentApps = _.take(draft.recentApps, 3);
           })
         );
       },
@@ -46,7 +47,14 @@ export const useRecentsStore = create<RecentsStore>(
               draft.recentDevs.unshift(dev);
             }
 
-            draft.recentDevs = take(draft.recentDevs, 3);
+            draft.recentDevs = _.take(draft.recentDevs, 3);
+          })
+        );
+      },
+      removeRecentApp: (desk: string) => {
+        set(
+          produce((draft: RecentsStore) => {
+            _.remove(draft.recentApps, (test) => test === desk);
           })
         );
       }

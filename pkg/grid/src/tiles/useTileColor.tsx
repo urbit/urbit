@@ -33,7 +33,7 @@ export const useTileColor = (color: string) => {
     tileColor,
     menuColor: getMenuColor(tileColor, darkBg),
     suspendColor,
-    suspendMenuColor: bgAdjustedColor(suspendColor, darkBg),
+    suspendMenuColor: bgAdjustedColor(suspendColor, darkTheme),
     lightText
   };
 };
