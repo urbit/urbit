@@ -121,7 +121,7 @@ const useHarkState = createState<HarkState>(
   ]
 );
 
-const emptyStats = () => ({
+export const emptyHarkStats = () => ({
       last: 0,
       count: 0,
       each: []
@@ -132,7 +132,7 @@ export function useHarkDm(ship: string) {
     useCallback(
       (s) => {
         const key = `/graph/~${window.ship}/dm-inbox/${patp2dec(ship)}`;
-        return s.unreads[key] || emptyStats();
+        return s.unreads[key] || emptyHarkStats();
       },
       [ship]
     )
@@ -141,15 +141,19 @@ export function useHarkDm(ship: string) {
 
 export function useHarkStat(path: string) {
   return useHarkState(
-    useCallback(s => s.unreads[path] || emptyStats(), [path])
+    useCallback(s => s.unreads[path] || emptyHarkStats(), [path])
   );
 }
 
+export function selHarkGraph(graph: string) {
+  const [,, ship, name] = graph.split('/');
+  const path = `/graph/${ship}/${name}`;
+  return (s: HarkState) => (s.unreads[path] || emptyHarkStats());
+}
+
 export function useHarkGraph(graph: string) {
-  const [, ship, name] = useMemo(() => graph.split('/'), [graph]);
-  return useHarkState(
-    useCallback(s => s.unreads[`/graph/${ship}/${name}`], [ship, name])
-  );
+  const sel = useMemo(() => selHarkGraph(graph), [graph]);
+  return useHarkState(sel);
 }
 
 export function useHarkGraphIndex(graph: string, index: string) {

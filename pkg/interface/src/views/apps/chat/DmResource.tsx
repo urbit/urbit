@@ -1,9 +1,9 @@
-import { cite, Content, Post, removeDmMessage } from '@urbit/api';
+import { acceptDm, cite, Content, declineDm, Post, removeDmMessage } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import bigInt from 'big-integer';
-import { Box, Row, Col, Text } from '@tlon/indigo-react';
-import { Link } from 'react-router-dom';
+import { Box, Row, Col, Text, Center } from '@tlon/indigo-react';
+import { Link, useHistory } from 'react-router-dom';
 import { patp2dec } from 'urbit-ob';
 import { useContact } from '~/logic/state/contact';
 import useGraphState, { useDM } from '~/logic/state/graph';
@@ -12,6 +12,7 @@ import useSettingsState, { selectCalmState } from '~/logic/state/settings';
 import { ChatPane } from './components/ChatPane';
 import shallow from 'zustand/shallow';
 import airlock from '~/logic/api';
+import { StatelessAsyncAction } from '~/views/components/StatelessAsyncAction';
 
 interface DmResourceProps {
   ship: string;
@@ -52,11 +53,13 @@ export function DmResource(props: DmResourceProps) {
   const { ship } = props;
   const dm = useDM(ship);
   const hark = useHarkDm(ship);
+  const history = useHistory();
   const unreadCount = hark.count;
   const contact = useContact(ship);
   const { hideNicknames } = useSettingsState(selectCalmState);
   const showNickname = !hideNicknames && Boolean(contact);
   const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
+  const pending = useGraphState(s => s.pendingDms.has(ship.slice(1)));
 
   const [
     getYoungerSiblings,
@@ -64,17 +67,17 @@ export function DmResource(props: DmResourceProps) {
     getNewest,
     addDmMessage
   ] = useGraphState(
-    s => [s.getYoungerSiblings, s.getOlderSiblings, s.getNewest, s.addDmMessage],
+    s => [
+      s.getYoungerSiblings,
+      s.getOlderSiblings,
+      s.getNewest,
+      s.addDmMessage
+    ],
     shallow
   );
 
   useEffect(() => {
-    getNewest(
-      `~${window.ship}`,
-      'dm-inbox',
-      100,
-      `/${patp2dec(ship)}`
-    );
+    getNewest(`~${window.ship}`, 'dm-inbox', 100, `/${patp2dec(ship)}`);
   }, [ship]);
 
   const fetchMessages = useCallback(
@@ -125,6 +128,14 @@ export function DmResource(props: DmResourceProps) {
   const onDelete = useCallback((msg: Post) => {
     airlock.poke(removeDmMessage(`~${window.ship}`, msg.index));
   }, []);
+
+  const onAccept = async () => {
+    await airlock.poke(acceptDm(ship));
+  };
+  const onDecline = async () => {
+    history.push('/~landscape/messages');
+    await airlock.poke(declineDm(ship));
+  };
   return (
     <Col width="100%" height="100%" overflow="hidden">
       <Row
@@ -135,6 +146,7 @@ export function DmResource(props: DmResourceProps) {
         height="6"
         borderBottom="1"
         borderBottomColor="lightGray"
+        justifyContent="space-between"
       >
         <Row alignItems="baseline">
           <Box
@@ -165,19 +177,41 @@ export function DmResource(props: DmResourceProps) {
           </Box>
         </Row>
       </Row>
-      <ChatPane
-        canWrite
-        id={ship}
-        graph={dm}
-        unreadCount={unreadCount}
-        onReply={quoteReply}
-        fetchMessages={fetchMessages}
-        dismissUnread={dismissUnread}
-        onDelete={onDelete}
-        getPermalink={() => undefined}
-        isAdmin={false}
-        onSubmit={onSubmit}
-      />
+      {pending ? (
+        <Center width="100%" height="100%">
+          <Col gapY="3">
+            <Box>
+              <Text>{ship} has invited you to a DM</Text>
+            </Box>
+            <Row gapX="2">
+              <StatelessAsyncAction onClick={onAccept} bg="transparent">
+                Accept
+              </StatelessAsyncAction>
+              <StatelessAsyncAction
+                onClick={onDecline}
+                destructive
+                bg="transparent"
+              >
+                Decline
+              </StatelessAsyncAction>
+            </Row>
+          </Col>
+        </Center>
+      ) : (
+        <ChatPane
+          canWrite
+          id={ship}
+          graph={dm}
+          unreadCount={unreadCount}
+          onReply={quoteReply}
+          fetchMessages={fetchMessages}
+          dismissUnread={dismissUnread}
+          onDelete={onDelete}
+          getPermalink={() => undefined}
+          isAdmin={false}
+          onSubmit={onSubmit}
+        />
+      )}
     </Col>
   );
 }

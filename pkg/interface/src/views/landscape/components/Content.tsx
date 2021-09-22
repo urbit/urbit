@@ -90,25 +90,35 @@ function getInviteRedirect(link: string) {
   return `/invites/${app}/${uid}`;
 }
 
+function getDmRedirect(link: string) {
+  const [,,ship] = link.split('/');
+  return `/~landscape/messages/dm/${ship}`;
+}
+
 function getNotificationRedirect(link: string) {
   if(link.startsWith('/graph-validator')) {
     return getGraphRedirect(link);
   } else if (link.startsWith('/invite')) {
     return getInviteRedirect(link);
+  } else if (link.startsWith('/dm')) {
+    return getDmRedirect(link);
   }
 }
 
 export const Content = (props) => {
   const history = useHistory();
   const location = useLocation();
-  const associations = useMetadataState(s => s.associations.graph);
+  const mdLoaded = useMetadataState(s => s.loaded);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
-    if(Object.keys(associations).length > 0 && query.has('grid-note')) {
+    if(mdLoaded && query.has('grid-note')) {
       history.push(getNotificationRedirect(query.get('grid-note')));
+    } else if(mdLoaded && query.has('grid-link')) {
+      const link = decodeURIComponent(query.get('grid-link')!);
+      history.push(`/perma${link}`);
     }
-  }, [location.search, associations]);
+  }, [location.search, mdLoaded]);
 
   useShortcut('navForward', useCallback((e) => {
     e.preventDefault();

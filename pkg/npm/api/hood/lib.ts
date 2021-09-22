@@ -94,13 +94,13 @@ export function getBlockers(vats: Vats): string[] {
   if(!base) {
     return blockers;
   }
-  const blockedOn = base.arak.next?.[0]?.weft?.kelvin;
+  const blockedOn = base.arak.rail?.next?.[0]?.weft?.kelvin;
   if(!blockedOn) {
     return blockers;
   }
   _.forEach(_.omit(vats, 'base'), (vat, desk) => {
     // assuming only %zuse
-    const kelvins = _.map(vat.arak.next, n => n.weft.kelvin);
+    const kelvins = _.map((vat.arak.rail?.next || []), n => n.weft.kelvin);
     if(!(kelvins.includes(blockedOn))) {
       blockers.push(desk);
     }

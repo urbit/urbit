@@ -1,4 +1,6 @@
 import { DocketHref } from '@urbit/api/docket';
+import { hsla, parseToHsla } from 'color2k';
+import _ from 'lodash';
 
 export const useMockData = import.meta.env.MODE === 'mock';
 
@@ -32,4 +34,19 @@ export function deSig(ship: string): string {
     return '';
   }
   return ship.replace('~', '');
+}
+
+export function normalizeUrbitColor(color: string): string {
+  if (color.startsWith('#')) {
+    return color;
+  }
+
+  const colorString = color.slice(2).replace('.', '').toUpperCase();
+  const lengthAdjustedColor = _.padEnd(colorString, 6, _.last(colorString));
+  return `#${lengthAdjustedColor}`;
+}
+
+export function getDarkColor(color: string): string {
+  const hslaColor = parseToHsla(color);
+  return hsla(hslaColor[0], hslaColor[1], 1 - hslaColor[2], 1);
 }

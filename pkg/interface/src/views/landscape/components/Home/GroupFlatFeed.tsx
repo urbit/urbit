@@ -14,6 +14,7 @@ import PostFlatTimeline from './Post/PostFlatTimeline';
 import airlock from '~/logic/api';
 import { markCountAsRead } from '@urbit/api';
 import { PostRepliesRoutes } from './Post/PostReplies';
+import { toHarkPlace } from '~/logic/lib/util';
 
 function GroupFlatFeed(props) {
   const {
@@ -43,7 +44,7 @@ function GroupFlatFeed(props) {
       return;
     }
     getDeepOlderThan(graphRid.ship, graphRid.name, 100);
-    airlock.poke(markCountAsRead(graphPath));
+    airlock.poke(markCountAsRead(toHarkPlace(graphPath)));
   }, [graphPath]);
 
   if (!graphPath) {

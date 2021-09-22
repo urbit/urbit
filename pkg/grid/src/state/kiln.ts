@@ -17,7 +17,7 @@ interface KilnState {
   toggleOTAs: (desk: string, on: boolean) => Promise<void>;
   set: (s: KilnState) => void;
 }
-const useKilnState = create<KilnState>((set) => ({
+const useKilnState = create<KilnState>((set, get) => ({
   vats: useMockData ? mockVats : {},
   lag: !!useMockData,
   loaded: false,
@@ -39,7 +39,10 @@ const useKilnState = create<KilnState>((set) => ({
       await fakeRequest('');
       set(
         produce((draft: KilnState) => {
-          draft.vats.base.arak.ship = ship;
+          if (!draft.vats.base.arak.rail) {
+            return;
+          }
+          draft.vats.base.arak.rail.ship = ship;
         })
       );
       return;
@@ -48,24 +51,22 @@ const useKilnState = create<KilnState>((set) => ({
     await api.poke(kilnInstall(ship, '%kids', 'base'));
   },
   toggleOTAs: async (desk: string, on: boolean) => {
-    if (useMockData) {
-      await fakeRequest('');
-      set(
-        produce((draft: KilnState) => {
-          const { arak } = draft.vats[desk];
+    set(
+      produce((draft: KilnState) => {
+        const { arak } = draft.vats[desk];
+        if (!arak.rail) {
+          return;
+        }
+        if (on) {
+          arak.rail.paused = false;
+        } else {
+          arak.rail.paused = true;
+        }
+      })
+    );
 
-          if (on) {
-            arak.paused = false;
-          } else {
-            arak.paused = true;
-          }
-        })
-      );
-
-      return;
-    }
-
-    await api.poke(on ? kilnResume(desk) : kilnPause(desk));
+    await (useMockData ? fakeRequest('') : api.poke(on ? kilnResume(desk) : kilnPause(desk)));
+    await get().fetchVats(); // refresh vat state
   },
   set: produce(set)
 }));

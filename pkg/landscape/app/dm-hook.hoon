@@ -1,5 +1,6 @@
 ::  dm-hook [landscape]: receive and send DMs 
 ::
+/-  hark=hark-store
 /+  default-agent, dbug, store=graph-store, graphlib=graph, agentio, resource
 /+  sig=signatures, hook=dm-hook
 ::
@@ -202,11 +203,12 @@
     ?>  =(1 ~(wyt by nodes))
     =/  ship-screen  (~(get ju screened) src.bowl)
     =.  ship-screen  (~(uni in ship-screen) (normalize-incoming nodes))
-    =.  screened  (~(put by screened) src.bowl ship-screen)
-    :_  state
+    :_  state(screened (~(put by screened) src.bowl ship-screen))
     =/  =action:hook
       [%pendings ~(key by screened)]
-    (fact:io dm-hook-action+!>(action) ~[/updates])^~
+    :-  (fact:io dm-hook-action+!>(action) ~[/updates])
+    ?:  (~(has by screened) src.bowl)  ~
+    (notify-pending src.bowl)^~
   ::
   ++  dm-exists
     |=  =ship
@@ -265,6 +267,16 @@
       == 
     ==
   ::
+  ++  notify-pending
+    |=  =ship
+    ^-  card
+    =/  =bin:hark  [/ [q.byk.bowl /dm/invite]]
+    =/  title=(list content:hark)
+      [ship/ship text/' invited you to a DM' ~]
+    %+  poke-our:pass  %hark-store
+    :-  %hark-action
+    !>(`action:hark`[%add-note bin title ~ now.bowl / /dm/(scot %p ship)])
+  ::
   ++  normalize-incoming
     |=  =nodes
     ^-  ^nodes
@@ -301,7 +313,13 @@
       (fact-init:io dm-hook-action+!>([%screen screening]))
   ==
 ::
-++  on-peek   on-peek:def
+++  on-peek   
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  (on-peek:def path)
+    [%x %pendings ~]  ``dm-hook-action+!>([%pendings ~(key by screened)])
+  ==
+::
 ++  on-leave  on-leave:def
 ++  on-agent  
   |=  [=wire =sign:agent:gall]

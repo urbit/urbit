@@ -7,7 +7,8 @@ import { Attribute } from './Attribute';
 export function VatMeta(props: { vat: Vat }) {
   const { vat } = props;
   const { desk, arak, cass, hash } = vat;
-  const { desk: foreignDesk, ship, next } = arak;
+
+  const { desk: foreignDesk, ship, next } = arak.rail!;
   const pluralUpdates = next.length !== 1;
   return (
     <div className="mt-5 sm:mt-8 space-y-5 sm:space-y-8">

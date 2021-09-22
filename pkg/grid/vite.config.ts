@@ -3,10 +3,14 @@ import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import reactRefresh from '@vitejs/plugin-react-refresh';
 import htmlPlugin from 'vite-plugin-html-config';
+import { execSync } from 'child_process';
 
 const htmlPluginOpt = {
   headScripts: [{ src: '/apps/grid/desk.js' }, { src: '/session.js' }]
 };
+
+const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
+process.env.VITE_SHORTHASH = GIT_DESC;
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {

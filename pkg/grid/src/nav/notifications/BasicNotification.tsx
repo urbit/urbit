@@ -5,10 +5,9 @@ import { map, take } from 'lodash';
 import { useCharge } from '../../state/docket';
 import { Elbow } from '../../components/icons/Elbow';
 import { ShipName } from '../../components/ShipName';
-import { getAppHref } from '../../state/util';
-import { Link } from 'react-router-dom';
 import { DeskLink } from '../../components/DeskLink';
-import {useHarkStore} from '../../state/hark';
+import { useHarkStore } from '../../state/hark';
+import { DocketImage } from '../../components/DocketImage';
 
 interface BasicNotificationProps {
   notification: Notification;
@@ -43,7 +42,6 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
   const contents = map(notification.body, 'content').filter((c) => c.length > 0);
   const large = contents.length === 0;
   const archive = () => {
-    const { bin } = notification;
     useHarkStore.getState().archiveNote(notification.bin, lid);
   };
 
@@ -53,17 +51,14 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
       to={`?grid-note=${encodeURIComponent(first.link)}`}
       desk={desk}
       className={cn(
-        'text-black rounded',
-        'unseen' in lid ? 'bg-blue-100' : 'bg-gray-100',
+        'text-black rounded-xl',
+        'unseen' in lid ? 'bg-blue-100' : 'bg-gray-50',
         large ? 'note-grid-no-content' : 'note-grid-content'
       )}
       aria-labelledby={id}
     >
       <header id={id} className="contents">
-        <div
-          className="note-grid-icon rounded w-full h-full"
-          style={{ backgroundColor: charge?.color ?? '#ee5432' }}
-        />
+        <DocketImage {...charge} size={!large ? 'xs' : 'default'} className="note-grid-icon" />
         <div className="note-grid-title font-semibold">{charge?.title || desk}</div>
         {!large ? <Elbow className="note-grid-arrow w-6 h-6 text-gray-300" /> : null}
         <h2 id={`${id}-title`} className="note-grid-head font-semibold text-gray-600">

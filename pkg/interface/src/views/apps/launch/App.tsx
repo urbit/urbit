@@ -3,23 +3,20 @@ import { Box, Button, Col, Icon, Row, Text } from '@tlon/indigo-react';
 import f from 'lodash/fp';
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { Route, useHistory } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import styled from 'styled-components';
 import {
-    hasTutorialGroup,
-
-    TUTORIAL_BOOK,
-    TUTORIAL_CHAT, TUTORIAL_GROUP,
-    TUTORIAL_HOST,
-
-    TUTORIAL_LINKS
+  hasTutorialGroup,
+  TUTORIAL_BOOK,
+  TUTORIAL_CHAT,
+  TUTORIAL_GROUP,
+  TUTORIAL_HOST,
+  TUTORIAL_LINKS
 } from '~/logic/lib/tutorialModal';
 import { useModal } from '~/logic/lib/useModal';
 import { useQuery } from '~/logic/lib/useQuery';
 import { useWaitForProps } from '~/logic/lib/useWaitForProps';
-import { writeText } from '~/logic/lib/util';
 import useHarkState from '~/logic/state/hark';
-import useLaunchState from '~/logic/state/launch';
 import useLocalState from '~/logic/state/local';
 import useMetadataState from '~/logic/state/metadata';
 import useSettingsState, { selectCalmState } from '~/logic/state/settings';
@@ -53,8 +50,6 @@ interface LaunchAppProps {
 
 export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
   const { connection } = props;
-  const { baseHash, runtimeLag } = useLaunchState(state => state);
-  const [hashText, setHashText] = useState(baseHash);
   const [exitingTut, setExitingTut] = useState(false);
   const seen = useSettingsState(s => s?.tutorial?.seen) ?? true;
   const associations = useMetadataState(s => s.associations);
@@ -67,35 +62,6 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
   !hideGroups ? { hideGroups } = calmState : null;
 
   const waiter = useWaitForProps({ ...props, associations });
-  const hashBox = (
-    <Box
-      position="sticky"
-      left={3}
-      bottom={3}
-      mt={3}
-      backgroundColor="white"
-      borderRadius={2}
-      width="fit-content"
-      fontSize={0}
-      cursor="pointer"
-      onClick={() => {
-        writeText(baseHash);
-        setHashText('copied');
-        setTimeout(() => {
-          setHashText(baseHash);
-        }, 2000);
-      }}
-    >
-      <Box
-        height="100%"
-        backgroundColor={runtimeLag ? 'yellow' : 'washedGray'}
-        p={2}
-        width="fit-content"
-      >
-        <Text mono bold>{hashText || baseHash}</Text>
-      </Box>
-    </Box>
-  );
 
   const { query } = useQuery();
 
@@ -247,7 +213,6 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
             (<Groups />)
           }
         </Box>
-        {hashBox}
       </ScrollbarLessBox>
     </>
   );

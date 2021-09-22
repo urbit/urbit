@@ -26,6 +26,9 @@ if(urbitrc.URL) {
   devServer = {
     ...devServer,
     index: 'index.html',
+    // headers: {
+    //   'Service-Worker-Allowed': '/'
+    // },
     proxy: [
       {
         context: (path) => {

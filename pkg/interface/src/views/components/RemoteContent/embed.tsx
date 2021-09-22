@@ -1,6 +1,7 @@
 import React, {
   MouseEvent,
   useCallback,
+  useEffect,
   useMemo,
   useState
 } from 'react';
@@ -14,7 +15,8 @@ import {
   allSystemStyle,
   Icon,
   Row,
-  Col
+  Col,
+  Text
 } from '@tlon/indigo-react';
 
 import { TruncatedText } from '~/views/components/TruncatedText';
@@ -23,11 +25,13 @@ import { IconRef, PropFunc } from '~/types';
 import { system } from 'styled-system';
 import { Association, GraphConfig, ReferenceContent } from '@urbit/api';
 import { Link } from 'react-router-dom';
-import { referenceToPermalink } from '~/logic/lib/permalinks';
+import { AppPermalink, referenceToPermalink } from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
 import { RemoteContentWrapper } from './wrapper';
 import { useEmbed } from '~/logic/state/embed';
 import { IS_SAFARI } from '~/logic/lib/platform';
+import useDocketState, { useTreaty } from '~/logic/state/docket';
+import { AppTile } from '~/views/apps/permalinks/embed';
 
 interface RemoteContentEmbedProps {
   url: string;
@@ -217,9 +221,39 @@ export function RemoteContentPermalinkEmbed(props: {
     return <RemoteContentPermalinkEmbedGraph {...permalink} />;
   } else if (permalink.type === 'group') {
     return <RemoteContentPermalinkEmbedGroup {...permalink} />;
+  } else if (permalink.type === 'app') {
+    return <RemoteContentPermalinkEmbedApp {...permalink} />;
   }
 
   return null;
+}
+
+function RemoteContentPermalinkEmbedApp({ link, ship, desk }: Omit<AppPermalink, 'type'>) {
+  const treaty = useTreaty(ship, desk);
+
+  useEffect(() => {
+    if (!treaty) {
+      useDocketState.getState().requestTreaty(ship, desk);
+    }
+  }, [treaty, ship, desk]);
+
+  return (
+    <Col
+      width="100%"
+      height="100%"
+      padding={3}
+      borderRadius={3}
+      justifyContent="space-around"
+      alignItems="center"
+    >
+      {treaty && (
+        <>
+          <AppTile color="washedGray" marginRight={0} {...treaty} />
+          <Row><Text fontSize="1" color="gray">App: {treaty.title}</Text></Row>
+        </>
+      )}
+    </Col>
+  );
 }
 
 function RemoteContentPermalinkEmbedGroup(props: {

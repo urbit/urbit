@@ -2,6 +2,8 @@
 import {
   ReferenceContent, resourceFromPath
 } from '@urbit/api';
+import { isValidPatp } from 'urbit-ob';
+import _ from 'lodash';
 
 export function getPermalinkForGraph(
   group: string,
@@ -18,7 +20,15 @@ function getPermalinkForAssociatedGroup(group: string) {
   return `web+urbitgraph://group/${ship}/${name}`;
 }
 
-type Permalink = GraphPermalink | GroupPermalink;
+type Permalink = AppPermalink | GraphPermalink | GroupPermalink;
+
+export interface AppPermalink {
+  type: 'app';
+  link: string;
+  ship: string;
+  desk: string;
+  path: string;
+}
 
 export interface GroupPermalink {
   type: 'group';
@@ -54,20 +64,13 @@ function parseGraphPermalink(
 }
 
 export function permalinkToReference(link: Permalink): ReferenceContent {
-  if(link.type === 'graph') {
-    const reference = {
-      graph: {
-        graph: link.graph,
-        group: link.group,
-        index: link.index
-      }
-    };
-    return { reference };
-  } else {
-    const reference = {
-      group: link.group
-    };
-    return { reference };
+  switch (link.type) {
+    case 'graph':
+      return { reference: { graph: _.omit(link, ['type', 'link']) } };
+    case 'group':
+      return { reference: { group: link.group } };
+    case 'app':
+      return { reference: { app: _.omit(link, ['type', 'link']) } };
   }
 }
 
@@ -79,6 +82,15 @@ export function referenceToPermalink({ reference }: ReferenceContent): Permalink
       type: 'graph',
       link,
       ...reference.graph
+    };
+  } else if ('app' in reference) {
+    const { ship, desk, path } = reference.app;
+    return {
+      type: 'app',
+      link: `web+urbitgraph://${ship}/${desk}${path}`,
+      ship,
+      desk,
+      path
     };
   } else {
     const link = `web+urbitgraph://group${reference.group.slice(5)}`;
@@ -92,6 +104,7 @@ export function referenceToPermalink({ reference }: ReferenceContent): Permalink
 
 export function parsePermalink(url: string): Permalink | null {
   const [kind, ...rest] = url.slice(17).split('/');
+
   if (kind === 'group') {
     const [ship, name, ...graph] = rest;
     const group = `/ship/${ship}/${name}`;
@@ -104,5 +117,18 @@ export function parsePermalink(url: string): Permalink | null {
       link: url.slice(11)
     };
   }
+
+  if (isValidPatp(kind)) {
+    const [desk, ...parts] = rest;
+    const path = '/' + parts.join('/');
+    return {
+      type: 'app',
+      link: url,
+      ship: kind,
+      desk,
+      path
+    };
+  }
+
   return null;
 }

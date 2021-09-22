@@ -42,6 +42,7 @@ function SidebarItemBase(props: {
   children: ReactNode;
   title: string | ReactNode;
   mono?: boolean;
+  pending?: boolean;
 }) {
   const {
     title,
@@ -51,7 +52,8 @@ function SidebarItemBase(props: {
     hasNotification,
     hasUnread,
     isSynced = false,
-    mono = false
+    mono = false,
+    pending = false
   } = props;
   const color = isSynced
     ? hasUnread || hasNotification
@@ -65,8 +67,8 @@ function SidebarItemBase(props: {
     <HoverBoxLink
       // ref={anchorRef}
       to={to}
-      bg="white"
-      bgActive="washedGray"
+      bg={pending ? 'lightBlue' : 'white'}
+      bgActive={pending ? 'washedBlue' : 'washedGray'}
       width="100%"
       display="flex"
       justifyContent="space-between"
@@ -120,8 +122,9 @@ export const SidebarDmItem = React.memo((props: {
   ship: string;
   selected?: boolean;
   workspace: Workspace;
+  pending?: boolean;
 }) => {
-  const { ship, selected = false } = props;
+  const { ship, selected = false, pending = false } = props;
   const contact = useContact(ship);
   const { hideAvatars, hideNicknames } = useSettingsState(s => s.calm);
   const title =
@@ -158,6 +161,7 @@ export const SidebarDmItem = React.memo((props: {
       title={title}
       mono={hideAvatars || !contact?.nickname}
       isSynced
+      pending={pending}
     >
       {img}
     </SidebarItemBase>

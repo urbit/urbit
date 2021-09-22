@@ -1,20 +1,16 @@
 import React, { useEffect } from 'react';
 import { Link, NavLink, Route, Switch } from 'react-router-dom';
-import { useLeapStore } from './Nav';
 import { Button } from '../components/Button';
 import { useHarkStore } from '../state/hark';
 import { Inbox } from './notifications/Inbox';
 
 export const Notifications = () => {
-  const select = useLeapStore((s) => s.select);
   const markAllAsRead = () => {
     const { archiveAll } = useHarkStore.getState();
     archiveAll();
   };
 
   useEffect(() => {
-    select('Notifications');
-
     function visibilitychange() {
       if (document.visibilityState === 'hidden') {
         useHarkStore.getState().opened();
