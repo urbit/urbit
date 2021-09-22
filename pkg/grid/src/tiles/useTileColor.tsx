@@ -13,17 +13,24 @@ function getMenuColor(color: string, darkBg: boolean): string {
   return bgAdjustedColor(satAdjustedColor, darkBg);
 }
 
+// makes tiles look broken because they blend into BG
+function disallowWhiteTiles(color: string): string {
+  const hslaColor = parseToHsla(color);
+  return hslaColor[2] >= 0.95 ? darken(color, hslaColor[2] - 0.95) : color;
+}
+
 export const useTileColor = (color: string) => {
   const theme = useCurrentTheme();
   const darkTheme = theme === 'dark';
-  const tileColor = darkTheme ? getDarkColor(color) : color;
+  const allowedColor = disallowWhiteTiles(color);
+  const tileColor = darkTheme ? getDarkColor(allowedColor) : allowedColor;
   const darkBg = !readableColorIsBlack(tileColor);
   const lightText = darkBg !== darkTheme; // if not same, light text
   const suspendColor = darkTheme ? 'rgb(26,26,26)' : 'rgb(220,220,220)';
 
   return {
     theme,
-    tileColor: theme === 'dark' ? getDarkColor(color) : color,
+    tileColor,
     menuColor: getMenuColor(tileColor, darkBg),
     suspendColor,
     suspendMenuColor: bgAdjustedColor(suspendColor, darkBg),
