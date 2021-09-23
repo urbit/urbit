@@ -168,6 +168,8 @@
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
       pud=(unit [=desk =yoki])                          ::  pending update
+      ::  REMOVE on next upgrade
+      dist-upgraded=_|                                  ::  are we in dist yet?
   ==                                                    ::
 ::
 ::  Object store.
@@ -303,6 +305,7 @@
           $>  $?  %info                                 ::  internal edit
                   %merg                                 ::  merge desks
                   %fuse                                 ::  merge many
+                  %park                                 ::
                   %pork                                 ::
                   %warp                                 ::
                   %werp                                 ::
@@ -339,6 +342,11 @@
               ==                                        ::
           gift                                          ::
       ==                                                ::
+      $:  %gall
+          $>  $?  %unto
+              ==
+          gift:gall
+      ==
       $:  %jael                                         ::
           $>(%public-keys gift:jael)                    ::
   ==  ==                                                ::
@@ -524,7 +532,7 @@
         =^  top  stack.nub  pop-stack
         =.  naves.cache.nub  (~(put by naves.cache.nub) mak [vase.res top])
         [vase.res nub]
-      ~>  %slog.0^leaf/"ford: make mark {<mak>}"
+      :: ~>  %slog.0^leaf/"ford: make mark {<mak>}"
       =^  cor=vase  nub  (build-fit %mar mak)
       =/  gad=vase  (slap cor limb/%grad)
       ?@  q.gad
@@ -599,7 +607,7 @@
         =.  marks.cache.nub  (~(put by marks.cache.nub) mak [dais.res top])
         [dais.res nub]
       =^  nav=vase  nub  (build-nave mak)
-      ~>  %slog.0^leaf/"ford: make dais {<mak>}"
+      :: ~>  %slog.0^leaf/"ford: make dais {<mak>}"
       :_  nub
       ^-  dais
       |_  sam=vase
@@ -654,7 +662,7 @@
         [vase.res nub]
       ::  try +grow; is there a +grow core with a .b arm?
       ::
-      ~>  %slog.0^leaf/"ford: make cast {<a>} -> {<b>}"
+      :: ~>  %slog.0^leaf/"ford: make cast {<a>} -> {<b>}"
       =^  old=vase  nub  (build-fit %mar a)
       ?:  =/  ram  (mule |.((slap old !,(*hoon grow))))
           ?:  ?=(%| -.ram)  %.n
@@ -714,7 +722,7 @@
         =.  tubes.cache.nub  (~(put by tubes.cache.nub) [a b] [tube.res top])
         [tube.res nub]
       =^  gat=vase  nub  (build-cast a b)
-      ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
+      :: ~>  %slog.0^leaf/"ford: make tube {<a>} -> {<b>}"
       :_(nub |=(v=vase (slam gat v)))
     ::
     ++  lobe-to-page
@@ -803,7 +811,7 @@
       =.  stack.nub
         =-  [(sy - ~) stack.nub]
         ?:(?=(%| -.dep) dep [& dir.p.dep])
-      ~>  %slog.0^leaf/"ford: make file {(spud path)}"
+      :: ~>  %slog.0^leaf/"ford: make file {(spud path)}"
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
@@ -1145,6 +1153,12 @@
   ++  emil
     |=  mof=(list move)
     %_(+> mow (weld (flop mof) mow))
+  ::
+  ::  Queue a list of moves, to be emitted before the rest
+  ::
+  ++  lime
+    |=  mof=(list move)
+    %_(+> mow (weld mow (flop mof)))
   ::
   ::  Produce either null or a result along a subscription.
   ::
@@ -1518,9 +1532,10 @@
     ?:  &(=(%base syd) !updated (~(any in invalid) is-kernel-path))
       (sys-update yoki new-data)
     ::
+    ~?  (did-kernel-update invalid)  %clay-kernel-updated
     =?  updated  updated  (did-kernel-update invalid)
     =>  ?.  updated  .
-        ~>(%slog.0^leaf/"clay: rebuilding {<syd>} after after kernel update" .)
+        ~>(%slog.0^leaf/"clay: rebuilding {<syd>} after kernel update" .)
     ::  clear caches if zuse reloaded
     ::
     =.  fod.dom
@@ -1575,7 +1590,50 @@
     =.  fod.dom  ford-cache.args
     =.  ..park  (emil (print q.old-yaki data))
     ::
+    =?  ..park  &(updated !dist-upgraded.ruf)  migrate-dist
+    ::
     wake:(ergo mim)
+    ::
+    ++  migrate-dist
+      ~>  %slog.0^'clay: migrating for third-party software distribution'
+      |^  ^+  ..park
+      ::  NOTE: reverse order, since we're prepending moves each time
+      =.  ..park  (install-from-tmp %landscape)
+      =.  ..park  (install-from-tmp %garden)
+      =.  ..park  (install-from-tmp %base)
+      ..park(dist-upgraded.ruf &)
+      ::
+      ++  install-from-tmp
+        |=  =desk
+        %-  lime
+        :~  :^  hen  %pass  /dist/[desk]/create
+            %^  new-desk:cloy  desk
+              (latest-tako desk)
+            ;;((map path page) (cue (get-tmp-jam desk)))
+        ::
+            :^  hen  %pass  /dist/[desk]/install
+            [%g %deal [our our] %hood %poke %kiln-install !>([desk our desk])]
+        ==
+      ::
+      ++  latest-tako
+        |=  =desk
+        ^-  (unit tako)
+        ?~  doj=(~(get by dos.rom) desk)  ~
+        =,  dom.u.doj
+        (~(get by hit) let)
+      ::
+      ++  get-tmp-jam
+        |=  =desk
+        ^-  @
+        ~|  [%missing-tmp-desk-jam desk]
+        ?~  tmp=(~(get by dir.ank.dom) ~.tmp)  !!
+        ?~  new=(~(get by dir.u.tmp) desk)     !!
+        ?~  jam=(~(get by dir.u.new) ~.jam)    !!
+        ?~  fil.u.jam                          !!
+        =*  fil  u.fil.u.jam
+        ?>  =(%jam p.q.fil)
+        ;;(@ q.q.q.fil)
+      --
     ::  +is-kernel-path: should changing .pax cause a kernel or vane reload?
     ::
     ++  is-kernel-path  |=(pax=path ?=([%sys *] pax))
@@ -1592,12 +1650,14 @@
       |^  ?-    -.yoki
               %|
             %-  lobe-to-weft
-            ~>  %mean.'clay: missing /sys/kelvin'
+            ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
+            ~|  ~(key by q.p.yoki)
             (~(got by q.p.yoki) /sys/kelvin)
           ::
               %&
             =/  fil=(each page lobe)
-              ~>  %mean.'clay: missing /sys/kelvin'
+              ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
+              ~|  ~(key by q.p.yoki)
               (~(got by q.p.yoki) /sys/kelvin)
             ?-    -.fil
                 %&  (page-to-weft p.fil)
@@ -4109,9 +4169,10 @@
         [~ fod]
       ::  virtualize to catch and produce deterministic failures
       ::
-      !.
+      !:
       =-  ?:  ?=(%& -<)  p.-
-          ((slog leaf+"clay: read-at-aeon fail {<mun>}" p.-) [[~ ~] fod])
+          %.  [[~ ~] fod]
+          (slog leaf+"clay: read-at-aeon fail {<[desk=syd mun]>}" ~)
       %-  mule  |.
       ?-  care.mun
           %d
@@ -4269,6 +4330,7 @@
     [~ ..^$(hun.rom.ruf hen)]
   ::
       %into
+    ~&  [%into (turn fis.req head)]
     =.  hez.ruf  `hen
     =+  bem=(~(get by mon.ruf) des.req)
     ?:  &(?=(~ bem) !=(%$ des.req))
@@ -4428,12 +4490,22 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%9 raft-9]
+        $%  [%10 raft-10]
+            [%9 raft-9]
             [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-9  raft
+      +$  raft-10  raft
+      +$  raft-9
+        $:  rom=room                                    ::  domestic
+            hoy=(map ship rung)                         ::  foreign
+            ran=rang                                    ::  hashes
+            mon=(map term beam)                         ::  mount points
+            hez=(unit duct)                             ::  sync duct
+            cez=(map @ta crew)                          ::  permission groups
+            pud=(unit [=desk =yoki])                    ::  pending update
+        ==                                              ::
       +$  raft-8
         $:  rom=room-8
             hoy=(map ship rung-8)
@@ -4549,7 +4621,8 @@
   =?  old  ?=(%6 -.old)  7+(raft-6-to-7 +.old)
   =?  old  ?=(%7 -.old)  8+(raft-7-to-8 +.old)
   =?  old  ?=(%8 -.old)  9+(raft-8-to-9 +.old)
-  ?>  ?=(%9 -.old)
+  =?  old  ?=(%9 -.old)  10+(raft-9-to-10 +.old)
+  ?>  ?=(%10 -.old)
   ..^^$(ruf +.old)
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -4612,6 +4685,11 @@
       =/  dom  dom.rede-8
       rede-8(dom [ank.dom let.dom hit.dom lab.dom mim.dom *ford-cache])
     ==
+  ::  +raft-9-to-10: add .dist-upgraded
+  ++  raft-9-to-10
+    |=  raf=raft-9
+    ^-  raft-10
+    raf(pud [pud.raf dist-upgraded=|])
   --
 ::
 ++  scry                                              ::  inspect
@@ -4682,6 +4760,13 @@
   ^+  [*(list move) ..^$]
   ?^  dud
     ~|(%clay-take-dud (mean tang.u.dud))
+  ?:  ?=([%dist *] tea)
+    ?>  ?=(%unto +<.hin)
+    ?>  ?=(%poke-ack -.p.hin)
+    ?~  p.p.hin
+      [~ ..^$]
+    =+  ((slog 'clay: dist migration failed' u.p.p.hin) ~)
+    !!
   ::
   ?:  ?=([%merge @ @ @ @ ~] tea)
     ?>  ?=(%writ +<.hin)
@@ -4835,6 +4920,7 @@
       ::
       %boon  !!
       %lost  !!
+      %unto  !!
       %writ
     %-  (slog leaf+"clay: strange writ (expected on upgrade to Fusion)" ~)
     [~ ..^$]

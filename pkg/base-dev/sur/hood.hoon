@@ -204,7 +204,8 @@
 ::
 ++  mergebase-hashes
   |=  [our=@p =desk now=@da =arak]
-  ?>  ?=(^ rail.arak)
+  ?~  rail.arak
+    ~
   =/  her  (scot %p ship.u.rail.arak)
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
