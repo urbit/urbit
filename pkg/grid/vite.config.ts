@@ -9,7 +9,8 @@ const htmlPluginOpt = {
   headScripts: [{ src: '/apps/grid/desk.js' }, { src: '/session.js' }]
 };
 
-const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
+// using current commit until release
+const GIT_DESC = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
 process.env.VITE_SHORTHASH = GIT_DESC;
 
 // https://vitejs.dev/config/
