@@ -254,7 +254,7 @@
           %-  ~(urn by eggs.old)
           |=  [a=term e=egg]
           ::NOTE  kiln will kick off appropriate app revival
-          ?:  =(%hood a)  e
+          ?:  =(%hood a)  e(q.beak %base)
           e(old-state [%| p.old-state.e])
         +>.old
       --
