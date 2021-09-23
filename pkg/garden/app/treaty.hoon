@@ -5,8 +5,9 @@
 ++  default-ally  ~zod
 ::
 +$  card  card:agent:gall
-+$  state-0
-  $:  treaties=(map [=ship =desk] treaty)
++$  state-1
+  $:  %1
+      treaties=(map [=ship =desk] treaty)
       sovereign=(map desk treaty)
       entente=alliance
       =allies:ally
@@ -16,7 +17,7 @@
 ^-  agent:gall
 %+  verb  &
 %-  agent:dbug
-=|  state-0
+=|  state-1
 =*  state  -
 =<
 |_  =bowl:gall
@@ -25,25 +26,73 @@
     io    ~(. agentio bowl)
     pass  pass:io
     cc    ~(. +> bowl)
-++  on-init  
+++  on-init
   ?:  =(our.bowl default-ally)  `this
   (on-poke %ally-update-0 !>([%add default-ally]))
 ++  on-save  !>(state)
 ++  on-load
   |=  =vase
-  =+  !<(old=state-0 vase)
-  `this(state old)
+  |^  =/  old=state-any
+        ?:  |(?=([~ *] q.vase) ?=([^ *] q.vase))
+          (state-0-to-1 !<(state-0 vase))
+        !<(state-any vase)
+      `this(state old)
+  ::
+  +$  state-any  state-1
+  +$  state-0
+    $:  treaties=(map [=ship =desk] treaty-0)
+        sovereign=(map desk treaty-0)
+        entente=alliance
+        =allies:ally
+        direct=(set [=ship =desk])
+    ==
+  +$  treaty-0
+    [=ship =desk =case hash=@uv docket=docket-0]
+  +$  docket-0
+    $:  %1
+        title=@t
+        info=@t
+        color=@ux
+        href=href-0
+        image=(unit cord)  :: url:docket
+        =version:docket
+        website=cord  ::  url:docket
+        license=cord
+    ==
+  +$  href-0
+    $%  [%glob base=term =glob-location:docket]
+        [%site =path]
+    ==
+  ::
+  ++  state-0-to-1
+    |=  old=state-0
+    ^-  state-1
+    :-  %1
+    %=  old
+      treaties   (~(run by treaties.old) treaty-0-to-1)
+      sovereign  (~(run by sovereign.old) treaty-0-to-1)
+    ==
+  ++  treaty-0-to-1
+    |=  t=treaty-0
+    ^-  treaty
+    t(href.docket (href-0-to-1 href.docket.t))
+  ++  href-0-to-1
+    |=  h=href-0
+    ^-  href:docket
+    ?.  ?=(%glob -.h)  h
+    [%glob base 0v0 glob-location]:h
+  --
 ::
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?>  (team:title [our src]:bowl)
-  |^  
+  |^
   ?+  mark  (on-poke:def mark vase)
     %ally-update-0      (ally-update !<(update:ally vase))
-    %alliance-update-0  (alliance-update !<(update:alliance vase)) 
+    %alliance-update-0  (alliance-update !<(update:alliance vase))
   ::
-      %noun 
+      %noun
     =+  ;;([%add =desk] q.vase)
     =/  =docket:docket  ~(get-docket so:cc desk)
     =/  =treaty  (treaty-from-docket:cc desk docket)
@@ -70,7 +119,7 @@
     =-  [[(alliance-update:ca:cc update) -.-] +.-]
     ?+  -.update  !!
     ::
-        %add  
+        %add
       =,  update
       =.  entente  (~(put in entente) [ship desk])
       ?.  =(our.bowl ship)  `this
@@ -94,8 +143,8 @@
   |=  =path
   ^-  (quip card _this)
   ?+  path  (on-watch:def path)
-    ::  syncing 
-      [%treaty @ @ ~]  
+    ::  syncing
+      [%treaty @ @ ~]
     =/  =ship  (slav %p i.t.path)
     =*  desk   i.t.t.path
     ?:  =(our.bowl ship)
@@ -143,15 +192,15 @@
     ``treaty+!>(treaty)
   ==
 ::
-++  on-agent 
+++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   =*  ship  src.bowl
-  |^  
+  |^
   ?+  wire  (on-agent:def wire sign)
     [%ally @ ~]  ?>(=(src.bowl (slav %p i.t.wire)) take-ally)
   ::
-      [%treaty @ @ ~]  
+      [%treaty @ @ ~]
     =*  desk  i.t.t.wire
     ?>  =(ship (slav %p i.t.wire))
     (take-treaty desk)
@@ -173,8 +222,8 @@
         %fact
       ?.  =(%alliance-update-0 p.cage.sign)  `this
       =+  !<(=update:alliance q.cage.sign)
-      =^  cards  allies  
-        ?-  -.update 
+      =^  cards  allies
+        ?-  -.update
         ::
             %ini
           :_   (~(put by allies) src.bowl init.update)
@@ -182,7 +231,7 @@
           |=  [s=^ship =desk]
           ~(safe-watch tr:cc s desk)
         ::
-            %add  
+            %add
           :_  (~(put ju allies) src.bowl [ship desk]:update)
           (drop ~(safe-watch tr:cc [ship desk]:update))
 
@@ -264,7 +313,7 @@
 ++  al
   |_  =ship
   ++  pass    ~(. ^pass /ally/(scot %p ship))
-  ++  watch   (watch:pass [ship dap.bowl] /alliance) 
+  ++  watch   (watch:pass [ship dap.bowl] /alliance)
   ++  leave   (leave:pass ship dap.bowl)
   --
 ::  +cg: Cage construction
@@ -280,7 +329,7 @@
   |%
   ++  watch-docket  (~(watch-our pass /docket) %docket /dockets)
   ++  ally-update  |=(=update:ally (fact:io (ally-update:cg update) /allies ~))
-  ++  alliance-update  
+  ++  alliance-update
     |=(=update:alliance (fact:io (alliance-update:cg update) /alliance ~))
   --
 ::  +tr: engine for treaties
@@ -293,7 +342,7 @@
   ++  watching  (~(has by wex.bowl) [path dock])
   ++  safe-watch  `(unit card)`?:(watching ~ `watch)
   ++  leave  (leave:pass dock)
-  ++  give  
+  ++  give
     =/  t=treaty  (~(got by treaties) ship desk)
     (fact:io (treaty:cg t) /treaties path ~)
   --
@@ -315,13 +364,3 @@
     (poke-our:pass %hood kiln-permission+!>([desk / &]))
   --
 --
-
-
-
-
-  
-
-
-
-
-
