@@ -8,14 +8,17 @@
 +$  url   cord
 ::  $glob-location: How to retrieve a glob
 ::
++$  glob-reference
+  [hash=@uvH location=glob-location]
+::
 +$  glob-location
-  $%  [%http =url hash=@uvH]
-      [%ames =ship hash=@uvH]
+  $%  [%http =url]
+      [%ames =ship]
   ==
 ::  $href: Where a tile links to
 ::
 +$  href
-  $%  [%glob base=term =glob-location]
+  $%  [%glob base=term =glob-reference]
       [%site =path]
   ==
 ::  $chad: State of a docket

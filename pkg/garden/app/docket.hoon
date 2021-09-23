@@ -219,8 +219,8 @@
         ?:  ?&  ?=(^ pre)
                 ?=(%glob -.chad.u.pre)
               ::
-                .=  [%ames our.bowl (sham glob.chad.u.pre)]
-                glob-location.href.docket
+                .=  [(sham glob.chad.u.pre) %ames our.bowl]
+                glob-reference.href.docket
             ==
           [~[add-fact:cha] state]
         ::  if the glob changed, forget the old and fetch the new
@@ -291,7 +291,7 @@
         =/  =docket  docket:(~(got by charges) desk)
         ?.  ?=([%glob * %ames *] href.docket)
           `state
-        ?.  =(hash.glob-location.href.docket (hash-glob glob))
+        ?.  =(hash.glob-reference.href.docket (hash-glob glob))
           ~&  [dap.bowl %glob-hash-mismatch on=desk from=src.bowl]
           `state
         =.  charges  (new-chad:cha glob+glob)
@@ -491,7 +491,7 @@
       :_  state
       ::
       =/  ours=?
-        =/  loc  glob-location.href.docket.charge
+        =/  loc  location.glob-reference.href.docket.charge
         ?&  ?=(%ames -.loc)
             =(our.bowl ship.loc)
         ==
@@ -504,7 +504,7 @@
           %+  foal:space:userlib
             /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket
           =-  [%docket !>(`docket`-)]
-          docket.charge(glob-location.href [%ames our.bowl (hash-glob glob)])
+          docket.charge(glob-reference.href [(hash-glob glob) %ames our.bowl])
       ==
     ::
     ?~  parts=(de-request:multipart [header-list body]:request)
@@ -609,18 +609,18 @@
       (~(got by charges) desk)
     =/  tid=@t  (cat 3 'docket-' (scot %uv (sham (mix eny.bowl desk))))
     ?>  ?=(%glob -.href.docket.charge)
-    =/  loc  glob-location.href.docket.charge
-    ?:  ?=(%ames -.loc)
-      ?:  =(our.bowl ship.loc)
+    =/  ref  glob-reference.href.docket.charge
+    ?:  ?=(%ames -.location.ref)
+      ?:  =(our.bowl ship.location.ref)
         ~>  %slog.0^leaf/"docket: awaiting manual glob for {<desk>} desk"
         ~
       ~>  %slog.0^leaf/"docket: fetching ames glob for {<desk>} desk"
       :_  ~
       %+  watch:(pass %glob-ames)
-        [ship.loc %docket]
-      /glob/[base.href.docket.charge]/(scot %uv hash.loc)
+        [ship.location.ref %docket]
+      /glob/[base.href.docket.charge]/(scot %uv hash.ref)
     ~>  %slog.0^leaf/"docket: fetching http glob for {<desk>} desk"
-    =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[loc desk])])
+    =/  =cage  spider-start+!>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[ref desk])])
     :~  (watch-our:(pass %glob-http) %spider /thread-result/[tid])
         (poke-our:(pass %glob-http) %spider cage)
     ==

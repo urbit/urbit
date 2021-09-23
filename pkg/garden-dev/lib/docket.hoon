@@ -30,10 +30,10 @@
       ?^  site.draft  `[%site u.site.draft]
       ?~  base.draft  ~
       ?^  glob-http.draft
-        `[%glob [u.base %http u.glob-http]:draft]
+        `[%glob u.base hash.u.glob-http %http url.u.glob-http]:draft
       ?~  glob-ames.draft
         ~
-      `[%glob [u.base %ames u.glob-ames]:draft]
+      `[%glob u.base hash.u.glob-ames %ames ship.u.glob-ames]:draft
     ?~  href  ~
     =,  draft
     :-  ~
@@ -84,11 +84,11 @@
         ==
         ?~  image.d  ~  ~[image+u.image.d]
         ?:  ?=(%site -.href.d)  ~[site+path.href.d]
-        =/  loc=glob-location  glob-location.href.d
+        =/  ref=glob-reference  glob-reference.href.d
         :~  base+base.href.d
-            ?-  -.loc
-              %http  [%glob-http url hash]:loc
-              %ames  [%glob-ames ship hash]:loc
+            ?-  -.location.ref
+              %http  [%glob-http url.location.ref hash.ref]
+              %ames  [%glob-ames ship.location.ref hash.ref]
     ==  ==  ==
   ::
   ++  spit-clause
@@ -172,8 +172,15 @@
         %glob
       %-  pairs
       :~  base+s+base.h
-          glob-location+(glob-location glob-location.h)
+          glob-reference+(glob-reference glob-reference.h)
       ==
+    ==
+  ::
+  ++  glob-reference
+    |=  ref=^glob-reference
+    %-  pairs
+    :~  hash+s+(scot %uv hash.ref)
+        location+(glob-location location.ref)
     ==
   ::
   ++  glob-location
@@ -181,8 +188,8 @@
     ^-  json
     %+  frond  -.loc
     ?-  -.loc
-      %http  (pairs url+s+url.loc hash+s+(scot %uv hash.loc) ~)
-      %ames  (pairs ship+(ship ship.loc) hash+s+(scot %uv hash.loc) ~)
+      %http  s+url.loc
+      %ames  s+(scot %p ship.loc)
     ==
   ::
   ++  charge

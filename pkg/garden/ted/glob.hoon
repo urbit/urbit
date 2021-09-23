@@ -5,10 +5,10 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ loc=glob-location:docket base=term] arg)
+=+  !<([~ ref=glob-reference:docket base=term] arg)
 |^
-?-  -.loc
-  %http  (fetch-http +.loc)
+?-  -.location.ref
+  %http  (fetch-http [url.location hash]:ref)
   %ames  !!  ::NOTE  done within docket itself
 ==
 ::
