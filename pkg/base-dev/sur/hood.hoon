@@ -67,7 +67,11 @@
 ++  report-vat
   |=  [our=ship now=@da vat]
   ^-  tank
-  =+  .^(=weft %cx /(scot %p our)/[desk]/(scot %da now)/sys/kelvin)
+  =/  kel-path
+    /(scot %p our)/[desk]/(scot %da now)/sys/kelvin
+  ?.  .^(? %cu kel-path)
+    leaf+"bad desk: {<desk>}"
+  =+  .^(=weft %cx kel-path)
   :+  %rose  ["" "{<desk>}" "::"]
   ^-  tang
   =/  meb  (mergebase-hashes our desk now arak)
@@ -81,7 +85,7 @@
   :~  leaf/"/sys/kelvin:  {<[lal num]:weft>}"
       leaf/"base hash:    {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
       leaf/"%cz hash:     {<hash>}"
-      leaf/"updates:      {sat}"
+      leaf/"updates:      {poz}"
       leaf/"source ship:  {?~(rail.arak <~> <ship.u.rail.arak>)}"
       leaf/"source desk:  {?~(rail.arak <~> <desk.u.rail.arak>)}"
       leaf/"source aeon:  {?~(rail.arak <~> <aeon.u.rail.arak>)}"

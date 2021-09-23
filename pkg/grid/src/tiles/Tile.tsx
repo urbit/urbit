@@ -33,8 +33,8 @@ export const Tile: FunctionComponent<TileProps> = ({ charge, desk }) => {
         !active && 'cursor-default'
       )}
       style={{ backgroundColor }}
-      onClick={() => addRecentApp(charge)}
-      onAuxClick={() => addRecentApp(charge)}
+      onClick={() => addRecentApp(desk)}
+      onAuxClick={() => addRecentApp(desk)}
     >
       <div>
         {loading ? (

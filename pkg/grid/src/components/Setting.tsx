@@ -8,10 +8,18 @@ import { Toggle } from './Toggle';
 type SettingsProps = {
   name: string;
   on: boolean;
+  disabled?: boolean;
   toggle: (open: boolean) => Promise<void>;
 } & HTMLAttributes<HTMLDivElement>;
 
-export const Setting: FC<SettingsProps> = ({ name, on, toggle, className, children }) => {
+export const Setting: FC<SettingsProps> = ({
+  name,
+  on,
+  disabled = false,
+  toggle,
+  className,
+  children
+}) => {
   const { status, call } = useAsyncCall(toggle);
   const id = slugify(name);
 
@@ -26,6 +34,8 @@ export const Setting: FC<SettingsProps> = ({ name, on, toggle, className, childr
           pressed={on}
           onPressedChange={call}
           className="flex-none self-start text-blue-400"
+          disabled={disabled}
+          loading={status === 'loading'}
         />
         <div className="flex-1 flex flex-col justify-center space-y-6">{children}</div>
       </div>

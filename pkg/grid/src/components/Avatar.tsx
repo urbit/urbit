@@ -4,6 +4,7 @@ import { sigil, reactRenderer } from '@tlon/sigil-js';
 import { deSig, Contact } from '@urbit/api';
 import { darken, lighten, parseToHsla } from 'color2k';
 import { useCurrentTheme } from '../state/local';
+import { normalizeUrbitColor } from '../state/util';
 
 export type AvatarSizes = 'xs' | 'small' | 'default';
 
@@ -66,7 +67,7 @@ export const Avatar = ({ size, className, ...ship }: AvatarProps) => {
   const currentTheme = useCurrentTheme();
   const { shipName, color, avatar } = { ...emptyContact, ...ship };
   const { classes, size: sigilSize } = sizeMap[size];
-  const adjustedColor = themeAdjustColor(color, currentTheme);
+  const adjustedColor = themeAdjustColor(normalizeUrbitColor(color), currentTheme);
   const foregroundColor = foregroundFromBackground(adjustedColor);
   const sigilElement = useMemo(() => {
     if (shipName.match(/[_^]/)) {

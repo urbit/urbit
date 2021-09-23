@@ -200,7 +200,8 @@ module.exports = {
   },
   variants: {
     extend: {
-      opacity: ['hover-none']
+      opacity: ['hover-none'],
+      display: ['group-hover']
     }
   },
   plugins: [

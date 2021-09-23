@@ -9,6 +9,7 @@ import {
   scryAllies,
   scryAllyTreaties,
   scryCharges,
+  scryDefaultAlly,
   Treaty,
   Docket,
   Treaties,
@@ -22,7 +23,7 @@ import {
 } from '@urbit/api';
 import api from './api';
 import { mockAllies, mockCharges, mockTreaties } from './mock-data';
-import { fakeRequest, useMockData } from './util';
+import { fakeRequest, normalizeUrbitColor, useMockData } from './util';
 
 export interface ChargeWithDesk extends Charge {
   desk: string;
@@ -40,7 +41,9 @@ interface DocketState {
   charges: ChargesWithDesks;
   treaties: Treaties;
   allies: Allies;
+  defaultAlly: string | null;
   fetchCharges: () => Promise<void>;
+  fetchDefaultAlly: () => Promise<void>;
   requestTreaty: (ship: string, desk: string) => Promise<Treaty>;
   fetchAllies: () => Promise<Allies>;
   fetchAllyTreaties: (ally: string) => Promise<Treaties>;
@@ -50,6 +53,11 @@ interface DocketState {
 }
 
 const useDocketState = create<DocketState>((set, get) => ({
+  defaultAlly: useMockData ? '~zod' : null,
+  fetchDefaultAlly: async () => {
+    const defaultAlly = await api.scry<string>(scryDefaultAlly);
+    set({ defaultAlly });
+  },
   fetchCharges: async () => {
     const charg = useMockData
       ? await fakeRequest(mockCharges)
@@ -100,8 +108,8 @@ const useDocketState = create<DocketState>((set, get) => ({
     if (!treaty) {
       throw new Error('Bad install');
     }
+    set((state) => addCharge(state, desk, { ...treaty, chad: { install: null } }));
     if (useMockData) {
-      set((state) => addCharge(state, desk, { ...treaty, chad: { install: null } }));
       await new Promise<void>((res) => setTimeout(() => res(), 10000));
       set((state) => addCharge(state, desk, { ...treaty, chad: { glob: null } }));
     }
@@ -147,14 +155,10 @@ const useDocketState = create<DocketState>((set, get) => ({
 }));
 
 function normalizeDocket<T extends Docket>(docket: T, desk: string): T {
-  const color = docket?.color?.startsWith('#')
-    ? docket.color
-    : `#${docket.color.slice(2).replace('.', '')}`.toUpperCase();
-
   return {
     ...docket,
     desk,
-    color
+    color: normalizeUrbitColor(docket.color)
   };
 }
 

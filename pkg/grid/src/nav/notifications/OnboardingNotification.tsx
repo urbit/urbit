@@ -14,8 +14,8 @@ const cards: OnboardingCardProps[] = [
     href: '/leap/search/direct/apps/~zod/webterm'
   },
   {
-    title: 'Groups',
-    body: 'Install Groups, a suite of social software to communicate with other urbit users',
+    title: 'Landscape',
+    body: 'Install Landscape, a suite of social software to communicate with other urbit users',
     button: 'Install',
     color: '#D1DDD3',
     href: '/leap/search/direct/apps/~zod/landscape'
@@ -42,6 +42,16 @@ const cards: OnboardingCardProps[] = [
   //   color: '#82A6CA'
   // }
 ];
+
+if ('registerProtocolHandler' in window.navigator) {
+  cards.push({
+    title: 'Open Urbit-Native Links',
+    body: 'Enable your Urbit to open links you find in the wild',
+    button: 'Enable Link Handler',
+    color: '#82A6CA',
+    href: '/apps/grid/leap/system-preferences/interface'
+  });
+}
 
 interface OnboardingCardProps {
   title: string;

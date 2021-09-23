@@ -8,6 +8,7 @@ import { ShipName } from '../../components/ShipName';
 import { DeskLink } from '../../components/DeskLink';
 import { useHarkStore } from '../../state/hark';
 import { DocketImage } from '../../components/DocketImage';
+import { Button } from '../../components/Button';
 
 interface BasicNotificationProps {
   notification: Notification;
@@ -45,14 +46,20 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
     useHarkStore.getState().archiveNote(notification.bin, lid);
   };
 
+  const archiveNoFollow = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    archive();
+  };
+
   return (
     <DeskLink
       onClick={archive}
       to={`?grid-note=${encodeURIComponent(first.link)}`}
       desk={desk}
       className={cn(
-        'text-black rounded-xl',
-        'unseen' in lid ? 'bg-blue-100' : 'bg-gray-100',
+        'text-black rounded-xl group',
+        'unseen' in lid ? 'bg-blue-100' : 'bg-gray-50',
         large ? 'note-grid-no-content' : 'note-grid-content'
       )}
       aria-labelledby={id}
@@ -64,6 +71,9 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
         <h2 id={`${id}-title`} className="note-grid-head font-semibold text-gray-600">
           <NotificationText contents={first.title} />
         </h2>
+        <div className="note-grid-actions hidden justify-center self-center group-hover:flex">
+          <Button onClick={archiveNoFollow}>Archive</Button>
+        </div>
       </header>
       {contents.length > 0 ? (
         <div className="note-grid-body space-y-2">

@@ -572,15 +572,17 @@
     ?:  =(suffix /desk/js)
       %-  inline-js-response
       (rap 3 'window.desk = "' u.des '";' ~)
+    =/  requested
+      ?:  (~(has by glob) suffix)  suffix
+      /index/html
     =/  data=mime
-      (~(gut by glob) suffix (~(got by glob) /index/html))
+      (~(got by glob) requested)
     =/  mime-type=@t  (rsh 3 (crip <p.data>))
     =;  headers
       [[200 headers] `q.data]
-    :~  content-type+mime-type
-        max-1-wk:gen
-        'service-worker-allowed'^'/'
-    ==
+    :-  content-type+mime-type
+    ?:  =(/index/html requested)  ~
+    ~[max-1-wk:gen]
   --
 ::
 ++  get-light-charge

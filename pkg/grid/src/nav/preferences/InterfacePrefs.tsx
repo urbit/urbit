@@ -4,6 +4,8 @@ import { useProtocolHandling, setLocalState } from '../../state/local';
 
 export function InterfacePrefs() {
   const protocolHandling = useProtocolHandling();
+  const secure = window.location.protocol === 'https:';
+  const linkHandlingAllowed = secure && !('registerProtocolHandler' in window.navigator);
   const toggleProtoHandling = async () => {
     if (!protocolHandling && window?.navigator?.registerProtocolHandler) {
       try {
@@ -33,8 +35,20 @@ export function InterfacePrefs() {
   return (
     <>
       <h2 className="h3 mb-7">Interface Settings</h2>
-      <Setting on={protocolHandling} toggle={toggleProtoHandling} name="Handle Urbit links">
-        <p>Automatically open urbit links with this urbit</p>
+      <Setting
+        on={protocolHandling}
+        toggle={toggleProtoHandling}
+        name="Handle Urbit links"
+        disabled={!linkHandlingAllowed}
+      >
+        <p>
+          Automatically open urbit links with this urbit
+          {!linkHandlingAllowed && (
+            <>
+              , <strong className="text-orange-500">requires HTTPS</strong>
+            </>
+          )}
+        </p>
       </Setting>
     </>
   );

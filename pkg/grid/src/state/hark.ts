@@ -84,9 +84,19 @@ export const useHarkStore = createState<HarkState>(
       await api.poke(archiveAll);
     },
     archiveNote: async (bin, lid) => {
+      if (useMockData) {
+        get().set((draft) => {
+          const seen = 'seen' in lid ? 'seen' : 'unseen';
+          const binId = harkBinToId(bin);
+          delete draft[seen][binId];
+        });
+        return;
+      }
       await api.poke(archive(bin, lid));
     },
     opened: async () => {
+      reduceHark({ opened: null });
+
       await api.poke(opened);
     },
     getMore: async () => {

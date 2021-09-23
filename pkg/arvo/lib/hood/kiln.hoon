@@ -512,10 +512,10 @@
   ++  pause
     |=  lac=desk
     ^+  vats
+    =.  vats  (abed lac)
     ?.  is-tracking
       ~>  %slog.0^leaf/"kiln: {<lac>} already paused, ignoring"
       vats
-    =.  vats  (abed lac)
     ~>  %slog.0^leaf/"kiln: {<lac>} pausing updates"
     =/  rel  ral
     =.  rail.rak  `rel(paused &, aeon 0)

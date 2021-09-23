@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Dialog, DialogClose, DialogContent } from '../components/Dialog';
+import { useRecentsStore } from '../nav/search/Home';
 import useDocketState, { useCharges } from '../state/docket';
 
 export const RemoveApp = () => {
@@ -14,6 +15,7 @@ export const RemoveApp = () => {
   // TODO: add optimistic updates
   const handleRemoveApp = useCallback(() => {
     uninstallDocket(desk);
+    useRecentsStore.getState().removeRecentApp(desk);
   }, [desk]);
 
   return (

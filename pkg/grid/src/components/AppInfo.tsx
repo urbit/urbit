@@ -68,6 +68,8 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
     }, 1250);
   }, []);
 
+  const installing = installStatus === 'installing';
+
   if (!docket) {
     // TODO: maybe replace spinner with skeletons
     return (
@@ -87,15 +89,15 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
               as="a"
               href={getAppHref(docket.href)}
               target={docket.desk || '_blank'}
-              onClick={() => addRecentApp(docket)}
+              onClick={() => addRecentApp(docket.desk)}
             >
               Open App
             </PillButton>
           )}
           {installStatus !== 'installed' && (
             <Dialog>
-              <DialogTrigger as={PillButton} variant="alt-primary">
-                {installStatus === 'installing' ? (
+              <DialogTrigger as={PillButton} disabled={installing} variant="alt-primary">
+                {installing ? (
                   <>
                     <Spinner />
                     <span className="sr-only">Installing...</span>

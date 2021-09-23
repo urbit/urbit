@@ -51,31 +51,22 @@ const useKilnState = create<KilnState>((set, get) => ({
     await api.poke(kilnInstall(ship, '%kids', 'base'));
   },
   toggleOTAs: async (desk: string, on: boolean) => {
-    if (useMockData) {
-      await fakeRequest('');
-      set(
-        produce((draft: KilnState) => {
-          const { arak } = draft.vats[desk];
-          if (!arak.rail) {
-            return;
-          }
+    set(
+      produce((draft: KilnState) => {
+        const { arak } = draft.vats[desk];
+        if (!arak.rail) {
+          return;
+        }
+        if (on) {
+          arak.rail.paused = false;
+        } else {
+          arak.rail.paused = true;
+        }
+      })
+    );
 
-          if (on) {
-            arak.rail.paused = false;
-          } else {
-            arak.rail.paused = true;
-          }
-        })
-      );
-
-      return;
-    }
-
-    await api.poke(on ? kilnResume(desk) : kilnPause(desk));
-
-    if (!on) {
-      get().fetchVats(); // refresh vat state
-    }
+    await (useMockData ? fakeRequest('') : api.poke(on ? kilnResume(desk) : kilnPause(desk)));
+    await get().fetchVats(); // refresh vat state
   },
   set: produce(set)
 }));

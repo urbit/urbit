@@ -329,7 +329,6 @@ export const mockVat = (desk: string, blockers?: boolean): Vat => ({
     ud: 1
   },
   desk,
-  paused: false,
   arak: {
     rein: {
       sub: [],

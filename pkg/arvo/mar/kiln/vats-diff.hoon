@@ -11,7 +11,7 @@
     ?-  -.diff
       %block  (block +.diff)
       ?(%merge-sunk %merge-fail)  (desk-arak-err +.diff)
-      ?(%reset %merge %suspend %revive)  (desk-arak +.diff)
+      ?(%reset %commit %suspend %revive)  (desk-arak +.diff)
     ==
     ::
     ++  block
