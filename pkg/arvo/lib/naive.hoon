@@ -178,9 +178,10 @@
       topics=(lest @ux)
   ==
 +$  input
+  $:  block=@ud
   $%  [%bat batch=@]
       [%log =event-log]
-  ==
+  ==  ==
 ::  ECDSA verifier.
 ::
 ::  Must keccak `dat` and recover the ethereum address which signed.
@@ -914,7 +915,7 @@
 ::
 |=  [=verifier chain-id=@ud =state =input]
 ^-  [effects ^state]
-?:  ?=(%log -.input)
+?:  ?=(%log +<.input)
   :: Received log from L1 transaction
   ::
   (receive-log state event-log.input)

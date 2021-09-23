@@ -4,7 +4,9 @@
 :: This gate passes a state and input to naive.hoon for both L1 and L2
 :: transactions. Every transaction implemented in this test suite utilizes it.
 ::
-++  n  |=([=^state:naive =^input:naive] (%*(. naive lac &) verifier 1.337 +<))
+++  n
+  |=  [=^state:naive input=_+:*^input:naive]
+  (%*(. naive lac &) verifier 1.337 state 0 input)
 ::
 ++  orm   ((on ship point:naive) por:naive)
 ++  addr  address-from-prv:key:ethereum
@@ -853,7 +855,6 @@
   ::
   ++  log
     |=  [log-name=@ux data=@ux topics=(list @)]
-    ^-  ^input:naive
     [%log *@ux data log-name topics]
   ::
   ++  owner-changed
@@ -2334,7 +2335,7 @@
     ==
   ::
     !>
-    %^  naive  verifier  1.337  :-  *^state:naive
+    %^  naive  verifier  1.337  :+  *^state:naive  0
     :*  %log  *@ux  *@ux
         owner-changed:log-names:naive  (@ux ~bud)  (addr %bud-key-0)  ~
     ==

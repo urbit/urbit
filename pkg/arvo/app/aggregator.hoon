@@ -474,7 +474,7 @@
   ^-  [octs tx:naive]
   ?-    -.part-tx
       %raw
-    ?~  batch=(parse-raw-tx:naive q.raw.part-tx)
+    ?~  batch=(parse-raw-tx:naive 0 q.raw.part-tx)
       ~&  %parse-failed
       ::  TODO: maybe return a unit if parsing fails?
       ::

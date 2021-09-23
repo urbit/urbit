@@ -85,6 +85,7 @@
     $(logs t.logs)
   =/  [raw-effects=effects:naive new-nas=_nas.state]
     =/  =^input:naive
+      :-  block-number.u.mined.i.logs
       ?:  =(contract address.i.logs)
         =/  data  (data-to-hex data.i.logs)
         =/  =event-log:naive
