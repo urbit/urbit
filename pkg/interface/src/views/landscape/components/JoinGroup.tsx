@@ -104,8 +104,7 @@ export function JoinGroup(props: JoinGroupProps): ReactElement {
         history.push(`/~landscape${group}`);
       }
     } catch (e) {
-      //  drop them into inbox to show join request still pending
-      history.push('/~notifications');
+      console.error(e);
     }
   }, [waiter, history, associations, groups]);
 

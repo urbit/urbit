@@ -1,6 +1,7 @@
 import React, { ReactElement, useCallback } from 'react';
 import { Associations, Graph } from '@urbit/api';
 import { patp, patp2dec } from 'urbit-ob';
+import _ from 'lodash';
 
 import { SidebarAssociationItem, SidebarDmItem } from './SidebarItem';
 import useGraphState, { useInbox } from '~/logic/state/graph';
@@ -86,7 +87,7 @@ function getItems(associations: Associations, workspace: Workspace, inbox: Graph
     ? []
     : Array.from(pending).map(s => `~${s}`);
 
-  return [...filtered, ...direct, ...pend];
+  return [...filtered, ..._.union(direct, pend)];
 }
 
 export function SidebarList(props: {
