@@ -13,6 +13,7 @@ import React, {
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import { Cross } from '../components/icons/Cross';
 import { useDebounce } from '../logic/useDebounce';
+import { useErrorHandler } from '../logic/useErrorHandler';
 import { MenuState, useLeapStore } from './Nav';
 
 function normalizePathEnding(path: string) {
@@ -58,6 +59,7 @@ export const Leap = React.forwardRef(
     const inputRef = useRef<HTMLInputElement>(null);
     useImperativeHandle(ref, () => inputRef.current);
     const { rawInput, selectedMatch, matches, selection, select } = useLeapStore();
+    const handleError = useErrorHandler();
 
     useEffect(() => {
       if (selection && rawInput === '') {
@@ -123,7 +125,7 @@ export const Leap = React.forwardRef(
     const handleSearch = useCallback(debouncedSearch, [match]);
 
     const onChange = useCallback(
-      (e: ChangeEvent<HTMLInputElement>) => {
+      handleError((e: ChangeEvent<HTMLInputElement>) => {
         const input = e.target as HTMLInputElement;
         const value = input.value.trim();
         const isDeletion = (e.nativeEvent as InputEvent).inputType === 'deleteContentBackward';
@@ -148,12 +150,12 @@ export const Leap = React.forwardRef(
         }
 
         handleSearch(value);
-      },
+      }),
       [matches]
     );
 
     const onSubmit = useCallback(
-      (e: FormEvent<HTMLFormElement>) => {
+      handleError((e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const value = inputRef.current?.value.trim();
@@ -170,12 +172,12 @@ export const Leap = React.forwardRef(
 
         push(currentMatch.url);
         useLeapStore.setState({ rawInput: '' });
-      },
+      }),
       [match, selectedMatch]
     );
 
     const onKeyDown = useCallback(
-      (e: KeyboardEvent<HTMLDivElement>) => {
+      handleError((e: KeyboardEvent<HTMLDivElement>) => {
         const deletion = e.key === 'Backspace' || e.key === 'Delete';
         const arrow = e.key === 'ArrowDown' || e.key === 'ArrowUp';
 
@@ -207,7 +209,7 @@ export const Leap = React.forwardRef(
             selectedMatch: newMatch
           });
         }
-      },
+      }),
       [selection, rawInput, match, matches, selectedMatch]
     );
 

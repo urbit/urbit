@@ -2,9 +2,11 @@ import { DialogContent } from '@radix-ui/react-dialog';
 import * as Portal from '@radix-ui/react-portal';
 import classNames from 'classnames';
 import React, { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import create from 'zustand';
 import { Dialog } from '../components/Dialog';
+import { ErrorAlert } from '../components/ErrorAlert';
 import { Help } from './Help';
 import { Leap } from './Leap';
 import { Notifications } from './Notifications';
@@ -106,7 +108,7 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
   }, []);
 
   return (
-    <>
+    <ErrorBoundary FallbackComponent={ErrorAlert} onReset={() => push('/')}>
       {/* Using portal so that we can retain the same nav items both in the dialog and in the base header */}
       <Portal.Root
         containerRef={dialogContentOpen ? dialogNavRef : navRef}
@@ -172,6 +174,6 @@ export const Nav: FunctionComponent<NavProps> = ({ menu }) => {
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </ErrorBoundary>
   );
 };

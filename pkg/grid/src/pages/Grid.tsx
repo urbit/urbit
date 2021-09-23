@@ -1,6 +1,8 @@
 import { map, omit } from 'lodash';
 import React, { FunctionComponent } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Route, RouteComponentProps } from 'react-router-dom';
+import { ErrorAlert } from '../components/ErrorAlert';
 import { MenuState, Nav } from '../nav/Nav';
 import { useCharges } from '../state/docket';
 import { RemoveApp } from '../tiles/RemoveApp';
@@ -12,7 +14,7 @@ type GridProps = RouteComponentProps<{
   menu?: MenuState;
 }>;
 
-export const Grid: FunctionComponent<GridProps> = ({ match }) => {
+export const Grid: FunctionComponent<GridProps> = ({ match, history }) => {
   const charges = useCharges();
   const chargesLoaded = Object.keys(charges).length > 0;
 
@@ -32,15 +34,17 @@ export const Grid: FunctionComponent<GridProps> = ({ match }) => {
               ))}
           </div>
         )}
-        <Route exact path="/app/:desk">
-          <TileInfo />
-        </Route>
-        <Route exact path="/app/:desk/suspend">
-          <SuspendApp />
-        </Route>
-        <Route exact path="/app/:desk/remove">
-          <RemoveApp />
-        </Route>
+        <ErrorBoundary FallbackComponent={ErrorAlert} onReset={() => history.push('/')}>
+          <Route exact path="/app/:desk">
+            <TileInfo />
+          </Route>
+          <Route exact path="/app/:desk/suspend">
+            <SuspendApp />
+          </Route>
+          <Route exact path="/app/:desk/remove">
+            <RemoveApp />
+          </Route>
+        </ErrorBoundary>
       </main>
     </div>
   );
