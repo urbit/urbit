@@ -342,6 +342,11 @@
               ==                                        ::
           gift                                          ::
       ==                                                ::
+      $:  %gall
+          $>  $?  %unto
+              ==
+          gift:gall
+      ==
       $:  %jael                                         ::
           $>(%public-keys gift:jael)                    ::
   ==  ==                                                ::
@@ -1149,6 +1154,12 @@
     |=  mof=(list move)
     %_(+> mow (weld (flop mof) mow))
   ::
+  ::  Queue a list of moves, to be emitted before the rest
+  ::
+  ++  lime
+    |=  mof=(list move)
+    %_(+> mow (weld mow (flop mof)))
+  ::
   ::  Produce either null or a result along a subscription.
   ::
   ::  Producing null means subscription has been completed or cancelled.
@@ -1586,14 +1597,15 @@
     ++  migrate-dist
       ~>  %slog.0^'clay: migrating for third-party software distribution'
       |^  ^+  ..park
-      =.  ..park  (install-from-tmp %base)
-      =.  ..park  (install-from-tmp %garden)
+      ::  NOTE: reverse order, since we're prepending moves each time
       =.  ..park  (install-from-tmp %landscape)
+      =.  ..park  (install-from-tmp %garden)
+      =.  ..park  (install-from-tmp %base)
       ..park(dist-upgraded.ruf &)
       ::
       ++  install-from-tmp
         |=  =desk
-        %-  emil
+        %-  lime
         :~  :^  hen  %pass  /dist/[desk]/create
             %^  new-desk:cloy  desk
               (latest-tako desk)
@@ -4748,6 +4760,13 @@
   ^+  [*(list move) ..^$]
   ?^  dud
     ~|(%clay-take-dud (mean tang.u.dud))
+  ?:  ?=([%dist *] tea)
+    ?>  ?=(%unto +<.hin)
+    ?>  ?=(%poke-ack -.p.hin)
+    ?~  p.p.hin
+      [~ ..^$]
+    =+  ((slog 'clay: dist migration failed' u.p.p.hin) ~)
+    !!
   ::
   ?:  ?=([%merge @ @ @ @ ~] tea)
     ?>  ?=(%writ +<.hin)
@@ -4901,6 +4920,7 @@
       ::
       %boon  !!
       %lost  !!
+      %unto  !!
       %writ
     %-  (slog leaf+"clay: strange writ (expected on upgrade to Fusion)" ~)
     [~ ..^$]

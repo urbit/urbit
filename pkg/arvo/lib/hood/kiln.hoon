@@ -332,11 +332,8 @@
   ?>  ?=(%7 -.old)
   =.  state  old
   ::
-  =^  caz  state
-    ?:  (gte old-version %7)  [~ state]
-    ::NOTE  does migration to softdist logic, synchronous install
-    on-init
-  ::
+  =?  kiln  (lth old-version %7)
+    abet:(install:vats %base our %base)
   =?  kiln  ?=(^ old-ota)
     abet:(install:vats %base [her sud]:u.old-ota)
   =?  kiln  ?=(^ wef)
@@ -391,7 +388,13 @@
     ~_  leaf/"kiln: {<lac>} not installed"
     vats(loc lac, rak (~(got by ark) lac))
   ::
-  ++  here  "{<loc>} from {<[ship desk]:ral>}"
+  ++  here
+    ^-  tape
+    =/  dek  (trip loc)
+    ?~  rail.rak
+      dek
+    :(weld dek " from " <[ship desk]:u.rail.rak>)
+  ::
   ++  make-wire  |=(step=@tas /kiln/vats/[loc]/[step])
   ++  from-wire
     |=  =wire
@@ -495,7 +498,7 @@
     =:  loc  lac
         rak  [~ *rein]
       ==
-    ~>  %slog.0^leaf/"kiln: local install {here}"
+    ~>  %slog.0^leaf/"kiln: local install {<lac>}"
     =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
     =.  vats  (emit listen:pass)
     vats
