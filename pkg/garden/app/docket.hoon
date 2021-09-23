@@ -2,8 +2,9 @@
 /+  *server, agentio, default-agent, multipart, dbug, verb
 |%
 +$  card  card:agent:gall
-+$  state-0
-  $:  ::  local
++$  state-1
+  $:  %1
+      ::  local
       charges=(map desk charge)
   ==
 ::  $cache: impermanent state
@@ -11,7 +12,7 @@
   by-base=(map term desk)
 ::
 +$  inflated-state
-  [state-0 cache]
+  [state-1 cache]
 ::  +lac: toggle verbosity
 ++  lac  &
 ::
@@ -49,12 +50,14 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
-  =+  !<(old=state-0 vase)
-  =*  cha  ~(. ch q.byk.bowl)
-  |^
-  =.  -.state  old
-  =.  +.state  inflate-cache
-  `this
+  |^  =/  old=state-any
+        ?:  |(?=([~ *] q.vase) ?=([^ *] q.vase))
+          (state-0-to-1 !<(state-0 vase))
+        !<(state-any vase)
+      =*  cha  ~(. ch q.byk.bowl)
+      =.  -.state  old
+      =.  +.state  inflate-cache
+      `this
   ::
   ++  inflate-cache
     ^-  cache
@@ -63,6 +66,47 @@
     |=  [=desk =charge]
     ?.  ?=(%glob -.href.docket.charge)  ~
     `:_(desk base.href.docket.charge)
+  ::
+  +$  state-any  state-1
+  +$  state-0
+    $:  charges=(map desk charge-0)
+    ==
+  +$  charge-0
+    $:  docket=docket-0
+        =chad
+    ==
+  +$  docket-0
+    $:  %1
+        title=@t
+        info=@t
+        color=@ux
+        href=href-0
+        image=(unit url)
+        =version:docket
+        website=url
+        license=cord
+    ==
+  +$  href-0
+    $%  [%glob base=term =glob-location:docket]
+        [%site =path]
+    ==
+  ::
+  ++  state-0-to-1
+    |=  old=state-0
+    ^-  state-1
+    :-  %1
+    old(charges (~(run by charges.old) charge-0-to-1))
+  ::
+  ++  charge-0-to-1
+    |=  c=charge-0
+    ^-  charge
+    c(href.docket (href-0-to-1 href.docket.c))
+  ::
+  ++  href-0-to-1
+    |=  h=href-0
+    ^-  href
+    ?.  ?=(%glob -.h)  h
+    [%glob base 0v0 glob-location]:h
   --
 ::
 ++  on-save  !>(-.state)
