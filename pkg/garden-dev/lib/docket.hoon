@@ -7,8 +7,8 @@
     $:  title=(unit @t)
         info=(unit @t)
         color=(unit @ux)
-        glob-http=(unit url)
-        glob-ames=(unit =ship)
+        glob-http=(unit [=url hash=@uvH])
+        glob-ames=(unit [=ship hash=@uvH])
         base=(unit term)
         site=(unit path)
         image=(unit url)
@@ -30,10 +30,10 @@
       ?^  site.draft  `[%site u.site.draft]
       ?~  base.draft  ~
       ?^  glob-http.draft
-        `[%glob [u.base %http u.glob-http]:draft]
+        `[%glob u.base hash.u.glob-http %http url.u.glob-http]:draft
       ?~  glob-ames.draft
         ~
-      `[%glob [u.base %ames u.glob-ames]:draft]
+      `[%glob u.base hash.u.glob-ames %ames ship.u.glob-ames]:draft
     ?~  href  ~
     =,  draft
     :-  ~
@@ -60,8 +60,8 @@
         %title  draft(title `title.clause)
         %info   draft(info `info.clause)
         %color  draft(color `color.clause)
-        %glob-http   draft(glob-http `url.clause)
-        %glob-ames   draft(glob-ames `ship:clause)
+        %glob-http   draft(glob-http `[url hash]:clause)
+        %glob-ames   draft(glob-ames `[ship hash]:clause)
         %base   draft(base `base.clause)
         %site   draft(site `path.clause)
         %image  draft(image `url.clause)
@@ -84,11 +84,11 @@
         ==
         ?~  image.d  ~  ~[image+u.image.d]
         ?:  ?=(%site -.href.d)  ~[site+path.href.d]
-        =/  loc=glob-location  glob-location.href.d
+        =/  ref=glob-reference  glob-reference.href.d
         :~  base+base.href.d
-            ?-  -.loc
-              %http  [%glob-http url.loc]
-              %ames  [%glob-ames ship.loc]
+            ?-  -.location.ref
+              %http  [%glob-http url.location.ref hash.ref]
+              %ames  [%glob-ames ship.location.ref hash.ref]
     ==  ==  ==
   ::
   ++  spit-clause
@@ -98,8 +98,13 @@
     ?+  -.clause  "'{(trip +.clause)}'"
       %color  (scow %ux color.clause)
       %site   (spud path.clause)
-      %glob-ames  (scow %p ship.clause)
-      ::
+    ::
+        %glob-http
+      "[{(trip url.clause)} {(scow %uv hash.clause)}]"
+    ::
+        %glob-ames
+      "[{(scow %p ship.clause)} {(scow %uv hash.clause)}]"
+    ::
         %version
       =,  version.clause
       "[{(scow %ud major)} {(scow %ud minor)} {(scow %ud patch)}]"
@@ -127,10 +132,10 @@
     ?-  -.u
       %del-charge  s+desk.u
     ::
-        %initial  
+        %initial
       %-  pairs
       %+  turn  ~(tap by initial.u)
-      |=([=desk c=^charge] [desk (charge c)]) 
+      |=([=desk c=^charge] [desk (charge c)])
     ::
         %add-charge
       %-  pairs
@@ -167,8 +172,15 @@
         %glob
       %-  pairs
       :~  base+s+base.h
-          glob-location+(glob-location glob-location.h)
+          glob-reference+(glob-reference glob-reference.h)
       ==
+    ==
+  ::
+  ++  glob-reference
+    |=  ref=^glob-reference
+    %-  pairs
+    :~  hash+s+(scot %uv hash.ref)
+        location+(glob-location location.ref)
     ==
   ::
   ++  glob-location
@@ -176,8 +188,8 @@
     ^-  json
     %+  frond  -.loc
     ?-  -.loc
-      %http  (pairs url+s+url.loc ~)
-      %ames  (ship ship.loc)
+      %http  s+url.loc
+      %ames  s+(scot %p ship.loc)
     ==
   ::
   ++  charge

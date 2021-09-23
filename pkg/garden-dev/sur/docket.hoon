@@ -8,6 +8,9 @@
 +$  url   cord
 ::  $glob-location: How to retrieve a glob
 ::
++$  glob-reference
+  [hash=@uvH location=glob-location]
+::
 +$  glob-location
   $%  [%http =url]
       [%ames =ship]
@@ -15,7 +18,7 @@
 ::  $href: Where a tile links to
 ::
 +$  href
-  $%  [%glob base=term =glob-location]
+  $%  [%glob base=term =glob-reference]
       [%site =path]
   ==
 ::  $chad: State of a docket
@@ -24,9 +27,9 @@
   $%  :: Done
       [%glob =glob]
       [%site ~]
-      :: Waiting 
+      :: Waiting
       [%install ~]
-      [%suspend ~]
+      [%suspend glob=(unit glob)]
       :: Error
       [%hung err=cord]
   ==
@@ -46,8 +49,8 @@
   $%  [%title title=@t]
       [%info info=@t]
       [%color color=@ux]
-      [%glob-http url=cord]
-      [%glob-ames =ship]
+      [%glob-http url=cord hash=@uvH]
+      [%glob-ames =ship hash=@uvH]
       [%image =url]
       [%site =path]
       [%base base=term]
@@ -62,7 +65,7 @@
   $:  %1
       title=@t
       info=@t
-      color=@ux 
+      color=@ux
       =href
       image=(unit url)
       =version

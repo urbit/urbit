@@ -5,15 +5,15 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ loc=glob-location:docket base=term] arg)
+=+  !<([~ ref=glob-reference:docket base=term] arg)
 |^
-?-  -.loc
-  %http  (fetch-http url.loc)
-  %ames  (fetch-ames ship.loc base)
+?-  -.location.ref
+  %http  (fetch-http [url.location hash]:ref)
+  %ames  !!  ::NOTE  done within docket itself
 ==
 ::
 ++  fetch-http
-  |=  url=cord
+  |=  [url=cord hash=@uvH]
   ^-  form:m
   ;<  =glob:docket  bind:m
     %+  (retry:strandio ,glob:docket)  `5
@@ -22,16 +22,7 @@
     %-  pure:n
     %-  mole
     |.
+    =-  ?>(=(hash (sham -)) -)
     ;;(=glob:docket (cue cord))
   (pure:m !>(glob))
-::
-::  download from ship's docket state
-++  fetch-ames
-  |=  [=ship base=term]
-  ^-  form:m
-  ;<  =bowl:spider  bind:m  get-bowl:strandio
-  ;<  =cage  bind:m
-    (watch-one:strandio /glob/(scot %da now.bowl) [ship %docket] /glob/[base])
-  ?>  ?=(%glob p.cage)
-  (pure:m q.cage)
 --
