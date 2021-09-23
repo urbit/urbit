@@ -264,6 +264,9 @@
       --
   =|  old-ota=(unit ota)
   |=  [hood-version=@ud old=any-state]
+  =/  old-version  -.old
+  =*  state        +<+.$.abet
+  ::
   =?  old-ota  ?=(%0 -.old)
     =/  syncs=(list [ota =aeon])  ~(tap by syn.old)
     |-  ^-  (unit ota)
@@ -327,15 +330,17 @@
     `[paused.rail ship.rail desk.rail aeon.rail next]:a
   ::
   ?>  ?=(%7 -.old)
-  =.  +<+.$.abet  old
-  =<  abet
+  =.  state  old
+  ::
+  =?  kiln  (lth old-version %7)
+    abet:(install:vats %base our %base)
   =?  kiln  ?=(^ old-ota)
     abet:(install:vats %base [her sud]:u.old-ota)
   =?  kiln  ?=(^ wef)
     =/  except=(set desk)  (sy %base %kids ~)
     (bump:vats u.wef (all-desks-but:vats except) %.n)
   =.  wef  ~
-  kiln
+  abet:kiln
 ::
 ++  on-peek
   |=  =path
@@ -385,7 +390,6 @@
   ::
   ++  here  ?~  rail.rak  "{<loc>} from local"
             "{<loc>} from {<[ship desk]:ral>}"
-  ::
   ++  make-wire  |=(step=@tas /kiln/vats/[loc]/[step])
   ++  from-wire
     |=  =wire
@@ -489,7 +493,7 @@
     =:  loc  lac
         rak  [~ *rein]
       ==
-    ~>  %slog.0^leaf/"kiln: beginning install into {here}"
+    ~>  %slog.0^leaf/"kiln: local install {here}"
     =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
     =.  vats  (emit listen:pass)
     vats

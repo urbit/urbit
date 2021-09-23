@@ -67,6 +67,7 @@
     ::
         %0
       %_    $
+          -.old  %1
       ::
           cards 
         %+  welp  cards
