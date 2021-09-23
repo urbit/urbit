@@ -7,10 +7,11 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import 'react-hot-loader';
 import { hot } from 'react-hot-loader/root';
-import { BrowserRouter as Router, withRouter } from 'react-router-dom';
+import { Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import gcpManager from '~/logic/lib/gcpManager';
 import { favicon, svgDataURL } from '~/logic/lib/util';
+import history from '~/logic/lib/history';
 import withState from '~/logic/lib/withState';
 import useContactState from '~/logic/state/contact';
 import useLocalState from '~/logic/state/local';
@@ -170,7 +171,7 @@ class App extends React.Component {
             : null}
         </Helmet>
         <Root>
-          <Router basename="/apps/landscape">
+          <Router history={history}>
             <TutorialModal />
             <ErrorBoundary>
               <StatusBarWithRouter
