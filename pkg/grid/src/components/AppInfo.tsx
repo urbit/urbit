@@ -106,7 +106,11 @@ export const AppInfo: FC<AppInfoProps> = ({ docket, vat, className }) => {
                   'Get App'
                 )}
               </DialogTrigger>
-              <DialogContent showClose={false} className="max-w-[400px] space-y-6">
+              <DialogContent
+                showClose={false}
+                className="space-y-6"
+                containerClass="w-full max-w-md"
+              >
                 <h2 className="h4">Install &ldquo;{docket.title}&rdquo;</h2>
                 <p className="text-base tracking-tight pr-6">
                   This application will be able to view and interact with the contents of your
