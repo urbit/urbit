@@ -74,7 +74,7 @@ export const optReduceState = <S extends Record<string, unknown>, U>(
 export let stateStorageKeys: string[] = [];
 
 export const stateStorageKey = (stateName: string) => {
-  stateName = `Landscape${stateName}State`;
+  stateName = `Grid${stateName}State-${import.meta.env.VITE_SHORTHASH as any}`;
   stateStorageKeys = [...new Set([...stateStorageKeys, stateName])];
   return stateName;
 };
@@ -149,8 +149,7 @@ export const createState = <T extends Record<string, unknown>>(
       }),
       {
         blacklist,
-        name: stateStorageKey(name),
-        version: import.meta.env.VITE_SHORTHASH as any
+        name: stateStorageKey(name)
       }
     )
   );
