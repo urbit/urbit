@@ -23,6 +23,7 @@
         %unread-count  (unread-count +.upd)
         %saw-place    (saw-place +.upd)
         %all-stats     (all-stats +.upd)
+        %del-place     (place +.upd)
         ::%read-note   (index +.upd)
         ::%note-read   (note-read +.upd)
         %archived       (archived +.upd)

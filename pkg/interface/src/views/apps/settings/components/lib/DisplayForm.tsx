@@ -80,7 +80,7 @@ export default function DisplayForm() {
             <Text color="black" fontSize={2} fontWeight="medium">
               Display Preferences
             </Text>
-            <Text gray>Customize visual interfaces across your Landscape</Text>
+            <Text gray>Customize visual interfaces across Groups</Text>
           </Col>
           <BackgroundPicker />
           <Label>Theme</Label>

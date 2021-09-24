@@ -50,7 +50,7 @@
       ::
           %commit
         ?.  |(=(desk.diff %base) ~(has-docket de:cc desk.diff))  `this
-        =/  =action:hark  ~(updated de:cc desk.diff)
+        =/  =action:hark  ~(commit de:cc desk.diff)
         :_  this
         ~[(poke:ha:cc action)]
       ::
@@ -118,6 +118,8 @@
   ++  docket  .^(docket:^docket %cx scry-path)
   ++  hash    .^(@uv %cz (scry:io desk ~))
   ++  place    `place:hark`[q.byk.bowl /desk/[desk]]
+  ++  vat
+    .^(vat:hood %gx (scry:io %hood /kiln/vat/[desk]/noun))
   ++  body
     |=  [=path title=cord content=(unit cord)]
     ^-  body:hark
@@ -136,6 +138,15 @@
     ?:  has-docket
       (rap 3 'version: ' (ver version:docket) ~)
     (rap 3 'hash: ' (scot %uv hash) ~)
+  ::
+  ++  commit
+    ^-  action:hark
+    ?:(=(1 ud.cass:vat) created updated)
+  ::
+  ++  created
+    ^-  action:hark
+    :+  %add-note  [/created place]
+    (body /desk/[desk] (title-prefix ' has been installed') ~)
   ::
   ++  updated
     ^-  action:hark

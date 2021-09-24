@@ -68,7 +68,7 @@ module.exports = {
       'process.env.TUTORIAL_LINKS': JSON.stringify('community-articles-2143')
     }),
     new HtmlWebpackPlugin({
-      title: 'Landscape',
+      title: 'Groups',
       template: './public/index.html'
     })
   ],

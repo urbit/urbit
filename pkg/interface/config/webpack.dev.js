@@ -105,7 +105,7 @@ module.exports = {
 
     // new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      title: 'Landscape',
+      title: 'Groups',
       template: './public/index.html'
     })
   ],

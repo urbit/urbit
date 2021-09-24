@@ -74,14 +74,16 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
         >
           <NotificationText contents={first.title} />
         </h2>
-        <div className="note-grid-actions flex sm:hidden hover-none:flex pointer-coarse:flex justify-center self-center group-hover:flex">
-          <Button
-            onClick={archiveNoFollow}
-            className="px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-base leading-none sm:leading-normal"
-          >
-            Archive
-          </Button>
-        </div>
+        {!('time' in lid) ? (
+          <div className="note-grid-actions flex sm:hidden hover-none:flex pointer-coarse:flex justify-center self-center group-hover:flex">
+            <Button
+              onClick={archiveNoFollow}
+              className="px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-base leading-none sm:leading-normal"
+            >
+              Archive
+            </Button>
+          </div>
+        ) : null}
       </header>
       {contents.length > 0 ? (
         <div className="note-grid-body leading-tight sm:leading-normal space-y-2">
