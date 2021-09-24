@@ -71,9 +71,11 @@ export const BasicNotification = ({ notification, lid }: BasicNotificationProps)
         <h2 id={`${id}-title`} className="note-grid-head font-semibold text-gray-600">
           <NotificationText contents={first.title} />
         </h2>
-        <div className="note-grid-actions hidden justify-center self-center group-hover:flex">
-          <Button onClick={archiveNoFollow}>Archive</Button>
-        </div>
+        {!('time' in lid) ? (
+          <div className="note-grid-actions hidden justify-center self-center group-hover:flex">
+            <Button onClick={archiveNoFollow}>Archive</Button>
+          </div>
+        ) : null}
       </header>
       {contents.length > 0 ? (
         <div className="note-grid-body space-y-2">
