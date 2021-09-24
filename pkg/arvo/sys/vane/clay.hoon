@@ -4235,7 +4235,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%9                                        ::  vane version
+    $:  ver=%10                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4327,10 +4327,9 @@
     [mos ..^$]
   ::
       %init
-    [~ ..^$(hun.rom.ruf hen)]
+    [~ ..^$(hun.rom.ruf hen, dist-upgraded.ruf &)]
   ::
       %into
-    ~&  [%into (turn fis.req head)]
     =.  hez.ruf  `hen
     =+  bem=(~(get by mon.ruf) des.req)
     ?:  &(?=(~ bem) !=(%$ des.req))
