@@ -14,7 +14,7 @@ const cards: OnboardingCardProps[] = [
     href: '/leap/search/direct/apps/~zod/webterm'
   },
   {
-    title: 'Landscape',
+    title: 'Groups',
     body: 'A suite of applications to communicate on Urbit',
     button: 'Install',
     color: '#D1DDD3',
