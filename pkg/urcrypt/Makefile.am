@@ -89,8 +89,18 @@ libargon2_la_SOURCES = argon2/src/core.h \
 		       argon2/src/core.c \
 		       argon2/src/blake2/blake2b.c \
 		       argon2/src/thread.c \
-		       argon2/src/encoding.c \
-		       argon2/src/opt.c
+		       argon2/src/encoding.c
+
+# argon2 different sources for different CPU architectures
+# opt.c requires SSE instructions and won't work on AArch64 et al.
+if ARCH_X86_64
+libargon2_la_SOURCES += \
+	argon2/src/opt.c
+endif
+if ARCH_GENERIC
+libargon2_la_SOURCES += \
+	argon2/src/ref.c
+endif
 
 # scrypt
 libscrypt_la_CPPFLAGS = -D_FORTIFY_SOURCE=2
