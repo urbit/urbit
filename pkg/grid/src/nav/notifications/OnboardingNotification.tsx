@@ -49,7 +49,7 @@ if ('registerProtocolHandler' in window.navigator) {
     body: 'Enable your Urbit to open links you find in the wild',
     button: 'Enable Link Handler',
     color: '#82A6CA',
-    href: '/apps/grid/leap/system-preferences/interface'
+    href: '/leap/system-preferences/interface'
   });
 }
 
@@ -85,19 +85,19 @@ export const OnboardingNotification = ({ unread }: OnboardingNotificationProps) 
 
   return (
     <section
-      className={cn('notification space-y-2 text-black', unread ? 'bg-blue-100' : 'bg-gray-100')}
+      className={cn('notification space-y-2 text-black', unread ? 'bg-blue-100' : 'bg-gray-50')}
       aria-labelledby=""
     >
       <header id="system-updates-blocked" className="relative space-y-2">
         <div className="flex space-x-2">
-          <span className="inline-block w-6 h-6 bg-orange-500 rounded-full" />
-          <span className="font-medium">Grid</span>
+          <span className="inline-block w-6 h-6 bg-orange-500 rounded" />
+          <span className="font-semibold">Grid</span>
         </div>
         <div className="flex space-x-2">
           <h2 id="runtime-lag">Hello there, welcome to Grid!</h2>
         </div>
       </header>
-      <div className="grid grid-cols-3 grid-rows-2 gap-4">
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
         {
           /* eslint-disable-next-line react/no-array-index-key */
           cards.map((card, i) => (

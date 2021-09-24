@@ -62,10 +62,13 @@ export const Leap = React.forwardRef(
     const handleError = useErrorHandler();
 
     useEffect(() => {
-      if (selection && rawInput === '') {
+      const onTreaty = appsMatch && !appsMatch.isExact;
+      if (selection && rawInput === '' && !onTreaty) {
         inputRef.current?.focus();
+      } else if (selection && onTreaty) {
+        inputRef.current?.blur();
       }
-    }, [selection, rawInput]);
+    }, [selection, rawInput, appsMatch]);
 
     const toggleSearch = useCallback(() => {
       if (selection || menu === 'search') {

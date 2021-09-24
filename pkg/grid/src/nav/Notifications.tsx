@@ -33,30 +33,35 @@ export const Notifications = ({ history }: RouteComponentProps) => {
       onReset={() => history.push('/leap/notifications')}
     >
       <div className="grid grid-rows-[auto,1fr] h-full p-4 md:p-8 overflow-hidden">
-        <header className="space-x-2 mb-8">
+        <header className="order-last sm:order-none flex flex-wrap justify-start items-center w-full gap-2 mt-8 sm:mt-0 sm:mb-8">
           <NavLink
             exact
             activeClassName="text-black"
-            className="text-base font-semibold px-4"
+            className="flex-none text-base font-semibold px-4"
             to="/leap/notifications"
           >
             New
           </NavLink>
           <NavLink
             activeClassName="text-black"
-            className="text-base font-semibold px-4"
+            className="flex-none text-base font-semibold px-4"
             to="/leap/notifications/archive"
           >
             Archive
           </NavLink>
-          <Button onClick={markAllAsRead} variant="secondary" className="py-1.5 px-6 rounded-full">
+          <span className="flex-none inline-block sm:hidden w-full flex-shrink-0" />
+          <Button
+            onClick={markAllAsRead}
+            variant="secondary"
+            className="flex-auto sm:flex-none py-1.5 px-2 sm:px-6 text-sm sm:text-base rounded-full"
+          >
             Mark All as Read
           </Button>
           <Button
             as={Link}
             variant="secondary"
             to="/leap/system-preferences/notifications"
-            className="py-1.5 px-6 rounded-full"
+            className="flex-auto sm:flex-none py-1.5 px-3 sm:px-6 text-sm sm:text-base rounded-full"
           >
             Notification Settings
           </Button>

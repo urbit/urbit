@@ -76,7 +76,7 @@ export const SystemPreferences = (props: RouteComponentProps<{ submenu: string }
     >
       <div className="sm:flex h-full overflow-y-auto">
         <Route exact={isMobile} path={match.url}>
-          <aside className="flex-none self-start w-full sm:w-auto min-w-60 py-4 sm:py-8 font-semibold border-r-2 border-gray-50">
+          <aside className="flex-none self-start w-full sm:w-auto min-w-60 py-4 sm:py-8 font-semibold text-black sm:text-gray-400 border-r-2 border-gray-50">
             <nav className="px-2 sm:px-6">
               <h2 className="sm:hidden h3 mb-4 px-2">System Preferences</h2>
               <ul className="space-y-1">

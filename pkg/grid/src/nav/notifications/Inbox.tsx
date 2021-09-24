@@ -47,7 +47,7 @@ export const Inbox = ({ archived = false }) => {
           return Object.entries(box)
             .sort(([, a], [, b]) => b.time - a.time)
             .map(([binId, n]) =>
-              renderNotification(n, `${key.toString}-${binId}`, { time: key.toString() })
+              renderNotification(n, `${key.toString()}-${binId}`, { time: key.toString() })
             );
         })
       ) : (
