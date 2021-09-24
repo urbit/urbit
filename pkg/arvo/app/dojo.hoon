@@ -12,7 +12,7 @@
 =>  |%                                                  ::  external structures
     +$  id  @tasession                                  ::  session id
     +$  house                                           ::  all state
-      $:  %6
+      $:  %7
           egg=@u                                        ::  command count
           hoc=(map id session)                          ::  conversations
           acl=(set ship)                                ::  remote access whitelist
@@ -66,7 +66,7 @@
       $%  [%ur p=@t]                                    ::  http GET request
           [%ge p=dojo-model]                            ::  generator
           [%te p=term q=(list dojo-source)]             ::  thread
-          [%dv p=path]                                  ::  core from source
+          [%dv p=beak q=path]                           ::  core from source
           [%ex p=hoon]                                  ::  hoon expression
           [%sa p=mark]                                  ::  example mark value
           [%as p=mark q=dojo-source]                    ::  simple transmute
@@ -79,7 +79,7 @@
       ==                                                ::
     +$  dojo-server                                     ::  numbered device
       $:  p=@ud                                         ::  assembly index
-          q=path                                        ::  gate path
+          q=[=desk =path]                               ::  gate location
       ==                                                ::
     +$  dojo-config                                     ::  configuration
       $:  p=(list dojo-source)                          ::  by order
@@ -125,7 +125,14 @@
   ++  to-command
     |=  [gol=goal mod=dojo-model]
     ^-  dojo-command
-    [[%poke gol] [0 [%ge mod(q.p [q.gol q.p.mod])]]]
+    =/  =desk
+      ::TODO  maybe should recognize if the user specified a desk explicitly.
+      ::      currently eats the :app|desk#gen case.
+      =+  gop=(en-beam dir(q q.gol, s /))
+      ?.  .^(? %gu gop)
+        q.dir
+      .^(desk %gd gop)
+    [[%poke gol] [0 [%ge mod(q.p [desk q.gol path.q.p.mod])]]]
   ::
   ++  parse-variable
     |*  [sym=rule src=rule]
@@ -263,7 +270,14 @@
     auri:de-purl:html
   ::
   ++  parse-model   ;~(plug parse-server parse-config)
-  ++  parse-server  (stag 0 (most fas sym))
+  ::
+  ++  parse-server
+    %+  stag  0
+    ;~  plug
+      ;~(pose ;~(sfix sym zap) (easy q.dir))
+      (most fas sym)
+    ==
+  ::
   ++  parse-hoon    tall:hoon-parser
   ::
   ++  parse-rood
@@ -334,11 +348,11 @@
     ::  +dy-sing: make a clay read request
     ::
     ++  dy-sing
-      |=  [way=wire =care:clay =path]
+      |=  [way=wire =care:clay =beak =path]
       ^+  +>+>
       ?>  ?=(~ pux)
       %-  he-card(poy `+>+<(pux `way))
-      =/  [=ship =desk =case:clay]  he-beak
+      =/  [=ship =desk =case:clay]  beak
       [%pass way %arvo %c %warp ship desk ~ %sing care case path]
     ::
     ++  dy-request
@@ -427,7 +441,13 @@
     ++  dy-init-server                                  ::  ++dojo-server
       |=  srv=dojo-server
       =.  p.srv  num
-      [srv +>.$(num +(num), job (~(put by job) num [%dv [%gen q.srv]]))]
+      =/  bek=beak  he-beak
+      :-  srv
+      %_  +>.$
+        num  +(num)
+        job  %+  ~(put by job)  num
+             [%dv bek(q desk.q.srv) [%gen path.q.srv]]
+      ==
     ::
     ++  dy-init-config                                  ::  prepare config
       |=  cig=dojo-config
@@ -674,8 +694,8 @@
             [%as mark dy-shown]
             [%do hoon dy-shown]
             [%te term (list dy-shown)]
-            [%ge path (list dy-shown) (map term (unit dy-shown))]
-            [%dv path]
+            [%ge [desk path] (list dy-shown) (map term (unit dy-shown))]
+            [%dv beak path]
         ==
     ==
   ::
@@ -872,7 +892,7 @@
           %ur  (dy-request /hand `request:http`[%'GET' p.bil ~ ~])
           %te  (dy-wool-poke p.bil q.bil)
           %ex  (dy-mere p.bil)
-          %dv  (dy-sing hand+p.bil %a (snoc p.bil %hoon))
+          %dv  (dy-sing hand+q.bil %a p.bil (snoc q.bil %hoon))
           %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil)
           %sa
         =+  .^(=dais:clay cb+(en-beam he-beak /[p.bil]))
@@ -1498,12 +1518,53 @@
   !>(state)
 ::
 ++  on-load
-  |=  old=vase
-  ?:  ?=(%6 +<.old)
-    `..on-init(state !<(house old))
-  =/  old-5  !<([%5 egg=@u hoc=(map id session)] old)
-  =/  =house  [%6 egg.old-5 hoc.old-5 *(set ship)]
-  `..on-init(state house)
+  |=  ole=vase
+  |^  ::NOTE  ;; because we mangle the old session type
+      =+  old=;;(house-any q.ole)
+      =?  old  ?=(%5 -.old)
+        (house-5-to-6 old)
+      =?  old  ?=(%6 -.old)
+        (house-6-to-7 old)
+      ?>  ?=(%7 -.old)
+      `..on-init(state old)
+  ::
+  +$  house-any  $%(house house-6 house-5)
+  ::
+  +$  house-6                                           ::  all state
+    $:  %6
+        egg=@u                                        ::  command count
+        hoc=(map id session)                          ::  conversations
+        acl=(set ship)                                ::  remote access whitelist
+    ==                                                ::
+  +$  session-6                                       ::  per conversation
+    $:  say=sole-share                                ::  command-line state
+        dir=beam                                      ::  active path
+        poy=(unit *)                                  ::  working
+        $:  ::  sur: structure imports
+            ::
+            sur=(list cable:clay)
+            ::  lib: library imports
+            ::
+            lib=(list cable:clay)
+        ==
+        var=(map term cage)                           ::  variable state
+        old=(set term)                                ::  used TLVs
+        buf=tape                                      ::  multiline buffer
+    ==                                                ::
+  ++  house-6-to-7
+    |=  old=house-6
+    [%7 egg.old (~(run by hoc.old) session-6-to-7) acl.old]
+  ++  session-6-to-7
+    |=  old=session-6
+    ~?  ?=(^ poy.old)  [dap.hid %cancelling-for-load]
+    old(poy ~)
+  ::
+  +$  house-5
+    [%5 egg=@u hoc=(map id session)]
+  ++  house-5-to-6
+    |=  old=house-5
+    [%6 egg.old hoc.old *(set ship)]
+  --
 ::
 ++  on-poke
   |=  [=mark =vase]
