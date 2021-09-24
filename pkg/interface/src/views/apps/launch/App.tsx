@@ -111,10 +111,10 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
           </Box>
           <Text mb={3} lineHeight="tall" fontWeight="medium">Welcome</Text>
           <Text mb={3} lineHeight="tall">
-                        You have been invited to use Landscape, an interface to chat
+                        You have been invited to use Groups, an interface to chat
             and interact with communities
             <br />
-            Would you like a tour of Landscape?
+            Would you like a tour of Groups?
           </Text>
           <Row gapX={2} justifyContent="flex-end">
             <Button
@@ -151,7 +151,7 @@ export const LaunchApp = (props: LaunchAppProps): ReactElement | null => {
   return (
     <>
       <Helmet defer={false}>
-        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape</title>
+        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Groups</title>
       </Helmet>
       <Route path="/invites/:app/:uid">
         <Invite />

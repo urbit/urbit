@@ -20,7 +20,7 @@ export function BackgroundPicker(): ReactElement {
   };
   return (
     <Col>
-      <Label>Landscape Background</Label>
+      <Label>Groups Background</Label>
       <Row flexWrap="wrap" {...rowSpace}>
         <Col {...colProps}>
           <Radio mb={1} name="bgType" label="Image" id="url" />

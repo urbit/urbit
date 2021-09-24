@@ -31,7 +31,7 @@ export default function Settings(props: {}) {
     <Col gapY={5} p={5}>
       <Col gapY={1}>
         <Text fontSize={2}>System Preferences</Text>
-        <Text gray>Configure and customize Landscape</Text>
+        <Text gray>Configure and customize Groups</Text>
       </Col>
       <Box
         display="grid"
@@ -48,12 +48,12 @@ export default function Settings(props: {}) {
         <SettingsItem
           to="display"
           title="Display"
-          description="Customize visual interfaces across your Landscape"
+          description="Customize visual interfaces across Groups"
         />
         <SettingsItem
           to="calm"
           title="CalmEngine"
-          description="Modulate vearious elements across Landscape to maximize calmness"
+          description="Modulate vearious elements across Groups to maximize calmness"
         />
         <SettingsItem
           to="s3"
@@ -63,7 +63,7 @@ export default function Settings(props: {}) {
         <SettingsItem
           to="security"
           title="Security"
-          description="Manage sessions, login credentials, and Landscape access"
+          description="Manage sessions, login credentials, and Groups access"
         />
         {/*
         <SettingsItem

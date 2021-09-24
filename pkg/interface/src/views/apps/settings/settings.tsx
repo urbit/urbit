@@ -91,7 +91,7 @@ return;
   return (
     <>
       <Helmet defer={false}>
-        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Landscape - Settings</title>
+        <title>{ notificationsCount ? `(${String(notificationsCount) }) `: '' }Groups - Settings</title>
       </Helmet>
       <Skeleton>
         <Col
