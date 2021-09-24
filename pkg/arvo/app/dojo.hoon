@@ -274,7 +274,7 @@
   ++  parse-server
     %+  stag  0
     ;~  plug
-      ;~(pose ;~(sfix sym hax) (easy q.dir))
+      ;~(pose ;~(sfix sym zap) (easy q.dir))
       (most fas sym)
     ==
   ::
