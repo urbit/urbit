@@ -333,7 +333,7 @@ pier (serf, log) vSlog startedSig injected = do
       io $ readTVarIO siteSlog >>= ($ s)
       logOther "serf" (display $ T.strip $ tankToText tank)
 
-  let err = atomically . Term.trace muxed
+  let err = atomically . Term.trace muxed . (<> "\r\n")
   (bootEvents, startDrivers) <- do
     env <- ask
     siz <- atomically $ Term.curDemuxSize demux

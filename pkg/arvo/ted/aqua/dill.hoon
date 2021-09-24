@@ -17,16 +17,15 @@
     %+  roll  blits
     |=  [b=blit:dill line=tape]
     ?-    -.b
-        %put  (tape p.b)
+        %lin  (tape p.b)
         %klr  (tape (zing (turn p.b tail)))
-        %nel  ~&  "{<who>}: {line}"  ""
+        %mor  ~&  "{<who>}: {line}"  ""
         %hop  line
         %bel  line
         %clr  ""
         %sag  ~&  [%save-jamfile-to p.b]  line
         %sav  ~&  [%save-file-to p.b]  line
         %url  ~&  [%activate-url p.b]  line
-        %wyp  ""
     ==
   ~?  !=(~ last-line)  last-line
   ~

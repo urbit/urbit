@@ -119,24 +119,14 @@ deriveNoun ''BehnEf
 data Blit
     = Bel ()
     | Clr ()
-    | Hop HopTarget
+    | Hop Word64
     | Klr Stub
-    | Put [Char]
-    | Nel ()
+    | Lin [Char]
+    | Mor ()
     | Sag Path Noun
     | Sav Path Atom
     | Url Cord
-    | Wyp ()
-    --TMP  backwards compatibility
-    | Lin [Char]
-    | Mor ()
   deriving (Eq, Ord)
-
---NOTE  bottom-left-0-based coordinates
-data HopTarget
-    = Col Word64
-    | Roc Word64 Word64 -- row, col
-  deriving (Eq, Ord, Show)
 
 data Deco
     = DecoBl
@@ -215,33 +205,18 @@ instance FromNoun Tint where
                 "w" -> pure TintW
                 t   -> fail ("invalid: " <> unpack t)
 
-instance FromNoun HopTarget where
-  parseNoun = \case
-    A c           -> pure $ Col (fromIntegral c)
-    C (A r) (A c) -> pure $ Roc (fromIntegral r) (fromIntegral c)
-    n             -> fail ("invalid hop target: " <> show n)
-
-instance ToNoun HopTarget where
-  toNoun = \case
-    Col c   -> A (fromIntegral c)
-    Roc r c -> C (A (fromIntegral r)) (A (fromIntegral c))
-
 -- Manual instance to not save the noun/atom in Sag/Sav, because these can be
 -- megabytes and makes king hang.
 instance Show Blit where
   show (Bel ())     = "Bel ()"
   show (Clr ())     = "Clr ()"
-  show (Hop t)      = "Hop " ++ (show t)
+  show (Hop x)      = "Hop " ++ (show x)
   show (Klr s)      = "Klr " ++ (show s)
-  show (Put c)      = "Put " ++ (show c)
-  show (Nel ())     = "Nel ()"
+  show (Lin c)      = "Lin " ++ (show c)
+  show (Mor ())     = "Mor ()"
   show (Sag path _) = "Sag " ++ (show path)
   show (Sav path _) = "Sav " ++ (show path)
   show (Url c)      = "Url " ++ (show c)
-  show (Wyp ())     = "Wyp ()"
-  --
-  show (Lin c)      = "Lin " ++ (show c)
-  show (Mor ())     = "Mor ()"
 
 {-|
     %blip -- TODO

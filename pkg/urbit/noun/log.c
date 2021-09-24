@@ -22,8 +22,6 @@ u3l_log(const char* format, ...)
     //  this process did not set a logging function, fallback to stderr
     //
     vfprintf(stderr, format, myargs);
-    fprintf(stderr, "\r\n");
-    fflush(stderr);
   }
 
   va_end(myargs);

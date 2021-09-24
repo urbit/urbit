@@ -107,8 +107,11 @@
           $>(%wake gift:behn)                           ::
       ==                                                ::
       $:  %gall                                         ::
-          $>(%unto gift:gall)                           ::
-      ==                                                ::
+          $>  $?  %onto                                 ::
+                  %unto                                 ::
+              ==                                        ::
+          gift:gall                                ::
+      ==
   ==                                                    ::
 --  ::
 ::                                                      ::::
@@ -554,6 +557,10 @@
       =/  ships  (~(get ju ship-sources-reverse.etn) source-id)
       %-  curd  =<  abet
       (sources:~(feel su hen now pki etn) ships source)
+    ::
+        [%gall %onto *]
+      ~&  [%jael-onto tea hin]
+      +>.$
     ::
         [%gall %unto *]
       ?-  +>-.hin

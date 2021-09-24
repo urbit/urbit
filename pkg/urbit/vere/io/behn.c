@@ -48,7 +48,7 @@ _behn_wake_bail(u3_ovum* egg_u, u3_noun lud)
     u3_auto_bail_slog(egg_u, lud);
     u3_ovum_free(egg_u);
 
-    u3l_log("behn: timer failed; queue blocked");
+    u3l_log("behn: timer failed; queue blocked\n");
 
     //  XX review, add flag to continue?
     //
@@ -149,7 +149,7 @@ _behn_born_bail(u3_ovum* egg_u, u3_noun lud)
     u3_auto_bail_slog(egg_u, lud);
     u3_ovum_free(egg_u);
 
-    u3l_log("behn: initialization failed");
+    u3l_log("behn: initialization failed\n");
 
     //  XX review, add flag to continue?
     //

@@ -319,10 +319,7 @@
           task                                          ::
       ==                                                ::
       $:  %d                                            ::  to %dill
-          $>  $?  %flog                                 ::
-                  %text                                 ::
-              ==                                        ::
-          task:dill                                     ::
+          $>(%flog task:dill)                           ::
       ==                                                ::
       $:  %g                                            ::  to %gall
           $>(%deal task:gall)                           ::
@@ -346,6 +343,7 @@
       ==  ==                                            ::
       $:  %clay                                         ::
           $>  $?  %mere                                 ::
+                  %note                                 ::
                   %writ                                 ::
               ==                                        ::
           gift                                          ::
@@ -1892,8 +1890,7 @@
         |=  [prefix=@tD paths=(set path)]
         %+  turn  ~(tap in paths)
         |=  =path
-        ^-  move
-        [u.hun %pass /note %d %text prefix ' ' ~(ram re (path-to-tank path))]
+        [u.hun %give %note prefix (path-to-tank path)]
       ::
       ++  path-to-tank
         |=  =path
@@ -4791,6 +4788,7 @@
         q.p.p.+.hin
     [~ ..^$]
   ::
+      %note  [[hen %give +.hin]~ ..^$]
       %wake
     ::  TODO: handle behn errors
     ::
