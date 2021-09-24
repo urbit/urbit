@@ -101,6 +101,17 @@ AC_TYPE_UINT8_T
 # Checks for library functions.
 AC_CHECK_FUNCS([memset])
 
+# Checks for CPU architecture, uses SSE instructions if on X86_64
+AS_CASE([$host_cpu],
+    [x86_64], [ARCH=x86_64
+    AC_MSG_WARN("Architecture x86_64: Building libargon2 with optimizations")],
+    [ARCH=generic
+    AC_MSG_WARN("Architecture $host_cpu is not x86_64: Building libargon2 without optimizations")]
+)
+AC_SUBST([ARCH])
+AM_CONDITIONAL([ARCH_X86_64],  [test "$ARCH" = 'x86_64'])
+AM_CONDITIONAL([ARCH_GENERIC], [test "$ARCH" = 'generic'])
+
 # Finish and output
 AC_CONFIG_FILES([Makefile liburcrypt-$URCRYPT_API_VERSION.pc:liburcrypt.pc.in])
 AC_OUTPUT

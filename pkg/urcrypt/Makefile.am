@@ -6,6 +6,7 @@ lib_LTLIBRARIES = liburcrypt.la
 noinst_LTLIBRARIES = libed25519.la \
 		     libge_additions.la \
 		     libargon2.la \
+		     libkeccak_tiny.la \
 		     libscrypt.la
 
 include_HEADERS = urcrypt/urcrypt.h
@@ -26,6 +27,7 @@ liburcrypt_la_CPPFLAGS = -I$(srcdir)/ed25519/src \
 			 -I$(srcdir)/ge-additions \
 			 -I$(srcdir)/argon2/include \
 			 -I$(srcdir)/argon2/src/blake2 \
+			 -I$(srcdir)/keccak-tiny \
 			 -I$(srcdir)/scrypt
 liburcrypt_la_LIBADD = $(LIBCRYPTO_LIBS) \
 		       $(LIBSECP256K1_LIBS) \
@@ -33,6 +35,7 @@ liburcrypt_la_LIBADD = $(LIBCRYPTO_LIBS) \
 		       libed25519.la \
 		       libge_additions.la \
 		       libargon2.la \
+		       libkeccak_tiny.la \
 		       libscrypt.la
 liburcrypt_la_CFLAGS = $(LIBCRYPTO_CFLAGS) \
 		       $(LIBSECP256K1_CFLAGS) \
@@ -48,6 +51,7 @@ liburcrypt_la_SOURCES = urcrypt/aes_cbc.c \
 			urcrypt/ge_additions.c \
 			urcrypt/ripemd.c \
 			urcrypt/scrypt.c \
+			urcrypt/keccak.c \
 			urcrypt/secp256k1.c \
 			urcrypt/sha.c \
 			urcrypt/util.c \
@@ -89,8 +93,18 @@ libargon2_la_SOURCES = argon2/src/core.h \
 		       argon2/src/core.c \
 		       argon2/src/blake2/blake2b.c \
 		       argon2/src/thread.c \
-		       argon2/src/encoding.c \
-		       argon2/src/opt.c
+		       argon2/src/encoding.c
+
+# argon2 different sources for different CPU architectures
+# opt.c requires SSE instructions and won't work on AArch64 et al.
+if ARCH_X86_64
+libargon2_la_SOURCES += \
+	argon2/src/opt.c
+endif
+if ARCH_GENERIC
+libargon2_la_SOURCES += \
+	argon2/src/ref.c
+endif
 
 # scrypt
 libscrypt_la_CPPFLAGS = -D_FORTIFY_SOURCE=2
@@ -108,3 +122,9 @@ libscrypt_la_SOURCES = scrypt/b64.c \
 		       scrypt/crypto_scrypt-hexconvert.h \
 		       scrypt/slowequals.h \
 		       scrypt/sysendian.h
+
+# keccak-tiny
+libkeccak_tiny_la_CFLAGS = -march=native -std=c11 -Wextra -Wpedantic -Wall
+libkeccak_tiny_la_SOURCES = keccak-tiny/keccak-tiny.c \
+		       keccak-tiny/define-macros.h \
+		       keccak-tiny/keccak-tiny.h
