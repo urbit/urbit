@@ -186,12 +186,13 @@ _king_dawn(u3_noun feed, u3_noun pill, u3_noun path)
   //
   u3C.slog_f = _king_slog;
 
+  u3_noun ship = ( c3y == u3a_is_cell(u3h(feed)) )
+                 ? u3h(u3t(feed))
+                 : u3h(feed);
+  u3_noun vent = u3_dawn_vent(u3k(ship), u3k(feed));
   //  XX link properly
   //
-  //NOTE  +slav is safe because _boothack_key already verified it
-  u3_noun ship = u3dc("slav", 'p', u3i_string(u3_Host.ops_u.who_c));
-  u3_noun vent = u3_dawn_vent(u3k(ship), u3k(feed));
-  u3K.pir_u    = u3_pier_boot(sag_w, ship, vent, pill, path, feed);
+  u3K.pir_u    = u3_pier_boot(sag_w, u3k(ship), vent, pill, path, feed);
 
   // disable ivory slog printfs
   //
