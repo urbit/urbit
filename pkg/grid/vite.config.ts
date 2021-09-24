@@ -2,7 +2,7 @@ import { loadEnv, defineConfig } from 'vite';
 import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import reactRefresh from '@vitejs/plugin-react-refresh';
-import urbitPlugin from '@urbit/vite-plugin-urbit';
+import { urbitPlugin } from '@urbit/vite-plugin-urbit';
 import { execSync } from 'child_process';
 
 // using current commit until release
