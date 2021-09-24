@@ -8,21 +8,21 @@ import { getDarkColor } from '../../state/util';
 const cards: OnboardingCardProps[] = [
   {
     title: 'Terminal',
-    body: "Install a web terminal to access your Urbit's command line",
+    body: "A web interface to your Urbit's command line (the dojo).",
     button: 'Install',
     color: '#9CA4B1',
     href: '/leap/search/direct/apps/~zod/webterm'
   },
   {
     title: 'Landscape',
-    body: 'Install Landscape, a suite of social software to communicate with other urbit users',
+    body: 'A suite of applications to communicate on Urbit',
     button: 'Install',
     color: '#D1DDD3',
     href: '/leap/search/direct/apps/~zod/landscape'
   },
   {
     title: 'Bitcoin',
-    body: 'Install a bitcoin wallet. You can send bitcoin to any btc address, or even another ship',
+    body: ' A Bitcoin Wallet that lets you send and receive Bitcoin directly to and from other Urbit users',
     button: 'Install',
     color: '#F6EBDB',
     href: '/leap/search/direct/apps/~zod/bitcoin'
@@ -91,10 +91,10 @@ export const OnboardingNotification = ({ unread }: OnboardingNotificationProps) 
       <header id="system-updates-blocked" className="relative space-y-2">
         <div className="flex space-x-2">
           <span className="inline-block w-6 h-6 bg-orange-500 rounded" />
-          <span className="font-semibold">Grid</span>
+          <span className="font-semibold">Home</span>
         </div>
         <div className="flex space-x-2">
-          <h2 id="runtime-lag">Hello there, welcome to Grid!</h2>
+          <h2 id="runtime-lag">Hello there, and welcome!</h2>
         </div>
       </header>
       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">

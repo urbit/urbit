@@ -1,5 +1,5 @@
-:~  title+'Garden'
-    info+'An app launcher for Urbit. '
+:~  title+'System'
+    info+'An app launcher for Urbit.'
     color+0xee.5432
     glob-http+['https://bootstrap.urbit.org/glob-0v2.dne76.9hibl.1o442.h6l11.cn7os.glob' 0v2.dne76.9hibl.1o442.h6l11.cn7os]
     glob-http+['https://bootstrap.urbit.org/glob-0v7.1jqf3.5gao8.67i4k.64c49.i6kr8.glob' 0v7.1jqf3.5gao8.67i4k.64c49.i6kr8]

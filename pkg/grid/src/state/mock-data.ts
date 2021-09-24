@@ -35,7 +35,7 @@ export const mockTreaties: Treaties = {
   '~zod/garden': {
     ship: '~zod',
     desk: 'garden',
-    title: 'Landscape',
+    title: 'System',
     info: 'Your Urbit Home',
     href: makeHref('garden'),
     color: '#E2C050',

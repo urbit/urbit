@@ -2,12 +2,8 @@ import { loadEnv, defineConfig } from 'vite';
 import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import reactRefresh from '@vitejs/plugin-react-refresh';
-import htmlPlugin from 'vite-plugin-html-config';
+import urbitPlugin from '@urbit/vite-plugin-urbit';
 import { execSync } from 'child_process';
-
-const htmlPluginOpt = {
-  headScripts: [{ src: '/apps/grid/desk.js' }, { src: '/session.js' }]
-};
 
 // using current commit until release
 const GIT_DESC = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
@@ -24,17 +20,7 @@ export default ({ mode }) => {
     server:
       mode === 'mock'
         ? undefined
-        : {
-            https: true,
-            proxy: {
-              '^/apps/grid/desk.js': {
-                target: SHIP_URL
-              },
-              '^((?!/apps/grid).)*$': {
-                target: SHIP_URL
-              }
-            }
-          },
+        : { https: true },
     build:
       mode !== 'profile'
         ? undefined
@@ -48,6 +34,6 @@ export default ({ mode }) => {
               ]
             }
           },
-    plugins: [htmlPlugin(htmlPluginOpt), reactRefresh()]
+    plugins: [urbitPlugin({ base: 'grid', target: SHIP_URL }), reactRefresh()]
   });
 };

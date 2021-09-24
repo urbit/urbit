@@ -7,17 +7,6 @@ export const Help = () => {
       <img className="w-52 h-auto" src={helpAndSupport} alt="" />
       <div className="h4 space-y-4 md:space-y-8">
         <div>
-          <h2>User Help Docs</h2>
-          <a
-            className="text-blue-400"
-            href="mailto:support@tlon.io"
-            target="_blank"
-            rel="noreferrer"
-          >
-            tlon.io/help
-          </a>
-        </div>
-        <div>
           <h2>For general help, ask the community</h2>
           <a
             className="text-blue-400"
@@ -32,11 +21,11 @@ export const Help = () => {
           <h2>For all other issues:</h2>
           <a
             className="text-blue-400"
-            href="mailto:support@tlon.io"
+            href="mailto:support@urbit.org"
             target="_blank"
             rel="noreferrer"
           >
-            support@tlon.io
+            support@urbit.org
           </a>
         </div>
       </div>

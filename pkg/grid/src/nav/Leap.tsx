@@ -234,13 +234,13 @@ export const Leap = React.forwardRef(
               !selection && 'sr-only'
             )}
           >
-            {selection || 'Search Landscape'}
+            {selection || 'Search'}
           </label>
           <input
             id="leap"
             type="text"
             ref={inputRef}
-            placeholder={selection ? '' : 'Search Landscape'}
+            placeholder={selection ? '' : 'Search'}
             className="flex-1 w-full h-full px-2 h4 text-base rounded-full bg-transparent outline-none"
             value={rawInput}
             onClick={toggleSearch}
