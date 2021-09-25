@@ -496,6 +496,10 @@
     ~>  %slog.0^leaf/"kiln: local install {here}"
     =.  vats  (update-running-apps (get-apps-diff our loc now rein.rak))
     =.  vats  (emit listen:pass)
+    ::NOTE  for foreign desks, the download triggers a "real" commit, because
+    ::      we actually download the data. for local desks we do not download
+    ::      any data, it's already there, so we emit a commit "manually".
+    =.  vats  (emit (diff:give %commit lac rak))
     vats
   ::  +reset: resync after failure
   ::
