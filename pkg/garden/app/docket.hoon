@@ -602,7 +602,10 @@
     (poke-our:(pass %install) %hood kiln-install+!>([desk ship remote]))
   ++  uninstall
     (poke-our:(pass %uninstall) %hood kiln-uninstall+!>(desk))
-  ++  new-docket  |=(d=^docket (~(jab by charges) desk |=(charge +<(docket d))))
+  ++  new-docket
+    |=  d=^docket
+    %+  ~(put by charges)  desk
+    [d chad:(~(gut by charges) desk *charge)]
   ++  new-chad  |=(c=chad (~(jab by charges) desk |=(charge +<(chad c))))
   ++  fetch-glob
     ^-  (list card)
